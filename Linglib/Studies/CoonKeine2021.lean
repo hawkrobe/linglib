@@ -110,7 +110,7 @@ def dpPl (p : Person) : Goal := { person := p, plural := true }
 /-- A K-encapsulated dative goal. -/
 def dat (p : Person) : Goal := { person := p, encapsulated := true }
 
-/-- The person segments a goal exposes: its geometry under (11), or its person node alone. -/
+/-- A goal exposes the person segments of its geometry under (11), or its person node alone. -/
 def Goal.personSegments (g : Goal) : List Segment :=
   if g.encapsulated then [.pi] else personSpec .branching g.person
 
@@ -133,7 +133,7 @@ theorem pi_mem_personSegments (g : Goal) : Segment.pi ∈ g.personSegments := by
 /-- The goal as a φ-goal of [bejar-rezac-2003]: an encapsulated dative has its Case valued by
 its own head, a transparent goal has unvalued Case. -/
 def Goal.toPhiGoal (g : Goal) : PhiGoal :=
-  let cell := Agreement.Bundle.pn g.person (if g.plural then .plural else .singular)
+  let cell := Agreement.Bundle.personNumber g.person (if g.plural then .plural else .singular)
   if g.encapsulated then .valued .dat cell else .unvalued cell
 
 /-! ### Segment-based Agree and gluttony (14)–(16) -/
@@ -147,7 +147,7 @@ whose geometry bears it. -/
 def segmentProbe (geo : Goal → List σ) (s : σ) : Probe (Goal × ℕ) :=
   .relativized λ t => decide (s ∈ geo t.1)
 
-/-- Agree (14) for one probe segment: the closest accessible goal whose geometry bears it. -/
+/-- Agree (14) for one probe segment finds the closest accessible goal whose geometry bears it. -/
 def segmentAgree (geo : Goal → List σ) (s : σ) (goals : List Goal) : Option (Goal × ℕ) :=
   (segmentProbe geo s).search goals.zipIdx
 
@@ -155,7 +155,7 @@ def segmentAgree (geo : Goal → List σ) (s : σ) (goals : List Goal) : Option 
 def agreed (geo : Goal → List σ) (P : List σ) (goals : List Goal) : List (Goal × ℕ) :=
   goals.zipIdx.filter λ t => P.any λ s => segmentAgree geo s goals == some t
 
-/-- Feature gluttony (16): the probe has agreed with more than one DP. -/
+/-- Feature gluttony (16) is the probe's having agreed with more than one DP. -/
 def Gluttonous (geo : Goal → List σ) (P : List σ) (goals : List Goal) : Prop :=
   ∃ t ∈ agreed geo P goals, ∃ u ∈ agreed geo P goals, t ≠ u
 
@@ -175,7 +175,7 @@ theorem mem_agreed {t : Goal × ℕ} :
       t ∈ goals.zipIdx ∧ ∃ s ∈ P, segmentAgree geo s goals = some t := by
   simp [agreed]
 
-/-- Agree over two goals: the higher if it bears the segment, else the lower if it does. -/
+/-- Agree over two goals finds the higher if it bears the segment, else the lower if it does. -/
 theorem segmentAgree_pair {hi lo : Goal} :
     segmentAgree geo s [hi, lo] =
       if s ∈ geo hi then some (hi, 0) else if s ∈ geo lo then some (lo, 1) else none := by
@@ -249,9 +249,9 @@ theorem gluttonous_third_of_gluttonous {P : Probe.Articulation} {hi lo : Goal}
 
 /-! ### The Person Case Constraint from probe articulation (§3) -/
 
-/-- The PCC configuration: a clitic-doubling probe over IO > DO, the IO optionally
-K-encapsulated. By (30) each agreed-with DP must cliticize, which a gluttonous probe cannot
-satisfy, so gluttony is the violation. -/
+/-- The PCC configuration is a clitic-doubling probe over IO > DO, the IO optionally K-encapsulated.
+By (30) each agreed-with DP must cliticize, which a gluttonous probe cannot satisfy, so gluttony is
+the violation. -/
 def PCCViolation (P : Probe.Articulation) (ioOpaque : Bool) (io do_ : Person) : Prop :=
   Gluttonous Goal.personSegments P [{ person := io, encapsulated := ioOpaque }, dp do_]
 
@@ -259,24 +259,25 @@ instance (P : Probe.Articulation) (b : Bool) (io do_ : Person) :
     Decidable (PCCViolation P b io do_) :=
   inferInstanceAs (Decidable (Gluttonous _ _ _))
 
-/-- [uPERS [uPART]], (39a): the Weak PCC, and the person probe of German and Icelandic T
-((55), (79)). -/
+/-- The probe [uPERS [uPART]] of (39a) yields the Weak PCC, and is the person probe of German and
+Icelandic T ((55), (79)). -/
 abbrev weakProbe : Probe.Articulation := partialProbe
 
-/-- [uPERS [uPART [uSPKR]]], (39b): the Ultrastrong PCC. -/
+/-- The probe [uPERS [uPART [uSPKR]]] of (39b) yields the Ultrastrong PCC. -/
 abbrev ultrastrongProbe : Probe.Articulation := fullProbeStd
 
-/-- [uPERS [uSPKR]], (39c): the Me-First PCC, with a missing intermediate segment. -/
+/-- The probe [uPERS [uSPKR]] of (39c) yields the Me-First PCC, with a missing intermediate segment.
+-/
 def meFirstProbe : Probe.Articulation := [.pi, .speaker]
 
-/-- [uPERS [uPART [uSPKR] [uADDR]]], fn. 22 (i): the Strong PCC over transparent datives,
-and Slovenian's reversible Strong PCC (fn. 26). -/
+/-- The probe [uPERS [uPART [uSPKR] [uADDR]]] of fn. 22 (i) yields the Strong PCC over transparent
+datives, and Slovenian's reversible Strong PCC (fn. 26). -/
 def branchingProbe : Probe.Articulation := [.pi, .participant, .speaker, .addressee]
 
 /-- The person grid the PCC varieties are stated over. -/
 def persons : List Person := [.first, .second, .third]
 
-/-- The Weak PCC (22): *3 > 1/2. -/
+/-- The Weak PCC (22) bans *3 > 1/2. -/
 theorem weak_pcc : ∀ io ∈ persons, ∀ do_ ∈ persons,
     PCCViolation weakProbe false io do_ ↔ io = .third ∧ do_ ≠ .third := by
   decide
@@ -287,7 +288,7 @@ theorem strong_pcc : ∀ io ∈ persons, ∀ do_ ∈ persons,
     PCCViolation weakProbe true io do_ ↔ do_ ≠ .third := by
   decide
 
-/-- The Ultrastrong PCC (39b): the Weak bans and *2 > 1. -/
+/-- The Ultrastrong PCC (39b) has the Weak bans and *2 > 1. -/
 theorem ultrastrong_pcc : ∀ io ∈ persons, ∀ do_ ∈ persons,
     PCCViolation ultrastrongProbe false io do_ ↔
       io = .third ∧ do_ ≠ .third ∨ io = .second ∧ do_ = .first := by
@@ -333,9 +334,9 @@ theorem weak_strong_typology :
       (PCCViolation weakProbe true io do_ ↔ ¬ IsLicit strongGrammar io do_) := by
   decide
 
-/-- The Ultrastrong probe against that parametrization: every cell but 2 > 2, on which table 1
-is silent, P-Uniqueness bans it, and the probe, matched throughout by the indirect object,
-permits it. -/
+/-- Against that parametrization the Ultrastrong probe bans every cell but 2 > 2, on which table 1
+is silent, P-Uniqueness bans it, and the probe, matched throughout by the indirect object, permits
+it. -/
 theorem ultrastrong_typology :
     (∀ io ∈ persons, ∀ do_ ∈ persons, (io, do_) ≠ (.second, .second) →
       (PCCViolation ultrastrongProbe false io do_ ↔ ¬ IsLicit ultraStrongGrammar io do_)) ∧
@@ -354,10 +355,9 @@ theorem meFirst_typology :
 
 end Typology
 
-/-- The Reverse PCC (44)–(45) and its diagnosis (fn. 26): the branching probe over transparent
-goals bans the lower [PART] DP whichever object it is, while a dative exposing its person node
-alone cannot be banned when it is the lower one, so Slovenian's Strong PCC is the branching
-probe. -/
+/-- In the Reverse PCC (44)–(45) and its diagnosis (fn. 26), the branching probe over transparent
+goals bans the lower [PART] DP whichever object it is, while a dative exposing its person node alone
+cannot be banned when it is the lower one, so Slovenian's Strong PCC is the branching probe. -/
 theorem reverse_pcc :
     Gluttonous Goal.personSegments branchingProbe [dp .third, dp .second] ∧
     Gluttonous Goal.personSegments branchingProbe [dp .second, dp .first] ∧
@@ -376,10 +376,10 @@ instance (cycles : List (List PhiGoal)) (args : List PhiGoal) :
     Decidable (RevisedPLC cycles args) :=
   inferInstanceAs (Decidable (_ → _))
 
-/-- Basque (10), the paper's argument against the original condition: the 3DAT > 1ABS cluster
-is gluttonous in a finite clause and has no probe to glutton in a nonfinite one, whereas the
-original condition leaves the 1st person object unlicensed in both and needs the restriction of
-(9) to exempt the probeless clause. -/
+/-- Basque (10) is the paper's argument against the original condition. The 3DAT > 1ABS cluster is
+gluttonous in a finite clause and has no probe to glutton in a nonfinite one, whereas the original
+condition leaves the 1st person object unlicensed in both and needs the restriction of (9) to exempt
+the probeless clause. -/
 theorem nonfinite_obviation :
     PCCViolation weakProbe true .third .first ∧
     ¬ Gluttonous Goal.personSegments [] [dat .third, dp .first] ∧
@@ -401,8 +401,8 @@ sees after the person probe. -/
 def afterDoubling (P : Probe.Articulation) (goals : List Goal) : List Goal :=
   (goals.zipIdx.filter (· ∉ agreed Goal.personSegments P goals)).map (·.1)
 
-/-- No Number Case Constraint ((40)–(42)): over two clitic-doubled objects the person probe,
-rooted in [uPERS], doubles the higher one, so the number probe sees one goal. -/
+/-- There is no Number Case Constraint ((40)–(42)): over two clitic-doubled objects the person
+probe, rooted in [uPERS], doubles the higher one, so the number probe sees one goal. -/
 theorem no_number_case_constraint {P : Probe.Articulation} (hpi : Segment.pi ∈ P)
     {goals : List Goal} (h : goals.length ≤ 2) :
     ¬ Gluttonous Goal.numberSegments (numberProbe P) (afterDoubling P goals) := by
@@ -416,8 +416,8 @@ theorem no_number_case_constraint {P : Probe.Articulation} (hpi : Segment.pi ∈
       decide_false, Bool.false_eq_true, ↓reduceIte, List.length_map]
     exact (List.length_filter_le _ _).trans (by simpa using h)
 
-/-- With a third accessible DP, (43): the number probe sees two goals after doubling and
-gluttons over SG > PL. -/
+/-- With a third accessible DP (43), the number probe sees two goals after doubling and gluttons
+over SG > PL. -/
 theorem three_goal_number :
     Gluttonous Goal.numberSegments (numberProbe weakProbe)
       (afterDoubling weakProbe [dp .third, dp .third, dpPl .third]) := by
@@ -452,7 +452,7 @@ instance : Rule (VI σ) (List σ) String where
 instance : DecidableRel (Applies : VI σ → List σ → Prop) := λ vi value =>
   inferInstanceAs (Decidable (vi.spec ⊆ value))
 
-/-- The item a value demands: the most specific applicable one. -/
+/-- A value demands the most specific applicable item. -/
 abbrev demand (vocab : List (VI σ)) (value : List σ) : Option (VI σ) :=
   selectBy (·.spec.length) vocab value
 
@@ -520,13 +520,13 @@ def Paradigm.number : Paradigm → List (VI NumberSegment)
   | .hindiPresent => [⟨[.num], "hai"⟩, ⟨[.num, .pl], "hẼ"⟩]
   | _ => []
 
-/-- The number context of person insertion: the number probe's first value is plural. -/
+/-- The number context of person insertion is that the number probe's first value is plural. -/
 def pluralContext (P : Probe.Articulation) (goals : List Goal) : Bool :=
   (values Goal.numberSegments (numberProbe P) goals).head?.any λ v =>
     decide (NumberSegment.pl ∈ v)
 
-/-- What becomes of a probe after Agree: cliticization of what it agreed with (30), or
-Vocabulary insertion in a paradigm. -/
+/-- After Agree a probe either cliticizes what it agreed with (30) or undergoes Vocabulary insertion
+in a paradigm. -/
 inductive Aftermath where
   /-- Each agreed-with DP cliticizes onto the probe's host. -/
   | cliticize
@@ -534,8 +534,8 @@ inductive Aftermath where
   | realize (paradigm : Paradigm)
   deriving DecidableEq, Repr
 
-/-- Convergence of a person probe over its goals: no gluttony for a clitic-doubling probe;
-resolvable person and number demands, in a glossed number context, for an agreement probe. -/
+/-- A person probe converges over its goals when a clitic-doubling probe does not glutton, and when
+an agreement probe's person and number demands are resolvable in a glossed number context. -/
 def Aftermath.Converges : Aftermath → Probe.Articulation → List Goal → Prop
   | .cliticize, P, goals => ¬ Gluttonous Goal.personSegments P goals
   | .realize par, P, goals =>
@@ -559,13 +559,13 @@ theorem icelandic_syncretism :
       (Aftermath.realize .icelandicMediopassivePast).Converges weakProbe [dat .third, dp p] := by
   decide
 
-/-- Kichean Agent Focus number agreement (88): one item, realizing plural. -/
+/-- Kichean Agent Focus number agreement (88) has one item, realizing plural. -/
 def kicheanAgentFocus : List (VI NumberSegment) := [⟨[.num, .pl], "-e"⟩]
 
 /-- Two 3rd person goals of the given numbers, the cells of (88). -/
 def kicheanGoals (s o : Bool) : List Goal := [⟨.third, s, false⟩, ⟨.third, o, false⟩]
 
-/-- Omnivorous number (§5.2): with no singular item, a number probe gluttonous over SG > PL
+/-- In omnivorous number (§5.2), with no singular item, a number probe gluttonous over SG > PL
 converges on the plural item, and the table of (88) follows. -/
 theorem kichean_omnivorous :
     Gluttonous Goal.numberSegments (numberProbe weakProbe) (kicheanGoals false true) ∧
@@ -622,8 +622,8 @@ def Config.ofRow (row : Datum) : Option Config := do
   return ⟨← row.parse? "probe" probes, (← rowGoal row "higher") ++ (← rowGoal row "lower"),
     aftermath⟩
 
-/-- A row the paper judges grammatical or at most marginal: its `?` examples, (77) and fn. 32,
-it calls quite acceptable and much improved, while `*?` and `??` carry its star. -/
+/-- A row counts as grammatical when the paper judges it acceptable or marginal. Its `?` examples,
+(77) and fn. 32, it calls quite acceptable and much improved, while `*?` and `??` carry its star. -/
 def Grammatical (row : Datum) : Prop :=
   row.judgment = .acceptable ∨ row.judgment = .marginal
 

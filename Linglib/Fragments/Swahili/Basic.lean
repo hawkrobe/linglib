@@ -158,8 +158,10 @@ theorem Gender.faithful_subjPrefix :
 /-- The subject prefixes of the person cells are *ni-*, *u-*, *tu-* and *m-* for the speech-act
 participants and the prefixes of classes 1 and 2 for the third person. -/
 def subjectPrefix : Paradigm Morph :=
-  [(.pn .first .singular, .pref "ni"), (.pn .second .singular, .pref "u"),
-    (.pn .third .singular, NounClass.cl1.subjPrefix), (.pn .first .plural, .pref "tu"),
-    (.pn .second .plural, .pref "m"), (.pn .third .plural, NounClass.cl2.subjPrefix)]
+  [(.personNumber .first .singular, .pref "ni"), (.personNumber .second .singular, .pref "u"),
+    (.personNumber .third .singular, NounClass.cl1.subjPrefix),
+    (.personNumber .first .plural, .pref "tu"),
+    (.personNumber .second .plural, .pref "m"),
+    (.personNumber .third .plural, NounClass.cl2.subjPrefix)]
 
 end Swahili

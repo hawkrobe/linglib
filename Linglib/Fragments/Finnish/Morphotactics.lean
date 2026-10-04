@@ -118,16 +118,16 @@ inductive Exponent : Slot → Type where
   deriving DecidableEq
 
 open RegularExpression in
-/-- The order of the endings: function, number, case, possessive, each of which a word may lack,
-and then any number of clitics (§3.1, §3.3). -/
+/-- The endings come in the order function, number, case and possessive, each of which a word may
+lack, and are followed by any number of clitics (§3.1, §3.3). -/
 def template : RegularExpression Slot :=
   sublists [.function, .number, .case, .possession] * (char .clitic).star
 
 variable {σ : Slot}
 
-/-- The positions whose value an ending determines: its own, and for the nominative plural the
-case, for the comitative the number, and for an infinitive the number, which is never marked.
-A clitic determines none. -/
+/-- An ending determines the value of its own position, and the nominative plural also determines
+the case, the comitative the number, and an infinitive the number, which is never marked. A clitic
+determines none. -/
 def Exponent.fills : Exponent σ → List Slot
   | .infinitive _ => [.function, .number]
   | .nominativePlural => [.number, .case]
@@ -192,8 +192,7 @@ def caseEndings (plural : Bool) (c : Case) : List (List Segment) :=
     | c => Declension.endings c
   else Declension.endings c
 
-/-- An ending before a possessive ending: the translative -ksi is -kse, and a final consonant is
-dropped. -/
+/-- Before a possessive ending the translative -ksi is -kse, and a final consonant is dropped. -/
 def beforePossessive (x : List Segment) : List Segment :=
   if x = [k, s, i] then [k, s, e]
   else if ∀ y ∈ x.getLast?, y.IsVowel then x else x.dropLast
@@ -248,9 +247,11 @@ def realize (w : List Segment) (es : List (Σ σ, Exponent σ)) : List (List Seg
 -nsA alone after the illative, whose endings end in a consonant, as in *talo-o-nsa* 'into his
 house'. -/
 theorem continuations_third :
-    continuations [] false none [⟨_, .case .ine⟩, ⟨_, .possessive (.pn .third .singular)⟩] =
+    continuations [] false none [⟨_, .case .ine⟩,
+                                 ⟨_, .possessive (.personNumber .third .singular)⟩] =
         [[s, s, A, V, n], [s, s, A, n, s, A]] ∧
-      continuations [] false none [⟨_, .case .ill⟩, ⟨_, .possessive (.pn .third .singular)⟩] =
+      continuations [] false none [⟨_, .case .ill⟩,
+                                   ⟨_, .possessive (.personNumber .third .singular)⟩] =
         [[V, n, s, A], [h, V, n, s, A], [s, e, e, n, s, A]] := by
   decide
 

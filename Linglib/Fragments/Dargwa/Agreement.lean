@@ -53,7 +53,7 @@ otherwise, so it marks exactly the clauses in which the verb agrees with A.
 * The masculine marker ‹w› is dropped or realized *-j* in some positions. Some nouns for liquids
   and granular substances take plural agreement, and a few nouns contain a gender marker of
   their own, which follows the referent's or the possessor's gender.
-* Tanti has no clusivity, so the paradigms range over `Agreement.Bundle.pnCells`.
+* Tanti has no clusivity, so the paradigms range over `Agreement.Bundle.personNumberCells`.
 
 ## References
 
@@ -145,21 +145,23 @@ inductive PersonSet where
 *-a* also appears as *-a-ja*. -/
 def PersonSet.paradigm : PersonSet → Paradigm (List Morph)
   | .clitic =>
-    [(.pn .first .singular, [.encl "da"]), (.pn .second .singular, [.encl "de"]),
-     (.pn .third .singular, []), (.pn .first .plural, [.encl "da"]),
-     (.pn .second .plural, [.encl "da"]), (.pn .third .plural, [])]
+    [(.personNumber .first .singular, [.encl "da"]),
+     (.personNumber .second .singular, [.encl "de"]),
+     (.personNumber .third .singular, []), (.personNumber .first .plural, [.encl "da"]),
+     (.personNumber .second .plural, [.encl "da"]), (.personNumber .third .plural, [])]
   | .irrealis =>
-    [(.pn .first .singular, [.suff "d"]), (.pn .second .singular, [.suff "t:"]),
-     (.pn .third .singular, []), (.pn .first .plural, [.suff "ʜaˁ"]),
-     (.pn .second .plural, [.suff "t:", .suff "a"]), (.pn .third .plural, [])]
+    [(.personNumber .first .singular, [.suff "d"]), (.personNumber .second .singular, [.suff "t:"]),
+     (.personNumber .third .singular, []), (.personNumber .first .plural, [.suff "ʜaˁ"]),
+     (.personNumber .second .plural, [.suff "t:", .suff "a"]), (.personNumber .third .plural, [])]
   | .optative =>
-    [(.pn .first .singular, [.suff "a"]), (.pn .second .singular, [.suff "e"]),
-     (.pn .third .singular, []), (.pn .first .plural, [.suff "a"]),
-     (.pn .second .plural, [.suff "a"]), (.pn .third .plural, [])]
+    [(.personNumber .first .singular, [.suff "a"]), (.personNumber .second .singular, [.suff "e"]),
+     (.personNumber .third .singular, []), (.personNumber .first .plural, [.suff "a"]),
+     (.personNumber .second .plural, [.suff "a"]), (.personNumber .third .plural, [])]
 
 /-- In every set, a cell is unmarked exactly when it is not a speech-act participant's. -/
 theorem PersonSet.realize_eq_nil_iff :
-    ∀ s : PersonSet, ∀ c ∈ Bundle.pnCells, s.paradigm.realize c = some [] ↔ ¬ c.IsSAP := by
+    ∀ s : PersonSet, ∀ c ∈ Bundle.personNumberCells,
+      s.paradigm.realize c = some [] ↔ ¬ c.IsSAP := by
   decide
 
 /-- The past tense clitic bears no person. -/
@@ -167,13 +169,14 @@ def pastClitic : Morph := .encl "de"
 
 /-- The second person singular clitic is the past tense clitic. -/
 theorem clitic_second_singular :
-    PersonSet.clitic.paradigm.realize (.pn .second .singular) = some [pastClitic] := rfl
+    PersonSet.clitic.paradigm.realize (.personNumber .second .singular) = some [pastClitic] := rfl
 
 /-- A paradigm has the Dargic configuration when two speech-act participant cells share a
 marker exactly when both or neither is the second person singular. -/
 def IsDargic (p : Paradigm (List Morph)) : Prop :=
-  ∀ c ∈ Bundle.pnCells, ∀ c' ∈ Bundle.pnCells, c.IsSAP → c'.IsSAP →
-    (p.realize c = p.realize c' ↔ (c = .pn .second .singular ↔ c' = .pn .second .singular))
+  ∀ c ∈ Bundle.personNumberCells, ∀ c' ∈ Bundle.personNumberCells, c.IsSAP → c'.IsSAP →
+    (p.realize c = p.realize c' ↔
+      (c = .personNumber .second .singular ↔ c' = .personNumber .second .singular))
 
 instance (p : Paradigm (List Morph)) : Decidable (IsDargic p) := by
   unfold IsDargic; infer_instance
@@ -213,7 +216,7 @@ theorem thematic_eq_i_iff (s : Scenario Person) :
 cell that controls it. -/
 def transitiveClitic (a p : Person × Number) : Option (List Morph) :=
   let c := if personController ⟨a.1, p.1⟩ = .A then a else p
-  PersonSet.clitic.paradigm.realize (.pn c.1 c.2)
+  PersonSet.clitic.paradigm.realize (.personNumber c.1 c.2)
 
 /-- 'I caught you' takes *=de*, 'you caught me' *=da*, 'I caught him' *=da*, 'you caught him'
 *=de* and 'Rasul caught you' *=de*, since the verb agrees with the absolutive when both

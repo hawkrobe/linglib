@@ -35,7 +35,7 @@ survey the splits, which arose independently in Cholan, Q'anjob'alan and Yucatec
 
 ## Implementation notes
 
-A paradigm is an `Agreement.Paradigm` over `Agreement.Bundle.pnCells`, so a controller's
+A paradigm is an `Agreement.Paradigm` over `Agreement.Bundle.personNumberCells`, so a controller's
 `Word.phi` indexes it directly ([corbett-1998]); an exponent is a list of `Morphology.Morph`,
 empty for zero exponence and of length two for a discontinuous marker such as a person prefix
 with a separate plural word. A cell whose only marker is a process also renders as `[]`. Tables
@@ -70,7 +70,7 @@ abbrev ExponentTable := Agreement.Paradigm (List Morphology.Morph)
 
 /-- The third person singular cell has no segmental exponent. -/
 def ExponentTable.IsThirdSgZero (e : ExponentTable) : Prop :=
-  e.realize (.pn .third .singular) = some []
+  e.realize (.personNumber .third .singular) = some []
 
 instance (e : ExponentTable) : Decidable e.IsThirdSgZero := inferInstanceAs (Decidable (_ = _))
 
@@ -86,14 +86,13 @@ inductive VerbSlot where
   | status
   deriving DecidableEq, Repr, Fintype
 
-/-- The position of Set B relative to the verb stem: high, between the aspect marker and the
-stem, or low, after the stem. -/
+/-- Set B sits high, between the aspect marker and the stem, or low, after the stem. -/
 inductive ABSPosition where
   | high
   | low
   deriving DecidableEq, Repr, Fintype
 
-/-- The absolutive setting a verbal template determines: high when Set B is a prefix slot. -/
+/-- A verbal template sets the absolutive high when Set B is a prefix slot. -/
 def absPosition (t : Morphology.AffixTemplate VerbSlot) : ABSPosition :=
   if .setB ∈ t.prefixSlots then .high else .low
 

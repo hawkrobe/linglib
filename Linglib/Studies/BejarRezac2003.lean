@@ -58,8 +58,8 @@ namespace BejarRezac2003
 
 open Minimalist Agreement
 
-/-- A dative: Case valued by its own φ-bearing functional category — applicative P or
-dative marker — and so inactive for outside Agree (§4). -/
+/-- A dative has its Case valued by its own φ-bearing functional category, an applicative P or a
+dative marker, and so is inactive for outside Agree (§4). -/
 def dat (c : Bundle) : PhiGoal := .valued .dat c
 
 /-- The person probe of a Case-licensing head: every nominal bears a person value (8), and
@@ -120,10 +120,10 @@ theorem strong_pcc (cd ca : Bundle) :
 
 -- (1): *le lui* licit, *te lui* excluded.
 example :
-    PLCOk [[dat (.pn .third .singular), .unvalued (.pn .third .singular)]]
-      [dat (.pn .third .singular), .unvalued (.pn .third .singular)] ∧
-    ¬ PLCOk [[dat (.pn .third .singular), .unvalued (.pn .second .singular)]]
-      [dat (.pn .third .singular), .unvalued (.pn .second .singular)] := by
+    PLCOk [[dat (.personNumber .third .singular), .unvalued (.personNumber .third .singular)]]
+      [dat (.personNumber .third .singular), .unvalued (.personNumber .third .singular)] ∧
+    ¬ PLCOk [[dat (.personNumber .third .singular), .unvalued (.personNumber .second .singular)]]
+      [dat (.personNumber .third .singular), .unvalued (.personNumber .second .singular)] := by
   decide
 
 /-! ### Obviation -/
@@ -152,10 +152,14 @@ theorem dnc_pcc_iff (dativeEPP : Bool) (cd cn : Bundle) :
 
 -- (12) Icelandic *þið* excluded; (13) French *je lui fus présenté* licit.
 example :
-    ¬ PLCOk (dncCycles true (dat (.pn .third .singular)) (.unvalued (.pn .second .singular)))
-        [dat (.pn .third .singular), .unvalued (.pn .second .singular)] ∧
-    PLCOk (dncCycles false (dat (.pn .third .singular)) (.unvalued (.pn .first .singular)))
-        [dat (.pn .third .singular), .unvalued (.pn .first .singular)] := by
+    ¬ PLCOk
+        (dncCycles true (dat (.personNumber .third .singular))
+          (.unvalued (.personNumber .second .singular)))
+        [dat (.personNumber .third .singular), .unvalued (.personNumber .second .singular)] ∧
+    PLCOk
+        (dncCycles false (dat (.personNumber .third .singular))
+          (.unvalued (.personNumber .first .singular)))
+        [dat (.personNumber .third .singular), .unvalued (.personNumber .first .singular)] := by
   decide
 
 end BejarRezac2003

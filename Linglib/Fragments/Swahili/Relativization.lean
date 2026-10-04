@@ -74,16 +74,16 @@ def relativizers : List Relativizer := [amba]
 
 /-- The full personal pronouns. -/
 def pronoun : Paradigm Morph :=
-  [(.pn .first .singular, .free "mimi"), (.pn .second .singular, .free "wewe"),
-    (.pn .third .singular, .free "yeye"), (.pn .first .plural, .free "sisi"),
-    (.pn .second .plural, .free "nyinyi"), (.pn .third .plural, .free "wao")]
+  [(.personNumber .first .singular, .free "mimi"), (.personNumber .second .singular, .free "wewe"),
+    (.personNumber .third .singular, .free "yeye"), (.personNumber .first .plural, .free "sisi"),
+    (.personNumber .second .plural, .free "nyinyi"), (.personNumber .third .plural, .free "wao")]
 
 /-- The resumptive pronouns, suffixed to the monosyllabic preposition; they are also the
 prepositional pronouns of matrix clauses, *ni-li-kutana na-ye* 'I met with her'. -/
 def resumptive : Paradigm Morph :=
-  [(.pn .first .singular, .suff "mi"), (.pn .second .singular, .suff "we"),
-    (.pn .third .singular, .suff "ye"), (.pn .first .plural, .suff "si"),
-    (.pn .second .plural, .suff "nyi"), (.pn .third .plural, .suff "o")]
+  [(.personNumber .first .singular, .suff "mi"), (.personNumber .second .singular, .suff "we"),
+    (.personNumber .third .singular, .suff "ye"), (.personNumber .first .plural, .suff "si"),
+    (.personNumber .second .plural, .suff "nyi"), (.personNumber .third .plural, .suff "o")]
 
 /-- The relative concord of a class, the suffix of *amba* and the resumptive pronoun of a noun
 of the class, for classes 1 to 10. -/
@@ -103,8 +103,8 @@ def NounClass.concord? : NounClass → Option Morph
 /-- The third person resumptives are the concords of classes 1 and 2, the animate gender, and
 so carry number and gender but no person. -/
 theorem resumptive_third :
-    resumptive.realize (.pn .third .singular) = Gender.genderA.singularClass.concord? ∧
-      resumptive.realize (.pn .third .plural) = Gender.genderA.pluralClass.concord? :=
+    resumptive.realize (.personNumber .third .singular) = Gender.genderA.singularClass.concord? ∧
+      resumptive.realize (.personNumber .third .plural) = Gender.genderA.pluralClass.concord? :=
   ⟨rfl, rfl⟩
 
 /-! ### Resumption and the minimal word -/

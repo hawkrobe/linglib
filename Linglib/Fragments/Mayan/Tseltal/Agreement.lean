@@ -51,13 +51,13 @@ def assignCase : UD.Aspect → ArgumentRole → Case := fun _ ↦ Alignment.erga
 marks person alone. -/
 def setAExponent : Phonology.Segment.Class → ExponentTable
   | .consonant =>
-    [(.pn .first .singular, [.pref "j"]), (.pn .second .singular, [.pref "a"]),
-     (.pn .third .singular, [.pref "s"]), (.pn .first .plural, [.pref "j"]),
-     (.pn .second .plural, [.pref "a"]), (.pn .third .plural, [.pref "s"])]
+    [(.personNumber .first .singular, [.pref "j"]), (.personNumber .second .singular, [.pref "a"]),
+     (.personNumber .third .singular, [.pref "s"]), (.personNumber .first .plural, [.pref "j"]),
+     (.personNumber .second .plural, [.pref "a"]), (.personNumber .third .plural, [.pref "s"])]
   | .vowel =>
-    [(.pn .first .singular, [.pref "k"]), (.pn .second .singular, [.pref "aw"]),
-     (.pn .third .singular, [.pref "y"]), (.pn .first .plural, [.pref "k"]),
-     (.pn .second .plural, [.pref "aw"]), (.pn .third .plural, [.pref "y"])]
+    [(.personNumber .first .singular, [.pref "k"]), (.personNumber .second .singular, [.pref "aw"]),
+     (.personNumber .third .singular, [.pref "y"]), (.personNumber .first .plural, [.pref "k"]),
+     (.personNumber .second .plural, [.pref "aw"]), (.personNumber .third .plural, [.pref "y"])]
 
 /-- The plural suffix that goes with a Set A prefix, *-tik* for the inclusive first person and
 *-ik* for the second and the third; the exclusive first person varies by dialect and is not
@@ -70,9 +70,9 @@ def setAPlural : Person → List Morphology.Morph
 /-- The Set B suffixes, with a zero third person singular and the plural *-ik* alone in the
 third person. -/
 def setBExponent : ExponentTable :=
-  [(.pn .first .singular, [.suff "on"]), (.pn .second .singular, [.suff "at"]),
-   (.pn .third .singular, []), (.pn .first .plural, [.suff "otik"]),
-   (.pn .second .plural, [.suff "ex"]), (.pn .third .plural, [.suff "ik"])]
+  [(.personNumber .first .singular, [.suff "on"]), (.personNumber .second .singular, [.suff "at"]),
+   (.personNumber .third .singular, []), (.personNumber .first .plural, [.suff "otik"]),
+   (.personNumber .second .plural, [.suff "ex"]), (.personNumber .third .plural, [.suff "ik"])]
 
 /-! ### Extraction -/
 

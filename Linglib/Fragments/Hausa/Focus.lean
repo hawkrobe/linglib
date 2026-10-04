@@ -80,8 +80,8 @@ example : polarAfter [.L] = some .H := rfl
 
 /-! ### Focus configurations -/
 
-/-- A focused clause: its TAM as a general clause has it, the TAM its PAC surfaces in, the PAC's
-subject cell, the focus strategy, the gender of the focus, none for a plural, and whether the
+/-- A focused clause records its TAM as a general clause has it, the TAM its PAC surfaces in, the
+PAC's subject cell, the focus strategy, the gender of the focus (none for a plural), and whether the
 stabilizer surfaces. -/
 structure FocusConfig where
   tam : TAM
@@ -133,30 +133,33 @@ def mkExSitu (tam pacTAM : TAM) (cell : Bundle) (g : Option Gender) (hasStab : B
     FocusConfig :=
   ⟨tam, pacTAM, cell, .exSitu, g, hasStab⟩
 
-/-- *Audù nē ya tàfi kā̀suwā* 'It is Audu who went to the market': the fronted subject takes the
+/-- In *Audù nē ya tàfi kā̀suwā* 'It is Audu who went to the market', the fronted subject takes the
 preterite *ya* for the completive. -/
 example :
-    let c := mkExSitu .completive .preterite (genderedSingular .third .masculine) (some .masculine)
+    let c := mkExSitu .completive .preterite
+      ((Bundle.personNumber .third .singular).set .gender .masculine) (some .masculine)
     c.Licensed ∧ c.pac = some "ya" ∧ c.stab? = some ne := by
   decide
 
 /-- The completive does not occur after a fronted focus. -/
 example :
-    ¬ (mkExSitu .completive .completive (genderedSingular .third .masculine)
-      (some .masculine)).Licensed := by
+    ¬ (mkExSitu .completive .completive
+        ((Bundle.personNumber .third .singular).set .gender .masculine)
+        (some .masculine)).Licensed := by
   decide
 
-/-- *Audù yaa sàyi zoobèe ne* 'Audu bought a RING': the object focus stays in place, the TAM keeps
-its general form, and the stabilizer ends the clause. -/
+/-- In *Audù yaa sàyi zoobèe ne* 'Audu bought a RING', the object focus stays in place, the TAM
+keeps its general form, and the stabilizer ends the clause. -/
 example :
-    let c := mkInSitu .completive (genderedSingular .third .masculine) (some .masculine) true
+    let c := mkInSitu .completive
+      ((Bundle.personNumber .third .singular).set .gender .masculine) (some .masculine) true
     c.Licensed ∧ c.pac = some "yā" ∧ c.stab? = some ne := by
   decide
 
-/-- *Hàdīzà cē ta ci lambā̀* 'It was Hadiza who won the prize': the stabilizer agrees with the
+/-- In *Hàdīzà cē ta ci lambā̀* 'It was Hadiza who won the prize', the stabilizer agrees with the
 feminine focus. -/
 example :
-    (mkExSitu .completive .preterite (genderedSingular .third .feminine)
+    (mkExSitu .completive .preterite ((Bundle.personNumber .third .singular).set .gender .feminine)
       (some .feminine)).stab? = some ce := by
   decide
 

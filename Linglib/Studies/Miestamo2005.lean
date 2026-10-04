@@ -199,7 +199,7 @@ theorem russian_symmetric :
 negative of a stem with its ending the auxiliary takes the ending and the stem follows bare:
 the negative verb is the finite element of the clause, and the language is of type Asy. -/
 theorem finnish_negVerb :
-    Finnish.Negation.ending.cells = Agreement.Bundle.pnCells ∧
+    Finnish.Negation.ending.cells = Agreement.Bundle.personNumberCells ∧
     (∀ p ∈ Finnish.Negation.present, p.negative = p.marker.morphs ++ p.affirmative.reverse) ∧
     languageType Finnish.Negation.present IsSymmetric False = .asymmetric := by
   decide

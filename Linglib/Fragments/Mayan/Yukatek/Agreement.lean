@@ -63,26 +63,27 @@ def assignCase : UD.Aspect → ArgumentRole → Case
 third person plurals are the singular prefix with the suffixes *-e'ex* and *-o'ob'*. -/
 def setAExponent : Phonology.Segment.Class → ExponentTable
   | .consonant =>
-    [(.pn .first .singular, [.pref "in"]), (.pn .second .singular, [.pref "a"]),
-     (.pn .third .singular, [.pref "u"]), (.pn .first .plural, [.pref "k"]),
-     (.pn .second .plural, [.pref "a", .suff "e'ex"]),
-     (.pn .third .plural, [.pref "u", .suff "o'ob'"])]
+    [(.personNumber .first .singular, [.pref "in"]), (.personNumber .second .singular, [.pref "a"]),
+     (.personNumber .third .singular, [.pref "u"]), (.personNumber .first .plural, [.pref "k"]),
+     (.personNumber .second .plural, [.pref "a", .suff "e'ex"]),
+     (.personNumber .third .plural, [.pref "u", .suff "o'ob'"])]
   | .vowel =>
-    [(.pn .first .singular, [.pref "inw"]), (.pn .second .singular, [.pref "aw"]),
-     (.pn .third .singular, [.pref "uy"]), (.pn .first .plural, [.pref "k"]),
-     (.pn .second .plural, [.pref "aw", .suff "e'ex"]),
-     (.pn .third .plural, [.pref "uy", .suff "o'ob'"])]
+    [(.personNumber .first .singular, [.pref "inw"]),
+     (.personNumber .second .singular, [.pref "aw"]),
+     (.personNumber .third .singular, [.pref "uy"]), (.personNumber .first .plural, [.pref "k"]),
+     (.personNumber .second .plural, [.pref "aw", .suff "e'ex"]),
+     (.personNumber .third .plural, [.pref "uy", .suff "o'ob'"])]
 
 /-! ### Set B -/
 
 /-- The Set B markers, with a zero third person singular. -/
 def setBExponent : ExponentTable :=
-  [(.pn .first .singular, [.suff "en"]), (.pn .second .singular, [.suff "ech"]),
-   (.pn .third .singular, []), (.pn .first .plural, [.suff "o'on"]),
-   (.pn .second .plural, [.suff "e'ex"]), (.pn .third .plural, [.suff "o'ob'"])]
+  [(.personNumber .first .singular, [.suff "en"]), (.personNumber .second .singular, [.suff "ech"]),
+   (.personNumber .third .singular, []), (.personNumber .first .plural, [.suff "o'on"]),
+   (.personNumber .second .plural, [.suff "e'ex"]), (.personNumber .third .plural, [.suff "o'ob'"])]
 
 /-- The third person singular absolutive is null, as across the Mayan branches Kaufman and
 Norman compare. -/
-theorem p3sg_abs_null : setBExponent.realize (.pn .third .singular) = some [] := rfl
+theorem p3sg_abs_null : setBExponent.realize (.personNumber .third .singular) = some [] := rfl
 
 end Yukatek

@@ -64,8 +64,8 @@ inductive Clause
   | finite | imperative | passive | obligation | infinitival
   deriving DecidableEq, Repr
 
-/-- An object and the factors the grammar's rules read: the polarity of the sentence, the
-resultativity of the action, the definiteness of the quantity, the kind of nominal, and the
+/-- An object comes with the factors the grammar's rules read, namely the polarity of the sentence,
+the resultativity of the action, the definiteness of the quantity, the kind of nominal, and the
 clause type. -/
 structure Object where
   negated : Bool
@@ -77,7 +77,7 @@ structure Object where
 
 namespace Object
 
-/-- The partitive conditions of section 12.2.2: negation, irresultative action, indefinite
+/-- The partitive conditions of section 12.2.2 are negation, irresultative action and indefinite
 quantity. -/
 def IsPartitive (o : Object) : Prop := o.negated ∨ o.telicity = .atelic ∨ ¬ o.definite
 
@@ -90,8 +90,8 @@ def totalCase (o : Object) : Case :=
   | .plural | .numeral => .nom
   | .singular => if o.clause = .finite then .gen else .nom
 
-/-- The case of the object: partitive under any partitive condition, else the total-object
-ending (section 13.3.1). -/
+/-- The case of the object is the partitive under any partitive condition, and otherwise the
+total-object ending (section 13.3.1). -/
 def case (o : Object) : Case := if o.IsPartitive then .part else o.totalCase
 
 theorem totalCase_ne_part (o : Object) : o.totalCase ≠ .part := by
@@ -124,7 +124,7 @@ theorem case_of_personalPronoun {o : Object} (h : o.nominal = .personalPronoun)
 
 end Object
 
-/-- A row: the object and the case the grammar gives it. -/
+/-- A row pairs an object with the case the grammar gives it. -/
 structure Row where
   object : Object
   case : Case
@@ -161,7 +161,7 @@ section WordStructure
 
 open Finnish Phonology Data.Forms
 
-/-- A word of the tables: its stem and its endings. -/
+/-- A word of the tables is given by its stem and its endings. -/
 structure Word where
   stem : List Segment
   endings : List (Σ σ, Nominal.Exponent σ)
@@ -174,8 +174,10 @@ def caseLabels : List (String × Option Finnish.Case) :=
     ("com", some .com), ("abess", some .abess), ("inst", some .instr)]
 
 def possessorLabels : List (String × Agreement.Bundle) :=
-  [("1sg", .pn .first .singular), ("2sg", .pn .second .singular), ("3sg", .pn .third .singular),
-    ("1pl", .pn .first .plural), ("2pl", .pn .second .plural), ("3pl", .pn .third .plural)]
+  [("1sg", .personNumber .first .singular), ("2sg", .personNumber .second .singular),
+   ("3sg", .personNumber .third .singular),
+    ("1pl", .personNumber .first .plural), ("2pl", .personNumber .second .plural),
+    ("3pl", .personNumber .third .plural)]
 
 def infinitiveLabels : List (String × Infinitive) := [("a", .a), ("e", .e), ("ma", .ma)]
 

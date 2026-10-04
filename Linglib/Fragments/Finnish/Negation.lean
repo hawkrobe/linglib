@@ -29,9 +29,9 @@ def e : Marker := { pieces := [[.root "e"]] }
 /-- The negative auxiliary takes the person and number endings of the present, giving *en*, *et*,
 *ei*, *emme*, *ette* and *eivät*. -/
 def ending : Agreement.Paradigm Morph :=
-  [(.pn .first .singular, .suff "n"), (.pn .second .singular, .suff "t"),
-   (.pn .third .singular, .suff "i"), (.pn .first .plural, .suff "mme"),
-   (.pn .second .plural, .suff "tte"), (.pn .third .plural, .suff "ivät")]
+  [(.personNumber .first .singular, .suff "n"), (.personNumber .second .singular, .suff "t"),
+   (.personNumber .third .singular, .suff "i"), (.personNumber .first .plural, .suff "mme"),
+   (.personNumber .second .plural, .suff "tte"), (.personNumber .third .plural, .suff "ivät")]
 
 /-- First person singular presents with their negatives. -/
 def present : List Pair :=

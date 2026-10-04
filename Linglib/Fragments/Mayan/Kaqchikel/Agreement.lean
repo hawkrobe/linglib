@@ -58,8 +58,8 @@ open Agreement
 
 /-! ### The verbal complex -/
 
-/-- The position classes of the Kaqchikel verbal complex: the aspect marker, Set B and Set A
-before the stem, the status suffix after it ([preminger-2014]). -/
+/-- The Kaqchikel verbal complex has the aspect marker, Set B and Set A before the stem and the
+status suffix after it ([preminger-2014]). -/
 def template : Morphology.AffixTemplate Mayan.VerbSlot := ⟨[.aspect, .setB, .setA], [.status]⟩
 
 /-- Kaqchikel is ergative in every aspect but the progressive, where in the construction with
@@ -80,22 +80,22 @@ def assignCase : UD.Aspect → ArgumentRole → Case
     dialectal variant *u-* (Preminger's "r(u)/u-"). -/
 def setAExponent : Phonology.Segment.Class → ExponentTable
   | .consonant =>
-    [(.pn .first .singular, [.pref "n"]), (.pn .second .singular, [.pref "a"]),
-     (.pn .third .singular, [.pref "ru"]), (.pn .first .plural, [.pref "qa"]),
-     (.pn .second .plural, [.pref "i"]), (.pn .third .plural, [.pref "ki"])]
+    [(.personNumber .first .singular, [.pref "n"]), (.personNumber .second .singular, [.pref "a"]),
+     (.personNumber .third .singular, [.pref "ru"]), (.personNumber .first .plural, [.pref "qa"]),
+     (.personNumber .second .plural, [.pref "i"]), (.personNumber .third .plural, [.pref "ki"])]
   | .vowel =>
-    [(.pn .first .singular, [.pref "w"]), (.pn .second .singular, [.pref "aw"]),
-     (.pn .third .singular, [.pref "r"]), (.pn .first .plural, [.pref "q"]),
-     (.pn .second .plural, [.pref "iw"]), (.pn .third .plural, [.pref "k"])]
+    [(.personNumber .first .singular, [.pref "w"]), (.personNumber .second .singular, [.pref "aw"]),
+     (.personNumber .third .singular, [.pref "r"]), (.personNumber .first .plural, [.pref "q"]),
+     (.personNumber .second .plural, [.pref "iw"]), (.personNumber .third .plural, [.pref "k"])]
 
 /-! ### Set B (ABS) exponents -/
 
 /-- Set B (ABS) markers; ∅ 3SG doubles as the Elsewhere default
     ([preminger-2014] table (29), Ch. 5). -/
 def setBExponent : ExponentTable :=
-  [(.pn .first .singular, [.pref "in"]), (.pn .second .singular, [.pref "at"]),
-   (.pn .third .singular, []), (.pn .first .plural, [.pref "oj"]),
-   (.pn .second .plural, [.pref "ix"]), (.pn .third .plural, [.pref "e"])]
+  [(.personNumber .first .singular, [.pref "in"]), (.personNumber .second .singular, [.pref "at"]),
+   (.personNumber .third .singular, []), (.personNumber .first .plural, [.pref "oj"]),
+   (.personNumber .second .plural, [.pref "ix"]), (.personNumber .third .plural, [.pref "e"])]
 
 /-! ### Argument positions -/
 
@@ -122,7 +122,7 @@ theorem all_positions_agreed (p : ArgumentRole) (_ : p ∈ ArgumentRole.core) :
 
 /-! ### Case inventory -/
 
-/-- The case inventory realized by the core positions: {ERG, ABS}. -/
+/-- The core positions realize the cases ERG and ABS. -/
 def caseInventory : Finset Case := (ArgumentRole.core.map (assignCase .Perf)).toFinset
 
 /-- The inventory covers all argument positions: every position's case

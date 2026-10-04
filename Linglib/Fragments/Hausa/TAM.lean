@@ -56,22 +56,19 @@ namespace Hausa
 
 open Agreement
 
-/-- The cell of a second or third person singular of the given gender. -/
-def genderedSingular (p : Person) (g : Gender) : Bundle :=
-  Function.update (Bundle.pn p .singular) .gender ↑g
-
-/-- The impersonal 4p, which patterns with the plurals: plural, with no person. -/
-def impersonal : Bundle
-  | .number => Number.plural
-  | _ => ⊥
+/-- The impersonal 4p is plural with no person, and patterns with the plurals. -/
+def impersonal : Bundle := _root_.Bundle.single .number .plural
 
 /-- The nine cells of a PAC paradigm in [newman-2000]'s order: 1s, 2m, 2f, 3m, 3f, 1p, 2p, 3p
 and the impersonal 4p. -/
 def pacCells : List Bundle :=
-  [.pn .first .singular, genderedSingular .second .masculine,
-    genderedSingular .second .feminine, genderedSingular .third .masculine,
-    genderedSingular .third .feminine, .pn .first .plural, .pn .second .plural,
-    .pn .third .plural, impersonal]
+  [.personNumber .first .singular,
+    (Bundle.personNumber .second .singular).set .gender .masculine,
+    (Bundle.personNumber .second .singular).set .gender .feminine,
+    (Bundle.personNumber .third .singular).set .gender .masculine,
+    (Bundle.personNumber .third .singular).set .gender .feminine,
+    .personNumber .first .plural, .personNumber .second .plural, .personNumber .third .plural,
+    impersonal]
 
 /-- The affirmative TAMs of the PAC. -/
 inductive TAM where
@@ -122,7 +119,7 @@ def paradigm : TAM → Paradigm String
 /-- The PAC of a TAM in a subject cell. -/
 def form (t : TAM) (c : Bundle) : Option String := t.paradigm.realize c
 
-/-- The TAMs of general clauses: all but the rhetorical and the two Rel-continuous ones. -/
+/-- The TAMs of general clauses are all but the rhetorical and the two Rel-continuous ones. -/
 def general : Finset TAM :=
   {completive, preterite, continuous, future, allative, potential, habitual, subjunctive}
 
@@ -130,9 +127,9 @@ def general : Finset TAM :=
 def rel : Finset TAM :=
   {preterite, relContinuous1, relContinuous2, future, allative, rhetorical, habitual}
 
-/-- The TAMs a Rel environment takes in place of a TAM: the TAM itself if it occurs there; the
-preterite for the completive; the Rel-continuous1 or Rel-continuous2 for the continuous; the
-future for the potential; none for the subjunctive. -/
+/-- A Rel environment takes the TAM itself if it occurs there, the preterite for the completive, the
+Rel-continuous1 or Rel-continuous2 for the continuous, the future for the potential, and none for
+the subjunctive. -/
 def relCounterparts : TAM → Finset TAM
   | completive => {preterite}
   | continuous => {relContinuous1, relContinuous2}

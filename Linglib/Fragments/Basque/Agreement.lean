@@ -70,28 +70,30 @@ namespace Basque
 open Agreement Morphology
 
 /-- The cell of the familiar second person *hi* addressed to a person of the given gender. -/
-def familiar (g : Gender) : Bundle := Function.update (Bundle.pn .second .singular) .gender ↑g
+def familiar (g : Gender) : Bundle := (Bundle.personNumber .second .singular).set .gender g
 
 /-! ### The three slots -/
 
 /-- The absolutive prefixes. Only the first and second persons have one. -/
 def absolutive : Paradigm (List Morph) :=
-  [(.pn .first .singular, [.pref "n"]), (.pn .second .singular, [.pref "h"]),
-   (.pn .first .plural, [.pref "g"]), (.pn .second .plural, [.pref "z"])]
+  [(.personNumber .first .singular, [.pref "n"]), (.personNumber .second .singular, [.pref "h"]),
+   (.personNumber .first .plural, [.pref "g"]), (.personNumber .second .plural, [.pref "z"])]
 
 /-- The suffixes of the first and second persons, which the dative and ergative slots share. -/
 def participantSuffixes : Paradigm (List Morph) :=
-  [(.pn .first .singular, [.suff "t"]), (familiar .masculine, [.suff "k"]),
-   (familiar .feminine, [.suff "n"]), (.pn .first .plural, [.suff "gu"]),
-   (.pn .second .plural, [.suff "zu"])]
+  [(.personNumber .first .singular, [.suff "t"]), (familiar .masculine, [.suff "k"]),
+   (familiar .feminine, [.suff "n"]), (.personNumber .first .plural, [.suff "gu"]),
+   (.personNumber .second .plural, [.suff "zu"])]
 
 /-- The dative suffixes. -/
 def dative : Paradigm (List Morph) :=
-  participantSuffixes ++ [(.pn .third .singular, [.suff "o"]), (.pn .third .plural, [.suff "e"])]
+  participantSuffixes ++ [(.personNumber .third .singular, [.suff "o"]),
+                          (.personNumber .third .plural, [.suff "e"])]
 
 /-- The ergative suffixes. The third person singular has none. -/
 def ergative : Paradigm (List Morph) :=
-  participantSuffixes ++ [(.pn .third .singular, []), (.pn .third .plural, [.suff "te"])]
+  participantSuffixes ++ [(.personNumber .third .singular, []),
+                          (.personNumber .third .plural, [.suff "te"])]
 
 /-- The element in the absolutive slot when the absolutive phrase is third person, *d-* in the
 present and *z-* in the past. Basque has no future inflection. -/
@@ -103,9 +105,11 @@ def thirdAbsolutive : Tense → Option Morph
 /-- The ergative markers of a past-tense verb whose absolutive phrase is third person. They
 stand in the absolutive slot, and the third person plural keeps its suffix. -/
 def displacedErgative : Paradigm (List Morph) :=
-  [(.pn .first .singular, [.pref "n"]), (.pn .second .singular, [.pref "h"]),
-   (.pn .third .singular, [.pref "z"]), (.pn .first .plural, [.pref "g", .pref "en"]),
-   (.pn .second .plural, [.pref "z", .pref "en"]), (.pn .third .plural, [.pref "z", .suff "te"])]
+  [(.personNumber .first .singular, [.pref "n"]), (.personNumber .second .singular, [.pref "h"]),
+   (.personNumber .third .singular, [.pref "z"]),
+   (.personNumber .first .plural, [.pref "g", .pref "en"]),
+   (.personNumber .second .plural, [.pref "z", .pref "en"]),
+   (.personNumber .third .plural, [.pref "z", .suff "te"])]
 
 /-! ### Person in the absolutive slot -/
 
@@ -115,7 +119,8 @@ def HasPersonPrefix (c : Bundle) : Prop := (absolutive.realize c).isSome
 instance : DecidablePred HasPersonPrefix := fun _ ↦ inferInstanceAs (Decidable (_ = true))
 
 /-- The absolutive prefixes are those of the first and second persons. -/
-theorem hasPersonPrefix_iff_isSAP : ∀ c ∈ Bundle.pnCells, HasPersonPrefix c ↔ c.IsSAP := by
+theorem hasPersonPrefix_iff_isSAP :
+    ∀ c ∈ Bundle.personNumberCells, HasPersonPrefix c ↔ c.IsSAP := by
   decide
 
 /-- Every personal pronoun but the third person ones has an absolutive prefix. -/
@@ -125,15 +130,16 @@ theorem hasPersonPrefix_phi_iff : ∀ p ∈ Pronouns.pronouns,
 
 /-- The dative and ergative markers of the first and second persons coincide. -/
 theorem dative_eq_ergative {c : Bundle} (h : c.IsSAP) : dative.realize c = ergative.realize c := by
-  have h3 (n : Number) : Bundle.pn .third n ≠ c := by
+  have h3 (n : Number) : (c == Bundle.personNumber .third n) = false := by
+    rw [beq_eq_false_iff_ne]
     rintro rfl
-    simp [Bundle.IsSAP] at h
-  simp [dative, ergative, Paradigm.realize, List.find?_append, h3]
+    exact absurd h (by simp only [Bundle.IsSAP, Bundle.person_personNumber]; decide)
+  simp [dative, ergative, Paradigm.realize, List.lookup_append, List.lookup_cons, h3]
 
 /-- A displaced ergative begins with what would fill the absolutive slot for its own person and
 number in the past: the absolutive prefix of a first or second person, the past filler of a
 third. -/
-theorem displacedErgative_head : ∀ c ∈ Bundle.pnCells,
+theorem displacedErgative_head : ∀ c ∈ Bundle.personNumberCells,
     (displacedErgative.realize c).bind (·.head?) =
       ((absolutive.realize c).bind (·.head?)).or (thirdAbsolutive .past) := by
   decide

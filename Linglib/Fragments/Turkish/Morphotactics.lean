@@ -211,16 +211,19 @@ inductive PersonGroup where
 /-- The person markers of group 1 (§8.4). The second-person plural is also the formal
 singular, and the third-person singular is zero. -/
 def PersonGroup.one.paradigm : Agreement.Paradigm Suffix :=
-  [(.pn .first .singular, ⟨none, [m]⟩), (.pn .second .singular, ⟨none, [n]⟩),
-   (.pn .third .singular, ⟨none, []⟩), (.pn .first .plural, ⟨none, [k]⟩),
-   (.pn .second .plural, ⟨none, [n, I, z]⟩), (.pn .third .plural, ⟨none, [l, A, r]⟩)]
+  [(.personNumber .first .singular, ⟨none, [m]⟩), (.personNumber .second .singular, ⟨none, [n]⟩),
+   (.personNumber .third .singular, ⟨none, []⟩), (.personNumber .first .plural, ⟨none, [k]⟩),
+   (.personNumber .second .plural, ⟨none, [n, I, z]⟩),
+   (.personNumber .third .plural, ⟨none, [l, A, r]⟩)]
 
 /-- The person markers of group 2 (§8.4), whose first-person markers -(y)Im and -(y)Iz take
 the buffer `y`. -/
 def PersonGroup.two.paradigm : Agreement.Paradigm Suffix :=
-  [(.pn .first .singular, ⟨some y, [I, m]⟩), (.pn .second .singular, ⟨none, [s, I, n]⟩),
-   (.pn .third .singular, ⟨none, []⟩), (.pn .first .plural, ⟨some y, [I, z]⟩),
-   (.pn .second .plural, ⟨none, [s, I, n, I, z]⟩), (.pn .third .plural, ⟨none, [l, A, r]⟩)]
+  [(.personNumber .first .singular, ⟨some y, [I, m]⟩),
+   (.personNumber .second .singular, ⟨none, [s, I, n]⟩),
+   (.personNumber .third .singular, ⟨none, []⟩), (.personNumber .first .plural, ⟨some y, [I, z]⟩),
+   (.personNumber .second .plural, ⟨none, [s, I, n, I, z]⟩),
+   (.personNumber .third .plural, ⟨none, [l, A, r]⟩)]
 
 /-- The paradigm of a person-marker group. -/
 def PersonGroup.paradigm : PersonGroup → Agreement.Paradigm Suffix
@@ -340,9 +343,12 @@ inductive Slot where
 /-- The possessive suffixes (§8.1.2). The second-person plural is also the formal singular, and
 the final `n` that the third-person forms take before a case suffix is supplied by `forms`. -/
 def possessives : Agreement.Paradigm Suffix :=
-  [(.pn .first .singular, ⟨some I, [m]⟩), (.pn .second .singular, ⟨some I, [n]⟩),
-   (.pn .third .singular, ⟨some s, [I]⟩), (.pn .first .plural, ⟨some I, [m, I, z]⟩),
-   (.pn .second .plural, ⟨some I, [n, I, z]⟩), (.pn .third .plural, ⟨none, [l, A, r, I]⟩)]
+  [(.personNumber .first .singular, ⟨some I, [m]⟩),
+   (.personNumber .second .singular, ⟨some I, [n]⟩),
+   (.personNumber .third .singular, ⟨some s, [I]⟩),
+   (.personNumber .first .plural, ⟨some I, [m, I, z]⟩),
+   (.personNumber .second .plural, ⟨some I, [n, I, z]⟩),
+   (.personNumber .third .plural, ⟨none, [l, A, r, I]⟩)]
 
 /-- The exponents of each slot (§8.1.1 to §8.1.3). -/
 inductive Exponent : Slot → Type where
@@ -377,7 +383,7 @@ def Exponent.form : Exponent σ → Suffix
 /-- The third-person possessives are the exponents that take a final `n` before a case suffix
 (§6.2 (iib), §8.1.2). -/
 def Exponent.IsThirdPossessive : (Σ σ, Exponent σ) → Prop
-  | ⟨_, .possessive c⟩ => c = .pn .third .singular ∨ c = .pn .third .plural
+  | ⟨_, .possessive c⟩ => c = .personNumber .third .singular ∨ c = .personNumber .third .plural
   | _ => False
 
 instance : DecidablePred Exponent.IsThirdPossessive := fun e ↦ by

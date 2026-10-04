@@ -56,19 +56,19 @@ def assignCase : UD.Aspect → ArgumentRole → Case := fun _ ↦ Alignment.erga
 and *nu-* on a possessed noun. -/
 def setAExponent : Phonology.Segment.Class → ExponentTable
   | .consonant =>
-    [(.pn .first .singular, [.pref "in"]), (.pn .second .singular, [.pref "a"]),
-     (.pn .third .singular, [.pref "u"]), (.pn .first .plural, [.pref "qa"]),
-     (.pn .second .plural, [.pref "i"]), (.pn .third .plural, [.pref "ki"])]
+    [(.personNumber .first .singular, [.pref "in"]), (.personNumber .second .singular, [.pref "a"]),
+     (.personNumber .third .singular, [.pref "u"]), (.personNumber .first .plural, [.pref "qa"]),
+     (.personNumber .second .plural, [.pref "i"]), (.personNumber .third .plural, [.pref "ki"])]
   | .vowel =>
-    [(.pn .first .singular, [.pref "w"]), (.pn .second .singular, [.pref "aw"]),
-     (.pn .third .singular, [.pref "r"]), (.pn .first .plural, [.pref "q"]),
-     (.pn .second .plural, [.pref "iw"]), (.pn .third .plural, [.pref "k"])]
+    [(.personNumber .first .singular, [.pref "w"]), (.personNumber .second .singular, [.pref "aw"]),
+     (.personNumber .third .singular, [.pref "r"]), (.personNumber .first .plural, [.pref "q"]),
+     (.personNumber .second .plural, [.pref "iw"]), (.personNumber .third .plural, [.pref "k"])]
 
 /-- The Set B markers, with a zero third person singular. -/
 def setBExponent : ExponentTable :=
-  [(.pn .first .singular, [.pref "in"]), (.pn .second .singular, [.pref "at"]),
-   (.pn .third .singular, []), (.pn .first .plural, [.pref "oj"]),
-   (.pn .second .plural, [.pref "ix"]), (.pn .third .plural, [.pref "ee"])]
+  [(.personNumber .first .singular, [.pref "in"]), (.personNumber .second .singular, [.pref "at"]),
+   (.personNumber .third .singular, []), (.personNumber .first .plural, [.pref "oj"]),
+   (.personNumber .second .plural, [.pref "ix"]), (.personNumber .third .plural, [.pref "ee"])]
 
 /-- The honorific second person singular enclitic *=la*, after the verb in both sets. -/
 def laEncl : List Morphology.Morph := [.encl "la"]

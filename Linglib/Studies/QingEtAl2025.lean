@@ -290,8 +290,8 @@ imperfective, its negative, its past, and the perfective past, the last two in t
 person. -/
 def turkishInflections : List (List (Σ σ, Turkish.Verb.Exponent σ)) :=
   [[⟨_, .iyor⟩], [⟨_, .negative⟩, ⟨_, .iyor⟩],
-    [⟨_, .iyor⟩, ⟨_, .pastCopula⟩, ⟨_, .person .one (.pn .first .singular)⟩],
-    [⟨_, .di⟩, ⟨_, .person .one (.pn .first .singular)⟩]]
+    [⟨_, .iyor⟩, ⟨_, .pastCopula⟩, ⟨_, .person .one (.personNumber .first .singular)⟩],
+    [⟨_, .di⟩, ⟨_, .person .one (.personNumber .first .singular)⟩]]
 
 /-- The finite verb of every Turkish row is its predicate's Fragment entry under one of the
 paper's inflections. The finite-verb template licenses the suffix string, and the Fragment's
