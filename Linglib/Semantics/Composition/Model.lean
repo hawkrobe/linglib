@@ -41,7 +41,6 @@ mathlib API such as `Formula.Realize` then needs `letI := m.interp w`. The concr
 
 open FirstOrder Language
 open Semantics.Composition
-open Semantics.Montague (Lexicon)
 open Semantics.Composition.Tree
 open Syntax (Tree)
 

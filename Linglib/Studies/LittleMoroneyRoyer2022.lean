@@ -62,7 +62,6 @@ namespace LittleMoroneyRoyer2022
 open Semantics.Composition
 open Mereology (QMOD atomize)
 open Semantics.Composition.Tree (interp)
-open Semantics.Montague (Lexicon)
 open Syntax (Tree)
 open IoninMatushansky2006 (cardMod IsAtomOf cardMod_atoms_iff)
 
@@ -114,7 +113,7 @@ def cholLex : Lexicon (Finset α) Unit := fun w ↦
   else if w = "ts'i'" then some ⟨.e ⇒ .t, dogs⟩
   else none
 
-/-- *cha'-kojty*: numeral and classifier form a constituent ((23a)). -/
+/-- In *cha'-kojty*, numeral and classifier form a constituent ((23a)). -/
 def cholNumClf : Tree Unit String := .bin (.leaf "cha'") (.leaf Chol.Classifiers.kojty.form)
 
 /-- `[[cha' -kojty] ts'i']` ((51)). -/
@@ -164,7 +163,7 @@ def shanLex : Lexicon (Finset α) Unit := fun w ↦
   else if w = "mǎa" then some ⟨.e ⇒ .t, dogs⟩
   else none
 
-/-- *tǒ mǎa*: classifier and noun form a constituent ((23b)). -/
+/-- In *tǒ mǎa*, classifier and noun form a constituent ((23b)). -/
 def shanClfNoun : Tree Unit String := .bin (.leaf Shan.Classifiers.«to».form) (.leaf "mǎa")
 
 /-- `[sɔ̌ŋ [tǒ mǎa]]` ((52)), abstracting from the surface order *mǎa sɔ̌ŋ tǒ*
@@ -191,8 +190,8 @@ theorem shan_numClf_fails :
 
 /-! ### One denotation for *two dogs* -/
 
-/-- Measure modification by the atom count is quantized: `Finset.card` is a
-positive valuation, and strict monotonicity is all `qua_pullback` needs. -/
+/-- Measure modification by the atom count is quantized, since `Finset.card` is a positive
+valuation and strict monotonicity is all `qua_pullback` needs. -/
 theorem qmod_dogs_qua : Mereology.QUA (QMOD dogs Finset.card 2 : Finset α → Prop) := by
   refine (Mereology.qua_pullback ?_ (Mereology.singleton_qua 2)).subset fun _ h ↦ h.2
   exact IsPositiveValuation.strictMono (v := (Finset.card : Finset α → ℕ))
