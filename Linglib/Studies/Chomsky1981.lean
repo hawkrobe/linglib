@@ -77,9 +77,7 @@ def clause (subj v : Word) (comp : Tree Cat Word) : Tree Cat Word :=
 
 /-- `nominals t` lists the noun phrases of `t`, each with its position. -/
 def nominals (t : Tree Cat Word) : List (TreePath × Word) :=
-  t.fold (fun c w ↦ if c = .NP then [(⊥, w)] else [])
-    (fun _ bs ↦ bs.zipIdx.flatMap fun (ps, i) ↦ ps.map fun (p, w) ↦ (⟨i :: p.toList⟩, w))
-    (fun _ _ ↦ []) (fun _ _ ps ↦ ps.map fun (p, w) ↦ (⟨0 :: p.toList⟩, w))
+  t.positionedTerminals.filterMap fun x ↦ if x.2.1 = .NP then some (x.1, x.2.2) else none
 
 /-- `Nominal t` is the type of noun phrases of `t`. -/
 abbrev Nominal (t : Tree Cat Word) : Type := {x // x ∈ nominals t}

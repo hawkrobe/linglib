@@ -197,7 +197,7 @@ def valueAt (τ : Ty) : Option (PDenotation E W D) → Part (Ty.PDomain E W τ D
 
 variable {C : Type} {L : Type*}
 
-/-- The partial denotation of a tree under an assignment: a terminal denotes what its leaf
+/-- In the partial denotation of a tree under an assignment, a terminal denotes what its leaf
 interpretation gives it, a non-branching node what its daughter does, a binary node what
 `interpBinary` composes, a trace the value of its index, and a binder the partial function
 abstracting over its index in the body. -/
@@ -214,6 +214,7 @@ def interp (lex : L → Option (PDenotation E W D)) (g : Assignment E) :
   | .bind n _ body =>
     (interp lex g body).map fun d ↦
       ⟨.fn .e d.1, Part.some fun x ↦ valueAt d.1 (interp lex (g[n ↦ x]) body)⟩
+  | _ => none
 
 variable (lex lex' : L → Option (PDenotation E W D)) (g g' : Assignment E)
 
@@ -233,6 +234,24 @@ variable (lex lex' : L → Option (PDenotation E W D)) (g g' : Assignment E)
 @[simp] theorem interp_bind (n : ℕ) (c : C) (body : Tree C L) :
     interp lex g (.bind n c body) = (interp lex g body).map fun d ↦
       ⟨.fn .e d.1, Part.some fun x ↦ valueAt d.1 (interp lex (g[n ↦ x]) body)⟩ := rfl
+
+/-- A node whose daughters its label does not license denotes nothing. -/
+theorem interp_junk {l : Syntax.Tree.Label C L} {cs : List (Tree C L)}
+    (h : ¬ Syntax.Tree.Label.Licenses l (cs.map RoseTree.value)) :
+    interp lex g (RoseTree.node l cs) = none := by
+  cases l with
+  | terminal c w => cases cs with
+    | nil => exact absurd rfl h
+    | cons => rfl
+  | node c => exact absurd trivial h
+  | trace n c => cases cs with
+    | nil => exact absurd rfl h
+    | cons => rfl
+  | bind n c =>
+    rcases cs with _ | ⟨t, _ | ⟨u, cs⟩⟩
+    · rfl
+    · exact absurd rfl h
+    · rfl
 
 /-! ### Uninterpretability and presupposition failure -/
 
@@ -267,6 +286,7 @@ theorem interp_map_fst_congr (h : ∀ w, (lex w).map (·.1) = (lex' w).map (·.1
     have h := ih g g'
     revert h
     cases interp lex g body <;> cases interp lex' g' body <;> intro h <;> simp_all
+  | junk l cs hj _ => rw [interp_junk lex g hj, interp_junk lex' g' hj]
 
 /-- Uninterpretability is decided by the leaves' types alone. -/
 theorem uninterpretable_congr (h : ∀ w, (lex w).map (·.1) = (lex' w).map (·.1)) (t : Tree C L) :
@@ -355,8 +375,8 @@ inductive Denotation.Lifts : Denotation E W Id D → PDenotation E W D → Prop
 theorem Denotation.Lifts.fst {d : Denotation E W Id D} {d' : PDenotation E W D}
     (h : d.Lifts d') : d.1 = d'.1 := by cases h; rfl
 
-/-- The types whose functions take only individuals as arguments, which the extensional
-lexicon of [heim-kratzer-1998] has: individuals, truth values, degrees, cardinalities,
+/-- The types whose functions take only individuals as arguments are those the extensional
+lexicon of [heim-kratzer-1998] has, namely individuals, truth values, degrees, cardinalities,
 eventualities, functions from individuals, and intensions. -/
 inductive Ty.FirstOrder : Ty → Prop
   | e : FirstOrder .e
@@ -526,6 +546,7 @@ theorem interp_lifts (hlex : ∀ w d', lex' w = some d' → ∃ d, lex w = some 
       cases hl' with | @mk _ x' y' hl' => ?_
       refine ⟨y', by simp [valueAt, hv'], ?_⟩
       simpa [Tree.valueAt, hd'] using hl'
+  | junk l cs hj _ => exact absurd h (by rw [interp_junk _ _ hj]; simp)
 
 /-- A lexicon lifting a total one has no presupposition failures. -/
 theorem not_presupFailure_of_lifts

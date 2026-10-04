@@ -75,14 +75,15 @@ open Alternatives Modality Question Syntax
 
 /-! ### The polar morphemes and the deontic modal -/
 
-/-- Syntactic categories: the polarity category of Σ and NEG, and that of the deontic modal. -/
+/-- The syntactic categories are the polarity category of Σ and NEG and that of the deontic
+modal. -/
 inductive Cat where
   | pol
   | modal
   deriving DecidableEq, Repr
 
-/-- The propositional operators of the lexicon: the polarity heads, Σ the positive and NEG the
-negative, and the deontic modal. -/
+/-- The propositional operators of the lexicon are the polarity heads, Σ the positive and NEG
+the negative, and the deontic modal. -/
 inductive Word where
   | polarity (s : Polarity)
   | deontic
@@ -90,20 +91,20 @@ inductive Word where
 
 variable {W : Type} (f : ModalBase W) (g : OrderingSource W)
 
-/-- The operator a word denotes: a polarity head acts on propositions, so that Σ is the identity
+/-- The operator a word denotes. A polarity head acts on propositions, so that Σ is the identity
 and NEG complementation, and the deontic modal is necessity over the modal base and ordering
 source. -/
 def Word.den : Word → Set W → Set W
   | .polarity s => (s • ·)
   | .deontic => fun p ↦ {w | necessity f g (· ∈ p) w}
 
-/-- The operator a tree denotes: its terminal's operator, and the identity elsewhere. -/
+/-- A tree denotes its terminal's operator, and the identity elsewhere. -/
 def den : Tree Cat Word → Set W → Set W
   | .terminal _ w => w.den f g
   | _ => id
 
-/-- (44): the lexicon of propositional operators, Σ and NEG of category Pol and the deontic modal
-of its own category. -/
+/-- The lexicon of propositional operators (44) has Σ and NEG of category Pol and the deontic
+modal of its own category. -/
 def lexicon : Finset (Tree Cat Word) :=
   {.terminal .pol (.polarity .positive), .terminal .pol (.polarity .negative),
     .terminal .modal .deontic}
@@ -119,7 +120,7 @@ the Hamblin set, (10). Type-theoretic alternatives make Σ_F the F-marked identi
 `WithAlternatives.focused id`; category match makes it the interpretation of the syntactic
 composition `Alternatives.hamblin` over the lexicon. -/
 
-/-- The Hamblin set of the question formed on Σ_F with two-dimensional value `m`: the focus
+/-- The Hamblin set of the question formed on Σ_F with two-dimensional value `m` is the focus
 value of the TP `m <*> pure p`, (9) and (10). -/
 def hamblinSet (m : WithAlternatives (Set W → Set W)) (p : Set W) : Set (Set W) :=
   (m <*> pure p).alternatives
@@ -132,22 +133,22 @@ theorem mem_hamblinSet {m : WithAlternatives (Set W → Set W)} {p q : Set W} :
 
 /-! ### Type-theoretic alternatives over-generate -/
 
-/-- The Hamblin set under [rooth-1985]'s type-theoretic focus value, every operator of Σ's type,
-(26): Σ_F is the F-marked identity. -/
+/-- The Hamblin set under [rooth-1985]'s type-theoretic focus value, every operator of Σ's type
+(26), where Σ_F is the F-marked identity. -/
 def hamblinType (p : Set W) : Set (Set W) := hamblinSet (WithAlternatives.focused id) p
 
-/-- (28): the type-theoretic Hamblin set is every proposition. -/
+/-- The type-theoretic Hamblin set is every proposition (28). -/
 theorem hamblinType_eq_univ (p : Set W) : hamblinType p = Set.univ :=
   Set.eq_univ_of_forall fun q ↦ mem_hamblinSet.2 ⟨fun _ ↦ q, Set.mem_univ _, rfl⟩
 
 /-- Under type-theoretic alternatives the complete answer at `w` is total information about
-`w`: the responder must supply every true proposition. -/
+`w`, so the responder must supply every true proposition. -/
 theorem isStrongestTrueAnswer_hamblinType (p : Set W) (w : W) :
     IsStrongestTrueAnswer (hamblinType p) w {w} := by
   rw [hamblinType_eq_univ]
   exact ⟨⟨Set.mem_univ _, rfl⟩, fun _ hq ↦ Set.singleton_subset_iff.2 hq.2⟩
 
-/-- (31): the sample of the Hamblin set with the deontic propositions. -/
+/-- The sample of the Hamblin set with the deontic propositions (31). -/
 def sample (p : Set W) : Set (Set W) :=
   {p, pᶜ, Word.deontic.den f g p, (Word.deontic.den f g p)ᶜ, Word.deontic.den f g p ∩ p}
 
@@ -155,7 +156,7 @@ theorem sample_subset_hamblinType (p : Set W) : sample f g p ⊆ hamblinType p :
   rw [hamblinType_eq_univ]
   exact Set.subset_univ _
 
-/-- (34): at a world where Ali had to sleep and slept, the strongest true member of the sample
+/-- At a world where Ali had to sleep and slept (34), the strongest true member of the sample
 is the conjunction that he had to sleep and did, the over-informative answer (35b). -/
 theorem isStrongestTrueAnswer_sample {p : Set W} {w : W} (hw : w ∈ p)
     (hbox : w ∈ Word.deontic.den f g p) :
@@ -170,24 +171,24 @@ theorem isStrongestTrueAnswer_sample {p : Set W} {w : W} (hw : w ∈ p)
   · exact absurd hbox hwq
   · exact le_rfl
 
-/-- (36): any Hamblin set whatever is the type-theoretic focus value restricted by some
-context, so restriction by context alone cannot exclude the modalized question (38). -/
+/-- Any Hamblin set whatever is the type-theoretic focus value restricted by some context (36),
+so restriction by context alone cannot exclude the modalized question (38). -/
 theorem exists_context_inter_eq (p : Set W) (H : Set (Set W)) :
     ∃ c : Set (Set W), hamblinType p ∩ c = H :=
   ⟨H, by rw [hamblinType_eq_univ, Set.univ_inter]⟩
 
 /-! ### Category match -/
 
-/-- (42), the Category Match Constraint: Σ_F evokes its same-category replacements from the
+/-- Under the Category Match Constraint (42), Σ_F evokes its same-category replacements from the
 lexicon, the terminal clause of the substrate's syntactic composition, so its two-dimensional
 value is the interpretation of `Alternatives.hamblin`. -/
 def sigmaCat : WithAlternatives (Set W → Set W) := den f g <$> hamblin lexicon sigma
 
-/-- (45): the category-match alternatives of Σ_F are Σ and NEG. -/
+/-- The category-match alternatives of Σ_F are Σ and NEG (45). -/
 theorem hamblin_sigma :
     (hamblin lexicon sigma).alternatives = {sigma, .terminal .pol (.polarity .negative)} := by
   ext ψ
-  grind [hamblin, sigma, lexicon, Tree.cat]
+  grind [hamblin, sigma, lexicon, Tree.cat_terminal]
 
 /-- The Hamblin set under category match. -/
 def hamblinCat (p : Set W) : Set (Set W) := hamblinSet (sigmaCat f g) p
@@ -204,13 +205,13 @@ theorem hamblinCat_eq_alt_polar {p : Set W} (hne : p ≠ ∅) (hnu : p ≠ Set.u
     hamblinCat f g p = alt (polar p) := by
   rw [hamblinCat_eq, alt_polar_of_nontrivial hne hnu]
 
-/-- (41): a proposition is a member of the category-match Hamblin set only as the positive or
-the negative answer; the modal answer is excluded as soon as it differs from both. -/
+/-- A proposition is a member of the category-match Hamblin set only as the positive or the
+negative answer (41); the modal answer is excluded as soon as it differs from both. -/
 theorem mem_hamblinCat_iff (p q : Set W) : q ∈ hamblinCat f g p ↔ q = p ∨ q = pᶜ := by
   rw [hamblinCat_eq]
   rfl
 
-/-- (35a): under category match the complete answer is the positive answer when it is true. -/
+/-- Under category match the complete answer is the positive answer when it is true (35a). -/
 theorem isStrongestTrueAnswer_hamblinCat {p : Set W} {w : W} (hw : w ∈ p) :
     IsStrongestTrueAnswer (hamblinCat f g p) w p := by
   rw [hamblinCat_eq]

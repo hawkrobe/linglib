@@ -63,8 +63,8 @@ variable {W : Type*}
 
 /-! ### Conditions on the domain of exhaustification (27) -/
 
-/-- (27): `A` is a domain of EXH for the prejacent `S` with formal alternatives `F`: a subset of
-`F` containing `S` and every member of `F` in its Boolean closure. -/
+/-- By (27), `A` is a domain of EXH for the prejacent `S` with formal alternatives `F` when it is
+a subset of `F` containing `S` and every member of `F` in its Boolean closure. -/
 structure IsDomain (F : Set (Set W)) (S : Set W) (A : Set (Set W)) : Prop where
   subset : A ⊆ F
   self_mem : S ∈ A
@@ -105,8 +105,8 @@ theorem IsDomain.mem_of_isSymmetric (hA : IsDomain F S A) (h : IsSymmetric S S�
   hA.closed S₂ h₂ (h.sdiff_eq ▸ BooleanSubalgebra.sdiff_mem
     (BooleanSubalgebra.subset_closure hA.self_mem) (BooleanSubalgebra.subset_closure h₁))
 
-/-- (43), (46), (49): the domain that would license an inference against one of two symmetric
-formal alternatives, the prejacent with that alternative alone, fails (27). -/
+/-- In (43), (46) and (49), the domain that would license an inference against one of two
+symmetric formal alternatives, the prejacent with that alternative alone, fails (27). -/
 theorem not_isDomain_pair_of_isSymmetric (h : IsSymmetric S S₁ S₂) (hne₁ : S₁.Nonempty)
     (h₂ : S₂ ∈ F) : ¬ IsDomain F S {S, S₁} := by
   intro hA
@@ -115,7 +115,7 @@ theorem not_isDomain_pair_of_isSymmetric (h : IsSymmetric S S₁ S₂) (hne₁ :
   · exact disjoint_left.1 h.disjoint ha (h.subset_left ha)
   · exact disjoint_left.1 h.disjoint ha ha
 
-/-- (36): the prejacent with one alternative is a domain once every other formal alternative
+/-- By (36), the prejacent with one alternative is a domain once every other formal alternative
 lies outside their Boolean closure. -/
 theorem isDomain_pair (hS : S ∈ F) (h₁ : S₁ ∈ F)
     (h : ∀ S' ∈ F, S' ∈ BooleanSubalgebra.closure {S, S₁} → S' = S ∨ S' = S₁) :
@@ -127,7 +127,7 @@ theorem isDomain_pair (hS : S ∈ F) (h₁ : S₁ ∈ F)
 
 variable {run smoke : Set W}
 
-/-- (35)–(36): with *run ∧ smoke* underivable, `{run, run ∧ ¬smoke}` is a domain for the
+/-- In (35)–(36), with *run ∧ smoke* underivable, `{run, run ∧ ¬smoke}` is a domain for the
 formal alternatives `{run, smoke, ¬smoke, run ∧ ¬smoke}`, provided a non-runner smokes in some
 world and not in another, since then neither *smoke* nor *¬smoke* is in the closure. -/
 theorem run_smoke_isDomain {w v : W} (hw : w ∉ run ∧ w ∈ smoke)
@@ -143,8 +143,8 @@ theorem run_smoke_isDomain {w v : W} (hw : w ∉ run ∧ w ∈ smoke)
       (mem_compl hv.2) (not_not.2 hw.2))
   · exact Or.inr rfl
 
-/-- The inference of (34): exhaustifying *run* against *run ∧ ¬smoke* yields *run ∧ smoke*,
-given a world in which someone runs and smokes. -/
+/-- The inference of (34) is that exhaustifying *run* against *run ∧ ¬smoke* yields
+*run ∧ smoke*, given a world in which someone runs and smokes. -/
 theorem exhIE_run_smoke {u : W} (hu : u ∈ run ∧ u ∈ smoke) :
     exhIE {run, run ∩ smokeᶜ} run = run ∩ smoke := by
   rw [exhIE_pair_sdiff (φ := run) (d := run ∩ smokeᶜ) ⟨u, hu.1, λ h => h.2 hu.2⟩]
@@ -160,9 +160,9 @@ open Syntax
 
 variable {C V : Type}
 
-/-- A tree in the derivation of alternatives: the prejacent's own constituents, and the
-expressions substituted in from the source, which are atomic, their internal structure
-inaccessible, (32). Binder bodies are opaque as well. -/
+/-- A tree in the derivation of alternatives is built from the prejacent's own constituents and
+the expressions substituted in from the source, which are atomic, their internal structure
+inaccessible (32). Binder bodies are opaque as well. -/
 inductive ATree (C V : Type) where
   | terminal (c : C) (w : V)
   | node (c : C) (children : List (ATree C V))
@@ -178,10 +178,11 @@ def cat : ATree C V → C
 
 /-- The prejacent enters the derivation with no atomic expression. -/
 def ofTree : Tree C V → ATree C V
-  | .terminal c w => .terminal c w
-  | .node c cs => .node c (ofTreeList cs)
-  | .trace n c => .trace n c
+  | RoseTree.node (.terminal c w) _ => .terminal c w
+  | RoseTree.node (.node c) cs => .node c (ofTreeList cs)
+  | RoseTree.node (.trace n c) _ => .trace n c
   | .bind n c body => .bind n c body
+  | RoseTree.node (.bind _ c) cs => .node c (ofTreeList cs)
 where
   ofTreeList : List (Tree C V) → List (ATree C V)
   | [] => []
@@ -209,7 +210,7 @@ where
   | [] => []
   | t :: ts => atoms t ++ atomsList ts
 
-/-- (60a): only a non-atomic expression is replaceable. -/
+/-- By (60a), only a non-atomic expression is replaceable. -/
 def Replaceable : ATree C V → Prop
   | .atomic _ _ => False
   | _ => True
@@ -217,8 +218,10 @@ def Replaceable : ATree C V → Prop
 mutual
 
 theorem atoms_ofTree : ∀ t : Tree C V, (ofTree t).atoms = []
-  | .terminal _ _ | .trace _ _ | .bind _ _ _ => rfl
-  | .node _ cs => atomsList_ofTreeList cs
+  | RoseTree.node (.terminal _ _) _ | RoseTree.node (.trace _ _) _ | .bind _ _ _ => rfl
+  | RoseTree.node (.node _) cs => atomsList_ofTreeList cs
+  | RoseTree.node (.bind _ _) [] => rfl
+  | RoseTree.node (.bind _ _) (c₁ :: c₂ :: cs) => atomsList_ofTreeList (c₁ :: c₂ :: cs)
 
 theorem atomsList_ofTreeList : ∀ cs : List (Tree C V), atoms.atomsList (ofTree.ofTreeList cs) = []
   | [] => rfl
@@ -257,7 +260,7 @@ theorem mem_atomsList_of_getElem : ∀ (cs : List (ATree C V)) (i : Fin cs.lengt
 
 end ATree
 
-/-- One substitution, (13a) under (32): a replaceable constituent is replaced by a
+/-- In one substitution, (13a) under (32), a replaceable constituent is replaced by a
 same-category expression of the source, which enters as atomic. Substitution is the only
 operation, since [fox-katzir-2011]'s simplification is by substitution alone. -/
 inductive Subst (source : List (Tree C V)) : ATree C V → ATree C V → Prop where
@@ -270,7 +273,7 @@ inductive Subst (source : List (Tree C V)) : ATree C V → ATree C V → Prop wh
 def Derivable (source : List (Tree C V)) : ATree C V → ATree C V → Prop :=
   Relation.ReflTransGen (Subst source)
 
-/-- The formal alternatives of a prejacent under Atomicity: the sentences of the trees
+/-- The formal alternatives of a prejacent under Atomicity are the sentences of the trees
 derivable from it. -/
 def formalAlternatives (source : List (Tree C V)) (φ : Tree C V) : Set (Tree C V) :=
   {ψ | ∃ t, Derivable source (ATree.ofTree φ) t ∧ t.expand = ψ}
@@ -290,7 +293,7 @@ theorem Subst.atoms_mem_source {source : List (Tree C V)} {φ ψ : ATree C V}
     · exact ih (λ b hb => hφ b (ATree.mem_atomsList_of_getElem _ i hb)) a h'
     · exact hφ a h'
 
-/-- Every atomic expression of a derivable tree is a source expression: an alternative differs
+/-- Every atomic expression of a derivable tree is a source expression, so an alternative differs
 from the prejacent by whole source expressions, so the second step of (33), replacing inside
 one, is impossible. -/
 theorem atoms_mem_source {source : List (Tree C V)} {φ : Tree C V} {t : ATree C V}

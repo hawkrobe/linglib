@@ -71,7 +71,7 @@ inductive Language where
   | icelandic
   deriving DecidableEq, Repr
 
-/-- The quantifier slots: universal, negative, interrogative, distributive, existential, and
+/-- The quantifier slots are universal, negative, interrogative, distributive, existential, and
 the temporal universal *always*. -/
 inductive QSlot where
   | universal
@@ -82,15 +82,15 @@ inductive QSlot where
   | always
   deriving DecidableEq, Repr
 
-/-- A dual expression a language offers for a slot: its form, whether it is a single lexical
-item, and its node count. -/
+/-- A dual expression a language offers for a slot records its form, whether it is a single
+lexical item, and its node count. -/
 structure DualForm where
   form : String
   lexical : Bool
   size : ℕ
   deriving DecidableEq, Repr
 
-/-- A lexical dual item of a fragment: a quantifier whose number restriction is the dual. -/
+/-- A lexical dual item of a fragment is a quantifier whose number restriction is the dual. -/
 def lexicalDual (form : String) (restriction : Option Number) : DualForm :=
   ⟨form, decide (restriction = some .dual), 1⟩
 
@@ -102,7 +102,7 @@ structure Slot where
   duals : List DualForm
   deriving DecidableEq, Repr
 
-/-- The dual competitor a slot provides: a lexical dual item, the standard Maximize
+/-- The dual competitor a slot provides is a lexical dual item, the standard Maximize
 Presupposition competitor; or a pronounceable dual expression at most as complex as the plain
 one, which blocks the silent dual parse and stands in for it as an indirect alternative; or
 nothing simple enough. -/
@@ -118,8 +118,8 @@ def Slot.competitor (s : Slot) : Competitor :=
   else if s.duals.any (·.size ≤ s.size) then .indirect
   else .none
 
-/-- The paper's cells: the plain expression, its node count, and the dual expressions of the
-language with their counts. -/
+/-- Each of the paper's cells records the plain expression, its node count, and the dual
+expressions of the language with their counts. -/
 def typology : Language → QSlot → Option Slot
   | .english, .universal =>
     some ⟨"all", 1, [lexicalDual English.Determiners.QuantityWord.both.form
@@ -149,7 +149,7 @@ def typology : Language → QSlot → Option Slot
   | .icelandic, .which => some ⟨"hvaða", 1, [⟨"hvor", true, 1⟩]⟩
   | _, _ => none
 
-/-- The headline contrast: English *all* and French *tous* are anti-dual by different routes,
+/-- In the headline contrast, English *all* and French *tous* are anti-dual by different routes,
 a lexical dual and an indirect alternative. -/
 theorem universal_competitors :
     (typology .english .universal).map Slot.competitor = some .lexicalDual ∧
@@ -158,7 +158,7 @@ theorem universal_competitors :
 
 /-! ### The judgments -/
 
-/-- A reported judgment on a plain quantifier: its language, its slot, and whether it is
+/-- A reported judgment on a plain quantifier records its language, its slot, and whether it is
 anti-dual, degraded in a domain of two. -/
 def cellRow (r : Datum) : Option (Language × QSlot × Bool) := do
   let l ← r.parse? "language" [("english", Language.english), ("french", .french),
@@ -198,7 +198,7 @@ variable {S P M : Type*}
 def IsAmbiguous (parses : S → List P) (meaning : P → M) (s : S) : Prop :=
   ∃ p₁ ∈ parses s, ∃ p₂ ∈ parses s, meaning p₁ ≠ meaning p₂
 
-/-- Avoid Ambiguity (37): `s` cannot realize its parse `p₁` when `s` is ambiguous between `p₁`
+/-- Under Avoid Ambiguity (37), `s` cannot realize its parse `p₁` when `s` is ambiguous between `p₁`
 and some `p₂`, and a string `s'` at most as complex realizes `p₁`'s meaning but has no parse
 equivalent to `p₂`. -/
 def Blocked (parses : S → List P) (meaning : P → M) (size : S → Nat)
@@ -212,7 +212,7 @@ def Blocked (parses : S → List P) (meaning : P → M) (size : S → Nat)
 variable {parses : S → List P} {meaning : P → M} {size : S → Nat}
   {s : S} {p₁ : P}
 
-/-- Only ambiguous strings block: unambiguous synonyms never compete under Avoid
+/-- Only ambiguous strings block, so unambiguous synonyms never compete under Avoid
 Ambiguity. -/
 theorem Blocked.isAmbiguous (h : Blocked parses meaning size s p₁) :
     IsAmbiguous parses meaning s :=
@@ -236,7 +236,7 @@ section WorkedExample
 open Syntax
 open Alternatives
 
-/-- Two evaluation contexts: a domain of two cups and a domain of three; the dual
+/-- The two evaluation contexts are a domain of two cups and a domain of three; the dual
 presupposition is satisfied only in the first. -/
 inductive WorldEx where
   | w2
@@ -281,11 +281,11 @@ def hasLesDeux (t : Tree Cat String) : Bool :=
     | .terminal _ "les_deux" => true
     | _ => false
 
-/-- French pronounceability: trees containing the silent dual marker are silent. Stipulated
+/-- Under French pronounceability, trees containing the silent dual marker are silent. Stipulated
 here and derived from Avoid Ambiguity in `frenchPron_iff_not_blocked`. -/
 abbrev frenchPron : Tree Cat String → Prop := λ t => hasDualMarker t = false
 
-/-- The toy semantics: *tous V* asserts that all cups are full with a trivial presupposition;
+/-- In the toy semantics *tous V* asserts that all cups are full with a trivial presupposition;
 the dual variants, silent or *les deux*, presuppose exactly two cups and are defined only in
 the two-cup domain. -/
 def meaning (t : Tree Cat String) (w : WorldEx) : Bool :=
@@ -300,27 +300,27 @@ inductive Str where
   | lesDeuxV
   deriving DecidableEq, Fintype
 
-/-- The parses of each string: *tous les verres* is ambiguous between the plural and the dual
-parse by syncretism; *les deux verres* is unambiguous. -/
+/-- The parses of each string, where *tous les verres* is ambiguous between the plural and the
+dual parse by syncretism and *les deux verres* is unambiguous. -/
 def strParses : Str → List (Tree Cat String)
   | .tousV => [tousVerres, tousDualVerres]
   | .lesDeuxV => [lesDeuxVerres]
 
-/-- String complexity: the maximal node count over the string's parses, uniform here. -/
-def strSize (s : Str) : Nat := ((strParses s).map Syntax.Tree.numNodes).foldr max 0
+/-- String complexity is the maximal node count over the string's parses, uniform here. -/
+def strSize (s : Str) : Nat := ((strParses s).map RoseTree.numNodes).foldr max 0
 
 /-- The dual parse of *tous les verres* is blocked by (37), witnessed by *les deux verres*. -/
 theorem tousDual_blocked : Blocked strParses meaning strSize .tousV tousDualVerres := by
   decide
 
-/-- The plural parse survives: *les deux verres* does not realize the plural meaning, and no
-other string is simple enough. -/
+/-- The plural parse survives, since *les deux verres* does not realize the plural meaning and
+no other string is simple enough. -/
 theorem tousPl_not_blocked : ¬ Blocked strParses meaning strSize .tousV tousVerres := by
   decide
 
-/-- Pronounceability is Avoid Ambiguity: on the strings of the example a parse is pronounceable
-iff (37) does not block it, which derives the predicate the indirect-alternative source
-consumes. -/
+/-- Pronounceability is Avoid Ambiguity, since on the strings of the example a parse is
+pronounceable iff (37) does not block it, which derives the predicate the indirect-alternative
+source consumes. -/
 theorem frenchPron_iff_not_blocked :
     ∀ st : Str, ∀ p ∈ strParses st, (frenchPron p ↔ ¬ Blocked strParses meaning strSize st p) := by
   decide
@@ -332,10 +332,10 @@ def presupFn : Tree Cat String → WorldEx → Prop := λ t w => meaning t w = t
 presupposition. -/
 def assertionFn : Tree Cat String → WorldEx → Prop := λ _ _ => True
 
-/-- The indirect-alternative source (43): Katzir alternatives filtered by pronounceability and
-meaning-equivalence to a silent witness, complexity measured by `Syntax.Tree.numNodes`. -/
+/-- The indirect-alternative source (43) filters Katzir alternatives by pronounceability and
+meaning-equivalence to a silent witness, with complexity measured by `RoseTree.numNodes`. -/
 def frenchIndirectSrc : Tree Cat String → Set (Tree Cat String) :=
-  indirectFrom (structuralAlternatives frenchLex) frenchPron meaning Syntax.Tree.numNodes
+  indirectFrom (structuralAlternatives frenchLex) frenchPron meaning RoseTree.numNodes
 
 /-- *tous_DUAL V* is a Katzir alternative of *tous V*, by substituting the dual determiner. -/
 theorem tousDual_katzir_alt : tousDualVerres ∈ structuralAlternatives frenchLex tousVerres := by
@@ -351,7 +351,8 @@ theorem lesDeux_indirectAlt_tous : lesDeuxVerres ∈ frenchIndirectSrc tousVerre
   funext w; cases w <;> rfl
 
 /-- *tous V* violates Maximize Presupposition through the indirect alternative *les deux V*,
-licensed by the silent witness: the paper's derivation of the anti-duality of *tous*. -/
+licensed by the silent witness, which is the paper's derivation of the anti-duality of
+*tous*. -/
 theorem tous_blocked_via_indirect :
     Presupposition.MaximizePresupposition.Blocked frenchIndirectSrc presupFn assertionFn
       tousVerres := by

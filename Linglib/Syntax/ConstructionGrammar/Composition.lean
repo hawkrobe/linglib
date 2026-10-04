@@ -38,17 +38,16 @@ namespace ConstructionGrammar
 
 variable {D : Type*}
 
-/-- A composition rule: from the daughters' denotations to the mother's,
-partial because a rule demands daughter denotations of the right shape
-([kay-michaelis-2019] §4). -/
+/-- A composition rule maps the daughters' denotations to the mother's, partially, because a
+rule demands daughter denotations of the right shape ([kay-michaelis-2019] §4). -/
 abbrev CompositionRule (D : Type*) := List D → Option D
 
-/-- Readings under the override principle ([michaelis-2004], (20)): "if a lexical item is
+/-- The readings follow the override principle ([michaelis-2004], (20)), "if a lexical item is
 semantically incompatible with its morphosyntactic context, the meaning of the lexical item
-conforms to the meaning of the structure in which it is embedded". The rule's own output where
-the daughters already conform, and otherwise one reading for each daughter and reconciliation
-operator that makes the daughters conform when applied to that daughter alone. Distinct repairs
-produce genuine ambiguity. -/
+conforms to the meaning of the structure in which it is embedded". They are the rule's own output
+where the daughters already conform, and otherwise one reading for each daughter and
+reconciliation operator that makes the daughters conform when applied to that daughter alone.
+Distinct repairs produce genuine ambiguity. -/
 def CompositionRule.override [DecidableEq D] (r : CompositionRule D)
     (shifts : List (D → D)) (ds : List D) : List D :=
   match r ds with
@@ -56,8 +55,8 @@ def CompositionRule.override [DecidableEq D] (r : CompositionRule D)
   | none =>
     ((List.range ds.length).flatMap fun i ↦ shifts.filterMap fun s ↦ r (ds.modify i s)).dedup
 
-/-- Conforming daughters are composed directly: implicit type-shifting occurs only on mismatch
-([michaelis-2004], (20)). -/
+/-- Conforming daughters are composed directly, since implicit type-shifting occurs only on
+mismatch ([michaelis-2004], (20)). -/
 theorem CompositionRule.override_eq_of_eq_some [DecidableEq D]
     {r : CompositionRule D} {ds : List D} {d : D} (shifts : List (D → D))
     (h : r ds = some d) : r.override shifts ds = [d] := by
@@ -75,7 +74,7 @@ open Morphology (Word)
 
 mutual
 
-/-- All readings of a tree: each construction whose typed form the daughters instantiate
+/-- In the readings of a tree, each construction whose typed form the daughters instantiate
 contributes the readings its meaning pole, a composition rule, produces from the daughters'
 readings; words read their denotations `den`. -/
 def interps (cxns : List (Construction (CompositionRule D))) (den : Word → Option D) :
@@ -84,7 +83,7 @@ def interps (cxns : List (Construction (CompositionRule D))) (den : Word → Opt
   | .node _ ts =>
       cxns.flatMap fun c ↦
         if FormMatches c.form ts then (interpsList cxns den ts).filterMap c.meaning else []
-  | .trace _ _ | .bind _ _ _ => []
+  | _ => []
 
 /-- All sequences of daughter readings. -/
 def interpsList (cxns : List (Construction (CompositionRule D))) (den : Word → Option D) :

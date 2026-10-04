@@ -111,7 +111,7 @@ def functionalApplication? {E W D : Type} {M : Type → Type} [Applicative M]
     (d1 d2 : Denotation E W M D) : Option (Denotation E W M D) :=
   applyForward? d1 d2 <|> applyBackward? d1 d2
 
-/-- Intensional functional application ([von-fintel-heim-2011]): a daughter expecting an
+/-- Under intensional functional application ([von-fintel-heim-2011]) a daughter expecting an
 intension of type `⟨s,σ⟩` applies to the constant intension of a sister of type `σ`, in
 either order, so that modals and attitude verbs take the intension of their sister. -/
 def intensionalApplication? {E W D : Type} {M : Type → Type} [Applicative M]
@@ -253,8 +253,8 @@ section TreeInterp
 
 variable {C : Type}
 
-/-- The denotation of a tree under an assignment, by the composition principles of
-[heim-kratzer-1998]: a terminal denotes what its leaf interpretation gives it, a non-branching
+/-- In the denotation of a tree under an assignment, by the composition principles of
+[heim-kratzer-1998], a terminal denotes what its leaf interpretation gives it, a non-branching
 node what its daughter does, a binary node what `interpBinary` composes, a trace the value of
 its index, and a binder the abstraction over its index, when the effect has a distributor. -/
 def interp {E W : Type} {M : Type → Type} [Applicative M] {D : Type} [PredAbs M E W D]
@@ -272,6 +272,7 @@ def interp {E W : Type} {M : Type → Type} [Applicative M] {D : Type} [PredAbs 
     let dist ← PredAbs.dist? (M := M) (E := E) (W := W) (D := D)
     let ⟨bodyTy, probeVal⟩ ← interp lex g body
     some ⟨.fn .e bodyTy, dist bodyTy fun x ↦ valueAt bodyTy probeVal (interp lex (g[n ↦ x]) body)⟩
+  | _ => none
 
 end TreeInterp
 
@@ -309,6 +310,25 @@ variable {C : Type} {E W D : Type} {M : Type → Type} [Applicative M] [PredAbs 
     interp lex g (.node c (t₁ :: t₂ :: []))
       = ((interp lex g t₁).bind fun d₁ =>
           (interp lex g t₂).bind fun d₂ => interpBinary d₁ d₂) := rfl
+
+/-- A node whose daughters its label does not license denotes nothing. -/
+theorem interp_junk (lex : L → Option (Denotation E W M D)) (g : Assignment E)
+    {l : Tree.Label C L} {cs : List (Tree C L)}
+    (h : ¬ Tree.Label.Licenses l (cs.map RoseTree.value)) :
+    interp lex g (RoseTree.node l cs) = none := by
+  cases l with
+  | terminal c w => cases cs with
+    | nil => exact absurd rfl h
+    | cons => rfl
+  | node c => exact absurd trivial h
+  | trace n c => cases cs with
+    | nil => exact absurd rfl h
+    | cons => rfl
+  | bind n c =>
+    rcases cs with _ | ⟨t, _ | ⟨u, cs⟩⟩
+    · rfl
+    · exact absurd rfl h
+    · rfl
 
 omit [PredAbs M E W D] in
 /-- Forward application reduces at any types; backward application reduces only at concrete
@@ -405,6 +425,7 @@ theorem interp_map_fst_congr (g g' : Assignment E) (t : Tree C L) :
       have h := ih g g'
       revert h
       cases interp lex g body <;> cases interp lex g' body <;> intro h <;> simp_all
+  | junk l cs h _ => rw [interp_junk lex g h, interp_junk lex g' h]
 
 /-- Assignments agreeing on the traces free in a tree give it the same denotation, the
 coincidence theorem ([heim-kratzer-1998] §5.4.2). -/
@@ -433,7 +454,7 @@ theorem interp_congr_of_agree {g g' : Assignment E} {t : Tree C L}
           by_cases hin : i = n
           · subst hin; simp
           · rw [Function.update_of_ne hin, Function.update_of_ne hin]
-            exact h i (Finset.mem_erase.mpr ⟨hin, hi⟩)
+            exact h i (by rw [Tree.freeIndices_bind]; exact Finset.mem_erase.mpr ⟨hin, hi⟩)
       have ht := interp_map_fst_congr lex g g' body
       revert ht
       cases hg : interp lex g body <;> cases hg' : interp lex g' body <;> intro ht
@@ -449,8 +470,9 @@ theorem interp_congr_of_agree {g g' : Assignment E} {t : Tree C L}
         funext x
         rw [hb x]
         exact valueAt_of_map_fst (by rw [interp_map_fst_congr lex _ g' body, hg']; rfl)
+  | junk l cs hj _ => rw [interp_junk lex g hj, interp_junk lex g' hj]
 
-/-- [heim-kratzer-1998]'s (9): a tree with no free trace at index `i` denotes alike under an
+/-- By [heim-kratzer-1998]'s (9), a tree with no free trace at index `i` denotes alike under an
 assignment and its modification at `i`. -/
 theorem interp_update_of_not_mem_freeIndices {t : Tree C L} {i : ℕ}
     (h : i ∉ t.freeIndices) (g : Assignment E) (x : E) :
@@ -458,7 +480,7 @@ theorem interp_update_of_not_mem_freeIndices {t : Tree C L} {i : ℕ}
   interp_congr_of_agree lex fun j hj ↦
     Function.update_of_ne (fun hji ↦ h (by subst hji; exact hj)) x g
 
-/-- [heim-kratzer-1998]'s (10): a closed tree denotes alike under every assignment. -/
+/-- By [heim-kratzer-1998]'s (10), a closed tree denotes alike under every assignment. -/
 theorem interp_congr_of_closed {t : Tree C L} (h : t.Closed) (g g' : Assignment E) :
     interp lex g t = interp lex g' t :=
   interp_congr_of_agree lex fun i hi ↦ absurd (h ▸ hi) (Finset.notMem_empty i)
@@ -492,6 +514,13 @@ theorem interp_map {L' : Type*} (lex : L' → Option (Denotation E W M D)) (f : 
     | _ :: _ :: _ :: _ => rfl
   | trace n c => rfl
   | bind n c body ih => simp only [Tree.map_bind, interp_bind, ih]
+  | junk l cs hj _ =>
+    have hmap : (cs.map (Tree.map f)).map RoseTree.value =
+        (cs.map RoseTree.value).map (Tree.Label.mapWord f) := by
+      simp only [List.map_map]
+      exact List.map_congr_left fun t _ ↦ Tree.value_map f t
+    rw [Tree.map_rose, interp_junk _ _ (by rw [hmap, Tree.Label.licenses_mapWord]; exact hj),
+      interp_junk _ _ hj]
 
 variable (lex : L → Set (Denotation E W M D)) (g : Assignment E)
 
@@ -538,6 +567,7 @@ theorem exists_resolution_of_interp {choice : L → Option (Denotation E W M D)}
     refine ⟨.bind n c r, by simp [hr], ?_⟩
     rw [interp_bind, hdist, Option.bind_some, hd, Option.bind_some]
     simpa only [hres] using h
+  | junk l cs hj _ => exact absurd h (by rw [interp_junk _ _ hj]; simp)
 
 /-- A value the engine computes under a choice among the readings is a reading. -/
 theorem interp_mem_readings {choice : L → Option (Denotation E W M D)}
@@ -560,24 +590,30 @@ theorem readings_eq_of_choice (choice : L → Option (Denotation E W M D)) (t : 
 @[simp] theorem readings_terminal (c : C) (w : L) : readings lex g (.terminal c w) = lex w := by
   ext d
   refine ⟨fun ⟨r, hr, hd⟩ ↦ ?_, fun h ↦ ⟨.terminal c ⟨(w, d), h⟩, rfl, rfl⟩⟩
-  cases r with
+  rcases r with ⟨l, cs⟩
+  simp only [Tree.map_rose, RoseTree.node.injEq, List.map_eq_nil_iff] at hr
+  obtain ⟨hl, rfl⟩ := hr
+  cases l with
   | terminal c' p =>
-    simp only [Tree.map_terminal, Tree.terminal.injEq] at hr
-    obtain ⟨rfl, rfl⟩ := hr
+    simp only [Tree.Label.mapWord, Tree.Label.terminal.injEq] at hl
+    obtain ⟨rfl, rfl⟩ := hl
     cases Option.some.inj hd
     exact p.2
-  | _ => simp at hr
+  | _ => simp [Tree.Label.mapWord] at hl
 
 @[simp] theorem readings_trace (n : ℕ) (c : C) :
     readings lex g (.trace n c) = {⟨.e, pure (g n)⟩} := by
   ext d
   refine ⟨fun ⟨r, hr, hd⟩ ↦ ?_, fun h ↦ ⟨.trace n c, rfl, h ▸ rfl⟩⟩
-  cases r with
+  rcases r with ⟨l, cs⟩
+  simp only [Tree.map_rose, RoseTree.node.injEq, List.map_eq_nil_iff] at hr
+  obtain ⟨hl, rfl⟩ := hr
+  cases l with
   | trace n' c' =>
-    simp only [Tree.map_trace, Tree.trace.injEq] at hr
-    obtain ⟨rfl, rfl⟩ := hr
+    simp only [Tree.Label.mapWord, Tree.Label.trace.injEq] at hl
+    obtain ⟨rfl, rfl⟩ := hl
     exact (Option.some.inj hd).symm
-  | _ => simp at hr
+  | _ => simp [Tree.Label.mapWord] at hl
 
 /-- A binary node's readings are the pointwise compositions of its daughters'. -/
 theorem mem_readings_node_binary {c : C} {t₁ t₂ : Tree C L} {d : Denotation E W M D} :
@@ -585,10 +621,13 @@ theorem mem_readings_node_binary {c : C} {t₁ t₂ : Tree C L} {d : Denotation 
       ∃ d₁ ∈ readings lex g t₁, ∃ d₂ ∈ readings lex g t₂, interpBinary d₁ d₂ = some d := by
   constructor
   · rintro ⟨r, hr, hd⟩
-    cases r with
-    | node c' cs =>
-      simp only [Tree.map_node, Tree.node.injEq] at hr
-      obtain ⟨rfl, hcs⟩ := hr
+    rcases r with ⟨l, cs⟩
+    simp only [Tree.map_rose, RoseTree.node.injEq] at hr
+    obtain ⟨hl, hcs⟩ := hr
+    cases l with
+    | node c' =>
+      simp only [Tree.Label.mapWord, Tree.Label.node.injEq] at hl
+      subst hl
       obtain ⟨r₁, cs₁, rfl, rfl, hcs₁⟩ := List.map_eq_cons_iff.mp hcs
       obtain ⟨r₂, cs₂, rfl, rfl, hcs₂⟩ := List.map_eq_cons_iff.mp hcs₁
       obtain rfl := List.map_eq_nil_iff.mp hcs₂
@@ -596,7 +635,7 @@ theorem mem_readings_node_binary {c : C} {t₁ t₂ : Tree C L} {d : Denotation 
       obtain ⟨d₁, h₁, hd⟩ := Option.bind_eq_some_iff.mp hd
       obtain ⟨d₂, h₂, hd⟩ := Option.bind_eq_some_iff.mp hd
       exact ⟨d₁, ⟨r₁, rfl, h₁⟩, d₂, ⟨r₂, rfl, h₂⟩, hd⟩
-    | _ => simp at hr
+    | _ => simp [Tree.Label.mapWord] at hl
   · rintro ⟨d₁, ⟨r₁, hr₁, hd₁⟩, d₂, ⟨r₂, hr₂, hd₂⟩, h⟩
     exact ⟨.node c (r₁ :: r₂ :: []), by simp [hr₁, hr₂],
       by rw [interp_node_binary, hd₁, hd₂, Option.bind_some, Option.bind_some, h]⟩
