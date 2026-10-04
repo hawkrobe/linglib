@@ -1,8 +1,6 @@
 module
 
 public import Linglib.Syntax.Agreement.Bundle
-public import Linglib.Semantics.Reference.Prominence
-public import Linglib.Morphology.Word.Agree
 
 /-!
 # Agreement paradigms
@@ -21,8 +19,7 @@ indexes a paradigm directly ([corbett-1998]).
 * `Agreement.Bundle.personNumberCells` — the six person–number bundles
 * `Agreement.Bundle.IsSAP`, `Agreement.Bundle.IsPlural`, `Agreement.Bundle.person` — the
   speech-act-participant and plural cells, and the person a cell bears
-* `Agreement.Paradigm` — a table from bundles to exponents, with `Paradigm.realize` and
-  `Paradigm.realizeFor`
+* `Agreement.Paradigm` — a table from bundles to exponents, with `Paradigm.realize`
 
 ## References
 
@@ -31,8 +28,6 @@ indexes a paradigm directly ([corbett-1998]).
 -/
 
 @[expose] public section
-
-open Morphology (Word)
 
 namespace Agreement
 
@@ -71,10 +66,6 @@ variable {Exp : Type*}
 
 /-- The exponent realizing a cell, that of the first entry whose cell it is. -/
 def realize (p : Paradigm Exp) (c : Bundle) : Option Exp := p.lookup c
-
-/-- The exponent agreeing with a controller word. -/
-def realizeFor (p : Paradigm Exp) (controller : Word) : Option Exp :=
-  p.realize controller.phi
 
 /-- The cells the paradigm distinguishes, in declaration order. -/
 def cells (p : Paradigm Exp) : List Bundle := p.map (·.1)

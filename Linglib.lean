@@ -769,7 +769,6 @@ import Linglib.Morphology.Paradigm.Contiguity
 import Linglib.Morphology.Paradigm.Function
 import Linglib.Morphology.Paradigm.Linkage
 import Linglib.Morphology.Paradigm.Morphome
-import Linglib.Morphology.Paradigm.OfCells
 import Linglib.Morphology.Paradigm.ToTree
 import Linglib.Morphology.Realization
 import Linglib.Morphology.Root.Basic
