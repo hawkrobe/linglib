@@ -2,34 +2,34 @@
 """Generate Lean 4 modules from PHOIBLE 2.0 inventory data.
 
 Usage:
-    python3 scripts/gen_phoible.py [ISO_CODES...]
-    python3 scripts/gen_phoible.py --chart [--check]
+    python3 scripts/gen_phoible.py [ISO[=ID]...]
+    python3 scripts/gen_phoible.py --chart
+    python3 scripts/gen_phoible.py --check
 
 Examples:
     python3 scripts/gen_phoible.py eng deu jpn   # specific ISO codes
     python3 scripts/gen_phoible.py kor=2197      # a chosen inventory, by InventoryID
-    python3 scripts/gen_phoible.py               # the 16 PhonProfile defaults
+    python3 scripts/gen_phoible.py               # every inventory already generated
     python3 scripts/gen_phoible.py --chart       # the glyph-indexed feature chart
+    python3 scripts/gen_phoible.py --check       # chart and inventories in sync (CI)
 
 Reads from:  Linglib/Data/PHOIBLE/raw/phoible.csv
-Writes to:   Linglib/Data/PHOIBLE/Inventories/{Name}.lean
-             (one Lean file per requested ISO; first inventory per ISO).
+Writes to:   Linglib/Data/PHOIBLE/Inventories/{Name}.lean, one per requested ISO.
              Linglib/Data/PHOIBLE/Chart.lean with `--chart`.
 
 In PHOIBLE a glyph determines its feature values, whatever the inventory, so the chart has
-one feature matrix per glyph. `--chart` fails if the CSV ever breaks that invariant. Tones
+one feature matrix per glyph. `--chart` and `--check` fail if the CSV ever breaks that
+invariant, or what the docstring of `Data.PHOIBLE.Source` says each source records. Tones
 are left out, and so are glyphs with a contour value such as `-,+`, which a `Bool`-valued
 matrix cannot hold.
 
-The first inventory per ISO is taken (lowest InventoryID), which matches
-PHOIBLE's canonical doculect pick, unless `ISO=ID` names another. A phoneme
-whose glyph is in the chart takes its feature matrix from `Chart.lean`; tones
-and contour-valued glyphs carry theirs inline.
+An inventory is the one `ISO=ID` names, else the ISO's lowest InventoryID. Each generated
+module records the argument that regenerates it, and a run without arguments regenerates
+every module in `Inventories/` from its recorded argument. A phoneme whose glyph is in the
+chart takes its feature matrix from `Chart.lean`; tones and contour-valued glyphs carry theirs
+inline, with each contour read as the meet of its phases. PHOIBLE's `NA` becomes `none`.
 
 Dependencies: pure stdlib (csv module).
-
-Re-generation note: this script is non-destructive — it overwrites only the
-files for ISO codes given on the command line.
 """
 
 import csv
@@ -37,21 +37,13 @@ import re
 import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from check_module_frontier import as_module_if_possible, import_stmt  # noqa: E402
+from check_module_frontier import as_module_if_possible  # noqa: E402
 from collections import OrderedDict
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "Linglib" / "Data" / "PHOIBLE" / "raw" / "phoible.csv"
 OUT  = ROOT / "Linglib" / "Data" / "PHOIBLE" / "Inventories"
 CHART = ROOT / "Linglib" / "Data" / "PHOIBLE" / "Chart.lean"
-
-# ── Default ISO set (the 16 PhonProfile languages from
-#                    Phenomena/Phonology/Typology.lean) ──────────────────────
-
-DEFAULT_ISOS = [
-    "eng", "deu", "fin", "tur", "rus", "fra", "spa", "jpn",
-    "cmn", "hin", "kat", "hun", "swh", "yor", "mri", "zul",
-]
 
 # ── PHOIBLE feature columns (in CSV order, matching Schema.lean) ───────────
 
@@ -70,14 +62,25 @@ FEATURE_COLS = [
 # Column-to-constructor renames in `Data.PHOIBLE.Feature` (none at present).
 COL_TO_FIELD = {}
 
+# The `Source` column's codes, which are the constructors of `Data.PHOIBLE.Source`.
+SOURCES = ["spa", "upsid", "aa", "ph", "ra", "saphon", "ea", "er"]
+
+# What each source records, as the docstring of `Source` states; `check_row` verifies it.
+LISTS_ALLOPHONES = {"aa", "ph", "spa"}
+MARKS_MARGINAL = {"aa", "ea", "er", "ph", "upsid"}
+HAS_TONES = {"aa", "ph", "ra", "spa"}
+
 # ── Helpers ────────────────────────────────────────────────────────────────
 
 def feature_value(s: str):
-    """Map a CSV cell value to a Lean `Bool`, or `None` for PHOIBLE's `0`."""
-    s = s.strip()
-    if s == "+": return "true"
-    if s == "-": return "false"
-    # "0" (not applicable), and the variable values "+,-" / "-,+", are unspecified.
+    """Map a CSV cell to a Lean `Bool`, or `None` for an unspecified feature.
+
+    A cell is `+`, `-`, `0` (not applicable) or a contour of these such as `-,+`. The value is
+    the meet of the cell's phases in the subsumption order: the value every phase has, and
+    unspecified when the phases differ or one of them is `0`."""
+    phases = set(s.strip().split(","))
+    if phases == {"+"}: return "true"
+    if phases == {"-"}: return "false"
     return None
 
 def format_features(pairs, indent="        "):
@@ -95,35 +98,51 @@ def format_features(pairs, indent="        "):
 
 def segment_class(s: str) -> str:
     s = s.strip().strip('"')
-    if s == "consonant": return ".consonant"
-    if s == "vowel": return ".vowel"
-    if s == "tone": return ".tone"
+    if s in ("consonant", "vowel", "tone"): return "." + s
     raise ValueError(f"unknown segment class {s!r}")
 
 def source_constructor(s: str) -> str:
     s = s.strip().strip('"').lower()
-    # Map PHOIBLE source codes to Schema.Source constructors.
-    mapping = {
-        "spa": ".spa",
-        "upsid": ".upsid",
-        "aa": ".aa",
-        "gm": ".gm",
-        "ph": ".ph",
-        "ra": ".ra",
-        "saphon": ".saphon",
-        "ea": ".ea",
-        "er": ".er",
-    }
-    return mapping.get(s, ".upsid")  # fallback
+    if s in SOURCES: return "." + s
+    raise ValueError(f"unknown PHOIBLE source {s!r}: add it to `SOURCES` and to `Source`")
+
+def marginal_value(s: str) -> str:
+    """The `Marginal` column, `TRUE`, `FALSE` or `NA`, as a Lean `Option Bool`."""
+    s = s.strip().strip('"')
+    if s == "TRUE": return "some true"
+    if s == "FALSE": return "some false"
+    if s == "NA": return "none"
+    raise ValueError(f"unknown Marginal value {s!r}")
 
 def lean_string(s: str) -> str:
     """Quote a string for Lean source. Escapes backslashes and quotes."""
     return '"' + s.replace("\\", "\\\\").replace('"', '\\"') + '"'
 
-def parse_allophones(s: str) -> list:
+def lean_option_string(s: str) -> str:
+    """A CSV cell as a Lean `Option String`, `none` for `NA` and for the blank SAPHON writes."""
     s = s.strip().strip('"')
-    if s == "NA" or s == "": return []
-    return s.split()
+    return "none" if s in ("NA", "") else f"some {lean_string(s)}"
+
+def allophones_value(s: str) -> str:
+    """The `Allophones` column, a space-separated list or `NA`, as a Lean `Option (List String)`."""
+    s = s.strip().strip('"')
+    if s == "NA": return "none"
+    return "some [" + ", ".join(lean_string(a) for a in s.split()) + "]"
+
+def check_row(row: dict):
+    """Fail unless the row bears out what the docstring of `Source` says each source records,
+    and a listed set of allophones contains the phoneme's glyph."""
+    s, glyph = row["Source"], row["Phoneme"]
+    if s not in SOURCES:
+        sys.exit(f"FATAL: unknown PHOIBLE source {s!r}: add it to `SOURCES` and to `Source`")
+    if (row["Allophones"] != "NA") != (s in LISTS_ALLOPHONES):
+        sys.exit(f"FATAL: {s} row {glyph!r} breaks the allophone record of `Source`")
+    if row["Allophones"] != "NA" and glyph not in row["Allophones"].split():
+        sys.exit(f"FATAL: {s} row {glyph!r} lacks its glyph among its allophones")
+    if (row["Marginal"] != "NA") != (s in MARKS_MARGINAL):
+        sys.exit(f"FATAL: {s} row {glyph!r} breaks the marginality record of `Source`")
+    if row["SegmentClass"] == "tone" and s not in HAS_TONES:
+        sys.exit(f"FATAL: {s} row {glyph!r} is a tone, which `Source` says it has none of")
 
 def lang_module_name(lang_name: str, iso: str) -> str:
     """Lean module name from PHOIBLE LanguageName + ISO. Title-case, ASCII only."""
@@ -155,25 +174,17 @@ def emit_phoneme(row: dict) -> str:
     else:
         pairs = []
         for col in FEATURE_COLS + ["tone", "stress"]:
-            val = feature_value(row.get(col, "0"))
+            val = feature_value(row[col])
             if val is not None:
                 pairs.append((COL_TO_FIELD.get(col, col), val))
         feature_block = format_features(pairs)
 
-    glyph = row.get("Phoneme", "").strip().strip('"')
-    glyph_id = row.get("GlyphID", "").strip().strip('"')
-    allo = parse_allophones(row.get("Allophones", ""))
-    # PHOIBLE 2.0 writes the column as TRUE, FALSE or NA.
-    marginal = row.get("Marginal", "").strip().strip('"') == "TRUE"
-    seg_cls = segment_class(row.get("SegmentClass", "consonant"))
-
-    allo_str = "[" + ", ".join(lean_string(a) for a in allo) + "]"
+    glyph = row["Phoneme"].strip().strip('"')
 
     return f"""    {{ glyph := {lean_string(glyph)},
-      glyphId := {lean_string(glyph_id)},
-      allophones := {allo_str},
-      marginal := {str(marginal).lower()},
-      segmentClass := {seg_cls},
+      allophones := {allophones_value(row["Allophones"])},
+      marginal := {marginal_value(row["Marginal"])},
+      segmentClass := {segment_class(row["SegmentClass"])},
       features := {feature_block} }}"""
 
 def emit_inventory(rows: list, var_name: str) -> str:
@@ -181,23 +192,15 @@ def emit_inventory(rows: list, var_name: str) -> str:
     if not rows:
         raise ValueError("empty rows")
     head = rows[0]
-    inv_id = int(head["InventoryID"])
-    glottocode = head.get("Glottocode", "").strip().strip('"')
-    iso = head.get("ISO6393", "").strip().strip('"')
-    lang_name = head.get("LanguageName", "").strip().strip('"')
-    dialect_raw = head.get("SpecificDialect", "").strip().strip('"')
-    dialect = "" if dialect_raw == "NA" else dialect_raw
-    src = source_constructor(head.get("Source", "upsid"))
-
     phoneme_blocks = ",\n".join(emit_phoneme(r) for r in rows)
 
     return f"""def {var_name} : Inventory :=
-  {{ id := {inv_id},
-    glottocode := {lean_string(glottocode)},
-    iso := {lean_string(iso)},
-    languageName := {lean_string(lang_name)},
-    specificDialect := {lean_string(dialect)},
-    source := {src},
+  {{ id := {int(head["InventoryID"])},
+    glottocode := {lean_option_string(head["Glottocode"])},
+    iso := {lean_string(head["ISO6393"].strip().strip('"'))},
+    languageName := {lean_string(head["LanguageName"].strip().strip('"'))},
+    specificDialect := {lean_option_string(head["SpecificDialect"])},
+    source := {source_constructor(head["Source"])},
     phonemes := [
 {phoneme_blocks} ] }}"""
 
@@ -212,22 +215,27 @@ def emit_module(iso: str, rows_by_inv: dict, module_name: str, inv_id=None) -> s
         var_name = "lang"
 
     inv_block = emit_inventory(rows, var_name)
-    n_phonemes = len(rows)
     head = rows[0]
-    lang_name = head.get("LanguageName", "").strip().strip('"')
+    lang_name = head["LanguageName"].strip().strip('"')
+    glottocode = head["Glottocode"].strip().strip('"')
+    glotto = "" if glottocode == "NA" else f" (Glottocode `{glottocode}`)"
+    source = head["Source"].strip().strip('"').upper()
 
     regen = iso if inv_id is None else f"{iso}={inv_id}"
     return f"""import Linglib.Data.PHOIBLE.Chart
 
 /-!
-# PHOIBLE inventory: {lang_name} ({iso}, ID {first_inv_id})
-[moran-mccloy-2019]
+# PHOIBLE inventory of {lang_name}
 
-Auto-generated from PHOIBLE 2.0 by `scripts/gen_phoible.py`.
-**Do not edit by hand** — regenerate with `python3 scripts/gen_phoible.py {regen}`.
+This is PHOIBLE 2.0's inventory {first_inv_id} of {lang_name}{glotto}, from the {source} source,
+with {len(rows)} phonemes.
 
-{n_phonemes} phonemes. PHOIBLE inventory ID {first_inv_id}, Glottocode `{head.get("Glottocode", "").strip().strip(chr(34))}`.
-Source: PHOIBLE donor `{head.get("Source", "").strip().strip(chr(34))}`.
+Auto-generated by `scripts/gen_phoible.py`. **Do not edit by hand**: regenerate with
+`python3 scripts/gen_phoible.py {regen}`.
+
+## References
+
+* [moran-mccloy-2019]
 -/
 
 namespace Data.PHOIBLE.Inventories.{module_name}
@@ -242,12 +250,13 @@ end Data.PHOIBLE.Inventories.{module_name}
 # ── The glyph chart ────────────────────────────────────────────────────────
 
 def chart_rows():
-    """One CSV row per glyph, in order of first appearance; checks that a glyph
-    determines its feature values."""
+    """One CSV row per glyph, in order of first appearance; checks every row with `check_row`
+    and that a glyph determines its feature values."""
     cols = FEATURE_COLS + ["tone", "stress"]
     first = OrderedDict()
     with open(DATA, encoding="utf-8") as f:
         for row in csv.DictReader(f):
+            check_row(row)
             glyph = row["Phoneme"]
             vec = tuple(row[c] for c in cols)
             seen = first.get(glyph)
@@ -307,16 +316,65 @@ end Data.PHOIBLE.FeatureMatrix
 
 # ── Main ───────────────────────────────────────────────────────────────────
 
+REGEN = re.compile(r"python3 scripts/gen_phoible\.py ([a-z]{3}(?:=\d+)?)`")
+
+def recorded_args() -> list:
+    """The argument each module in `Inventories/` records for its regeneration."""
+    args = []
+    for path in sorted(OUT.glob("*.lean")):
+        m = REGEN.search(path.read_text(encoding="utf-8"))
+        if m is None:
+            sys.exit(f"FATAL: {path.relative_to(ROOT)} records no regeneration argument")
+        args.append(m.group(1))
+    return args
+
+def inventory_modules(args: list) -> dict:
+    """The module for each `ISO` or `ISO=ID` argument, keyed by its output path."""
+    chosen = {}
+    for a in args:
+        iso, _, inv = a.lower().partition("=")
+        chosen[iso] = int(inv) if inv else None
+
+    # Collect rows per (ISO, InventoryID).
+    by_iso = {iso: OrderedDict() for iso in chosen}
+    with open(DATA, encoding="utf-8") as f:
+        for row in csv.DictReader(f):
+            iso = row["ISO6393"].strip().strip('"').lower()
+            if iso in by_iso:
+                by_iso[iso].setdefault(int(row["InventoryID"]), []).append(row)
+
+    modules = {}
+    for iso, inv_id in chosen.items():
+        invs = by_iso[iso]
+        if not invs:
+            sys.stderr.write(f"WARN: no rows for ISO {iso}; skipping\n")
+            continue
+        first_inv_id = min(invs.keys()) if inv_id is None else inv_id
+        if first_inv_id not in invs:
+            sys.exit(f"FATAL: ISO {iso} has no inventory {first_inv_id}; it has {sorted(invs)}")
+        module_name = lang_module_name(invs[first_inv_id][0]["LanguageName"], iso)
+        modules[OUT / f"{module_name}.lean"] = (
+            as_module_if_possible(emit_module(iso, invs, module_name, inv_id)),
+            len(invs[first_inv_id]), iso, first_inv_id)
+    return modules
+
 def main():
     if not DATA.exists():
         sys.stderr.write(f"FATAL: {DATA} not found. Download with:\n")
         sys.stderr.write(f"  curl -sL https://raw.githubusercontent.com/phoible/dev/master/data/phoible.csv -o {DATA}\n")
         sys.exit(1)
 
-    if sys.argv[1:] == ["--chart", "--check"]:
+    if sys.argv[1:] == ["--check"]:
+        stale = []
         if not CHART.exists() or CHART.read_text(encoding="utf-8") != as_module_if_possible(emit_chart()):
-            sys.exit(f"FAIL: {CHART.relative_to(ROOT)} is out of sync; run --chart")
-        sys.stdout.write(f"OK: {CHART.relative_to(ROOT)} is in sync\n")
+            stale.append(CHART)
+        for path, (content, *_) in inventory_modules(recorded_args()).items():
+            if path.read_text(encoding="utf-8") != content:
+                stale.append(path)
+        if stale:
+            sys.exit("FAIL: out of sync, regenerate: "
+                     + ", ".join(str(p.relative_to(ROOT)) for p in stale))
+        sys.stdout.write("OK: the PHOIBLE chart and inventories are in sync\n")
         return
     if sys.argv[1:] == ["--chart"]:
         content = as_module_if_possible(emit_chart())
@@ -324,45 +382,13 @@ def main():
         sys.stdout.write(f"[gen] {CHART.relative_to(ROOT)} ({content.count(chr(10))} lines)\n")
         return
 
-    args = sys.argv[1:] if len(sys.argv) > 1 else DEFAULT_ISOS
-    chosen = {}
-    for a in args:
-        iso, _, inv = a.lower().partition("=")
-        chosen[iso] = int(inv) if inv else None
-    isos = list(chosen)
-
+    args = sys.argv[1:] or recorded_args()
     OUT.mkdir(parents=True, exist_ok=True)
-
-    # First pass: collect rows per (ISO, InventoryID).
-    by_iso = {iso: OrderedDict() for iso in isos}
-    with open(DATA, encoding="utf-8") as f:
-        reader = csv.DictReader(f)
-        for row in reader:
-            iso = row.get("ISO6393", "").strip().strip('"').lower()
-            if iso not in by_iso:
-                continue
-            inv_id = int(row["InventoryID"])
-            by_iso[iso].setdefault(inv_id, []).append(row)
-
-    # Emit one module per requested ISO.
-    for iso in isos:
-        invs = by_iso[iso]
-        if not invs:
-            sys.stderr.write(f"WARN: no rows for ISO {iso}; skipping\n")
-            continue
-        first_inv_id = min(invs.keys()) if chosen[iso] is None else chosen[iso]
-        if first_inv_id not in invs:
-            sys.exit(f"FATAL: ISO {iso} has no inventory {first_inv_id}; it has {sorted(invs)}")
-        head = invs[first_inv_id][0]
-        lang_name = head.get("LanguageName", "").strip().strip('"')
-        module_name = lang_module_name(lang_name, iso)
-
-        out_path = OUT / f"{module_name}.lean"
-        content = as_module_if_possible(emit_module(iso, invs, module_name, chosen[iso]))
-        out_path.write_text(content, encoding="utf-8")
-        sys.stdout.write(f"[gen] {module_name}.lean ({len(invs[first_inv_id])} phonemes, ISO {iso}, InvID {first_inv_id})\n")
-
-    sys.stdout.write(f"\nGenerated {len(isos)} modules under {OUT.relative_to(ROOT)}\n")
+    modules = inventory_modules(args)
+    for path, (content, n, iso, inv_id) in modules.items():
+        path.write_text(content, encoding="utf-8")
+        sys.stdout.write(f"[gen] {path.name} ({n} phonemes, ISO {iso}, InvID {inv_id})\n")
+    sys.stdout.write(f"\nGenerated {len(modules)} modules under {OUT.relative_to(ROOT)}\n")
 
 if __name__ == "__main__":
     main()

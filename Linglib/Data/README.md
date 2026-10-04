@@ -142,15 +142,16 @@ clauses recording the order of object and verb with text type, object length, an
 - **Download**: <https://github.com/phoible/dev/blob/master/data/phoible.csv> (`PHOIBLE/raw/phoible.csv`)
 - **Generator**: `scripts/gen_phoible.py`
 - **Output**: `Linglib/Data/PHOIBLE/Inventories/{Lang}.lean`, and `Linglib/Data/PHOIBLE/Chart.lean`, the feature matrix of each glyph. A glyph has the same feature values in every PHOIBLE inventory, so the chart is language-independent; it leaves out tones and the glyphs with contour values such as `-,+`.
-- **Coverage**: 23 languages (Akan, Arabic, Czech, English, Finnish, French, Georgian, German, Hindi-Urdu, Hungarian, Indonesian, Japanese, Korean, Mandarin, Maori, Persian, Russian, Spanish, Swahili, Tagalog, Turkish, Yoruba, Zulu); the first inventory per ISO unless `ISO=ID` names another. A phoneme's feature matrix is its chart entry, written inline only for tones and contour-valued glyphs.
+- **Coverage**: 23 languages (Akan, Arabic, Czech, English, Finnish, French, Georgian, German, Hindi-Urdu, Hungarian, Indonesian, Japanese, Korean, Mandarin, Maori, Persian, Russian, Spanish, Swahili, Tagalog, Turkish, Yoruba, Zulu); the first inventory per ISO unless `ISO=ID` names another. A phoneme's feature matrix is its chart entry, written inline only for tones and contour-valued glyphs, where a contour such as `-,+` leaves the feature unspecified. PHOIBLE's `NA` is `none`; the sources differ in whether they record allophones, tones and marginal phonemes (15 of the 23 inventories are from SPA, which does not mark marginal phonemes, and Yoruba's is from UPSID, which records no tones).
 
 #### Regenerating
 
 ```bash
-python3 scripts/gen_phoible.py            # default 16 ISOs
+python3 scripts/gen_phoible.py            # every inventory already generated
 python3 scripts/gen_phoible.py jpn ces    # specific ISOs
 python3 scripts/gen_phoible.py kor=2197   # a chosen inventory, by InventoryID
-python3 scripts/gen_phoible.py --chart    # the glyph chart (`--chart --check` validates sync)
+python3 scripts/gen_phoible.py --chart    # the glyph chart
+python3 scripts/gen_phoible.py --check    # chart and inventories in sync (CI)
 ```
 
 ### WALS v2020.4
