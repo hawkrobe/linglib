@@ -319,6 +319,28 @@
     "verified": "page-image"
   },
   {
+    "id": "brueningalkhalaf2020_24",
+    "source": {"bibkey": "bruening-alkhalaf-2020", "paperLabel": "(24)"},
+    "language": "stan1293",
+    "primaryText": "The invaders destroyed the castle and of the surrounding town.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["construction", "argument"],
+      ["selector", "precedes"],
+      ["selects", "NP"],
+      ["conjunct", "NP"],
+      ["conjunct", "PP"]
+    ],
+    "comment": "The preposition of is semantically contentless here, as in destruction of the town.",
+    "verified": "page-image"
+  },
+  {
     "id": "brueningalkhalaf2020_39a",
     "source": {"bibkey": "sag-etal-1985", "paperLabel": "(124a)"},
     "reportedIn": {"bibkey": "bruening-alkhalaf-2020", "paperLabel": "(39a)"},

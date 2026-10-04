@@ -197,6 +197,19 @@ def ex_22b : Datum :=
     readings := []
     paperFeatures := [("construction", "predicate"), ("selector", "precedes"), ("selects", "AP"), ("selects", "PP"), ("conjunct", "AP"), ("conjunct", "NP")] }
 
+def ex_24 : Datum :=
+  { id := "brueningalkhalaf2020_24"
+    source := ⟨"bruening-alkhalaf-2020", "(24)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "The invaders destroyed the castle and of the surrounding town."
+    glossedTokens := []
+    context := ""
+    judgment := .ungrammatical
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "argument"), ("selector", "precedes"), ("selects", "NP"), ("conjunct", "NP"), ("conjunct", "PP")] }
+
 def ex_39a : Datum :=
   { id := "brueningalkhalaf2020_39a"
     source := ⟨"sag-etal-1985", "(124a)"⟩
@@ -912,6 +925,6 @@ def ex_77b : Datum :=
     readings := []
     paperFeatures := [("construction", "argument"), ("selector", "precedes"), ("selects", "CP"), ("conjunct", "CP"), ("conjunct", "CP")] }
 
-def all : List Datum := [ex_2a, ex_2b, ex_3a, ex_3b, ex_20a, ex_20b, ex_20c, ex_20d, ex_21a, ex_21b, ex_21c, ex_21d, ex_22a, ex_22b, ex_39a, ex_39b, ex_39c, ex_39d, ex_40a, ex_40b, ex_41a, ex_41b, ex_42a, ex_42b, ex_42c, ex_42d, ex_43a, ex_43b, ex_43c, ex_44a, ex_44b, ex_44c, ex_44d, p15, ex_49a, ex_49b, ex_49c, ex_50a, ex_50b, ex_50c, ex_54a, ex_55a, ex_56a, ex_56b, ex_56c, ex_57a, ex_57b, ex_57c, ex_60a, ex_60b, ex_60c, ex_62a, ex_62b, ex_64a, ex_64b, ex_64d, ex_64e, ex_64f, ex_64g, ex_64h, ex_64i, ex_68a, ex_68b, ex_69a, ex_69b, ex_76a, ex_76b, ex_77a, ex_77b]
+def all : List Datum := [ex_2a, ex_2b, ex_3a, ex_3b, ex_20a, ex_20b, ex_20c, ex_20d, ex_21a, ex_21b, ex_21c, ex_21d, ex_22a, ex_22b, ex_24, ex_39a, ex_39b, ex_39c, ex_39d, ex_40a, ex_40b, ex_41a, ex_41b, ex_42a, ex_42b, ex_42c, ex_42d, ex_43a, ex_43b, ex_43c, ex_44a, ex_44b, ex_44c, ex_44d, p15, ex_49a, ex_49b, ex_49c, ex_50a, ex_50b, ex_50c, ex_54a, ex_55a, ex_56a, ex_56b, ex_56c, ex_57a, ex_57b, ex_57c, ex_60a, ex_60b, ex_60c, ex_62a, ex_62b, ex_64a, ex_64b, ex_64d, ex_64e, ex_64f, ex_64g, ex_64h, ex_64i, ex_68a, ex_68b, ex_69a, ex_69b, ex_76a, ex_76b, ex_77a, ex_77b]
 
 end BrueningAlKhalaf2020.Examples
