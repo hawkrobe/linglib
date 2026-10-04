@@ -33,8 +33,8 @@ of Sun, Tian and Breheny is put down to the corrective context of *P so not Q*.
 ## Implementation notes
 
 * A scale ⟨P, Q⟩ with `Q ⊆ P` puts each individual of the domain in one of the three cells of
-  `Aristotelian.Square.Cell`: neither term (`E`), the weak term only (`IO`), or the strong term
-  (`A`), as for *none*, *some but not all* and *all*.
+  `Aristotelian.Triangle`, ordered as *none* < *some but not all* < *all*: neither term (`E`),
+  the weak term only (`IO`), or the strong term (`A`).
 * The rows carry the condition means of Figure 1 and the per-scale strong-inference rates of
   both experiments, computed from the raw data the paper deposits.
 
@@ -56,7 +56,7 @@ of Sun, Tian and Breheny is put down to the corrective context of *P so not Q*.
 
 namespace Ronai2024
 
-open ChemlaSpector2011 Aristotelian.Square
+open ChemlaSpector2011 Aristotelian
 
 variable {ι : Type*}
 
@@ -74,13 +74,13 @@ inductive Inference where
 
 /-- What each inference says of a domain of individuals. The weak inference is the negation of
 the utterance's only alternative on an unmodified neo-Gricean account, *every N was Q*. -/
-def Inference.den : Inference → (ι → Cell) → Prop
-  | .trueControl, m => ∃ i, m i ∈ Cell.square.I
-  | .weak, m => ¬ ∀ i, m i ∈ Cell.square.A
-  | .strong, m => ∀ i, m i ∈ Cell.square.O
+def Inference.den : Inference → (ι → Triangle) → Prop
+  | .trueControl, m => ∃ i, ⊥ < m i
+  | .weak, m => ¬ ∀ i, m i = ⊤
+  | .strong, m => ∀ i, m i < ⊤
   | .falseControl, m => ¬ Exp1Some.reading .literal m
 
-instance [Fintype ι] (m : ι → Cell) : (n : Inference) → Decidable (n.den m)
+instance [Fintype ι] (m : ι → Triangle) : (n : Inference) → Decidable (n.den m)
   | .trueControl => inferInstanceAs (Decidable (∃ _, _))
   | .weak => inferInstanceAs (Decidable (¬ _))
   | .strong => inferInstanceAs (Decidable (∀ _, _))
@@ -95,28 +95,28 @@ def Inference.key : Inference → String
 
 /-- The sentence *Some N was Q* (5) is the alternative built by replacing both scalar terms and
 the compatible control of a second experiment. -/
-def compatible (m : ι → Cell) : Prop := ∃ i, m i ∈ Cell.square.A
+def compatible (m : ι → Triangle) : Prop := ∃ i, m i = ⊤
 
-instance [Fintype ι] (m : ι → Cell) : Decidable (compatible m) :=
+instance [Fintype ι] (m : ι → Triangle) : Decidable (compatible m) :=
   inferInstanceAs (Decidable (∃ _, _))
 
 /-- Negating the alternative *some N was Q* yields the strong inference. -/
-theorem compatible_iff_not_strong (m : ι → Cell) :
+theorem compatible_iff_not_strong (m : ι → Triangle) :
     compatible m ↔ ¬ Inference.den .strong m := by
   simp only [compatible, Inference.den, not_forall]
   exact exists_congr fun i ↦ by cases m i <;> decide
 
-/-- *Some N was Q* does not entail *every N was P*, as an individual in the `A` cell beside one in
-the `E` cell shows. -/
+/-- *Some N was Q* does not entail *every N was P*, as an individual at `A` beside one at `E`
+shows. -/
 theorem compatible_not_literal :
-    ∃ m : Bool → Cell, compatible m ∧ ¬ Exp1Some.reading .literal m :=
+    ∃ m : Bool → Triangle, compatible m ∧ ¬ Exp1Some.reading .literal m :=
   ⟨fun b ↦ if b then .A else .E, by decide⟩
 
 /-! ### Readings and the inferences they support (§3.4) -/
 
 /-- A reading supports an inference when it entails it on every nonempty domain. -/
 def Supports (ℓ : ReadingLabel) (n : Inference) : Prop :=
-  ∀ {ι : Type} [Nonempty ι] (m : ι → Cell), Exp1Some.reading ℓ m → n.den m
+  ∀ {ι : Type} [Nonempty ι] (m : ι → Triangle), Exp1Some.reading ℓ m → n.den m
 
 /-- The literal reading supports the true control alone, the global reading the weak inference
 too, and the local reading the strong inference too; no reading supports the false control. -/
@@ -187,12 +187,12 @@ theorem exp1_monotone :
 /-- The compatible control is consistent with the sentence, since a domain of individuals at
 `all` verifies both *every N was P* and *some N was Q*. -/
 theorem literal_and_compatible :
-    ∃ m : Unit → Cell, Exp1Some.reading .literal m ∧ compatible m :=
+    ∃ m : Unit → Triangle, Exp1Some.reading .literal m ∧ compatible m :=
   ⟨fun _ ↦ .A, by decide⟩
 
 /-- Once the strong inference is computed the compatible control is false, the local reading
 excluding it, which is why Experiment 2 replaces the baseline by an inference task. -/
-theorem not_compatible_of_local {m : ι → Cell} (h : Exp1Some.reading .local_ m) :
+theorem not_compatible_of_local {m : ι → Triangle} (h : Exp1Some.reading .local_ m) :
     ¬ compatible m :=
   fun ⟨i, hi⟩ ↦ absurd hi (by rw [h i]; decide)
 

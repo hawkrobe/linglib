@@ -11,26 +11,32 @@ Boolean algebra, related by contradiction (A–O, E–I), contrariety (A–E), s
 and subalternation (A→I, E→O). Its instances for generalized quantifiers, after Barwise and
 Cooper, and for modals live with those theories.
 
-A square with these relations divides its algebra into three pairwise contrary cells: `A`, `E`,
-and between them the conjunction `I ⊓ O` of the two particulars. Horn traces this trichotomy to
-De Morgan and to Jespersen's tripartition into *all*, *some* and *none*, whose middle term is
-neither the I nor the O corner but their conjunction; modally the cells are the necessary, the
-contingent and the impossible.
+A square with these relations divides its algebra into three pairwise contrary parts, `E`, `A`,
+and between them the conjunction `I ⊓ O` of the two particulars: the vertices of Horn's triangle
+of opposition. Horn traces this trichotomy to De Morgan and to Jespersen's tripartition into
+*all*, *some* and *none*, whose middle term is neither the I nor the O corner but their
+conjunction; modally the vertices are the impossible, the contingent and the necessary. Ordered
+by the affirmative corners they lie in, the vertices form the scale *none* < *some but not all* <
+*all*.
 
 ## Main definitions
 
 * `Square`, `SquareRelations`: a square and the relations of the square.
-* `Square.Cell`, `Square.cell`: the three cells of a square and the element at each.
-* `Square.Cell.square`: the square on the cells, each corner the set of cells below it.
+* `Triangle`, `Square.triangle`: the vertices of the triangle of opposition and the element of a
+  square at each.
+* `Triangle.corners`: the corners of the square as sets of vertices, and the order of the
+  vertices by the affirmative corners they lie in.
 
 ## Main results
 
 * `SquareRelations.subalternAI`, `SquareRelations.subalternEO`, `SquareRelations.subcontrIO`:
   the remaining relations of the square.
-* `SquareRelations.pairwise_disjoint_cell`, `SquareRelations.sup_cell`: the cells of a square
-  are pairwise disjoint and join to `⊤`.
-* `Square.Cell.squareRelations_square`, `Square.Cell.cell_square`: the square on the cells
-  satisfies the relations, and its cells are the singletons.
+* `SquareRelations.pairwise_disjoint_triangle`, `SquareRelations.sup_triangle`: the vertices of
+  a square are pairwise disjoint and join to `⊤`.
+* `Triangle.squareRelations_corners`, `Triangle.triangle_corners`: the corners as sets of
+  vertices satisfy the relations, and the vertices are the singletons.
+* `Triangle.mem_corners_I`, `Triangle.mem_corners_A`: *some* holds above the bottom vertex and
+  *all* at the top one.
 
 ## References
 
@@ -55,32 +61,65 @@ structure Square (α : Type*) where
   /-- `O` is the particular negative corner (*not every*, `¬□p`, `¬Bel p`). -/
   O : α
 
-namespace Square
-
-/-- A cell of a square is the universal affirmative `A`, the conjunction `IO` of the two
-particulars, or the universal negative `E`. -/
-inductive Cell where
-  | A
-  | IO
+/-- The vertices of the triangle of opposition, in scale order, are the universal negative `E`,
+the conjunction `IO` of the two particulars, and the universal affirmative `A`. -/
+inductive Triangle where
   | E
+  | IO
+  | A
   deriving DecidableEq, Repr, Fintype
 
-variable {α : Type*} [BooleanAlgebra α]
-
-/-- The element of a square at a cell. -/
-def cell (sq : Square α) : Cell → α
-  | .A => sq.A
-  | .IO => sq.I ⊓ sq.O
+/-- The element of a square at a vertex of its triangle. -/
+def Square.triangle {α : Type*} [BooleanAlgebra α] (sq : Square α) : Triangle → α
   | .E => sq.E
+  | .IO => sq.I ⊓ sq.O
+  | .A => sq.A
 
-/-- The square on the cells has as each corner the set of cells below it. -/
-def Cell.square : Square (Finset Cell) := ⟨{.A}, {.E}, {.A, .IO}, {.IO, .E}⟩
+namespace Triangle
 
-/-- The cells of the square on the cells are the singletons. -/
-theorem Cell.cell_square (c : Cell) : Cell.square.cell c = {c} := by
-  cases c <;> decide
+/-- The corners of the square, each given as the set of vertices at which it holds. -/
+def corners : Square (Finset Triangle) := ⟨{.A}, {.E}, {.IO, .A}, {.E, .IO}⟩
 
-end Square
+/-- The element of `corners` at each vertex is that vertex's singleton. -/
+theorem triangle_corners (t : Triangle) : corners.triangle t = {t} := by
+  cases t <;> decide
+
+/-- A vertex lies below another when the other lies in every affirmative corner that it does. -/
+instance : LE Triangle :=
+  ⟨fun s t ↦ (s ∈ corners.I → t ∈ corners.I) ∧ (s ∈ corners.A → t ∈ corners.A)⟩
+
+instance : DecidableLE Triangle := fun _ _ ↦ inferInstanceAs (Decidable (_ ∧ _))
+
+instance : LinearOrder Triangle where
+  le_refl := by decide
+  le_trans := by decide
+  le_antisymm := by decide
+  le_total := by decide
+  toDecidableLE := inferInstance
+
+instance : BoundedOrder Triangle where
+  top := .A
+  le_top := by decide
+  bot := .E
+  bot_le := by decide
+
+theorem bot_eq_E : (⊥ : Triangle) = .E := rfl
+
+theorem top_eq_A : (⊤ : Triangle) = .A := rfl
+
+/-- *Some* holds above the bottom vertex. -/
+theorem mem_corners_I {t : Triangle} : t ∈ corners.I ↔ ⊥ < t := by decide +revert
+
+/-- *All* holds at the top vertex. -/
+theorem mem_corners_A {t : Triangle} : t ∈ corners.A ↔ t = ⊤ := by decide +revert
+
+/-- *Not all* holds below the top vertex. -/
+theorem mem_corners_O {t : Triangle} : t ∈ corners.O ↔ t < ⊤ := by decide +revert
+
+/-- *None* holds at the bottom vertex. -/
+theorem mem_corners_E {t : Triangle} : t ∈ corners.E ↔ t = ⊥ := by decide +revert
+
+end Triangle
 
 /-! ### Square relations -/
 
@@ -130,26 +169,30 @@ theorem inf_IO_eq (h : SquareRelations sq) : sq.I ⊓ sq.O = (sq.A ⊔ sq.E)ᶜ 
   rw [h.contradEI.symm.eq_compl, h.contradAO.symm.eq_compl, compl_sup, inf_comm]
 
 open Function in
-/-- The cells of a square are pairwise disjoint. -/
-theorem pairwise_disjoint_cell (h : SquareRelations sq) : Pairwise (Disjoint on sq.cell) := by
+/-- The vertices of a square are pairwise disjoint. -/
+theorem pairwise_disjoint_triangle (h : SquareRelations sq) :
+    Pairwise (Disjoint on sq.triangle) := by
   have hA : Disjoint sq.A (sq.I ⊓ sq.O) := by
     rw [h.inf_IO_eq]; exact disjoint_compl_right.mono_right (compl_le_compl le_sup_left)
   have hE : Disjoint sq.E (sq.I ⊓ sq.O) := by
     rw [h.inf_IO_eq]; exact disjoint_compl_right.mono_right (compl_le_compl le_sup_right)
   rintro (_ | _ | _) (_ | _ | _) hne <;> first
     | exact absurd rfl hne
-    | simp only [onFun, Square.cell]
-  exacts [hA, h.contraryAE, hA.symm, hE.symm, h.contraryAE.symm, hE]
+    | simp only [onFun, Square.triangle]
+  exacts [hE, h.contraryAE.symm, hE.symm, hA.symm, h.contraryAE, hA]
 
-/-- The cells of a square join to `⊤`. -/
-theorem sup_cell (h : SquareRelations sq) : sq.cell .A ⊔ sq.cell .IO ⊔ sq.cell .E = ⊤ := by
-  simp only [Square.cell]
-  rw [h.inf_IO_eq, sup_right_comm, sup_compl_eq_top]
+/-- The vertices of a square join to `⊤`. -/
+theorem sup_triangle (h : SquareRelations sq) :
+    sq.triangle .E ⊔ sq.triangle .IO ⊔ sq.triangle .A = ⊤ := by
+  simp only [Square.triangle]
+  rw [h.inf_IO_eq]
+  calc sq.E ⊔ (sq.A ⊔ sq.E)ᶜ ⊔ sq.A = (sq.A ⊔ sq.E)ᶜ ⊔ (sq.A ⊔ sq.E) := by ac_rfl
+    _ = ⊤ := compl_sup_eq_top
 
 end SquareRelations
 
-/-- The square on the cells satisfies the relations of the square. -/
-theorem Square.Cell.squareRelations_square : SquareRelations Square.Cell.square :=
+/-- The corners as sets of vertices satisfy the relations of the square. -/
+theorem Triangle.squareRelations_corners : SquareRelations Triangle.corners :=
   .of_disjoint (by decide) (by decide) (by decide)
 
 end Aristotelian
