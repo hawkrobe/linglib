@@ -79,14 +79,14 @@ def GenderDimension.negative : GenderDimension → Gender
   | .masc => .feminine
   | .anim => .inanimate
 
-/-- The sign of a valued binary feature. Neither sign is inherently marked: which one a
+/-- A pole is the sign of a valued binary feature. Neither sign is inherently marked: which one a
 language's arbitrary gender carries is the Set 1 versus Set 2 parameter ([kramer-2015]). -/
 inductive GenderValue.Pole where
   | pos
   | neg
   deriving DecidableEq, Repr, Fintype
 
-/-- A valued gender feature, a dimension with a sign: [+FEM], [−FEM], [+ANIM] and so on. -/
+/-- A valued gender feature is a dimension with a sign, as in [+FEM], [−FEM] and [+ANIM]. -/
 structure GenderValue where
   /-- The dimension the feature is drawn over. -/
   dim : GenderDimension
@@ -100,18 +100,6 @@ def GenderValue.surface (v : GenderValue) : Gender :=
   match v.pole with
   | .pos => v.dim.positive
   | .neg => v.dim.negative
-
-/-- The canonical numbering of the six valued features, the encoding consumers with numeral
-gender slots use. -/
-def GenderValue.toNat : GenderValue → ℕ
-  | ⟨.fem, .pos⟩ => 0
-  | ⟨.fem, .neg⟩ => 1
-  | ⟨.masc, .pos⟩ => 2
-  | ⟨.masc, .neg⟩ => 3
-  | ⟨.anim, .pos⟩ => 4
-  | ⟨.anim, .neg⟩ => 5
-
-theorem GenderValue.toNat_injective : Function.Injective GenderValue.toNat := by decide
 
 /-- A gender-relevant nominalizing head in [kramer-2015]'s calculus: plain n, or n bearing
 an interpretable or uninterpretable [±FEM]. -/
@@ -130,8 +118,8 @@ inductive KramerN where
 
 namespace KramerN
 
-/-- What agreement exponence sees: the sign of the feature, not its interpretability, since
-natural and arbitrary gender receive the same Vocabulary Item; `none` for no feature. -/
+/-- Agreement exponence sees the sign of the feature, not its interpretability, since natural and
+arbitrary gender receive the same Vocabulary Item, and `none` for no feature. -/
 def exponence : KramerN → Option GenderValue.Pole
   | .plain => none
   | .iFem => some .pos
@@ -139,8 +127,8 @@ def exponence : KramerN → Option GenderValue.Pole
   | .iMasc => some .neg
   | .uMasc => some .neg
 
-/-- Each head as a split feature: interpretable heads value both halves, uninterpretable
-heads only the morphological half. -/
+/-- Each head is a split feature: interpretable heads value both halves, uninterpretable heads only
+the morphological half. -/
 def toSplitFeature : KramerN → Gender.SplitFeature GenderValue
   | .plain => ⟨none, none⟩
   | .iFem => ⟨some ⟨.fem, .pos⟩, some ⟨.fem, .pos⟩⟩
@@ -273,8 +261,8 @@ Teop, Algonquian, Lealao Chinantec (Chs 5–6; [adamson-2024] §3.1). MASC:
 Jarawara only ([adamson-2024] §3.2) — Maa's arbitrary masculine is
 negative-polarity FEM, not MASC. -/
 
-/-- The gendered nominal categorizer: n bearing the valued feature `v`
-with interpretability `interp`. -/
+/-- The gendered nominal categorizer is n bearing the valued feature `v` with interpretability
+`interp`. -/
 def Categorizer.Head.gendered (interp : Interpretability)
     (v : GenderValue) : Categorizer.Head where
   categorizer := .n
@@ -452,29 +440,6 @@ def Categorizer.Head.ofKramerN : KramerN → Categorizer.Head
   | .uFem  => .n_uFem
   | .uMasc => .n_uNegFem
 
-/-! ### DM Gender → Minimalist Feature System -/
-
-/-- A DM gender feature as a Minimalist phi-feature. -/
-def GenderFeature.toPhiFeature (gf : GenderFeature) : PhiFeature :=
-  .gender gf.val.toNat
-
-/-- A DM gender feature as a grammatical feature — valued when
-interpretable, unvalued (a probe) when uninterpretable. -/
-def GenderFeature.toGramFeature (gf : GenderFeature) : GramFeature :=
-  match gf.interp with
-  | .i => .valued (.phi gf.toPhiFeature)
-  | .u => .unvalued (.phi gf.toPhiFeature)
-
-/-- Interpretable gender maps to a valued feature. -/
-theorem interpretable_gender_valued (gf : GenderFeature) (h : gf.interp = .i) :
-    gf.toGramFeature = .valued (.phi (.gender gf.val.toNat)) := by
-  simp [GenderFeature.toGramFeature, h, GenderFeature.toPhiFeature]
-
-/-- Uninterpretable gender maps to an unvalued feature. -/
-theorem uninterpretable_gender_unvalued (gf : GenderFeature) (h : gf.interp = .u) :
-    gf.toGramFeature = .unvalued (.phi (.gender gf.val.toNat)) := by
-  simp [GenderFeature.toGramFeature, h, GenderFeature.toPhiFeature]
-
 /-! ### Vocabulary Insertion into a gender system
 
 The bridge from features on n to a language's genders is Vocabulary
@@ -531,14 +496,14 @@ Each pattern is a constraint on the system's comparative labels: which
 label the valued feature realizes and which label the default carries.
 Set 1 and Set 2 share a feature inventory and differ only here. -/
 
-/-- A Set 1 system: [+FEM] realizes the feminine-labeled gender and the
-default is masculine-labeled (Amharic, Spanish; [kramer-2015] Ch 6). -/
+/-- In a Set 1 system [+FEM] realizes the feminine-labeled gender and the default is
+masculine-labeled (Amharic, Spanish; [kramer-2015] Ch 6). -/
 def IsSet1 (label : G → Option Gender) (default : G) (value : GenderValue → G) : Prop :=
   label (value ⟨.fem, .pos⟩) = some .feminine
     ∧ label default = some .masculine
 
-/-- A Set 2 system: [−FEM] realizes the masculine-labeled gender and the
-default is feminine-labeled (Maa; [kramer-2015] §6.3). -/
+/-- In a Set 2 system [−FEM] realizes the masculine-labeled gender and the default is
+feminine-labeled (Maa; [kramer-2015] §6.3). -/
 def IsSet2 (label : G → Option Gender) (default : G) (value : GenderValue → G) : Prop :=
   label (value ⟨.fem, .neg⟩) = some .masculine
     ∧ label default = some .feminine
@@ -551,9 +516,8 @@ def IsThreeGender (label : G → Option Gender) (default : G) (value : GenderVal
     ∧ label (value ⟨.fem, .neg⟩) = some .masculine
     ∧ label default = some .neuter
 
-/-- An animacy system: [+ANIM] realizes the animate-labeled gender and
-the default is inanimate-labeled (Lealao Chinantec, [kramer-2015] §5.3;
-Algonquian, §6.4; Teop, [adamson-2024]). -/
+/-- In an animacy system [+ANIM] realizes the animate-labeled gender and the default is
+inanimate-labeled (Lealao Chinantec, [kramer-2015] §5.3; Algonquian, §6.4; Teop, [adamson-2024]). -/
 def IsAnimacyBased (label : G → Option Gender) (default : G) (value : GenderValue → G) : Prop :=
   label (value ⟨.anim, .pos⟩) = some .animate
     ∧ label default = some .inanimate

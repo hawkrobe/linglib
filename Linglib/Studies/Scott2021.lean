@@ -48,7 +48,7 @@ speaker of Table 4 a personless parasitic pronoun needs a personless true gap (`
 namespace Scott2021
 
 open Swahili Syntax DistributedMorphology
-open Minimalist (FeatureVal PhiFeature GramFeature)
+open Minimalist (FeatureVal)
 
 /-! ### The structure of pronouns (§5.1) -/
 
@@ -71,36 +71,31 @@ def pronoun (person : Option Person) (number : Number) : Tree DPCat String :=
         | some .second => [.node .Pers [.terminal .Pers "2"]]
         | _ => [])]]
 
-/-- The feature a terminal contributes, its person, its number, or the animate gender, encoded
-as gender 1. -/
+/-- A terminal contributes its person, its number, or the animate gender. -/
 def terminalFeature : DPCat → String → Option FeatureVal
-  | .Pers, "1" => some (.phi (.person .first))
-  | .Pers, "2" => some (.phi (.person .second))
-  | .Num, "sg" => some (.phi (.number .singular))
-  | .Num, "pl" => some (.phi (.number .plural))
-  | .n, "anim" => some (.phi (.gender 1))
+  | .Pers, "1" => some ⟨.person, .first⟩
+  | .Pers, "2" => some ⟨.person, .second⟩
+  | .Num, "sg" => some ⟨.number, .singular⟩
+  | .Num, "pl" => some ⟨.number, .plural⟩
+  | .n, "anim" => some ⟨.gender, .animate⟩
   | _, _ => none
 
 /-- The features at a tree's terminals, left to right. -/
-def featureList (t : Tree DPCat String) : List GramFeature :=
-  t.terminals.filterMap fun (c, w) ↦ (terminalFeature c w).map .valued
+def featureList (t : Tree DPCat String) : List FeatureVal :=
+  t.terminals.filterMap fun (c, w) ↦ terminalFeature c w
 
 /-! ### Vocabulary Insertion (§3.4) -/
 
 /-- The Vocabulary Items of (28), the person-specified animate entries and the personless
 animate defaults *-ye* and *-o*. -/
-def resumptiveVocab : List (VocabularyItem GramFeature String) :=
-  let entry (fs : List GramFeature) (e : String) : VocabularyItem GramFeature String := ⟨fs, e⟩
-  [ entry [.valued (.phi (.person .first)), .valued (.phi (.gender 1)),
-      .valued (.phi (.number .singular))] "mi",
-    entry [.valued (.phi (.person .first)), .valued (.phi (.gender 1)),
-      .valued (.phi (.number .plural))] "si",
-    entry [.valued (.phi (.person .second)), .valued (.phi (.gender 1)),
-      .valued (.phi (.number .singular))] "we",
-    entry [.valued (.phi (.person .second)), .valued (.phi (.gender 1)),
-      .valued (.phi (.number .plural))] "nyi",
-    entry [.valued (.phi (.gender 1)), .valued (.phi (.number .singular))] "ye",
-    entry [.valued (.phi (.gender 1)), .valued (.phi (.number .plural))] "o" ]
+def resumptiveVocab : List (VocabularyItem FeatureVal String) :=
+  let entry (fs : List FeatureVal) (e : String) : VocabularyItem FeatureVal String := ⟨fs, e⟩
+  [ entry [⟨.person, .first⟩, ⟨.gender, .animate⟩, ⟨.number, .singular⟩] "mi",
+    entry [⟨.person, .first⟩, ⟨.gender, .animate⟩, ⟨.number, .plural⟩] "si",
+    entry [⟨.person, .second⟩, ⟨.gender, .animate⟩, ⟨.number, .singular⟩] "we",
+    entry [⟨.person, .second⟩, ⟨.gender, .animate⟩, ⟨.number, .plural⟩] "nyi",
+    entry [⟨.gender, .animate⟩, ⟨.number, .singular⟩] "ye",
+    entry [⟨.gender, .animate⟩, ⟨.number, .plural⟩] "o" ]
 
 /-- The exponent of a pronoun structure, by the Subset Principle over (28). -/
 def spellout (t : Tree DPCat String) : Option String :=
@@ -166,9 +161,9 @@ theorem maxElide_persP :
 theorem person_entails_number :
     ∀ (c : DPCat) (n : Number),
       (featureList (deleteLayer c (pronoun (some .first) n))).any
-          (fun f ↦ match f with | .valued (.phi (.person _)) => true | _ => false) = true →
+          (fun f ↦ decide (f.1 = .person)) = true →
         (featureList (deleteLayer c (pronoun (some .first) n))).any
-          (fun f ↦ match f with | .valued (.phi (.number _)) => true | _ => false) = true := by
+          (fun f ↦ decide (f.1 = .number)) = true := by
   decide
 
 /-! ### Chain reduction (§5.2–5.3) -/
