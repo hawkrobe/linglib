@@ -2,42 +2,52 @@ module
 
 public import Linglib.Syntax.WordOrder
 public import Linglib.Syntax.Tree.Cat
-public import Mathlib.Data.Finset.Basic
+public import Linglib.Data.Examples.BrueningAlKhalaf2020
+public import Mathlib.Data.Finset.Insert
+public import Mathlib.Data.Fintype.Option
+public import Mathlib.Data.List.Sections
 
 /-!
 # Bruening and Al Khalaf 2020: category mismatches in coordination
 
-Coordination is supposed to conjoin like with like, and the counterexamples fall into two kinds.
-Predicates and modifiers of different categories coordinate freely but never violate a selectional
-restriction — *Danny became a political radical and very antisocial* is fine, *and under suspicion*
-is not — because what is selected there is a supercategory that several categories belong to.
-Arguments and prenominal modifiers, by contrast, do violate selection, and only in two
-configurations: a clause coordinated with a noun phrase where clauses are banned, and one of the
-non-*ly* adverbs coordinated with an adjective phrase prenominally. Those are exactly the two that
-displacement and ellipsis also permit, so the file derives the pair from distribution rather than
-listing it.
-
-The paper's mechanism is that the conjunct which has to satisfy the selectional requirement is the
-one linearly closest to the selecting head, against the rival accounts on which it is the
-structurally prominent first conjunct. The two are the same rule applied to different choices of
-conjunct, and they coincide exactly where the head precedes the coordination. English subjects and
-verb-final complements are where they part company, and the judgements there — a clause must come
-first when the coordination precedes its verb — are the linear ones.
+Bruening and Al Khalaf argue that coordinated arguments must match in category and may violate
+selection in two configurations only, a clause beside a noun phrase where only noun phrases are
+selected and a non-*ly* adverb beside an adjective before a noun. The violating conjunct is never
+the one next to the selector, and the two violations are those ellipsis and displacement permit.
+They derive the clausal case from a null N that makes a noun phrase of a clause but bears none of
+the semantic selectional features (S-features) a selector checks, with c-selection checked
+against every conjunct and S-features checked once, as soon as possible, in a structure built from
+left to right. The adverbial case rests on a silent Adv head that ellipsis or a partial copy can
+leave out. The paper's examples are the rows of `Data/Examples/BrueningAlKhalaf2020`.
 
 ## Main definitions
 
-* `FeaturePercolation`, `selectedSlot` — which conjunct must satisfy selection, on each account
-* `predictOrder` — the conjunct order each account predicts at a position
-* `coordExtension` — the categories a category can also appear as, outside coordination
-* `Supercategory` — the predicative and modifier supercategories over `Cat`
+* `leftToRight`: the conjunct a selector checks its S-features against.
+* `Conjunct`: a phrase as it enters a coordination, itself or a clause under the null N.
+* `Licensed`, `Satisfies`, `Admits`: the conditions on coordinated arguments and predicates.
+* `NominalCoordination`, `Displaced`: an adverb's two escapes from the ban on modifying a noun.
 
 ## Main results
 
-* `agree_iff_head_precedes` — the accounts coincide exactly where the head precedes the
-  coordination, and diverge everywhere else
-* `english_subject_diverges`, `ov_complement_diverges` — the two configurations that adjudicate
-* `coordExtension_exhaustive`, `extension_to_violation` — only clauses and adverb phrases extend,
-  which is where the two permitted violations come from
+* `leftToRight_headInitial`, `leftToRight_headFinal`: the checked conjunct is the first when the
+  selector precedes and the last when it follows.
+* `leftToRight_eq_head?_iff`: the accounts on which the first conjunct is prominent agree with this
+  one exactly where the selector precedes.
+* `mem_cats_of_mem_leftToRight`: the phrase next to the selector is selected in its own category.
+* `mem_cats_or_of_admits`: the only violation is a clause where a noun phrase is selected.
+* `exists_admits_iff_admits_elided`: a phrase may violate selection in a coordination exactly when
+  ellipsis of the selector may strand it.
+* `nominalCoordination_iff`, `displaced_iff`: a non-*ly* adverb may modify a noun when coordinated
+  before an adjective or displaced.
+* `argument_rows` and its siblings: the model's verdict on each example is its judgment.
+
+## Implementation notes
+
+* Coordinated predicates bear the supercategory Pred of Sag, Gazdar, Wasow and Weisler, which is
+  all coordination compares, so they need only `Satisfies`. The coordinator is left implicit.
+* Argument–modifier coordination (§2.1), the displacement of clauses (§§4.1, 4.5), and the
+  persisting S-features of speakers who reject (3a) (fn. 30) are not formalized. The
+  questionable (69) counts as excluded.
 
 ## References
 
@@ -48,195 +58,333 @@ first when the coordination precedes its verb — are the linear ones.
 -/
 
 @[expose] public section
+
 namespace BrueningAlKhalaf2020
 
 open Syntax (Cat)
 open Syntax.Cat (NP VP AdjP AdvP PP)
-open WordOrder
 
-/-! ### Shared types for selection-violating coordination -/
+variable {α β : Type*}
 
-/-- Preferred order of conjuncts in DP-CP selection-violating coordination. -/
-inductive ConjunctOrder where
-  /-- DP conjunct precedes CP conjunct. -/
-  | dpFirst
-  /-- CP conjunct precedes DP conjunct. -/
-  | cpFirst
-  deriving DecidableEq, Repr
+/-! ### The order of checking -/
 
-/-! ### Which conjunct must satisfy selection -/
+/-- `leftToRight d cs` is the conjunct of `cs` that a selector on side `d` checks its S-features
+against when the structure is built from left to right (§4.3). The coordination stacks its
+conjuncts' features by recency (92) and checking takes place as soon as it can, so a selector that
+precedes it checks the stack of the first conjunct alone ((87), (90)) and one that follows it the
+finished stack ((92)). -/
+def leftToRight : HeadDirection → List α → Option α
+  | .headInitial, cs => (cs.take 1).reverse.head?
+  | .headFinal, cs => cs.reverse.head?
 
-/-- A conjunct's position in the coordination. -/
-inductive ConjunctSlot where
-  /-- The specifier conjunct. -/
-  | first
-  /-- The complement conjunct. -/
-  | last
-  deriving DecidableEq, Repr
+/-- A selector that precedes the coordination checks the first conjunct. -/
+@[simp] theorem leftToRight_headInitial (cs : List α) :
+    leftToRight .headInitial cs = cs.head? := by
+  cases cs <;> simp [leftToRight]
 
-/-- Which conjunct's features reach the selecting head. The accounts differ in this alone. -/
-inductive FeaturePercolation where
-  /-- The features of the structurally prominent conjunct, whatever the surface order
-      ([munn-1993], [zhang-2010]). -/
-  | structural
-  /-- The features of the conjunct linearly closest to the selecting head. -/
-  | linear
-  deriving DecidableEq, Repr
+/-- A selector that follows the coordination checks the last conjunct. -/
+@[simp] theorem leftToRight_headFinal (cs : List α) :
+    leftToRight .headFinal cs = cs.getLast? := by
+  simp [leftToRight, List.head?_reverse]
 
-/-- The conjunct adjacent to the selecting head is the first when the head precedes the
-coordination and the last when it follows it. -/
-def adjacent : HeadDirection → ConjunctSlot
-  | .headInitial => .first
-  | .headFinal => .last
+theorem mem_of_mem_leftToRight {d : HeadDirection} {cs : List α} {x : α}
+    (h : x ∈ leftToRight d cs) : x ∈ cs := by
+  cases d
+  · exact List.mem_of_mem_head? (by simpa using h)
+  · exact List.mem_of_mem_getLast? (by simpa using h)
 
-/-- The conjunct that has to satisfy the head's selectional requirement is the adjacent one on
-the linear account and the prominent one, always the first, on the structural account. -/
-def selectedSlot : FeaturePercolation → HeadDirection → ConjunctSlot
-  | .linear, d => adjacent d
-  | .structural, _ => .first
+/-- The accounts on which the first conjunct is structurally prominent ([munn-1993],
+[zhang-2010]) check it whatever the order. They agree with the left-to-right derivation on every
+coordination exactly where the selector precedes it (§3.1). -/
+theorem leftToRight_eq_head?_iff [Nontrivial α] {d : HeadDirection} :
+    (∀ cs : List α, leftToRight d cs = cs.head?) ↔ d = .headInitial := by
+  refine ⟨fun h ↦ ?_, fun h cs ↦ by simp [h]⟩
+  cases d with
+  | headInitial => rfl
+  | headFinal =>
+    obtain ⟨a, b, hab⟩ := exists_pair_ne α
+    simpa [eq_comm, hab] using h [a, b]
 
-/-- The order predicted for a coordination of a selected noun phrase with a clause, the noun
-phrase taking the selected slot and the clause the other. -/
-def predictOrder (fp : FeaturePercolation) (d : HeadDirection) : ConjunctOrder :=
-  match selectedSlot fp d with
-  | .first => .dpFirst
-  | .last => .cpFirst
+private theorem rel_head? {R : α → β → Prop} :
+    ∀ {l₁ : List α} {l₂ : List β}, List.Forall₂ R l₁ l₂ → Option.Rel R l₁.head? l₂.head?
+  | _, _, .nil => .none
+  | _, _, .cons h _ => .some h
 
-/-- **The accounts coincide exactly where the head precedes the coordination**, since only there is
-the adjacent conjunct the prominent one. Everywhere else — an English subject, a verb-final
-complement, a postpositional complement — they make opposite predictions. -/
-theorem agree_iff_head_precedes (d : HeadDirection) :
-    predictOrder .structural d = predictOrder .linear d ↔ d = .headInitial := by
-  cases d <;> simp [predictOrder, selectedSlot, adjacent]
+/-- Checking picks out corresponding conjuncts of two coordinations of the same shape. -/
+theorem rel_leftToRight {R : α → β → Prop} {l₁ : List α} {l₂ : List β}
+    (h : List.Forall₂ R l₁ l₂) (d : HeadDirection) :
+    Option.Rel R (leftToRight d l₁) (leftToRight d l₂) := by
+  cases d
+  · simpa using rel_head? h
+  · exact rel_head? (List.forall₂_reverse_iff.2 h)
 
-/-! ### Permitted selection violations -/
+/-! ### Conjuncts -/
 
-/-- The two category mismatches a coordination may use to violate selection. Both are mismatches
-that displacement and ellipsis also permit: a clause has the distribution of a noun phrase under
-topicalization and pseudoclefting, and a non-*ly* adverb has that of an adjective prenominally. -/
-inductive SelectionViolationType where
-  /-- CP appearing in an NP-selecting position. -/
-  | cpAsNp
-  /-- Non-*ly* adverb appearing in an adjective position. -/
-  | advAsAdj
-  deriving DecidableEq, Repr
+/-- A phrase enters a coordination as a phrase of its own category or, if it is a clause, as the
+complement of the null N (78), a noun phrase whose semantically empty head bears no S-features
+(§4.2). The null N has category N and default φ-features, which enter number resolution ((93b)). -/
+inductive Conjunct where
+  /-- A phrase of category `c`, bearing S-features. -/
+  | phrase (c : Cat)
+  /-- A clause under the null N. -/
+  | nullN
+  deriving DecidableEq
 
-/-! ### The configurations that adjudicate -/
+namespace Conjunct
 
-/-- English complements follow the verb, its clause order being subject–verb–object. -/
-theorem english_complement_headInitial :
-    Arrangement.svo.headDirection .verb .object = .headInitial := by decide
+/-- `x.cat` is the category the conjunct `x` projects. -/
+def cat : Conjunct → Cat
+  | phrase c => c
+  | nullN => NP
 
-/-- With the head preceding, both accounts predict the selected noun phrase first, and that is what
-is found: *you can depend on my assistant and that he will be on time* ((3a), from
-[sag-etal-1985]). -/
-theorem english_complement_agree :
-    predictOrder .structural .headInitial = predictOrder .linear .headInitial :=
-  (agree_iff_head_precedes .headInitial).mpr rfl
+/-- A conjunct bears S-features unless its head is the null N, which is semantically empty
+(fn. 27). -/
+def Contentful : Conjunct → Prop
+  | phrase _ => True
+  | nullN => False
 
-/-- An English subject precedes the verb even though complements follow it, so the accounts part
-company there. The judgement is the linear one: *that he was late all the time and his constant
-harassment of coworkers resulted in his being dismissed* is good and the reverse order is not
-((41)). The same holds of a complement of a postposition, which likewise precedes its head
-(*that she got third place and her injury in the final round notwithstanding*, (43)). -/
-theorem english_subject_diverges :
-    predictOrder .structural .headFinal ≠ predictOrder .linear .headFinal := by
-  simpa using (agree_iff_head_precedes .headFinal).not.mpr (by simp)
+instance : DecidablePred Contentful := fun x ↦ by cases x <;> unfold Contentful <;> infer_instance
 
-/-- A verb-final language puts every complement before its verb, so the accounts diverge there
-too — the cross-linguistic version of the subject test. -/
-theorem ov_complement_diverges :
-    predictOrder .structural (Arrangement.sov.headDirection .verb .object)
-      ≠ predictOrder .linear (Arrangement.sov.headDirection .verb .object) := by
+/-- `ofCat c` lists the conjuncts a phrase of category `c` can be, itself and, for a clause, the
+noun phrase the null N makes of it. -/
+def ofCat : Cat → List Conjunct
+  | .CP => [phrase .CP, nullN]
+  | c => [phrase c]
+
+theorem mem_ofCat {x : Conjunct} {c : Cat} : x ∈ ofCat c ↔ x = phrase c ∨ c = .CP ∧ x = nullN := by
+  cases c <;> simp [ofCat]
+
+theorem eq_phrase_of_mem_ofCat {x : Conjunct} {c : Cat} (h : x ∈ ofCat c) (hx : x.Contentful) :
+    x = phrase c := by
+  rcases mem_ofCat.1 h with h | ⟨-, rfl⟩
+  exacts [h, hx.elim]
+
+end Conjunct
+
+/-! ### Licensing -/
+
+open Conjunct
+
+variable {check : List Conjunct → Option Conjunct} {cats : Finset Cat} {d : HeadDirection}
+  {ps : List Cat} {p : Cat}
+
+/-- Coordination combines phrases of one category only, since a coordinator selects a category
+and projects it (82). -/
+def Coordinable (cs : List Conjunct) : Prop :=
+  ∀ x ∈ cs, ∀ y ∈ cs, x.cat = y.cat
+
+/-- A coordination satisfies a selector that c-selects `cats` and checks its S-features against
+`check cs` when every conjunct is of a c-selected category, c-selection persisting and being
+checked against each (85), and the conjunct `check cs` bears S-features (88). -/
+def Satisfies (check : List Conjunct → Option Conjunct) (cats : Finset Cat)
+    (cs : List Conjunct) : Prop :=
+  (∀ x ∈ cs, x.cat ∈ cats) ∧ ∀ x ∈ check cs, x.Contentful
+
+/-- A coordinated argument is licensed when its conjuncts share a category and satisfy the
+selector. -/
+def Licensed (check : List Conjunct → Option Conjunct) (cats : Finset Cat)
+    (cs : List Conjunct) : Prop :=
+  Coordinable cs ∧ Satisfies check cats cs
+
+instance : DecidablePred Coordinable := fun _ ↦ by unfold Coordinable; infer_instance
+
+instance : DecidablePred (Satisfies check cats) := fun _ ↦ by unfold Satisfies; infer_instance
+
+instance : DecidablePred (Licensed check cats) := fun _ ↦ by unfold Licensed; infer_instance
+
+/-- A coordination of phrases of the categories `ps` is admitted under `L` when some choice of
+conjuncts for them satisfies `L`. -/
+def Admits (L : List Conjunct → Prop) (ps : List Cat) : Prop :=
+  ∃ cs ∈ (ps.map ofCat).sections, L cs
+
+instance {L : List Conjunct → Prop} [DecidablePred L] : Decidable (Admits L ps) := by
+  unfold Admits; infer_instance
+
+theorem Admits.mono {L L' : List Conjunct → Prop} (h : ∀ cs, L cs → L' cs) (hL : Admits L ps) :
+    Admits L' ps :=
+  let ⟨cs, hcs, hL⟩ := hL; ⟨cs, hcs, h cs hL⟩
+
+theorem Admits.satisfies (h : Admits (Licensed check cats) ps) : Admits (Satisfies check cats) ps :=
+  h.mono fun _ ↦ And.right
+
+theorem mem_sections_map_ofCat {cs : List Conjunct} :
+    cs ∈ (ps.map ofCat).sections ↔ List.Forall₂ (fun x c ↦ x ∈ ofCat c) cs ps := by
+  rw [List.mem_sections, List.forall₂_map_right_iff]
+
+private theorem exists_mem_of_rel_some {R : α → β → Prop} {o : Option α} {b : β}
+    (h : Option.Rel R o (some b)) : ∃ a ∈ o, R a b := by
+  cases h; exact ⟨_, rfl, ‹_›⟩
+
+private theorem exists_mem_of_forall₂ {R : α → β → Prop} :
+    ∀ {l₁ : List α} {l₂ : List β}, List.Forall₂ R l₁ l₂ → ∀ b ∈ l₂, ∃ a ∈ l₁, R a b
+  | _, _, .nil, _, hb => absurd hb List.not_mem_nil
+  | _, _, .cons hab h, b, hb => by
+    rcases List.mem_cons.1 hb with rfl | hb
+    · exact ⟨_, List.mem_cons_self, hab⟩
+    · obtain ⟨a, ha, hR⟩ := exists_mem_of_forall₂ h b hb
+      exact ⟨a, List.mem_cons_of_mem _ ha, hR⟩
+
+/-- **The only selectional violation is a clause where a noun phrase is selected** (§3.2). A
+phrase of a category the selector does not c-select can only be a clause under the null N,
+whichever conjunct the S-features are checked against. -/
+theorem mem_cats_or_of_admits (h : Admits (Satisfies check cats) ps) :
+    ∀ p ∈ ps, p ∈ cats ∨ p = .CP ∧ NP ∈ cats := by
+  obtain ⟨cs, hcs, hsel, -⟩ := h
+  intro p hp
+  obtain ⟨x, hx, hxp⟩ := exists_mem_of_forall₂ (mem_sections_map_ofCat.1 hcs) p hp
+  rcases mem_ofCat.1 hxp with rfl | ⟨rfl, rfl⟩
+  · exact .inl (hsel _ hx)
+  · exact .inr ⟨rfl, hsel _ hx⟩
+
+/-- **The phrase next to the selector is selected in its own category** (§3.1). It is the
+conjunct the S-features are checked against, so it cannot be a clause under the null N. -/
+theorem mem_cats_of_mem_leftToRight (h : Admits (Satisfies (leftToRight d) cats) ps) :
+    ∀ p ∈ leftToRight d ps, p ∈ cats := by
+  obtain ⟨cs, hcs, hsel, hS⟩ := h
+  intro p hp
+  have hrel := rel_leftToRight (mem_sections_map_ofCat.1 hcs) d
+  rw [Option.mem_def.1 hp] at hrel
+  obtain ⟨x, hx, hxp⟩ := exists_mem_of_rel_some hrel
+  have := hsel x (mem_of_mem_leftToRight hx)
+  rwa [eq_phrase_of_mem_ofCat hxp (hS x hx)] at this
+
+/-- **Coordination permits the violation ellipsis does** (§3.3). A phrase of a category the
+selector does not c-select can be coordinated with another just when it can be stranded by
+ellipsis of the selector, which deletes the selector's S-features at PF along with it, so that
+none are checked ((80)). -/
+theorem exists_admits_iff_admits_elided (hp : p ∉ cats) :
+    (∃ q, Admits (Licensed (leftToRight d) cats) [q, p] ∨
+        Admits (Licensed (leftToRight d) cats) [p, q]) ↔
+      Admits (Licensed (fun _ ↦ none) cats) [p] := by
+  constructor
+  · rintro ⟨q, h | h⟩ <;>
+    · rcases mem_cats_or_of_admits h.satisfies p (by simp) with h | ⟨rfl, hNP⟩
+      · exact absurd h hp
+      · exact ⟨[nullN], by simp [ofCat], by simp [Licensed, Coordinable, Satisfies, hNP, cat]⟩
+  · intro h
+    rcases mem_cats_or_of_admits h.satisfies p (by simp) with h | ⟨rfl, hNP⟩
+    · exact absurd h hp
+    refine ⟨NP, ?_⟩
+    cases d
+    · exact .inl ⟨[phrase NP, nullN], by simp [ofCat],
+        by simp [Licensed, Coordinable, Satisfies, cat, hNP, Contentful]⟩
+    · exact .inr ⟨[nullN, phrase NP], by simp [ofCat],
+        by simp [Licensed, Coordinable, Satisfies, cat, hNP, Contentful]⟩
+
+/-! ### Adverbs -/
+
+/-- The head that makes an adverb of an adjective (97) is silent in *once*, *soon* and *now* and
+the suffix *-ly* elsewhere. Both are semantically empty (98). -/
+inductive AdvHead where
+  /-- The silent head of *once*, *soon* and *now*. -/
+  | silent
+  /-- The suffix *-ly*. -/
+  | ly
+  deriving DecidableEq, Fintype
+
+/-- When PF deletes the material after a modifier, by ellipsis of the noun in the first of two
+coordinated N′s (103) or in the lower copy of a displaced modifier (100), a silent Adv head, empty
+in sound and meaning, goes with it, and *-ly* stays. -/
+def AdvHead.afterDeletion : AdvHead → Option AdvHead
+  | silent => none
+  | ly => some ly
+
+/-- Two prenominal modifiers, each an adjective (`none`) or an adverb with its head, can be
+coordinated as N′s with the first noun elided (102) when the PF ban on adverbs modifying N′ (99)
+finds no Adv head left on either. The ellipsis takes a silent head on the first along with the
+noun (103). -/
+def NominalCoordination (m₁ m₂ : Option AdvHead) : Prop :=
+  m₁.bind AdvHead.afterDeletion = none ∧ m₂ = none
+
+/-- A displaced prenominal modifier, adjoined to the noun phrase, escapes the ban on adverbs
+modifying N′ when its lower copy, adjoined to N′, can leave out its Adv head (100). -/
+def Displaced (m : Option AdvHead) : Prop :=
+  m.bind AdvHead.afterDeletion = none
+
+instance (m₁ m₂ : Option AdvHead) : Decidable (NominalCoordination m₁ m₂) := by
+  unfold NominalCoordination; infer_instance
+
+instance : DecidablePred Displaced := fun _ ↦ by unfold Displaced; infer_instance
+
+/-- A non-*ly* adverb can be coordinated with an adjective before a noun, if the adjective comes
+last; an adverb in *-ly* cannot (p. 15). -/
+theorem nominalCoordination_iff {m₁ m₂ : Option AdvHead} :
+    NominalCoordination m₁ m₂ ↔ m₁ ≠ some .ly ∧ m₂ = none := by
+  rcases m₁ with _ | _ | _ <;> simp [NominalCoordination, AdvHead.afterDeletion]
+
+/-- The adverbs that may be displaced to modify a noun are the non-*ly* ones ((56), (57)). -/
+theorem displaced_iff {m : Option AdvHead} : Displaced m ↔ m ≠ some .ly := by
+  rcases m with _ | _ | _ <;> simp [Displaced, AdvHead.afterDeletion]
+
+/-! ### The paper's examples -/
+
+open Examples
+
+/-- `catOf? s` is the category the paper's label `s` names. -/
+def catOf? (s : String) : Option Cat :=
+  [("NP", NP), ("AP", AdjP), ("PP", PP), ("CP", Cat.CP), ("VP", VP)].lookup s
+
+/-- `phrases? e` lists the categories of a row's conjuncts, in order. -/
+def phrases? (e : Datum) : Option (List Cat) := (e.features "conjunct").mapM catOf?
+
+/-- `selects? e` is the set of categories a row's selector c-selects. -/
+def selects? (e : Datum) : Option (Finset Cat) :=
+  ((e.features "selects").mapM catOf?).map List.toFinset
+
+/-- `side? e` says whether a row's selector precedes or follows what it selects. -/
+def side? (e : Datum) : Option HeadDirection :=
+  e.parse? "selector" [("precedes", .headInitial), ("follows", .headFinal)]
+
+/-- `modifiers? e` lists a row's prenominal modifiers, in order. -/
+def modifiers? (e : Datum) : Option (List (Option AdvHead)) :=
+  (e.features "modifier").mapM
+    ([("AP", none), ("non-ly AdvP", some .silent), ("-ly AdvP", some .ly)].lookup ·)
+
+/-- Every row is one of the five constructions below. -/
+theorem construction_rows : ∀ e ∈ Examples.all, e.feature? "construction" ∈ [some "predicate",
+    some "argument", some "ellipsis", some "prenominal", some "displacement"] := by
   decide
 
-/-! ### Supercategories -/
+/-- The model decides the coordinated predicates, each of which must meet the selector's
+restrictions ((20)–(22)). -/
+theorem predicate_rows : ∀ e ∈ Examples.all, e.feature? "construction" = some "predicate" →
+    ∃ ps ∈ phrases? e, ∃ cats ∈ selects? e, ∃ d ∈ side? e,
+      (Admits (Satisfies (leftToRight d) cats) ps ↔ e.judgment = .acceptable) := by
+  decide
 
-/-- The supercategories a position may select, under which apparently mismatched predicates and
-modifiers turn out to be alike. Selection is finer-grained than the supercategory coordination
-cares about: *become* selects predicates but admits only noun and adjective phrases, so
-*became a political radical and under suspicion* is still out ((1)). -/
-inductive Supercategory where
-  /-- Predicative: NP, VP, AP, PP can all serve as predicates. -/
-  | pred
-  /-- Modifier: AP, AdvP can both serve as (prenominal) modifiers. -/
-  | mod
-  deriving DecidableEq, Repr
+/-- The model decides the arguments, alone or coordinated, before or after their selector
+((2)–(3), (39)–(43), (49)–(50), (64), (68)–(69), (77)). -/
+theorem argument_rows : ∀ e ∈ Examples.all, e.feature? "construction" = some "argument" →
+    ∃ ps ∈ phrases? e, ∃ cats ∈ selects? e, ∃ d ∈ side? e,
+      (Admits (Licensed (leftToRight d) cats) ps ↔ e.judgment = .acceptable) := by
+  decide
 
-/-- Categories belonging to each supercategory, grounded in the `Cat` category
-    system from `Syntax`. `Pred` is the full predicative supercategory (B&AK's
-    (84): `Pred:{NP,AP}` and friends); `Mod` is restricted here to the
-    prenominal modifier categories. The inclusion order on `Finset Cat` gives
-    the lattice structure. -/
-def Supercategory.cats : Supercategory → Finset Cat
-  | .pred => {NP, VP, AdjP, PP}
-  | .mod  => {AdjP, AdvP}
+/-- The accounts that make the first conjunct prominent get every coordination before its
+selector backwards ((41)–(43)). -/
+theorem argument_rows_head? : ∀ e ∈ Examples.all, e.feature? "construction" = some "argument" →
+    side? e = some .headFinal → 2 ≤ (e.features "conjunct").length →
+    ∃ ps ∈ phrases? e, ∃ cats ∈ selects? e,
+      (Admits (Licensed List.head? cats) ps ↔ e.judgment ≠ .acceptable) := by
+  decide
 
-/-- The two supercategories overlap in the adjective phrase alone, which is why an adjective is
-the category that can be coordinated both with a predicate and with a modifier. -/
-theorem supercats_overlap :
-    Supercategory.cats .pred ∩ Supercategory.cats .mod = {AdjP} := by decide
+/-- The model decides the fragment answers and split questions, which strand a phrase by
+ellipsis of its selector ((54)–(55), (60), (62), (76)). -/
+theorem ellipsis_rows : ∀ e ∈ Examples.all, e.feature? "construction" = some "ellipsis" →
+    ∃ ps ∈ phrases? e, ∃ cats ∈ selects? e,
+      (Admits (Licensed (fun _ ↦ none) cats) ps ↔ e.judgment = .acceptable) := by
+  decide
 
-/-- Extended distributional compatibility for coordination (§3.2). Categories
-    that `c` can appear as in non-coordination contexts (displacement, ellipsis),
-    beyond its native category.
+/-- The model decides the prenominal modifiers, alone or coordinated ((44), p. 15,
+(56a), (57a)). -/
+theorem prenominal_rows : ∀ e ∈ Examples.all, e.feature? "construction" = some "prenominal" →
+    ∃ ms ∈ modifiers? e,
+      ((ms = [none] ∨ ∃ m₁ m₂, ms = [m₁, m₂] ∧ NominalCoordination m₁ m₂) ↔
+        e.judgment = .acceptable) := by
+  decide
 
-    - CP → NP: CPs can be topicalized, pseudoclefted, and pro-form replaced —
-      NP-like distributional properties
-    - AdvP → AdjP: non-*ly* adverbs appear prenominally — AdjP-like
-      distributional properties (only with a non-*ly* adverb conjoined to an
-      AP in prenominal position, AP last; this coarse map drops those
-      conditions)
-
-    All other categories have no extended compatibility. Combined with
-    `Supercategory.cats`, this derives B&AK's "exactly two permitted violations"
-    (§3.2). -/
-def coordExtension : Cat → Finset Cat
-  | .CP        => {NP}
-  | .proj .ADV => {AdjP}
-  | _          => ∅
-
-/-- CP extends to NP positions. -/
-theorem cp_extends_np : NP ∈ coordExtension .CP :=
-  Finset.mem_singleton.mpr rfl
-
-/-- AdvP extends to AdjP positions. -/
-theorem advp_extends_adjp : AdjP ∈ coordExtension (.proj .ADV) :=
-  Finset.mem_singleton.mpr rfl
-
-/-- Only CP and AdvP have non-empty coordination extensions. This structurally
-    derives B&AK's "exactly two permitted violations" (§3.2) from distributional
-    profiles rather than stipulating them as a list. -/
-theorem coordExtension_exhaustive (c : Cat) :
-    coordExtension c ≠ ∅ → c = .CP ∨ c = AdvP := by
-  cases c with
-  | CP => intro _; exact Or.inl rfl
-  | S => intro h; exact absurd rfl h
-  | head _ => intro h; exact absurd rfl h
-  | proj u =>
-    cases u <;> intro h <;>
-      first | exact Or.inr rfl | exact absurd rfl h
-
-/-- Map each violation type to its source and target categories. The source
-    category can appear in a position selecting the target via coordination. -/
-def SelectionViolationType.cats : SelectionViolationType → Cat × Cat
-  | .cpAsNp   => (.CP, NP)
-  | .advAsAdj => (AdvP, AdjP)
-
-/-- Each permitted violation corresponds to a non-empty `coordExtension`: the
-    target category appears in the extension of the source. -/
-theorem violation_from_extension (v : SelectionViolationType) :
-    v.cats.2 ∈ coordExtension v.cats.1 := by
-  cases v <;> exact Finset.mem_singleton.mpr rfl
-
-/-- Every non-empty `coordExtension` corresponds to a permitted violation. This,
-    together with `violation_from_extension`, establishes a bijection between
-    `SelectionViolationType` and non-empty extensions, proving the enumeration
-    is not stipulated but derived from distributional profiles. -/
-theorem extension_to_violation (c : Cat) (h : coordExtension c ≠ ∅) :
-    ∃ v : SelectionViolationType, v.cats.1 = c := by
-  rcases coordExtension_exhaustive c h with rfl | rfl
-  · exact ⟨.cpAsNp, rfl⟩
-  · exact ⟨.advAsAdj, rfl⟩
+/-- The model decides the displaced prenominal modifiers ((56b)–(57c)). -/
+theorem displacement_rows : ∀ e ∈ Examples.all, e.feature? "construction" = some "displacement" →
+    ∃ ms ∈ modifiers? e, ((∃ m, ms = [m] ∧ Displaced m) ↔ e.judgment = .acceptable) := by
+  decide
 
 end BrueningAlKhalaf2020
