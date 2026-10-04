@@ -87,7 +87,7 @@ namespace ProbabilityTheory.GaltonWatson
 
 variable {ι : Type*} [MeasurableSpace ι]
 
-/-- Partial family trees: a leaf `Sum.inl i` is a hole of type `i`, yet to be expanded, and a
+/-- In a partial family tree a leaf `Sum.inl i` is a hole of type `i`, yet to be expanded, and a
 node `Sum.inr i` is an individual of type `i` whose offspring is known. -/
 abbrev PartialTree (ι : Type*) := RoseTree (ι ⊕ ι)
 
@@ -182,8 +182,8 @@ section Generation
 
 variable (ξ : Kernel ι (List ι))
 
-/-- One synchronous generation: every hole draws its offspring and becomes a node whose children
-are fresh holes. -/
+/-- In one synchronous generation every hole draws its offspring and becomes a node whose
+children are fresh holes. -/
 noncomputable def generation : Kernel (PartialTree ι) (PartialTree ι) :=
   ⟨fold fun s μs => match s with
     | .inl i => (ξ i).map fun js => node (.inr i) (js.map hole)
@@ -253,8 +253,8 @@ theorem fillList_comp_generationList {κ : Kernel ι (RoseTree ι)} (ss : List (
 
 variable [MeasurableSingletonClass ι]
 
-/-- One generation from a type `i`: a single hole of type `i` draws its offspring, and each type
-among them grows a family tree with law `κ`. -/
+/-- In one generation from a type `i`, a single hole of type `i` draws its offspring, and each
+type among them grows a family tree with law `κ`. -/
 noncomputable def expand (κ : Kernel ι (RoseTree ι)) : Kernel ι (RoseTree ι) :=
   (fill κ ∘ₖ generation ξ).comap hole .of_discrete
 
@@ -299,13 +299,13 @@ section Weight
 
 variable (ξ : Kernel ι (List ι))
 
-/-- The probability of a finite family tree: the product over its nodes of the offspring
+/-- The probability of a finite family tree is the product over its nodes of the offspring
 probability of the list of types below that node. -/
-noncomputable def weight (t : RoseTree ι) : ℝ≥0∞ := (t.offspring.map fun p => ξ p.1 {p.2}).prod
+noncomputable def weight (t : RoseTree ι) : ℝ≥0∞ := (t.localTrees.map fun p => ξ p.1 {p.2}).prod
 
 theorem weight_node (i : ι) (cs : List (RoseTree ι)) :
     weight ξ (node i cs) = ξ i {cs.map value} * (cs.map (weight ξ)).prod := by
-  simp only [weight, offspring_node, List.map_cons, List.prod_cons, List.map_flatten,
+  simp only [weight, localTrees_node, List.map_cons, List.prod_cons, List.map_flatten,
     List.prod_flatten, List.map_map, Function.comp_def]
   rfl
 
@@ -340,7 +340,7 @@ theorem ωScottContinuous_expand :
 noncomputable def expandHom : (ι → Measure (RoseTree ι)) →o (ι → Measure (RoseTree ι)) :=
   ⟨fun κ => ⇑(expand ξ (ofFunOfCountable κ)), (ωScottContinuous_expand ξ).monotone⟩
 
-/-- The law of the family tree of an individual of each type, on finite trees: the least fixed
+/-- The law of the family tree of an individual of each type, on finite trees, is the least fixed
 point of the generation operator. Its total mass is the extinction probability. -/
 noncomputable def law : Kernel ι (RoseTree ι) := ofFunOfCountable (expandHom ξ).lfp
 
@@ -445,7 +445,7 @@ theorem law_univ_le_one (hξ : ∀ i, ξ i Set.univ ≤ 1) (i : ι) : law ξ i S
 
 variable (ξ)
 
-/-- The extinction probability of an individual of type `i`: the total mass of the law on finite
+/-- The extinction probability of an individual of type `i` is the total mass of the law on finite
 family trees, which for Markov offspring is the probability that the family tree is finite. -/
 noncomputable def extinctionProb (i : ι) : ℝ≥0∞ := law ξ i Set.univ
 
@@ -474,7 +474,7 @@ section Chain
 
 variable (ξ : Kernel ι (List ι)) [Countable ι]
 
-/-- The generation chain in Ionescu–Tulcea form: the state at time `n + 1` depends on the
+/-- In the Ionescu–Tulcea form of the generation chain, the state at time `n + 1` depends on the
 trajectory up to time `n` only through its last coordinate. -/
 noncomputable def chainKernel (n : ℕ) :
     Kernel (Π i : Iic n, (fun _ : ℕ => PartialTree ι) i) ((fun _ : ℕ => PartialTree ι) (n + 1)) :=

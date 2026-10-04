@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Computability.ContextFreeGrammar
-public import Linglib.Core.Data.RoseTree.Get
+public import Linglib.Core.Data.RoseTree.Licensed
 public import Linglib.Core.Data.RoseTree.Encodable
 public import Mathlib.Algebra.BigOperators.Group.Multiset.Basic
 public import Mathlib.Data.Finset.Card
@@ -16,27 +16,28 @@ public import Mathlib.Data.Nat.Find
 # Derivation trees of a context-free grammar
 
 A derivation tree, or parse tree, of a context-free grammar is a rose tree over its symbols,
-`RoseTree (Symbol T N)`. It is valid for a grammar when every terminal node is a leaf and every
-nonterminal node, read with the symbols of its children, is a rule. The yield of a tree is the
-list of terminals at its leaves, left to right.
+`RoseTree (Symbol T N)`. A grammar licenses a tree when every terminal node is a leaf and every
+nonterminal node, read with the symbols of its children, is a rule: the trees a grammar licenses
+are the local set of its rules (`RoseTree.Licensed`). The yield of a tree is the list of terminals
+at its leaves, left to right.
 
 ## Main definitions
 
 * `RoseTree.yield`: the terminal frontier.
-* `RoseTree.ValidFor g`: validity for the grammar `g`.
+* `ContextFreeGrammar.Licenses g`: the local trees the grammar `g` licenses.
 * `RoseTree.ruleCount`, `RoseTree.corpusRuleCount`: the number of applications of a rule in a
   tree and in a corpus of trees.
 * `RoseTree.ruleAt?`: the rule applied at a Gorn address.
 
 ## Main results
 
-* `RoseTree.ValidFor.derives`: a valid tree derives its yield from its root symbol.
-* `ContextFreeGrammar.exists_valid_tree`: every word of the language has a valid derivation tree
-  from the start symbol.
-* `RoseTree.ValidFor.replaceAt`, `RoseTree.ValidFor.exists_repeat`: replacing a subtree by one
-  with the same root symbol preserves validity, and a long enough path in a valid tree passes two
-  nodes with the same nonterminal; together with `RoseTree.numNodes_replaceAt_lt` these are the
-  ingredients of the pumping lemma.
+* `RoseTree.Licensed.derives`: a licensed tree derives its yield from its root symbol.
+* `ContextFreeGrammar.exists_licensed_tree`: every word of the language has a licensed derivation
+  tree from the start symbol.
+* `RoseTree.Licensed.replaceAt`, `RoseTree.Licensed.exists_repeat`: replacing a subtree by one
+  with the same root symbol keeps the tree licensed, and a long enough path in a licensed tree
+  passes two nodes with the same nonterminal; together with `RoseTree.numNodes_replaceAt_lt` these
+  are the ingredients of the pumping lemma.
 -/
 
 @[expose] public section
@@ -49,7 +50,7 @@ variable {T N : Type*}
 
 /-! ### The yield -/
 
-/-- The terminal frontier of a tree: the terminals among its leaves, left to right. -/
+/-- The terminal frontier of a tree lists the terminals among its leaves, left to right. -/
 def yield (t : RoseTree (Symbol T N)) : List T := t.leafList.filterMap Symbol.terminal?
 
 @[simp] theorem yield_node_nil (s : Symbol T N) : yield (node s []) = s.terminal?.toList := by
@@ -89,81 +90,61 @@ theorem yield_replaceAt {t s : RoseTree (Symbol T N)} {p : List ℕ} (h : subtre
     by simp [yield, hy, List.filterMap_append],
     fun new => by simp [yield, hy', List.filterMap_append]⟩
 
-/-! ### Validity -/
+/-! ### Licensing -/
 
-/-- A derivation tree is valid for a grammar when every terminal node is a leaf and every
-nonterminal node, with the symbols of its children, is a rule of the grammar. -/
-inductive ValidFor (g : ContextFreeGrammar T) : RoseTree (Symbol T g.NT) → Prop
-  | terminal (a : T) : ValidFor g (leaf (.terminal a))
-  | nonterminal (A : g.NT) (cs : List (RoseTree (Symbol T g.NT)))
-      (hrule : ⟨A, cs.map value⟩ ∈ g.rules) (hcs : ∀ c ∈ cs, ValidFor g c) :
-      ValidFor g (node (.nonterminal A) cs)
+/-- A grammar licenses a local tree when it is a terminal without children, or a nonterminal
+whose children's symbols are the right-hand side of one of its rules. -/
+def _root_.ContextFreeGrammar.Licenses (g : ContextFreeGrammar T) :
+    Symbol T g.NT → List (Symbol T g.NT) → Prop
+  | .terminal _, ks => ks = []
+  | .nonterminal A, ks => ⟨A, ks⟩ ∈ g.rules
 
-namespace ValidFor
+namespace Licensed
 
 variable {g : ContextFreeGrammar T}
 
-theorem of_mem {s : Symbol T g.NT} {cs : List (RoseTree (Symbol T g.NT))}
-    (h : ValidFor g (node s cs)) {c : RoseTree (Symbol T g.NT)} (hc : c ∈ cs) : ValidFor g c := by
-  cases h with
-  | terminal => simp at hc
-  | nonterminal _ _ _ hcs => exact hcs c hc
+theorem terminal (a : T) : (leaf (.terminal a) : RoseTree (Symbol T g.NT)).Licensed g.Licenses :=
+  licensed_leaf_iff.mpr rfl
+
+theorem nonterminal (A : g.NT) (cs : List (RoseTree (Symbol T g.NT)))
+    (hrule : ⟨A, cs.map value⟩ ∈ g.rules) (hcs : ∀ c ∈ cs, c.Licensed g.Licenses) :
+    (node (.nonterminal A) cs).Licensed g.Licenses :=
+  licensed_node_iff.mpr ⟨hrule, hcs⟩
 
 theorem rule_mem {A : g.NT} {cs : List (RoseTree (Symbol T g.NT))}
-    (h : ValidFor g (node (.nonterminal A) cs)) : ⟨A, cs.map value⟩ ∈ g.rules := by
-  cases h with
-  | nonterminal _ _ hrule => exact hrule
+    (h : (node (.nonterminal A) cs).Licensed g.Licenses) : ⟨A, cs.map value⟩ ∈ g.rules :=
+  h.rel_root
 
 theorem eq_nil_of_terminal {a : T} {cs : List (RoseTree (Symbol T g.NT))}
-    (h : ValidFor g (node (.terminal a) cs)) : cs = [] := by
-  cases h; rfl
+    (h : (node (.terminal a) cs).Licensed g.Licenses) : cs = [] :=
+  List.map_eq_nil_iff.mp h.rel_root
 
 /-- A node with children is a nonterminal node. -/
 theorem exists_nonterminal_of_ne_nil {s : Symbol T g.NT} {cs : List (RoseTree (Symbol T g.NT))}
-    (h : ValidFor g (node s cs)) (hcs : cs ≠ []) : ∃ A, s = .nonterminal A := by
-  cases h with
-  | terminal => exact absurd rfl hcs
+    (h : (node s cs).Licensed g.Licenses) (hcs : cs ≠ []) : ∃ A, s = .nonterminal A := by
+  cases s with
+  | terminal => exact absurd h.eq_nil_of_terminal hcs
   | nonterminal A => exact ⟨A, rfl⟩
 
-theorem of_subtreeAt {t : RoseTree (Symbol T g.NT)} (ht : ValidFor g t) {p : List ℕ}
-    {s : RoseTree (Symbol T g.NT)} (hs : subtreeAt t p = some s) : ValidFor g s := by
-  induction p generalizing t with
-  | nil => exact Option.some.inj hs ▸ ht
-  | cons i p ih =>
-    obtain ⟨c, hc, hcs⟩ := subtreeAt_cons_eq_some_iff.mp hs
-    cases t with
-    | node s cs => exact ih (ht.of_mem (List.mem_of_getElem? hc)) hcs
+/-- Induction over the trees a grammar licenses, by the two shapes it licenses. -/
+@[elab_as_elim]
+theorem grammar_induction
+    {motive : (t : RoseTree (Symbol T g.NT)) → t.Licensed g.Licenses → Prop}
+    (terminal : ∀ a, motive (leaf (.terminal a)) (terminal a))
+    (nonterminal : ∀ A cs (hrule : ⟨A, cs.map value⟩ ∈ g.rules)
+      (hcs : ∀ c ∈ cs, c.Licensed g.Licenses), (∀ c (hc : c ∈ cs), motive c (hcs c hc)) →
+        motive (node (.nonterminal A) cs) (.nonterminal A cs hrule hcs))
+    {t : RoseTree (Symbol T g.NT)} (ht : t.Licensed g.Licenses) : motive t ht := by
+  induction t with
+  | node s cs ih =>
+    cases s with
+    | terminal a =>
+      obtain rfl := ht.eq_nil_of_terminal
+      exact terminal a
+    | nonterminal A =>
+      exact nonterminal A cs ht.rule_mem (fun _ hc ↦ ht.of_mem hc) fun c hc ↦ ih c hc _
 
-/-- Replacing a subtree by a valid tree with the same root symbol preserves validity. -/
-theorem replaceAt {t : RoseTree (Symbol T g.NT)} (ht : ValidFor g t) {p : List ℕ}
-    {s : RoseTree (Symbol T g.NT)} (hs : subtreeAt t p = some s)
-    {new : RoseTree (Symbol T g.NT)} (hnew : ValidFor g new) (hv : new.value = s.value) :
-    ValidFor g (t.replaceAt p new) := by
-  induction p generalizing t with
-  | nil => rw [replaceAt_nil]; exact hnew
-  | cons i p ih =>
-    obtain ⟨c, hc, hcs⟩ := subtreeAt_cons_eq_some_iff.mp hs
-    cases t with
-    | node s₀ cs =>
-      rw [branching_children, children_node] at hc
-      rw [replaceAt_cons_of_getElem? (by simpa using hc), value_node, children_node]
-      have hval : (c.replaceAt p new).value = c.value := by
-        cases p with
-        | nil => rw [replaceAt_nil, hv, Option.some.inj hcs]
-        | cons j p => exact value_replaceAt_cons c j p new
-      obtain ⟨A, rfl⟩ := ht.exists_nonterminal_of_ne_nil
-        (List.ne_nil_of_mem (List.mem_of_getElem? hc))
-      refine nonterminal A _ ?_ fun d hd => ?_
-      · obtain ⟨hi, rfl⟩ := List.getElem?_eq_some_iff.mp hc
-        have h := List.set_getElem_self (as := cs.map value) (i := i) (by simpa using hi)
-        rw [List.getElem_map] at h
-        rw [List.map_set, hval, h]
-        exact ht.rule_mem
-      · rcases List.mem_or_eq_of_mem_set hd with hd | rfl
-        · exact ht.of_mem hd
-        · exact ih (ht.of_mem (List.mem_of_getElem? hc)) hcs
-
-end ValidFor
+end Licensed
 
 /-! ### Rule counts -/
 
@@ -171,16 +152,16 @@ section RuleCount
 
 variable [DecidableEq T] [DecidableEq N]
 
-/-- The number of applications of the rule `r` in a tree: the nonterminal nodes whose symbol and
-children's symbols spell out `r`. -/
+/-- `ruleCount r t` counts the applications of the rule `r` in `t`, the nonterminal nodes whose
+symbol and children's symbols spell out `r`. -/
 def ruleCount (r : ContextFreeRule T N) (t : RoseTree (Symbol T N)) : ℕ :=
-  t.offspring.count (.nonterminal r.input, r.output)
+  t.localTrees.count (.nonterminal r.input, r.output)
 
 theorem ruleCount_node_nonterminal (r : ContextFreeRule T N) (A : N)
     (cs : List (RoseTree (Symbol T N))) :
     ruleCount r (node (.nonterminal A) cs) =
       (if r = ⟨A, cs.map value⟩ then 1 else 0) + (cs.map (ruleCount r)).sum := by
-  simp only [ruleCount, offspring_node, List.count_cons, List.count_flatten, List.map_map,
+  simp only [ruleCount, localTrees_node, List.count_cons, List.count_flatten, List.map_map,
     Function.comp_def, beq_iff_eq, Prod.mk.injEq, Symbol.nonterminal.injEq]
   rw [add_comm]
   congr 1
@@ -190,7 +171,7 @@ theorem ruleCount_node_nonterminal (r : ContextFreeRule T N) (A : N)
 theorem ruleCount_node_terminal (r : ContextFreeRule T N) (a : T)
     (cs : List (RoseTree (Symbol T N))) :
     ruleCount r (node (.terminal a) cs) = (cs.map (ruleCount r)).sum := by
-  simp only [ruleCount, offspring_node, List.count_cons, List.count_flatten, List.map_map,
+  simp only [ruleCount, localTrees_node, List.count_cons, List.count_flatten, List.map_map,
     Function.comp_def, beq_iff_eq, Prod.mk.injEq, reduceCtorEq, false_and, ite_false, add_zero]
   rfl
 
@@ -214,8 +195,8 @@ end RuleCount
 
 /-! ### The rule at an address -/
 
-/-- The rule applied at a Gorn address: the nonterminal there with the symbols of its children,
-`none` off the tree or at a terminal. -/
+/-- The rule applied at a Gorn address is the nonterminal there with the symbols of its children,
+and `none` off the tree or at a terminal. -/
 def ruleAt? {g : ContextFreeGrammar T} (t : RoseTree (Symbol T g.NT)) (p : List ℕ) :
     Option (ContextFreeRule T g.NT) :=
   (subtreeAt t p).bind fun s => match s.value with
@@ -228,10 +209,11 @@ theorem ruleAt?_eq_some {g : ContextFreeGrammar T} {t : RoseTree (Symbol T g.NT)
     ruleAt? t p = some ⟨A, cs.map value⟩ := by
   simp [ruleAt?, h]
 
-/-- Along an address into a valid tree, every proper prefix ends at a nonterminal node, and so
+/-- Along an address into a licensed tree, every proper prefix ends at a nonterminal node, and so
 does the address itself when the subtree there has children. -/
-theorem ValidFor.exists_subtreeAt_take {g : ContextFreeGrammar T} {t : RoseTree (Symbol T g.NT)}
-    (ht : ValidFor g t) {p : List ℕ} {s : RoseTree (Symbol T g.NT)} (hs : subtreeAt t p = some s)
+theorem Licensed.exists_subtreeAt_take {g : ContextFreeGrammar T} {t : RoseTree (Symbol T g.NT)}
+    (ht : t.Licensed g.Licenses) {p : List ℕ} {s : RoseTree (Symbol T g.NT)}
+    (hs : subtreeAt t p = some s)
     (hh : 1 < s.height) {k : ℕ} (hk : k ≤ p.length) :
     ∃ A cs, subtreeAt t (p.take k) = some (node (.nonterminal A) cs) := by
   obtain ⟨u, hu⟩ := Option.isSome_iff_exists.mp (subtreeAt_take_isSome hs k)
@@ -249,10 +231,11 @@ theorem ValidFor.exists_subtreeAt_take {g : ContextFreeGrammar T} {t : RoseTree 
   obtain ⟨A, rfl⟩ := (ht.of_subtreeAt hu).exists_nonterminal_of_ne_nil hne
   exact ⟨A, cs, hu⟩
 
-/-- Pigeonhole along an address: a path of at least `g.rules.card` steps through a valid tree,
-ending at a node with children, passes two nodes with the same nonterminal. -/
-theorem ValidFor.exists_repeat {g : ContextFreeGrammar T} {t : RoseTree (Symbol T g.NT)}
-    (ht : ValidFor g t) {p : List ℕ} {s : RoseTree (Symbol T g.NT)} (hs : subtreeAt t p = some s)
+/-- By pigeonhole, a path of at least `g.rules.card` steps through a licensed tree, ending at a
+node with children, passes two nodes with the same nonterminal. -/
+theorem Licensed.exists_repeat {g : ContextFreeGrammar T} {t : RoseTree (Symbol T g.NT)}
+    (ht : t.Licensed g.Licenses) {p : List ℕ} {s : RoseTree (Symbol T g.NT)}
+    (hs : subtreeAt t p = some s)
     (hh : 1 < s.height) (hlen : g.rules.card ≤ p.length) :
     ∃ i j, i < j ∧ j ≤ p.length ∧ ∃ A csᵢ csⱼ,
       subtreeAt t (p.take i) = some (node (.nonterminal A) csᵢ) ∧
@@ -279,15 +262,15 @@ theorem ValidFor.exists_repeat {g : ContextFreeGrammar T} {t : RoseTree (Symbol 
   subst this
   exact ⟨a, b, hab, Nat.lt_succ_iff.mp hb, A, csₐ, cs_b, hA, hB⟩
 
-/-- Among the valid trees with a given yield and root symbol there is one of least size. -/
-theorem ValidFor.exists_min_numNodes {g : ContextFreeGrammar T} {t : RoseTree (Symbol T g.NT)}
-    (ht : ValidFor g t) :
-    ∃ t' : RoseTree (Symbol T g.NT), ValidFor g t' ∧ t'.yield = t.yield ∧ t'.value = t.value ∧
-      ∀ t'' : RoseTree (Symbol T g.NT), ValidFor g t'' → t''.yield = t.yield →
-        t''.value = t.value → t'.numNodes ≤ t''.numNodes := by
+/-- Among the licensed trees with a given yield and root symbol there is one of least size. -/
+theorem Licensed.exists_min_numNodes {g : ContextFreeGrammar T} {t : RoseTree (Symbol T g.NT)}
+    (ht : t.Licensed g.Licenses) :
+    ∃ t' : RoseTree (Symbol T g.NT), t'.Licensed g.Licenses ∧ t'.yield = t.yield ∧
+      t'.value = t.value ∧ ∀ t'' : RoseTree (Symbol T g.NT), t''.Licensed g.Licenses →
+        t''.yield = t.yield → t''.value = t.value → t'.numNodes ≤ t''.numNodes := by
   classical
   let P : ℕ → Prop := fun n => ∃ t' : RoseTree (Symbol T g.NT),
-    ValidFor g t' ∧ t'.yield = t.yield ∧ t'.value = t.value ∧ t'.numNodes = n
+    t'.Licensed g.Licenses ∧ t'.yield = t.yield ∧ t'.value = t.value ∧ t'.numNodes = n
   have hP : ∃ n, P n := ⟨t.numNodes, t, ht, rfl, rfl, rfl⟩
   obtain ⟨t', h₁, h₂, h₃, h₄⟩ := Nat.find_spec hP
   exact ⟨t', h₁, h₂, h₃, fun t'' hv hy hr => h₄ ▸ Nat.find_le ⟨t'', hv, hy, hr, rfl⟩⟩
@@ -310,10 +293,11 @@ private theorem derives_flatten_yield {cs : List (RoseTree (Symbol T g.NT))}
     exact ((h c (List.mem_cons_self ..)).append_right _).trans
       ((ih fun d hd => h d (List.mem_cons_of_mem _ hd)).append_left _)
 
-/-- **Soundness.** A valid tree derives its yield from its root symbol. -/
-theorem _root_.RoseTree.ValidFor.derives {t : RoseTree (Symbol T g.NT)} (ht : t.ValidFor g) :
+/-- **Soundness.** A licensed tree derives its yield from its root symbol. -/
+theorem _root_.RoseTree.Licensed.derives {t : RoseTree (Symbol T g.NT)}
+    (ht : t.Licensed g.Licenses) :
     g.Derives [t.value] (t.yield.map Symbol.terminal) := by
-  induction ht with
+  induction ht using RoseTree.Licensed.grammar_induction with
   | terminal a => simp [RoseTree.leaf]; exact Relation.ReflTransGen.refl
   | nonterminal A cs hrule _ ih =>
     rw [RoseTree.value_node, RoseTree.yield_node_nonterminal]
@@ -321,11 +305,11 @@ theorem _root_.RoseTree.ValidFor.derives {t : RoseTree (Symbol T g.NT)} (ht : t.
       ContextFreeRule.Rewrites.input_output⟩).trans (derives_flatten_yield ih)
 
 /-- **Forest existence.** A sentential form deriving a word is the list of root symbols of a
-list of valid trees whose yields concatenate to the word. -/
+list of licensed trees whose yields concatenate to the word. -/
 private theorem exists_forest {sf : List (Symbol T g.NT)} {w : List T}
     (h : g.Derives sf (w.map Symbol.terminal)) :
     ∃ ts : List (RoseTree (Symbol T g.NT)), ts.map RoseTree.value = sf ∧
-      (∀ t ∈ ts, t.ValidFor g) ∧ (ts.map RoseTree.yield).flatten = w := by
+      (∀ t ∈ ts, t.Licensed g.Licenses) ∧ (ts.map RoseTree.yield).flatten = w := by
   induction h using Relation.ReflTransGen.head_induction_on with
   | refl =>
     refine ⟨w.map fun a => RoseTree.leaf (.terminal a), ?_, ?_, ?_⟩
@@ -366,10 +350,10 @@ private theorem exists_forest {sf : List (Symbol T g.NT)} {w : List T}
       simp only [List.map_append, List.flatten_append, List.map_cons, List.map_nil,
         List.flatten_cons, List.flatten_nil, List.append_nil, RoseTree.yield_node_nonterminal]
 
-/-- **Completeness.** Every word of the language has a valid derivation tree from the start
+/-- **Completeness.** Every word of the language has a licensed derivation tree from the start
 symbol. -/
-theorem exists_valid_tree (g : ContextFreeGrammar T) {w : List T} (hw : w ∈ g.language) :
-    ∃ t : RoseTree (Symbol T g.NT), t.ValidFor g ∧ t.yield = w ∧
+theorem exists_licensed_tree (g : ContextFreeGrammar T) {w : List T} (hw : w ∈ g.language) :
+    ∃ t : RoseTree (Symbol T g.NT), t.Licensed g.Licenses ∧ t.yield = w ∧
       t.value = .nonterminal g.initial := by
   obtain ⟨ts, hroot, hvalid, hyield⟩ := exists_forest (g := g) hw
   obtain ⟨t, rfl⟩ : ∃ t, ts = [t] := by

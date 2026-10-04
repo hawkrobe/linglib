@@ -18,11 +18,11 @@ every word splits as `u ++ v ++ x ++ y ++ z` with `v ++ x ++ y` short, `v ++ y` 
 every `u ++ vⁱ ++ x ++ yⁱ ++ z` in the language.
 
 The proof is the textbook one through derivation trees. A word longer than
-`maxBranch ^ (rules.card + 1)` has a valid tree of height above `rules.card + 1`
-(`RoseTree.ValidFor.length_yield_le`); a longest path in a tree of least size passes two nodes
-with the same nonterminal (`RoseTree.ValidFor.exists_repeat`); replacing the lower by the upper
+`maxBranch ^ (rules.card + 1)` has a licensed tree of height above `rules.card + 1`
+(`RoseTree.Licensed.length_yield_le`); a longest path in a tree of least size passes two nodes
+with the same nonterminal (`RoseTree.Licensed.exists_repeat`); replacing the lower by the upper
 would shrink the tree unless it adds terminals, and grafting the lower into the upper repeatedly
-pumps them (`RoseTree.ValidFor.replaceAt`, `RoseTree.ValidFor.derives`).
+pumps them (`RoseTree.Licensed.replaceAt`, `RoseTree.Licensed.derives`).
 
 ## Main definitions
 
@@ -32,7 +32,7 @@ pumps them (`RoseTree.ValidFor.replaceAt`, `RoseTree.ValidFor.derives`).
 
 ## Main results
 
-* `RoseTree.ValidFor.length_yield_le`: a valid tree of height `h` has at most `maxBranch ^ h`
+* `RoseTree.Licensed.length_yield_le`: a licensed tree of height `h` has at most `maxBranch ^ h`
   terminals.
 * `Language.IsContextFree.hasCFLPumpingProperty`: every context-free language has the pumping
   property.
@@ -42,7 +42,7 @@ pumps them (`RoseTree.ValidFor.replaceAt`, `RoseTree.ValidFor.derives`).
 
 open RoseTree Core.Order.Branching
 
-/-- The pumping property of a language: beyond some length, every word splits as
+/-- A language has the pumping property when, beyond some length, every word splits as
 `u ++ v ++ x ++ y ++ z` with `v ++ x ++ y` no longer than that length, `v ++ y` nonempty, and every
 `u ++ vⁱ ++ x ++ yⁱ ++ z` in the language. -/
 def Language.HasCFLPumpingProperty {α : Type*} (L : Language α) : Prop :=
@@ -57,11 +57,12 @@ variable {T : Type*} (g : ContextFreeGrammar T)
 
 /-! ### The branching bound -/
 
-/-- The branching bound of a grammar: the longest right-hand side, and at least `2`. -/
+/-- The branching bound of a grammar is the length of its longest right-hand side, and at least
+`2`. -/
 noncomputable def maxBranch : ℕ := max 2 (g.rules.sup fun r => r.output.length)
 
-/-- The pumping constant `maxBranch ^ (rules.card + 1)`: a valid tree with more terminals has a
-path through two nodes with the same nonterminal. -/
+/-- The pumping constant is `maxBranch ^ (rules.card + 1)`, so that a licensed tree with more
+terminals has a path through two nodes with the same nonterminal. -/
 noncomputable def pumpingConstant : ℕ := g.maxBranch ^ (g.rules.card + 1)
 
 theorem two_le_maxBranch : 2 ≤ g.maxBranch := le_max_left _ _
@@ -76,10 +77,10 @@ theorem length_output_le_maxBranch {r : ContextFreeRule T g.NT} (hr : r ∈ g.ru
 
 variable {g}
 
-/-- A valid tree of height `h` has at most `maxBranch ^ (h - 1)` terminals. -/
-theorem _root_.RoseTree.ValidFor.length_yield_le {t : RoseTree (Symbol T g.NT)}
-    (ht : t.ValidFor g) : t.yield.length ≤ g.maxBranch ^ (t.height - 1) := by
-  induction ht with
+/-- A licensed tree of height `h` has at most `maxBranch ^ (h - 1)` terminals. -/
+theorem _root_.RoseTree.Licensed.length_yield_le {t : RoseTree (Symbol T g.NT)}
+    (ht : t.Licensed g.Licenses) : t.yield.length ≤ g.maxBranch ^ (t.height - 1) := by
+  induction ht using RoseTree.Licensed.grammar_induction with
   | terminal a => simp
   | nonterminal A cs hrule _ ih =>
     cases cs with
@@ -108,8 +109,8 @@ private theorem flatten_replicate_succ (l : List T) (n : ℕ) :
   rw [List.replicate_succ', List.flatten_append, List.flatten_cons, List.flatten_nil,
     List.append_nil]
 
-/-- A valid tree from the start symbol whose yield reaches the pumping constant pumps. -/
-theorem pumping_from_tall_tree {t : RoseTree (Symbol T g.NT)} (ht : t.ValidFor g)
+/-- A licensed tree from the start symbol whose yield reaches the pumping constant pumps. -/
+theorem pumping_from_tall_tree {t : RoseTree (Symbol T g.NT)} (ht : t.Licensed g.Licenses)
     (hroot : t.value = .nonterminal g.initial) (hlong : g.pumpingConstant ≤ t.yield.length) :
     ∃ u v x y z : List T, t.yield = u ++ v ++ x ++ y ++ z ∧
       (v ++ x ++ y).length ≤ g.pumpingConstant ∧ 1 ≤ v.length + y.length ∧
@@ -117,7 +118,7 @@ theorem pumping_from_tall_tree {t : RoseTree (Symbol T g.NT)} (ht : t.ValidFor g
         g.language := by
   classical
   have hb : 1 < g.maxBranch := g.two_le_maxBranch
-  -- a valid tree of least size with the same yield and root
+  -- a licensed tree of least size with the same yield and root
   obtain ⟨t₁, ht₁, hy₁, hr₁, hmin⟩ := ht.exists_min_numNodes
   -- it is taller than the number of rules
   have htall : g.rules.card + 1 < t₁.height := by
@@ -162,8 +163,8 @@ theorem pumping_from_tall_tree {t : RoseTree (Symbol T g.NT)} (ht : t.ValidFor g
     obtain ⟨s, hs, hsh⟩ := hpath (off + i) (by omega)
     rw [List.take_add, ← hq, ← hpo, hpo_sub, Option.some.injEq] at hs
     rw [hs, hsh]; omega
-  have houter_v : outer.ValidFor g := ht₁.of_subtreeAt hpo_sub
-  have hinner_v : inner.ValidFor g := houter_v.of_subtreeAt hpr_sub
+  have houter_v : outer.Licensed g.Licenses := ht₁.of_subtreeAt hpo_sub
+  have hinner_v : inner.Licensed g.Licenses := houter_v.of_subtreeAt hpr_sub
   -- yield decompositions
   obtain ⟨u, z, hyu, hyu'⟩ := yield_replaceAt hpo_sub
   obtain ⟨v, y, hyv, hyv'⟩ := yield_replaceAt hpr_sub
@@ -187,7 +188,7 @@ theorem pumping_from_tall_tree {t : RoseTree (Symbol T g.NT)} (ht : t.ValidFor g
       Nat.rec inner (fun _ prev => outer.replaceAt pr prev) n
     have hpump : ∀ n, (pump n).yield =
           (List.replicate n v).flatten ++ inner.yield ++ (List.replicate n y).flatten ∧
-        (pump n).value = inner.value ∧ (pump n).ValidFor g := fun n => by
+        (pump n).value = inner.value ∧ (pump n).Licensed g.Licenses := fun n => by
       induction n with
       | zero => exact ⟨by show inner.yield = _; simp, rfl, hinner_v⟩
       | succ n ih =>
@@ -209,7 +210,7 @@ theorem Language.IsContextFree.hasCFLPumpingProperty {T : Type*} {L : Language T
     (hcf : L.IsContextFree) : L.HasCFLPumpingProperty := by
   obtain ⟨g, rfl⟩ := hcf
   refine ⟨g.pumpingConstant, g.pumpingConstant_pos, fun w hw hlen => ?_⟩
-  obtain ⟨t, hvalid, hyield, hroot⟩ := g.exists_valid_tree hw
+  obtain ⟨t, hvalid, hyield, hroot⟩ := g.exists_licensed_tree hw
   obtain ⟨u, v, x, y, z, hdecomp, hvxy, hvy, hpump⟩ :=
     ContextFreeGrammar.pumping_from_tall_tree hvalid hroot (hyield ▸ hlen)
   exact ⟨u, v, x, y, z, hyield ▸ hdecomp, hvxy, hvy, hpump⟩
