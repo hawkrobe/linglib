@@ -73,33 +73,13 @@ variable {w : List TBU} {j k : ℕ}
 
 /-! ### UTP is not subsequential
 
-By bounded delay: a left machine reading `H Øⁿ⁺¹` has emitted at most one symbol, since
-`utp.map (H Øⁿ⁺¹) = H Øⁿ⁺¹` and `utp.map (H Øⁿ⁺¹ H) = Hⁿ⁺³` already differ at position `1`;
-so it withholds `n + 1` symbols. -/
+Whether a toneless TBU surfaces H depends on a H arbitrarily far away on each side of it, and
+the map preserves length, so a machine reading in either direction would have to withhold
+unboundedly many symbols. -/
 
-/-- UTP is not left-subsequential (§4.2, online appendix). -/
-theorem utp_not_isLeftSubsequential : ¬ IsLeftSubsequential utp.map :=
-  not_isLeftSubsequential_of_diverging fun N =>
-    ⟨.H :: List.replicate (N + 1) .O, [.H], 1,
-      by simp only [Surfacing.map_length, List.length_cons, List.length_replicate]; omega, by
-      rw [show utp.map (.H :: List.replicate (N + 1) .O) = .H :: List.replicate (N + 1) .O from
-          by simpa using utp.map_single 0 (N + 1),
-        show utp.map (.H :: List.replicate (N + 1) .O ++ [.H])
-            = List.replicate (N + 1 + 2) .H from
-          by simpa using utp.map_plateau 0 0 (List.replicate (N + 1) .O)]
-      simp [show (1 : ℕ) < N + 1 + 2 by omega]⟩
-
-/-- UTP is not right-subsequential, since by the reversal symmetry a right machine faces the
-mirror-image unbounded look-ahead. -/
-theorem utp_not_isRightSubsequential : ¬ IsRightSubsequential utp.map := fun h =>
-  have hsymm : List.revConj utp.map = utp.map :=
-    funext fun w => by simp [List.revConj, utp.map_reverse]
-  utp_not_isLeftSubsequential (hsymm ▸ h.revConj)
-
-/-- UTP is subsequential in neither direction. -/
-theorem utp_not_isSubsequential : ∀ d, ¬ IsSubsequential d utp.map
-  | .left => utp_not_isLeftSubsequential
-  | .right => utp_not_isRightSubsequential
+/-- UTP is subsequential in neither direction (§4.2, online appendix). -/
+theorem utp_not_isSubsequential : ∀ d, ¬ IsSubsequential d utp.map :=
+  utp.twoSidedUnboundedDependence.not_isSubsequential fun _ ↦ utp.map_length
 
 /-! ### The (43) mark-up decomposition
 
