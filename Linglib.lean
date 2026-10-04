@@ -139,7 +139,6 @@ import Linglib.Logic.PIP.Felicity
 import Linglib.Logic.PIP.Intensional
 import Linglib.Logic.Team.BSML.Bisimulation
 import Linglib.Logic.Team.BSML.Characteristic
-import Linglib.Logic.Team.BSML.ClassicalValidities
 import Linglib.Logic.Team.BSML.Defs
 import Linglib.Logic.Team.BSML.Enrichment
 import Linglib.Logic.Team.BSML.ExpressiveCompleteness

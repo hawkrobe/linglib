@@ -22,8 +22,9 @@ not updated by them. QBSML runs the same recursion over quantified atoms.
 * `Formula.NEFree`, `Formula.Positive`: the `NE`-free and the negation-free fragments.
 * `Formula.falsum`, `Formula.strongFalsum`: the weak contradiction `p ∧ ¬p` and the strong
   contradiction `⊥ ∧ NE`.
-* `consequence`, `equivalent`: support consequence and bilateral equivalence.
-* `evalStar`, `consequenceStar`: BSML*, which excludes `∅` from the possible states.
+* `Consequence`, `Equivalent`: support consequence and its symmetric closure, the `≡` of the
+  sources; `StronglyEquivalent`: equivalence of the formulas and of their negations.
+* `evalStar`, `ConsequenceStar`: BSML*, which excludes `∅` from the possible states.
 
 ## Implementation notes
 
@@ -51,6 +52,7 @@ lemmas there. One `eval` for both polarities makes double-negation elimination `
 * [aloni-anttila-yang-2024] Aloni, Anttila and Yang, State-based Modal Logics for Free Choice
 * [aloni-vanormondt-2023] Aloni and van Ormondt, Modified Numerals and Split Disjunction: The
   First-Order Case
+* [anttila-2021] Anttila, The Logic of Free Choice: Axiomatizations of State-based Modal Logics
 -/
 
 @[expose] public section
@@ -167,18 +169,6 @@ abbrev support (M : KripkeModel W Atom) (φ : Formula Atom) (t : Finset W) : Pro
 abbrev antiSupport (M : KripkeModel W Atom) (φ : Formula Atom) (t : Finset W) : Prop :=
   eval M false φ t
 
-/-! ### Double-negation elimination -/
-
-/-- `¬¬φ` has the same support as `φ`, definitionally. -/
-theorem dne_support (M : KripkeModel W Atom)
-    (φ : Formula Atom) (t : Finset W) :
-    support M (.neg (.neg φ)) t ↔ support M φ t := Iff.rfl
-
-/-- `¬¬φ` has the same anti-support as `φ`, definitionally. -/
-theorem dne_antiSupport (M : KripkeModel W Atom)
-    (φ : Formula Atom) (t : Finset W) :
-    antiSupport M (.neg (.neg φ)) t ↔ antiSupport M φ t := Iff.rfl
-
 /-! ### Unfolding lemmas -/
 
 @[simp] lemma support_neg (M : KripkeModel W Atom)
@@ -216,20 +206,32 @@ theorem not_support_strongFalsum [Inhabited Atom] (M : KripkeModel W Atom) (t : 
 /-! ### Consequence and equivalence -/
 
 /-- `ψ` is a consequence of `φ` when every team supporting `φ` supports `ψ`. -/
-def consequence (φ ψ : Formula Atom) : Prop :=
+def Consequence (φ ψ : Formula Atom) : Prop :=
   ∀ (M : KripkeModel W Atom) (t : Finset W), support M φ t → support M ψ t
 
-/-- Two formulas are equivalent when they have the same support and anti-support. -/
-def equivalent (φ ψ : Formula Atom) : Prop :=
-  ∀ (M : KripkeModel W Atom) (t : Finset W),
-    (support M φ t ↔ support M ψ t) ∧ (antiSupport M φ t ↔ antiSupport M ψ t)
+/-- Two formulas are equivalent, `φ ≡ ψ`, when they have the same support in every model
+    ([aloni-2022] p. 5:30, [anttila-2021] Definition 2.1.6, [aloni-anttila-yang-2024] p. 5). -/
+def Equivalent (φ ψ : Formula Atom) : Prop :=
+  ∀ (M : KripkeModel W Atom) (t : Finset W), support M φ t ↔ support M ψ t
+
+/-- Equivalence is mutual consequence. -/
+theorem equivalent_iff {φ ψ : Formula Atom} :
+    Equivalent (W := W) φ ψ ↔ Consequence (W := W) φ ψ ∧ Consequence (W := W) ψ φ where
+  mp h := ⟨fun M t ↦ (h M t).mp, fun M t ↦ (h M t).mpr⟩
+  mpr h M t := ⟨h.1 M t, h.2 M t⟩
+
+/-- Two formulas are strongly equivalent when they and their negations are equivalent
+    ([aloni-anttila-yang-2024] p. 5), that is, when they have the same support and the same
+    anti-support. -/
+def StronglyEquivalent (φ ψ : Formula Atom) : Prop :=
+  Equivalent (W := W) φ ψ ∧ Equivalent (W := W) (.neg φ) (.neg ψ)
 
 /-! ### BSML* -/
 
 /-- Bilateral evaluation for BSML* ([aloni-2022] §6.3.1) differs from `eval` in that `∅` is not
     among the possible states, so each part of a split is intersected with `Team.ne`. The
     exclusion applies wherever states are quantified, in the splits here and on the outer team in
-    `consequenceStar`; the atom, `ne` and modal clauses keep their BSML form. -/
+    `ConsequenceStar`; the atom, `ne` and modal clauses keep their BSML form. -/
 def evalStar (M : KripkeModel W Atom) : Bool → Formula Atom → Finset W → Prop
   | true,  .atom p,       t => t ∈ Team.flat fun w ↦ M.val p w = true
   | false, .atom p,       t => t ∈ Team.flat fun w ↦ M.val p w = false
@@ -266,7 +268,7 @@ abbrev antiSupportStar (M : KripkeModel W Atom) (φ : Formula Atom) (t : Finset 
 
 /-- In BSML*, `ψ` is a consequence of `φ` when every non-empty team supporting `φ` supports
     `ψ`. -/
-def consequenceStar (φ ψ : Formula Atom) : Prop :=
+def ConsequenceStar (φ ψ : Formula Atom) : Prop :=
   ∀ (M : KripkeModel W Atom) (t : Finset W), t.Nonempty → supportStar M φ t → supportStar M ψ t
 
 /-! ### Decidability of evaluation -/

@@ -17,7 +17,7 @@ BSML* is BSML with the empty team removed from the possible states.
 ## Main definitions
 
 * `BSML.enrich`: the enrichment function `[·]⁺`.
-* `BSML.consequencePlus`: BSML⁺ consequence, consequence between the enriched formulas.
+* `BSML.ConsequencePlus`: BSML⁺ consequence, consequence between the enriched formulas.
 
 ## Main results
 
@@ -26,7 +26,7 @@ BSML* is BSML with the empty team removed from the possible states.
   (Fact 2).
 * `BSML.antiSupport_enrich_iff`: on positive formulas enrichment is vacuous under a single
   negation (Fact 9).
-* `BSML.support_neg_enrich_neg_iff`, `BSML.not_forall_support_neg_neg_enrich_iff`: under a
+* `BSML.support_neg_enrich_neg_iff`, `BSML.not_equivalent_neg_neg_enrich`: under a
   double negation it is not (Fact 10).
 * `BSML.consequenceStar_iff_consequencePlus`: BSML* and BSML⁺ consequence coincide on
   classical positive formulas (Fact 13).
@@ -36,10 +36,8 @@ BSML* is BSML with the empty team removed from the possible states.
 ## Implementation notes
 
 Aloni defines `[·]⁺` on the `NE`-free fragment only. `enrich` is total and sends `NE` to
-itself, and `□` abbreviates `¬◇¬`, so it has no clause of its own. The paper's `≡` is
-mutual support consequence, so Facts 9 and 10 are stated as equivalences of support rather
-than through the bilateral `BSML.equivalent`. Fact 1 is one induction over the polarity
-parameter of `BSML.eval`, which is the paper's double induction.
+itself, and `□` abbreviates `¬◇¬`, so it has no clause of its own. Fact 1 is one induction over
+the polarity parameter of `BSML.eval`, which is the paper's double induction.
 
 ## References
 
@@ -162,9 +160,8 @@ theorem support_neg_enrich_neg_iff (M : KripkeModel W Atom) (φ : Formula Atom) 
 
 /-- Enrichment is not vacuous under a double negation, `¬¬[α]⁺ ≢ ¬¬α` for `NE`-free `α`
 (Fact 10). The empty team supports `¬¬α` but not `¬¬[α]⁺`. -/
-theorem not_forall_support_neg_neg_enrich_iff (hNE : φ.NEFree) :
-    ¬ ∀ (M : KripkeModel W Atom) (t : Finset W),
-      support M (.neg (.neg (enrich φ))) t ↔ support M (.neg (.neg φ)) t := fun h ↦
+theorem not_equivalent_neg_neg_enrich (hNE : φ.NEFree) :
+    ¬ Equivalent (W := W) (.neg (.neg (enrich φ))) (.neg (.neg φ)) := fun h ↦
   have h₀ := (h ⟨fun _ ↦ ∅, fun _ _ ↦ false⟩ ∅).mpr
     (support_empty_of_neFree (φ := .neg (.neg φ)) hNE _)
   (nonempty_of_support_enrich (φ := φ) h₀).ne_empty rfl
@@ -173,11 +170,11 @@ theorem not_forall_support_neg_neg_enrich_iff (hNE : φ.NEFree) :
 
 /-- BSML⁺ consequence is consequence between the enriched formulas,
 `α ⊨⁺ β iff [α]⁺ ⊨ [β]⁺`. -/
-def consequencePlus (φ ψ : Formula Atom) : Prop :=
-  consequence (W := W) (enrich φ) (enrich ψ)
+def ConsequencePlus (φ ψ : Formula Atom) : Prop :=
+  Consequence (W := W) (enrich φ) (enrich ψ)
 
 /-- On classical positive formulas, those with neither `NE` nor negation, support of the
-enrichment is BSML* support on a non-empty team: the `NE` conjunct at each subformula is the
+enrichment is BSML* support on a non-empty team. The `NE` conjunct at each subformula is the
 exclusion of `∅` from each split. -/
 theorem support_enrich_iff_supportStar (hNE : φ.NEFree) (hPos : φ.Positive) :
     support M (enrich φ) t ↔ supportStar M φ t ∧ t.Nonempty := by
@@ -209,7 +206,7 @@ theorem support_enrich_iff_supportStar (hNE : φ.NEFree) (hPos : φ.Positive) :
 the empty team from the states and excluding it syntactically through `[·]⁺` agree. -/
 theorem consequenceStar_iff_consequencePlus (hφ : φ.NEFree) (hφ' : φ.Positive)
     (hψ : ψ.NEFree) (hψ' : ψ.Positive) :
-    consequenceStar (W := W) φ ψ ↔ consequencePlus (W := W) φ ψ where
+    ConsequenceStar (W := W) φ ψ ↔ ConsequencePlus (W := W) φ ψ where
   mp h M t h' :=
     have ⟨hs, hne⟩ := (support_enrich_iff_supportStar hφ hφ').mp h'
     (support_enrich_iff_supportStar hψ hψ').mpr ⟨h M t hne hs, hne⟩
@@ -220,7 +217,7 @@ theorem consequenceStar_iff_consequencePlus (hφ : φ.NEFree) (hφ' : φ.Positiv
 /-- Negative free choice holds in BSML*, `◇¬(α ∧ β) ⊨* ◇¬α` (Fact 14). A BSML* anti-support
 split of `α ∧ β` has two non-empty parts, and the part anti-supporting `α` is the witness. -/
 theorem negativeFC_star_poss (α β : Formula Atom) :
-    consequenceStar (W := W) (.poss (.neg (.conj α β))) (.poss (.neg α)) :=
+    ConsequenceStar (W := W) (.poss (.neg (.conj α β))) (.poss (.neg α)) :=
   fun _ _ _ h w hw ↦
     have ⟨_, hs, _, s₁, ⟨h₁, hne₁⟩, _, _, hu⟩ := h w hw
     ⟨s₁, (hu ▸ Finset.subset_union_left).trans hs, hne₁, h₁⟩
@@ -228,7 +225,7 @@ theorem negativeFC_star_poss (α β : Formula Atom) :
 /-- The `□` form of negative free choice in BSML*, `¬□(α ∧ β) ⊨* ¬□α` (Fact 14), by the
 duality `□φ := ¬◇¬φ`. -/
 theorem negativeFC_star_nec (α β : Formula Atom) :
-    consequenceStar (W := W) (.neg (Formula.nec (.conj α β))) (.neg (Formula.nec α)) :=
+    ConsequenceStar (W := W) (.neg (Formula.nec (.conj α β))) (.neg (Formula.nec α)) :=
   negativeFC_star_poss α β
 
 end BSML
