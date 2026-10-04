@@ -1,0 +1,1548 @@
+[
+  {
+    "id": "halpert2012_ex127a",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(127a)"},
+    "language": "zulu1248",
+    "primaryText": "a-ku-phek-anga muntu",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["a-ku-phek-anga", "NEG-17S-cook-NEG.PAST"], ["muntu", "1person"]
+    ],
+    "translation": "Nobody cooked.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["above", "-aug"]
+    ],
+    "comment": "p. 102.",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex127b",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(127b)"},
+    "language": "zulu1248",
+    "primaryText": "umuntu a-ka-phek-anga qanda",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["umuntu", "AUG.1person"], ["a-ka-phek-anga", "NEG-1S-cook-NEG.PAST"], ["qanda", "5egg"]
+    ],
+    "translation": "A/the person didn’t cook any egg.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["outside", "+aug"],
+      ["vDomain", "-aug"]
+    ],
+    "comment": "p. 102.",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex127c",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(127c)"},
+    "language": "zulu1248",
+    "primaryText": "a-ku-phek-anga muntu qanda",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["a-ku-phek-anga", "NEG-17S-cook-NEG.PAST"], ["muntu", "1person"], ["qanda", "5egg"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["above", "-aug"],
+      ["vDomain", "-aug"]
+    ],
+    "comment": "p. 102.",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex127d",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(127d)"},
+    "language": "zulu1248",
+    "primaryText": "a-ku-phek-anga muntu iqanda",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["a-ku-phek-anga", "NEG-17S-cook-NEG.PAST"], ["muntu", "1person"], ["iqanda", "AUG.5egg"]
+    ],
+    "translation": "Nobody cooked the/an/any egg.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["above", "-aug"],
+      ["vDomain", "+aug"]
+    ],
+    "comment": "p. 102.",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex127e",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(127e)"},
+    "language": "zulu1248",
+    "primaryText": "a-ku-phek-anga umuntu qanda",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["a-ku-phek-anga", "NEG-17S-cook-NEG.PAST"], ["umuntu", "AUG.1person"], ["qanda", "5egg"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["above", "+aug"],
+      ["vDomain", "-aug"]
+    ],
+    "comment": "p. 102. The source glosses the verb \"NEG- 17S- cook NEG.PAST\", missing a hyphen.",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex129a",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(129a)"},
+    "language": "zulu1248",
+    "primaryText": "uThemba a-ka-phek-el-i muntu nyama",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["uThemba", "AUG.1Themba"], ["a-ka-phek-el-i", "NEG-1S-cook-APPL-NEG"], ["muntu", "1person"],
+      ["nyama", "9meat"]
+    ],
+    "translation": "Themba doesn’t cook anyone any meat.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["outside", "+aug"],
+      ["above", "-aug"],
+      ["vDomain", "-aug"],
+      ["extension", "appl"]
+    ],
+    "comment": "p. 103.",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex129b",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(129b)"},
+    "language": "zulu1248",
+    "primaryText": "uThemba a-ka-phek-el-i uSipho nyama",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["uThemba", "AUG.1Themba"], ["a-ka-phek-el-i", "NEG-1S-cook-APPL-NEG"],
+      ["uSipho", "AUG.1Sipho"], ["nyama", "9meat"]
+    ],
+    "translation": "Themba doesn’t cook Sipho any meat.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["outside", "+aug"],
+      ["above", "+aug"],
+      ["vDomain", "-aug"],
+      ["extension", "appl"]
+    ],
+    "comment": "p. 103.",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex129c",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(129c)"},
+    "language": "zulu1248",
+    "primaryText": "uThemba a-ka-phek-el-i muntu inyama",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["uThemba", "AUG.1Themba"], ["a-ka-phek-el-i", "NEG-1S-cook-APPL-NEG"], ["muntu", "1person"],
+      ["inyama", "AUG.9meat"]
+    ],
+    "translation": "Themba doesn’t cook anyone meat/the meat.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["outside", "+aug"],
+      ["above", "-aug"],
+      ["vDomain", "+aug"],
+      ["extension", "appl"]
+    ],
+    "comment": "p. 103. The source glosses inyama \"9meat\", without AUG.",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex130a",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(130a)"},
+    "language": "zulu1248",
+    "primaryText": "uSipho a-ka-fund-is-anga muntu lutho",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["uSipho", "AUG.1Sipho"], ["a-ka-fund-is-anga", "NEG-1S-learn-CAUS-NEG.PAST"],
+      ["muntu", "1person"], ["lutho", "16thing"]
+    ],
+    "translation": "Sipho didn’t teach anyone anything.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["outside", "+aug"],
+      ["above", "-aug"],
+      ["vDomain", "-aug"],
+      ["extension", "caus"]
+    ],
+    "comment": "p. 103.",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex130b",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(130b)"},
+    "language": "zulu1248",
+    "primaryText": "uSipho a-ka-fund-is-anga abafana lutho",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["uSipho", "AUG.1Sipho"], ["a-ka-fund-is-anga", "NEG-1S-learn-CAUS-NEG.PAST"],
+      ["abafana", "AUG.1boys"], ["lutho", "16thing"]
+    ],
+    "translation": "Sipho didn’t teach the boys anything.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["outside", "+aug"],
+      ["above", "+aug"],
+      ["vDomain", "-aug"],
+      ["extension", "caus"]
+    ],
+    "comment": "p. 104.",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex130c",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(130c)"},
+    "language": "zulu1248",
+    "primaryText": "uSipho a-ka-fund-is-anga muntu isiZulu",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["uSipho", "AUG.1Sipho"], ["a-ka-fund-is-anga", "NEG-1S-learn-CAUS-NEG.PAST"],
+      ["muntu", "1person"], ["isiZulu", "AUG.7Zulu"]
+    ],
+    "translation": "Sipho didn’t teach anyone Zulu.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["outside", "+aug"],
+      ["above", "-aug"],
+      ["vDomain", "+aug"],
+      ["extension", "caus"]
+    ],
+    "comment": "p. 104.",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex134a",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(134a)"},
+    "language": "zulu1248",
+    "primaryText": "a-ku-fund-is-anga muntu mantombazane",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["a-ku-fund-is-anga", "NEG-17S-learn-CAUS-NEG.PAST"], ["muntu", "1person"],
+      ["mantombazane", "6girl"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["above", "-aug"],
+      ["above", "-aug"],
+      ["extension", "caus"]
+    ],
+    "comment": "p. 106. Intended: ‘Nobody taught any girls.’",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex134b",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(134b)"},
+    "language": "zulu1248",
+    "primaryText": "a-ku-fund-is-anga muntu lutho",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["a-ku-fund-is-anga", "NEG-17S-learn-CAUS-NEG.PAST"], ["muntu", "1person"],
+      ["lutho", "16thing"]
+    ],
+    "translation": "Nobody taught anything.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["above", "-aug"],
+      ["vDomain", "-aug"],
+      ["extension", "caus"]
+    ],
+    "comment": "p. 106.",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex135a",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(135a)"},
+    "language": "zulu1248",
+    "primaryText": "A-ku-thum-el-anga muntu izingane mali",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["A-ku-thum-el-anga", "NEG-17S-send-APPL-NEG.PAST"], ["muntu", "1person"],
+      ["izingane", "AUG.10child"], ["mali", "9money"]
+    ],
+    "translation": "Nobody sent the children any money.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["above", "-aug"],
+      ["above", "+aug"],
+      ["vDomain", "-aug"],
+      ["extension", "appl"]
+    ],
+    "comment": "p. 106.",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex135b",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(135b)"},
+    "language": "zulu1248",
+    "primaryText": "A-ku-thum-el-anga muntu zingane mali",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["A-ku-thum-el-anga", "NEG-17S-send-APPL-NEG.PAST"], ["muntu", "1person"],
+      ["zingane", "10child"], ["mali", "9money"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["above", "-aug"],
+      ["above", "-aug"],
+      ["vDomain", "-aug"],
+      ["extension", "appl"]
+    ],
+    "comment": "p. 106.",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex135c",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(135c)"},
+    "language": "zulu1248",
+    "primaryText": "A-ku-thum-el-anga umuntu zingane mali",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["A-ku-thum-el-anga", "NEG-17S-send-APPL-NEG.PAST"], ["umuntu", "AUG.1person"],
+      ["zingane", "10child"], ["mali", "9money"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["above", "+aug"],
+      ["above", "-aug"],
+      ["vDomain", "-aug"],
+      ["extension", "appl"]
+    ],
+    "comment": "p. 106.",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex135d",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(135d)"},
+    "language": "zulu1248",
+    "primaryText": "A-ku-thum-el-anga muntu zingane imali",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["A-ku-thum-el-anga", "NEG-17S-send-APPL-NEG.PAST"], ["muntu", "1person"],
+      ["zingane", "10child"], ["imali", "AUG.9money"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["above", "-aug"],
+      ["above", "-aug"],
+      ["vDomain", "+aug"],
+      ["extension", "appl"]
+    ],
+    "comment": "p. 106.",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex137a",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(137a)"},
+    "language": "zulu1248",
+    "primaryText": "a-ku-fund-is-anga muntu amantombazane lutho",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["a-ku-fund-is-anga", "NEG-17S-learn-CAUS-NEG.PAST"], ["muntu", "1person"],
+      ["amantombazane", "AUG.6girl"], ["lutho", "16thing"]
+    ],
+    "translation": "Nobody taught (any) girls anything.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["above", "-aug"],
+      ["above", "+aug"],
+      ["vDomain", "-aug"],
+      ["extension", "caus"]
+    ],
+    "comment": "p. 107.",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex137b",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(137b)"},
+    "language": "zulu1248",
+    "primaryText": "a-ku-fund-is-anga muntu mantombazane lutho",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["a-ku-fund-is-anga", "NEG-17S-learn-CAUS-NEG.PAST"], ["muntu", "1person"],
+      ["mantombazane", "6girl"], ["lutho", "16thing"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["above", "-aug"],
+      ["above", "-aug"],
+      ["vDomain", "-aug"],
+      ["extension", "caus"]
+    ],
+    "comment": "p. 107.",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex137c",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(137c)"},
+    "language": "zulu1248",
+    "primaryText": "a-ku-fund-is-anga umuntu mantombazane lutho",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["a-ku-fund-is-anga", "NEG-17S-learn-CAUS-NEG.PAST"], ["umuntu", "AUG.1person"],
+      ["mantombazane", "6girl"], ["lutho", "16thing"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["above", "+aug"],
+      ["above", "-aug"],
+      ["vDomain", "-aug"],
+      ["extension", "caus"]
+    ],
+    "comment": "p. 107.",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex137d",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(137d)"},
+    "language": "zulu1248",
+    "primaryText": "a-ku-fund-is-anga muntu mantombazane isiZulu",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["a-ku-fund-is-anga", "NEG-17S-learn-CAUS-NEG.PAST"], ["muntu", "1person"],
+      ["mantombazane", "6girl"], ["isiZulu", "AUG.7Zulu"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["above", "-aug"],
+      ["above", "-aug"],
+      ["vDomain", "+aug"],
+      ["extension", "caus"]
+    ],
+    "comment": "p. 107. The source glosses isiZulu \"aug.7Zulu\".",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex139",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(139)"},
+    "language": "zulu1248",
+    "primaryText": "uSipho u-fund-is-el-a uthisha omkhulu amantombazane isiZulu",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["uSipho", "AUG.1Sipho"], ["u-fund-is-el-a", "1S-learn-CAUS-APPL-FV"],
+      ["uthisha", "AUG.1teacher"], ["omkhulu", "1REL.big"], ["amantombazane", "AUG.6girls"],
+      ["isiZulu", "AUG.7Zulu"]
+    ],
+    "translation": "Sipho is teaching the girls Zulu for the principal.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["outside", "+aug"],
+      ["above", "+aug"],
+      ["above", "+aug"],
+      ["vDomain", "+aug"],
+      ["extension", "caus"],
+      ["extension", "appl"],
+      ["verbForm", "conjoint"]
+    ],
+    "comment": "p. 108. uthisha omkhulu ‘the principal’ is one phrase.",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex140",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(140)"},
+    "language": "zulu1248",
+    "primaryText": "uSipho a-ka-fundis-el-i muntu mantombazane zilimi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["uSipho", "AUG.1Sipho"], ["a-ka-fundis-el-i", "NEG-1S-teach-APPL-NEG"],
+      ["muntu", "1person"], ["mantombazane", "6girls"], ["zilimi", "8language"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["outside", "+aug"],
+      ["above", "-aug"],
+      ["above", "-aug"],
+      ["vDomain", "-aug"],
+      ["extension", "caus"],
+      ["extension", "appl"]
+    ],
+    "comment": "p. 108. Intended: ‘Sipho doesn’t teach any kids any languages for anyone.’",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex141a",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(141a)"},
+    "language": "zulu1248",
+    "primaryText": "uSipho a-ka-fundis-el-i muntu abantwana lutho",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["uSipho", "AUG.1Sipho"], ["a-ka-fundis-el-i", "NEG-1S-teach-APPL-NEG"],
+      ["muntu", "1person"], ["abantwana", "AUG.2children"], ["lutho", "13thing"]
+    ],
+    "translation": "Sipho doesn’t teach (any) kids anything for anyone.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["outside", "+aug"],
+      ["above", "-aug"],
+      ["above", "+aug"],
+      ["vDomain", "-aug"],
+      ["extension", "caus"],
+      ["extension", "appl"]
+    ],
+    "comment": "p. 109. Speakers also accept an NPI reading of the augmented abantwana here (p. 109).",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex141b",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(141b)"},
+    "language": "zulu1248",
+    "primaryText": "uSipho a-ka-fundis-el-i uThemba bantwana lutho",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["uSipho", "AUG.1Sipho"], ["a-ka-fundis-el-i", "NEG-1S-teach-APPL-NEG"],
+      ["uThemba", "AUG.1Themba"], ["bantwana", "2children"], ["lutho", "13thing"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["outside", "+aug"],
+      ["above", "+aug"],
+      ["above", "-aug"],
+      ["vDomain", "-aug"],
+      ["extension", "caus"],
+      ["extension", "appl"]
+    ],
+    "comment": "p. 109. Marginally acceptable for some speakers, ungrammatical for the majority (footnote 8).",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex141c",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(141c)"},
+    "language": "zulu1248",
+    "primaryText": "uSipho a-ka-fundis-el-i muntu bantwana izilimi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["uSipho", "AUG.1Sipho"], ["a-ka-fundis-el-i", "NEG-1S-teach-APPL-NEG"],
+      ["muntu", "1person"], ["bantwana", "2children"], ["izilimi", "AUG.8language"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["outside", "+aug"],
+      ["above", "-aug"],
+      ["above", "-aug"],
+      ["vDomain", "+aug"],
+      ["extension", "caus"],
+      ["extension", "appl"]
+    ],
+    "comment": "p. 109.",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex118a",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(118a)"},
+    "language": "zulu1248",
+    "primaryText": "A-ngi-m-bon-i muntu",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["A-ngi-m-bon-i", "NEG-1SG-1O-see-NEG"], ["muntu", "1person"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["outside", "-aug"]
+    ],
+    "comment": "p. 96. Intended: ‘I don’t see anybody.’ The source marks the right edge of vP before muntu.",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex118b",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(118b)"},
+    "language": "zulu1248",
+    "primaryText": "A-ngi-yi-fun-i mali",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["A-ngi-yi-fun-i", "NEG-1SG-9O-want-NEG"], ["mali", "9money"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["outside", "-aug"]
+    ],
+    "comment": "p. 96. Intended: ‘I don’t want any money.’ The source marks the right edge of vP before mali.",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex121a",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(121a)"},
+    "language": "zulu1248",
+    "primaryText": "A-ngi-sho-ngo ukuthi muntu u-fik-ile",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["A-ngi-sho-ngo", "NEG-1SG-say-NEG.PAST"], ["ukuthi", "that"], ["muntu", "1person"],
+      ["u-fik-ile", "1S-arrive-PFV"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["outside", "-aug"]
+    ],
+    "comment": "p. 97. Translated ‘I didn’t say that anyone came.’",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex121b",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(121b)"},
+    "language": "zulu1248",
+    "primaryText": "A-ngi-sho-ngo ukuthi umuntu u-fik-ile",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["A-ngi-sho-ngo", "NEG-1SG-say-NEG.PAST"], ["ukuthi", "that"], ["umuntu", "AUG.1person"],
+      ["u-fik-ile", "1S-arrive-PFV"]
+    ],
+    "translation": "I didn’t say that a/the person/anyone came.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["outside", "+aug"]
+    ],
+    "comment": "p. 97. The source glosses umuntu \"1person\", without AUG.",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex121c",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(121c)"},
+    "language": "zulu1248",
+    "primaryText": "A-ngi-sho-ngo ukuthi ku-fik-e muntu",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["A-ngi-sho-ngo", "NEG-1SG-say-NEG.PAST"], ["ukuthi", "that"],
+      ["ku-fik-e", "17S-arrive-PFV"], ["muntu", "1person"]
+    ],
+    "translation": "I didn’t say that anyone came.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["above", "-aug"]
+    ],
+    "comment": "p. 98.",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex218a",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(218a)"},
+    "language": "zulu1248",
+    "primaryText": "ngeke ku-fundise muntu",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ngeke", "never"], ["ku-fundise", "17S-teach.SJC"], ["muntu", "1person"]
+    ],
+    "translation": "Nobody will ever teach.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["above", "-aug"]
+    ],
+    "comment": "p. 165. The source glosses the prefix \"17s\".",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex218b",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(218b)"},
+    "language": "zulu1248",
+    "primaryText": "ngeke muntu a-fundise",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ngeke", "never"], ["muntu", "1person"], ["a-fundise", "1S-teach.SJC"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["outside", "-aug"]
+    ],
+    "comment": "p. 165. The source glosses the prefix \"1s\".",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex181a",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(181a)"},
+    "language": "zulu1248",
+    "primaryText": "ku-ya-banda",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ku-ya-banda", "17S-YA-be.cold"]
+    ],
+    "translation": "It’s cold.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verbForm", "disjoint"]
+    ],
+    "comment": "p. 144.",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex181b",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(181b)"},
+    "language": "zulu1248",
+    "primaryText": "ku-banda",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ku-banda", "17S-be.cold"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["verbForm", "conjoint"]
+    ],
+    "comment": "p. 144.",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex182a",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(182a)"},
+    "language": "zulu1248",
+    "primaryText": "ku-pheka uSipho",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ku-pheka", "17S-cook"], ["uSipho", "AUG.1Sipho"]
+    ],
+    "translation": "Sipho’s cooking.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["above", "+aug"],
+      ["verbForm", "conjoint"]
+    ],
+    "comment": "p. 144.",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex182b",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(182b)"},
+    "language": "zulu1248",
+    "primaryText": "ku-ya-pheka uSipho",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ku-ya-pheka", "17S-YA-cook"], ["uSipho", "AUG.1Sipho"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["above", "+aug"],
+      ["verbForm", "disjoint"]
+    ],
+    "comment": "p. 144.",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex183a",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(183a)"},
+    "language": "zulu1248",
+    "primaryText": "uSipho u-pheka iqanda",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["uSipho", "AUG.1Sipho"], ["u-pheka", "1S-cook"], ["iqanda", "AUG.5egg"]
+    ],
+    "translation": "Sipho is cooking an egg.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["outside", "+aug"],
+      ["vDomain", "+aug"],
+      ["verbForm", "conjoint"]
+    ],
+    "comment": "p. 144.",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex183b",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(183b)"},
+    "language": "zulu1248",
+    "primaryText": "uSipho u-ya-pheka iqanda",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["uSipho", "AUG.1Sipho"], ["u-ya-pheka", "1S-YA-cook"], ["iqanda", "AUG.5egg"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["outside", "+aug"],
+      ["vDomain", "+aug"],
+      ["verbForm", "disjoint"]
+    ],
+    "comment": "p. 144.",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex184a",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(184a)"},
+    "language": "zulu1248",
+    "primaryText": "uSipho u-ya-pheka",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["uSipho", "AUG.1Sipho"], ["u-ya-pheka", "1S-YA-cook"]
+    ],
+    "translation": "Sipho is cooking.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["outside", "+aug"],
+      ["verbForm", "disjoint"]
+    ],
+    "comment": "p. 145. The source prints the subject in parentheses, (uSipho) u-ya-pheka.",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex184b",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(184b)"},
+    "language": "zulu1248",
+    "primaryText": "uSipho u-pheka",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["uSipho", "AUG.1Sipho"], ["u-pheka", "1S-cook"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["outside", "+aug"],
+      ["verbForm", "conjoint"]
+    ],
+    "comment": "p. 145.",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex184c",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(184c)"},
+    "language": "zulu1248",
+    "primaryText": "u-ya-pheka uSipho",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["u-ya-pheka", "1S-YA-cook"], ["uSipho", "AUG.1Sipho"]
+    ],
+    "translation": "Sipho is cooking.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["outside", "+aug"],
+      ["verbForm", "disjoint"]
+    ],
+    "comment": "p. 145. The source glosses uSipho \"AUG.uSipho\".",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex184d",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(184d)"},
+    "language": "zulu1248",
+    "primaryText": "u-pheka uSipho",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["u-pheka", "1S-cook"], ["uSipho", "AUG.1Sipho"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["outside", "+aug"],
+      ["verbForm", "conjoint"]
+    ],
+    "comment": "p. 145.",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex185a",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(185a)"},
+    "language": "zulu1248",
+    "primaryText": "iqanda uSipho u-ya-li-pheka",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["iqanda", "AUG.5egg"], ["uSipho", "AUG.1Sipho"], ["u-ya-li-pheka", "1S-YA-5O-cook"]
+    ],
+    "translation": "(As for) the egg, Sipho is cooking it.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["outside", "+aug"],
+      ["outside", "+aug"],
+      ["verbForm", "disjoint"]
+    ],
+    "comment": "p. 145. The source prints both nominals in parentheses, (iqanda) (uSipho) u-ya-li-pheka.",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex185b",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(185b)"},
+    "language": "zulu1248",
+    "primaryText": "iqanda uSipho u-li-pheka",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["iqanda", "AUG.5egg"], ["uSipho", "AUG.1Sipho"], ["u-li-pheka", "1S-5O-cook"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["outside", "+aug"],
+      ["outside", "+aug"],
+      ["verbForm", "conjoint"]
+    ],
+    "comment": "p. 145.",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex185c",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(185c)"},
+    "language": "zulu1248",
+    "primaryText": "uSipho u-ya-li-pheka iqanda",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["uSipho", "AUG.1Sipho"], ["u-ya-li-pheka", "1S-YA-5O-cook"], ["iqanda", "AUG.5egg"]
+    ],
+    "translation": "Sipho is cooking the egg.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["outside", "+aug"],
+      ["outside", "+aug"],
+      ["verbForm", "disjoint"]
+    ],
+    "comment": "p. 145.",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex185d",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(185d)"},
+    "language": "zulu1248",
+    "primaryText": "uSipho u-li-pheka iqanda",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["uSipho", "AUG.1Sipho"], ["u-li-pheka", "1S-5O-cook"], ["iqanda", "AUG.5egg"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["outside", "+aug"],
+      ["outside", "+aug"],
+      ["verbForm", "conjoint"]
+    ],
+    "comment": "p. 145.",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex186a",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(186a)"},
+    "language": "zulu1248",
+    "primaryText": "uSipho u-phek-ela uMfundo iqanda",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["uSipho", "AUG.1Sipho"], ["u-phek-ela", "1S-cook-APPL"], ["uMfundo", "AUG.1Mfundo"],
+      ["iqanda", "AUG.5egg"]
+    ],
+    "translation": "Sipho is cooking Mfundo an egg.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["outside", "+aug"],
+      ["above", "+aug"],
+      ["vDomain", "+aug"],
+      ["extension", "appl"],
+      ["verbForm", "conjoint"]
+    ],
+    "comment": "p. 145.",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex186b",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(186b)"},
+    "language": "zulu1248",
+    "primaryText": "uMfundo uSipho u-m-phek-ela iqanda",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["uMfundo", "AUG.1Mfundo"], ["uSipho", "AUG.1Sipho"], ["u-m-phek-ela", "1S-1O-cook-APPL"],
+      ["iqanda", "AUG.5egg"]
+    ],
+    "translation": "(As for) Mfundo, Sipho is cooking an egg for him.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["outside", "+aug"],
+      ["outside", "+aug"],
+      ["vDomain", "+aug"],
+      ["extension", "appl"],
+      ["verbForm", "conjoint"]
+    ],
+    "comment": "p. 145.",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex186c",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(186c)"},
+    "language": "zulu1248",
+    "primaryText": "uMfundo uSipho u-ya-m-phek-ela iqanda",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["uMfundo", "AUG.1Mfundo"], ["uSipho", "AUG.1Sipho"],
+      ["u-ya-m-phek-ela", "1S-YA-1O-cook-APPL"], ["iqanda", "AUG.5egg"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["outside", "+aug"],
+      ["outside", "+aug"],
+      ["vDomain", "+aug"],
+      ["extension", "appl"],
+      ["verbForm", "disjoint"]
+    ],
+    "comment": "p. 146. The source prints the verb \"u- ya- m phekela\", glossed \"1S- YA- 1O- cook- APPL\".",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex186d",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(186d)"},
+    "language": "zulu1248",
+    "primaryText": "iqanda uSipho u-li-phek-ela uMfundo",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["iqanda", "AUG.5egg"], ["uSipho", "AUG.1Sipho"], ["u-li-phek-ela", "1S-5O-cook-APPL"],
+      ["uMfundo", "AUG.1Mfundo"]
+    ],
+    "translation": "As for the egg, Sipho is cooking it for Mfundo.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["outside", "+aug"],
+      ["outside", "+aug"],
+      ["above", "+aug"],
+      ["extension", "appl"],
+      ["verbForm", "conjoint"]
+    ],
+    "comment": "p. 146.",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex186e",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(186e)"},
+    "language": "zulu1248",
+    "primaryText": "iqanda uSipho u-ya-li-phek-ela uMfundo",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["iqanda", "AUG.5egg"], ["uSipho", "AUG.1Sipho"], ["u-ya-li-phek-ela", "1S-YA-5O-cook-APPL"],
+      ["uMfundo", "AUG.1Mfundo"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["outside", "+aug"],
+      ["outside", "+aug"],
+      ["above", "+aug"],
+      ["extension", "appl"],
+      ["verbForm", "disjoint"]
+    ],
+    "comment": "p. 146. The source prints \"u- ya- li phek- ela\".",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex187a",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(187a)"},
+    "language": "zulu1248",
+    "primaryText": "uSipho u-gijima kahle",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["uSipho", "AUG.1Sipho"], ["u-gijima", "1S-run"], ["kahle", "well"]
+    ],
+    "translation": "Sipho runs well.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["outside", "+aug"],
+      ["vDomain", "adverb"],
+      ["verbForm", "conjoint"]
+    ],
+    "comment": "p. 147.",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex187b",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(187b)"},
+    "language": "zulu1248",
+    "primaryText": "uSipho u-ya-gijima kahle",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["uSipho", "AUG.1Sipho"], ["u-ya-gijima", "1S-YA-run"], ["kahle", "well"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["outside", "+aug"],
+      ["vDomain", "adverb"],
+      ["verbForm", "disjoint"]
+    ],
+    "comment": "p. 147. The disjoint is permitted when the adverb is old information and the predicate bears verum focus, (188).",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex240a",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(240a)"},
+    "language": "zulu1248",
+    "primaryText": "uMandla u-bona sengathi ngi-ya-m-thanda",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["uMandla", "AUG.1Mandla"], ["u-bona", "1S-see"], ["sengathi", "as.if"],
+      ["ngi-ya-m-thanda", "1SG-YA-1O-like"]
+    ],
+    "translation": "Mandla is of the opinion that I like him.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["outside", "+aug"],
+      ["vDomain", "sengathi"],
+      ["verbForm", "conjoint"]
+    ],
+    "comment": "p. 179. The source adds that the sentence implies that I don’t.",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex240b",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(240b)"},
+    "language": "zulu1248",
+    "primaryText": "uMandla u-ya-bona sengathi ngi-ya-m-thanda",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["uMandla", "AUG.1Mandla"], ["u-ya-bona", "1S-YA-see"], ["sengathi", "as.if"],
+      ["ngi-ya-m-thanda", "1SG-YA-1O-like"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["outside", "+aug"],
+      ["vDomain", "sengathi"],
+      ["verbForm", "disjoint"]
+    ],
+    "comment": "p. 179.",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex241a",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(241a)"},
+    "language": "zulu1248",
+    "primaryText": "uMandla u-bona Monwa ukuthi ngi-ya-m-thanda",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["uMandla", "AUG.1Mandla"], ["u-bona", "1S-see"], ["Monwa", "1Monwa"], ["ukuthi", "that"],
+      ["ngi-ya-m-thanda", "1SG-YA-1O-like"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["outside", "+aug"],
+      ["outside", "ukuthi"],
+      ["verbForm", "conjoint"]
+    ],
+    "comment": "p. 179. Printed with commas around the vocative Monwa.",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex241b",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(241b)"},
+    "language": "zulu1248",
+    "primaryText": "uMandla u-ya-bona Monwa ukuthi ngi-ya-m-thanda",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["uMandla", "AUG.1Mandla"], ["u-ya-bona", "1S-YA-see"], ["Monwa", "1Monwa"],
+      ["ukuthi", "that"], ["ngi-ya-m-thanda", "1SG-YA-1O-like"]
+    ],
+    "translation": "Mandla sees, Monwa, that I like him.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["outside", "+aug"],
+      ["outside", "ukuthi"],
+      ["verbForm", "disjoint"]
+    ],
+    "comment": "p. 179. Printed with commas around the vocative Monwa.",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex242a",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(242a)"},
+    "language": "zulu1248",
+    "primaryText": "uMandla u-bona Monwa sengathi ngi-ya-m-thanda",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["uMandla", "AUG.1Mandla"], ["u-bona", "1S-see"], ["Monwa", "1Monwa"], ["sengathi", "as.if"],
+      ["ngi-ya-m-thanda", "1SG-YA-1O-like"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["outside", "+aug"],
+      ["outside", "sengathi"],
+      ["verbForm", "conjoint"]
+    ],
+    "comment": "p. 179. Intended: ‘Mandla is of the opinion, Monwa, that I like him.’ Printed with commas around the vocative.",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex242b",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(242b)"},
+    "language": "zulu1248",
+    "primaryText": "uMandla u-bona sengathi ngi-ya-m-thanda Monwa",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["uMandla", "AUG.1Mandla"], ["u-bona", "1S-see"], ["sengathi", "as.if"],
+      ["ngi-ya-m-thanda", "1SG-YA-1O-like"], ["Monwa", "1Monwa"]
+    ],
+    "translation": "Mandla is of the opinion that I like him, Monwa.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["outside", "+aug"],
+      ["vDomain", "sengathi"],
+      ["verbForm", "conjoint"]
+    ],
+    "comment": "p. 179. Printed with a comma before the vocative.",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex252a",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(252a)"},
+    "language": "zulu1248",
+    "primaryText": "uMthuli u-dla inyama sengathi u-ya-yi-qabuka",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["uMthuli", "AUG.1Mthuli"], ["u-dla", "1S-eat"], ["inyama", "AUG.9meat"],
+      ["sengathi", "as.if"], ["u-ya-yi-qabuka", "1S-YA-9O-discover"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["outside", "+aug"],
+      ["vDomain", "+aug"],
+      ["vDomain", "sengathi"],
+      ["verbForm", "conjoint"]
+    ],
+    "comment": "p. 182. Intended: ‘He’s eating meat as if he’s just discovered it.’",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex252b",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(252b)"},
+    "language": "zulu1248",
+    "primaryText": "inyama u-yi-dla sengathi u-ya-yi-qabuka",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["inyama", "AUG.9meat"], ["u-yi-dla", "1S-9O-eat"], ["sengathi", "as.if"],
+      ["u-ya-yi-qabuka", "1S-YA-9O-discover"]
+    ],
+    "translation": "He’s eating meat as if he’s just discovered it.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["outside", "+aug"],
+      ["vDomain", "sengathi"],
+      ["verbForm", "conjoint"]
+    ],
+    "comment": "p. 182.",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex252c",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(252c)"},
+    "language": "zulu1248",
+    "primaryText": "u-dla sengathi inyama u-ya-yi-qabuka",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["u-dla", "1S-eat"], ["sengathi", "as.if"], ["inyama", "AUG.9meat"],
+      ["u-ya-yi-qabuka", "1S-YA-9O-discover"]
+    ],
+    "translation": "He’s eating as if he’s just discovered meat.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["vDomain", "sengathi"],
+      ["verbForm", "conjoint"]
+    ],
+    "comment": "p. 183. The source glosses inyama \"AUG9meat\".",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex254a",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(254a)"},
+    "language": "zulu1248",
+    "primaryText": "ngi-bhala nge-peni",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ngi-bhala", "1SG-write"], ["nge-peni", "NGA.AUG-5pen"]
+    ],
+    "translation": "I write with a pen.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["vDomain", "+aug"],
+      ["verbForm", "conjoint"]
+    ],
+    "comment": "p. 185. nge- is nga- plus the augment i- (nga+ipeni).",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex254b",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(254b)"},
+    "language": "zulu1248",
+    "primaryText": "a-ngi-bhal-i nga-peni",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["a-ngi-bhal-i", "NEG-1SG-write-NEG"], ["nga-peni", "NGA-5pen"]
+    ],
+    "translation": "I write with a pen.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["vDomain", "-aug"]
+    ],
+    "comment": "p. 185. The source translates the negated sentence as ‘I write with a pen.’",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex255a",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(255a)"},
+    "language": "zulu1248",
+    "primaryText": "u-Mfundo u-bhala i-zincwadi nge-peni",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["u-Mfundo", "AUG-1Mfundo"], ["u-bhala", "1S-write"], ["i-zincwadi", "AUG-10letter"],
+      ["nge-peni", "NGA.AUG-5pen"]
+    ],
+    "translation": "Mfundo writes letters with a pen.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["outside", "+aug"],
+      ["vDomain", "+aug"],
+      ["vDomain", "+aug"],
+      ["verbForm", "conjoint"]
+    ],
+    "comment": "p. 185.",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex255b",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(255b)"},
+    "language": "zulu1248",
+    "primaryText": "u-Mfundo a-ka-bhal-i i-zincwadi nga-peni",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["u-Mfundo", "AUG-1Mfundo"], ["a-ka-bhal-i", "NEG-1S-write-NEG"],
+      ["i-zincwadi", "AUG-10letter"], ["nga-peni", "NGA-5pen"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["outside", "+aug"],
+      ["vDomain", "+aug"],
+      ["vDomain", "-aug"]
+    ],
+    "comment": "p. 185.",
+    "verified": "page-image"
+  },
+  {
+    "id": "halpert2012_ex255c",
+    "source": {"bibkey": "halpert-2012", "paperLabel": "(255c)"},
+    "language": "zulu1248",
+    "primaryText": "u-Mfundo a-ka-bhal-i nga-peni i-zincwadi",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["u-Mfundo", "AUG-1Mfundo"], ["a-ka-bhal-i", "NEG-1S-write-NEG"], ["nga-peni", "NGA-5pen"],
+      ["i-zincwadi", "AUG-10letter"]
+    ],
+    "translation": "Mfundo doesn’t write letters with any pen.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["outside", "+aug"],
+      ["vDomain", "-aug"],
+      ["vDomain", "+aug"]
+    ],
+    "comment": "p. 185.",
+    "verified": "page-image"
+  }
+]
