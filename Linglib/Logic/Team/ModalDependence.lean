@@ -9,105 +9,48 @@ public import Linglib.Logic.Team.Closure
 public import Linglib.Logic.Team.Definability
 
 /-!
-# Modal Dependence Logic (MDL)
+# Modal dependence logic
 
-[vaananen-2008] [vaananen-2007]
+Väänänen's modal dependence logic (MDL) extends classical modal logic with the dependence atom
+`=(p₁, …, pₙ; q)`, supported by a team when the value of `q` is a function of the values of
+`p₁, …, pₙ` across the team. Like BSML it evaluates formulas bilaterally against teams of worlds
+of a Kripke model, and negation swaps support and anti-support. A team supports `◇φ` when one team
+supporting `φ` supplies a successor to each of its worlds, and anti-supports it when the union of
+the successor sets anti-supports `φ`. MDL formulas are downward closed and supported by the empty
+team, but the dependence atom breaks union closure.
 
-MDL is the modal extension of dependence logic introduced in
-[vaananen-2008] ("Modal Dependence Logic", in Apt & van Rooij eds.
-*New Perspectives on Games and Interaction*, pp. 237-254). It adds a
-*dependence atom* `=(p₁,...,pₙ; q)` to classical modal logic, meaning
-"the value of `q` is functionally determined by the values of
-`p₁,...,pₙ` across the team."
+## Main definitions
 
-The framework is grounded in Väänänen's foundational
-[vaananen-2007] (the *Dependence Logic* book, Cambridge University
-Press 2007), which develops the first-order team-semantic apparatus
-that MDL adapts to modal logic. Where the book's quantifiers range
-over assignments, MDL's modalities range over Kripke worlds — but the
-team-semantic skeleton (formulas as predicates of teams, downward
-closure, dependence atoms) transfers directly.
+* `Formula`: atoms, dependence atoms, `¬`, `∧`, split `∨` and `◇`.
+* `eval`: bilateral evaluation, with `support` and `antiSupport`.
+* `Formula.modalDepth`: the nesting depth of `◇`.
+* `Formula.DepFree`, `Realize`: the fragment without dependence atoms, and classical truth.
 
-MDL is studied for its computational and model-theoretic properties
-(satisfiability complexity in [lohmann-vollmer-2013] and Sevenster's
-earlier expressive-power work; bisimulation invariance), with
-applications in database theory, knowledge representation, and AI
-rather than primarily in linguistic semantics — hence the placement in
-`Logic/` rather than `Semantics/`, alongside the other
-team-semantic primitives (`Logic/Team/`).
+## Main results
 
-## What changes from BSML
-
-MDL and BSML share a bilateral semantics (Player II = support, Player
-I = anti-support, negation flips polarity per [vaananen-2008]
-clause (T5)) and the same Kripke-model carrier. The structural
-differences:
-
-* **Atom**: BSML's `NE` becomes MDL's `dep`. `=(x⃗; y)` is supported by
-  a team iff any two worlds agreeing on `x⃗` also agree on `y`.
-* **Modal operator clauses**: MDL's ◇-support uses a **single witness**
-  `Y` ([vaananen-2008] clause (T8)) — `∃ Y, (∀ w ∈ s, ∃ y ∈ Y,
-  y ∈ R[w]) ∧ support φ Y` — rather than BSML's per-world witnesses.
-  Similarly, ◇-anti-support uses the union of accessibility images
-  (T9) rather than per-world checks. The two formulations are
-  equivalent under union-closure but diverge for MDL since dep atoms
-  break it.
-
-## Closure profile
-
-MDL's closure profile differs from BSML's, placing it in a different
-cell of the closure-property lattice:
-
-| Property            | BSML (NE-free) | BSML (with NE) | MDL              |
-|---------------------|----------------|----------------|------------------|
-| `IsLowerSet`        | ✓              | broken by NE   | ✓ (Lemma 4.2)    |
-| `SupClosed`         | ✓              | ✓              | broken by `dep`  |
-| `∅ ∈ support`       | ✓              | ✓              | ✓                |
-
-The dep atom is downward-closed (subteam of a functionally-dependent
-team is functionally dependent) but breaks union-closure (two
-functionally-dependent teams may have conflicting `y` values at
-worlds with matching `x⃗`).
-
-## Main declarations
-
-* `Formula` — MDL syntax (Definition 1.1).
-* `eval` — bilateral semantics (Definition 4.1), parametric in polarity.
-* `support` / `antiSupport` — convenience abbreviations.
-* `Formula.modalDepth` — depth of nested ◇.
-* `isLowerSet_support` — Lemma 4.2's downward-closure property.
-* `support_empty` — every formula is supported on the empty team.
-* `Formula.DepFree`, `Realize`, `support_iff_forall_realize` — without
-  dependence atoms MDL is classical modal logic: support is pointwise
-  Kripke truth.
-* `not_supClosed_dep_of_witness` — the witness that `dep` breaks
-  union-closure: in any model with two worlds sharing a `p`-value but
-  differing on `q`, the singleton teams support `=(p; q)` but their
-  union does not.
+* `isLowerSet_support`, `support_empty`: support is downward closed and contains `∅`.
+* `not_supClosed_dep_of_witness`: the dependence atom is not union-closed.
+* `support_iff_forall_realize`: without dependence atoms, support is pointwise classical truth.
+* `invariant_eval`: `k`-bisimilar teams agree on every formula of modal depth at most `k`.
 
 ## Implementation notes
 
-The MDL eval is a fold over the operations of `Team/Operations.lean`:
-`Team.flat` for atoms, `Team.dep` of `Team/Atoms.lean` for the dependence atom read
-through the valuation, `Team.tensor` for the split clauses, and Väänänen's
-single-witness and image modalities `Team.possWitness` and `Team.necImage`,
-whose closure lemmas give Lemma 4.2 and the empty-team property case by
-case. The MDL eval uses Väänänen's exact clauses, not BSML's. The disjunction
-clause is the under-DC simplified form `X = Y ∪ Z` (paper's (T6)'
-under Lemma 4.2 part 1) rather than the literal `X ⊆ Y ∪ Z` from
-(T6); under downward closure they are equivalent.
+`eval` is a fold over the operations of `Team/Operations.lean` and the dependence atom
+`Team.dep`, with Väänänen's single-witness and image modalities. The disjunction clause is the
+split `t₁ ∪ t₂ = t`, which is equivalent to Väänänen's `t ⊆ t₁ ∪ t₂` under downward closure.
 
-The `KripkeModel` carrier from `Logic/Team/Kripke.lean` is the
-shared substrate consumed by BSML, QBSML, and the AAY-2024
-extensions (BSMLOr/BSMLEmpty) alike.
+## TODO
 
-## Todo
+* The classical disjunction and the satisfiability complexity results of
+  [lohmann-vollmer-2013].
+* Modal independence logic, with the independence atom beside `Team.dep`.
 
-* [lohmann-vollmer-2013] — adds classical disjunction `⓿` (the
-  BSML∨ analogue) and complete satisfiability complexity classification.
-  Natural second consumer paper, with a Studies file anchored on it.
-* Modal independence logic, with Grädel and Väänänen's independence atom beside
-  `Team.dep` in `Team/Atoms.lean`.
+## References
+
+* [vaananen-2007] Väänänen, Dependence Logic: A New Approach to Independence Friendly Logic
+* [vaananen-2008] Väänänen, Modal Dependence Logic
+* [lohmann-vollmer-2013] Lohmann and Vollmer, Complexity Results for Modal Dependence Logic
+* [aloni-anttila-yang-2024] Aloni, Anttila and Yang, State-based Modal Logics for Free Choice
 -/
 
 @[expose] public section
@@ -120,20 +63,16 @@ open ModalLogic (KripkeModel)
 
 /-! ### Syntax (Definition 1.1) -/
 
-/-- MDL syntax (Definition 1.1 of [vaananen-2008]): classical modal
-    logic extended with the dependence atom `=(p₁,...,pₙ; q)`.
-
-    `□` and binary `∧` are abbreviations (the paper's `□A := ¬◇¬A` and
-    `A ∧ B := ¬(¬A ∨ ¬B)`). We include `conj` as a primitive constructor
-    here for ergonomic parallelism with BSML, with the semantic clauses
-    matching what the abbreviations would yield. -/
+/-- The formulas of MDL ([vaananen-2008] Definition 1.1) extend classical modal logic with the
+    dependence atom `=(p₁,...,pₙ; q)`. Väänänen defines `□A` as `¬◇¬A` and `A ∧ B` as
+    `¬(¬A ∨ ¬B)`; `conj` is primitive here, with the clauses that abbreviation yields. -/
 inductive Formula (Atom : Type*) where
   /-- Atomic proposition. -/
   | atom (p : Atom)
-  /-- Dependence atom `=(x⃗; y)`: values of `y` in the team are
-      functionally determined by values of `x⃗`. -/
+  /-- The dependence atom `=(x⃗; y)` says that the values of `y` in the team are a function
+      of the values of `x⃗`. -/
   | dep (xs : List Atom) (y : Atom)
-  /-- Bilateral negation: swap support/anti-support. -/
+  /-- Negation, which swaps support and anti-support. -/
   | neg (φ : Formula Atom)
   /-- Conjunction. -/
   | conj (φ ψ : Formula Atom)
@@ -194,11 +133,11 @@ def eval (M : KripkeModel W Atom) : Bool → Formula Atom → Finset W → Prop
   | true,  .poss ψ,        t => t ∈ Team.possWitness M.access {s | eval M true ψ s}
   | false, .poss ψ,        t => t ∈ Team.necImage M.access {s | eval M false ψ s}
 
-/-- Support: positive evaluation. -/
+/-- Support is evaluation in the positive polarity. -/
 abbrev support (M : KripkeModel W Atom) (φ : Formula Atom) (t : Finset W) : Prop :=
   eval M true φ t
 
-/-- Anti-support: negative evaluation. -/
+/-- Anti-support is evaluation in the negative polarity. -/
 abbrev antiSupport (M : KripkeModel W Atom) (φ : Formula Atom) (t : Finset W) : Prop :=
   eval M false φ t
 
@@ -249,20 +188,17 @@ abbrev antiSupport (M : KripkeModel W Atom) (φ : Formula Atom) (t : Finset W) :
 
 /-! ### Modal depth -/
 
-/-- Modal depth of an MDL formula. Atoms and dep atoms are 0; `neg`
-    preserves depth; `conj` and `disj` take max; `poss` increments. -/
+/-- The modal depth of a formula is the greatest number of nested `◇`s in it. -/
 def Formula.modalDepth : Formula Atom → ℕ
-  | .atom _ => 0
-  | .dep _ _ => 0
+  | .atom _ | .dep _ _ => 0
   | .neg ψ => ψ.modalDepth
-  | .conj ψ₁ ψ₂ => max ψ₁.modalDepth ψ₂.modalDepth
-  | .disj ψ₁ ψ₂ => max ψ₁.modalDepth ψ₂.modalDepth
+  | .conj ψ₁ ψ₂ | .disj ψ₁ ψ₂ => max ψ₁.modalDepth ψ₂.modalDepth
   | .poss ψ => ψ.modalDepth + 1
 
 /-! ### Lemma 4.2: Downward closure -/
 
-/-- Joint downward closure for both polarities: each case is the closure lemma of its
-    connective in `Team/Operations.lean`; the dependence atom is inherited by subteams. -/
+/-- Support and anti-support are downward closed together. Each case is the closure lemma of
+    its connective in `Team/Operations.lean`, and subteams inherit the dependence atom. -/
 private theorem support_and_antiSupport_isLowerSet (φ : Formula Atom)
     (M : KripkeModel W Atom) :
     IsLowerSet {t | support M φ t} ∧ IsLowerSet {t | antiSupport M φ t} := by
@@ -274,17 +210,14 @@ private theorem support_and_antiSupport_isLowerSet (φ : Formula Atom)
   | disj ψ₁ ψ₂ ih₁ ih₂ => exact ⟨ih₁.1.tensor ih₂.1, ih₁.2.inter ih₂.2⟩
   | poss ψ ih => exact ⟨Team.isLowerSet_possWitness _ _, ih.2.necImage⟩
 
-/-- **Lemma 4.2 of [vaananen-2008]**: every MDL formula's support
-    is downward-closed. The defining closure property of the dependence
-    family — what BSML loses when it adds NE. -/
+/-- The support of every MDL formula is downward closed ([vaananen-2008] Lemma 4.2). -/
 theorem isLowerSet_support (M : KripkeModel W Atom) (φ : Formula Atom) :
     IsLowerSet { t : Finset W | support M φ t } :=
   (support_and_antiSupport_isLowerSet φ M).1
 
 /-! ### Empty team property -/
 
-/-- Joint empty-team property: every MDL formula has both empty support and empty
-    anti-support; no `NE` constructor breaks it. -/
+/-- Every MDL formula is supported and anti-supported by the empty team. -/
 private theorem support_and_antiSupport_empty
     (φ : Formula Atom) (M : KripkeModel W Atom) :
     support M φ ∅ ∧ antiSupport M φ ∅ := by
@@ -303,11 +236,8 @@ theorem support_empty (M : KripkeModel W Atom) (φ : Formula Atom) :
 
 /-! ### Dep breaks union closure (the defining feature) -/
 
-/-- **The dep atom is not union-closed**: a constructive counterexample.
-    Take a model with at least two worlds `w₁, w₂` where `M.val p w₁ =
-    M.val p w₂` but `M.val q w₁ ≠ M.val q w₂`. Then `{w₁}` and `{w₂}`
-    each support `=(p; q)` vacuously (each is a singleton, so the
-    functional-dependence condition is trivial), but `{w₁, w₂}` does not. -/
+/-- The dependence atom is not union-closed. When two worlds agree on `p` but not on `q`,
+    each of their singleton teams supports `=(p; q)` but the team of both does not. -/
 theorem not_supClosed_dep_of_witness {p q : Atom} {w₁ w₂ : W}
     {M : KripkeModel W Atom} (hp : M.val p w₁ = M.val p w₂) (hq : M.val q w₁ ≠ M.val q w₂) :
     ¬ SupClosed { t : Finset W | support M (.dep [p] q) t } := by
@@ -317,158 +247,46 @@ theorem not_supClosed_dep_of_witness {p q : Atom} {w₁ w₂ : W}
 /-! ### Soundness for the closure cell (Definability bridge) -/
 
 open Team in
-/-- **MDL is sound for its closure cell**: every MDL-definable team property is
-    downward-closed and has the empty-team property. The dependence family
-    occupies the downward-closed, empty-team cell ([vaananen-2008];
-    [anttila-2025]) — `dep` breaks union closure (see
-    `not_supClosed_dep_of_witness`) but preserves downward closure.
-
-    Composes `isLowerSet_support` (Lemma 4.2) and `support_empty` through the
-    `Team/Definability.lean` bridge. The converse (every such property is
-    MDL-definable) is the open half. -/
+/-- Every MDL-definable team property is downward closed and contains the empty team. The
+    converse, that every such property is MDL-definable, is not proved here. -/
 theorem definableClass_support_subset (M : KripkeModel W Atom) :
     definableClass (support M) ⊆ {P | IsLowerSet P ∧ ∅ ∈ P} :=
   definableClass_subset fun φ ↦ ⟨isLowerSet_support M φ, support_empty M φ⟩
 
-/-! ### Bisimulation invariance (Väänänen-style ◇)
-
-MDL's modality differs from BSML's: anti-`◇` uses the union of accessibility
-images (clause (T9)), and `◇`-support a single witness team (clause (T8)),
-rather than BSML's per-world sub-witnesses. The invariance proof therefore
-recurses through `StateBisim.biUnionAccess` and `StateBisim.possWitness`
-(carrier-level transport lemmas in `Logic/Team/Bisimulation.lean`)
-at the modal step, where BSML uses `WorldBisim.accessStateBisim` /
-`StateBisim.exists_image_subset`. The dependence-atom case is depth-0 and turns on
-`WorldBisim.val_eq`: state bisim preserves the set of atom-valuation profiles
-realised in a team, and functional dependence is a property of that set. -/
+/-! ### Bisimulation invariance -/
 
 section Bisimulation
 
-open ModalLogic
+open ModalLogic (WorldBisim)
 
-variable {W' : Type*} [DecidableEq W']
+variable {W' : Type*} [DecidableEq W'] {M : KripkeModel W Atom} {M' : KripkeModel W' Atom}
 
-/-- **Bisimulation invariance for MDL** (the [aloni-anttila-yang-2024]
-    Theorem 3.8 analogue for [vaananen-2008]'s modal dependence logic):
-    if `s ⇌_k s'` and `φ` has modal depth `≤ k`, then `eval M b φ s ↔
-    eval M' b φ s'` for both polarities.
-
-    Second consumer of the carrier-level bisimulation substrate (after BSML),
-    which is what licensed lifting it out of `BSML/`. -/
-theorem bisim_invariant_eval {M : KripkeModel W Atom} {M' : KripkeModel W' Atom}
-    (φ : Formula Atom) {k : ℕ} (hd : φ.modalDepth ≤ k)
-    {s : Finset W} {s' : Finset W'} (hbisim : StateBisim k M s M' s')
-    (b : Bool) : eval M b φ s ↔ eval M' b φ s' := by
-  induction φ generalizing k s s' b with
-  | atom p =>
-    cases b <;>
-    · constructor
-      · intro h w' hw'
-        obtain ⟨w, hw, hbw⟩ := hbisim.2 w' hw'
-        rw [← hbw.val_eq]; exact h w hw
-      · intro h w hw
-        obtain ⟨w', hw', hbw⟩ := hbisim.1 w hw
-        rw [hbw.val_eq]; exact h w' hw'
+/-- Teams that are `k`-bisimilar agree on every MDL formula of modal depth at most `k`, in both
+    polarities, by the argument of [aloni-anttila-yang-2024] Theorem 3.8. -/
+theorem invariant_eval {k : ℕ} (φ : Formula Atom) (hd : φ.modalDepth ≤ k) (b : Bool) :
+    Team.Invariant (WorldBisim k M · M' ·) {t | eval M b φ t} {t | eval M' b φ t} := by
+  induction φ generalizing k b with
+  | atom p => cases b <;> exact Team.invariant_flat fun _ _ h ↦ by rw [h.val_eq]
   | dep xs y =>
     cases b
-    · -- antiSupport (dep xs y) s = (s = ∅)
-      exact hbisim.eq_empty_iff
-    · -- support (dep xs y): functional dependence, a property of the
-      -- valuation profiles, which bisim preserves (`val_eq`).
-      change support M _ s ↔ support M' _ s'
-      rw [support_dep, support_dep]
-      constructor
-      · intro h w₁' hw₁' w₂' hw₂' hagree'
-        obtain ⟨w₁, hw₁, hb₁⟩ := hbisim.2 w₁' hw₁'
-        obtain ⟨w₂, hw₂, hb₂⟩ := hbisim.2 w₂' hw₂'
-        have hagree : ∀ x ∈ xs, M.val x w₁ = M.val x w₂ := by
-          intro x hx; rw [hb₁.val_eq x, hagree' x hx, ← hb₂.val_eq x]
-        rw [← hb₁.val_eq y, ← hb₂.val_eq y]; exact h w₁ hw₁ w₂ hw₂ hagree
-      · intro h w₁ hw₁ w₂ hw₂ hagree
-        obtain ⟨w₁', hw₁', hb₁⟩ := hbisim.1 w₁ hw₁
-        obtain ⟨w₂', hw₂', hb₂⟩ := hbisim.1 w₂ hw₂
-        have hagree' : ∀ x ∈ xs, M'.val x w₁' = M'.val x w₂' := by
-          intro x hx; rw [← hb₁.val_eq x, hagree x hx, hb₂.val_eq x]
-        rw [hb₁.val_eq y, hb₂.val_eq y]; exact h w₁' hw₁' w₂' hw₂' hagree'
-  | neg ψ ih =>
-    cases b
-    · exact ih hd hbisim true
-    · exact ih hd hbisim false
+    · exact Team.invariant_singleton_empty
+    · exact Team.invariant_dep (fun _ _ h ↦ List.map_congr_left fun x _ ↦ h.val_eq x)
+        fun _ _ h ↦ h.val_eq y
+  | neg ψ ih => cases b <;> exact ih hd _
   | conj ψ₁ ψ₂ ih₁ ih₂ =>
-    have hd₁ : ψ₁.modalDepth ≤ k := (le_max_left _ _).trans hd
-    have hd₂ : ψ₂.modalDepth ≤ k := (le_max_right _ _).trans hd
-    cases b
-    · -- antiSupport (conj): split into (t, u)
-      constructor
-      · rintro ⟨t, h₁, u, h₂, hsplit⟩
-        obtain ⟨t', u', hsplit', hbt, hbu⟩ := hbisim.splitPreserve hsplit
-        exact ⟨t', (ih₁ hd₁ hbt false).mp h₁, u', (ih₂ hd₂ hbu false).mp h₂, hsplit'⟩
-      · rintro ⟨t', h₁, u', h₂, hsplit'⟩
-        obtain ⟨t, u, hsplit, hbt, hbu⟩ := StateBisim.splitPreserve hbisim.symm hsplit'
-        exact ⟨t, (ih₁ hd₁ hbt.symm false).mpr h₁, u, (ih₂ hd₂ hbu.symm false).mpr h₂, hsplit⟩
-    · -- support (conj) = support ψ₁ ∧ support ψ₂
-      constructor
-      · rintro ⟨h₁, h₂⟩
-        exact ⟨(ih₁ hd₁ hbisim true).mp h₁, (ih₂ hd₂ hbisim true).mp h₂⟩
-      · rintro ⟨h₁, h₂⟩
-        exact ⟨(ih₁ hd₁ hbisim true).mpr h₁, (ih₂ hd₂ hbisim true).mpr h₂⟩
+    obtain ⟨hd₁, hd₂⟩ := max_le_iff.mp hd
+    cases b; exacts [(ih₁ hd₁ _).tensor (ih₂ hd₂ _), (ih₁ hd₁ _).inter (ih₂ hd₂ _)]
   | disj ψ₁ ψ₂ ih₁ ih₂ =>
-    have hd₁ : ψ₁.modalDepth ≤ k := (le_max_left _ _).trans hd
-    have hd₂ : ψ₂.modalDepth ≤ k := (le_max_right _ _).trans hd
-    cases b
-    · -- antiSupport (disj) = antiSupport ψ₁ ∧ antiSupport ψ₂
-      constructor
-      · rintro ⟨h₁, h₂⟩
-        exact ⟨(ih₁ hd₁ hbisim false).mp h₁, (ih₂ hd₂ hbisim false).mp h₂⟩
-      · rintro ⟨h₁, h₂⟩
-        exact ⟨(ih₁ hd₁ hbisim false).mpr h₁, (ih₂ hd₂ hbisim false).mpr h₂⟩
-    · -- support (disj): split into (t, u)
-      constructor
-      · rintro ⟨t, h₁, u, h₂, hsplit⟩
-        obtain ⟨t', u', hsplit', hbt, hbu⟩ := hbisim.splitPreserve hsplit
-        exact ⟨t', (ih₁ hd₁ hbt true).mp h₁, u', (ih₂ hd₂ hbu true).mp h₂, hsplit'⟩
-      · rintro ⟨t', h₁, u', h₂, hsplit'⟩
-        obtain ⟨t, u, hsplit, hbt, hbu⟩ := StateBisim.splitPreserve hbisim.symm hsplit'
-        exact ⟨t, (ih₁ hd₁ hbt.symm true).mpr h₁, u, (ih₂ hd₂ hbu.symm true).mpr h₂, hsplit⟩
+    obtain ⟨hd₁, hd₂⟩ := max_le_iff.mp hd
+    cases b; exacts [(ih₁ hd₁ _).inter (ih₂ hd₂ _), (ih₁ hd₁ _).tensor (ih₂ hd₂ _)]
   | poss ψ ih =>
-    cases k with
-    | zero => exact absurd hd (Nat.not_succ_le_zero _)
-    | succ k =>
-      have hdψ : ψ.modalDepth ≤ k := Nat.le_of_succ_le_succ hd
-      cases b
-      · -- antiSupport (poss ψ) s = antiSupport ψ (s.biUnion R), evaluated on the
-        -- union of images; `biUnionAccess` transports it.
-        show eval M false ψ (s.biUnion M.access) ↔ eval M' false ψ (s'.biUnion M'.access)
-        exact ih hdψ hbisim.biUnionAccess false
-      · -- support (poss ψ): single witness team Y. Shrink to its reachable part,
-        -- transport via `possWitness`, recurse.
-        constructor
-        · rintro ⟨Y, hwit, hYsupp⟩
-          show ∃ Y' : Finset W',
-            (∀ w' ∈ s', ∃ y' ∈ Y', y' ∈ M'.access w') ∧ eval M' true ψ Y'
-          obtain ⟨Y', _hY'sub, hY'wit, hYbisim⟩ :=
-            hbisim.possWitness (Y := Y ∩ s.biUnion M.access)
-              Finset.inter_subset_right
-              (fun w hw => by
-                obtain ⟨y, hyY, hyw⟩ := hwit w hw
-                exact ⟨y, Finset.mem_inter.mpr
-                  ⟨hyY, Finset.mem_biUnion.mpr ⟨w, hw, hyw⟩⟩, hyw⟩)
-          exact ⟨Y', hY'wit,
-            (ih hdψ hYbisim true).mp
-              (isLowerSet_support M ψ Finset.inter_subset_left hYsupp)⟩
-        · rintro ⟨Y', hwit', hY'supp⟩
-          show ∃ Y : Finset W,
-            (∀ w ∈ s, ∃ y ∈ Y, y ∈ M.access w) ∧ eval M true ψ Y
-          obtain ⟨Y, _hYsub, hYwit, hYbisim⟩ :=
-            hbisim.symm.possWitness (Y := Y' ∩ s'.biUnion M'.access)
-              Finset.inter_subset_right
-              (fun w' hw' => by
-                obtain ⟨y', hy'Y, hy'w⟩ := hwit' w' hw'
-                exact ⟨y', Finset.mem_inter.mpr
-                  ⟨hy'Y, Finset.mem_biUnion.mpr ⟨w', hw', hy'w⟩⟩, hy'w⟩)
-          exact ⟨Y, hYwit,
-            (ih hdψ hYbisim.symm true).mpr
-              (isLowerSet_support M' ψ Finset.inter_subset_left hY'supp)⟩
+    obtain _ | k := k
+    · exact absurd hd (Nat.not_succ_le_zero _)
+    have ih := ih (Nat.le_of_succ_le_succ hd)
+    cases b
+    · exact (ih _).necImage fun _ _ h ↦ h.2
+    · exact (ih _).possWitness (fun _ _ h ↦ h.2) (isLowerSet_support M ψ)
+        (isLowerSet_support M' ψ)
 
 end Bisimulation
 
