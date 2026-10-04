@@ -226,7 +226,7 @@ theorem DefectiveGoal.empty_of_nonempty (probe : FeatureBundle)
   have hne : probe.toList ≠ [] := by
     intro he
     refine h (funext λ t => ?_)
-    have hnone := (List.filterMap_eq_nil_iff.mp he) t (by cases t <;> decide)
+    have hnone := (List.filterMap_eq_nil_iff.mp he) t (Minimalist.FeatureType.mem_all t)
     cases hp : probe t with
     | absent => rfl
     | unvalued => rw [hp] at hnone; exact absurd hnone (by simp)
