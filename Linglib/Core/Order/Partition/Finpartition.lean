@@ -95,6 +95,13 @@ theorem minterm_sumElim (φ : ι → α) (ψ : κ → α) (σ : ι ⊕ κ → Bo
   simp only [minterm, ← univ_disjSum_univ, inf_disjSum]
   rfl
 
+theorem minterm_comp_equiv (e : κ ≃ ι) (φ : ι → α) (σ : κ → Bool) :
+    minterm (φ ∘ e) σ = minterm φ (σ ∘ e.symm) := by
+  rw [minterm, minterm, ← univ_map_equiv_to_embedding e, inf_map]
+  congr 1
+  funext k
+  simp
+
 theorem mem_minterm {γ : Type*} [Fintype γ] [DecidableEq γ] {φ : ι → Finset γ} {x : γ} :
     x ∈ minterm φ σ ↔ ∀ i, x ∈ φ i ↔ σ i = true := by
   rw [← singleton_subset_iff, minterm, Finset.le_inf_iff]
@@ -407,6 +414,14 @@ def minterms : Finpartition (⊤ : α) :=
 theorem mem_minterms_parts {φ : ι → α} {a : α} :
     a ∈ (minterms φ).parts ↔ a ≠ ⊥ ∧ ∃ σ, minterm φ σ = a := by
   simp [minterms]
+
+/-- Reindexing a family does not change its minterms. -/
+theorem parts_minterms_comp_equiv [Fintype κ] [DecidableEq κ] (e : κ ≃ ι) (φ : ι → α) :
+    (minterms (φ ∘ e)).parts = (minterms φ).parts := by
+  ext a
+  simp only [mem_minterms_parts, minterm_comp_equiv]
+  refine and_congr_right fun _ ↦ ⟨fun ⟨σ, h⟩ ↦ ⟨_, h⟩, fun ⟨τ, h⟩ ↦ ⟨τ ∘ e, ?_⟩⟩
+  simpa [Function.comp_assoc] using h
 
 /-- The minterms of the union of two families form the meet of their partitions into minterms. -/
 theorem minterms_sumElim [Fintype κ] [DecidableEq κ] (φ : ι → α) (ψ : κ → α) :
