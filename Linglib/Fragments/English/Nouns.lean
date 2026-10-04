@@ -1,14 +1,13 @@
 module
 
 public import Linglib.Syntax.Category.Noun.Basic
-public import Linglib.Semantics.Plurality.MassCount
 public import Linglib.Morphology.Word.Basic
 public import Linglib.Fragments.English.Inflection
 
 /-!
 # English nouns
 
-The English noun as a lexical entry: the root `Noun` with the mass/count feature, its lexical gender
+The English noun as a lexical entry: the root `Noun` with the count/mass class, its lexical gender
 where it has one, and its plural where that is not the regular *-s* one, which `Inflection.lean`'s
 `suffixS` supplies; names are the root `ProperName`. English nouns have no grammatical gender; the
 label recorded for *man*, *woman* and the names is the natural gender their pronouns agree with.
@@ -23,7 +22,6 @@ Bare plurals and bare mass nouns are arguments and a bare singular count noun is
 ## References
 
 * [chierchia-1998]
-* [krifka-2026]
 -/
 
 @[expose] public section
@@ -34,11 +32,11 @@ open English.Inflection
 
 open Morphology (Word Features)
 
-/-- An English noun: the root entry with the mass/count feature, its lexical gender where it
+/-- An English noun is the root entry with the count/mass class, its lexical gender where it
 has one, and its plural where that is not the regular *-s* one. -/
 structure Noun extends _root_.Noun where
-  /-- The mass/count feature ([krifka-2026]). -/
-  countable : MassCount := .count
+  /-- The count/mass class. -/
+  massCount : MassCount := .count
   /-- The natural gender the noun's pronouns agree with, where it has one. -/
   gender : Option Gender := none
   /-- The plural, where it is not the regular *-s* one. -/
@@ -49,24 +47,24 @@ structure Noun extends _root_.Noun where
 def Noun.common (form : String) : Noun := { form, gloss := form }
 
 /-- A mass noun. -/
-def Noun.mass (form : String) : Noun := { form, gloss := form, countable := .mass }
+def Noun.mass (form : String) : Noun := { form, gloss := form, massCount := .mass }
 
-/-- The form at a number: the citation form in the singular; in the plural, for a count noun,
-the irregular plural where there is one and else the regular *-s* one. -/
+/-- The form at a number is the citation form in the singular and, in the plural of a count
+noun, the irregular plural where there is one and else the regular *-s* one. -/
 def Noun.realize (n : Noun) : Number → Option String
   | .singular => some n.form
   | .plural =>
-    if n.countable = .mass then none else some (n.irregularPlural.getD (suffixS n.form))
+    if n.massCount = .mass then none else some (n.irregularPlural.getD (suffixS n.form))
   | _ => none
 
-/-- The singular as a word token: a `NOUN` with the gender where the entry has one. -/
+/-- The singular word token is a `NOUN` with the gender where the entry has one. -/
 def Noun.toWordSg (n : Noun) : Word :=
   { form := n.form, cat := .NOUN
     features := Features.of (number := some .singular) (gender := n.gender) }
 
 /-- The entry as a word token at a number, where it has a form there. -/
 def Noun.toWord (n : Noun) (num : Number) : Option Word :=
-  (n.realize num).map λ form =>
+  (n.realize num).map fun form ↦
     { n.toWordSg with form, features := Features.of (number := some num) (gender := n.gender) }
 
 theorem Noun.toWord_singular (n : Noun) : n.toWord .singular = some n.toWordSg := rfl
@@ -94,6 +92,7 @@ def spy : Noun := .common "spy"
 def idea : Noun := .common "idea"
 def lot : Noun := .common "lot"
 def bean : Noun := .common "bean"
+def lentil : Noun := .common "lentil"
 def father : Noun := { Noun.common "father" with gender := some .masculine }
 def mother : Noun := { Noun.common "mother" with gender := some .feminine }
 def man : Noun := { Noun.common "man" with gender := some .masculine, irregularPlural := "men" }

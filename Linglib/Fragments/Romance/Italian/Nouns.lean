@@ -1,13 +1,12 @@
 module
 
 public import Linglib.Syntax.Category.Noun.Basic
-public import Linglib.Semantics.Plurality.MassCount
 
 /-!
 # Italian nouns
 
 The Italian noun as a lexical entry: the root `GenderedNoun` over the masculine and feminine
-genders, with the mass/count feature and its plural; names are the root `ProperName`. Italian nouns
+genders, with the count/mass class and its plural; names are the root `ProperName`. Italian nouns
 need a determiner (`Italian.Determiners.inventory`) to be arguments ([chierchia-1998]); the definite
 plural denotes a kind and the bare plural, where licensed, a property (`Studies/Guerrini2026.lean`).
 The plurals in *-a* that change gender are `Italian.NumberGender`.
@@ -22,10 +21,10 @@ The plurals in *-a* that change gender are `Italian.NumberGender`.
 namespace Italian.Nouns
 
 
-/-- An Italian noun: the root gendered entry with the mass/count feature and its plural. -/
+/-- An Italian noun is the root gendered entry with the count/mass class and its plural. -/
 structure Noun extends GenderedNoun Gender where
-  /-- The mass/count feature. -/
-  countable : MassCount := .count
+  /-- The count/mass class. -/
+  massCount : MassCount := .count
   /-- The plural. -/
   plural : Option String := none
   deriving DecidableEq, Repr
@@ -53,10 +52,10 @@ def casa : Noun := { form := "casa", gloss := "house", gender := .feminine, plur
 
 /-! ### Mass nouns -/
 
-def acqua : Noun := { form := "acqua", gloss := "water", gender := .feminine, countable := .mass }
-def vino : Noun := { form := "vino", gloss := "wine", gender := .masculine, countable := .mass }
-def pane : Noun := { form := "pane", gloss := "bread", gender := .masculine, countable := .mass }
-def latte : Noun := { form := "latte", gloss := "milk", gender := .masculine, countable := .mass }
+def acqua : Noun := { form := "acqua", gloss := "water", gender := .feminine, massCount := .mass }
+def vino : Noun := { form := "vino", gloss := "wine", gender := .masculine, massCount := .mass }
+def pane : Noun := { form := "pane", gloss := "bread", gender := .masculine, massCount := .mass }
+def latte : Noun := { form := "latte", gloss := "milk", gender := .masculine, massCount := .mass }
 
 /-! ### Proper names -/
 

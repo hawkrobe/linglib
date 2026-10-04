@@ -4,18 +4,20 @@ public import Linglib.Semantics.Reference.Iota
 public import Linglib.Semantics.Plurality.Algebra
 public import Linglib.Semantics.Dynamic.Update
 public import Linglib.Logic.Assignment
-public import Linglib.Semantics.Plurality.MassCount
+public import Linglib.Syntax.Category.Noun.Basic
 
 /-!
 # Krifka (2026): Anaphora for Concepts, Kinds, and Parts in Dynamic Interpretation
 
-Krifka treats the head noun of a DP as introducing a discourse referent for a concept, a
-property with a count feature. The kind pronouns take that concept to a kind: *it* takes a mass
-concept to its kind, and *they* takes a count concept to the kind of its plural closure, so *a
-spider* is resumed by *them* and *mold* by *it*. Concept referents are presupposed by the input
+Krifka treats the head noun of a DP as introducing a discourse referent for a concept, a property
+with a count feature. The kind pronouns take that concept to a kind: *it* takes a mass concept to
+its kind, and *they* takes a count concept to the kind of its plural closure, so *a spider* is
+resumed by *them* and *mold* by *it*. Krifka takes the feature to be formal, like grammatical
+gender, since *pollen* and *pollen grains* can describe the same stuff and are still resumed by *it*
+and *them* respectively, (8) and (12) on pp. 605–606. Concept referents are presupposed by the input
 assignment, as the referents of names are, so they survive negation, which is a test, while an
-entity referent introduced under negation does not. After *John doesn't own a dog*, the kind
-pronoun *them* is therefore interpretable and a partitive is not.
+entity referent introduced under negation does not. After *John doesn't own a dog*, the kind pronoun
+*them* is therefore interpretable and a partitive is not.
 
 ## Main results
 
@@ -95,10 +97,7 @@ theorem they_eq_it_of_supClosed {P : World → Set E} (h : ∀ w, SupClosed (P w
 sufficient condition for σ stated after (13). -/
 theorem it_isSome_of_supClosed {P : World → Set E} {w : World} (hfin : (P w).Finite)
     (hne : (P w).Nonempty) (hcum : SupClosed (P w)) : (it P w).isSome :=
-  have ht : hfin.toFinset.Nonempty := hfin.toFinset_nonempty.2 hne
-  iota_isGreatest_isSome_iff.2 ⟨hfin.toFinset.sup' ht id,
-    hcum.finsetSup'_mem ht fun _ hx ↦ hfin.mem_toFinset.1 hx,
-    fun _ hx ↦ Finset.le_sup' id (hfin.mem_toFinset.2 hx)⟩
+  hcum.directedOn.iota_isGreatest_isSome hfin hne
 
 end Kinds
 
@@ -108,13 +107,11 @@ def spider : Unit → Set (Individual Bool) :=
 
 /-- The kind of the singular count concept is undefined with two instances (15c). -/
 theorem spider_no_kind : it spider () = none := by
-  refine iota_isGreatest_eq_none_iff.2 ?_
-  rintro ⟨x, hx, hmax⟩
-  have h₁ := hmax (Set.mem_insert _ _)
-  have h₂ := hmax (Set.mem_insert_of_mem _ rfl)
-  rcases hx with rfl | rfl
-  · exact Bool.noConfusion (Set.mem_singleton_iff.1 (h₂ (Set.mem_singleton false)))
-  · exact Bool.noConfusion (Set.mem_singleton_iff.1 (h₁ (Set.mem_singleton true)))
+  refine IsAntichain.iota_isGreatest_eq_none ?_ (Set.mem_insert _ _)
+    (Set.mem_insert_of_mem _ rfl) fun h ↦ Bool.noConfusion (Set.singleton_eq_singleton_iff.1
+      (congrArg Subtype.val h))
+  rintro _ (rfl | rfl) _ (rfl | rfl) hne h
+  exacts [hne rfl, Bool.noConfusion (h rfl), Bool.noConfusion (h rfl), hne rfl]
 
 /-- The kind of the plural closure of *spider* is the sum of the two spiders (15b). -/
 theorem spiders_kind : they spider () = some (Individual.atom true ⊔ Individual.atom false) := by

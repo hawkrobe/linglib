@@ -1,39 +1,45 @@
 module
 
-public import Linglib.Semantics.Plurality.MassCount
 public import Linglib.Syntax.Category.Determiner.Basic
 
 /-!
 # The Nominal Mapping Parameter
 
-This file defines the Nominal Mapping Parameter of [chierchia-1998], which sets what a
-language's nouns can denote: kinds, so that they are arguments ([+arg]), or properties, so that
-they are predicates ([+pred]), or either. A setting is the set of denotation types nouns take.
-The setting and the language's determiners then decide which bare nominals can be arguments. A
-covert type shift is blocked when a determiner lexicalizes it, the Blocking Principle, and kind
-formation ∩ is defined only for mass nouns and plurals, so a [+arg, +pred] language with
-articles admits bare plurals and bare mass nouns but no bare singular count nouns, while a
-[+arg, −pred] language admits every bare nominal and a [−arg, +pred] language none.
+The Nominal Mapping Parameter of Chierchia sets what a language's nouns can denote: kinds, so
+that they are arguments ([+arg]), or properties, so that they are predicates ([+pred]), or
+either. A setting is the set of denotation types nouns take. The setting and the language's
+determiners then decide which bare nominals can be arguments. A covert type shift is blocked when
+a determiner lexicalizes it, the Blocking Principle. A [+arg, +pred] language with both articles
+then admits exactly the bare nominals for which kind formation ∩ is defined, a [+arg, −pred]
+language every bare nominal, and a [−arg, +pred] language none.
 
 ## Main definitions
 
-* `NominalMapping` — a setting of the parameter, with the three attested settings `argOnly`,
-  `argAndPred` and `predOnly`, and `CanDenoteKind` and `CanDenoteProperty`
-* `CovertShift`, `Determiner.Inventory.Blocks` — the covert type shifts and the Blocking
-  Principle
-* `DownDefined`, `NominalMapping.LicensesBare` — where ∩ is defined, and which bare nominals a
-  language admits as arguments
+* `NominalMapping`: a setting of the parameter, with the three attested settings `argOnly`,
+  `argAndPred` and `predOnly`.
+* `CovertShift`, `Determiner.Inventory.Blocks`: the covert type shifts and the Blocking
+  Principle.
+* `NominalMapping.LicensesBare`: the bare nominals a language admits as arguments.
 
 ## Main results
 
-* `NominalMapping.licensesBare_iff_downDefined` — with ι and ∃ blocked, a [+arg, +pred]
-  language admits exactly the bare nominals ∩ is defined for
-* `NominalMapping.exists_licensesBare_iff` — a language admits some bare argument iff it is
-  [+arg]
+* `NominalMapping.argAndPred_licensesBare_iff`: with ι and ∃ blocked, a [+arg, +pred] language
+  admits exactly the bare nominals ∩ is defined for.
+* `NominalMapping.licensesBare_true_iff`: a language admits a bare nominal with a kind iff it is
+  [+arg].
+
+## Implementation notes
+
+Whether ∩ is defined for a nominal is a proposition `down` that the consumer supplies, as for
+`Determiner.Inventory.Available`. It depends on the nominal's denotation and not on its number
+and countability alone, since a plural property anchored to particular entities has no kind.
+`DirectedOn.iota_isGreatest_isSome` and `IsAntichain.iota_isGreatest_eq_none` decide it for
+cumulative extensions and for extensions of two or more atoms.
 
 ## References
 
 * [chierchia-1998]
+* [dayal-2004]
 * [jenks-2018]
 * [moroney-2021]
 -/
@@ -42,13 +48,13 @@ articles admits bare plurals and bare mass nouns but no bare singular count noun
 
 namespace Genericity
 
-/-- What a noun denotes: a kind, of type e, or a property, of type ⟨e,t⟩. -/
+/-- A noun denotes a kind, of type e, or a property, of type ⟨e,t⟩. -/
 inductive NominalDenotation where
   | kind
   | property
   deriving DecidableEq, Repr, Fintype
 
-/-- A setting of the Nominal Mapping Parameter: the denotation types a language's nouns can
+/-- A setting of the Nominal Mapping Parameter is the set of denotation types a language's nouns can
 take. The language is [+arg] when `.kind` is in the setting and [+pred] when `.property` is; the
 empty setting, [−arg, −pred], leaves nouns nothing to denote and is excluded by the paper. -/
 def NominalMapping := Finset NominalDenotation
@@ -98,7 +104,7 @@ end NominalMapping
 
 /-! ### Covert type shifts -/
 
-/-- The covert type shifts: kind formation ∩, the definite ι and the existential ∃ of
+/-- The covert type shifts are kind formation ∩, the definite ι and the existential ∃ of
 [chierchia-1998], and the anaphoric definite ι^x of [jenks-2018], which [moroney-2021] makes
 covert. -/
 inductive CovertShift where
@@ -107,13 +113,6 @@ inductive CovertShift where
   | iotaAnaphoric
   | exists
   deriving DecidableEq, Repr, Fintype
-
-/-- Kind formation is defined for a mass noun and for a plural, whose instances form a
-plurality; a singular count property cannot supply the plurality of instances a kind needs. -/
-def DownDefined (nt : MassCount) (num : Number) : Prop := nt = .mass ∨ num = .plural
-
-instance (nt : MassCount) (num : Number) : Decidable (DownDefined nt num) := by
-  unfold DownDefined; infer_instance
 
 end Genericity
 
@@ -132,7 +131,7 @@ def Blocks (ds : Inventory) : CovertShift → Prop
   | .iotaAnaphoric => ds.Marks .familiarity
   | .exists => ∃ e ∈ ds, e.kind = .article .indefinite
 
-instance (ds : Inventory) : DecidablePred ds.Blocks := λ τ => by
+instance (ds : Inventory) : DecidablePred ds.Blocks := fun τ ↦ by
   cases τ <;> unfold Blocks <;> infer_instance
 
 /-- Kind formation is never blocked. -/
@@ -153,34 +152,33 @@ namespace Genericity.NominalMapping
 
 /-! ### Bare arguments -/
 
-/-- A language with the setting `m` and the determiners `ds` admits a bare nominal of
-countability `nt` and number `num` as an argument: it must be [+arg], and if also [+pred], so
-that count nouns are predicates, the nominal needs ∩ to be defined for it or ι or ∃ unblocked. -/
-def LicensesBare (m : NominalMapping) (ds : Determiner.Inventory) (nt : MassCount)
-    (num : Number) : Prop :=
-  .kind ∈ m ∧ (.property ∉ m ∨ DownDefined nt num ∨ ¬ ds.Blocks .iota ∨ ¬ ds.Blocks .exists)
+/-- A language with the setting `m` and the determiners `ds` admits as an argument a bare
+nominal for which ∩ is defined just when `down` holds: it must be [+arg], and if it is also
+[+pred], so that its nouns are predicates, ∩ must be defined for the nominal or ι or ∃ must be
+unblocked. -/
+def LicensesBare (m : NominalMapping) (ds : Determiner.Inventory) (down : Prop) : Prop :=
+  .kind ∈ m ∧ (.property ∉ m ∨ down ∨ ¬ ds.Blocks .iota ∨ ¬ ds.Blocks .exists)
 
-instance (m : NominalMapping) (ds : Determiner.Inventory) (nt : MassCount) (num : Number) :
-    Decidable (m.LicensesBare ds nt num) := by
+instance (m : NominalMapping) (ds : Determiner.Inventory) (down : Prop) [Decidable down] :
+    Decidable (m.LicensesBare ds down) := by
   unfold LicensesBare; infer_instance
 
-variable {ds : Determiner.Inventory} {nt : MassCount} {num : Number}
+variable {m : NominalMapping} {ds : Determiner.Inventory} {down : Prop}
 
 /-- With ι and ∃ blocked, a [+arg, +pred] language admits exactly the bare nominals ∩ is
-defined for: plurals and mass nouns, not singular count nouns. -/
-theorem licensesBare_iff_downDefined (hι : ds.Blocks .iota) (hex : ds.Blocks .exists) :
-    argAndPred.LicensesBare ds nt num ↔ DownDefined nt num := by
+defined for. -/
+theorem argAndPred_licensesBare_iff (hι : ds.Blocks .iota) (hex : ds.Blocks .exists) :
+    argAndPred.LicensesBare ds down ↔ down := by
   simp [LicensesBare, hι, hex]
 
-/-- A [+arg, +pred] language admits bare singular count nouns iff it lacks a definite or an
-indefinite article. -/
-theorem licensesBare_singular_iff :
-    argAndPred.LicensesBare ds .count .singular ↔ ¬ ds.Blocks .iota ∨ ¬ ds.Blocks .exists := by
-  simp [LicensesBare, DownDefined]
+/-- A [+arg, +pred] language admits a bare nominal without a kind, such as a singular count
+noun, iff it lacks a definite or an indefinite article. -/
+theorem argAndPred_licensesBare_false_iff :
+    argAndPred.LicensesBare ds False ↔ ¬ ds.Blocks .iota ∨ ¬ ds.Blocks .exists := by
+  simp [LicensesBare]
 
-/-- A language admits some bare argument iff it is [+arg]. -/
-theorem exists_licensesBare_iff (m : NominalMapping) :
-    (∃ nt num, m.LicensesBare ds nt num) ↔ .kind ∈ m :=
-  ⟨λ ⟨_, _, h, _⟩ => h, λ h => ⟨.mass, .singular, h, .inr (.inl (.inl rfl))⟩⟩
+/-- A language admits a bare nominal with a kind iff it is [+arg]. -/
+theorem licensesBare_true_iff : m.LicensesBare ds True ↔ .kind ∈ m := by
+  simp [LicensesBare]
 
 end Genericity.NominalMapping
