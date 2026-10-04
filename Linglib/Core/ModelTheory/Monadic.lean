@@ -11,9 +11,12 @@ each element of a structure has a unary type, the set of symbols holding of it. 
 structures the Ehrenfeucht–Fraïssé game is decided by counting: duplicator answers a played
 element by its partner and a fresh element by a fresh element of the same type, which is possible
 while, for each type, the unplayed elements on the two sides are equinumerous or both at least the
-number of rounds left. Hence two monadic structures are `t`-equivalent when, for each unary type,
+number of rounds left. Conversely, spoiler wins when a type is scarcer on one side, so two
+structures for a finite monadic signature are `t`-equivalent exactly when, for each unary type,
 their elements of that type are equinumerous or both at least `t`, the first-order case of Peters
-and Westerståhl's Theorem 13.
+and Westerståhl's Theorem 13. With the Hintikka characterization of definability, this makes a
+class first-order definable iff it is invariant under these counts up to some threshold, which is
+van Benthem's characterization of the first-order definable determiners.
 
 ## Main definitions
 
@@ -24,11 +27,17 @@ and Westerståhl's Theorem 13.
 ## Main results
 
 * `FirstOrder.Language.MonadicMatch.backForth`: the counting strategy wins the game.
-* `FirstOrder.Language.nEquiv_of_min_encard_eq`: the `t`-equivalence criterion.
+* `FirstOrder.Language.BackForth.min_encard_eq`: conversely, any winning position satisfies the
+  counting condition.
+* `FirstOrder.Language.nEquiv_iff_min_encard_eq`: the `t`-equivalence criterion.
+* `FirstOrder.Language.foDefinable_iff_exists_min_encard_eq`: a class of structures for a finite
+  monadic signature is definable within `K` iff it is invariant under agreement of the unary type
+  counts up to some threshold.
 
 ## References
 
 * [peters-westerstahl-2006]
+* [van-benthem-1984]
 -/
 
 @[expose] public section
@@ -37,7 +46,7 @@ universe u v w w'
 
 namespace FirstOrder.Language
 
-open BoundedFormula
+open BoundedFormula CategoryTheory
 
 variable (L : Language.{u, v}) {M : Type w} {N : Type w'} [L.Structure M] [L.Structure N]
 
@@ -176,5 +185,66 @@ theorem nEquiv_of_min_encard_eq [L.IsMonadic] {t : ℕ}
     L.NEquiv t M N :=
   BackForth.nEquiv <| MonadicMatch.backForth ⟨fun i => i.elim0, fun i => i.elim0⟩ fun S => by
     simpa [Set.range_eq_empty] using h S
+
+namespace BackForth
+
+/-- Back-and-forth related tuples match, since equalities and unary predications of variables are
+atomic formulas. -/
+theorem monadicMatch {k : ℕ} (h : L.BackForth k v w) : L.MonadicMatch v w where
+  eq_iff i j := h.realize_iff_of_isAtomic (φ := (&i).bdEqual &j) (.equal _ _)
+  unaryType_eq i := funext fun R => propext <| by
+    simpa [unaryType] using h.realize_iff_of_isAtomic (φ := R.boundedFormula₁ &i) (.rel _ _)
+
+/-- A *forth* move answers a fresh element of type `S` by a fresh element of type `S`. -/
+theorem exists_mem_sdiff_range {k : ℕ} (h : L.BackForth (k + 1) v w) {S : L.Relations 1 → Prop}
+    {a : M} (ha : a ∈ L.unaryType ⁻¹' {S} \ Set.range v) :
+    ∃ b ∈ L.unaryType ⁻¹' {S} \ Set.range w, L.BackForth k (Fin.snoc v a) (Fin.snoc w b) := by
+  obtain ⟨b, hb⟩ := h.forth a
+  have hm := hb.monadicMatch
+  refine ⟨b, ⟨?_, fun ⟨i, hi⟩ => ha.2 ⟨i, ?_⟩⟩, hb⟩
+  · have := hm.unaryType_eq (Fin.last n)
+    simp only [Fin.snoc_last] at this
+    exact (this.symm.trans ha.1 : L.unaryType b = S)
+  · simpa [hi] using (hm.eq_iff i.castSucc (Fin.last n)).2
+
+/-- At a winning position for `j` rounds, the unplayed elements of each unary type are
+equinumerous on the two sides or both at least `j`. -/
+theorem min_encard_eq : ∀ {j n : ℕ} {v : Fin n → M} {w : Fin n → N}, L.BackForth j v w →
+    ∀ S, min (j : ℕ∞) (L.unaryType ⁻¹' {S} \ Set.range v).encard =
+      min (j : ℕ∞) (L.unaryType ⁻¹' {S} \ Set.range w).encard
+  | 0, _, _, _, _, _ => by simp
+  | j + 1, _, v, w, h, S => by
+    rcases (L.unaryType ⁻¹' {S} \ Set.range v).eq_empty_or_nonempty with hv | ⟨a, ha⟩
+    · rcases (L.unaryType ⁻¹' {S} \ Set.range w).eq_empty_or_nonempty with hw | ⟨b, hb⟩
+      · simp [hv, hw]
+      · obtain ⟨a, ha, -⟩ := h.symm.exists_mem_sdiff_range hb
+        exact absurd (hv ▸ ha) (Set.notMem_empty a)
+    · obtain ⟨b, hb, hab⟩ := h.exists_mem_sdiff_range ha
+      have := min_encard_eq hab S
+      rw [sdiff_range_snoc, sdiff_range_snoc] at this
+      rw [← Set.encard_sdiff_singleton_add_one ha, ← Set.encard_sdiff_singleton_add_one hb]
+      push_cast
+      rw [min_add_add_right, min_add_add_right, this]
+
+end BackForth
+
+/-- Two structures for a finite monadic signature are `t`-equivalent iff, for every unary type,
+their elements of that type are equinumerous or both at least `t` ([peters-westerstahl-2006]
+Theorem 13 with condition (13.7), first-order case). -/
+theorem nEquiv_iff_min_encard_eq [L.IsMonadic] [Finite L.Symbols] {t : ℕ} :
+    L.NEquiv t M N ↔ ∀ S, min (t : ℕ∞) (L.unaryType ⁻¹' {S} : Set M).encard =
+      min (t : ℕ∞) (L.unaryType ⁻¹' {S} : Set N).encard :=
+  ⟨fun h S => by simpa [Set.range_eq_empty] using (nEquiv_iff_backForth.1 h).min_encard_eq S,
+    nEquiv_of_min_encard_eq⟩
+
+/-- A class of structures for a finite monadic signature is first-order definable within `K` iff,
+for some threshold `n`, it is invariant within `K` under agreement of the unary type counts up to
+`n`; for two unary predicates this is [van-benthem-1984] Theorem 6.1. -/
+theorem foDefinable_iff_exists_min_encard_eq [L.IsMonadic] [Finite L.Symbols]
+    {K P : Set (Bundled.{w} L.Structure)} :
+    L.FODefinable K P ↔ ∃ n : ℕ, ∀ M ∈ K, ∀ N ∈ K,
+      (∀ S, min (n : ℕ∞) (L.unaryType ⁻¹' {S} : Set M).encard =
+        min (n : ℕ∞) (L.unaryType ⁻¹' {S} : Set N).encard) → M ∈ P → N ∈ P := by
+  simp only [foDefinable_iff_exists_nEquiv, nEquiv_iff_min_encard_eq]
 
 end FirstOrder.Language

@@ -31,6 +31,8 @@ Hintikka formulas. This is the rank-bounded counterpart of mathlib's `IsExtensio
   quantifier rank `≤ k`.
 * `FirstOrder.Language.backForth_iff_realize_iff`, `FirstOrder.Language.nEquiv_iff_backForth`:
   the converse over a finite relational signature.
+* `FirstOrder.Language.foDefinable_iff_exists_nEquiv`: over a finite relational signature, a class
+  is definable within `K` iff it is closed under `NEquiv k` within `K` for some `k`.
 
 ## Implementation notes
 
@@ -38,11 +40,6 @@ Tuples are the bound variables of `L.BoundedFormula Empty n`, so the `Fin.snoc` 
 is a round of the game and sentences are the case `n = 0`. As in Hodges's back-and-forth systems,
 the atomic condition holds at every rank; Libkin states it at rank `0` only, which agrees on
 nonempty structures (`backForth_succ_iff`) but makes soundness fail on empty ones.
-
-## TODO
-
-* Libkin's Corollary 3.17: over a finite relational signature, a class is definable within `K`
-  iff it is closed under `NEquiv k` within `K` for some `k`, via `hintikkaSet k 0`.
 
 ## References
 
@@ -416,6 +413,22 @@ theorem backForth_iff_realize_iff (v : Fin n → M) (w : Fin n → N) :
 theorem nEquiv_iff_backForth :
     L.NEquiv k M N ↔ L.BackForth k (default : Fin 0 → M) (default : Fin 0 → N) :=
   ⟨fun h => (backForth_iff_realize_iff _ _).2 fun φ hφ => h φ hφ, BackForth.nEquiv⟩
+
+/-- Over a finite relational signature, a class is first-order definable within `K` iff, for some
+`k`, it is closed under `k`-equivalence within `K` ([libkin-2004] Corollary 3.17). The defining
+sentence is the disjunction of the rank-`k` Hintikka sentences of its members. -/
+theorem foDefinable_iff_exists_nEquiv {K P : Set (Bundled.{w} L.Structure)} :
+    L.FODefinable K P ↔ ∃ k, ∀ M ∈ K, ∀ N ∈ K, L.NEquiv k M N → M ∈ P → N ∈ P := by
+  classical
+  refine ⟨fun ⟨φ, hφ⟩ => ⟨φ.qr, fun M hM N hN h hP => (hφ N hN).2 ((h φ le_rfl).1
+    ((hφ M hM).1 hP))⟩, fun ⟨k, hk⟩ => ⟨iSup fun θ : (L.hintikkaSet k 0).filter
+      (fun θ => ∃ N ∈ K, N ∈ P ∧ θ.Realize (default : Empty → N) default) => θ.1,
+        fun M hM => ?_⟩⟩
+  simp only [Sentence.Realize, Formula.Realize, realize_iSup, Subtype.exists, Finset.mem_filter]
+  refine ⟨fun hP => ⟨_, ⟨hintikka_mem k default, M, hM, hP, realize_hintikka_self k _⟩,
+    realize_hintikka_self k _⟩, fun ⟨θ, ⟨hθ, N, hN, hP, hNθ⟩, hMθ⟩ => ?_⟩
+  obtain rfl := eq_hintikka_of_realize _ hθ hNθ
+  exact hk N hN M hM ((realize_hintikka_iff _ _).1 hMθ).nEquiv hP
 
 end Hintikka
 
