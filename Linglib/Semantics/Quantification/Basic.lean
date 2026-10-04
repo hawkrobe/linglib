@@ -3,7 +3,6 @@ module
 public import Linglib.Semantics.Quantification.Defs
 public import Linglib.Semantics.Quantification.Properties
 public import Linglib.Logic.Aristotelian.Square
-public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Concrete propositional generalized quantifiers
@@ -15,29 +14,21 @@ Cooper's universals of conservativity and scope monotonicity, Keenan and Stavi's
 structure, and Peters and Westerståhl's left monotonicity and smoothness. The counting
 quantifiers such as *most* and *few* are in `Quantification/Counting.lean`.
 
-At a non-empty restrictor the square collapses to Jespersen's tripartition: the scope covers all
-of the restrictor, some but not all of it, or none of it.
-
 ## Main definitions
 
 * `every`, `GQ.some`, `no`, `the`: the propositional denotations.
 * `SatisfiesUniversals`: conservativity together with monotonicity in the scope.
 * `square`: the square of opposition of `every`, `no`, `some` and `not every` at a restrictor.
-* `Tripartition`: the three cells of the tripartition, ordered by how much of the restrictor the
-  scope covers.
-* `Tripartition.of R S`: the cell in which the scope `S` falls relative to `R`.
 
 ## Main results
 
 * `square_relations`: with a non-empty restrictor the four stand in all six relations of the
-  square.
-* `Tripartition.bot_lt_of_iff`, `Tripartition.of_eq_top_iff`: *some* holds above the bottom cell
-  and *every* at the top one, the latter given a non-empty restrictor.
+  square, so its cells (`Aristotelian.Square.cell`) divide the scopes into those covering all of
+  the restrictor, some but not all of it, and none of it.
 
 ## References
 
 * [barwise-cooper-1981]
-* [horn-2001]
 * [keenan-stavi-1986]
 * [peters-westerstahl-2006]
 * [russell-1905]
@@ -367,76 +358,3 @@ theorem satisfiesUniversals_no : SatisfiesUniversals (no : GQ α) :=
   ⟨conservative_no, Or.inr scopeAntitone_no⟩
 
 end Quantifier.GQ
-
-/-! ### Jespersen's tripartition
-
-[horn-2001] (pp. 218–219) traces to De Morgan the trichotomy of complete inclusion, partial
-inclusion with partial exclusion, and complete exclusion, and to Jespersen its tripartition into
-*all*, *some* and *none*, whose middle cell is the conjunction of the square's I and O corners
-rather than either one. The cells are pairwise contrary; at a non-empty restrictor, where *every*
-entails *some*, they are the three minterms of `every R` and `GQ.some R` that do not vanish
-identically. Ordered by how much of the restrictor the scope covers, *some* holds above the
-bottom cell, *every* at the top one, and *not every* below it. -/
-
-namespace Quantifier
-
-/-- A cell of Jespersen's tripartition records whether a scope covers none of a restrictor, some
-but not all of it, or all of it. -/
-inductive Tripartition where
-  | none
-  | someNotAll
-  | all
-  deriving DecidableEq, Repr, Fintype
-
-namespace Tripartition
-
-/-- The position of a cell in the order `none < someNotAll < all`. -/
-def toFin : Tripartition → Fin 3
-  | none => 0
-  | someNotAll => 1
-  | all => 2
-
-theorem toFin_injective : Function.Injective toFin := by decide
-
-instance : LinearOrder Tripartition := LinearOrder.lift' toFin toFin_injective
-
-instance : BoundedOrder Tripartition where
-  top := all
-  le_top := by decide
-  bot := none
-  bot_le := by decide
-
-theorem bot_eq_none : (⊥ : Tripartition) = none := rfl
-
-theorem top_eq_all : (⊤ : Tripartition) = all := rfl
-
-/-- The middle cell is the one *some* reaches and *every* does not. -/
-theorem eq_someNotAll_iff {s : Tripartition} : s = someNotAll ↔ ⊥ < s ∧ s < ⊤ := by
-  decide +revert
-
-open GQ
-
-variable {α : Type*} [Fintype α] {R S : α → Prop} [DecidablePred R] [DecidablePred S]
-
-/-- The cell in which the scope `S` falls relative to the restrictor `R`. -/
-def of (R S : α → Prop) [DecidablePred R] [DecidablePred S] : Tripartition :=
-  if GQ.some R S then if every R S then all else someNotAll else none
-
-theorem of_eq_bot_iff : of R S = ⊥ ↔ no R S := by
-  unfold of
-  rw [no_contradicts_some]
-  split_ifs <;> simp_all [bot_eq_none]
-
-/-- *some* holds exactly above the bottom cell. -/
-theorem bot_lt_of_iff : ⊥ < of R S ↔ GQ.some R S := by
-  rw [bot_lt_iff_ne_bot, Ne, of_eq_bot_iff, no_contradicts_some, not_not]
-
-/-- *every* holds exactly at the top cell, given a non-empty restrictor. -/
-theorem of_eq_top_iff (hR : ∃ x, R x) : of R S = ⊤ ↔ every R S := by
-  unfold of
-  split_ifs with h₁ <;> simp_all [top_eq_all]
-  exact fun h ↦ h₁ (subalternation_a_i R S hR h)
-
-end Tripartition
-
-end Quantifier

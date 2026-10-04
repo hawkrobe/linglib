@@ -3,7 +3,7 @@ module
 public import Mathlib.Data.Set.Basic
 public import Mathlib.Data.Fintype.Basic
 public import Mathlib.Tactic.DeriveFintype
-public import Linglib.Semantics.Quantification.Basic
+public import Linglib.Logic.Aristotelian.Square
 
 /-!
 # Katzir and Singh (2015): Economy of Structure and Information
@@ -158,26 +158,27 @@ end Scenario
 /-! ### Some and all (Sections 1 and 3.2)
 
 The *some* and *all* alternatives over the three ways a set of grades, names or origins can
-fall, the cells of `Quantifier.Tripartition`: to all, to some but not all, or to none. -/
+fall, the cells of the square of opposition (`Aristotelian.Square.Cell`): to all (`A`), to some
+but not all (`IO`), or to none (`E`). -/
 
-open Quantifier
+open Aristotelian.Square
 
 /-- The scalar alternatives. -/
 inductive Scalar
   | some_ | all_
   deriving DecidableEq, Repr, Fintype
 
-/-- *Some* is true above the bottom cell, *all* only at the top one. -/
-def scalarDenotes : Scalar → Tripartition → Prop
-  | .some_, w => ⊥ < w
-  | .all_, w => w = ⊤
+/-- *Some* is true in the `I` corner of the square, *all* in the `A` corner. -/
+def scalarDenotes : Scalar → Cell → Prop
+  | .some_, w => w ∈ Cell.square.I
+  | .all_, w => w ∈ Cell.square.A
 
 instance : ∀ u w, Decidable (scalarDenotes u w) := fun u w ↦ by
   cases u <;> unfold scalarDenotes <;> infer_instance
 
 /-- In the scalar scenario the alternatives form the question and have the same complexity, the
 context being a parameter. -/
-abbrev scalar (context : Set Tripartition) : Scenario Tripartition Scalar Scalar where
+abbrev scalar (context : Set Cell) : Scenario Cell Scalar Scalar where
   meaning u := {w | scalarDenotes u w}
   complexity _ := 1
   context := context
@@ -187,48 +188,48 @@ abbrev scalar (context : Set Tripartition) : Scenario Tripartition Scalar Scalar
 or that every father names all his children alike does in (1) and (19), the question they form
 has one live answer and both are odd. -/
 theorem some_all_odd_of_settled :
-    (scalar {w | w ≠ .someNotAll}).Settled ∧
-      ∀ u w, ¬ (scalar {w | w ≠ .someNotAll}).Felicitous u w := by
+    (scalar {w | w ≠ .IO}).Settled ∧
+      ∀ u w, ¬ (scalar {w | w ≠ .IO}).Felicitous u w := by
   decide
 
 /-- Where the equivalence is the speaker's belief rather than common knowledge (17), the
 question is open, and where the property holds of all *all* is a good answer while *some* is
 needlessly weak. -/
 theorem all_felicitous_some_odd :
-    (scalar Set.univ).Felicitous .all_ .all ∧ ¬ (scalar Set.univ).Felicitous .some_ .all := by
+    (scalar Set.univ).Felicitous .all_ .A ∧ ¬ (scalar Set.univ).Felicitous .some_ .A := by
   decide
 
 /-- The explicit question *to how many?* of (20) is not settled by the common knowledge of
 (19), and *all* becomes a good answer while *some* stays needlessly weak. -/
-abbrev explicit : Scenario Tripartition Scalar Tripartition where
+abbrev explicit : Scenario Cell Scalar Cell where
   meaning u := {w | scalarDenotes u w}
   complexity _ := 1
-  context := {w | w ≠ .someNotAll}
+  context := {w | w ≠ .IO}
   question a := {a}
 
 theorem explicit_question_rescues_all :
-    ¬ explicit.Settled ∧ explicit.Felicitous .all_ .all ∧ ¬ explicit.Felicitous .some_ .all := by
+    ¬ explicit.Settled ∧ explicit.Felicitous .all_ .A ∧ ¬ explicit.Felicitous .some_ .A := by
   decide
 
 /-- Under a downward-entailing operator (18) the entailment reverses, *some* being the
 stronger, and it is *all* that is needlessly weak. -/
-def restrictorDenotes : Scalar → Tripartition → Prop
-  | .some_, w => w = .all
-  | .all_, w => w ≠ .none
+def restrictorDenotes : Scalar → Cell → Prop
+  | .some_, w => w ∈ Cell.square.A
+  | .all_, w => w ∈ Cell.square.I
 
 instance : ∀ u w, Decidable (restrictorDenotes u w) := fun u w ↦ by
   cases u <;> unfold restrictorDenotes <;> infer_instance
 
 /-- The scenario of (18) asserts that every professor who assigned an A to some or all of his
 students got a raise, over how many of the A-givers got one. -/
-abbrev restrictor : Scenario Tripartition Scalar Scalar where
+abbrev restrictor : Scenario Cell Scalar Scalar where
   meaning u := {w | restrictorDenotes u w}
   complexity _ := 1
   context := Set.univ
   question u := {w | restrictorDenotes u w}
 
 theorem some_felicitous_all_odd :
-    restrictor.Felicitous .some_ .all ∧ ¬ restrictor.Felicitous .all_ .all := by
+    restrictor.Felicitous .some_ .A ∧ ¬ restrictor.Felicitous .all_ .A := by
   decide
 
 /-! ### Maximize Presupposition (Section 3.2.3) -/

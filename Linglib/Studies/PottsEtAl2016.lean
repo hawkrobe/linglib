@@ -1,14 +1,14 @@
 module
 
 public import Linglib.Pragmatics.RSA.Silence
-public import Linglib.Semantics.Quantification.Basic
+public import Linglib.Logic.Aristotelian.Square
 
 /-!
 # Potts, Lassiter, Levy and Frank (2016): Embedded Implicatures as Pragmatic Inferences under Compositional Lexical Uncertainty
 
 Potts, Lassiter, Levy and Frank model embedded implicatures as pragmatic inference under
 compositional lexical uncertainty, in the context of their experiment (§6). Three players each
-hit none, some but not all, or all of their shots, a cell of `Quantifier.Tripartition`, and a
+hit all, some but not all, or none of their shots, a cell of `Aristotelian.Square.Cell`, and a
 state is the multiset of outcomes (16). A message composes a quantifier over players with a
 quantifier over shots, the null message added (18), and the lexica are the neo-Gricean
 refinement set of *some*, itself or *some but not all* (14), (19d). The literal listener `L0`,
@@ -45,7 +45,7 @@ formalized.
 
 @[expose] public section
 
-open MeasureTheory ProbabilityTheory RSA Quantifier
+open MeasureTheory ProbabilityTheory RSA Aristotelian.Square
 open scoped ENNReal NNReal
 
 namespace PottsEtAl2016
@@ -69,17 +69,17 @@ inductive World where
 instance : MeasurableSpace World := ⊤
 
 /-- The outcomes of a state. -/
-def World.outcomes : World → Multiset Tripartition
-  | .NNN => {.none, .none, .none}
-  | .NNS => {.none, .none, .someNotAll}
-  | .NNA => {.none, .none, .all}
-  | .NSS => {.none, .someNotAll, .someNotAll}
-  | .NSA => {.none, .someNotAll, .all}
-  | .NAA => {.none, .all, .all}
-  | .SSS => {.someNotAll, .someNotAll, .someNotAll}
-  | .SSA => {.someNotAll, .someNotAll, .all}
-  | .SAA => {.someNotAll, .all, .all}
-  | .AAA => {.all, .all, .all}
+def World.outcomes : World → Multiset Cell
+  | .NNN => {.E, .E, .E}
+  | .NNS => {.E, .E, .IO}
+  | .NNA => {.E, .E, .A}
+  | .NSS => {.E, .IO, .IO}
+  | .NSA => {.E, .IO, .A}
+  | .NAA => {.E, .A, .A}
+  | .SSS => {.IO, .IO, .IO}
+  | .SSA => {.IO, .IO, .A}
+  | .SAA => {.IO, .A, .A}
+  | .AAA => {.A, .A, .A}
 
 /-- The quantifiers over a player's shots are *every*, *no* and *some*. -/
 inductive ShotQ where
@@ -105,9 +105,9 @@ inductive Lex where
 instance : MeasurableSpace Lex := ⊤
 
 /-- Under a lexicon *some* covers the outcomes with any hit, or those with some but not all. -/
-def Lex.someDen : Lex → Finset Tripartition
-  | .weak => {.someNotAll, .all}
-  | .strong => {.someNotAll}
+def Lex.someDen : Lex → Finset Cell
+  | .weak => Cell.square.I
+  | .strong => {.IO}
 
 /-- The refinement condition (11) holds, each lexicon reading *some* as a nonempty part of its
 base denotation, which the base lexicon is. -/
@@ -115,9 +115,9 @@ theorem lex_refines : ∀ l : Lex, l.someDen.Nonempty ∧ l.someDen ⊆ Lex.weak
   decide
 
 /-- Whether an outcome satisfies the quantifier over shots under a lexicon. -/
-def ShotQ.Holds (l : Lex) : ShotQ → Tripartition → Prop
-  | .every, o => o = ⊤
-  | .no, o => o = ⊥
+def ShotQ.Holds (l : Lex) : ShotQ → Cell → Prop
+  | .every, o => o ∈ Cell.square.A
+  | .no, o => o ∈ Cell.square.E
   | .some_, o => o ∈ l.someDen
 
 instance (l : Lex) (s : ShotQ) : DecidablePred (s.Holds l) := fun o ↦ by

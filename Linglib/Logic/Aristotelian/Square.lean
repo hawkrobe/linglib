@@ -1,6 +1,7 @@
 module
 
-public import Mathlib.Order.BooleanAlgebra.Basic
+public import Mathlib.Data.Finset.BooleanAlgebra
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # The square of opposition
@@ -9,6 +10,27 @@ The square of opposition, in the form Horn surveys, has four corners `A`, `E`, `
 Boolean algebra, related by contradiction (A–O, E–I), contrariety (A–E), subcontrariety (I–O)
 and subalternation (A→I, E→O). Its instances for generalized quantifiers, after Barwise and
 Cooper, and for modals live with those theories.
+
+A square with these relations divides its algebra into three pairwise contrary cells: `A`, `E`,
+and between them the conjunction `I ⊓ O` of the two particulars. Horn traces this trichotomy to
+De Morgan and to Jespersen's tripartition into *all*, *some* and *none*, whose middle term is
+neither the I nor the O corner but their conjunction; modally the cells are the necessary, the
+contingent and the impossible.
+
+## Main definitions
+
+* `Square`, `SquareRelations`: a square and the relations of the square.
+* `Square.Cell`, `Square.cell`: the three cells of a square and the element at each.
+* `Square.Cell.square`: the square on the cells, each corner the set of cells below it.
+
+## Main results
+
+* `SquareRelations.subalternAI`, `SquareRelations.subalternEO`, `SquareRelations.subcontrIO`:
+  the remaining relations of the square.
+* `SquareRelations.pairwise_disjoint_cell`, `SquareRelations.sup_cell`: the cells of a square
+  are pairwise disjoint and join to `⊤`.
+* `Square.Cell.squareRelations_square`, `Square.Cell.cell_square`: the square on the cells
+  satisfies the relations, and its cells are the singletons.
 
 ## References
 
@@ -32,6 +54,33 @@ structure Square (α : Type*) where
   I : α
   /-- `O` is the particular negative corner (*not every*, `¬□p`, `¬Bel p`). -/
   O : α
+
+namespace Square
+
+/-- A cell of a square is the universal affirmative `A`, the conjunction `IO` of the two
+particulars, or the universal negative `E`. -/
+inductive Cell where
+  | A
+  | IO
+  | E
+  deriving DecidableEq, Repr, Fintype
+
+variable {α : Type*} [BooleanAlgebra α]
+
+/-- The element of a square at a cell. -/
+def cell (sq : Square α) : Cell → α
+  | .A => sq.A
+  | .IO => sq.I ⊓ sq.O
+  | .E => sq.E
+
+/-- The square on the cells has as each corner the set of cells below it. -/
+def Cell.square : Square (Finset Cell) := ⟨{.A}, {.E}, {.A, .IO}, {.IO, .E}⟩
+
+/-- The cells of the square on the cells are the singletons. -/
+theorem Cell.cell_square (c : Cell) : Cell.square.cell c = {c} := by
+  cases c <;> decide
+
+end Square
 
 /-! ### Square relations -/
 
@@ -74,6 +123,33 @@ theorem of_disjoint (hI : sq.I = sq.Eᶜ) (hO : sq.O = sq.Aᶜ) (h : Disjoint sq
     SquareRelations sq :=
   ⟨hO ▸ isCompl_compl, hI ▸ isCompl_compl, h⟩
 
+/-! ### The cells -/
+
+/-- The middle cell is the complement of the join of the contraries. -/
+theorem inf_IO_eq (h : SquareRelations sq) : sq.I ⊓ sq.O = (sq.A ⊔ sq.E)ᶜ := by
+  rw [h.contradEI.symm.eq_compl, h.contradAO.symm.eq_compl, compl_sup, inf_comm]
+
+open Function in
+/-- The cells of a square are pairwise disjoint. -/
+theorem pairwise_disjoint_cell (h : SquareRelations sq) : Pairwise (Disjoint on sq.cell) := by
+  have hA : Disjoint sq.A (sq.I ⊓ sq.O) := by
+    rw [h.inf_IO_eq]; exact disjoint_compl_right.mono_right (compl_le_compl le_sup_left)
+  have hE : Disjoint sq.E (sq.I ⊓ sq.O) := by
+    rw [h.inf_IO_eq]; exact disjoint_compl_right.mono_right (compl_le_compl le_sup_right)
+  rintro (_ | _ | _) (_ | _ | _) hne <;> first
+    | exact absurd rfl hne
+    | simp only [onFun, Square.cell]
+  exacts [hA, h.contraryAE, hA.symm, hE.symm, h.contraryAE.symm, hE]
+
+/-- The cells of a square join to `⊤`. -/
+theorem sup_cell (h : SquareRelations sq) : sq.cell .A ⊔ sq.cell .IO ⊔ sq.cell .E = ⊤ := by
+  simp only [Square.cell]
+  rw [h.inf_IO_eq, sup_right_comm, sup_compl_eq_top]
+
 end SquareRelations
+
+/-- The square on the cells satisfies the relations of the square. -/
+theorem Square.Cell.squareRelations_square : SquareRelations Square.Cell.square :=
+  .of_disjoint (by decide) (by decide) (by decide)
 
 end Aristotelian

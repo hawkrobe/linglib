@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Quantification.Basic
+public import Linglib.Logic.Aristotelian.Square
 public import Linglib.Semantics.Quantification.Numerals.Basic
 
 /-!
@@ -29,9 +29,9 @@ developmental strategy of Musolino.
 
 ## Implementation notes
 
-* Scalar trials are typed by `Quantifier.Tripartition`, a box showing Cookie Monster with none,
-  some but not all, or all of the cookies; number trials by the cardinality of a box. Both
-  scales read their terms as lower bounds and strengthen them with `Exhaustification.exhChain`.
+* Scalar trials are typed by the cells of the square of opposition (`Aristotelian.Square.Cell`),
+  a box showing Cookie Monster with all, some but not all, or none of the cookies; number trials
+  by the cardinality of a box.
 * The choice proportions and the statistics stay in prose: the paradigm's predictions are
   categorical, and the paper's argument is that the majority choice identifies the reading.
 
@@ -151,53 +151,48 @@ theorem choice_one_five_atLeast :
 
 /-! ### Scalar trials
 
-On the cells of the tripartition *some* is the lower bound `someNotAll ≤ ·` and *all* the lower
-bound `all ≤ ·`, so the scalar trials run on the operator the numerals do. -/
+A box's cell of the square records whether Cookie Monster has all of the cookies (`A`), some but
+not all of them (`IO`), or none (`E`). Literal *some* is the `I` corner and *all* the `A` corner,
+and *some* strengthened by its implicature *not all* is the middle cell, where `I` and `O` both
+hold. -/
 
-open Quantifier
+open Aristotelian.Square
 
-/-- Literal *some*, the lower bound `someNotAll ≤ ·`. -/
-abbrev someLiteral : Tripartition → Prop := (.someNotAll ≤ ·)
+/-- Literal *some* holds in the `I` corner. -/
+abbrev someLiteral : Cell → Prop := (· ∈ Cell.square.I)
 
-/-- *All*, the lower bound `all ≤ ·`. -/
-abbrev allLiteral : Tripartition → Prop := (.all ≤ ·)
+/-- *All* holds in the `A` corner. -/
+abbrev allLiteral : Cell → Prop := (· ∈ Cell.square.A)
 
-/-- *Some* exhaustified against *all*, as a numeral is against the stronger numerals. -/
-def someStrengthened : Tripartition → Prop := Exhaustification.exhChain (· ≤ ·) .someNotAll
-
-instance : DecidablePred someStrengthened := fun _ ↦
-  inferInstanceAs (Decidable (Exhaustification.exhChain _ _ _))
-
-/-- The strengthened *some* is *some but not all*. -/
-theorem someStrengthened_iff (w : Tripartition) : someStrengthened w ↔ w = .someNotAll :=
-  Exhaustification.exhChain_le_iff
+/-- *Some* strengthened by *not all* holds where the `I` and `O` corners both do. -/
+abbrev someStrengthened : Cell → Prop := (· ∈ Cell.square.I ⊓ Cell.square.O)
 
 /-- In some(NONE,SOME) either reading picks the subset. -/
-theorem some_none_some : choice someLiteral ⟨.none, .someNotAll⟩ = some (.visible .someNotAll) := by
+theorem some_none_some : choice someLiteral ⟨.E, .IO⟩ = some (.visible .IO) := by
   decide
 
 /-- In some(SOME,ALL) the literal meaning fits both visible boxes and the implicature selects
 the subset, which adults chose and children split on. -/
-theorem some_some_all_literal : choice someLiteral ⟨.someNotAll, .all⟩ = Option.none := by decide
+theorem some_some_all_literal : choice someLiteral ⟨.IO, .A⟩ = Option.none := by decide
 
 theorem some_some_all_strengthened :
-    choice someStrengthened ⟨.someNotAll, .all⟩ = some (.visible .someNotAll) := by decide
+    choice someStrengthened ⟨.IO, .A⟩ = some (.visible .IO) := by decide
 
 /-- In some(NONE,ALL), the control for implicature cancellation, the literal meaning picks the
 total set, which adults and children chose, and the strengthened meaning the covered box. -/
-theorem some_none_all_literal : choice someLiteral ⟨.none, .all⟩ = some (.visible .all) := by
+theorem some_none_all_literal : choice someLiteral ⟨.E, .A⟩ = some (.visible .A) := by
   decide
 
-theorem some_none_all_strengthened : choice someStrengthened ⟨.none, .all⟩ = some .covered := by
+theorem some_none_all_strengthened : choice someStrengthened ⟨.E, .A⟩ = some .covered := by
   decide
 
 /-- In Experiment 3 *all* selects the total set when visible and the covered box otherwise, so
 the children's choices tracked the quantifier rather than the character. -/
-theorem all_none_all : choice allLiteral ⟨.none, .all⟩ = some (.visible .all) := by decide
+theorem all_none_all : choice allLiteral ⟨.E, .A⟩ = some (.visible .A) := by decide
 
-theorem all_some_all : choice allLiteral ⟨.someNotAll, .all⟩ = some (.visible .all) := by decide
+theorem all_some_all : choice allLiteral ⟨.IO, .A⟩ = some (.visible .A) := by decide
 
-theorem all_some_none : choice allLiteral ⟨.someNotAll, .none⟩ = some .covered := by decide
+theorem all_some_none : choice allLiteral ⟨.IO, .E⟩ = some .covered := by decide
 
 /-! ### Two-knowers -/
 
