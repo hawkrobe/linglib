@@ -1,22 +1,22 @@
 module
 
 public import Linglib.Core.Order.Bundle
-public import Linglib.Syntax.Case.Basic
+public import Linglib.Semantics.Plurality.NumberFeatures
 public import Linglib.Semantics.Reference.Prominence
-public import Linglib.Syntax.Gender.Basic
-public import Linglib.Syntax.Number.Basic
+public import Linglib.Syntax.Agreement.Bundle
 public import Linglib.Syntax.Minimalist.FeatureSlot
-public import Linglib.Syntax.Person.Basic
+public import Linglib.Syntax.Person.Features
 
 /-!
 # Features for Minimalist Agree
 
-A feature dimension is a kind of feature that Agree checks, such as person, number, case or
-[±wh], and each dimension has a value type: `Person`, `Number`, `Gender` and `Case` for the
-φ-features and case, as elsewhere in the library, and `Bool` for the bivalent features. A
-feature value is a dimension with a value in it, and two values share a dimension when their
-first components agree. A feature bundle assigns each dimension a three-state checking slot:
-absent, unvalued (a probe), or valued.
+A feature dimension is a kind of feature that Agree checks: an agreement dimension
+(`Agreement.Dimension`), one of Harbour's person or number features (`Person.Feature`,
+`Number.Feature`), or a Minimalist feature such as [±wh]. Each takes its values from the type
+that already owns it, so the person dimension here is the person of an agreement bundle, and
+Harbour's features are bivalent. A feature value is a dimension with a value in it, and two
+values share a dimension when their first components agree. A feature bundle assigns each
+dimension a three-state checking slot: absent, unvalued (a probe), or valued.
 
 Interpretability is orthogonal to valuation. Chomsky's interpretable features contribute to LF
 (the φ-features of a noun, categorial features), and uninterpretable ones must be checked and
@@ -36,6 +36,8 @@ its host as well as its dimension.
 * [chomsky-1995], [chomsky-2000], [chomsky-2001]
 * [adger-2003]
 * [bjorkman-2011] — the [Infl] feature
+* [harbour-2014] — the number features
+* [harbour-2016] — the person features
 * [marcolli-chomsky-berwick-2025] — bundles as assignments
 -/
 
@@ -55,35 +57,63 @@ inductive Infl where
 
 /-! ### Dimensions and values -/
 
-/-- The feature dimensions checked via Agree. φ-features split into their three
-sub-dimensions (`person`, `number`, `gender`) so each is a slot in its own right. -/
+/-- The feature dimensions Agree checks are the agreement dimensions, Harbour's person and number
+features, and the Minimalist [±wh], [±tense], [Infl] and [obl]. -/
 inductive FeatureType where
-  | person | number | gender
-  | case | wh | tense | infl | oblique
-  | atomic | minimal | participant | author
+  | agr (d : Agreement.Dimension)
+  | personFeature (f : Person.Feature)
+  | numberFeature (f : Number.Feature)
+  | wh | tense | infl | oblique
   deriving Repr, DecidableEq, Fintype
 
-/-- All feature dimensions, for computable enumeration
-(`Finset.univ.toList` is noncomputable). -/
-def FeatureType.all : List FeatureType :=
-  [.person, .number, .gender, .case, .wh, .tense, .infl, .oblique,
-   .atomic, .minimal, .participant, .author]
+namespace FeatureType
 
-/-- The value type of a dimension is `Person`, `Number`, `Gender` or `Case` for the φ-features and
-case, the [Infl] values, and `Bool` for the bivalent features. -/
-@[reducible] def FeatureType.ValueOf : FeatureType → Type
-  | .person => Person
-  | .number => Number
-  | .gender => Gender
-  | .case => Case
-  | .infl => Infl
-  | .wh | .tense | .oblique | .atomic | .minimal | .participant | .author => Bool
+/-- `person` is the agreement dimension of person. -/
+@[match_pattern] abbrev person : FeatureType := agr .person
+/-- `number` is the agreement dimension of number. -/
+@[match_pattern] abbrev number : FeatureType := agr .number
+/-- `gender` is the agreement dimension of gender. -/
+@[match_pattern] abbrev gender : FeatureType := agr .gender
+/-- `case` is the agreement dimension of case. -/
+@[match_pattern] abbrev case : FeatureType := agr .case
+/-- `participant` is Harbour's [±participant]. -/
+@[match_pattern] abbrev participant : FeatureType := personFeature .participant
+/-- `author` is Harbour's [±author]. -/
+@[match_pattern] abbrev author : FeatureType := personFeature .author
+/-- `atomic` is Harbour's [±atomic]. -/
+@[match_pattern] abbrev atomic : FeatureType := numberFeature .atomic
+/-- `minimal` is Harbour's [±minimal]. -/
+@[match_pattern] abbrev minimal : FeatureType := numberFeature .minimal
+
+/-- All feature dimensions, for computable enumeration (`Finset.univ.toList` is
+noncomputable). -/
+def all : List FeatureType :=
+  [person, number, gender, case, agr .definiteness, participant, author, atomic, minimal,
+   wh, tense, infl, oblique]
+
+/-- Every dimension is listed in `all`. -/
+theorem mem_all (t : FeatureType) : t ∈ all := by
+  revert t; decide
+
+/-- The value type of a dimension is that of the agreement dimension it is, [Infl]'s values, or
+`Bool` for the bivalent features. -/
+@[reducible] def ValueOf : FeatureType → Type
+  | agr d => d.Value
+  | personFeature _ | numberFeature _ => Bool
+  | infl => Infl
+  | wh | tense | oblique => Bool
 
 instance (t : FeatureType) : DecidableEq t.ValueOf := by
-  cases t <;> exact inferInstance
+  cases t with
+  | agr d => exact inferInstance
+  | _ => exact inferInstance
 
 instance (t : FeatureType) : Repr t.ValueOf := by
-  cases t <;> exact inferInstance
+  cases t with
+  | agr d => cases d <;> exact inferInstance
+  | _ => exact inferInstance
+
+end FeatureType
 
 /-- A feature value is a dimension with a value in it, written `⟨.person, .first⟩`. -/
 abbrev FeatureVal := Σ t : FeatureType, t.ValueOf
