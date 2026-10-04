@@ -1,0 +1,81 @@
+{
+  "FormTable": [
+    {
+      "ID": "yolyan2025_2_11a_1",
+      "Language_ID": "bemb1257",
+      "Parameter_ID": "they_will_arrive",
+      "Form": "bá-ká-fík-á",
+      "Segments": ["b", "á", "+", "k", "á", "+", "f", "í", "k", "+", "á"],
+      "Comment": "Copperbelt Bemba data cited from Bickmore and Kula (2013) and Kula and Bickmore (2015).",
+      "Source": ["yolyan-2025[Example 2.11 (a)]"],
+      "Underlying": "/bá-ka-fik-a/"
+    },
+    {
+      "ID": "yolyan2025_2_11a_2",
+      "Language_ID": "bemb1257",
+      "Parameter_ID": "they_will_introduce_him_her",
+      "Form": "bá-ká-mú-lóndólól-á",
+      "Segments": ["b", "á", "+", "k", "á", "+", "m", "ú", "+", "l", "ó", "n", "d", "ó", "l", "ó", "l", "+", "á"],
+      "Comment": "",
+      "Source": ["yolyan-2025[Example 2.11 (a)]"],
+      "Underlying": "/bá-ka-mu-londolol-a/"
+    },
+    {
+      "ID": "yolyan2025_2_11b_1",
+      "Language_ID": "bemb1257",
+      "Parameter_ID": "they_will_hate",
+      "Form": "bá-ká-pát-à kó",
+      "Segments": ["b", "á", "+", "k", "á", "+", "p", "á", "t", "+", "à", "_", "k", "ó"],
+      "Comment": "The following high tone of kó blocks unbounded spreading; only the next two vowels surface high.",
+      "Source": ["yolyan-2025[Example 2.11 (b)]"],
+      "Underlying": "/bá-ka-pat-a kó/"
+    },
+    {
+      "ID": "yolyan2025_2_11b_2",
+      "Language_ID": "bemb1257",
+      "Parameter_ID": "they_will_introduce_them",
+      "Form": "bá-ká-ló-òndòlòl-à kó",
+      "Segments": ["b", "á", "+", "k", "á", "+", "l", "ó", "+", "ò", "n", "d", "ò", "l", "ò", "l", "+", "à", "_", "k", "ó"],
+      "Comment": "Form as printed in the paper; the root londolol is split across the second spread vowel.",
+      "Source": ["yolyan-2025[Example 2.11 (b)]"],
+      "Underlying": "/bá-ka-londolol-a kó/"
+    },
+    {
+      "ID": "yolyan2025_2_11c",
+      "Language_ID": "bemb1257",
+      "Parameter_ID": "to_pierce",
+      "Form": "ù-kù-tùl-à",
+      "Segments": ["ù", "+", "k", "ù", "+", "t", "ù", "l", "+", "à"],
+      "Comment": "No underlying high tone; every vowel surfaces low by default.",
+      "Source": ["yolyan-2025[Example 2.11 (c)]"],
+      "Underlying": "/u-ku-tul-a/"
+    }
+  ],
+  "ParameterTable": [
+    {
+      "ID": "they_will_arrive",
+      "Name": "they will arrive",
+      "Description": ""
+    },
+    {
+      "ID": "they_will_introduce_him_her",
+      "Name": "they will introduce him/her",
+      "Description": ""
+    },
+    {
+      "ID": "they_will_hate",
+      "Name": "they will hate",
+      "Description": ""
+    },
+    {
+      "ID": "they_will_introduce_them",
+      "Name": "they will introduce them",
+      "Description": ""
+    },
+    {
+      "ID": "to_pierce",
+      "Name": "to pierce",
+      "Description": ""
+    }
+  ]
+}

@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Computability.ElgotMezei
-public import Linglib.Data.Examples.Jardine2016a
+public import Linglib.Data.Forms.Jardine2016a
 public import Linglib.Phonology.Tone.Plateauing
 
 /-!
@@ -23,7 +23,7 @@ the OCP-merged output is one H linked to the plateau (Section 4.4).
 
 ## Main results
 
-* `utp_map_rows`: the map reproduces the plateaus of Section 2.2
+* `utp_map_forms`: the map reproduces the plateaus of Section 2.2
 * `utp_not_isSubsequential`: plateauing is subsequential in neither direction
 * `utp_eq_resolve_mark`, `utp_isBimachineComputable`: the mark-up decomposition (43)
 
@@ -31,9 +31,9 @@ the OCP-merged output is one H linked to the plateau (Section 4.4).
 
 * The conjecture of Section 5.2, after Heinz and Lai, that plateauing has no mark-up-free
   decomposition and so is not weakly deterministic, is not stated.
-* The rows write the paper's string representation one symbol per mora, a long vowel counting
-  two; the Digo, Xhosa and Yaka data, whose plateaus interact with tone shift or an accentual
-  analysis, are not encoded.
+* The words of `Data/Forms/Jardine2016a.json` carry the paper's string representation one symbol
+  per mora, a long vowel counting two; the Digo, Xhosa and Yaka data, whose plateaus interact
+  with tone shift or an accentual analysis, are not encoded.
 
 ## References
 
@@ -51,30 +51,23 @@ open Tone
 
 /-! ### The plateauing data
 
-The paper's string representation of Section 4.1, one symbol per mora, `H` a TBU associated to a
-H tone and Ø, written `O`, an unspecified one. -/
+The words of Section 2.2 carry their underlying and surface TBU strings in the paper's string
+representation of Section 4.1, one symbol per mora, `H` a TBU associated to a H tone and Ø,
+written `O`, an unspecified one, read off the paper's autosegmental diagrams. -/
 
-/-- A row of Section 2.2 pairs an underlying and a surface TBU string. -/
-structure Row where
-  underlying : List TBU
-  surface : List TBU
-  deriving DecidableEq
+/-- `tbuString s` is the TBU string spelled `s` in `H` and `O`. -/
+def tbuString (s : String) : List TBU := s.toList.map fun c ↦ if c = 'H' then .H else .O
 
-/-- A TBU string from its `H`/`O` spelling. -/
-def tbuString (s : String) : List TBU := s.toList.map λ c => if c = 'H' then .H else .O
+/-- `ofForm f` is the underlying and the surface TBU string of the word `f`. -/
+def ofForm (f : Data.Forms.Form) : Option (List TBU × List TBU) := do
+  let u ← f.column? "UnderlyingTones"
+  let s ← f.column? "SurfaceTones"
+  some (tbuString u, tbuString s)
 
-/-- A row from the paper's features. -/
-def Row.ofDatum (e : Datum) : Option Row := do
-  let u ← e.feature? "underlying"
-  let s ← e.feature? "surface"
-  some ⟨tbuString u, tbuString s⟩
-
-/-- The plateauing data of Section 2.2 are Luganda (8) to (12), Zulu (18b) and Saramaccan (21). -/
-def rows : List Row := Examples.all.filterMap Row.ofDatum
-
-/-- The map (36) reproduces every row, with no change for at most one H and a plateau between the
-outermost Hs otherwise. -/
-theorem utp_map_rows : ∀ r ∈ rows, utp.map r.underlying = r.surface := by decide
+/-- The map (36) reproduces every plateau of Section 2.2, Luganda (8) to (12), Zulu (18b) and
+Saramaccan (21), with no change for at most one H and a plateau between the outermost Hs
+otherwise. -/
+theorem utp_map_forms : ∀ f ∈ Forms.all, ∃ p ∈ ofForm f, utp.map p.1 = p.2 := by decide
 
 variable {w : List TBU} {j k : ℕ}
 
