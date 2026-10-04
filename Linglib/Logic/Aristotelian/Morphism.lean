@@ -1,7 +1,7 @@
 module
 
+public import Linglib.Core.Order.BooleanSubalgebra
 public import Linglib.Logic.Aristotelian.Basic
-public import Mathlib.Order.BooleanSubalgebra
 
 /-!
 # Isomorphisms of Aristotelian diagrams
@@ -12,7 +12,9 @@ it preserves and reflects the four Aristotelian relations, and a *Boolean isomor
 extends to an order isomorphism of the Boolean closures. Every Boolean isomorphism is an
 Aristotelian one but not conversely, as their Keynes–Johnson octagons show. Aristotelian
 isomorphisms form a groupoid, the core of De Klerck, Vignero and Demey's category of
-Aristotelian diagrams.
+Aristotelian diagrams. Demey and Smessaert's bitstring semantics sends each element of the
+closure of a diagram to the set of its minterms below it, and carries the diagram to an
+Aristotelian isomorphic diagram of bitstrings.
 
 ## Main definitions
 
@@ -22,6 +24,7 @@ Aristotelian diagrams.
 ## Main results
 
 * `BooleanIso.toAristotelianIso`: every Boolean isomorphism is an Aristotelian isomorphism.
+* `AristotelianIso.toSetOfMinterms`: a diagram and its bitstrings are Aristotelian isomorphic.
 
 ## Implementation notes
 
@@ -31,6 +34,17 @@ preserved and reflected. This is equivalent to asking it of the four relations, 
 `IsCompl`, `IsContrary`, `IsSubcontrary` and `<` is a Boolean combination of the three, and
 conversely (`disjoint_iff_isCompl_or_isContrary`, `codisjoint_iff_isCompl_or_isSubcontrary`).
 
+The bitstring semantics is Boolean-algebra theory and lives in `Core/Order`. Demey and
+Smessaert's partition induced by a fragment (2018, Definition 5; 2024, Definition 3) is
+`Finpartition.minterms`, with anchor formulas `minterm`; their Lemma 3 is `disjoint_minterm`
+and `sup_minterm`, Lemma 4 `Finpartition.minterms_sumElim`, Lemma 6
+`BooleanSubalgebra.minterm_le_or_le_compl`, Lemma 7
+`BooleanSubalgebra.le_iff_forall_mem_minterms`, Lemma 9 `BooleanSubalgebra.isAtom_iff_mem_minterms`,
+and Theorem 1 `BooleanSubalgebra.toSetOfMinterms` with `BooleanSubalgebra.card_closure`. They
+number the minterms and write a set of them as a string of bits; `toSetOfMinterms` keeps the set.
+Their Theorem 2, proved there from Theorem 1 through the Boolean-to-Aristotelian lemma, is
+proved here directly.
+
 ## References
 
 * [demey-smessaert-2018]
@@ -39,21 +53,6 @@ conversely (`disjoint_iff_isCompl_or_isContrary`, `codisjoint_iff_isCompl_or_isS
 -/
 
 @[expose] public section
-
-namespace BooleanSubalgebra
-variable {β : Type*} [BooleanAlgebra β] {L : BooleanSubalgebra β} {a b : L}
-
-/-- `Disjoint` transfers across a Boolean subalgebra's coercion.
-UPSTREAM: belongs in `Mathlib.Order.BooleanSubalgebra`, cf. `Complementeds.disjoint_coe`. -/
-@[simp, norm_cast] theorem disjoint_coe : Disjoint (a : β) b ↔ Disjoint a b := by
-  rw [disjoint_iff, disjoint_iff, ← val_inf, ← val_bot, Subtype.coe_inj]
-
-/-- `Codisjoint` transfers across a Boolean subalgebra's coercion.
-UPSTREAM: belongs in `Mathlib.Order.BooleanSubalgebra`, cf. `Complementeds.codisjoint_coe`. -/
-@[simp, norm_cast] theorem codisjoint_coe : Codisjoint (a : β) b ↔ Codisjoint a b := by
-  rw [codisjoint_iff, codisjoint_iff, ← val_sup, ← val_top, Subtype.coe_inj]
-
-end BooleanSubalgebra
 
 namespace Aristotelian
 
@@ -190,5 +189,21 @@ def toAristotelianIso (bi : BooleanIso φ φ') : AristotelianIso φ φ' where
 instance : CoeOut (BooleanIso φ φ') (AristotelianIso φ φ') := ⟨toAristotelianIso⟩
 
 end BooleanIso
+
+/-! ### Bitstrings -/
+
+variable [Fintype ι] [DecidableEq ι] [DecidableEq α] in
+variable (φ) in
+/-- The bitstrings of the elements of a diagram form a diagram Aristotelian isomorphic to it
+([demey-smessaert-2018] Theorem 2). -/
+noncomputable def AristotelianIso.toSetOfMinterms :
+    AristotelianIso φ fun i ↦ BooleanSubalgebra.toSetOfMinterms φ (corner φ i) where
+  toEquiv := .refl ι
+  map_disjoint i j := (disjoint_coe (a := corner φ i) (b := corner φ j)).trans
+    (disjoint_map_orderIso_iff (BooleanSubalgebra.toSetOfMinterms φ)).symm
+  map_codisjoint i j := (codisjoint_coe (a := corner φ i) (b := corner φ j)).trans
+    (codisjoint_map_orderIso_iff (BooleanSubalgebra.toSetOfMinterms φ)).symm
+  map_lt i j := (Subtype.coe_lt_coe (x := corner φ i) (y := corner φ j)).trans
+    (BooleanSubalgebra.toSetOfMinterms φ).lt_iff_lt.symm
 
 end Aristotelian
