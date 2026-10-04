@@ -270,7 +270,7 @@ theorem most_apply_self {d : GQ.Family} (hd : d ∈ ⟦QuantityWord.most⟧) (A 
   omega
 
 open Classical in
-/-- Under the proportional reading (*fewer than half*), *few N are N* is contradictory:
+/-- Under the proportional reading (*fewer than half*), *few N are N* is contradictory, so
 `few` is negative strong, where B&C's Table II lists *few* as weak. -/
 theorem few_negativeStrong : NegativeStrong (few : GQ α) := by
   intro A hA
@@ -368,29 +368,22 @@ with equality and two unary predicate symbols `U`, `V`, **no sentence** is
 true in exactly the finite models where more than half the V's are U's
 (`2·|U∩V| > |V|`). B&C treat *most* via *more than half* "to avoid problems
 of vagueness"; the theorem is the formal core of their claim that *most*
-must be a determiner, not a quantifier (their C13, deferred).
+must be a determiner, not a quantifier.
 
-The proof is the paper's own (pp. 213–214), a hand-rolled Fraïssé argument:
-for each `m`, two structures on `Fin (3m+1)` — `V = [0,2m)`, `U₁ = [0,m)`,
-`U₂ = [0,m+1)` — disagree on *more than half* but agree on every formula
-with fewer than `m` quantifiers-plus-free-variables (their condition (6)),
-because a region-respecting correspondence can always be extended:
-"there is always enough room". -/
+The proof is the paper's "Fraïssé method" (pp. 213–214): for each `m`, two models on `Fin k` —
+`V = [0, 2m)`, `U₁ = [0, m)`, `U₂ = [0, m+1)` — disagree on *more than half* but agree on every
+sentence with fewer than `m` quantifiers, their (5). B&C prove (5) by extending a one-one
+correspondence that respects `U` and `V` one step at each quantifier, their (6), since "there is
+always enough room": below `m`, every Venn region of the two models is either the same set or
+large in both. That argument is the Ehrenfeucht–Fraïssé game on monadic models, so (5) is
+`Quantifier.Lindstrom.nEquiv_structOfAB` applied to the two models (`nEquiv_struc`), for
+quantifier rank, which is at most the number of quantifiers. -/
 
 namespace BarwiseCooper1981
 
 open FirstOrder Language
 
-open Quantifier.Lindstrom (L_UV uRel vRel structOfAB)
-
-/-- Quantifier count of a formula (`c(φ)` minus the free-variable count in
-B&C's notation). -/
-def numQuant : ∀ {α : Type*} {n : ℕ}, L_UV.BoundedFormula α n → ℕ
-  | _, _, .falsum => 0
-  | _, _, .equal _ _ => 0
-  | _, _, .rel _ _ => 0
-  | _, _, .imp f₁ f₂ => numQuant f₁ + numQuant f₂
-  | _, _, .all f => numQuant f + 1
+open Quantifier.Lindstrom (L_UV uRel vRel structOfAB nEquiv_structOfAB)
 
 /-- The structure `M₁`, in which `U` is `[0, m)` and `V` is `[0, 2m)`, so that exactly half the
 `V`'s are `U`'s. -/
@@ -402,203 +395,36 @@ half the `V`'s are `U`'s. -/
 @[reducible] def struc₂ (m k : ℕ) : L_UV.Structure (Fin k) :=
   structOfAB (fun x => x.val < m + 1) (fun x => x.val < 2 * m)
 
-/-- Realization in `M₁` (structures are term-level, so instances are pinned
-explicitly). -/
-def Realize₁ (m k : ℕ) {ℓ : ℕ} (φ : L_UV.BoundedFormula Empty ℓ)
-    (xs : Fin ℓ → Fin k) : Prop :=
-  @BoundedFormula.Realize L_UV _ (struc₁ m k) Empty ℓ φ default xs
+private theorem le_encard_of_Ico {k lo hi t : ℕ} {s : Set (Fin k)} (hhi : hi ≤ k)
+    (ht : t ≤ hi - lo) (hs : ∀ x : Fin k, lo ≤ x.val → x.val < hi → x ∈ s) :
+    (t : ℕ∞) ≤ s.encard := by
+  let I := (Finset.Ico lo hi).attachFin fun x hx => (Finset.mem_Ico.1 hx).2.trans_le hhi
+  calc (t : ℕ∞) ≤ (I.card : ℕ∞) := by
+        rw [Finset.card_attachFin, Nat.card_Ico]; exact_mod_cast ht
+    _ = (I : Set (Fin k)).encard := (Set.encard_coe_eq_coe_finsetCard I).symm
+    _ ≤ s.encard := Set.encard_le_encard fun x hx => by
+        have := Finset.mem_Ico.1 ((Finset.mem_attachFin _).1 (Finset.mem_coe.1 hx))
+        exact hs x this.1 this.2
 
-/-- Realization in `M₂`. -/
-def Realize₂ (m k : ℕ) {ℓ : ℕ} (φ : L_UV.BoundedFormula Empty ℓ)
-    (xs : Fin ℓ → Fin k) : Prop :=
-  @BoundedFormula.Realize L_UV _ (struc₂ m k) Empty ℓ φ default xs
+private theorem min_eq_min_of_le {t k : ℕ} {s s' : Set (Fin k)} (h : (t : ℕ∞) ≤ s.encard)
+    (h' : (t : ℕ∞) ≤ s'.encard) : min (t : ℕ∞) s.encard = min (t : ℕ∞) s'.encard := by
+  rw [min_eq_left h, min_eq_left h']
 
-/-- B&C's one-one correspondence (proof of C12, condition on `aᵢ ↔ bᵢ`):
-pairing-injective, and respecting the `U`-regions (`U₁` against `U₂`) and
-the shared `V`-region. -/
-structure RegionMatch (m k : ℕ) {ℓ : ℕ} (a b : Fin ℓ → Fin k) : Prop where
-  inj : ∀ i j, a i = a j ↔ b i = b j
-  inU : ∀ i, (a i).val < m ↔ (b i).val < m + 1
-  inV : ∀ i, (a i).val < 2 * m ↔ (b i).val < 2 * m
-
-/-- Every `L_UV`-term is a variable (the language has no function symbols). -/
-private theorem term_eq_var {γ : Type} (t : L_UV.Term γ) : ∃ i, t = Term.var i := by
-  cases t with
-  | var i => exact ⟨i, rfl⟩
-  | func f _ => exact f.elim
-
-/-- Fresh element in a value-interval of `Fin (3m+1)`: if the interval holds
-more elements than the tuple uses, something in it avoids the tuple. -/
-private theorem exists_fresh {k ℓ : ℕ} (f : Fin ℓ → Fin k) (lo hi : ℕ)
-    (hhi : hi ≤ k) (hroom : ℓ < hi - lo) :
-    ∃ y : Fin k, lo ≤ y.val ∧ y.val < hi ∧ ∀ i, f i ≠ y := by
-  by_contra h
-  push Not at h
-  have hsub : (Finset.Ico lo hi).attachFin
-      (fun x hx => lt_of_lt_of_le (Finset.mem_Ico.mp hx).2 hhi)
-      ⊆ Finset.image f Finset.univ := by
-    intro y hy
-    have hy' := (Finset.mem_attachFin _).mp hy
-    obtain ⟨i, hi'⟩ := h y (Finset.mem_Ico.mp hy').1 (Finset.mem_Ico.mp hy').2
-    exact hi' ▸ Finset.mem_image_of_mem f (Finset.mem_univ i)
-  have hcard := Finset.card_le_card hsub
-  have himg : (Finset.image f Finset.univ).card ≤ ℓ :=
-    le_trans Finset.card_image_le (by simp)
-  rw [Finset.card_attachFin, Nat.card_Ico] at hcard
-  omega
-
-/-- Extending a correspondence with an already-matched pair. -/
-private theorem regionMatch_snoc_matched (m k : ℕ) {ℓ : ℕ}
-    {a b : Fin ℓ → Fin k} (h : RegionMatch m k a b) (i : Fin ℓ) :
-    RegionMatch m k (Fin.snoc a (a i)) (Fin.snoc b (b i)) := by
-  refine ⟨?_, ?_, ?_⟩
-  · intro p q
-    induction p using Fin.lastCases with
-    | last =>
-      induction q using Fin.lastCases with
-      | last => simp
-      | cast q => simpa only [Fin.snoc_last, Fin.snoc_castSucc] using h.inj i q
-    | cast p =>
-      induction q using Fin.lastCases with
-      | last => simpa only [Fin.snoc_last, Fin.snoc_castSucc] using h.inj p i
-      | cast q => simpa only [Fin.snoc_castSucc] using h.inj p q
-  · intro p
-    induction p using Fin.lastCases with
-    | last => simpa only [Fin.snoc_last] using h.inU i
-    | cast p => simpa only [Fin.snoc_castSucc] using h.inU p
-  · intro p
-    induction p using Fin.lastCases with
-    | last => simpa only [Fin.snoc_last] using h.inV i
-    | cast p => simpa only [Fin.snoc_castSucc] using h.inV p
-
-/-- Extending a correspondence with a fresh, region-matched pair. -/
-private theorem regionMatch_snoc_fresh (m k : ℕ) {ℓ : ℕ}
-    {a b : Fin ℓ → Fin k} (h : RegionMatch m k a b)
-    {x y : Fin k} (hxa : ∀ i, a i ≠ x) (hyb : ∀ i, b i ≠ y)
-    (hU : x.val < m ↔ y.val < m + 1) (hV : x.val < 2 * m ↔ y.val < 2 * m) :
-    RegionMatch m k (Fin.snoc a x) (Fin.snoc b y) := by
-  refine ⟨?_, ?_, ?_⟩
-  · intro p q
-    induction p using Fin.lastCases with
-    | last =>
-      induction q using Fin.lastCases with
-      | last => simp
-      | cast q =>
-        simp only [Fin.snoc_last, Fin.snoc_castSucc]
-        exact iff_of_false (fun e => hxa q e.symm) (fun e => hyb q e.symm)
-    | cast p =>
-      induction q using Fin.lastCases with
-      | last =>
-        simp only [Fin.snoc_last, Fin.snoc_castSucc]
-        exact iff_of_false (hxa p) (hyb p)
-      | cast q => simpa only [Fin.snoc_castSucc] using h.inj p q
-  · intro p
-    induction p using Fin.lastCases with
-    | last => simpa only [Fin.snoc_last] using hU
-    | cast p => simpa only [Fin.snoc_castSucc] using h.inU p
-  · intro p
-    induction p using Fin.lastCases with
-    | last => simpa only [Fin.snoc_last] using hV
-    | cast p => simpa only [Fin.snoc_castSucc] using h.inV p
-
-/-- Extend a correspondence by an `M₁`-side element ("there is always enough
-room", B&C p. 214). -/
-private theorem extend₁₂ (m k : ℕ) (hk : 3 * m ≤ k) {ℓ : ℕ} (hℓ : ℓ + 1 < m)
-    {a b : Fin ℓ → Fin k} (h : RegionMatch m k a b)
-    (x : Fin k) :
-    ∃ y, RegionMatch m k (Fin.snoc a x) (Fin.snoc b y) := by
-  by_cases hx : ∃ i, a i = x
-  · obtain ⟨i, rfl⟩ := hx
-    exact ⟨b i, regionMatch_snoc_matched m k h i⟩
-  · push Not at hx
-    by_cases h1 : x.val < m
-    · obtain ⟨y, hy1, hy2, hy3⟩ := exists_fresh b 0 (m + 1) (by omega) (by omega)
-      exact ⟨y, regionMatch_snoc_fresh m k h hx hy3 (by omega) (by omega)⟩
-    · by_cases h2 : x.val < 2 * m
-      · obtain ⟨y, hy1, hy2, hy3⟩ := exists_fresh b (m + 1) (2 * m) (by omega) (by omega)
-        exact ⟨y, regionMatch_snoc_fresh m k h hx hy3 (by omega) (by omega)⟩
-      · obtain ⟨y, hy1, hy2, hy3⟩ := exists_fresh b (2 * m) k (by omega) (by omega)
-        exact ⟨y, regionMatch_snoc_fresh m k h hx hy3 (by omega) (by omega)⟩
-
-/-- Extend a correspondence by an `M₂`-side element. -/
-private theorem extend₂₁ (m k : ℕ) (hk : 3 * m ≤ k) {ℓ : ℕ} (hℓ : ℓ + 1 < m)
-    {a b : Fin ℓ → Fin k} (h : RegionMatch m k a b)
-    (y : Fin k) :
-    ∃ x, RegionMatch m k (Fin.snoc a x) (Fin.snoc b y) := by
-  by_cases hy : ∃ i, b i = y
-  · obtain ⟨i, rfl⟩ := hy
-    exact ⟨a i, regionMatch_snoc_matched m k h i⟩
-  · push Not at hy
-    by_cases h1 : y.val < m + 1
-    · obtain ⟨x, hx1, hx2, hx3⟩ := exists_fresh a 0 m (by omega) (by omega)
-      exact ⟨x, regionMatch_snoc_fresh m k h hx3 hy (by omega) (by omega)⟩
-    · by_cases h2 : y.val < 2 * m
-      · obtain ⟨x, hx1, hx2, hx3⟩ := exists_fresh a m (2 * m) (by omega) (by omega)
-        exact ⟨x, regionMatch_snoc_fresh m k h hx3 hy (by omega) (by omega)⟩
-      · obtain ⟨x, hx1, hx2, hx3⟩ := exists_fresh a (2 * m) k (by omega) (by omega)
-        exact ⟨x, regionMatch_snoc_fresh m k h hx3 hy (by omega) (by omega)⟩
-
-/-- Barwise and Cooper's condition (6) (p. 214) says that a formula whose quantifier count plus
-free-variable count is below `m` cannot distinguish region-matched tuples across `M₁` and
-`M₂`; by structural induction, at each quantifier "there is always enough room to extend the
-one-one correspondence one more step". -/
-theorem realize_iff_of_regionMatch (m k : ℕ) (hk : 3 * m ≤ k) :
-    ∀ {ℓ : ℕ} (φ : L_UV.BoundedFormula Empty ℓ), numQuant φ + ℓ < m →
-      ∀ {a b : Fin ℓ → Fin k}, RegionMatch m k a b →
-        (Realize₁ m k φ a ↔ Realize₂ m k φ b) := by
-  intro ℓ φ
-  induction φ with
-  | falsum =>
-    intro _ a b _
-    exact Iff.rfl
-  | equal t₁ t₂ =>
-    intro _ a b h
-    obtain ⟨i, rfl⟩ := term_eq_var t₁
-    obtain ⟨j, rfl⟩ := term_eq_var t₂
-    rcases i with e | i
-    · exact e.elim
-    rcases j with e | j
-    · exact e.elim
-    simp only [Realize₁, Realize₂]
-    exact h.inj i j
-  | rel R ts =>
-    intro _ a b h
-    cases R with
-    | U =>
-      obtain ⟨i, hi⟩ := term_eq_var (ts 0)
-      rcases i with e | i
-      · exact e.elim
-      show ((fun p => @Term.realize L_UV _ (struc₁ m k) _ (Sum.elim default a) (ts p)) 0).val < m ↔
-        ((fun p => @Term.realize L_UV _ (struc₂ m k) _ (Sum.elim default b) (ts p)) 0).val < m + 1
-      simp only [hi, Term.realize_var, Sum.elim_inr]
-      exact h.inU i
-    | V =>
-      obtain ⟨i, hi⟩ := term_eq_var (ts 0)
-      rcases i with e | i
-      · exact e.elim
-      show ((fun p => @Term.realize L_UV _ (struc₁ m k) _ (Sum.elim default a) (ts p)) 0).val
-          < 2 * m ↔
-        ((fun p => @Term.realize L_UV _ (struc₂ m k) _ (Sum.elim default b) (ts p)) 0).val < 2 * m
-      simp only [hi, Term.realize_var, Sum.elim_inr]
-      exact h.inV i
-  | imp f₁ f₂ ih₁ ih₂ =>
-    intro hc a b h
-    simp only [numQuant] at hc
-    simp only [Realize₁, Realize₂, BoundedFormula.realize_imp] at *
-    exact imp_congr (ih₁ (by omega) h) (ih₂ (by omega) h)
-  | @all j f ih =>
-    intro hc a b h
-    simp only [numQuant] at hc
-    have hc' : numQuant f + (j + 1) < m := by omega
-    have hℓ : j + 1 < m := by omega
-    simp only [Realize₁, Realize₂, BoundedFormula.realize_all] at *
-    constructor
-    · intro hall y
-      obtain ⟨x, hx⟩ := extend₂₁ m k hk hℓ h y
-      exact (ih hc' hx).mp (hall x)
-    · intro hall x
-      obtain ⟨y, hy⟩ := extend₁₂ m k hk hℓ h x
-      exact (ih hc' hy).mpr (hall y)
+/-- B&C's (5) says that the two models agree on every sentence with fewer than `m` quantifiers;
+for quantifier rank this is `(m - 1)`-equivalence, since each Venn region of `U` and `V` is either
+the same set in both models or has at least `m - 1` elements in both. The region outside `V` is
+the same set, so `2m ≤ k` suffices where B&C take `k ≥ 3m`. -/
+theorem nEquiv_struc (m k : ℕ) (hm : 0 < m) (hk : 2 * m ≤ k) :
+    @NEquiv L_UV (m - 1) (Fin k) (Fin k) (struc₁ m k) (struc₂ m k) := by
+  refine nEquiv_structOfAB ?_ ?_ ?_ ?_
+  · exact min_eq_min_of_le (le_encard_of_Ico (lo := 0) (hi := m) (by omega) (by omega)
+      fun x _ hx => ⟨hx, by omega⟩) (le_encard_of_Ico (lo := 0) (hi := m) (by omega) (by omega)
+      fun x _ hx => ⟨by omega, by omega⟩)
+  · congr 2; ext x; simp only [Set.mem_ofPred_eq]; omega
+  · exact min_eq_min_of_le (le_encard_of_Ico (lo := m) (hi := 2 * m) (by omega) (by omega)
+      fun x h₁ h₂ => ⟨by omega, h₂⟩) (le_encard_of_Ico (lo := m + 1) (hi := 2 * m) (by omega)
+      (by omega) fun x h₁ h₂ => ⟨by omega, h₂⟩)
+  · congr 2; ext x; simp only [Set.mem_ofPred_eq]; omega
 
 /-! ### The theorem -/
 
@@ -647,8 +473,7 @@ theorem more_than_half_not_definable :
       (S : L_UV.Structure M),
       (@Sentence.Realize L_UV M S φ ↔ MoreThanHalf M S) := by
   rintro ⟨φ, hφ⟩
-  set m := numQuant φ + 1 with hm
-  have hm1 : 1 ≤ m := by omega
+  set m := φ.qr + 1 with hm
   -- M₁ does not satisfy more-than-half: |U₁ ∩ V| = m, |V| = 2m
   have hmth₁ : ¬ MoreThanHalf (Fin (3 * m + 1)) (struc₁ m (3 * m + 1)) := by
     rw [moreThanHalf_iff (m := m) (c := m) _ (fun x => Iff.rfl) (fun x => Iff.rfl)
@@ -659,22 +484,10 @@ theorem more_than_half_not_definable :
     rw [moreThanHalf_iff (m := m) (c := m + 1) _ (fun x => Iff.rfl) (fun x => Iff.rfl)
       (by omega) (by omega)]
     omega
-  -- but they agree on φ, by condition (6) at the empty correspondence
-  have hagree : Realize₁ m (3 * m + 1) φ default ↔ Realize₂ m (3 * m + 1) φ default :=
-    realize_iff_of_regionMatch m (3 * m + 1) (by omega) φ (by omega)
-      ⟨fun i => i.elim0, fun i => i.elim0, fun i => i.elim0⟩
-  have hsent₁ : @Sentence.Realize L_UV _ (struc₁ m (3 * m + 1)) φ ↔
-      Realize₁ m (3 * m + 1) φ default := by
-    unfold Realize₁
-    exact iff_of_eq (congrArg₂ (@BoundedFormula.Realize L_UV _ (struc₁ m (3 * m + 1)) Empty 0 φ)
-      (funext fun e => e.elim) (funext fun i => i.elim0))
-  have hsent₂ : @Sentence.Realize L_UV _ (struc₂ m (3 * m + 1)) φ ↔
-      Realize₂ m (3 * m + 1) φ default := by
-    unfold Realize₂
-    exact iff_of_eq (congrArg₂ (@BoundedFormula.Realize L_UV _ (struc₂ m (3 * m + 1)) Empty 0 φ)
-      (funext fun e => e.elim) (funext fun i => i.elim0))
+  -- but they agree on φ, by (5)
+  have hagree := nEquiv_struc m (3 * m + 1) (by omega) (by omega) φ (by omega)
   exact hmth₁ ((hφ _ (struc₁ m (3 * m + 1))).mp
-    (hsent₁.mpr (hagree.mpr (hsent₂.mp ((hφ _ (struc₂ m (3 * m + 1))).mpr hmth₂)))))
+    (hagree.mpr ((hφ _ (struc₂ m (3 * m + 1))).mpr hmth₂)))
 end BarwiseCooper1981
 
 /-! ### Appendix C: C13 — *most* is a determiner, not a quantifier
@@ -687,15 +500,15 @@ not definable from the *unrelativized* one. So *most* cannot be a unary
 sentence operator over the domain — it must be a determiner (a footnote
 credits a related unpublished 1965 theorem to David Kaplan).
 
-The proof is B&C's: a translation `star` eliminating `Q` (`Qx θ` becomes
-"every `x` outside `V` and the free variables satisfies `θ*`"), correct on
-models where the domain swamps `V` (property (P), via "a trivial
-automorphism argument"), reducing to C12's models. -/
+The proof is B&C's: a translation `star` from `L(Q)` into the first-order language of C12 (`Qx θ`
+becomes "every `x` outside `V` and the free variables satisfies `θ*`"), correct on models where
+the domain swamps `V` (property (P), via "a trivial automorphism argument"); the C12 models then
+agree on `φ*` by (5), "since `φ*` is a first-order sentence with `c(φ*) < m`". -/
 
 namespace BarwiseCooper1981
 
 open FirstOrder Language
-open Quantifier.Lindstrom (L_UV uRel vRel)
+open Quantifier.Lindstrom (L_UV uRel vRel structOfAB structOfAB_relMap_V)
 
 /-- The formulas of Barwise and Cooper's `L(Q)`, the monadic language of C12 with the atoms
 `U`, `V` and equality plus the unrelativized majority quantifier `Qx[·]`, in de Bruijn
@@ -711,8 +524,8 @@ inductive QFormula : ℕ → Type where
 
 namespace QFormula
 
-/-- Realization over a finite monadic model `⟨E, U, V⟩`. The `Q` clause is
-B&C's: more than half of all things satisfy the body. -/
+/-- `ψ.Realize U V xs` is realization over the finite monadic model `⟨E, U, V⟩`, where `Qx θ`
+holds when more than half of all things satisfy `θ`. -/
 def Realize {E : Type} [Fintype E] (U V : E → Prop) :
     ∀ {n : ℕ}, QFormula n → (Fin n → E) → Prop
   | _, .falsum, _ => False
@@ -734,120 +547,33 @@ def numQ : ∀ {n : ℕ}, QFormula n → ℕ
   | _, .all f => numQ f + 1
   | _, .qx f => numQ f + 1
 
-/-- `Q`-freeness: the first-order fragment of `L(Q)`. -/
-def QFree : ∀ {n : ℕ}, QFormula n → Prop
-  | _, .falsum => True
-  | _, .equal _ _ => True
-  | _, .isU _ => True
-  | _, .isV _ => True
-  | _, .imp f₁ f₂ => QFree f₁ ∧ QFree f₂
-  | _, .all f => QFree f
-  | _, .qx _ => False
+/-- B&C's `Q`-elimination `ψ*` (p. 215) translates `L(Q)` into the first-order language of C12,
+sending `Qx θ` to "every `x` is in `V`, equal to a free variable, or satisfies `θ*`". -/
+noncomputable def star : ∀ {n : ℕ}, QFormula n → L_UV.BoundedFormula Empty n
+  | _, .falsum => ⊥
+  | _, .equal i j => (&i).bdEqual &j
+  | _, .isU i => uRel.boundedFormula₁ &i
+  | _, .isV i => vRel.boundedFormula₁ &i
+  | _, .imp f₁ f₂ => (star f₁).imp (star f₂)
+  | _, .all f => (star f).all
+  | n, .qx f => (vRel.boundedFormula₁ &(Fin.last n) ⊔
+      ((BoundedFormula.iSup fun i : Fin n => (&(Fin.last n)).bdEqual &i.castSucc) ⊔ star f)).all
 
-/-- Negation. -/
-def not {n : ℕ} (f : QFormula n) : QFormula n := f.imp .falsum
-
-/-- Disjunction (classical). -/
-def or {n : ℕ} (f g : QFormula n) : QFormula n := f.not.imp g
-
-theorem realize_or {E : Type} [Fintype E] {U V : E → Prop} {n : ℕ}
-    {f g : QFormula n} {xs : Fin n → E} :
-    (f.or g).Realize U V xs ↔ f.Realize U V xs ∨ g.Realize U V xs := by
-  show ((f.Realize U V xs → False) → g.Realize U V xs) ↔ _
-  exact or_iff_not_imp_left.symm
-
-/-- Finite disjunction. -/
-def orList {n : ℕ} : List (QFormula n) → QFormula n
-  | [] => .falsum
-  | f :: l => f.or (orList l)
-
-theorem realize_orList {E : Type} [Fintype E] {U V : E → Prop} {n : ℕ}
-    {xs : Fin n → E} : ∀ {l : List (QFormula n)},
-    (orList l).Realize U V xs ↔ ∃ f ∈ l, f.Realize U V xs
-  | [] => by simp [orList, Realize]
-  | f :: l => by
-      simp only [orList, realize_or, realize_orList, List.mem_cons]
-      constructor
-      · rintro (h | ⟨g, hg, hr⟩)
-        · exact ⟨f, Or.inl rfl, h⟩
-        · exact ⟨g, Or.inr hg, hr⟩
-      · rintro ⟨g, (rfl | hg), hr⟩
-        · exact Or.inl hr
-        · exact Or.inr ⟨g, hg, hr⟩
-
-/-- "The last variable equals one of the first `n`." -/
-def eqAny (n : ℕ) : QFormula (n + 1) :=
-  orList ((List.finRange n).map fun i => .equal (Fin.last n) i.castSucc)
-
-theorem realize_eqAny {E : Type} [Fintype E] {U V : E → Prop} {n : ℕ}
-    {ys : Fin (n + 1) → E} :
-    (eqAny n).Realize U V ys ↔ ∃ i : Fin n, ys (Fin.last n) = ys i.castSucc := by
-  simp only [eqAny, realize_orList, List.mem_map, List.mem_finRange]
-  constructor
-  · rintro ⟨f, ⟨i, -, rfl⟩, hr⟩
-    exact ⟨i, hr⟩
-  · rintro ⟨i, hi⟩
-    exact ⟨_, ⟨i, trivial, rfl⟩, hi⟩
-
-/-- B&C's `Q`-elimination (`ψ*`, p. 215): `Qx θ` becomes "every `x` that is
-outside `V` and distinct from the free variables satisfies `θ*`". -/
-def star : ∀ {n : ℕ}, QFormula n → QFormula n
-  | _, .falsum => .falsum
-  | _, .equal i j => .equal i j
-  | _, .isU i => .isU i
-  | _, .isV i => .isV i
-  | _, .imp f₁ f₂ => .imp (star f₁) (star f₂)
-  | _, .all f => .all (star f)
-  | n, .qx f => .all ((QFormula.isV (Fin.last n)).or ((eqAny n).or (star f)))
-
-theorem qFree_orList : ∀ {n : ℕ} {l : List (QFormula n)},
-    (∀ f ∈ l, QFree f) → QFree (orList l)
-  | _, [], _ => trivial
-  | _, f :: l, h =>
-      ⟨⟨h f (.head _), trivial⟩, qFree_orList fun g hg => h g (.tail _ hg)⟩
-
-theorem qFree_eqAny (n : ℕ) : QFree (eqAny n) :=
-  qFree_orList fun f hf => by
-    obtain ⟨i, -, rfl⟩ := List.mem_map.mp hf
-    trivial
-
-theorem qFree_star : ∀ {n : ℕ} (f : QFormula n), QFree (star f)
-  | _, .falsum => trivial
-  | _, .equal _ _ => trivial
-  | _, .isU _ => trivial
-  | _, .isV _ => trivial
-  | _, .imp f₁ f₂ => ⟨qFree_star f₁, qFree_star f₂⟩
-  | _, .all f => qFree_star f
-  | n, .qx f =>
-      ⟨⟨trivial, trivial⟩, ⟨⟨qFree_eqAny n, trivial⟩, qFree_star f⟩⟩
-
-theorem numQ_orList : ∀ {n : ℕ} {l : List (QFormula n)},
-    (∀ f ∈ l, numQ f = 0) → numQ (orList l) = 0
-  | _, [], _ => rfl
-  | _, f :: l, h => by
-      show numQ f + 0 + numQ (orList l) = 0
-      rw [h f (.head _), numQ_orList fun g hg => h g (.tail _ hg)]
-
-theorem numQ_eqAny (n : ℕ) : numQ (eqAny n) = 0 :=
-  numQ_orList fun f hf => by
-    obtain ⟨i, -, rfl⟩ := List.mem_map.mp hf
-    rfl
-
-theorem numQ_star : ∀ {n : ℕ} (f : QFormula n), numQ (star f) = numQ f
-  | _, .falsum => rfl
-  | _, .equal _ _ => rfl
-  | _, .isU _ => rfl
-  | _, .isV _ => rfl
-  | _, .imp f₁ f₂ => by
-      show numQ (star f₁) + numQ (star f₂) = _
-      rw [numQ_star f₁, numQ_star f₂]; rfl
-  | _, .all f => by
-      show numQ (star f) + 1 = _
-      rw [numQ_star f]; rfl
-  | n, .qx f => by
-      show 0 + 0 + (numQ (eqAny n) + 0 + numQ (star f)) + 1 = numQ f + 1
-      rw [numQ_eqAny, numQ_star f]
-      omega
+/-- The translation adds no quantifier nesting beyond `ψ`'s quantifier count, a form of B&C's
+`c(ψ*) = c(ψ)` (p. 215). -/
+theorem qr_star_le : ∀ {n : ℕ} (ψ : QFormula n), (star ψ).qr ≤ numQ ψ
+  | _, .falsum => le_rfl
+  | _, .equal _ _ => Nat.zero_le _
+  | _, .isU _ => Nat.zero_le _
+  | _, .isV _ => Nat.zero_le _
+  | _, .imp f₁ f₂ => max_le ((qr_star_le f₁).trans (Nat.le_add_right _ _))
+      ((qr_star_le f₂).trans (Nat.le_add_left _ _))
+  | _, .all f => Nat.add_le_add_right (qr_star_le f) 1
+  | _, .qx f => by
+      simp only [star, BoundedFormula.qr_all, BoundedFormula.qr_sup, numQ]
+      exact Nat.add_le_add_right (max_le (Nat.zero_le _) (max_le
+        ((BoundedFormula.qr_iSup_le (k := 0) fun _ => le_rfl).trans (Nat.zero_le _))
+        (qr_star_le f))) 1
 
 /-- `L(Q)`-realization is invariant under automorphisms of the monadic model
 (B&C's "trivial automorphism argument", p. 215). -/
@@ -895,50 +621,6 @@ theorem realize_equivMap {E : Type} [Fintype E] {U V : E → Prop} (σ : E ≃ E
           exact (realize_equivMap σ hU hV f _).mpr ha'
       rw [hset, Set.ncard_image_of_injective _ σ.injective]
 
-/-- The `Q`-free condition (6): the C12 argument for the `L(Q)` fragment
-over the C12 model pair. -/
-theorem realize_iff_of_qFree (m k : ℕ) (hk : 3 * m ≤ k) :
-    ∀ {ℓ : ℕ} (ψ : QFormula ℓ), QFree ψ → numQ ψ + ℓ < m →
-      ∀ {a b : Fin ℓ → Fin k}, RegionMatch m k a b →
-        (ψ.Realize (fun x => x.val < m) (fun x => x.val < 2 * m) a ↔
-          ψ.Realize (fun x => x.val < m + 1) (fun x => x.val < 2 * m) b) := by
-  intro ℓ ψ
-  induction ψ with
-  | falsum =>
-    intro _ _ a b _
-    exact Iff.rfl
-  | equal i j =>
-    intro _ _ a b h
-    show a i = a j ↔ b i = b j
-    exact h.inj i j
-  | isU i =>
-    intro _ _ a b h
-    exact h.inU i
-  | isV i =>
-    intro _ _ a b h
-    exact h.inV i
-  | imp f₁ f₂ ih₁ ih₂ =>
-    intro hq hc a b h
-    show (_ → _) ↔ (_ → _)
-    have hcc : numQ (f₁.imp f₂) = numQ f₁ + numQ f₂ := rfl
-    exact imp_congr (ih₁ hq.1 (by omega) h) (ih₂ hq.2 (by omega) h)
-  | @all j f ih =>
-    intro hq hc a b h
-    have hcc : numQ f.all = numQ f + 1 := rfl
-    have hc' : numQ f + (j + 1) < m := by omega
-    have hℓ : j + 1 < m := by omega
-    show (∀ x, _) ↔ (∀ y, _)
-    constructor
-    · intro hall y
-      obtain ⟨x, hx⟩ := extend₂₁ m k hk hℓ h y
-      exact (ih hq hc' hx).mp (hall x)
-    · intro hall x
-      obtain ⟨y, hy⟩ := extend₁₂ m k hk hℓ h x
-      exact (ih hq hc' hy).mpr (hall y)
-  | qx f ih =>
-    intro hq
-    exact hq.elim
-
 /-- Swapping two elements outside `V` fixes any predicate below `V`. -/
 private theorem swap_pred_iff {E : Type} [DecidableEq E] {P V : E → Prop}
     (hPV : ∀ x, P x → V x) {b₀ b : E} (h₀ : ¬ V b₀) (h₁ : ¬ V b) :
@@ -959,7 +641,9 @@ theorem realize_star_iff {E : Type} [Fintype E] {U V : E → Prop}
     (hUV : ∀ x, U x → V x) :
     ∀ {n : ℕ} (ψ : QFormula n),
       2 * (Set.ncard {x | V x} + (numQ ψ + n)) ≤ Fintype.card E →
-      ∀ xs : Fin n → E, ((star ψ).Realize U V xs ↔ ψ.Realize U V xs)
+      ∀ xs : Fin n → E,
+        (@BoundedFormula.Realize L_UV E (structOfAB U V) Empty n (star ψ) default xs ↔
+          ψ.Realize U V xs)
   | _, .falsum, _, _ => Iff.rfl
   | _, .equal _ _, _, _ => Iff.rfl
   | _, .isU _, _, _ => Iff.rfl
@@ -978,16 +662,18 @@ theorem realize_star_iff {E : Type} [Fintype E] {U V : E → Prop}
       have := Classical.decEq E
       have hq : numQ (qx f) = numQ f + 1 := rfl
       rw [hq] at hb
-      have hIH : ∀ b, ((star f).Realize U V (Fin.snoc xs b) ↔
+      let _ : L_UV.Structure E := structOfAB U V
+      have hIH : ∀ b, ((star f).Realize default (Fin.snoc xs b) ↔
           f.Realize U V (Fin.snoc xs b)) := fun b =>
         realize_star_iff hUV f (by omega) (Fin.snoc xs b)
-      have hstar : (star (qx f)).Realize U V xs ↔
+      have hstar : (star (qx f)).Realize default xs ↔
           ∀ b, ¬ V b → (∀ i, b ≠ xs i) → f.Realize U V (Fin.snoc xs b) := by
-        show (∀ b, ((QFormula.isV (Fin.last n)).or
-          ((eqAny n).or (star f))).Realize U V (Fin.snoc xs b)) ↔ _
+        simp only [star, BoundedFormula.realize_all]
         refine forall_congr' fun b => ?_
-        rw [realize_or, realize_or, realize_eqAny, hIH b]
-        simp only [Realize, Fin.snoc_last, Fin.snoc_castSucc]
+        simp only [BoundedFormula.realize_sup, BoundedFormula.realize_iSup,
+          BoundedFormula.realize_bdEqual, BoundedFormula.realize_rel₁, Term.realize_var,
+          Function.comp_apply, Sum.elim_inr, Fin.snoc_last, Fin.snoc_castSucc,
+          structOfAB_relMap_V, hIH b]
         constructor
         · rintro (hv | ⟨i, hi⟩ | hf) hnv hne
           · exact absurd hv hnv
@@ -1104,17 +790,16 @@ theorem more_than_half_not_Q_definable :
     (U := fun x => x.val < m) (V := fun x => x.val < 2 * m)
     (fun x hx => by omega) φ
     (by rw [show {x : Fin k | x.val < 2 * m}.ncard = 2 * m from hcardV,
-      Fintype.card_fin]; omega) default
+      Fintype.card_fin]; omega)
   have hP₂ := QFormula.realize_star_iff (E := Fin k)
     (U := fun x => x.val < m + 1) (V := fun x => x.val < 2 * m)
     (fun x hx => by omega) φ
     (by rw [show {x : Fin k | x.val < 2 * m}.ncard = 2 * m from hcardV,
-      Fintype.card_fin]; omega) default
-  have htrans := QFormula.realize_iff_of_qFree m k hk (QFormula.star φ)
-    (QFormula.qFree_star φ) (by rw [QFormula.numQ_star]; omega)
-    (a := default) (b := default)
-    ⟨fun i => i.elim0, fun i => i.elim0, fun i => i.elim0⟩
-  exact hfalse₁ (hP₁.mp (htrans.mpr (hP₂.mpr htrue₂)))
+      Fintype.card_fin]; omega)
+  -- by (5), since `φ*` is a first-order sentence of quantifier rank below `m`
+  have htrans := nEquiv_struc m k (by omega) (by omega) (QFormula.star φ)
+    ((QFormula.qr_star_le φ).trans (by omega))
+  exact hfalse₁ (hcast _ _ ((hP₁ _).mp (htrans.mpr ((hP₂ _).mpr (hcast _ _ htrue₂)))))
 
 /-! ### The truth condition is the codebase's (most : GQ α) -/
 

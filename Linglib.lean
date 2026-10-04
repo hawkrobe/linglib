@@ -124,7 +124,6 @@ import Linglib.Core.MeasureTheory.Measure.WithDensity
 import Linglib.Core.ModelTheory.Binders
 import Linglib.Core.ModelTheory.StructureFamily
 import Linglib.Core.ModelTheory.EhrenfeuchtFraisse
-import Linglib.Core.ModelTheory.EhrenfeuchtFraisseGame
 import Linglib.Logic.Modal.FirstOrder.Semantics
 import Linglib.Logic.Modal.FirstOrder.Syntax
 import Linglib.Logic.Modal.FirstOrder.Correspondence

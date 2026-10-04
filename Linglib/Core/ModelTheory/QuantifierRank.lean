@@ -7,10 +7,9 @@ public import Mathlib.ModelTheory.Complexity
 
 `[UPSTREAM]` candidate. mathlib's `ModelTheory` has formula *complexity classes*
 (`IsQF`, `IsPrenex`, `IsUniversal`) but no quantifier-*rank* function. `qr φ` is the
-maximal nesting depth of quantifiers in `φ` — the standard measure indexing
-Ehrenfeucht–Fraïssé games and `≡ₙ` n-equivalence, the foundation of every
-first-order inexpressibility result (e.g. `Studies.BarwiseCooper1981`'s
-`most ∉ FO`, whose ad-hoc `numQuant` this generalizes).
+maximal nesting depth of quantifiers in `φ` ([libkin-2004] Definition 3.8; [hodges-1993]
+§3.3), the measure indexing Ehrenfeucht–Fraïssé games and `≡ₙ` n-equivalence. It is bounded by
+the number of quantifiers, and the gap can be exponential.
 
 mathlib has the `∞`-rank apparatus (`ElementarilyEquivalent`, the unbounded
 back-and-forth `IsExtensionPair`); `qr` is the bottom of the missing finite-rank
@@ -18,7 +17,12 @@ layer.
 
 ## Main definitions
 
-* `FirstOrder.Language.BoundedFormula.qr` — quantifier rank (max quantifier nesting).
+* `FirstOrder.Language.BoundedFormula.qr`: quantifier rank (max quantifier nesting).
+
+## References
+
+* [libkin-2004]
+* [hodges-1993]
 -/
 
 @[expose] public section
@@ -27,8 +31,8 @@ namespace FirstOrder.Language.BoundedFormula
 
 variable {L : Language} {α : Type*} {n : ℕ}
 
-/-- Quantifier rank: the maximal nesting depth of quantifiers in a formula.
-Atomic formulas have rank `0`, `imp` takes the max, and `all` adds one. -/
+/-- The quantifier rank of a formula is the maximal nesting depth of its quantifiers. Atomic
+formulas have rank `0`, an implication has the larger rank of its two sides, and `all` adds one. -/
 def qr : ∀ {n : ℕ}, L.BoundedFormula α n → ℕ
   | _, .falsum => 0
   | _, .equal _ _ => 0
@@ -81,6 +85,23 @@ def qr : ∀ {n : ℕ}, L.BoundedFormula α n → ℕ
   | _, .all f => by
       have : relabelEquiv g f.all = (relabelEquiv g f).all := rfl
       rw [this, qr_all, qr_all, qr_relabelEquiv g f]
+
+private theorem qr_foldr_le {f : L.BoundedFormula α n → L.BoundedFormula α n →
+    L.BoundedFormula α n} {e : L.BoundedFormula α n} {k : ℕ}
+    (hf : ∀ φ ψ, (f φ ψ).qr = max φ.qr ψ.qr) (he : e.qr = 0) :
+    ∀ {l : List (L.BoundedFormula α n)}, (∀ φ ∈ l, φ.qr ≤ k) → (l.foldr f e).qr ≤ k
+  | [], _ => he ▸ k.zero_le
+  | φ :: l, h => by
+      rw [List.foldr_cons, hf, max_le_iff]
+      exact ⟨h φ List.mem_cons_self, qr_foldr_le hf he fun ψ hψ => h ψ (.tail _ hψ)⟩
+
+theorem qr_iInf_le {β : Type*} [Finite β] {f : β → L.BoundedFormula α n} {k : ℕ}
+    (h : ∀ b, (f b).qr ≤ k) : (iInf f).qr ≤ k :=
+  qr_foldr_le qr_inf qr_top fun φ hφ => by obtain ⟨b, -, rfl⟩ := List.mem_map.1 hφ; exact h b
+
+theorem qr_iSup_le {β : Type*} [Finite β] {f : β → L.BoundedFormula α n} {k : ℕ}
+    (h : ∀ b, (f b).qr ≤ k) : (iSup f).qr ≤ k :=
+  qr_foldr_le qr_sup qr_bot fun φ hφ => by obtain ⟨b, -, rfl⟩ := List.mem_map.1 hφ; exact h b
 
 /-- An atomic formula has quantifier rank `0`. -/
 theorem IsAtomic.qr_eq_zero {φ : L.BoundedFormula α n} (h : φ.IsAtomic) : φ.qr = 0 := by
