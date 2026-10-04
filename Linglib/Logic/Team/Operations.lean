@@ -8,41 +8,39 @@ public import Linglib.Logic.Team.Closure
 public import Linglib.Logic.Team.Definability
 
 /-!
-# Team operations: the connectives of team semantics as operations on team properties
+# Team operations
 
 A team-semantic connective takes the team properties defined by its arguments to the team
-property defined by the compound. This file defines those operations on `TeamProperty α`
-once, so that each team logic's evaluation is a fold over them and each closure fact about
-a connective is proved once rather than per logic: the pointwise lift `flat` of a property
-of points, the tensor (split) disjunction `tensor`, the non-emptiness atom `ne`, and the
-modalities — the flat `poss`/`nec` over successor sets ([aloni-2022]), the single-witness
-`possWitness`/`necImage` of modal dependence logic ([vaananen-2008]), and the lax
-`possLax` of modal inclusion logic ([anttila-haggblom-yang-2024]).
+property defined by the compound. The connectives are defined here once, as operations on
+`TeamProperty α`, so that each team logic's evaluation is a fold over them and each closure fact
+about a connective is proved once. They are the pointwise lift `flat` of a property of points,
+the tensor (split) disjunction `tensor`, the non-emptiness atom `ne`, and the modalities: Aloni's
+flat `poss` and `nec` over successor sets, Väänänen's single-witness `possWitness` and image
+`necImage` of modal dependence logic, and the lax `possLax` of modal inclusion logic.
 
-The operations are mathlib's where mathlib has them. Tensor disjunction is the pointwise
-sup `P ⊻ Q` (`Set.sups`) of the lattice `Finset α`, so its closure lemmas are the
-lattice-general ones of `Core/Order/Sups.lean`; conjunction is intersection; the image
-modality is the preimage of a property along the bundled `SupBotHom` `biUnionHom R`, so
-its closure lemmas are `IsLowerSet.preimage` and `SupClosed.preimage`. The remaining
-results follow [anttila-2021]: `flat` properties and the flat modalities are flat outright,
-and `flat` commutes with conjunction, tensor disjunction and the flat modalities — the
-content of his Proposition 2.2.16, by which a formula built from flat atoms by these
-connectives defines a flat property, pointwise its classical truth.
+The operations are mathlib's where mathlib has them. Tensor disjunction is the pointwise sup
+`P ⊻ Q` (`Set.sups`) of the lattice `Finset α`, so its closure lemmas are the lattice-general
+ones of `Core/Order/Sups.lean`; conjunction is intersection; the image modality is the preimage
+of a property along the bundled `SupBotHom` `biUnionHom R`, so its closure lemmas are
+`IsLowerSet.preimage` and `SupClosed.preimage`. Following Anttila, `flat` properties and the flat
+modalities are flat outright, and `flat` commutes with conjunction, tensor disjunction and the
+flat modalities, so a formula built from flat atoms by these connectives defines a flat
+property, pointwise its classical truth.
 
 ## Main definitions
 
-* `Team.flat`, `Team.tensor`, `Team.ne`, `Team.poss`, `Team.nec` — the BSML connectives.
-* `Team.biUnionHom`, `Team.possWitness`, `Team.necImage`, `Team.possLax` — the modal
+* `Team.flat`, `Team.tensor`, `Team.ne`, `Team.poss`, `Team.nec`: the BSML connectives.
+* `Team.biUnionHom`, `Team.possWitness`, `Team.necImage`, `Team.possLax`: the modal
   clauses of modal dependence and inclusion logic.
 
 ## Main results
 
 * `Team.isFlat_flat`, `IsLowerSet.tensor`, `SupClosed.tensor`, `Team.empty_mem_tensor`,
-  `Set.OrdConnected.tensor` — closure per connective.
+  `Set.OrdConnected.tensor`: closure per connective.
 * `Team.flat_inter`, `Team.tensor_flat`, `Team.poss_flat`, `Team.nec_flat`,
-  `Team.possWitness_flat`, `Team.possLax_flat`, `Team.necImage_flat` — `flat` is a
+  `Team.possWitness_flat`, `Team.possLax_flat`, `Team.necImage_flat`: `flat` is a
   homomorphism.
-* `Team.poss_union`, `Team.nec_union` — the flat modalities send unions to tensor
+* `Team.poss_union`, `Team.nec_union`: the flat modalities send unions to tensor
   disjunctions.
 
 ## Implementation notes
@@ -55,8 +53,8 @@ clauses written through these operations are the same propositions as the paper'
 split of a team appears as a witness `t₁ ∪ t₂ = t`.
 
 The points of a team are left abstract: worlds for BSML, world–assignment indices for
-QBSML, assignments for first-order dependence logic. "Team" is the term of [vaananen-2007];
-Aloni's state-based modal logics call the same object a "state".
+QBSML, assignments for first-order dependence logic. "Team" is Väänänen's term; Aloni's
+state-based modal logics call the same object a "state".
 
 ## References
 
@@ -65,7 +63,7 @@ Aloni's state-based modal logics call the same object a "state".
 * [anttila-2021] Anttila, The Logic of Free Choice: Axiomatizations of State-based Modal
   Logics
 * [anttila-2025] Anttila, Not Nothing: Nonemptiness in Team Semantics
-* [anttila-haggblom-yang-2024] Anttila, Häggblom and Yang, Axiomatizing modal inclusion logic
+* [anttila-haggblom-yang-2025] Anttila, Häggblom and Yang, Axiomatizing modal inclusion logic
   and its variants
 * [vaananen-2007] Väänänen, Dependence Logic: A New Approach to Independence Friendly Logic
 * [vaananen-2008] Väänänen, Modal Dependence Logic
@@ -198,7 +196,7 @@ def biUnionHom {β : Type*} [DecidableEq β] (R : α → Finset β) :
 def necImage (R : α → Finset α) (P : TeamProperty α) : TeamProperty α :=
   biUnionHom R ⁻¹' P
 
-/-- The lax possibility modality of modal inclusion logic ([anttila-haggblom-yang-2024]
+/-- The lax possibility modality of modal inclusion logic ([anttila-haggblom-yang-2025]
     Definition 2.2) holds of a team when some team of successors in `P` reaches every point. -/
 def possLax (R : α → Finset α) (P : TeamProperty α) : TeamProperty α :=
   {t | ∃ S ⊆ t.biUnion R, (∀ x ∈ t, ∃ y ∈ S, y ∈ R x) ∧ S ∈ P}
