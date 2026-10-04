@@ -1,29 +1,31 @@
 module
 
 public import Linglib.Pragmatics.RSA.Silence
+public import Linglib.Semantics.Quantification.Basic
 
 /-!
 # Potts, Lassiter, Levy and Frank (2016): Embedded Implicatures as Pragmatic Inferences under Compositional Lexical Uncertainty
 
-This file formalizes the compositional lexical-uncertainty model of [potts-etal-2016] in the
-context of its experiment (§6). Three players each hit none, some, or all of their shots, a
-state being the multiset of outcomes (16); a message composes a quantifier over players with a
-quantifier over shots, the null message added (18); and the lexica are the neo-Gricean
-refinement set of *some*, itself or *some but not all* (14), (19d). The literal listener
-conditions a flat prior on a message's extension under a lexicon, the speaker weights messages
-by the listener's mass at the state and a cost, and the uncertainty listener inverts the speaker
-jointly over states and lexica (13) (`L0`, `S1`, `L1`); the fixed-lexicon pragmatics of (19b)
-inverts the base-lexicon speaker alone (`L1fixed`). The uncertainty listener assigns mass to a
-state exactly when some refinement makes the message true there, the fixed-lexicon listener
-exactly when the base lexicon does, so *exactly one player hit some of his shots* is heard as
-compatible with the locally enriched states NSA and SAA and *no player hit some of his shots*
-with NNA, NAA and AAA, which the fixed-lexicon model excludes (`one_some_local`,
-`no_some_local`), the low but non-negligible enrichment under a negative quantifier that
-[chemla-spector-2011] report. The uncertainty listener still ranks the literal construal first,
-NNS and NNN (`one_some_literal_first`, `no_some_literal_first`), and for *every player hit some
-of his shots* mirrors the human ordering, SSS first and AAA last among the true states, where
-the fixed-lexicon listener puts SAA first (`every_some_ordering`, `every_some_fixed`). Every
-ordering holds at every rationality and every cost of the null message.
+Potts, Lassiter, Levy and Frank model embedded implicatures as pragmatic inference under
+compositional lexical uncertainty, in the context of their experiment (§6). Three players each
+hit none, some but not all, or all of their shots, a cell of `Quantifier.Tripartition`, and a
+state is the multiset of outcomes (16). A message composes a quantifier over players with a
+quantifier over shots, the null message added (18), and the lexica are the neo-Gricean
+refinement set of *some*, itself or *some but not all* (14), (19d). The literal listener `L0`,
+the speaker `S1` and the uncertainty listener `L1`, which inverts the speaker jointly over states
+and lexica (13), are compared with the fixed-lexicon listener `L1fixed` of (19b). Every ordering
+below holds at every rationality and every cost of the null message.
+
+## Main results
+
+* `one_some_local`, `no_some_local`: under *exactly one* and *no* the uncertainty listener gives
+  mass to the locally enriched states, which the fixed-lexicon model excludes, the low but
+  non-negligible enrichment under a negative quantifier that Chemla and Spector report.
+* `one_some_literal_first`, `no_some_literal_first`: the literal construals NNS and NNN still
+  rank first.
+* `every_some_ordering`, `every_some_fixed`: for *every player hit some of his shots* the
+  uncertainty listener mirrors the human ordering, SSS first and AAA last among the true states,
+  where the fixed-lexicon listener puts SAA first.
 
 ## Implementation notes
 
@@ -43,21 +45,14 @@ formalized.
 
 @[expose] public section
 
-open MeasureTheory ProbabilityTheory RSA
+open MeasureTheory ProbabilityTheory RSA Quantifier
 open scoped ENNReal NNReal
 
 namespace PottsEtAl2016
 
 /-! ### The context (§6, (16) and (18)) -/
 
-/-- A player's outcome: hit none of the shots, some but not all, or all. -/
-inductive Outcome where
-  | nothing
-  | scored
-  | aced
-  deriving DecidableEq, Fintype
-
-/-- The states (16): the multisets of three outcomes, named by their outcomes. -/
+/-- The states (16) are the multisets of three outcomes, each named by its outcomes. -/
 inductive World where
   | NNN
   | NNS
@@ -74,34 +69,34 @@ inductive World where
 instance : MeasurableSpace World := ⊤
 
 /-- The outcomes of a state. -/
-def World.outcomes : World → Multiset Outcome
-  | .NNN => {.nothing, .nothing, .nothing}
-  | .NNS => {.nothing, .nothing, .scored}
-  | .NNA => {.nothing, .nothing, .aced}
-  | .NSS => {.nothing, .scored, .scored}
-  | .NSA => {.nothing, .scored, .aced}
-  | .NAA => {.nothing, .aced, .aced}
-  | .SSS => {.scored, .scored, .scored}
-  | .SSA => {.scored, .scored, .aced}
-  | .SAA => {.scored, .aced, .aced}
-  | .AAA => {.aced, .aced, .aced}
+def World.outcomes : World → Multiset Tripartition
+  | .NNN => {.none, .none, .none}
+  | .NNS => {.none, .none, .someNotAll}
+  | .NNA => {.none, .none, .all}
+  | .NSS => {.none, .someNotAll, .someNotAll}
+  | .NSA => {.none, .someNotAll, .all}
+  | .NAA => {.none, .all, .all}
+  | .SSS => {.someNotAll, .someNotAll, .someNotAll}
+  | .SSA => {.someNotAll, .someNotAll, .all}
+  | .SAA => {.someNotAll, .all, .all}
+  | .AAA => {.all, .all, .all}
 
-/-- The quantifiers over a player's shots: *every*, *no*, *some*. -/
+/-- The quantifiers over a player's shots are *every*, *no* and *some*. -/
 inductive ShotQ where
   | every
   | no
   | some_
   deriving DecidableEq, Fintype
 
-/-- The quantifiers over the players: *every*, *exactly one*, *no*. -/
+/-- The quantifiers over the players are *every*, *exactly one* and *no*. -/
 inductive PlayerQ where
   | every
   | exactlyOne
   | no
   deriving DecidableEq, Fintype
 
-/-- The lexica of the neo-Gricean refinement set (14), (19d): *some* read as itself or as
-*some but not all*. -/
+/-- The lexica of the neo-Gricean refinement set (14), (19d) read *some* as itself or as *some
+but not all*. -/
 inductive Lex where
   | weak
   | strong
@@ -109,23 +104,23 @@ inductive Lex where
 
 instance : MeasurableSpace Lex := ⊤
 
-/-- The outcomes *some* covers under a lexicon: any hit, or some but not all. -/
-def Lex.someDen : Lex → Finset Outcome
-  | .weak => {.scored, .aced}
-  | .strong => {.scored}
+/-- Under a lexicon *some* covers the outcomes with any hit, or those with some but not all. -/
+def Lex.someDen : Lex → Finset Tripartition
+  | .weak => {.someNotAll, .all}
+  | .strong => {.someNotAll}
 
-/-- The refinement condition (11): each lexicon reads *some* as a nonempty part of its base
-denotation, which the base lexicon is. -/
+/-- The refinement condition (11) holds, each lexicon reading *some* as a nonempty part of its
+base denotation, which the base lexicon is. -/
 theorem lex_refines : ∀ l : Lex, l.someDen.Nonempty ∧ l.someDen ⊆ Lex.weak.someDen := by
   decide
 
 /-- Whether an outcome satisfies the quantifier over shots under a lexicon. -/
-def ShotQ.Holds (l : Lex) : ShotQ → Outcome → Prop
-  | .every, o => o = .aced
-  | .no, o => o = .nothing
+def ShotQ.Holds (l : Lex) : ShotQ → Tripartition → Prop
+  | .every, o => o = ⊤
+  | .no, o => o = ⊥
   | .some_, o => o ∈ l.someDen
 
-instance (l : Lex) (s : ShotQ) : DecidablePred (s.Holds l) := λ o => by
+instance (l : Lex) (s : ShotQ) : DecidablePred (s.Holds l) := fun o ↦ by
   cases s <;> unfold ShotQ.Holds <;> infer_instance
 
 /-- Whether a number of players satisfies the quantifier over players. -/
@@ -134,24 +129,24 @@ def PlayerQ.Holds : PlayerQ → ℕ → Prop
   | .exactlyOne, n => n = 1
   | .no, n => n = 0
 
-instance (q : PlayerQ) : DecidablePred q.Holds := λ n => by
+instance (q : PlayerQ) : DecidablePred q.Holds := fun n ↦ by
   cases q <;> unfold PlayerQ.Holds <;> infer_instance
 
-/-- A statement (18c): a quantifier over players applied to a quantifier over shots. -/
+/-- A statement (18c) applies a quantifier over players to a quantifier over shots. -/
 abbrev Stmt := PlayerQ × ShotQ
 
-/-- The truth of a statement at a state under a lexicon: the quantifier over players applied to
-the number of players whose outcome satisfies the quantifier over shots. -/
+/-- A statement is true at a state under a lexicon when its quantifier over players holds of
+the number of players whose outcome satisfies its quantifier over shots. -/
 def Stmt.Truth (l : Lex) (s : Stmt) (w : World) : Prop :=
   s.1.Holds (w.outcomes.countP (s.2.Holds l))
 
-instance (l : Lex) (s : Stmt) : DecidablePred (s.Truth l) := λ w =>
+instance (l : Lex) (s : Stmt) : DecidablePred (s.Truth l) := fun w ↦
   inferInstanceAs (Decidable (s.1.Holds (w.outcomes.countP (s.2.Holds l))))
 
 /-- The extension of a statement under a lexicon. -/
 def stmtSem (l : Lex) (s : Stmt) : Finset World := Finset.univ.filter (s.Truth l)
 
-/-- The messages (18c): the statements and the null message of (12a). -/
+/-- The messages (18c) are the statements and the null message of (12a). -/
 abbrev Msg := WithSilence Stmt
 
 instance : MeasurableSpace Msg := ⊤
@@ -189,21 +184,21 @@ section Tower
 
 variable (α : ℝ) (κ : ℝ≥0)
 
-/-- The cost factor (18d): `κ` for the null message and 1 for every statement. -/
+/-- The cost factor (18d) is `κ` for the null message and 1 for every statement. -/
 def cost : Msg → ℝ≥0∞ := liftCostFactor κ 1
 
-/-- The literal listener (13a) at a flat prior: uniform on the message's extension. -/
+/-- The literal listener (13a) at a flat prior is uniform on the message's extension. -/
 noncomputable def L0 (l : Lex) : Kernel Msg World := uniformListener (sem l)
 
 /-- The speaker (13b). -/
 noncomputable def S1 (l : Lex) : Kernel World Msg := speaker α (cost κ) (L0 l)
 
-/-- The uncertainty listener (13c): the joint posterior over states and lexica at flat priors,
+/-- The uncertainty listener (13c) is the joint posterior over states and lexica at flat priors,
 whose state marginal is the paper's listener. -/
 noncomputable def L1 : Kernel Msg (World × Lex) :=
   familyListener L0 α (cost κ) (uniformOn Set.univ)
 
-/-- The fixed-lexicon pragmatic listener (19b): the base lexicon's speaker inverted at a flat
+/-- The fixed-lexicon pragmatic listener (19b) inverts the base lexicon's speaker at a flat
 prior. -/
 noncomputable def L1fixed : Kernel Msg World :=
   pragmaticListener α (cost κ) (L0 .weak) (uniformOn Set.univ)
@@ -241,9 +236,9 @@ theorem L1fixed_ne_zero_iff (m : Msg) (w : World) :
     (comp_apply_singleton_ne_zero _ _ (uniformOn_univ_singleton_ne_zero w₀) ((hs w₀ m).2 h₀)),
     and_iff_right (uniformOn_univ_singleton_ne_zero w), hs]
 
-/-- *Exactly one player hit some of his shots*: the locally enriched states NSA and SAA, false
-on the literal construal, receive mass from the uncertainty listener and none from the
-fixed-lexicon listener. -/
+/-- Hearing *exactly one player hit some of his shots*, the uncertainty listener gives mass to
+the locally enriched states NSA and SAA, false on the literal construal, and the fixed-lexicon
+listener none. -/
 theorem one_some_local :
     ∀ w ∈ ({.NSA, .SAA} : Finset World),
       (L1 α κ (some oneSome)).fst {w} ≠ 0 ∧ L1fixed α κ (some oneSome) {w} = 0 := by
@@ -252,8 +247,8 @@ theorem one_some_local :
   simp only [Finset.mem_insert, Finset.mem_singleton] at hw
   rcases hw with rfl | rfl <;> decide
 
-/-- *No player hit some of his shots*: the locally enriched states NNA, NAA and AAA receive mass
-from the uncertainty listener and none from the fixed-lexicon listener. -/
+/-- Hearing *no player hit some of his shots*, the uncertainty listener gives mass to the locally
+enriched states NNA, NAA and AAA, and the fixed-lexicon listener none. -/
 theorem no_some_local :
     ∀ w ∈ ({.NNA, .NAA, .AAA} : Finset World),
       (L1 α κ (some noSome)).fst {w} ≠ 0 ∧ L1fixed α κ (some noSome) {w} = 0 := by
@@ -284,7 +279,7 @@ theorem L1fixed_real_lt_iff (m : Msg) (w₁ w₂ : World) :
       (cost_ne_top κ) w₀ m).2 h₀)
 
 omit hκ in
-/-- The speaker's share of a statement: its informativity weight over the weights of the
+/-- The speaker's share of a statement is its informativity weight over the weights of the
 statements true at the state plus the null message's weight. -/
 theorem S1_real (l : Lex) (w : World) (s : Stmt) :
     (S1 α κ l w).real {some s}
@@ -324,19 +319,19 @@ def ShotQ.equivFin : ShotQ ≃ Fin 3 where
 
 theorem Lex.sum_univ {M : Type*} [AddCommMonoid M] (f : Lex → M) :
     ∑ l, f l = f .weak + f .strong := by
-  rw [Fintype.sum_equiv Lex.equivFin f (f ∘ Lex.equivFin.symm) λ l => by simp,
+  rw [Fintype.sum_equiv Lex.equivFin f (f ∘ Lex.equivFin.symm) fun l ↦ by simp,
     Fin.sum_univ_two]
   rfl
 
 theorem PlayerQ.sum_univ {M : Type*} [AddCommMonoid M] (f : PlayerQ → M) :
     ∑ q, f q = f .every + f .exactlyOne + f .no := by
-  rw [Fintype.sum_equiv PlayerQ.equivFin f (f ∘ PlayerQ.equivFin.symm) λ q => by simp,
+  rw [Fintype.sum_equiv PlayerQ.equivFin f (f ∘ PlayerQ.equivFin.symm) fun q ↦ by simp,
     Fin.sum_univ_three]
   rfl
 
 theorem ShotQ.sum_univ {M : Type*} [AddCommMonoid M] (f : ShotQ → M) :
     ∑ s, f s = f .every + f .no + f .some_ := by
-  rw [Fintype.sum_equiv ShotQ.equivFin f (f ∘ ShotQ.equivFin.symm) λ s => by simp,
+  rw [Fintype.sum_equiv ShotQ.equivFin f (f ∘ ShotQ.equivFin.symm) fun s ↦ by simp,
     Fin.sum_univ_three]
   rfl
 
@@ -368,9 +363,9 @@ private theorem weights :
     Real.rpow_lt_rpow (by norm_num) (by norm_num) hα,
     Real.rpow_lt_one (by norm_num) (by norm_num) hα, by positivity⟩
 
-/-- *Every player hit some of his shots*: the uncertainty listener ranks the locally enriched
-SSS above the other true states and AAA below the two remaining ones, the ordering of the human
-responses. -/
+/-- Hearing *every player hit some of his shots*, the uncertainty listener ranks the locally
+enriched SSS above the other true states and AAA below the two remaining ones, the ordering of
+the human responses. -/
 theorem every_some_ordering :
     (L1 α κ (some everySome)).fst.real {.SSA} < (L1 α κ (some everySome)).fst.real {.SSS} ∧
     (L1 α κ (some everySome)).fst.real {.SAA} < (L1 α κ (some everySome)).fst.real {.SSS} ∧
@@ -402,8 +397,8 @@ theorem every_some_fixed :
     zero_add]
   exact div_lt_div_of_pos_left ha (by positivity) (by linarith)
 
-/-- *Exactly one player hit some of his shots*: the literal construal NNS stays the most
-preferred state, above NNA and above the locally enriched NSA and SAA. -/
+/-- Hearing *exactly one player hit some of his shots*, the uncertainty listener still prefers the
+literal construal NNS most, above NNA and above the locally enriched NSA and SAA. -/
 theorem one_some_literal_first :
     (L1 α κ (some oneSome)).fst.real {.NNA} < (L1 α κ (some oneSome)).fst.real {.NNS} ∧
     (L1 α κ (some oneSome)).fst.real {.NSA} < (L1 α κ (some oneSome)).fst.real {.NNS} ∧
@@ -419,8 +414,8 @@ theorem one_some_literal_first :
       (le_add_of_nonneg_left (by positivity)),
     lt_add_of_pos_left _ (by positivity)⟩
 
-/-- *No player hit some of his shots*: the literal construal NNN stays the most preferred state,
-above the locally enriched NNA, NAA and AAA. -/
+/-- Hearing *no player hit some of his shots*, the uncertainty listener still prefers the literal
+construal NNN most, above the locally enriched NNA, NAA and AAA. -/
 theorem no_some_literal_first :
     (L1 α κ (some noSome)).fst.real {.NNA} < (L1 α κ (some noSome)).fst.real {.NNN} ∧
     (L1 α κ (some noSome)).fst.real {.NAA} < (L1 α κ (some noSome)).fst.real {.NNN} ∧

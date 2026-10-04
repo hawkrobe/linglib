@@ -3,6 +3,7 @@ module
 public import Linglib.Semantics.Quantification.Defs
 public import Linglib.Semantics.Quantification.Properties
 public import Linglib.Logic.Aristotelian.Square
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Concrete propositional generalized quantifiers
@@ -14,20 +15,29 @@ Cooper's universals of conservativity and scope monotonicity, Keenan and Stavi's
 structure, and Peters and Westerståhl's left monotonicity and smoothness. The counting
 quantifiers such as *most* and *few* are in `Quantification/Counting.lean`.
 
+At a non-empty restrictor the square collapses to Jespersen's tripartition: the scope covers all
+of the restrictor, some but not all of it, or none of it.
+
 ## Main definitions
 
 * `every`, `GQ.some`, `no`, `the`: the propositional denotations.
 * `SatisfiesUniversals`: conservativity together with monotonicity in the scope.
 * `square`: the square of opposition of `every`, `no`, `some` and `not every` at a restrictor.
+* `Tripartition`: the three cells of the tripartition, ordered by how much of the restrictor the
+  scope covers.
+* `Tripartition.of R S`: the cell in which the scope `S` falls relative to `R`.
 
 ## Main results
 
 * `square_relations`: with a non-empty restrictor the four stand in all six relations of the
   square.
+* `Tripartition.bot_lt_of_iff`, `Tripartition.of_eq_top_iff`: *some* holds above the bottom cell
+  and *every* at the top one, the latter given a non-empty restrictor.
 
 ## References
 
 * [barwise-cooper-1981]
+* [horn-2001]
 * [keenan-stavi-1986]
 * [peters-westerstahl-2006]
 * [russell-1905]
@@ -42,26 +52,26 @@ namespace Quantifier.GQ
 /-! ### Denotations -/
 
 /-- The universal determiner, `λR λS. ∀x. R(x) → S(x)`. -/
-def every {α : Type*} : GQ α := fun R S => ∀ x : α, R x → S x
+def every {α : Type*} : GQ α := fun R S ↦ ∀ x : α, R x → S x
 
 /-- The existential determiner, `λR λS. ∃x. R(x) ∧ S(x)`. -/
-protected def some {α : Type*} : GQ α := fun R S => ∃ x : α, R x ∧ S x
+protected def some {α : Type*} : GQ α := fun R S ↦ ∃ x : α, R x ∧ S x
 
 /-- The negative determiner, `λR λS. ∀x. R(x) → ¬S(x)`. -/
-def no {α : Type*} : GQ α := fun R S => ∀ x : α, R x → ¬ S x
+def no {α : Type*} : GQ α := fun R S ↦ ∀ x : α, R x → ¬ S x
 
 /-- The singular definite of [russell-1905] in Montagovian form,
 `λR λS. ∃x. ∀y. (R(y) ↔ y = x) ∧ S(x)`. -/
-def the {α : Type*} : GQ α := fun R S => ∃ x : α, (∀ y, R y ↔ y = x) ∧ S x
+def the {α : Type*} : GQ α := fun R S ↦ ∃ x : α, (∀ y, R y ↔ y = x) ∧ S x
 
 /-- The definite asserts a unique restrictor element and applies the scope to it. -/
 theorem the_iff {α : Type*} (R S : α → Prop) :
     the R S ↔ (∃! x, R x) ∧ ∀ x, R x → S x := by
   constructor
   · rintro ⟨x, hx, hS⟩
-    exact ⟨⟨x, (hx x).2 rfl, fun y hy => (hx y).1 hy⟩, fun y hy => (hx y).1 hy ▸ hS⟩
+    exact ⟨⟨x, (hx x).2 rfl, fun y hy ↦ (hx y).1 hy⟩, fun y hy ↦ (hx y).1 hy ▸ hS⟩
   · rintro ⟨⟨x, hx, huniq⟩, hS⟩
-    exact ⟨x, fun y => ⟨huniq y, fun h => h ▸ hx⟩, hS x hx⟩
+    exact ⟨x, fun y ↦ ⟨huniq y, fun h ↦ h ▸ hx⟩, hS x hx⟩
 
 section Decidable
 
@@ -86,15 +96,15 @@ variable {α : Type*}
 
 theorem conservative_every : Conservative (every : GQ α) := by
   intro R S; simp only [every]
-  exact ⟨fun h x hR => ⟨hR, h x hR⟩, fun h x hR => (h x hR).2⟩
+  exact ⟨fun h x hR ↦ ⟨hR, h x hR⟩, fun h x hR ↦ (h x hR).2⟩
 
 theorem conservative_some : Conservative (GQ.some : GQ α) := by
   intro R S; simp only [GQ.some]
-  exact ⟨fun ⟨x, hR, hS⟩ => ⟨x, hR, hR, hS⟩, fun ⟨x, hR, _, hS⟩ => ⟨x, hR, hS⟩⟩
+  exact ⟨fun ⟨x, hR, hS⟩ ↦ ⟨x, hR, hR, hS⟩, fun ⟨x, hR, _, hS⟩ ↦ ⟨x, hR, hS⟩⟩
 
 theorem conservative_no : Conservative (no : GQ α) := by
   intro R S; simp only [no]
-  exact ⟨fun h x hR ⟨_, hS⟩ => h x hR hS, fun h x hR hS => h x hR ⟨hR, hS⟩⟩
+  exact ⟨fun h x hR ⟨_, hS⟩ ↦ h x hR hS, fun h x hR hS ↦ h x hR ⟨hR, hS⟩⟩
 
 /-! ### Scope monotonicity -/
 
@@ -121,41 +131,41 @@ theorem antitone_no (R : α → Prop) : Antitone (no R) :=
 
 /-! ### Symmetry (P&W Ch.6) -/
 
-instance symm_some : Std.Symm (GQ.some : GQ α) := ⟨fun _ _ ⟨x, hR, hS⟩ => ⟨x, hS, hR⟩⟩
+instance symm_some : Std.Symm (GQ.some : GQ α) := ⟨fun _ _ ⟨x, hR, hS⟩ ↦ ⟨x, hS, hR⟩⟩
 
-instance symm_no : Std.Symm (no : GQ α) := ⟨fun _ _ h x hS hR => h x hR hS⟩
+instance symm_no : Std.Symm (no : GQ α) := ⟨fun _ _ h x hS hR ↦ h x hR hS⟩
 
 /-! ### Intersectivity (CONSERV + SYMM bridge) -/
 
 theorem intersectionCondition_some : IntersectionCondition (GQ.some : GQ α) := by
   intro R S R' S' hInt
   simp only [GQ.some]
-  exact ⟨fun ⟨x, hR, hS⟩ => let ⟨hR', hS'⟩ := (hInt x).mp ⟨hR, hS⟩; ⟨x, hR', hS'⟩,
-         fun ⟨x, hR', hS'⟩ => let ⟨hR, hS⟩ := (hInt x).mpr ⟨hR', hS'⟩; ⟨x, hR, hS⟩⟩
+  exact ⟨fun ⟨x, hR, hS⟩ ↦ let ⟨hR', hS'⟩ := (hInt x).mp ⟨hR, hS⟩; ⟨x, hR', hS'⟩,
+         fun ⟨x, hR', hS'⟩ ↦ let ⟨hR, hS⟩ := (hInt x).mpr ⟨hR', hS'⟩; ⟨x, hR, hS⟩⟩
 
 theorem intersectionCondition_no : IntersectionCondition (no : GQ α) := by
   intro R S R' S' hInt
   simp only [no]
-  refine ⟨fun h x hR' hS' => h x ((hInt x).mpr ⟨hR', hS'⟩).1 ((hInt x).mpr ⟨hR', hS'⟩).2,
-          fun h x hR hS => h x ((hInt x).mp ⟨hR, hS⟩).1 ((hInt x).mp ⟨hR, hS⟩).2⟩
+  refine ⟨fun h x hR' hS' ↦ h x ((hInt x).mpr ⟨hR', hS'⟩).1 ((hInt x).mpr ⟨hR', hS'⟩).2,
+          fun h x hR hS ↦ h x ((hInt x).mp ⟨hR, hS⟩).1 ((hInt x).mp ⟨hR, hS⟩).2⟩
 
 /-! ### Left/right anti-additivity (P&W §5.8) -/
 
 theorem leftAntiAdditive_every : LeftAntiAdditive (every : GQ α) := by
   intro R R' S; simp only [every]
-  refine ⟨fun h => ⟨fun x hR => h x (Or.inl hR), fun x hR' => h x (Or.inr hR')⟩,
-          fun ⟨h1, h2⟩ x hRR' => hRR'.elim (h1 x) (h2 x)⟩
+  refine ⟨fun h ↦ ⟨fun x hR ↦ h x (Or.inl hR), fun x hR' ↦ h x (Or.inr hR')⟩,
+          fun ⟨h1, h2⟩ x hRR' ↦ hRR'.elim (h1 x) (h2 x)⟩
 
 theorem leftAntiAdditive_no : LeftAntiAdditive (no : GQ α) := by
   intro R R' S; simp only [no]
-  refine ⟨fun h => ⟨fun x hR => h x (Or.inl hR), fun x hR' => h x (Or.inr hR')⟩,
-          fun ⟨h1, h2⟩ x hRR' => hRR'.elim (h1 x) (h2 x)⟩
+  refine ⟨fun h ↦ ⟨fun x hR ↦ h x (Or.inl hR), fun x hR' ↦ h x (Or.inr hR')⟩,
+          fun ⟨h1, h2⟩ x hRR' ↦ hRR'.elim (h1 x) (h2 x)⟩
 
 theorem rightAntiAdditive_no : RightAntiAdditive (no : GQ α) := by
   intro R S S'; simp only [no]
-  refine ⟨fun h => ⟨fun x hR hS => h x hR (Or.inl hS),
-                    fun x hR hS' => h x hR (Or.inr hS')⟩,
-          fun ⟨h1, h2⟩ x hR hSS' => hSS'.elim (h1 x hR) (h2 x hR)⟩
+  refine ⟨fun h ↦ ⟨fun x hR hS ↦ h x hR (Or.inl hS),
+                    fun x hR hS' ↦ h x hR (Or.inr hS')⟩,
+          fun ⟨h1, h2⟩ x hR hSS' ↦ hSS'.elim (h1 x hR) (h2 x hR)⟩
 
 /-! ### Duality square (B&C §4.11) -/
 
@@ -168,15 +178,15 @@ theorem innerNeg_every :
 theorem dual_every :
     (dual (every : GQ α) : GQ α) = (GQ.some : GQ α) := by
   funext R S; simp only [dual, compl_apply, innerNeg, every, GQ.some]
-  exact propext ⟨fun h => by push Not at h; exact h,
-                 fun ⟨x, hR, hS⟩ h => h x hR hS⟩
+  exact propext ⟨fun h ↦ by push Not at h; exact h,
+                 fun ⟨x, hR, hS⟩ h ↦ h x hR hS⟩
 
 /-- The outer negation of `some` is `no`, since negating existence gives universal negation. -/
 theorem compl_some :
     ((GQ.some : GQ α)ᶜ : GQ α) = (no : GQ α) := by
   funext R S; simp only [compl_apply, GQ.some, no]
-  exact propext ⟨fun h x hR hS => h ⟨x, hR, hS⟩,
-                 fun h ⟨x, hR, hS⟩ => h x hR hS⟩
+  exact propext ⟨fun h x hR hS ↦ h ⟨x, hR, hS⟩,
+                 fun h ⟨x, hR, hS⟩ ↦ h x hR hS⟩
 
 /-! ### Positive/negative strong (P&W Ch.6) -/
 
@@ -194,20 +204,20 @@ theorem no_negative_strong_nonempty (R : α → Prop)
 
 theorem existential_some : Existential (GQ.some : GQ α) := by
   intro R S; simp only [GQ.some]
-  exact ⟨fun ⟨x, hR, hS⟩ => ⟨x, ⟨hR, hS⟩, trivial⟩,
-         fun ⟨x, ⟨hR, hS⟩, _⟩ => ⟨x, hR, hS⟩⟩
+  exact ⟨fun ⟨x, hR, hS⟩ ↦ ⟨x, ⟨hR, hS⟩, trivial⟩,
+         fun ⟨x, ⟨hR, hS⟩, _⟩ ↦ ⟨x, hR, hS⟩⟩
 
 theorem existential_no : Existential (no : GQ α) := by
   intro R S; simp only [no]
-  exact ⟨fun h x ⟨hR, hS⟩ _ => h x hR hS,
-         fun h x hR hS => h x ⟨hR, hS⟩ trivial⟩
+  exact ⟨fun h x ⟨hR, hS⟩ _ ↦ h x hR hS,
+         fun h x hR hS ↦ h x ⟨hR, hS⟩ trivial⟩
 
 /-! ### Relational properties ([van-benthem-1984]) -/
 
-instance isTrans_every : IsTrans _ (every : GQ α) := ⟨fun _ _ _ hAB hBC x hA => hBC x (hAB x hA)⟩
+instance isTrans_every : IsTrans _ (every : GQ α) := ⟨fun _ _ _ hAB hBC x hA ↦ hBC x (hAB x hA)⟩
 
 instance antisymm_every : Std.Antisymm (every : GQ α) :=
-  ⟨fun _ _ hAB hBA => funext fun x => propext ⟨hAB x, hBA x⟩⟩
+  ⟨fun _ _ hAB hBA ↦ funext fun x ↦ propext ⟨hAB x, hBA x⟩⟩
 
 theorem quasiReflexive_some : QuasiReflexive (GQ.some : GQ α) := by
   intro A B ⟨x, hA, _⟩; exact ⟨x, hA, hA⟩
@@ -252,7 +262,7 @@ theorem doubleMono_compl_every :
 
 /-- *Every* is scope-intersective, and so filtrating. -/
 theorem scopeIntersective_every : ScopeIntersective (every : GQ α) :=
-  fun _ _ _ hAB hAC x hA => ⟨hAB x hA, hAC x hA⟩
+  fun _ _ _ hAB hAC x hA ↦ ⟨hAB x hA, hAC x hA⟩
 
 theorem filtrating_every : Filtrating (every : GQ α) :=
   ⟨scopeMonotone_every, scopeIntersective_every⟩
@@ -342,7 +352,7 @@ theorem smooth_every : Smooth (every : GQ α) :=
   ⟨downNE_every, upSE_every⟩
 
 theorem coSmooth_no : CoSmooth (no : GQ α) :=
-  ⟨downNW_no, fun _ _ _ _ hInt hQ x hR' hS => hQ x (hInt x hR' hS) hS⟩
+  ⟨downNW_no, fun _ _ _ _ hInt hQ x hR' hS ↦ hQ x (hInt x hR' hS) hS⟩
 
 /-! ### Satisfies universals: B&C's CONS + MON ([barwise-cooper-1981]; used as a
 learnability/complexity target by [van-de-pol-etal-2023]) -/
@@ -357,3 +367,76 @@ theorem satisfiesUniversals_no : SatisfiesUniversals (no : GQ α) :=
   ⟨conservative_no, Or.inr scopeAntitone_no⟩
 
 end Quantifier.GQ
+
+/-! ### Jespersen's tripartition
+
+[horn-2001] (pp. 218–219) traces to De Morgan the trichotomy of complete inclusion, partial
+inclusion with partial exclusion, and complete exclusion, and to Jespersen its tripartition into
+*all*, *some* and *none*, whose middle cell is the conjunction of the square's I and O corners
+rather than either one. The cells are pairwise contrary; at a non-empty restrictor, where *every*
+entails *some*, they are the three minterms of `every R` and `GQ.some R` that do not vanish
+identically. Ordered by how much of the restrictor the scope covers, *some* holds above the
+bottom cell, *every* at the top one, and *not every* below it. -/
+
+namespace Quantifier
+
+/-- A cell of Jespersen's tripartition records whether a scope covers none of a restrictor, some
+but not all of it, or all of it. -/
+inductive Tripartition where
+  | none
+  | someNotAll
+  | all
+  deriving DecidableEq, Repr, Fintype
+
+namespace Tripartition
+
+/-- The position of a cell in the order `none < someNotAll < all`. -/
+def toFin : Tripartition → Fin 3
+  | none => 0
+  | someNotAll => 1
+  | all => 2
+
+theorem toFin_injective : Function.Injective toFin := by decide
+
+instance : LinearOrder Tripartition := LinearOrder.lift' toFin toFin_injective
+
+instance : BoundedOrder Tripartition where
+  top := all
+  le_top := by decide
+  bot := none
+  bot_le := by decide
+
+theorem bot_eq_none : (⊥ : Tripartition) = none := rfl
+
+theorem top_eq_all : (⊤ : Tripartition) = all := rfl
+
+/-- The middle cell is the one *some* reaches and *every* does not. -/
+theorem eq_someNotAll_iff {s : Tripartition} : s = someNotAll ↔ ⊥ < s ∧ s < ⊤ := by
+  decide +revert
+
+open GQ
+
+variable {α : Type*} [Fintype α] {R S : α → Prop} [DecidablePred R] [DecidablePred S]
+
+/-- The cell in which the scope `S` falls relative to the restrictor `R`. -/
+def of (R S : α → Prop) [DecidablePred R] [DecidablePred S] : Tripartition :=
+  if GQ.some R S then if every R S then all else someNotAll else none
+
+theorem of_eq_bot_iff : of R S = ⊥ ↔ no R S := by
+  unfold of
+  rw [no_contradicts_some]
+  split_ifs <;> simp_all [bot_eq_none]
+
+/-- *some* holds exactly above the bottom cell. -/
+theorem bot_lt_of_iff : ⊥ < of R S ↔ GQ.some R S := by
+  rw [bot_lt_iff_ne_bot, Ne, of_eq_bot_iff, no_contradicts_some, not_not]
+
+/-- *every* holds exactly at the top cell, given a non-empty restrictor. -/
+theorem of_eq_top_iff (hR : ∃ x, R x) : of R S = ⊤ ↔ every R S := by
+  unfold of
+  split_ifs with h₁ <;> simp_all [top_eq_all]
+  exact fun h ↦ h₁ (subalternation_a_i R S hR h)
+
+end Tripartition
+
+end Quantifier

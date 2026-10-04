@@ -3,31 +3,30 @@ module
 public import Mathlib.Data.Set.Basic
 public import Mathlib.Data.Fintype.Basic
 public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Semantics.Quantification.Basic
 
 /-!
 # Katzir and Singh (2015): Economy of Structure and Information
 
-This file formalizes the two felicity conditions of [katzir-singh-2015] for the oddness of
-assertions such as *Some Italians come from a warm country* ([magri-2009]) and *John has one
-wife* ([spector-2014]). The question condition (8) asks that an assertion address a good
-question, one the participants are known to want settled; the answer condition (15) asks that
-it be a true, relevant answer that is not needlessly worse than another true relevant one, an
-alternative being better (16) when it is at most as complex, in the structural sense of
-[katzir-2007], and at least as strong. `Scenario` collects the meanings and complexities of the
-alternatives, the context, and the question, and `Felicitous` is the conjunction of the two
-conditions at a world.
+Katzir and Singh account for the oddness of assertions such as *Some Italians come from a warm
+country* and *John has one wife* with two felicity conditions. The question condition (8) asks
+that an assertion address a question the participants are known to want settled; the answer
+condition (15) asks that it be a true, relevant answer not needlessly worse than another true
+relevant one, an alternative being better (16) when it is at most as complex, in Katzir's
+structural sense, and at least as strong. A `Scenario` collects the meanings and complexities of
+the alternatives, the context and the question, and `Felicitous` conjoins the two conditions.
 
-Being better is a strict order (`Scenario.better_trans`), a true relevant alternative of no
-greater complexity that is strictly stronger makes an answer needlessly weak
-(`Scenario.not_goodAnswer_of_stronger`), the mechanism behind the *some*/*all* cases of (17)
-and (18) and behind [heim-1991]'s Maximize Presupposition in (21), and disjoining a stronger or
-conjoining a weaker constituent makes an answer needlessly complex
-(`Scenario.not_goodAnswer_disj`, `Scenario.not_goodAnswer_conj`), the Hurford constraint of (22)
-and (23). The paper's scenarios then decide: the one-answer question of (1) makes *some* and
-*all* alike odd, the open question of (17) leaves *all* good and *some* odd where all holds, the
-downward-entailing (18) reverses the verdict, the common-knowledge context of (19) leaves the
-question formed by the alternatives with one live answer while the explicit question of (20)
-does not, and (21) and (22) fall to the answer condition.
+## Main results
+
+* `Scenario.better_trans`: being better is a strict order.
+* `Scenario.not_goodAnswer_of_stronger`: a true relevant alternative of no greater complexity
+  that is strictly stronger makes an answer needlessly weak, behind the *some*/*all* cases (17)
+  and (18) and Heim's Maximize Presupposition (21).
+* `Scenario.not_goodAnswer_disj`, `Scenario.not_goodAnswer_conj`: disjoining a stronger or
+  conjoining a weaker constituent makes an answer needlessly complex, Hurford's constraint (22).
+* `some_all_odd_of_settled`, `all_felicitous_some_odd`, `some_felicitous_all_odd`: the
+  one-answer question of (1) makes *some* and *all* alike odd, the open question of (17) leaves
+  *all* good and *some* odd where all holds, and the downward-entailing (18) reverses the verdict.
 
 ## Implementation notes
 
@@ -42,15 +41,19 @@ not represented.
 ## References
 
 * [katzir-singh-2015]
-* [magri-2009], [spector-2014], [heim-1991], [hurford-1974], [katzir-2007]
+* [magri-2009]
+* [spector-2014]
+* [heim-1991]
+* [hurford-1974]
+* [katzir-2007]
 -/
 
 @[expose] public section
 
 namespace KatzirSingh2015
 
-/-- A discourse situation: the meanings of the alternatives and their structural complexity,
-the context, and the question, a family of answers. -/
+/-- A discourse situation records the meanings of the alternatives and their structural
+complexity, the context, and the question, a family of answers. -/
 structure Scenario (W U A : Type*) where
   meaning : U → Set W
   complexity : U → ℕ
@@ -61,31 +64,32 @@ namespace Scenario
 
 variable {W U A : Type*} (s : Scenario W U A)
 
-/-- The question is settled in the context: its live answers there coincide. -/
+/-- The question is settled in the context when its live answers there coincide. -/
 def Settled : Prop :=
   ∀ a b : A, (∃ w ∈ s.context, w ∈ s.question a) → (∃ w ∈ s.context, w ∈ s.question b) →
     ∀ w ∈ s.context, (w ∈ s.question a ↔ w ∈ s.question b)
 
-/-- Relevant to the question: within the context, the assertion does not split a cell of the
-partition the answers induce. -/
+/-- An assertion is relevant to the question when, within the context, it does not split a cell
+of the partition the answers induce. -/
 def Relevant (u : U) : Prop :=
   ∀ w ∈ s.context, ∀ v ∈ s.context,
     (∀ a, w ∈ s.question a ↔ v ∈ s.question a) → (w ∈ s.meaning u ↔ v ∈ s.meaning u)
 
-/-- (16a): at least as good, at most as complex and at least as strong. -/
+/-- An alternative is at least as good (16a) when it is at most as complex and at least as
+strong. -/
 def AtLeastAsGood (u v : U) : Prop :=
   s.complexity u ≤ s.complexity v ∧ s.meaning u ⊆ s.meaning v
 
-/-- (16b): strictly better. -/
+/-- An alternative is better (16b) when it is at least as good and not conversely. -/
 def Better (u v : U) : Prop := s.AtLeastAsGood u v ∧ ¬ s.AtLeastAsGood v u
 
-/-- (15): a good answer at `w` is true, relevant, and not needlessly worse than a true relevant
+/-- A good answer at `w` (15) is true, relevant, and not needlessly worse than a true relevant
 alternative. -/
 def GoodAnswer (u : U) (w : W) : Prop :=
   w ∈ s.meaning u ∧ s.Relevant u ∧ ¬ ∃ v, s.Better v u ∧ w ∈ s.meaning v ∧ s.Relevant v
 
-/-- Felicitous at `w`: the question is not settled, (8), and the assertion is a good answer,
-(15). -/
+/-- An assertion is felicitous at `w` when the question is not settled (8) and the assertion is a
+good answer (15). -/
 def Felicitous (u : U) (w : W) : Prop := ¬ s.Settled ∧ s.GoodAnswer u w
 
 section Decidable
@@ -118,88 +122,85 @@ theorem atLeastAsGood_trans (h : s.AtLeastAsGood u v) (h' : s.AtLeastAsGood v x)
     s.AtLeastAsGood u x :=
   ⟨h.1.trans h'.1, h.2.trans h'.2⟩
 
-theorem better_irrefl (u : U) : ¬ s.Better u u := λ h => h.2 (s.atLeastAsGood_refl u)
+theorem better_irrefl (u : U) : ¬ s.Better u u := fun h ↦ h.2 (s.atLeastAsGood_refl u)
 
-theorem better_asymm (h : s.Better u v) : ¬ s.Better v u := λ h' => h.2 h'.1
+theorem better_asymm (h : s.Better u v) : ¬ s.Better v u := fun h' ↦ h.2 h'.1
 
 /-- Better-than is a strict order, the irreflexive part of the at-least-as-good preorder. -/
 theorem better_trans (h : s.Better u v) (h' : s.Better v x) : s.Better u x :=
-  ⟨s.atLeastAsGood_trans h.1 h'.1, λ hx => h.2 (s.atLeastAsGood_trans h'.1 hx)⟩
+  ⟨s.atLeastAsGood_trans h.1 h'.1, fun hx ↦ h.2 (s.atLeastAsGood_trans h'.1 hx)⟩
 
-/-- A needlessly weak answer: a true relevant alternative of no greater complexity that is
-strictly stronger is better, so the answer is not good. -/
+/-- An answer is needlessly weak, and so not good, when a true relevant alternative of no greater
+complexity is strictly stronger. -/
 theorem not_goodAnswer_of_stronger {w : W} (hc : s.complexity v ≤ s.complexity u)
     (hs : s.meaning v ⊂ s.meaning u) (hw : w ∈ s.meaning v) (hr : s.Relevant v) :
     ¬ s.GoodAnswer u w :=
-  λ h => h.2.2 ⟨v, ⟨⟨hc, hs.1⟩, λ h' => hs.2 h'.2⟩, hw, hr⟩
+  fun h ↦ h.2.2 ⟨v, ⟨⟨hc, hs.1⟩, fun h' ↦ hs.2 h'.2⟩, hw, hr⟩
 
-/-- A needlessly complex answer, (22): a disjunction whose second disjunct entails the first
-says what the first does at greater complexity, so it is not a good answer where the first
-disjunct is a true relevant one. -/
+/-- A disjunction whose second disjunct entails the first says what the first does at greater
+complexity, so it is a needlessly complex answer (22) where the first disjunct is a true relevant
+one. -/
 theorem not_goodAnswer_disj {d φ ψ : U} {w : W} (hd : s.meaning d = s.meaning φ ∪ s.meaning ψ)
     (hψ : s.meaning ψ ⊆ s.meaning φ) (hc : s.complexity φ < s.complexity d)
     (hw : w ∈ s.meaning φ) (hr : s.Relevant φ) : ¬ s.GoodAnswer d w := by
   have heq : s.meaning d = s.meaning φ := by rw [hd, Set.union_eq_left.mpr hψ]
-  exact λ h => h.2.2 ⟨φ, ⟨⟨hc.le, by rw [heq]⟩, λ h' => absurd h'.1 (not_le.mpr hc)⟩, hw, hr⟩
+  exact fun h ↦ h.2.2 ⟨φ, ⟨⟨hc.le, by rw [heq]⟩, fun h' ↦ absurd h'.1 (not_le.mpr hc)⟩, hw, hr⟩
 
 /-- Likewise a conjunction whose second conjunct is entailed by the first, (23). -/
 theorem not_goodAnswer_conj {c φ ψ : U} {w : W} (hc' : s.meaning c = s.meaning φ ∩ s.meaning ψ)
     (hψ : s.meaning φ ⊆ s.meaning ψ) (hc : s.complexity φ < s.complexity c)
     (hw : w ∈ s.meaning φ) (hr : s.Relevant φ) : ¬ s.GoodAnswer c w := by
   have heq : s.meaning c = s.meaning φ := by rw [hc', Set.inter_eq_left.mpr hψ]
-  exact λ h => h.2.2 ⟨φ, ⟨⟨hc.le, by rw [heq]⟩, λ h' => absurd h'.1 (not_le.mpr hc)⟩, hw, hr⟩
+  exact fun h ↦ h.2.2 ⟨φ, ⟨⟨hc.le, by rw [heq]⟩, fun h' ↦ absurd h'.1 (not_le.mpr hc)⟩, hw, hr⟩
 
 end Scenario
 
 /-! ### Some and all (Sections 1 and 3.2)
 
 The *some* and *all* alternatives over the three ways a set of grades, names or origins can
-fall: to all, to some but not all, or to none. -/
+fall, the cells of `Quantifier.Tripartition`: to all, to some but not all, or to none. -/
 
-/-- Whether the property holds of all, of some but not all, or of none. -/
-inductive Share
-  | all | someNotAll | none
-  deriving DecidableEq, Repr, Fintype
+open Quantifier
 
 /-- The scalar alternatives. -/
 inductive Scalar
   | some_ | all_
   deriving DecidableEq, Repr, Fintype
 
-/-- *Some* is true unless of none, *all* only of all. -/
-def scalarDenotes : Scalar → Share → Prop
-  | .some_, w => w ≠ .none
-  | .all_, w => w = .all
+/-- *Some* is true above the bottom cell, *all* only at the top one. -/
+def scalarDenotes : Scalar → Tripartition → Prop
+  | .some_, w => ⊥ < w
+  | .all_, w => w = ⊤
 
-instance : ∀ u w, Decidable (scalarDenotes u w) := λ u w => by
+instance : ∀ u w, Decidable (scalarDenotes u w) := fun u w ↦ by
   cases u <;> unfold scalarDenotes <;> infer_instance
 
-/-- The scalar scenario, the alternatives forming the question: a context, and the same
-complexity for both. -/
-abbrev scalar (context : Set Share) : Scenario Share Scalar Scalar where
+/-- In the scalar scenario the alternatives form the question and have the same complexity, the
+context being a parameter. -/
+abbrev scalar (context : Set Tripartition) : Scenario Tripartition Scalar Scalar where
   meaning u := {w | scalarDenotes u w}
   complexity _ := 1
   context := context
   question u := {w | scalarDenotes u w}
 
-/-- (1) and (19): where the context makes *some* and *all* equivalent, as common knowledge that
-Italy is warm or that every father names all his children alike does, the question they form
+/-- Where the context makes *some* and *all* equivalent, as common knowledge that Italy is warm
+or that every father names all his children alike does in (1) and (19), the question they form
 has one live answer and both are odd. -/
 theorem some_all_odd_of_settled :
     (scalar {w | w ≠ .someNotAll}).Settled ∧
       ∀ u w, ¬ (scalar {w | w ≠ .someNotAll}).Felicitous u w := by
   decide
 
-/-- (17): where the equivalence is the speaker's belief rather than common knowledge, the
+/-- Where the equivalence is the speaker's belief rather than common knowledge (17), the
 question is open, and where the property holds of all *all* is a good answer while *some* is
 needlessly weak. -/
 theorem all_felicitous_some_odd :
     (scalar Set.univ).Felicitous .all_ .all ∧ ¬ (scalar Set.univ).Felicitous .some_ .all := by
   decide
 
-/-- (20): the explicit question *to how many?* is not settled by the common knowledge of (19),
-and *all* becomes a good answer while *some* stays needlessly weak. -/
-abbrev explicit : Scenario Share Scalar Share where
+/-- The explicit question *to how many?* of (20) is not settled by the common knowledge of
+(19), and *all* becomes a good answer while *some* stays needlessly weak. -/
+abbrev explicit : Scenario Tripartition Scalar Tripartition where
   meaning u := {w | scalarDenotes u w}
   complexity _ := 1
   context := {w | w ≠ .someNotAll}
@@ -209,18 +210,18 @@ theorem explicit_question_rescues_all :
     ¬ explicit.Settled ∧ explicit.Felicitous .all_ .all ∧ ¬ explicit.Felicitous .some_ .all := by
   decide
 
-/-- (18): under a downward-entailing operator the entailment reverses, *some* being the
+/-- Under a downward-entailing operator (18) the entailment reverses, *some* being the
 stronger, and it is *all* that is needlessly weak. -/
-def restrictorDenotes : Scalar → Share → Prop
+def restrictorDenotes : Scalar → Tripartition → Prop
   | .some_, w => w = .all
   | .all_, w => w ≠ .none
 
-instance : ∀ u w, Decidable (restrictorDenotes u w) := λ u w => by
+instance : ∀ u w, Decidable (restrictorDenotes u w) := fun u w ↦ by
   cases u <;> unfold restrictorDenotes <;> infer_instance
 
-/-- The scenario of (18): every professor who assigned an A to some/all of his students got a
-raise, over how many of the A-givers got one. -/
-abbrev restrictor : Scenario Share Scalar Scalar where
+/-- The scenario of (18) asserts that every professor who assigned an A to some or all of his
+students got a raise, over how many of the A-givers got one. -/
+abbrev restrictor : Scenario Tripartition Scalar Scalar where
   meaning u := {w | restrictorDenotes u w}
   complexity _ := 1
   context := Set.univ
@@ -247,7 +248,7 @@ def articleDenotes : Article → Sky → Prop
   | .a, w => w ≠ .oneDark
   | .the, w => w = .oneShining
 
-instance : ∀ u w, Decidable (articleDenotes u w) := λ u w => by
+instance : ∀ u w, Decidable (articleDenotes u w) := fun u w ↦ by
   cases u <;> unfold articleDenotes <;> infer_instance
 
 /-- (21) with common knowledge of one sun, the question being whether it shines. -/
@@ -257,8 +258,8 @@ abbrev sun : Scenario Sky Article Bool where
   context := {w | w ≠ .many}
   question b := {w | decide (w = .oneShining) = b}
 
-/-- Maximize Presupposition as an instance of the answer condition: the definite is the better
-answer and the indefinite needlessly weak. -/
+/-- Maximize Presupposition is an instance of the answer condition, the definite being the
+better answer and the indefinite needlessly weak. -/
 theorem the_felicitous_a_odd :
     sun.Felicitous .the .oneShining ∧ ¬ sun.Felicitous .a .oneShining := by
   decide
@@ -279,10 +280,10 @@ def visitDenotes : Visit → Trip → Prop
   | .france, w => w ≠ .elsewhere
   | .franceOrParis, w => w ≠ .elsewhere
 
-instance : ∀ u w, Decidable (visitDenotes u w) := λ u w => by
+instance : ∀ u w, Decidable (visitDenotes u w) := fun u w ↦ by
   cases u <;> unfold visitDenotes <;> infer_instance
 
-/-- (22): the disjunction is more complex than its first disjunct, and the question is where
+/-- In (22) the disjunction is more complex than its first disjunct, and the question is where
 John went. -/
 abbrev hurford : Scenario Trip Visit Trip where
   meaning u := {w | visitDenotes u w}

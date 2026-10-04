@@ -1,35 +1,37 @@
 module
 
-public import Linglib.Pragmatics.Implicature.SomeAll
+public import Linglib.Semantics.Quantification.Basic
 public import Linglib.Semantics.Quantification.Numerals.Basic
 
 /-!
 # Huang, Spelke and Snedeker (2013): What exactly do numbers mean?
 
-This file formalizes the covered-box task of [huang-spelke-snedeker-2013], which asks whether
-number words have exact or lower-bounded semantics by cancelling the scalar implicature that
-would otherwise supply the upper bound. A trial offers two visible boxes and a covered one, and
-the instruction is a definite description, *the box with two fish*; under a reading `R` of the
-term the referent is the visible box satisfying `R` when exactly one does, the covered box when
-none does, and no box at all when both do (`choice`). In the critical trials a lower-bounded
-match is visible and an exact one is not: an exact *two* sends the participant to the covered
-box and a lower-bounded *two* to the visible box (`choice_exact_covered`,
-`choice_atLeast_visible`), while for *some* the literal meaning picks the box where
-Cookie Monster has all of the cookies and the strengthened meaning the covered box. Adults and
+Huang, Spelke and Snedeker ask whether number words have exact or lower-bounded semantics by
+cancelling the scalar implicature that would otherwise supply the upper bound. A trial shows two
+visible boxes and a covered one, and the instruction is a definite description such as *the box
+with two fish*. Its referent under a reading of the term is the visible box satisfying it when
+exactly one does, the covered box when none does, and no box when both do (`choice`). Adults and
 two- to three-year-olds took the total set for *some* and the covered box for *two*.
 
 Two-knowers, children who give one and two but a handful for larger numerals in Wynn's Give-N
-task ([wynn-1992]), are the population for which the lower-bounded account has no implicature
-to offer, the developmental strategy of [musolino-2004]: exhaustifying *two* against the count
-list a child knows leaves the lower bound untouched when *two* is its top (`exhKnown_last`),
-and only a known stronger numeral makes it exact (`exhKnown_of_lt`). Section 6.1's residual
-route, an implicit alternative *more than two*, does recover exactness
-(`atLeast_not_moreThan_iff_bare`).
+task, are the population for which the lower-bounded account has no implicature to offer, the
+developmental strategy of Musolino.
+
+## Main results
+
+* `choice_exact_covered`, `choice_atLeast_visible`: in the critical trials an exact *two* sends
+  the participant to the covered box and a lower-bounded *two* to the visible one.
+* `some_none_all_literal`, `some_none_all_strengthened`: literal *some* picks the box where
+  Cookie Monster has all of the cookies, strengthened *some* the covered box.
+* `exhKnown_last`, `exhKnown_of_lt`: exhaustifying *two* against a known count list leaves it
+  lower-bounded when it is the top of the list and makes it exact otherwise.
+* `atLeast_diff_moreThan_eq_bare`: an implicit alternative *more than two* recovers exactness.
 
 ## Implementation notes
 
-* Scalar trials are typed by the shared `SomeAllWorld`, a box showing Cookie Monster's share of
-  the cookies; number trials by the cardinality of a box.
+* Scalar trials are typed by `Quantifier.Tripartition`, a box showing Cookie Monster with none,
+  some but not all, or all of the cookies; number trials by the cardinality of a box. Both
+  scales read their terms as lower bounds and strengthen them with `Exhaustification.exhChain`.
 * The choice proportions and the statistics stay in prose: the paradigm's predictions are
   categorical, and the paper's argument is that the majority choice identifies the reading.
 
@@ -48,7 +50,7 @@ open Numerals Degree
 
 /-! ### The covered-box task -/
 
-/-- A covered-box trial: two visible boxes with contents of type `α`, and a covered box. -/
+/-- A covered-box trial shows two visible boxes with contents of type `α` beside a covered box. -/
 structure Trial (α : Type*) where
   left : α
   right : α
@@ -61,7 +63,7 @@ inductive Choice (α : Type*) where
 
 variable {α : Type*} (R : α → Prop) [DecidablePred R] (t : Trial α)
 
-/-- The referent of the definite description under a reading `R` of the term: the visible box
+/-- The referent of the definite description under a reading `R` of the term is the visible box
 satisfying `R` when exactly one does, the covered box when none does, and no box when both do,
 since the description presupposes a unique referent. -/
 def choice : Option (Choice α) :=
@@ -80,17 +82,17 @@ theorem choice_eq_visible_left_iff :
   unfold choice
   split_ifs with h₁ h₂ h₂ <;> simp only [h₁, h₂, Option.some.injEq, Choice.visible.injEq,
     reduceCtorEq, not_true_eq_false, not_false_eq_true, and_self, and_false, false_and, iff_false]
-  exact λ h => h₁ (h ▸ h₂)
+  exact fun h ↦ h₁ (h ▸ h₂)
 
 theorem choice_eq_visible_right_iff :
     choice R t = some (.visible t.right) ↔ ¬ R t.left ∧ R t.right := by
   unfold choice
   split_ifs with h₁ h₂ h₂ <;> simp only [h₁, h₂, Option.some.injEq, Choice.visible.injEq,
     reduceCtorEq, not_true_eq_false, not_false_eq_true, and_self, and_false, false_and, iff_false]
-  exact λ h => h₂ (h ▸ h₁)
+  exact fun h ↦ h₂ (h ▸ h₁)
 
-/-- Strengthening the reading can only move the referent to the covered box or resolve a tie:
-the design of Section 1.4. -/
+/-- Strengthening the reading can only move the referent to the covered box or resolve a tie,
+which is the design of Section 1.4. -/
 theorem choice_covered_of_le {R' : α → Prop} [DecidablePred R'] (h : ∀ x, R' x → R x)
     (hc : choice R t = some .covered) : choice R' t = some .covered := by
   rw [choice_eq_covered_iff] at hc ⊢
@@ -98,8 +100,8 @@ theorem choice_covered_of_le {R' : α → Prop} [DecidablePred R'] (h : ∀ x, R
 
 /-! ### Number trials -/
 
-/-- The critical trials show a smaller and a larger set: an exact numeral has no visible
-referent, so the covered box is chosen. -/
+/-- The critical trials show a smaller and a larger set, so an exact numeral has no visible
+referent and the covered box is chosen. -/
 theorem choice_exact_covered {m a b : ℕ} (ha : a < m) (hb : m < b) :
     choice (· ∈ Comparison.eq.interval m) ⟨a, b⟩ = some .covered :=
   (choice_eq_covered_iff _ _).2 ⟨by simp; omega, by simp; omega⟩
@@ -118,7 +120,7 @@ theorem choice_exhNumeral_covered {m a b : ℕ} (ha : a < m) (hb : m < b) :
     ⟨by simp only [exhNumeral_eq, Comparison.interval_eq, Set.mem_singleton_iff]; omega,
       by simp only [exhNumeral_eq, Comparison.interval_eq, Set.mem_singleton_iff]; omega⟩
 
-/-- two(1,2): with an exact match visible against a smaller set, both readings pick it. -/
+/-- In two(1,2) an exact match is visible against a smaller set, and both readings pick it. -/
 theorem choice_one_two_bare :
     choice (· ∈ Comparison.eq.interval 2) ⟨1, 2⟩ = some (.visible 2) := by decide
 
@@ -126,8 +128,8 @@ theorem choice_one_two_atLeast :
     choice (· ∈ Comparison.ge.interval 2) ⟨1, 2⟩ = some (.visible 2) := by
   decide
 
-/-- two(2,3∨5): against a larger set the lower-bounded reading leaves the description without
-a unique referent, and it is the implicature that restores the exact match. -/
+/-- In two(2,3∨5) the lower-bounded reading leaves the description without a unique referent
+against a larger set, and it is the implicature that restores the exact match. -/
 theorem choice_two_three_bare :
     choice (· ∈ Comparison.eq.interval 2) ⟨2, 3⟩ = some (.visible 2) := by decide
 
@@ -135,7 +137,7 @@ theorem choice_two_three_atLeast : choice (· ∈ Comparison.ge.interval 2) ⟨2
 
 theorem choice_two_three_exh : choice (· ∈ exhNumeral 2) ⟨2, 3⟩ = some (.visible 2) := by decide
 
-/-- two(1,3∨5), the critical trials: adults and two-knowers chose the covered box. -/
+/-- In the critical trials two(1,3∨5) adults and two-knowers chose the covered box. -/
 theorem choice_one_three_bare : choice (· ∈ Comparison.eq.interval 2) ⟨1, 3⟩ = some .covered :=
   choice_exact_covered (by omega) (by omega)
 
@@ -147,41 +149,55 @@ theorem choice_one_five_atLeast :
     choice (· ∈ Comparison.ge.interval 2) ⟨1, 5⟩ = some (.visible 5) :=
   choice_atLeast_visible (by omega) (by omega)
 
-/-! ### Scalar trials -/
+/-! ### Scalar trials
 
-open SomeAllWorld
+On the cells of the tripartition *some* is the lower bound `someNotAll ≤ ·` and *all* the lower
+bound `all ≤ ·`, so the scalar trials run on the operator the numerals do. -/
 
-/-- *Some* strengthened by its implicature: some but not all. -/
-def someStrengthened (w : SomeAllWorld) : Prop := atLeastOne w ∧ notUniversal w
+open Quantifier
 
-instance : DecidablePred someStrengthened := λ _ => inferInstanceAs (Decidable (_ ∧ _))
+/-- Literal *some*, the lower bound `someNotAll ≤ ·`. -/
+abbrev someLiteral : Tripartition → Prop := (.someNotAll ≤ ·)
 
-/-- some(NONE,SOME): the subset under either reading. -/
-theorem some_none_some : choice atLeastOne ⟨.none, .someNotAll⟩ = some (.visible .someNotAll) := by
+/-- *All*, the lower bound `all ≤ ·`. -/
+abbrev allLiteral : Tripartition → Prop := (.all ≤ ·)
+
+/-- *Some* exhaustified against *all*, as a numeral is against the stronger numerals. -/
+def someStrengthened : Tripartition → Prop := Exhaustification.exhChain (· ≤ ·) .someNotAll
+
+instance : DecidablePred someStrengthened := fun _ ↦
+  inferInstanceAs (Decidable (Exhaustification.exhChain _ _ _))
+
+/-- The strengthened *some* is *some but not all*. -/
+theorem someStrengthened_iff (w : Tripartition) : someStrengthened w ↔ w = .someNotAll :=
+  Exhaustification.exhChain_le_iff
+
+/-- In some(NONE,SOME) either reading picks the subset. -/
+theorem some_none_some : choice someLiteral ⟨.none, .someNotAll⟩ = some (.visible .someNotAll) := by
   decide
 
-/-- some(SOME,ALL): the literal meaning fits both visible boxes and the implicature selects
+/-- In some(SOME,ALL) the literal meaning fits both visible boxes and the implicature selects
 the subset, which adults chose and children split on. -/
-theorem some_some_all_literal : choice atLeastOne ⟨.someNotAll, .all⟩ = Option.none := by decide
+theorem some_some_all_literal : choice someLiteral ⟨.someNotAll, .all⟩ = Option.none := by decide
 
 theorem some_some_all_strengthened :
     choice someStrengthened ⟨.someNotAll, .all⟩ = some (.visible .someNotAll) := by decide
 
-/-- some(NONE,ALL), the control for implicature cancellation: the literal meaning picks the
+/-- In some(NONE,ALL), the control for implicature cancellation, the literal meaning picks the
 total set, which adults and children chose, and the strengthened meaning the covered box. -/
-theorem some_none_all_literal : choice atLeastOne ⟨.none, .all⟩ = some (.visible .all) := by
+theorem some_none_all_literal : choice someLiteral ⟨.none, .all⟩ = some (.visible .all) := by
   decide
 
 theorem some_none_all_strengthened : choice someStrengthened ⟨.none, .all⟩ = some .covered := by
   decide
 
-/-- Experiment 3: *all* selects the total set when visible and the covered box otherwise, so
+/-- In Experiment 3 *all* selects the total set when visible and the covered box otherwise, so
 the children's choices tracked the quantifier rather than the character. -/
-theorem all_none_all : choice universal ⟨.none, .all⟩ = some (.visible .all) := by decide
+theorem all_none_all : choice allLiteral ⟨.none, .all⟩ = some (.visible .all) := by decide
 
-theorem all_some_all : choice universal ⟨.someNotAll, .all⟩ = some (.visible .all) := by decide
+theorem all_some_all : choice allLiteral ⟨.someNotAll, .all⟩ = some (.visible .all) := by decide
 
-theorem all_some_none : choice universal ⟨.someNotAll, .none⟩ = some .covered := by decide
+theorem all_some_none : choice allLiteral ⟨.someNotAll, .none⟩ = some .covered := by decide
 
 /-! ### Two-knowers -/
 
@@ -190,14 +206,14 @@ that list exhaustified against its known stronger alternatives. -/
 def exhKnown (k : ℕ) (i : Fin (k + 1)) (n : ℕ) : Prop :=
   Exhaustification.exhChain (fun j : Fin (k + 1) ↦ (· ∈ Comparison.ge.interval (j : ℕ))) i n
 
-instance (k : ℕ) (i : Fin (k + 1)) : DecidablePred (exhKnown k i) := λ _ =>
+instance (k : ℕ) (i : Fin (k + 1)) : DecidablePred (exhKnown k i) := fun _ ↦
   inferInstanceAs (Decidable (Exhaustification.exhChain _ _ _))
 
 /-- The top of the count list has no stronger known alternative, so exhaustification leaves its
 lower-bounded meaning as it is. -/
 theorem exhKnown_last (k n : ℕ) :
     exhKnown k (Fin.last k) n ↔ n ∈ Comparison.ge.interval k :=
-  ⟨λ h => h.1, λ h => ⟨h, λ j hj => absurd hj (not_lt.2 (Fin.le_last j))⟩⟩
+  ⟨fun h ↦ h.1, fun h ↦ ⟨h, fun j hj ↦ absurd hj (not_lt.2 (Fin.le_last j))⟩⟩
 
 /-- A numeral below the top is exhaustified to its exact meaning. -/
 theorem exhKnown_of_lt {k : ℕ} {i : Fin (k + 1)} (hi : i < Fin.last k) (n : ℕ) :
@@ -207,11 +223,11 @@ theorem exhKnown_of_lt {k : ℕ} {i : Fin (k + 1)} (hi : i < Fin.last k) (n : �
     (φ := fun j : Fin (k + 1) ↦ (· ∈ Comparison.ge.interval (j : ℕ)))
     (fun j k hjk n (hk : (k : ℕ) ≤ n) ↦ show (j : ℕ) ≤ n from le_trans hjk hk)
     (Fin.lt_def.2 (Nat.lt_succ_self _))
-    (λ j hj => Fin.le_def.2 (Nat.succ_le_of_lt (Fin.lt_def.1 hj)))]
+    (fun j hj ↦ Fin.le_def.2 (Nat.succ_le_of_lt (Fin.lt_def.1 hj)))]
   simp only [Comparison.interval_ge, Comparison.interval_eq, Set.mem_Ici, Set.mem_singleton_iff]
   omega
 
-/-- A two-knower's count list is *one*, *two*: under lower-bounded semantics, *two* stays
+/-- A two-knower's count list is *one*, *two*, so under lower-bounded semantics *two* stays
 lower-bounded and the child should hand over the visible box with three fish, contrary to the
 covered-box choices of Experiments 2 and 4. -/
 theorem twoKnower_lowerBounded : choice (exhKnown 2 (Fin.last 2)) ⟨1, 3⟩ = some (.visible 3) := by
@@ -220,8 +236,8 @@ theorem twoKnower_lowerBounded : choice (exhKnown 2 (Fin.last 2)) ⟨1, 3⟩ = s
 /-- A three-knower could reach the covered box through the implicature. -/
 theorem threeKnower_exact : choice (exhKnown 3 2) ⟨1, 3⟩ = some .covered := by decide
 
-/-- Section 6.1: an implicit alternative *more than two* would exhaustify *two* to its exact
-meaning, the route the paper leaves logically open. -/
+/-- An implicit alternative *more than two* would exhaustify *two* to its exact meaning, the
+route Section 6.1 leaves logically open. -/
 theorem atLeast_diff_moreThan_eq_bare (m : ℕ) :
     Comparison.ge.interval m \ Comparison.gt.interval m = Comparison.eq.interval m := by
   simp
