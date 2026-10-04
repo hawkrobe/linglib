@@ -1,24 +1,23 @@
 module
 
 public import Linglib.Phonology.Prosody.Syllable
+public import Linglib.Core.Data.RoseTree.Licensed
 
 /-!
 # Metrical feet
-[hayes-1995] [selkirk-1980] [kager-1999]
 
-The canonical metrical foot ([selkirk-1980]; [nespor-vogel-1986]; [hayes-1995];
-[kager-1999]): a flat, **headed** constituent over syllable positions — a non-empty,
-ordered sequence of syllables with one distinguished `head` (the stressed daughter /
-head terminal). Headedness (trochaic/iambic), binarity, and the
-trochee/iamb/moraic **inventory are all derived** from the structure, not stored — the
-moraic/syllabic split is a counting parameter on `moraCount`, not a different kind of
-foot. Re-representations into the prosodic tree (`Prosody.Tree`) and the metrical grid
-are *functions* that recover the same head.
+The canonical metrical foot (Selkirk 1980; Nespor and Vogel 1986; Hayes 1995; Kager 1999) is a
+flat, headed constituent over syllable positions: a non-empty, ordered sequence of syllables with
+one distinguished `head`, the stressed daughter. Headedness (trochaic or iambic), binarity, and the
+trochee, iamb and moraic inventory are derived from the structure, not stored, and the moraic
+versus syllabic split is a counting parameter on `moraCount`. Re-representations into the
+prosodic tree (`Prosody.Tree`) and the metrical grid are functions that recover the same head.
 
 ## Main definitions
 
-* `isFootTree` / `IsFoot` — structural foot well-formedness on the prosodic-tree carrier
-  (an `f`-node over a non-empty list of σ-leaves; the Layeredness core).
+* `IsFoot` — foot well-formedness on the prosodic-tree carrier: a tree rooted in an `f`-node
+  and licensed by the Layeredness relation `Constituent.Licenses`, so an `f`-node over a
+  non-empty list of σ-leaves.
 * `Foot` — a headed constituent over syllable positions (`head : Fin _`, so non-empty).
 * `Foot.IsTrochaic` / `IsIambic` / `IsBinary` / `IsDegenerate` — derived shape predicates.
 * `Foot.moraCount` — mora count under a weight reading (the quantity axis).
@@ -32,12 +31,24 @@ are *functions* that recover the same head.
 
 ## Main results
 
-* `Foot.itl_gap` — the Iambic/Trochaic Law ([hayes-1985]): a binary iamb need not be
+* `Foot.itl_gap` — the Iambic/Trochaic Law (Hayes 1985): a binary iamb need not be
   weight-blind-characterizable, unlike a binary (syllabic) trochee.
 * `Foot.headFlags_toProsTree` — the prosodic-tree re-representation carries the same
   head profile as `headFlags` (head-preservation, the functorial spine).
 * `Foot.isFoot_toProsTree` — every `Foot`'s prosodic tree is a well-formed foot tree
   (`IsFoot`): the functoriality/well-formedness bridge onto the carrier.
+
+## References
+
+* [selkirk-1980]
+* [nespor-vogel-1986]
+* [hayes-1985]
+* [hayes-1995]
+* [kager-1999]
+* [kager-2007]
+* [ito-mester-2003]
+* [martinez-paricio-kager-2015]
+* [lamont-2022c]
 -/
 
 @[expose] public section
@@ -46,21 +57,26 @@ namespace Prosody
 
 /-! ### Carrier well-formedness -/
 
-/-- The structural `Bool` foot checker on the prosodic-tree carrier ([selkirk-1980];
-    matches `Foot.toProsTree`): an `f`-node dominating a non-empty list of σ-leaves. -/
-def isFootTree : Tree → Bool
-  | .node a cs => a.isFt && !cs.isEmpty &&
-      cs.all (fun | .node b ds => b.isSyl && ds.isEmpty)
+/-- A well-formed foot is a licensed tree rooted in an `f`-node, so an `f`-node dominating a
+    non-empty list of σ-leaves, the inviolable Layeredness and σ-Headedness core
+    ([selkirk-1980]; [hayes-1995]). Foot binarity (FtBin) and recursive internally-layered feet
+    (contested, Golston 2021 against [martinez-paricio-kager-2015]) are violable and deferred;
+    these are flat feet, the sibling of `IsWord`'s Layeredness. -/
+def IsFoot (t : Tree) : Prop := t.value.isFt = true ∧ t.Licensed Constituent.Licenses
 
-/-- A well-formed foot: an `f`-node dominating a non-empty list of σ-leaves — the
-    inviolable Layeredness + σ-Headedness core ([selkirk-1980]; [hayes-1995]). Foot
-    binarity (FtBin) and recursive internally-layered feet (contested — Golston 2021 vs
-    [martinez-paricio-kager-2015]) are violable and deferred; this is flat feet, the
-    sibling of `IsWord`'s Layeredness. -/
-def IsFoot (t : Tree) : Prop := isFootTree t
+instance (t : Tree) : Decidable (IsFoot t) := inferInstanceAs (Decidable (_ ∧ _))
 
-instance (t : Tree) : Decidable (IsFoot t) :=
-  inferInstanceAs (Decidable (isFootTree t = true))
+/-- The daughters of a well-formed foot are σ-leaves. -/
+theorem IsFoot.isSyl_leaf {t : Tree} (h : IsFoot t) {c : Tree} (hc : c ∈ t.children) :
+    c.value.isSyl = true ∧ c.children = [] := by
+  rcases t with ⟨a, cs⟩
+  obtain ⟨hft, hl⟩ := h
+  obtain ⟨b, rfl⟩ : ∃ b, a = .ft b := by cases a <;> simp_all [Constituent.isFt]
+  have hsyl := (RoseTree.licensed_node_iff.mp hl).1.2 c.value (List.mem_map_of_mem hc)
+  refine ⟨hsyl, ?_⟩
+  rcases c with ⟨cl, ccs⟩
+  obtain ⟨w, h', rfl⟩ : ∃ w h', cl = .syl w h' := by cases cl <;> simp_all [Constituent.isSyl]
+  simpa [Constituent.Licenses] using (RoseTree.licensed_node_iff.mp (hl.of_mem hc)).1
 
 -- A σ-leaf is a non-`f` node, so not a foot; a flat `f`-node over a σ-leaf is one.
 example : ¬ IsFoot (.node (.syl 2) []) := by decide
@@ -68,9 +84,9 @@ example : IsFoot (.node .ft [.node (.syl 2) []]) := by decide
 
 /-! ### The canonical foot -/
 
-/-- The canonical metrical foot ([selkirk-1980]; [hayes-1995]; [kager-1999]): a
-    non-empty, ordered sequence of syllable positions with one distinguished `head`
-    (the stressed daughter, the head). The `Fin` index forces non-emptiness by construction.
+/-- The canonical metrical foot ([selkirk-1980]; [hayes-1995]; [kager-1999]) is a non-empty,
+    ordered sequence of syllable positions with one distinguished `head`, the stressed
+    daughter. The `Fin` index forces non-emptiness by construction.
     The inventory and headedness are derived below, not stored. -/
 structure Foot (S : Type*) where
   /-- The dominated syllable positions, left to right. -/
@@ -108,8 +124,8 @@ instance (f : Foot S) : Decidable f.IsIambic := by unfold IsIambic; infer_instan
 instance (f : Foot S) : Decidable f.IsBinary := by unfold IsBinary; infer_instance
 instance (f : Foot S) : Decidable f.IsDegenerate := by unfold IsDegenerate; infer_instance
 
-/-- Above the monosyllable, headedness is exclusive: a foot is not both trochaic and
-    iambic (at length 1 the sole σ is both head-initial and head-final). -/
+/-- Above the monosyllable headedness is exclusive, so a foot is not both trochaic and iambic
+    (at length 1 the sole σ is both head-initial and head-final). -/
 theorem not_trochaic_and_iambic (f : Foot S) (h : 1 < f.syllables.length) :
     ¬ (f.IsTrochaic ∧ f.IsIambic) := by
   rintro ⟨ht, hi⟩
@@ -121,13 +137,13 @@ theorem not_trochaic_and_iambic (f : Foot S) (h : 1 < f.syllables.length) :
     split parameterizes (`FtBin`-by-μ). -/
 def moraCount (w : S → ℕ) (f : Foot S) : ℕ := (f.syllables.map w).sum
 
-/-- Syllabic trochee `(σ́σ)`: head-initial and binary, weight-blind ([hayes-1995]). -/
+/-- A syllabic trochee `(σ́σ)` is head-initial and binary, weight-blind ([hayes-1995]). -/
 def IsSyllabicTrochee (f : Foot S) : Prop := f.IsTrochaic ∧ f.IsBinary
-/-- Moraic trochee `(H)`/`(LL)`: head-initial and bimoraic ([hayes-1995]). -/
+/-- A moraic trochee `(H)` or `(LL)` is head-initial and bimoraic ([hayes-1995]). -/
 def IsMoraicTrochee (w : S → ℕ) (f : Foot S) : Prop := f.IsTrochaic ∧ moraCount w f = 2
-/-- Canonical iamb over Hayes' right-prominent inventory `{(H),(LL),(LH)}`
-    ([hayes-1995]): head-final, and either a bimoraic monosyllable or an even/right-heavy
-    bi-or-trimoraic disyllable. Unlike the trochee, the iamb references weight — the
+/-- A canonical iamb over Hayes' right-prominent inventory `{(H),(LL),(LH)}` ([hayes-1995]) is
+    head-final, and either a bimoraic monosyllable or an even or right-heavy bimoraic or trimoraic
+    disyllable. Unlike the trochee, the iamb references weight — the
     quantity-sensitivity the Iambic/Trochaic Law predicts. -/
 def IsCanonicalIamb (w : S → ℕ) (f : Foot S) : Prop :=
   f.IsIambic ∧
@@ -142,29 +158,29 @@ instance (w : S → ℕ) (f : Foot S) : Decidable (IsMoraicTrochee w f) := by
 instance (w : S → ℕ) (f : Foot S) : Decidable (IsCanonicalIamb w f) := by
   unfold IsCanonicalIamb; infer_instance
 
-/-- **The Iambic/Trochaic Law** ([hayes-1985], after Bolton 1894): a binary iamb is
-    *not* characterizable weight-blind — the head-final binary cell admits the
-    left-heavy `(H L̗)` that Hayes' canonical inventory excludes — whereas a binary
-    trochee is exactly `IsSyllabicTrochee` (weight-blind). Witness: `(H L̗)`. -/
+/-- By **the Iambic/Trochaic Law** ([hayes-1985], after Bolton 1894) a binary iamb is not
+    characterizable weight-blind, since the head-final binary cell admits the left-heavy `(H L̗)`
+    that Hayes' canonical inventory excludes, whereas a binary trochee is exactly
+    `IsSyllabicTrochee` (weight-blind). The witness is `(H L̗)`. -/
 theorem itl_gap : ∃ f : Foot ℕ, (f.IsIambic ∧ f.IsBinary) ∧ ¬ IsCanonicalIamb id f :=
   ⟨Foot.iamb 2 1, by decide⟩
 
 /-! ### Re-representations (preserving the head) -/
 
-/-- Re-represent as a prosodic tree ([selkirk-1980]; [ito-mester-2003]): a depth-1 `.f`
-    node over `.σ` leaves, the head σ marked via `Constituent.isHead`. The `.f` node
+/-- As a prosodic tree ([selkirk-1980]; [ito-mester-2003]) a foot is a depth-1 `.f` node over
+    `.σ` leaves, the head σ marked via `Constituent.isHead`. The `.f` node
     itself is marked `isHead` when the foot heads its ω (the `isHead` argument, set by the
     caller building the word tree). -/
 def toProsTree (w : S → Syllable.Weight) (f : Foot S) (isHead : Bool := false) : Tree :=
   .node (.ft isHead) ((List.finRange f.syllables.length).map (fun i =>
     .node (.syl (w (f.syllables.get i)) (decide (i = f.head))) []))
 
-/-- The **metrical grid** of a foot in isolation ([hayes-1995]): the head σ carries `2` grid marks,
-    every other σ `1`. -/
+/-- In the **metrical grid** of a foot in isolation ([hayes-1995]) the head σ carries `2` grid
+    marks and every other σ `1`. -/
 def toGrid (f : Foot S) : List ℕ :=
   (List.finRange f.syllables.length).map (fun i => if i = f.head then 2 else 1)
 
-/-- The σ-leaves' **head flags**: `true` at the head σ, `false` elsewhere ([hayes-1995]). -/
+/-- The σ-leaves' **head flags** are `true` at the head σ and `false` elsewhere ([hayes-1995]). -/
 def headFlags (f : Foot S) : List Bool :=
   (List.finRange f.syllables.length).map (fun i => decide (i = f.head))
 
@@ -175,26 +191,23 @@ def childHeadFlags : Tree → List Bool
 @[simp] theorem toGrid_length (f : Foot S) :
     (toGrid f).length = f.syllables.length := by simp [toGrid]
 
-/-- The two re-representations carry the **same head profile**: the prosodic tree's
-    σ-leaf head flags are exactly `headFlags f`. So both recover the foot's head. -/
+/-- The two re-representations carry the **same head profile**, since the prosodic tree's σ-leaf
+    head flags are exactly `headFlags f`, so both recover the foot's head. -/
 theorem headFlags_toProsTree (w : S → Syllable.Weight) (f : Foot S) :
     childHeadFlags (toProsTree w f) = headFlags f := by
   simp [childHeadFlags, toProsTree, headFlags, List.map_map, Function.comp, Constituent.isHead]
 
-/-- **Functoriality / well-formedness bridge**: a `Foot` record's prosodic-tree
-    re-representation is always a well-formed foot tree — `toProsTree` lands in the
-    depth-1 f/σ band that `isFootTree` carves out. With `headFlags_toProsTree`
+/-- A `Foot` record's prosodic-tree re-representation is always a well-formed foot tree, since
+    `toProsTree` lands in the depth-1 f/σ band that `IsFoot` carves out. With `headFlags_toProsTree`
     (head-preservation) this is the load-bearing half of the `Foot S ≃ {t // IsFoot t}`
     embedding that bridges footing-on-`Foot` to OT-on-`Tree`. -/
 theorem isFoot_toProsTree (w : S → Syllable.Weight) (f : Foot S) :
     IsFoot (f.toProsTree w) := by
   have hpos : 0 < f.syllables.length := f.head.pos
-  unfold IsFoot isFootTree toProsTree
-  refine Bool.and_eq_true _ _ |>.mpr ⟨Bool.and_eq_true _ _ |>.mpr ⟨by decide, ?_⟩, ?_⟩
-  · simpa [List.isEmpty_map, List.finRange_eq_nil_iff] using hpos.ne'
-  · rw [List.all_map, List.all_eq_true]
-    intro i _
-    rfl
+  refine ⟨rfl, RoseTree.licensed_node_iff.mpr ⟨⟨?_, ?_⟩, ?_⟩⟩
+  · simpa [List.finRange_eq_nil_iff] using hpos.ne'
+  · simp [Constituent.isSyl]
+  · simp [Constituent.Licenses]
 
 end Foot
 
@@ -214,7 +227,7 @@ A **footing**: a flat parse into feet and stray (unfooted) syllables, no designa
 A prosodic word ω (an `IsWord` tree, `Prosody/Word.lean`) is the headed refinement of a
 footing. -/
 
-/-- A footing: a flat sequence of feet and stray (unfooted) syllables, no designated head
+/-- A footing is a flat sequence of feet and stray (unfooted) syllables, with no designated head
     ([lamont-2022c]). -/
 abbrev Footing (S : Type*) := List (Foot S ⊕ S)
 
@@ -230,7 +243,8 @@ def strays : List S := fc.filterMap Sum.getRight?
 /-- The total number of syllables, footed and stray. -/
 def size : Nat := (fc.map (Sum.elim Foot.length (fun _ => 1))).sum
 
-/-- The `Parse(σ)` violation profile ([lamont-2022c]): `1` at each stray σ, `0` at each footed. -/
+/-- The `Parse(σ)` violation profile ([lamont-2022c]) is `1` at each stray σ and `0` at each
+    footed one. -/
 def strayMarks : List Nat := fc.flatMap (Sum.elim (List.replicate ·.length 0) (fun _ => [1]))
 
 /-! ### Foot positions and quantity

@@ -6,30 +6,24 @@ public import Linglib.Core.Order.Branching
 
 /-!
 # Prosodic words (ω)
-[selkirk-1980] [nespor-vogel-1986] [liberman-prince-1977] [hayes-1995] [ito-mester-2009]
-[mccarthy-prince-1993] [selkirk-1996] [ito-mester-2003] [prince-smolensky-1993] [dolatian-2020]
 
-A prosodic word ω is a node of the prosodic tree (`Prosody.Tree`), and well-formedness is
-a *declarative* property of that carrier rather than a separate inductive. `IsWord` carves
-out the well-formed ω-trees as the **Strict-Layer** core ([selkirk-1996]): an ω-node whose
-daughters are only feet, recursive sub-words (ω-over-ω), or stray (unfooted) syllables — the
-inviolable **Layeredness** constraint (no φ/ι/AP inside an ω). The library's OT studies
-score raw `Tree` candidates, so theorems take `IsWord` as a hypothesis on the carrier
+A prosodic word ω is a node of the prosodic tree (`Prosody.Tree`), and well-formedness is a
+declarative property of that carrier rather than a separate inductive. `IsWord` carves out the
+well-formed ω-trees as the Strict-Layer core (Selkirk 1996): an ω-node whose daughters are only
+feet, recursive sub-words, or stray syllables, the inviolable Layeredness constraint. The OT
+studies score raw `Tree` candidates, so theorems take `IsWord` as a hypothesis on the carrier
 rather than bundling a subtype.
 
-`Exhaustivity` and `No-Recursion` are *violable* OT constraints, not part of `IsWord`: a
-stray σ (a free clitic) and an ω-over-ω (the extended prosodic word of [ito-mester-2009])
-are both admitted. They are scored on the carrier by `parseInto`/`noRec` and ranked by a
-grammar — that is where they belong. Headedness (that an ω dominates a foot, the minimal-word
-effect of [selkirk-1996]) is the typical case but is *not* presupposed: footless languages
-have ω directly over σ (DeLisi 2015, per [dolatian-2020]), and the OT recursion candidates
-here abstract the foot level. Prominence-head marking is likewise a refinement, not enforced.
+Exhaustivity and No-Recursion are violable OT constraints, not part of `IsWord`: a stray σ (a
+free clitic) and an ω-over-ω (Itô and Mester's 2009 extended prosodic word) are both admitted,
+and `parseInto` and `noRec` score them on the carrier. Headedness, that an ω dominates a foot, is
+the typical case but is not presupposed: footless languages have ω directly over σ (DeLisi 2015,
+per Dolatian 2020).
 
 ## Main definitions
 
-* `isWordTree` — the structural `Bool` Layeredness checker (decide-reducible; the foot arm
-  reuses `Foot.isFootTree`).
-* `IsWord` — the Layeredness predicate; theorems take it as a hypothesis on the carrier
+* `IsWord` — the Layeredness predicate, a tree rooted in an ω-node and licensed by
+  `Constituent.Licenses`; theorems take it as a hypothesis on the carrier
   (mathlib's `Squarefree`-style), there is no bundled subtype.
 * `noRec` / `parseInto` — the violable OT constraints over the carrier (`Constraint Tree`).
 * `maximalProjections` / `minimalProjections` / `IsMinimalProj` — the topmost / bottommost
@@ -41,6 +35,20 @@ here abstract the foot level. Prominence-head marking is likewise a refinement, 
 
 * `noLevelRec_imp_max_eq_min` — under transitive No-Recursion at `ℓ`, the maximal and
   minimal ℓ-projections coincide (every ℓ-node is at once topmost and bottommost).
+
+## References
+
+* [selkirk-1980]
+* [nespor-vogel-1986]
+* [liberman-prince-1977]
+* [hayes-1995]
+* [mccarthy-prince-1993]
+* [prince-smolensky-1993]
+* [selkirk-1996]
+* [ito-mester-2003]
+* [ito-mester-2009]
+* [dolatian-2020]
+* [uchihara-mendozaruiz-2021]
 -/
 
 @[expose] public section
@@ -57,8 +65,8 @@ are local `where`s. -/
 
 open OptimalityTheory
 
-/-- **No-Recursion** ([ito-mester-2009]): parent–child pairs sharing a level (an element
-    parsed into the same category twice). -/
+/-- **No-Recursion** ([ito-mester-2009]) counts parent–child pairs sharing a level, an element
+    parsed into the same category twice. -/
 def noRec : Constraint Tree := fun t => go t where
   go : Tree → Nat
     | .node a cs => (cs.filter (fun c => Constituent.sameLevel c.value a)).length + goList cs
@@ -79,9 +87,9 @@ so only the latter carries a one-argument predicate. The intonational utterance 
 maximal ι-projection. `List` (not `Finset`) keeps the duplicate-position counts that
 Match-style correspondence ([selkirk-1996]) reads. -/
 
-/-- The **maximal projections** of `t` selected by `p`: the topmost `p`-nodes (those with no
-    `p`-ancestor), in tree order. A top-down `under`-flag fold (cf. `parseInto`) pruning a subtree
-    once the first `p`-node is hit. -/
+/-- The **maximal projections** of `t` selected by `p` are the topmost `p`-nodes (those with no
+    `p`-ancestor), in tree order. They are read by a top-down `under`-flag fold (cf. `parseInto`)
+    that prunes a subtree once the first `p`-node is hit. -/
 def maximalProjections (p : Constituent → Bool) (t : Tree) : List Tree := go false t where
   go (under : Bool) : Tree → List Tree
     | .node a cs =>
@@ -99,11 +107,12 @@ def anyAtLevel (p : Constituent → Bool) : Tree → Bool := go where
     | []      => false
     | c :: cs => go c || goList cs
 
-/-- The intrinsic minimal-`p` test: a `p`-node no proper descendant of which is a `p`-node. -/
+/-- The intrinsic minimal-`p` test holds of a `p`-node no proper descendant of which is a
+    `p`-node. -/
 def isMinimalProj (p : Constituent → Bool) : Tree → Bool
   | .node a cs => p a && !(cs.any (anyAtLevel p))
 
-/-- The **minimal projections** of `t` selected by `p`: the bottommost `p`-nodes (those with no
+/-- The **minimal projections** of `t` selected by `p` are the bottommost `p`-nodes (those with no
     `p`-descendant), in tree order. -/
 def minimalProjections (p : Constituent → Bool) (t : Tree) : List Tree := go t where
   go : Tree → List Tree
@@ -112,19 +121,19 @@ def minimalProjections (p : Constituent → Bool) (t : Tree) : List Tree := go t
     | []      => []
     | c :: cs => go c ++ goList cs
 
-/-- A **minimal `p`-projection**: a `p`-node none of whose proper descendants is a `p`-node — the
+/-- A **minimal `p`-projection** is a `p`-node none of whose proper descendants is a `p`-node, the
     intrinsic, context-free dual of (context-relative) maximality. -/
 def IsMinimalProj (p : Constituent → Bool) (t : Tree) : Prop := isMinimalProj p t
 
 instance (p : Constituent → Bool) (t : Tree) : Decidable (IsMinimalProj p t) :=
   inferInstanceAs (Decidable (isMinimalProj p t = true))
 
-/-- **Transitive No-Recursion at `ℓ`**: no ℓ-node properly dominates an ℓ-node — every
-    ℓ-node is a minimal projection. This — not `noRec` — is what collapses the maximal and
-    minimal ℓ-projections (`noLevelRec_imp_max_eq_min`): `noRec t = 0` forbids only *direct*
-    ℓ-over-ℓ, while `ω(f(ω))` recurses through an intervening foot (`noRec = 0`, yet
-    maximal ≠ minimal); the one-step `noRec` is the shadow this casts on the strictly-layered
-    trees `IsWord` carves out. -/
+/-- **Transitive No-Recursion at `ℓ`** holds when no ℓ-node properly dominates an ℓ-node, so that
+    every ℓ-node is a minimal projection. This, not `noRec`, is what collapses the maximal and
+    minimal ℓ-projections (`noLevelRec_imp_max_eq_min`). `noRec t = 0` forbids only direct
+    ℓ-over-ℓ, while `ω(f(ω))` recurses through an intervening foot (`noRec = 0`, yet maximal ≠
+    minimal); the one-step `noRec` is the shadow this casts on the strictly-layered trees `IsWord`
+    carves out. -/
 def noLevelRec (p : Constituent → Bool) : Tree → Bool := go where
   go : Tree → Bool
     | .node a cs => (!p a || isMinimalProj p (.node a cs)) && goList cs
@@ -197,10 +206,10 @@ private theorem isMin_go {p : Constituent → Bool} {s : Tree} :
       · simp only [List.not_mem_nil] at h
     · exact IH c hc hsc
 
-/-- Minimality is **intrinsic**: a node returned as a minimal ℓ-projection of any tree is
-    itself a minimal ℓ-projection (`IsMinimalProj`) — it does not depend on the ambient tree.
-    The maximal/minimal asymmetry: a node is maximal only *relative* to an ambient tree
-    (its ℓ-ancestors), but minimal *in itself*. -/
+/-- Minimality is **intrinsic**, since a node returned as a minimal ℓ-projection of any tree is
+    itself a minimal ℓ-projection (`IsMinimalProj`), independent of the ambient tree. Hence the
+    maximal/minimal asymmetry, by which a node is maximal only relative to an ambient tree (its
+    ℓ-ancestors) but minimal in itself. -/
 theorem isMinimalProj_of_mem_minimalProjections {p : Constituent → Bool} {s t : Tree}
     (h : s ∈ minimalProjections p t) : IsMinimalProj p s := isMin_go _ h
 
@@ -259,15 +268,15 @@ private theorem maxMin_go (p : Constituent → Bool) :
       exact IH c hc (h2 c hc)
 
 /-- **No-Recursion collapses the projections.** Under transitive No-Recursion at `ℓ`
-    (`noLevelRec`: no ℓ-node properly dominates an ℓ-node), the topmost and bottommost
-    ℓ-nodes coincide — every ℓ-node is at once maximal and minimal. The naive `noRec t = 0`
-    (no *direct* ℓ-over-ℓ) does **not** suffice — `ω(f(ω))` has `noRec = 0` yet maximal ≠
-    minimal — but on the strictly-layered words `IsWord` cuts out, the two conditions agree. -/
+    (`noLevelRec`, no ℓ-node properly dominating an ℓ-node), the topmost and bottommost ℓ-nodes
+    coincide, every ℓ-node being at once maximal and minimal. The naive `noRec t = 0` (no direct
+    ℓ-over-ℓ) does not suffice, since `ω(f(ω))` has `noRec = 0` yet maximal ≠ minimal, but on the
+    strictly-layered words `IsWord` cuts out the two conditions agree. -/
 theorem noLevelRec_imp_max_eq_min {p : Constituent → Bool} {t : Tree}
     (h : noLevelRec p t = true) : maximalProjections p t = minimalProjections p t :=
   maxMin_go p t h
 
-/-- **Parse-into-`p`** ([ito-mester-2003]): σ-leaves dominated by no `p`-node. -/
+/-- **Parse-into-`p`** ([ito-mester-2003]) counts σ-leaves dominated by no `p`-node. -/
 def parseInto (p : Constituent → Bool) : Constraint Tree := fun t => go false t where
   go (under : Bool) : Tree → Nat
     | .node a cs =>
@@ -283,7 +292,7 @@ def footContent (cs : List Tree) : List Syllable.Weight :=
     | .node a [] => a.weight?
     | _ => none
 
-/-- The feet of a prosodic tree: the σ-weight content of every `f`-node. -/
+/-- The feet of a prosodic tree are the σ-weight contents of its `f`-nodes. -/
 def feet : Tree → List (List Syllable.Weight) := fun t => go t where
   go : Tree → List (List Syllable.Weight)
     | .node a cs => (if a.isFt then [footContent cs] else []) ++ goList cs
@@ -294,7 +303,7 @@ def feet : Tree → List (List Syllable.Weight) := fun t => go t where
 /-- Syllables parsed into no foot — `parseInto (·.isFt)`. -/
 def unfootedCount (t : Tree) : Nat := parseInto (·.isFt) t
 
-/-- Total mora count: the sum of the tree's σ-weights. -/
+/-- The total mora count is the sum of the tree's σ-weights. -/
 def moraCount : Tree → Nat := fun t => go t where
   go : Tree → Nat
     | .node a cs => a.weight?.getD 0 + goList cs
@@ -304,50 +313,27 @@ def moraCount : Tree → Nat := fun t => go t where
 
 /-! ### The well-formed prosodic word ω
 
-`isWordTree` is the structural `Bool` realization of the inviolable Layeredness core
-([selkirk-1996]); `IsWord` is the declarative predicate it backs, and `Word` the carrier
-subtype. Both checkers mirror the `go`/`goList` structural recursion of `noRec`, so they
-are `decide`-reducible — a winner can be certified `IsWord by decide`. -/
+`IsWord` is the inviolable Layeredness core ([selkirk-1996]): a tree rooted in an ω-node and
+licensed by `Constituent.Licenses`. Licensing is decidable by structural recursion, so a winner
+can be certified `IsWord` by `decide`. -/
 
-/-- The structural Layeredness checker: an ω-node every daughter of which is a well-formed
-    foot (`isFootTree`, in `Foot`), a recursive ω (the ω-over-ω arm), or a stray σ-leaf. -/
-def isWordTree : Tree → Bool := fun t => go t where
-  go : Tree → Bool
-    | .node a cs => a.isOm && goList cs
-  goList : List Tree → Bool
-    | [] => true
-    | c :: cs =>
-        (isFootTree c || go c || (c.value.isSyl && c.children.isEmpty))
-          && goList cs
+/-- A well-formed prosodic word is a licensed tree rooted in an ω-node, so an ω-node dominating
+    only feet, recursive ω's, and stray σ, never φ or ι. This is the inviolable **Layeredness**
+    core. Headedness (a foot daughter, the minimal-word effect of [selkirk-1996]) is the typical
+    case but is not presupposed, since footless languages have ω directly over σ (DeLisi 2015,
+    per [dolatian-2020]) and the OT recursion candidates abstract the foot level. Exhaustivity (a
+    stray σ) and Nonrecursivity (ω-over-ω) are violable OT constraints, so both are admitted
+    here. -/
+def IsWord (t : Tree) : Prop := t.value.isOm = true ∧ t.Licensed Constituent.Licenses
 
-/-- A well-formed prosodic word: an ω-node dominating only feet, recursive ω's, and stray σ
-    — never φ/ι. This is the inviolable **Layeredness** core. Headedness (a foot daughter —
-    the minimal-word effect, [selkirk-1996]) is the typical case but is *not* presupposed:
-    footless languages have ω directly over σ (DeLisi 2015, per [dolatian-2020]), and the OT
-    recursion candidates abstract the foot level. Exhaustivity (a stray σ) and Nonrecursivity
-    (ω-over-ω) are violable OT constraints, so both are admitted here. -/
-def IsWord (t : Tree) : Prop := isWordTree t
+instance (t : Tree) : Decidable (IsWord t) := inferInstanceAs (Decidable (_ ∧ _))
 
-instance (t : Tree) : Decidable (IsWord t) :=
-  inferInstanceAs (Decidable (isWordTree t = true))
-
-/-- `isWordTree.goList` as a `List.all` over children. -/
-theorem isWordTree.goList_all (cs : List Tree) :
-    isWordTree.goList cs
-      = cs.all (fun c => isFootTree c || isWordTree.go c
-          || (c.value.isSyl && c.children.isEmpty)) := by
-  induction cs with
-  | nil => rfl
-  | cons c cs ih => simp only [isWordTree.goList, List.all_cons, ih]
-
-/-- A non-recursive word is an ω over well-formed feet and stray σ-leaves — the structural content
+/-- A non-recursive word is an ω over well-formed feet and stray σ-leaves, the structural content
     of `IsWord ∧ noRec = 0`, used to read the grid off a word. -/
 theorem isWord_children {a : Constituent} {cs : List Tree}
     (hw : IsWord (.node a cs)) (hr : noRec (.node a cs) = 0) :
-    a.isOm = true ∧ ∀ c ∈ cs, isFootTree c = true ∨ (c.value.isSyl = true ∧ c.children = []) := by
-  simp only [IsWord, isWordTree, isWordTree.go, Bool.and_eq_true,
-    isWordTree.goList_all, List.all_eq_true] at hw
-  obtain ⟨ha, hall⟩ := hw
+    a.isOm = true ∧ ∀ c ∈ cs, IsFoot c ∨ (c.value.isSyl = true ∧ c.children = []) := by
+  obtain ⟨ha, hl⟩ := hw
   obtain ⟨hd, rfl⟩ : ∃ b, a = .om b := by
     cases a <;> first | exact ⟨_, rfl⟩ | simp_all [Constituent.isOm]
   have hr' : (cs.filter (fun c => Constituent.sameLevel c.value (.om hd))).length = 0 := by
@@ -364,37 +350,38 @@ theorem isWord_children {a : Constituent} {cs : List Tree}
     rw [List.length_eq_zero_iff] at hr'
     rw [hr'] at hmem; exact List.not_mem_nil hmem
   refine ⟨ha, fun c hc => ?_⟩
-  have hdisj := hall c hc
+  have hcl := hl.of_mem hc
+  have hlab := (RoseTree.licensed_node_iff.mp hl).1 c.value (List.mem_map_of_mem hc)
   have hsl := hnoω c hc
-  obtain ⟨cl, ccs⟩ := c
-  simp only [RoseTree.value_node] at hsl
+  rcases c with ⟨cl, ccs⟩
+  simp only [RoseTree.value_node] at hsl hlab
   have hcω : cl.isOm = false := by
     cases cl <;> simp_all [Constituent.sameLevel, Constituent.isOm]
-  rw [show isWordTree.go (.node cl ccs)
-        = (cl.isOm && isWordTree.goList ccs) from rfl, hcω] at hdisj
-  simp only [Bool.false_and, Bool.or_false, Bool.or_eq_true, Bool.and_eq_true,
-    RoseTree.children_node, List.isEmpty_iff,
-    RoseTree.value_node] at hdisj ⊢
-  rcases hdisj with h | h
-  · exact Or.inl h
-  · exact Or.inr h
+  rcases hlab with hft | hom | hsyl
+  · exact Or.inl ⟨hft, hcl⟩
+  · simp [hcω] at hom
+  · refine Or.inr ⟨hsyl, ?_⟩
+    obtain ⟨w, h', rfl⟩ : ∃ w h', cl = .syl w h' := by
+      cases cl <;> simp_all [Constituent.isSyl]
+    simpa [Constituent.Licenses] using (RoseTree.licensed_node_iff.mp hcl).1
 
 /-! ### Word-size predicates -/
 
 variable {measure : List Syllable.Weight → ℕ} {t : Tree}
 
-/-- Minimal word ([mccarthy-prince-1993]): contains a well-formed foot (PrWd ⊇ Ft). -/
+/-- A minimal word ([mccarthy-prince-1993]) contains a well-formed foot (PrWd ⊇ Ft). -/
 def MinimalWord (measure : List Syllable.Weight → ℕ) (t : Tree) : Prop :=
   ∃ f ∈ feet t, measure f = 2
 instance : Decidable (MinimalWord measure t) := by unfold MinimalWord; infer_instance
 
-/-- Maximal word ([uchihara-mendozaruiz-2021]): ≤ one well-formed foot, exhaustively
-    parsed — the upper size bound. -/
+/-- A maximal word ([uchihara-mendozaruiz-2021]) has at most one well-formed foot and is
+    exhaustively parsed, the upper size bound. -/
 def MaximalWord (measure : List Syllable.Weight → ℕ) (t : Tree) : Prop :=
   (feet t).length ≤ 1 ∧ unfootedCount t = 0 ∧ ∀ f ∈ feet t, measure f = 2
 instance : Decidable (MaximalWord measure t) := by unfold MaximalWord; infer_instance
 
-/-- The perfect prosodic word ([ito-mester-2009]): ω coextensive with one well-formed foot. -/
+/-- The perfect prosodic word ([ito-mester-2009]) is an ω coextensive with one well-formed
+    foot. -/
 def PerfectWord (measure : List Syllable.Weight → ℕ) (t : Tree) : Prop :=
   (feet t).length = 1 ∧ (∀ f ∈ feet t, measure f = 2) ∧ unfootedCount t = 0
 instance : Decidable (PerfectWord measure t) := by unfold PerfectWord; infer_instance
