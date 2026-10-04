@@ -185,8 +185,7 @@ def tokens (t : PlanarSyntacticObject) : Finset LIToken := ((tokenList t.val).ma
 
 /-- The terms of `t` are its subtrees, a shared constituent counted once, as
 [marcolli-chomsky-berwick-2025]'s `subtrees` taken each once. -/
-def terms (t : PlanarSyntacticObject) : Finset (RoseTree Vertex) :=
-  ((vertices t.val).filterMap (subtreeAt t.val)).toFinset
+def terms (t : PlanarSyntacticObject) : Finset (RoseTree Vertex) := t.val.subtrees.toFinset
 
 /-- The cost of an object counts its tokens as the lexical items drawn, its internal terms as the
 Merges, so that a shared constituent is built once, and its elided domains as the applications of

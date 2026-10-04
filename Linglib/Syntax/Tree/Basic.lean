@@ -21,7 +21,7 @@ subtrees, replacement and the frontier are those of the rose tree.
 * `Syntax.Tree.Label.Licenses`, `Syntax.Tree.IsWellFormed`: terminals and traces are leaves and
   binders have one body.
 * `Syntax.Tree.rec'`: induction over the four shapes, with a case for ill-formed nodes.
-* `Syntax.Tree.terminals`, `yield`, `cats`, `subtrees`, `map`, `freeIndices`, `leafSubst`.
+* `Syntax.Tree.terminals`, `yield`, `cats`, `map`, `freeIndices`, `leafSubst`.
 * `Syntax.Tree.positionedTerminals`: the terminals with their positions, in the order of the
   yield, which is precedence (`pairwise_precedes_positionedTerminals`).
 
@@ -288,50 +288,19 @@ theorem mem_cats_bind {c' : C} {n : ℕ} {c : C} {t : Tree C W} :
     c' ∈ (bind n c t).cats ↔ c' = c ∨ c' ∈ t.cats := by
   simp
 
-mutual
-/-- The subtrees, the tree itself first, in pre-order. -/
-def subtrees : Tree C W → List (Tree C W)
-  | t@(RoseTree.node _ cs) => t :: subtreesList cs
-/-- `subtrees` across a daughter list. -/
-def subtreesList : List (Tree C W) → List (Tree C W)
-  | [] => []
-  | t :: ts => subtrees t ++ subtreesList ts
-end
-
-theorem subtreesList_eq (cs : List (Tree C W)) : subtreesList cs = cs.flatMap subtrees := by
-  induction cs with
-  | nil => rfl
-  | cons t ts ih => rw [subtreesList, ih, List.flatMap_cons]
-
-theorem subtrees_rose (l : Label C W) (cs : List (Tree C W)) :
-    subtrees (RoseTree.node l cs) = RoseTree.node l cs :: cs.flatMap subtrees := by
-  rw [subtrees, subtreesList_eq]
-
 @[simp] theorem subtrees_terminal (c : C) (w : W) : (terminal c w).subtrees = [terminal c w] :=
   rfl
 
 @[simp] theorem subtrees_node (c : C) (cs : List (Tree C W)) :
-    (node c cs).subtrees = node c cs :: cs.flatMap subtrees :=
-  subtrees_rose _ cs
+    (node c cs).subtrees = node c cs :: cs.flatMap RoseTree.subtrees :=
+  RoseTree.subtrees_node _ cs
 
 @[simp] theorem subtrees_trace (n : ℕ) (c : C) : (trace n c : Tree C W).subtrees = [trace n c] :=
   rfl
 
 @[simp] theorem subtrees_bind (n : ℕ) (c : C) (t : Tree C W) :
     (bind n c t).subtrees = bind n c t :: t.subtrees := by
-  simp [bind, subtrees_rose]
-
-theorem self_mem_subtrees (t : Tree C W) : t ∈ t.subtrees := by
-  rcases t with ⟨l, cs⟩
-  simp [subtrees_rose]
-
-/-- The categories are those at the roots of the subtrees. -/
-theorem map_cat_subtrees (t : Tree C W) : t.subtrees.map cat = t.cats := by
-  induction t using RoseTree.rec' with
-  | node l cs ih =>
-    simp only [subtrees_rose, List.map_cons, cats, RoseTree.values_node, List.flatMap_def,
-      List.map_flatten, List.map_map]
-    exact congrArg _ (congrArg _ (List.map_congr_left fun t ht ↦ ih t ht))
+  simp [bind]
 
 /-! ### Free traces -/
 

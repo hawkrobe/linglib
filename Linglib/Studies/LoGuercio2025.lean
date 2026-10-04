@@ -68,7 +68,7 @@ instance : LawfulBEq EWord where
 
 open EWord
 
-/-- The lexical items: terminals only. -/
+/-- The lexical items, terminals only. -/
 def epithetLex : Finset (Tree Cat EWord) :=
   {.terminal .N .john, .terminal .N .pedro,
    .terminal .V .arrived, .terminal .Adv .first,
@@ -93,7 +93,7 @@ def bastardPedroDP : Tree Cat EWord :=
 /-- *[DP that bastard Pedro] arrived first*, the intermediate step of the derivation (24). -/
 def bastardPedroArrived : Tree Cat EWord := .node .S [bastardPedroDP, arrivedFirst]
 
-/-- The substitution source after the mention: the lexical items and the contextually
+/-- After the mention the substitution source holds the lexical items and the contextually
 relevant epithet phrase ([fox-katzir-2011]). -/
 def priorContextLex : Finset (Tree Cat EWord) :=
   insert bastardPedroDP epithetLex
@@ -106,7 +106,7 @@ def daughters : Tree Cat EWord → List (Tree Cat EWord)
 /-- A determiner phrase with at least two daughters. -/
 def WideDP (t : Tree Cat EWord) : Prop := t.cat = .DP ∧ 2 ≤ (daughters t).length
 
-/-- The epithet construction: a determiner phrase *that bastard X*. -/
+/-- The epithet construction is a determiner phrase *that bastard X*. -/
 def IsEpithet : Tree Cat EWord → Prop
   | .node .DP [.terminal .Det .that_, .terminal .N .bastard, _] => True
   | _ => False
@@ -125,7 +125,7 @@ def HasEpithet (φ : Tree Cat EWord) : Prop := ∃ s ∈ φ.subtrees, IsEpithet 
 instance : DecidablePred HasEpithet := λ _ => inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
 /-- Out of the blue no structural alternative of the bare sentence contains a determiner
-phrase with two or more daughters: no source item has one, the sentence has none, and the
+phrase with two or more daughters, since no source item has one, the sentence has none, and the
 operations cannot widen a phrase. -/
 theorem no_wideDP_outOfBlue {ψ : Tree Cat EWord}
     (h : ψ ∈ structuralAlternatives epithetLex johnArrived) : ∀ t ∈ ψ.subtrees, ¬ WideDP t :=
@@ -138,11 +138,12 @@ theorem no_wideDP_outOfBlue {ψ : Tree Cat EWord}
 /-- Out of the blue, the epithet sentence is not a structural alternative. -/
 theorem epithet_not_alternative_outOfBlue :
     bastardJohnArrived ∉ structuralAlternatives epithetLex johnArrived :=
-  λ h => no_wideDP_outOfBlue h (.node .DP [.terminal .Det .that_, .terminal .N .bastard,
+  fun h ↦ no_wideDP_outOfBlue h (Tree.node .DP [.terminal .Det .that_, .terminal .N .bastard,
     .terminal .N .john]) (by decide) (by decide)
 
 /-- After the mention, the epithet sentence is a structural alternative, by the paper's
-derivation (24): the mentioned phrase replaces the subject, then *John* replaces *Pedro*. -/
+derivation (24), in which the mentioned phrase replaces the subject and then *John* replaces
+*Pedro*. -/
 theorem epithet_alternative_priorMention :
     bastardJohnArrived ∈ structuralAlternatives priorContextLex johnArrived := by
   have step1 : StructOp (substitutionSource priorContextLex johnArrived) johnArrived
@@ -160,16 +161,16 @@ theorem epithet_alternative_priorMention :
 
 /-! ### Conventionally implicated content as felicity sets -/
 
-/-- Worlds: whether the speaker believes that John is a bastard. -/
+/-- The worlds settle whether the speaker believes that John is a bastard. -/
 abbrev World : Type := Bool
 
-/-- The felicity-set content of the paper's (12): a sentence with the epithet construction is
+/-- Under the felicity-set content of the paper's (12), a sentence with the epithet construction is
 felicitous only where the speaker holds the attitude; any other sentence is felicitous
 everywhere. -/
 def expressiveCI (φ : Tree Cat EWord) : Set World := {w | HasEpithet φ → w = true}
 
-/-- The epithet sentence has stronger content than the bare one: its felicity set is a proper
-subset. -/
+/-- The epithet sentence has stronger content than the bare one, since its felicity set is a
+proper subset. -/
 theorem epithet_ciStronger_than_bare :
     expressiveCI bastardJohnArrived ⊂ expressiveCI johnArrived :=
   LE.le.ssubset_of_not_superset (λ _ _ h => absurd h (by decide))
@@ -178,7 +179,7 @@ theorem epithet_ciStronger_than_bare :
 
 /-! ### The inference -/
 
-/-- Out of the blue the bare sentence does not violate the principle: every formal
+/-- Out of the blue the bare sentence does not violate the principle, since every formal
 alternative is free of the epithet construction, so none has stronger content. -/
 theorem outOfBlue_no_ACI :
     ¬ Blocked (structuralAlternatives epithetLex) expressiveCI johnArrived := by
@@ -186,7 +187,7 @@ theorem outOfBlue_no_ACI :
   obtain ⟨w, -, h_alt⟩ := Set.not_subset.1 hss.2
   exact h_alt λ ⟨s, hs, hse⟩ => absurd (WideDP.of_isEpithet hse) (no_wideDP_outOfBlue hφ' s hs)
 
-/-- After the mention the bare sentence violates the principle: the epithet sentence is a
+/-- After the mention the bare sentence violates the principle, since the epithet sentence is a
 formal alternative with stronger content. -/
 theorem priorMention_yes_ACI :
     Blocked (structuralAlternatives priorContextLex) expressiveCI johnArrived :=
