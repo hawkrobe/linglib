@@ -27,6 +27,9 @@ jobs:
       - name: Check generated WALS data (imported features only, in sync)
         run: python3 scripts/gen_wals.py --check
 
+      - name: Check generated PHOIBLE data
+        run: python3 scripts/gen_phoible.py --check
+
       - name: Check generated example data
         run: python3 scripts/gen_examples.py --check
 
