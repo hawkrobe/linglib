@@ -10,8 +10,8 @@ public import Mathlib.Order.Hom.Lattice
 class of `L`-structures closed under isomorphism, so the invariance Mostowski imposed on
 quantifiers is part of the type rather than a side condition on a denotation. These classes form
 a Boolean subalgebra of the powerset of `Bundled L.Structure`. Each sentence defines one, its
-class of models, and the Ehrenfeucht–Fraïssé results in this directory decide which classes are
-defined by a sentence.
+class of models, and the Ehrenfeucht–Fraïssé results in this directory decide which classes arise
+this way, the classes Lindström writes `EC`.
 
 ## Main definitions
 
@@ -19,8 +19,14 @@ defined by a sentence.
 * `FirstOrder.Language.LindstromQuantifier.ofSentence`: the class of models of a sentence.
 * `FirstOrder.Language.LindstromQuantifier.holdsHom`: the embedding into the powerset algebra.
 
+## Implementation notes
+
+Lindström restricts quantifiers to classes of relational structures; here `L` may have function
+symbols, which costs nothing since isomorphism invariance is the only condition.
+
 ## References
 
+* [lindstrom-1966]
 * [mostowski-1957]
 -/
 
