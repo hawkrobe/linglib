@@ -7,6 +7,7 @@ module
 
 public import Mathlib.Data.Fintype.EquivFin
 public import Linglib.Core.Computability.Mealy
+public import Linglib.Core.Computability.ScanDirection
 public import Linglib.Core.Data.Fintype.Transfer
 
 /-!
@@ -23,12 +24,15 @@ letter-to-letter machines here compute the total length-preserving ones.
 
 * `Bimachine L R α β`: machine with left states `L`, right states `R`, alphabets `α`, `β`
 * `Bimachine.run`: the computed function
+* `Bimachine.reverse`: the mirror machine, the two automata trading sides
 * `IsBimachineComputable f`: `f` is computed by some finite bimachine
 
 ## Main theorems
 
-* `Bimachine.getElem?_run`: output `i` is
+* `Bimachine.LetterToLetter.getElem?_run`: output `i` is
   `output (lState (x.take i)) (x i) (rState (x.drop (i+1)))`
+* `Bimachine.run_reverse`: the mirror machine computes the reverse conjugate
+* `IsBimachineComputable.revConj`: the class is closed under reverse conjugation
 
 ## Implementation notes
 
@@ -49,15 +53,15 @@ variable {L R α β : Type*}
 /-- A bimachine is a left automaton scanning left to right, a right automaton scanning
 right to left, and a cell output reading both context states and the current symbol. -/
 structure Bimachine (L R α β : Type*) where
-  /-- Starting state of the left automaton. -/
+  /-- The left automaton starts in this state. -/
   lInit : L
-  /-- Transition of the left automaton, scanning left to right. -/
+  /-- The left automaton steps on each symbol, scanning left to right. -/
   lStep : L → α → L
-  /-- Starting state of the right automaton. -/
+  /-- The right automaton starts in this state. -/
   rInit : R
-  /-- Transition of the right automaton, scanning right to left. -/
+  /-- The right automaton steps on each symbol, scanning right to left. -/
   rStep : R → α → R
-  /-- The word emitted from the two context states and the current input symbol. -/
+  /-- A cell emits a word from the two context states and the current input symbol. -/
   output : L → α → R → List β
 
 instance [Inhabited L] [Inhabited R] : Inhabited (Bimachine L R α β) :=
@@ -70,10 +74,10 @@ variable (B : Bimachine L R α β)
 /-- `B.lStateAfter l pre` is the left state reached from `l` after scanning `pre`. -/
 def lStateAfter (l : L) : List α → L := List.foldl B.lStep l
 
-/-- Left state after scanning a prefix left-to-right from the start state. -/
+/-- `B.lState pre` is the left state after scanning `pre` left to right from the start. -/
 def lState : List α → L := B.lStateAfter B.lInit
 
-/-- Right state after scanning a suffix right-to-left. -/
+/-- `B.rState suf` is the right state after scanning `suf` right to left. -/
 def rState (suf : List α) : R := suf.foldr (fun a r => B.rStep r a) B.rInit
 
 /-- `B.runFrom l x` runs `B` on `x` threading the left state from `l`; each tail's
@@ -82,7 +86,7 @@ def runFrom : L → List α → List β
   | _, [] => []
   | l, x :: xs => B.output l x (B.rState xs) ++ runFrom (B.lStep l x) xs
 
-/-- The computed function. -/
+/-- `B.run` is the function `B` computes. -/
 def run : List α → List β := B.runFrom B.lInit
 
 section
@@ -108,10 +112,10 @@ positions need not track input positions. A **letter-to-letter** bimachine emits
 one symbol per cell ([sakarovitch-2009] §IV.6); the function it computes is then
 *length-preserving*, and the positional description below holds. -/
 
-/-- A witness that `B` is *letter-to-letter*: every cell emits exactly one symbol, named
-by `cell`. -/
+/-- A witness that `B` is *letter-to-letter* names, by `cell`, the one symbol every cell
+emits. -/
 structure LetterToLetter (B : Bimachine L R α β) where
-  /-- The single symbol emitted at a cell. -/
+  /-- `cell l a r` is the symbol the cell emits. -/
   cell : L → α → R → β
   /-- Every cell emits exactly that one symbol. -/
   output_eq : ∀ l a r, B.output l a r = [cell l a r]
@@ -185,7 +189,7 @@ def map (eL : L ≃ L') (eR : R ≃ R') (B : Bimachine L R α β) : Bimachine L'
     (map eL eR B).run = B.run := by
   funext xs; simp [run]
 
-/-- `map` as an equivalence of bimachines. -/
+/-- `reindex eL eR` is `map eL eR` as an equivalence of bimachines. -/
 def reindex (eL : L ≃ L') (eR : R ≃ R') : Bimachine L R α β ≃ Bimachine L' R' α β where
   toFun := map eL eR
   invFun := map eL.symm eR.symm
@@ -208,6 +212,52 @@ theorem LetterToLetter.cell_inj {B : Bimachine L R α β} (w : B.LetterToLetter)
 def LetterToLetter.map {L' R' : Type*} {B : Bimachine L R α β} (w : B.LetterToLetter)
     (eL : L ≃ L') (eR : R ≃ R') : (Bimachine.map eL eR B).LetterToLetter :=
   ⟨fun l a r => w.cell (eL.symm l) a (eR.symm r), fun _ _ _ => w.output_eq _ _ _⟩
+
+/-! ### Reversal
+
+Read backwards, a bimachine is again a bimachine: the two automata trade sides and every
+cell emits its word reversed. The mirror computes the reverse conjugate, so the
+bimachine-computable functions are closed under `List.revConj`. -/
+
+/-- In the mirror image of `B` the right automaton scans left to right, the left one right to
+left, and each cell emits its word reversed. -/
+@[simps]
+def reverse : Bimachine R L α β where
+  lInit := B.rInit
+  lStep := B.rStep
+  rInit := B.lInit
+  rStep := B.lStep
+  output r a l := (B.output l a r).reverse
+
+@[simp] theorem reverse_reverse : B.reverse.reverse = B := by
+  simp [reverse]
+
+/-- Appending a symbol restarts the right automaton of every earlier cell from the state that
+symbol leads to. -/
+private theorem runFrom_append_singleton (l : L) (xs : List α) (a : α) :
+    B.runFrom l (xs ++ [a]) =
+      ({ B with rInit := B.rStep B.rInit a } : Bimachine L R α β).runFrom l xs
+        ++ B.output (B.lStateAfter l xs) a B.rInit := by
+  induction xs generalizing l with
+  | nil => simp [runFrom]
+  | cons y ys ih =>
+    simp only [List.cons_append, runFrom_cons, ih, List.append_assoc, lStateAfter_cons]
+    congr 2
+    simp [rState, List.foldr_append]
+
+private theorem reverse_runFrom (r : R) (xs : List α) :
+    B.reverse.runFrom r xs =
+      (({ B with rInit := r } : Bimachine L R α β).runFrom B.lInit xs.reverse).reverse := by
+  induction xs generalizing r with
+  | nil => rfl
+  | cons a xs ih =>
+    rw [runFrom_cons, ih, List.reverse_cons, runFrom_append_singleton, List.reverse_append]
+    congr 1
+    simp [rState, lStateAfter]
+
+/-- The mirror bimachine computes the reverse conjugate. -/
+@[simp] theorem run_reverse : B.reverse.run = List.revConj B.run :=
+  funext fun xs => B.reverse_runFrom B.rInit xs
 
 /-! ### Flag bimachines
 
@@ -307,7 +357,17 @@ theorem Bimachine.isBimachineComputable {L R : Type*} [Fintype L] [Fintype R]
     (B : Bimachine L R α β) : IsBimachineComputable B.run :=
   isBimachineComputable_iff.mpr ⟨L, inferInstance, R, inferInstance, B, rfl⟩
 
-/-- Computability by a finite **letter-to-letter** bimachine: the total
+/-- The reverse conjugate of a bimachine-computable function is bimachine-computable. -/
+protected theorem IsBimachineComputable.revConj {f : List α → List β}
+    (h : IsBimachineComputable f) : IsBimachineComputable (List.revConj f) :=
+  have ⟨L, _, R, _, B, hB⟩ := h
+  ⟨R, ‹_›, L, ‹_›, B.reverse, hB ▸ B.run_reverse⟩
+
+@[simp] theorem isBimachineComputable_revConj_iff {f : List α → List β} :
+    IsBimachineComputable (List.revConj f) ↔ IsBimachineComputable f :=
+  ⟨fun h => List.revConj_revConj f ▸ h.revConj, .revConj⟩
+
+/-- `f` is computed by a finite **letter-to-letter** bimachine. These are the total
 length-preserving rational functions. -/
 def IsLengthPreservingBimachineComputable (f : List α → List β) : Prop :=
   ∃ (L : Type) (_ : Fintype L) (R : Type) (_ : Fintype R) (B : Bimachine L R α β),

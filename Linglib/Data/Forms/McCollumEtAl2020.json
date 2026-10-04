@@ -1,0 +1,711 @@
+{
+  "FormTable": [
+    {
+      "ID": "mccollumetal2020_1a",
+      "Language_ID": "nyan1302",
+      "Parameter_ID": "3sg_neg_fut_come",
+      "Form": "atɪ́babá",
+      "Segments": ["a", "t", "ɪ́", "b", "a", "b", "á"],
+      "Comment": "",
+      "Source": ["mccollum-bakovic-mai-meinhardt-2020[(1a)]", "mccollum-bakovic-mai-meinhardt-2020[(5a)]"],
+      "Underlying": "/a-tɪ́-ba-bá/"
+    },
+    {
+      "ID": "mccollumetal2020_1b",
+      "Language_ID": "nyan1302",
+      "Parameter_ID": "3sg_neg_fut_grow",
+      "Form": "etíbeʃē",
+      "Segments": ["e", "t", "í", "b", "e", "ʃ", "ē"],
+      "Comment": "",
+      "Source": ["mccollum-bakovic-mai-meinhardt-2020[(1b)]", "mccollum-bakovic-mai-meinhardt-2020[(5d)]"],
+      "Underlying": "/a-tɪ́-ba-ʃē/"
+    },
+    {
+      "ID": "mccollumetal2020_1c",
+      "Language_ID": "nyan1302",
+      "Parameter_ID": "1sg_neg_fut_come",
+      "Form": "ɪtɪ́babá",
+      "Segments": ["ɪ", "t", "ɪ́", "b", "a", "b", "á"],
+      "Comment": "",
+      "Source": ["mccollum-bakovic-mai-meinhardt-2020[(1c)]"],
+      "Underlying": "/ɪ-tɪ́-ba-bá/"
+    },
+    {
+      "ID": "mccollumetal2020_1d",
+      "Language_ID": "nyan1302",
+      "Parameter_ID": "1sg_neg_fut_grow",
+      "Form": "ɪtɪ́baʃē",
+      "Segments": ["ɪ", "t", "ɪ́", "b", "a", "ʃ", "ē"],
+      "Comment": "",
+      "Source": ["mccollum-bakovic-mai-meinhardt-2020[(1d)]"],
+      "Underlying": "/ɪ-tɪ́-ba-ʃē/"
+    },
+    {
+      "ID": "mccollumetal2020_2a_man",
+      "Language_ID": "nyan1302",
+      "Parameter_ID": "cl1_man",
+      "Form": "aɲɪ",
+      "Segments": ["a", "ɲ", "ɪ"],
+      "Comment": "",
+      "Source": ["mccollum-bakovic-mai-meinhardt-2020[(2a)]"],
+      "Underlying": "/a-ɲɪ/"
+    },
+    {
+      "ID": "mccollumetal2020_2a_dog",
+      "Language_ID": "nyan1302",
+      "Parameter_ID": "cl1_dog",
+      "Form": "ebú",
+      "Segments": ["e", "b", "ú"],
+      "Comment": "",
+      "Source": ["mccollum-bakovic-mai-meinhardt-2020[(2a)]"],
+      "Underlying": "/a-bú/"
+    },
+    {
+      "ID": "mccollumetal2020_2b_copper",
+      "Language_ID": "nyan1302",
+      "Parameter_ID": "cl3_copper",
+      "Form": "ɔda",
+      "Segments": ["ɔ", "d", "a"],
+      "Comment": "",
+      "Source": ["mccollum-bakovic-mai-meinhardt-2020[(2b)]"],
+      "Underlying": "/ɔ-da/"
+    },
+    {
+      "ID": "mccollumetal2020_2b_vulture",
+      "Language_ID": "nyan1302",
+      "Parameter_ID": "cl3_vulture",
+      "Form": "opétē",
+      "Segments": ["o", "p", "é", "t", "ē"],
+      "Comment": "",
+      "Source": ["mccollum-bakovic-mai-meinhardt-2020[(2b)]"],
+      "Underlying": "/ɔ-pétē/"
+    },
+    {
+      "ID": "mccollumetal2020_2c_copper",
+      "Language_ID": "nyan1302",
+      "Parameter_ID": "cl4_copper",
+      "Form": "ɪda",
+      "Segments": ["ɪ", "d", "a"],
+      "Comment": "",
+      "Source": ["mccollum-bakovic-mai-meinhardt-2020[(2c)]"],
+      "Underlying": "/ɪ-da/"
+    },
+    {
+      "ID": "mccollumetal2020_2c_vulture",
+      "Language_ID": "nyan1302",
+      "Parameter_ID": "cl4_vulture",
+      "Form": "ipétē",
+      "Segments": ["i", "p", "é", "t", "ē"],
+      "Comment": "",
+      "Source": ["mccollum-bakovic-mai-meinhardt-2020[(2c)]"],
+      "Underlying": "/ɪ-pétē/"
+    },
+    {
+      "ID": "mccollumetal2020_2d_axe",
+      "Language_ID": "nyan1302",
+      "Parameter_ID": "cl8_axe",
+      "Form": "bʊwɪ",
+      "Segments": ["b", "ʊ", "w", "ɪ"],
+      "Comment": "",
+      "Source": ["mccollum-bakovic-mai-meinhardt-2020[(2d)]"],
+      "Underlying": "/bʊ-wɪ/"
+    },
+    {
+      "ID": "mccollumetal2020_2d_war",
+      "Language_ID": "nyan1302",
+      "Parameter_ID": "cl8_war",
+      "Form": "buju",
+      "Segments": ["b", "u", "j", "u"],
+      "Comment": "",
+      "Source": ["mccollum-bakovic-mai-meinhardt-2020[(2d)]"],
+      "Underlying": "/bʊ-ju/"
+    },
+    {
+      "ID": "mccollumetal2020_3a",
+      "Language_ID": "nyan1302",
+      "Parameter_ID": "1sg_neg_come",
+      "Form": "ɪtɪ́bá",
+      "Segments": ["ɪ", "t", "ɪ́", "b", "á"],
+      "Comment": "",
+      "Source": ["mccollum-bakovic-mai-meinhardt-2020[(3a)]"],
+      "Underlying": "/ɪ-tɪ́-bá/"
+    },
+    {
+      "ID": "mccollumetal2020_3b",
+      "Language_ID": "nyan1302",
+      "Parameter_ID": "1pl_neg_come",
+      "Form": "bʊtɪ́bá",
+      "Segments": ["b", "ʊ", "t", "ɪ́", "b", "á"],
+      "Comment": "",
+      "Source": ["mccollum-bakovic-mai-meinhardt-2020[(3b)]"],
+      "Underlying": "/bʊ-tɪ́-bá/"
+    },
+    {
+      "ID": "mccollumetal2020_3c",
+      "Language_ID": "nyan1302",
+      "Parameter_ID": "cl5_neg_come",
+      "Form": "kɪtɪ́bá",
+      "Segments": ["k", "ɪ", "t", "ɪ́", "b", "á"],
+      "Comment": "",
+      "Source": ["mccollum-bakovic-mai-meinhardt-2020[(3c)]"],
+      "Underlying": "/kɪ-tɪ́-bá/"
+    },
+    {
+      "ID": "mccollumetal2020_3d",
+      "Language_ID": "nyan1302",
+      "Parameter_ID": "1sg_neg_grow",
+      "Form": "itíʃē",
+      "Segments": ["i", "t", "í", "ʃ", "ē"],
+      "Comment": "",
+      "Source": ["mccollum-bakovic-mai-meinhardt-2020[(3d)]"],
+      "Underlying": "/ɪ-tɪ́-ʃē/"
+    },
+    {
+      "ID": "mccollumetal2020_3e",
+      "Language_ID": "nyan1302",
+      "Parameter_ID": "1pl_neg_grow",
+      "Form": "butíʃē",
+      "Segments": ["b", "u", "t", "í", "ʃ", "ē"],
+      "Comment": "",
+      "Source": ["mccollum-bakovic-mai-meinhardt-2020[(3e)]"],
+      "Underlying": "/bʊ-tɪ́-ʃē/"
+    },
+    {
+      "ID": "mccollumetal2020_3f",
+      "Language_ID": "nyan1302",
+      "Parameter_ID": "cl5_neg_grow",
+      "Form": "kitíʃē",
+      "Segments": ["k", "i", "t", "í", "ʃ", "ē"],
+      "Comment": "",
+      "Source": ["mccollum-bakovic-mai-meinhardt-2020[(3f)]"],
+      "Underlying": "/kɪ-tɪ́-ʃē/"
+    },
+    {
+      "ID": "mccollumetal2020_4a",
+      "Language_ID": "nyan1302",
+      "Parameter_ID": "3sg_fut_come",
+      "Form": "ababá",
+      "Segments": ["a", "b", "a", "b", "á"],
+      "Comment": "",
+      "Source": ["mccollum-bakovic-mai-meinhardt-2020[(4a)]"],
+      "Underlying": "/a-ba-bá/"
+    },
+    {
+      "ID": "mccollumetal2020_4b",
+      "Language_ID": "nyan1302",
+      "Parameter_ID": "cl7_fut_come",
+      "Form": "kababá",
+      "Segments": ["k", "a", "b", "a", "b", "á"],
+      "Comment": "",
+      "Source": ["mccollum-bakovic-mai-meinhardt-2020[(4b)]"],
+      "Underlying": "/ka-ba-bá/"
+    },
+    {
+      "ID": "mccollumetal2020_4c",
+      "Language_ID": "nyan1302",
+      "Parameter_ID": "2sg_fut_come",
+      "Form": "ɔbɔbá",
+      "Segments": ["ɔ", "b", "ɔ", "b", "á"],
+      "Comment": "",
+      "Source": ["mccollum-bakovic-mai-meinhardt-2020[(4c)]"],
+      "Underlying": "/ɔ-ba-bá/"
+    },
+    {
+      "ID": "mccollumetal2020_4d",
+      "Language_ID": "nyan1302",
+      "Parameter_ID": "3sg_fut_grow",
+      "Form": "ebeʃē",
+      "Segments": ["e", "b", "e", "ʃ", "ē"],
+      "Comment": "",
+      "Source": ["mccollum-bakovic-mai-meinhardt-2020[(4d)]"],
+      "Underlying": "/a-ba-ʃē/"
+    },
+    {
+      "ID": "mccollumetal2020_4e",
+      "Language_ID": "nyan1302",
+      "Parameter_ID": "cl7_fut_grow",
+      "Form": "kebeʃē",
+      "Segments": ["k", "e", "b", "e", "ʃ", "ē"],
+      "Comment": "",
+      "Source": ["mccollum-bakovic-mai-meinhardt-2020[(4e)]"],
+      "Underlying": "/ka-ba-ʃē/"
+    },
+    {
+      "ID": "mccollumetal2020_4f",
+      "Language_ID": "nyan1302",
+      "Parameter_ID": "2sg_fut_grow",
+      "Form": "oboʃē",
+      "Segments": ["o", "b", "o", "ʃ", "ē"],
+      "Comment": "",
+      "Source": ["mccollum-bakovic-mai-meinhardt-2020[(4f)]"],
+      "Underlying": "/ɔ-ba-ʃē/"
+    },
+    {
+      "ID": "mccollumetal2020_5b",
+      "Language_ID": "nyan1302",
+      "Parameter_ID": "cl7_neg_fut_come",
+      "Form": "katɪ́babá",
+      "Segments": ["k", "a", "t", "ɪ́", "b", "a", "b", "á"],
+      "Comment": "",
+      "Source": ["mccollum-bakovic-mai-meinhardt-2020[(5b)]"],
+      "Underlying": "/ka-tɪ́-ba-bá/"
+    },
+    {
+      "ID": "mccollumetal2020_5c",
+      "Language_ID": "nyan1302",
+      "Parameter_ID": "2sg_neg_fut_come",
+      "Form": "ɔtɪ́bɔbá",
+      "Segments": ["ɔ", "t", "ɪ́", "b", "ɔ", "b", "á"],
+      "Comment": "The gloss is printed 2SG-Z-NEG-FUT-come.",
+      "Source": ["mccollum-bakovic-mai-meinhardt-2020[(5c)]"],
+      "Underlying": "/ɔ-tɪ́-ba-bá/"
+    },
+    {
+      "ID": "mccollumetal2020_5e",
+      "Language_ID": "nyan1302",
+      "Parameter_ID": "cl7_neg_fut_grow",
+      "Form": "ketíbeʃē",
+      "Segments": ["k", "e", "t", "í", "b", "e", "ʃ", "ē"],
+      "Comment": "",
+      "Source": ["mccollum-bakovic-mai-meinhardt-2020[(5e)]"],
+      "Underlying": "/ka-tɪ́-ba-ʃē/"
+    },
+    {
+      "ID": "mccollumetal2020_5f",
+      "Language_ID": "nyan1302",
+      "Parameter_ID": "2sg_neg_fut_grow",
+      "Form": "otíboʃē",
+      "Segments": ["o", "t", "í", "b", "o", "ʃ", "ē"],
+      "Comment": "",
+      "Source": ["mccollum-bakovic-mai-meinhardt-2020[(5f)]"],
+      "Underlying": "/ɔ-tɪ́-ba-ʃē/"
+    },
+    {
+      "ID": "mccollumetal2020_6a",
+      "Language_ID": "nyan1302",
+      "Parameter_ID": "1sg_fut_come",
+      "Form": "ɪbabá",
+      "Segments": ["ɪ", "b", "a", "b", "á"],
+      "Comment": "",
+      "Source": ["mccollum-bakovic-mai-meinhardt-2020[(6a)]"],
+      "Underlying": "/ɪ-ba-bá/"
+    },
+    {
+      "ID": "mccollumetal2020_6b",
+      "Language_ID": "nyan1302",
+      "Parameter_ID": "1pl_fut_come",
+      "Form": "bʊbabá",
+      "Segments": ["b", "ʊ", "b", "a", "b", "á"],
+      "Comment": "",
+      "Source": ["mccollum-bakovic-mai-meinhardt-2020[(6b)]"],
+      "Underlying": "/bʊ-ba-bá/"
+    },
+    {
+      "ID": "mccollumetal2020_6c",
+      "Language_ID": "nyan1302",
+      "Parameter_ID": "cl5_fut_come",
+      "Form": "kɪbabá",
+      "Segments": ["k", "ɪ", "b", "a", "b", "á"],
+      "Comment": "",
+      "Source": ["mccollum-bakovic-mai-meinhardt-2020[(6c)]"],
+      "Underlying": "/kɪ-ba-bá/"
+    },
+    {
+      "ID": "mccollumetal2020_6d",
+      "Language_ID": "nyan1302",
+      "Parameter_ID": "1sg_fut_grow",
+      "Form": "ɪbaʃē",
+      "Segments": ["ɪ", "b", "a", "ʃ", "ē"],
+      "Comment": "",
+      "Source": ["mccollum-bakovic-mai-meinhardt-2020[(6d)]"],
+      "Underlying": "/ɪ-ba-ʃē/"
+    },
+    {
+      "ID": "mccollumetal2020_6e",
+      "Language_ID": "nyan1302",
+      "Parameter_ID": "1pl_fut_grow",
+      "Form": "bʊbaʃē",
+      "Segments": ["b", "ʊ", "b", "a", "ʃ", "ē"],
+      "Comment": "",
+      "Source": ["mccollum-bakovic-mai-meinhardt-2020[(6e)]"],
+      "Underlying": "/bʊ-ba-ʃē/"
+    },
+    {
+      "ID": "mccollumetal2020_6f",
+      "Language_ID": "nyan1302",
+      "Parameter_ID": "cl5_fut_grow",
+      "Form": "kɪbaʃē",
+      "Segments": ["k", "ɪ", "b", "a", "ʃ", "ē"],
+      "Comment": "",
+      "Source": ["mccollum-bakovic-mai-meinhardt-2020[(6f)]"],
+      "Underlying": "/kɪ-ba-ʃē/"
+    },
+    {
+      "ID": "mccollumetal2020_7a",
+      "Language_ID": "nyan1302",
+      "Parameter_ID": "1sg_itv_cook",
+      "Form": "ɪdɪtɔ́",
+      "Segments": ["ɪ", "d", "ɪ", "t", "ɔ́"],
+      "Comment": "",
+      "Source": ["mccollum-bakovic-mai-meinhardt-2020[(7a)]"],
+      "Underlying": "/ɪ-dɪ-tɔ́/"
+    },
+    {
+      "ID": "mccollumetal2020_7b",
+      "Language_ID": "nyan1302",
+      "Parameter_ID": "1sg_itv_climb",
+      "Form": "idiwu",
+      "Segments": ["i", "d", "i", "w", "u"],
+      "Comment": "",
+      "Source": ["mccollum-bakovic-mai-meinhardt-2020[(7b)]"],
+      "Underlying": "/ɪ-dɪ-wu/"
+    },
+    {
+      "ID": "mccollumetal2020_7c",
+      "Language_ID": "nyan1302",
+      "Parameter_ID": "1sg_fut_itv_climb",
+      "Form": "ɪbadiwu",
+      "Segments": ["ɪ", "b", "a", "d", "i", "w", "u"],
+      "Comment": "",
+      "Source": ["mccollum-bakovic-mai-meinhardt-2020[(7c)]"],
+      "Underlying": "/ɪ-ba-dɪ-wu/"
+    },
+    {
+      "ID": "mccollumetal2020_7d",
+      "Language_ID": "nyan1302",
+      "Parameter_ID": "1pl_fut_itv_climb",
+      "Form": "bʊbadiwu",
+      "Segments": ["b", "ʊ", "b", "a", "d", "i", "w", "u"],
+      "Comment": "",
+      "Source": ["mccollum-bakovic-mai-meinhardt-2020[(7d)]"],
+      "Underlying": "/bʊ-ba-dɪ-wu/"
+    },
+    {
+      "ID": "mccollumetal2020_8a",
+      "Language_ID": "nyan1302",
+      "Parameter_ID": "3sg_neg_climb",
+      "Form": "etíwu",
+      "Segments": ["e", "t", "í", "w", "u"],
+      "Comment": "The underlying form is printed /a-atɪ́-wu/.",
+      "Source": ["mccollum-bakovic-mai-meinhardt-2020[(8a)]"],
+      "Underlying": "/a-tɪ́-wu/"
+    },
+    {
+      "ID": "mccollumetal2020_8b",
+      "Language_ID": "nyan1302",
+      "Parameter_ID": "1sg_neg_climb",
+      "Form": "itíwu",
+      "Segments": ["i", "t", "í", "w", "u"],
+      "Comment": "The underlying form is printed /i-tɪ́-wu/; the tape (26) runs the word as /ɪ-tɪ́-wu/.",
+      "Source": ["mccollum-bakovic-mai-meinhardt-2020[(8b)]"],
+      "Underlying": "/ɪ-tɪ́-wu/"
+    },
+    {
+      "ID": "mccollumetal2020_8c",
+      "Language_ID": "nyan1302",
+      "Parameter_ID": "1sg_fut_climb",
+      "Form": "ɪbawu",
+      "Segments": ["ɪ", "b", "a", "w", "u"],
+      "Comment": "",
+      "Source": ["mccollum-bakovic-mai-meinhardt-2020[(8c)]", "mccollum-bakovic-mai-meinhardt-2020[(27b)]"],
+      "Underlying": "/ɪ-ba-wu/"
+    },
+    {
+      "ID": "mccollumetal2020_8d",
+      "Language_ID": "nyan1302",
+      "Parameter_ID": "1sg_neg_pfv_climb",
+      "Form": "ɪtɪ́kawu",
+      "Segments": ["ɪ", "t", "ɪ́", "k", "a", "w", "u"],
+      "Comment": "",
+      "Source": ["mccollum-bakovic-mai-meinhardt-2020[(8d)]"],
+      "Underlying": "/ɪ-tɪ́-ka-wu/"
+    },
+    {
+      "ID": "mccollumetal2020_8e",
+      "Language_ID": "nyan1302",
+      "Parameter_ID": "1sg_neg_pfv_prog_climb",
+      "Form": "ɪtɪ́kaáwū",
+      "Segments": ["ɪ", "t", "ɪ́", "k", "a", "á", "w", "ū"],
+      "Comment": "",
+      "Source": ["mccollum-bakovic-mai-meinhardt-2020[(8e)]"],
+      "Underlying": "/ɪ-tɪ́-ka-á-wu/"
+    },
+    {
+      "ID": "mccollumetal2020_8f",
+      "Language_ID": "nyan1302",
+      "Parameter_ID": "1sg_neg_pfv_prog_vent_climb",
+      "Form": "ɪtɪ́kaábāwū",
+      "Segments": ["ɪ", "t", "ɪ́", "k", "a", "á", "b", "ā", "w", "ū"],
+      "Comment": "",
+      "Source": ["mccollum-bakovic-mai-meinhardt-2020[(8f)]"],
+      "Underlying": "/ɪ-tɪ́-ka-á-ba-wu/"
+    },
+    {
+      "ID": "mccollumetal2020_8g",
+      "Language_ID": "nyan1302",
+      "Parameter_ID": "1sg_neg_pfv_prog_vent_vent_climb",
+      "Form": "ɪtɪ́kaábābāwū",
+      "Segments": ["ɪ", "t", "ɪ́", "k", "a", "á", "b", "ā", "b", "ā", "w", "ū"],
+      "Comment": "",
+      "Source": ["mccollum-bakovic-mai-meinhardt-2020[(8g)]"],
+      "Underlying": "/ɪ-tɪ́-ka-á-ba-ba-wu/"
+    },
+    {
+      "ID": "mccollumetal2020_8h",
+      "Language_ID": "nyan1302",
+      "Parameter_ID": "3sg_neg_pfv_prog_vent_vent_climb",
+      "Form": "etíkeébēbēwū",
+      "Segments": ["e", "t", "í", "k", "e", "é", "b", "ē", "b", "ē", "w", "ū"],
+      "Comment": "",
+      "Source": ["mccollum-bakovic-mai-meinhardt-2020[(8h)]"],
+      "Underlying": "/a-tɪ́-ka-á-ba-ba-wu/"
+    },
+    {
+      "ID": "mccollumetal2020_27a",
+      "Language_ID": "nyan1302",
+      "Parameter_ID": "3sg_fut_climb",
+      "Form": "ebewu",
+      "Segments": ["e", "b", "e", "w", "u"],
+      "Comment": "",
+      "Source": ["mccollum-bakovic-mai-meinhardt-2020[(27a)]"],
+      "Underlying": "/a-ba-wu/"
+    }
+  ],
+  "ParameterTable": [
+    {
+      "ID": "3sg_neg_fut_come",
+      "Name": "3SG-NEG-FUT-come",
+      "Description": ""
+    },
+    {
+      "ID": "3sg_neg_fut_grow",
+      "Name": "3SG-NEG-FUT-grow",
+      "Description": ""
+    },
+    {
+      "ID": "1sg_neg_fut_come",
+      "Name": "1SG-NEG-FUT-come",
+      "Description": ""
+    },
+    {
+      "ID": "1sg_neg_fut_grow",
+      "Name": "1SG-NEG-FUT-grow",
+      "Description": ""
+    },
+    {
+      "ID": "cl1_man",
+      "Name": "CL1-man",
+      "Description": ""
+    },
+    {
+      "ID": "cl1_dog",
+      "Name": "CL1-dog",
+      "Description": ""
+    },
+    {
+      "ID": "cl3_copper",
+      "Name": "CL3-copper",
+      "Description": ""
+    },
+    {
+      "ID": "cl3_vulture",
+      "Name": "CL3-vulture",
+      "Description": ""
+    },
+    {
+      "ID": "cl4_copper",
+      "Name": "CL4-copper",
+      "Description": ""
+    },
+    {
+      "ID": "cl4_vulture",
+      "Name": "CL4-vulture",
+      "Description": ""
+    },
+    {
+      "ID": "cl8_axe",
+      "Name": "CL8-axe",
+      "Description": ""
+    },
+    {
+      "ID": "cl8_war",
+      "Name": "CL8-war",
+      "Description": ""
+    },
+    {
+      "ID": "1sg_neg_come",
+      "Name": "1SG-NEG-come",
+      "Description": ""
+    },
+    {
+      "ID": "1pl_neg_come",
+      "Name": "1PL-NEG-come",
+      "Description": ""
+    },
+    {
+      "ID": "cl5_neg_come",
+      "Name": "CL5-NEG-come",
+      "Description": ""
+    },
+    {
+      "ID": "1sg_neg_grow",
+      "Name": "1SG-NEG-grow",
+      "Description": ""
+    },
+    {
+      "ID": "1pl_neg_grow",
+      "Name": "1PL-NEG-grow",
+      "Description": ""
+    },
+    {
+      "ID": "cl5_neg_grow",
+      "Name": "CL5-NEG-grow",
+      "Description": ""
+    },
+    {
+      "ID": "3sg_fut_come",
+      "Name": "3SG-FUT-come",
+      "Description": ""
+    },
+    {
+      "ID": "cl7_fut_come",
+      "Name": "CL7-FUT-come",
+      "Description": ""
+    },
+    {
+      "ID": "2sg_fut_come",
+      "Name": "2SG-FUT-come",
+      "Description": ""
+    },
+    {
+      "ID": "3sg_fut_grow",
+      "Name": "3SG-FUT-grow",
+      "Description": ""
+    },
+    {
+      "ID": "cl7_fut_grow",
+      "Name": "CL7-FUT-grow",
+      "Description": ""
+    },
+    {
+      "ID": "2sg_fut_grow",
+      "Name": "2SG-FUT-grow",
+      "Description": ""
+    },
+    {
+      "ID": "cl7_neg_fut_come",
+      "Name": "CL7-NEG-FUT-come",
+      "Description": ""
+    },
+    {
+      "ID": "2sg_neg_fut_come",
+      "Name": "2SG-NEG-FUT-come",
+      "Description": ""
+    },
+    {
+      "ID": "cl7_neg_fut_grow",
+      "Name": "CL7-NEG-FUT-grow",
+      "Description": ""
+    },
+    {
+      "ID": "2sg_neg_fut_grow",
+      "Name": "2SG-NEG-FUT-grow",
+      "Description": ""
+    },
+    {
+      "ID": "1sg_fut_come",
+      "Name": "1SG-FUT-come",
+      "Description": ""
+    },
+    {
+      "ID": "1pl_fut_come",
+      "Name": "1PL-FUT-come",
+      "Description": ""
+    },
+    {
+      "ID": "cl5_fut_come",
+      "Name": "CL5-FUT-come",
+      "Description": ""
+    },
+    {
+      "ID": "1sg_fut_grow",
+      "Name": "1SG-FUT-grow",
+      "Description": ""
+    },
+    {
+      "ID": "1pl_fut_grow",
+      "Name": "1PL-FUT-grow",
+      "Description": ""
+    },
+    {
+      "ID": "cl5_fut_grow",
+      "Name": "CL5-FUT-grow",
+      "Description": ""
+    },
+    {
+      "ID": "1sg_itv_cook",
+      "Name": "1SG-ITV-cook",
+      "Description": ""
+    },
+    {
+      "ID": "1sg_itv_climb",
+      "Name": "1SG-ITV-climb",
+      "Description": ""
+    },
+    {
+      "ID": "1sg_fut_itv_climb",
+      "Name": "1SG-FUT-ITV-climb",
+      "Description": ""
+    },
+    {
+      "ID": "1pl_fut_itv_climb",
+      "Name": "1PL-FUT-ITV-climb",
+      "Description": ""
+    },
+    {
+      "ID": "3sg_neg_climb",
+      "Name": "3SG-NEG-climb",
+      "Description": ""
+    },
+    {
+      "ID": "1sg_neg_climb",
+      "Name": "1SG-NEG-climb",
+      "Description": ""
+    },
+    {
+      "ID": "1sg_fut_climb",
+      "Name": "1SG-FUT-climb",
+      "Description": ""
+    },
+    {
+      "ID": "1sg_neg_pfv_climb",
+      "Name": "1SG-NEG-PFV-climb",
+      "Description": ""
+    },
+    {
+      "ID": "1sg_neg_pfv_prog_climb",
+      "Name": "1SG-NEG-PFV-PROG-climb",
+      "Description": ""
+    },
+    {
+      "ID": "1sg_neg_pfv_prog_vent_climb",
+      "Name": "1SG-NEG-PFV-PROG-VENT-climb",
+      "Description": ""
+    },
+    {
+      "ID": "1sg_neg_pfv_prog_vent_vent_climb",
+      "Name": "1SG-NEG-PFV-PROG-VENT-VENT-climb",
+      "Description": ""
+    },
+    {
+      "ID": "3sg_neg_pfv_prog_vent_vent_climb",
+      "Name": "3SG-NEG-PFV-PROG-VENT-VENT-climb",
+      "Description": ""
+    },
+    {
+      "ID": "3sg_fut_climb",
+      "Name": "3SG-FUT-climb",
+      "Description": ""
+    }
+  ]
+}

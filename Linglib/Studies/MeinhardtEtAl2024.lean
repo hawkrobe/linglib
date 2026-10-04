@@ -11,23 +11,27 @@ public import Linglib.Phonology.Subregular.OSL
 public import Linglib.Core.Computability.Subsequential
 public import Linglib.Phonology.Subregular.Dependence
 public import Linglib.Core.Computability.Bimachine
+public import Linglib.Studies.McCollumEtAl2020
 
 /-!
 # Meinhardt, Mai, Baković and McCollum (2024): Weak Determinism and ATR Harmony
 
-This file formalizes the Maasai case of [meinhardt-mai-bakovic-mccollum-2024], which
-tightens the weakly deterministic function class of [heinz-lai-2013] by an explicit
-interaction condition. Bidirectional iterative ATR harmony in Maasai is attested and weakly
+This file formalizes the Maasai case of Meinhardt, Mai, Baković and McCollum, who tighten
+the weakly deterministic function class of Heinz and Lai by an explicit interaction
+condition. Bidirectional iterative ATR harmony in Maasai is attested and weakly
 deterministic, an unbounded semiambient pattern in which every target depends on one side
 at a time, so its two contradirectional subsequential passes do not interact; Turkana,
 identical but for exceptionally dominant retracted suffix vowels, is attested and
 non-deterministic, an unbounded circumambient pattern in which some targets depend on both
 sides at once. Dominance is an underlying specification of the spreading value on vowels,
 carried by roots and suffixes alike. The rightward spreading pass is output-strictly-local
-after [chandlee-eyraud-heinz-2015], the bidirectional dominant–recessive map is weakly
+after Chandlee, Eyraud and Heinz, the bidirectional dominant–recessive map is weakly
 deterministic through a non-interacting bimachine (`maasai_weaklyDeterministic`) with
 two-sided unbounded dependence (`maasai_twoSidedUnboundedDependence`) but without
 requiring both sides at once (`maasai_not_requiresBothSides`), the boundary the paper draws.
+Tutrugbu's conditional blocking, the paper's (3), lies on the other side: it requires both
+sides, so it is neither semiambient (`tutrugbu_not_semiambient`) nor weakly deterministic
+(`tutrugbu_not_weaklyDeterministic`).
 
 ## Implementation notes
 
@@ -42,6 +46,7 @@ glide effects, and the Turkana half of the paper are not represented.
 * [heinz-lai-2013]
 * [chandlee-eyraud-heinz-2015]
 * [wilson-2006]
+* [mccollum-bakovic-mai-meinhardt-2020]
 -/
 
 @[expose] public section
@@ -50,9 +55,8 @@ namespace MeinhardtEtAl2024
 
 open Subregular
 
-/-- Minimal alphabet capturing the dominance-vs-recessive distinction
-that drives Maasai ATR harmony per [meinhardt-mai-bakovic-mccollum-2024]
-p. 1203. Four symbols stand in for the relevant phonological contrasts.
+/-- A minimal alphabet captures the dominance-vs-recessive distinction that drives Maasai ATR
+harmony (p. 1203). Four symbols stand in for the relevant phonological contrasts.
 
 * `recL` — a recessive [-ATR] vowel (e.g., /ɪ/, /ʊ/), surfacing as
   [-ATR] absent harmony and raising to [+ATR] under spread.
@@ -94,7 +98,7 @@ end Seg
 
 With k = 2 the output decision at each position depends on the
 **single immediately preceding output symbol**, as in the canonical OSL fragment of
-phonological maps of [chandlee-eyraud-heinz-2015]. The rule emits as follows.
+phonological maps of Chandlee, Eyraud and Heinz. The rule emits as follows.
 
 * Current input is `dom` → emit `recH` (dominant always surfaces as
   [+ATR]).
@@ -105,8 +109,8 @@ phonological maps of [chandlee-eyraud-heinz-2015]. The rule emits as follows.
   (spread continues).
 * Current input is `recL` otherwise → emit `recL` (no spread to here).
 
-Single-direction iterative spreading patterns are OSL but not ISL
-([chandlee-eyraud-heinz-2015]), because the output decision depends on the
+Single-direction iterative spreading patterns are OSL but not ISL, after Chandlee, Eyraud and
+Heinz, because the output decision depends on the
 *output* history (how far spread has propagated) rather than the *input*
 history alone (`rightwardATR_osl_not_isLeftInputStrictlyLocal`). -/
 def rightwardATR_osl : OSLRule 2 Seg Seg where
@@ -135,8 +139,7 @@ example : rightwardATR_osl.apply [.dom, .a, .recL] = [.recH, .a, .recL] := by
 example : rightwardATR_osl.apply [.recL, .recL] = [.recL, .recL] := by decide
 
 /-- **Rightward [+ATR] spreading is Left-Output-Strictly-Local**, witnessed by
-`rightwardATR_osl` ([chandlee-eyraud-heinz-2015], the result
-[meinhardt-mai-bakovic-mccollum-2024] builds on). -/
+`rightwardATR_osl`. -/
 theorem rightwardATR_osl_isLeftOutputStrictlyLocal :
     IsLeftOutputStrictlyLocal 2 rightwardATR_osl.apply :=
   rightwardATR_osl.isLeftOutputStrictlyLocal_apply
@@ -192,7 +195,7 @@ Maasai dominant-recessive ATR harmony spreads [+ATR] from a dominant root to rec
 vowels on *both* sides. Modelled here in its non-opaque core: a recessive `recL` raises
 to `recH` iff the word contains a dominant vowel anywhere (`maasai`). This is a *union*
 of two independent spreading passes, so it is **weakly deterministic**
-([meinhardt-mai-bakovic-mccollum-2024], unbounded *semiambient*): the bimachine `maasaiBM`
+(the paper's unbounded *semiambient*): the bimachine `maasaiBM`
 tracks a dominant seen on each side and its output is literally a `unite` of one-sided
 rules. A recessive's surface ATR still co-varies with information unboundedly far on
 either side, so `maasai` satisfies `TwoSidedUnboundedDependence` — as does Tutrugbu. The
@@ -252,14 +255,14 @@ theorem maasaiBM_run : maasaiBM.run = maasai := by
       Option.map_none]
 
 /-- **Maasai ATR harmony is weakly deterministic**, the bidirectional dominant-recessive
-spread being a non-interacting bimachine ([meinhardt-mai-bakovic-mccollum-2024]). -/
+spread being a non-interacting bimachine. -/
 theorem maasai_weaklyDeterministic : IsNonInteractingBimachineComputable maasai :=
   maasaiBM_run ▸ maasaiBM.isNonInteractingBimachineComputable maasaiBM_isNonInteracting
 
 /-- **Maasai has two-sided unbounded dependence** — at every distance, a medial
 recessive's ATR flips under a dominant placed far to the left *or* far to the right,
 each side alone sufficing. Tutrugbu satisfies this too
-(`tutrugbu_twoSidedUnboundedDependence`), but Maasai does *not*
+(`McCollumEtAl2020.tutrugbu_twoSidedUnboundedDependence`), but Maasai does *not*
 `RequiresBothSides`, so it stays weakly deterministic. The paper's positive
 classification of Maasai as unbounded *semiambient*, with every target fixed by information
 from at most one side, is the stronger claim `maasai_semiambient`. -/
@@ -290,7 +293,7 @@ theorem maasai_not_requiresBothSides : ¬ RequiresBothSides maasai := fun h ↦
   h.not_isNonInteractingBimachineComputable maasai_weaklyDeterministic
 
 /-- Maasai is weakly deterministic yet not Mealy-computable, witnessing
-`synchronous ⊊ WD` in the length-preserving-stratum reading of [heinz-lai-2013]'s
+`synchronous ⊊ WD` in the length-preserving-stratum reading of Heinz and Lai's
 `LSF, RSF ⊆ WD` corollary being strict, with `maasai` as their own dominant-recessive
 witness (their Thms. 6 and 7). A Mealy-computable map is right-myopic
 (`IsMealyComputable.boundedDependence_right`), but Maasai's bidirectional spread is not
@@ -303,8 +306,23 @@ theorem maasai_not_mealyComputable : ¬ IsMealyComputable maasai := fun h ↦
 is length-preserving, so a left-subsequential computer's delay bound would cap its
 right dependence (`IsLeftSubsequential.boundedDependence_right`), but the spread's
 right dependence is unbounded. -/
-theorem maasai_not_leftSubsequential : ¬ IsLeftSubsequential maasai := fun h ↦
-  maasai_twoSidedUnboundedDependence.unboundedDependence .right
-    (h.boundedDependence_right fun xs ↦ by simp [maasai])
+theorem maasai_not_leftSubsequential : ¬ IsLeftSubsequential maasai :=
+  maasai_twoSidedUnboundedDependence.not_isSubsequential (fun _ ↦ by simp [maasai]) .left
+
+/-! ### Tutrugbu
+
+Tutrugbu's conditional blocking, the paper's (3), is unbounded circumambient (Def. 2). It
+requires both sides, so some change it makes is licensed by neither side alone and no
+non-interacting bimachine computes it. -/
+
+/-- Tutrugbu ATR harmony is not semiambient (Def. 3), since some change it makes is licensed
+by neither side alone. -/
+theorem tutrugbu_not_semiambient : ¬ OneSidedChanges McCollumEtAl2020.tutrugbu.map :=
+  McCollumEtAl2020.tutrugbu_requiresBothSides.not_oneSidedChanges
+
+/-- Tutrugbu ATR harmony is not weakly deterministic. -/
+theorem tutrugbu_not_weaklyDeterministic :
+    ¬ IsNonInteractingBimachineComputable McCollumEtAl2020.tutrugbu.map :=
+  McCollumEtAl2020.tutrugbu_requiresBothSides.not_isNonInteractingBimachineComputable
 
 end MeinhardtEtAl2024

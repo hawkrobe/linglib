@@ -5,316 +5,291 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Phonology.Subregular.Dependence
-public import Linglib.Core.Computability.Bimachine
+public import Mathlib.Data.Fintype.Option
+public import Mathlib.Data.Fintype.Prod
+public import Linglib.Core.Computability.ElgotMezei
+public import Linglib.Data.Forms.McCollumEtAl2020
+public import Linglib.Phonology.Subregular.Docking
 
 /-!
-# McCollum, Baković, Mai and Meinhardt (2020): Unbounded Circumambient Patterns
+# McCollum, Baković, Mai and Meinhardt (2020): Unbounded circumambient patterns
 
-This file formalizes the Tutrugbu case of [mccollum-bakovic-mai-meinhardt-2020]. Regressive
-ATR harmony in Tutrugbu is an unbounded circumambient pattern: the surface ATR of a prefix
-vowel depends on information arbitrarily far away on both sides, the ATR value of the root
-to the right and the height of the initial-syllable vowel to the left, since a non-high
-prefix vowel blocks harmony exactly when the initial vowel is high, at any distance. Such
-patterns require non-deterministic regular power, above the weakly deterministic bound of
-[heinz-lai-2013], and are a non-myopic harmony of the sour-grapes kind, the segmental
-counterexample to the claim that unbounded spreading is myopic. The rule `tutrugbuATR`
-implements the conditional blocking on a small alphabet, the paper's contrasts are decided,
-and the circumambience proper, both sides needed at once, is the witness fed to the
-substrate's dependence and machine-level classification (`tutrugbu_requiresBothSides`,
-`tutrugbu_nonmyopic`).
+ATR harmony in Tutrugbu spreads `[+ATR]` from the root leftward onto every prefix vowel unless
+the initial vowel is `[+high]`, in which case a `[−high]` prefix vowel blocks it. McCollum,
+Baković, Mai and Meinhardt show that this segmental pattern is unbounded circumambient in
+Jardine's sense, their (13), like the tonal patterns Jardine took to be special: the surface
+value of a medial `[−high]` vowel depends at once on the root to its right and on the initial
+vowel to its left, however far away both are. No subsequential transducer computes the map in
+either direction, (27), but a right-to-left pass that leaves some vowels undecided followed by
+a left-to-right pass that decides them does, (28) and (29), so by Elgot and Mezei's
+composition theorem the map is regular.
+
+## Main definitions
+
+* `Seg`: a prefix vowel with its height and ATR value, or a root with its ATR value
+* `Harmonizes`: the paper's generalization, the context in which a prefix vowel harmonizes
+* `tutrugbu`: the harmony as a docking process
+* `markRight`, `resolveLeft`: the two passes of the mark-up analysis
+
+## Main results
+
+* `tutrugbu_map_forms`: the map takes every word of (1) to (8) and (27) to its surface form
+* `tutrugbu_requiresBothSides`, `tutrugbu_twoSidedUnboundedDependence`: unbounded
+  circumambience, (13)
+* `tutrugbu_not_isSubsequential`: no subsequential analysis in either direction, (27)
+* `tutrugbu_map_eq_resolve_mark`, `tutrugbu_isBimachineComputable`: the mark-up analysis, and
+  the regularity it shows
+
+## Implementation notes
+
+* A word is its prefix vowels and its root, the consonants dropped as in the transducers of the
+  paper's supplementary materials. Prefixes are underlyingly `[−ATR]` (§2.3.1), and docking
+  raises a prefix vowel to `[+ATR]`.
+* The words of `Data/Forms/McCollumEtAl2020.json` are transcribed from the page images, with
+  the source's misprints recorded in their comments. The vowel of the negation prefix, printed
+  much like ⟨í⟩, is a distinct glyph in the PDF and is read as ⟨ɪ́⟩, as the column headers of
+  (3) and (5) and the tape (26) require.
+* Not modelled: the conditionally transparent variant of §2.2, the suffixes and enclitics of
+  (10), and phrasal harmony (11).
+* The paper's conclusion that the map is not weakly deterministic uses Heinz and Lai's
+  definition (17) informally, and its fn. 10 records that the definition admits mark-up-free
+  loopholes, so the conclusion is not stated here.
 
 ## References
 
 * [mccollum-bakovic-mai-meinhardt-2020]
+* [jardine-2016a]
 * [heinz-lai-2013]
-* [wilson-2006]
-* [walker-2010]
+* [elgot-mezei-1965]
 -/
 
 @[expose] public section
 
 namespace McCollumEtAl2020
 
+open Subregular
 
+/-! ### The harmony -/
 
-/-! ### Alphabet and the conditional-blocking rule -/
-
-/-- Toy Tutrugbu segment alphabet. Prefix vowels carry [±high] and a surface [±ATR];
-the root carries [±ATR] (the harmony trigger). Underlying prefixes are [−ATR]
-(`vHi`/`vLo`); harmony raises them to the [+ATR] surface forms (`vHiA`/`vLoA`). -/
+/-- A segment of a Tutrugbu word as harmony reads it is a prefix vowel with its height and ATR
+value, or a root with its ATR value. -/
 inductive Seg
-  | vHi   -- [+high] prefix vowel, surface [−ATR]
-  | vLo   -- [−high] prefix vowel, surface [−ATR]
-  | vHiA  -- [+high] prefix vowel, surface [+ATR]
-  | vLoA  -- [−high] prefix vowel, surface [+ATR]
-  | rP    -- root, [+ATR]  (e.g. 'grow')
-  | rM    -- root, [−ATR]  (e.g. 'come')
+  | pfx (high atr : Bool)
+  | root (atr : Bool)
   deriving DecidableEq, Repr
 
-namespace Seg
-/-- A [+high] prefix vowel. -/
-def isHiPfx : Seg → Bool | .vHi | .vHiA => true | _ => false
-/-- Raise a prefix vowel to its [+ATR] surface form (root vowels unchanged). -/
-def raisePfx : Seg → Seg | .vHi => .vHiA | .vLo => .vLoA | s => s
-end Seg
+/-- `s.raise` is `s` with `[+ATR]`, if `s` is a prefix vowel. -/
+def Seg.raise : Seg → Seg
+  | .pfx h _ => .pfx h true
+  | .root a => .root a
 
-open Seg
+/-- `s.isHigh` is the height of a prefix vowel; a root counts as not `[+high]`. -/
+def Seg.isHigh : Seg → Bool
+  | .pfx h _ => h
+  | .root _ => false
 
-/-- Regressive spread over the prefixes, scanned **root-side first** (the list is the
-reversed prefix sequence). `spreading` tracks whether [+ATR] still propagates;
-`initialHi` is whether the initial-syllable vowel is [+high] (the blocking condition).
-A [−high] vowel is a *conditional blocker*: it halts spread only when `initialHi`. -/
-def spreadRTL (initialHi : Bool) : Bool → List Seg → List Seg
-  | _, [] => []
-  | spreading, v :: rest =>
-    if spreading then
-      if v.isHiPfx then raisePfx v :: spreadRTL initialHi true rest
-      else if initialHi then v :: spreadRTL initialHi false rest        -- blocker
-      else raisePfx v :: spreadRTL initialHi true rest
-    else v :: spreadRTL initialHi false rest
+/-- The initial vowel of `w` is `[+high]`. -/
+def InitialHigh (w : List Seg) : Prop := ∃ a, w.head? = some (.pfx true a)
 
-@[simp] theorem spreadRTL_nil (ih sp : Bool) : spreadRTL ih sp [] = [] := rfl
+instance : DecidablePred InitialHigh := fun w ↦ by unfold InitialHigh; infer_instance
 
-theorem spreadRTL_cons (ih sp : Bool) (v : Seg) (rest : List Seg) :
-    spreadRTL ih sp (v :: rest) =
-      if sp then
-        (if v.isHiPfx then raisePfx v :: spreadRTL ih true rest
-         else if ih then v :: spreadRTL ih false rest
-         else raisePfx v :: spreadRTL ih true rest)
-      else v :: spreadRTL ih false rest := rfl
+/-- Prefix vowel `i` of `w` harmonizes when a `[+ATR]` root follows it, unless the initial vowel
+is `[+high]` and a `[−high]` vowel lies at or after `i`. -/
+def Harmonizes (w : List Seg) (i : ℕ) : Prop :=
+  .root true ∈ w.drop (i + 1) ∧ (InitialHigh w → ∀ a, .pfx false a ∉ w.drop i)
 
-/-- Once spreading has stopped, the scan leaves the list unchanged. -/
-theorem spreadRTL_stopped (ih : Bool) : ∀ L, spreadRTL ih false L = L
-  | [] => rfl
-  | v :: rest => by rw [spreadRTL_cons, ite_eq_right (by decide), spreadRTL_stopped ih rest]
+instance (w : List Seg) (i : ℕ) : Decidable (Harmonizes w i) := by
+  unfold Harmonizes; infer_instance
 
-/-- With an initial [−high] vowel (`ih = false`), nothing blocks: every prefix raises. -/
-theorem spreadRTL_false_true : ∀ L, spreadRTL false true L = L.map raisePfx
-  | [] => rfl
-  | v :: rest => by
-      rw [spreadRTL_cons, ite_eq_left rfl]
-      have ih := spreadRTL_false_true rest
-      cases h : v.isHiPfx <;> simp [ih]
+/-- Tutrugbu ATR harmony docks `[+ATR]` on the prefix vowels that harmonize. -/
+def tutrugbu : Docking Seg where
+  dock := Seg.raise
+  Docks := Harmonizes
+  lt_length {w i} h := by
+    by_contra hi
+    have h1 := h.1
+    rw [List.drop_eq_nil_of_le (by omega)] at h1
+    exact List.not_mem_nil h1
+  decDocks _ _ := inferInstance
 
-/-- A `replicate`-block of [+high] fillers raises and keeps spreading. -/
-theorem spreadRTL_replicate_vHi (ih : Bool) (rest : List Seg) :
-    ∀ n, spreadRTL ih true (List.replicate n .vHi ++ rest)
-       = List.replicate n .vHiA ++ spreadRTL ih true rest
-  | 0 => by simp
-  | n + 1 => by
-      rw [List.replicate_succ, List.cons_append, spreadRTL_cons, ite_eq_left rfl,
-          ite_eq_left (by decide : (Seg.vHi).isHiPfx = true),
-          spreadRTL_replicate_vHi ih rest n, List.replicate_succ, List.cons_append]
-      rfl
+/-! ### The data
 
-/-- Tutrugbu ATR harmony on `[prefix vowels…] ++ [root]`. Harmony applies only with a
-[+ATR] root; the initial-syllable height gates conditional blocking. -/
-def tutrugbuATR (xs : List Seg) : List Seg :=
-  match xs.getLast? with
-  | some .rP =>
-    let prefixes := xs.dropLast
-    let initialHi := match prefixes.head? with | some p => p.isHiPfx | none => false
-    (spreadRTL initialHi true prefixes.reverse).reverse ++ [.rP]
-  | _ => xs
+The words of (1) to (8) and (27) are read off their transcriptions: the morphemes of the
+underlying form give one segment per prefix vowel and one for the root, and the surface vowels
+are aligned with them. -/
 
-/-! ### Stimulus contrasts (paper §2.1, exx. (3)-(8)) -/
+/-- The height and ATR value of the vowel letter `c`, after the inventory of §2.1, in which `ɪ`
+and `ʊ` are the `[+high, −ATR]` vowels; any other character is no vowel. -/
+def vowelFeatures : Char → Option (Bool × Bool)
+  | 'i' | 'í' | 'ī' | 'u' | 'ú' | 'ū' => some (true, true)
+  | 'ɪ' | 'ʊ' => some (true, false)
+  | 'e' | 'é' | 'ē' | 'o' | 'ó' | 'ō' => some (false, true)
+  | 'a' | 'á' | 'ā' | 'ɔ' | 'ɛ' => some (false, false)
+  | _ => none
 
--- (3) all [+high] prefixes + [+ATR] root: full harmony.  /ɪ-tɔ-ʃɣ/ analogue
-example : tutrugbuATR [.vHi, .vHi, .rP] = [.vHiA, .vHiA, .rP] := by decide
--- (4) all [−high] prefixes + [+ATR] root: full harmony.  /a-ba-ʃɣ/ → [ebeʃɣ]
-example : tutrugbuATR [.vLo, .vLo, .rP] = [.vLoA, .vLoA, .rP] := by decide
--- (4a) [−ATR] root: no harmony.  /a-ba-bá/ → [ababá]
-example : tutrugbuATR [.vLo, .vLo, .rM] = [.vLo, .vLo, .rM] := by decide
--- (6) [+high] initial + [−high] medial + [+ATR] root: BLOCKED.  /ɪ-ba-ʃɣ/ → [ɪbaʃɣ]
-example : tutrugbuATR [.vHi, .vLo, .rP] = [.vHi, .vLo, .rP] := by decide
--- (7c) harmony spreads up to the blocker.  /ɪ-ba-dɪ-wu/ → [ɪbadiwu]
-example : tutrugbuATR [.vHi, .vLo, .vHi, .rP] = [.vHi, .vLo, .vHiA, .rP] := by decide
+/-- `ofForm f` is the underlying and the surface string of the word `f`. The vowels of its
+`Underlying` column after the last morpheme boundary are the root's, and its surface vowels
+are aligned with them. -/
+def ofForm (f : Data.Forms.Form) : Option (List Seg × List Seg) := do
+  let u := ((f.column? "Underlying").getD "").toList.reverse
+  let pre := (u.dropWhile (· != '-')).reverse.filterMap vowelFeatures
+  let rt ← ((u.takeWhile (· != '-')).filterMap vowelFeatures).getLast?
+  let sv := f.segments.filterMap fun s ↦ s.toList.head?.bind vowelFeatures
+  let rt' ← (sv.drop pre.length).head?
+  let word (vs : List (Bool × Bool)) (r : Bool × Bool) : List Seg :=
+    vs.map (fun v ↦ .pfx v.1 v.2) ++ [.root r.2]
+  some (word pre rt, word (sv.take pre.length) rt')
 
-/-- **The circumambient contrast** (paper §2.1): at a fixed medial [−high] target, the
-surface ATR depends on BOTH the initial-σ height (left) AND the root ATR (right). -/
-example : -- initial [−high], root [+ATR] → target harmonises
-    tutrugbuATR [.vLo, .vLo, .rP] = [.vLoA, .vLoA, .rP] := by decide
-example : -- vary the LEFT (initial → [+high]): target blocked
-    tutrugbuATR [.vHi, .vLo, .rP] = [.vHi, .vLo, .rP] := by decide
-example : -- vary the RIGHT (root → [−ATR]): target unharmonised
-    tutrugbuATR [.vLo, .vLo, .rM] = [.vLo, .vLo, .rM] := by decide
+/-- The map takes the underlying form of every word of (1) to (8) and (27) to its surface
+form. -/
+theorem tutrugbu_map_forms : ∀ f ∈ Forms.all, ∃ p ∈ ofForm f, tutrugbu.map p.1 = p.2 := by
+  decide
 
-/-- **Unbounded conditional blocking** (paper exx. (8c)/(8d); longer gaps schematised):
-the [+high] initial and the [−high] blocker keep interacting across arbitrarily many
-intervening [+high] vowels — the rule licenses an unbounded gap. -/
-example : tutrugbuATR [.vHi, .vLo, .rP] = [.vHi, .vLo, .rP] := by decide            -- (8c)
-example : tutrugbuATR [.vHi, .vHi, .vLo, .rP] = [.vHi, .vHi, .vLo, .rP] := by decide -- (8d)
-example : tutrugbuATR [.vHi, .vHi, .vHi, .vLo, .rP]
-        = [.vHi, .vHi, .vHi, .vLo, .rP] := by decide                               -- gap 2 (schem.)
--- contrast: drop the [+high] initial (→ [−high]) and the SAME word harmonises fully
-example : tutrugbuATR [.vLo, .vHi, .vHi, .vLo, .rP]
-        = [.vLoA, .vHiA, .vHiA, .vLoA, .rP] := by decide
+/-! ### Unbounded circumambience
 
-/-! ### Subregular classification -/
+The witness is a run of `[−high]` vowels between the initial vowel and the root. With a
+`[−high]` initial and a `[+ATR]` root the whole run harmonizes, as in (8h); a `[+high]` initial
+blocks it, as in (8g); a `[−ATR]` root triggers nothing, as in (5a) against (5d). -/
 
-/-- The prefix sequence of the witness: a [−high]/[+high] initial, then `d` [+high]
-fillers, the [−high] target, and `d` more [+high] fillers. -/
-def pre (init : Seg) (d : ℕ) : List Seg :=
-  init :: List.replicate d .vHi ++ .vLo :: List.replicate d .vHi
+private theorem harmonizes_flankWord_mid (x y : Seg) (d : ℕ) :
+    Harmonizes (flankWord x (.pfx false false) y (2 * d + 1)) (d + 1) ↔
+      y = .root true ∧ ∀ a, x ≠ .pfx true a := by
+  rw [Harmonizes, mem_drop_flankWord_iff (by simp) (by omega), drop_flankWord (by omega)]
+  simp [InitialHigh, show 2 * d + 1 - d = d + 1 by omega, List.replicate_succ, eq_comm]
 
-/-- The unbounded-circumambience witness at distance `d`: a [−high] target flanked by
-`d` [+high] fillers on each side, a [−high] initial, and a [+ATR] root. -/
-def base (d : ℕ) : List Seg := pre .vLo d ++ [.rP]
-/-- Far-LEFT perturbation: flip the initial to [+high] (blocks the target). -/
-def baseL (d : ℕ) : List Seg := pre .vHi d ++ [.rP]
-/-- Far-RIGHT perturbation: flip the root to [−ATR] (removes the trigger). -/
-def baseR (d : ℕ) : List Seg := pre .vLo d ++ [.rM]
+/-- Tutrugbu ATR harmony requires both sides. At every distance a medial `[−high]` vowel
+harmonizes, and changing either the initial vowel or the root alone undoes it. -/
+theorem tutrugbu_requiresBothSides : RequiresBothSides tutrugbu.map :=
+  tutrugbu.requiresBothSides_of_flanks (fill := .pfx false false) (xOn := .pfx false false)
+    (yOn := .root true) (xOff := .pfx true false) (yOff := .root false)
+    (n := fun d ↦ 2 * d + 1) (t := fun d ↦ d + 1) (by decide) (fun _ ↦ by omega)
+    (fun _ ↦ by omega) (fun d ↦ (harmonizes_flankWord_mid _ _ d).mpr ⟨rfl, by simp⟩)
+    (fun d h ↦ ((harmonizes_flankWord_mid _ _ d).mp h).2 false rfl)
+    (fun d h ↦ by simpa using ((harmonizes_flankWord_mid _ _ d).mp h).1)
 
-/-- `tutrugbuATR` on `base d`: with a [−high] initial nothing blocks, so every prefix
-raises; the target at index `d+1` surfaces [+ATR] (`.vLoA`). -/
-theorem tutrugbuATR_base (d : ℕ) :
-    tutrugbuATR (base d)
-      = .vLoA :: List.replicate d .vHiA ++ .vLoA :: List.replicate d .vHiA ++ [.rP] := by
-  have hLast : (base d).getLast? = some .rP := by simp [base]
-  have hDrop : (base d).dropLast = pre .vLo d := by simp [base]
-  have hHead : (pre .vLo d).head? = some .vLo := by simp [pre]
-  -- With ih=false, spreading raises every prefix
-  have hSpread : (spreadRTL false true (pre .vLo d).reverse).reverse = (pre .vLo d).map .raisePfx :=
-    by rw [spreadRTL_false_true, List.map_reverse, List.reverse_reverse]
-  -- First reduce tutrugbuATR using the computed pieces
-  rw [show tutrugbuATR (base d) =
-      (spreadRTL false true (pre .vLo d).reverse).reverse ++ [.rP] from by
-    simp only [tutrugbuATR, hLast, hDrop, hHead, Seg.isHiPfx]]
-  -- Now substitute the spread result and expand pre
-  rw [hSpread]
-  simp only [pre, List.map_cons, List.map_append, List.map_replicate, Seg.raisePfx,
-    List.cons_append, List.append_assoc]
-
-/-- `tutrugbuATR` on `baseL d`: a [+high] initial makes the [−high] target a blocker, so
-[+ATR] reaches only the root-side fillers; the target at index `d+1` stays [−ATR]. -/
-theorem tutrugbuATR_baseL (d : ℕ) :
-    tutrugbuATR (baseL d)
-      = List.replicate (d + 1) .vHi ++ .vLo :: List.replicate d .vHiA ++ [.rP] := by
-  have hLast : (baseL d).getLast? = some .rP := by simp [baseL]
-  have hDrop : (baseL d).dropLast = pre .vHi d := by simp [baseL]
-  have hHead : (pre .vHi d).head? = some .vHi := by simp [pre]
-  -- (pre .vHi d).reverse = replicate d .vHi ++ .vLo :: replicate (d+1) .vHi
-  have hRev : (pre .vHi d).reverse =
-      List.replicate d .vHi ++ .vLo :: List.replicate (d + 1) .vHi := by
-    simp only [pre, List.reverse_cons, List.reverse_append, List.reverse_replicate,
-      List.append_assoc, List.cons_append, List.nil_append, List.replicate_succ']
-  -- spreadRTL result: replicate d .vHiA ++ .vLo :: replicate (d+1) .vHi
-  have hSpread : spreadRTL true true ((pre .vHi d).reverse) =
-      List.replicate d .vHiA ++ .vLo :: List.replicate (d + 1) .vHi := by
-    rw [hRev, spreadRTL_replicate_vHi, spreadRTL_cons]
-    simp only [Seg.isHiPfx, ite_true, ite_false, Bool.false_eq_true, spreadRTL_stopped]
-  -- Reduce tutrugbuATR to the spread expression
-  rw [show tutrugbuATR (baseL d) =
-      (spreadRTL true true (pre .vHi d).reverse).reverse ++ [.rP] from by
-    simp only [tutrugbuATR, hLast, hDrop, hHead, Seg.isHiPfx]]
-  -- Substitute hSpread and reverse the result
-  rw [hSpread]
-  simp only [List.reverse_append, List.reverse_replicate, List.reverse_cons, List.nil_append,
-    List.append_assoc, List.cons_append]
-
-/-- `tutrugbuATR` on `baseR d`: a [−ATR] root provides no trigger, so the map is the
-identity; the target at index `d+1` stays [−ATR]. -/
-theorem tutrugbuATR_baseR (d : ℕ) : tutrugbuATR (baseR d) = baseR d := by
-  have hLast : (baseR d).getLast? = some .rM := by simp [baseR]
-  simp only [tutrugbuATR, hLast]
-
-/-- The base output at the target index is [+ATR]. -/
-theorem base_get_target (d : ℕ) : (tutrugbuATR (base d))[d + 1]? = some .vLoA := by
-  rw [tutrugbuATR_base]
-  simp
-
-/-- The `baseL` output at the target index is [−ATR] (blocked). -/
-theorem baseL_get_target (d : ℕ) : (tutrugbuATR (baseL d))[d + 1]? = some .vLo := by
-  rw [tutrugbuATR_baseL]
-  simp
-
-/-- The `baseR` output at the target index is [−ATR] (no trigger). -/
-theorem baseR_get_target (d : ℕ) : (tutrugbuATR (baseR d))[d + 1]? = some .vLo := by
-  rw [tutrugbuATR_baseR]
-  simp [baseR, pre]
-
-/-- The input symbol at the target index is the recessive `.vLo` (for any initial and
-root): the prefix sequence places a `[−high]` vowel there. -/
-theorem pre_get_target (init : Seg) (d : ℕ) : (pre init d)[d + 1]? = some .vLo := by
-  simp only [pre, List.cons_append, List.getElem?_cons_succ]
-  rw [List.getElem?_append_right (by simp)]
-  simp
-
-/-- **Tutrugbu ATR harmony requires both sides** — the strong witness form of the
-paper's unbounded circumambience (its def. 13): at the medial target the base spreads
-([+ATR]), but flipping the initial height to the far left *or* the root ATR to the far
-right reverts it to its [−ATR] input — the suppression structure no union of one-sided
-rules can produce. -/
-theorem tutrugbu_requiresBothSides : RequiresBothSides tutrugbuATR := by
-  intro d
-  have hpl : (pre Seg.vLo d).length = 2 * d + 2 := by
-    simp only [pre, List.length_cons, List.length_append, List.length_replicate]; omega
-  have hplH : (pre Seg.vHi d).length = 2 * d + 2 := by
-    simp only [pre, List.length_cons, List.length_append, List.length_replicate]; omega
-  have hbin : (base d)[d + 1]? = some .vLo := by
-    rw [show base d = pre Seg.vLo d ++ [.rP] from rfl,
-        List.getElem?_append_left (by omega : d + 1 < (pre Seg.vLo d).length), pre_get_target]
-  have hLin : (baseL d)[d + 1]? = some .vLo := by
-    rw [show baseL d = pre Seg.vHi d ++ [.rP] from rfl,
-        List.getElem?_append_left (by omega : d + 1 < (pre Seg.vHi d).length), pre_get_target]
-  have hRin : (baseR d)[d + 1]? = some .vLo := by
-    rw [show baseR d = pre Seg.vLo d ++ [.rM] from rfl,
-        List.getElem?_append_left (by omega : d + 1 < (pre Seg.vLo d).length), pre_get_target]
-  refine ⟨base d, d + 1, ?_, ?_, λ s => ?_⟩
-  · simp only [base, pre, List.length_cons, List.length_append, List.length_replicate,
-      List.length_nil]; omega
-  · rw [base_get_target, hbin]; decide
-  match s with
-  | .left =>
-    refine ⟨baseL d, ⟨?_, ?_⟩, ?_, ?_⟩
-    · simp only [baseL, base, pre, List.length_cons, List.length_append,
-        List.length_replicate, List.length_nil]
-    · intro k hk
-      simp only [ScanDirection.window_left, Set.mem_Ici] at hk
-      cases k with
-      | zero => omega
-      | succ k' => simp only [base, baseL, pre, List.cons_append, List.getElem?_cons_succ]
-    · rw [hLin, hbin]
-    · rw [baseL_get_target, hLin]
-  | .right =>
-    refine ⟨baseR d, ⟨?_, ?_⟩, ?_, ?_⟩
-    · simp only [baseR, base, pre, List.length_cons, List.length_append,
-        List.length_replicate, List.length_nil]
-    · intro k hk
-      simp only [ScanDirection.window_right, Set.mem_Iic] at hk
-      show (base d)[k]? = (baseR d)[k]?
-      rw [show base d = pre Seg.vLo d ++ [.rP] from rfl,
-          show baseR d = pre Seg.vLo d ++ [.rM] from rfl,
-          List.getElem?_append_left (by omega : k < (pre Seg.vLo d).length),
-          List.getElem?_append_left (by omega : k < (pre Seg.vLo d).length)]
-    · rw [hRin, hbin]
-    · rw [baseR_get_target, hRin]
-
-/-- **Tutrugbu ATR harmony has two-sided unbounded dependence** — the weaker
-diagnostic, derived from the requires-both-sides witness. -/
-theorem tutrugbu_twoSidedUnboundedDependence : TwoSidedUnboundedDependence tutrugbuATR :=
+/-- Tutrugbu ATR harmony is unbounded circumambient in the sense of (13). At every distance one
+medial vowel changes under a far change on either side. -/
+theorem tutrugbu_twoSidedUnboundedDependence : TwoSidedUnboundedDependence tutrugbu.map :=
   tutrugbu_requiresBothSides.twoSidedUnboundedDependence
 
-/-- **Tutrugbu ATR harmony is non-myopic** — the attested "variation on sour grapes"
-([mccollum-bakovic-mai-meinhardt-2020]; [wilson-2006]). A segmental counterexample to
-the myopia generalisation defended by [kimper-2012] and [mascaro-2019], on the
-nonmyopic side argued by [walker-2010]. -/
-theorem tutrugbu_nonmyopic (s : ScanDirection) : UnboundedDependence tutrugbuATR s :=
-  tutrugbu_twoSidedUnboundedDependence.unboundedDependence s
+/-- No subsequential transducer computes Tutrugbu ATR harmony, in either direction, (27). -/
+theorem tutrugbu_not_isSubsequential : ∀ d, ¬ IsSubsequential d tutrugbu.map :=
+  tutrugbu_twoSidedUnboundedDependence.not_isSubsequential fun _ ↦ tutrugbu.map_length
 
-/-- **Tutrugbu is not semiambient** — where Maasai's changes are each licensed by one
-side (`MeinhardtEtAl2024.maasai_semiambient`), Tutrugbu's harmonisation cell cannot
-be: the trigger sits on one side and the blocker on the other. -/
-theorem tutrugbu_not_semiambient : ¬ OneSidedChanges tutrugbuATR :=
-  tutrugbu_requiresBothSides.not_oneSidedChanges
+/-! ### The mark-up analysis
 
-/-- **Tutrugbu ATR harmony is not weakly deterministic** — it needs the full
-non-deterministic regular power, above the weakly-deterministic upper bound of
-[heinz-lai-2013]. The capstone: the conjunctive blocking (`tutrugbu_requiresBothSides`)
-cannot be a union of one-sided rules, so no non-interacting bimachine computes it. -/
-theorem tutrugbu_not_weaklyDeterministic :
-    ¬ IsNonInteractingBimachineComputable tutrugbuATR :=
-  tutrugbu_requiresBothSides.not_isNonInteractingBimachineComputable
+The right-to-left pass (28), Fig. 8 of the supplementary materials, decides each prefix vowel
+it can: before a `[−ATR]` root a vowel stays `[−ATR]`, and a `[+high]` vowel before a `[+ATR]`
+root with no `[−high]` vowel in between is `[+ATR]`. From the first `[−high]` vowel leftward it
+leaves the value open, writing Ê for a `[+high]` vowel and Ψ for a `[−high]` one. The
+left-to-right pass (29), Fig. 9, reads the height of the initial vowel: if it is `[+high]` the
+blocking conditions hold and every open vowel stays `[−ATR]`, and otherwise every open vowel is
+`[+ATR]`. -/
+
+/-- A symbol of the intermediate alphabet is a decided segment, or a prefix vowel of known
+height whose ATR value is left open, Ê when `[+high]` and Ψ when `[−high]`. -/
+inductive Mark
+  | seg (s : Seg)
+  | undecided (high : Bool)
+  deriving DecidableEq, Repr
+
+/-- `m.isHigh` is the height of a marked segment. -/
+def Mark.isHigh : Mark → Bool
+  | .seg s => s.isHigh
+  | .undecided h => h
+
+/-- The right-to-left pass (28). Its state records whether a `[+ATR]` root has been read and
+whether a `[−high]` vowel has. -/
+def markRight : Mealy (Bool × Bool) Seg Mark where
+  start := (false, false)
+  step p s := match s with
+    | .root true => (true, p.2)
+    | .pfx false _ => (p.1, true)
+    | _ => p
+  output p s := match s with
+    | .pfx h false => if !p.1 then .seg s else if h && !p.2 then .seg (.pfx h true)
+      else .undecided h
+    | s => .seg s
+
+/-- The left-to-right pass (29). Its state records the height of the initial vowel. -/
+def resolveLeft : Mealy (Option Bool) Mark Seg where
+  start := none
+  step b m := some (b.getD m.isHigh)
+  output b m := match m with
+    | .seg s => s
+    | .undecided h => .pfx h !(b.getD h)
+
+private theorem markRight_stateAfter (p : Bool × Bool) (xs : List Seg) :
+    markRight.stateAfter p xs =
+      (p.1 || decide (.root true ∈ xs), p.2 || decide (∃ a, .pfx false a ∈ xs)) := by
+  induction xs generalizing p with
+  | nil => simp
+  | cons x xs ih =>
+    rw [Mealy.stateAfter_cons, ih]
+    rcases x with ⟨_ | _, _⟩ | _ | _ <;> simp [markRight]
+
+private theorem resolveLeft_stateAfter (xs : List Mark) :
+    resolveLeft.stateAfter none xs = xs.head?.map Mark.isHigh := by
+  cases xs with
+  | nil => rfl
+  | cons x xs =>
+    simp only [Mealy.stateAfter_cons, List.head?_cons, Option.map_some]
+    induction xs generalizing x with
+    | nil => rfl
+    | cons y ys ih => simpa [resolveLeft] using ih x
+
+/-- The first pass keeps every vowel's height. -/
+private theorem isHigh_markRight_output (p : Bool × Bool) (s : Seg) :
+    (markRight.output p s).isHigh = s.isHigh := by
+  rcases s with ⟨h, _ | _⟩ | a <;> simp only [markRight] <;> (try split_ifs) <;> rfl
+
+/-- So the second pass reads the height of the initial vowel of the input. -/
+private theorem head?_take_markRight_runRight (w : List Seg) (i : ℕ) :
+    ((markRight.runRight w).take i).head?.map Mark.isHigh = (w.take i).head?.map Seg.isHigh := by
+  rcases i with _ | i
+  · rfl
+  rw [List.head?_take, List.head?_take, ite_eq_right i.add_one_ne_zero,
+    ite_eq_right i.add_one_ne_zero,
+    List.head?_eq_getElem?, List.head?_eq_getElem?, Mealy.getElem?_runRight, Option.map_map]
+  exact Option.map_congr fun s _ ↦ isHigh_markRight_output _ s
+
+/-- The mark-up analysis computes Tutrugbu ATR harmony, marking right to left and then
+resolving left to right. -/
+theorem tutrugbu_map_eq_resolve_mark (w : List Seg) :
+    tutrugbu.map w = resolveLeft.run (markRight.runRight w) := by
+  refine List.ext_getElem? fun i ↦ ?_
+  rw [Docking.map_getElem?, Mealy.getElem?_run, Mealy.getElem?_runRight,
+    show resolveLeft.start = none from rfl, resolveLeft_stateAfter,
+    head?_take_markRight_runRight, show markRight.start = (false, false) from rfl,
+    markRight_stateAfter]
+  rcases ha : w[i]? with _ | a
+  · rfl
+  obtain ⟨hi, rfl⟩ := List.getElem?_eq_some_iff.mp ha
+  have hstate : (w.take i).head?.map Seg.isHigh =
+      if i = 0 then none else some (w.head?.any Seg.isHigh) := by
+    rcases i with _ | i
+    · rfl
+    · simp [List.head?_eq_getElem?, List.getElem?_eq_getElem (show 0 < w.length by omega)]
+  have hinit : InitialHigh w ↔ w.head?.any Seg.isHigh := by
+    unfold InitialHigh
+    rcases w.head? with _ | (⟨_ | _, _⟩ | _) <;> simp [Seg.isHigh]
+  have h0 : i = 0 → w.head?.any Seg.isHigh = w[i].isHigh := by
+    rintro rfl
+    simp [List.head?_eq_getElem?, List.getElem?_eq_getElem hi]
+  simp only [Option.map_some, Option.some_inj, Bool.false_or, List.mem_reverse, hstate,
+    tutrugbu, Harmonizes, hinit, List.drop_eq_getElem_cons hi, List.mem_cons, not_or]
+  revert h0
+  generalize w.head?.any Seg.isHigh = IH
+  by_cases hT : Seg.root true ∈ w.drop (i + 1) <;>
+    by_cases hB : ∃ a, Seg.pfx false a ∈ w.drop (i + 1) <;>
+    rcases w[i] with ⟨_ | _, _ | _⟩ | _ <;> cases IH <;> by_cases i = 0 <;>
+    simp_all [resolveLeft, markRight, Seg.raise, Seg.isHigh] <;> tauto
+
+/-- Tutrugbu ATR harmony is regular. The mark-up analysis is a left-to-right Mealy pass after a
+right-to-left one, and a bimachine computes such a composite. -/
+theorem tutrugbu_isBimachineComputable : IsBimachineComputable tutrugbu.map := by
+  rw [show tutrugbu.map = resolveLeft.run ∘ markRight.runRight from
+    funext tutrugbu_map_eq_resolve_mark]
+  exact resolveLeft.isBimachineComputable_run_comp_runRight markRight
 
 end McCollumEtAl2020

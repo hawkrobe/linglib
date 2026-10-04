@@ -28,6 +28,7 @@ only that window, so the map depends boundedly on both sides in the sense of
 ## Main results
 
 * `Docking.map_getElem?` — the rewrite pointwise.
+* `Docking.requiresBothSides_of_flanks` — the flank-witness template, from three docking facts.
 * `Docking.ofQF_map_getElem?_congr` — with a bounded guard, the output at a position reads
   only the guard's window.
 * `Docking.ofQF_boundedDependence` — hence bounded dependence on both sides.
@@ -42,11 +43,11 @@ only that window, so the map depends boundedly on both sides in the sense of
 
 namespace Subregular
 
-/-- A docking process over the alphabet `α`: what docking does to a position's symbol, and the
-context predicate saying at which positions of a word it docks; the other positions keep
-their symbol. -/
+/-- A docking process over the alphabet `α` is what docking does to a position's symbol,
+together with the context predicate saying at which positions of a word it docks; the other
+positions keep their symbol. -/
 structure Docking (α : Type*) where
-  /-- The change docked at a position. -/
+  /-- `dock a` is the change docked at a position holding `a`. -/
   dock : α → α
   /-- Position `i` of `w` is docked at. -/
   Docks : List α → ℕ → Prop
@@ -61,7 +62,7 @@ variable {α : Type*} (P : Docking α) {w : List α} {i : ℕ}
 
 instance (w : List α) (i : ℕ) : Decidable (P.Docks w i) := P.decDocks w i
 
-/-- The induced rewrite: the change docked exactly at the docking positions. -/
+/-- The induced rewrite docks the change exactly at the docking positions. -/
 def map (w : List α) : List α := w.mapIdx fun i a => if P.Docks w i then P.dock a else a
 
 @[simp] theorem map_nil : P.map [] = [] := rfl
@@ -78,12 +79,28 @@ theorem map_getElem?_of_docks (h : P.Docks w i) : (P.map w)[i]? = w[i]?.map P.do
 theorem map_getElem?_of_not_docks (h : ¬ P.Docks w i) : (P.map w)[i]? = w[i]? := by
   simp [map_getElem?, h]
 
-/-- The docking positions of `w`, as a finite set. -/
+/-- `P.support w` is the finite set of docking positions of `w`. -/
 def support (w : List α) : Finset ℕ := (Finset.range w.length).filter (P.Docks w)
 
 @[simp] theorem mem_support : i ∈ P.support w ↔ P.Docks w i := by
   simp only [support, Finset.mem_filter, Finset.mem_range, and_iff_right_iff_imp]
   exact P.lt_length
+
+/-- The flank-witness template at the docking level. A process that docks a change of the
+filler at a `d`-margined target of a flank word, and does not dock there when either flank
+alone is flipped, requires both sides. -/
+theorem requiresBothSides_of_flanks {fill xOn yOn xOff yOff : α} {n t : ℕ → ℕ}
+    (hfill : P.dock fill ≠ fill) (ht : ∀ d, d < t d) (hn : ∀ d, t d + d ≤ n d)
+    (hon : ∀ d, P.Docks (flankWord xOn fill yOn (n d)) (t d))
+    (hoffL : ∀ d, ¬ P.Docks (flankWord xOff fill yOn (n d)) (t d))
+    (hoffR : ∀ d, ¬ P.Docks (flankWord xOn fill yOff (n d)) (t d)) :
+    RequiresBothSides P.map :=
+  have hmid (x y : α) (d : ℕ) : (flankWord x fill y (n d))[t d]? = some fill :=
+    getElem?_flankWord_mid (by have := ht d; omega) (by have := hn d; omega)
+  .of_flanks (fill := fill) (xOn := xOn) (yOn := yOn) (xOff := xOff) (yOff := yOff) ht hn
+    (fun d => by rw [P.map_getElem?_of_docks (hon d), hmid]; simpa using hfill)
+    (fun d => by rw [P.map_getElem?_of_not_docks (hoffL d), hmid])
+    (fun d => by rw [P.map_getElem?_of_not_docks (hoffR d), hmid])
 
 /-! ### Quantifier-free contexts -/
 

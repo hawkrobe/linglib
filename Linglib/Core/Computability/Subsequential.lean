@@ -58,6 +58,9 @@ classification predicates require a `Fintype` instance.
   subsequential functions pull back regular languages
 * `IsLeftSubsequential.bounded_delay`, `IsRightSubsequential.bounded_delay`: all but
   boundedly many symbols of `f u` survive extending the input on the far side
+* `IsLeftSubsequential.exists_dependsOn_Iic`, `IsRightSubsequential.exists_dependsOn_Ici`:
+  a length-preserving subsequential function reads each output coordinate off a window
+  bounded on the far side
 
 ## Implementation notes
 
@@ -98,7 +101,7 @@ machine whose `output` is the block of symbols emitted on reading an input symbo
 state — together with a state-final output (`finalOutput`). -/
 @[ext]
 structure SubsequentialTransducer (σ α β : Type*) extends Mealy σ α (List β) where
-  /-- Output emitted on terminating in a state. -/
+  /-- `finalOutput s` is the block emitted on terminating in the state `s`. -/
   finalOutput : σ → List β
 
 instance [Inhabited σ] : Inhabited (SubsequentialTransducer σ α β) :=
@@ -188,7 +191,7 @@ def map (g : σ ≃ τ) (T : SubsequentialTransducer σ α β) : SubsequentialTr
 @[simp] theorem runRight_map (g : σ ≃ τ) : (map g T).runRight = T.runRight := by
   funext xs; simp [runRight]
 
-/-- `map` as an equivalence of machines. -/
+/-- `reindex g` is `map g` as an equivalence of machines. -/
 def reindex (g : σ ≃ τ) : SubsequentialTransducer σ α β ≃ SubsequentialTransducer τ α β where
   toFun := map g
   invFun := map g.symm
@@ -333,7 +336,7 @@ def Mealy.toSubsequentialTransducer (T : Mealy σ α β) : SubsequentialTransduc
 
 /-- A witness that every output block of `T` is a singleton, named by `cell`. -/
 structure SubsequentialTransducer.LetterToLetter (T : SubsequentialTransducer σ α β) where
-  /-- The single symbol emitted at a cell. -/
+  /-- `cell s a` is the symbol emitted on reading `a` in the state `s`. -/
   cell : σ → α → β
   /-- Every output block is that singleton. -/
   output_eq : ∀ s x, T.output s x = [cell s x]
@@ -349,7 +352,7 @@ def ofLength (hs : ∀ s x, (T.output s x).length = 1) : T.LetterToLetter where
     obtain ⟨a, ha⟩ := List.length_eq_one_iff.mp (hs s x)
     simp [ha]
 
-/-- The Mealy machine emitting each cell's symbol. -/
+/-- `w.toMealy` is the Mealy machine emitting each cell's symbol. -/
 @[simps]
 def toMealy (w : T.LetterToLetter) : Mealy σ α β where
   start := T.start
@@ -418,7 +421,8 @@ def IsSubsequential (d : ScanDirection) (f : List α → List β) : Prop :=
 @[simp] theorem isSubsequential_right_iff :
     IsSubsequential .right f ↔ IsRightSubsequential f := Iff.rfl
 
-/-- The universe-polymorphic form of `IsLeftSubsequential`. -/
+/-- `IsLeftSubsequential` holds as soon as a transducer with states in any universe computes
+`f`. -/
 theorem isLeftSubsequential_iff.{v} :
     IsLeftSubsequential f
       ↔ ∃ (σ : Type v) (_ : Fintype σ) (T : SubsequentialTransducer σ α β), T.run = f :=
@@ -426,7 +430,8 @@ theorem isLeftSubsequential_iff.{v} :
     (fun e ⟨T, hT⟩ => ⟨SubsequentialTransducer.map e T, (T.run_map e).trans hT⟩)
     (fun e ⟨T, hT⟩ => ⟨SubsequentialTransducer.map e T, (T.run_map e).trans hT⟩)
 
-/-- The universe-polymorphic form of `IsRightSubsequential`, in the `runRight` shape. -/
+/-- `IsRightSubsequential` holds as soon as a transducer with states in any universe computes
+`f` right to left. -/
 theorem isRightSubsequential_iff.{v} :
     IsRightSubsequential f
       ↔ ∃ (σ : Type v) (_ : Fintype σ) (T : SubsequentialTransducer σ α β), T.runRight = f :=
@@ -632,6 +637,43 @@ theorem IsLeftSubsequential.exists_dependsOn_Iic
     · conv_rhs => rw [← List.take_append_drop (i + N + 1) w]
       exact hN _ _ i (by rw [hlen, List.length_take]; omega)
   rw [← key u, ← key v, hag.take_eq (by omega)]
+
+/-- Coordinates of `f u` at least `N` positions from its start are stable under extending the
+input on the left, for a length-preserving right-subsequential `f`. -/
+theorem IsRightSubsequential.exists_getElem?_append_eq (hlen : ∀ w, (f w).length = w.length)
+    (hf : IsRightSubsequential f) :
+    ∃ N : ℕ, ∀ u v i, N ≤ i → (f u)[i]? = (f (v ++ u))[v.length + i]? := by
+  obtain ⟨N, hN⟩ := hf.bounded_delay
+  refine ⟨N, fun u v i hi => ?_⟩
+  have h := List.suffix_iff_eq_drop.mp (hN u v)
+  rcases le_or_gt N u.length with hNu | hNu
+  · have hk : (f (v ++ u)).length - ((f u).drop N).length = v.length + N := by
+      simp [hlen]; omega
+    rw [hk] at h
+    simpa [List.getElem?_drop, Nat.add_sub_cancel' hi, Nat.add_assoc] using
+      congrArg (·[i - N]?) h
+  · rw [List.getElem?_eq_none (by rw [hlen]; omega),
+      List.getElem?_eq_none (by rw [hlen, List.length_append]; omega)]
+
+/-- A length-preserving right-subsequential function is oblivious to input beyond a fixed
+margin to the left of each output coordinate. -/
+theorem IsRightSubsequential.exists_dependsOn_Ici
+    (hlen : ∀ w, (f w).length = w.length) (hf : IsRightSubsequential f) :
+    ∃ N, ∀ i n, DependsOn (fun x : Fin n → α ↦ (f (List.ofFn x))[i]?)
+      (Fin.val ⁻¹' Set.Ici (i - N)) := by
+  obtain ⟨N, hN⟩ := hf.exists_getElem?_append_eq hlen
+  refine ⟨N, fun i ↦ (List.forall_dependsOn_ofFn_iff fun u ↦ (f u)[i]?).mpr
+    fun u v _ hag ↦ ?_⟩
+  show (f u)[i]? = (f v)[i]?
+  rcases lt_or_ge i N with hiN | hiN
+  · rw [List.ext_getElem? fun k => hag (Set.mem_Ici.mpr (by omega))]
+  have key : ∀ w : List α, (f (w.drop (i - N)))[N]? = (f w)[i]? := fun w => by
+    rcases le_or_gt (i - N) w.length with h | h
+    · rw [hN (w.drop (i - N)) (w.take (i - N)) N le_rfl, List.take_append_drop,
+        List.length_take, Nat.min_eq_left h, Nat.sub_add_cancel hiN]
+    · rw [List.drop_of_length_le h.le, List.getElem?_eq_none (by simp [hlen]),
+        List.getElem?_eq_none (by rw [hlen]; omega)]
+  rw [← key u, ← key v, hag.drop_eq le_rfl]
 
 /-- `f` is not left-subsequential if for every `N` some images `f u` and `f (u ++ v)`
 disagree more than `N` positions before the end of `f u` — the contrapositive of
