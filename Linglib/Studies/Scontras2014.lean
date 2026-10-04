@@ -1,15 +1,14 @@
 module
 
 public import Linglib.Semantics.Degree.Measure.Dimensioned
+public import Linglib.Semantics.Mereology.Topology
 public import Linglib.Data.Examples.Scontras2014
-public import Mathlib.Order.Antichain
-public import Mathlib.Data.Set.Card
 
 /-!
 # Scontras (2014): The Semantics of Measurement
 
-This file formalizes the dissertation's third chapter, on quantizing nouns, the words that
-package a substance for counting or measuring. Diagnostics adapted from Rothstein separate three
+Scontras's third chapter studies quantizing nouns, the words that package a substance for
+counting or measuring. Diagnostics adapted from Rothstein separate three
 readings of *n Q of S* and three classes of noun (`Data/Examples/Scontras2014`): a container noun
 like *glass* is a plain predicate whose container reading arises from intersective modification
 by the preposition *of*, contributing the filled-with relation ((38), `containerReading`); a
@@ -25,13 +24,13 @@ measure suffix *-ful* ((47), `shiftCM`) and the measure term by lexical reinterp
 class of containers of a unit quantity ((52), `shiftMC`); atomizers, being neither predicates of
 containers nor measures, have no measure use.
 
-Countable units are the maximally self-connected instances of a kind in a mereotopology,
-parthood with a connectedness relation obeying the bridging axioms of [grimm-2012] ((69)–(75),
-`Mereotopology`, `MSC`), and a partition returns such units ((76), `IsMSCPartition`); no-overlap
-alone ((66), `IsNonOverlapping`) does not stop the water in a glass from counting as two. Either
-way the members of a partition form an antichain, so each of them measures one relative atom
-under the relative-atom measure of (68) (`pAtomMeasure_eq_one`), which is what lets cardinal
-numerals count them.
+Countable units are the maximally self-connected instances of a kind in Grimm's mereotopology,
+parthood with a connection relation ((72), (73), `Mereology.IsConnection`) and
+self-connection ((74), `Mereology.SelfConnected`), and a partition returns such units ((75),
+(76), `IsMSCPartition`); no-overlap alone ((66), `DisjointPred Overlap`) does not stop the water
+in a glass from counting as two. Either way the members of a partition form an antichain, so
+each of them measures one relative atom under the relative-atom measure of (68)
+(`pAtomMeasure_eq_one`), which is what lets cardinal numerals count them.
 
 ## Implementation notes
 
@@ -44,6 +43,12 @@ numerals count them.
   the remark that world knowledge narrows its output.
 * The number-marking system of the second chapter, the substrate's `applyNumeral` and
   `IsQuantityUniform`, is consumed rather than restated.
+* Of the axioms bridging connection and parthood, integrity (73a) and unity (73b) follow from
+  reflexivity, symmetry and monotonicity (73c) (`IsConnection.of_le`,
+  `IsConnection.of_overlap`). Overlap (71) carries the library's non-null clause, with which it
+  agrees on carriers without a null individual (`IsClassicalMereology.overlap_iff`); on a carrier
+  with one, the clause-free version holds of any two individuals and makes self-connection
+  trivial. The maximality of (75) is mathlib's `Maximal`.
 
 ## References
 
@@ -63,59 +68,60 @@ variable {E : Type*} {D : Type}
 
 /-! ### The three readings (§3.2, §3.3) -/
 
-/-- (38b): the preposition *of* of a container reading, the property of being filled with an
-instance of the substance `k`. -/
+/-- The preposition *of* of a container reading (38b) denotes the property of being filled with
+an instance of the substance `k`. -/
 def ofFilled (filledWith : E → E → Prop) (k : E → Prop) (x : E) : Prop :=
   ∃ y, k y ∧ filledWith y x
 
-/-- (38d): the container reading of a container noun `P` with substance `k`: a `P` filled with
-the substance, by intersective modification. -/
+/-- The container reading (38d) of a container noun `P` with substance `k` holds of a `P` filled
+with the substance, by intersective modification. -/
 def containerReading (P : E → Prop) (filledWith : E → E → Prop) (k : E → Prop) (x : E) : Prop :=
   P x ∧ ofFilled filledWith k x
 
-/-- (41), (42): the measure reading of a measure term with measure `μ`, numeral `n` and
-substance `k`: the instances of the substance that measure `n`. -/
+/-- The measure reading ((41), (42)) of a measure term with measure `μ`, numeral `n` and
+substance `k` holds of the instances of the substance that measure `n`. -/
 def measureReading [Preorder D] (μ : DimensionedMeasure E D) (k : E → Prop) (n : D) (x : E) :
     Prop :=
   k x ∧ μ.applyNumeral n x
 
-/-- (77): the atomizing reading of an atomizer with partitioning function `π` and substance
-`k`. -/
+/-- The atomizing reading (77) of an atomizer with partitioning function `π` and substance `k`
+holds of what `π` returns for `k`. -/
 def atomizingReading (π : (E → Prop) → E → Prop) (k : E → Prop) (x : E) : Prop := π k x
 
-/-- (79), (87): an atomizer's selectional restriction, as the properties its units must have. -/
+/-- An atomizer's selectional restriction ((79), (87)) adds the properties its units must
+have. -/
 def atomizerReading (props : E → Prop) (π : (E → Prop) → E → Prop) (k : E → Prop) (x : E) :
     Prop :=
   props x ∧ atomizingReading π k x
 
-/-- Table 3.1: a container reading refers to members of the quantizing noun's denotation. -/
+/-- A container reading refers to members of the quantizing noun's denotation (Table 3.1). -/
 theorem containerReading_subset (P : E → Prop) (filledWith : E → E → Prop) (k : E → Prop) :
-    ∀ x, containerReading P filledWith k x → P x := λ _ h => h.1
+    ∀ x, containerReading P filledWith k x → P x := fun _ h ↦ h.1
 
-/-- Table 3.1: a measure reading refers to instances of the substance. -/
+/-- A measure reading refers to instances of the substance (Table 3.1). -/
 theorem measureReading_subset [Preorder D] (μ : DimensionedMeasure E D) (k : E → Prop) (n : D) :
-    ∀ x, measureReading μ k n x → k x := λ _ h => h.1
+    ∀ x, measureReading μ k n x → k x := fun _ h ↦ h.1
 
 /-- The measure reading with numeral `n` is quantity-uniform under the term's measure, the
 condition (44) that number marking checks. -/
 theorem measureReading_isQuantityUniform [Preorder D] (μ : DimensionedMeasure E D) (k : E → Prop)
     (n : D) : IsQuantityUniform (measureReading μ k n) μ :=
-  λ _ _ hx hy => hx.2.trans hy.2.symm
+  fun _ _ hx hy ↦ hx.2.trans hy.2.symm
 
 /-! ### Derived uses (§3.2.3) -/
 
-/-- (47): the container-to-measure shift, on the model of *-ful*: the substance measured by the
+/-- The container-to-measure shift (47), on the model of *-ful*, measures the substance by the
 number of containers it fills. -/
 def shiftCM (P : E → Prop) (filledWith : E → E → Prop) (card : E → ℕ) (k : E → Prop) (n : ℕ)
     (x : E) : Prop :=
   k x ∧ ∃ y, P y ∧ filledWith x y ∧ card y = n
 
-/-- A shifted container noun yields a measure reading: it refers to the substance. -/
+/-- A shifted container noun yields a measure reading, which refers to the substance. -/
 theorem shiftCM_subset (P : E → Prop) (filledWith : E → E → Prop) (card : E → ℕ) (k : E → Prop)
-    (n : ℕ) : ∀ x, shiftCM P filledWith card k n x → k x := λ _ h => h.1
+    (n : ℕ) : ∀ x, shiftCM P filledWith card k n x → k x := fun _ h ↦ h.1
 
-/-- (52): the measure-term-to-container shift: the objects filled with a unit quantity of some
-substance, which lexical reinterpretation narrows to a salient class of containers. -/
+/-- The measure-term-to-container shift (52) yields the objects filled with a unit quantity of
+some substance, which lexical reinterpretation narrows to a salient class of containers. -/
 def shiftMC [Preorder D] [One D] (μ : DimensionedMeasure E D) (filledWith : E → E → Prop)
     (x : E) : Prop :=
   ∃ (k : E → Prop) (y : E), measureReading μ k 1 y ∧ filledWith y x
@@ -131,56 +137,32 @@ theorem containerReading_shiftMC [Preorder D] [One D] (μ : DimensionedMeasure E
 
 section Mereotopology
 
-variable [PartialOrder E]
+open Mereology
 
-/-- (71): two individuals overlap when they share a part. -/
-def Overlap (x y : E) : Prop := ∃ z, z ≤ x ∧ z ≤ y
+variable [PartialOrder E] (C : E → E → Prop)
 
-/-- (72), (73): a mereotopology on the parthood order: a reflexive symmetric connectedness
-relation, entailed by parthood (integrity) and by overlap (unity), and monotone along
-parthood. -/
-structure Mereotopology (E : Type*) [PartialOrder E] where
-  /-- Connectedness. -/
-  C : E → E → Prop
-  refl : ∀ x, C x x
-  symm : ∀ x y, C x y → C y x
-  integrity : ∀ x y, x ≤ y → C x y
-  unity : ∀ x y, Overlap x y → C x y
-  mono : ∀ x y z, x ≤ y → C x z → C z y
+/-- A partition of the kind `k` ((75), (76)) returns maximally self-connected instances of it,
+instances of `k` maximal among its self-connected instances. -/
+def IsMSCPartition (k : E → Prop) (Q : E → Prop) : Prop :=
+  ∀ y, Q y → Maximal (fun x ↦ SelfConnected C x ∧ k x) y
 
-variable (M : Mereotopology E)
-
-/-- (74): an individual is self-connected when any two individuals that between them overlap
-exactly what it overlaps are connected. -/
-def SelfConnected (x : E) : Prop :=
-  ∀ y z, (∀ v, Overlap v x ↔ Overlap v y ∨ Overlap v z) → M.C y z
-
-/-- (75): a maximally self-connected instance of the kind `k`: self-connected and a proper part
-of no self-connected instance. -/
-def MSC (k : E → Prop) (x : E) : Prop :=
-  SelfConnected M x ∧ k x ∧ ¬ ∃ y, x < y ∧ SelfConnected M y ∧ k y
-
-/-- (76): a partition of the kind `k` returns maximally self-connected instances of it. -/
-def IsMSCPartition (k : E → Prop) (Q : E → Prop) : Prop := ∀ y, Q y → k y ∧ MSC M k y
-
-/-- (66): a set of individuals no two of which overlap. -/
-def IsNonOverlapping (Q : E → Prop) : Prop := ∀ x y, Q x → Q y → x ≠ y → ¬ Overlap x y
-
-/-- (68): the relative-atom measure of `Q`: the number of `Q`-atoms, members of `Q` with no
-member of `Q` as a proper part, that are parts of `y`. -/
+/-- The relative-atom measure of `Q` (68) counts the `Q`-atoms, members of `Q` with no member of
+`Q` as a proper part, that are parts of `y`. -/
 noncomputable def pAtomMeasure (Q : E → Prop) (y : E) : ℕ :=
   {x | Q x ∧ x ≤ y ∧ ¬ ∃ z, Q z ∧ z < x}.ncard
 
-/-- The members of a maximally self-connected partition form an antichain: one cannot be a
-proper part of another. -/
-theorem isAntichain_of_isMSCPartition {k Q : E → Prop} (h : IsMSCPartition M k Q) :
-    IsAntichain (· ≤ ·) {x | Q x} := λ x hx y hy hxy hle =>
-  (h x hx).2.2.2 ⟨y, lt_of_le_of_ne hle hxy, (h y hy).2.1, (h y hy).1⟩
+variable {C}
 
-/-- The members of a non-overlapping partition form an antichain. -/
-theorem isAntichain_of_isNonOverlapping {Q : E → Prop} (h : IsNonOverlapping Q) :
-    IsAntichain (· ≤ ·) {x | Q x} := λ x hx y hy hxy hle =>
-  h x y hx hy hxy ⟨x, le_rfl, hle⟩
+/-- The members of a maximally self-connected partition form an antichain, so one cannot be a
+proper part of another. -/
+theorem isAntichain_of_isMSCPartition {k Q : E → Prop} (h : IsMSCPartition C k Q) :
+    IsAntichain (· ≤ ·) {x | Q x} :=
+  (setOfPred_maximal_antichain _).subset h
+
+/-- The members of a non-overlapping partition (66) form an antichain. -/
+theorem isAntichain_of_disjointPred [NoBotOrder E] {Q : E → Prop}
+    (h : DisjointPred Overlap {x | Q x}) : IsAntichain (· ≤ ·) {x | Q x} :=
+  fun x hx y hy hxy hle ↦ h ⟨x, hx, y, hy, hxy, .of_le (not_isBot x) hle⟩
 
 /-- In an antichain every member is its only atom below itself. -/
 theorem atoms_eq_singleton {Q : E → Prop} (h : IsAntichain (· ≤ ·) {x | Q x}) {y : E}
@@ -192,18 +174,18 @@ theorem atoms_eq_singleton {Q : E → Prop} (h : IsAntichain (· ≤ ·) {x | Q 
     by_contra hne
     exact h hx hy hne hxy
   · rintro rfl
-    exact ⟨hy, le_rfl, λ ⟨z, hz, hzy⟩ => h hz hy hzy.ne hzy.le⟩
+    exact ⟨hy, le_rfl, fun ⟨z, hz, hzy⟩ ↦ h hz hy hzy.ne hzy.le⟩
 
 /-- Each member of a partition measures one relative atom, so cardinal numerals count them. -/
 theorem pAtomMeasure_eq_one {Q : E → Prop} (h : IsAntichain (· ≤ ·) {x | Q x}) {y : E}
     (hy : Q y) : pAtomMeasure Q y = 1 := by
   rw [pAtomMeasure, atoms_eq_singleton h hy, Set.ncard_singleton]
 
-/-- (77) with (76): the atomizing reading refers to maximally self-connected instances of the
+/-- By (77) with (76), the atomizing reading refers to maximally self-connected instances of the
 substance, hence to the substance. -/
 theorem atomizingReading_subset {π : (E → Prop) → E → Prop} {k : E → Prop}
-    (hπ : IsMSCPartition M k (π k)) : ∀ x, atomizingReading π k x → k x :=
-  λ _ hx => (hπ _ hx).1
+    (hπ : IsMSCPartition C k (π k)) : ∀ x, atomizingReading π k x → k x :=
+  fun _ hx ↦ (hπ _ hx).1.2
 
 end Mereotopology
 

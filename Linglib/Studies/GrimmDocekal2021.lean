@@ -1,38 +1,34 @@
 module
 
-public import Mathlib.Logic.Relation
-public import Mathlib.Data.Finset.Lattice.Fold
-public import Linglib.Semantics.Mereology
+public import Linglib.Semantics.Mereology.Topology
 public import Linglib.Semantics.Plurality.Groups
 public import Linglib.Data.Examples.GrimmDocekal2021
 
 /-!
 # Grimm and Dočekal (2021): Counting Aggregates, Groups and Kinds
 
-This file formalizes [grimm-docekal-2021]'s account of the Czech morphology that counts
-aggregates, groups, and kinds. The suffix *-í* derives strongly non-countable nouns from
-countable roots, *listí* 'foliage' from *list* 'leaf', which take no plural, no cardinal, and no
-packaging (`derived_aggregates_noncountable`); the group numeral *-ice* yields a countable group,
-*dvě trojice námořníků* 'two groups of three sailors', whereas the aggregate numeral *-oje* and
-the taxonomic numeral *-ojí* yield phrases that no outer cardinal or universal quantifier can
-take (`complex_numerals_uncounted`); *-oje* selects nouns whose referents come in connected
-sets (`aggregate_numeral_selects`); and Czech nouns are inflexible, with no grinding and a
-taxonomic plural confined to non-episodic contexts where the taxonomic numeral is free
-(`taxonomic_plural_nonepisodic`). Section 5 extends [krifka-1995b]'s nominal semantics with
-[landman-1989]'s groups for *-ice* and with [grimm-2012]'s mereotopology for *-í* and *-oje*:
-a cluster is a sum of entities transitively connected through it, a maximal cluster absorbs every
-cluster it overlaps, maximal clusters are disjoint (`maxClusters_disjointPred`), *-oje* counts
-the maximal clusters below its argument, whose number is therefore determinate
-(`ojeSem_determinate`), and *-ojí* counts subkinds and so fails on a kind-less argument
-(`oji_needs_subkinds`).
+Grimm and Dočekal account for the Czech morphology that counts aggregates, groups, and kinds. The
+suffix *-í* derives strongly non-countable nouns from countable roots, *listí* 'foliage' from *list*
+'leaf', which take no plural, no cardinal, and no packaging (`derived_aggregates_noncountable`); the
+group numeral *-ice* yields a countable group, *dvě trojice námořníků* 'two groups of three
+sailors', whereas the aggregate numeral *-oje* and the taxonomic numeral *-ojí* yield phrases that
+no outer cardinal or universal quantifier can take (`complex_numerals_uncounted`); *-oje* selects
+nouns whose referents come in connected sets (`aggregate_numeral_selects`); and Czech nouns are
+inflexible, with no grinding and a taxonomic plural confined to non-episodic contexts where the
+taxonomic numeral is free (`taxonomic_plural_nonepisodic`). Section 5 extends Krifka's nominal
+semantics with Landman's groups for *-ice* and with Grimm's mereotopology for *-í* and *-oje*: a
+cluster is a sum of entities transitively connected through entities of their kind
+(`Mereology.IsCluster`), a maximal cluster absorbs every cluster it overlaps, *-oje* counts the
+maximal clusters below its argument, whose number is therefore determinate (`ojeSem_determinate`),
+and *-ojí* counts subkinds and so fails on a kind-less argument (`oji_needs_subkinds`).
 
 ## Implementation notes
 
-The connection relation is a parameter, the paper's proximate or external connectedness; the
-cluster of (61) uses a finite set of members and its supremum. The group numeral is stated over
-the library's `Plurality.GroupStructure`, whose `up` packs a sum into an atom, which is why a
-group can be counted again. The paper's Table 1, the twenty-two nouns derived by *-í*, is
-lexical data for the Czech Fragment and is not retyped here.
+The connection relation is a parameter, the paper's proximate or external connectedness, which (63)
+binds existentially; the cluster of (61) uses a finite set of members and its supremum. The group
+numeral is stated over the library's `Plurality.GroupStructure`, whose `up` packs a sum into an
+atom, which is why a group can be counted again. The paper's Table 1, the twenty-two nouns derived
+by *-í*, is lexical data for the Czech Fragment and is not retyped here.
 
 ## References
 
@@ -44,8 +40,8 @@ lexical data for the Czech Fragment and is not retyped here.
 
 ## TODO
 
-Table 1's derived aggregates belong in `Fragments/Slavic/Czech/`; [krifka-1995b]'s kind and
-object unit operators of section 4 are not formalized.
+Table 1's derived aggregates belong in `Fragments/Slavic/Czech/`; Krifka's kind and object unit
+operators of section 4 are not formalized.
 -/
 
 @[expose] public section
@@ -56,60 +52,60 @@ open Mereology
 
 /-! ### The judged noun phrases, section 2 -/
 
-/-- The class of the noun a numeral or operation applies to. -/
+/-- A noun falls into one of these classes, which numerals and operations select. -/
 inductive Noun where
   | ordinary
   | animate
-  /-- A noun derived by *-í*. -/
+  /-- The noun is derived by *-í*. -/
   | derivedAggregate
   | pluraleTantum
-  /-- A countable noun whose referents typically come together in multiples, *klíče* 'keys'. -/
+  /-- The noun is countable, and its referents typically come in multiples, *klíče* 'keys'. -/
   | multiple
   | substance
   | abstract
-  /-- A uniquely referring phrase, *noha tohoto stolu* 'this table's leg'. -/
+  /-- The phrase refers uniquely, *noha tohoto stolu* 'this table's leg'. -/
   | unique
   | proper
   deriving DecidableEq, Repr
 
-/-- The numeral of the phrase. -/
+/-- A phrase carries one of these numerals, or none. -/
 inductive Numeral where
   | none
   | simple
-  /-- *-ice*. -/
+  /-- The group numeral is *-ice*. -/
   | group
-  /-- *-oje*, *-ery*. -/
+  /-- The aggregate numerals are *-oje* and *-ery*. -/
   | aggregate
-  /-- *-ojí*, *-ero*. -/
+  /-- The taxonomic numerals are *-ojí* and *-ero*. -/
   | taxonomic
   deriving DecidableEq, Repr
 
-/-- The operation the phrase tests. -/
+/-- A judged phrase tests one of these operations. -/
 inductive Operation where
   | none
   | pluralization
   | simpleCardinal
-  /-- *mnohé* 'many'. -/
+  /-- The vague quantifier is *mnohé* 'many'. -/
   | vagueQuantifier
-  /-- *všechny* 'all'. -/
+  /-- The universal quantifier is *všechny* 'all'. -/
   | universal
-  /-- A simple cardinal over a complex numeral. -/
+  /-- A simple cardinal applies over a complex numeral. -/
   | outerCardinal
   | packaging
   | grinding
-  /-- Deriving an aggregate with *-í*. -/
+  /-- An aggregate is derived with *-í*. -/
   | derivation
   deriving DecidableEq, Repr
 
-/-- The context a reading is judged in. -/
+/-- A reading is judged in one of these contexts. -/
 inductive Context where
   | episodic
   | generic
-  /-- A fast-food order, section 2.2.2. -/
+  /-- The context is a fast-food order, section 2.2.2. -/
   | portion
   deriving DecidableEq, Repr
 
-/-- A judged noun phrase. -/
+/-- A row records a noun phrase and its judgment. -/
 structure Row where
   noun : Noun
   numeral : Numeral
@@ -137,7 +133,7 @@ def Row.ofDatum (ex : Datum) : Option Row := do
       [("episodic", Context.episodic), ("generic", .generic), ("portion", .portion)],
     ex.feature? "reading" = some "taxonomic", ex.judgment⟩
 
-/-- The judged phrases of sections 2, 4, and 5. -/
+/-- The rows are the judged phrases of sections 2, 4, and 5. -/
 def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 /-- Nouns derived by *-í* take neither plural, nor simple cardinal, nor a vague quantifier, nor a
@@ -177,7 +173,7 @@ theorem aggregate_numeral_selects :
       ∀ r ∈ rows, r.numeral = .aggregate → r.noun = .ordinary → r.judgment ≠ .acceptable := by
   decide
 
-/-- Section 2.3: grinding is rejected, (34) and (35); the taxonomic reading of a plural or a
+/-- In section 2.3, grinding is rejected, (34) and (35); the taxonomic reading of a plural or a
 simple cardinal phrase needs a non-episodic context, (36) to (40), while the taxonomic numeral
 is free in both. -/
 theorem taxonomic_plural_nonepisodic :
@@ -193,69 +189,21 @@ theorem taxonomic_needs_kind :
       r.judgment ≠ .acceptable := by
   decide
 
-/-! ### Cluster mereotopology, section 5.2
+/-! ### The three numerals, sections 4.2 and 5
 
-Connection is reflexive and symmetric ((56), (57)) and parthood entails it (58). A cluster is
-the sum of a set of entities of a property, any two of which are connected through the set
-((60), (61)); a maximal cluster absorbs every cluster it overlaps (63). -/
+The aggregate numeral counts clusters, section 5.2. Connection is reflexive and symmetric ((56),
+(57)) and whatever is connected to a part is connected to the whole (58): the axioms of
+`Mereology.IsConnection`, from which overlap entails connection ((59),
+`Mereology.IsConnection.of_overlap`). A cluster ((60), (61)) is `Mereology.IsCluster`, the sum of
+entities of a property any two of which are transitively connected through such entities. Inside a
+connected component clusters are cumulative (`Mereology.cum_isClusterIn`), the cumulativity of *-í*
+nouns, *listí* and *listí* making *listí*; a maximal cluster absorbs every cluster it overlaps (63),
+so two maximal clusters do not overlap (`Mereology.disjointPred_isMaxCluster`), the paper's remark
+after (63). -/
 
-variable {α : Type*} [SemilatticeSup α] (C ov : α → α → Prop)
+variable {α : Type*} [SemilatticeSup α] (C : α → α → Prop)
 
-/-- (60): connected through a chain of members of `Z`. -/
-def ChainIn (Z : Finset α) : α → α → Prop :=
-  Relation.ReflTransGen λ a b => a ∈ Z ∧ b ∈ Z ∧ C a b
-
-/-- (61): a cluster individual, the sum of a nonempty set of `P`-entities pairwise transitively
-connected through the set. -/
-def IsCluster (P : α → Prop) (x : α) : Prop :=
-  ∃ (Z : Finset α) (hZ : Z.Nonempty),
-    (∀ z ∈ Z, P z) ∧ x = Z.sup' hZ id ∧ ∀ z ∈ Z, ∀ z' ∈ Z, ChainIn C Z z z'
-
-/-- (63): a maximal cluster absorbs every cluster overlapping it. -/
-def IsMaxCluster (P : α → Prop) (x : α) : Prop :=
-  IsCluster C P x ∧ ∀ y, IsCluster C P y → ov y x → y ≤ x
-
-/-- Maximal clusters are pairwise disjoint, the paper's remark after (63): two overlapping
-maximal clusters would each absorb the other. -/
-theorem maxClusters_disjointPred {P : α → Prop} (hsym : ∀ a b, ov a b → ov b a) :
-    DisjointPred ov {x | IsMaxCluster C ov P x} := by
-  rintro ⟨x, hx, y, hy, hne, hov⟩
-  exact hne (le_antisymm (hy.2 x hx.1 hov) (hx.2 y hy.1 (hsym x y hov)))
-
-/-- Two clusters connected at some pair of members sum to a cluster: the cumulativity of *-í*
-nouns, *listí* and *listí* making *listí*, for connected sums. -/
-theorem isCluster_sup {P : α → Prop} {Z₁ Z₂ : Finset α} (hsymC : ∀ a b, C a b → C b a)
-    (h₁ : Z₁.Nonempty) (h₂ : Z₂.Nonempty) (hP₁ : ∀ z ∈ Z₁, P z) (hP₂ : ∀ z ∈ Z₂, P z)
-    (hc₁ : ∀ z ∈ Z₁, ∀ z' ∈ Z₁, ChainIn C Z₁ z z') (hc₂ : ∀ z ∈ Z₂, ∀ z' ∈ Z₂, ChainIn C Z₂ z z')
-    {z₁ z₂ : α} (hz₁ : z₁ ∈ Z₁) (hz₂ : z₂ ∈ Z₂) (hlink : C z₁ z₂) :
-    IsCluster C P (Z₁.sup' h₁ id ⊔ Z₂.sup' h₂ id) := by
-  classical
-  have hsub₁ : Z₁ ⊆ Z₁ ∪ Z₂ := Finset.subset_union_left
-  have hsub₂ : Z₂ ⊆ Z₁ ∪ Z₂ := Finset.subset_union_right
-  have hmono₁ : ∀ a b, ChainIn C Z₁ a b → ChainIn C (Z₁ ∪ Z₂) a b :=
-    Relation.ReflTransGen.mono λ _ _ ⟨hu, hv, hC⟩ => ⟨hsub₁ hu, hsub₁ hv, hC⟩
-  have hmono₂ : ∀ a b, ChainIn C Z₂ a b → ChainIn C (Z₁ ∪ Z₂) a b :=
-    Relation.ReflTransGen.mono λ _ _ ⟨hu, hv, hC⟩ => ⟨hsub₂ hu, hsub₂ hv, hC⟩
-  have hstep : ChainIn C (Z₁ ∪ Z₂) z₁ z₂ :=
-    Relation.ReflTransGen.single ⟨hsub₁ hz₁, hsub₂ hz₂, hlink⟩
-  have hstep' : ChainIn C (Z₁ ∪ Z₂) z₂ z₁ :=
-    Relation.ReflTransGen.single ⟨hsub₂ hz₂, hsub₁ hz₁, hsymC _ _ hlink⟩
-  refine ⟨Z₁ ∪ Z₂, h₁.mono hsub₁, ?_, ?_, ?_⟩
-  · intro z hz
-    rcases Finset.mem_union.mp hz with h | h
-    · exact hP₁ z h
-    · exact hP₂ z h
-  · rw [Finset.sup'_union h₁ h₂ id]
-  · intro z hz z' hz'
-    rcases Finset.mem_union.mp hz with h | h <;> rcases Finset.mem_union.mp hz' with h' | h'
-    · exact hmono₁ _ _ (hc₁ z h z' h')
-    · exact ((hmono₁ _ _ (hc₁ z h z₁ hz₁)).trans hstep).trans (hmono₂ _ _ (hc₂ z₂ hz₂ z' h'))
-    · exact ((hmono₂ _ _ (hc₂ z h z₂ hz₂)).trans hstep').trans (hmono₁ _ _ (hc₁ z₁ hz₁ z' h'))
-    · exact hmono₂ _ _ (hc₂ z h z' h')
-
-/-! ### The three numerals, sections 4.2 and 5 -/
-
-/-- (55): the group numeral packs a sum of `n` members of `P` into a group atom. -/
+/-- The group numeral (55) packs a sum of `n` members of `P` into a group atom. -/
 def iceSem (G : Plurality.GroupStructure α) (n : ℕ) (P : α → ℕ → Prop) (x : α) : Prop :=
   ∃ y, x = G.up y ∧ P y n
 
@@ -265,30 +213,90 @@ theorem iceSem_atom {G : Plurality.GroupStructure α} {n : ℕ} {P : α → ℕ 
   let ⟨_, hx, _⟩ := h
   hx ▸ G.atom_up _
 
-/-- (64): `n`-*oje* `P` holds of `x` when the maximal `P`-clusters properly below `x` number
-`n`. -/
+/-- By (64), `n`-*oje* `P` holds of a `P`-entity `x` when the maximal `P`-clusters properly
+below `x` number `n`. -/
 def ojeSem (n : ℕ) (P : α → Prop) (x : α) : Prop :=
-  ∃ Y : Finset α, (∀ z, (z < x ∧ IsMaxCluster C ov P z) ↔ z ∈ Y) ∧ Y.card = n
+  P x ∧ ∃ Y : Finset α, (∀ z, (z < x ∧ IsMaxCluster C P z) ↔ z ∈ Y) ∧ Y.card = n
 
 /-- The cardinality an aggregate numeral asserts is determinate, the witnessing set being the
-maximal clusters below the argument: no outer cardinal can re-specify it, (27) and (26). -/
-theorem ojeSem_determinate {n m : ℕ} {P : α → Prop} {x : α} (hn : ojeSem C ov n P x)
-    (hm : ojeSem C ov m P x) : n = m := by
-  obtain ⟨Y, hY, rfl⟩ := hn
-  obtain ⟨Y', hY', rfl⟩ := hm
-  rw [Finset.ext λ z => (hY z).symm.trans (hY' z)]
+maximal clusters below the argument, so no outer cardinal can re-specify it, (27) and (26). -/
+theorem ojeSem_determinate {n m : ℕ} {P : α → Prop} {x : α} (hn : ojeSem C n P x)
+    (hm : ojeSem C m P x) : n = m := by
+  obtain ⟨-, Y, hY, rfl⟩ := hn
+  obtain ⟨-, Y', hY', rfl⟩ := hm
+  rw [Finset.ext fun z ↦ (hY z).symm.trans (hY' z)]
 
-/-- (50), over a subkind relation `T`: `n`-*ojí* `k` holds of a set of subkinds of `k` numbering
-`n`. -/
+/-- By (50), over a subkind relation `T`, `n`-*ojí* `k` holds of a set of subkinds of `k`
+numbering `n`. -/
 def ojiSem {κ : Type*} (T : κ → κ → Prop) (n : ℕ) (k : κ) (X : Finset κ) : Prop :=
   (∀ z ∈ X, T z k) ∧ X.card = n
 
-/-- A kind-less argument defeats the taxonomic numeral, (52): a proper name has no subkinds. -/
+/-- A kind-less argument defeats the taxonomic numeral (52), since a proper name has no
+subkinds. -/
 theorem oji_needs_subkinds {κ : Type*} {T : κ → κ → Prop} {k : κ} (hk : ∀ z, ¬ T z k) {n : ℕ}
     (hn : n ≠ 0) : ¬ ∃ X : Finset κ, ojiSem T n k X := by
   rintro ⟨X, hX, hcard⟩
   rcases Finset.eq_empty_or_nonempty X with rfl | ⟨z, hz⟩
   · exact hn (hcard ▸ rfl)
   · exact hk z (hX z hz)
+
+/-! ### Three leaves in a row
+
+The leaves of *listí* need only be proximately connected, section 5.2.1. Three leaves lie in a
+row, each near its neighbours: the outer two are not near each other, yet their sum is a cluster,
+since they are transitively connected through the middle leaf, which (61) lets lie outside the
+cluster. Without the middle leaf the outer two form no cluster. -/
+
+section Leaves
+
+/-- Leaf sums are the sets of three leaves in a row. -/
+abbrev LeafSum := Finset (Fin 3)
+
+/-- Two sums are near when they contain the same or neighbouring leaves. -/
+def Near (s t : LeafSum) : Prop := ∃ i ∈ s, ∃ j ∈ t, (i : ℕ) ≤ j + 1 ∧ (j : ℕ) ≤ i + 1
+
+instance : DecidableRel Near := fun s t ↦ by unfold Near; infer_instance
+
+/-- A leaf sum is a single leaf when it has one member. -/
+def Leaf (s : LeafSum) : Prop := s.card = 1
+
+instance : DecidablePred Leaf := fun s ↦ by unfold Leaf; infer_instance
+
+/-- The outer leaves are the leaves other than the middle one. -/
+def OuterLeaf (s : LeafSum) : Prop := s = {0} ∨ s = {2}
+
+instance : DecidablePred OuterLeaf := fun s ↦ by unfold OuterLeaf; infer_instance
+
+/-- The outer leaves sum to a cluster of leaves, connected through the middle leaf. -/
+example : IsCluster Near Leaf ({0, 2} : LeafSum) := by
+  have h02 : (connectionGraph Near Leaf).Reachable {0} {2} :=
+    (connectionGraph_reachable (b := {1}) (by decide) (by decide) (by decide)).trans
+      (connectionGraph_reachable (by decide) (by decide) (by decide))
+  refine isCluster_iff.2 ⟨{{0}, {2}}, by simp, by decide, fun z hz z' hz' ↦ ?_, ?_⟩
+  · simp only [Finset.mem_insert, Finset.mem_singleton] at hz hz'
+    rcases hz with rfl | rfl <;> rcases hz' with rfl | rfl
+    exacts [.refl _, h02, h02.symm, .refl _]
+  · simpa using isLUB_pair (a := ({0} : LeafSum)) (b := {2})
+
+/-- Without the middle leaf, the outer leaves form no cluster. -/
+example : ¬ IsCluster Near OuterLeaf ({0, 2} : LeafSum) := by
+  rintro ⟨c, Z, -, hZ, hlub⟩
+  have hR : ∀ a b : LeafSum, a ≠ b → ¬ (OuterLeaf a ∧ OuterLeaf b ∧ Near a b) := by decide
+  have hub (u : LeafSum) (hu : ∀ z ∈ Z, z = u) : ({0, 2} : LeafSum) ≤ u :=
+    hlub.2 fun z hz ↦ (hu z hz).le
+  have h0 : ({0} : LeafSum) ∈ Z := by
+    by_contra h
+    exact absurd (hub {2} fun z hz ↦ (hZ z hz).1.resolve_left fun e ↦ h (e ▸ hz)) (by decide)
+  have h2 : ({2} : LeafSum) ∈ Z := by
+    by_contra h
+    exact absurd (hub {0} fun z hz ↦ (hZ z hz).1.resolve_right fun e ↦ h (e ▸ hz)) (by decide)
+  have hreach := SimpleGraph.ConnectedComponent.exact ((hZ _ h0).2.trans (hZ _ h2).2.symm)
+  rcases (SimpleGraph.reachable_iff_reflTransGen _ _).1 hreach |>.cases_head with h | ⟨b, hb, -⟩
+  · exact absurd h (by decide)
+  · simp only [connectionGraph, SimpleGraph.fromRel_adj] at hb
+    rcases hb.2 with h | h
+    exacts [hR _ _ hb.1 h, hR _ _ (Ne.symm hb.1) h]
+
+end Leaves
 
 end GrimmDocekal2021
