@@ -6,27 +6,27 @@ public import Linglib.Logic.Modal.Defs
 /-!
 # The classical fragment of BSML
 
-The `NE`-free fragment of BSML, Aloni's BSML∅, behaves like classical modal logic
-([aloni-2022]). This file defines classical (single-world) Kripke truth of a BSML
-formula, `Realize`, with the modal clause taken from the shared `ModalLogic.Diamond`,
-and proves that on `NE`-free formulas team support is pointwise classical truth
-([anttila-2021] Proposition 2.2.16, both polarities). Consequence and equivalence
-then coincide with their classical definitions: this is [aloni-2022]'s Fact 15 and
-[anttila-2021]'s Fact 2.2.17.
+The `NE`-free fragment of BSML, Aloni's BSML∅, behaves like classical modal logic. A BSML
+formula is classically true at a single world, `Realize`, with the modal clause taken from
+`ModalLogic.Diamond`, and on `NE`-free formulas team support is classical truth at every world
+of the team, in both polarities. Consequence and equivalence then coincide with their classical
+definitions, as Aloni and Anttila observe.
 
-## Main declarations
+## Main definitions
 
-* `Realize M φ w` — classical truth of `φ` at the world `w` of `M`: split disjunction
-  is pointwise, `◇` is `ModalLogic.Diamond` over `M.accessible`, and `NE` is true.
+* `Realize M φ w`: classical truth of `φ` at the world `w` of `M`.
+* `ClassicalConsequence`: classical modal consequence.
+
+## Main results
+
 * `eval_iff_forall_realize`, `support_iff_forall_realize`,
-  `antiSupport_iff_forall_not_realize` — Proposition 2.2.16: an `NE`-free formula is
-  supported by a team iff it is true at each of its worlds, and anti-supported iff false
-  at each.
-* `support_singleton_iff_realize` — its singleton case: `{w} ⊨⁺ φ ↔ M, w ⊨ φ`.
-* `classicalConsequence`, `consequence_iff_classicalConsequence` — Fact 15: on `NE`-free
-  formulas, BSML consequence is classical modal consequence.
-* `equivalent_iff_classicalConsequence` — Fact 2.2.17: bilateral equivalence of `NE`-free
-  formulas is mutual classical consequence.
+  `antiSupport_iff_forall_not_realize`: an `NE`-free formula is supported by a team iff it is
+  true at each of its worlds, and anti-supported iff false at each.
+* `support_singleton_iff_realize`: the singleton case, `{w} ⊨⁺ φ ↔ M, w ⊨ φ`.
+* `consequence_iff_classicalConsequence`: on `NE`-free formulas, BSML consequence is
+  classical modal consequence.
+* `equivalent_iff_classicalConsequence`: on `NE`-free formulas, equivalence is mutual
+  classical consequence.
 
 ## Implementation notes
 
@@ -55,7 +55,7 @@ variable {W : Type*} {Atom : Type*}
 
 /-! ### Classical truth -/
 
-/-- Classical Kripke truth of a BSML formula at a single world: split disjunction is
+/-- `Realize M φ w` is the classical Kripke truth of `φ` at the world `w`. Split disjunction is
     pointwise, `◇` is `ModalLogic.Diamond` over `M.accessible`, and `NE` is true. -/
 def Realize (M : KripkeModel W Atom) : Formula Atom → W → Prop
   | .atom p, w => M.val p w = true
@@ -101,9 +101,9 @@ theorem realize_nec : Realize M ψ.nec w ↔ □[M.accessible] (Realize M ψ) w 
 
 variable [DecidableEq W] {t : Finset W}
 
-/-- [anttila-2021] Proposition 2.2.16, both polarities at once: an `NE`-free formula is
-    supported by `t` iff it is true at every world of `t`, and anti-supported iff it is
-    false at every world of `t`. -/
+/-- An `NE`-free formula is supported by `t` iff it is true at every world of `t`, and
+    anti-supported iff it is false at every world of `t` ([anttila-2021] Proposition 2.2.16,
+    both polarities at once). -/
 theorem eval_iff_forall_realize (hNE : φ.NEFree) (b : Bool) (t : Finset W) :
     eval M b φ t ↔ ∀ w ∈ t, (Realize M φ w ↔ b) := by
   induction φ generalizing b t with
@@ -138,7 +138,8 @@ theorem antiSupport_iff_forall_not_realize (hNE : φ.NEFree) :
     antiSupport M φ t ↔ ∀ w ∈ t, ¬ Realize M φ w := by
   simpa using eval_iff_forall_realize hNE false t
 
-/-- The singleton case of Proposition 2.2.16: `{w} ⊨⁺ φ ↔ M, w ⊨ φ`. -/
+/-- A singleton team supports an `NE`-free formula iff its world realizes it,
+    `{w} ⊨⁺ φ ↔ M, w ⊨ φ`. -/
 theorem support_singleton_iff_realize (hNE : φ.NEFree) :
     support M φ {w} ↔ Realize M φ w := by
   simp [support_iff_forall_realize hNE]
@@ -149,34 +150,27 @@ theorem antiSupport_singleton_iff_not_realize (hNE : φ.NEFree) :
 
 /-! ### Consequence is classical consequence (Fact 15) -/
 
-/-- Classical modal consequence: every world of every model realizing `φ` realizes `ψ`. -/
-def classicalConsequence (φ ψ : Formula Atom) : Prop :=
+/-- `ψ` is a classical modal consequence of `φ` when every world of every model realizing `φ`
+    realizes `ψ`. -/
+def ClassicalConsequence (φ ψ : Formula Atom) : Prop :=
   ∀ (M : KripkeModel W Atom) (w : W), Realize M φ w → Realize M ψ w
 
-/-- [aloni-2022] Fact 15 ([anttila-2021] Fact 2.2.17): on `NE`-free formulas, BSML
-    consequence is classical modal consequence. -/
+/-- On `NE`-free formulas BSML consequence is classical modal consequence ([aloni-2022] Fact 15,
+    [anttila-2021] Fact 2.2.17). -/
 theorem consequence_iff_classicalConsequence (hφ : φ.NEFree) (hψ : ψ.NEFree) :
-    consequence (W := W) φ ψ ↔ classicalConsequence (W := W) φ ψ where
+    Consequence (W := W) φ ψ ↔ ClassicalConsequence (W := W) φ ψ where
   mp h M w hw :=
     (support_singleton_iff_realize hψ).mp (h M {w} ((support_singleton_iff_realize hφ).mpr hw))
   mpr h M _ ht :=
     (support_iff_forall_realize hψ).mpr fun w hw ↦
       h M w ((support_iff_forall_realize hφ).mp ht w hw)
 
-/-- [anttila-2021] Fact 2.2.17: bilateral equivalence of `NE`-free formulas is mutual
-    classical consequence. -/
+/-- On `NE`-free formulas equivalence is mutual classical consequence ([anttila-2021]
+    Fact 2.2.17). -/
 theorem equivalent_iff_classicalConsequence (hφ : φ.NEFree) (hψ : ψ.NEFree) :
-    equivalent (W := W) φ ψ ↔
-      classicalConsequence (W := W) φ ψ ∧ classicalConsequence (W := W) ψ φ where
-  mp h :=
-    ⟨fun M w hw ↦ (support_singleton_iff_realize hψ).mp
-        ((h M {w}).1.mp ((support_singleton_iff_realize hφ).mpr hw)),
-      fun M w hw ↦ (support_singleton_iff_realize hφ).mp
-        ((h M {w}).1.mpr ((support_singleton_iff_realize hψ).mpr hw))⟩
-  mpr := fun ⟨h₁, h₂⟩ M _ ↦ by
-    rw [support_iff_forall_realize hφ, support_iff_forall_realize hψ,
-      antiSupport_iff_forall_not_realize hφ, antiSupport_iff_forall_not_realize hψ]
-    exact ⟨forall₂_congr fun w _ ↦ ⟨h₁ M w, h₂ M w⟩,
-      forall₂_congr fun w _ ↦ not_congr ⟨h₁ M w, h₂ M w⟩⟩
+    Equivalent (W := W) φ ψ ↔
+      ClassicalConsequence (W := W) φ ψ ∧ ClassicalConsequence (W := W) ψ φ :=
+  equivalent_iff.trans <| and_congr (consequence_iff_classicalConsequence hφ hψ)
+    (consequence_iff_classicalConsequence hψ hφ)
 
 end BSML

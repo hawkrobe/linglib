@@ -1,32 +1,42 @@
 module
 
 public import Linglib.Logic.Team.BSML.Enrichment
-public import Linglib.Logic.Team.BSML.ClassicalValidities
+public import Linglib.Logic.Team.BSML.Negation
 public import Linglib.Logic.Team.BSML.Classical
 public import Linglib.Logic.Team.BSML.Scenarios
 
 /-!
-# Free choice from neglect-zero: the BSML facts of [aloni-2022]
+# Free choice from neglect-zero in BSML
 
-[aloni-2022] derives free-choice inferences from a *neglect-zero* tendency: the
-pragmatic enrichment `[·]⁺` (`BSML.enrich`) conjoins `NE` to every subformula, so
-an enriched split disjunction needs two non-empty witnesses, and under a
-possibility modal each witness is a live option. This file proves the paper's
-free-choice facts for arbitrary `NE`-free `α β`: Modal Disjunction (Fact 3,
-state-based `R`), Narrow Scope FC (Fact 4) and its dependent-disjunct corollary,
-Wide Scope FC (Fact 5, indisputable `R`), Dual Prohibition (Fact 11), Double
-Negation (Fact 12), the epistemic contradiction that motivates the state-based
-reading of epistemic modals (§4.1), and the BSML⁺ failure of Negative FC
-(Fact 14), and Table 5's comparison of the `NE`-free fragment BSML∅ with BSML⁺.
-The paper's illustrations (Figures 1–5) are checked by `decide` on its four-world
-model `w_∅, w_a, w_b, w_ab` (`BSML.TwoAtomWorld`), whose running state is
-`{w_a, w_b}`.
+Aloni derives free-choice inferences from a neglect-zero tendency. Her pragmatic enrichment
+`[·]⁺` (`BSML.enrich`) conjoins `NE` to every subformula, so an enriched split disjunction needs
+two non-empty witnesses, and under a possibility modal each witness is a live option. The paper's
+free-choice facts are proved here for arbitrary `NE`-free `α β`, and its figures are checked by
+`decide` on the four-world model `w_∅, w_a, w_b, w_ab` (`BSML.TwoAtomWorld`), whose running
+state is `{w_a, w_b}`.
 
-The remaining facts are substrate: Facts 1, 2, 9, 10, 13 and the BSML* half of
-Fact 14 in `Logic/Team/BSML/Enrichment.lean`, Facts 6–8 in
-`ClassicalValidities.lean`, Fact 15 in `Classical.lean`. Out of scope: the
-first-order extension (§6.2, see [aloni-vanormondt-2023]) and the BSML◇
-conjecture of §7 beyond its countermodel (63b).
+## Main results
+
+* `modalDisjunction`, `narrowScopeFC`, `wideScopeFC`, `dualProhibition`, `doubleNegationFC`:
+  Facts 3, 4, 5, 11 and 12.
+* `epistemicContradiction`: the epistemic contradiction of §4.1.
+* `not_forall_support_neg_of_forall_disjoint`: incompatibility does not define negation.
+* `not_negativeFC_poss`, `not_negativeFC_nec`: BSML⁺ fails Negative FC (Fact 14).
+* `positiveFC_plus`, `not_positiveFC`, `addition`, `not_addition_plus`, `contraposition`,
+  `not_contraposition_plus`: Table 5's comparison of BSML∅ with BSML⁺.
+
+## Implementation notes
+
+Facts 1, 2, 9, 10, 13 and the BSML* half of Fact 14 are in `Logic/Team/BSML/Enrichment.lean`,
+Facts 6–8 in `Logic/Team/BSML/Negation.lean`, and Fact 15 in `Logic/Team/BSML/Classical.lean`.
+The first-order extension of §6.2, which Aloni and van Ormondt develop, and the BSML◇ conjecture
+of §7 beyond its countermodel (63b) are out of scope.
+
+## References
+
+* [aloni-2022] Aloni, Logic and Conversation: The Case of Free Choice
+* [aloni-vanormondt-2023] Aloni and van Ormondt, Modified Numerals and Split Disjunction: The
+  First-Order Case
 -/
 
 @[expose] public section
@@ -108,7 +118,7 @@ theorem epistemicContradiction (hSB : Team.IsStateBased M.access t)
     (h : support M (.conj (.poss φ) (.neg φ)) t) : t = ∅ :=
   Finset.eq_empty_of_forall_notMem fun w hw ↦
     have ⟨_, hs, ⟨_, hv⟩, hsupp⟩ := h.1 w hw
-    Finset.disjoint_left.mp (disjoint_support_antiSupport M φ h.2 hsupp) (hSB w hw ▸ hs hv) hv
+    Finset.disjoint_right.mp (disjoint_of_support_of_antiSupport hsupp h.2) (hSB w hw ▸ hs hv) hv
 
 /-! ### The four-world illustrations
 
@@ -202,6 +212,18 @@ example : ¬ Team.IsIndisputable fig5b.access state ∧
 example : support fig5b (.disj (.poss (enrich (.atom .a))) (.poss (enrich (.atom .b)))) state := by
   decide
 
+/-! ### Negation and incompatibility -/
+
+/-- Incompatibility does not define negation, so the converse of Fact 7 fails (p. 5:31). The
+    state `{w_b}` is disjoint from every team supporting `¬((a ∧ NE) ∨ b)` but does not support
+    its negation, since `a` is no open possibility in `{w_b}`. -/
+theorem not_forall_support_neg_of_forall_disjoint :
+    ¬ ∀ (φ : Formula FCAtom) (M : KripkeModel TwoAtomWorld FCAtom) (s : Finset TwoAtomWorld),
+      (∀ t, support M φ t → Disjoint s t) → support M (.neg φ) s :=
+  fun h ↦ (by decide : ¬ support propositional
+      (.neg (.neg (.disj (.conj (.atom .a) .ne) (.atom .b)))) {.onlyB})
+    (h _ _ _ (by decide))
+
 /-! ### Negative free choice (Fact 14)
 
 BSML⁺ validates neither `◇¬(α ∧ β) ⊨ ◇¬α` nor `¬□(α ∧ β) ⊨ ¬□α` — the paper's
@@ -212,14 +234,14 @@ Arabic". The countermodel is Figure 5(b)'s frame at the state `{w_a}`: inside
 (`BSML.negativeFC_star_poss`, `BSML.negativeFC_star_nec`). -/
 
 theorem not_negativeFC_poss :
-    ¬ consequencePlus (W := TwoAtomWorld) (Atom := FCAtom)
+    ¬ ConsequencePlus (W := TwoAtomWorld) (Atom := FCAtom)
       (.poss (.neg (.conj (.atom .a) (.atom .b)))) (.poss (.neg (.atom .a))) :=
   fun h ↦ (by decide : ¬ support fig5b (enrich (.poss (.neg (.atom .a)))) {.onlyA})
     (h fig5b {.onlyA} (by decide))
 
 /-- The `□` form follows from the `◇` form by the duality `□φ := ¬◇¬φ`. -/
 theorem not_negativeFC_nec :
-    ¬ consequencePlus (W := TwoAtomWorld) (Atom := FCAtom)
+    ¬ ConsequencePlus (W := TwoAtomWorld) (Atom := FCAtom)
       (.neg (Formula.nec (.conj (.atom .a) (.atom .b)))) (.neg (Formula.nec (.atom .a))) :=
   fun h ↦ not_negativeFC_poss fun M t hp ↦
     (support_enrich_neg_neg M _ t).mp (h M t ((support_enrich_neg_neg M _ t).mpr hp))
@@ -233,9 +255,9 @@ The BSML∅ failure of Positive FC is Figure 4(a); the BSML⁺ failures are refu
 Figure 5(a)'s frame and on the arrow-free model, the failing contrapositive being that
 of Positive FC itself. -/
 
-/-- Positive FC in BSML⁺: `◇(α ∨ β) ⊨⁺ ◇α ∧ ◇β`. -/
+/-- Positive FC holds in BSML⁺, `◇(α ∨ β) ⊨⁺ ◇α ∧ ◇β`. -/
 theorem positiveFC_plus :
-    consequencePlus (W := W) (.poss (.disj α β)) (.conj (.poss α) (.poss β)) :=
+    ConsequencePlus (W := W) (.poss (.disj α β)) (.conj (.poss α) (.poss β)) :=
   fun M t h ↦
     have hw : ∀ w ∈ t, (∃ s ⊆ M.access w, s.Nonempty ∧ support M (enrich α) s) ∧
         ∃ s ⊆ M.access w, s.Nonempty ∧ support M (enrich β) s := fun w hw ↦
@@ -244,34 +266,34 @@ theorem positiveFC_plus :
         ⟨_, (le_sup_right.trans_eq hu).trans hs, nonempty_of_support_enrich h₂, h₂⟩⟩
     ⟨⟨⟨fun w hw' ↦ (hw w hw').1, h.2⟩, ⟨fun w hw' ↦ (hw w hw').2, h.2⟩⟩, h.2⟩
 
-/-- Positive FC fails in BSML∅: Figure 4(a) supports `◇(a ∨ b)` but not `◇b`. -/
+/-- Positive FC fails in BSML∅, since Figure 4(a) supports `◇(a ∨ b)` but not `◇b`. -/
 theorem not_positiveFC :
-    ¬ consequence (W := TwoAtomWorld) (.poss aOrB) (.conj mayA mayB) :=
+    ¬ Consequence (W := TwoAtomWorld) (.poss aOrB) (.conj mayA mayB) :=
   fun h ↦ (by decide : ¬ support fig4a (.conj mayA mayB) {.both}) (h fig4a {.both} (by decide))
 
-/-- Addition in BSML∅: `α ⊨ α ∨ β` for `NE`-free `α β`, classically. -/
-theorem addition (hα : α.NEFree) (hβ : β.NEFree) : consequence (W := W) α (.disj α β) :=
+/-- Addition holds in BSML∅, `α ⊨ α ∨ β` for `NE`-free `α β`, classically. -/
+theorem addition (hα : α.NEFree) (hβ : β.NEFree) : Consequence (W := W) α (.disj α β) :=
   (consequence_iff_classicalConsequence (ψ := .disj α β) hα ⟨hα, hβ⟩).mpr fun _ _ ↦ Or.inl
 
-/-- Addition fails in BSML⁺: `[a]⁺ ⊭ [a ∨ b]⁺` at the zero-model `{w_a}`, where `b` has
+/-- Addition fails in BSML⁺, `[a]⁺ ⊭ [a ∨ b]⁺` at the zero-model `{w_a}`, where `b` has
 no non-empty witness. -/
 theorem not_addition_plus :
-    ¬ consequencePlus (W := TwoAtomWorld) (.atom .a) aOrB :=
+    ¬ ConsequencePlus (W := TwoAtomWorld) (.atom .a) aOrB :=
   fun h ↦ (by decide : ¬ support propositional (enrich aOrB) {.onlyA})
     (h propositional {.onlyA} (by decide))
 
-/-- Contraposition in BSML∅: for `NE`-free `α β`, `α ⊨ β` gives `¬β ⊨ ¬α`, classically. -/
-theorem contraposition (hα : α.NEFree) (hβ : β.NEFree) (h : consequence (W := W) α β) :
-    consequence (W := W) (.neg β) (.neg α) :=
+/-- Contraposition holds in BSML∅, so for `NE`-free `α β`, `α ⊨ β` gives `¬β ⊨ ¬α`. -/
+theorem contraposition (hα : α.NEFree) (hβ : β.NEFree) (h : Consequence (W := W) α β) :
+    Consequence (W := W) (.neg β) (.neg α) :=
   (consequence_iff_classicalConsequence (φ := .neg β) (ψ := .neg α) hβ hα).mpr
     fun M w hβ' hα' ↦ hβ' ((consequence_iff_classicalConsequence hα hβ).mp h M w hα')
 
-/-- Contraposition fails in BSML⁺: Positive FC holds, but its contrapositive
+/-- Contraposition fails in BSML⁺. Positive FC holds, but its contrapositive
 `¬(◇a ∧ ◇b) ⊨⁺ ¬◇(a ∨ b)` fails at `{w_a}` on Figure 5(a)'s frame, where `R[w_a] = {w_b}`
 anti-supports `a` but not `a ∨ b`. -/
 theorem not_contraposition_plus :
-    consequencePlus (W := TwoAtomWorld) (.poss aOrB) (.conj mayA mayB) ∧
-      ¬ consequencePlus (W := TwoAtomWorld) (.neg (.conj mayA mayB)) (.neg (.poss aOrB)) :=
+    ConsequencePlus (W := TwoAtomWorld) (.poss aOrB) (.conj mayA mayB) ∧
+      ¬ ConsequencePlus (W := TwoAtomWorld) (.neg (.conj mayA mayB)) (.neg (.poss aOrB)) :=
   ⟨positiveFC_plus, fun h ↦
     (by decide : ¬ support fig5a (enrich (.neg (.poss aOrB))) {.onlyA})
       (h fig5a {.onlyA} (by decide))⟩

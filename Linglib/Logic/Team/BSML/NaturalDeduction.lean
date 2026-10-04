@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Logic.Team.BSML.Classical
-public import Linglib.Logic.Team.BSML.ClassicalValidities
+public import Linglib.Logic.Team.BSML.Negation
 public import Linglib.Logic.Team.BSML.Properties
 public import Linglib.Logic.Team.BSML.Scenarios
 
@@ -244,9 +244,8 @@ theorem soundness (h : Γ ⊢ φ) (M : KripkeModel W Atom) :
         (hs γ hγ)
   | negE _ hβ _ _ ih₁ ih₂ =>
     intro s hΓ
-    have h := disjoint_support_antiSupport M _ (ih₂ s fun γ hγ ↦ hΓ γ (.inr hγ))
-      (ih₁ s fun γ hγ ↦ hΓ γ (.inl hγ))
-    rw [(Finset.disjoint_self_iff_empty s).mp h]
+    rw [eq_empty_of_support_of_antiSupport (ih₁ s fun γ hγ ↦ hΓ γ (.inl hγ))
+      (ih₂ s fun γ hγ ↦ hΓ γ (.inr hγ))]
     exact support_empty_of_neFree hβ M
   | dneE _ ih | dneI _ ih | dmConjE _ ih | dmConjI _ ih | dmDisjE _ ih | dmDisjI _ ih
   | interE _ ih | interI _ ih => exact ih
@@ -329,8 +328,8 @@ theorem soundness (h : Γ ⊢ φ) (M : KripkeModel W Atom) :
     have h : s ∈ nec M.access {t | support M (C.fill ψ) t} := ih s hΓ
     rwa [Formula.Context.setOf_support_fill M ψ hC, nec_union] at h
 
-/-- A derivation from one premise is a consequence in the sense of `consequence`. -/
-theorem consequence_of_derives (h : {φ} ⊢ ψ) : consequence (W := W) φ ψ :=
+/-- A derivation from one premise is a consequence in the sense of `Consequence`. -/
+theorem consequence_of_derives (h : {φ} ⊢ ψ) : Consequence (W := W) φ ψ :=
   fun M t ht ↦ soundness h M t fun _ hγ ↦ hγ ▸ ht
 
 /-! ### Derived rules -/
