@@ -26,7 +26,8 @@ def f_1a : Form :=
     comment := ""
     source := [
       ⟨"mccollum-bakovic-mai-meinhardt-2020", "(1a)"⟩,
-      ⟨"mccollum-bakovic-mai-meinhardt-2020", "(5a)"⟩
+      ⟨"mccollum-bakovic-mai-meinhardt-2020", "(5a)"⟩,
+      ⟨"yolyan-2025", "Example 2.12 (b)"⟩
     ]
     columns := [("Underlying", "/a-tɪ́-ba-bá/")] }
 
@@ -39,7 +40,8 @@ def f_1b : Form :=
     comment := ""
     source := [
       ⟨"mccollum-bakovic-mai-meinhardt-2020", "(1b)"⟩,
-      ⟨"mccollum-bakovic-mai-meinhardt-2020", "(5d)"⟩
+      ⟨"mccollum-bakovic-mai-meinhardt-2020", "(5d)"⟩,
+      ⟨"yolyan-2025", "Example 2.12 (a)"⟩
     ]
     columns := [("Underlying", "/a-tɪ́-ba-ʃē/")] }
 
@@ -183,7 +185,8 @@ def f_3b : Form :=
     segments := ["b", "ʊ", "t", "ɪ́", "b", "á"]
     comment := ""
     source := [
-      ⟨"mccollum-bakovic-mai-meinhardt-2020", "(3b)"⟩
+      ⟨"mccollum-bakovic-mai-meinhardt-2020", "(3b)"⟩,
+      ⟨"yolyan-2025", "Example 2.12 (b)"⟩
     ]
     columns := [("Underlying", "/bʊ-tɪ́-bá/")] }
 
@@ -219,7 +222,8 @@ def f_3e : Form :=
     segments := ["b", "u", "t", "í", "ʃ", "ē"]
     comment := ""
     source := [
-      ⟨"mccollum-bakovic-mai-meinhardt-2020", "(3e)"⟩
+      ⟨"mccollum-bakovic-mai-meinhardt-2020", "(3e)"⟩,
+      ⟨"yolyan-2025", "Example 2.12 (a)"⟩
     ]
     columns := [("Underlying", "/bʊ-tɪ́-ʃē/")] }
 
@@ -495,7 +499,8 @@ def f_8b : Form :=
     segments := ["i", "t", "í", "w", "u"]
     comment := "The underlying form is printed /i-tɪ́-wu/; the tape (26) runs the word as /ɪ-tɪ́-wu/."
     source := [
-      ⟨"mccollum-bakovic-mai-meinhardt-2020", "(8b)"⟩
+      ⟨"mccollum-bakovic-mai-meinhardt-2020", "(8b)"⟩,
+      ⟨"yolyan-2025", "Example 2.12 (c)"⟩
     ]
     columns := [("Underlying", "/ɪ-tɪ́-wu/")] }
 
@@ -508,7 +513,8 @@ def f_8c : Form :=
     comment := ""
     source := [
       ⟨"mccollum-bakovic-mai-meinhardt-2020", "(8c)"⟩,
-      ⟨"mccollum-bakovic-mai-meinhardt-2020", "(27b)"⟩
+      ⟨"mccollum-bakovic-mai-meinhardt-2020", "(27b)"⟩,
+      ⟨"yolyan-2025", "Example 2.12 (c)"⟩
     ]
     columns := [("Underlying", "/ɪ-ba-wu/")] }
 
@@ -556,7 +562,8 @@ def f_8g : Form :=
     segments := ["ɪ", "t", "ɪ́", "k", "a", "á", "b", "ā", "b", "ā", "w", "ū"]
     comment := ""
     source := [
-      ⟨"mccollum-bakovic-mai-meinhardt-2020", "(8g)"⟩
+      ⟨"mccollum-bakovic-mai-meinhardt-2020", "(8g)"⟩,
+      ⟨"yolyan-2025", "Example 2.12 (c)"⟩
     ]
     columns := [("Underlying", "/ɪ-tɪ́-ka-á-ba-ba-wu/")] }
 
@@ -568,7 +575,8 @@ def f_8h : Form :=
     segments := ["e", "t", "í", "k", "e", "é", "b", "ē", "b", "ē", "w", "ū"]
     comment := ""
     source := [
-      ⟨"mccollum-bakovic-mai-meinhardt-2020", "(8h)"⟩
+      ⟨"mccollum-bakovic-mai-meinhardt-2020", "(8h)"⟩,
+      ⟨"yolyan-2025", "Example 2.12 (c)"⟩
     ]
     columns := [("Underlying", "/a-tɪ́-ka-á-ba-ba-wu/")] }
 

@@ -7,7 +7,7 @@
       "Form": "atɪ́babá",
       "Segments": ["a", "t", "ɪ́", "b", "a", "b", "á"],
       "Comment": "",
-      "Source": ["mccollum-bakovic-mai-meinhardt-2020[(1a)]", "mccollum-bakovic-mai-meinhardt-2020[(5a)]"],
+      "Source": ["mccollum-bakovic-mai-meinhardt-2020[(1a)]", "mccollum-bakovic-mai-meinhardt-2020[(5a)]", "yolyan-2025[Example 2.12 (b)]"],
       "Underlying": "/a-tɪ́-ba-bá/"
     },
     {
@@ -17,7 +17,7 @@
       "Form": "etíbeʃē",
       "Segments": ["e", "t", "í", "b", "e", "ʃ", "ē"],
       "Comment": "",
-      "Source": ["mccollum-bakovic-mai-meinhardt-2020[(1b)]", "mccollum-bakovic-mai-meinhardt-2020[(5d)]"],
+      "Source": ["mccollum-bakovic-mai-meinhardt-2020[(1b)]", "mccollum-bakovic-mai-meinhardt-2020[(5d)]", "yolyan-2025[Example 2.12 (a)]"],
       "Underlying": "/a-tɪ́-ba-ʃē/"
     },
     {
@@ -137,7 +137,7 @@
       "Form": "bʊtɪ́bá",
       "Segments": ["b", "ʊ", "t", "ɪ́", "b", "á"],
       "Comment": "",
-      "Source": ["mccollum-bakovic-mai-meinhardt-2020[(3b)]"],
+      "Source": ["mccollum-bakovic-mai-meinhardt-2020[(3b)]", "yolyan-2025[Example 2.12 (b)]"],
       "Underlying": "/bʊ-tɪ́-bá/"
     },
     {
@@ -167,7 +167,7 @@
       "Form": "butíʃē",
       "Segments": ["b", "u", "t", "í", "ʃ", "ē"],
       "Comment": "",
-      "Source": ["mccollum-bakovic-mai-meinhardt-2020[(3e)]"],
+      "Source": ["mccollum-bakovic-mai-meinhardt-2020[(3e)]", "yolyan-2025[Example 2.12 (a)]"],
       "Underlying": "/bʊ-tɪ́-ʃē/"
     },
     {
@@ -397,7 +397,7 @@
       "Form": "itíwu",
       "Segments": ["i", "t", "í", "w", "u"],
       "Comment": "The underlying form is printed /i-tɪ́-wu/; the tape (26) runs the word as /ɪ-tɪ́-wu/.",
-      "Source": ["mccollum-bakovic-mai-meinhardt-2020[(8b)]"],
+      "Source": ["mccollum-bakovic-mai-meinhardt-2020[(8b)]", "yolyan-2025[Example 2.12 (c)]"],
       "Underlying": "/ɪ-tɪ́-wu/"
     },
     {
@@ -407,7 +407,7 @@
       "Form": "ɪbawu",
       "Segments": ["ɪ", "b", "a", "w", "u"],
       "Comment": "",
-      "Source": ["mccollum-bakovic-mai-meinhardt-2020[(8c)]", "mccollum-bakovic-mai-meinhardt-2020[(27b)]"],
+      "Source": ["mccollum-bakovic-mai-meinhardt-2020[(8c)]", "mccollum-bakovic-mai-meinhardt-2020[(27b)]", "yolyan-2025[Example 2.12 (c)]"],
       "Underlying": "/ɪ-ba-wu/"
     },
     {
@@ -447,7 +447,7 @@
       "Form": "ɪtɪ́kaábābāwū",
       "Segments": ["ɪ", "t", "ɪ́", "k", "a", "á", "b", "ā", "b", "ā", "w", "ū"],
       "Comment": "",
-      "Source": ["mccollum-bakovic-mai-meinhardt-2020[(8g)]"],
+      "Source": ["mccollum-bakovic-mai-meinhardt-2020[(8g)]", "yolyan-2025[Example 2.12 (c)]"],
       "Underlying": "/ɪ-tɪ́-ka-á-ba-ba-wu/"
     },
     {
@@ -457,7 +457,7 @@
       "Form": "etíkeébēbēwū",
       "Segments": ["e", "t", "í", "k", "e", "é", "b", "ē", "b", "ē", "w", "ū"],
       "Comment": "",
-      "Source": ["mccollum-bakovic-mai-meinhardt-2020[(8h)]"],
+      "Source": ["mccollum-bakovic-mai-meinhardt-2020[(8h)]", "yolyan-2025[Example 2.12 (c)]"],
       "Underlying": "/a-tɪ́-ka-á-ba-ba-wu/"
     },
     {
