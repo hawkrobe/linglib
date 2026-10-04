@@ -1,45 +1,58 @@
 module
 
 public import Linglib.Studies.BrueningAlKhalaf2020
+public import Linglib.Data.Examples.Bruening2025
+public import Linglib.Data.Examples.BrueningAlKhalaf2020
+public import Linglib.Data.Experiments.Bruening2025
 
 /-!
 # Bruening 2025: selectional violations in coordination
 
-Bruening replies to the objection that the two selectional violations Bruening and Al Khalaf find
-in coordination, a clause beside a noun phrase where only noun phrases are selected and a non-*ly*
-adverb beside an adjective before a noun, are not violations at all. Three acceptability surveys
-bear the objection out in neither case, and since their results are effect directions on rating
-scales they are recorded in prose. The reply accepts the critics' evidence that coordinated
-arguments need not match in category ((8)–(12)) and revises the 2020 analysis, keeping its
-selector's requirements and dropping the requirement that conjuncts share a category (§§5.2–5.3).
-It rests on categorial selection being irreducible to semantic selection, which five
-*become*-type predicates show.
+Bruening replies to Patejuk and Przepiórkowski's critique of Bruening and Al Khalaf. He grants
+that coordinated arguments need not match in category, so the revised grammar keeps the 2020
+selector's requirements, c-selection checked against every conjunct and S-features checked once
+against the conjunct next to the selector, without the requirement that conjuncts share a
+category (§§5.2–5.4). He maintains that the two selectional violations are real, limited and
+linear, as three surveys bear out, and replaces the 2020 account of the adverbial one by negative
+c-selectional features, which the next item merged checks off (§5.8). The examples are the rows of
+`Data/Examples/Bruening2025` and the survey results are `Data/Experiments/Bruening2025`.
 
 ## Main definitions
 
-* `ComplementProfile`, `BecomeType.profile`: the categories each *become*-type predicate admits.
+* `CFeature`, `Modifier`: a modifier's category and c-selectional feature.
+* `MergesWith`: when a coordination of modifiers can merge with its host.
 
 ## Main results
 
-* `cSelection_not_reducible`: no assignment of categories to a semantic class fits the five
-  predicates.
-* `unlike_arguments`: coordinated arguments of different categories, each selected, are admitted
-  by the revision and excluded by the 2020 grammar.
-* `violations_are_directional`: a clause may join a noun phrase where clauses are banned, after it
-  but not before it, and no noun phrase may join a clause where noun phrases are banned.
-* `no_other_violations`: a prepositional phrase may not join a noun phrase where noun phrases
-  alone are selected.
+* `selection_rows`: complements of one category and meaning differ in acceptability from verb
+  to verb, so c-selection is not semantic selection.
+* `argument_rows`, `argument_rows_licensed`, `argument_rows_2020`: the revision decides the
+  coordinated arguments, and it parts from the 2020 grammar exactly on coordinations of selected
+  phrases of different categories, in both papers' data.
+* `cp_subjects`, `exp1b_persisting`: speaker variation as the absence or the persistence of
+  S-features.
+* `mergesWith_iff_nominalCoordination`: on prenominal modifiers the analysis agrees with the 2020
+  one, with no null head.
+* `mergesWith_cmpr_iff`: it extends to comparatives, where an adverb may also only be the
+  conjunct away from the comparative.
+* `modifier_rows`, `stacked_rows`, `prenominal_rows_2020`: it decides the examples and the 2020
+  paper's prenominal ones.
+* `exp1a_predictions`, `exp2_predictions`, `exp1b_predictions`: the survey conditions the
+  analysis admits, which are the ones rated higher (Tables 2, 4, 6).
 
 ## Implementation notes
 
-* The revision is the 2020 study's `Satisfies` without its `Coordinable` clause, so the 2020
-  theorems about `Satisfies`, `mem_cats_or_of_admits` and `mem_cats_of_mem_leftToRight`, hold of
-  it. The reply's own analysis of the adverbial violation (§5.8) is not formalized.
+* S-features are present or absent. The superset requirement of §5.3 matters only for
+  *strengthen* and *withdraw* (§5.6), which the paper excludes semantically (`semantic_rows`).
+* The positive features of *-ly* adverbs are left open by the paper beyond excluding nouns; they
+  are given verbs and adjectives here, and no theorem uses more than that they exclude nouns.
+* Short displacement as a degree phrase ((105)) is not formalized.
 
 ## References
 
 * [bruening-2025]
 * [bruening-alkhalaf-2020]
+* [patejuk-przepiorkowski-2023]
 * [pollard-sag-1987]
 -/
 
@@ -47,91 +60,249 @@ It rests on categorial selection being irreducible to semantic selection, which 
 
 namespace Bruening2025
 
-open BrueningAlKhalaf2020
+open BrueningAlKhalaf2020 (Conjunct Admits Satisfies Licensed checkedOnce phrases? selects? side?
+  AdvHead NominalCoordination)
 open Syntax (Cat)
-open Syntax.Cat (NP PP)
+open Syntax.Cat (N V Adj Adv NP)
 
-/-! ### Categorial selection is not semantic selection -/
+/-! ### Categorial selection -/
 
-/-- The complement categories a predicate admits. Every complement at issue is semantically a
-predicate, so the profiles differ on categories alone. -/
-structure ComplementProfile where
-  /-- Whether noun phrases are admitted, as in *she ended up a cynic*. -/
-  np : Bool
-  /-- Whether adjective phrases are admitted, as in *she grew tired*. -/
-  ap : Bool
-  /-- Whether prepositional phrases are admitted, as in *she got into trouble*. -/
-  pp : Bool
-  /-- Whether gerundive complements are admitted, as in *they ended up liking it*. -/
-  gerund : Bool
-  /-- Whether *to*-infinitives are admitted, as in *they turned out to like it*. -/
-  toInfinitive : Bool
-  deriving DecidableEq, Repr
-
-/-- The five *become*-type predicates and the categories each admits. -/
-inductive BecomeType where
-  | become | grow | get | endUp | turnOut
-  deriving DecidableEq, Repr
-
-/-- *Become* admits noun and adjective phrases, *grow* only adjective phrases, *get* adjective and
-prepositional phrases, and *end up* and *turn out* both noun and adjective phrases while splitting
-the nonfinite complements between them. -/
-def BecomeType.profile : BecomeType → ComplementProfile
-  | .become => ⟨true, true, false, false, false⟩
-  | .grow => ⟨false, true, false, false, false⟩
-  | .get => ⟨false, true, true, false, false⟩
-  | .endUp => ⟨true, true, false, true, false⟩
-  | .turnOut => ⟨true, true, false, false, true⟩
-
-/-- No assignment of a complement profile to the semantic class the five predicates share can
-reproduce their distribution, since they are alike semantically and differ categorially, so
-categorial selection is a further fact about a predicate. -/
-theorem cSelection_not_reducible {α : Type*} (semantics : BecomeType → α)
-    (halike : ∀ v w, semantics v = semantics w) (fromSemantics : α → ComplementProfile) :
-    ¬ ∀ v : BecomeType, fromSemantics (semantics v) = v.profile := by
-  intro h
-  have := (h .become).symm.trans ((halike .become .grow) ▸ h .grow)
-  exact absurd this (by decide)
-
-/-- Even the two predicates that admit the same phrasal categories differ on nonfinite
-complements, as *they ended up liking it* against *they turned out to like it* shows. -/
-theorem endUp_turnOut_differ :
-    BecomeType.endUp.profile.np = BecomeType.turnOut.profile.np ∧
-      BecomeType.endUp.profile.ap = BecomeType.turnOut.profile.ap ∧
-      BecomeType.endUp.profile.gerund ≠ BecomeType.turnOut.profile.gerund ∧
-      BecomeType.endUp.profile.toInfinitive ≠ BecomeType.turnOut.profile.toInfinitive := by
+/-- Two complements of one category after *become*-type predicates differ in acceptability
+((17)). Every complement here is semantically a predicate, so whether a predicate admits one is
+a further fact about it, c-selection (§4.1, after [pollard-sag-1987]). -/
+theorem selection_rows : ∃ e₁ ∈ Examples.all, ∃ e₂ ∈ Examples.all,
+    e₁.feature? "construction" = some "selection" ∧ e₂.feature? "construction" = some "selection" ∧
+      e₁.feature? "complement" = e₂.feature? "complement" ∧ e₁.judgment ≠ e₂.judgment := by
   decide
 
-/-! ### The revised grammar -/
+/-! ### Coordinated arguments -/
 
-/-- Coordinated arguments of different categories, each selected, are admitted once conjuncts need
-not share a category, as a clause and a prepositional phrase are after *believe* (9) and a clause
-before a noun phrase after *show* (10). The 2020 grammar excludes both, the second because the
-clause must then be a noun phrase under the null N, which bears no S-features for the verb to
-check, as in its (69). -/
-theorem unlike_arguments :
-    (Admits (Satisfies (leftToRight .headInitial) {.CP, PP}) [.CP, PP] ∧
-      ¬ Admits (Licensed (leftToRight .headInitial) {.CP, PP}) [.CP, PP]) ∧
-    (Admits (Satisfies (leftToRight .headInitial) {NP, .CP}) [.CP, NP] ∧
-      ¬ Admits (Licensed (leftToRight .headInitial) {NP, .CP}) [.CP, NP]) := by
+/-- A predicate with S-features rejects a clausal subject, which can only be a noun phrase under
+the null N, while one that imposes none admits it, so speakers who accept *that images are
+waterproof is incoherent* have a predicate without S-features (§5.7). -/
+theorem cp_subjects :
+    ¬ Admits (Satisfies (checkedOnce .headFinal) {NP}) [.CP] ∧
+      Admits (Satisfies (fun _ ↦ []) {NP}) [.CP] := by
   decide
 
-/-- The violations run one way, and away from the selector. A clause coordinated with a noun
-phrase is admitted where a noun phrase is selected, after the noun phrase but not before it — *you
-can depend on my assistant and that he will be on time* against (3b) — while a noun phrase
-coordinated with a clause is not admitted where a clause is selected, as in *she thinks that the
-world is flat and another discredited thing* (49). -/
-theorem violations_are_directional :
-    Admits (Satisfies (leftToRight .headInitial) {NP}) [NP, .CP] ∧
-      ¬ Admits (Satisfies (leftToRight .headInitial) {NP}) [.CP, NP] ∧
-      ¬ Admits (Satisfies (leftToRight .headInitial) {.CP}) [.CP, NP] := by
+/-! ### Adverbs -/
+
+/-- The degree heads the analysis of adverbs refers to besides the categories of `Syntax.Cat`
+(§5.8) are a comparative and an equative. -/
+inductive Degree where
+  /-- A comparative, *taller*. -/
+  | cmpr
+  /-- An equative, *as tall as*. -/
+  | eq
+  deriving DecidableEq
+
+/-- A modifier's c-selectional feature (§5.8) either requires what it merges with to be of one of
+some categories or forbids it to be of any of them. -/
+inductive CFeature where
+  /-- A positive feature, `[C ∈ s]`. -/
+  | sel (s : Finset (Cat ⊕ Degree))
+  /-- A negative feature, `[C ∉ s]`. -/
+  | ban (s : Finset (Cat ⊕ Degree))
+  deriving DecidableEq
+
+namespace CFeature
+
+/-- A negative feature is checked off as soon as the next item is merged, and fails if that item
+is of a category it bans. A positive feature waits. -/
+def ChecksNext : CFeature → Cat ⊕ Degree → Prop
+  | sel _, _ => True
+  | ban s, c => c ∉ s
+
+/-- A positive feature on the coordinator's stack is checked against the item the coordination
+merges with, as is every feature on the stack ((75)). -/
+def ChecksHost : CFeature → Cat ⊕ Degree → Prop
+  | sel s, c => c ∈ s
+  | ban _, _ => True
+
+instance (f : CFeature) : DecidablePred f.ChecksNext := fun _ ↦ by
+  cases f <;> unfold ChecksNext <;> infer_instance
+
+instance (f : CFeature) : DecidablePred f.ChecksHost := fun _ ↦ by
+  cases f <;> unfold ChecksHost <;> infer_instance
+
+end CFeature
+
+/-- A modifier is an item of some category with a c-selectional feature. -/
+structure Modifier where
+  /-- The modifier's category. -/
+  cat : Cat ⊕ Degree
+  /-- The modifier's c-selectional feature. -/
+  feature : CFeature
+  deriving DecidableEq
+
+namespace Modifier
+
+/-- An adjective selects a nonmaximal noun (§4.1). -/
+def adjective : Modifier := ⟨.inl Adj, .sel {.inl N}⟩
+
+/-- An underspecified adverb such as *once*, *twice* or *soon* may merge with anything but a
+nonmaximal noun or a comparative (§5.8). -/
+def adverb : Modifier := ⟨.inl Adv, .ban {.inl N, .inr .cmpr}⟩
+
+/-- An adverb in *-ly* selects what adverbs modify, verbs and adjectives, and not nouns (§4.1). -/
+def lyAdverb : Modifier := ⟨.inl Adv, .sel {.inl V, .inl Adj}⟩
+
+/-- A measure phrase such as *three times* selects a comparative (p. 479). -/
+def measure : Modifier := ⟨.inl NP, .sel {.inr .cmpr}⟩
+
+/-- The modifier the 2020 analysis's adjective, silent-headed adverb or adverb in *-ly* is here. -/
+def ofAdvHead : Option AdvHead → Modifier
+  | none => adjective
+  | some .silent => adverb
+  | some .ly => lyAdverb
+
+end Modifier
+
+/-- A coordination of modifiers `ms` can merge with an item of category `h` when the negative
+feature of each conjunct is checked off by the next conjunct and that of the last by `h`, the
+last conjunct's features being on top of the coordinator's stack, and every positive feature on
+the stack is satisfied by `h` ((100)–(104)). -/
+def MergesWith (ms : List Modifier) (h : Cat ⊕ Degree) : Prop :=
+  ms.IsChain (fun x y ↦ x.feature.ChecksNext y.cat) ∧
+    (∀ x ∈ HeadDirection.headFinal.nearest ms, x.feature.ChecksNext h) ∧
+      ∀ x ∈ ms, x.feature.ChecksHost h
+
+instance (ms : List Modifier) (h : Cat ⊕ Degree) : Decidable (MergesWith ms h) := by
+  unfold MergesWith; infer_instance
+
+/-- An underspecified adverb alone merges with anything but a nonmaximal noun or a comparative,
+so *twice* is out before *taller* and in before *as tall as* ((97)). -/
+theorem adverb_mergesWith_iff {h : Cat ⊕ Degree} :
+    MergesWith [.adverb] h ↔ h ≠ .inl N ∧ h ≠ .inr .cmpr := by
+  simp [MergesWith, Modifier.adverb, CFeature.ChecksNext, CFeature.ChecksHost]
+
+/-- **On prenominal modifiers the analysis agrees with the 2020 one** (p. 480). Coordinated before
+a noun, an adjective or an underspecified adverb may come first and only an adjective last, as the
+2020 analysis derives from a silent Adv head and the ban on adverbs modifying N′, while this one
+needs neither. -/
+theorem mergesWith_iff_nominalCoordination (m₁ m₂ : Option AdvHead) :
+    MergesWith [.ofAdvHead m₁, .ofAdvHead m₂] (.inl N) ↔ NominalCoordination m₁ m₂ := by
+  rcases m₁ with _ | _ | _ <;> rcases m₂ with _ | _ | _ <;> decide
+
+/-- **It extends to comparatives**, which the 2020 analysis does not cover. Coordinated with a
+measure phrase before a comparative, an underspecified adverb must come first, as in *twice and
+maybe even three times taller* but not *one point five times or even twice taller* ((98)). -/
+theorem mergesWith_cmpr_iff : ∀ x ∈ [Modifier.measure, .adverb],
+    ∀ y ∈ [Modifier.measure, .adverb], (MergesWith [x, y] (.inr .cmpr) ↔ y = .measure) := by
   decide
 
-/-- A prepositional phrase may not join a noun phrase where the selecting head admits noun phrases
-only, so *the invaders destroyed the castle and of the surrounding town* is out (44). In general a
-phrase the selector does not c-select can only be a clause where a noun phrase is selected
-(`mem_cats_or_of_admits`). -/
-theorem no_other_violations : ¬ Admits (Satisfies (leftToRight .headInitial) {NP}) [NP, PP] := by
+/-! ### The paper's examples -/
+
+open Examples
+
+/-- `modifierOf? s` is the modifier the label `s` names. -/
+def modifierOf? (s : String) : Option Modifier :=
+  [("AP", .adjective), ("non-ly AdvP", .adverb), ("-ly AdvP", .lyAdverb), ("MP", .measure)].lookup s
+
+/-- `modifierList? e` lists a row's modifiers, in order. -/
+def modifierList? (e : Datum) : Option (List Modifier) :=
+  (e.features "modifier").mapM modifierOf?
+
+/-- `host? e` is the category of what a row's modifiers modify. -/
+def host? (e : Datum) : Option (Cat ⊕ Degree) :=
+  e.parse? "host" [("N", .inl N), ("CMPR", .inr .cmpr), ("equative", .inr .eq)]
+
+/-- Every row is one of the five constructions below. -/
+theorem construction_rows : ∀ e ∈ Examples.all, e.feature? "construction" ∈
+    [some "argument", some "semantic", some "selection", some "modifiers", some "stacked"] := by
+  decide
+
+/-- The revision decides the arguments, alone or coordinated ((9)–(10), (14), (38)–(39), (42b),
+(52a)). -/
+theorem argument_rows : ∀ e ∈ Examples.all, e.feature? "construction" = some "argument" →
+    ∃ ps ∈ phrases? e, ∃ cats ∈ selects? e, ∃ d ∈ side? e,
+      (Admits (Satisfies (checkedOnce d) cats) ps ↔ e.judgment = .acceptable) := by
+  decide
+
+/-- Of the acceptable coordinated arguments, the 2020 grammar rejects exactly those whose
+conjuncts are all selected and differ in category ((9), (10), (14a)). -/
+theorem argument_rows_licensed : ∀ e ∈ Examples.all,
+    e.feature? "construction" = some "argument" → e.judgment = .acceptable →
+      ∃ ps ∈ phrases? e, ∃ cats ∈ selects? e, ∃ d ∈ side? e,
+        (¬ Admits (Licensed (checkedOnce d) cats) ps ↔
+          (∀ p ∈ ps, p ∈ cats) ∧ ∃ p ∈ ps, ∃ q ∈ ps, p ≠ q) := by
+  decide
+
+/-- On the 2020 paper's arguments the revision keeps every judgment except on the coordinations of
+selected phrases of different categories, its (64) and (69), which it admits. -/
+theorem argument_rows_2020 : ∀ e ∈ BrueningAlKhalaf2020.Examples.all,
+    e.feature? "construction" = some "argument" →
+      ∃ ps ∈ phrases? e, ∃ cats ∈ selects? e, ∃ d ∈ side? e,
+        (Admits (Satisfies (checkedOnce d) cats) ps ↔ e.judgment = .acceptable ∨
+          (∀ p ∈ ps, p ∈ cats) ∧ ∃ p ∈ ps, ∃ q ∈ ps, p ≠ q) := by
+  decide
+
+/-- The revision admits *strengthen* and *withdraw* with a noun phrase coordinated with a clause,
+which the paper excludes semantically ((42c), §5.6). -/
+theorem semantic_rows : ∀ e ∈ Examples.all, e.feature? "construction" = some "semantic" →
+    e.judgment ≠ .acceptable ∧ ∃ ps ∈ phrases? e, ∃ cats ∈ selects? e, ∃ d ∈ side? e,
+      Admits (Satisfies (checkedOnce d) cats) ps := by
+  decide
+
+/-- The analysis decides the coordinated and lone modifiers ((22), (36), (97)–(99)). -/
+theorem modifier_rows : ∀ e ∈ Examples.all, e.feature? "construction" = some "modifiers" →
+    ∃ ms ∈ modifierList? e, ∃ h ∈ host? e, (MergesWith ms h ↔ e.judgment = .acceptable) := by
+  decide
+
+/-- Stacked modifiers each merge with a projection of the noun, so an underspecified adverb
+cannot precede an adjective uncoordinated ((20), (66), (67)). -/
+theorem stacked_rows : ∀ e ∈ Examples.all, e.feature? "construction" = some "stacked" →
+    ∃ ms ∈ modifierList? e, ∃ h ∈ host? e,
+      ((∀ m ∈ ms, MergesWith [m] h) ↔ e.judgment = .acceptable) := by
+  decide
+
+/-- The analysis decides the 2020 paper's prenominal examples ((44), its p. 15, (56a), (57a)). -/
+theorem prenominal_rows_2020 : ∀ e ∈ BrueningAlKhalaf2020.Examples.all,
+    e.feature? "construction" = some "prenominal" →
+      ∃ ms ∈ modifierList? e, (MergesWith ms (.inl N) ↔ e.judgment = .acceptable) := by
+  decide
+
+/-! ### The surveys -/
+
+/-- `c.modifiers` is the lone prenominal modifier of the items of a condition of Experiment 1a. -/
+def Exp1aCondition.modifiers : Exp1aCondition → Option (List Modifier)
+  | .adjective => some [.adjective]
+  | .adverb => some [.adverb]
+  | _ => none
+
+/-- The analysis admits the adjectives of Experiment 1a and not the adverbs. -/
+theorem exp1a_predictions : ∀ c : Exp1aCondition, ∀ ms ∈ c.modifiers,
+    (MergesWith ms (.inl N) ↔ c = .adjective) := by
+  decide
+
+/-- `c.modifiers` is the lone prenominal modifier of the items of a condition of Experiment 2,
+whose *one*-replacement rules out a compound. -/
+def Exp2Condition.modifiers : Exp2Condition → Option (List Modifier)
+  | .adjective => some [.adjective]
+  | .adverb => some [.adverb]
+  | _ => none
+
+/-- The analysis admits the adjectives of Experiment 2 and not the adverbs. -/
+theorem exp2_predictions : ∀ c : Exp2Condition, ∀ ms ∈ c.modifiers,
+    (MergesWith ms (.inl N) ↔ c = .adjective) := by
+  decide
+
+/-- `c.phrases` is the complement of the items of a condition of Experiment 1b, all after a
+preposition or verb that selects noun phrases only. -/
+def Exp1bCondition.phrases : Exp1bCondition → Option (List Cat)
+  | .coordination => some [NP, .CP]
+  | .simple => some [.CP]
+  | _ => none
+
+/-- The revision admits the coordinations of Experiment 1b and not the bare clauses. -/
+theorem exp1b_predictions : ∀ c : Exp1bCondition, ∀ ps ∈ c.phrases,
+    (Admits (Satisfies (checkedOnce .headInitial) {NP}) ps ↔ c = .coordination) := by
+  decide
+
+/-- For the speakers whose S-features persist, about a tenth of those surveyed (p. 457), the
+coordinations of Experiment 1b are out as well (§5.9, after `mem_cats_of_admits_id`). -/
+theorem exp1b_persisting : ∀ c : Exp1bCondition, ∀ ps ∈ c.phrases,
+    ¬ Admits (Satisfies id {NP}) ps := by
   decide
 
 end Bruening2025

@@ -2,6 +2,7 @@ module
 
 public import Mathlib.Data.Fin.Rev
 public import Mathlib.Data.Fintype.Perm
+public import Mathlib.Data.List.Forall2
 public import Mathlib.Logic.Function.Basic
 public import Mathlib.Tactic.DeriveFintype
 
@@ -12,17 +13,20 @@ The order of a head relative to one of its dependents, and the linear arrangemen
 set of constituents, in particular of the subject, object and verb of a clause.
 
 `HeadDirection` is the two-valued order of a head and a dependent, head-initial when the head
-precedes; `HeadDirection.swap` is the opposite direction and `HeadDirection.ofLT` the direction
-read off two positions. `WordOrder.Arrangement α n` is a linear arrangement of the elements of
-`α` over `n` ranks, a bijection onto `Fin n`, so that precedence, the head direction of any
-pair and the mirror image are read off the ranks. `Arrangement Constituent 3` arranges the
-three clausal constituents, and its six values are the basic word orders of the typological
-literature ([greenberg-1963], [dryer-2013-wals]), `Arrangement.sov` and its siblings.
+precedes; `HeadDirection.swap` is the opposite direction, `HeadDirection.ofLT` the direction read
+off two positions, and `HeadDirection.nearest` picks, from dependents in linear order on one side of
+their head, the one next to it. `WordOrder.Arrangement α n` is a linear arrangement of the elements
+of `α` over `n` ranks, a bijection onto `Fin n`, so that precedence, the head direction of any pair
+and the mirror image are read off the ranks. `Arrangement Constituent 3` arranges the three clausal
+constituents, and its six values are the basic word orders of the typological literature
+([greenberg-1963], [dryer-2013-wals]), `Arrangement.sov` and its siblings.
 
 ## Main declarations
 
 * `HeadDirection`, `HeadDirection.swap`, `HeadDirection.ofLT`: the two directions, the
   involution exchanging them, and the direction of a head and a dependent at given positions.
+* `HeadDirection.nearest`: the dependent next to the head, such as the conjunct of a
+  coordination that a selector or a probe next to it sees.
 * `WordOrder.Arrangement`, `Arrangement.Precedes`, `Arrangement.headDirection`,
   `Arrangement.mirror`: an arrangement of a finite type over ranks, precedence of two elements,
   the head direction of a pair, and the reversed arrangement, which reverses every precedence
@@ -98,6 +102,55 @@ end ofLT
 theorem ofLT_swap {α : Type*} [LinearOrder α] {head dep : α} (h : head ≠ dep) :
     ofLT dep head = (ofLT head dep).swap := by
   rcases lt_or_gt_of_ne h with hlt | hlt <;> simp [ofLT, hlt, lt_asymm hlt]
+
+section nearest
+
+variable {α β : Type*}
+
+/-- `d.nearest l` is the element of `l`, dependents in linear order on one side of their head,
+that is next to the head, the first when the head precedes them and the last when it follows. -/
+def nearest : HeadDirection → List α → Option α
+  | headInitial, l => l.head?
+  | headFinal, l => l.getLast?
+
+@[simp] theorem nearest_headInitial (l : List α) : headInitial.nearest l = l.head? := rfl
+
+@[simp] theorem nearest_headFinal (l : List α) : headFinal.nearest l = l.getLast? := rfl
+
+theorem mem_of_mem_nearest {d : HeadDirection} {l : List α} {a : α} (h : a ∈ d.nearest l) :
+    a ∈ l := by
+  cases d
+  · exact List.mem_of_mem_head? h
+  · exact List.mem_of_mem_getLast? h
+
+/-- Reversing the dependents and the side of the head picks out the same one. -/
+theorem nearest_swap_reverse (d : HeadDirection) (l : List α) :
+    d.swap.nearest l.reverse = d.nearest l := by
+  cases d <;> simp [List.head?_reverse, List.getLast?_reverse]
+
+/-- The dependent next to the head is the first on every list exactly when the head precedes. -/
+theorem nearest_eq_head?_iff [Nontrivial α] {d : HeadDirection} :
+    (∀ l : List α, d.nearest l = l.head?) ↔ d = headInitial := by
+  refine ⟨fun h ↦ ?_, fun h l ↦ by simp [h]⟩
+  cases d with
+  | headInitial => rfl
+  | headFinal =>
+    obtain ⟨a, b, hab⟩ := exists_pair_ne α
+    simpa [eq_comm, hab] using h [a, b]
+
+private theorem rel_head? {R : α → β → Prop} :
+    ∀ {l₁ : List α} {l₂ : List β}, List.Forall₂ R l₁ l₂ → Option.Rel R l₁.head? l₂.head?
+  | _, _, .nil => .none
+  | _, _, .cons h _ => .some h
+
+/-- Lists related pointwise have related nearest elements. -/
+theorem rel_nearest {R : α → β → Prop} {l₁ : List α} {l₂ : List β} (h : List.Forall₂ R l₁ l₂)
+    (d : HeadDirection) : Option.Rel R (d.nearest l₁) (d.nearest l₂) := by
+  cases d
+  · exact rel_head? h
+  · simpa [List.head?_reverse] using rel_head? (List.forall₂_reverse_iff.2 h)
+
+end nearest
 
 end HeadDirection
 

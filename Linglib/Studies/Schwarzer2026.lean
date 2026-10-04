@@ -10,17 +10,17 @@ public import Mathlib.Algebra.Order.Field.Rat
 /-!
 # Schwarzer (2026): The law and order of selection-violating coordination
 
-This file formalizes the squib's test of the three analyses of selection-violating coordination,
-a clause coordinated with a noun phrase in a position where only the noun phrase is selected. The
-bottom-up analyses of [sag-etal-1985] and [munn-1993] give the coordination an asymmetric
-structure in which the first conjunct alone is prominent for the selector, so the selected noun
-phrase comes first whatever the position of the verb; the linear closeness analysis of
-[bruening-alkhalaf-2020] and [bruening-2025] derives left to right and lets the conjunct linearly
-adjacent to the selector satisfy selection; and the temporal closeness analysis of [kim-lu-2024]
-treats the mismatch as a grammaticality illusion in which the parser checks the conjunct closest in
-time to the selector, which is the conjunct the linear analysis checks
-(`closestInTime_eq_leftToRight`). In German the two predictions come apart: complements precede
-the verb in an embedded finite clause and follow it in a root clause with verb-second
+This file formalizes the squib's test of the three analyses of selection-violating coordination, a
+clause coordinated with a noun phrase in a position where only the noun phrase is selected. The
+bottom-up analyses of [sag-etal-1985] and [munn-1993] give the coordination an asymmetric structure
+in which the first conjunct alone is prominent for the selector, so the selected noun phrase comes
+first whatever the position of the verb; the linear closeness analysis of [bruening-alkhalaf-2020]
+and [bruening-2025] derives left to right and lets the conjunct linearly adjacent to the selector
+satisfy selection; and the temporal closeness analysis of [kim-lu-2024] treats the mismatch as a
+grammaticality illusion in which the parser checks the conjunct closest in time to the selector.
+Both closeness accounts thus check the conjunct next to the selector, `checkedOnce`, and the
+bottom-up ones the first, `List.take 1`. In German the two predictions come apart: complements
+precede the verb in an embedded finite clause and follow it in a root clause with verb-second
 (`embeddedPosition`, `rootPosition`), so the closeness accounts admit only the clause first in the
 embedded case, where the two accounts admit opposite orders (`accounts_diverge_embedded`).
 
@@ -64,8 +64,6 @@ open BrueningAlKhalaf2020
 open Syntax (Cat)
 open Syntax.Cat (NP)
 
-variable {α : Type*}
-
 /-- In a German root declarative the verb in second position precedes its complements, the
 configuration of (17). -/
 abbrev rootPosition : HeadDirection := .headInitial
@@ -79,43 +77,30 @@ def Order.phrases : Order → List Cat
   | .dpFirst => [NP, .CP]
   | .cpFirst => [.CP, NP]
 
-/-- The temporal closeness analysis has the parser check the conjunct closest in time to the
-selector, the first when the verb precedes and the last, whose features are still in memory, when
-it follows. -/
-def closestInTime : HeadDirection → List α → Option α
-  | .headInitial, cs => cs.head?
-  | .headFinal, cs => cs.getLast?
-
-/-- The temporal closeness analysis checks the conjunct the left-to-right derivation does. -/
-theorem closestInTime_eq_leftToRight : closestInTime (α := α) = leftToRight := by
-  funext d cs; cases d <;> simp [closestInTime]
-
 /-- The bottom-up analyses check the first conjunct whatever the verb's position, and so admit
 the selected noun phrase first, (10b), with a verb that does not select a clause. -/
 theorem structural_admits_iff (o : Order) :
-    Admits (Licensed List.head? {NP}) o.phrases ↔ o = .dpFirst := by
+    Admits (Licensed (List.take 1) {NP}) o.phrases ↔ o = .dpFirst := by
   cases o <;> decide
 
 /-- The closeness accounts admit the clause first in the embedded position, (10a). -/
 theorem closeness_embedded_iff (o : Order) :
-    Admits (Licensed (leftToRight embeddedPosition) {NP}) o.phrases ↔ o = .cpFirst := by
+    Admits (Licensed (checkedOnce embeddedPosition) {NP}) o.phrases ↔ o = .cpFirst := by
   cases o <;> decide
 
 /-- The accounts diverge in the embedded position only, which is what makes German the test
 case, since in the root position the linear account checks the first conjunct too. -/
 theorem accounts_diverge_embedded :
-    (∃ o : Order, ¬ (Admits (Licensed List.head? {NP}) o.phrases ↔
-        Admits (Licensed (leftToRight embeddedPosition) {NP}) o.phrases)) ∧
-      leftToRight (α := Conjunct) rootPosition = List.head? :=
-  ⟨⟨.dpFirst, by decide⟩, funext leftToRight_headInitial⟩
+    (∃ o : Order, ¬ (Admits (Licensed (List.take 1) {NP}) o.phrases ↔
+        Admits (Licensed (checkedOnce embeddedPosition) {NP}) o.phrases)) ∧
+      checkedOnce rootPosition = List.take 1 :=
+  ⟨⟨.dpFirst, by decide⟩, funext fun cs ↦ by cases cs <;> rfl⟩
 
 /-- A noun phrase first in the embedded position refutes the linear and temporal closeness
 accounts, whatever the reason for the preference. -/
 theorem closeness_rejects_dpFirst :
-    ¬ Admits (Licensed (leftToRight embeddedPosition) {NP}) Order.dpFirst.phrases ∧
-      ¬ Admits (Licensed (closestInTime embeddedPosition) {NP}) Order.dpFirst.phrases := by
-  rw [closestInTime_eq_leftToRight]
-  exact ⟨by decide, by decide⟩
+    ¬ Admits (Licensed (checkedOnce embeddedPosition) {NP}) Order.dpFirst.phrases := by
+  decide
 
 /-! ### The predicates -/
 
@@ -187,16 +172,14 @@ theorem preferred_eq (p : Position) : preferred p = .dpFirst := by
 
 /-- Experiment 2 refutes the linear and temporal closeness accounts. -/
 theorem choices_refute_closeness :
-    ¬ Admits (Licensed (leftToRight Position.preverbal.direction) {NP})
-        (preferred .preverbal).phrases ∧
-      ¬ Admits (Licensed (closestInTime Position.preverbal.direction) {NP})
-        (preferred .preverbal).phrases := by
+    ¬ Admits (Licensed (checkedOnce Position.preverbal.direction) {NP})
+      (preferred .preverbal).phrases := by
   rw [preferred_eq]
   exact closeness_rejects_dpFirst
 
 /-- The structural account admits exactly the preferred order in both positions. -/
 theorem choices_match_structural (p : Position) (o : Order) :
-    Admits (Licensed List.head? {NP}) o.phrases ↔ o = preferred p := by
+    Admits (Licensed (List.take 1) {NP}) o.phrases ↔ o = preferred p := by
   rw [preferred_eq, structural_admits_iff]
 
 end Schwarzer2026
