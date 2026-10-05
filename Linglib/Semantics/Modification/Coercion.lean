@@ -7,20 +7,30 @@ public import Linglib.Semantics.Modification.Classification
 
 Kamp and Partee's non-vacuity principle asks that a predicate have both a positive and a
 negative extension in its local domain, and their head primacy principle makes the extension of
-the head noun the local domain of its modifier. Partee uses the two to reanalyse privative
-adjectives as subsective: where an adjective is vacuous on the literal noun, the noun is widened
-until the adjective is not. Kamp anticipates both principles in his §7.
+the head noun the local domain of its modifier. A privative adjective is never non-vacuous within
+its head, and neither is a tautologous one such as *real*. Partee's proposal is that the head is
+then shifted, as a last resort, to include the adjective's value, *fur* to real or fake fur, so
+that the compound becomes non-vacuous.
 
 ## Main definitions
 
 * `IsNonVacuous P w d`: `P` has a positive and a negative extension within `d` at `w`.
-* `LicensedCoercion N adj w`: a widening of `N` under which `adj` is non-vacuous in the
-  widened noun at `w`.
-* `SubsectiveReanalysis adj`: a reanalysis of `adj` as subsective after widening the noun.
+* `ShiftsHead adj N w`: `adj N` is vacuous within `N` and non-vacuous within `N` widened by the
+  adjective's value, so Partee's rule shifts the head.
+
+## Main statements
+
+* `not_isNonVacuous_of_isPrivative`, `not_isNonVacuous_self`: privative and tautologous
+  modifiers are vacuous within their head.
+* `shiftsHead_iff_of_isPrivative`: a privative adjective shifts its head exactly when there are
+  both things in its value and things in the noun.
+* `not_shiftsHead_of_isNonVacuous`: a compound already non-vacuous within its head is not
+  shifted.
 
 ## Implementation notes
 
-This models Partee's widening of *fur* to real or fake fur in her §4, formulae (18) and (20).
+The principles are Kamp and Partee's (NVP) and (HPP), Partee's (18) and (20), with head primacy
+in its simplest form, which makes the local domain the positive extension of the head.
 `IsNonVacuous` is bivalent, simplifying the partial setting of Kamp and Partee. Complement
 coercion (`Studies/Pustejovsky1995.lean`) and the type shifts of noun phrases
 (`Semantics/Quantification/NP.lean`) are different notions.
@@ -29,7 +39,6 @@ coercion (`Studies/Pustejovsky1995.lean`) and the type shifts of noun phrases
 
 * [kamp-partee-1995]
 * [partee-2010]
-* [kamp-1975]
 -/
 
 @[expose] public section
@@ -48,13 +57,6 @@ theorem IsNonVacuous.mono {P : Property W E} {w : W} {d d' : E → Prop}
     (h : IsNonVacuous P w d) (hdd' : d ≤ d') : IsNonVacuous P w d' :=
   ⟨h.1.imp fun x hx ↦ ⟨hdd' x hx.1, hx.2⟩, h.2.imp fun x hx ↦ ⟨hdd' x hx.1, hx.2⟩⟩
 
-/-- A predicate and its complement are non-vacuous in the same local domains. -/
-theorem isNonVacuous_compl {P : Property W E} {w : W} {d : E → Prop} :
-    IsNonVacuous (fun w x ↦ ¬ P w x) w d ↔ IsNonVacuous P w d := by
-  unfold IsNonVacuous
-  simp only [not_not]
-  exact and_comm
-
 /-- A predicate disjoint from `Q` is non-vacuous in any domain that holds an instance of it and
 an instance of `Q`. -/
 theorem isNonVacuous_of_disjoint {P Q : Property W E} {w : W} {d : E → Prop} (h : Disjoint P Q)
@@ -68,47 +70,37 @@ theorem not_isNonVacuous_of_isPrivative {adj : Modifier (Property W E)}
     ¬ IsNonVacuous (adj N) w (N w) :=
   fun h ↦ h.1.elim fun x hx ↦ isPrivative_iff.1 hp N w x hx.2 hx.1
 
-/-- A coercion of `N` licensed at `w` is a wider noun meaning `shift` such that `adj shift` is
-non-vacuous in the extension of `shift` at `w`, the local domain that head primacy assigns. The
-`shift` is a full intension although licensing holds at the single world `w`, since a
-non-extensional `adj` reads its values at other worlds. -/
-structure LicensedCoercion (N : Property W E) (adj : Modifier (Property W E)) (w : W) where
-  shift : Property W E
-  le_shift : N w ≤ shift w
-  satisfies_nvp : IsNonVacuous (adj shift) w (shift w)
+/-- No predicate is non-vacuous within its own extension, so a tautologous modifier such as
+*real*, whose value is the noun, is vacuous within its head. -/
+theorem not_isNonVacuous_self (P : Property W E) (w : W) : ¬ IsNonVacuous P w (P w) :=
+  fun h ↦ h.2.elim fun _ hx ↦ hx.2 hx.1
 
-/-- A subsective reanalysis of `adjClassical` widens each noun and interprets the adjective
-subsectively. Coercion is a last resort for [partee-2010], so `shift_inert` forbids widening a
-noun on which `adjClassical` is already non-vacuous. -/
-structure SubsectiveReanalysis (adjClassical : Modifier (Property W E)) where
-  nounShift : Property W E → Property W E
-  adjSubsective : Modifier (Property W E)
-  le_nounShift : ∀ N, N ≤ nounShift N
-  is_subsective : Modifier.IsSubsective adjSubsective
-  shift_inert : ∀ (N : Property W E) (w : W),
-    IsNonVacuous (adjClassical N) w (N w) → nounShift N ≤ N
+/-- Within a domain widened by its own extension, a predicate is non-vacuous exactly when it
+holds somewhere and fails somewhere in the original domain. -/
+theorem isNonVacuous_sup_self_iff {P : Property W E} {w : W} {d : E → Prop} :
+    IsNonVacuous P w (d ⊔ P w) ↔ (∃ x, P w x) ∧ ∃ x, d x ∧ ¬ P w x :=
+  ⟨fun ⟨⟨x, _, hx⟩, ⟨y, hy, hny⟩⟩ ↦ ⟨⟨x, hx⟩, y, hy.resolve_right hny, hny⟩,
+    fun ⟨⟨x, hx⟩, ⟨y, hy, hny⟩⟩ ↦ ⟨⟨x, Or.inr hx, hx⟩, ⟨y, Or.inl hy, hny⟩⟩⟩
 
-variable {adjClassical : Modifier (Property W E)}
+/-- `adj` shifts the head `N` at `w` when `adj N` is vacuous within `N`, the local domain that head
+primacy assigns, and non-vacuous within `N` widened to include the adjective's value. -/
+def ShiftsHead (adj : Modifier (Property W E)) (N : Property W E) (w : W) : Prop :=
+  ¬ IsNonVacuous (adj N) w (N w) ∧ IsNonVacuous (adj N) w (N w ⊔ adj N w)
 
-/-- Where direct application is already non-vacuous, the shift is the identity. -/
-theorem SubsectiveReanalysis.nounShift_eq_self (R : SubsectiveReanalysis adjClassical)
-    {N : Property W E} {w : W} (h : IsNonVacuous (adjClassical N) w (N w)) :
-    R.nounShift N = N :=
-  le_antisymm (R.shift_inert N w h) (R.le_nounShift N)
+variable {adj : Modifier (Property W E)} {N : Property W E} {w : W}
 
-/-- Where direct application is already non-vacuous, the reanalysed meaning applies only to
-members of the literal noun. -/
-theorem SubsectiveReanalysis.adjSubsective_nounShift_le (R : SubsectiveReanalysis adjClassical)
-    {N : Property W E} {w : W} (h : IsNonVacuous (adjClassical N) w (N w)) :
-    R.adjSubsective (R.nounShift N) ≤ N :=
-  (congrArg R.adjSubsective (R.nounShift_eq_self h)).trans_le (R.is_subsective N)
+/-- A compound already non-vacuous within its head does not shift the head. -/
+theorem not_shiftsHead_of_isNonVacuous (h : IsNonVacuous (adj N) w (N w)) :
+    ¬ ShiftsHead adj N w :=
+  fun h' ↦ h'.1 h
 
-/-- A reanalysis licenses a coercion at every world where the reanalysed meaning is non-vacuous
-on the widened noun, unlike a privative adjective (`Partee2010.isPrivative_no_LicensedCoercion`). -/
-def SubsectiveReanalysis.licensedCoercion (R : SubsectiveReanalysis adjClassical)
-    {N : Property W E} {w : W}
-    (h : IsNonVacuous (R.adjSubsective (R.nounShift N)) w (R.nounShift N w)) :
-    LicensedCoercion N R.adjSubsective w :=
-  ⟨R.nounShift N, R.le_nounShift N w, h⟩
+/-- A privative adjective shifts its head exactly when there are things in its value and things
+in the noun, so *fake fur* widens *fur* just when there are fake furs and real furs. -/
+theorem shiftsHead_iff_of_isPrivative (hp : Modifier.IsPrivative adj) :
+    ShiftsHead adj N w ↔ (∃ x, adj N w x) ∧ ∃ x, N w x := by
+  rw [ShiftsHead, isNonVacuous_sup_self_iff,
+    and_iff_right (not_isNonVacuous_of_isPrivative hp N w)]
+  exact and_congr_right fun _ ↦ exists_congr fun x ↦
+    ⟨And.left, fun h ↦ ⟨h, fun h' ↦ isPrivative_iff.1 hp N w x h' h⟩⟩
 
 end Modification
