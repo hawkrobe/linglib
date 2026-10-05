@@ -13,7 +13,7 @@ public import Linglib.Fragments.Korean.Coordination
 # Mitrović and Sauerland (2016): Two Conjunctions Are Better Than One
 
 This file formalizes the universal two-head structure for the conjunction of noun phrases
-proposed by [mitrovic-sauerland-2016]. The head μ combines with a predicate and denotes the
+that Mitrović and Sauerland propose. The head μ combines with a predicate and denotes the
 subset relation, (12a), and the head J′ intersects two quantifiers, (12b); an individual reaches
 μ through the shift to its characteristic property. The subset relation is the generalized
 quantifier *every* (`mu_eq_every`), which is why a μ particle on an indeterminate, Japanese
@@ -74,8 +74,8 @@ theorem mu_eq_every : (mu : GQ α) = GQ.every := rfl
 theorem mu_shift (a : α) : mu (shift a) = NP.individual a :=
   funext fun _ ↦ propext ⟨fun h ↦ h a rfl, fun h _ hx ↦ hx ▸ h⟩
 
-/-- The conjunction of two individuals, (13): J′, intersection, of the μ phrases of the shifted
-conjuncts is the meet of their Montague lifts. -/
+/-- In the conjunction of two individuals, (13), J′, intersection, of the μ phrases of the
+shifted conjuncts is the meet of their Montague lifts. -/
 theorem conjunction_eq (a b : α) :
     Coordinator.op .conjunctive (mu (shift a)) (mu (shift b)) =
       NP.individual a ⊓ NP.individual b := by
@@ -87,8 +87,8 @@ theorem conjunction_apply (a b : α) (P : α → Prop) :
     Coordinator.op .conjunctive (mu (shift a)) (mu (shift b)) P ↔ P a ∧ P b := by
   rw [conjunction_eq]; rfl
 
-/-- J′ cannot apply to the shifted individuals without μ: the intersection of two singletons is
-empty unless the conjuncts are identical. -/
+/-- J′ cannot apply to the shifted individuals without μ, since the intersection of two
+singletons is empty unless the conjuncts are identical. -/
 theorem shift_inf_shift_eq_bot_iff {a b : α} : shift a ⊓ shift b = ⊥ ↔ a ≠ b := by
   constructor
   · rintro h rfl
@@ -102,13 +102,14 @@ end Semantics
 /-- The universal reading of Japanese *dare-mo* 'everyone' is μ, (1a) and (15). -/
 theorem dare_mo_denotes_mu {α : Type} [Fintype α] {d : GQ.Family}
     (h : d ∈ ⟦Japanese.Determiners.dare_mo⟧) : d α = mu := by
+  rw [Japanese.Determiners.denote_dare_mo] at h
   obtain rfl : d = GQ.Family.every := h
   rfl
 
 /-! ### Exponence -/
 
-/-- Which heads of the structure a conjunction strategy pronounces: J alone, *A and B*; the two
-μ heads, *A-mo B-mo*; or all three. -/
+/-- A conjunction strategy pronounces J alone, *A and B*, the two μ heads, *A-mo B-mo*, or all
+three heads of the structure. -/
 inductive ConjunctionStrategy where
   | jOnly
   | muOnly
@@ -121,7 +122,7 @@ def ConjunctionStrategy.overtMorphemeCount : ConjunctionStrategy → ℕ
   | .muOnly => 2
   | .jMu => 3
 
-/-- The number of heads in the structure: J and the two μ heads. -/
+/-- The structure has three heads, J and the two μ heads. -/
 def ConjunctionStrategy.semanticPieceCount : ℕ := 3
 
 /-- A language's exponents of the two heads, which the paper classifies, and the strategies it
@@ -174,7 +175,8 @@ def slovenian : ConjunctionSystem :=
 def msLanguages : List ConjunctionSystem :=
   [english, japanese, hungarian, georgian, latin, korean, slovenian]
 
-/-- Triadic exponency: the J-only, μ-only, and J-with-μ strategies are all attested. -/
+/-- A system has triadic exponency when the J-only, μ-only, and J-with-μ strategies are all
+attested in it. -/
 def hasAllThreeStrategies (sys : ConjunctionSystem) : Prop :=
   .jOnly ∈ sys.strategies ∧ .muOnly ∈ sys.strategies ∧ .jMu ∈ sys.strategies
 

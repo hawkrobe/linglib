@@ -40,7 +40,11 @@ inflectional negation realizes direct negation, which the series lacks (`irgende
 
 Hamblin functional application is mathlib's `Set.seq`, and singleton denotations are
 `{f}`; the four sentential operators return singleton sets, as in the paper, so that closure
-is idle on an already closed set. The modal semantics is stated for an accessibility relation
+is idle on an already closed set. The operators are the coordinator operations on sets,
+`Coordinator.sOp` (`opExists_eq_sOp`), and on individual alternatives they give the readings of
+the indeterminate quantifiers in `Fragments/Japanese/Determiners.lean` (`sOp_image_eq_reading`),
+an identification of *ka* and *mo* with the coordinators that the fragment makes and the paper
+does not. The modal semantics is stated for an accessibility relation
 on any type of worlds, and the free-choice computations are the paper's three tables with
 the derived implicature as a hypothesis. The Beck-effect paradigm and its scrambled
 counterpart are example rows, keyed by the intervener's interpretable feature, and so is the
@@ -69,8 +73,8 @@ section Composition
 
 variable {W E : Type*}
 
-/-- A singleton set of functions applies pointwise as an image: the verb of *dare nemutta*
-introduces one alternative, the indeterminate a set of individuals. -/
+/-- A singleton set of functions applies pointwise as an image, as when the verb of *dare
+nemutta* introduces one alternative and the indeterminate a set of individuals. -/
 theorem seq_singleton (f : E → W → Prop) (A : Set E) : Set.seq {f} A = f '' A := by
   ext p; simp [Set.mem_seq_iff]
 
@@ -94,17 +98,17 @@ theorem opExists_singleton (p : W → Prop) : opExists {p} = {p} := by simp [opE
 
 theorem opForall_singleton (p : W → Prop) : opForall {p} = {p} := by simp [opForall]
 
-/-- Alternatives are caught by the nearest operator (4): once closed, a set has a single
-member, so a higher operator finds nothing left to quantify over. -/
+/-- Alternatives are caught by the nearest operator (4), since a closed set has a single member
+and a higher operator finds nothing left to quantify over. -/
 theorem opForall_opExists (A : Set (W → Prop)) : opForall (opExists A) = opExists A :=
   opForall_singleton _
 
 theorem opExists_opForall (A : Set (W → Prop)) : opExists (opForall A) = opForall A :=
   opExists_singleton _
 
-/-- Determiner quantification as the special case with individual alternatives (§2):
-existential closure over the propositions a predicate yields from a set of individuals is
-the ordinary existential quantifier. -/
+/-- Determiner quantification is the special case with individual alternatives (§2), so that
+existential closure over the propositions a predicate yields from a set of individuals is the
+ordinary existential quantifier. -/
 theorem opExists_image (P : E → W → Prop) (A : Set E) :
     opExists (P '' A) = {fun w ↦ ∃ x ∈ A, P x w} := by
   simp [opExists]
@@ -112,6 +116,30 @@ theorem opExists_image (P : E → W → Prop) (A : Set E) :
 theorem opForall_image (P : E → W → Prop) (A : Set E) :
     opForall (P '' A) = {fun w ↦ ∀ x ∈ A, P x w} := by
   simp [opForall]
+
+/-- Existential closure is the disjunction of the alternatives, `Coordinator.sOp .disjunctive`,
+which in Japanese is *ka*. -/
+theorem opExists_eq_sOp (A : Set (W → Prop)) : opExists A = {Coordinator.sOp .disjunctive A} := by
+  rw [opExists]; congr 1; ext w; simp [sSup_apply]
+
+/-- Universal closure is the conjunction of the alternatives, which in Japanese is *mo*. -/
+theorem opForall_eq_sOp (A : Set (W → Prop)) : opForall A = {Coordinator.sOp .conjunctive A} := by
+  rw [opForall]; congr 1; ext w; simp [sInf_apply]
+
+/-- Negative closure is the negative coordination of the alternatives. -/
+theorem opNeg_eq_sOp (A : Set (W → Prop)) : opNeg A = {Coordinator.sOp .negative A} := by
+  rw [opNeg]; congr 1; ext w; simp [sSup_apply]
+
+/-- The coordination an indeterminate's particle applies to the propositions a predicate yields
+from a set of individuals is, at each world, the indeterminate's reading in
+`Fragments/Japanese/Determiners.lean`, so the fragment's determiner readings are the special case
+of the paper's closure with individual alternatives (§2). -/
+theorem sOp_image_eq_reading [Fintype E] (q : Japanese.Determiners.Indefinite)
+    (P : E → W → Prop) (A : Set E) :
+    Coordinator.sOp q.particle.role (P '' A) = fun w ↦ q.reading E (· ∈ A) (P · w) := by
+  funext w
+  rw [Coordinator.sOp_apply, Set.image_image]
+  rfl
 
 end Composition
 
@@ -188,9 +216,8 @@ theorem kann_singleton (R : SetRel W W) (p : W → Prop) : kann R {p} = {◇[R] 
 theorem muss_singleton (R : SetRel W W) (p : W → Prop) : muss R {p} = {□[R] p} := by
   simp [muss]
 
-/-- The distribution requirement is not entailed by *muss* (§6): with two alternatives
-and a single accessible world verifying one of them, necessity holds and distribution
-fails. -/
+/-- The distribution requirement is not entailed by *muss* (§6). With two alternatives and a
+single accessible world verifying one of them, necessity holds and distribution fails. -/
 theorem not_distribution_of_muss :
     ∃ (R : SetRel Bool Bool) (A : Set (Bool → Prop)) (w : Bool),
       (∀ q ∈ muss R A, q w) ∧ ¬ distribution R A w :=
@@ -257,15 +284,18 @@ end FreeChoice
 
 /-! ### Selectivity and intervention (§9) -/
 
-
-/-- Japanese indeterminates do not change shape: *dare-ka* and *dare-mo* share their base
-and differ in force. -/
-theorem japanese_same_base :
+open scoped Semantics in
+/-- Japanese indeterminates do not change shape (§9). *Dare-ka* and *dare-mo* share their
+indeterminate and differ in their readings, which their particles' coordinations supply. -/
+theorem japanese_same_base.{u} :
     Japanese.Determiners.dare_ka.indeterminate = Japanese.Determiners.dare_mo.indeterminate ∧
-      Japanese.Determiners.dare_ka.force ≠ Japanese.Determiners.dare_mo.force :=
-  ⟨rfl, by decide⟩
+      (⟦Japanese.Determiners.dare_ka⟧ : Set Quantifier.GQ.Family.{u}) ≠
+        ⟦Japanese.Determiners.dare_mo⟧ := by
+  refine ⟨rfl, ?_⟩
+  rw [Japanese.Determiners.denote_dare_ka, Japanese.Determiners.denote_dare_mo]
+  exact fun h ↦ Quantifier.GQ.Family.some_ne_every (Set.singleton_eq_singleton_iff.1 h)
 
-/-- The Latvian series are selective (§1, §9): in [haspelmath-1997]'s figure the *kaut*-series
+/-- The Latvian series are selective (§1, §9). In [haspelmath-1997]'s figure the *kaut*-series
 is existential, the *ne*-series confined to the direct scope of negation and the *jeb*-series to
 indirect negation, comparatives and free choice, so that no function of the map is served by two
 series. -/
@@ -274,8 +304,8 @@ theorem latvian_selective :
   decide
 
 /-- The Japanese series of [haspelmath-1997] are as disjoint as the Latvian ones, so the contrast
-the paper draws between the two systems is one of shape and not of distribution: the Latvian
-marker sits on the pronoun, while the Japanese indeterminate keeps its shape under each particle
+the paper draws between the two systems is one of shape and not of distribution, the Latvian
+marker sitting on the pronoun, while the Japanese indeterminate keeps its shape under each particle
 (`japanese_same_base`). -/
 theorem japanese_series_disjoint :
     Haspelmath1997.japanese.Pairwise (Disjoint ·.functions ·.functions) := by
@@ -309,7 +339,7 @@ theorem rows_irgendein :
   decide
 
 /-- Under a negative operator *irgendein* is acceptable exactly when the operator closes its scope
-with [∃] and not with [Neg]: under *niemand* and *auf keinen Fall* and not under *nicht*, (12),
+with [∃] and not with [Neg], so under *niemand* and *auf keinen Fall* and not under *nicht*, (12),
 (18) and (21). -/
 theorem rows_irgendein_selective :
     ∀ r ∈ Examples.all, (contextOf? r).isSome → ∀ f ∈ r.feature? "feature",
@@ -317,7 +347,7 @@ theorem rows_irgendein_selective :
   decide
 
 /-- The licensing table licenses *irgendein* under inflectional negation, which is downward
-entailing, and (21) is ungrammatical: strength does not exclude the item there, and selectivity
+entailing, and (21) is ungrammatical, so strength does not exclude the item there and selectivity
 does. -/
 theorem negation_licenses_irgendein :
     LicensingContext.negation.Licenses German.PolarityItems.irgendein ∧

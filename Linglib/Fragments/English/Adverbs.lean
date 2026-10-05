@@ -1,18 +1,20 @@
 module
 
 public import Linglib.Semantics.Modality.Basic
-public import Linglib.Semantics.Quantification.Lexicon
+public import Linglib.Semantics.Quantification.Counting
+public import Linglib.Semantics.Denotation
 
 /-!
 # English adverbs
 
-Lexical entries for the English closed-class adverbs typed by their semantic owners: the modal
-adverbs *certainly*, *definitely*, *necessarily*, *possibly*, *perhaps*, *maybe*, *probably* and
-*potentially* as `Modality.ModalItem`s, with their force–flavor meanings and register, and the
-adverbs of quantification *always*, *usually*, *sometimes* and *never* ([lewis-1975]) with the
-force of the quantifier each lexicalizes. The modal-concord readings of *must certainly* and
-*may possibly* and the situation-pronoun analysis of adverbs of quantification live in the
-studies that treat them ([liu-rotter-2025], [percus-2000]).
+The closed-class adverbs of English are typed by their semantic owners. The modal adverbs
+*certainly*, *definitely*, *necessarily*, *possibly*, *perhaps*, *maybe*, *probably* and
+*potentially* are `Modality.ModalItem`s, with their force–flavor meanings and register. The
+adverbs of quantification *always*, *usually*, *sometimes* and *never*, which Lewis analyzes as
+quantifiers over cases, are the carrier `AdverbOfQuantification`, whose words denote their
+readings as generalized quantifiers. The modal-concord readings of *must certainly* and *may
+possibly* and the situation-pronoun analysis of adverbs of quantification live in the studies
+that treat them.
 
 ## References
 
@@ -54,15 +56,33 @@ end ModalAdverbs
 
 /-! ### Adverbs of quantification -/
 
-section AdverbsOfQuantification
+/-- The adverbs of quantification *always*, *usually*, *sometimes* and *never* quantify over the
+cases their restrictor supplies ([lewis-1975]). -/
+inductive AdverbOfQuantification where
+  | always | usually | sometimes | never
+  deriving DecidableEq, Repr
 
-open Quantifier.Lexicon
+namespace AdverbOfQuantification
 
-def always : Adverb := { form := "always", force := .universal }
-def usually : Adverb := { form := "usually", force := .proportional }
-def sometimes : Adverb := { form := "sometimes", force := .existential }
-def never : Adverb := { form := "never", force := .negative }
+/-- The form of an adverb is its spelling. -/
+def form : AdverbOfQuantification → String
+  | .always => "always"
+  | .usually => "usually"
+  | .sometimes => "sometimes"
+  | .never => "never"
 
-end AdverbsOfQuantification
+universe u
+
+/-- An adverb denotes its reading over cases, *always* `every`, *usually* `most`, *sometimes*
+`Quantifier.GQ.some` and *never* `no`. -/
+noncomputable instance : Semantics.Denotes AdverbOfQuantification (Set Quantifier.GQ.Family.{u})
+    where
+  denote
+    | .always => {Quantifier.GQ.Family.every}
+    | .usually => {Quantifier.GQ.Family.most}
+    | .sometimes => {Quantifier.GQ.Family.some}
+    | .never => {Quantifier.GQ.Family.no}
+
+end AdverbOfQuantification
 
 end English.Adverbs

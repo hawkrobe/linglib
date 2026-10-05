@@ -1024,7 +1024,6 @@ import Linglib.Semantics.Quantification.Counting
 import Linglib.Semantics.Quantification.Defs
 import Linglib.Semantics.Quantification.Exceptive
 import Linglib.Semantics.Quantification.Lattice
-import Linglib.Semantics.Quantification.Lexicon
 import Linglib.Semantics.Quantification.Lindstrom
 import Linglib.Semantics.Quantification.NumberTree
 import Linglib.Semantics.Quantification.Numerals.Basic
