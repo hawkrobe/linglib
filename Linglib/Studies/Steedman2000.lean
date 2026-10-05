@@ -3,6 +3,7 @@ module
 public import Linglib.Data.Examples.Steedman2000
 public import Linglib.Semantics.Composition.Toy
 public import Linglib.Fragments.English.Coordination
+public import Linglib.Semantics.Composition.Coordinator
 public import Linglib.Syntax.CCG.Derivation
 public import Linglib.Syntax.CCG.Grammar
 public import Linglib.Syntax.CCG.Interface
@@ -184,10 +185,10 @@ def pqLex : SemLexicon Unit Unit := fun w c ↦
   | "q", .atom .S => some False
   | "and", .rslash (.lslash (.atom .S) _ (.atom .S)) _ (.atom .S) =>
       some (show Prop → Prop → Prop from
-        fun q p ↦ Coordinator.op English.Coordination.and_.role p q)
+        fun q p ↦ English.Coordination.and_.role.denote {p, q})
   | "or", .rslash (.lslash (.atom .S) _ (.atom .S)) _ (.atom .S) =>
       some (show Prop → Prop → Prop from
-        fun q p ↦ Coordinator.op English.Coordination.or_.role p q)
+        fun q p ↦ English.Coordination.or_.role.denote {p, q})
   | _, _ => none
 
 def dp : Derivation Atom S := .lex "p" S
@@ -199,9 +200,9 @@ theorem coord_role_load_bearing :
     (Derivation.bapp dp (.fapp (.lex "and" (conj S)) dq)).interp pqLex ≠
     (Derivation.bapp dp (.fapp (.lex "or" (conj S)) dq)).interp pqLex := by
   have hand : (Derivation.bapp dp (.fapp (.lex "and" (conj S)) dq)).interp pqLex
-      = some (True ∧ False) := rfl
+      = some (True ∧ False) := congrArg some (sInf_pair (a := True) (b := False))
   have hor : (Derivation.bapp dp (.fapp (.lex "or" (conj S)) dq)).interp pqLex
-      = some (True ∨ False) := rfl
+      = some (True ∨ False) := congrArg some (sSup_pair (a := True) (b := False))
   rw [hand, hor, ne_eq, Option.some.injEq, eq_iff_iff]
   exact fun h ↦ (h.mpr (Or.inl trivial)).2
 

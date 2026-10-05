@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Basic.Real.Basic
-public import Mathlib.Order.BooleanAlgebra.Basic
+public import Mathlib.Order.CompleteBooleanAlgebra
 
 /-!
 # Semantic types and denotation domains
@@ -16,16 +16,16 @@ function application.
 
 `Ty.Domain` is reducible: a denotation of type `⟨e,t⟩` *is* an `E → Prop` to every tactic and
 instance, and the pointwise Boolean algebra of a type that ends in `t` is mathlib's `Pi`
-instance. `Ty.Domain.booleanAlgebra?` computes that algebra by recursion on the type, for the
-composition engine's runtime type dispatch.
+instance. `Ty.Domain.completeBooleanAlgebra?` computes that algebra, which is complete, by
+recursion on the type, for the composition engine's runtime type dispatch.
 
 ## Main definitions
 
 * `Ty`: semantic types.
 * `Ty.Domain E W ty`: the denotation domain of `ty`.
 * `Denotation E W M`: a semantic type with an `M`-computation in its domain.
-* `Ty.Domain.booleanAlgebra?`: the pointwise Boolean algebra of a conjoinable type, `none` on
-  a type that does not end in `t`.
+* `Ty.Domain.completeBooleanAlgebra?`: the pointwise complete Boolean algebra of a conjoinable
+  type, `none` on a type that does not end in `t`.
 * `Ty.apply?`, `Ty.intensionalApplication?`, `Ty.predicateModification?`,
   `Ty.eventIdentification?`: the type each binary composition mode composes from its
   daughters' types, `none` when the mode does not apply.
@@ -42,7 +42,7 @@ composition engine's runtime type dispatch.
 
 namespace Semantics.Composition
 
-/-- Semantic types: Montague's `e`, `t`, `fn a b` (⟨a,b⟩) and `intens a` (⟨s,a⟩), the
+/-- The semantic types are Montague's `e`, `t`, `fn a b` (⟨a,b⟩) and `intens a` (⟨s,a⟩), the
 degree sort `d` ([heim-2001], [wellwood-2015]), the cardinality sort `n` ([sudo-2016],
 [scontras-2014], [little-moroney-royer-2022]), and the eventuality sorts `v` (events) and
 `s` (states) ([davidson-1967], [parsons-1990], [yu-ausensi-smith-2023]). -/
@@ -80,9 +80,9 @@ inductive Ty.Extensional : Ty → Prop
   | t : Extensional .t
   | fn {a b : Ty} : Extensional a → Extensional b → Extensional (.fn a b)
 
-/-- Denotation domains: `e` denotes in `E`, `t` in `Prop`, `d` in the scale `D`, `n` in
+/-- The type `e` denotes in `E`, `t` in `Prop`, `d` in the scale `D`, `n` in
 `ℕ`, `⟨a,b⟩` in `Ty.Domain a → Ty.Domain b` and `⟨s,a⟩` in `W → Ty.Domain a`. The eventuality sorts
-have the empty domain: nothing here constructs event-typed denotations. -/
+have the empty domain, since nothing here constructs event-typed denotations. -/
 abbrev Ty.Domain (E W : Type) (ty : Ty) (D : Type := ℝ) : Type :=
   match ty with
   | .e => E
@@ -94,24 +94,25 @@ abbrev Ty.Domain (E W : Type) (ty : Ty) (D : Type := ℝ) : Type :=
   | .fn a b => Ty.Domain E W a D → Ty.Domain E W b D
   | .intens a => W → Ty.Domain E W a D
 
-/-- A denotation in the Montague type system: a semantic type together with an `M`-computation
+/-- A denotation in the Montague type system is a semantic type together with an `M`-computation
 in the domain of that type. `M := Id` is the pure [heim-kratzer-1998] carrier; effectful
 denotations supply `M`. -/
 abbrev Denotation (E W : Type) (M : Type → Type := Id) (D : Type := ℝ) : Type :=
   (ty : Ty) × M (Ty.Domain E W ty D)
 
-/-- The pointwise Boolean algebra of a conjoinable type ([partee-rooth-1983]), computed by
-recursion on the type: `none` exactly when the type does not end in `t`. At a concrete
-type this is the instance `Pi.instBooleanAlgebra` finds statically. -/
-def Ty.Domain.booleanAlgebra? (E W : Type) (ty : Ty) (D : Type := ℝ) :
-    Option (BooleanAlgebra (Ty.Domain E W ty D)) :=
+/-- The domain of a conjoinable type carries the pointwise complete Boolean algebra
+([partee-rooth-1983]), computed by recursion on the type and `none` exactly when the type does
+not end in `t`. At a concrete type it is the instance `Pi.instCompleteBooleanAlgebra` finds
+statically. -/
+def Ty.Domain.completeBooleanAlgebra? (E W : Type) (ty : Ty) (D : Type := ℝ) :
+    Option (CompleteBooleanAlgebra (Ty.Domain E W ty D)) :=
   match ty with
   | .t => some inferInstance
   | .fn _ b =>
-    (booleanAlgebra? E W b D).map fun (i : BooleanAlgebra (Ty.Domain E W b D)) =>
+    (completeBooleanAlgebra? E W b D).map fun (i : CompleteBooleanAlgebra (Ty.Domain E W b D)) =>
       letI := i; inferInstance
   | .intens a =>
-    (booleanAlgebra? E W a D).map fun (i : BooleanAlgebra (Ty.Domain E W a D)) =>
+    (completeBooleanAlgebra? E W a D).map fun (i : CompleteBooleanAlgebra (Ty.Domain E W a D)) =>
       letI := i; inferInstance
   | _ => none
 

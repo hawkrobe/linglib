@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Quantification.Basic
-public import Linglib.Syntax.Category.Coordinator
+public import Linglib.Semantics.Composition.Coordinator
 public import Linglib.Fragments.English.Coordination
 public import Linglib.Fragments.Japanese.Determiners
 public import Linglib.Fragments.Hungarian.Coordination
@@ -77,14 +77,14 @@ theorem mu_shift (a : α) : mu (shift a) = NP.individual a :=
 /-- In the conjunction of two individuals, (13), J′, intersection, of the μ phrases of the
 shifted conjuncts is the meet of their Montague lifts. -/
 theorem conjunction_eq (a b : α) :
-    Coordinator.op .conjunctive (mu (shift a)) (mu (shift b)) =
+    Coordinator.Role.denote .conjunctive {mu (shift a), mu (shift b)} =
       NP.individual a ⊓ NP.individual b := by
-  rw [mu_shift, mu_shift, Coordinator.op_conjunctive]
+  rw [mu_shift, mu_shift, Coordinator.Role.denote_conjunctive, sInf_pair]
 
 /-- The conjunction holds of a predicate that holds of each conjunct, so it has no collective
 reading, (14). -/
 theorem conjunction_apply (a b : α) (P : α → Prop) :
-    Coordinator.op .conjunctive (mu (shift a)) (mu (shift b)) P ↔ P a ∧ P b := by
+    Coordinator.Role.denote .conjunctive {mu (shift a), mu (shift b)} P ↔ P a ∧ P b := by
   rw [conjunction_eq]; rfl
 
 /-- J′ cannot apply to the shifted individuals without μ, since the intersection of two
