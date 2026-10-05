@@ -114,39 +114,39 @@ theorem layers_derived :
 
 /-! ### Centering (25)–(26), (42)–(43) -/
 
-variable {W E : Type*} {c : Set W} (H : Set (Set W)) (R : E → W → W → Prop) (x : E)
+variable {W : Type*} {c : Set W} (H : Set (Set W)) (Dox : SetRel W W)
 
 /-- The at-issue content of *x knows Q* and of *x remembers Q* is knowledge of the answer at
-the evaluation time. -/
-def knows : Set W := {w | KnowsAnswer H w R x}
+the evaluation time, through the center's doxastic alternatives `Dox`. -/
+def knows : Set W := {w | KnowsAnswer H w Dox}
 
 /-- In (43b), *x forgets Q* is ignorance of the answer, its past-knowledge presupposition set
 aside. -/
-def forgets : Set W := (knows H R x)ᶜ
+def forgets : Set W := (knows H Dox)ᶜ
 
 /-- Bare *know* and *remember* reject quasi-subordination in every context, as in (26d) and
 (42a), because the requirement of Persp_CQ fails on the context updated with the assertion. -/
-theorem not_possiblyIgnorant_knows : ¬ PossiblyIgnorant H (c ∩ knows H R x) R x :=
+theorem not_possiblyIgnorant_knows : ¬ PossiblyIgnorant H (c ∩ knows H Dox) Dox :=
   not_possiblyIgnorant_inter_of_subset subset_rfl
 
 /-- Negated *remember* and bare *forget* quasi-subordinate exactly in the contexts where the
 center may be ignorant, as in (42b) and (43). -/
 theorem possiblyIgnorant_forgets_iff :
-    PossiblyIgnorant H (c ∩ forgets H R x) R x ↔ PossiblyIgnorant H c R x :=
+    PossiblyIgnorant H (c ∩ forgets H Dox) Dox ↔ PossiblyIgnorant H c Dox :=
   possiblyIgnorant_inter_compl_iff
 
 /-- Under a polar question either answer is at issue, so the same holds of
 *Does Sue remember?* (42c). -/
 theorem possiblyIgnorant_knows_question_iff :
-    PossiblyIgnorant H (c ∩ (knows H R x ∪ (knows H R x)ᶜ)) R x ↔ PossiblyIgnorant H c R x :=
+    PossiblyIgnorant H (c ∩ (knows H Dox ∪ (knows H Dox)ᶜ)) Dox ↔ PossiblyIgnorant H c Dox :=
   possiblyIgnorant_inter_union_compl_iff
 
 /-- The same computation licenses *Have you forgotten [was Henry a communist]* (46b),
 which the paper marks unacceptable; §3.3 attributes the difference to who is invested in
 the answer, not formalized here. -/
 theorem possiblyIgnorant_forgets_question_iff :
-    PossiblyIgnorant H (c ∩ (forgets H R x ∪ (forgets H R x)ᶜ)) R x ↔
-      PossiblyIgnorant H c R x :=
+    PossiblyIgnorant H (c ∩ (forgets H Dox ∪ (forgets H Dox)ᶜ)) Dox ↔
+      PossiblyIgnorant H c Dox :=
   possiblyIgnorant_inter_union_compl_iff
 
 /-! ### Boundary tones and the features they realize (§4.3–4.4) -/
