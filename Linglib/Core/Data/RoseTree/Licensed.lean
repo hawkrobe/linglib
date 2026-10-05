@@ -12,23 +12,24 @@ public import Mathlib.Data.Multiset.MapFold
 /-!
 # Licensed trees
 
-The local trees of a rose tree are its nodes' values, each paired with the values of the node's
-children (`RoseTree.localTrees`). A relation `R` between a value and a list of values licenses a
-tree when every local tree of the tree satisfies it, and a set of trees defined this way is a
-local set. The derivation trees of a context-free grammar are the trees its rules license, and
-any well-formedness condition stated on a node and its children takes the same form. A condition
-on the root alone is a separate conjunct.
+A relation `R a ks` says that a node labelled `a` may have daughters labelled `ks`, in order: it
+is a set of local trees, each a node's label with its daughters' labels. `R` licenses a tree when
+every subtree of the tree satisfies it at its root, and the trees `R` licenses form a local tree
+language. The derivation trees of a context-free grammar are the trees its rules license, and any
+well-formedness condition on a node and its daughters' labels takes the same form; a condition on
+the root alone is a separate conjunct, and a condition that reads the daughters' subtrees is not
+of this form. A tree is licensed exactly when each of its local trees is
+(`licensed_iff_forall_mem_localTrees`), which decides licensing.
 
 ## Main definitions
 
-* `RoseTree.Licensed R t`: every local tree of `t` satisfies `R`.
+* `RoseTree.Licensed R t`: every subtree of `t` satisfies `R` at its root.
 
 ## Main results
 
 * `RoseTree.licensed_node_iff`: a tree is licensed when its root's local tree satisfies `R` and
-  its children are licensed.
-* `RoseTree.Licensed.of_subtreeAt`, `RoseTree.licensed_iff_forall_isSubtree`: licensing passes to
-  subtrees, and a tree is licensed when every subtree's root local tree satisfies `R`.
+  its children are licensed; `RoseTree.Licensed.induction` is the induction principle.
+* `RoseTree.Licensed.of_subtreeAt`: licensing passes to subtrees.
 * `RoseTree.Licensed.replaceAt`: replacing a subtree by a licensed tree with the same root value
   keeps the tree licensed.
 * `RoseTree.licensed_of_perm`: a relation that ignores the order of the children licenses
@@ -39,25 +40,36 @@ on the root alone is a separate conjunct.
 
 namespace RoseTree
 
-
 variable {α : Type*} {R : α → List α → Prop}
 
-/-- A relation `R` licenses `t` when every local tree of `t` satisfies it. -/
-def Licensed (R : α → List α → Prop) (t : RoseTree α) : Prop := ∀ e ∈ t.localTrees, R e.1 e.2
-
-instance [∀ a ks, Decidable (R a ks)] (t : RoseTree α) : Decidable (t.Licensed R) :=
-  inferInstanceAs (Decidable (∀ e ∈ t.localTrees, R e.1 e.2))
+/-- `R` licenses `t` when every subtree of `t` satisfies it at its root, `R a ks` reading "a node
+labelled `a` may have daughters labelled `ks`, in order". -/
+def Licensed (R : α → List α → Prop) (t : RoseTree α) : Prop :=
+  ∀ s, IsSubtree s t → R s.value (s.children.map value)
 
 theorem licensed_node_iff {a : α} {cs : List (RoseTree α)} :
     (node a cs).Licensed R ↔ R a (cs.map value) ∧ ∀ c ∈ cs, c.Licensed R := by
-  simp only [Licensed, localTrees_node, List.mem_cons, forall_eq_or_imp, List.mem_flatten,
-    List.mem_map]
-  refine and_congr_right fun _ ↦ ⟨fun h c hc e he ↦ h e ⟨_, ⟨c, hc, rfl⟩, he⟩, ?_⟩
-  rintro h e ⟨_, ⟨c, hc, rfl⟩, he⟩
-  exact h c hc e he
+  simp only [Licensed, isSubtree_node_iff, or_imp, forall_and, forall_eq, value_node,
+    children_node, forall_exists_index, and_imp]
+  exact and_congr_right fun _ ↦ ⟨fun h c hc s hs ↦ h s c hc hs, fun h s c hc hs ↦ h c hc s hs⟩
 
 @[simp] theorem licensed_leaf_iff {a : α} : (leaf a).Licensed R ↔ R a [] := by
   simp [leaf, licensed_node_iff]
+
+/-- A tree is licensed exactly when each of its local trees is. -/
+theorem licensed_iff_forall_mem_localTrees {t : RoseTree α} :
+    t.Licensed R ↔ ∀ e ∈ t.localTrees, R e.1 e.2 := by
+  induction t with
+  | node a cs ih =>
+    simp only [licensed_node_iff, localTrees_node, List.mem_cons, forall_eq_or_imp,
+      List.mem_flatten, List.mem_map, forall_exists_index, and_imp]
+    refine and_congr_right fun _ ↦ ⟨fun h e l c hc hl he ↦ ?_, fun h c hc ↦ ?_⟩
+    · subst hl
+      exact (ih c hc).mp (h c hc) e he
+    · exact (ih c hc).mpr fun e he ↦ h e _ c hc rfl he
+
+instance [∀ a ks, Decidable (R a ks)] (t : RoseTree α) : Decidable (t.Licensed R) :=
+  decidable_of_iff _ licensed_iff_forall_mem_localTrees.symm
 
 /-- In a licensed tree the root's local tree satisfies `R`. -/
 theorem Licensed.rel_root {a : α} {cs : List (RoseTree α)} (h : (node a cs).Licensed R) :
@@ -68,25 +80,23 @@ theorem Licensed.of_mem {a : α} {cs : List (RoseTree α)} (h : (node a cs).Lice
     {c : RoseTree α} (hc : c ∈ cs) : c.Licensed R :=
   (licensed_node_iff.mp h).2 c hc
 
-theorem Licensed.of_subtreeAt {t s : RoseTree α} (ht : t.Licensed R) {p : List ℕ}
-    (hs : subtreeAt t p = some s) : s.Licensed R := by
-  induction p generalizing t with
-  | nil => exact Option.some.inj hs ▸ ht
-  | cons i p ih =>
-    obtain ⟨c, hc, hcs⟩ := subtreeAt_cons_eq_some_iff.mp hs
-    cases t with
-    | node a cs => exact ih (ht.of_mem (List.mem_of_getElem? hc)) hcs
+/-- Induction over the trees `R` licenses. -/
+@[elab_as_elim]
+theorem Licensed.induction {motive : (t : RoseTree α) → t.Licensed R → Prop}
+    (node : ∀ a cs (hR : R a (cs.map value)) (hcs : ∀ c ∈ cs, c.Licensed R),
+      (∀ c (hc : c ∈ cs), motive c (hcs c hc)) →
+        motive (node a cs) (licensed_node_iff.mpr ⟨hR, hcs⟩))
+    {t : RoseTree α} (ht : t.Licensed R) : motive t ht := by
+  induction t with
+  | node a cs ih => exact node a cs ht.rel_root (fun _ ↦ ht.of_mem) fun c hc ↦ ih c hc _
 
-theorem licensed_iff_forall_isSubtree {t : RoseTree α} :
-    t.Licensed R ↔ ∀ s, IsSubtree s t → R s.value (s.children.map value) := by
-  refine ⟨fun h s hs ↦ ?_, fun h ↦ ?_⟩
-  · obtain ⟨p, hp⟩ := isSubtree_iff_exists_subtreeAt.mp hs
-    obtain ⟨a, cs⟩ := s
-    exact (h.of_subtreeAt hp).rel_root
-  · induction t with
-    | node a cs ih =>
-      refine licensed_node_iff.mpr ⟨h _ (.refl _), fun c hc ↦ ih c hc fun s hs ↦ ?_⟩
-      exact h s (hs.trans (IsSubtree.of_mem_children hc))
+theorem Licensed.of_isSubtree {s t : RoseTree α} (ht : t.Licensed R) (hs : IsSubtree s t) :
+    s.Licensed R :=
+  fun r hr ↦ ht r (hr.trans hs)
+
+theorem Licensed.of_subtreeAt {t s : RoseTree α} (ht : t.Licensed R) {p : List ℕ}
+    (hs : subtreeAt t p = some s) : s.Licensed R :=
+  ht.of_isSubtree (isSubtree_iff_exists_subtreeAt.mpr ⟨p, hs⟩)
 
 /-- Replacing a subtree by a licensed tree with the same root value keeps a tree licensed. -/
 theorem Licensed.replaceAt {t s new : RoseTree α} (ht : t.Licensed R) {p : List ℕ}
