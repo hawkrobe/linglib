@@ -63,8 +63,8 @@ open ModalLogic (KripkeModel)
 
 /-! ### Syntax (Definition 1.1) -/
 
-/-- The formulas of MDL ([vaananen-2008] Definition 1.1) extend classical modal logic with the
-    dependence atom `=(p₁,...,pₙ; q)`. Väänänen defines `□A` as `¬◇¬A` and `A ∧ B` as
+/-- The formulas of MDL ([vaananen-2008] Definition 1.1, p. 238) extend classical modal logic
+    with the dependence atom `=(p₁,...,pₙ; q)`. Väänänen defines `□A` as `¬◇¬A` and `A ∧ B` as
     `¬(¬A ∨ ¬B)`; `conj` is primitive here, with the clauses that abbreviation yields. -/
 inductive Formula (Atom : Type*) where
   /-- Atomic proposition. -/
@@ -112,7 +112,7 @@ variable [DecidableEq W]
 
 /-! ### Semantics (Definition 4.1) -/
 
-/-- Bilateral evaluation for MDL (Definition 4.1 of [vaananen-2008]).
+/-- Bilateral evaluation for MDL (Definition 4.1 of [vaananen-2008], p. 245).
     `eval M true φ t` is support (Player II); `eval M false φ t` is
     anti-support (Player I). Negation flips polarity (clause (T5)).
 
@@ -210,7 +210,7 @@ private theorem support_and_antiSupport_isLowerSet (φ : Formula Atom)
   | disj ψ₁ ψ₂ ih₁ ih₂ => exact ⟨ih₁.1.tensor ih₂.1, ih₁.2.inter ih₂.2⟩
   | poss ψ ih => exact ⟨Team.isLowerSet_possWitness _ _, ih.2.necImage⟩
 
-/-- The support of every MDL formula is downward closed ([vaananen-2008] Lemma 4.2). -/
+/-- The support of every MDL formula is downward closed ([vaananen-2008] Lemma 4.2, p. 245). -/
 theorem isLowerSet_support (M : KripkeModel W Atom) (φ : Formula Atom) :
     IsLowerSet { t : Finset W | support M φ t } :=
   (support_and_antiSupport_isLowerSet φ M).1

@@ -113,11 +113,11 @@ theorem isLowerSet_support_of_neFree {φ : Formula Atom}
     IsLowerSet { t : Finset W | support M φ t } :=
   (support_and_antiSupport_isLowerSet_of_neFree φ hNE M).1
 
-/-- Joint order-convexity for both polarities ([anttila-2025] Proposition
-    3.3.1). The split cases need union closure of the subformulas
-    (`Set.OrdConnected.tensor`), which is exactly why split disjunction
-    preserves convexity only in a union-closed setting ([anttila-2025] Fact
-    3.2.7 vs Proposition 3.3.1). -/
+/-- Support and anti-support are jointly order-convex. [anttila-2025] Proposition 3.3.6 (p. 82)
+    proves convexity for BSML without its bilateral negation, which swaps the polarities, so here
+    both are proved together. The split cases need union closure of the subformulas
+    (`Set.OrdConnected.tensor`), since split disjunction preserves convexity only in a
+    union-closed setting ([anttila-2025] Fact 3.2.7, p. 71, against Proposition 3.3.1, p. 79). -/
 private theorem support_and_antiSupport_ordConnected
     (φ : Formula Atom) (M : KripkeModel W Atom) :
     Set.OrdConnected {t | support M φ t} ∧ Set.OrdConnected {t | antiSupport M φ t} := by
@@ -134,7 +134,8 @@ private theorem support_and_antiSupport_ordConnected
   | poss ψ _ => exact ⟨ordConnected_flat _, ordConnected_flat _⟩
 
 /-- BSML support is order-convex for every formula, `NE` included ([anttila-2025]
-    Proposition 3.3.1), so a team between two supporting teams supports the formula too. With
+    Proposition 3.3.6 and the remark after Theorem 3.3.7, pp. 82–83), so a team between two
+    supporting teams supports the formula too. With
     `supClosed_support`, this is the property for which BSML is expressively complete. -/
 theorem ordConnected_support (M : KripkeModel W Atom) (φ : Formula Atom) :
     Set.OrdConnected { t : Finset W | support M φ t } :=

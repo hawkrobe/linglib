@@ -45,14 +45,15 @@ theorem bisimClosed_support (M : KripkeModel W Atom) (φ : Formula Atom) :
 /-! ### Expressive completeness -/
 
 /-- Every BSML-definable team property is convex, union-closed and
-    bounded-bisimulation-closed ([anttila-2025] Ch 3). -/
+    bounded-bisimulation-closed ([anttila-2025] §3.3.2). -/
 theorem definableClass_support_subset (M : KripkeModel W Atom) :
     definableClass (support M) ⊆ {P | P.OrdConnected ∧ SupClosed P ∧ BisimClosed M P} :=
   definableClass_subset fun φ ↦
     ⟨ordConnected_support M φ, supClosed_support M φ, bisimClosed_support M φ⟩
 
 /-- Every convex, union-closed, bounded-bisimulation-closed team property is BSML-definable
-    ([anttila-2025] Ch 3, here within one model and over finitely many atoms).
+    ([anttila-2025] Theorem 3.3.7 and the remark after it, p. 83, here within one model and over
+    finitely many atoms).
 
     The defining formula conjoins an upper bound — the flat disjunction
     `δ_U` of the characteristic formulas of the union `U` of all teams of
@@ -152,8 +153,8 @@ theorem subset_definableClass_support [Fintype W] [Fintype Atom] [Inhabited Atom
       exact (hbisim hbis).mp ht''P
 
 /-- **BSML is expressively complete** for the convex, union-closed,
-    bounded-bisimulation-closed team properties ([anttila-2025] Ch 3, in
-    within-model finite-atom form). -/
+    bounded-bisimulation-closed team properties ([anttila-2025] Theorem 3.3.7 and the remark
+    after it, p. 83, in within-model finite-atom form). -/
 theorem definableClass_support_eq [Fintype W] [Fintype Atom] [Inhabited Atom]
     (M : KripkeModel W Atom) :
     definableClass (support M) = {P | P.OrdConnected ∧ SupClosed P ∧ BisimClosed M P} :=
