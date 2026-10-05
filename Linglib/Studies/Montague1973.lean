@@ -14,24 +14,36 @@ public import Mathlib.Data.Fin.VecNotation
 /-!
 # Montague (1973): The Proper Treatment of Quantification in Ordinary English
 
-Montague builds the sentences of a fragment of English by analysis trees, translates each
-tree into intensional logic, and interprets the logic in models, among which meaning postulates
-single out the logically possible ones. Here `Analysis.realize` interprets the trees directly,
-as translation and interpretation do together, and `Entails` is truth preservation in every
-logically possible interpretation.
+Montague's fragment of English builds its sentences by analysis trees, which record the rules
+used, so a sentence with two readings has two trees. An interpretation gives every word a sense,
+its extension at each index (a possible world at a moment). Nouns and verbs apply to individual
+concepts, functions from indices to individuals, so *the temperature* can name something whose
+value changes over time. Montague's meaning postulates single out the logically possible
+interpretations. In these, names and ordinary nouns concern only constant concepts, those with
+the same value at every index, and most verbs depend only on the current values of their
+arguments. One sentence entails another when every logically possible interpretation makes the
+second true wherever it makes the first true.
 
-* Ordinary nouns hold only of constant concepts, so the simple sentences of §4 come out
-  first-order, and the extensional nouns and verbs are definable from their `*`-counterparts.
-* The two analyses of *a woman loves every man* are its two scope readings, not equivalent.
-* Partee's temperature argument is invalid, and *a price rises* needs concept variables.
-* The de re reading of *John seeks a unicorn* entails that there are unicorns; the de dicto
-  reading does not.
+## Main statements
+
+* `every_man_walks_iff`, `a_man_walks_iff`, `the_man_walks_iff`: the simple sentences mean what
+  their first-order paraphrases say, because ordinary nouns hold only of constant concepts.
+* `Interp.LogicallyPossible.extTV_starTV`: an ordinary transitive verb is determined by the
+  relation between individuals that it expresses; likewise for nouns and intransitive verbs.
+* `aWomanLovesEveryMan.not_entails`: *a woman loves every man* has two readings, one for each
+  order of the quantifiers, and they are not equivalent.
+* `not_entails_ninetyRises`: from *the temperature is ninety* and *the temperature rises* it does
+  not follow that *ninety rises*.
+* `a_price_rises_needs_concepts`: *a price rises* can be true although no individual price rises.
+* `johnSeeksAUnicorn.exists_unicorn_of_deRe`, `johnSeeksAUnicorn.not_entails`: on one reading
+  *John seeks a unicorn* implies that there are unicorns, and on the other it does not.
 
 ## Implementation notes
 
-The direct interpretation is the one fn. 13 describes, with bound variables as Lean binders. An
-index stands for a world–moment pair; tense and *necessarily* are omitted. Postulates (1)–(5) are
-the ones about constants of the fragment; (6)–(9) involve words outside it.
+Montague translates each tree into intensional logic and then interprets the logic;
+`Analysis.realize` does both steps at once, as his footnote 13 allows. One index type stands for
+his world–moment pairs, and tense is omitted. Of his nine meaning postulates, only the five that
+mention no word outside the fragment are imposed.
 
 ## References
 
@@ -42,10 +54,7 @@ the ones about constants of the fragment; (6)–(9) involve words outside it.
 
 namespace Montague1973
 
-open Semantics.Composition
-open Reference (IsRigid isRigid_const isRigid_of_subsingleton)
-open Quantifier (GQ)
-open Quantifier.Polyadic (surfaceScope inverseScope)
+open Semantics.Composition Reference Quantifier Polyadic
 
 /-! ### Categories and the category-to-type map -/
 
@@ -152,8 +161,8 @@ def Analysis.realize (M : Interp E W) :
 
 /-! ### `*`-counterparts and extensional senses
 
-Each kind of extensional sense is the image of a lift of first-order data, and `δ*` reads the
-data back off. -/
+`rigidCN`, `extIV` and `extTV` build a sense from a set of individuals or a relation between
+them, and `δ*` recovers the set or relation from the sense. -/
 
 /-- `starIV δ` is `δ*` for `δ` of type `f(IV) = f(CN)`, the set `û δ(^u)` of individuals whose
 constant concept is in `δ`. -/
