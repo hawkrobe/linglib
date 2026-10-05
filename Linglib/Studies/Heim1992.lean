@@ -8,23 +8,25 @@ public import Mathlib.Data.Set.Lattice.Bounded
 /-!
 # Heim (1992): Presupposition Projection and the Semantics of Attitude Verbs
 
-This file formalizes the context change potentials that [heim-1992] gives the attitude predicates
-and the projection behaviour they determine. The belief rule (18) is `believes`, a `CCP.Partial`
-combinator over the doxastic accessibility assignment of (11)–(12): the report is defined iff the
-complement is defined on each doxastic state, so that a complement presupposing `p` yields a
-report presupposing that its holder believes `p`, Karttunen's generalization; on atomic
-complements the condition is Karttunen's rule (3), admittance in the beliefs attributed to the
-holder, which the paper construes as the union of the doxastic states (`admits_believes_iff`),
-and there the report is the update with the partial proposition presupposing that the holder
-believes the presupposition and asserting that the holder believes the assertion
-(`believes_ofPartialProp`). The paper's calculations follow: the *too*-discourse (20) presupposes
-nothing and its *doubt* variant (25) is admitted only by contexts its first conjunct reduces to
-the absurd context; the factive rule for *know* of footnote 47 (`knows`) makes a context
-admitting the report admit the complement's presupposition, which Patrick's cello (2) shows a
-belief report need not. The desire half replaces the Hintikka-style rule (27) with the
-comparative-belief semantics (31), the similarity semantics of [stalnaker-1968] and [lewis-1973]
-on the library's `Desire.Conditional.Want`, with a four-world model on the shape of
-[asher-1987]'s Concorde case (32) and the amendment (40) blocking `want p ∧ want ¬p`.
+Heim gives the attitude predicates context change potentials and derives their projection
+behaviour. The belief rule (18) is `believes`, a `CCP.Partial` combinator over the doxastic
+accessibility of (11)–(12): the report is defined iff the complement is defined on each doxastic
+state, so a complement presupposing `p` yields a report presupposing that its holder believes `p`,
+Karttunen's generalization. The factive rule of footnote 47 makes *know* admit only contexts that
+admit its complement's presupposition, which a belief report need not. The desire half replaces
+the Hintikka-style rule (27) with the comparative semantics (31) on similarity, the library's
+`Desire.Conditional.Want`, with the amendment (40) blocking `want p ∧ want ¬p`.
+
+## Main results
+
+* `admits_believes_iff`, `believes_ofPartialProp`: on atomic complements the belief rule is
+  Karttunen's admittance in the holder's beliefs, and the update with a partial proposition.
+* `believes_too_admits`, `doubt_too_admits_iff`: the *too*-discourse presupposes nothing, and its
+  *doubt* variant is admitted only by contexts its first conjunct reduces to the absurd one.
+* `admits_of_admits_knows`, `believes_admits_not_knows`: *know* passes on its complement's
+  presupposition and *believe* need not, as Patrick's cello shows.
+* `defined_recovered`, `not_want_recovered_compl`: on a four-world model shaped like Asher's
+  Concorde case, the amendment blocks wanting both `p` and `¬p`.
 
 ## Implementation notes
 
@@ -55,27 +57,27 @@ section Belief
 variable {W E : Type*} (Dox : E → W → Set W) (a : E) (φ : CCP.Partial W) (p : PartialProp W)
   (c : Set W)
 
-/-- Rule (18): `c + a believes φ` is defined iff `Dox_a(w) + φ` is defined for every `w ∈ c`,
+/-- By rule (18), `c + a believes φ` is defined iff `Dox_a(w) + φ` is defined for every `w ∈ c`,
 and then equals `{w ∈ c | Dox_a(w) + φ = Dox_a(w)}`. -/
 def believes : CCP.Partial W :=
   fun c ↦ ⟨∀ w ∈ c, φ.Admits (Dox a w), fun _ ↦ {w ∈ c | Dox a w ∈ φ (Dox a w)}⟩
 
-/-- Karttunen's generalization: if `φ` presupposes `p`, then `a believes φ` presupposes that
+/-- By Karttunen's generalization, if `φ` presupposes `p`, then `a believes φ` presupposes that
 `a` believes `p`. -/
 theorem admits_believes_ofPartialProp :
     (believes Dox a (ofPartialProp p)).Admits c ↔
       ∀ w ∈ c, ModalLogic.Box (.ofSuccessors (Dox a)) p.presup w :=
   Iff.rfl
 
-/-- Karttunen's rule (3) on atomic complements: definedness on each `Dox_a(w)` is admittance in
-their union, the beliefs attributed to `a` in `c`. -/
+/-- On atomic complements, Karttunen's rule (3) makes definedness on each `Dox_a(w)` admittance
+in their union, the beliefs attributed to `a` in `c`. -/
 theorem admits_believes_iff :
     (believes Dox a (ofPartialProp p)).Admits c ↔ p.Admits (beliefContext (Dox a) c) :=
   beliefContext_subset_iff.symm
 
-/-- On atomic complements (18) is static, as in the calculation (24): `a believes φ` is the update
-with the partial proposition that presupposes that `a` believes `φ`'s presupposition and asserts
-that `a` believes its assertion. -/
+/-- On atomic complements (18) is static, as in the calculation (24), since `a believes φ` is the
+update with the partial proposition that presupposes that `a` believes `φ`'s presupposition and
+asserts that `a` believes its assertion. -/
 theorem believes_ofPartialProp :
     believes Dox a (ofPartialProp p) = ofPartialProp
       ⟨ModalLogic.Box (.ofSuccessors (Dox a)) p.presup,
@@ -85,8 +87,8 @@ theorem believes_ofPartialProp :
   simp only [believes, mem_ofPartialProp_self, Set.mem_ofPred_eq, ofPartialProp_get]
   exact ⟨fun ⟨hw, _, ha⟩ ↦ ⟨hw, ha⟩, fun ⟨hw, ha⟩ ↦ ⟨hw, h w hw, ha⟩⟩
 
-/-- (20) presupposes nothing: every context admits `John believes that Mary_i is here, and he
-believes that Susan_F is here too_i`, where by (22) the *too*-clause presupposes that Mary is
+/-- (20) presupposes nothing, since every context admits `John believes that Mary_i is here, and
+he believes that Susan_F is here too_i`, where by (22) the *too*-clause presupposes that Mary is
 here. -/
 theorem believes_too_admits (m s : Set W) :
     (seq (believes Dox a (ofPartialProp (.ofProp m)))
@@ -105,7 +107,7 @@ theorem doubt_too_admits_iff (m s : Set W) :
     exact hm (h w ⟨hw, fun hS ↦ hm ((mem_ofPartialProp_self _ _).1 hS.2).2⟩)
   · exact (mem_ofPartialProp_self _ _).2 ⟨fun _ _ ↦ trivial, h w hw.1⟩
 
-/-- The factive rule of footnote 47: `c + a knows φ` is undefined unless `c + φ = c`, and is
+/-- By the factive rule of footnote 47, `c + a knows φ` is undefined unless `c + φ = c`, and is
 otherwise `c + a believes φ`. -/
 def knows : CCP.Partial W := fun c ↦ Part.assert (c ∈ φ c) fun _ ↦ believes Dox a φ c
 
@@ -127,14 +129,14 @@ inductive CelloWorld where
   | lacks
   deriving DecidableEq
 
-/-- Patrick's misconception (2): whatever the facts, he believes he owns a cello. -/
+/-- In Patrick's misconception (2), whatever the facts, he believes he owns a cello. -/
 def celloDox (_ : Unit) (_ : CelloWorld) : Set CelloWorld := {.owns}
 
-/-- `Patrick sells his cello` (1): presupposes that he owns one. -/
+/-- `Patrick sells his cello` (1) presupposes that he owns one. -/
 def sellsCello : PartialProp CelloWorld := ⟨(· = .owns), fun _ ↦ True⟩
 
 /-- Where Patrick lacks a cello but believes he owns one, `Patrick believes he is selling his
-cello` is admitted and `Patrick knows he is selling his cello` is not: `celloDox` is not
+cello` is admitted and `Patrick knows he is selling his cello` is not, since `celloDox` is not
 veridical at `lacks`. -/
 theorem believes_admits_not_knows :
     (believes celloDox () (ofPartialProp sellsCello)).Admits {.lacks} ∧
@@ -144,8 +146,8 @@ theorem believes_admits_not_knows :
 
 /-! ### Desire reports: the four-world model -/
 
-/-- Worlds classified by two binary dimensions, recovered (`r`) and sick (`s`):
-`w0 = r ∧ s`, `w1 = r ∧ ¬s`, `w2 = ¬r ∧ s`, `w3 = ¬r ∧ ¬s`. -/
+/-- Worlds are classified by two binary dimensions, recovered (`r`) and sick (`s`), with
+`w0 = r ∧ s`, `w1 = r ∧ ¬s`, `w2 = ¬r ∧ s` and `w3 = ¬r ∧ ¬s`. -/
 inductive HealthWorld where
   | w0 | w1 | w2 | w3
   deriving DecidableEq, Fintype
@@ -176,9 +178,9 @@ instance (w : HealthWorld) : Std.Antisymm (prefRecovered w) :=
 
 abbrev heimFrame : Frame HealthWorld := ⟨trivialSim, prefRecovered⟩
 
-/-- The (40) amendment: `want recovered` is defined when both recovered and non-recovered
+/-- Under the (40) amendment, `want recovered` is defined when both recovered and non-recovered
 worlds are believed possible. -/
-theorem defined_recovered : Defined Set.univ recovered :=
+theorem defined_recovered : Desire.IsContingent Set.univ recovered :=
   ⟨⟨.w0, trivial, trivial⟩, ⟨.w2, trivial, id⟩⟩
 
 /-- Under (40) and an asymmetric preference, `want recovered` and `want ¬recovered` cannot both

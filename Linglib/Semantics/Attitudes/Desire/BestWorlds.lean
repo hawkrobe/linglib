@@ -2,6 +2,7 @@ module
 
 public import Linglib.Semantics.Modality.Kratzer.Ordering
 public import Linglib.Semantics.Presupposition.Defs
+public import Linglib.Semantics.Attitudes.Desire.Conditional
 
 /-!
 # Best-worlds desire semantics
@@ -27,14 +28,19 @@ assertion of wanting `p` false.
   problem Villalta raises.
 * `Desire.BestWorlds.want_inter_iff`: wanting a conjunction is wanting each conjunct, which makes
   *sorry* anti-additive in its complement.
+* `Desire.BestWorlds.ssubset_of_presup_glad`: the presupposition of *glad* makes the domain
+  properly contain the belief worlds.
 
 ## Implementation notes
 
 The domain is a parameter. Von Fintel's is the set DOX* of worlds compatible with what the subject
 believes however she acts, a superset of her belief worlds; Phillips-Brown's rendering takes the
 belief worlds themselves. Von Fintel's condition that the domain of *want* be DOX* constrains the
-domain rather than the complement and is left to the caller. Desires given as finite sets of
-worlds enter as an ordering source through `source`.
+domain rather than the complement and is left to the caller, and his presupposition that `p` be
+contingent in the domain is Heim's (`Desire.IsContingent`). The subject is fixed, so the domain
+and the ordering source are indexed by worlds alone. `glad` is his best-worlds entry (50), which
+he replaces by a comparison of the belief worlds with the non-`p` worlds, (52), after the Honda
+Civic case; the replacement is `VonFintel1999.gladBetter`.
 
 ## References
 
@@ -65,6 +71,13 @@ variable {A : List (W → Prop)} {dom p q : Set W}
 
 theorem want_iff_forall : Want A dom p ↔ ∀ w ∈ bestAmong dom A, w ∈ p := Iff.rfl
 
+theorem want_iff : Want A dom p ↔ ∀ w ∈ dom, (∀ z ∈ dom, (z ≤[A] w) → (w ≤[A] z)) → w ∈ p :=
+  ⟨fun h _ hw hb ↦ h ⟨hw, hb⟩, fun h w hw ↦ h w hw.1 hw.2⟩
+
+instance [Fintype W] [DecidableRel (atLeastAsGoodAs A)] [DecidablePred (· ∈ dom)]
+    [DecidablePred (· ∈ p)] : Decidable (Want A dom p) :=
+  decidable_of_iff _ want_iff.symm
+
 /-- Wanting a conjunction is wanting each conjunct. -/
 theorem want_inter_iff : Want A dom (p ∩ q) ↔ Want A dom p ∧ Want A dom q :=
   Set.subset_inter_iff
@@ -87,38 +100,6 @@ theorem Want.not_compl [Finite W] (h : dom.Nonempty) (hp : Want A dom p) : ¬ Wa
 
 end Want
 
-/-! ### Desires as finite sets of worlds -/
-
-section Source
-
-variable (G : List (Finset W)) (dom p : Set W)
-
-/-- The desires as an ordering source. -/
-def source : List (W → Prop) := G.map fun s w ↦ w ∈ s
-
-/-- `le G w z` holds when every desire in `G` satisfied at `z` is satisfied at `w`. -/
-abbrev le (w z : W) : Prop := w ≤[source G] z
-
-theorem le_iff (w z : W) : le G w z ↔ ∀ s ∈ G, z ∈ s → w ∈ s := by
-  simp [source, atLeastAsGoodAs_iff]
-
-theorem mem_bestAmong_source (w : W) :
-    w ∈ bestAmong dom (source G) ↔ w ∈ dom ∧ ∀ z ∈ dom, le G z w → le G w z :=
-  Iff.rfl
-
-theorem want_source_iff :
-    Want (source G) dom p ↔ ∀ w ∈ dom, (∀ z ∈ dom, le G z w → le G w z) → w ∈ p :=
-  ⟨fun h _ hw hb ↦ h ⟨hw, hb⟩, fun h w hw ↦ h w hw.1 hw.2⟩
-
-instance [DecidableEq W] (w z : W) : Decidable (le G w z) :=
-  decidable_of_iff _ (le_iff G w z).symm
-
-instance [Fintype W] [DecidableEq W] [DecidablePred (· ∈ dom)] [DecidablePred (· ∈ p)] :
-    Decidable (Want (source G) dom p) :=
-  decidable_of_iff _ (want_source_iff G dom p).symm
-
-end Source
-
 /-! ### *Want*, *glad* and *sorry* -/
 
 section Entries
@@ -129,7 +110,7 @@ variable (dox base : W → Set W) (g : W → List (W → Prop)) (p : Set W)
 and asserts that its best worlds under the ordering source `g` are `p`-worlds
 ([von-fintel-1999]'s (45)). -/
 def want : PartialProp W where
-  presup w := (base w ∩ p).Nonempty ∧ (base w \ p).Nonempty
+  presup w := IsContingent (base w) p
   assertion w := Want (g w) (base w) p
 
 /-- *a is glad that p* presupposes, besides the presupposition of *want*, that `a` believes `p`
@@ -144,6 +125,13 @@ def glad : PartialProp W where
 def regret : PartialProp W where
   presup := (glad dox base g p).presup
   assertion := (want base g pᶜ).assertion
+
+variable {dox base g p}
+
+/-- The presupposition of *glad* makes the domain properly contain the belief worlds, since the
+belief worlds are `p`-worlds and the domain has a non-`p`-world ([von-fintel-1999], p. 123). -/
+theorem ssubset_of_presup_glad {w : W} (h : (glad dox base g p).presup w) : dox w ⊂ base w :=
+  h.2.1.ssubset_of_not_superset fun hb ↦ let ⟨_, hv⟩ := h.2.2.2; hv.2 (h.1 (hb hv.1))
 
 end Entries
 
