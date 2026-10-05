@@ -7,8 +7,8 @@ public import Linglib.Syntax.Case.Basic
 
 Japanese marks the relations of a noun phrase with particles after it. Tsujimura separates the
 case particles, the nominative *ga*, the accusative *o*, the dative *ni* and the genitive *no*,
-from the postpositions, the counterparts of English prepositions, which cannot stand on their
-own: *de* 'at', *e* 'to', *to* 'with', *made* 'until' and *kara* 'from'. The nominative and the
+from the postpositions, the counterparts of English prepositions (`Japanese.Adpositions`): *de*
+'at', *e* 'to', *to* 'with', *made* 'until' and *kara* 'from'. The nominative and the
 accusative, unlike case endings, may be dropped in casual speech, *Tomodati(-ga) kita?* 'Has my
 friend come?', and replaced by *mo* 'also' and *sae* 'even'. Two markers are polysemous: *ni*
 marks recipients, goals, times and the location of existence, and *de* the location of an
@@ -24,7 +24,6 @@ single *ni* entry, the matter of `Studies/SadakaneKoizumi1995.lean`.
 * `Japanese.Case.label`, `Japanese.Case.functions`: the comparative value each case is named for,
   and the values it expresses.
 * `Japanese.Case.droppable`: the cases whose particles casual speech drops.
-* `Japanese.Postposition`: the postpositions, with their forms and the case values they express.
 
 ## References
 
@@ -81,48 +80,5 @@ theorem label_mem_functions (c : Case) : c.label ∈ c.functions := by
 def droppable : Finset Case := {nom, acc}
 
 end Case
-
-/-! ### Postpositions -/
-
-/-- The postpositions. -/
-inductive Postposition where
-  /-- *de* で 'at'. -/
-  | de
-  /-- *e* へ 'to'. -/
-  | e
-  /-- *to* と 'with'. -/
-  | «to»
-  /-- *kara* から 'from'. -/
-  | kara
-  /-- *made* まで 'until'. -/
-  | made
-  /-- *yori* より 'than', the standard marker of the comparative (`Japanese.Comparison.yori`). -/
-  | yori
-  deriving DecidableEq, Fintype, Repr
-
-namespace Postposition
-
-/-- The form of a postposition. -/
-def form : Postposition → String
-  | de => "de"
-  | e => "e"
-  | «to» => "to"
-  | kara => "kara"
-  | made => "made"
-  | yori => "yori"
-
-/-- `p.functions` are the comparative values `p` expresses. *De* marks the locative of an
-action's place and the instrumental, *e* the allative, *to* the comitative, *kara* the ablative
-of spatial and temporal sources, *made* the terminative of spatial and temporal endpoints, and
-*yori* the ablative, as the separative standard of the comparative. -/
-def functions : Postposition → Finset _root_.Case
-  | de => {.loc, .inst}
-  | e => {.all}
-  | «to» => {.com}
-  | kara => {.abl}
-  | made => {.ter}
-  | yori => {.abl}
-
-end Postposition
 
 end Japanese

@@ -6,24 +6,23 @@ public import Linglib.Semantics.Aspect.Defs
 /-!
 # Hindi case
 
-Hindi nominals carry three layers of case-like marking ([masica-1991] §8.4, pp. 231–233). The
-first is inflection: a noun has a direct, an oblique and a vocative form in each number, and a
-declined adjective agrees with it in the direct–oblique contrast ([spencer-2005] (1)–(2);
-[mohanan-1994] p. 62). The second is the postpositions *ne*, *ko*, *se*, *kaa*, *mẽ* and *par*,
-which follow the oblique form and have one shape in both numbers ([masica-1991] p. 233;
-[mohanan-1994] pp. 60–63). The third is the complex postpositions, which follow a genitive, as
-*bacce-ke liye* 'for the child'.
+Hindi nominals carry three layers of case-like marking (Masica §8.4, pp. 231–233). The first is
+inflection: a noun has a direct, an oblique and a vocative form in each number, and a declined
+adjective agrees with it in the direct–oblique contrast (Spencer (1)–(2); Mohanan p. 62). The
+second is the simple postpositions of `Hindi.Adpositions`, which follow the oblique form and have
+one shape in both numbers (Masica p. 233; Mohanan pp. 60–63). The third is the complex
+postpositions, which follow a genitive, as *bacce-ke liye* 'for the child'.
 
-Which of these are the cases is disputed. [masica-1991] treats the postpositions as formal cases
-under the traditional labels, and finds no accusative among them (pp. 238–239); [mohanan-1994]
-takes them to mark universal case features, *ko* both the accusative of objects and the dative of
-goals (p. 67); [spencer-2005] takes the three inflected forms to be the only cases, the
-postpositions being words that select the oblique. This file records the forms on which the three
-agree: the inflected forms as `Hindi.Case`, and the postpositions with the functions they express.
+Which of these are the cases is disputed. Masica treats the postpositions as formal cases under
+the traditional labels, and finds no accusative among them (pp. 238–239); Mohanan takes them to
+mark universal case features, *ko* both the accusative of objects and the dative of goals
+(p. 67); Spencer takes the three inflected forms to be the only cases, the postpositions being
+words that select the oblique. This file records the inflected forms, on which the three agree,
+as `Hindi.Case`.
 
-The alignment is split by aspect: in the perfective the transitive subject takes *ne* and the
-object the direct form, while elsewhere the subject is direct and the object takes *ko* when it is
-marked at all ([blake-1994]).
+The alignment is split by aspect, as Blake describes it: in the perfective the transitive subject
+takes *ne* and the object the direct form, while elsewhere the subject is direct and the object
+takes *ko* when it is marked at all.
 
 ## Main definitions
 
@@ -31,7 +30,6 @@ marked at all ([blake-1994]).
   value each is named for.
 * `Hindi.Noun`, `Hindi.nouns`: Spencer's two nouns with a vocative, by the form of each case in each
   number.
-* `Hindi.Postposition`: the six postpositions, with their forms and the functions they express.
 * `Hindi.alignment`: the alignment of case marking by aspect.
 
 ## Main results
@@ -123,53 +121,10 @@ theorem singular_oblique_eq_vocative : ∀ n ∈ nouns, n.singular .oblique = n.
 theorem singular_larkii_eq (c : Case) : larkii.singular c = "laRkii" := by
   cases c <;> rfl
 
-/-! ### The postpositions -/
-
-/-- The postpositions that follow the oblique form, [mohanan-1994]'s case clitics and
-[masica-1991]'s Layer II. -/
-inductive Postposition where
-  /-- *ne*, of the agent. -/
-  | ne
-  /-- *ko*, of the goal and the object. -/
-  | ko
-  /-- *se*, of the instrument and the source. -/
-  | se
-  /-- *kaa*, of the possessor, which agrees with the possessed noun. -/
-  | kaa
-  /-- *mẽ* 'in'. -/
-  | me
-  /-- *par* 'on, at'. -/
-  | par
-  deriving DecidableEq, Fintype, Repr
-
-namespace Postposition
-
-/-- The form of a postposition, *kaa* in its masculine singular direct form. -/
-def form : Postposition → String
-  | ne => "ne"
-  | ko => "ko"
-  | se => "se"
-  | kaa => "kaa"
-  | me => "mẽ"
-  | par => "par"
-
-/-- The comparative values a postposition expresses ([mohanan-1994] p. 67; [masica-1991]
-p. 238): *ne* the agent of a perfective verb, *ko* the goal and the object, *se* the instrument,
-the source and the companion, *kaa* the possessor, and *mẽ* and *par* location. -/
-def functions : Postposition → Finset _root_.Case
-  | ne => {.erg}
-  | ko => {.dat, .acc}
-  | se => {.inst, .abl, .com}
-  | kaa => {.gen}
-  | me => {.loc}
-  | par => {.loc}
-
-end Postposition
-
 /-! ### Alignment -/
 
-/-- The alignment by aspect: ergative in the perfective, where the transitive subject takes
-*ne*, and accusative otherwise. -/
+/-- The alignment is ergative in the perfective, where the transitive subject takes *ne*, and
+accusative otherwise. -/
 def alignment : Aspect.Perfectivity → Alignment.AlignmentType
   | .perfective => .ergative
   | .imperfective => .accusative
