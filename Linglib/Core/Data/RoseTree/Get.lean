@@ -41,9 +41,10 @@ a binary-search-tree lookup, which has no analogue for a general rose tree.
 * `RoseTree.positionedLeaves`: the leaves with their addresses, exactly the leaf addresses
   (`subtreeAt_of_mem_positionedLeaves`, `mem_positionedLeaves_of_subtreeAt`) in the order of the
   frontier (`map_snd_positionedLeaves`), which is precedence (`pairwise_precedes_positionedLeaves`).
-* `RoseTree.replaceAt`: replacement at an address, splitting the frontier
-  (`leafList_replaceAt`) and shrinking the tree when the new subtree is smaller
-  (`numNodes_replaceAt_lt`).
+* `RoseTree.replaceAt`: replacement at an address, leaving the subtrees away from it unchanged
+  (`subtreeAt_replaceAt_of_not_prefix`) and those above it holding the replacement
+  (`subtreeAt_replaceAt_of_prefix`), splitting the frontier (`leafList_replaceAt`) and shrinking
+  the tree when the new subtree is smaller (`numNodes_replaceAt_lt`).
 -/
 
 @[expose] public section
@@ -538,6 +539,35 @@ theorem leafList_replaceAt {t s : RoseTree α} {p : List ℕ} (h : subtreeAt t p
           leafList_node_of_ne_nil _ (List.append_ne_nil_of_right_ne_nil _ (List.cons_ne_nil _ _)),
           List.map_append, List.map_cons, List.flatten_append, List.flatten_cons, hy']
         simp only [List.append_assoc]
+
+/-- Away from the replaced address, at an address neither above nor below it, the subtree is
+unchanged. -/
+theorem subtreeAt_replaceAt_of_not_prefix {t new : RoseTree α} {p q : List ℕ} (hpq : ¬ p <+: q)
+    (hqp : ¬ q <+: p) : (t.replaceAt p new).subtreeAt q = t.subtreeAt q := by
+  induction p generalizing t q with
+  | nil => exact absurd List.nil_prefix hpq
+  | cons i p ih =>
+    obtain _ | ⟨j, q⟩ := q
+    · exact absurd List.nil_prefix hqp
+    obtain ⟨a, cs⟩ := t
+    obtain rfl | hij := eq_or_ne i j
+    · have h (t : RoseTree α) : (t.replaceAt p new).subtreeAt q = t.subtreeAt q :=
+        ih (fun h ↦ hpq (List.cons_prefix_cons.mpr ⟨rfl, h⟩))
+          (fun h ↦ hqp (List.cons_prefix_cons.mpr ⟨rfl, h⟩))
+      cases hc : cs[i]? <;> simp [replaceAt_cons, hc, h]
+    · simp [replaceAt_cons, hij]
+
+/-- At an address above the replaced one, the subtree has the replacement inside it. -/
+theorem subtreeAt_replaceAt_of_prefix {t new : RoseTree α} {p q : List ℕ} (hqp : q <+: p) :
+    (t.replaceAt p new).subtreeAt q = (t.subtreeAt q).map (·.replaceAt (p.drop q.length) new) := by
+  induction q generalizing t p with
+  | nil => simp
+  | cons j q ih =>
+    obtain _ | ⟨i, p⟩ := p
+    · exact absurd hqp (by simp)
+    obtain ⟨rfl, h⟩ := List.cons_prefix_cons.mp hqp
+    obtain ⟨a, cs⟩ := t
+    cases hc : cs[j]? <;> simp [replaceAt_cons, hc, ih h]
 
 /-- Replacing a subtree by a strictly smaller one shrinks the tree. -/
 theorem numNodes_replaceAt_lt {t s : RoseTree α} {p : List ℕ} (h : subtreeAt t p = some s)

@@ -56,14 +56,8 @@ def headIndexAt (t : Tree C W) (p : TreePath) : Option ℕ := (t.subtreeAt p.toL
 abbrev HeadDaughterAt (t : Tree C W) : TreePath → TreePath → Prop := headDaughterRel t.headIndexAt
 
 /-- A position of `t` is a segment when its label marks the mother of an adjunction. -/
-def IsSegmentAt (t : Tree C W) (p : TreePath) : Prop :=
-  ∃ s, t.subtreeAt p.toList = some s ∧ s.value.IsSegment
-
-instance (t : Tree C W) : DecidablePred (IsSegmentAt t) := fun p ↦
-  match h : t.subtreeAt p.toList with
-  | none => isFalse (by rintro ⟨s, hs, -⟩; rw [h] at hs; cases hs)
-  | some s => decidable_of_iff s.value.IsSegment
-      ⟨fun hc ↦ ⟨s, h, hc⟩, fun ⟨s', hs, hc⟩ ↦ by cases h.symm.trans hs; exact hc⟩
+abbrev IsSegmentAt (t : Tree C W) (p : TreePath) : Prop :=
+  p ∈ RoseTree.positionsWhere (fun s ↦ s.value.IsSegment) t
 
 /-- `ProjectsAt t m d` says that `m` projects from its head daughter `d`, a new category. -/
 abbrev ProjectsAt (t : Tree C W) : TreePath → TreePath → Prop :=
