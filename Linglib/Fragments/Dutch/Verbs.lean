@@ -195,7 +195,8 @@ def komen : Verb :=
     frames := [ArgumentFrame.unaccusative], vendlerClass := some .achievement,
     direction := some .goal }
 
-/-- *sterven* 'die', an unaccusative verb denoting a transition: *De oude man is gestorven*. -/
+/-- *sterven* 'die' is an unaccusative verb denoting a transition, as in *De oude man is
+gestorven*. -/
 def sterven : Verb :=
   { simplex "sterven" "gestorven" with
     frames := [ArgumentFrame.unaccusative], vendlerClass := some .achievement }
@@ -212,8 +213,9 @@ def stijgen : Verb :=
     frames := [ArgumentFrame.unaccusative], vendlerClass := some .accomplishment,
     scaleDimension := some .height }
 
-/-- *blijven* 'stay', an unaccusative verb expressing that a state continues to exist (§1.2), with
-the auxiliary *zijn*: *Was dan ook wat langer gebleven!* 'You should have stayed a bit longer!'. -/
+/-- *blijven* 'stay' is an unaccusative verb expressing that a state continues to exist (§1.2),
+with the auxiliary *zijn*, as in *Was dan ook wat langer gebleven!* 'You should have stayed a bit
+longer!'. -/
 def blijven : Verb :=
   { simplex "blijven" "gebleven" with
     frames := [ArgumentFrame.unaccusative], vendlerClass := some .state,
@@ -227,8 +229,8 @@ def duren : Verb :=
   { simplex "duren" "geduurd" with
     frames := [ArgumentFrame.intransitive], vendlerClass := some .state }
 
-/-- *staan* 'stand', a stative verb of location, an atelic unaccusative verb with *hebben*: *Jan
-heeft lang op het perron gestaan*. -/
+/-- *staan* 'stand' is a stative verb of location, an atelic unaccusative verb with *hebben*, as
+in *Jan heeft lang op het perron gestaan*. -/
 def staan : Verb :=
   { simplex "staan" "gestaan" with
     frames := [ArgumentFrame.unaccusative], vendlerClass := some .state }
@@ -249,7 +251,8 @@ def lopen : Verb :=
     frames := [ArgumentFrame.intransitive, ArgumentFrame.spatialPP], vendlerClass := some .activity,
     direction := some .place }
 
-/-- *wandelen* 'walk', an intransitive verb of manner of motion: *De jongen heeft gewandeld*. -/
+/-- *wandelen* 'walk' is an intransitive verb of manner of motion, as in *De jongen heeft
+gewandeld*. -/
 def wandelen : Verb :=
   { simplex "wandelen" "gewandeld" with
     frames := [ArgumentFrame.intransitive, ArgumentFrame.spatialPP], vendlerClass := some .activity,
@@ -271,7 +274,7 @@ def Verb.withPath (v : Verb) (p : Adposition.SpatialReading) : Verb :=
 @[simp] theorem Verb.toVerb_withPath (v : Verb) (p : Adposition.SpatialReading) :
     (v.withPath p).toVerb = v.toVerb.withPath p := rfl
 
-/-- The auxiliary of the perfect of `v` on the frame `fr` ([broekhuis-corver-2026e] §§2.1–2.2):
+/-- The auxiliary of the perfect of `v` on the frame `fr` ([broekhuis-corver-2026e] §§2.1–2.2) is
 *zijn* on an unaccusative frame when the verb is telic, and on an intransitive frame when a
 directional phrase gives the verb of motion a path and makes it telic, since the phrase makes it
 unaccusative; *hebben* otherwise, for transitive and intransitive verbs and for atelic
@@ -282,10 +285,10 @@ def perfect (v : Verb) (fr : ArgumentFrame) : ArgumentStructure.PerfectAux :=
       v.vendlerClass.any (·.telicity == .telic) then .be
   else .have
 
-/-- A bounded directional phrase gives a dynamic intransitive verb *zijn*: *De jongen is naar
-Groningen gewandeld* (§2.2, (274b)). -/
+/-- A bounded directional phrase gives a dynamic intransitive verb *zijn*, as in *De jongen is
+naar Groningen gewandeld* (§2.2, (274b)). -/
 theorem perfect_withPath_intransitive {v : Verb} {p : Adposition.SpatialReading}
-    (hv : v.TakesSpatial) (hd : p.direction ≠ .place) (hb : p.bounded) {c : Aspect.VendlerClass}
+    (hv : v.TakesSpatial) (hd : p.direction ≠ .place) (hb : p.IsBounded) {c : Aspect.VendlerClass}
     (hc : v.vendlerClass = some c) (hdyn : c.dynamicity = .dynamic) :
     perfect (v.withPath p) .intransitive = .be := by
   simp [perfect, Verb.withPath, hv, hd, hb, hc, ArgumentFrame.intransitive,

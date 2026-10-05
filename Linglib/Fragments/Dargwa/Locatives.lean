@@ -126,7 +126,7 @@ def Orientation.morphs : Orientation → Gender.Marker → List Morph
   | .translative, _ => [.suff "tːi"]
 
 /-- The path head of the comparative decomposition an orientation expresses. -/
-def Orientation.pathDir : Orientation → Spatial.PathDir
+def Orientation.pathDir : Orientation → Spatial.Path.Direction
   | .essive => .place
   | .lative => .goal
   | .elative => .source
@@ -223,7 +223,7 @@ theorem isSpatial_post_iff {o : Orientation} {d : Option Direction} :
 
 /-- The forms fill the grid of regions and path heads except for the route, which the
 translative expresses, outside the exterior. -/
-theorem exists_isSpatial_iff (r : Spatial.Localization) (d : Spatial.PathDir) :
+theorem exists_isSpatial_iff (r : Spatial.Localization) (d : Spatial.Path.Direction) :
     (∃ f : LocativeForm,
       f.IsSpatial ∧ f.localization.region = r ∧ f.orientation.pathDir = d) ↔
       d ≠ .route ∨ r = .exterior := by

@@ -11,10 +11,10 @@ public import Linglib.Syntax.Category.Verb.Basic
 # Perfect-auxiliary selection (be/have)
 
 Many Romance and Germanic languages form the perfect with either *be* or *have*, and the choice
-tracks split intransitivity. The binary account, [burzio-1986]'s for Italian, has unaccusatives
-and reflexives take *be* (Italian *è arrivato*, French *est arrivé*) and unergatives and
-transitives *have* (Italian *ha mangiato*); German and Dutch reflexives take *have*
-([sorace-2000], §1). [sorace-2000] refines the intransitives into the Auxiliary Selection
+tracks split intransitivity. The binary account, Burzio's for Italian, has unaccusatives and
+reflexives take *be* (Italian *è arrivato*, French *est arrivé*) and unergatives and transitives
+*have* (Italian *ha mangiato*); German and Dutch reflexives take *have* (Sorace §1). Sorace
+refines the intransitives into the Auxiliary Selection
 Hierarchy, a chain of seven aspectual and thematic verb types along which the preference for
 *be* falls: the verbs at the two ends choose their auxiliary categorically and in every language,
 the verbs between them vary, and each language draws its cutoff between *be* and *have* at its
@@ -52,11 +52,11 @@ inductive PerfectAux where
 
 /-- Transitivity class relevant to auxiliary selection. -/
 inductive TransitivityClass where
-  /-- Subject is the theme: *arrive*, *fall*, *die*. -/
+  /-- The subject is the theme, as of *arrive*, *fall* and *die*. -/
   | unaccusative
-  /-- Subject is an agent and there is no object: *run*, *laugh*. -/
+  /-- The subject is an agent and there is no object, as with *run* and *laugh*. -/
   | unergative
-  /-- Subject is an agent and the object a theme: *eat*, *build*. -/
+  /-- The subject is an agent and the object a theme, as with *eat* and *build*. -/
   | transitive
   /-- A reflexive clitic, which selects *be* in Romance and *have* in
       German. -/
@@ -65,16 +65,17 @@ inductive TransitivityClass where
 
 namespace TransitivityClass
 
-/-- The binary account of auxiliary selection, given the auxiliary of reflexives: unaccusatives
-select *be*, unergatives and transitives *have*, and reflexives are the locus of variation, *be*
-in Romance and *have* in German ([burzio-1986] for the Italian generalization). -/
+/-- In the binary account of auxiliary selection, given the auxiliary of reflexives,
+unaccusatives select *be*, unergatives and transitives *have*, and reflexives are the locus of
+variation, *be* in Romance and *have* in German ([burzio-1986] for the Italian
+generalization). -/
 def selection (refl : PerfectAux) : TransitivityClass → PerfectAux
   | unaccusative => .be
   | reflexive    => refl
   | unergative   => .have
   | transitive   => .have
 
-/-- Canonical (Romance) auxiliary selection: reflexives → *be*. -/
+/-- Canonical (Romance) auxiliary selection gives reflexives *be*. -/
 def canonicalSelection : TransitivityClass → PerfectAux := selection .be
 
 /-- Does this transitivity class canonically select *be*? -/
@@ -86,27 +87,29 @@ instance : DecidablePred SelectsBe := fun c =>
 
 end TransitivityClass
 
-/-- The Auxiliary Selection Hierarchy ([sorace-2000], Table 1): the aspectual and thematic types
-of monadic intransitive verbs, ordered from the type most consistent in taking *be* to the type
-most consistent in taking *have*. The transitions and states come first, by decreasing telicity,
+/-- The Auxiliary Selection Hierarchy ([sorace-2000], Table 1) orders the aspectual and thematic
+types of monadic intransitive verbs from the type most consistent in taking *be* to the type most
+consistent in taking *have*. The transitions and states come first, by decreasing telicity,
 then the processes, by increasing control. The two ends are the core types, whose verbs choose
 their auxiliary categorically. -/
 inductive AuxiliarySelectionHierarchy where
-  /-- A telic change of location: *arrive*, *come*, *fall*. -/
+  /-- A telic change of location, as *arrive*, *come* and *fall* denote. -/
   | changeOfLocation
-  /-- A change of state, mostly without a specified endpoint: *rise*, *rot*, *become*, *die*. -/
+  /-- A change of state, mostly without a specified endpoint, as *rise*, *rot*, *become* and *die*
+denote. -/
   | changeOfState
-  /-- The continuation of a pre-existing state: *stay*, *remain*, *last*, *survive*. -/
+  /-- The continuation of a pre-existing state, as *stay*, *remain*, *last* and *survive* denote. -/
   | continuationOfState
-  /-- The existence of a state: *be*, *exist*, *belong*, *seem*. -/
+  /-- The existence of a state, as *be*, *exist*, *belong* and *seem* denote. -/
   | existenceOfState
-  /-- A process without volition: *tremble*, *cough*, verbs of emission and weather verbs. -/
+  /-- A process without volition, as *tremble*, *cough*, verbs of emission and weather verbs
+denote. -/
   | uncontrolledProcess
-  /-- A controlled process of motion, whose agent undergoes an undirected displacement: *run*,
-      *swim*, *walk*. -/
+  /-- A controlled process of motion, whose agent undergoes an undirected displacement, as *run*,
+      *swim* and *walk* denote. -/
   | motionalProcess
-  /-- A controlled process without motion, which leaves its agent unaffected: *work*, *play*,
-      *talk*. -/
+  /-- A controlled process without motion, which leaves its agent unaffected, as *work*, *play*
+      and *talk* denote. -/
   | nonmotionalProcess
   deriving DecidableEq, Repr, Fintype
 
@@ -146,7 +149,7 @@ def ofVerb (v : Verb) : Option AuxiliarySelectionHierarchy := do
 bottom of the hierarchy: the directed motion use in which verbs of manner of motion take *be*
 ([sorace-2000] §4.3, [levin-hovav-1995] p. 185). -/
 theorem ofVerb_withPath_eq_bot {v : Verb} {p : Adposition.SpatialReading} (hv : v.TakesSpatial)
-    (hd : p.direction ≠ .place) (hb : p.bounded) {c : Aspect.VendlerClass}
+    (hd : p.direction ≠ .place) (hb : p.IsBounded) {c : Aspect.VendlerClass}
     (hc : v.vendlerClass = some c) (hdyn : c.dynamicity = .dynamic) :
     ofVerb (v.withPath p) = some ⊥ := by
   simp [ofVerb, hv, hd, hb, hc, hdyn, Aspect.VendlerClass.telicity_telicize hdyn]

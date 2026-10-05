@@ -7,7 +7,7 @@ public import Linglib.Semantics.Presupposition.Basic
 public import Linglib.Semantics.Presupposition.TriggerTypology
 public import Linglib.Logic.Natural.ImplicationSignature
 public import Linglib.Semantics.Aspect.Defs
-public import Linglib.Semantics.Events.PathDir
+public import Linglib.Semantics.Events.Path
 public import Linglib.Semantics.Attitudes.Basic
 public import Linglib.Semantics.ArgumentStructure.LevinClass
 public import Linglib.Logic.Natural.Basic
@@ -60,7 +60,7 @@ open NaturalLogic (Signature)
 
 /-- The external-argument dimension of a verb's frame, neutral between syntactic frameworks. -/
 inductive VoiceType where
-  /-- An external argument is introduced: transitives and unergatives. -/
+  /-- An external argument is introduced, as in transitives and unergatives. -/
   | agentive
   /-- No external argument is introduced, as in unaccusatives and anticausatives. -/
   | nonThematic
@@ -139,11 +139,11 @@ structure Aspect where
       for *dry*, a decrease in wetness. -/
   scalePolarity : Polarity := .positive
   /-- The direction of the path along which a verb of motion displaces its theme, relative to
-      the ground ([pantcheva-2011]): `.goal` for *arrive* and *come*, `.source` for *leave*, and
-      `.place` for a verb of manner of motion, which displaces its theme without a direction
-      ([levin-hovav-1995] p. 147, *roll*, *walk*, *swim* against *arrive*, *come*, *fall*).
-      `none` for a verb that says nothing of its theme's path. -/
-  direction : Option Spatial.PathDir := none
+      the ground ([pantcheva-2011]). It is `.goal` for *arrive* and *come*, `.source` for
+      *leave*, and `.place` for a verb of manner of motion, which displaces its theme without a
+      direction ([levin-hovav-1995] p. 147, *roll*, *walk*, *swim* against *arrive*, *come*,
+      *fall*), and `none` for a verb that says nothing of its theme's path. -/
+  direction : Option Spatial.Path.Direction := none
   /-- The [krifka-1998] incrementality class of the theme relation, `none` for intransitives
       and clause-embedding verbs. -/
   incrementality : Option Incrementality := none
@@ -164,10 +164,9 @@ structure Presupposition where
   implicative : NaturalLogic.ImplicationSignature := ⊥
   deriving Repr, BEq
 
-/-- One frame-conditioned reading of a verb ([bondarenko-2022] §4.4.3
-    *hanaxa*; Greek *thimame*): per-frame overrides of the lexeme-level
-    attitude and opacity (`none` = inherit `Verb.attitude` /
-    `Verb.opaqueContext`), and the frame's control type. -/
+/-- A frame-conditioned reading of a verb ([bondarenko-2022] §4.4.3 *hanaxa*; Greek
+    *thimame*) overrides the lexeme-level attitude and opacity for its frame (`none` inherits
+    `Verb.attitude` and `Verb.opaqueContext`) and records the frame's control type. -/
 structure Reading where
   /-- The reading applies to every frame of the verb refining this one, in the refinement order
       on `ArgumentFrame`. -/
@@ -191,12 +190,12 @@ structure Attitude where
   /-- Unified attitude classification covering doxastic and preferential attitudes.
       Theoretical properties (C-distributivity, parasitic, etc.) are DERIVED. -/
   attitude : Option _root_.Attitude := none
-  /-- Frame-conditioned readings ([bondarenko-2022] §4.4.3): per-frame
-      attitude/opacity overrides and control, keyed to `frames` entries. -/
+  /-- The frame-conditioned readings ([bondarenko-2022] §4.4.3), per-frame attitude and opacity
+      overrides and control keyed to `frames` entries. -/
   readings : List Reading := []
   /-- Entailment signature of the complement position.
       Classifies this verb's monotonicity w.r.t. its clausal complement.
-      `.mono` = upward monotone: the report is closed under entailment of
+      `.mono` is upward monotone, the report closed under entailment of
       the complement, as in Hintikka-style doxastic semantics
       ([hintikka-1962]). Set only where the classification is textbook
       consensus (believe, think, know); preferential attitudes (want, hope)
@@ -207,7 +206,7 @@ structure Attitude where
 end Verb
 
 /--
-Cross-linguistic verb core: all semantic fields shared across languages.
+The cross-linguistic verb core holds the semantic fields shared across languages.
 
 Composes the `Verb.*` facets (argument structure, aspect, presupposition,
 attitude, root) plus the citation form, speech-act status, and a

@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.Category.Adposition.Basic
-public import Linglib.Semantics.Events.PathDir
+public import Linglib.Semantics.Events.Path
 
 /-!
 # Dutch adpositions
@@ -65,7 +65,7 @@ structure Adposition extends _root_.Adposition where
   /-- `direction l` is `.place` when a use in position `l` is locational and `.goal`, `.source`
   or `.route` when it denotes a path whose endpoint, starting point or interior is the
   reference object; a position the entry does not take is `.place`. -/
-  direction : _root_.Adposition.Linearization → Spatial.PathDir := fun _ ↦ .place
+  direction : _root_.Adposition.Linearization → Spatial.Path.Direction := fun _ ↦ .place
   /-- The complement can be replaced by an R-word, as *met de pop* 'with the doll' beside *er
   ... mee* 'with it'. -/
   rPronoun : Bool := true
@@ -87,18 +87,18 @@ def preposition (form : String) (functions : Finset Case := {.loc}) : Adposition
 
 /-- `directional form d` is the preposition over a noun phrase denoting a path in direction
 `d`. -/
-def directional (form : String) (d : Spatial.PathDir) : Adposition :=
+def directional (form : String) (d : Spatial.Path.Direction) : Adposition :=
   { preposition form {Case.ofDir d} with direction := fun _ ↦ d }
 
 /-- `ambipositional form d` is the spatial adposition over a noun phrase that is locational
 before its complement and denotes a path in direction `d` after it. -/
-def ambipositional (form : String) (d : Spatial.PathDir) : Adposition :=
+def ambipositional (form : String) (d : Spatial.Path.Direction) : Adposition :=
   { preposition form {.loc, Case.ofDir d} with
     linearization := {.pre, .post}, direction := fun | .post => d | _ => .place }
 
 /-- `circumposition first second d` is the circumposition *first … second* over a noun phrase,
 denoting a path in direction `d`, or locational when `d` is `.place`. -/
-def circumposition (first second : String) (d : Spatial.PathDir) : Adposition :=
+def circumposition (first second : String) (d : Spatial.Path.Direction) : Adposition :=
   { morphs := [.free first, .free second], linearization := {.circum},
     functions := {Case.ofDir d}, complements := {some .np},
     direction := fun | .circum => d | _ => .place }

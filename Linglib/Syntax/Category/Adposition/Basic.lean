@@ -30,8 +30,7 @@ takes. An adposition may occur without its term when the term is understood (Hag
 ## Main results
 
 * `Adposition.isParticle_iff`: a particle takes no complement.
-* `Adposition.isSpatial_iff`: a spatial adposition marks a value with a path direction or the
-  terminative.
+* `Adposition.isSpatial_iff`: a spatial adposition marks a value with a direction.
 * `Adposition.kind?_eq_some_iff`: the type of an adposition is the type all its values share.
 
 ## Implementation notes
@@ -197,7 +196,7 @@ def IsSpatial : Prop := .spatial ∈ a.kinds
 
 instance : Decidable a.IsSpatial := inferInstanceAs (Decidable (_ ∈ _))
 
-theorem isSpatial_iff : a.IsSpatial ↔ ∃ c ∈ a.functions, c.dirOf.isSome ∨ c = .ter := by
+theorem isSpatial_iff : a.IsSpatial ↔ ∃ c ∈ a.functions, c.dirOf.isSome := by
   simp [IsSpatial, kinds, Case.kind_eq_spatial_iff]
 
 end Adposition

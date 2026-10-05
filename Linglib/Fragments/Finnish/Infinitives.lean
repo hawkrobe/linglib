@@ -58,13 +58,13 @@ open Phonology
 
 /-- The Finnish infinitives, named by their function endings. -/
 inductive Infinitive where
-  /-- The A infinitive, the first, which is the dictionary form: *sano-a* 'say'. -/
+  /-- The A infinitive, the first, is the dictionary form, as in *sano-a* 'say'. -/
   | a
-  /-- The E infinitive, the second: *sano-e-ssa* 'while saying'. -/
+  /-- The E infinitive is the second, as in *sano-e-ssa* 'while saying'. -/
   | e
-  /-- The MA infinitive, the third: *sano-ma-an* 'to say'. -/
+  /-- The MA infinitive is the third, as in *sano-ma-an* 'to say'. -/
   | ma
-  /-- The MINEN infinitive, the fourth: *tietä-minen* 'knowing'. -/
+  /-- The MINEN infinitive is the fourth, as in *tietä-minen* 'knowing'. -/
   | minen
   deriving DecidableEq, Repr, Fintype
 
@@ -79,13 +79,13 @@ def cases : Infinitive → Finset Case
 
 /-- Of the local cases the MA infinitive takes the interior series and, of the exterior
 series, the adessive alone. -/
-theorem toCase_mem_cases_ma_iff {r : Spatial.Localization} {d : Spatial.PathDir}
+theorem toCase_mem_cases_ma_iff {r : Spatial.Localization} {d : Spatial.Path.Direction}
     {c : _root_.Case} (h : _root_.Case.toCase r d = some c) :
     c ∈ ma.cases.image Case.label ↔ r = .interior ∨ r = .exterior ∧ d = .place := by
   cases r <;> cases d <;> cases h <;> decide
 
-/-- The ending of the A infinitive after its stem: -dA after a long vowel or a diphthong, -tA
-after `s`, the stem's final consonant with -A after `l`, `n` or `r`, and -A otherwise. -/
+/-- The A infinitive ends in -dA after a long vowel or a diphthong, -tA after `s`, the stem's
+final consonant with -A after `l`, `n` or `r`, and -A otherwise. -/
 def aEnding (w : List Segment) : List Segment :=
   match w.reverse with
   | x :: y :: _ =>
@@ -95,7 +95,7 @@ def aEnding (w : List Segment) : List Segment :=
     else [A]
   | _ => [A]
 
-/-- The stem of the E infinitive: the infinitive stem, whose final -e changes to -i, as in
+/-- The stem of the E infinitive is the infinitive stem with its final -e changed to -i, as in
 *luki-e-* 'read' from *luke-a* (§22.3.1). -/
 def eStem (w : List Segment) : List Segment :=
   if w.getLast? = some Finnish.e then w.dropLast ++ [i] else w
