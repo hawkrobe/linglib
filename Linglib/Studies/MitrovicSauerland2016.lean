@@ -8,6 +8,8 @@ public import Linglib.Fragments.Hungarian.Coordination
 public import Linglib.Fragments.Georgian.Coordination
 public import Linglib.Fragments.Latin.Coordination
 public import Linglib.Fragments.Korean.Coordination
+public import Mathlib.Data.Fintype.Sigma
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Mitrović and Sauerland (2016): Two Conjunctions Are Better Than One
@@ -24,13 +26,16 @@ the two lifts (`conjunction_eq`), true of a predicate that holds of each conjunc
 shifted individuals directly is contradictory unless the conjuncts are identical
 (`shift_inf_shift_eq_bot_iff`).
 
-Languages differ in which heads they pronounce. Coordinators of the J kind, such as English
-*and*, have propositional uses and lack additive and quantificational uses; coordinators of the
-μ kind, such as Japanese *mo*, combine noun phrases, double, and have them (`mu_has_other_use`,
-`j_has_no_other_use`). Some languages pronounce all three heads at once, triadic exponency,
-which the paper attests in Southeastern Macedonian, Hungarian, and Avar
-(`hasAllThreeStrategies`, `hungarian_triadic`), and every language of the sample has a strategy
-pronouncing J alone (`j_is_universal`).
+The structure has three heads, J and a μ head on each conjunct (`Head`), and a conjunction strategy
+is the set of heads a language pronounces (`ConjunctionStrategy.pronounced`): exactly the nonempty
+sets that pronounce the μ head of both conjuncts or of neither (`exists_pronounced_eq_iff`).
+Languages differ in which heads they pronounce. Coordinators of the J kind, such as English *and*,
+have propositional uses and lack additive and quantificational uses; coordinators of the μ kind,
+such as Japanese *mo*, combine noun phrases, double, and have them (`mu_has_other_use`,
+`j_has_no_other_use`). Some languages pronounce all three heads at once, triadic exponency, which
+the paper attests in Southeastern Macedonian, Hungarian, and Avar (`hasAllThreeStrategies`,
+`hungarian_triadic`), and every language of the sample has a strategy pronouncing J alone
+(`j_is_universal`).
 
 ## Implementation notes
 
@@ -108,22 +113,43 @@ theorem dare_mo_denotes_mu {α : Type} [Fintype α] {d : GQ.Family}
 
 /-! ### Exponence -/
 
+/-- The heads of the structure for the conjunction of two noun phrases, (13), are J and a μ head
+on each conjunct. -/
+inductive Head where
+  | j
+  | mu (conjunct : Fin 2)
+  deriving DecidableEq, Repr, Fintype
+
+theorem card_head : Fintype.card Head = 3 := rfl
+
 /-- A conjunction strategy pronounces J alone, *A and B*, the two μ heads, *A-mo B-mo*, or all
 three heads of the structure. -/
 inductive ConjunctionStrategy where
   | jOnly
   | muOnly
   | jMu
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
-/-- The number of heads a strategy pronounces. -/
-def ConjunctionStrategy.overtMorphemeCount : ConjunctionStrategy → ℕ
-  | .jOnly => 1
-  | .muOnly => 2
-  | .jMu => 3
+/-- The heads a strategy pronounces. -/
+def ConjunctionStrategy.pronounced : ConjunctionStrategy → Finset Head
+  | .jOnly => {.j}
+  | .muOnly => Finset.univ.image .mu
+  | .jMu => Finset.univ
 
-/-- The structure has three heads, J and the two μ heads. -/
-def ConjunctionStrategy.semanticPieceCount : ℕ := 3
+/-- A set of heads is μ-uniform when it has the μ head of every conjunct or of none. -/
+def MuUniform (h : Finset Head) : Prop := ∀ i j : Fin 2, Head.mu i ∈ h ↔ Head.mu j ∈ h
+
+instance : DecidablePred MuUniform := fun _ ↦ inferInstanceAs (Decidable (∀ _ _, _ ↔ _))
+
+/-- The strategies are exactly the nonempty μ-uniform sets of heads, the ways of pronouncing the
+structure that pronounce the μ head of both conjuncts or of neither. -/
+theorem exists_pronounced_eq_iff (h : Finset Head) :
+    (∃ s : ConjunctionStrategy, s.pronounced = h) ↔ h.Nonempty ∧ MuUniform h := by
+  constructor
+  · rintro ⟨s, rfl⟩; cases s <;> decide
+  · rintro ⟨hne, hu⟩
+    revert h
+    decide
 
 /-- A language's exponents of the two heads, which the paper classifies, and the strategies it
 allows. -/
@@ -182,6 +208,16 @@ def hasAllThreeStrategies (sys : ConjunctionSystem) : Prop :=
 
 instance (sys : ConjunctionSystem) : Decidable (hasAllThreeStrategies sys) := by
   unfold hasAllThreeStrategies; infer_instance
+
+/-- The exponent of a head in a language is its J or its μ coordinator. -/
+def ConjunctionSystem.exponent (sys : ConjunctionSystem) : Head → Option Coordinator
+  | .j => sys.j
+  | .mu _ => sys.mu
+
+/-- A language of the sample has an exponent for every head its strategies pronounce. -/
+theorem strategies_exponent : ∀ sys ∈ msLanguages, ∀ st ∈ sys.strategies,
+    ∀ h ∈ st.pronounced, (sys.exponent h).isSome := by
+  decide
 
 /-- Hungarian realizes all three strategies, *Kati is (és) Mari is*. -/
 theorem hungarian_triadic : hasAllThreeStrategies hungarian := by decide
