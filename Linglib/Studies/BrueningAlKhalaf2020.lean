@@ -61,7 +61,7 @@ silent Adv head that ellipsis or a partial copy can leave out. The paper's examp
 namespace BrueningAlKhalaf2020
 
 open Syntax (Cat)
-open Syntax.Cat (NP VP AdjP AdvP PP)
+open Syntax.Cat (N V Adj Adv P)
 
 variable {α β : Type*}
 
@@ -82,7 +82,7 @@ namespace Conjunct
 /-- `x.cat` is the category the conjunct `x` projects. -/
 def cat : Conjunct → Cat
   | phrase c => c
-  | nullN => NP
+  | nullN => N
 
 /-- A conjunct bears S-features unless its head is the null N, which is semantically empty
 (fn. 27). -/
@@ -95,10 +95,10 @@ instance : DecidablePred Contentful := fun x ↦ by cases x <;> unfold Contentfu
 /-- `ofCat c` lists the conjuncts a phrase of category `c` can be, itself and, for a clause, the
 noun phrase the null N makes of it. -/
 def ofCat : Cat → List Conjunct
-  | .CP => [phrase .CP, nullN]
+  | .C => [phrase .C, nullN]
   | c => [phrase c]
 
-theorem mem_ofCat {x : Conjunct} {c : Cat} : x ∈ ofCat c ↔ x = phrase c ∨ c = .CP ∧ x = nullN := by
+theorem mem_ofCat {x : Conjunct} {c : Cat} : x ∈ ofCat c ↔ x = phrase c ∨ c = .C ∧ x = nullN := by
   unfold ofCat; split <;> simp_all
 
 theorem eq_phrase_of_mem_ofCat {x : Conjunct} {c : Cat} (h : x ∈ ofCat c) (hx : x.Contentful) :
@@ -190,7 +190,7 @@ theorem Admits.exists_mem {L : List Conjunct → Prop} (h : Admits L ps) :
 phrase of a category the selector does not c-select can only be a clause under the null N,
 whichever conjunct the S-features are checked against. -/
 theorem mem_cats_or_of_admits (h : Admits (Satisfies check cats) ps) :
-    ∀ p ∈ ps, p ∈ cats ∨ p = .CP ∧ NP ∈ cats := by
+    ∀ p ∈ ps, p ∈ cats ∨ p = .C ∧ N ∈ cats := by
   obtain ⟨cs, ⟨hsel, -⟩, hcs⟩ := h.exists_mem
   intro p hp
   obtain ⟨x, hx, hxp⟩ := hcs p hp
@@ -226,11 +226,11 @@ theorem exists_admits_iff_admits_elided (hp : p ∉ cats) :
   · intro h
     rcases mem_cats_or_of_admits h.satisfies p (by simp) with h | ⟨rfl, hNP⟩
     · exact absurd h hp
-    refine ⟨NP, ?_⟩
+    refine ⟨N, ?_⟩
     cases d
-    · exact .inl ⟨[phrase NP, nullN], by simp [ofCat],
+    · exact .inl ⟨[phrase N, nullN], by simp [ofCat],
         by simp [Licensed, Coordinable, Satisfies, checkedOnce, cat, hNP, Contentful]⟩
-    · exact .inr ⟨[nullN, phrase NP], by simp [ofCat],
+    · exact .inr ⟨[nullN, phrase N], by simp [ofCat],
         by simp [Licensed, Coordinable, Satisfies, checkedOnce, cat, hNP, Contentful]⟩
 
 /-- **Speakers whose S-features persist admit no violation in coordination** (fn. 30). For the
@@ -295,7 +295,7 @@ open Examples
 
 /-- `catOf? s` is the category the paper's label `s` names. -/
 def catOf? (s : String) : Option Cat :=
-  [("NP", NP), ("AP", AdjP), ("PP", PP), ("CP", Cat.CP), ("VP", VP)].lookup s
+  [("NP", N), ("AP", Adj), ("PP", P), ("CP", Cat.C), ("VP", V)].lookup s
 
 /-- `phrases? e` lists the categories of a row's conjuncts, in order. -/
 def phrases? (e : Datum) : Option (List Cat) := (e.features "conjunct").mapM catOf?

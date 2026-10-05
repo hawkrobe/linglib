@@ -28,6 +28,7 @@ both, the meet of the prefix order.
   `u ++ m` or of `m ++ v`, or contains `m`.
 * `List.IsInfix.notMem_or_notMem_of_length_le`: an infix of `u ++ m ++ v` no longer than `m` misses
   every element occurring only in `u` or every element occurring only in `v`.
+* `List.pairwise_inits`: the prefixes `inits` lists ascend in the prefix order.
 
 ## Implementation notes
 
@@ -93,5 +94,12 @@ theorem prefix_commonPrefix : ∀ {r l₁ l₂ : List α}, r <+: l₁ → r <+: 
     simpa [commonPrefix] using prefix_commonPrefix (r := rs) (prefix_append _ _) (prefix_append _ _)
 
 end CommonPrefix
+
+/-- The prefixes of a list, as `inits` lists them, ascend in the prefix order. -/
+theorem pairwise_inits : ∀ l : List α, l.inits.Pairwise (· <+: ·)
+  | [] => by simp
+  | a :: l => by
+    rw [inits_cons, pairwise_cons, pairwise_map]
+    exact ⟨fun _ _ ↦ nil_prefix, (pairwise_inits l).imp fun h ↦ cons_prefix_cons.2 ⟨rfl, h⟩⟩
 
 end List

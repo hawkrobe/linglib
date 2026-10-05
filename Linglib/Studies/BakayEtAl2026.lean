@@ -83,25 +83,25 @@ inductive Structure
   deriving DecidableEq, Fintype, Repr
 
 /-- `np` is a one-word noun phrase. -/
-def np : Tree Cat Unit := .terminal .NP ()
+def np : Tree Cat Unit := .terminal .N ()
 
 /-- `possessive` is a noun phrase of a possessor and its head noun. -/
-def possessive : Tree Cat Unit := .node .NP [np, .terminal .N ()]
+def possessive : Tree Cat Unit := .node .N [np, .terminal .N ()]
 
 /-- `reciprocalVP` is the lowest verb phrase, of the reciprocal object and the embedded verb. -/
-def reciprocalVP : Tree Cat Unit := .node .VP [np, .terminal .V ()]
+def reciprocalVP : Tree Cat Unit := .node .V [np, .terminal .V ()]
 
 /-- The embedded clause of a structure. -/
 def Structure.clause : Structure → Tree Cat Unit
   | .possessorInSubject => .node .S [possessive, reciprocalVP]
-  | .possessorInAdjunct => .node .S [np, .node .VP [possessive, reciprocalVP]]
+  | .possessorInAdjunct => .node .S [np, .node .V [possessive, reciprocalVP]]
   | .postpositionalAdjunct =>
-      .node .S [np, .node .VP [.node .PP [np, .terminal .P ()], reciprocalVP]]
-  | .indirectObject => .node .S [np, .node .VP [np, reciprocalVP]]
+      .node .S [np, .node .V [.node .P [np, .terminal .P ()], reciprocalVP]]
+  | .indirectObject => .node .S [np, .node .V [np, reciprocalVP]]
 
 /-- A stimulus is the matrix subject over the embedded clause and the matrix verb. -/
 def Structure.tree (s : Structure) : Tree Cat Unit :=
-  .node .S [np, .node .VP [s.clause, .terminal .V ()]]
+  .node .S [np, .node .V [s.clause, .terminal .V ()]]
 
 /-- The noun phrases of a stimulus are the matrix subject, the embedded subject, the embedded
 clause's second noun phrase, a distractor or an indirect object, and the reciprocal. -/
@@ -123,7 +123,7 @@ def Structure.path : Structure → Role → TreePath
   | _, .reciprocal => ⟨[1, 0, 1, 1, 0]⟩
 
 /-- Every noun phrase of a stimulus sits at a noun phrase of its tree. -/
-theorem path_mem_labeled : ∀ s r, Structure.path s r ∈ labeled (Structure.tree s) {.NP} := by
+theorem path_mem_labeled : ∀ s r, Structure.path s r ∈ labeled (Structure.tree s) {.N} := by
   decide
 
 /-- Distinct noun phrases of a stimulus sit at distinct positions. -/
@@ -157,7 +157,7 @@ theorem available_iff (s : Structure) (r : Role) :
 is a clause or verb-phrase node sharing the minimal clause of `q`, so that it hangs from the
 spine of that clause. -/
 def Local (t : Tree Cat Unit) (p q : TreePath) : Prop :=
-  p.parent ∈ labeled t {.S, .VP} ∧ (p.parent, q) ∈ mateRelation (labeled t {.S})
+  p.parent ∈ labeled t {.S, .V} ∧ (p.parent, q) ∈ mateRelation (labeled t {.S})
 
 instance (t : Tree Cat Unit) (p q : TreePath) : Decidable (Local t p q) :=
   inferInstanceAs (Decidable (_ ∧ _))

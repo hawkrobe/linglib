@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.Cat
-public import Linglib.Syntax.Tree.Basic
+public import Linglib.Syntax.Tree.Projection
 public import Linglib.Data.Examples.Ross1967
 
 /-!
@@ -25,16 +25,16 @@ of these islands freely.
 
 ## Implementation notes
 
-Trees carry the categories of `Syntax.Cat`, a noun phrase being the maximal projection of a
-noun, a coordinate structure that of a conjunction with the conjuncts and the conjunction words
-as its daughters, and a lexical head noun a noun terminal among an NP's daughters. The trees are
-the dissertation's diagrams reduced to the categories the constraints
-mention, with the moved constituent in its source position; questions and topicalizations
-land at the root and relativizations at the relative clause. Dominance in the Sentential
-Subject Constraint is read as immediate, the configuration of a sentence exhaustively
-dominated by a subject NP, so that the constraint does not reach a clause inside a relative
-clause on a subject. The A-over-A principle, the pied-piping convention, upward boundedness,
-and the definition of islands as the domains of chopping rules are not formalized.
+Trees carry the categories of `Syntax.Cat`, which have no levels: a noun phrase is a node of
+category `N`, a coordinate structure a node of category `Conj` headed by its conjunction word, whose
+other daughters are the conjuncts, and a noun phrase has a lexical head noun when its head daughter
+is a noun. The trees are the dissertation's diagrams reduced to the categories the constraints
+mention, with the moved constituent in its source position; questions and topicalizations land at
+the root and relativizations at the relative clause. Dominance in the Sentential Subject Constraint
+is read as immediate, the configuration of a sentence exhaustively dominated by a subject NP, so
+that the constraint does not reach a clause inside a relative clause on a subject. The A-over-A
+principle, the pied-piping convention, upward boundedness, and the definition of islands as the
+domains of chopping rules are not formalized.
 
 ## References
 
@@ -46,12 +46,12 @@ and the definition of islands as the domains of chopping rules are not formalize
 namespace Ross1967
 
 open Syntax Core.Order
-open Syntax.Cat (NP VP PP AdjP ConjP)
+open Syntax.Cat (N V P Adj Conj)
 
 /-! ### Trees and movements -/
 
 /-- A word of a part of speech. -/
-def w (pos : UD.UPOS) (form : String) : Tree Cat String := .terminal (.proj pos .zero) form
+def w (pos : UD.UPOS) (form : String) : Tree Cat String := .terminal (.lex pos) form
 
 /-- A movement in a tree records the position of the moved constituent and the position it
 lands at. -/
@@ -75,15 +75,15 @@ dominate the landing site, the constituents the moved element is moved out of. -
 def crossed : List (List ℕ) :=
   m.source.inits.filter fun p ↦ p ≠ m.source ∧ ¬ p <+: m.landing
 
-/-- A noun phrase has a lexical head noun when a noun is among its daughters. -/
+/-- A noun phrase has a lexical head noun when its head daughter is a noun, a word. -/
 def LexicalNP (t : Tree Cat String) : Prop :=
-  t.cat = NP ∧ ∃ d ∈ t.children, Tree.cat d = .N
+  t.cat = N ∧ ∃ d ∈ t.headIndex?.bind (t.children[·]?), d.children = []
 
 instance (t : Tree Cat String) : Decidable (LexicalNP t) := inferInstanceAs (Decidable (_ ∧ _))
 
-/-- A conjunct is a daughter of a coordinate structure other than a conjunction word. -/
+/-- A conjunct is a daughter of a coordinate structure other than its head, the conjunction. -/
 def IsConjunct (p : List ℕ) : Prop :=
-  m.cat? p.dropLast = some ConjP ∧ m.cat? p ≠ some .Conj
+  m.cat? p.dropLast = some Conj ∧ ¬ Tree.HeadDaughterAt m.tree ⟨p.dropLast⟩ ⟨p⟩
 
 instance (p : List ℕ) : Decidable (m.IsConjunct p) := inferInstanceAs (Decidable (_ ∧ _))
 
@@ -102,14 +102,14 @@ def CSC : Prop :=
 /-- The Sentential Subject Constraint is violated when the movement leaves a sentence immediately
 dominated by a noun phrase that is itself immediately dominated by a sentence. -/
 def SSC : Prop :=
-  ∃ s ∈ m.crossed, m.cat? s = some .S ∧ m.cat? s.dropLast = some NP ∧
+  ∃ s ∈ m.crossed, m.cat? s = some .S ∧ m.cat? s.dropLast = some N ∧
     m.cat? s.dropLast.dropLast = some .S
 
 /-- The Left Branch Condition is violated when the moved element is a noun phrase that is the
 leftmost daughter of a noun phrase the movement leaves. -/
 def LBC : Prop :=
-  m.cat? m.source = some NP ∧ m.source.getLast? = some 0 ∧
-    m.cat? m.source.dropLast = some NP ∧ m.source.dropLast ∈ m.crossed
+  m.cat? m.source = some N ∧ m.source.getLast? = some 0 ∧
+    m.cat? m.source.dropLast = some N ∧ m.source.dropLast ∈ m.crossed
 
 instance : Decidable m.CNPC := by unfold CNPC; infer_instance
 instance : Decidable m.CSC := by unfold CSC; infer_instance
@@ -128,148 +128,148 @@ end Movement
 /-- In *Who does Phineas know a girl who is jealous of?* the questioned NP is inside the relative
 clause on *girl*. -/
 def phineas : Tree Cat String :=
-  .node .S [.node NP [w .PROPN "Phineas"],
-    .node VP [w .VERB "knows",
-      .node NP [w .DET "a", w .NOUN "girl",
-        .node .S [.node NP [w .PRON "who"],
-          .node VP [w .AUX "is",
-            .node AdjP [w .ADJ "jealous", .node PP [w .ADP "of", .node NP [w .PRON "who"]]]]]]]]
+  .node .S [.node N [w .PROPN "Phineas"],
+    .node V [w .VERB "knows",
+      .node N [w .DET "a", w .NOUN "girl",
+        .node .S [.node N [w .PRON "who"],
+          .node V [w .AUX "is",
+            .node Adj [w .ADJ "jealous", .node P [w .ADP "of", .node N [w .PRON "who"]]]]]]]]
 
 /-- The relative clause of *the hat which I believed the claim that Otto was wearing*. -/
 def hatClaim : Tree Cat String :=
-  .node .S [.node NP [w .DET "the", w .NOUN "hat",
-      .node .S [.node NP [w .PRON "I"],
-        .node VP [w .VERB "believed",
-          .node NP [w .DET "the", w .NOUN "claim",
-            .node .S [w .SCONJ "that", .node NP [w .PROPN "Otto"],
-              .node VP [w .AUX "was", w .VERB "wearing", .node NP [w .PRON "which"]]]]]]],
-    .node VP [w .AUX "is", w .ADJ "red"]]
+  .node .S [.node N [w .DET "the", w .NOUN "hat",
+      .node .S [.node N [w .PRON "I"],
+        .node V [w .VERB "believed",
+          .node N [w .DET "the", w .NOUN "claim",
+            .node .S [w .SCONJ "that", .node N [w .PROPN "Otto"],
+              .node V [w .AUX "was", w .VERB "wearing", .node N [w .PRON "which"]]]]]]],
+    .node V [w .AUX "is", w .ADJ "red"]]
 
 /-- The relative clause of *the hat which I believed that Otto was wearing*. -/
 def hatThat : Tree Cat String :=
-  .node .S [.node NP [w .DET "the", w .NOUN "hat",
-      .node .S [.node NP [w .PRON "I"],
-        .node VP [w .VERB "believed",
-          .node .S [w .SCONJ "that", .node NP [w .PROPN "Otto"],
-            .node VP [w .AUX "was", w .VERB "wearing", .node NP [w .PRON "which"]]]]]],
-    .node VP [w .AUX "is", w .ADJ "red"]]
+  .node .S [.node N [w .DET "the", w .NOUN "hat",
+      .node .S [.node N [w .PRON "I"],
+        .node V [w .VERB "believed",
+          .node .S [w .SCONJ "that", .node N [w .PROPN "Otto"],
+            .node V [w .AUX "was", w .VERB "wearing", .node N [w .PRON "which"]]]]]],
+    .node V [w .AUX "is", w .ADJ "red"]]
 
 /-- In *What sofa will he put the chair between some table and?* the questioned NP is a
 conjunct. -/
 def sofa : Tree Cat String :=
-  .node .S [.node NP [w .PRON "he"],
-    .node VP [w .VERB "put", .node NP [w .DET "the", w .NOUN "chair"],
-      .node PP [w .ADP "between",
-        .node ConjP [.node NP [w .DET "some", w .NOUN "table"], w .CCONJ "and",
-          .node NP [w .DET "what", w .NOUN "sofa"]]]]]
+  .node .S [.node N [w .PRON "he"],
+    .node V [w .VERB "put", .node N [w .DET "the", w .NOUN "chair"],
+      .node P [w .ADP "between",
+        .node Conj [.node N [w .DET "some", w .NOUN "table"], w .CCONJ "and",
+          .node N [w .DET "what", w .NOUN "sofa"]]]]]
 
 /-- *The lute which Henry plays and sings madrigals* relativizes out of a conjoined VP. -/
 def lute : Tree Cat String :=
-  .node .S [.node NP [w .DET "the", w .NOUN "lute",
-      .node .S [.node NP [w .PROPN "Henry"],
-        .node ConjP [.node VP [w .VERB "plays", .node NP [w .PRON "which"]], w .CCONJ "and",
-          .node VP [w .VERB "sings", .node NP [w .NOUN "madrigals"]]]]],
-    .node VP [w .AUX "is", w .ADJ "warped"]]
+  .node .S [.node N [w .DET "the", w .NOUN "lute",
+      .node .S [.node N [w .PROPN "Henry"],
+        .node Conj [.node V [w .VERB "plays", .node N [w .PRON "which"]], w .CCONJ "and",
+          .node V [w .VERB "sings", .node N [w .NOUN "madrigals"]]]]],
+    .node V [w .AUX "is", w .ADJ "warped"]]
 
 /-- *Which trombone did the nurse polish and the plumber computed my tax?* questions out of a
 conjoined sentence. -/
 def trombone : Tree Cat String :=
-  .node .S [.node ConjP [
-    .node .S [.node NP [w .DET "the", w .NOUN "nurse"],
-      .node VP [w .VERB "polish", .node NP [w .DET "which", w .NOUN "trombone"]]],
+  .node .S [.node Conj [
+    .node .S [.node N [w .DET "the", w .NOUN "nurse"],
+      .node V [w .VERB "polish", .node N [w .DET "which", w .NOUN "trombone"]]],
     w .CCONJ "and",
-    .node .S [.node NP [w .DET "the", w .NOUN "plumber"],
-      .node VP [w .VERB "computed", .node NP [w .PRON "my", w .NOUN "tax"]]]]]
+    .node .S [.node N [w .DET "the", w .NOUN "plumber"],
+      .node V [w .VERB "computed", .node N [w .PRON "my", w .NOUN "tax"]]]]]
 
 /-- In *The boy whose guardian's employer we elected president* the possessor NPs are nested on
 left branches. -/
 def guardian : Tree Cat String :=
-  .node .S [.node NP [w .DET "the", w .NOUN "boy",
-      .node .S [.node NP [w .PRON "we"],
-        .node VP [w .VERB "elected",
-          .node NP [.node NP [.node NP [w .PRON "whose"], w .NOUN "guardian's"],
+  .node .S [.node N [w .DET "the", w .NOUN "boy",
+      .node .S [.node N [w .PRON "we"],
+        .node V [w .VERB "elected",
+          .node N [.node N [.node N [w .PRON "whose"], w .NOUN "guardian's"],
             w .NOUN "employer"],
-          .node NP [w .NOUN "president"]]]],
-    .node VP [w .VERB "ratted", .node PP [w .ADP "on", .node NP [w .PRON "us"]]]]
+          .node N [w .NOUN "president"]]]],
+    .node V [w .VERB "ratted", .node P [w .ADP "on", .node N [w .PRON "us"]]]]
 
 /-- The predicate of the teacher sentences. -/
 def battleax : Tree Cat String :=
-  .node VP [w .AUX "is",
-    .node NP [w .DET "a", w .ADJ "crusty", w .ADJ "old", w .NOUN "battleax"]]
+  .node V [w .AUX "is",
+    .node N [w .DET "a", w .ADJ "crusty", w .ADJ "old", w .NOUN "battleax"]]
 
 /-- *that the principal would fire who*. -/
 def fireClause : Tree Cat String :=
-  .node .S [w .SCONJ "that", .node NP [w .DET "the", w .NOUN "principal"],
-    .node VP [w .AUX "would", w .VERB "fire", .node NP [w .PRON "who"]]]
+  .node .S [w .SCONJ "that", .node N [w .DET "the", w .NOUN "principal"],
+    .node V [w .AUX "would", w .VERB "fire", .node N [w .PRON "who"]]]
 
 /-- *The teacher who the reporters expected that the principal would fire*. -/
 def teacherActive : Tree Cat String :=
-  .node .S [.node NP [w .DET "the", w .NOUN "teacher",
-      .node .S [.node NP [w .DET "the", w .NOUN "reporters"],
-        .node VP [w .VERB "expected", fireClause]]],
+  .node .S [.node N [w .DET "the", w .NOUN "teacher",
+      .node .S [.node N [w .DET "the", w .NOUN "reporters"],
+        .node V [w .VERB "expected", fireClause]]],
     battleax]
 
 /-- In *The teacher who that the principal would fire was expected by the reporters* the
 that-clause is a sentential subject. -/
 def teacherPassive : Tree Cat String :=
-  .node .S [.node NP [w .DET "the", w .NOUN "teacher",
-      .node .S [.node NP [fireClause],
-        .node VP [w .AUX "was", w .VERB "expected",
-          .node PP [w .ADP "by", .node NP [w .DET "the", w .NOUN "reporters"]]]]],
+  .node .S [.node N [w .DET "the", w .NOUN "teacher",
+      .node .S [.node N [fireClause],
+        .node V [w .AUX "was", w .VERB "expected",
+          .node P [w .ADP "by", .node N [w .DET "the", w .NOUN "reporters"]]]]],
     battleax]
 
 /-- In *The teacher who it was expected by the reporters that the principal would fire* the
 that-clause is extraposed. -/
 def teacherExtraposed : Tree Cat String :=
-  .node .S [.node NP [w .DET "the", w .NOUN "teacher",
-      .node .S [.node NP [w .PRON "it"],
-        .node VP [w .AUX "was", w .VERB "expected",
-          .node PP [w .ADP "by", .node NP [w .DET "the", w .NOUN "reporters"]], fireClause]]],
+  .node .S [.node N [w .DET "the", w .NOUN "teacher",
+      .node .S [.node N [w .PRON "it"],
+        .node V [w .AUX "was", w .VERB "expected",
+          .node P [w .ADP "by", .node N [w .DET "the", w .NOUN "reporters"]], fireClause]]],
     battleax]
 
 /-- *Of which cars were the hoods damaged by the explosion?* moves a subconstituent of a phrasal
 subject. -/
 def hoods : Tree Cat String :=
-  .node .S [.node NP [w .DET "the", w .NOUN "hoods",
-      .node PP [w .ADP "of", .node NP [w .DET "which", w .NOUN "cars"]]],
-    .node VP [w .AUX "were", w .VERB "damaged",
-      .node PP [w .ADP "by", .node NP [w .DET "the", w .NOUN "explosion"]]]]
+  .node .S [.node N [w .DET "the", w .NOUN "hoods",
+      .node P [w .ADP "of", .node N [w .DET "which", w .NOUN "cars"]]],
+    .node V [w .AUX "were", w .VERB "damaged",
+      .node P [w .ADP "by", .node N [w .DET "the", w .NOUN "explosion"]]]]
 
 /-- In *My father, the man he works with in Boston is going to tell the police …* the
 dislocated NP is the subject of a relative clause. -/
 def father : Tree Cat String :=
-  .node .S [.node NP [w .DET "the", w .NOUN "man",
-      .node .S [.node NP [w .PRON "my", w .NOUN "father"],
-        .node VP [w .VERB "works", .node PP [w .ADP "with", .node NP [w .PRON "who"]],
-          .node PP [w .ADP "in", .node NP [w .PROPN "Boston"]]]]],
-    .node VP [w .AUX "is", w .VERB "going",
-      .node PP [w .ADP "to", .node VP [w .VERB "tell", .node NP [w .DET "the", w .NOUN "police"]]]]]
+  .node .S [.node N [w .DET "the", w .NOUN "man",
+      .node .S [.node N [w .PRON "my", w .NOUN "father"],
+        .node V [w .VERB "works", .node P [w .ADP "with", .node N [w .PRON "who"]],
+          .node P [w .ADP "in", .node N [w .PROPN "Boston"]]]]],
+    .node V [w .AUX "is", w .VERB "going",
+      .node P [w .ADP "to", .node V [w .VERB "tell", .node N [w .DET "the", w .NOUN "police"]]]]]
 
 /-- In *This guitar, I've sung folksongs and accompanied myself on it all my life* the
 dislocated NP is inside a conjunct. -/
 def guitar : Tree Cat String :=
-  .node .S [.node NP [w .PRON "I"],
-    .node VP [w .AUX "have",
-      .node ConjP [.node VP [w .VERB "sung", .node NP [w .NOUN "folksongs"]], w .CCONJ "and",
-        .node VP [w .VERB "accompanied", .node NP [w .PRON "myself"],
-          .node PP [w .ADP "on", .node NP [w .DET "this", w .NOUN "guitar"]]]]]]
+  .node .S [.node N [w .PRON "I"],
+    .node V [w .AUX "have",
+      .node Conj [.node V [w .VERB "sung", .node N [w .NOUN "folksongs"]], w .CCONJ "and",
+        .node V [w .VERB "accompanied", .node N [w .PRON "myself"],
+          .node P [w .ADP "on", .node N [w .DET "this", w .NOUN "guitar"]]]]]]
 
 /-- In *My father, that he's lived here all his life is well-known to the cops* the dislocated
 NP is inside a sentential subject. -/
 def lived : Tree Cat String :=
-  .node .S [.node NP [.node .S [w .SCONJ "that", .node NP [w .PRON "my", w .NOUN "father"],
-      .node VP [w .AUX "has", w .VERB "lived", w .ADV "here",
-        .node NP [w .DET "all", w .PRON "his", w .NOUN "life"]]]],
-    .node VP [w .AUX "is", w .ADJ "well-known",
-      .node PP [w .ADP "to", .node NP [w .DET "the", w .NOUN "cops"]]]]
+  .node .S [.node N [.node .S [w .SCONJ "that", .node N [w .PRON "my", w .NOUN "father"],
+      .node V [w .AUX "has", w .VERB "lived", w .ADV "here",
+        .node N [w .DET "all", w .PRON "his", w .NOUN "life"]]]],
+    .node V [w .AUX "is", w .ADJ "well-known",
+      .node P [w .ADP "to", .node N [w .DET "the", w .NOUN "cops"]]]]
 
 /-- In *My wife, somebody stole her handbag last night* the dislocated NP is a possessor on a
 left branch. -/
 def handbag : Tree Cat String :=
-  .node .S [.node NP [w .PRON "somebody"],
-    .node VP [w .VERB "stole",
-      .node NP [.node NP [w .PRON "my", w .NOUN "wife"], w .NOUN "handbag"],
-      .node NP [w .ADJ "last", w .NOUN "night"]]]
+  .node .S [.node N [w .PRON "somebody"],
+    .node V [w .VERB "stole",
+      .node N [.node N [w .PRON "my", w .NOUN "wife"], w .NOUN "handbag"],
+      .node N [w .ADJ "last", w .NOUN "night"]]]
 
 /-- The movement of each example, by the dissertation's number. Questions and dislocations
 land at the root, relativizations at the relative clause. -/

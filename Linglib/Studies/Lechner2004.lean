@@ -67,14 +67,14 @@ open Core.Order Syntax Syntax.Tree Binding
 /-! ### Trees and coreference -/
 
 /-- `np` is a nominal, a terminal noun phrase. -/
-abbrev np : Tree Cat Unit := .terminal .NP ()
+abbrev np : Tree Cat Unit := .terminal .N ()
 
 /-- `word c` is a word of category `c`. -/
 abbrev word (c : Cat) : Tree Cat Unit := .terminal c ()
 
 /-- `nominalIn` is a noun phrase with a nominal beside its head noun, as in *Peter's sister* and
 *die Frau des Präsidenten*. -/
-abbrev nominalIn : Tree Cat Unit := .node .NP [np, word .N]
+abbrev nominalIn : Tree Cat Unit := .node .N [np, word .N]
 
 /-- The binding configuration of the positions `p` and `q` of `t` reads them as `0` and `1`. -/
 abbrev pairConfiguration (t : Tree Cat Unit) (p q : TreePath) : Configuration (Fin 2) :=
@@ -157,11 +157,11 @@ theorem cCommands_copy_iff (c : CDComparative) {p : TreePath} (hsp : ¬ c.site �
   cCommands_replaceAt_of_le (TreePath.le_def.2 (List.prefix_append _ _)) hsp hps
 
 /-- `proudOfJohn` is the antecedent *d-proud of John* of (24) and (25). -/
-def proudOfJohn : Tree Cat Unit := .node .AdjP [word .Adj, .node .PP [word .P, np]]
+def proudOfJohn : Tree Cat Unit := .node .Adj [word .Adj, .node .P [word .P, np]]
 
 /-- `cd24` is the *than*-clause of (24), *than he is △*. -/
 def cd24 : CDComparative where
-  thanClause := .node .S [np, .node .VP [word .V, .trace 0 .AdjP]]
+  thanClause := .node .S [np, .node .V [word .V, .trace 0 .Adj]]
   site := ⟨[1, 1]⟩
   pronoun := ⟨[0]⟩
   antecedent := proudOfJohn
@@ -169,8 +169,8 @@ def cd24 : CDComparative where
 
 /-- `cd25` is the *than*-clause of (25), *than he believes that I am △*. -/
 def cd25 : CDComparative where
-  thanClause := .node .S [np, .node .VP [word .V,
-    .node .CP [word .C, .node .S [np, .node .VP [word .V, .trace 0 .AdjP]]]]]
+  thanClause := .node .S [np, .node .V [word .V,
+    .node .C [word .C, .node .S [np, .node .V [word .V, .trace 0 .Adj]]]]]
   site := ⟨[1, 1, 1, 1, 1]⟩
   pronoun := ⟨[0]⟩
   antecedent := proudOfJohn
@@ -238,14 +238,14 @@ def gapped : Tree Cat Unit := e.matrix.replaceAt e.correlate.toList e.remnant
 
 /-- The sentence, the *than*-phrase in its base with the remnant as its complement. -/
 def sentence : Tree Cat Unit :=
-  e.matrix.replaceAt e.thanPhrase.toList (Tree.node .PP [word .P, e.remnant])
+  e.matrix.replaceAt e.thanPhrase.toList (Tree.node .P [word .P, e.remnant])
 
 /-- The LF of the direct analysis adjoins the remnant and the correlate to the clause they leave
 traces in. -/
 def direct : Tree Cat Unit :=
   .node .S [e.remnant, .node .S [(e.matrix.subtreeAt e.correlate.toList).getD np,
-    (e.sentence.replaceAt (e.thanPhrase.toList ++ [1]) (Tree.trace 1 .NP)).replaceAt
-      e.correlate.toList (Tree.trace 0 .NP)]]
+    (e.sentence.replaceAt (e.thanPhrase.toList ++ [1]) (Tree.trace 1 .N)).replaceAt
+      e.correlate.toList (Tree.trace 0 .N)]]
 
 /-- In the Gapped clause the remnant c-commands a matrix term exactly when the correlate
 c-commands it in the matrix clause (Prediction V). -/
@@ -315,8 +315,8 @@ instance (a : Analysis) (e : PhrasalComparative) : Decidable (a.Permits e) :=
 /-- `introduced` is the English clause *subject introduced object to more friends*, with a trace at
 the base of the *than*-phrase in the degree phrase. -/
 def introduced : Tree Cat Unit :=
-  .node .S [np, .node .VP [word .V,
-    .node .VP [np, .node .PP [word .P, .node .NP [word .N, .trace 0 .PP]]]]]
+  .node .S [np, .node .V [word .V,
+    .node .V [np, .node .P [word .P, .node .N [word .N, .trace 0 .P]]]]]
 
 /-- In (83a), *Sally introduced him to more friends than Peter's sister*, the correlate, the
 subject, is higher than the pronoun. -/
@@ -343,7 +343,7 @@ def ex85 : PhrasalComparative where
 /-- `vorgestellt` is the German clause *subject dative more people introduced*, with a trace at the
 base of the *than*-phrase in the degree phrase. -/
 def vorgestellt : Tree Cat Unit :=
-  .node .S [np, .node .VP [np, .node .VP [.node .NP [word .N, .trace 0 .PP], word .V]]]
+  .node .S [np, .node .V [np, .node .V [.node .N [word .N, .trace 0 .P], word .V]]]
 
 /-- In (87a), *Sie hat ihm mehr Leute vorgestellt als Peters Schwester*, with a nominative
 remnant, the correlate, the subject, is higher than the pronoun. -/
@@ -370,7 +370,7 @@ def ex87b : PhrasalComparative where
 /-- `schaetzt subj obj` is the German clause *subject object more appreciates*, with a trace at the
 base of the *than*-phrase in the degree adverb. -/
 def schaetzt (subj obj : Tree Cat Unit) : Tree Cat Unit :=
-  .node .S [subj, .node .VP [obj, .node .VP [.node .AdvP [word .Adv, .trace 0 .PP], word .V]]]
+  .node .S [subj, .node .V [obj, .node .V [.node .Adv [word .Adv, .trace 0 .P], word .V]]]
 
 /-- In (90a), *Die Frau des Präsidenten schätzt die Öffentlichkeit mehr als ihn*, the correlate,
 the object, is lower than the name. -/

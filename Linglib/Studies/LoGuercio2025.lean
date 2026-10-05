@@ -77,19 +77,19 @@ def epithetLex : Finset (Tree Cat EWord) :=
    .terminal .Det .that_, .terminal .N .bastard}
 
 /-- The predicate *arrived first*. -/
-def arrivedFirst : Tree Cat EWord := .node .VP [.terminal .V .arrived, .terminal .Adv .first]
+def arrivedFirst : Tree Cat EWord := .node .V [.terminal .V .arrived, .terminal .Adv .first]
 
 /-- *[DP John] arrived first*, the first conjunct of the paper's (20a) as its (24) parses it. -/
-def johnArrived : Tree Cat EWord := .node .S [.node .DP [.terminal .N .john], arrivedFirst]
+def johnArrived : Tree Cat EWord := .node .S [.node .Det [.terminal .N .john], arrivedFirst]
 
 /-- *[DP that bastard John] arrived first*, the paper's (20b). -/
 def bastardJohnArrived : Tree Cat EWord :=
-  .node .S [.node .DP [.terminal .Det .that_, .terminal .N .bastard, .terminal .N .john],
+  .node .S [.node .Det [.terminal .Det .that_, .terminal .N .bastard, .terminal .N .john],
     arrivedFirst]
 
 /-- *[DP that bastard Pedro]*, mentioned in the second conjunct of (20a). -/
 def bastardPedroDP : Tree Cat EWord :=
-  .node .DP [.terminal .Det .that_, .terminal .N .bastard, .terminal .N .pedro]
+  .node .Det [.terminal .Det .that_, .terminal .N .bastard, .terminal .N .pedro]
 
 /-- *[DP that bastard Pedro] arrived first*, the intermediate step of the derivation (24). -/
 def bastardPedroArrived : Tree Cat EWord := .node .S [bastardPedroDP, arrivedFirst]
@@ -105,11 +105,11 @@ def daughters : Tree Cat EWord → List (Tree Cat EWord)
   | _ => []
 
 /-- A determiner phrase with at least two daughters. -/
-def WideDP (t : Tree Cat EWord) : Prop := t.cat = .DP ∧ 2 ≤ (daughters t).length
+def WideDP (t : Tree Cat EWord) : Prop := t.cat = .Det ∧ 2 ≤ (daughters t).length
 
 /-- The epithet construction is a determiner phrase *that bastard X*. -/
 def IsEpithet : Tree Cat EWord → Prop
-  | .node .DP [.terminal .Det .that_, .terminal .N .bastard, _] => True
+  | .node .Det [.terminal .Det .that_, .terminal .N .bastard, _] => True
   | _ => False
 
 instance : DecidablePred WideDP := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
@@ -139,7 +139,7 @@ theorem no_wideDP_outOfBlue {ψ : Tree Cat EWord}
 /-- Out of the blue, the epithet sentence is not a structural alternative. -/
 theorem epithet_not_alternative_outOfBlue :
     bastardJohnArrived ∉ structuralAlternatives epithetLex johnArrived :=
-  fun h ↦ no_wideDP_outOfBlue h (Tree.node .DP [.terminal .Det .that_, .terminal .N .bastard,
+  fun h ↦ no_wideDP_outOfBlue h (Tree.node .Det [.terminal .Det .that_, .terminal .N .bastard,
     .terminal .N .john]) (by decide) (by decide)
 
 /-- After the mention, the epithet sentence is a structural alternative, by the paper's
@@ -149,7 +149,7 @@ theorem epithet_alternative_priorMention :
     bastardJohnArrived ∈ structuralAlternatives priorContextLex johnArrived := by
   have step1 : StructOp (substitutionSource priorContextLex johnArrived) johnArrived
       bastardPedroArrived :=
-    StructOp.inChild (cs := [Tree.node Cat.DP [Tree.terminal Cat.N john], arrivedFirst])
+    StructOp.inChild (cs := [Tree.node Cat.Det [Tree.terminal Cat.N john], arrivedFirst])
       ⟨0, by decide⟩
       (StructOp.subst rfl (Set.mem_union_left _ (by simp [priorContextLex])))
   have step2 : StructOp (substitutionSource priorContextLex johnArrived) bastardPedroArrived

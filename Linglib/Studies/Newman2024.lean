@@ -3,7 +3,7 @@ module
 public import Mathlib.Data.Finset.Card
 public import Mathlib.Data.Finset.Max
 public import Linglib.Syntax.Minimalist.Defs
-public import Linglib.Syntax.Tree.Command
+public import Linglib.Syntax.Tree.Projection
 public import Linglib.Syntax.Binding.Basic
 public import Linglib.Syntax.Case.Dependent
 
@@ -339,40 +339,41 @@ inductive Leaf where
   | iobj
   deriving DecidableEq, Repr
 
-/-- An `XTree` is a tree whose nodes carry a category and a bar level. -/
-abbrev XTree := Syntax.Tree (Cat × Syntax.BarLevel) Leaf
+/-- An `XTree` is a tree whose nodes carry a category. Which nodes are heads, intermediate or
+maximal projections is read off the tree: a node's head daughter is its daughter of its category. -/
+abbrev XTree := Syntax.Tree Cat Leaf
 
 /-- A tree counts for Merge features as a phrase of its root's category. -/
-def XTree.checks (t : XTree) : Finset Feature := Phrase.checks ⟨t.cat.1, ∅⟩
+def XTree.checks (t : XTree) : Finset Feature := Phrase.checks ⟨t.cat, ∅⟩
 
 /-- `bar c h comp specs` is the stack of intermediate projections of the phrase headed by `h`,
 with complement `comp` and specifiers `specs`. -/
 def bar (c : Cat) (h comp : XTree) : List XTree → XTree
-  | [] => .node (c, .bar) [h, comp]
-  | s :: ss => .node (c, .bar) [s, bar c h comp ss]
+  | [] => .node c [h, comp]
+  | s :: ss => .node c [s, bar c h comp ss]
 
 /-- `project c h es` is the phrase the head `h` of category `c` projects when `es` merge with it.
 The first is the complement, and each later one tucks in below the specifiers already merged, so
 the first specifier is outermost. -/
 def project (c : Cat) (h : XTree) : List XTree → XTree
-  | [] => .node (c, .max) [h]
-  | [comp] => .node (c, .max) [h, comp]
-  | comp :: s :: ss => .node (c, .max) [s, bar c h comp ss]
+  | [] => .node c [h]
+  | [comp] => .node c [h, comp]
+  | comp :: s :: ss => .node c [s, bar c h comp ss]
 
 /-- `subjP` is the external argument, a DP. -/
-def subjP : XTree := .terminal (.D, .max) .subj
+def subjP : XTree := .terminal .D .subj
 
 /-- `dobjP` is the direct object, a DP. -/
-def dobjP : XTree := .terminal (.D, .max) .dobj
+def dobjP : XTree := .terminal .D .dobj
 
 /-- `iobjP` is the phrase containing the indirect object, a PP or an applicative phrase. -/
-def iobjP : XTree := .terminal (.P, .max) .iobj
+def iobjP : XTree := .terminal .P .iobj
 
 /-- `vHead` is the head v. -/
-def vHead : XTree := .terminal (.v, .zero) .v
+def vHead : XTree := .terminal .v .v
 
 /-- `VHead` is the head V. -/
-def VHead : XTree := .terminal (.V, .zero) .V
+def VHead : XTree := .terminal .V .V
 
 /-- `lowXP` is the ditransitive with the indirect object in V's complement. -/
 def lowXP : XTree := project .v vHead [project .V VHead [iobjP, dobjP], subjP]
@@ -383,8 +384,7 @@ def highXP : XTree := project .v vHead [iobjP, subjP, project .V VHead [dobjP]]
 
 /-- `highXPRight` is `highXP` with the VP specifier linearized on the right. -/
 def highXPRight : XTree :=
-  .node (.v, .max) [subjP, .node (.v, .bar) [.node (.v, .bar) [vHead, iobjP],
-    project .V VHead [dobjP]]]
+  .node .v [subjP, .node .v [.node .v [vHead, iobjP], project .V VHead [dobjP]]]
 
 /-- `ditransitives` lists the three ditransitive vPs. -/
 def ditransitives : List XTree := [lowXP, highXP, highXPRight]
@@ -403,12 +403,11 @@ theorem ditransitives_licensed :
 properly dominating `a` dominates `b` and `b` does not c-command `a`. Binding is not restricted to
 a domain. -/
 def configuration (t : XTree) : Binding.Configuration TreePath where
-  commands a b := (a, b) ∈ Syntax.Tree.maxCommand t {n | n.2 = .max} ∧
-    ¬ Syntax.CCommands t b a
+  commands a b := (a, b) ∈ Syntax.Tree.maxCommandAt t ∧ ¬ Syntax.CCommands t b a
   domain _ := Set.univ
 
 instance (t : XTree) : DecidableRel (configuration t).commands := fun a b ↦
-  inferInstanceAs (Decidable ((a, b) ∈ Syntax.Tree.maxCommand t _ ∧ _))
+  inferInstanceAs (Decidable ((a, b) ∈ Syntax.Tree.maxCommandAt t ∧ _))
 
 /-- `leafPaths t` pairs each leaf of `t` with its position. -/
 def leafPaths (t : XTree) : List (Leaf × TreePath) :=

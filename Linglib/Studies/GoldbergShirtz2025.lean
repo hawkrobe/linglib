@@ -20,13 +20,13 @@ minimally different foils.
 
 The paper's Figure 5 network is a `Constructicon` (`figure5`): the prenominal PAL construction
 inherits in normal mode from both the NN compound and adjectival modification, which conflict on
-bar level and stress (`mothers_conflict`), so PAL states exactly those properties and inherits the
-rest (`inherited_palN`). The zero-level PAL and the four conventional subtypes are joined to it by
-motivation links, and removing PAL leaves a phrase in a word slot unlicensed
-(`pal_load_bearing`). The attested tokens of example (1) and Tables 2–3 and the
+whether the output is a word and on stress (`mothers_conflict`), so PAL states exactly those
+properties and inherits the rest (`inherited_palN`). The zero-level PAL and the four conventional
+subtypes are joined to it by motivation links, and removing PAL leaves a phrase in a word slot
+unlicensed (`pal_load_bearing`). The attested tokens of example (1) and Tables 2–3 and the
 comparable constructions of section 7 are rows: PALs occupy every word-class slot and take that
-slot's inflection (`rows_inflection`), and the host frame of a comparable construction need not be
-a compound (`hostFrames_complete`).
+slot's inflection (`rows_inflection`), and the host frame of a comparable construction need not be a
+compound (`hostFrames_complete`).
 
 ## Implementation notes
 
@@ -56,12 +56,12 @@ open Presupposition
 
 /-- In the prenominal PAL construction a zero-level PAL whose internal syntax
 is phrasal modifies a head N, forming an N′ (the paper's structure (7),
-`[N′ PAL⁰ N]`, vs. the NN compound's `[N⁰ N⁰ N⁰]`). The head N's bar level
+`[N′ PAL⁰ N]`, vs. the NN compound's `[N⁰ N⁰ N⁰]`). Whether the head N is a word
 is left underspecified since PALs may modify nouns with complements
 ("a 'don't mess with me' type of driver"). -/
 def palConstruction : Construction Unit :=
   { form :=
-      [ { filler := .phrasal, level := some .zero }
+      [ { filler := .phrasal, lex := some true }
       , { filler := .open_ .NOUN, isHead := true } ]
   , meaning := ()
   , pragmaticPoint := true }
@@ -84,7 +84,7 @@ def aSimplePALConstruction : Construction Unit :=
   { form :=
       [ { filler := .fixed "a" }
       , { filler := .fixed "simple" }
-      , { filler := .phrasal, level := some .zero
+      , { filler := .phrasal, lex := some true
         , isHead := true } ]
   , meaning := ()
   , pragmaticPoint := true }
@@ -96,7 +96,7 @@ broke exactly the quote-from-context or interdiction condition. -/
 def dontPALmeConstruction : Construction Unit :=
   { form :=
       [ { filler := .fixed "Don't" }
-      , { filler := .phrasal, level := some .zero
+      , { filler := .phrasal, lex := some true
         , isHead := true }
       , { filler := .fixed "me" } ]
   , meaning := ()
@@ -110,7 +110,7 @@ def theOldPALConstruction : Construction Unit :=
   { form :=
       [ { filler := .fixed "the" }
       , { filler := .fixed "old" }
-      , { filler := .phrasal, level := some .zero
+      , { filler := .phrasal, lex := some true
         , isHead := true }
       , { filler := .open_ .NOUN } ]
   , meaning := ()
@@ -120,18 +120,18 @@ def theOldPALConstruction : Construction Unit :=
 unit. -/
 def nnCompound : Construction Unit :=
   { form :=
-      [ { filler := .open_ .NOUN, level := some .zero }
+      [ { filler := .open_ .NOUN, lex := some true }
       , { filler := .open_ .NOUN, isHead := true
-        , level := some .zero } ]
+        , lex := some true } ]
   , meaning := () }
 
 /-- The adjectival modification construction is a parent of PAL, passing down the prenominal
 slot. -/
 def adjNModification : Construction Unit :=
   { form :=
-      [ { filler := .open_ .ADJ, level := some .zero }
+      [ { filler := .open_ .ADJ, lex := some true }
       , { filler := .open_ .NOUN, isHead := true
-        , level := some .bar } ]
+        , lex := some false } ]
   , meaning := () }
 
 /-! ### Degrees of abstraction (Table 8) -/
@@ -154,7 +154,7 @@ theorem table8_specificity :
 /-- The zero-level PAL, a phrase in a word-level position, with its familiar tokens
 (*do-it-yourself*, *know-it-all*, *pay-as-you-go*). -/
 def zeroLevelPAL : Construction Unit :=
-  { form := [{ filler := .phrasal, level := some .zero }]
+  { form := [{ filler := .phrasal, lex := some true }]
   , meaning := ()
   , pragmaticPoint := true }
 
@@ -252,11 +252,11 @@ inductive SelfEmbedding where
 
 open DefaultInheritance
 
-/-- A construction may state the bar level of its output. PAL N forms an N′, with adjectival
-modification and against the compound's N⁰. -/
-def level : Figure5 → Option Syntax.BarLevel
-  | .nnCompound => some .zero
-  | .adjN | .palN => some .bar
+/-- A construction may state whether its output is a word. PAL N forms an N′, a phrase, with
+adjectival modification and against the compound's N⁰, a word. -/
+def lex : Figure5 → Option Bool
+  | .nnCompound => some true
+  | .adjN | .palN => some false
   | _ => none
 
 /-- The position of the modifier slot, which both mothers state and PAL N does not. -/
@@ -278,19 +278,19 @@ def selfEmbedding : Figure5 → Option SelfEmbedding
   | .adjN => some .banned
   | _ => none
 
-/-- Were PAL N to state neither its bar level nor its stress, it would inherit both mothers'
-values of each. -/
+/-- Were PAL N to state neither whether its output is a word nor its stress, it would inherit
+both mothers' values of each. -/
 theorem mothers_conflict :
-    inherited (Function.update level .palN none) .palN = {.zero, .bar} ∧
+    inherited (Function.update lex .palN none) .palN = {true, false} ∧
       inherited (Function.update stress .palN none) .palN = {.modifier, .head} := by
   refine ⟨Set.ext fun v ↦ ?_, Set.ext fun v ↦ ?_⟩ <;>
     simp only [Set.mem_insert_iff, Set.mem_singleton_iff] <;> cases v <;> decide
 
-/-- PAL N's full specification, computed by normal-mode inheritance: its own N′ level and stress
+/-- PAL N's full specification, computed by normal-mode inheritance: its own phrasal N′, stress
 within the modifier, the prenominal slot from both mothers, which agree, and non-self-embedding
 from adjectival modification. -/
 theorem inherited_palN :
-    inherited level .palN = {.bar} ∧ inherited modPosition .palN = {.prenominal} ∧
+    inherited lex .palN = {false} ∧ inherited modPosition .palN = {.prenominal} ∧
       inherited stress .palN = {.modifier} ∧ inherited selfEmbedding .palN = {.banned} := by
   refine ⟨inherited_eq_singleton_of_eq_some rfl, Set.ext fun v ↦ ?_,
     inherited_eq_singleton_of_eq_some rfl,

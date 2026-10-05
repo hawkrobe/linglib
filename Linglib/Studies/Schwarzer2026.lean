@@ -50,7 +50,7 @@ namespace Schwarzer2026
 
 open BrueningAlKhalaf2020
 open Syntax (Cat)
-open Syntax.Cat (NP)
+open Syntax.Cat (N)
 
 /-! ### The analyses -/
 
@@ -64,25 +64,25 @@ abbrev embeddedPosition : HeadDirection := .headFinal
 
 /-- `o.phrases` lists the categories of the conjuncts of a coordination in the order `o`. -/
 def Order.phrases : Order → List Cat
-  | .dpFirst => [NP, .CP]
-  | .cpFirst => [.CP, NP]
+  | .dpFirst => [N, .C]
+  | .cpFirst => [.C, N]
 
 /-- The bottom-up analyses admit the selected noun phrase first, after a verb that does not select
 a clause, whatever the verb's position, (10b). -/
 theorem structural_admits_iff (o : Order) :
-    Admits (Licensed (List.take 1) {NP}) o.phrases ↔ o = .dpFirst := by
+    Admits (Licensed (List.take 1) {N}) o.phrases ↔ o = .dpFirst := by
   cases o <;> decide
 
 /-- The closeness analyses admit the clause first before the verb, (10a). -/
 theorem closeness_embedded_iff (o : Order) :
-    Admits (Licensed (checkedOnce embeddedPosition) {NP}) o.phrases ↔ o = .cpFirst := by
+    Admits (Licensed (checkedOnce embeddedPosition) {N}) o.phrases ↔ o = .cpFirst := by
   cases o <;> decide
 
 /-- The analyses differ before the verb only, which is what makes German the test case, since
 after it the closeness analyses check the first conjunct too. -/
 theorem accounts_diverge_embedded :
-    (∃ o : Order, ¬ (Admits (Licensed (List.take 1) {NP}) o.phrases ↔
-        Admits (Licensed (checkedOnce embeddedPosition) {NP}) o.phrases)) ∧
+    (∃ o : Order, ¬ (Admits (Licensed (List.take 1) {N}) o.phrases ↔
+        Admits (Licensed (checkedOnce embeddedPosition) {N}) o.phrases)) ∧
       checkedOnce rootPosition = List.take 1 :=
   ⟨⟨.dpFirst, by decide⟩, funext fun cs ↦ by cases cs <;> rfl⟩
 
@@ -92,7 +92,7 @@ theorem accounts_diverge_embedded :
 entry, which has a noun phrase if a frame takes one and a clause if a frame takes a
 *dass*-clause. -/
 def selects (v : German.Verb) : Finset Cat :=
-  (if v.toVerb.TakesNominal then {NP} else ∅) ∪ (if v.toVerb.TakesClausal then {.CP} else ∅)
+  (if v.toVerb.TakesNominal then {N} else ∅) ∪ (if v.toVerb.TakesClausal then {.C} else ∅)
 
 /-- `s.verbs` lists the four predicates of Experiment 1 that do or do not select a clause. -/
 def Selection.verbs : Selection → List German.Verb
@@ -104,14 +104,14 @@ def Selection.verbs : Selection → List German.Verb
 /-- Each predicate's entry takes a noun phrase, and a clause exactly when the paper classes it as
 selecting one (p. 7). -/
 theorem selects_verbs (s : Selection) :
-    ∀ v ∈ s.verbs, selects v = if s = .yes then {NP, .CP} else {NP} := by
+    ∀ v ∈ s.verbs, selects v = if s = .yes then {N, .C} else {N} := by
   cases s <;> decide
 
 /-- `c.phrases` lists the categories of the conjuncts of a complement of Experiment 1, a bare
 clause or a coordination with the noun phrase first. -/
 def Complement.phrases : Complement → List Cat
-  | .dass => [.CP]
-  | .coord => [NP, .CP]
+  | .dass => [.C]
+  | .coord => [N, .C]
 
 /-- The grammar admits every condition of Experiment 1, after the verb, except a bare clause after
 a verb that does not select one, where the coordination is admitted through the null N. All the
@@ -162,7 +162,7 @@ theorem preferred_eq (p : Position) : preferred p = .dpFirst := by
 /-- **Experiment 2 refutes the linear and temporal closeness analyses**, since the order
 preferred before the verb is one they exclude. -/
 theorem choices_refute_closeness :
-    ¬ Admits (Licensed (checkedOnce Position.preverbal.direction) {NP})
+    ¬ Admits (Licensed (checkedOnce Position.preverbal.direction) {N})
       (preferred .preverbal).phrases := by
   rw [preferred_eq]
   decide
@@ -170,7 +170,7 @@ theorem choices_refute_closeness :
 /-- The bottom-up analyses admit exactly the preferred order in both positions, which the squib
 takes to support them only indirectly (p. 15). -/
 theorem choices_match_structural (p : Position) (o : Order) :
-    Admits (Licensed (List.take 1) {NP}) o.phrases ↔ o = preferred p := by
+    Admits (Licensed (List.take 1) {N}) o.phrases ↔ o = preferred p := by
   rw [preferred_eq, structural_admits_iff]
 
 end Schwarzer2026

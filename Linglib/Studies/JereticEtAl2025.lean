@@ -260,14 +260,14 @@ def verresLex : Tree Cat String := .terminal .N "verres"
 def frenchLex : Finset (Tree Cat String) := {tousLex, tousDualLex, lesDeuxLex, verresLex}
 
 /-- *tous V*, the surface universal. -/
-def tousVerres : Tree Cat String := .node .NP [tousLex, verresLex]
+def tousVerres : Tree Cat String := .node .N [tousLex, verresLex]
 
 /-- *tous_DUAL V*, the silent witness, one Katzir substitution from `tousVerres` at the same
 size. -/
-def tousDualVerres : Tree Cat String := .node .NP [tousDualLex, verresLex]
+def tousDualVerres : Tree Cat String := .node .N [tousDualLex, verresLex]
 
 /-- *les deux V*, the indirect alternative, of the same size as `tousVerres`. -/
-def lesDeuxVerres : Tree Cat String := .node .NP [lesDeuxLex, verresLex]
+def lesDeuxVerres : Tree Cat String := .node .N [lesDeuxLex, verresLex]
 
 /-- Whether a tree contains the silent dual marker. -/
 def hasDualMarker (t : Tree Cat String) : Bool :=
