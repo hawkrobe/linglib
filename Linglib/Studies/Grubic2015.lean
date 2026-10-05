@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Semantics.Exhaustification.Excluder
+public import Linglib.Semantics.Focus.Particles
 public import Linglib.Semantics.Focus.Control
 public import Linglib.Semantics.Presupposition.Basic
 public import Linglib.Data.Examples.Grubic2015
@@ -14,21 +14,23 @@ public import Mathlib.Data.Set.Lattice.Bounded
 /-!
 # Grubic (2015): Focus and Alternative Sensitivity in Ngamo
 
-This file formalizes the question-under-discussion analysis of the Ngamo alternative-sensitive
-particles in chapter 7 of [grubic-2015], "Focus and alternative sensitivity in Ngamo
-(West-Chadic)", against the data of chapter 6, rows of `Data.Examples.Grubic2015`. The
-exclusive *yak('i)* has the entry (2) of [coppock-beaver-2014]'s exclusives: it presupposes
-that some alternative at least as strong as the prejacent on a salient scale is true and asserts
-that no true alternative is stronger (`yak`). On an entailment scale, the complement-exclusion
-reading of section 6.1.1, the presupposition entails the prejacent, which therefore projects
-through negation as in (29) (`prejacent_projects`), and over the conjunctions of independent
-atomic answers, the lattice of (11), it is defined and true exactly where the prejacent holds
-and every other atom fails, the exclusive inference of (166) (`truthSet_yak`). The additive
+Grubic analyses the Ngamo alternative-sensitive particles of chapter 7 against the data of
+chapter 6, the rows of `Data.Examples.Grubic2015`, in a question-under-discussion framework. The
+exclusive *yak('i)* has Coppock and Beaver's entry for exclusives, the substrate's
+`Focus.Particles.only`: it presupposes that some alternative at least as strong as the prejacent
+on a salient scale is true and asserts that no true alternative is stronger. The additive
 *ke('e)* has no truth-conditional content and presupposes a salient antecedent about a different
-topic situation, (45), one that need not be true, (46), and one that parallel background-marked
-antecedents, being anaphoric, cannot supply, (44) and (49) (`ke_undefined_of_anaphoric`). The
-scalar *har('i)* asserts its prejacent and presupposes that a contextual implication of it, in
-the sense of (18), ranks highest among its alternatives, (17) (`har`).
+topic situation, and the scalar *har('i)* asserts its prejacent and presupposes that a contextual
+implication of it ranks highest among its alternatives.
+
+## Main results
+
+* `prejacent_projects`: on an entailment scale, the complement-exclusion reading, the
+  presupposition of *yak('i)* entails the prejacent, which therefore projects through negation.
+* `truthSet_only_conjunctions`: over the conjunctions of independent atomic answers *yak('i)* is
+  defined and true exactly where the prejacent holds and every other atom fails.
+* `ke_undefined_of_anaphoric`: parallel background-marked antecedents, being anaphoric, cannot
+  supply the antecedent of *ke('e)*.
 
 ## Implementation notes
 
@@ -50,44 +52,27 @@ not theorems.
 
 namespace Grubic2015
 
-open Exhaustification Presupposition Focus
+open Exhaustification Presupposition Focus Focus.Particles
 
 variable {W T : Type*} (S : Set W → Set W → Prop) (C : Set (Set W)) (p : Set W)
 
 /-! ### The exclusive *yak('i)*, section 7.1 -/
 
-/-- (2i): some alternative at least as strong as the prejacent is true, the presupposition of
-*yak('i)*. -/
-def atLeast : Set W := {w | ∃ q ∈ C, w ∈ q ∧ S q p}
-
-/-- (2ii): no true alternative is stronger than the prejacent, the assertion of *yak('i)*. -/
-def atMost : Set W := {w | ∀ q ∈ C, w ∈ q → S p q}
-
-/-- On the entailment scale the assertion of *yak('i)* is the exclusion
-`Exhaustification.excludes`. -/
-theorem atMost_subset_eq : atMost (· ⊆ ·) C p = excludes C p := rfl
-
-/-- *yak('i)* 'only', the propositional entry (2). -/
-def yak : PartialProp W := ⟨(· ∈ atLeast S C p), (· ∈ atMost S C p)⟩
-
-/-- On an entailment scale the presupposition entails the prejacent. -/
-theorem atLeast_subset : atLeast (· ⊆ ·) C p ⊆ p := fun _ ⟨_, _, hw, hq⟩ ↦ hq hw
-
-/-- (29): negation leaves the presupposition in place, so *not only Dimza built a house* still
-has Dimza building a house; on a rank-order scale, where alternatives need not entail the
+/-- Negation leaves the presupposition in place, so *not only Dimza built a house* still has
+Dimza building a house (29); on a rank-order scale, where alternatives need not entail the
 prejacent, nothing of the kind follows. -/
-theorem prejacent_projects {w : W} (h : (yak (· ⊆ ·) C p).neg.presup w) : w ∈ p :=
-  atLeast_subset C p h
+theorem prejacent_projects {w : W} (h : (only (· ⊆ ·) C p).neg.presup w) : w ∈ p :=
+  atLeast_subset_subset h
 
-/-- The answers of (11): the nonempty conjunctions of a set of atomic answers. -/
+/-- The answers of (11) are the nonempty conjunctions of a set of atomic answers. -/
 def conjunctions (atoms : Set (Set W)) : Set (Set W) :=
   {q | ∃ A ⊆ atoms, A.Nonempty ∧ q = ⋂₀ A}
 
 /-- Over the conjunctions of atomic answers, the truth set of *yak('i)* on the entailment scale
 is the prejacent with no other atom true, the exhaustification `Exhaustification.exh` over the
 atoms ((166) and (25)). -/
-theorem truthSet_yak {atoms : Set (Set W)} (hp : p ∈ atoms) :
-    (yak (· ⊆ ·) (conjunctions atoms) p).truthSet = exh atoms p := by
+theorem truthSet_only_conjunctions {atoms : Set (Set W)} (hp : p ∈ atoms) :
+    (only (· ⊆ ·) (conjunctions atoms) p).truthSet = exh atoms p := by
   ext w
   constructor
   · rintro ⟨⟨_, ⟨A, hA, -, rfl⟩, hw, hq⟩, hmost⟩
@@ -102,25 +87,25 @@ theorem truthSet_yak {atoms : Set (Set W)} (hp : p ∈ atoms) :
 
 /-! ### The additive *ke('e)*, section 7.3 -/
 
-/-- *ke('e)* 'also', (45): no truth-conditional contribution, and the presupposition of a salient
-antecedent about a different topic situation, one that need not itself be true, (46). -/
+/-- *ke('e)* 'also' (45) makes no truth-conditional contribution and presupposes a salient
+antecedent about a different topic situation, one that need not itself be true (46). -/
 def ke (given : Set (Set W)) (topic : Set W → T) : PartialProp W :=
   ⟨fun _ ↦ ∃ q ∈ given, topic q ≠ topic p, (· ∈ p)⟩
 
-/-- (44) and (49): when every salient antecedent is anaphoric to the host's topic situation, as
-parallel background-marked antecedents are by default, *ke('e)* is undefined. -/
+/-- When every salient antecedent is anaphoric to the host's topic situation, as parallel
+background-marked antecedents are by default, *ke('e)* is undefined ((44) and (49)). -/
 theorem ke_undefined_of_anaphoric {given : Set (Set W)} {topic : Set W → T}
     (h : ∀ q ∈ given, topic q = topic p) (w : W) : ¬ (ke p given topic).defined w :=
   fun ⟨q, hq, hne⟩ ↦ hne (h q hq)
 
 /-! ### The scalar *har('i)*, section 7.2 -/
 
-/-- A contextual implication, (18): entailed by the common ground updated with the prejacent
-but not by the common ground alone. -/
+/-- A contextual implication (18) is entailed by the common ground updated with the prejacent but
+not by the common ground alone. -/
 def CImpl (CG q : Set W) : Prop := ¬ CG ⊆ q ∧ CG ∩ p ⊆ q
 
-/-- *har('i)* 'even', (17): asserts the prejacent and presupposes that some contextual
-implication of it ranks highest among its alternatives on the salient scale. -/
+/-- *har('i)* 'even' (17) asserts the prejacent and presupposes that some contextual implication
+of it ranks highest among its alternatives on the salient scale. -/
 def har (CG : Set W) (alt : Set W → Set (Set W)) : PartialProp W :=
   ⟨fun w ↦ ∃ q, CImpl p CG q ∧ ∀ q' ∈ alt q, w ∈ q' → S q q', (· ∈ p)⟩
 

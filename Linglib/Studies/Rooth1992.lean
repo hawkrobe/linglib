@@ -3,30 +3,33 @@ module
 public import Linglib.Data.Examples.Rooth1992
 public import Linglib.Pragmatics.NeoGricean.Basic
 public import Linglib.Semantics.Focus.Control
-public import Linglib.Semantics.Exhaustification.Excluder
+public import Linglib.Semantics.Focus.Particles
 
 /-!
 # Rooth (1992): A theory of focus interpretation
 
-This file formalizes [rooth-1992]'s unification of the effects of intonational focus. Alternative
-semantics gives a phrase a focus semantic value beside its ordinary one, the set of substitution
-instances at the focused position, computed here by mapping a predicate over an F-marked
-constituent whose alternatives are the whole domain (`WithAlternatives.focused`). The four effects
-the paper surveys, association with *only*, contrasting phrases, scalar implicature, and
-question-answer congruence, each require some semantic or pragmatic object to be a subset or an
-element of a focus semantic value, and the focus interpretation principle keeps only that
-requirement: the operator ~ presupposes `Focus.SquiggleSet` or `Focus.SquiggleInd` of a free
-variable whose antecedent is a `Focus.Antecedent`. In the introduction scenario *only* quantifies
-over a domain constrained by focus, `only`, which gives (3a) and (3b) their truth values; a
-focused transitive verb shows why the domain is constrained rather than fixed, since its full
-focus semantic value contains the trivial relation and fixing the domain to it makes *only*
-unsatisfiable. A scale of alternative assertions lies inside the focus semantic value, so focus on
-the verb licenses the acing scale that focus on the subject does not, and the group scale under
-subject focus yields the roommate implicature through the neo-Gricean substrate. A question
-denotation lies inside the answer's focus semantic value, admitting the subject-focused answer to
-the subject question and rejecting the object-focused one. In bare remnant ellipsis focus filters
-a compositional ambiguity instead of restricting a parameter: each choice of correlate finds an
-antecedent for ~ under exactly one focus placement (`ellipsis_filter`).
+Rooth unifies the effects of intonational focus. Alternative semantics gives a phrase a focus
+semantic value beside its ordinary one, the set of substitution instances at the focused position,
+computed here by mapping a predicate over an F-marked constituent whose alternatives are the whole
+domain (`WithAlternatives.focused`). Association with *only*, contrasting phrases, scalar
+implicature and question-answer congruence each require some object to be a subset or an element
+of a focus semantic value, and the focus interpretation principle keeps only that requirement: the
+operator ~ presupposes `Focus.SquiggleSet` or `Focus.SquiggleInd` of a free variable whose
+antecedent is a `Focus.Antecedent`.
+
+## Main results
+
+* `three_a`, `three_b`, `only_rows`: *only* over a domain constrained by focus gives (3a) and (3b)
+  their truth values.
+* `recognitions_fixed`, `recognitions_constrained`: the domain is constrained rather than fixed,
+  since the full focus semantic value of a focused verb contains the trivial relation.
+* `verbFocus_scale`, `ace_notMem_subjectFocus`, `roommate_implicature`: focus on the verb licenses
+  the acing scale that focus on the subject does not, and the group scale yields the roommate
+  implicature.
+* `question_resolves_subjectFocus`, `question_rejects_objectFocus`, `qa_rows`: a question
+  admits the answer whose focus semantic value contains it.
+* `ellipsis_filter`: in bare remnant ellipsis focus filters a compositional ambiguity, each
+  correlate finding an antecedent for ~ under exactly one focus placement.
 
 ## Implementation notes
 
@@ -35,6 +38,10 @@ antecedent for ~ under exactly one focus placement (`ellipsis_filter`).
   with groups as finite sets of people.
 * The rows carry the paper's examples with the truth values of the introduction scenario and
   the question-answer judgments, which the theorems derive.
+* *Only* is the substrate's exclusive assertion on the identity scale,
+  `Focus.Particles.atMost (· = ·)`, which is (4b) with the equation reversed. Footnote 2 leaves
+  open whether the prejacent belongs in the presupposition or the assertion, and suggests that
+  the property may only need to be the strongest in the domain, the entailment scale.
 
 ## References
 
@@ -48,7 +55,7 @@ antecedent for ~ under exactly one focus placement (`ellipsis_filter`).
 
 namespace Rooth1992
 
-open Exhaustification Focus WithAlternatives
+open Exhaustification Focus Focus.Particles WithAlternatives
 
 /-! ### Focus semantic values (2) -/
 
@@ -58,26 +65,11 @@ universe u
 
 variable {α β : Type u}
 
-/-- *Only* over a domain `C` of propositions asserts that every true member of the domain is
-the prejacent. -/
-def only {W : Type*} (C : Set (Set W)) (p : Set W) : Set W := {w | ∀ q ∈ C, w ∈ q → q = p}
-
-/-- A true member of the domain distinct from the prejacent refutes *only*. -/
-theorem notMem_only {W : Type*} {C : Set (Set W)} {p q : Set W} {w : W} (hq : q ∈ C)
-    (hw : w ∈ q) (hne : q ≠ p) : w ∉ only C p :=
-  λ h => hne (h q hq hw)
-
-/-- Where the prejacent entails no other member of the domain, the paper's *only* is the
-exclusion `Exhaustification.excludes`. -/
-theorem only_eq_excludes {W : Type*} {C : Set (Set W)} {p : Set W}
-    (h : ∀ q ∈ C, p ⊆ q → q = p) : only C p = excludes C p :=
-  Set.ext λ _ => (mem_excludes_iff_forall_eq h).symm
-
 /-- A domain containing the trivial proposition makes *only* unsatisfiable for any other
 prejacent. -/
-theorem only_eq_empty_of_univ_mem {W : Type*} {C : Set (Set W)} {p : Set W}
-    (hC : Set.univ ∈ C) (hp : p ≠ Set.univ) : only C p = ∅ :=
-  Set.eq_empty_iff_forall_notMem.2 λ w hw => hp (hw _ hC (Set.mem_univ w)).symm
+theorem atMost_eq_empty_of_univ_mem {W : Type*} {C : Set (Set W)} {p : Set W}
+    (hC : Set.univ ∈ C) (hp : p ≠ Set.univ) : atMost (· = ·) C p = ∅ :=
+  Set.eq_empty_iff_forall_notMem.2 fun w hw ↦ hp (hw _ hC (Set.mem_univ w))
 
 end Values
 
@@ -94,10 +86,10 @@ def atom (a : A) : Set (Set A) := {w | a ∈ w}
 
 @[simp] theorem mem_atom {a : A} {w : Set A} : w ∈ atom a ↔ a ∈ w := Iff.rfl
 
-theorem atom_injective : Function.Injective (atom (A := A)) := λ a _ h =>
+theorem atom_injective : Function.Injective (atom (A := A)) := fun a _ h ↦
   (Set.mem_singleton_iff.1 ((Set.ext_iff.1 h {a}).1 (Set.mem_singleton a))).symm
 
-theorem atom_ne_univ (a : A) : atom a ≠ Set.univ := λ h =>
+theorem atom_ne_univ (a : A) : atom a ≠ Set.univ := fun h ↦
   Set.notMem_empty a ((Set.ext_iff.1 h ∅).2 (Set.mem_univ ∅))
 
 end Atoms
@@ -106,9 +98,10 @@ end Atoms
 
 *Only* quantifies over a domain `C` of properties: if Mary has a property in `C`, it is the one
 the VP expresses ((4b), (30b)). Focus constrains `C` to lie inside the focus semantic value of
-the VP ((9c)); `only` is the assertion at the propositional level, and coincides with the
-substrate's `Exhaustification.excludes` where the prejacent entails no other member of the
-domain (`only_eq_excludes`). -/
+the VP ((9c)). At the propositional level the assertion is the exclusive's assertion on the
+identity scale, `Focus.Particles.atMost (· = ·)`, which is the entailment-scale exclusion where
+the prejacent entails no other member of the domain
+(`Focus.Particles.atMost_eq_eq_atMost_subset`). -/
 
 section Only
 
@@ -117,27 +110,27 @@ variable {E : Type} (m b t s c : E)
 /-- The fact that `x` introduced `y` to `z`. -/
 def intro (x y z : E) : Set (Set (E × E × E)) := atom (x, y, z)
 
-/-- The introduction scenario: Mary introduced Bill and Tom to Sue, and there were no other
+/-- In the introduction scenario Mary introduced Bill and Tom to Sue, and there were no other
 introductions. -/
 def scenario : Set (E × E × E) := {(m, b, s), (m, t, s)}
 
-/-- (5a): the focus semantic value of *introduced [Bill]F to Sue* with Mary as subject, the
-propositions of the form 'Mary introduced y to Sue'. -/
+/-- The focus semantic value of *introduced [Bill]F to Sue* with Mary as subject (5a) is the set
+of propositions of the form 'Mary introduced y to Sue'. -/
 theorem vp_objectFocus :
-    ((λ y => intro m y s) <$> focused b).alternatives = Set.range λ y => intro m y s :=
+    ((fun y ↦ intro m y s) <$> focused b).alternatives = Set.range fun y ↦ intro m y s :=
   alternatives_map_focused _ _
 
-/-- (3a) is false in the scenario: 'Mary introduced Tom to Sue' is a true member of the domain
-distinct from the prejacent. -/
+/-- (3a) is false in the scenario, since 'Mary introduced Tom to Sue' is a true member of the
+domain distinct from the prejacent. -/
 theorem three_a (hbt : b ≠ t) :
-    scenario m b t s ∉ only (Set.range λ y => intro m y s) (intro m b s) :=
-  notMem_only (q := intro m t s) ⟨t, rfl⟩ (by simp [scenario, intro])
-    λ h => hbt (Prod.mk.inj (Prod.mk.inj (atom_injective h)).2).1.symm
+    scenario m b t s ∉ atMost (· = ·) (Set.range fun y ↦ intro m y s) (intro m b s) :=
+  notMem_atMost (q := intro m t s) ⟨t, rfl⟩ (by simp [scenario, intro])
+    fun h ↦ hbt (Prod.mk.inj (Prod.mk.inj (atom_injective h)).2).1
 
-/-- (3b) is true in the scenario: the only true proposition of the form 'Mary introduced Bill
-to z' is the prejacent. -/
+/-- (3b) is true in the scenario, since the only true proposition of the form 'Mary introduced
+Bill to z' is the prejacent. -/
 theorem three_b (hbt : b ≠ t) :
-    scenario m b t s ∈ only (Set.range λ z => intro m b z) (intro m b s) := by
+    scenario m b t s ∈ atMost (· = ·) (Set.range fun z ↦ intro m b z) (intro m b s) := by
   rintro q ⟨z, rfl⟩ hw
   simp only [scenario, intro, mem_atom, Set.mem_insert_iff, Set.mem_singleton_iff,
     Prod.mk.injEq] at hw
@@ -154,24 +147,25 @@ inductive Verb where
 /-- The fact that `x` stands in relation `v` to `y`. -/
 def rel (v : Verb) (x y : E) : Set (Set (Verb × E × E)) := atom (v, x, y)
 
-/-- (8): the focus semantic value of *[read]F The Recognitions* with Mary as subject ranges over
+/-- The focus semantic value of *[read]F The Recognitions* with Mary as subject (8) ranges over
 every relation, so it contains the trivial proposition. -/
 theorem univ_mem_vp_verbFocus :
-    Set.univ ∈ ((λ R : E → E → Set (Set (Verb × E × E)) => R m c) <$>
+    Set.univ ∈ ((fun R : E → E → Set (Set (Verb × E × E)) ↦ R m c) <$>
       focused (rel .read)).alternatives := by
-  rw [alternatives_map_focused]; exact ⟨λ _ _ => Set.univ, rfl⟩
+  rw [alternatives_map_focused]; exact ⟨fun _ _ ↦ Set.univ, rfl⟩
 
 /-- (7) with the domain fixed to the full focus semantic value, as in [rooth-1985], is
 unsatisfiable. -/
 theorem recognitions_fixed :
-    only ((λ R : E → E → Set (Set (Verb × E × E)) => R m c) <$>
+    atMost (· = ·) ((fun R : E → E → Set (Set (Verb × E × E)) ↦ R m c) <$>
       focused (rel .read)).alternatives (rel .read m c) = ∅ :=
-  only_eq_empty_of_univ_mem (univ_mem_vp_verbFocus m c) (atom_ne_univ _)
+  atMost_eq_empty_of_univ_mem (univ_mem_vp_verbFocus m c) (atom_ne_univ _)
 
-/-- (37c): with the domain constrained to reading and understanding, (7) is true where Mary
-read without understanding. -/
+/-- With the domain constrained to reading and understanding (37c), (7) is true where Mary read
+without understanding. -/
 theorem recognitions_constrained :
-    {(Verb.read, m, c)} ∈ only {rel .read m c, rel .understand m c} (rel .read m c) := by
+    {(Verb.read, m, c)} ∈
+      atMost (· = ·) {rel .read m c, rel .understand m c} (rel .read m c) := by
   rintro q (rfl | rfl) hw
   · rfl
   · simp [rel] at hw
@@ -189,10 +183,10 @@ section Contrast
 variable {E W : Type} (farmer american canadian : E → Set W)
 
 /-- The intersective N' *P farmer*. -/
-def nbar (P : E → Set W) : E → Set W := λ x => P x ∩ farmer x
+def nbar (P : E → Set W) : E → Set W := fun x ↦ P x ∩ farmer x
 
-/-- (15): 'Canadian farmer' is a property of the form 'P farmer', so it can be the antecedent
-for the focus on *[American]F farmer*. -/
+/-- 'Canadian farmer' is a property of the form 'P farmer', so it can be the antecedent for the
+focus on *[American]F farmer* (15). -/
 theorem farmer_contrast (h : nbar farmer canadian ≠ nbar farmer american) :
     SquiggleInd (nbar farmer american) ((nbar farmer <$> focused american).alternatives)
       (nbar farmer canadian) := by
@@ -210,7 +204,7 @@ section Scale
 
 variable {E : Type} (m : E)
 
-/-- The world in which everyone has a grade: failed, passed, or aced. -/
+/-- In the quiz world everyone has a grade, failed, passed or aced. -/
 abbrev Grades (E : Type) := E → Fin 3
 
 /-- The group `g` passed. -/
@@ -219,49 +213,49 @@ def pass (g : Finset E) : Set (Grades E) := {w | ∀ x ∈ g, 1 ≤ w x}
 /-- `x` aced. -/
 def ace (x : E) : Set (Grades E) := {w | 2 ≤ w x}
 
-/-- (18): acing entails passing and not conversely. -/
+/-- Acing entails passing and not conversely (18). -/
 theorem ace_ssubset_pass : ace m ⊂ pass {m} := by
-  refine ⟨λ w h => ?_, λ h => ?_⟩
+  refine ⟨fun w h ↦ ?_, fun h ↦ ?_⟩
   · intro x hx
     rw [Finset.mem_singleton] at hx
     exact hx ▸ le_trans (by decide) h
-  · have := h (show (λ _ => (1 : Fin 3)) ∈ pass {m} by simp [pass])
+  · have := h (show (fun _ ↦ (1 : Fin 3)) ∈ pass {m} by simp [pass])
     exact absurd this (by simp [ace])
 
 /-- A group passed iff its parts did. -/
 theorem pass_union [DecidableEq E] (g g' : Finset E) : pass (g ∪ g') = pass g ∩ pass g' := by
   ext w; simp [pass, or_imp, forall_and]
 
-/-- (16): the scale of acing and passing lies inside the focus semantic value of
-*I [passed]F*, and asserting the weaker member implicates the negation of the stronger. -/
+/-- The scale of acing and passing lies inside the focus semantic value of *I [passed]F*, and
+asserting the weaker member implicates the negation of the stronger (16). -/
 theorem verbFocus_scale :
-    {ace m, pass {m}} ⊆ ((λ V : Finset E → Set (Grades E) => V {m}) <$>
+    {ace m, pass {m}} ⊆ ((fun V : Finset E → Set (Grades E) ↦ V {m}) <$>
       focused pass).alternatives ∧
     NeoGricean.IsSecondaryImplicature (pass {m}) {ace m} (ace m) := by
   refine ⟨?_, NeoGricean.isSecondaryImplicature_of_ssubset (ace_ssubset_pass m)⟩
   rw [alternatives_map_focused]
   rintro q (rfl | rfl)
-  · exact ⟨λ _ => ace m, rfl⟩
+  · exact ⟨fun _ ↦ ace m, rfl⟩
   · exact ⟨pass, rfl⟩
 
-/-- (21): the scale of group propositions of the form 'x passed' lies inside the focus semantic
-value of *[I]F passed*. -/
+/-- The scale of group propositions of the form 'x passed' lies inside the focus semantic value
+of *[I]F passed* (21). -/
 theorem subjectFocus_scale :
     Set.range pass ⊆ ((pass (E := E)) <$> focused {m}).alternatives := by
   rw [alternatives_map_focused]
 
-/-- The acing scale does not lie inside the focus semantic value of *[I]F passed*: no group's
-passing is Mats's acing, which is why (17) suggests nothing about acing. -/
+/-- The acing scale does not lie inside the focus semantic value of *[I]F passed*, since no
+group's passing is Mats's acing, which is why (17) suggests nothing about acing. -/
 theorem ace_notMem_subjectFocus : ace m ∉ ((pass (E := E)) <$> focused {m}).alternatives := by
   rw [alternatives_map_focused]
   rintro ⟨g, hg⟩
-  have := (Set.ext_iff.1 hg (λ _ => 1)).1 (λ _ _ => le_rfl)
+  have := (Set.ext_iff.1 hg (fun _ ↦ 1)).1 (fun _ _ ↦ le_rfl)
   simp [ace] at this
 
-/-- The roommate implicature: asserting that Mats passed implicates the negation of the
-group proposition that Mats and Paul passed, which with Mats passing is Paul not passing. -/
+/-- In the roommate implicature, asserting that Mats passed implicates the negation of the group
+proposition that Mats and Paul passed, which with Mats passing is Paul not passing. -/
 theorem roommate_implicature [DecidableEq E] (p : E) (w : Grades E) (hm : w ∈ pass {m})
-    (hmp : w ∉ pass {m, p}) : w ∉ pass {p} := λ hp =>
+    (hmp : w ∉ pass {m, p}) : w ∉ pass {p} := fun hp ↦
   hmp (by rw [show ({m, p} : Finset E) = {m} ∪ {p} from rfl, pass_union]; exact ⟨hm, hp⟩)
 
 end Scale
@@ -279,26 +273,26 @@ variable {E : Type} (P : Set E) (m b : E)
 /-- The fact that `x` cut `y` down to size. -/
 def cut (x y : E) : Set (Set (E × E)) := atom (x, y)
 
-/-- (25a): *Who cut Bill down to size?* over the persons `P`. -/
-def whoCut (b : E) : Set (Set (Set (E × E))) := (λ x => cut x b) '' P
+/-- The question *Who cut Bill down to size?* (25a) over the persons `P`. -/
+def whoCut (b : E) : Set (Set (Set (E × E))) := (fun x ↦ cut x b) '' P
 
-/-- The focus semantic value of *[Mary]F cut Bill down to size*: the propositions of the form
-'x cut Bill down to size', over every individual. -/
+/-- The focus semantic value of *[Mary]F cut Bill down to size* is the set of propositions of the
+form 'x cut Bill down to size', over every individual. -/
 theorem subjectFocus_value :
-    ((λ x => cut x b) <$> focused m).alternatives = Set.range λ x => cut x b :=
+    ((fun x ↦ cut x b) <$> focused m).alternatives = Set.range fun x ↦ cut x b :=
   alternatives_map_focused _ _
 
-/-- (23Aa) answers (23Qa): the question fully resolves the focus on the subject, with any other
-person supplying the contrasting alternative. -/
+/-- (23Aa) answers (23Qa), since the question fully resolves the focus on the subject, with any
+other person supplying the contrasting alternative. -/
 theorem question_resolves_subjectFocus {x : E} (hm : m ∈ P) (hx : x ∈ P) (hxm : x ≠ m) :
-    (Antecedent.question (whoCut P b)).Resolves (cut m b) (Set.range λ x => cut x b) :=
+    (Antecedent.question (whoCut P b)).Resolves (cut m b) (Set.range fun x ↦ cut x b) :=
   ⟨Set.image_subset_range _ _, ⟨m, hm, rfl⟩,
-    cut x b, ⟨x, hx, rfl⟩, λ h => hxm (Prod.mk.inj (atom_injective h)).1⟩
+    cut x b, ⟨x, hx, rfl⟩, fun h ↦ hxm (Prod.mk.inj (atom_injective h)).1⟩
 
-/-- (23Ab) does not answer (23Qa): another person's cutting Bill down to size is not of the
+/-- (23Ab) does not answer (23Qa), since another person's cutting Bill down to size is not of the
 form 'Mary cut y down to size'. -/
 theorem question_rejects_objectFocus {x : E} (hx : x ∈ P) (hxm : x ≠ m) :
-    ¬ (Antecedent.question (whoCut P b)).Admits (Set.range λ y => cut m y) := λ h =>
+    ¬ (Antecedent.question (whoCut P b)).Admits (Set.range fun y ↦ cut m y) := fun h ↦
   let ⟨_, hy⟩ := h ⟨x, hx, rfl⟩
   hxm (Prod.mk.inj (atom_injective hy)).1.symm
 
@@ -324,7 +318,7 @@ inductive Correlate where
   | subject
   deriving DecidableEq, Repr
 
-/-- The *than*-clause under each correlate: 'she beats Sue' or 'Sue beats me'. -/
+/-- The *than*-clause under each correlate is 'she beats Sue' or 'Sue beats me'. -/
 def thanClause : Correlate → Set (Set (E × E))
   | .object => beats she sue
   | .subject => beats sue me
@@ -337,23 +331,23 @@ inductive FocusSite where
 
 /-- The focus semantic value of the main clause under each placement of focus. -/
 def mainClause : FocusSite → Set (Set (Set (E × E)))
-  | .onObject => ((λ y => beats she y) <$> focused me).alternatives
-  | .onSubject => ((λ x => beats x me) <$> focused she).alternatives
+  | .onObject => ((fun y ↦ beats she y) <$> focused me).alternatives
+  | .onSubject => ((fun x ↦ beats x me) <$> focused she).alternatives
 
-/-- (66): the *than*-clause is an antecedent for the focus in the main clause exactly when the
-correlate is the focused phrase, so each reading survives under one placement of focus. -/
+/-- The *than*-clause is an antecedent for the focus in the main clause exactly when the
+correlate is the focused phrase, so each reading survives under one placement of focus (66). -/
 theorem ellipsis_filter (hsm : sue ≠ me) (hss : sue ≠ she) (r : Correlate) (f : FocusSite) :
     (Antecedent.phrase (thanClause she me sue r)).Resolves (beats she me)
         (mainClause she me f) ↔
       (r = .object ↔ f = .onObject) := by
   cases r <;> cases f <;>
     simp only [Antecedent.Resolves, thanClause, mainClause, alternatives_map_focused]
-  · exact iff_of_true ⟨⟨sue, rfl⟩, λ h => hsm (Prod.mk.inj (atom_injective h)).2⟩ (by decide)
-  · exact iff_of_false (λ ⟨⟨_, hx⟩, _⟩ => hsm (Prod.mk.inj (atom_injective hx)).2.symm)
+  · exact iff_of_true ⟨⟨sue, rfl⟩, fun h ↦ hsm (Prod.mk.inj (atom_injective h)).2⟩ (by decide)
+  · exact iff_of_false (fun ⟨⟨_, hx⟩, _⟩ ↦ hsm (Prod.mk.inj (atom_injective hx)).2.symm)
       (by decide)
-  · exact iff_of_false (λ ⟨⟨_, hy⟩, _⟩ => hss (Prod.mk.inj (atom_injective hy)).1.symm)
+  · exact iff_of_false (fun ⟨⟨_, hy⟩, _⟩ ↦ hss (Prod.mk.inj (atom_injective hy)).1.symm)
       (by decide)
-  · exact iff_of_true ⟨⟨sue, rfl⟩, λ h => hss (Prod.mk.inj (atom_injective h)).1⟩ (by decide)
+  · exact iff_of_true ⟨⟨sue, rfl⟩, fun h ↦ hss (Prod.mk.inj (atom_injective h)).1⟩ (by decide)
 
 end Ellipsis
 
@@ -377,8 +371,8 @@ inductive OnlyFocus where
 
 /-- The domain of *only* a focus position constrains, over the introduction scenario. -/
 def OnlyFocus.domain : OnlyFocus → Set (Set (Set (Person × Person × Person)))
-  | .bill => Set.range λ y => intro Person.mary y .sue
-  | .sue => Set.range λ z => intro Person.mary .bill z
+  | .bill => Set.range fun y ↦ intro Person.mary y .sue
+  | .sue => Set.range fun z ↦ intro Person.mary .bill z
 
 /-- The focus position and the truth value an *only* row reports. -/
 def onlyRow (r : Datum) : Option (OnlyFocus × Bool) := do
@@ -386,19 +380,20 @@ def onlyRow (r : Datum) : Option (OnlyFocus × Bool) := do
   let v ← r.parse? "truth" [("true", true), ("false", false)]
   pure (f, v)
 
-/-- The *only* rows: (3a) false and (3b) true. -/
+/-- The *only* rows have (3a) false and (3b) true. -/
 def onlyData : List (OnlyFocus × Bool) := Examples.all.filterMap onlyRow
 
-/-- (3a) and (3b): a row is true in the introduction scenario iff *only* over the domain its
+/-- A row of (3a) and (3b) is true in the introduction scenario iff *only* over the domain its
 focus constrains holds there. -/
 theorem only_rows : ∀ d ∈ onlyData, (d.2 = true ↔
-    scenario Person.mary .bill .tom .sue ∈ only d.1.domain (intro Person.mary .bill .sue)) := by
+    scenario Person.mary .bill .tom .sue ∈
+      atMost (· = ·) d.1.domain (intro Person.mary .bill .sue)) := by
   intro d hd
   rw [show onlyData = [(.bill, false), (.sue, true)] by decide] at hd
   simp only [List.mem_cons, List.not_mem_nil, or_false] at hd
   rcases hd with rfl | rfl
-  · exact ⟨λ h => absurd h Bool.false_ne_true, λ h => absurd h (three_a _ _ _ _ (by decide))⟩
-  · exact ⟨λ _ => three_b _ _ _ _ (by decide), λ _ => rfl⟩
+  · exact ⟨fun h ↦ absurd h Bool.false_ne_true, fun h ↦ absurd h (three_a _ _ _ _ (by decide))⟩
+  · exact ⟨fun _ ↦ three_b _ _ _ _ (by decide), fun _ ↦ rfl⟩
 
 /-- The questions of (23). -/
 inductive Q where
@@ -409,7 +404,7 @@ inductive Q where
 /-- The denotation of a question, over all persons. -/
 def Q.den : Q → Set (Set (Set (Person × Person)))
   | .whoCutBill => whoCut Set.univ .bill
-  | .whoDidMaryCut => (λ y => cut Person.mary y) '' Set.univ
+  | .whoDidMaryCut => (fun y ↦ cut Person.mary y) '' Set.univ
 
 /-- The focus positions of the answers of (23). -/
 inductive AnswerFocus where
@@ -419,8 +414,8 @@ inductive AnswerFocus where
 
 /-- The focus semantic value of an answer. -/
 def AnswerFocus.value : AnswerFocus → Set (Set (Set (Person × Person)))
-  | .mary => Set.range λ x => cut x Person.bill
-  | .bill => Set.range λ y => cut Person.mary y
+  | .mary => Set.range fun x ↦ cut x Person.bill
+  | .bill => Set.range fun y ↦ cut Person.mary y
 
 /-- The question, the answer's focus position, and the judgment of a question-answer row. -/
 def qaRow (r : Datum) : Option (Q × AnswerFocus × Bool) := do
@@ -431,8 +426,8 @@ def qaRow (r : Datum) : Option (Q × AnswerFocus × Bool) := do
 /-- The question-answer rows of (23). -/
 def qaData : List (Q × AnswerFocus × Bool) := Examples.all.filterMap qaRow
 
-/-- (23): an answer is appropriate iff the question denotation lies inside its focus semantic
-value. -/
+/-- An answer is appropriate iff the question denotation lies inside its focus semantic value
+(23). -/
 theorem qa_rows : ∀ d ∈ qaData,
     (d.2.2 = true ↔ (Antecedent.question d.1.den).Admits d.2.1.value) := by
   intro d hd
@@ -440,12 +435,12 @@ theorem qa_rows : ∀ d ∈ qaData,
     (.whoDidMaryCut, .bill, true), (.whoDidMaryCut, .mary, false)] by decide] at hd
   simp only [List.mem_cons, List.not_mem_nil, or_false] at hd
   rcases hd with rfl | rfl | rfl | rfl
-  · exact ⟨λ _ => Set.image_subset_range _ _, λ _ => rfl⟩
-  · exact ⟨λ h => absurd h Bool.false_ne_true,
-      λ h => absurd h (question_rejects_objectFocus _ _ _ (Set.mem_univ Person.monique)
+  · exact ⟨fun _ ↦ Set.image_subset_range _ _, fun _ ↦ rfl⟩
+  · exact ⟨fun h ↦ absurd h Bool.false_ne_true,
+      fun h ↦ absurd h (question_rejects_objectFocus _ _ _ (Set.mem_univ Person.monique)
         (by decide))⟩
-  · exact ⟨λ _ => Set.image_subset_range _ _, λ _ => rfl⟩
-  · refine ⟨λ h => absurd h Bool.false_ne_true, λ h => ?_⟩
+  · exact ⟨fun _ ↦ Set.image_subset_range _ _, fun _ ↦ rfl⟩
+  · refine ⟨fun h ↦ absurd h Bool.false_ne_true, fun h ↦ ?_⟩
     obtain ⟨_, hy⟩ := h ⟨Person.bjorn, Set.mem_univ _, rfl⟩
     exact absurd (Prod.mk.inj (atom_injective hy)).2 (by decide)
 
