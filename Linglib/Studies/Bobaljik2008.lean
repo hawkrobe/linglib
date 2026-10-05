@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Order.UpperLower.Basic
 public import Linglib.Syntax.Case.Dependent
-public import Linglib.Fragments.Hindi.Case
+public import Linglib.Fragments.HindiUrdu.Case
 
 /-!
 # Bobaljik (2008): Where's Phi? Agreement as a Postsyntactic Operation
@@ -129,9 +129,9 @@ theorem controller_quirky (c : Case) (t : CaseCategory) (ht : t ≠ .lexical) :
 /-- In the Hindi perfective the verb agrees with the unmarked object past the ergative subject,
 and in the imperfective with the subject. -/
 theorem hindi_controller :
-    controller .unmarked (assignCases (Hindi.alignment .perfective) (fun _ ↦ none)
+    controller .unmarked (assignCases (HindiUrdu.alignment .perfective) (fun _ ↦ none)
       [ArgumentRole.A, .P]) = some 1 ∧
-    controller .unmarked (assignCases (Hindi.alignment .imperfective) (fun _ ↦ none)
+    controller .unmarked (assignCases (HindiUrdu.alignment .imperfective) (fun _ ↦ none)
       [ArgumentRole.A, .P]) = some 0 := by
   decide
 
