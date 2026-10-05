@@ -17,8 +17,8 @@ the nominative apart, and the *ABA syncretism law over the order is the framewor
 `Morphology.IsContiguous`.
 
 The directional containment of spatial cases, Place ⊂ Goal ⊂ Source ⊂ Route, is
-`Spatial.PathDir`, and the decomposition of spatial cases into localization and direction is in
-`Syntax/Case/Spatial.lean`.
+`Spatial.Path.Direction`, and the decomposition of spatial cases into localization and direction
+is in `Syntax/Case/Spatial.lean`.
 
 ## Main definitions
 

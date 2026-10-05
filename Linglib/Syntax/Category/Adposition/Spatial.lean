@@ -1,23 +1,23 @@
 module
 
 public import Linglib.Syntax.Category.Adposition.Basic
-public import Linglib.Semantics.Events.PathDir
+public import Linglib.Semantics.Events.Path
 
 /-!
 # Spatial adpositions
 
 A theory refines a spatial `Adposition` by decomposing its relation into an axial part, a
-localization, a direction and a boundedness, as Svenonius does in the cartographic sequence. The
-direction is `Spatial.PathDir`, Pantcheva's Place, Goal, Source and Route, and the localization
-is `Spatial.Localization`, the vocabulary spatial cases decompose into as well. The axial parts
-are what case morphology lacks, a flat paradigm rather than a ranked containment, and
-boundedness is Zwarts's separate axis, *to* against *towards*.
+localization and the shape of its path, as Svenonius does in the cartographic sequence. The
+shape is one of Pantcheva's eight, `Spatial.Path.Shape`, or none for a locative reading, and the
+localization is `Spatial.Localization`, the vocabulary spatial cases decompose into as well. The
+axial parts are what case morphology lacks, a flat paradigm rather than a ranked containment.
 
 ## Main declarations
 
 * `Adposition.AxPart`: the axial parts (front, back, top, …).
 * `Adposition.SpatialReading`: the cartographic decomposition.
-* `Adposition.SpatialReading.denote`: the paths a spatial reading denotes relative to a region.
+* `Adposition.SpatialReading.direction`, `IsBounded`: the direction and boundedness of a
+  reading, read off its shape.
 
 ## References
 
@@ -44,41 +44,40 @@ inductive AxPart where
   deriving DecidableEq, Repr, Fintype
 
 /-- A spatial reading decomposes a spatial adposition's relation into an axial part, a
-localization, a direction and a boundedness. -/
+localization and the shape of its path. -/
 structure SpatialReading where
   /-- The axial part of an axial adposition such as *behind*; `none` for *in*, *to*,
   *from*. -/
   axPart : Option AxPart := none
   /-- The localization, interior, surface or exterior. -/
   localization : Option Spatial.Localization := none
-  /-- The direction, Place, Goal, Source or Route. -/
-  direction : Spatial.PathDir
-  /-- The reading is bounded, telic *to*, rather than unbounded, atelic *towards*. -/
-  bounded : Bool := false
+  /-- The shape of the path, `none` for a locative reading. -/
+  shape : Option Spatial.Path.Shape := none
   deriving Repr, DecidableEq
 
-/-- A spatial reading denotes, relative to a region, the paths its direction denotes. -/
-def SpatialReading.denote {Loc : Type*} (r : SpatialReading) (R : Set Loc) :
-    Set (Spatial.Path Loc) :=
-  r.direction.denote R
+namespace SpatialReading
+
+/-- The direction of a reading is its shape's, and Place for a locative reading. -/
+def direction (r : SpatialReading) : Spatial.Path.Direction :=
+  (r.shape.map (·.direction)).getD .place
+
+/-- A reading is bounded when its path is, as *to* is and *towards* is not. -/
+def IsBounded (r : SpatialReading) : Prop := ∃ s ∈ r.shape, s.IsBounded
+
+instance : DecidablePred IsBounded := fun r ↦
+  inferInstanceAs (Decidable (∃ s ∈ r.shape, s.IsBounded))
+
+end SpatialReading
 
 /-! ### Readings -/
 
-/-- The reading of *behind* is axial (back) and stative. -/
-def behind : SpatialReading :=
-  { axPart := some .back, direction := .place }
+/-- The reading of *behind* is axial (back) and locative. -/
+def behind : SpatialReading := { axPart := some .back }
 
-/-- The reading of *under* is axial (bottom) and stative. -/
-def under : SpatialReading :=
-  { axPart := some .bottom, direction := .place }
+/-- The reading of *under* is axial (bottom) and locative. -/
+def under : SpatialReading := { axPart := some .bottom }
 
-/-- The reading of *into* is a bounded interior goal with no axial part. -/
-def into : SpatialReading :=
-  { localization := some .interior, direction := .goal, bounded := true }
-
-/-- The axial parts case morphology lacks are genuinely present here. -/
-example : behind.axPart = some .back := by decide
-/-- A simple directional reading denotes what its direction denotes. -/
-example (R : Set ℕ) : into.denote R = Spatial.PathDir.goal.denote R := rfl
+/-- The reading of *into* is a cofinal path into the interior. -/
+def into : SpatialReading := { localization := some .interior, shape := some .cofinal }
 
 end Adposition

@@ -61,7 +61,7 @@ def withPath (v : Verb) (p : Adposition.SpatialReading) : Verb :=
   if p.direction = .place ∨ ¬ v.TakesSpatial then v else
     { v with
       direction := some p.direction
-      vendlerClass := if p.bounded then v.vendlerClass.map (·.telicize) else v.vendlerClass }
+      vendlerClass := if p.IsBounded then v.vendlerClass.map (·.telicize) else v.vendlerClass }
 
 @[simp] theorem withPath_of_direction_eq_place (h : p.direction = .place) : v.withPath p = v := by
   simp [withPath, h]
@@ -75,7 +75,7 @@ def withPath (v : Verb) (p : Adposition.SpatialReading) : Verb :=
 
 @[simp] theorem vendlerClass_withPath (hv : v.TakesSpatial) (h : p.direction ≠ .place) :
     (v.withPath p).vendlerClass =
-      if p.bounded then v.vendlerClass.map (·.telicize) else v.vendlerClass := by
+      if p.IsBounded then v.vendlerClass.map (·.telicize) else v.vendlerClass := by
   simp [withPath, hv, h]
 
 end withPath

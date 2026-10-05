@@ -12,8 +12,8 @@ the personal pronouns, as in *häne-t* 'him, her'. The local cases cross the dir
 motion with a region. The inessive -ssA 'in', the elative -stA 'out of' and the illative -Vn
 'into' make up the interior series, and the adessive -llA 'on', the ablative -ltA 'off' and
 the allative -lle 'onto' the exterior series. Finnish has no surface series, which Hungarian
-has, and no dative, whose recipient function the allative covers, a gap [blake-1994]'s
-hierarchy registers (`Studies/Blake1994.lean`).
+has, and no dative, whose recipient function the allative covers, a gap Blake's hierarchy
+registers (`Studies/Blake1994.lean`).
 
 The comparative label of the instructive, a case of manner and means as in *jala-n* 'on
 foot', is the instrumental.
@@ -25,7 +25,7 @@ foot', is the instrumental.
 ## Main results
 
 * `Finnish.Case.toCase_mem_image_label_iff`: the local cases are the interior and exterior series
-  of the shared `Localization × PathDir` decomposition.
+  of the shared `Localization × Direction` decomposition.
 
 The endings, spelled in segments, are in `Finnish.Declension`.
 
@@ -95,7 +95,7 @@ def label : Case → _root_.Case
 
 /-- The local cases are the interior and exterior series: a cell of the shared spatial
 decomposition is the label of a Finnish case exactly when its region is not the surface. -/
-theorem toCase_mem_image_label_iff {r : Spatial.Localization} {d : Spatial.PathDir}
+theorem toCase_mem_image_label_iff {r : Spatial.Localization} {d : Spatial.Path.Direction}
     {c : _root_.Case} (h : _root_.Case.toCase r d = some c) :
     c ∈ Finset.univ.image label ↔ r ≠ .surface := by
   cases r <;> cases d <;> cases h <;> decide

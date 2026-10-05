@@ -1,20 +1,20 @@
 module
 
 public import Linglib.Morphology.Paradigm.Contiguity
-public import Linglib.Semantics.Events.PathDir
+public import Linglib.Semantics.Events.Path
 
 /-!
 # Pantcheva (2011): Decomposing Path
 
-This file formalizes the syncretism typology of the ninth chapter of [pantcheva-2011]. The
+This file formalizes the syncretism typology of the ninth chapter of Pantcheva's thesis. The
 directional heads Place, Goal, Source, and Route form the containment sequence of
-`Spatial.PathDir`, and a syncretism pattern over the four is a paradigm over that sequence
-(`Pattern`). Two constraints restrict the patterns: the *ABA generalization of Bobaljik
-([bobaljik-2012], then circulating in manuscript), on which a syncretism targets only
-adjacent heads of the sequence, the same contiguity that governs nominal case in
-[caha-2009] (`Morphology.IsContiguous`); and *A&¬A, on which Goal and Source never share a
+`Spatial.Path.Direction`, and a syncretism pattern over the four is a paradigm over that sequence
+(`Pattern`). Two constraints restrict the patterns: the *ABA generalization of Bobaljik (then
+circulating in manuscript), on which a syncretism targets only adjacent heads of the sequence,
+the same contiguity that governs nominal case in Caha's analysis (`Morphology.IsContiguous`);
+and *A&¬A, on which Goal and Source never share a
 marker, because the Source head is the locus of a reversal of the Goal path (§5.4), so one
-marker for both would be contradictory (`GoalSourceMerged`, `goalSource_distinct_denotation`).
+marker for both would be contradictory (`GoalSourceMerged`, `goalSource_disjoint`).
 Together they say exactly that no syncretism crosses the seam between Goal and Source
 (`possible_iff_respectsSeam`), which cuts the fifteen set-partitions of the four roles to the
 four attested patterns, Types 1 to 4 of Table 9.2: Place and Goal may merge, Source and Route
@@ -43,18 +43,18 @@ namespace Pantcheva2011
 
 open Morphology
 
-/-- A syncretism pattern over the four path roles, in containment order Place, Goal, Source,
-Route, as form-class indices: the four-cell instance of `Morphology.Paradigm`. -/
+/-- A syncretism pattern assigns form-class indices to the four path roles, in containment order
+Place, Goal, Source, Route, as the four-cell instance of `Morphology.Paradigm`. -/
 abbrev Pattern := Paradigm 4 ℕ
 
-/-- The fifteen syncretism patterns up to relabeling: the restricted-growth strings over four
+/-- The fifteen syncretism patterns up to relabeling are the restricted-growth strings over four
 positions, one per set-partition of the four roles. -/
 def allPatterns : List Pattern :=
   [![0, 0, 0, 0], ![0, 0, 0, 1], ![0, 0, 1, 0], ![0, 0, 1, 1], ![0, 0, 1, 2],
    ![0, 1, 0, 0], ![0, 1, 0, 1], ![0, 1, 0, 2], ![0, 1, 1, 0], ![0, 1, 1, 1],
    ![0, 1, 1, 2], ![0, 1, 2, 0], ![0, 1, 2, 1], ![0, 1, 2, 2], ![0, 1, 2, 3]]
 
-/-- *A&¬A: Goal and Source share a form class. -/
+/-- Goal and Source share a form class, which *A&¬A forbids. -/
 def GoalSourceMerged (p : Pattern) : Prop := p 1 = p 2
 
 instance (p : Pattern) : Decidable (GoalSourceMerged p) := inferInstanceAs (Decidable (_ = _))
@@ -96,14 +96,14 @@ theorem possible_iff_respectsSeam (p : Pattern) : Possible p ↔ RespectsSeam p 
         · have : ¬ k ≤ 1 := λ hk => hi (hs'.mpr hk); omega
       subst hjk'; exact hik
 
-/-- The syncretism typology (Table 9.2): of the fifteen patterns, exactly four respect the
-seam, Types 1 to 4: all distinct (English), Place=Goal (Georgian), Source=Route, and both. -/
+/-- Of the fifteen patterns, exactly four respect the seam, Types 1 to 4 of Table 9.2, with all
+roles distinct (English), Place=Goal (Georgian), Source=Route, and both. -/
 theorem possible_syncretisms :
     allPatterns.filter (λ p => Possible p) =
       [![0, 0, 1, 1], ![0, 0, 1, 2], ![0, 1, 2, 2], ![0, 1, 2, 3]] := by
   decide
 
-/-- Table 9.3, Types 5 to 11: the seven patterns excluded by *ABA, a syncretism spanning
+/-- *ABA excludes seven patterns, Types 5 to 11 of Table 9.3, each a syncretism spanning
 non-adjacent roles. -/
 theorem aba_excluded :
     allPatterns.filter (λ p => ¬ IsContiguous p) =
@@ -111,8 +111,8 @@ theorem aba_excluded :
        ![0, 1, 2, 0], ![0, 1, 2, 1]] := by
   decide
 
-/-- Table 9.3, Types 12 to 15: the four contiguous patterns excluded by *A&¬A alone, the
-constraint peculiar to the directional domain. -/
+/-- *A&¬A alone, the constraint peculiar to the directional domain, excludes four contiguous
+patterns, Types 12 to 15 of Table 9.3. -/
 theorem ana_excluded :
     allPatterns.filter (λ p => IsContiguous p ∧ GoalSourceMerged p) =
       [![0, 0, 0, 0], ![0, 0, 0, 1], ![0, 1, 1, 1], ![0, 1, 1, 2]] := by
@@ -121,13 +121,14 @@ theorem ana_excluded :
 /-! ### Morphological containment (Table 4.2)
 
 The Source structure contains the Goal structure, visible where the Source marker contains the
-Goal marker, as in Quechua *-man* against *-man-da*: the shell containment of `PathDir`. -/
+Goal marker, as in Quechua *-man* against *-man-da*, the shell containment of
+`Spatial.Path.Direction`. -/
 
 /-- Source contains Goal contains Place, as shell-stack inclusion. -/
 theorem source_contains_goal :
-    Spatial.PathDir.place.shells ⊂ Spatial.PathDir.goal.shells ∧
-      Spatial.PathDir.goal.shells ⊂ Spatial.PathDir.source.shells ∧
-      Spatial.PathDir.source.shells ⊂ Spatial.PathDir.route.shells := by
+    Spatial.Path.Direction.place.shells ⊂ Spatial.Path.Direction.goal.shells ∧
+      Spatial.Path.Direction.goal.shells ⊂ Spatial.Path.Direction.source.shells ∧
+      Spatial.Path.Direction.source.shells ⊂ Spatial.Path.Direction.route.shells := by
   refine ⟨?_, ?_, ?_⟩ <;> decide
 
 /-- Georgian's Location=Goal syncretism (Table 9.1) is Type 3. -/
@@ -136,17 +137,18 @@ theorem georgian_loc_goal_possible : Possible ![0, 0, 1, 2] := by decide
 /-! ### The semantic ground of *A&¬A (§5.4) -/
 
 /-- A Source path is a Goal path traversed the other way, so no path is both, and a single
-marker for Goal and Source would denote a path and its reverse at once: the ground of the
+marker for Goal and Source would denote a path and its reverse at once, the ground of the
 *A&¬A constraint. -/
-theorem goalSource_disjoint {Loc : Type*} (R : Set Loc) :
-    Disjoint (Spatial.PathDir.goal.denote R) (Spatial.PathDir.source.denote R) :=
-  Spatial.PathDir.disjoint_denote_goal_source R
+theorem goalSource_disjoint {Loc : Type*} (R : Set Loc) (p : Spatial.Path Loc) :
+    p.IsCofinal R → ¬ p.IsCoinitial R :=
+  Spatial.Path.IsCofinal.not_isCoinitial
 
-/-- A path from outside a place into it is a Goal path and not a Source path, and its reverse is
-a Source path. -/
+/-- A path from outside a place into it is cofinal and not coinitial, and its reverse is
+coinitial. -/
 example : let p : Spatial.Path ℕ := ⟨0, [1]⟩
-    p ∈ Spatial.PathDir.goal.denote {1} ∧ p ∉ Spatial.PathDir.source.denote {1} ∧
-      p.reverse ∈ Spatial.PathDir.source.denote {1} := by
-  simp [Spatial.PathDir.denote, Spatial.Path.goal, Spatial.Path.reverse, Spatial.Path.points]
+    p.IsCofinal {1} ∧ ¬ p.IsCoinitial {1} ∧ p.reverse.IsCoinitial {1} := by
+  have h : (⟨0, [1]⟩ : Spatial.Path ℕ).IsCofinal {1} :=
+    ⟨[0], [1], rfl, by simp, by simp, by simp, by simp⟩
+  exact ⟨h, h.not_isCoinitial, Spatial.Path.isCoinitial_reverse.2 h⟩
 
 end Pantcheva2011

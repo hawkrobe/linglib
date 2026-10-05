@@ -341,7 +341,7 @@ def squillare : Verb where
 
 /-! ### The perfect auxiliary -/
 
-/-- The auxiliary of the perfect of `v` on the frame `fr` ([maiden-robustelli-2007] §14.20):
+/-- The auxiliary of the perfect of `v` on the frame `fr` ([maiden-robustelli-2007] §14.20) is
 *avere* for a transitive verb; for an intransitive one *essere* when it is a state or expresses a
 change, to an endpoint or along a scale, and *avere* when an activity is in the foreground. -/
 def perfect (v : Verb) (fr : ArgumentFrame) : PerfectAux :=
@@ -362,7 +362,8 @@ example :
     [lavorare, nuotare, tossire, squillare, correre].map (perfect · .intransitive) =
       List.replicate 5 .have ∧
     perfect (correre.withPath Adposition.into) .intransitive = .be ∧
-    perfect (correre.withPath { Adposition.into with bounded := false }) .intransitive = .have ∧
+    perfect (correre.withPath { Adposition.into with shape := some .approximative })
+      .intransitive = .have ∧
     perfect (nuotare.withPath Adposition.into) .intransitive = .have := by
   decide
 
