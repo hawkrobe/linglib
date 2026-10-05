@@ -21,9 +21,10 @@ Fintel's sense and, where the context is anti-additive, Strawson anti-additive i
 The classical witnesses are complementation for negation, the sections of *every*, *no* and *few*,
 and *at most two*, which is antitone but not anti-additive (`atMost_not_antiAdditive`), the
 strictness that makes its context weak. The Strawson witnesses are the operators of
-`Logic/Natural/Strawson.lean`: *only*, *regret*, *since*, superlatives and *would*. The
-contexts of *before*, *without*, *deny*, *doubt*, *too … to* and the comparatives have no operator
-yet, and questions and the generic contexts license by other routes than strength.
+`Logic/Natural/Strawson.lean` and `Semantics/Attitudes/Desire/BestWorlds.lean`: *only*, *regret*,
+*since*, superlatives and *would*. The contexts of *before*, *without*, *deny*, *doubt*, *too … to*
+and the comparatives have no operator yet, and questions and the generic contexts license by other
+routes than strength.
 
 ## Main declarations
 
@@ -43,7 +44,7 @@ yet, and questions and the generic contexts license by other routes than strengt
 
 namespace PolarityItem
 
-open NaturalLogic Presupposition
+open NaturalLogic Presupposition Desire.BestWorlds
 open Quantifier Quantifier.GQ Quantifier.NP
 
 /-- A **classical witness** of a licensing context is a function holding every strength of

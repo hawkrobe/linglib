@@ -12,29 +12,31 @@ public import Mathlib.Data.Fintype.Powerset
 /-!
 # Phillips-Brown (2025): Some-Things-Considered Desire
 
-This file formalizes the question-based semantics of desire ascriptions of
-[phillips-brown-2025]. Conflicting ascriptions, *you want to take a nap* and *you don't want to
-take a nap* both true, falsify the belief-based semantics of [heim-1992] and [von-fintel-1999],
-which evaluate the agent's preferences over her whole belief set with no context sensitivity
-(§2.1) (`vonFintel_no_conflict`, `heim_no_conflict`); a context-sensitive preference relation
-predicts them but, valuing whole worlds, predicts *you want to fail the exam* wherever *Nap* is
-true (§2.2), an instance of the closure under doxastic equivalence of [villalta-2008] (§4.1)
-(`closure_under_doxastic_equivalence`, `cpr_overgenerates`). The proposal evaluates an
-ascription against a contextual question (§3), a partition of the worlds: the answers
+Phillips-Brown gives a question-based semantics for desire ascriptions. Conflicting ascriptions,
+*you want to take a nap* and *you don't want to take a nap* both true, falsify the belief-based
+semantics of Heim and von Fintel, which evaluate the agent's preferences over her whole belief set
+with no context sensitivity, and a context-sensitive preference relation that values whole worlds
+overgenerates, predicting *you want to fail the exam* wherever *Nap* is true. The proposal
+evaluates an ascription against a contextual question, a partition of the worlds: the answers
 compatible with the beliefs are ranked by the desires they entail, *S wants p* holds when every
-best answer entails *p* (`Want`), and the ascription is defined only if the question decides *p*
-(§3.6), is diverse and does not stack the deck (§3.7), and the beliefs are sensitive to it
-(§4.2) (`Defined`). *Nap* is true considering whether one naps and whether one feels rested,
-*Not-nap* considering whether one naps and whether one passes, and in the former context *Fail*
-is undefined, the outcome of the exam being ignored (`act_true`, `not_act_true`,
-`cost_undefined`); the lobster case, *Lobster*, *Not-lobster* and *Die*, is the same model. The
-deck-stacked question of Lu's case would make *Lu wants it not to rain* true and is excluded by
-the anti-deckstacking constraint, which the level playing field satisfies
-(`not_rain_deckstacked`, `deckstacked_excluded`); an agent whose beliefs are insensitive to
-every question that decides *p*, William III and nuclear war, has *S wants p* undefined in every
-context (`undefined_of_insensitive`), which leaves the semantics Strawson upward monotone
-(`toPartialProp_strawsonEntails`). On the finest question the semantics is the best-worlds one
-(`want_bot_iff`).
+best answer entails *p* (`Want`), and the ascription is defined only if the question decides *p*,
+is diverse, does not stack the deck, and the beliefs are sensitive to it (`Defined`).
+
+## Main results
+
+* `vonFintel_no_conflict`, `heim_no_conflict`: the belief-based semantics cannot make *Nap* and
+  *Not-nap* both true.
+* `closure_under_doxastic_equivalence`, `cpr_overgenerates`: on a belief-based semantics wanting
+  the act is wanting its believed cost, Villalta's closure under doxastic equivalence.
+* `act_true`, `not_act_true`, `cost_undefined`: *Nap* and *Not-nap* are each true in their own
+  context, and *Fail* is undefined in the first.
+* `not_rain_deckstacked`, `deckstacked_excluded`: the deck-stacked question of Lu's case is
+  excluded by the anti-deckstacking constraint, which the level playing field satisfies.
+* `undefined_of_insensitive`, `toPartialProp_strawsonEntails`: an agent whose beliefs are
+  insensitive to every question deciding *p* has *S wants p* undefined, which leaves the semantics
+  Strawson upward monotone.
+* `want_bot_iff`: on the finest question the semantics is the best-worlds one,
+  `Desire.BestWorlds.Want`.
 
 ## Implementation notes
 
@@ -78,10 +80,10 @@ variable {W : Type*} (G N : List (Finset W)) (s : Setoid W) (bel p : Set W)
 /-- An answer, the cell of `w`, compatible with the beliefs. -/
 def Live (w : W) : Prop := ∃ v ∈ s.cell w, v ∈ bel
 
-/-- The desires an answer entails: answers are ordered by inclusion of these. -/
-abbrev entailed : W → Set (Finset W) := Preorder.satisfied (λ w g => s.cell w ⊆ ↑g) {g | g ∈ G}
+/-- The desires an answer entails, by whose inclusion answers are ordered. -/
+abbrev entailed : W → Set (Finset W) := Preorder.satisfied (fun w g ↦ s.cell w ⊆ ↑g) {g | g ∈ G}
 
-/-- `S wants p`: every best live answer entails `p`. -/
+/-- `S wants p` holds when every best live answer entails `p`. -/
 def Want : Prop := ∀ w, MaximalFor (Live s bel) (entailed G s) w → s.cell w ⊆ p
 
 /-- Some answer entails `p` and some entails `¬p`. -/
@@ -90,7 +92,7 @@ def IsDiverse : Prop := (∃ w, s.cell w ⊆ p) ∧ ∃ w, s.cell w ⊆ pᶜ
 /-- Every salient proposition in `N` that some answer entails is itself decided. -/
 def IsAntiDeckstacking : Prop := ∀ q ∈ N, (∃ w, s.cell w ⊆ ↑q) → s.Decides ↑q
 
-/-- The beliefs discriminate among the answers: some answer is live and some is not. -/
+/-- The beliefs discriminate among the answers when some answer is live and some is not. -/
 def IsBelSensitive : Prop := (∃ w, Live s bel w) ∧ ∃ w, ¬ Live s bel w
 
 /-- The four metasemantic constraints jointly. -/
@@ -98,7 +100,7 @@ def Defined : Prop :=
   s.Decides p ∧ IsDiverse s p ∧ IsAntiDeckstacking N s ∧ IsBelSensitive s bel
 
 /-- Question-based *want* with its definedness conditions as presupposition. -/
-def toPartialProp : PartialProp W := ⟨λ _ => Defined N s bel p, λ _ => Want G s bel p⟩
+def toPartialProp : PartialProp W := ⟨fun _ ↦ Defined N s bel p, fun _ ↦ Want G s bel p⟩
 
 section Decidable
 
@@ -125,35 +127,36 @@ end Decidable
 variable {G N s bel p} {q : Set W}
 
 theorem Want.mono (hpq : p ⊆ q) (h : Want G s bel p) : Want G s bel q :=
-  λ w hw => (h w hw).trans hpq
+  fun w hw ↦ (h w hw).trans hpq
 
 /-- A best live answer exists whenever some answer is live. -/
 theorem exists_best [Finite W] (h : ∃ w, Live s bel w) :
     ∃ w, MaximalFor (Live s bel) (entailed G s) w :=
   Set.Finite.exists_maximalFor _ {w | Live s bel w} (Set.toFinite _) h
 
-/-- Without a `p`-answer the ascription is false as soon as some answer is live: the diversity
-constraint against vacuous falsity. -/
+/-- Without a `p`-answer the ascription is false as soon as some answer is live, which the
+diversity constraint against vacuous falsity rules out. -/
 theorem not_want_of_not_exists [Finite W] (hlive : ∃ w, Live s bel w)
-    (hp : ¬ ∃ w, s.cell w ⊆ p) : ¬ Want G s bel p := λ hw =>
+    (hp : ¬ ∃ w, s.cell w ⊆ p) : ¬ Want G s bel p := fun hw ↦
   let ⟨w, hb⟩ := exists_best (G := G) hlive
   hp ⟨w, hw w hb⟩
 
-/-- With the question deciding `p` and no `¬p`-answer the ascription is true: the diversity
-constraint against vacuous truth. -/
+/-- With the question deciding `p` and no `¬p`-answer the ascription is true, which the diversity
+constraint against vacuous truth rules out. -/
 theorem want_of_decides_of_not_exists (hc : s.Decides p) (hnp : ¬ ∃ w, s.cell w ⊆ pᶜ) :
-    Want G s bel p := λ w _ =>
-  (Setoid.decides_iff_forall_cell.1 hc w).resolve_right λ h => hnp ⟨w, h⟩
+    Want G s bel p := fun w _ ↦
+  (Setoid.decides_iff_forall_cell.1 hc w).resolve_right fun h ↦ hnp ⟨w, h⟩
 
-/-- Strawson upward monotonicity: where both ascriptions are defined, `want p` entails
-`want q` for `p ⊆ q`. -/
+/-- The semantics is Strawson upward monotone, since where both ascriptions are defined,
+`want p` entails `want q` for `p ⊆ q`. -/
 theorem toPartialProp_strawsonEntails (hpq : p ⊆ q) :
     (toPartialProp G N s bel p).strawsonEntails (toPartialProp G N s bel q) :=
-  λ _ _ _ h => h.mono hpq
+  fun _ _ _ h ↦ h.mono hpq
 
 /-- On the finest question, question-based *want* is best-worlds *want* (§3.4). -/
-theorem want_bot_iff : Want G ⊥ bel p ↔ BestWorlds.Want G bel p := by
-  simp only [Want, BestWorlds.want_iff, BestWorlds.le_iff, MaximalFor, Live,
+theorem want_bot_iff : Want G ⊥ bel p ↔ BestWorlds.Want (G.map fun s w ↦ w ∈ s) bel p := by
+  simp only [Want, BestWorlds.want_iff, Modality.atLeastAsGoodAs_iff, List.forall_mem_map,
+    MaximalFor, Live,
     entailed, Preorder.satisfied, Setoid.cell_bot, Set.mem_singleton_iff, exists_eq_left,
     Set.singleton_subset_iff, Set.ofPred_subset_ofPred, Finset.mem_coe, and_imp]
   simp +contextual [Set.mem_ofPred_eq]
@@ -162,7 +165,8 @@ end Semantics
 
 /-! ### The nap and lobster cases (§2.1, §2.2) -/
 
-/-- A state: whether the act is done, whether its benefit obtains, whether its cost obtains. -/
+/-- A state records whether the act is done, whether its benefit obtains and whether its cost
+obtains. -/
 structure World where
   act : Bool
   benefit : Bool
@@ -171,49 +175,49 @@ structure World where
 
 instance : Fintype World :=
   Fintype.ofEquiv (Bool × Bool × Bool)
-    ⟨λ t => ⟨t.1, t.2.1, t.2.2⟩, λ w => (w.act, w.benefit, w.cost), λ _ => rfl, λ _ => rfl⟩
+    ⟨fun t ↦ ⟨t.1, t.2.1, t.2.2⟩, fun w ↦ (w.act, w.benefit, w.cost), fun _ ↦ rfl, fun _ ↦ rfl⟩
 
-/-- The act: napping, eating the lobster. -/
+/-- The act is napping, or eating the lobster. -/
 def act : Finset World := Finset.univ.filter (·.act)
 
-/-- Its benefit: feeling rested, the gustatory experience. -/
+/-- Its benefit is feeling rested, or the gustatory experience. -/
 def benefit : Finset World := Finset.univ.filter (·.benefit)
 
-/-- Its cost: failing the exam, dying of anaphylactic shock. -/
+/-- Its cost is failing the exam, or dying of anaphylactic shock. -/
 def cost : Finset World := Finset.univ.filter (·.cost)
 
-/-- The beliefs: the benefit and the cost each come exactly with the act. -/
+/-- The beliefs have the benefit and the cost each come exactly with the act. -/
 def bel : Set World := {w | w.benefit = w.act ∧ w.cost = w.act}
 
 instance : DecidablePred (· ∈ bel) :=
-  λ w => inferInstanceAs (Decidable (w.benefit = w.act ∧ w.cost = w.act))
+  fun w ↦ inferInstanceAs (Decidable (w.benefit = w.act ∧ w.cost = w.act))
 
-/-- The desires: the benefit, and not the cost. -/
+/-- The desires are the benefit and not the cost. -/
 def desires : List (Finset World) := [benefit, costᶜ]
 
-/-- Von Fintel's semantics cannot make *Nap* and *Not-nap* both true, whatever the desires:
-some belief-world is best, and it settles the act one way. -/
-theorem vonFintel_no_conflict (G : List (Finset World)) :
-    ¬ (BestWorlds.Want G bel ↑act ∧ BestWorlds.Want G bel (↑act : Set World)ᶜ) :=
-  λ ⟨h, h'⟩ => h.not_compl ⟨⟨true, true, true⟩, by decide⟩ h'
+/-- Von Fintel's semantics cannot make *Nap* and *Not-nap* both true, whatever the desires,
+since some belief-world is best and it settles the act one way. -/
+theorem vonFintel_no_conflict (A : List (World → Prop)) :
+    ¬ (BestWorlds.Want A bel ↑act ∧ BestWorlds.Want A bel (↑act : Set World)ᶜ) :=
+  fun ⟨h, h'⟩ ↦ h.not_compl ⟨⟨true, true, true⟩, by decide⟩ h'
 
 /-- Neither can Heim's, under her definedness amendment and antisymmetric desirability. -/
 theorem heim_no_conflict (F : Conditional.Frame World) (w : World) [Std.Antisymm (F.pref w)]
-    (hd : Conditional.Defined bel ↑act) :
+    (hd : Desire.IsContingent bel ↑act) :
     ¬ (Conditional.Want F bel w ↑act ∧ Conditional.Want F bel w (↑act : Set World)ᶜ) :=
-  λ ⟨h, h'⟩ => h.not_compl hd h'
+  fun ⟨h, h'⟩ ↦ h.not_compl hd h'
 
-/-- Closure under doxastic equivalence (§4.1): on a belief-based semantics, the cost being
-believed to come exactly with the act, wanting the act is wanting the cost, *Nap* entailing
-*Fail*. -/
-theorem closure_under_doxastic_equivalence (G : List (Finset World))
-    (h : BestWorlds.Want G bel ↑act) : BestWorlds.Want G bel ↑cost :=
+/-- On a belief-based semantics, the cost being believed to come exactly with the act, wanting
+the act is wanting the cost, *Nap* entailing *Fail*, the closure under doxastic equivalence of
+§4.1. -/
+theorem closure_under_doxastic_equivalence (A : List (World → Prop))
+    (h : BestWorlds.Want A bel ↑act) : BestWorlds.Want A bel ↑cost :=
   h.mono_on (by decide +kernel)
 
-/-- A context-sensitive preference relation overgenerates (§2.2): the value of feeling rested
-makes *Nap* true, and with it *Fail*. -/
+/-- A context-sensitive preference relation overgenerates (§2.2), since the value of feeling
+rested makes *Nap* true, and with it *Fail*. -/
 theorem cpr_overgenerates :
-    BestWorlds.Want [benefit] bel ↑act ∧ BestWorlds.Want [benefit] bel ↑cost :=
+    BestWorlds.Want [(· ∈ benefit)] bel ↑act ∧ BestWorlds.Want [(· ∈ benefit)] bel ↑cost :=
   ⟨by decide, closure_under_doxastic_equivalence _ (by decide +kernel)⟩
 
 /-! ### Some-things-considered desire (§3) -/
@@ -232,15 +236,15 @@ instance : DecidableRel qCost := inferInstanceAs (DecidableRel (Setoid.ofProps _
 /-- The salient propositions of the case, the test set of the anti-deckstacking constraint. -/
 def issues : List (Finset World) := [act, benefit, cost]
 
-/-- *Nap*, *Lobster*: considering the act and its benefit, the ascription is defined and true. -/
+/-- Considering the act and its benefit, *Nap* and *Lobster* are defined and true. -/
 theorem act_true : Defined issues qBenefit bel ↑act ∧ Want desires qBenefit bel ↑act := by
   decide +kernel
 
-/-- *Fail*, *Die*: in that context the cost is ignored, so the ascription is undefined
-(§3.6), which blocks the inference from *Nap* to *Fail* (§4.1). -/
+/-- In that context the cost is ignored, so *Fail* and *Die* are undefined (§3.6), which blocks
+the inference from *Nap* to *Fail* (§4.1). -/
 theorem cost_undefined : ¬ qBenefit.Decides ↑cost := by decide +kernel
 
-/-- *Not-nap*, *Not-lobster*: considering the act and its cost, not doing the act is wanted,
+/-- Considering the act and its cost, not doing the act is wanted, *Not-nap* and *Not-lobster*,
 and so is avoiding the cost, *Not-die*. -/
 theorem not_act_true :
     Defined issues qCost bel (↑act : Set World)ᶜ ∧ Want desires qCost bel (↑act : Set World)ᶜ ∧
@@ -249,7 +253,7 @@ theorem not_act_true :
 
 /-! ### Deck-stacking (§3.7) -/
 
-/-- A state of Lu's case: whether it rains, whether Lu is happy. -/
+/-- A state of Lu's case records whether it rains and whether Lu is happy. -/
 structure LuWorld where
   rain : Bool
   happy : Bool
@@ -257,7 +261,7 @@ structure LuWorld where
 
 instance : Fintype LuWorld :=
   Fintype.ofEquiv (Bool × Bool)
-    ⟨λ t => ⟨t.1, t.2⟩, λ w => (w.rain, w.happy), λ _ => rfl, λ _ => rfl⟩
+    ⟨fun t ↦ ⟨t.1, t.2⟩, fun w ↦ (w.rain, w.happy), fun _ ↦ rfl, fun _ ↦ rfl⟩
 
 /-- It rains tomorrow. -/
 def rain : Finset LuWorld := Finset.univ.filter (·.rain)
@@ -265,13 +269,14 @@ def rain : Finset LuWorld := Finset.univ.filter (·.rain)
 /-- Lu is happy tomorrow. -/
 def happy : Finset LuWorld := Finset.univ.filter (·.happy)
 
-/-- Lu's beliefs: happy whatever the weather. -/
+/-- Lu believes she is happy whatever the weather. -/
 def belLu : Set LuWorld := {w | w.happy = true}
 
-instance : DecidablePred (· ∈ belLu) := λ w => inferInstanceAs (Decidable (w.happy = true))
+instance : DecidablePred (· ∈ belLu) := fun w ↦ inferInstanceAs (Decidable (w.happy = true))
 
-/-- The deck-stacked question (Figure 7): whether it rains, and if not, whether Lu is happy. -/
-def qStacked : Setoid LuWorld := Setoid.ker λ w => if w.rain then none else some w.happy
+/-- The deck-stacked question (Figure 7) asks whether it rains, and if not, whether Lu is
+happy. -/
+def qStacked : Setoid LuWorld := Setoid.ker fun w ↦ if w.rain then none else some w.happy
 
 /-- The level playing field (Figure 9). -/
 def qFair : Setoid LuWorld := Setoid.ofProps {rain, happy}
@@ -294,7 +299,7 @@ theorem deckstacked_excluded :
   decide +kernel
 
 /-- Read with `q` ranging over all propositions, the Anti-deckstacking Constraint admits only
-the finest partition: two worlds in one cell, with a second cell available, are equal, since
+the finest partition. Two worlds in one cell, with a second cell available, are equal, since
 the union of the second cell with the first minus one of the worlds is entailed by an answer
 and decided by none. -/
 theorem antiDeckstacking_univ_singleton {W : Type*} {s : Setoid W}
@@ -309,11 +314,12 @@ theorem antiDeckstacking_univ_singleton {W : Type*} {s : Setoid W}
 /-! ### Belief-sensitivity (§4.2) -/
 
 /-- An agent whose beliefs are insensitive to every question that decides `p`, William III and
-England avoiding nuclear war with France, has *S wants p* undefined in every context: where `p`
-is decided the beliefs are insensitive, and where they are sensitive `p` is not decided. -/
+England avoiding nuclear war with France, has *S wants p* undefined in every context, since
+where `p` is decided the beliefs are insensitive, and where they are sensitive `p` is not
+decided. -/
 theorem undefined_of_insensitive {W : Type*} {bel p : Set W}
     (h : ∀ s : Setoid W, s.Decides p → ¬ IsBelSensitive s bel) (N : List (Finset W))
     (s : Setoid W) : ¬ Defined N s bel p :=
-  λ hd => h s hd.1 hd.2.2.2
+  fun hd ↦ h s hd.1 hd.2.2.2
 
 end PhillipsBrown2025

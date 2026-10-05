@@ -10,8 +10,9 @@ public import Linglib.Data.Examples.VonFintel1999
 Von Fintel defends the Fauconnier–Ladusaw theory of negative polarity licensing against four
 licensers that are not downward entailing, focus *only*, the adversative attitudes, superlatives
 and conditional antecedents: each is downward entailing once the inference is checked only where
-the presuppositions hold. The notion and the operators are in `Logic/Natural/Strawson.lean`; this
-file carries the paper's arguments around them, and its licensing judgments are the rows of
+the presuppositions hold. The notion and the operators are in `Logic/Natural/Strawson.lean`, the
+attitude entries in `Semantics/Attitudes/Desire/BestWorlds.lean`; this file carries the paper's
+arguments around them, and its licensing judgments are the rows of
 `Data/Examples/VonFintel1999.json`.
 
 *Want* and *glad* are upward entailing in the Strawson sense, on the best-worlds semantics and on
@@ -26,8 +27,8 @@ entailing.
 
 ## Main results
 
-* `isStrawsonUE_want`, `isStrawsonUE_gladBetter`, `isStrawsonUE_regretBetter`: the desire
-  attitudes are Strawson upward entailing.
+* `isStrawsonUE_gladBetter`, `isStrawsonUE_regretBetter`: the set-comparison *glad* and *sorry*
+  are Strawson upward entailing, like the best-worlds *want* and *glad*.
 * `holds_glad_of_want`, `not_gladBetter_of_want`: wanting and believing gives gladness on the
   best-worlds semantics, not on the set comparison.
 * `not_isStrawsonDE_regretBetter`: the set-comparison *sorry* would not license.
@@ -55,7 +56,7 @@ entailing.
 
 namespace VonFintel1999
 
-open NaturalLogic Presupposition Modality Conditional
+open NaturalLogic Presupposition Modality Conditional Desire.BestWorlds
 
 variable {W ι : Type*}
 
@@ -68,16 +69,6 @@ variable (dox rel : W → Set W) (g : W → List (W → Prop)) (p : Set W)
 /-- `X` is better than `Y` when every `X`-world is strictly better than every `Y`-world under the
 ordering source `A`. -/
 def Better (A : List (W → Prop)) (X Y : Set W) : Prop := ∀ x ∈ X, ∀ y ∈ Y, x <[A] y
-
-/-- *a wants p* presupposes that the modal base contains both `p`-worlds and non-`p`-worlds and
-asserts that its best worlds under the desire ordering are `p`-worlds (45). -/
-def want : PartialProp W where
-  presup w := (rel w ∩ p).Nonempty ∧ (rel w \ p).Nonempty
-  assertion w := bestAmong (rel w) (g w) ⊆ p
-
-/-- *Want* is Strawson upward entailing in its complement (§3.2). -/
-theorem isStrawsonUE_want : IsStrawsonUE (want rel g) :=
-  .of_monotone fun _ _ h _ hw ↦ hw.trans h
 
 /-- The set-comparison *glad* (52) has the presupposition of the best-worlds one and asserts that
 the belief worlds are strictly better than every relevant non-`p` world. -/
@@ -104,7 +95,7 @@ theorem not_gladBetter_of_want :
       (w : Fin 3), dox w ⊆ p ∧ (want rel g p).assertion w ∧
         ¬ (gladBetter dox rel g p).assertion w :=
   ⟨fun _ ↦ {0}, fun _ ↦ Set.univ, fun _ ↦ [(· = 1)], {0, 1}, 0, by simp, by
-    simp only [want, Set.subset_def, mem_bestAmong, atLeastAsGoodAs_iff,
+    simp only [want, Want, Set.subset_def, mem_bestAmong, atLeastAsGoodAs_iff,
       List.forall_mem_singleton, Set.mem_univ, Set.mem_insert_iff, Set.mem_singleton_iff]
     decide, by
     simp only [gladBetter, Better, strictlyBetter_iff, atLeastAsGoodAs_iff,

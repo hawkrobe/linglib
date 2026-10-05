@@ -68,6 +68,16 @@ theorem atLeastAsGoodAs_trans {A : List (W → Prop)} {u v w : W} (huv : u ≤[A
 /-- With an empty ordering source every world is at least as good as every other. -/
 theorem atLeastAsGoodAs_nil (w z : W) : w ≤[([] : List (W → Prop))] z := fun _ h ↦ nomatch h
 
+instance decidableRel_atLeastAsGoodAs_nil :
+    DecidableRel (atLeastAsGoodAs ([] : List (W → Prop))) :=
+  fun w z ↦ isTrue (atLeastAsGoodAs_nil w z)
+
+instance decidableRel_atLeastAsGoodAs_cons (p : W → Prop) [DecidablePred p]
+    (A : List (W → Prop)) [DecidableRel (atLeastAsGoodAs A)] :
+    DecidableRel (atLeastAsGoodAs (p :: A)) :=
+  fun w z ↦ decidable_of_iff ((p z → p w) ∧ w ≤[A] z) <| by
+    simp only [atLeastAsGoodAs_iff, List.forall_mem_cons]
+
 /-- An empty ordering source induces the preorder relating every two worlds. -/
 @[simp] theorem premisePreorder_nil : premisePreorder ([] : List (W → Prop)) = ⊤ :=
   top_unique fun _ _ _ ↦ atLeastAsGoodAs_nil _ _
