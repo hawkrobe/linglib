@@ -11,7 +11,7 @@ A wh-question over atomic answers `a i` denotes, under [dayal-1996]'s sum-closed
 the family of conjunctions `conjFamily a S` over non-empty groups `S`; under [spector-2008]'s
 higher-order quantification (pruned to disjunctions of atoms, as in [fox-2018]) it denotes the
 family of disjunctions `disj a S`. Both families are read off a world's `profile`, the atoms
-true there, and both induce the same strong answers.
+true there, and both induce the same partition, the kernel of `profile`.
 
 ## References
 
@@ -36,10 +36,10 @@ def conjFamily (S : Finset ι) : Set W := ⋂ i ∈ S, a i
 /-- The disjunction of the atoms in a group. -/
 def disj (S : Finset ι) : Set W := ⋃ i ∈ S, a i
 
-/-- The Hamblin set closed under conjunction: one member per non-empty group. -/
+/-- The Hamblin set closed under conjunction has one member per non-empty group. -/
 def conjClosure : Set (Set W) := conjFamily a '' {S | S.Nonempty}
 
-/-- The Hamblin set closed under disjunction: one member per non-empty group. -/
+/-- The Hamblin set closed under disjunction has one member per non-empty group. -/
 def disjClosure : Set (Set W) := disj a '' {S | S.Nonempty}
 
 variable {a}
@@ -71,38 +71,35 @@ theorem conjClosure_finite [Fintype ι] : (conjClosure a).Finite :=
 theorem disjClosure_finite [Fintype ι] : (disjClosure a).Finite :=
   (Set.toFinite {S : Finset ι | S.Nonempty}).image _
 
-/-- Under either closure, two worlds give the same strong answer iff they have the same
+/-- Under conjunctive closure, two worlds are in the same cell iff they have the same
 profile. -/
-theorem mem_strongAnswer_conjClosure_iff {w v : W} :
-    v ∈ strongAnswer (conjClosure a) w ↔ profile a v = profile a w := by
-  rw [mem_strongAnswer]
+theorem partition_conjClosure : partition (conjClosure a) = Setoid.ker (profile a) := by
+  ext v w
+  rw [partition_iff, Setoid.ker_def]
   constructor
   · intro h
     ext i
-    have := h _ (conjFamily_mem_conjClosure ⟨i, Finset.mem_singleton_self i⟩)
-    rw [conjFamily_singleton] at this
-    exact this.symm
+    simpa only [conjFamily_singleton, mem_profile] using
+      h _ (conjFamily_mem_conjClosure (Finset.singleton_nonempty i))
   · rintro h _ ⟨S, -, rfl⟩
     rw [mem_conjFamily_iff_subset, mem_conjFamily_iff_subset, h]
 
-theorem mem_strongAnswer_disjClosure_iff {w v : W} :
-    v ∈ strongAnswer (disjClosure a) w ↔ profile a v = profile a w := by
-  rw [mem_strongAnswer]
+/-- Under disjunctive closure, two worlds are in the same cell iff they have the same profile. -/
+theorem partition_disjClosure : partition (disjClosure a) = Setoid.ker (profile a) := by
+  ext v w
+  rw [partition_iff, Setoid.ker_def]
   constructor
   · intro h
     ext i
-    have := h _ (disj_mem_disjClosure ⟨i, Finset.mem_singleton_self i⟩)
-    rw [disj_singleton] at this
-    exact this.symm
+    simpa only [disj_singleton, mem_profile] using
+      h _ (disj_mem_disjClosure (Finset.singleton_nonempty i))
   · rintro h _ ⟨S, -, rfl⟩
-    have hi : ∀ i, w ∈ a i ↔ v ∈ a i := λ i => by
-      change i ∈ profile a w ↔ i ∈ profile a v
-      rw [h]
-    simp only [mem_disj, hi]
+    simp only [Set.ext_iff, mem_profile] at h
+    simp only [mem_disj, h]
 
-/-- Both closures induce the same logical partition. -/
-theorem strongAnswer_conjClosure_eq_disjClosure (w : W) :
-    strongAnswer (conjClosure a) w = strongAnswer (disjClosure a) w :=
-  Set.ext λ _ => mem_strongAnswer_conjClosure_iff.trans mem_strongAnswer_disjClosure_iff.symm
+/-- Both closures induce the same partition. -/
+theorem partition_conjClosure_eq_disjClosure :
+    partition (conjClosure a) = partition (disjClosure a) :=
+  partition_conjClosure.trans partition_disjClosure.symm
 
 end Question

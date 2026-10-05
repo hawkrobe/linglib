@@ -55,7 +55,7 @@ open Semantics.Composition.Tree
 
 /-! ### The lexical specification -/
 
-/-- The quantification over propositions an outside-merging complementizer contributes: an
+/-- An outside-merging complementizer contributes a quantification over propositions: an
 indefinite ranging over a set of propositions, a polar indefinite requiring a binder, or a
 definite binding a single proposition. -/
 inductive Quantification
@@ -64,16 +64,16 @@ inductive Quantification
   | definite
   deriving DecidableEq, Repr
 
-/-- The lexical specification of a clause-typing element: merging outside the clause, as the
-matrix verb's argument, with a quantification over propositions, or inside its lower C domain,
-binding no propositional variable. -/
+/-- A clause-typing element is lexically specified as merging outside the clause, as the matrix
+verb's argument, with a quantification over propositions, or inside its lower C domain, binding
+no propositional variable. -/
 inductive Spec
   | outside (q : Quantification)
   | inside
   deriving DecidableEq, Repr
 
-/-- The specification of the Modern Greek complementizers: *oti* indefinite, *an* polar, *pu*
-definite, all outside, and *na* inside. -/
+/-- Among the Modern Greek complementizers, *oti* is indefinite, *an* polar and *pu* definite,
+all merging outside, and *na* merges inside. -/
 def profile (c : Complementizer) : Option Spec :=
   if c = oti then some (.outside .indefinite)
   else if c = an then some (.outside .polar)
@@ -92,14 +92,14 @@ theorem factive_iff_definite :
 
 variable {W : Type*}
 
-/-- The *oti*-clause: an indefinite over propositions, asserting its content without
+/-- The *oti*-clause is an indefinite over propositions, asserting its content without
 presupposition. -/
 def otiClause (p : Set W) : PartialProp W := { presup := λ _ => True, assertion := (· ∈ p) }
 
-/-- The *pu*-clause: a definite over propositions, presupposing the proposition it locates. -/
+/-- The *pu*-clause is a definite over propositions, presupposing the proposition it locates. -/
 def puClause (p : Set W) : PartialProp W := { presup := (· ∈ p), assertion := (· ∈ p) }
 
-/-- The *an*-clause: the polar set of the proposition and its negation. -/
+/-- The *an*-clause is the polar set of the proposition and its negation. -/
 def anClause (p : Set W) : Question W := Question.polar p
 
 /-- Factivity is the definite's presupposition: the *pu*-clause is defined at a world exactly
@@ -114,12 +114,12 @@ theorem pu_projects_through_negation (p : Set W) (w : W) :
       (PartialProp.neg (otiClause p)).defined w :=
   ⟨Iff.rfl, trivial⟩
 
-/-- Strong against weak presupposition: the *pu*-clause strongly entails the *oti*-clause. -/
+/-- The *pu*-clause strongly entails the *oti*-clause, strong presupposition against weak. -/
 theorem puClause_strongEntails_oti (p : Set W) : (puClause p).strongEntails (otiClause p) :=
   λ _ _ ha => ⟨trivial, ha⟩
 
 /-- The *an*-clause asserts nothing, raising only the issue its binder must settle. -/
-theorem anClause_not_informative (p : Set W) : ¬ (anClause p).isInformative :=
+theorem anClause_not_informative (p : Set W) : ¬ (anClause p).IsInformative :=
   Question.not_isInformative_polar p
 
 /-- An outside merger takes a proposition, and a *na*-clause, its subject position reopened,
@@ -129,7 +129,7 @@ theorem comp_over_na_type_clash (b : Semantics.Composition.Ty) :
 
 /-! ### Selection -/
 
-/-- The classes of selecting predicate the paper distinguishes: interrogatives, which bind the
+/-- The paper distinguishes these classes of selecting predicate: interrogatives, which bind the
 polar complementizer themselves; verbs of knowing, which take any complement; epistemic verbs,
 which take *na* only in the present tense, some of them only under an operator; volitionals,
 which take *na* alone; emotive factives, which take *pu* alone; emotives that take *pu* on a
@@ -163,7 +163,7 @@ def classOf (v : Verb) : Option Class :=
   else if v == leo then some .saying
   else none
 
-/-- A selection configuration: the predicate's class, the complementizer, and the matrix
+/-- A selection configuration records the predicate's class, the complementizer, and the matrix
 operators and tenses the paper finds relevant. -/
 structure Config where
   cls : Class

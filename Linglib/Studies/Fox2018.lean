@@ -55,14 +55,14 @@ section Matching
 
 variable (Exh : Set W → Set W) (H : Set (Set W)) (A : Set W)
 
-/-- The contextual partition: the strong answers restricted to the context set. -/
+/-- The contextual partition restricts the strong answers to the context set. -/
 def contextualPartition : Set (Set W) := {C | ∃ w ∈ A, C = strongAnswer H w ∩ A}
 
-/-- Cell Identification: every cell of the contextual partition is the exhaustification of some
-member. -/
+/-- Cell Identification holds when every cell of the contextual partition is the
+exhaustification of some member. -/
 def CellIdentification : Prop := ∀ C ∈ contextualPartition H A, ∃ p ∈ H, Exh p ∩ A = C
 
-/-- Non-Vacuity: every member exhaustifies to a cell of the contextual partition. -/
+/-- Non-Vacuity holds when every member exhaustifies to a cell of the contextual partition. -/
 def NonVacuity : Prop := ∀ p ∈ H, ∃ C ∈ contextualPartition H A, Exh p ∩ A = C
 
 /-- Question Partition Matching. -/
@@ -130,7 +130,8 @@ theorem cellIdentification_exhCell_iff :
     obtain ⟨p, hp⟩ := h w hw
     exact ⟨p, hp.1.1, by rw [exhCell_eq_strongAnswer H w hp]⟩
 
-/-- Non-Vacuity: every member is the strongest true member at some context world. -/
+/-- Non-Vacuity holds for `exhCell` iff every member is the strongest true member at some
+context world. -/
 theorem nonVacuity_exhCell_iff :
     NonVacuity (exhCell H) H A ↔ ∀ p ∈ H, ∃ w ∈ A, IsStrongestTrueAnswer H w p := by
   constructor
@@ -142,8 +143,8 @@ theorem nonVacuity_exhCell_iff :
     obtain ⟨w, hw, hwp⟩ := h p hp
     exact ⟨_, ⟨w, hw, rfl⟩, by rw [exhCell_eq_strongAnswer H w hwp]⟩
 
-/-- A singular which-question: over pairwise incomparable atoms, Dayal's presupposition is that
-exactly one is true. -/
+/-- For a singular which-question over pairwise incomparable atoms, Dayal's presupposition is
+that exactly one atom is true. -/
 theorem isExhaustivelyResolvable_range_iff_existsUnique {ι : Type*} {a : ι → Set W}
     (ha : ∀ i j, a i ⊆ a j → i = j) (w : W) :
     IsExhaustivelyResolvable (range a) w ↔ ∃! i, w ∈ a i := by
@@ -151,8 +152,8 @@ theorem isExhaustivelyResolvable_range_iff_existsUnique {ι : Type*} {a : ι →
   exact exists_congr λ i => and_congr_right λ _ =>
     ⟨λ h j hj => (ha _ _ (h j hj)).symm, λ h j hj => by rw [h j hj]⟩
 
-/-- A plural which-question: closed under conjunction, the set is resolvable wherever some
-member is true. -/
+/-- A plural which-question, closed under conjunction, is resolvable wherever some member is
+true. -/
 theorem isExhaustivelyResolvable_conjClosure {ι : Type*} [Fintype ι] {a : ι → Set W} {w : W}
     (hw : ∃ i, w ∈ a i) : IsExhaustivelyResolvable (conjClosure a) w := by
   classical
@@ -229,8 +230,8 @@ theorem isCellValued_cell : IsCellValued (cell H) H := λ _ hp _ hw => cell_eq_s
 theorem qpm_cell_iff_partitionsBy {A : Set W} : QPM (cell H) H A ↔ PartitionsBy (cell H) H A :=
   qpm_iff_partitionsBy isCellValued_cell
 
-/-- Free choice in one step: on [fox-2007]'s diamond the cell operator asserts both independent
-alternatives and denies the strongest. -/
+/-- On [fox-2007]'s diamond the cell operator asserts both independent alternatives and denies
+the strongest, deriving free choice in one step. -/
 theorem cell_diamond {w s n e : Set W} (h : Fox2007.IsDiamond w s n e) :
     cell {w, s, n, e} w = (s ∩ n) \ e := by
   rw [cell_eq_of_iff _ _ λ q hq => h.isInnocentlyExcludable_iff hq]
@@ -271,7 +272,7 @@ variable {ι : Type*} {a : ι → Set W}
 /-- Every profile is realized by some world. -/
 def Rich (a : ι → Set W) : Prop := ∀ T : Finset ι, ∃ w, profile a w = ↑T
 
-/-- The worlds with a given profile: a cell of the logical partition of either closure. -/
+/-- The worlds with a given profile form a cell of the logical partition of either closure. -/
 def profileCell (a : ι → Set W) (T : Finset ι) : Set W := {v | profile a v = ↑T}
 
 theorem mem_profileCell {T : Finset ι} {v : W} : v ∈ profileCell a T ↔ profile a v = ↑T := Iff.rfl
@@ -280,12 +281,14 @@ theorem mem_profileCell {T : Finset ι} {v : W} : v ∈ profileCell a T ↔ prof
 theorem strongAnswer_conjClosure_eq {T : Finset ι} {w : W} (hw : profile a w = ↑T) :
     strongAnswer (conjClosure a) w = profileCell a T := by
   ext v
-  rw [mem_strongAnswer_conjClosure_iff, hw, mem_profileCell]
+  rw [strongAnswer_eq_cell, partition_conjClosure, Setoid.mem_cell, Setoid.ker_def, hw,
+    mem_profileCell]
 
 theorem strongAnswer_disjClosure_eq {T : Finset ι} {w : W} (hw : profile a w = ↑T) :
     strongAnswer (disjClosure a) w = profileCell a T := by
   ext v
-  rw [mem_strongAnswer_disjClosure_iff, hw, mem_profileCell]
+  rw [strongAnswer_eq_cell, partition_disjClosure, Setoid.mem_cell, Setoid.ker_def, hw,
+    mem_profileCell]
 
 /-- Under either closure, a world lies below another iff its profile is included. -/
 theorem leALT_conjClosure_iff {u v : W} :
@@ -356,7 +359,8 @@ theorem isInnocentlyExcludable_conj_iff [Fintype ι] {S T : Finset ι} (hS : S.N
         rw [mem_conjFamily_iff_subset, hw₀]
         exact λ h => hUT (Finset.coe_subset.1 h)
 
-/-- The minimal worlds given the disjunction over a group: the sole witnesses of its members. -/
+/-- The minimal worlds given the disjunction over a group are the sole witnesses of its
+members. -/
 theorem mem_exhMW_disjClosure_iff {T : Finset ι} {u : W} :
     u ∈ exhMW (disjClosure a) (disj a T) ↔ ∃ i ∈ T, profile a u = ↑({i} : Finset ι) := by
   have hsing : ∀ {i : ι} {v : W}, profile a v = ↑({i} : Finset ι) → v ∈ a i := λ {i v} hv => by
@@ -444,12 +448,14 @@ theorem cell_disj {T : Finset ι} (hT : T.Nonempty) :
     refine ⟨⟨i, hi, (hmem i).2 hi⟩, λ S _ => ?_⟩
     simp only [hmem]
 
-/-- The revised answer operator: the true members entailing the cell identifier. -/
+/-- The revised answer operator returns the true members entailing the cell identifier. -/
 def ans (Exh : Set W → Set W) (H : Set (Set W)) (w : W) : Set (Set W) :=
   {q ∈ H | w ∈ q ∧ ∀ p ∈ H, w ∈ Exh p → q ⊆ p}
 
-/-- Mention-all: the conjunctive question's answer set is the conjunction over the profile. -/
-theorem ans_conjClosure [Fintype ι] {T : Finset ι} (hT : T.Nonempty) {w : W} (hw : profile a w = ↑T) :
+/-- The conjunctive question's answer set is the conjunction over the profile, the mention-all
+reading. -/
+theorem ans_conjClosure [Fintype ι] {T : Finset ι} (hT : T.Nonempty) {w : W}
+    (hw : profile a w = ↑T) :
     ans (cell (conjClosure a)) (conjClosure a) w = {conjFamily a T} := by
   ext q
   rw [mem_singleton_iff]
@@ -471,8 +477,8 @@ theorem ans_conjClosure [Fintype ι] {T : Finset ι} (hT : T.Nonempty) {w : W} (
     subst hwU'
     exact subset_rfl
 
-/-- Mention-some: the disjunctive question's answer set is every disjunction over a sub-group of
-the profile. -/
+/-- The disjunctive question's answer set consists of the disjunctions over the non-empty
+sub-groups of the profile, the mention-some reading. -/
 theorem ans_disjClosure {T : Finset ι} (hT : T.Nonempty) {w : W} (hw : profile a w = ↑T) :
     ans (cell (disjClosure a)) (disjClosure a) w = disj a '' {S | S.Nonempty ∧ S ⊆ T} := by
   ext q
@@ -508,7 +514,7 @@ end Closures
 
 /-! ### The data -/
 
-/-- A question of the data: whether it is a degree question, whether negation and a modal
+/-- A question of the data records whether it is a degree question, whether negation and a modal
 intervene, whether the wh-phrase is singular, and whether the island reading is blocked. -/
 structure Row where
   negation : Bool
@@ -529,8 +535,8 @@ def Row.ofDatum (ex : Datum) : Option Row := do
 
 def rows : List Row := Examples.all.filterMap Row.ofDatum
 
-/-- The islands of the data: a reading is blocked under negation without an intervening modal,
-or for a singular wh-phrase. -/
+/-- The theory predicts the islands of the data: a reading is blocked under negation without an
+intervening modal, or for a singular wh-phrase. -/
 theorem rows_predicted :
     ∀ r ∈ rows, (r.blocked = true ↔ (r.negation = true ∧ r.modal = false) ∨ r.singular = true) := by
   decide

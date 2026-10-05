@@ -76,8 +76,8 @@ namespace DTS
 
 /-! ### Contexts -/
 
-/-- A DTS context (Partial Definition 6): the proposition H at issue, with ¬H implicit, and a
-prior over worlds. -/
+/-- A DTS context (Partial Definition 6) consists of the proposition H at issue, with ¬H
+implicit, and a prior over worlds. -/
 structure Context (W : Type*) [MeasurableSpace W] where
   /-- The hypothesis H. -/
   topic : Set W
@@ -89,7 +89,7 @@ structure Context (W : Type*) [MeasurableSpace W] where
 
 variable {W : Type*} [MeasurableSpace W]
 
-/-- Swap the issue: replace H with ¬H. -/
+/-- Swapping the issue replaces H with ¬H. -/
 def swapIssue (ctx : Context W) : Context W :=
   { topic := ctx.topicᶜ,
     topicMeasurable := ctx.topicMeasurable.compl,
@@ -105,7 +105,7 @@ def Context.toQuestion (ctx : Context W) : Question W :=
 
 /-- The issue is inquisitive iff H is neither everything nor nothing. -/
 theorem Context.toQuestion_isInquisitive_iff (ctx : Context W) :
-    ctx.toQuestion.isInquisitive ↔ ctx.topic ≠ ∅ ∧ ctx.topic ≠ Set.univ :=
+    ctx.toQuestion.IsInquisitive ↔ ctx.topic ≠ ∅ ∧ ctx.topic ≠ Set.univ :=
   Question.isInquisitive_polar_iff _
 
 /-! ### The induced binary testing problem
@@ -116,8 +116,8 @@ it. `Context.conditional` is the model's family of data-generating
 distributions and `Context.hypothesisKernel` packages it as the kernel of
 the testing problem (the shape of Degenne's `twoHypKernel μ ν`). -/
 
-/-- The data-generating distribution of each side of the issue: the prior
-conditioned on H (at `true`) or on ¬H (at `false`). -/
+/-- Each side of the issue generates data by the prior conditioned on H (at `true`) or on ¬H
+(at `false`). -/
 noncomputable def Context.conditional (ctx : Context W) : Bool → Measure W
   | true => ctx.prior[|ctx.topic]
   | false => ctx.prior[|ctx.topicᶜ]
@@ -137,8 +137,8 @@ theorem Context.conditional_swapIssue (ctx : Context W) (θ : Bool) :
 noncomputable def Context.hypothesisKernel (ctx : Context W) : Kernel Bool W :=
   .ofFunOfCountable ctx.conditional
 
-/-- The parameter prior of the induced binary testing problem: the issue
-splits the prior's total mass. -/
+/-- The parameter prior of the induced binary testing problem splits the prior's total mass
+between the two sides of the issue. -/
 noncomputable def Context.hypothesisPrior (ctx : Context W) : Measure Bool :=
   ctx.prior ctx.topic • Measure.dirac true + ctx.prior ctx.topicᶜ • Measure.dirac false
 
@@ -153,7 +153,7 @@ noncomputable def Context.hypothesisPrior (ctx : Context W) : Measure Bool :=
     ctx.hypothesisPrior {false} = ctx.prior ctx.topicᶜ := by
   simp [Context.hypothesisPrior, Measure.dirac_apply' _ (MeasurableSet.singleton _)]
 
-/-- A live issue: both sides carry mass. Merin's dichotomic issue {H, ¬H}
+/-- An issue is live when both sides carry mass. Merin's dichotomic issue {H, ¬H}
 presupposes a genuine question, so the degenerate cases are excluded at the
 level of the object rather than per theorem. -/
 class Context.Nondegenerate (ctx : Context W) : Prop where
@@ -178,7 +178,7 @@ instance (ctx : Context W) (θ : Bool) :
 
 /-! ### Bayes factor and relevance -/
 
-/-- Bayes factor: P(E∣H) / P(E∣¬H), in `ℝ≥0∞` — the likelihood ratio of the
+/-- The Bayes factor P(E∣H) / P(E∣¬H), in `ℝ≥0∞`, is the likelihood ratio of the
 induced binary testing problem. Total division gives the boundary cases
 their true values: P(E∣¬H) = 0 with P(E∣H) > 0 is `∞` (infinitely strong
 evidence for H), and 0/0 = 0. -/
@@ -192,8 +192,8 @@ theorem bayesFactor_def (ctx : Context W) (e : Set W) :
 theorem bayesFactor_eq_hypothesisKernel_div (ctx : Context W) (e : Set W) :
     bayesFactor ctx e = ctx.hypothesisKernel true e / ctx.hypothesisKernel false e := rfl
 
-/-- Merin's relevance of E to H (Definition 4), the log Bayes factor, real-valued through
-`ENNReal.toReal`: the boundary cases `0` and `∞` both land at `Real.log 0 = 0`,
+/-- Merin's relevance of E to H (Definition 4) is the log Bayes factor, real-valued through
+`ENNReal.toReal`. The boundary cases `0` and `∞` both land at `Real.log 0 = 0`,
 so sign and order facts are read off `bayesFactor` itself
 (`posRelevant_iff_one_lt_toReal`, `relevance_lt_relevance`). -/
 noncomputable def relevance (ctx : Context W) (e : Set W) : ℝ :=
@@ -325,7 +325,7 @@ end Count
 The relevance signs in real-valued cross-product mass form — the ENNReal→ℝ
 transfer done once, edge cases included; the particle files consume these. -/
 
-/-- Positive relevance as a cross-product of real masses: E confirms H iff
+/-- Positive relevance is a comparison of cross-products of real masses: E confirms H iff
 the H-side mass of E outweighs its ¬H-side mass after weighting each by the
 opposite cell of the issue. -/
 theorem posRelevant_iff_real_cross (ctx : Context W) [IsFiniteMeasure ctx.prior]
@@ -424,8 +424,8 @@ interpretation assumes this of coordinated sisters unless something suggests oth
 def CondIndepIssue (ctx : Context W) (a b : Set W) : Prop :=
   ∀ θ, IndepSet a b (ctx.conditional θ)
 
-/-- The product-equation characterization of issue-conditional
-independence: P(A∧B∣H) = P(A∣H)·P(B∣H) and likewise given ¬H. -/
+/-- Issue-conditional independence is the product equation P(A∧B∣H) = P(A∣H)·P(B∣H)
+together with its analogue given ¬H. -/
 theorem condIndepIssue_iff (ctx : Context W) {a b : Set W}
     (ham : MeasurableSet a) (hbm : MeasurableSet b) :
     CondIndepIssue ctx a b ↔
@@ -473,10 +473,8 @@ end Count
 
 /-! ### Sign reversal -/
 
-/-- **Corollary 3** (qualitative sign reversal): E is positively relevant to
-H iff E is negatively relevant to ¬H.
-
-The ordinal content of r_H(E) = −r_{¬H}(E). -/
+/-- E is positively relevant to H iff E is negatively relevant to ¬H. This is the qualitative
+sign reversal of Corollary 3, the ordinal content of r_H(E) = −r_{¬H}(E). -/
 theorem sign_reversal_qual (ctx : Context W) [IsFiniteMeasure ctx.prior]
     (e : Set W)
     (hEH : ctx.prior[|ctx.topic] e ≠ 0)
@@ -489,9 +487,9 @@ theorem sign_reversal_qual (ctx : Context W) [IsFiniteMeasure ctx.prior]
     ENNReal.div_lt_iff (Or.inl hEH)
       (Or.inl (cond_apply_ne_top _ ctx.topicMeasurable e)), one_mul]
 
-/-- **Corollary 3** (quantitative): BF_H(E) · BF_{¬H}(E) = 1.
-
-Exact when both conditional probabilities are nonzero. -/
+/-- The Bayes factors of E for H and for ¬H multiply to one, BF_H(E) · BF_{¬H}(E) = 1, the
+quantitative form of Corollary 3. The identity is exact when both conditional probabilities are
+nonzero. -/
 theorem sign_reversal (ctx : Context W) [IsFiniteMeasure ctx.prior]
     (e : Set W)
     (hEH : ctx.prior[|ctx.topic] e ≠ 0)
@@ -501,9 +499,9 @@ theorem sign_reversal (ctx : Context W) [IsFiniteMeasure ctx.prior]
   exact likelihoodRatio_mul_swap hEH (cond_apply_ne_top _ ctx.topicMeasurable e)
     hENotH (cond_apply_ne_top _ ctx.topicMeasurable.compl e)
 
-/-- **Fact 2**: relevance is the differential of conditional
-informativeness — log BF_H(E) = inf(E, ¬H) − inf(E, H), where
-inf(E, X) = −log P(E∣X) is the conditional surprisal of E. -/
+/-- Relevance is the differential of conditional informativeness (Fact 2):
+log BF_H(E) = inf(E, ¬H) − inf(E, H), where inf(E, X) = −log P(E∣X) is the conditional surprisal
+of E. -/
 theorem relevance_eq_neg_log_sub_neg_log (ctx : Context W) (e : Set W)
     (hEH : ctx.prior[|ctx.topic] e ≠ 0)
     (hENotH : ctx.prior[|ctx.topicᶜ] e ≠ 0) :
@@ -514,8 +512,8 @@ theorem relevance_eq_neg_log_sub_neg_log (ctx : Context W) (e : Set W)
 
 /-! ### Consequences of issue-conditional independence -/
 
-/-- **Fact 5**: Under issue-conditional independence, the Bayes factor is
-multiplicative over conjunction: BF(A∧B) = BF(A) · BF(B). -/
+/-- Under issue-conditional independence the Bayes factor is multiplicative over conjunction,
+BF(A∧B) = BF(A) · BF(B) (Fact 5). -/
 theorem CondIndepIssue.bayesFactor_inter {ctx : Context W}
     [IsFiniteMeasure ctx.prior] {a b : Set W}
     (h : CondIndepIssue ctx a b)
@@ -524,8 +522,8 @@ theorem CondIndepIssue.bayesFactor_inter {ctx : Context W}
   likelihoodRatio_inter (h true) (h false) hNotH'
     (cond_apply_ne_top _ ctx.topicMeasurable.compl b)
 
-/-- **Theorem 6a** (conjunction): under issue-conditional independence with
-both A, B positively relevant, conjunction dominates both conjuncts. -/
+/-- Under issue-conditional independence with A and B both positively relevant, their
+conjunction dominates both conjuncts, the conjunction case of Theorem 6a. -/
 theorem CondIndepIssue.max_bayesFactor_lt_inter {ctx : Context W}
     [IsFiniteMeasure ctx.prior] [ctx.Nondegenerate] {a b : Set W}
     (h : CondIndepIssue ctx a b)
@@ -536,9 +534,9 @@ theorem CondIndepIssue.max_bayesFactor_lt_inter {ctx : Context W}
   have := ctx.isProbabilityMeasure_conditional false
   exact max_likelihoodRatio_lt_inter (h true) (h false) hPosA hPosB hNa hNb
 
-/-- **Theorem 6a** (disjunction, upper): under issue-conditional
-independence with both A, B positively relevant, the disjunction is
-dominated by the stronger disjunct. -/
+/-- Under issue-conditional independence with A and B both positively relevant, their
+disjunction is dominated by the stronger disjunct, the upper bound for disjunction in
+Theorem 6a. -/
 theorem CondIndepIssue.bayesFactor_union_lt_max {ctx : Context W}
     [IsFiniteMeasure ctx.prior] [ctx.Nondegenerate] {a b : Set W}
     (hbm : MeasurableSet b) (h : CondIndepIssue ctx a b)
@@ -549,9 +547,8 @@ theorem CondIndepIssue.bayesFactor_union_lt_max {ctx : Context W}
   have := ctx.isProbabilityMeasure_conditional false
   exact likelihoodRatio_union_lt_max hbm (h true) (h false) hPosA hPosB hNa hNb
 
-/-- **Theorem 6a** (disjunction, lower): under issue-conditional
-independence with both A, B positively relevant, the disjunction is still
-positively relevant. -/
+/-- Under issue-conditional independence with A and B both positively relevant, their
+disjunction is still positively relevant, the lower bound for disjunction in Theorem 6a. -/
 theorem CondIndepIssue.one_lt_bayesFactor_union {ctx : Context W}
     [IsFiniteMeasure ctx.prior] [ctx.Nondegenerate] {a b : Set W}
     (hbm : MeasurableSet b) (h : CondIndepIssue ctx a b)
@@ -582,10 +579,9 @@ theorem posRelevant_iff_lt_cond (ctx : Context W) [IsProbabilityMeasure ctx.prio
 
 /-! ### Risk of the induced problem -/
 
-/-- The average risk of an estimator against the induced testing problem,
-in its finite two-point form: the loss on each side of the issue weighted
-by that side's prior mass (the countable-space register of
-`Mathlib.Probability.Decision.Risk.Countable`). -/
+/-- In its finite two-point form, the average risk of an estimator against the induced testing
+problem is the loss on each side of the issue weighted by that side's prior mass, as in the
+countable-space setting of `Mathlib.Probability.Decision.Risk.Countable`. -/
 theorem avgRisk_hypothesisKernel {𝓨 : Type*} [MeasurableSpace 𝓨] (ctx : Context W)
     (ℓ : Bool → 𝓨 → ℝ≥0∞) (κ : Kernel W 𝓨) :
     avgRisk ℓ ctx.hypothesisKernel κ ctx.hypothesisPrior =

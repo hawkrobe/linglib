@@ -77,10 +77,10 @@ theorem orbit_eq_alt_query {p : Set W} (hp : p.Nonempty) (hpc : pᶜ.Nonempty) :
 
 /-! ### Discourse strategies of polar subquestions -/
 
-/-- A *wh*-question over candidates pursued through the polar question for each: the tree of the
-sitting-back passage. -/
+/-- The tree of the sitting-back passage pursues a *wh*-question over candidates through the
+polar question for each candidate. -/
 def agentStrategy (agents : List F) (P : F → Set W) : Strategy W :=
-  .node (⨆ w, ofSet (strongAnswer (Set.range P) w)) (agents.map fun f ↦ .leaf (ofSet (P f)).query)
+  .node (fromSetoid (partition (Set.range P))) (agents.map fun f ↦ .leaf (ofSet (P f)).query)
 
 /-- The polar subquestions for all candidates jointly resolve the *wh*-question. -/
 theorem agentStrategy_isComplete {agents : List F} (hcov : ∀ f, f ∈ agents)
@@ -92,21 +92,22 @@ theorem agentStrategy_isComplete {agents : List F} (hcov : ∀ f, f ∈ agents)
       simp only [Multiset.mem_coe, List.mem_map, List.map_map, Function.comp_def, RoseTree.leaf,
         RoseTree.value_node]
       exact ⟨fun ⟨f, _, h⟩ ↦ ⟨f, h⟩, fun ⟨f, h⟩ ↦ ⟨f, hcov f, h⟩⟩
-    rw [← iInf_query_ofSet_eq_iSup_ofSet_strongAnswer]
+    rw [fromSetoid_partition, iInf_range]
+    simp_rw [← query_ofSet]
     refine (le_antisymm ?_ ?_).le
     · exact le_iInf fun f ↦ Multiset.inf_le ((hmem _).mpr ⟨f, rfl⟩)
     · exact Multiset.le_inf.mpr fun q hq ↦ by obtain ⟨f, rfl⟩ := (hmem q).mp hq; exact iInf_le _ f
   · obtain ⟨f, _, rfl⟩ := List.mem_map.mp hc
     exact .leaf _
 
-/-- A polar question about a disjunction of instances pursued through the polar questions of the
-instances: the tree of the treaty passage. -/
+/-- The tree of the treaty passage pursues a polar question about a disjunction of instances
+through the polar questions of the instances. -/
 def scalarStrategy (p q : Set W) : Strategy W :=
   .node (ofSet (p ∪ q)).query [.leaf (ofSet p).query, .leaf (ofSet q).query]
 
 theorem scalarStrategy_isComplete (p q : Set W) : (scalarStrategy p q).IsComplete := by
   refine .node_pair (le_def.mpr fun σ hσ ↦ ?_) (.leaf _) (.leaf _)
-  rw [RoseTree.leaf, RoseTree.leaf, RoseTree.value_node, RoseTree.value_node, inf_eq_conj] at hσ
+  rw [RoseTree.leaf, RoseTree.leaf, RoseTree.value_node, RoseTree.value_node] at hσ
   obtain ⟨h₁, h₂⟩ := hσ
   have h₁' : σ ∈ (ofSet p).query := h₁
   have h₂' : σ ∈ (ofSet q).query := h₂
@@ -142,8 +143,8 @@ inductive Relation
   | identity | analogy | unstated
   deriving DecidableEq, Repr
 
-/-- The response a polarity-focus utterance makes to a preceding turn, if the antecedent is one:
-an affirmation after a negative statement, a positive statement or a polar question. -/
+/-- When the antecedent is a preceding turn, a polarity-focus utterance responds to it with an
+affirmation, after a negative statement, a positive statement or a polar question. -/
 def Antecedent.response : Antecedent → Option Discourse.Response
   | .explicitNegation => some ⟨.assertion, .negative, .positive⟩
   | .positive => some ⟨.assertion, .positive, .positive⟩

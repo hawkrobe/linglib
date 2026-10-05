@@ -182,7 +182,7 @@ theorem proposition_toInquisitive [Fintype W] [DecidableEq W] (M : Inquisitive.M
   | query φ ih =>
     simp only [toInquisitive, Inquisitive.Formula.polarQ, Inquisitive.Formula.neg,
       Inquisitive.proposition_inqDisj, Inquisitive.proposition_impl, Inquisitive.proposition_bot,
-      himp_bot, proposition, ih, Question.query, Question.compl_eq, Question.sup_eq_inqDisj]
+      himp_bot, proposition, ih, Question.query, Question.compl_eq]
 
 /-- The highlights of a formula are not a function of the InqB formula it abbreviates, since `!a`
 and `¬¬a` abbreviate the same formula but highlight `a` with opposite polarities. -/

@@ -22,8 +22,8 @@ existential and a universal relation to propositions.
 
 ## Main statements
 
-* `exhaustifiedPartition_mentionSome_eq_diff`: the answers that are some world's strong answer are
-  the strongly exhaustive answers other than the contradiction.
+* `classes_partition_mentionSome`: the cells of the partition are the strongly exhaustive answers
+  other than the contradiction.
 * `negation_generalization`, `restricted_compl_subsingleton_iff`: a question and its negation have
   the same strongly exhaustive answers, and with a restrictor outside the negation knowing one
   settles the other exactly when the domain is known.
@@ -109,28 +109,19 @@ theorem trueAnswers_stronglyExhaustive :
   · rintro rfl
     exact ⟨⟨α w, rfl⟩, rfl⟩
 
-/-- (129) is the substrate's partition of the mention-some set, the classes of the kernel of the
-extension map. -/
-theorem exhaustifiedPartition_mentionSome :
-    exhaustifiedPartition (mentionSome α) = (Setoid.ker α).classes := by
-  ext C
-  simp only [mem_exhaustifiedPartition, strongAnswer_mentionSome, Setoid.classes,
-    Set.mem_ofPred_eq]
-  exact exists_congr fun w ↦ by
-    rw [show α ⁻¹' {α w} = {x | Setoid.ker α x w} from
-      Set.ext fun _ ↦ Setoid.ker_iff_mem_preimage.symm]
+/-- The partition (129) relates the worlds where the abstract has the same extension, so its
+cells partition the worlds (p. 70). -/
+theorem partition_mentionSome : partition (mentionSome α) = Setoid.ker α := by
+  ext v w
+  rw [← Setoid.mem_cell, ← strongAnswer_eq_cell, strongAnswer_mentionSome]
+  rfl
 
-/-- The answers that are some world's strong answer partition the worlds (p. 70). -/
-theorem isPartition_exhaustifiedPartition_mentionSome :
-    Setoid.IsPartition (exhaustifiedPartition (mentionSome α)) :=
-  exhaustifiedPartition_mentionSome α ▸ Setoid.isPartition_classes _
-
-/-- The answers that are some world's strong answer (129) are the strongly exhaustive answers
-other than the contradiction (footnote 24). -/
-theorem exhaustifiedPartition_mentionSome_eq_diff :
-    exhaustifiedPartition (mentionSome α) = stronglyExhaustive α \ {∅} := by
+/-- The cells of the partition (129) are the strongly exhaustive answers other than the
+contradiction (footnote 24). -/
+theorem classes_partition_mentionSome :
+    (partition (mentionSome α)).classes = stronglyExhaustive α \ {∅} := by
   ext C
-  simp only [mem_exhaustifiedPartition, strongAnswer_mentionSome, Set.mem_sdiff,
+  simp only [classes_partition, Set.mem_range, strongAnswer_mentionSome, Set.mem_sdiff,
     mem_stronglyExhaustive, Set.mem_singleton_iff]
   constructor
   · rintro ⟨w, rfl⟩

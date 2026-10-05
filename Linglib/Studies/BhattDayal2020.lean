@@ -67,7 +67,7 @@ variable {W : Type*}
 
 /-! ### The singleton presupposition -/
 
-/-- The domain of *kya:* (23): its sister has a single alternative, the paper's
+/-- *kya:* is defined (23) when its sister has a single alternative, the paper's
 `∃p ∈ Q[∀q[q ∈ Q → q = p]]` read on the sister's alternatives. On that domain *kya:* is the
 identity. -/
 def KyaDefined (Q : Question W) : Prop := ∃ p, alt Q = {p}
@@ -101,7 +101,7 @@ theorem kya_not_two_cell {p : Set W} (hne : p ≠ ∅) (hnu : p ≠ Set.univ) :
 /-- The presupposition picks out exactly the non-inquisitive contents among the normal ones.
 The declarative *p* meets it as well as the polar question, since both are `ofSet p`. -/
 theorem kyaDefined_iff_not_isInquisitive {Q : Question W} (hQ : Q.IsNormal) :
-    KyaDefined Q ↔ ¬Q.isInquisitive :=
+    KyaDefined Q ↔ ¬Q.IsInquisitive :=
   hQ.exists_alt_eq_singleton_iff.trans (info_mem_iff_not_isInquisitive Q)
 
 /-! ### Alternative questions -/
