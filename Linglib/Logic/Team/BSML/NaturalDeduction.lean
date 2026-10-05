@@ -3,7 +3,6 @@ module
 public import Linglib.Logic.Team.BSML.Classical
 public import Linglib.Logic.Team.BSML.Negation
 public import Linglib.Logic.Team.BSML.Properties
-public import Linglib.Logic.Team.BSML.Scenarios
 
 /-!
 # Natural deduction for BSML
@@ -341,7 +340,7 @@ theorem Derives.single (φ : Formula Atom) : {φ} ⊢ φ := .hyp rfl
 theorem Derives.mono (hΓΔ : Γ ⊆ Δ) (h : Γ ⊢ φ) : Δ ⊢ φ :=
   Set.union_eq_self_of_subset_left hΓΔ ▸ h.cut (.hyp (Set.mem_insert φ Δ))
 
-/-- `cut` within one set of premises. -/
+/-- `cut` applies within one set of premises. -/
 theorem Derives.cut' (h₁ : Γ ⊢ φ) (h₂ : insert φ Γ ⊢ ψ) : Γ ⊢ ψ :=
   Set.union_self Γ ▸ h₁.cut h₂
 
@@ -349,14 +348,14 @@ theorem Derives.cut' (h₁ : Γ ⊢ φ) (h₂ : insert φ Γ ⊢ ψ) : Γ ⊢ ψ
 theorem Derives.trans (h₁ : Γ ⊢ φ) (h₂ : {φ} ⊢ ψ) : Γ ⊢ ψ :=
   h₁.cut' (h₂.mono (by simp))
 
-/-- `∧I` within one set of premises. -/
+/-- `∧I` applies within one set of premises. -/
 theorem Derives.conj (h₁ : Γ ⊢ φ) (h₂ : Γ ⊢ ψ) : Γ ⊢ .conj φ ψ :=
   Set.union_self Γ ▸ h₁.conjI h₂
 
-/-- `◇Mon`, with the premise first. -/
+/-- `◇Mon` applies with the premise first. -/
 theorem Derives.possMon' (h₁ : Γ ⊢ .poss φ) (h₂ : {φ} ⊢ ψ) : Γ ⊢ .poss ψ := .possMon h₂ h₁
 
-/-- `∨Mon` with a side derivation from the replaced disjunct alone. -/
+/-- `∨Mon` applies with a side derivation from the replaced disjunct alone. -/
 theorem Derives.disjMon' (h₁ : Γ ⊢ .disj φ ψ) (h₂ : {ψ} ⊢ χ) : Γ ⊢ .disj φ χ := by
   simpa using h₁.disjMon (Δ := ∅) (by simp) (by simpa using h₂)
 
@@ -448,16 +447,19 @@ theorem not_atom_derives_disj_ne (p : Atom) : ¬ {.atom p} ⊢ .disj (.atom p) .
   obtain ⟨t₁, -, t₂, hne, h⟩ := soundness hd M ∅ fun γ hγ ↦ hγ ▸ empty_supports_atom M p
   exact hne.ne_empty (Finset.union_eq_empty.mp h).2
 
-/-- In the model of [aloni-anttila-yang-2024] Figure 3(b), p. 6, `w_ab` sees `w_a` and itself,
-    and `w_∅` sees `w_b`. -/
-private def figure3b : KripkeModel TwoAtomWorld FCAtom where
-  access | .both => {.onlyA, .both} | .nothing => {.onlyB} | _ => ∅
-  val p w := w.holds p
-
-/-- Free choice fails without enrichment. The state `{w_ab, w_∅}` of Figure 3(b) supports
-    `◇(a ∨ b)` but not `◇a ∧ ◇b` ([aloni-anttila-yang-2024] pp. 6–7). -/
-theorem not_poss_disj_derives_conj_poss :
-    ¬ {.poss (.disj (.atom .a) (.atom .b))} ⊢ .conj (.poss (.atom FCAtom.a)) (.poss (.atom .b)) :=
-  fun h ↦ absurd (soundness h figure3b {.both, .nothing} fun γ hγ ↦ hγ ▸ by decide) (by decide)
+/-- Free choice fails without enrichment, `◇(p ∨ q) ⊬ ◇p ∧ ◇q` for distinct atoms. A world that
+    sees only a `q`-world is a zero-model of `◇(p ∨ q)`, the empty team witnessing `p`, but does
+    not support `◇p`, as at the world `w_∅` of the state `s_b` in [aloni-anttila-yang-2024]
+    Figure 3(b) (pp. 6–7). -/
+theorem not_poss_disj_derives_conj_poss {p q : Atom} (hpq : p ≠ q) :
+    ¬ {.poss (.disj (.atom p) (.atom q))} ⊢ .conj (.poss (.atom p)) (.poss (.atom q)) := by
+  classical
+  intro hd
+  let M : KripkeModel Unit Atom := ⟨fun _ ↦ {()}, fun r _ ↦ r = q⟩
+  have h := soundness hd M {()} fun γ hγ ↦ hγ ▸ fun _ _ ↦
+    ⟨{()}, subset_rfl, Finset.singleton_nonempty _, ∅, empty_supports_atom M p, {()},
+      fun _ _ ↦ by simp [M], by simp⟩
+  obtain ⟨s, hs, ⟨⟨⟩, hu⟩, hp⟩ := h.1 () (Finset.mem_singleton_self _)
+  exact hpq (by simpa [M] using hp () hu)
 
 end BSML

@@ -3,7 +3,7 @@ module
 public import Linglib.Logic.Team.BSML.Enrichment
 public import Linglib.Logic.Team.BSML.Negation
 public import Linglib.Logic.Team.BSML.Classical
-public import Linglib.Logic.Team.BSML.Scenarios
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Free choice from neglect-zero in BSML
@@ -12,8 +12,8 @@ Aloni derives free-choice inferences from a neglect-zero tendency. Her pragmatic
 `[·]⁺` (`BSML.enrich`) conjoins `NE` to every subformula, so an enriched split disjunction needs
 two non-empty witnesses, and under a possibility modal each witness is a live option. The paper's
 free-choice facts are proved here for arbitrary `NE`-free `α β`, and its figures are checked by
-`decide` on the four-world model `w_∅, w_a, w_b, w_ab` (`BSML.TwoAtomWorld`), whose running
-state is `{w_a, w_b}`.
+`decide` on its four worlds `w_∅, w_a, w_b, w_ab`, each the set of atoms true at it, whose
+running state is `{w_a, w_b}`.
 
 ## Main results
 
@@ -46,8 +46,8 @@ namespace Aloni2022
 open BSML
 open ModalLogic (KripkeModel)
 
-variable {W : Type*} [DecidableEq W] {Atom : Type*} {M : KripkeModel W Atom}
-  {α β φ : Formula Atom} {t : Finset W}
+variable {W : Type*} [DecidableEq W] {A : Type*} {M : KripkeModel W A} {α β φ : Formula A}
+  {t : Finset W}
 
 /-! ### Free-choice facts -/
 
@@ -122,53 +122,56 @@ theorem epistemicContradiction (hSB : Team.IsStateBased M.access t)
 
 /-! ### The four-world illustrations
 
-The paper's figures are model–state pairs on `TwoAtomWorld`; each `figNx` fixes
-the accessibility arrows drawn in Figure N(x), worlds without arrows seeing `∅`. -/
+A world of the paper's figures is the set of atoms true at it: `w_a` is "a world where only `a`
+is true, `w_b` only `b`, etc." (fn. 11, p. 5:14), so `w_∅`, `w_a`, `w_b`, `w_ab` are `∅`, `{a}`,
+`{b}`, `{a, b}` and an atom holds at a world by membership. Each `figNx` fixes the accessibility
+arrows drawn in Figure N(x), worlds without arrows seeing `∅`. -/
 
-/-- The paper's Kripke models on the four worlds have valuation `TwoAtomWorld.holds` and
-accessibility `R`. -/
-def model (R : TwoAtomWorld → Finset TwoAtomWorld) : KripkeModel TwoAtomWorld FCAtom :=
-  ⟨R, fun p w ↦ w.holds p⟩
+inductive Atom
+  | a
+  | b
+  deriving DecidableEq, Fintype
 
-/-- The state `{w_a, w_b}` of Figures 1, 2(a), 3 and 5. -/
-def state : Finset TwoAtomWorld := {.onlyA, .onlyB}
+/-- `model R` is the paper's Kripke model on the four worlds with accessibility `R`. -/
+def model (R : Finset Atom → Finset (Finset Atom)) : KripkeModel (Finset Atom) Atom :=
+  ⟨R, fun p w ↦ p ∈ w⟩
+
+/-- `state` is the running state `{w_a, w_b}` of Figures 1, 2(a), 3 and 5. -/
+def state : Finset (Finset Atom) := {{.a}, {.b}}
 
 /-- Figures 1–2 draw no arrows, so only atoms and disjunction are evaluated. -/
-def propositional : KripkeModel TwoAtomWorld FCAtom := model fun _ ↦ ∅
+def propositional : KripkeModel (Finset Atom) Atom := model fun _ ↦ ∅
 
 /-- Figure 3(a) has `R[w_a] = R[w_b] = {w_ab, w_∅}`. -/
-def fig3a : KripkeModel TwoAtomWorld FCAtom :=
-  model fun | .onlyA | .onlyB => {.both, .nothing} | _ => ∅
+def fig3a : KripkeModel (Finset Atom) Atom := model fun w ↦ if w ∈ state then {{.a, .b}, ∅} else ∅
 
 /-- Figure 3(b) has `R[w_a] = R[w_b] = {w_a, w_b}`. -/
-def fig3b : KripkeModel TwoAtomWorld FCAtom :=
-  model fun | .onlyA | .onlyB => {.onlyA, .onlyB} | _ => ∅
+def fig3b : KripkeModel (Finset Atom) Atom := model fun w ↦ if w ∈ state then state else ∅
 
 /-- Figure 3(c) has `R[w_a] = {w_ab}`, `R[w_b] = {w_a, w_∅}`. -/
-def fig3c : KripkeModel TwoAtomWorld FCAtom :=
-  model fun | .onlyA => {.both} | .onlyB => {.onlyA, .nothing} | _ => ∅
+def fig3c : KripkeModel (Finset Atom) Atom :=
+  model fun w ↦ if w = {.a} then {{.a, .b}} else if w = {.b} then {{.a}, ∅} else ∅
 
 /-- Figure 4(a) has `R[w_ab] = {w_a}`. -/
-def fig4a : KripkeModel TwoAtomWorld FCAtom := model fun | .both => {.onlyA} | _ => ∅
+def fig4a : KripkeModel (Finset Atom) Atom := model fun w ↦ if w = {.a, .b} then {{.a}} else ∅
 
 /-- Figure 4(b) has `R[w_ab] = {w_a, w_b}`. -/
-def fig4b : KripkeModel TwoAtomWorld FCAtom := model fun | .both => {.onlyA, .onlyB} | _ => ∅
+def fig4b : KripkeModel (Finset Atom) Atom := model fun w ↦ if w = {.a, .b} then state else ∅
 
 /-- Figure 5(a) has `R[w_a] = R[w_b] = {w_b}`. -/
-def fig5a : KripkeModel TwoAtomWorld FCAtom := model fun | .onlyA | .onlyB => {.onlyB} | _ => ∅
+def fig5a : KripkeModel (Finset Atom) Atom := model fun w ↦ if w ∈ state then {{.b}} else ∅
 
 /-- Figure 5(b) has `R[w_a] = {w_a}`, `R[w_b] = {w_b}`. -/
-def fig5b : KripkeModel TwoAtomWorld FCAtom :=
-  model fun | .onlyA => {.onlyA} | .onlyB => {.onlyB} | _ => ∅
+def fig5b : KripkeModel (Finset Atom) Atom := model fun w ↦ if w ∈ state then {w} else ∅
 
-/-- The disjunction `a ∨ b`. -/
-def aOrB : Formula FCAtom := .disj (.atom .a) (.atom .b)
+/-- `aOrB` is the disjunction `a ∨ b`. -/
+def aOrB : Formula Atom := .disj (.atom .a) (.atom .b)
 
-/-- `◇a`. -/
-def mayA : Formula FCAtom := .poss (.atom .a)
+/-- `mayA` is `◇a`. -/
+def mayA : Formula Atom := .poss (.atom .a)
 
-/-- `◇b`. -/
-def mayB : Formula FCAtom := .poss (.atom .b)
+/-- `mayB` is `◇b`. -/
+def mayB : Formula Atom := .poss (.atom .b)
 
 -- Figure 1: the state supports neither `a` nor `¬a`.
 example : ¬ support propositional (.atom .a) state ∧
@@ -178,12 +181,12 @@ example : ¬ support propositional (.atom .a) state ∧
 -- (c) `{w_a}` — a zero-model, `b` witnessed by `∅` — and (d) `{w_a, w_b, w_∅}`.
 example : support propositional aOrB state ∧ support propositional (enrich aOrB) state := by
   decide
-example : support propositional aOrB {.both, .onlyB} ∧
-    support propositional (enrich aOrB) {.both, .onlyB} := by decide
-example : support propositional aOrB {.onlyA} ∧ ¬ support propositional (enrich aOrB) {.onlyA} := by
+example : support propositional aOrB {{.a, .b}, {.b}} ∧
+    support propositional (enrich aOrB) {{.a, .b}, {.b}} := by decide
+example : support propositional aOrB {{.a}} ∧ ¬ support propositional (enrich aOrB) {{.a}} := by
   decide
-example : ¬ support propositional aOrB {.onlyA, .onlyB, .nothing} ∧
-    ¬ support propositional (enrich aOrB) {.onlyA, .onlyB, .nothing} := by decide
+example : ¬ support propositional aOrB {{.a}, {.b}, ∅} ∧
+    ¬ support propositional (enrich aOrB) {{.a}, {.b}, ∅} := by decide
 
 -- Figure 3: indisputability against state-basedness on `{w_a, w_b}`.
 example : Team.IsIndisputable fig3a.access state ∧ ¬ Team.IsStateBased fig3a.access state := by
@@ -198,9 +201,9 @@ example : support fig3b mayA state ∧ ¬ support fig3b (.atom .a) state ∧
 
 -- Figure 4: at `{w_ab}`, (a) supports `◇(a ∨ b)` but not `[◇(a ∨ b)]⁺`, since `b` is
 -- no open possibility in `R[w_ab]`; (b) supports `[◇(a ∨ b)]⁺`.
-example : support fig4a (.poss aOrB) {.both} ∧ ¬ support fig4a (enrich (.poss aOrB)) {.both} := by
-  decide
-example : support fig4b (enrich (.poss aOrB)) {.both} := by decide
+example : support fig4a (.poss aOrB) {{.a, .b}} ∧
+    ¬ support fig4a (enrich (.poss aOrB)) {{.a, .b}} := by decide
+example : support fig4b (enrich (.poss aOrB)) {{.a, .b}} := by decide
 
 -- Figure 5: wide-scope FC fails (a) without enrichment on an indisputable `R` and
 -- (b) with enrichment on a non-indisputable `R`; (63b) is the locally enriched
@@ -218,10 +221,10 @@ example : support fig5b (.disj (.poss (enrich (.atom .a))) (.poss (enrich (.atom
     state `{w_b}` is disjoint from every team supporting `¬((a ∧ NE) ∨ b)` but does not support
     its negation, since `a` is no open possibility in `{w_b}`. -/
 theorem not_forall_support_neg_of_forall_disjoint :
-    ¬ ∀ (φ : Formula FCAtom) (M : KripkeModel TwoAtomWorld FCAtom) (s : Finset TwoAtomWorld),
+    ¬ ∀ (φ : Formula Atom) (M : KripkeModel (Finset Atom) Atom) (s : Finset (Finset Atom)),
       (∀ t, support M φ t → Disjoint s t) → support M (.neg φ) s :=
   fun h ↦ (by decide : ¬ support propositional
-      (.neg (.neg (.disj (.conj (.atom .a) .ne) (.atom .b)))) {.onlyB})
+      (.neg (.neg (.disj (.conj (.atom .a) .ne) (.atom .b)))) {{.b}})
     (h _ _ _ (by decide))
 
 /-! ### Negative free choice (Fact 14)
@@ -234,14 +237,14 @@ Arabic". The countermodel is Figure 5(b)'s frame at the state `{w_a}`: inside
 (`BSML.negativeFC_star_poss`, `BSML.negativeFC_star_nec`). -/
 
 theorem not_negativeFC_poss :
-    ¬ ConsequencePlus (W := TwoAtomWorld) (Atom := FCAtom)
+    ¬ ConsequencePlus (W := Finset Atom) (Atom := Atom)
       (.poss (.neg (.conj (.atom .a) (.atom .b)))) (.poss (.neg (.atom .a))) :=
-  fun h ↦ (by decide : ¬ support fig5b (enrich (.poss (.neg (.atom .a)))) {.onlyA})
-    (h fig5b {.onlyA} (by decide))
+  fun h ↦ (by decide : ¬ support fig5b (enrich (.poss (.neg (.atom .a)))) {{.a}})
+    (h fig5b {{.a}} (by decide))
 
 /-- The `□` form follows from the `◇` form by the duality `□φ := ¬◇¬φ`. -/
 theorem not_negativeFC_nec :
-    ¬ ConsequencePlus (W := TwoAtomWorld) (Atom := FCAtom)
+    ¬ ConsequencePlus (W := Finset Atom) (Atom := Atom)
       (.neg (Formula.nec (.conj (.atom .a) (.atom .b)))) (.neg (Formula.nec (.atom .a))) :=
   fun h ↦ not_negativeFC_poss fun M t hp ↦
     (support_enrich_neg_neg M _ t).mp (h M t ((support_enrich_neg_neg M _ t).mpr hp))
@@ -268,8 +271,9 @@ theorem positiveFC_plus :
 
 /-- Positive FC fails in BSML∅, since Figure 4(a) supports `◇(a ∨ b)` but not `◇b`. -/
 theorem not_positiveFC :
-    ¬ Consequence (W := TwoAtomWorld) (.poss aOrB) (.conj mayA mayB) :=
-  fun h ↦ (by decide : ¬ support fig4a (.conj mayA mayB) {.both}) (h fig4a {.both} (by decide))
+    ¬ Consequence (W := Finset Atom) (.poss aOrB) (.conj mayA mayB) :=
+  fun h ↦ (by decide : ¬ support fig4a (.conj mayA mayB) {{.a, .b}})
+    (h fig4a {{.a, .b}} (by decide))
 
 /-- Addition holds in BSML∅, `α ⊨ α ∨ β` for `NE`-free `α β`, classically. -/
 theorem addition (hα : α.NEFree) (hβ : β.NEFree) : Consequence (W := W) α (.disj α β) :=
@@ -278,9 +282,9 @@ theorem addition (hα : α.NEFree) (hβ : β.NEFree) : Consequence (W := W) α (
 /-- Addition fails in BSML⁺, `[a]⁺ ⊭ [a ∨ b]⁺` at the zero-model `{w_a}`, where `b` has
 no non-empty witness. -/
 theorem not_addition_plus :
-    ¬ ConsequencePlus (W := TwoAtomWorld) (.atom .a) aOrB :=
-  fun h ↦ (by decide : ¬ support propositional (enrich aOrB) {.onlyA})
-    (h propositional {.onlyA} (by decide))
+    ¬ ConsequencePlus (W := Finset Atom) (.atom Atom.a) aOrB :=
+  fun h ↦ (by decide : ¬ support propositional (enrich aOrB) {{.a}})
+    (h propositional {{.a}} (by decide))
 
 /-- Contraposition holds in BSML∅, so for `NE`-free `α β`, `α ⊨ β` gives `¬β ⊨ ¬α`. -/
 theorem contraposition (hα : α.NEFree) (hβ : β.NEFree) (h : Consequence (W := W) α β) :
@@ -292,10 +296,10 @@ theorem contraposition (hα : α.NEFree) (hβ : β.NEFree) (h : Consequence (W :
 `¬(◇a ∧ ◇b) ⊨⁺ ¬◇(a ∨ b)` fails at `{w_a}` on Figure 5(a)'s frame, where `R[w_a] = {w_b}`
 anti-supports `a` but not `a ∨ b`. -/
 theorem not_contraposition_plus :
-    ConsequencePlus (W := TwoAtomWorld) (.poss aOrB) (.conj mayA mayB) ∧
-      ¬ ConsequencePlus (W := TwoAtomWorld) (.neg (.conj mayA mayB)) (.neg (.poss aOrB)) :=
+    ConsequencePlus (W := Finset Atom) (.poss aOrB) (.conj mayA mayB) ∧
+      ¬ ConsequencePlus (W := Finset Atom) (.neg (.conj mayA mayB)) (.neg (.poss aOrB)) :=
   ⟨positiveFC_plus, fun h ↦
-    (by decide : ¬ support fig5a (enrich (.neg (.poss aOrB))) {.onlyA})
-      (h fig5a {.onlyA} (by decide))⟩
+    (by decide : ¬ support fig5a (enrich (.neg (.poss aOrB))) {{.a}})
+      (h fig5a {{.a}} (by decide))⟩
 
 end Aloni2022
