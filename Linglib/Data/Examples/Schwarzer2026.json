@@ -23,7 +23,8 @@
       ["complement", "dass"],
       ["position", "postverbal"]
     ],
-    "comment": "Bare dass-clause with a non-CP-selecting verb."
+    "comment": "Printed without a mark; the author judges a bare clause after the four non-selecting predicates to contrast sharply with the coordination (p. 7).",
+    "verified": "page-image"
   },
   {
     "id": "schwarzer2026_ex11b",
@@ -40,7 +41,7 @@
     ],
     "translation": "At the turn of the year, the city completes its revision of the local transport plan and stops the scheme of planting a tree for every newborn child.",
     "context": "",
-    "judgment": "marginal",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -51,7 +52,8 @@
       ["position", "postverbal"],
       ["order", "dpFirst"]
     ],
-    "comment": "DP-CP coordination with a non-CP-selecting verb, rated like the marked-but-grammatical filler group C; the coordination improves over the bare clause by more than the selected contexts predict."
+    "comment": "Printed without a mark; the author judges DP-CP coordinations after the four non-selecting predicates grammatical, as do five other speakers (p. 7).",
+    "verified": "page-image"
   },
   {
     "id": "schwarzer2026_ex12a",
@@ -77,7 +79,8 @@
       ["complement", "dass"],
       ["position", "postverbal"]
     ],
-    "comment": "Bare dass-clause with a CP-selecting verb."
+    "comment": "Printed without a mark; veranlassen selects both complements.",
+    "verified": "page-image"
   },
   {
     "id": "schwarzer2026_ex12b",
@@ -105,118 +108,7 @@
       ["position", "postverbal"],
       ["order", "dpFirst"]
     ],
-    "comment": "DP-CP coordination with a CP-selecting verb."
-  },
-  {
-    "id": "schwarzer2026_ex16a",
-    "source": {"bibkey": "schwarzer-2026", "paperLabel": "(16a)"},
-    "language": "stan1295",
-    "primaryText": "Die Stadt hat zum Jahreswechsel die Überarbeitung des Nahverkehrskonzepts und dass für Neugeborene ein Baum gepflanzt wird beendet.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Die", "the"], ["Stadt", "city"], ["hat", "has"], ["zum", "at.the"],
-      ["Jahreswechsel", "year.turn"], ["die", "the"], ["Überarbeitung", "revision"],
-      ["des", "of.the"], ["Nahverkehrskonzepts", "public.transport.plan"], ["und", "and"],
-      ["dass", "that"], ["für", "for"], ["Neugeborene", "newborns"], ["ein", "a"],
-      ["Baum", "tree"], ["gepflanzt", "planted"], ["wird", "AUX.PASS"], ["beendet", "ended"]
-    ],
-    "translation": "At the turn of the year, the city completed its revision of the local transport plan and stopped the scheme of planting a tree for every newborn child.",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["experiment", "2"],
-      ["verb", "beenden"],
-      ["selectsCP", "no"],
-      ["complement", "coord"],
-      ["position", "preverbal"],
-      ["order", "dpFirst"]
-    ],
-    "comment": "Preverbal coordination, DP first: chosen over (16b) more often in the forced choice."
-  },
-  {
-    "id": "schwarzer2026_ex16b",
-    "source": {"bibkey": "schwarzer-2026", "paperLabel": "(16b)"},
-    "language": "stan1295",
-    "primaryText": "Die Stadt hat zum Jahreswechsel dass für Neugeborene ein Baum gepflanzt wird und die Überarbeitung des Nahverkehrskonzepts beendet.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Die", "the"], ["Stadt", "city"], ["hat", "has"], ["zum", "at.the"],
-      ["Jahreswechsel", "year.turn"], ["dass", "that"], ["für", "for"],
-      ["Neugeborene", "newborns"], ["ein", "a"], ["Baum", "tree"], ["gepflanzt", "planted"],
-      ["wird", "AUX.PASS"], ["und", "and"], ["die", "the"], ["Überarbeitung", "revision"],
-      ["des", "of.the"], ["Nahverkehrskonzepts", "public.transport.plan"], ["beendet", "ended"]
-    ],
-    "translation": "At the turn of the year, the city stopped the scheme of planting a tree for every newborn child and completed its revision of the local transport plan.",
-    "context": "",
-    "judgment": "marginal",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["experiment", "2"],
-      ["verb", "beenden"],
-      ["selectsCP", "no"],
-      ["complement", "coord"],
-      ["position", "preverbal"],
-      ["order", "cpFirst"]
-    ],
-    "comment": "Preverbal coordination, CP first: the order the linear and temporal closeness accounts predict to be preferred."
-  },
-  {
-    "id": "schwarzer2026_ex17a",
-    "source": {"bibkey": "schwarzer-2026", "paperLabel": "(17a)"},
-    "language": "stan1295",
-    "primaryText": "Die Stadt beendet zum Jahreswechsel die Überarbeitung des Nahverkehrskonzepts und dass für Neugeborene ein Baum gepflanzt wird.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Die", "the"], ["Stadt", "city"], ["beendet", "ends"], ["zum", "at.the"],
-      ["Jahreswechsel", "year.turn"], ["die", "the"], ["Überarbeitung", "revision"],
-      ["des", "of.the"], ["Nahverkehrskonzepts", "public.transport.plan"], ["und", "and"],
-      ["dass", "that"], ["für", "for"], ["Neugeborene", "newborns"], ["ein", "a"],
-      ["Baum", "tree"], ["gepflanzt", "planted"], ["wird", "AUX.PASS"]
-    ],
-    "translation": "At the turn of the year, the city completes its revision of the local transport plan and stops the scheme of planting a tree for every newborn child.",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["experiment", "2"],
-      ["verb", "beenden"],
-      ["selectsCP", "no"],
-      ["complement", "coord"],
-      ["position", "postverbal"],
-      ["order", "dpFirst"]
-    ],
-    "comment": "Postverbal coordination, DP first: chosen as often as in preverbal position."
-  },
-  {
-    "id": "schwarzer2026_ex17b",
-    "source": {"bibkey": "schwarzer-2026", "paperLabel": "(17b)"},
-    "language": "stan1295",
-    "primaryText": "Die Stadt beendet zum Jahreswechsel dass für Neugeborene ein Baum gepflanzt wird und die Überarbeitung des Nahverkehrskonzepts.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["Die", "the"], ["Stadt", "city"], ["beendet", "ends"], ["zum", "at.the"],
-      ["Jahreswechsel", "year.turn"], ["dass", "that"], ["für", "for"],
-      ["Neugeborene", "newborns"], ["ein", "a"], ["Baum", "tree"], ["gepflanzt", "planted"],
-      ["wird", "AUX.PASS"], ["und", "and"], ["die", "the"], ["Überarbeitung", "revision"],
-      ["des", "of.the"], ["Nahverkehrskonzepts", "public.transport.plan"]
-    ],
-    "translation": "At the turn of the year, the city stops the scheme of planting a tree for every newborn child and completes its revision of the local transport plan.",
-    "context": "",
-    "judgment": "marginal",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["experiment", "2"],
-      ["verb", "beenden"],
-      ["selectsCP", "no"],
-      ["complement", "coord"],
-      ["position", "postverbal"],
-      ["order", "cpFirst"]
-    ],
-    "comment": "Postverbal coordination, CP first."
+    "comment": "Printed without a mark; veranlassen selects both complements.",
+    "verified": "page-image"
   }
 ]

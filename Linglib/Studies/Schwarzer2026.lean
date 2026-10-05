@@ -5,54 +5,42 @@ public import Linglib.Studies.BrueningAlKhalaf2020
 public import Linglib.Data.Examples.Schwarzer2026
 public import Linglib.Data.Experiments.Schwarzer2026
 public import Linglib.Fragments.German.Verbs
-public import Mathlib.Algebra.Order.Field.Rat
 
 /-!
-# Schwarzer (2026): The law and order of selection-violating coordination
+# Schwarzer 2026: the law and order of selection-violating coordination
 
-This file formalizes the squib's test of the three analyses of selection-violating coordination, a
-clause coordinated with a noun phrase in a position where only the noun phrase is selected. The
-bottom-up analyses of [sag-etal-1985] and [munn-1993] give the coordination an asymmetric structure
-in which the first conjunct alone is prominent for the selector, so the selected noun phrase comes
-first whatever the position of the verb; the linear closeness analysis of [bruening-alkhalaf-2020]
-and [bruening-2025] derives left to right and lets the conjunct linearly adjacent to the selector
-satisfy selection; and the temporal closeness analysis of [kim-lu-2024] treats the mismatch as a
-grammaticality illusion in which the parser checks the conjunct closest in time to the selector.
-Both closeness accounts thus check the conjunct next to the selector, `checkedOnce`, and the
-bottom-up ones the first, `List.take 1`. In German the two predictions come apart: complements
-precede the verb in an embedded finite clause and follow it in a root clause with verb-second
-(`embeddedPosition`, `rootPosition`), so the closeness accounts admit only the clause first in the
-embedded case, where the two accounts admit opposite orders (`accounts_diverge_embedded`).
+Schwarzer tests three analyses of a clause coordinated with a noun phrase where only the noun
+phrase is selected on German, where complements follow the verb in a root clause and precede it in
+an embedded one. The bottom-up analyses (Sag, Gazdar, Wasow and Weisler; Munn) make the first
+conjunct prominent, so they check `List.take 1`; the linear closeness analysis (Bruening and Al
+Khalaf; Bruening) and the temporal one (Kim and Lu) check the conjunct next to the verb,
+`checkedOnce`. They part company before the verb, where only the bottom-up analyses admit the noun
+phrase first. Experiment 1 shows that German allows the construction, and in Experiment 2 the noun
+phrase first is preferred before the verb as much as after it, against both closeness analyses.
 
-Experiment 1 confirms that German allows the construction with verbs that reject a bare
-*dass*-clause (`Data/Examples/Schwarzer2026`, (11) and (12)): selection raises the ratings of both
-complements, and a coordination loses less than a bare clause where the verb does not select one
-(`selection_raises`, `selection_interaction`). Experiment 2's forced choice finds the noun phrase
-first in twenty-three of thirty choices in both positions (`Data/Experiments/Schwarzer2026`), so
-the preferred order is the noun phrase first in both (`preferred_eq`). A noun-phrase-first
-preference in the embedded position refutes the closeness prediction
-(`closeness_rejects_dpFirst`), and
-the choices supply it (`choices_refute_closeness`), while the structural account admits the noun
-phrase first in either position (`structural_admits_iff`) and matches the choices in both positions
-(`choices_match_structural`); the squib notes that the latter is thereby supported only
-indirectly.
+## Main results
+
+* `exp1_predictions`, `exp1_rows`: the grammar admits every condition of Experiment 1 but a bare
+  clause after a verb whose fragment entry takes none, and decides the paper's samples.
+* `accounts_diverge_embedded`: the analyses differ before the verb and agree after it.
+* `choices_refute_closeness`, `choices_match_structural`: the order preferred before the verb is
+  one the closeness analyses exclude and the bottom-up ones admit.
 
 ## Implementation notes
 
-* The verb positions are read off the German verb-second profile, with the finite verb in the
-  clause-final position of an embedded clause and in second position of a root declarative.
-* The eight predicates of Experiment 1 are the entries of `Fragments/German/Verbs`, whose frames
-  say whether a predicate takes a *dass*-clause; each row's selection value is read off its
-  predicate's entry (`rows_selectsCP`), and so are the judgments of the bare clauses (`dass_rows`).
-* The descriptive statistics of Experiment 1 and the choices of Experiment 2 are
+* The verbs' c-selection is read off their entries in `Fragments/German/Verbs`. The results are
   `Data/Experiments/Schwarzer2026`; the mixed model and the logistic regression are not
-  formalized, and the preferred order is read off the counts as the order chosen more often.
+  formalized, and the preferred order is the one chosen more often.
+* The bottom-up analyses are given the noun-phrase shell over the clause of the 2020 study; their
+  variant that licenses only the first conjunct makes the same predictions here.
 
 ## References
 
 * [schwarzer-2026]
 * [bruening-alkhalaf-2020]
+* [bruening-2025]
 * [kim-lu-2024]
+* [munn-1993]
 * [sag-etal-1985]
 -/
 
@@ -64,6 +52,8 @@ open BrueningAlKhalaf2020
 open Syntax (Cat)
 open Syntax.Cat (NP)
 
+/-! ### The analyses -/
+
 /-- In a German root declarative the verb in second position precedes its complements, the
 configuration of (17). -/
 abbrev rootPosition : HeadDirection := .headInitial
@@ -72,59 +62,80 @@ abbrev rootPosition : HeadDirection := .headInitial
 configuration of (16). -/
 abbrev embeddedPosition : HeadDirection := .headFinal
 
-/-- The phrases of a coordination of the noun phrase and the clause in each order. -/
+/-- `o.phrases` lists the categories of the conjuncts of a coordination in the order `o`. -/
 def Order.phrases : Order → List Cat
   | .dpFirst => [NP, .CP]
   | .cpFirst => [.CP, NP]
 
-/-- The bottom-up analyses check the first conjunct whatever the verb's position, and so admit
-the selected noun phrase first, (10b), with a verb that does not select a clause. -/
+/-- The bottom-up analyses admit the selected noun phrase first, after a verb that does not select
+a clause, whatever the verb's position, (10b). -/
 theorem structural_admits_iff (o : Order) :
     Admits (Licensed (List.take 1) {NP}) o.phrases ↔ o = .dpFirst := by
   cases o <;> decide
 
-/-- The closeness accounts admit the clause first in the embedded position, (10a). -/
+/-- The closeness analyses admit the clause first before the verb, (10a). -/
 theorem closeness_embedded_iff (o : Order) :
     Admits (Licensed (checkedOnce embeddedPosition) {NP}) o.phrases ↔ o = .cpFirst := by
   cases o <;> decide
 
-/-- The accounts diverge in the embedded position only, which is what makes German the test
-case, since in the root position the linear account checks the first conjunct too. -/
+/-- The analyses differ before the verb only, which is what makes German the test case, since
+after it the closeness analyses check the first conjunct too. -/
 theorem accounts_diverge_embedded :
     (∃ o : Order, ¬ (Admits (Licensed (List.take 1) {NP}) o.phrases ↔
         Admits (Licensed (checkedOnce embeddedPosition) {NP}) o.phrases)) ∧
       checkedOnce rootPosition = List.take 1 :=
   ⟨⟨.dpFirst, by decide⟩, funext fun cs ↦ by cases cs <;> rfl⟩
 
-/-- A noun phrase first in the embedded position refutes the linear and temporal closeness
-accounts, whatever the reason for the preference. -/
-theorem closeness_rejects_dpFirst :
-    ¬ Admits (Licensed (checkedOnce embeddedPosition) {NP}) Order.dpFirst.phrases := by
-  decide
+/-! ### Experiment 1 -/
 
-/-! ### The predicates -/
+/-- `selects v` is the set of categories the verb `v` c-selects for its object, read off its
+entry, which has a noun phrase if a frame takes one and a clause if a frame takes a
+*dass*-clause. -/
+def selects (v : German.Verb) : Finset Cat :=
+  (if v.toVerb.TakesNominal then {NP} else ∅) ∪ (if v.toVerb.TakesClausal then {.CP} else ∅)
 
-/-- The fragment entry of a predicate named in a row. -/
+/-- `s.verbs` lists the four predicates of Experiment 1 that do or do not select a clause. -/
+def Selection.verbs : Selection → List German.Verb
+  | .yes => [German.Verbs.veranlassen, German.Verbs.vergessen, German.Verbs.erwarten,
+      German.Verbs.beschliessen]
+  | .no => [German.Verbs.beenden, German.Verbs.streichen, German.Verbs.uebereilen,
+      German.Verbs.entwickeln]
+
+/-- Each predicate's entry takes a noun phrase, and a clause exactly when the paper classes it as
+selecting one (p. 7). -/
+theorem selects_verbs (s : Selection) :
+    ∀ v ∈ s.verbs, selects v = if s = .yes then {NP, .CP} else {NP} := by
+  cases s <;> decide
+
+/-- `c.phrases` lists the categories of the conjuncts of a complement of Experiment 1, a bare
+clause or a coordination with the noun phrase first. -/
+def Complement.phrases : Complement → List Cat
+  | .dass => [.CP]
+  | .coord => [NP, .CP]
+
+/-- The grammar admits every condition of Experiment 1, after the verb, except a bare clause after
+a verb that does not select one, where the coordination is admitted through the null N. All the
+analyses agree, since the verb precedes. Coordinations are accordingly rated above bare clauses
+after those verbs, and lose less from the absence of selection (table (14), p. 9). -/
+theorem exp1_predictions (s : Selection) (c : Complement) : ∀ v ∈ s.verbs,
+    (Admits (Licensed (checkedOnce rootPosition) (selects v)) c.phrases ↔
+      c = .coord ∨ s = .yes) := by
+  cases s <;> cases c <;> decide
+
+/-- `entryOf form` is the fragment entry of the verb a row names. -/
 def entryOf (form : String) : Option German.Verb :=
   German.Verbs.allVerbs.find? (·.form = form)
 
-/-- The four predicates of Experiment 1 that select a *dass*-clause. -/
-def selecting : List German.Verb :=
-  [German.Verbs.veranlassen, German.Verbs.vergessen, German.Verbs.erwarten,
-    German.Verbs.beschliessen]
+/-- `complementOf? e` is the complement of a row of Experiment 1. -/
+def complementOf? (e : Datum) : Option Complement :=
+  e.parse? "complement" [("dass", .dass), ("coord", .coord)]
 
-/-- The four predicates of Experiment 1 that do not. -/
-def nonSelecting : List German.Verb :=
-  [German.Verbs.beenden, German.Verbs.streichen, German.Verbs.uebereilen, German.Verbs.entwickeln]
-
-/-- All eight predicates take a noun phrase, and only the selecting four a clause. -/
-theorem selection_of_entries :
-    (∀ v ∈ selecting ++ nonSelecting, v.toVerb.TakesNominal) ∧
-      (∀ v ∈ selecting, v.toVerb.TakesClausal) ∧ ∀ v ∈ nonSelecting, ¬ v.toVerb.TakesClausal := by
-  decide
-
-/-- Every row names a predicate with a fragment entry. -/
-theorem rows_have_entries : ∀ e ∈ Examples.all, ((e.feature? "verb").bind entryOf).isSome := by
+/-- The grammar, with each verb's c-selection read off its entry, decides the paper's samples of
+Experiment 1, (11) and (12). -/
+theorem exp1_rows : ∀ e ∈ Examples.all, ∃ v ∈ (e.feature? "verb").bind entryOf,
+    ∃ c ∈ complementOf? e,
+      (Admits (Licensed (checkedOnce rootPosition) (selects v)) c.phrases ↔
+        e.judgment = .acceptable) := by
   decide
 
 /-- Each row's selection value is that of its predicate's entry. -/
@@ -133,29 +144,7 @@ theorem rows_selectsCP :
       (e.feature? "selectsCP" = some "yes" ↔ v.toVerb.TakesClausal) := by
   decide
 
-/-- A bare *dass*-clause is acceptable exactly after a predicate that takes a clause, (11a) and
-(12a). -/
-theorem dass_rows :
-    ∀ e ∈ Examples.all, e.feature? "complement" = some "dass" →
-      ∀ v ∈ (e.feature? "verb").bind entryOf,
-        (e.judgment = .acceptable ↔ v.toVerb.TakesClausal) := by
-  decide
-
-/-! ### The experiments -/
-
-/-- Selection raises the mean rating of both complements. -/
-theorem selection_raises (c : Complement) :
-    (ratings c .no).meanZ.toRat < (ratings c .yes).meanZ.toRat := by
-  cases c <;> decide +kernel
-
-/-- In the interaction of Experiment 1 a coordination gains less from selection than a bare
-*dass*-clause, so that after a verb that does not select a clause it is rated above the bare
-clause. -/
-theorem selection_interaction :
-    (ratings .coord .yes).meanZ.toRat - (ratings .coord .no).meanZ.toRat <
-      (ratings .dass .yes).meanZ.toRat - (ratings .dass .no).meanZ.toRat ∧
-    (ratings .dass .no).meanZ.toRat < (ratings .coord .no).meanZ.toRat := by
-  decide +kernel
+/-! ### Experiment 2 -/
 
 /-- The head direction of a position of Experiment 2. -/
 def Position.direction : Position → HeadDirection
@@ -166,18 +155,20 @@ def Position.direction : Position → HeadDirection
 def preferred (p : Position) : Order :=
   if (choices p .cpFirst).count < (choices p .dpFirst).count then .dpFirst else .cpFirst
 
-/-- The noun phrase first is preferred in both positions. -/
+/-- The noun phrase first is preferred in both positions, chosen 23 times of 30 (p. 13). -/
 theorem preferred_eq (p : Position) : preferred p = .dpFirst := by
   cases p <;> decide
 
-/-- Experiment 2 refutes the linear and temporal closeness accounts. -/
+/-- **Experiment 2 refutes the linear and temporal closeness analyses**, since the order
+preferred before the verb is one they exclude. -/
 theorem choices_refute_closeness :
     ¬ Admits (Licensed (checkedOnce Position.preverbal.direction) {NP})
       (preferred .preverbal).phrases := by
   rw [preferred_eq]
-  exact closeness_rejects_dpFirst
+  decide
 
-/-- The structural account admits exactly the preferred order in both positions. -/
+/-- The bottom-up analyses admit exactly the preferred order in both positions, which the squib
+takes to support them only indirectly (p. 15). -/
 theorem choices_match_structural (p : Position) (o : Order) :
     Admits (Licensed (List.take 1) {NP}) o.phrases ↔ o = preferred p := by
   rw [preferred_eq, structural_admits_iff]
