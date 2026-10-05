@@ -195,7 +195,7 @@ theorem fake_apply_intersective_not (P N : DualContent W E) (w : W) (x : E)
 /-- On E-structure *fake* is privative in the sense of [kamp-1975], over any lexicon whose
 E-structures are the properties themselves. -/
 theorem fake_toModifier_isPrivative (lex : Property W E → DualContent W E)
-    (hlex : ∀ P, (lex P).extension = P) : isPrivative ((fake made).toModifier lex) :=
+    (hlex : ∀ P, (lex P).extension = P) : IsPrivative ((fake made).toModifier lex) :=
   isPrivative_iff.2 λ P _ _ h => (hlex P ▸ h.1 :)
 
 /-- So the non-vacuity principle licenses no coercion of the head, [partee-2010]'s
@@ -211,7 +211,7 @@ end Contrasts
 extension, so its default interpretation involves no violation of non-vacuity. -/
 theorem fake_isNonVacuous :
     ∃ (W E : Type) (made : Property W E → Property W E) (N : DualContent W E) (w : W),
-      isNonVacuous ((fake made).apply N).extension w (λ _ => True) :=
+      IsNonVacuous ((fake made).apply N).extension w (λ _ => True) :=
   ⟨Unit, Bool, λ _ _ _ => True,
     ⟨λ _ x => x = true, λ _ _ => True, λ _ _ => True, λ _ _ => True, λ _ _ => False⟩, (),
     ⟨false, trivial, by simp [Restructuring.apply, fake]⟩,

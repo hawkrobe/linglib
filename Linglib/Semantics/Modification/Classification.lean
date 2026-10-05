@@ -8,143 +8,81 @@ public import Mathlib.Tactic.Common
 public import Linglib.Logic.Modal.Extensional
 
 /-!
-# Modifier-meaning classification at the intensional carrier
+# Modifiers of intensional properties
 
-We instantiate the order-theoretic modifier classes of
-`Modification/Basic.lean` at intensional properties. The classification
-goes back to [parsons-1970] and [kamp-1975] (definitions (4)–(7)) and
-was consolidated in [kamp-partee-1995]; the modern labels are Partee's.
+An intensional property is a function from worlds to predicates of entities, and attributive
+adjectives denote modifiers of intensional properties. At these modifiers Kamp's order-theoretic
+classes (`Semantics/Modification/Basic.lean`) take their familiar pointwise form, an intersective
+modifier is extensional, and a privative modifier that holds of something is not subsective. The
+classification descends from Parsons and Kamp through Kamp and Partee; the labels are Partee's.
 
 ## Main definitions
 
-* `Property W E`: intensional properties, `W → E → Prop`.
-* `isIntersective_iff`, `isPrivative_iff`: pointwise forms of the
-  order-theoretic classes at this carrier.
-* `isExtensional_of_isIntersective`: intersective modifier meanings are
-  `ModalLogic.IsExtensional`.
-* `not_isSubsective_of_isPrivative`: privative meanings with non-empty
-  extension are not subsective.
-* `RevisedClass`: [partee-2010]'s three-class hierarchy after the
-  privative collapse.
+* `Modification.Property W E`: intensional properties, `W → E → Prop`.
+
+## Main results
+
+* `isIntersective_iff`, `isPrivative_iff`: the classes stated pointwise.
+* `isExtensional_of_isIntersective`: intersective modifiers are extensional.
+* `not_isSubsective_of_isPrivative`: a privative modifier that holds of something is not
+  subsective.
 
 ## Implementation notes
 
-Extensionality is orthogonal to the entailment hierarchy; the
-independence witnesses are in `Studies/Kamp1975.lean`. Whether
-*adjectives* uniformly denote `Modifier (Property W E)` is a
-theoretical claim (`Studies/Elbourne2026.lean`); the carrier is named
-for the denotation type, not the word class.
+Extensionality is independent of the classes; `Studies/Kamp1975.lean` gives the witnesses.
+Whether adjectives uniformly denote `Modifier (Property W E)` is a theoretical claim
+(`Studies/Elbourne2026.lean`).
+
+## References
+
+* [parsons-1970]
+* [kamp-1975]
+* [kamp-partee-1995]
 -/
 
 @[expose] public section
 
 namespace Modification
 
-/-- An intensional property: a function from worlds to predicates over entities. -/
+/-- An intensional property is a function from worlds to predicates over entities. -/
 abbrev Property (W E : Type*) := W → E → Prop
-
-/-! ### Pointwise forms of the order-theoretic classes -/
-
-section Hierarchy
 
 open Modifier
 
 variable {W E : Type*} {adj : Modifier (Property W E)}
 
-/-- Pointwise form of `Modifier.intersective` at the intensional carrier. -/
 @[simp] theorem intersective_apply (Q N : Property W E) (w : W) (x : E) :
     intersective Q N w x ↔ Q w x ∧ N w x :=
   Iff.rfl
 
-/-- Pointwise form of `Modifier.isIntersective` at the intensional
-    carrier: the extension at each world is the intersection of the
-    noun's extension with some fixed property Q ([kamp-1975]
-    definition (4), "predicative").
-
-    Examples: "gray", "French", "carnivorous", "four-legged". -/
+/-- A modifier of intensional properties is intersective if and only if it conjoins every noun
+with one fixed property, as *gray* does. -/
 theorem isIntersective_iff :
-    isIntersective adj ↔
+    IsIntersective adj ↔
       ∃ (Q : Property W E), ∀ (N : Property W E) (w : W) (x : E),
         adj N w x ↔ (Q w x ∧ N w x) := by
-  simp only [isIntersective, funext_iff, Pi.inf_apply, inf_Prop_eq, eq_iff_iff]
+  simp only [IsIntersective, funext_iff, Pi.inf_apply, inf_Prop_eq, eq_iff_iff]
 
-/-- Pointwise form of `Modifier.isPrivative` at the intensional carrier:
-    the extension is always disjoint from the noun's extension
-    ([kamp-1975] definition (5)).
-
-    Examples: "fake", "counterfeit".
-    [partee-2010] argues this class should be eliminated. -/
+/-- A modifier of intensional properties is privative if and only if nothing it yields from a
+noun falls under the noun, as with *fake*. -/
 theorem isPrivative_iff :
-    isPrivative adj ↔
+    IsPrivative adj ↔
       ∀ (N : Property W E) (w : W) (x : E), adj N w x → ¬ N w x := by
-  simp only [isPrivative, Pi.disjoint_iff, Prop.disjoint_iff, not_and]
+  simp only [IsPrivative, Pi.disjoint_iff, Prop.disjoint_iff, not_and]
 
-/-! ### Implication structure
-
-    Intersective → subsective holds at any carrier
-    (`Modifier.isIntersective.isSubsective`); intersective → extensional
-    and the privative/subsective incompatibility are stated here. The
-    order-theoretic core of the latter is `Modifier.isPrivative.eq_bot`. -/
-
-/-- Intersective modifier meanings are extensional: meet with a fixed
-    property reads the noun only through its extension at each world. -/
-theorem isExtensional_of_isIntersective (h : isIntersective adj) :
+/-- Intersective modifiers are extensional, since the meet with a fixed property reads the noun
+only through its extension at each world. -/
+theorem isExtensional_of_isIntersective (h : IsIntersective adj) :
     ModalLogic.IsExtensional adj := by
   obtain ⟨Q, hQ⟩ := h
   intro w N₁ N₂ hN
   simp only [hQ, Pi.inf_apply, hN]
 
-/-- Privative modifier meanings are not subsective (when the modifier has
-    non-empty extension for some noun). -/
-theorem not_isSubsective_of_isPrivative (hp : isPrivative adj)
-    (hne : ∃ N w x, adj N w x) : ¬ isSubsective adj := by
+/-- A privative modifier that holds of something is not subsective. -/
+theorem not_isSubsective_of_isPrivative (hp : IsPrivative adj)
+    (hne : ∃ N w x, adj N w x) : ¬ IsSubsective adj := by
   intro hs
   obtain ⟨N, w, x, hadj⟩ := hne
   exact isPrivative_iff.mp hp N w x hadj (hs N w x hadj)
-
-end Hierarchy
-
-/-! ### Revised hierarchy ([partee-2010])
-
-The post-collapse 3-class hierarchy after eliminating "privative" via
-noun coercion. Per [partee-2010] footnote 1, the hierarchy is
-subset-ordered (intersective ⊂ subsective ⊂ unrestricted), not linear;
-the enum picks the *narrowest fit* per adjective. The licensing
-mechanism (NVP + HPP) is in
-`Semantics/Modification/Coercion.lean`. -/
-
-section Revised
-
-variable {W E : Type*}
-
-/-- Adjective hierarchy after [partee-2010]'s collapse: the
-    privative class is eliminated in favor of subsective + noun coercion. -/
-inductive RevisedClass where
-  /-- `⟦A N⟧ = ⟦Q⟧ ∩ ⟦N⟧` (Kamp's intersective). -/
-  | intersective
-  /-- `⟦A N⟧ ⊆ ⟦N*⟧` — includes former "privatives" via coercion. -/
-  | subsective
-  /-- No entailment: alleged, potential, putative (the plain/modal
-      non-subsective class). -/
-  | nonSubsective
-  deriving DecidableEq
-
-/-- Predicate-level interpretation of `RevisedClass`. Per the subset
-    ordering, `intersective` and `subsective` are not disjoint: every
-    intersective modifier meaning satisfies `Modifier.isSubsective`
-    (`Modifier.isIntersective.isSubsective`).
-
-    Caveat on `.nonSubsective`: the membership condition `¬ isSubsective
-    adj` is necessary but coarse — it also holds of Kamp-privatives,
-    which under Partee's reanalysis are not supposed to exist as a
-    natural class. Read `.nonSubsective` as Partee's *intended* "modal"
-    class (alleged, potential, putative); the bare predicate
-    `¬ isSubsective` over-generates. -/
-def RevisedClass.satisfies : RevisedClass → Modifier (Property W E) → Prop
-  | .intersective  => Modifier.isIntersective
-  | .subsective    => Modifier.isSubsective
-  | .nonSubsective => fun adj => ¬ Modifier.isSubsective adj
-
-end Revised
 
 end Modification
