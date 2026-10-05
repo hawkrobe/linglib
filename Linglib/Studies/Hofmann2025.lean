@@ -6,25 +6,26 @@ public import Linglib.Semantics.Dynamic.ICDRT
 /-!
 # Hofmann (2025): Anaphoric Accessibility with Flat Update
 
-This file formalizes [hofmann-2025]'s account of anaphora to negated indefinites in
-Intensional CDRT, the intensional instance of the Compositional DRT of [muskens-1996] in
-`Semantics/Dynamic/ICDRT.lean`. Indefinites introduce their discourse referent globally,
-relative to the propositional dref of their local context, and a pronoun is acceptable when its
-referent exists throughout its own local context under a consistent assignment of speaker
-commitments (38). The veridical, hypothetical and counterfactual drefs of (16) are defined
-relative to a speaker's commitment set. The subset requirement (39) follows from relative
-variable update (`ICDRT.mem_localEntailment_iff_of_relUpdate`), and a veridical anaphor
-context admits only veridical antecedents (`veridicalIndiv_of_accessible`). The fragment of
-Appendix C, `semDEC` and the sentential operators, is run on the paper's four-world model for
-the bathroom discourses of §3 and §4: the veridical discourse of Figures 5 and 6, the negated
-antecedent of Figure 7 whose veridical continuation no consistent extension admits
-(`counterfactual_veridical_impossible`), the double negation of Figure 8, the bathroom
-disjunction of Figure 9 and the disagreement of Figure 10 are outputs of the fragment's
-updates from an initial state, with their pronouns accessible or not as the paper says.
+Hofmann accounts for anaphora to negated indefinites in the intensional compositional DRT of
+`Semantics/Dynamic/ICDRT.lean`. An indefinite introduces its discourse referent globally,
+relative to the propositional referent of its local context, and a pronoun is acceptable when
+its referent exists throughout its own local context under a consistent assignment of speaker
+commitments. This file runs the fragment of the paper's Appendix C on its four-world model of
+the bathroom discourses.
+
+## Main statements
+
+* `veridicalIndiv_of_accessible`, `counterfactual_blocks_veridical`: an accessible anaphor in a
+  veridical context has a veridical antecedent, and a counterfactual antecedent admits no
+  veridical anaphor.
+* `veridical_run`, `doubleNeg_run`, `bathDisj_run`, `disagree_run`: the discourses of Figures 6,
+  8, 9 and 10 are outputs of the fragment, with their pronouns accessible.
+* `negated_run`, `counterfactual_veridical_impossible`: a negated antecedent (Figure 7) makes its
+  referent counterfactual, and no consistent extension admits a veridical continuation.
 
 ## Implementation notes
 
-* The operators of the fragment are CDRT's: a DRS `[δ | C]` is `dexists δ (test C)` and
+* The operators of the fragment are CDRT's: a DRS `[δ | C]` is `box {δ} C` and
   `max_φ` is `maxAt` at a propositional dref.
 * The maximization operators of App. C (18) and (19), and of the displayed updates (41), (43) and
   (44), apply to updates that leave the maximized dref unchanged, so under the definition
@@ -63,16 +64,17 @@ variable {W E : Type*}
 
 /-! ### Commitment and veridicality ((16), (36), (37)) -/
 
-/-- A veridical individual dref (36a): entailed in the commitment set. A dref is hypothetical
-when it is not veridical (16b). -/
+/-- An individual dref is veridical if it is entailed in the commitment set (36a), and
+hypothetical when it is not veridical (16b). -/
 abbrev VeridicalIndiv (φ_DC : PVar) (v : IVar) (i : State W E) : Prop :=
   i ∈ localEntailment φ_DC v
 
-/-- A counterfactual individual dref (37a): without a referent throughout the commitment set. -/
+/-- An individual dref is counterfactual if it has no referent throughout the commitment set
+(37a). -/
 def CounterfactualIndiv (φ_DC : PVar) (v : IVar) (i : State W E) : Prop :=
   ∀ w ∈ i.prop φ_DC, i.indiv v w = none
 
-/-- A counterfactual propositional dref (37b): disjoint from the commitment set. -/
+/-- A propositional dref is counterfactual if it is disjoint from the commitment set (37b). -/
 def CounterfactualProp (φ_DC δ : PVar) (i : State W E) : Prop :=
   i.prop φ_DC ∩ i.prop δ = ∅
 
@@ -83,7 +85,7 @@ theorem CounterfactualIndiv.not_veridicalIndiv {φ_DC : PVar} {v : IVar} {i : St
     ¬VeridicalIndiv φ_DC v i := fun hv ↦
   let ⟨w, hw⟩ := hDC; hv w hw (hc w hw)
 
-/-- Negation under assertion makes its prejacent counterfactual: the commitments entail the
+/-- Negation under assertion makes its prejacent counterfactual, since the commitments entail the
 negation's context (the condition of assertion, (20a)), the complement of the prejacent's. -/
 theorem counterfactualProp_of_mem_eqCompl {φ_DC φ φ' : PVar} {i : State W E}
     (hc : i ∈ eqCompl φ φ') (hdec : i ∈ incl φ_DC φ) : CounterfactualProp φ_DC φ' i :=
@@ -91,9 +93,9 @@ theorem counterfactualProp_of_mem_eqCompl {φ_DC φ φ' : PVar} {i : State W E}
 
 /-! ### Accessibility (38) and the subset requirement (39) -/
 
-/-- Accessibility (38): `υ` is entailed in the anaphor's local context `φ` and the commitment
-set is consistent. The paper's consistency (31) covers every interlocutor; this is one
-interlocutor's. -/
+/-- A dref `υ` is accessible (38) if it is entailed in the anaphor's local context `φ` and the
+commitment set is consistent. The paper's consistency (31) covers every interlocutor; this is
+one interlocutor's. -/
 def Accessible (φ : PVar) (v : IVar) (φ_DC : PVar) (i : State W E) : Prop :=
   i ∈ localEntailment φ v ∧ (i.prop φ_DC).Nonempty
 
@@ -103,9 +105,9 @@ theorem veridicalIndiv_of_accessible {φ φ_DC : PVar} {v : IVar} {j : State W E
     (hdec : j ∈ incl φ_DC φ) (h : Accessible φ v φ_DC j) : VeridicalIndiv φ_DC v j :=
   fun w hw ↦ h.1 w (hdec hw)
 
-/-- A counterfactual antecedent admits no veridical anaphor (§3.4.2, (26)): an extension that
+/-- A counterfactual antecedent admits no veridical anaphor (§3.4.2, (26)). An extension that
 keeps the commitment set and the antecedent's context, entails the anaphor's context in the
-commitments, and meets the subset requirement (39), empties the commitment set. -/
+commitments, and meets the subset requirement (39) empties the commitment set. -/
 theorem counterfactual_blocks_veridical (i j : State W E) (φ_DC φ_anaphor φ_neg : PVar)
     (h_extends_DC : j.prop φ_DC = i.prop φ_DC) (h_extends_neg : j.prop φ_neg = i.prop φ_neg)
     (h_disjoint : CounterfactualProp φ_DC φ_neg i) (h_dec : j ∈ incl φ_DC φ_anaphor)
@@ -118,68 +120,68 @@ theorem counterfactual_blocks_veridical (i j : State W E) (φ_DC φ_anaphor φ_n
 
 /-! ### The fragment of Appendix C
 
-Each operator is a DRS `[δ | C] = dexists δ (test C)` (App. B (12)) followed by maximization
+Each operator is a DRS `[δ | C] = box {δ} C` (App. B (12)) followed by maximization
 `max_φ` (App. B (10b)), CDRT's `maxAt` at a propositional dref. -/
 
-/-- The type of predicates, `e(wt)`: an individual dref and a local context to an update. -/
+/-- A predicate, of type `e(wt)`, takes an individual dref and a local context to an update. -/
 abbrev SemE (W E : Type*) := IVar → PVar → Update (State W E)
 
-/-- The type of clauses, `wt`: a local context to an update. -/
+/-- A clause, of type `wt`, takes a local context to an update. -/
 abbrev SemW (W E : Type*) := PVar → Update (State W E)
 
-/-- The vacuous scope of an existential: the identity update. -/
+/-- The vacuous scope of an existential is the identity update. -/
 def vacuousScope : SemE W E := fun _ _ ↦ SetRel.id
 
-/-- App. C (15): a common noun is a test that its argument satisfies it in the local context. -/
+/-- A common noun is a test that its argument satisfies it in the local context (App. C (15)).
+-/
 def commonNoun (R : E → W → Prop) : SemE W E :=
   fun v φ ↦ test (pred R φ v)
 
 /-- An intransitive verb phrase, of the same shape as a common noun. -/
 abbrev intransVP (R : E → W → Prop) : SemE W E := commonNoun R
 
-/-- App. C (16): the indefinite introduces its dref relative to the local context, then runs its
-restrictor and its scope. -/
+/-- The indefinite introduces its dref relative to the local context, then runs its restrictor
+and its scope (App. C (16)). -/
 def indefinite (v : IVar) (P P' : SemE W E) (φ : PVar) : Update (State W E) :=
   relUpdate φ v ○ P v φ ○ P' v φ
 
-/-- App. C (17): a pronoun passes its index to the predicate. -/
+/-- A pronoun passes its index to the predicate (App. C (17)). -/
 def pronoun (v : IVar) (P : SemE W E) (φ : PVar) : Update (State W E) := P v φ
 
-/-- App. C (14): a proper name introduces a dref equal to its constant. -/
+/-- A proper name introduces a dref equal to its constant (App. C (14)). -/
 def properName (name : E) (v : IVar) (P : SemE W E) (φ : PVar) : Update (State W E) :=
-  dexists v (test {j | ∀ w : W, j.indiv v w = some name}) ○ P v φ
+  box {v} {j | ∀ w : W, j.indiv v w = some name} ○ P v φ
 
-/-- App. C (18a): negation introduces the complement of its context as the prejacent's context
-and maximizes it over the prejacent. -/
+/-- Negation introduces the complement of its context as the prejacent's context and maximizes it
+over the prejacent (App. C (18a)). -/
 def semNOT (φ' : PVar) (Sc : SemW W E) (φ : PVar) : Update (State W E) :=
-  dexists φ' (test (eqCompl φ φ')) ○ maxAt φ' (Sc φ')
+  box {φ'} (eqCompl φ φ') ○ maxAt φ' (Sc φ')
 
-/-- App. C (18b): disjunction introduces a context for each disjunct whose union is its own. -/
+/-- Disjunction introduces a context for each disjunct, whose union is its own (App. C (18b)). -/
 def semOR (φ' φ'' : PVar) (Sc' Sc'' : SemW W E) (φ : PVar) : Update (State W E) :=
-  dexists φ' (dexists φ'' (test {j | j.prop φ = j.prop φ' ∪ j.prop φ''})) ○
+  box {φ', φ''} {j | j.prop φ = j.prop φ' ∪ j.prop φ''} ○
     maxAt φ' (Sc' φ') ○ maxAt φ'' (Sc'' φ'')
 
-/-- App. C (18c): the conditional's context is the union of the antecedent's complement and the
-consequent's context. -/
+/-- The conditional's context is the union of the antecedent's complement and the consequent's
+context (App. C (18c)). -/
 def semIF (φ' φ'' : PVar) (Sc' Sc'' : SemW W E) (φ : PVar) : Update (State W E) :=
-  dexists φ' (dexists φ'' (test {j | j.prop φ = (j.prop φ')ᶜ ∪ j.prop φ''})) ○
+  box {φ', φ''} {j | j.prop φ = (j.prop φ')ᶜ ∪ j.prop φ''} ○
     maxAt φ' (Sc' φ') ○ maxAt φ'' (Sc'' φ'')
 
-/-- App. C (18d): conjunction narrows the context through each conjunct in turn. -/
+/-- Conjunction narrows the context through each conjunct in turn (App. C (18d)). -/
 def semAND (φ' φ'' : PVar) (Sc' Sc'' : SemW W E) (φ : PVar) : Update (State W E) :=
-  dexists φ' (test (incl φ' φ)) ○ maxAt φ' (Sc' φ') ○
-    dexists φ'' (test (incl φ'' φ')) ○ maxAt φ'' (Sc'' φ'')
+  box {φ'} (incl φ' φ) ○ maxAt φ' (Sc' φ') ○ box {φ''} (incl φ'' φ') ○ maxAt φ'' (Sc'' φ'')
 
-/-- App. C (18e): an attitude verb introduces a context the subject's doxastic state `dox`
-entails. -/
+/-- An attitude verb introduces a context the subject's doxastic state `dox` entails
+(App. C (18e)). -/
 def semBelieved (φ' : PVar) (dox : State W E → Set W) (Sc : SemW W E) (_φ : PVar) :
     Update (State W E) :=
-  dexists φ' (test {j | dox j ⊆ j.prop φ'}) ○ maxAt φ' (Sc φ')
+  box {φ'} {j | dox j ⊆ j.prop φ'} ○ maxAt φ' (Sc φ')
 
-/-- App. C (19): the declarative introduces the assertion's context, which the speaker's
-commitments entail (20a), and maximizes it over the clause. -/
+/-- The declarative introduces the assertion's context, which the speaker's commitments entail
+(20a), and maximizes it over the clause (App. C (19)). -/
 def semDEC (φ_DC : PVar) (φ : PVar) (Sc : SemW W E) : Update (State W E) :=
-  dexists φ (test (incl φ_DC φ)) ○ maxAt φ (Sc φ)
+  box {φ} (incl φ_DC φ) ○ maxAt φ (Sc φ)
 
 /-! ### Maximization of a dref an update leaves fixed -/
 
@@ -201,21 +203,20 @@ theorem pronoun_fixes (φ : PVar) {v : IVar} {P : SemE W E} {φ' : PVar} (h : Fi
 /-- Negation fixes every dref other than the one it introduces that its prejacent fixes. -/
 theorem semNOT_fixes (φ : PVar) {φ' : PVar} {Sc : SemW W E} {φ₀ : PVar} (h : φ' ≠ φ)
     (hSc : Fixes φ (Sc φ')) : Fixes φ (semNOT φ' Sc φ₀) :=
-  ((fixes_randomAssign_of_ne h.symm).comp (fixes_test _ _)).comp hSc.maxBy
+  (fixes_box (by simpa using h.symm) _).comp hSc.maxBy
 
 theorem semOR_fixes (φ : PVar) {φ' φ'' : PVar} {Sc' Sc'' : SemW W E} {φ₀ : PVar}
     (h₁ : φ ≠ φ') (h₂ : φ ≠ φ'') (h' : Fixes φ (Sc' φ')) (h'' : Fixes φ (Sc'' φ'')) :
     Fixes φ (semOR φ' φ'' Sc' Sc'' φ₀) :=
-  (((fixes_randomAssign_of_ne h₁).comp ((fixes_randomAssign_of_ne h₂).comp
-    (fixes_test _ _))).comp h'.maxBy).comp h''.maxBy
+  (((fixes_box (by simp [h₁, h₂]) _).comp h'.maxBy).comp h''.maxBy)
 
 theorem semDEC_fixes (φ : PVar) {φ_DC φ' : PVar} {Sc : SemW W E} (h : φ' ≠ φ)
     (hSc : Fixes φ (Sc φ')) : Fixes φ (semDEC φ_DC φ' Sc) :=
-  ((fixes_randomAssign_of_ne h.symm).comp (fixes_test _ _)).comp hSc.maxBy
+  (fixes_box (by simpa using h.symm) _).comp hSc.maxBy
 
 /-! ### The model M₁ (§3.3.2) -/
 
-/-- The four worlds: a bathroom that is upstairs, a bathroom that is not, no bathroom and
+/-- The four worlds have a bathroom that is upstairs, a bathroom that is not, no bathroom and
 something upstairs, and neither. -/
 inductive World where
   | w_bu
@@ -249,7 +250,7 @@ def bathroomRef : World → Option Ent
   | .w_b => some .b
   | _ => none
 
-/-- The propositional drefs of the derivations: the assertion's context and the contexts of
+/-- The propositional drefs of the derivations are the assertion's context and the contexts of
 embedded clauses. -/
 def φ₁ : PVar := ⟨1⟩
 def φ₂ : PVar := ⟨2⟩
@@ -263,7 +264,7 @@ def φDCB : PVar := ⟨12⟩
 /-- The individual dref of the indefinite. -/
 def υ : IVar := ⟨0⟩
 
-/-- The null assignment (32): no referents and no information. -/
+/-- The null assignment (32) has no referents and no information. -/
 def null : State World Ent := ⟨fun _ _ ↦ none, fun _ ↦ Set.univ⟩
 
 /-- An initial state (33) of a single speaker whose commitment set is `dc`. -/
@@ -273,11 +274,11 @@ def init (dc : Set World) : State World Ent := null.updateProp φDC dc
 def init₂ (dcA dcB : Set World) : State World Ent :=
   (null.updateProp φDCA dcA).updateProp φDCB dcB
 
-/-- *there is a bathroom* (24): the indefinite with the noun as restrictor and a vacuous
-scope. -/
+/-- *There is a bathroom* (24) is the indefinite with the noun as restrictor and a vacuous scope.
+-/
 def thereIsABathroom : SemW World Ent := indefinite υ (commonNoun bathroom) vacuousScope
 
-/-- *it is upstairs* (30): the pronoun with the verb phrase. -/
+/-- *It is upstairs* (30) is the pronoun with the verb phrase. -/
 def itIsUpstairs : SemW World Ent := pronoun υ (intransVP upstairs)
 
 theorem thereIsABathroom_fixes (φ φ' : PVar) : Fixes φ (thereIsABathroom φ') :=
@@ -286,7 +287,7 @@ theorem thereIsABathroom_fixes (φ φ' : PVar) : Fixes φ (thereIsABathroom φ')
 theorem itIsUpstairs_fixes (φ φ' : PVar) : Fixes φ (itIsUpstairs φ') :=
   pronoun_fixes φ (commonNoun_fixes φ _ _ _)
 
-/-- The output of an assertion with `thereIsABathroom` as its clause: the dref is defined in
+/-- In the output of an assertion with `thereIsABathroom` as its clause, the dref is defined in
 the bathroom worlds of the context, and the context is in the bathroom worlds. -/
 theorem thereIsABathroom_output {φ : PVar} {k j : State World Ent}
     (h : k ~[thereIsABathroom φ] j) :
@@ -299,7 +300,7 @@ theorem thereIsABathroom_output {φ : PVar} {k j : State World Ent}
   | none => exact False.elim
   | some e => cases e; cases w <;> simp [bathroom]
 
-/-- The output of an assertion with `itIsUpstairs` as its clause: the dref is defined and
+/-- In the output of an assertion with `itIsUpstairs` as its clause, the dref is defined and
 upstairs throughout the context. -/
 theorem itIsUpstairs_output {φ : PVar} {k j : State World Ent} (h : k ~[itIsUpstairs φ] j) :
     k = j ∧ ∀ w ∈ j.prop φ, j.indiv υ w ≠ none ∧ w ∈ ({w_bu, w_u} : Set World) := by
@@ -325,7 +326,7 @@ def j₆ : State World Ent :=
 set it shows. -/
 theorem veridical_run : init {w_bu} ~[veridical] j₆ := by
   refine ⟨((init {w_bu}).updateProp φ₁ {w_bu, w_b}).updateIndiv υ bathroomRef, ?_, ?_⟩
-  · refine ⟨(init {w_bu}).updateProp φ₁ {w_bu, w_b}, updateProp_mem_dexists_test _ _ ?_, ?_⟩
+  · refine ⟨(init {w_bu}).updateProp φ₁ {w_bu, w_b}, updateProp_mem_box _ _ ?_, ?_⟩
     · intro w hw
       simp only [init, State.updateProp_prop_self,
         State.updateProp_prop_of_ne _ (by decide : φDC ≠ φ₁)] at hw ⊢
@@ -335,7 +336,7 @@ theorem veridical_run : init {w_bu} ~[veridical] j₆ := by
       · cases w <;> simp [bathroomRef, init, State.updateProp_prop_self]
       · simp only [State.updateIndiv_prop, State.updateProp_prop_self] at hw
         cases w <;> simp_all [bathroomRef, bathroom]
-  · refine ⟨j₆, updateProp_mem_dexists_test _ _ ?_, ?_⟩
+  · refine ⟨j₆, updateProp_mem_box _ _ ?_, ?_⟩
     · intro w hw
       simp only [init, State.updateProp_prop_self, State.updateIndiv_prop,
         State.updateProp_prop_of_ne _ (by decide : φDC ≠ φ₃),
@@ -362,14 +363,14 @@ theorem veridical_accessible : Accessible φ₃ υ φDC j₆ :=
    ⟨w_bu, by simp [j₆, init, State.updateProp_prop_of_ne _ (by decide : φDC ≠ φ₃),
      State.updateProp_prop_of_ne _ (by decide : φDC ≠ φ₁)]⟩⟩
 
-/-- Pragmatic maximization (35): the commitment set of Figure 6 is maximal among the outputs
-of the discourse from any initial state, since every output commits the speaker to the
+/-- Under pragmatic maximization (35) the commitment set of Figure 6 is maximal among the
+outputs of the discourse from any initial state, since every output commits the speaker to the
 bathroom being upstairs. -/
 theorem veridical_maximal (dc : Set World) (h : State World Ent)
     (hrun : init dc ~[veridical] h) : ¬ (j₆.prop φDC ⊂ h.prop φDC) := by
   obtain ⟨h₁, ⟨k₁, hk₁, hmax₁⟩, ⟨k₂, hk₂, hmax₂⟩⟩ := hrun
-  obtain ⟨hup₁, -⟩ := mem_dexists_test.mp hk₁
-  obtain ⟨hup₂, hdec₂⟩ := mem_dexists_test.mp hk₂
+  obtain ⟨hup₁, -⟩ := mem_box_singleton.mp hk₁
+  obtain ⟨hup₂, hdec₂⟩ := mem_box_singleton.mp hk₂
   replace hup₁ := mem_randomAssign_prop.mp hup₁
   replace hup₂ := mem_randomAssign_prop.mp hup₂
   rw [maxAt_eq_of_fixes (thereIsABathroom_fixes _ _)] at hmax₁
@@ -409,14 +410,14 @@ def j₇ : State World Ent :=
     bathroomRef
 
 theorem negated_run : init {w_u, w_0} ~[negated] j₇ := by
-  refine ⟨(init {w_u, w_0}).updateProp φ₁ {w_u, w_0}, updateProp_mem_dexists_test _ _ ?_, ?_⟩
+  refine ⟨(init {w_u, w_0}).updateProp φ₁ {w_u, w_0}, updateProp_mem_box _ _ ?_, ?_⟩
   · intro w hw
     simp only [init, State.updateProp_prop_self,
       State.updateProp_prop_of_ne _ (by decide : φDC ≠ φ₁)] at hw ⊢
     exact hw
   · rw [maxAt_eq_of_fixes (semNOT_fixes φ₁ (by decide) (thereIsABathroom_fixes _ _))]
     refine ⟨((init {w_u, w_0}).updateProp φ₁ {w_u, w_0}).updateProp φ₂ {w_bu, w_b},
-      updateProp_mem_dexists_test _ _ ?_, ?_⟩
+      updateProp_mem_box _ _ ?_, ?_⟩
     · show _ = _ᶜ
       ext w
       cases w <;> simp [State.updateProp_prop_self,
@@ -427,7 +428,7 @@ theorem negated_run : init {w_u, w_0} ~[negated] j₇ := by
       · simp only [State.updateIndiv_prop, State.updateProp_prop_self] at hw
         cases w <;> simp_all [bathroomRef, bathroom]
 
-/-- The dref is counterfactual: undefined throughout the speaker's commitment set. -/
+/-- The dref is counterfactual, undefined throughout the speaker's commitment set. -/
 theorem negated_counterfactualIndiv : CounterfactualIndiv φDC υ j₇ := by
   intro w hw
   simp only [j₇, init, State.updateIndiv_prop,
@@ -443,7 +444,7 @@ theorem negated_isComplement : j₇ ∈ eqCompl φ₁ φ₂ := by
   cases w <;> simp [j₇, State.updateProp_prop_self,
     State.updateProp_prop_of_ne _ (by decide : φ₁ ≠ φ₂)]
 
-/-- Every output of (41) makes the prejacent counterfactual: the commitments entail the
+/-- Every output of (41) makes the prejacent counterfactual, since the commitments entail the
 assertion's context, the complement of the prejacent's. -/
 theorem negated_counterfactualProp {i j : State World Ent} (h : i ~[negated] j) :
     CounterfactualProp φDC φ₂ j := by
@@ -451,9 +452,9 @@ theorem negated_counterfactualProp {i j : State World Ent} (h : i ~[negated] j) 
   rw [maxAt_eq_of_fixes (semNOT_fixes φ₁ (by decide) (thereIsABathroom_fixes _ _))] at hmax
   obtain ⟨m, hm, hmax⟩ := hmax
   rw [maxAt_eq_of_fixes (thereIsABathroom_fixes _ _)] at hmax
-  obtain ⟨hup, hc⟩ := mem_dexists_test.mp hm
+  obtain ⟨hup, hc⟩ := mem_box_singleton.mp hm
   have hdec' : m ∈ incl φDC φ₁ := by
-    have hdec := (mem_dexists_test.mp hk).2
+    have hdec := (mem_box_singleton.mp hk).2
     rw [incl, Set.mem_ofPred_eq, (fixes_randomAssign_of_ne (by decide)).prop_eq hup,
       (fixes_randomAssign_of_ne (by decide)).prop_eq hup]
     exact hdec
@@ -461,7 +462,7 @@ theorem negated_counterfactualProp {i j : State World Ent} (h : i ~[negated] j) 
     (thereIsABathroom_fixes φ₂ φ₂).prop_eq hmax]
   exact counterfactualProp_of_mem_eqCompl hc hdec'
 
-/-- No consistent extension of Figure 7 admits the veridical anaphor (30): a context the
+/-- No consistent extension of Figure 7 admits the veridical anaphor (30), since a context the
 commitments entail that lies within the prejacent's context empties the commitment set
 (§3.4.2). -/
 theorem counterfactual_veridical_impossible (j : State World Ent)
@@ -471,15 +472,15 @@ theorem counterfactual_veridical_impossible (j : State World Ent)
     hdec hsub
 
 /-- The last row of Table 3, with the prejacent's context empty and the dref nowhere defined,
-is also an output of (41): the printed maximization does not exclude it. -/
+is also an output of (41), since the printed maximization does not exclude it. -/
 def jRow4 : State World Ent :=
   ((init Set.univ).updateProp φ₁ Set.univ).updateProp φ₂ ∅
 
 theorem negated_row4 : init Set.univ ~[negated] jRow4 := by
   refine ⟨(init Set.univ).updateProp φ₁ Set.univ,
-    updateProp_mem_dexists_test _ _ fun _ _ ↦ trivial, ?_⟩
+    updateProp_mem_box _ _ fun _ _ ↦ trivial, ?_⟩
   rw [maxAt_eq_of_fixes (semNOT_fixes φ₁ (by decide) (thereIsABathroom_fixes _ _))]
-  refine ⟨jRow4, updateProp_mem_dexists_test _ _ ?_, ?_⟩
+  refine ⟨jRow4, updateProp_mem_box _ _ ?_, ?_⟩
   · show _ = _ᶜ
     simp [State.updateProp_prop_self,
       State.updateProp_prop_of_ne _ (by decide : φ₁ ≠ φ₂)]
@@ -489,8 +490,8 @@ theorem negated_row4 : init Set.univ ~[negated] jRow4 := by
     · simp [jRow4, init, null, State.updateProp_prop_self]
     · simp [jRow4, State.updateProp_prop_self] at hw
 
-/-- Maximizing the prejacent's context over the whole assertion selects Figure 7: every output
-from the same initial state keeps that context within the bathroom worlds. -/
+/-- Maximizing the prejacent's context over the whole assertion selects Figure 7, since every
+output from the same initial state keeps that context within the bathroom worlds. -/
 theorem negated_max : init {w_u, w_0} ~[maxAt φ₂ negated] j₇ := by
   refine mem_maxAt_prop.mpr ⟨negated_run, fun k hk hlt ↦ ?_⟩
   obtain ⟨k₁, ⟨_, _⟩, hmax⟩ := hk
@@ -515,7 +516,7 @@ def j₈ : State World Ent :=
     {w_bu, w_b}).updateIndiv υ bathroomRef
 
 theorem doubleNeg_run : init {w_bu, w_b} ~[doubleNeg] j₈ := by
-  refine ⟨(init {w_bu, w_b}).updateProp φ₁ {w_bu, w_b}, updateProp_mem_dexists_test _ _ ?_, ?_⟩
+  refine ⟨(init {w_bu, w_b}).updateProp φ₁ {w_bu, w_b}, updateProp_mem_box _ _ ?_, ?_⟩
   · intro w hw
     simp only [init, State.updateProp_prop_self,
       State.updateProp_prop_of_ne _ (by decide : φDC ≠ φ₁)] at hw ⊢
@@ -523,14 +524,14 @@ theorem doubleNeg_run : init {w_bu, w_b} ~[doubleNeg] j₈ := by
   · rw [maxAt_eq_of_fixes (semNOT_fixes φ₁ (by decide)
       (semNOT_fixes φ₁ (by decide) (thereIsABathroom_fixes _ _)))]
     refine ⟨((init {w_bu, w_b}).updateProp φ₁ {w_bu, w_b}).updateProp φ₂ {w_u, w_0},
-      updateProp_mem_dexists_test _ _ ?_, ?_⟩
+      updateProp_mem_box _ _ ?_, ?_⟩
     · show _ = _ᶜ
       ext w
       cases w <;> simp [State.updateProp_prop_self,
         State.updateProp_prop_of_ne _ (by decide : φ₁ ≠ φ₂)]
     · rw [maxAt_eq_of_fixes (semNOT_fixes φ₂ (by decide) (thereIsABathroom_fixes _ _))]
       refine ⟨(((init {w_bu, w_b}).updateProp φ₁ {w_bu, w_b}).updateProp φ₂ {w_u, w_0}).updateProp
-        φ₃ {w_bu, w_b}, updateProp_mem_dexists_test _ _ ?_, ?_⟩
+        φ₃ {w_bu, w_b}, updateProp_mem_box _ _ ?_, ?_⟩
       · show _ = _ᶜ
         ext w
         cases w <;> simp [State.updateProp_prop_self,
@@ -580,7 +581,7 @@ def j₉ : State World Ent :=
 
 theorem bathDisj_run : init {w_bu, w_u, w_0} ~[bathDisj] j₉ := by
   refine ⟨(init {w_bu, w_u, w_0}).updateProp φ₁ {w_bu, w_u, w_0},
-    updateProp_mem_dexists_test _ _ ?_, ?_⟩
+    updateProp_mem_box _ _ ?_, ?_⟩
   · intro w hw
     simp only [init, State.updateProp_prop_self,
       State.updateProp_prop_of_ne _ (by decide : φDC ≠ φ₁)] at hw ⊢
@@ -588,8 +589,8 @@ theorem bathDisj_run : init {w_bu, w_u, w_0} ~[bathDisj] j₉ := by
   · rw [maxAt_eq_of_fixes (semOR_fixes φ₁ (by decide) (by decide)
       (semNOT_fixes φ₁ (by decide) (thereIsABathroom_fixes _ _)) (itIsUpstairs_fixes _ _))]
     refine ⟨j₉, ⟨(((init {w_bu, w_u, w_0}).updateProp φ₁ {w_bu, w_u, w_0}).updateProp φ₂
-      {w_u, w_0}).updateProp φ₃ {w_bu}, ⟨_, updateProp_mem_randomAssign _ _ _,
-      updateProp_mem_dexists_test _ _ ?_⟩, ?_⟩, ?_⟩
+      {w_u, w_0}).updateProp φ₃ {w_bu}, mem_box_insert_of_mem (updateProp_mem_randomAssign _ _ _)
+      (updateProp_mem_box _ _ ?_), ?_⟩, ?_⟩
     · show _ = _ ∪ _
       ext w
       cases w <;> simp [State.updateProp_prop_self,
@@ -599,7 +600,7 @@ theorem bathDisj_run : init {w_bu, w_u, w_0} ~[bathDisj] j₉ := by
     · rw [maxAt_eq_of_fixes (semNOT_fixes φ₂ (by decide) (thereIsABathroom_fixes _ _))]
       refine ⟨((((init {w_bu, w_u, w_0}).updateProp φ₁ {w_bu, w_u, w_0}).updateProp φ₂
         {w_u, w_0}).updateProp φ₃ {w_bu}).updateProp φ₄ {w_bu, w_b},
-        updateProp_mem_dexists_test _ _ ?_, ?_⟩
+        updateProp_mem_box _ _ ?_, ?_⟩
       · show _ = _ᶜ
         ext w
         cases w <;> simp [State.updateProp_prop_self,
@@ -627,8 +628,8 @@ theorem bathDisj_union : j₉.prop φ₁ = j₉.prop φ₂ ∪ j₉.prop φ₃ :
     State.updateProp_prop_of_ne _ (by decide : φ₂ ≠ φ₃),
     State.updateProp_prop_of_ne _ (by decide : φ₃ ≠ φ₄)]
 
-/-- The dref is counterfactual for the speaker yet accessible in the second disjunct
-(§4.2): the disjuncts' contexts need not overlap the commitment set. -/
+/-- The dref is counterfactual for the speaker yet accessible in the second disjunct (§4.2),
+since the disjuncts' contexts need not overlap the commitment set. -/
 theorem bathDisj_accessible : Accessible φ₃ υ φDC j₉ :=
   ⟨fun w hw ↦ by
     simp only [j₉, State.updateIndiv_prop, State.updateProp_prop_self,
@@ -642,7 +643,7 @@ theorem bathDisj_accessible : Accessible φ₃ υ φDC j₉ :=
 
 /-! ### Disagreement (47) and (48), Figure 10 -/
 
-/-- `A`: *There isn't a bathroom.* `B`: *It is upstairs.* -/
+/-- Speaker `A` says *There isn't a bathroom* and speaker `B` says *It is upstairs*. -/
 def disagree : Update (State World Ent) :=
   semDEC φDCA φ₁ (semNOT φ₂ thereIsABathroom) ○ semDEC φDCB φ₃ itIsUpstairs
 
@@ -654,7 +655,7 @@ def j₁₀ : State World Ent :=
 theorem disagree_run : init₂ {w_u, w_0} {w_bu} ~[disagree] j₁₀ := by
   refine ⟨(((init₂ {w_u, w_0} {w_bu}).updateProp φ₁ {w_u, w_0}).updateProp φ₂
     {w_bu, w_b}).updateIndiv υ bathroomRef, ?_, ?_⟩
-  · refine ⟨(init₂ {w_u, w_0} {w_bu}).updateProp φ₁ {w_u, w_0}, updateProp_mem_dexists_test _ _ ?_,
+  · refine ⟨(init₂ {w_u, w_0} {w_bu}).updateProp φ₁ {w_u, w_0}, updateProp_mem_box _ _ ?_,
       ?_⟩
     · intro w hw
       simp only [init₂, State.updateProp_prop_self,
@@ -663,7 +664,7 @@ theorem disagree_run : init₂ {w_u, w_0} {w_bu} ~[disagree] j₁₀ := by
       exact hw
     · rw [maxAt_eq_of_fixes (semNOT_fixes φ₁ (by decide) (thereIsABathroom_fixes _ _))]
       refine ⟨((init₂ {w_u, w_0} {w_bu}).updateProp φ₁ {w_u, w_0}).updateProp φ₂ {w_bu, w_b},
-        updateProp_mem_dexists_test _ _ ?_, ?_⟩
+        updateProp_mem_box _ _ ?_, ?_⟩
       · show _ = _ᶜ
         ext w
         cases w <;> simp [State.updateProp_prop_self,
@@ -673,7 +674,7 @@ theorem disagree_run : init₂ {w_u, w_0} {w_bu} ~[disagree] j₁₀ := by
         · cases w <;> simp [bathroomRef, State.updateProp_prop_self]
         · simp only [State.updateIndiv_prop, State.updateProp_prop_self] at hw
           cases w <;> simp_all [bathroomRef, bathroom]
-  · refine ⟨j₁₀, updateProp_mem_dexists_test _ _ ?_, ?_⟩
+  · refine ⟨j₁₀, updateProp_mem_box _ _ ?_, ?_⟩
     · intro w hw
       simp only [init₂, State.updateProp_prop_self, State.updateIndiv_prop,
         State.updateProp_prop_of_ne _ (by decide : φDCB ≠ φ₃),

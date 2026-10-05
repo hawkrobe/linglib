@@ -266,10 +266,6 @@ theorem mem_dexists {D : Update S} : i ~[dexists r D] j ↔ ∃ e, extend i r e 
 theorem mem_dforall {D : Update S} : i ∈ dforall r D ↔ ∀ e, extend i r e ∈ D.dom :=
   ⟨fun h e ↦ h ⟨e, rfl⟩, by rintro h _ ⟨e, rfl⟩; exact h e⟩
 
-/-- The DRS `[r | C]` introduces `r` and then tests `C`. -/
-theorem mem_dexists_test : i ~[dexists r (test C)] j ↔ i ~[randomAssign r] j ∧ j ∈ C :=
-  ⟨fun ⟨_, h, rfl, hC⟩ ↦ ⟨h, hC⟩, fun ⟨h, hC⟩ ↦ ⟨j, h, rfl, hC⟩⟩
-
 /-- An existential is true where the cylindrification of its scope's truth set is. -/
 theorem dom_dexists (D : Update S) : (dexists r D).dom = cyl r D.dom := by
   rw [← preimage_univ_right, dexists, preimage_comp, preimage_univ_right, preimage_randomAssign]
@@ -317,6 +313,14 @@ def box (s : Finset R) (C : Condition S) : Update S :=
 @[simp] theorem box_empty (C : Condition S) : box (∅ : Finset R) C = test C := by
   simp [box]
 
+/-- A one-register box is an existential over a test. -/
+theorem box_singleton (r : R) (C : Condition S) : box {r} C = dexists r (test C) := by
+  rw [box, Finset.noncommProd_singleton, mul_def, dexists]
+
+/-- The box `[r | C]` assigns `r` at random and then tests `C`. -/
+theorem mem_box_singleton : i ~[box {r} C] j ↔ i ~[randomAssign r] j ∧ j ∈ C := by
+  rw [box_singleton, dexists, mem_comp_test]
+
 /-- A box commutes with a random assignment whose register lies outside the dimension set of its
 condition. -/
 theorem commute_box_randomAssign (s : Finset R) (h : r ∉ dimSet C) :
@@ -350,13 +354,15 @@ theorem box_insert (r : R) (s : Finset R) (C : Condition S) :
   · rw [box, Finset.noncommProd_insert_of_notMem _ _ _ _ hr, mul_assoc, mul_def]
     rfl
 
-/-- A one-register box is an existential over a test. -/
-theorem box_singleton (r : R) (C : Condition S) : box {r} C = dexists r (test C) := by
-  rw [← insert_empty_eq, box_insert, box_empty, dexists]
-
 theorem mem_box_insert {s : Finset R} :
     i ~[box (insert r s) C] j ↔ ∃ e, extend i r e ~[box s C] j := by
   rw [box_insert, ← dexists, mem_dexists]
+
+/-- A random assignment to `r` followed by a box gives the box with `r` added. -/
+theorem mem_box_insert_of_mem {s : Finset R} {k : S} (hk : i ~[randomAssign r] k)
+    (hj : k ~[box s C] j) : i ~[box (insert r s) C] j := by
+  rw [box_insert]
+  exact ⟨k, hk, hj⟩
 
 /-- The weakest precondition of a box quantifies over each of its registers. -/
 theorem preimage_box_insert (r : R) (s : Finset R) (C t : Condition S) :
