@@ -69,15 +69,15 @@ open Core.Order Syntax Syntax.Tree Binding
 /-! ### Clauses and their noun phrases -/
 
 /-- `np w` is the one-word noun phrase `w`. -/
-def np (w : Word) : Tree Cat Word := .terminal .NP w
+def np (w : Word) : Tree Cat Word := .terminal .N w
 
 /-- `clause subj v comp` is the clause with subject `subj`, verb `v` and complement `comp`. -/
 def clause (subj v : Word) (comp : Tree Cat Word) : Tree Cat Word :=
-  .node .S [np subj, .node .VP [.terminal .V v, comp]]
+  .node .S [np subj, .node .V [.terminal .V v, comp]]
 
 /-- `nominals t` lists the noun phrases of `t`, each with its position. -/
 def nominals (t : Tree Cat Word) : List (TreePath × Word) :=
-  t.positionedTerminals.filterMap fun x ↦ if x.2.1 = .NP then some (x.1, x.2.2) else none
+  t.positionedTerminals.filterMap fun x ↦ if x.2.1 = .N then some (x.1, x.2.2) else none
 
 /-- `Nominal t` is the type of noun phrases of `t`. -/
 abbrev Nominal (t : Tree Cat Word) : Type := {x // x ∈ nominals t}

@@ -67,19 +67,19 @@ def lexicon : Finset (Tree Cat Word) :=
 /-- (25a) *John ate some of the cake*. -/
 def someSentence : Tree Cat Word :=
   .node .S [.terminal .N .john,
-    .node .VP [.terminal .V .ate, .terminal .Det .some_, .terminal .N .cake]]
+    .node .V [.terminal .V .ate, .terminal .Det .some_, .terminal .N .cake]]
 
 /-- (25b) *John ate all of the cake*. -/
 def allSentence : Tree Cat Word :=
   .node .S [.terminal .N .john,
-    .node .VP [.terminal .V .ate, .terminal .Det .all_, .terminal .N .cake]]
+    .node .V [.terminal .V .ate, .terminal .Det .all_, .terminal .N .cake]]
 
 /-- (25c) *John ate some but not all of the cake*, the symmetric alternative. -/
 def someButNotAllSentence : Tree Cat Word :=
   .node .S [.terminal .N .john,
-    .node .VP [.terminal .V .ate,
-      .node .ConjP [.terminal .Det .some_, .terminal .Conj .but_,
-        .node .NegP [.terminal .Neg .not_, .terminal .Det .all_]],
+    .node .V [.terminal .V .ate,
+      .node .Conj [.terminal .Det .some_, .terminal .Conj .but_,
+        .node .Neg [.terminal .Neg .not_, .terminal .Det .all_]],
       .terminal .N .cake]]
 
 /-- (25b) is (25a) with *all* substituted for *some*. -/
@@ -103,16 +103,16 @@ theorem some_all_equalComplexity :
     · simp [substitutionSource, lexicon]
 
 /-- No item of the substitution source of (25a) contains a conjunction phrase. -/
-theorem source_lacks_conjP :
-    ∀ t ∈ substitutionSource lexicon someSentence, Cat.ConjP ∉ t.cats :=
+theorem source_lacks_conjP : ∀ t ∈ substitutionSource lexicon someSentence,
+    ∀ s ∈ t.subtrees, s.value ≠ .node Cat.Conj :=
   forall_mem_substitutionSource.2 ⟨by decide, by decide⟩
 
 /-- The symmetric alternative is no structural alternative, since the operations never
 introduce the conjunction phrase it needs, so the symmetry problem does not arise. -/
 theorem someButNotAll_not_mem_alternatives :
     someButNotAllSentence ∉ structuralAlternatives lexicon someSentence := fun h ↦
-  category_preservation _ Cat.ConjP someSentence someButNotAllSentence source_lacks_conjP
-    (by decide) h (by decide)
+  (by decide : ¬ ∀ s ∈ someButNotAllSentence.subtrees, s.value ≠ .node Cat.Conj)
+    (phrase_preservation _ Cat.Conj source_lacks_conjP (by decide) h)
 
 /-- How much of the cake John ate. -/
 inductive Cake
@@ -148,24 +148,24 @@ theorem primary_implicature_some {wa : Tree Cat Word → Prop}
 /-- (26a) *John ate the apple or the pear*. -/
 def orSentence : Tree Cat Word :=
   .node .S [
-    .node .S [.terminal .N .john, .node .VP [.terminal .V .ate, .terminal .N .apple]],
+    .node .S [.terminal .N .john, .node .V [.terminal .V .ate, .terminal .N .apple]],
     .terminal .Conj .or_,
-    .node .S [.terminal .N .john, .node .VP [.terminal .V .ate, .terminal .N .pear]]]
+    .node .S [.terminal .N .john, .node .V [.terminal .V .ate, .terminal .N .pear]]]
 
 /-- (26b) *John ate the apple and the pear*. -/
 def andSentence : Tree Cat Word :=
   .node .S [
-    .node .S [.terminal .N .john, .node .VP [.terminal .V .ate, .terminal .N .apple]],
+    .node .S [.terminal .N .john, .node .V [.terminal .V .ate, .terminal .N .apple]],
     .terminal .Conj .and_,
-    .node .S [.terminal .N .john, .node .VP [.terminal .V .ate, .terminal .N .pear]]]
+    .node .S [.terminal .N .john, .node .V [.terminal .V .ate, .terminal .N .pear]]]
 
 /-- (27a) *John ate the apple*, the left disjunct. -/
 def leftDisjunct : Tree Cat Word :=
-  .node .S [.terminal .N .john, .node .VP [.terminal .V .ate, .terminal .N .apple]]
+  .node .S [.terminal .N .john, .node .V [.terminal .V .ate, .terminal .N .apple]]
 
 /-- (27b) *John ate the pear*, the right disjunct. -/
 def rightDisjunct : Tree Cat Word :=
-  .node .S [.terminal .N .john, .node .VP [.terminal .V .ate, .terminal .N .pear]]
+  .node .S [.terminal .N .john, .node .V [.terminal .V .ate, .terminal .N .pear]]
 
 theorem leafSubst_or_and : orSentence.leafSubst .or_ .and_ .Conj = andSentence := rfl
 
@@ -214,10 +214,10 @@ theorem primary_inferences_or {wa : Tree Cat Word → Prop}
 /-! ### Strictly simpler alternatives (Section 4.3) -/
 
 /-- (29a) *a tall man*, without its determiner. -/
-def tallMan : Tree Cat Word := .node .NP [.terminal .Adj .tall, .terminal .N .man]
+def tallMan : Tree Cat Word := .node .N [.terminal .Adj .tall, .terminal .N .man]
 
 /-- (29b) *a man*. -/
-def justMan : Tree Cat Word := .node .NP [.terminal .N .man]
+def justMan : Tree Cat Word := .node .N [.terminal .N .man]
 
 /-- Deleting the modifier gives an alternative, strictly simpler; in an upward-entailing
 context it is entailed and yields no inference, under a downward-entailing operator it does,
@@ -229,7 +229,7 @@ theorem justMan_mem_alternatives : justMan ∈ structuralAlternatives lexicon ta
 
 /-- *a little bit more than warm*, an adjective phrase. -/
 def moreThanWarm : Tree Cat Word :=
-  .node .AdjP [.terminal .Adv .aLittleBitMoreThan, .terminal .Adj .warm]
+  .node .Adj [.terminal .Adv .aLittleBitMoreThan, .terminal .Adj .warm]
 
 /-- *it is a little bit more than warm today*. -/
 def moreThanWarmToday : Tree Cat Word :=
@@ -238,7 +238,7 @@ def moreThanWarmToday : Tree Cat Word :=
 /-- (40a) *It was warm yesterday, and it is a little bit more than warm today*. -/
 def warmYesterday : Tree Cat Word :=
   .node .S [
-    .node .S [.terminal .Pron .it, .terminal .Aux .was, .node .AdjP [.terminal .Adj .warm],
+    .node .S [.terminal .Pron .it, .terminal .Aux .was, .node .Adj [.terminal .Adj .warm],
       .terminal .Adv .yesterday],
     .terminal .Conj .and_, moreThanWarmToday]
 

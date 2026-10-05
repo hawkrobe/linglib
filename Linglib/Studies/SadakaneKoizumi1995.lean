@@ -81,7 +81,7 @@ inductive Attachment where
   deriving DecidableEq
 
 /-- A category can bear Case when it is an NP or a PP; an AP cannot ((10)). -/
-def CaseAssignable (c : Cat) : Prop := c = .NP ∨ c = .PP
+def CaseAssignable (c : Cat) : Prop := c = .N ∨ c = .P
 
 instance : DecidablePred CaseAssignable := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
@@ -89,13 +89,13 @@ namespace Attachment
 
 /-- `a.phrase` is the phrase a particle forms with its noun phrase. -/
 def phrase : Attachment → Tree Cat Unit
-  | clitic => .terminal .NP ()
-  | head u => .node (.proj u .max) [.terminal .NP (), .terminal (.proj u .zero) ()]
+  | clitic => .terminal .N ()
+  | head u => .node (.lex u) [.terminal .N (), .terminal (.lex u) ()]
 
 /-- In the clause of (6) and (7), the particle's phrase, a floating numeral quantifier and the
 verb are sisters. -/
 def quantifierTree (a : Attachment) : Tree Cat Unit :=
-  .node .VP [a.phrase, .terminal .Num (), .terminal .V ()]
+  .node .V [a.phrase, .terminal .Num (), .terminal .V ()]
 
 /-- `a.host` is the position of the noun phrase in `a.quantifierTree`. -/
 def host : Attachment → TreePath
@@ -323,7 +323,7 @@ def readingLabels : List (String × Reading) :=
   [("affected", .affected), ("nonaffected", .nonaffected)]
 
 /-- The examples of (10) name the category of the copula's complement. -/
-def focusLabels : List (String × Cat) := [("NP", .NP), ("AP", .AdjP), ("PP", .PP)]
+def focusLabels : List (String × Cat) := [("NP", .N), ("AP", .Adj), ("PP", .P)]
 
 /-- `particles x` lists the particles the paper reads in `x`, two for an ambiguous *ni*. -/
 def particles (x : Datum) : List Particle :=

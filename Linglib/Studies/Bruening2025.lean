@@ -33,6 +33,8 @@ c-selectional features, which the next item merged checks off (§5.8). The examp
   S-features.
 * `mergesWith_iff_nominalCoordination`: on prenominal modifiers the analysis agrees with the 2020
   one, with no null head.
+* `adverb_mergesWith_maximal`: an underspecified adverb merges with a maximal noun phrase and not
+  with a nonmaximal one, the distinction the analysis needs.
 * `mergesWith_cmpr_iff`: it extends to comparatives, where an adverb may also only be the
   conjunct away from the comparative.
 * `modifier_rows`, `stacked_rows`, `prenominal_rows_2020`: it decides the examples and the 2020
@@ -46,6 +48,9 @@ c-selectional features, which the next item merged checks off (§5.8). The examp
   *strengthen* and *withdraw* (§5.6), which the paper excludes semantically (`semantic_rows`).
 * The positive features of *-ly* adverbs are left open by the paper beyond excluding nouns; they
   are given verbs and adjectives here, and no theorem uses more than that they exclude nouns.
+* Bruening's categories distinguish a maximal `NP` from a nonmaximal `N` (p. 479). His calculus
+  has no trees from which to read maximality off, so a selected category here is a `Syntax.Cat`
+  with a flag for being maximal, as in the paper, or a degree head.
 * Short displacement as a degree phrase ((105)) is not formalized.
 
 ## References
@@ -63,7 +68,7 @@ namespace Bruening2025
 open BrueningAlKhalaf2020 (Conjunct Admits Satisfies Licensed checkedOnce phrases? selects? side?
   AdvHead NominalCoordination)
 open Syntax (Cat)
-open Syntax.Cat (N V Adj Adv NP)
+open Syntax.Cat (N V Adj Adv)
 
 /-! ### Categorial selection -/
 
@@ -81,8 +86,8 @@ theorem selection_rows : ∃ e₁ ∈ Examples.all, ∃ e₂ ∈ Examples.all,
 the null N, while one that imposes none admits it, so speakers who accept *that images are
 waterproof is incoherent* have a predicate without S-features (§5.7). -/
 theorem cp_subjects :
-    ¬ Admits (Satisfies (checkedOnce .headFinal) {NP}) [.CP] ∧
-      Admits (Satisfies (fun _ ↦ []) {NP}) [.CP] := by
+    ¬ Admits (Satisfies (checkedOnce .headFinal) {N}) [.C] ∧
+      Admits (Satisfies (fun _ ↦ []) {N}) [.C] := by
   decide
 
 /-! ### Adverbs -/
@@ -97,25 +102,26 @@ inductive Degree where
   deriving DecidableEq
 
 /-- A modifier's c-selectional feature (§5.8) either requires what it merges with to be of one of
-some categories or forbids it to be of any of them. -/
+some categories or forbids it to be of any of them. A category selected is a projection marked
+maximal, as `NP`, or not, as `N`, or a degree head. -/
 inductive CFeature where
   /-- A positive feature, `[C ∈ s]`. -/
-  | sel (s : Finset (Cat ⊕ Degree))
+  | sel (s : Finset ((Cat × Bool) ⊕ Degree))
   /-- A negative feature, `[C ∉ s]`. -/
-  | ban (s : Finset (Cat ⊕ Degree))
+  | ban (s : Finset ((Cat × Bool) ⊕ Degree))
   deriving DecidableEq
 
 namespace CFeature
 
 /-- A negative feature is checked off as soon as the next item is merged, and fails if that item
 is of a category it bans. A positive feature waits. -/
-def ChecksNext : CFeature → Cat ⊕ Degree → Prop
+def ChecksNext : CFeature → (Cat × Bool) ⊕ Degree → Prop
   | sel _, _ => True
   | ban s, c => c ∉ s
 
 /-- A positive feature on the coordinator's stack is checked against the item the coordination
 merges with, as is every feature on the stack ((75)). -/
-def ChecksHost : CFeature → Cat ⊕ Degree → Prop
+def ChecksHost : CFeature → (Cat × Bool) ⊕ Degree → Prop
   | sel s, c => c ∈ s
   | ban _, _ => True
 
@@ -129,8 +135,8 @@ end CFeature
 
 /-- A modifier is an item of some category with a c-selectional feature. -/
 structure Modifier where
-  /-- The modifier's category. -/
-  cat : Cat ⊕ Degree
+  /-- `cat` is the modifier's category. -/
+  cat : (Cat × Bool) ⊕ Degree
   /-- The modifier's c-selectional feature. -/
   feature : CFeature
   deriving DecidableEq
@@ -138,17 +144,17 @@ structure Modifier where
 namespace Modifier
 
 /-- An adjective selects a nonmaximal noun (§4.1). -/
-def adjective : Modifier := ⟨.inl Adj, .sel {.inl N}⟩
+def adjective : Modifier := ⟨.inl (Adj, true), .sel {.inl (N, false)}⟩
 
 /-- An underspecified adverb such as *once*, *twice* or *soon* may merge with anything but a
 nonmaximal noun or a comparative (§5.8). -/
-def adverb : Modifier := ⟨.inl Adv, .ban {.inl N, .inr .cmpr}⟩
+def adverb : Modifier := ⟨.inl (Adv, true), .ban {.inl (N, false), .inr .cmpr}⟩
 
 /-- An adverb in *-ly* selects what adverbs modify, verbs and adjectives, and not nouns (§4.1). -/
-def lyAdverb : Modifier := ⟨.inl Adv, .sel {.inl V, .inl Adj}⟩
+def lyAdverb : Modifier := ⟨.inl (Adv, true), .sel {.inl (V, false), .inl (Adj, false)}⟩
 
 /-- A measure phrase such as *three times* selects a comparative (p. 479). -/
-def measure : Modifier := ⟨.inl NP, .sel {.inr .cmpr}⟩
+def measure : Modifier := ⟨.inl (N, true), .sel {.inr .cmpr}⟩
 
 /-- The modifier the 2020 analysis's adjective, silent-headed adverb or adverb in *-ly* is here. -/
 def ofAdvHead : Option AdvHead → Modifier
@@ -162,26 +168,32 @@ end Modifier
 feature of each conjunct is checked off by the next conjunct and that of the last by `h`, the
 last conjunct's features being on top of the coordinator's stack, and every positive feature on
 the stack is satisfied by `h` ((100)–(104)). -/
-def MergesWith (ms : List Modifier) (h : Cat ⊕ Degree) : Prop :=
+def MergesWith (ms : List Modifier) (h : (Cat × Bool) ⊕ Degree) : Prop :=
   ms.IsChain (fun x y ↦ x.feature.ChecksNext y.cat) ∧
     (∀ x ∈ HeadDirection.headFinal.nearest ms, x.feature.ChecksNext h) ∧
       ∀ x ∈ ms, x.feature.ChecksHost h
 
-instance (ms : List Modifier) (h : Cat ⊕ Degree) : Decidable (MergesWith ms h) := by
+instance (ms : List Modifier) (h : (Cat × Bool) ⊕ Degree) : Decidable (MergesWith ms h) := by
   unfold MergesWith; infer_instance
 
 /-- An underspecified adverb alone merges with anything but a nonmaximal noun or a comparative,
 so *twice* is out before *taller* and in before *as tall as* ((97)). -/
-theorem adverb_mergesWith_iff {h : Cat ⊕ Degree} :
-    MergesWith [.adverb] h ↔ h ≠ .inl N ∧ h ≠ .inr .cmpr := by
+theorem adverb_mergesWith_iff {h : (Cat × Bool) ⊕ Degree} :
+    MergesWith [.adverb] h ↔ h ≠ .inl (N, false) ∧ h ≠ .inr .cmpr := by
   simp [MergesWith, Modifier.adverb, CFeature.ChecksNext, CFeature.ChecksHost]
+
+/-- An underspecified adverb can merge with a maximal noun phrase, as *soon* in *so soon a visit*,
+but not with a nonmaximal one, which is why the analysis needs the distinction (p. 479). -/
+theorem adverb_mergesWith_maximal :
+    MergesWith [.adverb] (.inl (N, true)) ∧ ¬ MergesWith [.adverb] (.inl (N, false)) := by
+  decide
 
 /-- **On prenominal modifiers the analysis agrees with the 2020 one** (p. 480). Coordinated before
 a noun, an adjective or an underspecified adverb may come first and only an adjective last, as the
 2020 analysis derives from a silent Adv head and the ban on adverbs modifying N′, while this one
 needs neither. -/
 theorem mergesWith_iff_nominalCoordination (m₁ m₂ : Option AdvHead) :
-    MergesWith [.ofAdvHead m₁, .ofAdvHead m₂] (.inl N) ↔ NominalCoordination m₁ m₂ := by
+    MergesWith [.ofAdvHead m₁, .ofAdvHead m₂] (.inl (N, false)) ↔ NominalCoordination m₁ m₂ := by
   rcases m₁ with _ | _ | _ <;> rcases m₂ with _ | _ | _ <;> decide
 
 /-- **It extends to comparatives**, which the 2020 analysis does not cover. Coordinated with a
@@ -204,8 +216,8 @@ def modifierList? (e : Datum) : Option (List Modifier) :=
   (e.features "modifier").mapM modifierOf?
 
 /-- `host? e` is the category of what a row's modifiers modify. -/
-def host? (e : Datum) : Option (Cat ⊕ Degree) :=
-  e.parse? "host" [("N", .inl N), ("CMPR", .inr .cmpr), ("equative", .inr .eq)]
+def host? (e : Datum) : Option ((Cat × Bool) ⊕ Degree) :=
+  e.parse? "host" [("N", .inl (N, false)), ("CMPR", .inr .cmpr), ("equative", .inr .eq)]
 
 /-- Every row is one of the five constructions below. -/
 theorem construction_rows : ∀ e ∈ Examples.all, e.feature? "construction" ∈
@@ -259,7 +271,7 @@ theorem stacked_rows : ∀ e ∈ Examples.all, e.feature? "construction" = some 
 /-- The analysis decides the 2020 paper's prenominal examples ((44), its p. 15, (56a), (57a)). -/
 theorem prenominal_rows_2020 : ∀ e ∈ BrueningAlKhalaf2020.Examples.all,
     e.feature? "construction" = some "prenominal" →
-      ∃ ms ∈ modifierList? e, (MergesWith ms (.inl N) ↔ e.judgment = .acceptable) := by
+      ∃ ms ∈ modifierList? e, (MergesWith ms (.inl (N, false)) ↔ e.judgment = .acceptable) := by
   decide
 
 /-! ### The surveys -/
@@ -272,7 +284,7 @@ def Exp1aCondition.modifiers : Exp1aCondition → Option (List Modifier)
 
 /-- The analysis admits the adjectives of Experiment 1a and not the adverbs. -/
 theorem exp1a_predictions : ∀ c : Exp1aCondition, ∀ ms ∈ c.modifiers,
-    (MergesWith ms (.inl N) ↔ c = .adjective) := by
+    (MergesWith ms (.inl (N, false)) ↔ c = .adjective) := by
   decide
 
 /-- `c.modifiers` is the lone prenominal modifier of the items of a condition of Experiment 2,
@@ -284,25 +296,25 @@ def Exp2Condition.modifiers : Exp2Condition → Option (List Modifier)
 
 /-- The analysis admits the adjectives of Experiment 2 and not the adverbs. -/
 theorem exp2_predictions : ∀ c : Exp2Condition, ∀ ms ∈ c.modifiers,
-    (MergesWith ms (.inl N) ↔ c = .adjective) := by
+    (MergesWith ms (.inl (N, false)) ↔ c = .adjective) := by
   decide
 
 /-- `c.phrases` is the complement of the items of a condition of Experiment 1b, all after a
 preposition or verb that selects noun phrases only. -/
 def Exp1bCondition.phrases : Exp1bCondition → Option (List Cat)
-  | .coordination => some [NP, .CP]
-  | .simple => some [.CP]
+  | .coordination => some [N, .C]
+  | .simple => some [.C]
   | _ => none
 
 /-- The revision admits the coordinations of Experiment 1b and not the bare clauses. -/
 theorem exp1b_predictions : ∀ c : Exp1bCondition, ∀ ps ∈ c.phrases,
-    (Admits (Satisfies (checkedOnce .headInitial) {NP}) ps ↔ c = .coordination) := by
+    (Admits (Satisfies (checkedOnce .headInitial) {N}) ps ↔ c = .coordination) := by
   decide
 
 /-- For the speakers whose S-features persist, about a tenth of those surveyed (p. 457), the
 coordinations of Experiment 1b are out as well (§5.9, after `mem_cats_of_admits_id`). -/
 theorem exp1b_persisting : ∀ c : Exp1bCondition, ∀ ps ∈ c.phrases,
-    ¬ Admits (Satisfies id {NP}) ps := by
+    ¬ Admits (Satisfies id {N}) ps := by
   decide
 
 end Bruening2025

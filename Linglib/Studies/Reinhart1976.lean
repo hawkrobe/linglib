@@ -59,10 +59,10 @@ def Commands (t : Tree Cat W) (a b : TreePath) : Prop :=
 def PrecedesAndCommands (t : Tree Cat W) (a b : TreePath) : Prop :=
   TreePath.Precedes a b ∧ Commands t a b
 
-instance (t : Tree Cat W) : DecidableRel (Commands t) := λ _ _ => by
+instance (t : Tree Cat W) : DecidableRel (Commands t) := fun _ _ ↦ by
   unfold Commands; infer_instance
 
-instance (t : Tree Cat W) : DecidableRel (PrecedesAndCommands t) := λ _ _ => by
+instance (t : Tree Cat W) : DecidableRel (PrecedesAndCommands t) := fun _ _ ↦ by
   unfold PrecedesAndCommands; infer_instance
 
 /-- C-command entails command (49) whenever every S node branches. -/
@@ -83,16 +83,16 @@ def TypeI (t : Tree Cat W) (a b : TreePath) : Prop := CCommands t a b ∧ TreePa
 def TypeIII (t : Tree Cat W) (a b : TreePath) : Prop :=
   PrecedesAndCommands t a b ∧ ¬ CCommands t a b
 
-instance (t : Tree Cat W) : DecidableRel (TypeI t) := λ _ _ => by unfold TypeI; infer_instance
+instance (t : Tree Cat W) : DecidableRel (TypeI t) := fun _ _ ↦ by unfold TypeI; infer_instance
 
-instance (t : Tree Cat W) : DecidableRel (TypeIII t) := λ _ _ => by
+instance (t : Tree Cat W) : DecidableRel (TypeIII t) := fun _ _ ↦ by
   unfold TypeIII; infer_instance
 
 /-- The two domains agree except on types I and III (50). -/
 theorem cCommands_iff_precedesAndCommands {t : Tree Cat W} {a b : TreePath}
     (hS : labeled t {.S} ⊆ {p | IsBranchingAt t p}) (h₁ : ¬ TypeI t a b) (h₃ : ¬ TypeIII t a b) :
     CCommands t a b ↔ PrecedesAndCommands t a b := by
-  refine ⟨λ h => ⟨?_, cCommands_commands hS h⟩, λ h => by_contra λ h' => h₃ ⟨h, h'⟩⟩
+  refine ⟨fun h ↦ ⟨?_, cCommands_commands hS h⟩, fun h ↦ by_contra fun h' ↦ h₃ ⟨h, h'⟩⟩
   rcases TreePath.Precedes.trichotomy a b with hp | hp | hp | hp
   · exact absurd hp h.2.1
   · exact absurd hp h.2.2
@@ -123,17 +123,17 @@ instance (R : TreePath → TreePath → Prop) [DecidableRel R] (pron : List Tree
 /-- Whatever (10a) blocks, (10b) blocks. -/
 theorem permits10a_of_permits {R : TreePath → TreePath → Prop} {pron : List TreePath}
     {a b : TreePath} (h : Permits R pron a b) : Permits10a R pron a b :=
-  ⟨λ ⟨_, hb⟩ hab => hb (h.1 hab), λ ⟨_, ha⟩ hba => ha (h.2 hba)⟩
+  ⟨fun ⟨_, hb⟩ hab ↦ hb (h.1 hab), fun ⟨_, ha⟩ hba ↦ ha (h.2 hba)⟩
 
 /-! ### The trees -/
 
 /-- A noun phrase. -/
-def np : Tree Cat Unit := .node .NP [.terminal .N ()]
+def np : Tree Cat Unit := .node .N [.terminal .N ()]
 
 /-- The abstract tree (37) is a cyclic node with daughters A, B and C, of which B branches into
 D and a cyclic node with daughters E and F. -/
 def tree37 : Tree Cat Unit :=
-  .node .S [.terminal .N (), .node .VP [.terminal .N (), .node .S [.terminal .N (),
+  .node .S [.terminal .N (), .node .V [.terminal .N (), .node .S [.terminal .N (),
     .terminal .N ()]], .terminal .N ()]
 
 /-- The nodes of (37) other than the root are A, B, C, D, the lower cyclic node, E and F. -/
@@ -144,7 +144,7 @@ def nodes37 : List TreePath :=
 `a` itself. -/
 def domain (R : TreePath → TreePath → Prop) [DecidableRel R] (nodes : List TreePath)
     (a : TreePath) : List TreePath :=
-  nodes.filter λ b => decide (R a b)
+  nodes.filter fun b ↦ decide (R a b)
 
 /-- In the precede-and-command domains of (37), table (39a), C has nothing in its domain, and D,
 which precedes and commands C, has C in its domain. -/
@@ -177,44 +177,44 @@ theorem domain_cCommands_tree37 :
 /-- Example (9a) has a subject and an embedded subject, `NP₁ denied that NP₂ has met the Shah`,
 at `0` and `110`. -/
 def tree9a : Tree Cat Unit :=
-  .node .S [np, .node .VP [.terminal .V (), .node .S [np, .node .VP [.terminal .V (), np]]]]
+  .node .S [np, .node .V [.terminal .V (), .node .S [np, .node .V [.terminal .V (), np]]]]
 
 /-- Example (9b) has a noun phrase inside a relative clause of the subject, `the man who traveled
 with NP₅`, at `02111`, and an embedded subject at `110`. -/
 def tree9b : Tree Cat Unit :=
-  .node .S [.node .NP [.terminal .Det (), .terminal .N (), .node .S [np, .node .VP
-    [.terminal .V (), .node .PP [.terminal .P (), np]]]],
-    .node .VP [.terminal .V (), .node .S [np, .node .VP [.terminal .V (), np]]]]
+  .node .S [.node .N [.terminal .Det (), .terminal .N (), .node .S [np, .node .V
+    [.terminal .V (), .node .P [.terminal .P (), np]]]],
+    .node .V [.terminal .V (), .node .S [np, .node .V [.terminal .V (), np]]]]
 
 /-- Example (12) has an object inside a relative clause of the subject, `people who know NP`, at
 `0111`, and the matrix object at `11`. -/
 def tree12 : Tree Cat Unit :=
-  .node .S [.node .NP [.terminal .N (), .node .S [np, .node .VP [.terminal .V (), np]]],
-    .node .VP [.terminal .V (), np]]
+  .node .S [.node .N [.terminal .N (), .node .S [np, .node .V [.terminal .V (), np]]],
+    .node .V [.terminal .V (), np]]
 
 /-- Example (41) has a preposed prepositional phrase whose noun phrase, at `01`, may contain a
 possessor at `010`, with the subject at `1` and the object at `21`. -/
 def tree41 : Tree Cat Unit :=
-  .node .S [.node .PP [.terminal .P (), .node .NP [np, .terminal .N ()]], np,
-    .node .VP [.terminal .V (), np]]
+  .node .S [.node .P [.terminal .P (), .node .N [np, .terminal .N ()]], np,
+    .node .V [.terminal .V (), np]]
 
 /-- Example (42) has a sentential prepositional phrase whose clause has a subject with a
 possessor at `2100`, with the matrix subject at `0` and object at `11`. -/
 def tree42 : Tree Cat Unit :=
-  .node .S [np, .node .VP [.terminal .V (), np], .node .PP [.terminal .P (), .node .S
-    [.node .NP [np, .terminal .N ()], .node .VP [.terminal .V ()]]]]
+  .node .S [np, .node .V [.terminal .V (), np], .node .P [.terminal .P (), .node .S
+    [.node .N [np, .terminal .N ()], .node .V [.terminal .V ()]]]]
 
 /-- Example (48b) has a verb-phrasal prepositional phrase with a possessor at `11310`, and the
 object at `111`. -/
 def tree48b : Tree Cat Unit :=
-  .node .S [np, .node .VP [.terminal .V (), .node .VP [.terminal .V (), np, np,
-    .node .PP [.terminal .P (), .node .NP [np, .terminal .N ()]]]]]
+  .node .S [np, .node .V [.terminal .V (), .node .V [.terminal .V (), np, np,
+    .node .P [.terminal .P (), .node .N [np, .terminal .N ()]]]]]
 
 /-- Example (51) is a VOS clause with a VP, the object at `01` with a possessor at `011`, and the
 subject at `1` with a possessor at `11`. -/
 def tree51 : Tree Cat Unit :=
-  .node .S [.node .VP [.terminal .V (), .node .NP [.terminal .N (), np]],
-    .node .NP [.terminal .N (), np]]
+  .node .S [.node .V [.terminal .V (), .node .N [.terminal .N (), np]],
+    .node .N [.terminal .N (), np]]
 
 /-- In (41) the subject c-commands the noun phrase of the preposed phrase, which precedes it, a
 pair of type I. -/
@@ -238,7 +238,7 @@ def trees : List (String × Tree Cat Unit) :=
    ("sententialPP", tree42), ("verbalPP", tree48b), ("vos", tree51)]
 
 /-- A position from its digits. -/
-def path (s : String) : TreePath := ⟨s.toList.map λ c => c.toNat - '0'.toNat⟩
+def path (s : String) : TreePath := ⟨s.toList.map fun c ↦ c.toNat - '0'.toNat⟩
 
 /-- An example records its tree, the two noun phrases, the pronouns among them, and the
 judgment. -/

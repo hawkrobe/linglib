@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Syntax.Minimalist.Linearization.Replay
-public import Linglib.Syntax.Command
+public import Linglib.Syntax.Projection
 public import Linglib.Core.Data.RoseTree.Get
 
 /-!
@@ -14,31 +14,32 @@ public import Linglib.Core.Data.RoseTree.Get
 
 A planar syntactic object is a copy-theoretic representation. A vertex `Vertex.lex tok` is a
 pronounced copy of `tok` and a vertex `Vertex.traceOf tok` a deleted one, the trace Internal Merge
-leaves, the cancellation `T/T_v` of [marcolli-chomsky-berwick-2025] with the head of `T_v`
-remembered. The chain of a token is the list of its copies, and a copy stands for the maximal
-projection of its token, so a moved phrase sits where its head projects. A token moves when it
-has a deleted copy. A token bound in situ by an operator ([pesetsky-1987]) has a single copy. A
-deleted copy above the pronounced one is covert movement ([huang-1982]), and a pronounced copy
-between two deleted ones is partial movement ([sato-ngui-2017]), so where a phrase is pronounced
-and where it takes scope come apart without a separate choice of the copy to spell out. A token
-with two pronounced copies is shared, dominated by two mothers, [citko-2005]'s Parallel Merge.
+leaves, Marcolli, Chomsky and Berwick's cancellation `T/T_v` with the head of `T_v` remembered.
+The chain of a token is the list of its copies, and a copy stands for the maximal projection of
+its token, so a moved phrase sits where its head projects. A token moves when it has a deleted
+copy. A token bound in situ by an operator, as for Pesetsky, has a single copy. A deleted copy
+above the pronounced one is Huang's covert movement, and a pronounced copy between two deleted
+ones is Sato and Ngui's partial movement, so where a phrase is pronounced and where it takes scope
+come apart without a separate choice of the copy to spell out. A token with two pronounced copies
+is shared, dominated by two mothers, Citko's Parallel Merge.
 
 A copy is linked to the nearest copy above it, the one whose projection c-commands it with no
-other copy's projection in between, c-command being `Syntax.CCommands` ([barker-pullum-1990]).
-Locality constrains links. The Phase Impenetrability Condition ([chomsky-2000]) bars a link from
-the interior of a phase, the positions its head c-commands, to a position outside the head's
-maximal projection, so that the edge is the escape hatch (`Crosses`); an island is a domain no
-link may leave (`Escapes`). A token with one copy has no link, so binding in situ is subject to
-neither (`links_eq_nil_of_length_le_one`), and movement, covert movement included, is subject to
-both ([sato-ngui-2017]).
+other copy's projection in between, c-command being Barker and Pullum's `Syntax.CCommands`.
+Locality constrains links. Chomsky's Phase Impenetrability Condition bars a link from the interior
+of a phase, the positions its head c-commands, to a position outside the head's maximal
+projection, so that the edge is the escape hatch (`Crosses`); an island is a domain no link may
+leave (`Escapes`). A token with one copy has no link, so binding in situ is subject to neither
+(`links_eq_nil_of_length_le_one`), and movement, covert movement included, is subject to both, as
+Sato and Ngui find.
 
 ## Main definitions
 
 * `Minimalist.tokenList`, `Minimalist.traceList`: the pronounced and the deleted copies.
 * `occurrences`, `traces`, `chain`, `Moves`, `IsShared`: the copies of a token.
-* `projectionAt`, `HasAntecedent`, `orphanTraces`: the phrase a copy stands for, and the
-  deleted copies no pronounced copy c-commands, seen from their own conjunct copies without
-  antecedents.
+* `headIndex?`, `projectionAt`: the head daughter of a constituent, and the phrase a copy stands
+  for, its maximal projection along head daughters (`Syntax.maximalProjectionAt`).
+* `HasAntecedent`, `orphanTraces`: whether a pronounced copy c-commands a deleted one, and the
+  deleted copies without antecedents, seen from their own conjunct copies.
 * `IsLink`, `links`, `chainTop`: the links of a chain and its scope position.
 * `interior`, `Crosses`, `Escapes`: phases, islands, and the links that leave them.
 
@@ -50,7 +51,7 @@ both ([sato-ngui-2017]).
   is the same c-command domain on positions.
 * The head of a constituent is found down its right spine (`headPos?`), a left leaf that selects
   nothing being a specifier. Where two saturated phrases are sisters, a specifier and its sister,
-  the selection head `SyntacticObject.selHead` is undefined, as [marcolli-chomsky-berwick-2025]'s
+  the selection head `SyntacticObject.selHead` is undefined, as Marcolli, Chomsky and Berwick's
   head functions are, and the labeling algorithm (`SyntacticObject.label`) labels the object only
   once one of them has moved on; `headPos?` takes the right sister, so that a phrase with a
   specifier has a maximal projection to locate a copy in.
@@ -153,17 +154,15 @@ def headPos? : RoseTree Vertex → Option (List ℕ)
 def headToken? (s : RoseTree Vertex) : Option LIToken :=
   (headPos? s).bind fun q ↦ (subtreeAt s q).bind (Sum.elim id id ·.value)
 
-/-- The maximal projection of the copy at `p` is the highest position above it whose head is `p`
-itself, or `p` when there is none. -/
-def projectionAt (p : TreePath) : TreePath :=
-  ((p.toList.inits.find? fun r ↦
-      ((subtreeAt t.val r).bind headPos?).map (r ++ ·) = some p.toList).map TreePath.mk).getD p
+/-- The index of a constituent's head daughter, the first step of its head path. -/
+def headIndex? (s : RoseTree Vertex) : Option ℕ := (headPos? s).bind List.head?
 
-theorem projectionAt_le (p : TreePath) : projectionAt t p ≤ p := by
-  unfold projectionAt
-  cases h : p.toList.inits.find? _ with
-  | none => exact le_rfl
-  | some r => exact TreePath.le_def.2 (List.mem_inits _ _ |>.1 (List.mem_of_find?_eq_some h))
+/-- The maximal projection of the copy at `p` is the highest position reached from `p` by
+climbing while the position is the head daughter of its mother. -/
+def projectionAt (p : TreePath) : TreePath :=
+  maximalProjectionAt (fun q ↦ (subtreeAt t.val q.toList).bind headIndex?) p
+
+theorem projectionAt_le (p : TreePath) : projectionAt t p ≤ p := maximalProjectionAt_le _ p
 
 /-- A deleted copy has an antecedent when the projection of a pronounced copy of its token
 c-commands it. -/

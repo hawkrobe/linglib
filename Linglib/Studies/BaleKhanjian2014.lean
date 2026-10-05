@@ -181,45 +181,45 @@ theorem denotations :
 
 /-- The singular indefinite is a bare NP, the verb supplying existential force. -/
 def singularIndef : Tree Cat String :=
-  .node .S [.node .NP [.terminal .N "dəgha"], .node .VP [.terminal .V "vaze-ts"]]
+  .node .S [.node .N [.terminal .N "dəgha"], .node .V [.terminal .V "vaze-ts"]]
 
 /-- The plural indefinite is a full DP with a covert existential determiner. -/
 def pluralIndef : Tree Cat String :=
   .node .S [
-    .node .DP [.terminal .Det "∃",
-      .node .NumP [.node .NP [.terminal .N "dəgha"], .terminal .Num "-ner"]],
-    .node .VP [.terminal .V "vaze-ts-in"]]
+    .node .Det [.terminal .Det "∃",
+      .node .Num [.node .N [.terminal .N "dəgha"], .terminal .Num "-ner"]],
+    .node .V [.terminal .V "vaze-ts-in"]]
 
 /-- The singular definite is a full DP with a null number head. -/
 def singularDef : Tree Cat String :=
   .node .S [
-    .node .DP [.node .NumP [.node .NP [.terminal .N "dəgha"], .terminal .Num "-∅"],
+    .node .Det [.node .Num [.node .N [.terminal .N "dəgha"], .terminal .Num "-∅"],
       .terminal .Det "-n"],
-    .node .VP [.terminal .V "vaze-ts"]]
+    .node .V [.terminal .V "vaze-ts"]]
 
 /-- The plural definite has the same structure with the plural number head. -/
 def pluralDef : Tree Cat String :=
   .node .S [
-    .node .DP [.node .NumP [.node .NP [.terminal .N "dəgha"], .terminal .Num "-ner"],
+    .node .Det [.node .Num [.node .N [.terminal .N "dəgha"], .terminal .Num "-ner"],
       .terminal .Det "-ə"],
-    .node .VP [.terminal .V "vaze-ts-in"]]
+    .node .V [.terminal .V "vaze-ts-in"]]
 
 /-- The numeral-modified singular indefinite: a full DP, the numeral above the number
     phrase. -/
 def numeralSg : Tree Cat String :=
   .node .S [
-    .node .DP [.terminal .Det "∃",
-      .node .NumP [.terminal .Num "yergu",
-        .node .NumP [.node .NP [.terminal .N "dəgha"], .terminal .Num "-∅"]]],
-    .node .VP [.terminal .V "vaze-ts"]]
+    .node .Det [.terminal .Det "∃",
+      .node .Num [.terminal .Num "yergu",
+        .node .Num [.node .N [.terminal .N "dəgha"], .terminal .Num "-∅"]]],
+    .node .V [.terminal .V "vaze-ts"]]
 
 /-- The numeral-modified plural indefinite. -/
 def numeralPl : Tree Cat String :=
   .node .S [
-    .node .DP [.terminal .Det "∃",
-      .node .NumP [.terminal .Num "yergu",
-        .node .NumP [.node .NP [.terminal .N "dəgha"], .terminal .Num "-ner"]]],
-    .node .VP [.terminal .V "vaze-ts-in"]]
+    .node .Det [.terminal .Det "∃",
+      .node .Num [.terminal .Num "yergu",
+        .node .Num [.node .N [.terminal .N "dəgha"], .terminal .Num "-ner"]]],
+    .node .V [.terminal .V "vaze-ts-in"]]
 
 /-- The lexicon the substitutions draw on holds the two number heads, the two definite
     allomorphs, the two verb forms, and the noun. -/
@@ -232,22 +232,23 @@ def lexicon : Finset (Tree Cat String) :=
     of deletions, contractions and substitutions reaches it. -/
 theorem pluralIndef_not_alternative :
     pluralIndef ∉ structuralAlternatives lexicon singularIndef := fun h ↦
-  category_preservation (substitutionSource lexicon singularIndef) .DP singularIndef pluralIndef
-    (forall_mem_substitutionSource.2 ⟨by decide, by decide⟩) (by decide) h (by decide)
+  (by decide : ¬ ∀ s ∈ pluralIndef.subtrees, s.value ≠ .node .Det)
+    (phrase_preservation _ .Det (forall_mem_substitutionSource.2 ⟨by decide, by decide⟩)
+      (by decide) h)
 
 /-- The plural definite is a structural alternative to the singular definite, and conversely:
     they differ by three same-category substitutions. -/
 theorem pluralDef_alternative : equalComplexity (↑lexicon) singularDef pluralDef := by
   let step₁ : Tree Cat String :=
     .node .S [
-      .node .DP [.node .NumP [.node .NP [.terminal .N "dəgha"], .terminal .Num "-ner"],
+      .node .Det [.node .Num [.node .N [.terminal .N "dəgha"], .terminal .Num "-ner"],
         .terminal .Det "-ə"],
-      .node .VP [.terminal .V "vaze-ts"]]
+      .node .V [.terminal .V "vaze-ts"]]
   let step₂ : Tree Cat String :=
     .node .S [
-      .node .DP [.node .NumP [.node .NP [.terminal .N "dəgha"], .terminal .Num "-ner"],
+      .node .Det [.node .Num [.node .N [.terminal .N "dəgha"], .terminal .Num "-ner"],
         .terminal .Det "-n"],
-      .node .VP [.terminal .V "vaze-ts"]]
+      .node .V [.terminal .V "vaze-ts"]]
   refine ⟨?_, ?_⟩
   · refine .head (b := step₁) ?_ (.head (b := step₂) ?_ (.single ?_))
     · apply StructOp.inChild ⟨1, by simp⟩
@@ -277,10 +278,10 @@ theorem pluralDef_alternative : equalComplexity (↑lexicon) singularDef pluralD
 theorem numeralPl_alternative : equalComplexity lexicon numeralSg numeralPl := by
   let step : Tree Cat String :=
     .node .S [
-      .node .DP [.terminal .Det "∃",
-        .node .NumP [.terminal .Num "yergu",
-          .node .NumP [.node .NP [.terminal .N "dəgha"], .terminal .Num "-ner"]]],
-      .node .VP [.terminal .V "vaze-ts"]]
+      .node .Det [.terminal .Det "∃",
+        .node .Num [.terminal .Num "yergu",
+          .node .Num [.node .N [.terminal .N "dəgha"], .terminal .Num "-ner"]]],
+      .node .V [.terminal .V "vaze-ts"]]
   refine ⟨?_, ?_⟩
   · refine .head (b := step) ?_ (.single ?_)
     · apply StructOp.inChild ⟨1, by simp⟩

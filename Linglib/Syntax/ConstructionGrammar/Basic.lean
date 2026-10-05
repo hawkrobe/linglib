@@ -6,7 +6,6 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Data.UD.UPOS
-public import Linglib.Syntax.Cat
 public import Mathlib.Data.List.Dedup
 
 /-!
@@ -121,8 +120,9 @@ inductive SlotConstraint where
   | refEmpty
   deriving DecidableEq, Repr
 
-/-- A slot in a construction's form has a filler, a headedness flag, and the bar level of the
-position itself, where `level := none` leaves the bar level unspecified. A slot's semantics bears
+/-- A slot in a construction's form has a filler, a headedness flag, and Kay and Fillmore's
+lexicality of the position, where `lex := none` leaves it unspecified; their maximality is not
+stored, since a head is nonmaximal and every other daughter maximal. A slot's semantics bears
 its `refIdx`, and a predicate phrase that does not realize its own subject bears the index of that
 subject requirement as its `subjIdx`. Coinstantiation, which covers raising and control, unifies a
 predicator's subject with the subject requirement of its complement ([kay-fillmore-1999],
@@ -132,8 +132,8 @@ structure Slot (Lex : Type*) where
   filler : SlotFiller Lex
   /-- `isHead` records whether the slot is the head of the construction. -/
   isHead : Bool := false
-  /-- `level` is the bar level of the position, `some .zero` for a word-level slot. -/
-  level : Option Syntax.BarLevel := none
+  /-- `lex` says whether the position is a word, `some true` for a word-level slot. -/
+  lex : Option Bool := none
   /-- `gf` is the slot's grammatical function ([kay-fillmore-1999]). -/
   gf : Option GrammaticalFunction := none
   /-- The index of the slot's semantics. -/
@@ -147,11 +147,12 @@ structure Slot (Lex : Type*) where
 /-- A typed form is the form side of a construction, a sequence of slots. -/
 abbrev TypedForm (Lex : Type*) := List (Slot Lex)
 
-/-- A slot holds a phrase in a word-level position when its filler is phrasal and its level zero,
+/-- A slot holds a phrase in a word-level position when its filler is phrasal and its position a
+word,
 the defining configuration of phrasal compounds and the PAL construction ([goldberg-shirtz-2025])
 and the cell that lexical-integrity hypotheses rule out. -/
 def Slot.IsPhraseInWordSlot {Lex : Type*} (s : Slot Lex) : Prop :=
-  s.filler = .phrasal ∧ s.level = some .zero
+  s.filler = .phrasal ∧ s.lex = some true
 
 instance {Lex : Type*} [DecidableEq Lex] (s : Slot Lex) :
     Decidable s.IsPhraseInWordSlot :=

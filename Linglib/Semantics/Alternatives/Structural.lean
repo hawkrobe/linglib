@@ -21,7 +21,8 @@ combinator on sources of Jeretič and colleagues: the
 pronounceable expressions of no greater size that mean what a silent alternative means.
 
 No operation introduces a category absent from the tree and the source
-(`category_preservation`), which is what excludes the symmetric alternatives, nor a subtree
+(`category_preservation`), nor a phrase of a category of which neither has a phrase
+(`phrase_preservation`), which is what excludes the symmetric alternatives, nor a subtree
 property the operations cannot create (`subtree_preservation`); and substituting one lexical
 item for another of the same category throughout a tree, a Horn-scale alternative, is a chain
 of substitutions (`horn_alternatives_are_structural`), so scalar alternatives are a special
@@ -41,8 +42,9 @@ contraction, which act on the whole tree, lie outside any pointwise composition.
 
 ## Main results
 
-* `category_preservation`, `subtree_preservation` — the operations create no category and no
-  subtree property absent from the host and the source.
+* `category_preservation`, `phrase_preservation`, `subtree_preservation` — the operations
+  create no category, no phrase of a category and no subtree property absent from the host and
+  the source.
 * `horn_alternatives_are_structural` — leaf substitution of a same-category lexical item is a
   structural alternative.
 * `hamblin_alternatives_subset` — the alternatives composed by the Hamblin engine over the
@@ -232,6 +234,15 @@ theorem subtree_preservation (source : Set (Tree C W)) (Bad : Tree C W → Prop)
   | refl => exact h_φ
   | tail _ h_last ih =>
     exact structOp_preserves_free source Bad h_source h_delete h_set h_bind ih h_last
+
+/-- No structural alternative has a phrase of a category, a node labelled `Label.node c`, that
+neither the host nor any source item has. -/
+theorem phrase_preservation (source : Set (Tree C W)) (c : C)
+    (h_source : ∀ s ∈ source, ∀ t ∈ s.subtrees, t.value ≠ .node c) {φ ψ : Tree C W}
+    (h_φ : ∀ t ∈ φ.subtrees, t.value ≠ .node c) (h_reach : atMostAsComplex source ψ φ) :
+    ∀ t ∈ ψ.subtrees, t.value ≠ .node c :=
+  subtree_preservation source (·.value = .node c) h_source (fun _ _ _ ↦ id) (fun _ _ _ _ ↦ id)
+    (fun _ _ _ _ _ h ↦ by cases h) h_φ h_reach
 
 /-! ### Horn scales are structural alternatives -/
 
