@@ -86,23 +86,17 @@ open RoseTree SyntacticObject Core.Order Syntax
 
 /-! ### Copies -/
 
-/-- The positions of `t` whose label `f` accepts, with the values, left to right. -/
+/-- The positions of `t` whose label `f` accepts, with the values, in preorder. -/
 def positions {β : Type*} (f : Vertex → Option β) (t : RoseTree Vertex) : List (TreePath × β) :=
-  (vertices t).filterMap fun p ↦ ((subtreeAt t p).bind (f ·.value)).map (⟨p⟩, ·)
+  t.positionedSubtrees.filterMap fun x ↦ (f x.2.value).map (x.1, ·)
 
 theorem mem_positions_iff {β : Type*} {f : Vertex → Option β} {t : RoseTree Vertex}
     {p : TreePath} {b : β} :
     (p, b) ∈ positions f t ↔ ∃ s, subtreeAt t p.toList = some s ∧ f s.value = some b := by
-  simp only [positions, List.mem_filterMap]
-  constructor
-  · rintro ⟨q, -, h⟩
-    obtain ⟨b', hb', hpb⟩ := Option.map_eq_some_iff.mp h
-    obtain ⟨s, hs, hf⟩ := Option.bind_eq_some_iff.mp hb'
-    obtain ⟨rfl, rfl⟩ := Prod.mk.inj hpb
-    exact ⟨s, hs, hf⟩
-  · rintro ⟨s, hs, hf⟩
-    exact ⟨p.toList, mem_vertices.mpr (by rw [hs]; rfl),
-      Option.map_eq_some_iff.mpr ⟨b, Option.bind_eq_some_iff.mpr ⟨s, hs, hf⟩, by cases p; rfl⟩⟩
+  simp only [positions, List.mem_filterMap, Option.map_eq_some_iff, Prod.mk.injEq, Prod.exists,
+    mem_positionedSubtrees]
+  exact ⟨fun ⟨_, s, hs, _, hb, rfl, rfl⟩ ↦ ⟨s, hs, hb⟩,
+    fun ⟨s, hs, hb⟩ ↦ ⟨p, s, hs, b, hb, rfl, rfl⟩⟩
 
 /-- The pronounced copies, left to right. -/
 def tokenList : RoseTree Vertex → List (TreePath × LIToken) :=

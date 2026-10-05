@@ -55,11 +55,8 @@ def SyntacticObject.toPlanarLeaf? (s : SyntacticObject) : Option PlanarSyntactic
   | none     => if s = trace then some PlanarSyntacticObject.trace else none
 
 /-- Left-to-right token yield of an ordered tree; traces are unpronounced. -/
-def planarYield : RoseTree Vertex → List LIToken
-  | .node (.inl (some tok)) _ => [tok]
-  | .node (.inl none) [l, r] => planarYield l ++ planarYield r
-  | .node (.inl none) _ => []
-  | .node (.inr _) _ => []
+def planarYield (t : RoseTree Vertex) : List LIToken :=
+  t.leafList.filterMap (Sum.elim id fun _ ↦ none)
 
 /-- A subtree projects to `target` when its unordered tree is `target`'s. -/
 def projEqP (target : SyntacticObject) (s : RoseTree Vertex) : Bool :=
