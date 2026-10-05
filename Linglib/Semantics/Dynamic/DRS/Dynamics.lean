@@ -2,81 +2,84 @@ module
 
 public import Linglib.Semantics.Dynamic.DRS.Verification
 public import Linglib.Semantics.Dynamic.DRS.Reduction
-public import Linglib.Semantics.Dynamic.Update
+public import Linglib.Semantics.Dynamic.RegisterStructure
 
 /-!
 # The box relation: dynamic face of DRS verification
 
-This file gives DRS verification (`DRS/Verification.lean`) its relational,
-input–output face. The *box relation* `a ~[K.toRel] a'` holds when the output `a'`
-extends the input `a` across `K` and verifies `K`; a DRS is *true* under an
-input iff some output is related to it (the box relation's `SetRel.dom`). This
-is [muskens-1996]'s SEM3 format, in the style of [groenendijk-stokhof-1991];
-his SEM1/2 clauses — complex conditions as the spine connectives on box
-relations — are derived characterizations, connecting DRS verification to the
-connective algebra shared across the dynamic-semantics spine.
+The box relation of a DRS relates an input embedding to the outputs that agree with it off the
+universe and verify the DRS. It is the box `Update.box` of
+`Semantics/Dynamic/RegisterStructure.lean` over the universe, at the register structure of
+embeddings, so Muskens's relational semantics of DRT is the general one of boxes. A DRS is true under an input when some output is related to it.
 
 ## Main declarations
 
-* `DRS.toRel`: the box relation; `DRS.trueRel`: relational truth, its
-  domain.
-* `Embedding.verifies_neg_toRel` (`_imp_`, `_dis_`): complex conditions are
-  the spine connectives on box relations (SEM1/2).
-* `DRS.trueRel_iff_realize_toFormula`: dynamic truth equals the first-order
-  translation's `Realize` (`DRS/Reduction.lean`).
+* `DRS.toRel`: the box relation; `DRS.trueRel`: truth, its domain.
+* `Embedding.verifies_neg_toRel` (`_imp_`, `_dis_`): complex conditions are the connectives of
+  `Update` on box relations.
+* `DRS.trueRel_iff_realize_toFormula`: dynamic truth is the truth of the first-order
+  translation (`DRS/Reduction.lean`).
 * `DRS.trueRel_congr`: truth reads the input only at the occurring referents.
-* `DRS.toRel_merge`: the Merging Lemma — under freshness, `merge` denotes the
-  composition `○` of the two box relations.
+* `DRS.toRel_merge`: under freshness, `merge` denotes the composition of the box relations, as
+  an instance of the semantic Merging Lemma `Update.box_comp_box`.
 * `DRS.trueRel_map`: alphabetic variants have the same truth conditions.
 
 ## Implementation notes
 
-* Muskens scopes the equivalence of the relational and standard
-  interpretations to constant-free constructs, both sides in the
-  total-assignment rendering (fn. 3–4; see the deviation note in
-  `DRS/Verification.lean`).
-* The relational face (`toRel`, `trueRel`) follows the spine's lowerCamel
-  operation names (`neg`, `impl`, `disj`); verification uses the field's own
-  verb, and the first-order reduction speaks mathlib's `Formula.Realize`.
+Muskens scopes the agreement of his relational semantics with the standard one to constructs
+without constants, both in total-assignment form (fn. 3–4; see `DRS/Verification.lean`).
+
+## References
+
+* [muskens-1996]
+* [groenendijk-stokhof-1991]
 -/
 
 @[expose] public section
 
 open FirstOrder FirstOrder.Language
-open DynamicSemantics (Update)
-open DynamicSemantics.Update (neg impl disj)
+open DynamicSemantics (Update RegisterStructure)
+open DynamicSemantics.Update (neg impl disj box box_comp_box mem_box_iff)
 open SetRel
 
 namespace DRT
 
 universe u v w x
 
-variable {L : Language.{u, v}} {V : Type w} {M : Type x} [L.Structure M]
+variable {L : Language.{u, v}} {V : Type w} {M : Type x} [L.Structure M] [DecidableEq V]
 
 /-! ### The box relation -/
 
-/-- The box relation (SEM3), relating an input `a` to the outputs that extend
-it across `K` and verify `K`. -/
+/-- The box relation of a DRS (SEM3) is the box over its universe testing its conditions. -/
 def DRS.toRel (K : DRS L V) : Update (V → M) :=
-  {(a, a') | K.Extends a a' ∧ Embedding.Verifies a' K}
+  box K.referents {a | Embedding.Verifies a K}
 
+/-- The box relation relates an input to the outputs that extend it across the universe and
+verify the DRS. -/
 @[simp] theorem DRS.toRel_iff (K : DRS L V) (a a' : Embedding V M) :
-    a ~[DRS.toRel K] a' ↔ K.Extends a a' ∧ a'.Verifies K := Iff.rfl
+    a ~[DRS.toRel K] a' ↔ K.Extends a a' ∧ a'.Verifies K :=
+  mem_box_iff
 
 /-- A DRS is *true* under an input embedding `a` iff some output embedding is
 related to it, the domain of the box relation. -/
 def DRS.trueRel (K : DRS L V) (a : V → M) : Prop := a ∈ (DRS.toRel K).dom
 
-/-- `trueRel` unfolded: some output embedding is related to the input. -/
+/-- A DRS is true under an input iff some output embedding is related to it. -/
 theorem DRS.trueRel_iff (K : DRS L V) (a : V → M) :
     DRS.trueRel K a ↔ ∃ a', a ~[DRS.toRel K] a' := Iff.rfl
+
+/-- A DRS is true under an input iff some extension of the input across the universe verifies
+it. -/
+theorem DRS.trueRel_iff_exists_extends (K : DRS L V) (a : V → M) :
+    DRS.trueRel K a ↔ ∃ a', K.Extends a a' ∧ a'.Verifies K := by
+  simp only [DRS.trueRel_iff, DRS.toRel_iff]
 
 /-! ### The spine connectives (SEM1/2) -/
 
 /-- A negated sub-DRS is the spine's `neg` of its box relation. -/
 theorem Embedding.verifies_neg_toRel (K : DRS L V) (f : Embedding V M) :
     f.VerifiesCondition (.neg K) ↔ f ∈ neg (DRS.toRel K) := by
-  simp only [Embedding.verifies_neg]; rfl
+  simp only [Embedding.verifies_neg, DynamicSemantics.Update.mem_neg, DRS.toRel_iff]
 
 /-- A conditional is the spine's `impl` of the boxes' relations. -/
 theorem Embedding.verifies_imp_toRel (a c : DRS L V) (f : Embedding V M) :
@@ -92,62 +95,40 @@ theorem Embedding.verifies_dis_toRel (l r : DRS L V) (f : Embedding V M) :
 
 /-- The dynamic truth of a DRS equals its first-order translation's `Realize`
 — the third edge of the `Verifies`/`toFormula`/`toRel` triangle. -/
-theorem DRS.trueRel_iff_realize_toFormula [DecidableEq V] (K : DRS L V) (a : V → M) :
+theorem DRS.trueRel_iff_realize_toFormula (K : DRS L V) (a : V → M) :
     DRS.trueRel K a ↔ (K.toFormula).Realize a :=
-  (DRS.realize_toFormula K a).symm
+  (DRS.trueRel_iff_exists_extends K a).trans (DRS.realize_toFormula K a).symm
 
-/-- **Coincidence**: truth reads the input embedding only at the occurring
-referents. -/
-theorem DRS.trueRel_congr [DecidableEq V] {K : DRS L V} {a₁ a₂ : V → M}
-    (h : Set.EqOn a₁ a₂ ↑(DRS.varFinset K)) : DRS.trueRel K a₁ ↔ DRS.trueRel K a₂ :=
-  Embedding.exists_extends_verifies_congr h
+/-- Truth reads the input embedding only at the occurring referents. -/
+theorem DRS.trueRel_congr {K : DRS L V} {a₁ a₂ : V → M}
+    (h : Set.EqOn a₁ a₂ ↑(DRS.varFinset K)) : DRS.trueRel K a₁ ↔ DRS.trueRel K a₂ := by
+  simpa only [DRS.trueRel_iff_exists_extends] using Embedding.exists_extends_verifies_congr h
 
-/-- Renaming along a bijection transports dynamic truth: alphabetic variants
-have the same truth conditions. -/
+/-- Renaming along a bijection transports dynamic truth, so alphabetic variants have the same
+truth conditions. -/
 theorem DRS.trueRel_map {W : Type*} [DecidableEq W] (e : V ≃ W)
     (K : DRS L V) (a : Embedding W M) :
-    DRS.trueRel (K.map e) a ↔ DRS.trueRel K (a ∘ e) :=
-  Embedding.exists_extends_verifies_map e a K
+    DRS.trueRel (K.map e) a ↔ DRS.trueRel K (a ∘ e) := by
+  simpa only [DRS.trueRel_iff_exists_extends] using Embedding.exists_extends_verifies_map e a K
 
 /-! ### The merging lemma: sequencing is merge, under freshness -/
 
-/-- **Merging Lemma** (§II.2): when `K₂`'s universe is fresh
-for `K₁`'s conditions, the merge `K₁ ⊕ K₂` denotes the spine sequencing
-(relational composition) of the two box relations — `‖K₁ ⊕ K₂‖ = ‖K₁‖ ○ ‖K₂‖`.
-This is what gives `merge` its dynamic meaning. -/
-theorem DRS.toRel_merge [DecidableEq V] (K₁ K₂ : DRS L V)
+/-- When `K₂`'s universe is fresh for `K₁`'s conditions, the merge `K₁ ⊕ K₂` denotes the
+composition of the two box relations (the Merging Lemma of §II.2). It is the semantic Merging
+Lemma `Update.box_comp_box`, since freshness puts `K₂`'s referents outside the dimension set of
+`K₁`'s conditions. -/
+theorem DRS.toRel_merge (K₁ K₂ : DRS L V)
     (hfresh : Disjoint K₂.referents (Condition.varFinsetL K₁.conditions)) :
     (DRS.toRel (K₁.merge K₂) : Update (V → M)) = DRS.toRel K₁ ○ DRS.toRel K₂ := by
-  obtain ⟨U₁, conds₁⟩ := K₁
-  obtain ⟨U₂, conds₂⟩ := K₂
-  simp only [Finset.disjoint_left] at hfresh
-  ext ⟨a, a'⟩
-  simp only [mem_comp, DRS.toRel_iff, Box.Extends, DRS.merge, Embedding.verifies_mk,
-    List.forall_mem_append]
-  constructor
-  · rintro ⟨hag, hh₁, hh₂⟩
-    refine ⟨U₂.piecewise a a', ⟨?_, ?_⟩, ?_, ?_⟩
-    · intro x hx
-      by_cases hxU2 : x ∈ U₂
-      · rw [Finset.piecewise_eq_of_mem _ _ _ hxU2]
-      · rw [Finset.piecewise_eq_of_notMem _ _ _ hxU2]
-        refine hag x ?_
-        rw [Finset.mem_union, not_or]
-        exact ⟨hx, hxU2⟩
-    · intro c hc
-      refine (Embedding.verifiesCondition_congr c fun x hx => ?_).mpr (hh₁ c hc)
-      exact Finset.piecewise_eq_of_notMem _ _ _
-        (fun hU => hfresh hU (Condition.varFinset_subset_varFinsetL hc (Finset.mem_coe.mp hx)))
-    · intro x hx
-      exact (Finset.piecewise_eq_of_notMem _ _ _ hx).symm
-    · exact hh₂
-  · rintro ⟨a'', ⟨hag1, hh1⟩, hag2, hh2⟩
-    refine ⟨?_, ?_, hh2⟩
-    · intro x hx
-      rw [Finset.mem_union, not_or] at hx
-      rw [hag2 x hx.2, hag1 x hx.1]
-    · intro c hc
-      refine (Embedding.verifiesCondition_congr c fun x hx => ?_).mpr (hh1 c hc)
-      exact hag2 x fun hU => hfresh hU (Condition.varFinset_subset_varFinsetL hc (Finset.mem_coe.mp hx))
+  rw [DRS.toRel, DRS.toRel, DRS.toRel, box_comp_box fun r hr ↦ ?_]
+  · congr 1
+    ext a
+    simp
+  · rw [RegisterStructure.notMem_dimSet_iff]
+    intro g e
+    simp only [Set.mem_ofPred_eq, RegisterStructure.extend_eq_update, Embedding.verifies_iff]
+    refine forall₂_congr fun c hc ↦ Embedding.verifiesCondition_congr c fun y hy ↦ ?_
+    refine Function.update_of_ne (fun hyr ↦ Finset.disjoint_left.1 hfresh hr ?_) e g
+    exact hyr ▸ Condition.varFinset_subset_varFinsetL hc (Finset.mem_coe.1 hy)
 
 end DRT

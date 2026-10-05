@@ -2,9 +2,9 @@ module
 
 public import Linglib.Logic.CylindricAlgebra
 public import Linglib.Semantics.Dynamic.Update
-public import Mathlib.Algebra.BigOperators.Group.List.Basic
+public import Mathlib.Data.Finset.NoncommProd
 public import Mathlib.Data.Fin.Tuple.Basic
-public import Mathlib.Data.List.OfFn
+public import Mathlib.Data.Fintype.Fin
 public import Mathlib.Data.Set.Function
 
 /-!
@@ -24,7 +24,7 @@ cylindrification is the weakest precondition of `[r]`.
 * `RegisterStructure.cylindricAlgebra`: the cylindric algebra of conditions.
 * `Update.randomAssign`, `Update.dexists`, `Update.dforall`: random assignment and the dynamic
   quantifiers.
-* `Update.box`: the box `[u₁ … uₙ | C]`.
+* `Update.box`: the box `[u₁ … uₙ | C]` over a finite set of registers.
 * `Update.Fixes`, `Update.maxAt`: an update leaves a register unchanged, and maximization over a
   register's value.
 
@@ -38,11 +38,14 @@ cylindrification is the weakest precondition of `[r]`.
   where the cylindrification of its scope's truth set is.
 * `Update.commute_test_randomAssign_iff`: a test commutes with `[r]` exactly when `r` is outside
   the dimension set of its condition.
-* `Update.box_comp_box`: two boxes in sequence are one box when the second's registers lie
-  outside the dimension set of the first's condition (Muskens's Merging Lemma).
-* `Update.exists_box_ofFn_iff`, `Update.mem_dom_box_ofFn`: quantifying over the outputs of a box
+* `Update.box_comp_box`: two boxes in sequence are one box over the union of their registers
+  when the second's registers lie outside the dimension set of the first's condition (Muskens's
+  Merging Lemma).
+* `Update.exists_box_map_iff`, `Update.mem_dom_box_map`: quantifying over the outputs of a box
   over distinct registers is quantifying over tuples of values, so a box whose condition reads
   only its registers is true iff some tuple satisfies it (Muskens's Unselective Binding Lemma).
+* `Update.mem_box_iff`: at assignments, a box relates an assignment to those that agree with it
+  off the box's registers and satisfy its condition.
 * `RegisterStructure.dimSet_preimage_subset`: a condition read off registers in `s` has its
   dimension set inside `s`.
 
@@ -306,85 +309,114 @@ theorem maxAt_eq_of_fixes [Preorder E] {D : Update S} (h : Fixes r D) : maxAt r 
 
 /-! ### Boxes -/
 
-/-- The box `[u₁ … uₙ | C]` of [muskens-1996]'s ABB3 assigns each listed register at random and
-then tests `C`. -/
-def box (l : List R) (C : Condition S) : Update S :=
-  (l.map randomAssign).prod * test C
+/-- The box `[u₁ … uₙ | C]` of [muskens-1996]'s ABB3 assigns the registers of `s` at random and
+then tests `C`. Random assignments commute, so a box needs only the set of its registers. -/
+def box (s : Finset R) (C : Condition S) : Update S :=
+  s.noncommProd randomAssign (fun r _ r' _ _ ↦ commute_randomAssign r r') * test C
 
-@[simp] theorem box_nil (C : Condition S) : box ([] : List R) C = test C := one_mul _
+@[simp] theorem box_empty (C : Condition S) : box (∅ : Finset R) C = test C := by
+  simp [box]
 
-theorem box_cons (r : R) (l : List R) (C : Condition S) :
-    box (r :: l) C = randomAssign r ○ box l C := by
-  simp only [box, List.map_cons, List.prod_cons, mul_def, comp_assoc]
+/-- A box commutes with a random assignment whose register lies outside the dimension set of its
+condition. -/
+theorem commute_box_randomAssign (s : Finset R) (h : r ∉ dimSet C) :
+    Commute (box s C) (randomAssign r) :=
+  .mul_left (Finset.noncommProd_commute _ _ _ _ fun r' _ ↦ commute_randomAssign r r').symm
+    (commute_test_randomAssign_iff.2 h)
+
+/-- A box fixes every register outside it. -/
+theorem fixes_box {s : Finset R} (h : r ∉ s) (C : Condition S) : Fixes r (box s C) := by
+  classical
+  induction s using Finset.induction_on with
+  | empty => simpa using fixes_test r C
+  | insert r' s hr' ih =>
+    rw [box, Finset.noncommProd_insert_of_notMem _ _ _ _ hr', mul_assoc, mul_def]
+    exact (fixes_randomAssign_of_ne fun hr ↦ h (by simp [hr])).comp
+      (ih fun hr ↦ h (Finset.mem_insert_of_mem hr))
+
+variable [DecidableEq R]
+
+/-- Prefixing a random assignment adds its register to a box. -/
+theorem box_insert (r : R) (s : Finset R) (C : Condition S) :
+    box (insert r s) C = randomAssign r ○ box s C := by
+  by_cases hr : r ∈ s
+  · rw [Finset.insert_eq_of_mem hr]
+    have : box s C = randomAssign r ○ box (s.erase r) C := by
+      conv_lhs => rw [← Finset.insert_erase hr]
+      rw [box, Finset.noncommProd_insert_of_notMem _ _ _ _ (Finset.notMem_erase r s), mul_assoc,
+        mul_def]
+      rfl
+    rw [this, ← comp_assoc, randomAssign_comp_self]
+  · rw [box, Finset.noncommProd_insert_of_notMem _ _ _ _ hr, mul_assoc, mul_def]
+    rfl
 
 /-- A one-register box is an existential over a test. -/
-theorem box_singleton (r : R) (C : Condition S) : box [r] C = dexists r (test C) := by
-  rw [box_cons, box_nil, dexists]
+theorem box_singleton (r : R) (C : Condition S) : box {r} C = dexists r (test C) := by
+  rw [← insert_empty_eq, box_insert, box_empty, dexists]
 
-theorem mem_box_cons {l : List R} : i ~[box (r :: l) C] j ↔ ∃ e, extend i r e ~[box l C] j := by
-  rw [box_cons, ← dexists, mem_dexists]
+theorem mem_box_insert {s : Finset R} :
+    i ~[box (insert r s) C] j ↔ ∃ e, extend i r e ~[box s C] j := by
+  rw [box_insert, ← dexists, mem_dexists]
 
-/-- The weakest precondition of a box quantifies over its first register. -/
-theorem preimage_box_cons (r : R) (l : List R) (C t : Condition S) :
-    (box (r :: l) C).preimage t = cyl r ((box l C).preimage t) := by
-  rw [box_cons, preimage_comp, preimage_randomAssign]
+/-- The weakest precondition of a box quantifies over each of its registers. -/
+theorem preimage_box_insert (r : R) (s : Finset R) (C t : Condition S) :
+    (box (insert r s) C).preimage t = cyl r ((box s C).preimage t) := by
+  rw [box_insert, preimage_comp, preimage_randomAssign]
 
-/-- A box fixes every register it does not list. -/
-theorem fixes_box {l : List R} (h : r ∉ l) (C : Condition S) : Fixes r (box l C) := by
-  induction l with
-  | nil => simpa using fixes_test r C
-  | cons r' l ih =>
-    rw [box_cons]
-    exact (fixes_randomAssign_of_ne fun hr ↦ h (by simp [hr])).comp (ih fun hr ↦ h (.tail _ hr))
+/-- Two boxes in sequence are one box, provided no register of the second occurs in the
+conditions of the first (the Merging Lemma of [muskens-1996]). -/
+theorem box_comp_box {s t : Finset R} {C' : Condition S} (h : ∀ r ∈ t, r ∉ dimSet C) :
+    box s C ○ box t C' = box (s ∪ t) (C ∩ C') := by
+  induction t using Finset.induction_on generalizing s with
+  | empty => simp [box, ← test_comp_test, ← mul_def, mul_assoc]
+  | insert r t hr ih =>
+    have hc := commute_box_randomAssign s (h r (Finset.mem_insert_self ..))
+    rw [box_insert, Finset.union_insert, box_insert, ← ih fun r' hr' ↦ h r'
+      (Finset.mem_insert_of_mem hr'), ← mul_def, ← mul_def, ← mul_def, ← mul_assoc, hc.eq,
+      mul_assoc]
+    rfl
 
-/-- The Merging Lemma of [muskens-1996]. Two boxes in sequence are one box, provided no register
-of the second occurs in the conditions of the first. -/
-theorem box_comp_box {l l' : List R} {C' : Condition S} (h : ∀ r ∈ l', r ∉ dimSet C) :
-    box l C ○ box l' C' = box (l ++ l') (C ∩ C') := by
-  have hc : Commute (test C) (l'.map randomAssign).prod :=
-    .list_prod_right _ _ fun _ hx ↦ by
-      obtain ⟨r, hr, rfl⟩ := List.mem_map.1 hx
-      exact commute_test_randomAssign_iff.2 (h r hr)
-  simp only [box, ← mul_def, List.map_append, List.prod_append, ← test_comp_test, mul_assoc]
-  rw [← mul_assoc (test C), hc.eq, mul_assoc]
+/-- The registers `u₀, …, uₙ` are `u₀` and the rest. -/
+private theorem map_univ_succ {n : ℕ} (u : Fin (n + 1) ↪ R) :
+    Finset.univ.map u = insert (u 0) (Finset.univ.map ((Fin.succEmb n).trans u)) := by
+  ext r
+  simp [Fin.exists_fin_succ, eq_comm]
 
-/-- The Unselective Binding Lemma of [muskens-1996]. For distinct registers `u₁ … uₙ`, the
-states that differ from `i` at most there realize every tuple of values, so a quantifier over
-them is a quantifier over the tuples. -/
-theorem exists_box_ofFn_iff {n : ℕ} {u : Fin n → R} (hu : Function.Injective u)
-    (φ : (Fin n → E) → Prop) (i : S) :
-    (∃ j, i ~[box (List.ofFn u) Set.univ] j ∧ φ fun k ↦ val (u k) j) ↔ ∃ x, φ x := by
+/-- For distinct registers `u₀ … uₙ₋₁`, the states that differ from `i` at most there realize
+every tuple of values, so a quantifier over them is a quantifier over the tuples (the Unselective
+Binding Lemma of [muskens-1996]). -/
+theorem exists_box_map_iff {n : ℕ} (u : Fin n ↪ R) (φ : (Fin n → E) → Prop) (i : S) :
+    (∃ j, i ~[box (Finset.univ.map u) Set.univ] j ∧ φ fun k ↦ val (u k) j) ↔ ∃ x, φ x := by
   induction n generalizing i with
   | zero =>
-    simp only [List.ofFn_zero, box_nil, test_univ, SetRel.mem_id, exists_eq_left']
+    simp only [Finset.univ_eq_empty, Finset.map_empty, box_empty, test_univ, SetRel.mem_id,
+      exists_eq_left']
     exact ⟨fun h ↦ ⟨_, h⟩, fun ⟨x, h⟩ ↦ by rwa [Subsingleton.elim (fun k ↦ val (u k) i) x]⟩
   | succ n ih =>
-    have hu' : Function.Injective (Fin.tail u) := hu.comp (Fin.succ_injective _)
-    have h0 {e : E} {j : S} (hj : extend i (u 0) e ~[box (List.ofFn (Fin.tail u)) Set.univ] j) :
-        Fin.cons e (fun k ↦ val (Fin.tail u k) j) = fun k ↦ val (u k) j := by
+    set u' := (Fin.succEmb n).trans u
+    have h0 {e : E} {j : S} (hj : extend i (u 0) e ~[box (Finset.univ.map u') Set.univ] j) :
+        Fin.cons e (fun k ↦ val (u' k) j) = fun k ↦ val (u k) j := by
       refine funext (Fin.cases ?_ fun _ ↦ rfl)
-      have hu0 : u 0 ∉ List.ofFn (Fin.tail u) := by
-        simp only [List.mem_ofFn, not_exists]
-        exact fun k hk ↦ Fin.succ_ne_zero k (hu hk)
+      have hu0 : u 0 ∉ Finset.univ.map u' := by
+        simp [u', Fin.succ_ne_zero]
       rw [Fin.cons_zero, fixes_box hu0 _ _ _ hj, val_extend_self]
-    rw [List.ofFn_succ, Fin.exists_fin_succ_pi]
-    simp only [mem_box_cons]
+    rw [map_univ_succ, Fin.exists_fin_succ_pi]
+    simp only [mem_box_insert]
     constructor
     · rintro ⟨j, ⟨e, hj⟩, hφ⟩
-      exact ⟨e, (ih hu' (fun y ↦ φ (Fin.cons e y)) _).1 ⟨j, hj, (h0 hj).symm ▸ hφ⟩⟩
+      exact ⟨e, (ih u' (fun y ↦ φ (Fin.cons e y)) _).1 ⟨j, hj, (h0 hj).symm ▸ hφ⟩⟩
     · rintro ⟨e, y, hφ⟩
-      obtain ⟨j, hj, hφ⟩ := (ih hu' (fun y ↦ φ (Fin.cons e y)) (extend i (u 0) e)).2 ⟨y, hφ⟩
+      obtain ⟨j, hj, hφ⟩ := (ih u' (fun y ↦ φ (Fin.cons e y)) (extend i (u 0) e)).2 ⟨y, hφ⟩
       exact ⟨j, ⟨e, hj⟩, h0 hj ▸ hφ⟩
 
 /-- A box over distinct registers whose condition reads only those registers is true exactly
 when some tuple of values satisfies the condition. -/
-theorem mem_dom_box_ofFn {n : ℕ} {u : Fin n → R} (hu : Function.Injective u)
-    (P : (Fin n → E) → Prop) (i : S) :
-    i ∈ (box (List.ofFn u) {j | P fun k ↦ val (u k) j}).dom ↔ ∃ x, P x := by
-  have : box (List.ofFn u) {j | P fun k ↦ val (u k) j} =
-      box (List.ofFn u) Set.univ ○ test {j : S | P fun k ↦ val (u k) j} := by
+theorem mem_dom_box_map {n : ℕ} (u : Fin n ↪ R) (P : (Fin n → E) → Prop) (i : S) :
+    i ∈ (box (Finset.univ.map u) {j | P fun k ↦ val (u k) j}).dom ↔ ∃ x, P x := by
+  have : box (Finset.univ.map u) {j | P fun k ↦ val (u k) j} =
+      box (Finset.univ.map u) Set.univ ○ test {j : S | P fun k ↦ val (u k) j} := by
     simp only [box, ← mul_def, test_univ, ← one_def, mul_one]
-  rw [this, mem_dom, ← exists_box_ofFn_iff hu P i]
+  rw [this, mem_dom, ← exists_box_map_iff u P i]
   simp only [mem_comp_test, Set.mem_ofPred_eq]
 
 /-! ### The canonical register structure -/
@@ -392,6 +424,23 @@ theorem mem_dom_box_ofFn {n : ℕ} {u : Fin n → R} (hu : Function.Injective u)
 section Pi
 
 variable {V E : Type*} [DecidableEq V] {g h : V → E} {x : V}
+
+/-- At the canonical register structure, a box relates an assignment to the assignments that
+agree with it off the box's registers and satisfy its condition. -/
+theorem mem_box_iff {s : Finset V} {C : Condition (V → E)} :
+    g ~[box s C] h ↔ (∀ y ∉ s, h y = g y) ∧ h ∈ C := by
+  induction s using Finset.induction_on generalizing g with
+  | empty => simp [funext_iff, eq_comm]
+  | insert x s hx ih =>
+    simp only [mem_box_insert, ih, extend_eq_update, Finset.mem_insert, not_or]
+    constructor
+    · rintro ⟨e, hh, hC⟩
+      exact ⟨fun y ⟨hyx, hys⟩ ↦ (hh y hys).trans (Function.update_of_ne hyx e g), hC⟩
+    · rintro ⟨hh, hC⟩
+      refine ⟨h x, fun y hys ↦ ?_, hC⟩
+      obtain rfl | hyx := eq_or_ne y x
+      · simp
+      · rw [hh y ⟨hyx, hys⟩, Function.update_of_ne hyx]
 
 /-- At the canonical register structure, random assignment at `x` is agreement off `x`. -/
 theorem mem_randomAssign_iff_eqOn : g ~[randomAssign x] h ↔ Set.EqOn g h {x}ᶜ :=
