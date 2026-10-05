@@ -45,6 +45,7 @@ ambiguities of its later sections.
 @[expose] public section
 
 open Question
+open scoped SetRel
 
 namespace Karttunen1977
 
@@ -114,17 +115,17 @@ theorem told_true {H : Set (Set W)} {p : Set W} (hp : p ∈ trueAnswers H w) : w
 
 /-! ### Knowing a question (footnote 11) -/
 
-variable {A : Type*} (R : A → W → W → Prop) (x : A) (H : Set (Set W))
+variable (Dox : SetRel W W) (H : Set (Set W))
 
 /-- Footnote 11's meaning postulate, with the proposition-embedding *know* read through the
-accessibility relation `R`: the agent knows every true answer, and, when there is none,
-knows that there is none. -/
+agent's doxastic alternatives `Dox`: the agent knows every true answer, and, when there is
+none, knows that there is none. -/
 def Knows : Prop :=
-  KnowsAnswer H w R x ∧ (trueAnswers H w = ∅ → ∀ v, R x w v → trueAnswers H v = ∅)
+  KnowsAnswer H w Dox ∧ (trueAnswers H w = ∅ → w ∈ Dox.core {v | trueAnswers H v = ∅})
 
 /-- Knowing *whether p* is knowing `p` at a `p`-world and its negation at another, (31). -/
 theorem knows_pair_iff (p : Set W) :
-    Knows w R x {p, pᶜ} ↔ ∀ v, R x w v → (v ∈ p ↔ w ∈ p) := by
+    Knows w Dox {p, pᶜ} ↔ ∀ v, w ~[Dox] v → (v ∈ p ↔ w ∈ p) := by
   by_cases h : w ∈ p
   · simp [Knows, KnowsAnswer, weakAnswer, trueAnswers_pair_of_mem w h, h]
   · simp [Knows, KnowsAnswer, weakAnswer, trueAnswers_pair_of_notMem w h, h]
@@ -133,9 +134,10 @@ theorem knows_pair_iff (p : Set W) :
 the second conjunct of the postulate, without which the empty question would be known
 trivially. -/
 theorem knows_iff_of_no_witness (h : ∀ e ∈ D, w ∉ P e) :
-    Knows w R x (P '' D) ↔ ∀ v, R x w v → ∀ e ∈ D, v ∉ P e := by
+    Knows w Dox (P '' D) ↔ ∀ v, w ~[Dox] v → ∀ e ∈ D, v ∉ P e := by
   have h0 : trueAnswers (P '' D) w = ∅ := (trueAnswers_image_eq_empty_iff w D P).mpr h
   simp only [Knows, KnowsAnswer, weakAnswer, h0, Set.sInter_empty, Set.mem_univ, imp_true_iff,
-    true_and, true_imp_iff, trueAnswers_image_eq_empty_iff]
+    true_and, true_imp_iff, trueAnswers_image_eq_empty_iff, SetRel.mem_core,
+    Set.mem_ofPred_eq]
 
 end Karttunen1977

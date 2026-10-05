@@ -170,8 +170,7 @@ theorem generalizedKnow_iff_know_ker {α : Type*} {q : W → α} :
 /-- On a Hamblin set the simplified analysis is [karttunen-1977]'s meaning postulate as the
 substrate states it. -/
 theorem Karttunen.simplifiedKnow_trueAnswers (H : Set (Set W)) :
-    simplifiedKnow Dox x w (trueAnswers H) ↔
-      KnowsAnswer H w (fun x v u ↦ (v, u) ∈ Dox x) x := Iff.rfl
+    simplifiedKnow Dox x w (trueAnswers H) ↔ KnowsAnswer H w (Dox x) := Iff.rfl
 
 /-- On a Hamblin set the generalized analysis is Groenendijk and Stokhof's entry on the
 partition. -/
