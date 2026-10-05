@@ -133,6 +133,12 @@ theorem not_scopeAntitone_some [Nonempty α] : ¬ ScopeAntitone (GQ.some : GQ α
   let ⟨_, _, hb⟩ := h (fun _ ↦ True) (bot_le (a := fun _ ↦ True)) ⟨x, trivial, trivial⟩
   hb
 
+/-- On a nonempty domain `every` is not scope antitone, since `every ⊤ ⊤` holds and `every ⊤ ⊥`
+fails. -/
+theorem not_scopeAntitone_every [Nonempty α] : ¬ ScopeAntitone (every : GQ α) := fun h ↦
+  let ⟨x⟩ := ‹Nonempty α›
+  h (fun _ ↦ True) (bot_le (a := fun _ ↦ True)) (fun _ _ ↦ trivial) x trivial
+
 /-- `every R` is a monotone quantifier. -/
 theorem monotone_every (R : α → Prop) : Monotone (every R) :=
   scopeMonotone_every R
