@@ -69,7 +69,7 @@ sets containing the speaker and the others.
 
 namespace Hanink2021
 
-open Semantics Semantics.Composition Reference DistributedMorphology Morphology.Exponence
+open Semantics HeimKratzer Reference DistributedMorphology Morphology.Exponence
 open scoped Assignment
 
 variable {E W : Type}

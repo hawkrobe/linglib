@@ -97,7 +97,7 @@ structure Root where
   /-- The core-argument positions the root introduces, where annotated ([coon-2019]). -/
   valency : Option ArgumentStructure.Valency := none
   /-- The root's semantic type, where annotated ([coon-2019] (3)). -/
-  denotationType : Option Semantics.Composition.Ty := none
+  denotationType : Option Montague.Ty := none
   /-- Whether the root combines with the transitive-forming v ~ Voice head that merges an
   agent, the coordinate separating [coon-2019]'s √TV from its unaccusative √ITV (§3.3). -/
   licensesTransitiveVoice : Bool := false

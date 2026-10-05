@@ -6,13 +6,11 @@ public import Mathlib.Order.CompleteBooleanAlgebra
 /-!
 # Semantic types and denotation domains
 
-The semantic types of the composition engine and their denotation domains. `Ty` is the type
-grammar —
-`e`, `t`, `⟨a,b⟩`, `⟨s,a⟩`, and the degree, cardinality and eventuality sorts of later
-work — and `Ty.Domain E W ty` computes the domain of possible denotations of each type from an
-entity type `E` and an index type `W`: functions denote in function spaces and intensions
-in `W`-indexed families, so a denotation is an ordinary Lean term and composition is
-function application.
+Montague's semantic types and their denotation domains. `Ty` has Montague's `e`, `t`, `⟨a,b⟩`
+and `⟨s,a⟩` together with the degree, cardinality and eventuality sorts of later work, and
+`Ty.Domain E W ty` is the domain of possible denotations of a type, given an entity type `E`
+and an index type `W`. Functions denote in function spaces and intensions in `W`-indexed
+families, so a denotation is an ordinary Lean term and composition is function application.
 
 `Ty.Domain` is reducible: a denotation of type `⟨e,t⟩` *is* an `E → Prop` to every tactic and
 instance, and the pointwise Boolean algebra of a type that ends in `t` is mathlib's `Pi`
@@ -32,6 +30,7 @@ recursion on the type, for the composition engine's runtime type dispatch.
 
 ## References
 
+* [montague-1973]
 * [D. Dowty, R. Wall, S. Peters, *Introduction to Montague Semantics*
   (1981)][dowty-wall-peters-1981]
 * [D. Gallin, *Intensional and Higher-Order Modal Logic* (1975)][gallin-1975]
@@ -40,7 +39,7 @@ recursion on the type, for the composition engine's runtime type dispatch.
 
 @[expose] public section
 
-namespace Semantics.Composition
+namespace Montague
 
 /-- The semantic types are Montague's `e`, `t`, `fn a b` (⟨a,b⟩) and `intens a` (⟨s,a⟩), the
 degree sort `d` ([heim-2001], [wellwood-2015]), the cardinality sort `n` ([sudo-2016],
@@ -171,4 +170,4 @@ theorem Ty.intensionalApplication?_eq_none {σ τ : Ty} (h₁ : σ.Extensional)
   rcases h₁ with _ | _ | ⟨ha, _⟩ <;> rcases h₂ with _ | _ | ⟨ha', _⟩ <;>
     (try rcases ha with _ | _ | _) <;> (try rcases ha' with _ | _ | _) <;> rfl
 
-end Semantics.Composition
+end Montague

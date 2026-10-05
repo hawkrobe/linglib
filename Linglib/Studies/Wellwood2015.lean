@@ -120,8 +120,8 @@ end Derivation
 
 section TypeDriven
 
-open Semantics.Composition.Tree
-open Semantics.Composition
+open HeimKratzer.Tree
+open HeimKratzer
 open PhraseStructure (Tree)
 
 variable {Ent α : Type}

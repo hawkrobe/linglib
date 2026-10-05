@@ -53,7 +53,7 @@ being validated on the English inventory rather than derived.
 namespace Landau2024a
 
 open Control SetRel
-open Semantics.Composition (Ty)
+open Montague
 
 /-! ### The trichotomy (41) -/
 

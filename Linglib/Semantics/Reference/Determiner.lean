@@ -70,7 +70,7 @@ modeled. `Quantifier`, a generalized quantifier rather than an individual denota
 
 namespace Reference
 
-open Semantics Semantics.Composition
+open Semantics
 open scoped SetRel
 
 variable {E W : Type} (R : Restrictor E W) (d : ℕ) (possessor : Assignment E → W → E)

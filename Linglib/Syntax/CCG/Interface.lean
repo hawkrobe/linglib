@@ -43,7 +43,7 @@ The worked derivations over a toy fragment are in `Studies/Steedman2000.lean`.
 
 namespace CCG
 
-open Semantics.Composition
+open Montague
 
 /-! ### Type correspondence -/
 

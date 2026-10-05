@@ -16,7 +16,7 @@ modification, and repeated applications chain conditions on the same event.
 
 ## Main definitions
 
-* `Semantics.Composition.eventIdentification`: the combination of a relation and a predicate.
+* `ArgumentStructure.eventIdentification`: the combination of a relation and a predicate.
 
 ## Main results
 
@@ -40,7 +40,7 @@ composition engine, whose events share the domain of individuals, uses the same 
 
 @[expose] public section
 
-namespace Semantics.Composition
+namespace ArgumentStructure
 
 variable {α β : Type*}
 
@@ -78,4 +78,4 @@ theorem eventIdentification_eq_bot_iff :
     eventIdentification f g = ⊥ ↔ ∀ x, Disjoint (f x) g := by
   simp [funext_iff, Pi.disjoint_iff]
 
-end Semantics.Composition
+end ArgumentStructure

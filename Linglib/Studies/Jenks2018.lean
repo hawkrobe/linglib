@@ -50,7 +50,7 @@ fragments derive, marked-unique being the unattested fourth (`table2`).
 
 namespace Jenks2018
 
-open Reference Determiner Semantics Semantics.Composition
+open Reference Determiner Semantics
 
 /-! ### Environments and principles -/
 

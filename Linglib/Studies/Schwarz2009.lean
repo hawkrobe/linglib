@@ -34,7 +34,7 @@ antecedent (`weak_article_fails_on_multi`, `strong_article_picks_indexed_anteced
 
 namespace Schwarz2009
 
-open Reference Semantics Semantics.Composition
+open Reference Semantics
 
 variable {E W : Type}
 

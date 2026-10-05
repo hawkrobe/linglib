@@ -51,7 +51,7 @@ argument against uninterpretable features are not formalized.
 namespace Roussou2010
 
 open Greek.StandardModern.Complementizers Greek.StandardModern.Verbs Presupposition
-open Semantics.Composition.Tree
+open HeimKratzer.Tree
 
 /-! ### The lexical specification -/
 
@@ -124,8 +124,8 @@ theorem anClause_not_informative (p : Set W) : ¬ (anClause p).IsInformative :=
 
 /-- An outside merger takes a proposition, and a *na*-clause, its subject position reopened,
 is a property: application is undefined whatever the merger returns. -/
-theorem comp_over_na_type_clash (b : Semantics.Composition.Ty) :
-    Semantics.Composition.Ty.apply? (.fn .t b) (.fn .e .t) = none := rfl
+theorem comp_over_na_type_clash (b : Montague.Ty) :
+    Montague.Ty.apply? (.fn .t b) (.fn .e .t) = none := rfl
 
 /-! ### Selection -/
 

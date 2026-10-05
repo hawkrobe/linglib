@@ -50,12 +50,12 @@ and `compileFO` is partial.
 
 universe u v
 
-namespace Semantics.Composition
+namespace HeimKratzer
 
 open FirstOrder Language
 open FirstOrder.Language.Formula (all₁ ex₁)
-open Semantics.Composition
-open Semantics.Composition.Tree
+open Montague
+open HeimKratzer.Tree
 open PhraseStructure (Tree)
 
 variable {L : Language.{u, v}}
@@ -628,16 +628,16 @@ theorem holdsAt_of_models (hnd : fw.Nodup) (hfr : fw.FreshFor nm)
 
 end Consequence
 
-end Semantics.Composition
+end HeimKratzer
 
-namespace Semantics.Composition
+namespace HeimKratzer
 
 /-- The default logical vocabulary is pairwise distinct. -/
 theorem FOWords.nodup_default : ({} : FOWords).Nodup := by
   unfold FOWords.Nodup
   decide
 
-end Semantics.Composition
+end HeimKratzer
 
 /-! ### Bridge to mathlib `Theory` consequence
 
@@ -647,7 +647,7 @@ first-order consequence over the empty theory, and compactness transfers
 to families of trees. (`ModelType` requires nonempty carriers, hence the
 nonempty-domain restriction — standard in the GQ literature.) -/
 
-namespace Semantics.Composition
+namespace HeimKratzer
 
 open FirstOrder Language
 open PhraseStructure (Tree)
@@ -743,4 +743,4 @@ theorem holdsAt_compactness (hnd : fw.Nodup) (hfr : fw.FreshFor nm)
 
 end TheoryBridge
 
-end Semantics.Composition
+end HeimKratzer

@@ -58,7 +58,7 @@ derivation assumes only the laws it uses, for the one intension it stores. As in
 
 namespace Charlow2018
 
-open Semantics.Composition
+open HeimKratzer
 open scoped Assignment
 
 variable {E : Type}

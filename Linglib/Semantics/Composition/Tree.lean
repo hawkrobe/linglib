@@ -62,9 +62,9 @@ of a tree is ignored, composition being type-driven.
 
 @[expose] public section
 
-namespace Semantics.Composition.Tree
+namespace HeimKratzer.Tree
 
-open Semantics.Composition
+open Montague
 open scoped Assignment
 
 /-! ### Predicate Abstraction as a capability -/
@@ -158,11 +158,11 @@ def eventIdentification? {E W D : Type} {M : Type → Type} [Applicative M]
   | .fn .e (.fn .e .t), .fn .e .t =>
     let f : M (Ty.Domain E W (.e ⇒ .e ⇒ .t) D) := h1 ▸ d1.2
     let p : M (Ty.Domain E W (.e ⇒ .t) D) := h2 ▸ d2.2
-    some ⟨.e ⇒ .e ⇒ .t, eventIdentification <$> f <*> p⟩
+    some ⟨.e ⇒ .e ⇒ .t, ArgumentStructure.eventIdentification <$> f <*> p⟩
   | .fn .e .t, .fn .e (.fn .e .t) =>
     let p : M (Ty.Domain E W (.e ⇒ .t) D) := h1 ▸ d1.2
     let f : M (Ty.Domain E W (.e ⇒ .e ⇒ .t) D) := h2 ▸ d2.2
-    some ⟨.e ⇒ .e ⇒ .t, flip eventIdentification <$> p <*> f⟩
+    some ⟨.e ⇒ .e ⇒ .t, flip ArgumentStructure.eventIdentification <$> p <*> f⟩
   | _, _ => none
 
 /-- The modes a binary node tries, in order. -/
@@ -704,4 +704,4 @@ theorem mem_readings_node_binary {c : C} {t₁ t₂ : Tree C L} {d : Denotation 
 
 end Readings
 
-end Semantics.Composition.Tree
+end HeimKratzer.Tree

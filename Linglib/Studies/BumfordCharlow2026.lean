@@ -53,7 +53,7 @@ supplement effect, whose log is a monoid, is `Composition/Writer.lean`.
 The modes act on Lean's type constructors; an adjunction is mathlib's `Adjunction` between the
 corresponding functors `ofTypeFunctor Ω ⊣ ofTypeFunctor Γ`, so the unit, co-unit and induced
 monad are mathlib's. The grammar's `Ty` has computation types `comp f a`, which
-`Semantics.Composition.Ty` lacks: that engine runs every node in one effect, where the book's
+`Montague.Ty` lacks: that engine runs every node in one effect, where the book's
 grammar tracks a stack of effects per node. As in Appendix B, a writer is applicative exactly
 when its datum is `t`, every applicative effect of the grammar is monadic, and the only
 adjunction is `W i ⊣ R i`. Base types are `e` and `t`.

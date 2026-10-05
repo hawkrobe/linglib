@@ -847,7 +847,7 @@ theorem most_sem_not_definable :
 
 /-! ### The engine-level corollary: no fragment tree means *most* -/
 
-open Semantics.Composition in
+open HeimKratzer in
 set_option linter.style.haveILetI false in
 /-- No tree of the compiled fragment means *most*, since for any logical vocabulary and disjoint
 naming maps over the language of C12, no closed tree of the first-order fragment has, across all

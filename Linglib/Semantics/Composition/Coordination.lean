@@ -16,7 +16,7 @@ coordinator's denotation.
 
 ## Main definitions
 
-* `Semantics.Composition.Tree.coordinate?`: the coordination mode.
+* `HeimKratzer.Tree.coordinate?`: the coordination mode.
 
 ## Main results
 
@@ -30,9 +30,9 @@ coordinator's denotation.
 
 @[expose] public section
 
-namespace Semantics.Composition.Tree
+namespace HeimKratzer.Tree
 
-open Semantics.Composition
+open Montague
 
 /-- `coordinate? c d1 d2` combines two sisters of the same conjoinable type by what the
 coordinator `c` denotes on the pair, in the complete Boolean algebra of their type, threaded
@@ -58,4 +58,4 @@ theorem predicateModification?_eq_coordinate?_of_conjunctive {E W : Type} {M : T
     funext p q; simp [Modifier.intersective, Coordinator.denote_of_conjunctive hc]
   exact congrArg (fun F ↦ some (⟨.e ⇒ .t, F <$> v1 <*> v2⟩ : Denotation E W M)) h
 
-end Semantics.Composition.Tree
+end HeimKratzer.Tree

@@ -36,7 +36,9 @@ the structure and the object first as transitive-verb denotations, as `Model.pre
 
 @[expose] public section
 
-namespace Semantics.Composition
+namespace HeimKratzer
+
+open Montague
 
 open FirstOrder
 
@@ -164,4 +166,4 @@ example :
       (.node () [.terminal () "John", .terminal () "sleeps"] : PhraseStructure.Tree Unit String)
       = some ⟨.t, Toy.sleeps ToyEntity.john⟩ := rfl
 
-end Semantics.Composition
+end HeimKratzer

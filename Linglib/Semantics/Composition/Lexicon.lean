@@ -20,10 +20,12 @@ and the default `M := Id` is the pure lexicon of Heim and Kratzer's type-driven 
 
 @[expose] public section
 
-namespace Semantics.Composition
+namespace HeimKratzer
+
+open Montague
 
 /-- A lexicon looks up a string's `M`-effectful denotation, if it has one. -/
 abbrev Lexicon (E W : Type) (M : Type → Type := Id) (D : Type := ℝ) :=
   String → Option (Denotation E W M D)
 
-end Semantics.Composition
+end HeimKratzer

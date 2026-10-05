@@ -199,7 +199,7 @@ theorem passivizable_iff :
 
 /-- The semantic type of a clausal complement: a finite clause denotes a proposition and a
 nonfinite one a property, the type distinction of chapter I. -/
-def complementTy (fr : ArgumentFrame) : Option Semantics.Composition.Ty :=
+def complementTy (fr : ArgumentFrame) : Option Montague.Ty :=
   if fr.HasClausal then some (if fr.HasFinite then .t else .et) else none
 
 /-- Control verbs take property-denoting complements; *believe*, no control verb, takes a finite
