@@ -241,9 +241,9 @@ def sentence : Tree Cat Unit :=
   e.matrix.replaceAt e.thanPhrase.toList (Tree.node .P [word .P, e.remnant])
 
 /-- The LF of the direct analysis adjoins the remnant and the correlate to the clause they leave
-traces in. -/
+traces in, so that the clause is one category of three segments. -/
 def direct : Tree Cat Unit :=
-  .node .S [e.remnant, .node .S [(e.matrix.subtreeAt e.correlate.toList).getD np,
+  .adjoin .S [e.remnant, .adjoin .S [(e.matrix.subtreeAt e.correlate.toList).getD np,
     (e.sentence.replaceAt (e.thanPhrase.toList ++ [1]) (Tree.trace 1 .N)).replaceAt
       e.correlate.toList (Tree.trace 0 .N)]]
 

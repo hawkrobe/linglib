@@ -84,21 +84,24 @@ theorem forall_mem_substitutionSource {lex : Finset (Tree C W)} {φ : Tree C W}
     forall_and]
 
 /-- A structural operation on parse trees substitutes a constituent by a same-category item of the
-source, deletes a child, contracts a node to one of its same-category children, or applies one of
-these inside a child or a binder body. -/
+source, deletes a child of a phrase, contracts a phrase to one of its same-category children, or
+applies one of these inside a child of a phrase or a binder body. A phrase is a node or an
+adjunction structure. -/
 inductive StructOp (source : Set (Tree C W)) : Tree C W → Tree C W → Prop where
   /-- Substitute a tree by a same-category item of the source. -/
   | subst {φ ψ : Tree C W} (h_cat : ψ.cat = φ.cat) (h_src : ψ ∈ source) : StructOp source φ ψ
-  /-- Delete the `i`-th child of a node. -/
-  | delete {cat : C} {cs : List (Tree C W)} (i : Fin cs.length) :
-    StructOp source (.node cat cs) (.node cat (cs.eraseIdx i))
-  /-- Contract a node to one of its same-category children. -/
-  | contract {cat : C} {cs : List (Tree C W)} {child : Tree C W} (h_mem : child ∈ cs)
-    (h_cat : child.cat = cat) : StructOp source (.node cat cs) child
-  /-- Apply an operation inside one child of a node. -/
-  | inChild {cat : C} {cs : List (Tree C W)} (i : Fin cs.length) {ψ_child : Tree C W}
-    (h_step : StructOp source (cs.get i) ψ_child) :
-    StructOp source (.node cat cs) (.node cat (cs.set i ψ_child))
+  /-- Delete the `i`-th child of a phrase. -/
+  | delete {l : Tree.Label C W} {cs : List (Tree C W)} (i : Fin cs.length)
+    (hl : l.IsPhrase := by trivial) :
+    StructOp source (RoseTree.node l cs) (RoseTree.node l (cs.eraseIdx i))
+  /-- Contract a phrase to one of its same-category children. -/
+  | contract {l : Tree.Label C W} {cs : List (Tree C W)} {child : Tree C W} (h_mem : child ∈ cs)
+    (h_cat : child.cat = l.cat) (hl : l.IsPhrase := by trivial) :
+    StructOp source (RoseTree.node l cs) child
+  /-- Apply an operation inside one child of a phrase. -/
+  | inChild {l : Tree.Label C W} {cs : List (Tree C W)} (i : Fin cs.length) {ψ_child : Tree C W}
+    (h_step : StructOp source (cs.get i) ψ_child) (hl : l.IsPhrase := by trivial) :
+    StructOp source (RoseTree.node l cs) (RoseTree.node l (cs.set i ψ_child))
   /-- Apply an operation inside a binder body. -/
   | inBind {n : Nat} {cat : C} {body body' : Tree C W} (h_step : StructOp source body body') :
     StructOp source (.bind n cat body) (.bind n cat body')
@@ -144,13 +147,13 @@ private theorem structOp_preserves_no_cat (source : Set (Tree C W)) (c : C) (φ 
     c ∉ ψ.cats := by
   induction h_step with
   | subst _ h_src => exact h_source _ h_src
-  | @delete cat cs i =>
-    rw [Tree.mem_cats_node] at h_φ ⊢; push Not at h_φ ⊢
+  | @delete l cs i =>
+    rw [Tree.mem_cats_rose] at h_φ ⊢; push Not at h_φ ⊢
     exact ⟨h_φ.1, fun t ht ↦ h_φ.2 t ((List.eraseIdx_sublist cs i).subset ht)⟩
-  | @contract cat cs child h_mem _ =>
-    rw [Tree.mem_cats_node] at h_φ; push Not at h_φ; exact h_φ.2 child h_mem
-  | @inChild cat cs i ψ_child _ ih =>
-    rw [Tree.mem_cats_node] at h_φ ⊢; push Not at h_φ ⊢
+  | @contract l cs child h_mem _ =>
+    rw [Tree.mem_cats_rose] at h_φ; push Not at h_φ; exact h_φ.2 child h_mem
+  | @inChild l cs i ψ_child _ _ ih =>
+    rw [Tree.mem_cats_rose] at h_φ ⊢; push Not at h_φ ⊢
     have hih := ih (h_φ.2 (cs.get i) (List.get_mem cs i))
     refine ⟨h_φ.1, fun t ht ↦ ?_⟩
     rcases List.mem_or_eq_of_mem_set ht with ht' | rfl
@@ -177,34 +180,34 @@ that the tree lacks, and that a node cannot acquire by losing a child, by having
 replaced, or by a change of a binder's body. -/
 private theorem structOp_preserves_free (source : Set (Tree C W))
     (Bad : Tree C W → Prop) (h_source : ∀ s ∈ source, ∀ t ∈ s.subtrees, ¬ Bad t)
-    (h_delete : ∀ (cat : C) (cs : List (Tree C W)) (i : Fin cs.length),
-      ¬ Bad (.node cat cs) → ¬ Bad (.node cat (cs.eraseIdx i)))
-    (h_set : ∀ (cat : C) (cs : List (Tree C W)) (i : Fin cs.length) (ψ : Tree C W),
-      ¬ Bad (.node cat cs) → ¬ Bad (.node cat (cs.set i ψ)))
+    (h_delete : ∀ (l : Tree.Label C W) (cs : List (Tree C W)) (i : Fin cs.length), l.IsPhrase →
+      ¬ Bad (RoseTree.node l cs) → ¬ Bad (RoseTree.node l (cs.eraseIdx i)))
+    (h_set : ∀ (l : Tree.Label C W) (cs : List (Tree C W)) (i : Fin cs.length) (ψ : Tree C W),
+      l.IsPhrase → ¬ Bad (RoseTree.node l cs) → ¬ Bad (RoseTree.node l (cs.set i ψ)))
     (h_bind : ∀ (n : ℕ) (cat : C) (body body' : Tree C W),
       ¬ Bad (.bind n cat body) → ¬ Bad (.bind n cat body'))
     {φ ψ : Tree C W} (h_φ : ∀ t ∈ φ.subtrees, ¬ Bad t) (h_step : StructOp source φ ψ) :
     ∀ t ∈ ψ.subtrees, ¬ Bad t := by
   induction h_step with
   | subst _ h_src => exact h_source _ h_src
-  | @delete cat cs i =>
-    rw [Tree.subtrees_node] at h_φ ⊢
+  | @delete l cs i hl =>
+    rw [RoseTree.subtrees_node] at h_φ ⊢
     intro t ht
     rcases List.mem_cons.mp ht with rfl | ht
-    · exact h_delete cat cs i (h_φ _ (List.mem_cons_self ..))
+    · exact h_delete l cs i hl (h_φ _ (List.mem_cons_self ..))
     · obtain ⟨c, hc, htc⟩ := List.mem_flatMap.mp ht
       exact h_φ t (List.mem_cons_of_mem _ (List.mem_flatMap.mpr
         ⟨c, (List.eraseIdx_sublist cs i).subset hc, htc⟩))
-  | @contract cat cs child h_mem _ =>
-    rw [Tree.subtrees_node] at h_φ
+  | @contract l cs child h_mem _ =>
+    rw [RoseTree.subtrees_node] at h_φ
     exact fun t ht ↦ h_φ t (List.mem_cons_of_mem _ (List.mem_flatMap.mpr ⟨child, h_mem, ht⟩))
-  | @inChild cat cs i ψ_child _ ih =>
-    rw [Tree.subtrees_node] at h_φ ⊢
+  | @inChild l cs i ψ_child _ hl ih =>
+    rw [RoseTree.subtrees_node] at h_φ ⊢
     have hih := ih fun t ht ↦
       h_φ t (List.mem_cons_of_mem _ (List.mem_flatMap.mpr ⟨cs.get i, List.get_mem cs i, ht⟩))
     intro t ht
     rcases List.mem_cons.mp ht with rfl | ht
-    · exact h_set cat cs i ψ_child (h_φ _ (List.mem_cons_self ..))
+    · exact h_set l cs i ψ_child hl (h_φ _ (List.mem_cons_self ..))
     · obtain ⟨c, hc, htc⟩ := List.mem_flatMap.mp ht
       rcases List.mem_or_eq_of_mem_set hc with hc | rfl
       · exact h_φ t (List.mem_cons_of_mem _ (List.mem_flatMap.mpr ⟨c, hc, htc⟩))
@@ -221,10 +224,10 @@ acquire by losing a child, by having a child replaced, or by a change of a binde
 is absent from every structural alternative of the host. -/
 theorem subtree_preservation (source : Set (Tree C W)) (Bad : Tree C W → Prop)
     (h_source : ∀ s ∈ source, ∀ t ∈ s.subtrees, ¬ Bad t)
-    (h_delete : ∀ (cat : C) (cs : List (Tree C W)) (i : Fin cs.length),
-      ¬ Bad (.node cat cs) → ¬ Bad (.node cat (cs.eraseIdx i)))
-    (h_set : ∀ (cat : C) (cs : List (Tree C W)) (i : Fin cs.length) (ψ : Tree C W),
-      ¬ Bad (.node cat cs) → ¬ Bad (.node cat (cs.set i ψ)))
+    (h_delete : ∀ (l : Tree.Label C W) (cs : List (Tree C W)) (i : Fin cs.length), l.IsPhrase →
+      ¬ Bad (RoseTree.node l cs) → ¬ Bad (RoseTree.node l (cs.eraseIdx i)))
+    (h_set : ∀ (l : Tree.Label C W) (cs : List (Tree C W)) (i : Fin cs.length) (ψ : Tree C W),
+      l.IsPhrase → ¬ Bad (RoseTree.node l cs) → ¬ Bad (RoseTree.node l (cs.set i ψ)))
     (h_bind : ∀ (n : ℕ) (cat : C) (body body' : Tree C W),
       ¬ Bad (.bind n cat body) → ¬ Bad (.bind n cat body'))
     {φ ψ : Tree C W} (h_φ : ∀ t ∈ φ.subtrees, ¬ Bad t) (h_reach : atMostAsComplex source ψ φ) :
@@ -235,24 +238,25 @@ theorem subtree_preservation (source : Set (Tree C W)) (Bad : Tree C W → Prop)
   | tail _ h_last ih =>
     exact structOp_preserves_free source Bad h_source h_delete h_set h_bind ih h_last
 
-/-- No structural alternative has a phrase of a category, a node labelled `Label.node c`, that
-neither the host nor any source item has. -/
+/-- No structural alternative has a phrase of a category, a node or adjunction structure of
+category `c`, that neither the host nor any source item has. -/
 theorem phrase_preservation (source : Set (Tree C W)) (c : C)
-    (h_source : ∀ s ∈ source, ∀ t ∈ s.subtrees, t.value ≠ .node c) {φ ψ : Tree C W}
-    (h_φ : ∀ t ∈ φ.subtrees, t.value ≠ .node c) (h_reach : atMostAsComplex source ψ φ) :
-    ∀ t ∈ ψ.subtrees, t.value ≠ .node c :=
-  subtree_preservation source (·.value = .node c) h_source (fun _ _ _ ↦ id) (fun _ _ _ _ ↦ id)
-    (fun _ _ _ _ _ h ↦ by cases h) h_φ h_reach
+    (h_source : ∀ s ∈ source, ∀ t ∈ s.subtrees, ¬ (t.value.IsPhrase ∧ Tree.cat t = c))
+    {φ ψ : Tree C W} (h_φ : ∀ t ∈ φ.subtrees, ¬ (t.value.IsPhrase ∧ Tree.cat t = c))
+    (h_reach : atMostAsComplex source ψ φ) :
+    ∀ t ∈ ψ.subtrees, ¬ (t.value.IsPhrase ∧ Tree.cat t = c) :=
+  subtree_preservation source (fun t ↦ t.value.IsPhrase ∧ Tree.cat t = c) h_source
+    (fun _ _ _ _ ↦ id) (fun _ _ _ _ _ ↦ id) (fun _ _ _ _ _ h ↦ h.1.elim) h_φ h_reach
 
 /-! ### Horn scales are structural alternatives -/
 
 /-- Lift a ReflTransGen chain at position i through inChild. -/
 private theorem lift_at_position {source : Set (Tree C W)}
-    {cat : C} (cs : List (Tree C W))
+    {l : Tree.Label C W} (hl : l.IsPhrase) (cs : List (Tree C W))
     (i : Nat) (hi : i < cs.length) (ψ : Tree C W)
     (h : Relation.ReflTransGen (StructOp source) cs[i] ψ) :
     Relation.ReflTransGen (StructOp source)
-      (.node cat cs) (.node cat (cs.set i ψ)) := by
+      (RoseTree.node l cs) (RoseTree.node l (cs.set i ψ)) := by
   induction h with
   | refl => rw [List.set_getElem_self hi]
   | @tail b d _ hbd ih =>
@@ -260,7 +264,7 @@ private theorem lift_at_position {source : Set (Tree C W)}
     apply Relation.ReflTransGen.single
     have hlen : i < (cs.set i b).length := by rw [List.length_set]; exact hi
     rw [show cs.set i d = (cs.set i b).set i d from (List.set_set ..).symm]
-    apply StructOp.inChild ⟨i, hlen⟩
+    refine StructOp.inChild ⟨i, hlen⟩ ?_ hl
     have hget : (cs.set i b).get ⟨i, hlen⟩ = b := List.getElem_set_self ..
     rw [hget]; exact hbd
 
@@ -275,14 +279,14 @@ private theorem lift_bind {source : Set (Tree C W)}
 
 /-- Children reachable one by one make the node reachable. With `cs'` pointwise reachable from
 `cs`, `node cat cs` reaches `node cat cs'` by operations inside successive children. -/
-private theorem pointwise_reachable {source : Set (Tree C W)} {cat : C}
-    {cs cs' : List (Tree C W)} (hlen : cs'.length = cs.length)
+private theorem pointwise_reachable {source : Set (Tree C W)} {l : Tree.Label C W}
+    (hl : l.IsPhrase) {cs cs' : List (Tree C W)} (hlen : cs'.length = cs.length)
     (hf : ∀ (i : Nat) (hi : i < cs.length),
       Relation.ReflTransGen (StructOp source) cs[i] (cs'[i]'(hlen ▸ hi))) :
-    Relation.ReflTransGen (StructOp source) (.node cat cs) (.node cat cs') := by
+    Relation.ReflTransGen (StructOp source) (RoseTree.node l cs) (RoseTree.node l cs') := by
   suffices h : ∀ k (hk : k ≤ cs.length),
     Relation.ReflTransGen (StructOp source)
-      (.node cat cs) (.node cat (List.take k cs' ++ List.drop k cs)) by
+      (RoseTree.node l cs) (RoseTree.node l (List.take k cs' ++ List.drop k cs)) by
     have h' := h cs.length le_rfl
     rw [List.take_of_length_le (by omega), List.drop_length, List.append_nil] at h'
     exact h'
@@ -301,7 +305,7 @@ private theorem pointwise_reachable {source : Set (Tree C W)} {cat : C}
     suffices heq : List.take (k + 1) cs' ++ List.drop (k + 1) cs =
         (List.take k cs' ++ List.drop k cs).set k (cs'[k]'(by omega)) by
       rw [heq]
-      apply lift_at_position _ k (by simp [List.length_take]; omega)
+      apply lift_at_position hl _ k (by simp [List.length_take]; omega)
       rw [hmid_k]; exact hf k hk'
     have htk1_len : (List.take (k + 1) cs').length = k + 1 := by simp [List.length_take]; omega
     apply List.ext_getElem
@@ -319,14 +323,15 @@ private theorem pointwise_reachable {source : Set (Tree C W)} {cat : C}
           simp [htk1_len, htk_len, List.getElem_drop]
           congr 1; omega
 
-/-- Processing the children one at a time, `.node cat cs` reaches `.node cat (cs.map f)`. -/
+/-- Processing the children one at a time, a phrase over `cs` reaches the phrase over
+`cs.map f`. -/
 private theorem mapChildren_reachable {source : Set (Tree C W)}
-    {cat : C} {cs : List (Tree C W)} {f : Tree C W → Tree C W}
+    {l : Tree.Label C W} (hl : l.IsPhrase) {cs : List (Tree C W)} {f : Tree C W → Tree C W}
     (hf : ∀ (i : Nat) (hi : i < cs.length),
       Relation.ReflTransGen (StructOp source) cs[i] (f cs[i])) :
     Relation.ReflTransGen (StructOp source)
-      (.node cat cs) (.node cat (cs.map f)) :=
-  pointwise_reachable (by simp) fun i hi ↦ by rw [List.getElem_map]; exact hf i hi
+      (RoseTree.node l cs) (RoseTree.node l (cs.map f)) :=
+  pointwise_reachable hl (by simp) fun i hi ↦ by rw [List.getElem_map]; exact hf i hi
 
 /-- Leaf substitution is reachable via structural operations for any
 source containing `.terminal c β`. -/
@@ -342,7 +347,11 @@ private theorem leafSubst_reachable [DecidableEq C] [DecidableEq W] {source : Se
     · exact .refl
   | node c' cs ih =>
     rw [Tree.leafSubst_node]
-    exact mapChildren_reachable fun i hi ↦
+    exact mapChildren_reachable (l := .node c') trivial fun i hi ↦
+      ih _ (List.getElem_mem hi) (RoseTree.Licensed.of_mem hφ (List.getElem_mem hi))
+  | adjoin c' cs ih =>
+    rw [Tree.leafSubst_adjoin]
+    exact mapChildren_reachable (l := .segment c') trivial fun i hi ↦
       ih _ (List.getElem_mem hi) (RoseTree.Licensed.of_mem hφ (List.getElem_mem hi))
   | trace n c' => exact .refl
   | bind n c' body ih =>
@@ -371,6 +380,7 @@ same-category items of the lexicon, and the constructors compose pointwise. -/
 def hamblin (lex : Finset (Tree C W)) : Tree C W → WithAlternatives (Tree C W)
   | t@(.terminal c _) => ⟨t, insert t {s | s ∈ lex ∧ s.cat = c}⟩
   | .node c cs => Tree.node c <$> hamblinList lex cs
+  | .adjoin c cs => Tree.adjoin c <$> hamblinList lex cs
   | t@(.trace _ _) => pure t
   | .bind n c body => Tree.bind n c <$> hamblin lex body
   | t => pure t
@@ -389,6 +399,7 @@ theorem hamblin_junk (lex : Finset (Tree C W)) {l : Tree.Label C W} {cs : List (
     | nil => exact absurd rfl h
     | cons => rfl
   | node c => exact absurd trivial h
+  | segment c => exact absurd trivial h
   | trace n c => cases cs with
     | nil => exact absurd rfl h
     | cons => rfl
@@ -411,6 +422,14 @@ theorem hamblin_ordinary (lex : Finset (Tree C W)) (φ : Tree C W) :
     | cons t ts ihts =>
       simp only [hamblin.hamblinList, WithAlternatives.ordinary_seq, WithAlternatives.ordinary_map,
         ih t List.mem_cons_self, ihts fun s hs ↦ ih s (List.mem_cons_of_mem _ hs)]
+  | adjoin c cs ih =>
+    simp only [hamblin, WithAlternatives.ordinary_map]
+    congr 1
+    induction cs with
+    | nil => rfl
+    | cons t ts ihts =>
+      simp only [hamblin.hamblinList, WithAlternatives.ordinary_seq, WithAlternatives.ordinary_map,
+        ih t List.mem_cons_self, ihts fun s hs ↦ ih s (List.mem_cons_of_mem _ hs)]
   | trace n c => rfl
   | bind n c body ih => simp only [hamblin, WithAlternatives.ordinary_map, ih]
   | junk l cs h _ => rw [hamblin_junk lex h]; rfl
@@ -421,6 +440,14 @@ theorem hamblin_wellFormed (lex : Finset (Tree C W)) (φ : Tree C W) :
   induction φ using Tree.rec' with
   | terminal c w => exact Set.mem_insert _ _
   | node c cs ih =>
+    refine WithAlternatives.WellFormed.map ?_
+    induction cs with
+    | nil => exact WithAlternatives.WellFormed.unfeatured _
+    | cons t ts ihts =>
+      exact WithAlternatives.mem_alternatives_seq.2
+        ⟨_, WithAlternatives.mem_alternatives_map.2 ⟨_, ih t List.mem_cons_self, rfl⟩, _,
+          ihts fun s hs ↦ ih s (List.mem_cons_of_mem _ hs), rfl⟩
+  | adjoin c cs ih =>
     refine WithAlternatives.WellFormed.map ?_
     induction cs with
     | nil => exact WithAlternatives.WellFormed.unfeatured _
@@ -459,7 +486,26 @@ theorem reachable_of_mem_hamblin {source : Set (Tree C W)} (lex : Finset (Tree C
         obtain ⟨b, hb, rfl⟩ := WithAlternatives.mem_alternatives_map.1 hg
         exact List.Forall₂.cons (ih t List.mem_cons_self b hb)
           (ihts (fun s hs ↦ ih s (List.mem_cons_of_mem _ hs)) bs hbs)
-    exact pointwise_reachable h.length_eq.symm fun i hi ↦ h.get hi (h.length_eq ▸ hi)
+    exact pointwise_reachable (l := .node c) trivial h.length_eq.symm fun i hi ↦
+      h.get hi (h.length_eq ▸ hi)
+  | adjoin c cs ih =>
+    intro ψ hψ
+    obtain ⟨cs', hcs', rfl⟩ := WithAlternatives.mem_alternatives_map.1 hψ
+    clear hψ
+    have h : List.Forall₂ (Relation.ReflTransGen (StructOp source)) cs cs' := by
+      induction cs generalizing cs' with
+      | nil =>
+        have h : cs' ∈ ({[]} : Set (List (Tree C W))) := by
+          simpa [hamblin.hamblinList, WithAlternatives.alternatives_pure] using hcs'
+        obtain rfl := Set.mem_singleton_iff.1 h
+        exact List.Forall₂.nil
+      | cons t ts ihts =>
+        obtain ⟨g, hg, bs, hbs, rfl⟩ := WithAlternatives.mem_alternatives_seq.1 hcs'
+        obtain ⟨b, hb, rfl⟩ := WithAlternatives.mem_alternatives_map.1 hg
+        exact List.Forall₂.cons (ih t List.mem_cons_self b hb)
+          (ihts (fun s hs ↦ ih s (List.mem_cons_of_mem _ hs)) bs hbs)
+    exact pointwise_reachable (l := .segment c) trivial h.length_eq.symm fun i hi ↦
+      h.get hi (h.length_eq ▸ hi)
   | trace n c =>
     intro ψ hψ
     have h : ψ ∈ ({Tree.trace n c} : Set (Tree C W)) := by

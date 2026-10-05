@@ -99,13 +99,8 @@ relevant epithet phrase ([fox-katzir-2011]). -/
 def priorContextLex : Finset (Tree Cat EWord) :=
   insert bastardPedroDP epithetLex
 
-/-- The daughters of a tree. -/
-def daughters : Tree Cat EWord → List (Tree Cat EWord)
-  | .node _ cs => cs
-  | _ => []
-
 /-- A determiner phrase with at least two daughters. -/
-def WideDP (t : Tree Cat EWord) : Prop := t.cat = .Det ∧ 2 ≤ (daughters t).length
+def WideDP (t : Tree Cat EWord) : Prop := t.cat = .Det ∧ 2 ≤ t.children.length
 
 /-- The epithet construction is a determiner phrase *that bastard X*. -/
 def IsEpithet : Tree Cat EWord → Prop
@@ -117,7 +112,7 @@ instance : DecidablePred IsEpithet := fun t ↦ by unfold IsEpithet; split <;> i
 
 theorem WideDP.of_isEpithet {t : Tree Cat EWord} (h : IsEpithet t) : WideDP t := by
   unfold IsEpithet at h; split at h
-  · exact ⟨rfl, by simp [daughters]⟩
+  · exact ⟨rfl, by simp⟩
   · exact h.elim
 
 /-- A tree contains the epithet construction. -/
@@ -131,10 +126,10 @@ operations cannot widen a phrase. -/
 theorem no_wideDP_outOfBlue {ψ : Tree Cat EWord}
     (h : ψ ∈ structuralAlternatives epithetLex johnArrived) : ∀ t ∈ ψ.subtrees, ¬ WideDP t :=
   subtree_preservation _ WideDP (forall_mem_substitutionSource.2 ⟨by decide, by decide⟩)
-    (fun _ cs i h ⟨h1, h2⟩ ↦ h ⟨h1, by
-      simp only [daughters, List.length_eraseIdx, i.2, ite_true] at h2 ⊢; omega⟩)
-    (fun _ cs _ _ h ⟨h1, h2⟩ ↦ h ⟨h1, by simpa [daughters, List.length_set] using h2⟩)
-    (fun _ _ _ _ _ ⟨_, h2⟩ ↦ by simp [daughters] at h2) (by decide) h
+    (fun _ cs i _ h ⟨h1, h2⟩ ↦ h ⟨h1, by
+      simp only [RoseTree.children_node, List.length_eraseIdx, i.2, ite_true] at h2 ⊢; omega⟩)
+    (fun _ cs _ _ _ h ⟨h1, h2⟩ ↦ h ⟨h1, by simpa [List.length_set] using h2⟩)
+    (fun _ _ _ _ _ ⟨_, h2⟩ ↦ by simp at h2) (by decide) h
 
 /-- Out of the blue, the epithet sentence is not a structural alternative. -/
 theorem epithet_not_alternative_outOfBlue :

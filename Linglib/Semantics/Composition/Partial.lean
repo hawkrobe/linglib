@@ -6,7 +6,7 @@ public import Linglib.Semantics.Composition.Tree
 /-!
 # Partial interpretation
 
-This file is [heim-kratzer-1998]'s composition engine on partial denotations. A function
+This file is Heim and Kratzer's composition engine on partial denotations. A function
 denotes a partial function, mathlib's `PFun`, whose domain is the definedness condition the
 book attaches to a lexical entry, and a node denotes a `Part` value of its type, defined when
 its daughters are and the function among them is defined at its argument. Functional
@@ -198,9 +198,9 @@ def valueAt (τ : Ty) : Option (PDenotation E W D) → Part (Ty.PDomain E W τ D
 variable {C : Type} {L : Type*}
 
 /-- In the partial denotation of a tree under an assignment, a terminal denotes what its leaf
-interpretation gives it, a non-branching node what its daughter does, a binary node what
-`interpBinary` composes, a trace the value of its index, and a binder the partial function
-abstracting over its index in the body. -/
+interpretation gives it, a non-branching node what its daughter does, a binary node, a projection or
+an adjunction, what `interpBinary` composes, a trace the value of its index, and a binder the
+partial function abstracting over its index in the body. -/
 def interp (lex : L → Option (PDenotation E W D)) (g : Assignment E) :
     Tree C L → Option (PDenotation E W D)
   | .terminal _ w => lex w
@@ -210,6 +210,12 @@ def interp (lex : L → Option (PDenotation E W D)) (g : Assignment E) :
     let d₂ ← interp lex g t₂
     interpBinary d₁ d₂
   | .node _ _ => none
+  | .adjoin _ (t :: []) => interp lex g t
+  | .adjoin _ (t₁ :: t₂ :: []) => do
+    let d₁ ← interp lex g t₁
+    let d₂ ← interp lex g t₂
+    interpBinary d₁ d₂
+  | .adjoin _ _ => none
   | .trace n _ => some ⟨.e, Part.some (g n)⟩
   | .bind n _ body =>
     (interp lex g body).map fun d ↦
@@ -228,6 +234,13 @@ variable (lex lex' : L → Option (PDenotation E W D)) (g g' : Assignment E)
     interp lex g (.node c (t₁ :: t₂ :: [])) =
       (interp lex g t₁).bind fun d₁ ↦ (interp lex g t₂).bind fun d₂ ↦ interpBinary d₁ d₂ := rfl
 
+@[simp] theorem interp_adjoin_unary (c : C) (t : Tree C L) :
+    interp lex g (.adjoin c (t :: [])) = interp lex g t := rfl
+
+@[simp] theorem interp_adjoin_binary (c : C) (t₁ t₂ : Tree C L) :
+    interp lex g (.adjoin c (t₁ :: t₂ :: [])) =
+      (interp lex g t₁).bind fun d₁ ↦ (interp lex g t₂).bind fun d₂ ↦ interpBinary d₁ d₂ := rfl
+
 @[simp] theorem interp_trace (n : ℕ) (c : C) :
     interp lex g (.trace n c : Tree C L) = some ⟨.e, Part.some (g n)⟩ := rfl
 
@@ -244,6 +257,7 @@ theorem interp_junk {l : Syntax.Tree.Label C L} {cs : List (Tree C L)}
     | nil => exact absurd rfl h
     | cons => rfl
   | node c => exact absurd trivial h
+  | segment c => exact absurd trivial h
   | trace n c => cases cs with
     | nil => exact absurd rfl h
     | cons => rfl
@@ -273,6 +287,19 @@ theorem interp_map_fst_congr (h : ∀ w, (lex w).map (·.1) = (lex' w).map (·.1
     | [t] => simp only [interp_node_unary]; exact ih t (by simp) g g'
     | [t₁, t₂] =>
       simp only [interp_node_binary]
+      have h₁ := ih t₁ (by simp) g g'
+      have h₂ := ih t₂ (by simp) g g'
+      revert h₁ h₂
+      cases interp lex g t₁ <;> cases interp lex' g' t₁ <;>
+        cases interp lex g t₂ <;> cases interp lex' g' t₂ <;>
+        intro h₁ h₂ <;> simp_all [interpBinary_map_fst]
+    | _ :: _ :: _ :: _ => rfl
+  | adjoin c cs ih =>
+    match cs with
+    | [] => rfl
+    | [t] => simp only [interp_adjoin_unary]; exact ih t (by simp) g g'
+    | [t₁, t₂] =>
+      simp only [interp_adjoin_binary]
       have h₁ := ih t₁ (by simp) g g'
       have h₂ := ih t₂ (by simp) g g'
       revert h₁ h₂
@@ -521,6 +548,20 @@ theorem interp_lifts (hlex : ∀ w d', lex' w = some d' → ∃ d, lex w = some 
       obtain ⟨d₂, hd₂, hl₂⟩ := ih t₂ (by simp) g h₂'
       obtain ⟨d, hd, hl⟩ := interpBinary_lifts hl₁ hl₂ h
       exact ⟨d, by rw [Tree.interp_node_binary, hd₁, hd₂, Option.bind_some, Option.bind_some,
+        hd], hl⟩
+    | _ :: _ :: _ :: _ => exact absurd h (by simp [interp])
+  | adjoin c cs ih =>
+    match cs with
+    | [] => exact absurd h (by simp [interp])
+    | [t] => exact ih t (by simp) g h
+    | [t₁, t₂] =>
+      rw [interp_adjoin_binary] at h
+      obtain ⟨d₁', h₁', h⟩ := Option.bind_eq_some_iff.mp h
+      obtain ⟨d₂', h₂', h⟩ := Option.bind_eq_some_iff.mp h
+      obtain ⟨d₁, hd₁, hl₁⟩ := ih t₁ (by simp) g h₁'
+      obtain ⟨d₂, hd₂, hl₂⟩ := ih t₂ (by simp) g h₂'
+      obtain ⟨d, hd, hl⟩ := interpBinary_lifts hl₁ hl₂ h
+      exact ⟨d, by rw [Tree.interp_adjoin_binary, hd₁, hd₂, Option.bind_some, Option.bind_some,
         hd], hl⟩
     | _ :: _ :: _ :: _ => exact absurd h (by simp [interp])
   | trace n c =>
