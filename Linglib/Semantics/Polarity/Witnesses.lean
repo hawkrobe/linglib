@@ -20,11 +20,11 @@ Fintel's sense and, where the context is anti-additive, Strawson anti-additive i
 
 The classical witnesses are complementation for negation, the sections of *every*, *no* and *few*,
 and *at most two*, which is antitone but not anti-additive (`atMost_not_antiAdditive`), the
-strictness that makes its context weak. The Strawson witnesses are the operators of
-`Logic/Natural/Strawson.lean` and `Semantics/Attitudes/Desire/BestWorlds.lean`: *only*, *regret*,
-*since*, superlatives and *would*. The contexts of *before*, *without*, *deny*, *doubt*, *too … to*
-and the comparatives have no operator yet, and questions and the generic contexts license by other
-routes than strength.
+strictness that makes its context weak. The Strawson witnesses are von Fintel's operators with
+their owners: *only*, *regret*, superlatives and the modal-horizon counterfactual. The contexts of
+*before*, *without*, *deny*, *doubt*, *too … to*, temporal *since* and the comparatives have no
+operator yet, *since* being only von Fintel's study's, and questions and the generic contexts
+license by other routes than strength.
 
 ## Main declarations
 
@@ -178,25 +178,19 @@ def adversativeWitness : StrawsonWitness .adversative where
   isStrawsonDE := isStrawsonDE_regret _ _ _
   isStrawsonAA _ := isStrawsonAntiAdditive_regret _ _ _
 
-/-- Temporal *since* is Strawson anti-additive, with its past-event presupposition, and not
-classically antitone (`not_antitone_truthSet_since`). -/
-def sinceTemporalWitness : StrawsonWitness .sinceTemporal where
-  op := since (W := Fin 4) (fun _ ↦ {0}) (fun _ ↦ ∅)
-  isStrawsonDE := isStrawsonDE_since _ _
-  isStrawsonAA _ := isStrawsonAntiAdditive_since _ _
-
-/-- Superlatives are Strawson anti-additive in their restriction, with the designated-subject
-presupposition, and not classically antitone (`not_antitone_truthSet_superlative`). -/
+/-- Superlatives are Strawson anti-additive in their comparison class, with the designated-subject
+presupposition, and not classically antitone (`Degree.not_antitone_truthSet_superlative`). -/
 def superlativeWitness : StrawsonWitness .superlative where
-  op := (superlative (W := Fin 4) (id : Fin 4 → Fin 4) · 0)
-  isStrawsonDE := isStrawsonDE_superlative _ _
-  isStrawsonAA _ := isStrawsonAntiAdditive_superlative _ _
+  op := (Degree.superlative (W := Fin 4) (id : Fin 4 → Fin 4) · 0)
+  isStrawsonDE := Degree.isStrawsonDE_superlative _ _
+  isStrawsonAA _ := Degree.isStrawsonAntiAdditive_superlative _ _
 
 /-- Conditional antecedents are Strawson anti-additive, with the presupposition that the modal
-horizon admits the antecedent, and not classically antitone (`not_antitone_truthSet_would`). -/
+horizon admits the antecedent, and not classically antitone
+(`Conditional.not_antitone_truthSet_horizonCounterfactual`). -/
 def conditionalAntecedentWitness : StrawsonWitness .conditionalAntecedent where
-  op := (would (W := Fin 4) (fun _ ↦ Set.univ) · ∅)
-  isStrawsonDE := isStrawsonDE_would _ _
-  isStrawsonAA _ := isStrawsonAntiAdditive_would _ _
+  op := (Conditional.horizonCounterfactual (fun _ : Fin 4 ↦ (Set.univ : Set (Fin 4))) · ∅)
+  isStrawsonDE := Conditional.isStrawsonDE_horizonCounterfactual _ _
+  isStrawsonAA _ := Conditional.isStrawsonAntiAdditive_horizonCounterfactual _ _
 
 end PolarityItem
