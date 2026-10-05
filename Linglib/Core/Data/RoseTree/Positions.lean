@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Core.Data.RoseTree.Get
+public import Mathlib.Order.Minimal
 
 /-!
 # Positions of a rose tree
@@ -16,7 +17,9 @@ The positions whose subtree satisfies a predicate form `RoseTree.positionsWhere 
 when the predicate is, which picks out the positions of a label, of a branching node, or of any
 other condition on a node and what it dominates. Replacing the subtree at a position leaves the
 positions outside it where they were, for a predicate that does not look below the root
-(`mem_positionsWhere_replaceAt`).
+(`mem_positionsWhere_replaceAt`). The topmost and bottommost of the positions are their `Minimal`
+and `Maximal` members, the root being least, and both are decidable: the positions above one are
+its prefixes, and those below it in the tree are among `vertices`.
 
 ## Main declarations
 
@@ -141,6 +144,30 @@ theorem mem_positionsWhere_replaceAt
       List.drop_left]
     simp [hP]
   · rw [mem_positionsWhere, mem_positionsWhere, subtreeAt_replaceAt_of_not_prefix h hpc]
+
+theorem minimal_mem_positionsWhere_iff :
+    Minimal (· ∈ positionsWhere P t) p ↔
+      p ∈ positionsWhere P t ∧ ∀ q ∈ p.toList.inits, ⟨q⟩ ≠ p → ⟨q⟩ ∉ positionsWhere P t := by
+  rw [minimal_iff_forall_lt]
+  refine and_congr_right fun _ ↦ ⟨fun h q hq hne ↦ h ?_, fun h q hq ↦ ?_⟩
+  · exact lt_of_le_of_ne (TreePath.le_def.mpr ((List.mem_inits _ _).mp hq)) hne
+  · exact h q.toList ((List.mem_inits _ _).mpr (TreePath.le_def.mp hq.le)) hq.ne
+
+instance [DecidablePred P] : Decidable (Minimal (· ∈ positionsWhere P t) p) :=
+  decidable_of_iff _ minimal_mem_positionsWhere_iff.symm
+
+theorem maximal_mem_positionsWhere_iff :
+    Maximal (· ∈ positionsWhere P t) p ↔
+      p ∈ positionsWhere P t ∧ ∀ q ∈ t.vertices, p < ⟨q⟩ → ⟨q⟩ ∉ positionsWhere P t := by
+  rw [maximal_iff_forall_gt]
+  refine and_congr_right fun _ ↦ ⟨fun h q _ hpq ↦ h hpq, fun h q hpq hq ↦ ?_⟩
+  refine h q.toList (mem_vertices.mpr ?_) hpq hq
+  obtain ⟨s, hs, -⟩ := hq
+  rw [Option.mem_def.mp hs]
+  rfl
+
+instance [DecidablePred P] : Decidable (Maximal (· ∈ positionsWhere P t) p) :=
+  decidable_of_iff _ maximal_mem_positionsWhere_iff.symm
 
 end PositionsWhere
 

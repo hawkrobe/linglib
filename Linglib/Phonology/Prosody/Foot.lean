@@ -15,9 +15,10 @@ prosodic tree (`Prosody.Tree`) and the metrical grid are functions that recover 
 
 ## Main definitions
 
-* `IsFoot` — foot well-formedness on the prosodic-tree carrier: a tree rooted in an `f`-node
-  and licensed by the Layeredness relation `Constituent.Licenses`, so an `f`-node over a
-  non-empty list of σ-leaves.
+* `IsConstituent` — well-formedness at a prosodic level on the prosodic-tree carrier: a tree
+  rooted in a node of that level and licensed by the Layeredness relation
+  `Constituent.Licenses`; `IsFoot` is the `f` level, an `f`-node over a non-empty list of
+  σ-leaves.
 * `Foot` — a headed constituent over syllable positions (`head : Fin _`, so non-empty).
 * `Foot.IsTrochaic` / `IsIambic` / `IsBinary` / `IsDegenerate` — derived shape predicates.
 * `Foot.moraCount` — mora count under a weight reading (the quantity axis).
@@ -57,14 +58,21 @@ namespace Prosody
 
 /-! ### Carrier well-formedness -/
 
+/-- A well-formed prosodic constituent at the level `ℓ` is a tree rooted in an `ℓ`-node and
+licensed by `Constituent.Licenses`, so every node dominates only the levels Layeredness allows
+under it. -/
+def IsConstituent (ℓ : Constituent → Bool) (t : Tree) : Prop :=
+  ℓ t.value = true ∧ t.Licensed Constituent.Licenses
+
+instance (ℓ : Constituent → Bool) (t : Tree) : Decidable (IsConstituent ℓ t) :=
+  inferInstanceAs (Decidable (_ ∧ _))
+
 /-- A well-formed foot is a licensed tree rooted in an `f`-node, so an `f`-node dominating a
     non-empty list of σ-leaves, the inviolable Layeredness and σ-Headedness core
     ([selkirk-1980]; [hayes-1995]). Foot binarity (FtBin) and recursive internally-layered feet
     (contested, Golston 2021 against [martinez-paricio-kager-2015]) are violable and deferred;
     these are flat feet, the sibling of `IsWord`'s Layeredness. -/
-def IsFoot (t : Tree) : Prop := t.value.isFt = true ∧ t.Licensed Constituent.Licenses
-
-instance (t : Tree) : Decidable (IsFoot t) := inferInstanceAs (Decidable (_ ∧ _))
+abbrev IsFoot : Tree → Prop := IsConstituent Constituent.isFt
 
 /-- The daughters of a well-formed foot are σ-leaves. -/
 theorem IsFoot.isSyl_leaf {t : Tree} (h : IsFoot t) {c : Tree} (hc : c ∈ t.children) :

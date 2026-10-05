@@ -21,7 +21,7 @@ above the constraint that every prosodic word correspond to a morphological word
 ## Main definitions
 
 * `flat`, `nested`: the two parses of a prefix sequence over a stem.
-* `omegaInitial`, `omegaSeparates`: the structural side of the two diagnostics — the
+* `omegaInitial`, `OmegaSeparates`: the structural side of the two diagnostics — the
   ω-initial leaves, and whether an ω boundary separates two leaves.
 * `matchWord`, `matchOmega`, `subCat`: `Match (X⁰, ω)`, `Match (ω, X⁰)`, and the
   subcategorization frame, as constraints on prosodic trees.
@@ -72,97 +72,49 @@ def phrasal : Tree := .ph [.om [.leaf pref], .om [.leaf stem]]
 /-! ### Diagnostics -/
 
 /-- The leftmost leaf of a tree. -/
-def leftmost : Tree → Constituent := fun t => go t where
-  go : Tree → Constituent
-    | .node a cs => goList a cs
-  goList : Constituent → List Tree → Constituent
-    | a, [] => a
-    | _, c :: _ => go c
+def leftmost (t : Tree) : Constituent := t.leafList.head t.leafList_ne_nil
 
 /-- The ω-initial leaves, one per ω node: the left edge of an ω is where an onsetless
 syllable receives epenthetic [ʔ], the ω being the domain of syllabification. -/
-def omegaInitial : Tree → List Constituent := fun t => go t where
-  go : Tree → List Constituent
-    | .node a cs => (if a.isOm then [leftmost (.node a cs)] else []) ++ goList cs
-  goList : List Tree → List Constituent
-    | [] => []
-    | c :: cs => go c ++ goList cs
+def omegaInitial (t : Tree) : List Constituent :=
+  (t.subtrees.filter (·.value.isOm)).map leftmost
 
-/-- Whether `x` occurs as a leaf. -/
-def containsLeaf (x : Constituent) : Tree → Bool := fun t => go t where
-  go : Tree → Bool
-    | .node a [] => a == x
-    | .node _ (c :: cs) => go c || goList cs
-  goList : List Tree → Bool
-    | [] => false
-    | c :: cs => go c || goList cs
+/-- Some ω dominates the leaf `b` but not the leaf `a`: an ω boundary between them, across
+which `OCP(X)ω` (18) is inert. -/
+def OmegaSeparates (a b : Constituent) (t : Tree) : Prop :=
+  ∃ s ∈ t.subtrees, s.value.isOm = true ∧ b ∈ s.leafList ∧ a ∉ s.leafList
 
-/-- Whether some ω dominates the leaf `b` but not the leaf `a`: an ω boundary between them,
-across which `OCP(X)ω` (18) is inert. -/
-def omegaSeparates (a b : Constituent) : Tree → Bool := fun t => go t where
-  go : Tree → Bool
-    | .node c cs =>
-      (c.isOm && containsLeaf b (.node c cs) && !containsLeaf a (.node c cs)) || goList cs
-  goList : List Tree → Bool
-    | [] => false
-    | c :: cs => go c || goList cs
-
-theorem omegaInitial_om (cs : List Tree) :
-    omegaInitial (.om cs) = leftmost (.om cs) :: omegaInitial.goList cs := rfl
-
-theorem omegaInitial_goList_cons (c : Tree) (cs : List Tree) :
-    omegaInitial.goList (c :: cs) = omegaInitial c ++ omegaInitial.goList cs := rfl
-
-theorem omegaInitial_goList_nil : omegaInitial.goList [] = [] := rfl
-
-theorem omegaInitial_leaf {c : Constituent} (h : c.isOm = false) :
-    omegaInitial (.leaf c) = [] := by
-  simp [omegaInitial, omegaInitial.go, omegaInitial.goList, h]
-
-theorem omegaInitial_goList_leaves {cs : List Constituent} (h : ∀ c ∈ cs, c.isOm = false) :
-    omegaInitial.goList (cs.map RoseTree.leaf) = [] := by
-  induction cs with
-  | nil => rfl
-  | cons c cs ih =>
-    rw [List.map_cons, omegaInitial_goList_cons, omegaInitial_leaf (h c (List.mem_cons_self ..)),
-      ih fun d hd => h d (List.mem_cons_of_mem c hd)]
-    rfl
+instance (a b : Constituent) (t : Tree) : Decidable (OmegaSeparates a b t) :=
+  inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
 /-- In the recursive parse every stacked prefix and the stem is ω-initial: `n` high prefixes
 over a vowel-initial stem give `n + 1` loci of [ʔ]-insertion ((21)–(23)). -/
 theorem omegaInitial_nested {ps : List Constituent} {s : Constituent}
     (hps : ∀ p ∈ ps, p.isOm = false) (hs : s.isOm = false) :
     omegaInitial (nested ps s) = ps ++ [s] := by
+  have hom (h : Bool) : (Constituent.om h).isOm = true := rfl
   induction ps with
-  | nil =>
-    rw [nested, omegaInitial_om, omegaInitial_goList_cons, omegaInitial_leaf hs]
-    rfl
+  | nil => simp [omegaInitial, nested, leftmost, hs, hom]
   | cons p ps ih =>
-    rw [nested, omegaInitial_om, omegaInitial_goList_cons, omegaInitial_goList_cons,
-      omegaInitial_leaf (hps p (List.mem_cons_self ..)),
-      ih fun q hq => hps q (List.mem_cons_of_mem p hq), omegaInitial_goList_nil,
-      List.append_nil, List.nil_append]
-    rfl
+    have ih := ih fun q hq ↦ hps q (List.mem_cons_of_mem p hq)
+    simp only [omegaInitial] at ih
+    simp [omegaInitial, nested, leftmost, hps p (List.mem_cons_self ..), hom, ih]
 
 /-- In the flat parse only the first prefix is ω-initial: one locus of [ʔ]-insertion. -/
 theorem omegaInitial_flat {p : Constituent} {ps : List Constituent} {s : Constituent}
     (hp : p.isOm = false) (hps : ∀ q ∈ ps, q.isOm = false) (hs : s.isOm = false) :
     omegaInitial (flat (p :: ps) s) = [p] := by
-  rw [flat, List.cons_append, List.map_cons, omegaInitial_om, omegaInitial_goList_cons,
-    omegaInitial_leaf hp, omegaInitial_goList_leaves]
-  · rfl
-  · intro c hc
-    rcases List.mem_append.1 hc with hc | hc
-    · exact hps c hc
-    · exact List.mem_singleton.1 hc ▸ hs
+  have hom (h : Bool) : (Constituent.om h).isOm = true := rfl
+  simpa [omegaInitial, flat, leftmost, hp, hs, hom, List.filter_flatMap,
+    List.flatMap_eq_nil_iff] using hps
 
 -- (22)–(23): three high prefixes and a vowel-initial root, four glottal stops.
 example : omegaInitial (nested [pref, pref, pref] stem) = [pref, pref, pref, stem] := by decide
 
 -- (15) vs (16)–(17): no ω boundary separates a low prefix from its stem, so `OCP(X)ω`
 -- degeminates across the juncture; an ω boundary separates a high prefix from its stem.
-example : omegaSeparates pref stem (flat [pref] stem) = false := by decide
-example : omegaSeparates pref stem (nested [pref] stem) = true := by decide
+example : ¬ OmegaSeparates pref stem (flat [pref] stem) := by decide
+example : OmegaSeparates pref stem (nested [pref] stem) := by decide
 
 /-! ### Constraints and the ranking -/
 
@@ -170,29 +122,17 @@ example : omegaSeparates pref stem (nested [pref] stem) = true := by decide
 all of its segments, i.e. unless the root is an ω. Undominated in Kaqchikel. -/
 def matchWord : Constraint Tree := fun t => if t.value.isOm then 0 else 1
 
-/-- The number of ω nodes. -/
-def omegaCount : Tree → ℕ := fun t => go t where
-  go : Tree → ℕ
-    | .node a cs => (if a.isOm then 1 else 0) + goList cs
-  goList : List Tree → ℕ
-    | [] => 0
-    | c :: cs => go c + goList cs
-
 /-- `Match (ω, X⁰)` for a single morphological word: every ω other than a root ω fails to
 correspond to a morphological word. -/
-def matchOmega : Constraint Tree := fun t => omegaCount t - if t.value.isOm then 1 else 0
+def matchOmega : Constraint Tree := fun t =>
+  t.values.countP (·.isOm) - if t.value.isOm then 1 else 0
 
 /-- Whether the leaf `p` is the left sister of an ω inside an ω: the subcategorization frame
 `[ω p [ω ]]` (30) is realised. -/
-def hasFrame (p : Constituent) : Tree → Bool := fun t => go t where
-  go : Tree → Bool
-    | .node a cs =>
-      (a.isOm && match cs with
-        | [.node q [], .node b _] => q == p && b.isOm
-        | _ => false) || goList cs
-  goList : List Tree → Bool
-    | [] => false
-    | c :: cs => go c || goList cs
+def hasFrame (p : Constituent) (t : Tree) : Bool :=
+  t.subtrees.any fun s ↦ s.value.isOm && match s.children with
+    | [.node q [], .node b _] => q == p && b.isOm
+    | _ => false
 
 /-- `SubCat`: one violation per high-attaching prefix whose frame (30) is not realised. -/
 def subCat (prefs : List Constituent) : Constraint Tree := fun t =>
