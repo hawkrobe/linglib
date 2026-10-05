@@ -916,7 +916,6 @@ import Linglib.Semantics.Degree.Measure.Quantity
 import Linglib.Semantics.Degree.MeasurePhrase
 import Linglib.Semantics.Degree.Predicate
 import Linglib.Semantics.Degree.Quantifier
-import Linglib.Semantics.Dynamic.CDRT
 import Linglib.Semantics.Dynamic.Category
 import Linglib.Semantics.Dynamic.Collapse
 import Linglib.Semantics.Dynamic.DRS.Basic

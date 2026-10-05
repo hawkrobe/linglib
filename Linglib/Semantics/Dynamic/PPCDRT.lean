@@ -5,14 +5,14 @@ public import Linglib.Semantics.Dynamic.PCDRT
 /-!
 # Partial Plural CDRT
 
-Partial Plural Compositional DRT ([haug-dalrymple-2020]) joins the plural information states of
-Plural CDRT ([brasoveanu-2007], [dotlacil-2013]) with the partial assignments of Partial CDRT
-([haug-2014]), in which an anaphoric condition is a presupposition rather than a resolution the
+Haug and Dalrymple's Partial Plural Compositional DRT joins the plural information states of
+Plural CDRT (Brasoveanu, Dotlačil) with the partial assignments of Partial CDRT
+(Haug), in which an anaphoric condition is a presupposition rather than a resolution the
 grammar makes. This file defines the conditions of a PPDRS on the states of `PCDRT`, reading a
 dref's values and dependencies through `PCDRT.value` and `PCDRT.dep`.
 
 A condition takes the output state and the set `Δ` of drefs the DRS distributes over. Three
-anaphoric relations are distinguished ([higginbotham-1985], [williams-1991]):
+anaphoric relations are distinguished, after Higginbotham and Williams:
 
 * binding (`u_anaph = u_ant`), pointwise equality of the two drefs, which needs c-command;
 * group identity (`∪u_anaph → ∪u_ant`), the anaphor's values summed over each state's class
@@ -20,7 +20,7 @@ anaphoric relations are distinguished ([higginbotham-1985], [williams-1991]):
   antecedent escapes the distribution;
 * reciprocity, group identity with distinctness in every state, the contribution of *each
   other*; without the distinctness it is the underspecified meaning of German *sich* or the
-  Cheyenne reflexive/reciprocal affix ([murray-2008], [cable-2014]).
+  Cheyenne reflexive/reciprocal affix (Murray, Cable).
 
 ## Main definitions
 
@@ -195,7 +195,8 @@ theorem mem_extend_iff_covBy : i ~[extend u] o ↔ i ⋖ o ∧ i u ≠ o u := by
 theorem extend_subset_randomAssign [DecidableEq Var] :
     extend u ⊆ Update.randomAssign (S := PartialAssign Var D) u := by
   rintro ⟨i, o⟩ ⟨-, -, h⟩
-  refine (Update.mem_randomAssign (g := i) (h := o) (x := u)).2 ⟨o u, funext fun v ↦ ?_⟩
+  refine (Update.mem_randomAssign (i := i) (j := o) (r := u)).2 ⟨o u, funext fun v ↦ ?_⟩
+  rw [RegisterStructure.extend_eq_update]
   by_cases hv : v = u
   · subst hv
     simp

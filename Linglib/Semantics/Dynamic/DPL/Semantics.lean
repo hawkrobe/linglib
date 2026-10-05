@@ -8,7 +8,7 @@ public import Mathlib.ModelTheory.Semantics
 # The interpretations of dynamic predicate logic
 
 A formula of `DPL/Syntax.lean` has two interpretations in a structure `M`. The dynamic one,
-`Formula.eval`, is [groenendijk-stokhof-1991]'s: a relation between assignments, built from the
+`Formula.eval`, is Groenendijk and Stokhof's, a relation between assignments, built from the
 update algebra of `Update.lean`, with conjunction as composition, the existential as a random
 reset followed by its scope, and everything else a test. The static one, `Formula.static`, is
 the usual satisfaction set, built in the cylindric set algebra of assignments, with the
@@ -40,7 +40,7 @@ quantifier variable.
 
 @[expose] public section
 
-open FirstOrder FirstOrder.Language DynamicSemantics DynamicSemantics.Update SetRel
+open FirstOrder FirstOrder.Language DynamicSemantics Update SetRel
   CylindricAlgebra
 
 namespace DPL.Formula
@@ -107,6 +107,7 @@ theorem mem_eval_exs {xs : List V} {g h : V → M} :
       fun ⟨k, hk, hkh⟩ ↦ (funext fun y ↦ hk y List.not_mem_nil : k = g) ▸ hkh⟩
   | cons x xs ih =>
     rw [exs_cons, eval_ex, mem_dexists]
+    simp only [RegisterStructure.extend_eq_update]
     constructor
     · rintro ⟨e, he⟩
       obtain ⟨k, hk, hkh⟩ := ih.mp he

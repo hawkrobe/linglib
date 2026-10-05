@@ -5,11 +5,11 @@ public import Linglib.Semantics.Dynamic.RegisterStructure
 /-!
 # Intensional CDRT
 
-Compositional DRT ([muskens-1996]) with intensional discourse referents. An individual dref is
+Muskens's compositional DRT with intensional discourse referents. An individual dref is
 an individual concept, a function from worlds to individuals or the universal falsifier ⋆
 (type `s(we)`); a propositional dref is a set of worlds (type `s(wt)`) and stores the local
-context of some embedded content. This is the flat update of [stone-1999] and
-[brasoveanu-2006] in [hofmann-2025]'s formulation: a discourse state is a single assignment,
+context of some embedded content. This is the flat update of Stone and
+Brasoveanu in Hofmann's formulation: a discourse state is a single assignment,
 updated relationally, and an individual dref has a referent only at the worlds of its local
 context.
 
@@ -40,8 +40,8 @@ context, local entailment, and maximization over a propositional dref, CDRT's `U
 ## Implementation notes
 
 ⋆ is `none`. The typed drefs are two register sorts rather than one register carrier, since a
-`RegisterStructure` has one value type. The relative variable update is [hofmann-2025]'s
-biconditional form; [stone-1999]'s has only the implication from `φ`-worlds to referents.
+`RegisterStructure` has one value type. The relative variable update is Hofmann's
+biconditional form; Stone's has only the implication from `φ`-worlds to referents.
 
 ## References
 
@@ -55,7 +55,7 @@ biconditional form; [stone-1999]'s has only the implication from `φ`-worlds to 
 
 namespace ICDRT
 
-open DynamicSemantics DynamicSemantics.Update SetRel
+open DynamicSemantics Update SetRel
 
 /-- A propositional variable, the name of a propositional dref. -/
 structure PVar where
@@ -118,6 +118,9 @@ instance : RegisterStructure IVar (State W E) (W → Option E) where
   extend i v e := i.updateIndiv v e
   val_extend_self _ _ _ := State.updateIndiv_indiv_self ..
   val_extend_of_ne _ _ _ _ h := State.updateIndiv_indiv_of_ne _ h _
+  extend_eq_self _ _ := by simp [State.updateIndiv]
+  extend_idem _ _ _ _ := by simp [State.updateIndiv]
+  extend_comm _ _ _ h _ _ := by simp [State.updateIndiv, Function.update_comm h]
 
 /-- Propositional drefs are registers holding propositions. -/
 instance : RegisterStructure PVar (State W E) (Set W) where
@@ -125,6 +128,9 @@ instance : RegisterStructure PVar (State W E) (Set W) where
   extend i p s := i.updateProp p s
   val_extend_self _ _ _ := State.updateProp_prop_self ..
   val_extend_of_ne _ _ _ _ h := State.updateProp_prop_of_ne _ h _
+  extend_eq_self _ _ := by simp [State.updateProp]
+  extend_idem _ _ _ _ := by simp [State.updateProp]
+  extend_comm _ _ _ h _ _ := by simp [State.updateProp, Function.update_comm h]
 
 variable {i j : State W E} {v u : IVar} {φ φ' ψ : PVar}
 
