@@ -1,60 +1,47 @@
 module
 
 public import Linglib.Syntax.Minimalist.Geometry
-public import Linglib.Syntax.Minimalist.Phi.Geometry
-public import Linglib.Syntax.Minimalist.Probe.Phi
-public import Linglib.Syntax.Minimalist.Probe.Run
+public import Linglib.Syntax.Minimalist.Probe.Basic
+public import Linglib.Syntax.Person.Basic
+public import Mathlib.Order.Preorder.Chain
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Cyclic Agree over articulated person probes
 
-Cyclic Agree over articulated person probes ([bejar-rezac-2009]). Person is decomposed into
-privative segments in a containment hierarchy, every person bearing `π`, speech act participants
-also `participant`, and the innermost segment, `speaker` or `addressee`, distinguishing first
-from second person according to a geometry, a `Minimalist.Geometry` over the segments whose
-closures are the persons' specifications. A probe is an ordered list of unvalued segments, and a
-language's agreement system is a geometry together with a probe. The probe meets the internal
-argument first and checks every segment the argument bears; the unmatched segments are its active
-residue, which meets the external argument on the next cycle. The external argument controls the
-agreement slot when it checks some residue, a direct context, and the internal argument controls
-it otherwise, an inverse context, in which the external argument's person is unlicensed by the
-core probe.
-
-An articulated probe is a family of flat relativized searches, one per segment, over the
-cyclically ordered arguments, so the residue-based definitions factor through `Probe.search`
-(`eaIsLicensed_iff_segment_licensed`, `cycleSegments_eq_segmentGoal_filters`). It is also a
-single probe of [deal-2025a]'s interaction/satisfaction theory, interacting with every segment
-and satisfied by its innermost one, whose run copies exactly the segments of the two cycles
-(`toSpec_run_state`).
+Person is decomposed into privative segments ordered by entailment: every person bears `π`,
+speech-act participants also `participant`, and the innermost segments `speaker` and `addressee`
+distinguish first from second person according to a geometry, which fixes which segments a
+language uses. A probe is a list of unvalued segments. A probe on v first meets the internal
+argument and checks every segment it bears; the segments left over, its residue, probe again from
+the next projection of v, where the external argument is the closest goal. The context is direct
+when the external argument checks some residue, and inverse otherwise, when the core probe never
+Agrees with it and its person goes unlicensed.
 
 ## Main definitions
 
-* `Minimalist.CyclicAgree.Segment`: the privative person segments.
-* `Minimalist.CyclicAgree.PersonGeometry`: the standard, addressee and branching geometries over
-  the segments, each denoting a `Minimalist.Geometry`.
-* `Minimalist.CyclicAgree.personSpec`: the segments a person bears under a geometry, the
-  entailments of its innermost segment.
-* `Minimalist.Probe.Articulation`, `Minimalist.CyclicAgree.AgreementSystem`: an articulated
-  probe, and a geometry together with a probe.
-* `Minimalist.CyclicAgree.activeResidue`, `Minimalist.CyclicAgree.agreementValue`,
-  `Minimalist.CyclicAgree.cycleSegments`: the unmatched segments after a cycle, the person the
-  core slot realizes, and the segments each cycle checks.
-* `Minimalist.CyclicAgree.isInverseContext`, `Minimalist.CyclicAgree.eaIsLicensed`: the
-  external argument never Agreeing, and its person being licensed by the core probe.
+* `Minimalist.CyclicAgree.Segment`: the person segments, with their entailment order.
+* `Minimalist.CyclicAgree.PersonGeometry`: the standard, addressee and branching geometries.
+* `Minimalist.CyclicAgree.personSpec`: the segments a person bears under a geometry.
+* `Minimalist.CyclicAgree.AgreementSystem`: a geometry and an articulated probe, with the residue,
+  the direct and inverse contexts, the controller of the agreement slot, and person licensing of
+  the external argument.
 
 ## Main results
 
-* `Minimalist.CyclicAgree.plc_violation_iff_inverse`: the external argument is unlicensed
-  exactly in inverse contexts.
-* `Minimalist.CyclicAgree.same_person_ia_controls`, `Minimalist.CyclicAgree.flat_all_inverse`.
+* `Minimalist.CyclicAgree.AgreementSystem.eaLicensed_iff_isDirect`: the core probe licenses the
+  external argument exactly in direct contexts.
+* `Minimalist.CyclicAgree.AgreementSystem.isDirect_iff_length_lt`: under a chain geometry a
+  context is direct iff the external argument matches more of the probe than the internal one.
+* `Minimalist.CyclicAgree.AgreementSystem.IsDirect.mono`: a more articulated probe has more direct
+  contexts.
+* `Minimalist.CyclicAgree.AgreementSystem.flat_isInverse`: a flat probe makes every context
+  inverse.
 
 ## References
 
 * [bejar-rezac-2009]
-* [deal-2025a]
 * [harley-ritter-2002]
-* [coon-keine-2021]
 -/
 
 @[expose] public section
@@ -63,9 +50,7 @@ namespace Minimalist.CyclicAgree
 
 /-! ### Person segments and geometries -/
 
-/-- A segment of an articulated person feature. Every person bears `pi`, speech act participants
-also `participant`, and the innermost segments `speaker` and `addressee` distinguish first from
-second person according to the geometry. -/
+/-- A segment of an articulated person feature. -/
 inductive Segment where
   | pi
   | participant
@@ -73,78 +58,90 @@ inductive Segment where
   | addressee
   deriving DecidableEq, Repr, Inhabited, Fintype
 
-/-- The segments from the outermost to the innermost. -/
-def Segment.all : List Segment := [.pi, .participant, .speaker, .addressee]
+namespace Segment
 
-/-- A person geometry fixes which innermost segment distinguishes first from second person.
-Under `standard` first person is the most specified and bears `speaker`, under `addressee`
-second person is and bears `addressee`, and under `branching` the two are sister leaves under
-`participant` ([harley-ritter-2002]). -/
+/-- A segment entails `π`, and `speaker` and `addressee` entail `participant`. -/
+protected def le (a b : Segment) : Prop :=
+  a = b ∨ a = .pi ∨ (a = .participant ∧ (b = .speaker ∨ b = .addressee))
+
+instance : DecidableRel Segment.le := fun _ _ ↦ inferInstanceAs (Decidable (_ ∨ _))
+
+/-- The entailment order on segments, `a ≤ b` when bearing `b` entails bearing `a`. -/
+instance : PartialOrder Segment where
+  le := Segment.le
+  le_refl _ := Or.inl rfl
+  le_trans := by decide
+  le_antisymm := by decide
+
+instance : DecidableLE Segment := fun a b ↦ inferInstanceAs (Decidable (Segment.le a b))
+
+/-- The segments a segment entails, itself included. -/
+def entailments (s : Segment) : Finset Segment := Finset.univ.filter (· ≤ s)
+
+/-- The segments from the outermost to the innermost. -/
+def all : List Segment := [.pi, .participant, .speaker, .addressee]
+
+end Segment
+
+/-- The segments a person bears when both innermost segments are used; the inclusive bears both. -/
+def universalSpec : Person → List Segment
+  | .first | .firstExclusive => [.pi, .participant, .speaker]
+  | .firstInclusive => [.pi, .participant, .speaker, .addressee]
+  | .second => [.pi, .participant, .addressee]
+  | .third => [.pi]
+
+/-- A person geometry fixes which innermost segment distinguishes first from second person. It is
+`speaker` under `standard` and `addressee` under `addressee`, and under `branching` both are sister
+leaves of `participant` ([harley-ritter-2002]). -/
 inductive PersonGeometry where
   | standard
   | addressee
   | branching
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
 namespace PersonGeometry
 
-/-- The entailments of a segment, `pi` by `participant` by the innermost segments the geometry
-has. -/
-def entailments : PersonGeometry → Segment → Finset Segment
-  | _, .pi => {.pi}
-  | _, .participant => {.participant, .pi}
-  | .standard, .speaker | .branching, .speaker => {.speaker, .participant, .pi}
-  | .addressee, .speaker => {.speaker}
-  | .addressee, .addressee | .branching, .addressee => {.addressee, .participant, .pi}
-  | .standard, .addressee => {.addressee}
+/-- The segments a geometry uses. -/
+def nodes : PersonGeometry → Finset Segment
+  | .standard => {.pi, .participant, .speaker}
+  | .addressee => {.pi, .participant, .addressee}
+  | .branching => Finset.univ
 
 /-- The feature geometry a person geometry denotes. -/
 def toGeometry (geom : PersonGeometry) : Minimalist.Geometry Segment where
-  nodes := match geom with
-    | .standard => {.pi, .participant, .speaker}
-    | .addressee => {.pi, .participant, .addressee}
-    | .branching => {.pi, .participant, .speaker, .addressee}
-  entailments := geom.entailments
-  mem_entailments_self := by cases geom <;> decide
-  entailments_subset_of_mem := by cases geom <;> decide
-
-/-- The innermost segment a person bears under a geometry. -/
-def node (geom : PersonGeometry) : Person → Segment
-  | .third => .pi
-  | .first | .firstInclusive | .firstExclusive => match geom with
-    | .standard | .branching => .speaker
-    | .addressee => .participant
-  | .second => match geom with
-    | .standard => .participant
-    | .addressee | .branching => .addressee
+  nodes := geom.nodes
+  entailments := Segment.entailments
+  mem_entailments_self a := by simp [Segment.entailments]
+  entailments_subset_of_mem a b hb c hc := by
+    rw [Segment.entailments, Finset.mem_filter] at hb hc ⊢
+    exact ⟨Finset.mem_univ _, hc.2.trans hb.2⟩
 
 end PersonGeometry
 
-/-- The segments a person bears under a geometry, the entailments of its innermost segment, from
-the outermost to the innermost. -/
+/-- The segments a person bears under a geometry, from the outermost to the innermost. -/
 def personSpec (geom : PersonGeometry) (p : Person) : List Segment :=
-  Segment.all.filter fun s => decide (s ∈ geom.toGeometry.entailments (geom.node p))
+  Segment.all.filter fun s ↦ decide (s ∈ universalSpec p ∧ s ∈ geom.nodes)
 
-/-- Every person bears `pi` under every geometry. -/
+/-- Every person bears `π` under every geometry. -/
 theorem pi_mem_personSpec (geom : PersonGeometry) (p : Person) :
     Segment.pi ∈ personSpec geom p := by
-  cases geom <;> cases p <;> decide
+  cases geom <;> cases p <;> decide +kernel
 
-/-- Under the standard geometry a person bears `participant` iff its decomposition does. -/
-theorem std_participant_matches_decomposed (p : Person) :
-    (personSpec .standard p).contains .participant =
-      decide (.participant ∈ decomposePerson p) := by
-  cases p <;> decide
+/-- A geometry is a chain when the persons' specifications are linearly ordered by inclusion. -/
+def PersonGeometry.IsChain (geom : PersonGeometry) : Prop :=
+  _root_.IsChain (fun l m : List Segment ↦ l ⊆ m) (Set.range (personSpec geom))
 
-/-- Under the standard geometry the second person's segments are among the first person's. -/
-theorem std_first_entails_second :
-    ∀ s ∈ personSpec .standard .second, s ∈ personSpec .standard .first := by
-  decide
+theorem PersonGeometry.standard_isChain : PersonGeometry.standard.IsChain := by
+  simp only [PersonGeometry.IsChain, _root_.IsChain, Set.Pairwise, Set.forall_mem_range]
+  decide +kernel
 
-/-- Under the standard geometry the third person's segments are among the second person's. -/
-theorem std_second_entails_third :
-    ∀ s ∈ personSpec .standard .third, s ∈ personSpec .standard .second := by
-  decide
+theorem PersonGeometry.addressee_isChain : PersonGeometry.addressee.IsChain := by
+  simp only [PersonGeometry.IsChain, _root_.IsChain, Set.Pairwise, Set.forall_mem_range]
+  decide +kernel
+
+theorem PersonGeometry.not_branching_isChain : ¬ PersonGeometry.branching.IsChain := by
+  simp only [PersonGeometry.IsChain, _root_.IsChain, Set.Pairwise, Set.forall_mem_range]
+  decide +kernel
 
 /-! ### Articulated probes and agreement systems -/
 
@@ -152,20 +149,17 @@ theorem std_second_entails_third :
 specific. -/
 abbrev _root_.Minimalist.Probe.Articulation := List Segment
 
-/-- The flat probe `[uπ]`, which any argument fully checks. -/
+/-- The flat probe `[uπ]`. -/
 def flatProbe : Probe.Articulation := [.pi]
 
-/-- The partial probe `[uπ, uParticipant]`, which distinguishes participants from third person
-in every geometry. -/
+/-- The partial probe `[uπ, uparticipant]`, which distinguishes participants from third person. -/
 def partialProbe : Probe.Articulation := [.pi, .participant]
 
-/-- The full probe of the standard geometry, `[uπ, uParticipant, uSpeaker]`. -/
-def fullProbeStd : Probe.Articulation := [.pi, .participant, .speaker]
+/-- The full probe of a geometry, every segment the geometry uses. -/
+def fullProbe (geom : PersonGeometry) : Probe.Articulation :=
+  Segment.all.filter (· ∈ geom.nodes)
 
-/-- The full probe of the addressee geometry, `[uπ, uParticipant, uAddressee]`. -/
-def fullProbeAddr : Probe.Articulation := [.pi, .participant, .addressee]
-
-/-- A language's agreement system is a geometry together with the articulation of its probe. -/
+/-- A language's agreement system is a person geometry together with an articulated probe. -/
 structure AgreementSystem where
   /-- The person geometry. -/
   geometry : PersonGeometry
@@ -173,259 +167,117 @@ structure AgreementSystem where
   probe : Probe.Articulation
   deriving DecidableEq, Repr
 
-/-! ### Cycles -/
-
-/-- The active residue of a probe after Agree with a goal, the segments the goal does not
-bear. -/
-def activeResidue (probe : Probe.Articulation) (goal : List Segment) : Probe.Articulation :=
-  probe.filter (fun s => !goal.contains s)
-
-/-- The argument controlling the core agreement slot. -/
-inductive Controller where
+/-- One of the two arguments of a transitive clause. -/
+inductive Argument where
   | ia
   | ea
   deriving DecidableEq, Repr
 
-/-- The external argument Agrees on the second cycle when it bears some segment of the residue
-the internal argument left. -/
-def eaAgrees (geom : PersonGeometry) (probe : Probe.Articulation) (ea ia : Person) : Bool :=
-  let residue := activeResidue probe (personSpec geom ia)
-  let residueAfterEA := activeResidue residue (personSpec geom ea)
-  residueAfterEA.length < residue.length
+namespace AgreementSystem
 
-/-- The argument controlling the core slot, the external argument when it Agrees on the second
-cycle and the internal argument otherwise. -/
-def agreementController (geom : PersonGeometry) (probe : Probe.Articulation) (ea ia : Person) :
-    Controller :=
-  if eaAgrees geom probe ea ia then .ea else .ia
+variable (sys : AgreementSystem) (ea ia : Person)
 
-/-- The person the core agreement slot realizes. -/
-def agreementValue (geom : PersonGeometry) (probe : Probe.Articulation) (ea ia : Person) : Person :=
-  match agreementController geom probe ea ia with
-  | .ea => ea
-  | .ia => ia
+/-- The segments a person bears under the system's geometry. -/
+abbrev spec (p : Person) : List Segment := personSpec sys.geometry p
 
-/-- The controller under an agreement system. -/
-def AgreementSystem.controller (sys : AgreementSystem) (ea ia : Person) : Controller :=
-  agreementController sys.geometry sys.probe ea ia
+/-- The residue of the probe after Agree with the internal argument, the segments it does not
+bear. -/
+def residue : Probe.Articulation := sys.probe.filter fun s ↦ decide (s ∉ sys.spec ia)
 
-/-- The agreement value under an agreement system. -/
-def AgreementSystem.value (sys : AgreementSystem) (ea ia : Person) : Person :=
-  agreementValue sys.geometry sys.probe ea ia
+/-- A context is direct when the external argument bears some segment of the residue. -/
+def IsDirect : Prop := ∃ s ∈ sys.residue ia, s ∈ sys.spec ea
 
-/-- The segments checked on each cycle, by the internal argument and then by the external
-argument out of the residue. -/
-def cycleSegments (geom : PersonGeometry) (probe : Probe.Articulation) (ea ia : Person) :
-    Probe.Articulation × Probe.Articulation :=
-  let iaSpec := personSpec geom ia
-  let cycleI := probe.filter (fun s => iaSpec.contains s)
-  let residue := activeResidue probe iaSpec
-  let eaSpec := personSpec geom ea
-  let cycleII := residue.filter (fun s => eaSpec.contains s)
-  (cycleI, cycleII)
+/-- A context is inverse when it is not direct. -/
+def IsInverse : Prop := ¬ sys.IsDirect ea ia
 
-/-- The probe is valued on two distinct cycles, the configuration behind second-cycle
-morphology. -/
-def hasSecondCycleEffect (geom : PersonGeometry) (probe : Probe.Articulation) (ea ia : Person) :
-    Bool :=
-  let (c1, c2) := cycleSegments geom probe ea ia
-  !c1.isEmpty && !c2.isEmpty
+instance : Decidable (sys.IsDirect ea ia) := List.decidableBEx _ _
 
-/-! ### Direct and inverse contexts -/
+instance : Decidable (sys.IsInverse ea ia) := instDecidableNot
 
-/-- An inverse context, in which the core probe never Agrees with the external argument,
-either because the internal argument checks it fully or because the external argument bears no
-segment of the residue. -/
-def isInverseContext (geom : PersonGeometry) (probe : Probe.Articulation) (ea ia : Person) : Bool :=
-  !eaAgrees geom probe ea ia
+theorem isDirect_iff :
+    sys.IsDirect ea ia ↔ ∃ s ∈ sys.probe, s ∉ sys.spec ia ∧ s ∈ sys.spec ea := by
+  simp only [IsDirect, residue, List.mem_filter, decide_eq_true_eq]
+  exact ⟨fun ⟨s, ⟨h1, h2⟩, h3⟩ ↦ ⟨s, h1, h2, h3⟩, fun ⟨s, h1, h2, h3⟩ ↦ ⟨s, ⟨h1, h2⟩, h3⟩⟩
 
-/-- A direct context, in which the external argument checks some residue. -/
-def isDirectContext (geom : PersonGeometry) (probe : Probe.Articulation) (ea ia : Person) : Bool :=
-  eaAgrees geom probe ea ia
+/-- The argument controlling the agreement slot, the external argument in a direct context. -/
+def controller : Argument := if sys.IsDirect ea ia then .ea else .ia
 
-/-- The context is inverse under an agreement system. -/
-def AgreementSystem.isInverse (sys : AgreementSystem) (ea ia : Person) : Bool :=
-  isInverseContext sys.geometry sys.probe ea ia
+/-- The person the agreement slot realizes. -/
+def value : Person := if sys.IsDirect ea ia then ea else ia
 
-/-- The external argument is person-licensed by the core probe when some segment Agrees with
-it on the second cycle, the Person Licensing Condition of [bejar-rezac-2009]. -/
-def eaIsLicensed (geom : PersonGeometry) (probe : Probe.Articulation) (ea ia : Person) : Bool :=
-  eaAgrees geom probe ea ia
+/-- The segments checked on each cycle, by the internal argument and then by the external one
+out of the residue. -/
+def cycles : Probe.Articulation × Probe.Articulation :=
+  (sys.probe.filter (· ∈ sys.spec ia), (sys.residue ia).filter (· ∈ sys.spec ea))
 
-/-- The external argument is unlicensed exactly in inverse contexts. -/
-theorem plc_violation_iff_inverse (geom : PersonGeometry) (probe : Probe.Articulation)
-    (ea ia : Person) :
-    eaIsLicensed geom probe ea ia = false ↔ isInverseContext geom probe ea ia = true := by
-  simp [eaIsLicensed, isInverseContext]
+/-- A segment of the probe searches its domain, halting at the closest goal, which bears `π` and
+so intervenes for every segment, and Agrees with that goal iff it bears the segment. -/
+def segProbe (s : Segment) : Probe Person := .ofInt fun p ↦ decide (s ∈ sys.spec p)
 
-/-- Every context is direct or inverse and not both. -/
-theorem direct_inverse_exhaustive (geom : PersonGeometry) (probe : Probe.Articulation)
-    (ea ia : Person) :
-    (isDirectContext geom probe ea ia = true) ≠ (isInverseContext geom probe ea ia = true) := by
-  simp only [isDirectContext, isInverseContext]
-  cases eaAgrees geom probe ea ia <;> decide
+/-- The external argument is licensed by the core probe when some segment of the residue Agrees
+with it from the next projection of v, whose domain has the external argument closest and the
+internal one below. -/
+def EALicensed : Prop := ∃ s ∈ sys.residue ia, (sys.segProbe s).agree [ea, ia] = some ea
 
-/-- Arguments of the same person leave the internal argument in control, since the external
-argument bears no segment the internal one did not. -/
-theorem same_person_ia_controls (geom : PersonGeometry) (probe : Probe.Articulation) (p : Person) :
-    agreementController geom probe p p = .ia := by
-  simp only [agreementController]
-  have h : eaAgrees geom probe p p = false := by
-    simp only [eaAgrees]
-    suffices ∀ (xs : List Segment) (goal : List Segment),
-        ¬ (activeResidue (activeResidue xs goal) goal).length <
-          (activeResidue xs goal).length by
-      exact Bool.eq_false_iff.mpr (by simpa using this probe (personSpec geom p))
-    intro xs goal hlt
-    simp only [activeResidue, List.filter_filter] at hlt
-    have : ∀ (s : Segment), (!goal.contains s && !goal.contains s) = !goal.contains s := by
-      intro s; cases goal.contains s <;> simp
-    simp only [this] at hlt
-    omega
-  rw [h]; rfl
+instance : Decidable (sys.EALicensed ea ia) := List.decidableBEx _ _
 
-/-- The flat probe leaves no residue. -/
-theorem flat_no_residue (geom : PersonGeometry) (ia : Person) :
-    activeResidue flatProbe (personSpec geom ia) = [] := by
-  cases ia <;> cases geom <;> decide
+/-- The core probe licenses the external argument exactly in direct contexts. -/
+theorem eaLicensed_iff_isDirect : sys.EALicensed ea ia ↔ sys.IsDirect ea ia := by
+  simp only [EALicensed, IsDirect, segProbe, Probe.ofInt_agree_eq_some_iff, List.head?_cons,
+    true_and, decide_eq_true_eq]
 
-/-- Under the flat probe the internal argument always controls. -/
-theorem flat_ia_controls (geom : PersonGeometry) (ea ia : Person) :
-    agreementController geom flatProbe ea ia = .ia := by
-  cases ea <;> cases ia <;> cases geom <;> decide
+/-- Arguments of the same person make an inverse context. -/
+theorem isInverse_self (p : Person) : sys.IsInverse p p := fun h ↦
+  let ⟨_, _, hn, hm⟩ := (sys.isDirect_iff p p).1 h
+  hn hm
 
-/-- Under the flat probe every context is inverse. -/
-theorem flat_all_inverse (geom : PersonGeometry) (ea ia : Person) :
-    isInverseContext geom flatProbe ea ia = true := by
-  cases ea <;> cases ia <;> cases geom <;> decide
+/-- A probe with more segments has more direct contexts. -/
+theorem IsDirect.mono {sys' : AgreementSystem} (hg : sys'.geometry = sys.geometry)
+    (hp : sys.probe ⊆ sys'.probe) (h : sys.IsDirect ea ia) : sys'.IsDirect ea ia := by
+  rw [isDirect_iff] at h ⊢
+  obtain ⟨s, hs, h⟩ := h
+  exact ⟨s, hp hs, by simpa [spec, hg] using h⟩
 
-/-- The partial probe behaves alike under the standard and addressee geometries, since
-`participant` is geometry-independent. -/
-theorem partial_geometry_invariant (ea ia : Person) :
-    agreementValue .standard partialProbe ea ia = agreementValue .addressee partialProbe ea ia := by
-  cases ea <;> cases ia <;> decide
+/-- A flat probe leaves no residue, since every internal argument bears `π`, so every context is
+inverse. -/
+theorem flat_isInverse (geom : PersonGeometry) :
+    (⟨geom, flatProbe⟩ : AgreementSystem).IsInverse ea ia := by
+  rintro ⟨s, hs, -⟩
+  simp [residue, flatProbe, spec, pi_mem_personSpec] at hs
 
-/-! ### Grounding in relativized search
+theorem spec_subset_or_subset {geom : PersonGeometry} (h : geom.IsChain) (p q : Person) :
+    personSpec geom p ⊆ personSpec geom q ∨ personSpec geom q ⊆ personSpec geom p := by
+  by_cases hpq : personSpec geom p = personSpec geom q
+  · exact Or.inl (hpq ▸ List.Subset.refl _)
+  · exact h (Set.mem_range_self p) (Set.mem_range_self q) hpq
 
-An articulated probe is a family of flat relativized searches, one per segment, over the
-cyclically ordered argument tokens, so cyclic expansion at the level of the whole probe is
-first-visible-goal search at the level of each segment. -/
+/-- Under a chain geometry a context is direct iff the external argument matches more of the
+probe than the internal one does. -/
+theorem isDirect_iff_length_lt (h : sys.geometry.IsChain) :
+    sys.IsDirect ea ia ↔
+      (sys.cycles ea ia).1.length < (sys.probe.filter (· ∈ sys.spec ea)).length := by
+  simp only [cycles]
+  rcases spec_subset_or_subset h ia ea with hsub | hsub
+  · have key : sys.probe.filter (· ∈ sys.spec ia) =
+        (sys.probe.filter (· ∈ sys.spec ea)).filter (· ∈ sys.spec ia) := by
+      rw [List.filter_filter]
+      exact List.filter_congr fun s _ ↦ by
+        by_cases hi : s ∈ sys.spec ia
+        · simp [hi, hsub hi]
+        · simp [hi]
+    rw [key, List.length_filter_lt_length_iff_exists, isDirect_iff]
+    simp only [List.mem_filter, decide_eq_true_eq]
+    exact ⟨fun ⟨s, hs, hi, he⟩ ↦ ⟨s, ⟨hs, he⟩, hi⟩, fun ⟨s, ⟨hs, he⟩, hi⟩ ↦ ⟨s, hs, hi, he⟩⟩
+  · constructor
+    · intro h
+      obtain ⟨s, _, hn, hm⟩ := (sys.isDirect_iff ea ia).1 h
+      exact absurd (hsub hm) hn
+    · intro hlt
+      have := List.countP_mono_left (l := sys.probe) (p := fun s ↦ decide (s ∈ sys.spec ea))
+        (q := fun s ↦ decide (s ∈ sys.spec ia)) fun s _ h ↦ by simpa using hsub (by simpa using h)
+      simp only [List.countP_eq_length_filter] at this
+      exact absurd this (not_le.2 hlt)
 
-/-- The two arguments as goal tokens in cyclic order, the internal argument first. -/
-def goalTokens (ea ia : Person) : List (Controller × Person) :=
-  [(.ia, ia), (.ea, ea)]
-
-/-- An argument token is visible to a segment when its person bears the segment. -/
-def segVisible (geom : PersonGeometry) (s : Segment) (t : Controller × Person) : Bool :=
-  (personSpec geom t.2).contains s
-
-/-- A probe segment as a `Probe` over argument tokens. -/
-def segProbe (geom : PersonGeometry) (s : Segment) : Probe (Controller × Person) :=
-  .relativized (segVisible geom s)
-
-/-- The goal a single segment Agrees with, the first argument in cyclic order that bears it. -/
-def segmentGoal (geom : PersonGeometry) (ea ia : Person) (s : Segment) :
-    Option (Controller × Person) :=
-  (segProbe geom s).search (goalTokens ea ia)
-
-/-- A segment finds the external argument iff the internal argument bypasses it and the
-external one bears it. -/
-theorem segmentGoal_eq_ea_iff (geom : PersonGeometry) (ea ia : Person) (s : Segment) :
-    segmentGoal geom ea ia s = some (.ea, ea) ↔
-      (personSpec geom ia).contains s = false ∧ (personSpec geom ea).contains s = true := by
-  simp only [segmentGoal, segProbe, Probe.relativized, Probe.search, goalTokens, segVisible,
-    List.find?]
-  cases h1 : (personSpec geom ia).contains s <;>
-    cases h2 : (personSpec geom ea).contains s <;> simp
-
-/-- A segment finds the internal argument iff it bears the segment. -/
-theorem segmentGoal_eq_ia_iff (geom : PersonGeometry) (ea ia : Person) (s : Segment) :
-    segmentGoal geom ea ia s = some (.ia, ia) ↔ (personSpec geom ia).contains s = true := by
-  simp only [segmentGoal, segProbe, Probe.relativized, Probe.search, goalTokens, segVisible,
-    List.find?]
-  cases h1 : (personSpec geom ia).contains s <;>
-    cases h2 : (personSpec geom ea).contains s <;> simp
-
-/-- The external argument Agrees iff some probe segment is bypassed by the internal argument
-and borne by the external one. -/
-theorem eaAgrees_iff_exists (geom : PersonGeometry) (probe : Probe.Articulation) (ea ia : Person) :
-    eaAgrees geom probe ea ia = true ↔
-      ∃ s ∈ probe, (personSpec geom ia).contains s = false ∧
-        (personSpec geom ea).contains s = true := by
-  simp only [eaAgrees, activeResidue, decide_eq_true_eq,
-    List.length_filter_lt_length_iff_exists, List.mem_filter]
-  constructor
-  · rintro ⟨s, ⟨hs, hia⟩, hea⟩
-    exact ⟨s, hs, by simpa using hia, by simpa using hea⟩
-  · rintro ⟨s, hs, hia, hea⟩
-    exact ⟨s, ⟨hs, by simpa using hia⟩, by simpa using hea⟩
-
-/-- The external argument is licensed iff some segment's relativized search over the cyclic
-token order licenses its token. -/
-theorem eaIsLicensed_iff_segment_licensed (geom : PersonGeometry) (probe : Probe.Articulation)
-    (ea ia : Person) :
-    eaIsLicensed geom probe ea ia = true ↔
-      ∃ s ∈ probe, (segProbe geom s).Licensed (goalTokens ea ia) (.ea, ea) := by
-  rw [eaIsLicensed, eaAgrees_iff_exists]
-  exact exists_congr fun s => and_congr_right fun _ => (segmentGoal_eq_ea_iff geom ea ia s).symm
-
-/-- A context is inverse iff no segment's search licenses the external argument's token. -/
-theorem plc_violation_iff_no_segment_licensed (geom : PersonGeometry) (probe : Probe.Articulation)
-    (ea ia : Person) :
-    isInverseContext geom probe ea ia = true ↔
-      ∀ s ∈ probe, ¬ (segProbe geom s).Licensed (goalTokens ea ia) (.ea, ea) := by
-  rw [← plc_violation_iff_inverse, Bool.eq_false_iff, Ne, eaIsLicensed_iff_segment_licensed]
-  simp only [not_exists, not_and]
-
-/-- The cycles factor through the search, the first-cycle segments being those whose search
-finds the internal argument and the second-cycle segments those whose search finds the external
-one. -/
-theorem cycleSegments_eq_segmentGoal_filters (geom : PersonGeometry) (probe : Probe.Articulation)
-    (ea ia : Person) :
-    cycleSegments geom probe ea ia =
-      (probe.filter (fun s => segmentGoal geom ea ia s == some (.ia, ia)),
-       probe.filter (fun s => segmentGoal geom ea ia s == some (.ea, ea))) := by
-  simp only [cycleSegments, activeResidue, List.filter_filter, Prod.mk.injEq]
-  refine ⟨?_, ?_⟩
-  · exact List.filter_congr fun s _ => by
-      rw [Bool.eq_iff_iff, beq_iff_eq, segmentGoal_eq_ia_iff]
-  · exact List.filter_congr fun s _ => by
-      rw [Bool.eq_iff_iff, beq_iff_eq, segmentGoal_eq_ea_iff]
-      cases h1 : (personSpec geom ia).contains s <;>
-        cases h2 : (personSpec geom ea).contains s <;> simp_all
-
-/-! ### The articulated probe as an interaction/satisfaction specification
-
-Under the hierarchical person specifications a goal bearing a probe's innermost segment bears
-every segment, so halting on the innermost segment is halting when the probe is fully valued.
-An articulated probe is then the specification interacting with all of its segments and
-satisfied by the innermost, and [deal-2025a]'s Agree over the two argument tokens copies
-exactly the segments the two cycles check. -/
-
-/-- An articulated probe as a `[INT:probe, SAT:innermost]` specification. -/
-def _root_.Minimalist.Probe.Articulation.toSpec (probe : Probe.Articulation) :
-    Probe.Spec Segment :=
-  ⟨probe.toFinset, probe.getLast?.toList.toFinset⟩
-
-/-- The segments an argument token bears. -/
-def tokenFeats (geom : PersonGeometry) (t : Controller × Person) : Finset Segment :=
-  (personSpec geom t.2).toFinset
-
-/-- The segments an articulated probe copies over the two cyclically ordered arguments are the
-segments of its two cycles. -/
-theorem toSpec_run_state :
-    ∀ probe ∈ [flatProbe, partialProbe, fullProbeStd, fullProbeAddr],
-      ∀ geom ∈ [PersonGeometry.standard, .addressee, .branching], ∀ ea ia : Person,
-      (probe.toSpec.run (tokenFeats geom) (goalTokens ea ia)).state =
-        ((cycleSegments geom probe ea ia).1 ++ (cycleSegments geom probe ea ia).2).toFinset := by
-  decide
-
-/-- The articulated probe halts on the internal argument iff that argument leaves no residue. -/
-theorem toSpec_run_halt_eq_ia_iff :
-    ∀ probe ∈ [flatProbe, partialProbe, fullProbeStd, fullProbeAddr],
-      ∀ geom ∈ [PersonGeometry.standard, .addressee, .branching], ∀ ea ia : Person,
-      ((probe.toSpec.run (tokenFeats geom) (goalTokens ea ia)).halt = some (.ia, ia) ↔
-        activeResidue probe (personSpec geom ia) = []) := by
-  decide
+end AgreementSystem
 
 end Minimalist.CyclicAgree
