@@ -43,9 +43,10 @@ quantifiers and identity conditions of the assignment-based dynamic systems are 
 `Module R M` is over `[AddCommMonoid M]`: the dimension `ι` could not be inferred from a parent
 projection to `BooleanAlgebra A`.
 
-The concrete algebra is carried by predicates `(ι → E) → Prop` with the pointwise Boolean algebra
-rather than by `Set (ι → E)`, because the conditions of the dynamic systems are predicates on
-assignments.
+The concrete algebra is carried both by predicates `(ι → E) → Prop` with the pointwise Boolean
+algebra and by `Set (ι → E)`. The set algebra is defined on `Set` directly rather than transported
+from the predicate algebra, so that it agrees reducibly with the condition algebra of every
+register structure (`DynamicSemantics.RegisterStructure.cylindricAlgebra`) at the canonical one.
 
 ## References
 
@@ -190,8 +191,8 @@ section Subst
 
 variable [DecidableEq ι]
 
-/-- Substitution of the `j`-th variable for the `i`-th: constrain the two to agree, then forget
-the `i`-th. Substituting a variable for itself does nothing. -/
+/-- Substitution of the `j`-th variable for the `i`-th constrains the two to agree and then
+forgets the `i`-th. Substituting a variable for itself does nothing. -/
 def subst (i j : ι) (x : A) : A :=
   if i = j then x else cyl i (diag i j ⊓ x)
 
@@ -312,8 +313,16 @@ end Pi
 
 /-- Sets of assignments form the cylindric set algebra of [henkin-monk-tarski-1971], the algebra
 of predicates under `Set`'s order. -/
-instance {E : Type*} [DecidableEq ι] : CylindricAlgebra ι (Set (ι → E)) :=
-  inferInstanceAs (CylindricAlgebra ι ((ι → E) → Prop))
+instance instSetPi {E : Type*} [DecidableEq ι] : CylindricAlgebra ι (Set (ι → E)) where
+  cyl i t := {g | ∃ e, update g i e ∈ t}
+  diag i j := {g | g i = g j}
+  cyl_bot := cyl_bot (A := (ι → E) → Prop)
+  le_cyl := le_cyl (A := (ι → E) → Prop)
+  cyl_inf_cyl := cyl_inf_cyl (A := (ι → E) → Prop)
+  cyl_comm := cyl_comm (A := (ι → E) → Prop)
+  diag_self := diag_self (A := (ι → E) → Prop)
+  cyl_diag_inf_diag := cyl_diag_inf_diag (A := (ι → E) → Prop)
+  disjoint_cyl_diag_inf := disjoint_cyl_diag_inf (A := (ι → E) → Prop)
 
 @[simp]
 theorem mem_cyl {E : Type*} [DecidableEq ι] {t : Set (ι → E)} {g : ι → E} :

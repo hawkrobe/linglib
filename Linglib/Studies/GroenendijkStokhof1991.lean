@@ -8,7 +8,7 @@ public import Linglib.Semantics.Dynamic.DRS.Dynamics
 /-!
 # Groenendijk and Stokhof (1991): Dynamic Predicate Logic
 
-This file formalizes the logical facts of [groenendijk-stokhof-1991], "Dynamic predicate
+This file formalizes the logical facts of Groenendijk and Stokhof's "Dynamic predicate
 logic", in which a formula denotes a relation between assignments. The paper's semantics is
 the update algebra of `Semantics/Dynamic/Update.lean`: conjunction is relational composition, the
 existential is a random reset followed by its scope, and negation, implication, disjunction,
@@ -29,7 +29,7 @@ implication curries (`donkey_equivalence`). Section 3.5's dynamic entailment (`E
 satisfies the deduction theorem and reduces s-entailment to entailment from the closed
 premiss, and it is neither reflexive nor transitive, by the paper's own counterexamples. The
 satisfaction set of an existential computed in the proof of Fact 19 is the cylindrification of
-its scope's, in the cylindric set algebra of [henkin-monk-tarski-1971]; that is the substrate's
+its scope's, in the cylindric set algebra of Henkin, Monk and Tarski; that is the substrate's
 `dom_dexists`. The laws are then read off
 for the formulas of `DPL/Syntax.lean` under their interpretation `DPL.Formula.eval`, and the
 paper's opening contrast is computed: `∃x Px ∧ Qx` binds the last occurrence of `x`, while its
@@ -92,28 +92,28 @@ variable {S : Type*} (φ ψ χ : Update S)
 
 /-! ### Meaning, truth, and equivalence, section 3.2 -/
 
-/-- Validity and contradictoriness, Definitions 4 and 5: true, or false, with respect to
-every assignment. -/
+/-- A formula is valid if it is true, and contradictory if it is false, with respect to every
+assignment (Definitions 4 and 5). -/
 def Valid : Prop := ∀ g, g ∈ φ.dom
 
 def Contradiction : Prop := ∀ g, g ∉ φ.dom
 
-/-- s-equivalence, Definition 7: the same satisfaction set. -/
+/-- Two formulas are s-equivalent if they have the same satisfaction set (Definition 7). -/
 def SEquiv : Prop := φ.dom = ψ.dom
 
-/-- p-equivalence, Definition 10: the same production set. -/
+/-- Two formulas are p-equivalent if they have the same production set (Definition 10). -/
 def PEquiv : Prop := φ.cod = ψ.cod
 
 variable {φ ψ} in
-/-- Facts 1 and 2: equivalent formulas are s-equivalent and p-equivalent. -/
+/-- Equivalent formulas are s-equivalent and p-equivalent (Facts 1 and 2). -/
 theorem SEquiv.of_eq (h : φ = ψ) : SEquiv φ ψ := h ▸ rfl
 
 variable {φ ψ} in
 theorem PEquiv.of_eq (h : φ = ψ) : PEquiv φ ψ := h ▸ rfl
 
-/-- Fact 3: s-equivalence and p-equivalence together do not give equivalence. The paper's
-witnesses are the tautologies `Px ∨ ¬Px` and `∃x[Px ∨ ¬Px]`: a trivial test and its
-existential closure have the total satisfaction and production sets and differ as relations. -/
+/-- s-equivalence and p-equivalence together do not give equivalence (Fact 3). The paper's
+witnesses are the tautologies `Px ∨ ¬Px` and `∃x[Px ∨ ¬Px]`, a trivial test and its existential
+closure, which have the total satisfaction and production sets and differ as relations. -/
 theorem exists_sEquiv_pEquiv_ne {E : Type*} [Nontrivial E] :
     ∃ φ ψ : Update (Assignment E), SEquiv φ ψ ∧ PEquiv φ ψ ∧ φ ≠ ψ := by
   have hself (g : Assignment E) : g ~[dexists 0 (test Set.univ)] g :=
@@ -129,7 +129,7 @@ theorem exists_sEquiv_pEquiv_ne {E : Type*} [Nontrivial E] :
 
 variable {φ ψ}
 
-/-- Fact 4: on tests, equivalence, s-equivalence, and p-equivalence coincide. -/
+/-- On tests, equivalence, s-equivalence, and p-equivalence coincide (Fact 4). -/
 theorem sEquiv_iff_eq_of_isTest (hφ : IsTest φ) (hψ : IsTest ψ) : SEquiv φ ψ ↔ φ = ψ :=
   ⟨fun h ↦ (hφ.eq_test_dom.trans (congrArg test h)).trans hψ.eq_test_dom.symm, .of_eq⟩
 
@@ -168,17 +168,17 @@ theorem close_eq_neg_neg : ◇φ = ∼∼φ := by
 theorem close_eq_self_iff_isTest : ◇φ = φ ↔ IsTest φ :=
   ⟨fun h ↦ h ▸ isTest_test _, fun h ↦ h.eq_test_dom.symm⟩
 
-/-- The restricted law of double negation: `¬¬φ ≃ φ` exactly when `φ` is a test. -/
+/-- The restricted law of double negation says that `¬¬φ ≃ φ` exactly when `φ` is a test. -/
 theorem neg_neg_eq_self_iff_isTest : ∼∼φ = φ ↔ IsTest φ :=
   close_eq_neg_neg φ ▸ close_eq_self_iff_isTest φ
 
-/-- `◇φ ≃ ◇ψ` iff `φ ≃ₛ ψ`: closure retains exactly the truth conditions. -/
+/-- Closure retains exactly the truth conditions, `◇φ ≃ ◇ψ` iff `φ ≃ₛ ψ`. -/
 theorem close_eq_close_iff_sEquiv : ◇φ = ◇ψ ↔ SEquiv φ ψ := test_inj
 
 theorem neg_close : ∼◇φ = ∼φ := by
   rw [neg_test, neg_eq_compl_dom]
 
-/-- `φ ≃ₛ ¬¬φ`: double negation keeps the truth conditions. -/
+/-- Double negation keeps the truth conditions, `φ ≃ₛ ¬¬φ`. -/
 theorem sEquiv_neg_neg : SEquiv φ ∼∼φ := by
   rw [SEquiv, ← close_eq_neg_neg, dom_test]
 
@@ -264,14 +264,14 @@ theorem neg_exists_eq_forall_neg : ∼(dexists x φ) = test (dforall x ∼φ) :=
 theorem close_exists : ◇(dexists x φ) = ∼(test (dforall x ∼φ)) := by
   rw [close_eq_neg_neg, neg_exists_eq_forall_neg]
 
-/-- Scope extension, `∃xφ ∧ ψ ≃ ∃x[φ ∧ ψ]`: the binding power of the existential extends
-without limit to the right, which is what represents anaphora across sentences. It is the
-associativity of composition. -/
+/-- Scope extension, `∃xφ ∧ ψ ≃ ∃x[φ ∧ ψ]`, says that the binding power of the existential
+extends without limit to the right, which is what represents anaphora across sentences. It is
+the associativity of composition. -/
 theorem scope_extension : dexists x φ ○ ψ = dexists x (φ ○ ψ) :=
   comp_assoc ..
 
-/-- The donkey equivalence, `∃xφ → ψ ≃ ∀x[φ → ψ]`: an existential in an antecedent binds
-into the consequent with universal force. It is the currying of implication. -/
+/-- The donkey equivalence, `∃xφ → ψ ≃ ∀x[φ → ψ]`, says that an existential in an antecedent
+binds into the consequent with universal force. It is the currying of implication. -/
 theorem donkey_equivalence : (dexists x φ ⇒ ψ) = test (dforall x (φ ⇒ ψ)) :=
   (impl_impl _ _ _).symm
 
@@ -284,8 +284,8 @@ section Assignments
 variable {E : Type*} (x : ℕ) (φ ψ : Update (Assignment E))
 
 /-- An existential is a test only over a contradictory scope, given two individuals to reset
-between: this is why the externally dynamic constants are not definable from the universal
-and a static connective. -/
+between. This is why the externally dynamic constants are not definable from the universal and
+a static connective. -/
 theorem isTest_dexists_iff [Nontrivial E] : IsTest (dexists x φ) ↔ Contradiction φ := by
   refine ⟨fun h g ⟨k, hφ⟩ ↦ ?_, fun hc ⟨_, _⟩ ⟨_, _, hφ⟩ ↦ (hc _ ⟨_, hφ⟩).elim⟩
   obtain ⟨e, he⟩ := exists_ne (g x)
@@ -322,8 +322,8 @@ theorem dne_fails_anaphora [Nontrivial E] :
     (neg_neg_exists_eq_iff 0 _).mp h (fun _ ↦ Classical.arbitrary E) ⟨_, rfl, trivial⟩⟩
 
 /-- Disjunction, being internally static, does not define conjunction or implication even up
-to truth conditions: `φ ∧ ψ ≄ₛ ¬[¬φ ∨ ¬ψ]` and `φ → ψ ≄ₛ ¬φ ∨ ψ`, with `P` and `Q` true of one
-individual and `φ` the existential `∃xPx`. -/
+to truth conditions. Both `φ ∧ ψ ≄ₛ ¬[¬φ ∨ ¬ψ]` and `φ → ψ ≄ₛ ¬φ ∨ ψ` hold with `P` and `Q` true
+of one individual and `φ` the existential `∃xPx`. -/
 theorem not_sEquiv_comp_neg_disj_neg [Nontrivial E] :
     ∃ φ ψ : Update (Assignment E), ¬ SEquiv (φ ○ ψ) ∼(∼φ ⋎ ∼ψ) := by
   obtain ⟨a, b, hab⟩ := exists_pair_ne E
@@ -346,8 +346,8 @@ theorem not_sEquiv_impl_neg_disj [Nontrivial E] :
   · exact hn ⟨_, _, ⟨a, rfl⟩, rfl, by simp⟩
   · exact hab (by simpa using hb.symm)
 
-/-- Conjunction is neither commutative nor idempotent in general: `∃xPx ∧ Qx` differs from
-`Qx ∧ ∃xPx`, and the latter from its self-conjunction, binding being left to right. -/
+/-- Conjunction is neither commutative nor idempotent in general. Since binding goes left to
+right, `∃xPx ∧ Qx` differs from `Qx ∧ ∃xPx`, and the latter from its self-conjunction. -/
 theorem comp_not_comm [Nontrivial E] : ∃ φ ψ : Update (Assignment E), φ ○ ψ ≠ ψ ○ φ := by
   obtain ⟨a, b, hab⟩ := exists_pair_ne E
   refine ⟨dexists 0 (test Set.univ), test {g | g 0 = a}, fun h ↦ ?_⟩
@@ -372,25 +372,26 @@ end Assignments
 
 /-! ### Entailment, section 3.5 -/
 
-/-- s-entailment, Definition 18: truth is preserved from premiss to conclusion. -/
+/-- A premiss s-entails a conclusion if truth is preserved from one to the other
+(Definition 18). -/
 def SEntails : Prop := φ.dom ⊆ ψ.dom
 
-/-- Dynamic entailment, Definition 20: every output of the premiss is an input on which the
-conclusion succeeds. -/
+/-- A premiss dynamically entails a conclusion if every output of the premiss is an input on
+which the conclusion succeeds (Definition 20). -/
 def Entails : Prop := φ.cod ⊆ ψ.dom
 
 variable {φ ψ} in
-/-- Fact 10: meaning inclusion, Definition 19, which is `⊆` on relations, implies
-s-entailment; the converse fails, as `∃xPx ⊨ₛ ∃xPx → Px` with `∃xPx ⊈ Px` shows. -/
+/-- Meaning inclusion (Definition 19), which is `⊆` on relations, implies s-entailment
+(Fact 10). The converse fails, as `∃xPx ⊨ₛ ∃xPx → Px` with `∃xPx ⊈ Px` shows. -/
 theorem SEntails.of_subset (h : φ ⊆ ψ) : SEntails φ ψ :=
   fun _ ⟨k, hk⟩ ↦ ⟨k, h hk⟩
 
-/-- Fact 11, the deduction theorem: `φ ⊨ ψ` iff `φ → ψ` is valid. -/
+/-- The deduction theorem (Fact 11) says that `φ ⊨ ψ` iff `φ → ψ` is valid. -/
 theorem entails_iff_valid_impl : Entails φ ψ ↔ Valid (φ ⇒ ψ) := by
   simp only [Valid, dom_test]
   exact ⟨fun h _ _ hk ↦ h ⟨_, hk⟩, fun h _ ⟨g, hk⟩ ↦ h g hk⟩
 
-/-- Fact 12: s-entailment is dynamic entailment from the closed premiss. -/
+/-- s-entailment is dynamic entailment from the closed premiss (Fact 12). -/
 theorem sEntails_iff_entails_close : SEntails φ ψ ↔ Entails ◇φ ψ := by
   rw [Entails, cod_test, SEntails]
 
@@ -405,21 +406,21 @@ section Assignments
 
 variable {E : Type*} (x : ℕ)
 
-/-- `∃xPx ⊨ Px`, the paper's *A man came in wearing a hat. So, he wore a hat*: the premiss's
-output binds the free variable of the conclusion. -/
+/-- The entailment `∃xPx ⊨ Px`, the paper's *A man came in wearing a hat. So, he wore a hat*,
+holds because the premiss's output binds the free variable of the conclusion. -/
 theorem entails_exists_atom (p : E → Prop) :
     Entails (dexists x (test {g : Assignment E | p (g x)})) (test {g | p (g x)}) := by
   rintro _ ⟨_, _, -, rfl, hp⟩
   exact ⟨_, rfl, hp⟩
 
-/-- `Px ⊨ ∃xPx` as well, so the two entail each other yet are not equivalent, the atom being
-a test and the existential not: mutual entailment is weaker than equivalence. -/
+/-- `Px ⊨ ∃xPx` as well, so the two entail each other yet are not equivalent, the atom being a
+test and the existential not. Mutual entailment is weaker than equivalence. -/
 theorem entails_atom_exists (p : E → Prop) :
     Entails (test {g : Assignment E | p (g x)}) (dexists x (test {g | p (g x)})) := by
   rintro _ ⟨h, rfl, hp⟩
   exact ⟨h, h, ⟨h x, (Function.update_eq_self x h).symm⟩, rfl, hp⟩
 
-/-- `∃xPx ⊭ₛ Px`: s-entailment sees no binding from premiss to conclusion. -/
+/-- s-entailment sees no binding from premiss to conclusion, so `∃xPx ⊭ₛ Px`. -/
 theorem not_sEntails_exists_atom [Nontrivial E] :
     ∃ p : E → Prop, ¬ SEntails (dexists 0 (test {g : Assignment E | p (g 0)}))
       (test {g | p (g 0)}) := by
@@ -428,7 +429,7 @@ theorem not_sEntails_exists_atom [Nontrivial E] :
   obtain ⟨_, rfl, hb⟩ := h (a := fun _ ↦ b) ⟨_, _, ⟨a, rfl⟩, rfl, by simp⟩
   exact hab (by simpa using hb.symm)
 
-/-- Dynamic entailment is not reflexive: `Px ∧ ∃xQx` does not entail itself, its outputs
+/-- Dynamic entailment is not reflexive, since `Px ∧ ∃xQx` does not entail itself, its outputs
 having forgotten that the input satisfied `Px`. Fact 15 restores reflexivity when no active
 quantifier of the formula binds a free variable of it. -/
 theorem not_entails_self [Nontrivial E] : ∃ φ : Update (Assignment E), ¬ Entails φ φ := by
@@ -440,9 +441,9 @@ theorem not_entails_self [Nontrivial E] : ∃ φ : Update (Assignment E), ¬ Ent
   obtain ⟨_, _, ⟨rfl, hb⟩, -⟩ := h ⟨_, hb⟩
   exact hab (by simpa using hb.symm)
 
-/-- Dynamic entailment is not transitive: `¬¬∃xPx ⊨ ∃xPx` and `∃xPx ⊨ Px`, but `¬¬∃xPx ⊭ Px`,
-the doubly negated premiss binding nothing. Fact 16 restores transitivity when the premiss
-fixes every variable the middle formula binds in the conclusion. -/
+/-- Dynamic entailment is not transitive, since `¬¬∃xPx ⊨ ∃xPx` and `∃xPx ⊨ Px` but
+`¬¬∃xPx ⊭ Px`, the doubly negated premiss binding nothing. Fact 16 restores transitivity when
+the premiss fixes every variable the middle formula binds in the conclusion. -/
 theorem not_entails_trans [Nontrivial E] :
     ∃ p : E → Prop, ¬ Entails ∼∼(dexists 0 (test {g : Assignment E | p (g 0)}))
       (test {g | p (g 0)}) := by
@@ -452,8 +453,8 @@ theorem not_entails_trans [Nontrivial E] :
   obtain ⟨_, rfl, hb⟩ := h (a := fun _ ↦ b) ⟨_, _, ⟨a, rfl⟩, rfl, by simp⟩
   exact hab (by simpa using hb.symm)
 
-/-- Nor is it monotone in its premisses: `∃xPx ⊨ Px`, but a further premiss `∃xQx` resets
-the binding, `∃xPx, ∃xQx ⊭ Px`, a sequence of premisses being their conjunction. -/
+/-- Nor is it monotone in its premisses. Although `∃xPx ⊨ Px`, a further premiss `∃xQx` resets
+the binding, so `∃xPx, ∃xQx ⊭ Px`, a sequence of premisses being their conjunction. -/
 theorem not_entails_comp_exists [Nontrivial E] :
     ∃ p : E → Prop, ¬ Entails (dexists 0 (test {g : Assignment E | p (g 0)}) ○
       dexists 0 (test Set.univ)) (test {g | p (g 0)}) := by
@@ -534,7 +535,7 @@ theorem nbf_conj_imp : nbf ((φ ⋏ ψ) ⟿ χ) = nbf (φ ⟿ (ψ ⟿ χ)) := by
 theorem nbf_ex_imp : nbf ((∃[x] φ) ⟿ ψ) = ∀[x] (nbf (φ ⟿ ψ)) := by
   simp only [nbf, impNbf]
 
-/-- The paper's example: `[∃xPx ∧ ∃yQy] ∧ Rxy` has the normal binding form
+/-- In the paper's example, `[∃xPx ∧ ∃yQy] ∧ Rxy` has the normal binding form
 `∃x[Px ∧ ∃y[Qy ∧ Rxy]]`. -/
 example (P Q : L.Relations 1) (R : L.Relations 2) (y : V) :
     nbf (((∃[x] (rel P fun _ ↦ .var x)) ⋏ ∃[y] (rel Q fun _ ↦ .var y)) ⋏
@@ -590,12 +591,12 @@ under conditions on the two sets. -/
 
 variable {M φ ψ χ} {g h : V → M}
 
-/-- Fact 8: the truth of a formula depends only on its free variables. -/
+/-- The truth of a formula depends only on its free variables (Fact 8). -/
 theorem dependsOn_dom_eval : DependsOn (· ∈ (φ.eval M).dom) (↑φ.fv : Set V) := by
   rw [← context_I]
   exact (φ.hasContext_eval M).dependsOn_dom
 
-/-- Fact 9: a formula changes the values of its active quantifier variables only. -/
+/-- A formula changes the values of its active quantifier variables only (Fact 9). -/
 theorem eqOn_of_eval (hgh : g ~[φ.eval M] h) : Set.EqOn g h (↑φ.aqv : Set V)ᶜ := by
   rw [← context_B]
   exact (φ.hasContext_eval M).blocks hgh
@@ -606,20 +607,20 @@ theorem mem_dom_eval_iff (hd : Disjoint φ.aqv ψ.fv) (hgh : g ~[φ.eval M] h) :
     g ∈ (ψ.eval M).dom ↔ h ∈ (ψ.eval M).dom :=
   (φ.hasContext_eval M).mem_dom_iff (ψ.hasContext_eval M) (by rwa [context_B, context_I]) hgh
 
-/-- Fact 13: s-entailment and entailment coincide when the premiss binds nothing in the
-conclusion. -/
+/-- s-entailment and entailment coincide when the premiss binds nothing in the conclusion
+(Fact 13). -/
 theorem sEntails_iff_entails (hd : Disjoint φ.aqv ψ.fv) :
     SEntails (φ.eval M) (ψ.eval M) ↔ Entails (φ.eval M) (ψ.eval M) :=
   ⟨fun hs _ ⟨_, hgh⟩ ↦ (mem_dom_eval_iff hd hgh).mp (hs ⟨_, hgh⟩),
     fun he _ ⟨_, hgh⟩ ↦ (mem_dom_eval_iff hd hgh).mpr (he ⟨_, hgh⟩)⟩
 
-/-- Fact 14: meaning inclusion gives entailment when the premiss binds nothing in the
-conclusion. -/
+/-- Meaning inclusion gives entailment when the premiss binds nothing in the conclusion
+(Fact 14). -/
 theorem entails_of_subset (hd : Disjoint φ.aqv ψ.fv) (hsub : φ.eval M ⊆ ψ.eval M) :
     Entails (φ.eval M) (ψ.eval M) :=
   (sEntails_iff_entails hd).mp (SEntails.of_subset hsub)
 
-/-- Fact 15: a formula that binds none of its own free variables entails itself. -/
+/-- A formula that binds none of its own free variables entails itself (Fact 15). -/
 theorem entails_self (hd : Disjoint φ.aqv φ.fv) : Entails (φ.eval M) (φ.eval M) :=
   entails_of_subset hd subset_rfl
 
@@ -629,8 +630,8 @@ theorem entails_conj_right (hd : Disjoint ψ.aqv ψ.fv) :
   rintro _ ⟨_, _, _, hkh⟩
   exact (mem_dom_eval_iff hd hkh).mp ⟨_, hkh⟩
 
-/-- Fact 16: entailment is transitive when the first step fixes the variables the middle
-formula binds in the conclusion. -/
+/-- Entailment is transitive when the first step fixes the variables the middle formula binds in
+the conclusion (Fact 16). -/
 theorem EntailsOn.trans (h₁ : EntailsOn (ψ.aqv ∩ χ.fv) (φ.eval M) (ψ.eval M))
     (h₂ : Entails (ψ.eval M) (χ.eval M)) : Entails (φ.eval M) (χ.eval M) := by
   intro g hg
@@ -655,7 +656,7 @@ theorem eval_conjNbf : (conjNbf φ ψ).eval M = φ.eval M ○ ψ.eval M := by
 theorem eval_impNbf : (impNbf φ ψ).eval M = test (impl (φ.eval M) (ψ.eval M)) := by
   induction φ generalizing ψ <;> simp_all [impNbf, dexists, dforall, impl_comp]
 
-/-- Fact 17: a formula is equivalent to its normal binding form. -/
+/-- A formula is equivalent to its normal binding form (Fact 17). -/
 theorem eval_nbf : (nbf φ).eval M = φ.eval M := by
   induction φ <;> simp_all [nbf, eval_conjNbf, eval_impNbf]
 
@@ -667,26 +668,26 @@ theorem isScopeBound_impNbf (hφ : φ.IsScopeBound) (hψ : ψ.IsScopeBound) :
     (impNbf φ ψ).IsScopeBound := by
   induction φ generalizing ψ <;> simp_all [impNbf, IsScopeBound, aqv]
 
-/-- Fact 18: in a normal binding form every variable a quantifier binds is in its scope. -/
+/-- In a normal binding form every variable a quantifier binds is in its scope (Fact 18). -/
 theorem isScopeBound_nbf : (nbf φ).IsScopeBound := by
   induction φ with
   | conj φ ψ ihφ ihψ => exact isScopeBound_conjNbf _ _ ihφ ihψ
   | imp φ ψ ihφ ihψ => exact isScopeBound_impNbf _ _ ihφ ihψ
   | _ => simp_all [nbf, IsScopeBound]
 
-/-- Facts 20 and 21: the dynamic truth conditions of a formula are the static ones of its normal
-binding form. -/
+/-- The dynamic truth conditions of a formula are the static ones of its normal binding form
+(Facts 20 and 21). -/
 theorem dom_eval_eq_static_nbf : (φ.eval M).dom = (nbf φ).static M := by
   rw [← eval_nbf, (isScopeBound_nbf φ).dom_eval M]
 
-/-- Fact 21 in first-order terms: a formula is true under the dynamic interpretation exactly
-where the first-order translation of its normal binding form is satisfied. -/
+/-- A formula is true under the dynamic interpretation exactly where the first-order
+translation of its normal binding form is satisfied (Fact 21 in first-order terms). -/
 theorem mem_dom_eval_iff_realize_nbf {g : V → M} :
     g ∈ (φ.eval M).dom ↔ (nbf φ).toFormula.Realize g := by
   rw [dom_eval_eq_static_nbf, mem_static_iff]
 
-/-- Fact 23: a scope-bound formula is valid in dynamic predicate logic iff it is in predicate
-logic. -/
+/-- A scope-bound formula is valid in dynamic predicate logic iff it is in predicate logic
+(Fact 23). -/
 theorem valid_eval_iff (hφ : φ.IsScopeBound) : Valid (φ.eval M) ↔ φ.static M = Set.univ := by
   rw [← hφ.dom_eval M, Set.eq_univ_iff_forall]
   rfl
@@ -755,8 +756,8 @@ theorem isTest_eval_equal_conj_ex_equal (hxy : x ≠ y) :
     IsTest (((.var x ≐ .var y) ⋏ ∃[x] (.var x ≐ .var y) : Formula L V).eval M) := by
   rintro ⟨g, h⟩ ⟨_, ⟨rfl, hg⟩, hex⟩
   obtain ⟨e, rfl, he⟩ := mem_dexists.mp hex
-  simp only [Set.mem_ofPred_eq, Language.Term.realize_var, Function.update_self,
-    Function.update_of_ne hxy.symm] at he hg
+  simp only [Set.mem_ofPred_eq, Language.Term.realize_var, RegisterStructure.extend_eq_update,
+    Function.update_self, Function.update_of_ne hxy.symm] at he hg
   show g = Function.update g x e
   rw [he, ← hg, Function.update_eq_self]
 
@@ -825,7 +826,7 @@ private theorem eval_toDPL_of_conditions (K : DRS L V)
   simp only [mem_test, Finset.mem_toList, DRS.toRel_iff]
   exact ⟨fun ⟨_, hk, rfl, hv⟩ ↦ ⟨hk, hv⟩, fun ⟨hk, hv⟩ ↦ ⟨k, hk, rfl, hv⟩⟩
 
-/-- Fact 25 for conditions: the translation of a condition is the test of its verification. -/
+/-- The translation of a condition is the test of its verification (Fact 25 for conditions). -/
 theorem _root_.DRT.Condition.eval_toDPL (c : Condition L V) :
     c.toDPL.eval M = test {f : V → M | Embedding.VerifiesCondition f c} := by
   induction c with
@@ -847,8 +848,8 @@ theorem _root_.DRT.Condition.eval_toDPL (c : Condition L V) :
       eval_toDPL_of_conditions M r ihr]
     exact congrArg test (Set.ext fun f ↦ (Embedding.verifies_dis_toRel l r f).symm)
 
-/-- Fact 25 for boxes: the translation of a discourse representation structure denotes its box
-relation. -/
+/-- The translation of a discourse representation structure denotes its box relation (Fact 25
+for boxes). -/
 theorem _root_.DRT.DRS.eval_toDPL (K : DRS L V) : K.toDPL.eval M = K.toRel :=
   eval_toDPL_of_conditions M K fun c _ ↦ c.eval_toDPL M
 

@@ -10,14 +10,14 @@ public import Mathlib.Tactic.Tauto
 /-!
 # Contexts for dynamic predicate logic
 
-[visser-1998]'s contexts type the relations of dynamic predicate logic by the variables they
+Visser's contexts type the relations of dynamic predicate logic by the variables they
 touch. A context is a triple of finite sets of variables: the inputs `I` a relation reads, the
 blocks `B` at which it cuts the link between the input and the output value, and the outputs
 `O` it constrains, with `I` and `O` agreeing off `B`. A relation has a context when it changes
 only the blocks and membership in it is invariant under agreement on the inputs, on the outputs,
 and off the blocks. Contexts compose as relations do, so every formula gets a context by
 recursion, whose inputs are the free variables and whose blocks are the active quantifier
-variables of [groenendijk-stokhof-1991], and the formula's interpretation has it.
+variables of Groenendijk and Stokhof, and the formula's interpretation has it.
 
 ## Main definitions
 
@@ -65,15 +65,14 @@ variable {V E : Type*}
 
 /-! ### Contexts (Definition 3.1) -/
 
-/-- A DPL-context (Definition 3.1): input set `I` (variables the incoming
-assignment is read at), block set `B` (variables whose input-output link
-is cut), output set `O` (variables the outgoing assignment is constrained
-at), coherent in the sense that `I` and `O` agree off `B`, the paper's `I ∪ B = O ∪ B`
-(`Context.union_blocks`). -/
+/-- A DPL-context (Definition 3.1) has an input set `I` of variables the incoming assignment
+is read at, a block set `B` of variables whose input-output link is cut, and an output set `O`
+of variables the outgoing assignment is constrained at, with `I` and `O` agreeing off `B` (the
+paper's `I ∪ B = O ∪ B`, `Context.union_blocks`). -/
 @[ext] structure Context (V : Type*) where
   /-- The input set. -/
   I : Finset V
-  /-- The block set: the barrier between past and future. -/
+  /-- The block set is the barrier between past and future. -/
   B : Finset V
   /-- The output set. -/
   O : Finset V
@@ -96,7 +95,7 @@ def test (s : Finset V) : Context V := ⟨s, ∅, s, fun _ _ ↦ Iff.rfl⟩
 @[simp] theorem B_test (s : Finset V) : (test s).B = ∅ := rfl
 @[simp] theorem O_test (s : Finset V) : (test s).O = s := rfl
 
-/-- The reset context at `x`, Definition 3.12's `c_{∃v}`: it reads nothing, constrains no output,
+/-- The reset context at `x`, Definition 3.12's `c_{∃v}`, reads nothing, constrains no output,
 and blocks `x`. -/
 def reset (x : V) : Context V := ⟨∅, {x}, ∅, fun _ _ ↦ Iff.rfl⟩
 
@@ -115,8 +114,8 @@ theorem coh_mem (c : Context V) {v : V} : v ∈ c.I ∪ c.B ↔ v ∈ c.O ∪ c.
 theorem union_blocks (c : Context V) : c.I ∪ c.B = c.O ∪ c.B :=
   Finset.ext fun _ ↦ c.coh_mem
 
-/-- Context composition (Definition 3.1):
-`⟨I,B,O⟩ * ⟨I',B',O'⟩ = ⟨I ∪ (I'∖B), B ∪ B', (O∖B') ∪ O'⟩`. -/
+/-- Contexts compose by `⟨I,B,O⟩ * ⟨I',B',O'⟩ = ⟨I ∪ (I'∖B), B ∪ B', (O∖B') ∪ O'⟩`
+(Definition 3.1). -/
 instance : Mul (Context V) where
   mul c d :=
     { I := c.I ∪ (d.I \ c.B)
@@ -138,9 +137,9 @@ instance : Monoid (Context V) where
   one_mul c := by ext v <;> simp
   mul_one c := by ext v <;> simp
 
-/-- The information order on contexts (Definition 3.1): more informative
-contexts read, write, and block more — with new blocks confined to
-variables the larger context both reads and writes. -/
+/-- In the information order on contexts (Definition 3.1), more informative contexts read,
+write, and block more, with new blocks confined to variables the larger context both reads and
+writes. -/
 instance : LE (Context V) :=
   ⟨fun c d ↦ c.I ⊆ d.I ∧ c.O ⊆ d.O ∧ c.B ⊆ d.B ∧ d.B ⊆ c.B ∪ (d.I ∩ d.O)⟩
 
@@ -160,8 +159,7 @@ instance : PartialOrder (Context V) where
     obtain ⟨hI', hO', hB', -⟩ := h'
     exact Context.ext (hI.antisymm hI') (hB.antisymm hB') (hO.antisymm hO')
 
-/-- The implication context (Definition 3.1): implications are tests
-reading the combined inputs. -/
+/-- The implication context (Definition 3.1) is a test reading the combined inputs. -/
 def impl (c d : Context V) : Context V := test (c * d).I
 
 @[simp] theorem I_impl (c d : Context V) : (c.impl d).I = c.I ∪ (d.I \ c.B) := rfl
@@ -172,9 +170,8 @@ end Context
 
 /-! ### c-relations (Definition 3.4) -/
 
-/-- `c` is a context for `R` (Definition 3.4): `R` reads its input only
-at `c.I`, constrains its output only at `c.O`, and changes values only
-at `c.B`. -/
+/-- A context `c` is a context for `R` (Definition 3.4) if `R` reads its input only at `c.I`,
+constrains its output only at `c.O`, and changes values only at `c.B`. -/
 structure HasContext (R : Update (V → E)) (c : Context V) : Prop where
   /-- Only blocked variables change. -/
   blocks : ∀ ⦃f g⦄, f ~[R] g → Set.EqOn f g (↑c.B)ᶜ
@@ -224,8 +221,8 @@ variable {c d : Context V} {R S : Update (V → E)} {f f' g g' : V → E}
 
 /-! ### The order is sound for the typing (Theorem 3.5) -/
 
-/-- Theorem 3.5(1): larger contexts type more relations —
-`c ≤ d` and `R` a `c`-relation make `R` a `d`-relation. -/
+/-- Larger contexts type more relations (Theorem 3.5(1)), so if `c ≤ d` and `R` is a
+`c`-relation, then `R` is a `d`-relation. -/
 theorem mono (h : HasContext R c) (hcd : c ≤ d) : HasContext R d := by
   obtain ⟨hI, hO, hB, hBio⟩ := hcd
   refine ⟨fun f g hR ↦ (h.blocks hR).mono
@@ -238,8 +235,8 @@ theorem mono (h : HasContext R c) (hcd : c ≤ d) : HasContext R d := by
 
 /-! ### The unique-output lemma (Lemma 3.7) -/
 
-/-- Lemma 3.7, transfer: the patch agrees with `g` at the blocks and
-wherever the inputs agree. -/
+/-- The patch agrees with `g` at the blocks and wherever the inputs agree (Lemma 3.7,
+transfer). -/
 theorem patch_eqOn {J : Set V} (h : HasContext R c) (hR : f ~[R] g)
     (hJ : Set.EqOn f' f J) :
     Set.EqOn (c.B.piecewise g f') g (J ∪ ↑c.B) := by
@@ -247,9 +244,8 @@ theorem patch_eqOn {J : Set V} (h : HasContext R c) (hR : f ~[R] g)
   have hb := h.blocks hR
   grind [Set.EqOn, Finset.piecewise_eq_of_mem, Finset.piecewise_eq_of_notMem]
 
-/-- Lemma 3.7, existence: if `f'` agrees with `f` on the inputs and
-`f R g`, then `R` relates `f'` to the patch of `f'` by `g` at the
-blocks. -/
+/-- If `f'` agrees with `f` on the inputs and `f R g`, then `R` relates `f'` to the patch of
+`f'` by `g` at the blocks (Lemma 3.7, existence). -/
 theorem patch (h : HasContext R c) (hI : Set.EqOn f' f ↑c.I)
     (hR : f ~[R] g) : f' ~[R] c.B.piecewise g f' :=
   h.stable hR hI
@@ -258,8 +254,8 @@ theorem patch (h : HasContext R c) (hI : Set.EqOn f' f ↑c.I)
       grind)).symm
     (fun v hv ↦ (c.B.piecewise_eq_of_notMem _ _ hv).symm)
 
-/-- Lemma 3.7, uniqueness: the patch is the only output over `f'`
-agreeing with `g` on the blocks. -/
+/-- The patch is the only output over `f'` agreeing with `g` on the blocks (Lemma 3.7,
+uniqueness). -/
 theorem patch_unique (h : HasContext R c) (hR : f' ~[R] g')
     (hB : Set.EqOn g' g ↑c.B) : g' = c.B.piecewise g f' := by
   have hb := h.blocks hR
@@ -268,8 +264,8 @@ theorem patch_unique (h : HasContext R c) (hR : f' ~[R] g')
 
 /-! ### Composition and implication typing (Theorems 3.8–3.9) -/
 
-/-- Theorem 3.8: composition of a `c`-relation and a `d`-relation is a
-`c * d`-relation. -/
+/-- The composition of a `c`-relation and a `d`-relation is a `c * d`-relation (Theorem 3.8).
+-/
 theorem comp (hR : HasContext R c) (hS : HasContext S d) :
     HasContext (R ○ S) (c * d) where
   blocks := by
@@ -298,8 +294,8 @@ theorem comp (hR : HasContext R c) (hS : HasContext S d) :
         Finset.piecewise_eq_of_notMem, Context.I_mul, Context.O_mul,
         Context.B_mul]
 
-/-- Theorem 3.9: DPL implication of a `c`-relation and a `d`-relation is
-a `(c → d)`-relation. -/
+/-- The DPL implication of a `c`-relation and a `d`-relation is a `(c → d)`-relation
+(Theorem 3.9). -/
 theorem impl (hR : HasContext R c) (hS : HasContext S d) :
     HasContext (test (Update.impl R S)) (c.impl d) := by
   refine hasContext_test_iff.mpr ⟨isTest_test _, ?_⟩
@@ -316,15 +312,14 @@ end HasContext
 
 /-! ### The DPL generators, typed -/
 
-/-- The reset is typed at `⟨∅, {x}, ∅⟩` — Definition 3.12's `c_{∃v}`: it
-reads nothing, constrains no output, and blocks `x`. -/
+/-- The reset is typed at `⟨∅, {x}, ∅⟩`, Definition 3.12's `c_{∃v}`, which reads nothing,
+constrains no output, and blocks `x`. -/
 theorem hasContext_randomAssign (x : V) :
     HasContext (randomAssign (S := V → E) x) (Context.reset x) :=
   ⟨fun f g hR v hv ↦ mem_randomAssign_iff_eqOn.mp hR (by simpa using hv),
    fun f f' g g' _ _ _ hB ↦ mem_randomAssign_iff_eqOn.mpr fun v hv ↦ hB (by simpa using hv)⟩
 
-/-- The existential typing (Definition 3.12's `c_{∃v} • c_φ`): blocking
-`x` before a `c`-relation types `∃x φ`. -/
+/-- Blocking `x` before a `c`-relation types `∃x φ` (Definition 3.12's `c_{∃v} • c_φ`). -/
 theorem HasContext.dexists {c : Context V} {φ : Update (V → E)} (x : V)
     (h : HasContext φ c) :
     HasContext (dexists x φ) (Context.reset x * c) :=
@@ -348,8 +343,8 @@ theorem mem_dom_iff (hR : HasContext R c) (hS : HasContext S d) (hd : Disjoint c
     (hfg : f ~[R] g) : f ∈ S.dom ↔ g ∈ S.dom :=
   (hS.dependsOn_dom fun _ hv ↦ hR.blocks hfg (Finset.disjoint_right.mp hd hv)).to_iff
 
-/-- A relation that blocks none of the inputs of another commutes with its truth: the sequence
-is true where both are. -/
+/-- A relation that blocks none of the inputs of another commutes with its truth, so the
+sequence is true where both are. -/
 theorem dom_comp (hR : HasContext R c) (hS : HasContext S d) (hd : Disjoint c.B d.I) :
     (R ○ S).dom = R.dom ∩ S.dom :=
   Set.ext fun _ ↦
@@ -409,7 +404,7 @@ theorem context_B (φ : Formula L V) : φ.context.B = φ.aqv := by
 theorem context_I (φ : Formula L V) : φ.context.I = φ.fv := by
   induction φ <;> simp_all [context, fv, context_B, Finset.sdiff_singleton_eq_erase]
 
-/-- Theorem 3.13: the interpretation of a formula is typed by its context. -/
+/-- The interpretation of a formula is typed by its context (Theorem 3.13). -/
 theorem hasContext_eval (φ : Formula L V) : HasContext (φ.eval M) φ.context := by
   induction φ with
   | top => exact hasContext_id
@@ -456,7 +451,7 @@ theorem IsScopeBound.dom_eval {φ : Formula L V} (h : φ.IsScopeBound) :
   | ex x φ ih => rw [eval_ex, dom_dexists, ih h]; rfl
   | all x φ ih =>
     rw [eval_all, dom_test, dforall, impl_eq_core_dom, ← compl_compl (φ.eval M).dom, core_compl,
-      preimage_randomAssign_eq_cyl, ih h]
+      preimage_randomAssign, ih h]
     rfl
 
 end Formula

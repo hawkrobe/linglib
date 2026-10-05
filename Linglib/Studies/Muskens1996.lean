@@ -1,321 +1,391 @@
 module
 
-public import Linglib.Logic.CylindricAlgebra
-public import Linglib.Semantics.Dynamic.CDRT
 public import Linglib.Semantics.Dynamic.DRS.Indexed
+public import Linglib.Semantics.Dynamic.RegisterStructure
 public import Mathlib.Data.Fin.VecNotation
 
 /-!
-# Muskens (1996): Combining Montague Semantics and Discourse Representation
+# Muskens (1996): Combining Montague semantics and discourse representation
 
-This file formalizes the two worked developments of [muskens-1996] over the embedding of
-discourse representation theory in classical type theory, in which states are atomic and
-discourse referents are functions from states, the substrate at `Semantics/Dynamic/CDRT`.
-The compositional fragment gives lexical translations for a fragment of English with
-generalized coordination at every category (`cn`, `iv`, `tv`, `detA`, `detEvery`, `detNo`,
-`andNP`, `orVP`) and runs the paper's derivations: cross-sentential anaphora, the donkey
-sentence, and verb-phrase coordination with anaphora across the conjuncts. The weakest
-precondition calculus extracts first-order truth conditions from update meanings; the
-paper's `wp` is the relational preimage `SetRel.preimage`, so the compositional rules for
-tests, sequencing, and random assignment and the reduction of truth to the weakest
-precondition of the trivial condition are the substrate's and mathlib's
-(`Update.preimage_test`, `SetRel.preimage_comp`, `Update.preimage_randomAssign`,
-`SetRel.preimage_univ_right`), leaving the existential rule (`preimage_dexists`) and the syntactic
-characterization of entailment (`drtEntails`).
+Muskens grafts discourse representation theory onto classical type logic, so that states and
+registers are objects and the boxes of DRT abbreviate relations between states. This file
+formalizes the paper's compositional fragment, its basic translations T₀ and generalised
+coordination T6, over the register structures of `Semantics/Dynamic/RegisterStructure.lean`,
+and derives the paper's examples: their reduction to boxes, their truth conditions, the failure of
+`no` to bind across a conjunction, a reassignment that does not merge, the representational
+character of properness, and the re-declared referent of fn. 4.
+
+## Main definitions
+
+* `DynPred`, `DynQuant`: the types `[π]` and `[[π]]` of Table 2.
+* `ofStatic`, `ofStatic₂`, `name`, `indef`, `every`, `no`, `who`, `doesnt`, `ifThen`: T₀.
+
+## Main statements
+
+* `text_eq_box`: the two-sentence text (9) reduces by merging to the box (20).
+* `dom_text`, `dom_conditional`, `dom_vpCoord`, `dom_npCoord`, `dom_reassignment`: the truth
+  conditions (24), (8), (52), (60) and (68).
+* `dom_everyNarrow`, `dom_everyWide`: the two readings of (33), from its S-structure and from
+  quantifying in the raised indefinite.
+* `dom_npCoord_no`: with `no¹` for `a¹`, the truth conditions (65) read the pronoun's referent
+  off the input state.
+* `reassignment_eq`, `reassignment_ne_merge`: (66) translates as the two boxes (67), which do not
+  merge.
+* `toRel_improper_eq`, `isProper_proper`, `not_isProper_improper`: (45) and (47) have the same
+  semantic value, though only (45) is proper.
+* `fn4_diverges`: re-declaring a referent separates Muskens's semantics from the persistence
+  semantics.
 
 ## Implementation notes
 
-The paper's types translate as follows: static predicates are `E → Prop`, dynamic
-propositions are `Update S`, dynamic predicates take a discourse referent to an update
-(`DynPred`), and dynamic quantifiers take a dynamic predicate to an update (`DynQuant`).
-The composition rules are function application, sequencing, and abstraction and need no
-separate formalization.
+Static predicates are sets, so an atomic condition is a preimage, and a dynamic predicate takes
+the value function of a referent (`val u` for a register, a constant for a name). Names, pronouns
+and traces translate as `Function.eval δ`, the lift of their referent. T6's `and` is the product
+of the update monoid lifted pointwise to every type `α₁ → … → αₘ → Update S`, so a VP or NP
+conjunction is `*`. The paper's `wp` denotes `SetRel.preimage`, whose rules for boxes and
+sequencing are `Update.preimage_box_cons` and `SetRel.preimage_comp`.
+
+## TODO
+
+* The box language with `;` (SYN4), its `tr` and `wp` translations, and Propositions 1–3 for
+  it. Proposition 1, that a DRS is proper iff `wp(K, ⊤)` is closed, needs the free variables of
+  `DRS.toFormula` (`BoundedFormula.freeVarFinset` of `relabel` and `iExs`), absent from mathlib.
 
 ## References
 
 * [muskens-1996]
+* [kamp-reyle-1993]
 -/
 
 @[expose] public section
 
 namespace Muskens1996
 
-open DynamicSemantics DynamicSemantics.Update SetRel
+open DynamicSemantics DynamicSemantics.Update SetRel RegisterStructure
+open scoped DynamicSemantics.Update
 
 variable {R S E : Type*}
 
-/-! ### Semantic types -/
+/-! ### Types and basic translations (Table 2, T₀) -/
 
-/-- Dynamic one-place predicate: type `[π]` in [muskens-1996]. -/
-abbrev DynPred (S E : Type*) := Dref S E → Update S
+/-- A dynamic one-place predicate, type `[π]`. -/
+abbrev DynPred (S E : Type*) := (S → E) → Update S
 
-/-- Dynamic generalized quantifier: type `[[π]]` in [muskens-1996]. -/
+/-- A dynamic generalized quantifier, type `[[π]]`. -/
 abbrev DynQuant (S E : Type*) := DynPred S E → Update S
 
-/-! ### T₀ basic translations -/
+/-- A common noun or intransitive verb translates as the test of its predicate, as in
+`farmer ↝ λv[|farmer v]` and `stink ↝ λv[|stinks v]`. -/
+def ofStatic (P : Set E) : DynPred S E :=
+  fun v ↦ test (v ⁻¹' P)
 
-/-- Common noun: `farmer ↝ λv[|farmer v]`. Type `[π]`. -/
-def cn (P : E → Prop) : DynPred S E :=
-  λ u => test (Condition.atom1 P u)
+/-- A transitive verb takes its object noun phrase, as in `love ↝ λQλv(Q(λv'[|v loves v']))`.
+-/
+def ofStatic₂ (P : SetRel E E) : DynQuant S E → DynPred S E :=
+  fun Q v ↦ Q fun v' ↦ test {i | v i ~[P] v' i}
 
-/-- Intransitive verb: `stink ↝ λv[|stinks v]`. Type `[π]`. -/
-def iv (P : E → Prop) : DynPred S E :=
-  λ u => test (Condition.atom1 P u)
+/-- A name translates as the lift of the constant referent that AX4 gives it, as in
+`Maryⁿ ↝ λP.P(Mary)`. -/
+def name (x : E) : DynQuant S E :=
+  Function.eval (Function.const S x)
 
-/-- Transitive verb: `love ↝ λQλv(Q(λv'[|v loves v']))`.
-Type `[[π]] → [π]`: takes an NP (object) and produces a VP. -/
-def tv (R : E → E → Prop) : DynQuant S E → DynPred S E :=
-  λ Q u => Q (λ v => test (Condition.atom2 R u v))
+section Determiners
 
-/-- Indefinite determiner: `aⁿ ↝ λP'λP([uₙ]; P'(uₙ); P(uₙ))`.
-Type `[π] → [[π]]`; introduces discourse referent `u`. -/
-def detA [RegisterStructure R S E] (u : R) : DynPred S E → DynQuant S E :=
-  λ noun vp => randomAssign u ○ (noun (RegisterStructure.val u) ○ vp (RegisterStructure.val u))
+variable [RegisterStructure R S E]
 
-/-- Universal determiner: `everyⁿ ↝ λP'λP(([uₙ]; P'(uₙ)) ⇒ P(uₙ))`.
-Dynamic implication gives universal force. -/
-def detEvery [RegisterStructure R S E] (u : R) : DynPred S E → DynQuant S E :=
-  λ noun vp =>
-    test (impl (randomAssign u ○ noun (RegisterStructure.val u)) (vp (RegisterStructure.val u)))
+/-- The indefinite, `aⁿ ↝ λP'λP([uₙ|]; P'(uₙ); P(uₙ))`. -/
+def indef (u : R) : DynPred S E → DynQuant S E :=
+  fun P' P ↦ randomAssign u ○ (P' (val u) ○ P (val u))
 
-/-- Negative determiner: `noⁿ ↝ λP'λP[|not([uₙ]; P'(uₙ); P(uₙ))]`. -/
-def detNo [RegisterStructure R S E] (u : R) : DynPred S E → DynQuant S E :=
-  λ noun vp =>
-    test (neg (randomAssign u ○
-      (noun (RegisterStructure.val u) ○ vp (RegisterStructure.val u))))
+/-- The universal, `everyⁿ ↝ λP'λP[|([uₙ|]; P'(uₙ)) ⇒ P(uₙ)]`. -/
+def every (u : R) : DynPred S E → DynQuant S E :=
+  fun P' P ↦ test (impl (randomAssign u ○ P' (val u)) (P (val u)))
 
-/-- Proper name NP: `Maryⁿ ↝ λP.P(Mary)`. Type `[[π]]`. -/
-def properNP (name : Dref S E) : DynQuant S E :=
-  λ P => P name
+/-- The negative determiner, `noⁿ ↝ λP'λP[|not([uₙ|]; P'(uₙ); P(uₙ))]`. -/
+def no (u : R) : DynPred S E → DynQuant S E :=
+  fun P' P ↦ test (neg (randomAssign u ○ (P' (val u) ○ P (val u))))
 
-/-- Pronoun NP: `heₙ ↝ λP.P(uₙ)` — picks up the dref from the antecedent. -/
-def pro (u : Dref S E) : DynQuant S E :=
-  λ P => P u
+end Determiners
 
-/-- Conditional: `if ↝ λpq[|p ⇒ q]`. -/
-def cond : Update S → Update S → Update S :=
-  λ p q => test (impl p q)
+/-- The relative pronoun takes the relative clause and then the noun, as in
+`who ↝ λP'λPλv(P(v); P'(v))`. -/
+def who : DynPred S E → DynPred S E → DynPred S E :=
+  fun P' P v ↦ P v ○ P' v
 
-/-- Auxiliary negation: `doesn't ↝ λPλQ[|not Q(P)]` — takes VP (P) then
-subject NP (Q), matching [muskens-1996]'s argument order. -/
-def auxNeg : DynPred S E → DynQuant S E → Update S :=
-  λ P Q => test (neg (Q P))
+/-- Auxiliary negation, `doesn't ↝ λPλQ[|not Q(P)]`. -/
+def doesnt : DynPred S E → DynQuant S E → Update S :=
+  fun P Q ↦ test (neg (Q P))
 
-/-! ### Generalized coordination (§IV)
-
-`and` = sequencing applied pointwise; `or` = `Update` disjunction applied
-pointwise. The same schema works at every syntactic category. -/
-
-/-- Sentence-level `and`: `K₁ and K₂ = K₁; K₂`. -/
-def andS : Update S → Update S → Update S := comp
-
-/-- Sentence-level `or`: `K₁ or K₂ = [K₁ or K₂]` (disjunction test). -/
-def orS : Update S → Update S → Update S :=
-  λ D₁ D₂ => test (disj D₁ D₂)
-
-/-- VP-level `and`: `λv(P₁(v); P₂(v))`. -/
-def andVP : DynPred S E → DynPred S E → DynPred S E :=
-  λ P₁ P₂ u => P₁ u ○ P₂ u
-
-/-- VP-level `or`: `λv[P₁(v) or P₂(v)]`. -/
-def orVP : DynPred S E → DynPred S E → DynPred S E :=
-  λ P₁ P₂ u => test (disj (P₁ u) (P₂ u))
-
-/-- NP-level `and`: `λP(Q₁(P); Q₂(P))`. -/
-def andNP : DynQuant S E → DynQuant S E → DynQuant S E :=
-  λ Q₁ Q₂ P => Q₁ P ○ Q₂ P
-
-/-- NP-level `or`: `λP[Q₁(P) or Q₂(P)]`. -/
-def orNP : DynQuant S E → DynQuant S E → DynQuant S E :=
-  λ Q₁ Q₂ P => test (disj (Q₁ P) (Q₂ P))
+/-- The conditional, `if ↝ λpq[|p ⇒ q]`. -/
+def ifThen : Update S → Update S → Update S :=
+  fun p q ↦ test (impl p q)
 
 /-! ### The paper's derivations -/
 
-section Examples
+section Derivations
 
-variable [RegisterStructure R S E]
-variable (u₁ u₂ : R)
+variable [RegisterStructure R S E] {u₁ u₂ : R}
 
-/-- "A¹ man adores a² woman. She₂ abhors him₁." — cross-sentential anaphora:
-`[u₁]; [man u₁]; [u₂]; [woman u₂]; [u₁ adores u₂]; [u₂ abhors u₁]`. The
-single-sentence tree is the paper's derivation (39); the man/woman/adores/
-abhors box is the worked example Muskens runs the wp calculus on (p. 173),
-with truth conditions `∃x₁ x₂ (man x₁ ∧ woman x₂ ∧ adores x₁ x₂ ∧
-abhors x₂ x₁)`. -/
-def exampleText (man woman : E → Prop) (adores abhors : E → E → Prop) : Update S :=
-  detA u₁ (cn man) (tv adores (detA u₂ (cn woman))) ○
-    pro (RegisterStructure.val u₂) (tv abhors (pro (RegisterStructure.val u₁)))
+attribute [local simp] ofStatic ofStatic₂ Function.eval name indef no who ifThen Pi.mul_apply
+  mul_def dom_comp preimage_comp preimage_randomAssign val_extend_self
 
-/-- "Every¹ farmer who owns a² donkey beats it₂." — universal force from
-`detEvery`, anaphoric `it₂` picking up the indefinite's dref:
-`([u₁]; [farmer u₁]; [u₂]; [donkey u₂]; [u₁ owns u₂]) ⇒ [u₁ beats u₂]`. -/
-def donkeySentence
-    (farmer donkey_ : E → Prop) (owns beats : E → E → Prop) : Update S :=
-  detEvery u₁
-    (λ v => cn farmer v ○ detA u₂ (cn donkey_) (λ w => test (Condition.atom2 owns v w)))
-    (tv beats (pro (RegisterStructure.val u₂)))
+/-- "A¹ man adores a² woman. She₂ abhors him₁." ((9); its first sentence is tree (39)). -/
+def text (u₁ u₂ : R) (man woman : Set E) (adores abhors : SetRel E E) : Update S :=
+  indef u₁ (ofStatic man) (ofStatic₂ adores (indef u₂ (ofStatic woman))) ○
+    Function.eval (val u₂) (ofStatic₂ abhors (Function.eval (val u₁)))
 
-/-- "A² cat catches a¹ fish and eats it₁." — the paper's (52), decorated as
-tree (56): VP coordination with cross-conjunct anaphora. `andVP` sequences
-the conjuncts, so the dref introduced by "a¹ fish" is accessible to "it₁"
-(contrast (53) with `no¹`, where it is not). -/
-def vpCoordExample
-    (cat fish : E → Prop) (catches eats : E → E → Prop) : Update S :=
-  detA u₂ (cn cat)
-    (andVP (tv catches (detA u₁ (cn fish))) (tv eats (pro (RegisterStructure.val u₁))))
+/-- The text reduces by merging to the box (20),
+`[u₁ u₂ | man u₁, woman u₂, u₁ adores u₂, u₂ abhors u₁]`, since `man u₁` does not mention `u₂`.
+-/
+theorem text_eq_box (h : u₁ ≠ u₂) (man woman : Set E) (adores abhors : SetRel E E) :
+    (text u₁ u₂ man woman adores abhors : Update S) =
+      box [u₁, u₂] (val u₁ ⁻¹' man ∩ (val u₂ ⁻¹' woman ∩ {i | val u₁ i ~[adores] val u₂ i}) ∩
+        {i | val u₂ i ~[abhors] val u₁ i}) := by
+  have : (text u₁ u₂ man woman adores abhors : Update S) =
+      box [u₁] (val u₁ ⁻¹' man) ○ box [u₂] (val u₂ ⁻¹' woman ∩ {i | val u₁ i ~[adores] val u₂ i}) ○
+        box ([] : List R) {i | val u₂ i ~[abhors] val u₁ i} := by
+    simp only [text, indef, ofStatic, ofStatic₂, Function.eval, box_cons, box_nil,
+      ← test_comp_test, comp_assoc]
+  rw [this, box_comp_box (by simpa using fun hu ↦ h.symm (dimSet_preimage_val_subset u₁ man hu)),
+    box_comp_box (by simp)]
+  rfl
 
-end Examples
+/-- The truth conditions (24) of the text. -/
+theorem dom_text (h : u₁ ≠ u₂) (man woman : Set E) (adores abhors : SetRel E E) :
+    (text u₁ u₂ man woman adores abhors : Update S).dom =
+      {_i | ∃ x₁ x₂, x₁ ∈ man ∧ x₂ ∈ woman ∧ x₁ ~[adores] x₂ ∧ x₂ ~[abhors] x₁} := by
+  ext
+  simp [text, val_extend_of_ne _ _ _ _ h, and_assoc]
 
-/-! ### Weakest preconditions (§III.6)
+/-- "Every¹ girl adores a² boy" ((33)) at its S-structure (34), the indefinite in situ. -/
+def everyNarrow (u₁ u₂ : R) (girl boy : Set E) (adores : SetRel E E) : Update S :=
+  every u₁ (ofStatic girl) (ofStatic₂ adores (indef u₂ (ofStatic boy)))
 
-The paper's `wp(K, χ)`, the input states from which `K` can reach a state satisfying `χ`, is
-the relational preimage `SetRel.preimage K χ`. Its rules are the substrate's and mathlib's:
-WP of a test is `preimage_test`, WP_{;} is `SetRel.preimage_comp`, the existential clause of
-WP_{[]} is `preimage_randomAssign`, and Proposition 2, that `wp(K, ⊤)` is the truth condition
-`∃j K(i)(j)`, is `SetRel.preimage_univ_right`. Muskens's statement of Proposition 2 carries a
-closedness antecedent (proper `K`); in the semantic formulation the identity is unconditional. -/
+/-- At the LF (35), decorated as (40), (33) quantifies `a² boy` in over the trace `e₃`. -/
+def everyWide (u₁ u₂ : R) (girl boy : Set E) (adores : SetRel E E) : Update S :=
+  indef u₂ (ofStatic boy) fun v₃ ↦ every u₁ (ofStatic girl) (ofStatic₂ adores (Function.eval v₃))
 
-/-- The weakest precondition of an existential update quantifies that of its scope over the
-values of the register. -/
-theorem preimage_dexists [RegisterStructure R S E] (u : R) (D : Update S) (χ : Condition S) :
-    (dexists u D).preimage χ = {i | ∃ e : E, RegisterStructure.extend i u e ∈ D.preimage χ} := by
-  rw [dexists, preimage_comp, preimage_randomAssign]
+/-- The `∀∃` reading of (33), from (34). -/
+theorem dom_everyNarrow (h : u₁ ≠ u₂) (girl boy : Set E) (adores : SetRel E E) :
+    (everyNarrow u₁ u₂ girl boy adores : Update S).dom =
+      {_i | ∀ x₁ ∈ girl, ∃ x₂ ∈ boy, x₁ ~[adores] x₂} := by
+  ext
+  simp [everyNarrow, every, impl, core_comp, core_randomAssign, core_test,
+    val_extend_of_ne _ _ _ _ h, or_iff_not_imp_left]
 
-/-- DRT entailment: all premises true at `i` force the conclusion true at `i`. -/
-def drtEntails (premises : List (Update S)) (conclusion : Update S) : Prop :=
-  ∀ i, (∀ D ∈ premises, i ∈ D.dom) → i ∈ conclusion.dom
+/-- The `∃∀` reading of (33) comes from (35). The indefinite's referent lands at the top of the
+box, where a later pronoun can pick it up ((41)). -/
+theorem dom_everyWide (h : u₁ ≠ u₂) (girl boy : Set E) (adores : SetRel E E) :
+    (everyWide u₁ u₂ girl boy adores : Update S).dom =
+      {_i | ∃ x₂ ∈ boy, ∀ x₁ ∈ girl, x₁ ~[adores] x₂} := by
+  ext
+  simp [everyWide, every, impl, core_comp, core_randomAssign, core_test,
+    val_extend_of_ne _ _ _ _ h.symm, or_iff_not_imp_left]
 
-/-- Proposition 3: DRT entailment reduces to entailment of truth conditions
-`wp(Kᵢ, ⊤)`. -/
-theorem proposition_3 (premises : List (Update S)) (conclusion : Update S) :
-    drtEntails premises conclusion ↔
-    (∀ i, (∀ D ∈ premises, i ∈ D.preimage Set.univ) → i ∈ conclusion.preimage Set.univ) := by
-  simp only [drtEntails, preimage_univ_right]
+/-- "If a¹ man bores a² woman she₂ ignores him₁." ((4), translated as the box (6)). -/
+def conditional (u₁ u₂ : R) (man woman : Set E) (bores ignores : SetRel E E) : Update S :=
+  ifThen (indef u₁ (ofStatic man) (ofStatic₂ bores (indef u₂ (ofStatic woman))))
+    (Function.eval (val u₂) (ofStatic₂ ignores (Function.eval (val u₁))))
 
-/-- DPL-style entailment: every output of `D₁` can be extended by `D₂`. -/
-def dplEntails (D₁ D₂ : Update S) : Prop :=
-  D₁.cod ⊆ D₂.dom
+/-- The conditional has the truth conditions (8), in which the indefinites of the antecedent
+bind the pronouns of the consequent with universal force. -/
+theorem dom_conditional (h : u₁ ≠ u₂) (man woman : Set E) (bores ignores : SetRel E E) :
+    (conditional u₁ u₂ man woman bores ignores : Update S).dom =
+      {_i | ∀ x₁ x₂, x₁ ∈ man ∧ x₂ ∈ woman ∧ x₁ ~[bores] x₂ → x₂ ~[ignores] x₁} := by
+  ext
+  simp [conditional, impl, core_comp, core_randomAssign, core_test, val_extend_of_ne _ _ _ _ h]
+  grind
 
-/-- Corollary to Proposition 3: DPL entailment = validity of dynamic
-implication. -/
-theorem dpl_entailment_eq_dimpl_valid (D₁ D₂ : Update S) :
-    dplEntails D₁ D₂ ↔ ∀ i, i ∈ impl D₁ D₂ :=
-  ⟨fun h _ _ hj => h ⟨_, hj⟩, fun h _ ⟨i, hj⟩ => h i hj⟩
+/-- "A² cat catches a¹ fish and eats it₁." ((52), decorated as tree (56)). The conjoined VPs are
+sequenced, so the referent of `a¹ fish` is accessible to `it₁`. -/
+def vpCoord (u₁ u₂ : R) (cat fish : Set E) (catches eats : SetRel E E) : Update S :=
+  indef u₂ (ofStatic cat) (ofStatic₂ catches (indef u₁ (ofStatic fish)) *
+    ofStatic₂ eats (Function.eval (val u₁)))
 
-/-! ### Truth-condition extraction rules -/
+/-- The truth conditions of (52). -/
+theorem dom_vpCoord (h : u₁ ≠ u₂) (cat fish : Set E) (catches eats : SetRel E E) :
+    (vpCoord u₁ u₂ cat fish catches eats : Update S).dom =
+      {_i | ∃ x₂ x₁, x₂ ∈ cat ∧ x₁ ∈ fish ∧ x₂ ~[catches] x₁ ∧ x₂ ~[eats] x₁} := by
+  ext
+  simp [vpCoord, val_extend_of_ne _ _ _ _ h.symm, and_assoc]
 
-/-- TR of negation: `tr(not K) = ¬wp(K, ⊤)`. -/
-theorem tr_neg_eq (D : Update S) : neg D = (D.preimage Set.univ)ᶜ := by
-  rw [preimage_univ_right, neg_eq_compl_dom]
+/-- "John³ admires a¹ girl and a² boy who loves her₁." ((58), with the conjoined NP of (57)). -/
+def npCoord (u₁ u₂ : R) (john : E) (girl boy : Set E) (admires loves : SetRel E E) : Update S :=
+  name john (ofStatic₂ admires (indef u₁ (ofStatic girl) *
+    indef u₂ (who (ofStatic₂ loves (Function.eval (val u₁))) (ofStatic boy))))
 
-/-- TR of disjunction: `tr(K₁ or K₂) = wp(K₁, ⊤) ∨ wp(K₂, ⊤)` — the
-existential distributes over disjunction. -/
-theorem tr_disj_eq (D₁ D₂ : Update S) :
-    disj D₁ D₂ = D₁.preimage Set.univ ∪ D₂.preimage Set.univ := by
-  rw [preimage_univ_right, preimage_univ_right, disj_eq_dom_union_dom]
+/-- The truth conditions (60) of (58). -/
+theorem dom_npCoord (h : u₁ ≠ u₂) (john : E) (girl boy : Set E) (admires loves : SetRel E E) :
+    (npCoord u₁ u₂ john girl boy admires loves : Update S).dom =
+      {_i | ∃ x₁ x₂, x₁ ∈ girl ∧ john ~[admires] x₁ ∧ x₂ ∈ boy ∧ x₂ ~[loves] x₁ ∧
+        john ~[admires] x₂} := by
+  ext
+  simp [npCoord, val_extend_of_ne _ _ _ _ h, and_assoc]
 
-/-- TR of implication: `tr(K₁ ⇒ K₂) = ¬wp(K₁, ¬wp(K₂, ⊤))` — no way to
-satisfy the antecedent without satisfying the consequent. -/
-theorem tr_impl_eq (D₁ D₂ : Update S) :
-    impl D₁ D₂ = (D₁.preimage (D₂.preimage Set.univ)ᶜ)ᶜ := by
-  rw [preimage_univ_right, ← core_compl, compl_compl, impl_eq_core_dom]
+/-- "*John³ admires no¹ girl and a² boy who loves her₁." ((61)), in which `no¹` cannot bind
+`her₁`. -/
+def npCoordNo (u₁ u₂ : R) (john : E) (girl boy : Set E) (admires loves : SetRel E E) :
+    Update S :=
+  name john (ofStatic₂ admires (no u₁ (ofStatic girl) *
+    indef u₂ (who (ofStatic₂ loves (Function.eval (val u₁))) (ofStatic boy))))
 
-/-! ### Semantic properness -/
+/-- The truth conditions (65) of (61) are an open formula, which reads the pronoun's referent
+off the input state. -/
+theorem dom_npCoord_no (h : u₁ ≠ u₂) (john : E) (girl boy : Set E) (admires loves : SetRel E E) :
+    (npCoordNo u₁ u₂ john girl boy admires loves : Update S).dom =
+      {i | ∃ x₂, (¬∃ x₁ ∈ girl, john ~[admires] x₁) ∧ x₂ ∈ boy ∧ x₂ ~[loves] val u₁ i ∧
+        john ~[admires] x₂} := by
+  ext
+  simp [npCoordNo, mem_randomAssign, val_extend_of_ne _ _ _ _ h, and_assoc]
 
-/-- Semantic counterpart of [muskens-1996]'s properness (§III.5: a proper
-DRS contains no free referents): satisfiability doesn't depend on the input
-state. Proposition 1 connects the two — K is proper iff `wp(K, ⊤)` is a
-closed formula. The syntactic notion is strictly finer: Muskens notes a
-proper box and a non-proper box may have the same semantic value (his
-(45) vs (47)), which is why this semantic version is only a counterpart,
-not a reformulation. -/
-def isProper (D : Update S) : Prop :=
-  ∀ i₁ i₂, i₁ ∈ D.dom ↔ i₂ ∈ D.dom
+/-- "Bill¹ and Sue² own a³ donkey." ((66)), with the conjoined names applied pointwise. -/
+def reassignment (u₃ : R) (bill sue : E) (donkey : Set E) (owns : SetRel E E) : Update S :=
+  (name bill * name sue : DynQuant S E) (ofStatic₂ owns (indef u₃ (ofStatic donkey)))
 
-/-- Proper DRSes have state-independent weakest preconditions. -/
-theorem proper_wp_uniform (D : Update S) (h : isProper D) :
-    ∀ i₁ i₂, i₁ ∈ D.preimage Set.univ ↔ i₂ ∈ D.preimage Set.univ := by
-  simp only [preimage_univ_right]; exact h
+/-- (66) translates as (67), `[u₃ | donkey u₃, Bill owns u₃] ; [u₃ | donkey u₃, Sue owns u₃]`,
+in which the second box reassigns `u₃`. -/
+theorem reassignment_eq (u₃ : R) (bill sue : E) (donkey : Set E) (owns : SetRel E E) :
+    (reassignment u₃ bill sue donkey owns : Update S) =
+      box [u₃] (val u₃ ⁻¹' donkey ∩ {i | bill ~[owns] val u₃ i}) ○
+        box [u₃] (val u₃ ⁻¹' donkey ∩ {i | sue ~[owns] val u₃ i}) := by
+  simp only [reassignment, name, Function.const_apply, Pi.mul_apply, mul_def, Function.eval,
+    ofStatic₂, indef, ofStatic, box_cons, box_nil, ← test_comp_test, comp_assoc]
 
-/-! ### Cylindric algebra
+/-- The truth conditions (68) of (66). -/
+theorem dom_reassignment (u₃ : R) (bill sue : E) (donkey : Set E) (owns : SetRel E E) :
+    (reassignment u₃ bill sue donkey owns : Update S).dom =
+      {_i | (∃ x₃ ∈ donkey, bill ~[owns] x₃) ∧ ∃ x₃ ∈ donkey, sue ~[owns] x₃} := by
+  ext
+  simp [reassignment]
 
-CDRT's dref introduction and dref equality are cylindric-algebra operations
-([henkin-monk-tarski-1971]): an existential is true where the cylindrification of its scope's
-truth set is, by the substrate's `dom_dexists`, and dref equality is the diagonal. -/
+/-- The boxes of (67) do not merge. The register `u₃` occurs in the first box's conditions, and
+the merged box demands one donkey owned by both, so where Bill and Sue own only different
+donkeys the two differ. -/
+theorem reassignment_ne_merge [Nonempty S] {u₃ : R} {bill sue : E} {donkey : Set E}
+    {owns : SetRel E E} (hb : ∃ x ∈ donkey, bill ~[owns] x) (hs : ∃ x ∈ donkey, sue ~[owns] x)
+    (h : ¬∃ x ∈ donkey, bill ~[owns] x ∧ sue ~[owns] x) :
+    (reassignment u₃ bill sue donkey owns : Update S) ≠
+      box ([u₃] ++ [u₃]) ((val u₃ ⁻¹' donkey ∩ {i | bill ~[owns] val u₃ i}) ∩
+        (val u₃ ⁻¹' donkey ∩ {i | sue ~[owns] val u₃ i})) := by
+  intro heq
+  obtain ⟨i⟩ := ‹Nonempty S›
+  have hi : i ∈ (reassignment u₃ bill sue donkey owns : Update S).dom := by
+    rw [dom_reassignment]
+    exact ⟨hb, hs⟩
+  rw [heq, ← SetRel.preimage_univ_right] at hi
+  simp only [List.singleton_append, preimage_box_cons, box_nil, preimage_test, mem_cyl,
+    Set.mem_inter_iff, Set.mem_preimage, Set.mem_ofPred_eq, Set.mem_univ, and_true,
+    val_extend_self, extend_idem] at hi
+  obtain ⟨_, _, ⟨hd, hbo⟩, -, hso⟩ := hi
+  exact h ⟨_, hd, hbo, hso⟩
 
-section CylindricAlgebra
+end Derivations
 
-open CylindricAlgebra
-open CDRT
+/-! ### Properness is representational (§III.5)
 
-/-- The equality condition on two discourse referents is the diagonal element. -/
-theorem eq_dref_eq_diag {E : Type*} (i j : Nat) :
-    Condition.eq (dref i : Dref (State E) E) (dref j) = diag i j := rfl
+A proper box and a box that is not proper may have the same semantic value: (45), the
+translation of "No¹ girl walks", and (47), that of "*No¹ girl walks. If she₁ talks she₁ talks",
+denote the same relation in every model, but only (45) is proper. Acceptability of an indexing
+is therefore a property of its representation, which is why rule T5 closes translations under
+lambda conversion and merging only. -/
 
-end CylindricAlgebra
+section Representational
 
-/-! ### fn. 4: the equivalence is a fact about total assignments
+open FirstOrder FirstOrder.Language DRT
 
-[muskens-1996]'s fn. 4 scopes the SEM ≡ verification equivalence
-(`DRS.toRel_iff_realize`) to total assignments, contrasting them with
-[kamp-reyle-1993]'s partial embeddings, where re-declared referents keep
-their values. A DRS that re-declares a referent separates the two: on
-`[ | [x | man x] ⇒ [x | mortal x]]` the agree-off-universe semantics may
-reassign the re-declared `x`, so it only demands that some mortal exist,
-while the persistence rendering (`DRS.toRelAt`, `DRS/Indexed.lean`) forces
-every man to be mortal. In a model with a non-mortal man the two truth
-values differ (`fn4_diverges`) — the witness is proper (`fn4_isProper`), so
-what fails is exactly reuse-freeness (`fn4_not_reuseFreeAt`), the hypothesis
-of the reconciliation `DRS.trueRel_iff_toRelAt`. -/
+/-- The relation symbols of (44)–(47) are `girl`, `walk` and `talk`. -/
+inductive GirlRel : ℕ → Type
+  | girl : GirlRel 1
+  | walk : GirlRel 1
+  | talk : GirlRel 1
+
+/-- The language of (44)–(47). -/
+def girlLang : Language := ⟨fun _ ↦ Empty, GirlRel⟩
+
+/-- `[u₁ | girl u₁, walk u₁]`. -/
+def girlWalks : DRS girlLang ℕ := .mk {1} [.rel .girl (![1]), .rel .walk (![1])]
+
+/-- `[ | talk u₁]`. -/
+def talks : DRS girlLang ℕ := .mk ∅ [.rel .talk (![1])]
+
+/-- The box (45) is `[ | not[u₁ | girl u₁, walk u₁]]`. -/
+def proper : DRS girlLang ℕ := .mk ∅ [.neg girlWalks]
+
+/-- The box (47) is `[ | not[u₁ | girl u₁, walk u₁], [ | talk u₁] ⇒ [ | talk u₁]]`. -/
+def improper : DRS girlLang ℕ := .mk ∅ [.neg girlWalks, .imp talks talks]
+
+theorem isProper_proper : proper.IsProper := by
+  simp [DRS.IsProper, proper, girlWalks]
+
+theorem not_isProper_improper : ¬ improper.IsProper := by
+  simp [DRS.IsProper, improper, girlWalks, talks]
+
+/-- (45) and (47) denote the same relation in every model. -/
+theorem toRel_improper_eq {M : Type*} [girlLang.Structure M] :
+    (DRS.toRel improper : Update (ℕ → M)) = DRS.toRel proper := by
+  ext ⟨a, a'⟩
+  simp [DRS.toRel_iff, improper, proper, talks, Box.Extends]
+  exact fun _ _ g _ hg ↦ ⟨g, fun _ ↦ rfl, hg⟩
+
+end Representational
+
+/-! ### fn. 4: the total-assignment semantics and re-declared referents
+
+[muskens-1996]'s fn. 4 scopes the agreement of his semantics with standard DRT to total
+assignments and notes a second difference: on `[ | [x | man x] ⇒ [x | mortal x]]`, where `x` is
+declared twice, standard DRT ignores the second declaration and says that every man is mortal,
+while here the second `x` takes a new value and the box says that there is a mortal if there is
+a man. The persistence semantics `DRS.toRelAt` (`DRS/Indexed.lean`) renders standard DRT, and in a
+model with a non-mortal man the two truth values differ (`fn4_diverges`). The witness is proper
+(`fn4_isProper`), so what fails is reuse-freeness (`fn4_not_reuseFreeAt`), the hypothesis of the
+reconciliation `DRS.trueRel_iff_toRelAt`. -/
 
 section Fn4
 
 open FirstOrder FirstOrder.Language DRT
 
-/-- Relation symbols of the fn. 4 witness: `man` and `mortal`. -/
+/-- The relation symbols of the fn. 4 witness are `man` and `mortal`. -/
 inductive Fn4Rel : ℕ → Type
   | man : Fn4Rel 1
   | mortal : Fn4Rel 1
 
 /-- The language of the fn. 4 witness (no function symbols). -/
-def fn4Lang : Language := ⟨λ _ => Empty, Fn4Rel⟩
+def fn4Lang : Language := ⟨fun _ ↦ Empty, Fn4Rel⟩
 
 /-- The antecedent `[x | man x]`. -/
 def fn4Ante : DRS fn4Lang ℕ := .mk {0} [.rel .man (![0])]
 
-/-- The consequent `[x | mortal x]` — re-declaring `x`. -/
+/-- The consequent `[x | mortal x]`, re-declaring `x`. -/
 def fn4Cons : DRS fn4Lang ℕ := .mk {0} [.rel .mortal (![0])]
 
-/-- `[ | [x | man x] ⇒ [x | mortal x]]` with the referent `0` re-declared in
-the consequent. -/
+/-- `[ | [x | man x] ⇒ [x | mortal x]]`, with the referent `0` declared twice. -/
 def fn4 : DRS fn4Lang ℕ := .mk ∅ [.imp fn4Ante fn4Cons]
 
 /-- A man (`0`) who is not mortal, and a mortal (`1`). -/
 instance : fn4Lang.Structure (Fin 2) where
   funMap {_} f _ := f.elim
   RelMap {n} R := match n, R with
-    | 1, .man => λ args => args 0 = 0
-    | 1, .mortal => λ args => args 0 = 1
+    | 1, .man => fun args ↦ args 0 = 0
+    | 1, .mortal => fun args ↦ args 0 = 1
 
-/-- The witness is proper: its referential presuppositions are satisfied. -/
 theorem fn4_isProper : fn4.IsProper := by
   simp [DRS.IsProper, fn4, fn4Ante, fn4Cons]
 
-/-- The witness is not reuse-free: the consequent re-declares `0`. -/
+/-- The consequent re-declares `0`. -/
 theorem fn4_not_reuseFreeAt : ¬ DRS.ReuseFreeAt ∅ fn4 := by
   simp [fn4, fn4Ante, fn4Cons]
 
-/-- Flat truth: every input verifies the witness — the re-declared referent
-may be reassigned, so it suffices that some mortal exist. -/
+/-- In Muskens's semantics every input verifies the witness, since the re-declared referent may
+take a new value and some mortal suffices. -/
 theorem fn4_trueRel (g : ℕ → Fin 2) : DRS.trueRel fn4 g := by
-  refine ⟨g, λ x _ => rfl, ?_⟩
+  refine ⟨g, fun _ _ ↦ rfl, ?_⟩
   intro c hc
   simp only [fn4, DRS.conditions_mk, List.mem_singleton] at hc
   subst hc
   rw [Embedding.verifies_imp]
   intro g₁ _ _
   refine ⟨Function.update g₁ 0 1,
-    λ x hx => by rw [Function.update_apply, ite_eq_right (by simpa [fn4Cons] using hx)], ?_⟩
+    fun x hx ↦ by rw [Function.update_apply, ite_eq_right (by simpa [fn4Cons] using hx)], ?_⟩
   intro c hc
   simp only [fn4Cons, DRS.conditions_mk, List.mem_singleton] at hc
   subst hc
@@ -323,23 +393,22 @@ theorem fn4_trueRel (g : ℕ → Fin 2) : DRS.trueRel fn4 g := by
   show Function.update g₁ 0 1 0 = 1
   simp
 
-/-- Indexed falsity: persistence keeps the re-declared referent's man value, so
-no output verifies the witness in a model with a non-mortal man. -/
+/-- In the persistence semantics no output verifies the witness, since the re-declared referent
+keeps its value, a man who is not mortal. -/
 theorem fn4_not_toRelAt (g : ℕ → Fin 2) : ¬ ∃ g', DRS.toRelAt ∅ fn4 g g' := by
   rintro ⟨g', hg'⟩
   have himp : Condition.holdsAt (∅ ∪ ∅) (.imp fn4Ante fn4Cons) g' := hg'.2.1
-  have hman : DRS.toRelAt (∅ ∪ ∅) fn4Ante g' (λ _ => 0) :=
-    ⟨λ x hx => absurd hx (by simp), rfl, trivial⟩
+  have hman : DRS.toRelAt (∅ ∪ ∅) fn4Ante g' fun _ ↦ 0 :=
+    ⟨fun x hx ↦ absurd hx (by simp), rfl, trivial⟩
   obtain ⟨g₂, heq, hmortal, -⟩ := himp _ hman
   have h0 : g₂ 0 = 0 := heq (by simp [fn4Ante])
   have h1 : g₂ 0 = 1 := hmortal
   exact absurd (h0.symm.trans h1) (by decide)
 
-/-- The reconciliation `DRS.trueRel_iff_toRelAt` fails on the witness:
-flat-true, indexed-false. -/
+/-- The reconciliation `DRS.trueRel_iff_toRelAt` fails on the witness. -/
 theorem fn4_diverges (g : ℕ → Fin 2) :
     ¬ (DRS.trueRel fn4 g ↔ ∃ g', DRS.toRelAt ∅ fn4 g g') :=
-  λ h => fn4_not_toRelAt g (h.mp (fn4_trueRel g))
+  fun h ↦ fn4_not_toRelAt g (h.mp (fn4_trueRel g))
 
 end Fn4
 
