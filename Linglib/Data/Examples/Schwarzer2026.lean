@@ -36,7 +36,7 @@ def ex11b : Datum :=
     primaryText := "Die Stadt beendet zum Jahreswechsel die Überarbeitung des Nahverkehrskonzepts und dass für Neugeborene ein Baum gepflanzt wird."
     glossedTokens := [("Die", "the"), ("Stadt", "city"), ("beendet", "ends"), ("zum", "at.the"), ("Jahreswechsel", "year.turn"), ("die", "the"), ("Überarbeitung", "revision"), ("des", "of.the"), ("Nahverkehrskonzepts", "public.transport.plan"), ("und", "and"), ("dass", "that"), ("für", "for"), ("Neugeborene", "newborns"), ("ein", "a"), ("Baum", "tree"), ("gepflanzt", "planted"), ("wird", "AUX.PASS")]
     context := ""
-    judgment := .marginal
+    judgment := .acceptable
     alternatives := []
     readings := []
     paperFeatures := [("experiment", "1"), ("verb", "beenden"), ("selectsCP", "no"), ("complement", "coord"), ("position", "postverbal"), ("order", "dpFirst")] }
@@ -67,58 +67,6 @@ def ex12b : Datum :=
     readings := []
     paperFeatures := [("experiment", "1"), ("verb", "veranlassen"), ("selectsCP", "yes"), ("complement", "coord"), ("position", "postverbal"), ("order", "dpFirst")] }
 
-def ex16a : Datum :=
-  { id := "schwarzer2026_ex16a"
-    source := ⟨"schwarzer-2026", "(16a)"⟩
-    reportedIn := none
-    language := "stan1295"
-    primaryText := "Die Stadt hat zum Jahreswechsel die Überarbeitung des Nahverkehrskonzepts und dass für Neugeborene ein Baum gepflanzt wird beendet."
-    glossedTokens := [("Die", "the"), ("Stadt", "city"), ("hat", "has"), ("zum", "at.the"), ("Jahreswechsel", "year.turn"), ("die", "the"), ("Überarbeitung", "revision"), ("des", "of.the"), ("Nahverkehrskonzepts", "public.transport.plan"), ("und", "and"), ("dass", "that"), ("für", "for"), ("Neugeborene", "newborns"), ("ein", "a"), ("Baum", "tree"), ("gepflanzt", "planted"), ("wird", "AUX.PASS"), ("beendet", "ended")]
-    context := ""
-    judgment := .acceptable
-    alternatives := []
-    readings := []
-    paperFeatures := [("experiment", "2"), ("verb", "beenden"), ("selectsCP", "no"), ("complement", "coord"), ("position", "preverbal"), ("order", "dpFirst")] }
-
-def ex16b : Datum :=
-  { id := "schwarzer2026_ex16b"
-    source := ⟨"schwarzer-2026", "(16b)"⟩
-    reportedIn := none
-    language := "stan1295"
-    primaryText := "Die Stadt hat zum Jahreswechsel dass für Neugeborene ein Baum gepflanzt wird und die Überarbeitung des Nahverkehrskonzepts beendet."
-    glossedTokens := [("Die", "the"), ("Stadt", "city"), ("hat", "has"), ("zum", "at.the"), ("Jahreswechsel", "year.turn"), ("dass", "that"), ("für", "for"), ("Neugeborene", "newborns"), ("ein", "a"), ("Baum", "tree"), ("gepflanzt", "planted"), ("wird", "AUX.PASS"), ("und", "and"), ("die", "the"), ("Überarbeitung", "revision"), ("des", "of.the"), ("Nahverkehrskonzepts", "public.transport.plan"), ("beendet", "ended")]
-    context := ""
-    judgment := .marginal
-    alternatives := []
-    readings := []
-    paperFeatures := [("experiment", "2"), ("verb", "beenden"), ("selectsCP", "no"), ("complement", "coord"), ("position", "preverbal"), ("order", "cpFirst")] }
-
-def ex17a : Datum :=
-  { id := "schwarzer2026_ex17a"
-    source := ⟨"schwarzer-2026", "(17a)"⟩
-    reportedIn := none
-    language := "stan1295"
-    primaryText := "Die Stadt beendet zum Jahreswechsel die Überarbeitung des Nahverkehrskonzepts und dass für Neugeborene ein Baum gepflanzt wird."
-    glossedTokens := [("Die", "the"), ("Stadt", "city"), ("beendet", "ends"), ("zum", "at.the"), ("Jahreswechsel", "year.turn"), ("die", "the"), ("Überarbeitung", "revision"), ("des", "of.the"), ("Nahverkehrskonzepts", "public.transport.plan"), ("und", "and"), ("dass", "that"), ("für", "for"), ("Neugeborene", "newborns"), ("ein", "a"), ("Baum", "tree"), ("gepflanzt", "planted"), ("wird", "AUX.PASS")]
-    context := ""
-    judgment := .acceptable
-    alternatives := []
-    readings := []
-    paperFeatures := [("experiment", "2"), ("verb", "beenden"), ("selectsCP", "no"), ("complement", "coord"), ("position", "postverbal"), ("order", "dpFirst")] }
-
-def ex17b : Datum :=
-  { id := "schwarzer2026_ex17b"
-    source := ⟨"schwarzer-2026", "(17b)"⟩
-    reportedIn := none
-    language := "stan1295"
-    primaryText := "Die Stadt beendet zum Jahreswechsel dass für Neugeborene ein Baum gepflanzt wird und die Überarbeitung des Nahverkehrskonzepts."
-    glossedTokens := [("Die", "the"), ("Stadt", "city"), ("beendet", "ends"), ("zum", "at.the"), ("Jahreswechsel", "year.turn"), ("dass", "that"), ("für", "for"), ("Neugeborene", "newborns"), ("ein", "a"), ("Baum", "tree"), ("gepflanzt", "planted"), ("wird", "AUX.PASS"), ("und", "and"), ("die", "the"), ("Überarbeitung", "revision"), ("des", "of.the"), ("Nahverkehrskonzepts", "public.transport.plan")]
-    context := ""
-    judgment := .marginal
-    alternatives := []
-    readings := []
-    paperFeatures := [("experiment", "2"), ("verb", "beenden"), ("selectsCP", "no"), ("complement", "coord"), ("position", "postverbal"), ("order", "cpFirst")] }
-
-def all : List Datum := [ex11a, ex11b, ex12a, ex12b, ex16a, ex16b, ex17a, ex17b]
+def all : List Datum := [ex11a, ex11b, ex12a, ex12b]
 
 end Schwarzer2026.Examples
