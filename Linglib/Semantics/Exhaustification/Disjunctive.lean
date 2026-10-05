@@ -400,6 +400,24 @@ theorem II_pair (hcov : φ ⊆ d₁ ∪ d₂) (h₁ : ∃ w ∈ φ ∩ d₁, w �
     · exact absurd h (not_or.2 ⟨hw₁'.2, hw₂'.2⟩)
   · rintro (rfl | rfl | rfl) <;> simp [hw₁, hw₂, hw₁₁, hw₂₂]
 
+/-- The third alternative is the only innocently excludable one. -/
+theorem isInnocentlyExcludable_pair_iff (hcov : φ ⊆ d₁ ∪ d₂) (h₁ : ∃ w ∈ φ ∩ d₁, w ∉ d₂ ∪ c)
+    (h₂ : ∃ w ∈ φ ∩ d₂, w ∉ d₁ ∪ c) {q : Set World} :
+    IsInnocentlyExcludable {φ, d₁, d₂, c} φ q ↔ q = c := by
+  obtain ⟨w₁, hw₁⟩ := h₁
+  obtain ⟨w₂, hw₂⟩ := h₂
+  have hM := isMinimalCover_pair hcov hw₁ hw₂
+  obtain ⟨⟨hw₁, hw₁₁⟩, hw₁'⟩ := hw₁
+  obtain ⟨⟨hw₂, hw₂₂⟩, hw₂'⟩ := hw₂
+  simp only [Set.mem_union, not_or] at hw₁' hw₂'
+  refine ⟨fun hq ↦ ?_, ?_⟩
+  · have := (hM.isInnocentlyExcludable_iff hq.1).1 hq
+    simp only [Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, forall_eq] at this
+    rcases hq.1 with rfl | rfl | rfl | rfl
+    exacts [absurd hw₁ this.1, absurd hw₁₁ this.1, absurd hw₂₂ this.2, rfl]
+  · rintro rfl
+    exact (hM.isInnocentlyExcludable_iff (by simp)).2 (by simp [hw₁'.2, hw₂'.2])
+
 end Pair
 
 section Cover

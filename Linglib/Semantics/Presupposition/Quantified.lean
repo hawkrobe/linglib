@@ -5,23 +5,32 @@ public import Linglib.Semantics.Presupposition.Defs
 /-!
 # Quantified presupposition projection
 
-Projection of presuppositions from the scope of quantifiers — the
-empirically contested corner of projection theory: [chemla-2009-quantified]
-supports universal projection, [mayr-sauerland-2015] argue for existential
-semantic projection pragmatically strengthened, and [spector-sudo-2017]
-delimit when each reading surfaces.
+A presupposition triggered in the scope of a quantifier may project universally, as Chemla's
+experiments support, or existentially, as Mayr and Sauerland argue for a semantic projection
+that pragmatics then strengthens; Spector and Sudo delimit when each reading surfaces. Each
+quantifier here fixes its projection, so a consumer commits to a theory by its choice of
+operator. The strong Kleene existential of Kleene and Fox is instead defined exactly where some
+instance is true or every instance is false.
 
 ## Main declarations
 
-* `forallPartial` — universal quantification, universal projection.
-* `existsPartialUniv` / `existsPartialExist` — existential quantification
-  with universal vs existential projection; consumers committing to a
-  projection theory pick one explicitly.
-* `negExistsPartial` — negated existential, universal projection.
-* `existsPartialStrong` — the strong Kleene existential ([kleene-1952], [fox-2013]): true when
-  some instance is true, false when every instance is false, so that its presupposition is a
-  disjunction; `existsPartialStrong_presup_iff` reduces it to a presupposition every instance
-  shares, over a nonempty domain.
+* `forallPartial`: universal quantification with universal projection.
+* `existsPartialUniv`, `existsPartialExist`: existential quantification with universal and with
+  existential projection.
+* `negExistsPartial`: the negated existential with universal projection.
+* `existsUniquePartial`: *exactly one* with universal projection, which Del Pinal, Bassi and
+  Sauerland assume for non-monotonic quantifiers.
+* `existsPartialStrong`, `existsPartialStrong_presup_iff`: the strong Kleene existential, whose
+  presupposition over a nonempty domain reduces to one every instance shares.
+
+## References
+
+* [chemla-2009-quantified]
+* [mayr-sauerland-2015]
+* [spector-sudo-2017]
+* [kleene-1952]
+* [fox-2013]
+* [delpinal-bassi-sauerland-2024]
 -/
 
 @[expose] public section
@@ -32,52 +41,38 @@ namespace PartialProp
 
 variable {W : Type*}
 
-/-- Universal presupposition projection: presuppositions project
-    universally from the scope of a universal quantifier.
-
-    For ∀x ∈ S, φ(x) where φ(x) is a PartialProp:
-    - asserts: ∀x ∈ S, assertion(φ(x))
-    - presupposes: ∀x ∈ S, presup(φ(x))
-
-    [chemla-2009-quantified], [fox-2013]: presuppositions triggered in
-    the scope of a universal quantifier tend to project universally.
-    ([mayr-sauerland-2015] dissent: semantic projection is existential,
-    pragmatically strengthened — cf. [spector-sudo-2017].) -/
+/-- `forallPartial S φ` asserts that every `x` with `S x` satisfies the assertion of `φ x` and
+presupposes that every such `x` satisfies its presupposition. -/
 def forallPartial {α : Type*} (S : α → Prop) (φ : α → PartialProp W) : PartialProp W where
   presup := fun w => ∀ x, S x → (φ x).presup w
   assertion := fun w => ∀ x, S x → (φ x).assertion w
 
-/-- Existential presupposition projection — universal presup, existential
-    assert.
-
-    For ∃x ∈ S, φ(x): presuppositions project *universally*, but the
-    assertion is existential. This is the projection choice supported
-    experimentally by [chemla-2009-quantified]; whether it is the right
-    default is empirically contested — see [spector-sudo-2017] for
-    conditions under which a non-universal (existential) reading is
-    preferred. Consumers committing to a projection theory should pick
-    `existsPartialUniv` or `existsPartialExist` explicitly. -/
+/-- `existsPartialUniv S φ` asserts that some `x` with `S x` satisfies the assertion of `φ x` and
+presupposes that every such `x` satisfies its presupposition. -/
 def existsPartialUniv {α : Type*} (S : α → Prop) (φ : α → PartialProp W) : PartialProp W where
   presup := fun w => ∀ x, S x → (φ x).presup w
   assertion := fun w => ∃ x, S x ∧ (φ x).assertion w
 
-/-- Existential presupposition projection — existential presup, existential
-    assert. The non-universal alternative to `existsPartialUniv`; see
-    [spector-sudo-2017] for the empirical debate. -/
+/-- `existsPartialExist S φ` asserts that some `x` with `S x` satisfies the assertion of `φ x` and
+presupposes that some such `x` satisfies its presupposition. -/
 def existsPartialExist {α : Type*} (S : α → Prop) (φ : α → PartialProp W) : PartialProp W where
   presup := fun w => ∃ x, S x ∧ (φ x).presup w
   assertion := fun w => ∃ x, S x ∧ (φ x).assertion w
 
-/-- Negated existential with universal presupposition projection.
-
-    For ¬∃x ∈ S, φ(x): equivalent to ∀x ∈ S, ¬φ(x).
-    Presuppositions project universally. -/
+/-- `negExistsPartial S φ` asserts that no `x` with `S x` satisfies the assertion of `φ x` and
+presupposes that every such `x` satisfies its presupposition. -/
 def negExistsPartial {α : Type*} (S : α → Prop) (φ : α → PartialProp W) : PartialProp W where
   presup := fun w => ∀ x, S x → (φ x).presup w
   assertion := fun w => ¬∃ x, S x ∧ (φ x).assertion w
 
-/-- The strong Kleene existential ([kleene-1952], [fox-2013]): true when some instance is true,
-false when every instance is false, and undefined otherwise. -/
+/-- `existsUniquePartial S φ` asserts that exactly one `x` with `S x` satisfies the assertion of
+`φ x` and presupposes that every such `x` satisfies its presupposition. -/
+def existsUniquePartial {α : Type*} (S : α → Prop) (φ : α → PartialProp W) : PartialProp W where
+  presup := fun w => ∀ x, S x → (φ x).presup w
+  assertion := fun w => ∃! x, S x ∧ (φ x).assertion w
+
+/-- The strong Kleene existential is true when some instance is true, false when every instance
+is false, and undefined otherwise. -/
 def existsPartialStrong {α : Type*} (S : α → Prop) (φ : α → PartialProp W) : PartialProp W where
   presup w := (∃ x, S x ∧ (φ x).holds w) ∨ ∀ x, S x → (φ x).presup w ∧ ¬ (φ x).assertion w
   assertion w := ∃ x, S x ∧ (φ x).holds w
