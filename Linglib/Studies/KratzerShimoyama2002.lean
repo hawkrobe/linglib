@@ -40,10 +40,10 @@ inflectional negation realizes direct negation, which the series lacks (`irgende
 
 Hamblin functional application is mathlib's `Set.seq`, and singleton denotations are
 `{f}`; the four sentential operators return singleton sets, as in the paper, so that closure
-is idle on an already closed set. The operators are the denotations of coordinators on sets of
-coordinands, `Coordinator.Role.denote` (`opExists_eq_denote`), and on individual alternatives
-they give the readings of the indeterminate quantifiers in `Fragments/Japanese/Determiners.lean`
-(`denote_image_eq_reading`),
+is idle on an already closed set. The existential and universal operators are what the
+coordinators *ka* and *mo* denote on the set of alternatives (`opExists_eq_denote_ka`,
+`opForall_eq_denote_mo`), and on individual alternatives they give the readings of the
+indeterminate quantifiers in `Fragments/Japanese/Determiners.lean` (`denote_image_eq_reading`),
 an identification of *ka* and *mo* with the coordinators that the fragment makes and the paper
 does not. The modal semantics is stated for an accessibility relation
 on any type of worlds, and the free-choice computations are the paper's three tables with
@@ -118,20 +118,20 @@ theorem opForall_image (P : E → W → Prop) (A : Set E) :
     opForall (P '' A) = {fun w ↦ ∀ x ∈ A, P x w} := by
   simp [opForall]
 
-/-- Existential closure is the disjunction of the alternatives, which in Japanese is *ka*. -/
-theorem opExists_eq_denote (A : Set (W → Prop)) :
-    opExists A = {Coordinator.Role.denote .disjunctive A} := by
-  rw [opExists]; congr 1; ext w; simp [sSup_apply]
+/-- Existential closure is what the disjunctive *ka* denotes on the alternatives. -/
+theorem opExists_eq_denote_ka (A : Set (W → Prop)) :
+    opExists A = {Japanese.Coordination.ka.denote A} := by
+  rw [opExists, Coordinator.denote_of_disjunctive rfl]; congr 1; ext w; simp [sSup_apply]
 
-/-- Universal closure is the conjunction of the alternatives, which in Japanese is *mo*. -/
-theorem opForall_eq_denote (A : Set (W → Prop)) :
-    opForall A = {Coordinator.Role.denote .conjunctive A} := by
-  rw [opForall]; congr 1; ext w; simp [sInf_apply]
+/-- Universal closure is what the conjunctive *mo* denotes on the alternatives. -/
+theorem opForall_eq_denote_mo (A : Set (W → Prop)) :
+    opForall A = {Japanese.Coordination.mo.denote A} := by
+  rw [opForall, Coordinator.denote_of_conjunctive rfl]; congr 1; ext w; simp [sInf_apply]
 
-/-- Negative closure is the negative coordination of the alternatives. -/
-theorem opNeg_eq_denote (A : Set (W → Prop)) :
-    opNeg A = {Coordinator.Role.denote .negative A} := by
-  rw [opNeg]; congr 1; ext w; simp [sSup_apply]
+/-- Negative closure is what a negative coordinator denotes on the alternatives. -/
+theorem opNeg_eq_denote {c : Coordinator} (hc : c.role = .negative) (A : Set (W → Prop)) :
+    opNeg A = {c.denote A} := by
+  rw [opNeg, Coordinator.denote_of_negative hc]; congr 1; ext w; simp [sSup_apply]
 
 /-- The coordination an indeterminate's particle applies to the propositions a predicate yields
 from a set of individuals is, at each world, the indeterminate's reading in
@@ -139,9 +139,9 @@ from a set of individuals is, at each world, the indeterminate's reading in
 of the paper's closure with individual alternatives (§2). -/
 theorem denote_image_eq_reading [Fintype E] (q : Japanese.Determiners.Indefinite)
     (P : E → W → Prop) (A : Set E) :
-    q.particle.role.denote (P '' A) = fun w ↦ q.reading E (· ∈ A) (P · w) := by
+    q.particle.denote (P '' A) = fun w ↦ q.reading E (· ∈ A) (P · w) := by
   funext w
-  rw [Coordinator.Role.denote_apply, Set.image_image]
+  rw [Coordinator.denote_apply, Set.image_image]
   rfl
 
 end Composition

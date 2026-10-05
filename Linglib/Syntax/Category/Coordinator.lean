@@ -9,8 +9,8 @@ public import Linglib.Morphology.Word.Basic
 A coordinator is a word or clitic that links the coordinands of a coordinate construction, such
 as *and*, *or*, *but* and *nor*. This file defines its lexical record, with the form, the gloss,
 the semantic type and the attachment of the coordinator and the other uses its form has. What a
-semantic type denotes, an operation on the set of coordinands, is `Coordinator.Role.denote` in
-`Semantics/Composition/Coordinator.lean`.
+coordinator denotes, an operation on the set of coordinands that its semantic type fixes, is
+`Coordinator.denote` in `Semantics/Composition/Coordinator.lean`.
 
 ## Main definitions
 
@@ -51,8 +51,8 @@ inductive Role where
 
 end Coordinator
 
-/-- A coordinator of a language. Its denotation is not stored, since it is that of its semantic
-type, `role.denote`. -/
+/-- A coordinator of a language. Its denotation is not stored, since its semantic type fixes it,
+`Coordinator.denote`. -/
 structure Coordinator where
   /-- The surface form. -/
   form : String

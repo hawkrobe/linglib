@@ -74,18 +74,18 @@ theorem mu_eq_every : (mu : GQ α) = GQ.every := rfl
 theorem mu_shift (a : α) : mu (shift a) = NP.individual a :=
   funext fun _ ↦ propext ⟨fun h ↦ h a rfl, fun h _ hx ↦ hx ▸ h⟩
 
-/-- In the conjunction of two individuals, (13), J′, intersection, of the μ phrases of the
-shifted conjuncts is the meet of their Montague lifts. -/
-theorem conjunction_eq (a b : α) :
-    Coordinator.Role.denote .conjunctive {mu (shift a), mu (shift b)} =
-      NP.individual a ⊓ NP.individual b := by
-  rw [mu_shift, mu_shift, Coordinator.Role.denote_conjunctive, sInf_pair]
+/-- In the conjunction of two individuals, (13), J′, a conjunctive coordinator and so
+intersection, applied to the μ phrases of the shifted conjuncts gives the meet of their Montague
+lifts. -/
+theorem conjunction_eq {j : Coordinator} (hj : j.role = .conjunctive) (a b : α) :
+    j.denote {mu (shift a), mu (shift b)} = NP.individual a ⊓ NP.individual b := by
+  rw [mu_shift, mu_shift, Coordinator.denote_of_conjunctive hj, sInf_pair]
 
 /-- The conjunction holds of a predicate that holds of each conjunct, so it has no collective
 reading, (14). -/
-theorem conjunction_apply (a b : α) (P : α → Prop) :
-    Coordinator.Role.denote .conjunctive {mu (shift a), mu (shift b)} P ↔ P a ∧ P b := by
-  rw [conjunction_eq]; rfl
+theorem conjunction_apply {j : Coordinator} (hj : j.role = .conjunctive) (a b : α)
+    (P : α → Prop) : j.denote {mu (shift a), mu (shift b)} P ↔ P a ∧ P b := by
+  rw [conjunction_eq hj]; rfl
 
 /-- J′ cannot apply to the shifted individuals without μ, since the intersection of two
 singletons is empty unless the conjuncts are identical. -/

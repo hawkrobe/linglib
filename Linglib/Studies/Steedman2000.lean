@@ -185,10 +185,10 @@ def pqLex : SemLexicon Unit Unit := fun w c ↦
   | "q", .atom .S => some False
   | "and", .rslash (.lslash (.atom .S) _ (.atom .S)) _ (.atom .S) =>
       some (show Prop → Prop → Prop from
-        fun q p ↦ English.Coordination.and_.role.denote {p, q})
+        fun q p ↦ English.Coordination.and_.denote {p, q})
   | "or", .rslash (.lslash (.atom .S) _ (.atom .S)) _ (.atom .S) =>
       some (show Prop → Prop → Prop from
-        fun q p ↦ English.Coordination.or_.role.denote {p, q})
+        fun q p ↦ English.Coordination.or_.denote {p, q})
   | _, _ => none
 
 def dp : Derivation Atom S := .lex "p" S
