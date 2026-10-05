@@ -93,8 +93,8 @@ namespace Voice
 
 /-! ### Transitivity-related roles -/
 
-/-- The role of a nominal term in [creissels-2024]'s binary core-term system: the core
-roles S, A and P, and X for obliques. -/
+/-- The role of a nominal term in [creissels-2024]'s binary core-term system is one of the
+core roles S, A and P, or X for an oblique. -/
 inductive TermRole where
   /-- The sole core term of an intransitive clause. -/
   | S
@@ -106,8 +106,8 @@ inductive TermRole where
   | X
   deriving DecidableEq, Repr
 
-/-- The transitivity-related role of a comparative coding role: recipients and themes are
-P-like core terms. -/
+/-- The transitivity-related role of a comparative coding role, under which recipients and
+themes are P-like core terms. -/
 def TermRole.ofArgumentRole : ArgumentRole → TermRole
   | .S => .S
   | .A => .A
@@ -140,8 +140,8 @@ instance : DecidablePred ParticipantFate.RemovesFromCoreStatus := fun f ↦ by
 
 /-! ### Coding -/
 
-/-- How a voice is coded on the verb: by verbal morphology, by an analytic construction, or
-not at all, the unmarked voice of a system or a flexivalent alternation ([creissels-2024]
+/-- A voice is coded on the verb by verbal morphology, by an analytic construction, or not at
+all, as the unmarked voice of a system and a flexivalent alternation are ([creissels-2024]
 §1.1.3). Equipollence is a property of a system, `Voice.Equipollent`. -/
 inductive Coding where
   | synthetic
@@ -149,8 +149,8 @@ inductive Coding where
   | uncoded
   deriving DecidableEq, Repr
 
-/-- The coding type of a marker: uncoded when empty, synthetic when every morph is bound,
-analytic otherwise. -/
+/-- A marker is uncoded when empty, synthetic when every morph is bound, and analytic
+otherwise. -/
 def Coding.ofMarker (ms : List Morphology.Morph) : Coding :=
   if ms = [] then .uncoded
   else if ms.all fun m ↦ m.kind.side?.isSome then .synthetic
@@ -158,9 +158,9 @@ def Coding.ofMarker (ms : List Morphology.Morph) : Coding :=
 
 end Voice
 
-/-- A voice: the initial and the derived argument frame, the slot of the derived frame each
-slot of the initial frame's participant occupies, the derived slot that is the pivot, and
-the marker on the verb. -/
+/-- A voice is an initial and a derived argument frame, the slot of the derived frame each
+slot of the initial frame's participant occupies, the derived slot that is the pivot, and the
+marker on the verb. -/
 @[ext]
 structure Voice where
   /-- The initial construction. -/
@@ -170,12 +170,12 @@ structure Voice where
   /-- The derived slot each initial slot's participant occupies; an initial slot without an
       entry is suppressed from participant structure. -/
   correspondence : List (ArgumentFrame.Slot × ArgumentFrame.Slot)
-  /-- The syntactically privileged term of the derived construction: its first core slot, S
-      or A, unless a symmetrical voice selects another; `none` for an impersonal
-      construction ([creissels-2024] §8.1.7). -/
+  /-- The pivot is the syntactically privileged term of the derived construction, its first
+      core slot, S or A, unless a symmetrical voice selects another; it is `none` for an
+      impersonal construction ([creissels-2024] §8.1.7). -/
   pivot : Option ArgumentFrame.Slot := target.coreSlots.head?
-  /-- The morphs coding the voice on the verb, in surface order: affixes, an auxiliary, or
-      none for a zero-marked or an unmarked voice. -/
+  /-- The marker lists the morphs coding the voice on the verb in surface order, affixes or an
+      auxiliary, and is empty for a zero-marked or an unmarked voice. -/
   marker : List Morphology.Morph := []
   deriving DecidableEq, Repr
 
@@ -194,17 +194,17 @@ def image (s : Slot) : Option Slot := v.correspondence.lookup s
 def preimages (t : Slot) : List Slot :=
   v.source.slots.filter fun s ↦ v.image s == some t
 
-/-- The transitivity-related role of a derived slot: the coding role of a core slot, X for an
-expressed oblique, none for an implicit or expletive position. -/
+/-- The transitivity-related role of a derived slot is the coding role of a core slot, X for an
+expressed oblique, and none for an implicit or expletive position. -/
 def targetRole (t : Slot) : Option TermRole :=
   match v.target.codingRole t, v.target.get? t with
   | some r, _ => some (TermRole.ofArgumentRole r)
   | none, some p => if p.IsExpressed then some .X else none
   | none, none => none
 
-/-- The fate of an initial slot: suppressed without a correspondent; cumulated when another
-initial core term shares its derived core slot; maintained in a derived core slot;
-denucleativized otherwise; not applicable to a non-core initial slot. -/
+/-- An initial slot is suppressed when it has no correspondent, cumulated when another initial
+core term shares its derived core slot, maintained in a derived core slot, and denucleativized
+otherwise; a non-core initial slot has no fate. -/
 def fate (s : Slot) : ParticipantFate :=
   if s ∈ v.source.coreSlots then
     match v.image s with
@@ -223,9 +223,8 @@ def fateOfRole (r : TermRole) : ParticipantFate :=
   | some s => v.fate s
   | none => .na
 
-/-- The derived slots the derived construction introduces: expressed slots whose participant
-was not a core term of the initial construction, either new to it or nucleativized from a
-non-core slot. -/
+/-- The derived construction introduces the expressed slots whose participant was not a core
+term of the initial construction, either new to it or nucleativized from a non-core slot. -/
 def introduced : List Slot :=
   v.target.slots.filter fun t ↦
     (v.targetRole t).isSome &&
@@ -234,7 +233,7 @@ def introduced : List Slot :=
 /-- The role of the participant the derived construction introduces, if one. -/
 def newParticipant : Option TermRole := v.introduced.head?.bind v.targetRole
 
-/-- The transitivity-related role of the pivot: S, A or P for a core term, X for an
+/-- The transitivity-related role of the pivot is S, A or P for a core term and X for an
 oblique. -/
 def pivotRole : Option TermRole := v.pivot.bind v.targetRole
 
@@ -250,27 +249,29 @@ def Denucleativizes : Prop :=
 /-- Two initial core terms are cumulated. -/
 def Cumulates : Prop := ∃ s ∈ v.source.coreSlots, v.fate s = .cumulated
 
-/-- Valency-increasing: nucleativizes without denucleativizing. -/
+/-- A voice is valency-increasing when it nucleativizes without denucleativizing. -/
 def IsValencyIncreasing : Prop := v.Nucleativizes ∧ ¬ v.Denucleativizes
 
-/-- Valency-decreasing: denucleativizes without nucleativizing. -/
+/-- A voice is valency-decreasing when it denucleativizes without nucleativizing. -/
 def IsValencyDecreasing : Prop := v.Denucleativizes ∧ ¬ v.Nucleativizes
 
-/-- Symmetrical: the voice neither nucleativizes nor denucleativizes, so it does not affect
-the transitivity of the construction ([creissels-2024] §8.1.7). -/
+/-- A voice is symmetrical when it neither nucleativizes nor denucleativizes, so that it does
+not affect the transitivity of the construction ([creissels-2024] §8.1.7). -/
 def IsSymmetrical : Prop := ¬ v.Nucleativizes ∧ ¬ v.Denucleativizes
 
 /-- The pivot is an oblique, the selection a binary system does not allow
 ([creissels-2024] §8.5.2). -/
 def SelectsOblique : Prop := v.pivotRole = some .X
 
-/-- No term is privileged: an impersonal construction ([creissels-2024] §8.3.2.2). -/
+/-- A voice is impersonal when its derived construction privileges no term ([creissels-2024]
+§8.3.2.2). -/
 def IsImpersonal : Prop := v.pivot = none
 
 /-- The coding type of the voice, read off its marker ([creissels-2024] §1.1.3). -/
 def coding : Coding := .ofMarker v.marker
 
-/-- Coded on the verb: a voice as against flexivalency ([creissels-2024] §1.1.3). -/
+/-- A voice is coded when it is marked on the verb, as against a flexivalent alternation
+([creissels-2024] §1.1.3). -/
 def IsCoded : Prop := v.marker ≠ []
 
 instance : Decidable v.Nucleativizes := inferInstanceAs (Decidable (∃ _ ∈ _, _))
@@ -313,7 +314,7 @@ theorem IsValencyDecreasing.not_isSymmetrical (h : v.IsValencyDecreasing) :
 
 /-! ### The trivial voice -/
 
-/-- The trivial voice of a frame with itself: the initial construction of a system. -/
+/-- The trivial voice of a frame with itself is the initial construction of a system. -/
 def refl (fr : ArgumentFrame) : Voice :=
   { source := fr, target := fr, correspondence := fr.slots.map fun s ↦ (s, s) }
 
@@ -360,67 +361,67 @@ theorem isSymmetrical_refl (fr : ArgumentFrame) : (refl fr).IsSymmetrical := by
 
 open ArgumentFrame.Slot
 
-/-- The active: the initial transitive construction. -/
+/-- The active is the initial transitive construction. -/
 def active : Voice := refl .np
 
-/-- The agent voice of a symmetrical system, the agent the pivot: the active. -/
+/-- The agent voice of a symmetrical system, with the agent the pivot, is the active. -/
 abbrev agentVoice : Voice := active
 
-/-- The passive of a frame, the transitive one by default: the external argument is
-denucleativized but maintained in participant structure, implied here and expressed as an
-oblique in a long passive, and the first complement is the pivot ([creissels-2024]
-§8.3.2.1). -/
+/-- The passive of a frame, the transitive one by default, denucleativizes the external
+argument but maintains it in participant structure, implied here and expressed as an oblique in
+a long passive, and makes the first complement the pivot ([creissels-2024] §8.3.2.1). -/
 def passive (fr : ArgumentFrame := .np) : Voice :=
   { source := fr, target := ⟨none, fr.complements ++ [.implicit]⟩,
     correspondence := (external, complement fr.complements.length) ::
       (List.range fr.complements.length).map fun i ↦ (complement i, complement i) }
 
-/-- The impersonal passive: the passive whose derived construction privileges no term, the
-initial P keeping its coding ([creissels-2024] §8.3.2.2); of an intransitive frame, the
-denucleativization of its S (§8.3.2.4). -/
+/-- The impersonal passive is the passive whose derived construction privileges no term, the
+initial P keeping its coding ([creissels-2024] §8.3.2.2); of an intransitive frame, it
+denucleativizes the S (§8.3.2.4). -/
 def impersonalPassive (fr : ArgumentFrame := .np) : Voice := { passive fr with pivot := none }
 
-/-- The antipassive: the initial P is denucleativized and the initial A is the S of an
+/-- The antipassive denucleativizes the initial P and makes the initial A the S of an
 intransitive construction ([creissels-2024] §8.3.2.3). -/
 def antipassive : Voice :=
   { source := .np, target := .pp,
     correspondence := [(external, external), (complement 0, complement 0)] }
 
-/-- The anticausative: the initial A is suppressed from participant structure and the
-initial P is the S of an intransitive construction; [creissels-2024]'s decausativization
+/-- The anticausative suppresses the initial A from participant structure and makes the
+initial P the S of an intransitive construction, [creissels-2024]'s decausativization
 (§8.3.1.2). -/
 def anticausative : Voice :=
   { source := .np, target := .unaccusative, correspondence := [(complement 0, complement 0)] }
 
-/-- The causative: a causer is nucleativized as the A of a transitive construction whose P is
-the initial S ([creissels-2024] §8.3.1.1). -/
+/-- The causative nucleativizes a causer as the A of a transitive construction whose P is the
+initial S ([creissels-2024] §8.3.1.1). -/
 def causative : Voice :=
   { source := .intransitive, target := .np, correspondence := [(external, complement 0)] }
 
-/-- The reflexive: the initial A and P are cumulated in one S ([creissels-2024] §8.3.3). -/
+/-- The reflexive cumulates the initial A and P in one S ([creissels-2024] §8.3.3). -/
 def reflexive : Voice :=
   { source := .np, target := .intransitive,
     correspondence := [(external, external), (complement 0, external)] }
 
-/-- The reciprocal: the reflexive with a group reading ([creissels-2024] §8.3.3). -/
+/-- The reciprocal is the reflexive with a group reading ([creissels-2024] §8.3.3). -/
 abbrev reciprocal : Voice := reflexive
 
-/-- The applicative: an applied participant is nucleativized as a second P beside the
-initial A and P ([creissels-2024] §8.3.5). -/
+/-- The applicative nucleativizes an applied participant as a second P beside the initial A
+and P ([creissels-2024] §8.3.5). -/
 def applicative : Voice :=
   { source := .np, target := .np_np,
     correspondence := [(external, external), (complement 0, complement 0)] }
 
-/-- The patient voice of a symmetrical system: the transitive construction unchanged, the
-patient the pivot ([creissels-2024] §8.5.1). -/
+/-- The patient voice of a symmetrical system leaves the transitive construction unchanged and
+makes the patient the pivot ([creissels-2024] §8.5.1). -/
 def patientVoice : Voice := { refl .np with pivot := some (complement 0) }
 
-/-- An oblique voice of a multiple symmetrical system: the transitive construction with an
-oblique of relation `r` unchanged, the oblique the pivot ([creissels-2024] §8.5.2). -/
-def obliqueVoice (r : Adposition.RelationType) : Voice :=
+/-- An oblique voice of a multiple symmetrical system leaves the transitive construction with
+an oblique marking a case of type `r` unchanged and makes the oblique the pivot
+([creissels-2024] §8.5.2). -/
+def obliqueVoice (r : Case.Kind) : Voice :=
   { refl ⟨some .nominal, [.nominal, .adpositional (some r)]⟩ with pivot := some (complement 1) }
 
-/-- The locative voice: the oblique voice of a spatial oblique. -/
+/-- The locative voice is the oblique voice of a spatial oblique. -/
 abbrev locativeVoice : Voice := obliqueVoice .spatial
 
 /-! ### Properties of the voices -/
@@ -450,15 +451,15 @@ theorem applicative_isValencyIncreasing : applicative.IsValencyIncreasing := by 
 
 theorem patientVoice_isSymmetrical : patientVoice.IsSymmetrical := isSymmetrical_refl _
 
-theorem obliqueVoice_isSymmetrical (r : Adposition.RelationType) :
+theorem obliqueVoice_isSymmetrical (r : Case.Kind) :
     (obliqueVoice r).IsSymmetrical := isSymmetrical_refl _
 
-theorem obliqueVoice_selectsOblique (r : Adposition.RelationType) :
+theorem obliqueVoice_selectsOblique (r : Case.Kind) :
     (obliqueVoice r).SelectsOblique := by cases r <;> decide
 
 /-! ### Alternating verbs -/
 
-/-- The verb alternates by `v`: some frame of its refines the initial frame and some the
+/-- The verb alternates by `v` when some frame of its refines the initial frame and some the
 derived frame. Necessary for the alternation, not sufficient, since the two frames need not be
 related by it. -/
 def _root_.Verb.Alternates (w : Verb) (v : Voice) : Prop :=
@@ -469,8 +470,8 @@ instance (w : Verb) (v : Voice) : Decidable (w.Alternates v) :=
 
 /-! ### Alignment -/
 
-/-- The alignment of the core terms of transitive and intransitive clauses: S coded like A,
-or like P ([creissels-2024] §1.3.4). -/
+/-- The alignment of the core terms of transitive and intransitive clauses codes S like A or
+like P ([creissels-2024] §1.3.4). -/
 inductive Alignment where
   /-- S is coded like A, traditionally accusative. -/
   | A_alignment

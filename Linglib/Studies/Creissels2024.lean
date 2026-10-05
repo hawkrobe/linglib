@@ -99,9 +99,9 @@ open Voice
 
 /-! ### Constructions and transitivity-related roles (§1.3) -/
 
-/-- What a construction does with a potential participant of the verb: expresses it as a
-nominal term with a transitivity-related role, as a dative oblique, leaves it implied but
-unexpressed, or has it outside participant structure. -/
+/-- A construction expresses a potential participant of the verb as a nominal term with a
+transitivity-related role or as a dative oblique, leaves it implied but unexpressed, or has it
+outside participant structure. -/
 inductive Status where
   | term (r : TermRole)
   | dative
@@ -117,7 +117,7 @@ def role : Status → Option TermRole
   | dative => some .X
   | _ => none
 
-/-- A nuclear participant: one expressed as a core term. -/
+/-- A participant is nuclear when it is expressed as a core term. -/
 def Nuclear : Status → Prop
   | term r => r ≠ .X
   | _ => False
@@ -150,7 +150,7 @@ def Impersonal (c : Construction ι) : Prop := ∀ i, c i ≠ .term .A ∧ c i �
 section
 variable [Fintype ι] [DecidableEq ι]
 
-/-- The valency of a construction: its number of nuclear participants. -/
+/-- The valency of a construction is its number of nuclear participants. -/
 def valency (c : Construction ι) : ℕ := (Finset.univ.filter λ i => (c i).Nuclear).card
 
 instance (c : Construction ι) : Decidable c.Transitive := by unfold Transitive; infer_instance
@@ -230,41 +230,42 @@ theorem not_denucleativized_self (c : Construction ι) (i : ι) : ¬ Denucleativ
 
 /-! ### The main types of voice alternation (§8.3) -/
 
-/-- The common core of §8.3.2: a nuclear participant of the initial construction is
-denucleativized without being deleted from participant structure, and no participant is
-nucleativized. -/
+/-- A participant is demoted, the common core of §8.3.2, when it is nuclear in the initial
+construction and is denucleativized without being deleted from participant structure, and no
+participant is nucleativized. -/
 def Demoted (c d : Construction ι) (i : ι) : Prop :=
   Denucleativized c d i ∧ (d i).Present ∧ ¬ Nucleativization c d
 
-/-- Passivization: the initial construction is transitive, its A is demoted but maintained in
-participant structure, and its P remains a core term, as S in the canonical case and as the
+/-- In passivization the initial construction is transitive, its A is demoted but maintained
+in participant structure, and its P remains a core term, as S in the canonical case and as the
 P of a transitive construction after a double-P construction. -/
 def Passivization (c d : Construction ι) : Prop :=
   c.Transitive ∧ (∀ i, c i = .term .A → Demoted c d i) ∧ ∀ i, c i = .term .P → (d i).Nuclear
 
-/-- The impersonal variant of passivization: the initial P keeps its coding, so the derived
+/-- In the impersonal variant of passivization the initial P keeps its coding, so the derived
 construction has neither A nor S. -/
 def ImpersonalPassivization (c d : Construction ι) : Prop := Passivization c d ∧ d.Impersonal
 
-/-- Antipassivization: the initial construction is transitive, participant structure is
+/-- In antipassivization the initial construction is transitive, participant structure is
 unchanged, a P is demoted, and the initial A becomes the S of an intransitive construction,
 or keeps the role of A after a double-P construction. -/
 def Antipassivization (c d : Construction ι) : Prop :=
   c.Transitive ∧ PreservesStructure c d ∧ (∃ i, c i = .term .P ∧ Demoted c d i) ∧
     ∀ i, c i = .term .A → d i = .term .S ∨ d i = .term .A
 
-/-- S-denucleativization: the initial construction is intransitive and its S is demoted. -/
+/-- In S-denucleativization the initial construction is intransitive and its S is
+demoted. -/
 def SDenucleativization (c d : Construction ι) : Prop :=
   ¬ c.Transitive ∧ (∃ i, c i = .term .S) ∧ ∀ i, c i = .term .S → Demoted c d i
 
-/-- Decausativization: the initial construction is transitive, its A is suppressed from
+/-- In decausativization the initial construction is transitive, its A is suppressed from
 participant structure, its P becomes the S of an intransitive construction, and nothing is
 nucleativized. -/
 def Decausativization (c d : Construction ι) : Prop :=
   c.Transitive ∧ (∀ i, c i = .term .A → Suppressed c d i) ∧
     (∀ i, c i = .term .P → d i = .term .S) ∧ ¬ Nucleativization c d
 
-/-- A-nucleativization: a participant is nucleativized and takes over the role of A or S,
+/-- In A-nucleativization a participant is nucleativized and takes over the role of A or S,
 and the participant coded as A or S in the initial construction is coded as P or
 denucleativized. Causativization in the narrow sense of chapter 12, where the new
 participant instigates or controls the event, the A-nucleativization of an instrumental
@@ -275,14 +276,14 @@ def ANucleativization (c d : Construction ι) (i : ι) : Prop :=
   Nucleativized c d i ∧ (d i = .term .A ∨ d i = .term .S) ∧
     ∀ j, (c j = .term .A ∨ c j = .term .S) → d j = .term .P ∨ ¬ (d j).Nuclear
 
-/-- Reflexivization and reciprocalization: two participant roles expressed as A and P, or as
-S and a dative oblique, in the initial construction are cumulated by the S term of the
+/-- In reflexivization and reciprocalization two participant roles expressed as A and P, or
+as S and a dative oblique, in the initial construction are cumulated by the S term of the
 derived construction. Whether the S refers to an individual or to a group is not modelled. -/
 def Cumulation (c d : Construction ι) : Prop :=
   ∃ a p, a ≠ p ∧ ((c a = .term .A ∧ c p = .term .P) ∨ (c a = .term .S ∧ c p = .dative)) ∧
     d a = .term .S ∧ d p = .term .S
 
-/-- Applicativization: the participant coded as A or S in the initial construction keeps
+/-- In applicativization the participant coded as A or S in the initial construction keeps
 the role of A or S, and the derived construction expresses, in a role other than A or S, an
 applied participant that the initial construction did not express that way. -/
 def Applicativization (c d : Construction ι) (applied : ι) : Prop :=
@@ -290,21 +291,21 @@ def Applicativization (c d : Construction ι) (applied : ι) : Prop :=
     ¬ (c applied).Nuclear ∧ c applied ≠ d applied ∧ (d applied).Expressed ∧
       d applied ≠ .term .A ∧ d applied ≠ .term .S
 
-/-- P-applicativization: the applied phrase is a P, so the initial A or S is the A of the
+/-- In P-applicativization the applied phrase is a P, so the initial A or S is the A of the
 derived transitive construction. -/
 def PApplicativization (c d : Construction ι) (applied : ι) : Prop :=
   Applicativization c d applied ∧ d applied = .term .P ∧
     ∀ j, (c j = .term .A ∨ c j = .term .S) → d j = .term .A
 
-/-- D-applicativization: the applied phrase is a dative oblique. -/
+/-- In D-applicativization the applied phrase is a dative oblique. -/
 def DApplicativization (c d : Construction ι) (applied : ι) : Prop :=
   Applicativization c d applied ∧ d applied = .dative
 
-/-- X-applicativization: the applied phrase is an ordinary oblique. -/
+/-- In X-applicativization the applied phrase is an ordinary oblique. -/
 def XApplicativization (c d : Construction ι) (applied : ι) : Prop :=
   Applicativization c d applied ∧ d applied = .term .X
 
-/-- Portative derivation: an intransitive verb of motion becomes transitive, its S the A of
+/-- In portative derivation an intransitive verb of motion becomes transitive, its S the A of
 the derived construction and a carried entity its P. -/
 def Portative (c d : Construction ι) (carried : ι) : Prop :=
   ¬ c.Transitive ∧ Nucleativized c d carried ∧ d carried = .term .P ∧
@@ -408,9 +409,9 @@ theorem Symmetrical.not_aNucleativization {c d : Construction ι} (h : Symmetric
 section
 variable [Fintype ι] [DecidableEq ι]
 
-/-- The fate of an initial core term, read off the two constructions: suppressed when it
-leaves participant structure, cumulated when it shares its derived core term with another
-initial core term, maintained when it remains a core term, denucleativized otherwise. -/
+/-- An initial core term, read off the two constructions, is suppressed when it leaves
+participant structure, cumulated when it shares its derived core term with another initial
+core term, maintained when it remains a core term, and denucleativized otherwise. -/
 def fate (c d : Construction ι) (i : ι) : ParticipantFate :=
   if (c i).Nuclear then
     if d i = .absent then .suppressed
@@ -444,7 +445,7 @@ end
 
 /-! ### Alignment and the Obligatory Coding Principle (§1.3.4) -/
 
-/-- The flagging of a core term: the zero case, an accusative or an ergative. -/
+/-- A core term is flagged by the zero case, an accusative or an ergative. -/
 inductive Flag where
   | zero
   | accusative
@@ -463,7 +464,7 @@ structure Coding where
 
 namespace Coding
 
-/-- The alignment of an intransitive construction whose S carries a flag: with A, with P, or
+/-- An intransitive construction whose S carries a flag aligns with A, with P, or with
 neither. -/
 def alignment (t : Coding) (s : Flag) : Option Alignment :=
   if s = t.a then some .A_alignment else if s = t.p then some .P_alignment else none
@@ -480,8 +481,8 @@ def alignment (t : Coding) (s : Flag) : Option Alignment :=
 
 end Coding
 
-/-- The Obligatory Coding Principle, over the intransitive constructions of the examples: a
-flag of the transitive construction that every verb assigns to one of its participants, here
+/-- The Obligatory Coding Principle, over the intransitive constructions of the examples, says
+that every verb assigns a flag of the transitive construction to one of its participants, here
 every intransitive verb through its S. -/
 def ObligatoryCoding (t : Coding) (ss : List Flag) (k : Flag) : Prop :=
   (k = t.a ∨ k = t.p) ∧ ∀ s ∈ ss, s = k
@@ -492,7 +493,8 @@ def ObligatoryACoding (t : Coding) (ss : List Flag) : Prop := ObligatoryCoding t
 /-- An obligatory P-coding language, the consistently ergative type. -/
 def ObligatoryPCoding (t : Coding) (ss : List Flag) : Prop := ObligatoryCoding t ss t.p
 
-/-- A split-S language: some intransitive constructions align with A and some with P. -/
+/-- A language is split-S when some intransitive constructions align with A and some with
+P. -/
 def SplitS (t : Coding) (ss : List Flag) : Prop :=
   (∃ s ∈ ss, t.alignment s = some .A_alignment) ∧ ∃ s ∈ ss, t.alignment s = some .P_alignment
 
@@ -615,8 +617,8 @@ def slotNames : List (String × Fin 5) := [("p1", 0), ("p2", 1), ("p3", 2), ("p4
 def flagNames : List (String × Flag) :=
   [("zero", .zero), ("accusative", .accusative), ("ergative", .ergative)]
 
-/-- How a row's alternation is coded: the book's §1.1.3 labels, equipollent marking a label
-of the pair rather than of a voice. -/
+/-- A row's alternation is coded as the book's §1.1.3 labels say, equipollent marking being a
+label of the pair rather than of a voice. -/
 inductive Marking where
   | synthetic
   | analytic
@@ -639,8 +641,8 @@ where
   /-- The status of one slot. -/
   slot (row : Datum) (k : String) : Status := (row.parse? k statusNames).getD .absent
 
-/-- The rows of the same example whose variant the row names under a key: its initial
-construction, or the transitive use of a flexivalent verb. -/
+/-- `paired key row` lists the rows of the same example whose variant `row` names under `key`,
+such as its initial construction or the transitive use of a flexivalent verb. -/
 def paired (key : String) (row : Datum) : List Datum :=
   all.filter λ r =>
     r.feature? "example" = row.feature? "example" ∧ r.feature? "variant" = row.feature? key
@@ -691,33 +693,33 @@ theorem symmetrical_rows : ∀ row ∈ all, row.parse? "alternation" kindNames =
 /-! ### The book's own types -/
 
 open ArgumentFrame.Slot in
-/-- A/S-nucleativization of an oblique (§8.3.4.1): an oblique participant, an instrument,
+/-- In A/S-nucleativization of an oblique (§8.3.4.1) an oblique participant, an instrument,
 takes over the role of A and the initial A is denucleativized, understood as non-specific. -/
 def instrumentNucleativization : Voice :=
   { source := .np_pp, target := ⟨some .nominal, [.nominal, .implicit]⟩,
     correspondence :=
       [(external, complement 1), (complement 0, complement 0), (complement 1, external)] }
 
-/-- Concernativization (§8.3.4.2): a concernee is nucleativized as A and the initial S is
+/-- In concernativization (§8.3.4.2) a concernee is nucleativized as A and the initial S is
 the P; at the level of frames it is the causative, the difference lying in the new
 participant's relation to the event. -/
 def concernative : Voice := causative
 
 open ArgumentFrame.Slot in
-/-- D-applicativization (§14.1.3): an applied participant is expressed as a dative oblique,
+/-- In D-applicativization (§14.1.3) an applied participant is expressed as a dative oblique,
 the initial A and P unchanged. -/
 def dativeApplicative : Voice :=
   { source := .np, target := .np_pp,
     correspondence := [(external, external), (complement 0, complement 0)] }
 
 open ArgumentFrame.Slot in
-/-- X-applicativization (§14.1.4): an applied participant is expressed as an ordinary
+/-- In X-applicativization (§14.1.4) an applied participant is expressed as an ordinary
 oblique, the initial S unchanged. -/
 def obliqueApplicative : Voice :=
   { source := .intransitive, target := .pp, correspondence := [(external, external)] }
 
 open ArgumentFrame.Slot in
-/-- Portative derivation (§8.3.7): an intransitive motion verb becomes transitive, its S the
+/-- In portative derivation (§8.3.7) an intransitive motion verb becomes transitive, its S the
 A and a carried entity the P. -/
 def portative : Voice :=
   { source := .intransitive, target := .np, correspondence := [(external, external)] }
@@ -749,8 +751,8 @@ theorem records_described :
     ∀ e ∈ definingExamples, Describes e.1 (construction e.2.1) (construction e.2.2) := by
   decide +kernel
 
-/-- Mandinka (13) of chapter 1: 'repair' takes A and P, 'forget' takes S and a postpositional
-oblique. -/
+/-- In Mandinka (13) of chapter 1, 'repair' takes A and P, and 'forget' takes S and a
+postpositional oblique. -/
 theorem mandinka_roles :
     (construction ex_1_13a).Transitive ∧ ¬ (construction ex_1_13b).Transitive := by
   decide +kernel
@@ -791,7 +793,7 @@ theorem coexpression :
     [Kind.causativization, .passivization] ⊆ coExpressed "koyr1240" "-ndi" := by
   decide +kernel
 
-/-- Tswana (38): passivizing the applicative of the causative is the composite of the three
+/-- In Tswana (38), passivizing the applicative of the causative is the composite of the three
 alternations, through (38d) and (38e). -/
 theorem stacking_tswana :
     Relation.Comp (Relation.Comp (ANucleativization · · 2) (PApplicativization · · 3))
@@ -799,8 +801,8 @@ theorem stacking_tswana :
   ⟨construction ex_8_38e, ⟨construction ex_8_38d, by decide +kernel, by decide +kernel⟩,
     by decide +kernel⟩
 
-/-- Classical Nahuatl (39): the passive of the antipassive of the causative, through (39b)
-and (39c). -/
+/-- Classical Nahuatl (39) forms the passive of the antipassive of the causative, through
+(39b) and (39c). -/
 theorem stacking_nahuatl :
     Relation.Comp (Relation.Comp (ANucleativization · · 2) Antipassivization) Passivization
       (construction ex_8_39a) (construction ex_8_39e) :=
@@ -822,8 +824,8 @@ theorem causative_valency :
     (construction ex_8_51a).valency = (construction ex_8_51b).valency := by
   decide +kernel
 
-/-- Portative derivation in Tswana (3) of chapter 12: the woman who brought the food came,
-and the food, which cannot come, is not the initial S. -/
+/-- In the portative derivation of Tswana (3) of chapter 12, the woman who brought the food
+came, and the food, which cannot come, is not the initial S. -/
 theorem portative_rows :
     ex_12_3b.judgment = .acceptable ∧ ex_12_3c.judgment = .unacceptable ∧
     construction ex_12_3b 0 = .term .S ∧ construction ex_12_3c 1 = .term .S := by
@@ -831,19 +833,19 @@ theorem portative_rows :
 
 /-! ### Symmetrical voice systems (§8.5) -/
 
-/-- Balinese (47): a binary symmetrical system, the patient voice bare and initial, the agent
-voice by a nasal prefix, both keeping the taker and the shirt core terms. -/
+/-- Balinese (47) has a binary symmetrical system, the patient voice bare and initial, the
+agent voice marked by a nasal prefix, both keeping the taker and the shirt core terms. -/
 def balinese : Finset Voice := {patientVoice, agentVoice.marked [.pref "N"]}
 
-/-- Tagalog (48): a multiple symmetrical system, every voice marked and the pivot flagged by
-*ang* in place of its own flag: the agent voice by the infix *-um-*, the patient voice by
-*-in*, null in the realis, the locative voice, which selects the store, a spatial oblique, by
-*-an*, and the conveyance and instrumental voices, which select the child and the money, by
-*i-* and *ipaN-*. -/
+/-- Tagalog (48) has a multiple symmetrical system, every voice marked and the pivot flagged
+by *ang* in place of its own flag. The agent voice is marked by the infix *-um-*, the patient
+voice by *-in*, null in the realis, the locative voice, which selects the store, a spatial
+oblique, by *-an*, and the conveyance and instrumental voices, which select the child and the
+money, by *i-* and *ipaN-*. -/
 def tagalog : Finset Voice :=
   {agentVoice.marked [.infixed "um"], patientVoice.marked [.suff "in"],
-    locativeVoice.marked [.suff "an"], (obliqueVoice .grammatical).marked [.pref "i"],
-    (obliqueVoice .grammatical).marked [.pref "ipaN"]}
+    locativeVoice.marked [.suff "an"], (obliqueVoice .semantic).marked [.pref "i"],
+    (obliqueVoice .semantic).marked [.pref "ipaN"]}
 
 /-- Balinese is symmetrical and binary although morphologically oriented, so symmetry in the
 book's sense does not require equipollent marking (§8.1.7, §8.5.1). -/

@@ -4,21 +4,14 @@ public import Linglib.Syntax.Category.Adposition.Basic
 public import Linglib.Semantics.Events.PathDir
 
 /-!
-# Spatial adpositions: the cartographic refinement
+# Spatial adpositions
 
-The refinement a theory supplies for `Adposition` with `relation = .spatial`: the decomposition
-of the spatial relation into axial part, localization, direction and boundedness
-([svenonius-2010]). This is the spatial slice of the universal functional sequence; a temporal
-or grammatical adposition has none of it, which is why it refines a relation rather than
-defining the category.
-
-The direction is `Spatial.PathDir`, [pantcheva-2011]'s Place ⊂ Goal ⊂ Source ⊂ Route, and the
-localization is `Spatial.Localization`, the vocabulary spatial cases decompose into as well, so
-that a spatial adposition and a spatial case with the same direction denote the same paths
-(`Spatial.PathDir.denote`). The new piece is `AxPart`, the object-geometry axial parts
-([svenonius-2006]) that case morphology lacks; unlike the directions, the axial parts are a
-flat paradigm, not a ranked containment. Boundedness is [zwarts-2005]'s separate axis, *to*
-against *towards*.
+A theory refines a spatial `Adposition` by decomposing its relation into an axial part, a
+localization, a direction and a boundedness, as Svenonius does in the cartographic sequence. The
+direction is `Spatial.PathDir`, Pantcheva's Place, Goal, Source and Route, and the localization
+is `Spatial.Localization`, the vocabulary spatial cases decompose into as well. The axial parts
+are what case morphology lacks, a flat paradigm rather than a ranked containment, and
+boundedness is Zwarts's separate axis, *to* against *towards*.
 
 ## Main declarations
 
@@ -38,11 +31,8 @@ against *towards*.
 
 namespace Adposition
 
-/-- Axial parts ([svenonius-2006]): the object-geometry regions a spatial
-    adposition projects onto the Ground's axes. *behind* = `back`, *under* =
-    `bottom`, *on top of* = `top`, *in front of* = `front`, *beside* = `side`,
-    *inside* = `interior`, *outside* = `exterior`. A flat paradigm (the axes are
-    not nested), distinct from the ranked `Spatial.PathDir`/`Spatial.Localization`. -/
+/-- The axial parts are the regions a spatial adposition projects onto the Ground's axes, as
+*behind* projects `back` and *under* `bottom`. -/
 inductive AxPart where
   | front
   | back
@@ -53,43 +43,36 @@ inductive AxPart where
   | exterior
   deriving DecidableEq, Repr, Fintype
 
-/-- The cartographic decomposition of a spatial adposition's `relation`
-    ([svenonius-2010]): an axial part, a localization (`Spatial.Localization`), a direction
-    (`Spatial.PathDir`, [pantcheva-2011]), and a
-    boundedness ([zwarts-2005], the *separate* algebraic axis — `to` vs
-    `towards`). Theories own the slices; this is the shared vocabulary that a
-    `relation = .spatial` adposition is refined into. -/
+/-- A spatial reading decomposes a spatial adposition's relation into an axial part, a
+localization, a direction and a boundedness. -/
 structure SpatialReading where
-  /-- The axial part, if the P is axial/complex (*behind*); `none` for the simple
-      directional/locative Ps (*in*/*to*/*from*). -/
+  /-- The axial part of an axial adposition such as *behind*; `none` for *in*, *to*,
+  *from*. -/
   axPart : Option AxPart := none
   /-- The localization, interior, surface or exterior. -/
   localization : Option Spatial.Localization := none
   /-- The direction, Place, Goal, Source or Route. -/
   direction : Spatial.PathDir
-  /-- Boundedness ([zwarts-2005]): bounded (telic *to*) vs unbounded (atelic
-      *towards*) — orthogonal to direction. -/
+  /-- The reading is bounded, telic *to*, rather than unbounded, atelic *towards*. -/
   bounded : Bool := false
   deriving Repr, DecidableEq
 
-/-- The paths a spatial reading denotes relative to a region, those its direction denotes: a
-spatial adposition and a spatial case with the same direction share one meaning, two
-exponences. -/
+/-- A spatial reading denotes, relative to a region, the paths its direction denotes. -/
 def SpatialReading.denote {Loc : Type*} (r : SpatialReading) (R : Set Loc) :
     Set (Spatial.Path Loc) :=
   r.direction.denote R
 
-/-! ### Smoke tests — the differentia and the reuse -/
+/-! ### Readings -/
 
-/-- *behind*: an axial preposition (back), stative, no direction change. -/
+/-- The reading of *behind* is axial (back) and stative. -/
 def behind : SpatialReading :=
   { axPart := some .back, direction := .place }
 
-/-- *under*: axial (bottom), stative. -/
+/-- The reading of *under* is axial (bottom) and stative. -/
 def under : SpatialReading :=
   { axPart := some .bottom, direction := .place }
 
-/-- *into*: interior goal, bounded — no axial part (a simple directional P). -/
+/-- The reading of *into* is a bounded interior goal with no axial part. -/
 def into : SpatialReading :=
   { localization := some .interior, direction := .goal, bounded := true }
 
