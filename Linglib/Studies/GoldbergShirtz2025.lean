@@ -319,7 +319,7 @@ def demoInventory : List (Construction Unit) :=
 
 /-- "must-do task" (ex. (1b), determiner elided): the PAL phrase as a constituent daughter in the
 word-level modifier slot. -/
-def mustDoTask : Syntax.Tree Unit Morphology.Word :=
+def mustDoTask : PhraseStructure.Tree Unit Morphology.Word :=
   .node () [.node () [.leaf (.mk' "must" .AUX), .leaf (.mk' "do" .VERB)], .leaf (.mk' "task" .NOUN)]
 
 /-- The inventory licenses the PAL token. -/

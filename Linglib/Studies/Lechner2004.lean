@@ -62,7 +62,7 @@ surface Principle B account of (24) are not formalized.
 
 namespace Lechner2004
 
-open Core.Order Syntax Syntax.Tree Binding
+open Core.Order PhraseStructure PhraseStructure.Tree Binding
 
 /-! ### Trees and coreference -/
 

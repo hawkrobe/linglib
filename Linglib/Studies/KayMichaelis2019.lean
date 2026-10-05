@@ -124,11 +124,11 @@ def demoLex (w : Morphology.Word) : Option (Den E) :=
   | _ => none
 
 /-- `purplePlum` is *purple plum*, two words tagged for part of speech. -/
-def purplePlum : Syntax.Tree Unit Morphology.Word :=
+def purplePlum : PhraseStructure.Tree Unit Morphology.Word :=
   .node () [.leaf (.mk' "purple" .ADJ), .leaf (.mk' "plum" .NOUN)]
 
 /-- `allegedThief` is *alleged thief*, two words tagged for part of speech. -/
-def allegedThief : Syntax.Tree Unit Morphology.Word :=
+def allegedThief : PhraseStructure.Tree Unit Morphology.Word :=
   .node () [.leaf (.mk' "alleged" .ADJ), .leaf (.mk' "thief" .NOUN)]
 
 /-- *Purple plum* has exactly one reading, the intersection, since the operator construction

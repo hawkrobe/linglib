@@ -66,7 +66,7 @@ paper ties the choice between the two to how affected the referent of the noun p
 
 namespace SadakaneKoizumi1995
 
-open Syntax Syntax.Tree Core.Order
+open PhraseStructure PhraseStructure.Tree Core.Order
 
 /-! ### Case markers and postpositions -/
 

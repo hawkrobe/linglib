@@ -856,7 +856,7 @@ nonempty finite models, exactly the truth conditions of `most`; this is C12 stat
 partiality at *most* is a theorem, not a design choice. -/
 theorem no_tree_means_most (fw : FOWords) (nm : LexNaming (Language.monadic (Fin 2)))
     (hnd : fw.Nodup) (hfr : fw.FreshFor nm) (hdj : nm.Disjoint) :
-    ¬ ∃ (t : Syntax.Tree Unit String) (φ : (Language.monadic (Fin 2)).Formula ℕ)
+    ¬ ∃ (t : PhraseStructure.Tree Unit String) (φ : (Language.monadic (Fin 2)).Formula ℕ)
         (_ : compileFO fw nm t = some φ) (_ : φ.freeVarFinset = ∅),
       ∀ (M : Type) [Fintype M] [Nonempty M] (S : (Language.monadic (Fin 2)).Structure M)
         (g : Assignment M),

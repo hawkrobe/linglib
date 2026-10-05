@@ -12,26 +12,25 @@ public import Linglib.Data.Examples.Scott2021
 This file formalizes the paper's account of the resumptive pronouns that the objects of Swahili's
 monosyllabic prepositions require (§3.3): bound pronouns, the only option inside adjunct islands
 ((31)–(33)), match the head in person, while movement copies, diagnosed by parasitic gaps
-((35)–(37)), never carry person. Both follow from the Vocabulary of (28) (`resumptiveVocab`) and
-the copy theory of movement. A pronoun is a `Syntax.Tree` over D, Num, the animate n and, for
+((35)–(37)), never carry person. Both follow from the Vocabulary of (28) (`resumptiveVocab`) and the
+copy theory of movement. A pronoun is a `PhraseStructure.Tree` over D, Num, the animate n and, for
 local persons only, a Person projection ((40)–(44), `pronoun`), and the Vocabulary spells out the
 Fragment's paradigm of Table 2 (`table2`). A movement copy in a position with a phonological
 requirement is reduced rather than deleted, following [landau-2006]: MaxElide removes the largest
-constituent whose residue can still be spelled out (`Deletable`, `maxElideTarget`), which is
-PersP, since *-ye* spells out `[sg + n_anim]` while nothing spells out Num alone ((46)–(48),
-`maxElide_persP`). So a movement copy of a local-person pronoun surfaces as the personless
-pronoun (`movement_copy_personless`), a bound pronoun is spelled out in full, and a copy in a
-subject or object position, which carries no requirement, is deleted ((17)–(18),
-`gap_without_minimality`); and since Num is above Pers, a deletion that keeps person keeps
-number (`person_entails_number`), the crosslinguistic pattern of the paper's conclusion. The
-paper's judgments (`Data/Examples/Scott2021`) instantiate the account: clefts allow either
-pronoun but fix number ((24)–(25), (29)), islands allow only the bound pronoun, and for every
-speaker of Table 4 a personless parasitic pronoun needs a personless true gap (`cleft_rows`,
-`island_rows`, `parasitic_rows`).
+constituent whose residue can still be spelled out (`Deletable`, `maxElideTarget`), which is PersP,
+since *-ye* spells out `[sg + n_anim]` while nothing spells out Num alone ((46)–(48),
+`maxElide_persP`). So a movement copy of a local-person pronoun surfaces as the personless pronoun
+(`movement_copy_personless`), a bound pronoun is spelled out in full, and a copy in a subject or
+object position, which carries no requirement, is deleted ((17)–(18), `gap_without_minimality`); and
+since Num is above Pers, a deletion that keeps person keeps number (`person_entails_number`), the
+crosslinguistic pattern of the paper's conclusion. The paper's judgments (`Data/Examples/Scott2021`)
+instantiate the account: clefts allow either pronoun but fix number ((24)–(25), (29)), islands allow
+only the bound pronoun, and for every speaker of Table 4 a personless parasitic pronoun needs a
+personless true gap (`cleft_rows`, `island_rows`, `parasitic_rows`).
 
 ## Implementation notes
 
-* The structures are `Syntax.Tree`s over the four DP-internal categories, so MaxElide is
+* The structures are `PhraseStructure.Tree`s over the four DP-internal categories, so MaxElide is
   structural deletion rather than feature removal; features are read off the terminals for
   Vocabulary Insertion.
 * The interspeaker variation of Table 4 beyond its first two rows is not derived, as the paper
@@ -47,7 +46,7 @@ speaker of Table 4 a personless parasitic pronoun needs a personless true gap (`
 
 namespace Scott2021
 
-open Swahili Syntax DistributedMorphology
+open Swahili PhraseStructure DistributedMorphology
 open Minimalist (FeatureVal)
 
 /-! ### The structure of pronouns (§5.1) -/

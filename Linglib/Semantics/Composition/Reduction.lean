@@ -56,7 +56,7 @@ open FirstOrder Language
 open FirstOrder.Language.Formula (all₁ ex₁)
 open Semantics.Composition
 open Semantics.Composition.Tree
-open Syntax (Tree)
+open PhraseStructure (Tree)
 
 variable {L : Language.{u, v}}
 
@@ -650,7 +650,7 @@ nonempty-domain restriction — standard in the GQ literature.) -/
 namespace Semantics.Composition
 
 open FirstOrder Language
-open Syntax (Tree)
+open PhraseStructure (Tree)
 
 section TheoryBridge
 

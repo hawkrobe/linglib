@@ -246,7 +246,7 @@ end Typing
 
 /-! ### Tree interpretation -/
 
-open Syntax
+open PhraseStructure
 
 section TreeInterp
 

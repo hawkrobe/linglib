@@ -49,8 +49,8 @@ phrase first is preferred before the verb as much as after it, against both clos
 namespace Schwarzer2026
 
 open BrueningAlKhalaf2020
-open Syntax (Cat)
-open Syntax.Cat (N)
+open PhraseStructure (Cat)
+open PhraseStructure.Cat (N)
 
 /-! ### The analyses -/
 

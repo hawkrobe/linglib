@@ -52,7 +52,7 @@ theorems.
 namespace LoGuercio2025
 
 open Alternatives
-open Syntax
+open PhraseStructure
 
 /-! ### The epithet as a structural alternative -/
 

@@ -20,35 +20,35 @@ union, through the maximal generator of a relation.
 
 ## Main declarations
 
-* `Syntax.commandRelation P` and `Syntax.mateRelation P`: the relation `P` generates, and its
-  symmetric part.
-* `Syntax.branchingNodes` and `Syntax.cCommand`: the nodes covering two distinct nodes, and
-  the relation they generate, Reinhart's c-command.
-* `Syntax.commandByRelation R` and `Syntax.maximalGenerator R`: generation by a relation, and
-  the largest relation generating the same command relation.
-* `Syntax.IsBranchingAt` and `Syntax.cCommandAt`: on the positions of a rose tree, the
-  branching positions read off the tree and the c-command they generate, both decidable at
-  concrete positions; `Syntax.CCommands`, Reinhart's c-command restricted to positions neither
-  of which dominates the other.
-* `Syntax.mem_cCommand_iff`: on the rooted tree `Positions t` the order-theoretic
+* `PhraseStructure.commandRelation P` and `PhraseStructure.mateRelation P`: the relation `P`
+  generates, and its symmetric part.
+* `PhraseStructure.branchingNodes` and `PhraseStructure.cCommand`: the nodes covering two distinct
+  nodes, and the relation they generate, Reinhart's c-command.
+* `PhraseStructure.commandByRelation R` and `PhraseStructure.maximalGenerator R`: generation by a
+  relation, and the largest relation generating the same command relation.
+* `PhraseStructure.IsBranchingAt` and `PhraseStructure.cCommandAt`: on the positions of a rose tree,
+  the branching positions read off the tree and the c-command they generate, both decidable at
+  concrete positions; `PhraseStructure.CCommands`, Reinhart's c-command restricted to positions
+  neither of which dominates the other.
+* `PhraseStructure.mem_cCommand_iff`: on the rooted tree `Positions t` the order-theoretic
   `cCommand` is the tree's `cCommandAt`, through `mem_branchingNodes_iff`;
   `cCommandAt_map`: relabelling preserves c-command.
 
 ## Main results
 
-* `Syntax.commandRelation_union`, the Intersection Theorem, with `commandRelation_sUnion`
+* `PhraseStructure.commandRelation_union`, the Intersection Theorem, with `commandRelation_sUnion`
   and `commandRelation_anti`; `sInter_mem_range_commandRelation`, closure under
   intersection.
-* `Syntax.mem_commandRelation_of_le` (Descent), `commandRelation_insert_bot` (Boundedness),
+* `PhraseStructure.mem_commandRelation_of_le` (Descent), `commandRelation_insert_bot` (Boundedness),
   `commandRelation_fair` (Fairness) and `commandRelation_eq_Ici` (Constituency).
-* `Syntax.mem_commandRelation_congr` and `Syntax.mem_commandRelation_iff_of_le`: what a node
-  commands depends only on the generators above it, and in a tree order it commands a node
-  below `c` exactly when it commands `c`.
-* `Syntax.commandByRelation_union_subset` and `commandByRelation_inf_subset`, the Union
+* `PhraseStructure.mem_commandRelation_congr` and `PhraseStructure.mem_commandRelation_iff_of_le`:
+  what a node commands depends only on the generators above it, and in a tree order it commands a
+  node below `c` exactly when it commands `c`.
+* `PhraseStructure.commandByRelation_union_subset` and `commandByRelation_inf_subset`, the Union
   Theorem, whose converse needs the ancestors of a node linearly ordered (`IsLeftLinear`).
-* `Syntax.mem_cCommandAt_replaceAt` and `Syntax.cCommands_replaceAt_of_le`: replacing a subtree
-  leaves what the positions outside it c-command unchanged, and its positions are c-commanded by
-  what c-commanded its root, the configuration of reconstruction.
+* `PhraseStructure.mem_cCommandAt_replaceAt` and `PhraseStructure.cCommands_replaceAt_of_le`:
+  replacing a subtree leaves what the positions outside it c-command unchanged, and its positions
+  are c-commanded by what c-commanded its root, the configuration of reconstruction.
 
 ## References
 
@@ -58,7 +58,7 @@ union, through the maximal generator of a relation.
 
 @[expose] public section
 
-namespace Syntax
+namespace PhraseStructure
 
 variable {α : Type*} [PartialOrder α]
 
@@ -395,4 +395,4 @@ theorem mem_cCommand_iff {t : RoseTree β} (a b : t.Positions) :
 
 end Positions
 
-end Syntax
+end PhraseStructure

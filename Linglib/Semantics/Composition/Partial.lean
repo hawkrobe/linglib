@@ -64,7 +64,7 @@ abbrev PDenotation (E W : Type) (D : Type := ℝ) : Type :=
 
 namespace Partial
 
-open Syntax Tree
+open PhraseStructure Tree
 open scoped Assignment
 
 variable {E W D : Type}
@@ -249,8 +249,8 @@ variable (lex lex' : L → Option (PDenotation E W D)) (g g' : Assignment E)
       ⟨.fn .e d.1, Part.some fun x ↦ valueAt d.1 (interp lex (g[n ↦ x]) body)⟩ := rfl
 
 /-- A node whose daughters its label does not license denotes nothing. -/
-theorem interp_junk {l : Syntax.Tree.Label C L} {cs : List (Tree C L)}
-    (h : ¬ Syntax.Tree.Label.Licenses l (cs.map RoseTree.value)) :
+theorem interp_junk {l : PhraseStructure.Tree.Label C L} {cs : List (Tree C L)}
+    (h : ¬ PhraseStructure.Tree.Label.Licenses l (cs.map RoseTree.value)) :
     interp lex g (RoseTree.node l cs) = none := by
   cases l with
   | terminal c w => cases cs with
@@ -360,7 +360,7 @@ identification. -/
 
 section Total
 
-open Syntax Tree
+open PhraseStructure Tree
 open scoped Assignment
 
 variable {E W D : Type}

@@ -51,8 +51,8 @@ c-selectional features, which the next item merged checks off (§5.8). The examp
 * The positive features of *-ly* adverbs are left open by the paper beyond excluding nouns; they
   are given verbs and adjectives here, and no theorem uses more than that they exclude nouns.
 * Modifiers merge with a site, a position of a tree or a degree head, and whether the site is a
-  maximal projection is read off its tree (`Syntax.IsMaximalCategory`): the noun of (104) is
-  projected further by its mother, while *so soon* adjoins to the maximal noun phrase *a visit*
+  maximal projection is read off its tree (`PhraseStructure.IsMaximalCategory`): the noun of (104)
+  is projected further by its mother, while *so soon* adjoins to the maximal noun phrase *a visit*
   (p. 479). The features name maximal and nonmaximal projections (`Selected`); a modifier is a
   maximal phrase, since it is no head.
 * Short displacement as a degree phrase ((105)) is not formalized.
@@ -71,8 +71,8 @@ namespace Bruening2025
 
 open BrueningAlKhalaf2020 (Conjunct Admits Satisfies Licensed checkedOnce phrases? selects? side?
   AdvHead NominalCoordination)
-open Syntax (Cat)
-open Syntax.Cat (N V Adj Adv)
+open PhraseStructure (Cat IsMaximalCategory)
+open PhraseStructure.Cat (N V Adj Adv)
 open Core.Order (TreePath)
 
 /-! ### Categorial selection -/
@@ -97,8 +97,8 @@ theorem cp_subjects :
 
 /-! ### Adverbs -/
 
-/-- The degree heads the analysis of adverbs refers to besides the categories of `Syntax.Cat`
-(§5.8) are a comparative and an equative. -/
+/-- The degree heads the analysis of adverbs refers to besides the categories of
+`PhraseStructure.Cat` (§5.8) are a comparative and an equative. -/
 inductive Degree where
   /-- A comparative, *taller*. -/
   | cmpr
@@ -120,7 +120,7 @@ inductive Selected where
 /-- What a coordination of modifiers merges with is a position in a tree or a degree head. -/
 inductive Site where
   /-- `at t p` is the position `p` of the tree `t`. -/
-  | at (t : Syntax.Tree Cat String) (p : TreePath)
+  | at (t : PhraseStructure.Tree Cat String) (p : TreePath)
   /-- `degree d` is a degree head. -/
   | degree (d : Degree)
   deriving DecidableEq
@@ -128,10 +128,10 @@ inductive Site where
 /-- A site is of a selected kind by its category and by whether its category is maximal, which is
 read off the tree. -/
 def Selected.Matches : Selected → Site → Prop
-  | .maximal c, .at t p => (t.subtreeAt p.toList).map Syntax.Tree.cat = some c ∧
-      Syntax.IsMaximalCategory (Syntax.Tree.ProjectsAt t) (Syntax.Tree.AdjoinsAt t) p
-  | .nonmaximal c, .at t p => (t.subtreeAt p.toList).map Syntax.Tree.cat = some c ∧
-      ¬ Syntax.IsMaximalCategory (Syntax.Tree.ProjectsAt t) (Syntax.Tree.AdjoinsAt t) p
+  | .maximal c, .at t p => (t.subtreeAt p.toList).map PhraseStructure.Tree.cat = some c ∧
+      IsMaximalCategory t.ProjectsAt t.AdjoinsAt p
+  | .nonmaximal c, .at t p => (t.subtreeAt p.toList).map PhraseStructure.Tree.cat = some c ∧
+      ¬ IsMaximalCategory t.ProjectsAt t.AdjoinsAt p
   | .degree d, .degree d' => d = d'
   | _, _ => False
 
@@ -225,12 +225,12 @@ instance (ms : List Modifier) (h : Site) : Decidable (MergesWith ms h) := by
 
 /-- In (104) the coordination *once and future* merges with *king*, which its mother projects
 further, so the host is a nonmaximal noun. -/
-def onceAndFutureKing : Syntax.Tree Cat String :=
+def onceAndFutureKing : PhraseStructure.Tree Cat String :=
   .node N [.node .Conj [.terminal Adv "once", .terminal .Conj "and", .terminal Adj "future"],
     .node N [.terminal N "king"]]
 
 /-- In *so soon a visit*, *so soon* adjoins to the maximal noun phrase *a visit* (p. 479). -/
-def soSoonAVisit : Syntax.Tree Cat String :=
+def soSoonAVisit : PhraseStructure.Tree Cat String :=
   .adjoin N [.node Adv [.terminal Adv "so", .terminal Adv "soon"],
     .node N [.terminal .Det "a", .terminal N "visit"]]
 

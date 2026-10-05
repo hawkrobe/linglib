@@ -21,7 +21,7 @@ psycholinguistic studies of local anaphors test.
 
 ## Main definitions
 
-* `Syntax.Tree.clauseConfiguration`: c-command with the minimal clause as binding domain.
+* `PhraseStructure.Tree.clauseConfiguration`: c-command with the minimal clause as binding domain.
 
 ## References
 
@@ -31,7 +31,7 @@ psycholinguistic studies of local anaphors test.
 
 @[expose] public section
 
-namespace Syntax.Tree
+namespace PhraseStructure.Tree
 
 open Core.Order
 
@@ -49,4 +49,4 @@ instance : DecidableRel (clauseConfiguration t).commands :=
 instance (b : TreePath) : DecidablePred (· ∈ (clauseConfiguration t).domain b) :=
   fun a ↦ inferInstanceAs (Decidable ((b, a) ∈ sCommand t))
 
-end Syntax.Tree
+end PhraseStructure.Tree

@@ -233,7 +233,7 @@ one NP over two terminals, so every step is a `decide` or one Katzir substitutio
 
 section WorkedExample
 
-open Syntax
+open PhraseStructure
 open Alternatives
 
 /-- The two evaluation contexts are a domain of two cups and a domain of three; the dual
