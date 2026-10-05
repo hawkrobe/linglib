@@ -394,7 +394,6 @@ import Linglib.Fragments.Basque.Agreement
 import Linglib.Fragments.Basque.Pronouns
 import Linglib.Fragments.Basque.Relativization
 import Linglib.Fragments.Bayso.Number
-import Linglib.Fragments.Bulgarian.Clause
 import Linglib.Fragments.Burmese.Negation
 import Linglib.Fragments.Burmeso.ObjectAgreement
 import Linglib.Fragments.Buryat.Complementizers
