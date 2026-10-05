@@ -9,8 +9,8 @@ public import Linglib.Syntax.Case.Basic
 # φ-probes
 
 This file specializes `Probe` to φ-features, as probes over `Agreement.Bundle`s relativized by
-the feature they seek (`Probe.Target`, `Phi/Geometry.lean`). Preminger's participant-relativized
-person probe is one, and Béjar and Rezac's Person Licensing Condition is stated over it.
+the feature they seek (`Probe.Target`, `Phi/Geometry.lean`), Preminger's participant-relativized
+person probe among them, and the φ-goals they search, nominals with or without valued Case.
 
 ## Main definitions
 
@@ -18,12 +18,10 @@ person probe is one, and Béjar and Rezac's Person Licensing Condition is stated
 * `Agreement.Bundle.IsParticipant`: a cell bears an interpretable 1st/2nd person feature.
 * `Minimalist.Probe.Target.toProbe`: a target's denotation as a `Probe` over φ-cells.
 * `Minimalist.PhiGoal`: a nominal as a φ-goal, its case if already valued and its φ-cell.
-* `Minimalist.PLC`: the Person Licensing Condition over φ-bearing goals.
 
 ## References
 
 * [preminger-2014]
-* [bejar-rezac-2003]
 * [harley-ritter-2002]
 * [chomsky-2000]
 -/
@@ -93,16 +91,5 @@ def PhiGoal.unvalued (cell : Agreement.Bundle) : PhiGoal := ⟨none, cell⟩
 @[simp] theorem PhiGoal.unvalued_ne_valued (c : Case) (cell cell' : Agreement.Bundle) :
     PhiGoal.unvalued cell' ≠ PhiGoal.valued c cell :=
   (PhiGoal.valued_ne_unvalued c cell cell').symm
-
-/-- The Person Licensing Condition holds when every [participant]-bearing goal is licensed by the
-person probe's search. This single-cycle, search-only rendering omits the F-licensing route and
-multi-cycle repairs of [bejar-rezac-2003] (see `BejarRezac2003.PLCOk`). -/
-def PLC {α : Type*} (cellOf : α → Agreement.Bundle) (goals : List α) : Prop :=
-  (Probe.relativized fun a => (cellOf a).visibleTo .participant).AllLicensed
-    (fun a => (cellOf a).visibleTo .participant) goals
-
-instance {α : Type*} (cellOf : α → Agreement.Bundle) (goals : List α) :
-    Decidable (PLC cellOf goals) :=
-  inferInstanceAs (Decidable (Probe.AllLicensed _ _ goals))
 
 end Minimalist
