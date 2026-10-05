@@ -228,40 +228,44 @@ theorem star_cumulative {X : Set (Path Loc)}
 
 section Transfer
 
-variable {E : Type*} (C : E → E → E → Prop) (tr : E → Path Loc)
+open Event (σ)
 
-/-- A trace function is a homomorphism for concatenation when the trace of a fused event is the
+variable {E : Type*} [Event.SpatialTrace E Loc] (C : E → E → E → Prop)
+
+/-- The spatial trace is a homomorphism for concatenation when the trace of a fused event is the
 concatenation of the traces. -/
 def IsTraceHom : Prop :=
-  ∀ e e' f, C e e' f → Path.IsConcat (tr e) (tr e') (tr f)
+  ∀ e e' f, C e e' f → Path.IsConcat (σ e) (σ e') (σ f)
 
 /-- `⟦V PP⟧`, (25), holds of the verb's events whose trace lies in the phrase's denotation. -/
 def vpp (V : Set E) (X : Set (Path Loc)) : Set E :=
-  {e ∈ V | tr e ∈ X}
+  {e ∈ V | σ e ∈ X}
+
+variable {C}
 
 /-- Closure of the verb and of the phrase transfers to the verb phrase, so *walk along the river*
 is cumulative because *walk* and *along the river* are. -/
-theorem vpp_concat_closed (hhom : IsTraceHom C tr) {V : Set E}
+theorem vpp_concat_closed (hhom : IsTraceHom (E := E) C) {V : Set E}
     {X : Set (Path Loc)}
     (hV : ∀ e ∈ V, ∀ e' ∈ V, ∀ f, C e e' f → f ∈ V)
     (hX : ∀ p ∈ X, ∀ q ∈ X, ∀ r, Path.IsConcat p q r → r ∈ X) :
-    ∀ e ∈ vpp tr V X, ∀ e' ∈ vpp tr V X, ∀ f, C e e' f → f ∈ vpp tr V X :=
+    ∀ e ∈ vpp V X, ∀ e' ∈ vpp V X, ∀ f, C e e' f → f ∈ vpp V X :=
   λ e he e' he' f hf =>
     ⟨hV e he.1 e' he'.1 f hf, hX _ he.2 _ he'.2 _ (hhom e e' f hf)⟩
 
 /-- If no two paths of the phrase concatenate, no two events of the verb phrase fuse, so *walk to
 the house* is bounded because *to the house* has no concatenable pairs. -/
-theorem vpp_bounded_of_no_pairs (hhom : IsTraceHom C tr) {V : Set E}
+theorem vpp_bounded_of_no_pairs (hhom : IsTraceHom (E := E) C) {V : Set E}
     {X : Set (Path Loc)}
     (hX : ¬ ∃ p ∈ X, ∃ q ∈ X, ∃ r, Path.IsConcat p q r) :
-    Bounded C (vpp tr V X) :=
+    Bounded C (vpp V X) :=
   bounded_of_no_pairs λ ⟨e, he, e', he', f, hf⟩ =>
-    hX ⟨tr e, he.2, tr e', he'.2, tr f, hhom e e' f hf⟩
+    hX ⟨σ e, he.2, σ e', he'.2, σ f, hhom e e' f hf⟩
 
 /-- *Walk to the house* is bounded, (26), by the negative transfer at the strict goal phrase. -/
-theorem vpp_toPP_bounded (hhom : IsTraceHom C tr) {V : Set E} (x : Loc) :
-    Bounded C (vpp tr V (toPP x)) :=
-  vpp_bounded_of_no_pairs C tr hhom (toPP_no_pairs x)
+theorem vpp_toPP_bounded (hhom : IsTraceHom (E := E) C) {V : Set E} (x : Loc) :
+    Bounded C (vpp V (toPP x)) :=
+  vpp_bounded_of_no_pairs hhom (toPP_no_pairs x)
 
 end Transfer
 

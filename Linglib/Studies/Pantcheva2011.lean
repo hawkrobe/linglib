@@ -139,16 +139,21 @@ theorem georgian_loc_goal_possible : Possible ![0, 0, 1, 2] := by decide
 /-- A Source path is a Goal path traversed the other way, so no path is both, and a single
 marker for Goal and Source would denote a path and its reverse at once, the ground of the
 *A&¬A constraint. -/
-theorem goalSource_disjoint {Loc : Type*} (R : Set Loc) (p : Spatial.Path Loc) :
-    p.IsCofinal R → ¬ p.IsCoinitial R :=
+theorem goalSource_disjoint {ι α : Type*} [LinearOrder ι] [BoundedOrder ι] (R : Set α)
+    (γ : ι → α) : Spatial.Path.IsCofinal R γ → ¬ Spatial.Path.IsCoinitial R γ :=
   Spatial.Path.IsCofinal.not_isCoinitial
 
 /-- A path from outside a place into it is cofinal and not coinitial, and its reverse is
 coinitial. -/
 example : let p : Spatial.Path ℕ := ⟨0, [1]⟩
-    p.IsCofinal {1} ∧ ¬ p.IsCoinitial {1} ∧ p.reverse.IsCoinitial {1} := by
-  have h : (⟨0, [1]⟩ : Spatial.Path ℕ).IsCofinal {1} :=
-    ⟨[0], [1], rfl, by simp, by simp, by simp, by simp⟩
-  exact ⟨h, h.not_isCoinitial, Spatial.Path.isCoinitial_reverse.2 h⟩
+    Spatial.Path.IsCofinal {1} p ∧ ¬ Spatial.Path.IsCoinitial {1} p ∧
+      Spatial.Path.IsCoinitial {1} p.reverse := by
+  intro p
+  have h : Spatial.Path.IsCofinal {1} p := by
+    refine ⟨fun a b hab ha ↦ ?_, by decide, by decide⟩
+    simp only [Set.mem_preimage, Set.mem_singleton_iff] at ha ⊢
+    revert a b; decide
+  exact ⟨h, h.not_isCoinitial,
+    (Spatial.Path.hasShape_reverse p (d := (id : ℕ → ℕ)) (s := .coinitial)).2 h⟩
 
 end Pantcheva2011
