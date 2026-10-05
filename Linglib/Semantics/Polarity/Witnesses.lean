@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.Polarity.Licensing
 public import Linglib.Logic.Natural.Additivity
-public import Linglib.Logic.Natural.Strawson.Basic
+public import Linglib.Logic.Natural.Strawson
 public import Linglib.Semantics.Quantification.Signatures
 public import Linglib.Semantics.Quantification.Basic
 public import Linglib.Semantics.Quantification.Counting
@@ -15,14 +15,13 @@ licensing relation reads in two ways: modulo presuppositions for weak items and 
 items and positive polarity items. Each witnessed context has a model operator certifying the
 reading it supports. A presupposition-free context has a `ContextWitness`, a function holding
 every strength the context carries (`DEStrength.HoldsFor`); a Strawson-only context has a
-`StrawsonWitness`, an operator into partial propositions that is Strawson downward entailing
-([von-fintel-1999]) and, where the context is anti-additive, Strawson anti-additive
-([gajewski-2011]).
+`StrawsonWitness`, an operator into partial propositions that is Strawson downward entailing in von
+Fintel's sense and, where the context is anti-additive, Strawson anti-additive in Gajewski's.
 
 The classical witnesses are complementation for negation, the sections of *every*, *no* and *few*,
 and *at most two*, which is antitone but not anti-additive (`atMost_not_antiAdditive`), the
 strictness that makes its context weak. The Strawson witnesses are the operators of
-`Logic/Natural/Strawson/Basic.lean`: *only*, *regret*, *since*, superlatives and *would*. The
+`Logic/Natural/Strawson.lean`: *only*, *regret*, *since*, superlatives and *would*. The
 contexts of *before*, *without*, *deny*, *doubt*, *too … to* and the comparatives have no operator
 yet, and questions and the generic contexts license by other routes than strength.
 
@@ -164,38 +163,39 @@ theorem ContextWitness.holdsFor_of_licenses {c : LicensingContext} (w : ContextW
 
 /-! ### Strawson witnesses -/
 
-/-- Focus *only* is Strawson anti-additive and not classically antitone (`only_not_antitone`). -/
+/-- Focus *only* is Strawson anti-additive and not classically antitone
+(`not_antitone_truthSet_only`). -/
 def onlyFocusWitness : StrawsonWitness .onlyFocus where
   op := only (W := Fin 4) (0 : Fin 4)
-  isStrawsonDE := only_isStrawsonDE 0
-  isStrawsonAA _ := only_isStrawsonAA 0
+  isStrawsonDE := isStrawsonDE_only 0
+  isStrawsonAA _ := isStrawsonAntiAdditive_only 0
 
 /-- Adversatives are Strawson anti-additive, with doxastic factivity, and not classically antitone
-(`regret_not_antitone`). -/
+(`not_antitone_truthSet_regret`). -/
 def adversativeWitness : StrawsonWitness .adversative where
-  op := regret (W := Fin 4) (fun w ↦ {w}) (fun _ ↦ {1})
-  isStrawsonDE := regret_isStrawsonDE _ _
-  isStrawsonAA _ := regret_isStrawsonAA _ _
+  op := regret (W := Fin 4) (fun w ↦ {w}) (fun _ ↦ .univ) (fun _ ↦ [(· = 1)])
+  isStrawsonDE := isStrawsonDE_regret _ _ _
+  isStrawsonAA _ := isStrawsonAntiAdditive_regret _ _ _
 
-/-- Temporal *since* is Strawson antitone, with its past-event presupposition, and not classically
-antitone (`since_not_antitone`). -/
+/-- Temporal *since* is Strawson anti-additive, with its past-event presupposition, and not
+classically antitone (`not_antitone_truthSet_since`). -/
 def sinceTemporalWitness : StrawsonWitness .sinceTemporal where
   op := since (W := Fin 4) (fun _ ↦ {0}) (fun _ ↦ ∅)
-  isStrawsonDE := since_isStrawsonDE _ _
-  isStrawsonAA h := absurd h (by decide)
+  isStrawsonDE := isStrawsonDE_since _ _
+  isStrawsonAA _ := isStrawsonAntiAdditive_since _ _
 
 /-- Superlatives are Strawson anti-additive in their restriction, with the designated-subject
-presupposition. -/
+presupposition, and not classically antitone (`not_antitone_truthSet_superlative`). -/
 def superlativeWitness : StrawsonWitness .superlative where
   op := (superlative (W := Fin 4) (id : Fin 4 → Fin 4) · 0)
-  isStrawsonDE := superlative_isStrawsonDE _ _
-  isStrawsonAA _ := superlative_isStrawsonAA _ _
+  isStrawsonDE := isStrawsonDE_superlative _ _
+  isStrawsonAA _ := isStrawsonAntiAdditive_superlative _ _
 
-/-- Conditional antecedents are Strawson anti-additive, with the presupposition that the modal base
-admits the antecedent, and not classically antitone (`would_not_antitone`). -/
+/-- Conditional antecedents are Strawson anti-additive, with the presupposition that the modal
+horizon admits the antecedent, and not classically antitone (`not_antitone_truthSet_would`). -/
 def conditionalAntecedentWitness : StrawsonWitness .conditionalAntecedent where
   op := (would (W := Fin 4) (fun _ ↦ Set.univ) · ∅)
-  isStrawsonDE := would_isStrawsonDE _ _
-  isStrawsonAA _ := would_isStrawsonAA _ _
+  isStrawsonDE := isStrawsonDE_would _ _
+  isStrawsonAA _ := isStrawsonAntiAdditive_would _ _
 
 end PolarityItem
