@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Logic.Natural.Strawson
-public import Linglib.Semantics.Exhaustification.Excluder
 public import Linglib.Semantics.Conditionals.Restrictor
 public import Linglib.Data.Examples.VonFintel1999
 
@@ -19,9 +18,11 @@ file carries the paper's arguments around them, and its licensing judgments are 
 the set comparison alike. On the best-worlds semantics wanting and believing `p` makes one glad
 that `p`, which the Honda Civic scenario refutes for the set comparison. The set-comparison
 *sorry* is not Strawson downward entailing, which is why the paper keeps the best-worlds one.
-Focus *only* over a name is propositional *only* over the alternatives the name generates; a
-conditional antecedent under a genuine ordering source is not downward entailing; and a
-superlative inside a definite description is not even Strawson downward entailing.
+Of two entries for propositional *only*, the one that admits the prejacent's entailments as
+alternatives is Strawson downward entailing and the one that bars them assesses no downward
+inference at all; a conditional antecedent under a genuine ordering source is not downward
+entailing; and a superlative inside a definite description is not even Strawson downward
+entailing.
 
 ## Main results
 
@@ -30,7 +31,8 @@ superlative inside a definite description is not even Strawson downward entailin
 * `holds_glad_of_want`, `not_gladBetter_of_want`: wanting and believing gives gladness on the
   best-worlds semantics, not on the set comparison.
 * `not_isStrawsonDE_regretBetter`: the set-comparison *sorry* would not license.
-* `only_assertion_eq_excludes`: focus *only* as exclusion of alternatives.
+* `not_presup_only68b`: the rejected entry for propositional *only* can assess no downward
+  inference within one set of alternatives.
 * `not_antitone_conditionalNecessity`, `not_isStrawsonDE_theSuperlativeExceeds`: the conditional
   under an ordering source and the superlative description fail downward inference.
 
@@ -137,36 +139,31 @@ theorem not_isStrawsonDE_regretBetter :
 
 end Attitudes
 
-/-! ### Focus *only* and propositional *only* -/
+/-! ### Propositional *only*, §3.4
+
+Of the two entries for propositional *only* von Fintel compares, (68a) presupposes the prejacent
+and asserts that every true alternative is entailed by it; it is the substrate's
+`Focus.Particles.only (· ⊆ ·)` (`Focus.Particles.only_subset_eq`), Strawson downward entailing
+with the alternatives held fixed (`Focus.Particles.isStrawsonDE_only_subset`). (68b) bars the
+prejacent's entailments from the alternatives and asserts that every true alternative is the
+prejacent. -/
 
 section Only
 
-open Exhaustification
+open Focus.Particles
 
-/-- Focus *only* over a name is the exclusion over the alternatives the name generates
-(`Exhaustification.excludes`, §3.4) when the prejacent entails no other alternative. -/
-theorem only_assertion_eq_excludes (P : ι → Set W) (x : ι) (hP : ∀ y, P x ⊆ P y → y = x) :
-    {w | (only x P).assertion w} = excludes (Set.range P) (P x) := by
-  ext w
-  simp only [only, Set.mem_ofPred_eq, mem_excludes]
-  constructor
-  · rintro h q ⟨y, rfl⟩ hw
-    by_cases hyx : y = x
-    · exact hyx ▸ subset_rfl
-    · exact absurd hw (h y hyx)
-  · intro h y hyx hw
-    exact hyx (hP y (h (P y) ⟨y, rfl⟩ hw))
+variable (C : Set (Set W)) (p : Set W)
 
-/-- Without that condition the two come apart, since individuals generating one proposition are
-one alternative, entailed by the prejacent, for the exclusion but several for `only`. -/
-theorem only_assertion_ne_excludes :
-    {w | (only true fun _ : Bool ↦ (Set.univ : Set Unit)).assertion w} ≠
-      excludes (Set.range fun _ : Bool ↦ (Set.univ : Set Unit)) Set.univ := by
-  intro h
-  have h0 : () ∈ {w | (only true fun _ : Bool ↦ (Set.univ : Set Unit)).assertion w} := by
-    rw [h]
-    exact fun q hq _ ↦ by obtain ⟨y, rfl⟩ := hq; exact subset_rfl
-  exact h0 false Bool.false_ne_true (Set.mem_univ ())
+/-- *Only* in the entry (68b) presupposes the prejacent and that no alternative is entailed by
+it, and asserts that every true alternative is the prejacent. -/
+def only68b : PartialProp W :=
+  ⟨fun w ↦ w ∈ p ∧ ¬ ∃ r ∈ C, p ⊆ r, (· ∈ atMost (· = ·) C p)⟩
+
+/-- With (68b) no downward inference can be assessed within one set of alternatives, since when
+the premise's prejacent is an alternative the conclusion's presupposition fails (p. 134). -/
+theorem not_presup_only68b {q : Set W} (hp : p ∈ C) (hqp : q ⊆ p) (w : W) :
+    ¬ (only68b C q).presup w :=
+  fun h ↦ h.2 ⟨p, hp, hqp⟩
 
 end Only
 

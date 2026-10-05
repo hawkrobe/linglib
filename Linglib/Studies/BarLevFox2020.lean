@@ -3,6 +3,7 @@ module
 public import Linglib.Semantics.Exhaustification.Disjunctive
 public import Linglib.Semantics.Conditionals.Counterfactual
 public import Linglib.Semantics.Presupposition.Defs
+public import Linglib.Semantics.Focus.Particles
 public import Linglib.Logic.Modal.Basic
 public import Linglib.Data.Examples.BarLevFox2020
 public import Mathlib.Data.Fintype.Pi
@@ -30,6 +31,8 @@ excluded into included.
 * `freeChoice`, `simpleDisjunction`: the modal and the plain disjunction.
 * `II_fcAlts`, `isInnocentlyExcludable_fcAlts_iff`: what free choice includes and excludes.
 * `only_presup`: free choice under `only` is presupposed.
+* `truthSet_only_eq`: without symmetric alternatives `only` agrees with the exclusive
+  `Focus.Particles.only`.
 * `universalFreeChoice`, `negativeUniversalFreeChoice`, `freeChoiceOverUniversal`,
   `simplificationMost`: instances of `Exhaustification.exhIEII_quantified`.
 * `sda`, `sda_consequent_disjunct`, `orBoth`: simplification, its failure, and the switches.
@@ -108,7 +111,7 @@ theorem isInnocentlyExcludable_fcAlts_iff {q : Set W} :
 
 omit hF in
 /-- Without the modal the conjunctive alternative is the conjunction of the disjunct
-alternatives: exhaustification denies it and includes neither disjunct. -/
+alternatives, so exhaustification denies it and includes neither disjunct. -/
 theorem simpleDisjunction (h₁ : ∃ w ∈ a, w ∉ b) (h₂ : ∃ w ∈ b, w ∉ a) :
     exhIEII {a ∪ b, a, b, a ∩ b} (a ∪ b) = (a ∪ b) \ (a ∩ b) :=
   exhIEII_pair_inter le_rfl (h₁.imp fun _ h ↦ ⟨⟨Or.inl h.1, h.1⟩, h.2⟩)
@@ -125,18 +128,32 @@ end FreeChoice
 
 /-! ### `only` -/
 
-/-- `only` presupposes the innocently includable alternatives and asserts the prejacent with
-the innocently excludable ones denied. -/
+/-- `only` presupposes the innocently includable alternatives and asserts that the innocently
+excludable ones are false (32). -/
 def only (ALT : Set (Set W)) (φ : Set W) : PartialProp W where
   presup w := ∀ r ∈ II ALT φ, r w
-  assertion w := φ w ∧ ∀ q, IsInnocentlyExcludable ALT φ q → ¬ q w
+  assertion w := ∀ q, IsInnocentlyExcludable ALT φ q → ¬ q w
 
-/-- Free choice under `only` is presupposed: `only ◇(a ∨ b)` presupposes `◇a` and `◇b`. -/
+/-- Free choice under `only` is presupposed, since `only ◇(a ∨ b)` presupposes `◇a` and `◇b`. -/
 theorem only_presup {R : SetRel W W} {a b : Set W} (hF : FreeChoiceWitnesses R a b) (w : W) :
     (only (fcAlts R a b) (R.preimage (a ∪ b))).presup w ↔ w ∈ R.preimage a ∩ R.preimage b := by
   simp only [only, II_fcAlts hF, Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp,
     forall_eq]
   exact ⟨fun h ↦ ⟨h.2.1, h.2.2⟩, fun h ↦ ⟨preimage_mono Set.subset_union_left h.1, h.1, h.2⟩⟩
+
+/-- Where the prejacent is the only includable alternative and the excludable ones are exactly
+those it does not entail, `only` is true at the same worlds as the exclusive
+`Focus.Particles.only` on the entailment scale, the entry (29b) that Innocent Inclusion
+revises. -/
+theorem truthSet_only_eq {ALT : Set (Set W)} {φ : Set W} (hφ : φ ∈ ALT)
+    (hIE : ∀ q, IsInnocentlyExcludable ALT φ q ↔ q ∈ ALT ∧ ¬ φ ⊆ q) (hII : II ALT φ = {φ}) :
+    (only ALT φ).truthSet = (Focus.Particles.only (· ⊆ ·) ALT φ).truthSet := by
+  rw [Focus.Particles.truthSet_only_subset hφ]
+  ext w
+  simp only [PartialProp.mem_truthSet, PartialProp.holds, only, hII, Set.mem_singleton_iff,
+    forall_eq, hIE, and_imp, mem_exh]
+  exact ⟨fun ⟨hw, h⟩ ↦ ⟨hw, fun q hq hwq ↦ by_contra fun hne ↦ h q hq hne hwq⟩,
+    fun ⟨hw, h⟩ ↦ ⟨hw, fun q hq hne hwq ↦ hne (h q hq hwq)⟩⟩
 
 /-! ### Simplification of disjunctive antecedents -/
 
@@ -191,14 +208,14 @@ theorem sda_consequent_disjunct
 
 variable (ord p q r) in
 /-- The alternatives of `(Exh(p ∨ q) ∨ (p ∧ q)) → r`, the *or both* antecedent parsed with an
-embedded exhaustifier by Hurford's constraint (80): the antecedent's three cells. -/
+embedded exhaustifier by Hurford's constraint (80), are the antecedent's three cells. -/
 def orBothAlts : Set (Set W) :=
   {closestImp ord (p ∪ q) r, closestImp ord (p \ q) r,
     closestImp ord (q \ p) r, closestImp ord (p ∩ q) r}
 
 /-- With the antecedent's cells as alternatives nothing is excludable and, given a world
-verifying each cell's conditional alone and one verifying all three, everything is included:
-`(p ∨ q) → r` asserts the conjunctive conditional it denied under `sdaAlts` (82). -/
+verifying each cell's conditional alone and one verifying all three, everything is included,
+so `(p ∨ q) → r` asserts the conjunctive conditional it denied under `sdaAlts` (82). -/
 theorem orBoth (htot : ∀ w, Std.Total (ord w).le)
     (h₁ : ∃ w ∈ closestImp ord (p ∪ q) r ∩ closestImp ord (p \ q) r,
       w ∉ closestImp ord (q \ p) r ∪ closestImp ord (p ∩ q) r)
@@ -254,8 +271,8 @@ end Simplification
 
 /-! ### The switches -/
 
-/-- A world of [ciardelli-zhang-champollion-2018]'s scenario: whether each switch is up, and
-the wiring of the light. -/
+/-- A world of [ciardelli-zhang-champollion-2018]'s scenario records whether each switch is up,
+and the wiring of the light. -/
 structure Switch where
   up₁ : Bool
   up₂ : Bool
@@ -289,8 +306,8 @@ abbrev off : Set Switch := {w | w.light w.up₁ w.up₂ = false}
 /-- Both switches up, and the light on exactly when the switches agree. -/
 def actual : Switch := ⟨true, true, fun x y ↦ x == y⟩
 
-/-- *If switch A or switch B were down, the light would be off* (76) is true in the scenario:
-its strengthening asserts both simplifications and denies the conjunctive one. -/
+/-- *If switch A or switch B were down, the light would be off* (76) is true in the scenario,
+since its strengthening asserts both simplifications and denies the conjunctive one. -/
 theorem sda_actual :
     actual ∈ exhIEII (sdaAlts sim down₁ down₂ off)
       (closestImp sim (down₁ ∪ down₂) off) := by
@@ -299,7 +316,7 @@ theorem sda_actual :
   decide
 
 /-- *If switch A or switch B or both were down, the light would be off* (78) is false in the
-scenario: its strengthening asserts the conjunctive conditional. -/
+scenario, since its strengthening asserts the conjunctive conditional. -/
 theorem orBoth_actual :
     actual ∉ exhIEII (orBothAlts sim down₁ down₂ off)
       (closestImp sim (down₁ ∪ down₂) off) := by
@@ -465,8 +482,8 @@ def overUniversalAlts : Set (Set W) :=
 
 variable {R p q}
 
-/-- Free choice with the existential modal over the universal (57), [nouwen-2017]'s case:
-given the corresponding worlds, `◇∀x(px ∨ qx)` strengthens to `◇∀x px ∧ ◇∀x qx ∧ ¬◇∃x(px ∧ qx)`,
+/-- Given the corresponding worlds, free choice with the existential modal over the universal
+(57), [nouwen-2017]'s case, strengthens `◇∀x(px ∨ qx)` to `◇∀x px ∧ ◇∀x qx ∧ ¬◇∃x(px ∧ qx)`,
 although `◇∀` does not distribute over disjunction. -/
 theorem freeChoiceOverUniversal
     (h₁ : ∃ w ∈ R.preimage (⋂ x, p x), w ∉ R.preimage (⋃ x, q x))

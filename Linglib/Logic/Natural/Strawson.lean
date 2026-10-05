@@ -5,6 +5,7 @@ public import Linglib.Semantics.Presupposition.Basic
 public import Linglib.Semantics.Conditionals.Basic
 public import Linglib.Semantics.Degree.Quantifier
 public import Linglib.Semantics.Modality.Kratzer.Ordering
+public import Linglib.Semantics.Focus.Particles
 
 /-!
 # Strawson entailment
@@ -38,14 +39,23 @@ presupposition that defeats the classical property.
   `isStrawsonAntiAdditive_superlative`, `isStrawsonAntiAdditive_since`,
   `isStrawsonAntiAdditive_would`, `isStrawsonUE_glad`, `not_isStrawsonDE_glad`, and the
   `not_antitone_truthSet_` counterexamples.
+* `Focus.Particles.isStrawsonDE_only`, `Focus.Particles.isStrawsonAntiAdditive_only_subset`,
+  `Focus.Particles.isStrawsonDE_only_apply`: the propositional exclusive is Strawson downward
+  entailing in its prejacent and, applied to an individual, in its predicate, on scales refining
+  entailment; `Focus.Particles.not_isStrawsonDE_only_superset` fails it on the reversed scale.
+* `only_eq_only_range`, `only_ne_only_range`: the name-based *only* is the exclusive over the
+  alternatives the name generates exactly when no predication entails another's.
 
 ## Implementation notes
 
 * Strawson entailment takes the presuppositions of premise and conclusion alike as premises, as
   in von Fintel's Strawson validity and Gajewski's own proofs, rather than the literal clause of
   Gajewski's cross-categorial definition at type `t`.
-* *Only* presupposes that `x` is `P`; Horn's presupposition that something is `P` gives the same
-  Strawson facts, as von Fintel notes.
+* `only` is von Fintel's name-based *only*, which excludes individuals; the propositional
+  exclusive of Coppock and Beaver, which excludes alternative propositions, is
+  `Focus.Particles.only`, and its Strawson facts hold with the alternatives held fixed, as von
+  Fintel requires. `only` presupposes that `x` is `P`; Horn's presupposition that something is
+  `P` gives the same Strawson facts, as von Fintel notes.
 * *Glad* and *regret* take the belief worlds and the modal base as world-indexed sets and the
   ordering source as a world-indexed list, so their best worlds are `Modality.bestAmong`;
   following Heim, their factivity is doxastic. With suitable ordering sources *regret* also covers
@@ -64,6 +74,7 @@ presupposition that defeats the classical property.
 * [von-fintel-1999]
 * [gajewski-2005]
 * [gajewski-2011]
+* [coppock-beaver-2014]
 * [atlas-1996]
 * [horn-1996]
 * [heim-1992]
@@ -213,6 +224,33 @@ theorem not_antitone_truthSet_only :
     ¬ Antitone fun P : Bool → Set Unit ↦ (only true P).truthSet :=
   not_antitone_truthSet (p := ⊥) (q := fun y ↦ {_u | y = true}) (w := ()) bot_le
     ⟨rfl, fun _ hy h ↦ hy h⟩ id
+
+/-- When distinct individuals yield alternatives none of which the prejacent entails, the
+name-based *only* is the propositional exclusive `Focus.Particles.only` applied to the
+predication of `x`, over the alternatives the name generates ([coppock-beaver-2014]'s (93)). -/
+theorem only_eq_only_range (hP : ∀ y, P x ⊆ P y → y = x) :
+    only x P = Focus.Particles.only (· ⊆ ·) (Set.range P) (P x) := by
+  refine PartialProp.ext ?_ (funext fun w ↦ propext ?_)
+  · rw [Focus.Particles.only_presup, Focus.Particles.atLeast_subset_eq (Set.mem_range_self x)]
+    rfl
+  · simp only [only, Focus.Particles.only_assertion, Focus.Particles.mem_atMost,
+      Set.forall_mem_range]
+    refine ⟨fun h y hw ↦ ?_, fun h y hyx hw ↦ hyx (hP y (h y hw))⟩
+    by_cases hyx : y = x
+    · exact hyx ▸ subset_rfl
+    · exact absurd hw (h y hyx)
+
+/-- Without that condition the two come apart, since two individuals with the same predication
+are one alternative, entailed by the prejacent, for the exclusive but two individuals for the
+name-based *only*. -/
+theorem only_ne_only_range :
+    only true (fun _ : Bool ↦ (.univ : Set Unit)) ≠
+      Focus.Particles.only (· ⊆ ·) (Set.range fun _ : Bool ↦ (.univ : Set Unit)) .univ := by
+  intro h
+  have h0 : (Focus.Particles.only (· ⊆ ·) (Set.range fun _ : Bool ↦ (.univ : Set Unit))
+      .univ).assertion () := fun q ⟨_, hq⟩ _ ↦ hq ▸ subset_rfl
+  rw [← h] at h0
+  exact h0 false Bool.false_ne_true (Set.mem_univ ())
 
 end Only
 
@@ -373,3 +411,56 @@ theorem not_antitone_truthSet_would :
 end Would
 
 end NaturalLogic
+
+/-! ### The propositional exclusive -/
+
+namespace Focus.Particles
+
+open NaturalLogic
+
+variable {W ι : Type*} {S : Set W → Set W → Prop} (C : Set (Set W))
+
+/-- On a scale refining entailment, *only* is Strawson downward entailing in its prejacent with
+the alternatives held fixed ([von-fintel-1999], §3.4; [coppock-beaver-2014], fn. 22). -/
+theorem isStrawsonDE_only (hS : ∀ ⦃p q r⦄, p ⊆ q → S q r → S p r) : IsStrawsonDE (only S C) :=
+  .of_antitone fun _ _ hpq ↦ antitone_atMost hS hpq
+
+/-- On the entailment scale *only* is Strawson anti-additive in its prejacent. -/
+theorem isStrawsonAntiAdditive_only_subset : IsStrawsonAntiAdditive (only (· ⊆ ·) C) :=
+  .of_isAntiAdditive fun p q ↦ funext fun w ↦ propext <| by
+    show w ∈ Exhaustification.excludes C (p ∪ q) ↔
+      w ∈ Exhaustification.excludes C p ∧ w ∈ Exhaustification.excludes C q
+    rw [Exhaustification.excludes_union]
+    exact Iff.rfl
+
+theorem isStrawsonDE_only_subset : IsStrawsonDE (only (· ⊆ ·) C) :=
+  (isStrawsonAntiAdditive_only_subset C).isStrawsonDE
+
+/-- Applied to the predication of an individual, *only* is Strawson downward entailing in the
+predicate with the alternatives held fixed, so NP-modifying *only* licenses negative polarity
+items in the verb phrase ([coppock-beaver-2014]'s (93)). -/
+theorem isStrawsonDE_only_apply (hS : ∀ ⦃p q r⦄, p ⊆ q → S q r → S p r) (x : ι) :
+    IsStrawsonDE fun P : ι → Set W ↦ only S C (P x) :=
+  .of_antitone fun _ _ hPQ ↦ antitone_atMost hS (hPQ x)
+
+/-- *There only was precipitation in Medford* does not classically entail *there only was rain in
+Medford*, whose presupposition, the premise [von-fintel-1999]'s (67) adds, may fail. -/
+theorem not_antitone_truthSet_only_subset :
+    ¬ Antitone fun p : Set Bool ↦ (only (· ⊆ ·) {{true}, .univ} p).truthSet :=
+  not_antitone_truthSet (p := {true}) (q := .univ) (w := false) (Set.subset_univ _)
+    ⟨⟨.univ, by simp, trivial, subset_rfl⟩, fun q hq hw ↦ by
+      rcases hq with rfl | rfl
+      exacts [absurd hw (by simp), subset_rfl]⟩
+    fun ⟨_, _, hw, hsub⟩ ↦ by simpa using hsub hw
+
+/-- On a scale on which a weaker alternative outranks a stronger one, here reverse entailment,
+*only* is not Strawson downward entailing in its prejacent ([coppock-beaver-2014], fn. 22). The
+two-world model is ours; the footnote states the claim without one. -/
+theorem not_isStrawsonDE_only_superset :
+    ¬ IsStrawsonDE (only (· ⊇ ·) ({{true}, .univ} : Set (Set Bool))) := fun h ↦ by
+  have := h (p := {true}) (q := .univ) (Set.subset_univ _) true
+    ⟨.univ, by simp, trivial, subset_rfl⟩ ⟨{true}, by simp, rfl, subset_rfl⟩
+    (fun _ _ _ ↦ Set.subset_univ _) .univ (by simp) trivial
+  exact absurd (this (Set.mem_univ false)) (by simp)
+
+end Focus.Particles
