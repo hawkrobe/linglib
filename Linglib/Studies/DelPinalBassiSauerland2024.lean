@@ -2,6 +2,7 @@ module
 
 public import Linglib.Semantics.Exhaustification.Presuppositional
 public import Linglib.Semantics.Presupposition.Quantified
+public import Linglib.Semantics.Homogeneity.Plural
 public import Linglib.Studies.BarLevFox2020
 
 /-!
@@ -19,6 +20,9 @@ under negative factives, in disjunctions and under quantifiers all turn on the s
 * `basic_scalar`: `pex` presupposes the negation of a non-entailed alternative, (11a).
 * `free_choice`, `double_prohibition`, `negative_free_choice`,
   `negative_free_choice_under_negation`: the readings (14), (16), (19a) and (20), exactly.
+* `eval_pexPossOr`, `homogeneity_gap`: `pex[◇(p ∨ q)]` is Križ's homogeneous plural predication
+  over the disjuncts, the structure the paper compares with Goldstein's in §2.2, with the
+  presupposition failures of fn. 2.
 * `pex_and_exh_agree`: with every alternative relevant, `pex` and `exh` agree, (12e)–(13).
 * `free_choice_presupposed`, `unaware_disbelieves_each_disjunct`: negative factives, §3.
 * `free_choice_filtered`, `negative_free_choice_filtered`: Karttunen's filtering disjunction
@@ -41,6 +45,8 @@ and *exactly one* is `∃!`.
 * [delpinal-bassi-sauerland-2024]
 * [bar-lev-fox-2020]
 * [gotzner-romoli-santorio-2020]
+* [goldstein-2019]
+* [kriz-2016]
 * [fox-2013]
 * [karttunen-1973]
 -/
@@ -133,6 +139,41 @@ theorem free_choice : (pexPossOr R a b).holds w ↔ w ∈ R.preimage a ∧ w ∈
   rw [pexPossOr, pexIEII_holds_iff hl hu, ← pexPossOr, pexPossOr_presup hF,
     II_fcAlts_sdiff_inter hF]
   grind
+
+open Classical in
+/-- As a trivalent proposition, `pex^{IE+II}[◇(a ∨ b)]` is the plural predication that `a` and
+`b` are permitted, true where both are, false where neither is, and undefined in between. -/
+theorem eval_pexPossOr :
+    (pexPossOr R a b).eval = barePlural (fun x w ↦ w ∈ R.preimage x) {a, b} := by
+  funext w
+  have hq : (pexPossOr R a b).assertion w ↔ w ∈ R.preimage a ∨ w ∈ R.preimage b := by
+    change w ∈ R.preimage (a ∪ b) ↔ _
+    rw [preimage_union, Set.mem_union]
+  simp only [eval, barePlural, Trivalent.supervaluation, pexPossOr_presup hF, hq,
+    Finset.mem_insert, Finset.mem_singleton, forall_eq_or_imp, forall_eq, exists_eq_or_imp,
+    exists_eq_left]
+  split_ifs <;> grind
+
+/-- `pex^{IE+II}[◇(a ∨ b)]` is undefined exactly where one of `◇a` and `◇b` holds without the
+other, the presupposition failure fn. 2 predicts. -/
+theorem homogeneity_gap :
+    (pexPossOr R a b).eval.gapExt = symmDiff (R.preimage a) (R.preimage b) := by
+  ext w
+  simp only [Trivalent.Prop3.mem_gapExt, eval_eq_indet_iff, pexPossOr_presup hF,
+    Set.mem_symmDiff]
+  tauto
+
+/-- The negation `¬pex^{IE+II}[◇(a ∨ b)]` is undefined at the same worlds, fn. 2. -/
+theorem homogeneity_gap_neg :
+    (pexPossOr R a b).neg.eval.gapExt = symmDiff (R.preimage a) (R.preimage b) := by
+  rw [← homogeneity_gap hF]
+  ext w
+  simp
+
+/-- `pex^{IE+II}[◇(a ∨ b)]` is homogeneous, since a world permitting only `a` lies in its gap. -/
+theorem isHomogeneous_pexPossOr : isHomogeneous (pexPossOr R a b).eval := by
+  obtain ⟨w, hwa, hwb⟩ := hF.only_left
+  exact ⟨w, by rw [homogeneity_gap hF]; exact .inl ⟨hwa, hwb⟩⟩
 
 /-- With every alternative relevant, `pex^{IE+II}[◇(a ∨ b)]` holds exactly where
 `exh^{IE+II}[◇(a ∨ b)]` is true, (12e) and (13); the two differ only in what they presuppose. -/
