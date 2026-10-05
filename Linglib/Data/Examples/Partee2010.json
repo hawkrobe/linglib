@@ -1,301 +1,1278 @@
 [
   {
     "id": "partee2010_10a",
-    "source": {"bibkey": "partee-2010", "paperLabel": "(10a)"},
+    "source": {
+      "bibkey": "partee-2010",
+      "paperLabel": "(10a)"
+    },
     "language": "stan1293",
     "primaryText": "A fake gun is not a gun.",
-    "glossedTokens": [
-      ["A", "INDEF"], ["fake", "fake"], ["gun", "gun"], ["is", "be.PRS.3SG"], ["not", "NEG"],
-      ["a", "INDEF"], ["gun", "gun"]
-    ],
+    "glossedTokens": [],
     "translation": "",
-    "context": "Cited as an apparently-true privative entailment (the prima facie evidence for the privative class).",
+    "context": "",
     "judgment": "acceptable",
     "readings": [],
-    "comment": "Partee §2. Paired with (10b): if 'gun' excludes fake guns (the privative analysis), why is (10b) well-formed?"
+    "comment": "Apparently true, with the first gun coerced to include fake guns and the second not (p. 280).",
+    "verified": "page-image"
   },
   {
     "id": "partee2010_10b",
-    "source": {"bibkey": "partee-2010", "paperLabel": "(10b)"},
+    "source": {
+      "bibkey": "partee-2010",
+      "paperLabel": "(10b)"
+    },
     "language": "stan1293",
     "primaryText": "Is that gun real or fake?",
-    "glossedTokens": [
-      ["Is", "be.PRS.3SG"], ["that", "DEM"], ["gun", "gun"], ["real", "real"], ["or", "or"],
-      ["fake", "fake"]
-    ],
+    "glossedTokens": [],
     "translation": "",
-    "context": "The 'gun puzzle': for this question to be well-formed, 'gun' must include both real and fake guns. Direct evidence that the noun's denotation coerces to include the adjective's extension.",
+    "context": "",
     "judgment": "acceptable",
     "readings": [],
-    "comment": "Partee §2 ex. (10b). The motivating puzzle: traditional privative analysis predicts 'gun' ∩ 'fake gun' = ∅, but (10b) presupposes 'gun' covers both. Resolved in §4 via NVP-licensed coercion of 'gun' to 'gun*'."
+    "comment": "Well-formed and interpretable, in tension with (10a) on the privative analysis (p. 277).",
+    "verified": "page-image"
   },
   {
     "id": "partee2010_11a",
-    "source": {"bibkey": "nowak-2000", "paperLabel": "(11a)"},
-    "reportedIn": {"bibkey": "partee-2010", "paperLabel": "(11a)"},
+    "source": {
+      "bibkey": "nowak-2000",
+      "paperLabel": ""
+    },
+    "reportedIn": {
+      "bibkey": "partee-2010",
+      "paperLabel": "(11a)"
+    },
     "language": "poli1260",
     "primaryText": "Kelnerki rozmawiały o przystojnym chłopcu.",
     "glossedTokens": [
-      ["Kelnerki", "waitress.NOM.PL"], ["rozmawiały", "talk.PST.3PL.F"], ["o", "about"],
-      ["przystojnym", "handsome.LOC.SG.M"], ["chłopcu", "boy.LOC.SG"]
+      [
+        "Kelnerki",
+        "waitresses"
+      ],
+      [
+        "rozmawiały",
+        "talked"
+      ],
+      [
+        "o",
+        "about"
+      ],
+      [
+        "przystojnym",
+        "handsome-LOC"
+      ],
+      [
+        "chłopcu",
+        "boy-LOC"
+      ]
     ],
     "translation": "The waitresses talked about a handsome boy.",
-    "context": "Unmarked NP-internal word order; Adj+N adjacent within the PP.",
+    "context": "",
     "judgment": "acceptable",
     "readings": [],
-    "comment": "Partee 2010 §3 ex. (11a); Nowak 2000. Baseline for the split construction in (11b)."
+    "comment": "Unmarked order (p. 278). All the Polish examples are from Nowak (2000).",
+    "verified": "page-image",
+    "paperFeatures": [
+      [
+        "adjective",
+        "handsome"
+      ],
+      [
+        "construction",
+        "unsplit"
+      ]
+    ]
   },
   {
     "id": "partee2010_11b",
-    "source": {"bibkey": "nowak-2000", "paperLabel": "(11b)"},
-    "reportedIn": {"bibkey": "partee-2010", "paperLabel": "(11b)"},
+    "source": {
+      "bibkey": "nowak-2000",
+      "paperLabel": ""
+    },
+    "reportedIn": {
+      "bibkey": "partee-2010",
+      "paperLabel": "(11b)"
+    },
     "language": "poli1260",
     "primaryText": "O przystojnym kelnerki rozmawiały chłopcu.",
     "glossedTokens": [
-      ["O", "about"], ["przystojnym", "handsome.LOC.SG.M"], ["kelnerki", "waitress.NOM.PL"],
-      ["rozmawiały", "talk.PST.3PL.F"], ["chłopcu", "boy.LOC.SG"]
+      [
+        "O",
+        "about"
+      ],
+      [
+        "przystojnym",
+        "handsome-LOC"
+      ],
+      [
+        "kelnerki",
+        "waitresses"
+      ],
+      [
+        "rozmawiały",
+        "talked"
+      ],
+      [
+        "chłopcu",
+        "boy-LOC"
+      ]
     ],
     "translation": "The waitresses talked about a handsome BOY.",
-    "context": "NP-split: preposition + adjective in sentence-initial position, head noun sentence-final. Topic-focus structure highlights the noun.",
+    "context": "",
     "judgment": "acceptable",
     "readings": [],
-    "comment": "Partee 2010 §3 ex. (11b); Nowak 2000. The split-NP construction central to Partee's argument: intersective 'przystojny' splits cleanly. Compare with (14b) where non-subsective 'były' cannot split."
+    "comment": "Split of (11a): preposition and adjective sentence-initial, bare noun sentence-final (p. 278).",
+    "verified": "page-image",
+    "paperFeatures": [
+      [
+        "adjective",
+        "handsome"
+      ],
+      [
+        "construction",
+        "NP-split"
+      ]
+    ]
   },
   {
     "id": "partee2010_13b",
-    "source": {"bibkey": "nowak-2000", "paperLabel": "(13b)"},
-    "reportedIn": {"bibkey": "partee-2010", "paperLabel": "(13b)"},
+    "source": {
+      "bibkey": "nowak-2000",
+      "paperLabel": ""
+    },
+    "reportedIn": {
+      "bibkey": "partee-2010",
+      "paperLabel": "(13b)"
+    },
     "language": "poli1260",
     "primaryText": "Do doliny weszliśmy rozległej.",
     "glossedTokens": [
-      ["Do", "to"], ["doliny", "valley.GEN.SG"], ["weszliśmy", "enter.PST.1PL"],
-      ["rozległej", "large.GEN.SG.F"]
+      [
+        "Do",
+        "to"
+      ],
+      [
+        "doliny",
+        "valley-GEN"
+      ],
+      [
+        "weszliśmy",
+        "enter-PST.1ST.PL"
+      ],
+      [
+        "rozległej",
+        "large-GEN"
+      ]
     ],
     "translation": "We entered a LARGE valley.",
-    "context": "NP-split with intersective adjective 'rozległy' (large). The split succeeds, as expected for intersective Adj+N.",
+    "context": "",
     "judgment": "acceptable",
     "readings": [],
-    "comment": "Partee 2010 §3 ex. (13b); Nowak 2000. Intersective member of the splittable class (15a/c)."
+    "comment": "Split with rozległy 'large' (p. 279).",
+    "verified": "page-image",
+    "paperFeatures": [
+      [
+        "adjective",
+        "large"
+      ],
+      [
+        "construction",
+        "NP-split"
+      ]
+    ]
   },
   {
     "id": "partee2010_14b",
-    "source": {"bibkey": "nowak-2000", "paperLabel": "(14b)"},
-    "reportedIn": {"bibkey": "partee-2010", "paperLabel": "(14b)"},
+    "source": {
+      "bibkey": "nowak-2000",
+      "paperLabel": ""
+    },
+    "reportedIn": {
+      "bibkey": "partee-2010",
+      "paperLabel": "(14b)"
+    },
     "language": "poli1260",
     "primaryText": "Z prezydentem rozmawiała byłym.",
     "glossedTokens": [
-      ["Z", "with"], ["prezydentem", "president.INS.SG"], ["rozmawiała", "talk.PST.3SG.F"],
-      ["byłym", "former.INS.SG.M"]
+      [
+        "Z",
+        "with"
+      ],
+      [
+        "prezydentem",
+        "president-INSTR"
+      ],
+      [
+        "rozmawiała",
+        "talk-PST.3RD.F.SG"
+      ],
+      [
+        "byłym",
+        "former-INSTR"
+      ]
     ],
     "translation": "She talked with the FORMER president.",
-    "context": "Attempted NP-split with non-subsective modal adjective 'były' (former). The split is ungrammatical.",
+    "context": "",
     "judgment": "ungrammatical",
     "readings": [],
-    "comment": "Partee 2010 §3 ex. (14b); Nowak 2000. Critical negative datum: non-subsective adjectives cannot split. This is the empirical contrast that motivates the 3-class hierarchy: the splitting diagnostic distinguishes subsective (including former privatives) from non-subsective, NOT privative from non-privative."
+    "comment": "See (14a).",
+    "verified": "page-image",
+    "paperFeatures": [
+      [
+        "adjective",
+        "former"
+      ],
+      [
+        "class",
+        "privative"
+      ],
+      [
+        "construction",
+        "NP-split"
+      ]
+    ]
   },
   {
-    "id": "partee2010_biedny_ambiguity",
-    "source": {"bibkey": "nowak-2000", "paperLabel": "(15b),(16a)"},
-    "reportedIn": {"bibkey": "partee-2010", "paperLabel": "(15b),(16a)"},
+    "id": "partee2010_15b",
+    "source": {
+      "bibkey": "nowak-2000",
+      "paperLabel": ""
+    },
+    "reportedIn": {
+      "bibkey": "partee-2010",
+      "paperLabel": "(15b)"
+    },
     "language": "poli1260",
     "primaryText": "biedny",
     "glossedTokens": [
-      ["biedny", "poor.NOM.SG.M"]
+      [
+        "biedny",
+        "poor"
+      ]
     ],
-    "translation": "poor / pitiful (lexically ambiguous)",
-    "context": "Polish 'biedny' is lexically ambiguous between an intersective reading 'not rich' (15b: can split in NP-split construction) and a non-subsective reading 'pitiful' (16a: cannot split). The splitting diagnostic tracks the READING, not the lexical form.",
+    "translation": "poor",
+    "context": "",
     "judgment": "acceptable",
-    "readings": [
-      {"name": "intersective 'not rich'", "judgment": "acceptable"},
-      {"name": "non-subsective 'pitiful'", "judgment": "unacceptable"}
+    "readings": [],
+    "paperFeatures": [
+      [
+        "adjective",
+        "poor"
+      ],
+      [
+        "sense",
+        "not rich"
+      ],
+      [
+        "construction",
+        "NP-split"
+      ]
     ],
-    "comment": "Partee 2010 §3 exs. (15b) and (16a); Nowak 2000. The single most precise empirical claim in the paper: the same lexical item splits or fails to split depending on its semantic class. This refutes any attempt to assimilate splitting to a morphological or lexical feature of the adjective. The `readings` field captures the discrimination at the reading level — the discrimination cannot be encoded at the class level alone."
+    "comment": "biedny 'poor' in the sense 'not rich' can split (p. 279).",
+    "verified": "page-image"
+  },
+  {
+    "id": "partee2010_16a",
+    "source": {
+      "bibkey": "nowak-2000",
+      "paperLabel": ""
+    },
+    "reportedIn": {
+      "bibkey": "partee-2010",
+      "paperLabel": "(16a)"
+    },
+    "language": "poli1260",
+    "primaryText": "biedny",
+    "glossedTokens": [
+      [
+        "biedny",
+        "poor"
+      ]
+    ],
+    "translation": "poor",
+    "context": "",
+    "judgment": "ungrammatical",
+    "readings": [],
+    "paperFeatures": [
+      [
+        "adjective",
+        "poor"
+      ],
+      [
+        "sense",
+        "pitiful"
+      ],
+      [
+        "construction",
+        "NP-split"
+      ]
+    ],
+    "comment": "biedny 'poor' in the sense 'pitiful' cannot split (p. 279).",
+    "verified": "page-image"
   },
   {
     "id": "partee2010_17b",
-    "source": {"bibkey": "partee-2010", "paperLabel": "(17b)"},
+    "source": {
+      "bibkey": "partee-2010",
+      "paperLabel": "(17b)"
+    },
     "language": "stan1293",
     "primaryText": "I don't care whether that fur is fake or real.",
-    "glossedTokens": [
-      ["I", "1SG"], ["don't", "do.PRS.NEG"], ["care", "care"], ["whether", "whether"],
-      ["that", "DEM"], ["fur", "fur"], ["is", "be.PRS.3SG"], ["fake", "fake"], ["or", "or"],
-      ["real", "real"]
-    ],
+    "glossedTokens": [],
     "translation": "",
-    "context": "Generalization of the (10b) gun-puzzle to 'fur'. The polar disjunction 'fake or real' presupposes that 'fur' covers both fake and real fur; otherwise 'real' would be redundant. Direct evidence of NVP-licensed coercion of the noun extension.",
+    "context": "",
     "judgment": "acceptable",
     "readings": [],
-    "comment": "Partee 2010 §4 ex. (17b). Together with (10b), the canonical evidence for noun-extension coercion. The paper notes 'real' would always be redundant without coercion."
+    "comment": "As (17a) (p. 279).",
+    "verified": "page-image"
   },
   {
     "id": "partee2010_19b",
-    "source": {"bibkey": "kamp-partee-1995", "paperLabel": "(19b) in Partee 2010"},
-    "reportedIn": {"bibkey": "partee-2010", "paperLabel": "(19b)"},
+    "source": {
+      "bibkey": "kamp-partee-1995",
+      "paperLabel": "(29c)"
+    },
+    "reportedIn": {
+      "bibkey": "partee-2010",
+      "paperLabel": "(19b)"
+    },
     "language": "stan1293",
-    "primaryText": "a midget giant (a giant, but an exceptionally small one)",
-    "glossedTokens": [
-      ["a", "INDEF"], ["midget", "midget"], ["giant", "giant"]
-    ],
+    "primaryText": "midget giant",
+    "glossedTokens": [],
     "translation": "",
-    "context": "Test case for HPP (Head Primacy Principle): the head 'giant' fixes the local domain; the modifier 'midget' is interpreted relative to that domain, yielding 'small for a giant'. Compare (19a) 'giant midget' = a midget who is exceptionally large.",
+    "context": "",
     "judgment": "acceptable",
-    "readings": [],
-    "comment": "Partee 2010 §4 ex. (19b); credited to Kamp & Partee 1995. The classical HPP example: identical adjective+noun pairs receive different interpretations depending on which is head, because the head fixes the local domain."
+    "readings": [
+      {
+        "name": "a giant, but an exceptionally small one",
+        "judgment": "acceptable"
+      }
+    ],
+    "comment": "From Kamp and Partee (1995) (p. 280).",
+    "verified": "page-image"
   },
   {
     "id": "partee2010_21b",
-    "source": {"bibkey": "kamp-partee-1995", "paperLabel": "(21b) in Partee 2010"},
-    "reportedIn": {"bibkey": "partee-2010", "paperLabel": "(21b)"},
+    "source": {
+      "bibkey": "kamp-partee-1995",
+      "paperLabel": "(31)"
+    },
+    "reportedIn": {
+      "bibkey": "partee-2010",
+      "paperLabel": "(21b)"
+    },
     "language": "stan1293",
     "primaryText": "Knives are sharp.",
-    "glossedTokens": [
-      ["Knives", "knife.PL"], ["are", "be.PRS.3PL"], ["sharp", "sharp"]
-    ],
+    "glossedTokens": [],
     "translation": "",
-    "context": "Test case for NVP (Non-Vacuity Principle). Generic predication: 'sharp' would be redundant if 'knife' presupposed sharpness; NVP forces a reading where some knives are not sharp, so the generic claim is non-vacuous.",
+    "context": "",
     "judgment": "acceptable",
     "readings": [],
-    "comment": "Partee 2010 §4 ex. (21b); credited to Kamp & Partee 1995. Demonstrates that NVP applies to simple predicates, not just to Adj+N combinations — the same principle Partee invokes for privative coercion."
+    "comment": "From Kamp and Partee (1995: 162) (p. 281).",
+    "verified": "page-image"
   },
   {
     "id": "partee2010_22b",
-    "source": {"bibkey": "partee-2010", "paperLabel": "(22b)"},
+    "source": {
+      "bibkey": "partee-2010",
+      "paperLabel": "(22b)"
+    },
     "language": "stan1293",
     "primaryText": "How many poets are buried in Amherst?",
-    "glossedTokens": [
-      ["How", "how"], ["many", "many"], ["poets", "poet.PL"], ["are", "be.PRS.3PL"],
-      ["buried", "bury.PASS.PTCP"], ["in", "in"], ["Amherst", "Amherst"]
-    ],
+    "glossedTokens": [],
     "translation": "",
-    "context": "Demonstrates context-shift of the noun 'poet' independent of any adjective. With predicate 'buried', 'poets' presupposes dead poets; with 'live in' or similar present-tense, 'poets' presupposes living poets. Shows N's extension is itself adjustable, supporting the coercion mechanism Partee invokes for privatives.",
+    "context": "",
     "judgment": "acceptable",
     "readings": [],
-    "comment": "Partee 2010 §4 ex. (22b). Closing argument: noun extensions are context-adjustable independently of adjective modification, so the coercion machinery posited for privatives isn't an ad hoc rescue — it's a general property of noun interpretation."
+    "comment": "Normally presupposes that the poets counted are dead (pp. 282-283).",
+    "verified": "page-image"
   },
   {
     "id": "partee2010_12a",
-    "source": {"bibkey": "nowak-2000", "paperLabel": "(12a)"},
-    "reportedIn": {"bibkey": "partee-2010", "paperLabel": "(12a)"},
+    "source": {
+      "bibkey": "nowak-2000",
+      "paperLabel": ""
+    },
+    "reportedIn": {
+      "bibkey": "partee-2010",
+      "paperLabel": "(12a)"
+    },
     "language": "poli1260",
     "primaryText": "Włamano się do nowego sklepu.",
     "glossedTokens": [
-      ["Włamano", "break.in-NEUT.SG"], ["się", "REFL"], ["do", "to"], ["nowego", "new.GEN.SG.M"],
-      ["sklepu", "store.GEN.SG"]
+      [
+        "Włamano",
+        "broke-in-NEUT.SG"
+      ],
+      [
+        "się",
+        "REFL"
+      ],
+      [
+        "do",
+        "to"
+      ],
+      [
+        "nowego",
+        "new-GEN"
+      ],
+      [
+        "sklepu",
+        "store-GEN"
+      ]
     ],
     "translation": "Someone broke into the new store.",
-    "context": "Unmarked NP-internal order; baseline for the split in (12b).",
+    "context": "",
     "judgment": "acceptable",
     "readings": [],
-    "comment": "Partee 2010 §3 ex. (12a); Nowak 2000. Unsplit baseline for the (12b) split-NP contrast."
+    "comment": "Unmarked order (p. 278).",
+    "verified": "page-image",
+    "paperFeatures": [
+      [
+        "adjective",
+        "new"
+      ],
+      [
+        "construction",
+        "unsplit"
+      ]
+    ]
   },
   {
     "id": "partee2010_12b",
-    "source": {"bibkey": "nowak-2000", "paperLabel": "(12b)"},
-    "reportedIn": {"bibkey": "partee-2010", "paperLabel": "(12b)"},
+    "source": {
+      "bibkey": "nowak-2000",
+      "paperLabel": ""
+    },
+    "reportedIn": {
+      "bibkey": "partee-2010",
+      "paperLabel": "(12b)"
+    },
     "language": "poli1260",
     "primaryText": "Do sklepu włamano się nowego.",
     "glossedTokens": [
-      ["Do", "to"], ["sklepu", "store.GEN.SG"], ["włamano", "break.in-NEUT.SG"], ["się", "REFL"],
-      ["nowego", "new.GEN.SG.M"]
+      [
+        "Do",
+        "to"
+      ],
+      [
+        "sklepu",
+        "store-GEN"
+      ],
+      [
+        "włamano",
+        "broke-in-NEUT.SG"
+      ],
+      [
+        "się",
+        "REFL"
+      ],
+      [
+        "nowego",
+        "new-GEN"
+      ]
     ],
     "translation": "Someone broke into the NEW store.",
-    "context": "NP-split: noun-in-PP sentence-initial, adjective sentence-final. Intersective 'nowy' (new) splits cleanly.",
+    "context": "",
     "judgment": "acceptable",
     "readings": [],
-    "comment": "Partee 2010 §3 ex. (12b); Nowak 2000. A second splittable intersective adjective, paired with (11b) to show the pattern is not lexically isolated."
+    "comment": "Split of (12a): preposition and noun sentence-initial, adjective sentence-final (p. 278).",
+    "verified": "page-image",
+    "paperFeatures": [
+      [
+        "adjective",
+        "new"
+      ],
+      [
+        "construction",
+        "NP-split"
+      ]
+    ]
   },
   {
     "id": "partee2010_13a",
-    "source": {"bibkey": "nowak-2000", "paperLabel": "(13a)"},
-    "reportedIn": {"bibkey": "partee-2010", "paperLabel": "(13a)"},
+    "source": {
+      "bibkey": "nowak-2000",
+      "paperLabel": ""
+    },
+    "reportedIn": {
+      "bibkey": "partee-2010",
+      "paperLabel": "(13a)"
+    },
     "language": "poli1260",
     "primaryText": "Do rozległej weszliśmy doliny.",
     "glossedTokens": [
-      ["Do", "to"], ["rozległej", "large.GEN.SG.F"], ["weszliśmy", "enter.PST.1PL"],
-      ["doliny", "valley.GEN.SG"]
+      [
+        "Do",
+        "to"
+      ],
+      [
+        "rozległej",
+        "large-GEN"
+      ],
+      [
+        "weszliśmy",
+        "enter-PST.1ST.PL"
+      ],
+      [
+        "doliny",
+        "valley-GEN"
+      ]
     ],
     "translation": "We entered a large VALLEY.",
-    "context": "Alternate split order: preposition + adjective initial, noun final. Pair-mate of (13b).",
+    "context": "",
     "judgment": "acceptable",
     "readings": [],
-    "comment": "Partee 2010 §3 ex. (13a); Nowak 2000. Both orderings of (13) are acceptable splits, demonstrating that the construction does not constrain which element is sentence-final."
+    "comment": "Split with rozległy 'large', which is in the list of adjectives that can split, (15a) (p. 279).",
+    "verified": "page-image",
+    "paperFeatures": [
+      [
+        "adjective",
+        "large"
+      ],
+      [
+        "construction",
+        "NP-split"
+      ]
+    ]
   },
   {
     "id": "partee2010_14a",
-    "source": {"bibkey": "nowak-2000", "paperLabel": "(14a)"},
-    "reportedIn": {"bibkey": "partee-2010", "paperLabel": "(14a)"},
+    "source": {
+      "bibkey": "nowak-2000",
+      "paperLabel": ""
+    },
+    "reportedIn": {
+      "bibkey": "partee-2010",
+      "paperLabel": "(14a)"
+    },
     "language": "poli1260",
     "primaryText": "Z byłym rozmawiała prezydentem.",
     "glossedTokens": [
-      ["Z", "with"], ["byłym", "former.INS.SG.M"], ["rozmawiała", "talk.PST.3SG.F"],
-      ["prezydentem", "president.INS.SG"]
+      [
+        "Z",
+        "with"
+      ],
+      [
+        "byłym",
+        "former-INSTR"
+      ],
+      [
+        "rozmawiała",
+        "talk-PST.3RD.F.SG"
+      ],
+      [
+        "prezydentem",
+        "president-INSTR"
+      ]
     ],
     "translation": "She talked with the former PRESIDENT.",
-    "context": "Attempted NP-split with non-subsective 'były' (former). Ungrammatical regardless of split order; pair-mate of (14b).",
+    "context": "",
     "judgment": "ungrammatical",
     "readings": [],
-    "comment": "Partee 2010 §3 ex. (14a); Nowak 2000. The ungrammaticality holds for both split orders, ruling out a syntactic explanation tied to which element is sentence-final."
+    "comment": "Neither split order is possible with były 'former' (p. 279). Former is normally regarded as privative, and that Polish past splits while former does not is a puzzle that remains for the no-privatives hypothesis (p. 282).",
+    "verified": "page-image",
+    "paperFeatures": [
+      [
+        "adjective",
+        "former"
+      ],
+      [
+        "class",
+        "privative"
+      ],
+      [
+        "construction",
+        "NP-split"
+      ]
+    ]
   },
   {
     "id": "partee2010_17a",
-    "source": {"bibkey": "partee-2010", "paperLabel": "(17a)"},
+    "source": {
+      "bibkey": "partee-2010",
+      "paperLabel": "(17a)"
+    },
     "language": "stan1293",
     "primaryText": "I don't care whether that fur is fake fur or real fur.",
-    "glossedTokens": [
-      ["I", "1SG"], ["don't", "do.PRS.NEG"], ["care", "care"], ["whether", "whether"],
-      ["that", "DEM"], ["fur", "fur"], ["is", "be.PRS.3SG"], ["fake", "fake"], ["fur", "fur"],
-      ["or", "or"], ["real", "real"], ["fur", "fur"]
-    ],
+    "glossedTokens": [],
     "translation": "",
-    "context": "Explicit form of the fur disjunction, with both 'fake fur' and 'real fur' as full NPs. The acceptability shows the noun 'fur' uncontroversially covers both extensions.",
+    "context": "",
     "judgment": "acceptable",
     "readings": [],
-    "comment": "Partee 2010 §4 ex. (17a). The unreduced form makes the coercion visible: 'fur' must be the extension covering both halves of the disjunction."
+    "comment": "The denotation of fur is expanded to include both fake and real fur (p. 279).",
+    "verified": "page-image"
   },
   {
     "id": "partee2010_19a",
-    "source": {"bibkey": "kamp-partee-1995", "paperLabel": "(19a) in Partee 2010"},
-    "reportedIn": {"bibkey": "partee-2010", "paperLabel": "(19a)"},
+    "source": {
+      "bibkey": "kamp-partee-1995",
+      "paperLabel": "(29b)"
+    },
+    "reportedIn": {
+      "bibkey": "partee-2010",
+      "paperLabel": "(19a)"
+    },
     "language": "stan1293",
-    "primaryText": "a giant midget (a midget, but an exceptionally large one)",
-    "glossedTokens": [
-      ["a", "INDEF"], ["giant", "giant"], ["midget", "midget"]
-    ],
+    "primaryText": "giant midget",
+    "glossedTokens": [],
     "translation": "",
-    "context": "HPP pair-mate of (19b): with 'midget' as head, the local domain is midgets; 'giant' shifts to 'large for a midget'. Same words, opposite interpretations.",
+    "context": "",
     "judgment": "acceptable",
-    "readings": [],
-    "comment": "Partee 2010 §4 ex. (19a); Kamp & Partee 1995. The (19a)/(19b) minimal pair is the canonical demonstration that head choice fixes the local domain — without (19a) as foil, (19b) does not make the HPP point."
+    "readings": [
+      {
+        "name": "a midget, but an exceptionally large one",
+        "judgment": "acceptable"
+      }
+    ],
+    "comment": "From Kamp and Partee (1995), evidence for the Head Primacy Principle (p. 280).",
+    "verified": "page-image"
   },
   {
     "id": "partee2010_21a",
-    "source": {"bibkey": "kamp-partee-1995", "paperLabel": "(21a) in Partee 2010"},
-    "reportedIn": {"bibkey": "partee-2010", "paperLabel": "(21a)"},
+    "source": {
+      "bibkey": "kamp-partee-1995",
+      "paperLabel": "(30)"
+    },
+    "reportedIn": {
+      "bibkey": "partee-2010",
+      "paperLabel": "(21a)"
+    },
     "language": "stan1293",
     "primaryText": "This is a sharp knife.",
-    "glossedTokens": [
-      ["This", "DEM"], ["is", "be.PRS.3SG"], ["a", "INDEF"], ["sharp", "sharp"],
-      ["knife", "knife"]
-    ],
+    "glossedTokens": [],
     "translation": "",
-    "context": "Episodic predication mate of the generic (21b). Both can be true together; 'sharp' is not redundant in (21a) because NVP requires the local domain of knives to contain both sharp and non-sharp instances.",
+    "context": "",
     "judgment": "acceptable",
     "readings": [],
-    "comment": "Partee 2010 §4 ex. (21a); Kamp & Partee 1995. Without (21a) as foil, the NVP analysis of (21b) does not have a contrastive case to anchor."
+    "comment": "From Kamp and Partee (1995: 162): the truth of (21b) is compatible with a non-redundant use of sharp in (21a) (p. 281).",
+    "verified": "page-image"
   },
   {
     "id": "partee2010_22a",
-    "source": {"bibkey": "partee-2010", "paperLabel": "(22a)"},
+    "source": {
+      "bibkey": "partee-2010",
+      "paperLabel": "(22a)"
+    },
     "language": "stan1293",
     "primaryText": "How many poets are there in Amherst?",
-    "glossedTokens": [
-      ["How", "how"], ["many", "many"], ["poets", "poet.PL"], ["are", "be.PRS.3PL"],
-      ["there", "EXIST"], ["in", "in"], ["Amherst", "Amherst"]
-    ],
+    "glossedTokens": [],
     "translation": "",
-    "context": "Existential predicate companion of (22b). With 'are there', 'poets' presupposes living poets, contrasting with (22b) where 'are buried' presupposes dead poets. Same noun, context-shifted extension.",
+    "context": "",
     "judgment": "acceptable",
     "readings": [],
-    "comment": "Partee 2010 §4 ex. (22a). Required as the live-poets foil for (22b)'s dead-poets reading; the pair demonstrates that the noun-extension shift Partee invokes for privatives is independently attested for ordinary nouns under predicate-driven coercion."
+    "comment": "In normal circumstances no temptation to include dead poets (p. 282).",
+    "verified": "page-image"
+  },
+  {
+    "id": "partee2010_15c_generous",
+    "source": {
+      "bibkey": "nowak-2000",
+      "paperLabel": ""
+    },
+    "reportedIn": {
+      "bibkey": "partee-2010",
+      "paperLabel": "(15c)"
+    },
+    "language": "poli1260",
+    "primaryText": "generous",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      [
+        "adjective",
+        "generous"
+      ],
+      [
+        "class",
+        "intersective"
+      ],
+      [
+        "construction",
+        "NP-split"
+      ]
+    ],
+    "comment": "The Polish translation of generous can split (p. 279). The paper gives only the English adjective, which stands in for the Polish form here.",
+    "verified": "page-image"
+  },
+  {
+    "id": "partee2010_15c_pretty",
+    "source": {
+      "bibkey": "nowak-2000",
+      "paperLabel": ""
+    },
+    "reportedIn": {
+      "bibkey": "partee-2010",
+      "paperLabel": "(15c)"
+    },
+    "language": "poli1260",
+    "primaryText": "pretty",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      [
+        "adjective",
+        "pretty"
+      ],
+      [
+        "class",
+        "intersective"
+      ],
+      [
+        "construction",
+        "NP-split"
+      ]
+    ],
+    "comment": "The Polish translation of pretty can split (p. 279). The paper gives only the English adjective, which stands in for the Polish form here.",
+    "verified": "page-image"
+  },
+  {
+    "id": "partee2010_15c_healthy",
+    "source": {
+      "bibkey": "nowak-2000",
+      "paperLabel": ""
+    },
+    "reportedIn": {
+      "bibkey": "partee-2010",
+      "paperLabel": "(15c)"
+    },
+    "language": "poli1260",
+    "primaryText": "healthy",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      [
+        "adjective",
+        "healthy"
+      ],
+      [
+        "class",
+        "intersective"
+      ],
+      [
+        "construction",
+        "NP-split"
+      ]
+    ],
+    "comment": "The Polish translation of healthy can split (p. 279). The paper gives only the English adjective, which stands in for the Polish form here.",
+    "verified": "page-image"
+  },
+  {
+    "id": "partee2010_15c_Chinese",
+    "source": {
+      "bibkey": "nowak-2000",
+      "paperLabel": ""
+    },
+    "reportedIn": {
+      "bibkey": "partee-2010",
+      "paperLabel": "(15c)"
+    },
+    "language": "poli1260",
+    "primaryText": "Chinese",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      [
+        "adjective",
+        "Chinese"
+      ],
+      [
+        "class",
+        "intersective"
+      ],
+      [
+        "construction",
+        "NP-split"
+      ]
+    ],
+    "comment": "The Polish translation of Chinese can split (p. 279). The paper gives only the English adjective, which stands in for the Polish form here.",
+    "verified": "page-image"
+  },
+  {
+    "id": "partee2010_15c_talkative",
+    "source": {
+      "bibkey": "nowak-2000",
+      "paperLabel": ""
+    },
+    "reportedIn": {
+      "bibkey": "partee-2010",
+      "paperLabel": "(15c)"
+    },
+    "language": "poli1260",
+    "primaryText": "talkative",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      [
+        "adjective",
+        "talkative"
+      ],
+      [
+        "class",
+        "intersective"
+      ],
+      [
+        "construction",
+        "NP-split"
+      ]
+    ],
+    "comment": "The Polish translation of talkative can split (p. 279). The paper gives only the English adjective, which stands in for the Polish form here.",
+    "verified": "page-image"
+  },
+  {
+    "id": "partee2010_15d_skillful",
+    "source": {
+      "bibkey": "nowak-2000",
+      "paperLabel": ""
+    },
+    "reportedIn": {
+      "bibkey": "partee-2010",
+      "paperLabel": "(15d)"
+    },
+    "language": "poli1260",
+    "primaryText": "skillful",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      [
+        "adjective",
+        "skillful"
+      ],
+      [
+        "class",
+        "subsective"
+      ],
+      [
+        "construction",
+        "NP-split"
+      ]
+    ],
+    "comment": "The Polish translation of skillful can split (p. 279). The paper gives only the English adjective, which stands in for the Polish form here.",
+    "verified": "page-image"
+  },
+  {
+    "id": "partee2010_15d_recent",
+    "source": {
+      "bibkey": "nowak-2000",
+      "paperLabel": ""
+    },
+    "reportedIn": {
+      "bibkey": "partee-2010",
+      "paperLabel": "(15d)"
+    },
+    "language": "poli1260",
+    "primaryText": "recent",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      [
+        "adjective",
+        "recent"
+      ],
+      [
+        "class",
+        "subsective"
+      ],
+      [
+        "construction",
+        "NP-split"
+      ]
+    ],
+    "comment": "The Polish translation of recent can split (p. 279). The paper gives only the English adjective, which stands in for the Polish form here.",
+    "verified": "page-image"
+  },
+  {
+    "id": "partee2010_15d_good",
+    "source": {
+      "bibkey": "nowak-2000",
+      "paperLabel": ""
+    },
+    "reportedIn": {
+      "bibkey": "partee-2010",
+      "paperLabel": "(15d)"
+    },
+    "language": "poli1260",
+    "primaryText": "good",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      [
+        "adjective",
+        "good"
+      ],
+      [
+        "class",
+        "subsective"
+      ],
+      [
+        "construction",
+        "NP-split"
+      ]
+    ],
+    "comment": "The Polish translation of good can split (p. 279). The paper gives only the English adjective, which stands in for the Polish form here.",
+    "verified": "page-image"
+  },
+  {
+    "id": "partee2010_15d_typical",
+    "source": {
+      "bibkey": "nowak-2000",
+      "paperLabel": ""
+    },
+    "reportedIn": {
+      "bibkey": "partee-2010",
+      "paperLabel": "(15d)"
+    },
+    "language": "poli1260",
+    "primaryText": "typical",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      [
+        "adjective",
+        "typical"
+      ],
+      [
+        "class",
+        "subsective"
+      ],
+      [
+        "construction",
+        "NP-split"
+      ]
+    ],
+    "comment": "The Polish translation of typical can split (p. 279). The paper gives only the English adjective, which stands in for the Polish form here.",
+    "verified": "page-image"
+  },
+  {
+    "id": "partee2010_15e_counterfeit",
+    "source": {
+      "bibkey": "nowak-2000",
+      "paperLabel": ""
+    },
+    "reportedIn": {
+      "bibkey": "partee-2010",
+      "paperLabel": "(15e)"
+    },
+    "language": "poli1260",
+    "primaryText": "counterfeit",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      [
+        "adjective",
+        "counterfeit"
+      ],
+      [
+        "class",
+        "privative"
+      ],
+      [
+        "construction",
+        "NP-split"
+      ]
+    ],
+    "comment": "The Polish translation of counterfeit can split (p. 279). The paper gives only the English adjective, which stands in for the Polish form here.",
+    "verified": "page-image"
+  },
+  {
+    "id": "partee2010_15e_past",
+    "source": {
+      "bibkey": "nowak-2000",
+      "paperLabel": ""
+    },
+    "reportedIn": {
+      "bibkey": "partee-2010",
+      "paperLabel": "(15e)"
+    },
+    "language": "poli1260",
+    "primaryText": "past",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      [
+        "adjective",
+        "past"
+      ],
+      [
+        "class",
+        "privative"
+      ],
+      [
+        "construction",
+        "NP-split"
+      ]
+    ],
+    "comment": "The Polish translation of past can split (p. 279). The paper gives only the English adjective, which stands in for the Polish form here. The paper marks past with (?!); unlike former, it splits and occurs predicatively, which the paper leaves open (p. 282).",
+    "verified": "page-image"
+  },
+  {
+    "id": "partee2010_15e_spurious",
+    "source": {
+      "bibkey": "nowak-2000",
+      "paperLabel": ""
+    },
+    "reportedIn": {
+      "bibkey": "partee-2010",
+      "paperLabel": "(15e)"
+    },
+    "language": "poli1260",
+    "primaryText": "spurious",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      [
+        "adjective",
+        "spurious"
+      ],
+      [
+        "class",
+        "privative"
+      ],
+      [
+        "construction",
+        "NP-split"
+      ]
+    ],
+    "comment": "The Polish translation of spurious can split (p. 279). The paper gives only the English adjective, which stands in for the Polish form here.",
+    "verified": "page-image"
+  },
+  {
+    "id": "partee2010_15e_imaginary",
+    "source": {
+      "bibkey": "nowak-2000",
+      "paperLabel": ""
+    },
+    "reportedIn": {
+      "bibkey": "partee-2010",
+      "paperLabel": "(15e)"
+    },
+    "language": "poli1260",
+    "primaryText": "imaginary",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      [
+        "adjective",
+        "imaginary"
+      ],
+      [
+        "class",
+        "privative"
+      ],
+      [
+        "construction",
+        "NP-split"
+      ]
+    ],
+    "comment": "The Polish translation of imaginary can split (p. 279). The paper gives only the English adjective, which stands in for the Polish form here.",
+    "verified": "page-image"
+  },
+  {
+    "id": "partee2010_15e_fictitious",
+    "source": {
+      "bibkey": "nowak-2000",
+      "paperLabel": ""
+    },
+    "reportedIn": {
+      "bibkey": "partee-2010",
+      "paperLabel": "(15e)"
+    },
+    "language": "poli1260",
+    "primaryText": "fictitious",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      [
+        "adjective",
+        "fictitious"
+      ],
+      [
+        "class",
+        "privative"
+      ],
+      [
+        "construction",
+        "NP-split"
+      ]
+    ],
+    "comment": "The Polish translation of fictitious can split (p. 279). The paper gives only the English adjective, which stands in for the Polish form here.",
+    "verified": "page-image"
+  },
+  {
+    "id": "partee2010_16b_alleged",
+    "source": {
+      "bibkey": "nowak-2000",
+      "paperLabel": ""
+    },
+    "reportedIn": {
+      "bibkey": "partee-2010",
+      "paperLabel": "(16b)"
+    },
+    "language": "poli1260",
+    "primaryText": "alleged",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "readings": [],
+    "paperFeatures": [
+      [
+        "adjective",
+        "alleged"
+      ],
+      [
+        "class",
+        "modal"
+      ],
+      [
+        "construction",
+        "NP-split"
+      ]
+    ],
+    "comment": "The Polish translation of alleged cannot split (p. 279). The paper gives only the English adjective, which stands in for the Polish form here.",
+    "verified": "page-image"
+  },
+  {
+    "id": "partee2010_16b_potential",
+    "source": {
+      "bibkey": "nowak-2000",
+      "paperLabel": ""
+    },
+    "reportedIn": {
+      "bibkey": "partee-2010",
+      "paperLabel": "(16b)"
+    },
+    "language": "poli1260",
+    "primaryText": "potential",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "readings": [],
+    "paperFeatures": [
+      [
+        "adjective",
+        "potential"
+      ],
+      [
+        "class",
+        "modal"
+      ],
+      [
+        "construction",
+        "NP-split"
+      ]
+    ],
+    "comment": "The Polish translation of potential cannot split (p. 279). The paper gives only the English adjective, which stands in for the Polish form here.",
+    "verified": "page-image"
+  },
+  {
+    "id": "partee2010_16b_predicted",
+    "source": {
+      "bibkey": "nowak-2000",
+      "paperLabel": ""
+    },
+    "reportedIn": {
+      "bibkey": "partee-2010",
+      "paperLabel": "(16b)"
+    },
+    "language": "poli1260",
+    "primaryText": "predicted",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "readings": [],
+    "paperFeatures": [
+      [
+        "adjective",
+        "predicted"
+      ],
+      [
+        "class",
+        "modal"
+      ],
+      [
+        "construction",
+        "NP-split"
+      ]
+    ],
+    "comment": "The Polish translation of predicted cannot split (p. 279). The paper gives only the English adjective, which stands in for the Polish form here.",
+    "verified": "page-image"
+  },
+  {
+    "id": "partee2010_16b_disputed",
+    "source": {
+      "bibkey": "nowak-2000",
+      "paperLabel": ""
+    },
+    "reportedIn": {
+      "bibkey": "partee-2010",
+      "paperLabel": "(16b)"
+    },
+    "language": "poli1260",
+    "primaryText": "disputed",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "readings": [],
+    "paperFeatures": [
+      [
+        "adjective",
+        "disputed"
+      ],
+      [
+        "class",
+        "modal"
+      ],
+      [
+        "construction",
+        "NP-split"
+      ]
+    ],
+    "comment": "The Polish translation of disputed cannot split (p. 279). The paper gives only the English adjective, which stands in for the Polish form here.",
+    "verified": "page-image"
   }
 ]

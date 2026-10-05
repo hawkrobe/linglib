@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Semantics.Modification.Coercion
-public import Linglib.Studies.Partee2010
 public import Linglib.Studies.Pustejovsky1995
 public import Mathlib.Order.CompleteLattice.Basic
 
@@ -28,10 +27,10 @@ first-order *fake* would make shifting heads read every fake gun as a gun.
 * `fake_bracketing`, `fake_brand_made_by_brand_reading`: *fake B N* denotes real Ns on
   [[fake B] N] and things that are not B Ns on [fake [B N]], so only the latter covers a fake
   handbag made by Chanel.
-* `fake_isNonVacuous`, `fake_no_licensedCoercion`: the literal *fake N* has a positive and a
-  negative extension, and no coercion of its head could be licensed.
+* `fake_isNonVacuous`, `fake_vacuous_in_head`: the literal *fake N* has a positive and a
+  negative extension, and is vacuous only within its head, where Partee's shift applies.
 * `shifting_heads_evil_park_owner`: with a first-order *fake*, one fake paintball gun that is a
-  real gun makes shifting heads read every fake gun as a gun.
+  real gun keeps shifting heads from shifting *gun*, so every fake gun is a gun.
 
 ## Implementation notes
 
@@ -285,14 +284,14 @@ theorem fake_isPrivative {lex : Property W E → DualContent W E}
     IsPrivative (DualContent.extension ∘ fake made ∘ lex) :=
   fun P ↦ (disjoint_privativeE (lex P)).mono_right (hlex P).ge
 
-/-- Hence non-vacuity in the local domain of the head, which licenses the coercions of
-[partee-2010], licenses none for *fake*. -/
-theorem fake_no_licensedCoercion {lex : Property W E → DualContent W E}
+/-- Hence the literal *fake N* is vacuous within its head, the local domain of head primacy,
+which is what triggers the head shift of [partee-2010]. -/
+theorem fake_vacuous_in_head {lex : Property W E → DualContent W E}
     (hlex : Function.LeftInverse DualContent.extension lex) (P : Property W E) (w : W) :
-    IsEmpty (LicensedCoercion P (DualContent.extension ∘ fake made ∘ lex) w) :=
-  Partee2010.isPrivative_no_LicensedCoercion (fake_isPrivative hlex) P w
+    ¬ IsNonVacuous ((DualContent.extension ∘ fake made ∘ lex) P) w (P w) :=
+  not_isNonVacuous_of_isPrivative (fake_isPrivative hlex) P w
 
-/-- None is needed (§5), since in any domain with a fake N and an N the literal *fake N* has a
+/-- No shift is needed (§5), since in any domain with a fake N and an N the literal *fake N* has a
 positive extension, the fake Ns, and a negative extension, which contains every N. -/
 theorem fake_isNonVacuous {N : DualContent W E} {w : W} {d : E → Prop}
     (hfake : ∃ x, d x ∧ (fake made N).extension w x) (hN : ∃ x, d x ∧ N.extension w x) :
@@ -301,13 +300,14 @@ theorem fake_isNonVacuous {N : DualContent W E} {w : W} {d : E → Prop}
 
 /-- If attributive *fake* is the first-order predicate (33), a world with a gun that is fake, as
 in the evil park owner scenario, and a gun that is not makes the literal *fake gun* non-vacuous
-among the guns, so shifting heads leaves *gun* unshifted and reads every fake gun as a gun, a
-reading *fake gun* never has (§6). -/
-theorem shifting_heads_evil_park_owner {fake gun : Property W E}
-    (R : SubsectiveReanalysis (intersective fake)) {w : W} (hfake : ∃ x, gun w x ∧ fake w x)
-    (hreal : ∃ x, gun w x ∧ ¬ fake w x) : R.adjSubsective (R.nounShift gun) ≤ gun :=
-  R.adjSubsective_nounShift_le
-    ⟨hfake.imp fun _ h ↦ ⟨h.1, h.2, h.1⟩, hreal.imp fun _ h ↦ ⟨h.1, fun h' ↦ h.2 h'.1⟩⟩
+among the guns, so shifting heads does not shift *gun* and every fake gun is a gun, a reading
+*fake gun* never has (§6). -/
+theorem shifting_heads_evil_park_owner {fake gun : Property W E} {w : W}
+    (hfake : ∃ x, gun w x ∧ fake w x) (hreal : ∃ x, gun w x ∧ ¬ fake w x) :
+    ¬ ShiftsHead (intersective fake) gun w ∧ intersective fake gun ≤ gun :=
+  ⟨not_shiftsHead_of_isNonVacuous
+      ⟨hfake.imp fun _ h ↦ ⟨h.1, h.2, h.1⟩, hreal.imp fun _ h ↦ ⟨h.1, fun h' ↦ h.2 h'.1⟩⟩,
+    fun _ _ h ↦ h.2⟩
 
 end Contrasts
 
