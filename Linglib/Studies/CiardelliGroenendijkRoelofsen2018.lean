@@ -19,7 +19,7 @@ disjunctive and wh-questions, and their conjunctions, disjunctions and condition
 these operations applied to declarative contents (Chapter 5).
 
 The substrate `Semantics/Questions/` is this theory: `Question W` is the proposition, `info`,
-`alt`, `isInformative` and `isInquisitive` its attributes, the lattice order its entailment with
+`alt`, `IsInformative` and `IsInquisitive` its attributes, the lattice order its entailment with
 `⊤`, `⊥`, `⊓`, `⊔` and `⇨` the operations, the double complement `Pᶜᶜ` and `query` the two
 projections with `compl_compl_inf_query` the division law, the regular elements
 (`Heyting.IsRegular`) the non-inquisitive propositions, and `polar` and `which` the polar and
@@ -43,8 +43,8 @@ variable {W : Type*}
 
 open Question
 
-/-- Fact 2.36: updating a non-inquisitive context with a non-inquisitive proposition is again
-non-inquisitive, with the intersection of the two informative contents as its own. The
+/-- Updating a non-inquisitive context with a non-inquisitive proposition is again
+non-inquisitive, with the intersection of the two informative contents as its own (Fact 2.36). The
 informative half needs no non-inquisitiveness (`info_inf`). -/
 theorem update_nonInquisitive (C P : Question W) (hC : C.info ∈ C)
     (hP : P.info ∈ P) :

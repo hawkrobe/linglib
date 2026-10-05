@@ -1,6 +1,5 @@
 module
 
-public import Linglib.Semantics.Questions.QParticleLayer
 public import Linglib.Semantics.Presupposition.Verb
 
 /-!
@@ -10,11 +9,11 @@ public import Linglib.Semantics.Presupposition.Verb
 `[SAP SA_ASK [PerspP PRO Persp_CQ [CP C_WH [TP …]]]]`: clause-typing at C,
 where a proposition becomes a set of propositions (`WHFeature`); centering at
 PerspP, which introduces a perspectival center who may not know the answer
-(`Question.PossiblyIgnorant`); and the illocutionary act at SAP. Embedding
-predicates select up to one of the layers (`SelectionClass`, read off a
-lexical entry by `deriveSelectionClass`): rogatives take CP only, PerspP, or
-SAP, responsives take CP and, where their meaning leaves the center's
-ignorance open, PerspP.
+(`Question.PossiblyIgnorant`); and the illocutionary act at SAP. The layers are
+ordered by height (`PeripheryLayer`), and embedding predicates select up to one of
+them (`SelectionClass`, read off a lexical entry by `deriveSelectionClass`):
+rogatives take CP only, PerspP, or SAP, responsives take CP and, where their
+meaning leaves the center's ignorance open, PerspP.
 
 ## References
 
@@ -26,19 +25,36 @@ ignorance open, PerspP.
 
 namespace Minimalist
 
-/-- The WH-feature on C: interrogative, declarative, or unspecified with typing
-delayed to a higher layer (Hindi-Urdu polar clauses, [dayal-2025] §4.4). -/
+/-- The WH-feature on C is interrogative, declarative, or unspecified with typing delayed to a
+higher layer (Hindi-Urdu polar clauses, [dayal-2025] §4.4). -/
 inductive WHFeature where
   | plusWH
   | minusWH
   | alphaWH
   deriving DecidableEq, Repr, Fintype
 
-/-- Embedding predicates by the largest left-peripheral structure they select
-([dayal-2025] §1.2): uninterrogatives take no interrogative; rogatives take CP
-only (*depend on*, *investigate*), PerspP (*wonder*, *want to know*) or SAP
-(*ask*); responsives (*know*, *remember*, *forget*) take CP and, where their
-meaning leaves the center's ignorance open, PerspP. -/
+/-- The interrogative left periphery has three layers, clause typing at C, centering at PerspP,
+and the speech act at SAP. -/
+inductive PeripheryLayer where
+  | cp
+  | perspP
+  | sap
+  deriving DecidableEq, Repr, Fintype
+
+/-- The height of a layer in the periphery. -/
+def PeripheryLayer.height : PeripheryLayer → ℕ
+  | .cp => 0
+  | .perspP => 1
+  | .sap => 2
+
+/-- Layers ordered by height. -/
+instance : LinearOrder PeripheryLayer := LinearOrder.lift' PeripheryLayer.height (by decide)
+
+/-- Embedding predicates are classed by the largest left-peripheral structure they select
+([dayal-2025] §1.2). Uninterrogatives take no interrogative; rogatives take CP only
+(*depend on*, *investigate*), PerspP (*wonder*, *want to know*) or SAP (*ask*); responsives
+(*know*, *remember*, *forget*) take CP and, where their meaning leaves the center's ignorance
+open, PerspP. -/
 inductive SelectionClass where
   | uninterrogative
   | rogativeCP
@@ -48,7 +64,7 @@ inductive SelectionClass where
   deriving DecidableEq, Repr, Fintype
 
 /-- The largest layer a class selects. -/
-def SelectionClass.layer : SelectionClass → Option Question.QParticleLayer
+def SelectionClass.layer : SelectionClass → Option PeripheryLayer
   | .uninterrogative => none
   | .rogativeCP => some .cp
   | .rogativePerspP => some .perspP

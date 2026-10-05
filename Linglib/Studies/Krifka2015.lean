@@ -51,7 +51,7 @@ open Question
 
 /-! ### The fixture -/
 
-/-- Two worlds: it is raining or it is not. -/
+/-- There are two worlds: it is raining or it is not. -/
 inductive Weather
   | rain
   | noRain
@@ -63,7 +63,7 @@ def raining : Set Weather := {.rain}
 theorem raining_ne_compl : raining ≠ rainingᶜ := λ h =>
   (Set.ext_iff.1 h .rain).1 rfl rfl
 
-/-- The initial commitment space: no commitments, every development licit. -/
+/-- The initial commitment space has no commitments and leaves every development licit. -/
 def C₀ : Space (State Discourse.Role Weather) := full ∅
 
 theorem mem_insert_empty_iff {x y : Commitment Discourse.Role Weather} :
@@ -93,7 +93,7 @@ theorem monopolar_yes_mem :
     insert (commit .addressee raining) ∅ ∈ (C₀.monopolarQuestion .addressee raining).states :=
   Or.inr (Or.inl rfl)
 
-/-- *No* is not: it requires a prior rejection (28b). -/
+/-- *No* is not a projected continuation, since it requires a prior rejection (28b). -/
 theorem monopolar_no_not_mem :
     insert (commit .addressee rainingᶜ) ∅ ∉ (C₀.monopolarQuestion .addressee raining).states := by
   rintro (h | h | ⟨-, h⟩)
@@ -150,7 +150,7 @@ theorem monopolar_continuation_mem :
 /-- A monopolar question raises no inquisitive issue: its bias is invisible to the issue
 observable. -/
 theorem monopolar_not_inquisitive :
-    ¬ (C₀.monopolarQuestion .addressee raining).toIssue.isInquisitive := by
+    ¬ (C₀.monopolarQuestion .addressee raining).toIssue.IsInquisitive := by
   intro h
   have hmem : raining ∈ (C₀.monopolarQuestion .addressee raining).toIssue :=
     (mem_toIssue_iff _).2 (Or.inr ⟨_, monopolar_continuation_mem,
@@ -178,7 +178,7 @@ theorem bipolar_continuation_subset {c : State Discourse.Role Weather}
   · exact Or.inr (contextSet_subset_of_mem_contents _ ⟨_, ⟨hc (Set.mem_insert _ _), rfl⟩, rfl⟩)
 
 /-- A bipolar question raises a genuine issue. -/
-theorem bipolar_inquisitive : (C₀.bipolarQuestion .addressee raining).toIssue.isInquisitive := by
+theorem bipolar_inquisitive : (C₀.bipolarQuestion .addressee raining).toIssue.IsInquisitive := by
   intro hinfo
   have hyes : raining ∈ (C₀.bipolarQuestion .addressee raining).toIssue :=
     (mem_toIssue_iff _).2 (Or.inr ⟨_, ⟨bipolar_yes_mem, (Set.insert_nonempty _ _).ne_empty⟩,
@@ -202,8 +202,8 @@ theorem bipolar_inquisitive : (C₀.bipolarQuestion .addressee raining).toIssue.
 
 /-! ### Table 1 -/
 
-/-- The worlds the contextual evidence of [buring-gunlogson-2000] leaves open, by the sign of `φ`
-it supports: `φ`, its complement, or every world. -/
+/-- The contextual evidence of [buring-gunlogson-2000] leaves open `φ`, its complement, or every
+world, according to the sign of `φ` it supports. -/
 def evidence (φ : Set Weather) : SignType → Set Weather
   | .pos => φ
   | .neg => φᶜ
@@ -219,10 +219,10 @@ def BipolarLicensed (E φ : Set Weather) : Prop := ¬ E ⊆ φ ∧ ¬ E ⊆ φ�
 evidence is not for `φ`. -/
 def HighNegationLicensed (E φ : Set Weather) : Prop := ¬ E ⊆ φ
 
-/-- A question by its reading: the question without negation, `none`, is licensed on either of
-its readings; the question with low negation, about `¬φ` (`some .negative`), only on the
-monopolar reading of `¬φ`; the question with high negation, about `φ` (`some .positive`), as
-such. -/
+/-- Each question is licensed on particular readings: the question without negation, `none`, is
+licensed on either of its readings; the question with low negation, about `¬φ`
+(`some .negative`), only on the monopolar reading of `¬φ`; the question with high negation,
+about `φ` (`some .positive`), as such. -/
 def Licensed (E φ : Set Weather) : Option Polarity → Prop
   | none => MonopolarLicensed E φ ∨ BipolarLicensed E φ
   | some .negative => MonopolarLicensed E φᶜ
@@ -233,10 +233,10 @@ theorem raining_ne_empty : raining ≠ ∅ := (Set.singleton_nonempty _).ne_empt
 theorem raining_ne_univ : raining ≠ Set.univ := λ h =>
   Weather.noConfusion (Set.eq_univ_iff_forall.1 h .noRain)
 
-/-- Table 1: with evidence for `φ` only the question without negation is licensed, read
-monopolar; with neutral evidence the question without negation, read bipolar, and the
-high-negation question; with evidence against `φ` both negated questions and not the question
-without negation. -/
+/-- Licensing reproduces Table 1: with evidence for `φ` only the question without negation is
+licensed, read monopolar; with neutral evidence the question without negation, read bipolar, and
+the high-negation question; with evidence against `φ` both negated questions and not the
+question without negation. -/
 theorem table1 (e : SignType) :
     (Licensed (evidence raining e) raining none ↔ e ≠ -1) ∧
       (Licensed (evidence raining e) raining (some .negative) ↔ e = -1) ∧
@@ -258,13 +258,13 @@ theorem licensed_iff_felicitous (r : Option Polarity) (e : SignType) :
 
 variable (C : Space (State Discourse.Role Weather)) (φ : Set Weather)
 
-/-- A matching tag (44): the conjunction of the assertion with the monopolar question of the same
-content, whose result is the state in which both participants are committed. -/
+/-- A matching tag (44) conjoins the assertion with the monopolar question of the same content,
+and its result is the state in which both participants are committed. -/
 def matchingTag : Space (State Discourse.Role Weather) :=
   (C.assert .speaker φ).assert .addressee φ
 
-/-- A reverse tag (45): the disjunction of the assertion with the monopolar question of the
-negation, rooted at the current state. -/
+/-- A reverse tag (45) disjoins the assertion with the monopolar question of the negation, rooted
+at the current state. -/
 def reverseTag : Space (State Discourse.Role Weather) :=
   C.propose ((C.assert .speaker φ).states ∪ (C.monopolarQuestion .addressee φᶜ).states) <| by
     rintro d (hd | rfl | hd)
@@ -280,7 +280,7 @@ theorem matchingTag_root :
 /-- A reverse tag keeps the root: the speaker's commitment is only one branch. -/
 theorem reverseTag_root : (reverseTag C₀ raining).root = ∅ := rfl
 
-/-- Its branches: the speaker's assertion, and the addressee's assertion of the negation. -/
+/-- Its branches are the speaker's assertion and the addressee's assertion of the negation. -/
 theorem reverseTag_branches :
     insert (commit .speaker raining) ∅ ∈ (reverseTag C₀ raining).states ∧
       insert (commit .addressee rainingᶜ) ∅ ∈ (reverseTag C₀ raining).states :=

@@ -78,24 +78,17 @@ open English English.Particles HindiUrdu.Particles Japanese.Particles English.Ve
 /-- The layer an embedding context reaches is CP under subordination, PerspP under
 quasi-subordination, and SAP for a matrix clause, a quotation or an insubordinated root
 utterance. -/
-def layerOfContext : EmbeddingContext → QParticleLayer
+def layerOfContext : EmbeddingContext → PeripheryLayer
   | .subordinated => .cp
   | .quasiSubordinated => .perspP
   | .matrix | .quotation | .insubordinated => .sap
-
-/-- The height of a layer in (7). -/
-def height : QParticleLayer → ℕ
-  | .polP => 0
-  | .cp => 1
-  | .perspP => 2
-  | .sap => 3
 
 /-- A class takes an embedding context when the context's layer is within what it
 selects. -/
 def Selects (cls : SelectionClass) (e : EmbeddingContext) : Prop :=
   match cls.layer with
   | none => False
-  | some l => height (layerOfContext e) ≤ height l
+  | some l => layerOfContext e ≤ l
 
 instance (cls : SelectionClass) (e : EmbeddingContext) : Decidable (Selects cls e) := by
   unfold Selects
@@ -103,16 +96,17 @@ instance (cls : SelectionClass) (e : EmbeddingContext) : Decidable (Selects cls 
 
 /-! ### Question particles (§1.3) -/
 
-/-- A particle's layer, read off its embedding distribution (20): licensed in subordination
-CP, otherwise in quasi-subordination PerspP, otherwise in matrix clauses SAP. -/
-def layerOf (p : Particle) : Option QParticleLayer :=
+/-- A particle's layer is read off its embedding distribution (20): CP if it is licensed in
+subordination, otherwise PerspP if it is licensed in quasi-subordination, otherwise SAP if it is
+licensed in matrix clauses. -/
+def layerOf (p : Particle) : Option PeripheryLayer :=
   if p.LicensedInEmbed .subordinated then some .cp
   else if p.LicensedInEmbed .quasiSubordinated then some .perspP
   else if p.LicensedInEmbed .matrix then some .sap
   else none
 
-/-- (15)–(19): Japanese *ka* types the clause at CP, Hindi-Urdu *kya:* sits at PerspP, and
-the meta question particles *kke* and *quick* at SAP. -/
+/-- Japanese *ka* types the clause at CP, Hindi-Urdu *kya:* sits at PerspP, and the meta
+question particles *kke* and *quick* sit at SAP, as in (15)–(19). -/
 theorem layers_derived :
     layerOf ka = some .cp ∧ layerOf kya = some .perspP ∧
       layerOf kke = some .sap ∧ layerOf quick = some .sap := by
@@ -122,32 +116,32 @@ theorem layers_derived :
 
 variable {W E : Type*} {c : Set W} (H : Set (Set W)) (R : E → W → W → Prop) (x : E)
 
-/-- The at-issue content of *x knows Q* and of *x remembers Q*: knowledge of the answer at
+/-- The at-issue content of *x knows Q* and of *x remembers Q* is knowledge of the answer at
 the evaluation time. -/
 def knows : Set W := {w | KnowsAnswer H w R x}
 
-/-- (43b): *x forgets Q* is ignorance of the answer, its past-knowledge presupposition set
+/-- In (43b), *x forgets Q* is ignorance of the answer, its past-knowledge presupposition set
 aside. -/
 def forgets : Set W := (knows H R x)ᶜ
 
-/-- (26d), (42a): bare *know* and *remember* reject quasi-subordination in every context:
-the requirement of Persp_CQ fails on the context updated with the assertion. -/
+/-- Bare *know* and *remember* reject quasi-subordination in every context, as in (26d) and
+(42a), because the requirement of Persp_CQ fails on the context updated with the assertion. -/
 theorem not_possiblyIgnorant_knows : ¬ PossiblyIgnorant H (c ∩ knows H R x) R x :=
   not_possiblyIgnorant_inter_of_subset subset_rfl
 
-/-- (42b), (43): negated *remember* and bare *forget* quasi-subordinate exactly in the
-contexts where the center may be ignorant. -/
+/-- Negated *remember* and bare *forget* quasi-subordinate exactly in the contexts where the
+center may be ignorant, as in (42b) and (43). -/
 theorem possiblyIgnorant_forgets_iff :
     PossiblyIgnorant H (c ∩ forgets H R x) R x ↔ PossiblyIgnorant H c R x :=
   possiblyIgnorant_inter_compl_iff
 
-/-- (42c): under a polar question either answer is at issue, so the same holds of
-*Does Sue remember?*. -/
+/-- Under a polar question either answer is at issue, so the same holds of
+*Does Sue remember?* (42c). -/
 theorem possiblyIgnorant_knows_question_iff :
     PossiblyIgnorant H (c ∩ (knows H R x ∪ (knows H R x)ᶜ)) R x ↔ PossiblyIgnorant H c R x :=
   possiblyIgnorant_inter_union_compl_iff
 
-/-- (46b): the same computation licenses *Have you forgotten [was Henry a communist]*,
+/-- The same computation licenses *Have you forgotten [was Henry a communist]* (46b),
 which the paper marks unacceptable; §3.3 attributes the difference to who is invested in
 the answer, not formalized here. -/
 theorem possiblyIgnorant_forgets_question_iff :
@@ -162,7 +156,7 @@ inductive Tone where
   | fall
   deriving DecidableEq, Repr
 
-/-- The feature on Persp: a centered question or a centered proposition. -/
+/-- The feature on Persp marks a centered question or a centered proposition. -/
 inductive PerspFeature where
   | cq
   | cp
@@ -173,7 +167,7 @@ def PerspFeature.tone : PerspFeature → Tone
   | .cq => .rise
   | .cp => .fall
 
-/-- The illocutionary head: asking, asserting, or the combined act of a biased question
+/-- The illocutionary head is asking, asserting, or the combined act of a biased question
 (64b). -/
 inductive Illocution where
   | ask
@@ -212,24 +206,24 @@ def Derivable (f : WHFeature) (p : PerspFeature) (sa : Illocution) : Prop :=
 instance (f : WHFeature) (p : PerspFeature) (sa : Illocution) : Decidable (Derivable f p sa) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
-/-- (64): with interrogative syntax a neutral question is derivable; with declarative
-syntax only the combined act of a biased question is. -/
+/-- With interrogative syntax a neutral question is derivable, and with declarative syntax only
+the combined act of a biased question is (64). -/
 theorem english_declarative_biased :
     Derivable .plusWH .cq .ask ∧ Derivable .minusWH .cp .assertAsk ∧
       ∀ p, ¬ Derivable .minusWH p .ask := by
   decide
 
-/-- (66): where C may stay untyped, a declarative question has both readings. -/
+/-- Where C may stay untyped, a declarative question has both readings (66). -/
 theorem delayed_typing_neutral :
     Derivable .alphaWH .cq .ask ∧ Derivable .alphaWH .cp .assertAsk := by
   decide
 
-/-- (67): without SAP a question needs Persp_CQ, which declarative syntax cannot host, so
-declarative questions do not quasi-subordinate. -/
+/-- Without SAP a question needs Persp_CQ, which declarative syntax cannot host, so
+declarative questions do not quasi-subordinate (67). -/
 theorem no_quasi_declarative_question : ¬ AgreesC .minusWH .cq := by decide
 
-/-- A language's resources for typing a bare polar clause at C (§4.4): a polar
-complementizer (*whether*, *se*) or a clause-typing Q-morpheme (*ka*). -/
+/-- A language may type a bare polar clause at C (§4.4) by a polar complementizer
+(*whether*, *se*) or by a clause-typing Q-morpheme (*ka*). -/
 structure PolarTyping where
   polarComplementizer : Bool
   qMorpheme : Bool
@@ -238,7 +232,7 @@ structure PolarTyping where
 /-- A simplex polar clause is clause-typed in a context when a lexical resource types it
 or the context supplies Persp_CQ above C ((72)). -/
 def Typed (L : PolarTyping) (e : EmbeddingContext) : Prop :=
-  L.polarComplementizer = true ∨ L.qMorpheme = true ∨ height .perspP ≤ height (layerOfContext e)
+  L.polarComplementizer = true ∨ L.qMorpheme = true ∨ .perspP ≤ layerOfContext e
 
 instance (L : PolarTyping) (e : EmbeddingContext) : Decidable (Typed L e) :=
   inferInstanceAs (Decidable (_ ∨ _ ∨ _))
@@ -248,16 +242,16 @@ def italian : PolarTyping := ⟨true, false⟩
 def japanese : PolarTyping := ⟨false, true⟩
 def hindiUrdu : PolarTyping := ⟨false, false⟩
 
-/-- (69)–(71): English and Italian subordinate simplex polar questions, Hindi-Urdu does
-not; every language quasi-subordinates them. -/
+/-- English and Italian subordinate simplex polar questions and Hindi-Urdu does not, while
+every language quasi-subordinates them, as in (69)–(71). -/
 theorem simplex_polar :
     (∀ e, Typed english e ∧ Typed italian e ∧ Typed japanese e) ∧
       ¬ Typed hindiUrdu .subordinated ∧ Typed hindiUrdu .quasiSubordinated ∧
         Typed hindiUrdu .matrix := by
   decide
 
-/-- (71): the fragment's *ya: nahĩ:* is obligatory exactly where nothing else types the
-clause. -/
+/-- The fragment's *ya: nahĩ:* is obligatory exactly where nothing else types the clause
+(71). -/
 theorem ya_nahi_obligatory_iff :
     ∀ e, ya_nahi.distribution .polar e = some .obligatory ↔ ¬ Typed hindiUrdu e := by
   decide
@@ -276,14 +270,15 @@ def contextOf : String → Option EmbeddingContext
   | "matrix" => some .matrix
   | _ => none
 
-/-- Whether a judgment counts as licensed: McCloskey's `?` on (40b) is licensed. -/
+/-- A judgment counts as licensed when it is acceptable or marginal, so that McCloskey's `?`
+on (40b) is licensed. -/
 def Fine (j : Judgment) : Prop := j = .acceptable ∨ j = .marginal
 
 instance (j : Judgment) : Decidable (Fine j) := inferInstanceAs (Decidable (_ ∨ _))
 
-/-- (8)–(9), (11), (24), (84)–(85): outside quasi-subordination an English predicate embeds
-an interrogative iff its lexical class, read off the fragment, selects the context's
-layer. -/
+/-- Outside quasi-subordination an English predicate embeds an interrogative iff its lexical
+class, read off the fragment, selects the context's layer, as in (8)–(9), (11), (24) and
+(84)–(85). -/
 theorem selection_rows :
     ∀ row ∈ Examples.all, ∀ v ∈ verbs, ∀ e,
       row.feature? "verb" = some v.form → (row.feature? "embedding").bind contextOf = some e →
@@ -291,16 +286,16 @@ theorem selection_rows :
       (Fine row.judgment ↔ Selects (deriveSelectionClass v.toVerb) e) := by
   decide
 
-/-- The answer relation of a responsive's at-issue content (43b): *know* and *remember*
-assert knowledge, *forget* ignorance. -/
+/-- In the at-issue content of a responsive (43b), *know* and *remember* assert knowledge of
+the answer and *forget* asserts ignorance. -/
 def assertsKnowledge : String → Bool
   | "know" => true
   | "remember" => true
   | _ => false
 
-/-- (8)–(9), (38), (40), (43), (45)–(46), (84)–(85): quasi-subordination is licensed iff the
-class selects PerspP and, for a responsive, its content does not assert knowledge of the
-answer once negation or questioning is taken into account — the instances of
+/-- Quasi-subordination is licensed iff the class selects PerspP and, for a responsive, its
+content does not assert knowledge of the answer once negation or questioning is taken into
+account, as in (8)–(9), (38), (40), (43), (45)–(46) and (84)–(85). These are the instances of
 `not_possiblyIgnorant_knows`, `possiblyIgnorant_forgets_iff` and
 `possiblyIgnorant_knows_question_iff` in a context where the center may be ignorant. Rows
 the paper attributes to who is invested in the answer (§3.3) carry the feature `invested`
@@ -317,16 +312,16 @@ theorem quasi_rows :
               row.feature? "questioned" = some "true")) := by
   decide
 
-/-- The WH-feature a language's declarative syntax leaves on C: typed early in English,
-delayable in Hindi-Urdu and Italian (§4.4). -/
+/-- Declarative syntax leaves the WH-feature on C typed early in English and delayable in
+Hindi-Urdu and Italian (§4.4). -/
 def declarativeC : String → Option WHFeature
   | "stan1293" => some .minusWH
   | "hind1269" => some .alphaWH
   | "ital1282" => some .alphaWH
   | _ => none
 
-/-- (62)–(63): a declarative question has a neutral reading iff its language's C may stay
-untyped, and always a biased one. -/
+/-- A declarative question has a neutral reading iff its language's C may stay untyped, and
+always has a biased one, as in (62)–(63). -/
 theorem declarative_question_rows :
     ∀ row ∈ Examples.all, ∀ f, row.feature? "syntax" = some "declarative" →
       row.feature? "embedding" = some "matrix" → declarativeC row.language = some f →
@@ -342,8 +337,8 @@ def typingOf : String → Option PolarTyping
   | "hind1269" => some hindiUrdu
   | _ => none
 
-/-- (69)–(71): a simplex polar clause is acceptable in a context iff it is clause-typed
-there. -/
+/-- A simplex polar clause is acceptable in a context iff it is clause-typed there, as in
+(69)–(71). -/
 theorem simplex_rows :
     ∀ row ∈ Examples.all, ∀ L e, row.feature? "simplex" = some "true" →
       typingOf row.language = some L → (row.feature? "embedding").bind contextOf = some e →

@@ -9,15 +9,12 @@ public import Mathlib.Data.Fintype.Basic
 public import Mathlib.Data.Setoid.Basic
 
 /-!
-# Kernel monotonicity and decidable equality for setoids
+# Kernel monotonicity, meets, and decidable equality for setoids
 
-Mirror of `Mathlib/Data/Setoid/Basic.lean`: the composition-monotonicity
-of `Setoid.ker`, and decidable equality of two setoids on a finite type whose
-relations are decidable. Mathlib has the monotonicity fact for every
-*algebraic* kernel — `LinearMap.ker_le_ker_comp` (whose name this mirrors),
-`MonoidHom.comap_ker`, `RingHom.comap_ker`,
-`CategoryTheory.Limits.kernelSubobject_comp_le` — but not for the plain
-`Setoid.ker` they all specialize. [UPSTREAM]
+This file adds to `Mathlib/Data/Setoid/Basic.lean` the monotonicity of `Setoid.ker` under
+composition, the relation of an indexed meet of setoids, and decidable equality of setoids on a
+finite type. Mathlib has the monotonicity for algebraic kernels (`LinearMap.ker_le_ker_comp`,
+`MonoidHom.comap_ker`) but not for the plain `Setoid.ker` they specialize. [UPSTREAM]
 -/
 
 @[expose] public section
@@ -27,6 +24,13 @@ of `g` — the `Setoid` primitive of `LinearMap.ker_le_ker_comp`. [UPSTREAM] -/
 theorem Setoid.ker_le_ker_comp {α β γ : Type*} (f : α → β) (h : β → γ) :
     Setoid.ker f ≤ Setoid.ker (h ∘ f) :=
   Setoid.le_def.mpr fun hxy => congrArg h hxy
+
+/-- Two elements are related by an indexed meet of setoids when every setoid relates them.
+[UPSTREAM] -/
+theorem Setoid.iInf_iff {α : Type*} {ι : Sort*} {f : ι → Setoid α} {a b : α} :
+    (⨅ i, f i) a b ↔ ∀ i, f i a b := by
+  rw [iInf, Setoid.sInf_iff]
+  simp
 
 /-- The kernel of a map into a type with decidable equality is decidable. [UPSTREAM] -/
 instance Setoid.ker.decidableRel {α β : Type*} (f : α → β) [DecidableEq β] :

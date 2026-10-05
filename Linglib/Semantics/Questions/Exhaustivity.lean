@@ -3,6 +3,7 @@ module
 public import Mathlib.Data.Finset.Basic
 public import Linglib.Semantics.Questions.Basic
 public import Linglib.Semantics.Questions.Resolution
+public import Linglib.Semantics.Questions.Partition.Inquisitive
 public import Linglib.Logic.Modal.Basic
 
 /-!
@@ -17,6 +18,10 @@ operator on the members of `H` true at `w`:
   [heim-1994] (Ans₁) and [beck-rullmann-1999];
 - `strongAnswer H w`, the worlds deciding every member as `w` does, the
   strongly exhaustive answer of [groenendijk-stokhof-1984] and Heim's Ans₂;
+- `partition H`, the Groenendijk–Stokhof partition as a `Setoid`, the kernel of
+  `trueAnswers H`: its cells are the strong answers (`strongAnswer_eq_cell`), and as an
+  inquisitive question it is the meet of the members' polar questions
+  (`fromSetoid_partition`);
 - `IsStrongestTrueAnswer H w p`, [dayal-1996]'s maximally informative true
   member: the least true member under entailment, `IsLeast`. Its existence is
   Dayal's existential presupposition `IsExhaustivelyResolvable`; `dayalAns`
@@ -33,7 +38,7 @@ operator on the members of `H` true at `w`:
 - `KnowsAnswer H w R x`, an agent's knowledge of the answer through their
   doxastic alternatives, and `PossiblyIgnorant H c R x`, [dayal-2025]'s
   requirement on the perspectival center of a question;
-- `exhCell H p` and `exhaustifiedPartition H`, [fox-2018]'s cells;
+- `exhCell H p`, [fox-2018]'s cells;
 - `ofFinset F`, a finite family of finite propositions, on which the
   presuppositions are decidable.
 
@@ -71,7 +76,7 @@ variable {W : Type*} (H : Set (Set W)) (w : W)
 
 /-! ### Karttunen sets and the weak and strong answers -/
 
-/-- The [karttunen-1977] denotation: the members of `H` true at `w`. -/
+/-- The true answers at `w` are the members of `H` true at `w`, the [karttunen-1977] denotation. -/
 def trueAnswers : Set (Set W) := {p ∈ H | w ∈ p}
 
 @[simp] theorem mem_trueAnswers {p : Set W} :
@@ -79,8 +84,8 @@ def trueAnswers : Set (Set W) := {p ∈ H | w ∈ p}
 
 theorem trueAnswers_subset : trueAnswers H w ⊆ H := fun _ h => h.1
 
-/-- The weakly exhaustive answer ([heim-1994]'s Ans₁, [beck-rullmann-1999]'s
-Ans-BR): the intersection of the true members. -/
+/-- The weakly exhaustive answer is the intersection of the true members ([heim-1994]'s Ans₁,
+[beck-rullmann-1999]'s Ans-BR). -/
 def weakAnswer : Set W := ⋂₀ trueAnswers H w
 
 @[simp] theorem mem_weakAnswer {v : W} :
@@ -93,56 +98,51 @@ theorem weakAnswer_subset {p : Set W} (hp : p ∈ H) (hw : w ∈ p) :
     weakAnswer H w ⊆ p :=
   Set.sInter_subset_of_mem ⟨hp, hw⟩
 
-/-- The strongly exhaustive answer ([groenendijk-stokhof-1984]; [heim-1994]'s
-Ans₂ form): the worlds that decide every member of `H` as `w` does. -/
+/-- The strongly exhaustive answer at `w` is the set of worlds that decide every member of `H` as
+`w` does ([groenendijk-stokhof-1984], [heim-1994]'s Ans₂). -/
 def strongAnswer : Set W := {v | ∀ p ∈ H, (w ∈ p ↔ v ∈ p)}
 
 @[simp] theorem mem_strongAnswer {v : W} :
     v ∈ strongAnswer H w ↔ ∀ p ∈ H, (w ∈ p ↔ v ∈ p) := Iff.rfl
-
-/-- Heim's form of the strong answer: the worlds with the same Karttunen set. -/
-theorem strongAnswer_eq_preimage :
-    strongAnswer H w = trueAnswers H ⁻¹' {trueAnswers H w} := by
-  ext v
-  simp only [mem_strongAnswer, Set.mem_preimage, Set.mem_singleton_iff, Set.ext_iff,
-    mem_trueAnswers]
-  constructor
-  · exact fun h p => and_congr_right fun hp => (h p hp).symm
-  · exact fun h p hp =>
-      ⟨fun hw => ((h p).2 ⟨hp, hw⟩).2, fun hv => ((h p).1 ⟨hp, hv⟩).2⟩
 
 theorem strongAnswer_subset_weakAnswer : strongAnswer H w ⊆ weakAnswer H w :=
   fun _ hv => (mem_weakAnswer H w).2 fun p hp hwp => (hv p hp).1 hwp
 
 @[simp] theorem self_mem_strongAnswer : w ∈ strongAnswer H w := fun _ _ => Iff.rfl
 
-theorem mem_strongAnswer_comm {w v : W} :
-    v ∈ strongAnswer H w ↔ w ∈ strongAnswer H v :=
-  ⟨fun h p hp => (h p hp).symm, fun h p hp => (h p hp).symm⟩
+/-- In the partition of [groenendijk-stokhof-1984], two worlds are equivalent when they have the
+same true members, [heim-1994]'s reduction of the strong answer to the Karttunen set. -/
+def partition : Setoid W := Setoid.ker (trueAnswers H)
 
-theorem mem_strongAnswer_trans {w v u : W} (huv : u ∈ strongAnswer H v)
-    (hvw : v ∈ strongAnswer H w) : u ∈ strongAnswer H w :=
-  fun p hp => (hvw p hp).trans (huv p hp)
+variable {H} in
+theorem partition_iff {v w : W} : partition H v w ↔ ∀ p ∈ H, (v ∈ p ↔ w ∈ p) := by
+  simp only [Setoid.ker_def, Set.ext_iff, mem_trueAnswers, and_congr_right_iff]
 
-/-- Two strong answers are equal or disjoint: they are the cells of a partition. -/
+/-- The partition is the meet of the polar questions of the members. -/
+theorem partition_eq_iInf : partition H = ⨅ p ∈ H, Setoid.polar p := by
+  ext v w
+  simp only [partition_iff, Setoid.iInf_iff, Setoid.polar_iff]
+
+/-- The strong answer at `w` is the cell of `w`. -/
+theorem strongAnswer_eq_cell : strongAnswer H w = (partition H).cell w := by
+  ext v
+  simp only [mem_strongAnswer, Setoid.mem_cell, partition_iff]
+  exact forall₂_congr fun _ _ ↦ Iff.comm
+
+theorem classes_partition : (partition H).classes = Set.range (strongAnswer H) := by
+  ext C
+  simp only [Setoid.classes, Set.mem_ofPred_eq, Set.mem_range, strongAnswer_eq_cell, eq_comm]
+  rfl
+
+/-- Two strong answers are equal or disjoint. -/
 theorem strongAnswer_eq_or_disjoint (w v : W) :
     strongAnswer H w = strongAnswer H v ∨ Disjoint (strongAnswer H w) (strongAnswer H v) := by
-  by_cases h : ∃ u, u ∈ strongAnswer H w ∧ u ∈ strongAnswer H v
-  · obtain ⟨u, huw, huv⟩ := h
-    refine Or.inl (Set.ext fun x => ⟨fun hx => ?_, fun hx => ?_⟩)
-    · exact mem_strongAnswer_trans H
-        (mem_strongAnswer_trans H hx ((mem_strongAnswer_comm H).1 huw)) huv
-    · exact mem_strongAnswer_trans H
-        (mem_strongAnswer_trans H hx ((mem_strongAnswer_comm H).1 huv)) huw
-  · exact Or.inr (Set.disjoint_left.2 fun u huw huv => h ⟨u, huw, huv⟩)
+  simpa only [strongAnswer_eq_cell] using (partition H).cell_eq_or_disjoint w v
 
-@[simp] theorem iUnion_strongAnswer : ⋃ w, strongAnswer H w = Set.univ :=
-  Set.eq_univ_of_forall fun v => Set.mem_iUnion.2 ⟨v, self_mem_strongAnswer H v⟩
-
-theorem mem_range_strongAnswer_iff {C : Set W} :
-    C ∈ Set.range (strongAnswer H) ↔ ∃ w ∈ C, C = strongAnswer H w :=
-  ⟨fun ⟨w, hw⟩ => ⟨w, hw ▸ self_mem_strongAnswer H w, hw.symm⟩,
-   fun ⟨w, _, hw⟩ => ⟨w, hw.symm⟩⟩
+/-- As an inquisitive question, the partition is the meet of the polar questions of the members:
+a state resolves it iff it resolves whether each member holds. -/
+theorem fromSetoid_partition : fromSetoid (partition H) = ⨅ p ∈ H, polar p := by
+  simp only [partition_eq_iInf, fromSetoid_iInf, fromSetoid_polar]
 
 /-- The strongly exhaustive answer to an inquisitive question mention-all answers it. -/
 theorem completelyAnsweredBy_strongAnswer (Q : Question W) :
@@ -154,12 +154,11 @@ theorem completelyAnsweredBy_strongAnswer (Q : Question W) :
 
 /-! ### Dayal's strongest true answer -/
 
-/-- [dayal-1996]'s maximally informative true member: `p` is in `H`, true at
-`w`, and entails every member true at `w`, the least element of the Karttunen
-set under `⊆`. -/
+/-- A strongest true answer at `w` is a member of `H` true at `w` that entails every member true
+at `w`, [dayal-1996]'s maximally informative true member. -/
 abbrev IsStrongestTrueAnswer (p : Set W) : Prop := IsLeast (trueAnswers H w) p
 
-/-- Dayal's existential presupposition: a strongest true member exists. -/
+/-- Dayal's existential presupposition holds at `w` when a strongest true member exists. -/
 def IsExhaustivelyResolvable : Prop := ∃ p, IsStrongestTrueAnswer H w p
 
 theorem isStrongestTrueAnswer_iff {p : Set W} :
@@ -201,7 +200,7 @@ theorem trueAnswers_range (P : α → Set W) (w : W) :
   · rintro ⟨a, hw, rfl⟩
     exact ⟨⟨a, rfl⟩, hw⟩
 
-/-- Dayal's presupposition on a topical property: a true short answer whose proposition
+/-- On a topical property, Dayal's presupposition asks for a true short answer whose proposition
 entails every true one. -/
 theorem isExhaustivelyResolvable_range_iff (P : α → Set W) (w : W) :
     IsExhaustivelyResolvable (Set.range P) w ↔
@@ -248,8 +247,8 @@ variable {E : Type*} {c A : Set W} {R : E → W → W → Prop} {x : E}
 doxastic alternatives, [karttunen-1977]'s meaning postulate for *know*. -/
 def KnowsAnswer (R : E → W → W → Prop) (x : E) : Prop := ∀ v, R x w v → v ∈ weakAnswer H w
 
-/-- [dayal-2025]'s requirement on a perspectival center: in the context `c` the
-center may not know the answer. -/
+/-- The perspectival center `x` is possibly ignorant in the context `c` when it may not know the
+answer there, [dayal-2025]'s requirement on the center of a question. -/
 def PossiblyIgnorant (c : Set W) (R : E → W → W → Prop) (x : E) : Prop :=
   ∃ w ∈ c, ¬ KnowsAnswer H w R x
 
@@ -284,8 +283,8 @@ theorem knowsAnswer_top_iff :
 end Knowing
 
 open Classical in
-/-- Dayal's answerhood operator Ans-D: the strongest true member, when the
-presupposition holds. -/
+/-- Dayal's answerhood operator Ans-D returns the strongest true member when the presupposition
+holds. -/
 noncomputable def dayalAns : Option (Set W) :=
   if weakAnswer H w ∈ H then some (weakAnswer H w) else none
 
@@ -320,8 +319,8 @@ def supported (s : Set W) : Set (Set W) := {p ∈ H | s ⊆ p}
   ext p
   simp [supported, trueAnswers]
 
-/-- Dayal's presupposition on an information state: a least supported member. On the
-singleton state `{w}` it is the presupposition at `w`. -/
+/-- Dayal's presupposition holds on an information state when the state supports a least member.
+On the singleton state `{w}` it is the presupposition at `w`. -/
 def IsExhaustivelyResolvableOn (s : Set W) : Prop := ∃ p, IsLeast (supported H s) p
 
 theorem isExhaustivelyResolvableOn_singleton :
@@ -331,8 +330,8 @@ theorem isExhaustivelyResolvableOn_singleton :
 
 /-! ### Questions under necessity -/
 
-/-- The question `□Q` over the accessibility `R`: every member necessitated, the image of `H`
-under `SetRel.core R`. -/
+/-- The question `□Q` over the accessibility `R` necessitates every member: it is the image of
+`H` under `SetRel.core R`. -/
 def box {W' : Type*} (R : SetRel W' W) : Set (Set W') := R.core '' H
 
 theorem mem_box {W' : Type*} {R : SetRel W' W} {q : Set W'} :
@@ -360,7 +359,7 @@ theorem isExhaustivelyResolvable_box_iff {W' : Type*} {R : SetRel W' W}
 
 /-! ### Cells ([fox-2018]) -/
 
-/-- The cell of `p`: the worlds where `p` is the strongest true member. -/
+/-- The cell of `p` is the set of worlds where `p` is the strongest true member. -/
 def exhCell (p : Set W) : Set W := {w | IsStrongestTrueAnswer H w p}
 
 @[simp] theorem mem_exhCell {p : Set W} {w : W} :
@@ -384,55 +383,8 @@ theorem exhCell_eq_strongAnswer {p : Set W} (h : IsStrongestTrueAnswer H w p) :
   · exact fun hv =>
       ⟨⟨h.1.1, (hv p h.1.1).1 h.1.2⟩, fun _ hq => h.2 ⟨hq.1, (hv _ hq.1).2 hq.2⟩⟩
 
-/-- The polar questions of a family of propositions jointly amount to the family's partition
-question: a state resolves each of them iff it lies within a cell of the strong answer, so a
-strategy of polar subquestions resolves the strongly exhaustive question. -/
-theorem iInf_query_ofSet_eq_iSup_ofSet_strongAnswer {ι : Type*} (P : ι → Set W) :
-    ⨅ i, (ofSet (P i)).query = ⨆ w, ofSet (strongAnswer (Set.range P) w) := by
-  apply Question.ext
-  intro σ
-  rw [mem_iInf_iff, mem_iSup_iff]
-  simp only [mem_query, mem_ofSet, info_ofSet]
-  constructor
-  · intro h
-    rcases σ.eq_empty_or_nonempty with rfl | ⟨w, hw⟩
-    · exact Or.inl rfl
-    · refine Or.inr ⟨w, fun v hv => ?_⟩
-      rw [mem_strongAnswer]
-      rintro _ ⟨i, rfl⟩
-      rcases h i with hi | hi
-      · exact ⟨fun _ => hi hv, fun _ => hi hw⟩
-      · exact ⟨fun hw' => absurd hw' (hi hw), fun hv' => absurd hv' (hi hv)⟩
-  · rintro (rfl | ⟨w, hσ⟩) i
-    · exact Or.inl (Set.empty_subset _)
-    · by_cases hw : w ∈ P i
-      · exact Or.inl fun v hv => (hσ hv (P i) ⟨i, rfl⟩).mp hw
-      · exact Or.inr fun v hv hv' => hw ((hσ hv (P i) ⟨i, rfl⟩).mpr hv')
-
-/-- The logical partition: the cells of the strong answer. -/
-def exhaustifiedPartition : Set (Set W) := Set.range (strongAnswer H)
-
-@[simp] theorem mem_exhaustifiedPartition {C : Set W} :
-    C ∈ exhaustifiedPartition H ↔ ∃ w, C = strongAnswer H w := by
-  simp [exhaustifiedPartition, eq_comm]
-
-theorem exhaustifiedPartition_nonempty {C : Set W} (h : C ∈ exhaustifiedPartition H) :
-    C.Nonempty :=
-  let ⟨w, hw⟩ := h; ⟨w, hw ▸ self_mem_strongAnswer H w⟩
-
-theorem exhaustifiedPartition_eq_or_disjoint {C₁ C₂ : Set W}
-    (h₁ : C₁ ∈ exhaustifiedPartition H) (h₂ : C₂ ∈ exhaustifiedPartition H) :
-    C₁ = C₂ ∨ Disjoint C₁ C₂ := by
-  obtain ⟨w₁, rfl⟩ := h₁
-  obtain ⟨w₂, rfl⟩ := h₂
-  exact strongAnswer_eq_or_disjoint H w₁ w₂
-
-@[simp] theorem sUnion_exhaustifiedPartition : ⋃₀ exhaustifiedPartition H = Set.univ := by
-  rw [exhaustifiedPartition, Set.sUnion_range]
-  exact iUnion_strongAnswer H
-
-/-- Dayal's strong operator Ans-D/H, [heim-1994]'s strengthening of Ans-D:
-the worlds with the same strongest true member as `w`. -/
+/-- Dayal's strong operator Ans-D/H, [heim-1994]'s strengthening of Ans-D, returns the worlds with
+the same strongest true member as `w`. -/
 noncomputable def dayalStrongAns : Option (Set W) := (dayalAns H w).map (exhCell H)
 
 /-- Where defined, Dayal's strong operator is the Groenendijk–Stokhof answer. -/

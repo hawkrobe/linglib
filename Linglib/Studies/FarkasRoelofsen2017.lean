@@ -78,7 +78,7 @@ inductive Intonation
   | rising
   deriving DecidableEq, Repr
 
-/-- The six sentence forms of (3)–(8): a declarative or interrogative clause with its
+/-- The six sentence forms of (3)–(8) are a declarative or interrogative clause with its
 intonation, or a falling declarative anchor with a reverse-polarity tag carrying the
 intonation. -/
 inductive Form
@@ -91,7 +91,8 @@ variable {W : Type*}
 
 namespace Intonation
 
-/-- (36): `closed` is vacuous and `open` is the non-informative projection. -/
+/-- `closed` intonation is vacuous and `open` intonation is the non-informative projection
+(36). -/
 def interpret : Intonation → Question W → Question W
   | .falling => id
   | .rising => Question.query
@@ -101,15 +102,15 @@ end Intonation
 namespace Form
 
 open scoped Classical in
-/-- (37)–(40): `dec` is `!`, `int` is `⟨?⟩`, which applies `?` only to a non-inquisitive
-argument, and a tag applies `int` to the falling declarative anchor. -/
+/-- `dec` is `!`, `int` is `⟨?⟩`, which applies `?` only to a non-inquisitive argument, and a
+tag applies `int` to the falling declarative anchor, as in (37)–(40). -/
 noncomputable def interpret : Form → Question W → Question W
   | .declarative i, P => i.interpret Pᶜᶜ
-  | .interrogative i, P => i.interpret (if P.isInquisitive then P else P.query)
-  | .tag i, P => i.interpret (if Pᶜᶜ.isInquisitive then Pᶜᶜ else Pᶜᶜ.query)
+  | .interrogative i, P => i.interpret (if P.IsInquisitive then P else P.query)
+  | .tag i, P => i.interpret (if Pᶜᶜ.IsInquisitive then Pᶜᶜ else Pᶜᶜ.query)
 
-/-- (47): polar interrogatives are the optimal forms for an inquisitive content; rising
-declaratives and tag interrogatives are marked. -/
+/-- Polar interrogatives are the optimal forms for an inquisitive content, and rising
+declaratives and tag interrogatives are marked (47). -/
 def IsMarked : Form → Prop
   | .declarative .rising => True
   | .tag _ => True
@@ -123,25 +124,25 @@ instance : DecidablePred IsMarked := λ f => by
 
 end Form
 
-/-- (41a): a falling declarative expresses the non-inquisitive projection of its radical. -/
+/-- A falling declarative expresses the non-inquisitive projection of its radical (41a). -/
 theorem interpret_declarative_falling (P : Question W) :
     (Form.declarative .falling).interpret P = Pᶜᶜ := rfl
 
-/-- (39), (40): a rising declarative and a tag interrogative express `?!P`. -/
+/-- A rising declarative and a tag interrogative express `?!P`, as in (39) and (40). -/
 theorem interpret_marked (P : Question W) (i : Intonation) :
     (Form.declarative .rising).interpret P = Pᶜᶜ.query ∧
       (Form.tag i).interpret P = Pᶜᶜ.query := by
   refine ⟨rfl, ?_⟩
   cases i <;> simp [Form.interpret, Intonation.interpret, not_isInquisitive_compl]
 
-/-- (38): a polar interrogative with a non-inquisitive radical expresses `?P`, whatever its
-intonation. -/
+/-- A polar interrogative with a non-inquisitive radical expresses `?P`, whatever its
+intonation (38). -/
 theorem interpret_interrogative_ofSet (α : Set W) (i : Intonation) :
     (Form.interrogative i).interpret (ofSet α) = (ofSet α).query := by
   cases i <;> simp [Form.interpret, Intonation.interpret, not_isInquisitive_ofSet]
 
-/-- (43): every form but the falling declarative expresses the same inquisitive proposition
-`{α, ᾱ}` for a radical `α`. -/
+/-- Every form but the falling declarative expresses the same inquisitive proposition
+`{α, ᾱ}` for a radical `α` (43). -/
 theorem interpret_eq_query_ofSet (α : Set W) (f : Form) (h : f ≠ .declarative .falling) :
     f.interpret (ofSet α) = (ofSet α).query := by
   rcases f with i | i | i
@@ -151,17 +152,17 @@ theorem interpret_eq_query_ofSet (α : Set W) (f : Form) (h : f ≠ .declarative
   · exact interpret_interrogative_ofSet α i
   · rw [(interpret_marked (ofSet α) i).2, compl_compl_ofSet]
 
-/-- (41b): those forms raise a genuine issue unless the radical is a tautology or a
-contradiction. -/
+/-- Those forms raise a genuine issue unless the radical is a tautology or a
+contradiction (41b). -/
 theorem isInquisitive_interpret_ofSet {α : Set W} (h₁ : α ≠ Set.univ) (h₂ : α ≠ ∅) (f : Form)
-    (h : f ≠ .declarative .falling) : (f.interpret (ofSet α)).isInquisitive := by
+    (h : f ≠ .declarative .falling) : (f.interpret (ofSet α)).IsInquisitive := by
   rw [interpret_eq_query_ofSet α f h]
   exact isInquisitive_query (by simpa using h₁) (by simpa using h₂)
 
 /-! ### Credence and discourse contexts -/
 
-/-- The four credence levels of §3.2: `zero` when the highlighted alternative is not
-considered more likely than its complement, `high` when much more likely. -/
+/-- §3.2 distinguishes four credence levels, from `zero`, when the highlighted alternative is not
+considered more likely than its complement, to `high`, when it is much more likely. -/
 inductive CredenceLevel
   | zero
   | low
@@ -181,8 +182,8 @@ instance : LinearOrder CredenceLevel := LinearOrder.lift' toNat (by decide)
 
 end CredenceLevel
 
-/-- A discourse context (22), enriched in §3.2: the propositions proposed so far, the
-participants' commitments, and for each participant the possibilities she has signalled
+/-- A discourse context (22), enriched in §3.2, records the propositions proposed so far, the
+participants' commitments, and for each participant the possibilities they have signalled
 evidence for, each with a credence interval. -/
 structure Context (A W : Type*) where
   table : List (Question W)
@@ -193,7 +194,7 @@ namespace Context
 
 variable {A : Type*} (K : Context A W) (x : A)
 
-/-- `cs(x)`: the worlds compatible with everything `x` is committed to. -/
+/-- `cs(x)` is the set of worlds compatible with everything `x` is committed to. -/
 def cs : Set W := contextSet (ofCommitter K.commitments x)
 
 /-- The common ground, the smallest set every participant is committed to the actual world
@@ -204,20 +205,20 @@ def cg : Set W := ⋃ x, K.cs x
 cannot comply with it. -/
 def CommonlyDecided (P : Question W) : Prop := K.cg ∈ P ∨ ∀ s ∈ P, K.cg ∩ s = ∅
 
-/-- (48), the basic convention of use: the proposition goes on the table and its informative
+/-- The basic convention of use (48) puts the proposition on the table and its informative
 content into the speaker's commitments. -/
 def basic (φ : Question W) : Context A W :=
   ⟨φ :: K.table, insert (commit x φ.info) K.commitments, K.evidence⟩
 
-/-- A special effect: the highlighted alternative enters the speaker's evidence with a credence
-interval. -/
+/-- A special effect enters the highlighted alternative into the speaker's evidence with a
+credence interval. -/
 def special [DecidableEq A] (α : Set W) (I : Set CredenceLevel) : Context A W :=
   { K with evidence := Function.update K.evidence x (insert (α, I) (K.evidence x)) }
 
 end Context
 
-/-- The credence interval a marked form signals for the highlighted alternative: (52),
-(56) and (58). -/
+/-- A marked form signals a credence interval for the highlighted alternative, as in (52), (56)
+and (58). -/
 def Form.specialEffect : Form → Option (CredenceLevel × CredenceLevel)
   | .declarative .rising => some (.zero, .low)
   | .tag .rising => some (.moderate, .high)
@@ -228,20 +229,21 @@ namespace Context
 
 variable {A : Type*} [DecidableEq A] (K : Context A W) (x : A)
 
-/-- The conventional discourse effect of `x` uttering the form `f` with radical `α`: the basic
-convention on the proposition the form expresses, then the form's special effect if any. -/
+/-- The conventional discourse effect of `x` uttering the form `f` with radical `α` is the basic
+convention on the proposition the form expresses, followed by the form's special effect if it
+has one. -/
 noncomputable def utter (f : Form) (α : Set W) : Context A W :=
   match f.specialEffect with
   | none => K.basic x (f.interpret (ofSet α))
   | some I => (K.basic x (f.interpret (ofSet α))).special x α (Set.Icc I.1 I.2)
 
-/-- The division of labor principle, (21a): an unmarked form's discourse effects are the
+/-- By the division of labor principle (21a), an unmarked form's discourse effects are the
 basic convention of use alone. -/
 theorem utter_eq_basic_of_not_isMarked {f : Form} (h : ¬ f.IsMarked) (α : Set W) :
     K.utter x f α = K.basic x (f.interpret (ofSet α)) := by
   rcases f with i | i | i <;> cases i <;> simp_all [utter, Form.specialEffect, Form.IsMarked]
 
-/-- (21b): a marked form's effects include the basic convention. -/
+/-- A marked form's effects include the basic convention (21b). -/
 theorem table_utter (f : Form) (α : Set W) :
     (K.utter x f α).table = f.interpret (ofSet α) :: K.table := by
   rcases f with i | i | i <;> cases i <;> rfl
@@ -252,7 +254,7 @@ theorem commitments_utter (f : Form) (α : Set W) :
   rcases f with i | i | i <;> cases i <;> rfl
 
 omit [DecidableEq A] in
-/-- (49): a falling declarative commits the speaker to the radical. -/
+/-- A falling declarative commits the speaker to the radical (49). -/
 theorem cs_basic_declarative_falling (α : Set W) :
     (K.basic x ((Form.declarative .falling).interpret (ofSet α))).cs x = K.cs x ∩ α := by
   simp only [cs, basic, interpret_declarative_falling, compl_compl_ofSet, info_ofSet]
@@ -260,15 +262,16 @@ theorem cs_basic_declarative_falling (α : Set W) :
     commit_content, Set.inter_comm]
 
 omit [DecidableEq A] in
-/-- (50), (51): an inquisitive proposition commits the speaker only to the trivial possibility. -/
+/-- An inquisitive proposition commits the speaker only to the trivial possibility, as in (50)
+and (51). -/
 theorem cs_basic_of_isInquisitive {φ : Question W} (h : φ.info = Set.univ) :
     (K.basic x φ).cs x = K.cs x := by
   simp only [cs, basic, h]
   rw [ofCommitter_insert_of_eq K.commitments x (commit x Set.univ) rfl,
     contextSet_insert_of_commit rfl, commit_content, Set.univ_inter]
 
-/-- (52), (56), (58): a marked form registers the highlighted alternative as evidenced with its
-credence interval. -/
+/-- A marked form registers the highlighted alternative as evidenced with its credence
+interval, as in (52), (56) and (58). -/
 theorem mem_evidence_utter {f : Form} {I : CredenceLevel × CredenceLevel}
     (h : f.specialEffect = some I) (α : Set W) :
     (α, Set.Icc I.1 I.2) ∈ (K.utter x f α).evidence x := by
@@ -284,7 +287,7 @@ end Context
 
 /-! ### Testing the account (§6) -/
 
-/-- What a context of §6 fixes: whether the speaker has evidence for the highlighted alternative,
+/-- A situation of §6 fixes whether the speaker has evidence for the highlighted alternative,
 whether the addressee is neutral, and the range of credence the context makes reasonable. -/
 structure Situation where
   evidence : Bool
@@ -293,9 +296,9 @@ structure Situation where
   hi : CredenceLevel
   deriving DecidableEq, Repr
 
-/-- The felicity of a form in a situation, as §6 reasons: a commitment to the radical needs high
-credence to be possible; an issue on the table needs an addressee who is not neutral; the
-unmarked inquisitive form presents the speaker as neutral, which needs low credence to be
+/-- A form is felicitous in a situation by the reasoning of §6: a commitment to the radical
+needs high credence to be possible; an issue on the table needs an addressee who is not neutral;
+the unmarked inquisitive form presents the speaker as neutral, which needs low credence to be
 possible; a marked form needs evidence and a credence the context allows within its interval. -/
 def Felicitous (f : Form) (s : Situation) : Prop :=
   match f.specialEffect with
@@ -309,7 +312,7 @@ instance (f : Form) (s : Situation) : Decidable (Felicitous f s) := by
   rcases f with i | i | i <;> cases i <;> simp only [Felicitous, Form.specialEffect] <;>
     infer_instance
 
-/-- A judgment of §6: the form, the situation, and the paper's verdict. -/
+/-- A judgment of §6 records the form, the situation, and the paper's verdict. -/
 structure Row where
   form : Form
   situation : Situation

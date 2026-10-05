@@ -44,7 +44,7 @@ variable {W : Type*} (Q : Setoid W) (p q : Set W)
 
 /-! ### Cells -/
 
-/-- The cell of `w`: the worlds equivalent to it. -/
+/-- The cell of `w` is the set of worlds equivalent to it. -/
 def cell (w : W) : Set W := {v | Q v w}
 
 variable {Q p q} {w v : W}
@@ -57,6 +57,13 @@ theorem mem_cell_self (w : W) : w ∈ Q.cell w := Q.refl' w
 
 theorem cell_eq_of_rel (h : Q w v) : Q.cell w = Q.cell v :=
   Set.ext λ _ => ⟨λ h' => Q.trans' h' h, λ h' => Q.trans' h' (Q.symm' h)⟩
+
+variable (Q) in
+/-- Two cells are equal or disjoint. -/
+theorem cell_eq_or_disjoint (w v : W) : Q.cell w = Q.cell v ∨ Disjoint (Q.cell w) (Q.cell v) := by
+  by_cases h : Q w v
+  · exact Or.inl (cell_eq_of_rel h)
+  · exact Or.inr (Set.disjoint_left.2 fun u hw hv ↦ h (Q.trans' (Q.symm' hw) hv))
 
 @[simp] theorem cell_bot (w : W) : (⊥ : Setoid W).cell w = {w} := by
   ext; simp [cell]
@@ -74,7 +81,7 @@ instance [Fintype W] [DecidableRel Q] [DecidablePred (· ∈ p)] : Decidable (Q.
 /-! ### Polar questions and decided propositions -/
 
 variable (p) in
-/-- The polar question whether `p`: the kernel of its indicator. -/
+/-- The polar question whether `p` is the kernel of its indicator. -/
 def polar : Setoid W := Setoid.ker (· ∈ p)
 
 theorem polar_iff : polar p w v ↔ (w ∈ p ↔ v ∈ p) := eq_iff_iff
@@ -86,8 +93,8 @@ instance [DecidablePred (· ∈ p)] : DecidableRel (polar p) :=
   λ _ _ => decidable_of_iff _ polar_iff.symm
 
 variable (Q p) in
-/-- `Q` decides `p`: `p` is constant on the cells of `Q`, so it is a union of cells. The
-question `Q` refines the polar question whether `p`. -/
+/-- A question decides `p` when it refines the polar question whether `p`, so that `p` is
+constant on its cells and a union of them. -/
 def Decides : Prop := Q ≤ polar p
 
 theorem decides_iff : Q.Decides p ↔ ∀ w v, Q w v → (w ∈ p ↔ v ∈ p) :=
@@ -156,12 +163,12 @@ theorem le_ker_iff_forall_decides {β : Type*} {f : W → β} :
 
 variable (ps : Finset (Finset W))
 
-/-- The question raised by a family of propositions: the coarsest question deciding each of
-them, the meet of their polar questions. -/
+/-- The question raised by a family of propositions is the meet of their polar questions, the
+coarsest question deciding each of them. -/
 def ofProps : Setoid W := ⨅ p ∈ ps, polar (↑p : Set W)
 
 theorem ofProps_iff : ofProps ps w v ↔ ∀ p ∈ ps, (w ∈ p ↔ v ∈ p) := by
-  simp only [iInf, Setoid.sInf_iff, Set.forall_mem_range, polar_iff, Finset.mem_coe]
+  simp only [Setoid.iInf_iff, polar_iff, Finset.mem_coe]
 
 instance [DecidableEq W] : DecidableRel (ofProps ps) :=
   λ _ _ => decidable_of_iff _ (ofProps_iff ps).symm
