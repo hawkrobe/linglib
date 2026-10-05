@@ -3,28 +3,28 @@ module
 public import Linglib.Semantics.Exhaustification.InnocentExclusion
 
 /-!
-# Innocent Inclusion [bar-lev-fox-2020]
+# Innocent Inclusion
 
-From [bar-lev-fox-2020], Definition (51):
+Bar-Lev and Fox's Innocent Inclusion runs after Innocent Exclusion and collects the alternatives
+that belong to every maximal set of alternatives that can be true together with the prejacent and
+the negations of the innocently excludable ones, (25b). Their operator `exhIEII` asserts the
+prejacent, denies the innocently excludable alternatives and asserts the innocently includable
+ones, (26). The cell of the prejacent in the partition the alternatives induce asserts the
+prejacent, denies the excludable alternatives and asserts all the others, (20); when the cell is
+consistent `exhIEII` is the cell, (27), and when it is not, as for simple disjunction, Innocent
+Inclusion adds nothing to Innocent Exclusion.
 
-> `II(p, C) = ∩{C'' ⊆ C : C''` is maximal s.t.
-> `{r : r ∈ C''} ∪ {p} ∪ {¬q : q ∈ IE(p,C)}` is consistent`}`
+## Main declarations
 
-After computing IE, find all maximal subsets of alternatives that can
-consistently be assigned TRUE (given that IE alternatives are false). An
-alternative is innocently includable iff it appears in ALL such maximal
-sets.
+* `II`, `IsInnocentlyIncludable`: the innocently includable alternatives.
+* `exhIEII`: exhaustification with Innocent Exclusion and Innocent Inclusion.
+* `cell`, `exhIEII_eq_cell_of_cell_nonempty`: cell identification.
+* `IsMinimalCover.exhIEII_eq`, `IsMinimalCover.II_eq`: exhaustification read off representative
+  minimal worlds.
 
-## Cell identification
+## References
 
-[bar-lev-fox-2020] eq. (20) + (27) + footnote 21. The *cell* of
-`Partition(ALT)` containing prejacent `φ` is the strongest proposition
-that assigns a definite truth value to every alternative in `ALT`: the
-prejacent, the negation of every IE-excludable alternative, and the truth
-of every non-excludable alternative. When the cell is consistent (=
-satisfiable at some world), `exhIEII` collapses onto it. When inconsistent
-(the simple-disjunction case `{a∨b, a, b, a∧b}`), `exhIEII` does no
-enrichment beyond `exhIE`.
+* [bar-lev-fox-2020]
 -/
 
 @[expose] public section
@@ -35,20 +35,18 @@ variable {World : Type*}
 variable (ALT : Set (Set World))
 variable (φ : Set World)
 
-/-- **Definition (II-compatible set)**: A set of propositions `R` is
-    `(ALT, φ, IE)`-compatible for inclusion if:
-    - `R ⊆ ALT`
-    - `{r : r ∈ R} ∪ {φ} ∪ {¬q : q ∈ IE(ALT, φ)}` is consistent. -/
+/-- A set `R` of alternatives is compatible for inclusion when its members can be true together
+with the prejacent and the negations of the innocently excludable alternatives. -/
 def IsIICompatible (R : Set (Set World)) : Prop :=
   R ⊆ ALT ∧
   (⋂₀ ({φ} ∪ {ψ | ∃ q, IsInnocentlyExcludable ALT φ q ∧ ψ = qᶜ} ∪ R)).Nonempty
 
-/-- **Definition (MI-set)**: Maximal II-compatible set. -/
+/-- An MI-set is a maximal set of alternatives compatible for inclusion. -/
 def IsMISet (R : Set (Set World)) : Prop :=
   IsIICompatible ALT φ R ∧
   ∀ R', IsIICompatible ALT φ R' → R ⊆ R' → R' ⊆ R
 
-/-- **Definition (II)**: `II(ALT, φ) = {r ∈ ALT : r belongs to every MI-set}`. -/
+/-- `II ALT φ` is the set of alternatives that belong to every MI-set. -/
 def II : Set (Set World) :=
   {r ∈ ALT | ∀ R, IsMISet ALT φ R → r ∈ R}
 
@@ -57,13 +55,9 @@ def II : Set (Set World) :=
 def IsInnocentlyIncludable (a : Set World) : Prop :=
   a ∈ II ALT φ
 
-/-- **Definition (Exh^{IE+II})**: The exhaustivity operator with both IE
-    and II.
-
-    `⟦Exh^{IE+II}⟧(ALT)(φ)(w) ⇔ φ(w) ∧ ∀q ∈ IE(ALT,φ)[¬q(w)] ∧ ∀r ∈ II(ALT,φ)[r(w)]`.
-
-    Bar-Lev & Fox's key operator that derives free choice. -/
-def exhIEII : Set World := λ w =>
+/-- `exhIEII ALT φ` asserts the prejacent, denies the innocently excludable alternatives and
+asserts the innocently includable ones. -/
+def exhIEII : Set World := fun w ↦
   φ w ∧
   (∀ q, IsInnocentlyExcludable ALT φ q → ¬q w) ∧
   (∀ r, IsInnocentlyIncludable ALT φ r → r w)
@@ -76,15 +70,13 @@ theorem exhIEII_eq_exhIE_inter (hfin : ALT.Finite) :
   rw [Set.mem_inter_iff, mem_exhIE_iff ALT φ hfin, Set.mem_sInter, and_assoc]
   exact Iff.rfl
 
-/-- The non-IE alternatives: members of `ALT` not innocently excludable.
-    [bar-lev-fox-2020] (the `C \ IE(p,C)` of paper eq. 20). -/
+/-- `nonExcludable ALT φ` is the set of alternatives that are not innocently excludable. -/
 def nonExcludable : Set (Set World) :=
   {r ∈ ALT | ¬ IsInnocentlyExcludable ALT φ r}
 
-/-- The cell of `Partition(ALT)` containing prejacent `φ`.
-    [bar-lev-fox-2020] eq. (20):
-    `Cell(p, C) = p ∧ ⋂₀ {¬q : q ∈ IE(p, C)} ∧ ⋂₀ (C \ IE(p, C))`. -/
-def cell : Set World := λ w =>
+/-- The cell of the prejacent in the partition the alternatives induce asserts the prejacent,
+denies the innocently excludable alternatives and asserts all the others. -/
+def cell : Set World := fun w ↦
   φ w ∧
   (∀ q, IsInnocentlyExcludable ALT φ q → ¬ q w) ∧
   (∀ r ∈ nonExcludable ALT φ, r w)
@@ -116,9 +108,8 @@ lemma isIICompatible_nonExcludable_of_cell_nonempty
   · exact hexcl q hq
   · exact hne ψ hr
 
-/-- **Cell identification ([bar-lev-fox-2020] footnote 21)**: when the
-    cell is consistent, the unique MI-set is `nonExcludable`, hence
-    `II = nonExcludable`. -/
+/-- When the cell is consistent, the non-excludable alternatives form the only MI-set, so they
+are the innocently includable ones. -/
 theorem II_eq_nonExcludable_of_cell_nonempty
     (h : (cell ALT φ).Nonempty) :
     II ALT φ = nonExcludable ALT φ := by
@@ -146,8 +137,7 @@ theorem II_eq_nonExcludable_of_cell_nonempty
             exact hu r (Set.mem_union_right _ hr)
     exact hR.2 _ hRr_compat Set.subset_union_left (Set.mem_union_right _ rfl)
 
-/-- **Cell identification ([bar-lev-fox-2020] eq. 27)**: when the cell
-    is consistent, `exhIEII` coincides with `cell`. -/
+/-- When the cell is consistent, exhaustification is the cell. -/
 theorem exhIEII_eq_cell_of_cell_nonempty
     (h : (cell ALT φ).Nonempty) :
     exhIEII ALT φ = cell ALT φ := by
@@ -159,16 +149,7 @@ theorem exhIEII_eq_cell_of_cell_nonempty
   · have : r ∈ nonExcludable ALT φ := by rw [← hII]; exact hr_II
     exact hne r this
 
-/-- **Sufficient condition for II membership via a cell witness world.**
-
-    Given any world `w` that witnesses cell consistency (satisfies the
-    prejacent, falsifies all IE-excludable alternatives, and verifies all
-    non-excludable alternatives), every alternative true at `w` is
-    innocently includable.
-
-    The abstract content of [bar-lev-fox-2020]'s free-choice
-    derivation: each disjunct is true at the "separately-A-B" world, which
-    is the cell witness for `Alt(◇(a∨b))`. -/
+/-- Every alternative true at a world of the cell is innocently includable. -/
 theorem mem_II_of_cell_witness {target : Set World}
     (htarget_alt : target ∈ ALT) (w : World)
     (hwitness : cell ALT φ w) (htarget : target w) :
@@ -176,22 +157,9 @@ theorem mem_II_of_cell_witness {target : Set World}
   rw [II_eq_nonExcludable_of_cell_nonempty ALT φ ⟨w, hwitness⟩]
   exact ⟨htarget_alt, fun hexc => hwitness.2.1 target hexc htarget⟩
 
-/-! ## Cell-witness factorization: from cell verdict to `exhIEII` consequences
+/-! ### Consequences of a world of the cell -/
 
-The headline theorem of cell-identification ([bar-lev-fox-2020]
-§3.3): once a cell witness is exhibited, `exhIEII` factors through
-the per-alternative verdict at the witness. In abstract terms, every
-alternative that holds at a cell witness is in II, hence asserted by
-`exhIEII`; every innocently excludable alternative is in IE, hence
-negated by `exhIEII`. The two corollaries below package these
-patterns as substrate-level theorems consumable by any
-`Exh^{IE+II}`-based study (basic FC, universal FC, SDA via Innocent
-Inclusion, etc.). -/
-
-/-- **Substrate-level cell-witness factorization (positive side).**
-    Any alternative that holds at a cell witness is entailed by
-    `exhIEII` at every world. Composition of `mem_II_of_cell_witness`
-    with the `hII` projection of `exhIEII`. -/
+/-- Exhaustification entails every alternative true at a world of the cell. -/
 theorem exhIEII_implies_cell_witnessed_alt {target : Set World}
     (htarget_alt : target ∈ ALT)
     (w : World) (hwitness : cell ALT φ w) (htarget : target w) :
@@ -199,13 +167,8 @@ theorem exhIEII_implies_cell_witnessed_alt {target : Set World}
   intro u h_exh
   exact h_exh.2.2 target (mem_II_of_cell_witness ALT φ htarget_alt w hwitness htarget)
 
-/-- **Substrate-level cell-witness factorization (list / multi-target).**
-    Given a cell witness and a list of alternatives all true at the
-    witness, `exhIEII` jointly entails every list member. The
-    cross-mechanism agreement template: any per-alternative-conjunction
-    operator (e.g., [santorio-2018]'s `sdaEval`) factors through
-    `exhIEII` whenever the per-alternatives hold at a shared cell
-    witness. -/
+/-- Exhaustification entails every alternative in a list of alternatives true at a world of the
+cell. -/
 theorem exhIEII_implies_cell_witnessed_alts
     (targets : List (Set World))
     (h_in_alt : ∀ t ∈ targets, t ∈ ALT)
@@ -216,22 +179,13 @@ theorem exhIEII_implies_cell_witnessed_alts
     exhIEII_implies_cell_witnessed_alt ALT φ
       (h_in_alt t ht) w hwitness (h_witness t ht) u h_exh
 
-/-- **Substrate-level cell-witness factorization (negation side).**
-    Any innocently excludable alternative is negated by `exhIEII`.
-    Definitional unfolding of `exhIEII`'s IE projection — named for
-    structural parallel with the positive side. -/
+/-- Exhaustification denies every innocently excludable alternative. -/
 theorem exhIEII_negates_excludable {target : Set World}
     (h_ie : IsInnocentlyExcludable ALT φ target) :
     ∀ u, exhIEII ALT φ u → ¬ target u :=
   fun _ h_exh => h_exh.2.1 target h_ie
 
-/-- **Cell-witness refutes IE-ness.** Any alternative true at the cell
-    witness is NOT innocently excludable. Direct contrapositive of the
-    cell predicate's IE clause: the cell witness falsifies every IE
-    alternative, so an alternative true at the witness cannot be IE.
-    Avoids constructing MC-set witnesses for non-IE-ness proofs in
-    study files: once the cell is established, every cell-witnessed
-    alternative is non-IE by this 1-line corollary. -/
+/-- No alternative true at a world of the cell is innocently excludable. -/
 theorem not_isInnocentlyExcludable_of_cell_witness {target : Set World}
     (w : World) (hwitness : cell ALT φ w) (htarget : target w) :
     ¬ IsInnocentlyExcludable ALT φ target :=
@@ -247,11 +201,11 @@ theorem cell_eq_of_iff {P : Set World → Prop}
   ext w
   constructor
   · rintro ⟨hw, hIE, hne⟩
-    exact ⟨hw, λ q hq => ⟨λ hwq hP => hIE q ((h q hq).2 hP) hwq,
-      λ hP => hne q ⟨hq, λ hIE' => hP ((h q hq).1 hIE')⟩⟩⟩
+    exact ⟨hw, fun q hq ↦ ⟨fun hwq hP ↦ hIE q ((h q hq).2 hP) hwq,
+      fun hP ↦ hne q ⟨hq, fun hIE' ↦ hP ((h q hq).1 hIE')⟩⟩⟩
   · rintro ⟨hw, h'⟩
-    exact ⟨hw, λ q hIE hwq => (h' q hIE.1).1 hwq ((h q hIE.1).1 hIE),
-      λ r hr => (h' r hr.1).2 λ hP => hr.2 ((h r hr.1).2 hP)⟩
+    exact ⟨hw, fun q hIE hwq ↦ (h' q hIE.1).1 hwq ((h q hIE.1).1 hIE),
+      fun r hr ↦ (h' r hr.1).2 fun hP ↦ hr.2 ((h r hr.1).2 hP)⟩
 
 /-- Over alternatives indexed by a family, the cell denies the indices characterized as
 innocently excludable and asserts the rest. -/
@@ -261,14 +215,14 @@ theorem cell_image_eq {ι : Type*} {f : ι → Set World} {I : Set ι} {P : ι �
   ext w
   constructor
   · rintro ⟨hw, hIE, hne⟩
-    exact ⟨hw, λ i hi => ⟨λ hwi hP => hIE _ ((h i hi).2 hP) hwi,
-      λ hP => hne _ ⟨⟨i, hi, rfl⟩, λ hIE' => hP ((h i hi).1 hIE')⟩⟩⟩
+    exact ⟨hw, fun i hi ↦ ⟨fun hwi hP ↦ hIE _ ((h i hi).2 hP) hwi,
+      fun hP ↦ hne _ ⟨⟨i, hi, rfl⟩, fun hIE' ↦ hP ((h i hi).1 hIE')⟩⟩⟩
   · rintro ⟨hw, h'⟩
-    refine ⟨hw, λ q hIE => ?_, λ r hr => ?_⟩
+    refine ⟨hw, fun q hIE ↦ ?_, fun r hr ↦ ?_⟩
     · obtain ⟨i, hi, rfl⟩ := hIE.1
-      exact λ hwi => (h' i hi).1 hwi ((h i hi).1 hIE)
+      exact fun hwi ↦ (h' i hi).1 hwi ((h i hi).1 hIE)
     · obtain ⟨i, hi, rfl⟩ := hr.1
-      exact (h' i hi).2 λ hP => hr.2 ((h i hi).2 hP)
+      exact (h' i hi).2 fun hP ↦ hr.2 ((h i hi).2 hP)
 
 /-! ### Representative minimal worlds -/
 
@@ -276,22 +230,30 @@ section MinimalCover
 
 variable {ALT φ} {M : Set World}
 
+/-- A prejacent world represents the minimal worlds alone when the prejacent entails every
+alternative true there. -/
+theorem IsMinimalCover.singleton {w₀ : World} (hw₀ : w₀ ∈ φ) (h : ∀ q ∈ ALT, w₀ ∈ q → φ ⊆ q) :
+    IsMinimalCover ALT φ {w₀} :=
+  ⟨fun _ hv ↦ hv ▸ hw₀, fun _ hw ↦ ⟨w₀, rfl, fun q hq hq₀ ↦ h q hq hq₀ hw⟩, by simp⟩
+
+/-- With a representative set of minimal worlds, the cell asserts the prejacent and settles
+every alternative as the minimal worlds jointly do. -/
 theorem IsMinimalCover.cell_eq (hM : IsMinimalCover ALT φ M) :
     cell ALT φ = {w | w ∈ φ ∧ ∀ q ∈ ALT, (w ∈ q ↔ ∃ v ∈ M, v ∈ q)} := by
   ext w
   constructor
   · rintro ⟨hφ, hIE, hne⟩
-    refine ⟨hφ, λ q hq => ⟨λ hwq => ?_, λ ⟨v, hv, hvq⟩ => hne q ⟨hq, λ hIEq => ?_⟩⟩⟩
+    refine ⟨hφ, fun q hq ↦ ⟨fun hwq ↦ ?_, fun ⟨v, hv, hvq⟩ ↦ hne q ⟨hq, fun hIEq ↦ ?_⟩⟩⟩
     · by_contra hnone
       push Not at hnone
       exact hIE q ((hM.isInnocentlyExcludable_iff hq).2 hnone) hwq
     · exact (hM.isInnocentlyExcludable_iff hq).1 hIEq v hv hvq
   · rintro ⟨hφ, h⟩
-    refine ⟨hφ, λ q hIEq hwq => ?_, λ r ⟨hr, hnIE⟩ => ?_⟩
+    refine ⟨hφ, fun q hIEq hwq ↦ ?_, fun r ⟨hr, hnIE⟩ ↦ ?_⟩
     · obtain ⟨v, hv, hvq⟩ := (h q hIEq.1).1 hwq
       exact (hM.isInnocentlyExcludable_iff hIEq.1).1 hIEq v hv hvq
     · by_contra hnr
-      exact hnIE ((hM.isInnocentlyExcludable_iff hr).2 λ v hv hvr => hnr ((h r hr).2 ⟨v, hv, hvr⟩))
+      exact hnIE ((hM.isInnocentlyExcludable_iff hr).2 fun v hv hvr ↦ hnr ((h r hr).2 ⟨v, hv, hvr⟩))
 
 /-- With a representative set of minimal worlds and a consistent cell, exhaustification asserts
 the prejacent and settles every alternative as the minimal worlds jointly do. -/
@@ -301,12 +263,14 @@ theorem IsMinimalCover.exhIEII_eq (hM : IsMinimalCover ALT φ M)
   rw [← hM.cell_eq]
   exact exhIEII_eq_cell_of_cell_nonempty ALT φ (by rw [hM.cell_eq]; exact hne)
 
+/-- With a representative set of minimal worlds and a consistent cell, the innocently
+includable alternatives are those true at some minimal world. -/
 theorem IsMinimalCover.II_eq (hM : IsMinimalCover ALT φ M)
     (hne : ∃ w ∈ φ, ∀ q ∈ ALT, (w ∈ q ↔ ∃ v ∈ M, v ∈ q)) :
     II ALT φ = {r ∈ ALT | ∃ v ∈ M, v ∈ r} := by
   rw [II_eq_nonExcludable_of_cell_nonempty ALT φ (by rw [hM.cell_eq]; exact hne)]
   ext r
-  exact and_congr_right λ hr => by rw [hM.isInnocentlyExcludable_iff hr]; push Not; rfl
+  exact and_congr_right fun hr ↦ by rw [hM.isInnocentlyExcludable_iff hr]; push Not; rfl
 
 /-- When every alternative other than `d` is entailed by the prejacent and some prejacent world
 falsifies `d`, exhaustification denies exactly `d`. -/
@@ -314,23 +278,21 @@ theorem exhIEII_eq_diff_of_forall_subset {d : Set World} (hd : d ∈ ALT)
     (hA : ∀ q ∈ ALT, q ≠ d → φ ⊆ q) (hne : ∃ w ∈ φ, w ∉ d) : exhIEII ALT φ = φ \ d := by
   obtain ⟨w₀, hw₀, hw₀d⟩ := hne
   have hM : IsMinimalCover ALT φ {w₀} :=
-    ⟨by simpa, λ w hw => ⟨w₀, rfl, λ q hq hq₀ => hA q hq (λ h => hw₀d (h ▸ hq₀)) hw⟩,
-      by simp⟩
+    .singleton hw₀ fun q hq hq₀ ↦ hA q hq fun h ↦ hw₀d (h ▸ hq₀)
   rw [hM.exhIEII_eq ⟨w₀, hw₀, by simp⟩]
   ext w
   simp only [Set.mem_ofPred_eq, Set.mem_singleton_iff, exists_eq_left, Set.mem_sdiff]
-  refine ⟨λ ⟨hw, h⟩ => ⟨hw, λ hwd => hw₀d ((h d hd).1 hwd)⟩, λ ⟨hw, hwd⟩ => ⟨hw, λ q hq => ?_⟩⟩
+  refine ⟨fun ⟨hw, h⟩ ↦ ⟨hw, fun hwd ↦ hw₀d ((h d hd).1 hwd)⟩, fun ⟨hw, hwd⟩ ↦ ⟨hw, fun q hq ↦ ?_⟩⟩
   by_cases hqd : q = d
   · subst hqd
-    exact ⟨λ h => absurd h hwd, λ h => absurd h hw₀d⟩
-  · exact ⟨λ _ => hA q hq hqd hw₀, λ _ => hA q hq hqd hw⟩
+    exact ⟨fun h ↦ absurd h hwd, fun h ↦ absurd h hw₀d⟩
+  · exact ⟨fun _ ↦ hA q hq hqd hw₀, fun _ ↦ hA q hq hqd hw⟩
 
 /-- When every alternative is entailed by the prejacent, exhaustification is vacuous. -/
 theorem exhIEII_eq_self_of_forall_subset (hA : ∀ q ∈ ALT, φ ⊆ q) (hsat : φ.Nonempty) :
     exhIEII ALT φ = φ := by
   obtain ⟨w₀, hw₀⟩ := hsat
-  have hM : IsMinimalCover ALT φ {w₀} :=
-    ⟨by simpa, fun w hw ↦ ⟨w₀, rfl, fun q hq _ ↦ hA q hq hw⟩, by simp⟩
+  have hM : IsMinimalCover ALT φ {w₀} := .singleton hw₀ fun q hq _ ↦ hA q hq
   rw [hM.exhIEII_eq ⟨w₀, hw₀, by simp⟩]
   ext w
   simp only [Set.mem_ofPred_eq, Set.mem_singleton_iff, exists_eq_left]
