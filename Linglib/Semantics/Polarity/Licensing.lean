@@ -15,20 +15,19 @@ public import Linglib.Semantics.Quantification.Indefinite
 The licensing theory of `PolarityItem`. Each `LicensingContext` imposes an entailment signature
 on the position of a polarity item, read modulo presuppositions (`LicensingContext.signature`),
 and so carries a strength of negation (`LicensingContext.strength`, `⊥` where the context is not
-downward entailing). Five contexts carry their strength only modulo their presupposition, focus
-*only*, temporal *since*, adversatives, conditional antecedents and superlatives
-([von-fintel-1999]); they are `LicensingContext.IsStrawsonOnly`.
+downward entailing). Five contexts carry their strength only modulo their presupposition, von
+Fintel's focus *only*, temporal *since*, adversatives, conditional antecedents and superlatives;
+they are `LicensingContext.IsStrawsonOnly`.
 
-A context licenses a weak negative polarity item when it is downward entailing modulo
-presuppositions ([ladusaw-1979], [von-fintel-1999]); a stronger item needs its strength of
-negation outright, which the Strawson-only contexts lack, although *only*, adversatives,
-conditional antecedents and superlatives are Strawson anti-additive ([zwarts-1998],
-[gajewski-2011]). A context blocks a positive polarity item when its strength outright reaches the
-item's anti-licensor ([vanderwouden-1997], [szabolcsi-2004]). The generic contexts license free
-choice items ([kadmon-landman-1993], [dayal-1996]) and questions the weak negative polarity items
-([van-rooy-2003-npi]). `LicensingContext.Admits` puts the routes together into the distribution
-the theory predicts, which each fragment checks against the contexts its entries are attested
-and excluded in.
+Following Ladusaw and von Fintel, a context licenses a weak negative polarity item when it is
+downward entailing modulo presuppositions. Following Zwarts and Gajewski, a stronger item needs
+its strength of negation outright, which the Strawson-only contexts lack although all five are
+Strawson anti-additive. A context blocks a positive polarity item when its strength outright
+reaches the item's anti-licensor, as van der Wouden and Szabolcsi describe. The generic contexts
+license free choice items, after Kadmon and Landman and Dayal, and questions license the weak
+negative polarity items, after van Rooy. `LicensingContext.Admits` puts the routes together into
+the distribution the theory predicts, which each fragment checks against the contexts its entries
+are attested and excluded in.
 
 ## Main declarations
 
@@ -103,14 +102,14 @@ namespace LicensingContext
 presuppositions ([von-fintel-1999]). Clausal negation is anti-morphic; the negative quantifiers,
 *without*, *deny*, the restrictor of a universal and the clausal comparative are anti-additive
 ([ladusaw-1979], [zwarts-1998]), and so, modulo presuppositions, are focus *only*, adversatives,
-conditional antecedents and superlatives ([gajewski-2011]); *few*, *at most*, *before*,
-*too … to*, *doubt* and temporal *since* are antitone; the phrasal comparative, questions and the
-generic contexts are monotone. -/
+conditional antecedents, superlatives ([gajewski-2011]) and temporal *since*
+(`NaturalLogic.isStrawsonAntiAdditive_since`); *few*, *at most*, *before*, *too … to* and *doubt*
+are antitone; the phrasal comparative, questions and the generic contexts are monotone. -/
 def signature : LicensingContext → Signature
   | .negation => .antiAddMult
   | .nobody | .withoutClause | .denyVerb | .universalRestrictor | .clausalComparative
-  | .onlyFocus | .adversative | .conditionalAntecedent | .superlative => .antiAdd
-  | .few | .atMost | .beforeClause | .tooTo | .doubtVerb | .sinceTemporal => .anti
+  | .onlyFocus | .adversative | .conditionalAntecedent | .superlative | .sinceTemporal => .antiAdd
+  | .few | .atMost | .beforeClause | .tooTo | .doubtVerb => .anti
   | .phrasalComparative | .question | .modalPossibility | .modalNecessity | .imperative
   | .generic | .freeRelative => .mono
 
@@ -118,8 +117,8 @@ def signature : LicensingContext → Signature
 entailing. -/
 def strength (c : LicensingContext) : WithBot DEStrength := c.signature.toDEStrength
 
-/-- A context is **Strawson-only** when its strength holds only modulo its presupposition: focus
-*only*, temporal *since*, adversatives, conditional antecedents and superlatives
+/-- A context is **Strawson-only** when its strength holds only modulo its presupposition, as for
+focus *only*, temporal *since*, adversatives, conditional antecedents and superlatives
 ([von-fintel-1999]). -/
 def IsStrawsonOnly : LicensingContext → Prop
   | .onlyFocus | .sinceTemporal | .adversative | .conditionalAntecedent | .superlative => True
@@ -191,8 +190,8 @@ theorem licenses_iff_eq_negation (h : e.licensor = some .antiMorphic) (hf : ¬ e
     (c : LicensingContext) : c.Licenses e ↔ c = .negation := by
   cases c <;> simp [Licenses, mechanism, h, hf] <;> decide
 
-/-- A Strawson-only context licenses no item stronger than weak that is not a free choice item:
-*only*, adversatives and conditional antecedents are Strawson anti-additive, yet license no strong
+/-- A Strawson-only context licenses no item stronger than weak that is not a free choice item.
+*Only*, adversatives and conditional antecedents are Strawson anti-additive, yet license no strong
 negative polarity item ([gajewski-2011]). -/
 theorem not_licenses_of_isStrawsonOnly (hc : c.IsStrawsonOnly) (h : ∀ r ∈ e.licensor, r ≠ .weak) :
     ¬ c.Licenses e := by
@@ -201,8 +200,8 @@ theorem not_licenses_of_isStrawsonOnly (hc : c.IsStrawsonOnly) (h : ∀ r ∈ e.
   · exact hs hc
   all_goals cases c <;> first | exact absurd hc id | exact absurd hm (by decide)
 
-/-- Clausal negation blocks every positive polarity item ([vanderwouden-1997]'s (169)): its
-strength is the top of the chain. -/
+/-- Clausal negation blocks every positive polarity item, since its strength is the top of the
+chain ([vanderwouden-1997]'s (169)). -/
 theorem antiLicenses_negation (h : e.IsPPI) : LicensingContext.negation.AntiLicenses e := by
   obtain ⟨r, hr⟩ := Option.isSome_iff_exists.mp h
   exact ⟨r, hr, WithBot.coe_le_coe.mpr (by cases r <;> decide), id⟩
@@ -245,8 +244,8 @@ theorem haspelmathFunction_eq_freeChoice_iff (c : LicensingContext) :
   cases c <;> decide
 
 /-- Every context realizing a function of the map's negative-polarity region, question through
-direct negation, is downward entailing or a question: the region is licensable by weak negative
-polarity items, though not uniformly downward entailing ([van-rooy-2003-npi]). -/
+direct negation, is downward entailing or a question, so the region is licensable by weak
+negative polarity items, though not uniformly downward entailing ([van-rooy-2003-npi]). -/
 theorem haspelmathFunction_npi_region (c : LicensingContext) {f : Indefinite.HaspelmathFunction}
     (hf : c.haspelmathFunction = some f) (hr : f ∈ Indefinite.npiRegion) :
     c.strength ≠ ⊥ ∨ c.mechanism = .entropy := by

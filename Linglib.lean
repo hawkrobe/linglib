@@ -942,8 +942,6 @@ import Linglib.Logic.Natural.Monotonicity.Defs
 import Linglib.Logic.Natural.Monotonicity.Structure
 import Linglib.Semantics.Quantification.Signatures
 import Linglib.Logic.Natural.Soundness
-import Linglib.Logic.Natural.Strawson.Basic
-import Linglib.Logic.Natural.Strawson.Soundness
 import Linglib.Semantics.Events.Basic
 import Linglib.Semantics.Events.Path
 import Linglib.Semantics.Evidential.Basic

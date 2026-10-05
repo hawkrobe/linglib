@@ -3,7 +3,6 @@ module
 public import Linglib.Logic.Natural.Basic
 public import Linglib.Semantics.Polarity.Licensing
 public import Linglib.Semantics.Polarity.Item
-public import Linglib.Logic.Natural.Strawson.Basic
 public import Linglib.Semantics.Supervaluation
 public import Linglib.Semantics.Genericity.Normality
 public import Linglib.Studies.Ladusaw1979
@@ -13,28 +12,30 @@ public import Mathlib.Data.Set.Basic
 /-!
 # Kadmon and Landman (1993): Any
 
-This file formalizes [kadmon-landman-1993], the unified analysis of *any*: *any CN* is the
-indefinite *a CN* with its domain widened along a contextual dimension, licensed only when the
-widening makes the statement stronger, the strengthening condition, checked at the narrowest
-operator over the indefinite, locality; free-choice *any* is the same item under a generic
-interpretation. Widening weakens an existential (`existsInDomain_mono`), so strengthening holds
-exactly under an antitone context (`Strengthening`, `de_satisfies_strengthening`), which is why
-[ladusaw-1979]'s downward-entailing contexts license and why a positive context does not
-(`ue_widening_weakens`); a context's mechanism and signature are read from the substrate's
-`LicensingContext.mechanism` and `LicensingContext.signature` (`ladusaw_de_is_kl_strengthening`).
-Section 3 handles the recalcitrant cases: adversatives are downward entailing with the perspective
-held constant, so *sorry* licenses and *glad* does not (`sorry_licenses_any`,
-`glad_does_not_license`) except on a settle-for-less reading; a negated *because*-clause licenses
-only by a metalinguistic denial of its presupposition; and conditional antecedents strengthen once
-the implicit restriction is fixed (`widening_satisfies_conditional_strengthening`). The paper's
-judgments follow this classification row by row (`rows_agree`). Section 4 models the generic
-restriction as a vague property set (`VagueRestriction`), each precisification of which induces
-the normality of GEN (`precisificationNormality`, `genericTrue`): widening along a dimension makes
-the quantifier universal with respect to it (`any_cn_dimensionally_universal`), domain vagueness is
-what lets a generic tolerate exceptions (`domain_vague_allows_exceptions`), and *almost* modifies
-domain-precise universals and dimensionally universal noun phrases (`almost_rows`). On a finite
-precisification space the two truth notions are [fine-1975]'s super-truth and borderline status
-(`genericSubTrue_not_superTrue_iff_indet`).
+Kadmon and Landman analyze *any CN* as the indefinite *a CN* with its domain widened along a
+contextual dimension, licensed only when the widening makes the statement stronger, a condition
+checked at the narrowest operator over the indefinite; free-choice *any* is the same item under a
+generic interpretation. Widening weakens an existential, so strengthening holds exactly under an
+antitone context, which is why Ladusaw's downward-entailing contexts license. Adversatives are
+downward entailing on a constant perspective, a negated *because*-clause licenses only by
+metalinguistic denial, and conditional antecedents strengthen once the implicit restriction is
+fixed. The generic restriction is a vague property set whose precisifications give the normality
+of GEN.
+
+## Main results
+
+* `de_satisfies_strengthening`, `ue_widening_weakens`, `ladusaw_de_is_kl_strengthening`: widening
+  strengthens under an antitone context and weakens under a monotone one, so Ladusaw's contexts
+  are strengthening contexts.
+* `strengthening_sorryThat`, `not_strengthening_wants`: *sorry* licenses *any* and *glad* does
+  not.
+* `widening_satisfies_conditional_strengthening`: conditional antecedents strengthen.
+* `rows_agree`: the paper's judgments follow its classification.
+* `any_cn_dimensionally_universal`, `domain_vague_allows_exceptions`: widening makes *any CN*
+  universal along its dimension, and domain vagueness lets a generic tolerate exceptions.
+* `almost_rows`: *almost* modifies domain-precise and dimensionally universal noun phrases.
+* `genericSubTrue_not_superTrue_iff_indet`: on a finite precisification space, exception tolerance
+  is Fine's borderline status.
 
 ## Implementation notes
 
@@ -67,27 +68,25 @@ must entail the narrow: `C (∃x∈D', Px) ⊆ C (∃x∈D, Px)`. This holds exa
 when `C` is antitone, which is why DE contexts license — and why widening in
 UE contexts, where it weakens, leaves *any* unlicensed. -/
 
-/-- The existential over a domain: `∃ x ∈ D, P x`. -/
+/-- The existential over a domain `D` is `∃ x ∈ D, P x`. -/
 def existsInDomain {World Entity : Type*} (D : Set Entity) (P : Entity → Set World) :
     Set World :=
-  λ w => ∃ x ∈ D, P x w
+  fun w ↦ ∃ x ∈ D, P x w
 
 /-- Widening the domain weakens the existential. -/
 theorem existsInDomain_mono {World Entity : Type*} {D D' : Set Entity} (P : Entity → Set World)
     (h : D ⊆ D') : existsInDomain D P ⊆ existsInDomain D' P :=
-  λ _ ⟨x, hx, hP⟩ => ⟨x, h hx, hP⟩
+  fun _ ⟨x, hx, hP⟩ ↦ ⟨x, h hx, hP⟩
 
-/-- K&L's strengthening condition: widening the domain `D` to `D'` in context
-`C` creates a stronger statement — the wide interpretation entails the narrow
-one. -/
+/-- K&L's strengthening condition holds when widening the domain `D` to `D'` in context `C`
+creates a stronger statement, the wide interpretation entailing the narrow one. -/
 def Strengthening {World Entity : Type*} (C : Set World → Set World) (D D' : Set Entity)
     (P : Entity → Set World) : Prop :=
   C (existsInDomain D' P) ⊆ C (existsInDomain D P)
 
-/-- In a DE (antitone) context, strengthening is automatic. K&L note that for
-many examples this makes the same predictions as [ladusaw-1979], while
-explaining *why* DE contexts license: widening must strengthen, and DE
-reverses entailment. -/
+/-- In a DE (antitone) context, strengthening is automatic. K&L note that for many examples this
+makes the same predictions as [ladusaw-1979], while explaining *why* DE contexts license, since
+widening must strengthen and DE reverses entailment. -/
 theorem de_satisfies_strengthening {World Entity : Type*} {C : Set World → Set World}
     (hDE : Antitone C) (D D' : Set Entity) (P : Entity → Set World)
     (hD : D ⊆ D') : Strengthening C D D' P :=
@@ -109,7 +108,7 @@ so this file's classification cannot drift from the substrate's. K&L's classific
 explain adversative predicates (DE on a constant perspective) and conditionals with implicit
 restrictions. -/
 
-/-- Ladusaw-DE contexts are K&L strengthening contexts: Ladusaw describes *where* NPIs occur,
+/-- Ladusaw-DE contexts are K&L strengthening contexts; Ladusaw describes *where* NPIs occur, and
 K&L explain *why*. -/
 theorem ladusaw_de_is_kl_strengthening (ctx : LicensingContext)
     (hDE : IsDownwardEntailing ctx) : ctx.mechanism = .strengthening := by
@@ -117,34 +116,36 @@ theorem ladusaw_de_is_kl_strengthening (ctx : LicensingContext)
 
 /-! ### Adversative predicates: *sorry* vs *glad*
 
-K&L §3.3: *sorry that A* entails *want ¬A*, and wanting a set empty entails
-wanting all its subsets empty, so for *sorry* the wide interpretation entails
-the narrow — strengthening holds. *Glad that A* entails *want A*, and wanting
-a set inhabited does not entail wanting each subset inhabited, so
-strengthening fails. K&L summarize: adversative predicates are DE on a
-constant perspective (and so guarantee strengthening), while predicates like
-*glad* are not DE. The constant "perspective" is the `best` parameter; the
-factive presupposition means the DE pattern is Strawson, not classical. -/
+K&L §3.3 reduce the adversatives to *want* on a constant perspective: being sorry that `A` is
+wanting `A` false, and being glad that `A` is wanting `A`. Wanting a set empty entails wanting each
+of its subsets empty, so *sorry* satisfies the strengthening condition; wanting a set inhabited does
+not entail wanting each subset inhabited, so *glad* does not. -/
 
-/-- *Sorry* licenses NPIs: it is Strawson-DE, DE with the perspective (`best`) held
-constant. -/
-theorem sorry_licenses_any {W : Type*} (dox best : W → Set W) :
-    IsStrawsonDE (regret dox best) :=
-  regret_isStrawsonDE dox best
+section Adversatives
 
-/-- *Sorry* is not classically DE: the doxastic factivity presupposition
-blocks it. K&L adopt Ladusaw's convention that the DE pattern need only hold
-of the sentence minus its factive presupposition. -/
-theorem sorry_not_classically_de :
-    ¬ Antitone λ p : Set Bool => (regret (λ w => {w}) (λ _ => {false}) p).truthSet :=
-  regret_not_antitone
+variable {World : Type*} (best : World → Set World)
 
-/-- *Glad* does not freely license NPIs: it is UE, so widening weakens.
-K&L: wanting a set to have members does not entail wanting each particular
-subset to have members. -/
-theorem glad_does_not_license {W : Type*} (dox best : W → Set W) :
-    Monotone λ p => (glad dox best p).truthSet :=
-  glad_monotone dox best
+/-- On a perspective whose best worlds at `w` are `best w`, one wants `A` at `w` when those best
+worlds are `A`-worlds. Being glad that `A` is wanting `A`. -/
+def wants (A : Set World) : Set World := {w | best w ⊆ A}
+
+/-- Being sorry that `A` is wanting `A` false on the same perspective. -/
+def sorryThat (A : Set World) : Set World := wants best Aᶜ
+
+/-- *Sorry* satisfies the strengthening condition, so it licenses *any*. -/
+theorem strengthening_sorryThat {Entity : Type*} {D D' : Set Entity} (P : Entity → Set World)
+    (hD : D ⊆ D') : Strengthening (sorryThat best) D D' P :=
+  de_satisfies_strengthening (fun _ _ h _ hw ↦ hw.trans (Set.compl_subset_compl.2 h)) D D' P hD
+
+end Adversatives
+
+/-- *Glad* fails the strengthening condition, so it does not license *any*. The best world bought
+the `false` car, so one is glad that some car was bought but not that the `true` car was. -/
+theorem not_strengthening_wants :
+    ¬ Strengthening (wants fun _ : Bool ↦ {false}) {true} .univ fun x ↦ {x} := by
+  intro h
+  obtain ⟨x, rfl, hfx⟩ := h (a := true) (fun w _ ↦ ⟨w, Set.mem_univ w, rfl⟩) rfl
+  exact Bool.false_ne_true hfx
 
 /-! ### Conditional antecedents
 
@@ -155,18 +156,17 @@ restrictor analysis of conditionals (cf. [kratzer-1986]), the antecedent of
 conditional necessity is classically DE once the modal base is fixed, so
 widening the antecedent domain strengthens the conditional. -/
 
-/-- Conditional antecedents satisfy strengthening: conditional necessity is
-DE in its antecedent with the modal base held constant. K&L (143): "If John
-subscribes to any newspaper, he gets well informed" — widening *newspaper* to
-include unimportant newspapers strengthens the conditional. -/
+/-- Conditional antecedents satisfy strengthening, since conditional necessity is DE in its
+antecedent with the modal base held constant. In K&L's (143), *If John subscribes to any
+newspaper, he gets well informed*, widening *newspaper* to include unimportant newspapers
+strengthens the conditional. -/
 theorem conditional_satisfies_strengthening {W : Type*}
     (domain : W → Set W) (β : Set W) :
     Antitone (Conditional.strictImp domain · β) :=
-  λ _ _ h => Conditional.strictImp_anti_left h
+  fun _ _ h ↦ Conditional.strictImp_anti_left h
 
-/-- A conditional with an implicit restriction (K&L's (147)): true iff every
-relevant case satisfying the restriction and the antecedent satisfies the
-consequent. -/
+/-- A conditional with an implicit restriction (K&L's (147)) is true when every relevant case
+satisfying the restriction and the antecedent satisfies the consequent. -/
 def conditionalWithRestriction {Case : Type*}
     (restriction antecedent consequent : Case → Prop) : Prop :=
   ∀ c, restriction c → antecedent c → consequent c
@@ -176,18 +176,18 @@ def conditionalWithRestriction {Case : Type*}
 (140) does not entail (141) — because the implicit restriction can shift. But
 the restriction cannot undo the effect of widening, so the wide restriction
 is never stronger than the narrow one, and then the wide conditional entails
-the narrow one. K&L: strengthening inferences "do always go through, because
+the narrow one. Strengthening inferences "do always go through, because
 of the relation between the restrictions of the premise and of the
 conclusion. The two restrictions are always the same, except that the
 restriction of the premise may be somewhat weaker (but never stronger), as
-dictated by the widening." -/
+dictated by the widening", in K&L's words. -/
 theorem widening_satisfies_conditional_strengthening {Case : Type*}
     {R_narrow R_wide A_narrow A_wide consequent : Case → Prop}
     (hRestrWeaker : ∀ c, R_narrow c → R_wide c)
     (hAntWeaker : ∀ c, A_narrow c → A_wide c)
     (hWide : conditionalWithRestriction R_wide A_wide consequent) :
     conditionalWithRestriction R_narrow A_narrow consequent :=
-  λ c hR hA => hWide c (hRestrWeaker c hR) (hAntWeaker c hA)
+  fun c hR hA ↦ hWide c (hRestrWeaker c hR) (hAntWeaker c hA)
 
 /-! ### Negated because-clauses: metalinguistic licensing
 
@@ -211,16 +211,16 @@ imperatives and free relatives through the generic mechanism follows the
 substrate, not K&L's text (they explicitly defer directives to later work and
 never discuss free relatives). -/
 
-/-- Interpretation of the indefinite containing *any*: episodic (PS *any*) or
-generic (FC *any*). -/
+/-- The indefinite containing *any* is interpreted episodically (PS *any*) or generically
+(FC *any*). -/
 inductive AnyInterpretation where
   | episodic
   | generic
   deriving DecidableEq, Repr
 
-/-- The interpretation of *any* in a licensing context, projected from the
-licensing mechanism: generic exactly when the substrate classifies the
-context as licensed by the generic indefinite. -/
+/-- The interpretation of *any* in a licensing context is projected from the licensing
+mechanism, and is generic exactly when the substrate classifies the context as licensed by the
+generic indefinite. -/
 def interpretationOf (c : LicensingContext) : AnyInterpretation :=
   match c.mechanism with
   | .genericIndefinite => .generic
@@ -241,11 +241,11 @@ because the supervaluation substrate (`Semantics/Supervaluation`,
 [fine-1975]) is `Finset`-based for computability; the finite-case bridge is
 `VagueRestriction.toSpecSpace` below. -/
 
-/-- A vague restriction ⟨v₀, V⟩ (K&L §4.1): a precise part (properties known
-to hold) together with its consistent completions, each extending the precise
-part, which is itself a minimal precisification. -/
+/-- A vague restriction ⟨v₀, V⟩ (K&L §4.1) is a precise part, the properties known to hold,
+together with its consistent completions, each extending the precise part, which is itself a
+minimal precisification. -/
 structure VagueRestriction (Property : Type*) where
-  /-- The precise part: properties definitely in the restriction. -/
+  /-- The precise part holds the properties definitely in the restriction. -/
   precise : Set Property
   /-- The consistent ways to complete the restriction. -/
   precisifications : Set (Set Property)
@@ -254,20 +254,19 @@ structure VagueRestriction (Property : Type*) where
   /-- The precise part is itself a (minimal) precisification. -/
   precise_mem : precise ∈ precisifications
 
-/-- The domain induced by a property set: the entities satisfying every
-property. -/
+/-- The domain induced by a property set is the set of entities satisfying every property. -/
 def domainOf {Property Entity : Type*} (props : Set Property)
     (apply : Property → Set Entity) : Set Entity :=
   {e | ∀ P ∈ props, e ∈ apply P}
 
-/-- Domain precise (K&L (164)): every precisification determines the same
+/-- A restriction is domain precise (K&L (164)) when every precisification determines the same
 domain as the precise part. -/
 def isDomainPrecise {Property Entity : Type*}
     (X : VagueRestriction Property) (apply : Property → Set Entity) : Prop :=
   ∀ v ∈ X.precisifications, domainOf v apply = domainOf X.precise apply
 
-/-- Domain vague: not domain precise — some precisifications yield different
-domains. -/
+/-- A restriction is domain vague when it is not domain precise, so that some precisifications
+yield different domains. -/
 def isDomainVague {Property Entity : Type*}
     (X : VagueRestriction Property) (apply : Property → Set Entity) : Prop :=
   ¬isDomainPrecise X apply
@@ -278,35 +277,35 @@ theorem isDomainPrecise_of_forall_eq {Property Entity : Type*}
     (X : VagueRestriction Property) (apply : Property → Set Entity)
     (h : ∀ v ∈ X.precisifications, v = X.precise) :
     isDomainPrecise X apply :=
-  λ v hv => by rw [h v hv]
+  fun v hv ↦ by rw [h v hv]
 
-/-- Widening along a dimension (K&L (174)): remove the properties on the
-dimension from the precise part and from every precisification. -/
+/-- Widening along a dimension (K&L (174)) removes the properties on the dimension from the
+precise part and from every precisification. -/
 def widenAlong {Property : Type*} (X : VagueRestriction Property)
     (onDimension : Property → Prop) : VagueRestriction Property where
   precise := {P ∈ X.precise | ¬onDimension P}
-  precisifications := (λ v => {P ∈ v | ¬onDimension P}) '' X.precisifications
+  precisifications := (fun v ↦ {P ∈ v | ¬onDimension P}) '' X.precisifications
   extends_precise := by
     rintro v' ⟨v, hv, rfl⟩ P ⟨hPprec, hPnot⟩
     exact ⟨X.extends_precise v hv hPprec, hPnot⟩
   precise_mem := ⟨X.precise, X.precise_mem, rfl⟩
 
-/-- Widening weakens the restriction: the widened precise part is a subset of
-the original. -/
+/-- Widening weakens the restriction, the widened precise part being a subset of the
+original. -/
 theorem widenAlong_weakens_precise {Property : Type*}
     (X : VagueRestriction Property) (onDimension : Property → Prop) :
     (widenAlong X onDimension).precise ⊆ X.precise :=
-  λ _ ⟨h, _⟩ => h
+  fun _ ⟨h, _⟩ ↦ h
 
-/-- Widening expands the domain: fewer constraints, more entities qualify.
-This is the restriction-weakening half of K&L §3.5.3: the restriction cannot
-undo the effect of widening. -/
+/-- Widening expands the domain, since with fewer constraints more entities qualify. This is the
+restriction-weakening half of K&L §3.5.3, that the restriction cannot undo the effect of
+widening. -/
 theorem widenAlong_expands_domain {Property Entity : Type*}
     (X : VagueRestriction Property) (onDimension : Property → Prop)
     (apply : Property → Set Entity) :
     domainOf X.precise apply ⊆
     domainOf (widenAlong X onDimension).precise apply :=
-  λ _ he P ⟨hPprec, _⟩ => he P hPprec
+  fun _ he P ⟨hPprec, _⟩ ↦ he P hPprec
 
 /-! ### Dimensional universality
 
@@ -317,22 +316,22 @@ Since *almost* requires a domain-precise universal or a dimensionally
 universal NP, this derives *almost any owl* vs ungrammatical *almost an owl*
 (§4.3). -/
 
-/-- Universality with respect to a dimension (K&L (175)): after widening
-along the dimension, every entity in the base denotation is in the domain. -/
+/-- A restriction is universal with respect to a dimension (K&L (175)) when, after widening along
+the dimension, every entity in the base denotation is in the domain. -/
 def universalWrtDimension {Property Entity : Type*}
     (X : VagueRestriction Property) (onDimension : Property → Prop)
     (apply : Property → Set Entity) (baseDenotation : Set Entity) : Prop :=
   baseDenotation ⊆ domainOf (widenAlong X onDimension).precise apply
 
-/-- A dimension is non-trivial on a base set (K&L (176)): some entity
-satisfies a property on the dimension and some entity fails one. -/
+/-- A dimension is non-trivial on a base set (K&L (176)) when some entity satisfies a property on
+the dimension and some entity fails one. -/
 def nonTrivialDimension {Property Entity : Type*}
     (onDimension : Property → Prop) (apply : Property → Set Entity)
     (baseDenotation : Set Entity) : Prop :=
   (∃ P, onDimension P ∧ ∃ e ∈ baseDenotation, e ∈ apply P) ∧
   (∃ P, onDimension P ∧ ∃ e ∈ baseDenotation, e ∉ apply P)
 
-/-- Dimensionally universal (K&L (177)): universal with respect to some
+/-- A restriction is dimensionally universal (K&L (177)) when it is universal with respect to some
 non-trivial dimension. -/
 def dimensionallyUniversal {Property Entity : Type*}
     (X : VagueRestriction Property) (apply : Property → Set Entity)
@@ -341,19 +340,18 @@ def dimensionallyUniversal {Property Entity : Type*}
     nonTrivialDimension onDimension apply baseDenotation ∧
     universalWrtDimension X onDimension apply baseDenotation
 
-/-- *Any CN* is dimensionally universal (K&L §4.3): widening along a
-non-trivial dimension yields universality with respect to that dimension. -/
+/-- *Any CN* is dimensionally universal (K&L §4.3), since widening along a non-trivial dimension
+yields universality with respect to that dimension. -/
 theorem any_cn_dimensionally_universal {Property Entity : Type*}
     (X : VagueRestriction Property) (onDimension : Property → Prop)
     (apply : Property → Set Entity) (baseDenotation : Set Entity)
     (hNT : nonTrivialDimension onDimension apply baseDenotation)
     (hBase : baseDenotation ⊆ domainOf {P ∈ X.precise | ¬onDimension P} apply) :
     dimensionallyUniversal (widenAlong X onDimension) apply baseDenotation :=
-  ⟨onDimension, hNT, λ _ he P ⟨⟨hPprec, hPnot⟩, _⟩ => hBase he P ⟨hPprec, hPnot⟩⟩
+  ⟨onDimension, hNT, fun _ he P ⟨⟨hPprec, hPnot⟩, _⟩ ↦ hBase he P ⟨hPprec, hPnot⟩⟩
 
-/-- Total widening: if every precise property is on the dimension, widening
-empties the precise part — K&L's case where *any CN* becomes not only
-universal with respect to the dimension but truly universal. -/
+/-- If every precise property is on the dimension, widening empties the precise part, K&L's case
+where *any CN* becomes not only universal with respect to the dimension but truly universal. -/
 theorem widenAlong_precise_eq_empty {Property : Type*}
     (X : VagueRestriction Property) (onDimension : Property → Prop)
     (hAllOnDim : ∀ P ∈ X.precise, onDimension P) :
@@ -372,24 +370,25 @@ normality: a precisification induces a `Genericity.Normality`, whose normal owls
 with its properties, and the generic under a precisification is GEN under that normality.
 Exception tolerance is the freedom to choose another precisification. -/
 
-/-- The normality a precisification induces, (161): the normal instances of a restrictor are
+/-- Under the normality a precisification induces (161), the normal instances of a restrictor are
 those with every property of the precisification. -/
 def precisificationNormality {Property Entity : Type*} (apply : Property → Set Entity) :
     Genericity.Normality (Set Property) Entity :=
   .ofAccess (domainOf · apply)
 
-/-- (159) under one precisification: every instance of the restrictor with the precisified
-properties satisfies the scope, GEN under the normality the precisification induces. -/
+/-- Under one precisification, the generic (159) holds when every instance of the restrictor with
+the precisified properties satisfies the scope, GEN under the normality the precisification
+induces. -/
 def genericTrue {Property Entity : Type*} (apply : Property → Set Entity) (R : Set Entity)
     (scope : Entity → Prop) (v : Set Property) : Prop :=
   v ∈ (precisificationNormality apply).gen R {e | scope e}
 
-/-- Supervaluationist truth: true under every precisification. -/
+/-- A generic is supervaluationistically true when it is true under every precisification. -/
 def genericSuperTrue {Property Entity : Type*} (X : VagueRestriction Property)
     (apply : Property → Set Entity) (R : Set Entity) (scope : Entity → Prop) : Prop :=
   ∀ v ∈ X.precisifications, genericTrue apply R scope v
 
-/-- Subvaluationist truth: true under some precisification — the
+/-- A generic is subvaluationistically true when it is true under some precisification, the
 exception-tolerant reading. -/
 def genericSubTrue {Property Entity : Type*} (X : VagueRestriction Property)
     (apply : Property → Set Entity) (R : Set Entity) (scope : Entity → Prop) : Prop :=
@@ -407,10 +406,9 @@ theorem domain_vague_allows_exceptions {Property Entity : Type*}
   obtain ⟨v, hv, hne⟩ := hVague
   exact ⟨v, hv, X.precise, X.precise_mem, hne⟩
 
-/-- K&L's explanation of exception tolerance: if the restriction is domain
-vague and the generic is subvaluationistically true, then there are
-precisifications with different domains and the generic holds under one of
-them — an apparent counterexample may fall outside the domain under the
+/-- K&L explain exception tolerance. If the restriction is domain vague and the generic is
+subvaluationistically true, then there are precisifications with different domains and the generic
+holds under one of them, so an apparent counterexample may fall outside the domain under the
 operative precisification. -/
 theorem domain_vagueness_explains_gen_exceptions {Property Entity : Type*}
     (X : VagueRestriction Property) (apply : Property → Set Entity)
@@ -462,12 +460,12 @@ theorem genericSuperTrue_iff_superTrue {Property Entity : Type*}
     genericSuperTrue X apply R scope ↔
       superTrue (genericTrue apply R scope) (X.toSpecSpace V hV) = Trivalent.true := by
   rw [superTrue_true_iff]
-  exact ⟨λ h v hv => h v (VagueRestriction.mem_toSpecSpace.mp hv),
-         λ h v hv => h v (VagueRestriction.mem_toSpecSpace.mpr hv)⟩
+  exact ⟨fun h v hv ↦ h v (VagueRestriction.mem_toSpecSpace.mp hv),
+         fun h v hv ↦ h v (VagueRestriction.mem_toSpecSpace.mpr hv)⟩
 
 /-- **K&L's exception-tolerance zone is Fine's borderline zone.** A generic
 that is subvaluationistically but not supervaluationistically true is
-exactly one whose supervaluation status is indefinite: assertable for K&L,
+exactly one whose supervaluation status is indefinite, assertable for K&L and
 borderline for [fine-1975]. -/
 theorem genericSubTrue_not_superTrue_iff_indet {Property Entity : Type*}
     (X : VagueRestriction Property) (apply : Property → Set Entity)
@@ -480,12 +478,12 @@ theorem genericSubTrue_not_superTrue_iff_indet {Property Entity : Type*}
   · rintro ⟨⟨v, hv, hvt⟩, hns⟩
     refine ⟨⟨v, VagueRestriction.mem_toSpecSpace.mpr hv, hvt⟩, ?_⟩
     by_contra hno
-    exact hns (λ w hw => by
+    exact hns (fun w hw ↦ by
       by_contra hwf
       exact hno ⟨w, VagueRestriction.mem_toSpecSpace.mpr hw, hwf⟩)
   · rintro ⟨⟨v, hv, hvt⟩, ⟨w, hw, hwf⟩⟩
     exact ⟨⟨v, VagueRestriction.mem_toSpecSpace.mp hv, hvt⟩,
-           λ hall => hwf (hall w (VagueRestriction.mem_toSpecSpace.mp hw))⟩
+           fun hall ↦ hwf (hall w (VagueRestriction.mem_toSpecSpace.mp hw))⟩
 
 /-! ### The *almost* test
 
@@ -501,8 +499,8 @@ inductive DomainPrecision
   | vague
   deriving DecidableEq, Repr
 
-/-- An *almost* row: the noun phrase, its precision, whether it is a true universal and whether
-it is dimensionally universal, and the judgment. -/
+/-- An *almost* row records the noun phrase, its precision, whether it is a true universal and
+whether it is dimensionally universal, and the judgment. -/
 structure AlmostRow where
   precision : DomainPrecision
   universal : Bool
@@ -523,8 +521,8 @@ def AlmostRow.ofDatum (e : Datum) : Option AlmostRow := do
 /-- The *almost* data of Section 4.3. -/
 def almostRows : List AlmostRow := Examples.all.filterMap AlmostRow.ofDatum
 
-/-- *Almost* modifies a domain-precise true universal or a dimensionally universal noun phrase:
-*every owl*, *no owl* and *any owl*, but not *some owl* nor generic *an owl*. -/
+/-- *Almost* modifies a domain-precise true universal or a dimensionally universal noun phrase,
+such as *every owl*, *no owl* and *any owl*, but not *some owl* nor generic *an owl*. -/
 theorem almost_rows :
     ∀ r ∈ almostRows, r.ok = true ↔ (r.universal = true ∧ r.precision = .precise) ∨
       r.dimUniversal = true := by
@@ -532,7 +530,7 @@ theorem almost_rows :
 
 /-! ### The licensing data -/
 
-/-- A licensing row: the context at the narrowest operator over *any*, a substrate
+/-- A licensing row records the context at the narrowest operator over *any*, a substrate
 `LicensingContext` or a local entailment signature, the settle-for-less and
 metalinguistic-denial readings, and the judgment. -/
 structure Row where
@@ -542,7 +540,7 @@ structure Row where
   metalinguistic : Bool
   grammatical : Bool
 
-/-- The signature at the narrowest operator: the context's Strawson signature where a context
+/-- The signature at the narrowest operator is the context's Strawson signature where a context
 exists, else the local one. -/
 def Row.signature (r : Row) : Signature :=
   match r.context with
@@ -576,9 +574,9 @@ def Row.ofDatum (e : Datum) : Option Row :=
 /-- The licensing data of Sections 1 to 3. -/
 def rows : List Row := Examples.all.filterMap Row.ofDatum
 
-/-- The paper's licensing picture on its own data: *any* is grammatical exactly when the local
-context is downward entailing, so widening strengthens, or generic, or read as settling for
-less under *glad*, or read as a metalinguistic denial under a negated *because*. -/
+/-- On the paper's own data, *any* is grammatical exactly when the local context is downward
+entailing, so widening strengthens, or generic, or read as settling for less under *glad*, or read
+as a metalinguistic denial under a negated *because*. -/
 theorem rows_agree :
     ∀ r ∈ rows, r.grammatical = true ↔
       r.signature.toDEStrength ≠ ⊥ ∨ r.context = some .generic ∨
