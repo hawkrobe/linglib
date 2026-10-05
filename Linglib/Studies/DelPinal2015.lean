@@ -30,8 +30,8 @@ first-order *fake* would make shifting heads read every fake gun as a gun.
   handbag made by Chanel.
 * `fake_isNonVacuous`, `fake_no_licensedCoercion`: the literal *fake N* has a positive and a
   negative extension, and no coercion of its head could be licensed.
-* `evil_park_owner`, `shifting_heads_evil_park_owner`: a fake paintball gun may be a real gun,
-  and with a first-order *fake* one such gun makes shifting heads read every fake gun as a gun.
+* `shifting_heads_evil_park_owner`: with a first-order *fake*, one fake paintball gun that is a
+  real gun makes shifting heads read every fake gun as a gun.
 
 ## Implementation notes
 
@@ -298,14 +298,6 @@ theorem fake_isNonVacuous {N : DualContent W E} {w : W} {d : E → Prop}
     (hfake : ∃ x, d x ∧ (fake made N).extension w x) (hN : ∃ x, d x ∧ N.extension w x) :
     IsNonVacuous (fake made N).extension w d :=
   isNonVacuous_of_disjoint (disjoint_privativeE N) hfake hN
-
-/-- In the evil park owner scenario (§6) a fake paintball gun is a real gun, which (16) allows,
-since a fake N is not an N but may be something every N is. -/
-theorem evil_park_owner :
-    ∃ (made : Property Unit Bool → Property Unit Bool) (N M : DualContent Unit Bool) (x : Bool),
-      N.extension ≤ M.extension ∧ (fake made N).extension () x ∧ M.extension () x :=
-  ⟨fun _ ↦ ⊤, ⟨fun _ x ↦ x, fun _ ↦ ⊥⟩, ⟨⊤, fun _ ↦ ⊥⟩, false, le_top,
-    by simp [fake, privativeE], trivial⟩
 
 /-- If attributive *fake* is the first-order predicate (33), a world with a gun that is fake, as
 in the evil park owner scenario, and a gun that is not makes the literal *fake gun* non-vacuous
