@@ -2,6 +2,9 @@ module
 
 public import Linglib.Syntax.Case.Order
 public import Linglib.Fragments.Telugu.Case
+public import Linglib.Fragments.Telugu.Adpositions
+public import Mathlib.Data.Fintype.List
+public import Mathlib.Data.Fintype.Sigma
 public import Linglib.Morphology.Paradigm.Contiguity
 public import Linglib.Phonology.OptimalityTheory.Tableau
 public import Linglib.Phonology.OptimalityTheory.Stratal
@@ -15,11 +18,11 @@ public import Linglib.Data.Examples.Aitha2026
 
 Telugu nouns show two stem alternations. The strong one (*il-lu* ~ *in-ṭi* 'house') is
 contextual allomorphy of the nominalizer n conditioned by [ACC], the feature every
-nonnominative case contains under [caha-2009]'s containment ([mcfadden-2018]). The weak
-one (*samudr-am* ~ *samudr-āni* 'ocean') only looks like case allomorphy: it violates *ABA,
-is triggered by agreement suffixes in nominative contexts, and reads the weight of the next
-syllable inside the prosodic word. It is the phonology of one underlying *-am-ni*, derived in
-Stratal OT ([kiparsky-2000]) from prespecified stress on the singular suffix *-ni*.
+nonnominative case contains under Caha's containment, as McFadden proposes. The weak one
+(*samudr-am* ~ *samudr-āni* 'ocean') only looks like case allomorphy: it violates *ABA, is
+triggered by agreement suffixes in nominative contexts, and reads the weight of the next syllable
+inside the prosodic word. It is the phonology of one underlying *-am-ni*, derived in Kiparsky's
+Stratal OT from prespecified stress on the singular suffix *-ni*.
 
 This file defines the Vocabulary Items of the strong alternation, the weak generalization, the
 singular suffix, and the Stem, Word, and Phrase tableaux with the marks of the paper's (49),
@@ -42,9 +45,9 @@ singular suffix, and the Stem, Word, and Phrase tableaux with the marks of the p
 
 ## Implementation notes
 
-The cells of the paradigms are the cases of `Telugu.Case` and the postpositions of
-`Telugu.Postposition`, the paper's P cell being *lō*, ordered by the scoped Caha containment
-order on their comparative values.
+The cells of the paradigms are the cases of `Telugu.Case` and the uses of the postpositions of
+`Telugu.Adpositions`, a postposition with a value it marks, the paper's P cell being *lō*; they
+are ordered by the scoped Caha containment order on their comparative values.
 
 ## References
 
@@ -114,18 +117,22 @@ def strongItems : List (VocabularyItem Feature String) :=
 /-- The exponent of n for root `r` in case `c`. -/
 def strongN (r : Root) (c : Case) : Option String := subsetPrinciple strongItems (site r c)
 
-/-- A cell of the paradigms (1) and (8), a case or a postposition. -/
+/-- A use of a Telugu postposition is the postposition with a value it marks. -/
+abbrev PostpositionUse :=
+  Σ a : {a // a ∈ Telugu.Adpositions.inventory}, {c // c ∈ a.1.functions}
+
+/-- A cell of the paradigms (1) and (8), a case or a use of a postposition. -/
 inductive ParadigmCell where
   /-- A case of `Telugu.Case`. -/
   | case (c : Telugu.Case)
-  /-- A postposition of `Telugu.Postposition`. -/
-  | postposition (p : Telugu.Postposition)
+  /-- A use of a postposition of `Telugu.Adpositions`. -/
+  | postposition (u : PostpositionUse)
   deriving DecidableEq, Fintype
 
 /-- The comparative value of a cell. -/
 def ParadigmCell.label : ParadigmCell → Case
   | .case c => c.label
-  | .postposition p => p.label
+  | .postposition u => u.2.1
 
 /-- The cells are ordered by the containment order on their comparative values. -/
 instance : Preorder ParadigmCell := Preorder.lift ParadigmCell.label

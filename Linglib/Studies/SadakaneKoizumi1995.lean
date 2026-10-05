@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Data.Examples.SadakaneKoizumi1995
+public import Linglib.Fragments.Japanese.Adpositions
 public import Linglib.Fragments.Japanese.Case
 public import Linglib.Syntax.Tree.Command
 
@@ -378,7 +379,8 @@ theorem caseMarker_form :
 of the dative *ni*, of which the paper's postposition *ni* is a homophone. -/
 theorem postposition_form :
     ∀ x ∈ Examples.all, ∀ s, x.feature? "form" = some s → postposition ∈ particles x →
-      s = Japanese.Case.dat.form ∨ ∃ p : Japanese.Postposition, p.form = s := by
+      s = Japanese.Case.dat.form ∨
+        ∃ p ∈ Japanese.Adpositions.inventory, p.morphs.map (·.form) = [s] := by
   decide +kernel
 
 end SadakaneKoizumi1995
