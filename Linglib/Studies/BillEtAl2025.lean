@@ -129,10 +129,9 @@ open Plurality in
 open Plurality.Distributivity in
 /-- The decomposition, J′ over the μ phrases of the singleton-shifted conjuncts (Figure 2), is
 distributive predication over the pair of conjuncts. -/
-theorem mu_is_distributive_check {E : Type} [DecidableEq E]
-    (e1 e2 : E) (P : E → Unit → Prop) [∀ a u, Decidable (P a u)] :
-    Coordinator.Role.denote .conjunctive {mu (shift e1), mu (shift e2)} (fun a ↦ P a ()) ↔
-      distMaximal P {e1, e2} () := by
-  simp [conjunction_apply, distMaximal_pair]
+theorem mu_is_distributive_check {E : Type} [DecidableEq E] {j : Coordinator}
+    (hj : j.role = .conjunctive) (e1 e2 : E) (P : E → Unit → Prop) [∀ a u, Decidable (P a u)] :
+    j.denote {mu (shift e1), mu (shift e2)} (fun a ↦ P a ()) ↔ distMaximal P {e1, e2} () := by
+  simp [conjunction_apply hj, distMaximal_pair]
 
 end BillEtAl2025

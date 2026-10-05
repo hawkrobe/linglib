@@ -18,7 +18,7 @@ moved for different features (Case 2, subcase I). Categorially identical coordin
 the Integrity Condition (50), by which a probe targets the coordinate structure and never a
 coordinand within it, and the same constituent cannot occupy both coordinated positions (71), a
 coordination the coordinator's denotation makes semantically vacuous
-(`Coordinator.Role.denote_pair_self`).
+(`Coordinator.denote_pair_self`).
 
 The paper's judgments are the rows of `Data/Examples/Fortuny2024.json`; `rows_predicted` checks
 them against the three-factor decomposition, and `rows_factor` that each ill-formed coordination
@@ -232,7 +232,7 @@ structure Occurrence where
 /-- A coordination is well formed only if its coordinands are coordinable and are distinct
 occurrences, so a constituent cannot appear in both coordinated positions (71). Such a coordination
 would also be semantically vacuous, the coordinator's operation returning the constituent
-(`Coordinator.Role.denote_pair_self`), which §2.3 relates to the Least Effort Principle. -/
+(`Coordinator.denote_pair_self`), which §2.3 relates to the Least Effort Principle. -/
 def WellFormed (α β : Occurrence) : Prop := Coordinable α.cat β.cat ∧ α ≠ β
 
 /-! ### The judgments -/

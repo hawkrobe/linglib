@@ -3,6 +3,7 @@ module
 public import Linglib.Core.Order.UpperLower.Closure
 public import Linglib.Semantics.Reference.ChoiceFunction
 public import Linglib.Semantics.Composition.Coordinator
+public import Linglib.Fragments.English.Coordination
 public import Mathlib.Data.Set.Card
 public import Mathlib.Data.Set.Sups
 
@@ -27,31 +28,30 @@ with intersection on upward-entailing conjuncts and overgenerates on the others.
 
 ## Main results
 
-* `minimization_denote_conjunctive_existentialRaising`: Minimization after Existential Raising keeps
+* `minimization_and_existentialRaising`: Minimization after Existential Raising keeps
   the singletons of the overlap and the pairs from the differences (p. 580), the man–woman pairs
   (20) for disjoint nouns
-* `minimization_denote_conjunctive_Ici`: Minimization of two principal filters is their join
+* `minimization_and_Ici`: Minimization of two principal filters is their join
 * `exists_mem_minimization_choiceRaising_iff`,
   `exists_mem_minimization_distributiveChoiceRaising_iff`: Choice Closure above Minimization
   gives every pair (57) and every mixture (80)
 * `inter_setOf_ncard_minimization_existentialRaising_predicateDistributivity`: no numeral above
   two counts the Existential Raising of plural nouns (76)
-* `minimization_denote_disjunctive_existentialRaising`, `determinerFitting_every_and_iff_or`:
+* `minimization_or_existentialRaising`, `determinerFitting_every_and_iff_or`:
   *or* is never collective, and *every cat and dog* is *every cat or dog* (95), (96), (99)
-* `sups_eq_denote_conjunctive`, `sups_noMan_noWoman`, `sups_individual_card`: the set product (101)
+* `sups_eq_and`, `sups_noMan_noWoman`, `sups_individual_card`: the set product (101)
   is intersection on upper sets and overgenerates in (103) and (105)
 
 ## Implementation notes
 
 A plurality is a `Set E` and a property of pluralities a `Set (Set E)`, as in the paper. The
-determiner *a* is `Quantifier.GQ.some`, the Montague lift is `Quantifier.NP.individual`, *and*
-and *or* are `Coordinator.Role.denote`, and Choice Closure quantifies over
-`Reference.ChoiceFunction`,
-whose totality turns the definedness condition `N ≠ ∅` of Choice Raising into a hypothesis. The
-counterexamples to the set product read Heycock and Zamparelli's sets of singletons as the
-individuals they contain, and (76) applies the numeral at the type of the sets it counts. The
-paper's (99a) writes `MIN(ER(cat)) or MIN(ER(dog))` for the `MIN(ER(cat) or ER(dog))` of its
-prose and (99b), and (83c) swaps the Americans and Russians of (82a) and (83b).
+determiner *a* is `Quantifier.GQ.some`, the Montague lift is `Quantifier.NP.individual`, *and* and
+*or* are what the English coordinators denote, `Coordinator.denote`, and Choice Closure quantifies
+over `Reference.ChoiceFunction`, whose totality turns the definedness condition `N ≠ ∅` of Choice
+Raising into a hypothesis. The counterexamples to the set product read Heycock and Zamparelli's sets
+of singletons as the individuals they contain, and (76) applies the numeral at the type of the sets
+it counts. The paper's (99a) writes `MIN(ER(cat)) or MIN(ER(dog))` for the `MIN(ER(cat) or ER(dog))`
+of its prose and (99b), and (83c) swaps the Americans and Russians of (82a) and (83b).
 
 ## TODO
 
@@ -72,7 +72,15 @@ not formalized.
 
 namespace Champollion2016
 
-open Quantifier Quantifier.NP Reference Set SetFamily
+open Quantifier Quantifier.NP Reference Set SetFamily English.Coordination
+
+private theorem and_denote {α : Type*} [CompleteBooleanAlgebra α] (s : Set α) :
+    and_.denote s = sInf s :=
+  Coordinator.denote_of_conjunctive rfl s
+
+private theorem or_denote {α : Type*} [CompleteBooleanAlgebra α] (s : Set α) :
+    or_.denote s = sSup s :=
+  Coordinator.denote_of_disjunctive rfl s
 
 variable {α E : Type*}
 
@@ -161,22 +169,22 @@ theorem image_singleton_sups (N N' : Set E) :
 
 /-- The conjunction *ER(man) and ER(woman)* is the upper closure of the pairs of a man and a
 woman, the sets that contain both (18). -/
-theorem denote_conjunctive_existentialRaising (N N' : Set E) :
-    Coordinator.Role.denote .conjunctive {existentialRaising N, existentialRaising N'} =
+theorem and_existentialRaising (N N' : Set E) :
+    and_.denote {existentialRaising N, existentialRaising N'} =
       (upperClosure {P : Set E | ∃ x ∈ N, ∃ y ∈ N', P = {x, y}} : Set (Set E)) := by
-  rw [Coordinator.Role.denote_conjunctive, sInf_pair, existentialRaising_eq_upperClosure,
+  rw [and_denote, sInf_pair, existentialRaising_eq_upperClosure,
     existentialRaising_eq_upperClosure, ← image_singleton_sups, upperClosure_sups]
   rfl
 
 /-- **Minimization after Existential Raising.** The minimal sets containing an `N` and an `N'`
 are the singletons of their overlap and the pairs of an `N` that is not an `N'` with an `N'`
 that is not an `N` (journal p. 580). -/
-theorem minimization_denote_conjunctive_existentialRaising (N N' : Set E) :
-    minimization (Coordinator.Role.denote .conjunctive
+theorem minimization_and_existentialRaising (N N' : Set E) :
+    minimization (and_.denote
       {existentialRaising N, existentialRaising N'}) =
       {P | ∃ x ∈ N ∩ N', P = {x}} ∪ {P | ∃ x ∈ N \ N', ∃ y ∈ N' \ N, P = {x, y}} := by
   ext P
-  rw [minimization, mem_ofPred_eq, denote_conjunctive_existentialRaising]
+  rw [minimization, mem_ofPred_eq, and_existentialRaising]
   refine minimal_mem_upperClosure_iff.trans ⟨?_, ?_⟩
   · rintro ⟨⟨x, hx, y, hy, rfl⟩, hmin⟩
     by_cases hxN' : x ∈ N'
@@ -201,34 +209,34 @@ theorem minimization_denote_conjunctive_existentialRaising (N N' : Set E) :
 
 /-- For disjoint nouns, Raising, Intersection and Minimization give the sets of one man and one
 woman, the meaning `mw-pair` of *man and woman* (10), (20). -/
-theorem minimization_denote_conjunctive_existentialRaising_of_disjoint {N N' : Set E}
+theorem minimization_and_existentialRaising_of_disjoint {N N' : Set E}
     (h : Disjoint N N') :
-    minimization (Coordinator.Role.denote .conjunctive
+    minimization (and_.denote
       {existentialRaising N, existentialRaising N'}) =
       {P | ∃ x ∈ N, ∃ y ∈ N', P = {x, y}} := by
-  rw [minimization_denote_conjunctive_existentialRaising, disjoint_iff_inter_eq_empty.mp h,
+  rw [minimization_and_existentialRaising, disjoint_iff_inter_eq_empty.mp h,
     sdiff_eq_left.mpr h, sdiff_eq_left.mpr h.symm]
   simp
 
 /-- When the nouns coincide, only singletons survive Minimization, so that *A doctor and lawyer
 met* would be deviant like *#John met* (42). -/
-theorem minimization_denote_conjunctive_existentialRaising_self (N : Set E) :
-    minimization (Coordinator.Role.denote .conjunctive
+theorem minimization_and_existentialRaising_self (N : Set E) :
+    minimization (and_.denote
       {existentialRaising N, existentialRaising N}) =
       (fun x ↦ ({x} : Set E)) '' N := by
-  rw [minimization_denote_conjunctive_existentialRaising]
+  rw [minimization_and_existentialRaising]
   ext P
   simp [eq_comm]
 
 /-- When John is a man, the singleton of John is the only minimal set that contains John and a
 man, so *John and some man met* (43) would be deviant. -/
-theorem minimization_denote_conjunctive_individual_existentialRaising {N : Set E} {j : E}
+theorem minimization_and_individual_existentialRaising {N : Set E} {j : E}
     (hj : j ∈ N) :
-    minimization (Coordinator.Role.denote .conjunctive {{P : Set E | individual j P},
+    minimization (and_.denote {{P : Set E | individual j P},
       existentialRaising N}) = {{j}} := by
   have : {P : Set E | individual j P} = existentialRaising {j} := by
     ext P; exact ⟨fun h ↦ ⟨j, rfl, h⟩, fun ⟨_, hx, h⟩ ↦ (eq_of_mem_singleton hx) ▸ h⟩
-  rw [this, minimization_denote_conjunctive_existentialRaising]
+  rw [this, minimization_and_existentialRaising]
   ext P
   simp [hj]
 
@@ -236,11 +244,11 @@ theorem minimization_denote_conjunctive_individual_existentialRaising {N : Set E
 woman both dated and met. -/
 theorem mem_existentialRaising_minimization_inter_iff {N N' : Set E} (h : Disjoint N N')
     (R S : Set (Set E)) :
-    S ∈ existentialRaising (minimization (Coordinator.Role.denote .conjunctive
+    S ∈ existentialRaising (minimization (and_.denote
         {existentialRaising N,
         existentialRaising N'}) ∩ R) ↔
       ∃ x ∈ N, ∃ y ∈ N', {x, y} ∈ R ∧ {x, y} ∈ S := by
-  rw [minimization_denote_conjunctive_existentialRaising_of_disjoint h]
+  rw [minimization_and_existentialRaising_of_disjoint h]
   constructor
   · rintro ⟨_, ⟨⟨x, hx, y, hy, rfl⟩, hR⟩, hS⟩
     exact ⟨x, hx, y, hy, hR, hS⟩
@@ -252,10 +260,10 @@ some man and some woman each had a beer. -/
 theorem predicateDistributivity_mem_existentialRaising_minimization_iff {N N' : Set E}
     (h : Disjoint N N') (S : Set E) :
     predicateDistributivity S ∈ existentialRaising (minimization
-        (Coordinator.Role.denote .conjunctive
+        (and_.denote
         {existentialRaising N, existentialRaising N'})) ↔
       ∃ x ∈ N, ∃ y ∈ N', x ∈ S ∧ y ∈ S := by
-  rw [minimization_denote_conjunctive_existentialRaising_of_disjoint h]
+  rw [minimization_and_existentialRaising_of_disjoint h]
   simp only [mem_existentialRaising, predicateDistributivity, mem_ofPred_eq]
   constructor
   · rintro ⟨_, ⟨x, hx, y, hy, rfl⟩, -, hS⟩
@@ -268,19 +276,19 @@ theorem predicateDistributivity_mem_existentialRaising_minimization_iff {N N' : 
 
 /-- Minimization of the meet of two principal filters keeps only their join. This is how
 Intersection and Minimization form a collective individual. -/
-theorem minimization_denote_conjunctive_Ici (a b : Set E) :
-    minimization (Coordinator.Role.denote .conjunctive {Ici a, Ici b}) = {a ∪ b} := by
-  rw [Coordinator.Role.denote_conjunctive, sInf_pair]
+theorem minimization_and_Ici (a b : Set E) :
+    minimization (and_.denote {Ici a, Ici b}) = {a ∪ b} := by
+  rw [and_denote, sInf_pair]
   ext P
   change Minimal (· ∈ Ici a ∩ Ici b) P ↔ _
   rw [Ici_inter_Ici]
   exact minimal_ge_iff
 
 /-- Minimization of the conjoined Montague lifts of John and Mary keeps only their pair (40). -/
-theorem minimization_denote_conjunctive_individual (x y : E) :
-    minimization (Coordinator.Role.denote .conjunctive {{P : Set E | individual x P},
+theorem minimization_and_individual (x y : E) :
+    minimization (and_.denote {{P : Set E | individual x P},
       {P : Set E | individual y P}}) = {{x, y}} := by
-  rw [setOf_individual, setOf_individual, minimization_denote_conjunctive_Ici, singleton_union]
+  rw [setOf_individual, setOf_individual, minimization_and_Ici, singleton_union]
 
 /-- On a nonempty noun, Choice Closure directly above Choice Raising is Existential Raising
 (p. 583). -/
@@ -292,9 +300,9 @@ theorem exists_mem_choiceRaising_iff {N P : Set E} (hN : N.Nonempty) :
 and any man. -/
 theorem exists_mem_minimization_individual_choiceRaising_iff {N P : Set E} (hN : N.Nonempty)
     (j : E) :
-    (∃ f : ChoiceFunction E, P ∈ minimization (Coordinator.Role.denote .conjunctive
+    (∃ f : ChoiceFunction E, P ∈ minimization (and_.denote
       {{P : Set E | individual j P}, choiceRaising f N})) ↔ ∃ x ∈ N, P = {j, x} := by
-  simp only [setOf_individual, choiceRaising_eq_Ici, minimization_denote_conjunctive_Ici,
+  simp only [setOf_individual, choiceRaising_eq_Ici, minimization_and_Ici,
     singleton_union, mem_singleton_iff]
   exact ChoiceFunction.exists_apply_iff_some hN fun x ↦ P = {j, x}
 
@@ -302,9 +310,9 @@ theorem exists_mem_minimization_individual_choiceRaising_iff {N P : Set E} (hN :
 doctor and any lawyer, whether or not they share their professions. -/
 theorem exists_mem_minimization_choiceRaising_iff {N N' P : Set E} (hN : N.Nonempty)
     (hN' : N'.Nonempty) :
-    (∃ f₁ f₂ : ChoiceFunction E, P ∈ minimization (Coordinator.Role.denote .conjunctive
+    (∃ f₁ f₂ : ChoiceFunction E, P ∈ minimization (and_.denote
       {choiceRaising f₁ N, choiceRaising f₂ N'})) ↔ ∃ x ∈ N, ∃ y ∈ N', P = {x, y} := by
-  simp only [choiceRaising_eq_Ici, minimization_denote_conjunctive_Ici, singleton_union,
+  simp only [choiceRaising_eq_Ici, minimization_and_Ici, singleton_union,
     mem_singleton_iff]
   exact (ChoiceFunction.exists_apply_iff_some hN fun x ↦
     ∃ f₂ : ChoiceFunction E, P = insert x {f₂ N'}).trans (exists_congr fun x ↦
@@ -316,10 +324,10 @@ theorem exists_mem_minimization_choiceRaising_iff {N N' P : Set E} (hN : N.Nonem
 pluralities `{M, W}`, which no numeral above two counts (75), (76). -/
 theorem inter_setOf_ncard_minimization_existentialRaising_predicateDistributivity
     (N N' : Set E) {n : ℕ} (hn : 2 < n) :
-    {Q : Set (Set E) | Q.ncard = n} ∩ minimization (Coordinator.Role.denote .conjunctive
+    {Q : Set (Set E) | Q.ncard = n} ∩ minimization (and_.denote
       {existentialRaising (predicateDistributivity N),
       existentialRaising (predicateDistributivity N')}) = ∅ := by
-  rw [minimization_denote_conjunctive_existentialRaising, eq_empty_iff_forall_notMem]
+  rw [minimization_and_existentialRaising, eq_empty_iff_forall_notMem]
   rintro _ ⟨hcard, ⟨M, -, rfl⟩ | ⟨M, -, W, -, rfl⟩⟩
   · simp only [mem_ofPred_eq, ncard_singleton] at hcard
     omega
@@ -331,9 +339,9 @@ theorem inter_setOf_ncard_minimization_existentialRaising_predicateDistributivit
 denotes the mixtures, the unions of a plurality from each noun, which form the set product. -/
 theorem exists_mem_minimization_distributiveChoiceRaising_iff {N N' : Set (Set E)} {P : Set E}
     (hN : N.Nonempty) (hN' : N'.Nonempty) :
-    (∃ f₁ f₂ : ChoiceFunction (Set E), P ∈ minimization (Coordinator.Role.denote .conjunctive
+    (∃ f₁ f₂ : ChoiceFunction (Set E), P ∈ minimization (and_.denote
       {distributiveChoiceRaising f₁ N, distributiveChoiceRaising f₂ N'})) ↔ P ∈ N ⊻ N' := by
-  simp only [distributiveChoiceRaising_eq_Ici, minimization_denote_conjunctive_Ici,
+  simp only [distributiveChoiceRaising_eq_Ici, minimization_and_Ici,
     mem_singleton_iff,
     mem_sups]
   exact (ChoiceFunction.exists_apply_iff_some hN fun M ↦
@@ -347,10 +355,10 @@ noun does. -/
 theorem exists_mem_existentialRaising_minimization_distributiveChoiceRaising_iff
     {N N' : Set (Set E)} (hN : N.Nonempty) (hN' : N'.Nonempty) (S : Set (Set E)) :
     (∃ f₁ f₂ : ChoiceFunction (Set E), S ∈ existentialRaising (minimization
-      (Coordinator.Role.denote .conjunctive {distributiveChoiceRaising f₁ N,
+      (and_.denote {distributiveChoiceRaising f₁ N,
         distributiveChoiceRaising f₂ N'}))) ↔
       ∃ M ∈ N, ∃ W ∈ N', M ∪ W ∈ S := by
-  simp only [distributiveChoiceRaising_eq_Ici, minimization_denote_conjunctive_Ici,
+  simp only [distributiveChoiceRaising_eq_Ici, minimization_and_Ici,
     mem_existentialRaising, mem_singleton_iff, exists_eq_left]
   exact (ChoiceFunction.exists_apply_iff_some hN fun M ↦
     ∃ f₂ : ChoiceFunction (Set E), M ∪ f₂ N' ∈ S).trans (exists_congr fun M ↦
@@ -360,14 +368,14 @@ theorem exists_mem_existentialRaising_minimization_distributiveChoiceRaising_iff
 
 /-- Minimization after Existential Raising of a disjunction keeps only singletons, so *or* is
 never collective (§6.2). -/
-theorem minimization_denote_disjunctive_existentialRaising (N N' : Set E) :
-    minimization (Coordinator.Role.denote .disjunctive
+theorem minimization_or_existentialRaising (N N' : Set E) :
+    minimization (or_.denote
       {existentialRaising N, existentialRaising N'}) =
       (fun x ↦ ({x} : Set E)) '' (N ∪ N') := by
   have hanti : IsAntichain (· ≤ ·) ((fun x ↦ ({x} : Set E)) '' (N ∪ N')) := by
     rintro _ ⟨x, -, rfl⟩ _ ⟨y, -, rfl⟩ hne hle
     exact hne (by rw [singleton_subset_singleton.mp hle])
-  rw [Coordinator.Role.denote_disjunctive, sSup_pair]
+  rw [or_denote, sSup_pair]
   ext P
   change Minimal (· ∈ existentialRaising N ∪ existentialRaising N') P ↔ _
   rw [← existentialRaising_union, existentialRaising_eq_upperClosure]
@@ -392,13 +400,13 @@ theorem determinerFitting_no_predicateDistributivity_iff (N : Set E) (S : Set (S
 
 /-- For disjoint nonempty nouns, Determiner Fitting of *every* to the collective *cat and dog*
 says that every cat and every dog is licensed (95). -/
-theorem determinerFitting_every_minimization_denote_conjunctive {N N' : Set E} (h : Disjoint N N')
+theorem determinerFitting_every_minimization_and {N N' : Set E} (h : Disjoint N N')
     (hN : N.Nonempty) (hN' : N'.Nonempty) (S : Set E) :
-    determinerFitting GQ.every (minimization (Coordinator.Role.denote .conjunctive
+    determinerFitting GQ.every (minimization (and_.denote
       {existentialRaising N, existentialRaising N'})) (predicateDistributivity S) ↔
-      GQ.every (Coordinator.Role.denote .disjunctive {N, N'}) S := by
-  rw [minimization_denote_conjunctive_existentialRaising_of_disjoint h,
-    Coordinator.Role.denote_disjunctive, sSup_pair]
+      GQ.every (or_.denote {N, N'}) S := by
+  rw [minimization_and_existentialRaising_of_disjoint h,
+    or_denote, sSup_pair]
   obtain ⟨x₀, hx₀⟩ := hN
   obtain ⟨y₀, hy₀⟩ := hN'
   refine ⟨fun hD z hz ↦ ?_, fun hS z ⟨_, ⟨x, hx, y, hy, rfl⟩, hz⟩ ↦ ⟨_, ⟨⟨x, hx, y, hy, rfl⟩,
@@ -413,12 +421,11 @@ theorem determinerFitting_every_minimization_denote_conjunctive {N N' : Set E} (
 
 /-- Under its collective structure, *every cat or dog is licensed* (99) says that every cat and
 every dog is licensed. -/
-theorem determinerFitting_every_minimization_denote_disjunctive (N N' S : Set E) :
-    determinerFitting GQ.every (minimization (Coordinator.Role.denote .disjunctive
+theorem determinerFitting_every_minimization_or (N N' S : Set E) :
+    determinerFitting GQ.every (minimization (or_.denote
       {existentialRaising N, existentialRaising N'})) (predicateDistributivity S) ↔
-      GQ.every (Coordinator.Role.denote .disjunctive {N, N'}) S := by
-  rw [minimization_denote_disjunctive_existentialRaising, Coordinator.Role.denote_disjunctive,
-    sSup_pair]
+      GQ.every (or_.denote {N, N'}) S := by
+  rw [minimization_or_existentialRaising, or_denote, sSup_pair]
   refine ⟨fun hD z hz ↦ ?_, fun hS z ⟨_, ⟨x, hx, rfl⟩, hz⟩ ↦ ⟨{x}, ⟨⟨x, hx, rfl⟩,
     singleton_nonempty x, singleton_subset_iff.2 (hS x hx)⟩, hz⟩⟩
   obtain ⟨_, ⟨-, -, hP⟩, hzP⟩ := hD z ⟨{z}, ⟨z, hz, rfl⟩, mem_singleton z⟩
@@ -428,18 +435,18 @@ theorem determinerFitting_every_minimization_denote_disjunctive (N N' S : Set E)
 Bergmann's puzzle (95), (96), (99). -/
 theorem determinerFitting_every_and_iff_or {N N' : Set E} (h : Disjoint N N')
     (hN : N.Nonempty) (hN' : N'.Nonempty) (S : Set E) :
-    determinerFitting GQ.every (minimization (Coordinator.Role.denote .conjunctive
+    determinerFitting GQ.every (minimization (and_.denote
       {existentialRaising N, existentialRaising N'})) (predicateDistributivity S) ↔
-      determinerFitting GQ.every (minimization (Coordinator.Role.denote .disjunctive
+      determinerFitting GQ.every (minimization (or_.denote
         {existentialRaising N, existentialRaising N'})) (predicateDistributivity S) :=
-  (determinerFitting_every_minimization_denote_conjunctive h hN hN' S).trans
-    (determinerFitting_every_minimization_denote_disjunctive N N' S).symm
+  (determinerFitting_every_minimization_and h hN hN' S).trans
+    (determinerFitting_every_minimization_or N N' S).symm
 
 /-- *A cat and dog came running in* (97) says that a cat and a dog came, where *a cat or dog*
 (98) says that one of them did. -/
-theorem determinerFitting_some_minimization_denote_conjunctive {N N' : Set E} (h : Disjoint N N')
+theorem determinerFitting_some_minimization_and {N N' : Set E} (h : Disjoint N N')
     (S : Set E) :
-    determinerFitting GQ.some (minimization (Coordinator.Role.denote .conjunctive
+    determinerFitting GQ.some (minimization (and_.denote
       {existentialRaising N, existentialRaising N'})) (predicateDistributivity S) ↔
       GQ.some N S ∧ GQ.some N' S := by
   rw [determinerFitting_some_iff fun h ↦ Set.not_nonempty_empty
@@ -451,30 +458,30 @@ theorem determinerFitting_some_minimization_denote_conjunctive {N N' : Set E} (h
 
 /-- When a cat came and no dog did, *a cat or dog came running in* (98) is true and *a cat and
 dog came running in* (97) is false. -/
-theorem some_denote_disjunctive_and_not_determinerFitting_some {N N' S : Set E} (h : Disjoint N N')
+theorem some_or_and_not_determinerFitting_some {N N' S : Set E} (h : Disjoint N N')
     {x : E} (hx : x ∈ N) (hxS : x ∈ S) (hN'S : Disjoint N' S) :
-    GQ.some (Coordinator.Role.denote .disjunctive {N, N'}) S ∧
-      ¬ determinerFitting GQ.some (minimization (Coordinator.Role.denote .conjunctive
+    GQ.some (or_.denote {N, N'}) S ∧
+      ¬ determinerFitting GQ.some (minimization (and_.denote
         {existentialRaising N, existentialRaising N'})) (predicateDistributivity S) := by
-  rw [determinerFitting_some_minimization_denote_conjunctive h,
-    Coordinator.Role.denote_disjunctive, sSup_pair]
+  rw [determinerFitting_some_minimization_and h,
+    or_denote, sSup_pair]
   exact ⟨⟨x, Or.inl hx, hxS⟩, fun ⟨_, y, hy, hyS⟩ ↦ disjoint_left.mp hN'S hy hyS⟩
 
 /-! ### The collective theory -/
 
 /-- Heycock and Zamparelli's collective entry (101), the set product `Q ⊻ Q'`, holds wherever
 intersection does. -/
-theorem denote_conjunctive_subset_sups [Lattice α] (Q Q' : Set α) :
-    Coordinator.Role.denote .conjunctive {Q, Q'} ⊆ Q ⊻ Q' := by
-  rw [Coordinator.Role.denote_conjunctive, sInf_pair]
+theorem and_subset_sups [Lattice α] (Q Q' : Set α) :
+    and_.denote {Q, Q'} ⊆ Q ⊻ Q' := by
+  rw [and_denote, sInf_pair]
   exact fun a h ↦ ⟨a, h.1, a, h.2, sup_idem a⟩
 
 /-- On upward-entailing conjuncts the collective and the intersective entries agree, so the
 collective theory goes wrong only on conjuncts that are not upward entailing (p. 608). -/
-theorem sups_eq_denote_conjunctive [Lattice α] {Q Q' : Set α} (hQ : IsUpperSet Q)
-    (hQ' : IsUpperSet Q') : Q ⊻ Q' = Coordinator.Role.denote .conjunctive {Q, Q'} := by
-  refine (Subset.antisymm ?_ (denote_conjunctive_subset_sups Q Q'))
-  rw [Coordinator.Role.denote_conjunctive, sInf_pair]
+theorem sups_eq_and [Lattice α] {Q Q' : Set α} (hQ : IsUpperSet Q)
+    (hQ' : IsUpperSet Q') : Q ⊻ Q' = and_.denote {Q, Q'} := by
+  refine (Subset.antisymm ?_ (and_subset_sups Q Q'))
+  rw [and_denote, sInf_pair]
   rintro _ ⟨a, ha, b, hb, rfl⟩
   exact ⟨hQ le_sup_left ha, hQ' le_sup_right hb⟩
 
@@ -482,7 +489,7 @@ theorem sups_eq_denote_conjunctive [Lattice α] {Q Q' : Set α} (hQ : IsUpperSet
 meaning that Raising, Intersection and Minimization derive (20). -/
 theorem sups_setOf_ncard_eq_one {N N' : Set E} (h : Disjoint N N') :
     {A | A.ncard = 1 ∧ A ⊆ N} ⊻ {B | B.ncard = 1 ∧ B ⊆ N'} =
-      minimization (Coordinator.Role.denote .conjunctive {existentialRaising N,
+      minimization (and_.denote {existentialRaising N,
         existentialRaising N'}) := by
   have hsing (N : Set E) : {A | A.ncard = 1 ∧ A ⊆ N} = (fun x ↦ ({x} : Set E)) '' N := by
     ext A
@@ -493,16 +500,16 @@ theorem sups_setOf_ncard_eq_one {N N' : Set E} (h : Disjoint N N') :
     · rintro ⟨x, hx, rfl⟩
       exact ⟨⟨x, rfl⟩, singleton_subset_iff.2 hx⟩
   rw [hsing, hsing, image_singleton_sups,
-    minimization_denote_conjunctive_existentialRaising_of_disjoint h]
+    minimization_and_existentialRaising_of_disjoint h]
 
 /-- When a man and a woman are the only smilers, the collective entry holds of the smilers in
 *No man and no woman smiled* (103a) and the intersective entry does not. -/
 theorem sups_noMan_noWoman {N N' : Set E} (h : Disjoint N N') {x y : E} (hx : x ∈ N)
     (hy : y ∈ N') :
     {x, y} ∈ {P : Set E | GQ.no N P} ⊻ {P | GQ.no N' P} ∧
-      {x, y} ∉ Coordinator.Role.denote .conjunctive
+      {x, y} ∉ and_.denote
         {{P : Set E | GQ.no N P}, {P : Set E | GQ.no N' P}} := by
-  rw [Coordinator.Role.denote_conjunctive, sInf_pair]
+  rw [and_denote, sInf_pair]
   refine ⟨⟨{y}, fun z hz hzy ↦ ?_, {x}, fun z hz hzx ↦ ?_, ?_⟩, fun ⟨hno, _⟩ ↦
     hno x hx (mem_insert x _)⟩
   · exact disjoint_left.mp h hz (eq_of_mem_singleton hzy ▸ hy)
@@ -513,9 +520,9 @@ theorem sups_noMan_noWoman {N N' : Set E} (h : Disjoint N N') {x y : E} (hx : x 
 *Mary and nobody else smiled* (103b). -/
 theorem sups_individual_nobodyElse {x y : E} (hxy : x ≠ y) :
     {x, y} ∈ {P : Set E | individual y P} ⊻ {P | GQ.no (· ≠ y) P} ∧
-      {x, y} ∉ Coordinator.Role.denote .conjunctive {{P : Set E | individual y P},
+      {x, y} ∉ and_.denote {{P : Set E | individual y P},
         {P : Set E | GQ.no (· ≠ y) P}} := by
-  rw [Coordinator.Role.denote_conjunctive, sInf_pair]
+  rw [and_denote, sInf_pair]
   exact ⟨⟨{x, y}, mem_insert_of_mem x rfl, ∅, fun _ _ h ↦ h, union_empty _⟩,
     fun ⟨_, hno⟩ ↦ hno x hxy (mem_insert x _)⟩
 
@@ -525,9 +532,9 @@ women, and the intersective entry does not. -/
 theorem sups_individual_card {N W : Set E} {j : E} (hj : j ∉ N) (hW : W ⊆ N)
     (hW4 : W.ncard = 4) {p : ℕ → Prop} (h3 : p 3) (h4 : ¬ p 4) :
     insert j W ∈ {P : Set E | individual j P} ⊻ {P | p (N ∩ P).ncard} ∧
-      insert j W ∉ Coordinator.Role.denote .conjunctive {{P : Set E | individual j P},
+      insert j W ∉ and_.denote {{P : Set E | individual j P},
         {P | p (N ∩ P).ncard}} := by
-  rw [Coordinator.Role.denote_conjunctive, sInf_pair]
+  rw [and_denote, sInf_pair]
   have hNW (P : Set E) (hP : P ⊆ W) : N ∩ P = P := inter_eq_right.mpr (hP.trans hW)
   obtain ⟨w, hw⟩ := nonempty_of_ncard_ne_zero (s := W) (by omega)
   refine ⟨⟨{j, w}, mem_insert j _, W \ {w}, ?_, ?_⟩, fun ⟨_, hp⟩ ↦ h4 ?_⟩
@@ -541,14 +548,14 @@ theorem sups_individual_card {N W : Set E} {j : E} (hj : j ∉ N) (hW : W ⊆ N)
 
 example {N W : Set E} {j : E} (hj : j ∉ N) (hW : W ⊆ N) (hW4 : W.ncard = 4) :
     insert j W ∈ {P : Set E | individual j P} ⊻ {P | Odd (N ∩ P).ncard} ∧
-      insert j W ∉ Coordinator.Role.denote .conjunctive {{P : Set E | individual j P},
+      insert j W ∉ and_.denote {{P : Set E | individual j P},
         {P | Odd (N ∩ P).ncard}} :=
   sups_individual_card (p := Odd) hj hW hW4 (by decide) (by decide)
 
 example {N W : Set E} {j : E} (hj : j ∉ N) (hW : W ⊆ N) (hW4 : W.ncard = 4) :
     insert j W ∈
       {P : Set E | individual j P} ⊻ {P | 1 ≤ (N ∩ P).ncard ∧ (N ∩ P).ncard ≤ 3} ∧
-      insert j W ∉ Coordinator.Role.denote .conjunctive {{P : Set E | individual j P},
+      insert j W ∉ and_.denote {{P : Set E | individual j P},
         {P | 1 ≤ (N ∩ P).ncard ∧ (N ∩ P).ncard ≤ 3}} :=
   sups_individual_card (p := fun n ↦ 1 ≤ n ∧ n ≤ 3) hj hW hW4 (by decide) (by decide)
 
