@@ -264,7 +264,7 @@ Icelandic T ((55), (79)). -/
 abbrev weakProbe : Probe.Articulation := partialProbe
 
 /-- The probe [uPERS [uPART [uSPKR]]] of (39b) yields the Ultrastrong PCC. -/
-abbrev ultrastrongProbe : Probe.Articulation := fullProbeStd
+abbrev ultrastrongProbe : Probe.Articulation := fullProbe .standard
 
 /-- The probe [uPERS [uSPKR]] of (39c) yields the Me-First PCC, with a missing intermediate segment.
 -/

@@ -17,7 +17,8 @@
       ["controller", "2"],
       ["context", "inverse"]
     ],
-    "comment": "The core slot tracks the IA: a 2nd-person object fully checks the [u-3-2] probe."
+    "comment": "The core slot tracks the IA: a 2nd-person object fully checks the [u-3-2] probe.",
+    "verified": "page-image"
   },
   {
     "id": "br2009_2b",
@@ -37,7 +38,8 @@
       ["controller", "1"],
       ["context", "inverse"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "br2009_2c",
@@ -57,7 +59,8 @@
       ["controller", "1"],
       ["context", "inverse"]
     ],
-    "comment": "With (2a): no ranking of person values decides between two SAP arguments — the IA wins both times."
+    "comment": "With (2a): no ranking of person values decides between two SAP arguments — the IA wins both times.",
+    "verified": "page-image"
   },
   {
     "id": "br2009_2d",
@@ -77,7 +80,8 @@
       ["controller", "1"],
       ["context", "direct"]
     ],
-    "comment": "The 3rd-person IA leaves the [u2] residue, which the SAP EA checks on cycle II: displacement to the EA."
+    "comment": "The 3rd-person IA leaves the [u2] residue, which the SAP EA checks on cycle II: displacement to the EA.",
+    "verified": "page-image"
   },
   {
     "id": "br2009_3",
@@ -98,25 +102,48 @@
       ["controller", "1"],
       ["diagnostic", "case and binding unaffected"]
     ],
-    "comment": "Ergative displacement changes neither case marking nor binding: agreement displacement is not movement."
+    "comment": "Ergative displacement changes neither case marking nor binding: agreement displacement is not movement.",
+    "verified": "page-image"
   },
   {
     "id": "br2009_15",
     "source": {"bibkey": "bejar-rezac-2009", "paperLabel": "(15)"},
     "language": "basq1248",
-    "primaryText": "Zuk etsaiari misilak / *ni saldu dizkiozu.",
+    "primaryText": "Zuk etsaiari misilak saldu dizkiozu",
     "glossedTokens": [
-      ["Zu-k", "you-E"], ["etsaia-ri", "enemy-D"], ["misil-ak", "missile-A.PL"], ["ni", "me.A"],
-      ["saldu", "sold"], ["d-i-zki-o-zu", "X-have-PL-3.D-2.E"]
+      ["Zu-k", "you-E"], ["etsaia-ri", "enemy-D"], ["misil-ak", "missile-A.PL"], ["saldu", "sold"],
+      ["d-i-zki-o-zu", "X-have-PL-3.D-2.E"]
     ],
-    "translation": "You have sold the missiles / *me to the enemy.",
+    "translation": "You have sold the missiles to the enemy.",
     "context": "",
     "judgment": "acceptable",
     "readings": [],
     "paperFeatures": [
       ["constraint", "Person Case Constraint"]
     ],
-    "comment": "With a dative goal absorbing the π-probe, a 1st-person theme is unlicensable — the PLC at work."
+    "comment": "The source prints the two variants of (15) with coindexation subscripts in one line.",
+    "verified": "page-image"
+  },
+  {
+    "id": "br2009_15_ni",
+    "source": {"bibkey": "bejar-rezac-2009", "paperLabel": "(15)"},
+    "language": "basq1248",
+    "primaryText": "Zu-k etsaia-ri ni saldu n-a-i-o-zu",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Zu-k", "you-E"], ["etsaia-ri", "enemy-D"], ["ni", "me.A"], ["saldu", "sold"],
+      ["n-a-i-o-zu", "1-X-have-3.D-2.E"]
+    ],
+    "translation": "You have sold me to the enemy.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["constraint", "Person Case Constraint"]
+    ],
+    "comment": "The source prints the auxiliary n-(a)-i-o-zu with an optional a.",
+    "verified": "page-image"
   },
   {
     "id": "br2009_t9_3_1",
@@ -127,7 +154,7 @@
       ["n-iñdd-u-en", "1.SG-INV-have-PAST"]
     ],
     "translation": "He had me.",
-    "context": "Bizkaian dialect of Bolivar.",
+    "context": "",
     "judgment": "acceptable",
     "readings": [],
     "paperFeatures": [
@@ -135,7 +162,227 @@
       ["ia", "1"],
       ["repair", "added probe (INV)"]
     ],
-    "comment": "The INV slot spells out the added probe that licenses the EA in inverse contexts."
+    "comment": "Bizkaian Basque of Bolívar. INV spells out the added probe that licenses the EA in inverse contexts.",
+    "verified": "page-image"
+  },
+  {
+    "id": "br2009_t9_1_2",
+    "source": {"bibkey": "bejar-rezac-2009", "paperLabel": "Table 9"},
+    "language": "basq1248",
+    "primaryText": "s-iñdd-u-te-n",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["s-iñdd-u-te-n", "2.SG-INV-have-1.SG-PAST"]
+    ],
+    "translation": "I had you.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ea", "1"],
+      ["ia", "2"],
+      ["repair", "added probe (INV)"]
+    ],
+    "comment": "Bizkaian Basque of Bolívar.",
+    "verified": "page-image"
+  },
+  {
+    "id": "br2009_t9_1_3",
+    "source": {"bibkey": "bejar-rezac-2009", "paperLabel": "Table 9"},
+    "language": "basq1248",
+    "primaryText": "n-eb-en",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["n-eb-en", "1.SG-have-PAST"]
+    ],
+    "translation": "I had him.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ea", "1"],
+      ["ia", "3"],
+      ["context", "direct"]
+    ],
+    "comment": "Bizkaian Basque of Bolívar.",
+    "verified": "page-image"
+  },
+  {
+    "id": "br2009_t9_2_1",
+    "source": {"bibkey": "bejar-rezac-2009", "paperLabel": "Table 9"},
+    "language": "basq1248",
+    "primaryText": "n-iñdd-u-su-n",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["n-iñdd-u-su-n", "1.SG-INV-have-2.SG-PAST"]
+    ],
+    "translation": "You had me.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ea", "2"],
+      ["ia", "1"],
+      ["repair", "added probe (INV)"]
+    ],
+    "comment": "Bizkaian Basque of Bolívar.",
+    "verified": "page-image"
+  },
+  {
+    "id": "br2009_t9_2_1pl",
+    "source": {"bibkey": "bejar-rezac-2009", "paperLabel": "Table 9"},
+    "language": "basq1248",
+    "primaryText": "g-iñdd-u-su-n",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["g-iñdd-u-su-n", "1.PL-INV-have-2.SG-PAST"]
+    ],
+    "translation": "You had us.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ea", "2"],
+      ["ia", "1"],
+      ["repair", "added probe (INV)"]
+    ],
+    "comment": "Bizkaian Basque of Bolívar. 1.PL enters as first person, number aside.",
+    "verified": "page-image"
+  },
+  {
+    "id": "br2009_t9_2_3",
+    "source": {"bibkey": "bejar-rezac-2009", "paperLabel": "Table 9"},
+    "language": "basq1248",
+    "primaryText": "s-eb-en",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["s-eb-en", "2.SG-have-PAST"]
+    ],
+    "translation": "You had him.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ea", "2"],
+      ["ia", "3"],
+      ["context", "direct"]
+    ],
+    "comment": "Bizkaian Basque of Bolívar.",
+    "verified": "page-image"
+  },
+  {
+    "id": "br2009_t9_1pl_2",
+    "source": {"bibkey": "bejar-rezac-2009", "paperLabel": "Table 9"},
+    "language": "basq1248",
+    "primaryText": "s-iñdd-u-gu-n",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["s-iñdd-u-gu-n", "2.SG-INV-have-1.PL-PAST"]
+    ],
+    "translation": "We had you.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ea", "1"],
+      ["ia", "2"],
+      ["repair", "added probe (INV)"]
+    ],
+    "comment": "Bizkaian Basque of Bolívar. 1.PL enters as first person, number aside.",
+    "verified": "page-image"
+  },
+  {
+    "id": "br2009_t9_1pl_3",
+    "source": {"bibkey": "bejar-rezac-2009", "paperLabel": "Table 9"},
+    "language": "basq1248",
+    "primaryText": "g-eb-en",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["g-eb-en", "1.PL-have-PAST"]
+    ],
+    "translation": "We had him.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ea", "1"],
+      ["ia", "3"],
+      ["context", "direct"]
+    ],
+    "comment": "Bizkaian Basque of Bolívar. 1.PL enters as first person, number aside.",
+    "verified": "page-image"
+  },
+  {
+    "id": "br2009_t9_3_2",
+    "source": {"bibkey": "bejar-rezac-2009", "paperLabel": "Table 9"},
+    "language": "basq1248",
+    "primaryText": "s-iñdd-u-en",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["s-iñdd-u-en", "2.SG-INV-have-PAST"]
+    ],
+    "translation": "He had you.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ea", "3"],
+      ["ia", "2"],
+      ["repair", "added probe (INV)"]
+    ],
+    "comment": "Bizkaian Basque of Bolívar.",
+    "verified": "page-image"
+  },
+  {
+    "id": "br2009_t9_3_1pl",
+    "source": {"bibkey": "bejar-rezac-2009", "paperLabel": "Table 9"},
+    "language": "basq1248",
+    "primaryText": "g-iñdd-u-en",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["g-iñdd-u-en", "1.PL-INV-have-PAST"]
+    ],
+    "translation": "He had us.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ea", "3"],
+      ["ia", "1"],
+      ["repair", "added probe (INV)"]
+    ],
+    "comment": "Bizkaian Basque of Bolívar. 1.PL enters as first person, number aside.",
+    "verified": "page-image"
+  },
+  {
+    "id": "br2009_t9_3_3",
+    "source": {"bibkey": "bejar-rezac-2009", "paperLabel": "Table 9"},
+    "language": "basq1248",
+    "primaryText": "eb-en",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["eb-en", "have-PAST"]
+    ],
+    "translation": "He had him.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ea", "3"],
+      ["ia", "3"]
+    ],
+    "comment": "Bizkaian Basque of Bolívar. The table leaves the cell unshaded, although (22a) counts Basque 3N3 inverse.",
+    "verified": "page-image"
   },
   {
     "id": "br2009_10",
@@ -153,7 +400,8 @@
       ["probe", "flat [u-3]"],
       ["agreement", "object and subject independent"]
     ],
-    "comment": "A flat probe is fully checked by any IA: no person-hierarchy interaction, every context inverse."
+    "comment": "A flat probe is fully checked by any IA: no person-hierarchy interaction, every context inverse.",
+    "verified": "page-image"
   },
   {
     "id": "br2009_17a",
@@ -173,7 +421,8 @@
       ["controller", "2"],
       ["context", "inverse"]
     ],
-    "comment": "Nishnaabemwin (Odawa/Eastern Ojibwe): 2nd person is most specified ([u-3-1-2]), so the 2nd-person IA wins."
+    "comment": "Nishnaabemwin (Odawa/Eastern Ojibwe): 2nd person is most specified ([u-3-1-2]), so the 2nd-person IA wins.",
+    "verified": "page-image"
   },
   {
     "id": "br2009_17b",
@@ -193,7 +442,8 @@
       ["controller", "2"],
       ["context", "direct"]
     ],
-    "comment": "The 1st-person IA leaves the [u2] segment, checked by the 2nd-person EA on cycle II."
+    "comment": "The 1st-person IA leaves the [u2] segment, checked by the 2nd-person EA on cycle II.",
+    "verified": "page-image"
   },
   {
     "id": "br2009_17c",
@@ -213,7 +463,8 @@
       ["controller", "1"],
       ["context", "inverse"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "br2009_17d",
@@ -233,7 +484,8 @@
       ["controller", "2"],
       ["context", "inverse"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "br2009_18a",
@@ -253,7 +505,8 @@
       ["controller", "1"],
       ["morphology", "first-cycle m-"]
     ],
-    "comment": "1sg spelled m- when the probe is valued on cycle I (IA controls)."
+    "comment": "1sg spelled m- when the probe is valued on cycle I (IA controls).",
+    "verified": "page-image"
   },
   {
     "id": "br2009_18b",
@@ -273,16 +526,17 @@
       ["controller", "1"],
       ["morphology", "second-cycle v-"]
     ],
-    "comment": "Same 1sg value spelled v- when valued on cycle II — a second-cycle effect."
+    "comment": "Same 1sg value spelled v- when valued on cycle II — a second-cycle effect.",
+    "verified": "page-image"
   },
   {
     "id": "br2009_29a",
     "source": {"bibkey": "bejar-rezac-2009", "paperLabel": "(29a)"},
     "language": "kash1277",
-    "primaryText": "bé chusath tsé paréna:va:n",
+    "primaryText": "bɨ chusath tsɨ parɨna:va:n",
     "glossedTokens": [
-      ["bé", "I.N"], ["chu-s-ath", "be.M.SG-1.SG.N-2.SG.E/A"], ["tsé", "you.N"],
-      ["paréna:va:n", "teaching"]
+      ["bɨ", "I.N"], ["chu-s-ath", "be.M.SG-1.SG.N-2.SG.E/A"], ["tsɨ", "you.N"],
+      ["parɨna:va:n", "teaching"]
     ],
     "translation": "I am teaching you.",
     "context": "",
@@ -291,18 +545,18 @@
     "paperFeatures": [
       ["ea", "1"],
       ["ia", "2"],
-      ["context", "direct"],
-      ["IA case", "unmarked"]
+      ["context", "direct"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "br2009_29b",
     "source": {"bibkey": "bejar-rezac-2009", "paperLabel": "(29b)"},
     "language": "kash1277",
-    "primaryText": "tsé chukh me paréna:va:n",
+    "primaryText": "tsɨ chukh me parɨna:va:n",
     "glossedTokens": [
-      ["tsé", "you.N"], ["chu-kh", "be.M.SG-2.SG.N"], ["me", "me.D"], ["paréna:va:n", "teaching"]
+      ["tsɨ", "you.N"], ["chu-kh", "be.M.SG-2.SG.N"], ["me", "me.D"], ["parɨna:va:n", "teaching"]
     ],
     "translation": "You are teaching me.",
     "context": "",
@@ -312,18 +566,43 @@
       ["ea", "2"],
       ["ia", "1"],
       ["context", "inverse"],
-      ["IA case", "R-Case (dative form)"]
+      ["repair", "R-Case"]
     ],
-    "comment": "The inverse-context IA takes the special R-Case; the sole agreement slot tracks the EA."
+    "comment": "The inverse-context IA takes the special R-Case; the sole agreement slot tracks the EA.",
+    "verified": "page-image"
+  },
+  {
+    "id": "br2009_30a",
+    "source": {"bibkey": "bejar-rezac-2009", "paperLabel": "(30a)"},
+    "language": "kash1277",
+    "primaryText": "su kari-y tse me hava:lɨ",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["su", "he.N"], ["kari-y", "do.FUT-2.SG.D"], ["tse", "you.D"], ["me", "me.D"],
+      ["hava:lɨ", "handover"]
+    ],
+    "translation": "He will hand you over to me.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ea", "3"],
+      ["ia", "2"],
+      ["context", "inverse"],
+      ["repair", "R-Case"]
+    ],
+    "comment": "The IA tse bears R-Case beside the inherent dative me.",
+    "verified": "page-image"
   },
   {
     "id": "br2009_30b",
     "source": {"bibkey": "bejar-rezac-2009", "paperLabel": "(30b)"},
     "language": "kash1277",
-    "primaryText": "tsé yikh me hava:lé karné tUm'séndi dUs'",
+    "primaryText": "tsɨ yikh me hava:lɨ karnɨ təm'sɨndi dəs'",
     "glossedTokens": [
-      ["tsé", "you.N"], ["yi-kh", "come.FUT-2.SG.N"], ["me", "me.D"], ["hava:lé", "handover"],
-      ["karné", "do.INF.ABL"], ["tUm'séndi", "he.GEN"], ["dUs'", "by"]
+      ["tsɨ", "you.N"], ["yi-kh", "come.FUT-2.SG.N"], ["me", "me.D"], ["hava:lɨ", "handover"],
+      ["karnɨ", "do.INF.ABL"], ["təm'sɨndi", "he.GEN"], ["dəs'", "by"]
     ],
     "translation": "You will be handed over to me by him.",
     "context": "",
@@ -333,6 +612,30 @@
       ["diagnostic", "passivization"],
       ["result", "R-Case disappears"]
     ],
-    "comment": "R-Case vanishes under passivization, unlike the inherent dative (30a) — it is structural, tied to the inverse configuration."
+    "comment": "Under passivization the inverse context is gone and so is the R-Case, unlike the inherent dative of (28).",
+    "verified": "page-image"
+  },
+  {
+    "id": "br2009_31a",
+    "source": {"bibkey": "bejar-rezac-2009", "paperLabel": "(31a)"},
+    "language": "kash1277",
+    "primaryText": "tsɨ vuch-a-kh me",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["tsɨ", "you.N"], ["vuch-a-kh", "see-2.SG-2.SG.N"], ["me", "me.D"]
+    ],
+    "translation": "You will see me.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["ea", "2"],
+      ["ia", "1"],
+      ["context", "inverse"],
+      ["repair", "R-Case"]
+    ],
+    "comment": "Present tense: the EA has structural Case, so the context is inverse and the IA bears R-Case.",
+    "verified": "page-image"
   }
 ]
