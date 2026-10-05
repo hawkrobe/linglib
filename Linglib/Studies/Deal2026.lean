@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Fragments.Adyghe.Clause
-public import Linglib.Fragments.Bulgarian.Clause
+public import Linglib.Fragments.Slavic.Bulgarian.Clause
 public import Linglib.Fragments.Ndebele.Clause
 public import Linglib.Fragments.NezPerce.Clause
 public import Linglib.Data.Examples.Deal2026
@@ -17,26 +17,36 @@ public import Linglib.Semantics.Attitudes.Verb
 /-!
 # Deal (2026): Clausal complementation as relativization, revisited
 
-This file formalizes the typology of notional complement clauses of [deal-2026]. The relative
-embeddings of Nez Perce, the complements whose edge obligatorily carries the relative pronoun
-*yox̂* and the complementizer *ke*, are CPs containing an Ā-dependency launched above TP, not
-DPs or PPs, so clausal complementation is not uniformly relativization ([kayne-2008],
-[kayne-2014], [arsenijevic-2009]). Table (79) places each construction by its extended spine,
-the heads projected from V up through any nominal or adpositional shell over C, and by whether
-the CP contains an Ā-dependency, and every cell of the table is filled: the internal syntax of
-a clause does not predict its external syntax. Factivity cross-cuts the Ā axis as well, table
-(80): within Nez Perce every relative embedding is factive but *cuukwe* 'know' is factive and
-simplex, and Adyghe uses the relative strategy for every tensed notional complement, factive
-or not. The Nez Perce embedding strategy is read off the paper's judgments, the rows of
-`Data/Examples/Deal2026.json`: a predicate embeds relatively when a grammatical notional
-complement of it carries the *yox̂ ke* edge (`RelativeEmbedding`). Every relative embedding
-is factive (`relative_factive`), factivity being the Fragment entries' [karttunen-1971b] class,
-which the projection trials (33)–(36) and (68) confirm row by row (`projection_rows`). The
-Adyghe Ā flag is that 'think' takes the Fragment's *ze-re-* typer, the Bulgarian one is
-[krapova-2010]'s double requirement over the Fragment's frames (`DetoComplement`), checked
-against her sentences (56)–(59) as rows of `Data/Examples/Krapova2010.json`, the shells
-come from the spines, and the case half of the diagnostic (21) that *yox̂* is a D from the
-Fragment's relative-pronoun paradigm.
+Deal types notional complement clauses by their internal and external syntax. The relative
+embeddings of Nez Perce, whose edge obligatorily carries the relative pronoun *yox̂* and the
+complementizer *ke*, are CPs containing an Ā-dependency launched above TP, not DPs or PPs, so
+clausal complementation is not uniformly relativization, against Kayne and Arsenijević. Table
+(79) places each construction by its extended spine, the heads projected from V up through any
+nominal or adpositional shell over C, and by whether the CP contains an Ā-dependency. Every cell
+is filled, so the internal syntax of a clause does not predict its external syntax, and
+factivity cross-cuts the Ā axis as well (table (80)).
+
+The Nez Perce embedding strategy is read off the paper's judgments in
+`Data/Examples/Deal2026.json`. The Adyghe Ā flag is that 'think' takes the Fragment's *ze-re-*
+typer, and the Bulgarian flag is Krapova's double requirement over the Fragment's frames, checked
+against her sentences (56)–(59) in `Data/Examples/Krapova2010.json`.
+
+## Main definitions
+
+* `RelativeEmbedding`: a predicate embeds relatively when a grammatical notional complement of
+  it carries the *yox̂ ke* edge.
+* `DetoComplement`: Krapova's double requirement on the predicates whose complement *deto*
+  introduces.
+* `Cell`, `rows`: the cells of table (79), each a spine with an Ā flag.
+
+## Main results
+
+* `relative_factive`, `projection_rows`: every relative embedding is factive, factivity being
+  the Fragment entries' Karttunen class, which the projection trials (33)–(36) and (68) confirm
+  row by row.
+* `table79`, `table80`: every cell of the two tables is filled.
+* `detoComplement_iff`, `deto_rows`: the double requirement picks out Krapova's *deto*-takers.
+* `paradigm_case_discriminates`: the case half of the diagnostic (21) that *yox̂* is a D.
 
 ## Implementation notes
 
@@ -143,15 +153,15 @@ def nezPerce (v : NezPerce.Verb) : Cell := ⟨ClauseSpine.cP, strategy v == .rel
 /-- English simplex V complementation, *think*, is a bare CP without an Ā-dependency. -/
 def englishThink : Cell := ⟨ClauseSpine.cP, false⟩
 
-/-- The Adyghe relative embedding of (43), V D N CP with an Ā-dependency, the flag from the
-Fragment: 'think' takes the relativizer *ze-* with the applicative *re-* on its tensed
+/-- The Adyghe relative embedding of (43) is V D N CP with an Ā-dependency. Its flag comes from
+the Fragment, where 'think' takes the relativizer *ze-* with the applicative *re-* on its tensed
 complement ([caponigro-polinsky-2011]). -/
 def adygheRelative : Cell :=
   ⟨ClauseSpine.cP.append [.N, .D], decide (Adyghe.gwepshesa.toVerb.Takes Adyghe.zeRe)⟩
 
-/-- [krapova-2010]'s double requirement, reported at footnote 22: *deto* introduces the
-complement of a predicate that is an emotive factive, a factive preferential attitude, and
-takes a *za* phrase. -/
+/-- By Krapova's double requirement, reported at footnote 22, *deto* introduces the complement
+of a predicate that is an emotive factive, a factive preferential attitude, and takes a *za*
+phrase. -/
 def DetoComplement (v : Bulgarian.Verb) : Prop :=
   v.toVerb.IsPreferential ∧ v.toVerb.IsFactive ∧
     ∃ fr ∈ v.frames, fr.HasAdpositional
@@ -185,7 +195,7 @@ theorem zaPhrase_rows :
           ∀ a ∈ row.alternatives, a.2 = .ungrammatical := by
   decide
 
-/-- Krapova's factivity tests (57a–b): the complement survives negation and a question exactly
+/-- In Krapova's factivity tests (57a–b) the complement survives negation and a question exactly
 for the factive predicates. -/
 theorem krapova_projection_rows :
     ∀ row ∈ Krapova2010.Examples.all, ∀ _ ∈ row.environment?,
@@ -193,8 +203,8 @@ theorem krapova_projection_rows :
         (row.projective? = some true ↔ v.toVerb.IsFactive) := by
   decide
 
-/-- Krapova's contradiction tests (57c) and footnote 46: a continuation denying the complement
-is unacceptable exactly under a factive predicate, under *deto* and *če* alike. -/
+/-- In Krapova's contradiction tests (57c) and footnote 46, a continuation denying the
+complement is unacceptable exactly under a factive predicate, under *deto* and *če* alike. -/
 theorem krapova_contradiction_rows :
     ∀ row ∈ Krapova2010.Examples.all, row.feature? "diagnostic" = some "contradiction" →
       ∀ v ∈ Bulgarian.verbs, row.feature? "verb" = some v.form →
@@ -205,17 +215,17 @@ theorem krapova_contradiction_rows :
 shell with an N co-argument of [hankamer-mikkelsen-2021]. -/
 def englishNComplementation : Cell := ⟨ClauseSpine.cP.append [.N, .D], false⟩
 
-/-- The Bulgarian relative embedding of (49), V P D CP with an Ā-dependency, the flag from the
-Fragment: *săžaljavam* 'regret' meets the double requirement, so it takes the *deto*
-complement [krapova-2010] analyzes as a hidden relative. -/
+/-- The Bulgarian relative embedding of (49) is V P D CP with an Ā-dependency. Its flag comes
+from the Fragment, where *săžaljavam* 'regret' meets the double requirement and so takes the
+*deto* complement Krapova analyzes as a hidden relative. -/
 def bulgarianRelative : Cell :=
   ⟨ClauseSpine.cP.append [.D, .P], decide (DetoComplement Bulgarian.sazhaljavam)⟩
 
-/-- The Ndebele embedding of (78), V P D CP without an Ā-dependency: the preposition *nga*
-'about' over the class-15 augment [pietraszko-2019] takes as a D over *kuthi*. -/
+/-- The Ndebele embedding of (78) is V P D CP without an Ā-dependency. The preposition *nga*
+'about' sits over the class-15 augment, which [pietraszko-2019] takes as a D over *kuthi*. -/
 def ndebeleEmbedding : Cell := ⟨ClauseSpine.cP.append [.D, .P], false⟩
 
-/-- The Washo factive of footnote 33, V D CP without an Ā-dependency or an N: a silent D over
+/-- The Washo factive of footnote 33 is V D CP without an Ā-dependency or an N, a silent D over
 the nominalized clause ([hanink-bochnak-2017], [bochnak-hanink-2021]), whose index binds without
 movement ([hanink-2021]). -/
 def washoFactive : Cell := ⟨BochnakHanink2021.complementSpine, false⟩
