@@ -17,7 +17,9 @@ operator on the members of `H` true at `w`:
 - `weakAnswer H w`, their intersection, the weakly exhaustive answer of
   [heim-1994] (Ans₁) and [beck-rullmann-1999];
 - `strongAnswer H w`, the worlds deciding every member as `w` does, the
-  strongly exhaustive answer of [groenendijk-stokhof-1984] and Heim's Ans₂;
+  strongly exhaustive answer of [groenendijk-stokhof-1984], and on a Hamblin
+  set also Heim's Ans₂, since the weak answer determines the true members
+  (`ker_weakAnswer`);
 - `partition H`, the Groenendijk–Stokhof partition as a `Setoid`, the kernel of
   `trueAnswers H`: its cells are the strong answers (`strongAnswer_eq_cell`), and as an
   inquisitive question it is the meet of the members' polar questions
@@ -111,7 +113,8 @@ theorem strongAnswer_subset_weakAnswer : strongAnswer H w ⊆ weakAnswer H w :=
 @[simp] theorem self_mem_strongAnswer : w ∈ strongAnswer H w := fun _ _ => Iff.rfl
 
 /-- In the partition of [groenendijk-stokhof-1984], two worlds are equivalent when they have the
-same true members, [heim-1994]'s reduction of the strong answer to the Karttunen set. -/
+same true members: the kernel of the Karttunen denotation, whose cell [heim-1994]'s generalized
+analysis has the agent believe. -/
 def partition : Setoid W := Setoid.ker (trueAnswers H)
 
 variable {H} in
@@ -122,6 +125,22 @@ theorem partition_iff {v w : W} : partition H v w ↔ ∀ p ∈ H, (v ∈ p ↔ 
 theorem partition_eq_iInf : partition H = ⨅ p ∈ H, Setoid.polar p := by
   ext v w
   simp only [partition_iff, Setoid.iInf_iff, Setoid.polar_iff]
+
+/-- The weak answer determines the true members: a world lies in each one's weak answer and
+each one's weak answer lies in all of its true members, so [heim-1994]'s Ans₂ on a Hamblin
+set, the proposition that the weak answer is what it is, is the cell of the partition. -/
+theorem ker_weakAnswer : Setoid.ker (weakAnswer H) = partition H := by
+  ext v w
+  rw [Setoid.ker_def, partition_iff]
+  constructor
+  · intro h p hp
+    have hw : w ∈ weakAnswer H v := h ▸ self_mem_weakAnswer H w
+    have hv : v ∈ weakAnswer H w := h ▸ self_mem_weakAnswer H v
+    exact ⟨fun hvp ↦ weakAnswer_subset H v hp hvp hw, fun hwp ↦ weakAnswer_subset H w hp hwp hv⟩
+  · intro h
+    ext u
+    simp only [mem_weakAnswer]
+    exact ⟨fun hu p hp hw ↦ hu p hp ((h p hp).2 hw), fun hu p hp hv ↦ hu p hp ((h p hp).1 hv)⟩
 
 /-- The strong answer at `w` is the cell of `w`. -/
 theorem strongAnswer_eq_cell : strongAnswer H w = (partition H).cell w := by
