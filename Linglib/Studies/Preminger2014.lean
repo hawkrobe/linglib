@@ -68,10 +68,13 @@ def numProbe : Probe Bundle := Probe.Target.plural.toProbe
 the competition for the single slot (71) run as a cascade over the subject's and object's cells. -/
 def afTarget (subj obj : Bundle) : Option Bundle := Probe.cascade [piProbe, numProbe] [subj, obj]
 
-/-- The Person Licensing Condition on the clause's two core arguments. -/
-def Plc (subj obj : Bundle) : Prop := PLC id [subj, obj]
+/-- The Person Licensing Condition holds of the clause's two core arguments when the person
+probe's search licenses each argument bearing [participant]. -/
+def Plc (subj obj : Bundle) : Prop :=
+  piProbe.AllLicensed (·.visibleTo .participant) [subj, obj]
 
-instance (subj obj : Bundle) : Decidable (Plc subj obj) := inferInstanceAs (Decidable (PLC _ _))
+instance (subj obj : Bundle) : Decidable (Plc subj obj) :=
+  inferInstanceAs (Decidable (Probe.AllLicensed _ _ _))
 
 /-- The absolutive exponent of a cell, empty where the paradigm has none. -/
 def exponent (c : Bundle) : List Morphology.Morph := (setBExponent.realize c).getD []
@@ -141,7 +144,7 @@ theorem afMarker_comm :
 /-- The person restriction is the Person Licensing Condition on the clause's two core
 arguments (76), since a single person probe licenses at most one [participant] feature. -/
 theorem personRestriction_iff_plc (s o : Bundle) : PersonRestriction s o ↔ Plc s o := by
-  unfold PersonRestriction Plc PLC
+  unfold PersonRestriction Plc piProbe Probe.Target.toProbe
   rw [Probe.relativized_allLicensed_iff]
   cases hs : s.visibleTo .participant <;> cases ho : o.visibleTo .participant <;>
     simp [Bundle.IsParticipant, hs, ho]
@@ -200,11 +203,8 @@ of [bejar-rezac-2003] is absorbed by a Case-licensed third-person dative above a
 PCC, whereas the Kichean probe, relativized to [participant], skips the third-person argument and
 licenses the participant below it. -/
 theorem relativization_contrast :
-    ¬ BejarRezac2003.PLCOk
-        [[BejarRezac2003.dat (.personNumber .third .singular),
-          PhiGoal.unvalued (.personNumber .first .singular)]]
-        [BejarRezac2003.dat (.personNumber .third .singular),
-         PhiGoal.unvalued (.personNumber .first .singular)] ∧
+    ¬ BejarRezac2003.PLC (BejarRezac2003.v.derive
+        [.dat (.personNumber .third .singular), .caseless (.personNumber .first .singular)]) ∧
       Plc (.personNumber .third .singular) (.personNumber .first .singular) := by
   decide
 

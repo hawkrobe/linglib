@@ -9,7 +9,7 @@ public import Linglib.Data.Examples.CoonKeine2021
 /-!
 # Coon and Keine 2021: feature gluttony
 
-[coon-keine-2021] argue that hierarchy effects, the Person Case Constraint on clitic clusters,
+Coon and Keine argue that hierarchy effects, the Person Case Constraint on clitic clusters,
 the person restriction on Icelandic dative-nominative agreement and the person and number
 restrictions on German assumed-identity copulas, come not from failed Agree but from too much
 of it. A probe is a hierarchy of segments, each of which agrees on its own with the closest
@@ -57,7 +57,7 @@ no configuration and enter no theorem.
 
 ## References
 
-* [J. Coon and S. Keine, *Feature Gluttony* (2021)][coon-keine-2021]
+* [coon-keine-2021]
 * [S. Béjar and M. Rezac, *Cyclic Agree* (2009)][bejar-rezac-2009]
 * [H. Harley and E. Ritter, *Person and number in pronouns: A feature-geometric analysis*
   (2002)][harley-ritter-2002]
@@ -90,8 +90,8 @@ open Minimalist Minimalist.CyclicAgree Morphology.Exponence
 
 /-! ### Goals and their visible geometries -/
 
-/-- A goal DP, with the K(ase) shell that encapsulates a dative so that only its person node is
-visible from outside (§3.4.1: Basque and Icelandic datives). -/
+/-- A goal DP may sit in the K(ase) shell that encapsulates a dative, so that only its person node
+is visible from outside, as with Basque and Icelandic datives (§3.4.1). -/
 structure Goal where
   /-- The DP's person. -/
   person : Person
@@ -130,11 +130,11 @@ theorem pi_mem_personSegments (g : Goal) : Segment.pi ∈ g.personSegments := by
   unfold Goal.personSegments
   split <;> [exact .head _; exact pi_mem_personSpec _ _]
 
-/-- The goal as a φ-goal of [bejar-rezac-2003]: an encapsulated dative has its Case valued by
-its own head, a transparent goal has unvalued Case. -/
-def Goal.toPhiGoal (g : Goal) : PhiGoal :=
+/-- A goal read as a nominal of [bejar-rezac-2003] has its Case valued and its person licensed by
+its own head when it is an encapsulated dative, and neither when it is transparent. -/
+def Goal.toNominal (g : Goal) : BejarRezac2003.Nominal :=
   let cell := Agreement.Bundle.personNumber g.person (if g.plural then .plural else .singular)
-  if g.encapsulated then .valued .dat cell else .unvalued cell
+  if g.encapsulated then .dat cell else .caseless cell
 
 /-! ### Segment-based Agree and gluttony (14)–(16) -/
 
@@ -142,7 +142,7 @@ section Agree
 
 variable {σ : Type*} [DecidableEq σ]
 
-/-- A probe segment as a relativized probe over position-indexed goals: it sees the goals
+/-- A probe segment is the relativized probe over position-indexed goals that sees the goals
 whose geometry bears it. -/
 def segmentProbe (geo : Goal → List σ) (s : σ) : Probe (Goal × ℕ) :=
   .relativized λ t => decide (s ∈ geo t.1)
@@ -190,8 +190,8 @@ theorem segmentAgree_pair_eq_lower_iff {hi lo : Goal} :
     segmentAgree geo s [hi, lo] = some (lo, 1) ↔ s ∉ geo hi ∧ s ∈ geo lo := by
   rw [segmentAgree_pair]; split_ifs <;> simp_all
 
-/-- Gluttony over two goals is an inverse configuration: some segment finds the higher goal,
-and some segment the higher goal lacks finds the lower. -/
+/-- Gluttony over two goals is an inverse configuration, in which some segment finds the higher
+goal and some segment the higher goal lacks finds the lower. -/
 theorem gluttonous_pair_iff {hi lo : Goal} :
     Gluttonous geo P [hi, lo] ↔
       (∃ s ∈ P, s ∈ geo hi) ∧ ∃ s ∈ P, s ∉ geo hi ∧ s ∈ geo lo := by
@@ -213,13 +213,13 @@ theorem gluttonous_pair_iff {hi lo : Goal} :
       (lo, 1), mem_agreed.2 ⟨by simp, s', hs', segmentAgree_pair_eq_lower_iff.2 ⟨hs'h, hs'l⟩⟩,
       by simp⟩
 
-/-- Gluttony arises only in inverse configurations: when the lower goal bears no segment the
+/-- Gluttony arises only in inverse configurations, so when the lower goal bears no segment the
 higher lacks, no probe gluttons over them. -/
 theorem not_gluttonous_of_subset {hi lo : Goal} (h : geo lo ⊆ geo hi) :
     ¬ Gluttonous geo P [hi, lo] :=
   λ hg => let ⟨_, _, _, hsh, hsl⟩ := gluttonous_pair_iff.1 hg; hsh (h hsl)
 
-/-- A probe over at most one goal never gluttons: the repairs of §3.5 and the multiply
+/-- A probe over at most one goal never gluttons, as in the repairs of §3.5 and with the multiply
 agreed-with DP of (86). -/
 theorem not_gluttonous_of_length_le_one (h : goals.length ≤ 1) : ¬ Gluttonous geo P goals := by
   rintro ⟨t, ht, u, hu, hne⟩
@@ -237,8 +237,8 @@ theorem not_gluttonous_singleton : ¬ Gluttonous geo [s] goals := by
 
 end Agree
 
-/-- Gluttony over a higher goal transfers to a bare 3rd person one: whichever segment reached
-the lower goal past the higher reaches it past a lone person node. -/
+/-- Gluttony over a higher goal transfers to a bare 3rd person one, since whichever segment
+reached the lower goal past the higher reaches it past a lone person node. -/
 theorem gluttonous_third_of_gluttonous {P : Probe.Articulation} {hi lo : Goal}
     (hpi : Segment.pi ∈ P) (h : Gluttonous Goal.personSegments P [hi, lo]) :
     Gluttonous Goal.personSegments P [dp .third, lo] := by
@@ -282,8 +282,7 @@ theorem weak_pcc : ∀ io ∈ persons, ∀ do_ ∈ persons,
     PCCViolation weakProbe false io do_ ↔ io = .third ∧ do_ ≠ .third := by
   decide
 
-/-- The Strong PCC through datives that expose their person node alone (§3.4.1):
-*1/2/3 > 1/2. -/
+/-- Datives that expose their person node alone yield the Strong PCC, *1/2/3 > 1/2 (§3.4.1). -/
 theorem strong_pcc : ∀ io ∈ persons, ∀ do_ ∈ persons,
     PCCViolation weakProbe true io do_ ↔ do_ ≠ .third := by
   decide
@@ -306,7 +305,7 @@ theorem branching_pcc : ∀ io ∈ persons, ∀ do_ ∈ persons,
     PCCViolation branchingProbe false io do_ ↔ do_ ≠ .third ∧ io ≠ do_ := by
   decide
 
-/-- No probe bans a direct or balanced configuration (§3.4.2): a 3rd person direct object
+/-- No probe bans a direct or balanced configuration (§3.4.2), since a 3rd person direct object
 exposes nothing the indirect object lacks. -/
 theorem direct_never_banned (P : Probe.Articulation) (b : Bool) (io : Person) :
     ¬ PCCViolation P b io .third :=
@@ -315,7 +314,7 @@ theorem direct_never_banned (P : Probe.Articulation) (b : Bool) (io : Person) :
     exact hs ▸ pi_mem_personSegments _
 
 /-- A probe rooted in [uPERS] that bans a cluster bans its direct object under a 3rd person
-indirect object (§3.4.2): a ban on [PART] > [PART] entails the ban on 3 > [PART]. -/
+indirect object (§3.4.2), so a ban on [PART] > [PART] entails the ban on 3 > [PART]. -/
 theorem pccViolation_third_of_pccViolation {P : Probe.Articulation} (hpi : Segment.pi ∈ P)
     {b : Bool} {io do_ : Person} (h : PCCViolation P b io do_) :
     PCCViolation P false .third do_ :=
@@ -344,7 +343,7 @@ theorem ultrastrong_typology :
       ¬ IsLicit ultraStrongGrammar .second .second := by
   decide
 
-/-- The Me-First probe against the typology: every cell but 1 > 1, which table 1 bans and the
+/-- The Me-First probe matches the typology in every cell but 1 > 1, which table 1 bans and the
 probe, whose [uSPKR] the indirect object matches, permits. -/
 theorem meFirst_typology :
     (∀ io ∈ persons, ∀ do_ ∈ persons, (io, do_) ≠ (.first, .first) →
@@ -367,14 +366,14 @@ theorem reverse_pcc :
 
 /-! ### Against licensing (§2.3) -/
 
-/-- The Person Licensing Condition of [preminger-2011], (9): the condition of
-[bejar-rezac-2003], (6), restricted to clauses with a person probe. -/
-def RevisedPLC (cycles : List (List PhiGoal)) (args : List PhiGoal) : Prop :=
-  cycles ≠ [] → BejarRezac2003.PLCOk cycles args
+/-- The Person Licensing Condition of [preminger-2011], (9), is the condition of
+[bejar-rezac-2003] restricted to clauses with a φ-probing head `F?`. -/
+def RevisedPLC (F? : Option BejarRezac2003.Head) (ns : List BejarRezac2003.Nominal) : Prop :=
+  ∀ F ∈ F?, BejarRezac2003.PLC (F.derive ns)
 
-instance (cycles : List (List PhiGoal)) (args : List PhiGoal) :
-    Decidable (RevisedPLC cycles args) :=
-  inferInstanceAs (Decidable (_ → _))
+instance (F? : Option BejarRezac2003.Head) (ns : List BejarRezac2003.Nominal) :
+    Decidable (RevisedPLC F? ns) := by
+  unfold RevisedPLC; infer_instance
 
 /-- Basque (10) is the paper's argument against the original condition. The 3DAT > 1ABS cluster is
 gluttonous in a finite clause and has no probe to glutton in a nonfinite one, whereas the original
@@ -383,25 +382,24 @@ the probeless clause. -/
 theorem nonfinite_obviation :
     PCCViolation weakProbe true .third .first ∧
     ¬ Gluttonous Goal.personSegments [] [dat .third, dp .first] ∧
-    ¬ BejarRezac2003.PLCOk [[dat .third, dp .first].map Goal.toPhiGoal]
-        [(dp .first).toPhiGoal] ∧
-    ¬ BejarRezac2003.PLCOk [] [(dp .first).toPhiGoal] ∧
-    RevisedPLC [] [(dp .first).toPhiGoal] := by
+    ¬ BejarRezac2003.PLC (BejarRezac2003.v.derive ([dat .third, dp .first].map Goal.toNominal)) ∧
+    ¬ BejarRezac2003.PLC [(dp .first).toNominal] ∧
+    RevisedPLC none [(dp .first).toNominal] := by
   decide
 
 /-! ### Number and clitic doubling (§3.4.3, §4.1.3) -/
 
-/-- The articulated number probe [uNUM [uPL]] of (23) and (55), paired with a person probe:
-the probe-specification hierarchy (40) makes a number probe entail a person one. -/
+/-- The articulated number probe [uNUM [uPL]] of (23) and (55) comes paired with a person probe,
+since the probe-specification hierarchy (40) makes a number probe entail a person one. -/
 def numberProbe (P : Probe.Articulation) : List NumberSegment :=
   if P = [] then [] else [.num, .pl]
 
-/-- Clitic doubling removes the doubled DP from later probing (§3.2): what the number probe
-sees after the person probe. -/
+/-- Clitic doubling removes the doubled DP from later probing (§3.2), which fixes what the number
+probe sees after the person probe. -/
 def afterDoubling (P : Probe.Articulation) (goals : List Goal) : List Goal :=
   (goals.zipIdx.filter (· ∉ agreed Goal.personSegments P goals)).map (·.1)
 
-/-- There is no Number Case Constraint ((40)–(42)): over two clitic-doubled objects the person
+/-- There is no Number Case Constraint ((40)–(42)). Over two clitic-doubled objects the person
 probe, rooted in [uPERS], doubles the higher one, so the number probe sees one goal. -/
 theorem no_number_case_constraint {P : Probe.Articulation} (hpi : Segment.pi ∈ P)
     {goals : List Goal} (h : goals.length ≤ 2) :
@@ -423,8 +421,8 @@ theorem three_goal_number :
       (afterDoubling weakProbe [dp .third, dp .third, dpPl .third]) := by
   decide
 
-/-- German copulas double nothing, so the number probe sees both nominatives (67): gluttony in
-SG > PL (64) but not in PL > SG. -/
+/-- German copulas double nothing, so the number probe sees both nominatives (67), with gluttony
+in SG > PL (64) but not in PL > SG. -/
 theorem copula_number :
     Gluttonous Goal.numberSegments (numberProbe weakProbe) [dp .third, dpPl .third] ∧
     ¬ Gluttonous Goal.numberSegments (numberProbe weakProbe) [dpPl .third, dp .third] := by
@@ -470,7 +468,7 @@ def realization (vocab : List (VI σ)) (vals : List (List σ)) : Option String :
 
 end Vocabulary
 
-/-- The paradigms the paper realizes gluttonous probes in, each holding the forms it glosses:
+/-- The paper realizes gluttonous probes in these paradigms, each holding the forms it glosses,
 the Icelandic past mediopassive (81), *líka* and *þykja* of (76b) and (78), the German present
 and past copula ((51), (52), fn. 32), the Hindi-Urdu present and past copula ((68), (69),
 fn. 34) and the Brazilian Portuguese copula (70). -/
@@ -547,7 +545,7 @@ instance (a : Aftermath) (P : Probe.Articulation) (goals : List Goal) :
     Decidable (a.Converges P goals) := by
   cases a <;> simp only [Aftermath.Converges] <;> infer_instance
 
-/-- Icelandic dative-nominative agreement (76)–(85) in the past mediopassive: a 1st person
+/-- In Icelandic dative-nominative agreement (76)–(85) in the past mediopassive, a 1st person
 plural nominative crashes on *-ust* against *-umst* (83), a 2nd person plural one converges on
 *-ust* (85), and in the singular, where every cell is *-ist*, the restriction is lifted. -/
 theorem icelandic_syncretism :
