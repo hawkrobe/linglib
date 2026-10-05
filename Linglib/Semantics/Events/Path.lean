@@ -1,7 +1,10 @@
 module
 
 public import Mathlib.Data.List.Infix
+public import Mathlib.Order.Fin.Basic
 public import Mathlib.Order.Interval.Finset.Fin
+public import Mathlib.Order.Interval.Set.OrdConnected
+public import Mathlib.Order.UpperLower.Basic
 public import Mathlib.Tactic.DeriveFintype
 
 /-!
@@ -13,30 +16,36 @@ subpath order, and Krifka's adjacency of paths that share an endpoint. Zwarts's 
 continuous curves, mathlib's topological `_root_.Path`, but he allows sequences of places as
 compatible with the algebra, and they keep every operation computable.
 
-Relative to a region, the points of a path fall into runs inside and outside it, and Pantcheva
-classifies paths by those runs: a cofinal path (*to*) runs outside then inside, a coinitial one
-(*from*) the reverse, a transitive one (*past*) outside, inside and outside again. A delimited
-path keeps one point of its inside run (*up to*, *starting from*) and a non-transitional one
-none of its transition (*towards*, *away from*, *along*). Pantcheva builds these from the heads
-Place, Goal, Source and Route, each containing the last, and a source path is a reversed goal
-path.
+Pantcheva classifies paths by where they are inside a region. On any path parametrized by a
+bounded linear order of positions, a sequence of places or a curve, the positions inside the
+region form a set, and its order-theoretic shape is the path's: an upper set for a cofinal path
+(*to*), a lower set for a coinitial one (*from*), an interval missing both ends for a transitive
+one (*past*), the last position alone for a terminative one (*up to*). Reparametrizing keeps the
+shape and reversing the order reverses it, so a source path is a reversed goal path. An event
+domain's spatial trace sends each event to the path it traverses, as its temporal trace sends it
+to its run time.
 
 ## Main definitions
 
 * `Spatial.Path`: a directed trajectory, a source with later steps, ending at `Path.goal`.
 * `Spatial.Path.IsConcat`, `Subpath`, `adjacent`, `reverse`: the path algebra.
 * `Spatial.Path.Direction`: Place, Goal, Source and Route, in containment order.
+* `Spatial.Path.Shape`, `Shape.direction`, `Shape.transition`: the eight shapes.
 * `Spatial.Path.IsCofinal`, `IsCoinitial`, `IsTransitive`, `IsTerminative`, `IsEgressive`,
-  `IsProlative`, `IsApproximative`, `IsRecessive`: the shapes of a path relative to a region.
-* `Spatial.Path.Shape`, `Shape.direction`, `Shape.transition`, `HasShape`: the eight shapes.
+  `IsProlative`, `IsApproximative`, `IsRecessive`, `HasShape`: the shapes of a parametrized
+  path relative to a region.
+* `Spatial.Path.toFun`: a path's places indexed by their positions.
 * `Spatial.Localization`: interior, surface or exterior.
+* `Event.SpatialTrace`: the spatial trace of an event domain.
 
 ## Main results
 
 * `Spatial.Path.Direction.lt_iff_shells_ssubset`: the containment order is strict inclusion of
   head stacks.
 * `Spatial.Path.Shape.exists_direction_transition_iff`: a direction and a transition combine
-  into a shape exactly when the direction is a path and a route is not delimited.
+  into a shape exactly when the direction is not Place and a route is not delimited.
+* `Spatial.Path.hasShape_comp`, `hasShape_comp_ofDual`: reparametrizing keeps the shape, and
+  traversing the other way reverses it.
 * `Spatial.Path.hasShape_reverse`: reversing a path reverses its shape.
 * `Spatial.Path.IsCofinal.not_isCoinitial`: no path is both cofinal and coinitial.
 
@@ -215,132 +224,6 @@ def reverse (p : Path Loc) : Path Loc := ⟨p.goal, p.points.reverse.tail⟩
 @[simp] theorem reverse_reverse (p : Path Loc) : p.reverse.reverse = p :=
   points_injective (by simp)
 
-/-! ### Phases relative to a region
-
-The points of a path lie inside or outside a region, and the runs they form classify the path.
-A source shape is the reverse of the corresponding goal shape. -/
-
-section Phases
-
-variable {α : Type*} (R : Set Loc) (p : Path Loc)
-
-/-- A cofinal path lies outside `R` and then inside it, as a path *to* `R` does. -/
-def IsCofinal : Prop :=
-  ∃ l₁ l₂, p.points = l₁ ++ l₂ ∧ l₁ ≠ [] ∧ l₂ ≠ [] ∧ (∀ x ∈ l₁, x ∉ R) ∧ ∀ x ∈ l₂, x ∈ R
-
-/-- A coinitial path lies inside `R` and then outside it, the reverse of a cofinal path. -/
-def IsCoinitial : Prop := p.reverse.IsCofinal R
-
-/-- A transitive path lies outside `R`, inside it, and outside it again, as a path *past* `R`
-does. -/
-def IsTransitive : Prop :=
-  ∃ l₁ l₂ l₃, p.points = l₁ ++ l₂ ++ l₃ ∧ l₁ ≠ [] ∧ l₂ ≠ [] ∧ l₃ ≠ [] ∧
-    (∀ x ∈ l₁, x ∉ R) ∧ (∀ x ∈ l₂, x ∈ R) ∧ ∀ x ∈ l₃, x ∉ R
-
-/-- A terminative path lies outside `R` up to its goal, which is in `R`, as a path *up to* `R`
-does. -/
-def IsTerminative : Prop :=
-  ∃ l x, p.points = l ++ [x] ∧ l ≠ [] ∧ (∀ y ∈ l, y ∉ R) ∧ x ∈ R
-
-/-- An egressive path starts in `R` and lies outside it after its source, the reverse of a
-terminative path. -/
-def IsEgressive : Prop := p.reverse.IsTerminative R
-
-/-- A prolative path lies inside `R` throughout, as a path *along* `R` does. -/
-def IsProlative : Prop := ∀ x ∈ p.points, x ∈ R
-
-/-- An approximative path lies outside `R` and comes nearer to it at each point by the distance
-`d`, as a path *towards* `R` does. -/
-def IsApproximative [Preorder α] (d : Loc → α) : Prop :=
-  (∀ x ∈ p.points, x ∉ R) ∧ p.points.IsChain fun a b ↦ d b < d a
-
-/-- A recessive path is the reverse of an approximative one, as a path *away from* `R` is. -/
-def IsRecessive [Preorder α] (d : Loc → α) : Prop := p.reverse.IsApproximative R d
-
-variable {R p}
-
-@[simp] theorem isCoinitial_reverse : p.reverse.IsCoinitial R ↔ p.IsCofinal R := by
-  simp [IsCoinitial]
-
-@[simp] theorem isCofinal_reverse : p.reverse.IsCofinal R ↔ p.IsCoinitial R := Iff.rfl
-
-@[simp] theorem isEgressive_reverse : p.reverse.IsEgressive R ↔ p.IsTerminative R := by
-  simp [IsEgressive]
-
-@[simp] theorem isTerminative_reverse : p.reverse.IsTerminative R ↔ p.IsEgressive R := Iff.rfl
-
-@[simp] theorem isRecessive_reverse [Preorder α] {d : Loc → α} :
-    p.reverse.IsRecessive R d ↔ p.IsApproximative R d := by
-  simp [IsRecessive]
-
-@[simp] theorem isApproximative_reverse [Preorder α] {d : Loc → α} :
-    p.reverse.IsApproximative R d ↔ p.IsRecessive R d := Iff.rfl
-
-@[simp] theorem isProlative_reverse : p.reverse.IsProlative R ↔ p.IsProlative R := by
-  simp [IsProlative]
-
-theorem IsTransitive.reverse (h : p.IsTransitive R) : p.reverse.IsTransitive R := by
-  obtain ⟨l₁, l₂, l₃, hp, h₁, h₂, h₃, hR₁, hR₂, hR₃⟩ := h
-  exact ⟨l₃.reverse, l₂.reverse, l₁.reverse, by simp [hp], by simpa, by simpa, by simpa,
-    by simpa using hR₃, by simpa using hR₂, by simpa using hR₁⟩
-
-@[simp] theorem isTransitive_reverse : p.reverse.IsTransitive R ↔ p.IsTransitive R :=
-  ⟨fun h ↦ by simpa using h.reverse, IsTransitive.reverse⟩
-
-/-- A terminative path is cofinal. -/
-theorem IsTerminative.isCofinal (h : p.IsTerminative R) : p.IsCofinal R := by
-  obtain ⟨l, x, hp, hl, hR, hx⟩ := h
-  exact ⟨l, [x], hp, hl, by simp, hR, by simpa⟩
-
-/-- An egressive path is coinitial. -/
-theorem IsEgressive.isCoinitial (h : p.IsEgressive R) : p.IsCoinitial R :=
-  IsTerminative.isCofinal h
-
-private theorem head_mem_of_points_eq {l₁ l₂ : List Loc} (hp : p.points = l₁ ++ l₂)
-    (h : l₁ ≠ []) : p.source ∈ l₁ := by
-  obtain ⟨a, l, rfl⟩ := List.exists_cons_of_ne_nil h
-  have : p.source = a := by simpa [points] using congrArg List.head? hp
-  simp [this]
-
-private theorem goal_mem_of_points_eq {l₁ l₂ : List Loc} (hp : p.points = l₁ ++ l₂)
-    (h : l₂ ≠ []) : p.goal ∈ l₂ := by
-  have := head_mem_of_points_eq (p := p.reverse) (l₁ := l₂.reverse) (l₂ := l₁.reverse)
-    (by simp [hp]) (by simpa)
-  simpa using this
-
-theorem IsCofinal.source_not_mem (h : p.IsCofinal R) : p.source ∉ R := by
-  obtain ⟨l₁, l₂, hp, h₁, -, hR₁, -⟩ := h
-  exact hR₁ _ (head_mem_of_points_eq hp h₁)
-
-theorem IsCofinal.goal_mem (h : p.IsCofinal R) : p.goal ∈ R := by
-  obtain ⟨l₁, l₂, hp, -, h₂, -, hR₂⟩ := h
-  exact hR₂ _ (goal_mem_of_points_eq hp h₂)
-
-theorem IsCoinitial.source_mem (h : p.IsCoinitial R) : p.source ∈ R := by
-  simpa using IsCofinal.goal_mem h
-
-theorem IsCoinitial.goal_not_mem (h : p.IsCoinitial R) : p.goal ∉ R := by
-  simpa using IsCofinal.source_not_mem h
-
-theorem IsTransitive.source_not_mem (h : p.IsTransitive R) : p.source ∉ R := by
-  obtain ⟨l₁, l₂, l₃, hp, h₁, -, -, hR₁, -⟩ := h
-  exact hR₁ _ (head_mem_of_points_eq (l₂ := l₂ ++ l₃) (by simp [hp]) h₁)
-
-theorem IsTransitive.goal_not_mem (h : p.IsTransitive R) : p.goal ∉ R := by
-  obtain ⟨l₁, l₂, l₃, hp, -, -, h₃, -, -, hR₃⟩ := h
-  exact hR₃ _ (goal_mem_of_points_eq hp h₃)
-
-theorem IsTransitive.exists_mem (h : p.IsTransitive R) : ∃ x ∈ p.points, x ∈ R := by
-  obtain ⟨l₁, l₂, l₃, hp, -, h₂, -, -, hR₂, -⟩ := h
-  obtain ⟨x, hx⟩ := List.exists_mem_of_ne_nil l₂ h₂
-  exact ⟨x, by simp [hp, hx], hR₂ x hx⟩
-
-/-- No path is both cofinal and coinitial. -/
-theorem IsCofinal.not_isCoinitial (h : p.IsCofinal R) : ¬ p.IsCoinitial R :=
-  fun h' ↦ h'.goal_not_mem h.goal_mem
-
-end Phases
-
 /-! ### Directions -/
 
 /-- The direction heads of a path, in containment order, Goal built on Place, Source on Goal,
@@ -468,23 +351,192 @@ instance : DecidablePred IsBounded := fun s ↦ inferInstanceAs (Decidable (s.tr
 
 end Shape
 
-/-- `p.HasShape d R s` says that `p` has shape `s` relative to the region `R`, the distance `d`
-measuring nearness to it. -/
-def HasShape {α : Type*} [Preorder α] (d : Loc → α) (R : Set Loc) (p : Path Loc) :
-    Shape → Prop
-  | .cofinal => p.IsCofinal R
-  | .coinitial => p.IsCoinitial R
-  | .transitive => p.IsTransitive R
-  | .terminative => p.IsTerminative R
-  | .egressive => p.IsEgressive R
-  | .approximative => p.IsApproximative R d
-  | .recessive => p.IsRecessive R d
-  | .prolative => p.IsProlative R
+/-! ### Shapes relative to a region
+
+A path parametrized by a bounded linear order of positions, a sequence of places or a curve,
+has the shape its positions inside a region give it: a cofinal path's form an upper set, a
+coinitial path's a lower set, a transitive path's an interval inside the path. -/
+
+section Shapes
+
+open OrderDual Set
+
+variable {ι κ α β : Type*} [LinearOrder ι] [BoundedOrder ι] [LinearOrder κ] [BoundedOrder κ]
+  (R : Set α) (γ : ι → α)
+
+/-- A cofinal path starts outside `R`, ends inside it, and stays inside once in, as a path *to*
+`R` does. -/
+def IsCofinal : Prop := IsUpperSet (γ ⁻¹' R) ∧ γ ⊥ ∉ R ∧ γ ⊤ ∈ R
+
+/-- A coinitial path starts inside `R`, ends outside it, and stays outside once out, as a path
+*from* `R` does. -/
+def IsCoinitial : Prop := IsLowerSet (γ ⁻¹' R) ∧ γ ⊥ ∈ R ∧ γ ⊤ ∉ R
+
+/-- A transitive path starts and ends outside `R` and is inside it over one stretch, as a path
+*past* `R` is. -/
+def IsTransitive : Prop := (γ ⁻¹' R).OrdConnected ∧ (γ ⁻¹' R).Nonempty ∧ γ ⊥ ∉ R ∧ γ ⊤ ∉ R
+
+/-- A terminative path is inside `R` at its end only, as a path *up to* `R` is. -/
+def IsTerminative : Prop := γ ⁻¹' R = {⊤} ∧ (⊥ : ι) ≠ ⊤
+
+/-- An egressive path is inside `R` at its start only, as a path *starting from* `R` is. -/
+def IsEgressive : Prop := γ ⁻¹' R = {⊥} ∧ (⊥ : ι) ≠ ⊤
+
+/-- A prolative path is inside `R` throughout, as a path *along* `R` is. -/
+def IsProlative : Prop := ∀ i, γ i ∈ R
+
+/-- An approximative path is outside `R` throughout and nearer to it by `d` at each later
+position, as a path *towards* `R` is. -/
+def IsApproximative [Preorder β] (d : α → β) : Prop := (∀ i, γ i ∉ R) ∧ StrictAnti (d ∘ γ)
+
+/-- A recessive path is outside `R` throughout and farther from it by `d` at each later position,
+as a path *away from* `R` is. -/
+def IsRecessive [Preorder β] (d : α → β) : Prop := (∀ i, γ i ∉ R) ∧ StrictMono (d ∘ γ)
+
+/-- `HasShape d R γ s` says that `γ` has shape `s` relative to `R`, `d` measuring nearness to
+it. -/
+def HasShape [Preorder β] (d : α → β) : Shape → Prop
+  | .cofinal => IsCofinal R γ
+  | .coinitial => IsCoinitial R γ
+  | .transitive => IsTransitive R γ
+  | .terminative => IsTerminative R γ
+  | .egressive => IsEgressive R γ
+  | .approximative => IsApproximative R γ d
+  | .recessive => IsRecessive R γ d
+  | .prolative => IsProlative R γ
+
+variable {R γ}
+
+/-- A terminative path is cofinal. -/
+theorem IsTerminative.isCofinal (h : IsTerminative R γ) : IsCofinal R γ := by
+  obtain ⟨hS, hne⟩ := h
+  refine ⟨?_, fun h ↦ ?_, ?_⟩
+  · rw [hS, ← Ici_top]; exact isUpperSet_Ici ⊤
+  · have : (⊥ : ι) ∈ γ ⁻¹' R := h
+    rw [hS] at this
+    exact hne this
+  · show ⊤ ∈ γ ⁻¹' R; rw [hS]; rfl
+
+/-- No path is both cofinal and coinitial. -/
+theorem IsCofinal.not_isCoinitial (h : IsCofinal R γ) : ¬ IsCoinitial R γ :=
+  fun h' ↦ h'.2.2 h.2.2
+
+/-- A path keeps its shape under reparametrization by an order isomorphism. -/
+theorem HasShape.comp [Preorder β] {d : α → β} {s : Shape} (h : HasShape R γ d s)
+    (e : κ ≃o ι) : HasShape R (γ ∘ e) d s := by
+  have hpre : (γ ∘ e) ⁻¹' R = e ⁻¹' (γ ⁻¹' R) := rfl
+  have hne : ((⊥ : κ) ≠ ⊤ ↔ (⊥ : ι) ≠ ⊤) := by
+    rw [ne_eq, ne_eq, ← e.injective.eq_iff, map_bot, map_top]
+  cases s with
+  | cofinal => exact ⟨hpre ▸ h.1.preimage e.monotone, by simpa using h.2.1, by simpa using h.2.2⟩
+  | coinitial => exact ⟨hpre ▸ h.1.preimage e.monotone, by simpa using h.2.1, by simpa using h.2.2⟩
+  | transitive =>
+    obtain ⟨hc, ⟨i, hi⟩, h₀, h₁⟩ := h
+    exact ⟨hpre ▸ hc.preimage_mono e.monotone, ⟨e.symm i, by simpa using hi⟩,
+      by simpa using h₀, by simpa using h₁⟩
+  | terminative =>
+    refine ⟨?_, hne.2 h.2⟩
+    ext k
+    show e k ∈ γ ⁻¹' R ↔ k = ⊤
+    rw [h.1, mem_singleton_iff, ← map_top e, e.injective.eq_iff]
+  | egressive =>
+    refine ⟨?_, hne.2 h.2⟩
+    ext k
+    show e k ∈ γ ⁻¹' R ↔ k = ⊥
+    rw [h.1, mem_singleton_iff, ← map_bot e, e.injective.eq_iff]
+  | prolative => exact fun k ↦ h (e k)
+  | approximative => exact ⟨fun k ↦ h.1 (e k), h.2.comp_strictMono e.strictMono⟩
+  | recessive => exact ⟨fun k ↦ h.1 (e k), h.2.comp e.strictMono⟩
+
+/-- Reparametrizing a path by an order isomorphism keeps its shape. -/
+theorem hasShape_comp [Preorder β] {d : α → β} (e : κ ≃o ι) {s : Shape} :
+    HasShape R (γ ∘ e) d s ↔ HasShape R γ d s :=
+  ⟨fun h ↦ by simpa [Function.comp_def] using h.comp e.symm, fun h ↦ h.comp e⟩
+
+/-- Traversing a path the other way, on the dual order of positions, reverses its shape. -/
+theorem hasShape_comp_ofDual [Preorder β] {d : α → β} {s : Shape} :
+    HasShape R (γ ∘ ofDual) d s ↔ HasShape R γ d s.reverse := by
+  have hpre : (γ ∘ ofDual) ⁻¹' R = ofDual ⁻¹' (γ ⁻¹' R) := rfl
+  have hne : ((⊥ : ιᵒᵈ) ≠ ⊤ ↔ (⊥ : ι) ≠ ⊤) := by
+    rw [ne_eq, ne_eq, ← toDual_top, ← toDual_bot, toDual_inj, eq_comm]
+  cases s with
+  | cofinal =>
+    simp only [HasShape, Shape.reverse, IsCofinal, IsCoinitial, hpre,
+      isUpperSet_preimage_ofDual_iff, Function.comp_apply, ofDual_bot, ofDual_top]
+    tauto
+  | coinitial =>
+    simp only [HasShape, Shape.reverse, IsCofinal, IsCoinitial, hpre,
+      isLowerSet_preimage_ofDual_iff, Function.comp_apply, ofDual_bot, ofDual_top]
+    tauto
+  | transitive =>
+    simp only [HasShape, Shape.reverse, IsTransitive, hpre, ordConnected_dual,
+      Function.comp_apply, ofDual_bot, ofDual_top, OrderDual.ofDual.surjective.nonempty_preimage]
+    tauto
+  | terminative =>
+    refine and_congr ⟨fun h ↦ ?_, fun h ↦ ?_⟩ hne
+    · ext i
+      have := congrArg (toDual i ∈ ·) h
+      simpa [hpre, ← toDual_bot] using this
+    · ext i
+      rw [hpre, mem_preimage, h, mem_singleton_iff, mem_singleton_iff, ← toDual_bot]
+      exact ⟨fun h' ↦ by rw [← h', toDual_ofDual], fun h' ↦ by rw [h', ofDual_toDual]⟩
+  | egressive =>
+    refine and_congr ⟨fun h ↦ ?_, fun h ↦ ?_⟩ hne
+    · ext i
+      have := congrArg (toDual i ∈ ·) h
+      simpa [hpre, ← toDual_top] using this
+    · ext i
+      rw [hpre, mem_preimage, h, mem_singleton_iff, mem_singleton_iff, ← toDual_top]
+      exact ⟨fun h' ↦ by rw [← h', toDual_ofDual], fun h' ↦ by rw [h', ofDual_toDual]⟩
+  | prolative => exact OrderDual.forall
+  | approximative =>
+    simp only [HasShape, Shape.reverse, IsApproximative, IsRecessive, OrderDual.forall,
+      Function.comp_apply, ofDual_toDual, ← Function.comp_assoc, strictAnti_comp_ofDual_iff]
+  | recessive =>
+    simp only [HasShape, Shape.reverse, IsApproximative, IsRecessive, OrderDual.forall,
+      Function.comp_apply, ofDual_toDual, ← Function.comp_assoc, strictMono_comp_ofDual_iff]
+
+end Shapes
+
+/-! ### Sequences of places as parametrized paths -/
+
+variable {Loc : Type*} (p : Path Loc)
+
+/-- A path's places, indexed by their positions. -/
+def toFun : Fin (p.steps.length + 1) → Loc := fun i ↦ p.points.get ⟨i, by simp [points]⟩
+
+instance : CoeFun (Path Loc) fun p ↦ Fin (p.steps.length + 1) → Loc := ⟨toFun⟩
+
+@[simp] theorem coe_bot : p ⊥ = p.source := rfl
+
+@[simp] theorem coe_top : p ⊤ = p.goal := by
+  obtain ⟨s, l⟩ := p
+  induction l using List.reverseRecOn with
+  | nil => rfl
+  | append_singleton l x _ => simp [toFun, points, goal, List.getElem_append_right]
+
+theorem length_steps_reverse : p.reverse.steps.length = p.steps.length := by
+  simpa [points] using congrArg List.length (points_reverse p)
+
+/-- The positions of a reversed path, as an order isomorphism onto the dual of the path's. -/
+def revIso : Fin (p.reverse.steps.length + 1) ≃o (Fin (p.steps.length + 1))ᵒᵈ :=
+  (Fin.castOrderIso (by rw [length_steps_reverse])).trans Fin.revOrderIso.symm
+
+/-- A reversed path is the path read on the dual order of positions. -/
+theorem coe_reverse : ⇑p.reverse = (p ∘ OrderDual.ofDual) ∘ p.revIso := by
+  funext i
+  have h := points_reverse p
+  simp only [Function.comp_apply, revIso, OrderIso.trans_apply, Fin.revOrderIso_symm_apply,
+    OrderDual.ofDual_toDual]
+  simp only [toFun, List.get_eq_getElem, Fin.val_rev, Fin.castOrderIso_apply, Fin.val_cast]
+  simp only [h, List.getElem_reverse]
+  congr 1
+  simp [points]
 
 /-- Reversing a path reverses its shape. -/
-theorem hasShape_reverse {α : Type*} [Preorder α] {d : Loc → α} {R : Set Loc} {p : Path Loc}
-    {s : Shape} : p.reverse.HasShape d R s ↔ p.HasShape d R s.reverse := by
-  cases s <;> simp [HasShape, Shape.reverse]
+theorem hasShape_reverse {β : Type*} [Preorder β] {d : Loc → β} {R : Set Loc} {s : Shape} :
+    HasShape R p.reverse d s ↔ HasShape R p d s.reverse := by
+  rw [coe_reverse, hasShape_comp, hasShape_comp_ofDual]
 
 end Path
 
@@ -502,3 +554,15 @@ inductive Localization where
   deriving DecidableEq, Repr, Fintype
 
 end Spatial
+
+namespace Event
+
+/-- The spatial trace of an event domain `E`, which sends each event to the path its theme
+traverses. -/
+class SpatialTrace (E : Type*) (Loc : outParam Type*) where
+  /-- The path traversed in an event. -/
+  σ : E → Spatial.Path Loc
+
+export SpatialTrace (σ)
+
+end Event
