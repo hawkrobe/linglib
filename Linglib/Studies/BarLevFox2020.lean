@@ -28,6 +28,7 @@ excluded into included.
 ## Main results
 
 * `freeChoice`, `simpleDisjunction`: the modal and the plain disjunction.
+* `II_fcAlts`, `isInnocentlyExcludable_fcAlts_iff`: what free choice includes and excludes.
 * `only_presup`: free choice under `only` is presupposed.
 * `universalFreeChoice`, `negativeUniversalFreeChoice`, `freeChoiceOverUniversal`,
   `simplificationMost`: instances of `Exhaustification.exhIEII_quantified`.
@@ -60,40 +61,52 @@ section FreeChoice
 
 variable (R : SetRel W W) (a b : Set W)
 
-/-- The alternatives of `◇(a ∨ b)`: the disjunction replaced by its disjuncts and their
+/-- The alternatives of `◇(a ∨ b)` replace the disjunction by its disjuncts and their
 conjunction. -/
 def fcAlts : Set (Set W) := {R.preimage (a ∪ b), R.preimage a, R.preimage b, R.preimage (a ∩ b)}
 
-variable {R a b}
+/-- Free choice needs a world permitting only `a`, one permitting only `b`, and one permitting
+each but not both. -/
+structure FreeChoiceWitnesses : Prop where
+  only_left : ∃ w ∈ R.preimage a, w ∉ R.preimage b
+  only_right : ∃ w ∈ R.preimage b, w ∉ R.preimage a
+  not_both : ∃ w ∈ R.preimage a ∩ R.preimage b, w ∉ R.preimage (a ∩ b)
 
-variable (h₁ : ∃ w ∈ R.preimage a, w ∉ R.preimage b) (h₂ : ∃ w ∈ R.preimage b, w ∉ R.preimage a)
-  (h : ∃ w ∈ R.preimage a ∩ R.preimage b, w ∉ R.preimage (a ∩ b))
-include h₁ h₂ h
+variable {R a b} (hF : FreeChoiceWitnesses R a b)
+include hF
 
-/-- Free choice: given a world permitting only `a`, one permitting only `b`, and one
-permitting each but not both, `◇(a ∨ b)` strengthens to `◇a ∧ ◇b ∧ ¬◇(a ∧ b)`. -/
+private theorem FreeChoiceWitnesses.exists_left :
+    ∃ w ∈ R.preimage (a ∪ b) ∩ R.preimage a, w ∉ R.preimage b ∪ R.preimage (a ∩ b) :=
+  hF.only_left.imp fun _ h ↦ ⟨⟨preimage_mono Set.subset_union_left h.1, h.1⟩,
+    fun h' ↦ h.2 (h'.elim id (fun h' ↦ (preimage_inter_subset _ h').2))⟩
+
+private theorem FreeChoiceWitnesses.exists_right :
+    ∃ w ∈ R.preimage (a ∪ b) ∩ R.preimage b, w ∉ R.preimage a ∪ R.preimage (a ∩ b) :=
+  hF.only_right.imp fun _ h ↦ ⟨⟨preimage_mono Set.subset_union_right h.1, h.1⟩,
+    fun h' ↦ h.2 (h'.elim id (fun h' ↦ (preimage_inter_subset _ h').1))⟩
+
+private theorem FreeChoiceWitnesses.exists_both :
+    ∃ w ∈ R.preimage (a ∪ b) ∩ R.preimage a ∩ R.preimage b, w ∉ R.preimage (a ∩ b) :=
+  hF.not_both.imp fun _ h ↦ ⟨⟨⟨preimage_mono Set.subset_union_left h.1.1, h.1.1⟩, h.1.2⟩, h.2⟩
+
+/-- Given the witnesses, `◇(a ∨ b)` strengthens to `◇a ∧ ◇b ∧ ¬◇(a ∧ b)`, free choice. -/
 theorem freeChoice : exhIEII (fcAlts R a b) (R.preimage (a ∪ b)) =
     (R.preimage a ∩ R.preimage b) \ R.preimage (a ∩ b) := by
-  rw [fcAlts, exhIEII_pair (preimage_union ..).le
-    (h₁.imp fun _ h ↦ ⟨⟨preimage_mono Set.subset_union_left h.1, h.1⟩,
-      fun h' ↦ h.2 (h'.elim id (fun h' ↦ (preimage_inter_subset _ h').2))⟩)
-    (h₂.imp fun _ h ↦ ⟨⟨preimage_mono Set.subset_union_right h.1, h.1⟩,
-      fun h' ↦ h.2 (h'.elim id (fun h' ↦ (preimage_inter_subset _ h').1))⟩)
-    (h.imp fun _ h ↦ ⟨⟨⟨preimage_mono Set.subset_union_left h.1.1, h.1.1⟩, h.1.2⟩, h.2⟩),
+  rw [fcAlts, exhIEII_pair (preimage_union ..).le hF.exists_left hF.exists_right hF.exists_both,
     Set.inter_assoc, Set.inter_eq_right.2 fun _ h ↦ preimage_mono Set.subset_union_left h.1]
 
 /-- The includable alternatives of `◇(a ∨ b)` are the prejacent and the disjunct
 alternatives. -/
 theorem II_fcAlts :
     II (fcAlts R a b) (R.preimage (a ∪ b)) = {R.preimage (a ∪ b), R.preimage a, R.preimage b} :=
-  II_pair (preimage_union ..).le
-    (h₁.imp fun _ h ↦ ⟨⟨preimage_mono Set.subset_union_left h.1, h.1⟩,
-      fun h' ↦ h.2 (h'.elim id (fun h' ↦ (preimage_inter_subset _ h').2))⟩)
-    (h₂.imp fun _ h ↦ ⟨⟨preimage_mono Set.subset_union_right h.1, h.1⟩,
-      fun h' ↦ h.2 (h'.elim id (fun h' ↦ (preimage_inter_subset _ h').1))⟩)
-    (h.imp fun _ h ↦ ⟨⟨⟨preimage_mono Set.subset_union_left h.1.1, h.1.1⟩, h.1.2⟩, h.2⟩)
+  II_pair (preimage_union ..).le hF.exists_left hF.exists_right hF.exists_both
 
-omit h₁ h₂ h in
+/-- The only excludable alternative of `◇(a ∨ b)` is the conjunctive one. -/
+theorem isInnocentlyExcludable_fcAlts_iff {q : Set W} :
+    IsInnocentlyExcludable (fcAlts R a b) (R.preimage (a ∪ b)) q ↔ q = R.preimage (a ∩ b) :=
+  isInnocentlyExcludable_pair_iff (preimage_union ..).le hF.exists_left hF.exists_right
+
+omit hF in
 /-- Without the modal the conjunctive alternative is the conjunction of the disjunct
 alternatives: exhaustification denies it and includes neither disjunct. -/
 theorem simpleDisjunction (h₁ : ∃ w ∈ a, w ∉ b) (h₂ : ∃ w ∈ b, w ∉ a) :
@@ -101,7 +114,7 @@ theorem simpleDisjunction (h₁ : ∃ w ∈ a, w ∉ b) (h₂ : ∃ w ∈ b, w �
   exhIEII_pair_inter le_rfl (h₁.imp fun _ h ↦ ⟨⟨Or.inl h.1, h.1⟩, h.2⟩)
     (h₂.imp fun _ h ↦ ⟨⟨Or.inr h.1, h.1⟩, h.2⟩)
 
-omit h₁ h₂ h in
+omit hF in
 /-- The cell of simple disjunction is contradictory, so cell identification does not apply. -/
 theorem simpleDisjunction_cell (h₁ : ∃ w ∈ a, w ∉ b) (h₂ : ∃ w ∈ b, w ∉ a) :
     cell {a ∪ b, a, b, a ∩ b} (a ∪ b) = ∅ :=
@@ -119,11 +132,9 @@ def only (ALT : Set (Set W)) (φ : Set W) : PartialProp W where
   assertion w := φ w ∧ ∀ q, IsInnocentlyExcludable ALT φ q → ¬ q w
 
 /-- Free choice under `only` is presupposed: `only ◇(a ∨ b)` presupposes `◇a` and `◇b`. -/
-theorem only_presup {R : SetRel W W} {a b : Set W} (h₁ : ∃ w ∈ R.preimage a, w ∉ R.preimage b)
-    (h₂ : ∃ w ∈ R.preimage b, w ∉ R.preimage a)
-    (h : ∃ w ∈ R.preimage a ∩ R.preimage b, w ∉ R.preimage (a ∩ b)) (w : W) :
+theorem only_presup {R : SetRel W W} {a b : Set W} (hF : FreeChoiceWitnesses R a b) (w : W) :
     (only (fcAlts R a b) (R.preimage (a ∪ b))).presup w ↔ w ∈ R.preimage a ∩ R.preimage b := by
-  simp only [only, II_fcAlts h₁ h₂ h, Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp,
+  simp only [only, II_fcAlts hF, Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp,
     forall_eq]
   exact ⟨fun h ↦ ⟨h.2.1, h.2.2⟩, fun h ↦ ⟨preimage_mono Set.subset_union_left h.1, h.1, h.2⟩⟩
 
@@ -135,7 +146,7 @@ open Conditional
 
 variable (ord : W → Preorder W) (p q r : Set W)
 
-/-- The alternatives of `(p ∨ q) → r`: the antecedent's disjunction replaced by its disjuncts
+/-- The alternatives of `(p ∨ q) → r` replace the antecedent's disjunction by its disjuncts
 and their conjunction. -/
 def sdaAlts : Set (Set W) :=
   {closestImp ord (p ∪ q) r, closestImp ord p r, closestImp ord q r,
@@ -305,17 +316,17 @@ section Quantified
 
 variable {D : Type*} [Nonempty D] (P Q B : D → Set W)
 
-/-- The alternatives of `∀x(Px ∨ Qx)` (41): the disjunction replaced by its disjuncts and by
+/-- The alternatives of `∀x(Px ∨ Qx)` (41) replace the disjunction by its disjuncts and by
 their conjunctive counterpart `B`, and the universal by the existential. -/
 def universalAlts : Set (Set W) :=
   {⋂ x, P x ∪ Q x, ⋂ x, P x, ⋂ x, Q x, ⋂ x, B x, ⋃ x, P x ∪ Q x, ⋃ x, P x, ⋃ x, Q x, ⋃ x, B x}
 
 variable {P Q B}
 
-/-- Universal free choice (44): given a world where every individual has `P` and none `Q`, one
-the other way round, one where each has exactly one and both occur, and one where every
-individual has `P` and `Q` but none `B`, `∀x(Px ∨ Qx)` strengthens to
-`∀x Px ∧ ∀x Qx ∧ ¬∃x Bx`. With `Px = ◇px` and `Bx = ◇(px ∧ qx)` this is (36). -/
+/-- Given a world where every individual has `P` and none `Q`, one the other way round, one where
+each has exactly one and both occur, and one where every individual has `P` and `Q` but none
+`B`, `∀x(Px ∨ Qx)` strengthens to `∀x Px ∧ ∀x Qx ∧ ¬∃x Bx`, universal free choice (44). With
+`Px = ◇px` and `Bx = ◇(px ∧ qx)` this is (36). -/
 theorem universalFreeChoice (hB : ∀ x, B x ⊆ P x ∩ Q x)
     (h₁ : ∃ w, (∀ x, w ∈ P x) ∧ ∀ x, w ∉ Q x) (h₂ : ∃ w, (∀ x, w ∈ Q x) ∧ ∀ x, w ∉ P x)
     (h₃ : ∃ w, (∀ x, w ∈ P x ↔ w ∉ Q x) ∧ (∃ x, w ∈ P x) ∧ ∃ x, w ∈ Q x)
@@ -370,8 +381,8 @@ section Negative
 
 variable (R : SetRel W W) (p q : D → Set W)
 
-/-- The alternatives of `¬∃x □(px ∧ qx)`, *no student is required to solve both* (46): the
-conjunction replaced by its conjuncts and their disjunction, *no* by *not every*. -/
+/-- The alternatives of `¬∃x □(px ∧ qx)`, *no student is required to solve both* (46), replace
+the conjunction by its conjuncts and their disjunction, and *no* by *not every*. -/
 def negativeUniversalAlts : Set (Set W) :=
   {(⋃ x, R.core (p x ∩ q x))ᶜ, (⋃ x, R.core (p x))ᶜ, (⋃ x, R.core (q x))ᶜ,
     (⋃ x, R.core (p x ∪ q x))ᶜ, (⋂ x, R.core (p x ∩ q x))ᶜ, (⋂ x, R.core (p x))ᶜ,
@@ -379,9 +390,9 @@ def negativeUniversalAlts : Set (Set W) :=
 
 variable {R p q}
 
-/-- Negative universal free choice (47): the alternatives of `¬∃x □(px ∧ qx)` stand in the
-entailment pattern of universal free choice, so with the corresponding worlds it strengthens
-to `¬∃x □px ∧ ¬∃x □qx ∧ ∀x □(px ∨ qx)`. -/
+/-- The alternatives of `¬∃x □(px ∧ qx)` stand in the entailment pattern of universal free
+choice, so with the corresponding worlds it strengthens to `¬∃x □px ∧ ¬∃x □qx ∧ ∀x □(px ∨ qx)`,
+negative universal free choice (47). -/
 theorem negativeUniversalFreeChoice
     (h₁ : ∃ w, (∀ x, w ∉ R.core (p x)) ∧ ∀ x, w ∈ R.core (q x))
     (h₂ : ∃ w, (∀ x, w ∉ R.core (q x)) ∧ ∀ x, w ∈ R.core (p x))
@@ -526,10 +537,10 @@ section Most
 
 variable {D : Type*} [DecidableEq D]
 
-/-- `most(P)(S)`: more than half of `P` lies in `S` (86). -/
+/-- `Most P S` says that more than half of `P` lies in `S` (86). -/
 def Most (P S : Finset D) : Prop := P.card < 2 * (P ∩ S).card
 
-/-- `some(P)(S)`: `P` and `S` overlap. -/
+/-- `Overlaps P S` says that `P` and `S` meet. -/
 def Overlaps (P S : Finset D) : Prop := (P ∩ S).Nonempty
 
 variable {P Q S : Finset D}
@@ -562,7 +573,7 @@ theorem Most.of_union_right (h : Most (P ∪ Q) S) (hP : ¬ Overlaps P S) : Most
 
 variable (P Q S : W → Finset D)
 
-/-- The alternatives of `most(P ∪ Q)(S)` (87): the disjunctive restrictor replaced by its
+/-- The alternatives of `most(P ∪ Q)(S)` (87) replace the disjunctive restrictor by its
 disjuncts and their intersection, and *most* by *some*. -/
 def mostAlts : Set (Set W) :=
   {{w | Most (P w ∪ Q w) (S w)}, {w | Most (P w) (S w)}, {w | Most (Q w) (S w)},
@@ -571,10 +582,10 @@ def mostAlts : Set (Set W) :=
 
 variable {P Q S}
 
-/-- Simplification with *most* (89): given a world where most of `P ∪ Q` and most of `P` are in
-`S` but nothing of `Q` is, one the other way round, one where most of `P ∪ Q` but of neither
-`P` nor `Q` is, and one where most of each is but nothing of `P ∩ Q`, `most(P ∪ Q)(S)`
-strengthens to `most(P)(S) ∧ most(Q)(S) ∧ ¬some(P ∩ Q)(S)`. -/
+/-- Given a world where most of `P ∪ Q` and most of `P` are in `S` but nothing of `Q` is, one the
+other way round, one where most of `P ∪ Q` but of neither `P` nor `Q` is, and one where most of
+each is but nothing of `P ∩ Q`, `most(P ∪ Q)(S)` strengthens to
+`most(P)(S) ∧ most(Q)(S) ∧ ¬some(P ∩ Q)(S)`, simplification with *most* (89). -/
 theorem simplificationMost
     (h₁ : ∃ w, Most (P w ∪ Q w) (S w) ∧ Most (P w) (S w) ∧ ¬ Overlaps (Q w) (S w))
     (h₂ : ∃ w, Most (P w ∪ Q w) (S w) ∧ Most (Q w) (S w) ∧ ¬ Overlaps (P w) (S w))
