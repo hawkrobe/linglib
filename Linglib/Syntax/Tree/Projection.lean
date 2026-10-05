@@ -17,17 +17,18 @@ generate are read off the tree, and the Head Feature Principle holds along every
 
 ## Main definitions
 
-* `Syntax.Tree.headIndex?`, `Syntax.Tree.headIndexAt`: the head daughter's index.
-* `Syntax.Tree.HeadDaughterAt`, `Syntax.Tree.IsSegmentAt`, `Syntax.Tree.ProjectsAt`,
-  `Syntax.Tree.AdjoinsAt`: the head relation and its split into projection and adjunction.
-* `Syntax.Tree.maximalProjectionsAt`, `Syntax.Tree.maxCommandAt`.
+* `PhraseStructure.Tree.headIndex?`, `PhraseStructure.Tree.headIndexAt`: the head daughter's index.
+* `PhraseStructure.Tree.HeadDaughterAt`, `PhraseStructure.Tree.IsSegmentAt`,
+  `PhraseStructure.Tree.ProjectsAt`, `PhraseStructure.Tree.AdjoinsAt`: the head relation and its
+  split into projection and adjunction.
+* `PhraseStructure.Tree.maximalProjectionsAt`, `PhraseStructure.Tree.maxCommandAt`.
 
 ## Main results
 
-* `Syntax.Tree.cat_eq_of_isProjectionOf`: a projection has the category of what it projects
+* `PhraseStructure.Tree.cat_eq_of_isProjectionOf`: a projection has the category of what it projects
   from.
-* `Syntax.Tree.maximalProjectionsAt_eq_of_forall_not_isSegmentAt`: without adjunction the maximal
-  projections are the nodes that are no head daughter.
+* `PhraseStructure.Tree.maximalProjectionsAt_eq_of_forall_not_isSegmentAt`: without adjunction the
+  maximal projections are the nodes that are no head daughter.
 
 ## References
 
@@ -37,7 +38,7 @@ generate are read off the tree, and the Head Feature Principle holds along every
 
 @[expose] public section
 
-namespace Syntax.Tree
+namespace PhraseStructure.Tree
 
 open Core.Order
 
@@ -124,4 +125,4 @@ theorem cat_eq_of_isProjectionOf {t : Tree C W} {h p : TreePath}
       Option.bind_some, RoseTree.subtreeAt_nil, Option.some.injEq] at hs'
     rw [← hs', hcat, ih hu]
 
-end Syntax.Tree
+end PhraseStructure.Tree

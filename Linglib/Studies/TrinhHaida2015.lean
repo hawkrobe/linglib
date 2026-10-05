@@ -156,7 +156,7 @@ theorem exhIE_run_smoke {u : W} (hu : u ∈ run ∧ u ∈ smoke) :
 
 section Atomicity
 
-open Syntax
+open PhraseStructure
 
 variable {C V : Type}
 

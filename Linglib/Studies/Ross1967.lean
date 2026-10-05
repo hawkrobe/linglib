@@ -25,16 +25,16 @@ of these islands freely.
 
 ## Implementation notes
 
-Trees carry the categories of `Syntax.Cat`, which have no levels: a noun phrase is a node of
-category `N`, a coordinate structure a node of category `Conj` headed by its conjunction word, whose
-other daughters are the conjuncts, and a noun phrase has a lexical head noun when its head daughter
-is a noun. The trees are the dissertation's diagrams reduced to the categories the constraints
-mention, with the moved constituent in its source position; questions and topicalizations land at
-the root and relativizations at the relative clause. Dominance in the Sentential Subject Constraint
-is read as immediate, the configuration of a sentence exhaustively dominated by a subject NP, so
-that the constraint does not reach a clause inside a relative clause on a subject. The A-over-A
-principle, the pied-piping convention, upward boundedness, and the definition of islands as the
-domains of chopping rules are not formalized.
+Trees carry the categories of `PhraseStructure.Cat`, which have no levels: a noun phrase is a node
+of category `N`, a coordinate structure a node of category `Conj` headed by its conjunction word,
+whose other daughters are the conjuncts, and a noun phrase has a lexical head noun when its head
+daughter is a noun. The trees are the dissertation's diagrams reduced to the categories the
+constraints mention, with the moved constituent in its source position; questions and
+topicalizations land at the root and relativizations at the relative clause. Dominance in the
+Sentential Subject Constraint is read as immediate, the configuration of a sentence exhaustively
+dominated by a subject NP, so that the constraint does not reach a clause inside a relative clause
+on a subject. The A-over-A principle, the pied-piping convention, upward boundedness, and the
+definition of islands as the domains of chopping rules are not formalized.
 
 ## References
 
@@ -45,8 +45,8 @@ domains of chopping rules are not formalized.
 
 namespace Ross1967
 
-open Syntax Core.Order
-open Syntax.Cat (N V P Adj Conj)
+open PhraseStructure Core.Order
+open PhraseStructure.Cat (N V P Adj Conj)
 
 /-! ### Trees and movements -/
 

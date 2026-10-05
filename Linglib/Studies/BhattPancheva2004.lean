@@ -29,7 +29,7 @@ clause into the second argument of the nonconservative *-er* and yield a contrad
 
 ## Implementation notes
 
-* LFs are category-free trees at the paper's bracketing, `Syntax.Tree Unit String`, with
+* LFs are category-free trees at the paper's bracketing, `PhraseStructure.Tree Unit String`, with
   non-branching and elided material written as one leaf; scope is `Branching.cCommandAt` and the
   constraint `Minimalist.IsHeimKennedy` on it.
 * The comparative of (84) is `erSem`, proper inclusion of degree sets, and (85) is its value on
@@ -52,7 +52,7 @@ clause into the second argument of the nonconservative *-er* and yield a contrad
 
 namespace BhattPancheva2004
 
-open Core.Order Degree Minimalist Set Syntax Syntax.Tree
+open Core.Order Degree Minimalist Set PhraseStructure PhraseStructure.Tree
 
 /-! ### The Heim–Kennedy constraint (Section 4.1) -/
 

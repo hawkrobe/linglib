@@ -122,7 +122,7 @@ section TypeDriven
 
 open Semantics.Composition.Tree
 open Semantics.Composition
-open Syntax (Tree)
+open PhraseStructure (Tree)
 
 variable {Ent α : Type}
 

@@ -44,7 +44,7 @@ and the symmetric alternative places the conjunction of quantifiers at the deter
 
 @[expose] public section
 
-open Syntax Alternatives
+open PhraseStructure Alternatives
 
 namespace Katzir2007
 

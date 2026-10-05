@@ -67,7 +67,7 @@ the operations into the body of a binder, which the paper's trees lack.
 
 namespace Alternatives
 
-open Syntax Tree
+open PhraseStructure Tree
 
 variable {C W : Type*}
 

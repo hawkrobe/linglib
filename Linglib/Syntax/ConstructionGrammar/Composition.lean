@@ -69,7 +69,7 @@ theorem CompositionRule.override_nil [DecidableEq D]
     r.override [] ds = (r ds).toList := by
   cases h : r ds <;> simp [CompositionRule.override, h]
 
-open Syntax (Tree)
+open PhraseStructure (Tree)
 open Morphology (Word)
 
 mutual

@@ -12,19 +12,19 @@ adjunction a category too, marking it a further segment of its host's category r
 projection above it, and the two nodes of Heim and Kratzer's trace theory of movement, an indexed
 trace and an indexed binder over a body, carry a category each. Type-driven interpretation reads the
 tree with `C = Unit`; structural operations on parse trees read it with a category system such as
-`Syntax.Cat`. Positions, subtrees, replacement and the frontier are those of the rose tree.
+`PhraseStructure.Cat`. Positions, subtrees, replacement and the frontier are those of the rose tree.
 
 ## Main declarations
 
-* `Syntax.Tree.Label`, `Syntax.Tree`: the node labels and the trees over them, with the
-  pattern-matchable constructors `terminal`, `node`, `adjoin`, `trace`, `bind` and the category-free
-  `leaf`, `bin`, `tr`, `binder`.
-* `Syntax.Tree.Label.Licenses`, `Syntax.Tree.IsWellFormed`: terminals and traces are leaves and
-  binders have one body.
-* `Syntax.Tree.rec'`: induction over the five shapes, with a case for ill-formed nodes.
-* `Syntax.Tree.terminals`, `yield`, `cats`, `map`, `freeIndices`, `leafSubst`.
-* `Syntax.Tree.positionedTerminals`: the terminals with their positions, in the order of the
-  yield, which is precedence (`pairwise_precedes_positionedTerminals`).
+* `PhraseStructure.Tree.Label`, `PhraseStructure.Tree`: the node labels and the trees over them,
+  with the pattern-matchable constructors `terminal`, `node`, `adjoin`, `trace`, `bind` and the
+  category-free `leaf`, `bin`, `tr`, `binder`.
+* `PhraseStructure.Tree.Label.Licenses`, `PhraseStructure.Tree.IsWellFormed`: terminals and traces
+  are leaves and binders have one body.
+* `PhraseStructure.Tree.rec'`: induction over the five shapes, with a case for ill-formed nodes.
+* `PhraseStructure.Tree.terminals`, `yield`, `cats`, `map`, `freeIndices`, `leafSubst`.
+* `PhraseStructure.Tree.positionedTerminals`: the terminals with their positions, in the order of
+  the yield, which is precedence (`pairwise_precedes_positionedTerminals`).
 
 ## Implementation notes
 
@@ -54,7 +54,7 @@ resolve on those results, so write `Tree.cat s`, and write constructor patterns 
 
 @[expose] public section
 
-namespace Syntax
+namespace PhraseStructure
 
 namespace Tree
 
@@ -524,4 +524,4 @@ theorem pairwise_precedes_positionedTerminals (t : Tree C W) :
 
 end Tree
 
-end Syntax
+end PhraseStructure

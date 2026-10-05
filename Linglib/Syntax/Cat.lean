@@ -10,7 +10,7 @@ the clause `S`, which projects from no head. A category carries no level of proj
 phrase and the noun that heads it both have the category `N`, and whether a node is a minimal, an
 intermediate or a maximal projection is read off the tree from its head daughters
 (`Syntax/Tree/Projection.lean`). This is the category stripped of bar level that HPSG's head value
-records. `Syntax.Cat` is the default category type of `Syntax.Tree`.
+records. `PhraseStructure.Cat` is the default category type of `PhraseStructure.Tree`.
 
 ## Implementation notes
 
@@ -25,7 +25,7 @@ of English *not* and of other particles.
 
 @[expose] public section
 
-namespace Syntax
+namespace PhraseStructure
 
 /-- A syntactic category is a lexical category or the clause. -/
 inductive Cat where
@@ -58,4 +58,4 @@ Each name is a `match_pattern`, so it can be used in pattern position. -/
 
 end Cat
 
-end Syntax
+end PhraseStructure

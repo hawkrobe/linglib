@@ -26,27 +26,32 @@ daughter, which makes projection, the levels, categories and the maximal project
 
 ## Main definitions
 
-* `Syntax.IsProjectionOf`: the reflexive-transitive closure of the head relation.
-* `Syntax.IsMaximalProjection`, `Syntax.IsMinimalProjection`, `Syntax.IsLexicalHeadOf`.
-* `Syntax.segments`, `Syntax.Includes`, `Syntax.Excludes`, `Syntax.Contains`: the segments of a
-  category and what it dominates.
-* `Syntax.IsMaximalCategory`, `Syntax.maximalProjections`, `Syntax.maxCommand`: maximal
-  categories and MAX-command from them.
-* `Syntax.headDaughterRel`, `Syntax.maximalProjectionAt`, `Syntax.projectionIndex`,
-  `Syntax.adjunctionIndex`: head relations from head-daughter indices on tree positions.
+* `PhraseStructure.IsProjectionOf`: the reflexive-transitive closure of the head relation.
+* `PhraseStructure.IsMaximalProjection`, `PhraseStructure.IsMinimalProjection`,
+  `PhraseStructure.IsLexicalHeadOf`.
+* `PhraseStructure.segments`, `PhraseStructure.Includes`, `PhraseStructure.Excludes`,
+  `PhraseStructure.Contains`: the segments of a category and what it dominates.
+* `PhraseStructure.IsMaximalCategory`, `PhraseStructure.maximalProjections`,
+  `PhraseStructure.maxCommand`: maximal categories and MAX-command from them.
+* `PhraseStructure.headDaughterRel`, `PhraseStructure.maximalProjectionAt`,
+  `PhraseStructure.projectionIndex`, `PhraseStructure.adjunctionIndex`: head relations from
+  head-daughter indices on tree positions.
 
 ## Main results
 
-* `Syntax.isLeast_projections_iff`, `Syntax.exists_isLeast_projections`: the maximal projection
-  of a node is the least of its projections, and it exists.
-* `Syntax.isChain_segments`, `Syntax.includes_iff`, `Syntax.excludes_iff`: the segments of a
-  category form a chain, so inclusion is decided at the lowest segment and exclusion at the top.
-* `Syntax.not_includes_of_covBy`, `Syntax.maxCommand_adjunct`: an adjunct is not included in the
-  category it adjoins to, and it MAX-commands out of it.
-* `Syntax.maxCommand_eq_Ici`: the MAX-command domain of a node that projects further is the cone
-  of the lowest segment of its maximal category.
-* `Syntax.IsLexicalHeadOf.unique`: along a functional head relation a node has one lexical head.
-* `Syntax.isLeast_maximalProjectionAt`: `maximalProjectionAt` computes the maximal projection.
+* `PhraseStructure.isLeast_projections_iff`, `PhraseStructure.exists_isLeast_projections`: the
+  maximal projection of a node is the least of its projections, and it exists.
+* `PhraseStructure.isChain_segments`, `PhraseStructure.includes_iff`,
+  `PhraseStructure.excludes_iff`: the segments of a category form a chain, so inclusion is decided
+  at the lowest segment and exclusion at the top.
+* `PhraseStructure.not_includes_of_covBy`, `PhraseStructure.maxCommand_adjunct`: an adjunct is not
+  included in the category it adjoins to, and it MAX-commands out of it.
+* `PhraseStructure.maxCommand_eq_Ici`: the MAX-command domain of a node that projects further is the
+  cone of the lowest segment of its maximal category.
+* `PhraseStructure.IsLexicalHeadOf.unique`: along a functional head relation a node has one lexical
+  head.
+* `PhraseStructure.isLeast_maximalProjectionAt`: `maximalProjectionAt` computes the maximal
+  projection.
 
 ## Implementation notes
 
@@ -71,7 +76,7 @@ relations.
 
 @[expose] public section
 
-namespace Syntax
+namespace PhraseStructure
 
 section Defs
 
@@ -700,4 +705,4 @@ instance (x y : TreePath) : Decidable (Contains (headDaughterRel (adjunctionInde
 
 end Positions
 
-end Syntax
+end PhraseStructure

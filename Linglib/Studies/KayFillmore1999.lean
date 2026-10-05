@@ -86,7 +86,7 @@ theorem wxdy_partially_open : wxdyConstruction.specificity = .partiallyOpen := r
 The paper's minimal pairs, matched against the form: each is a sequence of daughter trees in the
 slot order `X`, BE, *doing*, *what*, `Y`, with lemma-level words tagged for part of speech. -/
 
-open Syntax (Tree)
+open PhraseStructure (Tree)
 open Morphology (Word)
 
 /-- *not*, a particle of negative polarity. -/

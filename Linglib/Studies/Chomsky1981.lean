@@ -20,7 +20,7 @@ coindexed and the first c-commands the second; an anaphor is bound in its govern
 (Principle A), a pronominal is free there (Principle B), and an R-expression is free
 (Principle C). The positions are the noun phrases of a phrase-structure tree, the command
 relation is Reinhart's c-command, the binding domain of a noun phrase is the minimal clause
-containing it (`Syntax.Tree.clauseConfiguration`), the dependency is coindexation, and no
+containing it (`PhraseStructure.Tree.clauseConfiguration`), the dependency is coindexation, and no
 anaphor is exempt. An indexing is licit when coindexed noun phrases agree in φ-features
 and it satisfies the three principles, and a tree is grammatical when some indexing is licit.
 
@@ -64,7 +64,7 @@ not available, and move the verified ones to `Data/Examples`.
 namespace Chomsky1981
 
 open Morphology (Word)
-open Core.Order Syntax Syntax.Tree Binding
+open Core.Order PhraseStructure PhraseStructure.Tree Binding
 
 /-! ### Clauses and their noun phrases -/
 

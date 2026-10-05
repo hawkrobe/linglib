@@ -62,7 +62,7 @@ namespace LittleMoroneyRoyer2022
 open Semantics.Composition
 open Mereology (QMOD atomize)
 open Semantics.Composition.Tree (interp)
-open Syntax (Tree)
+open PhraseStructure (Tree)
 open IoninMatushansky2006 (cardMod IsAtomOf cardMod_atoms_iff)
 
 /-! ### The two strategies, in the morphology -/

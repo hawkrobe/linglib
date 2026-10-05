@@ -49,7 +49,7 @@ and the government schema with head-of reaches the head of a governed phrase.
 
 namespace BarkerPullum1990
 
-open Core.Order Syntax Syntax.Tree
+open Core.Order PhraseStructure PhraseStructure.Tree
 
 /-- In the government schema `a` governs `b` when `a` commands `b` and `b` bears to `a` the
 composition of head-of with command. -/

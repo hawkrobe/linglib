@@ -30,8 +30,8 @@ verbs, relative and interrogative pronouns without a particle, and verb-final ve
 
 ## Implementation notes
 
-* Clauses are `Syntax.Tree`s over the labels of (76) and (97), with Π flat inside; the trace
-  bindings that reconstruction respects are given as an explicit list, footnote 7's
+* Clauses are `PhraseStructure.Tree`s over the labels of (76) and (97), with Π flat inside; the
+  trace bindings that reconstruction respects are given as an explicit list, footnote 7's
   pseudo-reconstruction, and Höhle's relation SR is left open in the paper.
 * VERUM is the identity on propositions, so the two scopings of (56) have the same content
   (`content_focusBackground`) and differ only in what is background.
@@ -49,7 +49,7 @@ verbs, relative and interrogative pronouns without a particle, and verb-final ve
 
 namespace Hohle1992
 
-open Core.Order Syntax
+open Core.Order PhraseStructure
 
 /-! ### The peripheral structure of (76) -/
 

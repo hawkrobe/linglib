@@ -60,8 +60,8 @@ silent Adv head that ellipsis or a partial copy can leave out. The paper's examp
 
 namespace BrueningAlKhalaf2020
 
-open Syntax (Cat)
-open Syntax.Cat (N V Adj Adv P)
+open PhraseStructure (Cat)
+open PhraseStructure.Cat (N V Adj Adv P)
 
 variable {α β : Type*}
 

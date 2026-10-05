@@ -43,7 +43,7 @@ such a word among its daughters (`SlotConstraint.Allows`).
 
 namespace ConstructionGrammar
 
-open Syntax (Tree)
+open PhraseStructure (Tree)
 open Morphology (Word)
 
 /-- A tree is the word of the given form and part of speech. -/

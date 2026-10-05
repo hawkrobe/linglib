@@ -60,7 +60,7 @@ definite singular.
 
 namespace BaleKhanjian2014
 
-open Syntax Alternatives
+open PhraseStructure Alternatives
 
 /-! ### Denotations -/
 

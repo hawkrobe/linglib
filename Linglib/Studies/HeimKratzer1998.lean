@@ -53,7 +53,7 @@ namespace HeimKratzer1998
 
 open Semantics.Composition
 open scoped Assignment
-open Syntax
+open PhraseStructure
 open Semantics.Composition.Tree
 open Quantifier Quantifier.GQ
 open Quantifier.Polyadic (surfaceScope inverseScope iterate_every_some_of_some_every)

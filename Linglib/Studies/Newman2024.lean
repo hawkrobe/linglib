@@ -341,7 +341,7 @@ inductive Leaf where
 
 /-- An `XTree` is a tree whose nodes carry a category. Which nodes are heads, intermediate or
 maximal projections is read off the tree: a node's head daughter is its daughter of its category. -/
-abbrev XTree := Syntax.Tree Cat Leaf
+abbrev XTree := PhraseStructure.Tree Cat Leaf
 
 /-- A tree counts for Merge features as a phrase of its root's category. -/
 def XTree.checks (t : XTree) : Finset Feature := Phrase.checks ⟨t.cat, ∅⟩
@@ -403,11 +403,11 @@ theorem ditransitives_licensed :
 properly dominating `a` dominates `b` and `b` does not c-command `a`. Binding is not restricted to
 a domain. -/
 def configuration (t : XTree) : Binding.Configuration TreePath where
-  commands a b := (a, b) ∈ Syntax.Tree.maxCommandAt t ∧ ¬ Syntax.CCommands t b a
+  commands a b := (a, b) ∈ PhraseStructure.Tree.maxCommandAt t ∧ ¬ PhraseStructure.CCommands t b a
   domain _ := Set.univ
 
 instance (t : XTree) : DecidableRel (configuration t).commands := fun a b ↦
-  inferInstanceAs (Decidable ((a, b) ∈ Syntax.Tree.maxCommandAt t ∧ _))
+  inferInstanceAs (Decidable ((a, b) ∈ PhraseStructure.Tree.maxCommandAt t ∧ _))
 
 /-- `leafPaths t` pairs each leaf of `t` with its position. -/
 def leafPaths (t : XTree) : List (Leaf × TreePath) :=
@@ -437,7 +437,7 @@ theorem canBind_dobj_iobj :
 /-- With the indirect object in v's complement neither object c-commands the other. -/
 theorem highXP_not_cCommands :
     ∃ a ∈ (leafPaths highXP).lookup .dobj, ∃ b ∈ (leafPaths highXP).lookup .iobj,
-      ¬ Syntax.CCommands highXP a b ∧ ¬ Syntax.CCommands highXP b a := by
+      ¬ PhraseStructure.CCommands highXP a b ∧ ¬ PhraseStructure.CCommands highXP b a := by
   decide
 
 /-- **Word order and binding.** When the indirect object precedes the direct object, the direct

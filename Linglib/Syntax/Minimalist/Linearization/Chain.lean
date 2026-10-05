@@ -24,7 +24,7 @@ come apart without a separate choice of the copy to spell out. A token with two 
 is shared, dominated by two mothers, Citko's Parallel Merge.
 
 A copy is linked to the nearest copy above it, the one whose projection c-commands it with no
-other copy's projection in between, c-command being Barker and Pullum's `Syntax.CCommands`.
+other copy's projection in between, c-command being Barker and Pullum's `PhraseStructure.CCommands`.
 Locality constrains links. Chomsky's Phase Impenetrability Condition bars a link from the interior
 of a phase, the positions its head c-commands, to a position outside the head's maximal
 projection, so that the edge is the escape hatch (`Crosses`); an island is a domain no link may
@@ -37,7 +37,7 @@ Sato and Ngui find.
 * `Minimalist.tokenList`, `Minimalist.traceList`: the pronounced and the deleted copies.
 * `occurrences`, `traces`, `chain`, `Moves`, `IsShared`: the copies of a token.
 * `headIndex?`, `projectionAt`: the head daughter of a constituent, and the phrase a copy stands
-  for, its maximal projection along head daughters (`Syntax.maximalProjectionAt`).
+  for, its maximal projection along head daughters (`PhraseStructure.maximalProjectionAt`).
 * `HasAntecedent`, `orphanTraces`: whether a pronounced copy c-commands a deleted one, and the
   deleted copies without antecedents, seen from their own conjunct copies.
 * `IsLink`, `links`, `chainTop`: the links of a chain and its scope position.
@@ -82,7 +82,7 @@ Sato and Ngui find.
 
 namespace Minimalist
 
-open RoseTree SyntacticObject Core.Order Syntax
+open RoseTree SyntacticObject Core.Order PhraseStructure
 
 /-! ### Copies -/
 

@@ -45,7 +45,7 @@ without any bound, `Alternatives.hamblin_alternatives_subset`.
 Propositions are sets of worlds. Σ and NEG are the positive and the negative `Polarity`, and
 denote its action on propositions, the identity and complementation. The deontic modal is
 `Modality.necessity` over a modal base and an ordering source. The lexicon is a finite set of
-terminals of `Syntax.Tree`, so that category match is the terminal clause of
+terminals of `PhraseStructure.Tree`, so that category match is the terminal clause of
 `Alternatives.hamblin`; the denotation of a tree is its terminal's operator and the identity
 elsewhere. Two-dimensional values are `WithAlternatives`, whose `<*>` is pointwise functional
 application. *=mI* itself is vacuous and does not enter the composition. The embedding data,
@@ -71,7 +71,7 @@ as rows and not modelled. The examples are the rows of `Data.Examples.TurkHirsch
 
 namespace TurkHirsch2026
 
-open Alternatives Modality Question Syntax
+open Alternatives Modality Question PhraseStructure
 
 /-! ### The polar morphemes and the deontic modal -/
 

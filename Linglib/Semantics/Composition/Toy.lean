@@ -161,7 +161,7 @@ theorem toyNaming_freshFor : FOWords.FreshFor {} toyNaming := by
 /-- "John sleeps" composes through `Tree.interp` over the toy lexicon to the model's fact. -/
 example :
     Tree.interp toyLexicon (fun _ ↦ ToyEntity.john)
-      (.node () [.terminal () "John", .terminal () "sleeps"] : Syntax.Tree Unit String)
+      (.node () [.terminal () "John", .terminal () "sleeps"] : PhraseStructure.Tree Unit String)
       = some ⟨.t, Toy.sleeps ToyEntity.john⟩ := rfl
 
 end Semantics.Composition
