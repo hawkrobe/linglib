@@ -157,9 +157,8 @@ theorem not_guaranteesException_most : ¬ GuaranteesException (most : GQ (Fin 5)
 
 /-- The limiting case: with two students, John and Harry, of whom only Harry attended, *most*
 has the unique exception John. -/
-theorem exists_excLeast_most_two :
-    ∃ C, ExcLeast most (λ _ : Fin 2 => True) C (· = 1) := by
-  refine ⟨(· = 0), (mostOn_univ _ _).1 (by decide), λ S hS x hx => ?_⟩
+theorem excLeast_most_two : ExcLeast most (fun _ : Fin 2 ↦ True) (· = 0) (· = 1) := by
+  refine ⟨(mostOn_univ _ _).1 (by decide), fun S hS x hx ↦ ?_⟩
   subst hx
   have hS' : most (λ x : Fin 2 => True ∧ ¬ S x) (· = 1) := hS
   by_contra h0
@@ -172,6 +171,11 @@ theorem exists_excLeast_most_two :
       funext λ x => propext (by fin_cases x <;> simp [h0, h1])
     rw [e] at hS'
     exact absurd ((mostOn_univ _ _).2 hS') (by decide)
+
+/-- *Most* can have a least exception, von Fintel's limiting case exposed existentially. -/
+theorem exists_excLeast_most_two :
+    ∃ C, ExcLeast most (fun _ : Fin 2 ↦ True) C (· = 1) :=
+  ⟨_, excLeast_most_two⟩
 
 /-! ### Free exceptives (§2) -/
 

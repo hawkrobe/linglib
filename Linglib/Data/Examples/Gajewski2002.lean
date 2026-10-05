@@ -15,10 +15,36 @@ this module; declarations live in `namespace Gajewski2002.Examples`.
 
 namespace Gajewski2002.Examples
 
+def ex4a : Datum :=
+  { id := "gajewski2002_ex4a"
+    source := ⟨"gajewski-2002", "(4a)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "There is the wolf at the door."
+    glossedTokens := []
+    context := ""
+    judgment := .ungrammatical
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "there"), ("determiner", "the"), ("strength", "strong"), ("grammatical", "no")] }
+
+def ex4b : Datum :=
+  { id := "gajewski2002_ex4b"
+    source := ⟨"gajewski-2002", "(4b)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "There were John and Mary cycling along the creek."
+    glossedTokens := []
+    context := ""
+    judgment := .ungrammatical
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "there"), ("determiner", "none"), ("strength", "strong"), ("grammatical", "no")] }
+
 def ex4c : Datum :=
   { id := "gajewski2002_ex4c"
-    source := ⟨"barwise-cooper-1981", "(4c)"⟩
-    reportedIn := some ⟨"gajewski-2002", "(4c)"⟩
+    source := ⟨"gajewski-2002", "(4c)"⟩
+    reportedIn := none
     language := "stan1293"
     primaryText := "There was everyone in the room."
     glossedTokens := []
@@ -26,7 +52,150 @@ def ex4c : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("construction", "there"), ("determiner", "every"), ("grammatical", "no")] }
+    paperFeatures := [("construction", "there"), ("determiner", "every"), ("strength", "strong"), ("grammatical", "no")] }
+
+def ex5a : Datum :=
+  { id := "gajewski2002_ex5a"
+    source := ⟨"gajewski-2002", "(5a)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "There is a wolf at the door."
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "there"), ("determiner", "some"), ("strength", "weak"), ("grammatical", "yes")] }
+
+def ex5b : Datum :=
+  { id := "gajewski2002_ex5b"
+    source := ⟨"gajewski-2002", "(5b)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "There were two people cycling along the creek."
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "there"), ("determiner", "two"), ("strength", "weak"), ("grammatical", "yes")] }
+
+def ex5c : Datum :=
+  { id := "gajewski2002_ex5c"
+    source := ⟨"gajewski-2002", "(5c)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "There was someone in the room."
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "there"), ("determiner", "some"), ("strength", "weak"), ("grammatical", "yes")] }
+
+def ex11a_every : Datum :=
+  { id := "gajewski2002_ex11a_every"
+    source := ⟨"gajewski-2002", "(11a)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Every student but Bill passed the exam."
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "exceptive"), ("determiner", "every"), ("grammatical", "yes")] }
+
+def ex11a_no : Datum :=
+  { id := "gajewski2002_ex11a_no"
+    source := ⟨"gajewski-2002", "(11a)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "No student but Bill passed the exam."
+    glossedTokens := []
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "exceptive"), ("determiner", "no"), ("grammatical", "yes")] }
+
+def ex11b_some : Datum :=
+  { id := "gajewski2002_ex11b_some"
+    source := ⟨"gajewski-2002", "(11b)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Some students but Bill passed the exam."
+    glossedTokens := []
+    context := ""
+    judgment := .ungrammatical
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "exceptive"), ("determiner", "some"), ("grammatical", "no")] }
+
+def ex11b_three : Datum :=
+  { id := "gajewski2002_ex11b_three"
+    source := ⟨"gajewski-2002", "(11b)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Three students but Bill passed the exam."
+    glossedTokens := []
+    context := ""
+    judgment := .ungrammatical
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "exceptive"), ("determiner", "three"), ("grammatical", "no")] }
+
+def ex11b_many : Datum :=
+  { id := "gajewski2002_ex11b_many"
+    source := ⟨"gajewski-2002", "(11b)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Many students but Bill passed the exam."
+    glossedTokens := []
+    context := ""
+    judgment := .ungrammatical
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "exceptive"), ("determiner", "many"), ("grammatical", "no")] }
+
+def ex11c_most : Datum :=
+  { id := "gajewski2002_ex11c_most"
+    source := ⟨"gajewski-2002", "(11c)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Most students but Bill passed the exam."
+    glossedTokens := []
+    context := ""
+    judgment := .ungrammatical
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "exceptive"), ("determiner", "most"), ("grammatical", "no")] }
+
+def ex11c_exactly_two : Datum :=
+  { id := "gajewski2002_ex11c_exactly_two"
+    source := ⟨"gajewski-2002", "(11c)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Exactly two students but Bill passed the exam."
+    glossedTokens := []
+    context := ""
+    judgment := .ungrammatical
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "exceptive"), ("determiner", "exactly two"), ("grammatical", "no")] }
+
+def ex11c_fewer_than_three : Datum :=
+  { id := "gajewski2002_ex11c_fewer_than_three"
+    source := ⟨"gajewski-2002", "(11c)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Fewer than three students but Bill passed the exam."
+    glossedTokens := []
+    context := ""
+    judgment := .ungrammatical
+    alternatives := []
+    readings := []
+    paperFeatures := [("construction", "exceptive"), ("determiner", "fewer than three"), ("grammatical", "no")] }
 
 def ex30a : Datum :=
   { id := "gajewski2002_ex30a"
@@ -40,71 +209,6 @@ def ex30a : Datum :=
     alternatives := []
     readings := []
     paperFeatures := [("construction", "there"), ("determiner", "every"), ("grammatical", "no")] }
-
-def ex5a : Datum :=
-  { id := "gajewski2002_ex5a"
-    source := ⟨"barwise-cooper-1981", "(5a)"⟩
-    reportedIn := some ⟨"gajewski-2002", "(5a)"⟩
-    language := "stan1293"
-    primaryText := "There is a wolf at the door."
-    glossedTokens := []
-    context := ""
-    judgment := .acceptable
-    alternatives := []
-    readings := []
-    paperFeatures := [("construction", "there"), ("determiner", "some"), ("grammatical", "yes")] }
-
-def ex5c : Datum :=
-  { id := "gajewski2002_ex5c"
-    source := ⟨"barwise-cooper-1981", "(5c)"⟩
-    reportedIn := some ⟨"gajewski-2002", "(5c)"⟩
-    language := "stan1293"
-    primaryText := "There was someone in the room."
-    glossedTokens := []
-    context := ""
-    judgment := .acceptable
-    alternatives := []
-    readings := []
-    paperFeatures := [("construction", "there"), ("determiner", "some"), ("grammatical", "yes")] }
-
-def ex11a_every : Datum :=
-  { id := "gajewski2002_ex11a_every"
-    source := ⟨"von-fintel-1993", "(11a)"⟩
-    reportedIn := some ⟨"gajewski-2002", "(11a)"⟩
-    language := "stan1293"
-    primaryText := "Every student but Bill passed the exam."
-    glossedTokens := []
-    context := ""
-    judgment := .acceptable
-    alternatives := []
-    readings := []
-    paperFeatures := [("construction", "exceptive"), ("determiner", "every"), ("grammatical", "yes")] }
-
-def ex11a_no : Datum :=
-  { id := "gajewski2002_ex11a_no"
-    source := ⟨"von-fintel-1993", "(11a)"⟩
-    reportedIn := some ⟨"gajewski-2002", "(11a)"⟩
-    language := "stan1293"
-    primaryText := "No student but Bill passed the exam."
-    glossedTokens := []
-    context := ""
-    judgment := .acceptable
-    alternatives := []
-    readings := []
-    paperFeatures := [("construction", "exceptive"), ("determiner", "no"), ("grammatical", "yes")] }
-
-def ex11b : Datum :=
-  { id := "gajewski2002_ex11b"
-    source := ⟨"von-fintel-1993", "(11b)"⟩
-    reportedIn := some ⟨"gajewski-2002", "(11b)"⟩
-    language := "stan1293"
-    primaryText := "Some students but Bill passed the exam."
-    glossedTokens := []
-    context := ""
-    judgment := .ungrammatical
-    alternatives := []
-    readings := []
-    paperFeatures := [("construction", "exceptive"), ("determiner", "some"), ("grammatical", "no")] }
 
 def ex34a : Datum :=
   { id := "gajewski2002_ex34a"
@@ -132,6 +236,6 @@ def ex34b : Datum :=
     readings := []
     paperFeatures := [("construction", "andNot"), ("determiner", "none"), ("grammatical", "yes")] }
 
-def all : List Datum := [ex4c, ex30a, ex5a, ex5c, ex11a_every, ex11a_no, ex11b, ex34a, ex34b]
+def all : List Datum := [ex4a, ex4b, ex4c, ex5a, ex5b, ex5c, ex11a_every, ex11a_no, ex11b_some, ex11b_three, ex11b_many, ex11c_most, ex11c_exactly_two, ex11c_fewer_than_three, ex30a, ex34a, ex34b]
 
 end Gajewski2002.Examples

@@ -1,48 +1,86 @@
 module
 
+public import Linglib.Semantics.Composition.Ty
 public import Linglib.Semantics.Quantification.Exceptive
 public import Linglib.Studies.BarwiseCooper1981
+public import Linglib.Studies.VonFintel1993
+public import Linglib.Core.GroupTheory.GroupAction.Blocks
+public import Linglib.Core.Data.Fin.VecNotation
 public import Linglib.Data.Examples.Gajewski2002
-public import Mathlib.Data.Fin.VecNotation
+public import Mathlib.Algebra.Group.Action.End
 
 /-!
 # Gajewski (2002): On Analyticity in Natural Language
 
 This file formalizes [gajewski-2002]'s principle that a sentence is ungrammatical if its
 logical form contains an L-analytic constituent, one that is true, or false, in virtue of its
-logical structure alone. Logical structure has two ingredients. The logical items are the
-denotations invariant under permutations of the domain, the criterion of [van-benthem-1989]:
-the determiners *every*, *some* and *no*, the truth-functional connectives, and expletive
-*there*, which denotes the whole domain. The logical skeleton of a sentence replaces each maximal
-constituent without logical items by a distinct variable of its type, and the sentence is
-L-analytic when the skeleton receives one truth value under every assignment
-(`Skeleton.IsLAnalytic`). The principle puts two analyses on firmer ground. [barwise-cooper-1981]
-explained the definiteness restriction on *there*-sentences of [milsark-1977] by the tautology a
-strong determiner produces there: the skeleton of *there is every new student* is an
-L-tautology because every set is a subset of the domain (`thereSkeleton_isLTautology`), while
-with *some* the skeleton is false under the empty assignment and true otherwise.
-[von-fintel-1993] explained the restriction of *but*-exceptives to universal determiners by the
-contradiction his least-exception semantics produces under a left-upward-monotone determiner,
-which admits no nonempty least exception (`ExcLeast.not_of_restrictorMonotone`): the skeleton
-with *some* is an L-contradiction (`exceptiveSkeleton_isLContradiction`), and the skeletons with
-*every* and *no* are contingent. Both analyses had appealed to trivial truth conditions, which
-*war is war* shows cannot be the explanation, and L-analyticity is narrower than triviality:
-*every woman is a woman* and *John is smoking and John is not smoking* receive skeletons with
-distinct variables for their repeated material, which are contingent, so the garden-variety
-tautologies and contradictions come out grammatical. The paper's sentences are the rows, and the
-principle predicts each (`rows_predicted`).
+logical structure alone. Logical structure has two ingredients, and the file formalizes both
+halves of the paper.
+
+The logical items are the denotations invariant under permutations of the domain, the
+criterion of [van-benthem-1989]: a permutation of the entity domain lifts through the
+`Montague.Ty` hierarchy (`permLift`), and an item is logical when every lifted permutation
+fixes it (`PermutationInvariant`). Truth-functional conjunction is fixed because the lift is
+the identity at type `t` (`permutationInvariant_and`), expletive *there*, which denotes the
+whole domain, is fixed, and the domain and the empty set are the only invariant properties
+(`permutationInvariant_et_iff`), so a contingent predicate like *new-student* is not a logical
+item. Invariance at the determiner type is exactly the quantity invariance the Quantification
+substrate states on `GQ` (`permutationInvariant_det_iff`), so the logicality of *every*, *some*
+and *no* follows from the isomorphism invariance of their Lindström classes rather than being
+stipulated. Von Fintel's *but* is a logical item too (`permutationInvariant_but`).
+
+The logical skeleton of a sentence replaces each maximal constituent without logical items by
+a distinct variable of its semantic type; a skeleton is a predicate on type-sorted assignments
+(`Skeleton`, domains by `Montague.Ty.Domain`), and a sentence is L-analytic when its skeleton
+receives one truth value under every assignment (`Skeleton.IsLAnalytic`). The principle puts
+two analyses on firmer ground. [barwise-cooper-1981] explained the definiteness restriction on
+*there*-sentences of [milsark-1977] by the tautology a strong determiner produces there: the
+skeleton of *there is every new student* is an L-tautology because every set is a subset of
+the domain (`thereSkeleton_isLTautology`), while with *some* or *two* the skeleton is false
+under the empty assignment and true under a large enough one. [von-fintel-1993] explained the
+restriction of *but*-exceptives to universal determiners by the contradiction his
+least-exception semantics produces under a left-upward-monotone determiner, which admits no
+nonempty least exception (`ExcLeast.not_of_restrictorMonotone`): the skeletons with *some* and
+*three* are L-contradictions, and the skeletons with *every* and *no* are contingent. Both
+analyses had appealed to trivial truth conditions, which *war is war* shows cannot be the
+explanation, and L-analyticity is narrower than triviality: *every woman is a woman* and
+*John is smoking and John is not smoking* receive skeletons with distinct variables for their
+repeated material, which are contingent, so the garden-variety tautologies and contradictions
+come out grammatical. The paper's sentences are the rows, and the principle predicts each
+(`rows_predicted`) except the *most*-exceptive, the gap the paper's footnote on *most*
+concedes and `exceptiveSkeleton_most_not_isLAnalytic` states.
 
 ## Implementation notes
 
-* A skeleton is a family of typed slots with the denotation it receives under an assignment;
-  the paper's variables of type ⟨e,t⟩ are slots valued in `α → Prop` and its propositional
-  variables slots valued in `Prop`. Davidson's formulation, that the truth value survives every
-  rewriting of the non-logical parts, is `Skeleton.isLAnalytic_iff`.
-* The exceptive skeleton carries the nonemptiness of the exception set that the paper's footnote
-  adds to von Fintel's schema.
-* The rows are evaluated over a two-element domain; the general theorems take any domain with
-  the one point their witnesses need.
+* The paper's type hierarchy has `e`, `t` and function types only; `permLift` extends it to
+  the rest of `Montague.Ty` by the identity at the degree, cardinality and eventuality sorts
+  and pointwise at intensions, with `Unit` as the inert index sort of the extensional
+  fragment.
+* The denotation of *but* is the paper's schema factored compositionally, but where the
+  printed uniqueness clause reads `g ⊆ j` the least-exception schema it factors requires
+  `f ⊆ j`, so `but` is `ExcLeast` with the arguments rearranged; the exceptive skeleton
+  carries the nonemptiness of the exception set that the paper's footnote adds to the schema.
+* A row's L-analyticity quantifies over every reading of its determiner and every finite
+  nonempty domain, following the model quantification of the paper's strength and
+  monotonicity definitions; nonemptiness reflects the remark that the *some* skeleton is true
+  on every nonempty value of its variable.
+* The readings of *every*, *some* and *most* are the English fragment's; *no* is read from
+  the quantification substrate because the fragment has no entry for the word, *a* is read as
+  *some*, *everyone* as *every*, *someone* as *some*, and the numerals as *at least n*, the
+  paper's own reading of *one, two* as left-upward-monotone determiners.
+* The rows cover the sentences the paper derives. Its remaining printed examples are data
+  only: *the wolf* needs a partial definite determiner, *John and Mary* is not a determiner,
+  *many* has no fixed reading, and the paper derives no verdict for *exactly two* or *fewer
+  than three*.
 * The examples are `Data.Examples.Gajewski2002`.
+
+## TODO
+
+* A partial definite determiner would let the *the wolf* row join `rows_predicted`.
+* Cardinality arguments for *exactly two* and *fewer than three* exceptives are in the later
+  literature the paper's footnote cites, not in the paper.
+* The English determiner fragment lacks *no*; adding it would let `Determiner.no` read from
+  the fragment.
 
 ## References
 
@@ -57,16 +95,144 @@ principle predicts each (`rows_predicted`).
 
 namespace Gajewski2002
 
-open Quantifier Quantifier.GQ Quantifier.Exceptive
+open Montague Quantifier Quantifier.GQ Quantifier.Exceptive
+open English.Determiners (QuantityWord)
+open scoped Semantics
 
-/-- A logical skeleton (24): typed slots, one per maximal constituent without logical items, and
-the denotation the skeleton receives under an assignment (27). -/
-structure Skeleton (ι : Type*) (D : ι → Type*) where
-  interpret : ((i : ι) → D i) → Prop
+variable {E : Type}
+
+/-! ### Logical items by permutation invariance (§3.1) -/
+
+/-- (17): the lift of a permutation of the entity domain to every type, the permutation
+itself at `e`, the identity at `t`, and conjugation at `⟨a,b⟩`. -/
+def permLift (π : Equiv.Perm E) : ∀ ty : Ty, Equiv.Perm (Ty.Domain E Unit ty)
+  | .e => π
+  | .t => Equiv.refl _
+  | .d => Equiv.refl _
+  | .n => Equiv.refl _
+  | .v => Equiv.refl _
+  | .s => Equiv.refl _
+  | .fn a b => (permLift π a).arrowCongr (permLift π b)
+  | .intens a => (Equiv.refl Unit).arrowCongr (permLift π a)
+
+@[simp] theorem permLift_et_apply (π : Equiv.Perm E) (P : E → Prop) :
+    permLift π Ty.et P = P ∘ ⇑π.symm :=
+  rfl
+
+@[simp] theorem permLift_det_apply (π : Equiv.Perm E) (Q : GQ E) (A B : E → Prop) :
+    permLift π Ty.det Q A B = Q (A ∘ ⇑π) (B ∘ ⇑π) :=
+  rfl
+
+/-- (18): an item is permutation invariant when every lifted permutation fixes it, van
+Benthem's criterion for the logical items. -/
+def PermutationInvariant (ty : Ty) (x : Ty.Domain E Unit ty) : Prop :=
+  ∀ π : Equiv.Perm E, permLift π ty x = x
+
+/-- (20): truth-functional conjunction is a logical item, preserved because the lift is the
+identity at type `t`. -/
+theorem permutationInvariant_and :
+    PermutationInvariant (E := E) (.t ⇒ .t ⇒ .t) fun u v : Prop ↦ u ∧ v :=
+  fun _ ↦ rfl
+
+/-- Negation is a logical item; the skeleton (36) keeps *not*. -/
+theorem permutationInvariant_not : PermutationInvariant (E := E) (.t ⇒ .t) Not :=
+  fun _ ↦ rfl
+
+/-- (23c): expletive *there* denotes the whole domain and is a logical item. -/
+theorem permutationInvariant_there : PermutationInvariant Ty.et fun _ : E ↦ True :=
+  fun _ ↦ rfl
+
+/-- The whole domain and the empty set are the only permutation-invariant properties, the
+discussion under (25); a contingent predicate like *new-student* is therefore replaced by a
+variable in the skeleton. -/
+theorem permutationInvariant_et_iff {P : E → Prop} :
+    PermutationInvariant Ty.et P ↔ P = (fun _ ↦ True) ∨ P = (fun _ ↦ False) := by
+  constructor
+  · intro h
+    have hB : MulAction.IsFixedBlock (Equiv.Perm E) {x | P x} := fun π ↦ Set.ext fun x ↦ by
+      simp only [Set.mem_smul_set_iff_inv_smul_mem, Equiv.Perm.smul_def, Set.mem_ofPred_eq]
+      exact iff_of_eq (congrFun (h π) x)
+    rcases hB.eq_empty_or_univ with h0 | hu
+    · exact Or.inr (funext fun x ↦ eq_false fun hx ↦
+        Set.eq_empty_iff_forall_notMem.1 h0 x hx)
+    · exact Or.inl (funext fun x ↦ eq_true (Set.eq_univ_iff_forall.1 hu x))
+  · rintro (rfl | rfl) π <;> rfl
+
+/-- Van Benthem invariance at the determiner type is Mostowski's quantity invariance, the
+form the Quantification substrate states on `GQ`. -/
+theorem permutationInvariant_det_iff {Q : GQ E} :
+    PermutationInvariant Ty.det Q ↔ QuantityInvariant Q := by
+  constructor
+  · intro h A B A' B' f hf hA hB
+    have hA' : A' = A ∘ f := funext fun x ↦ propext (hA x).symm
+    have hB' : B' = B ∘ f := funext fun x ↦ propext (hB x).symm
+    have hQ := congrFun (congrFun (h (Equiv.ofBijective f hf)) A) B
+    rw [permLift_det_apply] at hQ
+    rw [hA', hB']
+    exact (iff_of_eq hQ).symm
+  · intro h π
+    funext A B
+    exact propext (h (A ∘ ⇑π) (B ∘ ⇑π) A B ⇑π.symm π.symm.bijective
+      (fun x ↦ by simp) (fun x ↦ by simp))
+
+/-- (25): *some* is a logical item, by the isomorphism invariance of its Lindström class. -/
+theorem permutationInvariant_some : PermutationInvariant Ty.det (GQ.some : GQ E) :=
+  permutationInvariant_det_iff.2
+    (by rw [← Lindstrom.someDet_toGQ]; exact Lindstrom.Det.realize_quantityInvariant _)
+
+/-- (35): *every* is a logical item, so only *woman* is replaced in the skeleton of (34a). -/
+theorem permutationInvariant_every : PermutationInvariant Ty.det (every : GQ E) :=
+  permutationInvariant_det_iff.2
+    (by rw [← Lindstrom.everyDet_toGQ]; exact Lindstrom.Det.realize_quantityInvariant _)
+
+/-- *No* is a logical item; the skeletons of the (11a) exceptives keep it. -/
+theorem permutationInvariant_no : PermutationInvariant Ty.det (no : GQ E) :=
+  permutationInvariant_det_iff.2
+    (by rw [← Lindstrom.noDet_toGQ]; exact Lindstrom.Det.realize_quantityInvariant _)
+
+/-- (31): von Fintel's ||but||, the least-exception schema factored compositionally; the
+exception `f` is the least set whose subtraction from the restrictor `g` makes the
+quantification `D _ h` true. -/
+def but : Ty.Domain E Unit (Ty.et ⇒ Ty.et ⇒ Ty.det ⇒ Ty.et ⇒ .t) :=
+  fun f g D h ↦ ExcLeast D g f h
+
+/-- (31): ||but|| is a permutation-invariant element of its type, a logical constant, so it is
+not replaced by a variable in the skeletons (32)–(33). -/
+theorem permutationInvariant_but :
+    PermutationInvariant (Ty.et ⇒ Ty.et ⇒ Ty.det ⇒ Ty.et ⇒ .t) (but (E := E)) := by
+  intro π
+  funext f g D h
+  show but (f ∘ ⇑π) (g ∘ ⇑π) (fun A B ↦ D (A ∘ ⇑π.symm) (B ∘ ⇑π.symm)) (h ∘ ⇑π) = but f g D h
+  simp only [but, ExcLeast, IsLeast, lowerBounds, Set.mem_ofPred_eq, Pi.le_def, le_Prop_eq]
+  refine propext ⟨fun hb ↦ ⟨?_, fun j hj x hx ↦ ?_⟩, fun hb ↦ ⟨?_, fun j hj x hx ↦ ?_⟩⟩
+  · convert hb.1 using 2 <;>
+      simp [Function.comp_assoc, Equiv.self_comp_symm, Function.comp_apply,
+        Equiv.apply_symm_apply]
+  · have hc : (fun A B ↦ D (A ∘ ⇑π.symm) (B ∘ ⇑π.symm))
+        (fun x ↦ (g ∘ ⇑π) x ∧ ¬ (j ∘ ⇑π) x) (h ∘ ⇑π) := by
+      convert hj using 2 <;>
+        simp [Function.comp_assoc, Equiv.self_comp_symm, Function.comp_apply,
+          Equiv.apply_symm_apply]
+    simpa using hb.2 hc (⇑π.symm x) (by simpa using hx)
+  · convert hb.1 using 2 <;>
+      simp [Function.comp_assoc, Equiv.self_comp_symm, Function.comp_apply,
+        Equiv.apply_symm_apply]
+  · have hc : D (fun x ↦ g x ∧ ¬ (j ∘ ⇑π.symm) x) h := by
+      convert hj using 2 <;>
+        simp [Function.comp_assoc, Equiv.self_comp_symm, Function.comp_apply,
+          Equiv.apply_symm_apply]
+    simpa using hb.2 hc (⇑π x) (by simpa using hx)
+
+/-! ### Logical skeletons and L-analyticity (§3.2) -/
+
+/-- A logical skeleton (24): one typed slot per maximal constituent without logical items, and
+the denotation the skeleton receives under a type-sorted assignment (26)–(27). -/
+structure Skeleton (E : Type) {ι : Type*} (τ : ι → Ty) where
+  interpret : ((i : ι) → Ty.Domain E Unit (τ i)) → Prop
 
 namespace Skeleton
 
-variable {ι : Type*} {D : ι → Type*} (S : Skeleton ι D)
+variable {ι : Type*} {τ : ι → Ty} (S : Skeleton E τ)
 
 /-- The skeleton receives 1 under every assignment. -/
 def IsLTautology : Prop := ∀ g, S.interpret g
@@ -79,109 +245,141 @@ def IsLAnalytic : Prop := S.IsLTautology ∨ S.IsLContradiction
 
 /-- Davidson's formulation: the truth value survives every significant rewriting of the
 non-logical parts. -/
-theorem isLAnalytic_iff [Nonempty ((i : ι) → D i)] :
-    S.IsLAnalytic ↔ ∀ g g', S.interpret g ↔ S.interpret g' := by
-  refine ⟨λ h g g' => ?_, λ h => ?_⟩
+theorem isLAnalytic_iff : S.IsLAnalytic ↔ ∀ g g', S.interpret g ↔ S.interpret g' := by
+  refine ⟨fun h g g' ↦ ?_, fun h ↦ ?_⟩
   · rcases h with h | h
     · exact iff_of_true (h g) (h g')
     · exact iff_of_false (h g) (h g')
-  · obtain ⟨g₀⟩ := ‹Nonempty ((i : ι) → D i)›
-    by_cases hg : S.interpret g₀
-    · exact Or.inl λ g => (h g g₀).2 hg
-    · exact Or.inr λ g hg' => hg ((h g g₀).1 hg')
+  · by_cases hg : ∃ g, S.interpret g
+    · obtain ⟨g₀, hg₀⟩ := hg
+      exact Or.inl fun g ↦ (h g g₀).2 hg₀
+    · exact Or.inr fun g hg' ↦ hg ⟨g, hg'⟩
 
 end Skeleton
 
-variable {α : Type*}
-
 /-! ### The definiteness restriction (§3.3.1) -/
 
-/-- The skeleton (25) of a *there*-sentence: the determiner applied to a property variable and to
-*there*, which denotes the domain (23c). -/
-def thereSkeleton (Q : GQ α) : Skeleton Unit (λ _ => α → Prop) :=
-  ⟨λ g => Q (g ()) (λ _ => True)⟩
+/-- The skeleton (25) of a *there*-sentence: the determiner applied to a property variable and
+to *there*, which denotes the domain (23c). -/
+def thereSkeleton (Q : GQ E) : Skeleton E fun _ : Unit ↦ Ty.et :=
+  ⟨fun g ↦ Q (g ()) fun _ ↦ True⟩
 
 /-- (30): with a conservative positive strong determiner the *there*-skeleton is an
 L-tautology, [barwise-cooper-1981]'s consequence that the domain belongs to every strong
 quantifier. -/
-theorem thereSkeleton_isLTautology {Q : GQ α} (hc : Conservative Q) (hs : PositiveStrong Q) :
+theorem thereSkeleton_isLTautology {Q : GQ E} (hc : Conservative Q) (hs : PositiveStrong Q) :
     (thereSkeleton Q).IsLTautology :=
-  λ g => BarwiseCooper1981.there_of_positiveStrong hc hs (g ())
+  fun g ↦ BarwiseCooper1981.there_of_positiveStrong hc hs (g ())
 
-/-- (25): with *some* the skeleton is false under the empty assignment and true under the total
-one. -/
-theorem thereSkeleton_some_not_isLAnalytic (a : α) :
-    ¬ (thereSkeleton (GQ.some : GQ α)).IsLAnalytic := by
+/-- (25): with *some* the skeleton is false under the empty assignment and true under the
+total one. -/
+theorem thereSkeleton_some_not_isLAnalytic (a : E) :
+    ¬ (thereSkeleton (GQ.some : GQ E)).IsLAnalytic := by
   rintro (h | h)
-  · obtain ⟨_, hx, -⟩ := h (λ _ _ => False)
+  · obtain ⟨_, hx, -⟩ := h fun _ _ ↦ False
     exact hx
-  · exact h (λ _ _ => True) ⟨a, trivial, trivial⟩
+  · exact h (fun _ _ ↦ True) ⟨a, trivial, trivial⟩
+
+/-- (5b): with *at least two* the skeleton is false under the empty assignment and true under
+the total one over a two-element domain, so the weak numeral is grammatical *there*. -/
+theorem thereSkeleton_atLeast_two_not_isLAnalytic :
+    ¬ (thereSkeleton (atLeast 2 : GQ Bool)).IsLAnalytic := by
+  rintro (h | h)
+  · have ht := h fun _ _ ↦ False
+    simp only [thereSkeleton, atLeast, ge_iff_le] at ht
+    rw [count_eq_decidable] at ht
+    exact absurd ht (by decide)
+  · refine h (fun _ _ ↦ True) ?_
+    show (atLeast 2 : GQ Bool) _ _
+    simp only [atLeast, ge_iff_le]
+    rw [count_eq_decidable]
+    decide
 
 /-! ### But-exceptives (§3.3.2) -/
 
-/-- The skeleton (32)–(33) of *D n₁ but n₂ n₃*: von Fintel's least-exception schema (31), with
-the exception set nonempty as the paper's footnote requires. -/
-def exceptiveSkeleton (Q : GQ α) : Skeleton (Fin 3) (λ _ => α → Prop) :=
-  ⟨λ g => (∃ x, g 1 x) ∧ ExcLeast Q (g 0) (g 1) (g 2)⟩
+/-- The skeleton (32)–(33) of *D n₁ but n₂ n₃*: ||but|| applied to the exception, restrictor
+and scope variables around the logical determiner, with the exception set nonempty as the
+paper's footnote requires. -/
+def exceptiveSkeleton (Q : GQ E) : Skeleton E fun _ : Fin 3 ↦ Ty.et :=
+  ⟨fun g ↦ (∃ x, g 1 x) ∧ but (g 1) (g 0) Q (g 2)⟩
 
-/-- (33): with a left-upward-monotone determiner the exceptive skeleton is an L-contradiction. -/
-theorem exceptiveSkeleton_isLContradiction {Q : GQ α} (h : RestrictorMonotone Q) :
+/-- (33): with a left-upward-monotone determiner the exceptive skeleton is an
+L-contradiction. -/
+theorem exceptiveSkeleton_isLContradiction {Q : GQ E} (h : RestrictorMonotone Q) :
     (exceptiveSkeleton Q).IsLContradiction :=
-  λ _ ⟨⟨x, hx⟩, he⟩ => he.not_of_restrictorMonotone h x hx
+  fun _ hg ↦ hg.1.elim fun x hx ↦ ExcLeast.not_of_restrictorMonotone h hg.2 x hx
 
 /-- No exceptive skeleton is an L-tautology: an empty exception set falsifies it. -/
-theorem exceptiveSkeleton_not_isLTautology (Q : GQ α) :
+theorem exceptiveSkeleton_not_isLTautology (Q : GQ E) :
     ¬ (exceptiveSkeleton Q).IsLTautology :=
-  λ h => (h ![λ _ => True, λ _ => False, λ _ => True]).1.elim λ _ hx => hx
+  fun h ↦ (h ![fun _ ↦ True, fun _ ↦ False, fun _ ↦ True]).1.elim fun _ hx ↦ hx
 
 /-- (32): with *every* the exceptive skeleton is true when the exception is the one individual
 outside the scope. -/
-theorem exceptiveSkeleton_every_not_isLContradiction (a : α) :
-    ¬ (exceptiveSkeleton (every : GQ α)).IsLContradiction := λ h =>
-  h ![λ _ => True, (· = a), (· ≠ a)]
-    ⟨⟨a, rfl⟩, λ _ hx => hx.2, λ _ hS x hx => by_contra λ hs => hS x ⟨trivial, hs⟩ hx⟩
+theorem exceptiveSkeleton_every_not_isLContradiction (a : E) :
+    ¬ (exceptiveSkeleton (every : GQ E)).IsLContradiction := fun h ↦
+  h ![fun _ ↦ True, (· = a), (· ≠ a)]
+    ⟨⟨a, rfl⟩, fun _ hx ↦ hx.2, fun _ hS x hx ↦ by_contra fun hs ↦ hS x ⟨trivial, hs⟩ hx⟩
 
-/-- With *no* the exceptive skeleton is true when the exception is the one individual inside the
-scope. -/
-theorem exceptiveSkeleton_no_not_isLContradiction (a : α) :
-    ¬ (exceptiveSkeleton (no : GQ α)).IsLContradiction := λ h =>
-  h ![λ _ => True, (· = a), (· = a)]
-    ⟨⟨a, rfl⟩, λ _ hx hxa => hx.2 hxa, λ _ hS x hx => by_contra λ hs => hS x ⟨trivial, hs⟩ hx⟩
+/-- With *no* the exceptive skeleton is true when the exception is the one individual inside
+the scope. -/
+theorem exceptiveSkeleton_no_not_isLContradiction (a : E) :
+    ¬ (exceptiveSkeleton (no : GQ E)).IsLContradiction := fun h ↦
+  h ![fun _ ↦ True, (· = a), (· = a)]
+    ⟨⟨a, rfl⟩, fun _ hx hxa ↦ hx.2 hxa, fun _ hS x hx ↦ by_contra fun hs ↦ hS x ⟨trivial, hs⟩ hx⟩
+
+/-- The gap footnote 7 concedes: the *most*-exceptive (11c) is ungrammatical, yet its skeleton
+is not L-analytic, since *most* has a nonempty least exception in [von-fintel-1993]'s own
+limiting case. -/
+theorem exceptiveSkeleton_most_not_isLAnalytic :
+    ¬ (exceptiveSkeleton (most : GQ (Fin 2))).IsLAnalytic :=
+  fun h ↦ h.elim (exceptiveSkeleton_not_isLTautology _) fun hc ↦
+    hc ![fun _ ↦ True, (· = 0), (· = 1)] ⟨⟨0, rfl⟩, VonFintel1993.excLeast_most_two⟩
 
 /-! ### Garden-variety tautologies and contradictions (§3.3.3) -/
 
 /-- The skeleton (35) of *every woman is a woman*, with distinct variables for the two
 occurrences. -/
-def everyIsSkeleton : Skeleton (Fin 2) (λ _ => α → Prop) := ⟨λ g => every (g 0) (g 1)⟩
+def everyIsSkeleton (E : Type) : Skeleton E fun _ : Fin 2 ↦ Ty.et :=
+  ⟨fun g ↦ every (g 0) (g 1)⟩
 
-theorem everyIsSkeleton_not_isLAnalytic (a : α) : ¬ (everyIsSkeleton (α := α)).IsLAnalytic := by
+theorem everyIsSkeleton_not_isLAnalytic (a : E) : ¬ (everyIsSkeleton E).IsLAnalytic := by
   rintro (h | h)
-  · exact h ![λ _ => True, λ _ => False] a trivial
-  · exact h ![λ _ => True, λ _ => True] λ _ _ => trivial
+  · exact h ![fun _ ↦ True, fun _ ↦ False] a trivial
+  · exact h ![fun _ ↦ True, fun _ ↦ True] fun _ _ ↦ trivial
 
 /-- The skeleton (36) of *John is smoking and John is not smoking*, with two propositional
 variables. -/
-def andNotSkeleton : Skeleton (Fin 2) (λ _ => Prop) := ⟨λ g => g 0 ∧ ¬ g 1⟩
+def andNotSkeleton (E : Type) : Skeleton E fun _ : Fin 2 ↦ Ty.t :=
+  ⟨fun g ↦ g 0 ∧ ¬ g 1⟩
 
-theorem andNotSkeleton_not_isLAnalytic : ¬ andNotSkeleton.IsLAnalytic := by
+theorem andNotSkeleton_not_isLAnalytic : ¬ (andNotSkeleton E).IsLAnalytic := by
   rintro (h | h)
   · exact (h ![True, True]).2 trivial
   · exact h ![True, False] ⟨trivial, id⟩
 
 /-! ### The paper's sentences -/
 
-/-- The logical determiners of the paper's sentences. -/
+/-- The determiners of the paper's analyzed sentences. -/
 inductive Determiner
   | every
   | some
   | no
+  | most
+  | two
+  | three
   deriving DecidableEq, Repr
 
-/-- The denotation of a determiner over a domain. -/
-def Determiner.denote : Determiner → GQ α
-  | .every => GQ.every
-  | .some => GQ.some
-  | .no => GQ.no
+/-- The readings of a determiner, from the English fragment where it has the word, from the
+quantification substrate for *no*, and *at least n* for the numerals, the paper's reading of
+the left-upward-monotone *one, two*. -/
+noncomputable def Determiner.readings : Determiner → Set GQ.Family.{0}
+  | .every => ⟦QuantityWord.every⟧
+  | .some => ⟦QuantityWord.some_⟧
+  | .no => {GQ.Family.no}
+  | .most => ⟦QuantityWord.most⟧
+  | .two => {GQ.Family.atLeast 2}
+  | .three => {GQ.Family.atLeast 3}
 
 /-- The constructions of the paper's sentences, with their determiner where one matters. -/
 inductive Construction
@@ -197,17 +395,22 @@ structure Row where
   grammatical : Bool
   deriving DecidableEq
 
-/-- Whether the sentence's skeleton over a two-element domain is L-analytic. -/
+/-- Whether the row's skeleton is L-analytic on every reading of its determiner and every
+finite nonempty domain, the model quantification of the paper's definitions (6) and (14). -/
 def Row.LAnalytic (r : Row) : Prop :=
   match r.construction with
-  | .there d => (thereSkeleton (d.denote : GQ Bool)).IsLAnalytic
-  | .exceptive d => (exceptiveSkeleton (d.denote : GQ Bool)).IsLAnalytic
-  | .everyIs => (everyIsSkeleton (α := Bool)).IsLAnalytic
-  | .andNot => andNotSkeleton.IsLAnalytic
+  | .there d => ∀ q ∈ d.readings, ∀ (α : Type) [Fintype α] [Nonempty α],
+      (thereSkeleton (q α)).IsLAnalytic
+  | .exceptive d => ∀ q ∈ d.readings, ∀ (α : Type) [Fintype α] [Nonempty α],
+      (exceptiveSkeleton (q α)).IsLAnalytic
+  | .everyIs => ∀ (α : Type) [Fintype α] [Nonempty α], (everyIsSkeleton α).IsLAnalytic
+  | .andNot => ∀ (α : Type) [Fintype α] [Nonempty α], (andNotSkeleton α).IsLAnalytic
 
 def Row.ofDatum (ex : Datum) : Option Row := do
   let g ← ex.parse? "grammatical" [("yes", true), ("no", false)]
-  let d := ex.parse? "determiner" [("every", Determiner.every), ("some", .some), ("no", .no)]
+  let d := ex.parse? "determiner"
+    [("every", Determiner.every), ("some", .some), ("no", .no), ("most", .most),
+     ("two", .two), ("three", .three)]
   let c ← match ex.feature? "construction", d with
     | some "there", some d => some (Construction.there d)
     | some "exceptive", some d => some (.exceptive d)
@@ -219,31 +422,48 @@ def Row.ofDatum (ex : Datum) : Option Row := do
 def rows : List Row := Examples.all.filterMap Row.ofDatum
 
 private theorem rows_eq : rows =
-    [⟨.there .every, false⟩, ⟨.there .every, false⟩, ⟨.there .some, true⟩, ⟨.there .some, true⟩,
+    [⟨.there .every, false⟩, ⟨.there .some, true⟩, ⟨.there .two, true⟩, ⟨.there .some, true⟩,
      ⟨.exceptive .every, true⟩, ⟨.exceptive .no, true⟩, ⟨.exceptive .some, false⟩,
+     ⟨.exceptive .three, false⟩, ⟨.exceptive .most, false⟩, ⟨.there .every, false⟩,
      ⟨.everyIs, true⟩, ⟨.andNot, true⟩] := by
   decide
 
 /-- Principle (29): the paper's sentences are grammatical exactly when their skeletons are not
-L-analytic. -/
-theorem rows_predicted : ∀ r ∈ rows, (r.grammatical = true ↔ ¬ r.LAnalytic) := by
-  have hevery : (thereSkeleton (every : GQ Bool)).IsLAnalytic :=
-    Or.inl (thereSkeleton_isLTautology conservative_every positiveStrong_every)
-  have hsome : (exceptiveSkeleton (GQ.some : GQ Bool)).IsLAnalytic :=
-    Or.inr (exceptiveSkeleton_isLContradiction restrictorMonotone_some)
+L-analytic. The *most*-exceptive is the gap footnote 7 concedes,
+`exceptiveSkeleton_most_not_isLAnalytic`. -/
+theorem rows_predicted :
+    ∀ r ∈ rows, r.construction ≠ .exceptive .most →
+      (r.grammatical = true ↔ ¬ r.LAnalytic) := by
+  have hevery : (Row.mk (.there .every) false).LAnalytic := by
+    intro q hq α _ _
+    obtain rfl : q = GQ.Family.every := hq
+    exact Or.inl (thereSkeleton_isLTautology conservative_every positiveStrong_every)
+  have hsome : (Row.mk (.there .some) true).grammatical = true ↔
+      ¬ (Row.mk (.there .some) true).LAnalytic :=
+    iff_of_true rfl fun h ↦ thereSkeleton_some_not_isLAnalytic true (h GQ.Family.some rfl Bool)
   rw [rows_eq]
   simp only [List.mem_cons, List.not_mem_nil, or_false]
-  rintro r (rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl)
-  · exact iff_of_false Bool.false_ne_true (not_not.2 hevery)
-  · exact iff_of_false Bool.false_ne_true (not_not.2 hevery)
-  · exact iff_of_true rfl (thereSkeleton_some_not_isLAnalytic true)
-  · exact iff_of_true rfl (thereSkeleton_some_not_isLAnalytic true)
-  · exact iff_of_true rfl λ h => h.elim (exceptiveSkeleton_not_isLTautology _)
-      (exceptiveSkeleton_every_not_isLContradiction true)
-  · exact iff_of_true rfl λ h => h.elim (exceptiveSkeleton_not_isLTautology _)
-      (exceptiveSkeleton_no_not_isLContradiction true)
-  · exact iff_of_false Bool.false_ne_true (not_not.2 hsome)
-  · exact iff_of_true rfl (everyIsSkeleton_not_isLAnalytic true)
-  · exact iff_of_true rfl andNotSkeleton_not_isLAnalytic
+  rintro r (rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl)
+  · exact fun _ ↦ iff_of_false Bool.false_ne_true (not_not.2 hevery)
+  · exact fun _ ↦ hsome
+  · exact fun _ ↦ iff_of_true rfl fun h ↦
+      thereSkeleton_atLeast_two_not_isLAnalytic (h (GQ.Family.atLeast 2) rfl Bool)
+  · exact fun _ ↦ hsome
+  · exact fun _ ↦ iff_of_true rfl fun h ↦
+      (h GQ.Family.every rfl Bool).elim (exceptiveSkeleton_not_isLTautology _)
+        (exceptiveSkeleton_every_not_isLContradiction true)
+  · exact fun _ ↦ iff_of_true rfl fun h ↦
+      (h GQ.Family.no rfl Bool).elim (exceptiveSkeleton_not_isLTautology _)
+        (exceptiveSkeleton_no_not_isLContradiction true)
+  · refine fun _ ↦ iff_of_false Bool.false_ne_true (not_not.2 fun q hq α _ _ ↦ ?_)
+    obtain rfl : q = GQ.Family.some := hq
+    exact Or.inr (exceptiveSkeleton_isLContradiction restrictorMonotone_some)
+  · refine fun _ ↦ iff_of_false Bool.false_ne_true (not_not.2 fun q hq α _ _ ↦ ?_)
+    obtain rfl : q = GQ.Family.atLeast 3 := hq
+    exact Or.inr (exceptiveSkeleton_isLContradiction (restrictorMonotone_atLeast 3))
+  · exact fun hne ↦ absurd rfl hne
+  · exact fun _ ↦ iff_of_false Bool.false_ne_true (not_not.2 hevery)
+  · exact fun _ ↦ iff_of_true rfl fun h ↦ everyIsSkeleton_not_isLAnalytic true (h Bool)
+  · exact fun _ ↦ iff_of_true rfl fun h ↦ andNotSkeleton_not_isLAnalytic (h Bool)
 
 end Gajewski2002
