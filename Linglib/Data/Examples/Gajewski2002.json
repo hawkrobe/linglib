@@ -1,8 +1,78 @@
 [
   {
+    "id": "gajewski2002_ex4a",
+    "source": {
+      "bibkey": "gajewski-2002",
+      "paperLabel": "(4a)"
+    },
+    "language": "stan1293",
+    "primaryText": "There is the wolf at the door.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "there"
+      ],
+      [
+        "determiner",
+        "the"
+      ],
+      [
+        "strength",
+        "strong"
+      ],
+      [
+        "grammatical",
+        "no"
+      ]
+    ],
+    "comment": "Milsark's definiteness restriction with the definite article. Barwise and Cooper's strength definition is partial on the definite, so the row is data only."
+  },
+  {
+    "id": "gajewski2002_ex4b",
+    "source": {
+      "bibkey": "gajewski-2002",
+      "paperLabel": "(4b)"
+    },
+    "language": "stan1293",
+    "primaryText": "There were John and Mary cycling along the creek.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "there"
+      ],
+      [
+        "determiner",
+        "none"
+      ],
+      [
+        "strength",
+        "strong"
+      ],
+      [
+        "grammatical",
+        "no"
+      ]
+    ],
+    "comment": "A conjunction of proper names, strong in Milsark's sense; not a determiner row, so it is data only."
+  },
+  {
     "id": "gajewski2002_ex4c",
     "source": {
-      "bibkey": "barwise-cooper-1981",
+      "bibkey": "gajewski-2002",
       "paperLabel": "(4c)"
     },
     "language": "stan1293",
@@ -24,15 +94,368 @@
         "every"
       ],
       [
+        "strength",
+        "strong"
+      ],
+      [
         "grammatical",
         "no"
       ]
     ],
-    "comment": "A strong quantifier in a there-sentence, the Definiteness Restriction of Milsark and Barwise and Cooper; its logical skeleton receives 1 under every assignment.",
-    "reportedIn": {
+    "comment": "A strong quantifier in a there-sentence, the Definiteness Restriction of Milsark and Barwise and Cooper; its logical skeleton receives 1 under every assignment."
+  },
+  {
+    "id": "gajewski2002_ex5a",
+    "source": {
       "bibkey": "gajewski-2002",
-      "paperLabel": "(4c)"
-    }
+      "paperLabel": "(5a)"
+    },
+    "language": "stan1293",
+    "primaryText": "There is a wolf at the door.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "there"
+      ],
+      [
+        "determiner",
+        "some"
+      ],
+      [
+        "strength",
+        "weak"
+      ],
+      [
+        "grammatical",
+        "yes"
+      ]
+    ],
+    "comment": "A weak quantifier in a there-sentence; the indefinite article is read as the existential determiner."
+  },
+  {
+    "id": "gajewski2002_ex5b",
+    "source": {
+      "bibkey": "gajewski-2002",
+      "paperLabel": "(5b)"
+    },
+    "language": "stan1293",
+    "primaryText": "There were two people cycling along the creek.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "there"
+      ],
+      [
+        "determiner",
+        "two"
+      ],
+      [
+        "strength",
+        "weak"
+      ],
+      [
+        "grammatical",
+        "yes"
+      ]
+    ],
+    "comment": "A weak numeral in a there-sentence; the paper reads the numerals as at-least and left upward monotone."
+  },
+  {
+    "id": "gajewski2002_ex5c",
+    "source": {
+      "bibkey": "gajewski-2002",
+      "paperLabel": "(5c)"
+    },
+    "language": "stan1293",
+    "primaryText": "There was someone in the room.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "there"
+      ],
+      [
+        "determiner",
+        "some"
+      ],
+      [
+        "strength",
+        "weak"
+      ],
+      [
+        "grammatical",
+        "yes"
+      ]
+    ],
+    "comment": "The skeleton [there [are [some n1]]] is false when the variable is assigned the empty set and true otherwise, so it is not L-analytic."
+  },
+  {
+    "id": "gajewski2002_ex11a_every",
+    "source": {
+      "bibkey": "gajewski-2002",
+      "paperLabel": "(11a)"
+    },
+    "language": "stan1293",
+    "primaryText": "Every student but Bill passed the exam.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "exceptive"
+      ],
+      [
+        "determiner",
+        "every"
+      ],
+      [
+        "grammatical",
+        "yes"
+      ]
+    ],
+    "comment": "A but-exceptive on a positive universal; its skeleton is contingent."
+  },
+  {
+    "id": "gajewski2002_ex11a_no",
+    "source": {
+      "bibkey": "gajewski-2002",
+      "paperLabel": "(11a)"
+    },
+    "language": "stan1293",
+    "primaryText": "No student but Bill passed the exam.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "exceptive"
+      ],
+      [
+        "determiner",
+        "no"
+      ],
+      [
+        "grammatical",
+        "yes"
+      ]
+    ],
+    "comment": "A but-exceptive on a negative universal; its skeleton is contingent."
+  },
+  {
+    "id": "gajewski2002_ex11b_some",
+    "source": {
+      "bibkey": "gajewski-2002",
+      "paperLabel": "(11b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Some students but Bill passed the exam.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "exceptive"
+      ],
+      [
+        "determiner",
+        "some"
+      ],
+      [
+        "grammatical",
+        "no"
+      ]
+    ],
+    "comment": "A but-exceptive on a left-upward-monotone determiner: the least-exception schema is a contradiction under every assignment with a nonempty exception set."
+  },
+  {
+    "id": "gajewski2002_ex11b_three",
+    "source": {
+      "bibkey": "gajewski-2002",
+      "paperLabel": "(11b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Three students but Bill passed the exam.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "exceptive"
+      ],
+      [
+        "determiner",
+        "three"
+      ],
+      [
+        "grammatical",
+        "no"
+      ]
+    ],
+    "comment": "A left-upward-monotone numeral in a but-exceptive, read as at-least per the paper's monotonicity examples; the skeleton is an L-contradiction."
+  },
+  {
+    "id": "gajewski2002_ex11b_many",
+    "source": {
+      "bibkey": "gajewski-2002",
+      "paperLabel": "(11b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Many students but Bill passed the exam.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "exceptive"
+      ],
+      [
+        "determiner",
+        "many"
+      ],
+      [
+        "grammatical",
+        "no"
+      ]
+    ],
+    "comment": "Barwise and Cooper leave the standard of many to context, so the fragment gives it no reading and the row is data only."
+  },
+  {
+    "id": "gajewski2002_ex11c_most",
+    "source": {
+      "bibkey": "gajewski-2002",
+      "paperLabel": "(11c)"
+    },
+    "language": "stan1293",
+    "primaryText": "Most students but Bill passed the exam.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "exceptive"
+      ],
+      [
+        "determiner",
+        "most"
+      ],
+      [
+        "grammatical",
+        "no"
+      ]
+    ],
+    "comment": "The gap footnote 7 concedes: most is not left upward monotone and has a least exception in von Fintel's limiting case, so the principle does not derive the star."
+  },
+  {
+    "id": "gajewski2002_ex11c_exactly_two",
+    "source": {
+      "bibkey": "gajewski-2002",
+      "paperLabel": "(11c)"
+    },
+    "language": "stan1293",
+    "primaryText": "Exactly two students but Bill passed the exam.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "exceptive"
+      ],
+      [
+        "determiner",
+        "exactly two"
+      ],
+      [
+        "grammatical",
+        "no"
+      ]
+    ],
+    "comment": "Footnote 7 cites Moltmann and Lappin for the further problems; the paper derives no verdict, so the row is data only."
+  },
+  {
+    "id": "gajewski2002_ex11c_fewer_than_three",
+    "source": {
+      "bibkey": "gajewski-2002",
+      "paperLabel": "(11c)"
+    },
+    "language": "stan1293",
+    "primaryText": "Fewer than three students but Bill passed the exam.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "construction",
+        "exceptive"
+      ],
+      [
+        "determiner",
+        "fewer than three"
+      ],
+      [
+        "grammatical",
+        "no"
+      ]
+    ],
+    "comment": "Footnote 7 cites Moltmann and Lappin for the further problems; the paper derives no verdict, so the row is data only."
   },
   {
     "id": "gajewski2002_ex30a",
@@ -64,181 +487,6 @@
       ]
     ],
     "comment": "The logical skeleton [there [are [every n1]]] is an L-tautology: every element of the domain of properties is a subset of the domain of individuals."
-  },
-  {
-    "id": "gajewski2002_ex5a",
-    "source": {
-      "bibkey": "barwise-cooper-1981",
-      "paperLabel": "(5a)"
-    },
-    "language": "stan1293",
-    "primaryText": "There is a wolf at the door.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "construction",
-        "there"
-      ],
-      [
-        "determiner",
-        "some"
-      ],
-      [
-        "grammatical",
-        "yes"
-      ]
-    ],
-    "comment": "A weak quantifier in a there-sentence.",
-    "reportedIn": {
-      "bibkey": "gajewski-2002",
-      "paperLabel": "(5a)"
-    }
-  },
-  {
-    "id": "gajewski2002_ex5c",
-    "source": {
-      "bibkey": "barwise-cooper-1981",
-      "paperLabel": "(5c)"
-    },
-    "language": "stan1293",
-    "primaryText": "There was someone in the room.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "construction",
-        "there"
-      ],
-      [
-        "determiner",
-        "some"
-      ],
-      [
-        "grammatical",
-        "yes"
-      ]
-    ],
-    "comment": "The skeleton [there [are [some n1]]] is false when the variable is assigned the empty set and true otherwise, so it is not L-analytic.",
-    "reportedIn": {
-      "bibkey": "gajewski-2002",
-      "paperLabel": "(5c)"
-    }
-  },
-  {
-    "id": "gajewski2002_ex11a_every",
-    "source": {
-      "bibkey": "von-fintel-1993",
-      "paperLabel": "(11a)"
-    },
-    "language": "stan1293",
-    "primaryText": "Every student but Bill passed the exam.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "construction",
-        "exceptive"
-      ],
-      [
-        "determiner",
-        "every"
-      ],
-      [
-        "grammatical",
-        "yes"
-      ]
-    ],
-    "comment": "A but-exceptive on a positive universal; its skeleton is contingent.",
-    "reportedIn": {
-      "bibkey": "gajewski-2002",
-      "paperLabel": "(11a)"
-    }
-  },
-  {
-    "id": "gajewski2002_ex11a_no",
-    "source": {
-      "bibkey": "von-fintel-1993",
-      "paperLabel": "(11a)"
-    },
-    "language": "stan1293",
-    "primaryText": "No student but Bill passed the exam.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "construction",
-        "exceptive"
-      ],
-      [
-        "determiner",
-        "no"
-      ],
-      [
-        "grammatical",
-        "yes"
-      ]
-    ],
-    "comment": "A but-exceptive on a negative universal; its skeleton is contingent.",
-    "reportedIn": {
-      "bibkey": "gajewski-2002",
-      "paperLabel": "(11a)"
-    }
-  },
-  {
-    "id": "gajewski2002_ex11b",
-    "source": {
-      "bibkey": "von-fintel-1993",
-      "paperLabel": "(11b)"
-    },
-    "language": "stan1293",
-    "primaryText": "Some students but Bill passed the exam.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "construction",
-        "exceptive"
-      ],
-      [
-        "determiner",
-        "some"
-      ],
-      [
-        "grammatical",
-        "no"
-      ]
-    ],
-    "comment": "A but-exceptive on a left-upward-monotone determiner: the least-exception schema is a contradiction under every assignment with a nonempty exception set.",
-    "reportedIn": {
-      "bibkey": "gajewski-2002",
-      "paperLabel": "(11b)"
-    }
   },
   {
     "id": "gajewski2002_ex34a",
