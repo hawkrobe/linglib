@@ -57,7 +57,7 @@ interpretation has, `x ≐ x` reading `x` and denoting the identity.
 
 @[expose] public section
 
-open DynamicSemantics DynamicSemantics.Update SetRel
+open DynamicSemantics Update SetRel
 
 namespace DPL
 

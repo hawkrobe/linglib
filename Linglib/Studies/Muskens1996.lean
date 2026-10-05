@@ -7,49 +7,40 @@ public import Mathlib.Data.Fin.VecNotation
 /-!
 # Muskens (1996): Combining Montague semantics and discourse representation
 
-Muskens grafts discourse representation theory onto classical type logic, so that states and
-registers are objects and the boxes of DRT abbreviate relations between states. This file
-formalizes the paper's compositional fragment, its basic translations T₀ and generalised
-coordination T6, over the register structures of `Semantics/Dynamic/RegisterStructure.lean`,
-and derives the paper's examples: their reduction to boxes, their truth conditions, the failure of
-`no` to bind across a conjunction, a reassignment that does not merge, the representational
-character of properness, and the re-declared referent of fn. 4.
-
-## Main definitions
-
-* `DynPred`, `DynQuant`: the types `[π]` and `[[π]]` of Table 2.
-* `ofStatic`, `ofStatic₂`, `name`, `indef`, `every`, `no`, `who`, `doesnt`, `ifThen`: T₀.
+Muskens treats the boxes of discourse representation theory as relations between states, so
+that word meanings combine by function application and sequencing as in Montague semantics.
+This file gives his lexicon over the register structures of
+`Semantics/Dynamic/RegisterStructure.lean` and computes the meanings of his example sentences.
 
 ## Main statements
 
-* `text_eq_box`: the two-sentence text (9) reduces by merging to the box (20).
-* `dom_text`, `dom_conditional`, `dom_vpCoord`, `dom_npCoord`, `dom_reassignment`: the truth
-  conditions (24), (8), (52), (60) and (68).
-* `dom_everyNarrow`, `dom_everyWide`: the two readings of (33), from its S-structure and from
-  quantifying in the raised indefinite.
-* `dom_npCoord_no`: with `no¹` for `a¹`, the truth conditions (65) read the pronoun's referent
-  off the input state.
-* `reassignment_eq`, `reassignment_ne_merge`: (66) translates as the two boxes (67), which do not
-  merge.
-* `toRel_improper_eq`, `isProper_proper`, `not_isProper_improper`: (45) and (47) have the same
-  semantic value, though only (45) is proper.
-* `fn4_diverges`: re-declaring a referent separates Muskens's semantics from the persistence
-  semantics.
+* `text_eq_box`: "A man adores a woman. She abhors him." means a single box introducing both
+  referents.
+* `dom_text`, `dom_conditional`, `dom_vpCoord`, `dom_npCoord`, `dom_reassignment`: the examples
+  have the first-order truth conditions the paper gives.
+* `dom_everyNarrow`, `dom_everyWide`: "Every girl adores a boy" has both scope readings.
+* `dom_npCoord_no`: a pronoun after a conjunct headed by `no` reads its referent off the input
+  state, so `no` does not bind it.
+* `reassignment_ne_merge`: "Bill and Sue own a donkey" reassigns the donkey's referent, and its
+  two boxes do not merge into one.
+* `toRel_improper_eq`, `not_isProper_improper`: a proper and an improper box can mean the same,
+  so properness is a property of representations.
+* `fn4_diverges`: declaring a referent twice separates Muskens's semantics from Kamp and
+  Reyle's.
 
 ## Implementation notes
 
-Static predicates are sets, so an atomic condition is a preimage, and a dynamic predicate takes
-the value function of a referent (`val u` for a register, a constant for a name). Names, pronouns
-and traces translate as `Function.eval δ`, the lift of their referent. T6's `and` is the product
-of the update monoid lifted pointwise to every type `α₁ → … → αₘ → Update S`, so a VP or NP
-conjunction is `*`. The paper's `wp` denotes `SetRel.preimage`, whose rules for boxes and
-sequencing are `Update.preimage_box_cons` and `SetRel.preimage_comp`.
+Static predicates are sets, so an atomic condition is a preimage. A dynamic predicate takes the
+value function of a referent rather than its register, and names, pronouns and traces mean
+`Function.eval δ` for their referent `δ`. Conjunction at every category is the product of the
+update monoid lifted pointwise, so conjoined verb phrases and noun phrases multiply with `*`.
 
 ## TODO
 
-* The box language with `;` (SYN4), its `tr` and `wp` translations, and Propositions 1–3 for
-  it. Proposition 1, that a DRS is proper iff `wp(K, ⊤)` is closed, needs the free variables of
-  `DRS.toFormula` (`BoundedFormula.freeVarFinset` of `relabel` and `iExs`), absent from mathlib.
+* Muskens's box language with sequencing, its translation into first-order logic, and his
+  propositions about that translation. The one relating properness to closed formulas needs the
+  free variables of `DRS.toFormula`, which mathlib does not yet compute for `relabel` and
+  `iExs`.
 
 ## References
 
@@ -61,17 +52,17 @@ sequencing are `Update.preimage_box_cons` and `SetRel.preimage_comp`.
 
 namespace Muskens1996
 
-open DynamicSemantics DynamicSemantics.Update SetRel RegisterStructure
-open scoped DynamicSemantics.Update
+open DynamicSemantics Update SetRel RegisterStructure
 
 variable {R S E : Type*}
 
-/-! ### Types and basic translations (Table 2, T₀) -/
+/-! ### The lexicon -/
 
-/-- A dynamic one-place predicate, type `[π]`. -/
+/-- A dynamic predicate, the meaning of a noun or verb phrase, takes a discourse referent to an
+update. -/
 abbrev DynPred (S E : Type*) := (S → E) → Update S
 
-/-- A dynamic generalized quantifier, type `[[π]]`. -/
+/-- A dynamic quantifier, the meaning of a noun phrase, takes a dynamic predicate to an update. -/
 abbrev DynQuant (S E : Type*) := DynPred S E → Update S
 
 /-- A common noun or intransitive verb translates as the test of its predicate, as in
@@ -286,7 +277,7 @@ end Derivations
 A proper box and a box that is not proper may have the same semantic value: (45), the
 translation of "No¹ girl walks", and (47), that of "*No¹ girl walks. If she₁ talks she₁ talks",
 denote the same relation in every model, but only (45) is proper. Acceptability of an indexing
-is therefore a property of its representation, which is why rule T5 closes translations under
+is therefore a property of its representation, which is why Muskens simplifies translations by
 lambda conversion and merging only. -/
 
 section Representational

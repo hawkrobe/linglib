@@ -55,7 +55,7 @@ biconditional form; Stone's has only the implication from `φ`-worlds to referen
 
 namespace ICDRT
 
-open DynamicSemantics DynamicSemantics.Update SetRel
+open DynamicSemantics Update SetRel
 
 /-- A propositional variable, the name of a propositional dref. -/
 structure PVar where

@@ -40,7 +40,7 @@ quantifier variable.
 
 @[expose] public section
 
-open FirstOrder FirstOrder.Language DynamicSemantics DynamicSemantics.Update SetRel
+open FirstOrder FirstOrder.Language DynamicSemantics Update SetRel
   CylindricAlgebra
 
 namespace DPL.Formula

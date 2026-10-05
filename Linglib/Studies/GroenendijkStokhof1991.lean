@@ -76,7 +76,7 @@ translation to quantificational dynamic logic of section 4.3.
 
 namespace GroenendijkStokhof1991
 
-open DynamicSemantics DynamicSemantics.Update SetRel
+open DynamicSemantics Update SetRel
 
 /-- The test connectives of Definition 2 and the closure of Definition 17, as tests of the
 substrate's conditions; conjunction is `○`. -/

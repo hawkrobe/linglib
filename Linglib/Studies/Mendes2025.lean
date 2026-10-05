@@ -16,18 +16,14 @@ evaluated in the future situation its subordinate clause introduced (modal donke
 a strong quantifier whose restrictor carries the form has its existence presupposition satisfied
 in a historical alternative rather than at the anchor (modal displacement).
 
-## Main definitions
-
-* `temporal`, `subj`, `ind`: the temporal morphemes and the moods.
-* `sfForm`: a clause carrying the Subordinate Future with a tensed main clause.
-
 ## Main results
 
 * `sfForm_true_at`: the truth conditions of the paper's conditional and relative-clause
   derivations.
 * `temporal_shift`, `modal_donkey_anaphora`: the orderings of the paper's table of main-clause
   tenses, and the retrieval of the introduced situation.
-* `subj_fut_true_at`, `ind_fut_true_at`: modal displacement in the restrictor.
+* `subj_fut_true_at`, `ind_fut_true_at`: a restrictor in the Subordinate Future is true in some
+  later historical alternative of the anchor, one in the indicative only in the anchor's world.
 
 ## Implementation notes
 
@@ -48,7 +44,7 @@ namespace Mendes2025
 
 open Semantics
 
-open Reference HistoricalAlternatives DynamicSemantics DynamicSemantics.Update SetRel
+open Reference HistoricalAlternatives DynamicSemantics Update SetRel
 open RegisterStructure
 
 variable {W T : Type*}

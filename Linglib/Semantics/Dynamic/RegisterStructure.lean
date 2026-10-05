@@ -25,8 +25,8 @@ cylindrification is the weakest precondition of `[r]`.
 * `Update.randomAssign`, `Update.dexists`, `Update.dforall`: random assignment and the dynamic
   quantifiers.
 * `Update.box`: the box `[u₁ … uₙ | C]`.
-* `Update.Fixes`, `Update.maxAt`: an update leaves a register unchanged, and the spine's
-  `Update.maxBy` at a register's value.
+* `Update.Fixes`, `Update.maxAt`: an update leaves a register unchanged, and maximization over a
+  register's value.
 
 ## Main results
 
@@ -38,9 +38,11 @@ cylindrification is the weakest precondition of `[r]`.
   where the cylindrification of its scope's truth set is.
 * `Update.commute_test_randomAssign_iff`: a test commutes with `[r]` exactly when `r` is outside
   the dimension set of its condition.
-* `Update.box_comp_box`: the Merging Lemma.
-* `Update.exists_box_ofFn_iff`, `Update.mem_dom_box_ofFn`: the Unselective Binding Lemma, and
-  truth of a box whose condition reads only its own registers.
+* `Update.box_comp_box`: two boxes in sequence are one box when the second's registers lie
+  outside the dimension set of the first's condition (Muskens's Merging Lemma).
+* `Update.exists_box_ofFn_iff`, `Update.mem_dom_box_ofFn`: quantifying over the outputs of a box
+  over distinct registers is quantifying over tuples of values, so a box whose condition reads
+  only its registers is true iff some tuple satisfies it (Muskens's Unselective Binding Lemma).
 * `RegisterStructure.dimSet_preimage_subset`: a condition read off registers in `s` has its
   dimension set inside `s`.
 
