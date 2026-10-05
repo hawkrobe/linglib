@@ -97,7 +97,8 @@ def nec (R : α → Finset α) (P : TeamProperty α) : TeamProperty α :=
   flat fun x ↦ R x ∈ P
 
 /-- The single-witness possibility modality of modal dependence logic ([vaananen-2008]
-    clause (T8)) holds of a team when one team `Y` in `P` supplies a successor to every point. -/
+    clause (T8), p. 245) holds of a team when one team `Y` in `P` supplies a successor to every
+    point. -/
 def possWitness (R : α → Finset α) (P : TeamProperty α) : TeamProperty α :=
   {t | ∃ Y, (∀ x ∈ t, ∃ y ∈ Y, y ∈ R x) ∧ Y ∈ P}
 
@@ -191,8 +192,8 @@ def biUnionHom {β : Type*} [DecidableEq β] (R : α → Finset β) :
 @[simp] theorem biUnionHom_apply {β : Type*} [DecidableEq β] (R : α → Finset β) (t : Finset α) :
     biUnionHom R t = t.biUnion R := rfl
 
-/-- The image necessity modality ([vaananen-2008] clause (T9)) holds of a team when the union
-    of its successor sets is in `P`. -/
+/-- The image necessity modality ([vaananen-2008] clause (T9), p. 245) holds of a team when the
+    union of its successor sets is in `P`. -/
 def necImage (R : α → Finset α) (P : TeamProperty α) : TeamProperty α :=
   biUnionHom R ⁻¹' P
 
