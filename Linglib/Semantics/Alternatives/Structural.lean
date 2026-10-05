@@ -3,13 +3,13 @@ module
 public import Mathlib.Logic.Relation
 public import Mathlib.Order.Antisymmetrization
 public import Mathlib.Data.Finset.Basic
-public import Linglib.Syntax.Tree.Cat
+public import Linglib.Syntax.Tree.Basic
 public import Linglib.Semantics.Alternatives.Basic
 
 /-!
 # Structural alternatives
 
-This file defines the structural alternatives of a parse tree ([katzir-2007]): the trees
+This file defines Katzir's structural alternatives of a parse tree: the trees
 obtainable from it by deletion, contraction, and substitution of a constituent by a
 same-category item of the substitution source, the lexicon together with the tree's own
 subtrees. `StructOp` is one such operation, `atMostAsComplex` its reflexive-transitive
@@ -17,7 +17,7 @@ closure, the complexity preorder of the paper's definition (19), `equalComplexit
 antisymmetrization of that preorder, and `structuralAlternatives` the set of trees at most as
 complex as the given one, definition (20). Structural alternatives form an alternative source
 for the competition relation of `Alternatives.Competition`, and `indirectFrom` is the
-combinator on sources of [jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025]: the
+combinator on sources of Jeretič and colleagues: the
 pronounceable expressions of no greater size that mean what a silent alternative means.
 
 No operation introduces a category absent from the tree and the source
@@ -195,10 +195,10 @@ private theorem structOp_preserves_free (source : Set (Tree C W))
         ⟨c, (List.eraseIdx_sublist cs i).subset hc, htc⟩))
   | @contract cat cs child h_mem _ =>
     rw [Tree.subtrees_node] at h_φ
-    exact λ t ht => h_φ t (List.mem_cons_of_mem _ (List.mem_flatMap.mpr ⟨child, h_mem, ht⟩))
+    exact fun t ht ↦ h_φ t (List.mem_cons_of_mem _ (List.mem_flatMap.mpr ⟨child, h_mem, ht⟩))
   | @inChild cat cs i ψ_child _ ih =>
     rw [Tree.subtrees_node] at h_φ ⊢
-    have hih := ih λ t ht =>
+    have hih := ih fun t ht ↦
       h_φ t (List.mem_cons_of_mem _ (List.mem_flatMap.mpr ⟨cs.get i, List.get_mem cs i, ht⟩))
     intro t ht
     rcases List.mem_cons.mp ht with rfl | ht
@@ -212,7 +212,7 @@ private theorem structOp_preserves_free (source : Set (Tree C W))
     intro t ht
     rcases List.mem_cons.mp ht with rfl | ht
     · exact h_bind n cat body body' (h_φ _ (List.mem_cons_self ..))
-    · exact ih (λ t ht => h_φ t (List.mem_cons_of_mem _ ht)) t ht
+    · exact ih (fun t ht ↦ h_φ t (List.mem_cons_of_mem _ ht)) t ht
 
 /-- A subtree property that no source item has, that the host lacks, and that a node cannot
 acquire by losing a child, by having a child replaced, or by a change of a binder's body,
@@ -259,8 +259,8 @@ private theorem lift_bind {source : Set (Tree C W)}
     {n : Nat} {cat : C} {body body' : Tree C W}
     (h : Relation.ReflTransGen (StructOp source) body body') :
     Relation.ReflTransGen (StructOp source) (.bind n cat body) (.bind n cat body') :=
-  Relation.ReflTransGen.lift (λ t => Tree.bind n cat t)
-    (λ _ _ h => StructOp.inBind h) body body' h
+  Relation.ReflTransGen.lift (fun t ↦ Tree.bind n cat t)
+    (fun _ _ h ↦ StructOp.inBind h) body body' h
 
 /-- Children reachable one by one make the node reachable. With `cs'` pointwise reachable from
 `cs`, `node cat cs` reaches `node cat cs'` by operations inside successive children. -/
@@ -315,7 +315,7 @@ private theorem mapChildren_reachable {source : Set (Tree C W)}
       Relation.ReflTransGen (StructOp source) cs[i] (f cs[i])) :
     Relation.ReflTransGen (StructOp source)
       (.node cat cs) (.node cat (cs.map f)) :=
-  pointwise_reachable (by simp) λ i hi => by rw [List.getElem_map]; exact hf i hi
+  pointwise_reachable (by simp) fun i hi ↦ by rw [List.getElem_map]; exact hf i hi
 
 /-- Leaf substitution is reachable via structural operations for any
 source containing `.terminal c β`. -/
@@ -448,7 +448,7 @@ theorem reachable_of_mem_hamblin {source : Set (Tree C W)} (lex : Finset (Tree C
         obtain ⟨b, hb, rfl⟩ := WithAlternatives.mem_alternatives_map.1 hg
         exact List.Forall₂.cons (ih t List.mem_cons_self b hb)
           (ihts (fun s hs ↦ ih s (List.mem_cons_of_mem _ hs)) bs hbs)
-    exact pointwise_reachable h.length_eq.symm λ i hi => h.get hi (h.length_eq ▸ hi)
+    exact pointwise_reachable h.length_eq.symm fun i hi ↦ h.get hi (h.length_eq ▸ hi)
   | trace n c =>
     intro ψ hψ
     have h : ψ ∈ ({Tree.trace n c} : Set (Tree C W)) := by

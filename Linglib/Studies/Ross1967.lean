@@ -1,6 +1,7 @@
 module
 
-public import Linglib.Syntax.Tree.Cat
+public import Linglib.Syntax.Cat
+public import Linglib.Syntax.Tree.Basic
 public import Linglib.Data.Examples.Ross1967
 
 /-!
@@ -24,10 +25,10 @@ of these islands freely.
 
 ## Implementation notes
 
-Trees carry the UD-grounded categories of `Syntax.Cat`, a noun phrase being the projection of
-a noun, a coordinate structure the projection of a conjunction with the conjuncts and the
-conjunction words as its daughters, and a lexical head noun a noun terminal among an NP's
-daughters. The trees are the dissertation's diagrams reduced to the categories the constraints
+Trees carry the categories of `Syntax.Cat`, a noun phrase being the maximal projection of a
+noun, a coordinate structure that of a conjunction with the conjuncts and the conjunction words
+as its daughters, and a lexical head noun a noun terminal among an NP's daughters. The trees are
+the dissertation's diagrams reduced to the categories the constraints
 mention, with the moved constituent in its source position; questions and topicalizations
 land at the root and relativizations at the relative clause. Dominance in the Sentential
 Subject Constraint is read as immediate, the configuration of a sentence exhaustively
@@ -45,19 +46,12 @@ and the definition of islands as the domains of chopping rules are not formalize
 namespace Ross1967
 
 open Syntax Core.Order
+open Syntax.Cat (NP VP PP AdjP ConjP)
 
 /-! ### Trees and movements -/
 
-/-- The categories the constraints mention. -/
-abbrev NP : Cat := .proj .NOUN
-abbrev VP : Cat := .proj .VERB
-abbrev PP : Cat := .proj .ADP
-abbrev AP : Cat := .proj .ADJ
-/-- A coordinate structure, the projection of a conjunction. -/
-abbrev Coord : Cat := .proj .CCONJ
-
 /-- A word of a part of speech. -/
-def w (pos : UD.UPOS) (form : String) : Tree Cat String := .terminal (.head pos) form
+def w (pos : UD.UPOS) (form : String) : Tree Cat String := .terminal (.proj pos .zero) form
 
 /-- A movement in a tree records the position of the moved constituent and the position it
 lands at. -/
@@ -79,17 +73,17 @@ def cat? (p : List ℕ) : Option Cat := (m.at? p).map Tree.cat
 /-- The positions the movement crosses are the strict ancestors of the source that do not
 dominate the landing site, the constituents the moved element is moved out of. -/
 def crossed : List (List ℕ) :=
-  m.source.inits.filter λ p => p ≠ m.source ∧ ¬ p <+: m.landing
+  m.source.inits.filter fun p ↦ p ≠ m.source ∧ ¬ p <+: m.landing
 
 /-- A noun phrase has a lexical head noun when a noun is among its daughters. -/
 def LexicalNP (t : Tree Cat String) : Prop :=
-  t.cat = NP ∧ ∃ d ∈ t.children, Tree.cat d = .head .NOUN
+  t.cat = NP ∧ ∃ d ∈ t.children, Tree.cat d = .N
 
 instance (t : Tree Cat String) : Decidable (LexicalNP t) := inferInstanceAs (Decidable (_ ∧ _))
 
 /-- A conjunct is a daughter of a coordinate structure other than a conjunction word. -/
 def IsConjunct (p : List ℕ) : Prop :=
-  m.cat? p.dropLast = some Coord ∧ m.cat? p ≠ some (.head .CCONJ)
+  m.cat? p.dropLast = some ConjP ∧ m.cat? p ≠ some .Conj
 
 instance (p : List ℕ) : Decidable (m.IsConjunct p) := inferInstanceAs (Decidable (_ ∧ _))
 
@@ -139,7 +133,7 @@ def phineas : Tree Cat String :=
       .node NP [w .DET "a", w .NOUN "girl",
         .node .S [.node NP [w .PRON "who"],
           .node VP [w .AUX "is",
-            .node AP [w .ADJ "jealous", .node PP [w .ADP "of", .node NP [w .PRON "who"]]]]]]]]
+            .node AdjP [w .ADJ "jealous", .node PP [w .ADP "of", .node NP [w .PRON "who"]]]]]]]]
 
 /-- The relative clause of *the hat which I believed the claim that Otto was wearing*. -/
 def hatClaim : Tree Cat String :=
@@ -166,21 +160,21 @@ def sofa : Tree Cat String :=
   .node .S [.node NP [w .PRON "he"],
     .node VP [w .VERB "put", .node NP [w .DET "the", w .NOUN "chair"],
       .node PP [w .ADP "between",
-        .node Coord [.node NP [w .DET "some", w .NOUN "table"], w .CCONJ "and",
+        .node ConjP [.node NP [w .DET "some", w .NOUN "table"], w .CCONJ "and",
           .node NP [w .DET "what", w .NOUN "sofa"]]]]]
 
 /-- *The lute which Henry plays and sings madrigals* relativizes out of a conjoined VP. -/
 def lute : Tree Cat String :=
   .node .S [.node NP [w .DET "the", w .NOUN "lute",
       .node .S [.node NP [w .PROPN "Henry"],
-        .node Coord [.node VP [w .VERB "plays", .node NP [w .PRON "which"]], w .CCONJ "and",
+        .node ConjP [.node VP [w .VERB "plays", .node NP [w .PRON "which"]], w .CCONJ "and",
           .node VP [w .VERB "sings", .node NP [w .NOUN "madrigals"]]]]],
     .node VP [w .AUX "is", w .ADJ "warped"]]
 
 /-- *Which trombone did the nurse polish and the plumber computed my tax?* questions out of a
 conjoined sentence. -/
 def trombone : Tree Cat String :=
-  .node .S [.node Coord [
+  .node .S [.node ConjP [
     .node .S [.node NP [w .DET "the", w .NOUN "nurse"],
       .node VP [w .VERB "polish", .node NP [w .DET "which", w .NOUN "trombone"]]],
     w .CCONJ "and",
@@ -256,7 +250,7 @@ dislocated NP is inside a conjunct. -/
 def guitar : Tree Cat String :=
   .node .S [.node NP [w .PRON "I"],
     .node VP [w .AUX "have",
-      .node Coord [.node VP [w .VERB "sung", .node NP [w .NOUN "folksongs"]], w .CCONJ "and",
+      .node ConjP [.node VP [w .VERB "sung", .node NP [w .NOUN "folksongs"]], w .CCONJ "and",
         .node VP [w .VERB "accompanied", .node NP [w .PRON "myself"],
           .node PP [w .ADP "on", .node NP [w .DET "this", w .NOUN "guitar"]]]]]]
 

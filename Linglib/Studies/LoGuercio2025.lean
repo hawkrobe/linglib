@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Syntax.Cat
 public import Linglib.Semantics.Alternatives.Structural
 public import Linglib.Semantics.Alternatives.Competition
 public import Linglib.Data.Examples.LoGuercio2025
@@ -7,14 +8,14 @@ public import Linglib.Data.Examples.LoGuercio2025
 /-!
 # Lo Guercio (2025): Maximize Conventional Implicatures!
 
-This file formalizes the anti-conventional implicatures of [lo-guercio-2025]: scalar
+This file formalizes Lo Guercio's anti-conventional implicatures: scalar
 inferences that arise from comparing the conventionally implicated content of formal
 alternatives, as scalar implicatures compare at-issue content and antipresuppositions
 presuppositional content. Conventionally implied meaning is a restriction on the contexts
 of felicitous use, so one sentence has stronger such content than another when its felicity
 set is a proper subset of the other's, and the principle Maximize Conventional Implicatures!
-forbids a sentence when a formal alternative in the sense of [katzir-2007] and
-[fox-katzir-2011], one no more complex than it, has stronger content. All three principles
+forbids a sentence when a formal alternative in the sense of Katzir and of Fox and
+Katzir, one no more complex than it, has stronger content. All three principles
 are instances of the substrate's `Alternatives.Blocked`, here along conventional-implicature
 content.
 
@@ -61,7 +62,7 @@ inductive EWord where
   | that_ | bastard
   deriving DecidableEq, Repr
 
-instance : BEq EWord := ⟨λ a b => decide (a = b)⟩
+instance : BEq EWord := ⟨fun a b ↦ decide (a = b)⟩
 instance : LawfulBEq EWord where
   eq_of_beq h := of_decide_eq_true h
   rfl := decide_eq_true rfl
@@ -111,8 +112,8 @@ def IsEpithet : Tree Cat EWord → Prop
   | .node .DP [.terminal .Det .that_, .terminal .N .bastard, _] => True
   | _ => False
 
-instance : DecidablePred WideDP := λ _ => inferInstanceAs (Decidable (_ ∧ _))
-instance : DecidablePred IsEpithet := λ t => by unfold IsEpithet; split <;> infer_instance
+instance : DecidablePred WideDP := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
+instance : DecidablePred IsEpithet := fun t ↦ by unfold IsEpithet; split <;> infer_instance
 
 theorem WideDP.of_isEpithet {t : Tree Cat EWord} (h : IsEpithet t) : WideDP t := by
   unfold IsEpithet at h; split at h
@@ -122,7 +123,7 @@ theorem WideDP.of_isEpithet {t : Tree Cat EWord} (h : IsEpithet t) : WideDP t :=
 /-- A tree contains the epithet construction. -/
 def HasEpithet (φ : Tree Cat EWord) : Prop := ∃ s ∈ φ.subtrees, IsEpithet s
 
-instance : DecidablePred HasEpithet := λ _ => inferInstanceAs (Decidable (∃ _ ∈ _, _))
+instance : DecidablePred HasEpithet := fun _ ↦ inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
 /-- Out of the blue no structural alternative of the bare sentence contains a determiner
 phrase with two or more daughters, since no source item has one, the sentence has none, and the
@@ -130,10 +131,10 @@ operations cannot widen a phrase. -/
 theorem no_wideDP_outOfBlue {ψ : Tree Cat EWord}
     (h : ψ ∈ structuralAlternatives epithetLex johnArrived) : ∀ t ∈ ψ.subtrees, ¬ WideDP t :=
   subtree_preservation _ WideDP (forall_mem_substitutionSource.2 ⟨by decide, by decide⟩)
-    (λ _ cs i h ⟨h1, h2⟩ => h ⟨h1, by
+    (fun _ cs i h ⟨h1, h2⟩ ↦ h ⟨h1, by
       simp only [daughters, List.length_eraseIdx, i.2, ite_true] at h2 ⊢; omega⟩)
-    (λ _ cs _ _ h ⟨h1, h2⟩ => h ⟨h1, by simpa [daughters, List.length_set] using h2⟩)
-    (λ _ _ _ _ _ ⟨_, h2⟩ => by simp [daughters] at h2) (by decide) h
+    (fun _ cs _ _ h ⟨h1, h2⟩ ↦ h ⟨h1, by simpa [daughters, List.length_set] using h2⟩)
+    (fun _ _ _ _ _ ⟨_, h2⟩ ↦ by simp [daughters] at h2) (by decide) h
 
 /-- Out of the blue, the epithet sentence is not a structural alternative. -/
 theorem epithet_not_alternative_outOfBlue :
@@ -173,9 +174,9 @@ def expressiveCI (φ : Tree Cat EWord) : Set World := {w | HasEpithet φ → w =
 proper subset. -/
 theorem epithet_ciStronger_than_bare :
     expressiveCI bastardJohnArrived ⊂ expressiveCI johnArrived :=
-  LE.le.ssubset_of_not_superset (λ _ _ h => absurd h (by decide))
-    (Set.not_subset.2 ⟨false, λ h => absurd h (by decide),
-      λ h => Bool.false_ne_true (h (by decide))⟩)
+  LE.le.ssubset_of_not_superset (fun _ _ h ↦ absurd h (by decide))
+    (Set.not_subset.2 ⟨false, fun h ↦ absurd h (by decide),
+      fun h ↦ Bool.false_ne_true (h (by decide))⟩)
 
 /-! ### The inference -/
 
@@ -185,7 +186,7 @@ theorem outOfBlue_no_ACI :
     ¬ Blocked (structuralAlternatives epithetLex) expressiveCI johnArrived := by
   rintro ⟨φ', hφ', hss⟩
   obtain ⟨w, -, h_alt⟩ := Set.not_subset.1 hss.2
-  exact h_alt λ ⟨s, hs, hse⟩ => absurd (WideDP.of_isEpithet hse) (no_wideDP_outOfBlue hφ' s hs)
+  exact h_alt fun ⟨s, hs, hse⟩ ↦ absurd (WideDP.of_isEpithet hse) (no_wideDP_outOfBlue hφ' s hs)
 
 /-- After the mention the bare sentence violates the principle, since the epithet sentence is a
 formal alternative with stronger content. -/

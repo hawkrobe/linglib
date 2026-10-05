@@ -1996,7 +1996,6 @@ import Linglib.Syntax.Minimalist.Workspace.TraceMeasures
 import Linglib.Syntax.Negation
 import Linglib.Syntax.Reciprocal
 import Linglib.Syntax.Tree.Basic
-import Linglib.Syntax.Tree.Cat
 import Linglib.Syntax.Tree.Command
 import Linglib.Data.Examples.Svenonius2004
 import Linglib.Data.Examples.Istratkova2004

@@ -1,12 +1,13 @@
 module
 
+public import Linglib.Syntax.Cat
 public import Linglib.Semantics.Alternatives.Structural
 public import Linglib.Semantics.Alternatives.Competition
 
 /-!
 # Katzir (2007): Structurally-Defined Alternatives
 
-This file formalizes the worked examples of [katzir-2007], which replaces the Horn scales of
+This file formalizes the worked examples of Katzir's paper, which replaces the Horn scales of
 neo-Gricean pragmatics by alternatives defined on parse trees: the alternatives of a sentence
 are the trees obtainable from it by deletion, contraction, and substitution of constituents by
 same-category items of the substitution source, the lexicon together with the sentence's own
@@ -22,7 +23,7 @@ The examples are the paper's Section 4 and 5 sentences over a small lexicon. For
 operation introduces the conjunction it needs (`someButNotAll_not_mem_alternatives`). For the
 disjunction (26), the conjunction and each disjunct are alternatives (`and_mem_alternatives`,
 `leftDisjunct_mem_alternatives`, `rightDisjunct_mem_alternatives`), which yields the primary
-inferences (28) without the L and R connectives of [sauerland-2004]
+inferences (28) without Sauerland's L and R connectives
 (`primary_inferences_or`). Deleting a modifier gives a strictly simpler alternative, (29)
 (`justMan_mem_alternatives`), and the subtree clause of the substitution source (41) makes
 *a little bit more than warm* substitutable for *warm* in (40), so that the more complex
@@ -109,7 +110,7 @@ theorem source_lacks_conjP :
 /-- The symmetric alternative is no structural alternative, since the operations never
 introduce the conjunction phrase it needs, so the symmetry problem does not arise. -/
 theorem someButNotAll_not_mem_alternatives :
-    someButNotAllSentence ∉ structuralAlternatives lexicon someSentence := λ h =>
+    someButNotAllSentence ∉ structuralAlternatives lexicon someSentence := fun h ↦
   category_preservation _ Cat.ConjP someSentence someButNotAllSentence source_lacks_conjP
     (by decide) h (by decide)
 
@@ -132,7 +133,7 @@ def assertableAlts (wa : Tree Cat Word → Prop) (t : Tree Cat Word) : Set (Tree
 theorem blocked_of_weaklyAssertable_all {wa : Tree Cat Word → Prop} (h : wa allSentence) :
     Blocked (assertableAlts wa) cakeMeaning someSentence :=
   ⟨allSentence, ⟨all_mem_alternatives, h⟩, LE.le.ssubset_of_not_superset
-    (λ c hc => by simp_all [cakeMeaning, someSentence, allSentence, someButNotAllSentence])
+    (fun c hc ↦ by simp_all [cakeMeaning, someSentence, allSentence, someButNotAllSentence])
     (Set.not_subset.2 ⟨.part, by simp [cakeMeaning], by simp [cakeMeaning, someSentence,
       allSentence, someButNotAllSentence]⟩)⟩
 
@@ -140,7 +141,7 @@ theorem blocked_of_weaklyAssertable_all {wa : Tree Cat Word → Prop} (h : wa al
 assertable; the symmetric alternative, being no alternative, licenses nothing. -/
 theorem primary_implicature_some {wa : Tree Cat Word → Prop}
     (h : ¬ Blocked (assertableAlts wa) cakeMeaning someSentence) : ¬ wa allSentence :=
-  λ hwa => h (blocked_of_weaklyAssertable_all hwa)
+  fun hwa ↦ h (blocked_of_weaklyAssertable_all hwa)
 
 /-! ### Disjunction (Section 4.2) -/
 
@@ -202,11 +203,11 @@ conjunction and each disjunct not weakly assertable. -/
 theorem primary_inferences_or {wa : Tree Cat Word → Prop}
     (h : ¬ Blocked (assertableAlts wa) fruitMeaning orSentence) :
     ¬ wa andSentence ∧ ¬ wa leftDisjunct ∧ ¬ wa rightDisjunct := by
-  refine ⟨λ hwa => h ⟨andSentence, ⟨and_mem_alternatives, hwa⟩,
+  refine ⟨fun hwa ↦ h ⟨andSentence, ⟨and_mem_alternatives, hwa⟩,
       LE.le.ssubset_of_not_superset ?_ (Set.not_subset.2 ⟨(true, false), ?_, ?_⟩)⟩,
-    λ hwa => h ⟨leftDisjunct, ⟨leftDisjunct_mem_alternatives, hwa⟩,
+    fun hwa ↦ h ⟨leftDisjunct, ⟨leftDisjunct_mem_alternatives, hwa⟩,
       LE.le.ssubset_of_not_superset ?_ (Set.not_subset.2 ⟨(false, true), ?_, ?_⟩)⟩,
-    λ hwa => h ⟨rightDisjunct, ⟨rightDisjunct_mem_alternatives, hwa⟩,
+    fun hwa ↦ h ⟨rightDisjunct, ⟨rightDisjunct_mem_alternatives, hwa⟩,
       LE.le.ssubset_of_not_superset ?_ (Set.not_subset.2 ⟨(true, false), ?_, ?_⟩)⟩⟩ <;>
   simp_all [fruitMeaning, orSentence, andSentence, leftDisjunct, rightDisjunct]
 

@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Data.Examples.JereticEtAl2025
-public import Linglib.Syntax.Tree.Cat
+public import Linglib.Syntax.Cat
 public import Linglib.Semantics.Presupposition.MaximizePresupposition
 public import Linglib.Semantics.Alternatives.Structural
 public import Linglib.Fragments.Romance.French.Determiners
@@ -11,11 +11,11 @@ public import Mathlib.Tactic.DeriveFintype
 /-!
 # Jeretič et al. (2025): Core concepts and indirect alternatives
 
-This file formalizes [jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025]'s account of the
+This file formalizes Jeretič, Bassi, Gonzalez, Yatsushiro, Meyer and Sauerland's account of the
 anti-duality of French *tous*. English *all* and *every* are unusable in a domain known to hold
-two individuals because Maximize Presupposition prefers *both* ([percus-2006],
-[sauerland-2008a]); *tous* is anti-dual too although French has no word for *both*, the puzzle
-of [chemla-2007] taken by [buccola-kriz-chemla-2018] to show a conceptual alternative at work.
+two individuals because Maximize Presupposition prefers *both* (Percus, Sauerland); *tous* is
+anti-dual too although French has no word for *both*, the puzzle of Chemla taken by Buccola,
+Križ and Chemla to show a conceptual alternative at work.
 The account posits a dual number feature in every language, syncretic with the plural in
 French, so that the string *tous les NP* is ambiguous between a plural and a dual parse; Avoid
 Ambiguity (`Blocked`) bars the dual parse from pronunciation because *les deux NP* realizes its
@@ -31,7 +31,7 @@ complex as the plain one, which `Slot.competitor` derives from the paper's forms
 node counts; `theory_matches_data` checks the prediction against the judgments the paper
 reports, as rows: English *no* and *always* anti-dual, French *aucun* and *toujours* not,
 Japanese *which*, *each*, and *one* anti-dual by the lexical dual *dotti* where English and
-French are not. An account with direct alternatives only, [sauerland-2003]'s, predicts
+French are not. An account with direct alternatives only, Sauerland's, predicts
 anti-duality from lexical duals alone and so misses the indirect cells. The combination *tous
 les deux*, the domain restriction of Avoid Ambiguity, and the alternatives the paper rejects
 are not formalized.
@@ -283,7 +283,7 @@ def hasLesDeux (t : Tree Cat String) : Bool :=
 
 /-- Under French pronounceability, trees containing the silent dual marker are silent. Stipulated
 here and derived from Avoid Ambiguity in `frenchPron_iff_not_blocked`. -/
-abbrev frenchPron : Tree Cat String → Prop := λ t => hasDualMarker t = false
+abbrev frenchPron : Tree Cat String → Prop := fun t ↦ hasDualMarker t = false
 
 /-- In the toy semantics *tous V* asserts that all cups are full with a trivial presupposition;
 the dual variants, silent or *les deux*, presuppose exactly two cups and are defined only in
@@ -326,11 +326,11 @@ theorem frenchPron_iff_not_blocked :
   decide
 
 /-- The presupposition, definedness of the sentence, `meaning` lifted to `Prop`. -/
-def presupFn : Tree Cat String → WorldEx → Prop := λ t w => meaning t w = true
+def presupFn : Tree Cat String → WorldEx → Prop := fun t w ↦ meaning t w = true
 
 /-- The at-issue assertion, uniform across the three sentences, which differ only in
 presupposition. -/
-def assertionFn : Tree Cat String → WorldEx → Prop := λ _ _ => True
+def assertionFn : Tree Cat String → WorldEx → Prop := fun _ _ ↦ True
 
 /-- The indirect-alternative source (43) filters Katzir alternatives by pronounceability and
 meaning-equivalence to a silent witness, with complexity measured by `RoseTree.numNodes`. -/

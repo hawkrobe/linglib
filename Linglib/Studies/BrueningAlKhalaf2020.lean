@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.WordOrder
-public import Linglib.Syntax.Tree.Cat
+public import Linglib.Syntax.Cat
 public import Linglib.Data.Examples.BrueningAlKhalaf2020
 public import Mathlib.Data.Finset.Insert
 public import Mathlib.Data.Fintype.Option
@@ -99,7 +99,7 @@ def ofCat : Cat → List Conjunct
   | c => [phrase c]
 
 theorem mem_ofCat {x : Conjunct} {c : Cat} : x ∈ ofCat c ↔ x = phrase c ∨ c = .CP ∧ x = nullN := by
-  cases c <;> simp [ofCat]
+  unfold ofCat; split <;> simp_all
 
 theorem eq_phrase_of_mem_ofCat {x : Conjunct} {c : Cat} (h : x ∈ ofCat c) (hx : x.Contentful) :
     x = phrase c := by
