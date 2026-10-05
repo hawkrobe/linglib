@@ -35,7 +35,8 @@ and a presupposition trigger's full meaning fails plain downward entailment.
   The scale is the pair of ends the paper's computation of exhaustified *not every* uses.
 * The presupposition triggers have no scale-mates, so their enriched meaning is their full
   meaning, presupposition included, and the strong principle asks for its plain downward
-  entailment. The operators and their Strawson properties are the Strawson substrate's.
+  entailment. The operators are von Fintel's, with their owners, and their Strawson properties
+  are in `Logic/Natural/Strawson.lean`.
 * *At most five* against *at most four*, and the cardinal *fewer than four* of the
   scale-truncation discussion, are checked on a six-element domain.
 
@@ -169,9 +170,9 @@ def Licensed : Licenser → Strength → Prop
   | .only, .weak => ∀ {ι W : Type} (x : ι), IsStrawsonDE (only (W := W) x)
   | .only, .strong => ∀ {ι W : Type} (x : ι), Antitone fun P : ι → Set W ↦ (only x P).truthSet
   | .conditional, .weak => ∀ {W : Type} (horizon : W → Set W) (q : Set W),
-      IsStrawsonDE (would horizon · q)
+      IsStrawsonDE (Conditional.horizonCounterfactual horizon · q)
   | .conditional, .strong => ∀ {W : Type} (horizon : W → Set W) (q : Set W),
-      Antitone fun p ↦ (would horizon p q).truthSet
+      Antitone fun p ↦ (Conditional.horizonCounterfactual horizon p q).truthSet
   | .sorryThat, .weak => ∀ {W : Type} (dox base : W → Set W) (g : W → List (W → Prop)),
       IsStrawsonDE (regret dox base g)
   | .sorryThat, .strong => ∀ {W : Type} (dox base : W → Set W) (g : W → List (W → Prop)),
@@ -182,13 +183,14 @@ of what strong items were held to need, yet none licenses them. -/
 theorem strawsonAA_not_sufficient :
     (∀ {ι W : Type} (x : ι), IsStrawsonAntiAdditive (only (W := W) x)) ∧
       (∀ {W : Type} (horizon : W → Set W) (q : Set W),
-        IsStrawsonAntiAdditive (would horizon · q)) ∧
+        IsStrawsonAntiAdditive (Conditional.horizonCounterfactual horizon · q)) ∧
       (∀ {W : Type} (dox base : W → Set W) (g : W → List (W → Prop)),
         IsStrawsonAntiAdditive (regret dox base g)) ∧
       ¬ Licensed .only .strong ∧ ¬ Licensed .conditional .strong ∧
         ¬ Licensed .sorryThat .strong :=
-  ⟨isStrawsonAntiAdditive_only, isStrawsonAntiAdditive_would, isStrawsonAntiAdditive_regret,
-    fun h ↦ not_antitone_truthSet_only (h _), fun h ↦ not_antitone_truthSet_would (h _ _),
+  ⟨isStrawsonAntiAdditive_only, Conditional.isStrawsonAntiAdditive_horizonCounterfactual,
+    isStrawsonAntiAdditive_regret, fun h ↦ not_antitone_truthSet_only (h _),
+    fun h ↦ Conditional.not_antitone_truthSet_horizonCounterfactual (h _ _),
     fun h ↦ not_antitone_truthSet_regret (h _ _ _)⟩
 
 /-- *No* is the only one of the paper's licensers whose enriched meaning is downward
@@ -214,7 +216,7 @@ theorem licensed_weak_iff (L : Licenser) : Licensed L .weak ↔ L ≠ .some := b
       (show ((fun _ : Bool => False) : Bool → Prop) ≤ fun _ => True from fun _ hf => hf.elim)
       ⟨true, trivial, trivial⟩).elim fun _ h => h.2
   | only => exact iff_of_true isStrawsonDE_only nofun
-  | conditional => exact iff_of_true isStrawsonDE_would nofun
+  | conditional => exact iff_of_true Conditional.isStrawsonDE_horizonCounterfactual nofun
   | sorryThat => exact iff_of_true isStrawsonDE_regret nofun
 
 theorem licensed_iff (L : Licenser) (s : Strength) :

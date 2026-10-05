@@ -192,6 +192,14 @@ theorem strictImp_anti_left (hp : p' ⊆ p) :
     strictImp access p q ⊆ strictImp access p' q :=
   ofDomain_anti_left fun _ ↦ Set.inter_subset_inter_right _ hp
 
+/-- The strict conditional with a disjunctive antecedent is the conjunction of the conditionals of
+the disjuncts, the anti-additivity of the antecedent position. -/
+theorem strictImp_union_left :
+    strictImp access (p ∪ p') q = strictImp access p q ∩ strictImp access p' q :=
+  Set.ext fun _ ↦ by
+    simp only [mem_strictImp, Set.inter_union_distrib_left, Set.union_subset_iff,
+      Set.mem_inter_iff]
+
 /-- A strict conditional whose consequent holds throughout the accessible worlds is true for
 every antecedent ([stalnaker-1975], [von-fintel-1999], [mizuno-2024]). -/
 theorem mem_strictImp_of_subset (h : access i ⊆ q) :

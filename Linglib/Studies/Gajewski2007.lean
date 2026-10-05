@@ -388,9 +388,9 @@ def Env.AntiAdditive : Env → Prop
       ∀ (W : Type) (dox base : W → Set W) (g : W → List (W → Prop)),
         IsAntiAdditive fun p ↦ (regret dox base g p).truthSet
   | .conditional => ∀ (W : Type) (horizon : W → Set W) (q : Set W),
-      IsAntiAdditive fun p ↦ (would horizon p q).truthSet
+      IsAntiAdditive fun p ↦ (Conditional.horizonCounterfactual horizon p q).truthSet
   | .superlative => ∀ (W ι D : Type) [Preorder D] (μ : ι → D) (a : ι),
-      IsAntiAdditive fun Q : ι → Set W ↦ (NaturalLogic.superlative μ Q a).truthSet
+      IsAntiAdditive fun C : W → Set ι ↦ (Degree.superlative μ C a).truthSet
 
 private theorem not_isAntiAdditive_id : ¬ IsAntiAdditive (id : Set Bool → Set Bool) := by
   rw [isAntiAdditive_iff_mem]
@@ -420,10 +420,12 @@ theorem Env.antiAdditive_iff (e : Env) :
   | adversative =>
     exact iff_of_false (fun h ↦ not_antitone_truthSet_regret (h _ _ _ _).antitone) (by decide)
   | conditional =>
-    exact iff_of_false (fun h ↦ not_antitone_truthSet_would (h _ _ _).antitone) (by decide)
-  | superlative =>
-    exact iff_of_false (fun h ↦ not_antitone_truthSet_superlative (h Unit Unit ℕ _ _).antitone)
+    exact iff_of_false
+      (fun h ↦ Conditional.not_antitone_truthSet_horizonCounterfactual (h _ _ _).antitone)
       (by decide)
+  | superlative =>
+    exact iff_of_false
+      (fun h ↦ Degree.not_antitone_truthSet_superlative (h Unit Unit ℕ _ _).antitone) (by decide)
 
 instance : DecidablePred Env.AntiAdditive := fun e ↦ decidable_of_iff _ e.antiAdditive_iff.symm
 
@@ -434,12 +436,13 @@ theorem strawsonAntiAdditive_not_sufficient :
       (∀ (W : Type) (dox base : W → Set W) (g : W → List (W → Prop)),
         IsStrawsonAntiAdditive (regret dox base g)) ∧
       (∀ (W : Type) (horizon : W → Set W) (q : Set W),
-        IsStrawsonAntiAdditive (would horizon · q)) ∧
+        IsStrawsonAntiAdditive (Conditional.horizonCounterfactual horizon · q)) ∧
       (∀ (W ι D : Type) [Preorder D] (μ : ι → D) (a : ι),
-        IsStrawsonAntiAdditive (NaturalLogic.superlative (W := W) μ · a)) ∧
+        IsStrawsonAntiAdditive (Degree.superlative (W := W) μ · a)) ∧
       ∀ e ∈ [Env.only, .adversative, .conditional, .superlative], ¬ e.AntiAdditive :=
   ⟨fun _ _ ↦ isStrawsonAntiAdditive_only, fun _ ↦ isStrawsonAntiAdditive_regret,
-    fun _ ↦ isStrawsonAntiAdditive_would, fun _ _ _ _ ↦ isStrawsonAntiAdditive_superlative,
+    fun _ ↦ Conditional.isStrawsonAntiAdditive_horizonCounterfactual,
+    fun _ _ _ _ ↦ Degree.isStrawsonAntiAdditive_superlative,
     by decide⟩
 
 /-! ### The paper's judgments -/

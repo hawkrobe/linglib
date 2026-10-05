@@ -2,8 +2,8 @@ module
 
 public import Linglib.Logic.Natural.Additivity
 public import Linglib.Semantics.Presupposition.Basic
-public import Linglib.Semantics.Conditionals.Basic
-public import Linglib.Semantics.Degree.Quantifier
+public import Linglib.Semantics.Conditionals.Horizon
+public import Linglib.Semantics.Degree.Superlative
 public import Linglib.Semantics.Modality.Kratzer.Ordering
 public import Linglib.Semantics.Focus.Particles
 public import Linglib.Semantics.Attitudes.Desire.BestWorlds
@@ -26,7 +26,7 @@ presupposition that defeats the classical property.
 
 * `IsStrawsonDE`, `IsStrawsonUE`: antitonicity and monotonicity under Strawson entailment.
 * `IsStrawsonAntiAdditive`: `f (p ⊔ q)` is Strawson equivalent to `f p` conjoined with `f q`.
-* `only`, `superlative`, `since`, `would`: von Fintel's operators.
+* `only`: von Fintel's *only* over a name.
 
 ## Main results
 
@@ -36,9 +36,12 @@ presupposition that defeats the classical property.
   together with the Strawson form of Atlas's pseudo-anti-additivity.
 * `isStrawsonDE_ofProp_iff`, `isStrawsonAntiAdditive_ofProp_iff`: without presuppositions the
   Strawson notions are the classical ones.
-* `isStrawsonAntiAdditive_only`, `isStrawsonAntiAdditive_superlative`,
-  `isStrawsonAntiAdditive_since`, `isStrawsonAntiAdditive_would`, and the
-  `not_antitone_truthSet_` counterexamples.
+* `isStrawsonAntiAdditive_only`, `not_antitone_truthSet_only`: *only* over a name is Strawson
+  anti-additive and not classically downward entailing.
+* `Degree.isStrawsonAntiAdditive_superlative`,
+  `Conditional.isStrawsonAntiAdditive_horizonCounterfactual`: the superlative in its class and the
+  modal-horizon counterfactual in its antecedent are Strawson anti-additive, and neither is
+  classically downward entailing.
 * `Desire.BestWorlds.isStrawsonUE_want`, `Desire.BestWorlds.isStrawsonUE_glad`,
   `Desire.BestWorlds.not_isStrawsonDE_glad`, `Desire.BestWorlds.isStrawsonAntiAdditive_regret`:
   *want* and *glad* are Strawson upward entailing and *glad* is not Strawson downward entailing,
@@ -65,10 +68,9 @@ presupposition that defeats the classical property.
   covers *regret*, *amazed* and *surprised*. Von Fintel calls *glad* upward entailing; its
   presupposition that the domain contains non-`p` worlds can fail at a larger argument, so
   `Desire.BestWorlds.isStrawsonUE_glad` is the Strawson form he states for *want*.
-* The superlative's degree measure does not vary with the world, and *since* reads von Fintel's
-  prose meaning off world-indexed `past` and `window` sets.
-* `would` is the modal-horizon conditional; the admissibility of the horizon, a condition on the
-  context that does not mention the antecedent, is left to the caller.
+* The other operators live with their owners, the superlative in `Degree.superlative` and the
+  conditional in `Conditional.horizonCounterfactual`, and their Strawson facts are proved here;
+  temporal *since*, which no other paper's analysis consumes, is in `Studies/VonFintel1999.lean`.
 
 ## References
 
@@ -256,100 +258,6 @@ theorem only_ne_only_range :
 
 end Only
 
-/-! ### Superlatives -/
-
-section Superlative
-
-variable [Preorder D] (μ : ι → D) (Q : ι → Set W) (a : ι)
-
-/-- *a is the μ-est Q* presupposes that `a` is a `Q` and asserts that every other `Q` has a
-smaller degree ([von-fintel-1999]'s (79)). -/
-def superlative : PartialProp W where
-  presup w := w ∈ Q a
-  assertion w := ∀ x, w ∈ Q x → x ≠ a → μ x < μ a
-
-theorem isStrawsonAntiAdditive_superlative :
-    IsStrawsonAntiAdditive (superlative (W := W) μ · a) :=
-  .of_isAntiAdditive fun _ _ ↦ funext fun _ ↦ propext <| by
-    simp only [superlative, Pi.sup_apply, Pi.inf_apply, inf_Prop_eq, Set.sup_eq_union,
-      Set.mem_union, or_imp, forall_and]
-
-theorem isStrawsonDE_superlative : IsStrawsonDE (superlative (W := W) μ · a) :=
-  (isStrawsonAntiAdditive_superlative μ a).isStrawsonDE
-
-/-- At a world, the superlative holds exactly when `a` is the absolute superlative of the
-`Q`-individuals there ([heim-1999]). -/
-theorem holds_superlative_iff {D : Type*} [LinearOrder D] (μ : ι → D) (w : W) :
-    (superlative μ Q a).holds w ↔ Degree.absoluteSuperlative μ {x | w ∈ Q x} a :=
-  Iff.rfl
-
-/-- *Emma is the tallest girl in her class* does not classically entail *Emma is the tallest girl
-in her class to have learned the alphabet*, whose presupposition may fail ([von-fintel-1999]'s
-(76)). -/
-theorem not_antitone_truthSet_superlative :
-    ¬ Antitone fun Q : Unit → Set Unit ↦ (superlative (fun _ : Unit ↦ (0 : ℕ)) Q ()).truthSet :=
-  not_antitone_truthSet (p := ⊥) (q := fun _ ↦ .univ) (w := ()) bot_le
-    ⟨trivial, fun _ _ h ↦ absurd rfl h⟩ id
-
-end Superlative
-
-/-! ### Temporal *since* -/
-
-section Since
-
-variable (past window : W → Set W)
-
-/-- *It has been five years since p* presupposes a `p`-time five years ago, in `past`, and asserts
-none since, in `window` ([von-fintel-1999]'s (20)–(22)). -/
-def since (p : Set W) : PartialProp W where
-  presup w := (past w ∩ p).Nonempty
-  assertion w := Disjoint (window w) p
-
-theorem isStrawsonAntiAdditive_since : IsStrawsonAntiAdditive (since past window) :=
-  .of_isAntiAdditive fun _ _ ↦ funext fun _ ↦ propext Set.disjoint_union_right
-
-theorem isStrawsonDE_since : IsStrawsonDE (since past window) :=
-  (isStrawsonAntiAdditive_since past window).isStrawsonDE
-
-/-- *Since I saw a bird of prey* does not classically entail *since I saw an eagle*
-([von-fintel-1999]'s (20)). -/
-theorem not_antitone_truthSet_since :
-    ¬ Antitone fun p : Set Unit ↦ (since (fun _ ↦ .univ) (fun _ ↦ ∅) p).truthSet :=
-  not_antitone_truthSet (p := ∅) (q := .univ) (w := ()) (Set.empty_subset _)
-    ⟨⟨(), trivial, trivial⟩, Set.empty_disjoint _⟩ fun h ↦ h.ne_empty (Set.inter_empty _)
-
-end Since
-
-/-! ### Conditional antecedents -/
-
-section Would
-
-variable (horizon : W → Set W)
-
-/-- *If p, would q* presupposes that the modal horizon admits `p` and asserts that every
-`p`-world of the horizon is a `q`-world ([von-fintel-1999]'s (82) and (83)). -/
-def would (p q : Set W) : PartialProp W where
-  presup w := (horizon w ∩ p).Nonempty
-  assertion w := w ∈ Conditional.strictImp horizon p q
-
-theorem isStrawsonAntiAdditive_would (q : Set W) :
-    IsStrawsonAntiAdditive (would horizon · q) :=
-  .of_isAntiAdditive fun _ _ ↦ funext fun _ ↦ propext <| by
-    simp only [would, Pi.inf_apply, inf_Prop_eq, Set.sup_eq_union, Conditional.mem_strictImp,
-      Set.inter_union_distrib_left, Set.union_subset_iff]
-
-theorem isStrawsonDE_would (q : Set W) : IsStrawsonDE (would horizon · q) :=
-  (isStrawsonAntiAdditive_would horizon q).isStrawsonDE
-
-/-- Strengthening the antecedent is not classically valid, since a strengthened antecedent can
-fall outside the horizon ([von-fintel-1999], §4.3). -/
-theorem not_antitone_truthSet_would :
-    ¬ Antitone fun p : Set Unit ↦ (would (fun _ ↦ .univ) p .univ).truthSet :=
-  not_antitone_truthSet (p := ∅) (q := .univ) (w := ()) (Set.empty_subset _)
-    ⟨⟨(), trivial, trivial⟩, Set.subset_univ _⟩ fun h ↦ h.ne_empty (Set.inter_empty _)
-
-end Would
-
 end NaturalLogic
 
 /-! ### The propositional exclusive -/
@@ -463,3 +371,61 @@ theorem not_antitone_truthSet_regret :
   simp_all
 
 end Desire.BestWorlds
+
+/-! ### Superlatives -/
+
+namespace Degree
+
+open NaturalLogic
+
+variable {α D W : Type*} [Preorder D] (μ : α → D) (x : α)
+
+/-- The superlative is Strawson anti-additive in its comparison class. -/
+theorem isStrawsonAntiAdditive_superlative :
+    IsStrawsonAntiAdditive (superlative (W := W) μ · x) :=
+  .of_isAntiAdditive (isAntiAdditive_superlative_assertion μ x)
+
+theorem isStrawsonDE_superlative : IsStrawsonDE (superlative (W := W) μ · x) :=
+  (isStrawsonAntiAdditive_superlative μ x).isStrawsonDE
+
+/-- *Emma is the tallest girl in her class* does not classically entail *Emma is the tallest girl
+in her class to have learned the alphabet*, whose presupposition may fail ([von-fintel-1999]'s
+(76)). -/
+theorem not_antitone_truthSet_superlative :
+    ¬ Antitone fun C : Unit → Set Unit ↦ (superlative (fun _ : Unit ↦ (0 : ℕ)) C ()).truthSet :=
+  not_antitone_truthSet (p := ⊥) (q := fun _ ↦ .univ) (w := ()) bot_le
+    ⟨trivial, fun _ _ h ↦ absurd rfl h⟩ id
+
+end Degree
+
+/-! ### Conditional antecedents -/
+
+namespace Conditional
+
+open NaturalLogic
+
+variable {I W : Type*} (horizon : I → Set W) (q : Set W)
+
+/-- The modal-horizon counterfactual is Strawson anti-additive in its antecedent, since a strict
+conditional with a disjunctive antecedent is the conjunction of the conditionals of the disjuncts
+([gajewski-2011], Appendix 1). -/
+theorem isStrawsonAntiAdditive_horizonCounterfactual :
+    IsStrawsonAntiAdditive (horizonCounterfactual horizon · q) :=
+  .of_isAntiAdditive fun p p' ↦ funext fun i ↦ propext <| by
+    show i ∈ strictImp horizon (p ∪ p') q ↔ i ∈ strictImp horizon p q ∧ i ∈ strictImp horizon p' q
+    rw [strictImp_union_left]
+    exact Iff.rfl
+
+theorem isStrawsonDE_horizonCounterfactual :
+    IsStrawsonDE (horizonCounterfactual horizon · q) :=
+  (isStrawsonAntiAdditive_horizonCounterfactual horizon q).isStrawsonDE
+
+/-- Strengthening the antecedent is not classically valid, since a strengthened antecedent can
+fall outside the horizon ([von-fintel-1999], §4.3). -/
+theorem not_antitone_truthSet_horizonCounterfactual :
+    ¬ Antitone fun p : Set Unit ↦
+      (horizonCounterfactual (fun _ : Unit ↦ (.univ : Set Unit)) p .univ).truthSet :=
+  not_antitone_truthSet (p := ∅) (q := .univ) (w := ()) (Set.empty_subset _)
+    ⟨⟨(), trivial, trivial⟩, Set.subset_univ _⟩ fun h ↦ h.ne_empty (Set.inter_empty _)
+
+end Conditional

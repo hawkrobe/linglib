@@ -102,8 +102,9 @@ namespace LicensingContext
 presuppositions ([von-fintel-1999]). Clausal negation is anti-morphic; the negative quantifiers,
 *without*, *deny*, the restrictor of a universal and the clausal comparative are anti-additive
 ([ladusaw-1979], [zwarts-1998]), and so, modulo presuppositions, are focus *only*, adversatives,
-conditional antecedents, superlatives ([gajewski-2011]) and temporal *since*
-(`NaturalLogic.isStrawsonAntiAdditive_since`); *few*, *at most*, *before*, *too … to* and *doubt*
+conditional antecedents, superlatives and temporal *since*, all of von Fintel's Strawson downward
+entailing operators being Strawson anti-additive ([gajewski-2011],
+`VonFintel1999.isStrawsonAntiAdditive_since`); *few*, *at most*, *before*, *too … to* and *doubt*
 are antitone; the phrasal comparative, questions and the generic contexts are monotone. -/
 def signature : LicensingContext → Signature
   | .negation => .antiAddMult
