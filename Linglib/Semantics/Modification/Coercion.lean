@@ -55,6 +55,19 @@ theorem isNonVacuous_compl {P : Property W E} {w : W} {d : E → Prop} :
   simp only [not_not]
   exact and_comm
 
+/-- A predicate disjoint from `Q` is non-vacuous in any domain that holds an instance of it and
+an instance of `Q`. -/
+theorem isNonVacuous_of_disjoint {P Q : Property W E} {w : W} {d : E → Prop} (h : Disjoint P Q)
+    (hP : ∃ x, d x ∧ P w x) (hQ : ∃ x, d x ∧ Q w x) : IsNonVacuous P w d :=
+  ⟨hP, hQ.imp fun _ hx ↦ ⟨hx.1, fun hPx ↦ h.le_bot w _ ⟨hPx, hx.2⟩⟩⟩
+
+/-- A privative modifier is never non-vacuous within the extension of its noun, the local domain
+that head primacy assigns. -/
+theorem not_isNonVacuous_of_isPrivative {adj : Modifier (Property W E)}
+    (hp : Modifier.IsPrivative adj) (N : Property W E) (w : W) :
+    ¬ IsNonVacuous (adj N) w (N w) :=
+  fun h ↦ h.1.elim fun x hx ↦ isPrivative_iff.1 hp N w x hx.2 hx.1
+
 /-- A coercion of `N` licensed at `w` is a wider noun meaning `shift` such that `adj shift` is
 non-vacuous in the extension of `shift` at `w`, the local domain that head primacy assigns. The
 `shift` is a full intension although licensing holds at the single world `w`, since a
@@ -82,6 +95,13 @@ theorem SubsectiveReanalysis.nounShift_eq_self (R : SubsectiveReanalysis adjClas
     {N : Property W E} {w : W} (h : IsNonVacuous (adjClassical N) w (N w)) :
     R.nounShift N = N :=
   le_antisymm (R.shift_inert N w h) (R.le_nounShift N)
+
+/-- Where direct application is already non-vacuous, the reanalysed meaning applies only to
+members of the literal noun. -/
+theorem SubsectiveReanalysis.adjSubsective_nounShift_le (R : SubsectiveReanalysis adjClassical)
+    {N : Property W E} {w : W} (h : IsNonVacuous (adjClassical N) w (N w)) :
+    R.adjSubsective (R.nounShift N) ≤ N :=
+  (congrArg R.adjSubsective (R.nounShift_eq_self h)).trans_le (R.is_subsective N)
 
 /-- A reanalysis licenses a coercion at every world where the reanalysed meaning is non-vacuous
 on the widened noun, unlike a privative adjective (`Partee2010.isPrivative_no_LicensedCoercion`). -/

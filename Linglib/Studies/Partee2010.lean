@@ -80,9 +80,7 @@ the widened noun needs something in both the noun and the adjective's value. -/
 theorem isPrivative_no_LicensedCoercion {adj : Modifier (Property W E)}
     (hp : IsPrivative adj) (N : Property W E) (w : W) :
     IsEmpty (LicensedCoercion N adj w) :=
-  ⟨fun lc ↦ by
-    obtain ⟨x, hshift, hadj⟩ := lc.satisfies_nvp.1
-    exact isPrivative_iff.mp hp lc.shift w x hadj hshift⟩
+  ⟨fun lc ↦ not_isNonVacuous_of_isPrivative hp lc.shift w lc.satisfies_nvp⟩
 
 /-- Kamp's *fake* admits no licensed coercion. -/
 theorem fakeAdj_no_LicensedCoercion (N : Property Kamp1975.W2 Kamp1975.E3)
