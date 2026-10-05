@@ -117,11 +117,6 @@ def specHasN : RoseTree SyntacticObject.Vertex → Bool
   | .node (.inl none) [l, _] => hasN l
   | .node _ _ => false
 
-def subtrees : RoseTree SyntacticObject.Vertex → List (RoseTree SyntacticObject.Vertex)
-  | t@(.node _ []) => [t]
-  | t@(.node _ [l, r]) => t :: (subtrees l ++ subtrees r)
-  | t@(.node _ _) => [t]
-
 /-- The marked option used by raising `s` past a modifier whose complement is `c`. The whole
 complement pied-pipes, of the whose-picture type when the noun is its specifier and of the
 picture-of-who type otherwise, and a proper part strands the rest. -/
@@ -142,7 +137,7 @@ def step (m : LIToken) (st : Stage) : List Stage :=
   let d : Derivation := ⟨st.derivation.initial, st.derivation.steps ++ [.em .left (leaf m)]⟩
   let p := m * st.planar
   ⟨d, p, st.marks, st.raises⟩ ::
-    ((subtrees st.planar.val).filter hasN).filterMap fun s =>
+    (st.planar.val.subtrees.filter hasN).filterMap fun s =>
       if h : IsSyntacticObject (UnorderedTree.mk s) then
         (p.moveLeft (PlanarSyntacticObject.toSyntacticObject ⟨s, h⟩)).map fun p' =>
           ⟨⟨d.initial, d.steps ++ [.im (PlanarSyntacticObject.toSyntacticObject ⟨s, h⟩)]⟩, p',

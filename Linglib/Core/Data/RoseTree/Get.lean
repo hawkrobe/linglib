@@ -37,7 +37,8 @@ a binary-search-tree lookup, which has no analogue for a general rose tree.
 * `RoseTree.exists_subtreeAt_height_sub`: a maximal descent from a tree of height above `k`.
 * `RoseTree.numNodes_le_of_subtreeAt`: a subtree is no larger than its tree.
 * `RoseTree.vertices`: the addresses in preorder, one per vertex (`length_vertices`,
-  `nodup_vertices`) and exactly those inside the tree (`mem_vertices`).
+  `nodup_vertices`) and exactly those inside the tree (`mem_vertices`);
+  `RoseTree.positionedSubtrees` pairs each with its subtree (`mem_positionedSubtrees`).
 * `RoseTree.positionedLeaves`: the leaves with their addresses, exactly the leaf addresses
   (`subtreeAt_of_mem_positionedLeaves`, `mem_positionedLeaves_of_subtreeAt`) in the order of the
   frontier (`map_snd_positionedLeaves`), which is precedence (`pairwise_precedes_positionedLeaves`).
@@ -381,6 +382,16 @@ theorem nodup_verticesList : ∀ cs : List (RoseTree α), (verticesList cs).Nodu
     obtain ⟨j, q', rfl⟩ := exists_cons_of_mem_verticesList hp'
     simp at h
 end
+
+/-- The subtrees of `t` with their positions, in preorder. -/
+def positionedSubtrees (t : RoseTree α) : List (TreePath × RoseTree α) :=
+  t.vertices.filterMap fun p ↦ (t.subtreeAt p).map (⟨p⟩, ·)
+
+theorem mem_positionedSubtrees {t s : RoseTree α} {p : TreePath} :
+    (p, s) ∈ t.positionedSubtrees ↔ t.subtreeAt p.toList = some s := by
+  simp only [positionedSubtrees, List.mem_filterMap, Option.map_eq_some_iff, Prod.mk.injEq]
+  refine ⟨fun ⟨_, _, _, hs, rfl, rfl⟩ ↦ hs, fun hs ↦ ?_⟩
+  exact ⟨p.toList, mem_vertices.mpr (by rw [hs]; rfl), s, hs, rfl, rfl⟩
 
 /-! ### The leaves with their addresses -/
 

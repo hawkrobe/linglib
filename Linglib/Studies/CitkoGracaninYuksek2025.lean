@@ -238,8 +238,8 @@ instance (s : RoseTree Vertex) : Decidable (IsWhSpecifier s) :=
 /-- The heads of the projections whose edges host several wh-specifiers, each of which receives
 an asterisk. -/
 def asterisked (t : PlanarSyntacticObject) : List LIToken :=
-  (vertices t.val).filterMap fun p ↦ ((subtreeAt t.val p).bind projection).bind fun x ↦
-    if 1 < x.1.countP (decide <| IsWhSpecifier ·) then some x.2 else none
+  t.val.positionedSubtrees.filterMap fun x ↦ (projection x.2).bind fun y ↦
+    if 1 < y.1.countP (decide <| IsWhSpecifier ·) then some y.2 else none
 
 /-- The categories of the asterisked projections whose heads reach PF unsilenced. The object
 converges at PF under a multiple-wh-fronting parameter, the categories of the phases whose
