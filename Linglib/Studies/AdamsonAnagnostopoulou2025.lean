@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Syntax.Minimalist.Agree.Coordination
+public import Linglib.Syntax.WordOrder
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 public import Linglib.Fragments.Greek.StandardModern.Gender
 public import Linglib.Fragments.Icelandic.Nouns
@@ -171,7 +172,7 @@ theorem human_uniform :
       system.resolved .man .man = some .masculine := by
   decide
 
-/-- *O andras ke i gineka ine eksipni*: FEM is lost, MASC kept. -/
+/-- In *o andras ke i gineka ine eksipni* FEM is lost and MASC kept. -/
 theorem human_mismatch : system.resolved .man .woman = some .masculine := by decide
 
 /-- *I gineka ke to koritsi ine eksipnes*, where the neuter *koritsi* resolves by its referent. -/
@@ -215,11 +216,15 @@ theorem inanimate_uniform_neuter :
     system.converted (inanimate fusta) (inanimate bluza) = some .neuter := by
   decide
 
-/-- Closest conjunct agreement is with uninterpretable features, feminine for *megalofiia*
-whatever its referent and masculine for *pinakas*. -/
+/-- Closest conjunct agreement is with the uninterpretable features of the conjunct next to the
+predicate, which precedes the subject, so it is feminine for *i megalofiia ke o filos tu* whatever
+the genius's referent ((45)) and masculine for *o pinakas ke i karekla* ((46)). -/
 theorem closest_conjunct :
-    system.realize (system.arbitrary megalofiia.gender).uninterp = some .feminine ∧
-      system.realize (inanimate pinakas).uninterp = some .masculine := by
+    (HeadDirection.headInitial.nearest
+        [system.arbitrary megalofiia.gender, system.conceptual .man]).bind
+      (system.realize ·.uninterp) = some .feminine ∧
+    (HeadDirection.headInitial.nearest [inanimate pinakas, inanimate karekla]).bind
+      (system.realize ·.uninterp) = some .masculine := by
   decide
 
 /-- *O kleftis ke to daxtilidi*, where the thief's MASC and the ring's CLASS clash at PF; the
@@ -229,7 +234,8 @@ theorem human_inanimate_crash :
       resolve (system.conceptual .man) (inanimate daxtilidi) = {.cls} := by
   decide
 
-/-- Matched humans and inanimates converge: *o kleftis ke o pinakas*, *i gineka ke i ombrela*. -/
+/-- Matched humans and inanimates converge, as in *o kleftis ke o pinakas* and *i gineka ke i
+ombrela*. -/
 theorem human_inanimate_match :
     system.mixed (system.conceptual .man) (inanimate pinakas) = some .masculine ∧
       system.mixed (system.conceptual .woman) (inanimate ombrela) = some .feminine := by
@@ -309,7 +315,7 @@ theorem inanimate_mismatch :
 mixture takes the neuter. The geometry reads referents instead, so the two agree wherever the
 gender is the referent's and part where it is not. -/
 
-/-- On Corbett's coordinations the rule and the geometry agree: the boy and the girl resolve
+/-- On Corbett's coordinations the rule and the geometry agree. The boy and the girl resolve
 neuter as mismatched humans, and the ewe and the lamb, which contribute CLASS alone as the
 paper's inanimates do, resolve neuter through it. -/
 theorem corbett_rows :
@@ -320,8 +326,8 @@ theorem corbett_rows :
       system.converted (inanimate aer) (inanimate lamb) = some .neuter := by
   decide
 
-/-- *Skáldið og Jón eru frægir*: the rule resolves the neuter *skáld* and the masculine *Jón*
-to the neuter, the geometry to the masculine of the two men. -/
+/-- In *skáldið og Jón eru frægir* the rule resolves the neuter *skáld* and the masculine *Jón*
+to the neuter, and the geometry to the masculine of the two men. -/
 theorem corbett_skald_jon :
     Agreement.ResolutionRule.resolve Corbett1991.Icelandic.rules [skald, jon] = some .neuter ∧
       system.resolved .man .man = some .masculine := by
@@ -374,7 +380,8 @@ theorem human_mismatch : system.resolved .man .woman = some .masculine := by dec
 /-- Uniform women still resolve feminine. -/
 theorem women : system.resolved .woman .woman = some .feminine := by decide
 
-/-- *Znanje i intuicija su saradivali*: INDIV from the coordination's GRP realizes masculine. -/
+/-- In *znanje i intuicija su saradivali* the INDIV from the coordination's GRP realizes
+masculine. -/
 theorem inanimate_mismatch :
     system.converted (inanimate znanje) (inanimate intuicija) = some .masculine := by
   decide
