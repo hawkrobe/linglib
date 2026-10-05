@@ -1,9 +1,9 @@
 module
 
 public import Linglib.Logic.Team.QBSML.FreeChoice
-public import Linglib.Logic.Team.BSML.Scenarios
 public import Linglib.Semantics.Degree.Comparison
 public import Linglib.Data.Examples.AloniVanOrmondt2023
+public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Aloni and van Ormondt (2023): modified numerals and split disjunction
@@ -20,9 +20,11 @@ neglect-zero enrichment `[·]⁺` once BSML is raised to the first-order QBSML.
 The QBSML facts of §5 are the universal theorems of
 `Logic/Team/QBSML/FreeChoice`; here the denotations (14) and (16) are the
 split of the `≥` and `≤` intervals of `Degree.Comparison`, the
-results (56)–(61) and (63) are the facts instantiated at a universal-access
-model with the paper's `three`/`more` predicates, Fact 5 gives distribution
-at full information, and the obviation claim (57) is the Fig. 14 countermodel.
+results (56)–(61) and (63) are those facts for the paper's `three`/`more`
+predicates in every model, under the paper's side conditions, and the
+obviation claim (57) is the Fig. 14 countermodel. Its worlds are, as
+throughout the paper, the sets of atomic facts true at them: `w_{Pa}` is "the
+world `w` in which some object `a` has property `P`" (Example 3.1, p. 549).
 The example rows record the inference profile the analysis answers to.
 
 ## References
@@ -36,16 +38,16 @@ The example rows record the inference profile the analysis answers to.
 
 namespace AloniVanOrmondt2023
 
-open QBSML BSML Degree FirstOrder Language
+open QBSML Degree FirstOrder Language
 
 /-! ### Superlative modifiers as disjunctions -/
 
-/-- (14): *at least n* is *exactly n or more than n*. -/
+/-- *At least n* means *exactly n or more than n*, (14). -/
 theorem atLeast_eq_bare_union_moreThan (m : ℕ) :
     Comparison.ge.interval m = Comparison.eq.interval m ∪ Comparison.gt.interval m := by
   simp [Set.Ioi_insert]
 
-/-- (16): *at most n* is *exactly n or fewer than n*. -/
+/-- *At most n* means *exactly n or fewer than n*, (16). -/
 theorem atMost_eq_bare_union_fewerThan (m : ℕ) :
     Comparison.le.interval m = Comparison.eq.interval m ∪ Comparison.lt.interval m := by
   simp [Set.Iio_insert]
@@ -58,188 +60,161 @@ theorem modifier_rows :
       (m = "superlative" → row.feature? "embedding" = none → i = "ignorance") := by
   decide +kernel
 
-/-! ### The predicates and the models -/
+/-! ### The predicates -/
 
-/-- The paper's numeral predicates, `three(x)` and `more(x)`; the §5 facts are stated
-    with `P` and `Q`, which these instantiate. -/
+/-- `three` and `more` are the paper's numeral predicates; they instantiate the `P` and `Q`
+    of the §5 facts. -/
 inductive Predicate
   | three
   | more
   deriving DecidableEq, Repr, Fintype
 
-/-- Universal-access model on `TwoAtomWorld`: every world is accessible, and
-    `three` and `more` hold of `d` at `w` iff `w` models the atom `d`. -/
-def univAccessModel : Model TwoAtomWorld FCAtom FCAtom Predicate :=
-  .ofMonadic (λ _ ↦ Finset.univ) (λ _ ↦ id) (λ w _ d ↦ w.holds d)
+inductive Var
+  | x
+  deriving DecidableEq, Repr, Fintype
 
-/-- `three ∨ more` for the individual `a` — (45b). -/
-def threeOrMore : Formula QVar FCAtom Predicate :=
-  .disj (.predc .three .a) (.predc .more .a)
+variable {W Domain Const : Type*} [DecidableEq W] [DecidableEq Domain] [Fintype Domain]
+  {M : Model W Domain Const Predicate} {s : Finset (Index W Var Domain)} {c : Const}
 
-def three {Const : Type*} : Formula QVar Const Predicate := .pred .three .x
+/-- `threeOrMore c` is `three ∨ more` (45b) said of the individual `c`. -/
+def threeOrMore (c : Const) : Formula Var Const Predicate :=
+  .disj (.predc .three c) (.predc .more c)
 
-def more {Const : Type*} : Formula QVar Const Predicate := .pred .more .x
+def three : Formula Var Const Predicate := .pred .three .x
 
-theorem three_neFree {Const : Type*} : (three (Const := Const)).NEFree := .pred _ _
-theorem more_neFree {Const : Type*} : (more (Const := Const)).NEFree := .pred _ _
+def more : Formula Var Const Predicate := .pred .more .x
 
-variable {s : Finset (Index TwoAtomWorld QVar FCAtom)}
-variable {i : Index TwoAtomWorld QVar FCAtom}
-variable {v : Index TwoAtomWorld QVar FCAtom → QVar → FCAtom}
+theorem three_neFree : (three (Const := Const)).NEFree := .pred _ _
+theorem more_neFree : (more (Const := Const)).NEFree := .pred _ _
 
-/-- Proposition 4.1 at the model: support of the NE-free `∀x(three(x) ∨ more(x))`
-    is classical first-order truth at every index, the translation computed. -/
-theorem classicality_univ (hv : ∀ i ∈ s, ∀ y, i.assign y = some (v i y)) :
-    support univAccessModel (.univ .x (.disj three more)) s ↔
+/-- By Proposition 4.1, a state supports the NE-free `∀x(three(x) ∨ more(x))` iff its
+    first-order translation, computed by `rfl`, is true at every index. -/
+theorem classicality_univ {v : Index W Var Domain → Var → Domain}
+    (hv : ∀ i ∈ s, ∀ y, i.assign y = some (v i y)) :
+    support M (.univ .x (.disj three more)) s ↔
       ∀ i ∈ s,
-        (FirstOrder.Language.Formula.all₁ QVar.x
-          ((predSymb Predicate.three).formula₁ (FirstOrder.Language.Term.var QVar.x) ⊔
+        (FirstOrder.Language.Formula.all₁ Var.x
+          ((predSymb Predicate.three).formula₁ (FirstOrder.Language.Term.var Var.x) ⊔
             (predSymb Predicate.more).formula₁
-              (FirstOrder.Language.Term.var QVar.x))).RealizeAt
-          univAccessModel.interp i.world (v i) :=
-  support_iff_forall_realizeAt univAccessModel rfl s v hv
-
-/-- Universal access is indisputable on every state. -/
-theorem univAccessModel_indisputable (s : Finset (Index TwoAtomWorld QVar FCAtom)) :
-    Team.IsIndisputable univAccessModel.access (State.worldProj s) :=
-  λ _ _ _ _ ↦ rfl
-
-/-- Universal access is state-based exactly on states whose world projection is
-    everything — the epistemic reading (56) and (58) assume. -/
-theorem univAccessModel_stateBased_of_full (hfull : State.worldProj s = Finset.univ) :
-    Team.IsStateBased univAccessModel.access (State.worldProj s) :=
-  λ _ _ ↦ hfull.symm
-
-/-- A state of full world projection with the empty assignment. -/
-def fullState : Finset (Index TwoAtomWorld QVar FCAtom) :=
-  Finset.univ.image (λ w ↦ (w, λ _ ↦ none))
-
-example : Team.IsStateBased univAccessModel.access (State.worldProj fullState) := by decide
-
-example :
-    ¬ Team.IsStateBased univAccessModel.access (State.worldProj
-      ({(TwoAtomWorld.both, λ _ ↦ none)} : Finset (Index TwoAtomWorld QVar FCAtom))) := by
-  decide
+              (FirstOrder.Language.Term.var Var.x))).RealizeAt
+          M.interp i.world (v i) :=
+  support_iff_forall_realizeAt M rfl s v hv
 
 /-! ### The results (56)–(61) -/
 
-/-- (56), Fact 3: `[three ∨ more]⁺ ⊨ ◇three ∧ ◇more` on an epistemic state. -/
-theorem ignorance (hfull : State.worldProj s = Finset.univ)
-    (h : support univAccessModel threeOrMore.enrich s) :
-    support univAccessModel (.poss (.predc .three .a)) s ∧
-      support univAccessModel (.poss (.predc .more .a)) s :=
-  QBSML.ignorance univAccessModel (univAccessModel_stateBased_of_full hfull) h
+/-- Ignorance (56), Fact 3, is `[three ∨ more]⁺ ⊨ ◇three ∧ ◇more` on a state-based
+    accessibility relation, the paper's epistemic reading. -/
+theorem ignorance (hSB : Team.IsStateBased M.access (State.worldProj s))
+    (h : support M (threeOrMore c).enrich s) :
+    support M (.poss (.predc .three c)) s ∧ support M (.poss (.predc .more c)) s :=
+  QBSML.ignorance M hSB h
 
-/-- Fact 5, the full-knowledge distribution (51): at a state of maximal
-    information, `[∀x(three(x) ∨ more(x))]⁺` supports `∃x three(x) ∧ ∃x more(x)`. -/
-theorem distribution (h : support univAccessModel (Formula.univ .x (.disj three more)).enrich {i}) :
-    support univAccessModel (.exi .x three) {i} ∧ support univAccessModel (.exi .x more) {i} :=
-  QBSML.distribution univAccessModel three_neFree more_neFree h
+/-- At a state of maximal information, a single index, `[∀x(three(x) ∨ more(x))]⁺`
+    supports `∃x three(x) ∧ ∃x more(x)`, the distribution of (51) (Fact 5). -/
+theorem distribution {i : Index W Var Domain}
+    (h : support M (Formula.univ .x (.disj three more)).enrich {i}) :
+    support M (.exi .x three) {i} ∧ support M (.exi .x more) {i} :=
+  QBSML.distribution M three_neFree more_neFree h
 
-/-- (58), Fact 6: distribution under partial information yields the modalized
-    conclusion `∃x◇three(x) ∧ ∃x◇more(x)`. -/
-theorem distributionEpi (hfull : State.worldProj s = Finset.univ)
-    (h : support univAccessModel (Formula.univ .x (.disj three more)).enrich s) :
-    support univAccessModel (.exi .x (.poss three)) s ∧
-      support univAccessModel (.exi .x (.poss more)) s :=
-  QBSML.distributionEpi univAccessModel (univAccessModel_stateBased_of_full hfull) h
+/-- Distribution under partial information (58), Fact 6, yields the modalized conclusion
+    `∃x◇three(x) ∧ ∃x◇more(x)` on a state-based accessibility relation. -/
+theorem distributionEpi (hSB : Team.IsStateBased M.access (State.worldProj s))
+    (h : support M (Formula.univ .x (.disj three more)).enrich s) :
+    support M (.exi .x (.poss three)) s ∧ support M (.exi .x (.poss more)) s :=
+  QBSML.distributionEpi M hSB h
 
-/-- (59), Fact 7: `[□(three ∨ more)]⁺ ⊨ ◇three ∧ ◇more`. -/
-theorem boxFreeChoice (h : support univAccessModel (Formula.enrich (Formula.nec threeOrMore)) s) :
-    support univAccessModel (.poss (.predc .three .a)) s ∧
-      support univAccessModel (.poss (.predc .more .a)) s :=
-  QBSML.boxFC univAccessModel (.predc _ _) (.predc _ _) h
+/-- Free choice under necessity (59), Fact 7, is `[□(three ∨ more)]⁺ ⊨ ◇three ∧ ◇more`. -/
+theorem boxFreeChoice (h : support M (Formula.enrich (Formula.nec (threeOrMore c))) s) :
+    support M (.poss (.predc .three c)) s ∧ support M (.poss (.predc .more c)) s :=
+  QBSML.boxFC M (.predc _ _) (.predc _ _) h
 
-/-- (60), Fact 8: `[◇(three ∨ more)]⁺ ⊨ ◇three ∧ ◇more`. -/
-theorem diamondFreeChoice (h : support univAccessModel (Formula.enrich (.poss threeOrMore)) s) :
-    support univAccessModel (.poss (.predc .three .a)) s ∧
-      support univAccessModel (.poss (.predc .more .a)) s :=
-  QBSML.narrowScopeFC univAccessModel (.predc _ _) (.predc _ _) h
+/-- Free choice under possibility (60), Fact 8, is `[◇(three ∨ more)]⁺ ⊨ ◇three ∧ ◇more`. -/
+theorem diamondFreeChoice (h : support M (Formula.enrich (.poss (threeOrMore c))) s) :
+    support M (.poss (.predc .three c)) s ∧ support M (.poss (.predc .more c)) s :=
+  QBSML.narrowScopeFC M (.predc _ _) (.predc _ _) h
 
-/-- (63), Fact 9: universal free choice, attested by [chemla-2009]. -/
+/-- Universal free choice (63), Fact 9, is `[∀x◇(three(x) ∨ more(x))]⁺ ⊨
+    ∀x◇three(x) ∧ ∀x◇more(x)`, the inference [chemla-2009] attests. -/
 theorem universalFreeChoice
-    (h : support univAccessModel (Formula.univ .x (.poss (.disj three more))).enrich s) :
-    support univAccessModel (.univ .x (.poss three)) s ∧
-      support univAccessModel (.univ .x (.poss more)) s :=
-  QBSML.universalFC univAccessModel three_neFree more_neFree h
+    (h : support M (Formula.univ .x (.poss (.disj three more))).enrich s) :
+    support M (.univ .x (.poss three)) s ∧ support M (.univ .x (.poss more)) s :=
+  QBSML.universalFC M three_neFree more_neFree h
 
-/-- (61), Fact 10: under negation the enrichment is inert, `[¬(three ∨ more)]⁺ ⊨
-    ¬three ∧ ¬more`, so (61a) is blocked by the simpler *fewer than three*. -/
-theorem negation (h : support univAccessModel (Formula.enrich (.neg threeOrMore)) s) :
-    support univAccessModel (.neg (.predc .three .a)) s ∧
-      support univAccessModel (.neg (.predc .more .a)) s :=
-  QBSML.negationStrip univAccessModel (.predc _ _) (.predc _ _) h
+/-- Under negation the enrichment is inert, `[¬(three ∨ more)]⁺ ⊨ ¬three ∧ ¬more` ((61),
+    Fact 10), so the simpler *fewer than three* blocks (61a). -/
+theorem negation (h : support M (Formula.enrich (.neg (threeOrMore c))) s) :
+    support M (.neg (.predc .three c)) s ∧ support M (.neg (.predc .more c)) s :=
+  QBSML.negationStrip M (.predc _ _) (.predc _ _) h
 
 /-! ### Obviation: the Fig. 14 countermodel
 
 A single index at the world `w_{PaQb}` with the empty assignment; that world alone
-sees itself. The domain is the paper's two objects. -/
+sees itself. The domain is the paper's two objects, and a world is the set of
+atomic facts true at it. -/
 
-inductive Fig14Atom
+/-- `Entity` is the Fig. 14 domain of two objects, each its own individual constant. -/
+inductive Entity
   | a
   | b
   deriving DecidableEq, Repr, Fintype
 
-/-- The Fig. 14 valuation: `three` holds of `a` where the atom `a` holds and `more`
-    of `b` where `b` does, so `w_{Pa}`, `w_{Qb}`, `w_{PaQb}` and `w_∅` are
-    `onlyA`, `onlyB`, `both` and `nothing`. -/
-def fig14V (w : TwoAtomWorld) : Predicate → Fig14Atom → Prop
-  | .three, d => d = .a ∧ w.holds .a
-  | .more, d => d = .b ∧ w.holds .b
+/-- `wPaQb` is the world `w_{PaQb}`, where `three` (the figure's `P`) holds of `a` and
+    `more` (`Q`) holds of `b`. -/
+def wPaQb : Finset (Predicate × Entity) := {(.three, .a), (.more, .b)}
 
-/-- The Fig. 14 model: only `w_{PaQb}` has an arrow, to itself. -/
-def fig14Model : Model TwoAtomWorld Fig14Atom Fig14Atom Predicate :=
-  .ofMonadic (λ w ↦ if w = .both then {TwoAtomWorld.both} else ∅) (λ _ ↦ id) fig14V
+/-- In the Fig. 14 model only `w_{PaQb}` has an arrow, to itself. -/
+def fig14Model : Model (Finset (Predicate × Entity)) Entity Entity Predicate :=
+  .ofMonadic (fun w ↦ if w = wPaQb then {wPaQb} else ∅) (fun _ ↦ id) fun w P d ↦ (P, d) ∈ w
 
-def fig14Index : Index TwoAtomWorld QVar Fig14Atom := (TwoAtomWorld.both, λ _ ↦ none)
+def fig14Index : Index (Finset (Predicate × Entity)) Var Entity := (wPaQb, fun _ ↦ none)
 
-def fig14State : Finset (Index TwoAtomWorld QVar Fig14Atom) := {fig14Index}
+def fig14State : Finset (Index (Finset (Predicate × Entity)) Var Entity) := {fig14Index}
 
 /-- The accessibility is state-based on the Fig. 14 state, so obviation is not an
     artefact of dropping the frame condition behind ignorance. -/
 theorem fig14_stateBased :
     Team.IsStateBased fig14Model.access (State.worldProj fig14State) := by decide
 
-/-- Fig. 15: the universal extension splits into the `x/a` index supporting
+/-- As Fig. 15 shows, the universal extension splits into the `x/a` index supporting
     `[three(x)]⁺` and the `x/b` index supporting `[more(x)]⁺`. -/
 theorem fig14_premise :
     support fig14Model (Formula.univ .x (.disj three more)).enrich fig14State := by
   refine ⟨?_, Finset.singleton_nonempty _⟩
   show support fig14Model (Formula.disj three more).enrich
-    (State.extendUniversal fig14State QVar.x)
+    (State.extendUniversal fig14State Var.x)
   refine ⟨⟨{fig14Index.update .x .a}, ⟨?_, Finset.singleton_nonempty _⟩,
     {fig14Index.update .x .b}, ⟨?_, Finset.singleton_nonempty _⟩, ?_⟩,
     ⟨fig14Index.update .x .a, ?_⟩⟩
   · intro j hj
     obtain rfl := Finset.mem_singleton.mp hj
-    exact ⟨.a, rfl, rfl, rfl⟩
+    exact ⟨.a, rfl, by simp [fig14Model, wPaQb, fig14Index, Index.world]⟩
   · intro j hj
     obtain rfl := Finset.mem_singleton.mp hj
-    exact ⟨.b, rfl, rfl, rfl⟩
+    exact ⟨.b, rfl, by simp [fig14Model, wPaQb, fig14Index, Index.world]⟩
   · show ({fig14Index.update .x .a} ∪ {fig14Index.update .x .b} : Finset _)
-      = State.extendUniversal fig14State QVar.x
+      = State.extendUniversal fig14State Var.x
     decide
   · decide
 
-/-- Fig. 16: at the `x/b` index the only accessible world is `w_{PaQb}`, where
+/-- As Fig. 16 shows, at the `x/b` index the only accessible world is `w_{PaQb}`, where
     `three` holds of `a` alone, so `◇three(x)` fails. -/
 theorem fig14_conclusion_fails :
     ¬ support fig14Model (.univ .x (.conj (.poss three) (.poss more))) fig14State := by
   intro h
   obtain ⟨X, hX, hne, hsupp⟩ := h.1 (fig14Index.update .x .b) (by decide)
-  have hX' : X ⊆ {TwoAtomWorld.both} := by
+  have hX' : X ⊆ {wPaQb} := by
     simpa [fig14Model, Model.ofMonadic, Index.update, fig14Index] using hX
-  obtain rfl : X = {TwoAtomWorld.both} := hne.subset_singleton_iff.mp hX'
-  obtain ⟨d, hd, hP⟩ := hsupp (TwoAtomWorld.both, (fig14Index.update .x .b).assign)
+  obtain rfl : X = {wPaQb} := hne.subset_singleton_iff.mp hX'
+  obtain ⟨d, hd, hP⟩ := hsupp (wPaQb, (fig14Index.update .x .b).assign)
     (State.mem_modalLift.mpr ⟨Finset.mem_singleton_self _, rfl⟩)
   obtain rfl := Option.some.inj hd
-  exact Fig14Atom.noConfusion hP.1
+  simp [fig14Model, wPaQb, Index.world] at hP
 
-/-- (57), Fact 4: `[∀x(three(x) ∨ more(x))]⁺ ⊭ ∀x(◇three(x) ∧ ◇more(x))` — the
-    universal quantifier obviates ignorance. -/
+/-- The universal quantifier obviates ignorance, `[∀x(three(x) ∨ more(x))]⁺ ⊭
+    ∀x(◇three(x) ∧ ◇more(x))` ((57), Fact 4). -/
 theorem obviation :
-    ∃ (M : Model TwoAtomWorld Fig14Atom Fig14Atom Predicate)
-      (s : Finset (Index TwoAtomWorld QVar Fig14Atom)),
+    ∃ (M : Model (Finset (Predicate × Entity)) Entity Entity Predicate)
+      (s : Finset (Index (Finset (Predicate × Entity)) Var Entity)),
       support M (Formula.univ .x (.disj three more)).enrich s ∧
         ¬ support M (.univ .x (.conj (.poss three) (.poss more))) s :=
   ⟨fig14Model, fig14State, fig14_premise, fig14_conclusion_fails⟩

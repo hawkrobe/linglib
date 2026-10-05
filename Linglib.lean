@@ -140,7 +140,6 @@ import Linglib.Logic.Team.BSML.Enrichment
 import Linglib.Logic.Team.BSML.ExpressiveCompleteness
 import Linglib.Logic.Team.BSML.NaturalDeduction
 import Linglib.Logic.Team.BSML.Properties
-import Linglib.Logic.Team.BSML.Scenarios
 import Linglib.Logic.Modal.Basic
 import Linglib.Logic.Team.Bisimulation
 import Linglib.Logic.Modal.Defs
