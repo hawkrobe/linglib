@@ -269,7 +269,9 @@ noncomputable def univModel : KripkeModel (Σ k, WorldType n k) Atom where
   access
     | ⟨0, _⟩ => ∅
     | ⟨k + 1, τ⟩ => τ.2.image fun σ ↦ ⟨k, σ⟩
-  val p w := @decide (∃ i, e i = p ∧ w.2.val i = true) (Classical.dec _)
+  val p w := ∃ i, e i = p ∧ w.2.val i = true
+
+noncomputable instance : DecidableRel (univModel e).val := fun _ _ ↦ Classical.dec _
 
 /-- `world k τ` is the type `τ` as a world of the universal model. -/
 def WorldType.world (k : ℕ) (τ : WorldType n k) : Σ k, WorldType n k := ⟨k, τ⟩
@@ -283,7 +285,7 @@ variable {e}
 
 omit [Inhabited Atom] in
 theorem univModel_val (he : Function.Injective e) (i : Fin n) (w : Σ k, WorldType n k) :
-    (univModel e).val (e i) w = w.2.val i := by
+    (univModel e).val (e i) w ↔ w.2.val i = true := by
   simp [univModel, he.eq_iff]
 
 omit [Inhabited Atom] in
@@ -293,10 +295,10 @@ theorem univModel_access_succ {k : ℕ} (τ : WorldType n (k + 1)) :
 omit [Inhabited Atom] in
 theorem worldType_univModel (he : Function.Injective e) :
     ∀ (k : ℕ) (τ : WorldType n k), worldType e (univModel e) k (world k τ) = τ
-  | 0, a => funext fun i ↦ univModel_val he i _
+  | 0, a => funext fun i ↦ by simp [worldType, univModel_val he, world, WorldType.val]
   | k + 1, τ => by
     rw [worldType, univModel_access_succ, Finset.image_image]
-    refine Prod.ext (funext fun i ↦ univModel_val he i _) ?_
+    refine Prod.ext (funext fun i ↦ by simp [univModel_val he, world, WorldType.val]) ?_
     simp only [Function.comp_def, worldType_univModel he k, Finset.image_id']
 
 /-- The Hintikka formula of `τ` holds exactly at `τ`. -/

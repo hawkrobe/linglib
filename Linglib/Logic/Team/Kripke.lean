@@ -6,21 +6,34 @@ public import Linglib.Logic.Modal.Defs
 /-!
 # Kripke models
 
-This file defines `KripkeModel`, the finite Kripke carrier — successor
-`Finset`s and a `Bool` valuation — that the team-semantic modal logics
-(BSML, QBSML, modal dependence and inclusion logic, InqML) evaluate on.
-It is the decidable specialization of the relational primitives of
-`Logic/Modal/Defs.lean`: `KripkeModel.accessible` is the successor
-function as the `SetRel W W` those primitives take.
+A Kripke model gives each world the finite set of worlds it accesses and each atom the worlds
+at which it is true. The team-semantic modal logics (BSML, QBSML, modal dependence and inclusion
+logic, InqML) evaluate formulas on these models. `KripkeModel.accessible` reads the successor
+sets as the relation that `□` and `◇` of `Logic/Modal/Defs.lean` take.
 
-The file also states Aloni's two conditions on the accessibility relation relative to a team
-([aloni-2022] Definition 5), which distinguish epistemic from deontic modals: indisputability,
-that every world of the team sees the same worlds, and state-basedness, that every world of the
-team sees exactly the team.
+The file also states Aloni's two conditions on the accessibility relation relative to a team,
+which distinguish epistemic from deontic modals: indisputability, that every world of the team
+sees the same worlds, and state-basedness, that every world of the team sees exactly the team.
+
+## Main definitions
+
+* `ModalLogic.KripkeModel`, with the accessibility relation `KripkeModel.accessible`.
+* `Team.IsIndisputable`, `Team.IsStateBased`: the conditions of [aloni-2022] Definition 5.
+
+## Implementation notes
+
+The sources take any relation `R ⊆ W × W` and a valuation `V : X → ℘(W)`
+([aloni-anttila-yang-2024] Definition 2.2). Successor sets here are `Finset`s, since the team
+clauses evaluate subformulas on `R[w]` as a team; frames are therefore image-finite. The
+valuation is `Prop`-valued, and decision procedures for support take `[DecidableRel M.val]`.
+Aloni's conditions are not closed under bisimulation ([aloni-2022] fn. 21); [anttila-2021]
+Definition 3.3.1 (p. 46) restates them up to bisimilarity of the successor sets.
 
 ## References
 
 * [aloni-2022] Aloni, Logic and Conversation: The Case of Free Choice
+* [aloni-anttila-yang-2024] Aloni, Anttila and Yang, State-based Modal Logics for Free Choice
+* [anttila-2021] Anttila, The Logic of Free Choice: Axiomatizations of State-based Modal Logics
 * [vaananen-2008] Väänänen, Modal Dependence Logic
 -/
 
@@ -28,17 +41,17 @@ team sees exactly the team.
 
 namespace ModalLogic
 
-/-- A **Kripke model** over worlds `W` and atoms `Atom`. -/
+/-- A **Kripke model** over worlds `W` and atoms `Atom` has successor sets and a valuation. -/
 structure KripkeModel (W : Type*) (Atom : Type*) where
-  /-- Accessibility: `access w` is the set of worlds accessible from `w`. -/
+  /-- `access w` is the set of worlds accessible from `w`. -/
   access : W → Finset W
-  /-- Valuation: `val p w` is the truth value of atom `p` at world `w`. -/
-  val : Atom → W → Bool
+  /-- `val p w` says that the atom `p` is true at the world `w`. -/
+  val : Atom → W → Prop
 
 variable {W : Type*} {Atom : Type*}
 
 open SetRel in
-/-- The accessibility relation of `M`: `v` is accessible from `w` when `v ∈ M.access w`.
+/-- In the accessibility relation of `M`, `v` is accessible from `w` when `v ∈ M.access w`.
 This is the relation that `□` and `◇` of `Logic/Modal/Defs.lean` take. -/
 def KripkeModel.accessible (M : KripkeModel W Atom) : SetRel W W :=
   .ofSuccessors fun w ↦ ↑(M.access w)

@@ -90,8 +90,7 @@ theorem disjoint_of_support_of_antiSupport (hs : support M φ s) (ht : antiSuppo
     Disjoint s t := by
   induction φ generalizing s t with
   | atom p =>
-    exact Finset.disjoint_left.mpr fun w hw hw' ↦
-      Bool.false_ne_true ((ht w hw').symm.trans (hs w hw))
+    exact Finset.disjoint_left.mpr fun w hw hw' ↦ ht w hw' (hs w hw)
   | ne => exact ht ▸ Finset.disjoint_empty_right s
   | neg ψ ih => exact (ih ht hs).symm
   | conj ψ₁ ψ₂ ih₁ ih₂ =>

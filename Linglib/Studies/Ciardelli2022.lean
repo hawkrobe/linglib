@@ -35,49 +35,46 @@ open Inquisitive
 
 variable {W A : Type*} [DecidableEq W] (M : Model W A) (φ : Formula A)
 
-/-- (3b): knowing whether `φ` is knowing that `φ` or knowing that `¬φ`, the polar instance of
+/-- Knowing whether `φ` is knowing that `φ` or knowing that `¬φ` (3b), the polar instance of
 `support_nec_inqDisj`. -/
 theorem nec_polarQ :
     support M (.nec φ.polarQ) = support M ((Formula.nec φ).disj (.nec φ.neg)) :=
   support_nec_inqDisj M φ φ.neg
 
-/-- `¬□μ ∧ ⊞μ`: the agent wonders about `μ` ([ciardelli-roelofsen-2015]; §8.3). -/
+/-- The agent wonders about `μ` when `¬□μ ∧ ⊞μ` ([ciardelli-roelofsen-2015]; §8.3). -/
 abbrev wonders (μ : Formula A) : Formula A := (Formula.nec μ).neg.conj (.ent μ)
 
 /-! ### Fig. 8.1: knowing, wondering and neither (§8.3) -/
 
-/-- The four worlds `w_pq`, `w_p¬q`, `w_¬pq`, `w_¬p¬q` of Fig. 8.1. -/
-inductive World
-  | pq | pnq | npq | npnq
-  deriving DecidableEq, Fintype
-
 inductive Atom
   | p | q
-  deriving DecidableEq
-
-/-- The valuation of Fig. 8.1. -/
-def val : Atom → World → Bool
-  | .p, .pq | .p, .pnq | .q, .pq | .q, .npq => true
-  | _, _ => false
+  deriving DecidableEq, Fintype
 
 /-- `p` as a formula. -/
 abbrev p : Formula Atom := .atom .p
 
-/-- Fig. 8.1a: `Σ(w) = {{w_pq, w_p¬q}}↓`, the agent knows that `p` and has no open issue. -/
-def fig81a : Model World Atom :=
-  ⟨fun _ => ({.pq, .pnq} : Finset World).powerset, val⟩
+/-- `model inq` is the Fig. 8.1 model with inquisitive states `inq`. As in the book (p. 255),
+`w_pq` is the world where `p` and `q` are both true, `w_p¬q` the world where only `p` is, and so
+on, so a world is the set of atoms true at it. -/
+abbrev model (inq : Finset Atom → Finset (Finset (Finset Atom))) :
+    Model (Finset Atom) Atom :=
+  ⟨inq, fun a w ↦ a ∈ w⟩
 
-/-- Fig. 8.1b: `Σ(w) = {{w_pq, w_p¬q}, {w_¬pq, w_¬p¬q}}↓`, the agent knows nothing and is
+/-- In Fig. 8.1a, `Σ(w) = {{w_pq, w_p¬q}}↓`, so the agent knows that `p` and has no open issue. -/
+abbrev fig81a : Model (Finset Atom) Atom :=
+  model fun _ ↦ ({{.p, .q}, {.p}} : Finset (Finset Atom)).powerset
+
+/-- In Fig. 8.1b, `Σ(w) = {{w_pq, w_p¬q}, {w_¬pq, w_¬p¬q}}↓`, so the agent knows nothing and is
 interested in whether `p`. -/
-def fig81b : Model World Atom :=
-  ⟨fun _ => ({.pq, .pnq} : Finset World).powerset ∪ ({.npq, .npnq} : Finset World).powerset,
-    val⟩
+abbrev fig81b : Model (Finset Atom) Atom :=
+  model fun _ ↦ ({{.p, .q}, {.p}} : Finset (Finset Atom)).powerset ∪
+    ({{.q}, ∅} : Finset (Finset Atom)).powerset
 
-/-- Fig. 8.1c: `Σ(w) = {{w_pq, w_¬pq}, {w_p¬q, w_¬p¬q}}↓`, the agent knows nothing and is
+/-- In Fig. 8.1c, `Σ(w) = {{w_pq, w_¬pq}, {w_p¬q, w_¬p¬q}}↓`, so the agent knows nothing and is
 interested in whether `q`. -/
-def fig81c : Model World Atom :=
-  ⟨fun _ => ({.pq, .npq} : Finset World).powerset ∪ ({.pnq, .npnq} : Finset World).powerset,
-    val⟩
+abbrev fig81c : Model (Finset Atom) Atom :=
+  model fun _ ↦ ({{.p, .q}, {.q}} : Finset (Finset Atom)).powerset ∪
+    ({{.p}, ∅} : Finset (Finset Atom)).powerset
 
 /-- In (a) the agent knows that `p`, hence knows whether `p`. -/
 theorem fig81a_knows :

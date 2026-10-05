@@ -98,7 +98,7 @@ open scoped ModalLogic in
 /-- Classical Kripke truth of an MDL formula at a world, with `◇` the shared
     `ModalLogic.Diamond`; a dependence atom is true at every world. -/
 def Realize (M : KripkeModel W Atom) : Formula Atom → W → Prop
-  | .atom p, w => M.val p w = true
+  | .atom p, w => M.val p w
   | .dep _ _, _ => True
   | .neg ψ, w => ¬ Realize M ψ w
   | .conj ψ₁ ψ₂, w => Realize M ψ₁ w ∧ Realize M ψ₂ w
@@ -120,8 +120,8 @@ variable [DecidableEq W]
     BSML's per-world form; the two formulations diverge for non-union-
     closed logics like MDL. -/
 def eval (M : KripkeModel W Atom) : Bool → Formula Atom → Finset W → Prop
-  | true,  .atom p,        t => t ∈ Team.flat fun w ↦ M.val p w = true
-  | false, .atom p,        t => t ∈ Team.flat fun w ↦ M.val p w = false
+  | true,  .atom p,        t => t ∈ Team.flat (M.val p)
+  | false, .atom p,        t => t ∈ Team.flat fun w ↦ ¬ M.val p w
   | true,  .dep xs y,      t => t ∈ Team.dep (fun w ↦ xs.map (M.val · w)) (M.val y)
   | false, .dep _ _,       t => t ∈ ({∅} : Team.TeamProperty W)
   | true,  .neg ψ,         t => eval M false ψ t
@@ -142,17 +142,17 @@ abbrev antiSupport (M : KripkeModel W Atom) (φ : Formula Atom) (t : Finset W) :
   eval M false φ t
 
 @[simp] lemma support_atom (M : KripkeModel W Atom) (p : Atom) (t : Finset W) :
-    support M (.atom p) t ↔ ∀ w ∈ t, M.val p w = true := Iff.rfl
+    support M (.atom p) t ↔ ∀ w ∈ t, M.val p w := Iff.rfl
 
 @[simp] lemma antiSupport_atom (M : KripkeModel W Atom) (p : Atom) (t : Finset W) :
-    antiSupport M (.atom p) t ↔ ∀ w ∈ t, M.val p w = false := Iff.rfl
+    antiSupport M (.atom p) t ↔ ∀ w ∈ t, ¬ M.val p w := Iff.rfl
 
 @[simp] lemma support_dep (M : KripkeModel W Atom) (xs : List Atom) (y : Atom)
     (t : Finset W) :
     support M (.dep xs y) t ↔
       ∀ w₁ ∈ t, ∀ w₂ ∈ t,
-        (∀ x ∈ xs, M.val x w₁ = M.val x w₂) → M.val y w₁ = M.val y w₂ := by
-  simp only [support, eval, Team.mem_dep, List.map_inj_left]
+        (∀ x ∈ xs, M.val x w₁ ↔ M.val x w₂) → (M.val y w₁ ↔ M.val y w₂) := by
+  simp only [support, eval, Team.mem_dep, List.map_inj_left, eq_iff_iff]
 
 @[simp] lemma antiSupport_dep (M : KripkeModel W Atom) (xs : List Atom) (y : Atom)
     (t : Finset W) :
@@ -239,10 +239,10 @@ theorem support_empty (M : KripkeModel W Atom) (φ : Formula Atom) :
 /-- The dependence atom is not union-closed. When two worlds agree on `p` but not on `q`,
     each of their singleton teams supports `=(p; q)` but the team of both does not. -/
 theorem not_supClosed_dep_of_witness {p q : Atom} {w₁ w₂ : W}
-    {M : KripkeModel W Atom} (hp : M.val p w₁ = M.val p w₂) (hq : M.val q w₁ ≠ M.val q w₂) :
+    {M : KripkeModel W Atom} (hp : M.val p w₁ ↔ M.val p w₂) (hq : ¬ (M.val q w₁ ↔ M.val q w₂)) :
     ¬ SupClosed { t : Finset W | support M (.dep [p] q) t } := by
   simpa only [support, eval, Set.ofPred_mem_eq] using
-    Team.not_supClosed_dep (f := fun w ↦ [p].map (M.val · w)) (by simp [hp]) hq
+    Team.not_supClosed_dep (f := fun w ↦ [p].map (M.val · w)) (by simp [hp]) (hq ∘ Eq.to_iff)
 
 /-! ### Soundness for the closure cell (Definability bridge) -/
 
@@ -266,12 +266,15 @@ variable {W' : Type*} [DecidableEq W'] {M : KripkeModel W Atom} {M' : KripkeMode
 theorem invariant_eval {k : ℕ} (φ : Formula Atom) (hd : φ.modalDepth ≤ k) (b : Bool) :
     Team.Invariant (WorldBisim k M · M' ·) {t | eval M b φ t} {t | eval M' b φ t} := by
   induction φ generalizing k b with
-  | atom p => cases b <;> exact Team.invariant_flat fun _ _ h ↦ by rw [h.val_eq]
+  | atom p =>
+    cases b
+    · exact Team.invariant_flat fun _ _ h ↦ not_congr (h.val_iff p)
+    · exact Team.invariant_flat fun _ _ h ↦ h.val_iff p
   | dep xs y =>
     cases b
     · exact Team.invariant_singleton_empty
-    · exact Team.invariant_dep (fun _ _ h ↦ List.map_congr_left fun x _ ↦ h.val_eq x)
-        fun _ _ h ↦ h.val_eq y
+    · exact Team.invariant_dep (fun _ _ h ↦ List.map_congr_left fun x _ ↦ propext (h.val_iff x))
+        fun _ _ h ↦ propext (h.val_iff y)
   | neg ψ ih => cases b <;> exact ih hd _
   | conj ψ₁ ψ₂ ih₁ ih₂ =>
     obtain ⟨hd₁, hd₂⟩ := max_le_iff.mp hd

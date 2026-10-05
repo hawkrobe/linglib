@@ -122,8 +122,8 @@ end Formula
 /-- Bilateral evaluation `eval M b φ t` (Definition 2.3) is support when `b` is `true` and
     anti-support when it is `false`. -/
 def eval (M : KripkeModel W Atom) : Bool → Formula Atom → Finset W → Prop
-  | true, .atom p, t => ∀ w ∈ t, M.val p w = true
-  | false, .atom p, t => ∀ w ∈ t, M.val p w = false
+  | true, .atom p, t => ∀ w ∈ t, M.val p w
+  | false, .atom p, t => ∀ w ∈ t, ¬ M.val p w
   | true, .bot, t => t = ∅
   | false, .bot, _ => True
   | true, .ne, t => t.Nonempty
@@ -324,7 +324,7 @@ theorem isLowerSet_of_support_empty (hGD : φ.GDFree) (hE : φ.EmptFree) :
     worlds. -/
 def twoWorlds : KripkeModel Bool Unit where
   access _ := ∅
-  val _ w := w
+  val _ w := w = true
 
 /-- The property `‖(p ∧ NE) ∨ (¬p ∧ NE)‖ ∪ ‖⊥‖` of Fact 3.19 is union closed and bisimulation
     invariant, yet not expressible in BSML. -/
@@ -432,7 +432,10 @@ theorem invariant_eval {M : KripkeModel W Atom} {M' : KripkeModel W' Atom} {k : 
     (φ : Formula Atom) (hd : φ.modalDepth ≤ k) (b : Bool) :
     Team.Invariant (WorldBisim k M · M' ·) {t | eval M b φ t} {t | eval M' b φ t} := by
   induction φ generalizing k b with
-  | atom p => cases b <;> exact Team.invariant_flat fun _ _ h ↦ by rw [h.val_eq]
+  | atom p =>
+    cases b
+    · exact Team.invariant_flat fun _ _ h ↦ not_congr (h.val_iff p)
+    · exact Team.invariant_flat fun _ _ h ↦ h.val_iff p
   | bot => cases b; exacts [Team.invariant_univ, Team.invariant_singleton_empty]
   | ne => cases b; exacts [Team.invariant_singleton_empty, Team.invariant_ne]
   | neg ψ ih => cases b <;> exact ih hd _

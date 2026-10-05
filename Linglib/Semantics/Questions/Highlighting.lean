@@ -166,7 +166,7 @@ theorem isModalFree_toInquisitive : ∀ φ : Formula A, φ.toInquisitive.IsModal
 of the atoms by their truth sets in `M`. -/
 theorem proposition_toInquisitive [Fintype W] [DecidableEq W] (M : Inquisitive.Model W A)
     (φ : Formula A) :
-    Inquisitive.proposition M φ.toInquisitive = φ.proposition fun a ↦ {w | M.val a w = true} := by
+    Inquisitive.proposition M φ.toInquisitive = φ.proposition fun a ↦ {w | M.val a w} := by
   induction φ with
   | atom a =>
     rw [toInquisitive, (Inquisitive.truthConditional_iff_proposition_eq M _).1

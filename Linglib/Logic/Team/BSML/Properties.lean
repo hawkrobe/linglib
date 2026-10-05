@@ -165,7 +165,10 @@ variable {W' : Type*} [DecidableEq W'] {M : KripkeModel W Atom} {M' : KripkeMode
 theorem invariant_eval {k : ℕ} (φ : Formula Atom) (hd : φ.modalDepth ≤ k) (b : Bool) :
     Invariant (WorldBisim k M · M' ·) {t | eval M b φ t} {t | eval M' b φ t} := by
   induction φ generalizing k b with
-  | atom p => cases b <;> exact invariant_flat fun _ _ h ↦ by rw [h.val_eq]
+  | atom p =>
+    cases b
+    · exact invariant_flat fun _ _ h ↦ not_congr (h.val_iff p)
+    · exact invariant_flat fun _ _ h ↦ h.val_iff p
   | ne => cases b; exacts [invariant_singleton_empty, invariant_ne]
   | neg ψ ih => cases b <;> exact ih hd _
   | conj ψ₁ ψ₂ ih₁ ih₂ =>

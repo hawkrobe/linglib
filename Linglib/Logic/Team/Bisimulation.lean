@@ -256,18 +256,18 @@ variable {W W' Atom : Type*}
     agree on every atom and, at positive depth, their successor sets are related by the lifting
     of bisimilarity one depth down. -/
 def WorldBisim : ℕ → KripkeModel W Atom → W → KripkeModel W' Atom → W' → Prop
-  | 0,     M, w, M', w' => ∀ p : Atom, M.val p w = M'.val p w'
+  | 0,     M, w, M', w' => ∀ p : Atom, M.val p w ↔ M'.val p w'
   | k + 1, M, w, M', w' =>
-      (∀ p : Atom, M.val p w = M'.val p w') ∧
+      (∀ p : Atom, M.val p w ↔ M'.val p w') ∧
       Set.LiftRel (WorldBisim k M · M' ·) ↑(M.access w) ↑(M'.access w')
 
 theorem WorldBisim.refl (k : ℕ) (M : KripkeModel W Atom) (w : W) : WorldBisim k M w M w := by
   induction k generalizing w with
   | zero => intro _; rfl
-  | succ k ih => exact ⟨fun _ ↦ rfl, Set.liftRel_refl_of_refl_on fun v _ ↦ ih v⟩
+  | succ k ih => exact ⟨fun _ ↦ Iff.rfl, Set.liftRel_refl_of_refl_on fun v _ ↦ ih v⟩
 
-theorem WorldBisim.val_eq {k : ℕ} {M : KripkeModel W Atom} {w : W} {M' : KripkeModel W' Atom}
-    {w' : W'} (h : WorldBisim k M w M' w') (p : Atom) : M.val p w = M'.val p w' :=
+theorem WorldBisim.val_iff {k : ℕ} {M : KripkeModel W Atom} {w : W} {M' : KripkeModel W' Atom}
+    {w' : W'} (h : WorldBisim k M w M' w') (p : Atom) : M.val p w ↔ M'.val p w' :=
   match k, h with
   | 0, h => h p
   | _ + 1, ⟨h, _⟩ => h p

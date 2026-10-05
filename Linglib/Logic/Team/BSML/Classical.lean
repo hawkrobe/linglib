@@ -58,16 +58,16 @@ variable {W : Type*} {Atom : Type*}
 /-- `Realize M φ w` is the classical Kripke truth of `φ` at the world `w`. Split disjunction is
     pointwise, `◇` is `ModalLogic.Diamond` over `M.accessible`, and `NE` is true. -/
 def Realize (M : KripkeModel W Atom) : Formula Atom → W → Prop
-  | .atom p, w => M.val p w = true
+  | .atom p, w => M.val p w
   | .ne, _ => True
   | .neg ψ, w => ¬ Realize M ψ w
   | .conj ψ₁ ψ₂, w => Realize M ψ₁ w ∧ Realize M ψ₂ w
   | .disj ψ₁ ψ₂, w => Realize M ψ₁ w ∨ Realize M ψ₂ w
   | .poss ψ, w => ◇[M.accessible] (Realize M ψ) w
 
-instance instDecidableRealize (M : KripkeModel W Atom) :
+instance instDecidableRealize (M : KripkeModel W Atom) [DecidableRel M.val] :
     (φ : Formula Atom) → (w : W) → Decidable (Realize M φ w)
-  | .atom _, _ => inferInstanceAs (Decidable (_ = true))
+  | .atom p, w => inferInstanceAs (Decidable (M.val p w))
   | .ne, _ => .isTrue trivial
   | .neg ψ, w => @instDecidableNot _ (instDecidableRealize M ψ w)
   | .conj ψ₁ ψ₂, w =>
@@ -79,7 +79,7 @@ instance instDecidableRealize (M : KripkeModel W Atom) :
 
 variable {M : KripkeModel W Atom} {φ ψ ψ₁ ψ₂ : Formula Atom} {w : W}
 
-@[simp] theorem realize_atom {p : Atom} : Realize M (.atom p) w ↔ M.val p w = true := Iff.rfl
+@[simp] theorem realize_atom {p : Atom} : Realize M (.atom p) w ↔ M.val p w := Iff.rfl
 
 @[simp] theorem realize_ne : Realize M .ne w := trivial
 
