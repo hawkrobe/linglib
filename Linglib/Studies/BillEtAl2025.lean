@@ -64,8 +64,8 @@ theorem both_have_all_three :
 
 /-! ### The prediction -/
 
-/-- The pieces of the three-piece decomposition a strategy leaves unpronounced: the
-Transparency Principle's measure of comprehension difficulty (3). -/
+/-- The covert pieces of a strategy are the pieces of the three-piece decomposition it leaves
+unpronounced, the Transparency Principle's measure of comprehension difficulty (3). -/
 def covertPieces (s : ConjunctionStrategy) : ℕ :=
   ConjunctionStrategy.semanticPieceCount - s.overtMorphemeCount
 
@@ -75,8 +75,8 @@ theorem transparency_prediction :
     covertPieces .jMu < covertPieces .jOnly ∧ covertPieces .jMu < covertPieces .muOnly := by
   decide
 
-/-- The pieces of the rival structures: a lone *j* for *j* expressions, a *j* with two
-*mu*s for *mu* and *j-mu* expressions (Figure 1). -/
+/-- The rival structures have a lone *j* for *j* expressions and a *j* with two *mu*s for
+*mu* and *j-mu* expressions (Figure 1). -/
 def structuralPieces : ConjunctionStrategy → ℕ
   | .jOnly => 1
   | .muOnly => 3
@@ -84,14 +84,14 @@ def structuralPieces : ConjunctionStrategy → ℕ
 
 /-! ### The finding -/
 
-/-- The significant contrasts in Georgian children's replay counts (Table 3): *j-mu*
-sentences were harder than *j* and than *mu* sentences, and *j* and *mu* did not differ. -/
+/-- In Georgian children's replay counts (Table 3), *j-mu* sentences were significantly harder
+than *j* and than *mu* sentences, and *j* and *mu* did not differ. -/
 def georgianHarder : ConjunctionStrategy → ConjunctionStrategy → Prop
   | .jMu, .jOnly => True
   | .jMu, .muOnly => True
   | _, _ => False
 
-/-- The harder expressions were the more transparent ones: the prediction is reversed. -/
+/-- The harder expressions were the more transparent ones, so the prediction is reversed. -/
 theorem georgian_contradicts_transparency (s t : ConjunctionStrategy) (h : georgianHarder s t) :
     covertPieces s < covertPieces t := by
   cases s <;> cases t <;> simp [georgianHarder] at h <;> decide
@@ -103,8 +103,8 @@ theorem georgian_contradicts_structural :
 
 /-! ### The desiderata -/
 
-/-- The paper's conditions on a complexity measure: *j-mu* more complex than *j* and than
-*mu*, and *j* and *mu* equally complex. -/
+/-- A complexity measure meets the paper's conditions when *j-mu* is more complex than *j* and
+than *mu*, and *j* and *mu* are equally complex. -/
 def Desiderata (c : ConjunctionStrategy → ℕ) : Prop :=
   c .jOnly < c .jMu ∧ c .muOnly < c .jMu ∧ c .jOnly = c .muOnly
 
@@ -115,7 +115,7 @@ theorem covertPieces_not_desiderata : ¬ Desiderata covertPieces := by decide
 
 theorem structuralPieces_not_desiderata : ¬ Desiderata structuralPieces := by decide
 
-/-- The third desideratum's morphological route: Georgian *mu* is a bound clitic where
+/-- The third desideratum has a morphological route, since Georgian *mu* is a bound clitic where
 Hungarian *mu* is free, the difference the paper suggests may make Hungarian *mu* the less
 complex. -/
 theorem mu_kind_differs :
@@ -131,7 +131,7 @@ open Plurality.Distributivity in
 distributive predication over the pair of conjuncts. -/
 theorem mu_is_distributive_check {E : Type} [DecidableEq E]
     (e1 e2 : E) (P : E → Unit → Prop) [∀ a u, Decidable (P a u)] :
-    Coordinator.op .conjunctive (mu (shift e1)) (mu (shift e2)) (fun a ↦ P a ()) ↔
+    Coordinator.Role.denote .conjunctive {mu (shift e1), mu (shift e2)} (fun a ↦ P a ()) ↔
       distMaximal P {e1, e2} () := by
   simp [conjunction_apply, distMaximal_pair]
 

@@ -3,6 +3,7 @@ module
 public import Linglib.Syntax.Category.Determiner.Basic
 public import Linglib.Semantics.Quantification.Counting
 public import Linglib.Semantics.Denotation
+public import Linglib.Semantics.Composition.Coordinator
 public import Linglib.Fragments.Japanese.Coordination
 public import Linglib.Fragments.Japanese.Pronouns
 public import Linglib.Fragments.Japanese.Classifiers
@@ -76,7 +77,7 @@ def toQuantifier : Quantifier := { form := q.form }
 /-- The reading of an indeterminate quantifier applies its particle's coordination to the
 values the scope takes on the restrictor. -/
 def reading : GQ.Family.{u} :=
-  fun _ _ R S ↦ Coordinator.sOp q.particle.role (S '' {x | R x})
+  fun _ _ R S ↦ q.particle.role.denote (S '' {x | R x})
 
 /-- An indeterminate quantifier denotes its reading. -/
 instance : Semantics.Denotes Indefinite (Set GQ.Family.{u}) where
@@ -88,19 +89,19 @@ variable {q}
 theorem reading_of_disjunctive (h : q.particle.role = .disjunctive) :
     q.reading = GQ.Family.some.{u} := by
   funext _ _ R S
-  rw [reading, h, Coordinator.sOp_disjunctive, ← GQ.some_eq_sSup_image]; rfl
+  rw [reading, h, Coordinator.Role.denote_disjunctive, ← GQ.some_eq_sSup_image]; rfl
 
 /-- Under a conjunctive particle the reading is `every`. -/
 theorem reading_of_conjunctive (h : q.particle.role = .conjunctive) :
     q.reading = GQ.Family.every.{u} := by
   funext _ _ R S
-  rw [reading, h, Coordinator.sOp_conjunctive, ← GQ.every_eq_sInf_image]; rfl
+  rw [reading, h, Coordinator.Role.denote_conjunctive, ← GQ.every_eq_sInf_image]; rfl
 
 /-- Under a negative particle the reading is `no`. -/
 theorem reading_of_negative (h : q.particle.role = .negative) :
     q.reading = GQ.Family.no.{u} := by
   funext _ _ R S
-  rw [reading, h, Coordinator.sOp_negative, ← GQ.no_eq_compl_sSup_image]; rfl
+  rw [reading, h, Coordinator.Role.denote_negative, ← GQ.no_eq_compl_sSup_image]; rfl
 
 end Indefinite
 

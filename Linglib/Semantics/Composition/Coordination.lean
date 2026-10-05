@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Category.Coordinator
+public import Linglib.Semantics.Composition.Coordinator
 public import Linglib.Semantics.Composition.Tree
 
 /-!
@@ -8,10 +8,11 @@ public import Linglib.Semantics.Composition.Tree
 
 This file adds coordination to the composition engine of `Composition/Tree.lean` as a binary
 mode beside functional application, intensional application and predicate modification. Two
-sisters of the same conjoinable type combine by `Coordinator.op` in the pointwise Boolean
-algebra of that type, which the mode finds at runtime through `Ty.Domain.booleanAlgebra?`.
-Predicate modification is the conjunctive case at `⟨e,t⟩`, so the engine's modification mode
-already agrees with the `Coordinator` API.
+sisters of the same conjoinable type combine by the denotation of the coordinator's semantic
+type on the pair, `Coordinator.Role.denote`, in the pointwise complete Boolean algebra of that
+type, which the mode finds at runtime through `Ty.Domain.completeBooleanAlgebra?`. Predicate
+modification is the conjunctive case at `⟨e,t⟩`, so the engine's modification mode already
+agrees with the coordinator's denotation.
 
 ## Main definitions
 
@@ -34,13 +35,14 @@ namespace Semantics.Composition.Tree
 open Semantics.Composition
 
 /-- `coordinate? role d1 d2` combines two sisters of the same conjoinable type by
-`Coordinator.op role` in the Boolean algebra of their type, threaded through the effect `M`,
-and is `none` on sisters of different or non-conjoinable types. -/
+`role.denote` on the pair, in the complete Boolean algebra of their type, threaded through the
+effect `M`, and is `none` on sisters of different or non-conjoinable types. -/
 def coordinate? {E W : Type} {M : Type → Type} [Applicative M] (role : Coordinator.Role)
     (d1 d2 : Denotation E W M) : Option (Denotation E W M) :=
   if h : d1.1 = d2.1 then
-    (Ty.Domain.booleanAlgebra? E W d1.1).map fun (i : BooleanAlgebra (Ty.Domain E W d1.1)) =>
-      ⟨d1.1, (letI := i; Coordinator.op role) <$> d1.2 <*> (h ▸ d2.2)⟩
+    (Ty.Domain.completeBooleanAlgebra? E W d1.1).map
+      fun (i : CompleteBooleanAlgebra (Ty.Domain E W d1.1)) =>
+        ⟨d1.1, (fun p q ↦ letI := i; role.denote {p, q}) <$> d1.2 <*> (h ▸ d2.2)⟩
   else none
 
 /-- Predicate modification is generalized conjunction at `⟨e,t⟩`. -/
@@ -50,6 +52,9 @@ theorem predicateModification?_eq_coordinate?_conjunctive {E W : Type} {M : Type
   obtain ⟨t1, v1⟩ := d1
   obtain ⟨t2, v2⟩ := d2
   subst h1; subst h2
-  rfl
+  have h : (Modifier.intersective : Ty.Domain E W (.e ⇒ .t) → _) =
+      fun p q ↦ Coordinator.Role.denote .conjunctive {p, q} := by
+    funext p q; simp [Modifier.intersective]
+  exact congrArg (fun F ↦ some (⟨.e ⇒ .t, F <$> v1 <*> v2⟩ : Denotation E W M)) h
 
 end Semantics.Composition.Tree
