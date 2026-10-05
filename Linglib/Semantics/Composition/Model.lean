@@ -40,11 +40,11 @@ mathlib API such as `Formula.Realize` then needs `letI := m.interp w`. The concr
 @[expose] public section
 
 open FirstOrder Language
-open Semantics.Composition
-open Semantics.Composition.Tree
+open Montague
+open HeimKratzer.Tree
 open PhraseStructure (Tree)
 
-namespace Semantics.Composition
+namespace HeimKratzer
 
 universe u v
 
@@ -140,4 +140,4 @@ theorem interp_lexiconAt_predication (m : Model L) (nm : LexNaming L) (w : m.W)
   simp only [interp_node_binary, interp_terminal, Model.lexiconAt, hs, hv, hv₁]
   rfl
 
-end Semantics.Composition
+end HeimKratzer

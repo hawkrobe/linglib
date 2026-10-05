@@ -53,7 +53,7 @@ paper's (43) and whose effector stands for the paper's AGENT.
 
 namespace HaninkKoontzGarboden2025
 
-open Semantics Semantics.Composition Possession Washo
+open Semantics Montague Possession Washo
 
 /-! ### The two root meanings, section 4 -/
 

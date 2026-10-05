@@ -42,7 +42,7 @@ difference between the engine returning no denotation and returning an undefined
 
 @[expose] public section
 
-namespace Semantics.Composition
+namespace Montague
 
 /-- Partial denotation domains, as `Ty.Domain` but with functions the partial functions `→.`,
 whose domain is a lexical entry's definedness condition. -/
@@ -61,6 +61,12 @@ abbrev Ty.PDomain (E W : Type) (ty : Ty) (D : Type := ℝ) : Type :=
 domain. -/
 abbrev PDenotation (E W : Type) (D : Type := ℝ) : Type :=
   (ty : Ty) × Part (Ty.PDomain E W ty D)
+
+end Montague
+
+namespace HeimKratzer
+
+open Montague
 
 namespace Partial
 
@@ -358,10 +364,9 @@ the pure engine's value at the same node, so a total lexicon has no presuppositi
 converse fails, since the pure engine also has intensional application and event
 identification. -/
 
-section Total
+end HeimKratzer
 
-open PhraseStructure Tree
-open scoped Assignment
+namespace Montague
 
 variable {E W D : Type}
 
@@ -445,6 +450,19 @@ theorem Denotation.lifts_toPartial {d : Denotation E W Id D} (h : d.1.FirstOrder
     d.Lifts d.toPartial := by
   obtain ⟨ty, x⟩ := d
   exact .mk (Ty.lifts_toPartial h x)
+
+end Montague
+
+namespace HeimKratzer
+
+open Montague
+
+section Total
+
+open PhraseStructure Tree
+open scoped Assignment
+
+variable {E W D : Type}
 
 namespace Partial
 
@@ -615,4 +633,4 @@ end Partial
 
 end Total
 
-end Semantics.Composition
+end HeimKratzer

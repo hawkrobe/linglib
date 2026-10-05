@@ -51,13 +51,13 @@ empty*, *every person sees some person* for "Some publisher offended every lingu
 
 namespace HeimKratzer1998
 
-open Semantics.Composition
+open Montague HeimKratzer
 open scoped Assignment
 open PhraseStructure
-open Semantics.Composition.Tree
+open HeimKratzer.Tree
 open Quantifier Quantifier.GQ
 open Quantifier.Polyadic (surfaceScope inverseScope iterate_every_some_of_some_every)
-open Semantics.Composition.Toy (student person)
+open HeimKratzer.Toy (student person)
 open English.Determiners (QuantityWord)
 open scoped Semantics
 

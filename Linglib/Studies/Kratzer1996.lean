@@ -25,7 +25,7 @@ such as *own the dog* yields nothing (`agent_stative_eq_bot`).
 
 ## Implementation notes
 
-Event Identification is `Semantics.Composition.eventIdentification`, and the agentive Voice head
+Event Identification is `ArgumentStructure.eventIdentification`, and the agentive Voice head
 is `Voice.agentive`; the derivation is stated for an arbitrary agent relation and verb. Kratzer's
 Event Identification is undefined on inputs with disjoint sorts of events; the library's is
 total, so the clash comes out as the empty relation. The tree is built from planar leaf tokens,
@@ -41,7 +41,7 @@ and the paper's structural claim is its c-command relations.
 
 namespace Kratzer1996
 
-open ArgumentStructure Semantics.Composition
+open ArgumentStructure
 
 section Semantics
 

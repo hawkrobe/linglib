@@ -48,7 +48,7 @@ carry different contents (`stack_eq`).
 
 namespace BochnakHanink2021
 
-open Washo Minimalist Semantics Semantics.Composition Reference
+open Washo Minimalist Semantics Reference
 
 /-! ### Selection -/
 

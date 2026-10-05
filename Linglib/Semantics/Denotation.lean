@@ -10,7 +10,7 @@ bracket notation `⟦x⟧` for it ([heim-kratzer-1998]). A lexical item, a readi
 sentence denotes in whatever domain its instance names, so the class gives the library one name
 for the map from a semantic object to its meaning, whether that map is compositional or
 stipulated per object. An object that denotes in the Montague type system denotes in
-`Composition.Denotation E W M D`, a semantic type paired with a value in its domain, and is
+`Montague.Denotation E W M D`, a semantic type paired with a value in its domain, and is
 thereby a terminal for the composition engine.
 
 ## Implementation notes

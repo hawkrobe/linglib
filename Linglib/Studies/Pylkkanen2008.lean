@@ -33,7 +33,7 @@ type-driven composition engine.
 
 ## Implementation notes
 
-Semantic types are those of `Semantics.Composition.Ty`, in which events share the type `e` with
+Semantic types are those of `Montague.Ty`, in which events share the type `e` with
 individuals, as in the composition engine: the book's `⟨s,t⟩` is `Ty.et` and `⟨e,⟨s,t⟩⟩` is
 `Ty.eet`. A constituent fails to compose with another exactly when `tyBinary` returns `none`.
 
@@ -69,7 +69,7 @@ book's correlation of the two tests across Table 2.1 (`table21_static_iff_unerga
 namespace Pylkkanen2008
 
 
-open ArgumentStructure Minimalist Examples Semantics.Composition Semantics.Composition.Tree
+open ArgumentStructure Minimalist Examples Montague HeimKratzer.Tree
 
 variable {Entity E : Type*}
 

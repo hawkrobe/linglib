@@ -56,7 +56,7 @@ demonstrative's deictic content and the presupposition it imposes belong to the 
 
 namespace Reference
 
-open Semantics Semantics.Composition
+open Semantics
 
 /-- A restrictor is a property of entities at a situation, relative to an entity assignment. -/
 abbrev Restrictor (E W : Type) := Assignment E → W → E → Prop

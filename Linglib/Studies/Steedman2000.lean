@@ -91,7 +91,7 @@ def john_sees_mary : Derivation Atom S :=
 
 section Coordination
 
-open Semantics.Composition
+open HeimKratzer
 
 /-- The type-raised subject "John" is a lexical leaf of category `S/(S\NP)`. -/
 def john_tr : Derivation Atom (S / (S \ NP)) := .lex "John" (S / (S \ NP))

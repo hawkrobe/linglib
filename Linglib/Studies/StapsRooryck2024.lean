@@ -68,7 +68,7 @@ inanimate agent allows *par* when a change on an inferred scale is at stake.
 
 namespace StapsRooryck2024
 
-open ArgumentStructure Presupposition French.Verbs Semantics.Composition
+open ArgumentStructure Presupposition French.Verbs
 
 /-! ### Polymorphic types -/
 

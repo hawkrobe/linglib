@@ -24,7 +24,7 @@ classifiers is read off their fragments: Ch'ol's are suffixes on the numeral
 (`shan_classifiers_free`).
 
 The two lexicons `cholLex` and `shanLex` are driven through
-`Semantics.Composition.Tree.interp` over the substrate's own denotations:
+`HeimKratzer.Tree.interp` over the substrate's own denotations:
 the Ch'ol root is measure modification, `Mereology.QMOD`
 (`cholTree_interp`), the Shan root is `IoninMatushansky2006.cardMod` over
 the atomized noun, `Mereology.atomize` (`shanTree_interp`), and the two agree
@@ -59,9 +59,9 @@ marking, against [borer-2005]'s complementarity, where Shan's do not.
 
 namespace LittleMoroneyRoyer2022
 
-open Semantics.Composition
+open HeimKratzer
 open Mereology (QMOD atomize)
-open Semantics.Composition.Tree (interp)
+open HeimKratzer.Tree (interp)
 open PhraseStructure (Tree)
 open IoninMatushansky2006 (cardMod IsAtomOf cardMod_atoms_iff)
 
