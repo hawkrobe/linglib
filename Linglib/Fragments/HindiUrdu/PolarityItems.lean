@@ -3,17 +3,17 @@ module
 public import Linglib.Semantics.Polarity.Licensing
 
 /-!
-# Hindi polarity items
+# Hindi-Urdu polarity items
 
-Hindi builds its negative polarity items from weak indefinites and the particle *bhii* 'even'
-([lahiri-1998] (1)): *koii bhii* 'anyone', *ek bhii* 'even one', *kuch bhii* 'anything', *zaraa
-bhii* 'even a little', *kabhii bhii* 'ever'. All are negative polarity and free choice items,
-licensed in downward-entailing contexts and, as free choice items, in generics and generically read
-possibility modals but not under necessity modals (§5); the numeral and measure items *ek bhii*
-and *zaraa bhii* are odd in imperatives (§5.4). Plain *koii* 'someone' is no polarity item: it is
-used in every function of [haspelmath-1997]'s map but the comparative and free choice (A.22.3),
-and takes either scope with respect to negation ([lahiri-1998] (83)). The attested contexts follow
-[lahiri-1998] §4–5.
+Hindi-Urdu builds its negative polarity items from weak indefinites and the particle *bhii* 'even',
+as Lahiri describes them for Hindi ((1)): *koii bhii* 'anyone', *ek bhii* 'even one', *kuch bhii*
+'anything', *zaraa bhii* 'even a little', *kabhii bhii* 'ever'. All are negative polarity and free
+choice items, licensed in downward-entailing contexts and, as free choice items, in generics and
+generically read possibility modals but not under necessity modals (§5); the numeral and measure
+items *ek bhii* and *zaraa bhii* are odd in imperatives (§5.4). Plain *koii* 'someone' is no
+polarity item: it is used in every function of Haspelmath's map but the comparative and free choice
+(A.22.3), and takes either scope with respect to negation (Lahiri (83)). The attested contexts
+follow Lahiri §4–5.
 
 ## References
 
@@ -23,7 +23,7 @@ and takes either scope with respect to negation ([lahiri-1998] (83)). The attest
 
 @[expose] public section
 
-namespace Hindi.PolarityItems
+namespace HindiUrdu.PolarityItems
 
 open PolarityItem
 
@@ -82,4 +82,4 @@ theorem hindi_licensing_sound :
     ∀ e ∈ bhiiItems, ∀ c ∈ e.licensingContexts, c.Admits e := by
   decide
 
-end Hindi.PolarityItems
+end HindiUrdu.PolarityItems

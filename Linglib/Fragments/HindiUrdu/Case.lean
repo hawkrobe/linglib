@@ -4,13 +4,13 @@ public import Linglib.Syntax.Case.Alignment
 public import Linglib.Semantics.Aspect.Defs
 
 /-!
-# Hindi case
+# Hindi-Urdu case
 
-Hindi nominals carry three layers of case-like marking (Masica §8.4, pp. 231–233). The first is
-inflection: a noun has a direct, an oblique and a vocative form in each number, and a declined
-adjective agrees with it in the direct–oblique contrast (Spencer (1)–(2); Mohanan p. 62). The
-second is the simple postpositions of `Hindi.Adpositions`, which follow the oblique form and have
-one shape in both numbers (Masica p. 233; Mohanan pp. 60–63). The third is the complex
+Hindi-Urdu nominals carry three layers of case-like marking (Masica §8.4, pp. 231–233). The
+first is inflection: a noun has a direct, an oblique and a vocative form in each number, and a
+declined adjective agrees with it in the direct–oblique contrast (Spencer (1)–(2); Mohanan p. 62).
+The second is the simple postpositions of `HindiUrdu.Adpositions`, which follow the oblique form
+and have one shape in both numbers (Masica p. 233; Mohanan pp. 60–63). The third is the complex
 postpositions, which follow a genitive, as *bacce-ke liye* 'for the child'.
 
 Which of these are the cases is disputed. Masica treats the postpositions as formal cases under
@@ -18,7 +18,7 @@ the traditional labels, and finds no accusative among them (pp. 238–239); Moha
 mark universal case features, *ko* both the accusative of objects and the dative of goals
 (p. 67); Spencer takes the three inflected forms to be the only cases, the postpositions being
 words that select the oblique. This file records the inflected forms, on which the three agree,
-as `Hindi.Case`.
+as `HindiUrdu.Case`.
 
 The alignment is split by aspect, as Blake describes it: in the perfective the transitive subject
 takes *ne* and the object the direct form, while elsewhere the subject is direct and the object
@@ -26,19 +26,24 @@ takes *ko* when it is marked at all.
 
 ## Main definitions
 
-* `Hindi.Case`, `Hindi.Case.label`: the direct, oblique and vocative forms, and the comparative
-  value each is named for.
-* `Hindi.Noun`, `Hindi.nouns`: Spencer's two nouns with a vocative, by the form of each case in each
-  number.
-* `Hindi.alignment`: the alignment of case marking by aspect.
+* `HindiUrdu.Case`, `HindiUrdu.Case.label`: the direct, oblique and vocative forms, and the
+  comparative value each is named for.
+* `HindiUrdu.Noun`, `HindiUrdu.nouns`: Spencer's two nouns with a vocative, by the form of each
+  case in each number.
+* `HindiUrdu.alignment`: the alignment of case marking by aspect.
 
 ## Main results
 
-* `Hindi.plural_larkaa_injective`: the plural of *laRkaa* 'boy' keeps the three cases apart, the
-  vocative *laRko* against the oblique *laRkõ*.
-* `Hindi.singular_oblique_eq_vocative`: the singular has one form for the oblique and the vocative.
+* `HindiUrdu.plural_larkaa_injective`: the plural of *laRkaa* 'boy' keeps the three cases apart,
+  the vocative *laRko* against the oblique *laRkõ*.
+* `HindiUrdu.singular_oblique_eq_vocative`: the singular has one form for the oblique and the
+  vocative.
 
 ## Implementation notes
+
+Hindi and Urdu are literary styles of one colloquial language, with virtually identical grammar
+and core vocabulary (Masica §2.3, p. 27). The sources describe the case system from Hindi data,
+and the fragment records it for both.
 
 The forms are [spencer-2005]'s transcription, `R` a retroflex rhotic, doubled vowels long and a
 tilde marking nasalization. His table gives the inanimates *makaan* 'house' and *mez* 'table' no
@@ -54,7 +59,7 @@ vocative, and they are left out.
 
 @[expose] public section
 
-namespace Hindi
+namespace HindiUrdu
 
 /-! ### The inflected forms -/
 
@@ -129,4 +134,4 @@ def alignment : Aspect.Perfectivity → Alignment.AlignmentType
   | .perfective => .ergative
   | .imperfective => .accusative
 
-end Hindi
+end HindiUrdu

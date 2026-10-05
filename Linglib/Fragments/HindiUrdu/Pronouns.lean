@@ -3,12 +3,12 @@ module
 public import Linglib.Syntax.Category.Pronoun.Personal
 
 /-!
-# Hindi pronouns
+# Hindi-Urdu pronouns
 
-Personal pronouns of Hindi: a three-level honorific contrast in the second
-person (*tuu* / *tum* / *aap*) and demonstrative-based third-person forms
-(*vah* / *ve*). Hindi has no allocutive agreement; an honorific subject
-co-opts plural verb agreement ([alok-bhalla-2026] (48)).
+The personal pronouns of Hindi-Urdu show a three-level honorific contrast in the second person
+(*tuu* / *tum* / *aap*) and demonstrative-based third-person forms (*vah* / *ve*). There is no
+allocutive agreement; an honorific subject co-opts plural verb agreement, as Alok and Bhalla
+describe for Hindi ((48)).
 
 ## References
 
@@ -17,7 +17,7 @@ co-opts plural verb agreement ([alok-bhalla-2026] (48)).
 
 @[expose] public section
 
-namespace Hindi.Pronouns
+namespace HindiUrdu.Pronouns
 
 /-- *maiṃ* — 1sg. -/
 def maiN : PersonalPronoun := { form := "maiṃ", person := some .first, number := some .singular }
@@ -48,4 +48,4 @@ def ve : PersonalPronoun := { form := "ve", person := some .third, number := som
 /-- The pronoun inventory. -/
 def pronouns : Finset PersonalPronoun := {maiN, ham, tuu, tum, aap, vah, ve}
 
-end Hindi.Pronouns
+end HindiUrdu.Pronouns

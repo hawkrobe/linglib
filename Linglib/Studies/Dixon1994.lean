@@ -2,33 +2,26 @@ module
 
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Syntax.Case.Alignment
-public import Linglib.Fragments.Hindi.Case
+public import Linglib.Fragments.HindiUrdu.Case
 public import Linglib.Data.Examples.Dixon1994
 
 /-!
 # Dixon (1994): Ergativity
 
-This file formalizes the theory of [dixon-1994]. Its premiss is that every language works in
-terms of three universal syntactic-semantic relations, S, A and O, §1.1, and that a language is
-ergative at some level of its grammar when that level treats S like O and unlike A, and
-accusative when it treats S like A and unlike O, §8.2. Morphological marking may be split,
-Chapter 4. A split conditioned by the verb, §4.1, divides S into Sa, marked like A, and So,
-marked like O: a split-S language fixes each intransitive verb's class and a fluid-S language
-marks each instance of use by whether its referent controls the activity, and either system is
-accusative over Sa and ergative over So. A split conditioned by the NP, §4.2, follows the
-Nominal Hierarchy of Figure 4.5, from first person pronouns down to inanimate common nouns:
-accusative marking of O extends in from the left end and ergative marking of A from the right,
-the two segments either meeting, Dyirbal and Kuku-Yalanji, or overlapping in a tripartite
-zone, Cashinawa and Yidiny, while a gap in which neither applies would leave A and O
-undistinguished and is unattested, type (g) of the Appendix to Chapter 4. A split conditioned
-by tense, aspect or mood, §4.3, puts the ergative marking in the past or the perfective. At the
-level of inter-clausal syntax, Chapter 6, a pivot is the pair of functions, S/A or S/O, that an
-NP common to two linked clauses must bear in each; passive puts O into derived S and antipassive
-puts A into derived S, §6.1, so that passive alone feeds an S/A pivot for an NP in O function
-and antipassive alone feeds an S/O pivot for one in A function, which is why a language with a
-thoroughgoing S/O pivot must have an antipassive, §6.2.3. Of the eleven configurations of a
-common NP in two linked clauses, §6.2.1, English with its S/A pivot passivizes a clause in
-which the NP is O and Dyirbal with its S/O pivot antipassivizes one in which it is A, §6.2.2.
+Dixon analyzes every language in terms of three universal syntactic-semantic relations, S, A
+and O (§1.1). A level of grammar is ergative when it treats S like O and unlike A, and accusative
+when it treats S like A and unlike O (§8.2). Morphological marking may be split by the verb
+(§4.1), by the NP along the Nominal Hierarchy (§4.2), or by tense, aspect or mood (§4.3), and
+inter-clausal syntax pivots on S/A or on S/O (Chapter 6).
+
+In an NP-conditioned split, accusative marking of O extends in from the top of the hierarchy and
+ergative marking of A from the bottom. The two segments meet, as in Dyirbal and Kuku-Yalanji, or
+overlap in a tripartite zone, as in Cashinawa and Yidiny; a gap where neither applies is
+unattested, type (g) of the Appendix to Chapter 4. Passive alone feeds an S/A pivot for an NP in
+O function and antipassive alone an S/O pivot for one in A function, so a language with a
+thoroughgoing S/O pivot must have an antipassive (§6.2.3). English with its S/A pivot passivizes
+a clause in which the common NP is O, and Dyirbal with its S/O pivot antipassivizes one in which
+it is A (§6.2.2).
 
 ## Implementation notes
 
@@ -66,36 +59,37 @@ variable {κ : Type*}
 
 /-! ### Splits conditioned by the verb, §4.1 -/
 
-/-- The two subtypes of S in a split-S or fluid-S language: Sa, marked like A, and So, marked
-like O. -/
+/-- A split-S or fluid-S language divides S into two subtypes, Sa, marked like A, and So,
+marked like O. -/
 inductive SClass
   | sa
   | so
   deriving DecidableEq, Repr
 
-/-- A fluid-S system, §4.1.2: the S of an instance of use is Sa when its referent controls the
-activity and So otherwise. A split-S system, §4.1.1, is instead a fixed class for each verb. -/
+/-- In a fluid-S system (§4.1.2) the S of an instance of use is Sa when its referent controls the
+activity and So otherwise. A split-S system (§4.1.1) instead fixes a class for each verb. -/
 def fluidS {I : Type*} (control : I → Prop) [DecidablePred control] (i : I) : SClass :=
   if control i then .sa else .so
 
-/-- The marking of an S of class `c` under a transitive marking `m`: like A or like O. -/
+/-- Under the transitive marking `m`, an S of class `c` is marked like A or like O. -/
 def SClass.marking (m : ArgumentRole → κ) : SClass → ArgumentRole → κ
   | c, .S => match c with
     | .sa => m .A
     | .so => m .P
   | _, r => m r
 
-/-- A split system is a mixture of the two simple patterns, §4.1.1: over Sa verbs it is
-accusative and over So verbs ergative, whenever A and O are distinguished. -/
+/-- A split system mixes the two simple patterns (§4.1.1), accusative over Sa verbs and ergative
+over So verbs, whenever A and O are distinguished. -/
 theorem marking_sa_so {m : ArgumentRole → κ} (h : m .A ≠ m .P) :
     IsAccusative (SClass.sa.marking m) ∧ IsErgative (SClass.so.marking m) :=
   ⟨⟨rfl, h⟩, ⟨rfl, h.symm⟩⟩
 
 /-! ### Splits conditioned by the NP: the Nominal Hierarchy, §4.2 -/
 
-/-- The Nominal Hierarchy, Figure 4.5, by likelihood of being in A rather than in O function:
-first person pronouns, second person pronouns, demonstratives and third person pronouns,
-proper names, then common nouns with human, animate and inanimate reference. -/
+/-- The Nominal Hierarchy (Figure 4.5) orders NPs by their likelihood of being in A rather than
+in O function, from first person pronouns, second person pronouns, demonstratives and third
+person pronouns, and proper names down to common nouns with human, animate and inanimate
+reference. -/
 inductive Nominal
   | firstPerson
   | secondPerson
@@ -117,11 +111,11 @@ def Nominal.rank : Nominal → ℕ
   | .inanimate => 0
 
 instance : LinearOrder Nominal :=
-  LinearOrder.lift' Nominal.rank λ a b h => by cases a <;> cases b <;> simp_all [Nominal.rank]
+  LinearOrder.lift' Nominal.rank fun a b h ↦ by cases a <;> cases b <;> simp_all [Nominal.rank]
 
 variable {H : Type*} [LinearOrder H]
 
-/-- An NP-conditioned split, §4.2: accusative marking of O extends in from the left of the
+/-- In an NP-conditioned split (§4.2), accusative marking of O extends in from the left of the
 hierarchy over an upper set of positions, and ergative marking of A extends in from the right
 over a lower set. -/
 structure HierarchySplit (H : Type*) [LinearOrder H] where
@@ -136,14 +130,14 @@ namespace HierarchySplit
 
 variable (s : HierarchySplit H) (p q : H)
 
-/-- The pattern at a position: accusative where only O is marked, ergative where only A is,
+/-- The pattern at a position is accusative where only O is marked, ergative where only A is,
 tripartite where both are, and neutral, all three functions alike, where neither is. -/
 def pattern : AlignmentType :=
   if s.accusative p then (if s.ergative p then .tripartite else .accusative)
   else (if s.ergative p then .ergative else .neutral)
 
-/-- The two markings must at least meet, §4.2: A and O are distinguished at a position exactly
-when one of them applies there. -/
+/-- The two markings must at least meet (§4.2), since A and O are distinguished at a position
+exactly when one of them applies there. -/
 theorem marks_iff :
     (s.pattern p).MarksAgent ∨ (s.pattern p).MarksPatient ↔ s.accusative p ∨ s.ergative p := by
   unfold pattern
@@ -169,15 +163,15 @@ variable {s p q}
 theorem pattern_eq_accusative (h : s.pattern p = .accusative) (hpq : p ≤ q) :
     s.pattern q = .accusative := by
   rw [pattern_eq_accusative_iff] at *
-  exact ⟨s.accusative_mono p q hpq h.1, λ hq => h.2 (s.ergative_anti p q hpq hq)⟩
+  exact ⟨s.accusative_mono p q hpq h.1, fun hq ↦ h.2 (s.ergative_anti p q hpq hq)⟩
 
 /-- Below an ergative position the pattern stays ergative. -/
 theorem pattern_eq_ergative (h : s.pattern q = .ergative) (hpq : p ≤ q) :
     s.pattern p = .ergative := by
   rw [pattern_eq_ergative_iff] at *
-  exact ⟨λ hp => h.1 (s.accusative_mono p q hpq hp), s.ergative_anti p q hpq h.2⟩
+  exact ⟨fun hp ↦ h.1 (s.accusative_mono p q hpq hp), s.ergative_anti p q hpq h.2⟩
 
-/-- The overlap of the two markings and a gap between them exclude each other: a split is of
+/-- The overlap of the two markings and a gap between them exclude each other, so a split is of
 type (d) of the Appendix to Chapter 4 or of the unattested type (g), never both. -/
 theorem not_tripartite_and_neutral (ht : s.pattern p = .tripartite)
     (hn : s.pattern q = .neutral) : False := by
@@ -197,37 +191,38 @@ def ofCutoffs (a e : H) : HierarchySplit H where
 
 end HierarchySplit
 
-/-- Dyirbal, Table 4.1: accusative for first and second person pronouns, ergative from third
-person pronouns rightwards, the two meeting without overlap. -/
+/-- Dyirbal (Table 4.1) marks first and second person pronouns accusatively and NPs from third
+person pronouns rightwards ergatively, the two meeting without overlap. -/
 def dyirbal : HierarchySplit Nominal := .ofCutoffs .secondPerson .thirdPerson
 
-/-- Cashinawa, Table 4.2: accusative down to third person pronouns and ergative from third
-person pronouns rightwards, overlapping there. -/
+/-- Cashinawa (Table 4.2) marks NPs down to third person pronouns accusatively and from third
+person pronouns rightwards ergatively, the two overlapping there. -/
 def cashinawa : HierarchySplit Nominal := .ofCutoffs .thirdPerson .thirdPerson
 
-/-- Yidiny, Table 4.3: accusative down to proper names and kin terms, ergative from human
-deictics rightwards, overlapping over the middle of the hierarchy. -/
+/-- Yidiny (Table 4.3) marks NPs down to proper names and kin terms accusatively and from human
+deictics rightwards ergatively, the two overlapping over the middle of the hierarchy. -/
 def yidiny : HierarchySplit Nominal := .ofCutoffs .properName .thirdPerson
 
-/-- Latin, type (a): accusative for pronouns and masculine and feminine nouns, no ergative, so
-that neuter nouns have one form for S, A and O. -/
+/-- Latin, of type (a), marks pronouns and masculine and feminine nouns accusatively and has no
+ergative, so that neuter nouns have one form for S, A and O. -/
 def latin : HierarchySplit Nominal where
   accusative p := decide (.human ≤ p)
   ergative _ := false
   accusative_mono _ _ hpq h := by simpa using le_trans (by simpa using h) hpq
   ergative_anti _ _ _ h := h
 
-/-- Waga-Waga, type (f), fn. 14: ergative on every NP constituent, accusative down to human
-common nouns, so that the left and middle of the hierarchy are tripartite. -/
+/-- Waga-Waga, of type (f) (fn. 14), marks every NP constituent ergatively and NPs down to human
+common nouns accusatively, so that the left and middle of the hierarchy are tripartite. -/
 def wagaWaga : HierarchySplit Nominal where
   accusative p := decide (.human ≤ p)
   ergative _ := true
   accusative_mono _ _ hpq h := by simpa using le_trans (by simpa using h) hpq
   ergative_anti _ _ _ h := h
 
-/-- The patterns the cutoffs induce: Dyirbal's markings meet at third person pronouns, type
-(c); Cashinawa and Yidiny overlap in tripartite zones, type (d); Latin leaves neuter nouns
-neutral, type (a); Waga-Waga is tripartite down to human nouns and ergative below, type (f). -/
+/-- The cutoffs induce the patterns of the types. Dyirbal's markings meet at third person
+pronouns, type (c); Cashinawa and Yidiny overlap in tripartite zones, type (d); Latin leaves
+neuter nouns neutral, type (a); and Waga-Waga is tripartite down to human nouns and ergative
+below, type (f). -/
 theorem patterns :
     (∀ p, dyirbal.pattern p ≠ .tripartite ∧ dyirbal.pattern p ≠ .neutral) ∧
       dyirbal.pattern .secondPerson = .accusative ∧ dyirbal.pattern .thirdPerson = .ergative ∧
@@ -239,16 +234,16 @@ theorem patterns :
 
 /-! ### Splits conditioned by tense, aspect or mood, §4.3 -/
 
-/-- Dixon's generalization for an aspect-conditioned split: the ergative marking is found in
-the perfective, never in the imperfective alone. -/
+/-- An aspect-conditioned split is aspect-oriented when, as Dixon generalizes, the ergative
+marking is found in the perfective and never in the imperfective alone. -/
 def AspectOriented (s : Aspect.Perfectivity → AlignmentType) : Prop :=
   s .imperfective = .ergative → s .perfective = .ergative
 
-theorem aspectOriented_hindi : AspectOriented Hindi.alignment := fun h ↦ nomatch h
+theorem aspectOriented_hindi : AspectOriented HindiUrdu.alignment := fun h ↦ nomatch h
 
 /-! ### Passive, antipassive and pivots, §6.1 and §6.2 -/
 
-/-- The two pivots, §6.2: the functions an NP common to two linked clauses must bear in each,
+/-- A pivot (§6.2) is the pair of functions an NP common to two linked clauses must bear in each,
 S or A in a language with accusative syntax and S or O in one with ergative syntax. -/
 inductive Pivot
   | SA
@@ -270,8 +265,9 @@ inductive Derivation
   | antipassive
   deriving DecidableEq, Repr, Fintype
 
-/-- The derived function of a core function: passive puts O into S and A into the periphery,
-antipassive puts A into S and O into the periphery, and the ditransitive roles are peripheral. -/
+/-- `d.apply r` is the function the derivation `d` gives the core function `r`. Passive puts O
+into S and A into the periphery, antipassive puts A into S and O into the periphery, and the
+ditransitive roles are peripheral. -/
 def Derivation.apply : Derivation → ArgumentRole → Option ArgumentRole
   | .passive, .P => some .S
   | .antipassive, .A => some .S
@@ -284,7 +280,7 @@ def Feeds (π : Pivot) (d : Derivation) (r : ArgumentRole) : Prop :=
   ∃ g, d.apply r = some g ∧ π.Admits g
 
 /-- A common NP needs a derivation in a clause exactly when its function there is not a pivot
-function: O under an S/A pivot and A under an S/O pivot. -/
+function, O under an S/A pivot and A under an S/O pivot. -/
 theorem not_admits_iff :
     (∀ r ∈ ArgumentRole.core, ¬ Pivot.SA.Admits r ↔ r = .P) ∧
       ∀ r ∈ ArgumentRole.core, ¬ Pivot.SO.Admits r ↔ r = .A := by
@@ -297,9 +293,9 @@ antipassive, §6.2.3. -/
 theorem feeds_iff :
     (∀ d, Feeds .SA d .P ↔ d = .passive) ∧ (∀ d, Feeds .SO d .A ↔ d = .antipassive) ∧
       ¬ Feeds .SA .passive .A ∧ ¬ Feeds .SO .antipassive .P :=
-  ⟨λ d => by cases d <;> simp [Feeds, Derivation.apply, Pivot.Admits],
-    λ d => by cases d <;> simp [Feeds, Derivation.apply, Pivot.Admits],
-    (λ ⟨_, h, _⟩ => nomatch h), λ ⟨_, h, _⟩ => nomatch h⟩
+  ⟨fun d ↦ by cases d <;> simp [Feeds, Derivation.apply, Pivot.Admits],
+    fun d ↦ by cases d <;> simp [Feeds, Derivation.apply, Pivot.Admits],
+    (fun ⟨_, h, _⟩ ↦ nomatch h), fun ⟨_, h, _⟩ ↦ nomatch h⟩
 
 /-- Interchange A and O, leaving S and the ditransitive roles alone. -/
 def swapAO : ArgumentRole → ArgumentRole

@@ -9,7 +9,7 @@ public import Linglib.Fragments.German.Basel.Case
 public import Linglib.Fragments.German.Case
 public import Linglib.Fragments.Greek.Ancient.Case
 public import Linglib.Fragments.Greek.StandardModern.Case
-public import Linglib.Fragments.Hindi.Case
+public import Linglib.Fragments.HindiUrdu.Case
 public import Linglib.Fragments.Hungarian.Case
 public import Linglib.Fragments.Icelandic.Case
 public import Linglib.Fragments.Latin.Case
@@ -283,7 +283,7 @@ nominative, accusative and genitive ([blake-2001] p. 156), and the inflectional 
 Hindi–Urdu, leaving aside the vocative, as nominative and oblique (p. 10). -/
 theorem fragments_conform :
     ∀ inv ∈ [Finset.univ.image Greek.StandardModern.Case.label,
-      Finset.univ.image Arabic.ModernStandard.Case.label, Finset.univ.image Hindi.Case.label,
+      Finset.univ.image Arabic.ModernStandard.Case.label, Finset.univ.image HindiUrdu.Case.label,
       Finset.univ.image Telugu.Case.label, Finset.univ.image Belarusian.Case.label,
       Finset.univ.image Cassubian.Case.label, Finset.univ.image Russian.Case.label,
       Finset.univ.image Slovenian.Case.label,

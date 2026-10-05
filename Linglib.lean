@@ -493,9 +493,6 @@ import Linglib.Fragments.Hawaiian.Possession
 import Linglib.Fragments.Hebrew.ConsonantalRoots
 import Linglib.Fragments.Hebrew.Relativization
 import Linglib.Fragments.Hebrew.TemporalDeictic
-import Linglib.Fragments.Hindi.Case
-import Linglib.Fragments.Hindi.PolarityItems
-import Linglib.Fragments.Hindi.Pronouns
 import Linglib.Fragments.HindiUrdu.Comparison
 import Linglib.Fragments.HindiUrdu.Coordination
 import Linglib.Fragments.HindiUrdu.Particles

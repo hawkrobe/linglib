@@ -3,27 +3,27 @@ module
 public import Linglib.Syntax.Category.Adposition.Basic
 
 /-!
-# Hindi postpositions
+# Hindi-Urdu postpositions
 
-The simple postpositions of Hindi, *ne*, *ko*, *se*, *kaa*, *mẽ*, *par* and *tak*, as `Adposition`
-entries. They follow the oblique form of the noun and have one shape in both numbers (Masica
-p. 233), and they are clitics rather than affixes: a pause may separate them from the noun, and
-one may scope over coordinated nouns, *madraas aur haiderabaad-se* 'from Madras and Hyderabad'
-(Mohanan pp. 61–62; Masica p. 234). Each is an enclitic. The values marked are Mohanan's
-labels, *ko* both accusative and dative (p. 61), with *se* the instrumental, sociative and
-ablative at once (Masica p. 238); *tak* is the clitic Mohanan adds to the six (p. 61). *Kaa*
+The simple postpositions of Hindi-Urdu, *ne*, *ko*, *se*, *kaa*, *mẽ*, *par* and *tak*, as
+`Adposition` entries. They follow the oblique form of the noun and have one shape in both numbers
+(Masica p. 233), and they are clitics rather than affixes: a pause may separate them from the
+noun, and one may scope over coordinated nouns, *madraas aur haiderabaad-se* 'from Madras and
+Hyderabad' (Mohanan pp. 61–62; Masica p. 234). Each is an enclitic. The values marked are
+Mohanan's labels, *ko* both accusative and dative (p. 61), with *se* the instrumental, sociative
+and ablative at once (Masica p. 238); *tak* is the clitic Mohanan adds to the six (p. 61). *Kaa*
 alone agrees, with the possessed noun, as Spencer notes.
 
 ## Main definitions
 
-* `Hindi.Adpositions.inventory`: the simple postpositions.
+* `HindiUrdu.Adpositions.inventory`: the simple postpositions.
 
 ## Implementation notes
 
 * The sources agree that these are clitics and disagree on whether they realize case: Mohanan
   takes them to mark case features, Masica treats them as formal cases, and Spencer as
   postpositions that select the oblique, the only cases being the inflected forms of
-  `Hindi.Case`.
+  `HindiUrdu.Case`.
 * *Kaa* is recorded in its masculine singular direct form.
 
 ## References
@@ -35,7 +35,7 @@ alone agrees, with the possessed noun, as Spencer notes.
 
 @[expose] public section
 
-namespace Hindi.Adpositions
+namespace HindiUrdu.Adpositions
 
 /-- *ne*, marking the agent of a perfective verb. -/
 def ne : Adposition :=
@@ -75,4 +75,4 @@ def tak : Adposition :=
 /-- The simple postpositions. -/
 def inventory : List Adposition := [ne, ko, se, kaa, me, par, tak]
 
-end Hindi.Adpositions
+end HindiUrdu.Adpositions

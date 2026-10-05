@@ -2,13 +2,13 @@ module
 
 public import Linglib.Syntax.Case.Dependent
 public import Linglib.Fragments.Georgian.Agreement
-public import Linglib.Fragments.Hindi.Case
+public import Linglib.Fragments.HindiUrdu.Case
 public import Linglib.Data.Examples.Marantz1991
 
 /-!
 # Marantz (1991): Case and Licensing
 
-This file formalizes the theory of morphological case in [marantz-1991]. Noun phrases are
+Marantz develops a theory of morphological case. Noun phrases are
 licensed by projection and the requirement that clauses have subjects, and case is read off the
 finished structure afterwards. A case affix takes the first case it is eligible for in a
 disjunctive hierarchy: a case determined by a lexical head, then a dependent case, then the
@@ -235,7 +235,7 @@ def georgian (s : Georgian.Series) : Setting where
 
 /-- Hindi sees an unfilled position optionally, and its unmarked case is the nominative. -/
 def hindi (a : Aspect.Perfectivity) : Setting where
-  rules := .ofAlignment (Hindi.alignment a)
+  rules := .ofAlignment (HindiUrdu.alignment a)
   unfilled := .optionally
   spellOut
     | .abs => .nom
@@ -328,8 +328,8 @@ def Clause.agr (c : Clause) : Option Position :=
   else none
 
 /-- The Fragment's Set A, the suffixal agreement, marks the argument the agreement of (31)
-picks, in the first series and in the second: the nominative subject, the ergative subject, and
-the nominative object of a verb with a dative subject. -/
+picks in both series, which is the nominative subject, the ergative subject, or the nominative
+object of a verb with a dative subject. -/
 theorem georgian_agr : ∀ v : Georgian.VerbClass, ∀ s ∈ series,
     ((Georgian.pattern v s).subject.affixes = some .A ↔ (clause v).agr = some .subject) ∧
     ((Georgian.pattern v s).directObject.affixes = some .A ↔

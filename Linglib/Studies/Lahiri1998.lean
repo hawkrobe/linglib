@@ -1,14 +1,14 @@
 module
 
 public import Linglib.Semantics.Focus.Particles
-public import Linglib.Fragments.Hindi.PolarityItems
+public import Linglib.Fragments.HindiUrdu.PolarityItems
 public import Linglib.Data.Examples.Lahiri1998
 
 /-!
 # Lahiri (1998): Focus and negative polarity in Hindi
 
 This file formalizes the paper's account of the Hindi negative polarity items, each a weak
-indefinite plus the focus particle *bhii* 'even' (`Hindi.PolarityItems`). The scalar
+indefinite plus the focus particle *bhii* 'even' (`HindiUrdu.PolarityItems`). The scalar
 presupposition of *even*, that the prejacent is less likely than every focus alternative,
 clashes with an entailment-monotone likelihood exactly when an alternative entails the
 prejacent (`Focus.Particles.not_evenPresup_of_subset`). The indefinite is the weakest
@@ -49,7 +49,7 @@ and *kisiike* are *koii*'s.
 
 namespace Lahiri1998
 
-open Focus.Particles PolarityItem Hindi.PolarityItems
+open Focus.Particles PolarityItem HindiUrdu.PolarityItems
 
 /-! ### The implicature clash (§7, §8) -/
 
@@ -57,19 +57,19 @@ section Model
 
 variable {World Ent α : Type*} [PartialOrder α] {μ : Set World → α}
 
-/-- The existential assertion of an indefinite restricted by `P`: some `P`-entity satisfies
-the predicate. -/
+/-- `exist P φ` is the existential assertion of an indefinite restricted by `P`, true where some
+`P`-entity satisfies `φ`. -/
 def exist (P : Ent → Prop) (φ : World → Ent → Prop) : Set World := {w | ∃ x, P x ∧ φ w x}
 
-/-- The universal reading of a generic restricted by `P`: every `P`-entity satisfies the
-predicate. -/
+/-- `restrict P φ` is the universal reading of a generic restricted by `P`, true where every
+`P`-entity satisfies `φ`. -/
 def restrict (P : Ent → Prop) (φ : World → Ent → Prop) : Set World := {w | ∀ x, P x → φ w x}
 
 variable {φ : World → Ent → Prop}
 
-theorem exist_mono : Monotone (exist · φ) := λ _ _ h _ ⟨x, hx, hφ⟩ => ⟨x, h x hx, hφ⟩
+theorem exist_mono : Monotone (exist · φ) := fun _ _ h _ ⟨x, hx, hφ⟩ ↦ ⟨x, h x hx, hφ⟩
 
-theorem restrict_anti : Antitone (restrict · φ) := λ _ _ h _ hr x hx => hr x (h x hx)
+theorem restrict_anti : Antitone (restrict · φ) := fun _ _ h _ hr x hx ↦ hr x (h x hx)
 
 /-- The weakest predicate is true of everything, so every alternative entails the existential
 assertion. -/
@@ -86,8 +86,8 @@ def alternatives (Ps : Set (Ent → Prop)) (φ : World → Ent → Prop) : Set (
 variable {Ps : Set (Ent → Prop)}
 
 /-- In an upward-entailing context the presupposition of *bhii* is contradictory as soon as
-there is an alternative, cardinality or contextual property: each entails the assertion and
-so is at least as likely. -/
+there is an alternative, cardinality or contextual property, since each entails the assertion
+and so is at least as likely. -/
 theorem ue_clash (hμ : Monotone μ) (hPs : Ps.Nonempty) :
     ¬ evenPresup μ (exist ⊤ φ) (alternatives Ps φ) :=
   let ⟨P, hP⟩ := hPs
@@ -102,17 +102,17 @@ theorem de_presup (hμ : Monotone μ) {Q : Set World → Set World} (hQ : Antito
   rw [evenPresup_iff_ne hμ]
   · simp [alternatives, Set.image_image]
   · simp only [alternatives, Set.image_image, Set.forall_mem_image]
-    exact λ P _ => hQ (exist_subset_exist_top P)
+    exact fun P _ ↦ hQ (exist_subset_exist_top P)
 
-/-- *koii bhii aayaa* against *koii bhii nahiiN aayaa*, and the two implicature sets of a
-yes-no question: the positive reading clashes and the negative one is satisfiable. Negation
+/-- Of *koii bhii aayaa* and *koii bhii nahiiN aayaa*, and of the two implicature sets of a
+yes-no question, the positive reading clashes and the negative one is satisfiable. Negation
 inside the existential, the only scope English gives a subject indefinite, is again a positive
 context, which is why English lacks the subject NPIs that Hindi licenses. -/
 theorem clausemate_negation (hμ : Monotone μ) (hPs : Ps.Nonempty) :
     ¬ evenPresup μ (exist ⊤ φ) (alternatives Ps φ) ∧
       (evenPresup μ (exist ⊤ φ)ᶜ (compl '' alternatives Ps φ) ↔
         ∀ P ∈ Ps, μ (exist ⊤ φ)ᶜ ≠ μ (exist P φ)ᶜ) ∧
-      ¬ evenPresup μ (exist ⊤ λ w x => ¬ φ w x) (alternatives Ps λ w x => ¬ φ w x) :=
+      ¬ evenPresup μ (exist ⊤ fun w x ↦ ¬ φ w x) (alternatives Ps fun w x ↦ ¬ φ w x) :=
   ⟨ue_clash hμ hPs, de_presup hμ compl_anti, ue_clash hμ hPs⟩
 
 /-- In the restriction of a generic the assertion entails every alternative, so the
@@ -123,7 +123,7 @@ theorem generic_presup (hμ : Monotone μ) :
   rw [evenPresup_iff_ne hμ]
   · simp
   · simp only [Set.forall_mem_image]
-    exact λ P _ => restrict_top_subset P
+    exact fun P _ ↦ restrict_top_subset P
 
 end Model
 
@@ -155,10 +155,10 @@ inductive Environment where
   | numeralGeneric
   deriving DecidableEq, Repr
 
-/-- Whether the analysis licenses an indefinite plus *bhii* in the environment: the
-downward-entailing environments, questions on their negative-expectation reading, and the
-generic environments, generics with or without a numeral, generically read possibility modals
-and futures, and imperatives read as permissions. -/
+/-- The analysis licenses an indefinite plus *bhii* in the downward-entailing environments, in
+questions on their negative-expectation reading, and in the generic environments, which are
+generics with or without a numeral, generically read possibility modals and futures, and
+imperatives read as permissions. -/
 def Environment.Licensed : Environment → Prop
   | .negation | .protasis | .universalRestrictor | .adversative | .settleForLess
   | .prohibitionComplement | .before | .question | .generic | .possibilityModal
@@ -173,16 +173,16 @@ instance : DecidablePred Environment.Licensed
   | .positive | .apodosis | .existentialRestrictor | .factive | .prohibitionObject | .after
   | .episodicModal | .episodicFuture | .necessityModal => isFalse id
 
-/-- The alternatives an indefinite plus *bhii* introduces (§8): other cardinality or measure
-predicates for *ek* 'one' and *zaraa* 'a little', a contextually specified set of properties for
-*koii* and *kuch*. -/
+/-- An indefinite plus *bhii* introduces other cardinality or measure predicates as its
+alternatives for *ek* 'one' and *zaraa* 'a little', and a contextually specified set of
+properties for *koii* and *kuch* (§8). -/
 inductive Alternatives where
   | cardinality
   | property
   deriving DecidableEq, Repr
 
-/-- A judged example: its environment, the fragment entry of its item with the alternatives it
-introduces, and the judgment. -/
+/-- A row is a judged example, recording its environment, the fragment entry of its item with
+the alternatives it introduces, and the judgment. -/
 structure Row where
   env : Environment
   item : PolarityItem
@@ -219,9 +219,8 @@ def Row.ofDatum (r : Datum) : Option Row := do
 /-- The survey. -/
 def data : List Row := Examples.all.filterMap Row.ofDatum
 
-/-- The analysis reads every judgment of the survey, the cardinality items in imperatives and
-with numerals aside: an indefinite plus *bhii* is acceptable exactly in the environments it
-licenses. -/
+/-- Setting aside the cardinality items in imperatives and with numerals, an indefinite plus
+*bhii* in the survey is acceptable exactly in the environments the analysis licenses. -/
 theorem analysis_matches_judgments :
     ∀ d ∈ data,
       d.alternatives = .property ∨
