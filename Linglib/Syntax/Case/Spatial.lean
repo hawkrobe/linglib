@@ -6,10 +6,11 @@ public import Linglib.Semantics.Events.PathDir
 /-!
 # Spatial cases
 
-The spatial cases decompose into a localization and a direction ([pantcheva-2011]): the
+A spatial case combines a localization with a direction, as Pantcheva decomposes them: the
 interior, surface and exterior series of Finnish, Hungarian and Daghestanian local cases each
-cross a localization with Place, Goal and Source. `Case.toCase` builds a case from the two,
-and `Case.spatialDecomp` recovers them where both are determinable.
+cross a localization with Place, Goal and Source. The general locative, allative, ablative and
+perlative express a direction with no localization. Blake's types of case (Table 2.7) place
+the spatial cases among the semantic cases, apart from the grammatical ones.
 
 ## Main definitions
 
@@ -17,14 +18,26 @@ and `Case.spatialDecomp` recovers them where both are determinable.
   expresses, if any.
 * `Case.toCase`, `Case.spatialDecomp`: a spatial case from its localization and direction, and
   back.
+* `Case.ofDir`: the localization-neutral case of a direction.
+* `Case.Kind`, `Case.kind`: grammatical, spatial and other semantic cases.
 
 ## Main results
 
 * `Case.spatialDecomp_toCase`: the decomposition round-trips on the localization-specific cells.
+* `Case.dirOf_ofDir`: the localization-neutral case of a direction expresses it.
+* `Case.kind_eq_spatial_iff`: the spatial cases are those with a direction, and the
+  terminative.
+
+## Implementation notes
+
+Blake names the nominative, accusative, ergative, genitive and dative as grammatical cases;
+`Case.kind` adds the absolutive, the oblique, the partitive and the vocative to them, and the
+terminative to the spatial cases.
 
 ## References
 
 * [pantcheva-2011]
+* [blake-2001]
 -/
 
 @[expose] public section
@@ -60,13 +73,10 @@ def toCase : Localization → PathDir → Option Case
   | .exterior, .source => some .abl
   | _, .route => none
 
-/-- The localization a case expresses, under the spatial reading. The
-    exterior series is `ade`/`all`/`abl` (Finnish's external local
-    cases). **Conflation caveat**: `all`/`abl` double as the *general*
-    allative/ablative (Latin-type, localization-neutral); the spatial
-    decomposition reads them as exterior-goal/source, the use the
-    analytical split `Syntax/Case/Basic.lean` anticipates separating.
-    `loc` is the genuinely localization-neutral general locative (`none`). -/
+/-- The localization a case expresses, under the spatial reading. The exterior series is
+    `ade`, `all` and `abl`, Finnish's external local cases; `all` and `abl` also serve as the
+    general allative and ablative, with no localization, a use this decomposition does not
+    separate. The general locative `loc` has no localization. -/
 def localizationOf : Case → Option Localization
   | .ine | .ela | .ill => some .interior
   | .sup | .del | .sub => some .surface
@@ -88,5 +98,47 @@ theorem spatialDecomp_toCase (r : Localization) (d : PathDir) :
     (toCase r d).bind spatialDecomp =
       (toCase r d).map (fun _ => (r, d)) := by
   cases r <;> cases d <;> decide
+
+/-- `ofDir d` is the case that expresses `d` with no localization, the general locative,
+allative, ablative or perlative. -/
+def ofDir : PathDir → Case
+  | .place => .loc
+  | .goal => .all
+  | .source => .abl
+  | .route => .perl
+
+@[simp] theorem dirOf_ofDir (d : PathDir) : (ofDir d).dirOf = some d := by
+  cases d <;> rfl
+
+theorem ofDir_injective : Function.Injective ofDir := by
+  intro d d' h
+  simpa using congrArg dirOf h
+
+/-! ### Types of case -/
+
+/-- A case is grammatical, encoding a syntactic relation, or semantic, and a semantic case is
+spatial when it encodes location, source, destination or path. -/
+inductive Kind where
+  /-- A grammatical case is a core case, the genitive or the dative. -/
+  | grammatical
+  /-- A spatial case encodes location, source, destination or path, alone or with another
+  notion. -/
+  | spatial
+  /-- A semantic case that is not spatial, such as the instrumental and the comitative. -/
+  | semantic
+  deriving DecidableEq, Repr, Fintype
+
+/-- The type of a case value. -/
+def kind : Case → Kind
+  | .nom | .acc | .gen | .dat | .erg | .abs | .obl | .part | .voc => .grammatical
+  | .loc | .ine | .ade | .sup | .ill | .all | .sub | .ela | .abl | .del | .perl | .ter =>
+    .spatial
+  | .inst | .com | .ben | .abess | .caus | .tem | .ess | .transl => .semantic
+
+theorem kind_eq_spatial_iff (c : Case) : c.kind = .spatial ↔ c.dirOf.isSome ∨ c = .ter := by
+  cases c <;> decide
+
+theorem kind_eq_spatial_of_dirOf_isSome {c : Case} (h : c.dirOf.isSome) : c.kind = .spatial :=
+  (kind_eq_spatial_iff c).2 (.inl h)
 
 end Case

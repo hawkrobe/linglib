@@ -81,7 +81,7 @@ open Dutch.Adpositions
 def narrowLocatives : List Dutch.Adposition :=
   [achter, beneden, bij, binnen, boven, buiten, in_, naast, onder, op, tussen]
 
-/-- The point locative adpositions, whose complement is a point on a path: the inherently
+/-- The point locative adpositions, whose complement is a point on a path, are the inherently
 directional adpositions. -/
 def pointLocatives : List Dutch.Adposition := [naar, tot, van]
 
@@ -91,11 +91,11 @@ def extendedLocatives : List Dutch.Adposition :=
 
 /-- The classified adpositions are the spatial ones. -/
 theorem classes_spatial :
-    ∀ a ∈ narrowLocatives ++ pointLocatives ++ extendedLocatives, a.relation = .spatial := by
+    ∀ a ∈ narrowLocatives ++ pointLocatives ++ extendedLocatives, a.IsSpatial := by
   decide
 
 /-- The two core adpositions that do not fit the classification are non-spatial. -/
-theorem met_zonder_not_spatial : met.relation ≠ .spatial ∧ zonder.relation ≠ .spatial := by
+theorem met_zonder_not_spatial : ¬ met.IsSpatial ∧ ¬ zonder.IsSpatial := by
   decide
 
 /-- A point locative is one of the grammar's directional prepositions. -/
@@ -108,20 +108,20 @@ theorem narrowLocative_locational : ∀ a ∈ narrowLocatives, a.direction .pre 
 
 /-- A point locative is a preposition only: an inherently directional adposition checks the
 directionality itself and never raises its complement. -/
-theorem pointLocative_linearization : ∀ a ∈ pointLocatives, a.linearization = [.pre] := by
+theorem pointLocative_linearization : ∀ a ∈ pointLocatives, a.linearization = {.pre} := by
   decide
 
 /-- The postposition of a narrow locative denotes a goal path, *de berg op* 'up the mountain':
 the complement is read as the path and the location the preposition denotes as its endpoint,
 which is why a length modifier can measure it. -/
 theorem narrowLocative_direction_post :
-    ∀ a ∈ narrowLocatives, .post ∈ a.linearization → a.direction .post = .goal := by
+    ∀ a ∈ narrowLocatives, a.IsPostposition → a.direction .post = .goal := by
   decide
 
 /-- The postposition of an extended locative denotes a route or a source path, *het bos door*
 'through the woods', never a goal: the complement already extends along the path. -/
 theorem extendedLocative_direction_post :
-    ∀ a ∈ extendedLocatives, .post ∈ a.linearization → a.direction .post ≠ .goal := by
+    ∀ a ∈ extendedLocatives, a.IsPostposition → a.direction .post ≠ .goal := by
   decide
 
 /-! ### The directionality phrase -/
@@ -137,8 +137,8 @@ def DPRaises : Prop := dirP ∧ ¬ inherent
 
 instance : Decidable (DPRaises dirP inherent) := inferInstanceAs (Decidable (_ ∧ _))
 
-/-- The order of the adposition and its complement: postpositional when the complement has
-raised, prepositional otherwise. -/
+/-- The adposition follows its complement when the complement has raised, and precedes it
+otherwise. -/
 def linearization : Adposition.Linearization :=
   if DPRaises dirP inherent then .post else .pre
 

@@ -1,172 +1,203 @@
 module
 
-public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Syntax.Case.Spatial
+public import Linglib.Morphology.Morph
 public import Linglib.Morphology.Word.Basic
+public import Mathlib.Data.Finset.Image
 
 /-!
-# Adposition: the function-marking relator
-[hagege-2010] [dryer-2013] [svenonius-2010]
+# Adpositions
 
-The P-head word class — a **function-marking relator** — as a theory-neutral
-object, sibling to `Syntax/Category/Pronoun` in the closed-class function-word family.
-The base encodes only the cross-framework criteria that *define* the category;
-every framework (Minimalist cartography, HPSG, CCG, Dependency Grammar,
-cognitive grammar) and every semantic theory (Pantcheva direction, Zwarts path
-algebra, the Svenonius `AxPart` decomposition in `Adposition/Spatial.lean`)
-*plugs into* this base rather than defining it — exactly as Caha's containment
-refines `Case` without being `Case`.
+An adposition is a grammatical word that forms a phrase with a term it governs and marks, as a
+case affix does, the relation of that term to the head of the phrase (Hagège's definition,
+p. 8). Haspelmath groups case markers and adpositions together as *flags*, since they do the same
+work and cannot be told apart consistently across languages. So an entry here records the
+relations it marks as comparative case values, a set because adpositions are polysemous, beside
+its exponent as morphs, the positions it takes relative to its term, and the complements it
+takes. An adposition may occur without its term when the term is understood (Hagège p. 54,
+*she stayed in*), and a particle such as Dutch *heen* occurs only without one.
 
-## Defining criteria (typological tradition: [hagege-2010], [dryer-2013])
+## Main definitions
 
-1. **governs a complement** (the Ground/régime) — a relator; `[]` is the
-   intransitive/particle limit;
-2. **marks the function** of that complement — a `RelationType`;
-3. **closed-class grammatical** element (a category fact; may inflect/agree —
-   Celtic, Uralic, Hebrew);
-4. **fixed linearization** relative to the complement (a *set*: a lexeme may be
-   both pre- and post-positional, e.g. Dutch *op*);
-5. **exponence** on the grammaticalization cline (the case-affix boundary).
+* `Adposition`: the entry.
+* `Adposition.Linearization`, `Adposition.Complement`: positions and complement kinds.
+* `Adposition.IsPreposition`, `IsPostposition`, `IsCircumposition`, `IsAmbiposition`: the
+  position classes.
+* `Adposition.Takes`, `IsIntransitive`, `IsTransitive`, `IsParticle`: valence.
+* `Adposition.IsComplex`, `IsBound`, `form`, `toWord`: the exponent.
+* `Adposition.kinds`, `kind?`, `IsSpatial`: the types of case among the values marked.
 
-## Main declarations
+## Main results
 
-* `Adposition` — the category object (the five criteria as fields)
-* `Adposition.RelationType` / `Linearization` / `Complement` / `Exponence` /
-  `Form` — the criterion vocabularies
-* `Adposition.isIntransitive` / `isComplex` / `isAmbipositional`
-* `Adposition.toWord` — the entry as a UD `ADP` word
+* `Adposition.isParticle_iff`: a particle takes no complement.
+* `Adposition.isSpatial_iff`: a spatial adposition marks a value with a path direction or the
+  terminative.
+* `Adposition.kind?_eq_some_iff`: the type of an adposition is the type all its values share.
+
+## Implementation notes
+
+* The positions follow Dryer's WALS chapter 85 with circumpositions added. They are a set,
+  since an ambiposition such as Dutch *op* is one lexeme preposed or postposed (Hagège
+  pp. 114–116). A circumposition lists its pieces in surface order, the first before the term.
+* The transitive and intransitive uses of one preposition are one entry, as in Huddleston and
+  Pullum (p. 635).
+* `functions` is `∅` where no comparative value fits, as for *despite*.
+* The case an adposition governs on its complement (Corbett) is a fact about a language's own
+  case values and is left to the fragments.
+
+## References
+
+* [hagege-2010]
+* [haspelmath-2019]
+* [huddleston-pullum-2002]
+* [blake-2001]
+* [corbett-2026]
+* [dryer-2013-wals]
 -/
 
 @[expose] public section
 
+open Morphology (Morph Word)
+
 namespace Adposition
 
-/-- The relation an adposition marks (criterion 2) — coarse only. A spatial
-    relation's internal structure (`AxPart × Region × PathDir × Bound`) is a
-    *theory* (`Adposition/Spatial.lean`), never part of the category. -/
-inductive RelationType where
-  /-- Spatial: in/on/under/to/from. Refined by the cartographic decomposition. -/
-  | spatial
-  /-- Temporal: before/after/during/until. -/
-  | temporal
-  /-- Grammatical/relational: of/by/with — function-marking (agent, instrument,
-      comitative). The marked role is a Study-level refinement, not a base field. -/
-  | grammatical
-  /-- Logical/abstract: because-of/despite/concerning. -/
-  | logical
-  deriving DecidableEq, Repr, Fintype, Inhabited
-
-/-- A linearization of an adposition with respect to its complement (criterion 4). -/
+/-- The positions an adposition can take relative to the term it governs. -/
 inductive Linearization where
-  /-- Preposition: P precedes the complement. -/
+  /-- A preposition precedes the term. -/
   | pre
-  /-- Postposition: P follows the complement. -/
+  /-- A postposition follows the term. -/
   | post
-  /-- Circumposition: P brackets the complement (two exponents). -/
+  /-- A circumposition brackets the term, one piece on each side. -/
   | circum
-  /-- Inposition: P appears inside/second-position in the complement. -/
+  /-- An inposition occurs inside the term. -/
   | inposition
   deriving DecidableEq, Repr, Fintype
 
-/-- What an adposition governs (criterion 1) — P-specific complement types
-    (not the verb's `ArgumentFrame`, which
-    carries ditransitive frames an adposition never selects). -/
+/-- The kinds of term an adposition governs. -/
 inductive Complement where
+  /-- A noun phrase, *in the garden*. -/
   | np
+  /-- An adpositional phrase, Dutch *van boven de kast* 'from above the cupboard'. -/
   | pp
+  /-- A clause, *after he had arrived*. -/
   | clause
-  /-- Adjectival complement (Dutch *sinds kort* 'since recently'). -/
+  /-- An adjective phrase, Dutch *sinds kort* 'since recently'. -/
   | ap
-  /-- Measure-phrase complement (*for three hours*, *three days ago*). -/
+  /-- A measure phrase, *for three hours*, *three days ago*. -/
   | measure
-  /-- A subject with its predicate, the absolute construction (Dutch *met Jan ziek* 'with Jan
-      ill', English *with John away*). -/
+  /-- A subject with its predicate, the absolute construction, Dutch *met Jan ziek* 'with Jan
+  ill'. -/
   | smallClause
   deriving DecidableEq, Repr, Fintype
 
-/-- Exponence on the grammaticalization cline (criterion 5). `affix` is the
-    boundary at which the adposition becomes a `Case` exponent — the point where
-    this object and `Case` meet on the cline. -/
-inductive Exponence where
-  | free
-  | clitic
-  | affix
-  deriving DecidableEq, Repr, Fintype, Inhabited
-
-/-- The form of an adposition: a single word, or a complex/multi-word adposition
-    (*in front of*, *on top of*). -/
-inductive Form where
-  | simple (s : String)
-  | complex (parts : List String)
-  deriving DecidableEq, Repr
-
-/-- The surface string of a form (complex forms joined by spaces). -/
-def Form.text : Form → String
-  | .simple s => s
-  | .complex parts => " ".intercalate parts
-
 end Adposition
 
-/-- An adposition: the five defining criteria as fields. Theory-neutral —
-    spatial/grammatical refinements and framework analyses consume it. -/
+/-- An adposition is its exponent, the positions it takes relative to the term it governs, the
+comparative case values it marks, and the complements it takes, `none` for its use without
+one. -/
 structure Adposition where
-  form : Adposition.Form
-  /-- Criterion 2: the relation marked. -/
-  relation : Adposition.RelationType
-  /-- Criterion 1: complement types selected. `[]` = intransitive (particle). -/
-  complement : List Adposition.Complement
-  /-- Criterion 4: allowed linearizations (set semantics; may be several). -/
-  linearization : List Adposition.Linearization
-  /-- Criterion 5: exponence on the cline. -/
-  exponence : Adposition.Exponence := .free
-  /-- Criterion 3 refinement: inflects/agrees with the complement's φ-features
-      (Celtic *agam*, Hungarian, Hebrew). -/
-  agreesWithComplement : Bool := false
-  deriving Repr, DecidableEq
+  /-- The exponent, in surface order. -/
+  morphs : List Morph
+  /-- The positions relative to the governed term. -/
+  linearization : Finset Adposition.Linearization
+  /-- The comparative case values marked. -/
+  functions : Finset Case
+  /-- The complements taken; `none` is the use without a complement. -/
+  complements : Finset (Option Adposition.Complement)
+  deriving DecidableEq
 
 namespace Adposition
 
-/-- Intransitive (the particle limit): governs no complement. -/
-def isIntransitive (a : Adposition) : Bool := a.complement.isEmpty
+variable (a : Adposition)
 
-/-- Complex/multi-word adposition (*in front of*). -/
-def isComplex (a : Adposition) : Bool :=
-  match a.form with
-  | .complex _ => true
-  | .simple _ => false
+/-! ### The exponent -/
 
-/-- Ambipositional: allows both pre- and post-positional order (Dutch *op*). -/
-def isAmbipositional (a : Adposition) : Bool :=
-  a.linearization.contains .pre && a.linearization.contains .post
+/-- The surface form joins the pieces of the exponent, in boundary notation, with spaces. -/
+def form : String := " ".intercalate (a.morphs.map toString)
+
+instance : Repr Adposition := ⟨fun a _ ↦ a.form⟩
+
+/-- A complex adposition has more than one piece, *in front of*, *van … af*. -/
+def IsComplex : Prop := 1 < a.morphs.length
+
+instance : Decidable a.IsComplex := inferInstanceAs (Decidable (_ < _))
+
+/-- A bound adposition has no free piece, as a clitic flag does. -/
+def IsBound : Prop := ∀ m ∈ a.morphs, m.kind ≠ .free
+
+instance : Decidable a.IsBound := inferInstanceAs (Decidable (∀ m ∈ a.morphs, _))
 
 /-- The adposition as a word, UD category `ADP`. -/
-def toWord (a : Adposition) : Morphology.Word := { form := a.form.text, cat := .ADP }
+def toWord : Word := { form := a.form, cat := .ADP }
 
-/-! ### Smoke tests — the mature fields exercised (stress-test seeds) -/
+@[simp] theorem cat_toWord : a.toWord.cat = .ADP := rfl
 
-/-- English *in*: simple spatial preposition over an NP. -/
-def english_in : Adposition :=
-  { form := .simple "in", relation := .spatial, complement := [.np],
-    linearization := [.pre] }
+/-! ### Position -/
 
-/-- English *in front of*: a complex/multi-word spatial preposition. -/
-def english_inFrontOf : Adposition :=
-  { form := .complex ["in", "front", "of"], relation := .spatial,
-    complement := [.np], linearization := [.pre] }
+/-- The adposition precedes its term. -/
+def IsPreposition : Prop := .pre ∈ a.linearization
 
-/-- Dutch *op*: ambipositional (both pre- and post-positional). -/
-def dutch_op : Adposition :=
-  { form := .simple "op", relation := .spatial, complement := [.np],
-    linearization := [.pre, .post] }
+/-- The adposition follows its term. -/
+def IsPostposition : Prop := .post ∈ a.linearization
 
-/-- Irish *ag* 'at': a grammatical preposition that **inflects** for its
-    complement (*agam* 'at-me', *agat* 'at-you'). -/
-def irish_ag : Adposition :=
-  { form := .simple "ag", relation := .grammatical, complement := [.np],
-    linearization := [.pre], agreesWithComplement := true }
+/-- The adposition brackets its term. -/
+def IsCircumposition : Prop := .circum ∈ a.linearization
 
-example : english_inFrontOf.isComplex = true := by decide
-example : dutch_op.isAmbipositional = true := by decide
-example : irish_ag.agreesWithComplement = true := by decide
-example : english_in.isIntransitive = false := by decide
+/-- An ambiposition is preposed or postposed to its term. -/
+def IsAmbiposition : Prop := a.IsPreposition ∧ a.IsPostposition
+
+instance : Decidable a.IsPreposition := inferInstanceAs (Decidable (_ ∈ _))
+instance : Decidable a.IsPostposition := inferInstanceAs (Decidable (_ ∈ _))
+instance : Decidable a.IsCircumposition := inferInstanceAs (Decidable (_ ∈ _))
+instance : Decidable a.IsAmbiposition := inferInstanceAs (Decidable (_ ∧ _))
+
+/-! ### Valence -/
+
+/-- The adposition takes a complement of kind `c`. -/
+def Takes (c : Complement) : Prop := some c ∈ a.complements
+
+/-- The adposition occurs without a complement. -/
+def IsIntransitive : Prop := none ∈ a.complements
+
+/-- The adposition takes some complement. -/
+def IsTransitive : Prop := ∃ c, a.Takes c
+
+/-- A particle occurs only without a complement. -/
+def IsParticle : Prop := ∀ c ∈ a.complements, c = none
+
+instance (c : Complement) : Decidable (a.Takes c) := inferInstanceAs (Decidable (_ ∈ _))
+instance : Decidable a.IsIntransitive := inferInstanceAs (Decidable (_ ∈ _))
+instance : Decidable a.IsTransitive := inferInstanceAs (Decidable (∃ c, a.Takes c))
+instance : Decidable a.IsParticle := inferInstanceAs (Decidable (∀ c ∈ a.complements, c = none))
+
+theorem isParticle_iff : a.IsParticle ↔ ¬ a.IsTransitive := by
+  refine ⟨fun h ⟨c, hc⟩ ↦ Option.some_ne_none c (h _ hc), fun h c hc ↦ ?_⟩
+  cases c with
+  | none => rfl
+  | some c => exact absurd ⟨c, hc⟩ h
+
+/-! ### The values marked -/
+
+/-- The types of case among the values the adposition marks. -/
+def kinds : Finset Case.Kind := a.functions.image Case.kind
+
+/-- The type of case the adposition marks, when all its values share one. -/
+def kind? : Option Case.Kind :=
+  if a.kinds = {.grammatical} then some .grammatical
+  else if a.kinds = {.spatial} then some .spatial
+  else if a.kinds = {.semantic} then some .semantic
+  else none
+
+theorem kind?_eq_some_iff {k : Case.Kind} : a.kind? = some k ↔ a.kinds = {k} := by
+  unfold kind?
+  cases k <;> split_ifs <;> simp_all
+
+/-- A spatial adposition marks a spatial value. -/
+def IsSpatial : Prop := .spatial ∈ a.kinds
+
+instance : Decidable a.IsSpatial := inferInstanceAs (Decidable (_ ∈ _))
+
+theorem isSpatial_iff : a.IsSpatial ↔ ∃ c ∈ a.functions, c.dirOf.isSome ∨ c = .ter := by
+  simp [IsSpatial, kinds, Case.kind_eq_spatial_iff]
 
 end Adposition

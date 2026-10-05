@@ -10,14 +10,12 @@ public import Linglib.Core.Data.List.Forall2
 
 /-! # Argument frames
 
-A predicate's argument frame: its external argument, if any, and its
-complement positions in order. A position is nominal, adpositional,
-clausal, implicit or expletive, and carries the axes the predicate
-selects for: the relation and adposition of an adpositional position,
-the [noonan-2007] coding, sentence types and subject requirement of
-a clausal one, the interpretation of an implicit one. Positions and
-frames are partially ordered by refinement, so a schematic frame lies
-below every frame instantiating it.
+A predicate's argument frame is its external argument, if any, and its complement positions
+in order. A position is nominal, adpositional, clausal, implicit or expletive, and carries the
+axes the predicate selects for: the type of case, in Blake's sense, and the adposition of an
+adpositional position, Noonan's coding, the sentence types and the subject requirement of a
+clausal one, and the interpretation of an implicit one. Positions and frames are partially
+ordered by refinement, so a schematic frame lies below every frame instantiating it.
 
 ## Main definitions
 
@@ -47,20 +45,22 @@ A position refines another within its kind: `p ≤ q` when the two are of
 one kind and every axis `p` records, `q` records with the same value. A
 frame's order fixes the external argument and refines the complements
 pointwise (`List.Forall₂`). The external argument is an `Option`: `none`
-is the unaccusative and impersonal case. Role labels are derived from
-the frame (`ArgumentFrame.codingRole`), never stored. Complement-taking is
-cross-categorial ([noonan-2007]'s CTPs include adjectives and nouns),
-so `ArgumentFrame` is not under `Verb`. Frame-conditioned readings (attitude,
-opacity, control) live on `Verb.Reading`
-(`Syntax/Category/Verb/Defs.lean`); the selection relation between
-frames and clause-typers (`Verb.Takes`) in
-`Syntax/Category/Verb/ArgumentFrame/Takes.lean`. [deal-2026]'s CP-external
-shell inventory lives with its consumer in `Studies/Deal2026.lean`.
+is the unaccusative and impersonal case. Comrie's role labels S, A, P, R and T are derived
+from the frame (`ArgumentFrame.codingRole`), never stored. The interpretations of an implicit
+argument are Fillmore's and Bruening's, with Levin's understood-object alternations.
+Complement-taking is cross-categorial, Noonan's complement-taking predicates including
+adjectives and nouns, so `ArgumentFrame` is not under `Verb`. Frame-conditioned readings
+(attitude, opacity, control) live on `Verb.Reading` (`Syntax/Category/Verb/Defs.lean`); the
+selection relation between frames and clause-typers (`Verb.Takes`) in
+`Syntax/Category/Verb/ArgumentFrame/Takes.lean`. Deal's CP-external shell inventory lives
+with its consumer in `Studies/Deal2026.lean`.
 
 ## References
 
+* [blake-2001]
 * [bruening-2021]
 * [comrie-1978]
+* [deal-2026]
 * [fillmore-1986]
 * [levin-1993]
 * [noonan-2007]
@@ -68,10 +68,9 @@ shell inventory lives with its consumer in `Studies/Deal2026.lean`.
 
 @[expose] public section
 
-/-- The interpretation of an unexpressed argument ([fillmore-1986],
-[bruening-2021]; the understood-object alternations of [levin-1993]). -/
+/-- The interpretation of an unexpressed argument. -/
 inductive ImplicitInterp where
-  /-- Existentially bound: an unspecified someone or something. -/
+  /-- An existentially bound argument, an unspecified someone or something. -/
   | indef
   /-- A pragmatically recoverable definite. -/
   | def
@@ -86,13 +85,13 @@ inductive ImplicitInterp where
 namespace ArgumentFrame
 
 /-- An argument position of a frame is nominal; adpositional, recording the
-    relation and the adposition selected; clausal, recording the
-    [noonan-2007] coding, the sentence types and the subject requirement
+    type of case marked and the adposition selected; clausal, recording the
+    coding, the sentence types and the subject requirement
     selected; implicit, an unexpressed argument with its interpretation;
     or expletive. Every axis is optional, and `none` or `⊥` is unselective. -/
 inductive Position where
   | nominal
-  | adpositional (relation : Option Adposition.RelationType := none)
+  | adpositional (relation : Option Case.Kind := none)
       (adposition : Option Adposition := none)
   | clausal (coding : Option Complement.Coding := none)
       (types : Clause.Selection := ⊥)
@@ -103,10 +102,11 @@ inductive Position where
 
 namespace Position
 
-/-- The adpositional position selecting `p`. -/
-def adposition (p : Adposition) : Position := .adpositional (some p.relation) (some p)
+/-- The adpositional position selecting `p`, with the type of case `p` marks when it marks
+one type. -/
+def adposition (p : Adposition) : Position := .adpositional p.kind? (some p)
 
-/-- The position's recorded [noonan-2007] coding, if clausal. -/
+/-- The position's recorded coding, if clausal. -/
 def coding? : Position → Option Complement.Coding
   | clausal c _ _ => c
   | _ => none
@@ -122,7 +122,7 @@ def embeddedSubject? : Position → Option Clause.EmbeddedSubject
   | _ => none
 
 /-- The position's recorded relation, if adpositional. -/
-def relation? : Position → Option Adposition.RelationType
+def relation? : Position → Option Case.Kind
   | adpositional r _ => r
   | _ => none
 
@@ -191,7 +191,7 @@ def Axis.Carrier : Axis → Type
   | coding => Flat Complement.Coding
   | types => Clause.Selection
   | embeddedSubject => Flat Clause.EmbeddedSubject
-  | relation => Flat Adposition.RelationType
+  | relation => Flat Case.Kind
   | adposition => Flat Adposition
   | interp => Flat ImplicitInterp
 
@@ -199,7 +199,7 @@ instance : ∀ a : Axis, PartialOrder a.Carrier
   | .coding => inferInstanceAs (PartialOrder (Flat Complement.Coding))
   | .types => inferInstanceAs (PartialOrder Clause.Selection)
   | .embeddedSubject => inferInstanceAs (PartialOrder (Flat Clause.EmbeddedSubject))
-  | .relation => inferInstanceAs (PartialOrder (Flat Adposition.RelationType))
+  | .relation => inferInstanceAs (PartialOrder (Flat Case.Kind))
   | .adposition => inferInstanceAs (PartialOrder (Flat Adposition))
   | .interp => inferInstanceAs (PartialOrder (Flat ImplicitInterp))
 
@@ -207,7 +207,7 @@ instance : ∀ a : Axis, OrderBot a.Carrier
   | .coding => inferInstanceAs (OrderBot (Flat Complement.Coding))
   | .types => inferInstanceAs (OrderBot Clause.Selection)
   | .embeddedSubject => inferInstanceAs (OrderBot (Flat Clause.EmbeddedSubject))
-  | .relation => inferInstanceAs (OrderBot (Flat Adposition.RelationType))
+  | .relation => inferInstanceAs (OrderBot (Flat Case.Kind))
   | .adposition => inferInstanceAs (OrderBot (Flat Adposition))
   | .interp => inferInstanceAs (OrderBot (Flat ImplicitInterp))
 
@@ -215,7 +215,7 @@ instance : ∀ a : Axis, PartialUnify a.Carrier
   | .coding => inferInstanceAs (PartialUnify (Flat Complement.Coding))
   | .types => inferInstanceAs (PartialUnify Clause.Selection)
   | .embeddedSubject => inferInstanceAs (PartialUnify (Flat Clause.EmbeddedSubject))
-  | .relation => inferInstanceAs (PartialUnify (Flat Adposition.RelationType))
+  | .relation => inferInstanceAs (PartialUnify (Flat Case.Kind))
   | .adposition => inferInstanceAs (PartialUnify (Flat Adposition))
   | .interp => inferInstanceAs (PartialUnify (Flat ImplicitInterp))
 
@@ -223,7 +223,7 @@ instance : ∀ a : Axis, DecidableEq a.Carrier
   | .coding => inferInstanceAs (DecidableEq (Flat Complement.Coding))
   | .types => inferInstanceAs (DecidableEq Clause.Selection)
   | .embeddedSubject => inferInstanceAs (DecidableEq (Flat Clause.EmbeddedSubject))
-  | .relation => inferInstanceAs (DecidableEq (Flat Adposition.RelationType))
+  | .relation => inferInstanceAs (DecidableEq (Flat Case.Kind))
   | .adposition => inferInstanceAs (DecidableEq (Flat Adposition))
   | .interp => inferInstanceAs (DecidableEq (Flat ImplicitInterp))
 
@@ -231,12 +231,12 @@ instance : ∀ a : Axis, DecidableLE a.Carrier
   | .coding => inferInstanceAs (DecidableLE (Flat Complement.Coding))
   | .types => inferInstanceAs (DecidableLE Clause.Selection)
   | .embeddedSubject => inferInstanceAs (DecidableLE (Flat Clause.EmbeddedSubject))
-  | .relation => inferInstanceAs (DecidableLE (Flat Adposition.RelationType))
+  | .relation => inferInstanceAs (DecidableLE (Flat Case.Kind))
   | .adposition => inferInstanceAs (DecidableLE (Flat Adposition))
   | .interp => inferInstanceAs (DecidableLE (Flat ImplicitInterp))
 
-/-- A bundle of partial axis values, ordered pointwise by extension:
-    unification is `PartialUnify.unify`, consistency is `Compat`. -/
+/-- A bundle of partial axis values, ordered pointwise by extension, so that unification is
+    `PartialUnify.unify` and consistency is `Compat`. -/
 abbrev Axes := ∀ a : Axis, a.Carrier
 
 /-- The axes the position records. -/
@@ -324,7 +324,7 @@ def slots : List Slot :=
   (fr.external.map fun _ ↦ Slot.external).toList ++
     (List.range fr.complements.length).map .complement
 
-/-- The core argument slots are those realized as nominals ([comrie-1978]). -/
+/-- The core argument slots are those realized as nominals. -/
 def coreSlots : List Slot :=
   fr.slots.filter fun s ↦ (fr.get? s).any fun p ↦ decide p.IsNominal
 
@@ -336,11 +336,8 @@ def IsTransitive : Prop := 2 ≤ fr.valency
 
 instance : Decidable fr.IsTransitive := inferInstanceAs (Decidable (_ ≤ _))
 
-/-- The comparative classification of a core slot ([comrie-1978]): the
-    sole core argument of a one-place frame is S; a two-place frame has A
-    and P; a three-place frame A, R and T. A function of the frame's
-    shape, never a stored feature; `Clause.Arguments.codingRole` is the
-    classification of a clause token. -/
+/-- The comparative classification of a core slot. The sole core argument of a one-place
+    frame is S, a two-place frame has A and P, and a three-place frame A, R and T. -/
 def codingRole (s : Slot) : Option ArgumentRole :=
   (fr.coreSlots.idxOf? s).bind fun i ↦
     match fr.valency, i with
@@ -424,18 +421,19 @@ def np : ArgumentFrame := ⟨some .nominal, [.nominal]⟩
 /-- The double-object frame has two nominal complements. -/
 def np_np : ArgumentFrame := ⟨some .nominal, [.nominal, .nominal]⟩
 
-/-- The PP frame has one adpositional complement, selecting `p` when given. -/
+/-- The PP frame has one adpositional complement, selecting `p` when given, with the type of
+    case `p` marks when it marks one type. -/
 def pp (p : Option Adposition := none) : ArgumentFrame :=
-  ⟨some .nominal, [.adpositional (p.map (·.relation)) p]⟩
+  ⟨some .nominal, [.adpositional (p.bind Adposition.kind?) p]⟩
 
-/-- The spatial PP frame has one spatial adpositional complement, whatever its adposition: the
-    locative or directional phrase a verb of motion selects. -/
+/-- The spatial PP frame has one spatial adpositional complement, whatever its adposition, as
+    the locative or directional phrase a verb of motion selects. -/
 def spatialPP : ArgumentFrame := ⟨some .nominal, [.adpositional (some .spatial)]⟩
 
 /-- The NP + PP frame has a nominal plus an adpositional complement, selecting `p`
-    when given. -/
+    when given, with the type of case `p` marks when it marks one type. -/
 def np_pp (p : Option Adposition := none) : ArgumentFrame :=
-  ⟨some .nominal, [.nominal, .adpositional (p.map (·.relation)) p]⟩
+  ⟨some .nominal, [.nominal, .adpositional (p.bind Adposition.kind?) p]⟩
 
 /-- Finite declarative clause. -/
 def finiteClause : ArgumentFrame :=

@@ -120,8 +120,8 @@ open ArgumentStructure (PerfectAux TransitivityClass)
 
 /-! ### The internal structure of an adpositional phrase -/
 
-/-- What a transitive adposition selects: a noun phrase, a prepositional phrase, or an R-pronoun,
-the proform of a locational prepositional phrase. An intransitive adposition selects nothing,
+/-- A transitive adposition selects a noun phrase, a prepositional phrase, or an R-pronoun, the
+proform of a locational prepositional phrase. An intransitive adposition selects nothing,
 `Option.none`. -/
 inductive ComplementKind where
   | nominal
@@ -129,7 +129,7 @@ inductive ComplementKind where
   | rPronoun
   deriving DecidableEq, Repr, Fintype
 
-/-- The raising rule: a prepositional phrase or an R-pronoun raises to the specifier of the
+/-- By the raising rule, a prepositional phrase or an R-pronoun raises to the specifier of the
 phrase-internal functional projection, and a nominal complement only when the phrase is
 directional, under a semantic condition the chapter leaves open and this file idealizes to
 directionality. -/
@@ -147,16 +147,16 @@ section Phrase
 
 variable (k : ComplementKind) (d : Spatial.PathDir)
 
-/-- The three positions of the phrase, the specifier of the functional projection, the adposition,
-and the complement's base position, and where the complement is pronounced: in the specifier
-when it raises, in its base position otherwise. -/
+/-- The phrase has three positions, the specifier of the functional projection, the adposition,
+and the complement's base position, and the complement is pronounced in the specifier when it
+raises and in its base position otherwise. -/
 def position : Fin 3 := if Raises k d then 0 else 2
 
 /-- The adposition's position. -/
 def headPosition : Fin 3 := 1
 
-/-- The head direction of the phrase, read off the positions of the adposition and its complement:
-head-final exactly when the complement has raised. -/
+/-- The head direction of the phrase is read off the positions of the adposition and its
+complement, head-final exactly when the complement has raised. -/
 def headDirection : HeadDirection := .ofLT headPosition (position k d)
 
 /-- Extraction from an adpositional phrase requires the extracted element to precede the
@@ -269,15 +269,16 @@ theorem raises_nominal_of_dpRaises {inherent : Prop} {d : Spatial.PathDir}
 complement and have no postpositional use, as the fragment records, which removes them from the
 rule's overprediction. -/
 theorem pointLocative_not_postP :
-    ∀ a ∈ Helmantel2002.pointLocatives, .post ∉ a.linearization :=
-  fun a ha h ↦ by simp [Helmantel2002.pointLocative_linearization a ha] at h
+    ∀ a ∈ Helmantel2002.pointLocatives, ¬ a.IsPostposition :=
+  fun a ha h ↦ by
+    simp [Adposition.IsPostposition, Helmantel2002.pointLocative_linearization a ha] at h
 
 /-! ### The Dutch lexicon -/
 
 /-- The rule reproduces every postpositional use the grammar records: the postpositional order is
 derived from the path that use denotes. -/
 theorem linearization_direction_post :
-    ∀ a ∈ inventory, .post ∈ a.linearization →
+    ∀ a ∈ inventory, a.IsPostposition →
       linearization (some .nominal) (a.direction .post) = some .post :=
   fun a ha h ↦ (linearization_eq_post_iff _ _).2 ⟨rfl, direction_post_ne_place a ha h⟩
 
@@ -285,42 +286,42 @@ theorem linearization_direction_post :
 circumposition of the grammar is a listed preposition followed by a listed postposition or
 particle. -/
 theorem circumP_parts :
-    ∀ a ∈ inventory, a.isComplex →
-      ∃ b ∈ inventory, ∃ c ∈ inventory, a.form = .complex [b.form.text, c.form.text] ∧
-        .pre ∈ b.linearization ∧ (.post ∈ c.linearization ∨ c.intransitive) := by
+    ∀ a ∈ inventory, a.IsComplex →
+      ∃ b ∈ inventory, ∃ c ∈ inventory, a.morphs = b.morphs ++ c.morphs ∧
+        b.IsPreposition ∧ (c.IsPostposition ∨ c.IsIntransitive) := by
   decide
 
 /-- Every postposition but *af* is also a preposition, so the postpositional order is derived from
 the prepositional one; *af*, the one postposition the grammar records without a prepositional
 use, is a directional adposition whose complement always raises. -/
 theorem postP_subset_preP :
-    ∀ a ∈ inventory, .post ∈ a.linearization →
-      .pre ∈ a.linearization ∨ a.form = .simple "af" :=
+    ∀ a ∈ inventory, a.IsPostposition → a.IsPreposition ∨ a.toAdposition = af.toAdposition :=
   pre_of_post
 
 /-- The second elements *af* and *heen* of *van … af* and *over … heen* are not prepositions on
 their own, as the chapter notes, and head the raised phrase as postpositions. -/
-theorem circumP_parts_not_preP : .pre ∉ af.linearization ∧ .pre ∉ heen.linearization := by
+theorem circumP_parts_not_preP : ¬ af.IsPreposition ∧ ¬ heen.IsPreposition := by
   decide
 
 /-- An adposition with both orders is locational before its complement, *op de berg* 'on the
 mountain' against *de berg op* 'up the mountain', unless it is one of the grammar's directional
 prepositions, *over* 'across' and *voorbij* 'past', whose complement raises in either order. -/
 theorem postP_has_both_readings :
-    ∀ a ∈ inventory, .post ∈ a.linearization → .pre ∈ a.linearization →
-      a.direction .pre = .place ∨ a.form = .simple "over" ∨ a.form = .simple "voorbij" := by
+    ∀ a ∈ inventory, a.IsAmbiposition →
+      a.direction .pre = .place ∨ a.toAdposition = over₁.toAdposition ∨
+        a.toAdposition = voorbij.toAdposition := by
   decide
 
 /-- A circumposition takes only a nominal complement, the complement of the raised prepositional
 phrase. -/
 theorem circumP_complement_nominal :
-    ∀ a ∈ inventory, .circum ∈ a.linearization → a.complement = [.np] :=
-  complement_of_circum
+    ∀ a ∈ inventory, a.IsCircumposition → a.complements = {some .np} :=
+  complements_of_circum
 
 /-- Every postposition takes a nominal complement, the one that raises; *door* also takes a clause,
 in its prepositional use only. -/
 theorem postP_complement_np :
-    ∀ a ∈ inventory, .post ∈ a.linearization → .np ∈ a.complement := by
+    ∀ a ∈ inventory, a.IsPostposition → a.Takes .np := by
   decide
 
 /-- The morphologically complex prepositions resist R-pronominalization: *tijdens het journaal*
@@ -340,8 +341,8 @@ theorem no_rPron_not_postP :
 path shapes are independent of the order. -/
 theorem op_van_paths : op.direction .post = .goal ∧ van.direction .pre = .source := ⟨rfl, rfl⟩
 
-/-- The transitivity class of a verb of motion with a spatial complementive: a path makes the
-event a change of location and the verb unaccusative, a location leaves it unergative. -/
+/-- A path complementive makes the event of a verb of motion a change of location and the verb
+unaccusative, and a location complementive leaves it unergative. -/
 def verbClass (d : Spatial.PathDir) : TransitivityClass :=
   if d = .place then .unergative else .unaccusative
 
@@ -351,10 +352,10 @@ theorem selection_verbClass_eq_be_iff (r : PerfectAux) (d : Spatial.PathDir) :
     (verbClass d).selection r = .be ↔ d ≠ .place := by
   unfold verbClass; split <;> simp [*, TransitivityClass.selection]
 
-/-- *De fietser heeft op de heuvel gereden* 'the cyclist rode on the hill' against *de fietser is
-de heuvel op gereden* 'the cyclist rode up the hill': the prepositional phrase of *op* is
-locational and its verb takes *hebben* 'have', the postpositional phrase denotes a goal path and
-its verb takes *zijn* 'be'. -/
+/-- In *de fietser heeft op de heuvel gereden* 'the cyclist rode on the hill' the prepositional
+phrase of *op* is locational and its verb takes *hebben* 'have', and in *de fietser is de heuvel
+op gereden* 'the cyclist rode up the hill' the postpositional phrase denotes a goal path and its
+verb takes *zijn* 'be'. -/
 theorem perfect_op (r : PerfectAux) :
     (verbClass (op.direction .pre)).selection r = .have ∧
       (verbClass (op.direction .post)).selection r = .be :=
