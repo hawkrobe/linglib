@@ -56,10 +56,10 @@ variable {W Atom : Type*}
 information states, under the epistemic reading the states in which the agent's issues are
 settled. -/
 structure Model (W Atom : Type*) where
-  /-- `Σ(w)`, the states related to `w`. -/
+  /-- `inq w` is the set `Σ(w)` of states related to `w`. -/
   inq : W → Finset (Finset W)
-  /-- The valuation. -/
-  val : Atom → W → Bool
+  /-- `val p w` says that the atom `p` is true at the world `w`. -/
+  val : Atom → W → Prop
 
 namespace Model
 
@@ -149,13 +149,13 @@ theorem isLowerSet_image_coe [Fintype W] {S : Set (Finset W)} (hS : IsLowerSet S
 
 variable [DecidableEq W]
 
-/-- The **support set** of `φ` in `M`: the information states that settle it. Support is
+/-- The **support set** of `φ` in `M` is the set of information states that settle it. Support is
 persistent (Proposition 3.3.1), so the support set is a lower set of states, and conjunction,
 implication and inquisitive disjunction are the operations `⊓`, `⇨`, `⊔` of the Heyting algebra
 of lower sets ([ciardelli-groenendijk-roelofsen-2018]); `⊥` is supported by the empty state
 alone. -/
 def support (M : Model W Atom) : Formula Atom → LowerSet (Finset W)
-  | .atom p => ⟨Team.flat fun w ↦ M.val p w = true, Team.isLowerSet_flat _⟩
+  | .atom p => ⟨Team.flat (M.val p), Team.isLowerSet_flat _⟩
   | .bot => LowerSet.Iic ∅
   | .conj φ ψ => support M φ ⊓ support M ψ
   | .impl φ ψ => support M φ ⇨ support M ψ
@@ -166,7 +166,7 @@ def support (M : Model W Atom) : Formula Atom → LowerSet (Finset W)
 variable (M : Model W Atom) (φ ψ : Formula Atom) (s : Finset W) (w : W)
 
 @[simp] theorem mem_support_atom (p : Atom) :
-    s ∈ support M (.atom p) ↔ ∀ w ∈ s, M.val p w = true := Iff.rfl
+    s ∈ support M (.atom p) ↔ ∀ w ∈ s, M.val p w := Iff.rfl
 
 @[simp] theorem mem_support_bot : s ∈ support M (.bot : Formula Atom) ↔ s = ∅ :=
   LowerSet.mem_Iic_iff.trans Finset.subset_empty
@@ -188,7 +188,7 @@ variable (M : Model W Atom) (φ ψ : Formula Atom) (s : Finset W) (w : W)
     s ∈ support M (.ent φ) ↔ ∀ w ∈ s, ∀ t ∈ M.inq w, t ∈ support M φ := Iff.rfl
 
 /-- Support is decidable over a finite set of worlds, by structural recursion. -/
-def decidableMemSupport [Fintype W] :
+def decidableMemSupport [Fintype W] [DecidableRel M.val] :
     (φ : Formula Atom) → (s : Finset W) → Decidable (s ∈ support M φ)
   | .atom p, s => decidable_of_iff _ (mem_support_atom M s p).symm
   | .bot, s => decidable_of_iff _ (mem_support_bot M s).symm
@@ -208,7 +208,8 @@ def decidableMemSupport [Fintype W] :
     have := decidableMemSupport φ
     decidable_of_iff _ (mem_support_ent M φ s).symm
 
-instance [Fintype W] (φ : Formula Atom) (s : Finset W) : Decidable (s ∈ support M φ) :=
+instance [Fintype W] [DecidableRel M.val] (φ : Formula Atom) (s : Finset W) :
+    Decidable (s ∈ support M φ) :=
   decidableMemSupport M φ s
 
 /-- The support of a modal-free formula depends only on the valuation. -/
@@ -227,7 +228,7 @@ theorem support_eq_of_isModalFree {M M' : Model W Atom} (hval : M.val = M'.val) 
 
 /-! ### The empty state (Proposition 3.3.1) -/
 
-/-- **The empty state property**: the inconsistent state supports every formula. -/
+/-- By **the empty state property**, the inconsistent state supports every formula. -/
 theorem empty_mem_support : ∅ ∈ support M φ := by
   induction φ with
   | atom p => exact Team.empty_mem_flat _
@@ -262,8 +263,8 @@ theorem singleton_mem_support_disj :
 
 /-! ### Truth-conditional formulas (§3.4) -/
 
-/-- The truth set `|φ|_M` (§3.1): the worlds at which `φ` is true, truth being support at the
-singleton state. -/
+/-- The truth set `|φ|_M` (§3.1) is the set of worlds at which `φ` is true, truth being support
+at the singleton state. -/
 def truthSet : Set W := {w | {w} ∈ support M φ}
 
 /-- `φ` is **truth-conditional** in `M` (Definitions 2.6.3 and 3.4.1) when a state supports it
@@ -297,8 +298,8 @@ theorem TruthConditional.conj (hφ : TruthConditional M φ) (hψ : TruthConditio
   exact ⟨fun h w hw => ⟨h.1 w hw, h.2 w hw⟩,
     fun h => ⟨fun w hw => (h w hw).1, fun w hw => (h w hw).2⟩⟩
 
-/-- Proposition 3.4.7: an implication with a truth-conditional consequent is truth-conditional,
-whatever its antecedent. -/
+/-- An implication with a truth-conditional consequent is truth-conditional, whatever its
+antecedent (Proposition 3.4.7). -/
 theorem TruthConditional.impl (hψ : TruthConditional M ψ) (φ : Formula Atom) :
     TruthConditional M (.impl φ ψ) := fun s => by
   show s ∈ support M (.impl φ ψ) ↔ ∀ w ∈ s, {w} ∈ support M (.impl φ ψ)
@@ -309,12 +310,12 @@ theorem TruthConditional.impl (hψ : TruthConditional M ψ) (φ : Formula Atom) 
 
 variable (M φ ψ)
 
-/-- Proposition 3.4.8: every negation is truth-conditional. -/
+/-- Every negation is truth-conditional (Proposition 3.4.8). -/
 theorem truthConditional_neg : TruthConditional M φ.neg := (truthConditional_bot M).impl φ
 
 theorem truthConditional_disj : TruthConditional M (φ.disj ψ) := truthConditional_neg M _
 
-/-- Proposition 3.1.8: classical formulas are truth-conditional. -/
+/-- Classical formulas are truth-conditional (Proposition 3.1.8). -/
 theorem truthConditional_of_isClassical (h : φ.IsClassical) : TruthConditional M φ := by
   induction φ with
   | atom p => exact truthConditional_atom M p
@@ -325,7 +326,7 @@ theorem truthConditional_of_isClassical (h : φ.IsClassical) : TruthConditional 
   | nec φ _ => exact truthConditional_nec M φ
   | ent φ _ => exact truthConditional_ent M φ
 
-/-- Proposition 3.4.9: `¬¬φ` is supported exactly where `φ` is true at every world. -/
+/-- `¬¬φ` is supported exactly where `φ` is true at every world (Proposition 3.4.9). -/
 theorem mem_support_neg_neg : s ∈ support M φ.neg.neg ↔ ∀ w ∈ s, {w} ∈ support M φ := by
   simp only [Formula.neg, mem_support_impl, mem_support_bot]
   constructor
@@ -343,15 +344,15 @@ theorem mem_support_neg_neg : s ∈ support M φ.neg.neg ↔ ∀ w ∈ s, {w} �
 theorem truthSet_neg_neg : truthSet M φ.neg.neg = truthSet M φ :=
   Set.ext fun w => (mem_support_neg_neg M φ {w}).trans (by simp [truthSet])
 
-/-- Proposition 3.4.10: the double negation law holds exactly for statements. -/
+/-- The double negation law holds exactly for statements (Proposition 3.4.10). -/
 theorem truthConditional_iff_support_neg_neg :
     TruthConditional M φ ↔ support M φ.neg.neg = support M φ := by
   simp only [TruthConditional, SetLike.ext_iff, mem_support_neg_neg]
   exact forall_congr' fun s => Iff.comm
 
-/-- Proposition 2.5.2, the Ramsey test: for a statement `α`, `α → ψ` is supported at `s` iff
-`ψ` is supported at the `α`-worlds of `s`. -/
-theorem mem_support_impl_iff_of_truthConditional [Fintype W] {α : Formula Atom}
+/-- By the Ramsey test (Proposition 2.5.2), for a statement `α`, `α → ψ` is supported at `s`
+iff `ψ` is supported at the `α`-worlds of `s`. -/
+theorem mem_support_impl_iff_of_truthConditional [Fintype W] [DecidableRel M.val] {α : Formula Atom}
     (hα : TruthConditional M α) :
     s ∈ support M (.impl α ψ) ↔ s.filter (fun w => {w} ∈ support M α) ∈ support M ψ := by
   rw [mem_support_impl]
@@ -365,8 +366,8 @@ section Proposition
 
 variable [Fintype W]
 
-/-- The inquisitive proposition `[φ]_M` expressed by `φ` as a `Question`: the support set, carried
-from finite states to sets of worlds. -/
+/-- The inquisitive proposition `[φ]_M` expressed by `φ` is the support set as a `Question`,
+carried from finite states to sets of worlds. -/
 def proposition : Question W :=
   Question.ofLowerSet ((fun t : Finset W => (↑t : Set W)) '' (support M φ : Set (Finset W)))
     ⟨∅, empty_mem_support M φ, by simp⟩ (isLowerSet_image_coe (support M φ).lower)
@@ -425,7 +426,7 @@ theorem proposition_bot : proposition M (.bot : Formula Atom) = ⊥ := by
   · rintro ⟨t, rfl, rfl⟩; simp
   · rintro rfl; exact ⟨∅, by simp, rfl⟩
 
-/-- Proposition 3.3.5: the truth set is the union of the proposition. -/
+/-- The truth set is the union of the proposition (Proposition 3.3.5). -/
 theorem info_proposition : (proposition M φ).info = truthSet M φ := by
   ext w
   simp only [Question.info, Set.mem_sUnion]
@@ -434,8 +435,8 @@ theorem info_proposition : (proposition M φ).info = truthSet M φ := by
     exact (support M φ).lower (Finset.singleton_subset_iff.2 (Finset.mem_coe.1 hw)) ht
   · exact fun h => ⟨_, ⟨{w}, h, rfl⟩, by simp⟩
 
-/-- Definition 3.4.1 on propositions: `φ` is a statement iff it expresses the declarative
-proposition of its truth set. -/
+/-- On propositions, Definition 3.4.1 says that `φ` is a statement iff it expresses the
+declarative proposition of its truth set. -/
 theorem truthConditional_iff_proposition_eq :
     TruthConditional M φ ↔ proposition M φ = Question.ofSet (truthSet M φ) := by
   constructor
@@ -485,7 +486,7 @@ theorem support_nec_impl_nec :
 theorem support_nec_of_eq_top (h : support M φ = ⊤) : support M (.nec φ) = ⊤ :=
   top_unique fun _ _ _ _ ↦ h ▸ trivial
 
-/-- `□` distributes over inquisitive disjunction (§8.2): `□(φ \\/ ψ) ≡ □φ ∨ □ψ`. -/
+/-- `□` distributes over inquisitive disjunction, `□(φ \\/ ψ) ≡ □φ ∨ □ψ` (§8.2). -/
 theorem support_nec_inqDisj :
     support M (.nec (.inqDisj φ ψ)) = support M ((Formula.nec φ).disj (.nec ψ)) :=
   (truthConditional_nec M _).support_eq (truthConditional_disj M _ _) fun w => by
@@ -506,7 +507,7 @@ theorem support_ent_impl_ent :
 theorem support_ent_of_eq_top (h : support M φ = ⊤) : support M (.ent φ) = ⊤ :=
   top_unique fun _ _ _ _ _ _ ↦ h ▸ trivial
 
-/-- `□φ` entails `⊞φ`: each related state lies in the epistemic state, and support is
+/-- `□φ` entails `⊞φ`, since each related state lies in the epistemic state and support is
 persistent (§8.3). -/
 theorem support_nec_le_ent : support M (.nec φ) ≤ support M (.ent φ) :=
   fun _ h w hw _ ht ↦ (support M φ).lower (M.subset_access ht) (h w hw)
@@ -526,11 +527,10 @@ theorem support_ent_toInquisitive (M : ModalLogic.KripkeModel W Atom) :
 
 /-! ### The closure cell -/
 
-/-- Inquisitive disjunction breaks union closure: with `p` true only at `w₁` and `q` only at
+/-- Inquisitive disjunction breaks union closure. With `p` true only at `w₁` and `q` only at
 `w₂`, the singletons support `p \\/ q` but their union supports neither disjunct. -/
 theorem not_supClosed_inqDisj_of_witness {p q : Atom} {w₁ w₂ : W}
-    (hp₁ : M.val p w₁ = true) (hq₁ : M.val q w₁ = false)
-    (hp₂ : M.val p w₂ = false) (hq₂ : M.val q w₂ = true) :
+    (hp₁ : M.val p w₁) (hq₁ : ¬ M.val q w₁) (hp₂ : ¬ M.val p w₂) (hq₂ : M.val q w₂) :
     ¬ SupClosed (support M (.inqDisj (.atom p) (.atom q)) : Set (Finset W)) := fun h => by
   have := h (a := {w₁}) (b := {w₂}) (by simp [hp₁]) (by simp [hq₂])
   simp [hp₂, hq₁] at this

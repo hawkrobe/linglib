@@ -453,7 +453,6 @@ theorem not_atom_derives_disj_ne (p : Atom) : ¬ {.atom p} ⊢ .disj (.atom p) .
     Figure 3(b) (pp. 6–7). -/
 theorem not_poss_disj_derives_conj_poss {p q : Atom} (hpq : p ≠ q) :
     ¬ {.poss (.disj (.atom p) (.atom q))} ⊢ .conj (.poss (.atom p)) (.poss (.atom q)) := by
-  classical
   intro hd
   let M : KripkeModel Unit Atom := ⟨fun _ ↦ {()}, fun r _ ↦ r = q⟩
   have h := soundness hd M {()} fun γ hγ ↦ hγ ▸ fun _ _ ↦

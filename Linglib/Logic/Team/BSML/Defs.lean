@@ -157,8 +157,8 @@ variable {W : Type*} [DecidableEq W]
     (`⊨⁻`) when `b` is `false`. Negation flips the polarity, and the split clauses, support of
     `∨` and anti-support of `∧`, are `Team.tensor`. -/
 def eval (M : KripkeModel W Atom) : Bool → Formula Atom → Finset W → Prop
-  | true,  .atom p,       t => t ∈ Team.flat fun w ↦ M.val p w = true
-  | false, .atom p,       t => t ∈ Team.flat fun w ↦ M.val p w = false
+  | true,  .atom p,       t => t ∈ Team.flat (M.val p)
+  | false, .atom p,       t => t ∈ Team.flat fun w ↦ ¬ M.val p w
   | true,  .ne,           t => t ∈ Team.ne
   | false, .ne,           t => t ∈ ({∅} : Team.TeamProperty W)
   | true,  .neg ψ,        t => eval M false ψ t
@@ -204,8 +204,7 @@ lemma empty_supports_atom (M : KripkeModel W Atom) (p : Atom) :
 /-- The weak contradiction is supported by the empty team only. -/
 @[simp] theorem support_falsum [Inhabited Atom] (M : KripkeModel W Atom) (t : Finset W) :
     support M .falsum t ↔ t = ∅ where
-  mp := fun ⟨h₁, h₂⟩ ↦ Finset.eq_empty_iff_forall_notMem.mpr fun w hw ↦ by
-    simpa [h₁ w hw] using h₂ w hw
+  mp := fun ⟨h₁, h₂⟩ ↦ Finset.eq_empty_iff_forall_notMem.mpr fun w hw ↦ h₂ w hw (h₁ w hw)
   mpr := by rintro rfl; exact ⟨Team.empty_mem_flat _, Team.empty_mem_flat _⟩
 
 /-- The strong contradiction is supported by no team. -/
@@ -242,8 +241,8 @@ def StronglyEquivalent (φ ψ : Formula Atom) : Prop :=
     exclusion applies wherever states are quantified, in the splits here and on the outer team in
     `ConsequenceStar`; the atom, `ne` and modal clauses keep their BSML form. -/
 def evalStar (M : KripkeModel W Atom) : Bool → Formula Atom → Finset W → Prop
-  | true,  .atom p,       t => t ∈ Team.flat fun w ↦ M.val p w = true
-  | false, .atom p,       t => t ∈ Team.flat fun w ↦ M.val p w = false
+  | true,  .atom p,       t => t ∈ Team.flat (M.val p)
+  | false, .atom p,       t => t ∈ Team.flat fun w ↦ ¬ M.val p w
   | true,  .ne,           t => t ∈ Team.ne
   | false, .ne,           t => t ∈ ({∅} : Team.TeamProperty W)
   | true,  .neg ψ,        t => evalStar M false ψ t
@@ -284,7 +283,7 @@ def ConsequenceStar (φ ψ : Formula Atom) : Prop :=
 
 /-- Decidability of `eval` by structural recursion on the formula, through the operators'
     instances. -/
-def decidableEval [Fintype W] (M : KripkeModel W Atom) :
+def decidableEval [Fintype W] (M : KripkeModel W Atom) [DecidableRel M.val] :
     (pol : Bool) → (φ : Formula Atom) → (t : Finset W) → Decidable (eval M pol φ t)
   | true,  .atom _, t => by unfold eval; infer_instance
   | false, .atom _, t => by unfold eval; infer_instance
@@ -313,7 +312,7 @@ def decidableEval [Fintype W] (M : KripkeModel W Atom) :
       unfold eval
       exact @Team.nec.instDecidableMem _ _ _ (decidableEval M false ψ) t
 
-instance instDecidableEval [Fintype W] (M : KripkeModel W Atom) (pol : Bool) (φ : Formula Atom)
-    (t : Finset W) : Decidable (eval M pol φ t) := decidableEval M pol φ t
+instance instDecidableEval [Fintype W] (M : KripkeModel W Atom) [DecidableRel M.val] (pol : Bool)
+    (φ : Formula Atom) (t : Finset W) : Decidable (eval M pol φ t) := decidableEval M pol φ t
 
 end BSML

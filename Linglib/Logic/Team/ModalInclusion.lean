@@ -104,7 +104,7 @@ open scoped ModalLogic in
 /-- Classical Kripke truth of a MIL formula at a world, with `◇` and `□` the shared
     `ModalLogic.Diamond` and `ModalLogic.Box`; an inclusion atom is true at every world. -/
 def Realize (M : KripkeModel W Atom) : Formula Atom → W → Prop
-  | .atom p, w => M.val p w = true
+  | .atom p, w => M.val p w
   | .bot, _ => False
   | .incl _, _ => True
   | .neg ψ, w => ¬ Realize M ψ w
@@ -125,7 +125,7 @@ variable [DecidableEq W]
 
 /-- A team supports a formula ([anttila-haggblom-yang-2025] Definition 2.2). -/
 def eval (M : KripkeModel W Atom) : Formula Atom → Finset W → Prop
-  | .atom p,        t => t ∈ Team.flat fun w ↦ M.val p w = true
+  | .atom p,        t => t ∈ Team.flat (M.val p)
   | .bot,           t => t ∈ ({∅} : Team.TeamProperty W)
   | .incl xys,      t =>
       t ∈ Team.incl (fun w ↦ xys.map (M.val ·.1 w)) (fun w ↦ xys.map (M.val ·.2 w))
@@ -140,7 +140,7 @@ abbrev support (M : KripkeModel W Atom) (φ : Formula Atom) (t : Finset W) : Pro
   eval M φ t
 
 @[simp] lemma support_atom (M : KripkeModel W Atom) (p : Atom) (t : Finset W) :
-    support M (.atom p) t ↔ ∀ w ∈ t, M.val p w = true := Iff.rfl
+    support M (.atom p) t ↔ ∀ w ∈ t, M.val p w := Iff.rfl
 
 @[simp] lemma support_bot (M : KripkeModel W Atom) (t : Finset W) :
     support M (.bot : Formula Atom) t ↔ t = ∅ := Iff.rfl
@@ -148,8 +148,8 @@ abbrev support (M : KripkeModel W Atom) (φ : Formula Atom) (t : Finset W) : Pro
 @[simp] lemma support_incl (M : KripkeModel W Atom) (xys : List (Atom × Atom))
     (t : Finset W) :
     support M (.incl xys) t ↔
-      ∀ w₁ ∈ t, ∃ w₂ ∈ t, ∀ xy ∈ xys, M.val xy.1 w₁ = M.val xy.2 w₂ := by
-  simp only [support, eval, Team.mem_incl, List.map_inj_left]
+      ∀ w₁ ∈ t, ∃ w₂ ∈ t, ∀ xy ∈ xys, (M.val xy.1 w₁ ↔ M.val xy.2 w₂) := by
+  simp only [support, eval, Team.mem_incl, List.map_inj_left, eq_iff_iff]
 
 @[simp] lemma support_neg (M : KripkeModel W Atom) (φ : Formula Atom) (t : Finset W) :
     support M (.neg φ) t ↔ ∀ w ∈ t, ¬ support M φ {w} := Iff.rfl
@@ -214,13 +214,13 @@ theorem support_empty (M : KripkeModel W Atom) (φ : Formula Atom) :
     own and `w₁`'s `a`-value but `w₁` does not match itself, then `{w₁, w₂}` supports `a ⊆ b`
     and `{w₁}` does not. -/
 theorem not_isLowerSet_incl_of_witness {a b : Atom} {w₁ w₂ : W} {M : KripkeModel W Atom}
-    (hpair : M.val a w₁ = M.val b w₂) (hself : M.val a w₂ = M.val b w₂)
-    (hwit : M.val a w₁ ≠ M.val b w₁) :
+    (hpair : M.val a w₁ ↔ M.val b w₂) (hself : M.val a w₂ ↔ M.val b w₂)
+    (hwit : ¬ (M.val a w₁ ↔ M.val b w₁)) :
     ¬ IsLowerSet { t : Finset W | support M (.incl [(a, b)]) t } := by
   simpa only [support, eval, Set.ofPred_mem_eq] using
     Team.not_isLowerSet_incl (f := fun w ↦ [(a, b)].map (M.val ·.1 w))
       (g := fun w ↦ [(a, b)].map (M.val ·.2 w)) (a := w₁) (b := w₂) (by simp [hpair])
-      (by simp [hself]) (by simp [hwit])
+      (by simp [hself]) (by simpa [eq_iff_iff] using hwit)
 
 /-! ### Bisimulation invariance -/
 
@@ -235,11 +235,11 @@ variable {W' : Type*} [DecidableEq W'] {M : KripkeModel W Atom} {M' : KripkeMode
 theorem invariant_eval {k : ℕ} (φ : Formula Atom) (hd : φ.modalDepth ≤ k) :
     Team.Invariant (WorldBisim k M · M' ·) {t | eval M φ t} {t | eval M' φ t} := by
   induction φ generalizing k with
-  | atom p => exact Team.invariant_flat fun _ _ h ↦ by rw [h.val_eq]
+  | atom p => exact Team.invariant_flat fun _ _ h ↦ h.val_iff p
   | bot => exact Team.invariant_singleton_empty
   | incl xys =>
-    exact Team.invariant_incl (fun _ _ h ↦ List.map_congr_left fun x _ ↦ h.val_eq x.1)
-      fun _ _ h ↦ List.map_congr_left fun x _ ↦ h.val_eq x.2
+    exact Team.invariant_incl (fun _ _ h ↦ List.map_congr_left fun x _ ↦ propext (h.val_iff x.1))
+      fun _ _ h ↦ List.map_congr_left fun x _ ↦ propext (h.val_iff x.2)
   | neg ψ ih => exact Team.invariant_flat fun _ _ h ↦ not_congr ((ih hd).singleton h)
   | conj ψ₁ ψ₂ ih₁ ih₂ =>
     obtain ⟨hd₁, hd₂⟩ := max_le_iff.mp hd

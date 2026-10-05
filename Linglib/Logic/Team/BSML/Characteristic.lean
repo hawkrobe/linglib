@@ -58,8 +58,8 @@ def verum [Inhabited Atom] : Formula Atom :=
   .disj (.atom default) (.neg (.atom default))
 
 @[simp] theorem realize_verum [Inhabited Atom] (M : KripkeModel W Atom) (w : W) :
-    Realize M verum w := by
-  cases M.val default w <;> simp [verum, Realize]
+    Realize M verum w :=
+  em (M.val default w)
 
 @[simp] theorem neFree_verum [Inhabited Atom] : (verum : Formula Atom).NEFree :=
   ⟨trivial, trivial⟩
@@ -158,15 +158,17 @@ end WorldType
 
 variable {n : ℕ} (e : Fin n → Atom)
 
+open scoped Classical in
 /-- `worldType e M k w` is the type of depth `k` of the world `w`, over the atoms enumerated
     by `e`. -/
 noncomputable def worldType (M : KripkeModel W Atom) : (k : ℕ) → W → WorldType n k
-  | 0, w => fun i ↦ M.val (e i) w
-  | k + 1, w => (fun i ↦ M.val (e i) w, (M.access w).image (worldType M k))
+  | 0, w => fun i ↦ decide (M.val (e i) w)
+  | k + 1, w => (fun i ↦ decide (M.val (e i) w), (M.access w).image (worldType M k))
 
+open scoped Classical in
 omit [Inhabited Atom] in
 theorem val_worldType (M : KripkeModel W Atom) :
-    ∀ (k : ℕ) (w : W), (worldType e M k w).val = fun i ↦ M.val (e i) w
+    ∀ (k : ℕ) (w : W), (worldType e M k w).val = fun i ↦ decide (M.val (e i) w)
   | 0, _ | _ + 1, _ => rfl
 
 /-! ### Hintikka formulas -/
@@ -229,13 +231,15 @@ theorem strongHintikka_empty {k : ℕ} :
 
 variable {e}
 
+open scoped Classical in
 omit [Inhabited Atom] in
 theorem realize_literal (M : KripkeModel W Atom) (i : Fin n) (b : Bool) (w : W) :
-    Realize M (literal e i b) w ↔ M.val (e i) w = b := by
+    Realize M (literal e i b) w ↔ decide (M.val (e i) w) = b := by
   unfold literal; cases b <;> simp
 
+open scoped Classical in
 theorem realize_literals (M : KripkeModel W Atom) (a : Fin n → Bool) (w : W) :
-    Realize M (literals e a) w ↔ (fun i ↦ M.val (e i) w) = a := by
+    Realize M (literals e a) w ↔ (fun i ↦ decide (M.val (e i) w)) = a := by
   rw [literals, realize_bigConj, funext_iff]
   simp [realize_literal]
 
@@ -263,10 +267,12 @@ theorem worldType_eq_iff_worldBisim (he : Function.Surjective e) {M : KripkeMode
     ∀ (k : ℕ) (w : W) (w' : W'), worldType e M k w = worldType e M' k w' ↔ WorldBisim k M w M' w'
   | 0, w, w' => by
     rw [worldType, worldType, funext_iff, WorldBisim]
-    exact (he.forall (p := fun p ↦ M.val p w = M'.val p w')).symm
+    simp only [decide_eq_decide]
+    exact (he.forall (p := fun p ↦ (M.val p w ↔ M'.val p w'))).symm
   | k + 1, w, w' => by
     rw [worldType, worldType, Prod.ext_iff, funext_iff, WorldBisim, Finset.ext_iff]
-    refine and_congr (he.forall (p := fun p ↦ M.val p w = M'.val p w')).symm ?_
+    simp only [decide_eq_decide]
+    refine and_congr (he.forall (p := fun p ↦ (M.val p w ↔ M'.val p w'))).symm ?_
     simp only [Finset.mem_image]
     constructor
     · intro h

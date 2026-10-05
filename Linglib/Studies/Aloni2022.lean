@@ -133,36 +133,37 @@ inductive Atom
   deriving DecidableEq, Fintype
 
 /-- `model R` is the paper's Kripke model on the four worlds with accessibility `R`. -/
-def model (R : Finset Atom → Finset (Finset Atom)) : KripkeModel (Finset Atom) Atom :=
+abbrev model (R : Finset Atom → Finset (Finset Atom)) : KripkeModel (Finset Atom) Atom :=
   ⟨R, fun p w ↦ p ∈ w⟩
 
 /-- `state` is the running state `{w_a, w_b}` of Figures 1, 2(a), 3 and 5. -/
 def state : Finset (Finset Atom) := {{.a}, {.b}}
 
 /-- Figures 1–2 draw no arrows, so only atoms and disjunction are evaluated. -/
-def propositional : KripkeModel (Finset Atom) Atom := model fun _ ↦ ∅
+abbrev propositional : KripkeModel (Finset Atom) Atom := model fun _ ↦ ∅
 
 /-- Figure 3(a) has `R[w_a] = R[w_b] = {w_ab, w_∅}`. -/
-def fig3a : KripkeModel (Finset Atom) Atom := model fun w ↦ if w ∈ state then {{.a, .b}, ∅} else ∅
+abbrev fig3a : KripkeModel (Finset Atom) Atom :=
+  model fun w ↦ if w ∈ state then {{.a, .b}, ∅} else ∅
 
 /-- Figure 3(b) has `R[w_a] = R[w_b] = {w_a, w_b}`. -/
-def fig3b : KripkeModel (Finset Atom) Atom := model fun w ↦ if w ∈ state then state else ∅
+abbrev fig3b : KripkeModel (Finset Atom) Atom := model fun w ↦ if w ∈ state then state else ∅
 
 /-- Figure 3(c) has `R[w_a] = {w_ab}`, `R[w_b] = {w_a, w_∅}`. -/
-def fig3c : KripkeModel (Finset Atom) Atom :=
+abbrev fig3c : KripkeModel (Finset Atom) Atom :=
   model fun w ↦ if w = {.a} then {{.a, .b}} else if w = {.b} then {{.a}, ∅} else ∅
 
 /-- Figure 4(a) has `R[w_ab] = {w_a}`. -/
-def fig4a : KripkeModel (Finset Atom) Atom := model fun w ↦ if w = {.a, .b} then {{.a}} else ∅
+abbrev fig4a : KripkeModel (Finset Atom) Atom := model fun w ↦ if w = {.a, .b} then {{.a}} else ∅
 
 /-- Figure 4(b) has `R[w_ab] = {w_a, w_b}`. -/
-def fig4b : KripkeModel (Finset Atom) Atom := model fun w ↦ if w = {.a, .b} then state else ∅
+abbrev fig4b : KripkeModel (Finset Atom) Atom := model fun w ↦ if w = {.a, .b} then state else ∅
 
 /-- Figure 5(a) has `R[w_a] = R[w_b] = {w_b}`. -/
-def fig5a : KripkeModel (Finset Atom) Atom := model fun w ↦ if w ∈ state then {{.b}} else ∅
+abbrev fig5a : KripkeModel (Finset Atom) Atom := model fun w ↦ if w ∈ state then {{.b}} else ∅
 
 /-- Figure 5(b) has `R[w_a] = {w_a}`, `R[w_b] = {w_b}`. -/
-def fig5b : KripkeModel (Finset Atom) Atom := model fun w ↦ if w ∈ state then {w} else ∅
+abbrev fig5b : KripkeModel (Finset Atom) Atom := model fun w ↦ if w ∈ state then {w} else ∅
 
 /-- `aOrB` is the disjunction `a ∨ b`. -/
 def aOrB : Formula Atom := .disj (.atom .a) (.atom .b)
