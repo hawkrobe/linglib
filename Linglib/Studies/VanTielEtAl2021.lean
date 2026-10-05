@@ -3,6 +3,7 @@ module
 public import Linglib.Pragmatics.RSA.Basic
 public import Linglib.Fragments.English.Determiners
 public import Linglib.Data.Examples.VanTielEtAl2021
+public import Linglib.Data.Experiments.VanTielEtAl2021
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Probability.Kernel.Composition.Comp
 
@@ -24,7 +25,8 @@ models, since it prefers the true word with the smaller extension.
 * `speakerLit`, `listenerLit`, `speakerPrag`: the literal speaker, the literal listener and the
   pragmatic speaker.
 * `withConfusion`: production under imprecise number representation.
-* `direction`: the threshold direction of an English quantity word, read off its reading.
+* `Word.monotonicity`: the monotonicity Experiment 2 assigned a word, which fixes the side of its
+  threshold.
 
 ## Main results
 
@@ -35,6 +37,8 @@ models, since it prefers the true word with the smaller extension.
 * `gq_no_entailment`, `some_few_no_entailment`: *some* and *few* compete without entailment.
 * `monotone_gq`, `antitone_gq`: a word with a lower bound is monotone in the intersection set
   size, and a word with an upper bound antitone.
+* `monotonicity_eq_decreasing_iff`: on the words the English fragment shares with the study,
+  Experiment 2's coding agrees with the scope antitonicity of the fragment's readings.
 * `pt_lt_pt_of_abs_lt`: the prototype semantics is gradient by itself.
 
 ## Implementation notes
@@ -43,10 +47,8 @@ States are the intersection set sizes `Fin (n + 1)` and speakers are kernels fro
 words built with `Kernel.ofWeights`; the literal listener has a uniform prior over states.
 Thresholds, prototypes, spreads and saliences are parameters, not the fitted posterior values,
 and the Weber-fraction confusion kernel of Experiment 3 is an arbitrary kernel on states. The
-paper takes the monotonicity of each word from the judgments of Experiment 2. Here the direction
-of an English quantity word is derived from whether its reading in
-`Fragments/English/Determiners.lean` is antitone in its scope, which on the six scale words gives
-the experiment's classification, the non-monotone *half* included. The model comparison of
+words are the paper's seventeen, and the side of a word's threshold is the monotonicity
+Experiment 2 assigned it, read from `Data.Experiments.VanTielEtAl2021`. The model comparison of
 Table 1 and the ratings of Experiment 4 are not formalized. The examples are the rows of
 `Data.Examples.VanTielEtAl2021`.
 
@@ -69,22 +71,15 @@ open scoped ENNReal
 /-- The states are the intersection set sizes of a display of `n` circles. -/
 abbrev State (n : ℕ) := Fin (n + 1)
 
-/-- A quantity word's threshold is a lower bound for a monotone-increasing word and an upper
-bound for a monotone-decreasing one. -/
-inductive Direction where
-  | increasing
-  | decreasing
-  deriving DecidableEq, Repr
-
 variable {n : ℕ} {M : Type*}
 
 /-- A lexical meaning function gives the truth value of a word at a state. -/
 abbrev Lexicon (n : ℕ) (M : Type*) := M → State n → ℝ
 
 /-- In the generalized-quantifier lexicon a word is true at the states on its side of its
-threshold. -/
-def gq (dir : M → Direction) (θ : M → ℕ) : Lexicon n M := fun m t ↦
-  match dir m with
+threshold, above it for a monotone-increasing word and below it for a monotone-decreasing one. -/
+def gq (mono : M → Monotonicity) (θ : M → ℕ) : Lexicon n M := fun m t ↦
+  match mono m with
   | .increasing => if θ m ≤ t.val then 1 else 0
   | .decreasing => if t.val ≤ θ m then 1 else 0
 
@@ -93,32 +88,32 @@ prototype `p`, scaled by the spread `d`. -/
 noncomputable def pt (p d : M → ℝ) : Lexicon n M := fun m t ↦
   Real.exp (-(((t.val : ℝ) - p m) / d m) ^ 2)
 
-theorem gq_eq_one_or_zero (dir : M → Direction) (θ : M → ℕ) (m : M) (t : State n) :
-    gq dir θ m t = 1 ∨ gq dir θ m t = 0 := by
+theorem gq_eq_one_or_zero (mono : M → Monotonicity) (θ : M → ℕ) (m : M) (t : State n) :
+    gq mono θ m t = 1 ∨ gq mono θ m t = 0 := by
   unfold gq
   split <;> split_ifs <;> simp
 
 /-- *Some* and *few* stand in no entailment relation. With a lower bound for *some* and an upper
 bound for *few* inside the range, *few* is true and *some* false of an empty intersection, and
 the other way round of a full one. -/
-theorem gq_no_entailment (dir : M → Direction) (θ : M → ℕ) {m m' : M}
-    (hm : dir m = .increasing) (hθm : 1 ≤ θ m) (hθm' : θ m ≤ n) (hm' : dir m' = .decreasing)
+theorem gq_no_entailment (mono : M → Monotonicity) (θ : M → ℕ) {m m' : M}
+    (hm : mono m = .increasing) (hθm : 1 ≤ θ m) (hθm' : θ m ≤ n) (hm' : mono m' = .decreasing)
     (hθ : θ m' < n) :
-    gq dir θ m' (0 : State n) = 1 ∧ gq dir θ m (0 : State n) = 0 ∧
-      gq dir θ m (Fin.last n) = 1 ∧ gq dir θ m' (Fin.last n) = 0 := by
+    gq mono θ m' (0 : State n) = 1 ∧ gq mono θ m (0 : State n) = 0 ∧
+      gq mono θ m (Fin.last n) = 1 ∧ gq mono θ m' (Fin.last n) = 0 := by
   simp [gq, hm, hm', Fin.val_last]
   omega
 
 /-- A word with a lower bound is true at more states as the intersection grows. -/
-theorem monotone_gq (dir : M → Direction) (θ : M → ℕ) {m : M} (h : dir m = .increasing) :
-    Monotone (gq (n := n) dir θ m) := fun t t' (htt' : t.val ≤ t'.val) ↦ by
+theorem monotone_gq (mono : M → Monotonicity) (θ : M → ℕ) {m : M} (h : mono m = .increasing) :
+    Monotone (gq (n := n) mono θ m) := fun t t' (htt' : t.val ≤ t'.val) ↦ by
   simp only [gq, h]
   split_ifs with h₁ h₂
   exacts [le_rfl, absurd (h₁.trans htt') h₂, zero_le_one, le_rfl]
 
 /-- A word with an upper bound is true at fewer states as the intersection grows. -/
-theorem antitone_gq (dir : M → Direction) (θ : M → ℕ) {m : M} (h : dir m = .decreasing) :
-    Antitone (gq (n := n) dir θ m) := fun t t' (htt' : t.val ≤ t'.val) ↦ by
+theorem antitone_gq (mono : M → Monotonicity) (θ : M → ℕ) {m : M} (h : mono m = .decreasing) :
+    Antitone (gq (n := n) mono θ m) := fun t t' (htt' : t.val ≤ t'.val) ↦ by
   simp only [gq, h]
   split_ifs with h₁ h₂
   exacts [le_rfl, absurd (htt'.trans h₁) h₂, zero_le_one, le_rfl]
@@ -138,19 +133,19 @@ theorem pt_lt_pt_of_abs_lt (p d : M → ℝ) (m : M) {t t' : State n} (hd : 0 < 
   exact pow_lt_pow_left₀ h (abs_nonneg _) two_ne_zero
 
 /-- The extension of a word is the set of states where it is true. -/
-noncomputable def extension (n : ℕ) (dir : M → Direction) (θ : M → ℕ) (m : M) :
+noncomputable def extension (n : ℕ) (mono : M → Monotonicity) (θ : M → ℕ) (m : M) :
     Finset (State n) :=
-  Finset.univ.filter fun t ↦ gq dir θ m t = 1
+  Finset.univ.filter fun t ↦ gq mono θ m t = 1
 
-theorem gq_nonneg (dir : M → Direction) (θ : M → ℕ) (m : M) (t : State n) :
-    0 ≤ gq dir θ m t := by
-  rcases gq_eq_one_or_zero dir θ m t with h | h <;> simp [h]
+theorem gq_nonneg (mono : M → Monotonicity) (θ : M → ℕ) (m : M) (t : State n) :
+    0 ≤ gq mono θ m t := by
+  rcases gq_eq_one_or_zero mono θ m t with h | h <;> simp [h]
 
-theorem sum_gq (dir : M → Direction) (θ : M → ℕ) (m : M) :
-    ∑ t : State n, gq dir θ m t = (extension n dir θ m).card := by
+theorem sum_gq (mono : M → Monotonicity) (θ : M → ℕ) (m : M) :
+    ∑ t : State n, gq mono θ m t = (extension n mono θ m).card := by
   rw [extension, Finset.card_filter, Nat.cast_sum]
   refine Finset.sum_congr rfl fun t _ ↦ ?_
-  rcases gq_eq_one_or_zero dir θ m t with h | h <;> simp [h]
+  rcases gq_eq_one_or_zero mono θ m t with h | h <;> simp [h]
 
 /-! ### Speakers -/
 
@@ -196,61 +191,84 @@ theorem speakerLit_real_eq_of_eq (L : Lexicon n M) (sal : M → ℝ) {m m' : M} 
 
 /-- Under the threshold semantics the literal listener recovers a state from a word true there
 with the reciprocal of the size of the word's extension. -/
-theorem listenerLit_real_gq (dir : M → Direction) (θ : M → ℕ) {m : M} {t : State n}
-    (h : gq dir θ m t = 1) :
-    (listenerLit (gq dir θ) m).real {t} = 1 / (extension n dir θ m).card := by
+theorem listenerLit_real_gq (mono : M → Monotonicity) (θ : M → ℕ) {m : M} {t : State n}
+    (h : gq mono θ m t = 1) :
+    (listenerLit (gq mono θ) m).real {t} = 1 / (extension n mono θ m).card := by
   rw [listenerLit, Kernel.ofWeights_real_singleton _ _ (fun _ ↦ ENNReal.ofReal_ne_top),
-    ENNReal.toReal_ofReal (gq_nonneg dir θ m t), h,
-    Finset.sum_congr rfl (fun t' _ ↦ ENNReal.toReal_ofReal (gq_nonneg dir θ m t')), sum_gq]
+    ENNReal.toReal_ofReal (gq_nonneg mono θ m t), h,
+    Finset.sum_congr rfl (fun t' _ ↦ ENNReal.toReal_ofReal (gq_nonneg mono θ m t')), sum_gq]
 
 /-- Among words true at a state and equally salient, the pragmatic speaker prefers the one with
 the smaller extension, the more informative one, which is focality. -/
-theorem speakerPrag_real_lt_of_card_lt (dir : M → Direction) (θ : M → ℕ) {sal : M → ℝ}
+theorem speakerPrag_real_lt_of_card_lt (mono : M → Monotonicity) (θ : M → ℕ) {sal : M → ℝ}
     (hsal : ∀ m, 0 < sal m) {α : ℝ} (hα : 0 < α) {m m' : M} {t : State n}
-    (hm : gq dir θ m t = 1) (hm' : gq dir θ m' t = 1) (hs : sal m = sal m')
-    (hcard : (extension n dir θ m).card < (extension n dir θ m').card) :
-    (speakerPrag (gq dir θ) sal α t).real {m'} < (speakerPrag (gq dir θ) sal α t).real {m} := by
-  have hcm : 0 < (extension n dir θ m).card := Finset.card_pos.2 ⟨t, by simp [extension, hm]⟩
-  have hwm : 0 < sal m * ((listenerLit (gq dir θ) m).real {t}) ^ α := by
-    rw [listenerLit_real_gq dir θ hm]
+    (hm : gq mono θ m t = 1) (hm' : gq mono θ m' t = 1) (hs : sal m = sal m')
+    (hcard : (extension n mono θ m).card < (extension n mono θ m').card) :
+    (speakerPrag (gq mono θ) sal α t).real {m'} < (speakerPrag (gq mono θ) sal α t).real {m} := by
+  have hcm : 0 < (extension n mono θ m).card := Finset.card_pos.2 ⟨t, by simp [extension, hm]⟩
+  have hwm : 0 < sal m * ((listenerLit (gq mono θ) m).real {t}) ^ α := by
+    rw [listenerLit_real_gq mono θ hm]
     exact mul_pos (hsal m) (Real.rpow_pos_of_pos (by positivity) _)
-  have h0 : (∑ m'', ENNReal.ofReal (sal m'' * ((listenerLit (gq dir θ) m'').real {t}) ^ α)) ≠ 0 :=
+  have h0 : (∑ m'', ENNReal.ofReal (sal m'' * ((listenerLit (gq mono θ) m'').real {t}) ^ α)) ≠ 0 :=
     fun h ↦ (ENNReal.ofReal_pos.2 hwm).ne' ((Finset.sum_eq_zero_iff.1 h) m (Finset.mem_univ m))
-  have htop : (∑ m'', ENNReal.ofReal (sal m'' * ((listenerLit (gq dir θ) m'').real {t}) ^ α)) ≠ ∞ :=
+  have htop :
+      (∑ m'', ENNReal.ofReal (sal m'' * ((listenerLit (gq mono θ) m'').real {t}) ^ α)) ≠ ∞ :=
     ENNReal.sum_ne_top.2 fun _ _ ↦ ENNReal.ofReal_ne_top
   rw [speakerPrag, Kernel.ofWeights_real_singleton_lt_iff _ h0 htop,
-    ENNReal.ofReal_lt_ofReal_iff hwm, listenerLit_real_gq dir θ hm, listenerLit_real_gq dir θ hm',
+    ENNReal.ofReal_lt_ofReal_iff hwm, listenerLit_real_gq mono θ hm, listenerLit_real_gq mono θ hm',
     ← hs]
   refine mul_lt_mul_of_pos_left (Real.rpow_lt_rpow (by positivity) ?_ hα) (hsal m)
   exact one_div_lt_one_div_of_lt (by exact_mod_cast hcm) (by exact_mod_cast hcard)
 
-/-! ### The canonical quantity words -/
+/-! ### The quantity words of the study -/
+
+/-- The monotonicity of a word is the one Experiment 2 assigned it. -/
+def Word.monotonicity (w : Word) : Monotonicity := (classification w).monotonicity
+
+/-- *Some* and *few* compete without entailment for any thresholds inside the range. -/
+theorem some_few_no_entailment (θ : Word → ℕ) (hs : 1 ≤ θ .some) (hs' : θ .some ≤ n)
+    (hf : θ .few < n) :
+    gq Word.monotonicity θ .few (0 : State n) = 1 ∧
+      gq Word.monotonicity θ .some (0 : State n) = 0 ∧
+        gq Word.monotonicity θ .some (Fin.last n) = 1 ∧
+          gq Word.monotonicity θ .few (Fin.last n) = 0 :=
+  gq_no_entailment Word.monotonicity θ rfl hs hs' rfl hf
+
+/-! ### The English quantity words -/
 
 open English.Determiners Quantifier GQ
 open scoped Semantics
 
-open Classical in
-/-- A quantity word sets an upper bound when it has a reading antitone in its scope on every
-finite domain, and a lower bound otherwise. -/
-noncomputable def direction (w : QuantityWord) : Direction :=
-  if ∃ d ∈ (⟦w⟧ : Set Family.{0}), ∀ (α : Type) [Fintype α], ScopeAntitone (d α) then .decreasing
-  else .increasing
+/-- A word of the study is a quantity word of `Fragments/English/Determiners.lean` when the
+fragment has it. -/
+def Word.toQuantityWord? : Word → Option QuantityWord
+  | .none => .some .none_
+  | .few => .some .few
+  | .some => .some .some_
+  | .half => .some .half
+  | .many => .some .many
+  | .most => .some .most
+  | .all => .some .all
+  | _ => .none
 
-open Classical in
-theorem direction_few : direction .few = .decreasing := by
-  rw [direction, ite_eq_left_iff]
-  exact fun h ↦ absurd ⟨_, rfl, fun _ _ ↦ scopeAntitone_few⟩ h
-
-open Classical in
-theorem direction_some : direction .some_ = .increasing := by
-  rw [direction, ite_eq_right_iff]
-  exact fun ⟨_, (hd : _ = Family.some), h⟩ ↦ absurd (hd ▸ h PUnit) not_scopeAntitone_some
-
-/-- *Some* and *few* compete without entailment for any thresholds inside the range. -/
-theorem some_few_no_entailment (θ : QuantityWord → ℕ) (hs : 1 ≤ θ .some_) (hs' : θ .some_ ≤ n)
-    (hf : θ .few < n) :
-    gq direction θ .few (0 : State n) = 1 ∧ gq direction θ .some_ (0 : State n) = 0 ∧
-      gq direction θ .some_ (Fin.last n) = 1 ∧ gq direction θ .few (Fin.last n) = 0 :=
-  gq_no_entailment direction θ direction_some hs hs' direction_few hf
+/-- Experiment 2 coded a word the fragment shares monotone decreasing exactly when the word has a
+reading antitone in its scope on every finite domain. *Half*, whose reading is neither monotone
+nor antitone, was coded increasing. -/
+theorem monotonicity_eq_decreasing_iff {w : Word} {q : QuantityWord}
+    (h : w.toQuantityWord? = some q) :
+    w.monotonicity = .decreasing ↔
+      ∃ d ∈ (⟦q⟧ : Set Family.{0}), ∀ (α : Type) [Fintype α], ScopeAntitone (d α) := by
+  cases w <;> simp only [Word.toQuantityWord?, reduceCtorEq, Option.some.injEq] at h <;> subst h
+  · exact iff_of_true rfl ⟨_, rfl, fun _ _ ↦ scopeAntitone_no⟩
+  · exact iff_of_true rfl ⟨_, rfl, fun _ _ ↦ scopeAntitone_few⟩
+  · exact iff_of_false (by decide) fun ⟨_, (hd : _ = Family.some), h⟩ ↦
+      not_scopeAntitone_some (hd ▸ h PUnit)
+  · exact iff_of_false (by decide) fun ⟨_, (hd : _ = Family.half), h⟩ ↦
+      not_scopeAntitone_half (by subst hd; exact h (Fin 3))
+  · exact iff_of_false (by decide) fun ⟨_, hd, _⟩ ↦ hd
+  · exact iff_of_false (by decide) fun ⟨_, (hd : _ = Family.most), h⟩ ↦
+      not_scopeAntitone_most (hd ▸ h PUnit)
+  · exact iff_of_false (by decide) fun ⟨_, (hd : _ = Family.every), h⟩ ↦
+      not_scopeAntitone_every (hd ▸ h PUnit)
 
 end VanTielEtAl2021

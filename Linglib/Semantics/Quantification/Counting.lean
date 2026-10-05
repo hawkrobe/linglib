@@ -439,6 +439,12 @@ theorem scopeMonotone_most : ScopeMonotone (most : GQ α) := by
     count_le_of_imp fun x ⟨hR, hNS'⟩ => ⟨hR, fun hS => hNS' (hSS' x hS)⟩
   omega
 
+/-- On a nonempty domain `most` is not scope antitone, since `most ⊤ ⊤` holds and `most ⊤ ⊥`
+fails. -/
+theorem not_scopeAntitone_most [Nonempty α] : ¬ ScopeAntitone (most : GQ α) := fun h ↦ by
+  have := h (fun _ ↦ True) (bot_le (a := fun _ ↦ True))
+  simp [most, count, countOn] at this
+
 theorem scopeMonotone_atLeast (n : Nat) :
     ScopeMonotone (atLeast (α := α) n) := by
   intro R S S' hSS' h
