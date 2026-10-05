@@ -134,14 +134,11 @@ theorem grammar_induction
       (hcs : ∀ c ∈ cs, c.Licensed g.Licenses), (∀ c (hc : c ∈ cs), motive c (hcs c hc)) →
         motive (node (.nonterminal A) cs) (.nonterminal A cs hrule hcs))
     {t : RoseTree (Symbol T g.NT)} (ht : t.Licensed g.Licenses) : motive t ht := by
-  induction t with
-  | node s cs ih =>
+  induction ht using RoseTree.Licensed.induction with
+  | node s cs hR hcs ih =>
     cases s with
-    | terminal a =>
-      obtain rfl := ht.eq_nil_of_terminal
-      exact terminal a
-    | nonterminal A =>
-      exact nonterminal A cs ht.rule_mem (fun _ hc ↦ ht.of_mem hc) fun c hc ↦ ih c hc _
+    | terminal a => obtain rfl : cs = [] := List.map_eq_nil_iff.mp hR; exact terminal a
+    | nonterminal A => exact nonterminal A cs hR hcs ih
 
 end Licensed
 
