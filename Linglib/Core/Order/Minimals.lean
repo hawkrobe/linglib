@@ -123,6 +123,10 @@ instance [Fintype α] (p : Preorder α) [DecidableRel p.le] (s : Set α) [Decida
     (a : α) : Decidable (a ∈ p.minimals s) :=
   decidable_of_iff (a ∈ s ∧ ∀ b, b ∈ s → p.le b a → p.le a b) Iff.rfl
 
+instance {β : Type*} [Preorder β] [Fintype β] [DecidableLE β] {P : β → Prop}
+    [DecidablePred P] (b : β) : Decidable (Minimal P b) :=
+  decidable_of_iff (P b ∧ ∀ c, P c → c ≤ b → b ≤ c) Iff.rfl
+
 /-! ### Preorders pulled back along a map -/
 
 section lift
