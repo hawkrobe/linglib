@@ -28,7 +28,7 @@ structure pointwise (`⊓`/`⊔` via `Pi.instLattice`).
 
 namespace Trivalent
 
-/-- Three-valued propositions: functions from worlds to `Trivalent`. -/
+/-- A three-valued proposition is a function from worlds to `Trivalent`. -/
 abbrev Prop3 (W : Type*) := W → Trivalent
 
 namespace Prop3
@@ -49,13 +49,13 @@ def metaAssert (p : Prop3 W) : Prop3 W := λ w => Trivalent.metaAssert (p w)
 
 /-! ### Extensions -/
 
-/-- Positive extension: worlds where the proposition is true. -/
+/-- The positive extension collects the worlds where the proposition is true. -/
 def posExt (p : Prop3 W) : Set W := {w | p w = .true}
 
-/-- Negative extension: worlds where the proposition is false. -/
+/-- The negative extension collects the worlds where the proposition is false. -/
 def negExt (p : Prop3 W) : Set W := {w | p w = .false}
 
-/-- Extension gap: worlds where the proposition is neither true nor false. -/
+/-- The extension gap collects the worlds where the proposition is neither true nor false. -/
 def gapExt (p : Prop3 W) : Set W := {w | p w = .indet}
 
 @[simp] theorem mem_posExt {p : Prop3 W} {w : W} :
@@ -66,6 +66,15 @@ def gapExt (p : Prop3 W) : Set W := {w | p w = .indet}
 
 @[simp] theorem mem_gapExt {p : Prop3 W} {w : W} :
     w ∈ p.gapExt ↔ p w = .indet := Iff.rfl
+
+instance (p : Prop3 W) : DecidablePred (· ∈ p.posExt) :=
+  fun w ↦ inferInstanceAs (Decidable (p w = .true))
+
+instance (p : Prop3 W) : DecidablePred (· ∈ p.negExt) :=
+  fun w ↦ inferInstanceAs (Decidable (p w = .false))
+
+instance (p : Prop3 W) : DecidablePred (· ∈ p.gapExt) :=
+  fun w ↦ inferInstanceAs (Decidable (p w = .indet))
 
 /-- The three extensions cover the world space. -/
 theorem posExt_union_negExt_union_gapExt (p : Prop3 W) :
@@ -130,11 +139,12 @@ true otherwise, so that a quantified presupposition projects existentially. The
 existential is its dual. -/
 
 open Classical in
-/-- Haug's universal quantifier over a trivalent predicate. -/
+/-- Haug's universal quantifier evaluates a trivalent predicate: undefined only when every
+instance is, false when some instance is, and true otherwise. -/
 noncomputable def forall' (p : Prop3 W) : Trivalent :=
   if ∀ w, p w = .indet then .indet else if ∃ w, p w = .false then .false else .true
 
-/-- The existential quantifier, the dual of `forall'`. -/
+/-- The existential quantifier is the dual of `forall'`. -/
 noncomputable def exists' (p : Prop3 W) : Trivalent := neg (forall' (λ w => neg (p w)))
 
 @[simp] theorem forall'_eq_indet_iff (p : Prop3 W) : forall' p = .indet ↔ ∀ w, p w = .indet := by
@@ -162,9 +172,9 @@ theorem exists'_presuppose_ne_false (p : Prop3 W) :
     exists' (λ w => presuppose (p w)) ≠ .false := by
   simp
 
-/-- Quantifier Projection ([coppock-beaver-2015]'s appendix): over bivalent `φ` and `ψ`, a
-presupposition under the existential projects as an existentially quantified
-presupposition. -/
+/-- Quantifier Projection ([coppock-beaver-2015]'s appendix) lets a presupposition under the
+existential project as an existentially quantified presupposition, over bivalent `φ` and
+`ψ`. -/
 theorem exists'_meetWeak_presuppose {φ ψ : Prop3 W} (hφ : φ.isBivalent) (hψ : ψ.isBivalent) :
     exists' (λ w => meetWeak (presuppose (φ w)) (ψ w)) =
       meetWeak (exists' (λ w => presuppose (φ w))) (exists' (λ w => meetWeak (φ w) (ψ w))) := by
