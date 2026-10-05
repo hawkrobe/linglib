@@ -61,7 +61,7 @@ on the carrier. The whole-carrier `count` is its `Finset.univ` specialization
 cross-multiplied `Nat` predicate `thresholdGtOn` and its demoted ℚ view
 `prevalenceOn`, the analogue of `Rel.edgeDensity`) build on `countOn`. -/
 
-/-- Count of elements of `s` satisfying `P`. The Fintype-free counting primitive. -/
+/-- `countOn s P` counts the elements of `s` satisfying `P`, without a `Fintype` instance. -/
 def countOn {α : Type*} (s : Finset α) (P : α → Prop) [DecidablePred P] : Nat :=
   (s.filter P).card
 
@@ -100,7 +100,7 @@ instance thresholdGtOn.decidable {α : Type*} (s : Finset α) (R S : α → Prop
     (num denom : Nat) [DecidablePred R] [DecidablePred S] :
     Decidable (thresholdGtOn s R S num denom) := by unfold thresholdGtOn; infer_instance
 
-/-- `|s∩R| = |s∩R∩S| + |s∩R\S|`. -/
+/-- The members of `s` in `R` split into those in `S` and those outside it. -/
 theorem countOn_decompose {α : Type*} (s : Finset α) (R S : α → Prop)
     [DecidablePred R] [DecidablePred S] :
     countOn s R =
@@ -138,13 +138,13 @@ are bounded over an explicit `Finset`, hence decidable with no `Fintype`
 since `every` ranges over the whole (possibly infinite) carrier for the general GQ theory,
 whereas `everyOn s` ranges over `s`; the two meet at `s = Finset.univ` (`everyOn_univ`). -/
 
-/-- `s`-relativized restricted universal: every `R` in `s` is `S`. -/
+/-- `everyOn s R S` says that every `R` in `s` is `S`. -/
 def everyOn {α : Type*} (s : Finset α) (R S : α → Prop) : Prop := ∀ x ∈ s, R x → S x
 
-/-- `s`-relativized existential. -/
+/-- `someOn s R S` says that some `R` in `s` is `S`. -/
 def someOn {α : Type*} (s : Finset α) (R S : α → Prop) : Prop := ∃ x ∈ s, R x ∧ S x
 
-/-- `s`-relativized `no`. -/
+/-- `noOn s R S` says that no `R` in `s` is `S`. -/
 def noOn {α : Type*} (s : Finset α) (R S : α → Prop) : Prop := ∀ x ∈ s, R x → ¬ S x
 
 instance everyOn.decidable {α : Type*} (s : Finset α) (R S : α → Prop)
@@ -211,8 +211,7 @@ theorem prevalenceOn_pos_iff (hR : 0 < countOn s R) :
 
 end Prevalence
 
-/-- Count of elements satisfying a predicate, via `Finset.univ.filter`.
-    The `Finset.univ` specialization of `countOn`. -/
+/-- `count P` counts the elements satisfying `P`, as `countOn` on `Finset.univ`. -/
 def count {α : Type*} [Fintype α] (P : α → Prop) [DecidablePred P] : Nat :=
   countOn Finset.univ P
 
@@ -237,17 +236,18 @@ at `s = univ`, exhibiting them as the general layer's finite specialization. -/
 /-! ### Counting denotations -/
 
 open Classical in
-/-- (most : GQ α)(R)(S) = |R ∩ S| > |R \ S|. -/
+/-- *Most* `R` are `S` when more of the `R` are `S` than are not, `|R ∩ S| > |R ∖ S|`. -/
 noncomputable def most : GQ α := fun R S =>
   count (fun x : α => R x ∧ S x) > count (fun x : α => R x ∧ ¬ S x)
 
 open Classical in
-/-- (few : GQ α)(R)(S) = |R ∩ S| < |R \ S|, the inner negation of `most`. -/
+/-- *Few* `R` are `S` when fewer of the `R` are `S` than are not, `|R ∩ S| < |R ∖ S|`, so that
+`few` is the inner negation of `most`. -/
 noncomputable def few : GQ α := fun R S =>
   count (fun x : α => R x ∧ S x) < count (fun x : α => R x ∧ ¬ S x)
 
 open Classical in
-/-- (half : GQ α)(R)(S) = 2 * |R ∩ S| = |R|. -/
+/-- *Half* the `R` are `S` when `2 * |R ∩ S| = |R|`. -/
 noncomputable def half : GQ α := fun R S =>
   2 * count (fun x : α => R x ∧ S x) = count (fun x : α => R x)
 
@@ -263,27 +263,27 @@ noncomputable def neither : GQ α :=
   (no ⊓ (fun (R : α → Prop) _ => count (fun x : α => R x) = 2))
 
 open Classical in
-/-- ⟦at least n⟧(R)(S) = |R ∩ S| ≥ n. -/
+/-- *At least `n`* `R` are `S` when `|R ∩ S| ≥ n`. -/
 noncomputable def atLeast (n : Nat) : GQ α := fun R S =>
   count (fun x : α => R x ∧ S x) ≥ n
 
 open Classical in
-/-- ⟦at most n⟧(R)(S) = |R ∩ S| ≤ n. -/
+/-- *At most `n`* `R` are `S` when `|R ∩ S| ≤ n`. -/
 noncomputable def atMost (n : Nat) : GQ α := fun R S =>
   count (fun x : α => R x ∧ S x) ≤ n
 
 open Classical in
-/-- ⟦exactly n⟧(R)(S) = |R ∩ S| = n. -/
+/-- *Exactly `n`* `R` are `S` when `|R ∩ S| = n`. -/
 noncomputable def exactly (n : Nat) : GQ α := fun R S =>
   count (fun x : α => R x ∧ S x) = n
 
 open Classical in
-/-- ⟦all but n⟧(R)(S) = |R \ S| = n. The exceptive counterpart of
-    `exactly`; generalizes "every" (= all but 0). -/
+/-- *All but `n`* `R` are `S` when `|R ∖ S| = n`, the exceptive counterpart of `exactly`, of
+which *every* is the case `n = 0`. -/
 noncomputable def allBut (n : Nat) : GQ α := fun R S =>
   count (fun x : α => R x ∧ ¬ S x) = n
 
-/-- ⟦between n and k⟧(R)(S) = n ≤ |R ∩ S| ≤ k. -/
+/-- *Between `n` and `k`* `R` are `S` when `n ≤ |R ∩ S| ≤ k`. -/
 noncomputable def between (n k : Nat) : GQ α :=
   ((atLeast n) ⊓ (atMost k))
 
@@ -327,7 +327,8 @@ theorem count_decompose (R S : α → Prop)
 /-- A quantifier that reads only the two restrictor cells `|R ∩ S|` and `|R ∖ S|` is
 conservative. -/
 private theorem conservative_of_cells (P : ℕ → ℕ → Prop) :
-    Conservative (fun (R S : α → Prop) => P (count fun x => R x ∧ S x) (count fun x => R x ∧ ¬ S x)) := by
+    Conservative fun (R S : α → Prop) ↦
+      P (count fun x ↦ R x ∧ S x) (count fun x ↦ R x ∧ ¬ S x) := by
   intro R S
   beta_reduce
   congr! 2 <;> ext x <;> tauto
@@ -367,7 +368,7 @@ theorem conservative_between (n k : Nat) :
 
 /-! ### Counting quantifier identities -/
 
-/-- `(GQ.some : GQ α) = ⟦at least 1⟧`. -/
+/-- *Some* is *at least one*. -/
 theorem some_eq_atLeast_one :
     (GQ.some : GQ α) = (atLeast (α := α) 1 : GQ α) := by
   funext R S
@@ -389,19 +390,19 @@ theorem atMost_eq_compl_atLeast_succ (n : Nat) :
   funext R S; simp only [atMost, atLeast, compl_apply]
   exact propext ⟨fun h hGe => by omega, fun h => by omega⟩
 
-/-- `(no : GQ α) = ⟦at most 0⟧`. -/
+/-- *No* is *at most zero*. -/
 theorem no_eq_atMost_zero :
     (no : GQ α) = (atMost (α := α) 0 : GQ α) := by
   rw [← compl_some, some_eq_atLeast_one, atMost_eq_compl_atLeast_succ]
 
-/-- `⟦exactly n⟧ = ⟦at least n⟧ ⊓ ⟦at most n⟧`. -/
+/-- *Exactly `n`* is *at least `n`* and *at most `n`*. -/
 theorem exactly_eq_atLeast_inf_atMost (n : Nat) :
     (exactly (α := α) n : GQ α) =
     (((atLeast (α := α) n) ⊓ (atMost (α := α) n)) : GQ α) := by
   funext R S; simp only [exactly, atLeast, atMost, inf_apply]
   exact propext ⟨fun h => ⟨by omega, by omega⟩, fun ⟨h1, h2⟩ => by omega⟩
 
-/-- `⟦all but 0⟧ = (every : GQ α)`. -/
+/-- *All but zero* is *every*. -/
 theorem allBut_zero_eq_every :
     (allBut (α := α) 0 : GQ α) = (every : GQ α) := by
   funext R S; simp only [allBut, every]
@@ -677,8 +678,7 @@ theorem quantity_no : Quantity (no : GQ α) := by
   rw [no_eq_atMost_zero]; exact quantity_atMost 0
 
 omit [Fintype α] in
-/-- `(every : GQ α)` satisfies `QuantityInvariant` (proved directly via bijection
-    invariance of `∀`). -/
+/-- `every` is quantity invariant, since a bijection preserves `∀`. -/
 private theorem quantityInvariant_every :
     QuantityInvariant (every : GQ α) := by
   intro A B A' B' f hBij hA hB
@@ -844,12 +844,13 @@ theorem not_both_fin3 : ¬ both (α := Fin 3) (fun _ => True) (fun _ => True) :=
   rw [count_eq_decidable] at h
   exact absurd h (by decide)
 
-/-- *At most n* at any decidability instance, so that concrete cases evaluate by `decide`. -/
+/-- *At most `n`* unfolds at any decidability instance, so that concrete cases evaluate by
+`decide`. -/
 theorem atMost_iff {n : Nat} {R S : α → Prop} [DecidablePred fun x => R x ∧ S x] :
     atMost n R S ↔ count (fun x => R x ∧ S x) ≤ n := by
   unfold atMost; rw [count_eq_decidable]
 
-/-- *Few* at any decidability instance, so that concrete cases evaluate by `decide`. -/
+/-- *Few* unfolds at any decidability instance, so that concrete cases evaluate by `decide`. -/
 theorem few_iff {R S : α → Prop} [DecidablePred fun x => R x ∧ S x]
     [DecidablePred fun x => R x ∧ ¬ S x] :
     few R S ↔ count (fun x => R x ∧ S x) < count (fun x => R x ∧ ¬ S x) := by
@@ -883,7 +884,7 @@ theorem not_restrictorMonotone_most : ¬ RestrictorMonotone (most : GQ (Fin 3)) 
   simp only [count, countOn] at key
   revert key; decide
 
-/-- `most` over a singleton restrictor is the singleton's scope value. -/
+/-- On a singleton restrictor `most` is the scope's value at the singleton. -/
 theorem most_singleton_iff (j : α) (S : α → Prop) :
     most (fun x => x = j) S ↔ S j := by
   have h1 : count (fun x => x = j) = 1 := by
@@ -931,9 +932,8 @@ theorem not_existential_half : ¬ Existential (half : GQ (Fin 3)) := by
     simp only [count, countOn]; decide
   rw [v1, v2] at key; revert key; decide
 
-/-- `half` is not scope-upward-monotone. Witness over `Fin 3`: `R = {0,1}`,
-    `S = {0} ⊆ S' = {0,1}`; `half R S` is true (`2·1 = 2 = |R|`) but `half R S'`
-    is false (`2·2 = 4 ≠ 2`) — growing the scope flips it true→false. -/
+/-- `half` is not scope monotone. Over `Fin 3` with `R = {0, 1}` and `S = {0} ⊆ S' = {0, 1}`,
+`half R S` holds since `2 · 1 = |R|` and `half R S'` fails since `2 · 2 ≠ |R|`. -/
 theorem not_scopeMonotone_half : ¬ ScopeMonotone (half : GQ (Fin 3)) := by
   intro h
   have key : half (fun x : Fin 3 => x = 0 ∨ x = 1) (fun x => x = 0) →
@@ -952,9 +952,8 @@ theorem not_scopeMonotone_half : ¬ ScopeMonotone (half : GQ (Fin 3)) := by
   have v2 : (count fun x : Fin 3 => x = 0 ∨ x = 1) = 2 := by simp only [count, countOn]; decide
   rw [v0, v1, v2] at key; revert key; decide
 
-/-- `half` is not scope-downward-monotone. Witness over `Fin 3`: `R = {0,1}`,
-    `S = ∅ ⊆ S' = {0}`; `half R S'` is true (`2·1 = 2 = |R|`) but `half R S` is
-    false (`2·0 = 0 ≠ 2`) — shrinking the scope flips it true→false. -/
+/-- `half` is not scope antitone. Over `Fin 3` with `R = {0, 1}` and `S = ∅ ⊆ S' = {0}`,
+`half R S'` holds since `2 · 1 = |R|` and `half R S` fails since `2 · 0 ≠ |R|`. -/
 theorem not_scopeAntitone_half : ¬ ScopeAntitone (half : GQ (Fin 3)) := by
   intro h
   have key : half (fun x : Fin 3 => x = 0 ∨ x = 1) (fun x => x = 0) →
@@ -971,8 +970,8 @@ theorem not_scopeAntitone_half : ¬ ScopeAntitone (half : GQ (Fin 3)) := by
   have v2 : (count fun x : Fin 3 => x = 0 ∨ x = 1) = 2 := by simp only [count, countOn]; decide
   rw [v0, v1, v2] at key; revert key; decide
 
-/-- `half` is non-monotone in scope: neither scope-upward nor scope-downward
-    monotone ([van-de-pol-etal-2023]). -/
+/-- `half` is non-monotone in its scope, neither monotone nor antitone
+([van-de-pol-etal-2023]). -/
 theorem not_monotone_half :
     ¬ ScopeMonotone (half : GQ (Fin 3)) ∧
     ¬ ScopeAntitone (half : GQ (Fin 3)) :=
@@ -1011,9 +1010,7 @@ inheritance, not re-proof. -/
   unfold mostOn most
   congr! 2
 
-/-- `mostOn` at the whole carrier is proportional — inherited from
-    `proportional_most`, not re-proved: at `s = Finset.univ` the relativized
-    `mostOn` IS `most`. -/
+/-- `mostOn` on the whole domain is proportional, since there it is `most`. -/
 theorem mostOn_univ_proportional :
     Proportional (fun R S => mostOn (Finset.univ : Finset α) R S) := by
   have h : (fun (R S : α → Prop) => mostOn (Finset.univ : Finset α) R S) = most := by
@@ -1029,26 +1026,32 @@ universe u
 
 namespace Family
 
-/-- `every` on every finite domain. -/
+/-- `Family.every` is `every` on every finite domain. -/
 def every : Family.{u} := fun _ _ ↦ GQ.every
-/-- `GQ.some` on every finite domain. -/
+/-- `Family.some` is `GQ.some` on every finite domain. -/
 def some : Family.{u} := fun _ _ ↦ GQ.some
-/-- `no` on every finite domain. -/
+/-- `Family.no` is `no` on every finite domain. -/
 def no : Family.{u} := fun _ _ ↦ GQ.no
-/-- `most` on every finite domain. -/
+/-- `Family.most` is `most` on every finite domain. -/
 noncomputable def most : Family.{u} := fun α inst ↦ @GQ.most α inst
-/-- `few` on every finite domain. -/
+/-- `Family.few` is `few` on every finite domain. -/
 noncomputable def few : Family.{u} := fun α inst ↦ @GQ.few α inst
-/-- `half` on every finite domain. -/
+/-- `Family.half` is `half` on every finite domain. -/
 noncomputable def half : Family.{u} := fun α inst ↦ @GQ.half α inst
-/-- `both` on every finite domain. -/
+/-- `Family.both` is `both` on every finite domain. -/
 noncomputable def both : Family.{u} := fun α inst ↦ @GQ.both α inst
-/-- `neither` on every finite domain. -/
+/-- `Family.neither` is `neither` on every finite domain. -/
 noncomputable def neither : Family.{u} := fun α inst ↦ @GQ.neither α inst
-/-- `atLeast n` on every finite domain. -/
+/-- `Family.atLeast n` is `atLeast n` on every finite domain. -/
 noncomputable def atLeast (n : ℕ) : Family.{u} := fun α inst ↦ @GQ.atLeast α inst n
-/-- `exactly n` on every finite domain. -/
+/-- `Family.exactly n` is `exactly n` on every finite domain. -/
 noncomputable def exactly (n : ℕ) : Family.{u} := fun α inst ↦ @GQ.exactly α inst n
+
+/-- `some` and `every` are different families, since on an empty restrictor `every` holds and
+`some` fails. -/
+theorem some_ne_every : some.{u} ≠ every.{u} := fun h ↦ by
+  have := congrArg (fun d : Family.{u} ↦ d PUnit (fun _ ↦ False) fun _ ↦ False) h
+  simp [some, every, GQ.some, GQ.every] at this
 
 end Family
 

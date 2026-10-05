@@ -22,6 +22,9 @@ quantifiers such as *most* and *few* are in `Quantification/Counting.lean`.
 
 ## Main results
 
+* `every_eq_sInf_image`, `some_eq_sSup_image`, `no_eq_compl_sSup_image`: the three determiners
+  are the infimum, the supremum and the complement of the supremum of the scope over the
+  restrictor.
 * `square_relations`: with a non-empty restrictor the four stand in all six relations of the
   square, so its cells (`Aristotelian.Square.cell`) divide the scopes into those covering all of
   the restrictor, some but not all of it, and none of it.
@@ -42,13 +45,13 @@ namespace Quantifier.GQ
 
 /-! ### Denotations -/
 
-/-- The universal determiner, `λR λS. ∀x. R(x) → S(x)`. -/
+/-- The universal determiner is `λR λS. ∀x. R(x) → S(x)`. -/
 def every {α : Type*} : GQ α := fun R S ↦ ∀ x : α, R x → S x
 
-/-- The existential determiner, `λR λS. ∃x. R(x) ∧ S(x)`. -/
+/-- The existential determiner is `λR λS. ∃x. R(x) ∧ S(x)`. -/
 protected def some {α : Type*} : GQ α := fun R S ↦ ∃ x : α, R x ∧ S x
 
-/-- The negative determiner, `λR λS. ∀x. R(x) → ¬S(x)`. -/
+/-- The negative determiner is `λR λS. ∀x. R(x) → ¬S(x)`. -/
 def no {α : Type*} : GQ α := fun R S ↦ ∀ x : α, R x → ¬ S x
 
 /-- The singular definite of [russell-1905] in Montagovian form,
@@ -83,6 +86,21 @@ def SatisfiesUniversals {α : Type*} (q : GQ α) : Prop :=
 
 variable {α : Type*}
 
+/-! ### Infima and suprema
+
+At a restrictor `R`, `every R S` is the infimum of the values the scope takes on `R`, `GQ.some R S`
+their supremum, and `no R S` the complement of their supremum, so the three determiners are
+conjunction, disjunction and negative coordination over the restrictor. -/
+
+theorem every_eq_sInf_image (R S : α → Prop) : every R S = sInf (S '' {x | R x}) := by
+  rw [sInf_Prop_eq, Set.forall_mem_image]; rfl
+
+theorem some_eq_sSup_image (R S : α → Prop) : GQ.some R S = sSup (S '' {x | R x}) := by
+  rw [sSup_Prop_eq, Set.exists_mem_image]; rfl
+
+theorem no_eq_compl_sSup_image (R S : α → Prop) : no R S = (sSup (S '' {x | R x}))ᶜ := by
+  rw [← some_eq_sSup_image]; exact propext (by simp [no, GQ.some])
+
 /-! ### Conservativity -/
 
 theorem conservative_every : Conservative (every : GQ α) := by
@@ -107,6 +125,13 @@ theorem scopeMonotone_some : ScopeMonotone (GQ.some : GQ α) := by
 
 theorem scopeAntitone_no : ScopeAntitone (no : GQ α) := by
   intro R S S' hSS' h x hR hS; exact h x hR (hSS' x hS)
+
+/-- On a nonempty domain `some` is not scope antitone, since `some ⊤ ⊤` holds and `some ⊤ ⊥`
+fails. -/
+theorem not_scopeAntitone_some [Nonempty α] : ¬ ScopeAntitone (GQ.some : GQ α) := fun h ↦
+  let ⟨x⟩ := ‹Nonempty α›
+  let ⟨_, _, hb⟩ := h (fun _ ↦ True) (bot_le (a := fun _ ↦ True)) ⟨x, trivial, trivial⟩
+  hb
 
 /-- `every R` is a monotone quantifier. -/
 theorem monotone_every (R : α → Prop) : Monotone (every R) :=
@@ -267,7 +292,7 @@ subalternations and subcontrariety, needs existential import: at an empty restri
 `no` both hold vacuously (`a_e_contrary`), and `square_relations` assumes a non-empty one.
 -/
 
-/-- The square of opposition at the restrictor `R`. -/
+/-- At a restrictor `R` the four determiners form a square of opposition. -/
 def square (R : α → Prop) : Aristotelian.Square ((α → Prop) → Prop) where
   A := every R
   E := no R

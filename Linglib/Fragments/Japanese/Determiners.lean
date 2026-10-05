@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Syntax.Category.Determiner.Basic
-public import Linglib.Semantics.Quantification.Lexicon
 public import Linglib.Semantics.Quantification.Counting
 public import Linglib.Semantics.Denotation
 public import Linglib.Fragments.Japanese.Coordination
@@ -12,22 +11,27 @@ public import Linglib.Fragments.Japanese.Classifiers
 # Japanese quantifiers
 
 Japanese has no articles, and most of its quantifiers are built from an indeterminate pronoun of
-`Japanese.Pronouns` (*dare* 'who', *dono* 'which', *nan-* 'how many') and a particle: with *ka* the
-phrase is existential (*dare-ka* 'someone'), with *mo* universal (*dare-mo* 'everyone', *dono* N
-*mo* 'every N'), the particles being the coordinators *ka* 'or' and *mo* 'and', so that the force of
-the phrase is the Boolean operation of its particle. The remaining quantifiers are words of their
-own, the carrier `QuantityWord` of *subete* 'all', *hotondo* 'most' and *ryōhō* 'both'. Both
-carriers denote the readings available for their members, an indeterminate quantifier reading by the
-force of its particle. Numeral quantifiers such as *nan-nin-ka* 'several people' float away from
-their noun phrase, and *dare-mo* under clausemate negation is the negative indefinite of
-`Fragments/Japanese/PolarityItems.lean`.
+`Japanese.Pronouns` (*dare* 'who', *dono* 'which', *nan-* 'how many') and a particle, *ka* for the
+existential (*dare-ka* 'someone') and *mo* for the universal (*dare-mo* 'everyone', *dono* N *mo*
+'every N'). The particles are the coordinators *ka* 'or' and *mo* 'and', and an indeterminate
+quantifier applies its particle's coordination to the values its scope takes on the restrictor,
+the supremum for *ka* and the infimum for *mo*, which are `Quantifier.GQ.some` and `every`. The
+remaining quantifiers are words of their own, the carrier `QuantityWord` of *subete* 'all',
+*hotondo* 'most' and *ryōhō* 'both'. Numeral quantifiers such as *nan-nin-ka* 'several people'
+float away from their noun phrase, and *dare-mo* under clausemate negation is the negative
+indefinite of `Fragments/Japanese/PolarityItems.lean`.
 
 ## Main definitions
 
-* `Japanese.Determiners.Indefinite` — the quantifiers an indeterminate and a particle form, with
-  the force `Indefinite.force` of the particle
-* `Japanese.Determiners.QuantityWord` — the quantifiers that are words of their own
-* `Japanese.Determiners.inventory` — the determiner inventory, quantifiers only
+* `Japanese.Determiners.Indefinite`: the quantifiers an indeterminate and a particle form.
+* `Japanese.Determiners.Indefinite.reading`: the particle's coordination over the restrictor.
+* `Japanese.Determiners.QuantityWord`: the quantifiers that are words of their own.
+* `Japanese.Determiners.inventory`: the determiner inventory, quantifiers only.
+
+## Main results
+
+* `Indefinite.reading_of_disjunctive`, `Indefinite.reading_of_conjunctive`: the readings under
+  *ka* and *mo* are `Quantifier.GQ.some` and `every`.
 
 ## References
 
@@ -40,16 +44,10 @@ their noun phrase, and *dare-mo* under clausemate negation is the negative indef
 
 namespace Japanese.Determiners
 
-open Quantifier.Lexicon
+open Quantifier
+open scoped Semantics
 
 universe u
-
-/-- The force a particle gives an indeterminate: existential for the disjunction *ka* and
-universal for the conjunction *mo*. -/
-def particleForce (p : Coordinator) : QForce :=
-  match p.role with
-  | .disjunctive => .existential
-  | _ => .universal
 
 /-- A quantifier built from an indeterminate and a particle, with the classifier between them
 where there is one. -/
@@ -66,44 +64,62 @@ namespace Indefinite
 
 variable (q : Indefinite)
 
-/-- The form: the indeterminate, its classifier and the particle joined by hyphens, and for the
-determiner *dono* the particle after the noun the determiner takes. -/
+/-- The form joins the indeterminate, its classifier and the particle by hyphens, and puts the
+particle of the determiner *dono* after the noun the determiner takes. -/
 def form : String :=
   if q.indeterminate.ontology = .determiner then q.indeterminate.form ++ " … " ++ q.particle.form
   else q.indeterminate.form ++ (q.classifier.elim "" ("-" ++ ·.form)) ++ "-" ++ q.particle.form
 
-/-- The force of the quantifier, that of its particle. -/
-def force : QForce := particleForce q.particle
-
-/-- The quantifier as a determiner entry. -/
+/-- An indeterminate quantifier's determiner entry records its form. -/
 def toQuantifier : Quantifier := { form := q.form }
 
-/-- The reading available for an indeterminate quantifier is that of its particle's force,
-`Quantifier.GQ.some` for the disjunction *ka* and `every` for the conjunction *mo*. -/
-instance : Semantics.Denotes Indefinite (Set Quantifier.GQ.Family.{u}) where
-  denote q :=
-    match q.particle.role with
-    | .disjunctive => {Quantifier.GQ.Family.some}
-    | _ => {Quantifier.GQ.Family.every}
+/-- The reading of an indeterminate quantifier applies its particle's coordination to the
+values the scope takes on the restrictor. -/
+def reading : GQ.Family.{u} :=
+  fun _ _ R S ↦ Coordinator.sOp q.particle.role (S '' {x | R x})
+
+/-- An indeterminate quantifier denotes its reading. -/
+instance : Semantics.Denotes Indefinite (Set GQ.Family.{u}) where
+  denote q := {q.reading}
+
+variable {q}
+
+/-- Under a disjunctive particle the reading is `Quantifier.GQ.some`. -/
+theorem reading_of_disjunctive (h : q.particle.role = .disjunctive) :
+    q.reading = GQ.Family.some.{u} := by
+  funext _ _ R S
+  rw [reading, h, Coordinator.sOp_disjunctive, ← GQ.some_eq_sSup_image]; rfl
+
+/-- Under a conjunctive particle the reading is `every`. -/
+theorem reading_of_conjunctive (h : q.particle.role = .conjunctive) :
+    q.reading = GQ.Family.every.{u} := by
+  funext _ _ R S
+  rw [reading, h, Coordinator.sOp_conjunctive, ← GQ.every_eq_sInf_image]; rfl
+
+/-- Under a negative particle the reading is `no`. -/
+theorem reading_of_negative (h : q.particle.role = .negative) :
+    q.reading = GQ.Family.no.{u} := by
+  funext _ _ R S
+  rw [reading, h, Coordinator.sOp_negative, ← GQ.no_eq_compl_sSup_image]; rfl
 
 end Indefinite
 
-/-- *dare-ka* 'someone'. -/
+/-- *Dare-ka* is 'someone'. -/
 def dare_ka : Indefinite := ⟨Pronouns.dare, Coordination.ka, none⟩
 
-/-- *dare-mo* 'everyone'. -/
+/-- *Dare-mo* is 'everyone'. -/
 def dare_mo : Indefinite := ⟨Pronouns.dare, Coordination.mo, none⟩
 
-/-- *dono* N *mo* 'every N'. -/
+/-- *Dono* N *mo* is 'every N'. -/
 def dono_N_mo : Indefinite := ⟨Pronouns.dono, Coordination.mo, none⟩
 
-/-- *nan-nin-ka* 'several people', with the classifier *-nin*. -/
+/-- *Nan-nin-ka* is 'several people', with the classifier *-nin*. -/
 def nan_nin_ka : Indefinite := ⟨Pronouns.nan, Coordination.ka, some Classifiers.nin⟩
 
-/-- The indeterminate quantifiers. -/
+/-- `indefinites` lists the indeterminate quantifiers. -/
 def indefinites : List Indefinite := [dare_ka, dare_mo, dono_N_mo, nan_nin_ka]
 
-/-- The quantifiers that are words of their own: *subete* 'all', *hotondo* 'most' and *ryōhō*
+/-- The quantifiers that are words of their own are *subete* 'all', *hotondo* 'most' and *ryōhō*
 'both'. -/
 inductive QuantityWord where
   | subete | hotondo | ryoho
@@ -111,20 +127,19 @@ inductive QuantityWord where
 
 namespace QuantityWord
 
-/-- The romanized form. -/
+/-- The form of a word is its romanization. -/
 def form : QuantityWord → String
   | .subete => "subete"
   | .hotondo => "hotondo"
   | .ryoho => "ryōhō"
 
-/-- The word as a determiner record. -/
+/-- A word's determiner record carries its form. -/
 def toQuantifier (w : QuantityWord) : Quantifier := { form := w.form }
 
-/-- All the words. -/
+/-- `toList` lists every word. -/
 def toList : List QuantityWord := [.subete, .hotondo, .ryoho]
 
-/-- The readings available for a word: *subete* reads as `every`, *hotondo* as `most`
-and *ryōhō* as `both`. -/
+/-- *Subete* reads as `every`, *hotondo* as `most` and *ryōhō* as `both`. -/
 noncomputable instance : Semantics.Denotes QuantityWord (Set Quantifier.GQ.Family.{u}) where
   denote
     | .subete => {Quantifier.GQ.Family.every}
@@ -133,15 +148,17 @@ noncomputable instance : Semantics.Denotes QuantityWord (Set Quantifier.GQ.Famil
 
 end QuantityWord
 
-/-- The determiner inventory: quantifiers only, there being no articles. -/
+/-- The determiner inventory has quantifiers only, there being no articles. -/
 def inventory : Determiner.Inventory :=
   indefinites.map (.quantifier ·.toQuantifier) ++
     QuantityWord.toList.map (.quantifier ·.toQuantifier)
 
-/-- The universal indeterminates are the ones not built on the disjunction. -/
-theorem Indefinite.force_eq_universal_iff (q : Indefinite) :
-    q.force = .universal ↔ q.particle.role ≠ .disjunctive := by
-  unfold Indefinite.force particleForce
-  cases q.particle.role <;> simp
+/-- *Dare-ka* reads as `Quantifier.GQ.some`. -/
+theorem denote_dare_ka : ⟦dare_ka⟧ = ({GQ.Family.some} : Set GQ.Family.{u}) := by
+  rw [← Indefinite.reading_of_disjunctive (q := dare_ka) rfl]; rfl
+
+/-- *Dare-mo* reads as `every`. -/
+theorem denote_dare_mo : ⟦dare_mo⟧ = ({GQ.Family.every} : Set GQ.Family.{u}) := by
+  rw [← Indefinite.reading_of_conjunctive (q := dare_mo) rfl]; rfl
 
 end Japanese.Determiners

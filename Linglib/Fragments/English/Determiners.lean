@@ -2,43 +2,33 @@ module
 
 public import Linglib.Syntax.Category.Determiner.Basic
 public import Linglib.Semantics.Quantification.NP
-public import Linglib.Semantics.Quantification.Lexicon
 public import Linglib.Semantics.Denotation
 
 /-!
 # English determiners
 
-This file records the English determiner lexicon. The quantificational determiners are the
-carrier `QuantityWord`. A word projects to its `Quantifier` record by
-`QuantityWord.toQuantifier`, which carries only what the readings leave open, the selected
-number and whether mass nouns are selected, and denotes the set of readings the literature makes
-available for it through the `Denotes` instance, each a `Quantifier.GQ.Family`. A word with one
-consensus reading denotes a singleton, so `⟦QuantityWord.all⟧` is `{every}`, and *many*,
-whose standard [barwise-cooper-1981] leave to context, denotes `∅` until the theory hub has a
-reading for it. A study takes a stand by membership, and everything a reading fixes, force,
-monotonicity, strength and conservativity, is a theorem about the member chosen
-(`Studies/BarwiseCooper1981.lean`). The textbook labels of [barwise-cooper-1981]'s Table II are
-the metadata `QuantityWord.entry` for the studies that want the descriptive classification. The
-articles, demonstratives and possessives are the other determiner kinds, and the numerical
-determiners of [van-de-pol-etal-2023] are parameterized by their threshold.
+The quantificational determiners of English are the carrier `QuantityWord`. A word projects to a
+`Quantifier` record by `QuantityWord.toQuantifier`, which carries only what the readings leave
+open, the number the word selects and whether it selects mass nouns. The readings themselves are
+the `Denotes` instance, a set of `Quantifier.GQ.Family` per word: a word with one consensus
+reading denotes a singleton, so `⟦QuantityWord.all⟧` is `{every}`, and *many*, whose standard
+Barwise and Cooper leave to context, denotes `∅`. Everything a reading fixes, its force,
+monotonicity, strength and conservativity, is a theorem about it, as in
+`Studies/BarwiseCooper1981.lean`. The articles, demonstratives and possessives are the other
+determiner kinds.
 
 ## Main declarations
 
-* `QuantityWord` is the carrier of the quantificational determiners, with the six-word scale
-  `QuantityWord.scale` of [van-tiel-franke-sauerland-2021] inside it;
-  `QuantityWord.form`, `QuantityWord.numberRestriction` and `QuantityWord.selectsMass` are its
-  lexical data and `QuantityWord.toQuantifier` its record.
-* The `Denotes` instance gives each word its available readings from
-  `Quantification/Basic.lean` and `Quantification/Counting.lean`.
-* `QuantityWord.entry` is the [barwise-cooper-1981] Table II classification.
-* `inventory` is the English determiner inventory, and `marking` derives its [moroney-2021]
-  cell.
+* `QuantityWord`: the quantificational determiners, with the six-word scale
+  `QuantityWord.scale` of van Tiel, Franke and Sauerland inside it.
+* `QuantityWord.toQuantifier`: a word as a determiner record.
+* `inventory`: the English determiner inventory, and `marking` derives its cell in Moroney's
+  typology of definite marking.
 
 ## References
 
 * [barwise-cooper-1981]
 * [horn-1972]
-* [van-de-pol-etal-2023]
 * [van-tiel-franke-sauerland-2021]
 * [von-fintel-1993]
 * [harbour-2014]
@@ -51,9 +41,6 @@ determiners of [van-de-pol-etal-2023] are parameterized by their threshold.
 
 namespace English.Determiners
 
-export Quantifier.Lexicon
-  (QForce Monotonicity Strength)
-
 /-! ## Quantificational determiners -/
 
 /-- The quantificational determiners of English are the six-word quantity scale *none*, *few*,
@@ -64,7 +51,7 @@ inductive QuantityWord where
 
 namespace QuantityWord
 
-/-- The surface form. -/
+/-- The form of a word is its spelling. -/
 def form : QuantityWord → String
   | .none_ => "none"
   | .few => "few"
@@ -88,20 +75,22 @@ def numberRestriction : QuantityWord → Option Number
   | .both | .neither => some .dual
   | .none_ | .some_ | .half => none
 
-/-- Whether a word selects mass nouns, which the denotation likewise leaves open. -/
+/-- `selectsMass w` says whether `w` combines with mass nouns, which the denotation likewise
+leaves open. -/
 def selectsMass : QuantityWord → Bool
   | .none_ | .some_ | .half | .most | .all => true
   | .few | .every | .each | .many | .both | .neither => false
 
-/-- The word as a determiner record. -/
+/-- The determiner record of a word carries its form, its number and its mass selection. -/
 def toQuantifier (w : QuantityWord) : Quantifier :=
   { form := w.form, numberRestriction := w.numberRestriction, selectsMass := w.selectsMass }
 
-/-- The six-word quantity scale of [van-tiel-franke-sauerland-2021], the cross-paper scale on
-which quantifier theories are evaluated ([barwise-cooper-1981], [von-fintel-1993]). -/
+/-- The six-word quantity scale of [van-tiel-franke-sauerland-2021] runs from *none* to *all*;
+quantifier theories such as those of [barwise-cooper-1981] and [von-fintel-1993] are compared on
+it. -/
 def scale : List QuantityWord := [.none_, .few, .some_, .half, .most, .all]
 
-/-- All the words. -/
+/-- `toList` lists every word. -/
 def toList : List QuantityWord :=
   [.none_, .few, .some_, .half, .most, .all, .every, .each, .many, .both, .neither]
 
@@ -111,11 +100,11 @@ theorem mem_toList (w : QuantityWord) : w ∈ toList := by cases w <;> decide
 
 universe u
 
-/-- The readings the literature makes available for a word, as generalized quantifiers on every
-finite domain. *None* reads as `no`, *some* as `Quantifier.GQ.some`, *all*, *every* and *each* as
-`every`, *most* as `most`, *few* as `few`, *half* as `half`, *both* as
-`both` and *neither* as `neither`; *many* has no reading, since
-[barwise-cooper-1981] leave its standard to context. -/
+/-- A word denotes the readings the literature makes available for it, as generalized
+quantifiers on every finite domain. *None* reads as `no`, *some* as `Quantifier.GQ.some`, *all*,
+*every* and *each* as `every`, *most* as `most`, *few* as `few`, *half* as `half`, *both* as
+`both` and *neither* as `neither`; *many* has no reading, since [barwise-cooper-1981] leave its
+standard to context. -/
 noncomputable instance : Semantics.Denotes QuantityWord (Set Quantifier.GQ.Family.{u}) where
   denote
     | .none_ => {Quantifier.GQ.Family.no}
@@ -128,136 +117,65 @@ noncomputable instance : Semantics.Denotes QuantityWord (Set Quantifier.GQ.Famil
     | .neither => {Quantifier.GQ.Family.neither}
     | .many => ∅
 
-/-! ### The Table II classification -/
-
-/-- The textbook labels a word carries, its force, its monotonicity and its weak or strong
-strength, which are not the denotation but the descriptive classification the GQT model
-([van-tiel-franke-sauerland-2021]) and the exceptive-licensing bridge ([von-fintel-1993])
-consume. -/
-structure Metadata where
-  /-- The quantificational force. -/
-  qforce : QForce
-  /-- The monotonicity. -/
-  monotonicity : Monotonicity := .increasing
-  /-- The weak or strong strength. -/
-  strength : Strength := .weak
-  deriving Repr, DecidableEq
-
-/-- The [barwise-cooper-1981] Table II classification of each word, with *half* after
-[van-de-pol-etal-2023]. -/
-def entry : QuantityWord → Metadata
-  | .none_ => { qforce := .negative, monotonicity := .decreasing }
-  | .few => { qforce := .proportional, monotonicity := .decreasing }
-  | .some_ => { qforce := .existential }
-  | .half => { qforce := .proportional, monotonicity := .nonMonotone }
-  | .most => { qforce := .proportional, strength := .strong }
-  | .all | .every | .each => { qforce := .universal, strength := .strong }
-  | .many => { qforce := .proportional }
-  | .both => { qforce := .universal, strength := .strong }
-  | .neither => { qforce := .negative, monotonicity := .decreasing, strength := .strong }
-
 end QuantityWord
 
-/-! ## Articles and demonstratives
+/-! ## Articles, demonstratives and possessives
 
-The definites/indefinites and demonstratives are *not* quantifiers: their
-denotation is definiteness, not a generalized quantifier. -/
+The articles and demonstratives are not quantifiers, since what they denote is definiteness and
+not a generalized quantifier. -/
 
-/-- "the" — definite article, syncretic over both [schwarz-2009] strengths. -/
+/-- *The* is the definite article, syncretic over both strengths of [schwarz-2009]. -/
 def the : Article :=
   { form := "the", definiteness := .definite, exponent := .dedicatedMorpheme
   , uses := {.immediateSituation, .largerSituation, .anaphoric, .donkey} }
 
-/-- "a" — indefinite article, singular. -/
+/-- *A* is the singular indefinite article. -/
 def a : Article :=
   { form := "a", definiteness := .indefinite, exponent := .dedicatedMorpheme }
 
-/-- "an" — indefinite article, singular (phonological allomorph of *a*). -/
+/-- *An* is the singular indefinite article, the allomorph of *a* before a vowel. -/
 def an : Article :=
   { form := "an", definiteness := .indefinite, exponent := .dedicatedMorpheme }
 
-/-- "this" — proximal demonstrative determiner, singular. -/
+/-- *This* is the singular proximal demonstrative. -/
 def this : DemonstrativeDeterminer := { form := "this", deixis := Person.first.participantSets }
 
-/-- "that" — distal demonstrative determiner, singular. -/
+/-- *That* is the singular distal demonstrative. -/
 def that : DemonstrativeDeterminer := { form := "that", deixis := Person.first.participantSetsᶜ }
 
-/-- "these" — proximal demonstrative determiner, plural. -/
+/-- *These* is the plural proximal demonstrative. -/
 def these : DemonstrativeDeterminer := { form := "these", deixis := Person.first.participantSets }
 
-/-- "those" — distal demonstrative determiner, plural. -/
+/-- *Those* is the plural distal demonstrative. -/
 def those : DemonstrativeDeterminer := { form := "those", deixis := Person.first.participantSetsᶜ }
 
-/-- "my" — first-person possessive determiner. -/
+/-- *My* is the first-person possessive determiner. -/
 def my : PossessiveDeterminer := { form := "my" }
 
-/-- "your" — second-person possessive determiner. -/
+/-- *Your* is the second-person possessive determiner. -/
 def your : PossessiveDeterminer := { form := "your" }
 
-/-! ## Numerical Determiners
-[barwise-cooper-1981] [van-de-pol-etal-2023]
+/-! ## The inventory -/
 
-Parameterized by a numerical threshold `n`. These are the class of
-determiners [van-de-pol-etal-2023] show satisfy all three semantic
-universals (and have low MDL).
--/
-
-/-- Numerical determiner entry. -/
-structure NumericalDetEntry where
-  form : String
-  qforce : QForce
-  monotonicity : Monotonicity
-  /-- The numerical threshold -/
-  threshold : Nat
-  deriving Repr, BEq
-
-/-- "at least n" — upward monotone in scope, conservative, quantity -/
-def atLeast (n : Nat) : NumericalDetEntry :=
-  { form := s!"at least {n}", qforce := .proportional
-  , monotonicity := .increasing, threshold := n }
-
-/-- "at most n" — downward monotone in scope, conservative, quantity -/
-def atMost (n : Nat) : NumericalDetEntry :=
-  { form := s!"at most {n}", qforce := .proportional
-  , monotonicity := .decreasing, threshold := n }
-
-/-- "exactly n" — non-monotone (neither UE nor DE), conservative, quantity -/
-def exactlyN (n : Nat) : NumericalDetEntry :=
-  { form := s!"exactly {n}", qforce := .proportional
-  , monotonicity := .nonMonotone, threshold := n }
-
-/-- "more than n" — upward monotone, conservative, quantity -/
-def moreThan (n : Nat) : NumericalDetEntry :=
-  { form := s!"more than {n}", qforce := .proportional
-  , monotonicity := .increasing, threshold := n }
-
-/-- "fewer than n" — downward monotone, conservative, quantity -/
-def fewerThan (n : Nat) : NumericalDetEntry :=
-  { form := s!"fewer than {n}", qforce := .proportional
-  , monotonicity := .decreasing, threshold := n }
-
-/-! ## Lexicon Access -/
-
-/-- All quantificational determiner entries. -/
+/-- The quantificational determiners as records. -/
 def allQuantifiers : List Quantifier := QuantityWord.toList.map QuantityWord.toQuantifier
 
-/-- All article entries. -/
+/-- The articles. -/
 def allArticles : List Article := [the, a, an]
 
-/-- All demonstrative-determiner entries. -/
+/-- The demonstratives. -/
 def allDemonstratives : List DemonstrativeDeterminer := [this, that, these, those]
 
-/-- All possessive-determiner entries. -/
+/-- The possessive determiners. -/
 def allPossessives : List PossessiveDeterminer := [my, your]
 
-/-- The full inventory as a heterogeneous `Determiner.Inventory`
-    (the per-language form a Fragment declares). -/
+/-- The determiner inventory collects every kind of determiner. -/
 def inventory : Determiner.Inventory :=
   allArticles.map .article ++ allDemonstratives.map .demonstrative ++
     allQuantifiers.map .quantifier ++ allPossessives.map .possessive
 
-/-- English's inventory derives the `.generallyMarked` [moroney-2021] cell: the
-    syncretic *the* covers both [schwarz-2009] use types. -/
+/-- English's inventory is in the `.generallyMarked` cell of [moroney-2021], since the
+syncretic *the* covers both use types of [schwarz-2009]. -/
 theorem marking : inventory.markingStrategy = .generallyMarked := by decide
 
 end English.Determiners
