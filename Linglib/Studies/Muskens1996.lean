@@ -115,7 +115,7 @@ def ifThen : Update S → Update S → Update S :=
 
 section Derivations
 
-variable [RegisterStructure R S E] {u₁ u₂ : R}
+variable [RegisterStructure R S E] [DecidableEq R] {u₁ u₂ : R}
 
 attribute [local simp] ofStatic ofStatic₂ Function.eval name indef no who ifThen Pi.mul_apply
   mul_def dom_comp preimage_comp preimage_randomAssign val_extend_self
@@ -130,15 +130,15 @@ def text (u₁ u₂ : R) (man woman : Set E) (adores abhors : SetRel E E) : Upda
 -/
 theorem text_eq_box (h : u₁ ≠ u₂) (man woman : Set E) (adores abhors : SetRel E E) :
     (text u₁ u₂ man woman adores abhors : Update S) =
-      box [u₁, u₂] (val u₁ ⁻¹' man ∩ (val u₂ ⁻¹' woman ∩ {i | val u₁ i ~[adores] val u₂ i}) ∩
+      box {u₁, u₂} (val u₁ ⁻¹' man ∩ (val u₂ ⁻¹' woman ∩ {i | val u₁ i ~[adores] val u₂ i}) ∩
         {i | val u₂ i ~[abhors] val u₁ i}) := by
   have : (text u₁ u₂ man woman adores abhors : Update S) =
-      box [u₁] (val u₁ ⁻¹' man) ○ box [u₂] (val u₂ ⁻¹' woman ∩ {i | val u₁ i ~[adores] val u₂ i}) ○
-        box ([] : List R) {i | val u₂ i ~[abhors] val u₁ i} := by
-    simp only [text, indef, ofStatic, ofStatic₂, Function.eval, box_cons, box_nil,
+      box {u₁} (val u₁ ⁻¹' man) ○ box {u₂} (val u₂ ⁻¹' woman ∩ {i | val u₁ i ~[adores] val u₂ i}) ○
+        box (∅ : Finset R) {i | val u₂ i ~[abhors] val u₁ i} := by
+    simp only [text, indef, ofStatic, ofStatic₂, Function.eval, box_singleton, dexists, box_empty,
       ← test_comp_test, comp_assoc]
   rw [this, box_comp_box (by simpa using fun hu ↦ h.symm (dimSet_preimage_val_subset u₁ man hu)),
-    box_comp_box (by simp)]
+    box_comp_box (by simp), Finset.union_empty]
   rfl
 
 /-- The truth conditions (24) of the text. -/
@@ -237,10 +237,10 @@ def reassignment (u₃ : R) (bill sue : E) (donkey : Set E) (owns : SetRel E E) 
 in which the second box reassigns `u₃`. -/
 theorem reassignment_eq (u₃ : R) (bill sue : E) (donkey : Set E) (owns : SetRel E E) :
     (reassignment u₃ bill sue donkey owns : Update S) =
-      box [u₃] (val u₃ ⁻¹' donkey ∩ {i | bill ~[owns] val u₃ i}) ○
-        box [u₃] (val u₃ ⁻¹' donkey ∩ {i | sue ~[owns] val u₃ i}) := by
+      box {u₃} (val u₃ ⁻¹' donkey ∩ {i | bill ~[owns] val u₃ i}) ○
+        box {u₃} (val u₃ ⁻¹' donkey ∩ {i | sue ~[owns] val u₃ i}) := by
   simp only [reassignment, name, Function.const_apply, Pi.mul_apply, mul_def, Function.eval,
-    ofStatic₂, indef, ofStatic, box_cons, box_nil, ← test_comp_test, comp_assoc]
+    ofStatic₂, indef, ofStatic, box_singleton, dexists, ← test_comp_test, comp_assoc]
 
 /-- The truth conditions (68) of (66). -/
 theorem dom_reassignment (u₃ : R) (bill sue : E) (donkey : Set E) (owns : SetRel E E) :
@@ -250,24 +250,22 @@ theorem dom_reassignment (u₃ : R) (bill sue : E) (donkey : Set E) (owns : SetR
   simp [reassignment]
 
 /-- The boxes of (67) do not merge. The register `u₃` occurs in the first box's conditions, and
-the merged box demands one donkey owned by both, so where Bill and Sue own only different
-donkeys the two differ. -/
+the merged box, whose universe is `{u₃} ∪ {u₃} = {u₃}`, demands one donkey owned by both, so where
+Bill and Sue own only different donkeys the two differ. -/
 theorem reassignment_ne_merge [Nonempty S] {u₃ : R} {bill sue : E} {donkey : Set E}
     {owns : SetRel E E} (hb : ∃ x ∈ donkey, bill ~[owns] x) (hs : ∃ x ∈ donkey, sue ~[owns] x)
     (h : ¬∃ x ∈ donkey, bill ~[owns] x ∧ sue ~[owns] x) :
     (reassignment u₃ bill sue donkey owns : Update S) ≠
-      box ([u₃] ++ [u₃]) ((val u₃ ⁻¹' donkey ∩ {i | bill ~[owns] val u₃ i}) ∩
+      box {u₃} ((val u₃ ⁻¹' donkey ∩ {i | bill ~[owns] val u₃ i}) ∩
         (val u₃ ⁻¹' donkey ∩ {i | sue ~[owns] val u₃ i})) := by
   intro heq
   obtain ⟨i⟩ := ‹Nonempty S›
   have hi : i ∈ (reassignment u₃ bill sue donkey owns : Update S).dom := by
     rw [dom_reassignment]
     exact ⟨hb, hs⟩
-  rw [heq, ← SetRel.preimage_univ_right] at hi
-  simp only [List.singleton_append, preimage_box_cons, box_nil, preimage_test, mem_cyl,
-    Set.mem_inter_iff, Set.mem_preimage, Set.mem_ofPred_eq, Set.mem_univ, and_true,
-    val_extend_self, extend_idem] at hi
-  obtain ⟨_, _, ⟨hd, hbo⟩, -, hso⟩ := hi
+  rw [heq, box_singleton, dom_dexists, dom_test] at hi
+  obtain ⟨_, ⟨hd, hbo⟩, -, hso⟩ := hi
+  simp only [Set.mem_preimage, Set.mem_ofPred_eq, val_extend_self] at hd hbo hso
   exact h ⟨_, hd, hbo, hso⟩
 
 end Derivations
@@ -369,7 +367,7 @@ theorem fn4_not_reuseFreeAt : ¬ DRS.ReuseFreeAt ∅ fn4 := by
 /-- In Muskens's semantics every input verifies the witness, since the re-declared referent may
 take a new value and some mortal suffices. -/
 theorem fn4_trueRel (g : ℕ → Fin 2) : DRS.trueRel fn4 g := by
-  refine ⟨g, fun _ _ ↦ rfl, ?_⟩
+  refine (DRS.trueRel_iff_exists_extends _ _).2 ⟨g, fun _ _ ↦ rfl, ?_⟩
   intro c hc
   simp only [fn4, DRS.conditions_mk, List.mem_singleton] at hc
   subst hc

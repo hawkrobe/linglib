@@ -99,7 +99,7 @@ abbrev past : Radical W T → Sit W T → Sit W T → Update (State W T) := temp
 /-- The subjunctive `subj^{s₁}_{s₀} ⇝ λℙ.[s₁ | s₁ ∈ hist s₀]; ℙ(s₁)(s₀)` is an indefinite over
 situations, introducing `s₁` among the historical alternatives of the anchor `s₀`. -/
 def subj (s₁ : ℕ) (s₀ : Sit W T) (ℙ : Tensed W T) : Update (State W T) :=
-  dexists s₁ (test {i | val s₁ i ∈ historicalBase history (s₀ i)}) ○ ℙ (val s₁) s₀
+  box {s₁} {i | val s₁ i ∈ historicalBase history (s₀ i)} ○ ℙ (val s₁) s₀
 
 /-! ### Unpacking the entries -/
 
@@ -119,7 +119,7 @@ theorem subj_apply :
     i ~[subj history s₁ s ℙ] o ↔
       ∃ e, e ∈ historicalBase history (s (Function.update i s₁ e)) ∧
         Function.update i s₁ e ~[ℙ (val s₁) s] o := by
-  simp only [subj, dexists, mem_comp, mem_randomAssign, mem_test]
+  simp only [subj, box_singleton, dexists, mem_comp, mem_randomAssign, mem_test]
   constructor
   · rintro ⟨_, ⟨_, ⟨e, rfl⟩, rfl, he⟩, hℙ⟩
     exact ⟨e, by simpa using he, hℙ⟩

@@ -15,7 +15,7 @@ context.
 
 A state has two sorts of registers, `IVar` and `PVar`, each with its `RegisterStructure`, so
 the variable update `[δ]` is CDRT's `Update.randomAssign` at either sort and a DRS
-`[δ | C]` is `Update.dexists δ (test C)`. Over these sit the relative variable update `[φ : υ]`,
+`[δ | C]` is `Update.box {δ} C`. Over these sit the relative variable update `[φ : υ]`,
 after which `υ` has a referent at exactly the `φ`-worlds, predication relative to a local
 context, local entailment, and maximization over a propositional dref, CDRT's `Update.maxAt`.
 
@@ -67,7 +67,7 @@ structure IVar where
   idx : ℕ
   deriving DecidableEq, Repr
 
-/-- A discourse state: an individual concept for each individual dref and a proposition for
+/-- A discourse state assigns an individual concept to each individual dref and a proposition to
 each propositional dref. An individual dref is `none`, the falsifier ⋆, at the worlds where it
 has no referent. -/
 @[ext] structure State (W E : Type*) where
@@ -146,7 +146,8 @@ theorem updateProp_mem_randomAssign (i : State W E) (p : PVar) (s : Set W) :
     i ~[randomAssign p] i.updateProp p s :=
   ⟨s, rfl⟩
 
-/-- `[υ]` ([hofmann-2025] App. B (9a)): `j` differs from `i` at most in the value of `υ`. -/
+/-- The update `[υ]` relates `i` to the states `j` that differ from it at most in the value of
+`υ` ([hofmann-2025] App. B (9a)). -/
 theorem mem_randomAssign_indiv :
     i ~[randomAssign v] j ↔ (∀ p, j.prop p = i.prop p) ∧ ∀ u, u ≠ v → j.indiv u = i.indiv u := by
   refine ⟨?_, fun ⟨hp, hu⟩ ↦ ⟨j.indiv v, ?_⟩⟩
@@ -159,7 +160,8 @@ theorem mem_randomAssign_indiv :
       · exact (hu u h).trans (State.updateIndiv_indiv_of_ne _ h _).symm
     · funext p; exact hp p
 
-/-- `[φ]` ([hofmann-2025] App. B (9a)): `j` differs from `i` at most in the value of `φ`. -/
+/-- The update `[φ]` relates `i` to the states `j` that differ from it at most in the value of
+`φ` ([hofmann-2025] App. B (9a)). -/
 theorem mem_randomAssign_prop :
     i ~[randomAssign φ] j ↔ (∀ q, q ≠ φ → j.prop q = i.prop q) ∧ ∀ u, j.indiv u = i.indiv u := by
   refine ⟨?_, fun ⟨hq, hu⟩ ↦ ⟨j.prop φ, ?_⟩⟩
@@ -178,31 +180,31 @@ theorem _root_.DynamicSemantics.Update.Fixes.prop_eq {D : Update (State W E)} (h
   h i j hD
 
 /-- Introducing `p` with the value `s` runs the DRS `[p | C]` when the result satisfies `C`. -/
-theorem updateProp_mem_dexists_test {C : Condition (State W E)} (p : PVar) (s : Set W)
-    (h : i.updateProp p s ∈ C) : i ~[dexists p (test C)] i.updateProp p s :=
-  mem_dexists_test.mpr ⟨updateProp_mem_randomAssign i p s, h⟩
+theorem updateProp_mem_box {C : Condition (State W E)} (p : PVar) (s : Set W)
+    (h : i.updateProp p s ∈ C) : i ~[box {p} C] i.updateProp p s :=
+  mem_box_singleton.mpr ⟨updateProp_mem_randomAssign i p s, h⟩
 
 /-- An individual variable update fixes every propositional dref. -/
 theorem fixes_randomAssign_ivar (φ : PVar) (v : IVar) :
     Fixes φ (randomAssign (S := State W E) v) :=
   fun _ _ h ↦ (mem_randomAssign_indiv.mp h).1 φ
 
-/-- Maximization `max_φ(D)` over a propositional dref ([hofmann-2025] (40)) is CDRT's `maxAt`:
-no other output of `D` gives `φ` a proper superset. -/
+/-- Maximization `max_φ(D)` over a propositional dref ([hofmann-2025] (40)) is CDRT's `maxAt`,
+keeping the outputs of `D` at which no other output gives `φ` a proper superset. -/
 theorem mem_maxAt_prop {D : Update (State W E)} :
     i ~[maxAt φ D] j ↔ i ~[D] j ∧ ∀ k, i ~[D] k → ¬j.prop φ ⊂ k.prop φ :=
   Iff.rfl
 
 /-! ### Relative variable update -/
 
-/-- Relative variable update `[φ : υ]` ([hofmann-2025] (25), App. B (9b)): an update of `υ`
-after which `υ` has a referent at all and only the `φ`-worlds. -/
+/-- The relative variable update `[φ : υ]` ([hofmann-2025] (25), App. B (9b)) updates `υ` so
+that it has a referent at all and only the `φ`-worlds. -/
 def relUpdate (φ : PVar) (v : IVar) : Update (State W E) :=
-  dexists v (test {j | ∀ w, w ∈ j.prop φ ↔ j.indiv v w ≠ none})
+  box {v} {j | ∀ w, w ∈ j.prop φ ↔ j.indiv v w ≠ none}
 
 theorem mem_relUpdate :
     i ~[relUpdate φ v] j ↔ i ~[randomAssign v] j ∧ ∀ w, w ∈ j.prop φ ↔ j.indiv v w ≠ none :=
-  mem_dexists_test
+  mem_box_singleton
 
 /-- Introducing `υ` as the concept `e` is a relative update `[φ : υ]` when `e` has a referent
 at exactly the `φ`-worlds. -/
@@ -210,13 +212,14 @@ theorem updateIndiv_mem_relUpdate (e : W → Option E) (h : ∀ w, w ∈ i.prop 
     i ~[relUpdate φ v] i.updateIndiv v e :=
   mem_relUpdate.mpr ⟨updateIndiv_mem_randomAssign i v e, by simpa using h⟩
 
-theorem fixes_relUpdate (ψ φ : PVar) (v : IVar) : Fixes ψ (relUpdate (W := W) (E := E) φ v) :=
-  (fixes_randomAssign_ivar ψ v).comp (fixes_test ψ _)
+theorem fixes_relUpdate (ψ φ : PVar) (v : IVar) : Fixes ψ (relUpdate (W := W) (E := E) φ v) := by
+  rw [relUpdate, box_singleton]
+  exact (fixes_randomAssign_ivar ψ v).comp (fixes_test ψ _)
 
 /-! ### Conditions -/
 
-/-- Predication `R_φ(υ)` ([hofmann-2025] (27), App. B (7a)): `R` holds of `υ`'s referent at
-every world of the local context `φ`; ⋆ satisfies no relation. -/
+/-- Predication `R_φ(υ)` ([hofmann-2025] (27), App. B (7a)) holds if `R` holds of `υ`'s
+referent at every world of the local context `φ`; ⋆ satisfies no relation. -/
 def pred (R : E → W → Prop) (φ : PVar) (v : IVar) : Condition (State W E) :=
   {i | ∀ w ∈ i.prop φ,
     match i.indiv v w with
@@ -229,8 +232,8 @@ def incl (φ₁ φ₂ : PVar) : Condition (State W E) := {i | i.prop φ₁ ⊆ i
 /-- `φ₁ ≡ φ̄₂` (App. B (7b), (8a)), the condition negation places on its context. -/
 def eqCompl (φ₁ φ₂ : PVar) : Condition (State W E) := {i | i.prop φ₁ = (i.prop φ₂)ᶜ}
 
-/-- `υ` is entailed in the local context `φ` ([hofmann-2025] (28)): it has a referent at every
-`φ`-world. -/
+/-- A dref `υ` is entailed in the local context `φ` ([hofmann-2025] (28)) if it has a referent
+at every `φ`-world. -/
 def localEntailment (φ : PVar) (v : IVar) : Condition (State W E) :=
   {i | ∀ w ∈ i.prop φ, i.indiv v w ≠ none}
 
@@ -239,12 +242,12 @@ theorem not_mem_pred_of_eq_none {R : E → W → Prop} {w : W} (hw : w ∈ i.pro
     (h : i.indiv v w = none) : i ∉ pred R φ v := fun hp ↦ by
   simpa [h] using hp w hw
 
-/-- Predication entails local entailment ((29b)): a referent satisfying `R` is not ⋆. -/
+/-- Predication entails local entailment ((29b)), since a referent satisfying `R` is not ⋆. -/
 theorem mem_localEntailment_of_mem_pred {R : E → W → Prop} (h : i ∈ pred R φ v) :
     i ∈ localEntailment φ v := fun _ hw hnone ↦ not_mem_pred_of_eq_none hw hnone h
 
 /-- After `[φ : υ]`, `υ` is entailed in a local context exactly when the context lies within
-`φ`: the subset requirement of [hofmann-2025] (39). -/
+`φ`, the subset requirement of [hofmann-2025] (39). -/
 theorem mem_localEntailment_iff_of_relUpdate (h : i ~[relUpdate φ v] j) :
     j ∈ localEntailment ψ v ↔ j.prop ψ ⊆ j.prop φ :=
   let hj := (mem_relUpdate.mp h).2

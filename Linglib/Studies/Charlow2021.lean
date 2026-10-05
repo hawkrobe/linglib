@@ -75,11 +75,11 @@ section Pointwise
 variable {R S E : Type*} [RegisterStructure R S E]
 
 /-- `Evar v P` stores in `v` some entity satisfying `P` (17). -/
-def Evar (v : R) (P : E → Prop) : Update S := dexists v (test {i | P (val v i)})
+def Evar (v : R) (P : E → Prop) : Update S := box {v} {i | P (val v i)}
 
 theorem mem_Evar {v : R} {P : E → Prop} {i j : S} :
     i ~[Evar v P] j ↔ ∃ x, P x ∧ j = extend i v x := by
-  simp only [Evar, mem_dexists_test, Set.mem_ofPred_eq]
+  simp only [Evar, mem_box_singleton, Set.mem_ofPred_eq]
   constructor
   · rintro ⟨⟨x, rfl⟩, hP⟩
     exact ⟨x, by rwa [val_extend_self] at hP, rfl⟩
@@ -87,7 +87,7 @@ theorem mem_Evar {v : R} {P : E → Prop} {i j : S} :
     exact ⟨⟨x, rfl⟩, by rwa [val_extend_self]⟩
 
 theorem fixes_Evar {v r : R} (h : r ≠ v) (P : E → Prop) : Fixes r (Evar (S := S) v P) :=
-  (fixes_randomAssign_of_ne h).comp (fixes_test r _)
+  fixes_box (by simpa using h) _
 
 /-- `relTest u v r` is the dynamic verb that tests `r` of the values of `u` and `v` (11). -/
 def relTest (u v : R) (r : E → E → Prop) : Update S := test {i | r (val u i) (val v i)}
