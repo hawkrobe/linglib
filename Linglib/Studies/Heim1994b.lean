@@ -1,37 +1,59 @@
 module
 
-public import Linglib.Logic.Modal.Epistemic
 public import Linglib.Semantics.Questions.Exhaustivity
 public import Linglib.Data.Examples.Heim1994b
+public import Mathlib.Tactic.TFAE
 
 /-!
 # Heim (1994): Interrogative Semantics and Karttunen's Semantics for *know*
 
-This file formalizes [heim-1994]: with [karttunen-1977]'s interrogative intensions, the set
-of true answers at each world, the simplified analysis of *know* (4) has the agent believe
-the intersection of the true answers, the actual analysis (5) adds that an empty answer set
-be known to be empty, and the generalized analysis (9) has the agent believe that the answer
-set is what it is, which makes the first clause redundant
-(`simplifiedKnow_of_generalizedKnow`). For
-"which students called" the generalized analysis coincides with [groenendijk-stokhof-1982]'s
-(13)–(14) exactly when distinct individuals call in distinct sets of worlds
-(`generalizedKnow_iff_gsKnow`), and the coincidence fails on the paper's two contrived
-predicates: identity with oneself (21), where the generalized analysis reduces to knowing
-whether there are students, and living with one's actual spouse (24), where the symmetry
-of the relation lets the report come out true. Structured propositions (27) restore the
-equivalence for any predicate (`structured_eq_gs`).
+This file formalizes [heim-1994]. A [karttunen-1977] intension assigns each world a set of
+true answers; `IsKarttunen` is the property that every member of the answer set at `w` holds
+at `w`, true of the substrate's Karttunen denotation (`isKarttunen_trueAnswers`). Karttunen's
+simplified entry for *know* (4) has the agent believe the answer in Heim's first sense (15),
+the intersection of the true answers; his actual entry (5) adds that an empty answer set be
+believed empty; and the generalized entry (9) has the agent believe that the answer set is
+what it is, which makes the first clause redundant
+(`Karttunen.simplifiedKnow_of_generalizedKnow`). Believing the answer set to be what it is is
+believing the cell of the kernel of the intension (`generalizedKnow_iff_know_ker`), so the
+generalized analysis is [groenendijk-stokhof-1982]'s entry (14) on the kernel question; for
+*whether*-questions all four entries coincide (`knows_whether_tfae`).
+
+The comparison for constituent questions rests on one observation: the which-intension (3)
+is the image of the extension of *student who called* under the propositional concept `C`,
+while Groenendijk and Stokhof's (13) is the kernel of the extension map, so the two agree
+exactly when `C` is injective — the paper's premise that no two individuals call in exactly
+the same possible worlds (`ker_which`). The two divergences of §7 are the two ways
+injectivity fails: identity with oneself (21) is constant, reducing the generalized analysis
+to knowing whether there are students (`Karttunen.ker_which_identicalWithSelf`), and living
+with one's actual spouse (24) identifies Bill with Sue (`Spouses`). Structured propositions
+(27) restore the agreement for every predicate, since tagging each individual with the
+property is injective outright (`ker_whichStructured`), while the unstructured answers stay
+recoverable (`Karttunen.which_eq_image_whichStructured`) though not conversely
+(`Spouses.whichStructured_ne`). The answer in the second sense (16) entails the answer in
+the first (`ans₂_subset_ans₁`), and on a Hamblin set it is the substrate's strongly
+exhaustive answer (`ans₂_trueAnswers`).
 
 ## Implementation notes
 
-Belief is the box over doxastic alternatives, on propositions as sets mathlib's
-`SetRel.core`, so "x believes p in w" is `w ∈ (Dox x).core p`. A Karttunen intension is any
-`W → Set (Set W)`; the property the redundancy proof uses, that every member of the answer set
-at a world is true there, is
-`IsKarttunen`. The exhaustiveness failure of the actual analysis (§2) and the two divergences
-of §7 are shown on two-individual, two-world models rather than stated over arbitrary
-models, as the paper's scenarios are. The answers in the two senses (15)–(16) are the
-substrate's `weakAnswer` and its reflective closure, of which the Groenendijk–Stokhof answer
-is a subset (`strongAnswer_subset_ans₂`); the ambiguity of *answer* in (17)–(20) is a row.
+Belief is `w ∈ (Dox x).core p` over doxastic alternatives `Dox : E → SetRel W W`, with no
+frame conditions, as the paper assumes none. Predicates are topical properties `E → Set W`,
+the substrate's `trueAnswers_range` shape, so the restrictorless *who called* (6) is the
+Karttunen denotation of `Set.range C` (`Karttunen.which_univ`) and the superset argument of
+§3 is `Karttunen.which_mono`. `E` ranges over individuals, not the groups of the paper's
+footnote on plurals. `identicalWithSelf` is the universally necessary property, which every
+individual has in every world. The scenarios are the paper's own two-world models: in
+`Spouses` the worlds record whether Sue is a student and whether the couples live together,
+and John holds the single false belief that Sue is not a student (§7). The ambiguity of
+*answer* in (17)–(20) is a row. The Feynman sentence of §4's footnote is not modelled; the
+general negation case is `George2011`.
+
+## TODO
+
+* §6 identifies the proposition of (9) with the answer in the second sense (16), but in
+  general only `Setoid.ker q ≤ Setoid.ker (ans₁ q)` holds (`ker_le_ker_ans₁`): on identity
+  with oneself, `ans₂` is trivial while the kernel of the intension asks whether there are
+  students.
 
 ## References
 
@@ -46,276 +68,503 @@ is a subset (`strongAnswer_subset_ans₂`); the ambiguity of *answer* in (17)–
 namespace Heim1994b
 
 open Question
-open scoped SetRel
 
 variable {W E : Type*}
 
-/-! ### Karttunen intensions and the three analyses of *know* (§1, §2, §4) -/
+/-! ### Karttunen intensions -/
 
-/-- The property of every intension of an interrogative clause under [karttunen-1977]: each
-    member of the answer set at `w` is true at `w`. -/
+/-- The property of every interrogative intension under [karttunen-1977]: each member of the
+answer set at `w` is true at `w`; the redundancy proof of §4 rests on it. -/
 def IsKarttunen (q : W → Set (Set W)) : Prop := ∀ w, ∀ p ∈ q w, w ∈ p
 
+theorem isKarttunen_trueAnswers (H : Set (Set W)) : IsKarttunen (trueAnswers H) :=
+  fun _ _ h ↦ h.2
+
 /-- (2): the intension of "whether φ", the true one of `φ` and its negation. -/
-def whether (φ : Set W) : W → Set (Set W) := λ w => {p | (p = φ ∨ p = φᶜ) ∧ w ∈ p}
+def Karttunen.whether (φ : Set W) : W → Set (Set W) := trueAnswers {φ, φᶜ}
+
+theorem Karttunen.whether_nonempty (φ : Set W) (w : W) : (whether φ w).Nonempty := by
+  by_cases h : w ∈ φ
+  · exact ⟨φ, Set.mem_insert _ _, h⟩
+  · exact ⟨φᶜ, Set.mem_insert_of_mem _ rfl, h⟩
+
+/-- The students who called at `w`, the extension behind the colon in (3) and (13). -/
+def extension (S C : E → Set W) (w : W) : Set E := {x | w ∈ S x ∩ C x}
 
 /-- (3): the intension of "which students called", the propositions that `x` called for the
-    students `x` who actually called. -/
-def whichK (S C : W → E → Prop) : W → Set (Set W) :=
-  λ w => {p | ∃ x, S w x ∧ C w x ∧ p = {w' | C w' x}}
+students `x` who called — the image of the extension under the propositional concept. -/
+def Karttunen.which (S C : E → Set W) (w : W) : Set (Set W) := C '' extension S C w
 
-theorem isKarttunen_whether (φ : Set W) : IsKarttunen (whether φ) := λ _ _ h => h.2
+theorem Karttunen.isKarttunen_which (S C : E → Set W) : IsKarttunen (which S C) := by
+  rintro w p ⟨x, hx, rfl⟩
+  exact hx.2
 
-theorem isKarttunen_whichK (S C : W → E → Prop) : IsKarttunen (whichK S C) := by
-  rintro w p ⟨x, -, hC, rfl⟩
-  exact hC
+/-- (6): without a restrictor, "who called" is the Karttunen denotation of the Hamblin set
+of the propositions that each individual called. -/
+theorem Karttunen.which_univ (C : E → Set W) :
+    which (fun _ ↦ Set.univ) C = trueAnswers (Set.range C) := by
+  funext w
+  simp [which, extension, trueAnswers_range]
+
+/-- The superset argument of §3: widening the restrictor widens the answer set. -/
+theorem Karttunen.which_mono {S P : E → Set W} (C : E → Set W) (h : ∀ x, S x ⊆ P x) (w : W) :
+    which S C w ⊆ which P C w :=
+  Set.image_mono fun _ hx ↦ ⟨h _ hx.1, hx.2⟩
+
+/-! ### The answer in the two senses -/
+
+/-- (15): the answer in the first sense, the intersection of the true answers. -/
+def ans₁ (q : W → Set (Set W)) (w : W) : Set W := ⋂₀ q w
+
+/-- (16): the answer in the second sense, the proposition that the answer in the first
+sense is what it is. -/
+def ans₂ (q : W → Set (Set W)) (w : W) : Set W := {w' | ans₁ q w' = ans₁ q w}
+
+theorem ans₁_trueAnswers (H : Set (Set W)) : ans₁ (trueAnswers H) = weakAnswer H := rfl
+
+/-- On a Hamblin set the answer in the second sense is the strongly exhaustive answer. -/
+theorem ans₂_trueAnswers (H : Set (Set W)) (w : W) :
+    ans₂ (trueAnswers H) w = strongAnswer H w := by
+  rw [strongAnswer_eq_cell, ← ker_weakAnswer]
+  rfl
+
+theorem IsKarttunen.self_mem_ans₁ {q : W → Set (Set W)} (hq : IsKarttunen q) (w : W) :
+    w ∈ ans₁ q w :=
+  Set.mem_sInter.2 (hq w)
+
+theorem ker_le_ker_ans₁ (q : W → Set (Set W)) : Setoid.ker q ≤ Setoid.ker (ans₁ q) :=
+  Setoid.ker_le_ker_comp q Set.sInter
+
+/-- §6: the answer in the second sense always entails the answer in the first. -/
+theorem ans₂_subset_ans₁ {q : W → Set (Set W)} (hq : IsKarttunen q) (w : W) :
+    ans₂ q w ⊆ ans₁ q w :=
+  fun v hv ↦ (show ans₁ q v = ans₁ q w from hv) ▸ hq.self_mem_ans₁ v
+
+/-! ### The entries for *know* -/
 
 variable (Dox : E → SetRel W W) (x : E) (w : W)
 
-/-- (4) The simplified Karttunen analysis: `x` believes the intersection of the true
-    answers. -/
-def simplifiedKnow (q : W → Set (Set W)) : Prop := w ∈ (Dox x).core (⋂₀ q w)
+/-- (4) The simplified Karttunen analysis: `x` believes the answer in the first sense. -/
+def Karttunen.simplifiedKnow (q : W → Set (Set W)) : Prop := w ∈ (Dox x).core (ans₁ q w)
 
 /-- (5) The actual Karttunen analysis: (i) as in (4), and (ii) if the answer set is empty,
-    `x` believes that it is empty. -/
-def actualKnow (q : W → Set (Set W)) : Prop :=
-  w ∈ (Dox x).core (⋂₀ q w) ∧ (q w = ∅ → w ∈ (Dox x).core {w' | q w' = ∅})
+`x` believes that it is empty. -/
+def Karttunen.know (q : W → Set (Set W)) : Prop :=
+  simplifiedKnow Dox x w q ∧ (q w = ∅ → w ∈ (Dox x).core {w' | q w' = ∅})
 
-/-- (9) The generalized Karttunen analysis: `x` believes that the answer set is what it is. -/
-def generalizedKnow (q : W → Set (Set W)) : Prop := w ∈ (Dox x).core {w' | q w' = q w}
+/-- (9) The generalized Karttunen analysis: `x` believes that the answer set is what it is,
+for answer sets of any type, as §8 applies the same entry to structured intensions. -/
+def generalizedKnow {α : Type*} (q : W → α) : Prop := w ∈ (Dox x).core {w' | q w' = q w}
 
-/-- (14) [groenendijk-stokhof-1982]'s analysis, over an intension that is a proposition at
-    each world. -/
-def gsKnow (r : W → Set W) : Prop := w ∈ (Dox x).core (r w)
+/-- (14) [groenendijk-stokhof-1982]'s analysis: `x` believes the cell of `w` in the
+partition question. -/
+def GroenendijkStokhof.know (Q : Setoid W) : Prop := w ∈ (Dox x).core (Q.cell w)
 
 variable {Dox x w}
 
-/-- (7): with an empty answer set, believing it empty is believing it to be what it is. -/
-theorem actualKnow_iff {q : W → Set (Set W)} (h : q w = ∅) :
-    actualKnow Dox x w q ↔ w ∈ (Dox x).core (⋂₀ q w) ∧ generalizedKnow Dox x w q := by
-  simp only [actualKnow, generalizedKnow, h, forall_const]
+/-- The generalized analysis is Groenendijk and Stokhof's entry on the kernel of the
+intension. -/
+theorem generalizedKnow_iff_know_ker {α : Type*} {q : W → α} :
+    generalizedKnow Dox x w q ↔ GroenendijkStokhof.know Dox x w (Setoid.ker q) := Iff.rfl
 
-/-- §4: clause (i) of (8) is redundant given clause (ii): every proposition in `q w'` is
-    true in `w'`, so an alternative `w'` with `q w' = q w` lies in the intersection of
-    `q w`. -/
-theorem simplifiedKnow_of_generalizedKnow {q : W → Set (Set W)} (hq : IsKarttunen q)
-    (h : generalizedKnow Dox x w q) : simplifiedKnow Dox x w q := by
-  intro w' hw'
-  have e : q w' = q w := h hw'
-  exact Set.mem_sInter.2 λ p hp => hq w' p (e ▸ hp)
+/-- On a Hamblin set the simplified analysis is [karttunen-1977]'s meaning postulate as the
+substrate states it. -/
+theorem Karttunen.simplifiedKnow_trueAnswers (H : Set (Set W)) :
+    simplifiedKnow Dox x w (trueAnswers H) ↔
+      KnowsAnswer H w (fun x v u ↦ (v, u) ∈ Dox x) x := Iff.rfl
+
+/-- On a Hamblin set the generalized analysis is Groenendijk and Stokhof's entry on the
+partition. -/
+theorem generalizedKnow_trueAnswers (H : Set (Set W)) :
+    generalizedKnow Dox x w (trueAnswers H) ↔
+      GroenendijkStokhof.know Dox x w (partition H) := Iff.rfl
+
+/-- §3: knowing a bigger answer set is knowing the smaller one. -/
+theorem Karttunen.simplifiedKnow_of_subset {q q' : W → Set (Set W)} (h : q w ⊆ q' w)
+    (hk : simplifiedKnow Dox x w q') : simplifiedKnow Dox x w q :=
+  SetRel.core_mono (Set.sInter_subset_sInter h) hk
+
+/-- §4: clause (i) of (8) is redundant given clause (ii), since an alternative with the same
+answer set lies in the answer in the second sense, hence in the first. -/
+theorem Karttunen.simplifiedKnow_of_generalizedKnow {q : W → Set (Set W)}
+    (hq : IsKarttunen q) (h : generalizedKnow Dox x w q) : simplifiedKnow Dox x w q :=
+  SetRel.core_mono (fun _ hv ↦ ans₂_subset_ans₁ hq w (ker_le_ker_ans₁ q hv)) h
 
 /-- Hence (8) and (9) are equivalent, and the generalized analysis implies the actual one. -/
-theorem actualKnow_of_generalizedKnow {q : W → Set (Set W)} (hq : IsKarttunen q)
-    (h : generalizedKnow Dox x w q) : actualKnow Dox x w q :=
-  ⟨simplifiedKnow_of_generalizedKnow hq h, λ e => by unfold generalizedKnow at h; rwa [e] at h⟩
+theorem Karttunen.know_of_generalizedKnow {q : W → Set (Set W)} (hq : IsKarttunen q)
+    (h : generalizedKnow Dox x w q) : know Dox x w q :=
+  ⟨simplifiedKnow_of_generalizedKnow hq h, fun e ↦ by unfold generalizedKnow at h; rwa [e] at h⟩
 
-/-- Footnote 11: for a *whether*-question the three analyses coincide with
-    [groenendijk-stokhof-1982]'s (12). -/
-theorem whether_eq_gs (φ : Set W) :
-    {w' | whether φ w' = whether φ w} = {w' | w' ∈ φ ↔ w ∈ φ} := by
-  ext w'
-  constructor
-  · intro h
-    simpa [whether] using Set.ext_iff.1 h φ
-  · intro h
-    ext p
-    simp only [whether, Set.mem_ofPred_eq]
-    rcases em (p = φ) with rfl | hp
-    · simp only [true_or, true_and]
-      exact h
-    · rcases em (p = φᶜ) with rfl | hp'
-      · simp only [or_true, true_and, Set.mem_compl_iff]
-        exact not_congr h
-      · simp [hp, hp']
+/-- (7): with an empty answer set, the actual analysis is the generalized one. -/
+theorem Karttunen.know_iff_generalizedKnow_of_eq_empty {q : W → Set (Set W)} (h : q w = ∅) :
+    know Dox x w q ↔ generalizedKnow Dox x w q := by
+  simp [know, simplifiedKnow, generalizedKnow, ans₁, h]
 
-theorem sInter_whether (φ : Set W) : ⋂₀ whether φ w = {w' | w' ∈ φ ↔ w ∈ φ} := by
-  ext w'
-  simp only [Set.mem_sInter, whether, Set.mem_ofPred_eq]
-  constructor
-  · intro h
-    exact ⟨λ hw' => by_contra λ hw => h φᶜ ⟨Or.inr rfl, hw⟩ hw', λ hw => h φ ⟨Or.inl rfl, hw⟩⟩
-  · rintro h p ⟨hp | hp, hw⟩ <;> subst hp
-    · exact h.2 hw
-    · exact λ hw' => hw (h.1 hw')
+/-! ### *Whether*-questions -/
 
-theorem simplifiedKnow_whether_iff (φ : Set W) :
-    simplifiedKnow Dox x w (whether φ) ↔ generalizedKnow Dox x w (whether φ) := by
-  unfold simplifiedKnow generalizedKnow
-  rw [sInter_whether, whether_eq_gs]
+/-- Karttunen's *whether* has [groenendijk-stokhof-1982]'s (12) as its kernel. -/
+theorem Karttunen.ker_whether (φ : Set W) : Setoid.ker (whether φ) = Setoid.polar φ := by
+  show partition {φ, φᶜ} = _
+  ext v w
+  rw [partition_iff, Setoid.polar_iff]
+  simp [not_iff_not]
 
-/-! ### Constituent questions: Karttunen against Groenendijk and Stokhof (§4–§5) -/
+theorem ans₁_whether (φ : Set W) (w : W) :
+    ans₁ (Karttunen.whether φ) w = (Setoid.polar φ).cell w := by
+  show weakAnswer {φ, φᶜ} w = _
+  ext v
+  simp only [mem_weakAnswer, Setoid.mem_cell, Setoid.polar_iff, Set.forall_mem_insert,
+    Set.forall_mem_singleton, Set.mem_compl_iff]
+  by_cases h : w ∈ φ <;> simp [h]
 
-/-- (13): [groenendijk-stokhof-1982]'s intension of "which students called": the worlds
-    where the same individuals are students who called. -/
-def whichGS (S C : W → E → Prop) : W → Set W :=
-  λ w => {w' | ∀ x, S w' x ∧ C w' x ↔ S w x ∧ C w x}
+/-- §4: the simplified, actual, and generalized analyses and Groenendijk and Stokhof's all
+agree on "NP knows whether φ", the proof "left to the reader" and the paper's footnote 11. -/
+theorem knows_whether_tfae (φ : Set W) :
+    [Karttunen.simplifiedKnow Dox x w (Karttunen.whether φ),
+      Karttunen.know Dox x w (Karttunen.whether φ),
+      generalizedKnow Dox x w (Karttunen.whether φ),
+      GroenendijkStokhof.know Dox x w (Setoid.polar φ)].TFAE := by
+  tfae_have 1 ↔ 2 :=
+    (and_iff_left fun h ↦ absurd h (Karttunen.whether_nonempty φ w).ne_empty).symm
+  tfae_have 3 ↔ 4 := by rw [generalizedKnow_iff_know_ker, Karttunen.ker_whether]
+  tfae_have 1 ↔ 4 := by rw [Karttunen.simplifiedKnow, ans₁_whether]; rfl
+  tfae_finish
 
-/-- (10) is (11): when distinct individuals call in distinct sets of worlds, believing that
-    the set of propositions "x called" for the students `x` who called is what it is, is
-    believing that the students who called are who they are. -/
-theorem whichK_eq_whichGS {S C : W → E → Prop} (hC : Function.Injective λ x => {w' | C w' x}) :
-    {w' | whichK S C w' = whichK S C w} = whichGS S C w := by
-  ext w'
-  simp only [Set.mem_ofPred_eq, whichGS]
-  rw [Set.ext_iff]
-  simp only [whichK, Set.mem_ofPred_eq]
-  constructor
-  · intro h y
-    constructor
-    · rintro ⟨hS, hC'⟩
-      obtain ⟨z, hSz, hCz, hz⟩ := (h {v | C v y}).1 ⟨y, hS, hC', rfl⟩
-      obtain rfl := hC hz.symm
-      exact ⟨hSz, hCz⟩
-    · rintro ⟨hS, hC'⟩
-      obtain ⟨z, hSz, hCz, hz⟩ := (h {v | C v y}).2 ⟨y, hS, hC', rfl⟩
-      obtain rfl := hC hz.symm
-      exact ⟨hSz, hCz⟩
-  · intro h p
-    constructor
-    · rintro ⟨y, hS, hC', rfl⟩
-      exact ⟨y, ((h y).1 ⟨hS, hC'⟩).1, ((h y).1 ⟨hS, hC'⟩).2, rfl⟩
-    · rintro ⟨y, hS, hC', rfl⟩
-      exact ⟨y, ((h y).2 ⟨hS, hC'⟩).1, ((h y).2 ⟨hS, hC'⟩).2, rfl⟩
+/-! ### Constituent questions: Karttunen against Groenendijk and Stokhof -/
+
+/-- (13): the partition by which students called, the kernel of the extension map. -/
+def GroenendijkStokhof.which (S C : E → Set W) : Setoid W := Setoid.ker (extension S C)
+
+/-- (10) is (11): when no two individuals call in exactly the same possible worlds, the
+kernel of Karttunen's intension is Groenendijk and Stokhof's partition. -/
+theorem ker_which {S C : E → Set W} (hC : Function.Injective C) :
+    Setoid.ker (Karttunen.which S C) = GroenendijkStokhof.which S C :=
+  Setoid.ker_comp_of_injective (extension S C) hC.image_injective
 
 /-- The generalized Karttunen analysis and Groenendijk and Stokhof's agree on "which
-    students called" under the injectivity premise. -/
-theorem generalizedKnow_iff_gsKnow {S C : W → E → Prop}
-    (hC : Function.Injective λ x => {w' | C w' x}) :
-    generalizedKnow Dox x w (whichK S C) ↔ gsKnow Dox x w (whichGS S C) := by
-  unfold generalizedKnow gsKnow
-  rw [whichK_eq_whichGS hC]
+students called" under the injectivity premise. -/
+theorem generalizedKnow_which_iff {S C : E → Set W} (hC : Function.Injective C) :
+    generalizedKnow Dox x w (Karttunen.which S C) ↔
+      GroenendijkStokhof.know Dox x w (GroenendijkStokhof.which S C) := by
+  rw [generalizedKnow_iff_know_ker, ker_which hC]
 
-/-! ### The exhaustiveness failure of the actual analysis (§2)
+/-- §6's neutralization: "which A are B" and "which B are A" raise the same partition. -/
+theorem GroenendijkStokhof.which_comm (S C : E → Set W) : which S C = which C S :=
+  congrArg Setoid.ker (funext fun w ↦ Set.ext fun x ↦ by simp [extension, Set.inter_comm])
 
-Two individuals, Bill and Mary, both students; Bill called in every world and Mary called
-only in the world `true`. In the world `false`, John is agnostic about Mary. -/
+/-! ### The exhaustiveness scenario (§2)
 
-/-- Bill (`true`) called everywhere; Mary (`false`) called only in the world `true`. -/
-def called : Bool → Bool → Prop := λ w y => y = true ∨ w = true
+Bill and Mary, both of them people; Bill called in every world and Mary only in the world
+`true`. In the world `false`, where Mary did not call, John is agnostic. -/
+
+namespace Exhaustiveness
+
+inductive Student | bill | mary
+
+/-- Bill called in every world; Mary only in `true`. -/
+def called : Student → Set Bool
+  | .bill => Set.univ
+  | .mary => {true}
 
 /-- John's doxastic alternatives: every world, at every world. -/
 def agnostic : Unit → SetRel Bool Bool := fun _ ↦ Set.univ
 
+theorem which_false : Karttunen.which (fun _ ↦ Set.univ) called false = {Set.univ} := by
+  ext p
+  simp only [Karttunen.which, extension, Set.mem_image, Set.mem_ofPred_eq,
+    Set.mem_singleton_iff]
+  constructor
+  · rintro ⟨x, hx, rfl⟩
+    cases x
+    · rfl
+    · simp [called] at hx
+  · rintro rfl
+    exact ⟨.bill, by simp [called], rfl⟩
+
+theorem singleton_true_mem_which_true :
+    ({true} : Set Bool) ∈ Karttunen.which (fun _ ↦ Set.univ) called true :=
+  ⟨.mary, by simp [called, extension], rfl⟩
+
 /-- The actual analysis makes (1) true at `false`, where Mary did not call: the only true
-    answer, that Bill called, is believed, and the answer set is not empty. -/
-theorem actualKnow_called : actualKnow agnostic () false (whichK (λ _ _ => True) called) := by
-  refine ⟨λ w' _ => Set.mem_sInter.2 ?_, λ e => ?_⟩
-  · rintro p ⟨y, -, hy, rfl⟩
-    rcases y with _ | _
-    · exact absurd hy (by simp [called])
-    · exact Or.inl rfl
-  · have hm : {w' | called w' true} ∈ whichK (λ _ _ => True) called false :=
-      ⟨true, trivial, Or.inl rfl, rfl⟩
-    rw [e] at hm
-    exact (Set.notMem_empty _ hm).elim
+answer, that Bill called, is believed, and the answer set is not empty. -/
+theorem karttunen_know :
+    Karttunen.know agnostic () false (Karttunen.which (fun _ ↦ Set.univ) called) := by
+  refine ⟨?_, fun h ↦ absurd h (by rw [which_false]; exact Set.singleton_ne_empty _)⟩
+  show false ∈ (agnostic ()).core (⋂₀ Karttunen.which (fun _ ↦ Set.univ) called false)
+  rw [which_false, Set.sInter_singleton, SetRel.core_univ]
+  trivial
 
 /-- The generalized analysis makes (1) false there: in the alternative `true` Mary called
-    too, so the answer set differs. -/
-theorem not_generalizedKnow_called :
-    ¬ generalizedKnow agnostic () false (whichK (λ _ _ => True) called) := by
+too, so the answer set differs. -/
+theorem not_generalizedKnow :
+    ¬ generalizedKnow agnostic () false (Karttunen.which (fun _ ↦ Set.univ) called) := by
   intro h
-  have e : whichK (λ _ _ => True) called true = whichK (λ _ _ => True) called false :=
-    @h true trivial
-  have hm : {w' | called w' false} ∈ whichK (λ _ _ => True) called true :=
-    ⟨false, trivial, Or.inr rfl, rfl⟩
-  rw [e] at hm
-  obtain ⟨y, -, hy, hp⟩ := hm
-  have := Set.ext_iff.1 hp false
-  rcases y with _ | _
-  · exact absurd hy (by simp [called])
-  · simp [called] at this
+  have := h (show (false, true) ∈ agnostic () from trivial)
+  simp only [Set.mem_ofPred_eq, which_false] at this
+  have h1 : ({true} : Set Bool) = Set.univ :=
+    Set.mem_singleton_iff.1 (this ▸ singleton_true_mem_which_true)
+  exact absurd (Set.ext_iff.1 h1 false) (by simp)
 
-/-! ### Non-equivalence (§7) -/
+/-- Groenendijk and Stokhof agree with the generalized analysis here. -/
+theorem not_groenendijkStokhof_know :
+    ¬ GroenendijkStokhof.know agnostic () false
+      (GroenendijkStokhof.which (fun _ ↦ Set.univ) called) := by
+  intro h
+  have := h (show (false, true) ∈ agnostic () from trivial)
+  simp only [Setoid.mem_cell, GroenendijkStokhof.which, Setoid.ker_def] at this
+  have := congrArg (Student.mary ∈ ·) this
+  simp [extension, called] at this
 
-/-- With the universally necessary property, the answer set is `{univ}` when there are
-    students and empty otherwise. -/
-theorem whichK_const_true {S : W → E → Prop} (hS : ∃ y, S w y) :
-    whichK S (λ _ _ => True) w = {Set.univ} := by
-  ext p
-  simp only [whichK, Set.mem_ofPred_eq, true_and, Set.ofPred_true, Set.mem_singleton_iff]
-  exact ⟨λ ⟨_, _, h⟩ => h, λ h => hS.imp λ y hy => ⟨hy, h⟩⟩
+end Exhaustiveness
 
-theorem whichK_const_false {S : W → E → Prop} (hS : ¬ ∃ y, S w y) :
-    whichK S (λ _ _ => True) w = ∅ := by
-  ext p
-  simp only [whichK, Set.mem_ofPred_eq, true_and, Set.notMem_empty, iff_false, not_exists,
-    not_and]
-  exact λ y hy _ => hS ⟨y, hy⟩
+/-! ### The de dicto scenario (§3–§4)
 
-/-- (23): for the universally necessary property, the generalized Karttunen analysis of (21)
-    asks only whether there are students. -/
-theorem whichK_self {S : W → E → Prop} :
-    {w' | whichK S (λ _ _ => True) w' = whichK S (λ _ _ => True) w} =
-      {w' | (∃ y, S w' y) ↔ ∃ y, S w y} := by
-  ext w'
+Mary, the sole individual, called in every world but is a student only in the actual world
+`true`; John is agnostic. The generalized analysis delivers the de dicto reading: (1) comes
+out false because John does not know that Mary is a student, while Karttunen's entries make
+it true. At the other world, where there are no student callers, Karttunen's actual entry
+correctly blocks the entailment from "John knows who called" (6) to (1). -/
+
+namespace DeDicto
+
+/-- Mary is a student only in `true`. -/
+def student : Unit → Set Bool := fun _ ↦ {true}
+
+/-- Mary called in every world. -/
+def called : Unit → Set Bool := fun _ ↦ Set.univ
+
+def agnostic : Unit → SetRel Bool Bool := fun _ ↦ Set.univ
+
+/-- Karttunen's actual analysis makes (1) true at `true`: the one true answer is believed. -/
+theorem karttunen_know : Karttunen.know agnostic () true (Karttunen.which student called) := by
+  refine ⟨?_, fun h ↦ ?_⟩
+  · intro v _
+    simp [ans₁, Karttunen.which, extension, student, called]
+  · exact absurd h (Set.Nonempty.ne_empty ⟨_, (), by simp [student, called, extension], rfl⟩)
+
+/-- The generalized analysis makes (1) false: in the alternative `false` Mary is not a
+student, so the answer set differs. -/
+theorem not_generalizedKnow :
+    ¬ generalizedKnow agnostic () true (Karttunen.which student called) := by
+  intro h
+  have e : Karttunen.which student called false = Karttunen.which student called true :=
+    h (show (true, false) ∈ agnostic () from trivial)
+  have h1 : (Set.univ : Set Bool) ∈ Karttunen.which student called true :=
+    ⟨(), by simp [extension, student, called], rfl⟩
+  rw [← e] at h1
+  simp [Karttunen.which, extension, student] at h1
+
+/-- (6) "John knows who called" stays true on the generalized analysis. -/
+theorem generalizedKnow_who :
+    generalizedKnow agnostic () true (Karttunen.which (fun _ ↦ Set.univ) called) := by
+  intro v _
+  simp [Karttunen.which, extension, called]
+
+/-- At `false` there are callers but no student callers, and (6) is true on the actual
+analysis. -/
+theorem karttunen_know_who :
+    Karttunen.know agnostic () false (Karttunen.which (fun _ ↦ Set.univ) called) := by
+  refine ⟨fun v _ ↦ ?_, fun h ↦ ?_⟩
+  · simp [ans₁, Karttunen.which, extension, called]
+  · exact absurd h (Set.Nonempty.ne_empty ⟨_, (), by simp [called, extension], rfl⟩)
+
+/-- But (1) is false there on the actual analysis: the answer set is empty and John does
+not believe it empty, so (6) does not entail (1). -/
+theorem not_karttunen_know_of_no_student :
+    ¬ Karttunen.know agnostic () false (Karttunen.which student called) := by
+  rintro ⟨-, hii⟩
+  have h0 : Karttunen.which student called false = ∅ := by
+    simp [Karttunen.which, extension, student]
+  have e : Karttunen.which student called true = ∅ :=
+    hii h0 (show (false, true) ∈ agnostic () from trivial)
+  have h1 : (Set.univ : Set Bool) ∈ Karttunen.which student called true :=
+    ⟨(), by simp [extension, student, called], rfl⟩
+  rw [e] at h1
+  exact Set.notMem_empty _ h1
+
+end DeDicto
+
+/-! ### Non-equivalence: identity with oneself (§7) -/
+
+/-- The universally necessary property, which every individual has in every world. -/
+def identicalWithSelf : E → Set W := fun _ ↦ Set.univ
+
+theorem extension_identicalWithSelf (S : E → Set W) (w : W) :
+    extension S identicalWithSelf w = {x | w ∈ S x} := by
+  simp [extension, identicalWithSelf]
+
+theorem Karttunen.which_identicalWithSelf_of_exists {S : E → Set W} {w : W}
+    (h : ∃ x, w ∈ S x) : which S identicalWithSelf w = {Set.univ} := by
+  rw [which, extension_identicalWithSelf]
+  exact Set.Nonempty.image_const h _
+
+theorem Karttunen.which_identicalWithSelf_of_not_exists {S : E → Set W} {w : W}
+    (h : ¬ ∃ x, w ∈ S x) : which S identicalWithSelf w = ∅ := by
+  rw [which, extension_identicalWithSelf, Set.image_eq_empty]
+  exact Set.eq_empty_of_forall_notMem fun x hx ↦ h ⟨x, hx⟩
+
+/-- (22): Groenendijk and Stokhof read (21) as knowing what students there are. -/
+theorem GroenendijkStokhof.which_identicalWithSelf (S : E → Set W) :
+    which S identicalWithSelf = Setoid.ker fun w ↦ {x | w ∈ S x} :=
+  congrArg Setoid.ker (funext (extension_identicalWithSelf S))
+
+/-- (23): the generalized analysis reads (21) as knowing whether there are students. -/
+theorem Karttunen.ker_which_identicalWithSelf (S : E → Set W) :
+    Setoid.ker (which S identicalWithSelf) = Setoid.polar {w | ∃ x, w ∈ S x} := by
+  ext v w
+  rw [Setoid.ker_def, Setoid.polar_iff]
+  by_cases hv : ∃ x, v ∈ S x <;> by_cases hw : ∃ x, w ∈ S x <;>
+    simp [hv, hw, which_identicalWithSelf_of_exists, which_identicalWithSelf_of_not_exists]
+
+/-! Two worlds with one student each, Bill in `true` and Mary in `false`; John agnostic.
+There are students either way, so the generalized analysis ascribes knowledge of (21) while
+Groenendijk and Stokhof's does not. -/
+
+namespace Identity
+
+inductive Student | bill | mary
+
+/-- Bill is the student in `true`, Mary in `false`. -/
+def student : Student → Set Bool
+  | .bill => {true}
+  | .mary => {false}
+
+def agnostic : Unit → SetRel Bool Bool := fun _ ↦ Set.univ
+
+theorem generalizedKnow_holds :
+    generalizedKnow agnostic () true (Karttunen.which student identicalWithSelf) := by
+  intro v _
   simp only [Set.mem_ofPred_eq]
-  by_cases h' : ∃ y, S w' y <;> by_cases h : ∃ y, S w y
-  · simp [whichK_const_true h', whichK_const_true h, h', h]
-  · simp [whichK_const_true h', whichK_const_false h, h', h]
-  · simp [whichK_const_false h', whichK_const_true h, h', h]
-  · simp [whichK_const_false h', whichK_const_false h, h', h]
+  cases v
+  · rw [Karttunen.which_identicalWithSelf_of_exists (S := student) ⟨Student.mary, rfl⟩,
+      Karttunen.which_identicalWithSelf_of_exists (S := student) ⟨Student.bill, rfl⟩]
+  · rfl
 
-/-- Two worlds with one student each, Bill in `true` and Mary in `false`. -/
-def oneStudent : Bool → Bool → Prop := λ w y => y = w
+theorem not_groenendijkStokhof_know :
+    ¬ GroenendijkStokhof.know agnostic () true
+      (GroenendijkStokhof.which student identicalWithSelf) := by
+  intro h
+  have := h (show (true, false) ∈ agnostic () from trivial)
+  simp only [Setoid.mem_cell, GroenendijkStokhof.which, Setoid.ker_def] at this
+  have := congrArg (Student.mary ∈ ·) this
+  simp [extension, student, identicalWithSelf] at this
 
-/-- On (21), the generalized analysis ascribes knowledge to the agnostic John, since there
-    are students in both worlds, while Groenendijk and Stokhof's (22) does not. -/
-theorem self_divergence :
-    generalizedKnow agnostic () true (whichK oneStudent (λ _ _ => True)) ∧
-      ¬ gsKnow agnostic () true (whichGS oneStudent (λ _ _ => True)) := by
-  constructor
-  · intro w' _
-    show whichK oneStudent (λ _ _ => True) w' = whichK oneStudent (λ _ _ => True) true
-    rw [whichK_const_true (S := oneStudent) ⟨w', rfl⟩,
-      whichK_const_true (S := oneStudent) ⟨true, rfl⟩]
-  · intro h
-    have := @h false trivial true
-    simp [oneStudent] at this
+end Identity
 
-/-- In the world `true` both Bill and Sue are students, in `false` only Bill is. -/
-def student : Bool → Bool → Prop := λ w y => y = true ∨ w = true
+/-! ### Non-equivalence: living with one's actual spouse (§7) -/
 
-/-- `x` lives with `x`'s actual spouse: Bill's spouse is Sue and Sue's is Bill, and they live
-    together in every world, so both propositions are the whole set of worlds. -/
-def livesWithSpouse : Bool → Bool → Prop := λ _ _ => True
+/-! Bill is married to Sue, and the proposition that either lives with their actual spouse
+is the proposition that they live together, so the two answers coincide. A world records
+whether Sue is a student and whether the couple live together; in the actual world both
+hold, and John's one false belief is that Sue is not a student. -/
 
-/-- (24)–(26): the generalized analysis makes the report true although John believes Sue not
-    to be a student, because Bill's and Sue's propositions coincide; Groenendijk and Stokhof
-    make it false. -/
-theorem spouse_divergence :
-    generalizedKnow agnostic () true (whichK student livesWithSpouse) ∧
-      ¬ gsKnow agnostic () true (whichGS student livesWithSpouse) := by
-  constructor
-  · intro w' _
-    show whichK student (λ _ _ => True) w' = whichK student (λ _ _ => True) true
-    rw [whichK_const_true (S := student) ⟨true, Or.inl rfl⟩,
-      whichK_const_true (S := student) ⟨true, Or.inl rfl⟩]
-  · intro h
-    have := @h false trivial false
-    simp [student, livesWithSpouse] at this
+namespace Spouses
+
+inductive Person | bill | sue
+
+/-- A world: is Sue a student, and do Bill and Sue live together? -/
+abbrev World := Bool × Bool
+
+/-- Bill is a student everywhere; Sue where the first coordinate holds. -/
+def student : Person → Set World
+  | .bill => Set.univ
+  | .sue => {w | w.1 = true}
+
+/-- Each lives with their actual spouse exactly where they live together. -/
+def livesWithSpouse : Person → Set World := fun _ ↦ {w | w.2 = true}
+
+def actual : World := (true, true)
+
+/-- John's only doxastic alternative: Sue is not a student, and they live together. -/
+def john : Unit → SetRel World World := fun _ ↦ {p | p.2 = (false, true)}
+
+/-- The paper's premise fails: Bill's and Sue's propositions coincide. -/
+theorem not_injective_livesWithSpouse : ¬ Function.Injective livesWithSpouse :=
+  fun h ↦ Person.noConfusion (h (a₁ := .bill) (a₂ := .sue) rfl)
+
+theorem extension_actual : extension student livesWithSpouse actual = Set.univ := by
+  ext x
+  cases x <;> simp [extension, student, livesWithSpouse, actual]
+
+theorem extension_alt : extension student livesWithSpouse (false, true) = {.bill} := by
+  ext x
+  cases x <;> simp [extension, student, livesWithSpouse]
+
+/-- (26): the answer sets at the actual world and at John's alternative coincide, although
+Sue is a student in one and not the other. -/
+theorem which_eq :
+    Karttunen.which student livesWithSpouse (false, true) =
+      Karttunen.which student livesWithSpouse actual := by
+  simp only [Karttunen.which, extension_actual, extension_alt, livesWithSpouse]
+  ext p
+  simp only [Set.image_singleton, Set.mem_singleton_iff, Set.image_univ, Set.mem_range]
+  exact ⟨fun h ↦ ⟨.bill, h.symm⟩, fun ⟨_, h⟩ ↦ h.symm⟩
+
+/-- The generalized analysis wrongly makes (24) true. -/
+theorem generalizedKnow_holds :
+    generalizedKnow john () actual (Karttunen.which student livesWithSpouse) := by
+  rintro v (rfl : v = (false, true))
+  exact which_eq
+
+/-- (25): Groenendijk and Stokhof make (24) false. -/
+theorem not_groenendijkStokhof_know :
+    ¬ GroenendijkStokhof.know john () actual
+      (GroenendijkStokhof.which student livesWithSpouse) := by
+  intro h
+  have := h (show (actual, ((false : Bool), (true : Bool))) ∈ john () from rfl)
+  simp only [Setoid.mem_cell, GroenendijkStokhof.which, Setoid.ker_def, extension_actual,
+    extension_alt] at this
+  have := congrArg (Person.sue ∈ ·) this
+  simp at this
+
+end Spouses
 
 /-! ### Structured propositions (§8) -/
 
-/-- (28): with structured answers, the pairs of a student who called and the property of
-    calling, the generalized analysis is Groenendijk and Stokhof's (11) for any predicate. -/
-theorem structured_eq_gs (S C : W → E → Prop) :
-    {w' | {y | S w' y ∧ C w' y} = {y | S w y ∧ C w y}} = whichGS S C w := by
-  ext w'
-  simp only [Set.mem_ofPred_eq, whichGS, Set.ext_iff]
+/-- (27): the structured intension, the pairs of a student who called with the property of
+calling. -/
+def whichStructured (S C : E → Set W) (w : W) : Set (E × (E → Set W)) :=
+  (fun x ↦ (x, C)) '' extension S C w
 
-/-! ### The two answers (§6) -/
+/-- (28) is Groenendijk and Stokhof's (11) for any predicate: tagging each individual with
+the property is injective whatever the property. -/
+theorem ker_whichStructured (S C : E → Set W) :
+    Setoid.ker (whichStructured S C) = GroenendijkStokhof.which S C :=
+  Setoid.ker_comp_of_injective (extension S C) (Prod.mk_left_injective C).image_injective
 
-/-- (16): the answer in the second sense, the proposition that the answer in the first sense
-    is what it is; the first sense is the substrate's `weakAnswer`. -/
-def ans₂ (H : Set (Set W)) (w : W) : Set W := {w' | weakAnswer H w' = weakAnswer H w}
+/-- With structured answers the generalized analysis is Groenendijk and Stokhof's, with no
+premise on the predicate. -/
+theorem generalizedKnow_whichStructured_iff {S C : E → Set W} :
+    generalizedKnow Dox x w (whichStructured S C) ↔
+      GroenendijkStokhof.know Dox x w (GroenendijkStokhof.which S C) := by
+  rw [generalizedKnow_iff_know_ker, ker_whichStructured]
 
-/-- Groenendijk and Stokhof's answer, deciding every alternative as `w` does, has the same
-    answer in the first sense. -/
-theorem strongAnswer_subset_ans₂ (H : Set (Set W)) (w : W) : strongAnswer H w ⊆ ans₂ H w := by
-  intro v hv
-  show weakAnswer H v = weakAnswer H w
-  ext u
-  simp only [mem_weakAnswer]
-  exact ⟨λ h p hp hwp => h p hp ((hv p hp).1 hwp), λ h p hp hvp => h p hp ((hv p hp).2 hvp)⟩
+/-- The unstructured answers are always recoverable from the structured intension. -/
+theorem Karttunen.which_eq_image_whichStructured (S C : E → Set W) (w : W) :
+    which S C w = (fun p : E × (E → Set W) ↦ p.2 p.1) '' whichStructured S C w := by
+  simp [which, whichStructured, Set.image_image]
+
+/-- On (21), structured answers withdraw the knowledge ascription. -/
+theorem Identity.not_generalizedKnow_structured :
+    ¬ generalizedKnow Identity.agnostic () true
+      (whichStructured Identity.student identicalWithSelf) := by
+  rw [generalizedKnow_iff_know_ker, ker_whichStructured]
+  exact Identity.not_groenendijkStokhof_know
+
+/-- On (24), structured answers withdraw the knowledge ascription. -/
+theorem Spouses.not_generalizedKnow_structured :
+    ¬ generalizedKnow Spouses.john () Spouses.actual
+      (whichStructured Spouses.student Spouses.livesWithSpouse) := by
+  rw [generalizedKnow_iff_know_ker, ker_whichStructured]
+  exact Spouses.not_groenendijkStokhof_know
+
+/-- …though not conversely: the structured intensions differ where the unstructured ones
+coincide. -/
+theorem Spouses.whichStructured_ne :
+    whichStructured Spouses.student Spouses.livesWithSpouse (false, true) ≠
+      whichStructured Spouses.student Spouses.livesWithSpouse Spouses.actual := by
+  intro h
+  have := congrArg ((Spouses.Person.sue, Spouses.livesWithSpouse) ∈ ·) h
+  simp [whichStructured, Spouses.extension_actual, Spouses.extension_alt] at this
 
 end Heim1994b
