@@ -73,7 +73,7 @@ into the complement of *think*, the asymmetry of stacked neg-raising predicates 
 
 namespace Gajewski2007
 
-open Presupposition PartialProp ModalLogic NaturalLogic
+open Presupposition PartialProp ModalLogic NaturalLogic Desire.BestWorlds
 open SetRel
 
 variable {W : Type*}

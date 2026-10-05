@@ -6,6 +6,7 @@ public import Linglib.Semantics.Conditionals.Basic
 public import Linglib.Semantics.Degree.Quantifier
 public import Linglib.Semantics.Modality.Kratzer.Ordering
 public import Linglib.Semantics.Focus.Particles
+public import Linglib.Semantics.Attitudes.Desire.BestWorlds
 
 /-!
 # Strawson entailment
@@ -25,7 +26,7 @@ presupposition that defeats the classical property.
 
 * `IsStrawsonDE`, `IsStrawsonUE`: antitonicity and monotonicity under Strawson entailment.
 * `IsStrawsonAntiAdditive`: `f (p ⊔ q)` is Strawson equivalent to `f p` conjoined with `f q`.
-* `only`, `glad`, `regret`, `superlative`, `since`, `would`: von Fintel's operators.
+* `only`, `superlative`, `since`, `would`: von Fintel's operators.
 
 ## Main results
 
@@ -35,10 +36,13 @@ presupposition that defeats the classical property.
   together with the Strawson form of Atlas's pseudo-anti-additivity.
 * `isStrawsonDE_ofProp_iff`, `isStrawsonAntiAdditive_ofProp_iff`: without presuppositions the
   Strawson notions are the classical ones.
-* `isStrawsonAntiAdditive_only`, `isStrawsonAntiAdditive_regret`,
-  `isStrawsonAntiAdditive_superlative`, `isStrawsonAntiAdditive_since`,
-  `isStrawsonAntiAdditive_would`, `isStrawsonUE_glad`, `not_isStrawsonDE_glad`, and the
+* `isStrawsonAntiAdditive_only`, `isStrawsonAntiAdditive_superlative`,
+  `isStrawsonAntiAdditive_since`, `isStrawsonAntiAdditive_would`, and the
   `not_antitone_truthSet_` counterexamples.
+* `Desire.BestWorlds.isStrawsonUE_want`, `Desire.BestWorlds.isStrawsonUE_glad`,
+  `Desire.BestWorlds.not_isStrawsonDE_glad`, `Desire.BestWorlds.isStrawsonAntiAdditive_regret`:
+  *want* and *glad* are Strawson upward entailing and *glad* is not Strawson downward entailing,
+  while *sorry* is Strawson anti-additive.
 * `Focus.Particles.isStrawsonDE_only`, `Focus.Particles.isStrawsonAntiAdditive_only_subset`,
   `Focus.Particles.isStrawsonDE_only_apply`: the propositional exclusive is Strawson downward
   entailing in its prejacent and, applied to an individual, in its predicate, on scales refining
@@ -56,13 +60,11 @@ presupposition that defeats the classical property.
   `Focus.Particles.only`, and its Strawson facts hold with the alternatives held fixed, as von
   Fintel requires. `only` presupposes that `x` is `P`; Horn's presupposition that something is
   `P` gives the same Strawson facts, as von Fintel notes.
-* *Glad* and *regret* take the belief worlds and the modal base as world-indexed sets and the
-  ordering source as a world-indexed list, so their best worlds are `Modality.bestAmong`;
-  following Heim, their factivity is doxastic. With suitable ordering sources *regret* also covers
-  *sorry*, *amazed* and *surprised*.
-* Von Fintel calls *glad* upward entailing; its presupposition that the modal base contains
-  non-`p` worlds can fail at a larger argument, so `isStrawsonUE_glad` is the Strawson form he
-  states for *want*.
+* *Want*, *glad* and *sorry* are the best-worlds entries of `Desire.BestWorlds`; following Heim,
+  the factivity of *glad* and *sorry* is doxastic, and with suitable ordering sources *sorry* also
+  covers *regret*, *amazed* and *surprised*. Von Fintel calls *glad* upward entailing; its
+  presupposition that the domain contains non-`p` worlds can fail at a larger argument, so
+  `Desire.BestWorlds.isStrawsonUE_glad` is the Strawson form he states for *want*.
 * The superlative's degree measure does not vary with the world, and *since* reads von Fintel's
   prose meaning off world-indexed `past` and `window` sets.
 * `would` is the modal-horizon conditional; the admissibility of the horizon, a condition on the
@@ -254,68 +256,6 @@ theorem only_ne_only_range :
 
 end Only
 
-/-! ### *Glad* and *regret* -/
-
-section Attitudes
-
-open Modality
-
-variable (dox base : W → Set W) (g : W → List (W → Prop))
-
-/-- *a is glad that p* presupposes that `a` believes `p` and that the modal base contains the
-belief worlds and both `p`-worlds and non-`p`-worlds, and asserts that the best worlds of the base
-under the ordering source `g` are `p`-worlds ([von-fintel-1999]'s (50)). -/
-def glad (p : Set W) : PartialProp W where
-  presup w := dox w ⊆ p ∧ dox w ⊆ base w ∧ (base w ∩ p).Nonempty ∧ (base w \ p).Nonempty
-  assertion w := bestAmong (base w) (g w) ⊆ p
-
-/-- *a regrets that p* has the presupposition of *glad* and asserts that no best world of the
-modal base is a `p`-world ([von-fintel-1999]'s (53)). -/
-def regret (p : Set W) : PartialProp W where
-  presup := (glad dox base g p).presup
-  assertion w := Disjoint (bestAmong (base w) (g w)) p
-
-theorem isStrawsonUE_glad : IsStrawsonUE (glad dox base g) :=
-  .of_monotone fun _ _ h _ hw ↦ hw.trans h
-
-/-- *Glad* is not Strawson downward entailing, so it licenses no negative polarity item
-([von-fintel-1999], §3.3). The subject believes world `0` and prefers world `1`, so is glad that
-`0` or `1` holds but not that `0` does. -/
-theorem not_isStrawsonDE_glad :
-    ¬ IsStrawsonDE (glad (fun _ : Fin 3 ↦ {0}) (fun _ ↦ .univ) (fun _ ↦ [(· = 1)])) := by
-  have hb : bestAmong (Set.univ : Set (Fin 3)) [(· = 1)] = {1} := by
-    rw [bestAmong_eq_of_exists ⟨1, Set.mem_univ _, by simp⟩]
-    ext
-    simp
-  intro h
-  have h1 : ({1} : Set (Fin 3)) ⊆ {0} := by
-    have := h (p := {0}) (q := {0, 1}) (by simp) 0
-    simp only [glad, hb] at this
-    exact this ⟨by simp, Set.subset_univ _, ⟨0, by simp⟩, ⟨2, by simp⟩⟩
-      ⟨subset_rfl, Set.subset_univ _, ⟨0, by simp⟩, ⟨1, by simp⟩⟩ (by simp)
-  simpa using h1 (Set.mem_singleton 1)
-
-theorem isStrawsonAntiAdditive_regret : IsStrawsonAntiAdditive (regret dox base g) :=
-  .of_isAntiAdditive fun _ _ ↦ funext fun _ ↦ propext Set.disjoint_union_right
-
-theorem isStrawsonDE_regret : IsStrawsonDE (regret dox base g) :=
-  (isStrawsonAntiAdditive_regret dox base g).isStrawsonDE
-
-/-- *Sorry that Robin bought a car* does not classically entail *sorry that Robin bought a Honda
-Civic*, whose factive presupposition may fail ([von-fintel-1999]'s (30)). The subject believes
-world `true` and prefers world `false`. -/
-theorem not_antitone_truthSet_regret :
-    ¬ Antitone fun p : Set Bool ↦
-      (regret (fun _ ↦ {true}) (fun _ ↦ .univ) (fun _ ↦ [(· = false)]) p).truthSet := by
-  refine not_antitone_truthSet (p := ∅) (q := {true}) (w := true) (Set.empty_subset _)
-    ⟨⟨subset_rfl, Set.subset_univ _, ⟨true, trivial, rfl⟩, ⟨false, trivial, by simp⟩⟩, ?_⟩
-    fun h ↦ h.1 rfl
-  show Disjoint (bestAmong .univ [(· = false)]) {true}
-  rw [bestAmong_eq_of_exists ⟨false, Set.mem_univ _, by simp⟩]
-  simp
-
-end Attitudes
-
 /-! ### Superlatives -/
 
 section Superlative
@@ -464,3 +404,62 @@ theorem not_isStrawsonDE_only_superset :
   exact absurd (this (Set.mem_univ false)) (by simp)
 
 end Focus.Particles
+
+/-! ### *Want*, *glad* and *sorry* -/
+
+namespace Desire.BestWorlds
+
+open Modality NaturalLogic
+
+variable {W : Type*} (dox base : W → Set W) (g : W → List (W → Prop))
+
+/-- *Want* is Strawson upward entailing in its complement ([von-fintel-1999], §3.2). -/
+theorem isStrawsonUE_want : IsStrawsonUE (want base g) :=
+  .of_monotone fun _ _ h _ hw ↦ hw.trans h
+
+theorem isStrawsonUE_glad : IsStrawsonUE (glad dox base g) :=
+  .of_monotone fun _ _ h _ hw ↦ hw.trans h
+
+/-- *Glad* is not Strawson downward entailing, so it licenses no negative polarity item
+([von-fintel-1999], §3.3). The subject believes world `0` and prefers world `1`, so is glad that
+`0` or `1` holds but not that `0` does. -/
+theorem not_isStrawsonDE_glad :
+    ¬ IsStrawsonDE (glad (fun _ : Fin 3 ↦ {0}) (fun _ ↦ .univ) (fun _ ↦ [(· = 1)])) := by
+  have hb : bestAmong (Set.univ : Set (Fin 3)) [(· = 1)] = {1} := by
+    rw [bestAmong_eq_of_exists ⟨1, Set.mem_univ _, by simp⟩]
+    ext
+    simp
+  intro h
+  have h1 : ({1} : Set (Fin 3)) ⊆ {0} := by
+    have := h (p := {0}) (q := {0, 1}) (by simp) 0
+    simp only [glad, want, Want, hb] at this
+    exact this ⟨by simp, Set.subset_univ _, ⟨0, by simp⟩, ⟨2, by simp⟩⟩
+      ⟨subset_rfl, Set.subset_univ _, ⟨0, by simp⟩, ⟨1, by simp⟩⟩ (by simp)
+  simpa using h1 (Set.mem_singleton 1)
+
+/-- *Sorry* is Strawson anti-additive in its complement, since wanting a disjunction false is
+wanting each disjunct false. -/
+theorem isStrawsonAntiAdditive_regret : IsStrawsonAntiAdditive (regret dox base g) :=
+  .of_isAntiAdditive fun p q ↦ funext fun w ↦ propext <| by
+    show Want (g w) (base w) (p ∪ q)ᶜ ↔ Want (g w) (base w) pᶜ ∧ Want (g w) (base w) qᶜ
+    rw [Set.compl_union]
+    exact want_inter_iff
+
+theorem isStrawsonDE_regret : IsStrawsonDE (regret dox base g) :=
+  (isStrawsonAntiAdditive_regret dox base g).isStrawsonDE
+
+/-- *Sorry that Robin bought a car* does not classically entail *sorry that Robin bought a Honda
+Civic*, whose factive presupposition may fail ([von-fintel-1999]'s (30)). The subject believes
+world `true` and prefers world `false`. -/
+theorem not_antitone_truthSet_regret :
+    ¬ Antitone fun p : Set Bool ↦
+      (regret (fun _ ↦ {true}) (fun _ ↦ .univ) (fun _ ↦ [(· = false)]) p).truthSet := by
+  refine not_antitone_truthSet (p := ∅) (q := {true}) (w := true) (Set.empty_subset _)
+    ⟨⟨subset_rfl, Set.subset_univ _, ⟨true, trivial, rfl⟩, ⟨false, trivial, by simp⟩⟩, ?_⟩
+    fun h ↦ h.1 rfl
+  show bestAmong .univ [(· = false)] ⊆ {true}ᶜ
+  rw [bestAmong_eq_of_exists ⟨false, Set.mem_univ _, by simp⟩]
+  intro x hx
+  simp_all
+
+end Desire.BestWorlds

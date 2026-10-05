@@ -52,7 +52,7 @@ and a presupposition trigger's full meaning fails plain downward entailment.
 
 namespace Gajewski2011
 
-open NaturalLogic Presupposition Quantifier Quantifier.GQ
+open NaturalLogic Presupposition Quantifier Quantifier.GQ Desire.BestWorlds
 
 variable {α : Type*}
 
