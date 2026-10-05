@@ -1,64 +1,261 @@
 [
   {
     "id": "delpinal2015_fake_gun",
-    "source": {"bibkey": "delpinal-2015", "paperLabel": "(17)"},
+    "source": {
+      "bibkey": "delpinal-2015",
+      "paperLabel": "(17)"
+    },
     "language": "stan1293",
     "primaryText": "fake gun",
-    "glossedTokens": [
-      ["fake", "fake"], ["gun", "gun"]
-    ],
+    "glossedTokens": [],
     "translation": "",
-    "context": "Paper eq. 17 worked composition: fake gun's E-structure asserts ¬gun(x), ¬made-as-gun, ∃e[MAKING(e) ∧ GOAL(e, perceptual-gun(x))]. C-structure: TELIC negated (not for shooting), FORMAL preserved (looks like gun), AGENTIVE = made-to-look-like-gun. The canonical privative.",
+    "context": "",
     "judgment": "acceptable",
     "readings": [],
-    "comment": "Del Pinal §3 eq. 17. Illustrates the full DC composition for the privative paradigm case. The TELIC-negation entailment (fake gun is not for shooting) distinguishes DC from a coarser Kamp-privative analysis that only commits to ¬gun."
+    "comment": "The full dual content of fake gun, (16) applied to (8): not a gun, not made to shoot, made to look like a gun; C-structure keeps gun's constitutive and formal, negates its telic. Its E-structure (10) says nothing about whether a fake gun can shoot (p. 7:21).",
+    "verified": "page-image"
   },
   {
     "id": "delpinal2015_counterfeit_rolex",
-    "source": {"bibkey": "delpinal-2015", "paperLabel": "(11)"},
+    "source": {
+      "bibkey": "delpinal-2015",
+      "paperLabel": "(11)"
+    },
     "language": "stan1293",
     "primaryText": "counterfeit Rolex",
-    "glossedTokens": [
-      ["counterfeit", "counterfeit"], ["Rolex", "Rolex"]
-    ],
+    "glossedTokens": [],
     "translation": "",
-    "context": "Paper eq. 11: counterfeit differs from fake in TELIC. A counterfeit Rolex is made to BOTH look AND function like a Rolex (GOAL includes Q_F AND Q_T); a fake Rolex would only need to look like one.",
+    "context": "",
     "judgment": "acceptable",
     "readings": [],
-    "comment": "Del Pinal §3 eq. 11. Discriminates counterfeit from fake at the C-structure level: counterfeit's AGENTIVE asserts MAKING with GOAL = (Q_F ∧ Q_T)(N), fake's asserts MAKING with GOAL = Q_F(N) only. This three-way contrast (fake/counterfeit/artificial) is the DC-specific empirical wedge against any account that lumps all privatives."
+    "comment": "A counterfeit Rolex is not a Rolex, did not come into being as a Rolex does, and was made to look and to function like a Rolex (pp. 7:16-17); a fake need not be made to function like the original (fn. 14).",
+    "verified": "page-image"
   },
   {
     "id": "delpinal2015_artificial_heart",
-    "source": {"bibkey": "delpinal-2015", "paperLabel": "(12)"},
+    "source": {
+      "bibkey": "delpinal-2015",
+      "paperLabel": "(12)"
+    },
     "language": "stan1293",
     "primaryText": "artificial heart",
-    "glossedTokens": [
-      ["artificial", "artificial"], ["heart", "heart"]
-    ],
+    "glossedTokens": [],
     "translation": "",
-    "context": "Paper eq. 12: artificial differs from fake in NOT negating FORMAL. An artificial heart need not look like a heart but is made with the intention that it function like a heart (GOAL = Q_T, not Q_F). Some find ¬Q_E itself unstable for 'artificial' (paper notes mixed intuitions about whether artificial legs are 'really' legs).",
+    "context": "",
     "judgment": "acceptable",
-    "readings": [
-      {"name": "strict privative (¬Q_E preserved)", "judgment": "acceptable"},
-      {"name": "non-privative (Q_E preserved)", "judgment": "marginal"}
-    ],
-    "comment": "Del Pinal §3 eq. 12. Completes the fake/counterfeit/artificial trio. The reading-level annotation captures Del Pinal's own observation (p. 17) that mature speakers give 'mixed and unstable intuitions' about whether artificial N is a kind of N — a graded privativity that no purely-binary classification can model."
+    "readings": [],
+    "comment": "An artificial heart is made to function like a heart and need not be made to look like one (p. 7:17). Del Pinal reports mixed and unstable intuitions on whether artificial hands and legs are really hands and legs, so the conjunct not-a-heart might be dropped from (12).",
+    "verified": "page-image"
   },
   {
     "id": "delpinal2015_fake_chanel_handbag",
-    "source": {"bibkey": "delpinal-2015", "paperLabel": "fn. 12"},
+    "source": {
+      "bibkey": "delpinal-2015",
+      "paperLabel": "p. 7:15"
+    },
     "language": "stan1293",
     "primaryText": "fake Chanel handbag",
-    "glossedTokens": [
-      ["fake", "fake"], ["Chanel", "Chanel"], ["handbag", "handbag"]
-    ],
+    "glossedTokens": [],
     "translation": "",
-    "context": "Paper footnote 12: structural-scope ambiguity diagnostic. (i) [fake [Chanel handbag]]: a counterfeit Chanel handbag (negates AGENTIVE of 'Chanel handbag' = the brand-source quale). (ii) [[fake Chanel] handbag]: a handbag whose 'Chanel' attribution is fake (could be a real handbag, falsely branded). Distinguishes DC from coarser noun-coercion accounts that don't distinguish the two scopes.",
+    "context": "",
     "judgment": "acceptable",
     "readings": [
-      {"name": "[fake [Chanel handbag]] (counterfeit)", "judgment": "acceptable"},
-      {"name": "[[fake Chanel] handbag] (falsely-branded)", "judgment": "acceptable"}
+      {
+        "name": "[fake [Chanel handbag]]: not from Chanel, made to pass for a Chanel handbag",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "[fake [Chanel handbag]]: a fake handbag made by Chanel",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "[[fake Chanel] handbag]: a fake handbag made by Chanel",
+        "judgment": "unacceptable"
+      }
     ],
-    "comment": "Del Pinal §3 footnote 12. The scope ambiguity is structurally derivable in DC because both 'Chanel' (a brand-name modifier, adding to AGENTIVE) and 'fake' (a semantic restructuring operator) compose via FA_DC at different bracketings. Partee's noun-coercion account does not naturally yield the two readings — the canonical diagnostic for the DC-vs-Partee divergence on iterated privatives."
+    "comment": "Brand-name modifiers add a condition to the agentive, which fake negates, so [fake [Chanel handbag]] also covers a fake handbag made by Chanel (p. 7:15); fn. 12 says that reading is not possible under [[fake Chanel] handbag], which is also available.",
+    "verified": "page-image"
+  },
+  {
+    "id": "delpinal2015_26a",
+    "source": {
+      "bibkey": "delpinal-2015",
+      "paperLabel": "(26a)"
+    },
+    "language": "stan1293",
+    "primaryText": "giant midget",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [
+      {
+        "name": "a midget, but a very large one",
+        "judgment": "acceptable"
+      }
+    ],
+    "comment": "Evidence for head primacy (p. 7:26): the head is interpreted first and the modifier shifted to subsect it.",
+    "verified": "page-image"
+  },
+  {
+    "id": "delpinal2015_26b",
+    "source": {
+      "bibkey": "delpinal-2015",
+      "paperLabel": "(26b)"
+    },
+    "language": "stan1293",
+    "primaryText": "midget giant",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [
+      {
+        "name": "a giant, but a very small one",
+        "judgment": "acceptable"
+      }
+    ],
+    "comment": "Evidence for head primacy (p. 7:26).",
+    "verified": "page-image"
+  },
+  {
+    "id": "delpinal2015_27",
+    "source": {
+      "bibkey": "delpinal-2015",
+      "paperLabel": "(27)"
+    },
+    "language": "stan1293",
+    "primaryText": "Something unbelievable happened at MIT. Scientists discovered a way of making, literally, stone lions and rubber rabbits.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [
+      {
+        "name": "stone lions and rubber rabbits taken literally, lions and rabbits made of stone and rubber",
+        "judgment": "acceptable"
+      }
+    ],
+    "discourseSegments": [
+      "Something unbelievable happened at MIT.",
+      "Scientists discovered a way of making, literally, stone lions and rubber rabbits."
+    ],
+    "comment": "An L-constitutive material NP: literally withholds the non-vacuity-guided loosening of the head, so the NPs are read as (29) (p. 7:30).",
+    "verified": "page-image"
+  },
+  {
+    "id": "delpinal2015_28",
+    "source": {
+      "bibkey": "delpinal-2015",
+      "paperLabel": "(28)"
+    },
+    "language": "stan1293",
+    "primaryText": "Bio-technology is advancing at an astonishing pace. I am convinced that, in the future, we will be able to make, literally, silicon cows.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [
+      {
+        "name": "silicon cows taken literally, cows made of silicon",
+        "judgment": "acceptable"
+      }
+    ],
+    "discourseSegments": [
+      "Bio-technology is advancing at an astonishing pace.",
+      "I am convinced that, in the future, we will be able to make, literally, silicon cows."
+    ],
+    "comment": "An L-constitutive material NP, read as (30) (p. 7:30).",
+    "verified": "page-image"
+  },
+  {
+    "id": "delpinal2015_31",
+    "source": {
+      "bibkey": "delpinal-2015",
+      "paperLabel": "(31)"
+    },
+    "language": "stan1293",
+    "primaryText": "Listen to this unbelievable story. Some immoral toy store owner was, literally, selling fake guns at his store.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [
+      {
+        "name": "fake guns in the default sense, which are not guns",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "real guns that are fakes of some other kind, such as fake paintball guns",
+        "judgment": "unacceptable"
+      }
+    ],
+    "discourseSegments": [
+      "Listen to this unbelievable story.",
+      "Some immoral toy store owner was, literally, selling fake guns at his store."
+    ],
+    "comment": "An L-privative NP: literally leaves fake gun at its default interpretation (p. 7:32), and fake gun is never used for fake paintball guns that are real guns, even in contexts like (31) and (32) (p. 7:35).",
+    "verified": "page-image"
+  },
+  {
+    "id": "delpinal2015_32",
+    "source": {
+      "bibkey": "delpinal-2015",
+      "paperLabel": "(32)"
+    },
+    "language": "stan1293",
+    "primaryText": "Something amazing happened at MIT. Some engineer managed to make, literally, a fake gun.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [
+      {
+        "name": "a fake gun in the default sense, which is not a gun",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "a real gun that is a fake of some other kind, such as a fake paintball gun",
+        "judgment": "unacceptable"
+      }
+    ],
+    "discourseSegments": [
+      "Something amazing happened at MIT.",
+      "Some engineer managed to make, literally, a fake gun."
+    ],
+    "comment": "An L-privative NP (p. 7:32; p. 7:35).",
+    "verified": "page-image"
+  },
+  {
+    "id": "delpinal2015_evil_park_owner",
+    "source": {
+      "bibkey": "delpinal-2015",
+      "paperLabel": "p. 7:34"
+    },
+    "language": "stan1293",
+    "primaryText": "fake paintball gun",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Mark is an evil paintball gun park owner. He really hates John. Unaware of this secret hate, John goes to Mark's park to play. Mark comes up with the plan of secretly replacing John's paintball gun with a fake paintball gun that is actually a real gun, with the intention that John kill someone. Fortunately, when John handles the fake paintball gun he notices something suspiciously off with its weight and refuses to use it.",
+    "judgment": "acceptable",
+    "readings": [],
+    "comment": "The object is appropriately called a fake paintball gun: made to look and feel like a paintball gun, not one, and made to kill by shooting, so a gun that is also a fake object (p. 7:34).",
+    "verified": "page-image"
+  },
+  {
+    "id": "delpinal2015_evil_partygoer",
+    "source": {
+      "bibkey": "delpinal-2015",
+      "paperLabel": "p. 7:34"
+    },
+    "language": "stan1293",
+    "primaryText": "fake toy gun",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Peter is a clever terrorist who wants to cause havoc at a Halloween party. To evade the security measures, he designs a gun that is intended to look like a toy gun but is actually a very powerful gun. Fortunately the security personnel are suspicious of Peter and his fake toy gun, so he gets caught and his plot is averted.",
+    "judgment": "acceptable",
+    "readings": [],
+    "comment": "The object is appropriately called a fake toy gun: made to look like a toy gun, not one, and made to kill by shooting (p. 7:34).",
+    "verified": "page-image"
   }
 ]

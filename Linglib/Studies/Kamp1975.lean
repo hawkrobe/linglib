@@ -10,24 +10,28 @@ public import Linglib.Logic.Modal.Extensional
 /-!
 # Kamp (1975): Two theories about adjectives
 
-This file formalizes [kamp-1975]'s two theories of adjective meaning. The first treats an
-adjective as a function from properties to properties constrained by meaning postulates,
-predicative, privative, or affirmative, with *alleged* satisfying none; the classification is
-the order-theoretic one of `Semantics/Modification/Classification.lean`, of which
-`intersective_at_world` and `subsective_at_world` give the single-world specializations, and
-`grayAdj`, `fakeAdj`, `skillfulAdj`, and `allegedAdj` witness the four cases, extensionality
-proving orthogonal to subsectivity. The second theory, for vague adjectives, replaces total
-extensions by partial ones and, after [van-fraassen-1969], derives the comparative from
-quantification over admissible completions: `kampPreorder` is the definition numbered (12),
-one object at least as A as another when every completion that puts the second in the
-extension puts the first in, and `kampMeasureLe` the rival (13), which compares the measures
-of the completion sets. The rival makes any two objects comparable
-(`kampMeasureLe_total`), which the paper rejects for multi-criteria adjectives like *clever*,
-where (12) leaves Smith and Jones incomparable (`clever_incomparable`); for one-dimensional
-adjectives the two coincide (`kampPreorder_le_iff_kampMeasureLe`). The supervaluational turn
-is preceded by an argument against many-valued logics, `kleene_dilemma`: no truth-functional
-conjunction is both idempotent at the borderline value and false on borderline
-contradictions.
+Kamp's first theory treats an adjective as a function from properties to properties,
+constrained by meaning postulates that make it predicative, privative or affirmative, with
+*alleged* satisfying none; extensionality is a separate dimension. His second theory, for vague
+adjectives, gives them partial extensions and, after van Fraassen, derives the comparative from
+quantification over the admissible completions: one object is at least as A as another when
+every completion that puts the second in the extension puts the first in. A rival definition,
+which compares the measures of the completion sets, makes any two objects comparable, which Kamp
+rejects for adjectives with several criteria such as *clever*; for one-dimensional adjectives the
+two agree. Before this, Kamp argues that no many-valued logic handles borderline cases.
+
+## Main statements
+
+* `intersective_at_world`, `subsective_at_world`: fixing a world sends the intensional classes
+  to the classes of single-world predicates.
+* `kleene_dilemma`: no truth-functional conjunction is both idempotent at the borderline value
+  and false on borderline contradictions.
+* `kampMeasureLe_total`, `clever_incomparable`: the measured comparative is total, while the
+  completion comparative leaves Smith and Jones incomparable in cleverness.
+* `kampPreorder_le_iff_kampMeasureLe`: for one-dimensional adjectives the two comparatives agree.
+* `gray_intersective`, `fake_privative`, `skillful_subsective`, `skillful_not_extensional`,
+  `alleged_not_subsective`: each class has a member, and extensionality is independent of
+  subsectivity.
 
 ## Implementation notes
 
@@ -54,7 +58,7 @@ open Modification Modifier
 
 /-! ### Bridge to single-world predicates
 
-The classification (`Modifier.isIntersective`, `.isSubsective`, …) is
+The classification (`Modifier.IsIntersective`, `.IsSubsective`, …) is
 one order-theoretic definition instantiated at two carriers: the
 intensional `Property W E = W → E → Prop` and the single-world
 `E → Prop`. The bridge theorems below show that fixing a world sends
@@ -64,30 +68,29 @@ section Bridge
 
 variable {W E : Type*}
 
-/-- Single-world specialization: given a fixed world, the intensional
-    instance of `Modifier.isIntersective` reduces to the `E → Prop`
-    instance on the rigidified single-world view `N ↦ adj (λ _ => N) w`. -/
+/-- At a fixed world an intersective modifier of intensional properties is an intersective
+modifier of predicates, `N ↦ adj (fun _ ↦ N) w`. -/
 theorem intersective_at_world {adj : Modifier (Property W E)}
-    (h : isIntersective adj) (w : W) :
-    isIntersective (λ N : E → Prop => adj (λ _ => N) w) := by
+    (h : IsIntersective adj) (w : W) :
+    IsIntersective (fun N : E → Prop ↦ adj (fun _ ↦ N) w) := by
   obtain ⟨Q, hQ⟩ := h
-  exact ⟨Q w, λ N => congrFun (hQ λ _ => N) w⟩
+  exact ⟨Q w, fun N ↦ congrFun (hQ fun _ ↦ N) w⟩
 
-/-- Single-world specialization of `Modifier.isSubsective`. -/
+/-- At a fixed world a subsective modifier of intensional properties is a subsective modifier
+of predicates. -/
 theorem subsective_at_world {adj : Modifier (Property W E)}
-    (h : isSubsective adj) (w : W) :
-    isSubsective (λ N : E → Prop => adj (λ _ => N) w) :=
-  λ N => h (λ _ => N) w
+    (h : IsSubsective adj) (w : W) :
+    IsSubsective (fun N : E → Prop ↦ adj (fun _ ↦ N) w) :=
+  fun N ↦ h (fun _ ↦ N) w
 
 end Bridge
 
 /-! ### The many-valued dilemma -/
 
-/-- No truth-functional conjunction is both idempotent at the borderline
-    value and false on borderline contradictions: with `neg indet = indet`,
-    both demands constrain the same input pair. This is the dilemma of
-    [kamp-1975], pp. 130–131, stated there for every linearly ordered
-    n-valued logic; `Trivalent` is the minimal witness. -/
+/-- No truth-functional conjunction is both idempotent at the borderline value and false on
+borderline contradictions, since with `neg indet = indet` both demands constrain the same pair
+of inputs. Kamp states the dilemma (pp. 130–131) for every linearly ordered n-valued logic, of
+which `Trivalent` is the smallest. -/
 theorem kleene_dilemma :
     ¬∃ (meet : Trivalent → Trivalent → Trivalent),
       meet .indet .indet = .indet ∧
@@ -96,15 +99,13 @@ theorem kleene_dilemma :
   rw [Trivalent.neg_indet, hidem] at hcontra
   cases hcontra
 
-/-- Strong Kleene conjunction (`⊓` on `Trivalent`) takes the idempotent
-    horn of the dilemma, so borderline contradictions are not false
-    (`Trivalent.inf_compl_indet_ne_bot`) — the cost `kleene_dilemma`
-    predicts for any truth-functional choice. -/
+/-- Strong Kleene conjunction, `⊓` on `Trivalent`, takes the idempotent horn of the dilemma, so
+borderline contradictions are not false. -/
 example : Trivalent.indet ⊓ Trivalent.indet = Trivalent.indet ∧
     Trivalent.indet ⊓ Trivalent.indetᶜ ≠ ⊥ :=
   ⟨inf_idem _, Trivalent.inf_compl_indet_ne_bot⟩
 
-/-! ### Kamp's completion comparative, definition (12)
+/-! ### The completion comparative
 
 Definition (12) (paper § 4): u₁ is at least as A as u₂ iff every
 admissible completion that puts u₂ in the extension also puts u₁ in it.
@@ -112,25 +113,22 @@ admissible completion that puts u₂ in the extension also puts u₁ in it.
 comparison classes; the bridge is
 `Klein1980.kleinPreorder_eq_kampPreorder`. -/
 
-/-- Kamp's completion comparative (definition (12), paper § 4) as a
-    `Preorder`: `le u₁ u₂` iff every completion in `S` that puts `u₂` in
-    the extension also puts `u₁` in — `le` reads "u₁ is at least as A as
-    u₂", Kamp's `≥`. The S-restricted analogue of `kleinPreorder` in
-    `Delineation.lean`. Kamp credits (12) to [lewis-1970], where it is
-    attributed to Kaplan. -/
+/-- Kamp's completion comparative, definition (12) of § 4, is the preorder in which `u₁ ≤ u₂`
+when every completion in `S` that puts `u₂` in the extension also puts `u₁` in, so that `≤`
+reads *at least as A as*. Kamp credits (12) to [lewis-1970], who attributes it to Kaplan. -/
 @[reducible] def kampPreorder {E C : Type*} (ext : C → E → Prop) (S : Set C) :
     Preorder E where
   le u₁ u₂ := ∀ c ∈ S, ext c u₂ → ext c u₁
-  le_refl _ := λ _ _ h => h
-  le_trans _ _ _ hab hbc := λ c hc h => hab c hc (hbc c hc h)
+  le_refl _ := fun _ _ h ↦ h
+  le_trans _ _ _ hab hbc := fun c hc h ↦ hab c hc (hbc c hc h)
 
-/-- The Kamp preorder is `Antitone` in S: enlarging S (more completions
-    to quantify over) makes `≤` harder to satisfy. -/
+/-- The completion comparative is antitone in the set of completions, since more completions
+make `≤` harder to satisfy. -/
 theorem kampPreorder_antitone {E C : Type*} (ext : C → E → Prop) (u₁ u₂ : E) :
-    Antitone (λ S => (kampPreorder ext S).le u₁ u₂) :=
-  λ _ _ hle hall c hc => hall c (hle hc)
+    Antitone (fun S ↦ (kampPreorder ext S).le u₁ u₂) :=
+  fun _ _ hle hall c hc ↦ hall c (hle hc)
 
-/-! ### (12) vs (13): definite vs measured comparatives
+/-! ### Completion and measured comparatives
 
 Kamp's second candidate, definition (13) (paper § 4), compares the
 *measures* of the completion sets rather than the sets themselves. His
@@ -144,34 +142,28 @@ section MeasuredComparative
 variable {E C : Type*} (ext : C → E → Prop) [∀ c e, Decidable (ext c e)]
   (S : Finset C) (p : C → ℚ)
 
-/-- [kamp-1975] definition (13) (paper § 4): the measure-based
-    comparative — `u₁ ≤ u₂` iff the measure of completions putting `u₂`
-    in the extension is at most that putting `u₁` in (`kampPreorder`'s
-    orientation). Kamp's probability measure over a field of subsets is
-    specialized to atomic ℚ weights over a finite completion set; only
-    the ordering matters, so weights need not sum to 1. -/
+/-- The measured comparative, definition (13) of § 4, holds of `u₁` and `u₂` when the
+completions putting `u₂` in the extension weigh at most as much as those putting `u₁` in. -/
 def kampMeasureLe (u₁ u₂ : E) : Prop :=
   ∑ c ∈ S with ext c u₂, p c ≤ ∑ c ∈ S with ext c u₁, p c
 
-/-- (13) is total: it makes any two objects comparable. This is Kamp's
-    § 5 objection to (13); (12) does not share the property
-    (`clever_incomparable`). -/
+/-- The measured comparative makes any two objects comparable, Kamp's objection to it in § 5,
+which the completion comparative escapes (`clever_incomparable`). -/
 theorem kampMeasureLe_total (u₁ u₂ : E) :
     kampMeasureLe ext S p u₁ u₂ ∨ kampMeasureLe ext S p u₂ u₁ :=
   le_total _ _
 
-/-- Definite comparison entails measured comparison: (12) implies (13)
-    for nonnegative weights. -/
+/-- For nonnegative weights the completion comparative implies the measured one. -/
 theorem kampMeasureLe_of_kampPreorder_le (hp : ∀ c ∈ S, 0 ≤ p c) {u₁ u₂ : E}
     (h : (kampPreorder ext (S : Set C)).le u₁ u₂) :
     kampMeasureLe ext S p u₁ u₂ := by
   refine Finset.sum_le_sum_of_subset_of_nonneg ?_
-    λ c hc _ => hp c (Finset.mem_filter.mp hc).1
+    fun c hc _ ↦ hp c (Finset.mem_filter.mp hc).1
   intro c hc
   rw [Finset.mem_filter] at hc ⊢
   exact ⟨hc.1, h c hc.1 hc.2⟩
 
-/-! #### The Smith/Jones incomparability witness (§ 5)
+/-! #### Smith and Jones
 
 Two criteria for *clever* — problem-solving and quick-wittedness — as
 two completions; Smith passes one, Jones the other. Under (12) the two
@@ -181,46 +173,44 @@ verdict (`kampMeasureLe_total`). Kamp's own scenario is asymmetric
 wrongly makes Smith cleverer); this symmetric toy witnesses the
 incomparability and the forced verdict, not that specific outcome. -/
 
+/-- The two criteria of cleverness, problem solving and quick wit. -/
 inductive Crit | problemSolving | quickWit deriving DecidableEq
 
+/-- Smith and Jones. -/
 inductive P2 | smith | jones deriving DecidableEq
 
+/-- Smith is clever by the first criterion and Jones by the second. -/
 def cleverExt : Crit → P2 → Prop
   | .problemSolving, .smith => True
   | .quickWit,       .jones => True
   | _,               _      => False
 
-/-- Under (12), Smith and Jones are incomparable in cleverness — Kamp's
-    argument that (12) "captures the comparative correctly" for
-    multi-criteria adjectives, against (13)'s forced totality. -/
+/-- By the completion comparative Smith and Jones are incomparable in cleverness, which Kamp
+takes to capture the comparative correctly for adjectives with several criteria. -/
 theorem clever_incomparable :
     ¬ (kampPreorder cleverExt Set.univ).le .smith .jones ∧
     ¬ (kampPreorder cleverExt Set.univ).le .jones .smith :=
-  ⟨λ h => h .quickWit trivial trivial,
-   λ h => h .problemSolving trivial trivial⟩
+  ⟨fun h ↦ h .quickWit trivial trivial,
+   fun h ↦ h .problemSolving trivial trivial⟩
 
 /-! #### One-dimensionality -/
 
-/-- One-dimensional adjectives ([kamp-1975] § 5: *heavy*, *tall*, *hot*):
-    any two entities' completion-sets are `⊆`-comparable, so the
-    extensions form a chain (threshold structure). The formal condition
-    is Kamp's (18), stated in § 6 where it grounds the adjective/noun
-    asymmetry. -/
+/-- An adjective is one-dimensional, as *heavy*, *tall* and *hot* are in § 5, when the
+completion sets of any two entities are comparable by inclusion. The condition is Kamp's (18),
+stated in § 6. -/
 def OneDimensional : Prop :=
   ∀ u₁ u₂ : E, (∀ c ∈ S, ext c u₁ → ext c u₂) ∨ (∀ c ∈ S, ext c u₂ → ext c u₁)
 
-/-- For one-dimensional adjectives with strictly positive weights, the
-    measured comparative (13) collapses to the definite comparative (12)
-    — Kamp's § 5 observation that "for this special case the two
-    definitions are equivalent", with strict positivity rendering his
-    "provided p has been correctly specified". -/
+/-- For a one-dimensional adjective and strictly positive weights the two comparatives agree,
+Kamp's observation in § 5 that "for this special case the two definitions are equivalent", strict
+positivity rendering his proviso that the measure be correctly specified. -/
 theorem kampPreorder_le_iff_kampMeasureLe (hp : ∀ c ∈ S, 0 < p c)
     (h18 : OneDimensional ext S) (u₁ u₂ : E) :
     (kampPreorder ext (S : Set C)).le u₁ u₂ ↔ kampMeasureLe ext S p u₁ u₂ := by
-  refine ⟨kampMeasureLe_of_kampPreorder_le ext S p λ c hc => (hp c hc).le,
-          λ h13 => ?_⟩
+  refine ⟨kampMeasureLe_of_kampPreorder_le ext S p fun c hc ↦ (hp c hc).le,
+          fun h13 ↦ ?_⟩
   rcases h18 u₂ u₁ with h | h
-  · exact λ c hc => h c hc
+  · exact fun c hc ↦ h c hc
   · intro c hcS hc₂
     by_contra hc₁
     have hlt : ∑ c ∈ S with ext c u₁, p c < ∑ c ∈ S with ext c u₂, p c := by
@@ -230,12 +220,12 @@ theorem kampPreorder_le_iff_kampMeasureLe (hp : ∀ c ∈ S, 0 < p c)
         exact ⟨hd.1, h d hd.1 hd.2⟩
       · exact Finset.mem_filter.mpr ⟨hcS, hc₂⟩
       · simp [hc₁]
-      · exact λ d hd _ => (hp d (Finset.mem_filter.mp hd).1).le
+      · exact fun d hd _ ↦ (hp d (Finset.mem_filter.mp hd).1).le
     exact absurd h13 (not_le.mpr hlt)
 
 end MeasuredComparative
 
-/-! ### Concrete Witnesses for Each Class
+/-! ### A member of each class
 
 Each class in the hierarchy is non-empty: explicit denotations that
 provably satisfy each definition from `Classification.lean`, modeling
@@ -256,50 +246,46 @@ inductive W2 | w₁ | w₂
 /-- Three entities suffice for all witness constructions. -/
 inductive E3 | a | b | c
 
-/-- "gray": an intersective adjective ([kamp-1975] definition (4),
-    "predicative") — a fixed property conjoined with the noun, so
-    "gray cat" entails both "gray" and "cat". -/
-def grayAdj : Modifier (Property W2 E3) := λ N w x =>
+-- UNVERIFIED: Kamp's definition numbers (4)–(6) below; the paper is not available to check.
+
+/-- *gray* is predicative, Kamp's definition (4), since it conjoins a fixed property with the
+noun, so *gray cat* entails both *gray* and *cat*. -/
+def grayAdj : Modifier (Property W2 E3) := fun N w x ↦
   (match x with | .a => True | _ => False) ∧ N w x
 
-theorem gray_intersective : isIntersective grayAdj :=
+theorem gray_intersective : IsIntersective grayAdj :=
   isIntersective_iff.mpr
-    ⟨λ _ x => match x with | .a => True | _ => False,
-     λ N w x => by cases x <;> simp [grayAdj]⟩
+    ⟨fun _ x ↦ match x with | .a => True | _ => False,
+     fun N w x ↦ by cases x <;> simp [grayAdj]⟩
 
-/-- "gray" is therefore also extensional and subsective. -/
+/-- *gray* is therefore also extensional and subsective. -/
 example : ModalLogic.IsExtensional grayAdj :=
   isExtensional_of_isIntersective gray_intersective
-example : isSubsective grayAdj := gray_intersective.isSubsective
+example : IsSubsective grayAdj := gray_intersective.isSubsective
 
-/-- "fake": a privative adjective ([kamp-1975] definition (5); *fake* and
-    *false* are his examples) — "fake gun" entails "not a gun". Kamp
-    doubts any English adjective is privative "in all of its
-    possible uses", anticipating [partee-2010]'s subsective-plus-coercion
-    reanalysis; see `Partee2010.lean`. -/
-def fakeAdj : Modifier (Property W2 E3) := λ N w x =>
+/-- *fake* is privative, Kamp's definition (5), so *fake gun* entails *not a gun*. Kamp doubts
+that any English adjective is privative "in all of its possible uses". -/
+def fakeAdj : Modifier (Property W2 E3) := fun N w x ↦
   (match x with | .b => True | _ => False) ∧ ¬ N w x
 
-theorem fake_privative : isPrivative fakeAdj :=
-  isPrivative_iff.mpr λ _ _ _ h => h.2
+theorem fake_privative : IsPrivative fakeAdj :=
+  isPrivative_iff.mpr fun _ _ _ h ↦ h.2
 
-/-- "skillful": subsective ([kamp-1975] definition (6), "affirmative")
-    but not extensional — "skillful surgeon" entails "surgeon", yet skill
-    depends on the noun's intension, not just its current extension
-    (Kamp's example, crediting the cobblers/darts-players case to David
-    Lewis). -/
-def skillfulAdj : Modifier (Property W2 E3) := λ N w x =>
+/-- *skillful* is affirmative, Kamp's definition (6), but not extensional. A skillful surgeon
+is a surgeon, yet skill depends on the noun's intension and not just its current extension, as
+in the case of cobblers and darts players that Kamp credits to Lewis. -/
+def skillfulAdj : Modifier (Property W2 E3) := fun N w x ↦
   N w x ∧ match x with
     | .a => N .w₁ .a  -- a's skill assessment depends on N's intension
     | _  => False
 
-theorem skillful_subsective : isSubsective skillfulAdj :=
-  λ _ _ _ h => h.1
+theorem skillful_subsective : IsSubsective skillfulAdj :=
+  fun _ _ _ h ↦ h.1
 
 theorem skillful_not_extensional : ¬ ModalLogic.IsExtensional skillfulAdj := by
   intro hext
-  let N₁ : Property W2 E3 := λ _ _ => True
-  let N₂ : Property W2 E3 := λ w x => match w, x with
+  let N₁ : Property W2 E3 := fun _ _ ↦ True
+  let N₂ : Property W2 E3 := fun w x ↦ match w, x with
     | .w₁, .a => False
     | _, _    => True
   have hagree : N₁ .w₂ = N₂ .w₂ := by
@@ -308,28 +294,25 @@ theorem skillful_not_extensional : ¬ ModalLogic.IsExtensional skillfulAdj := by
   have hLHS : skillfulAdj N₁ .w₂ .a := ⟨trivial, trivial⟩
   exact (congrFun h .a ▸ hLHS).2
 
-/-- "alleged": a non-subsective (modal) adjective — [kamp-1975]'s opening
-    example (1), "Every alleged thief is a thief" is no logical truth. No
-    meaning postulate relates the modified and unmodified extensions
-    (likewise "potential", "putative"). -/
-def allegedAdj : Modifier (Property W2 E3) := λ _N _ x =>
+/-- *alleged* satisfies no meaning postulate, Kamp's opening example (1) being that *every
+alleged thief is a thief* is no logical truth. -/
+def allegedAdj : Modifier (Property W2 E3) := fun _N _ x ↦
   match x with | .a => True | _ => False
 
-/-- "alleged" ignores the noun entirely, so it is trivially extensional —
-    with `skillful_not_extensional` and `skillful_subsective`, this
-    witnesses that extensionality is orthogonal to subsectivity. -/
+/-- *alleged* ignores the noun, so it is extensional; with `skillful_not_extensional` this
+shows that extensionality is independent of subsectivity. -/
 theorem alleged_extensional : ModalLogic.IsExtensional allegedAdj :=
-  λ _ _ _ _ => rfl
+  fun _ _ _ _ ↦ rfl
 
-/-- "alleged N" does not entail "N" (not subsective). -/
-theorem alleged_not_subsective : ¬ isSubsective allegedAdj := by
+/-- *alleged N* does not entail *N*. -/
+theorem alleged_not_subsective : ¬ IsSubsective allegedAdj := by
   intro h
-  exact h (λ _ _ => False) .w₁ .a trivial
+  exact h (fun _ _ ↦ False) .w₁ .a trivial
 
-/-- "alleged N" does not entail "not N" (not privative). -/
-theorem alleged_not_privative : ¬ isPrivative allegedAdj := by
+/-- *alleged N* does not entail *not N*. -/
+theorem alleged_not_privative : ¬ IsPrivative allegedAdj := by
   intro h
-  exact isPrivative_iff.mp h (λ _ _ => True) .w₁ .a trivial trivial
+  exact isPrivative_iff.mp h (fun _ _ ↦ True) .w₁ .a trivial trivial
 
 end Witnesses
 
