@@ -32,7 +32,7 @@ by Predicate Abstraction, which is a capability of the effect (`PredAbs`) rather
   not fit, and `interpBinary` tries them in order; `tyBinary` is the type they compose to, a
   function of the daughters' types alone (`interpBinary_map_fst`).
 * `interp` interprets a tree under an assignment, over any leaf type.
-* `interp_congr_of_agree` and its corollaries are [heim-kratzer-1998]'s theorems on variable
+* `interp_congr_of_agree` and its corollaries are Heim and Kratzer's theorems on variable
   binding: interpretability and the composed type never depend on the assignment
   (`interp_map_fst_congr`), and a tree's denotation depends on it only at the traces free in
   the tree.
@@ -254,7 +254,8 @@ variable {C : Type}
 
 /-- In the denotation of a tree under an assignment, by the composition principles of
 [heim-kratzer-1998], a terminal denotes what its leaf interpretation gives it, a non-branching
-node what its daughter does, a binary node what `interpBinary` composes, a trace the value of
+node what its daughter does, a binary node, a projection or an adjunction, what `interpBinary`
+composes, a trace the value of
 its index, and a binder the abstraction over its index, when the effect has a distributor. -/
 def interp {E W : Type} {M : Type → Type} [Applicative M] {D : Type} [PredAbs M E W D]
     {L : Type*} (lex : L → Option (Denotation E W M D)) (g : Assignment E) :
@@ -266,6 +267,12 @@ def interp {E W : Type} {M : Type → Type} [Applicative M] {D : Type} [PredAbs 
     let d2 ← interp lex g t2
     interpBinary d1 d2
   | .node _ _ => none
+  | .adjoin _ (t :: []) => interp lex g t
+  | .adjoin _ (t1 :: t2 :: []) => do
+    let d1 ← interp lex g t1
+    let d2 ← interp lex g t2
+    interpBinary d1 d2
+  | .adjoin _ _ => none
   | .trace n _ => some ⟨.e, pure (g n)⟩
   | .bind n _ body => do
     let dist ← PredAbs.dist? (M := M) (E := E) (W := W) (D := D)
@@ -292,6 +299,16 @@ variable {C : Type} {E W D : Type} {M : Type → Type} [Applicative M] [PredAbs 
 @[simp] theorem interp_node_unary (lex : L → Option (Denotation E W M D)) (g : Assignment E)
     (c : C) (t : Tree C L) :
     interp lex g (.node c (t :: [])) = interp lex g t := rfl
+
+@[simp] theorem interp_adjoin_unary (lex : L → Option (Denotation E W M D)) (g : Assignment E)
+    (c : C) (t : Tree C L) :
+    interp lex g (.adjoin c (t :: [])) = interp lex g t := rfl
+
+@[simp] theorem interp_adjoin_binary (lex : L → Option (Denotation E W M D)) (g : Assignment E)
+    (c : C) (t₁ t₂ : Tree C L) :
+    interp lex g (.adjoin c (t₁ :: t₂ :: []))
+      = ((interp lex g t₁).bind fun d₁ =>
+          (interp lex g t₂).bind fun d₂ => interpBinary d₁ d₂) := rfl
 
 @[simp] theorem interp_trace (lex : L → Option (Denotation E W M D)) (g : Assignment E) (n : ℕ)
     (c : C) : interp lex g (.trace n c : Tree C L) = some ⟨.e, pure (g n)⟩ := rfl
@@ -320,6 +337,7 @@ theorem interp_junk (lex : L → Option (Denotation E W M D)) (g : Assignment E)
     | nil => exact absurd rfl h
     | cons => rfl
   | node c => exact absurd trivial h
+  | segment c => exact absurd trivial h
   | trace n c => cases cs with
     | nil => exact absurd rfl h
     | cons => rfl
@@ -415,6 +433,19 @@ theorem interp_map_fst_congr (g g' : Assignment E) (t : Tree C L) :
         cases interp lex g t₂ <;> cases interp lex g' t₂ <;>
         intro h₁ h₂ <;> simp_all [interpBinary_map_fst]
     | _ :: _ :: _ :: _ => rfl
+  | adjoin c cs ih =>
+    match cs with
+    | [] => rfl
+    | [t] => simp only [interp_adjoin_unary]; exact ih t (by simp) g g'
+    | [t₁, t₂] =>
+      simp only [interp_adjoin_binary]
+      have h₁ := ih t₁ (by simp) g g'
+      have h₂ := ih t₂ (by simp) g g'
+      revert h₁ h₂
+      cases interp lex g t₁ <;> cases interp lex g' t₁ <;>
+        cases interp lex g t₂ <;> cases interp lex g' t₂ <;>
+        intro h₁ h₂ <;> simp_all [interpBinary_map_fst]
+    | _ :: _ :: _ :: _ => rfl
   | trace n c => rfl
   | bind n c body ih =>
     simp only [interp_bind]
@@ -440,6 +471,16 @@ theorem interp_congr_of_agree {g g' : Assignment E} {t : Tree C L}
     | [t] => simp only [interp_node_unary]; exact ih t (by simp) (hm t (by simp))
     | [t₁, t₂] =>
       simp only [interp_node_binary]
+      rw [ih t₁ (by simp) (hm t₁ (by simp)), ih t₂ (by simp) (hm t₂ (by simp))]
+    | _ :: _ :: _ :: _ => rfl
+  | adjoin c cs ih =>
+    have hm : ∀ t ∈ cs, ∀ i ∈ t.freeIndices, g i = g' i := fun t ht i hi =>
+      h i (Tree.mem_freeIndices_adjoin.2 ⟨t, ht, hi⟩)
+    match cs with
+    | [] => rfl
+    | [t] => simp only [interp_adjoin_unary]; exact ih t (by simp) (hm t (by simp))
+    | [t₁, t₂] =>
+      simp only [interp_adjoin_binary]
       rw [ih t₁ (by simp) (hm t₁ (by simp)), ih t₂ (by simp) (hm t₂ (by simp))]
     | _ :: _ :: _ :: _ => rfl
   | trace n c => simp only [interp_trace]; rw [h n (by simp)]
@@ -511,6 +552,13 @@ theorem interp_map {L' : Type*} (lex : L' → Option (Denotation E W M D)) (f : 
     | [t₁, t₂] =>
       simp only [Tree.map_node, List.map, interp_node_binary, ih t₁ (by simp), ih t₂ (by simp)]
     | _ :: _ :: _ :: _ => rfl
+  | adjoin c cs ih =>
+    match cs with
+    | [] => rfl
+    | [t] => exact ih t (by simp) g
+    | [t₁, t₂] =>
+      simp only [Tree.map_adjoin, List.map, interp_adjoin_binary, ih t₁ (by simp), ih t₂ (by simp)]
+    | _ :: _ :: _ :: _ => rfl
   | trace n c => rfl
   | bind n c body ih => simp only [Tree.map_bind, interp_bind, ih]
   | junk l cs hj _ =>
@@ -553,6 +601,21 @@ theorem exists_resolution_of_interp {choice : L → Option (Denotation E W M D)}
       obtain ⟨r₂, hr₂, hd₂⟩ := ih t₂ (by simp) h₂
       exact ⟨.node c (r₁ :: r₂ :: []), by simp [hr₁, hr₂],
         by rw [interp_node_binary, hd₁, hd₂, Option.bind_some, Option.bind_some, h]⟩
+    | _ :: _ :: _ :: _ => exact absurd h (by simp [interp])
+  | adjoin c cs ih =>
+    match cs with
+    | [] => exact absurd h (by simp [interp])
+    | [t] =>
+      obtain ⟨r, hr, hd⟩ := ih t (by simp) h
+      exact ⟨.adjoin c (r :: []), by simp [hr], hd⟩
+    | [t₁, t₂] =>
+      rw [interp_adjoin_binary] at h
+      obtain ⟨d₁, h₁, h⟩ := Option.bind_eq_some_iff.mp h
+      obtain ⟨d₂, h₂, h⟩ := Option.bind_eq_some_iff.mp h
+      obtain ⟨r₁, hr₁, hd₁⟩ := ih t₁ (by simp) h₁
+      obtain ⟨r₂, hr₂, hd₂⟩ := ih t₂ (by simp) h₂
+      exact ⟨.adjoin c (r₁ :: r₂ :: []), by simp [hr₁, hr₂],
+        by rw [interp_adjoin_binary, hd₁, hd₂, Option.bind_some, Option.bind_some, h]⟩
     | _ :: _ :: _ :: _ => exact absurd h (by simp [interp])
   | trace n c => exact ⟨.trace n c, rfl, h⟩
   | bind n c body ih =>

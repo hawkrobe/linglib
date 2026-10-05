@@ -104,14 +104,14 @@ theorem some_all_equalComplexity :
 
 /-- No item of the substitution source of (25a) contains a conjunction phrase. -/
 theorem source_lacks_conjP : ∀ t ∈ substitutionSource lexicon someSentence,
-    ∀ s ∈ t.subtrees, s.value ≠ .node Cat.Conj :=
+    ∀ s ∈ t.subtrees, ¬ (s.value.IsPhrase ∧ Tree.cat s = Cat.Conj) :=
   forall_mem_substitutionSource.2 ⟨by decide, by decide⟩
 
 /-- The symmetric alternative is no structural alternative, since the operations never
 introduce the conjunction phrase it needs, so the symmetry problem does not arise. -/
 theorem someButNotAll_not_mem_alternatives :
     someButNotAllSentence ∉ structuralAlternatives lexicon someSentence := fun h ↦
-  (by decide : ¬ ∀ s ∈ someButNotAllSentence.subtrees, s.value ≠ .node Cat.Conj)
+  (by decide : ¬ ∀ s ∈ someButNotAllSentence.subtrees, ¬ (s.value.IsPhrase ∧ Tree.cat s = Cat.Conj))
     (phrase_preservation _ Cat.Conj source_lacks_conjP (by decide) h)
 
 /-- How much of the cake John ate. -/

@@ -8,9 +8,9 @@ public import Linglib.Data.Examples.TrinhHaida2015
 /-!
 # Trinh and Haida (2015): Constraining the Derivation of Alternatives
 
-This file formalizes the Atomicity constraint of [trinh-haida-2015] and the argument from
+This file formalizes Trinh and Haida's Atomicity constraint and the argument from
 symmetry that motivates it. Exhaustification `EXH(A)(S)` negates the innocently excludable
-members of a domain `A` of alternatives, (1), the substrate's `exhIE`, and on [fox-katzir-2011]'s
+members of a domain `A` of alternatives, (1), the substrate's `exhIE`, and on Fox and Katzir's
 theory `A` is the set of relevant members of the formal alternatives `F(S)`, which, relevance
 being closed under negation and conjunction, amounts to the conditions (27): `A ⊆ F(S)`,
 `S ∈ A`, and no member of `F(S)` outside `A` lies in the Boolean closure of `A`, `IsDomain`.
@@ -34,7 +34,7 @@ non-runners, `run_smoke_isDomain`, and exhaustification yields *run and smoked*,
 Sentences are propositions `Set W` and the Boolean closure is mathlib's
 `BooleanSubalgebra.closure`; membership in it respects any agreement between worlds on the
 generators, `mem_iff_of_mem_closure`, which is how (27c) is refuted or established. The
-derivation of alternatives is by substitution alone, as the paper takes [fox-katzir-2011]'s to
+derivation of alternatives is by substitution alone, as the paper takes Fox and Katzir's to
 be, of a same-category source expression for a non-atomic constituent, and every substituted
 expression enters marked atomic, so an alternative differs from the prejacent by whole source
 expressions only; the substitution source, the sets `F(S)` of (35) and (42), and the
@@ -75,8 +75,8 @@ member of `A`. -/
 theorem mem_iff_of_mem_closure {A : Set (Set W)} {p : Set W}
     (hp : p ∈ BooleanSubalgebra.closure A) {w v : W} (h : ∀ a ∈ A, w ∈ a ↔ v ∈ a) :
     w ∈ p ↔ v ∈ p := by
-  refine BooleanSubalgebra.closure_bot_sup_induction (p := λ x _ => (w ∈ x ↔ v ∈ x))
-    (λ x hx => h x hx) (by simp) (λ x _ y _ hx hy => ?_) (λ x _ hx => ?_) hp
+  refine BooleanSubalgebra.closure_bot_sup_induction (p := fun x _ ↦ (w ∈ x ↔ v ∈ x))
+    (fun x hx ↦ h x hx) (by simp) (fun x _ y _ hx hy ↦ ?_) (fun x _ hx ↦ ?_) hp
   · show w ∈ x ∪ y ↔ v ∈ x ∪ y
     simp [hx, hy]
   · show w ∈ xᶜ ↔ v ∈ xᶜ
@@ -86,12 +86,12 @@ theorem mem_iff_of_mem_closure {A : Set (Set W)} {p : Set W}
 theorem notMem_closure_of_separates {A : Set (Set W)} {p : Set W} {w v : W}
     (h : ∀ a ∈ A, w ∈ a ↔ v ∈ a) (hw : w ∈ p) (hv : v ∉ p) :
     p ∉ BooleanSubalgebra.closure A :=
-  λ hp => hv ((mem_iff_of_mem_closure hp h).1 hw)
+  fun hp ↦ hv ((mem_iff_of_mem_closure hp h).1 hw)
 
 variable {F A : Set (Set W)} {S S₁ S₂ : Set W}
 
 /-- The formal alternatives are a domain for any of their members. -/
-theorem isDomain_self (hS : S ∈ F) : IsDomain F S F := ⟨subset_rfl, hS, λ _ h _ => h⟩
+theorem isDomain_self (hS : S ∈ F) : IsDomain F S F := ⟨subset_rfl, hS, fun _ h _ ↦ h⟩
 
 /-- The negation of a member of a domain is in the domain whenever it is a formal
 alternative. -/
@@ -120,7 +120,7 @@ lies outside their Boolean closure. -/
 theorem isDomain_pair (hS : S ∈ F) (h₁ : S₁ ∈ F)
     (h : ∀ S' ∈ F, S' ∈ BooleanSubalgebra.closure {S, S₁} → S' = S ∨ S' = S₁) :
     IsDomain F S {S, S₁} :=
-  ⟨by rintro _ (rfl | rfl) <;> assumption, by simp, λ S' hS' hc => by
+  ⟨by rintro _ (rfl | rfl) <;> assumption, by simp, fun S' hS' hc ↦ by
     rcases h S' hS' hc with rfl | rfl <;> simp⟩
 
 /-! ### Symmetry breaking under Atomicity: run and smoke (section 3.2.2) -/
@@ -139,7 +139,7 @@ theorem run_smoke_isDomain {w v : W} (hw : w ∉ run ∧ w ∈ smoke)
   rintro _ (rfl | rfl | rfl | rfl) hc
   · exact Or.inl rfl
   · exact absurd hc (notMem_closure_of_separates hagree hw.2 hv.2)
-  · exact absurd hc (notMem_closure_of_separates (λ a ha => (hagree a ha).symm)
+  · exact absurd hc (notMem_closure_of_separates (fun a ha ↦ (hagree a ha).symm)
       (mem_compl hv.2) (not_not.2 hw.2))
   · exact Or.inr rfl
 
@@ -147,7 +147,7 @@ theorem run_smoke_isDomain {w v : W} (hw : w ∉ run ∧ w ∈ smoke)
 *run ∧ smoke*, given a world in which someone runs and smokes. -/
 theorem exhIE_run_smoke {u : W} (hu : u ∈ run ∧ u ∈ smoke) :
     exhIE {run, run ∩ smokeᶜ} run = run ∩ smoke := by
-  rw [exhIE_pair_sdiff (φ := run) (d := run ∩ smokeᶜ) ⟨u, hu.1, λ h => h.2 hu.2⟩]
+  rw [exhIE_pair_sdiff (φ := run) (d := run ∩ smokeᶜ) ⟨u, hu.1, fun h ↦ h.2 hu.2⟩]
   ext x
   simp only [mem_sdiff, mem_inter_iff, mem_compl_iff]
   tauto
@@ -176,10 +176,12 @@ namespace ATree
 def cat : ATree C V → C
   | .terminal c _ | .node c _ | .trace _ c | .bind _ c _ | .atomic c _ => c
 
-/-- The prejacent enters the derivation with no atomic expression. -/
+/-- The prejacent enters the derivation with no atomic expression, an adjunction structure as a
+phrase. -/
 def ofTree : Tree C V → ATree C V
   | RoseTree.node (.terminal c w) _ => .terminal c w
   | RoseTree.node (.node c) cs => .node c (ofTreeList cs)
+  | RoseTree.node (.segment c) cs => .node c (ofTreeList cs)
   | RoseTree.node (.trace n c) _ => .trace n c
   | .bind n c body => .bind n c body
   | RoseTree.node (.bind _ c) cs => .node c (ofTreeList cs)
@@ -220,6 +222,7 @@ mutual
 theorem atoms_ofTree : ∀ t : Tree C V, (ofTree t).atoms = []
   | RoseTree.node (.terminal _ _) _ | RoseTree.node (.trace _ _) _ | .bind _ _ _ => rfl
   | RoseTree.node (.node _) cs => atomsList_ofTreeList cs
+  | RoseTree.node (.segment _) cs => atomsList_ofTreeList cs
   | RoseTree.node (.bind _ _) [] => rfl
   | RoseTree.node (.bind _ _) (c₁ :: c₂ :: cs) => atomsList_ofTreeList (c₁ :: c₂ :: cs)
 
@@ -290,7 +293,7 @@ theorem Subst.atoms_mem_source {source : List (Tree C V)} {φ ψ : ATree C V}
   | inChild i _ ih =>
     intro a ha
     rcases ATree.mem_atomsList_set _ i _ ha with h' | h'
-    · exact ih (λ b hb => hφ b (ATree.mem_atomsList_of_getElem _ i hb)) a h'
+    · exact ih (fun b hb ↦ hφ b (ATree.mem_atomsList_of_getElem _ i hb)) a h'
     · exact hφ a h'
 
 /-- Every atomic expression of a derivable tree is a source expression, so an alternative differs

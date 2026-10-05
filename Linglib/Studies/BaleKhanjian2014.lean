@@ -232,7 +232,7 @@ def lexicon : Finset (Tree Cat String) :=
     of deletions, contractions and substitutions reaches it. -/
 theorem pluralIndef_not_alternative :
     pluralIndef ∉ structuralAlternatives lexicon singularIndef := fun h ↦
-  (by decide : ¬ ∀ s ∈ pluralIndef.subtrees, s.value ≠ .node .Det)
+  (by decide : ¬ ∀ s ∈ pluralIndef.subtrees, ¬ (s.value.IsPhrase ∧ Tree.cat s = .Det))
     (phrase_preservation _ .Det (forall_mem_substitutionSource.2 ⟨by decide, by decide⟩)
       (by decide) h)
 
