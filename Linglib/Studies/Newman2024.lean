@@ -329,13 +329,6 @@ end Distribution
 
 /-! ### The dative alternation -/
 
-/-- A node of a tree is a head, an intermediate projection, or a maximal projection. -/
-inductive Level where
-  | head
-  | bar
-  | max
-  deriving DecidableEq, Repr
-
 /-- A leaf of a ditransitive vP is the external argument, v, V, the direct object, or the phrase
 containing the indirect object. -/
 inductive Leaf where
@@ -346,8 +339,8 @@ inductive Leaf where
   | iobj
   deriving DecidableEq, Repr
 
-/-- An `XTree` is a tree whose nodes carry a category and a projection level. -/
-abbrev XTree := Syntax.Tree (Cat × Level) Leaf
+/-- An `XTree` is a tree whose nodes carry a category and a bar level. -/
+abbrev XTree := Syntax.Tree (Cat × Syntax.BarLevel) Leaf
 
 /-- A tree counts for Merge features as a phrase of its root's category. -/
 def XTree.checks (t : XTree) : Finset Feature := Phrase.checks ⟨t.cat.1, ∅⟩
@@ -376,10 +369,10 @@ def dobjP : XTree := .terminal (.D, .max) .dobj
 def iobjP : XTree := .terminal (.P, .max) .iobj
 
 /-- `vHead` is the head v. -/
-def vHead : XTree := .terminal (.v, .head) .v
+def vHead : XTree := .terminal (.v, .zero) .v
 
 /-- `VHead` is the head V. -/
-def VHead : XTree := .terminal (.V, .head) .V
+def VHead : XTree := .terminal (.V, .zero) .V
 
 /-- `lowXP` is the ditransitive with the indirect object in V's complement. -/
 def lowXP : XTree := project .v vHead [project .V VHead [iobjP, dobjP], subjP]

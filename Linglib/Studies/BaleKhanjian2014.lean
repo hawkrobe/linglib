@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Tactic.DeriveFintype
-public import Linglib.Syntax.Tree.Cat
+public import Linglib.Syntax.Cat
 public import Linglib.Semantics.Alternatives.Structural
 public import Linglib.Data.Examples.BaleKhanjian2014
 
@@ -66,10 +66,10 @@ open Syntax Alternatives
 
 variable {α : Type*}
 
-/-- The singular noun over the boys `B`: every nonempty group of them. -/
+/-- Over the boys `B`, the singular noun denotes every nonempty group of them. -/
 def general (B : Finset α) : Finset (Finset α) := B.powerset.filter (·.Nonempty)
 
-/-- The plural noun: the groups of two or more. -/
+/-- The plural noun denotes the groups of two or more. -/
 def strictPlural (B : Finset α) : Finset (Finset α) := B.powerset.filter (2 ≤ ·.card)
 
 /-- A numeral restricts a noun to the groups of its cardinality. -/
@@ -84,8 +84,8 @@ theorem mem_general {B x : Finset α} : x ∈ general B ↔ x ⊆ B ∧ x.Nonemp
 theorem mem_strictPlural {B x : Finset α} : x ∈ strictPlural B ↔ x ⊆ B ∧ 2 ≤ x.card := by
   simp [strictPlural]
 
-/-- The plural denotation is included in the singular's: general number. -/
-theorem strictPlural_subset_general (B : Finset α) : strictPlural B ⊆ general B := λ x hx => by
+/-- The plural denotation is included in the singular's, so the singular has general number. -/
+theorem strictPlural_subset_general (B : Finset α) : strictPlural B ⊆ general B := fun x hx ↦ by
   rw [mem_strictPlural] at hx
   exact mem_general.2 ⟨hx.1, Finset.card_pos.1 (by omega)⟩
 
@@ -100,12 +100,12 @@ theorem two_general_eq_two_strictPlural (B : Finset α) :
 
 variable [DecidableEq α]
 
-/-- The supremum operator: the join of a set of groups when the set contains it. -/
+/-- The supremum operator returns the join of a set of groups when the set contains it. -/
 def sup? (P : Finset (Finset α)) : Option (Finset α) :=
   if P.sup id ∈ P then some (P.sup id) else none
 
 theorem sup_general (B : Finset α) : (general B).sup id = B := by
-  apply le_antisymm (Finset.sup_le λ x hx => (mem_general.1 hx).1)
+  apply le_antisymm (Finset.sup_le fun x hx ↦ (mem_general.1 hx).1)
   rcases B.eq_empty_or_nonempty with rfl | hB
   · simp
   · exact Finset.le_sup (f := id) (mem_general.2 ⟨subset_rfl, hB⟩)
@@ -115,12 +115,12 @@ theorem sup?_general (B : Finset α) : sup? (general B) = if B.Nonempty then som
   rw [sup?, sup_general]
   by_cases hB : B.Nonempty
   · rw [ite_eq_left (mem_general.2 ⟨subset_rfl, hB⟩), ite_eq_left hB]
-  · rw [ite_eq_right (λ h => hB (mem_general.1 h).2), ite_eq_right hB]
+  · rw [ite_eq_right (fun h ↦ hB (mem_general.1 h).2), ite_eq_right hB]
 
 theorem sup_strictPlural (B : Finset α) :
     (strictPlural B).sup id = if 2 ≤ B.card then B else ∅ := by
   split_ifs with h
-  · apply le_antisymm (Finset.sup_le λ x hx => (mem_strictPlural.1 hx).1)
+  · apply le_antisymm (Finset.sup_le fun x hx ↦ (mem_strictPlural.1 hx).1)
     exact Finset.le_sup (f := id) (mem_strictPlural.2 ⟨subset_rfl, h⟩)
   · apply (Finset.sup_eq_bot_iff _ _).2
     intro x hx
@@ -133,9 +133,10 @@ theorem sup?_strictPlural (B : Finset α) :
   rw [sup?, sup_strictPlural]
   by_cases h : 2 ≤ B.card
   · rw [ite_eq_left h, ite_eq_left (mem_strictPlural.2 ⟨subset_rfl, h⟩), ite_eq_left h]
-  · rw [ite_eq_right h, ite_eq_right (λ hm => absurd (mem_strictPlural.1 hm).2 (by simp)), ite_eq_right h]
+  · rw [ite_eq_right h, ite_eq_right (fun hm ↦ absurd (mem_strictPlural.1 hm).2 (by simp)),
+      ite_eq_right h]
 
-/-- At the number phrase, the plural's presupposition is the stronger: whenever the plural
+/-- At the number phrase, the plural's presupposition is the stronger, since whenever the plural
     definite is defined so is the singular. -/
 theorem strictPlural_presupposition_stronger (B : Finset α) :
     (sup? (strictPlural B)).isSome → (sup? (general B)).isSome := by
@@ -145,7 +146,7 @@ theorem strictPlural_presupposition_stronger (B : Finset α) :
   · simp [Finset.card_pos.1 (by omega : 0 < B.card)]
   · simp at h
 
-/-- Competition read off the presuppositions: the singular definite denotes a single boy
+/-- Read off the presuppositions, competition makes the singular definite denote a single boy
     exactly when the plural definite's presupposition fails. -/
 theorem strict_singular_iff (B : Finset α) (hB : B.Nonempty) :
     (sup? (general B)).map Finset.card = some 1 ↔ sup? (strictPlural B) = none := by
@@ -167,7 +168,8 @@ inductive Boy
   | john | brad | c
   deriving DecidableEq, Fintype, Repr
 
-/-- The denotations over three boys: every nonempty group, and the groups of two or more. -/
+/-- Over three boys the singular denotes every nonempty group and the plural the groups of two or
+more. -/
 theorem denotations :
     general (Finset.univ : Finset Boy) =
       {{.john}, {.brad}, {.c}, {.john, .brad}, {.john, .c}, {.brad, .c}, {.john, .brad, .c}} ∧
@@ -177,25 +179,25 @@ theorem denotations :
 
 /-! ### Structures -/
 
-/-- The singular indefinite: a bare NP, the verb supplying existential force. -/
+/-- The singular indefinite is a bare NP, the verb supplying existential force. -/
 def singularIndef : Tree Cat String :=
   .node .S [.node .NP [.terminal .N "dəgha"], .node .VP [.terminal .V "vaze-ts"]]
 
-/-- The plural indefinite: a full DP with a covert existential determiner. -/
+/-- The plural indefinite is a full DP with a covert existential determiner. -/
 def pluralIndef : Tree Cat String :=
   .node .S [
     .node .DP [.terminal .Det "∃",
       .node .NumP [.node .NP [.terminal .N "dəgha"], .terminal .Num "-ner"]],
     .node .VP [.terminal .V "vaze-ts-in"]]
 
-/-- The singular definite: a full DP with a null number head. -/
+/-- The singular definite is a full DP with a null number head. -/
 def singularDef : Tree Cat String :=
   .node .S [
     .node .DP [.node .NumP [.node .NP [.terminal .N "dəgha"], .terminal .Num "-∅"],
       .terminal .Det "-n"],
     .node .VP [.terminal .V "vaze-ts"]]
 
-/-- The plural definite: the same structure with the plural number head. -/
+/-- The plural definite has the same structure with the plural number head. -/
 def pluralDef : Tree Cat String :=
   .node .S [
     .node .DP [.node .NumP [.node .NP [.terminal .N "dəgha"], .terminal .Num "-ner"],
@@ -219,17 +221,17 @@ def numeralPl : Tree Cat String :=
         .node .NumP [.node .NP [.terminal .N "dəgha"], .terminal .Num "-ner"]]],
     .node .VP [.terminal .V "vaze-ts-in"]]
 
-/-- The lexicon the substitutions draw on: the two number heads, the two definite allomorphs,
-    the two verb forms, and the noun. -/
+/-- The lexicon the substitutions draw on holds the two number heads, the two definite
+    allomorphs, the two verb forms, and the noun. -/
 def lexicon : Finset (Tree Cat String) :=
   {.terminal .Num "-∅", .terminal .Num "-ner", .terminal .Det "-n", .terminal .Det "-ə",
    .terminal .V "vaze-ts", .terminal .V "vaze-ts-in", .terminal .N "dəgha"}
 
-/-- The plural indefinite is no structural alternative to the singular indefinite: it has a
+/-- The plural indefinite is no structural alternative to the singular indefinite. It has a
     determiner phrase, and neither the singular indefinite nor the lexicon has one, so no chain
     of deletions, contractions and substitutions reaches it. -/
 theorem pluralIndef_not_alternative :
-    pluralIndef ∉ structuralAlternatives lexicon singularIndef := λ h =>
+    pluralIndef ∉ structuralAlternatives lexicon singularIndef := fun h ↦
   category_preservation (substitutionSource lexicon singularIndef) .DP singularIndef pluralIndef
     (forall_mem_substitutionSource.2 ⟨by decide, by decide⟩) (by decide) h (by decide)
 
@@ -301,7 +303,7 @@ theorem numeralPl_alternative : equalComplexity lexicon numeralSg numeralPl := b
 
 /-! ### The rows -/
 
-/-- The subject of a predicative sentence: John, or John and Brad. -/
+/-- The subject of a predicative sentence is John, or John and Brad. -/
 def subject? (r : Datum) : Option (Finset Boy) :=
   match r.feature? "subject" with
   | some "atom" => some {.john}

@@ -90,7 +90,7 @@ namespace Attachment
 /-- `a.phrase` is the phrase a particle forms with its noun phrase. -/
 def phrase : Attachment → Tree Cat Unit
   | clitic => .terminal .NP ()
-  | head u => .node (.proj u) [.terminal .NP (), .terminal (.head u) ()]
+  | head u => .node (.proj u .max) [.terminal .NP (), .terminal (.proj u .zero) ()]
 
 /-- In the clause of (6) and (7), the particle's phrase, a floating numeral quantifier and the
 verb are sisters. -/

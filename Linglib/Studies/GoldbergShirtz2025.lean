@@ -9,7 +9,7 @@ public import Linglib.Data.Examples.GoldbergShirtz2025
 /-!
 # Goldberg and Shirtz (2025): The English Phrase-as-Lemma Construction
 
-This file formalizes [goldberg-shirtz-2025]'s phrase-as-lemma (PAL) construction: a phrase used in
+This file formalizes Goldberg and Shirtz's phrase-as-lemma (PAL) construction: a phrase used in
 a slot reserved for a word ("a trickle-down policy", "the 'both sides do it' argument"), whose
 lemma-like construal presents the situation type as familiar to speaker and addressee, with wit and
 sarcasm as rhetorical effects of discussing the presumed familiar. Five preregistered forced-choice
@@ -54,7 +54,7 @@ open Presupposition
 
 /-! ### The Figure 5 constructicon -/
 
-/-- The prenominal PAL construction: a zero-level PAL whose internal syntax
+/-- In the prenominal PAL construction a zero-level PAL whose internal syntax
 is phrasal modifies a head N, forming an N′ (the paper's structure (7),
 `[N′ PAL⁰ N]`, vs. the NN compound's `[N⁰ N⁰ N⁰]`). The head N's bar level
 is left underspecified since PALs may modify nouns with complements
@@ -77,7 +77,7 @@ def mustVerbConstruction : Construction Unit :=
   , meaning := ()
   , pragmaticPoint := true }
 
-/-- The *a simple ⟨PAL⟩* subtype: the PAL is itself the head noun, with
+/-- In the *a simple ⟨PAL⟩* subtype the PAL is itself the head noun, with
 *simple* marking the situation type as routine ("Could've tried a simple
 'I'm sorry.'"). Study 5's foils used *a short*. -/
 def aSimplePALConstruction : Construction Unit :=
@@ -89,7 +89,7 @@ def aSimplePALConstruction : Construction Unit :=
   , meaning := ()
   , pragmaticPoint := true }
 
-/-- The *Don't ⟨PAL⟩ me* subtype: the PAL fills a V slot, must quote the
+/-- In the *Don't ⟨PAL⟩ me* subtype the PAL fills a V slot, must quote the
 immediately preceding discourse, and occurs in an interdiction context
 ("A: you're welcome. B: No, don't 'you're welcome' me."). Study 5's foils
 broke exactly the quote-from-context or interdiction condition. -/
@@ -116,7 +116,8 @@ def theOldPALConstruction : Construction Unit :=
   , meaning := ()
   , pragmaticPoint := true }
 
-/-- NN compound construction (parent: PAL-internal stress, tight unit). -/
+/-- The NN compound construction is a parent of PAL, passing down internal stress and a tight
+unit. -/
 def nnCompound : Construction Unit :=
   { form :=
       [ { filler := .open_ .NOUN, level := some .zero }
@@ -124,7 +125,8 @@ def nnCompound : Construction Unit :=
         , level := some .zero } ]
   , meaning := () }
 
-/-- Adjectival modification construction (parent: prenominal slot). -/
+/-- The adjectival modification construction is a parent of PAL, passing down the prenominal
+slot. -/
 def adjNModification : Construction Unit :=
   { form :=
       [ { filler := .open_ .ADJ, level := some .zero }
@@ -229,8 +231,8 @@ another", which makes complete inheritance "unsuitable whenever a node is allowe
 single mother". PAL N states exactly those two properties, and inherits the rest
 (`inherited_palN`). -/
 
-/-- Locus of primary stress in a modification construction: compound stress falls within the
-modifier (*BLACKbird*), phrasal modification stresses the head (*black BIRD*). -/
+/-- The locus of primary stress in a modification construction is within the modifier for
+compound stress (*BLACKbird*) and on the head for phrasal modification (*black BIRD*). -/
 inductive StressLocus where
   | modifier
   | head
@@ -250,9 +252,9 @@ inductive SelfEmbedding where
 
 open DefaultInheritance
 
-/-- The bar level of a construction's output, where it states one: PAL N forms an N′, with
-adjectival modification and against the compound's N⁰. -/
-def level : Figure5 → Option BarLevel
+/-- A construction may state the bar level of its output. PAL N forms an N′, with adjectival
+modification and against the compound's N⁰. -/
+def level : Figure5 → Option Syntax.BarLevel
   | .nnCompound => some .zero
   | .adjN | .palN => some .bar
   | _ => none
@@ -262,8 +264,9 @@ def modPosition : Figure5 → Option ModPosition
   | .nnCompound | .adjN => some .prenominal
   | _ => none
 
-/-- The locus of primary stress: PAL N forms "a tight semantic and phonological unit", with the
-stress within the PAL as in the compound, against adjectival modification. -/
+/-- A construction may state the locus of primary stress. PAL N forms "a tight semantic and
+phonological unit", with the stress within the PAL as in the compound, against adjectival
+modification. -/
 def stress : Figure5 → Option StressLocus
   | .nnCompound | .palN => some .modifier
   | .adjN => some .head
@@ -322,7 +325,7 @@ def mustDoTask : Syntax.Tree Unit Morphology.Word :=
 /-- The inventory licenses the PAL token. -/
 theorem demo_licenses_mustDoTask : Licenses demoInventory mustDoTask := by decide
 
-/-- Remove the PAL construction and the token is rejected: nothing else licenses a phrase in a
+/-- Without the PAL construction the token is rejected, since nothing else licenses a phrase in a
 word-level modifier slot. PAL is load-bearing. -/
 theorem pal_load_bearing :
     ¬ Licenses (demoInventory.erase palConstruction) mustDoTask := by decide
@@ -340,7 +343,7 @@ def palMeaning (W : Type*) (situationType headNoun : W → Prop) : PartialProp W
 
 /-! ### Irreducibility -/
 
-/-- The PAL construction is not fully compositional: pairing
+/-- The PAL construction is not fully compositional. Pairing
 phrase-in-a-word-slot form with a presumed-familiarity function is a
 construction-specific pragmatic function, so PAL cannot be decomposed into
 the three universal combination schemata (see `Construction.IsFullyCompositional`). -/
@@ -373,12 +376,13 @@ inductive Inflection where
   | gerund
   deriving DecidableEq
 
-/-- The slot whose inflection an affix is: nominal plural and agentive *-er*, verbal *-ing*. -/
+/-- An affix is the inflection of a slot, nominal for the plural and agentive *-er* and verbal
+for *-ing*. -/
 def Inflection.position : Inflection → PALPosition
   | .plural | .agentivePlural => .headNoun
   | .gerund => .verb
 
-/-- An attested English PAL: its slot and any inflection it carries. -/
+/-- An attested English PAL records its slot and any inflection it carries. -/
 structure Row where
   position : PALPosition
   inflection : Option Inflection
@@ -394,15 +398,15 @@ def Row.ofDatum (ex : Datum) : Option Row := do
 /-- The English tokens of (1a)–(1c), Table 2, and Table 3. -/
 def rows : List Row := Examples.all.filterMap Row.ofDatum
 
-/-- Table 2: PALs are attested in every word-class slot. -/
+/-- PALs are attested in every word-class slot (Table 2). -/
 theorem rows_position : ∀ p : PALPosition, ∃ r ∈ rows, r.position = p := by decide
 
-/-- Table 3: a PAL takes the inflection of the slot it fills. -/
+/-- A PAL takes the inflection of the slot it fills (Table 3). -/
 theorem rows_inflection : ∀ r ∈ rows, ∀ i ∈ r.inflection, i.position = r.position := by decide
 
 /-! ### Comparable constructions in other languages (section 7) -/
 
-/-- The frame hosting a comparable construction: a compound(-like) frame in West Germanic and
+/-- A comparable construction is hosted by a compound(-like) frame in West Germanic and
 Turkish, where the compound marker sits on the head noun, or the complement of a preposition in
 Hebrew and Brazilian Portuguese. -/
 inductive PALHostFrame where
@@ -413,7 +417,7 @@ inductive PALHostFrame where
 /-- The host frames of the German, Dutch, Afrikaans, Turkish, Hebrew, and Brazilian Portuguese
 PALs of (8) and (15)–(18). -/
 def hostFrames : List PALHostFrame :=
-  Examples.all.filterMap λ ex => ex.parse? "hostFrame"
+  Examples.all.filterMap fun ex ↦ ex.parse? "hostFrame"
     [("compound", .compound), ("preposition complement", .prepositionComplement)]
 
 example : rows.length + hostFrames.length = Examples.all.length := by decide
