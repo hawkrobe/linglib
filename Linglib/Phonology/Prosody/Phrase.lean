@@ -14,8 +14,9 @@ The φ and ι layers sit above the prosodic word, with Strict-Layer well-formedn
 (Selkirk 1996; overview in Ishihara and Kalivoda 2022). A phrase is a φ-node over well-formed
 ω-trees, and an utterance an ι-node over phrases. `HeadUnique` is the culminativity of
 prominence, at most one head child per node, the structural hook that Büring's (2015) metrical
-weak–strong calculus reads (Büring 2016). `phrases` reads the φ-constituents off an utterance;
-φ-edges are what demarcative focus reflexes (`Reflex.boundary`) realize.
+weak–strong calculus reads (Büring 2016). The φ-constituents of an utterance are its maximal
+φ-projections (`maximalProjections`); φ-edges are what demarcative focus reflexes
+(`Reflex.boundary`) realize.
 
 ## References
 
@@ -33,15 +34,11 @@ open RoseTree
 
 /-- A well-formed phonological phrase is a licensed tree rooted in a φ-node, so a φ-node over
 well-formed prosodic words, the Strict Layer at the phrase level. -/
-def IsPhrase (t : Tree) : Prop := t.value.isPh = true ∧ t.Licensed Constituent.Licenses
-
-instance (t : Tree) : Decidable (IsPhrase t) := inferInstanceAs (Decidable (_ ∧ _))
+abbrev IsPhrase : Tree → Prop := IsConstituent Constituent.isPh
 
 /-- A well-formed intonational phrase, or utterance, is a licensed tree rooted in an ι-node, so
 an ι-node over well-formed phrases. -/
-def IsUtterance (t : Tree) : Prop := t.value.isIota = true ∧ t.Licensed Constituent.Licenses
-
-instance (t : Tree) : Decidable (IsUtterance t) := inferInstanceAs (Decidable (_ ∧ _))
+abbrev IsUtterance : Tree → Prop := IsConstituent Constituent.isIota
 
 /-- Prominence is culminative when at most one child heads its parent. -/
 def HeadUnique (t : Tree) : Prop :=
@@ -49,10 +46,6 @@ def HeadUnique (t : Tree) : Prop :=
 
 instance (t : Tree) : Decidable (HeadUnique t) :=
   inferInstanceAs (Decidable (_ ≤ _))
-
-/-- The φ-constituents of a tree, outermost-first. -/
-def phrases (t : Tree) : List Tree :=
-  maximalProjections Constituent.isPh t
 
 /-- Every child of a well-formed phrase is a well-formed word. -/
 theorem IsPhrase.children_isWord {t : Tree} (h : IsPhrase t) :
