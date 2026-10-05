@@ -50,7 +50,7 @@ and *exactly one* is `∃!`.
 namespace DelPinalBassiSauerland2024
 
 open Presupposition PartialProp
-open Exhaustification Exhaustification.Presuppositional BarLevFox2020 ModalLogic SetRel
+open Exhaustification Homogeneity BarLevFox2020 ModalLogic SetRel
 open scoped ModalLogic
 
 variable {W : Type*}
@@ -59,28 +59,13 @@ variable {W : Type*}
 
 /-- On a prejacent with one other alternative, which it does not entail, as *some* has *all*,
 `pex^{IE+II}` presupposes that the alternative is false, (10)–(11a). -/
-theorem basic_scalar {φ ψ : Set W} (hw : ∃ w ∈ φ, w ∉ ψ) {w : W} :
+theorem basic_scalar {φ ψ : Set W} (h : ¬ φ ⊆ ψ) {w : W} :
     (pexIEII {φ, ψ} φ {φ, ψ}).presup w ↔ w ∉ ψ := by
-  obtain ⟨w₀, hw₀, hw₀ψ⟩ := hw
+  obtain ⟨w₀, hw₀, hw₀ψ⟩ := Set.not_subset.1 h
   have hM : IsMinimalCover {φ, ψ} φ {w₀} :=
-    ⟨fun v (hv : v = w₀) ↦ hv ▸ hw₀, fun w hw ↦ ⟨w₀, rfl, fun q hq hq₀ ↦ by
-      rcases hq with rfl | rfl
-      exacts [hw, absurd hq₀ hw₀ψ]⟩, by simp⟩
-  have hIE : ∀ q, IsInnocentlyExcludable {φ, ψ} φ q ↔ q = ψ := fun q ↦
-    ⟨fun hq ↦ by
-      have := (hM.isInnocentlyExcludable_iff hq.1).1 hq w₀ rfl
-      rcases hq.1 with rfl | rfl
-      exacts [absurd hw₀ this, rfl],
-    by rintro rfl; exact (hM.isInnocentlyExcludable_iff (by simp)).2 (by simpa)⟩
-  have hII : includable {φ, ψ} φ ∩ {φ, ψ} = ∅ := by
-    rw [includable, hM.II_eq ⟨w₀, hw₀, by simp⟩]
-    ext q
-    simp only [Set.mem_inter_iff, Set.mem_sdiff, Set.mem_singleton_iff,
-      exists_eq_left, Set.mem_insert_iff, Set.mem_empty_iff_false, iff_false]
-    rintro ⟨⟨⟨rfl | rfl, hq⟩, hne⟩, -⟩
-    exacts [hne rfl, hw₀ψ hq]
-  rw [pexIEII_presup_of_includable_inter_eq_empty hII]
-  exact ⟨fun h ↦ h ψ ((hIE ψ).2 rfl) (by simp), fun h q hq _ ↦ (hIE q).1 hq ▸ h⟩
+    .singleton hw₀ (by rintro q (rfl | rfl) hq; exacts [le_rfl, absurd hq hw₀ψ])
+  rw [pexIEII_presup_of_inter_eq_empty (by rw [hM.II_eq ⟨w₀, hw₀, by simp⟩]; grind)]
+  grind [hM.isInnocentlyExcludable_iff]
 
 /-! ### `pex^{IE+II}` on `◇(p ∨ q)`, §2.2 -/
 
@@ -100,21 +85,18 @@ the negation holds exactly where double prohibition does, (16); the presuppositi
 whatever the includable alternatives are. -/
 theorem double_prohibition :
     (pexPossOr R a b).neg.holds w ↔ w ∉ R.preimage a ∧ w ∉ R.preimage b := by
-  refine ⟨fun h ↦ ?_, fun ⟨ha, hb⟩ ↦ ?_⟩
-  · have h₂ : w ∉ R.preimage (a ∪ b) := h.2
-    rwa [preimage_union, Set.mem_union, not_or] at h₂
-  · have hn : ∀ α ∈ ({R.preimage (a ∪ b), R.preimage a, R.preimage b} : Set (Set W)),
-        w ∉ α := by
-      simp [preimage_union, ha, hb]
-    exact ⟨⟨fun ψ _ hψ ↦ hn ψ hψ, .inr fun α hα ↦ hn α hα.2⟩, hn _ (by simp)⟩
+  simp only [holds, neg, pexPossOr, pexIEII, preimage_union]
+  grind [Homogeneous]
 
 variable (hF : FreeChoiceWitnesses R a b)
 include hF
 
-/-- The includable alternatives of `◇(a ∨ b)` are `◇a` and `◇b`, (12d). -/
-theorem includable_fcAlts :
-    includable (fcAlts R a b) (R.preimage (a ∪ b)) = {R.preimage a, R.preimage b} := by
-  rw [includable, II_fcAlts hF, Set.insert_sdiff_of_mem _ (Set.mem_singleton _),
+/-- Apart from the prejacent, the innocently includable alternatives of `◇(a ∨ b)` are `◇a` and
+`◇b`, (12d). -/
+theorem II_fcAlts_sdiff :
+    II (fcAlts R a b) (R.preimage (a ∪ b)) \ {R.preimage (a ∪ b)} =
+      {R.preimage a, R.preimage b} := by
+  rw [II_fcAlts hF, Set.insert_sdiff_of_mem _ (Set.mem_singleton _),
     Set.sdiff_singleton_eq_self]
   obtain ⟨w₁, hw₁a, hw₁b⟩ := hF.only_left
   obtain ⟨w₂, hw₂b, hw₂a⟩ := hF.only_right
@@ -122,10 +104,10 @@ theorem includable_fcAlts :
   exact ⟨fun he ↦ hw₂a (he ▸ preimage_mono Set.subset_union_right hw₂b),
     fun he ↦ hw₁b (he ▸ preimage_mono Set.subset_union_left hw₁a)⟩
 
-private theorem includable_fcAlts_inter :
-    includable (fcAlts R a b) (R.preimage (a ∪ b)) ∩
+private theorem II_fcAlts_sdiff_inter :
+    II (fcAlts R a b) (R.preimage (a ∪ b)) \ {R.preimage (a ∪ b)} ∩
       {R.preimage (a ∪ b), R.preimage a, R.preimage b} = {R.preimage a, R.preimage b} := by
-  rw [includable_fcAlts hF, Set.inter_eq_left]
+  rw [II_fcAlts_sdiff hF, Set.inter_eq_left]
   exact Set.subset_insert _ _
 
 /-- `pex^{IE+II}[◇(a ∨ b)]` presupposes `◇a ↔ ◇b`, (14); its one excludable alternative,
@@ -133,44 +115,38 @@ private theorem includable_fcAlts_inter :
 theorem pexPossOr_presup :
     (pexPossOr R a b).presup w ↔ (w ∈ R.preimage a ↔ w ∈ R.preimage b) := by
   refine (and_iff_right fun ψ hψ hR ↦ ?_).trans
-    (by rw [includable_fcAlts_inter hF, homogeneous_pair])
+    (by rw [II_fcAlts_sdiff_inter hF, homogeneous_pair])
   obtain rfl := (isInnocentlyExcludable_fcAlts_iff hF).1 hψ
   obtain ⟨w₀, ⟨hw₀a, hw₀b⟩, hw₀⟩ := hF.not_both
-  simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hR
-  rcases hR with he | he | he <;> rw [he] at hw₀
-  exacts [(hw₀ (preimage_mono Set.subset_union_left hw₀a)).elim, (hw₀ hw₀a).elim,
-    (hw₀ hw₀b).elim]
+  grind [preimage_mono Set.subset_union_left hw₀a]
 
 /-- `pex^{IE+II}[◇(a ∨ b)]` holds exactly where free choice does, (14), since `◇(a ∨ b)` lies
 between `◇a ∧ ◇b` and `◇a ∨ ◇b`. -/
 theorem free_choice : (pexPossOr R a b).holds w ↔ w ∈ R.preimage a ∧ w ∈ R.preimage b := by
-  have hl : ⋂₀ (includable (fcAlts R a b) (R.preimage (a ∪ b)) ∩
+  have hl : ⋂₀ (II (fcAlts R a b) (R.preimage (a ∪ b)) \ {R.preimage (a ∪ b)} ∩
       {R.preimage (a ∪ b), R.preimage a, R.preimage b}) ⊆ R.preimage (a ∪ b) := by
-    rw [includable_fcAlts_inter hF, Set.sInter_pair, preimage_union]
+    rw [II_fcAlts_sdiff_inter hF, Set.sInter_pair, preimage_union]
     exact inf_le_sup
-  have hu : R.preimage (a ∪ b) ⊆ ⋃₀ (includable (fcAlts R a b) (R.preimage (a ∪ b)) ∩
+  have hu : R.preimage (a ∪ b) ⊆ ⋃₀ (II (fcAlts R a b) (R.preimage (a ∪ b)) \ {R.preimage (a ∪ b)} ∩
       {R.preimage (a ∪ b), R.preimage a, R.preimage b}) := by
-    rw [includable_fcAlts_inter hF, Set.sUnion_pair, preimage_union]
+    rw [II_fcAlts_sdiff_inter hF, Set.sUnion_pair, preimage_union]
   rw [pexPossOr, pexIEII_holds_iff hl hu, ← pexPossOr, pexPossOr_presup hF,
-    includable_fcAlts_inter hF]
-  simp only [Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, forall_eq]
-  tauto
+    II_fcAlts_sdiff_inter hF]
+  grind
 
 /-- With every alternative relevant, `pex^{IE+II}[◇(a ∨ b)]` holds exactly where
 `exh^{IE+II}[◇(a ∨ b)]` is true, (12e) and (13); the two differ only in what they presuppose. -/
 theorem pex_and_exh_agree :
     (pexIEII (fcAlts R a b) (R.preimage (a ∪ b)) (fcAlts R a b)).holds w ↔
       w ∈ exhIEII (fcAlts R a b) (R.preimage (a ∪ b)) := by
-  have hII : includable (fcAlts R a b) (R.preimage (a ∪ b)) ∩ fcAlts R a b =
+  have hII : II (fcAlts R a b) (R.preimage (a ∪ b)) \ {R.preimage (a ∪ b)} ∩ fcAlts R a b =
       {R.preimage a, R.preimage b} := by
-    rw [Set.inter_eq_left.2 fun _ h ↦ h.1.1, includable_fcAlts hF]
+    rw [Set.inter_eq_left.2 fun _ h ↦ h.1.1, II_fcAlts_sdiff hF]
   have hc : R.preimage (a ∩ b) ∈ fcAlts R a b := by simp [fcAlts]
   rw [freeChoice hF]
   change ((∀ ψ, _ → _ → w ∉ ψ) ∧ Homogeneous _ w) ∧ w ∈ R.preimage (a ∪ b) ↔ _
   rw [hII, homogeneous_pair]
-  simp only [isInnocentlyExcludable_fcAlts_iff hF, forall_eq, hc, true_imp_iff]
-  rw [preimage_union, Set.mem_union, Set.mem_sdiff, Set.mem_inter_iff]
-  tauto
+  grind [isInnocentlyExcludable_fcAlts_iff hF, preimage_union]
 
 omit hF in
 /-- The alternatives of `◇(¬T ∨ ¬B)` are those of `¬□(T ∧ B)` in (18b). -/
@@ -238,15 +214,16 @@ variable (h₁ : ∃ w ∈ R.core T, w ∉ R.core B) (h₂ : ∃ w ∈ R.core B,
   (h : (R.core (T ∩ B)).Nonempty) {w : W}
 include h₁ h₂ h
 
-/-- The includable alternatives of `□(T ∧ B)` are all its other alternatives, (20). -/
-theorem includable_necAlts :
-    includable (necAlts R T B) (R.core (T ∩ B)) = {R.core T, R.core B, R.core (T ∪ B)} := by
+/-- Apart from the prejacent, every alternative of `□(T ∧ B)` is innocently includable, (20). -/
+theorem II_necAlts_sdiff :
+    II (necAlts R T B) (R.core (T ∩ B)) \ {R.core (T ∩ B)} =
+      {R.core T, R.core B, R.core (T ∪ B)} := by
   obtain ⟨w₀, hw₀⟩ := id h
   have hII : II (necAlts R T B) (R.core (T ∩ B)) = necAlts R T B :=
     (Set.sep_subset _ _).antisymm fun q hq ↦ mem_II_of_cell_witness _ _ hq w₀
       ⟨hw₀, fun q hq ↦ absurd hq (not_isInnocentlyExcludable_necAlts h q),
         fun r hr ↦ subset_of_mem_necAlts hr.1 hw₀⟩ (subset_of_mem_necAlts hq hw₀)
-  rw [includable, hII, necAlts, Set.insert_sdiff_of_mem _ (Set.mem_singleton _),
+  rw [hII, necAlts, Set.insert_sdiff_of_mem _ (Set.mem_singleton _),
     Set.sdiff_singleton_eq_self]
   obtain ⟨wT, hwT, hwTB⟩ := h₁
   obtain ⟨wB, hwB, hwBT⟩ := h₂
@@ -256,13 +233,13 @@ theorem includable_necAlts :
   · exact core_mono Set.inter_subset_left (he ▸ hwB)
   · exact core_mono Set.inter_subset_right (he ▸ core_mono Set.subset_union_left hwT)
 
-private theorem includable_necAlts_inter :
-    includable (necAlts R T B) (R.core (T ∩ B)) ∩ {R.core (T ∩ B), R.core T, R.core B} =
+private theorem II_necAlts_sdiff_inter :
+    II (necAlts R T B) (R.core (T ∩ B)) \ {R.core (T ∩ B)} ∩ {R.core (T ∩ B), R.core T, R.core B} =
       {R.core T, R.core B} := by
   have hne : R.core (T ∪ B) ≠ R.core (T ∩ B) := fun he ↦ by
     obtain ⟨wT, hwT, hwTB⟩ := h₁
     exact hwTB (core_mono Set.inter_subset_right (he ▸ core_mono Set.subset_union_left hwT))
-  rw [includable_necAlts h₁ h₂ h]
+  rw [II_necAlts_sdiff h₁ h₂ h]
   ext α
   simp only [Set.mem_inter_iff, Set.mem_insert_iff, Set.mem_singleton_iff]
   grind
@@ -270,23 +247,22 @@ private theorem includable_necAlts_inter :
 /-- `pex^{IE+II}[□(T ∧ B)]` presupposes `□T ↔ □B`, (20). -/
 theorem pexNecAnd_presup : (pexNecAnd R T B).presup w ↔ (w ∈ R.core T ↔ w ∈ R.core B) :=
   (and_iff_right fun ψ hψ _ ↦ absurd hψ (not_isInnocentlyExcludable_necAlts h ψ)).trans
-    (by rw [includable_necAlts_inter h₁ h₂ h, homogeneous_pair])
+    (by rw [II_necAlts_sdiff_inter h₁ h₂ h, homogeneous_pair])
 
 /-- The homogeneity `□T ↔ □B` projects out of the negation of the strong prejacent, so
 `¬pex^{IE+II}[□(T ∧ B)]` holds exactly where negative free choice does, (20). -/
 theorem negative_free_choice_under_negation :
     (pexNecAnd R T B).neg.holds w ↔ w ∉ R.core T ∧ w ∉ R.core B := by
-  have hl : ⋂₀ (includable (necAlts R T B) (R.core (T ∩ B)) ∩
+  have hl : ⋂₀ (II (necAlts R T B) (R.core (T ∩ B)) \ {R.core (T ∩ B)} ∩
       {R.core (T ∩ B), R.core T, R.core B}) ⊆ R.core (T ∩ B) := by
-    rw [includable_necAlts_inter h₁ h₂ h, Set.sInter_pair, core_inter]
-  have hu : R.core (T ∩ B) ⊆ ⋃₀ (includable (necAlts R T B) (R.core (T ∩ B)) ∩
+    rw [II_necAlts_sdiff_inter h₁ h₂ h, Set.sInter_pair, core_inter]
+  have hu : R.core (T ∩ B) ⊆ ⋃₀ (II (necAlts R T B) (R.core (T ∩ B)) \ {R.core (T ∩ B)} ∩
       {R.core (T ∩ B), R.core T, R.core B}) := by
-    rw [includable_necAlts_inter h₁ h₂ h, Set.sUnion_pair, core_inter]
+    rw [II_necAlts_sdiff_inter h₁ h₂ h, Set.sUnion_pair, core_inter]
     exact inf_le_sup
   rw [pexNecAnd, pexIEII_neg_holds_iff hl hu, ← pexNecAnd, pexNecAnd_presup h₁ h₂ h,
-    includable_necAlts_inter h₁ h₂ h]
-  simp only [Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, forall_eq]
-  tauto
+    II_necAlts_sdiff_inter h₁ h₂ h]
+  grind
 
 end NegativeFreeChoice
 
@@ -362,17 +338,17 @@ theorem no_filtering_without_pex (hw : ∃ w ∈ R.preimage a, w ∉ R.preimage 
 theorem exh_filters (hA : a ⊆ A) (hB : b ⊆ B) (hF : FreeChoiceWitnesses R a b) (w : W) :
     ((ofProp (· ∈ exhIEII (fcAlts R a b) (R.preimage (a ∪ b)))).neg.orFilter
       ⟨fun w ↦ w ∈ R.preimage A ∧ w ∈ R.preimage B, C⟩).presup w := by
-  refine ⟨trivial, fun hna ↦ ?_⟩
-  have := not_not.1 hna
-  rw [freeChoice hF] at this
-  exact ⟨preimage_mono hA this.1.1, preimage_mono hB this.1.2⟩
+  have := @preimage_mono _ _ R _ _ hA
+  have := @preimage_mono _ _ R _ _ hB
+  simp only [orFilter, neg, ofProp, freeChoice hF]
+  grind
 
 /-- A flat `exh` under the negation loses double prohibition, since the negated exhaustified
 disjunction is compatible with permitting `a`, (47b). -/
 theorem exh_loses_double_prohibition (hF : FreeChoiceWitnesses R a b) :
     ∃ w, w ∉ exhIEII (fcAlts R a b) (R.preimage (a ∪ b)) ∧ w ∈ R.preimage a := by
   obtain ⟨w₁, hw₁a, hw₁b⟩ := hF.only_left
-  exact ⟨w₁, fun hex ↦ by rw [freeChoice hF] at hex; exact hw₁b hex.1.2, hw₁a⟩
+  exact ⟨w₁, by grind [freeChoice hF], hw₁a⟩
 
 /-- In `pex[□(A ∧ B)] ∨ C`, with `C` presupposing `¬□a ∧ ¬□b`, the negation of the first
 disjunct is negative free choice for `A` and `B`, which entails that presupposition, so it is
@@ -383,9 +359,11 @@ theorem negative_free_choice_filtered (hA : a ⊆ A) (hB : b ⊆ B)
     ((pexNecAnd R A B).orFilter ⟨fun w ↦ w ∉ R.core a ∧ w ∉ R.core b, C⟩).presup =
       (pexNecAnd R A B).presup := by
   funext w
-  refine propext ⟨And.left, fun hp ↦ ⟨hp, fun hna ↦ ?_⟩⟩
-  have := (negative_free_choice_under_negation h₁ h₂ h).1 ⟨hp, hna⟩
-  exact ⟨fun ha ↦ this.1 (core_mono hA ha), fun hb ↦ this.2 (core_mono hB hb)⟩
+  have := @negative_free_choice_under_negation _ R A B h₁ h₂ h w
+  have := @core_mono _ _ R _ _ hA
+  have := @core_mono _ _ R _ _ hB
+  simp only [orFilter, eq_iff_iff]
+  grind [holds, neg]
 
 /-- Since `exh^{IE+II}` is vacuous on `□(A ∧ B)`, the negation of the first disjunct is only
 `¬□(A ∧ B)`, and a world requiring `a` but not `B` refutes the filtering, (56c). -/
