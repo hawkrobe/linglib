@@ -242,7 +242,7 @@ structure SemanticGame (C W F A : Type*) [Fintype W] where
   prior : StdSimplex ℝ W
   /-- Every world has positive prior probability. -/
   prior_support : prior.weights.support = Finset.univ
-  /-- The literal meaning: is signal `f` true at world `w`? -/
+  /-- Whether signal `f` is literally true at world `w`. -/
   meaning : F → W → Prop
   /-- The sender's utility of an outcome, by her context, the world and the receiver's action. -/
   vS : C → W → A → ℝ
@@ -1648,15 +1648,17 @@ def game (c : ℝ) : SemanticGame Unit (Fin 2) (Fin 3) (Fin 2) where
 attribute [local simp] meaning uniform SemanticGame.uS
   Finsupp.single_apply Fin.sum_univ_two Finset.sum_filter
 
-/-- The same meanings as an interpretation game, for the iterated best response of
-[franke-2011]. -/
-def ibrGame : InterpGame (Fin 2) (Fin 3) := ⟨meaning, fun _ ↦ 1 / 2⟩
+/-- The denotations of the signals, which are the literal receiver of the iterated best
+response of [franke-2011]. -/
+def denotation (f : Fin 3) : Finset (Fin 2) := Finset.univ.filter (meaning f)
 
-/-- Under iterated best response "some" is never sent and keeps both readings, the naive receiver
-being already a fixed point. -/
+/-- Under iterated best response the literal receiver is already a fixed point, in which no world
+sends "some" and "some" keeps both readings. -/
 theorem ibr_some_ambiguous :
-    Franke2011.receiverChain ibrGame 1 = Franke2011.receiverChain ibrGame 0 ∧
-      Franke2011.receiverChain ibrGame 0 0 = Finset.univ := by
+    Function.IsFixedPt (Franke2011.receiverStep denotation ∘ Franke2011.senderStep denotation)
+        denotation ∧
+      Franke2011.inverse (Franke2011.senderStep denotation denotation) 0 = ∅ ∧
+      denotation 0 = Finset.univ := by
   decide
 
 variable {c : ℝ}
