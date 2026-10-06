@@ -6,21 +6,22 @@ public import Linglib.Data.UD.UPOS
 public import Linglib.Morphology.ConstructionMorphology.Schema
 public import Linglib.Morphology.Root.Basic
 public import Linglib.Morphology.Root.Consonantal
+public import Linglib.Morphology.Word.Comparative
 
 /-!
 # Haspelmath (2025): Roots and root classes in comparative grammar
 
-This file formalizes the definition of the root as a comparative concept in
-[haspelmath-2025b]. `IsRootIn` is definition (1): a contentful form (`Form`, a morph
-with its meaning class) that occurs in a free form with no other contentful form, relative
-to a fragment's free-form inventory. The qualifying clause separates roots from contentful
-affixes (the Japanese causative `-ase`) and neoclassical combining forms (`geo-`), which
-are morphological cores under the formal base definition of `Morphology/Root/Basic.lean`
-but not roots; it admits bound roots (Sorbian `žon-`) and excludes free forms without a
-lexical meaning (`hello`, fn. 10). Roots are concrete forms (§4), so the four Arabic forms
-sharing the skeleton k-t-b are four roots (`arabic_four_roots`) and the German ablaut pair
-`lauf` ~ `lief` two. `RootClass.upos` is (10), word classes as comparative concepts, and
-`RootClass.unmarkedFunction` the prototypical combinations of (9).
+This file formalizes the definition of the root as a comparative concept in [haspelmath-2025b].
+Its definition (1), a contentful form (`Form`, a morph with its meaning class) that occurs in a
+free form with no other contentful form, is the root of `Morphology.Comparative`, read over a
+fragment's free-form inventory. The qualifying clause separates roots from contentful affixes
+(the Japanese causative `-ase`) and neoclassical combining forms (`geo-`), which are
+morphological cores under the formal base definition of `Morphology/Root/Basic.lean` but not
+roots; it admits bound roots (Sorbian `žon-`) and excludes free forms without a lexical meaning
+(`hello`, fn. 10). Roots are concrete forms (§4), so the four Arabic forms sharing the skeleton
+k-t-b are four roots (`arabic_four_roots`) and the German ablaut pair `lauf` ~ `lief` two.
+`upos` is (10), word classes as comparative concepts, and `unmarkedFunction` the prototypical
+combinations of (9).
 
 §6 adopts the heterosemy view: `hammer` (noun) and `hammer` (verb) are two roots with one
 shape (`hammer_two_roots`), related by the sister schemas of (21) (`nounVerb`, one
@@ -35,10 +36,12 @@ description over shared variables read through two subscriptings,
   for its meaning, which is all definition (1) and the lexical meaning of (11) need.
   Relatedness of meaning within a heterosemous root set is carried by the schema of (21),
   not by the forms.
-* `IsStemIn` is the stem definition of fn. 6, with the Latin `laud-ab-` case.
+* `IsStemIn` is the stem definition of fn. 6, with the Latin `laud-ab-` case; its affixes are
+  those of `Morphology.Comparative.IsAffixIn` over the roots of definition (1).
 
 ## References
 
+* [haspelmath-2023]
 * [haspelmath-2025b]
 * [jackendoff-audring-2020]
 -/
@@ -47,21 +50,13 @@ description over shared variables read through two subscriptings,
 
 namespace Haspelmath2025b
 
-open Morphology
+open Morphology Morphology.Comparative
 
 /-! ### Root classes (§5) -/
 
-/-- The three root classes (§5): roots denoting actions, objects and properties, the
-lexical meanings of (11). -/
-inductive RootClass where
-  | action
-  | object
-  | property
-  deriving DecidableEq, Fintype, Repr
-
-/-- (10): word classes as comparative concepts. A verb is an action-denoting root, a noun
+/-- Word classes are comparative concepts (10): a verb is an action-denoting root, a noun
 an object-denoting root, an adjective a property-denoting root. -/
-def RootClass.upos : RootClass → UD.UPOS
+def upos : RootClass → UD.UPOS
   | .action => .VERB
   | .object => .NOUN
   | .property => .ADJ
@@ -73,17 +68,18 @@ inductive DiscourseFunction where
   | modification
   deriving DecidableEq, Fintype, Repr
 
-/-- (9): the discourse function in which a root class needs no function indicator: no
+/-- `unmarkedFunction c` is the discourse function in which the class `c` needs no function
+indicator (9): no
 copula or verbalizer for action roots in predication, no nominalizer for object roots in
 reference, no relativizer or genitive for property roots in modification. -/
-def RootClass.unmarkedFunction : RootClass → DiscourseFunction
+def unmarkedFunction : RootClass → DiscourseFunction
   | .action => .predication
   | .object => .reference
   | .property => .modification
 
 /-! ### Definition (1) -/
 
-/-- A form (§2, §4): a morph, the pairing of a shape with a meaning, recorded with its root
+/-- A form (§2, §4) is a morph, the pairing of a shape with a meaning, recorded with its root
 class when it denotes an action, an object or a property and `none` otherwise. -/
 structure Form where
   /-- The morph. -/
@@ -92,25 +88,6 @@ structure Form where
   meaning : Option RootClass
   deriving DecidableEq, Repr
 
-/-- A form is contentful when it denotes an action, an object or a property (§2). -/
-def Form.IsContentful (f : Form) : Prop := f.meaning ≠ none
-
-instance (f : Form) : Decidable f.IsContentful := inferInstanceAs (Decidable (_ ≠ _))
-
-/-- Definition (1): a root is a contentful form that can occur as part of a free form
-without another contentful form. -/
-def IsRootIn (freeForms : List (List Form)) (f : Form) : Prop :=
-  f.IsContentful ∧ ∃ w ∈ freeForms, f ∈ w ∧ ∀ g ∈ w, g ≠ f → ¬ g.IsContentful
-
-instance (freeForms : List (List Form)) (f : Form) : Decidable (IsRootIn freeForms f) :=
-  inferInstanceAs (Decidable (_ ∧ ∃ w ∈ freeForms, _))
-
-/-- A form is bound when it is not itself a free form (fn. 2). -/
-def IsBoundIn (freeForms : List (List Form)) (f : Form) : Prop := [f] ∉ freeForms
-
-instance (freeForms : List (List Form)) (f : Form) : Decidable (IsBoundIn freeForms f) :=
-  inferInstanceAs (Decidable (_ ∉ _))
-
 /-- The shapes of the forms of a word, for the formal definitions of
 `Morphology/Root/Basic.lean`. -/
 def shapes (w : List Form) : List Morph := w.map Form.shape
@@ -118,10 +95,10 @@ def shapes (w : List Form) : List Morph := w.map Form.shape
 /-- Fn. 6: a stem is a contiguous string of at least one root and possibly some affixes that
 can be combined with an affix. -/
 def IsStemIn (words freeForms : List (List Form)) (s : List Form) : Prop :=
-  (∃ f ∈ s, IsRootIn freeForms f) ∧
-    (∀ f ∈ s, IsRootIn freeForms f ∨ f.shape.kind.attachment? = some .affix) ∧
-    ∃ w ∈ words, ∃ a ∈ w,
-      a.shape.kind.attachment? = some .affix ∧ (w = s ++ [a] ∨ w = a :: s)
+  let root := IsRootIn freeForms Form.meaning
+  let affix := IsAffixIn freeForms Form.meaning root
+  (∃ f ∈ s, root f) ∧ (∀ f ∈ s, root f ∨ affix f) ∧
+    ∃ w ∈ words, ∃ a ∈ w, affix a ∧ (w = s ++ [a] ∨ w = a :: s)
 
 instance (words freeForms : List (List Form)) (s : List Form) :
     Decidable (IsStemIn words freeForms s) :=
@@ -141,9 +118,10 @@ def ru : Form := ⟨.suff "ru", none⟩
 /-- The Japanese free forms `yom-u` 'read' and `yom-ase-ru` 'make read'. -/
 def japanese : List (List Form) := [[yom, u], [yom, ase, ru]]
 
-/-- §2: the causative `-ase` is contentful but never occurs without another contentful
-form, so it is not a root, while `yom` is. -/
-theorem ase_not_root : ase.IsContentful ∧ ¬ IsRootIn japanese ase ∧ IsRootIn japanese yom := by
+/-- The causative `-ase` is contentful but never occurs without another contentful form, so
+it is not a root, while `yom` is (§2). -/
+theorem ase_not_root : IsContentful Form.meaning ase ∧ ¬ IsRootIn japanese Form.meaning ase ∧
+    IsRootIn japanese Form.meaning yom := by
   decide
 
 /-- The neoclassical combining form `geo-`. -/
@@ -161,21 +139,21 @@ def s : Form := ⟨.suff "s", none⟩
 /-- The English past suffix. -/
 def ed : Form := ⟨.suff "ed", none⟩
 
-/-- English free forms: `geology`, `hello`, and the *hammer* forms. -/
+/-- The English free forms are `geology`, `hello`, and the *hammer* forms. -/
 def english : List (List Form) :=
   [[geo, logy], [hello], [hammerN], [hammerN, s], [hammerV], [hammerV, ed]]
 
-/-- §2: `geo-` is contentful but only occurs with another contentful form, so it is not
-a root, although it is a morphological core under the formal base definition. -/
+/-- `geo-` is contentful but only occurs with another contentful form, so it is not a root,
+although it is a morphological core under the formal base definition (§2). -/
 theorem geo_not_root :
-    ¬ IsRootIn english geo ∧
+    ¬ IsRootIn english Form.meaning geo ∧
       geo.shape.IsCoreIn (english.map shapes) (english.map shapes) := by
   decide
 
-/-- Fn. 10: `hello` is a free form without a lexical meaning, hence not a root, although
-it is a morphological core. -/
+/-- `hello` is a free form without a lexical meaning, hence not a root, although it is a
+morphological core (fn. 10). -/
 theorem hello_not_root :
-    ¬ IsRootIn english hello ∧
+    ¬ IsRootIn english Form.meaning hello ∧
       hello.shape.IsCoreIn (english.map shapes) (english.map shapes) := by
   decide
 
@@ -191,8 +169,8 @@ def uAcc : Form := ⟨.suff "u", none⟩
 /-- The Sorbian free forms `žon-a`, `žon-y`, `žon-u` (§3). -/
 def sorbian : List (List Form) := [[žon, a], [žon, y], [žon, uAcc]]
 
-/-- §3, fn. 2: `žon-` always occurs with an inflectional affix, yet it is a root. -/
-theorem žon_bound_root : IsRootIn sorbian žon ∧ IsBoundIn sorbian žon := by decide
+/-- `žon-` always occurs with an inflectional affix, yet it is a root (§3, fn. 2). -/
+theorem žon_bound_root : IsRootIn sorbian Form.meaning žon ∧ IsBoundIn sorbian žon := by decide
 
 /-! ### Roots as concrete forms (§4) -/
 
@@ -207,14 +185,15 @@ def en : Form := ⟨.suff "en", none⟩
 /-- The German participial prefix. -/
 def ge : Form := ⟨.pref "ge", none⟩
 
-/-- The German verb forms of (5): `lauf-e`, `lauf-en`, `lauf`, `ge-lauf-en`, `lief`. -/
+/-- The German verb forms of (5) are `lauf-e`, `lauf-en`, `lauf`, `ge-lauf-en`, `lief`. -/
 def german : List (List Form) := [[lauf, e], [lauf, en], [lauf], [ge, lauf, en], [lief]]
 
-/-- §4: with no replacive morphs, `lauf` and `lief` are two roots. -/
-theorem lauf_lief_roots : IsRootIn german lauf ∧ IsRootIn german lief ∧ lauf ≠ lief := by
+/-- With no replacive morphs, `lauf` and `lief` are two roots (§4). -/
+theorem lauf_lief_roots :
+    IsRootIn german Form.meaning lauf ∧ IsRootIn german Form.meaning lief ∧ lauf ≠ lief := by
   decide
 
-/-- The consonantal skeleton of a form: its shape with the vowels removed. -/
+/-- The consonantal skeleton of a form is its shape with the vowels removed. -/
 def skeleton (f : Form) : ConsonantalRoot Char :=
   ⟨f.shape.form.toList.filter (· ∉ ['a', 'i', 'u'])⟩
 
@@ -231,14 +210,14 @@ def naa : Form := ⟨.suff "naa", none⟩
 /-- The Arabic first-plural prefix. -/
 def na : Form := ⟨.pref "na", none⟩
 
-/-- The Arabic forms of (6): `katab-naa`, `na-ktub-u`, `kaatib`, `kitaab`. -/
+/-- The Arabic forms of (6) are `katab-naa`, `na-ktub-u`, `kaatib`, `kitaab`. -/
 def arabic : List (List Form) := [[katab, naa], [na, ktub, u], [kaatib], [kitaab]]
 
-/-- §4: the forms of (6) contain four distinct roots sharing the skeleton k-t-b, which
-is not itself a root. -/
+/-- The forms of (6) contain four distinct roots sharing the skeleton k-t-b, which is not
+itself a root (§4). -/
 theorem arabic_four_roots :
     (∀ f ∈ [katab, ktub, kaatib, kitaab],
-        IsRootIn arabic f ∧ skeleton f = ⟨['k', 't', 'b']⟩) ∧
+        IsRootIn arabic Form.meaning f ∧ skeleton f = ⟨['k', 't', 'b']⟩) ∧
       [katab, ktub, kaatib, kitaab].Nodup := by
   decide
 
@@ -261,9 +240,9 @@ theorem laudab_stem : IsStemIn latin latin [laud, ab] ∧ IsStemIn latin latin [
 
 /-! ### Heterosemy (§6) -/
 
-/-- §6: `hammer` (noun) and `hammer` (verb) are two roots with one shape. -/
+/-- `hammer` (noun) and `hammer` (verb) are two roots with one shape (§6). -/
 theorem hammer_two_roots :
-    IsRootIn english hammerN ∧ IsRootIn english hammerV ∧
+    IsRootIn english Form.meaning hammerN ∧ IsRootIn english Form.meaning hammerV ∧
       hammerN ≠ hammerV ∧ hammerN.shape = hammerV.shape := by
   decide
 
@@ -274,7 +253,7 @@ inductive Tier where
   | phonology
   deriving DecidableEq, Fintype, Repr
 
-/-- A tier value: a meaning, a word class, or a shape. -/
+/-- A tier value is a meaning, a word class, or a shape. -/
 inductive Value where
   | meaning (m : String)
   | category (c : RootClass)
@@ -290,10 +269,10 @@ instance : PartialOrder Value where
 
 instance : DecidableLE Value := λ a b => inferInstanceAs (Decidable (a = b))
 
-/-- A tier description: a value, or `⊥` for an open variable. -/
+/-- A tier description is a value, or `⊥` for an open variable. -/
 abbrev Slot := WithBot Value
 
-/-- The variables of the sister schemas (21): the meaning and the category of each root, and
+/-- The variables of the sister schemas (21) are the meaning and the category of each root, and
 the shape `Y` they share (index 2). -/
 inductive RootVar
   | nounMeaning
@@ -303,8 +282,8 @@ inductive RootVar
   | shape
   deriving DecidableEq
 
-/-- (21): the sister schemas `X (noun)` and `X (verb)` as one description over their
-variables, the categories pinned, the meanings and the shared shape open. -/
+/-- The sister schemas `X (noun)` and `X (verb)` of (21) form one description over their
+variables, with the categories pinned and the meanings and the shared shape open. -/
 def nounVerb : ConstructionMorphology.Schema RootVar Slot where
   body
     | .nounCategory => ↑(Value.category .object)
@@ -324,19 +303,21 @@ def verbSub : Tier → RootVar
   | .morphosyntax => .verbCategory
   | .phonology => .shape
 
-/-- (21a) `X (noun)`: an object meaning related to `X`, a noun, with the open shape `Y`. -/
+/-- Schema (21a), `X (noun)`, pairs an object meaning related to `X` with a noun and the open
+shape `Y`. -/
 def nounSchema : ConstructionMorphology.Schema Tier Slot := nounVerb.comap nounSub
 
-/-- (21b) `X (verb)`: doing in relation to `X`, a verb, with the open shape `Y`. -/
+/-- Schema (21b), `X (verb)`, pairs doing in relation to `X` with a verb and the open shape
+`Y`. -/
 def verbSchema : ConstructionMorphology.Schema Tier Slot := nounVerb.comap verbSub
 
-/-- (20a): `hammer` (noun). -/
+/-- `hammerNoun` is the noun `hammer` of (20a). -/
 def hammerNoun : Tier → Slot
   | .semantics => ↑(Value.meaning "HAMMER")
   | .morphosyntax => ↑(Value.category .object)
   | .phonology => ↑(Value.shape "hæmər")
 
-/-- (20b): `hammer` (verb). -/
+/-- `hammerVerb` is the verb `hammer` of (20b). -/
 def hammerVerb : Tier → Slot
   | .semantics => ↑(Value.meaning "HIT (WITH SOMETHING LIKE HAMMER)")
   | .morphosyntax => ↑(Value.category .action)
@@ -356,7 +337,7 @@ def hammerRoots : RootVar → Slot
   | .verbCategory => hammerVerb .morphosyntax
   | .shape => hammerNoun .phonology
 
-/-- (20): the two *hammer* roots instantiate the sister schemas of (21) as a pair, their
+/-- The two *hammer* roots of (20) instantiate the sister schemas of (21) as a pair, their
 shapes filled alike; neither is derived from the other or from an abstract root. -/
 theorem hammer_sisters :
     nounVerb.InstantiatesAt (Sum.elim nounSub verbSub) (Sum.elim hammerNoun hammerVerb) :=
