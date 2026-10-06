@@ -84,6 +84,20 @@ theorem argmin_eq_argmax_of_le_iff {f' : α → γ}
 theorem argmax_eq_self_of_forall_le (h : ∀ a ∈ s, ∀ b ∈ s, f b ≤ f a) : s.argmax f = s :=
   filter_true_of_mem h
 
+/-- The argmax is the singleton `{a}` iff `a ∈ s` beats every other element of `s`. -/
+theorem argmax_eq_singleton_iff : s.argmax f = {a} ↔ a ∈ s ∧ ∀ b ∈ s, b ≠ a → f b < f a := by
+  constructor
+  · intro h
+    have ha := mem_argmax.1 (h ▸ mem_singleton_self a)
+    refine ⟨ha.1, fun b hb hba ↦ lt_of_not_ge fun hle ↦ hba ?_⟩
+    simpa [h] using mem_argmax.2 ⟨hb, fun c hc ↦ (ha.2 c hc).trans hle⟩
+  · rintro ⟨ha, h⟩
+    ext b
+    simp only [mem_argmax, mem_singleton]
+    refine ⟨fun ⟨hb, hmax⟩ ↦ by_contra fun hba ↦ (hmax a ha).not_gt (h b hb hba), ?_⟩
+    rintro rfl
+    exact ⟨ha, fun c hc ↦ (eq_or_ne c b).elim (fun h ↦ h ▸ le_rfl) fun hcb ↦ (h c hc hcb).le⟩
+
 /-- The argmax of a score that is positive on a nonempty `t ⊆ s` and zero on
 the rest of `s` is the argmax over `t`. -/
 theorem argmax_eq_argmax_of_support [Zero β] {t : Finset α} (hts : t ⊆ s) (hne : t.Nonempty)
