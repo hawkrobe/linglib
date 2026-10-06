@@ -65,7 +65,7 @@ namespace Denic2023
 
 open Exhaustification MeasureTheory ProbabilityTheory
 
-/-- The worlds for *all of n are A₁ or … or Aₘ*: each individual has exactly one of the `m`
+/-- In the worlds for *all of n are A₁ or … or Aₘ* each individual has exactly one of the `m`
 properties. -/
 abbrev World (n m : ℕ) := Fin n → Fin m
 
@@ -77,10 +77,10 @@ def allAre (i : Fin m) : Set (World n m) := {w | ∀ x, w x = i}
 /-- *Some of the n are Aᵢ*, the existential alternative. -/
 def someAre (i : Fin m) : Set (World n m) := {w | ∃ x, w x = i}
 
-/-- ALT-or, (24) and (25): only the disjunction activates its alternatives. -/
+/-- Under ALT-or only the disjunction activates its alternatives, (24) and (25). -/
 def altOr (n m : ℕ) : Set (Set (World n m)) := Set.range allAre
 
-/-- ALT-all-or, (22) and (23): the quantifier activates its alternatives too. -/
+/-- Under ALT-all-or the quantifier activates its alternatives too, (22) and (23). -/
 def altAllOr (n m : ℕ) : Set (Set (World n m)) := Set.range allAre ∪ Set.range someAre
 
 theorem altAllOr_finite : (altAllOr n m).Finite := (Set.finite_range _).union (Set.finite_range _)
@@ -92,37 +92,35 @@ def LeavesOpen (ALT : Set (Set (World n m))) (a : Set (World n m)) : Prop :=
 
 /-! ### Entailment cannot tell the sentences apart, §3.2 -/
 
-/-- With ALT-or every alternative is innocently excludable, for any domain of at least two: a
-world with two individuals of different properties falsifies them all. -/
+/-- With ALT-or every alternative is innocently excludable, for any domain of at least two,
+since a world with two individuals of different properties falsifies them all. -/
 theorem isInnocentlyExcludable_altOr (hn : 2 ≤ n) (hm : 2 ≤ m) (i : Fin m) :
     IsInnocentlyExcludable (altOr n m) Set.univ (allAre i) :=
   IsInnocentlyExcludable.of_full_exclusion_consistent ⟨i, rfl⟩
-    ⟨λ x => if x.val = 0 then ⟨0, by omega⟩ else ⟨1, by omega⟩, trivial, by
+    ⟨fun x ↦ if x.val = 0 then ⟨0, by omega⟩ else ⟨1, by omega⟩, trivial, by
       rintro _ ⟨j, rfl⟩ h
       have h0 := h ⟨0, by omega⟩
       have h1 := h ⟨1, by omega⟩
       rw [← h0] at h1
       simp at h1⟩
 
-/-- Exhaustifying with ALT-or over two disjuncts gives the distributive reading, (6a): some are
-French and some are Spanish. -/
+/-- Exhaustifying with ALT-or over two disjuncts gives the distributive reading (6a), that some
+are French and some are Spanish. -/
 theorem exhIE_altOr (hn : 2 ≤ n) : exhIE (altOr n 2) Set.univ = someAre 0 ∩ someAre 1 := by
   have h2 : ∀ j : Fin 2, j ≠ 1 → j = 0 := by decide
   have h2' : ∀ j : Fin 2, j ≠ 0 → j = 1 := by decide
   ext w
   constructor
   · intro h
-    have h0 := h _ (isInnocentlyExcludable_altOr hn le_rfl 0).2
-    have h1 := h _ (isInnocentlyExcludable_altOr hn le_rfl 1).2
+    have h0 := h.2 _ (isInnocentlyExcludable_altOr hn le_rfl 0)
+    have h1 := h.2 _ (isInnocentlyExcludable_altOr hn le_rfl 1)
     obtain ⟨x, hx⟩ := not_forall.1 (h0 : ¬ ∀ x, w x = 0)
     obtain ⟨y, hy⟩ := not_forall.1 (h1 : ¬ ∀ x, w x = 1)
     exact ⟨⟨y, h2 _ hy⟩, ⟨x, h2' _ hx⟩⟩
-  · rintro ⟨⟨x, hx⟩, ⟨y, hy⟩⟩ ψ hψ
-    rcases eq_or_exists_of_mem_IE _ _ (Set.finite_range _) ψ hψ ⟨w, trivial⟩ with
-      rfl | ⟨_, ⟨i, rfl⟩, rfl⟩
-    · trivial
-    · intro hall
-      exact absurd (((hall x).symm.trans hx).symm.trans ((hall y).symm.trans hy)) (by decide)
+  · rintro ⟨⟨x, hx⟩, ⟨y, hy⟩⟩
+    refine ⟨trivial, fun a ha hall ↦ ?_⟩
+    obtain ⟨i, rfl⟩ := ha.1
+    exact absurd (((hall x).symm.trans hx).symm.trans ((hall y).symm.trans hy)) (by decide)
 
 /-- With ALT-or the existential alternatives are entailed, so no ignorance arises about
 them, (6b). -/
@@ -133,11 +131,11 @@ theorem exhIE_altOr_subset_someAre (hn : 2 ≤ n) (i : Fin 2) :
   · exact Set.inter_subset_left
   · exact Set.inter_subset_right
 
-/-- With ALT-all-or, the world where everyone is `i` is minimal: any world verifying fewer
+/-- With ALT-all-or, the world where everyone is `i` is minimal, since any world verifying fewer
 alternatives would have to falsify *all are i* and *some are i* while verifying no other
 alternative, and there is no such world. -/
 theorem const_mem_exhMW (hn : 1 ≤ n) (i : Fin m) :
-    (λ _ => i : World n m) ∈ exhMW (altAllOr n m) Set.univ := by
+    (fun _ ↦ i : World n m) ∈ exhMW (altAllOr n m) Set.univ := by
   refine ⟨trivial, ?_⟩
   rintro ⟨v, -, hle, hnle⟩
   apply hnle
@@ -155,7 +153,7 @@ theorem const_mem_exhMW (hn : 1 ≤ n) (i : Fin m) :
 
 /-- With ALT-all-or, the world where one individual is `i` and the rest are `k` is minimal. -/
 theorem split_mem_exhMW (hn : 2 ≤ n) {i k : Fin m} (hik : i ≠ k) :
-    (λ x => if x.val = 0 then i else k : World n m) ∈ exhMW (altAllOr n m) Set.univ := by
+    (fun x ↦ if x.val = 0 then i else k : World n m) ∈ exhMW (altAllOr n m) Set.univ := by
   refine ⟨trivial, ?_⟩
   rintro ⟨v, -, hle, hnle⟩
   apply hnle
@@ -177,23 +175,23 @@ theorem split_mem_exhMW (hn : 2 ≤ n) {i k : Fin m} (hik : i ≠ k) :
     have hj : j = i ∨ j = k := by split_ifs at hx <;> simp_all
     by_contra hv'
     rcases hj with rfl | rfl
-    · have hall : ∀ x, v x = k := λ x => (hv x).resolve_left λ h => hv' ⟨x, h⟩
+    · have hall : ∀ x, v x = k := fun x ↦ (hv x).resolve_left fun h ↦ hv' ⟨x, h⟩
       have h0 := hle _ (Or.inl ⟨k, rfl⟩) hall ⟨0, by omega⟩
       simp at h0
       exact hik h0
-    · have hall : ∀ x, v x = i := λ x => (hv x).resolve_right λ h => hv' ⟨x, h⟩
+    · have hall : ∀ x, v x = i := fun x ↦ (hv x).resolve_right fun h ↦ hv' ⟨x, h⟩
       have h1 := hle _ (Or.inl ⟨i, rfl⟩) hall ⟨1, by omega⟩
       simp at h1
       exact hik h1.symm
 
-/-- (26): with ALT-all-or no alternative is innocently excludable, for any domain of at least
+/-- With ALT-all-or no alternative is innocently excludable (26), for any domain of at least
 two, each universal alternative holding at a minimal constant world and each existential one
 at a minimal two-property world. -/
 theorem not_isInnocentlyExcludable_altAllOr (hn : 2 ≤ n) (hm : 2 ≤ m) :
     ∀ a ∈ altAllOr n m, ¬ IsInnocentlyExcludable (altAllOr n m) Set.univ a := by
   rintro a (⟨i, rfl⟩ | ⟨i, rfl⟩) h
   · exact (isInnocentlyExcludable_iff_exhMW_subset_compl _ _ _ (Or.inl ⟨i, rfl⟩)).1 h
-      (const_mem_exhMW (by omega) i) (λ _ => rfl)
+      (const_mem_exhMW (by omega) i) (fun _ ↦ rfl)
   · have : Nontrivial (Fin m) := Fin.nontrivial_iff_two_le.2 hm
     obtain ⟨k, hk⟩ := exists_ne i
     exact (isInnocentlyExcludable_iff_exhMW_subset_compl _ _ _ (Or.inr ⟨i, rfl⟩)).1 h
@@ -202,22 +200,20 @@ theorem not_isInnocentlyExcludable_altAllOr (hn : 2 ≤ n) (hm : 2 ≤ m) :
 /-- With ALT-all-or exhaustification is vacuous. -/
 theorem exhIE_altAllOr (hn : 2 ≤ n) (hm : 2 ≤ m) : exhIE (altAllOr n m) Set.univ = Set.univ := by
   ext w
-  refine ⟨λ _ => trivial, λ _ ψ hψ => ?_⟩
-  rcases eq_or_exists_of_mem_IE _ _ altAllOr_finite ψ hψ ⟨w, trivial⟩ with rfl | ⟨a, ha, rfl⟩
-  · trivial
-  · exact absurd ⟨ha, hψ⟩ (not_isInnocentlyExcludable_altAllOr hn hm a ha)
+  exact ⟨fun _ ↦ trivial, fun _ ↦ ⟨trivial, fun a ha ↦
+    absurd ha (not_isInnocentlyExcludable_altAllOr hn hm a ha.1)⟩⟩
 
-/-- With ALT-all-or every alternative is left open, (7b): ignorance about all of them. -/
+/-- With ALT-all-or every alternative is left open, giving ignorance about all of them (7b). -/
 theorem leavesOpen_altAllOr (hn : 2 ≤ n) (hm : 2 ≤ m) :
     ∀ a ∈ altAllOr n m, LeavesOpen (altAllOr n m) a := by
   have : Nontrivial (Fin m) := Fin.nontrivial_iff_two_le.2 hm
   simp only [LeavesOpen, exhIE_altAllOr hn hm]
   rintro a (⟨i, rfl⟩ | ⟨i, rfl⟩)
   · obtain ⟨k, hk⟩ := exists_ne i
-    exact ⟨⟨λ _ => i, trivial, λ _ => rfl⟩,
-      ⟨λ x => if x.val = 0 then i else k, trivial, λ h => hk (by simpa using h ⟨1, by omega⟩)⟩⟩
+    exact ⟨⟨fun _ ↦ i, trivial, fun _ ↦ rfl⟩,
+      ⟨fun x ↦ if x.val = 0 then i else k, trivial, fun h ↦ hk (by simpa using h ⟨1, by omega⟩)⟩⟩
   · obtain ⟨k, hk⟩ := exists_ne i
-    exact ⟨⟨λ _ => i, trivial, ⟨0, by omega⟩, rfl⟩, ⟨λ _ => k, trivial, λ ⟨_, h⟩ => hk h⟩⟩
+    exact ⟨⟨fun _ ↦ i, trivial, ⟨0, by omega⟩, rfl⟩, ⟨fun _ ↦ k, trivial, fun ⟨_, h⟩ ↦ hk h⟩⟩
 
 /-! ### Probabilistic informativeness, §4 -/
 
@@ -226,7 +222,7 @@ theorem ncard_someAre_compl (i : Fin m) : (someAre (n := n) i)ᶜ.ncard = (m - 1
     ext f; simp [someAre]
   rw [this, ← Nat.card_coe_set_eq, Nat.card_eq_fintype_card]
   show Fintype.card {f : World n m // ∀ x, f x ≠ i} = _
-  rw [Fintype.card_congr (Equiv.subtypePiEquivPi (p := λ _ j => j ≠ i)), Fintype.card_pi,
+  rw [Fintype.card_congr (Equiv.subtypePiEquivPi (p := fun _ j ↦ j ≠ i)), Fintype.card_pi,
     Finset.prod_const, Finset.card_univ, Fintype.card_fin, Fintype.card_subtype_compl,
     Fintype.card_fin, Fintype.card_subtype_eq]
 
@@ -237,11 +233,11 @@ theorem ncard_someAre (i : Fin m) : (someAre (n := n) i).ncard = m ^ n - (m - 1)
   omega
 
 theorem ncard_allAre (i : Fin m) : (allAre (n := n) i).ncard = 1 := by
-  rw [show allAre (n := n) i = {λ _ => i} from Set.ext λ w =>
-    ⟨λ h => funext h, λ h x => congrFun h x⟩, Set.ncard_singleton]
+  rw [show allAre (n := n) i = {fun _ ↦ i} from Set.ext fun w ↦
+    ⟨fun h ↦ funext h, fun h x ↦ congrFun h x⟩, Set.ncard_singleton]
 
-/-- The probability that some of the n individuals is `Aᵢ` given that all are one of the `m`,
-under the uniform prior of §4: `1 − ((m − 1)/m)^n`. -/
+/-- Under the uniform prior of §4, the probability that some of the n individuals is `Aᵢ` given
+that all are one of the `m` is `1 − ((m − 1)/m)^n`. -/
 theorem uniformOn_real_someAre (hm : 1 ≤ m) (i : Fin m) :
     (uniformOn (Set.univ : Set (World n m))).real (someAre i) = 1 - ((m - 1 : ℝ) / m) ^ n := by
   rw [uniformOn_real_apply, Set.univ_inter, ncard_someAre, Set.ncard_univ,
@@ -251,7 +247,7 @@ theorem uniformOn_real_someAre (hm : 1 ≤ m) (i : Fin m) :
   rw [Nat.cast_sub hle, Nat.cast_pow, Nat.cast_pow, Nat.cast_sub hm, Nat.cast_one, sub_div,
     div_self (pow_ne_zero n hm'), div_pow]
 
-/-- The probability that all n individuals are `Aᵢ`: `(1/m)^n`. -/
+/-- The probability that all n individuals are `Aᵢ` is `(1/m)^n`. -/
 theorem uniformOn_real_allAre (i : Fin m) :
     (uniformOn (Set.univ : Set (World n m))).real (allAre i) = (1 / m : ℝ) ^ n := by
   rw [uniformOn_real_apply, Set.univ_inter, ncard_allAre, Set.ncard_univ, Nat.card_eq_fintype_card,
@@ -259,7 +255,7 @@ theorem uniformOn_real_allAre (i : Fin m) :
   push_cast
   rfl
 
-/-- §4's assumption (i): the more individuals, the likelier that some of them is `Aᵢ`. -/
+/-- The more individuals, the likelier that some of them is `Aᵢ`, §4's assumption (i). -/
 theorem uniformOn_real_someAre_lt (hm : 2 ≤ m) {n' : ℕ} (h : n < n') (i : Fin m) :
     (uniformOn (Set.univ : Set (World n m))).real (someAre i) <
       (uniformOn (Set.univ : Set (World n' m))).real (someAre i) := by
@@ -269,8 +265,8 @@ theorem uniformOn_real_someAre_lt (hm : 2 ≤ m) {n' : ℕ} (h : n < n') (i : Fi
   · apply div_pos <;> linarith
   · rw [div_lt_one (by linarith)]; linarith
 
-/-- §4's assumption (ii): with more than one individual, that some of them is `Aᵢ` is likelier
-than that all are. -/
+/-- With more than one individual, that some of them is `Aᵢ` is likelier than that all are,
+§4's assumption (ii). -/
 theorem uniformOn_real_allAre_lt_someAre (hn : 2 ≤ n) (hm : 2 ≤ m) (i : Fin m) :
     (uniformOn (Set.univ : Set (World n m))).real (allAre i) <
       (uniformOn (Set.univ : Set (World n m))).real (someAre i) := by
@@ -284,7 +280,7 @@ theorem uniformOn_real_allAre_lt_someAre (hn : 2 ≤ n) (hm : 2 ≤ m) (i : Fin 
   have : (1 / m : ℝ) + (m - 1) / m = 1 := by field_simp; ring
   linarith
 
-/-- §4's assumption (iii): the more disjuncts, the less likely that some individual is `A₁`. -/
+/-- The more disjuncts, the less likely that some individual is `A₁`, §4's assumption (iii). -/
 theorem uniformOn_real_someAre_anti (hn : 1 ≤ n) (hm : 2 ≤ m) {m' : ℕ} (h : m < m')
     (i : Fin m) (i' : Fin m') :
     (uniformOn (Set.univ : Set (World n m'))).real (someAre i') <
@@ -297,11 +293,11 @@ theorem uniformOn_real_someAre_anti (hn : 1 ≤ n) (hm : 2 ≤ m) {m' : ℕ} (h 
   rw [div_lt_div_iff₀ (by linarith) (by linarith)]
   nlinarith
 
-/-- (30), in threshold form: an alternative is pruned when its probability given the utterance
-reaches the threshold. -/
+/-- In the threshold form of (30), an alternative is pruned when its probability given the
+utterance reaches the threshold. -/
 def Pruned (θ p : ℝ) : Prop := θ ≤ p
 
-/-- One threshold resolves the inference puzzle: the existential alternatives of all-20-or, (6),
+/-- One threshold resolves the inference puzzle. The existential alternatives of all-20-or, (6),
 and simple-disj, (8), are pruned, leaving ALT-or and the distributive reading, and those of
 all-2-or, (7), and complex-disj, (9), are kept, leaving ALT-all-or and ignorance. -/
 theorem threshold_separates :
@@ -314,42 +310,42 @@ theorem threshold_separates :
 
 /-! ### The deviance puzzle, §5 to §7 -/
 
-/-- The common-knowledge worlds for *each of the n girls is one of the n names* under the
-identity copula: the names are borne by different girls. -/
+/-- In the common-knowledge worlds for *each of the n girls is one of the n names* under the
+identity copula, the names are borne by different girls. -/
 def distinct (n : ℕ) : Set (World n n) := {w | Function.Injective w}
 
-/-- A predicate of individuals is singleton-denoting given common knowledge `CK`, §5: at every
-common-knowledge world it holds of at most one individual. -/
+/-- A predicate of individuals is singleton-denoting given common knowledge `CK` (§5) when at
+every common-knowledge world it holds of at most one individual. -/
 def SingletonDenoting (CK : Set (World n m)) (P : World n m → Fin n → Prop) : Prop :=
   ∀ w ∈ CK, ∀ x y, P w x → P w y → x = y
 
 /-- *Is Mary* is singleton-denoting given that the names are borne by different girls, (37a). -/
 theorem singletonDenoting_distinct (i : Fin n) :
-    SingletonDenoting (distinct n) (λ w x => w x = i) :=
-  λ _ hw _ _ hx hy => hw (hx.trans hy.symm)
+    SingletonDenoting (distinct n) (fun w x ↦ w x = i) :=
+  fun _ hw _ _ hx hy ↦ hw (hx.trans hy.symm)
 
-/-- *Is called Mary* is not, (37b): two girls may bear the name. -/
+/-- *Is called Mary* is not singleton-denoting, since two girls may bear the name (37b). -/
 theorem not_singletonDenoting_univ (hn : 2 ≤ n) (i : Fin m) :
-    ¬ SingletonDenoting (Set.univ : Set (World n m)) (λ w x => w x = i) :=
-  λ h => absurd (h (λ _ => i) trivial ⟨0, by omega⟩ ⟨1, by omega⟩ rfl rfl) (by simp)
+    ¬ SingletonDenoting (Set.univ : Set (World n m)) (fun w x ↦ w x = i) :=
+  fun h ↦ absurd (h (fun _ ↦ i) trivial ⟨0, by omega⟩ ⟨1, by omega⟩ rfl rfl) (by simp)
 
-/-- Given common knowledge and the utterance, every name is borne by some girl: an injection of
-the n girls into the n names is a surjection. -/
+/-- Given common knowledge and the utterance, every name is borne by some girl, since an
+injection of the n girls into the n names is a surjection. -/
 theorem distinct_subset_someAre (i : Fin n) : distinct n ⊆ someAre i :=
-  λ _ hw => Finite.injective_iff_surjective.1 hw i
+  fun _ hw ↦ Finite.injective_iff_surjective.1 hw i
 
 /-- Common knowledge settles an alternative when it holds or fails at every world compatible
 with it. -/
 def Settled (CK a : Set (World n m)) : Prop := CK ⊆ a ∨ CK ⊆ aᶜ
 
-/-- (40): deviant-be, (31), is deviant because exhaustification with ALT-all-or leaves every
+/-- Deviant-be (31) is deviant (40) because exhaustification with ALT-all-or leaves every
 existential alternative open, so ignorance about it is inferred, while common knowledge settles
 it. -/
 theorem deviant_be (hn : 2 ≤ n) (i : Fin n) :
     LeavesOpen (altAllOr n n) (someAre i) ∧ Settled (distinct n) (someAre i) :=
   ⟨leavesOpen_altAllOr hn hn _ (Or.inr ⟨i, rfl⟩), Or.inl (distinct_subset_someAre i)⟩
 
-/-- non-deviant-called, (32): the same ignorance is inferred, but common knowledge settles
+/-- For non-deviant-called (32) the same ignorance is inferred, but common knowledge settles
 nothing, since the girls may all be called Mary or none may be. -/
 theorem non_deviant_called (hn : 2 ≤ n) (hm : 2 ≤ m) (i : Fin m) :
     LeavesOpen (altAllOr n m) (someAre i) ∧ ¬ Settled (Set.univ : Set (World n m)) (someAre i) := by
@@ -357,8 +353,8 @@ theorem non_deviant_called (hn : 2 ≤ n) (hm : 2 ≤ m) (i : Fin m) :
   have : Nontrivial (Fin m) := Fin.nontrivial_iff_two_le.2 hm
   obtain ⟨k, hk⟩ := exists_ne i
   rintro (h | h)
-  · exact hk (h (Set.mem_univ (λ _ => k))).choose_spec
-  · exact h (Set.mem_univ (λ _ => i)) ⟨⟨0, by omega⟩, rfl⟩
+  · exact hk (h (Set.mem_univ (fun _ ↦ k))).choose_spec
+  · exact h (Set.mem_univ (fun _ ↦ i)) ⟨⟨0, by omega⟩, rfl⟩
 
 /-- Relative to common knowledge the existential alternatives of deviant-be are certain. -/
 theorem uniformOn_distinct_real_someAre (i : Fin n) :
@@ -366,7 +362,7 @@ theorem uniformOn_distinct_real_someAre (i : Fin n) :
   rw [uniformOn_real_apply, Set.inter_eq_left.2 (distinct_subset_someAre i), div_self]
   exact Nat.cast_ne_zero.2 ((Set.ncard_pos (Set.toFinite _)).2 ⟨id, Function.injective_id⟩).ne'
 
-/-- §7.3: informativeness must be computed blindly to common knowledge. Relative to it the
+/-- Informativeness must be computed blindly to common knowledge (§7.3). Relative to it the
 existential alternatives of deviant-be are certain and any threshold prunes them, which would
 leave no ignorance inference and predict no deviance; blind to it their probability is
 `1 − (2/3)^3`, below every threshold that keeps the alternatives of all-2-or, so they survive. -/

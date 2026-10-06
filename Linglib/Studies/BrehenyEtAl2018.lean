@@ -100,7 +100,7 @@ theorem exhIE_eq_self_of_isDomain {F C : Set (Set W)} {φ p : Set W}
     (hF : F ⊆ {φ, p, pᶜ, φᶜ}) (hp : p ∈ F) (hpc : pᶜ ∈ F) (hC : IsDomain F φ C)
     (h₁ : (φ ∩ p).Nonempty) (h₂ : (φ ∩ pᶜ).Nonempty) : exhIE C φ = φ := by
   have hfin : C.Finite := (toFinite _).subset (hC.subset.trans hF)
-  rw [exhIE_eq_self_iff C φ hfin]
+  rw [exhIE_eq_self_iff C φ]
   intro a ha
   have hmem := hF (hC.subset ha.1)
   simp only [mem_insert_iff, mem_singleton_iff] at hmem
@@ -119,22 +119,22 @@ section Indirect
 
 variable {all any : Set W}
 
-/-- (14): the formal alternatives of *John didn't do all of the homework* on the structural
-approach: *not all*, *not any*, *all*, and *some*, the last by the derivation (15). -/
+/-- On the structural approach the formal alternatives of *John didn't do all of the homework*
+are *not all*, *not any*, *all*, and *some*, the last by the derivation (15), as in (14). -/
 def indirectAlts (all any : Set W) : Set (Set W) := {allᶜ, anyᶜ, all, any}
 
-/-- (12) undergenerates: *some* is the negation of *not any*, every domain holding one holds
-both, and exhaustification of *not all* is vacuous on every domain, given a world with no
-homework done and one with some but not all of it done. -/
+/-- The structural approach undergenerates (12). Since *some* is the negation of *not any*, every
+domain holding one holds both, and exhaustification of *not all* is vacuous on every domain,
+given a world with no homework done and one with some but not all of it done. -/
 theorem exhIE_indirect_eq_self {C : Set (Set W)} (hC : IsDomain (indirectAlts all any) allᶜ C)
     (h₀ : (allᶜ ∩ anyᶜ).Nonempty) (h₁ : (allᶜ ∩ any).Nonempty) : exhIE C allᶜ = allᶜ :=
   exhIE_eq_self_of_isDomain (p := anyᶜ) (by simp [indirectAlts, insert_subset_iff])
     (by simp [indirectAlts]) (by simp [indirectAlts]) hC h₀ (by simpa using h₁)
 
-/-- (22): under the Atomicity Constraint *some* is not derivable from *not all*, the formal
+/-- Under the Atomicity Constraint *some* is not derivable from *not all*, so the formal
 alternatives are *not all*, *not any*, and *all*, their own domain, and exhaustification
 derives (12b), *not all* and *some*, given a world with some but not all of the homework
-done. -/
+done, as in (22). -/
 theorem exhIE_indirect_atomicity (h₁ : (allᶜ ∩ any).Nonempty) :
     exhIE {allᶜ, anyᶜ, all} allᶜ = allᶜ ∩ any := by
   obtain ⟨v, hv, hv'⟩ := h₁
@@ -152,9 +152,9 @@ theorem exhIE_indirect_atomicity (h₁ : (allᶜ ∩ any).Nonempty) :
       · exact Or.inr (notMem_compl_iff.2 hv')
       · exact Or.inr hv
   ext w
-  rw [mem_exhIE_iff _ _ (toFinite _), mem_inter_iff]
-  refine ⟨λ ⟨hw, h⟩ => ⟨hw, notMem_compl_iff.1 (h _ (hIE anyᶜ (by simp)))⟩,
-    λ ⟨hw, hw'⟩ => ⟨hw, λ a ha => ?_⟩⟩
+  rw [mem_exhIE_iff _ _, mem_inter_iff]
+  refine ⟨fun ⟨hw, h⟩ ↦ ⟨hw, notMem_compl_iff.1 (h _ (hIE anyᶜ (by simp)))⟩,
+    fun ⟨hw, hw'⟩ ↦ ⟨hw, fun a ha ↦ ?_⟩⟩
   rcases ha.1 with rfl | rfl | rfl
   · exact absurd ha (not_isInnocentlyExcludable_of_phi_subset (toFinite _) ⟨w, hw⟩ subset_rfl)
   · exact notMem_compl_iff.2 hw'
@@ -168,20 +168,20 @@ section Particularised
 
 variable {run smoke : Set W}
 
-/-- (31): the alternatives of *John went for a run* from the constituents (28) makes salient:
-*run*, *smoke*, and *not smoke*. -/
+/-- The alternatives of *John went for a run* from the constituents that (28) makes salient are
+*run*, *smoke*, and *not smoke*, as in (31). -/
 def splitAlts (run smoke : Set W) : Set (Set W) := {run, smoke, smokeᶜ}
 
-/-- (28) undergenerates with or without Atomicity: a domain holding *smoke* or *not smoke* holds
-both by closure, so exhaustification is vacuous on every domain, given a world where John runs
-and smokes and one where he runs and does not. -/
+/-- The context (28) undergenerates with or without Atomicity. A domain holding *smoke* or *not
+smoke* holds both by closure, so exhaustification is vacuous on every domain, given a world where
+John runs and smokes and one where he runs and does not. -/
 theorem exhIE_split_eq_self {C : Set (Set W)} (hC : IsDomain (splitAlts run smoke) run C)
     (h₁ : (run ∩ smoke).Nonempty) (h₂ : (run ∩ smokeᶜ).Nonempty) : exhIE C run = run :=
   exhIE_eq_self_of_isDomain (p := smoke) (by simp [splitAlts, insert_subset_iff])
     (by simp [splitAlts]) (by simp [splitAlts]) hC h₁ h₂
 
-/-- Footnote 16: ignoring the salient *didn't smoke* leaves `{run, smoke}`, and exhaustification
-derives that John did not smoke, the opposite of the attested inference. -/
+/-- Ignoring the salient *didn't smoke* leaves `{run, smoke}`, and exhaustification derives that
+John did not smoke, the opposite of the attested inference (footnote 16). -/
 theorem exhIE_split_ignored (h₂ : (run ∩ smokeᶜ).Nonempty) :
     exhIE {run, smoke} run = run ∩ smokeᶜ := by
   rw [exhIE_pair_sdiff run (by rwa [sdiff_eq]), sdiff_eq]
@@ -194,9 +194,9 @@ section Gradable
 
 variable {full empty half : Set W}
 
-/-- (39)–(40) with (37) and footnote 20: under Atomicity the formal alternatives of (32) are
-*not full*, *not empty*, and the modifier alternative *not half full*, while *empty* is not
-derivable; `{¬full, ¬empty}` is a domain, since *not half full* separates a glass a bit filled
+/-- Under Atomicity the formal alternatives of (32) are *not full*, *not empty*, and the modifier
+alternative *not half full*, while *empty* is not derivable, by (39)–(40) with (37) and
+footnote 20. `{¬full, ¬empty}` is a domain, since *not half full* separates a glass a bit filled
 from one half filled, which *not full* and *not empty* do not. -/
 theorem isDomain_notFull_notEmpty {l m : W} (hl : l ∈ fullᶜ ∩ emptyᶜ ∩ halfᶜ)
     (hm : m ∈ fullᶜ ∩ emptyᶜ ∩ half) :
@@ -208,15 +208,15 @@ theorem isDomain_notFull_notEmpty {l m : W} (hl : l ∈ fullᶜ ∩ emptyᶜ ∩
   · refine absurd hc (notMem_closure_of_separates ?_ hl.2 (notMem_compl_iff.2 hm.2))
     rintro _ (rfl | rfl) <;> simp [hl.1.1, hl.1.2, hm.1.1, hm.1.2]
 
-/-- The Atomicity Constraint backfires, (32b): on that domain exhaustification of *not full*
+/-- The Atomicity Constraint backfires (32b), since on that domain exhaustification of *not full*
 asserts *empty*, given an empty glass and no glass both full and empty. -/
 theorem exhIE_notFull_notEmpty (h : Disjoint full empty) (hne : empty.Nonempty) :
     exhIE {fullᶜ, emptyᶜ} fullᶜ = empty := by
   have hsd : fullᶜ \ emptyᶜ = empty := by rw [sdiff_compl, inter_eq_right.2 h.subset_compl_left]
   rw [exhIE_pair_sdiff fullᶜ (by rwa [hsd]), hsd]
 
-/-- Without Atomicity, [fox-katzir-2011]: *empty* is a formal alternative by (40), every domain
-holding *not empty* holds it, and exhaustification of *not full* is vacuous, neither the
+/-- Without Atomicity, as in [fox-katzir-2011], *empty* is a formal alternative by (40), every
+domain holding *not empty* holds it, and exhaustification of *not full* is vacuous, neither the
 unattested (32b) nor the attested (32a), given an empty glass and one neither full nor
 empty. -/
 theorem exhIE_notFull_eq_self {C : Set (Set W)}
@@ -224,8 +224,8 @@ theorem exhIE_notFull_eq_self {C : Set (Set W)}
     (h₂ : (fullᶜ ∩ empty).Nonempty) : exhIE C fullᶜ = fullᶜ :=
   exhIE_eq_self_of_isDomain (p := emptyᶜ) (by simp) (by simp) (by simp) hC h₁ (by simpa using h₂)
 
-/-- (37): `{¬full, ¬half full}` is a domain as well, since *not empty* separates an empty glass
-from one a bit filled, which *not full* and *not half full* do not. -/
+/-- `{¬full, ¬half full}` is a domain as well, since *not empty* separates an empty glass from
+one a bit filled, which *not full* and *not half full* do not, as in (37). -/
 theorem isDomain_notFull_notHalf {e l : W} (he : e ∈ fullᶜ ∩ empty ∩ halfᶜ)
     (hl : l ∈ fullᶜ ∩ emptyᶜ ∩ halfᶜ) :
     IsDomain {fullᶜ, emptyᶜ, halfᶜ} fullᶜ {fullᶜ, halfᶜ} := by
@@ -247,15 +247,15 @@ theorem exhIE_notFull_notHalf_subset (h : Disjoint half empty) (hm : (fullᶜ �
     exhIE {fullᶜ, halfᶜ} fullᶜ ⊆ emptyᶜ :=
   (exhIE_notFull_notHalf hm).symm ▸ inter_subset_right.trans h.subset_compl_right
 
-/-- Footnote 20: with *not half full* kept alongside *not empty*, neither is excludable, and
-exhaustification on all three alternatives is vacuous, given an empty glass and one half but
-not fully filled. -/
+/-- With *not half full* kept alongside *not empty*, neither is excludable, and exhaustification
+on all three alternatives is vacuous, given an empty glass and one half but not fully filled
+(footnote 20). -/
 theorem exhIE_adjectiveAlts_eq_self (h : Disjoint half empty) (he : (fullᶜ ∩ empty).Nonempty)
     (hm : (fullᶜ ∩ half).Nonempty) : exhIE {fullᶜ, emptyᶜ, halfᶜ} fullᶜ = fullᶜ := by
   have hcov : fullᶜ ⊆ emptyᶜ ∪ halfᶜ := by
     rw [← compl_inter, inter_comm, h.inter_eq, compl_empty]
     exact subset_univ _
-  rw [exhIE_eq_self_iff _ _ (toFinite _)]
+  rw [exhIE_eq_self_iff _ _]
   intro a ha
   rcases ha.1 with rfl | rfl | rfl
   · exact absurd ha (not_isInnocentlyExcludable_of_phi_subset (toFinite _)
@@ -273,15 +273,15 @@ section Lexicalised
 
 variable {permitted required optional : Set W}
 
-/-- (44): *required* and *optional* partition *permitted*, and as single lexical items all three
-are formal alternatives of one another; every domain holding one of the pair holds the other by
-closure, and exhaustification of *permitted* is vacuous on every domain, so neither (44b) nor
-(44c) arises. -/
+/-- In (44) *required* and *optional* partition *permitted*, and as single lexical items all
+three are formal alternatives of one another. Every domain holding one of the pair holds the
+other by closure, and exhaustification of *permitted* is vacuous on every domain, so neither
+(44b) nor (44c) arises. -/
 theorem exhIE_permitted_eq_self {C : Set (Set W)} (h : IsSymmetric permitted required optional)
     (hC : IsDomain {permitted, required, optional} permitted C) (h₁ : required.Nonempty)
     (h₂ : optional.Nonempty) : exhIE C permitted = permitted := by
   have hfin : C.Finite := (toFinite _).subset hC.subset
-  rw [exhIE_eq_self_iff C permitted hfin]
+  rw [exhIE_eq_self_iff C permitted]
   intro a ha
   rcases hC.subset ha.1 with rfl | rfl | rfl
   · exact absurd ha
