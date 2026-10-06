@@ -175,30 +175,16 @@ theorem polar_ne_top (hp : p.Nonempty) (hp' : p ≠ Set.univ) : polar p ≠ ⊤ 
   obtain ⟨u, hu⟩ := (Set.ne_univ_iff_exists_notMem p).1 hp'
   exact hu ((polar_iff.1 (show polar p v u from h ▸ trivial)).1 hv)
 
-/-- A polar question whether `p`, for `p` neither empty nor everything, is a coatom, since any
-coarser question relates a `p`-world to a world outside `p` and so relates everything. -/
+/-- A polar question whether `p`, for `p` neither empty nor everything, is a coatom, since a
+coarser question relates a `p`-world `a` to a world outside `p`, and so relates every world to
+`a`. -/
 theorem isCoatom_polar (hp : p.Nonempty) (hp' : p ≠ Set.univ) : IsCoatom (polar p) := by
-  refine ⟨polar_ne_top hp hp', fun R hR ↦ ?_⟩
-  obtain ⟨a, b, hab, hnab⟩ : ∃ a b, R a b ∧ ¬ polar p a b := by
-    by_contra h
-    push Not at h
-    exact hR.ne (le_antisymm hR.le fun a b hab ↦ h a b hab)
-  have hle : polar p ≤ R := hR.le
-  rw [polar_iff] at hnab
-  have key : ∀ x y, x ∈ p → y ∉ p → R x y := fun x y hx hy ↦ by
-    by_cases ha : a ∈ p
-    · have hb : b ∉ p := fun hb ↦ hnab (iff_of_true ha hb)
-      exact R.trans' (hle (polar_iff.2 (iff_of_true hx ha)))
-        (R.trans' hab (hle (polar_iff.2 (iff_of_false hb hy))))
-    · have hb : b ∈ p := by_contra fun hb ↦ hnab (iff_of_false ha hb)
-      exact R.trans' (hle (polar_iff.2 (iff_of_true hx hb)))
-        (R.trans' (R.symm' hab) (hle (polar_iff.2 (iff_of_false ha hy))))
-  refine Setoid.eq_top_iff.2 fun x y ↦ ?_
-  by_cases hx : x ∈ p <;> by_cases hy : y ∈ p
-  · exact hle (polar_iff.2 (iff_of_true hx hy))
-  · exact key x y hx hy
-  · exact R.symm' (key y x hy hx)
-  · exact hle (polar_iff.2 (iff_of_false hx hy))
+  refine ⟨polar_ne_top hp hp', fun R hR ↦ Setoid.eq_top_iff.2 fun x y ↦ ?_⟩
+  obtain ⟨a, b, hab, h⟩ : ∃ a b, R a b ∧ ¬ polar p a b := by
+    simpa [Setoid.le_def] using hR.not_ge
+  have hle := @hR.le
+  simp only [Setoid.le_def, polar_iff] at h hle
+  grind [Setoid.trans', Setoid.symm']
 
 /-- The coatoms of the lattice of questions are exactly the polar questions whether `p`, for `p`
 neither empty nor everything. -/
