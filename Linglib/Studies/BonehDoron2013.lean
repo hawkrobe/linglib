@@ -15,7 +15,7 @@ actual world. The English auxiliaries mark neither; *would* marks mood, a specia
 and *used to* is the imperfective under a retrospective aspect, which places the reference
 interval before the perspective interval. The operators are built on Link's sum closure,
 Kratzer's modal base, Klein's imperfective and Pancheva's final-subinterval perfect
-(`Aspect.IntervalPred.perfect`); Del Prete's Italian Same-Object Effect is the configuration of
+(`Aspect.perfect`); Del Prete's Italian Same-Object Effect is the configuration of
 `same_object_infelicity`.
 
 ## Main statements
@@ -44,7 +44,7 @@ namespace BonehDoron2013
 
 open Event (τ)
 
-open Aspect (Perfectivity IntervalPred IMPF)
+open Aspect (Perfectivity IMPF)
 open Modality (ModalBase)
 
 /-! ### Hab against Gen ((4)–(8), (13)–(15))
@@ -116,13 +116,13 @@ interval, Kamp and Reyle's P, so *used to* is imperfective and retrospective by 
 
 /-- The retrospective holds at a perspective interval when some reference interval satisfying
 the description lies wholly before it, (19b). -/
-def retro {W T : Type*} [LinearOrder T] (A : IntervalPred W T) :
-    IntervalPred W T :=
-  fun w p => ∃ i, A w i ∧ i.isBefore p
+def retro {W T : Type*} [LinearOrder T] (A : W → Set (NonemptyInterval T)) :
+    W → Set (NonemptyInterval T) :=
+  fun w ↦ {p | ∃ i ∈ A w, i.isBefore p}
 
 /-- *Used to* is the retrospective over the imperfective, (18). -/
 def usedToOp {W T E : Type*} [LinearOrder T] [Event.TemporalTrace E T] (P : W → E → Prop) :
-    IntervalPred W T :=
+    W → Set (NonemptyInterval T) :=
   retro (IMPF P)
 
 /-- One reference interval serves the retrospective and the perfect at once only for an
@@ -139,7 +139,7 @@ contains a reference interval before the perspective satisfies *used to* however
 theorem usedTo_of_persisting_state {W T E : Type*} [LinearOrder T] [Event.TemporalTrace E T]
     {P : W → E → Prop} {w : W} {e : E} (hP : P w e)
     {i p : NonemptyInterval T} (hie : i < τ e) (hip : i.isBefore p) :
-    usedToOp P w p :=
+    p ∈ usedToOp P w :=
   ⟨i, ⟨e, hie, hP⟩, hip⟩
 
 /-! ### The three forms and Table (41) -/

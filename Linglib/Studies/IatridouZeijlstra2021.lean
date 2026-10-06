@@ -51,7 +51,7 @@ gives the punctual one.
   at every subinterval. Entailment between the alternatives is logical, inclusion between sets of
   interpretations of the event predicate: a claim is stated for `P : V → E → Prop` reaching every
   extension (`Function.Surjective P`), the extensions themselves (`P = id`, `V = E → Prop`) or
-  their negations (`surjective_not`). A predicate at a world is its extension, `PRFV P w τ` being
+  their negations (`surjective_not`). A predicate at a world is its extension, `τ ∈ PRFV P w` being
   `PRFV id (P w) τ` by definition. Refuting an entailment assumes the event domain rich, every
   interval the run time of some event (`Function.Surjective Event.τ`).
 * The paper calls the exhaustified positive claim a logical contradiction. It needs the events to
@@ -105,23 +105,25 @@ variable {W T E : Type*} [LinearOrder T] [Event.TemporalTrace E T]
 
 section Exhaustification
 
-variable {V : Type*} {p : IntervalPred V T} {τ : NonemptyInterval T}
+variable {V : Type*} {p : V → Set (NonemptyInterval T)} {τ : NonemptyInterval T}
 
 /-- The domain alternatives of the claim `p` at the span `τ` are the claim at each of its
 subintervals, (45b), (49b) and (127). -/
-def domainAlternatives (p : IntervalPred V T) (τ : NonemptyInterval T) : Set (Set V) :=
-  (fun τ' ↦ {v | p v τ'}) '' Set.Iic τ
+def domainAlternatives (p : V → Set (NonemptyInterval T)) (τ : NonemptyInterval T) :
+    Set (Set V) :=
+  (fun τ' ↦ {v | τ' ∈ p v}) '' Set.Iic τ
 
 /-- A claim with the subinterval property entails its domain alternatives, so exhaustifying them
 is vacuous. -/
-theorem exh_domainAlternatives_eq_self (hp : p.HasSubintervalProperty) :
-    exh (domainAlternatives p τ) {v | p v τ} = {v | p v τ} :=
+theorem exh_domainAlternatives_eq_self (hp : ∀ v, IsLowerSet (p v)) :
+    exh (domainAlternatives p τ) {v | τ ∈ p v} = {v | τ ∈ p v} :=
   exh_eq_self <| by rintro _ ⟨τ', hτ', rfl⟩ v hv; exact hp v hτ' hv
 
 /-- When the claim at one span entails it at another exactly when the second contains the first,
 exhaustification negates the claim at every proper subinterval. -/
-theorem mem_exh_domainAlternatives_iff (hp : ∀ τ₁ τ₂, {v | p v τ₁} ⊆ {v | p v τ₂} ↔ τ₁ ≤ τ₂)
-    {v : V} : v ∈ exh (domainAlternatives p τ) {v | p v τ} ↔ p v τ ∧ ∀ τ' < τ, ¬ p v τ' := by
+theorem mem_exh_domainAlternatives_iff
+    (hp : ∀ τ₁ τ₂, {v | τ₁ ∈ p v} ⊆ {v | τ₂ ∈ p v} ↔ τ₁ ≤ τ₂) {v : V} :
+    v ∈ exh (domainAlternatives p τ) {v | τ ∈ p v} ↔ τ ∈ p v ∧ ∀ τ' < τ, τ' ∉ p v := by
   simp only [mem_exh, domainAlternatives, Set.forall_mem_image, Set.mem_Iic, Set.mem_ofPred_eq,
     hp]
   refine and_congr_right fun _ ↦ ⟨fun h τ' hlt hv ↦ hlt.not_ge (h hlt.le hv), fun h τ' hle hv ↦ ?_⟩
@@ -137,7 +139,7 @@ The assertion of a perfect of the perfective, (14e) and (49a), is `Aspect.PRFV`:
 run time lies inside the span. Its domain alternatives are stronger and not entailed, so
 exhaustification negates them all and the event would have to fill the span, which a culminated
 event shorter than weeks cannot, (44) and (49). The negated perfective has the subinterval
-property (`Aspect.hasSubintervalProperty_not_prfv`), so under negation every alternative is
+property (`Aspect.isLowerSet_compl_prfv`), so under negation every alternative is
 entailed and exhaustification is vacuous, (50). With *until* the same holds of the until time
 span: the positive perfective (128)–(132) is contradictory, and so is (146a), exhaustifying the
 perfective of the negated predicate, while the construal exhaustifying the negated claim, (148b),
@@ -151,7 +153,7 @@ variable {V : Type*} {P : V → E → Prop} {τ : NonemptyInterval T}
 span entails it at another exactly when the second contains the first. -/
 theorem prfv_subset_prfv_iff (hP : Function.Surjective P)
     (hrich : Function.Surjective (Event.τ : E → NonemptyInterval T)) {τ₁ τ₂ : NonemptyInterval T} :
-    {v | PRFV P v τ₁} ⊆ {v | PRFV P v τ₂} ↔ τ₁ ≤ τ₂ := by
+    {v | τ₁ ∈ PRFV P v} ⊆ {v | τ₂ ∈ PRFV P v} ↔ τ₁ ≤ τ₂ := by
   refine ⟨fun h ↦ ?_, fun h _ ⟨e, he, hv⟩ ↦ ⟨e, he.trans h, hv⟩⟩
   obtain ⟨v, hv⟩ := hP (Event.τ · = τ₁)
   obtain ⟨e₀, he₀⟩ := hrich τ₁
@@ -162,8 +164,8 @@ theorem prfv_subset_prfv_iff (hP : Function.Surjective P)
 inside a proper subinterval. -/
 theorem mem_exh_prfv_iff (hP : Function.Surjective P)
     (hrich : Function.Surjective (Event.τ : E → NonemptyInterval T)) {v : V} :
-    v ∈ exh (domainAlternatives (PRFV P) τ) {v | PRFV P v τ} ↔
-      (∃ e, Event.τ e = τ ∧ P v e) ∧ ∀ τ' < τ, ¬ PRFV P v τ' := by
+    v ∈ exh (domainAlternatives (PRFV P) τ) {v | τ ∈ PRFV P v} ↔
+      (∃ e, Event.τ e = τ ∧ P v e) ∧ ∀ τ' < τ, τ' ∉ PRFV P v := by
   rw [mem_exh_domainAlternatives_iff fun _ _ ↦ prfv_subset_prfv_iff hP hrich]
   exact ⟨fun ⟨⟨e, he, hv⟩, h⟩ ↦ ⟨⟨e, he.eq_of_not_lt fun hlt ↦ h _ hlt ⟨e, le_rfl, hv⟩, hv⟩, h⟩,
     fun ⟨⟨e, he, hv⟩, h⟩ ↦ ⟨⟨e, he.le, hv⟩, h⟩⟩
@@ -175,16 +177,15 @@ presupposition of (180) are instances. -/
 theorem in_years_contradictory (hP : Function.Surjective P)
     (hrich : Function.Surjective (Event.τ : E → NonemptyInterval T)) {v : V}
     (hshort : ∀ e, P v e → Event.τ e ≠ τ) :
-    v ∉ exh (domainAlternatives (PRFV P) τ) {v | PRFV P v τ} := fun h ↦
+    v ∉ exh (domainAlternatives (PRFV P) τ) {v | τ ∈ PRFV P v} := fun h ↦
   let ⟨⟨e, he, hv⟩, _⟩ := (mem_exh_prfv_iff hP hrich).1 h
   hshort e hv he
 
 /-- Under negation exhaustification is vacuous, (50) and (126)–(127), and so is the construal of
 *until* that exhaustifies the negated perfective, (148b). -/
 theorem negated_perfective_exh_vacuous :
-    exh (domainAlternatives (fun v τ ↦ ¬ PRFV P v τ) τ) {v | ¬ PRFV P v τ} =
-      {v | ¬ PRFV P v τ} :=
-  exh_domainAlternatives_eq_self (hasSubintervalProperty_not_prfv P)
+    exh (domainAlternatives (fun v ↦ (PRFV P v)ᶜ) τ) {v | τ ∉ PRFV P v} = {v | τ ∉ PRFV P v} :=
+  exh_domainAlternatives_eq_self fun v ↦ isLowerSet_compl_prfv P v
 
 end Perfective
 
@@ -208,7 +209,7 @@ section Widening
 span that `F` admits. -/
 def Widened (F : NonemptyInterval T → Prop) (P : W → E → Prop) (w : W)
     (τ : NonemptyInterval T) : Prop :=
-  IsGreatest {τ' | F τ' ∧ ¬ PRFV P w τ'} τ
+  IsGreatest {τ' | F τ' ∧ τ' ∉ PRFV P w} τ
 
 variable {F : NonemptyInterval T → Prop} {P : W → E → Prop} {w : W} {τ τ' : NonemptyInterval T}
 
@@ -229,14 +230,14 @@ theorem isChain_lb (t : T) : IsChain (· ≤ ·) {τ : NonemptyInterval T | LB t
 /-- On a chain of spans sharing the fixed boundary, the widened span is the maximal event-free
 one, the boundary stretched until the sentence would become false. -/
 theorem widened_iff_maximal (hF : IsChain (· ≤ ·) {τ | F τ}) :
-    Widened F P w τ ↔ Maximal (fun τ' ↦ F τ' ∧ ¬ PRFV P w τ') τ := by
+    Widened F P w τ ↔ Maximal (fun τ' ↦ F τ' ∧ τ' ∉ PRFV P w) τ := by
   refine ⟨fun h ↦ ⟨h.1, fun _ hτ' _ ↦ h.2 hτ'⟩, fun h ↦ ⟨h.1, fun τ' hτ' ↦ ?_⟩⟩
   obtain rfl | hne := eq_or_ne τ' τ
   · exact le_rfl
   · exact (hF hτ'.1 h.1.1 hne).elim id (h.2 hτ')
 
 /-- Every wider span with the fixed boundary contains an event. -/
-theorem Widened.prfv (h : Widened F P w τ) (hτ' : F τ') (hlt : τ < τ') : PRFV P w τ' :=
+theorem Widened.prfv (h : Widened F P w τ) (hτ' : F τ') (hlt : τ < τ') : τ' ∈ PRFV P w :=
   by_contra fun hfree ↦ hlt.not_ge (h.2 ⟨hτ', hfree⟩)
 
 /-- The actuality inference is not cancelable, Constant's observation (22) and (26), since a
@@ -249,7 +250,7 @@ theorem actuality_inference (h : Widened F P w τ) (hw : ∃ τ', F τ' ∧ τ <
 /-- The beyond expectation inference, (31)–(33) and (119)–(122), is that the widened span contains
 every event-free span with the same fixed boundary. -/
 theorem beyond_expectation_inference (h : Widened F P w τ) (hτ' : F τ')
-    (hfree : ¬ PRFV P w τ') : τ' ≤ τ :=
+    (hfree : τ' ∉ PRFV P w) : τ' ≤ τ :=
   h.2 ⟨hτ', hfree⟩
 
 /-- With *in years* the last event starts just before the left boundary of the widened perfect
@@ -301,9 +302,9 @@ theorem not_widened_rb_of_finite [DenselyOrdered T] [NoMinOrder T] {t : T}
 leaves the actuality inference cancelable, since the negated perfect holds with no relevant event
 at all, (11)–(12), and with the last event before the left boundary, (23). -/
 theorem cancelable_of_lb {t : T} (s : T) (hs : s ≤ t) :
-    (∃ P : W → E → Prop, ∃ τ, LB s τ ∧ RB τ t ∧ ¬ PRFV P w τ ∧ ∀ e, ¬ P w e) ∧
+    (∃ P : W → E → Prop, ∃ τ, LB s τ ∧ RB τ t ∧ τ ∉ PRFV P w ∧ ∀ e, ¬ P w e) ∧
       ∀ e₀ : E, (Event.τ e₀).snd < s →
-        ∃ P : W → E → Prop, ∃ τ, LB s τ ∧ RB τ t ∧ ¬ PRFV P w τ ∧ P w e₀ :=
+        ∃ P : W → E → Prop, ∃ τ, LB s τ ∧ RB τ t ∧ τ ∉ PRFV P w ∧ P w e₀ :=
   ⟨⟨fun _ _ ↦ False, ⟨(s, t), hs⟩, rfl, rfl, fun ⟨_, _, h⟩ ↦ h, fun _ ↦ id⟩,
     fun e₀ he₀ ↦ ⟨fun _ e ↦ e = e₀, ⟨(s, t), hs⟩, rfl, rfl,
       fun ⟨_, hle, heq⟩ ↦ (heq ▸ (le_def.1 hle).1 : s ≤ (Event.τ e₀).fst).not_gt
@@ -328,14 +329,14 @@ variable {V : Type*} {P : V → E → Prop} {τ : NonemptyInterval T}
 /-- Exhaustifying the throughout claim is vacuous, (137) with (144), and (139) with (141) for the
 negated event predicate. -/
 theorem throughout_exh_vacuous :
-    exh (domainAlternatives (UNBOUNDED P) τ) {v | UNBOUNDED P v τ} = {v | UNBOUNDED P v τ} :=
-  exh_domainAlternatives_eq_self (hasSubintervalProperty_unbounded P)
+    exh (domainAlternatives (UNBOUNDED P) τ) {v | τ ∈ UNBOUNDED P v} = {v | τ ∈ UNBOUNDED P v} :=
+  exh_domainAlternatives_eq_self fun v ↦ isLowerSet_unbounded P v
 
 /-- Where every extension is available and the event domain is rich, the not-throughout claim at
 one span entails it at another exactly when the second contains the first, (142). -/
 theorem not_unbounded_subset_iff (hP : Function.Surjective P)
     (hrich : Function.Surjective (Event.τ : E → NonemptyInterval T)) {τ₁ τ₂ : NonemptyInterval T} :
-    {v | ¬ UNBOUNDED P v τ₁} ⊆ {v | ¬ UNBOUNDED P v τ₂} ↔ τ₁ ≤ τ₂ := by
+    {v | τ₁ ∉ UNBOUNDED P v} ⊆ {v | τ₂ ∉ UNBOUNDED P v} ↔ τ₁ ≤ τ₂ := by
   refine ⟨fun h ↦ ?_, fun h _ hn ⟨e, he, hv⟩ ↦ hn ⟨e, h.trans he, hv⟩⟩
   obtain ⟨v, hv⟩ := hP (Event.τ · = τ₂)
   obtain ⟨e₀, he₀⟩ := hrich τ₂
@@ -347,18 +348,18 @@ theorem not_unbounded_subset_iff (hP : Function.Surjective P)
 subinterval. -/
 theorem mem_exh_not_unbounded_iff (hP : Function.Surjective P)
     (hrich : Function.Surjective (Event.τ : E → NonemptyInterval T)) {v : V} :
-    v ∈ exh (domainAlternatives (fun v τ ↦ ¬ UNBOUNDED P v τ) τ) {v | ¬ UNBOUNDED P v τ} ↔
-      ¬ UNBOUNDED P v τ ∧ ∀ τ' < τ, UNBOUNDED P v τ' := by
-  rw [mem_exh_domainAlternatives_iff fun _ _ ↦ not_unbounded_subset_iff hP hrich]
-  simp only [not_not]
+    v ∈ exh (domainAlternatives (fun v ↦ (UNBOUNDED P v)ᶜ) τ) {v | τ ∉ UNBOUNDED P v} ↔
+      τ ∉ UNBOUNDED P v ∧ ∀ τ' < τ, τ' ∈ UNBOUNDED P v :=
+  (mem_exh_domainAlternatives_iff (p := fun v ↦ (UNBOUNDED P v)ᶜ)
+    fun _ _ ↦ not_unbounded_subset_iff hP hrich).trans <| by simp
 
 /-- Where overlapping events sum to an event and the span has an interior point, a predicate
 holding throughout every proper subinterval holds throughout the span. -/
 theorem unbounded_of_forall_lt {v : V}
     (hsum : ∀ e₁ e₂, P v e₁ → P v e₂ → (Event.τ e₁).overlaps (Event.τ e₂) →
       ∃ e, P v e ∧ Event.τ e₁ ≤ Event.τ e ∧ Event.τ e₂ ≤ Event.τ e)
-    {m : T} (hm₁ : τ.fst < m) (hm₂ : m < τ.snd) (h : ∀ τ' < τ, UNBOUNDED P v τ') :
-    UNBOUNDED P v τ := by
+    {m : T} (hm₁ : τ.fst < m) (hm₂ : m < τ.snd) (h : ∀ τ' < τ, τ' ∈ UNBOUNDED P v) :
+    τ ∈ UNBOUNDED P v := by
   obtain ⟨e₁, he₁, hP₁⟩ := h ⟨(τ.fst, m), hm₁.le⟩
     (lt_of_le_of_ne (le_def.2 ⟨le_rfl, hm₂.le⟩) fun heq ↦ hm₂.ne (congrArg (·.snd) heq))
   obtain ⟨e₂, he₂, hP₂⟩ := h ⟨(m, τ.snd), hm₂.le⟩
@@ -376,7 +377,7 @@ theorem not_throughout_exh_contradictory (hP : Function.Surjective P)
     (hsum : ∀ e₁ e₂, P v e₁ → P v e₂ → (Event.τ e₁).overlaps (Event.τ e₂) →
       ∃ e, P v e ∧ Event.τ e₁ ≤ Event.τ e ∧ Event.τ e₂ ≤ Event.τ e)
     {m : T} (hm₁ : τ.fst < m) (hm₂ : m < τ.snd) :
-    v ∉ exh (domainAlternatives (fun v τ ↦ ¬ UNBOUNDED P v τ) τ) {v | ¬ UNBOUNDED P v τ} :=
+    v ∉ exh (domainAlternatives (fun v ↦ (UNBOUNDED P v)ᶜ) τ) {v | τ ∉ UNBOUNDED P v} :=
   fun h ↦
     let ⟨hn, hall⟩ := (mem_exh_not_unbounded_iff hP hrich).1 h
     hn (unbounded_of_forall_lt hsum hm₁ hm₂ hall)
@@ -399,9 +400,9 @@ variable {P : W → E → Prop} {w : W}
 /-- The durative *until* of [giannakidou-2002] accepts a negated perfective, which has the
 subinterval property, in a model with no relevant event at all. -/
 theorem two_until_overgenerates (hP : ∀ e, ¬ P w e) {s t : T} (h : s < t) :
-    Giannakidou2002.durativeUntil (fun w τ ↦ ¬ PRFV P w τ) w t :=
-  (Giannakidou2002.durativeUntil_iff_of_hasSubintervalProperty
-    (hasSubintervalProperty_not_prfv P) w t).2 ⟨⟨(s, t), h.le⟩, h, rfl, fun ⟨e, _, he⟩ ↦ hP e he⟩
+    Giannakidou2002.durativeUntil (fun w ↦ (PRFV P w)ᶜ) w t :=
+  (Giannakidou2002.durativeUntil_iff_of_isLowerSet (isLowerSet_compl_prfv P w) t).2
+    ⟨⟨(s, t), h.le⟩, h, rfl, fun ⟨e, _, he⟩ ↦ hP e he⟩
 
 /-- *No time but `t₀` is a time of a `P`-event*, the exceptive of *dhen … para mono* with a
 temporal argument on the least-exception semantics, says that `t₀` is the only such time, which
@@ -429,8 +430,9 @@ section RightBoundary
 
 variable {Q : W → E → Prop} {w : W} {e : E}
 
-/-- The moments at which an interval predicate holds of some span ending there. -/
-def rightBoundaries (q : IntervalPred W T) (w : W) : Set T := {s | ∃ τ, RB τ s ∧ q w τ}
+/-- The moments at which an interval property holds of some span ending there. -/
+def rightBoundaries (q : W → Set (NonemptyInterval T)) (w : W) : Set T :=
+  {s | ∃ τ, RB τ s ∧ τ ∈ q w}
 
 /-- A perfective argument clause sets the right boundary at the completion of its first event. -/
 theorem isLeast_rightBoundaries_prfv (he : Q w e)

@@ -7,8 +7,8 @@ public import Linglib.Semantics.Tense.Quantificational
 # Knick and Sharf (2026): On focus and the perfect aspect
 
 Knick and Sharf compose viewpoint aspect, the perfect and tense: an event predicate becomes an
-interval predicate under the imperfective or perfective, a predicate of world-time points under
-the perfect, and a proposition under a tense. The U-perfect, whose perfect time span has its
+interval property under the imperfective or perfective, a set of world-time points under the
+perfect, and a proposition under a tense. The U-perfect, whose perfect time span has its
 left boundary in a domain `tᵣ`, entails its simple present competitor whatever the domain and is
 equivalent to it under broad focus, where the domain is unrestricted, which is why competition
 rules it out there. Among the focus alternatives, a domain further in the past is stronger.
@@ -49,30 +49,32 @@ variable {W T E : Type*} [LinearOrder T] [Event.TemporalTrace E T]
 
 /-! ### Tense -/
 
-/-- The present tense evaluates a point predicate at the speech time `tc` in the world `w`. -/
-def evalPres (p : PointPred W T) (tc : T) (w : W) : Prop :=
-  p ⟨w, tc⟩
+/-- The present tense evaluates a set of world-time points at the speech time `tc` in the world
+`w`. -/
+def evalPres (p : Set (Index W T)) (tc : T) (w : W) : Prop :=
+  ⟨w, tc⟩ ∈ p
 
-/-- The past tense evaluates a point predicate at some time before the speech time `tc`, the
-quantificational past of `Semantics/Tense/Quantificational.lean`. -/
-def evalPast (p : PointPred W T) (tc : T) (w : W) : Prop :=
-  ◇[Tense.toSetRel ⟦Tense.past⟧] (fun t ↦ p (w, t)) tc
+/-- The past tense evaluates a set of world-time points at some time before the speech time `tc`,
+the quantificational past of `Semantics/Tense/Quantificational.lean`. -/
+def evalPast (p : Set (Index W T)) (tc : T) (w : W) : Prop :=
+  ◇[Tense.toSetRel ⟦Tense.past⟧] (fun t ↦ (w, t) ∈ p) tc
 
-/-- The future tense evaluates a point predicate at some time after the speech time `tc`. -/
-def evalFut (p : PointPred W T) (tc : T) (w : W) : Prop :=
-  ◇[Tense.toSetRel ⟦Tense.future⟧] (fun t ↦ p (w, t)) tc
+/-- The future tense evaluates a set of world-time points at some time after the speech time
+`tc`. -/
+def evalFut (p : Set (Index W T)) (tc : T) (w : W) : Prop :=
+  ◇[Tense.toSetRel ⟦Tense.future⟧] (fun t ↦ (w, t) ∈ p) tc
 
 /-! ### Composed forms -/
 
-/-- The simple present is `PRES(IMPF(V).atPoint)`, so *John runs* holds at speech time when
+/-- The simple present is `PRES(atPoint(IMPF(V)))`, so *John runs* holds at speech time when
 some event `e` with `[tc, tc] ⊂ τ(e)` satisfies `V`. -/
 def simplePresent (V : W → E → Prop) (tc : T) (w : W) : Prop :=
-  evalPres (IntervalPred.atPoint (IMPF V)) tc w
+  evalPres (atPoint (IMPF V)) tc w
 
-/-- The simple past is `PAST(PRFV(V).atPoint)`, so *John ran* holds when some `t < tc` and some
+/-- The simple past is `PAST(atPoint(PRFV(V)))`, so *John ran* holds when some `t < tc` and some
 event `e` with `τ(e) ⊆ [t, t]` satisfy `V`. -/
 def simplePast (V : W → E → Prop) (tc : T) (w : W) : Prop :=
-  evalPast (IntervalPred.atPoint (PRFV V)) tc w
+  evalPast (atPoint (PRFV V)) tc w
 
 /-- The present perfect progressive is `PRES(PERF(IMPF(V)))`, so *John has been running* holds
 at `tc` when some perfect time span right-bounded by `tc` satisfies `IMPF(V)`. -/
@@ -109,7 +111,7 @@ theorem presPerfProgXN_unfold (V : W → E → Prop) (tᵣ : Set T)
     (tc : T) (w : W) :
     presPerfProgXN V tᵣ tc w ↔
     ∃ pts : NonemptyInterval T, ∃ tLB ∈ tᵣ,
-      LB tLB pts ∧ RB pts tc ∧ IMPF V w pts := by
+      LB tLB pts ∧ RB pts tc ∧ pts ∈ IMPF V w := by
   rfl
 
 /-! ### Results -/
@@ -146,7 +148,7 @@ alternatives in (33) and (35), since an event whose run time contains the perfec
 `tLB₁` also contains the shorter one from a later `tLB₂`. -/
 theorem earlier_lb_stronger_impf (V : W → E → Prop)
     (tLB₁ tLB₂ : T) (tc : T) (w : W) (h : tLB₁ < tLB₂) (htc : tLB₂ ≤ tc) :
-    PERF_XN (IMPF V) {tLB₁} ⟨w, tc⟩ → PERF_XN (IMPF V) {tLB₂} ⟨w, tc⟩ := by
+    ⟨w, tc⟩ ∈ PERF_XN (IMPF V) {tLB₁} → ⟨w, tc⟩ ∈ PERF_XN (IMPF V) {tLB₂} := by
   intro ⟨pts, tLB, htLB, hLB, hRB, e, hlt, hV⟩
   obtain ⟨hsub, _hOr⟩ := NonemptyInterval.lt_def.mp hlt
   obtain ⟨hS1, hS2⟩ := NonemptyInterval.le_def.mp hsub
@@ -168,7 +170,7 @@ theorem earlier_lb_stronger_impf (V : W → E → Prop)
 the shorter span from `tLB₂` also fits inside the longer span from an earlier `tLB₁`. -/
 theorem later_lb_stronger_prfv (V : W → E → Prop)
     (tLB₁ tLB₂ : T) (tc : T) (w : W) (h : tLB₁ < tLB₂) :
-    PERF_XN (PRFV V) {tLB₂} ⟨w, tc⟩ → PERF_XN (PRFV V) {tLB₁} ⟨w, tc⟩ := by
+    ⟨w, tc⟩ ∈ PERF_XN (PRFV V) {tLB₂} → ⟨w, tc⟩ ∈ PERF_XN (PRFV V) {tLB₁} := by
   intro ⟨pts, tLB, htLB, hLB, hRB, e, hle, hV⟩
   obtain ⟨hS1, hS2⟩ := NonemptyInterval.le_def.mp hle
   -- tLB = tLB₂ (singleton), pts = [tLB₂, tc]
@@ -189,14 +191,14 @@ theorem later_lb_stronger_prfv (V : W → E → Prop)
 theorem earlier_lb_not_weaker_impf :
     ¬ ∀ (V : Unit → NonemptyInterval ℤ → Prop) (tLB₁ tLB₂ : ℤ) (tc : ℤ) (w : Unit),
       tLB₁ < tLB₂ →
-      PERF_XN (IMPF V) {tLB₂} ⟨w, tc⟩ → PERF_XN (IMPF V) {tLB₁} ⟨w, tc⟩ := by
+      ⟨w, tc⟩ ∈ PERF_XN (IMPF V) {tLB₂} → ⟨w, tc⟩ ∈ PERF_XN (IMPF V) {tLB₁} := by
   intro hall
   -- Counterexample: event runtime [1,5], tLB₁=0, tLB₂=2, tc=4
   let e₀ : NonemptyInterval ℤ := ⟨⟨1, 5⟩, by omega⟩
   let V : Unit → NonemptyInterval ℤ → Prop := fun _ e => e = e₀
   -- Premise: PERF_XN(IMPF(V), {2})(⟨(), 4⟩)
   -- PTS = [2,4], event [1,5]: [2,4] ⊂ [1,5] ✓
-  have prem : PERF_XN (IMPF V) {(2 : ℤ)} ⟨(), 4⟩ := by
+  have prem : ⟨(), 4⟩ ∈ PERF_XN (IMPF V) {(2 : ℤ)} := by
     refine ⟨⟨⟨2, 4⟩, by omega⟩, 2, rfl, rfl, rfl, e₀, ?_, rfl⟩
     dsimp only [e₀]
     decide
