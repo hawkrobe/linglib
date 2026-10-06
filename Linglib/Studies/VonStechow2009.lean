@@ -20,8 +20,9 @@ complements are properties of times, and *before* and *after* take the earliest 
 clause. Along the way he argues that achievements need moments but not discrete time.
 
 A time is a moment, a point of a linear order, or an interval of moments, mathlib's
-`NonemptyInterval`, whose `≤` is the subinterval relation. A tense is possibility `◇` along the
-accessibility relation of its cell (`Semantics/Tense/Quantificational.lean`).
+`NonemptyInterval`, whose `≤` is the subinterval relation. A tense is possibility `◇` along its
+cell read as a relation (`Semantics/Tense/Quantificational.lean`), so `◇[toSetRel ⟦past⟧] P s`
+says that `P` held at some time before `s`.
 
 ## Main statements
 
@@ -138,22 +139,22 @@ end Achievements
 
 /-- The pluperfect *John had called* (27) places the calling before the speech time. -/
 theorem pluperfect_before_speech
-    (h : ◇[accessibility ⟦past⟧] (◇[accessibility ⟦past⟧] P) s) : ∃ t < s, P t := by
-  simpa using diamond_diamond_accessibility h
+    (h : ◇[toSetRel ⟦past⟧] (◇[toSetRel ⟦past⟧] P) s) : ∃ t < s, P t := by
+  simpa using diamond_diamond_toSetRel h
 
 /-- Without a restriction on *have*, the future perfect *John will have left at six* (55) can
 place the leaving before the speech time. -/
 theorem exists_future_perfect_before_speech :
     ∃ (s six : ℤ) (leave : ℤ → Prop),
-      ◇[accessibility ⟦future⟧] (fun t ↦ t = six ∧ ◇[accessibility ⟦past⟧] leave t) s ∧
+      ◇[toSetRel ⟦future⟧] (fun t ↦ t = six ∧ ◇[toSetRel ⟦past⟧] leave t) s ∧
         ∀ t, leave t → t < s :=
   ⟨0, 6, (· = -1), by simp, fun _ ht ↦ by omega⟩
 
 /-- With the content of *will* added to the restriction of *have* (57), the future perfect places
 the leaving after the speech time. -/
 theorem future_perfect_after_speech {six : T}
-    (h : ◇[accessibility ⟦future⟧]
-      (fun t ↦ t = six ∧ ◇[accessibility ⟦past⟧] (fun t' ↦ s < t' ∧ P t') t) s) :
+    (h : ◇[toSetRel ⟦future⟧]
+      (fun t ↦ t = six ∧ ◇[toSetRel ⟦past⟧] (fun t' ↦ s < t' ∧ P t') t) s) :
     ∃ t', s < t' ∧ P t' :=
   let ⟨_, _, _, t', _, hs, hP⟩ := h; ⟨t', hs, hP⟩
 
@@ -182,18 +183,18 @@ theorem not_perfAdv_yesterday {W : Type*} (call : IntervalPred W T)
 at five, the first reading holds and the second fails. -/
 theorem reference_time_reading_not_event_time_reading :
     ∃ (s six : ℤ) (leave : ℤ → Prop),
-      ◇[accessibility ⟦past⟧] (fun t ↦ t = six ∧ ◇[accessibility ⟦past⟧] leave t) s ∧
-        ¬ ◇[accessibility ⟦past⟧]
-          (fun t ↦ ◇[accessibility ⟦past⟧] (fun t' ↦ t' = six ∧ leave t') t) s :=
+      ◇[toSetRel ⟦past⟧] (fun t ↦ t = six ∧ ◇[toSetRel ⟦past⟧] leave t) s ∧
+        ¬ ◇[toSetRel ⟦past⟧]
+          (fun t ↦ ◇[toSetRel ⟦past⟧] (fun t' ↦ t' = six ∧ leave t') t) s :=
   ⟨10, 6, (· = 5), by simp, by simp⟩
 
 /-- With the leaving at six, the second reading of *Mary had left at six* holds and the first
 fails. -/
 theorem event_time_reading_not_reference_time_reading :
     ∃ (s six : ℤ) (leave : ℤ → Prop),
-      ◇[accessibility ⟦past⟧]
-          (fun t ↦ ◇[accessibility ⟦past⟧] (fun t' ↦ t' = six ∧ leave t') t) s ∧
-        ¬ ◇[accessibility ⟦past⟧] (fun t ↦ t = six ∧ ◇[accessibility ⟦past⟧] leave t) s :=
+      ◇[toSetRel ⟦past⟧]
+          (fun t ↦ ◇[toSetRel ⟦past⟧] (fun t' ↦ t' = six ∧ leave t') t) s ∧
+        ¬ ◇[toSetRel ⟦past⟧] (fun t ↦ t = six ∧ ◇[toSetRel ⟦past⟧] leave t) s :=
   ⟨10, 6, (· = 6), ⟨7, by simp, 6, by simp, rfl, rfl⟩, by simp⟩
 
 section Quantified
@@ -203,13 +204,13 @@ variable (sunday work : NonemptyInterval T → Prop) {σ : NonemptyInterval T}
 /-- *John worked on every Sunday* with the quantifier under the Past (44a) entails a past time
 on every Sunday. -/
 theorem past_time_on_every_sunday
-    (h : ◇[Perspective.accessibility ⟦past⟧] (fun t ↦ ∀ t', sunday t' → t ≤ t' ∧ work t) σ) :
+    (h : ◇[Perspective.toSetRel ⟦past⟧] (fun t ↦ ∀ t', sunday t' → t ≤ t' ∧ work t) σ) :
     ∃ t, ∀ t', sunday t' → t ≤ t' :=
   let ⟨t, _, h⟩ := h; ⟨t, fun t' ht' ↦ (h t' ht').1⟩
 
 /-- With the quantifier over the Past (44b) it entails that every Sunday contains a past time. -/
 theorem every_sunday_contains_past_time
-    (h : ∀ t', sunday t' → ◇[Perspective.accessibility ⟦past⟧] (fun t ↦ t ≤ t' ∧ work t) σ) :
+    (h : ∀ t', sunday t' → ◇[Perspective.toSetRel ⟦past⟧] (fun t ↦ t ≤ t' ∧ work t) σ) :
     ∀ t', sunday t' → ∃ t, t.precedes σ ∧ t ≤ t' :=
   fun t' ht' ↦ let ⟨t, hts, h⟩ := h t' ht'; ⟨t, Perspective.presup_past.1 hts, h.1⟩
 
@@ -224,11 +225,11 @@ Sundays sharing no time, and with the quantifier over the Past (44b), a Sunday b
 future. -/
 theorem every_sunday :
     (∀ t', sunday t' ∧ t'.precedes (.pure 10) →
-      ◇[Perspective.accessibility ⟦past⟧] (fun t ↦ t ≤ t' ∧ sunday t) (.pure 10)) ∧
-    ¬ ◇[Perspective.accessibility ⟦past⟧]
+      ◇[Perspective.toSetRel ⟦past⟧] (fun t ↦ t ≤ t' ∧ sunday t) (.pure 10)) ∧
+    ¬ ◇[Perspective.toSetRel ⟦past⟧]
       (fun t ↦ ∀ t', sunday t' → t ≤ t' ∧ sunday t) (.pure 10) ∧
     ¬ ∀ t', sunday t' →
-      ◇[Perspective.accessibility ⟦past⟧] (fun t ↦ t ≤ t' ∧ sunday t) (.pure 10) := by
+      ◇[Perspective.toSetRel ⟦past⟧] (fun t ↦ t ≤ t' ∧ sunday t) (.pure 10) := by
   refine ⟨fun t' ⟨h, hs⟩ ↦ ⟨t', Perspective.presup_past.2 hs, le_rfl, h⟩, ?_, fun h ↦ ?_⟩
   · rintro ⟨t, -, h⟩
     have h₀ := NonemptyInterval.le_def.1 (h ⟨(0, 1), by decide⟩ ⟨rfl, rfl⟩).1
@@ -254,7 +255,7 @@ variable {W : Type*} (turnOff rain : IntervalPred W T) (w : W) {σ t₅ today : 
 domain `K` before `σ` satisfies it. -/
 def RestrictedPast (K : Set (NonemptyInterval T)) (Q : NonemptyInterval T → Prop)
     (σ : NonemptyInterval T) : Prop :=
-  ◇[Perspective.accessibility ⟦past⟧] (fun t ↦ t ∈ K ∧ Q t) σ
+  ◇[Perspective.toSetRel ⟦past⟧] (fun t ↦ t ∈ K ∧ Q t) σ
 
 /-- Restricted to the subintervals of a time that the referential Past (47) admits, the
 indefinite Past is the Perfective (50) at that time, so *I didn't turn off the stove* means the
@@ -266,7 +267,7 @@ theorem restrictedPast_Iic_iff_prfv (h : Perspective.Presup ⟦past⟧ σ t₅) 
     (NonemptyInterval.precedes_of_le_of_precedes ht (Perspective.presup_past.1 h)), ht, hQ⟩⟩
 
 /-- The negation of the unrestricted Past (46b) entails that of the restricted Past (54). -/
-theorem not_restrictedPast_of_not_past (h : ¬ ◇[Perspective.accessibility ⟦past⟧] Q σ) :
+theorem not_restrictedPast_of_not_past (h : ¬ ◇[Perspective.toSetRel ⟦past⟧] Q σ) :
     ¬ RestrictedPast K Q σ :=
   fun ⟨t, hts, _, hQ⟩ ↦ h ⟨t, hts, hQ⟩
 
@@ -274,14 +275,14 @@ theorem not_restrictedPast_of_not_past (h : ¬ ◇[Perspective.accessibility ⟦
 interval the speaker has in mind. -/
 theorem exists_not_restrictedPast_past :
     ∃ (σ : NonemptyInterval ℤ) (K : Set (NonemptyInterval ℤ)) (Q : NonemptyInterval ℤ → Prop),
-      ¬ RestrictedPast K Q σ ∧ ◇[Perspective.accessibility ⟦past⟧] Q σ := by
+      ¬ RestrictedPast K Q σ ∧ ◇[Perspective.toSetRel ⟦past⟧] Q σ := by
   refine ⟨.pure 10, Set.Iic ⟨(5, 6), by decide⟩, (· = .pure 1), ?_, .pure 1, by decide, rfl⟩
   rintro ⟨t, -, hK, rfl⟩
   exact absurd (NonemptyInterval.le_def.1 hK).1 (by decide)
 
 /-- *It didn't rain today*, with negation over the indefinite Past (58), entails its referential
 analysis with the Perfective (59) at any past reference time on today. -/
-theorem not_prfv_of_not_past (h : ¬ ◇[Perspective.accessibility ⟦past⟧]
+theorem not_prfv_of_not_past (h : ¬ ◇[Perspective.toSetRel ⟦past⟧]
       (fun t ↦ t ≤ today ∧ rain w t) σ)
     (h₅ : Perspective.Presup ⟦past⟧ σ t₅) (h₅' : t₅ ≤ today) : ¬ PRFV rain w t₅ :=
   fun ⟨t, ht, hr⟩ ↦ h ⟨t, Perspective.presup_past.2
@@ -293,7 +294,7 @@ elsewhere in today. -/
 theorem exists_not_prfv_past :
     ∃ (σ t₅ today : NonemptyInterval ℤ) (rain : IntervalPred Unit ℤ),
       (Perspective.Presup ⟦past⟧ σ t₅ ∧ t₅ ≤ today ∧ ¬ PRFV rain () t₅) ∧
-        ◇[Perspective.accessibility ⟦past⟧] (fun t ↦ t ≤ today ∧ rain () t) σ := by
+        ◇[Perspective.toSetRel ⟦past⟧] (fun t ↦ t ≤ today ∧ rain () t) σ := by
   refine ⟨.pure 20, ⟨(0, 1), by decide⟩, ⟨(0, 10), by decide⟩, fun _ t ↦ t = .pure 5,
     ⟨by decide, by decide, ?_⟩, .pure 5, by decide, by decide, rfl⟩
   rintro ⟨t, ht, rfl⟩
@@ -303,7 +304,7 @@ theorem exists_not_prfv_past :
 the referential analysis (59) is the indefinite one (58). -/
 theorem not_prfv_iff_not_past (hmax : ∀ t ≤ today, t.precedes σ → t ≤ t₅)
     (h₅ : Perspective.Presup ⟦past⟧ σ t₅) (h₅' : t₅ ≤ today) :
-    ¬ PRFV rain w t₅ ↔ ¬ ◇[Perspective.accessibility ⟦past⟧] (fun t ↦ t ≤ today ∧ rain w t) σ :=
+    ¬ PRFV rain w t₅ ↔ ¬ ◇[Perspective.toSetRel ⟦past⟧] (fun t ↦ t ≤ today ∧ rain w t) σ :=
   ⟨fun h ⟨t, ht, hle, hr⟩ ↦ h ⟨t, hmax t hle (Perspective.presup_past.1 ht), hr⟩,
     fun h ↦ not_prfv_of_not_past rain w h h₅ h₅'⟩
 
@@ -318,15 +319,15 @@ variable {X : Type*} (boot : X → Prop) (polish : X → T → Prop)
 /-- *John polished every boot* with the Past over the quantifier entails the reading with the
 quantifier over the Past (61). -/
 theorem forall_past_of_past_forall
-    (h : ◇[accessibility ⟦past⟧] (fun t ↦ ∀ x, boot x → polish x t) s) :
-    ∀ x, boot x → ◇[accessibility ⟦past⟧] (polish x) s :=
+    (h : ◇[toSetRel ⟦past⟧] (fun t ↦ ∀ x, boot x → polish x t) s) :
+    ∀ x, boot x → ◇[toSetRel ⟦past⟧] (polish x) s :=
   fun x hx ↦ let ⟨t, hts, h⟩ := h; ⟨t, hts, h x hx⟩
 
 /-- The converse fails when the boots are polished at different past times. -/
 theorem exists_forall_past_not_past_forall :
     ∃ (s : ℤ) (boot : Bool → Prop) (polish : Bool → ℤ → Prop),
-      (∀ x, boot x → ◇[accessibility ⟦past⟧] (polish x) s) ∧
-        ¬ ◇[accessibility ⟦past⟧] (fun t ↦ ∀ x, boot x → polish x t) s :=
+      (∀ x, boot x → ◇[toSetRel ⟦past⟧] (polish x) s) ∧
+        ¬ ◇[toSetRel ⟦past⟧] (fun t ↦ ∀ x, boot x → polish x t) s :=
   ⟨5, fun _ ↦ True, fun b t ↦ t = if b then 1 else 2,
     fun b _ ↦ ⟨if b then 1 else 2, by cases b <;> decide, rfl⟩,
     fun ⟨t, _, h⟩ ↦ by have := h true trivial; have := h false trivial; simp_all⟩
@@ -349,12 +350,12 @@ variable {X : Type*} (fish : X → Prop) (alive buy : X → T → Prop)
 /-- In the simultaneous reading (66) of *Mary will buy a fish that is alive* the relative-clause
 pronoun is bound by *will*, so the fish is alive at the buying. -/
 def Simultaneous (s : T) : Prop :=
-  ◇[accessibility ⟦future⟧] (fun t ↦ ∃ x, fish x ∧ alive x t ∧ buy x t) s
+  ◇[toSetRel ⟦future⟧] (fun t ↦ ∃ x, fish x ∧ alive x t ∧ buy x t) s
 
 /-- In the deictic reading (67) the pronoun is bound by the matrix Present, so the fish is alive
 now. -/
 def Deictic (s : T) : Prop :=
-  ◇[accessibility ⟦future⟧] (fun t ↦ ∃ x, fish x ∧ alive x s ∧ buy x t) s
+  ◇[toSetRel ⟦future⟧] (fun t ↦ ∃ x, fish x ∧ alive x s ∧ buy x t) s
 
 /-- The simultaneous reading does not entail the deictic one. -/
 theorem exists_simultaneous_not_deictic :
@@ -382,9 +383,9 @@ variable {W : Type*}
 a past time that is five, every doxastic alternative of Mary's makes that time six; with five not
 six, it holds exactly when Mary has no alternatives at five, believing a contradiction. -/
 theorem anaphoric_report_iff (Dox : T → SetRel W W) {five six : T} (hne : five ≠ six) (w : W) :
-    ◇[accessibility ⟦past⟧] (fun t ↦ t = five ∧ □[Dox t] (fun _ ↦ t = six) w) s ↔
+    ◇[toSetRel ⟦past⟧] (fun t ↦ t = five ∧ □[Dox t] (fun _ ↦ t = six) w) s ↔
       five < s ∧ ∀ w', ¬ w ~[Dox five] w' := by
-  simp only [diamond_accessibility_past]
+  simp only [diamond_toSetRel_past]
   constructor
   · rintro ⟨_, hs, rfl, hb⟩
     exact ⟨hs, fun w' hw' ↦ hne (hb w' hw')⟩
@@ -395,7 +396,7 @@ theorem anaphoric_report_iff (Dox : T → SetRel W W) {five six : T} (hne : five
 at six. -/
 theorem exists_lewis_report :
     ∃ Dox : SetRel (Index Unit ℤ) (Index Unit ℤ), (∃ i, ((), 5) ~[Dox] i) ∧
-      ◇[accessibility ⟦past⟧] (fun t ↦ t = 5 ∧ □[Dox] (fun i ↦ i.time = 6) ((), t)) 7 :=
+      ◇[toSetRel ⟦past⟧] (fun t ↦ t = 5 ∧ □[Dox] (fun i ↦ i.time = 6) ((), t)) 7 :=
   ⟨{p | p.2.time = 6}, ⟨((), 6), rfl⟩, 5, by decide, rfl, fun _ h ↦ h⟩
 
 /-- In *John thought that he would buy a fish that was still alive* (82) the relative-clause
@@ -404,7 +405,7 @@ Past could place it. -/
 theorem exists_bound_relative_after_speech :
     ∃ (Dox : SetRel (Index Unit ℤ) (Index Unit ℤ)) (fish : Unit → Prop)
       (alive buy : Unit → ℤ → Prop),
-      ◇[accessibility ⟦past⟧] (fun t₀ ↦ □[Dox] (fun i ↦ ◇[accessibility ⟦future⟧]
+      ◇[toSetRel ⟦past⟧] (fun t₀ ↦ □[Dox] (fun i ↦ ◇[toSetRel ⟦future⟧]
         (fun t₃ ↦ ∃ x, fish x ∧ alive x t₃ ∧ buy x t₃) i.time) ((), t₀)) 0 ∧
         ∀ x t, alive x t → 0 < t := by
   refine ⟨{p | p.2 = ((), -1)}, fun _ ↦ True, fun _ t ↦ t = 5, fun _ t ↦ t = 5,
