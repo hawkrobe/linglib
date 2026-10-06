@@ -6,7 +6,7 @@
       "paperLabel": "(1)"
     },
     "language": "stan1293",
-    "primaryText": "Quinn: Do you take Visa or Mastercard? Rickie: Yes, we take Visa. ?? Quinn: Yeah, sure I already knew that!",
+    "primaryText": "Quinn: Do you take Visa or Mastercard? Rickie: Yes, we take Visa. Quinn: Yeah, sure I already knew that!",
     "discourseSegments": [
       "Quinn: Do you take Visa or Mastercard?",
       "Rickie: Yes, we take Visa.",
@@ -15,7 +15,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "acceptable",
+    "judgment": "questionable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [

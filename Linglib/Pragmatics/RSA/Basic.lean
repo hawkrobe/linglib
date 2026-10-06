@@ -117,7 +117,7 @@ theorem literalListener_const_mul (μ : Measure W) (m : U → W → ℝ≥0∞) 
   Kernel.ext fun _ ↦ literalListener_apply_eq_of_eq_mul μ hc0 hc fun _ ↦ rfl
 
 /-- Every finite measure on a countable discrete space is a literal listener at a prior of
-positive mass everywhere: the meaning is the measure's density against the prior. -/
+positive mass everywhere, with the measure's density against the prior as the meaning. -/
 theorem literalListener_div [Countable W] [MeasurableSingletonClass W] (μ : Measure W)
     [IsFiniteMeasure μ] (hμ : ∀ w, μ {w} ≠ 0) (ν : U → Measure W) (u : U) :
     literalListener μ (fun u w ↦ ν u {w} / μ {w}) u = (ν u)[|Set.univ] := by
@@ -158,8 +158,8 @@ theorem isProbabilityMeasure_literalListener (μ : Measure W) (m : U → W → �
     rwa [withDensity_apply _ MeasurableSet.univ, Measure.restrict_univ]
 
 /-- Marginalizing a joint literal listener whose meaning depends on the first coordinate alone
-gives the literal listener on the marginal prior: the meaning carries no information about the
-second coordinate. -/
+gives the literal listener on the marginal prior, since the meaning carries no information about
+the second coordinate. -/
 theorem literalListener_map_fst {V : Type*} [MeasurableSpace V] (μ : Measure (W × V))
     (m : U → W → ℝ≥0∞) (hm : ∀ u, Measurable (m u)) (u : U) :
     (literalListener μ (fun u p ↦ m u p.1) u).map Prod.fst =
@@ -492,8 +492,8 @@ theorem speakerOfScore_real_singleton_of_pair {w : W} {u u' : U} (huu' : u ≠ u
     EReal.toReal_coe]
 
 omit [MeasurableSingletonClass U] in
-/-- The power-weight speaker is the score speaker at the informativity utility: the log of the
-listener's mass scaled by the rationality, plus the log of the cost factor. -/
+/-- The power-weight speaker is the score speaker at the informativity utility, which is the log
+of the listener's mass scaled by the rationality plus the log of the cost factor. -/
 theorem speaker_eq_speakerOfScore (α : ℝ) (cost : U → ℝ≥0∞) (L : Kernel U W) :
     speaker α cost L =
       speakerOfScore fun w u ↦ ENNReal.log (L u {w}) * α + ENNReal.log (cost u) := by
@@ -563,7 +563,7 @@ theorem freeEnergy_speakerOfScore (htop : ∀ u, score w u ≠ ⊤) (h0 : ∃ u,
   rw [speakerOfScore_eq_tilted htop h0]
   exact freeEnergy_tilted _ .of_finite .of_finite .of_finite
 
-/-- The score speaker is the rational optimizer: among the distributions absolutely continuous
+/-- The score speaker is the rational optimizer. Among the distributions absolutely continuous
 with respect to the uniform measure on the applicable utterances, its row has the greatest
 expected score less divergence from that uniform measure. -/
 theorem isGreatest_freeEnergy_speakerOfScore (htop : ∀ u, score w u ≠ ⊤)
@@ -582,7 +582,7 @@ end Gibbs
 
 open Filter Topology in
 /-- As rationality grows, the speaker puts all its mass on the utterance the listener most favors
-at `w`: the fully rational speaker is the argmax speaker. -/
+at `w`, so the fully rational speaker is the argmax speaker. -/
 theorem tendsto_speaker_real_singleton_atTop {cost : U → ℝ≥0∞} (hc0 : ∀ u, cost u ≠ 0)
     (hctop : ∀ u, cost u ≠ ∞) {L : Kernel U W} {w : W} (hle : ∀ u, L u {w} ≤ 1) {u : U}
     (hu : L u {w} ≠ 0) (hmax : ∀ u' ≠ u, L u' {w} < L u {w}) :
@@ -618,7 +618,7 @@ theorem tendsto_speaker_real_singleton_atTop {cost : U → ℝ≥0∞} (hc0 : �
   simpa using (hlim.inv₀ one_ne_zero).congr' hform
 
 /-- With Boolean meanings and a constant cost, a state two utterances both fit produces the
-utterance with the smaller extension more often: informativity is the inverse of extension
+utterance with the smaller extension more often, since informativity is the inverse of extension
 mass. -/
 theorem speaker_literalListener_indicator_real_singleton_lt_iff [DiscreteMeasurableSpace W]
     {α : ℝ} (hα : 0 < α) {c : ℝ≥0∞} (hc0 : c ≠ 0) (hctop : c ≠ ∞) (μ : Measure W)
@@ -678,18 +678,13 @@ theorem pragmaticListener_literalListener_indicator_apply_singleton_of_notMem
   simp
 
 /-- At a prior giving every state the same positive mass, listener preference between two
-states is speaker preference between them: the prior and the marginal cancel. -/
+states is speaker preference between them, since the prior and the marginal cancel. -/
 theorem pragmaticListener_real_lt_iff (hμeq : ∀ w w', μ {w} = μ {w'}) (hμ0 : ∀ w, μ {w} ≠ 0)
     {u : U} {w₀ : W} (hs : speaker α cost L w₀ {u} ≠ 0) {w₁ w₂ : W} :
     (pragmaticListener α cost L μ u).real {w₁} < (pragmaticListener α cost L μ u).real {w₂}
-      ↔ (speaker α cost L w₁).real {u} < (speaker α cost L w₂).real {u} := by
-  have hx : (speaker α cost L ∘ₘ μ) {u} ≠ 0 := comp_apply_singleton_ne_zero _ _ (hμ0 w₀) hs
-  rw [pragmaticListener, posterior_real_singleton _ _ hx, posterior_real_singleton _ _ hx,
-    div_lt_div_iff_of_pos_right
-      (by rw [measureReal_def]; exact ENNReal.toReal_pos hx (measure_ne_top _ _)),
-    show μ.real {w₁} = μ.real {w₂} by rw [measureReal_def, measureReal_def, hμeq],
-    mul_lt_mul_iff_of_pos_left
-      (by rw [measureReal_def]; exact ENNReal.toReal_pos (hμ0 w₂) (measure_ne_top _ _))]
+      ↔ (speaker α cost L w₁).real {u} < (speaker α cost L w₂).real {u} :=
+  posterior_real_singleton_lt_iff_of_eq _ _ (comp_apply_singleton_ne_zero _ _ (hμ0 w₀) hs)
+    (hμeq w₁ w₂) (hμ0 w₁)
 
 variable [DiscreteMeasurableSpace U] [StandardBorelSpace U] [Nonempty U] [DecidableEq O]
   (obs : U → O)
@@ -744,8 +739,8 @@ theorem jointListener_apply_singleton {o : O} (ho : ((speaker α cost L ∘ₘ �
   simp only [Set.indicator_apply, Set.mem_singleton_iff]
   split_ifs <;> simp [mul_comm]
 
-/-- State-listener preference on reals: the observation's marginal cancels, leaving
-prior-weighted speaker mass pooled over the observation's fibre. -/
+/-- The joint listener prefers the state with the greater prior-weighted speaker mass pooled
+over the observation's fibre, since the observation's marginal cancels. -/
 theorem jointListener_fst_real_lt_iff [Fintype W] {o : O}
     (ho : ((speaker α cost L ∘ₘ μ).map obs) {o} ≠ 0) (w₁ w₂ : W) :
     (jointListener α cost L μ obs o).fst.real {w₁}
@@ -892,8 +887,8 @@ theorem familyListener_real_lt_iff (L : Λ → Kernel U W) (α : ℝ) (cost : U 
   rw [familyListener, posterior_real_finset_lt_iff _ _ hu]
   simp_rw [familySpeaker_apply]
 
-/-- State-marginal preference for a latent family at equal priors: the latent pools,
-leaving summed member speaker shares. -/
+/-- At equal priors, the family listener's state marginal prefers the state with the greater
+speaker share summed over the latent family. -/
 theorem familyListener_fst_real_lt_iff [Fintype Λ] (L : Λ → Kernel U W) {α : ℝ}
     {cost : U → ℝ≥0∞} (hμeq : ∀ p q : W × Λ, μ {p} = μ {q}) (hμ0 : ∀ p : W × Λ, μ {p} ≠ 0)
     {u : U} {w₀ : W} {l₀ : Λ} (hs : speaker α cost (L l₀) w₀ {u} ≠ 0) {w₁ w₂ : W} :
@@ -911,8 +906,8 @@ theorem familyListener_fst_real_lt_iff [Fintype Λ] (L : Λ → Kernel U W) {α 
     mul_lt_mul_iff_right₀
       (show (0 : ℝ) < μ.real {p₀} from ENNReal.toReal_pos (hμ0 p₀) (measure_ne_top _ _))]
 
-/-- Latent-marginal preference for a latent family at equal priors: the states pool,
-leaving summed member speaker shares. -/
+/-- At equal priors, the family listener's latent marginal prefers the member with the greater
+speaker share summed over the states. -/
 theorem familyListener_snd_real_lt_iff [Fintype W] (L : Λ → Kernel U W) {α : ℝ}
     {cost : U → ℝ≥0∞} (hμeq : ∀ p q : W × Λ, μ {p} = μ {q}) (hμ0 : ∀ p : W × Λ, μ {p} ≠ 0)
     {u : U} {w₀ : W} {l₀ : Λ} (hs : speaker α cost (L l₀) w₀ {u} ≠ 0) {l₁ l₂ : Λ} :
@@ -931,7 +926,7 @@ theorem familyListener_snd_real_lt_iff [Fintype W] (L : Λ → Kernel U W) {α :
       (show (0 : ℝ) < μ.real {p₀} from ENNReal.toReal_pos (hμ0 p₀) (measure_ne_top _ _))]
 
 /-- A pair producing the utterance with certainty outweighs any event of smaller total prior
-mass: the listener's posterior on the pair's event exceeds that event's. -/
+mass, in that the listener's posterior on the pair's event exceeds that event's. -/
 theorem familyListener_real_lt_of_certain (L : Λ → Kernel U W) (α : ℝ) (cost : U → ℝ≥0∞)
     {u : U} {E₁ E₂ : Finset (W × Λ)} {p₀ : W × Λ} (hp₀ : p₀ ∈ E₂)
     (hs : speaker α cost (L p₀.2) p₀.1 {u} = 1) (hlt : (∑ p ∈ E₁, μ.real {p}) < μ.real {p₀}) :
