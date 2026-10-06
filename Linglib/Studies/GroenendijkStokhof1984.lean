@@ -528,11 +528,9 @@ noncomputable def update (S : InformationSets i) (P : Set W) : InformationSets i
   doxastic := if (S.doxastic ∩ P).Nonempty then S.doxastic ∩ P else S.doxastic
   epistemic := if i ∈ P ∧ (S.doxastic ∩ P).Nonempty then S.epistemic ∩ P else S.epistemic
   doxastic_subset := by
-    by_cases h : (S.doxastic ∩ P).Nonempty <;> by_cases hi : i ∈ P <;> simp only [h, hi,
-      and_self, and_true, and_false, ite_true, ite_false]
-    · exact Set.inter_subset_inter_left P S.doxastic_subset
-    · exact Set.inter_subset_left.trans S.doxastic_subset
-    all_goals exact S.doxastic_subset
+    split_ifs with hD hE hE
+    exacts [Set.inter_subset_inter_left P S.doxastic_subset,
+      Set.inter_subset_left.trans S.doxastic_subset, absurd hE.2 hD, S.doxastic_subset]
   doxastic_nonempty := by split_ifs with h; exacts [h, S.doxastic_nonempty]
   mem_epistemic := by split_ifs with h; exacts [⟨S.mem_epistemic, h.1⟩, S.mem_epistemic]
 
@@ -686,25 +684,23 @@ theorem independent :
   ⟨⟨(0, {0}), rfl, rfl⟩, ⟨(1, {0}), rfl, by simp [byDescription]⟩,
     ⟨(1, {1}), rfl, by simp [byName]⟩, ⟨(0, ∅), by simp [byName], by simp [byDescription]⟩⟩
 
-theorem doxastic_inter_byName : info.doxastic ∩ byName = {(0, {0})} := by
+/-- An answer true at `(0, {0})` and false at `(0, {1})` leaves the individual's beliefs only
+`(0, {0})`. -/
+theorem doxastic_inter_eq {P : Set Index} (h₀ : ((0 : Fin 2), ({0} : Finset (Fin 2))) ∈ P)
+    (h₁ : ((0 : Fin 2), ({1} : Finset (Fin 2))) ∉ P) : info.doxastic ∩ P = {(0, {0})} := by
   ext w
-  simp only [info, byName, Set.mem_inter_iff, Set.mem_insert_iff, Set.mem_singleton_iff,
-    Set.mem_ofPred_eq]
+  simp only [info, Set.mem_inter_iff, Set.mem_insert_iff, Set.mem_singleton_iff]
   constructor
   · rintro ⟨rfl | rfl, h⟩
-    · rfl
-    · exact absurd h (by decide)
-  · rintro rfl; exact ⟨Or.inl rfl, rfl⟩
+    exacts [rfl, absurd h h₁]
+  · rintro rfl
+    exact ⟨Or.inl rfl, h₀⟩
 
-theorem doxastic_inter_byDescription : info.doxastic ∩ byDescription = {(0, {0})} := by
-  ext w
-  simp only [info, byDescription, Set.mem_inter_iff, Set.mem_insert_iff, Set.mem_singleton_iff,
-    Set.mem_ofPred_eq]
-  constructor
-  · rintro ⟨rfl | rfl, h⟩
-    · rfl
-    · exact absurd h (by decide)
-  · rintro rfl; exact ⟨Or.inl rfl, rfl⟩
+theorem doxastic_inter_byName : info.doxastic ∩ byName = {(0, {0})} :=
+  doxastic_inter_eq rfl (by simp [byName])
+
+theorem doxastic_inter_byDescription : info.doxastic ∩ byDescription = {(0, {0})} :=
+  doxastic_inter_eq rfl (by simp [byDescription])
 
 /-- The two answers are equivalent on the individual's beliefs. -/
 theorem pragmatically_equivalent : info.doxastic ∩ byName = info.doxastic ∩ byDescription := by
@@ -738,15 +734,8 @@ theorem letsKnow_byName :
 
 /-- The much weaker answer that if anyone G's the F does already gives a true answer. -/
 theorem givesTrueAnswer_ifAnyoneThenTheF : info.GivesTrueAnswer ifAnyoneThenTheF whoGs := by
-  have h : info.doxastic ∩ ifAnyoneThenTheF = {(0, {0})} := by
-    ext w
-    simp only [info, ifAnyoneThenTheF, Set.mem_inter_iff, Set.mem_insert_iff,
-      Set.mem_singleton_iff, Set.mem_ofPred_eq]
-    constructor
-    · rintro ⟨rfl | rfl, h⟩
-      · rfl
-      · exact absurd (h (by decide)) (by decide)
-    · rintro rfl; exact ⟨Or.inl rfl, fun _ ↦ by decide⟩
+  have h : info.doxastic ∩ ifAnyoneThenTheF = {(0, {0})} :=
+    doxastic_inter_eq (fun _ ↦ by decide) (by simp [ifAnyoneThenTheF])
   rw [InformationSets.GivesTrueAnswer, InformationSets.HasTrueAnswer,
     InformationSets.update_doxastic_of_nonempty (by simp [h]), h, offersTrueAnswer_iff,
     Set.singleton_subset_iff]
