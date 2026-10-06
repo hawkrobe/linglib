@@ -17,19 +17,21 @@ product parameter space, to comparisons of prior-weighted likelihood sums.
 
 ## Main results
 
-* `ProbabilityTheory.posterior_apply_singleton` — `(κ†μ) x {ω} = μ {ω} * κ ω {x} / (κ ∘ₘ μ) {x}`;
-  `comp_real_mul_posterior_real`, the same with the denominator cleared, at every observation.
-* `ProbabilityTheory.posterior_deterministic_eq_cond` — a deterministic observation's posterior
+* `ProbabilityTheory.posterior_apply_singleton`: `(κ†μ) x {ω} = μ {ω} * κ ω {x} / (κ ∘ₘ μ) {x}`;
+  and `comp_real_mul_posterior_real`, the same with the denominator cleared, at every observation.
+* `ProbabilityTheory.posterior_deterministic_eq_cond`: a deterministic observation's posterior
   is the prior conditioned on the observation's fibre.
-* `ProbabilityTheory.posterior_real_finset_lt_iff` — event comparison of the posterior.
-* `ProbabilityTheory.integral_posterior` — the posterior expectation is the prior expectation
+* `ProbabilityTheory.posterior_const`: an observation whose law does not depend on the state
+  leaves the prior unchanged.
+* `ProbabilityTheory.posterior_real_finset_lt_iff`: event comparison of the posterior.
+* `ProbabilityTheory.integral_posterior`: the posterior expectation is the prior expectation
   of the likelihood-weighted statistic over the observation's marginal.
-* `ProbabilityTheory.integral_le_integral_posterior` — conditioning on an observation raises
+* `ProbabilityTheory.integral_le_integral_posterior`: conditioning on an observation raises
   the expectation of a statistic that monovaries with the observation's likelihood.
-* `ProbabilityTheory.posterior_fst_real_lt_iff`, `posterior_snd_real_lt_iff` — marginal
+* `ProbabilityTheory.posterior_fst_real_lt_iff`, `posterior_snd_real_lt_iff`: marginal
   comparison over a product parameter space.
 * `ProbabilityTheory.posterior_uniformOn_univ_apply_singleton`,
-  `posterior_uniformOn_univ_real_finset` — Bayes against the uniform prior, the prior
+  `posterior_uniformOn_univ_real_finset`: Bayes against the uniform prior, the prior
   cancelling.
 -/
 
@@ -57,8 +59,8 @@ variable {Ω 𝓧 : Type*} [MeasurableSpace Ω] [MeasurableSpace 𝓧]
   [StandardBorelSpace Ω] [Nonempty Ω]
   (κ : Kernel Ω 𝓧) (μ : Measure Ω) [IsFiniteMeasure μ] [IsFiniteKernel κ]
 
-/-- Exact Bayes for the posterior kernel at a positive-mass observation:
-evaluate the defining compProd identity on a singleton rectangle. -/
+/-- At an observation of positive mass, the posterior mass of a state is given exactly by Bayes'
+rule. -/
 theorem posterior_apply_singleton {x : 𝓧} (hx : (κ ∘ₘ μ) {x} ≠ 0) (ω : Ω) :
     (κ†μ) x {ω} = μ {ω} * κ ω {x} / (κ ∘ₘ μ) {x} := by
   have hrect := congrArg (fun m => m ({x} ×ˢ {ω}))
@@ -78,7 +80,7 @@ theorem posterior_apply_singleton_ne_zero_iff {x : 𝓧} (hx : (κ ∘ₘ μ) {x
     (κ†μ) x {ω} ≠ 0 ↔ μ {ω} ≠ 0 ∧ κ ω {x} ≠ 0 := by
   rw [posterior_apply_singleton κ μ hx, ne_eq, ENNReal.div_eq_zero_iff, mul_eq_zero, not_or,
     not_or]
-  exact ⟨λ h => h.1, λ h => ⟨h, measure_ne_top _ _⟩⟩
+  exact ⟨fun h ↦ h.1, fun h ↦ ⟨h, measure_ne_top _ _⟩⟩
 
 /-- Two states with the same likelihood of the observation and the same prior mass have the
 same posterior mass. -/
@@ -104,8 +106,8 @@ theorem posterior_real_finset_lt_iff {x : 𝓧} (hx : (κ ∘ₘ μ) {x} ≠ 0) 
   simp_rw [ENNReal.toReal_mul]
   exact Iff.rfl
 
-/-- The posterior mass of a finite event: prior-weighted likelihoods over the event,
-normalized by the observation marginal. -/
+/-- The posterior mass of a finite event is the sum of the prior-weighted likelihoods over the
+event, normalized by the observation marginal. -/
 theorem posterior_apply_finset {x : 𝓧} (hx : (κ ∘ₘ μ) {x} ≠ 0) (E : Finset Ω) :
     (κ†μ) x ↑E = (∑ ω ∈ E, μ {ω} * κ ω {x}) / (κ ∘ₘ μ) {x} := by
   rw [← sum_measure_singleton]
@@ -129,7 +131,8 @@ theorem posterior_deterministic_eq_cond [Countable Ω] {f : Ω → 𝓧} (hf : M
       Set.inter_singleton_eq_empty.mpr (by simpa using h), measure_empty, mul_zero]
 
 omit [StandardBorelSpace Ω] [Nonempty Ω] [IsFiniteMeasure μ] [IsFiniteKernel κ] in
-/-- The observation marginal at an atom: prior mass times emission mass, summed over states. -/
+/-- The observation marginal at an atom is the prior mass times the emission mass, summed over
+states. -/
 theorem _root_.MeasureTheory.Measure.comp_apply_singleton [Fintype Ω] (x : 𝓧) :
     (κ ∘ₘ μ) {x} = ∑ ω, μ {ω} * κ ω {x} := by
   rw [Measure.bind_apply (.singleton x) (Kernel.aemeasurable _), lintegral_fintype]
@@ -148,14 +151,14 @@ theorem _root_.MeasureTheory.Measure.comp_real_singleton_eq_integral [Fintype Ω
     (κ ∘ₘ μ).real {x} = ∫ ω, (κ ω).real {x} ∂μ := by
   rw [Measure.comp_real_singleton, integral_fintype .of_finite]; rfl
 
-/-- Exact Bayes on reals at a positive-mass observation. -/
+/-- At an observation of positive mass, Bayes' rule holds on reals. -/
 theorem posterior_real_singleton {x : 𝓧} (hx : (κ ∘ₘ μ) {x} ≠ 0) (ω : Ω) :
     ((κ†μ) x).real {ω} = μ.real {ω} * (κ ω).real {x} / (κ ∘ₘ μ).real {x} := by
   rw [measureReal_def, posterior_apply_singleton κ μ hx, ENNReal.toReal_div, ENNReal.toReal_mul,
     measureReal_def, measureReal_def, measureReal_def]
 
-/-- Bayes' rule on reals with the denominator cleared: the observation marginal times the
-posterior is the prior times the likelihood, at every state and observation. -/
+/-- At every state and observation, the observation marginal times the posterior is the prior
+times the likelihood, Bayes' rule on reals with the denominator cleared. -/
 theorem comp_real_mul_posterior_real [Fintype Ω] (ω : Ω) (x : 𝓧) :
     (κ ∘ₘ μ).real {x} * ((κ†μ) x).real {ω} = μ.real {ω} * (κ ω).real {x} := by
   obtain hx | hx := eq_or_ne ((κ ∘ₘ μ) {x}) 0
@@ -245,7 +248,7 @@ of the two likelihoods. -/
 theorem _root_.MeasureTheory.Measure.comp_real_singleton_of_pair (x : 𝓧) :
     (κ ∘ₘ μ).real {x} = μ.real {ω} * (κ ω).real {x} + μ.real {ω'} * (κ ω').real {x} := by
   rw [Measure.comp_real_singleton]
-  exact Fintype.sum_eq_add ω ω' hne λ c hc => by
+  exact Fintype.sum_eq_add ω ω' hne fun c hc ↦ by
     rw [measureReal_def, of_not_not (mt (hsupp c) (not_or.mpr hc)), ENNReal.toReal_zero, zero_mul]
 
 omit [StandardBorelSpace Ω] [Nonempty Ω] [IsFiniteKernel κ] in
@@ -254,7 +257,7 @@ theorem _root_.MeasureTheory.measureReal_singleton_add_singleton_of_pair
     [IsProbabilityMeasure μ] : μ.real {ω} + μ.real {ω'} = 1 := by
   have h := measure_univ (μ := μ)
   rw [← Finset.coe_univ, ← sum_measure_singleton,
-    Fintype.sum_eq_add ω ω' hne (λ c hc => of_not_not (mt (hsupp c) (not_or.mpr hc)))] at h
+    Fintype.sum_eq_add ω ω' hne (fun c hc ↦ of_not_not (mt (hsupp c) (not_or.mpr hc)))] at h
   rw [measureReal_def, measureReal_def,
     ← ENNReal.toReal_add (measure_ne_top _ _) (measure_ne_top _ _), h, ENNReal.toReal_one]
 
@@ -324,25 +327,25 @@ variable {A B : Type*} [MeasurableSpace A] [MeasurableSpace B] [MeasurableSingle
   [IsFiniteKernel κ] {x : 𝓧} (hx : (κ ∘ₘ μ) {x} ≠ 0)
 include hx
 
-/-- The state marginal of the posterior over a product parameter space, on reals:
-prior-weighted likelihoods pooled over the latent, normalized by the observation marginal. -/
+/-- Over a product parameter space, the state marginal of the posterior pools the
+prior-weighted likelihoods over the latent, normalized by the observation marginal. -/
 theorem posterior_fst_real_singleton [Fintype B] (a : A) :
     ((κ†μ) x).fst.real {a}
       = (∑ b, μ.real {(a, b)} * (κ (a, b)).real {x}) / (κ ∘ₘ μ).real {x} := by
   rw [Measure.fst_real_singleton_eq_sum, Finset.sum_div]
-  exact Finset.sum_congr rfl λ b _ => posterior_real_singleton κ μ hx (a, b)
+  exact Finset.sum_congr rfl fun b _ ↦ posterior_real_singleton κ μ hx (a, b)
 
-/-- The latent marginal of the posterior over a product parameter space, on reals:
-prior-weighted likelihoods pooled over the states, normalized by the observation marginal. -/
+/-- Over a product parameter space, the latent marginal of the posterior pools the
+prior-weighted likelihoods over the states, normalized by the observation marginal. -/
 theorem posterior_snd_real_singleton [Fintype A] (b : B) :
     ((κ†μ) x).snd.real {b}
       = (∑ a, μ.real {(a, b)} * (κ (a, b)).real {x}) / (κ ∘ₘ μ).real {x} := by
   rw [Measure.snd_real_singleton_eq_sum, Finset.sum_div]
-  exact Finset.sum_congr rfl λ a _ => posterior_real_singleton κ μ hx (a, b)
+  exact Finset.sum_congr rfl fun a _ ↦ posterior_real_singleton κ μ hx (a, b)
 
-/-- Marginal listener preference over a product parameter space, on reals:
-for latent-in-the-state models, the observation's marginal cancels and the
-latent pools. -/
+/-- Over a product parameter space, comparing the state marginals of the posterior reduces to
+comparing prior-weighted likelihoods pooled over the latent; the observation marginal
+cancels. -/
 theorem posterior_fst_real_lt_iff [Fintype B] (a₁ a₂ : A) :
     ((κ†μ) x).fst.real {a₁} < ((κ†μ) x).fst.real {a₂}
       ↔ (∑ b, μ.real {(a₁, b)} * (κ (a₁, b)).real {x})
@@ -365,8 +368,8 @@ theorem posterior_fst_real_lt_iff [Fintype B] (a₁ a₂ : A) :
   simp_rw [ENNReal.toReal_mul]
   exact Iff.rfl
 
-/-- Marginal listener preference over the latent component of a product
-parameter space, on reals: the states pool. -/
+/-- Over a product parameter space, comparing the latent marginals of the posterior reduces to
+comparing prior-weighted likelihoods pooled over the states. -/
 theorem posterior_snd_real_lt_iff [Fintype A] (b₁ b₂ : B) :
     ((κ†μ) x).snd.real {b₁} < ((κ†μ) x).snd.real {b₂}
       ↔ (∑ a, μ.real {(a, b₁)} * (κ (a, b₁)).real {x})
@@ -397,14 +400,14 @@ variable {W : Type*} [MeasurableSpace W] [MeasurableSingletonClass W] [StandardB
   [Fintype W] [Nonempty W] (κ : Kernel W 𝓧) [IsFiniteKernel κ]
 
 omit [StandardBorelSpace W] [Nonempty W] [IsFiniteKernel κ] in
-/-- The observation marginal of a kernel against the uniform prior: the mean likelihood. -/
+/-- Against the uniform prior, the observation marginal of a kernel is the mean likelihood. -/
 theorem comp_uniformOn_univ_apply_singleton (x : 𝓧) :
     (κ ∘ₘ uniformOn (Set.univ : Set W)) {x} = (Fintype.card W : ℝ≥0∞)⁻¹ * ∑ w, κ w {x} := by
   rw [Measure.comp_apply_singleton, Finset.mul_sum]
-  exact Finset.sum_congr rfl λ w _ => by rw [uniformOn_univ_apply_singleton]
+  exact Finset.sum_congr rfl fun w _ ↦ by rw [uniformOn_univ_apply_singleton]
 
-/-- Bayes against the uniform prior: the posterior at a state is its likelihood of the
-observation normalized over the states, the prior cancelling. -/
+/-- Against the uniform prior, the posterior at a state is its likelihood of the observation
+normalized over the states. -/
 theorem posterior_uniformOn_univ_apply_singleton {x : 𝓧} (hx : ∑ w, κ w {x} ≠ 0) (w : W) :
     (κ†(uniformOn (Set.univ : Set W))) x {w} = κ w {x} / ∑ w', κ w' {x} := by
   have hc : (Fintype.card W : ℝ≥0∞)⁻¹ ≠ 0 := ENNReal.inv_ne_zero.mpr (ENNReal.natCast_ne_top _)
@@ -415,21 +418,41 @@ theorem posterior_uniformOn_univ_apply_singleton {x : 𝓧} (hx : ∑ w, κ w {x
   rw [posterior_apply_singleton _ _ hsum, uniformOn_univ_apply_singleton,
     comp_uniformOn_univ_apply_singleton, ENNReal.mul_div_mul_left _ _ hc hct]
 
-/-- Bayes against the uniform prior at a finite event: the likelihoods over the event,
-normalized over the states. -/
+/-- Against the uniform prior, the posterior mass of a finite event is the sum of the
+likelihoods over the event, normalized over the states. -/
 theorem posterior_uniformOn_univ_apply_finset {x : 𝓧} (hx : ∑ w, κ w {x} ≠ 0) (E : Finset W) :
     (κ†(uniformOn (Set.univ : Set W))) x ↑E = (∑ w ∈ E, κ w {x}) / ∑ w, κ w {x} := by
   rw [← sum_measure_singleton]
   simp_rw [posterior_uniformOn_univ_apply_singleton κ hx, div_eq_mul_inv]
   rw [Finset.sum_mul]
 
-/-- Bayes against the uniform prior at a finite event, on reals. -/
+/-- Against the uniform prior, the posterior mass of a finite event on reals is the sum of the
+likelihoods over the event, normalized over the states. -/
 theorem posterior_uniformOn_univ_real_finset {x : 𝓧} (hx : ∑ w, κ w {x} ≠ 0) (E : Finset W) :
     ((κ†(uniformOn (Set.univ : Set W))) x).real ↑E =
       (∑ w ∈ E, (κ w {x}).toReal) / ∑ w, (κ w {x}).toReal := by
   rw [measureReal_def, posterior_uniformOn_univ_apply_finset κ hx, ENNReal.toReal_div,
-    ENNReal.toReal_sum λ w _ => measure_ne_top _ _, ENNReal.toReal_sum λ w _ => measure_ne_top _ _]
+    ENNReal.toReal_sum fun w _ ↦ measure_ne_top _ _,
+    ENNReal.toReal_sum fun w _ ↦ measure_ne_top _ _]
 
 end UniformPrior
+
+section Const
+
+variable {Ω 𝓧 : Type*} {mΩ : MeasurableSpace Ω} {m𝓧 : MeasurableSpace 𝓧} [StandardBorelSpace Ω]
+  [Nonempty Ω]
+
+/-- An observation whose law does not depend on the state leaves the prior unchanged. -/
+theorem posterior_const (ν : Measure 𝓧) [IsFiniteMeasure ν] (μ : Measure Ω)
+    [IsProbabilityMeasure μ] :
+    (Kernel.const Ω ν)†μ =ᵐ[ν] Kernel.const 𝓧 μ := by
+  have h := ae_eq_posterior_of_compProd_eq (κ := Kernel.const Ω ν) (μ := μ)
+    (η := Kernel.const 𝓧 μ) (by
+      rw [Measure.const_comp, measure_univ, one_smul, Measure.compProd_const,
+        Measure.compProd_const, Measure.prod_swap])
+  rw [Measure.const_comp, measure_univ, one_smul] at h
+  exact h.symm
+
+end Const
 
 end ProbabilityTheory

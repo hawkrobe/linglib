@@ -49,12 +49,11 @@ separation argument (see the implementation notes).
 ## Implementation notes
 
 The development is stated entirely over Mathlib's `Kernel` and `bayesRisk` with no further
-dependencies, so it can serve as a `Mathlib.Probability.Decision.Blackwell` candidate. The
-finite, `ℝ`-valued `ObservationModel.eig` / `questionUtility` view in
-`Core.Probability.Decision.ExperimentDesign` is a downstream consumer:
-`ObservationModel.eig_deterministic_eq_questionUtility` there identifies the deterministic-
-experiment value with [van-rooy-2003]'s question utility, whose refinement monotonicity is the
-partition instance of `bayesRisk_deterministic_le_deterministic_comp` below.
+dependencies, so it can serve as a `Mathlib.Probability.Decision.Blackwell` candidate. On the
+utility scale, `Core.Probability.Decision.ValueOfInformation` reads the data-processing direction
+as the statement that garbling an experiment never raises its value of information, and
+`Core.Probability.Decision.Duality` identifies the Bayes risk of a deterministic experiment with
+[van-rooy-2003]'s question utility.
 
 `Kernel.BlackwellDominates` quantifies over *all* decision problems (every measurable action space
 `𝓨` and loss `ℓ : Θ → 𝓨 → ℝ≥0∞`) and priors: dominance for a single one does not force garbling.
@@ -106,8 +105,8 @@ private lemma comp_singleton_eq_sum [Fintype 𝓧] [MeasurableSingletonClass �
     (η ∘ₖ P) θ {x'} = ∑ x, η x {x'} * P θ {x} := by
   rw [Kernel.comp_apply' η P θ (measurableSet_singleton x'), lintegral_fintype]
 
-/-- `P'` is a **garbling** of `P` (Blackwell): there is a Markov post-processing
-kernel `η` with `P' = η ∘ₖ P`. Read "`P` is at least as informative as `P'`". -/
+/-- `P'` is a garbling of `P` when a Markov kernel `η` post-processes `P` into `P'`, so that
+`P' = η ∘ₖ P` and `P` is at least as informative as `P'`. -/
 def Kernel.IsGarblingOf (P' : Kernel Θ 𝓧') (P : Kernel Θ 𝓧) : Prop :=
   ∃ η : Kernel 𝓧 𝓧', IsMarkovKernel η ∧ P' = η ∘ₖ P
 
@@ -125,17 +124,14 @@ protected theorem Kernel.IsGarblingOf.trans {𝓧'' : Type*} [MeasurableSpace �
   have := hη₁; have := hη₂
   exact ⟨η₂ ∘ₖ η₁, inferInstance, (η₂.comp_assoc η₁ P).symm⟩
 
-/-- `P` **Blackwell-dominates** `P'`: for every decision problem (action space `𝓨`, loss `ℓ`)
-and prior `π`, the Bayes risk under `P` is no larger than under `P'`. The right-hand side of the
-Blackwell equivalence. -/
+/-- `P` Blackwell-dominates `P'` when, for every decision problem (an action space `𝓨` with a
+loss `ℓ`) and every prior `π`, the Bayes risk under `P` is at most that under `P'`. -/
 def Kernel.BlackwellDominates (P : Kernel Θ 𝓧) (P' : Kernel Θ 𝓧') : Prop :=
   ∀ {𝓨 : Type u} [MeasurableSpace 𝓨] (ℓ : Θ → 𝓨 → ℝ≥0∞) (π : Measure Θ),
     bayesRisk ℓ P π ≤ bayesRisk ℓ P' π
 
-/-- **Easy direction (data-processing).** If `P'` is a garbling of `P`, then for every
-decision problem the Bayes risk under `P` is no larger than under `P'`: garbling the
-more-informative experiment cannot help. Specializes
-`bayesRisk_le_bayesRisk_comp`. -/
+/-- If `P'` is a garbling of `P`, the Bayes risk under `P` is at most that under `P'` in every
+decision problem. -/
 theorem bayesRisk_le_of_isGarblingOf {𝓨 : Type u} [MeasurableSpace 𝓨]
     (ℓ : Θ → 𝓨 → ℝ≥0∞) {P : Kernel Θ 𝓧} {P' : Kernel Θ 𝓧'}
     (h : P'.IsGarblingOf P) (π : Measure Θ) :
@@ -144,7 +140,7 @@ theorem bayesRisk_le_of_isGarblingOf {𝓨 : Type u} [MeasurableSpace 𝓨]
   have := hη
   exact bayesRisk_le_bayesRisk_comp ℓ P π η
 
-/-- **Easy direction, bundled.** A garbling of `P` is Blackwell-dominated by `P`. -/
+/-- A garbling of `P` is Blackwell-dominated by `P`. -/
 theorem blackwellDominates_of_isGarblingOf {P : Kernel Θ 𝓧} {P' : Kernel Θ 𝓧'}
     (h : P'.IsGarblingOf P) : P.BlackwellDominates P' :=
   fun ℓ π => bayesRisk_le_of_isGarblingOf ℓ h π
@@ -154,9 +150,8 @@ theorem blackwellDominates_of_isGarblingOf {P : Kernel Θ 𝓧} {P' : Kernel Θ 
 Over finite spaces, the Markov garblings `{η ∘ₖ P | η Markov}` of `P`, encoded by their
 singleton masses as vectors in `Θ → 𝓧' → ℝ`, form a compact convex polytope `garblingSet P`.
 It is the linear image of the product of standard simplices — the stochastic matrices `η` —
-under `garblingMap P`. This is the geometric substrate for the Blackwell–Sherman–Stein
-converse: if `encode P'` lies outside the polytope, a separating functional realizes a
-decision problem on which `P'` is strictly worse than `P`. -/
+under `garblingMap P`. If `encode P'` lies outside the polytope, a separating functional gives
+a decision problem on which `P'` is strictly worse than `P`, which proves the converse. -/
 
 section GarblingPolytope
 
@@ -165,19 +160,18 @@ variable [Fintype 𝓧] [Fintype 𝓧'] [MeasurableSingletonClass 𝓧] [Measura
 -- The finite-space instances below are shared across the section; not every lemma uses all.
 set_option linter.unusedSectionVars false
 
-/-- Encode an experiment `Q : Kernel Θ 𝓧'` as the real vector of its singleton masses
-`(θ, x') ↦ (Q θ {x'}).toReal`. Injective on Markov (more generally finite) kernels. -/
+/-- `encode Q` is the real vector `(θ, x') ↦ (Q θ {x'}).toReal` of the singleton masses of the
+experiment `Q`. -/
 private noncomputable def encode (Q : Kernel Θ 𝓧') : Θ → 𝓧' → ℝ :=
   fun θ x' => (Q θ {x'}).toReal
 
-/-- The stochastic matrices `𝓧 → 𝓧' → ℝ`: each row is a probability vector. The encodings
-of the Markov kernels `η : Kernel 𝓧 𝓧'`. -/
+/-- A stochastic matrix `𝓧 → 𝓧' → ℝ` has a probability vector in each row; these matrices
+encode the Markov kernels `𝓧 → 𝓧'`. -/
 private def stochasticMatrices : Set (𝓧 → 𝓧' → ℝ) :=
   Set.univ.pi fun _ => Set.range fun w : StdSimplex ℝ 𝓧' => ⇑w.weights
 
-/-- Post-composition by a stochastic matrix, as a linear map on the matrix space:
-`M ↦ (θ, x') ↦ ∑ₓ M x x' · (P θ {x}).toReal`. On `M = encode η` this is `encode (η ∘ₖ P)`
-(`encode_comp`). -/
+/-- `garblingMap P` is the linear map sending a matrix `M` to
+`(θ, x') ↦ ∑ₓ M x x' · (P θ {x}).toReal`, post-composition of `P` with `M`. -/
 private noncomputable def garblingMap (P : Kernel Θ 𝓧) :
     (𝓧 → 𝓧' → ℝ) →ₗ[ℝ] (Θ → 𝓧' → ℝ) where
   toFun M := fun θ x' => ∑ x, M x x' * (P θ {x}).toReal
@@ -186,8 +180,8 @@ private noncomputable def garblingMap (P : Kernel Θ 𝓧) :
     ext θ x'
     simp only [Pi.smul_apply, smul_eq_mul, RingHom.id_apply, Finset.mul_sum, mul_assoc]
 
-/-- The garbling polytope of `P`: the encodings of all Markov garblings `η ∘ₖ P`, realized as
-the linear image of the stochastic-matrix simplex. -/
+/-- The garbling polytope of `P` is the set of encodings of the Markov garblings `η ∘ₖ P`, the
+image of the stochastic matrices under `garblingMap P`. -/
 private noncomputable def garblingSet (P : Kernel Θ 𝓧) : Set (Θ → 𝓧' → ℝ) :=
   garblingMap (𝓧' := 𝓧') P '' stochasticMatrices
 
@@ -207,11 +201,11 @@ private theorem isClosed_garblingSet (P : Kernel Θ 𝓧) :
     IsClosed (garblingSet (𝓧' := 𝓧') P) :=
   (isCompact_garblingSet P).isClosed
 
-/-- The stochastic matrix `(x, x') ↦ (η x {x'}).toReal` of a kernel `η : Kernel 𝓧 𝓧'`. -/
+/-- `encodeMatrix η` is the matrix `(x, x') ↦ (η x {x'}).toReal` of a kernel `η`. -/
 private noncomputable def encodeMatrix (η : Kernel 𝓧 𝓧') : 𝓧 → 𝓧' → ℝ :=
   fun x x' => (η x {x'}).toReal
 
-/-- Encoding intertwines kernel composition with the linear garbling map:
+/-- Encoding sends kernel composition to the garbling map,
 `encode (η ∘ₖ P) = garblingMap P (encodeMatrix η)`. -/
 private theorem encode_comp (P : Kernel Θ 𝓧) [IsMarkovKernel P]
     (η : Kernel 𝓧 𝓧') [IsMarkovKernel η] :
@@ -223,7 +217,7 @@ private theorem encode_comp (P : Kernel Θ 𝓧) [IsMarkovKernel P]
   rw [comp_singleton_eq_sum, ENNReal.toReal_sum hne]
   exact Finset.sum_congr rfl fun x _ => ENNReal.toReal_mul
 
-/-- `encode` is injective on finite kernels: singleton masses determine the kernel. -/
+/-- Finite kernels with the same encoding are equal, since singleton masses determine them. -/
 private theorem encode_injective {Q Q' : Kernel Θ 𝓧'}
     [IsFiniteKernel Q] [IsFiniteKernel Q'] (hQ : encode Q = encode Q') : Q = Q' := by
   refine Kernel.ext fun θ => Measure.ext_of_singleton fun x' => ?_
@@ -231,9 +225,8 @@ private theorem encode_injective {Q Q' : Kernel Θ 𝓧'}
   simp only [encode] at hx
   rwa [ENNReal.toReal_eq_toReal_iff' (measure_ne_top _ _) (measure_ne_top _ _)] at hx
 
-/-- Build a kernel `𝓧 → 𝓧'` from a real matrix `M`: row `x` is the measure with mass
-`ENNReal.ofReal (M x x')` on each `x'`. On a stochastic matrix it is Markov and inverts
-`encodeMatrix`. -/
+/-- `buildKernel M` is the kernel whose row at `x` has mass `ENNReal.ofReal (M x x')` at each
+`x'`. -/
 private noncomputable def buildKernel (M : 𝓧 → 𝓧' → ℝ) : Kernel 𝓧 𝓧' :=
   Kernel.ofFunOfCountable fun x => ∑ x' : 𝓧', ENNReal.ofReal (M x x') • Measure.dirac x'
 
@@ -269,9 +262,8 @@ private theorem encodeMatrix_buildKernel {M : 𝓧 → 𝓧' → ℝ}
   show (buildKernel M x {x'}).toReal = M x x'
   rw [buildKernel_apply, ENNReal.toReal_ofReal ((stochasticMatrices_row hM x).1 x')]
 
-/-- **Step 6 of the converse.** If `encode P'` lies in the garbling polytope of `P`, its
-witness stochastic matrix builds a Markov kernel `η` with `η ∘ₖ P = P'`, so `P'` is a
-garbling of `P`. -/
+/-- If `encode P'` lies in the garbling polytope of `P`, the kernel built from a witnessing
+stochastic matrix shows that `P'` is a garbling of `P`. -/
 private theorem isGarblingOf_of_encode_mem (P : Kernel Θ 𝓧) [IsMarkovKernel P]
     {P' : Kernel Θ 𝓧'} [IsMarkovKernel P'] (hmem : encode P' ∈ garblingSet P) :
     P'.IsGarblingOf P := by
@@ -284,9 +276,8 @@ private theorem isGarblingOf_of_encode_mem (P : Kernel Θ 𝓧) [IsMarkovKernel 
 private theorem encode_nonneg (Q : Kernel Θ 𝓧') (θ : Θ) (x' : 𝓧') : 0 ≤ encode Q θ x' :=
   ENNReal.toReal_nonneg
 
-/-- For a Markov kernel the encoded row masses sum to one over outcomes, hence the full encoding
-sums to `Fintype.card Θ`. This is the constraint pinning every garbling to the affine slice the
-loss shift exploits. -/
+/-- The encoded rows of a Markov kernel sum to one, so its whole encoding sums to
+`Fintype.card Θ`. -/
 private theorem sum_encode_eq [Fintype Θ] (Q : Kernel Θ 𝓧') [IsMarkovKernel Q] :
     ∑ θ, ∑ x', encode Q θ x' = (Fintype.card Θ : ℝ) := by
   have hrow : ∀ θ, ∑ x', encode Q θ x' = 1 := fun θ => by
@@ -305,8 +296,8 @@ private theorem encodeMatrix_mem (η : Kernel 𝓧 𝓧') [IsMarkovKernel η] :
   rw [← ENNReal.toReal_sum fun x' _ => measure_ne_top _ _, sum_measure_singleton,
     Finset.coe_univ, measure_univ, ENNReal.toReal_one]
 
-/-- A continuous linear functional on the finite product `Θ → 𝓧' → ℝ` is the sum of its values on
-the standard basis `Pi.single θ (Pi.single x' 1)`, weighted by coordinates. -/
+/-- A continuous linear functional on `Θ → 𝓧' → ℝ` is the coordinate-weighted sum of its values
+on the standard basis `Pi.single θ (Pi.single x' 1)`. -/
 private theorem clm_apply_eq_sum_single [Fintype Θ] [DecidableEq Θ] [DecidableEq 𝓧']
     (f : (Θ → 𝓧' → ℝ) →L[ℝ] ℝ) (v : Θ → 𝓧' → ℝ) :
     f v = ∑ θ, ∑ x', v θ x' * f (Pi.single θ (Pi.single x' (1 : ℝ))) := by
@@ -323,10 +314,9 @@ private theorem clm_apply_eq_sum_single [Fintype Θ] [DecidableEq Θ] [Decidable
         rw [map_sum]
         exact Finset.sum_congr rfl fun x' _ => by rw [map_smul, smul_eq_mul]
 
-/-- **Risk conversion.** Under the uniform prior on `Θ`, the Bayes risk of the experiment `Q` at
-the identity estimator with the nonnegative affine loss `(θ, x') ↦ a θ x' + C` is a single
-`ENNReal.ofReal` of a manifestly nonnegative real double sum. The caller linearizes that sum
-against the separating functional. -/
+/-- Under the uniform prior on `Θ`, the average risk of the experiment `Q` at the identity
+estimator with the nonnegative affine loss `(θ, x') ↦ a θ x' + C` is `ENNReal.ofReal` of a
+nonnegative real double sum. -/
 private theorem avgRisk_id_uniform_eq [Fintype Θ] [Nonempty Θ] [MeasurableSingletonClass Θ]
     (a : Θ → 𝓧' → ℝ) {C : ℝ}
     (hC : ∀ θ x', 0 ≤ a θ x' + C) (Q : Kernel Θ 𝓧') [IsMarkovKernel Q] :
@@ -355,12 +345,8 @@ private theorem avgRisk_id_uniform_eq [Fintype Θ] [Nonempty Θ] [MeasurableSing
 
 end GarblingPolytope
 
-/-- **Blackwell–Sherman–Stein converse, minimal-hypothesis form**. Same conclusion as
-`isGarblingOf_of_blackwellDominates`, but the risk-comparison hypothesis is required only for
-losses that are **everywhere finite** (`ℓ θ x' ≠ ⊤`) and **only at the uniform prior**. The
-proof body constructs exactly such a loss, so this weakened form is enough to conclude that
-`P'` is a garbling of `P`. Downstream users (e.g. Van Rooy's decision-theoretic converse
-transported through the utility–loss duality) supply only finite-valued losses. -/
+/-- If `P` has Bayes risk at most that of `P'` under the uniform prior for every everywhere-finite
+loss, then `P'` is a garbling of `P`. -/
 theorem isGarblingOf_of_bayesRisk_uniform_le
     [Fintype Θ] [Fintype 𝓧] [Fintype 𝓧'] [Nonempty Θ]
     [MeasurableSingletonClass Θ] [MeasurableSingletonClass 𝓧] [MeasurableSingletonClass 𝓧']
@@ -417,7 +403,7 @@ theorem isGarblingOf_of_bayesRisk_uniform_le
       rw [← Finset.sum_mul, Finset.sum_congr rfl fun θ _ => hrow θ, Finset.sum_add_distrib,
         ← Finset.mul_sum, sum_encode_eq Q, hcoord]
       field_simp [hN_pos.ne']
-    -- The Bayes risk of `Q` at the identity estimator equals `ofReal ((card Θ)⁻¹ · f (encode Q) + C)`.
+    -- The Bayes risk of `Q` at the identity estimator is `ofReal ((card Θ)⁻¹ · f (encode Q) + C)`.
     have key : ∀ (Q : Kernel Θ 𝓧') [IsMarkovKernel Q],
         avgRisk ℓ Q Kernel.id π
           = ENNReal.ofReal ((Fintype.card Θ : ℝ)⁻¹ * f (encode Q) + C) := by
@@ -449,31 +435,14 @@ theorem isGarblingOf_of_bayesRisk_uniform_le
       gcongr
     exact absurd (h ℓ hℓ_ne_top) (not_le.mpr ((hP'_le.trans_lt hlt).trans_le hP_ge))
 
-/-- **Blackwell–Sherman–Stein converse** (finite case). If `P` Blackwell-dominates `P'` (attains a
-Bayes risk no larger than `P'` for *every* decision problem and prior), then `P'` is a garbling of
-`P`.
+/-- On finite spaces with `Θ` nonempty, if `P` Blackwell-dominates `P'` and both are Markov
+kernels, then `P'` is a garbling of `P`.
 
-Stated for finite parameter and sample spaces, with both experiments Markov kernels. All
-four hypotheses are essential:
-
-* The converse is **false** for general measurable spaces — this is the *finite* Blackwell
-  equivalence ([blackwell-1953]); the standard-Borel version additionally requires the
-  experiments to be dominated.
-* `[Nonempty Θ]` is necessary: with `Θ` empty every Bayes risk is `0`, so the hypothesis holds
-  vacuously, yet a Markov garbling `η : Kernel 𝓧 𝓧'` need not exist when `𝓧` is nonempty and
-  `𝓧'` is empty. (Nonempty `Θ` together with `[IsMarkovKernel P']` also forces `𝓧'` nonempty.)
-* `[IsMarkovKernel P]` is necessary: a defective `P` can attain low risk without being
-  informative. E.g. the zero kernel `P = 0` has `bayesRisk ℓ 0 π = 0` for every loss (the
-  least possible value), so it dominates every `P'`, yet `η ∘ₖ 0 = 0` forces `P' = 0`.
-* `[IsMarkovKernel P']` is necessary: an over-massed `P'` inflates every risk. E.g. over a
-  one-point sample space with `P' = 2 • P` one has `bayesRisk ℓ P' π = 2 • bayesRisk ℓ P π
-  ≥ bayesRisk ℓ P π` for every loss, yet `P'` (mass `2`) is not `η ∘ₖ P` for any Markov `η`.
-
-The quantification over *all* decision problems is likewise essential: dominance for a
-single one does not force garbling.
-
-The proof factors through `isGarblingOf_of_bayesRisk_uniform_le`: the internal separating loss
-is finite-valued, so the full universal quantification is stronger than needed. -/
+Each hypothesis is needed. With `Θ` empty every Bayes risk is `0`, yet no Markov kernel maps a
+nonempty `𝓧` to an empty `𝓧'`. The zero kernel has Bayes risk `0` for every loss and so
+dominates every `P'`, yet `η ∘ₖ 0 = 0`. Over a one-point sample space `P' = 2 • P` has twice the
+Bayes risk of `P` for every loss, yet is no Markov garbling of `P`. Dominance in a single
+decision problem does not force garbling either. -/
 theorem isGarblingOf_of_blackwellDominates
     [Fintype Θ] [Fintype 𝓧] [Fintype 𝓧'] [Nonempty Θ]
     [MeasurableSingletonClass Θ] [MeasurableSingletonClass 𝓧] [MeasurableSingletonClass 𝓧']
@@ -482,11 +451,8 @@ theorem isGarblingOf_of_blackwellDominates
     P'.IsGarblingOf P :=
   isGarblingOf_of_bayesRisk_uniform_le fun ℓ _ => h ℓ _
 
-/-- **[blackwell-1953]** (finite case). `P` is at least as informative as `P'` (`P'` is a
-garbling of `P`) iff `P` Blackwell-dominates `P'` (no greater Bayes risk across every decision
-problem). The forward direction (`blackwellDominates_of_isGarblingOf`) holds for arbitrary spaces;
-the reverse (`isGarblingOf_of_blackwellDominates`) needs finiteness, nonempty `Θ`, and that both
-experiments are Markov kernels. -/
+/-- On finite spaces with `Θ` nonempty and Markov `P` and `P'`, `P'` is a garbling of `P`
+exactly when `P` Blackwell-dominates `P'`. -/
 theorem isGarblingOf_iff_blackwellDominates
     [Fintype Θ] [Fintype 𝓧] [Fintype 𝓧'] [Nonempty Θ]
     [MeasurableSingletonClass Θ] [MeasurableSingletonClass 𝓧] [MeasurableSingletonClass 𝓧']
@@ -496,27 +462,23 @@ theorem isGarblingOf_iff_blackwellDominates
 
 /-! ### Deterministic experiments: partitions as kernels
 
-A deterministic classifier `f : Θ → 𝓧` is the experiment `Kernel.deterministic f hf` — the
-partition of `Θ` into the fibers of `f`, viewed as an error-free observation. Coarsening the
-partition (post-composing the classifier) is a deterministic garbling, so a finer partition
-Blackwell-dominates every coarsening. This is the kernel-level form of the fact that
-partition-refinement monotonicity of question value ([van-rooy-2003] §4.1, formalized
-ℚ-valued as `Core.DecisionTheory.DecisionProblem.questionUtility_mono_of_refines`) is a special case of
-[blackwell-1953]. -/
+A deterministic classifier `f : Θ → 𝓧` is the experiment `Kernel.deterministic f hf`, an
+error-free observation of the cell of `θ` in the partition of `Θ` into the fibers of `f`.
+Coarsening the partition is a deterministic garbling, so a finer partition Blackwell-dominates
+every coarsening. On the utility scale this is the monotonicity of question utility under
+refinement, `Core.DecisionTheory.DecisionProblem.questionUtility_mono_of_refines`, which
+[van-rooy-2003] presents as a special case of [blackwell-1953]. -/
 
-/-- A coarsened classifier is a garbling of the classifier it factors through: the
-partition of `g ∘ f` is obtained from the partition of `f` by the deterministic
-post-processing `g`. -/
+/-- Post-processing by `g` turns the experiment observing `f θ` into the one observing
+`g (f θ)`, so a coarsened classifier is a garbling of the classifier it factors through. -/
 theorem Kernel.deterministic_comp_isGarblingOf_deterministic {𝓨 : Type*} [MeasurableSpace 𝓨]
     {f : Θ → 𝓧} {g : 𝓧 → 𝓨} (hf : Measurable f) (hg : Measurable g) :
     (Kernel.deterministic (g ∘ f) (hg.comp hf)).IsGarblingOf (Kernel.deterministic f hf) :=
   ⟨Kernel.deterministic g hg, inferInstance,
     (Kernel.deterministic_comp_deterministic hf hg).symm⟩
 
-/-- **A finer partition is worth at least as much as any coarsening, in every decision
-problem**: the Bayes risk of the experiment "observe `f θ`" is at most that of
-"observe `g (f θ)`". The kernel-level [blackwell-1953] fact behind [van-rooy-2003]'s §4.1
-question-utility monotonicity. -/
+/-- In every decision problem, observing `f θ` has Bayes risk at most that of observing
+`g (f θ)`, so a finer partition is worth at least as much as any coarsening. -/
 theorem bayesRisk_deterministic_le_deterministic_comp {𝓨 : Type u} [MeasurableSpace 𝓨]
     {𝓨' : Type u} [MeasurableSpace 𝓨']
     {f : Θ → 𝓧'} {g : 𝓧' → 𝓨} (hf : Measurable f) (hg : Measurable g)
@@ -526,11 +488,8 @@ theorem bayesRisk_deterministic_le_deterministic_comp {𝓨 : Type u} [Measurabl
   bayesRisk_le_of_isGarblingOf ℓ
     (Kernel.deterministic_comp_isGarblingOf_deterministic hf hg) π
 
-/-- **Between deterministic experiments the Blackwell order is functional factoring**:
-`deterministic g` is a garbling of `deterministic f` iff `g` factors through `f`. The
-mixing kernel of any garbling of a deterministic experiment is forced to be Dirac on
-the range of `f`, so randomized post-processing buys nothing — the partition of `g`
-must genuinely coarsen the partition of `f`. -/
+/-- `deterministic g` is a garbling of `deterministic f` exactly when `g` factors through `f`;
+randomized post-processing gains nothing between deterministic experiments. -/
 theorem Kernel.deterministic_isGarblingOf_deterministic_iff {𝓨 : Type*}
     [MeasurableSpace 𝓨] [Countable 𝓧] [MeasurableSingletonClass 𝓧]
     [MeasurableSingletonClass 𝓨] [Nonempty 𝓨]
@@ -549,19 +508,18 @@ theorem Kernel.deterministic_isGarblingOf_deterministic_iff {𝓨 : Type*}
       have h12 : Measure.dirac (g θ) = Measure.dirac (g θ') := by
         rw [← hpt θ, ← hpt θ', hff]
       by_contra hne
-      have he := congrArg (λ μ : Measure 𝓨 => μ {g θ}) h12
+      have he := congrArg (fun μ : Measure 𝓨 ↦ μ {g θ}) h12
       rw [Measure.dirac_apply' _ (measurableSet_singleton _),
         Measure.dirac_apply' _ (measurableSet_singleton _)] at he
       simp [Ne.symm hne] at he
-    exact ⟨Function.extend f g (λ _ => Classical.arbitrary 𝓨),
+    exact ⟨Function.extend f g (fun _ ↦ Classical.arbitrary 𝓨),
       (hft.extend_comp _).symm⟩
   · rintro ⟨ψ, rfl⟩
     exact ⟨Kernel.deterministic ψ (measurable_of_countable ψ), inferInstance,
       (Kernel.deterministic_comp_deterministic hf (measurable_of_countable ψ)).symm⟩
 
-/-- The average risk of any estimator `κ` on the deterministic experiment `f`,
-regrouped by cell: `avgRisk = ∑_x ∑_y κ(x){y} · ∑_{θ ∈ fiber x} π{θ}·ℓ(θ, y)`.
-No `IsMarkovKernel` hypothesis is needed — this is a pure algebraic rearrangement. -/
+/-- The average risk of an estimator `κ` on the deterministic experiment `f` regroups by cell
+as `∑_x ∑_y κ(x){y} · ∑_{θ ∈ fiber x} π{θ}·ℓ(θ, y)`. -/
 private lemma avgRisk_deterministic_fintype_eq [Fintype Θ] [Fintype 𝓧]
     [DecidableEq 𝓧] [MeasurableSingletonClass Θ] [MeasurableSingletonClass 𝓧]
     {𝓨 : Type u} [MeasurableSpace 𝓨] [Fintype 𝓨] [MeasurableSingletonClass 𝓨]
@@ -589,11 +547,9 @@ private lemma avgRisk_deterministic_fintype_eq [Fintype Θ] [Fintype 𝓧]
         rw [Finset.sum_comm]
         exact Finset.sum_congr rfl fun y _ => by rw [Finset.mul_sum]
 
-/-- **Bayes risk of a deterministic experiment** (finite case): observing the exact
-cell of `θ` under `f`, the optimal estimator picks the best action per cell, so the
-Bayes risk is the sum over cells of the minimal conditional expected loss. The
-utility-scale reading — risk = bound minus partition value — is
-`Core.Probability.Decision.Duality`. -/
+/-- On finite spaces, the Bayes risk of a deterministic experiment is the sum over cells of the
+least expected loss of an action on the cell, since the optimal estimator picks the best action
+in each cell. -/
 theorem bayesRisk_deterministic [Fintype Θ] [Fintype 𝓧] [DecidableEq 𝓧]
     [MeasurableSingletonClass Θ] [MeasurableSingletonClass 𝓧] {𝓨 : Type u}
     [MeasurableSpace 𝓨] [Fintype 𝓨] [Nonempty 𝓨] [MeasurableSingletonClass 𝓨]
