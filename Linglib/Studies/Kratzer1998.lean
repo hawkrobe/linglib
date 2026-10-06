@@ -42,7 +42,7 @@ An out-of-the-blue context is the temporal assignment sending every variable to 
 utterance time, so the definedness of a tense pronoun there is its presupposition under the
 library's `TensePronoun.fullPresupposition`, which holds iff the tense's cell admits
 coincidence. The aspect operators take a reference interval; a tense supplies a point, embedded
-as `NonemptyInterval.pure`. The aspects are instances of the library's `IntervalPred.ofRel`.
+as `NonemptyInterval.pure`. The aspects are instances of the library's `Aspect.ofRel`.
 The imperfective and the perfective are the library's `Aspect.UNBOUNDED` and `Aspect.PRFV`, and
 the perfect, with strict precedence, is stronger than the perfect viewpoint of
 `Aspect.ViewpointType`, which admits an event abutting the reference time
@@ -70,7 +70,7 @@ open Event (τ)
 open Semantics
 
 open Tense
-open Aspect (IntervalPred UNBOUNDED PRFV ViewpointType)
+open Aspect (ofRel ofRel_mono UNBOUNDED PRFV ViewpointType)
 
 /-! ### The tenses (§4–§5) -/
 
@@ -139,12 +139,12 @@ variable {T W E : Type*} [LinearOrder T] [Event.TemporalTrace E T]
 /-- The operator of (38) turns a property of times into the property of eventualities that
 holds of `e`, at any world, iff the property of times holds of the running time of `e` at every
 world. -/
-def star (P : IntervalPred W T) (_ : W) (e : E) : Prop :=
-  ∀ w', P w' (τ e)
+def star (P : W → Set (NonemptyInterval T)) (_ : W) (e : E) : Prop :=
+  ∀ w', τ e ∈ P w'
 
 /-- The temporal de re is semantically forced, since `star P` does not depend on the evaluation
 world. -/
-theorem star_congr (P : IntervalPred W T) (e : E) (w w' : W) :
+theorem star_congr (P : W → Set (NonemptyInterval T)) (e : E) (w w' : W) :
     star P w e ↔ star P w' e := Iff.rfl
 
 /-- `a.rel r s` is the relation of the aspect `a` between the reference time `r` and the event
@@ -158,8 +158,8 @@ def AspectHead.rel : AspectHead → NonemptyInterval T → NonemptyInterval T �
 
 /-- An aspect maps a property of events to the property of times that stand in the aspect's
 relation to the time of some such event. -/
-def AspectHead.denote (a : AspectHead) (P : W → E → Prop) : IntervalPred W T :=
-  IntervalPred.ofRel a.rel P
+def AspectHead.denote (a : AspectHead) (P : W → E → Prop) : W → Set (NonemptyInterval T) :=
+  ofRel a.rel P
 
 theorem denote_imperfective (P : W → E → Prop) :
     AspectHead.imperfective.denote P = UNBOUNDED P := rfl
@@ -169,8 +169,8 @@ theorem denote_perfective (P : W → E → Prop) : AspectHead.perfective.denote 
 /-- The perfect entails the perfect viewpoint of the library, whose relation also admits an
 event that ends exactly when the reference time begins. -/
 theorem perfect_viewpointType {P : W → E → Prop} {w : W} {r : NonemptyInterval T} :
-    AspectHead.perfect.denote P w r → ViewpointType.perfect.denote P w r :=
-  IntervalPred.ofRel_mono fun _ _ h ↦ le_of_lt h
+    r ∈ AspectHead.perfect.denote P w → r ∈ ViewpointType.perfect.denote P w :=
+  fun h ↦ ofRel_mono (fun _ _ h ↦ le_of_lt h) P w h
 
 variable (T) in
 /-- An anterior aspect places the event time before the reference time. -/
@@ -190,7 +190,7 @@ theorem AspectHead.isAnterior_iff [Nonempty T] (a : AspectHead) :
 
 /-- An anterior aspect describes an event that is over by the reference time. -/
 theorem AspectHead.IsAnterior.precedes {a : AspectHead} (ha : a.IsAnterior T)
-    {P : W → E → Prop} {w : W} {r : NonemptyInterval T} (h : a.denote P w r) :
+    {P : W → E → Prop} {w : W} {r : NonemptyInterval T} (h : r ∈ a.denote P w) :
     ∃ e : E, (τ e).precedes r ∧ P w e :=
   let ⟨e, he, hP⟩ := h
   ⟨e, ha _ _ he, hP⟩
@@ -199,13 +199,13 @@ theorem AspectHead.IsAnterior.precedes {a : AspectHead} (ha : a.IsAnterior T)
 defined and the aspect holds of the property at the tense's reference. -/
 def denote (C : Finset Ordering) (a : AspectHead) (n : ℕ) (P : W → E → Prop)
     (g : TemporalAssignment T) (w : W) : Prop :=
-  (tense C n).fullPresupposition g ∧ a.denote P w (.pure ((tense C n).resolve g))
+  (tense C n).fullPresupposition g ∧ .pure ((tense C n).resolve g) ∈ a.denote P w
 
 /-- Out of the blue a tense with an aspect is true iff the tense admits coincidence with the
 utterance time and the aspect holds there. -/
 theorem denote_outOfTheBlue_iff (C : Finset Ordering) (a : AspectHead) (n : ℕ)
     (P : W → E → Prop) (t₀ : T) (w : W) :
-    denote C a n P (outOfTheBlue t₀) w ↔ .eq ∈ C ∧ a.denote P w (.pure t₀) := by
+    denote C a n P (outOfTheBlue t₀) w ↔ .eq ∈ C ∧ .pure t₀ ∈ a.denote P w := by
   rw [denote, tense_outOfTheBlue_iff]; rfl
 
 /-- Present tense with perfect aspect describes an event over by the utterance time, so a past

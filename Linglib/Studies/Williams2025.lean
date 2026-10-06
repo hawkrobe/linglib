@@ -93,8 +93,8 @@ variable {W T E : Type*} [LinearOrder T] [Event.TemporalTrace E T]
 abbrev Complement (W E T : Type*) [LinearOrder T] := W → NonemptyInterval T → E → Prop
 
 /-- The closure (27) of a complement binds its event. -/
-def Complement.closure (C : Complement W E T) : Aspect.IntervalPred W T :=
-  fun w t ↦ ∃ e, C w t e
+def Complement.closure (C : Complement W E T) : W → Set (NonemptyInterval T) :=
+  fun w ↦ {t | ∃ e, C w t e}
 
 /-- In AspP, (30c), the plain infinitive, perfective aspect locates the event within the reference
 time. -/

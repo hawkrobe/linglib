@@ -37,13 +37,13 @@ the punctual words, and its stativity diagnostics from homogeneity with negation
 
 ## Implementation notes
 
-* Descriptions are the interval predicates of `Aspect`; events carry a run time and a
+* Descriptions are the interval properties of `Aspect`; events carry a run time and a
   perfective description places it within the reference interval, an imperfective one strictly
   around it. The until interval is required to be nondegenerate, which is what excludes a single
   event from satisfying the durative condition at both its endpoints.
 * Homogeneity is the subinterval property of `Aspect/SubintervalProperty.lean`, and durative
-  UNTIL is the durative reading `IntervalPred.durative` at a nondegenerate span ending at the
-  until time.
+  UNTIL is the durative reading `Aspect.durative` at a nondegenerate span ending at the until
+  time.
 * The relation of each connective is read off its fragment entry. Which words are punctual
   *until*s, Greek *para monon*, Icelandic *fyrr en* and Dutch *pas*, is the paper's
   classification (`Connective.Punctual`). The polarity of the eventive words is read off their
@@ -74,14 +74,14 @@ variable {W T E : Type*} [LinearOrder T] [Event.TemporalTrace E T]
 
 /-- Durative UNTIL holds when the description holds throughout a nondegenerate interval ending at
 the until time, at every one of its subintervals. -/
-def durativeUntil (p : IntervalPred W T) (w : W) (t' : T) : Prop :=
-  ∃ i : NonemptyInterval T, i.fst < i.snd ∧ RB i t' ∧ p.durative w i
+def durativeUntil (p : W → Set (NonemptyInterval T)) (w : W) (t' : T) : Prop :=
+  ∃ i : NonemptyInterval T, i.fst < i.snd ∧ RB i t' ∧ i ∈ durative p w
 
 /-- A homogeneous description need only hold at the until interval itself. -/
-theorem durativeUntil_iff_of_hasSubintervalProperty {p : IntervalPred W T}
-    (hp : p.HasSubintervalProperty) (w : W) (t' : T) :
-    durativeUntil p w t' ↔ ∃ i : NonemptyInterval T, i.fst < i.snd ∧ RB i t' ∧ p w i := by
-  simp only [durativeUntil, IntervalPred.durative_iff_of_hasSubintervalProperty hp]
+theorem durativeUntil_iff_of_isLowerSet {p : W → Set (NonemptyInterval T)} {w : W}
+    (hp : IsLowerSet (p w)) (t' : T) :
+    durativeUntil p w t' ↔ ∃ i : NonemptyInterval T, i.fst < i.snd ∧ RB i t' ∧ i ∈ p w := by
+  simp only [durativeUntil, durative_eq_of_isLowerSet hp]
 
 /-- A perfective description of a single event is incompatible with durative UNTIL, since an
 achievement or accomplishment cannot lie within both endpoints of the until interval. -/
@@ -89,9 +89,11 @@ theorem not_durativeUntil_prfv {P : W → E → Prop} {w : W}
     (hP : ∀ e e', P w e → P w e' → e = e') (t' : T) : ¬ durativeUntil (PRFV P) w t' := by
   rintro ⟨i, hi, -, h⟩
   obtain ⟨e₁, h₁, he₁⟩ :=
-    h (NonemptyInterval.pure i.fst) (NonemptyInterval.le_def.mpr ⟨le_rfl, i.fst_le_snd⟩)
+    h (Set.mem_Iic.2 (NonemptyInterval.le_def.mpr ⟨le_rfl, (i.fst_le_snd : i.fst ≤ i.snd)⟩) :
+      NonemptyInterval.pure i.fst ∈ Set.Iic i)
   obtain ⟨e₂, h₂, he₂⟩ :=
-    h (NonemptyInterval.pure i.snd) (NonemptyInterval.le_def.mpr ⟨i.fst_le_snd, le_rfl⟩)
+    h (Set.mem_Iic.2 (NonemptyInterval.le_def.mpr ⟨(i.fst_le_snd : i.fst ≤ i.snd), le_rfl⟩) :
+      NonemptyInterval.pure i.snd ∈ Set.Iic i)
   obtain rfl := hP e₁ e₂ he₁ he₂
   exact absurd ((NonemptyInterval.le_def.mp h₂).1.trans
     ((τ e₁).fst_le_snd.trans (NonemptyInterval.le_def.mp h₁).2)) (not_le.mpr hi)
@@ -100,18 +102,19 @@ theorem not_durativeUntil_prfv {P : W → E → Prop} {w : W}
 
 /-- The state of not-P-ing, which a stativizing negation would deliver, holds when no P-event
 overlaps the interval. -/
-def notState (P : W → E → Prop) : IntervalPred W T :=
-  fun w i ↦ ∀ e, P w e → ∀ a ∈ (τ e), a ∉ i
+def notState (P : W → E → Prop) : W → Set (NonemptyInterval T) :=
+  fun w ↦ {i | ∀ e, P w e → ∀ a ∈ (τ e), a ∉ i}
 
-theorem hasSubintervalProperty_notState (P : W → E → Prop) :
-    (notState P : IntervalPred W T).HasSubintervalProperty :=
-  fun _ _ _ hji h e he a ha haj ↦ h e he a ha (NonemptyInterval.coe_subset_coe.mpr hji haj)
+theorem isLowerSet_notState (P : W → E → Prop) (w : W) :
+    IsLowerSet (notState P w : Set (NonemptyInterval T)) :=
+  fun _ _ hji h e he a ha haj ↦ h e he a ha (NonemptyInterval.coe_subset_coe.mpr hji haj)
 
 /-- Mittwoch's wide-scope reading is durative UNTIL of the state of not-P-ing. -/
 def wideScope (P : W → E → Prop) (w : W) (t' : T) : Prop := durativeUntil (notState P) w t'
 
 /-- External negation denies the durative UNTIL claim. -/
-def narrowScope (p : IntervalPred W T) (w : W) (t' : T) : Prop := ¬ durativeUntil p w t'
+def narrowScope (p : W → Set (NonemptyInterval T)) (w : W) (t' : T) : Prop :=
+  ¬ durativeUntil p w t'
 
 /-- Karttunen's scalar eventive UNTIL holds when a P-event occurs at the until time and none
 starts earlier. -/

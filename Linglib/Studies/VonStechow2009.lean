@@ -161,16 +161,16 @@ theorem future_perfect_after_speech {six : T}
 /-! ### Temporal adverbials -/
 
 /-- The extended-now perfect (28) at the speech time is the perfect of `Aspect`. -/
-theorem xn_iff_perf {W : Type*} (p : IntervalPred W T) (w : W) :
-    p.perfect w (.pure s) ↔ PERF p (w, s) :=
-  (perf_iff_perfect_atPoint p (w, s)).symm
+theorem xn_iff_perf {W : Type*} (p : W → Set (NonemptyInterval T)) (w : W) :
+    .pure s ∈ perfect p w ↔ (w, s) ∈ PERF p := by
+  rw [perf_eq_atPoint_perfect]; rfl
 
 /-- In *John has called yesterday* (42, `Examples.ex_42`) *yesterday* modifies the extended-now
 interval, which ends at the speech time, so the sentence is contradictory unless the speech time
 is on yesterday. -/
-theorem not_perfAdv_yesterday {W : Type*} (call : IntervalPred W T)
+theorem not_perfAdv_yesterday {W : Type*} (call : W → Set (NonemptyInterval T))
     (yesterday : NonemptyInterval T) (w : W) (hs : s ∉ yesterday) :
-    ¬ PERF_ADV call (· ≤ yesterday) (w, s) := by
+    (w, s) ∉ PERF_ADV call (· ≤ yesterday) := by
   rintro ⟨t, hle, hRB, -⟩
   obtain ⟨h₁, h₂⟩ := NonemptyInterval.le_def.1 hle
   have e : t.snd = s := hRB
@@ -245,7 +245,8 @@ theorem every_sunday :
 
 section Partee
 
-variable {W : Type*} (turnOff rain : IntervalPred W T) (w : W) {σ t₅ today : NonemptyInterval T}
+variable {W : Type*} (turnOff rain : W → NonemptyInterval T → Prop) (w : W)
+  {σ t₅ today : NonemptyInterval T}
   {K : Set (NonemptyInterval T)} {Q : NonemptyInterval T → Prop}
 
 /-- The contextually restricted Past (53) holds of a predicate at `σ` when some interval of the
@@ -259,7 +260,7 @@ indefinite Past is the Perfective (50) at that time, so *I didn't turn off the s
 same on the referential analysis with the Perfective (52) and on the indefinite analysis with a
 restriction (54). -/
 theorem restrictedPast_Iic_iff_prfv (h : Perspective.Presup ⟦past⟧ σ t₅) :
-    RestrictedPast (Set.Iic t₅) (turnOff w) σ ↔ PRFV turnOff w t₅ :=
+    RestrictedPast (Set.Iic t₅) (turnOff w) σ ↔ t₅ ∈ PRFV turnOff w :=
   ⟨fun ⟨t, _, ht, hQ⟩ ↦ ⟨t, ht, hQ⟩, fun ⟨t, ht, hQ⟩ ↦ ⟨t, Perspective.presup_past.2
     (NonemptyInterval.precedes_of_le_of_precedes ht (Perspective.presup_past.1 h)), ht, hQ⟩⟩
 
@@ -281,7 +282,7 @@ theorem exists_not_restrictedPast_past :
 analysis with the Perfective (59) at any past reference time on today. -/
 theorem not_prfv_of_not_past (h : ¬ ◇[Perspective.toSetRel ⟦past⟧]
       (fun t ↦ t ≤ today ∧ rain w t) σ)
-    (h₅ : Perspective.Presup ⟦past⟧ σ t₅) (h₅' : t₅ ≤ today) : ¬ PRFV rain w t₅ :=
+    (h₅ : Perspective.Presup ⟦past⟧ σ t₅) (h₅' : t₅ ≤ today) : t₅ ∉ PRFV rain w :=
   fun ⟨t, ht, hr⟩ ↦ h ⟨t, Perspective.presup_past.2
     (NonemptyInterval.precedes_of_le_of_precedes ht (Perspective.presup_past.1 h₅)),
     ht.trans h₅', hr⟩
@@ -289,8 +290,8 @@ theorem not_prfv_of_not_past (h : ¬ ◇[Perspective.toSetRel ⟦past⟧]
 /-- The referential analysis (59) is too weak, since a short reference time leaves room for rain
 elsewhere in today. -/
 theorem exists_not_prfv_past :
-    ∃ (σ t₅ today : NonemptyInterval ℤ) (rain : IntervalPred Unit ℤ),
-      (Perspective.Presup ⟦past⟧ σ t₅ ∧ t₅ ≤ today ∧ ¬ PRFV rain () t₅) ∧
+    ∃ (σ t₅ today : NonemptyInterval ℤ) (rain : Unit → NonemptyInterval ℤ → Prop),
+      (Perspective.Presup ⟦past⟧ σ t₅ ∧ t₅ ≤ today ∧ t₅ ∉ PRFV rain ()) ∧
         ◇[Perspective.toSetRel ⟦past⟧] (fun t ↦ t ≤ today ∧ rain () t) σ := by
   refine ⟨.pure 20, ⟨(0, 1), by decide⟩, ⟨(0, 10), by decide⟩, fun _ t ↦ t = .pure 5,
     ⟨by decide, by decide, ?_⟩, .pure 5, by decide, by decide, rfl⟩
@@ -301,7 +302,7 @@ theorem exists_not_prfv_past :
 the referential analysis (59) is the indefinite one (58). -/
 theorem not_prfv_iff_not_past (hmax : ∀ t ≤ today, t.precedes σ → t ≤ t₅)
     (h₅ : Perspective.Presup ⟦past⟧ σ t₅) (h₅' : t₅ ≤ today) :
-    ¬ PRFV rain w t₅ ↔ ¬ ◇[Perspective.toSetRel ⟦past⟧] (fun t ↦ t ≤ today ∧ rain w t) σ :=
+    t₅ ∉ PRFV rain w ↔ ¬ ◇[Perspective.toSetRel ⟦past⟧] (fun t ↦ t ≤ today ∧ rain w t) σ :=
   ⟨fun h ⟨t, ht, hle, hr⟩ ↦ h ⟨t, hmax t hle (Perspective.presup_past.1 ht), hr⟩,
     fun h ↦ not_prfv_of_not_past rain w h h₅ h₅'⟩
 
