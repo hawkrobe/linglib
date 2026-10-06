@@ -86,7 +86,7 @@ theorem mem_contextualPartition {C : Set W} :
 theorem qpm_iff_partitionsBy (h : IsCellValued Exh H) : QPM Exh H A ↔ PartitionsBy Exh H A := by
   constructor
   · rintro ⟨hCI, hNV⟩
-    refine ⟨λ p hp => ?_, λ p hp q hq => ?_, λ w hw => ?_⟩
+    refine ⟨fun p hp ↦ ?_, fun p hp q hq ↦ ?_, fun w hw ↦ ?_⟩
     · obtain ⟨_, ⟨w, hw, rfl⟩, hpw⟩ := hNV p hp
       exact ⟨w, by rw [hpw]; exact ⟨self_mem_strongAnswer H w, hw⟩⟩
     · obtain ⟨_, ⟨w, hw, rfl⟩, hpw⟩ := hNV p hp
@@ -99,7 +99,7 @@ theorem qpm_iff_partitionsBy (h : IsCellValued Exh H) : QPM Exh H A ↔ Partitio
       have : w ∈ Exh p ∩ A := by rw [hpw]; exact ⟨self_mem_strongAnswer H w, hw⟩
       exact ⟨p, hp, this.1⟩
   · rintro ⟨hne, -, hcov⟩
-    refine ⟨?_, λ p hp => ?_⟩
+    refine ⟨?_, fun p hp ↦ ?_⟩
     · rintro _ ⟨w, hw, rfl⟩
       obtain ⟨p, hp, hwp⟩ := hcov w hw
       exact ⟨p, hp, by rw [h p hp w hwp]⟩
@@ -115,7 +115,7 @@ section Dayal
 variable {H : Set (Set W)} {A : Set W}
 
 theorem isCellValued_exhCell : IsCellValued (exhCell H) H :=
-  λ _ _ w hw => exhCell_eq_strongAnswer H w hw
+  fun _ _ w hw ↦ exhCell_eq_strongAnswer H w hw
 
 /-- With exhaustification as the strongest true member, Cell Identification is Dayal's
 presupposition on the context set. -/
@@ -149,8 +149,8 @@ theorem isExhaustivelyResolvable_range_iff_existsUnique {ι : Type*} {a : ι →
     (ha : ∀ i j, a i ⊆ a j → i = j) (w : W) :
     IsExhaustivelyResolvable (range a) w ↔ ∃! i, w ∈ a i := by
   rw [isExhaustivelyResolvable_range_iff]
-  exact exists_congr λ i => and_congr_right λ _ =>
-    ⟨λ h j hj => (ha _ _ (h j hj)).symm, λ h j hj => by rw [h j hj]⟩
+  exact exists_congr fun i ↦ and_congr_right fun _ ↦
+    ⟨fun h j hj ↦ (ha _ _ (h j hj)).symm, fun h j hj ↦ by rw [h j hj]⟩
 
 /-- A plural which-question, closed under conjunction, is resolvable wherever some member is
 true. -/
@@ -158,12 +158,12 @@ theorem isExhaustivelyResolvable_conjClosure {ι : Type*} [Fintype ι] {a : ι �
     (hw : ∃ i, w ∈ a i) : IsExhaustivelyResolvable (conjClosure a) w := by
   classical
   obtain ⟨i, hi⟩ := hw
-  let T : Finset ι := Finset.univ.filter (λ i => w ∈ a i)
-  have hT : ∀ i, i ∈ T ↔ w ∈ a i := λ i => by simp [T]
+  let T : Finset ι := Finset.univ.filter (fun i ↦ w ∈ a i)
+  have hT : ∀ i, i ∈ T ↔ w ∈ a i := fun i ↦ by simp [T]
   refine ⟨conjFamily a T, ⟨conjFamily_mem_conjClosure ⟨i, (hT i).2 hi⟩,
-    mem_conjFamily.2 λ i hi => (hT i).1 hi⟩, ?_⟩
+    mem_conjFamily.2 fun i hi ↦ (hT i).1 hi⟩, ?_⟩
   rintro _ ⟨⟨S, -, rfl⟩, hwS⟩ v hv
-  exact mem_conjFamily.2 λ j hj => mem_conjFamily.1 hv j ((hT j).2 (mem_conjFamily.1 hwS j hj))
+  exact mem_conjFamily.2 fun j hj ↦ mem_conjFamily.1 hv j ((hT j).2 (mem_conjFamily.1 hwS j hj))
 
 /-! ### Negative islands -/
 
@@ -176,7 +176,7 @@ theorem not_isStrongestTrueAnswer_union {q₁ q₂ : Set W} (h₁ : q₁ ∈ H) 
   · exact h₁₂ (subset_union_left.trans (hmin ⟨h₂, hw⟩))
 
 /-- A higher-order question under negation contains the negated conjunction of two readings
-together with each negated reading, so Non-Vacuity fails: the negative island. -/
+together with each negated reading, so Non-Vacuity fails, which is the negative island. -/
 theorem not_nonVacuity_exhCell_of_union {q₁ q₂ : Set W} (h₁ : q₁ ∈ H) (h₂ : q₂ ∈ H)
     (hu : q₁ ∪ q₂ ∈ H) (h₁₂ : ¬ q₁ ⊆ q₂) (h₂₁ : ¬ q₂ ⊆ q₁) : ¬ NonVacuity (exhCell H) H A := by
   rw [nonVacuity_exhCell_iff]
@@ -185,7 +185,7 @@ theorem not_nonVacuity_exhCell_of_union {q₁ q₂ : Set W} (h₁ : q₁ ∈ H) 
   exact not_isStrongestTrueAnswer_union h₁ h₂ h₁₂ h₂₁ w hw
 
 /-- Under a necessity modal, a member that is exactly the modal base of a context world is the
-strongest true member there: the island is obviated. -/
+strongest true member there, so the island is obviated. -/
 theorem isStrongestTrueAnswer_box {W' : Type*} {R : SetRel W' W} {p : Set W} (hp : p ∈ H)
     {x : W'} (hx : ∀ v, x ~[R] v ↔ v ∈ p) : IsStrongestTrueAnswer (box H R) x (R.core p) := by
   refine ⟨⟨⟨p, hp, rfl⟩, fun v hv ↦ (hx v).1 hv⟩, ?_⟩
@@ -210,7 +210,8 @@ section Cell
 
 variable {H : Set (Set W)}
 
-/-- The cell operator identifies cells: each of its non-empty values is a strong answer. -/
+/-- Each non-empty value of the cell operator is a strong answer, so the operator identifies
+cells. -/
 theorem cell_eq_strongAnswer {p : Set W} (hp : p ∈ H) {w : W} (hw : w ∈ cell H p) :
     cell H p = strongAnswer H w := by
   ext v
@@ -218,13 +219,13 @@ theorem cell_eq_strongAnswer {p : Set W} (hp : p ∈ H) {w : W} (hw : w ∈ cell
   constructor
   · intro hv q hq
     by_cases hIE : IsInnocentlyExcludable H p q
-    · exact ⟨λ hwq => (hw.2.1 q hIE hwq).elim, λ hvq => (hv.2.1 q hIE hvq).elim⟩
-    · exact ⟨λ _ => hv.2.2 q ⟨hq, hIE⟩, λ _ => hw.2.2 q ⟨hq, hIE⟩⟩
+    · exact ⟨fun hwq ↦ (hw.2.1 q hIE hwq).elim, fun hvq ↦ (hv.2.1 q hIE hvq).elim⟩
+    · exact ⟨fun _ ↦ hv.2.2 q ⟨hq, hIE⟩, fun _ ↦ hw.2.2 q ⟨hq, hIE⟩⟩
   · intro hv
-    exact ⟨(hv p hp).1 hw.1, λ q hIE hvq => hw.2.1 q hIE ((hv q hIE.1).2 hvq),
-      λ r hr => (hv r hr.1).1 (hw.2.2 r hr)⟩
+    exact ⟨(hv p hp).1 hw.1, fun q hIE hvq ↦ hw.2.1 q hIE ((hv q hIE.1).2 hvq),
+      fun r hr ↦ (hv r hr.1).1 (hw.2.2 r hr)⟩
 
-theorem isCellValued_cell : IsCellValued (cell H) H := λ _ hp _ hw => cell_eq_strongAnswer hp hw
+theorem isCellValued_cell : IsCellValued (cell H) H := fun _ hp _ hw ↦ cell_eq_strongAnswer hp hw
 
 /-- With the cell operator, matching is partitioning. -/
 theorem qpm_cell_iff_partitionsBy {A : Set W} : QPM (cell H) H A ↔ PartitionsBy (cell H) H A :=
@@ -234,7 +235,7 @@ theorem qpm_cell_iff_partitionsBy {A : Set W} : QPM (cell H) H A ↔ PartitionsB
 the strongest, deriving free choice in one step. -/
 theorem cell_diamond {w s n e : Set W} (h : Fox2007.IsDiamond w s n e) :
     cell {w, s, n, e} w = (s ∩ n) \ e := by
-  rw [cell_eq_of_iff _ _ λ q hq => h.isInnocentlyExcludable_iff hq]
+  rw [cell_eq_of_iff _ _ fun q hq ↦ h.isInnocentlyExcludable_iff hq]
   have hne : ∀ q ∈ ({w, s, n} : Set (Set W)), q ≠ e := by
     obtain ⟨rfl, hs, hn, ⟨a, ha⟩, ⟨b, hb⟩⟩ := h
     rintro q (rfl | rfl | rfl) hqe
@@ -245,21 +246,21 @@ theorem cell_diamond {w s n e : Set W} (h : Fox2007.IsDiamond w s n e) :
   constructor
   · rintro ⟨-, hx⟩
     exact ⟨⟨(hx s (by simp)).2 (hne s (by simp)), (hx n (by simp)).2 (hne n (by simp))⟩,
-      λ hxe => (hx e (by simp)).1 hxe rfl⟩
+      fun hxe ↦ (hx e (by simp)).1 hxe rfl⟩
   · rintro ⟨⟨hxs, hxn⟩, hxe⟩
-    refine ⟨h.union ▸ Or.inl hxs, λ q hq => ?_⟩
+    refine ⟨h.union ▸ Or.inl hxs, fun q hq ↦ ?_⟩
     simp only [mem_insert_iff, mem_singleton_iff] at hq
     obtain h1 | h1 | h1 | h1 := hq <;> subst q
     · exact iff_of_true (h.union ▸ Or.inl hxs) (hne _ (by simp))
     · exact iff_of_true hxs (hne _ (by simp))
     · exact iff_of_true hxn (hne _ (by simp))
-    · exact iff_of_false hxe λ h' => h' rfl
+    · exact iff_of_false hxe fun h' ↦ h' rfl
 
 /-- The cell operator agrees with [fox-2007]'s recursive exhaustification wherever free choice
 is consistent. -/
-theorem cell_eq_exh₂ {w s n e : Set W} (h : Fox2007.IsDiamond w s n e)
-    (hne : ((s ∩ n) \ e).Nonempty) : cell {w, s, n, e} w = Fox2007.exh₂ {w, s, n, e} w := by
-  rw [cell_diamond h, h.exh₂_eq hne]
+theorem cell_eq_exhIter_two {w s n e : Set W} (h : Fox2007.IsDiamond w s n e)
+    (hne : ((s ∩ n) \ e).Nonempty) : cell {w, s, n, e} w = Fox2007.exhIter {w, s, n, e} 2 w := by
+  rw [cell_diamond h, h.exhIter_two_eq hne]
 
 end Cell
 
@@ -321,7 +322,7 @@ theorem conjFamily_subset_conjFamily_iff {S T : Finset ι} :
       (Finset.mem_coe.2 hi)
     rw [hw] at this
     exact Finset.mem_coe.1 this
-  · exact λ h _ hv => mem_conjFamily.2 λ i hi => mem_conjFamily.1 hv i (h hi)
+  · exact fun h _ hv ↦ mem_conjFamily.2 fun i hi ↦ mem_conjFamily.1 hv i (h hi)
 
 theorem disj_subset_disj_iff {S T : Finset ι} : disj a S ⊆ disj a T ↔ S ⊆ T := by
   constructor
@@ -340,30 +341,30 @@ theorem disj_subset_disj_iff {S T : Finset ι} : disj a S ⊆ disj a T ↔ S ⊆
     exact mem_disj.2 ⟨i, h hi, hvi⟩
 
 /-- Given the conjunction over a group, a member is innocently excludable iff its group is not
-included: the paper's computation for the low-type question. -/
+included, as the paper computes for the low-type question. -/
 theorem isInnocentlyExcludable_conj_iff [Fintype ι] {S T : Finset ι} (hS : S.Nonempty) :
     IsInnocentlyExcludable (conjClosure a) (conjFamily a T) (conjFamily a S) ↔ ¬ S ⊆ T := by
   obtain ⟨w₀, hw₀⟩ := hrich T
   have hw₀T : w₀ ∈ conjFamily a T := mem_conjFamily_iff_subset.2 (by rw [hw₀])
   constructor
-  · exact λ hIE hST => not_isInnocentlyExcludable_of_phi_subset conjClosure_finite ⟨w₀, hw₀T⟩
+  · exact fun hIE hST ↦ not_isInnocentlyExcludable_of_phi_subset conjClosure_finite ⟨w₀, hw₀T⟩
       ((conjFamily_subset_conjFamily_iff hrich).2 hST) hIE
   · intro hST
     refine .of_forall_subset_or_notMem (conjFamily_mem_conjClosure hS) hw₀T ?_ ?_
     · rw [mem_conjFamily_iff_subset, hw₀]
-      exact λ h => hST (Finset.coe_subset.1 h)
+      exact fun h ↦ hST (Finset.coe_subset.1 h)
     · rintro _ ⟨U, -, rfl⟩
       by_cases hUT : U ⊆ T
       · exact Or.inl ((conjFamily_subset_conjFamily_iff hrich).2 hUT)
       · right
         rw [mem_conjFamily_iff_subset, hw₀]
-        exact λ h => hUT (Finset.coe_subset.1 h)
+        exact fun h ↦ hUT (Finset.coe_subset.1 h)
 
 /-- The minimal worlds given the disjunction over a group are the sole witnesses of its
 members. -/
 theorem mem_exhMW_disjClosure_iff {T : Finset ι} {u : W} :
     u ∈ exhMW (disjClosure a) (disj a T) ↔ ∃ i ∈ T, profile a u = ↑({i} : Finset ι) := by
-  have hsing : ∀ {i : ι} {v : W}, profile a v = ↑({i} : Finset ι) → v ∈ a i := λ {i v} hv => by
+  have hsing : ∀ {i : ι} {v : W}, profile a v = ↑({i} : Finset ι) → v ∈ a i := fun {i v} hv ↦ by
     change i ∈ profile a v
     rw [hv]
     exact Finset.mem_coe.2 (Finset.mem_singleton_self i)
@@ -375,7 +376,7 @@ theorem mem_exhMW_disjClosure_iff {T : Finset ι} {u : W} :
       rw [hv, Finset.coe_singleton]
       exact singleton_subset_iff.2 hui)
     have huv : u ≤[disjClosure a] v :=
-      by_contra λ h => hmin ⟨v, mem_disj.2 ⟨i, hi, hsing hv⟩, hvu, h⟩
+      by_contra fun h ↦ hmin ⟨v, mem_disj.2 ⟨i, hi, hsing hv⟩, hvu, h⟩
     refine ⟨i, hi, subset_antisymm ?_ ?_⟩
     · rw [← hv]
       exact leALT_disjClosure_iff.1 huv
@@ -394,7 +395,7 @@ theorem mem_exhMW_disjClosure_iff {T : Finset ι} {u : W} :
     exact singleton_subset_iff.2 hj
 
 /-- Given the disjunction over a group, a member is innocently excludable iff its group is
-disjoint from it: the paper's computation for the high-type question. -/
+disjoint from it, as the paper computes for the high-type question. -/
 theorem isInnocentlyExcludable_disj_iff {S T : Finset ι} (hS : S.Nonempty) :
     IsInnocentlyExcludable (disjClosure a) (disj a T) (disj a S) ↔ Disjoint S T := by
   rw [isInnocentlyExcludable_iff_exhMW_subset_compl _ _ _ (disj_mem_disjClosure hS),
@@ -416,7 +417,7 @@ theorem isInnocentlyExcludable_disj_iff {S T : Finset ι} (hS : S.Nonempty) :
 /-- For the conjunctive question, the member for a group identifies the cell of that profile. -/
 theorem cell_conjFamily [Fintype ι] (T : Finset ι) :
     cell (conjClosure a) (conjFamily a T) = profileCell a T := by
-  rw [conjClosure, cell_image_eq _ λ S hS => isInnocentlyExcludable_conj_iff hrich hS]
+  rw [conjClosure, cell_image_eq _ fun S hS ↦ isInnocentlyExcludable_conj_iff hrich hS]
   ext x
   simp only [mem_ofPred_eq, mem_conjFamily_iff_subset, not_not, mem_profileCell]
   constructor
@@ -426,12 +427,12 @@ theorem cell_conjFamily [Fintype ι] (T : Finset ι) :
     rw [Finset.coe_singleton, singleton_subset_iff, Finset.singleton_subset_iff] at this
     exact this.trans Finset.mem_coe.symm
   · intro hx
-    exact ⟨by rw [hx], λ S _ => by rw [hx, Finset.coe_subset]⟩
+    exact ⟨by rw [hx], fun S _ ↦ by rw [hx, Finset.coe_subset]⟩
 
 /-- For the disjunctive question, the member for a group identifies the same cell. -/
 theorem cell_disj {T : Finset ι} (hT : T.Nonempty) :
     cell (disjClosure a) (disj a T) = profileCell a T := by
-  rw [disjClosure, cell_image_eq _ λ S hS => isInnocentlyExcludable_disj_iff hrich hS]
+  rw [disjClosure, cell_image_eq _ fun S hS ↦ isInnocentlyExcludable_disj_iff hrich hS]
   ext x
   simp only [mem_ofPred_eq, mem_disj, Finset.not_disjoint_iff, mem_profileCell]
   constructor
@@ -442,10 +443,10 @@ theorem cell_disj {T : Finset ι} (hT : T.Nonempty) :
     exact this.trans Finset.mem_coe.symm
   · intro hx
     obtain ⟨i, hi⟩ := hT
-    have hmem : ∀ j, x ∈ a j ↔ j ∈ T := λ j => by
+    have hmem : ∀ j, x ∈ a j ↔ j ∈ T := fun j ↦ by
       change j ∈ profile a x ↔ j ∈ T
       rw [hx, Finset.mem_coe]
-    refine ⟨⟨i, hi, (hmem i).2 hi⟩, λ S _ => ?_⟩
+    refine ⟨⟨i, hi, (hmem i).2 hi⟩, fun S _ ↦ ?_⟩
     simp only [hmem]
 
 /-- The revised answer operator returns the true members entailing the cell identifier. -/
@@ -499,7 +500,7 @@ theorem ans_disjClosure {T : Finset ι} (hT : T.Nonempty) {w : W} (hw : profile 
       exact (disj_subset_disj_iff hrich).2 hST
 
 /-- With two or more true atoms, the disjunctive question's answer set has more than one
-member: the mention-some reading. -/
+member, which is the mention-some reading. -/
 theorem not_subsingleton_ans_disjClosure {T : Finset ι} (hT : 1 < T.card) {w : W}
     (hw : profile a w = ↑T) : ¬ (ans (cell (disjClosure a)) (disjClosure a) w).Subsingleton := by
   obtain ⟨i, hi, j, hj, hij⟩ := Finset.one_lt_card.1 hT
@@ -535,8 +536,8 @@ def Row.ofDatum (ex : Datum) : Option Row := do
 
 def rows : List Row := Examples.all.filterMap Row.ofDatum
 
-/-- The theory predicts the islands of the data: a reading is blocked under negation without an
-intervening modal, or for a singular wh-phrase. -/
+/-- The theory predicts the islands of the data, where a reading is blocked under negation
+without an intervening modal, or for a singular wh-phrase. -/
 theorem rows_predicted :
     ∀ r ∈ rows, (r.blocked = true ↔ (r.negation = true ∧ r.modal = false) ∨ r.singular = true) := by
   decide
