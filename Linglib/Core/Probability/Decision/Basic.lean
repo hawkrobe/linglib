@@ -73,7 +73,8 @@ namespace Core.DecisionTheory
 
 variable {K W A : Type*} [Field K] [LinearOrder K] [IsStrictOrderedRing K]
 
-/-- A decision problem `D = (W, A, U, π)` with utility and prior. -/
+/-- A decision problem `D = (W, A, U, π)` has a utility for each action in each world and a
+prior over worlds. -/
 structure DecisionProblem (K W A : Type*) where
   /-- Utility of action `a` in world `w`. -/
   utility : W → A → K
@@ -82,11 +83,10 @@ structure DecisionProblem (K W A : Type*) where
 
 namespace DecisionProblem
 
-/-- The uniform prior over a `Fintype` of worlds (`0` when `W` is empty,
-    since `1 / 0 = 0` in a field). -/
+/-- The uniform prior gives each world the mass `1 / |W|`, which is `0` when `W` is empty. -/
 def uniformPrior [Fintype W] : W → K := fun _ ↦ 1 / Fintype.card W
 
-/-- Create a decision problem with uniform prior. -/
+/-- `withUniformPrior utility` is the decision problem with this utility and the uniform prior. -/
 def withUniformPrior [Fintype W] (utility : W → A → K) : DecisionProblem K W A where
   utility := utility
   prior := uniformPrior
@@ -95,7 +95,7 @@ def withUniformPrior [Fintype W] (utility : W → A → K) : DecisionProblem K W
 
 variable (dp : DecisionProblem K W A)
 
-/-- Expected utility of action `a` given the prior. -/
+/-- The expected utility of action `a` is its utility averaged over the prior. -/
 def expectedUtility [Fintype W] (a : A) : K :=
   ∑ w : W, dp.prior w * dp.utility w a
 
@@ -104,8 +104,8 @@ there is no action. -/
 def value [Fintype W] (actions : Finset A) : K :=
   if h : actions.Nonempty then actions.sup' h dp.expectedUtility else 0
 
-/-- Conditional expected utility of action `a` given cell membership
-    (`0` on zero-mass cells). -/
+/-- The conditional expected utility of action `a` given `cell` averages its utility over the
+prior restricted to `cell`, and is `0` on a cell of zero mass. -/
 def condExpectedUtility (cell : Finset W) (a : A) : K :=
   if cell.sum dp.prior = 0 then 0
   else cell.sum (fun w ↦ (dp.prior w / cell.sum dp.prior) * dp.utility w a)
@@ -115,11 +115,12 @@ utility of an action. -/
 def condValue (actions : Finset A) (cell : Finset W) : K :=
   if h : actions.Nonempty then actions.sup' h (dp.condExpectedUtility cell) else 0
 
-/-- `UV(C) = V(D ∣ C) − V(D)`, the utility value of learning proposition `C`. -/
+/-- The utility value `UV(C) = V(D ∣ C) − V(D)` of learning `C` is the value after learning it
+less the value before. -/
 def utilityValue [Fintype W] (actions : Finset A) (cell : Finset W) : K :=
   dp.condValue actions cell - dp.value actions
 
-/-- Probability of a cell of the partition. -/
+/-- The probability of a cell is its prior mass. -/
 def cellProbability (cell : Finset W) : K :=
   cell.sum dp.prior
 
@@ -198,11 +199,11 @@ end CharacterizationApi
 
 /-! ### Maximin -/
 
-/-- `S(a) = min_w U(w, a)`, the security level of action `a`. -/
+/-- The security level `S(a) = min_w U(w, a)` of action `a` is its worst utility over `worlds`. -/
 def securityLevel (worlds : Finset W) (a : A) : K :=
   if h : worlds.Nonempty then worlds.inf' h (fun w ↦ dp.utility w a) else 0
 
-/-- `MV = max_a min_w U(w, a)`, the maximin value. -/
+/-- The maximin value `MV = max_a min_w U(w, a)` is the best security level of an action. -/
 def maximinValue (worlds : Finset W) (actions : Finset A) : K :=
   if h : actions.Nonempty then actions.sup' h (dp.securityLevel worlds) else 0
 
@@ -233,11 +234,12 @@ variable [DecidableEq W]
 def condSecurityLevel (worlds : Finset W) (a : A) (c : Finset W) : K :=
   dp.securityLevel (worlds ∩ c) a
 
-/-- Maximin value after learning `c`. -/
+/-- The maximin value after learning `c` is the maximin value over the worlds of `c`. -/
 def condMaximinValue (worlds : Finset W) (actions : Finset A) (c : Finset W) : K :=
   dp.maximinValue (worlds ∩ c) actions
 
-/-- Maximin utility value of learning `c`. -/
+/-- The maximin utility value of learning `c` is the maximin value after learning `c` less the
+maximin value before. -/
 def maximinUtilityValue (worlds : Finset W) (actions : Finset A) (c : Finset W) : K :=
   dp.condMaximinValue worlds actions c - dp.maximinValue worlds actions
 
@@ -252,8 +254,7 @@ every other in every world of `c` ([van-rooy-2003]). -/
 def IsResolved (dp : DecisionProblem K W A) (acts : Set A) (c : Set W) : Prop :=
   ∃ a ∈ acts, ∀ b ∈ acts, ∀ w ∈ c, dp.utility w b ≤ dp.utility w a
 
-/-- Decidability of `IsResolved` under finite, decidable carriers — the
-    prerequisite for `decide`-based evaluation in worked study examples. -/
+/-- `IsResolved` is decidable over finite, decidable sets of actions and worlds. -/
 instance IsResolved.instDecidable (dp : DecisionProblem K W A) (acts : Set A) (c : Set W)
     [Fintype A] [DecidablePred (· ∈ acts)] [Fintype W] [DecidablePred (· ∈ c)] :
     Decidable (IsResolved dp acts c) := by
@@ -261,13 +262,14 @@ instance IsResolved.instDecidable (dp : DecisionProblem K W A) (acts : Set A) (c
 
 /-! ### Question utility -/
 
-/-- `EUV(Q) = ∑_{q ∈ Q} P(q) · UV(q)`, the expected utility value of
-    question `Q`. -/
+/-- The expected utility value `EUV(Q) = ∑_{q ∈ Q} P(q) · UV(q)` of the question `Q` weights the
+utility value of each cell by its probability. -/
 def questionUtility [Fintype W] (dp : DecisionProblem K W A) (actions : Finset A)
     (cells : Finset (Finset W)) : K :=
   cells.sum (fun cell ↦ dp.cellProbability cell * dp.utilityValue actions cell)
 
-/-- `MV(Q) = min_{q ∈ Q} MV(q)`, the maximin question value. -/
+/-- The maximin question value `MV(Q) = min_{q ∈ Q} MV(q)` is the least maximin utility value of
+a cell of `Q`. -/
 def questionMaximin [DecidableEq W] (dp : DecisionProblem K W A) (worlds : Finset W)
     (actions : Finset A) (q : List (Finset W)) : K :=
   match q with
@@ -295,8 +297,8 @@ noncomputable def valueSampleInfo [Fintype W] (dp : DecisionProblem K W A)
     | none => 0
   dp.condValue actions cell - currentActionEU
 
-/-- The expected value of sample information `EVSI(Q) = ∑ P(C) · VSI(C)` of asking the
-question `Q`. -/
+/-- The expected value of sample information `EVSI(Q) = ∑ P(C) · VSI(C)` of asking the question
+`Q` weights the value of sample information of each cell by its probability. -/
 noncomputable def expectedValueSampleInfo [Fintype W] (dp : DecisionProblem K W A)
     (actions : Finset A) (cells : Finset (Finset W)) : K :=
   cells.sum (fun cell ↦ dp.cellProbability cell * valueSampleInfo dp actions cell)
@@ -370,7 +372,7 @@ theorem sum_cellProbability_parts (dp : DecisionProblem K W A) :
     ∑ c ∈ Q.parts, dp.cellProbability c = ∑ w, dp.prior w :=
   Q.sum_parts_sum dp.prior
 
-/-- The law of total expectation over a partition. -/
+/-- The law of total expectation holds over a partition. -/
 theorem sum_cellProbability_mul_condExpectedUtility (dp : DecisionProblem K W A)
     (hprior : ∀ w, 0 ≤ dp.prior w) (a : A) :
     ∑ c ∈ Q.parts, dp.cellProbability c * dp.condExpectedUtility c a = dp.expectedUtility a := by
@@ -409,25 +411,16 @@ theorem questionUtility_parts_eq_zero (dp : DecisionProblem K W A) {actions : Fi
 
 end EuvEvsi
 
-/-! ### Refinement monotonicity (Blackwell forward direction / [van-rooy-2003] §4.1)
+/-! ### Refinement monotonicity
 
-[van-rooy-2003] p. 743 states that `Q ⊑ Q' ↔ ∀ DP, EUV(Q) ≥ EUV(Q')` is "a special
-case of [blackwell-1953]". The `⟹` ("only if") direction is the data-processing /
-Jensen inequality: a *finer* question can only raise question utility. We prove it
-directly at the `questionUtility` level; the kernel-level fact it specializes —
-coarsening a deterministic classifier is a Markov garbling, so the finer partition
-has lower Bayes risk in every decision problem — is
-`ProbabilityTheory.bayesRisk_deterministic_le_deterministic_comp` in
-`Core.Probability.Decision.Blackwell`, and
-`ObservationModel.eig_deterministic_eq_questionUtility` in
-`Core.Probability.Decision.ExperimentDesign` identifies `questionUtility` with the
-expected value of the corresponding deterministic experiment.
-
-The mathematical core is the **unnormalized cell value** `maxₐ ∑_{w∈c} P(w)·U(w,a)`,
-which equals `P(c)·V(D|c)` (`cellProbability_mul_condValue_eq_uValue`) and is
-**superadditive** under splitting a cell into disjoint pieces
-(`uValue_union_le`): the max of a sum is at most the sum of the maxes. Summed over a
-partition, this gives `questionUtility (finer) ≥ questionUtility (coarser)`. -/
+[van-rooy-2003] states on p. 743 that one question refines another exactly when it is at least
+as useful in every decision problem, "a special case of [blackwell-1953]". This section proves
+the direction that a finer question can only raise question utility. The unnormalized value
+`maxₐ ∑_{w∈c} P(w)·U(w,a)` of a cell equals `P(c)·V(D|c)` and is superadditive under
+splitting the cell, since the best of a sum is at most the sum of the bests; summing over a
+partition gives the inequality. For arbitrary experiments in place of partitions, the same
+direction is `valueOfInformation_decisionValue_comp_le` in
+`Core.Probability.Decision.ValueOfInformation`. -/
 
 section Refinement
 
@@ -477,12 +470,8 @@ theorem cellProbability_mul_condValue_union_le (dp : DecisionProblem K W A)
     cellProbability_mul_condValue_eq_uValue dp acts _ hprior]
   exact uValue_union_le dp acts hdisj
 
-/-- **Question utility rises under refinement (binary split)** — the `⟹` ("only if")
-direction of [van-rooy-2003]'s §4.1 Fact (p. 743), in its elementary case. Splitting one
-cell `c₁ ∪ c₂` of a question into the two disjoint cells `c₁`, `c₂` can only increase the
-expected utility value `EUV`. This is the finite-partition instance of [blackwell-1953]'s
-data-processing inequality; any finite refinement of one partition by another is a
-composition of such binary splits, so iterating gives the full §4.1 monotonicity. -/
+/-- Splitting one cell `c₁ ∪ c₂` of a question into the disjoint cells `c₁` and `c₂` can only
+raise its expected utility value. -/
 theorem questionUtility_split_ge [Fintype W] (dp : DecisionProblem K W A)
     (acts : Finset A) {c₁ c₂ : Finset W} (rest : Finset (Finset W))
     (hdisj : Disjoint c₁ c₂) (hprior : ∀ w, 0 ≤ dp.prior w)

@@ -1,11 +1,10 @@
 module
 
-public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Data.Finset.Powerset
+public import Mathlib.InformationTheory.KullbackLeibler.Basic
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Core.Analysis.SpecialFunctions.Softmax
-public import Linglib.Core.Probability.UniformOn
-public import Linglib.Core.Probability.Decision.ExperimentDesign
+public import Linglib.Core.Probability.Decision.ValueOfInformation
 
 /-!
 # Hawkins, Tsvilodub, Bergey, Goodman and Franke (2025): Relevant answers to polar questions
@@ -16,50 +15,50 @@ respondent `R0` answers with any true and safe response (2.1), where a response 
 a question when a questioner who knew it would know the answer (`Safe`, with the
 belief-state characterization `safe_iff_forall_settles`). The questioner `questioner`
 soft-maximizes the expected value of the decision problem updated by the base respondent's
-answer less its cost (2.3), with the Bayesian update (2.4) as the posterior of the
-observation model `R0Model` and the policy value of (2.2) as `value`;
-`questionScore_eq_eig` identifies the score with [lindley-1956]'s expected information gain
-of the question as an experiment. The pragmatic respondent `respondent` infers the
-questioner's decision problem from the question (`respondentPosterior`,
-`respondentPosterior_lt_iff`: a question is a signal about the goal) and soft-maximizes a
-mixture of informativity and action relevance less cost (2.5); `respondentScore_beta_one`
-and `respondentScore_beta_zero` are its two pure ends. `posterior_lt_iff_card` is the size
-principle of §2b: a response is strengthened towards the worlds with fewer true and safe
-alternatives.
+answer less its cost (2.3), with the Bayesian update (2.4) as the posterior of the base
+respondent's kernel `R0Kernel` and the policy value of (2.2) as `value`;
+`questionScore_eq_valueOfInformation` reads the score as the value of information of the
+question under the policy value. The pragmatic respondent `respondent` infers the questioner's
+decision problem from the question (`respondentPosterior`, `respondentPosterior_lt_iff`: a
+question is a signal about the goal) and soft-maximizes a mixture of informativity and action
+relevance less cost (2.5); `respondentScore_beta_one` and `respondentScore_beta_zero` are its
+two pure ends. `posterior_R0Kernel_real_lt_iff` is the size principle of §2b: a response is
+strengthened towards the worlds with fewer true and safe alternatives.
 
 Case study 1 (§3a) instantiates the model on the credit cards: `polar_exhaustive_safe` and
 `mention_safe_iff` classify the responses, `yes_value_eq_exhaustive` is the reason the
 exhaustive list is dispreferred after a question about a card the questioner holds (3), and
-`generalYes_posterior_pos` the residual uncertainty after the general question (5).
+`generalYes_posterior_ne_zero` the residual uncertainty after the general question (5).
 
 ## Implementation notes
 
-* The questioner and the pragmatic respondent are `Real.softmax` over their scores; beliefs are
-  functions `W → ℝ`, as in `ProbabilityTheory.ObservationModel`, and the Kullback–Leibler term
-  of (2.5) is the finite sum `kl` in the direction the paper writes it.
+* Beliefs over worlds are probability measures and the base respondent to a question is a
+  kernel from worlds to responses, so the update (2.4) is its posterior and the
+  Kullback–Leibler term of (2.5) is `klDiv`, in the direction the paper writes it. The
+  questioner, the pragmatic respondent and its belief over decision problems are
+  `Real.softmax` weight vectors.
 * The safe base respondent of (2.1) and its truth-only relaxation `R0'` of §2c are
-  `ProbabilityTheory.uniformOn` over the true and safe (respectively true) responses, and the
-  observation models take their point masses as likelihoods. The observation model needs every
-  world to admit a true and safe response, which `polar_admissible` supplies for polar
-  questions.
+  `ProbabilityTheory.uniformOn` over the true and safe (respectively true) responses. The base
+  respondent always responds when every world admits a true and safe response, which
+  `polar_admissible` supplies for polar questions.
 * The case study fixes the parameters the paper leaves free only where a theorem needs a
   sign; the fitted values of the electronic supplementary material are not reproduced.
 
 ## TODO
 
 * Case studies 2 and 3 (the iced tea and blanket vignettes) with the elicited utilities.
+* The respondent's belief over decision problems as the posterior of the questioner's kernel.
 
 ## References
 
 * [hawkins-etal-2025]
-* [lindley-1956]
 -/
 
 @[expose] public section
 
 namespace HawkinsEtAl2025
 
-open MeasureTheory ProbabilityTheory Finset
+open MeasureTheory ProbabilityTheory InformationTheory Finset
 
 variable {W Q R A D : Type*}
 
@@ -76,27 +75,27 @@ instance [Fintype W] (q r : W → Prop) [DecidablePred q] [DecidablePred r] :
     Decidable (Safe q r) :=
   inferInstanceAs (Decidable (_ ∨ _))
 
-/-- Safety in belief states: every state verifying `r` settles `q`. -/
+/-- A response is safe exactly when every belief state verifying `r` settles `q`. -/
 theorem safe_iff_forall_settles (q r : W → Prop) :
     Safe q r ↔ ∀ s : Set W, s ⊆ {w | r w} → Settles s q := by
   constructor
   · rintro (h | h) s hs
-    · exact Or.inl λ w hw => h w (hs hw)
-    · exact Or.inr λ w hw => h w (hs hw)
+    · exact Or.inl fun w hw ↦ h w (hs hw)
+    · exact Or.inr fun w hw ↦ h w (hs hw)
   · intro h
     rcases h {w | r w} le_rfl with h' | h'
-    · exact Or.inl λ w hw => h' hw
-    · exact Or.inr λ w hw => h' hw
+    · exact Or.inl fun w hw ↦ h' hw
+    · exact Or.inr fun w hw ↦ h' hw
 
-theorem safe_self (q : W → Prop) : Safe q q := Or.inl λ _ h => h
+theorem safe_self (q : W → Prop) : Safe q q := Or.inl fun _ h ↦ h
 
-theorem safe_not (q : W → Prop) : Safe q (λ w => ¬ q w) := Or.inr λ _ h => h
+theorem safe_not (q : W → Prop) : Safe q (fun w ↦ ¬ q w) := Or.inr fun _ h ↦ h
 
 /-! ### The model -/
 
-/-- A PRIOR-PQ model: the propositions questions and responses denote, the questioner's
-decision problems, and the cost of responses. -/
-structure Model (W Q R A D : Type*) where
+/-- A PRIOR-PQ model gives the propositions that questions and responses denote, the
+questioner's decision problems, and the cost of responses. -/
+structure Model (W Q R A D : Type*) [MeasurableSpace W] where
   /-- The proposition a polar question asks about. -/
   question : Q → W → Prop
   /-- The proposition a response asserts. -/
@@ -104,31 +103,56 @@ structure Model (W Q R A D : Type*) where
   /-- The utility function of a decision problem. -/
   utility : D → W → A → ℝ
   /-- The questioner's prior over worlds under a decision problem. -/
-  prior : D → W → ℝ
+  prior : D → Measure W
   /-- The production cost of a response. -/
   cost : R → ℝ
 
-variable (m : Model W Q R A D) [∀ q, DecidablePred (m.question q)]
-  [∀ r, DecidablePred (m.response r)] [Fintype R] [Fintype W]
+variable [MeasurableSpace W] [MeasurableSpace R] (m : Model W Q R A D)
 
 /-- A response is admissible at a world and question when it is true there and safe. -/
 def Model.Admissible (w : W) (q : Q) (r : R) : Prop :=
   m.response r w ∧ Safe (m.question q) (m.response r)
 
-instance (w : W) (q : Q) (r : R) : Decidable (m.Admissible w q r) :=
+instance [Fintype W] [∀ q, DecidablePred (m.question q)] [∀ r, DecidablePred (m.response r)]
+    (w : W) (q : Q) (r : R) : Decidable (m.Admissible w q r) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
 section BaseRespondent
 
-variable [MeasurableSpace R] [MeasurableSingletonClass R]
-
-/-- (2.1): the base-level respondent, uniform over the true and safe responses. -/
+/-- The base-level respondent (2.1) is uniform over the true and safe responses. -/
 noncomputable def Model.R0 (w : W) (q : Q) : Measure R := uniformOn {r | m.Admissible w q r}
 
-/-- §2c: the truth-only relaxation of the base respondent, uniform over the true responses. -/
+/-- The truth-only relaxation of the base respondent (§2c) is uniform over the true responses. -/
 noncomputable def Model.R0' (w : W) : Measure R := uniformOn {r | m.response r w}
 
-/-- The number of true and safe responses at a world and question. -/
+section Kernel
+
+variable [DiscreteMeasurableSpace W] [Countable W]
+
+/-- The base respondent to the question `q` draws a response at each world. -/
+noncomputable def Model.R0Kernel (q : Q) : Kernel W R :=
+  Kernel.ofFunOfCountable fun w ↦ m.R0 w q
+
+/-- The truth-only base respondent draws a response at each world. -/
+noncomputable def Model.R0Kernel' : Kernel W R :=
+  Kernel.ofFunOfCountable fun w ↦ m.R0' w
+
+@[simp] theorem Model.R0Kernel_apply (q : Q) (w : W) : m.R0Kernel q w = m.R0 w q := rfl
+
+instance (q : Q) : IsFiniteKernel (m.R0Kernel q) :=
+  ⟨⟨1, ENNReal.one_lt_top, fun w ↦ show uniformOn {r | m.Admissible w q r} Set.univ ≤ 1 from
+    prob_le_one⟩⟩
+
+instance : IsFiniteKernel m.R0Kernel' :=
+  ⟨⟨1, ENNReal.one_lt_top, fun w ↦ show uniformOn {r | m.response r w} Set.univ ≤ 1 from
+    prob_le_one⟩⟩
+
+end Kernel
+
+variable [∀ q, DecidablePred (m.question q)] [∀ r, DecidablePred (m.response r)] [Fintype W]
+  [Fintype R] [MeasurableSingletonClass R]
+
+/-- `admissibleCard w q` counts the true and safe responses to `q` at `w`. -/
 def Model.admissibleCard (w : W) (q : Q) : ℕ := (univ.filter (m.Admissible w q)).card
 
 /-- The base respondent gives each true and safe response the reciprocal of their number, and
@@ -147,92 +171,63 @@ theorem Model.R0_real_singleton (w : W) (q : Q) (r : R) :
     simp [h]
 
 /-- The base respondent gives a response positive probability iff it is true and safe. -/
-theorem Model.R0_real_pos_iff {w : W} {q : Q} {r : R} (h : 0 < m.admissibleCard w q) :
-    0 < (m.R0 w q).real {r} ↔ m.Admissible w q r := by
-  have hcard : (0 : ℝ) < m.admissibleCard w q := by exact_mod_cast h
-  rw [m.R0_real_singleton]
-  split_ifs with hadm
-  · simp [hadm, hcard]
-  · simp [hadm]
+theorem Model.R0_apply_singleton_ne_zero_iff {w : W} {q : Q} {r : R} :
+    m.R0 w q {r} ≠ 0 ↔ m.Admissible w q r := by
+  classical
+  rw [Model.R0, ← Finset.coe_filter_univ, uniformOn_finset_apply_singleton]
+  simp
 
-/-- The base respondent as an observation model, with questions as experiments and
-responses as observations, given that every world admits a true and safe response. -/
-noncomputable def Model.R0Model (h : ∀ w q, 0 < m.admissibleCard w q) :
-    ObservationModel W Q R where
-  likelihood w q r := (m.R0 w q).real {r}
-  likelihood_nonneg _ _ _ := measureReal_nonneg
-  likelihood_sum w q := by
+variable [DiscreteMeasurableSpace W]
+
+/-- When every world admits a true and safe response, the base respondent always responds. -/
+theorem Model.isMarkovKernel_R0Kernel (h : ∀ w q, 0 < m.admissibleCard w q) (q : Q) :
+    IsMarkovKernel (m.R0Kernel q) :=
+  ⟨fun w ↦ by
     obtain ⟨r, hr⟩ := Finset.card_pos.1 (h w q)
-    have : IsProbabilityMeasure (m.R0 w q) :=
-      isProbabilityMeasure_uniformOn (Set.toFinite _) ⟨r, (Finset.mem_filter.1 hr).2⟩
-    rw [sum_measureReal_singleton, Finset.coe_univ]
-    exact probReal_univ
+    exact isProbabilityMeasure_uniformOn (Set.toFinite _) ⟨r, (Finset.mem_filter.1 hr).2⟩⟩
 
-/-- The truth-only base respondent as an observation model, given that every world makes
-some response true. -/
-noncomputable def Model.R0Model' (h : ∀ w, ∃ r, m.response r w) : ObservationModel W Q R where
-  likelihood w _ r := (m.R0' w).real {r}
-  likelihood_nonneg _ _ _ := measureReal_nonneg
-  likelihood_sum w _ := by
-    have : IsProbabilityMeasure (m.R0' w) := isProbabilityMeasure_uniformOn (Set.toFinite _) (h w)
-    rw [sum_measureReal_singleton, Finset.coe_univ]
-    exact probReal_univ
+section Posterior
 
-section Positivity
+variable {d : D} (hπ : ∀ w, m.prior d {w} ≠ 0)
+include hπ
 
-variable (h : ∀ w q, 0 < m.admissibleCard w q) (d : D)
+/-- Under a prior of full support, a response has positive marginal when some world admits
+it. -/
+theorem Model.R0Kernel_comp_apply_ne_zero {q : Q} {r : R} {w : W} (hadm : m.Admissible w q r) :
+    (m.R0Kernel q ∘ₘ m.prior d) {r} ≠ 0 := by
+  rw [Measure.comp_apply_singleton, Ne, Finset.sum_eq_zero_iff]
+  exact fun h ↦ mul_ne_zero (hπ w) (m.R0_apply_singleton_ne_zero_iff.2 hadm) (h w (mem_univ w))
 
-theorem Model.R0Model_likelihood_pos_iff {w : W} {q : Q} {r : R} :
-    0 < (m.R0Model h).likelihood w q r ↔ m.Admissible w q r :=
-  m.R0_real_pos_iff (h w q)
+variable [Nonempty W] [IsFiniteMeasure (m.prior d)]
 
-/-- The marginal of a response is positive when some world of positive prior admits it. -/
-theorem Model.R0Model_marginal_pos (hπ : ∀ w, 0 < m.prior d w) {q : Q} {r : R} {w : W}
-    (hadm : m.Admissible w q r) : 0 < (m.R0Model h).marginal (m.prior d) q r :=
-  lt_of_lt_of_le (mul_pos (hπ w) ((m.R0Model_likelihood_pos_iff h).2 hadm))
-    (single_le_sum (λ w' _ => mul_nonneg (hπ w').le ((m.R0Model h).likelihood_nonneg w' q r))
-      (mem_univ w))
+/-- Under a prior of full support, a world keeps positive posterior after a response iff the
+response is true and safe there. -/
+theorem Model.posterior_R0Kernel_apply_ne_zero_iff {q : Q} {r : R}
+    (hm : (m.R0Kernel q ∘ₘ m.prior d) {r} ≠ 0) {w : W} :
+    ((m.R0Kernel q)†(m.prior d)) r {w} ≠ 0 ↔ m.Admissible w q r := by
+  rw [posterior_apply_singleton_ne_zero_iff _ _ hm]
+  exact ⟨fun h ↦ m.R0_apply_singleton_ne_zero_iff.1 h.2,
+    fun h ↦ ⟨hπ w, m.R0_apply_singleton_ne_zero_iff.2 h⟩⟩
 
-/-- Under positive priors a world has positive posterior after a response iff the response
-is true and safe there. -/
-theorem Model.R0Model_posterior_pos_iff (hπ : ∀ w, 0 < m.prior d w) {q : Q} {r : R}
-    (hm : (m.R0Model h).marginal (m.prior d) q r ≠ 0) {w : W} :
-    0 < (m.R0Model h).posterior (m.prior d) q r w ↔ m.Admissible w q r := by
-  have hmpos : 0 < (m.R0Model h).marginal (m.prior d) q r :=
-    lt_of_le_of_ne ((m.R0Model h).marginal_nonneg (λ w => (hπ w).le) q r) hm.symm
-  simp only [ObservationModel.posterior, hm, ↓reduceIte]
-  rw [div_pos_iff_of_pos_right hmpos]
-  constructor
-  · intro hpos
-    exact (m.R0Model_likelihood_pos_iff h).1 (pos_of_mul_pos_right hpos (hπ w).le)
-  · intro hadm
-    exact mul_pos (hπ w) ((m.R0Model_likelihood_pos_iff h).2 hadm)
+end Posterior
 
-end Positivity
-
-/-- The size principle (§2b): between two worlds of equal prior at which a response is true
+/-- By the size principle (§2b), between two worlds of equal prior at which a response is true
 and safe, the posterior favours the world with fewer true and safe alternatives. -/
-theorem Model.posterior_lt_iff_card (h : ∀ w q, 0 < m.admissibleCard w q) (d : D) (q : Q)
-    (r : R) {w₁ w₂ : W} (hπ : ∀ w, 0 ≤ m.prior d w) (hp : m.prior d w₁ = m.prior d w₂)
-    (hpos : 0 < m.prior d w₁) (h₁ : m.Admissible w₁ q r) (h₂ : m.Admissible w₂ q r)
-    (hm : (m.R0Model h).marginal (m.prior d) q r ≠ 0) :
-    (m.R0Model h).posterior (m.prior d) q r w₁ < (m.R0Model h).posterior (m.prior d) q r w₂ ↔
+theorem Model.posterior_R0Kernel_real_lt_iff [Nonempty W] {d : D} [IsFiniteMeasure (m.prior d)]
+    {q : Q} {r : R} {w₁ w₂ : W} (hp : m.prior d {w₁} = m.prior d {w₂})
+    (hpos : m.prior d {w₁} ≠ 0) (h₁ : m.Admissible w₁ q r) (h₂ : m.Admissible w₂ q r)
+    (hm : (m.R0Kernel q ∘ₘ m.prior d) {r} ≠ 0) :
+    (((m.R0Kernel q)†(m.prior d)) r).real {w₁} < (((m.R0Kernel q)†(m.prior d)) r).real {w₂} ↔
       m.admissibleCard w₂ q < m.admissibleCard w₁ q := by
-  have hmpos : 0 < (m.R0Model h).marginal (m.prior d) q r :=
-    lt_of_le_of_ne ((m.R0Model h).marginal_nonneg hπ q r) hm.symm
-  have hc : ∀ w, (0 : ℝ) < m.admissibleCard w q := λ w => by exact_mod_cast h w q
-  have hlik : ∀ w, m.Admissible w q r →
-      (m.R0Model h).likelihood w q r = 1 / (m.admissibleCard w q : ℝ) := by
-    intro w hw
-    show (m.R0 w q).real {r} = _
-    simp only [m.R0_real_singleton, hw, ↓reduceIte, one_div]
-  simp only [ObservationModel.posterior, hm, ↓reduceIte, hlik w₁ h₁, hlik w₂ h₂, ← hp]
-  rw [div_lt_div_iff_of_pos_right hmpos]
-  constructor
-  · intro hlt
-    exact_mod_cast lt_of_one_div_lt_one_div (hc w₁) (lt_of_mul_lt_mul_left hlt hpos.le)
-  · intro hlt
-    exact mul_lt_mul_of_pos_left (one_div_lt_one_div_of_lt (hc w₂) (by exact_mod_cast hlt)) hpos
+  have hc : ∀ w, m.Admissible w q r → (0 : ℝ) < m.admissibleCard w q := fun w hw ↦
+    Nat.cast_pos.2 (Finset.card_pos.2 ⟨r, Finset.mem_filter.2 ⟨mem_univ r, hw⟩⟩)
+  have hμ : 0 < (m.prior d).real {w₁} := ENNReal.toReal_pos hpos (measure_ne_top _ _)
+  have := posterior_real_finset_lt_iff (m.R0Kernel q) (m.prior d) hm {w₁} {w₂}
+  simp only [Finset.coe_singleton, Finset.sum_singleton] at this
+  have hp' : (m.prior d).real {w₂} = (m.prior d).real {w₁} := by
+    rw [measureReal_def, measureReal_def, hp]
+  simp only [Model.R0Kernel_apply, m.R0_real_singleton, h₁, h₂, ↓reduceIte] at this
+  rw [this, hp', mul_lt_mul_iff_of_pos_left hμ, inv_lt_inv₀ (hc w₁ h₁) (hc w₂ h₂), Nat.cast_lt]
 
 end BaseRespondent
 
@@ -240,151 +235,136 @@ end BaseRespondent
 
 variable [Fintype A]
 
-/-- (2.2): the policy of a decision problem under beliefs `π`, a softmax over expected
-utility with rationality `αℵ`. -/
-noncomputable def policy (U : W → A → ℝ) (αℵ : ℝ) (π : W → ℝ) : A → ℝ :=
-  Real.softmax (λ a => αℵ * ∑ w, π w * U w a)
+/-- The policy (2.2) of a decision problem under beliefs `π` is a softmax over expected utility
+with rationality `αℵ`. -/
+noncomputable def policy (U : W → A → ℝ) (αℵ : ℝ) (π : Measure W) : A → ℝ :=
+  Real.softmax fun a ↦ αℵ * ∫ w, U w a ∂π
 
-/-- The value `V(D)` of a decision problem: the expected utility of following its policy. -/
-noncomputable def value [Nonempty A] (U : W → A → ℝ) (αℵ : ℝ) (π : W → ℝ) : ℝ :=
-  ∑ a, policy U αℵ π a * ∑ w, π w * U w a
+/-- The value `V(D)` of a decision problem is the expected utility of following its policy. -/
+noncomputable def value [Nonempty A] (U : W → A → ℝ) (αℵ : ℝ) (π : Measure W) : ℝ :=
+  ∑ a, policy U αℵ π a * ∫ w, U w a ∂π
 
 variable [Nonempty A]
 
 omit [Fintype A] [Nonempty A] in
-/-- Beliefs whose support sees a constant utility profile have that profile as expected
+/-- A belief under which the utility profile is almost surely `c` has `c` as expected
 utility. -/
-theorem expectedUtility_eq_of_support {π : W → ℝ} {U : W → A → ℝ} {c : A → ℝ}
-    (hsum : ∑ w, π w = 1) (hU : ∀ w, π w ≠ 0 → ∀ a, U w a = c a) (a : A) :
-    ∑ w, π w * U w a = c a := by
-  calc ∑ w, π w * U w a = ∑ w, π w * c a := by
-        refine sum_congr rfl λ w _ => ?_
-        by_cases hw : π w = 0
-        · simp [hw]
-        · rw [hU w hw a]
-    _ = c a := by rw [← sum_mul, hsum, one_mul]
+theorem integral_eq_of_ae {π : Measure W} [IsProbabilityMeasure π] {U : W → A → ℝ}
+    {c : A → ℝ} (hU : ∀ᵐ w ∂π, U w = c) (a : A) : ∫ w, U w a ∂π = c a := by
+  rw [integral_congr_ae (hU.mono fun w hw ↦ congrFun hw a)]
+  simp
 
-/-- Two beliefs seeing the same constant utility profile have the same value. -/
-theorem value_eq_of_support {π π' : W → ℝ} {U : W → A → ℝ} {c : A → ℝ} (αℵ : ℝ)
-    (hsum : ∑ w, π w = 1) (hsum' : ∑ w, π' w = 1)
-    (hU : ∀ w, π w ≠ 0 → ∀ a, U w a = c a) (hU' : ∀ w, π' w ≠ 0 → ∀ a, U w a = c a) :
+/-- Two beliefs under which the utility profile is almost surely the same have the same
+value. -/
+theorem value_eq_of_ae {π π' : Measure W} [IsProbabilityMeasure π] [IsProbabilityMeasure π']
+    {U : W → A → ℝ} {c : A → ℝ} (αℵ : ℝ) (hU : ∀ᵐ w ∂π, U w = c) (hU' : ∀ᵐ w ∂π', U w = c) :
     value U αℵ π = value U αℵ π' := by
-  simp only [value, policy, expectedUtility_eq_of_support hsum hU,
-    expectedUtility_eq_of_support hsum' hU']
+  simp only [value, policy, integral_eq_of_ae hU, integral_eq_of_ae hU']
 
-/-- The expected value to the questioner of asking `q` (2.3): the expected value of the
-updated decision problem after the base respondent's answer, less the weighted cost. -/
-noncomputable def Model.questionScore (om : ObservationModel W Q R) (αℵ wc : ℝ) (d : D)
-    (q : Q) : ℝ :=
-  ∑ r, om.marginal (m.prior d) q r *
-    (value (m.utility d) αℵ (om.posterior (m.prior d) q r) - wc * m.cost r)
+variable [StandardBorelSpace W] [Nonempty W] [∀ d, IsFiniteMeasure (m.prior d)]
+  (κ : Q → Kernel W R) [∀ q, IsFiniteKernel (κ q)]
 
-omit [∀ q, DecidablePred (m.question q)] [∀ r, DecidablePred (m.response r)] in
-/-- The question score is [lindley-1956]'s expected information gain of the question under
-the policy value, plus the value of the prior, less the expected cost. -/
-theorem Model.questionScore_eq_eig (om : ObservationModel W Q R) (αℵ wc : ℝ) (d : D) (q : Q) :
-    m.questionScore om αℵ wc d q =
-      om.eig (m.prior d) (value (m.utility d) αℵ) q + value (m.utility d) αℵ (m.prior d) -
-        wc * ∑ r, om.marginal (m.prior d) q r * m.cost r := by
-  have hcost : ∑ r, om.marginal (m.prior d) q r * (wc * m.cost r) =
-      wc * ∑ r, om.marginal (m.prior d) q r * m.cost r := by
-    rw [mul_sum]; exact sum_congr rfl λ r _ => by ring
-  simp only [Model.questionScore, ObservationModel.eig, mul_sub, sum_sub_distrib, hcost]
+/-- The expected value to the questioner of asking `q` (2.3) is the expected value of the
+updated decision problem after the response drawn by `κ q`, less the weighted cost. -/
+noncomputable def Model.questionScore (αℵ wc : ℝ) (d : D) (q : Q) : ℝ :=
+  ∫ r, (value (m.utility d) αℵ (((κ q)†(m.prior d)) r) - wc * m.cost r) ∂(κ q ∘ₘ m.prior d)
+
+/-- The question score is the value of information of the question under the policy value, plus
+the value of the prior, less the expected cost. -/
+theorem Model.questionScore_eq_valueOfInformation [Finite R] [MeasurableSingletonClass R]
+    (αℵ wc : ℝ) (d : D) (q : Q) :
+    m.questionScore κ αℵ wc d q =
+      valueOfInformation (value (m.utility d) αℵ) (κ q) (m.prior d) +
+        value (m.utility d) αℵ (m.prior d) - wc * ∫ r, m.cost r ∂(κ q ∘ₘ m.prior d) := by
+  rw [Model.questionScore, integral_sub .of_finite .of_finite, integral_const_mul,
+    valueOfInformation]
   ring
 
 variable [Fintype Q]
 
-/-- (2.3): the questioner, a softmax over question scores with rationality `αQ`. -/
-noncomputable def Model.questioner (om : ObservationModel W Q R) (αℵ wc αQ : ℝ) (d : D) :
-    Q → ℝ :=
-  Real.softmax (αQ • m.questionScore om αℵ wc d)
+/-- The questioner (2.3) is a softmax over question scores with rationality `αQ`. -/
+noncomputable def Model.questioner (αℵ wc αQ : ℝ) (d : D) : Q → ℝ :=
+  Real.softmax (αQ • m.questionScore κ αℵ wc d)
 
 /-! ### The pragmatic respondent (§2c) -/
 
 variable [Fintype D]
 
-/-- The respondent's posterior over decision problems after hearing `q`: Bayesian theory of
-mind through the questioner, `π(D ∣ q) ∝ Q(q ∣ D) π(D)`. -/
-noncomputable def Model.respondentPosterior (om : ObservationModel W Q R) (αℵ wc αQ : ℝ)
-    (πD : D → ℝ) (q : Q) (d : D) : ℝ :=
-  let z := ∑ d', m.questioner om αℵ wc αQ d' q * πD d'
-  if z = 0 then 0 else m.questioner om αℵ wc αQ d q * πD d / z
+/-- The respondent's posterior over decision problems after hearing `q` inverts the questioner
+by Bayes' rule, `π(D ∣ q) ∝ Q(q ∣ D) π(D)`. -/
+noncomputable def Model.respondentPosterior (αℵ wc αQ : ℝ) (πD : D → ℝ) (q : Q) (d : D) : ℝ :=
+  let z := ∑ d', m.questioner κ αℵ wc αQ d' q * πD d'
+  if z = 0 then 0 else m.questioner κ αℵ wc αQ d q * πD d / z
 
-omit [∀ q, DecidablePred (m.question q)] [∀ r, DecidablePred (m.response r)] in
 /-- A question is a signal about the goal: with equal priors, the decision problem under
 which the question was the more probable is the more probable after it. -/
-theorem Model.respondentPosterior_lt_iff (om : ObservationModel W Q R) (αℵ wc αQ : ℝ)
-    (πD : D → ℝ) (hπ : ∀ d, 0 ≤ πD d) (q : Q) {d₁ d₂ : D} (hp : πD d₁ = πD d₂)
-    (hpos : 0 < πD d₁)
-    (hz : ∑ d', m.questioner om αℵ wc αQ d' q * πD d' ≠ 0) :
-    m.respondentPosterior om αℵ wc αQ πD q d₁ <
-        m.respondentPosterior om αℵ wc αQ πD q d₂ ↔
-      m.questioner om αℵ wc αQ d₁ q <
-        m.questioner om αℵ wc αQ d₂ q := by
+theorem Model.respondentPosterior_lt_iff (αℵ wc αQ : ℝ) (πD : D → ℝ) (hπ : ∀ d, 0 ≤ πD d)
+    (q : Q) {d₁ d₂ : D} (hp : πD d₁ = πD d₂) (hpos : 0 < πD d₁)
+    (hz : ∑ d', m.questioner κ αℵ wc αQ d' q * πD d' ≠ 0) :
+    m.respondentPosterior κ αℵ wc αQ πD q d₁ < m.respondentPosterior κ αℵ wc αQ πD q d₂ ↔
+      m.questioner κ αℵ wc αQ d₁ q < m.questioner κ αℵ wc αQ d₂ q := by
   have : Nonempty Q := ⟨q⟩
-  have hzpos : 0 < ∑ d', m.questioner om αℵ wc αQ d' q * πD d' :=
-    lt_of_le_of_ne (sum_nonneg λ d' _ =>
+  have hzpos : 0 < ∑ d', m.questioner κ αℵ wc αQ d' q * πD d' :=
+    lt_of_le_of_ne (sum_nonneg fun d' _ ↦
       mul_nonneg (Real.softmax_nonneg _ q) (hπ d')) (Ne.symm hz)
   simp only [Model.respondentPosterior, hz, ↓reduceIte, ← hp]
   rw [div_lt_div_iff_of_pos_right hzpos]
-  exact ⟨λ hlt => lt_of_mul_lt_mul_right hlt hpos.le,
-    λ hlt => mul_lt_mul_of_pos_right hlt hpos⟩
+  exact ⟨fun hlt ↦ lt_of_mul_lt_mul_right hlt hpos.le,
+    fun hlt ↦ mul_lt_mul_of_pos_right hlt hpos⟩
 
-/-- The finite Kullback–Leibler divergence of beliefs, in the direction of (2.5). -/
-noncomputable def kl (p q : W → ℝ) : ℝ := ∑ w, p w * Real.log (p w / q w)
+/-- The utility of a response under one decision problem (2.5) weighs informativity by `1 − β`
+and action relevance by `β`, less the weighted cost. -/
+noncomputable def Model.singleScore (κ' : Q → Kernel W R) [∀ q, IsFiniteKernel (κ' q)]
+    (αℵ wc β : ℝ) (πW : Measure W) (d : D) (q : Q) (r : R) : ℝ :=
+  (1 - β) * -(klDiv (((κ' q)†(m.prior d)) r) πW).toReal +
+    β * value (m.utility d) αℵ (((κ q)†(m.prior d)) r) - wc * m.cost r
 
-/-- The utility of a response under one decision problem (2.5): informativity weighted
-`1 − β`, action relevance weighted `β`, less the weighted cost. -/
-noncomputable def Model.singleScore (om om' : ObservationModel W Q R) (αℵ wc β : ℝ)
-    (πW : W → ℝ) (d : D) (q : Q) (r : R) : ℝ :=
-  (1 - β) * (- kl (om'.posterior (m.prior d) q r) πW) +
-    β * value (m.utility d) αℵ (om.posterior (m.prior d) q r) - wc * m.cost r
+variable (κ' : Q → Kernel W R) [∀ q, IsFiniteKernel (κ' q)]
 
-/-- (2.5): the pragmatic respondent's score, the expected utility of a response over the
+/-- The pragmatic respondent's score (2.5) is the expected utility of a response over the
 inferred decision problem. -/
-noncomputable def Model.respondentScore (om om' : ObservationModel W Q R) (αℵ wc αQ β : ℝ)
-    (πD : D → ℝ) (πW : W → ℝ) (q : Q) (r : R) : ℝ :=
-  ∑ d, m.respondentPosterior om αℵ wc αQ πD q d * singleScore m om om' αℵ wc β πW d q r
+noncomputable def Model.respondentScore (αℵ wc αQ β : ℝ) (πD : D → ℝ) (πW : Measure W) (q : Q)
+    (r : R) : ℝ :=
+  ∑ d, m.respondentPosterior κ αℵ wc αQ πD q d * m.singleScore κ κ' αℵ wc β πW d q r
 
-/-- (2.5): the pragmatic respondent, a softmax over response scores with rationality `αR`. -/
-noncomputable def Model.respondent (om om' : ObservationModel W Q R) (αℵ wc αQ β αR : ℝ)
-    (πD : D → ℝ) (πW : W → ℝ) (q : Q) : R → ℝ :=
-  Real.softmax (αR • respondentScore m om om' αℵ wc αQ β πD πW q)
+/-- The pragmatic respondent (2.5) is a softmax over response scores with rationality `αR`. -/
+noncomputable def Model.respondent [Fintype R] (αℵ wc αQ β αR : ℝ) (πD : D → ℝ) (πW : Measure W)
+    (q : Q) :
+    R → ℝ :=
+  Real.softmax (αR • m.respondentScore κ κ' αℵ wc αQ β πD πW q)
 
-omit [∀ q, DecidablePred (m.question q)] [∀ r, DecidablePred (m.response r)] in
 /-- At `β = 1` the respondent weighs only action relevance and cost. -/
-theorem Model.respondentScore_beta_one (om om' : ObservationModel W Q R) (αℵ wc αQ : ℝ)
-    (πD : D → ℝ) (πW : W → ℝ) (q : Q) (r : R) :
-    respondentScore m om om' αℵ wc αQ 1 πD πW q r =
-      ∑ d, m.respondentPosterior om αℵ wc αQ πD q d *
-        (value (m.utility d) αℵ (om.posterior (m.prior d) q r) - wc * m.cost r) := by
+theorem Model.respondentScore_beta_one (αℵ wc αQ : ℝ) (πD : D → ℝ) (πW : Measure W) (q : Q)
+    (r : R) :
+    m.respondentScore κ κ' αℵ wc αQ 1 πD πW q r =
+      ∑ d, m.respondentPosterior κ αℵ wc αQ πD q d *
+        (value (m.utility d) αℵ (((κ q)†(m.prior d)) r) - wc * m.cost r) := by
   simp [Model.respondentScore, Model.singleScore]
 
-omit [∀ q, DecidablePred (m.question q)] [∀ r, DecidablePred (m.response r)] in
 /-- At `β = 0` the respondent weighs only informativity and cost. -/
-theorem Model.respondentScore_beta_zero (om om' : ObservationModel W Q R) (αℵ wc αQ : ℝ)
-    (πD : D → ℝ) (πW : W → ℝ) (q : Q) (r : R) :
-    respondentScore m om om' αℵ wc αQ 0 πD πW q r =
-      ∑ d, m.respondentPosterior om αℵ wc αQ πD q d *
-        (- kl (om'.posterior (m.prior d) q r) πW - wc * m.cost r) := by
+theorem Model.respondentScore_beta_zero (αℵ wc αQ : ℝ) (πD : D → ℝ) (πW : Measure W) (q : Q)
+    (r : R) :
+    m.respondentScore κ κ' αℵ wc αQ 0 πD πW q r =
+      ∑ d, m.respondentPosterior κ αℵ wc αQ πD q d *
+        (-(klDiv (((κ' q)†(m.prior d)) r) πW).toReal - wc * m.cost r) := by
   simp [Model.respondentScore, Model.singleScore]
 
 /-! ### Case study 1: credit cards (§3a) -/
 
-/-- The three cards. -/
+/-- A card is one of the three credit cards of §3a. -/
 inductive Card where
   | amex
   | mastercard
   | carteBlanche
   deriving DecidableEq, Fintype, Repr
 
-/-- The questioner's actions. -/
+/-- The questioner either stays or goes. -/
 inductive Act where
   | stay
   | go
   deriving DecidableEq, Fintype, Repr, Inhabited
 
-/-- The responses: a polar answer to whether any card of `S` is accepted, the mention of some
+/-- A response is a polar answer to whether any card of `S` is accepted, the mention of some
 accepted cards, or the exhaustive list of the accepted cards. -/
 inductive Resp where
   | polar (S : Finset Card) (b : Bool)
@@ -394,22 +374,26 @@ inductive Resp where
 
 instance : MeasurableSpace Resp := ⊤
 
-/-- The decision problems: `U1`, whether any of the questioner's cards `C` is accepted, and
-`U2`, whether any card is accepted. -/
+instance : MeasurableSpace (Finset Card) := ⊤
+
+instance : DiscreteMeasurableSpace (Finset Card) := ⟨fun _ ↦ MeasurableSpace.measurableSet_top⟩
+
+/-- The decision problem `U1` turns on whether any of the questioner's cards `C` is accepted,
+and `U2` on whether any card is accepted. -/
 inductive Goal where
   | ownCards (C : Finset Card)
   | anyCard
   deriving DecidableEq, Fintype
 
-/-- The utility of §3a: 5 for going when a relevant card is accepted or staying when none is,
-0 otherwise. -/
+/-- The utility of §3a is 5 for going when a relevant card is accepted or staying when none is,
+and 0 otherwise. -/
 def cardUtility : Goal → Finset Card → Act → ℝ
   | .ownCards C, w, .go => if (C ∩ w).Nonempty then 5 else 0
   | .ownCards C, w, .stay => if (C ∩ w).Nonempty then 0 else 5
   | .anyCard, w, .go => if w.Nonempty then 5 else 0
   | .anyCard, w, .stay => if w.Nonempty then 0 else 5
 
-/-- The proposition a response asserts. -/
+/-- `respProp r` is the proposition the response `r` asserts. -/
 def respProp : Resp → Finset Card → Prop
   | .polar S b, w => (S ∩ w).Nonempty ↔ b = true
   | .mention T, w => T ⊆ w
@@ -420,24 +404,27 @@ instance : ∀ r, DecidablePred (respProp r)
   | .mention T, w => inferInstanceAs (Decidable (T ⊆ w))
   | .exhaustive T, w => inferInstanceAs (Decidable (T = w))
 
-/-- The credit-card model: a question asks whether any card of a set is accepted, worlds are
+/-- In the credit-card model, a question asks whether any card of a set is accepted, worlds are
 the sets of accepted cards, priors are uniform over the eight worlds, and a response costs
 the cards it mentions. -/
 noncomputable def cards : Model (Finset Card) (Finset Card) Resp Act Goal where
   question S w := (S ∩ w).Nonempty
   response := respProp
   utility := cardUtility
-  prior _ _ := 1 / 8
+  prior _ := uniformOn Set.univ
   cost
     | .polar _ _ => 0
     | .mention T => T.card
     | .exhaustive T => T.card
 
 instance : ∀ S, DecidablePred (cards.question S) :=
-  λ S w => inferInstanceAs (Decidable (S ∩ w).Nonempty)
+  fun S w ↦ inferInstanceAs (Decidable (S ∩ w).Nonempty)
 
 instance : ∀ r, DecidablePred (cards.response r) :=
-  λ r => inferInstanceAs (DecidablePred (respProp r))
+  fun r ↦ inferInstanceAs (DecidablePred (respProp r))
+
+instance (d : Goal) : IsProbabilityMeasure (cards.prior d) :=
+  inferInstanceAs (IsProbabilityMeasure (uniformOn Set.univ))
 
 /-- Polar answers to the question asked are safe, as are exhaustive lists. -/
 theorem polar_exhaustive_safe :
@@ -452,79 +439,61 @@ theorem mention_safe_iff (S T : Finset Card) (hS : S.Nonempty) :
   revert S T; decide
 
 /-- Every world admits a true and safe response to every question: the true polar answer. -/
-theorem polar_admissible : ∀ w q, 0 < cards.admissibleCard w q := λ w q =>
+theorem polar_admissible : ∀ w q, 0 < cards.admissibleCard w q := fun w q ↦
   Finset.card_pos.2 ⟨.polar q (decide (q ∩ w).Nonempty), Finset.mem_filter.2 ⟨mem_univ _,
     ⟨by show (q ∩ w).Nonempty ↔ decide (q ∩ w).Nonempty = true; simp,
       polar_exhaustive_safe.1 q _⟩⟩⟩
 
-/-- The base respondent as an observation model for the credit cards. -/
-noncomputable def cardsModel : ObservationModel (Finset Card) (Finset Card) Resp :=
-  cards.R0Model polar_admissible
+private theorem cards_prior_ne_zero (d : Goal) (w : Finset Card) : cards.prior d {w} ≠ 0 :=
+  uniformOn_univ_singleton_ne_zero w
 
-private theorem cards_prior_pos (d : Goal) : ∀ w, 0 < cards.prior d w := λ _ => by
-  simp [cards]
-
-/-- (3): for a questioner holding the card asked about, after the answer "yes" the value of
+/-- In (3), for a questioner holding the card asked about, after the answer "yes" the value of
 the decision problem already equals its value after the exhaustive list, since every world
 compatible with either answer accepts a card the questioner holds; only the cost separates
 the two answers. -/
 theorem yes_value_eq_exhaustive (C w : Finset Card) (hC : .amex ∈ C) (hw : .amex ∈ w)
     (αℵ : ℝ) :
+    haveI := cards.isMarkovKernel_R0Kernel polar_admissible {.amex}
     value (cards.utility (.ownCards C)) αℵ
-        (cardsModel.posterior (cards.prior (.ownCards C)) {.amex} (.polar {.amex} true)) =
+        (((cards.R0Kernel {.amex})†(cards.prior (.ownCards C))) (.polar {.amex} true)) =
       value (cards.utility (.ownCards C)) αℵ
-        (cardsModel.posterior (cards.prior (.ownCards C)) {.amex} (.exhaustive w)) := by
+        (((cards.R0Kernel {.amex})†(cards.prior (.ownCards C))) (.exhaustive w)) := by
+  have hπ := cards_prior_ne_zero (.ownCards C)
   have hyes : cards.Admissible w {.amex} (.polar {.amex} true) := by
-    refine ⟨?_, (polar_exhaustive_safe.1 _ _)⟩
+    refine ⟨?_, polar_exhaustive_safe.1 _ _⟩
     show ({Card.amex} ∩ w).Nonempty ↔ true = true
     simp [Finset.singleton_inter_of_mem hw]
-  have hexh : cards.Admissible w {.amex} (.exhaustive w) :=
-    ⟨rfl, polar_exhaustive_safe.2 _ _⟩
-  have hm₁ :=
-    (cards.R0Model_marginal_pos polar_admissible (.ownCards C) (cards_prior_pos _) hyes).ne'
-  have hm₂ :=
-    (cards.R0Model_marginal_pos polar_admissible (.ownCards C) (cards_prior_pos _) hexh).ne'
-  refine value_eq_of_support (c := λ a => match a with | .go => 5 | .stay => 0) αℵ
-    (cardsModel.sum_posterior hm₁) (cardsModel.sum_posterior hm₂) ?_ ?_
-  · intro w' hw' a
-    have hadm := (cards.R0Model_posterior_pos_iff polar_admissible _ (cards_prior_pos _) hm₁).1
-      (lt_of_le_of_ne (cardsModel.posterior_nonneg (λ w => (cards_prior_pos _ w).le) _ _ w')
-        (Ne.symm hw'))
-    have : Card.amex ∈ w' := by
-      obtain ⟨x, hx⟩ : ({Card.amex} ∩ w').Nonempty := (hadm.1 : _ ↔ true = true).2 rfl
-      rw [Finset.mem_inter, Finset.mem_singleton] at hx
-      exact hx.1 ▸ hx.2
-    have hCw : (C ∩ w').Nonempty := ⟨.amex, Finset.mem_inter.2 ⟨hC, this⟩⟩
-    cases a <;> simp [cards, cardUtility, hCw]
-  · intro w' hw' a
-    have hadm := (cards.R0Model_posterior_pos_iff polar_admissible _ (cards_prior_pos _) hm₂).1
-      (lt_of_le_of_ne (cardsModel.posterior_nonneg (λ w => (cards_prior_pos _ w).le) _ _ w')
-        (Ne.symm hw'))
-    have hw'w : w = w' := hadm.1
-    subst hw'w
-    have hCw : (C ∩ w).Nonempty := ⟨.amex, Finset.mem_inter.2 ⟨hC, hw⟩⟩
-    cases a <;> simp [cards, cardUtility, hCw]
+  have hexh : cards.Admissible w {.amex} (.exhaustive w) := ⟨rfl, polar_exhaustive_safe.2 _ _⟩
+  have hm₁ := cards.R0Kernel_comp_apply_ne_zero hπ hyes
+  have hm₂ := cards.R0Kernel_comp_apply_ne_zero hπ hexh
+  have hgo : ∀ w' : Finset Card, Card.amex ∈ w' →
+      cards.utility (.ownCards C) w' = fun a ↦ match a with | .go => 5 | .stay => 0 :=
+    fun w' hw' ↦ funext fun a ↦ by
+      have hCw : (C ∩ w').Nonempty := ⟨.amex, Finset.mem_inter.2 ⟨hC, hw'⟩⟩
+      cases a <;> simp [cards, cardUtility, hCw]
+  refine value_eq_of_ae αℵ (ae_iff_of_countable.2 fun w' hw' ↦ hgo w' ?_)
+    (ae_iff_of_countable.2 fun w' hw' ↦ hgo w' ?_)
+  · obtain ⟨x, hx⟩ : ({Card.amex} ∩ w').Nonempty :=
+      ((cards.posterior_R0Kernel_apply_ne_zero_iff hπ hm₁).1 hw').1.2 rfl
+    rw [Finset.mem_inter, Finset.mem_singleton] at hx
+    exact hx.1 ▸ hx.2
+  · exact ((cards.posterior_R0Kernel_apply_ne_zero_iff hπ hm₂).1 hw').1 ▸ hw
 
-/-- (5): after "yes" to the general question, a world accepting only MasterCard keeps
+/-- In (5), after "yes" to the general question, a world accepting only MasterCard keeps
 positive posterior, so a questioner holding American Express remains uncertain; after "yes"
 to the question about American Express it does not. -/
-theorem generalYes_posterior_pos :
-    0 < cardsModel.posterior (cards.prior (.ownCards {.amex})) univ (.polar univ true)
-        {.mastercard} ∧
-      cardsModel.posterior (cards.prior (.ownCards {.amex})) {.amex} (.polar {.amex} true)
-        {.mastercard} = 0 := by
+theorem generalYes_posterior_ne_zero :
+    ((cards.R0Kernel univ)†(cards.prior (.ownCards {.amex}))) (.polar univ true)
+        {{.mastercard}} ≠ 0 ∧
+      ((cards.R0Kernel {.amex})†(cards.prior (.ownCards {.amex}))) (.polar {.amex} true)
+        {{.mastercard}} = 0 := by
+  have hπ := cards_prior_ne_zero (.ownCards {.amex})
   have h₁ : cards.Admissible {.mastercard} univ (.polar univ true) := by decide
   have h₂ : ¬ cards.Admissible {.mastercard} {.amex} (.polar {.amex} true) := by decide
   have h₃ : cards.Admissible {.amex} {.amex} (.polar {.amex} true) := by decide
-  have hm₁ := (cards.R0Model_marginal_pos polar_admissible (.ownCards {.amex})
-    (cards_prior_pos _) h₁).ne'
-  refine ⟨(cards.R0Model_posterior_pos_iff polar_admissible (.ownCards {.amex})
-    (cards_prior_pos _) hm₁).2 h₁, ?_⟩
-  have hm := (cards.R0Model_marginal_pos polar_admissible (.ownCards {.amex})
-    (cards_prior_pos _) h₃).ne'
-  by_contra hne
-  exact h₂ ((cards.R0Model_posterior_pos_iff polar_admissible _ (cards_prior_pos _) hm).1
-    (lt_of_le_of_ne (cardsModel.posterior_nonneg (λ w => (cards_prior_pos _ w).le) _ _ _)
-      (Ne.symm hne)))
+  exact ⟨(cards.posterior_R0Kernel_apply_ne_zero_iff hπ
+      (cards.R0Kernel_comp_apply_ne_zero hπ h₁)).2 h₁,
+    not_not.1 fun h ↦ h₂ ((cards.posterior_R0Kernel_apply_ne_zero_iff hπ
+      (cards.R0Kernel_comp_apply_ne_zero hπ h₃)).1 h)⟩
 
 end HawkinsEtAl2025
