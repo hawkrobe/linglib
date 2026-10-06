@@ -15,7 +15,9 @@ question, `Q ≤ polar p`, and the question raised by a family of propositions i
 their polar questions, so a finer question decides more (`le_trans`), the finest question
 decides everything (`bot_le`), and a family's question decides each member (`iInf₂_le`). A
 question settles the value of a function exactly when it decides each of its fibres
-(`le_ker_iff_forall_decides`). A proposition a question decides is [cariani-2013]'s visible,
+(`le_ker_iff_forall_decides`). Every question is the meet of the polar questions of its cells
+(`iInf_polar_cell`), and the nontrivial polar questions are the coatoms of the lattice of
+questions (`isCoatom_iff`). A proposition a question decides is [cariani-2013]'s visible,
 [phillips-brown-2025]'s considered, and an issue in a subject matter for
 [von-fintel-gillies-2010]; the converse relation, a proposition settling a question, is
 `Question.Resolves`.
@@ -158,6 +160,56 @@ theorem le_ker_iff_forall_decides {β : Type*} {f : W → β} :
     Q ≤ ker f ↔ ∀ b, Q.Decides (f ⁻¹' {b}) :=
   ⟨fun h _ ↦ decides_iff.2 fun _ _ hwv ↦ by simp [ker_def.1 (h hwv)],
     fun h w _ hwv ↦ (((h (f w)).iff hwv).1 rfl).symm⟩
+
+/-! ### Polar questions as coatoms -/
+
+variable (Q) in
+/-- A question is the meet of the polar questions of its cells. -/
+theorem iInf_polar_cell : ⨅ w, polar (Q.cell w) = Q := by
+  ext v u
+  simp only [Setoid.iInf_iff, polar_iff, mem_cell]
+  exact ⟨fun h ↦ (h u).2 (Q.refl' u), fun h w ↦ ⟨fun hv ↦ Q.trans' (Q.symm' h) hv, Q.trans' h⟩⟩
+
+theorem polar_ne_top (hp : p.Nonempty) (hp' : p ≠ Set.univ) : polar p ≠ ⊤ := fun h ↦ by
+  obtain ⟨v, hv⟩ := hp
+  obtain ⟨u, hu⟩ := (Set.ne_univ_iff_exists_notMem p).1 hp'
+  exact hu ((polar_iff.1 (show polar p v u from h ▸ trivial)).1 hv)
+
+/-- A polar question whether `p`, for `p` neither empty nor everything, is a coatom, since any
+coarser question relates a `p`-world to a world outside `p` and so relates everything. -/
+theorem isCoatom_polar (hp : p.Nonempty) (hp' : p ≠ Set.univ) : IsCoatom (polar p) := by
+  refine ⟨polar_ne_top hp hp', fun R hR ↦ ?_⟩
+  obtain ⟨a, b, hab, hnab⟩ : ∃ a b, R a b ∧ ¬ polar p a b := by
+    by_contra h
+    push Not at h
+    exact hR.ne (le_antisymm hR.le fun a b hab ↦ h a b hab)
+  have hle : polar p ≤ R := hR.le
+  rw [polar_iff] at hnab
+  have key : ∀ x y, x ∈ p → y ∉ p → R x y := fun x y hx hy ↦ by
+    by_cases ha : a ∈ p
+    · have hb : b ∉ p := fun hb ↦ hnab (iff_of_true ha hb)
+      exact R.trans' (hle (polar_iff.2 (iff_of_true hx ha)))
+        (R.trans' hab (hle (polar_iff.2 (iff_of_false hb hy))))
+    · have hb : b ∈ p := by_contra fun hb ↦ hnab (iff_of_false ha hb)
+      exact R.trans' (hle (polar_iff.2 (iff_of_true hx hb)))
+        (R.trans' (R.symm' hab) (hle (polar_iff.2 (iff_of_false ha hy))))
+  refine Setoid.eq_top_iff.2 fun x y ↦ ?_
+  by_cases hx : x ∈ p <;> by_cases hy : y ∈ p
+  · exact hle (polar_iff.2 (iff_of_true hx hy))
+  · exact key x y hx hy
+  · exact R.symm' (key y x hy hx)
+  · exact hle (polar_iff.2 (iff_of_false hx hy))
+
+/-- The coatoms of the lattice of questions are exactly the polar questions whether `p`, for `p`
+neither empty nor everything. -/
+theorem isCoatom_iff : IsCoatom Q ↔ ∃ p : Set W, p.Nonempty ∧ p ≠ Set.univ ∧ Q = polar p := by
+  refine ⟨fun h ↦ ?_, fun ⟨p, hp, hp', e⟩ ↦ e ▸ isCoatom_polar hp hp'⟩
+  obtain ⟨w, hw⟩ : ∃ w, Q.cell w ≠ Set.univ := by
+    by_contra hall
+    push Not at hall
+    exact h.1 (Setoid.eq_top_iff.2 fun x y ↦ show x ∈ Q.cell y from (hall y) ▸ Set.mem_univ x)
+  exact ⟨Q.cell w, ⟨w, mem_cell_self w⟩, hw,
+    ((h.le_iff.1 (decides_cell w)).resolve_left (polar_ne_top ⟨w, mem_cell_self w⟩ hw)).symm⟩
 
 /-! ### The question raised by a family of propositions -/
 

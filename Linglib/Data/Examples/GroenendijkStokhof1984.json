@@ -1,271 +1,204 @@
 [
   {
-    "id": "gs1984_mentionsome_italian_newspaper",
-    "source": {"bibkey": "groenendijk-stokhof-1984", "paperLabel": "Ch. VI §5, p. 331"},
+    "id": "gs1984_i_11",
+    "source": {
+      "bibkey": "groenendijk-stokhof-1984",
+      "paperLabel": "ch. I (11), p. 24"
+    },
+    "language": "stan1293",
+    "primaryText": "Which student did every professor recommend?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "John.",
+        "judgment": "acceptable"
+      },
+      {
+        "form": "Professor Jones, John; professor Williams, William; professor Peters, Peter ...",
+        "judgment": "acceptable"
+      },
+      {
+        "form": "His best one.",
+        "judgment": "acceptable"
+      }
+    ],
+    "readings": [
+      {
+        "name": "wh-wide-scope",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "pair-list",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "functional",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [],
+    "comment": "Threefold ambiguous, each reading shown by its answer: (12) for the wh-phrase over the term, (13) for the term over the wh-phrase, (14) for the third reading, which chapter III calls functional.",
+    "verified": "page-image"
+  },
+  {
+    "id": "gs1984_i_15",
+    "source": {
+      "bibkey": "groenendijk-stokhof-1984",
+      "paperLabel": "ch. I (15), p. 24"
+    },
+    "language": "stan1293",
+    "primaryText": "Which student did no professor recommend?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "His worst one.",
+        "judgment": "acceptable"
+      },
+      {
+        "form": "Professor Jones, John; professor Williams, William; professor Peters, Peter ...",
+        "judgment": "unacceptable"
+      }
+    ],
+    "readings": [
+      {
+        "name": "functional",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "pair-list",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [],
+    "comment": "The functional answer survives a decreasing term where the list answer does not, so the third reading of (11) is no arrangement of scopes. The page prints the starred list as a second (15) and the text calls it (17); the starred answer is the list.",
+    "verified": "page-image"
+  },
+  {
+    "id": "gs1984_i_17",
+    "source": {
+      "bibkey": "groenendijk-stokhof-1984",
+      "paperLabel": "ch. I (17), p. 25"
+    },
+    "language": "stan1293",
+    "primaryText": "What did two of John's friends give him for Christmas?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "wh-wide-scope",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "choice",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [],
+    "comment": "The less likely reading asks after a present John got twice; the more likely one asks to specify, for two friends of the addressee's choosing, what each gave him, so the interrogative has more than one complete semantic answer.",
+    "verified": "page-image"
+  },
+  {
+    "id": "gs1984_i_18",
+    "source": {
+      "bibkey": "groenendijk-stokhof-1984",
+      "paperLabel": "ch. I (18), p. 25"
+    },
+    "language": "stan1293",
+    "primaryText": "Where do they have all books written by Nooteboom in stock?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "mention-all",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "mention-some",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [],
+    "comment": "Depending on the context, an exhaustive listing of all decent bookshops or the mention of some bookshop.",
+    "verified": "page-image"
+  },
+  {
+    "id": "gs1984_i_19",
+    "source": {
+      "bibkey": "groenendijk-stokhof-1984",
+      "paperLabel": "ch. I (19), p. 27"
+    },
+    "language": "stan1293",
+    "primaryText": "Whom did John kiss at the party last night?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "Mary.",
+        "judgment": "acceptable"
+      },
+      {
+        "form": "The girl from next door.",
+        "judgment": "acceptable"
+      },
+      {
+        "form": "A redhead.",
+        "judgment": "acceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "(20) answers by a rigid name for every questioner; (21) completely only for a questioner who knows who the girl from next door is; (22) is partial unless the information singles out one redhead.",
+    "verified": "page-image"
+  },
+  {
+    "id": "gs1984_v_29",
+    "source": {
+      "bibkey": "groenendijk-stokhof-1984",
+      "paperLabel": "ch. V (29), p. 278"
+    },
     "language": "stan1293",
     "primaryText": "Where can I buy an Italian newspaper?",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "The questioner has a practical goal (getting an Italian newspaper); a single location suffices. Context determines whether the questioner wants all locations or just one.",
-    "judgment": "acceptable",
-    "alternatives": [
-      {"form": "At the station kiosk", "judgment": "acceptable"}
-    ],
-    "readings": [
-      {"name": "mention-some", "judgment": "acceptable"},
-      {"name": "mention-all", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["phenomenon", "mention_some"]
-    ],
-    "comment": "UNVERIFIED paperLabel: 'Ch. VI §5, p. 331' carried from prior Lean file (Phenomena/Questions/MentionSome.lean whereCanIBuy, plus the module docstring's 'Chapter VI, Section 5'), not checked against PDF. Merged from whereCanIBuy and newspaperContexts: mention-some arises from the questioner's practical goal, with no wide-scope existential or disjunction, so no choice reading; 'At the station kiosk' is a complete mention-some answer. Goal-licensing point folded in from the prior file's HumanConcernDatum rows: the underlying human concern makes partial information sufficient — going to one seller achieves the goal."
-  },
-  {
-    "id": "gs1984_mentionsome_know_newspaper",
-    "source": {"bibkey": "groenendijk-stokhof-1984", "paperLabel": "Ch. VI §5.3, (9)-(10)"},
-    "language": "stan1293",
-    "primaryText": "John knows where he can buy an Italian newspaper",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
+    "context": "Asked by an Italian tourist in your home-town.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
-      {"name": "mention-some", "judgment": "acceptable"},
-      {"name": "mention-all", "judgment": "acceptable"}
+      {
+        "name": "mention-some",
+        "judgment": "acceptable"
+      }
     ],
-    "paperFeatures": [
-      ["phenomenon", "mention_some"],
-      ["licensor", "know"],
-      ["licenses_mention_some", "true"]
-    ],
-    "comment": "UNVERIFIED paperLabel: '(9)-(10)' and §5.3 carried from prior Lean file (Phenomena/Questions/MentionSome.lean johnKnowsWherePaper), not checked against PDF. Mention-some paraphrase: 'There is a place that sells Italian newspapers and John knows it sells them.' Mention-all paraphrase: 'For every place that sells Italian newspapers, John knows it sells them.' No choice paraphrase available."
+    "paperFeatures": [],
+    "comment": "The addressee mentions some place where the tourist is likely to find one rather than a complete list.",
+    "verified": "page-image"
   },
   {
-    "id": "gs1984_mentionsome_wonder_newspaper",
-    "source": {"bibkey": "groenendijk-stokhof-1984", "paperLabel": "Ch. VI §5.3, (11)-(12)"},
-    "language": "stan1293",
-    "primaryText": "John wonders where he can buy an Italian newspaper",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [
-      {"name": "mention-some", "judgment": "acceptable"},
-      {"name": "mention-all", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["phenomenon", "mention_some"],
-      ["licensor", "wonder"],
-      ["licenses_mention_some", "true"]
-    ],
-    "comment": "UNVERIFIED paperLabel: '(11)-(12)' and §5.3 carried from prior Lean file (Phenomena/Questions/MentionSome.lean johnWondersWherePaper), not checked against PDF. Mention-some paraphrase: 'John wants to know of some place that it sells Italian newspapers' (not all places). Mention-all paraphrase: 'John wants to know of every place whether it sells Italian newspapers.' No choice paraphrase available."
-  },
-  {
-    "id": "gs1984_mentionsome_know_pen",
-    "source": {"bibkey": "groenendijk-stokhof-1984", "paperLabel": "Ch. VI §5.3"},
-    "language": "stan1293",
-    "primaryText": "John knows who has a pen",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [
-      {"name": "mention-some", "judgment": "acceptable"},
-      {"name": "choice", "judgment": "acceptable"},
-      {"name": "mention-all", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["phenomenon", "mention_some"],
-      ["licensor", "know"],
-      ["licenses_mention_some", "true"]
-    ],
-    "comment": "UNVERIFIED paperLabel: §5.3 carried from prior Lean file (Phenomena/Questions/MentionSome.lean johnKnowsWhoHasPen), not checked against PDF. Three-way ambiguity. Mention-some paraphrase: 'John knows of someone who has a pen (that they have a pen).' Choice paraphrase: 'For whichever pen is relevant, John knows who has it.' Mention-all paraphrase: 'John knows of everyone who has a pen that they have one.'"
-  },
-  {
-    "id": "gs1984_mentionsome_negative_pen",
-    "source": {"bibkey": "groenendijk-stokhof-1984", "paperLabel": "Ch. VI §5.2"},
-    "language": "stan1293",
-    "primaryText": "Where is a pen?",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "The questioner needs a pen and wants a location where one can be found.",
-    "judgment": "acceptable",
-    "alternatives": [
-      {"form": "In the study", "judgment": "acceptable"},
-      {"form": "Not in the drawer", "judgment": "unacceptable"},
-      {"form": "Nowhere / There isn't one", "judgment": "acceptable"}
-    ],
-    "readings": [
-      {"name": "mention-some", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["phenomenon", "mention_some"]
-    ],
-    "comment": "UNVERIFIED paperLabel: §5.2 carried from prior Lean file (Phenomena/Questions/MentionSome.lean penLocationNegative), not checked against PDF. The negative answer problem for partial answerhood (P-ANS): 'Not in the drawer' satisfies P-ANS but is not an acceptable mention-some answer — it doesn't provide a location where you can get a pen. The complete negative 'Nowhere / There isn't one' remains acceptable."
-  },
-  {
-    "id": "gs1984_mentionsome_depends",
-    "source": {"bibkey": "groenendijk-stokhof-1984", "paperLabel": "Ch. VI §5.4"},
-    "language": "stan1293",
-    "primaryText": "It depends on who has a pen",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [
-      {"name": "mention-some", "judgment": "unacceptable"}
-    ],
-    "paperFeatures": [
-      ["phenomenon", "mention_some"],
-      ["licensor", "depends"],
-      ["licenses_mention_some", "false"]
-    ],
-    "comment": "UNVERIFIED paperLabel: §5.4 carried from prior Lean file (Phenomena/Questions/MentionSome.lean dependsBlocks), not checked against PDF. 'Depends' blocks mention-some: functional dependency requires the complete answer to the embedded question."
-  },
-  {
-    "id": "gs1984_mentionsome_matter",
-    "source": {"bibkey": "groenendijk-stokhof-1984", "paperLabel": "Ch. VI §5.4"},
-    "language": "stan1293",
-    "primaryText": "It matters who has a pen",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [
-      {"name": "mention-some", "judgment": "unacceptable"}
-    ],
-    "paperFeatures": [
-      ["phenomenon", "mention_some"],
-      ["licensor", "matter"],
-      ["licenses_mention_some", "false"]
-    ],
-    "comment": "UNVERIFIED paperLabel: §5.4 carried from prior Lean file (Phenomena/Questions/MentionSome.lean matterBlocks), not checked against PDF. 'Matter' blocks mention-some: relevance requires knowing the full picture."
-  },
-  {
-    "id": "gs1984_mentionsome_determine",
-    "source": {"bibkey": "groenendijk-stokhof-1984", "paperLabel": "Ch. VI §5.4"},
-    "language": "stan1293",
-    "primaryText": "Who gets the prize is determined by who wins",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [
-      {"name": "mention-some", "judgment": "unacceptable"}
-    ],
-    "paperFeatures": [
-      ["phenomenon", "mention_some"],
-      ["licensor", "determine"],
-      ["licenses_mention_some", "false"]
-    ],
-    "comment": "UNVERIFIED paperLabel: §5.4 carried from prior Lean file (Phenomena/Questions/MentionSome.lean determineBlocks), not checked against PDF. 'Determine' blocks mention-some: the determination relation needs complete input."
-  },
-  {
-    "id": "gs1984_mentionsome_know",
-    "source": {"bibkey": "groenendijk-stokhof-1984", "paperLabel": "Ch. VI §5.4"},
-    "language": "stan1293",
-    "primaryText": "John knows who has a pen",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [
-      {"name": "mention-some", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["phenomenon", "mention_some"],
-      ["licensor", "know"],
-      ["licenses_mention_some", "true"]
-    ],
-    "comment": "UNVERIFIED paperLabel: §5.4 carried from prior Lean file (Phenomena/Questions/MentionSome.lean knowAllows), not checked against PDF. 'Know' allows mention-some: knowledge can be partial; knowing one pen-haver suffices. Verb-licensing table row; same sentence as gs1984_mentionsome_know_pen, which records the full three-way ambiguity."
-  },
-  {
-    "id": "gs1984_mentionsome_wonder",
-    "source": {"bibkey": "groenendijk-stokhof-1984", "paperLabel": "Ch. VI §5.4"},
-    "language": "stan1293",
-    "primaryText": "John wonders who has a pen",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [
-      {"name": "mention-some", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["phenomenon", "mention_some"],
-      ["licensor", "wonder"],
-      ["licenses_mention_some", "true"]
-    ],
-    "comment": "UNVERIFIED paperLabel: §5.4 carried from prior Lean file (Phenomena/Questions/MentionSome.lean wonderAllows), not checked against PDF. 'Wonder' allows mention-some: one can wonder about one satisfier without needing all."
-  },
-  {
-    "id": "gs1984_mentionsome_findout",
-    "source": {"bibkey": "groenendijk-stokhof-1984", "paperLabel": "Ch. VI §5.4"},
-    "language": "stan1293",
-    "primaryText": "John found out who has a pen",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [
-      {"name": "mention-some", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["phenomenon", "mention_some"],
-      ["licensor", "find out"],
-      ["licenses_mention_some", "true"]
-    ],
-    "comment": "UNVERIFIED paperLabel: §5.4 carried from prior Lean file (Phenomena/Questions/MentionSome.lean findOutAllows), not checked against PDF. 'Find out' allows mention-some: finding out about one pen-haver suffices for the goal."
-  },
-  {
-    "id": "gs1984_mentiontwo_unicorns",
-    "source": {"bibkey": "belnap-1982", "paperLabel": "two-unicorns example"},
-    "reportedIn": {"bibkey": "groenendijk-stokhof-1984", "paperLabel": "Ch. VI §5.3"},
-    "language": "stan1293",
-    "primaryText": "Where do two unicorns live?",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "The cumulative reading is natural when the questioner wants to know the locations of the unicorns collectively.",
-    "judgment": "acceptable",
-    "alternatives": [
-      {"form": "In the enchanted forest (where both unicorns live)", "judgment": "acceptable"},
-      {"form": "One in Paris, one in Rome", "judgment": "acceptable"},
-      {"form": "The white unicorn lives in Paris; the silver one in Rome", "judgment": "acceptable"}
-    ],
-    "readings": [
-      {"name": "mention-some", "judgment": "acceptable"},
-      {"name": "cumulative", "judgment": "acceptable"},
-      {"name": "choice", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["phenomenon", "mention_some"]
-    ],
-    "comment": "UNVERIFIED paperLabel: §5.3 carried from prior Lean file (Phenomena/Questions/MentionSome.lean whereTwoUnicorns, source 'G&S 1984, Section 5.3; Belnap 1982'), not checked against PDF. Mention-two / cumulative quantification with numeral 'two': the mention-some answer names one place housing both unicorns; the cumulative answer distributes the two unicorns over places; the choice answer identifies the specific unicorns."
-  },
-  {
-    "id": "gs1984_yourfather",
-    "source": {"bibkey": "groenendijk-stokhof-1984", "paperLabel": "p. 359"},
+    "id": "gs1984_v_37",
+    "source": {
+      "bibkey": "groenendijk-stokhof-1984",
+      "paperLabel": "ch. V (37), p. 359"
+    },
     "language": "stan1293",
     "primaryText": "Whom did you talk to? Your father.",
     "discourseSegments": [
@@ -279,14 +212,20 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["phenomenon", "pragmatic_answerhood"],
-      ["rigidity", "pragmatic_not_semantic"]
+      [
+        "answer",
+        "complete-pragmatic"
+      ]
     ],
-    "comment": "UNVERIFIED paperLabel: p. 359 carried from prior Lean file (Phenomena/Questions/PragmaticAnswerhood.lean yourFather), not checked against PDF. 'Your father' is not semantically rigid but is pragmatically rigid: it denotes the same individual across all indices compatible with the questioner's information."
+    "comment": "Your father is not semantically rigid but is pragmatically rigid in the information set of anyone who knows who their father is.",
+    "verified": "page-image"
   },
   {
-    "id": "gs1984_zoetemelk_rigid",
-    "source": {"bibkey": "groenendijk-stokhof-1984", "paperLabel": "p. 359"},
+    "id": "gs1984_v_38",
+    "source": {
+      "bibkey": "groenendijk-stokhof-1984",
+      "paperLabel": "ch. V (38), p. 359"
+    },
     "language": "stan1293",
     "primaryText": "Who won the Tour de France in 1980? The one who ended second in 1979.",
     "discourseSegments": [
@@ -295,19 +234,25 @@
     ],
     "glossedTokens": [],
     "translation": "",
-    "context": "The questioner knows Joop Zoetemelk ended second in 1979.",
+    "context": "The questioner has the information that Joop Zoetemelk ended second in the Tour de France of 1979.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["phenomenon", "pragmatic_answerhood"],
-      ["rigidity", "pragmatic_not_semantic"]
+      [
+        "answer",
+        "complete-pragmatic"
+      ]
     ],
-    "comment": "UNVERIFIED paperLabel: p. 359 carried from prior Lean file (Phenomena/Questions/PragmaticAnswerhood.lean tourDeFrance1980), not checked against PDF. The definite description is not semantically rigid, but for anyone who knows Zoetemelk ended second in 1979 it rigidly picks out Zoetemelk."
+    "comment": "Zoetemelk did end second in 1979, so the answer is a true complete pragmatic answer; a questioner who believes Eddy Merckx ended second gets the false complete answer that Merckx won (p. 360).",
+    "verified": "page-image"
   },
   {
-    "id": "gs1984_zoetemelk_false_true",
-    "source": {"bibkey": "groenendijk-stokhof-1984", "paperLabel": "p. 360"},
+    "id": "gs1984_v_39",
+    "source": {
+      "bibkey": "groenendijk-stokhof-1984",
+      "paperLabel": "ch. V (39), p. 360"
+    },
     "language": "stan1293",
     "primaryText": "Who won the Tour de France in 1980? The one who won in 1979.",
     "discourseSegments": [
@@ -316,19 +261,25 @@
     ],
     "glossedTokens": [],
     "translation": "",
-    "context": "The questioner wrongly believes Joop Zoetemelk won in 1979.",
+    "context": "The questioner wrongly believes that Joop Zoetemelk was the winner in 1979.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["phenomenon", "pragmatic_answerhood"],
-      ["answer_truth", "false_but_conveys_true"]
+      [
+        "answer",
+        "complete-pragmatic"
+      ]
     ],
-    "comment": "UNVERIFIED paperLabel: p. 360 carried from prior Lean file (Phenomena/Questions/PragmaticAnswerhood.lean zoetemelkWinner), not checked against PDF. A false proposition gives a true pragmatic answer: the proposition expressed ('The 1979 winner won again in 1980') is false (Hinault won 1979, Zoetemelk won 1980), yet given the questioner's false belief it conveys the true information that Joop Zoetemelk won the Tour de France in 1980."
+    "comment": "The proposition expressed, that the 1979 winner won again in 1980, is false, yet it carries to this questioner the true information that Zoetemelk won in 1980: a false proposition can be a true complete pragmatic answer.",
+    "verified": "page-image"
   },
   {
-    "id": "gs1984_elderly_lady_bootshop",
-    "source": {"bibkey": "groenendijk-stokhof-1984", "paperLabel": "pp. 360-361"},
+    "id": "gs1984_v_40",
+    "source": {
+      "bibkey": "groenendijk-stokhof-1984",
+      "paperLabel": "ch. V (40), pp. 360-361"
+    },
     "language": "stan1293",
     "primaryText": "Who served you when you bought these boots? An elderly lady wearing glasses.",
     "discourseSegments": [
@@ -337,279 +288,925 @@
     ],
     "glossedTokens": [],
     "translation": "",
-    "context": "A customer bought boots; the sales manager wants to know who served them. The manager knows all staff members well but not who served this customer; the customer doesn't know staff names and can only give a physical description. Only one elderly lady with glasses is on the staff.",
+    "context": "Asked by the salesmanager of a client; the property applies to a single member of her staff.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["phenomenon", "pragmatic_answerhood"],
-      ["rigidity", "pragmatically_definite"]
+      [
+        "answer",
+        "complete-pragmatic"
+      ]
     ],
-    "comment": "UNVERIFIED paperLabel: pp. 360-361 carried from prior Lean file (Phenomena/Questions/PragmaticAnswerhood.lean elderlyLady and bootShop, both migrated into this row), not checked against PDF. The semantically indefinite term is pragmatically definite because the questioner's information uniquely identifies the referent. Despite the participants' disharmonious information, the indefinite description achieves coordination: the manager can identify the staff member."
+    "comment": "The term is neither semantically rigid nor semantically definite but is pragmatically definite and rigid in the salesmanager's information set.",
+    "verified": "page-image"
   },
   {
-    "id": "gs1984_profa_contribution",
-    "source": {"bibkey": "groenendijk-stokhof-1984", "paperLabel": "p. 362"},
+    "id": "gs1984_v_41",
+    "source": {
+      "bibkey": "groenendijk-stokhof-1984",
+      "paperLabel": "ch. V (41), p. 361"
+    },
     "language": "stan1293",
-    "primaryText": "From which authors did the editors already receive their contribution? At least from Prof. A.",
+    "primaryText": "From which authors did the editors already receive their contribution to the proceedings? I don't know, but at least they received it from Professor A.",
     "discourseSegments": [
-      "From which authors did the editors already receive their contribution?",
-      "At least from Prof. A."
+      "From which authors did the editors already receive their contribution to the proceedings?",
+      "I don't know, but at least they received it from Professor A."
     ],
     "glossedTokens": [],
     "translation": "",
-    "context": "Prof. A. is always the last to send in contributions.",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["phenomenon", "pragmatic_answerhood"],
-      ["exhaustive_inference", "true"]
-    ],
-    "comment": "UNVERIFIED paperLabel: p. 362 carried from prior Lean file (Phenomena/Questions/PragmaticAnswerhood.lean profAContribution), not checked against PDF. The explicitly non-exhaustive answer pragmatically implies an exhaustive answer — the editors have received contributions from all authors — due to the questioner's background knowledge that Prof. A. is always last."
-  },
-  {
-    "id": "gs1984_profa_acceptance",
-    "source": {"bibkey": "groenendijk-stokhof-1984", "paperLabel": "p. 362"},
-    "language": "stan1293",
-    "primaryText": "From whom did the organizers receive a letter of acceptance? At least from Prof. A.",
-    "discourseSegments": [
-      "From whom did the organizers receive a letter of acceptance?",
-      "At least from Prof. A."
-    ],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Prof. A. is always the first to accept invitations.",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["phenomenon", "pragmatic_answerhood"],
-      ["exhaustive_inference", "false"]
-    ],
-    "comment": "UNVERIFIED paperLabel: p. 362 carried from prior Lean file (Phenomena/Questions/PragmaticAnswerhood.lean profAAcceptance), not checked against PDF. The same answer to a different question yields no exhaustive conclusion: being first to accept doesn't entail that others accepted. Minimal pair with gs1984_profa_contribution."
-  },
-  {
-    "id": "gs1984_court_testimony",
-    "source": {"bibkey": "groenendijk-stokhof-1984", "paperLabel": "pp. 363, 390"},
-    "language": "stan1293",
-    "primaryText": "John Smith of 123 Main Street",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Court of Law testimony: questions are posed on behalf of the social community, so answers must work for a great variety of information sets.",
+    "context": "The questioner knows that Prof. A. is bound to be the last one to send in his contribution.",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "Your neighbor's husband", "judgment": "unacceptable"}
+      {
+        "form": "At least from Prof. A.",
+        "judgment": "acceptable"
+      }
     ],
     "readings": [],
-    "paperFeatures": [
-      ["phenomenon", "pragmatic_answerhood"],
-      ["rigidity", "semantic_required"]
-    ],
-    "comment": "UNVERIFIED paperLabel: pp. 363, 390 carried from prior Lean file (Phenomena/Questions/PragmaticAnswerhood.lean courtTestimony), not checked against PDF. In highly institutionalized settings, rigid, standard semantic answers are required because information sets vary widely; answers should stay as close to semantic answers as possible."
+    "paperFeatures": [],
+    "comment": "(42) is the shorter form of the answer. For this questioner the explicitly non-exhaustive answer gives the exhaustive answer that every contribution has arrived, though the term lacks the pragmatic properties itself.",
+    "verified": "page-image"
   },
   {
-    "id": "gs1984_pairlist_each_professor",
-    "source": {"bibkey": "groenendijk-stokhof-1984", "paperLabel": "Ch. VI §2.1, p. 403"},
+    "id": "gs1984_v_43",
+    "source": {
+      "bibkey": "groenendijk-stokhof-1984",
+      "paperLabel": "ch. V (43), p. 362"
+    },
+    "language": "stan1293",
+    "primaryText": "From whom did the organizers already receive a letter of acceptance to attend the conference? At least from Prof. A.",
+    "discourseSegments": [
+      "From whom did the organizers already receive a letter of acceptance to attend the conference?",
+      "At least from Prof. A."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Prof. A. is also always the first to accept an invitation to attend a conference.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "The same answer (42) is of little help toward a complete answer to (43): the exhaustive answer to (41) came from the interrogative's abstract, not from the term.",
+    "verified": "page-image"
+  },
+  {
+    "id": "gs1984_vi_1",
+    "source": {
+      "bibkey": "groenendijk-stokhof-1984",
+      "paperLabel": "ch. VI (1), p. 446"
+    },
     "language": "stan1293",
     "primaryText": "Which student was recommended by each professor?",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "Faculty meeting about graduate admissions.",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "Prof. Smith recommended Alice, Prof. Jones recommended Bob, Prof. Brown recommended Carol", "judgment": "acceptable"},
-      {"form": "Alice (was recommended by all professors)", "judgment": "acceptable"}
+      {
+        "form": "John.",
+        "judgment": "acceptable"
+      },
+      {
+        "form": "Professor Jones, Bill; professor Williams, Mary; and professor Peters, John.",
+        "judgment": "acceptable"
+      }
     ],
     "readings": [
-      {"name": "pair-list", "judgment": "acceptable"},
-      {"name": "single", "judgment": "acceptable"}
+      {
+        "name": "wh-wide-scope",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "pair-list",
+        "judgment": "acceptable"
+      }
     ],
-    "paperFeatures": [
-      ["phenomenon", "pair_list"],
-      ["quantifier", "each"],
-      ["embedding", "matrix"],
-      ["pair_list_ok", "true"]
-    ],
-    "comment": "UNVERIFIED paperLabel: p. 403 carried from prior Lean file (Phenomena/Questions/ScopeReadings.lean whichStudentEachProfessor and matrixPairList, both migrated into this row; the §2.1 anchor is from that file's module docstring), not checked against PDF. Pair-list is the preferred reading; the prior file's factors note: the universal c-commands the wh-phrase, and 'each' licenses pair-list. Matrix questions allow pair-list with 'each'."
+    "paperFeatures": [],
+    "comment": "(2a) answers the reading with the wh-phrase over the term, (3a) the pair-list reading with the term over the wh-phrase, on which (1) is equivalent to (4) Which professor recommended which student?",
+    "verified": "page-image"
   },
   {
-    "id": "gs1984_pairlist_every_man",
-    "source": {"bibkey": "groenendijk-stokhof-1984", "paperLabel": "Ch. VI §2.1, p. 404"},
+    "id": "gs1984_vi_5",
+    "source": {
+      "bibkey": "groenendijk-stokhof-1984",
+      "paperLabel": "ch. VI (5), p. 447"
+    },
     "language": "stan1293",
-    "primaryText": "Who does every man love?",
+    "primaryText": "John knows which student was recommended by each professor",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "Discussion about romantic relationships in a small community.",
+    "context": "",
     "judgment": "acceptable",
-    "alternatives": [
-      {"form": "John loves Mary, Bill loves Sue, Tom loves Alice", "judgment": "acceptable"},
-      {"form": "Mary (is loved by all men)", "judgment": "acceptable"}
-    ],
+    "alternatives": [],
     "readings": [
-      {"name": "pair-list", "judgment": "acceptable"},
-      {"name": "single", "judgment": "acceptable"}
+      {
+        "name": "wh-wide-scope",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "pair-list",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "term-wide-scope",
+        "judgment": "acceptable"
+      }
     ],
-    "paperFeatures": [
-      ["phenomenon", "pair_list"],
-      ["quantifier", "every"],
-      ["embedding", "matrix"],
-      ["pair_list_ok", "true"]
-    ],
-    "comment": "UNVERIFIED paperLabel: p. 404 carried from prior Lean file (Phenomena/Questions/ScopeReadings.lean whoEveryManLove), not checked against PDF. Matrix question with universal subject; pair-list preferred."
+    "paperFeatures": [],
+    "comment": "Three readings: knowing the answer (2), knowing the pair-list answer, which requires de dicto knowledge of who the professors are, and knowing of each actual professor which student that individual recommended.",
+    "verified": "page-image"
   },
   {
-    "id": "gs1984_functional_his_teachers",
-    "source": {"bibkey": "groenendijk-stokhof-1984", "paperLabel": "Ch. VI §2.1, p. 405"},
+    "id": "gs1984_vi_6",
+    "source": {
+      "bibkey": "groenendijk-stokhof-1984",
+      "paperLabel": "ch. VI (6), p. 447"
+    },
     "language": "stan1293",
-    "primaryText": "Which of his teachers does every student admire?",
+    "primaryText": "John wonders which student was recommended by each professor",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "Survey about student-teacher relationships.",
+    "context": "",
     "judgment": "acceptable",
-    "alternatives": [
-      {"form": "John admires Prof. Smith, Mary admires Prof. Jones, Bill admires Prof. Brown", "judgment": "acceptable"}
-    ],
+    "alternatives": [],
     "readings": [
-      {"name": "functional pair-list", "judgment": "acceptable"},
-      {"name": "single", "judgment": "unacceptable"}
+      {
+        "name": "wh-wide-scope",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "pair-list",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "term-wide-scope",
+        "judgment": "acceptable"
+      }
     ],
-    "paperFeatures": [
-      ["phenomenon", "pair_list"],
-      ["quantifier", "every"],
-      ["embedding", "matrix"],
-      ["pair_list_ok", "true"]
-    ],
-    "comment": "UNVERIFIED paperLabel: p. 405 carried from prior Lean file (Phenomena/Questions/ScopeReadings.lean whichTeacherEveryStudent and whichOfHisTeachers, both migrated into this row), not checked against PDF. The bound variable 'his' forces the functional reading — each student's answer is their own teacher — so no single-individual answer is available."
+    "paperFeatures": [],
+    "comment": "On its third reading (6) implies (7), for no professor does John know which student he or she recommended; on its second it implies (8), not for all professors does he.",
+    "verified": "page-image"
   },
   {
-    "id": "gs1984_pairlist_know",
-    "source": {"bibkey": "groenendijk-stokhof-1984", "paperLabel": "Ch. VI §2.1, p. 408"},
-    "language": "stan1293",
-    "primaryText": "John knows which student each professor recommended",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Embedded under 'know'.",
-    "judgment": "acceptable",
-    "alternatives": [
-      {"form": "John knows: Smith recommended Alice, Jones recommended Bob, Brown recommended Carol", "judgment": "acceptable"},
-      {"form": "John knows: Alice (recommended by all)", "judgment": "acceptable"}
-    ],
-    "readings": [
-      {"name": "pair-list", "judgment": "acceptable"},
-      {"name": "single", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["phenomenon", "pair_list"],
-      ["quantifier", "each"],
-      ["embedding", "know"],
-      ["pair_list_ok", "true"]
-    ],
-    "comment": "UNVERIFIED paperLabel: p. 408 carried from prior Lean file (Phenomena/Questions/ScopeReadings.lean knowPairList and knowLicenses, both migrated into this row), not checked against PDF. Factive 'know' licenses pair-list because the answer is presupposed true."
-  },
-  {
-    "id": "gs1984_pairlist_wonder",
-    "source": {"bibkey": "groenendijk-stokhof-1984", "paperLabel": "Ch. VI §2.1, p. 409"},
-    "language": "stan1293",
-    "primaryText": "John wonders which student each professor recommended",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "Embedded under 'wonder'.",
-    "judgment": "acceptable",
-    "alternatives": [
-      {"form": "John wonders whether there's a student all recommended", "judgment": "acceptable"}
-    ],
-    "readings": [
-      {"name": "pair-list", "judgment": "marginal"},
-      {"name": "single", "judgment": "acceptable"}
-    ],
-    "paperFeatures": [
-      ["phenomenon", "pair_list"],
-      ["quantifier", "each"],
-      ["embedding", "wonder"],
-      ["pair_list_ok", "false"]
-    ],
-    "comment": "UNVERIFIED paperLabel: p. 409 carried from prior Lean file (Phenomena/Questions/ScopeReadings.lean wonderPairList and wonderDislikes, both migrated into this row), not checked against PDF. Non-factive 'wonder' disfavors pair-list: the questioner doesn't presuppose the answer, so the pair-list reading is degraded."
-  },
-  {
-    "id": "gs1984_choice_john_or_mary",
-    "source": {"bibkey": "groenendijk-stokhof-1984", "paperLabel": "Ch. VI §2.2, p. 411"},
+    "id": "gs1984_vi_12",
+    "source": {
+      "bibkey": "groenendijk-stokhof-1984",
+      "paperLabel": "ch. VI (12), pp. 450-451"
+    },
     "language": "stan1293",
     "primaryText": "Whom does John or Mary love?",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "Discussing potential matches in a group.",
+    "context": "John loves Suzy; Mary loves Suzy and Bill.",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "If John: Bill. If Mary: Sue.", "judgment": "acceptable"},
-      {"form": "Bill and Sue (loved by John-or-Mary collectively)", "judgment": "acceptable"}
+      {
+        "form": "Suzy and Bill.",
+        "judgment": "acceptable"
+      },
+      {
+        "form": "John, Suzy.",
+        "judgment": "acceptable"
+      },
+      {
+        "form": "Mary, Suzy and Bill.",
+        "judgment": "acceptable"
+      }
     ],
     "readings": [
-      {"name": "choice", "judgment": "acceptable"},
-      {"name": "non-choice", "judgment": "acceptable"}
+      {
+        "name": "wh-wide-scope",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "choice",
+        "judgment": "acceptable"
+      }
     ],
-    "paperFeatures": [
-      ["phenomenon", "choice"],
-      ["quantifier", "disjunction"],
-      ["embedding", "matrix"]
-    ],
-    "comment": "UNVERIFIED paperLabel: p. 411 carried from prior Lean file (Phenomena/Questions/ScopeReadings.lean whomJohnOrMaryLove; the §2.2 anchor is from that file's module docstring), not checked against PDF. Wide-scope disjunction yields a choice reading: different disjuncts can give different complete answers."
+    "paperFeatures": [],
+    "comment": "(13a) is the unique true complete answer on the first reading; on the choice reading both (14a) and (15a) are complete and true answers, as for the disjunction (16) Whom does John love? Or, whom does Mary love?",
+    "verified": "page-image"
   },
   {
-    "id": "gs1984_choice_know_mary_or_sue",
-    "source": {"bibkey": "groenendijk-stokhof-1984", "paperLabel": "Ch. VI §2.2, p. 412"},
+    "id": "gs1984_vi_17",
+    "source": {
+      "bibkey": "groenendijk-stokhof-1984",
+      "paperLabel": "ch. VI (17), p. 451"
+    },
     "language": "stan1293",
-    "primaryText": "John knows whom Mary or Sue invited",
+    "primaryText": "Whom do John and Mary love?",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "Embedded under 'know'.",
+    "context": "John loves Suzy; Mary loves Suzy and Bill.",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "John knows: If Mary invited: Bill. If Sue invited: Tom.", "judgment": "acceptable"},
-      {"form": "John knows who was invited by at least one of them", "judgment": "acceptable"}
+      {
+        "form": "Suzy.",
+        "judgment": "acceptable"
+      },
+      {
+        "form": "John, Suzy; and Mary, Suzy and Bill.",
+        "judgment": "acceptable"
+      }
     ],
     "readings": [
-      {"name": "choice", "judgment": "acceptable"},
-      {"name": "non-choice", "judgment": "acceptable"}
+      {
+        "name": "wh-wide-scope",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "pair-list",
+        "judgment": "acceptable"
+      }
     ],
-    "paperFeatures": [
-      ["phenomenon", "choice"],
-      ["quantifier", "disjunction"],
-      ["embedding", "know"]
-    ],
-    "comment": "UNVERIFIED paperLabel: p. 412 carried from prior Lean file (Phenomena/Questions/ScopeReadings.lean knowWhomMaryOrSue), not checked against PDF. Choice reading available under embedding 'know'."
+    "paperFeatures": [],
+    "comment": "(18a) answers the first reading, (19a) the pair-list reading, the conjunction (20) Whom does John love? And, whom does Mary love?",
+    "verified": "page-image"
   },
   {
-    "id": "gs1984_choice_some_professor",
-    "source": {"bibkey": "groenendijk-stokhof-1984", "paperLabel": "Ch. VI §2.2, p. 413"},
+    "id": "gs1984_vi_21",
+    "source": {
+      "bibkey": "groenendijk-stokhof-1984",
+      "paperLabel": "ch. VI (21), p. 453"
+    },
     "language": "stan1293",
-    "primaryText": "Which student does some professor recommend?",
+    "primaryText": "What did two of John's friends give him for Christmas?",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "Asking about recommendations.",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "Prof. Smith recommends Alice; that's the relevant answer", "judgment": "acceptable"},
-      {"form": "Alice, Bob, and Carol are each recommended by at least one professor", "judgment": "acceptable"}
+      {
+        "form": "A watch.",
+        "judgment": "acceptable"
+      },
+      {
+        "form": "Bill, a watch and a ball; Peter, a book and a pen.",
+        "judgment": "acceptable"
+      }
     ],
     "readings": [
-      {"name": "choice", "judgment": "acceptable"},
-      {"name": "non-choice", "judgment": "acceptable"}
+      {
+        "name": "wh-wide-scope",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "choice",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [],
+    "comment": "(22) answers the reading with the wh-phrase widest; on the choice reading (23a) is one complete answer, and the gifts of any other two friends would be another (p. 454).",
+    "verified": "page-image"
+  },
+  {
+    "id": "gs1984_vi_24",
+    "source": {
+      "bibkey": "groenendijk-stokhof-1984",
+      "paperLabel": "ch. VI (24), p. 454"
+    },
+    "language": "stan1293",
+    "primaryText": "Which student was recommended by no professor?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "pair-list",
+        "judgment": "unacceptable"
+      },
+      {
+        "name": "choice",
+        "judgment": "unacceptable"
+      }
     ],
     "paperFeatures": [
-      ["phenomenon", "choice"],
-      ["quantifier", "some"],
-      ["embedding", "matrix"]
+      [
+        "termMonotonicity",
+        "decreasing"
+      ]
     ],
-    "comment": "UNVERIFIED paperLabel: p. 413 carried from prior Lean file (Phenomena/Questions/ScopeReadings.lean whichStudentSomeProfessor), not checked against PDF. Wide-scope existential yields a choice reading: the answer depends on which witness professor is relevant."
+    "comment": "A monotone decreasing term cannot take scope over the wh-phrase: the reading would be answered by answering no question (p. 455).",
+    "verified": "page-image"
+  },
+  {
+    "id": "gs1984_vi_25",
+    "source": {
+      "bibkey": "groenendijk-stokhof-1984",
+      "paperLabel": "ch. VI (25), p. 454"
+    },
+    "language": "stan1293",
+    "primaryText": "What did at most one of John's friends give him for Christmas?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "pair-list",
+        "judgment": "unacceptable"
+      },
+      {
+        "name": "choice",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "termMonotonicity",
+        "decreasing"
+      ]
+    ],
+    "comment": "As (24).",
+    "verified": "page-image"
+  },
+  {
+    "id": "gs1984_vi_26",
+    "source": {
+      "bibkey": "groenendijk-stokhof-1984",
+      "paperLabel": "ch. VI (26), p. 455"
+    },
+    "language": "stan1293",
+    "primaryText": "Bill wonders whom John or Mary loves",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "wh-wide-scope",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "choice",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "term-widest-scope",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [],
+    "comment": "Assuming wonder implies not knowing, the choice reading implies (27), Bill knows neither whom John loves nor whom Mary loves, and the widest-scope reading (28), he does not know one of them (p. 456).",
+    "verified": "page-image"
+  },
+  {
+    "id": "gs1984_vi_32",
+    "source": {
+      "bibkey": "groenendijk-stokhof-1984",
+      "paperLabel": "ch. VI (32), p. 457"
+    },
+    "language": "stan1293",
+    "primaryText": "Bill knows whom John or Mary loves",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [],
+    "comment": "With the extensional know the choice and widest-scope readings coincide, but only because John or Mary is rigid; with two girls they come apart.",
+    "verified": "page-image"
+  },
+  {
+    "id": "gs1984_vi_33",
+    "source": {
+      "bibkey": "groenendijk-stokhof-1984",
+      "paperLabel": "ch. VI (33), p. 458"
+    },
+    "language": "stan1293",
+    "primaryText": "Where do they sell Italian newspapers in Amsterdam?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "mention-some",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "mention-all",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [],
+    "comment": "Mention-some when asked by an Italian tourist curious about home; mention-all when asked of an informant by someone setting up a distribution network for foreign newspapers.",
+    "verified": "page-image"
+  },
+  {
+    "id": "gs1984_vi_34",
+    "source": {
+      "bibkey": "groenendijk-stokhof-1984",
+      "paperLabel": "ch. VI (34), p. 458"
+    },
+    "language": "stan1293",
+    "primaryText": "Who has got a light?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "mention-some",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "mention-all",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "gs1984_vi_35",
+    "source": {
+      "bibkey": "groenendijk-stokhof-1984",
+      "paperLabel": "ch. VI (35), p. 458"
+    },
+    "language": "stan1293",
+    "primaryText": "Where can I find a pen?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "mention-some",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "mention-all",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "gs1984_vi_5_1",
+    "source": {
+      "bibkey": "groenendijk-stokhof-1984",
+      "paperLabel": "ch. VI §5.2 (1)-(2), p. 531"
+    },
+    "language": "stan1293",
+    "primaryText": "Where is a pen? On my desk.",
+    "discourseSegments": [
+      "Where is a pen?",
+      "On my desk."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "Not in the drawer.",
+        "judgment": "acceptable"
+      },
+      {
+        "form": "Nowhere.",
+        "judgment": "acceptable"
+      }
+    ],
+    "readings": [
+      {
+        "name": "mention-some",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [],
+    "comment": "(2) is a completely satisfactory mention-some answer. The negative (7) is a true partial answer but no satisfactory mention-some answer, and (8), a possible complete answer, is no possible mention-some answer (p. 532).",
+    "verified": "page-image"
+  },
+  {
+    "id": "gs1984_vi_5_9",
+    "source": {
+      "bibkey": "groenendijk-stokhof-1984",
+      "paperLabel": "ch. VI §5.2 (9), p. 533"
+    },
+    "language": "stan1293",
+    "primaryText": "John knows where a pen is",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "mention-all",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "mention-some",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [],
+    "comment": "Paraphrased as (10) For all places where a pen is, John knows that there is a pen at that place, and as (11) For some places where a pen is, John knows that there is a pen at that place; the two differ in truth conditions.",
+    "verified": "page-image"
+  },
+  {
+    "id": "gs1984_vi_5_12",
+    "source": {
+      "bibkey": "groenendijk-stokhof-1984",
+      "paperLabel": "ch. VI §5.2 (12), p. 533"
+    },
+    "language": "stan1293",
+    "primaryText": "John wonders where a pen is",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "mention-all",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "mention-some",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [],
+    "comment": "Paraphrased as (13), John wants for all places where a pen is to know whether there is a pen there, and as (14), for some place.",
+    "verified": "page-image"
+  },
+  {
+    "id": "gs1984_vi_5_15",
+    "source": {
+      "bibkey": "groenendijk-stokhof-1984",
+      "paperLabel": "ch. VI §5.3 (15)-(16), p. 534"
+    },
+    "language": "stan1293",
+    "primaryText": "Who has a pen? John.",
+    "discourseSegments": [
+      "Who has a pen?",
+      "John."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "mention-some",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [],
+    "comment": "Applying the term of (16) to the abstract (17) gives the proposition (18) that John has a pen, a semantic answer on the mention-some reading.",
+    "verified": "page-image"
+  },
+  {
+    "id": "gs1984_vi_5_24",
+    "source": {
+      "bibkey": "groenendijk-stokhof-1984",
+      "paperLabel": "ch. VI §5.3 (24), p. 536"
+    },
+    "language": "stan1293",
+    "primaryText": "John knows who has a pen",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "mention-some",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "mention-all",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "choice",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [],
+    "comment": "On the mention-some reading paraphrasable as (26) Of someone who has a pen, John knows whether he has a pen, and (28) ... that he has a pen (p. 537). If nobody has a pen it is false on that reading even when John knows nobody has one (p. 538).",
+    "verified": "page-image"
+  },
+  {
+    "id": "gs1984_vi_5_33",
+    "source": {
+      "bibkey": "groenendijk-stokhof-1984",
+      "paperLabel": "ch. VI §5.3 (33), pp. 539-540"
+    },
+    "language": "stan1293",
+    "primaryText": "Where do two unicorns live?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "Bel lives in the wood, and Nap lives near the lake",
+        "judgment": "acceptable"
+      },
+      {
+        "form": "In the wood, and near the lake.",
+        "judgment": "acceptable"
+      }
+    ],
+    "readings": [
+      {
+        "name": "mention-some",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "mention-all",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "mention-two",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "choice",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [],
+    "comment": "Belnap's example. Mention-some asks for a place where two unicorns live together, mention-all for all such places, mention-two for two places where two different unicorns live. (35) answers the choice reading as a two-constituent interrogative; (36) is a one-constituent answer to the mention-two interpretation, which is therefore not the choice reading, pace Belnap (p. 540).",
+    "verified": "page-image"
+  },
+  {
+    "id": "gs1984_vi_5_41",
+    "source": {
+      "bibkey": "groenendijk-stokhof-1984",
+      "paperLabel": "ch. VI §5.4 (41), p. 544"
+    },
+    "language": "stan1293",
+    "primaryText": "Maria wonders where they sell Italian newspapers",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "mention-some",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "humanSubject",
+        "true"
+      ]
+    ],
+    "comment": "Mention-some interpretations are possible only under verbs with a human subject tied to typical human concerns.",
+    "verified": "page-image"
+  },
+  {
+    "id": "gs1984_vi_5_42",
+    "source": {
+      "bibkey": "groenendijk-stokhof-1984",
+      "paperLabel": "ch. VI §5.4 (42), p. 544"
+    },
+    "language": "stan1293",
+    "primaryText": "Mario asks where they sell Italian newspapers",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "mention-some",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "humanSubject",
+        "true"
+      ]
+    ],
+    "comment": "Mention-some interpretations are possible only under verbs with a human subject tied to typical human concerns.",
+    "verified": "page-image"
+  },
+  {
+    "id": "gs1984_vi_5_43",
+    "source": {
+      "bibkey": "groenendijk-stokhof-1984",
+      "paperLabel": "ch. VI §5.4 (43), p. 544"
+    },
+    "language": "stan1293",
+    "primaryText": "Mary knows where they sell Italian newspapers",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "mention-some",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "humanSubject",
+        "true"
+      ]
+    ],
+    "comment": "Mention-some interpretations are possible only under verbs with a human subject tied to typical human concerns.",
+    "verified": "page-image"
+  },
+  {
+    "id": "gs1984_vi_5_44",
+    "source": {
+      "bibkey": "groenendijk-stokhof-1984",
+      "paperLabel": "ch. VI §5.4 (44), pp. 544-545"
+    },
+    "language": "stan1293",
+    "primaryText": "What the average grade is depends on what grade each student has got",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "mention-some",
+        "judgment": "unacceptable"
+      },
+      {
+        "name": "mention-all",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "humanSubject",
+        "false"
+      ]
+    ],
+    "comment": "Under verbs with no human subject and no tie to human concerns only mention-all interpretations are possible, a problem for a semantic approach that posits a mention-some reading.",
+    "verified": "page-image"
+  },
+  {
+    "id": "gs1984_vi_5_45",
+    "source": {
+      "bibkey": "groenendijk-stokhof-1984",
+      "paperLabel": "ch. VI §5.4 (45), p. 545"
+    },
+    "language": "stan1293",
+    "primaryText": "Where you can get gas depends on what day it is",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "mention-some",
+        "judgment": "unacceptable"
+      },
+      {
+        "name": "mention-all",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "humanSubject",
+        "false"
+      ]
+    ],
+    "comment": "Under verbs with no human subject and no tie to human concerns only mention-all interpretations are possible, a problem for a semantic approach that posits a mention-some reading.",
+    "verified": "page-image"
+  },
+  {
+    "id": "gs1984_vi_5_46",
+    "source": {
+      "bibkey": "groenendijk-stokhof-1984",
+      "paperLabel": "ch. VI §5.4 (46), p. 545"
+    },
+    "language": "stan1293",
+    "primaryText": "Does it matter where a pen is?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "mention-some",
+        "judgment": "unacceptable"
+      },
+      {
+        "name": "mention-all",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "humanSubject",
+        "false"
+      ]
+    ],
+    "comment": "Under verbs with no human subject and no tie to human concerns only mention-all interpretations are possible, a problem for a semantic approach that posits a mention-some reading.",
+    "verified": "page-image"
+  },
+  {
+    "id": "gs1984_vi_5_47",
+    "source": {
+      "bibkey": "groenendijk-stokhof-1984",
+      "paperLabel": "ch. VI §5.4 (47), p. 545"
+    },
+    "language": "stan1293",
+    "primaryText": "Who will come is partly determined by who is invited",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "mention-some",
+        "judgment": "unacceptable"
+      },
+      {
+        "name": "mention-all",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "humanSubject",
+        "false"
+      ]
+    ],
+    "comment": "Under verbs with no human subject and no tie to human concerns only mention-all interpretations are possible, a problem for a semantic approach that posits a mention-some reading.",
+    "verified": "page-image"
+  },
+  {
+    "id": "gs1984_vi_5_48",
+    "source": {
+      "bibkey": "groenendijk-stokhof-1984",
+      "paperLabel": "ch. VI §5.4 (48), p. 545"
+    },
+    "language": "stan1293",
+    "primaryText": "Where can I get gas around here? That depends on what time it is.",
+    "discourseSegments": [
+      "Where can I get gas around here?",
+      "That depends on what time it is."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "mention-some",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [],
+    "comment": "The interrogative gets a mention-some interpretation while the indicative reply involves a mention-all interpretation of the same complement.",
+    "verified": "page-image"
   }
 ]
