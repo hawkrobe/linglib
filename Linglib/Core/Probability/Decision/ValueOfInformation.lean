@@ -5,7 +5,9 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Linglib.Core.Probability.Decision.Blackwell
 public import Linglib.Core.Probability.Kernel.Posterior
+public import Mathlib.Probability.Kernel.Composition.IntegralCompProd
 public import Mathlib.Probability.Decision.BayesEstimator
 public import Mathlib.Probability.Decision.Risk.Basic
 public import Mathlib.Probability.Decision.Risk.RiskIncrease
@@ -23,7 +25,11 @@ Shannon entropy.
 The decision value `decisionValue U μ` of a belief is the best expected utility of an action.
 For it, the value of information is the risk increase of mathlib's decision theory at the
 regret loss `C − U`, so information never has negative value, and garbling an experiment never
-raises its value, the forward direction of Blackwell's comparison of experiments.
+raises its value, the forward direction of Blackwell's comparison of experiments. For an
+experiment that observes a classifier `f`, the value of information is the probability-weighted
+value of the prior conditioned on each fibre of `f`; a fixed statistic gains nothing, which is the
+law of total expectation over the fibres, and the converse of Blackwell's theorem says that a
+classifier never worth more than `f` factors through `f`.
 
 ## Main definitions
 
@@ -40,6 +46,10 @@ raises its value, the forward direction of Blackwell's comparison of experiments
 * `valueOfInformation_decisionValue_comp_le`: a garbled experiment is worth no more.
 * `valueOfInformation_const`: an experiment whose law does not depend on the parameter is
   worth nothing.
+* `valueOfInformation_deterministic`, `sum_measureReal_mul_integral_cond`: the value of observing
+  a classifier sums over its fibres, and the law of total expectation over them.
+* `exists_eq_comp_of_forall_valueOfInformation_le`: a classifier never worth more than `f`
+  factors through `f`.
 
 ## Implementation notes
 
@@ -78,6 +88,13 @@ theorem hasArgminEstimator_of_finite (ℓ : Θ → 𝓨 → ℝ≥0∞) (P : Ker
 
 end ArgminEstimator
 
+/-- Integrating against the composition of a kernel with a measure integrates twice. -/
+theorem _root_.MeasureTheory.Measure.integral_comp {E : Type*} [NormedAddCommGroup E]
+    [NormedSpace ℝ E] {μ : Measure 𝓧} {κ : Kernel 𝓧 Θ} {f : Θ → E} (hf : Integrable f (κ ∘ₘ μ)) :
+    ∫ θ, f θ ∂(κ ∘ₘ μ) = ∫ x, ∫ θ, f θ ∂(κ x) ∂μ := by
+  rw [Measure.comp_eq_comp_const_apply] at hf ⊢
+  rw [Kernel.integral_comp hf, Kernel.const_apply]
+
 /-- The value of information of the experiment `κ` to an agent with prior `π` who values a
 belief by `V` is the expected value of the posterior less the value of the prior. -/
 noncomputable def valueOfInformation [StandardBorelSpace Θ] [Nonempty Θ] (V : Measure Θ → ℝ)
@@ -103,6 +120,14 @@ theorem valueOfInformation_const (V : Measure Θ → ℝ) (ν : Measure 𝓧) [I
   rw [valueOfInformation, Measure.const_comp, measure_univ, one_smul, sub_eq_zero,
     integral_congr_ae ((posterior_const ν π).mono fun x hx ↦ congrArg V hx)]
   simp
+
+/-- A fixed statistic gains nothing from an experiment, since the posteriors average back to the
+prior. -/
+theorem valueOfInformation_integral [Finite Θ] [MeasurableSingletonClass Θ] [Finite 𝓧]
+    [MeasurableSingletonClass 𝓧] (g : Θ → ℝ) (κ : Kernel Θ 𝓧) [IsMarkovKernel κ]
+    (π : Measure Θ) [IsProbabilityMeasure π] :
+    valueOfInformation (fun ν ↦ ∫ θ, g θ ∂ν) κ π = 0 := by
+  rw [valueOfInformation, sub_eq_zero, ← Measure.integral_comp .of_finite, posterior_comp_self]
 
 end Basic
 
@@ -220,5 +245,81 @@ theorem valueOfInformation_decisionValue_comp_le {𝓧' : Type*} {m𝓧' : Measu
     ENNReal.ofReal_le_ofReal_iff (valueOfInformation_decisionValue_nonneg U κ π)] at h
 
 end Inequalities
+
+/-! ### Deterministic experiments -/
+
+section Deterministic
+
+variable [Finite Θ] [MeasurableSingletonClass Θ] [StandardBorelSpace Θ] [Nonempty Θ]
+  [Fintype 𝓧] [MeasurableSingletonClass 𝓧]
+
+/-- The value of information of observing `f` is the decision value of the prior conditioned on
+each fibre of `f`, weighted by the fibre's probability, less the decision value of the prior. -/
+theorem valueOfInformation_deterministic (V : Measure Θ → ℝ) {f : Θ → 𝓧} (hf : Measurable f)
+    (π : Measure Θ) [IsFiniteMeasure π] :
+    valueOfInformation V (Kernel.deterministic f hf) π =
+      ∑ x, π.real (f ⁻¹' {x}) * V π[|f ⁻¹' {x}] - V π := by
+  rw [valueOfInformation, integral_fintype .of_finite, Measure.deterministic_comp_eq_map]
+  congr 1
+  refine Finset.sum_congr rfl fun x _ ↦ ?_
+  rw [smul_eq_mul, map_measureReal_apply hf (measurableSet_singleton x)]
+  rcases eq_or_ne (π (f ⁻¹' {x})) 0 with h | h
+  · simp [measureReal_def, h]
+  · rw [posterior_deterministic_eq_cond _ hf h]
+
+/-- Observing a function of `f` is worth no more to an expected-utility maximizer than observing
+`f`. -/
+theorem valueOfInformation_decisionValue_le_of_factorsThrough [Finite 𝓨] (U : Θ → 𝓨 → ℝ)
+    {𝓧' : Type*} {m𝓧' : MeasurableSpace 𝓧'} [Finite 𝓧'] [MeasurableSingletonClass 𝓧']
+    {f : Θ → 𝓧} {g : Θ → 𝓧'} (hf : Measurable f) (hg : Measurable g) (h : g.FactorsThrough f)
+    (π : Measure Θ) [IsProbabilityMeasure π] :
+    valueOfInformation (decisionValue U) (Kernel.deterministic g hg) π ≤
+      valueOfInformation (decisionValue U) (Kernel.deterministic f hf) π := by
+  obtain ⟨θ₀⟩ := ‹Nonempty Θ›
+  have hψ := h.extend_comp (e' := fun _ ↦ g θ₀)
+  have := valueOfInformation_decisionValue_comp_le U (Kernel.deterministic f hf) π
+    (Kernel.deterministic (Function.extend f g fun _ ↦ g θ₀) (measurable_of_countable _))
+  simp only [Kernel.deterministic_comp_deterministic, hψ] at this
+  exact this
+
+omit [MeasurableSingletonClass 𝓧] in
+/-- Averaging the expectations conditional on the fibres of `f` recovers the expectation, the law
+of total expectation. -/
+theorem sum_measureReal_mul_integral_cond (g : Θ → ℝ) (f : Θ → 𝓧) (π : Measure Θ)
+    [IsProbabilityMeasure π] :
+    ∑ x, π.real (f ⁻¹' {x}) * ∫ θ, g θ ∂π[|f ⁻¹' {x}] = ∫ θ, g θ ∂π := by
+  let _ : MeasurableSpace 𝓧 := ⊤
+  have : MeasurableSingletonClass 𝓧 := ⟨fun _ ↦ trivial⟩
+  have h := valueOfInformation_integral g (Kernel.deterministic f (measurable_of_countable f)) π
+  rwa [valueOfInformation_deterministic, sub_eq_zero] at h
+
+variable {𝓧' : Type*} {m𝓧' : MeasurableSpace 𝓧'} [Fintype 𝓧'] [MeasurableSingletonClass 𝓧']
+  [Nonempty 𝓧']
+
+/-- If observing `g` is never worth more than observing `f` to an expected-utility maximizer
+with actions `𝓧'` and a uniform prior, then `g` factors through `f`. -/
+theorem exists_eq_comp_of_forall_valueOfInformation_le [Fintype Θ] (f : Θ → 𝓧) (g : Θ → 𝓧')
+    (h : ∀ U : Θ → 𝓧' → ℝ,
+      valueOfInformation (decisionValue U) (Kernel.deterministic g (measurable_of_countable g))
+          (uniformOn Set.univ) ≤
+        valueOfInformation (decisionValue U) (Kernel.deterministic f (measurable_of_countable f))
+          (uniformOn Set.univ)) :
+    ∃ ψ : 𝓧 → 𝓧', g = ψ ∘ f := by
+  refine (Kernel.deterministic_isGarblingOf_deterministic_iff (measurable_of_countable f)
+    (measurable_of_countable g)).1 (isGarblingOf_of_bayesRisk_uniform_le fun ℓ hℓ ↦ ?_)
+  have hπ : ((Fintype.card Θ : ℝ≥0∞)⁻¹ • Measure.count : Measure Θ) = uniformOn Set.univ :=
+    Measure.ext fun s _ ↦ by
+      rw [uniformOn_univ, Measure.smul_apply, smul_eq_mul, ENNReal.div_eq_inv_mul]
+  have hU : ∀ θ x', -(ℓ θ x').toReal ≤ 0 := fun _ _ ↦ neg_nonpos.2 ENNReal.toReal_nonneg
+  have hℓ' : ℓ = fun θ x' ↦ ENNReal.ofReal (0 - -(ℓ θ x').toReal) := by
+    ext θ x'
+    simp [ENNReal.ofReal_toReal (hℓ θ x')]
+  rw [hπ, hℓ', bayesRisk_ofReal_sub hU, bayesRisk_ofReal_sub hU]
+  refine ENNReal.ofReal_le_ofReal (sub_le_sub_left ?_ 0)
+  have := h fun θ x' ↦ -(ℓ θ x').toReal
+  rw [valueOfInformation, valueOfInformation] at this
+  linarith
+
+end Deterministic
 
 end ProbabilityTheory

@@ -1,7 +1,8 @@
 module
 
 public import Linglib.Semantics.Questions.Partition.Basic
-public import Linglib.Core.Probability.Decision.Basic
+public import Linglib.Core.Order.Partition.Finpartition
+public import Linglib.Core.Probability.Decision.ValueOfInformation
 public import Mathlib.Data.Set.Card
 public import Mathlib.MeasureTheory.Measure.Real
 public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
@@ -23,14 +24,14 @@ complement is a cell and its two-cell partition properly coarsens the partition.
 * `sum_measureReal_compl`, `sum_measureReal_compl_eq_one_iff`: the complement probabilities sum
   to one less than the number of cells, and to one exactly for two cells.
 * `isGreatest_polar_cell`: a cell and its complement give the coarsest coarsening deciding it.
-* `eu_eq_partitionEU`, `partitionEU_congr`: expected utility computed cell by cell does not
+* `integral_eq_partitionEU`, `partitionEU_congr`: expected utility computed cell by cell does not
   depend on the partition.
 
 ## Implementation notes
 
-Coarsening is the refinement order on `Setoid`. Expected utility uses
-`Core.DecisionTheory.DecisionProblem`, with the prior independent of the act; the paper's
-computation for coarsenings uses Jeffrey's form, with probabilities conditional on the act.
+Coarsening is the refinement order on `Setoid`. Expected utility integrates a utility against a
+prior measure independent of the act; the paper's computation for coarsenings uses Jeffrey's
+form, with probabilities conditional on the act.
 
 ## TODO
 
@@ -48,8 +49,6 @@ such regrouping, are not formalized; nor is the conditional-independence result 
 @[expose] public section
 
 namespace Merin1999b
-
-open Core.DecisionTheory Core.DecisionTheory.DecisionProblem
 
 /-! ### FACT 1: complement families -/
 
@@ -178,26 +177,31 @@ def IsNegativeAttribute {M : Type*} (R : Set M) (q : Setoid M) : Prop :=
 
 /-! ### EU compositionality under coarsening -/
 
-variable {K M A : Type*} [Field K] [LinearOrder K] [IsStrictOrderedRing K]
+section ExpectedUtility
 
-/-- The expected utility of an act computed through a partition weights each cell's
-conditional expected utility by the cell's probability. -/
-def partitionEU [Fintype M] [DecidableEq M] (dp : DecisionProblem K M A) (q : Setoid M)
-    [DecidableRel q] (a : A) : K :=
-  ∑ cell ∈ (Finpartition.ofSetoid q).parts, cell.sum dp.prior * condExpectedUtility dp cell a
+open MeasureTheory ProbabilityTheory
 
-/-- Expected utility computed through any partition is the expected utility, for a nonnegative
-prior. -/
-theorem eu_eq_partitionEU [Fintype M] [DecidableEq M] (dp : DecisionProblem K M A) (a : A)
-    (q : Setoid M) [DecidableRel q] (hprior : ∀ w, dp.prior w ≥ 0) :
-    expectedUtility dp a = partitionEU dp q a :=
-  (sum_cellProbability_mul_condExpectedUtility (Finpartition.ofSetoid q) dp hprior a).symm
+variable {M A : Type*} [Fintype M] [DecidableEq M] [MeasurableSpace M] [DiscreteMeasurableSpace M]
+  [Nonempty M]
+
+/-- The expected utility of an act computed through a partition weights each cell's conditional
+expected utility by the cell's probability. -/
+noncomputable def partitionEU (μ : Measure M) (U : M → A → ℝ) (q : Setoid M) [DecidableRel q]
+    (a : A) : ℝ :=
+  ∑ cell ∈ (Finpartition.ofSetoid q).parts, μ.real cell * ∫ m, U m a ∂μ[|cell]
+
+/-- Expected utility computed through any partition is the expected utility. -/
+theorem integral_eq_partitionEU (μ : Measure M) [IsProbabilityMeasure μ] (U : M → A → ℝ)
+    (q : Setoid M) [DecidableRel q] (a : A) : ∫ m, U m a ∂μ = partitionEU μ U q a := by
+  rw [partitionEU, (Finpartition.ofSetoid q).sum_parts_eq_sum_preimage_part
+    (F := fun c ↦ μ.real c * ∫ m, U m a ∂μ[|c]) (by simp), sum_measureReal_mul_integral_cond]
 
 /-- Expected utility computed through a partition does not depend on the partition. -/
-theorem partitionEU_congr [Fintype M] [DecidableEq M] (dp : DecisionProblem K M A)
-    (q q' : Setoid M) [DecidableRel q] [DecidableRel q'] (a : A)
-    (hprior : ∀ w, dp.prior w ≥ 0) :
-    partitionEU dp q a = partitionEU dp q' a :=
-  (eu_eq_partitionEU dp a q hprior).symm.trans (eu_eq_partitionEU dp a q' hprior)
+theorem partitionEU_congr (μ : Measure M) [IsProbabilityMeasure μ] (U : M → A → ℝ)
+    (q q' : Setoid M) [DecidableRel q] [DecidableRel q'] (a : A) :
+    partitionEU μ U q a = partitionEU μ U q' a :=
+  (integral_eq_partitionEU μ U q a).symm.trans (integral_eq_partitionEU μ U q' a)
+
+end ExpectedUtility
 
 end Merin1999b

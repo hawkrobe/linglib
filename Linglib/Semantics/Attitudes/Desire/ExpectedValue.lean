@@ -1,16 +1,15 @@
 module
 
-public import Linglib.Core.Probability.Decision.Basic
-public import Mathlib.Algebra.Order.Field.Basic
-public import Mathlib.Tactic.FieldSimp
+public import Mathlib.MeasureTheory.Integral.Bochner.Set
+public import Mathlib.Probability.ConditionalProbability
 
 /-!
 # Expected-value desire semantics
 
 `a wants p` iff the conditional expected value of `p` given `a`'s beliefs exceeds a
 contextual threshold — [lassiter-2017]'s scalar semantics for evaluative predicates,
-applied to *want* ([lassiter-2011]). `expectedValue` is the conditional expected utility
-of the one-action decision problem whose utility is the value function. It is an interval
+applied to *want* ([lassiter-2011]). `expectedValue` is the expectation of the value function
+under the prior conditioned on the worlds of `p` compatible with the beliefs. It is an interval
 scale (`expectedValue_affine`) and intermediate on disjoint propositions
 (`expectedValue_intermediate`), from which the threshold reading derives Weakening
 (`Want.union`) and, given exclusivity, the Smith Principle (`Want.inter_of_union_eq_univ`).
@@ -26,116 +25,133 @@ The bare threshold admits simultaneous `want p` and `want ¬p` (`exists_want_and
 
 namespace Desire.ExpectedValue
 
-open Core.DecisionTheory
+open MeasureTheory ProbabilityTheory
 
-variable {W : Type*} [Fintype W] (pr V : W → ℚ) (θ : ℚ) (bel p q : Set W)
-  [DecidablePred (· ∈ bel)] [DecidablePred (· ∈ p)] [DecidablePred (· ∈ q)]
+variable {W : Type*} [MeasurableSpace W] (μ : Measure W) (V : W → ℝ) (θ : ℝ) (bel p q : Set W)
 
-/-- The one-action decision problem whose utility is the value function `V`. -/
-def toDecisionProblem : DecisionProblem ℚ W Unit := ⟨λ w _ => V w, pr⟩
+/-- The expected value `E_V(p)` of `p` given the belief state is the expectation of the value
+function under the prior conditioned on the worlds of `p` compatible with the beliefs. -/
+noncomputable def expectedValue : ℝ := ∫ w, V w ∂μ[|bel ∩ p]
 
-/-- The worlds of `p` compatible with the beliefs. -/
-def cell : Finset W := Finset.univ.filter (· ∈ bel ∩ p)
+/-- `p` has positive prior mass inside the belief state when its compatible worlds do. -/
+def HasPositiveBeliefMass : Prop := μ (bel ∩ p) ≠ 0
 
-/-- `E_V(p)`: the conditional expected value of `p` given the belief state (`0` on a
-zero-mass cell). -/
-def expectedValue : ℚ := (toDecisionProblem pr V).condExpectedUtility (cell bel p) ()
+/-- `a wants p` when the expected value of `p` exceeds the threshold. -/
+def Want : Prop := θ < expectedValue μ V bel p
 
-/-- `p` carries positive prior mass inside the belief state. -/
-def HasPositiveBeliefMass : Prop := 0 < ∑ w ∈ cell bel p, pr w
+variable {μ V θ bel p q} [IsFiniteMeasure μ]
 
-/-- `a wants p`: the expected value of `p` exceeds the threshold. -/
-def Want : Prop := θ < expectedValue pr V bel p
+/-- The mass of the compatible worlds of `p` times the expected value of `p` is the integral of
+the value function over those worlds. -/
+theorem measureReal_mul_expectedValue :
+    μ.real (bel ∩ p) * expectedValue μ V bel p = ∫ w in bel ∩ p, V w ∂μ := by
+  rw [expectedValue, ProbabilityTheory.cond, integral_smul_measure, smul_eq_mul, ← mul_assoc]
+  rcases eq_or_ne (μ (bel ∩ p)) 0 with h | h
+  · simp [measureReal_def, h, Measure.restrict_eq_zero.2 h]
+  · rw [measureReal_def, ENNReal.toReal_inv, mul_inv_cancel₀
+      (ENNReal.toReal_ne_zero.2 ⟨h, measure_ne_top _ _⟩), one_mul]
 
-instance : Decidable (Want pr V θ bel p) := inferInstanceAs (Decidable (_ < _))
+private theorem measureReal_pos (h : HasPositiveBeliefMass μ bel p) : 0 < μ.real (bel ∩ p) :=
+  ENNReal.toReal_pos h (measure_ne_top _ _)
 
-variable {pr V θ bel p q}
+variable [Finite W] [MeasurableSingletonClass W]
 
-theorem cell_congr (h : p = q) : cell bel p = cell bel q := by
-  subst h; exact Finset.filter_congr_decidable ..
-
-theorem expectedValue_congr (h : p = q) : expectedValue pr V bel p = expectedValue pr V bel q := by
-  simp only [expectedValue, cell_congr h]
-
-theorem expectedValue_eq (h : HasPositiveBeliefMass pr bel p) :
-    expectedValue pr V bel p = (∑ w ∈ cell bel p, pr w * V w) / ∑ w ∈ cell bel p, pr w := by
-  have hne := h.ne'
-  simp only [expectedValue, DecisionProblem.condExpectedUtility, toDecisionProblem, ite_eq_right hne]
-  rw [eq_div_iff hne, Finset.sum_mul]
-  exact Finset.sum_congr rfl λ w _ => by field_simp
+/-- Over finitely many worlds, the expected value of `p` is the prior-weighted average of the
+value function over the worlds of `p` compatible with the beliefs. -/
+theorem expectedValue_eq_sum [Fintype W] [DecidablePred (· ∈ bel ∩ p)] :
+    expectedValue μ V bel p =
+      (∑ w ∈ Finset.univ.filter (· ∈ bel ∩ p), μ.real {w} * V w) /
+        ∑ w ∈ Finset.univ.filter (· ∈ bel ∩ p), μ.real {w} := by
+  have hden : ∑ w ∈ Finset.univ.filter (· ∈ bel ∩ p), μ.real {w} = μ.real (bel ∩ p) := by
+    rw [sum_measureReal_singleton]
+    congr 1
+    ext w
+    simp
+  have hnum : ∑ w ∈ Finset.univ.filter (· ∈ bel ∩ p), μ.real {w} * V w =
+      ∫ w in bel ∩ p, V w ∂μ := by
+    rw [integral_fintype .of_finite, Finset.sum_filter]
+    refine Finset.sum_congr rfl fun w _ ↦ ?_
+    rw [smul_eq_mul, measureReal_restrict_apply (measurableSet_singleton w)]
+    by_cases hw : w ∈ bel ∩ p <;> simp [hw]
+  rw [hden, hnum, ← measureReal_mul_expectedValue]
+  rcases eq_or_ne (μ (bel ∩ p)) 0 with h | h
+  · simp [expectedValue, cond_eq_zero_of_meas_eq_zero h]
+  · rw [mul_div_cancel_left₀ _ (measureReal_pos h).ne']
 
 /-- Expected value is an interval scale: a positive affine transformation of the value
 function transforms expected value by the same coefficients. -/
-theorem expectedValue_affine (h : HasPositiveBeliefMass pr bel p) (a b : ℚ) :
-    expectedValue pr (λ w => a * V w + b) bel p = a * expectedValue pr V bel p + b := by
-  rw [expectedValue_eq h, expectedValue_eq h, div_eq_iff h.ne', add_mul, mul_div_assoc',
-    div_mul_cancel₀ _ h.ne', Finset.mul_sum, Finset.mul_sum, ← Finset.sum_add_distrib]
-  exact Finset.sum_congr rfl λ w _ => by ring
-
-theorem cell_union [DecidableEq W] : cell bel (p ∪ q) = cell bel p ∪ cell bel q := by
-  ext; simp [cell, Set.inter_union_distrib_left]
-
-theorem disjoint_cell [DecidableEq W] (h : Disjoint p q) :
-    Disjoint (cell bel p) (cell bel q) :=
-  Finset.disjoint_filter.2 λ _ _ hp hq => Set.disjoint_left.1 h hp.2 hq.2
+theorem expectedValue_affine (h : HasPositiveBeliefMass μ bel p) (a b : ℝ) :
+    expectedValue μ (fun w ↦ a * V w + b) bel p = a * expectedValue μ V bel p + b := by
+  have := cond_isProbabilityMeasure (μ := μ) h
+  simp only [expectedValue]
+  rw [integral_add .of_finite .of_finite, integral_const_mul, integral_const, probReal_univ,
+    one_smul]
 
 /-- The expected value of a disjoint union lies between the expected values of the
 parts. -/
-theorem expectedValue_intermediate [DecidableEq W] (hp : HasPositiveBeliefMass pr bel p)
-    (hq : HasPositiveBeliefMass pr bel q) (hd : Disjoint p q) :
-    min (expectedValue pr V bel p) (expectedValue pr V bel q) ≤
-        expectedValue pr V bel (p ∪ q) ∧
-      expectedValue pr V bel (p ∪ q) ≤
-        max (expectedValue pr V bel p) (expectedValue pr V bel q) := by
-  have hpq : HasPositiveBeliefMass pr bel (p ∪ q) := by
-    unfold HasPositiveBeliefMass at *
-    rw [cell_union, Finset.sum_union (disjoint_cell hd)]
-    exact add_pos hp hq
-  rw [expectedValue_eq hp, expectedValue_eq hq, expectedValue_eq hpq, cell_union,
-    Finset.sum_union (disjoint_cell hd), Finset.sum_union (disjoint_cell hd)]
-  unfold HasPositiveBeliefMass at hp hq
+theorem expectedValue_intermediate (hp : HasPositiveBeliefMass μ bel p)
+    (hq : HasPositiveBeliefMass μ bel q) (hd : Disjoint p q) :
+    min (expectedValue μ V bel p) (expectedValue μ V bel q) ≤ expectedValue μ V bel (p ∪ q) ∧
+      expectedValue μ V bel (p ∪ q) ≤ max (expectedValue μ V bel p) (expectedValue μ V bel q) := by
+  have hd' : Disjoint (bel ∩ p) (bel ∩ q) := hd.mono Set.inter_subset_right Set.inter_subset_right
+  have hmp := measureReal_pos hp
+  have hmq := measureReal_pos hq
+  have hmass : μ.real (bel ∩ (p ∪ q)) = μ.real (bel ∩ p) + μ.real (bel ∩ q) := by
+    rw [Set.inter_union_distrib_left, measureReal_union hd' (Set.toFinite _).measurableSet]
+  have hsum : μ.real (bel ∩ (p ∪ q)) * expectedValue μ V bel (p ∪ q) =
+      μ.real (bel ∩ p) * expectedValue μ V bel p + μ.real (bel ∩ q) * expectedValue μ V bel q := by
+    rw [measureReal_mul_expectedValue, measureReal_mul_expectedValue, measureReal_mul_expectedValue,
+      Set.inter_union_distrib_left,
+      setIntegral_union hd' (Set.toFinite _).measurableSet Integrable.of_finite.integrableOn
+        Integrable.of_finite.integrableOn]
+  rw [hmass] at hsum
   constructor
-  · rw [le_div_iff₀ (add_pos hp hq), mul_add]
-    exact add_le_add ((le_div_iff₀ hp).1 (min_le_left _ _))
-      ((le_div_iff₀ hq).1 (min_le_right _ _))
-  · rw [div_le_iff₀ (add_pos hp hq), mul_add]
-    exact add_le_add ((div_le_iff₀ hp).1 (le_max_left _ _))
-      ((div_le_iff₀ hq).1 (le_max_right _ _))
+  · by_contra hlt
+    push Not at hlt
+    nlinarith [min_le_left (expectedValue μ V bel p) (expectedValue μ V bel q),
+      min_le_right (expectedValue μ V bel p) (expectedValue μ V bel q)]
+  · by_contra hlt
+    push Not at hlt
+    nlinarith [le_max_left (expectedValue μ V bel p) (expectedValue μ V bel q),
+      le_max_right (expectedValue μ V bel p) (expectedValue μ V bel q)]
 
-/-- Weakening: disjoint `p` and `q` both above threshold put their union above it. -/
-theorem Want.union [DecidableEq W] (hp' : HasPositiveBeliefMass pr bel p)
-    (hq' : HasPositiveBeliefMass pr bel q) (hd : Disjoint p q) (hp : Want pr V θ bel p)
-    (hq : Want pr V θ bel q) : Want pr V θ bel (p ∪ q) :=
+/-- Weakening holds, since disjoint `p` and `q` both above threshold put their union above it. -/
+theorem Want.union (hp' : HasPositiveBeliefMass μ bel p) (hq' : HasPositiveBeliefMass μ bel q)
+    (hd : Disjoint p q) (hp : Want μ V θ bel p) (hq : Want μ V θ bel q) :
+    Want μ V θ bel (p ∪ q) :=
   lt_of_lt_of_le (lt_min hp hq) (expectedValue_intermediate hp' hq' hd).1
 
 /-- A disjoint union above threshold with one part at or below it has the other part
 above it. -/
-theorem Want.resolve_left [DecidableEq W] (hp' : HasPositiveBeliefMass pr bel p)
-    (hq' : HasPositiveBeliefMass pr bel q) (hd : Disjoint p q) (h : Want pr V θ bel (p ∪ q))
-    (hp : ¬ Want pr V θ bel p) : Want pr V θ bel q :=
+theorem Want.resolve_left (hp' : HasPositiveBeliefMass μ bel p)
+    (hq' : HasPositiveBeliefMass μ bel q) (hd : Disjoint p q) (h : Want μ V θ bel (p ∪ q))
+    (hp : ¬ Want μ V θ bel p) : Want μ V θ bel q :=
   (lt_max_iff.1 (lt_of_lt_of_le h (expectedValue_intermediate hp' hq' hd).2)).resolve_left hp
 
-/-- The Smith Principle: for exhaustive `p` and `q` both above threshold, so is `p ∩ q`,
+/-- The Smith Principle holds: for exhaustive `p` and `q` both above threshold, so is `p ∩ q`,
 provided `want` is exclusive on `q`. -/
-theorem Want.inter_of_union_eq_univ [DecidableEq W]
-    (hpq : HasPositiveBeliefMass pr bel (p ∩ q)) (hq' : HasPositiveBeliefMass pr bel qᶜ)
-    (huniv : p ∪ q = Set.univ) (hp : Want pr V θ bel p) (hex : ¬ Want pr V θ bel qᶜ) :
-    Want pr V θ bel (p ∩ q) := by
+theorem Want.inter_of_union_eq_univ (hpq : HasPositiveBeliefMass μ bel (p ∩ q))
+    (hq' : HasPositiveBeliefMass μ bel qᶜ) (huniv : p ∪ q = Set.univ) (hp : Want μ V θ bel p)
+    (hex : ¬ Want μ V θ bel qᶜ) : Want μ V θ bel (p ∩ q) := by
   have hsub : qᶜ ⊆ p := Set.compl_subset_iff_union.2 (Set.union_comm _ _ ▸ huniv)
   have heq : qᶜ ∪ p ∩ q = p := by
     rw [← Set.inter_eq_right.2 hsub, Set.union_comm, Set.inter_union_compl]
   exact Want.resolve_left hq' hpq (disjoint_compl_left.mono_right Set.inter_subset_right)
-    (by unfold Want; rwa [expectedValue_congr heq]) hex
+    (by rw [heq]; exact hp) hex
 
+omit [Finite W] [MeasurableSingletonClass W] [IsFiniteMeasure μ] in
 /-- The bare threshold admits simultaneous `want p` and `want ¬p`. -/
 theorem exists_want_and_want_compl :
-    ∃ (W : Type) (_ : Fintype W) (pr V : W → ℚ) (θ : ℚ) (bel p : Set W)
-      (_ : DecidablePred (· ∈ bel)) (_ : DecidablePred (· ∈ p)),
-      Want pr V θ bel p ∧ Want pr V θ bel pᶜ :=
-  ⟨Bool, inferInstance, λ _ => 1, λ b => if b then 2 else 1, 0, Set.univ, {true},
-    inferInstance, inferInstance, by
-      constructor <;>
-        norm_num [Want, expectedValue, cell, DecisionProblem.condExpectedUtility,
-          toDecisionProblem, Finset.sum_filter, Fintype.sum_bool] <;> decide⟩
+    ∃ (W : Type) (_ : MeasurableSpace W) (μ : Measure W) (V : W → ℝ) (θ : ℝ) (bel p : Set W),
+      Want μ V θ bel p ∧ Want μ V θ bel pᶜ := by
+  refine ⟨Bool, inferInstance, Measure.count, fun b ↦ if b then 2 else 1, 0, Set.univ, {true}, ?_⟩
+  have hpos (s : Set Bool) (hs : Measure.count (Set.univ ∩ s) ≠ 0) :
+      0 < expectedValue Measure.count (fun b ↦ if b then (2 : ℝ) else 1) Set.univ s := by
+    have := cond_isProbabilityMeasure (μ := Measure.count) hs
+    refine lt_of_lt_of_le zero_lt_one ?_
+    calc (1 : ℝ) = ∫ _, (1 : ℝ) ∂Measure.count[|Set.univ ∩ s] := by
+          rw [integral_const, probReal_univ, smul_eq_mul, mul_one]
+      _ ≤ _ := integral_mono (integrable_const 1) .of_finite fun b ↦ by cases b <;> norm_num
+  exact ⟨hpos _ (by simp), hpos _ (by simp [Set.compl_def])⟩
 
 end Desire.ExpectedValue
