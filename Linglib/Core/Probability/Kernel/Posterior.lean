@@ -23,7 +23,9 @@ product parameter space, to comparisons of prior-weighted likelihood sums.
   is the prior conditioned on the observation's fibre.
 * `ProbabilityTheory.posterior_const`: an observation whose law does not depend on the state
   leaves the prior unchanged.
-* `ProbabilityTheory.posterior_real_finset_lt_iff`: event comparison of the posterior.
+* `ProbabilityTheory.posterior_real_finset_lt_iff`: event comparison of the posterior, and
+  `posterior_real_singleton_lt_iff_of_eq`, state comparison at equal prior as likelihood
+  comparison.
 * `ProbabilityTheory.integral_posterior`, `comp_real_mul_integral_posterior`: the posterior
   expectation is the prior expectation of the likelihood-weighted statistic over the
   observation's marginal.
@@ -106,6 +108,16 @@ theorem posterior_real_finset_lt_iff {x : 𝓧} (hx : (κ ∘ₘ μ) {x} ≠ 0) 
     ENNReal.toReal_sum (fun ω _ => ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _))]
   simp_rw [ENNReal.toReal_mul]
   exact Iff.rfl
+
+/-- Between two states of equal prior mass, the posterior favours the one under which the
+observation is likelier. -/
+theorem posterior_real_singleton_lt_iff_of_eq {x : 𝓧} (hx : (κ ∘ₘ μ) {x} ≠ 0) {ω₁ ω₂ : Ω}
+    (hμ : μ {ω₁} = μ {ω₂}) (hpos : μ {ω₁} ≠ 0) :
+    ((κ†μ) x).real {ω₁} < ((κ†μ) x).real {ω₂} ↔ (κ ω₁).real {x} < (κ ω₂).real {x} := by
+  have h := posterior_real_finset_lt_iff κ μ hx {ω₁} {ω₂}
+  simp only [Finset.coe_singleton, Finset.sum_singleton] at h
+  rw [h, measureReal_def μ {ω₂}, ← hμ, ← measureReal_def, mul_lt_mul_iff_of_pos_left
+    (show 0 < μ.real {ω₁} from ENNReal.toReal_pos hpos (measure_ne_top _ _))]
 
 /-- The posterior mass of a finite event is the sum of the prior-weighted likelihoods over the
 event, normalized by the observation marginal. -/
