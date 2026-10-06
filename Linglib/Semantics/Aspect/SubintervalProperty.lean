@@ -18,10 +18,17 @@ time, *Mary was running* entailing *Mary ran*: the reference time lies inside th
 running, so it is itself the run time of a running. The entailment does not characterize the
 property, since a predicate may validate it without being closed under subintervals.
 
+Dowty states the property of sentences true at intervals, and an interval predicate has it when
+it holds at every subinterval of an interval it holds at. The non-strict and the strict
+imperfective have it whatever the predicate, and so does the negated perfective: an interval
+containing no event of the predicate has no subinterval containing one.
+
 ## Main definitions
 
 * `Aspect.HasSubintervalProperty`: the run times of the predicate form a lower set at every
   world.
+* `Aspect.IntervalPred.HasSubintervalProperty`: the intervals at which an interval predicate
+  holds form a lower set at every world.
 
 ## Main results
 
@@ -32,6 +39,9 @@ property, since a predicate may validate it without being closed under subinterv
   event ends lacks the property.
 * `Aspect.exists_prfv_of_impf_not_hasSubintervalProperty`: a predicate may validate the
   entailment and lack the property.
+* `Aspect.hasSubintervalProperty_unbounded`, `Aspect.hasSubintervalProperty_impf`,
+  `Aspect.hasSubintervalProperty_not_prfv`: the imperfectives and the negated perfective have the
+  property as interval predicates.
 
 ## Implementation notes
 
@@ -115,5 +125,28 @@ theorem exists_prfv_of_impf_not_hasSubintervalProperty :
   rcases hP with hP | hP
   · exact absurd hP (by decide)
   · exact absurd (congrArg (·.snd) hP) (by decide)
+
+/-! ### Interval predicates -/
+
+/-- An interval predicate has the subinterval property when it holds at every subinterval of an
+interval it holds at, so that at every world the intervals at which it holds form a lower set. -/
+def IntervalPred.HasSubintervalProperty (p : IntervalPred W T) : Prop :=
+  ∀ w, IsLowerSet {t | p w t}
+
+variable (P)
+
+/-- The non-strict imperfective has the subinterval property whatever the predicate. -/
+theorem hasSubintervalProperty_unbounded : (UNBOUNDED P).HasSubintervalProperty :=
+  fun _ _ _ hle ⟨e, he, hP⟩ ↦ ⟨e, hle.trans he, hP⟩
+
+/-- The imperfective has the subinterval property whatever the predicate. -/
+theorem hasSubintervalProperty_impf : (IMPF P).HasSubintervalProperty :=
+  fun _ _ _ hle ⟨e, he, hP⟩ ↦ ⟨e, hle.trans_lt he, hP⟩
+
+/-- Negation yields the subinterval property, since an interval containing no event of the
+predicate has no subinterval containing one. -/
+theorem hasSubintervalProperty_not_prfv :
+    IntervalPred.HasSubintervalProperty fun w (t : NonemptyInterval T) ↦ ¬ PRFV P w t :=
+  fun _ _ _ hle hn ⟨e, he, hP⟩ ↦ hn ⟨e, he.trans hle, hP⟩
 
 end Aspect
