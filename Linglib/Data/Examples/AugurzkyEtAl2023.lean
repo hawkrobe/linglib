@@ -69,7 +69,7 @@ def ex_15 : Datum :=
 
 def notEvery : Datum :=
   { id := "augurzkyetal2023_notEvery"
-    source := ⟨"augurzky-etal-2023", "Experiment 2, not every"⟩
+    source := ⟨"augurzky-etal-2023", "Figure 4"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Not every boy opened his presents."

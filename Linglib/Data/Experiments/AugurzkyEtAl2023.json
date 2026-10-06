@@ -156,7 +156,7 @@
     {
       "name": "tests",
       "structure": "Test",
-      "doc": "a likelihood-ratio test of a term of a cumulative logistic mixed-effects model.",
+      "doc": "a χ² test of a term of a cumulative logistic mixed-effects model.",
       "locator": "§3.1.2, §3.2.2",
       "verified": "page-image",
       "columns": [
