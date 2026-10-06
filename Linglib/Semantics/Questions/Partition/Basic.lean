@@ -179,18 +179,12 @@ theorem polar_ne_top (hp : p.Nonempty) (hp' : p ≠ Set.univ) : polar p ≠ ⊤ 
 coarser question relates a `p`-world `a` to a world outside `p`, and so relates every world to
 `a`. -/
 theorem isCoatom_polar (hp : p.Nonempty) (hp' : p ≠ Set.univ) : IsCoatom (polar p) := by
-  refine ⟨polar_ne_top hp hp', fun R hR ↦ Setoid.eq_top_iff.2 ?_⟩
-  obtain ⟨a, b, hab, ha, hb⟩ : ∃ a b, R a b ∧ a ∈ p ∧ b ∉ p := by
-    obtain ⟨a, b, hab, h⟩ : ∃ a b, R a b ∧ ¬ polar p a b := by
-      simpa [Setoid.le_def] using hR.not_ge
-    by_cases ha : a ∈ p
-    · exact ⟨a, b, hab, ha, fun hb ↦ h (polar_iff.2 (iff_of_true ha hb))⟩
-    · exact ⟨b, a, R.symm' hab, by_contra fun hb ↦ h (polar_iff.2 (iff_of_false ha hb)), ha⟩
-  have h x : R x a := by
-    by_cases hx : x ∈ p
-    · exact hR.le (polar_iff.2 (iff_of_true hx ha))
-    · exact R.trans' (hR.le (polar_iff.2 (iff_of_false hx hb))) (R.symm' hab)
-  exact fun x y ↦ R.trans' (h x) (R.symm' (h y))
+  refine ⟨polar_ne_top hp hp', fun R hR ↦ Setoid.eq_top_iff.2 fun x y ↦ ?_⟩
+  obtain ⟨a, b, hab, h⟩ : ∃ a b, R a b ∧ ¬ polar p a b := by
+    simpa [Setoid.le_def] using hR.not_ge
+  have hle := @hR.le
+  simp only [Setoid.le_def, polar_iff] at h hle
+  grind [Setoid.trans', Setoid.symm']
 
 /-- The coatoms of the lattice of questions are exactly the polar questions whether `p`, for `p`
 neither empty nor everything. -/

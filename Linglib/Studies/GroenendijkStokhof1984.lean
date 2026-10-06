@@ -145,10 +145,9 @@ dicto (chapter I, (8)). -/
 theorem whichDeDicto_inf_who_le (G P : E → Set W) :
     whichDeDicto G P ⊓ who G ≤ whichDeDicto G fun x ↦ (P x)ᶜ := fun _ _ ⟨h, hG⟩ ↦
   who_iff.2 fun x ↦ by
-    have h₁ := who_iff.1 h x
-    have h₂ := who_iff.1 hG x
-    simp only [Set.mem_inter_iff, Set.mem_compl_iff] at h₁ ⊢
-    tauto
+    have := who_iff.1 h x
+    have := who_iff.1 hG x
+    grind
 
 /-- Asking of each individual whom they love is asking who loves whom, the pair-list reading of
 *whom does everyone love* over a fixed domain (chapter VI, pp. 447–449). -/
@@ -197,11 +196,7 @@ theorem knows_who_iff {P : E → Set W} :
     Knows R (who P) w ↔
       (∀ x, w ∈ P x → w ∈ R.core (P x)) ∧ ∀ x, w ∉ P x → w ∈ R.core (P x)ᶜ := by
   simp only [Knows, SetRel.mem_core, Setoid.mem_cell, who_iff, Set.mem_compl_iff]
-  refine ⟨fun h ↦ ⟨fun x hx v hv ↦ (h hv x).2 hx, fun x hx v hv hv' ↦ hx ((h hv x).1 hv')⟩,
-    fun ⟨h₁, h₂⟩ v hv x ↦ ?_⟩
-  by_cases hx : w ∈ P x
-  · exact iff_of_true (h₁ x hx hv) hx
-  · exact iff_of_false (h₂ x hx hv) hx
+  grind
 
 /-- Knowing who walks, when nobody walks, is knowing that nobody walks (chapter II, (XIII)). -/
 theorem knows_nobody {P : E → Set W} (h : Knows R (who P) w) (hw : ∀ x, w ∉ P x) :
@@ -690,11 +685,7 @@ theorem doxastic_inter_eq {P : Set Index} (h₀ : ((0 : Fin 2), ({0} : Finset (F
     (h₁ : ((0 : Fin 2), ({1} : Finset (Fin 2))) ∉ P) : info.doxastic ∩ P = {(0, {0})} := by
   ext w
   simp only [info, Set.mem_inter_iff, Set.mem_insert_iff, Set.mem_singleton_iff]
-  constructor
-  · rintro ⟨rfl | rfl, h⟩
-    exacts [rfl, absurd h h₁]
-  · rintro rfl
-    exact ⟨Or.inl rfl, h₀⟩
+  grind
 
 theorem doxastic_inter_byName : info.doxastic ∩ byName = {(0, {0})} :=
   doxastic_inter_eq rfl (by simp [byName])
@@ -867,12 +858,9 @@ V, appendix 2, (4)). -/
 theorem determined_union (P₁ P₂ : Set W) :
     determined Q (P₁ ∪ P₂) = determined Q P₁ ∪ determined Q P₂ := by
   ext v
-  simp only [determined, compatible, Set.mem_sUnion, Set.mem_sep_iff, Set.mem_union]
-  constructor
-  · rintro ⟨X, ⟨hX, y, hyX, hy | hy⟩, hv⟩
-    exacts [Or.inl ⟨X, ⟨hX, y, hyX, hy⟩, hv⟩, Or.inr ⟨X, ⟨hX, y, hyX, hy⟩, hv⟩]
-  · rintro (⟨X, ⟨hX, y, hyX, hy⟩, hv⟩ | ⟨X, ⟨hX, y, hyX, hy⟩, hv⟩)
-    exacts [⟨X, ⟨hX, y, hyX, Or.inl hy⟩, hv⟩, ⟨X, ⟨hX, y, hyX, Or.inr hy⟩, hv⟩]
+  simp only [determined, compatible, Set.mem_sUnion, Set.mem_sep_iff, Set.mem_union,
+    Set.Nonempty, Set.mem_inter_iff]
+  grind
 
 /-- The answers compatible with a conjunction are compatible with each conjunct (chapter V,
 appendix 2, (3), which states an equation). -/
@@ -890,32 +878,22 @@ theorem better_or_inter_or_union {P₁ P₂ : Set W} (h₁ : GivesPartialSemanti
       (GivesPartialSemanticAnswer (P₁ ∪ P₂) Q ∧ Better Q (P₁ ∪ P₂) P₁ ∧
         Better Q (P₁ ∪ P₂) P₂) := by
   have hsub := determined_inter_subset (Q := Q) P₁ P₂
-  have hsub₁ : determined Q (P₁ ∩ P₂) ⊆ determined Q P₁ := hsub.trans Set.inter_subset_left
-  have hsub₂ : determined Q (P₁ ∩ P₂) ⊆ determined Q P₂ := hsub.trans Set.inter_subset_right
+  have hu := determined_union (Q := Q) P₁ P₂
   have hne₁₂ : determined Q (P₁ ∩ P₂) ≠ ∅ := by
     obtain ⟨z, hz⟩ := h
     exact Set.nonempty_iff_ne_empty.1 ⟨z, _, ⟨Q.mem_classes z, z, Q.refl' z, hz⟩, Q.refl' z⟩
+  unfold Better MoreInformative MoreStandard GivesPartialSemanticAnswer at *
+  -- the paper's four cases (16): the conjunction compatible with as many answers as either
+  -- conjunct, or fewer
   rcases eq_or_ne (determined Q (P₁ ∩ P₂)) (determined Q P₁) with e₁ | n₁ <;>
   rcases eq_or_ne (determined Q (P₁ ∩ P₂)) (determined Q P₂) with e₂ | n₂
-  · have e : determined Q P₁ = determined Q P₂ := e₁.symm.trans e₂
-    have eu : determined Q (P₁ ∪ P₂) = determined Q P₁ := by
-      rw [determined_union, ← e, Set.union_self]
-    by_cases u₁ : P₂ ⊆ P₁
-    · exact Or.inl (Or.inr ⟨e, Set.ssubset_iff_subset_ne.2 ⟨u₁, hne.symm⟩⟩)
+  · by_cases u₁ : P₂ ⊆ P₁
+    · grind [Set.ssubset_iff_subset_ne]
     by_cases u₂ : P₁ ⊆ P₂
-    · exact Or.inr (Or.inl (Or.inr ⟨e.symm, Set.ssubset_iff_subset_ne.2 ⟨u₂, hne⟩⟩))
-    refine Or.inr (Or.inr (Or.inr ⟨⟨eu ▸ h₁.1, eu ▸ h₁.2⟩, Or.inr ⟨eu, ?_⟩,
-      Or.inr ⟨eu.trans e, ?_⟩⟩))
-    · exact Set.ssubset_iff_subset_ne.2 ⟨Set.subset_union_left,
-        fun hu ↦ u₁ (hu ▸ Set.subset_union_right)⟩
-    · exact Set.ssubset_iff_subset_ne.2 ⟨Set.subset_union_right,
-        fun hu ↦ u₂ (hu ▸ Set.subset_union_left)⟩
-  · exact Or.inl (Or.inl (Set.ssubset_iff_subset_ne.2 ⟨e₁ ▸ hsub₂, fun heq ↦ n₂ (e₁.trans heq)⟩))
-  · exact Or.inr (Or.inl (Or.inl (Set.ssubset_iff_subset_ne.2
-      ⟨e₂ ▸ hsub₁, fun heq ↦ n₁ (e₂.trans heq)⟩)))
-  · refine Or.inr (Or.inr (Or.inl ⟨⟨hne₁₂, fun hu ↦ h₁.2 (Set.eq_univ_of_univ_subset
-      (hu ▸ hsub₁))⟩, Or.inl (Set.ssubset_iff_subset_ne.2 ⟨hsub₁, n₁⟩),
-      Or.inl (Set.ssubset_iff_subset_ne.2 ⟨hsub₂, n₂⟩)⟩))
+    · grind [Set.ssubset_iff_subset_ne]
+    grind [Set.ssubset_iff_subset_ne, Set.subset_union_left, Set.subset_union_right,
+      Set.union_self, Set.subset_inter_iff]
+  all_goals grind [Set.ssubset_iff_subset_ne, Set.subset_inter_iff, Set.eq_univ_of_univ_subset]
 
 /-! Four indices in two cells, `{0, 1}` and `{2, 3}`. -/
 
