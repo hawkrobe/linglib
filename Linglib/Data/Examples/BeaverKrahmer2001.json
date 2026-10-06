@@ -1,0 +1,749 @@
+[
+ {
+  "id": "beaverkrahmer2001_1",
+  "source": {
+   "bibkey": "beaver-krahmer-2001",
+   "paperLabel": "(1)"
+  },
+  "language": "stan1293",
+  "primaryText": "Somebody managed to succeed George V on the throne of England.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "phenomenon",
+    "quantified presupposition trigger"
+   ]
+  ],
+  "comment": "Karttunen and Peters's classic manage-to example; the quantifier binds into the trigger."
+ },
+ {
+  "id": "beaverkrahmer2001_2",
+  "source": {
+   "bibkey": "heim-1983",
+   "paperLabel": "(25)"
+  },
+  "language": "stan1293",
+  "primaryText": "A fat man pushes his bicycle.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [],
+  "comment": "Heim's indefinite with a presupposing predicate; existential projection intuitive.",
+  "reportedIn": {
+   "bibkey": "beaver-krahmer-2001",
+   "paperLabel": "(2)"
+  }
+ },
+ {
+  "id": "beaverkrahmer2001_3",
+  "source": {
+   "bibkey": "heim-1983",
+   "paperLabel": "(23)"
+  },
+  "language": "stan1293",
+  "primaryText": "Everyone who serves his king will be rewarded.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [],
+  "comment": "",
+  "reportedIn": {
+   "bibkey": "beaver-krahmer-2001",
+   "paperLabel": "(3)"
+  }
+ },
+ {
+  "id": "beaverkrahmer2001_4",
+  "source": {
+   "bibkey": "heim-1983",
+   "paperLabel": "(7)"
+  },
+  "language": "stan1293",
+  "primaryText": "Every nation cherishes its king.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [],
+  "comment": "Heim predicts the universal presupposition that every nation has a king.",
+  "reportedIn": {
+   "bibkey": "beaver-krahmer-2001",
+   "paperLabel": "(4)"
+  }
+ },
+ {
+  "id": "beaverkrahmer2001_5",
+  "source": {
+   "bibkey": "beaver-krahmer-2001",
+   "paperLabel": "(5)"
+  },
+  "language": "stan1293",
+  "primaryText": "Bill regrets that Mary is sad.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "schema",
+    "q<p>"
+   ],
+   [
+    "intuitive",
+    "p"
+   ],
+   [
+    "strongPredicts",
+    "p"
+   ]
+  ],
+  "comment": "The factive's complement is the elementary presupposition."
+ },
+ {
+  "id": "beaverkrahmer2001_6",
+  "source": {
+   "bibkey": "beaver-krahmer-2001",
+   "paperLabel": "(6)"
+  },
+  "language": "stan1293",
+  "primaryText": "Bill regrets that the king of France is bald.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "phenomenon",
+    "nested elementary presupposition"
+   ]
+  ],
+  "comment": "A transplication inside the subscript of another."
+ },
+ {
+  "id": "beaverkrahmer2001_7",
+  "source": {
+   "bibkey": "beaver-krahmer-2001",
+   "paperLabel": "(7)"
+  },
+  "language": "stan1293",
+  "primaryText": "It is not the case that Bill regrets that Mary is sad.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "schema",
+    "~q<p>"
+   ],
+   [
+    "intuitive",
+    "p"
+   ],
+   [
+    "strongPredicts",
+    "p"
+   ],
+   [
+    "strongVerdict",
+    "correct"
+   ]
+  ],
+  "comment": ""
+ },
+ {
+  "id": "beaverkrahmer2001_8",
+  "source": {
+   "bibkey": "beaver-krahmer-2001",
+   "paperLabel": "(8)"
+  },
+  "language": "stan1293",
+  "primaryText": "If Bill regrets that Mary is sad, then he'll soothe her.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "schema",
+    "q<p> -> r"
+   ],
+   [
+    "intuitive",
+    "p"
+   ],
+   [
+    "strongPredicts",
+    "p | r"
+   ],
+   [
+    "strongVerdict",
+    "incorrect"
+   ],
+   [
+    "middlePredicts",
+    "p"
+   ],
+   [
+    "middleVerdict",
+    "correct"
+   ]
+  ],
+  "comment": ""
+ },
+ {
+  "id": "beaverkrahmer2001_9",
+  "source": {
+   "bibkey": "beaver-krahmer-2001",
+   "paperLabel": "(9)"
+  },
+  "language": "stan1293",
+  "primaryText": "If Mary is sad, then Bill regrets that Mary is sad.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "schema",
+    "p -> q<p>"
+   ],
+   [
+    "intuitive",
+    "none"
+   ],
+   [
+    "weakPredicts",
+    "p"
+   ],
+   [
+    "weakVerdict",
+    "incorrect"
+   ]
+  ],
+  "comment": ""
+ },
+ {
+  "id": "beaverkrahmer2001_10",
+  "source": {
+   "bibkey": "beaver-krahmer-2001",
+   "paperLabel": "(10)"
+  },
+  "language": "stan1293",
+  "primaryText": "Somebody managed to succeed George V (on the throne of England).",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "questionable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "phenomenon",
+    "quantified presupposition trigger"
+   ]
+  ],
+  "comment": "Printed with ?; a Karttunen-and-Peters-style reading is argued to be too weak."
+ },
+ {
+  "id": "beaverkrahmer2001_13",
+  "source": {
+   "bibkey": "heim-1983",
+   "paperLabel": "(7)"
+  },
+  "language": "stan1293",
+  "primaryText": "Every nation cherishes its king.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "predicted",
+    "disjunctive"
+   ]
+  ],
+  "comment": "The fragment derives the disjunction of the universal truth condition and the existential falsity condition.",
+  "reportedIn": {
+   "bibkey": "beaver-krahmer-2001",
+   "paperLabel": "(13)"
+  }
+ },
+ {
+  "id": "beaverkrahmer2001_16",
+  "source": {
+   "bibkey": "beaver-krahmer-2001",
+   "paperLabel": "(16)"
+  },
+  "language": "stan1293",
+  "primaryText": "Mary doesn't know that Bill is happy, she merely believes it.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "phenomenon",
+    "cancellation under negation"
+   ]
+  ],
+  "comment": ""
+ },
+ {
+  "id": "beaverkrahmer2001_17",
+  "source": {
+   "bibkey": "beaver-krahmer-2001",
+   "paperLabel": "(17)"
+  },
+  "language": "stan1293",
+  "primaryText": "If Mary knows that Bill is happy, then I'm a Dutchman - she merely believes it.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "phenomenon",
+    "cancellation in a conditional"
+   ]
+  ],
+  "comment": "Beaver 1997's example; the same cancellation without a negation to blame."
+ },
+ {
+  "id": "beaverkrahmer2001_18",
+  "source": {
+   "bibkey": "beaver-krahmer-2001",
+   "paperLabel": "(18)"
+  },
+  "language": "stan1293",
+  "primaryText": "Either Bill has stopped smoking, or he doesn't have enough money to buy cigarettes.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "schema",
+    "q<p> | r"
+   ],
+   [
+    "intuitive",
+    "p"
+   ],
+   [
+    "projection",
+    "leftProjects"
+   ]
+  ],
+  "comment": ""
+ },
+ {
+  "id": "beaverkrahmer2001_19",
+  "source": {
+   "bibkey": "beaver-krahmer-2001",
+   "paperLabel": "(19)"
+  },
+  "language": "stan1293",
+  "primaryText": "Either Bill doesn't have enough money to buy cigarettes, or he's stopped smoking.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "schema",
+    "r | q<p>"
+   ],
+   [
+    "intuitive",
+    "p"
+   ],
+   [
+    "projection",
+    "rightProjects"
+   ]
+  ],
+  "comment": ""
+ },
+ {
+  "id": "beaverkrahmer2001_20",
+  "source": {
+   "bibkey": "beaver-krahmer-2001",
+   "paperLabel": "(20)"
+  },
+  "language": "stan1293",
+  "primaryText": "Either Bill has just stopped smoking, or else he's just started doing some exercise.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "projection",
+    "bothProject"
+   ]
+  ],
+  "comment": ""
+ },
+ {
+  "id": "beaverkrahmer2001_21",
+  "source": {
+   "bibkey": "beaver-krahmer-2001",
+   "paperLabel": "(21)"
+  },
+  "language": "stan1293",
+  "primaryText": "Either Bill has just stopped smoking, or he never did smoke and just carried that lighter around as a pose.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "schema",
+    "q<p> | ~p"
+   ],
+   [
+    "intuitive",
+    "none"
+   ],
+   [
+    "projection",
+    "cancelLeft"
+   ]
+  ],
+  "comment": ""
+ },
+ {
+  "id": "beaverkrahmer2001_22",
+  "source": {
+   "bibkey": "beaver-krahmer-2001",
+   "paperLabel": "(22)"
+  },
+  "language": "stan1293",
+  "primaryText": "Either Bill always did smoke, but only when nobody was watching, or else he's just started smoking.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "projection",
+    "cancelRight"
+   ]
+  ],
+  "comment": ""
+ },
+ {
+  "id": "beaverkrahmer2001_23",
+  "source": {
+   "bibkey": "beaver-krahmer-2001",
+   "paperLabel": "(23)"
+  },
+  "language": "stan1293",
+  "primaryText": "Either Bill just stopped smoking, and never did drink, or else he just stopped drinking, and never did smoke.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "projection",
+    "cancelBothAssertions"
+   ]
+  ],
+  "comment": ""
+ },
+ {
+  "id": "beaverkrahmer2001_24",
+  "source": {
+   "bibkey": "beaver-krahmer-2001",
+   "paperLabel": "(24)"
+  },
+  "language": "stan1293",
+  "primaryText": "Either Bill has just stopped smoking, or else he's just started smoking.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "schema",
+    "q<p> | r<~p>"
+   ],
+   [
+    "intuitive",
+    "none"
+   ],
+   [
+    "projection",
+    "cancelBothInconsistent"
+   ]
+  ],
+  "comment": ""
+ },
+ {
+  "id": "beaverkrahmer2001_25",
+  "source": {
+   "bibkey": "beaver-krahmer-2001",
+   "paperLabel": "(25)"
+  },
+  "language": "stan1293",
+  "primaryText": "If Mary is clever, she knows that Bill is happy.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "schema",
+    "p -> q<r>"
+   ],
+   [
+    "intuitive",
+    "r"
+   ],
+   [
+    "strongPredicts",
+    "p -> r"
+   ],
+   [
+    "strongVerdict",
+    "incorrect"
+   ],
+   [
+    "middlePredicts",
+    "p -> r"
+   ],
+   [
+    "middleVerdict",
+    "incorrect"
+   ]
+  ],
+  "comment": "The presupposition should project strongly; the conditional prediction is inappropriately weak."
+ },
+ {
+  "id": "beaverkrahmer2001_26",
+  "source": {
+   "bibkey": "beaver-2001",
+   "paperLabel": "E154"
+  },
+  "language": "stan1293",
+  "primaryText": "If Spaceman Spiff lands on Planet X, he will be bothered by the fact that his weight is higher than it would be on earth.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "schema",
+    "p -> q<r>"
+   ],
+   [
+    "intuitive",
+    "p -> r"
+   ],
+   [
+    "strongPredicts",
+    "p -> r"
+   ],
+   [
+    "strongVerdict",
+    "correct"
+   ],
+   [
+    "middlePredicts",
+    "p -> r"
+   ],
+   [
+    "middleVerdict",
+    "correct"
+   ]
+  ],
+  "comment": "A case where the Karttunen-style conditional presupposition is exactly what intuition wants.",
+  "reportedIn": {
+   "bibkey": "beaver-krahmer-2001",
+   "paperLabel": "(26)"
+  }
+ },
+ {
+  "id": "beaverkrahmer2001_27",
+  "source": {
+   "bibkey": "beaver-krahmer-2001",
+   "paperLabel": "(27)"
+  },
+  "language": "stan1293",
+  "primaryText": "The king of France is not bald, since there is no king of France.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "basic",
+    "~(q<p>) &w ~p"
+   ],
+   [
+    "preferred",
+    "~A(q<p>) &w ~p"
+   ],
+   [
+    "presupposes",
+    "none"
+   ]
+  ],
+  "comment": ""
+ },
+ {
+  "id": "beaverkrahmer2001_28",
+  "source": {
+   "bibkey": "beaver-krahmer-2001",
+   "paperLabel": "(28)"
+  },
+  "language": "stan1293",
+  "primaryText": "Either Bill has just stopped smoking, or else he's just started smoking.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "basic",
+    "q<p> |w r<~p>"
+   ],
+   [
+    "preferred",
+    "A(q<p>) |w A(r<~p>)"
+   ]
+  ],
+  "comment": "The basic translation is nowhere defined; meta-asserting both disjuncts is the only coherent and defined translation."
+ },
+ {
+  "id": "beaverkrahmer2001_29",
+  "source": {
+   "bibkey": "beaver-krahmer-2001",
+   "paperLabel": "(29)"
+  },
+  "language": "stan1293",
+  "primaryText": "If Mary is sad, then Bill regrets that Mary is sad.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "basic",
+    "p ->w q<p>"
+   ],
+   [
+    "preferred",
+    "p ->w A(q<p>)"
+   ],
+   [
+    "presupposes",
+    "none"
+   ]
+  ],
+  "comment": "The antecedent makes the bare consequent redundant; meta-asserting it removes the violation."
+ },
+ {
+  "id": "beaverkrahmer2001_30",
+  "source": {
+   "bibkey": "beaver-krahmer-2001",
+   "paperLabel": "(30)"
+  },
+  "language": "stan1293",
+  "primaryText": "If Spaceman Spiff stands on the weighing scale, he will be bothered by the fact that his weight is higher than it was yesterday.",
+  "discourseSegments": [],
+  "glossedTokens": [],
+  "translation": "",
+  "context": "",
+  "judgment": "acceptable",
+  "alternatives": [],
+  "readings": [],
+  "paperFeatures": [
+   [
+    "phenomenon",
+    "unconditional accommodation"
+   ]
+  ],
+  "comment": "Heard as presupposing the weight increase outright; the paper sketches a plausibility constraint on initial common grounds."
+ }
+]
