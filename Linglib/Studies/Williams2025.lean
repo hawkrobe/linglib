@@ -19,14 +19,6 @@ infinitives only. The modal is a last resort for Bondarenko's pre-existence pres
 embedded event started before the forgetting: an anterior complement meets it as soon as the
 complement holds, while a plain infinitive contradicts it and needs the modal.
 
-## Main definitions
-
-* `aspP`: the plain infinitive.
-* `anterior`: the anterior shift of the gerund and the perfect.
-* `mod`: the plan modal.
-* `PreEx`: pre-existence at the forgetting.
-* `NeedsMod`: the need for the modal.
-
 ## Main results
 
 * `needsMod_aspP`: a plain infinitive needs the modal.
@@ -189,8 +181,8 @@ theorem not_needsMod_mod {f s : E} (hs : mod plan C w (τ f) s) (hlt : (τ s).fs
 
 /-- [white-2014] modalizes the infinitive of the implicative *forget* and the gerund of the
 factive one alike, but the infinitive frame hosts the plain infinitive, which needs the modal,
-and the perfect infinitive, which like the gerund does not: whether the modal heads a complement
-is not a matter of its frame. -/
+and the perfect infinitive, which like the gerund does not, so whether the modal heads a
+complement is not a matter of its frame. -/
 theorem mca_overgenerates {f : E} (h : P w e) (hf : (τ e).precedes (τ f)) :
     (∀ fr ∈ English.Verbs.forget.frames, White2014.Modalized fr) ∧
       (∃ fr ∈ English.Verbs.forget_rog.frames, White2014.Modalized fr) ∧

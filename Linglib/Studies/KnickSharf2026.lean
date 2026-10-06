@@ -13,11 +13,6 @@ left boundary in a domain `tᵣ`, entails its simple present competitor whatever
 equivalent to it under broad focus, where the domain is unrestricted, which is why competition
 rules it out there. Among the focus alternatives, a domain further in the past is stronger.
 
-## Main definitions
-
-* `simplePresent`: the simple present.
-* `presPerfProgXN`: the U-perfect with domain restriction `tᵣ`.
-
 ## Main results
 
 * `u_perf_entails_simple_present`: the U-perfect entails the simple present.

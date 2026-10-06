@@ -54,7 +54,7 @@ open Degree Tense Rett2020a
 
 /-! ### Ambivalence -/
 
-/-- Semantic ambivalence (4): a sentence ambiguous between two propositions each equivalent to
+/-- Semantic ambivalence (4) is a sentence's ambiguity between two propositions each equivalent to
 the negation of the other. -/
 def Ambivalent (p q : Prop) : Prop := p ↔ ¬ q
 
@@ -67,12 +67,12 @@ section Degrees
 
 variable {E D : Type*} [LinearOrder D] (μ : E → D)
 
-/-- The informative bounds of a set of degrees: its greatest lower and least upper bounds,
-when it has them. -/
+/-- The informative bounds of a set of degrees are its greatest lower and least upper bounds, when
+it has them. -/
 def informativeBounds (X : Set D) : Set D := {x | IsGLB X x ∨ IsLUB X x}
 
-/-- Fixed-point ambidirectionality of a degree set: every informative bound of its complement
-is one of its own, so a relation to the informative bound is insensitive to negation. -/
+/-- A degree set is fixed-point ambidirectional when every informative bound of its complement is
+one of its own, so a relation to the informative bound is insensitive to negation. -/
 def SharesBounds (X : Set D) : Prop := informativeBounds Xᶜ ⊆ informativeBounds X
 
 /-- On an open scale, the degrees an individual does not reach share their only informative
@@ -91,44 +91,43 @@ theorem not_sharesBounds_Iic [OrderTop D] {a : D} (ha : a < ⊤) : ¬ SharesBoun
   intro h
   have htop : ⊤ ∈ informativeBounds (Set.Iic a)ᶜ := by
     rw [Set.compl_Iic]
-    exact Or.inr ⟨λ _ _ => le_top, λ b hb => hb ha⟩
+    exact Or.inr ⟨fun _ _ ↦ le_top, fun b hb ↦ hb ha⟩
   rcases h htop with hx | hx
   · exact absurd (hx.1 (Set.mem_Iic.mpr le_rfl)) (not_le.mpr ha)
-  · exact absurd (hx.2 (λ _ hx => hx)) (not_le.mpr ha)
+  · exact absurd (hx.2 (fun _ hx ↦ hx)) (not_le.mpr ha)
 
 variable (a b : E)
 
-/-- The comparative (47): the least upper bound of the target's degrees exceeds that of the
-standard's. -/
+/-- The comparative (47) holds when the least upper bound of the target's degrees exceeds that of
+the standard's. -/
 def taller : Prop := ∃ d' d, IsLUB (Set.Iic (μ a)) d' ∧ IsLUB (Set.Iic (μ b)) d ∧ d < d'
 
-/-- The comparative with a negated standard (53): the standard's degree relative is read on
-the negative scale, so its informative bound is the greatest lower bound of the degrees the
-standard does not reach. -/
+/-- The comparative with a negated standard (53) reads the standard's degree relative on the
+negative scale, so its informative bound is the greatest lower bound of the degrees the standard
+does not reach. -/
 def tallerNeg : Prop := ∃ d' d, IsLUB (Set.Iic (μ a)) d' ∧ IsGLB (Set.Ioi (μ b)) d ∧ d < d'
 
 theorem taller_iff : taller μ a b ↔ μ b < μ a :=
-  ⟨λ ⟨_, _, h', h, hlt⟩ => by rwa [h.unique isLUB_Iic, h'.unique isLUB_Iic] at hlt,
-    λ h => ⟨μ a, μ b, isLUB_Iic, isLUB_Iic, h⟩⟩
+  ⟨fun ⟨_, _, h', h, hlt⟩ ↦ by rwa [h.unique isLUB_Iic, h'.unique isLUB_Iic] at hlt,
+    fun h ↦ ⟨μ a, μ b, isLUB_Iic, isLUB_Iic, h⟩⟩
 
 theorem tallerNeg_iff [DenselyOrdered D] : tallerNeg μ a b ↔ μ b < μ a :=
-  ⟨λ ⟨_, _, h', h, hlt⟩ => by rwa [h.unique isGLB_Ioi, h'.unique isLUB_Iic] at hlt,
-    λ h => ⟨μ a, μ b, isLUB_Iic, isGLB_Ioi, h⟩⟩
+  ⟨fun ⟨_, _, h', h, hlt⟩ ↦ by rwa [h.unique isGLB_Ioi, h'.unique isLUB_Iic] at hlt,
+    fun h ↦ ⟨μ a, μ b, isLUB_Iic, isGLB_Ioi, h⟩⟩
 
-/-- Fixed-point ambidirectionality of the comparative: negating the standard changes
-nothing. -/
+/-- The comparative is fixed-point ambidirectional, since negating the standard changes nothing. -/
 theorem tallerNeg_iff_taller [DenselyOrdered D] : tallerNeg μ a b ↔ taller μ a b :=
   (tallerNeg_iff μ a b).trans (taller_iff μ a b).symm
 
 /-- The comparative is downward entailing in its standard (80). -/
 theorem taller_antitone {c : E} (h : μ b ≤ μ a) : taller μ c a → taller μ c b :=
-  λ ht => (taller_iff μ c b).mpr (h.trans_lt ((taller_iff μ c a).mp ht))
+  fun ht ↦ (taller_iff μ c b).mpr (h.trans_lt ((taller_iff μ c a).mp ht))
 
-/-- So is the comparative with a negated standard: the negation reverses the scale on which
+/-- So is the comparative with a negated standard, since the negation reverses the scale on which
 the entailment is computed but not the truth conditions. -/
 theorem tallerNeg_antitone [DenselyOrdered D] {c : E} (h : μ b ≤ μ a) :
     tallerNeg μ c a → tallerNeg μ c b :=
-  λ ht => (tallerNeg_iff_taller μ c b).mpr
+  fun ht ↦ (tallerNeg_iff_taller μ c b).mpr
     (taller_antitone μ a b h ((tallerNeg_iff_taller μ c a).mp ht))
 
 end Degrees
@@ -137,23 +136,24 @@ end Degrees
 
 section Times
 
-variable {T : Type*} [LinearOrder T] (A : RunTimes T)
+variable {T : Type*} [LinearOrder T] (A : Set (NonemptyInterval T))
 
-/-- *A until B* (73): the last time of `A` precedes the first time of `B`. -/
-def until_ (B : RunTimes T) : Prop :=
+/-- *A until B* (73) holds when the last time of `A` precedes the first time of `B`. -/
+def until_ (B : Set (NonemptyInterval T)) : Prop :=
   ∃ m ∈ maxOnScale .gt (timeTrace A), ∃ m' ∈ maxOnScale .lt (timeTrace B), m < m'
 
-theorem until_iff_of_isLeast {B : RunTimes T} {m' : T} (h : IsLeast (timeTrace B) m') :
+theorem until_iff_of_isLeast {B : Set (NonemptyInterval T)} {m' : T}
+    (h : IsLeast (timeTrace B) m') :
     until_ A B ↔ ∃ m ∈ maxOnScale .gt (timeTrace A), m < m' := by
   simp only [until_, maxOnScale_lt_eq, Set.mem_ofPred_eq]
-  exact ⟨λ ⟨m, hm, _, hm', hlt⟩ => ⟨m, hm, hm'.unique h ▸ hlt⟩,
-    λ ⟨m, hm, hlt⟩ => ⟨m, hm, m', h, hlt⟩⟩
+  exact ⟨fun ⟨m, hm, _, hm', hlt⟩ ↦ ⟨m, hm, hm'.unique h ▸ hlt⟩,
+    fun ⟨m, hm, hlt⟩ ↦ ⟨m, hm, m', h, hlt⟩⟩
 
 variable [OrderBot T] (s : T)
 
-/-- The runtime of a negated event: the interval from the beginning of time to the event's
-start. -/
-def preEvent : RunTimes T := stativeDenotation ⟨⟨⊥, s⟩, bot_le⟩
+/-- The runtime of a negated event is the interval from the beginning of time to the event's start.
+-/
+def preEvent : Set (NonemptyInterval T) := Set.Iic ⟨⟨⊥, s⟩, bot_le⟩
 
 theorem isLeast_timeTrace_preEvent : IsLeast (timeTrace (preEvent s)) ⊥ :=
   isLeast_timeTrace_stative _
@@ -172,16 +172,16 @@ theorem not_before_preEvent : ¬ before A (preEvent s) := by
   rintro ⟨_, _, h⟩
   exact not_lt_bot h
 
-/-- Coerced to its end, the negated event gives *before* the starting-point reading of the
-event itself: the two share their informative bound. -/
+/-- Coerced to its end, the negated event gives *before* the starting-point reading of the event
+itself, since the two share their informative bound. -/
 theorem before_preEvent_completive_iff :
     before A (completive (preEvent s)) ↔ ∃ t ∈ timeTrace A, t < s :=
   before_completive_iff (isGreatest_timeTrace_preEvent s)
 
-/-- *Before* is ambidirectional on the starting-point reading: negating an embedded event
+/-- *Before* is ambidirectional on the starting-point reading, since negating an embedded event
 changes nothing, and the endpoint reading of a telic event is lost. -/
 theorem before_ambidirectional (i : NonemptyInterval T) :
-    before A (stativeDenotation i) ↔ before A (completive (preEvent i.fst)) :=
+    before A (Set.Iic i) ↔ before A (completive (preEvent i.fst)) :=
   (before_iff_of_isLeast (isLeast_timeTrace_stative i)).trans
     (before_preEvent_completive_iff A i.fst).symm
 
@@ -189,8 +189,8 @@ theorem before_ambidirectional (i : NonemptyInterval T) :
 theorem after_preEvent_iff : after A (preEvent s) ↔ ∃ t ∈ timeTrace A, s < t :=
   after_iff_of_isGreatest (isGreatest_timeTrace_preEvent s)
 
-/-- Coerced to its onset, *after* a negated event is trivially true of any main clause with a
-time: nothing is gained, so *after* licenses no expletive negation. -/
+/-- Coerced to its onset, *after* a negated event is trivially true of any main clause with a time,
+so nothing is gained and *after* licenses no expletive negation. -/
 theorem after_preEvent_inchoative {t : T} (ht : t ∈ timeTrace A) (h : t ≠ ⊥) :
     after A (inchoative (preEvent s)) :=
   (after_inchoative_iff (isLeast_timeTrace_preEvent s)).mpr ⟨t, ht, bot_lt_iff_ne_bot.mpr h⟩
@@ -198,11 +198,11 @@ theorem after_preEvent_inchoative {t : T} (ht : t ∈ timeTrace A) (h : t ≠ �
 /-- *Until* treats its embedded clause as *before* does, so it is ambidirectional in the same
 way. -/
 theorem until_preEvent_completive_iff (i : NonemptyInterval T) :
-    until_ A (stativeDenotation i) ↔ until_ A (completive (preEvent i.fst)) := by
+    until_ A (Set.Iic i) ↔ until_ A (completive (preEvent i.fst)) := by
   rw [until_iff_of_isLeast A (isLeast_timeTrace_stative i),
     until_iff_of_isLeast A (isLeast_timeTrace_completive_preEvent i.fst)]
 
-/-- *Since* a punctual event is *since* the negated event coerced to its end: the two have the
+/-- *Since* a punctual event is *since* the negated event coerced to its end, as the two have the
 same single time. -/
 theorem since_preEvent_completive_iff :
     Heinamaki1974.since A (completive (preEvent s)) ↔
@@ -217,18 +217,18 @@ section NotAmbidirectional
 
 variable {T : Type*}
 
-/-- *After* is not ambidirectional under complementation: with two times, *after* the earlier
+/-- *After* is not ambidirectional under complementation, since with two times *after* the earlier
 of a punctual clause differs from *after* its complement. -/
 theorem after_not_ambidirectional [LinearOrder T] (hab : ∃ a b : T, a < b) :
-    ¬ ∀ (A : RunTimes T) (B : Set T),
-      isAmbidirectional (λ X => ∃ t ∈ timeTrace A, ∃ m ∈ maxOnScale .gt X, m < t) B := by
+    ¬ ∀ (A : Set (NonemptyInterval T)) (B : Set T),
+      isAmbidirectional (fun X ↦ ∃ t ∈ timeTrace A, ∃ m ∈ maxOnScale .gt X, m < t) B := by
   obtain ⟨a, b, hab⟩ := hab
   intro h
   have h_amb := h {NonemptyInterval.pure b} {a}
-  have h_fB : ∃ t ∈ timeTrace ({NonemptyInterval.pure b} : RunTimes T),
+  have h_fB : ∃ t ∈ timeTrace ({NonemptyInterval.pure b} : Set (NonemptyInterval T)),
       ∃ m ∈ maxOnScale .gt ({a} : Set T), m < t :=
     ⟨b, ⟨NonemptyInterval.pure b, rfl, le_refl _, le_refl _⟩,
-     a, ⟨rfl, λ _ hx' hne => absurd hx' hne⟩, hab⟩
+     a, ⟨rfl, fun _ hx' hne ↦ absurd hx' hne⟩, hab⟩
   obtain ⟨t, ht_A, m, ⟨_, hm_dom⟩, htm⟩ := h_amb.mp h_fB
   obtain ⟨j, hj_mem, hj_s, hj_f⟩ := ht_A
   simp only [Set.mem_singleton_iff] at hj_mem
@@ -242,15 +242,14 @@ theorem after_not_ambidirectional [LinearOrder T] (hab : ∃ a b : T, a < b) :
   · rw [ht_eq] at htm
     exact absurd htm (not_lt.mpr (le_of_lt (hm_dom b hb_compl (Ne.symm hmb))))
 
-/-- *While* demands total overlap, which the complement of the embedded interval cannot
-supply: it is not ambidirectional, so Hungarian *amíg* with negation reads only as
-*until* (74). -/
+/-- *While* demands total overlap, which the complement of the embedded interval cannot supply, so
+it is not ambidirectional and Hungarian *amíg* with negation reads only as *until* (74). -/
 theorem while_not_ambidirectional [Inhabited T] :
-    ¬ ∀ (A B : Set T), isAmbidirectional (λ X => ∀ t ∈ A, t ∈ X) B := by
+    ¬ ∀ (A B : Set T), isAmbidirectional (fun X ↦ ∀ t ∈ A, t ∈ X) B := by
   intro h
   have := h {default} {default}
   simp only [isAmbidirectional] at this
-  have lhs : ∀ t ∈ ({default} : Set T), t ∈ ({default} : Set T) := λ _ h => h
+  have lhs : ∀ t ∈ ({default} : Set T), t ∈ ({default} : Set T) := fun _ h ↦ h
   have rhs := this.mp lhs (default : T) rfl
   exact absurd rfl rhs
 
@@ -287,10 +286,10 @@ def Construction.Scalar : Construction → Prop
   | .before | .until | .since | .comparative | .equative => True
   | _ => False
 
-instance : DecidablePred Construction.Scalar := λ c => by
+instance : DecidablePred Construction.Scalar := fun c ↦ by
   cases c <;> unfold Construction.Scalar <;> infer_instance
 
-/-- An example: its construction and judgment. -/
+/-- An example records its construction and judgment. -/
 structure Row where
   construction : Construction
   judgment : Judgment

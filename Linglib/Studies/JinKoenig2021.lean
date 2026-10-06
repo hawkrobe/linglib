@@ -64,7 +64,7 @@ def DualInference {X : Type*} (p : X → Prop) : Prop := (∃ x, p x) ∧ ∃ y,
 open Tense Anscombe1964 Karttunen1974 in
 /-- *q before p* says that *p* holds at some time and fails at the time of *q*, which precedes
 every time of *p*, (13b). -/
-theorem before_dual {T : Type*} [LinearOrder T] {A B : RunTimes T}
+theorem before_dual {T : Type*} [LinearOrder T] {A B : Set (NonemptyInterval T)}
     (h : Anscombe.beforeEver A B) (hB : (timeTrace B).Nonempty) :
     DualInference (· ∈ timeTrace B) :=
   ⟨hB, let ⟨t, _, ht⟩ := h; ⟨t, fun hmem ↦ lt_irrefl t (ht t hmem)⟩⟩
@@ -72,7 +72,7 @@ theorem before_dual {T : Type*} [LinearOrder T] {A B : RunTimes T}
 /-! ### Logical operators (Section 6.3) -/
 
 open Modality in
-/-- *impossible p* is the necessity of `¬p`: `p` fails at the best worlds and, if it holds
+/-- *impossible p* is the necessity of `¬p`, so `p` fails at the best worlds and, if it holds
 anywhere, the meaning activates both, (13c). -/
 theorem impossible_dual {W : Type*} (f : ModalBase W) (g : OrderingSource W) (p : W → Prop)
     (w : W) (h : necessity f g (fun w' ↦ ¬ p w') w) (hb : (bestWorlds f g w).Nonempty)
@@ -220,7 +220,7 @@ def Row.ofDatum (e : Datum) : Option Row := do
 /-- The examples of Sections 1, 2 and 6. -/
 def rows : List Row := Examples.all.filterMap Row.ofDatum
 
-/-- Mandarin's negator tracks the trigger, Sections 6.1.1 and 6.1.2: the imperative negator
+/-- Mandarin's negator tracks the trigger, Sections 6.1.1 and 6.1.2. The imperative negator appears
 exactly under *fear* and the deontic negator exactly under the *regret* class. -/
 theorem mandarin_negators :
     ∀ r ∈ rows, r.language = .mandarin →
@@ -238,11 +238,10 @@ theorem januubi_standard : ∀ r ∈ rows, r.language = .januubi → r.kind = .s
 
 /-! ### Blocked classes (Sections 6.4 and 7) -/
 
-/-- A concept can fail to trigger expletive negation in a language for these reasons: Januubi
-admits only noun phrases as complements of comparatives and disprefers the modal that the
-*regret* class needs; Januubi, Mandarin and Zarma-Sonrai express *too … to* as
-'too … so that … not', and Mandarin and Zarma-Sonrai express *without* as 'q not p', where the
-negation is part of the meaning. -/
+/-- A concept can fail to trigger expletive negation in a language for three reasons. Januubi admits
+only noun phrases as complements of comparatives and disprefers the modal that the *regret* class
+needs; Januubi, Mandarin and Zarma-Sonrai express *too … to* as 'too … so that … not'; and Mandarin
+and Zarma-Sonrai express *without* as 'q not p', where the negation is part of the meaning. -/
 def blocking : Language → ENConcept → Option ENBlockingReason
   | .januubi, .moreThan | .januubi, .lessThan => some .npOnlyComplement
   | .januubi, .regret => some .modalRestriction

@@ -30,29 +30,29 @@ namespace Anscombe1964
 
 open Tense NonemptyInterval
 
-variable {T : Type*} [LinearOrder T] {A B C : RunTimes T}
+variable {T : Type*} [LinearOrder T] {A B C : Set (NonemptyInterval T)}
 
 /-! ### Definitions -/
 
-/-- *p before q*: *p and not q, and then q* (§II). -/
-def Anscombe.before (A B : RunTimes T) : Prop :=
+/-- *p before q* holds when *p and not q, and then q* (§II). -/
+def Anscombe.before (A B : Set (NonemptyInterval T)) : Prop :=
   ∃ t ∈ timeTrace A \ timeTrace B, ∃ t' ∈ timeTrace B, t < t'
 
-/-- *p after q*: *q, and then p* — a time of *p* after a time of *q* (§II, §IV). -/
-def Anscombe.after (A B : RunTimes T) : Prop :=
+/-- *p after q* holds when *q, and then p*, a time of *p* after a time of *q* (§II, §IV). -/
+def Anscombe.after (A B : Set (NonemptyInterval T)) : Prop :=
   ∃ t ∈ timeTrace A, ∃ t' ∈ timeTrace B, t' < t
 
 /-- The §IV rendering of *p before q*, a time of *p* before every time of *q*, which §V
 finds right for *p before ever q*. -/
-def Anscombe.beforeEver (A B : RunTimes T) : Prop :=
+def Anscombe.beforeEver (A B : Set (NonemptyInterval T)) : Prop :=
   ∃ t ∈ timeTrace A, ∀ t' ∈ timeTrace B, t < t'
 
-/-- Repetition: *p, and then not p, and then p* (§II). -/
-def Repetition (A : RunTimes T) : Prop :=
+/-- A clause repeats when *p, and then not p, and then p* (§II). -/
+def Repetition (A : Set (NonemptyInterval T)) : Prop :=
   ∃ t₁ ∈ timeTrace A, ∃ t₂ ∉ timeTrace A, ∃ t₃ ∈ timeTrace A, t₁ < t₂ ∧ t₂ < t₃
 
 /-- A clause reports an instantaneous event when it holds at a single time (§VIII). -/
-def Instantaneous (A : RunTimes T) : Prop := ∃ t, timeTrace A = {t}
+def Instantaneous (A : Set (NonemptyInterval T)) : Prop := ∃ t, timeTrace A = {t}
 
 /-! ### The logical properties (§II) -/
 
@@ -76,10 +76,10 @@ theorem before_trans (hB : (timeTrace B).OrdConnected) (hC : (timeTrace C).OrdCo
   have hab' : a < b' := lt_of_not_ge fun h => haB (hB.out hb' hb ⟨h, hab.le⟩)
   exact ⟨a, ⟨ha, fun haC => hb'C (hC.out haC hc ⟨hab'.le, hb'c.le⟩)⟩, c, hc, hab'.trans hb'c⟩
 
-/-- With repetition admitted, *before* is not asymmetric: *it was night before it was day,
-and day before it was night*. -/
+/-- With repetition admitted, *before* is not asymmetric, as in *it was night before it was day, and
+day before it was night*. -/
 theorem before_not_asymm :
-    ∃ A B : RunTimes ℤ, Anscombe.before A B ∧ Anscombe.before B A :=
+    ∃ A B : Set (NonemptyInterval ℤ), Anscombe.before A B ∧ Anscombe.before B A :=
   ⟨{pure 0, pure 2}, {pure 1, pure 3},
     ⟨0, by simp, 1, by simp, by decide⟩, ⟨1, by simp, 2, by simp, by decide⟩⟩
 
@@ -87,17 +87,18 @@ theorem before_not_asymm :
 theorem after_of_before : Anscombe.before A B → Anscombe.after B A :=
   fun ⟨a, ⟨ha, _⟩, b, hb, hab⟩ => ⟨b, hb, a, ha, hab⟩
 
-/-- *After* is not asymmetric: the overlapping existences of the Parthenon and St. Peter's. -/
+/-- *After* is not asymmetric, as the overlapping existences of the Parthenon and St. Peter's show.
+-/
 theorem after_not_asymm :
-    ∃ A B : RunTimes ℤ, Anscombe.after A B ∧ Anscombe.after B A :=
-  ⟨stativeDenotation ⟨(0, 10), by decide⟩, stativeDenotation ⟨(5, 15), by decide⟩,
-    ⟨10, mem_timeTrace_stativeDenotation.2 ⟨by decide, by decide⟩,
-      5, mem_timeTrace_stativeDenotation.2 ⟨by decide, by decide⟩, by decide⟩,
-    ⟨15, mem_timeTrace_stativeDenotation.2 ⟨by decide, by decide⟩,
-      0, mem_timeTrace_stativeDenotation.2 ⟨by decide, by decide⟩, by decide⟩⟩
+    ∃ A B : Set (NonemptyInterval ℤ), Anscombe.after A B ∧ Anscombe.after B A :=
+  ⟨Set.Iic ⟨(0, 10), by decide⟩, Set.Iic ⟨(5, 15), by decide⟩,
+    ⟨10, mem_timeTrace_Iic.2 ⟨by decide, by decide⟩,
+      5, mem_timeTrace_Iic.2 ⟨by decide, by decide⟩, by decide⟩,
+    ⟨15, mem_timeTrace_Iic.2 ⟨by decide, by decide⟩,
+      0, mem_timeTrace_Iic.2 ⟨by decide, by decide⟩, by decide⟩⟩
 
-/-- *The Parthenon was there after the Parthenon was there* might pass, *I was born after I
-was born* does not: a clause is after itself iff it holds at two times. -/
+/-- *The Parthenon was there after the Parthenon was there* might pass and *I was born after I was
+born* does not, since a clause is after itself iff it holds at two times. -/
 theorem after_self_iff : Anscombe.after A A ↔ (timeTrace A).Nontrivial :=
   ⟨fun ⟨t, ht, t', ht', h⟩ => ⟨t', ht', t, ht, h.ne⟩, fun h =>
     let ⟨x, hx, y, hy, hxy⟩ := Set.nontrivial_iff_exists_lt.1 h; ⟨y, hy, x, hx, hxy⟩⟩
@@ -106,13 +107,14 @@ theorem not_after_self_of_instantaneous (hA : Instantaneous A) : ¬ Anscombe.aft
   fun h => let ⟨_, ht⟩ := hA
     Set.not_nontrivial_iff.2 (ht ▸ Set.subsingleton_singleton) (after_self_iff.1 h)
 
-/-- *After* is not transitive: *I was born after the Parthenon was there; the Parthenon was
+/-- *After* is not transitive, as in *I was born after the Parthenon was there; the Parthenon was
 there after I was born; ergo, I was born after I was born*. -/
 theorem after_not_trans :
-    ∃ A B : RunTimes ℤ, Anscombe.after A B ∧ Anscombe.after B A ∧ ¬ Anscombe.after A A :=
-  ⟨{pure 5}, stativeDenotation ⟨(0, 10), by decide⟩,
-    ⟨5, by simp, 0, mem_timeTrace_stativeDenotation.2 ⟨by decide, by decide⟩, by decide⟩,
-    ⟨10, mem_timeTrace_stativeDenotation.2 ⟨by decide, by decide⟩, 5, by simp, by decide⟩,
+    ∃ A B : Set (NonemptyInterval ℤ),
+      Anscombe.after A B ∧ Anscombe.after B A ∧ ¬ Anscombe.after A A :=
+  ⟨{pure 5}, Set.Iic ⟨(0, 10), by decide⟩,
+    ⟨5, by simp, 0, mem_timeTrace_Iic.2 ⟨by decide, by decide⟩, by decide⟩,
+    ⟨10, mem_timeTrace_Iic.2 ⟨by decide, by decide⟩, 5, by simp, by decide⟩,
     not_after_self_of_instantaneous ⟨5, by simp⟩⟩
 
 /-! ### Quantification over times (§IV–§V) -/
@@ -130,14 +132,14 @@ theorem before_iff_beforeEver (hB : (timeTrace B).OrdConnected) :
     ⟨⟨a, ha, fun _ hb' => lt_of_not_ge fun h => haB (hB.out hb' hb ⟨h, hab.le⟩)⟩, b, hb⟩,
     fun ⟨h, hne⟩ => before_of_beforeEver hne h⟩
 
-/-- *He studied his appearance in the glass before he used the telephone* does not say he did
-so before he ever used it: *before* without *before ever*. -/
+/-- *He studied his appearance in the glass before he used the telephone* does not say he did so
+before he ever used it, so *before* does not entail *before ever*. -/
 theorem before_not_beforeEver :
-    ∃ A B : RunTimes ℤ, Anscombe.before A B ∧ ¬ Anscombe.beforeEver A B :=
+    ∃ A B : Set (NonemptyInterval ℤ), Anscombe.before A B ∧ ¬ Anscombe.beforeEver A B :=
   ⟨{pure 5}, {pure 1, pure 9}, ⟨5, by simp, 9, by simp, by decide⟩,
     fun ⟨t, ht, h⟩ => absurd (h 1 (by simp)) (by simp at ht; subst ht; decide)⟩
 
-/-- *Before ever*, when *q* has a first time: a time of *p* precedes it. -/
+/-- When *q* has a first time, *p before ever q* holds iff a time of *p* precedes it. -/
 theorem beforeEver_iff_lt_least {lb : T} (hlb : IsLeast (timeTrace B) lb) :
     Anscombe.beforeEver A B ↔ ∃ t ∈ timeTrace A, t < lb :=
   ⟨fun ⟨a, ha, h⟩ => ⟨a, ha, h lb hlb.1⟩,
@@ -165,11 +167,11 @@ theorem not_after_of_before_of_instantaneous (hA : Instantaneous A)
 
 /-- A stretch can be both before and after an instantaneous event (§X, case 1). -/
 theorem after_and_before_of_extended :
-    ∃ A B : RunTimes ℤ, Instantaneous B ∧ Anscombe.before A B ∧ Anscombe.after A B :=
-  ⟨stativeDenotation ⟨(1, 7), by decide⟩, {pure 4}, ⟨4, by simp⟩,
-    ⟨1, ⟨mem_timeTrace_stativeDenotation.2 ⟨by decide, by decide⟩, by simp⟩,
+    ∃ A B : Set (NonemptyInterval ℤ), Instantaneous B ∧ Anscombe.before A B ∧ Anscombe.after A B :=
+  ⟨Set.Iic ⟨(1, 7), by decide⟩, {pure 4}, ⟨4, by simp⟩,
+    ⟨1, ⟨mem_timeTrace_Iic.2 ⟨by decide, by decide⟩, by simp⟩,
       4, by simp, by decide⟩,
-    ⟨7, mem_timeTrace_stativeDenotation.2 ⟨by decide, by decide⟩, 4, by simp, by decide⟩⟩
+    ⟨7, mem_timeTrace_Iic.2 ⟨by decide, by decide⟩, 4, by simp, by decide⟩⟩
 
 /-! ### Beginnings and endings (§IX–§X) -/
 

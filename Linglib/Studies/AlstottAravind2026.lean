@@ -55,21 +55,21 @@ open Tense Rett2020a
 
 variable {T : Type*} [LinearOrder T]
 
-/-- The under-specification entry for *before* (7a): some run-time of the main clause is
-partly preceded by every run-time of the embedded clause — Anscombe's entry with *some*
+/-- The under-specification entry for *before*, (7a), holds when some run-time of the main clause is
+partly preceded by every run-time of the embedded clause. It is Anscombe's entry with *some*
 subinterval following in place of *every*, the weakening accomplishments require. -/
-def weakBefore (A B : RunTimes T) : Prop := ∃ i ∈ A, ∀ j ∈ B, i.snd < j.snd
+def weakBefore (A B : Set (NonemptyInterval T)) : Prop := ∃ i ∈ A, ∀ j ∈ B, i.snd < j.snd
 
-/-- The under-specification entry for *after* (7b): some run-time of the main clause fully
-follows some run-time of the embedded clause. -/
-def weakAfter (A B : RunTimes T) : Prop := ∃ i ∈ A, ∃ j ∈ B, j.snd < i.fst
+/-- The under-specification entry for *after*, (7b), holds when some run-time of the main clause
+fully follows some run-time of the embedded clause. -/
+def weakAfter (A B : Set (NonemptyInterval T)) : Prop := ∃ i ∈ A, ∃ j ∈ B, j.snd < i.fst
 
 /-- Temporal overlap — the *while* reading a competition-based implicature negates (§8.1). -/
-def Overlap (A B : RunTimes T) : Prop := ∃ t, t ∈ timeTrace A ∧ t ∈ timeTrace B
+def Overlap (A B : Set (NonemptyInterval T)) : Prop := ∃ t, t ∈ timeTrace A ∧ t ∈ timeTrace B
 
 /-- A stative is weakly *before* an accomplishment iff its onset precedes the telos. -/
 theorem weakBefore_stative_accomplishment_iff (a b : NonemptyInterval T) :
-    weakBefore (stativeDenotation a) (accomplishmentDenotation b) ↔ a.fst < b.snd := by
+    weakBefore (Set.Iic a) {b} ↔ a.fst < b.snd := by
   constructor
   · rintro ⟨i, hi, h⟩
     exact lt_of_le_of_lt ((Set.mem_Iic.mp hi).1.trans i.fst_le_snd) (h b rfl)
@@ -79,7 +79,7 @@ theorem weakBefore_stative_accomplishment_iff (a b : NonemptyInterval T) :
 
 /-- A stative is weakly *after* a stative iff its end follows the other's onset. -/
 theorem weakAfter_stative_stative_iff (a b : NonemptyInterval T) :
-    weakAfter (stativeDenotation a) (stativeDenotation b) ↔ b.fst < a.snd := by
+    weakAfter (Set.Iic a) (Set.Iic b) ↔ b.fst < a.snd := by
   constructor
   · rintro ⟨i, hi, j, hj, h⟩
     exact lt_of_le_of_lt ((Set.mem_Iic.mp hj).1.trans j.fst_le_snd)
@@ -90,8 +90,8 @@ theorem weakAfter_stative_stative_iff (a b : NonemptyInterval T) :
 
 /-- A stative and an accomplishment overlap iff neither ends before the other starts. -/
 theorem overlap_stative_accomplishment_iff (a b : NonemptyInterval T) :
-    Overlap (stativeDenotation a) (accomplishmentDenotation b) ↔ a.fst ≤ b.snd ∧ b.fst ≤ a.snd := by
-  simp only [Overlap, timeTrace_stativeDenotation, timeTrace_accomplishmentDenotation,
+    Overlap (Set.Iic a) {b} ↔ a.fst ≤ b.snd ∧ b.fst ≤ a.snd := by
+  simp only [Overlap, timeTrace_Iic, timeTrace_singleton,
     Set.mem_ofPred_eq, NonemptyInterval.mem_def]
   constructor
   · rintro ⟨t, ⟨h1, h2⟩, h3, h4⟩
@@ -107,74 +107,73 @@ accomplishment its single run-time. -/
 
 /-- Hector builds the tent 4:00–4:30pm, minutes after noon. -/
 def hectorBuilds : NonemptyInterval ℕ := ⟨⟨240, 270⟩, by omega⟩
-/-- Emma is irritable 2:00–4:30pm (29a): the before-start context. -/
+/-- Emma is irritable 2:00–4:30pm in the before-start context, (29a). -/
 def emmaIrritableA : NonemptyInterval ℕ := ⟨⟨120, 270⟩, by omega⟩
-/-- Emma is irritable 4:15–4:30pm (29b): the before-finish context. -/
+/-- Emma is irritable 4:15–4:30pm in the before-finish context, (29b). -/
 def emmaIrritableB : NonemptyInterval ℕ := ⟨⟨255, 270⟩, by omega⟩
 /-- Lara fears the dog 10:00–10:15am, minutes after midnight. -/
 def laraFears : NonemptyInterval ℕ := ⟨⟨600, 615⟩, by omega⟩
-/-- Dave is regretful 10:05–10:15am (31a): the after-start context. -/
+/-- Dave is regretful 10:05–10:15am in the after-start context, (31a). -/
 def daveRegretfulA : NonemptyInterval ℕ := ⟨⟨605, 615⟩, by omega⟩
-/-- Dave is regretful from 10:05am for many days (31b): the after-finish context. -/
+/-- Dave is regretful from 10:05am for many days in the after-finish context, (31b). -/
 def daveRegretfulB : NonemptyInterval ℕ := ⟨⟨605, 4935⟩, by omega⟩
 
-abbrev tent := accomplishmentDenotation hectorBuilds
-abbrev irritableA := stativeDenotation emmaIrritableA
-abbrev irritableB := stativeDenotation emmaIrritableB
-abbrev fear := stativeDenotation laraFears
-abbrev regretfulA := stativeDenotation daveRegretfulA
-abbrev regretfulB := stativeDenotation daveRegretfulB
+abbrev tent : Set (NonemptyInterval ℕ) := {hectorBuilds}
+abbrev irritableA := Set.Iic emmaIrritableA
+abbrev irritableB := Set.Iic emmaIrritableB
+abbrev fear := Set.Iic laraFears
+abbrev regretfulA := Set.Iic daveRegretfulA
+abbrev regretfulB := Set.Iic daveRegretfulB
 
-/-- Exp. 2: Rett's default before-start reading is true in the before-start context and
-false in the before-finish context, where `completive` restores truth — coercion is needed in
-(29b) only. -/
+/-- In Exp. 2 Rett's default before-start reading is true in the before-start context and false in
+the before-finish context, where `completive` restores truth, so coercion is needed in (29b) only.
+-/
 theorem exp2_rett_asymmetric :
     before irritableA tent ∧ ¬ before irritableB tent ∧
       before irritableB (completive tent) := by
   simp only [before_stative_accomplishment_iff, before_stative_completive_iff]
   decide
 
-/-- Exp. 2: the under-specification reading is true in both contexts, and so is the
-overlap a *while*-competition implicature would negate — neither distinguishes (29a) from
-(29b) (§8.1). -/
+/-- In Exp. 2 the under-specification reading is true in both contexts, and so is the overlap a
+*while*-competition implicature would negate, so neither distinguishes (29a) from (29b) (§8.1). -/
 theorem exp2_underspecification_symmetric :
     (weakBefore irritableA tent ∧ weakBefore irritableB tent) ∧
       (Overlap irritableA tent ∧ Overlap irritableB tent) := by
   simp only [weakBefore_stative_accomplishment_iff, overlap_stative_accomplishment_iff]
   decide
 
-/-- Exp. 4: Rett's default after-finish reading is false in the after-start context, where
-`inchoative` restores truth, and true in the after-finish context — coercion is needed in
-(31a) only. -/
+/-- In Exp. 4 Rett's default after-finish reading is false in the after-start context, where
+`inchoative` restores truth, and true in the after-finish context, so coercion is needed in (31a)
+only. -/
 theorem exp4_rett_asymmetric :
     ¬ after regretfulA fear ∧ after regretfulA (inchoative fear) ∧
       after regretfulB fear := by
   simp only [after_stative_stative_iff, after_stative_inchoative_iff]
   decide
 
-/-- Exp. 4: the under-specification reading is true in both contexts. -/
+/-- In Exp. 4 the under-specification reading is true in both contexts. -/
 theorem exp4_underspecification_symmetric :
     weakAfter regretfulA fear ∧ weakAfter regretfulB fear := by
   simp only [weakAfter_stative_stative_iff]
   decide
 
 private theorem mem_stative {i j : NonemptyInterval ℕ} :
-    j ∈ stativeDenotation i ↔ i.fst ≤ j.fst ∧ j.snd ≤ i.snd := by
-  simp [stativeDenotation, NonemptyInterval.le_def]
+    j ∈ Set.Iic i ↔ i.fst ≤ j.fst ∧ j.snd ≤ i.snd := by
+  simp [Set.Iic, NonemptyInterval.le_def]
 
 /-! ### A non-coercive account of *within*-modifiers (§8.2) -/
 
-/-- *Within d* at the reference time `t` (33b): the clause holds throughout some subinterval
-of `[t, t + d]`. -/
-def within (t d : ℕ) (p : RunTimes ℕ) : Prop := ∃ i ∈ p, t ≤ i.fst ∧ i.snd ≤ t + d
+/-- *Within d* at the reference time `t`, (33b), holds when the clause holds throughout some
+subinterval of `[t, t + d]`. -/
+def within (t d : ℕ) (p : Set (NonemptyInterval ℕ)) : Prop := ∃ i ∈ p, t ≤ i.fst ∧ i.snd ≤ t + d
 
 /-- For a state holding throughout `[s, f]`, *within d* says the state reaches into the
 span, and the negation of the alternative with a shorter span `d'` (35) says it does not
 reach into the shorter span; together they locate the state's onset inside `(t + d', t + d]`
 — the change-of-state reading without any operator. -/
 theorem within_implicature_onset {s f t d d' : ℕ} (hsf : s ≤ f)
-    (h : within t d (stativeDenotation ⟨⟨s, f⟩, hsf⟩))
-    (h' : ¬ within t d' (stativeDenotation ⟨⟨s, f⟩, hsf⟩)) : t + d' < s ∧ s ≤ t + d := by
+    (h : within t d (Set.Iic ⟨⟨s, f⟩, hsf⟩))
+    (h' : ¬ within t d' (Set.Iic ⟨⟨s, f⟩, hsf⟩)) : t + d' < s ∧ s ≤ t + d := by
   obtain ⟨i, hi, hti, hit⟩ := h
   rw [mem_stative] at hi
   simp only [] at hi
@@ -184,16 +183,16 @@ theorem within_implicature_onset {s f t d d' : ℕ} (hsf : s ≤ f)
   exact h' ⟨⟨⟨max s t, max s t⟩, le_rfl⟩, mem_stative.mpr ⟨by simp, by simp; omega⟩,
     by simp, by simp; omega⟩
 
-/-- For an accomplishment with run-time `i`, *within d* says the whole run-time lies in the
-span (36): the same entry, with no operator either. -/
+/-- For an accomplishment with run-time `i`, *within d* says the whole run-time lies in the span,
+(36), by the same entry and with no operator either. -/
 theorem within_accomplishment_iff (t d : ℕ) (i : NonemptyInterval ℕ) :
-    within t d (accomplishmentDenotation i) ↔ t ≤ i.fst ∧ i.snd ≤ t + d := by
-  simp [within, accomplishmentDenotation]
+    within t d {i} ↔ t ≤ i.fst ∧ i.snd ≤ t + d := by
+  simp [within]
 
 /-! ### Predictions against the four experiments -/
 
-/-- The operator Rett's theory inserts (§3): `inchoative` for atelic *within*-modifier
-sentences and after-start readings of atelic *after*-clauses, `completive` for accomplishment
+/-- The operator Rett's theory inserts (§3) is `inchoative` for atelic *within*-modifier sentences
+and after-start readings of atelic *after*-clauses, and `completive` for accomplishment
 *at*-modifier sentences and before-finish readings of telic *before*-clauses. -/
 def rettOperator (row : Datum) : Option String :=
   match row.feature? "construction", row.feature? "telicity", row.feature? "context" with
@@ -203,7 +202,7 @@ def rettOperator (row : Datum) : Option String :=
   | some "after", some "atelic", some "afterStart" => some "inchoative"
   | _, _, _ => none
 
-/-- The paper's revision (§8.2): no operator in *within*-modifier sentences. -/
+/-- The paper's revision (§8.2) inserts no operator in *within*-modifier sentences. -/
 def revisedOperator (row : Datum) : Option String :=
   if row.feature? "construction" = some "within" then none else rettOperator row
 

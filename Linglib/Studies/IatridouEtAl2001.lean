@@ -169,8 +169,8 @@ theorem universal_of_covers {e : E} (he : P w e) (h₀ : t₀ ≤ t) (h₁ : (τ
 /-! ### Point 2: an unmodified perfect is silent about the right boundary -/
 
 /-- The inclusive perfect, the reading of the covert adverbial, is true of an eventuality that
-ended before the time of tense, so it does not assert the eventuality there: *She has been sick*
-and *I have been cooking* can go on *but she is fine now* and *but I'm done now*, (9)–(12) and
+ended before the time of tense, so it does not assert the eventuality there, and *She has been
+sick* and *I have been cooking* can go on *but she is fine now* and *but I'm done now*, (9)–(12) and
 (15). -/
 theorem inclusive_silent_at_rb {e₀ : E} (h : (τ e₀).snd < t) :
     ⟨w, t⟩ ∈ PERF (inclusive (UNBOUNDED fun (_ : W) e ↦ e = e₀)) ∧
@@ -191,7 +191,7 @@ theorem unmodified_not_universal {e₀ : E} (h : (τ e₀).snd < t) :
 /-! ### Point 3: the span is not the E–R interval -/
 
 /-- With *since 1991* the span starts in 1991 while its only eventuality lies in the fall of
-1993, (28): the left boundary is set by the adverbial, not by the eventuality. -/
+1993, (28), so the left boundary is set by the adverbial, not by the eventuality. -/
 theorem span_lb_before_event {lb : T} {e₀ : E} (h₁ : lb < (τ e₀).fst) (h₂ : (τ e₀).snd ≤ t) :
     ⟨w, t⟩ ∈ PERF ({pts | pts.fst = lb} ∩ inclusive (PRFV fun (_ : W) e ↦ e = e₀) ·) :=
   ⟨⟨(lb, t), h₁.le.trans ((τ e₀).fst_le_snd.trans h₂)⟩,
@@ -200,7 +200,7 @@ theorem span_lb_before_event {lb : T} {e₀ : E} (h₁ : lb < (τ e₀).fst) (h�
 /-! ### Point 4: the aspect of the participle -/
 
 /-- A perfective participle on a predicate whose eventualities take time, a telic or a stative
-that the perfective makes inchoative, has no universal perfect, so none with any adverbial: Greek
+that the perfective makes inchoative, has no universal perfect, so none with any adverbial, in Greek
 (30) and (34), Bulgarian (35) and the English nonprogressives of (41). -/
 theorem no_universal_of_prfv (h : ∀ e, P w e → (τ e).fst < (τ e).snd) :
     ⟨w, t⟩ ∉ PERF (durative (PRFV P)) :=
