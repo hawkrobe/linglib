@@ -27,7 +27,8 @@ constituency, which applying the operations as functions would forget.
   affixes of each side outward from the root in order of attachment, and
   `attachAll_injective` says the tree records the affixes and their order
 * `Word.Tree.attachMorphs` — attachment of morphs on the sides their kinds
-  give; `attachMorphs_injOn` on sequences of affixes
+  give; `attachMorphs_injOn` on sequences of morphs bound on a side, and
+  `words_toList_attachMorphs`: the result is one word
 * `Word.Tree.base`, `Word.Tree.stem`, `Word.Tree.roots` — [booij-2012]'s
   relational notions
 * `Word.Tree.IsKindCoherent` — attachment kinds match their positions
@@ -182,8 +183,8 @@ theorem toList_foldl_attach (t : Tree M) : ∀ affixes : List (Morph.Side × M),
     rw [List.foldl_cons, toList_foldl_attach (t.attach s a) rest]
     cases s <;> simp [toList]
 
-/-- The surface of attachment: the affixes of each side read outward from the
-root in the order they were attached — prefixes outermost first, suffixes
+/-- Attachment surfaces with the affixes of each side read outward from the
+root in the order they were attached, prefixes outermost first and suffixes
 innermost first. -/
 theorem toList_attachAll (root : M) (affixes : List (Morph.Side × M)) :
     (attachAll root affixes).toList =
@@ -211,20 +212,28 @@ side, an infix or a free form, is not attached. -/
 def attachMorphs (root : Morph) (ms : List Morph) : Tree Morph :=
   attachAll root (ms.filterMap fun m ↦ (m.kind.side?).map (·, m))
 
-/-- On sequences of affixes, morphs bound on a side, attachment records the affixes and
-their order. -/
+/-- On sequences of morphs bound on a side, attachment records the morphs and their order. -/
 theorem attachMorphs_injOn (root : Morph) :
-    Set.InjOn (attachMorphs root) {ms | ∀ m ∈ ms, ∃ s, m.kind = .bound s .affix} := by
+    Set.InjOn (attachMorphs root) {ms | ∀ m ∈ ms, m.kind.side?.isSome} := by
   intro l₁ h₁ l₂ h₂ h
-  have key : ∀ l : List Morph, (∀ m ∈ l, ∃ s, m.kind = .bound s .affix) →
+  have key : ∀ l : List Morph, (∀ m ∈ l, m.kind.side?.isSome) →
       (l.filterMap fun m ↦ (m.kind.side?).map (·, m)) =
         l.map fun m ↦ ((m.kind.side?).getD .before, m) := by
     intro l hl
     rw [← List.filterMap_eq_map]
-    exact List.filterMap_congr fun m hm ↦ by obtain ⟨s, hs⟩ := hl m hm; simp [hs]
+    exact List.filterMap_congr fun m hm ↦ by
+      obtain ⟨s, hs⟩ := Option.isSome_iff_exists.mp (hl m hm)
+      simp [hs]
   have := attachAll_injective root
     (by simpa only [attachMorphs, key l₁ h₁, key l₂ h₂] using h)
   exact List.map_injective_iff.mpr (fun m m' hmm ↦ (Prod.ext_iff.mp hmm).2) this
+
+/-- A root with morphs attached on their sides is one word. -/
+theorem words_toList_attachMorphs (root : Morph) (ms : List Morph) :
+    Morph.words (attachMorphs root ms).toList = [(attachMorphs root ms).toList] := by
+  rw [attachMorphs, toList_attachAll]
+  exact Morph.words_append_cons root (fun p hp ↦ by simp at hp; exact hp.2)
+    fun s hs ↦ by simp at hs; exact hs.2
 
 /-! ### Laws -/
 

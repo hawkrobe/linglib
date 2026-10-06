@@ -153,7 +153,7 @@ inductive Coding where
 otherwise. -/
 def Coding.ofMarker (ms : List Morphology.Morph) : Coding :=
   if ms = [] then .uncoded
-  else if ms.all fun m ↦ m.kind.side?.isSome then .synthetic
+  else if ms.all fun m ↦ m.kind.position?.isSome then .synthetic
   else .analytic
 
 end Voice

@@ -120,7 +120,7 @@ def causativeQuechua (fr : ArgumentFrame) : Voice :=
         (List.range fr.complements.length).map fun i ↦ (.complement i, .complement i) }
   else causativeChamorro fr
 
-/-- Applicative (53): the first oblique becomes the object and the old object a second object
+/-- The applicative (53) makes the first oblique the object and the old object a second object
 after it. -/
 def applicativeOf (fr : ArgumentFrame) : Option Voice :=
   (fr.complements.findIdx? fun p ↦ decide p.IsAdpositional).map fun j ↦
@@ -162,7 +162,7 @@ theorem applicativeOf_isValencyIncreasing :
 
 /-! ### Participants and stages -/
 
-/-- The nominals a clause may host: the root's agent and patient, NP1 and NP2 of the paper's
+/-- The nominals a clause may host are the root's agent and patient, NP1 and NP2 of the paper's
 schemas, the oblique an applicative promotes, NP3, and the causer a causative introduces. -/
 inductive Arg
   | agent
@@ -183,19 +183,19 @@ With the morphological and the syntactic effect of a process one thing, the rest
 by construction ([baker-1985] §6): agreement attached before a GF-rule registers the subject
 before the rule applied, and agreement attached after it the subject after. -/
 
-/-- (27a): agreement inside the GF-rule morpheme registers the semantic subject. -/
+/-- Agreement inside the GF-rule morpheme registers the semantic subject (27a). -/
 theorem registered_agree_apply (s : Stage) (v : Voice) (a : Option Arg) :
     (s.agree.apply v a).registered = s.registered ++ s.subjects :=
   Voice.Stage.registered_agree_apply s v a
 
-/-- (27d): agreement outside the GF-rule morpheme registers the surface subject. -/
+/-- Agreement outside the GF-rule morpheme registers the surface subject (27d). -/
 theorem registered_apply_agree (s : Stage) (v : Voice) (a : Option Arg) :
     (s.apply v a).agree.registered = s.registered ++ (s.apply v a).subjects :=
   Voice.Stage.registered_apply_agree s v a
 
 /-! ### Processes and grammars -/
 
-/-- The paper's processes: the GF-rules (§2.2) and number agreement (§3.1). -/
+/-- The paper's processes are the GF-rules (§2.2) and number agreement (§3.1). -/
 inductive Process
   | passive
   | causative
@@ -204,15 +204,15 @@ inductive Process
   | agreement
   deriving DecidableEq, Repr
 
-/-- The two causative types (§4.1): the Quechua type leaves a transitive root's object in place
-and demotes its subject, the Chamorro type makes the old subject the object. -/
+/-- Of the two causative types (§4.1), the Quechua type leaves a transitive root's object in
+place and demotes its subject, and the Chamorro type makes the old subject the object. -/
 inductive CausativeType
   | quechua
   | chamorro
   deriving DecidableEq, Repr
 
-/-- A language's settings: its causative type, and whether its passive can promote the second of
-two objects (58). -/
+/-- A language's settings are its causative type and whether its passive can promote the second
+of two objects (58). -/
 structure Grammar where
   causative : CausativeType
   passiveSecond : Bool := false
@@ -227,7 +227,7 @@ def Grammar.causativeOf : Grammar → ArgumentFrame → Voice
 def Grammar.passivesOf (g : Grammar) (fr : ArgumentFrame) : List Voice :=
   (passiveAt 0 fr).toList ++ if g.passiveSecond then (passiveAt 1 fr).toList else []
 
-/-- The stages a process can derive from a stage: the GF-rules apply their voices, the causative
+/-- A process derives stages from a stage: the GF-rules apply their voices, the causative
 introducing the causer, and number agreement applies to a clause with no object (16). -/
 def Process.apply (g : Grammar) : Process → Stage → List Stage
   | .passive, s => (g.passivesOf s.frame).map (s.apply · none)
@@ -240,8 +240,8 @@ def Process.apply (g : Grammar) : Process → Stage → List Stage
 def outcomes (g : Grammar) (ps : List Process) (s : Stage) : List Stage :=
   ps.foldl (fun ss p ↦ ss.flatMap (p.apply g)) [s]
 
-/-- The initial stage of a root: the agent as subject, the patient as object if transitive, and
-the oblique an applicative will promote. -/
+/-- The initial stage of a root has the agent as subject, the patient as object if transitive,
+and the oblique an applicative will promote. -/
 def initial (transitive applied : Bool) : Stage where
   frame := ⟨some .nominal,
     (if transitive then [.nominal] else []) ++ if applied then [.adpositional] else []⟩
@@ -265,34 +265,34 @@ theorem applied_subject_of_applicative_first (g : Grammar) :
 
 /-! ### Derivations and words -/
 
-/-- A derivation: the processes with the affix each adds, in order of application, the single
-object whose two projections are the word and the grammatical functions ([baker-1985] §6). -/
+/-- A derivation lists the processes with the affix each adds, in order of application; it is the
+single object whose two projections are the word and the grammatical functions
+([baker-1985] §6). -/
 abbrev Derivation := List (Process × Morph)
 
-/-- The word a derivation builds on a root: each affix attached on its side, in order of
+/-- The word a derivation builds on a root attaches each affix on its side, in order of
 application (§2.1). -/
 def word (root : Morph) (d : Derivation) : Tree Morph := Tree.attachMorphs root (d.map (·.2))
 
 /-- The morphological derivation determines the syntactic one (§2.1): for a language marking
-each process by its own affix, the word is injective in the sequence of processes. -/
-theorem word_injective (root : Morph) (μ : Process → Morph) (σ : Process → Morph.Side)
-    (hμ : Function.Injective μ) (hσ : ∀ p, (μ p).kind = .bound (σ p) .affix) :
+each process by its own morph bound on a side, the word is injective in the sequence of
+processes. -/
+theorem word_injective (root : Morph) {μ : Process → Morph} (hμ : Function.Injective μ)
+    (hside : ∀ p, (μ p).kind.side?.isSome) :
     Function.Injective fun ps : List Process ↦ word root (ps.map fun p ↦ (p, μ p)) := by
   intro ps₁ ps₂ h
-  have key (ps : List Process) : ∀ m ∈ ps.map μ, ∃ s, m.kind = .bound s .affix := by
-    simp only [List.mem_map, forall_exists_index, and_imp, forall_apply_eq_imp_iff₂]
-    exact fun p _ ↦ ⟨σ p, hσ p⟩
+  have key (ps : List Process) : ∀ m ∈ ps.map μ, m.kind.side?.isSome := by simp [hside]
   have := Tree.attachMorphs_injOn root (key ps₁) (key ps₂)
     (by simpa only [word, List.map_map, Function.comp_def] using h)
   exact List.map_injective_iff.mpr hμ this
 
 /-! ### The paper's examples -/
 
-/-- The keys of a row's segmentation: the gloss label and the form of each morph. -/
+/-- The keys of a row's segmentation name the gloss label and the form of each morph. -/
 def morphKeys : List (String × String) :=
   [("m1", "f1"), ("m2", "f2"), ("m3", "f3"), ("m4", "f4"), ("m5", "f5"), ("m6", "f6")]
 
-/-- A row's segmentation: the gloss label and form of each morph in surface order. -/
+/-- A row's segmentation lists the gloss label and form of each morph in surface order. -/
 def segmentation (r : Datum) : List (String × String) :=
   morphKeys.filterMap fun k ↦ (r.feature? k.1).bind fun l ↦ (r.feature? k.2).map (l, ·)
 
@@ -311,7 +311,7 @@ def suffixes (r : Datum) : List (String × String) :=
 def rootMorph (r : Datum) : Morph :=
   .root ((((segmentation r).find? (·.1 = rootLabel r)).map (·.2)).getD "")
 
-/-- A row's morphs in surface order: prefixes, root, suffixes. -/
+/-- A row's morphs are its prefixes, root and suffixes in surface order. -/
 def morphs (r : Datum) : List Morph :=
   (prefixes r).map (Morph.pref ·.2) ++ rootMorph r :: (suffixes r).map (Morph.suff ·.2)
 
@@ -324,7 +324,7 @@ def process? : String → Option Process
   | "PL" => some .agreement
   | _ => none
 
-/-- A row's derivation: its process-marking affixes in order of application, the prefixes from
+/-- A row's derivation lists its process-marking affixes in order of application, the prefixes from
 the root outward and then the suffixes, each bound on its side. -/
 def derivation (r : Datum) : Derivation :=
   ((prefixes r).reverse.filterMap fun m ↦ (process? m.1).map (·, Morph.pref m.2)) ++
@@ -333,13 +333,13 @@ def derivation (r : Datum) : Derivation :=
 /-- A row's processes in order of application. -/
 def processes (r : Datum) : List Process := (derivation r).map (·.1)
 
-/-- A row's initial stage: transitive as recorded, with an oblique when an applicative
+/-- A row's initial stage is transitive as recorded, with an oblique when an applicative
 applies. -/
 def initialOf (r : Datum) : Stage :=
   initial (r.feature? "valence" = some "transitive") (.applicative ∈ processes r)
 
-/-- A row's language settings: Chamorro, Bemba, Huichol and Chi-Mwi:ni have the Chamorro
-causative, Quechua its own; Kinyarwanda's passive reaches a second object. -/
+/-- In a row's language settings, Chamorro, Bemba, Huichol and Chi-Mwi:ni have the Chamorro
+causative and Quechua its own, and Kinyarwanda's passive reaches a second object. -/
 def grammar? (r : Datum) : Option Grammar :=
   match r.language with
   | "cham1312" | "bemb1257" | "huic1243" | "chim1312" => some ⟨.chamorro, false⟩
@@ -353,7 +353,7 @@ theorem rows_word :
     ∀ r ∈ Examples.all, (word (rootMorph r) (derivation r)).toList.Sublist (morphs r) := by
   decide +kernel
 
-/-- The level of grammatical functions an agreement references: the surface subject, the
+/-- The level of grammatical functions an agreement references is the surface subject, the
 semantic subject, or an intermediate one. -/
 inductive Level
   | surface
@@ -366,7 +366,7 @@ def level? (r : Datum) : Option Level :=
   r.parse? "agreesWith" [("surface subject", .surface), ("semantic subject", .semantic),
     ("intermediate subject", .intermediate)]
 
-/-- The level of a single registration: the surface subject, the semantic subject, or
+/-- The level of a single registration is the surface subject, the semantic subject, or
 neither. -/
 def level (start final : Stage) : Option Level :=
   match final.registered with

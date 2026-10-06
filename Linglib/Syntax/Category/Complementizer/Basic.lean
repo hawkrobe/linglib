@@ -9,7 +9,7 @@ public import Linglib.Morphology.Word.Basic
 
 @[expose] public section
 
-open Morphology (Morph Word)
+open Morphology (Morph)
 
 /-!
 # Complementizer
@@ -27,11 +27,8 @@ Uyghur *de*.
 * `Complementizer` — the general complementizer object
 * `Complementizer.Licenser` — adnominal vs adverbal licensing category
 * `Complementizer.form` — the surface form with boundary notation
-* `Complementizer.IsBound` — affixal status, read off the morphs
 * `Complementizer.IsFinite` — finiteness of the typed clause, read off the
   verb form
-* `Complementizer.toWord` — the `SCONJ` word a free complementizer
-  projects
 
 ## Implementation notes
 
@@ -86,23 +83,10 @@ namespace Complementizer
 /-- The surface form is the morphs' forms with their boundary notation. -/
 def form (c : Complementizer) : String := Morph.surface c.morphs
 
-/-- A complementizer is bound when no morph of its exponent is a free form. -/
-def IsBound (c : Complementizer) : Prop := ∀ m ∈ c.morphs, m.kind ≠ .free
-
-instance : DecidablePred IsBound := fun c => by
-  unfold IsBound; infer_instance
-
 /-- A complementizer is finite when the clause it types has a finite verb form. -/
 def IsFinite (c : Complementizer) : Prop := c.verbForm = some .Fin
 
 instance : DecidablePred IsFinite := fun c =>
   inferInstanceAs (Decidable (c.verbForm = some .Fin))
-
-/-- The `SCONJ` word a free complementizer projects; `none` for bound
-clause-typers. -/
-def toWord (c : Complementizer) : Option Word :=
-  match c.morphs with
-  | [⟨.free, s⟩] => some { form := s, cat := .SCONJ }
-  | _ => none
 
 end Complementizer

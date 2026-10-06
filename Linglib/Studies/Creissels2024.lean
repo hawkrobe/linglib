@@ -856,4 +856,7 @@ theorem balinese_binary :
 /-- Tagalog is symmetrical and multiple: an oblique may be the pivot (§8.5.2). -/
 theorem tagalog_multiple : Voice.Symmetrical tagalog ∧ Multiple tagalog := by decide
 
+/-- Every Tagalog voice is coded on the verb by an affix, the agent voice by the infix *-um-*. -/
+theorem tagalog_synthetic : ∀ v ∈ tagalog, v.coding = .synthetic := by decide
+
 end Creissels2024
