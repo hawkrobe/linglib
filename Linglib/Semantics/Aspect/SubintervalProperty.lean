@@ -21,7 +21,9 @@ property, since a predicate may validate it without being closed under subinterv
 Dowty states the property of sentences true at intervals, and an interval predicate has it when
 it holds at every subinterval of an interval it holds at. The non-strict and the strict
 imperfective have it whatever the predicate, and so does the negated perfective: an interval
-containing no event of the predicate has no subinterval containing one.
+containing no event of the predicate has no subinterval containing one. A durative claim, the
+predicate at every subinterval of a span, has it too, and for a predicate with the property it
+is the predicate itself.
 
 ## Main definitions
 
@@ -42,6 +44,8 @@ containing no event of the predicate has no subinterval containing one.
 * `Aspect.hasSubintervalProperty_unbounded`, `Aspect.hasSubintervalProperty_impf`,
   `Aspect.hasSubintervalProperty_not_prfv`: the imperfectives and the negated perfective have the
   property as interval predicates.
+* `Aspect.IntervalPred.durative_iff_of_hasSubintervalProperty`: a predicate with the property
+  holds throughout a span exactly when it holds at the span.
 
 ## Implementation notes
 
@@ -148,5 +152,17 @@ predicate has no subinterval containing one. -/
 theorem hasSubintervalProperty_not_prfv :
     IntervalPred.HasSubintervalProperty fun w (t : NonemptyInterval T) ↦ ¬ PRFV P w t :=
   fun _ _ _ hle hn ⟨e, he, hP⟩ ↦ hn ⟨e, he.trans hle, hP⟩
+
+variable {p : IntervalPred W T}
+
+/-- A durative claim has the subinterval property whatever the predicate. -/
+theorem IntervalPred.hasSubintervalProperty_durative : p.durative.HasSubintervalProperty :=
+  fun _ _ _ hle h _ hj ↦ h _ (hj.trans hle)
+
+/-- A predicate with the subinterval property holds throughout a span exactly when it holds at
+the span. -/
+theorem IntervalPred.durative_iff_of_hasSubintervalProperty (hp : p.HasSubintervalProperty) :
+    p.durative w t ↔ p w t :=
+  ⟨fun h ↦ h t le_rfl, fun h _ hj ↦ hp w hj h⟩
 
 end Aspect
