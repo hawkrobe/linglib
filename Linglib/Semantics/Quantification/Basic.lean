@@ -129,6 +129,16 @@ theorem conservative_no : Conservative (no : GQ α) := by
   intro R S; simp only [no]
   exact ⟨fun h x hR ⟨_, hS⟩ ↦ h x hR hS, fun h x hR hS ↦ h x hR ⟨hR, hS⟩⟩
 
+/-! ### Quantity invariance -/
+
+/-- `every` is quantity invariant, since a bijection preserves `∀`. -/
+theorem quantityInvariant_every : QuantityInvariant (every : GQ α) := by
+  intro A B A' B' f hBij hA hB
+  simp only [every]
+  rw [hBij.surjective.forall]
+  exact forall_congr' fun x ↦ by
+    rw [show A (f x) ↔ A' x from hA x, show B (f x) ↔ B' x from hB x]
+
 /-! ### Scope monotonicity -/
 
 theorem scopeMonotone_every : ScopeMonotone (every : GQ α) := by
