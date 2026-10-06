@@ -65,7 +65,7 @@ truth-named constructors is this library's ergonomic choice; the name follows th
 
 @[expose] public section
 
-/-- Three-valued truth: the 3-element bounded chain `false < indet < true`.
+/-- Three-valued truth is the 3-element bounded chain `false < indet < true`.
 Strong Kleene logic ([kleene-1952]) corresponds to the order-derived operations:
 conjunction is `⊓` (= `min`), disjunction `⊔` (= `max`), and `neg` the
 order-reversing involution. -/
@@ -79,7 +79,7 @@ namespace Trivalent
 
 /-! ### The truth order -/
 
-/-- The less-than-or-equal relation on truth values: `false < indet < true`. -/
+/-- The less-than-or-equal relation orders the truth values `false < indet < true`. -/
 protected inductive LE : Trivalent → Trivalent → Prop
   | of_false (a) : Trivalent.LE .false a
   | indet : Trivalent.LE .indet .indet
@@ -87,7 +87,7 @@ protected inductive LE : Trivalent → Trivalent → Prop
 
 instance : LE Trivalent := ⟨Trivalent.LE⟩
 
-instance instDecidableLE : DecidableLE Trivalent := λ a b => by
+instance instDecidableLE : DecidableLE Trivalent := fun a b => by
   cases a <;> cases b <;>
     first | exact isTrue (by constructor) | exact isFalse (by rintro ⟨_⟩)
 
@@ -109,7 +109,7 @@ instance : BoundedOrder Trivalent where
 Strong Kleene meet/join on a chain ARE `min`/`max` = `⊓`/`⊔`; use the mathlib
 operations directly. Negation is the remaining primitive. -/
 
-/-- Strong Kleene negation: the order-reversing involution swapping `false` and
+/-- Strong Kleene negation is the order-reversing involution swapping `false` and
 `true`, fixing `indet`. -/
 def neg : Trivalent → Trivalent
   | .true  => .false
@@ -136,14 +136,14 @@ def neg : Trivalent → Trivalent
 theorem neg_involutive : Function.Involutive (neg : Trivalent → Trivalent) := neg_neg
 
 /-- Strong Kleene negation is antitone (order-reversing). -/
-theorem neg_antitone : Antitone neg := λ a b h => by
+theorem neg_antitone : Antitone neg := fun a b h => by
   revert h; cases a <;> cases b <;> decide
 
-/-- De Morgan: negation swaps meet and join — from antitonicity alone. -/
+/-- Negation swaps meet and join: De Morgan, from antitonicity alone. -/
 @[simp] theorem neg_inf (a b : Trivalent) : neg (a ⊓ b) = neg a ⊔ neg b :=
   neg_antitone.map_min
 
-/-- De Morgan: negation swaps join and meet. -/
+/-- Negation swaps join and meet: the other De Morgan law. -/
 @[simp] theorem neg_sup (a b : Trivalent) : neg (a ⊔ b) = neg a ⊓ neg b :=
   neg_antitone.map_max
 
@@ -230,7 +230,7 @@ instance (d : Designation) (v : Trivalent) : Decidable (designated d v) :=
 @[simp] theorem designated_lp_iff (v : Trivalent) : designated .lp v ↔ v ≠ .false := by
   cases v <;> decide
 
-/-- K3/LP duality via negation: negation swaps the standards (the antitone involution
+/-- Negation swaps the designation standards — the K3/LP duality (the antitone involution
 `neg` fixes `indet`, exchanging the two principal filters' complements). -/
 theorem designated_neg_iff (d : Designation) (v : Trivalent) :
     designated d.dual (neg v) ↔ ¬ designated d v := by
@@ -250,14 +250,14 @@ theorem designated_lp_of_k3 {v : Trivalent} (h : designated .k3 v) : designated 
 
 /-! ### Conversion from Bool -/
 
-/-- The two-valued fragment: `Bool.true ↦ .true`, `Bool.false ↦ .false`. -/
+/-- The two-valued fragment embeds by `Bool.true ↦ .true`, `Bool.false ↦ .false`. -/
 def ofBool : Bool → Trivalent
   | Bool.true => .true
   | Bool.false => .false
 
 instance : Coe Bool Trivalent := ⟨ofBool⟩
 
-/-- The value of a decidable proposition: `true` or `false`, never `indet`. -/
+/-- The value of a decidable proposition is `true` or `false`, never `indet`. -/
 def ofProp (P : Prop) [Decidable P] : Trivalent := ofBool (decide P)
 
 @[simp] theorem ofProp_eq_true_iff {P : Prop} [Decidable P] : ofProp P = .true ↔ P := by
@@ -279,7 +279,7 @@ def isDefined : Trivalent → Prop
   | .false => True
   | .indet => False
 
-instance : DecidablePred isDefined := λ v => by
+instance : DecidablePred isDefined := fun v => by
   cases v <;> unfold isDefined <;> infer_instance
 
 /-- Project to `Bool`, sending `indet` to `false`. -/
@@ -318,7 +318,7 @@ def ofBoolHom : BoundedLatticeHom Bool Trivalent where
 
 /-! ### Exclusive disjunction -/
 
-/-- Strong Kleene exclusive disjunction: true when exactly one operand is true,
+/-- Strong Kleene exclusive disjunction is true when exactly one operand is true and
 undefined when either operand is. Unlike `⊔`, XOR cannot "see past" an undefined
 operand — `.true ⊔ .indet = .true`, but `xor .true .indet = .indet`
 ([wang-davidson-2026], Table 2). -/
@@ -362,12 +362,13 @@ theorem xor_indet_iff (a b : Trivalent) :
 Mathlib's carrier for a three-element chain with an involutive order-reversing
 negation fixing the midpoint is `SignType` (`-1 < 0 < 1`). -/
 
-/-- The truth-order carrier iso: `false ↔ -1`, `indet ↔ 0`, `true ↔ 1`, with Kleene
-negation corresponding to `SignType` negation (`orderIsoSignType_neg`). The
+/-- The truth order's mathlib carrier is `SignType`: `false ↔ -1`, `indet ↔ 0`,
+`true ↔ 1`, with Kleene negation corresponding to `SignType` negation
+(`orderIsoSignType_neg`). The
 knowledge-order counterpart is `equivFlatBool`. -/
 def orderIsoSignType : Trivalent ≃o SignType where
-  toFun := λ | .false => .neg | .indet => .zero | .true => .pos
-  invFun := λ | .neg => .false | .zero => .indet | .pos => .true
+  toFun := fun | .false => .neg | .indet => .zero | .true => .pos
+  invFun := fun | .neg => .false | .zero => .indet | .pos => .true
   left_inv a := by cases a <;> rfl
   right_inv s := by cases s <;> rfl
   map_rel_iff' {a b} := by cases a <;> cases b <;> decide
@@ -389,7 +390,7 @@ original; English translation by Bergmann 1981) and are discussed by [kleene-195
 paradox-prone statements. `metaAssert` and `presuppose` are the 𝒜 and ∂ operators
 of [beaver-krahmer-2001] §2. -/
 
-/-- Weak Kleene disjunction: indet is absorbing (both operands must be defined). -/
+/-- In Weak Kleene disjunction `indet` is absorbing: both operands must be defined. -/
 def joinWeak : Trivalent → Trivalent → Trivalent
   | .true, .true => .true
   | .true, .false => .true
@@ -397,7 +398,7 @@ def joinWeak : Trivalent → Trivalent → Trivalent
   | .false, .false => .false
   | _, _ => .indet
 
-/-- Weak Kleene conjunction: indet is absorbing. -/
+/-- In Weak Kleene conjunction `indet` is absorbing. -/
 def meetWeak : Trivalent → Trivalent → Trivalent
   | .true, .true => .true
   | .true, .false => .false
@@ -421,8 +422,8 @@ theorem joinWeak_eq_false_iff (a b : Trivalent) :
 theorem meetWeak_comm (a b : Trivalent) : meetWeak a b = meetWeak b a := by
   cases a <;> cases b <;> rfl
 
-/-- Meta-assertion: the 𝒜 (assertion) operator of [beaver-krahmer-2001] §2, closing
-a trivalent value to bivalent by treating undefinedness as falsity. -/
+/-- Meta-assertion closes a trivalent value to bivalent by treating undefinedness as
+falsity: Bochvar's assertion operator ([bochvar-1937]), the 𝒜 of [beaver-krahmer-2001] §2. -/
 def metaAssert : Trivalent → Trivalent
   | .true => .true
   | .false => .false
@@ -444,8 +445,34 @@ theorem metaAssert_idempotent (v : Trivalent) : metaAssert (metaAssert v) = meta
 theorem metaAssert_of_defined (v : Trivalent) (h : v.isDefined) : metaAssert v = v := by
   cases v with | true => rfl | false => rfl | indet => exact absurd h id
 
-/-- Presupposition: the ∂ operator of [beaver-krahmer-2001] §2, the companion of
-`metaAssert` — asserts a true value, undefined otherwise (`T ↦ T`, `F ↦ #`, `# ↦ #`). -/
+@[simp] theorem metaAssert_eq_true_iff {a : Trivalent} : metaAssert a = .true ↔ a = .true := by
+  cases a <;> decide
+
+@[simp] theorem metaAssert_eq_false_iff {a : Trivalent} : metaAssert a = .false ↔ a ≠ .true := by
+  cases a <;> decide
+
+/-- Meta-assertion distributes over strong Kleene conjunction ([beaver-krahmer-2001]'s
+Fact 1). -/
+theorem metaAssert_inf (a b : Trivalent) :
+    metaAssert (a ⊓ b) = metaAssert a ⊓ metaAssert b := by
+  cases a <;> cases b <;> decide
+
+/-- Meta-assertion distributes over strong Kleene disjunction. -/
+theorem metaAssert_sup (a b : Trivalent) :
+    metaAssert (a ⊔ b) = metaAssert a ⊔ metaAssert b := by
+  cases a <;> cases b <;> decide
+
+/-- `metaAssert` is a bounded lattice homomorphism onto the two-valued fragment. -/
+def metaAssertHom : BoundedLatticeHom Trivalent Trivalent where
+  toFun := metaAssert
+  map_sup' := metaAssert_sup
+  map_inf' := metaAssert_inf
+  map_top' := rfl
+  map_bot' := rfl
+
+/-- The presupposition operator ∂ asserts a true value and is undefined otherwise
+(`T ↦ T`, `F ↦ #`, `# ↦ #`): Beaver's operator ([beaver-1992]), the companion of
+`metaAssert` in [beaver-krahmer-2001] §2. -/
 def presuppose : Trivalent → Trivalent
   | .true => .true
   | _ => .indet
@@ -493,7 +520,7 @@ theorem neg_meetWeak_of_ne_false {a : Trivalent} (h : a ≠ .false) (b : Trivale
     neg (meetWeak a b) = meetWeak a (neg b) := by
   revert h; cases a <;> cases b <;> decide
 
-/-- Negation projection: a presupposed conjunct passes through negation. -/
+/-- A presupposed conjunct passes through negation: negation projection. -/
 theorem neg_meetWeak_presuppose (a b : Trivalent) :
     neg (meetWeak (presuppose a) b) = meetWeak (presuppose a) (neg b) :=
   neg_meetWeak_of_ne_false (presuppose_ne_false a) b
@@ -515,15 +542,15 @@ The asymmetric left-to-right connectives of [peters-1979], the trivalent face of
 Karttunen filtering ([beaver-krahmer-2001], [spector-2025]): an undefined first
 operand absorbs; a defined one proceeds by Strong Kleene. -/
 
-/-- Middle Kleene conjunction: left-undefined absorbs, left-defined proceeds by
-Strong Kleene. Asymmetric — `meetMiddle .false .indet = .false` but
+/-- In Middle Kleene conjunction a left undefined operand absorbs and a defined one
+proceeds by Strong Kleene. Asymmetric — `meetMiddle .false .indet = .false` but
 `meetMiddle .indet .false = .indet` ([peters-1979]). -/
 def meetMiddle : Trivalent → Trivalent → Trivalent
   | .indet, _ => .indet
   | a, b => a ⊓ b
 
-/-- Middle Kleene disjunction: left-undefined absorbs, left-defined proceeds by
-Strong Kleene — a defined first disjunct can settle the result even when the second
+/-- In Middle Kleene disjunction a left undefined operand absorbs and a defined one
+proceeds by Strong Kleene — a defined first disjunct can settle the result even when the second
 is undefined, the left-to-right filtering pattern ([peters-1979]). -/
 def joinMiddle : Trivalent → Trivalent → Trivalent
   | .indet, _ => .indet
@@ -531,11 +558,11 @@ def joinMiddle : Trivalent → Trivalent → Trivalent
 
 /-- Middle Kleene conjunction is not commutative. -/
 theorem meetMiddle_not_comm : ¬ ∀ a b : Trivalent, meetMiddle a b = meetMiddle b a :=
-  λ h => absurd (h .false .indet) (by decide)
+  fun h => absurd (h .false .indet) (by decide)
 
 /-- Middle Kleene disjunction is not commutative. -/
 theorem joinMiddle_not_comm : ¬ ∀ a b : Trivalent, joinMiddle a b = joinMiddle b a :=
-  λ h => absurd (h .true .indet) (by decide)
+  fun h => absurd (h .true .indet) (by decide)
 
 /-- When the left operand is defined, Middle Kleene conjunction equals Strong Kleene. -/
 theorem meetMiddle_eq_inf_of_left_defined (a b : Trivalent) (h : a.isDefined) :
@@ -591,14 +618,14 @@ least one operand is, and asserts the combination of the assertive operands only
 `indet` is the identity element. Contrast Strong Kleene (indet propagates unless
 dominated) and Weak Kleene (indet always propagates). -/
 
-/-- Belnap conjunction: undefined operands are skipped; `indet` is the identity
+/-- Belnap conjunction skips undefined operands; `indet` is the identity
 ([belnap-1970], (8)). -/
 def meetBelnap : Trivalent → Trivalent → Trivalent
   | .indet, b => b
   | a, .indet => a
   | a, b => a ⊓ b
 
-/-- Belnap disjunction: undefined operands are skipped; `indet` is the identity
+/-- Belnap disjunction skips undefined operands; `indet` is the identity
 ([belnap-1970], (9)). -/
 def joinBelnap : Trivalent → Trivalent → Trivalent
   | .indet, b => b
@@ -646,9 +673,9 @@ section Supervaluation
 
 variable {α : Type*} (s : Finset α) (P : α → Prop) [DecidablePred P]
 
-/-- The supervaluation of `P` over the family `s` ([van-fraassen-1966]): `.true` when `P` holds
-at every member, `.false` when it fails at every member of a nonempty `s`, and `.indet`
-otherwise. -/
+/-- The supervaluation of `P` over the family `s` ([van-fraassen-1966]) is `.true` when `P`
+holds at every member, `.false` when it fails at every member of a nonempty `s`, and
+`.indet` otherwise. -/
 def supervaluation : Trivalent :=
   if ∀ a ∈ s, P a then .true else if ∃ a ∈ s, P a then .indet else .false
 

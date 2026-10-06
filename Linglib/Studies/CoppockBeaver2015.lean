@@ -101,7 +101,7 @@ article competes with the indefinite under an expression-level Maximize Presuppo
 
 namespace CoppockBeaver2015
 
-open Trivalent Trivalent.Prop3 Reference
+open Trivalent Trivalent.Prop3 Reference DynamicSemantics
 
 variable {E W : Type*}
 
@@ -511,27 +511,15 @@ theorem the_dominates_an [Nontrivial E] [DecidablePred (WeakUnique (E := E))] :
     have := h (fun _ ↦ .true) (fun _ ↦ .inl rfl) x (by simp [an])
     exact hxy ((the_ne_indet_iff.1 this).1 rfl rfl)
 
-/-- The update of a context with a sentential meaning (74) is the Heimian partial update of
-the meaning read as a partial proposition: it is defined when the meaning is classical
-throughout the context, and then keeps the worlds of the context where it is true. -/
-def update (C : Set W) (p : Prop3 W) : Part (Set W) :=
-  DynamicSemantics.CCP.Partial.ofPartialProp (Presupposition.PartialProp.ofProp3 p) C
-
-/-- Meanings that agree on the context update it alike. -/
-theorem update_congr {C : Set W} {p q : Prop3 W} (h : ∀ w ∈ C, p w = q w) :
-    update C p = update C q :=
-  Part.ext' (forall₂_congr fun w hw ↦ show p w ≠ .indet ↔ q w ≠ .indet by rw [h w hw])
-    fun _ _ ↦ Set.ext fun w ↦ and_congr_right fun hw ↦
-      show p w = .true ↔ q w = .true by rw [h w hw]
-
 /-- Under Maximize Presupposition (75), `α` blocks its competitor `β` in context `C` and
 derivation `D`, the sentence meaning as a function of the article's meaning, when `α`
-dominates `β` and the two derivations update `C` alike. Clause (i), competitorhood, is
-glossed in the appendix as classical equivalence with a high-frequency item and is carried
-by `Dominates`. -/
+dominates `β` and the two derivations update `C` alike; the update of a context with a
+meaning (74) is the substrate's Heimian partial update `CCP.Partial.ofProp3`. Clause (i),
+competitorhood, is glossed in the appendix as classical equivalence with a high-frequency
+item and is carried by `Dominates`. -/
 def Blocks (C : Set W) (D : (Prop3 E → Prop3 E) → Prop3 W) (α β : Prop3 E → Prop3 E) :
     Prop :=
-  Dominates α β ∧ update C (D α) = update C (D β)
+  Dominates α β ∧ CCP.Partial.ofProp3 (D α) C = CCP.Partial.ofProp3 (D β) C
 
 section Derivations
 
@@ -542,7 +530,8 @@ variable [DecidablePred (WeakUnique (E := E))] {C : Set W} (F : W → Prop3 E �
 derivation applying the article to it. -/
 theorem blocks_of_weakUnique [Nontrivial E] (h : ∀ w ∈ C, WeakUnique (π w)) :
     Blocks C (fun α w ↦ F w (α (π w))) the an :=
-  ⟨the_dominates_an, update_congr fun w hw ↦ congrArg (F w) (the_eq_of_weakUnique (h w hw))⟩
+  ⟨the_dominates_an,
+    CCP.Partial.ofProp3_congr fun w hw ↦ congrArg (F w) (the_eq_of_weakUnique (h w hw))⟩
 
 /-- Where weak uniqueness fails at a world of the context, *the* fails to block *a* provided
 the indefinite sentence is classical on the context and the material around the description
@@ -551,7 +540,7 @@ theorem not_blocks_of_not_weakUnique (hF : ∀ w, F w (fun _ ↦ .indet) = .inde
     (hw : w ∈ C) (h : ¬ WeakUnique (π w)) (hdom : ∀ w ∈ C, F w (π w) ≠ .indet) :
     ¬ Blocks C (fun α w ↦ F w (α (π w))) the an := by
   intro hb
-  have hd : (update C (fun w ↦ F w (the (π w)))).Dom := hb.2 ▸ hdom
+  have hd : (CCP.Partial.ofProp3 (fun w ↦ F w (the (π w))) C).Dom := hb.2 ▸ hdom
   exact hd hw (by simp only [funext (the_eq_indet_of_not_weakUnique h), hF])
 
 variable [DecidableRel (Exclusive (E := E))]
@@ -633,7 +622,7 @@ def scopeInside (T : E → Prop3 E) (Q : Prop3 E → Trivalent) (M : Prop3 E →
 defined update (§3.2–3.3). -/
 theorem not_update_dom_iota {C : Set W} {π : W → Prop3 E} (G : W → E → Trivalent) {w : W}
     (hw : w ∈ C) (h : ¬ ∃! x, π w x = .true) :
-    ¬ (update C (fun w ↦ (iota (π w)).elim .indet (G w))).Dom := fun hd ↦
+    ¬ (CCP.Partial.ofProp3 (fun w ↦ (iota (π w)).elim .indet (G w)) C).Dom := fun hd ↦
   hd hw (show (iota (π w)).elim .indet (G w) = .indet by
     rw [(iota_eq_none_iff _).2 h]
     rfl)
@@ -643,9 +632,9 @@ indeterminate readings update the context alike (§3.4). -/
 theorem readings_agree_of_existsUnique {C : Set W} {π Q : W → Prop3 E}
     (hπ : ∀ w ∈ C, (π w).isBivalent) (hQ : ∀ w ∈ C, (Q w).isBivalent)
     (h : ∀ w ∈ C, ∃! x, π w x = .true) :
-    update C (fun w ↦ (iota (π w)).elim .indet (Q w)) =
-      update C (fun w ↦ ex (π w) (Q w)) := by
-  refine update_congr fun w hw ↦ ?_
+    CCP.Partial.ofProp3 (fun w ↦ (iota (π w)).elim .indet (Q w)) C =
+      CCP.Partial.ofProp3 (fun w ↦ ex (π w) (Q w)) C := by
+  refine CCP.Partial.ofProp3_congr fun w hw ↦ ?_
   obtain ⟨x, hx, hu⟩ := h w hw
   have hi : iota (π w) = some x := (Reference.iota_eq_some_iff _).2 ⟨hx, hu⟩
   rw [hi, Option.elim_some, ex]
@@ -662,7 +651,7 @@ no determinate indefinites (§3.3). -/
 theorem no_determinate_indefinites [Nontrivial E] [DecidablePred (WeakUnique (E := E))]
     (F : W → Prop3 E → Trivalent) (π : W → Prop3 E) (G : W → E → Trivalent) {C : Set W}
     (h : ¬ Blocks C (fun α w ↦ F w (α (π w))) the an) :
-    ¬ (update C (fun w ↦ (iota (π w)).elim .indet (G w))).Dom := fun hd ↦
+    ¬ (CCP.Partial.ofProp3 (fun w ↦ (iota (π w)).elim .indet (G w)) C).Dom := fun hd ↦
   h <| blocks_of_weakUnique F π fun _ hw ↦
     (existsUnique_iff_nonempty_subsingleton.1 <| not_not.1 fun hu ↦
       not_update_dom_iota G hw hu hd).2
