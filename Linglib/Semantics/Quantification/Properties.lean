@@ -107,10 +107,16 @@ theorem QuantityInvariant.inf (f g : GQ α)
   simp only [inf_apply]
   exact and_congr (hf A B A' B' σ hBij hA hB) (hg A B A' B' σ hBij hA hB)
 
-/-- Conservative + intersection condition → symmetric (B&C Theorem C5).
-    Proof: by conservativity Q(A,B) = Q(A, A∩B) and Q(B,A) = Q(B, B∩A);
-    both have the same restrictor∩scope = A∩B, so intersection condition
-    equates them. -/
+/-- Join preserves QuantityInvariant. -/
+theorem QuantityInvariant.sup (f g : GQ α)
+    (hf : QuantityInvariant f) (hg : QuantityInvariant g) :
+    QuantityInvariant ((f ⊔ g)) := by
+  intro A B A' B' σ hBij hA hB
+  simp only [sup_apply]
+  exact or_congr (hf A B A' B' σ hBij hA hB) (hg A B A' B' σ hBij hA hB)
+
+/-- A conservative quantifier satisfying the intersection condition is symmetric (Barwise and
+Cooper's Theorem C5). -/
 theorem intersection_conservative_symmetric (q : GQ α)
     (hCons : Conservative q) (hInt : IntersectionCondition q) :
     Std.Symm q :=
@@ -417,8 +423,8 @@ theorem symm_of_upSW_of_downNE (q : GQ α)
   rw [hCommSwap]
   exact hBint
 
-/-- [peters-westerstahl-2006] Prop 7: a CONSERV type ⟨1,1⟩ quantifier
-    is symmetric iff it satisfies ↑_SW Mon and ↓_NE Mon. -/
+/-- A conservative quantifier is symmetric iff it satisfies ↑SW Mon and ↓NE Mon
+([peters-westerstahl-2006]'s Prop 7). -/
 theorem symm_iff_upSW_and_downNE (q : GQ α) (hCons : Conservative q) :
     Std.Symm q ↔ (UpSWMon q ∧ DownNEMon q) :=
   ⟨upSW_and_downNE_of_symm q hCons,
@@ -466,6 +472,22 @@ theorem ScopeMonotone.sup (f g : GQ α)
   · exact Or.inl (hf R hSS' hfRS)
   · exact Or.inr (hg R hSS' hgRS)
 
+/-- An existential quantifier is conservative, so E-Det lies inside DDet
+([keenan-stavi-1986]). -/
+theorem Existential.conservative {q : GQ α} (h : Existential q) : Conservative q :=
+  fun R T => by
+    rw [h R T, h R (fun x => R x ∧ T x)]
+    simp only [and_self_left]
+
+/-- The existential property is preserved under adjectival restriction, since an absolute
+adjective commutes with the meet of restrictor and scope ([keenan-stavi-1986]'s PROP 16). -/
+theorem Existential.adjRestrict {q : GQ α} (h : Existential q) (adj : α → Prop) :
+    Existential (adjRestrict q adj) := fun R T => by
+  simp only [GQ.adjRestrict]
+  rw [h (fun x => R x ∧ adj x) T]
+  exact Iff.of_eq (congrArg (fun A => q A fun _ => True)
+    (funext fun x => propext (by tauto)))
+
 /-- Conservativity is preserved under adjectival restriction. -/
 theorem Conservative.adjRestrict (q : GQ α) (adj : α → Prop)
     (h : Conservative q) : Conservative (adjRestrict q adj) := by
@@ -503,8 +525,8 @@ theorem individual_meet_closed (a : α) (P Q : α → Prop) :
 
 /-! ### [van-benthem-1984] Characterization -/
 
-/-- [van-benthem-1984] Theorem 3.1.1: Under conservativity, inclusion (⊆)
-    is the only reflexive antisymmetric quantifier. -/
+/-- Under conservativity, inclusion is the only reflexive antisymmetric quantifier
+([van-benthem-1984]'s Theorem 3.1.1). -/
 theorem vanBenthem_refl_antisym_is_inclusion (q : GQ α)
     (hCons : Conservative q) (hRefl : PositiveStrong q)
     (hAnti : Std.Antisymm q) :
@@ -529,7 +551,8 @@ theorem vanBenthem_refl_antisym_is_inclusion (q : GQ α)
       exact ⟨fun h => h.1, fun hAx => ⟨hAx, hSub x hAx⟩⟩
     rw [hEq]; exact hRefl A
 
-/-- [van-benthem-1984] Thm 4.1.1 (Zwarts): reflexive + transitive → MON↑. -/
+/-- A conservative reflexive transitive quantifier is scope-upward monotone (Zwarts's theorem
+in [van-benthem-1984]). -/
 theorem zwarts_refl_trans_scopeUp (q : GQ α)
     (hCons : Conservative q) (hRefl : PositiveStrong q)
     (hTrans : IsTrans _ q) : ScopeMonotone q := by
@@ -541,7 +564,8 @@ theorem zwarts_refl_trans_scopeUp (q : GQ α)
     rw [this]; exact hRefl S
   exact hTrans.trans R S S' hQRS hQSS'
 
-/-- [van-benthem-1984] Thm 4.1.1 (Zwarts): reflexive + transitive → ↓MON. -/
+/-- A conservative reflexive transitive quantifier is restrictor-antitone (Zwarts's theorem in
+[van-benthem-1984]). -/
 theorem zwarts_refl_trans_restrictorDown (q : GQ α)
     (hCons : Conservative q) (hRefl : PositiveStrong q)
     (hTrans : IsTrans _ q) : RestrictorAntitone q := by
@@ -575,7 +599,8 @@ theorem ScopeMonotone.rightContinuous (q : GQ α)
   intro A B B₁ _ hB₁B _ hQ1 _
   exact h A hB₁B hQ1
 
-/-- [van-benthem-1984] Thm 4.1.2: irreflexive + almost-connected → MON↓. -/
+/-- A conservative irreflexive almost-connected quantifier is scope-antitone
+([van-benthem-1984]'s Theorem 4.1.2). -/
 theorem irrefl_almostConn_scopeDown (q : GQ α)
     (hCons : Conservative q)
     (hIrrefl : NegativeStrong q)
@@ -587,7 +612,8 @@ theorem irrefl_almostConn_scopeDown (q : GQ α)
   rw [← compl_compl q]
   exact ScopeMonotone.compl (qᶜ) hUp
 
-/-- [van-benthem-1984] Thm 4.1.2: irreflexive + almost-connected → ↑MON. -/
+/-- A conservative irreflexive almost-connected quantifier is restrictor-monotone
+([van-benthem-1984]'s Theorem 4.1.2). -/
 theorem irrefl_almostConn_restrictorUp (q : GQ α)
     (hCons : Conservative q)
     (hIrrefl : NegativeStrong q)
@@ -716,8 +742,8 @@ private theorem swapDiff_preserves_AB [Fintype α] [DecidableEq α]
            fun ⟨hAx, _⟩ => absurd hAx hA⟩
   · exact ⟨fun ⟨hBx, _⟩ => absurd hBx hB, fun ⟨hAx, _⟩ => absurd hAx hA⟩
 
-/-- [peters-westerstahl-2006] Prop 6.59 (fixed-domain version):
-    Under CONSERV + ISOM + asymmetry, ¬Q(A,B) whenever |A \ B| = |B \ A|. -/
+/-- Under conservativity, quantity invariance and asymmetry, `Q(A, B)` fails whenever `A ∖ B`
+and `B ∖ A` have the same size ([peters-westerstahl-2006]'s Prop 6.59, fixed-domain version). -/
 theorem isom_asymmetric_eq_diff [Fintype α] [DecidableEq α] (q : GQ α)
     (hCons : Conservative q) (hIsom : QuantityInvariant q)
     (hAsym : Std.Asymm q)
@@ -743,8 +769,8 @@ theorem isom_asymmetric_eq_diff [Fintype α] [DecidableEq α] (q : GQ α)
 
 [van-benthem-1984] §3.3 -/
 
-/-- [van-benthem-1984] Cor 3.3.2: Under conservativity, the ONLY
-    symmetric quasi-reflexive quantifier is overlap (= "some"). -/
+/-- Under conservativity the only symmetric quasi-reflexive quantifier is overlap, that is
+*some* ([van-benthem-1984]'s Corollary 3.3.2). -/
 theorem vanBenthem_symm_quasiRefl_is_overlap [Fintype α] [DecidableEq α] (q : GQ α)
     (hCons : Conservative q) (hSym : Std.Symm q)
     (hQR : QuasiReflexive q)
@@ -805,8 +831,8 @@ theorem vanBenthem_symm_quasiRefl_is_overlap [Fintype α] [DecidableEq α] (q : 
     · intro y hy; subst hy; exact ⟨hAa, hBa⟩
     · exact h_single
 
-/-- [van-benthem-1984] Cor 3.3.3: Under conservativity, the ONLY
-    symmetric quasi-universal quantifier is disjointness (= "no"). -/
+/-- Under conservativity the only symmetric quasi-universal quantifier is disjointness, that is
+*no* ([van-benthem-1984]'s Corollary 3.3.3). -/
 theorem vanBenthem_symm_quasiUniv_is_disjointness [Fintype α] [DecidableEq α] (q : GQ α)
     (hCons : Conservative q) (hSym : Std.Symm q)
     (hQU : QuasiUniversal q)

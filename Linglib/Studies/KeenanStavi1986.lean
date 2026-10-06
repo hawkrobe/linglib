@@ -4,37 +4,62 @@ public import Linglib.Semantics.Quantification.Lattice
 public import Linglib.Semantics.Quantification.Counting
 public import Mathlib.SetTheory.Cardinal.Finite
 public import Mathlib.Order.Atoms
-public import Mathlib.Tactic.FinCases
+public import Mathlib.Data.Sym.Card
+public import Mathlib.Data.Sym.Sym2.Order
+public import Mathlib.Data.Fintype.Fin
 
 /-!
 # Keenan and Stavi (1986): A Semantic Characterization of Natural Language Determiners
 
-This file formalizes the Conservativity Theorem of [keenan-stavi-1986]: the possible determiner
+This file formalizes Keenan and Stavi's Conservativity Theorem: the possible determiner
 denotations, the Boolean closure of the denotations of a few simple determiners, are exactly the
 conservative functions, those with `f R T ↔ f R (R ⊓ T)`. The generators are the Appendix's two
-individual-anchored determiners `Sₐ` and `Eₐ`, *John's one or more* and *John's zero or more* when
-`a` is all John possesses (`S`, `E`); every conservative function is the join of the atoms
-`atom p q` at the pairs where it holds, each atom is a meet of generators and their complements,
-and so the Boolean subalgebra the generators generate is the conservative algebra
-(`closure_generators`). Counting the atoms, three cells per individual, gives PROP 4: on `n`
-individuals there are `2 ^ 3 ^ n` conservative functions among the `2 ^ 4 ^ n` functions from
-properties to sets of properties (`card_consGQ`), 512 among 65,536 for two individuals.
+individual-anchored determiners `Sₐ` and `Eₐ`, *John's one or more* and *John's zero or more*
+when `a` is all John possesses, here derived as restrictions of *some* and *every* by the
+singleton property of `a` (`someOf`, `allOf`); every conservative function is the join of the
+atoms `atom p q` at the pairs where it holds, the atoms of the algebra are exactly these
+(`isAtom_iff`), each atom is a meet of generators and their complements, and so the Boolean
+subalgebra the generators generate is the conservative algebra (`closure_generators`). The
+algebra is complete and atomic (the instance is in `Quantification/Lattice.lean`), so it is
+isomorphic to the power set of its atoms; sorting the individuals into three cells counts the
+atoms, and with `n` individuals there are `2 ^ 3 ^ n` conservative functions among the
+`2 ^ 2 ^ 2n` functions from properties to sets of properties (`card_consGQ`, `card_gq`,
+PROP 4), 512 among 65,536 for two individuals.
 
 Section 3.3 characterizes the determiners of existential-*there* sentences as the existential
-functions, `f R T ↔ f (R ⊓ T) ⊤`: *at least n* is one, *every* and *the two* are not, the class
-is closed under the Boolean operations (PROP 13) and isomorphic to the sets of properties through
-`f ↦ f(1)` (PROP 15, `existentialEquiv`), so has `2 ^ 2 ^ n` members. The cardinal functions of
-Section 3.4, deciding by the number of individuals in restrictor and scope, are the `2 ^ (n + 1)`
-subsets of `{0, …, n}` (PROP 14), all existential, and *no ... but John* is existential without
-being cardinal.
+functions, `f R T ↔ f (R ⊓ T) ⊤`: *at least n* is one, *every* and *the n* are not, and the
+class is closed under the Boolean operations (PROP 13). Section 3.4 isolates the cardinal
+functions, deciding by the number of individuals in restrictor and scope: they are closed under
+the Boolean operations and properly included in the existential functions (PROP 14), which are
+in turn isomorphic as a Boolean algebra to the type ⟨1⟩ quantifiers through `f ↦ f(1)`
+(PROP 15, `existentialOrderIso`), so number `2 ^ 2 ^ n`; the cardinal functions are the sets of
+cardinalities up to `n` (`cardinalOrderIso`), so number `2 ^ (n + 1)`, and *no ... but John* is
+existential without being cardinal. Section 3.5 defines the logical determiners as the
+permutation-invariant conservative functions (114); they depend only on the sizes of the
+restrictor and of its meet with the scope, form the algebra of sets of nested pairs of
+cardinalities (`logicalOrderIso`), and number `2 ^ ((n + 1)(n + 2)/2)` (PROP 19), 64 among the
+512 conservative functions on two individuals. Footnote 10's characterization closes the
+circle: on a finite universe the cardinal functions are exactly the existential logical ones
+(`cardinalSubalgebra_eq_inf`).
 
 ## Implementation notes
 
-Conservativity and the existential property are the substrate's `Conservative` and
-`Existential`, and the conservative algebra is `ConsGQ`; the three classes are Boolean
-subalgebras of `GQ α`, and the counts are `Nat.card`s over a `Fintype` universe. The
-(In)effability Theorems of Section 3.6, which quantify over the English determiner expressions,
-are not formalized.
+Conservativity, the existential property and quantity invariance are the substrate's
+`Conservative`, `Existential` and `QuantityInvariant`, the conservative algebra is `ConsGQ`
+with its `CompleteAtomicBooleanAlgebra` instance, and the counts are `Nat.card`s over a
+`Fintype` universe derived from mathlib's representation theorem
+`CompleteAtomicBooleanAlgebra.toSetOfIsAtom`. `Cardinal` is stated with `Nat.card` rather than
+`count`, keeping the definition free of decidability instances; `count_eq_nat_card` bridges.
+Canonical witnesses of each size are initial segments of a fixed enumeration (`segment`), which
+nest, unlike arbitrarily chosen subsets. `BooleanSubalgebra.closure` is finitary, so
+`closure_generators` carries `[Finite α]`; the paper closes under arbitrary meets and joins, and
+on an infinite universe the finitary closure is strictly smaller than the conservative algebra.
+
+## TODO
+
+* Footnote 10(b): on an infinite universe `CARD ⊊ E-Det ⊓ LOG`, witnessed by the paper's `f₀`.
+* The (In)effability Theorems of Section 3.6, which quantify over the English determiner
+  expressions.
 
 ## References
 
@@ -51,85 +76,123 @@ variable {α : Type*}
 
 /-! ### The Conservativity Theorem (Section 2.5 and the Appendix) -/
 
-/-- `Sₐ`: the restrictor and the scope both hold of the individual `a`, the denotation (8) of
+/-- `Sₐ` restricts *some* by the singleton property of `a`; it is the Appendix's denotation of
 *John's one or more* when `a` is all John possesses. -/
-def S (a : α) : GQ α := λ R T => R a ∧ T a
+def someOf (a : α) : GQ α := adjRestrict GQ.some (ident a)
 
-/-- `Eₐ`: the scope holds of `a` if the restrictor does, *John's zero or more*. -/
-def E (a : α) : GQ α := λ R T => R a → T a
+@[simp] theorem someOf_apply (a : α) (R T : α → Prop) : someOf a R T ↔ R a ∧ T a :=
+  ⟨fun ⟨_, ⟨hR, hx⟩, hT⟩ ↦ hx ▸ ⟨hR, hT⟩, fun ⟨hR, hT⟩ ↦ ⟨a, ⟨hR, rfl⟩, hT⟩⟩
 
-/-- The generators of the conservative algebra: `Sₐ` and `Eₐ` for every individual. -/
-def generators (α : Type*) : Set (GQ α) := Set.range S ∪ Set.range E
+/-- `Eₐ` restricts *every* by the singleton property of `a`; it is the Appendix's denotation of
+*John's zero or more*. -/
+def allOf (a : α) : GQ α := adjRestrict every (ident a)
 
-theorem conservative_S (a : α) : Conservative (S a) :=
-  λ _ _ => ⟨λ h => ⟨h.1, h⟩, λ h => ⟨h.1, h.2.2⟩⟩
+@[simp] theorem allOf_apply (a : α) (R T : α → Prop) : allOf a R T ↔ (R a → T a) :=
+  ⟨fun h hR ↦ h a ⟨hR, rfl⟩, fun h _ ⟨hR, hx⟩ ↦ hx.symm ▸ h (hx ▸ hR)⟩
 
-theorem conservative_E (a : α) : Conservative (E a) :=
-  λ _ _ => ⟨λ h hR => ⟨hR, h hR⟩, λ h hR => (h hR).2⟩
+theorem conservative_someOf (a : α) : Conservative (someOf a) :=
+  Conservative.adjRestrict _ _ conservative_some
 
-/-- The atom `f_{pq}` of the conservative algebra: true at the restrictor `p` and exactly the
-scopes meeting `p` in `q`. -/
-def atom (p q : α → Prop) : GQ α := λ R T => R = p ∧ R ⊓ T = q
+theorem conservative_allOf (a : α) : Conservative (allOf a) :=
+  Conservative.adjRestrict _ _ conservative_every
 
-theorem conservative_atom (p q : α → Prop) : Conservative (atom p q) := λ R T => by
+/-- The generators are themselves existential, an instance of PROP 16. -/
+theorem existential_someOf (a : α) : Existential (someOf a) :=
+  Existential.adjRestrict existential_some _
+
+/-- The generators of the conservative algebra are the `Sₐ` and `Eₐ` for every individual. -/
+def generators (α : Type*) : Set (GQ α) := Set.range someOf ∪ Set.range allOf
+
+/-- Every generator is conservative, the base case of PROP 1. -/
+theorem conservative_of_mem_generators {q : GQ α} (hq : q ∈ generators α) : Conservative q := by
+  obtain ⟨a, rfl⟩ | ⟨a, rfl⟩ := hq
+  exacts [conservative_someOf a, conservative_allOf a]
+
+/-- The Appendix's atom `f_{pq}` of the conservative algebra holds at the restrictor `p` and
+exactly the scopes meeting `p` in `q`. -/
+def atom (p q : α → Prop) : GQ α := fun R T ↦ R = p ∧ R ⊓ T = q
+
+theorem conservative_atom (p q : α → Prop) : Conservative (atom p q) := fun R T ↦ by
   show R = p ∧ R ⊓ T = q ↔ R = p ∧ R ⊓ (R ⊓ T) = q
   rw [← inf_assoc, inf_idem]
 
 /-- `atom p q` lies below a conservative `f` exactly when `f` holds at `(p, q)`. -/
 theorem atom_le_iff {f : GQ α} (hf : Conservative f) {p q : α → Prop} (h : q ≤ p) :
     atom p q ≤ f ↔ f p q :=
-  ⟨λ hle => hle p q ⟨rfl, inf_eq_right.mpr h⟩, λ hpq R T ⟨hR, hT⟩ => by
+  ⟨fun hle ↦ hle p q ⟨rfl, inf_eq_right.mpr h⟩, fun hpq R T ⟨hR, hT⟩ ↦ by
     subst hR; subst hT; exact (hf _ _).mpr hpq⟩
 
-/-- The atoms of the conservative algebra are the `atom p q` with `q ≤ p`. -/
+/-- Each `atom p q` with `q ≤ p` is an atom of the conservative algebra; `isAtom_iff` adds the
+converse. -/
 theorem isAtom_atom {p q : α → Prop} (h : q ≤ p) :
     IsAtom (⟨atom p q, conservative_atom p q⟩ : ConsGQ α) := by
-  refine ⟨λ hbot => ?_, λ b hb => ?_⟩
-  · exact (congrArg (λ f : ConsGQ α => f.1 p q) hbot).mp ⟨rfl, inf_eq_right.mpr h⟩
+  refine ⟨fun hbot ↦ ?_, fun b hb ↦ ?_⟩
+  · exact (congrArg (fun f : ConsGQ α ↦ f.1 p q) hbot).mp ⟨rfl, inf_eq_right.mpr h⟩
   · by_contra hne
     obtain ⟨R, T, hRT⟩ : ∃ R T, b.1 R T := by
       by_contra hall
       push Not at hall
-      exact hne (Subtype.ext (funext₂ λ R T => propext ⟨hall R T, False.elim⟩))
+      exact hne (Subtype.ext (funext₂ fun R T ↦ propext ⟨hall R T, False.elim⟩))
     have hle : b.1 ≤ atom p q := hb.le
     obtain ⟨rfl, rfl⟩ := hle R T hRT
-    refine hb.not_ge λ R' T' ⟨hR', hT'⟩ => ?_
+    refine hb.not_ge fun R' T' ⟨hR', hT'⟩ ↦ ?_
     subst hR'
     exact (b.2.iff_of_inf_eq hT').mpr hRT
 
-/-- Every conservative function is the join of the atoms at the pairs where it holds: the
-conservative algebra is atomic. -/
+/-- The atoms of the conservative algebra are exactly the `atom p q` with `q ≤ p`
+(the Appendix). -/
+theorem isAtom_iff {f : ConsGQ α} :
+    IsAtom f ↔ ∃ p q, q ≤ p ∧ f.1 = atom p q := by
+  constructor
+  · intro hf
+    obtain ⟨R, T, hRT⟩ : ∃ R T, f.1 R T := by
+      by_contra hall
+      push Not at hall
+      exact hf.1 (Subtype.ext (funext₂ fun R T ↦ propext ⟨hall R T, False.elim⟩))
+    refine ⟨R, R ⊓ T, inf_le_left, ?_⟩
+    have hle : (⟨atom R (R ⊓ T), conservative_atom R (R ⊓ T)⟩ : ConsGQ α) ≤ f :=
+      (atom_le_iff f.2 inf_le_left).mpr ((f.2 R T).mp hRT)
+    have hne : (⟨atom R (R ⊓ T), conservative_atom R (R ⊓ T)⟩ : ConsGQ α) ≠ ⊥ := fun hbot ↦
+      (congrArg (fun g : ConsGQ α ↦ g.1 R (R ⊓ T)) hbot).mp ⟨rfl, inf_eq_right.mpr inf_le_left⟩
+    exact congrArg Subtype.val ((hf.le_iff.mp hle).resolve_left hne).symm
+  · rintro ⟨p, q, hqp, hf⟩
+    have hfe : f = ⟨atom p q, conservative_atom p q⟩ := Subtype.ext hf
+    exact hfe ▸ isAtom_atom hqp
+
+/-- Every conservative function is the join of the atoms at the pairs where it holds, so the
+conservative algebra is atomistic; this is the indexed form the Appendix uses. -/
 theorem eq_iSup_atom {f : GQ α} (hf : Conservative f) :
     f = ⨆ pq ∈ {pq : (α → Prop) × (α → Prop) | f pq.1 pq.2}, atom pq.1 pq.2 := by
   funext R T
   apply propext
   simp only [iSup_apply, iSup_Prop_eq, exists_prop, Set.mem_ofPred_eq, Prod.exists, atom]
   constructor
-  · exact λ h => ⟨R, R ⊓ T, (hf R T).mp h, rfl, rfl⟩
+  · exact fun h ↦ ⟨R, R ⊓ T, (hf R T).mp h, rfl, rfl⟩
   · rintro ⟨p, q, h, rfl, rfl⟩
     exact (hf _ _).mpr h
 
-/-- The Appendix's decomposition of an atom into generators: `Sₐ` over the individuals in `q`,
+/-- The Appendix decomposes an atom into generators, meeting `Sₐ` over the individuals in `q`,
 the complements of `Sₐ` and `Eₐ` over those in `p` but not in `q`, and the complement of `Sₐ`
 with `Eₐ` over those outside `p`. -/
 theorem atom_eq_iInf (p q : α → Prop) :
-    atom p q = (⨅ a ∈ {a | q a}, S a) ⊓ (⨅ a ∈ {a | p a ∧ ¬ q a}, (S a)ᶜ ⊓ (E a)ᶜ) ⊓
-      ⨅ a ∈ {a | ¬ p a}, (S a)ᶜ ⊓ E a := by
+    atom p q = (⨅ a ∈ {a | q a}, someOf a) ⊓
+      (⨅ a ∈ {a | p a ∧ ¬ q a}, (someOf a)ᶜ ⊓ (allOf a)ᶜ) ⊓
+      ⨅ a ∈ {a | ¬ p a}, (someOf a)ᶜ ⊓ allOf a := by
   funext R T
   apply propext
   simp only [atom, Pi.inf_apply, iInf_apply, iInf_Prop_eq, Pi.compl_apply, compl_iff_not,
-    inf_Prop_eq, Set.mem_ofPred_eq, S, E]
+    inf_Prop_eq, Set.mem_ofPred_eq, someOf_apply, allOf_apply]
   constructor
   · rintro ⟨rfl, rfl⟩
-    exact ⟨⟨λ _ h => h, λ _ ⟨hR, hq⟩ => ⟨hq, λ h => hq ⟨hR, h hR⟩⟩⟩,
-      λ _ hR => ⟨λ h => hR h.1, λ h => absurd h hR⟩⟩
+    exact ⟨⟨fun _ h ↦ h, fun _ ⟨hR, hq⟩ ↦ ⟨hq, fun h ↦ hq ⟨hR, h hR⟩⟩⟩,
+      fun _ hR ↦ ⟨fun h ↦ hR h.1, fun h ↦ absurd h hR⟩⟩
   · rintro ⟨⟨hq, hp⟩, hn⟩
-    refine ⟨funext λ a => propext ?_, funext λ a => propext ?_⟩
+    refine ⟨funext fun a ↦ propext ?_, funext fun a ↦ propext ?_⟩
     · by_cases hpa : p a
       · by_cases hqa : q a
         · exact iff_of_true (hq a hqa).1 hpa
         · exact iff_of_true (of_not_imp (hp a ⟨hpa, hqa⟩).2) hpa
-      · exact iff_of_false (λ hR => (hn a hpa).1 ⟨hR, (hn a hpa).2 hR⟩) hpa
+      · exact iff_of_false (fun hR ↦ (hn a hpa).1 ⟨hR, (hn a hpa).2 hR⟩) hpa
     · by_cases hqa : q a
       · exact iff_of_true (hq a hqa) hqa
       · by_cases hpa : p a
@@ -139,48 +202,52 @@ theorem atom_eq_iInf (p q : α → Prop) :
 theorem atom_mem_closure [Finite α] (p q : α → Prop) :
     atom p q ∈ closure (generators α) := by
   rw [atom_eq_iInf]
-  refine inf_mem (inf_mem (biInf_mem (Set.toFinite _) λ a _ => ?_)
-    (biInf_mem (Set.toFinite _) λ a _ => ?_)) (biInf_mem (Set.toFinite _) λ a _ => ?_)
+  refine inf_mem (inf_mem (biInf_mem (Set.toFinite _) fun a _ ↦ ?_)
+    (biInf_mem (Set.toFinite _) fun a _ ↦ ?_)) (biInf_mem (Set.toFinite _) fun a _ ↦ ?_)
   · exact subset_closure (Or.inl ⟨a, rfl⟩)
   · exact inf_mem (compl_mem (subset_closure (Or.inl ⟨a, rfl⟩)))
       (compl_mem (subset_closure (Or.inr ⟨a, rfl⟩)))
   · exact inf_mem (compl_mem (subset_closure (Or.inl ⟨a, rfl⟩))) (subset_closure (Or.inr ⟨a, rfl⟩))
 
-/-- The Conservativity Theorem: the Boolean algebra generated by the `Sₐ` and `Eₐ` is the
-algebra of conservative functions. -/
+/-- The Conservativity Theorem says that the Boolean algebra generated by the `Sₐ` and `Eₐ` is
+the algebra of conservative functions. -/
 theorem closure_generators [Finite α] : closure (generators α) = conservativeSubalgebra := by
-  refine le_antisymm (closure_le.2 ?_) λ f hf => ?_
-  · rintro _ (⟨a, rfl⟩ | ⟨a, rfl⟩)
-    exacts [conservative_S a, conservative_E a]
-  · rw [eq_iSup_atom (mem_conservativeSubalgebra.mp hf)]
-    exact biSup_mem (Set.toFinite _) λ pq _ => atom_mem_closure pq.1 pq.2
+  refine le_antisymm (closure_le.2 fun q hq ↦ conservative_of_mem_generators hq) fun f hf ↦ ?_
+  rw [eq_iSup_atom (mem_conservativeSubalgebra.mp hf)]
+  exact biSup_mem (Set.toFinite _) fun pq _ ↦ atom_mem_closure pq.1 pq.2
 
-/-! ### Counting the conservative functions (Section 2.7) -/
+/-! ### Counting the conservative functions (Section 2.7 and the Appendix) -/
 
-/-- The index of the atoms: restrictor–scope pairs with the scope inside the restrictor. -/
-abbrev Atoms (α : Type*) := {pq : (α → Prop) × (α → Prop) // pq.2 ≤ pq.1}
+/-- The atoms are indexed by the restrictor–scope pairs with the scope inside the restrictor. -/
+abbrev Nested (α : Type*) := {pq : (α → Prop) × (α → Prop) // pq.2 ≤ pq.1}
 
-/-- A conservative function is its values on the atoms, and any values extend to one. -/
-noncomputable def consEquiv : ConsGQ α ≃ (Atoms α → Prop) where
-  toFun f pq := f.1 pq.1.1 pq.1.2
-  invFun g := ⟨λ R T => g ⟨(R, R ⊓ T), inf_le_left⟩, λ R T =>
-    Iff.of_eq (congrArg g (Subtype.ext (Prod.ext rfl (by
-      show R ⊓ T = R ⊓ (R ⊓ T)
-      rw [← inf_assoc, inf_idem]))))⟩
-  left_inv f := Subtype.ext (funext₂ λ R T => propext (f.2 R T).symm)
-  right_inv g := funext λ pq => congrArg g (Subtype.ext (Prod.ext rfl (inf_eq_right.mpr pq.2)))
+/-- Distinct nested pairs give distinct atoms. -/
+theorem atom_injective : Function.Injective fun pq : Nested α ↦ atom pq.1.1 pq.1.2 := by
+  rintro ⟨⟨p, q⟩, hpq⟩ ⟨⟨p', q'⟩, hpq'⟩ h
+  have h' : atom p q = atom p' q' := h
+  obtain ⟨rfl, hq⟩ : atom p' q' p q := h' ▸ ⟨rfl, inf_eq_right.mpr hpq⟩
+  have hqq : q = q' := by rw [← hq, inf_eq_right.mpr hpq]
+  exact Subtype.ext (Prod.ext rfl hqq)
+
+/-- The paper's index pairs are exactly mathlib's atoms of the conservative algebra. -/
+noncomputable def atomEquiv : Nested α ≃ {f : ConsGQ α // IsAtom f} :=
+  Equiv.ofBijective
+    (fun pq ↦ ⟨⟨atom pq.1.1 pq.1.2, conservative_atom _ _⟩, isAtom_atom pq.2⟩)
+    ⟨fun _ _ h ↦ atom_injective (congrArg (fun f ↦ f.1.1) h), fun f ↦ by
+      obtain ⟨p, q, hqp, hf⟩ := isAtom_iff.mp f.2
+      exact ⟨⟨(p, q), hqp⟩, Subtype.ext (Subtype.ext hf.symm)⟩⟩
 
 open Classical in
 /-- A pair `q ≤ p` sorts each individual into one of three cells, in `q`, in `p` but not `q`,
-or outside `p`, and any sorting arises. -/
-noncomputable def atomsEquiv : Atoms α ≃ (α → Fin 3) where
+or outside `p`, and any sorting arises (the Appendix's coding `g_pq`). -/
+noncomputable def nestedEquivFin3 : Nested α ≃ (α → Fin 3) where
   toFun pq x := if pq.1.2 x then 2 else if pq.1.1 x then 1 else 0
-  invFun c := ⟨(λ x => c x ≠ 0, λ x => c x = 2), λ x hx => by
+  invFun c := ⟨(fun x ↦ c x ≠ 0, fun x ↦ c x = 2), fun x hx ↦ by
     show c x ≠ 0
     rw [show c x = 2 from hx]
     decide⟩
-  left_inv := λ ⟨⟨p, q⟩, h⟩ => by
-    refine Subtype.ext (Prod.ext (funext λ x => propext ?_) (funext λ x => propext ?_))
+  left_inv := fun ⟨⟨p, q⟩, h⟩ ↦ by
+    refine Subtype.ext (Prod.ext (funext fun x ↦ propext ?_) (funext fun x ↦ propext ?_))
     · by_cases hq : q x
       · have hp : p x := h x hq
         simp [hq, hp]
@@ -188,7 +255,7 @@ noncomputable def atomsEquiv : Atoms α ≃ (α → Fin 3) where
     · by_cases hq : q x
       · simp [hq]
       · by_cases hp : p x <;> simp +decide [hq, hp]
-  right_inv c := funext λ x => by
+  right_inv c := funext fun x ↦ by
     dsimp only
     by_cases h2 : c x = 2
     · simp [h2]
@@ -197,24 +264,88 @@ noncomputable def atomsEquiv : Atoms α ≃ (α → Fin 3) where
       · have h1 : c x = 1 := by omega
         simp +decide [h1]
 
-theorem card_atoms [Fintype α] : Nat.card (Atoms α) = 3 ^ Fintype.card α := by
-  rw [Nat.card_congr atomsEquiv, Nat.card_fun, Nat.card_eq_fintype_card,
+theorem card_nested [Fintype α] : Nat.card (Nested α) = 3 ^ Fintype.card α := by
+  rw [Nat.card_congr nestedEquivFin3, Nat.card_fun, Nat.card_eq_fintype_card,
     Nat.card_eq_fintype_card, Fintype.card_fin]
 
-/-- PROP 4: with `n` individuals there are `2 ^ 3 ^ n` conservative functions. -/
-theorem card_consGQ [Fintype α] : Nat.card (ConsGQ α) = 2 ^ 3 ^ Fintype.card α := by
-  rw [Nat.card_congr consEquiv, Nat.card_fun, card_atoms, Nat.card_eq_fintype_card,
-    Fintype.card_prop]
+/-- The conservative algebra has `3 ^ n` atoms, three cells per individual. -/
+theorem card_isAtom [Fintype α] :
+    Nat.card {f : ConsGQ α // IsAtom f} = 3 ^ Fintype.card α := by
+  rw [← Nat.card_congr (atomEquiv (α := α)), card_nested]
 
-/-- Among `2 ^ 4 ^ n` functions from properties to sets of properties. -/
-theorem card_gq [Fintype α] : Nat.card (GQ α) = 2 ^ 4 ^ Fintype.card α := by
-  rw [Nat.card_fun, Nat.card_fun, Nat.card_fun, Nat.card_eq_fintype_card (α := Prop),
-    Fintype.card_prop, Nat.card_eq_fintype_card, ← pow_mul, ← mul_pow]
+/-- With `n` individuals there are `2 ^ 3 ^ n` conservative functions, through the power set of
+the atoms (PROP 4). -/
+theorem card_consGQ [Fintype α] : Nat.card (ConsGQ α) = 2 ^ 3 ^ Fintype.card α := by
+  rw [Nat.card_congr CompleteAtomicBooleanAlgebra.toSetOfIsAtom.toEquiv]
+  change Nat.card ({f : ConsGQ α // IsAtom f} → Prop) = _
+  rw [Nat.card_fun, Nat.card_eq_fintype_card (α := Prop), Fintype.card_prop, card_isAtom]
+
+/-- PROP 4 in its cardinal-valued form, covering the infinite universes the paper allows. -/
+theorem mk_consGQ :
+    _root_.Cardinal.mk (ConsGQ α) =
+      (2 : _root_.Cardinal) ^ (3 : _root_.Cardinal) ^ _root_.Cardinal.mk α := by
+  rw [_root_.Cardinal.mk_congr CompleteAtomicBooleanAlgebra.toSetOfIsAtom.toEquiv]
+  change _root_.Cardinal.mk (Set {f : ConsGQ α // IsAtom f}) = _
+  rw [_root_.Cardinal.mk_set, _root_.Cardinal.mk_congr (atomEquiv (α := α)).symm,
+    _root_.Cardinal.mk_congr nestedEquivFin3, _root_.Cardinal.mk_arrow,
+    _root_.Cardinal.mk_fin, _root_.Cardinal.lift_natCast, _root_.Cardinal.lift_uzero]
   norm_num
+
+/-- Among `2 ^ 2 ^ 2n` functions from properties to sets of properties (PROP 4). -/
+theorem card_gq [Fintype α] : Nat.card (GQ α) = 2 ^ 2 ^ (2 * Fintype.card α) := by
+  rw [Nat.card_fun, Nat.card_fun, Nat.card_fun, Nat.card_eq_fintype_card (α := Prop),
+    Fintype.card_prop, Nat.card_eq_fintype_card, ← pow_mul, ← pow_add, ← two_mul]
+
+/-! ### Canonical witnesses of each size
+
+Initial segments of a fixed enumeration of the universe, nested by construction, standing in
+for the paper's freely chosen sets of `k` individuals. -/
+
+section Segment
+
+variable [Fintype α]
+
+/-- `segment k` holds of the first `k` individuals under a fixed enumeration of the
+universe. -/
+def segment (k : ℕ) : α → Prop := fun x ↦ ((Fintype.equivFin α) x : ℕ) < k
+
+theorem segment_mono {k m : ℕ} (h : k ≤ m) : segment (α := α) k ≤ segment m :=
+  fun _ hx ↦ lt_of_lt_of_le hx h
+
+/-- `count` agrees with the instance-free `Nat.card` of the satisfying subtype. -/
+theorem count_eq_nat_card (P : α → Prop) [DecidablePred P] :
+    count P = Nat.card {x // P x} := by
+  rw [Nat.card_eq_fintype_card, Fintype.card_subtype]
+  rfl
+
+theorem card_segment {k : ℕ} (hk : k ≤ Fintype.card α) :
+    Nat.card {x : α // segment k x} = k := by
+  have e : {x : α // segment k x} ≃ {i : Fin (Fintype.card α) // (i : ℕ) < k} :=
+    (Fintype.equivFin α).subtypeEquiv fun x ↦ Iff.rfl
+  rw [Nat.card_congr e, Nat.card_eq_fintype_card, Fintype.card_subtype,
+    Fin.card_filter_val_lt]
+  omega
+
+theorem card_segment_inter {m k : ℕ} (h : m ≤ k) (hm : m ≤ Fintype.card α) :
+    Nat.card {x : α // segment k x ∧ segment m x} = m := by
+  rw [Nat.card_congr (Equiv.subtypeEquivRight fun x ↦
+    and_iff_right_of_imp fun hx ↦ segment_mono h x hx)]
+  exact card_segment hm
+
+/-- A subtype of a finite carrier has at most `Fintype.card α` elements. -/
+theorem card_subtype_le_card (P : α → Prop) : Nat.card {x // P x} ≤ Fintype.card α :=
+  (Nat.card_le_card_of_injective _ Subtype.val_injective).trans_eq Nat.card_eq_fintype_card
+
+/-- The meet cell is no larger than the restrictor cell. -/
+theorem card_inter_le_card_left (R T : α → Prop) :
+    Nat.card {x // R x ∧ T x} ≤ Nat.card {x // R x} :=
+  Nat.card_le_card_of_injective _ (Subtype.impEmbedding _ _ fun _ hx ↦ hx.1).injective
+
+end Segment
 
 /-! ### Existential determiners (Section 3.3) -/
 
-/-- PROP 13: the existential functions are closed under the Boolean operations. -/
+/-- The existential functions are closed under the Boolean operations (PROP 13). -/
 def existentialSubalgebra : BooleanSubalgebra (GQ α) where
   carrier := {f | Existential f}
   supClosed' _ hf _ hg R T := or_congr (hf R T) (hg R T)
@@ -226,77 +357,108 @@ def existentialSubalgebra : BooleanSubalgebra (GQ α) where
     f ∈ existentialSubalgebra ↔ Existential f :=
   Iff.rfl
 
-/-- Existential functions are conservative: E-Det lies in DDet. -/
+/-- An indexed join of existential functions is existential (PROP 13(b) in its infinitary
+form). -/
+theorem existential_iSup {ι : Sort*} {f : ι → GQ α} (hf : ∀ i, Existential (f i)) :
+    Existential (⨆ i, f i) := fun R T ↦ by
+  simp only [iSup_apply, iSup_Prop_eq]
+  exact exists_congr fun i ↦ hf i R T
+
+/-- An indexed meet of existential functions is existential (PROP 13(b) in its infinitary
+form). -/
+theorem existential_iInf {ι : Sort*} {f : ι → GQ α} (hf : ∀ i, Existential (f i)) :
+    Existential (⨅ i, f i) := fun R T ↦ by
+  simp only [iInf_apply, iInf_Prop_eq]
+  exact forall_congr' fun i ↦ hf i R T
+
+/-- Existential functions are conservative, so E-Det lies in DDet. -/
 theorem existentialSubalgebra_le :
     existentialSubalgebra ≤ (conservativeSubalgebra : BooleanSubalgebra (GQ α)) :=
-  λ _ hf R T => by
-    rw [hf R T, hf R (λ x => R x ∧ T x)]
-    simp only [and_self_left]
+  fun _ hf ↦ hf.conservative
 
-/-- (99)–(100): *at least n* is existential. -/
-theorem existential_at_least_n [Fintype α] (n : ℕ) :
+/-- *At least n* is existential ((99)–(100)). -/
+theorem existential_atLeast [Fintype α] (n : ℕ) :
     Existential (atLeast (α := α) n) := by
   classical
   intro R T
   simp only [atLeast]
-  rw [count_eq_decidable (λ x => (R x ∧ T x) ∧ True), count_eq_decidable (λ x => R x ∧ T x),
-    count_congr_iff (Q := λ x => R x ∧ T x) λ _ => iff_of_eq (and_true _)]
+  rw [count_eq_decidable (fun x ↦ (R x ∧ T x) ∧ True), count_eq_decidable (fun x ↦ R x ∧ T x),
+    count_congr_iff (Q := fun x ↦ R x ∧ T x) fun _ ↦ iff_of_eq (and_true _)]
 
-/-- *every* is not existential: with two lawyers, one of them a doctor, *every lawyer is a
-doctor* is false while *every lawyer who is a doctor is an individual* is true. -/
-theorem not_existential_every : ¬ Existential (every : GQ (Fin 2)) := λ h =>
-  absurd ((h (λ _ => True) (· = 0)).mpr λ _ _ => trivial) λ h' =>
-    absurd (h' 1 trivial) (by decide)
+/-- *every* is not existential, since with a scope lacking one individual *everything is T*
+fails while *every T-thing is an individual* holds (the two-lawyer argument of Section 3.3). -/
+theorem not_existential_every [Nonempty α] : ¬ Existential (every : GQ α) := fun h ↦ by
+  obtain ⟨b⟩ := ‹Nonempty α›
+  exact absurd ((h (fun _ ↦ True) (· ≠ b)).mpr fun _ _ ↦ trivial) fun h' ↦ (h' b trivial) rfl
 
 open Classical in
-/-- (43): *the n*, the universal on a restrictor of exactly `n` individuals. -/
-noncomputable def theN [Fintype α] (n : ℕ) : GQ α := λ R T => count R = n ∧ every R T
+/-- *the n* is the universal on a restrictor of exactly `n` individuals ((43)); *both* is
+`theN 2`. -/
+noncomputable def theN [Fintype α] (n : ℕ) : GQ α :=
+  every ⊓ fun R _ ↦ count R = n
 
-/-- *the two* is not existential: with three individuals, two of them with the scope
-property, *the two individuals have it* is false while *the two individuals who have it are
-individuals* is true. -/
-theorem not_existential_theN : ¬ Existential (theN (α := Fin 3) 2) := by
-  intro h
-  have key := (h (λ _ => True) (· ≠ 2)).mpr
-  simp only [theN, every, true_and, imp_true_iff, and_true, true_imp_iff] at key
-  rw [count_eq_decidable (λ x : Fin 3 => x ≠ 2), count_eq_decidable (λ _ : Fin 3 => True)] at key
-  simp only [count, countOn] at key
-  revert key
-  decide
+open Classical in
+theorem theN_apply [Fintype α] (n : ℕ) (R T : α → Prop) :
+    theN n R T ↔ every R T ∧ count R = n :=
+  Iff.rfl
 
-/-- (42): *no ... but J*, true when restrictor and scope meet in exactly the individual `a`. -/
-def noBut (a : α) : GQ α := λ R T => R ⊓ T = (· = a)
+/-- *the two* is *each of the two*. -/
+theorem theN_two_eq_both [Fintype α] : theN 2 = (both : GQ α) := rfl
 
-/-- (103): *no ... but John* is existential. -/
-theorem existential_noBut (a : α) : Existential (noBut a) := λ R T => by
-  show R ⊓ T = (· = a) ↔ (R ⊓ T) ⊓ (⊤ : α → Prop) = (· = a)
+/-- *the n* is not existential below the universe size, since *the n things are the first n*
+fails while *the n first-n things are individuals* holds (Section 3.3's argument for *the two*,
+at every `n`). -/
+theorem not_existential_theN [Fintype α] {n : ℕ} (hn : n < Fintype.card α) :
+    ¬ Existential (theN (α := α) n) := fun h ↦ by
+  classical
+  have h1 : theN (α := α) n (fun x ↦ True ∧ segment n x) (fun _ ↦ True) := by
+    rw [theN_apply]
+    refine ⟨fun _ _ ↦ trivial, ?_⟩
+    rw [count_eq_decidable, count_congr_iff (Q := segment n) fun x ↦ iff_of_eq (true_and _),
+      count_eq_nat_card, card_segment hn.le]
+  have h2 := (h (fun _ ↦ True) (segment n)).mpr h1
+  rw [theN_apply] at h2
+  have hcard := h2.2
+  rw [count_eq_decidable, count_univ] at hcard
+  omega
+
+/-- *no ... but J* holds when restrictor and scope meet in exactly the individual `a` ((42)). -/
+def noBut (a : α) : GQ α := fun R T ↦ R ⊓ T = ident a
+
+/-- *no ... but John* is existential ((103)). -/
+theorem existential_noBut (a : α) : Existential (noBut a) := fun R T ↦ by
+  show R ⊓ T = ident a ↔ (R ⊓ T) ⊓ (⊤ : α → Prop) = ident a
   rw [inf_top_eq]
 
-/-- PROP 15: an existential function is determined by its set of properties `f(1)`, and every
-set of properties arises. -/
-noncomputable def existentialEquiv : existentialSubalgebra (α := α) ≃ ((α → Prop) → Prop) where
-  toFun f T := f.1 ⊤ T
-  invFun g := ⟨λ R T => g (R ⊓ T), λ R T => Iff.of_eq (congrArg g (inf_top_eq _).symm)⟩
-  left_inv f := Subtype.ext (funext₂ λ R T => propext ((f.2 ⊤ (R ⊓ T)).trans (by
-    show f.1 (⊤ ⊓ (R ⊓ T)) ⊤ ↔ f.1 R T
-    rw [top_inf_eq]
-    exact (f.2 R T).symm)))
-  right_inv g := funext λ T => congrArg g (top_inf_eq T)
+/-- An existential function is determined by its set of properties `f(1)`, and the
+correspondence is an isomorphism onto the type ⟨1⟩ quantifiers, the possible NP denotations
+(PROP 15). -/
+noncomputable def existentialOrderIso : existentialSubalgebra (α := α) ≃o NP α :=
+  Equiv.toOrderIso
+    { toFun := fun f T ↦ f.1 ⊤ T
+      invFun := fun g ↦ ⟨fun R T ↦ g (R ⊓ T), fun R T ↦
+        Iff.of_eq (congrArg g (inf_top_eq _).symm)⟩
+      left_inv := fun f ↦ Subtype.ext (funext₂ fun R T ↦ propext ((f.2 ⊤ (R ⊓ T)).trans (by
+        show f.1 (⊤ ⊓ (R ⊓ T)) ⊤ ↔ f.1 R T
+        rw [top_inf_eq]
+        exact (f.2 R T).symm)))
+      right_inv := fun g ↦ funext fun T ↦ congrArg g (top_inf_eq T) }
+    (fun _ _ h T hT ↦ h ⊤ T hT) (fun _ _ h R T hx ↦ h _ hx)
 
-/-- With `n` individuals there are `2 ^ 2 ^ n` existential functions. -/
+/-- With `n` individuals there are `2 ^ 2 ^ n` existential functions (PROP 15(a)). -/
 theorem card_existential [Fintype α] :
     Nat.card (existentialSubalgebra (α := α)) = 2 ^ 2 ^ Fintype.card α := by
-  rw [Nat.card_congr existentialEquiv, Nat.card_fun, Nat.card_fun,
+  rw [Nat.card_congr existentialOrderIso.toEquiv, Nat.card_fun, Nat.card_fun,
     Nat.card_eq_fintype_card (α := Prop), Fintype.card_prop, Nat.card_eq_fintype_card]
 
 /-! ### Cardinal determiners (Section 3.4) -/
 
-/-- (102): a cardinal function decides by the number of individuals in restrictor and scope. -/
+/-- A cardinal function decides by the number of individuals in restrictor and scope ((102)). -/
 def Cardinal (f : GQ α) : Prop :=
   ∀ R T R' T' : α → Prop,
     Nat.card {x // R x ∧ T x} = Nat.card {x // R' x ∧ T' x} → (f R T ↔ f R' T')
 
-/-- PROP 14(a): the cardinal functions are closed under the Boolean operations. -/
+/-- The cardinal functions are closed under the Boolean operations (PROP 14(a)). -/
 def cardinalSubalgebra : BooleanSubalgebra (GQ α) where
   carrier := {f | Cardinal f}
   supClosed' _ hf _ hg R T R' T' h := or_congr (hf R T R' T' h) (hg R T R' T' h)
@@ -307,62 +469,359 @@ def cardinalSubalgebra : BooleanSubalgebra (GQ α) where
 @[simp] theorem mem_cardinalSubalgebra {f : GQ α} : f ∈ cardinalSubalgebra ↔ Cardinal f :=
   Iff.rfl
 
-/-- PROP 14(c): cardinal functions are existential. -/
+/-- A cardinal function is existential (PROP 14(c)). -/
+theorem Cardinal.existential {f : GQ α} (hf : Cardinal f) : Existential f := fun R T ↦
+  hf R T _ _ (Nat.card_congr (Equiv.subtypeEquivRight fun _ ↦ (iff_of_eq (and_true _)).symm))
+
+/-- A cardinal function is quantity invariant, since a bijection preserves the count of the
+meet. -/
+theorem Cardinal.quantityInvariant {f : GQ α} (hf : Cardinal f) : QuantityInvariant f :=
+  fun A B A' B' σ hBij hA hB ↦ hf A B A' B'
+    (Nat.card_congr (Equiv.subtypeEquiv (Equiv.ofBijective σ hBij) fun x ↦
+      (and_congr (hA x) (hB x)).symm)).symm
+
 theorem cardinalSubalgebra_le :
     cardinalSubalgebra ≤ (existentialSubalgebra : BooleanSubalgebra (GQ α)) :=
-  λ _ hf R T =>
-    hf R T _ _ (Nat.card_congr (Equiv.subtypeEquivRight λ _ => (iff_of_eq (and_true _)).symm))
+  fun _ hf ↦ Cardinal.existential hf
+
+/-- *at least n* is cardinal. -/
+theorem cardinal_atLeast [Fintype α] (n : ℕ) : Cardinal (atLeast (α := α) n) := by
+  classical
+  intro R T R' T' h
+  simp only [atLeast]
+  rw [count_eq_decidable (fun x ↦ R x ∧ T x), count_eq_decidable (fun x ↦ R' x ∧ T' x),
+    count_eq_nat_card, count_eq_nat_card, h]
+
+/-- *exactly n* is cardinal. -/
+theorem cardinal_exactly [Fintype α] (n : ℕ) : Cardinal (exactly (α := α) n) := by
+  classical
+  intro R T R' T' h
+  simp only [exactly]
+  rw [count_eq_decidable (fun x ↦ R x ∧ T x), count_eq_decidable (fun x ↦ R' x ∧ T' x),
+    count_eq_nat_card, count_eq_nat_card, h]
+
+private theorem card_ident_inter (c : α) : Nat.card {x // ident c x ∧ ident c x} = 1 := by
+  rw [Nat.card_congr (Equiv.subtypeEquivRight (q := fun x ↦ x = c) fun x ↦ by simp [ident])]
+  exact Nat.card_unique
+
+/-- *some* is cardinal, as *at least one*. -/
+theorem cardinal_some [Fintype α] : Cardinal (GQ.some : GQ α) := by
+  rw [some_eq_atLeast_one]
+  exact cardinal_atLeast 1
 
 /-- *no ... but John* is not cardinal: it separates two singletons of equal size. -/
-theorem not_cardinal_noBut : ¬ Cardinal (noBut (0 : Fin 2)) := by
-  intro h
-  have key := (h (· = 0) (· = 0) (· = 1) (· = 1)
-    (by simp only [Nat.card_eq_fintype_card, Fintype.card_subtype]; decide)).mp (inf_idem _)
-  rw [noBut, inf_idem] at key
-  exact absurd ((congrFun key 1).mp rfl) (by decide)
+theorem not_cardinal_noBut {a b : α} (hab : a ≠ b) : ¬ Cardinal (noBut a) := fun h ↦ by
+  have hcards : Nat.card {x // ident a x ∧ ident a x} = Nat.card {x // ident b x ∧ ident b x} :=
+    (card_ident_inter a).trans (card_ident_inter b).symm
+  have key : ident b = ident a := by
+    have h1 : ident b ⊓ ident b = ident a :=
+      (h (ident a) (ident a) (ident b) (ident b) hcards).mp (inf_idem _)
+    rwa [inf_idem] at h1
+  exact hab (ident_injective key).symm
 
-theorem exists_ofSize [Fintype α] (k : Fin (Fintype.card α + 1)) :
-    ∃ t ⊆ (Finset.univ : Finset α), t.card = k :=
-  Finset.exists_subset_card_eq ((Nat.lt_succ_iff.mp k.2).trans_eq Finset.card_univ.symm)
+/-- The cardinal functions are not closed under adjectival restriction, since `Sₐ` restricts
+the cardinal *some* but is not itself cardinal (PROP 16's parenthetical). -/
+theorem not_cardinal_someOf {a b : α} (hab : a ≠ b) : ¬ Cardinal (someOf a) := fun h ↦ by
+  have key := (h (ident a) (ident a) (ident b) (ident b)
+    ((card_ident_inter a).trans (card_ident_inter b).symm)).mp
+    (someOf_apply a _ _ |>.mpr ⟨rfl, rfl⟩)
+  rw [someOf_apply] at key
+  exact hab key.1
 
-/-- A set of `k` individuals, for `k` at most the size of the universe. -/
-noncomputable def ofSize [Fintype α] (k : Fin (Fintype.card α + 1)) : Finset α :=
-  Classical.choose (exists_ofSize k)
+/-- The cardinal functions are a proper subclass of the existential ones once two individuals
+exist, witnessed by *no ... but John* (PROP 14(c)). -/
+theorem cardinalSubalgebra_lt [Nontrivial α] :
+    cardinalSubalgebra < (existentialSubalgebra : BooleanSubalgebra (GQ α)) := by
+  obtain ⟨a, b, hab⟩ := exists_pair_ne α
+  refine cardinalSubalgebra_le.lt_of_ne fun h ↦ not_cardinal_noBut hab ?_
+  rw [← mem_cardinalSubalgebra, h]
+  exact existential_noBut a
 
-theorem card_ofSize [Fintype α] (k : Fin (Fintype.card α + 1)) :
-    Nat.card {x // x ∈ ofSize k ∧ x ∈ ofSize k} = k := by
-  rw [Nat.card_congr (Equiv.subtypeEquivRight λ _ => and_self_iff), Nat.card_eq_finsetCard]
-  exact (Classical.choose_spec (exists_ofSize k)).2
+open Classical in
+/-- A cardinal function is a set `K` of cardinalities between `0` and `n`, holding at `(R, T)`
+exactly when `|R ⊓ T| ∈ K`, and the correspondence is an isomorphism onto the power set
+((102), with PROP 14(b) the count). -/
+noncomputable def cardinalOrderIso [Fintype α] :
+    cardinalSubalgebra (α := α) ≃o Set (Fin (Fintype.card α + 1)) :=
+  Equiv.toOrderIso
+    { toFun := fun f ↦ {k | f.1 (segment k) (segment k)}
+      invFun := fun K ↦ ⟨fun R T ↦
+          (⟨Nat.card {x // R x ∧ T x}, Nat.lt_succ_of_le (card_subtype_le_card _)⟩ : Fin _) ∈ K,
+        fun R T R' T' h ↦ iff_of_eq (congrArg (· ∈ K) (Fin.ext h))⟩
+      left_inv := fun f ↦ Subtype.ext (funext₂ fun R T ↦ propext
+        (f.2 _ _ R T (by rw [card_segment_inter le_rfl (card_subtype_le_card _)])))
+      right_inv := fun K ↦ Set.ext fun k ↦ iff_of_eq (congrArg (· ∈ K) (Fin.ext (by
+        show Nat.card {x : α // segment k x ∧ segment k x} = k
+        rw [card_segment_inter le_rfl (Nat.lt_succ_iff.mp k.2)]))) }
+    (fun _ _ h k hk ↦ h _ _ hk) (fun _ _ h R T hx ↦ h hx)
 
-/-- PROP 14(b): a cardinal function is a set of numbers between `0` and `n`, read off the sets
-of each size, and any set of numbers arises. -/
-noncomputable def cardinalEquiv [Fintype α] :
-    cardinalSubalgebra (α := α) ≃ (Fin (Fintype.card α + 1) → Prop) where
-  toFun f k := f.1 (· ∈ ofSize k) (· ∈ ofSize k)
-  invFun g := ⟨λ R T => g ⟨Nat.card {x // R x ∧ T x},
-      Nat.lt_succ_of_le ((Nat.card_le_card_of_injective _ Subtype.val_injective).trans_eq
-        Nat.card_eq_fintype_card)⟩,
-    λ _ _ _ _ h => Iff.of_eq (congrArg g (Fin.ext h))⟩
-  left_inv f := Subtype.ext (funext₂ λ R T => propext (f.2 _ _ R T (card_ofSize _)))
-  right_inv g := funext λ k => congrArg g (Fin.ext (card_ofSize k))
-
+/-- With `n` individuals there are `2 ^ (n + 1)` cardinal functions (PROP 14(b)). -/
 theorem card_cardinal [Fintype α] :
     Nat.card (cardinalSubalgebra (α := α)) = 2 ^ (Fintype.card α + 1) := by
-  rw [Nat.card_congr cardinalEquiv, Nat.card_fun, Nat.card_eq_fintype_card,
-    Nat.card_eq_fintype_card, Fintype.card_prop, Fintype.card_fin]
+  rw [Nat.card_congr cardinalOrderIso.toEquiv]
+  change Nat.card (Fin (Fintype.card α + 1) → Prop) = _
+  rw [Nat.card_fun, Nat.card_eq_fintype_card (α := Prop), Fintype.card_prop,
+    Nat.card_eq_fintype_card, Fintype.card_fin]
 
-/-- Two individuals: 512 conservative functions among 65,536, of which 8 are cardinal. -/
-theorem two_individuals :
-    Nat.card (ConsGQ (Fin 2)) = 512 ∧ Nat.card (GQ (Fin 2)) = 65536 ∧
-      Nat.card (cardinalSubalgebra (α := Fin 2)) = 8 := by
-  simp only [card_consGQ, card_gq, card_cardinal, Fintype.card_fin]
-  decide
+/-- The atoms of the cardinal algebra are the *exactly k*, as the Appendix remarks. -/
+theorem isAtom_cardinal_iff [Fintype α] {f : cardinalSubalgebra (α := α)} :
+    IsAtom f ↔ ∃ k : Fin (Fintype.card α + 1), f.1 = exactly (k : ℕ) := by
+  rw [← OrderIso.isAtom_iff cardinalOrderIso f, Set.isAtom_iff]
+  constructor
+  · rintro ⟨k, hk⟩
+    have hf : f = cardinalOrderIso.symm {k} := by
+      rw [← hk, OrderIso.symm_apply_apply]
+    refine ⟨k, ?_⟩
+    rw [hf]
+    funext R T
+    apply propext
+    classical
+    show (⟨Nat.card {x // R x ∧ T x}, _⟩ : Fin _) ∈ ({k} : Set _) ↔ _
+    rw [Set.mem_singleton_iff, Fin.ext_iff]
+    simp only [exactly]
+    rw [count_eq_decidable (fun x ↦ R x ∧ T x), count_eq_nat_card]
+  · rintro ⟨k, hf⟩
+    refine ⟨k, ?_⟩
+    ext k'
+    classical
+    show f.1 (segment (k' : ℕ)) (segment (k' : ℕ)) ↔ k' ∈ ({k} : Set _)
+    rw [hf, Set.mem_singleton_iff]
+    simp only [exactly]
+    rw [count_eq_decidable (fun x ↦ segment (k' : ℕ) x ∧ segment (k' : ℕ) x),
+      count_eq_nat_card, card_segment_inter le_rfl (Nat.lt_succ_iff.mp k'.2), Fin.ext_iff]
 
-/-- Three individuals: 16 cardinal functions among 256 existential ones. -/
-theorem three_individuals :
-    Nat.card (cardinalSubalgebra (α := Fin 3)) = 16 ∧
-      Nat.card (existentialSubalgebra (α := Fin 3)) = 256 := by
-  simp only [card_cardinal, card_existential, Fintype.card_fin]
-  decide
+/-! ### Logical determiners (Section 3.5 and the Appendix) -/
+
+/-- The quantity-invariant functions are closed under the Boolean operations (the Appendix's
+PI subalgebra). -/
+def quantityInvariantSubalgebra : BooleanSubalgebra (GQ α) where
+  carrier := {f | QuantityInvariant f}
+  supClosed' f hf g hg := QuantityInvariant.sup f g hf hg
+  infClosed' f hf g hg := QuantityInvariant.inf f g hf hg
+  compl_mem' hf := QuantityInvariant.compl _ hf
+  bot_mem' _ _ _ _ _ _ _ _ := Iff.rfl
+
+@[simp] theorem mem_quantityInvariantSubalgebra {f : GQ α} :
+    f ∈ quantityInvariantSubalgebra ↔ QuantityInvariant f :=
+  Iff.rfl
+
+/-- LOG, the algebra of logical determiners, collects the permutation-invariant members of the
+conservative algebra ((114)). -/
+def logicalSubalgebra : BooleanSubalgebra (GQ α) :=
+  conservativeSubalgebra ⊓ quantityInvariantSubalgebra
+
+@[simp] theorem mem_logicalSubalgebra {f : GQ α} :
+    f ∈ logicalSubalgebra ↔ Conservative f ∧ QuantityInvariant f :=
+  Iff.rfl
+
+/-- *every* is logical. -/
+theorem logical_every : (every : GQ α) ∈ logicalSubalgebra :=
+  ⟨conservative_every, quantityInvariant_every⟩
+
+/-- On a nonempty universe *every* is not cardinal, since it is not existential. -/
+theorem not_cardinal_every [Nonempty α] : ¬ Cardinal (every : GQ α) :=
+  fun h ↦ not_existential_every h.existential
+
+/-- Every cardinal function is logical. -/
+theorem cardinalSubalgebra_le_logical :
+    cardinalSubalgebra ≤ (logicalSubalgebra : BooleanSubalgebra (GQ α)) :=
+  fun _ hf ↦ ⟨(Cardinal.existential hf).conservative, Cardinal.quantityInvariant hf⟩
+
+/-- Beyond one individual the cardinal functions are a proper subclass of the logical ones,
+witnessed by *every* (Section 3.5). -/
+theorem cardinalSubalgebra_lt_logical [Nontrivial α] :
+    cardinalSubalgebra < (logicalSubalgebra : BooleanSubalgebra (GQ α)) := by
+  refine cardinalSubalgebra_le_logical.lt_of_ne fun h ↦ not_cardinal_every (α := α) ?_
+  rw [← mem_cardinalSubalgebra, h]
+  exact logical_every
+
+open Classical in
+private theorem logical_congr_count [Fintype α] {f : GQ α} (hc : Conservative f)
+    (hq : QuantityInvariant f) {R T R' T' : α → Prop}
+    (h1 : count (fun x ↦ R x) = count (fun x ↦ R' x))
+    (h2 : count (fun x ↦ R x ∧ T x) = count (fun x ↦ R' x ∧ T' x)) :
+    f R T ↔ f R' T' := by
+  classical
+  have hQ4 := quantity_of_quantityInvariant f hq
+  rw [hc R T, hc R' T']
+  refine hQ4 R (fun x ↦ R x ∧ T x) R' (fun x ↦ R' x ∧ T' x) ?_ ?_ ?_ ?_
+  · have c1 : count (fun x ↦ R x ∧ (R x ∧ T x)) = count (fun x ↦ R x ∧ T x) :=
+      count_congr_iff fun x ↦ by tauto
+    have c2 : count (fun x ↦ R' x ∧ (R' x ∧ T' x)) = count (fun x ↦ R' x ∧ T' x) :=
+      count_congr_iff fun x ↦ by tauto
+    conv_lhs => rw [count_eq_decidable]
+    conv_rhs => rw [count_eq_decidable]
+    omega
+  · have d1 := count_decompose R T
+    have d2 := count_decompose R' T'
+    have c1 : count (fun x ↦ R x ∧ ¬ (R x ∧ T x)) = count (fun x ↦ R x ∧ ¬ T x) :=
+      count_congr_iff fun x ↦ by tauto
+    have c2 : count (fun x ↦ R' x ∧ ¬ (R' x ∧ T' x)) = count (fun x ↦ R' x ∧ ¬ T' x) :=
+      count_congr_iff fun x ↦ by tauto
+    conv_lhs => rw [count_eq_decidable]
+    conv_rhs => rw [count_eq_decidable]
+    omega
+  · have c1 : count (fun x ↦ ¬ R x ∧ (R x ∧ T x)) = 0 :=
+      countOn_eq_zero_iff.mpr fun x _ hx ↦ hx.1 hx.2.1
+    have c2 : count (fun x ↦ ¬ R' x ∧ (R' x ∧ T' x)) = 0 :=
+      countOn_eq_zero_iff.mpr fun x _ hx ↦ hx.1 hx.2.1
+    conv_lhs => rw [count_eq_decidable]
+    conv_rhs => rw [count_eq_decidable]
+    omega
+  · have d1 := count_decompose (fun x ↦ ¬ R x) (fun x ↦ R x ∧ T x)
+    have d2 := count_decompose (fun x ↦ ¬ R' x) (fun x ↦ R' x ∧ T' x)
+    have e1 := count_decompose (fun _ : α ↦ True) R
+    have e2 := count_decompose (fun _ : α ↦ True) R'
+    have z1 : count (fun x ↦ ¬ R x ∧ (R x ∧ T x)) = 0 :=
+      countOn_eq_zero_iff.mpr fun x _ hx ↦ hx.1 hx.2.1
+    have z2 : count (fun x ↦ ¬ R' x ∧ (R' x ∧ T' x)) = 0 :=
+      countOn_eq_zero_iff.mpr fun x _ hx ↦ hx.1 hx.2.1
+    have w1 : count (fun x ↦ True ∧ R x) = count (fun x ↦ R x) :=
+      count_congr_iff fun x ↦ by tauto
+    have w1' : count (fun x ↦ True ∧ ¬ R x) = count (fun x ↦ ¬ R x) :=
+      count_congr_iff fun x ↦ by tauto
+    have w2 : count (fun x ↦ True ∧ R' x) = count (fun x ↦ R' x) :=
+      count_congr_iff fun x ↦ by tauto
+    have w2' : count (fun x ↦ True ∧ ¬ R' x) = count (fun x ↦ ¬ R' x) :=
+      count_congr_iff fun x ↦ by tauto
+    conv_lhs => rw [count_eq_decidable]
+    conv_rhs => rw [count_eq_decidable]
+    omega
+
+/-- A logical function depends only on the sizes of the restrictor and of its meet with the
+scope, the two-number reduction behind PROP 19. -/
+theorem logical_congr [Fintype α] {f : GQ α} (hf : f ∈ logicalSubalgebra)
+    {R T R' T' : α → Prop}
+    (hR : Nat.card {x // R x} = Nat.card {x // R' x})
+    (hRT : Nat.card {x // R x ∧ T x} = Nat.card {x // R' x ∧ T' x}) :
+    f R T ↔ f R' T' := by
+  obtain ⟨hc, hq⟩ := hf
+  classical
+  refine logical_congr_count hc hq ?_ ?_
+  · rw [count_eq_nat_card, count_eq_nat_card]
+    exact hR
+  · rw [count_eq_nat_card, count_eq_nat_card]
+    exact hRT
+
+/-- The logical atoms are indexed by nested pairs of cardinalities up to the universe size
+(the Appendix's `F_{m',m}` index). -/
+abbrev Triangle (n : ℕ) := {mm : Fin (n + 1) × Fin (n + 1) // mm.2 ≤ mm.1}
+
+theorem card_triangle (n : ℕ) : Nat.card (Triangle n) = (n + 1) * (n + 2) / 2 := by
+  have e : Triangle n ≃ {p : Fin (n + 1) × Fin (n + 1) // p.1 ≤ p.2} :=
+    (Equiv.prodComm _ _).subtypeEquiv fun mm ↦ Iff.rfl
+  rw [Nat.card_congr e, Nat.card_congr Sym2.sortEquiv.symm, Nat.card_eq_fintype_card,
+    Sym2.card, Fintype.card_fin, Nat.choose_two_right]
+  simp [Nat.mul_comm]
+
+open Classical in
+/-- A logical function is a set of nested pairs `(|R|, |R ⊓ T|)`, read off the initial
+segments, and any set of pairs arises; the correspondence is an isomorphism onto the power set
+(the Appendix's representation of PI). -/
+noncomputable def logicalOrderIso [Fintype α] :
+    logicalSubalgebra (α := α) ≃o Set (Triangle (Fintype.card α)) :=
+  Equiv.toOrderIso
+    { toFun := fun f ↦ {mm | f.1 (segment mm.1.1) (segment mm.1.2)}
+      invFun := fun S ↦ ⟨fun R T ↦
+          (⟨(⟨Nat.card {x // R x}, Nat.lt_succ_of_le (card_subtype_le_card _)⟩,
+             ⟨Nat.card {x // R x ∧ T x}, Nat.lt_succ_of_le (card_subtype_le_card _)⟩),
+            Fin.mk_le_mk.mpr (card_inter_le_card_left R T)⟩ : Triangle _) ∈ S,
+        ⟨fun R T ↦ iff_of_eq (congrArg (· ∈ S) (Subtype.ext (Prod.ext rfl (Fin.ext
+            (Nat.card_congr (Equiv.subtypeEquivRight fun x ↦ by tauto)).symm)))),
+          fun A B A' B' σ hBij hA hB ↦ iff_of_eq (congrArg (· ∈ S) (Subtype.ext (Prod.ext
+            (Fin.ext (Nat.card_congr (Equiv.subtypeEquiv (Equiv.ofBijective σ hBij)
+              fun x ↦ (hA x).symm)).symm)
+            (Fin.ext (Nat.card_congr (Equiv.subtypeEquiv (Equiv.ofBijective σ hBij)
+              fun x ↦ (and_congr (hA x) (hB x)).symm)).symm))))⟩⟩
+      left_inv := fun f ↦ Subtype.ext (funext₂ fun R T ↦ propext
+        (logical_congr f.2 (card_segment (card_subtype_le_card _))
+          (by rw [card_segment_inter (card_inter_le_card_left R T) (card_subtype_le_card _)])))
+      right_inv := fun S ↦ Set.ext fun mm ↦ iff_of_eq (congrArg (· ∈ S) (Subtype.ext (Prod.ext
+        (Fin.ext (by
+          show Nat.card {x : α // segment mm.1.1 x} = mm.1.1
+          exact card_segment (Nat.lt_succ_iff.mp mm.1.1.2)))
+        (Fin.ext (by
+          show Nat.card {x : α // segment mm.1.1 x ∧ segment mm.1.2 x} = mm.1.2
+          exact card_segment_inter mm.2 (Nat.lt_succ_iff.mp mm.1.2.2))))))}
+    (fun _ _ h mm hmm ↦ h _ _ hmm) (fun _ _ h R T hx ↦ h hx)
+
+/-- With `n` individuals there are `2 ^ ((n + 1)(n + 2)/2)` logical functions (PROP 19). -/
+theorem card_logical [Fintype α] :
+    Nat.card (logicalSubalgebra (α := α)) =
+      2 ^ ((Fintype.card α + 1) * (Fintype.card α + 2) / 2) := by
+  rw [Nat.card_congr logicalOrderIso.toEquiv]
+  change Nat.card (Triangle (Fintype.card α) → Prop) = _
+  rw [Nat.card_fun, Nat.card_eq_fintype_card (α := Prop), Fintype.card_prop, card_triangle]
+
+/-- *exactly m of the n* is the Appendix's atom `F_{n,m}` of the logical algebra. -/
+def exactlyOfThe (m n : ℕ) : GQ α := fun R T ↦
+  Nat.card {x // R x} = n ∧ Nat.card {x // R x ∧ T x} = m
+
+/-- The atoms of the logical algebra are the *exactly m of the n*, as the Appendix remarks. -/
+theorem isAtom_logical_iff [Fintype α] {f : logicalSubalgebra (α := α)} :
+    IsAtom f ↔ ∃ mm : Triangle (Fintype.card α), f.1 = exactlyOfThe mm.1.2 mm.1.1 := by
+  rw [← OrderIso.isAtom_iff logicalOrderIso f, Set.isAtom_iff]
+  constructor
+  · rintro ⟨mm, hmm⟩
+    have hf : f = logicalOrderIso.symm {mm} := by
+      rw [← hmm, OrderIso.symm_apply_apply]
+    refine ⟨mm, ?_⟩
+    rw [hf]
+    funext R T
+    apply propext
+    show (⟨(⟨Nat.card {x // R x}, _⟩, ⟨Nat.card {x // R x ∧ T x}, _⟩), _⟩ : Triangle _)
+      ∈ ({mm} : Set _) ↔ _
+    rw [Set.mem_singleton_iff, Subtype.ext_iff, Prod.ext_iff, Fin.ext_iff, Fin.ext_iff]
+    exact Iff.rfl
+  · rintro ⟨mm, hf⟩
+    refine ⟨mm, ?_⟩
+    ext mm'
+    show f.1 (segment (mm'.1.1 : ℕ)) (segment (mm'.1.2 : ℕ)) ↔ mm' ∈ ({mm} : Set _)
+    rw [hf, Set.mem_singleton_iff]
+    show Nat.card {x : α // segment (mm'.1.1 : ℕ) x} = (mm.1.1 : ℕ) ∧ _ ↔ _
+    rw [card_segment (Nat.lt_succ_iff.mp mm'.1.1.2),
+      card_segment_inter mm'.2 (Nat.lt_succ_iff.mp mm'.1.2.2),
+      Subtype.ext_iff, Prod.ext_iff, Fin.ext_iff, Fin.ext_iff]
+
+/-- Footnote 10 characterizes the cardinal functions on a finite universe as exactly the
+existential logical ones. -/
+theorem cardinalSubalgebra_eq_inf [Fintype α] :
+    cardinalSubalgebra =
+      (existentialSubalgebra ⊓ logicalSubalgebra : BooleanSubalgebra (GQ α)) := by
+  refine le_antisymm (le_inf cardinalSubalgebra_le cardinalSubalgebra_le_logical) ?_
+  rintro f ⟨hex, hlog⟩ R T R' T' h
+  calc f R T
+      ↔ f (fun x ↦ R x ∧ T x) (fun _ ↦ True) := hex R T
+    _ ↔ f (fun x ↦ R' x ∧ T' x) (fun _ ↦ True) :=
+        logical_congr hlog h (by
+          rw [Nat.card_congr (Equiv.subtypeEquivRight
+              (q := fun x ↦ R x ∧ T x) fun x ↦ iff_of_eq (and_true _)),
+            Nat.card_congr (Equiv.subtypeEquivRight
+              (q := fun x ↦ R' x ∧ T' x) fun x ↦ iff_of_eq (and_true _))]
+          exact h)
+    _ ↔ f R' T' := (hex R' T').symm
+
+/-! ### The paper's worked universes
+
+Two individuals: 512 conservative functions among 65,536, of which 8 are cardinal and 64
+logical; three individuals: 16 cardinal among 256 existential functions. -/
+
+example : Nat.card (ConsGQ (Fin 2)) = 512 := by
+  rw [card_consGQ, Fintype.card_fin]; norm_num
+
+example : Nat.card (GQ (Fin 2)) = 65536 := by
+  rw [card_gq, Fintype.card_fin]; norm_num
+
+example : Nat.card (cardinalSubalgebra (α := Fin 2)) = 8 := by
+  rw [card_cardinal, Fintype.card_fin]; norm_num
+
+example : Nat.card (logicalSubalgebra (α := Fin 2)) = 64 := by
+  rw [card_logical, Fintype.card_fin]; norm_num
+
+example : Nat.card (cardinalSubalgebra (α := Fin 3)) = 16 := by
+  rw [card_cardinal, Fintype.card_fin]; norm_num
+
+example : Nat.card (existentialSubalgebra (α := Fin 3)) = 256 := by
+  rw [card_existential, Fintype.card_fin]; norm_num
 
 end KeenanStavi1986

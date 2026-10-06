@@ -322,6 +322,14 @@ theorem count_decompose (R S : α → Prop)
       count (fun x : α => R x ∧ ¬ S x) :=
   countOn_decompose _ R S
 
+/-- A count is at most the size of the carrier. -/
+theorem count_le_card (P : α → Prop) [DecidablePred P] : count P ≤ Fintype.card α :=
+  (Finset.card_filter_le _ _).trans_eq Finset.card_univ
+
+/-- The trivial predicate counts the whole carrier. -/
+theorem count_univ : count (fun _ : α => True) = Fintype.card α := by
+  simp [count, countOn]
+
 /-! ### Conservativity of counting GQs -/
 
 /-- A quantifier that reads only the two restrictor cells `|R ∩ S|` and `|R ∖ S|` is
@@ -682,16 +690,6 @@ theorem quantity_some : Quantity (GQ.some : GQ α) := by
 
 theorem quantity_no : Quantity (no : GQ α) := by
   rw [no_eq_atMost_zero]; exact quantity_atMost 0
-
-omit [Fintype α] in
-/-- `every` is quantity invariant, since a bijection preserves `∀`. -/
-private theorem quantityInvariant_every :
-    QuantityInvariant (every : GQ α) := by
-  intro A B A' B' f hBij hA hB
-  simp only [every]
-  rw [hBij.surjective.forall]
-  exact forall_congr' fun x => by
-    rw [show A (f x) ↔ A' x from hA x, show B (f x) ↔ B' x from hB x]
 
 theorem quantity_every : Quantity (every : GQ α) :=
   quantity_of_quantityInvariant _ quantityInvariant_every
