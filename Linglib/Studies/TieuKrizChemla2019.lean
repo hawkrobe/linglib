@@ -1,266 +1,467 @@
 module
 
-public import Mathlib.Tactic.DeriveFintype
-public import Linglib.Semantics.Exhaustification.InnocentExclusion
+public import Mathlib.Data.Fintype.Prod
+public import Mathlib.Data.Fintype.Sigma
 public import Linglib.Semantics.Homogeneity.Plural
 public import Linglib.Semantics.Polarity.Basic
+public import Linglib.Semantics.Quantification.Basic
+public import Linglib.Studies.Magri2014
 public import Linglib.Data.Examples.TieuKrizChemla2019
 
 /-!
-# Tieu, Križ and Chemla (2019): Children's Acquisition of Homogeneity in Plural Definite Descriptions
+# Tieu, Križ and Chemla (2019): Children's acquisition of homogeneity in plural definite descriptions
 
-This file formalizes the readings of the plural definite that [tieu-kriz-chemla-2019] tests
-on four- and five-year-old French-speaking children, and the prediction of the implicature
-account of homogeneity, [magri-2014], that the study falsifies. *The trucks are blue* and
-*The trucks are not blue*, (1)–(2), are neither true nor false when some but not all of the
-trucks are blue, a GAP context, whereas the universal (3)–(4) has a complementary negation.
-A child might read the definite homogeneously, existentially as (6), or universally as (7),
-and the three readings predict distinct pairs of responses to the positive and the negative
-sentence in a GAP context, Figure 2, `Reading.value` and `value_of_isGap`. On the
-implicature account, (10)–(11), the definite has the existential meaning and reaches the
-universal one by exhaustifying twice, the outer exhaustification negating the *not all*
-implicature of *some*, so that implicature is a sub-computation of homogeneity: a child who
-accepts *some* where all objects have the property should accept the positive definite in a
-GAP context, and one who rejects the first should reject the second,
-`implicature_gap_iff_si`. Experiment 2's ternary judgments separate the homogeneous reading,
-undefined in a GAP context, from a universal reading outscoping negation, false there,
-which the binary judgments of Experiment 1 conflate, `gapPattern_injective` and
-`binary_collapse`.
+*The trucks are blue* and *The trucks are not blue* are both neither true nor false when some but
+not all of the trucks are blue, a GAP context. Tieu, Križ and Chemla test four- and five-year-old
+French-speaking children on such sentences and on the *not all* implicature of *some*, against
+Magri's account, on which the definite means *some* and reaches *all* by exhaustifying twice, the
+*not all* implicature being a step of that computation.
+
+A child may instead read the definite as a quantifier, existential or universal, scoping under
+or over negation. Such a construal is classical, and a reading is the supervaluation over its
+construals: the homogeneous reading over the existential and the universal construal, as in the
+paper's statement of the supervaluation account, and the scope-ambiguous universal of
+Experiment 2 over the two scopes of the universal.
+
+## Main results
+
+* `value_of_isGap`: in a GAP context the readings take the values of Figure 2 and Table 8;
+  `value_of_subset`, `value_of_disjoint`: elsewhere they agree, which the control trials check.
+* `value_homogeneous`: the homogeneous reading is Križ's trivalent plural.
+* `binaryPattern_quantified_bijective`: the four quantified readings give the four possible
+  pairs of binary judgments, one of them the wide-scope existential that no child showed.
+* `binaryPattern_eq_wideScopeUniversal`, `gapPattern_injective`: binary judgments conflate the
+  homogeneous reading with the wide-scope universal, and ternary ones separate them.
+* `homogeneous_weakNegation`: the homogeneous reading with weak negation is the universal one.
+* `definite_in_gap_iff_some_in_all`: on Magri's account a participant accepts the positive
+  definite in a GAP context exactly when they accept *some* where every object has the property.
+* `implicaturePattern_of_isGap`: the account predicts the existential pattern without the
+  implicature and the homogeneous one with it.
 
 ## Implementation notes
 
-A world is the set of objects with the property and the definite's plurality a finite set
-of atoms, so the homogeneous reading is the substrate's `Homogeneity.barePlural`, the
-universal readings `Homogeneity.allPlural` at either scope relative to negation, and the
-scope-ambiguous universal of Experiment 2 supervaluates over the two scopes with the
-`Trivalent.supervaluation` that supervaluates the bare plural over its atoms. A ternary reward is
-the trivalent value itself, Table 8's coding, and a binary judgment accepts exactly the true
-sentences. The implicature account is computed with the substrate's innocent exclusion on
-these worlds, and a participant computes the implicature exactly when *all* is among their
-alternatives to *some*, the paper's assumption that the same alternatives drive both
-inferences. Partial-truth responding, Table 8's PT column, is a response strategy rather than
-a reading, and the paper finds no evidence for it. The experiments are reported in prose. In
-Experiment 1, a binary truth-value judgment task, sixteen of 24 children showed the
-homogeneous pattern and eight the existential one, no child the universal one; six of the
-homogeneous children, and five of 22 adults, accepted *some* where all objects had the
-property, the HOM/−SI group the account excludes, and the group survives a Bayesian group
-assignment and leave-one-out cross-validation. Experiment 2, a ternary reward task after
-[katsos-bishop-2011], replicated the group with five of 22 children and two of 25 adults.
-Since nearly all children with the implicature read the definite homogeneously while the
-converse fails, the paper concludes that homogeneity is acquired before, and independently
-of, the scalar implicature, resolving the conflict between the non-maximal interpretations
-of [karmiloff-smith-1979] and [caponigro-etal-2012] and the maximal ones of earlier
-act-out tasks: young children's definite is existential and scopes under negation. The
-examples are the rows of `Data.Examples.TieuKrizChemla2019`.
+A world is the set of objects with the property. Magri's account is the double strengthening of
+`Studies/Magri2014`, and a participant computes the *not all* implicature exactly when *all* is
+among their alternatives to *some* (`.strong ∈ A`), since the paper's argument rests on the two
+inferences sharing their alternatives. A binary judgment accepts exactly the true sentences, and
+Table 8's rewards 1, 0 and −1 are the three truth values. Not formalized are Table 8's
+partial-truth group, which on the definite responds as the homogeneous one; the ternary coding
+of the implicature trials, after Katsos and Bishop; and the statistics. In Experiment 1, 16 of 24
+children were homogeneous and 8 existential, and 6 of the homogeneous children and 5 of 22 adults
+lacked the implicature; in Experiment 2 the homogeneous group without the implicature had 5 of 24
+children and 2 of 25 adults.
 
 ## TODO
 
-The printed Table 8 assigns the scope-ambiguous and wide-scope universal groups GAP
-responses that contradict the definitions beside it, which are followed here.
+The printed Table 2 has the universal groups accept the positive sentence in a GAP context,
+against Figure 2. The printed Table 8 gives the scope-ambiguous and wide-scope universal groups
+GAP rewards that contradict their definitions beside it, and fixes rows for *all* under negation
+and *some* in a GAP context that no definition determines. The definitions are followed.
 
 ## References
 
 * [tieu-kriz-chemla-2019]
 * [magri-2014]
-* [kriz-2015]
-* [kriz-chemla-2015]
-* [spector-2013]
-* [fox-2007]
+* [kriz-2016]
+* [spector-2013b]
 * [katsos-bishop-2011]
-* [karmiloff-smith-1979]
-* [caponigro-etal-2012]
 -/
 
 @[expose] public section
 
 namespace TieuKrizChemla2019
 
-open Exhaustification Homogeneity
+open Homogeneity Quantifier
 
 variable {Atom : Type*} (x : Finset Atom)
 
-/-- A GAP context: some but not all objects of the plurality have the property, Figure 1. -/
+/-- A GAP context is one where some but not all objects of the plurality have the property,
+Figure 1. -/
 def IsGap (w : Finset Atom) : Prop := (∃ a ∈ x, a ∈ w) ∧ ∃ a ∈ x, a ∉ w
 
-/-! ### Readings of the plural definite (section 1) -/
+/-! ### Construals -/
 
-section Readings
+/-- The force of a construal of the plural definite is existential, (6), or universal, (7). -/
+inductive Force where
+  | existential
+  | universal
+  deriving DecidableEq, Fintype
 
-variable [DecidableEq Atom]
+/-- The determiner of a force is *some* or *every*. -/
+def Force.gq : Force → GQ Atom
+  | .existential => GQ.some
+  | .universal => GQ.every
 
-/-- The scope of a universal reading of the definite relative to negation. -/
+/-- A construal of the definite scopes under or over sentential negation. -/
 inductive Scope where
   | low
   | wide
   deriving DecidableEq, Fintype
 
-/-- The negated sentence under a universal reading of the definite at a scope: *not all* or
-*none*. -/
-def universalNeg : Scope → Trivalent.Prop3 (Finset Atom)
-  | .low => λ w => (allPlural (λ a w => a ∈ w) x w).neg
-  | .wide => allPlural (λ a w => a ∉ w) x
+/-- Negation at a scope takes the outer negation of a quantifier scoping under it and the inner
+negation of one scoping over it. -/
+def Scope.neg : Scope → GQ Atom → GQ Atom
+  | .low, q => qᶜ
+  | .wide, q => q.innerNeg
 
-/-- The readings a participant may assign to the plural definite: the three of Figure 2 and
-the two further universal readings of Experiment 2, Table 8. -/
+/-- A bivalent construal of the plural definite is a force with a scope relative to negation. -/
+structure Construal where
+  /-- The quantificational force. -/
+  force : Force
+  /-- The scope relative to negation. -/
+  scope : Scope
+  deriving DecidableEq, Fintype
+
+/-- The quantifier a construal gives the definite at a polarity. -/
+def Construal.gq (c : Construal) : Polarity → GQ Atom
+  | .positive => c.force.gq
+  | .negative => c.scope.neg c.force.gq
+
+/-- Under a construal, *the Xs are P* at a polarity holds at the world `w`, the objects with the
+property. -/
+def Construal.Holds (c : Construal) (p : Polarity) (w : Finset Atom) : Prop :=
+  c.gq p (· ∈ x) (· ∈ w)
+
+instance [DecidableEq Atom] (c : Construal) (p : Polarity) (w : Finset Atom) :
+    Decidable (c.Holds x p w) := by
+  obtain ⟨_ | _, _ | _⟩ := c <;> cases p <;>
+    dsimp only [Construal.Holds, Construal.gq, Scope.neg, Force.gq, GQ.compl_apply, GQ.innerNeg,
+      GQ.every, GQ.some] <;>
+    infer_instance
+
+/-! ### Readings -/
+
+/-- The readings a participant may assign the plural definite are the quantified readings,
+among them the existential and the universal of Figure 2, the wide-scope universal of Table 8 and
+the wide-scope existential of the empty fourth group; the homogeneous reading; and the universal
+ambiguous in scope relative to negation, Table 8. -/
 inductive Reading where
-  /-- THE as SOME, (6), scoping under negation. -/
-  | existential
-  /-- THE with a truth-value gap, (1)–(2). -/
+  /-- The definite as a quantifier at a scope. -/
+  | quantified (c : Construal)
+  /-- The definite with a truth-value gap, (1)–(2). -/
   | homogeneous
-  /-- THE as ALL, (7), scoping under negation. -/
-  | universal
-  /-- THE as ALL, scoping over negation. -/
-  | wideScopeUniversal
-  /-- THE as ALL, ambiguous in scope relative to negation. -/
+  /-- The definite as *all*, ambiguous in scope relative to negation. -/
   | scopeAmbiguous
-  deriving Repr, DecidableEq, Fintype
+  deriving DecidableEq
 
-/-- The value of the definite sentence at a polarity under a reading. Negation is Kleene
-negation except where the universal outscopes it; the scope-ambiguous reading supervaluates
-over the two scopes. -/
-def Reading.value : Reading → Polarity → Trivalent.Prop3 (Finset Atom)
-  | .existential, .positive => λ w => .ofProp (∃ a ∈ x, a ∈ w)
-  | .existential, .negative => λ w => (Trivalent.ofProp (∃ a ∈ x, a ∈ w)).neg
-  | .homogeneous, .positive => barePlural (λ a w => a ∈ w) x
-  | .homogeneous, .negative => λ w => (barePlural (λ a w => a ∈ w) x w).neg
-  | .universal, .positive | .wideScopeUniversal, .positive | .scopeAmbiguous, .positive =>
-      allPlural (λ a w => a ∈ w) x
-  | .universal, .negative => universalNeg x .low
-  | .wideScopeUniversal, .negative => universalNeg x .wide
-  | .scopeAmbiguous, .negative => fun w ↦
-      Trivalent.supervaluation Finset.univ (universalNeg x · w = .true)
+instance : Fintype Reading where
+  elems := {.quantified ⟨.existential, .low⟩, .quantified ⟨.existential, .wide⟩,
+    .quantified ⟨.universal, .low⟩, .quantified ⟨.universal, .wide⟩, .homogeneous,
+    .scopeAmbiguous}
+  complete := by rintro (⟨_ | _, _ | _⟩ | _ | _) <;> simp
+
+/-- The construals a reading supervaluates over. The homogeneous reading is true when (8a) and
+(8b) both are and false when neither is, and the scope-ambiguous one is true or false according
+to where the universal takes scope. -/
+def Reading.construals : Reading → Finset Construal
+  | .quantified c => {c}
+  | .homogeneous => {⟨.existential, .low⟩, ⟨.universal, .low⟩}
+  | .scopeAmbiguous => {⟨.universal, .low⟩, ⟨.universal, .wide⟩}
+
+theorem Reading.construals_nonempty (r : Reading) : r.construals.Nonempty := by
+  rcases r with c | _ | _ <;> simp [construals]
+
+/-- The value of the definite sentence at a polarity under a reading is the supervaluation over
+the reading's construals. -/
+def Reading.value [DecidableEq Atom] (r : Reading) (p : Polarity) :
+    Trivalent.Prop3 (Finset Atom) :=
+  fun w ↦ Trivalent.supervaluation r.construals (·.Holds x p w)
 
 /-- The values of the positive and the negative sentence in a GAP context under each reading,
-Figure 2 and Table 8. -/
+Figure 2 and the group definitions of Table 8. -/
 def Reading.gapPattern : Reading → Trivalent × Trivalent
-  | .existential => (.true, .false)
+  | .quantified ⟨.existential, .low⟩ => (.true, .false)
+  | .quantified ⟨.existential, .wide⟩ => (.true, .true)
+  | .quantified ⟨.universal, .low⟩ => (.false, .true)
+  | .quantified ⟨.universal, .wide⟩ => (.false, .false)
   | .homogeneous => (.indet, .indet)
-  | .universal => (.false, .true)
-  | .wideScopeUniversal => (.false, .false)
   | .scopeAmbiguous => (.false, .indet)
 
-/-- The binary judgments of a reading's GAP pattern: each sentence is accepted iff true. -/
+/-- A binary judgment accepts exactly the true sentences, collapsing the intermediate reward
+into the minimal one. -/
 def Reading.binaryPattern (r : Reading) : Bool × Bool :=
-  (r.gapPattern.1 = .true, r.gapPattern.2 = .true)
+  r.gapPattern.map Trivalent.toBoolOrFalse Trivalent.toBoolOrFalse
 
-variable {x}
+/-! ### Predictions -/
+
+variable {x} {w : Finset Atom}
+
+/-- In a GAP context the existential holds of the property and of its negation and the
+universal of neither, so a construal holds exactly when it is existential at the positive
+polarity or over negation. -/
+theorem Construal.holds_of_isGap (hw : IsGap x w) (c : Construal) (p : Polarity) :
+    c.Holds x p w ↔ (c.force = .existential ↔ p = .positive ∨ c.scope = .wide) := by
+  obtain ⟨⟨a, ha, haw⟩, b, hb, hbw⟩ := hw
+  obtain ⟨_ | _, _ | _⟩ := c <;> cases p <;>
+    simp [Holds, gq, Scope.neg, Force.gq, GQ.innerNeg, GQ.some, GQ.every] <;> grind
+
+/-- Where every object has the property, every construal makes the positive sentence true and
+the negative one false. -/
+theorem Construal.holds_of_subset (hx : x.Nonempty) (hw : x ⊆ w) (c : Construal)
+    (p : Polarity) : c.Holds x p w ↔ p = .positive := by
+  obtain ⟨b, hb⟩ := hx
+  obtain ⟨_ | _, _ | _⟩ := c <;> cases p <;>
+    simp [Holds, gq, Scope.neg, Force.gq, GQ.innerNeg, GQ.some, GQ.every] <;> grind
+
+/-- Where no object has the property, every construal makes the positive sentence false and the
+negative one true. -/
+theorem Construal.holds_of_disjoint (hx : x.Nonempty) (hw : Disjoint x w) (c : Construal)
+    (p : Polarity) : c.Holds x p w ↔ p = .negative := by
+  obtain ⟨b, hb⟩ := hx
+  rw [Finset.disjoint_left] at hw
+  obtain ⟨_ | _, _ | _⟩ := c <;> cases p <;>
+    simp [Holds, gq, Scope.neg, Force.gq, GQ.innerNeg, GQ.some, GQ.every] <;> grind
+
+variable [DecidableEq Atom]
 
 /-- In a GAP context every reading takes the values of Figure 2 and Table 8. -/
-theorem value_of_isGap {w : Finset Atom} (hw : IsGap x w) (r : Reading) :
+theorem value_of_isGap (hw : IsGap x w) (r : Reading) :
     (r.value x .positive w, r.value x .negative w) = r.gapPattern := by
-  have hall : allPlural (λ a w => a ∈ w) x w = .false :=
-    (allPlural_eq_false_iff _ _ _).2 λ h => hw.2.elim λ a ha => ha.2 (h a ha.1)
-  have hnone : allPlural (λ a w => a ∉ w) x w = .false :=
-    (allPlural_eq_false_iff _ _ _).2 λ h => hw.1.elim λ a ha => h a ha.1 ha.2
-  have hbare : barePlural (λ a w => a ∈ w) x w = .indet :=
-    (Trivalent.supervaluation_eq_indet_iff _ _).2 ⟨hw.1, hw.2⟩
-  have hamb : Trivalent.supervaluation Finset.univ (universalNeg x · w = .true) = .indet :=
-    (Trivalent.supervaluation_eq_indet_iff _ _).2
-      ⟨⟨.low, Finset.mem_univ _, by simp [universalNeg, hall]⟩,
-        ⟨.wide, Finset.mem_univ _, by simp [universalNeg, hnone]⟩⟩
-  cases r
-  · simp [Reading.value, Reading.gapPattern, hw.1]
-  · simp [Reading.value, Reading.gapPattern, hbare]
-  · simp [Reading.value, Reading.gapPattern, universalNeg, hall]
-  · simp [Reading.value, Reading.gapPattern, universalNeg, hall, hnone]
-  · simp only [Reading.value, Reading.gapPattern, hall, hamb]
+  simp only [Reading.value, Construal.holds_of_isGap hw]
+  rcases r with ⟨_ | _, _ | _⟩ | _ | _ <;> decide
 
-/-- Ternary judgments separate all five readings in a GAP context, Experiment 2's design. -/
+/-- Where every object has the property all readings make the positive sentence true and the
+negative one false, as the clearly true and clearly false controls of both experiments require.
+-/
+theorem value_of_subset (hx : x.Nonempty) (hw : x ⊆ w) (r : Reading) :
+    (r.value x .positive w, r.value x .negative w) = (.true, .false) := by
+  simp only [Reading.value, Construal.holds_of_subset hx hw,
+    Trivalent.supervaluation_const r.construals_nonempty]
+  simp
+
+/-- Where no object has the property all readings make the positive sentence false and the
+negative one true. -/
+theorem value_of_disjoint (hx : x.Nonempty) (hw : Disjoint x w) (r : Reading) :
+    (r.value x .positive w, r.value x .negative w) = (.false, .true) := by
+  simp only [Reading.value, Construal.holds_of_disjoint hx hw,
+    Trivalent.supervaluation_const r.construals_nonempty]
+  simp
+
+/-- A quantified reading is classical. -/
+@[simp] theorem value_quantified (c : Construal) (p : Polarity) (w : Finset Atom) :
+    (Reading.quantified c).value x p w = .ofProp (c.Holds x p w) :=
+  Trivalent.supervaluation_singleton _ c
+
+/-- A reading whose construals all scope under negation negates by strong Kleene negation. -/
+theorem value_negative_of_low {r : Reading} (h : ∀ c ∈ r.construals, c.scope = .low)
+    (w : Finset Atom) : r.value x .negative w = (r.value x .positive w).neg := by
+  rw [Reading.value, Reading.value, ← Trivalent.supervaluation_not _ r.construals_nonempty]
+  refine Trivalent.supervaluation_congr fun c hc ↦ ?_
+  obtain ⟨_ | _, _⟩ := c <;> cases h _ hc <;> rfl
+
+/-- The homogeneous reading is the trivalent plural `barePlural`, the supervaluation over the
+objects of the plurality. -/
+theorem value_homogeneous (hx : x.Nonempty) :
+    Reading.homogeneous.value x .positive = barePlural (· ∈ ·) x := by
+  funext w
+  obtain ⟨b, hb⟩ := hx
+  apply Trivalent.eq_of_indet_iff_of_true_iff <;>
+    simp [Reading.value, Reading.construals, barePlural, Trivalent.supervaluation_eq_indet_iff,
+      Trivalent.supervaluation_eq_true_iff, Construal.Holds, Construal.gq, Force.gq, GQ.some,
+      GQ.every] <;>
+    grind
+
+omit [DecidableEq Atom] in
+/-- A GAP context is where (8a) and (8b) disagree, so where the presupposition that all or none
+of the objects have the property fails. -/
+theorem isGap_iff_not_homogeneous (hx : x.Nonempty) :
+    IsGap x w ↔ ¬ Homogeneous {{w | ∃ a ∈ x, a ∈ w}, {w | x ⊆ w}} w := by
+  obtain ⟨b, hb⟩ := hx
+  rw [homogeneous_pair]
+  simp only [IsGap, Set.mem_ofPred_eq, Finset.subset_iff]
+  grind
+
+/-- A participant who reads the definite homogeneously but reverses the positive judgment to
+obtain the negative one, weak negation (fn 23), responds as a universal participant. -/
+theorem homogeneous_weakNegation (hx : x.Nonempty) (w : Finset Atom) :
+    (Reading.homogeneous.value x .positive w).metaAssert.neg =
+      (Reading.quantified ⟨.universal, .low⟩).value x .negative w := by
+  rw [value_homogeneous hx, value_negative_of_low (by simp [Reading.construals])]
+  simp [barePlural, Construal.Holds, Construal.gq, Force.gq, GQ.every]
+
+/-- A child who restricts the plurality to the objects that verify the sentence, (19) and (20),
+accepts both sentences in a GAP context, the pattern of the wide-scope existential, which no
+child showed. -/
+theorem domainRestriction_of_isGap (hw : IsGap x w) :
+    Reading.homogeneous.value (x.filter (· ∈ w)) .positive w = .true ∧
+      Reading.homogeneous.value (x.filter (· ∉ w)) .negative w = .true := by
+  obtain ⟨⟨a, ha, haw⟩, b, hb, hbw⟩ := hw
+  rw [value_negative_of_low (by simp [Reading.construals]),
+    value_homogeneous ⟨a, Finset.mem_filter.2 ⟨ha, haw⟩⟩,
+    value_homogeneous ⟨b, Finset.mem_filter.2 ⟨hb, hbw⟩⟩]
+  simp only [barePlural, Trivalent.neg_eq_true_iff, Trivalent.supervaluation_eq_true_iff,
+    Trivalent.supervaluation_eq_false_iff, Finset.mem_filter]
+  exact ⟨fun _ h ↦ h.2, ⟨b, Finset.mem_filter.2 ⟨hb, hbw⟩⟩, fun _ h ↦ h.2⟩
+
+/-! ### Binary and ternary judgments -/
+
+/-- Ternary judgments separate all readings in a GAP context, Experiment 2's design. -/
 theorem gapPattern_injective : Function.Injective Reading.gapPattern := by decide
 
-/-- The three readings of Figure 2 predict pairwise distinct binary responses in a GAP
-context, so Experiment 1 identifies them. -/
-theorem binaryPattern_figure2 :
-    ∀ r ∈ [Reading.existential, .homogeneous, .universal],
-      ∀ r' ∈ [Reading.existential, .homogeneous, .universal],
-        r.binaryPattern = r'.binaryPattern → r = r' := by decide
+/-- The four quantified readings give the four possible pairs of binary judgments in a GAP
+context, the three of Figure 2 and the wide-scope existential of the empty fourth group. -/
+theorem binaryPattern_quantified_bijective :
+    Function.Bijective fun c : Construal ↦ (Reading.quantified c).binaryPattern := by decide
 
-/-- Binary judgments conflate the homogeneous reading with the universal readings that
-outscope negation, all three rejecting both sentences in a GAP context: Experiment 1 cannot
-tell a truly homogeneous child from a wide-scope universal one. -/
-theorem binary_collapse :
-    Reading.homogeneous.binaryPattern = Reading.wideScopeUniversal.binaryPattern ∧
-      Reading.homogeneous.binaryPattern = Reading.scopeAmbiguous.binaryPattern := by decide
+/-- Binary judgments conflate the homogeneous reading and the scope-ambiguous universal with the
+wide-scope universal, all three rejecting both sentences in a GAP context. -/
+theorem binaryPattern_eq_wideScopeUniversal :
+    ∀ r ∈ ({.homogeneous, .scopeAmbiguous} : Finset Reading),
+      r.binaryPattern = (Reading.quantified ⟨.universal, .wide⟩).binaryPattern := by decide
 
-end Readings
-
-/-! ### The implicature account (section 2) -/
+/-! ### The implicature account -/
 
 section Implicature
 
-/-- The literal existential meaning of the definite and of *some*: some object of the
-plurality has the property. -/
-def someMeaning : Set (Finset Atom) := {w | ∃ a ∈ x, a ∈ w}
+open Magri2014 (Item exh strengthened primal primalMates compl_comp_primal)
+open Exhaustification
 
-/-- *All*: every object of the plurality has the property. -/
-def allMeaning : Set (Finset Atom) := {w | x ⊆ w}
+/-- A participant's Horn-mates are those of Magri's primal configuration with `A` as the
+alternatives to *some*. Magri's are `{.mystery, .strong}` (`mates_primal`), with *all* among
+them. -/
+def mates (A : Finset Item) : Item → Finset Item :=
+  Function.update primalMates .weak A
 
-/-- A participant's alternatives to *some*: *all* is among them exactly when the participant
-computes the *not all* implicature. -/
-def alts : Bool → Set (Set (Finset Atom))
-  | true => {someMeaning x, allMeaning x}
-  | false => {someMeaning x}
+theorem mates_primal : mates {.mystery, .strong} = primalMates :=
+  Function.update_eq_self _ _
 
-/-- (11): the strengthened definite of the implicature account, [magri-2014]'s double
-exhaustification. The definite's only Horn-mate is the equivalent *some*, so the inner
-exhaustification leaves its existential meaning; the outer exhaustifies that against the
-exhaustified *some*, (10). -/
-def strengthened (si : Bool) : Set (Finset Atom) :=
-  exhIE {someMeaning x, exhIE (alts x si) (someMeaning x)} (someMeaning x)
+section General
 
-variable {x}
+variable {W : Type*} [Fintype W] [DecidableEq W] {wk st : Finset W} {A : Finset Item}
 
-private theorem allMeaning_subset_someMeaning (hx : x.Nonempty) :
-    allMeaning x ⊆ someMeaning x :=
-  λ _ hw => hx.elim λ a ha => ⟨a, ha, hw ha⟩
+private theorem exh_mates_mystery : exh (mates A) (primal wk st) .mystery = wk := by
+  change innocent.exh (({.weak} : Finset Item).image (primal wk st)) wk = wk
+  rw [Finset.image_singleton]
+  exact innocent_exh_eq_self_of_forall_subset (by simp [primal])
 
-/-- (10): with *all* among its alternatives, *some* is exhaustified to *some but not all*. -/
-theorem exhIE_someMeaning {w : Finset Atom} (hw : IsGap x w) :
-    exhIE {someMeaning x, allMeaning x} (someMeaning x) = someMeaning x \ allMeaning x :=
-  exhIE_pair_sdiff (φ := someMeaning x) (d := allMeaning x)
-    ⟨w, hw.1, λ h => hw.2.elim λ _ ha => ha.2 (h ha.1)⟩
+private theorem exh_mates_weak_of_forall (h : ∀ i ∈ A, wk ⊆ primal wk st i) :
+    exh (mates A) (primal wk st) .weak = wk :=
+  innocent_exh_eq_self_of_forall_subset fun a ha ↦ by
+    obtain ⟨i, hi, rfl⟩ := Finset.mem_image.1 ha
+    exact h i hi
 
-/-- (11): with the implicature, the strengthened definite is universal. -/
-theorem strengthened_true (hx : x.Nonempty) {w : Finset Atom} (hw : IsGap x w) :
-    strengthened x true = allMeaning x := by
-  rw [strengthened, alts, exhIE_someMeaning hw,
-    exhIE_pair_sdiff (φ := someMeaning x) (d := someMeaning x \ allMeaning x)
-      ⟨x, hx.elim λ a ha => ⟨a, ha, ha⟩,
-        λ h => h.2 (show x ⊆ x from Finset.Subset.refl x)⟩,
-    Set.sdiff_sdiff_right_self]
-  exact Set.inter_eq_right.2 (allMeaning_subset_someMeaning hx)
+/-- Without *all* among its alternatives, *some* excludes nothing. -/
+theorem exh_mates_weak_of_notMem (hA : .strong ∉ A) : exh (mates A) (primal wk st) .weak = wk :=
+  exh_mates_weak_of_forall fun i hi ↦ by
+    cases i <;> first | exact subset_rfl | exact absurd hi hA
 
-/-- Without the implicature both exhaustifications are vacuous and the definite keeps its
-existential meaning. -/
-theorem strengthened_false : strengthened x false = someMeaning x := by
-  rw [strengthened, alts, exhIE_singleton_self, Set.pair_eq_singleton, exhIE_singleton_self]
+/-- With *all* among its alternatives, *some* is strengthened to *some but not all*, (10). -/
+theorem exh_mates_weak_of_mem (hA : .strong ∈ A) (h : (wk \ st).Nonempty) :
+    exh (mates A) (primal wk st) .weak = wk \ st := by
+  have hne : wk ≠ st := fun e ↦ by simp [e] at h
+  have himg : (A.image (primal wk st)).erase wk = {st} := by
+    ext a
+    simp only [Finset.mem_erase, Finset.mem_image, Finset.mem_singleton]
+    constructor
+    · rintro ⟨ha, i, -, rfl⟩
+      cases i <;> first | exact absurd rfl ha | rfl
+    · rintro rfl
+      exact ⟨hne.symm, .strong, hA, rfl⟩
+  change innocent.exh (A.image (primal wk st)) wk = wk \ st
+  rw [innocent_exh_erase_entailed subset_rfl (h.mono Finset.sdiff_subset), himg,
+    innocent_exh_singleton h]
 
-/-- The *not all* implicature is a sub-computation of the homogeneity implicature: a
-participant accepts the positive definite in a GAP context `w` exactly when they accept
-*some* in a context `w'` where every object has the property. The HOM/−SI participants of
-both experiments, who reject the first and accept the second, contradict the account. -/
-theorem implicature_gap_iff_si (hx : x.Nonempty) {w w' : Finset Atom} (hw : IsGap x w)
-    (hw' : x ⊆ w') (si : Bool) :
-    w ∈ strengthened x si ↔ w' ∈ exhIE (alts x si) (someMeaning x) := by
-  cases si
-  · rw [strengthened_false, alts, exhIE_singleton_self]
-    exact iff_of_true hw.1 (hx.elim λ a ha => ⟨a, ha, hw' ha⟩)
-  · rw [strengthened_true hx hw, alts, exhIE_someMeaning hw]
-    exact iff_of_false (λ h => hw.2.elim λ _ ha => ha.2 (h ha.1)) λ h => h.2 hw'
+/-- The strengthened definite (11) is computed from the exhaustified *some* (10). The inner
+exhaustification of the definite is vacuous and the outer one denies the exhaustified *some*, so
+the *not all* implicature is a sub-computation of the homogeneity implicature. -/
+theorem strengthened_mates_mystery :
+    strengthened (mates A) (primal wk st) .mystery =
+      innocent.exh {exh (mates A) (primal wk st) .weak} wk := by
+  change innocent.exh (({.weak} : Finset Item).image (exh (mates A) (primal wk st)))
+    (exh (mates A) (primal wk st) .mystery) = _
+  rw [Finset.image_singleton, exh_mates_mystery]
 
-/-- Negation is downward-entailing, so the account leaves the negated definite its
-existential meaning, false in a GAP context whatever the participant's implicatures: the
-universal pattern of Figure 2 is never predicted, and the account's two profiles are the
-existential pattern without the implicature and the homogeneous pattern with it. -/
-theorem implicature_binaryPattern (hx : x.Nonempty) {w : Finset Atom} (hw : IsGap x w) :
-    (w ∈ strengthened x false ↔ Reading.existential.binaryPattern.1 = true) ∧
-      (w ∈ (someMeaning x)ᶜ ↔ Reading.existential.binaryPattern.2 = true) ∧
-      (w ∈ strengthened x true ↔ Reading.homogeneous.binaryPattern.1 = true) ∧
-      (w ∈ (someMeaning x)ᶜ ↔ Reading.homogeneous.binaryPattern.2 = true) := by
-  rw [strengthened_false, strengthened_true hx hw]
-  exact ⟨iff_of_true hw.1 rfl, iff_of_false (λ h => h hw.1) (by decide),
-    iff_of_false (λ h => hw.2.elim λ _ ha => ha.2 (h ha.1)) (by decide),
-    iff_of_false (λ h => h hw.1) (by decide)⟩
+/-- Without *all* among the alternatives the definite keeps its existential meaning. -/
+theorem strengthened_mates_mystery_of_notMem (hA : .strong ∉ A) :
+    strengthened (mates A) (primal wk st) .mystery = wk := by
+  rw [strengthened_mates_mystery, exh_mates_weak_of_notMem hA]
+  exact innocent_exh_eq_self_of_forall_subset (by simp)
+
+/-- With *all* among the alternatives the definite is universal, (11). -/
+theorem strengthened_mates_mystery_of_mem (hA : .strong ∈ A) (h : st ⊆ wk) (hne : st.Nonempty) :
+    strengthened (mates A) (primal wk st) .mystery = st := by
+  rw [strengthened_mates_mystery]
+  rcases (wk \ st).eq_empty_or_nonempty with h₁ | h₁
+  · have hsub := Finset.sdiff_eq_empty_iff_subset.1 h₁
+    rw [exh_mates_weak_of_forall fun i _ ↦ by cases i <;> first | exact subset_rfl | exact hsub,
+      innocent_exh_eq_self_of_forall_subset (by simp)]
+    exact hsub.antisymm h
+  · have h₂ : (wk \ (wk \ st)).Nonempty := by
+      rwa [sdiff_sdiff_right_self, Finset.inf_eq_inter, Finset.inter_eq_right.2 h]
+    rw [exh_mates_weak_of_mem hA h₁, innocent_exh_singleton h₂, sdiff_sdiff_right_self,
+      Finset.inf_eq_inter, Finset.inter_eq_right.2 h]
+
+/-- Under negation nothing is strengthened and the definite means *none*, whatever the
+alternatives. -/
+theorem strengthened_mates_not_mystery (h : st ⊆ wk) :
+    strengthened (mates A) (compl ∘ primal wk st) .mystery = wkᶜ := by
+  rw [compl_comp_primal, strengthened_mates_mystery,
+    exh_mates_weak_of_forall fun i _ ↦ by
+      cases i <;> first | exact subset_rfl | exact Finset.compl_subset_compl.2 h]
+  exact innocent_exh_eq_self_of_forall_subset (by simp)
+
+end General
+
+variable [Fintype Atom] {A : Finset Item} {w' : Finset Atom}
+
+variable (x) in
+/-- *Some* and the definite hold where some object of the plurality has the property, the weak
+pole of the scale. -/
+def someWorlds : Finset (Finset Atom) := Finset.univ.filter fun w ↦ ∃ a ∈ x, a ∈ w
+
+variable (x) in
+/-- *All* holds where every object of the plurality has the property, the strong pole. -/
+def allWorlds : Finset (Finset Atom) := Finset.univ.filter (x ⊆ ·)
+
+@[simp] theorem mem_someWorlds : w ∈ someWorlds x ↔ ∃ a ∈ x, a ∈ w := by simp [someWorlds]
+
+@[simp] theorem mem_allWorlds : w ∈ allWorlds x ↔ x ⊆ w := by simp [allWorlds]
+
+theorem allWorlds_subset_someWorlds (hx : x.Nonempty) : allWorlds x ⊆ someWorlds x :=
+  fun _ hw ↦ mem_someWorlds.2 (hx.elim fun a ha ↦ ⟨a, ha, mem_allWorlds.1 hw ha⟩)
+
+/-- A GAP context is where the weak pole holds without the strong, the account's gap. -/
+theorem isGap_iff_mem_sdiff : IsGap x w ↔ w ∈ someWorlds x \ allWorlds x := by
+  simp [IsGap, Finset.subset_iff]
+
+/-- Since the *not all* implicature is a sub-computation of homogeneity, a participant accepts
+the positive definite in a GAP context exactly when they accept *some* where every object has the
+property, whatever their alternatives. The homogeneous participants of both experiments who
+accept *some* there contradict the account. -/
+theorem definite_in_gap_iff_some_in_all (hw : IsGap x w) (hw' : x ⊆ w') :
+    w ∈ strengthened (mates A) (primal (someWorlds x) (allWorlds x)) .mystery ↔
+      w' ∈ exh (mates A) (primal (someWorlds x) (allWorlds x)) .weak := by
+  have hx : x.Nonempty := hw.1.imp fun _ h ↦ h.1
+  have hall : ¬ x ⊆ w := fun h ↦ hw.2.elim fun a ha ↦ ha.2 (h ha.1)
+  by_cases hA : .strong ∈ A
+  · rw [strengthened_mates_mystery_of_mem hA (allWorlds_subset_someWorlds hx)
+      ⟨x, mem_allWorlds.2 subset_rfl⟩, exh_mates_weak_of_mem hA ⟨w, isGap_iff_mem_sdiff.1 hw⟩]
+    simp [hw', hall]
+  · have hsome : ∃ a ∈ x, a ∈ w' := hx.elim fun a ha ↦ ⟨a, ha, hw' ha⟩
+    rw [strengthened_mates_mystery_of_notMem hA, exh_mates_weak_of_notMem hA]
+    simp [hw.1, hsome]
+
+variable (x A) in
+/-- The account's binary judgments of the positive and the negative definite at a world, for a
+participant whose alternatives to *some* are `A`. -/
+def implicaturePattern (w : Finset Atom) : Bool × Bool :=
+  (decide (w ∈ strengthened (mates A) (primal (someWorlds x) (allWorlds x)) .mystery),
+    decide (w ∈ strengthened (mates A) (compl ∘ primal (someWorlds x) (allWorlds x)) .mystery))
+
+/-- The account predicts the existential pattern without the implicature and the homogeneous
+one with it, the two groups of Table 2 it allows. -/
+theorem implicaturePattern_of_isGap (hw : IsGap x w) :
+    implicaturePattern x A w = (if .strong ∈ A then Reading.homogeneous
+      else .quantified ⟨.existential, .low⟩).binaryPattern := by
+  have hx : x.Nonempty := hw.1.imp fun _ h ↦ h.1
+  have hall : ¬ x ⊆ w := fun h ↦ hw.2.elim fun a ha ↦ ha.2 (h ha.1)
+  rw [implicaturePattern, strengthened_mates_not_mystery (allWorlds_subset_someWorlds hx)]
+  split_ifs with hA
+  · rw [strengthened_mates_mystery_of_mem hA (allWorlds_subset_someWorlds hx)
+      ⟨x, mem_allWorlds.2 subset_rfl⟩]
+    simp [hw.1, hall, Reading.binaryPattern, Reading.gapPattern, Trivalent.toBoolOrFalse]
+  · rw [strengthened_mates_mystery_of_notMem hA]
+    simp [hw.1, Reading.binaryPattern, Reading.gapPattern, Trivalent.toBoolOrFalse]
 
 end Implicature
 

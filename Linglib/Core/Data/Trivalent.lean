@@ -707,6 +707,24 @@ theorem supervaluation_eq_indet_iff :
 @[simp] theorem supervaluation_singleton (a : α) : supervaluation {a} P = ofProp (P a) := by
   by_cases h : P a <;> simp [supervaluation, ofProp, ofBool, h]
 
+variable {s P} in
+/-- The supervaluation depends only on the predicate's values on the family. -/
+theorem supervaluation_congr {Q : α → Prop} [DecidablePred Q] (h : ∀ a ∈ s, P a ↔ Q a) :
+    supervaluation s P = supervaluation s Q := by
+  refine eq_of_indet_iff_of_true_iff ?_ ?_
+  · simp only [supervaluation_eq_indet_iff]
+    exact and_congr (exists_congr fun a ↦ and_congr_right (h a))
+      (exists_congr fun a ↦ and_congr_right fun ha ↦ not_congr (h a ha))
+  · simp only [supervaluation_eq_true_iff]
+    exact forall₂_congr h
+
+variable {s} in
+/-- Over a nonempty family a constant predicate supervaluates to its classical value. -/
+theorem supervaluation_const (hs : s.Nonempty) (q : Prop) [Decidable q] :
+    supervaluation s (fun _ ↦ q) = ofProp q := by
+  by_cases h : q <;> simp [supervaluation, h]
+  exact hs
+
 /-- Removing the gap leaves classical universal truth. -/
 @[simp] theorem metaAssert_supervaluation :
     (supervaluation s P).metaAssert = ofProp (∀ a ∈ s, P a) := by
