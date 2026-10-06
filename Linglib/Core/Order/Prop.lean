@@ -1,17 +1,19 @@
 module
 
 public import Mathlib.Order.Basic
+public import Mathlib.Order.BooleanAlgebra.Basic
 
 /-!
-# The strict order on propositions
+# The strict order and decidability on propositions and predicates
 
 In the implication order on `Prop`, `p < q` holds exactly when `p` fails and `q` holds, so it is
-decidable whenever both propositions are. Mathlib gives `Prop` its partial order in
-`Order.Basic` without either fact.
+decidable whenever both propositions are; mathlib gives `Prop` its partial order in `Order.Basic`
+without either fact. Likewise the pointwise difference `p \ q` of two decidable predicates is
+decidable, the sibling of mathlib's `Prop.decidablePredBot` and `Prop.decidablePredTop`.
 
 ## References
 
-* [UPSTREAM] candidate for `Mathlib.Order.Basic`.
+* [UPSTREAM] candidate for `Mathlib.Order.Basic` and `Mathlib.Order.PropInstances`.
 -/
 
 @[expose] public section
@@ -25,3 +27,8 @@ theorem Prop.lt_iff : p < q ↔ ¬ p ∧ q := by
 
 instance Prop.decidableLT [Decidable p] [Decidable q] : Decidable (p < q) :=
   decidable_of_iff _ Prop.lt_iff.symm
+
+/-- The difference of two decidable predicates is decidable. -/
+instance Prop.decidablePredSDiff {α : Type*} (p q : α → Prop) [DecidablePred p]
+    [DecidablePred q] : DecidablePred (p \ q) :=
+  fun x ↦ decidable_of_iff (p x ∧ ¬ q x) Iff.rfl
