@@ -100,8 +100,8 @@ variable (hA : A ⊆ subDisjs I p)
   (hsep : ∀ i ∈ I, ∃ w, ∀ j ∈ I, w ∈ p j ↔ j = i)
 include hA hsplit hsep
 
-/-- Nothing is innocently excludable: each sub-disjunction holds at the minimal world of one
-of its disjuncts. -/
+/-- Nothing is innocently excludable, since each sub-disjunction holds at the minimal world of
+one of its disjuncts. -/
 theorem not_isInnocentlyExcludable_of_subDisjs (q : Set World) :
     ¬ IsInnocentlyExcludable A (disj I p) q := by
   intro hq
@@ -240,7 +240,7 @@ theorem exhIEII_subDisjsOfCard [DecidableEq ι] [∀ w i, Decidable (w ∈ p i)]
       exact mem_subDisj.2 ⟨j, hj, hwj⟩
 
 /-- With the conjunction of the disjuncts among the alternatives, it is innocently excludable
-whenever there are two disjuncts: exhaustification then denies it. -/
+whenever there are two disjuncts, and exhaustification then denies it. -/
 theorem isInnocentlyExcludable_iInter_of_insert (hsep : ∀ i ∈ I, ∃ w, ∀ j ∈ I, w ∈ p j ↔ j = i)
     (h2 : 2 ≤ I.card) :
     IsInnocentlyExcludable (insert (⋂ i ∈ I, p i) (subDisjs I p)) (disj I p) (⋂ i ∈ I, p i) := by
@@ -333,24 +333,25 @@ theorem exhIEII_pair_inter (hcov : φ ⊆ d₁ ∪ d₂) (h₁ : ∃ w ∈ φ �
     · rintro rfl
       exact (hM.isInnocentlyExcludable_iff (by simp)).2 (by simp [hw₁', hw₂'])
   have hMI : ∀ d ∈ ({d₁, d₂} : Set (Set World)), ∀ w ∈ φ ∩ d, w ∉ d₁ ∩ d₂ →
-      IsMISet {φ, d₁, d₂, d₁ ∩ d₂} φ {φ, d} := by
+      Maximal (IsConsistentInclusion {φ, d₁, d₂, d₁ ∩ d₂} φ) {φ, d} := by
     intro d hd w ⟨hw, hwd⟩ hw'
     simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hd
-    refine ⟨⟨?_, w, ?_⟩, fun R' ⟨hR', u, hu⟩ hRR' r hr ↦ ?_⟩
+    refine ⟨⟨?_, w, ⟨hw, fun q hq ↦ ((hIE q).1 hq) ▸ hw'⟩, ?_⟩,
+      fun R' ⟨hR', u, hu, huR⟩ hRR' r hr ↦ ?_⟩
     · rcases hd with rfl | rfl <;> rintro r (rfl | rfl) <;> simp
-    · rintro ψ ((rfl | ⟨q, hq, rfl⟩) | (rfl | rfl))
-      exacts [hw, ((hIE q).1 hq) ▸ hw', hw, hwd]
-    · have hud : u ∈ d := hu d (Or.inr (hRR' (Or.inr rfl)))
-      have hu' : u ∉ d₁ ∩ d₂ := hu _ (Or.inl (Or.inr ⟨d₁ ∩ d₂, (hIE _).2 rfl, rfl⟩))
+    · rintro ψ (rfl | rfl)
+      exacts [hw, hwd]
+    · have hud : u ∈ d := huR d (hRR' (Or.inr rfl))
+      have hu' : u ∉ d₁ ∩ d₂ := hu.2 _ ((hIE _).2 rfl)
       rcases hR' hr with rfl | rfl | rfl | rfl
       · exact Or.inl rfl
       · rcases hd with rfl | rfl
         · exact Or.inr rfl
-        · exact absurd ⟨hu r (Or.inr hr), hud⟩ hu'
+        · exact absurd ⟨huR r hr, hud⟩ hu'
       · rcases hd with rfl | rfl
-        · exact absurd ⟨hud, hu r (Or.inr hr)⟩ hu'
+        · exact absurd ⟨hud, huR r hr⟩ hu'
         · exact Or.inr rfl
-      · exact absurd (hu _ (Or.inr hr)) hu'
+      · exact absurd (huR _ hr) hu'
   ext w
   constructor
   · rintro ⟨hw, hIEw, -⟩

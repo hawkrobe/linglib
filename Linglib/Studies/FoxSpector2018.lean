@@ -48,7 +48,7 @@ open Exhaustification Set
 
 variable {W : Type*}
 
-/-- A continuation: what the rest of the sentence does with the constituent's meaning. -/
+/-- A continuation is what the rest of the sentence does with the constituent's meaning. -/
 abbrev Continuation (W : Type*) := Set W → Set W
 
 /-! ### The economy condition -/
@@ -57,19 +57,23 @@ section Economy
 
 variable (S : Continuation W) (conts : Set (Continuation W)) (C : Set (Set W)) (A : Set W)
 
-/-- Globally vacuous: eliminating `exh` does not change the truth conditions. -/
+/-- An occurrence of `exh` is globally vacuous when eliminating it does not change the truth
+conditions. -/
 def GloballyVacuous : Prop := S (exhIE C A) = S A
 
-/-- Globally weakening: eliminating `exh` does not alter or strengthens the truth conditions. -/
+/-- An occurrence of `exh` is globally weakening when eliminating it does not alter or
+strengthens the truth conditions. -/
 def GloballyWeakening : Prop := S A ⊆ S (exhIE C A)
 
-/-- Incrementally vacuous: vacuous for every continuation available at the point. -/
+/-- An occurrence of `exh` is incrementally vacuous when it is vacuous for every continuation
+available at the point. -/
 def IncrementallyVacuous : Prop := ∀ S ∈ conts, GloballyVacuous S C A
 
-/-- Incrementally weakening: weakening for every continuation available at the point. -/
+/-- An occurrence of `exh` is incrementally weakening when it is weakening for every
+continuation available at the point. -/
 def IncrementallyWeakening : Prop := ∀ S ∈ conts, GloballyWeakening S C A
 
-/-- The economy condition: an occurrence of `exh` is licensed unless it is incrementally
+/-- By the economy condition, an occurrence of `exh` is licensed unless it is incrementally
 weakening. -/
 def Licensed : Prop := ¬ IncrementallyWeakening conts C A
 
@@ -80,11 +84,11 @@ theorem GloballyVacuous.globallyWeakening (h : GloballyVacuous S C A) :
 
 /-- The first version of the condition, on vacuity, follows from the second. -/
 theorem not_licensed_of_incrementallyVacuous (h : IncrementallyVacuous conts C A) :
-    ¬ Licensed conts C A := λ hl => hl λ S hS => (h S hS).globallyWeakening
+    ¬ Licensed conts C A := fun hl ↦ hl fun S hS ↦ (h S hS).globallyWeakening
 
 /-- Vacuous exhaustification is never licensed. -/
 theorem not_licensed_of_eq (h : exhIE C A = A) : ¬ Licensed conts C A :=
-  λ hl => hl λ S _ => (congrArg S h).symm.subset
+  fun hl ↦ hl fun S _ ↦ (congrArg S h).symm.subset
 
 /-- Under a downward-entailing continuation, `exh` is always weakening. -/
 theorem globallyWeakening_of_antitone (hS : Antitone S) : GloballyWeakening S C A :=
@@ -93,18 +97,18 @@ theorem globallyWeakening_of_antitone (hS : Antitone S) : GloballyWeakening S C 
 /-- Under an upward-entailing continuation, `exh` is weakening only when it is vacuous. -/
 theorem globallyWeakening_iff_of_monotone (hS : Monotone S) :
     GloballyWeakening S C A ↔ GloballyVacuous S C A :=
-  ⟨λ h => subset_antisymm (hS (exhIE_subset C A)) h, GloballyVacuous.globallyWeakening⟩
+  ⟨fun h ↦ subset_antisymm (hS (exhIE_subset C A)) h, GloballyVacuous.globallyWeakening⟩
 
 /-- Under a downward-entailing operator, `exh` is never licensed. -/
 theorem not_licensed_of_forall_antitone (h : ∀ S ∈ conts, Antitone S) : ¬ Licensed conts C A :=
-  λ hl => hl λ S hS => globallyWeakening_of_antitone (h S hS)
+  fun hl ↦ hl fun S hS ↦ globallyWeakening_of_antitone (h S hS)
 
 /-- Under upward-entailing continuations, as below two downward-entailing operators, `exh` is
 licensed exactly when it is not vacuous for one of them. -/
 theorem licensed_iff_of_forall_monotone (h : ∀ S ∈ conts, Monotone S) :
     Licensed conts C A ↔ ∃ S ∈ conts, S (exhIE C A) ≠ S A := by
   simp only [Licensed, IncrementallyWeakening, not_forall, exists_prop]
-  exact exists_congr λ S => and_congr_right λ hS =>
+  exact exists_congr fun S ↦ and_congr_right fun hS ↦
     (globallyWeakening_iff_of_monotone (h S hS)).not
 
 end Economy
@@ -118,15 +122,15 @@ variable {C : Set (Set W)} {p q A X : Set W}
 /-- Hurford's Constraint is violated when one disjunct entails the other. -/
 def HurfordViolation (p q : Set W) : Prop := p ⊆ q ∨ q ⊆ p
 
-/-- The continuations of a first disjunct: any second disjunct may follow. -/
-def orLeft : Set (Continuation W) := range λ Y : Set W => λ A => A ∪ Y
+/-- Any second disjunct may follow a first disjunct. -/
+def orLeft : Set (Continuation W) := range fun Y : Set W ↦ fun A ↦ A ∪ Y
 
-/-- The continuation of a final disjunct after `X`: nothing follows. -/
-def orRight (X : Set W) : Set (Continuation W) := {λ A => X ∪ A}
+/-- Nothing follows a final disjunct after `X`. -/
+def orRight (X : Set W) : Set (Continuation W) := {fun A ↦ X ∪ A}
 
-/-- On a first disjunct, `exh` is licensed whenever it excludes something: the empty second
-disjunct is a continuation on which it is not vacuous. -/
-theorem licensed_orLeft (h : exhIE C A ≠ A) : Licensed orLeft C A := λ hw =>
+/-- On a first disjunct, `exh` is licensed whenever it excludes something, since the empty
+second disjunct is a continuation on which it is not vacuous. -/
+theorem licensed_orLeft (h : exhIE C A ≠ A) : Licensed orLeft C A := fun hw ↦
   h (subset_antisymm (exhIE_subset C A) (by simpa [GloballyWeakening] using hw _ ⟨∅, rfl⟩))
 
 /-- On a final disjunct, `exh` is licensed exactly when it strengthens the whole disjunction. -/
@@ -134,8 +138,8 @@ theorem licensed_orRight_iff : Licensed (orRight X) C A ↔ ¬ X ∪ A ⊆ X ∪
   simp only [Licensed, IncrementallyWeakening, orRight, mem_singleton_iff, forall_eq,
     GloballyWeakening]
 
-/-- Singh's asymmetry, canonical order: exhaustifying the weak disjunct of *p or q, or both* is
-licensed. -/
+/-- In the canonical order of Singh's asymmetry, exhaustifying the weak disjunct of *p or q, or
+both* is licensed. -/
 theorem singh_canonical (h : (p ∩ q).Nonempty) (h' : ((p ∪ q) \ (p ∩ q)).Nonempty) :
     Licensed orLeft {p ∪ q, p ∩ q} (p ∪ q) := by
   refine licensed_orLeft ?_
@@ -146,8 +150,8 @@ theorem singh_canonical (h : (p ∩ q).Nonempty) (h' : ((p ∪ q) \ (p ∩ q)).N
   rw [← he] at hw'
   exact hw'.2 hw
 
-/-- Singh's asymmetry, reverse order: exhaustifying the final weak disjunct of *both, or p or q*
-is vacuous, hence not licensed. -/
+/-- In the reverse order of Singh's asymmetry, exhaustifying the final weak disjunct of *both, or
+p or q* is vacuous, hence not licensed. -/
 theorem singh_reverse (h' : ((p ∪ q) \ (p ∩ q)).Nonempty) :
     ¬ Licensed (orRight (p ∩ q)) {p ∪ q, p ∩ q} (p ∪ q) := by
   rw [licensed_orRight_iff, exhIE_pair_sdiff (p ∪ q) h', not_not]
@@ -157,25 +161,25 @@ theorem singh_reverse (h' : ((p ∪ q) \ (p ∩ q)).Nonempty) :
     · exact Or.inl hpq
     · exact Or.inr ⟨hw, hpq⟩
 
-/-- Distant entailing disjuncts in reverse order: `exh` on the final weak disjunct is licensed
-when the exhaustified disjunction is strictly stronger than the bare one. -/
+/-- For distant entailing disjuncts in reverse order, `exh` on the final weak disjunct is
+licensed when the exhaustified disjunction is strictly stronger than the bare one. -/
 theorem licensed_orRight_of_ssubset (h : q ∪ exhIE C p ⊂ q ∪ p) : Licensed (orRight q) C p :=
   licensed_orRight_iff.2 (ssubset_def ▸ h).2
 
 /-- Exhaustifying the first disjunct restores Hurford's Constraint once the exhaustified
 disjunct and the second are logically independent. -/
 theorem not_hurfordViolation_of_independent (h₁ : ¬ exhIE C p ⊆ q) (h₂ : ¬ q ⊆ exhIE C p) :
-    ¬ HurfordViolation (exhIE C p) q := λ h => h.elim h₁ h₂
+    ¬ HurfordViolation (exhIE C p) q := fun h ↦ h.elim h₁ h₂
 
-/-- A Hurford disjunction under negation: every continuation negates a disjunction or a
+/-- Under negation, every continuation of a Hurford disjunction negates a disjunction or a
 conjunction containing the exhaustified disjunct, so `exh` is incrementally weakening. -/
 theorem not_licensed_neg :
-    ¬ Licensed (range (λ r : Set W => λ A => (A ∪ r)ᶜ) ∪ range λ r : Set W => λ A => (A ∩ r)ᶜ)
+    ¬ Licensed (range (fun r : Set W ↦ fun A ↦ (A ∪ r)ᶜ) ∪ range fun r : Set W ↦ fun A ↦ (A ∩ r)ᶜ)
       C A := by
   refine not_licensed_of_forall_antitone ?_
   rintro _ (⟨r, rfl⟩ | ⟨r, rfl⟩)
-  · exact λ _ _ h => compl_subset_compl.2 (union_subset_union_left r h)
-  · exact λ _ _ h => compl_subset_compl.2 (inter_subset_inter_left r h)
+  · exact fun _ _ h ↦ compl_subset_compl.2 (union_subset_union_left r h)
+  · exact fun _ _ h ↦ compl_subset_compl.2 (inter_subset_inter_left r h)
 
 end Hurford
 
@@ -190,19 +194,20 @@ def excludable (C : Set (Set W)) (A : Set W) : Set (Set W) := {q | IsInnocentlyE
 
 theorem mem_excludable {q : Set W} : q ∈ excludable C A ↔ IsInnocentlyExcludable C A q := Iff.rfl
 
-/-- Globally weakening relative to the comparison class: some set of alternatives with strictly
-fewer innocently excludable members gives a result at least as strong. -/
+/-- An occurrence of `exh` is globally weakening relative to the comparison class when some set
+of alternatives with strictly fewer innocently excludable members gives a result at least as
+strong. -/
 def GloballyWeakeningCC (S : Continuation W) (C : Set (Set W)) (A : Set W) : Prop :=
   ∃ C', excludable C' A ⊂ excludable C A ∧ S (exhIE C' A) ⊆ S (exhIE C A)
 
-/-- The comparison-class condition subsumes the earlier one: the empty set of alternatives is a
-comparison. -/
+/-- The comparison-class condition subsumes the earlier one, since the empty set of alternatives
+is a comparison. -/
 theorem GloballyWeakening.globallyWeakeningCC (h : GloballyWeakening S C A)
     (hne : (excludable C A).Nonempty) : GloballyWeakeningCC S C A := by
   refine ⟨∅, ?_, by rwa [exhIE_empty]⟩
-  refine ssubset_of_subset_of_ne (λ _ hq => (mem_excludable.1 hq).1.elim) ?_
+  refine ssubset_of_subset_of_ne (fun _ hq ↦ (mem_excludable.1 hq).1.elim) ?_
   obtain ⟨q, hq⟩ := hne
-  exact λ h => (mem_excludable.1 (h ▸ hq : q ∈ excludable ∅ A)).1.elim
+  exact fun h ↦ (mem_excludable.1 (h ▸ hq : q ∈ excludable ∅ A)).1.elim
 
 /-- Under a downward-entailing operator, exhaustifying against the un-exhaustified sentence
 denies it. -/
@@ -210,15 +215,15 @@ theorem exhIE_op (hne : (S (exhIE C A) \ S A).Nonempty) :
     exhIE {S (exhIE C A), S A} (S (exhIE C A)) = S (exhIE C A) \ S A :=
   exhIE_pair_sdiff _ hne
 
-/-- The theorem of §10: with more innocently excludable alternatives, the two-layered
+/-- With more innocently excludable alternatives, the two-layered
 exhaustification under a downward-entailing operator is weaker, so economy forces the smaller
-alternative set, narrow focus. -/
-theorem op_exh_mono (hOP : Antitone S) (hC : C.Finite) (hC' : C'.Finite)
+alternative set, narrow focus. This is the theorem of §10. -/
+theorem op_exh_mono (hOP : Antitone S)
     (hsub : excludable C' A ⊆ excludable C A) (hne : (S (exhIE C A) \ S A).Nonempty)
     (hne' : (S (exhIE C' A) \ S A).Nonempty) :
     exhIE {S (exhIE C' A), S A} (S (exhIE C' A)) ⊆ exhIE {S (exhIE C A), S A} (S (exhIE C A)) := by
   rw [exhIE_op hne, exhIE_op hne']
-  exact Set.sdiff_subset_sdiff_left (hOP (exhIE_subset_exhIE C A hC hC' λ q hq => hsub hq))
+  exact Set.sdiff_subset_sdiff_left (hOP (exhIE_subset_exhIE C A fun q hq ↦ hsub hq))
 
 end ComparisonClass
 
@@ -229,7 +234,8 @@ section NegExh
 variable {C : Set (Set W)} {A p q : Set W}
 
 /-- Under negation, the exhaustified sentence exhaustified against the bare one yields what the
-inner exhaustification excluded: the embedded implicature turns into its conjunctive dual. -/
+inner exhaustification excluded, so the embedded implicature turns into its conjunctive
+dual. -/
 theorem exh_neg_exh (hne : (A \ exhIE C A).Nonempty) :
     exhIE {(exhIE C A)ᶜ, Aᶜ} (exhIE C A)ᶜ = A \ exhIE C A := by
   rw [exhIE_pair_sdiff (exhIE C A)ᶜ (d := Aᶜ) (by rwa [compl_sdiff_compl]), compl_sdiff_compl]
@@ -243,28 +249,28 @@ theorem exh_neg_exh_or (h : (p ∩ q).Nonempty) (h' : ((p ∪ q) \ (p ∩ q)).No
     obtain ⟨w, hw⟩ := h
     exact ⟨w, Or.inl hw.1, hw⟩
 
-/-- Under a negative quantifier the construal is not conjunctive: no individual has the weak
-property without the strong one, and some individual has the strong one. -/
+/-- Under a negative quantifier the construal is not conjunctive, since no individual has the
+weak property without the strong one, and some individual has the strong one. -/
 theorem exh_no_exh {ι : Type*} {P Q : ι → Set W} (hQ : ∀ x, Q x ⊆ P x)
     (hne : ((⋃ x, P x \ Q x)ᶜ ∩ ⋃ x, Q x).Nonempty) :
     exhIE {(⋃ x, P x \ Q x)ᶜ, (⋃ x, P x)ᶜ} (⋃ x, P x \ Q x)ᶜ =
       (⋃ x, P x \ Q x)ᶜ ∩ ⋃ x, Q x := by
   have hne' : ((⋃ x, P x \ Q x)ᶜ \ (⋃ x, P x)ᶜ).Nonempty := by
     obtain ⟨w, hw, hwQ⟩ := hne
-    exact ⟨w, hw, λ h => h (iUnion_mono (λ x => hQ x) hwQ)⟩
+    exact ⟨w, hw, fun h ↦ h (iUnion_mono (fun x ↦ hQ x) hwQ)⟩
   rw [exhIE_pair_sdiff _ hne']
   ext w
   simp only [mem_sdiff, mem_compl_iff, mem_iUnion, not_exists, not_forall, not_not, mem_inter_iff]
-  refine and_congr_right λ hw => ⟨?_, λ ⟨x, hx⟩ => ⟨x, hQ x hx⟩⟩
+  refine and_congr_right fun hw ↦ ⟨?_, fun ⟨x, hx⟩ ↦ ⟨x, hQ x hx⟩⟩
   rintro ⟨x, hx⟩
   by_contra hno
-  exact hw x ⟨hx, λ hq => hno ⟨x, hq⟩⟩
+  exact hw x ⟨hx, fun hq ↦ hno ⟨x, hq⟩⟩
 
 end NegExh
 
 /-! ### The data -/
 
-/-- A disjunction of the data: whether its disjuncts stand in entailment, whether a scalar
+/-- A disjunction of the data records whether its disjuncts stand in entailment, whether a scalar
 alternative lets exhaustification break it, the order of the disjuncts, whether they are
 distant entailing disjuncts, and how many downward-entailing operators scope over it. -/
 structure Row where
@@ -288,11 +294,11 @@ def Row.ofDatum (ex : Datum) : Option Row := do
 
 def rows : List Row := Examples.all.filterMap Row.ofDatum
 
-/-- Economy accounts for the distribution: a Hurford disjunction is acceptable when a scalar
+/-- Economy accounts for the distribution, a Hurford disjunction being acceptable when a scalar
 alternative lets `exh` break the entailment on a disjunct where it is licensed, the first one or
 a distant one, and no single downward-entailing operator makes it weakening. -/
-theorem rows_predicted : ∀ r ∈ rows, (r.judgment = .acceptable ↔
-    r.hurford = false ∨ (r.rescuable = true ∧ (r.canonical = true ∨ r.distant = true) ∧ r.de ≠ 1)) := by
+theorem rows_predicted : ∀ r ∈ rows, (r.judgment = .acceptable ↔ r.hurford = false ∨
+    (r.rescuable = true ∧ (r.canonical = true ∨ r.distant = true) ∧ r.de ≠ 1)) := by
   decide
 
 end FoxSpector2018

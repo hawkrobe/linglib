@@ -7,7 +7,7 @@ public import Linglib.Data.Examples.Fox2007
 public import Mathlib.Order.OrderIsoNat
 
 /-!
-# Free choice by recursive exhaustification
+# Fox (2007): Free Choice and the Theory of Scalar Implicatures
 
 From *You may eat the cake or the ice-cream* hearers infer that each option is allowed, though the
 sentence only says that one of them is. Fox derives this free choice inference by exhaustifying
@@ -136,7 +136,7 @@ theorem exists_exhIter_eq (hC : C.Finite) :
       have : (⟨q, hq⟩ : C) ∈ f v := hv
       rwa [hvu] at this
     | succ n ih =>
-      exact fun q hq ↦ exhIE_preimage_image _ _ (hC.image _) (ih q hq)
+      exact fun q hq ↦ exhIE_preimage_image _ _ (ih q hq)
         (by rintro _ ⟨r, hr, rfl⟩; exact ih r hr)
   have : Finite C := hC.to_subtype
   have hanti : Antitone fun n (q : C) ↦ f '' exhIter C n q :=
@@ -262,7 +262,7 @@ theorem isInnocentlyExcludable_iff {q : Set W} (hq : q ∈ ({w, s, n, e} : Set (
     exacts [hun (hn hue), hus (hs hue)]
 
 theorem exhIE_w : exhIE {w, s, n, e} w = w \ e := by
-  rw [exhIE_eq_of_iff _ _ (toFinite _) fun q hq ↦ h.isInnocentlyExcludable_iff hq]
+  rw [exhIE_eq_of_iff _ _ fun q hq ↦ h.isInnocentlyExcludable_iff hq]
   ext u
   exact ⟨fun ⟨hu, h'⟩ ↦ ⟨hu, h' e (by simp) rfl⟩, fun ⟨hu, hue⟩ ↦ ⟨hu, fun _ _ hq ↦ hq ▸ hue⟩⟩
 
@@ -317,7 +317,7 @@ theorem exhIter_two_eq_of_eq_inter (he : e = s ∩ n) :
     tauto
   rw [exhIter_two, h.image_exhIE, h.exhIE_w, h.union, he, hsd]
   obtain ⟨-, -, -, ⟨a, has, han⟩, ⟨b, hbn, hbs⟩⟩ := h
-  refine (exhIE_eq_self_iff _ _ (toFinite _)).2 fun q hq ↦ ?_
+  refine (exhIE_eq_self_iff _ _).2 fun q hq ↦ ?_
   rcases id hq.1 with rfl | rfl | rfl | rfl
   · exact (not_isInnocentlyExcludable_of_phi_subset (toFinite _) ⟨a, Or.inl ⟨has, han⟩⟩
       subset_rfl hq).elim
@@ -459,7 +459,7 @@ theorem exhIE_hornAlt :
     exhIE (hornAlt O O' a b) (O (a ⊔ b)) = O (a ⊔ b) \ (O (a ⊓ b) ∪ O' (a ⊔ b)) := by
   obtain ⟨x, hx⟩ := ha
   obtain ⟨y, hy⟩ := hb
-  rw [(isMinimalCover_hornAlt hO hO' hab hx hy).exhIE_eq finite_hornAlt]
+  rw [(isMinimalCover_hornAlt hO hO' hab hx hy).exhIE_eq]
   ext u
   simp only [mem_ofPred_eq, mem_insert_iff, mem_singleton_iff, forall_eq_or_imp, forall_eq,
     mem_sdiff]
@@ -794,7 +794,7 @@ theorem embedded_scalar_implicature (hah : ah ⊆ sh) (hsh : (sh \ (r ∪ ah)).N
       · exact (hx (Or.inl (huv r (by simp) hyr))).elim
       · exact (hys (huv sh (by simp) hxs)).elim
       · exact leALT_refl _ _
-  rw [hM.exhIE_eq (toFinite _)]
+  rw [hM.exhIE_eq]
   ext u
   simp only [mem_ofPred_eq, mem_insert_iff, mem_singleton_iff, forall_eq_or_imp, forall_eq,
     mem_sdiff, mem_union, mem_inter_iff]
@@ -825,28 +825,18 @@ include ha
 /-- A group of two or more is innocently excludable given the existential answer. -/
 theorem isInnocentlyExcludable_conj {S : Finset ι} {i j : ι} (hi : i ∈ S) (hj : j ∈ S)
     (hij : i ≠ j) : IsInnocentlyExcludable (conjClosure a) (⋃ i, a i) (conjFamily a S) := by
-  refine .of_extension_consistent (conjFamily_mem_conjClosure ⟨i, hi⟩) fun E hE ↦ ?_
-  obtain ⟨v, hv⟩ := hE.1.2.2
+  refine .of_forall_maximal (conjFamily_mem_conjClosure ⟨i, hi⟩) fun X hX ↦ ?_
+  obtain ⟨v, hv, hvX⟩ := hX.1.2
   by_cases hvS : v ∈ conjFamily a S
   · obtain ⟨u, hui, hu⟩ := ha i
-    refine ⟨u, ?_⟩
-    rintro ψ (hψ | hψ)
-    · rcases hE.1.2.1 ψ hψ with rfl | ⟨c, ⟨T, -, rfl⟩, rfl⟩
-      · exact mem_iUnion.2 ⟨i, hui⟩
-      · intro huT
-        have hTi : ∀ k ∈ T, k = i := fun k hk ↦
-          by_contra fun hki ↦ hu k hki (mem_conjFamily.1 huT k hk)
-        refine hv _ hψ (mem_conjFamily.2 fun k hk ↦ ?_)
-        rw [hTi k hk]
-        exact mem_conjFamily.1 hvS i hi
-    · rw [mem_singleton_iff] at hψ
-      subst hψ
-      exact fun huS ↦ hu j hij.symm (mem_conjFamily.1 huS j hj)
-  · refine ⟨v, ?_⟩
-    rintro ψ (hψ | hψ)
-    · exact hv ψ hψ
-    · rw [mem_singleton_iff] at hψ
-      exact hψ ▸ hvS
+    refine ⟨u, mem_iUnion.2 ⟨i, hui⟩, ?_⟩
+    rintro ⟨c, rfl | hc, huc⟩
+    · exact hu j hij.symm (mem_conjFamily.1 huc j hj)
+    · obtain ⟨T, -, rfl⟩ := hX.1.1 hc
+      refine hvX ⟨_, hc, mem_conjFamily.2 fun k hk ↦ ?_⟩
+      obtain rfl : k = i := by_contra fun hki ↦ hu k hki (mem_conjFamily.1 huc k hk)
+      exact mem_conjFamily.1 hvS k hi
+  · exact ⟨v, hv, fun ⟨c, hc, hvc⟩ ↦ hc.elim (fun h ↦ hvS (h ▸ hvc)) fun h ↦ hvX ⟨c, h, hvc⟩⟩
 
 /-- A single individual is not innocently excludable given the existential answer. -/
 theorem not_isInnocentlyExcludable_atom (i : ι) :
@@ -872,7 +862,7 @@ provided each individual can be the sole witness. -/
 theorem exhIE_conjClosure [Fintype ι] [DecidableEq ι] :
     exhIE (conjClosure a) (⋃ i, a i) = {u | ∃! i, u ∈ a i} := by
   ext u
-  rw [mem_exhIE_iff _ _ conjClosure_finite, mem_iUnion, mem_ofPred_eq]
+  rw [mem_exhIE_iff, mem_iUnion]
   constructor
   · rintro ⟨⟨i, hi⟩, h⟩
     refine ⟨i, hi, fun j hj ↦ by_contra fun hji ↦

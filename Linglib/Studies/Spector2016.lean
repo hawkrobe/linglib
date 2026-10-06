@@ -11,8 +11,8 @@ operator based on minimal worlds, `exhMW`, with the operator of [fox-2007] based
 exclusion, `exhIE`. The paper's general results live in the substrate: the minimal-world
 operator entails the innocent-exclusion operator, an alternative is innocently excludable
 exactly when the minimal worlds falsify it, closing the alternatives under conjunction makes
-the two operators coincide (`exhMW_eq_exhIE_of_closedUnderInter`), and closing them under
-disjunction changes neither (`exhIE_disjClosure_eq`). Here are the illustrations and the
+the two operators coincide (`exhMW_eq_exhIE_of_infClosed`), and closing them under
+disjunction changes neither (`exhIE_sUnion_image_powerset`). Here are the illustrations and the
 practical consequences. With a single alternative the operators agree (`elementary`). For a
 disjunction with only its disjuncts as alternatives, the minimal-world operator returns the
 exclusive reading while innocent exclusion is vacuous (`exhMW_or`, `exhIE_or`); adding the
@@ -61,7 +61,7 @@ theorem exhMW_pair {φ ψ : Set World} (hne : (φ \ ψ).Nonempty) : exhMW {φ, �
   ext u
   constructor
   · rintro ⟨hu, hmin⟩
-    refine ⟨hu, λ hψu => hmin ⟨w, hwφ, λ a ha haw => ?_, λ h => hwψ (h ψ (Or.inr rfl) hψu)⟩⟩
+    refine ⟨hu, fun hψu ↦ hmin ⟨w, hwφ, fun a ha haw ↦ ?_, fun h ↦ hwψ (h ψ (Or.inr rfl) hψu)⟩⟩
     simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at ha
     rcases ha with rfl | rfl
     · exact hu
@@ -69,13 +69,13 @@ theorem exhMW_pair {φ ψ : Set World} (hne : (φ \ ψ).Nonempty) : exhMW {φ, �
   · rintro ⟨hu, hψu⟩
     refine ⟨hu, ?_⟩
     rintro ⟨v, hv, -, hnle⟩
-    refine hnle λ a ha hau => ?_
+    refine hnle fun a ha hau ↦ ?_
     simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at ha
     rcases ha with rfl | rfl
     · exact hv
     · exact absurd hau hψu
 
-/-- The elementary case: both operators deny the single alternative. -/
+/-- In the elementary case both operators deny the single alternative. -/
 theorem elementary {φ ψ : Set World} (hne : (φ \ ψ).Nonempty) :
     exhMW {φ, ψ} φ = φ \ ψ ∧ exhIE {φ, ψ} φ = φ \ ψ :=
   ⟨exhMW_pair hne, exhIE_pair_sdiff φ hne⟩
@@ -85,14 +85,14 @@ theorem elementary {φ ψ : Set World} (hne : (φ \ ψ).Nonempty) :
 variable {A B : Set World}
 
 /-- Against the disjuncts alone, the minimal worlds of a disjunction are those verifying
-exactly one disjunct: the exclusive reading. -/
+exactly one disjunct, the exclusive reading. -/
 theorem exhMW_or (hA : (A \ B).Nonempty) : exhMW {A, B} (A ∪ B) = (A \ B) ∪ (B \ A) := by
   obtain ⟨w, hwA, hwB⟩ := hA
   ext u
   constructor
   · rintro ⟨hu, hmin⟩
     by_cases hAu : u ∈ A
-    · refine Or.inl ⟨hAu, λ hBu => hmin ⟨w, Or.inl hwA, λ a ha haw => ?_, λ h => ?_⟩⟩
+    · refine Or.inl ⟨hAu, fun hBu ↦ hmin ⟨w, Or.inl hwA, fun a ha haw ↦ ?_, fun h ↦ ?_⟩⟩
       · simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at ha
         rcases ha with rfl | rfl
         · exact hAu
@@ -108,7 +108,7 @@ theorem exhMW_or (hA : (A \ B).Nonempty) : exhMW {A, B} (A ∪ B) = (A \ B) ∪ 
         rcases hv with hAv | hBv
         · exact hAv
         · exact absurd (hle B (Or.inr rfl) hBv) hBu
-      refine hnle λ a ha hau => ?_
+      refine hnle fun a ha hau ↦ ?_
       simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at ha
       rcases ha with rfl | rfl
       · exact hAv
@@ -119,21 +119,21 @@ theorem exhMW_or (hA : (A \ B).Nonempty) : exhMW {A, B} (A ∪ B) = (A \ B) ∪ 
         rcases hv with hAv | hBv
         · exact absurd (hle A (Or.inl rfl) hAv) hAu
         · exact hBv
-      refine hnle λ a ha hau => ?_
+      refine hnle fun a ha hau ↦ ?_
       simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at ha
       rcases ha with rfl | rfl
       · exact absurd hau hAu
       · exact hBv
 
-/-- Against the disjuncts alone, innocent exclusion is vacuous: each disjunct is verified by
-some minimal world, so neither is innocently excludable. -/
+/-- Against the disjuncts alone, innocent exclusion is vacuous, since each disjunct is verified
+by some minimal world, so neither is innocently excludable. -/
 theorem exhIE_or (hA : (A \ B).Nonempty) (hB : (B \ A).Nonempty) :
     exhIE {A, B} (A ∪ B) = A ∪ B := by
-  rw [exhIE_eq_phi_and_exhMW_negated {A, B} (A ∪ B) (Set.toFinite _), exhMW_or hA]
+  rw [exhIE_eq_setOf_exhMW_subset_compl {A, B} (A ∪ B), exhMW_or hA]
   obtain ⟨w, hwA, hwB⟩ := hA
   obtain ⟨w', hw'B, hw'A⟩ := hB
   ext u
-  refine ⟨λ h => h.1, λ hu => ⟨hu, λ a ha hsub => ?_⟩⟩
+  refine ⟨fun h ↦ h.1, fun hu ↦ ⟨hu, fun a ha hsub ↦ ?_⟩⟩
   simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at ha
   rcases ha with rfl | rfl
   · exact absurd hwA (hsub (Or.inl ⟨hwA, hwB⟩))
@@ -146,7 +146,7 @@ theorem exhMW_congr {ALT ALT' : Set (Set World)} (φ : Set World)
   show (φ u ∧ ¬ ∃ v, φ v ∧ v <[ALT] u) ↔ (φ u ∧ ¬ ∃ v, φ v ∧ v <[ALT'] u)
   simp only [ltALT, h]
 
-/-- Adding the conjunction as an alternative leaves the order on worlds unchanged: it holds
+/-- Adding the conjunction as an alternative leaves the order on worlds unchanged, since it holds
 exactly where both disjuncts do. -/
 theorem leALT_or_and_iff (u v : World) : (u ≤[{A, B, A ∩ B}] v) ↔ (u ≤[{A, B}] v) := by
   constructor
@@ -160,7 +160,7 @@ theorem leALT_or_and_iff (u v : World) : (u ≤[{A, B, A ∩ B}] v) ↔ (u ≤[{
     rcases ha with rfl | rfl | rfl
     · exact h _ (Or.inl rfl)
     · exact h _ (Or.inr rfl)
-    · exact λ ⟨hAu, hBu⟩ => ⟨h _ (Or.inl rfl) hAu, h _ (Or.inr rfl) hBu⟩
+    · exact fun ⟨hAu, hBu⟩ ↦ ⟨h _ (Or.inl rfl) hAu, h _ (Or.inr rfl) hBu⟩
 
 /-- With the conjunction among the alternatives the minimal worlds are as before. -/
 theorem exhMW_or_and (hA : (A \ B).Nonempty) :
@@ -171,21 +171,21 @@ theorem exhMW_or_and (hA : (A \ B).Nonempty) :
 operators agree on the exclusive reading. -/
 theorem exhIE_or_and (hA : (A \ B).Nonempty) (hB : (B \ A).Nonempty) :
     exhIE {A, B, A ∩ B} (A ∪ B) = (A \ B) ∪ (B \ A) := by
-  rw [exhIE_eq_phi_and_exhMW_negated {A, B, A ∩ B} (A ∪ B) (Set.toFinite _), exhMW_or_and hA]
+  rw [exhIE_eq_setOf_exhMW_subset_compl {A, B, A ∩ B} (A ∪ B), exhMW_or_and hA]
   obtain ⟨w, hwA, hwB⟩ := hA
   obtain ⟨w', hw'B, hw'A⟩ := hB
   ext u
   constructor
   · rintro ⟨hu, h⟩
-    have hnot : u ∉ A ∩ B := h (A ∩ B) (Or.inr (Or.inr rfl)) λ x hx ⟨hxA, hxB⟩ => by
+    have hnot : u ∉ A ∩ B := h (A ∩ B) (Or.inr (Or.inr rfl)) fun x hx ⟨hxA, hxB⟩ ↦ by
       rcases hx with ⟨-, hx⟩ | ⟨-, hx⟩
       · exact hx hxB
       · exact hx hxA
     rcases hu with hAu | hBu
-    · exact Or.inl ⟨hAu, λ hBu => hnot ⟨hAu, hBu⟩⟩
-    · exact Or.inr ⟨hBu, λ hAu => hnot ⟨hAu, hBu⟩⟩
+    · exact Or.inl ⟨hAu, fun hBu ↦ hnot ⟨hAu, hBu⟩⟩
+    · exact Or.inr ⟨hBu, fun hAu ↦ hnot ⟨hAu, hBu⟩⟩
   · intro hu
-    refine ⟨?_, λ a ha hsub => ?_⟩
+    refine ⟨?_, fun a ha hsub ↦ ?_⟩
     · rcases hu with ⟨hAu, -⟩ | ⟨hBu, -⟩
       · exact Or.inl hAu
       · exact Or.inr hBu
@@ -202,7 +202,7 @@ theorem exhIE_or_and (hA : (A \ B).Nonempty) (hB : (B \ A).Nonempty) :
 
 variable {m p s : Set World}
 
-/-- *Either Mary came, or both Peter and Sue did*: over the elementary alternatives the
+/-- For *Either Mary came, or both Peter and Sue did*, over the elementary alternatives the
 minimal worlds are those where only Mary came and those where Peter and Sue came without
 Mary, which by the paper's results is what innocent exclusion returns over the full
 alternative set. -/
@@ -213,7 +213,7 @@ theorem exhMW_or_and_three (hm : ∃ w, w ∈ m ∧ w ∉ p ∧ w ∉ s) :
   constructor
   · rintro ⟨hu, hmin⟩
     by_cases hmu : u ∈ m
-    · refine Or.inl ⟨hmu, λ hpsu => hmin ⟨w, Or.inl hwm, λ a ha haw => ?_, λ h => ?_⟩⟩
+    · refine Or.inl ⟨hmu, fun hpsu ↦ hmin ⟨w, Or.inl hwm, fun a ha haw ↦ ?_, fun h ↦ ?_⟩⟩
       · simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at ha
         rcases ha with rfl | rfl | rfl
         · exact hmu
@@ -232,7 +232,7 @@ theorem exhMW_or_and_three (hm : ∃ w, w ∈ m ∧ w ∉ p ∧ w ∉ s) :
         rcases hv with hmv | ⟨hpv, -⟩
         · exact hmv
         · exact (hpsu (Or.inl (hle p (Or.inr (Or.inl rfl)) hpv))).elim
-      refine hnle λ a ha hau => ?_
+      refine hnle fun a ha hau ↦ ?_
       simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at ha
       rcases ha with rfl | rfl | rfl
       · exact hmv
@@ -244,7 +244,7 @@ theorem exhMW_or_and_three (hm : ∃ w, w ∈ m ∧ w ∉ p ∧ w ∉ s) :
         rcases hv with hmv | hpsv
         · exact absurd (hle m (Or.inl rfl) hmv) hmu
         · exact hpsv
-      refine hnle λ a ha hau => ?_
+      refine hnle fun a ha hau ↦ ?_
       simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at ha
       rcases ha with rfl | rfl | rfl
       · exact absurd hau hmu
@@ -257,7 +257,7 @@ theorem exhMW_or_and_three (hm : ∃ w, w ∈ m ∧ w ∉ p ∧ w ∉ s) :
 theorem exhIE_eq_of_exhMW_eq {ALT : Set (Set World)} {φ : Set World}
     (h : exhMW ALT φ = φ) : exhIE ALT φ = φ :=
   Set.Subset.antisymm (exhIE_subset ALT φ)
-    λ u hu => exhMW_subset_exhIE ALT φ (by rw [h]; exact hu)
+    fun u hu ↦ exhMW_subset_exhIE ALT φ (by rw [h]; exact hu)
 
 /-- Worlds with a number of stars, or infinitely many. -/
 abbrev Stars := WithTop ℕ
@@ -268,11 +268,11 @@ def exactly (n : ℕ) : Set Stars := {w | w = n}
 /-- *There are at least n stars*. -/
 def atLeast (n : ℕ) : Set Stars := {w | (n : Stars) ≤ w}
 
-/-- The alternatives of *at least n*: every *exactly m* and every *at least m*. -/
+/-- The alternatives of *at least n* are every *exactly m* and every *at least m*. -/
 def starsALT : Set (Set Stars) := range exactly ∪ range atLeast
 
-/-- No world verifies strictly fewer of these alternatives than another: *exactly n* holds
-only at the `n`-star world, and every *at least m* holds only at the world with infinitely
+/-- No world verifies strictly fewer of these alternatives than another, since *exactly n*
+holds only at the `n`-star world, and every *at least m* holds only at the world with infinitely
 many stars. -/
 theorem eq_of_leALT_stars {u v : Stars} (h : u ≤[starsALT] v) : u = v := by
   induction u using WithTop.recTopCoe with
@@ -286,7 +286,7 @@ theorem eq_of_leALT_stars {u v : Stars} (h : u ≤[starsALT] v) : u = v := by
 
 /-- Every world verifying *at least n* is minimal, so the operator is vacuous. -/
 theorem exhMW_stars (n : ℕ) : exhMW starsALT (atLeast n) = atLeast n := by
-  refine Set.Subset.antisymm (exhMW_subset _ _) λ u hu => ⟨hu, ?_⟩
+  refine Set.Subset.antisymm (exhMW_subset _ _) fun u hu ↦ ⟨hu, ?_⟩
   rintro ⟨v, -, hle, hnle⟩
   have := eq_of_leALT_stars hle
   subst this

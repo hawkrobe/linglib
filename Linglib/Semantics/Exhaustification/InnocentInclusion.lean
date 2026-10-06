@@ -6,8 +6,8 @@ public import Linglib.Semantics.Exhaustification.InnocentExclusion
 # Innocent Inclusion
 
 Bar-Lev and Fox's Innocent Inclusion runs after Innocent Exclusion and collects the alternatives
-that belong to every maximal set of alternatives that can be true together with the prejacent and
-the negations of the innocently excludable ones, (25b). Their operator `exhIEII` asserts the
+that belong to every maximal consistent inclusion, a maximal set of alternatives that can all be
+true together with the exhaustified prejacent, (25b). Their operator `exhIEII` asserts the
 prejacent, denies the innocently excludable alternatives and asserts the innocently includable
 ones, (26). The cell of the prejacent in the partition the alternatives induce asserts the
 prejacent, denies the excludable alternatives and asserts all the others, (20); when the cell is
@@ -16,7 +16,8 @@ Inclusion adds nothing to Innocent Exclusion.
 
 ## Main declarations
 
-* `II`, `IsInnocentlyIncludable`: the innocently includable alternatives.
+* `IsConsistentInclusion`, `II`, `IsInnocentlyIncludable`: the innocently includable
+  alternatives.
 * `exhIEII`: exhaustification with Innocent Exclusion and Innocent Inclusion.
 * `cell`, `exhIEII_eq_cell_of_cell_nonempty`: cell identification.
 * `IsMinimalCover.exhIEII_eq`, `IsMinimalCover.II_eq`: exhaustification read off representative
@@ -35,23 +36,16 @@ variable {World : Type*}
 variable (ALT : Set (Set World))
 variable (φ : Set World)
 
-/-- A set `R` of alternatives is compatible for inclusion when its members can be true together
-with the prejacent and the negations of the innocently excludable alternatives. -/
-def IsIICompatible (R : Set (Set World)) : Prop :=
-  R ⊆ ALT ∧
-  (⋂₀ ({φ} ∪ {ψ | ∃ q, IsInnocentlyExcludable ALT φ q ∧ ψ = qᶜ} ∪ R)).Nonempty
+/-- A set of alternatives is a consistent inclusion when its members can all be true together
+with the exhaustified prejacent. -/
+def IsConsistentInclusion (R : Set (Set World)) : Prop :=
+  R ⊆ ALT ∧ (exhIE ALT φ ∩ ⋂₀ R).Nonempty
 
-/-- An MI-set is a maximal set of alternatives compatible for inclusion. -/
-def IsMISet (R : Set (Set World)) : Prop :=
-  IsIICompatible ALT φ R ∧
-  ∀ R', IsIICompatible ALT φ R' → R ⊆ R' → R' ⊆ R
-
-/-- `II ALT φ` is the set of alternatives that belong to every MI-set. -/
+/-- `II ALT φ` is the set of alternatives that belong to every maximal consistent inclusion. -/
 def II : Set (Set World) :=
-  {r ∈ ALT | ∀ R, IsMISet ALT φ R → r ∈ R}
+  {r ∈ ALT | ∀ R, Maximal (IsConsistentInclusion ALT φ) R → r ∈ R}
 
-/-- An alternative `a` is innocently includable given `ALT` and `φ` iff
-    `a ∈ II(ALT, φ)`. -/
+/-- An alternative is innocently includable when it belongs to `II ALT φ`. -/
 def IsInnocentlyIncludable (a : Set World) : Prop :=
   a ∈ II ALT φ
 
@@ -64,10 +58,9 @@ def exhIEII : Set World := fun w ↦
 
 /-- The operator is innocent exclusion together with every innocently includable
 alternative. -/
-theorem exhIEII_eq_exhIE_inter (hfin : ALT.Finite) :
-    exhIEII ALT φ = exhIE ALT φ ∩ ⋂₀ II ALT φ := by
+theorem exhIEII_eq_exhIE_inter : exhIEII ALT φ = exhIE ALT φ ∩ ⋂₀ II ALT φ := by
   ext w
-  rw [Set.mem_inter_iff, mem_exhIE_iff ALT φ hfin, Set.mem_sInter, and_assoc]
+  rw [Set.mem_inter_iff, mem_exhIE_iff, Set.mem_sInter, and_assoc]
   exact Iff.rfl
 
 /-- `nonExcludable ALT φ` is the set of alternatives that are not innocently excludable. -/
@@ -86,56 +79,32 @@ def cell : Set World := fun w ↦
 @[simp] lemma mem_nonExcludable {r : Set World} :
     r ∈ nonExcludable ALT φ ↔ r ∈ ALT ∧ ¬ IsInnocentlyExcludable ALT φ r := Iff.rfl
 
-/-- Every II-compatible set consists of non-excludable alternatives. -/
-lemma isIICompatible_subset_nonExcludable
-    {R : Set (Set World)} (hR : IsIICompatible ALT φ R) :
-    R ⊆ nonExcludable ALT φ := by
-  intro r hr
-  refine ⟨hR.1 hr, fun hexc => ?_⟩
-  obtain ⟨u, hu⟩ := hR.2
-  exact hu (rᶜ) (Set.mem_union_left _ (Set.mem_union_right _ ⟨r, hexc, rfl⟩))
-    (hu r (Set.mem_union_right _ hr))
+variable {ALT φ} in
+/-- A subset of a consistent inclusion is a consistent inclusion. -/
+lemma IsConsistentInclusion.mono {R S : Set (Set World)} (hS : IsConsistentInclusion ALT φ S)
+    (hRS : R ⊆ S) : IsConsistentInclusion ALT φ R :=
+  ⟨hRS.trans hS.1, hS.2.mono (Set.inter_subset_inter_right _ (Set.sInter_subset_sInter hRS))⟩
 
-/-- When the cell is consistent (nonempty as a set of worlds),
-    `nonExcludable` is itself II-compatible. -/
-lemma isIICompatible_nonExcludable_of_cell_nonempty
-    (h : (cell ALT φ).Nonempty) :
-    IsIICompatible ALT φ (nonExcludable ALT φ) := by
-  obtain ⟨u, hφ, hexcl, hne⟩ := h
-  refine ⟨fun _ hr => hr.1, u, ?_⟩
-  rintro ψ ((hφψ | ⟨q, hq, rfl⟩) | hr)
-  · rw [Set.mem_singleton_iff.mp hφψ]; exact hφ
-  · exact hexcl q hq
-  · exact hne ψ hr
+variable {ALT φ} in
+/-- Every consistent inclusion consists of non-excludable alternatives. -/
+lemma IsConsistentInclusion.subset_nonExcludable {R : Set (Set World)}
+    (hR : IsConsistentInclusion ALT φ R) : R ⊆ nonExcludable ALT φ := fun r hr ↦
+  ⟨hR.1 hr, fun hexc ↦ let ⟨_, hu, huR⟩ := hR.2; hu.2 r hexc (huR r hr)⟩
 
-/-- When the cell is consistent, the non-excludable alternatives form the only MI-set, so they
-are the innocently includable ones. -/
-theorem II_eq_nonExcludable_of_cell_nonempty
-    (h : (cell ALT φ).Nonempty) :
+/-- When the cell is consistent, the non-excludable alternatives form a consistent inclusion. -/
+lemma isConsistentInclusion_nonExcludable_of_cell_nonempty (h : (cell ALT φ).Nonempty) :
+    IsConsistentInclusion ALT φ (nonExcludable ALT φ) :=
+  let ⟨u, hφ, hexcl, hne⟩ := h
+  ⟨fun _ hr ↦ hr.1, u, ⟨hφ, hexcl⟩, hne⟩
+
+/-- When the cell is consistent, the non-excludable alternatives form the only maximal
+consistent inclusion, so they are the innocently includable ones. -/
+theorem II_eq_nonExcludable_of_cell_nonempty (h : (cell ALT φ).Nonempty) :
     II ALT φ = nonExcludable ALT φ := by
-  have hD_compat := isIICompatible_nonExcludable_of_cell_nonempty ALT φ h
+  have hD := isConsistentInclusion_nonExcludable_of_cell_nonempty ALT φ h
   ext r
-  refine ⟨fun ⟨hrALT, hrMI⟩ => ?_, fun hr => ⟨hr.1, ?_⟩⟩
-  · have hD_MI : IsMISet ALT φ (nonExcludable ALT φ) :=
-      ⟨hD_compat, fun R' hR' _ => isIICompatible_subset_nonExcludable ALT φ hR'⟩
-    exact hrMI _ hD_MI
-  · intro R hR
-    have hR_sub := isIICompatible_subset_nonExcludable ALT φ hR.1
-    have hRr_compat : IsIICompatible ALT φ (R ∪ {r}) := by
-      refine ⟨?_, ?_⟩
-      · rintro s (hsR | hsr)
-        · exact hR.1.1 hsR
-        · rw [Set.mem_singleton_iff.mp hsr]; exact hr.1
-      · obtain ⟨u, hu⟩ := hD_compat.2
-        refine ⟨u, ?_⟩
-        rintro ψ ((hφψ | hneg) | hRr)
-        · exact hu ψ (Set.mem_union_left _ (Set.mem_union_left _ hφψ))
-        · exact hu ψ (Set.mem_union_left _ (Set.mem_union_right _ hneg))
-        · rcases hRr with hsR | hsr
-          · exact hu ψ (Set.mem_union_right _ (hR_sub hsR))
-          · rw [Set.mem_singleton_iff.mp hsr]
-            exact hu r (Set.mem_union_right _ hr)
-    exact hR.2 _ hRr_compat Set.subset_union_left (Set.mem_union_right _ rfl)
+  refine ⟨fun ⟨_, hr⟩ ↦ hr _ ⟨hD, fun _ hR _ ↦ hR.subset_nonExcludable⟩, fun hr ↦ ⟨hr.1, fun R hR ↦
+    hR.mem_of_prop_insert (hD.mono (Set.insert_subset hr hR.1.subset_nonExcludable))⟩⟩
 
 /-- When the cell is consistent, exhaustification is the cell. -/
 theorem exhIEII_eq_cell_of_cell_nonempty

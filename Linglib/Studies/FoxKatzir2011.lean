@@ -62,11 +62,11 @@ open PhraseStructure Alternatives
 
 variable {C V : Type} (lex : Finset (Tree C V)) (φ : Tree C V) (salient : Finset (Tree C V))
 
-/-- The substitution source in a context: the lexicon, the sub-constituents of the sentence,
-and the salient constituents of the context. -/
+/-- The substitution source in a context consists of the lexicon, the sub-constituents of the
+sentence, and the salient constituents of the context. -/
 def contextualSource : Set (Tree C V) := ↑lex ∪ {t | t ∈ φ.subtrees} ∪ ↑salient
 
-/-- The formal alternatives in a context: whatever is at most as complex as the sentence over
+/-- The formal alternatives in a context are whatever is at most as complex as the sentence over
 the contextual substitution source. -/
 def formalAlternatives : Set (Tree C V) :=
   {ψ | atMostAsComplex (contextualSource lex φ salient) ψ φ}
@@ -95,10 +95,11 @@ section Operators
 
 variable (A : Set (Set W)) (S : Set W)
 
-/-- The alternatives negated for scalar implicature: the strictly stronger members. -/
+/-- Scalar implicature negates the strictly stronger alternatives. -/
 def nSI : Set (Set W) := {p ∈ A | p ⊂ S}
 
-/-- The scalar implicature: the negations of the strictly stronger alternatives. -/
+/-- The scalar implicature is the conjunction of the negations of the strictly stronger
+alternatives. -/
 def SI : Set W := ⋂ p ∈ nSI A S, pᶜ
 
 /-- The strengthened meaning. -/
@@ -108,13 +109,13 @@ variable {A S}
 
 theorem mem_SM {w : W} : w ∈ SM A S ↔ w ∈ S ∧ ∀ p ∈ A, p ⊂ S → w ∉ p := by
   simp only [SM, SI, nSI, mem_inter_iff, mem_iInter₂, mem_ofPred_eq, mem_compl_iff]
-  exact and_congr_right λ _ =>
-    ⟨λ h p hp hps => h p ⟨hp, hps⟩, λ h p ⟨hp, hps⟩ => h p hp hps⟩
+  exact and_congr_right fun _ ↦
+    ⟨fun h p hp hps ↦ h p ⟨hp, hps⟩, fun h p ⟨hp, hps⟩ ↦ h p hp hps⟩
 
 /-- *Only*, the prejacent with the alternatives it does not entail denied
 (`Exhaustification.exh`), is at least as strong as the strengthened meaning. -/
-theorem exh_subset_SM : exh A S ⊆ SM A S := λ _ hw =>
-  mem_SM.2 ⟨hw.1, λ p hp hps hwp => (ssubset_def ▸ hps).2 (hw.2 p hp hwp)⟩
+theorem exh_subset_SM : exh A S ⊆ SM A S := fun _ hw ↦
+  mem_SM.2 ⟨hw.1, fun p hp hps hwp ↦ (ssubset_def ▸ hps).2 (hw.2 p hp hwp)⟩
 
 end Operators
 
@@ -124,8 +125,8 @@ section Symmetry
 
 variable {A : Set (Set W)} {S S₁ S₂ : Set W}
 
-/-- The symmetry problem: with both symmetric alternatives in the set, the strengthened meaning
-is contradictory, since negating either asserts the other. -/
+/-- With both symmetric alternatives in the set, the strengthened meaning is contradictory, since
+negating either asserts the other. This is the symmetry problem. -/
 theorem SM_eq_empty_of_isSymmetric (h : IsSymmetric S S₁ S₂) (h₁ : S₁ ∈ A) (h₂ : S₂ ∈ A)
     (hne₁ : S₁.Nonempty) (hne₂ : S₂.Nonempty) : SM A S = ∅ := by
   ext w
@@ -147,12 +148,12 @@ theorem not_isInnocentlyExcludable_of_isSymmetric (h : IsSymmetric S S₁ S₂)
   not_isInnocentlyExcludable_of_subset_union _ _ (toFinite _) (by simp) (by simp)
     h.union.symm.subset (h.symm.sdiff_eq.symm ▸ hne₁)
 
-/-- Innocent exclusion negates neither symmetric alternative: exhaustification is vacuous. -/
+/-- Innocent exclusion negates neither symmetric alternative, so exhaustification is vacuous. -/
 theorem exhIE_eq_self_of_isSymmetric (h : IsSymmetric S S₁ S₂) (hne₁ : S₁.Nonempty)
     (hne₂ : S₂.Nonempty) : exhIE {S, S₁, S₂} S = S := by
   ext w
-  rw [mem_exhIE_iff _ _ (toFinite _)]
-  refine ⟨λ hw => hw.1, λ hw => ⟨hw, λ q hq => ?_⟩⟩
+  rw [mem_exhIE_iff]
+  refine ⟨fun hw ↦ hw.1, fun hw ↦ ⟨hw, fun q hq ↦ ?_⟩⟩
   have hq1 := hq.1
   simp only [mem_insert_iff, mem_singleton_iff] at hq1
   obtain h1 | h1 | h1 := hq1 <;> subst q
@@ -176,8 +177,8 @@ theorem exhIE_pair_eq_sdiff (h : IsSymmetric S S₁ S₂) (hne₂ : S₂.Nonempt
     · exact Or.inl subset_rfl
     · exact Or.inr (disjoint_left.1 h.disjoint.symm hb)
   ext w
-  rw [mem_exhIE_iff _ _ (toFinite _), ← h.sdiff_eq, mem_sdiff]
-  refine ⟨λ ⟨hw, h'⟩ => ⟨hw, h' S₁ hIE⟩, λ ⟨hw, hw₁⟩ => ⟨hw, λ q hq => ?_⟩⟩
+  rw [mem_exhIE_iff, ← h.sdiff_eq, mem_sdiff]
+  refine ⟨fun ⟨hw, h'⟩ ↦ ⟨hw, h' S₁ hIE⟩, fun ⟨hw, hw₁⟩ ↦ ⟨hw, fun q hq ↦ ?_⟩⟩
   have hq1 := hq.1
   simp only [mem_insert_iff, mem_singleton_iff] at hq1
   obtain h1 | h1 := hq1 <;> subst q
@@ -199,11 +200,11 @@ theorem not_isSymmetric_nec {x : W} (hx : x ∈ R.core S) (hx₁ : x ∉ R.core 
   have : x ∈ R.core S₁ ∪ R.core S₂ := h.union ▸ hx
   exact this.elim hx₁ hx₂
 
-/-- Both implicatures arise under the universal operator: such a world lies in the strengthened
-meaning. -/
+/-- Both implicatures arise under the universal operator, since such a world lies in the
+strengthened meaning. -/
 theorem mem_SM_nec {x : W} (hx : x ∈ R.core S) (hx₁ : x ∉ R.core S₁) (hx₂ : x ∉ R.core S₂) :
     x ∈ SM {R.core S, R.core S₁, R.core S₂} (R.core S) := by
-  refine mem_SM.2 ⟨hx, λ p hp hps => ?_⟩
+  refine mem_SM.2 ⟨hx, fun p hp hps ↦ ?_⟩
   simp only [mem_insert_iff, mem_singleton_iff] at hp
   obtain h1 | h1 | h1 := hp <;> subst p
   · exact (ssubset_irrefl _ hps).elim
@@ -213,7 +214,7 @@ theorem mem_SM_nec {x : W} (hx : x ∈ R.core S) (hx₁ : x ∉ R.core S₁) (hx
 /-- Both exclusions of *only* arise under the universal operator. -/
 theorem mem_exh_nec {x : W} (hx : x ∈ R.core S) (hx₁ : x ∉ R.core S₁) (hx₂ : x ∉ R.core S₂) :
     x ∈ exh {R.core S, R.core S₁, R.core S₂} (R.core S) := by
-  refine ⟨hx, λ p hp hxp => ?_⟩
+  refine ⟨hx, fun p hp hxp ↦ ?_⟩
   simp only [mem_insert_iff, mem_singleton_iff] at hp
   obtain h1 | h1 | h1 := hp <;> subst p
   · exact subset_rfl
@@ -228,7 +229,7 @@ section Restriction
 
 variable {S S₁ S₂ : Set W} {F : Set (Set W)}
 
-/-- Context cannot break symmetry: with the context set the relevant propositions, closed under
+/-- Context cannot break symmetry. With the context set the relevant propositions, closed under
 negation and conjunction, the actual alternatives keep both symmetric alternatives or
 neither. -/
 theorem mem_inter_of_isSymmetric (h : IsSymmetric S S₁ S₂) (R : BooleanSubalgebra (Set W))
@@ -236,18 +237,18 @@ theorem mem_inter_of_isSymmetric (h : IsSymmetric S S₁ S₂) (R : BooleanSubal
     S₂ ∈ (R : Set (Set W)) ∩ F :=
   ⟨h.mem_of_mem hS h₁.1, hF⟩
 
-/-- Exhaustively relevant given a restriction: its *only*-meaning lies in the Boolean closure of
-the restriction. -/
+/-- A sentence is exhaustively relevant given a restriction when its *only*-meaning lies in the
+Boolean closure of the restriction. -/
 def ExhaustivelyRelevant (A : Set (Set W)) (p : Set W) : Prop :=
   exh A p ∈ BooleanSubalgebra.closure A
 
-/-- An allowable restriction of the formal alternatives: it keeps the assertion, and prunes
+/-- A restriction of the formal alternatives is allowable when it keeps the assertion and prunes
 nothing exhaustively relevant. -/
 def IsAllowableRestriction (F A : Set (Set W)) (S : Set W) : Prop :=
   S ∈ A ∧ ∀ p ∈ F \ A, ¬ ExhaustivelyRelevant A p
 
-/-- Neither disjunct of a disjunction can be pruned in favour of the other, symmetric or not:
-its *only*-meaning is the assertion without the kept disjunct. -/
+/-- Neither disjunct of a disjunction can be pruned in favour of the other, symmetric or not,
+since its *only*-meaning is the assertion without the kept disjunct. -/
 theorem not_isAllowableRestriction_pair (hS : S = S₁ ∪ S₂) (h₂₁ : ¬ S₂ ⊆ S₁) (hF : S₂ ∈ F)
     (h₂ : S₂ ∉ ({S, S₁} : Set (Set W))) : ¬ IsAllowableRestriction F {S, S₁} S := by
   rintro ⟨-, hall⟩
@@ -257,8 +258,8 @@ theorem not_isAllowableRestriction_pair (hS : S = S₁ ∪ S₂) (h₂₁ : ¬ S
     ext w
     rw [mem_exh, union_sdiff_left, mem_sdiff]
     simp only [mem_insert_iff, mem_singleton_iff, forall_eq_or_imp, forall_eq]
-    exact ⟨λ ⟨hw, _, h⟩ => ⟨hw, λ h1 => h₂₁ (h h1)⟩,
-      λ ⟨hw, h⟩ => ⟨hw, λ _ => subset_union_right, λ h1 => (h h1).elim⟩⟩
+    exact ⟨fun ⟨hw, _, h⟩ ↦ ⟨hw, fun h1 ↦ h₂₁ (h h1)⟩,
+      fun ⟨hw, h⟩ ↦ ⟨hw, fun _ ↦ subset_union_right, fun h1 ↦ (h h1).elim⟩⟩
   rw [ExhaustivelyRelevant, hOnly]
   exact BooleanSubalgebra.sdiff_mem (BooleanSubalgebra.subset_closure (by simp))
     (BooleanSubalgebra.subset_closure (by simp))
@@ -267,9 +268,9 @@ end Restriction
 
 /-! ### The data -/
 
-/-- A sentence of the data: whether its formal alternatives contain a symmetric pair, whether a
-universal operator intervenes, whether the alternatives at issue are compatible, and whether
-the inference arises. -/
+/-- A sentence of the data records whether its formal alternatives contain a symmetric pair,
+whether a universal operator intervenes, whether the alternatives at issue are compatible, and
+whether the inference arises. -/
 structure Row where
   symmetric : Bool
   universal : Bool

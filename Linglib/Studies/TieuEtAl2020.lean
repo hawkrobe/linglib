@@ -62,31 +62,31 @@ open Exhaustification
 
 /-! ### Plural meanings over the number of giraffes fed -/
 
-/-- (5a): the weak reading, one or more. -/
+/-- The weak reading is one or more (5a). -/
 def weak : Set ℕ := {n | 1 ≤ n}
 
-/-- (5b): the strong reading, more than one, the multiplicity inference. -/
+/-- The strong reading is more than one, the multiplicity inference (5b). -/
 def strong : Set ℕ := {n | 2 ≤ n}
 
-/-- (14): the singular alternative, exactly one. -/
+/-- The singular alternative is exactly one (14). -/
 def singular : Set ℕ := {1}
 
 /-! ### The implicature approach (section 1.2.2) -/
 
-/-- (13)–(15): exhaustifying the weak plural against its singular alternative yields the
-multiplicity inference. -/
+/-- Exhaustifying the weak plural against its singular alternative yields the multiplicity
+inference, (13)–(15). -/
 theorem exhIE_weak : exhIE {weak, singular} weak = strong := by
   rw [exhIE_pair_sdiff (φ := weak) (d := singular) ⟨2, by simp [weak, singular]⟩]
   ext n
   simp only [weak, singular, strong, Set.mem_sdiff, Set.mem_ofPred_eq, Set.mem_singleton_iff]
   omega
 
-/-- (16)–(17): under negation the singular alternative is entailed by the negated plural, so
-nothing is excluded and the sentence conveys that no giraffe was fed. -/
+/-- Under negation the singular alternative is entailed by the negated plural, so nothing is
+excluded and the sentence conveys that no giraffe was fed, (16)–(17). -/
 theorem exhIE_compl_weak : exhIE {weakᶜ, singularᶜ} weakᶜ = weakᶜ := by
   ext n
-  rw [mem_exhIE_iff _ _ (Set.toFinite _)]
-  refine ⟨And.left, λ h => ⟨h, λ a ha => ?_⟩⟩
+  rw [mem_exhIE_iff]
+  refine ⟨And.left, fun h ↦ ⟨h, fun a ha ↦ ?_⟩⟩
   have hsub : weakᶜ ⊆ a := by
     rcases Set.mem_insert_iff.1 ha.1 with rfl | h
     · exact subset_rfl
@@ -99,9 +99,8 @@ theorem exhIE_compl_weak : exhIE {weakᶜ, singularᶜ} weakᶜ = weakᶜ := by
   exact absurd ha (not_isInnocentlyExcludable_of_phi_subset (Set.toFinite _)
     ⟨0, by show (0 : ℕ) ∈ weakᶜ; simp [weak]⟩ hsub)
 
-/-- (29): the *not all* implicature of *some of the k giraffes* is the same exhaustifier
-against the stronger alternative *all*, the mechanism the uniformity prediction (28)
-rests on. -/
+/-- The *not all* implicature of *some of the k giraffes* is the same exhaustifier against the
+stronger alternative *all* (29), the mechanism the uniformity prediction (28) rests on. -/
 theorem exhIE_some {k : ℕ} (hk : 2 ≤ k) :
     exhIE {{n | 1 ≤ n}, {k}} {n | 1 ≤ n} = {n | 1 ≤ n ∧ n ≠ k} := by
   rw [exhIE_pair_sdiff (φ := {n | 1 ≤ n}) (d := {k}) ⟨1, by simp; omega⟩]
@@ -110,7 +109,7 @@ theorem exhIE_some {k : ℕ} (hk : 2 ≤ k) :
 
 /-! ### The ambiguity approach (section 1.2.1) -/
 
-/-- The Strongest Meaning Hypothesis, (7): among the readings of a plural sentence, prefer the
+/-- The Strongest Meaning Hypothesis (7) prefers, among the readings of a plural sentence, the
 one entailing all the others. -/
 def IsPreferred (R : Set (Set ℕ)) (r : Set ℕ) : Prop := r ∈ R ∧ ∀ r' ∈ R, r ⊆ r'
 
@@ -138,16 +137,16 @@ theorem isPreferred_compl_weak : IsPreferred {weakᶜ, strongᶜ} weakᶜ :=
 
 /-! ### The homogeneity approach (section 1.2.3) -/
 
-/-- (20)–(22): the plural sentence is true of a plurality of giraffes, false of none and
-undefined otherwise. -/
+/-- The plural sentence is true of a plurality of giraffes, false of none and undefined
+otherwise, (20)–(22). -/
 def homogeneous (n : ℕ) : Trivalent :=
   if 2 ≤ n then .true else if n = 0 then .false else .indet
 
 theorem homogeneous_eq_true_iff {n : ℕ} : homogeneous n = .true ↔ 2 ≤ n := by
   rcases n with _ | _ | n <;> simp [homogeneous]
 
-/-- (23)–(24): negation leaves undefinedness untouched, so the negated sentence is true of no
-giraffe fed. -/
+/-- Negation leaves undefinedness untouched, so the negated sentence is true of no giraffe fed,
+(23)–(24). -/
 theorem neg_homogeneous_eq_true_iff {n : ℕ} : (homogeneous n).neg = .true ↔ n = 0 := by
   rcases n with _ | _ | n <;> simp [homogeneous]
 
@@ -157,18 +156,18 @@ theorem neg_homogeneous_eq_true_iff {n : ℕ} : (homogeneous n).neg = .true ↔ 
 theorem readings_positive :
     exhIE {weak, singular} weak = strong ∧ IsPreferred {weak, strong} strong ∧
       {n | homogeneous n = .true} = strong :=
-  ⟨exhIE_weak, isPreferred_strong, Set.ext λ _ => homogeneous_eq_true_iff⟩
+  ⟨exhIE_weak, isPreferred_strong, Set.ext fun _ ↦ homogeneous_eq_true_iff⟩
 
 /-- All three approaches make a negated plural sentence convey that none was fed. -/
 theorem readings_negative :
     exhIE {weakᶜ, singularᶜ} weakᶜ = weakᶜ ∧ IsPreferred {weakᶜ, strongᶜ} weakᶜ ∧
       {n | (homogeneous n).neg = .true} = weakᶜ := by
-  refine ⟨exhIE_compl_weak, isPreferred_compl_weak, Set.ext λ n => ?_⟩
+  refine ⟨exhIE_compl_weak, isPreferred_compl_weak, Set.ext fun n ↦ ?_⟩
   rw [Set.mem_ofPred_eq, neg_homogeneous_eq_true_iff]
   simp [weak]
 
-/-- (27), the singular context: the implicature approach makes the positive sentence literally
-true but its enriched meaning false and the negative sentence false, an asymmetry; the
+/-- In the singular context (27) the implicature approach makes the positive sentence literally
+true but its enriched meaning false and the negative sentence false, an asymmetry. The
 ambiguity approach makes both false and the homogeneity approach both undefined. -/
 theorem singular_context :
     (1 ∈ weak ∧ 1 ∉ exhIE {weak, singular} weak ∧

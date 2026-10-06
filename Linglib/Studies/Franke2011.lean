@@ -71,8 +71,8 @@ vectors (eq. (66)), with three values — believed true, believed false,
 uncertain (§6.2). A message is true at a state when the state believes it
 true. -/
 
-/-- The three belief values of §6.2: believed true (`1`), believed false
-(`0`), uncertain (`u`). Base-level states use only the first two. -/
+/-- The three belief values of §6.2 are believed true (`1`), believed false
+(`0`) and uncertain (`u`). Base-level states use only the first two. -/
 inductive BeliefValue where
   | yes
   | no
@@ -81,7 +81,7 @@ inductive BeliefValue where
 
 variable {T M : Type*} [Fintype T] [Fintype M] [DecidableEq T] [DecidableEq M]
 
-/-- The interpretation game of a belief-value table: `m` is true at `t` iff
+/-- In the interpretation game of a belief-value table, `m` is true at `t` iff
 `t` believes `m` true. -/
 def ofTable (table : T → M → BeliefValue) (prior : T → ℚ) : InterpGame T M where
   meaning m t := table t m = .yes
@@ -89,15 +89,15 @@ def ofTable (table : T → M → BeliefValue) (prior : T → ℚ) : InterpGame T
 
 /-- The number of alternatives a state is undecided about. -/
 def uncertaintyCount (table : T → M → BeliefValue) (t : T) : ℕ :=
-  (Finset.univ.filter λ m => table t m = .unc).card
+  (Finset.univ.filter fun m ↦ table t m = .unc).card
 
-/-- The competence assumption (67): the prior strictly decreases in the number
-of undecided alternatives. -/
+/-- Under the competence assumption (67) the prior strictly decreases in the
+number of undecided alternatives. -/
 def CompetencePrior (table : T → M → BeliefValue) (prior : T → ℚ) : Prop :=
   ∀ t t', uncertaintyCount table t < uncertaintyCount table t' → prior t' < prior t
 
-/-- The incompetence assumption (68): the prior strictly increases in the number
-of undecided alternatives. -/
+/-- Under the incompetence assumption (68) the prior strictly increases in the
+number of undecided alternatives. -/
 def IncompetencePrior (table : T → M → BeliefValue) (prior : T → ℚ) : Prop :=
   ∀ t t', uncertaintyCount table t < uncertaintyCount table t' → prior t < prior t'
 
@@ -115,20 +115,20 @@ variable (G : InterpGame T M)
 
 /-- The level-(k+1) sender type from the level-k receiver type (76). -/
 def senderStep (R : M → Finset T) (t : T) : Finset M :=
-  let inducing := Finset.univ.filter λ m => t ∈ R m
-  if inducing = ∅ then G.trueMessages t else inducing.argmin λ m => (R m).card
+  let inducing := Finset.univ.filter fun m ↦ t ∈ R m
+  if inducing = ∅ then G.trueMessages t else inducing.argmin fun m ↦ (R m).card
 
 /-- The level-(k+1) receiver type from the level-k sender type (77). -/
 def receiverStep (S : T → Finset M) (m : M) : Finset T :=
-  let senders := Finset.univ.filter λ t => m ∈ S t
-  if senders = ∅ then G.trueStates m else senders.argmin λ t => (S t).card
+  let senders := Finset.univ.filter fun t ↦ m ∈ S t
+  if senders = ∅ then G.trueStates m else senders.argmin fun t ↦ (S t).card
 
-/-- The chain starting from the naive receiver: `receiverChain n` is `R₂ₙ`. -/
+/-- In the chain starting from the naive receiver, `receiverChain n` is `R₂ₙ`. -/
 def receiverChain : ℕ → M → Finset T
   | 0 => G.trueStates
   | n + 1 => receiverStep G (senderStep G (receiverChain n))
 
-/-- The chain starting from the naive sender: `senderChain n` is `S₂ₙ`. -/
+/-- In the chain starting from the naive sender, `senderChain n` is `S₂ₙ`. -/
 def senderChain : ℕ → T → Finset M
   | 0 => G.trueMessages
   | n + 1 => senderStep G (receiverStep G (senderChain n))
@@ -137,34 +137,34 @@ def senderChain : ℕ → T → Finset M
 def IsLightFixedPoint (S : T → Finset M) (R : M → Finset T) : Prop :=
   senderStep G R = S ∧ receiverStep G S = R
 
-/-- Near-flat priors (83): among the light-system interpretations of a
+/-- Near-flat priors (83) select, among the light-system interpretations of a
 non-surprise message, the a priori most likely states. -/
 def receiverStepPrior (S : T → Finset M) (m : M) : Finset T :=
-  if Finset.univ.filter (λ t => m ∈ S t) = ∅ then G.trueStates m
+  if Finset.univ.filter (fun t ↦ m ∈ S t) = ∅ then G.trueStates m
   else (receiverStep G S m).argmax G.prior
 
-/-- Nominal message costs (§9.2): among the light-system messages for an
+/-- Nominal message costs (§9.2) select, among the light-system messages for an
 inducible state, the cheapest. -/
 def senderStepCost (cost : M → ℚ) (R : M → Finset T) (t : T) : Finset M :=
-  if Finset.univ.filter (λ m => t ∈ R m) = ∅ then G.trueMessages t
-  else (senderStep G R t).argmax λ m => -cost m
+  if Finset.univ.filter (fun m ↦ t ∈ R m) = ∅ then G.trueMessages t
+  else (senderStep G R t).argmax fun m ↦ -cost m
 
 omit [Fintype T] in
 theorem mem_senderStep {R : M → Finset T} {t : T} {m : M} :
     m ∈ senderStep G R t ↔
-      if Finset.univ.filter (λ m => t ∈ R m) = ∅ then G.meaning m t
+      if Finset.univ.filter (fun m ↦ t ∈ R m) = ∅ then G.meaning m t
       else t ∈ R m ∧ ∀ m', t ∈ R m' → (R m).card ≤ (R m').card := by
   simp only [senderStep]; split_ifs <;> simp
 
 omit [Fintype M] in
 theorem mem_receiverStep {S : T → Finset M} {m : M} {t : T} :
     t ∈ receiverStep G S m ↔
-      if Finset.univ.filter (λ t => m ∈ S t) = ∅ then G.meaning m t
+      if Finset.univ.filter (fun t ↦ m ∈ S t) = ∅ then G.meaning m t
       else m ∈ S t ∧ ∀ t', m ∈ S t' → (S t).card ≤ (S t').card := by
   simp only [receiverStep]; split_ifs <;> simp
 
-/-- Lemma 2, sender half: a level-(k+1) sender only sends true messages,
-given that the level-k receiver only assigns true interpretations. -/
+/-- A level-(k+1) sender only sends true messages, given that the level-k
+receiver only assigns true interpretations (the sender half of Lemma 2). -/
 theorem senderStep_subset_trueMessages {R : M → Finset T} (hR : ∀ m, R m ⊆ G.trueStates m)
     (t : T) : senderStep G R t ⊆ G.trueMessages t := by
   intro m hm
@@ -182,7 +182,7 @@ theorem receiverStep_subset_trueStates {S : T → Finset M} (hS : ∀ t, S t ⊆
   · exact G.mem_trueStates.mpr ht
   · exact G.mem_trueStates.mpr (G.mem_trueMessages.mp (hS t ht.1))
 
-/-- Lemma 2: truth is preserved along the receiver chain. -/
+/-- Truth is preserved along the receiver chain (Lemma 2). -/
 theorem receiverChain_subset_trueStates (n : ℕ) (m : M) :
     receiverChain G n m ⊆ G.trueStates m := by
   induction n generalizing m with
@@ -190,7 +190,7 @@ theorem receiverChain_subset_trueStates (n : ℕ) (m : M) :
   | succ n ih =>
     exact receiverStep_subset_trueStates G (senderStep_subset_trueMessages G ih) m
 
-/-- Lemma 2: truth is preserved along the sender chain. -/
+/-- Truth is preserved along the sender chain (Lemma 2). -/
 theorem senderChain_subset_trueMessages (n : ℕ) (t : T) :
     senderChain G n t ⊆ G.trueMessages t := by
   induction n generalizing t with
@@ -217,11 +217,11 @@ inductive Message where
 
 /-- The interpretation game of Figure 4. -/
 def game : InterpGame State Message :=
-  ofTable (λ t m => match t, m with
+  ofTable (fun t m ↦ match t, m with
     | _, .some | .all, .all => .yes
-    | .someNotAll, .all => .no) λ _ => 1 / 2
+    | .someNotAll, .all => .no) fun _ ↦ 1 / 2
 
-/-- The empirically correct play (69): "some" conveys some-but-not-all. -/
+/-- In the empirically correct play (69), "some" conveys some-but-not-all. -/
 def receiver69 : Message → State
   | .some => .someNotAll
   | .all => .all
@@ -230,7 +230,7 @@ def sender69 : State → Message
   | .someNotAll => .some
   | .all => .all
 
-/-- The reversed play (71): also a Nash equilibrium — equilibrium does not
+/-- The reversed play (71) is also a Nash equilibrium, so equilibrium does not
 select the attested reading. -/
 def receiver71 : Message → State
   | .some => .all
@@ -240,14 +240,14 @@ def sender71 : State → Message
   | .someNotAll => .all
   | .all => .some
 
-/-- Both chains reach (69) at level 2: the scalar implicature. -/
+/-- Both chains reach (69), the scalar implicature, at level 2. -/
 theorem receiverChain_one :
-    receiverChain game 1 = λ m => {receiver69 m} := by decide
+    receiverChain game 1 = fun m ↦ {receiver69 m} := by decide
 
 theorem senderChain_one :
-    senderChain game 1 = λ t => {sender69 t} := by decide
+    senderChain game 1 = fun t ↦ {sender69 t} := by decide
 
-theorem fixed : IsLightFixedPoint game (λ t => {sender69 t}) (λ m => {receiver69 m}) := by
+theorem fixed : IsLightFixedPoint game (fun t ↦ {sender69 t}) (fun m ↦ {receiver69 m}) := by
   unfold IsLightFixedPoint; decide
 
 end SomeAll
@@ -277,9 +277,9 @@ inductive Message where
 
 /-- The interpretation game of Figure 5. -/
 def game : InterpGame State Message :=
-  ofTable (λ t m => match t, m with
+  ofTable (fun t m ↦ match t, m with
     | .onlyA, .first | .both, .first | .onlyB, .second | .both, .second | _, .either => .yes
-    | _, _ => .no) λ _ => 1 / 3
+    | _, _ => .no) fun _ ↦ 1 / 3
 
 /-- The target play (70) / (82). -/
 def receiver70 : Message → State
@@ -304,7 +304,7 @@ def sender72 : State → Message
   | .both => .first
 
 /-- The receiver chain reaches (82) at `R₄` (Figure 7, lower strand). -/
-theorem receiverChain_two : receiverChain game 2 = λ m => {receiver70 m} := by decide
+theorem receiverChain_two : receiverChain game 2 = fun m ↦ {receiver70 m} := by decide
 
 /-- On the way, `R₂` finds the disjunction a surprise message and reads it
 literally (eq. (137)). -/
@@ -312,15 +312,15 @@ theorem receiverChain_one_either : receiverChain game 1 .either = {.onlyA, .only
   decide
 
 /-- The sender chain reaches (82) at `S₄` (Figure 7, upper strand). -/
-theorem senderChain_two : senderChain game 2 = λ t => {sender70 t} := by decide
+theorem senderChain_two : senderChain game 2 = fun t ↦ {sender70 t} := by decide
 
 /-- `R₁` on the sender chain reads the disjunction as either single-disjunct
-state (eq. (141)) — the minimal-models exhaustification (50) — while `R₂` on
-the receiver chain does not: `R₁ ≠ R₂` (§10). -/
+state (eq. (141)), the minimal-models exhaustification (50), while `R₂` on
+the receiver chain does not, so `R₁ ≠ R₂` (§10). -/
 theorem receiver1_either : receiverStep game (senderChain game 0) .either = {.onlyA, .onlyB} := by
   decide
 
-theorem fixed : IsLightFixedPoint game (λ t => {sender70 t}) (λ m => {receiver70 m}) := by
+theorem fixed : IsLightFixedPoint game (fun t ↦ {sender70 t}) (fun m ↦ {receiver70 m}) := by
   unfold IsLightFixedPoint; decide
 
 end TwoDisjuncts
@@ -349,16 +349,16 @@ def table : State → Message → BeliefValue
   | .t11, .all => .yes
   | .t1u, .all => .unc
 
-/-- Flat priors: the game of Figure 6 with `a = b`. -/
-def game : InterpGame State Message := ofTable table λ _ => 1 / 3
+/-- Flat priors give the game of Figure 6 with `a = b`. -/
+def game : InterpGame State Message := ofTable table fun _ ↦ 1 / 3
 
-/-- Competent speaker: the uncertain state is less likely (`a > b`). -/
+/-- For a competent speaker the uncertain state is less likely (`a > b`). -/
 def competent : InterpGame State Message :=
-  ofTable table λ t => if t = .t1u then 1 / 5 else 2 / 5
+  ofTable table fun t ↦ if t = .t1u then 1 / 5 else 2 / 5
 
-/-- Incompetent speaker: the uncertain state is more likely. -/
+/-- For an incompetent speaker the uncertain state is more likely. -/
 def incompetent : InterpGame State Message :=
-  ofTable table λ t => if t = .t1u then 3 / 5 else 1 / 5
+  ofTable table fun t ↦ if t = .t1u then 3 / 5 else 1 / 5
 
 theorem competent_prior : CompetencePrior table competent.prior := by
   unfold CompetencePrior uncertaintyCount; decide +kernel
@@ -366,15 +366,15 @@ theorem competent_prior : CompetencePrior table competent.prior := by
 theorem incompetent_prior : IncompetencePrior table incompetent.prior := by
   unfold IncompetencePrior uncertaintyCount; decide +kernel
 
-/-- Figure 8: "some" conveys that the speaker does not believe "all" —
-believes not-all or is uncertain. -/
+/-- "Some" conveys that the speaker does not believe "all", so believes
+not-all or is uncertain (Figure 8). -/
 theorem receiver_general : receiverChain game 1 .some = {.t10, .t1u} := by decide
 
 theorem sender_general : receiverStep game (senderChain game 0) .some = {.t10, .t1u} := by
   decide
 
-/-- Figure 9: under competence, "some" conveys that the speaker believes
-not-all (the strong epistemic implicature). -/
+/-- Under competence, "some" conveys that the speaker believes not-all, the
+strong epistemic implicature (Figure 9). -/
 theorem receiver_competent :
     receiverStepPrior competent (senderStep competent competent.trueStates) .some = {.t10} := by
   decide +kernel
@@ -417,19 +417,19 @@ def table : State → Message → BeliefValue
   | .t101, .second => .no
   | .t1u1, .second | .tuu1, .second => .unc
 
-def game : InterpGame State Message := ofTable table λ _ => 1 / 6
+def game : InterpGame State Message := ofTable table fun _ ↦ 1 / 6
 
 def competent : InterpGame State Message :=
-  ofTable table λ t => match t with
+  ofTable table fun t ↦ match t with
     | .t101 | .t011 | .t111 => 3 / 12
     | .t1u1 | .tu11 => 1 / 12
     | .tuu1 => 1 / 12
 
-/-- Figure 10: on the sender chain the disjunction is read as uncertainty
-about both disjuncts from `R₁` on, and a single disjunct as belief in it
-without belief in the other. -/
+/-- On the sender chain the disjunction is read as uncertainty about both
+disjuncts from `R₁` on, and a single disjunct as belief in it without belief
+in the other (Figure 10). -/
 theorem receiver_ignorance :
-    receiverStep game (senderChain game 1) = λ m => match m with
+    receiverStep game (senderChain game 1) = fun m ↦ match m with
       | .first => {.t101, .t1u1}
       | .second => {.t011, .tu11}
       | .either => {.tuu1} := by
@@ -465,12 +465,12 @@ inductive Message where
   deriving DecidableEq, Fintype, Repr
 
 def game : InterpGame State Message :=
-  ofTable (λ t m => match t, m with
+  ofTable (fun t m ↦ match t, m with
     | _, .either | .both, _ | .onlyA, .first | .onlyB, .second => .yes
-    | _, _ => .no) λ _ => 1 / 3
+    | _, _ => .no) fun _ ↦ 1 / 3
 
 theorem receiver_surprise :
-    receiverChain game 1 = λ m => match m with
+    receiverChain game 1 = fun m ↦ match m with
       | .first => {.onlyA}
       | .second => {.onlyB}
       | .both => {.both}
@@ -498,13 +498,13 @@ inductive State where
 open DisjunctionConj (Message)
 
 def game : InterpGame State Message :=
-  ofTable (λ t m => match t, m with
+  ofTable (fun t m ↦ match t, m with
     | _, .either | .t1111, _ | .t1001, .first | .t0101, .second
     | .t1101, .first | .t1101, .second => .yes
-    | _, _ => .no) λ _ => 1 / 4
+    | _, _ => .no) fun _ ↦ 1 / 4
 
 theorem receiver_fixed :
-    receiverChain game 2 = λ m => match m with
+    receiverChain game 2 = fun m ↦ match m with
       | .first => {.t1001}
       | .second => {.t0101}
       | .both => {.t1111}
@@ -534,12 +534,12 @@ inductive State where
 open DisjunctionConj (Message)
 
 def game : InterpGame State Message :=
-  ofTable (λ t m => match t, m with
+  ofTable (fun t m ↦ match t, m with
     | _, .either => .yes
     | .t1001, .first | .t1011, .first | .t1101, .first | .t1111, .first => .yes
     | .t0101, .second | .t0111, .second | .t1101, .second | .t1111, .second => .yes
     | .t1011, .both | .t0111, .both | .t1111, .both => .yes
-    | _, _ => .no) λ _ => 1 / 6
+    | _, _ => .no) fun _ ↦ 1 / 6
 
 theorem receiver_fixed : receiverChain game 2 .either = {.t1101} := by decide
 
@@ -579,16 +579,16 @@ def table : State → Message → BeliefValue
   | .t1001, .both | .t0101, .both | .tuu01, .both => .no
   | .t1uu1, .both | .tu1u1, .both | .tuuu1, .both => .unc
 
-def game : InterpGame State Message := ofTable table λ _ => 1 / 7
+def game : InterpGame State Message := ofTable table fun _ ↦ 1 / 7
 
 def competent : InterpGame State Message :=
-  ofTable table λ t => match t with
+  ofTable table fun t ↦ match t with
     | .t1001 | .t0101 | .t1111 => 4 / 20
     | .tuu01 | .t1uu1 | .tu1u1 => 2 / 20
     | .tuuu1 => 1 / 20
 
 def incompetent : InterpGame State Message :=
-  ofTable table λ t => match t with
+  ofTable table fun t ↦ match t with
     | .t1001 | .t0101 | .t1111 => 1 / 20
     | .tuu01 | .t1uu1 | .tu1u1 => 2 / 20
     | .tuuu1 => 6 / 20
@@ -630,7 +630,7 @@ def table : State → Message → BeliefValue
   | .t1u, .johnAndMary => .unc
 
 def game : InterpGame State Message :=
-  ofTable table λ t => if t = .t1u then 1 / 5 else 2 / 5
+  ofTable table fun t ↦ if t = .t1u then 1 / 5 else 2 / 5
 
 /-- The disjunction is nominally costlier than its equivalent. -/
 def cost : Message → ℚ
@@ -642,7 +642,7 @@ def step (R : Message → Finset State) : Message → Finset State :=
   receiverStepPrior game (senderStepCost game cost R)
 
 theorem receiver_fixed :
-    step (step game.trueStates) = λ m => match m with
+    step (step game.trueStates) = fun m ↦ match m with
       | .john => {.t10}
       | .johnAndMary => {.t11}
       | .johnOrBoth => {.t1u} := by
@@ -677,9 +677,9 @@ def table : State → Message → BeliefValue
   | .t011, .second | .t111, .second => .yes
   | _, _ => .no
 
-def game : InterpGame State Message := ofTable table λ _ => 1 / 4
+def game : InterpGame State Message := ofTable table fun _ ↦ 1 / 4
 
-/-- Figure 17: the mixed-group reading. -/
+/-- This is the mixed-group reading of Figure 17. -/
 theorem receiver_mixed : receiverStep game (senderChain game 0) .either = {.t001} := by decide
 
 /-- The pruned game (102), without the mixed state. -/
@@ -702,28 +702,28 @@ after `m`, so a level-(k+1) sender is uniform over the messages maximising it
 states ((119)–(122)), and reads a surprise message — one no state sends —
 literally, by the truth ceteris paribus assumption. -/
 
-/-- The true messages maximising the receiver's probability of the true state:
-the level-(k+1) sender's choices in `t` (116). -/
+/-- The level-(k+1) sender's choices in `t` are the true messages maximising the
+receiver's probability of the true state (116). -/
 def optimalMessages (H : M → T → ℚ) (t : T) : Finset M := (G.trueMessages t).argmax (H · t)
 
-/-- The unbiased belief in the level-(k+1) sender type: uniform over the optimal
-messages (117). -/
+/-- The unbiased belief in the level-(k+1) sender type is uniform over the
+optimal messages (117). -/
 def senderResponse (H : M → T → ℚ) (t : T) : M → ℚ := (optimalMessages G H t).uniform
 
-/-- A surprise message: no state sends it, so Bayesian conditioning is
-undefined (B.3). -/
+/-- A message is a surprise when no state sends it, so Bayesian conditioning
+is undefined (B.3). -/
 def IsSurprise (S : T → M → ℚ) (m : M) : Prop := ∀ t, S t m = 0
 
 instance (S : T → M → ℚ) (m : M) : Decidable (IsSurprise S m) :=
   inferInstanceAs (Decidable (∀ t, S t m = 0))
 
-/-- The unbiased belief in the level-(k+1) receiver type: uniform over the
+/-- The unbiased belief in the level-(k+1) receiver type is uniform over the
 states maximising `Pr(t) · S(t, m)`, the posterior (119)–(120) up to
 normalisation; a surprise message is read literally (122). -/
 def receiverResponse (S : T → M → ℚ) (m : M) : T → ℚ :=
-  if IsSurprise S m then G.literal m else (Finset.univ.argmax λ t => G.prior t * S t m).uniform
+  if IsSurprise S m then G.literal m else (Finset.univ.argmax fun t ↦ G.prior t * S t m).uniform
 
-/-- The receiver levels of the heavy system from the literal receiver:
+/-- In the receiver levels of the heavy system from the literal receiver,
 `receiverLevel n` is `R₂ₙ`. -/
 def receiverLevel : ℕ → M → T → ℚ
   | 0 => G.literal
@@ -732,7 +732,7 @@ def receiverLevel : ℕ → M → T → ℚ
 /-- A receiver strategy the heavy dynamics reproduce. -/
 def IsFixedPoint (H : M → T → ℚ) : Prop := receiverResponse G (senderResponse G H) = H
 
-/-- Expected gain (144): the probability of successful communication. -/
+/-- The expected gain (144) is the probability of successful communication. -/
 def expectedGain (S : T → M → ℚ) (H : M → T → ℚ) : ℚ :=
   ∑ t, G.prior t * ∑ m, S t m * H m t
 
@@ -749,14 +749,14 @@ theorem senderResponse_pos_iff (H : M → T → ℚ) (t : T) (m : M) :
 omit [Fintype T] [DecidableEq T] in
 theorem senderResponse_eq_zero_of_not_meaning (H : M → T → ℚ) {t : T} {m : M}
     (hm : ¬ G.meaning m t) : senderResponse G H t m = 0 :=
-  Finset.uniform_of_notMem λ h => hm ((mem_optimalMessages G).mp h).1
+  Finset.uniform_of_notMem fun h ↦ hm ((mem_optimalMessages G).mp h).1
 
 omit [Fintype M] [DecidableEq M] in
 /-- Every receiver response is uniform over a set of states. -/
 theorem receiverResponse_eq_uniform (S : T → M → ℚ) (m : M) :
     receiverResponse G S m =
       (if IsSurprise S m then G.trueStates m
-        else Finset.univ.argmax λ t => G.prior t * S t m).uniform := by
+        else Finset.univ.argmax fun t ↦ G.prior t * S t m).uniform := by
   unfold receiverResponse; split_ifs <;> rfl
 
 omit [Fintype M] [DecidableEq M] in
@@ -784,20 +784,20 @@ theorem receiverLevel_sum_le_one (n : ℕ) (m : M) : ∑ t, receiverLevel G n m 
 /-- The level-(k+1) sender's optimal messages against the unbiased belief in a
 receiver type are the light-system sender type (76). -/
 theorem optimalMessages_uniform {R : M → Finset T} (hR : ∀ m, R m ⊆ G.trueStates m) (t : T) :
-    optimalMessages G (λ m => (R m).uniform) t = senderStep G R t := by
+    optimalMessages G (fun m ↦ (R m).uniform) t = senderStep G R t := by
   simp only [optimalMessages, senderStep]
   split_ifs with hemp
-  · refine Finset.argmax_eq_self_of_forall_le λ m _ m' _ => ?_
-    have h : ∀ m, t ∉ R m := λ m hm =>
+  · refine Finset.argmax_eq_self_of_forall_le fun m _ m' _ ↦ ?_
+    have h : ∀ m, t ∉ R m := fun m hm ↦
       Finset.eq_empty_iff_forall_notMem.mp hemp m (Finset.mem_filter.mpr ⟨Finset.mem_univ _, hm⟩)
     simp [Finset.uniform_of_notMem (h m), Finset.uniform_of_notMem (h m')]
-  · rw [Finset.argmax_eq_argmax_of_support (t := Finset.univ.filter λ m => t ∈ R m)
-      (λ m hm => G.mem_trueMessages.mpr (G.mem_trueStates.mp (hR m (Finset.mem_filter.mp hm).2)))
+  · rw [Finset.argmax_eq_argmax_of_support (t := Finset.univ.filter fun m ↦ t ∈ R m)
+      (fun m hm ↦ G.mem_trueMessages.mpr (G.mem_trueStates.mp (hR m (Finset.mem_filter.mp hm).2)))
       (Finset.nonempty_iff_ne_empty.mpr hemp)
-      (λ m hm => Finset.uniform_pos_iff.mpr (Finset.mem_filter.mp hm).2)
-      (λ m _ hm => Finset.uniform_of_notMem λ h =>
+      (fun m hm ↦ Finset.uniform_pos_iff.mpr (Finset.mem_filter.mp hm).2)
+      (fun m _ hm ↦ Finset.uniform_of_notMem fun h ↦
         hm (Finset.mem_filter.mpr ⟨Finset.mem_univ _, h⟩))]
-    refine (Finset.argmin_eq_argmax_of_le_iff λ m hm m' hm' => ?_).symm
+    refine (Finset.argmin_eq_argmax_of_le_iff fun m hm m' hm' ↦ ?_).symm
     rw [Finset.uniform_of_mem (Finset.mem_filter.mp hm).2,
       Finset.uniform_of_mem (Finset.mem_filter.mp hm').2, inv_le_inv₀
       (by exact_mod_cast Finset.card_pos.mpr ⟨t, (Finset.mem_filter.mp hm').2⟩)
@@ -807,9 +807,9 @@ omit [Fintype M] [DecidableEq T] in
 /-- A surprise message under the unbiased belief in a sender type is one no
 state sends. -/
 theorem isSurprise_uniform_iff (S : T → Finset M) (m : M) :
-    IsSurprise (λ t => (S t).uniform) m ↔ Finset.univ.filter (λ t => m ∈ S t) = ∅ := by
+    IsSurprise (fun t ↦ (S t).uniform) m ↔ Finset.univ.filter (fun t ↦ m ∈ S t) = ∅ := by
   simp only [IsSurprise, Finset.filter_eq_empty_iff, Finset.mem_univ, true_implies]
-  exact forall_congr' λ t => by rw [← Finset.uniform_pos_iff (K := ℚ), not_lt,
+  exact forall_congr' fun t ↦ by rw [← Finset.uniform_pos_iff (K := ℚ), not_lt,
     le_antisymm_iff, and_iff_left Finset.uniform_nonneg]
 
 omit [Fintype M] [DecidableEq T] in
@@ -817,20 +817,20 @@ omit [Fintype M] [DecidableEq T] in
 a flat prior, are maximised on the light-system receiver type (77). -/
 theorem argmax_prior_mul_uniform (hprior : ∀ t, 0 < G.prior t)
     (hflat : ∀ t t', G.prior t = G.prior t') {S : T → Finset M} {m : M}
-    (hne : Finset.univ.filter (λ t => m ∈ S t) ≠ ∅) :
-    (Finset.univ.argmax λ t => G.prior t * (S t).uniform m) =
-      (Finset.univ.filter λ t => m ∈ S t).argmin λ t => (S t).card := by
+    (hne : Finset.univ.filter (fun t ↦ m ∈ S t) ≠ ∅) :
+    (Finset.univ.argmax fun t ↦ G.prior t * (S t).uniform m) =
+      (Finset.univ.filter fun t ↦ m ∈ S t).argmin fun t ↦ (S t).card := by
   obtain ⟨t₀, ht₀⟩ := Finset.nonempty_iff_ne_empty.mpr hne
-  have hp : ∀ t, G.prior t = G.prior t₀ := λ t => hflat t t₀
+  have hp : ∀ t, G.prior t = G.prior t₀ := fun t ↦ hflat t t₀
   simp_rw [hp]
-  show Finset.univ.argmax ((λ x => G.prior t₀ * x) ∘ λ t => (S t).uniform m) = _
+  show Finset.univ.argmax ((fun x ↦ G.prior t₀ * x) ∘ fun t ↦ (S t).uniform m) = _
   rw [Finset.argmax_comp_strictMono (strictMono_mul_left_of_pos (hprior t₀)),
-    Finset.argmax_eq_argmax_of_support (t := Finset.univ.filter λ t => m ∈ S t)
+    Finset.argmax_eq_argmax_of_support (t := Finset.univ.filter fun t ↦ m ∈ S t)
       (Finset.filter_subset _ _) ⟨t₀, ht₀⟩
-      (λ t ht => Finset.uniform_pos_iff.mpr (Finset.mem_filter.mp ht).2)
-      (λ t _ ht => Finset.uniform_of_notMem λ h =>
+      (fun t ht ↦ Finset.uniform_pos_iff.mpr (Finset.mem_filter.mp ht).2)
+      (fun t _ ht ↦ Finset.uniform_of_notMem fun h ↦
         ht (Finset.mem_filter.mpr ⟨Finset.mem_univ _, h⟩))]
-  refine (Finset.argmin_eq_argmax_of_le_iff λ t ht t' ht' => ?_).symm
+  refine (Finset.argmin_eq_argmax_of_le_iff fun t ht t' ht' ↦ ?_).symm
   rw [Finset.uniform_of_mem (Finset.mem_filter.mp ht).2,
     Finset.uniform_of_mem (Finset.mem_filter.mp ht').2,
     inv_le_inv₀ (by exact_mod_cast Finset.card_pos.mpr ⟨m, (Finset.mem_filter.mp ht').2⟩)
@@ -841,23 +841,23 @@ omit [Fintype M] in
 under flat priors, is the unbiased belief in the light-system receiver type. -/
 theorem receiverResponse_uniform (hprior : ∀ t, 0 < G.prior t)
     (hflat : ∀ t t', G.prior t = G.prior t') (S : T → Finset M) (m : M) :
-    receiverResponse G (λ t => (S t).uniform) m = (receiverStep G S m).uniform := by
+    receiverResponse G (fun t ↦ (S t).uniform) m = (receiverStep G S m).uniform := by
   rw [receiverResponse_eq_uniform, receiverStep]
-  by_cases hemp : Finset.univ.filter (λ t => m ∈ S t) = ∅
+  by_cases hemp : Finset.univ.filter (fun t ↦ m ∈ S t) = ∅
   · rw [ite_eq_left ((isSurprise_uniform_iff S m).mpr hemp), ite_eq_left hemp]
   · rw [ite_eq_right (mt (isSurprise_uniform_iff S m).mp hemp), ite_eq_right hemp,
       argmax_prior_mul_uniform G hprior hflat hemp]
 
-/-- Theorem 1: with flat priors the heavy receiver levels are the unbiased
-beliefs in the light receiver chain. -/
+/-- With flat priors the heavy receiver levels are the unbiased beliefs in the
+light receiver chain (Theorem 1). -/
 theorem receiverLevel_eq_uniform (hprior : ∀ t, 0 < G.prior t)
     (hflat : ∀ t t', G.prior t = G.prior t') (n : ℕ) :
-    receiverLevel G n = λ m => (receiverChain G n m).uniform := by
+    receiverLevel G n = fun m ↦ (receiverChain G n m).uniform := by
   induction n with
   | zero => rfl
   | succ n ih =>
     have hS : senderResponse G (receiverLevel G n) =
-        λ t => (senderStep G (receiverChain G n) t).uniform := funext λ t => by
+        fun t ↦ (senderStep G (receiverChain G n) t).uniform := funext fun t ↦ by
       rw [ih, senderResponse, optimalMessages_uniform G (receiverChain_subset_trueStates G n)]
     funext m
     rw [receiverLevel, receiverChain, hS]
@@ -865,22 +865,22 @@ theorem receiverLevel_eq_uniform (hprior : ∀ t, 0 < G.prior t)
 
 /-! ### Theorem 2: near-flat priors -/
 
-/-- The near-flat condition (132), with the inequality the proof needs:
+/-- The near-flat condition (132), with the inequality the proof needs, is
 `Pr(t_min)/Pr(t_max) > (|M|-1)/|M|` (the paper prints it reversed). -/
 def NearFlat : Prop :=
   ∀ t t', ((Fintype.card M : ℚ) - 1) * G.prior t' < Fintype.card M * G.prior t
 
 omit [DecidableEq T] in
-/-- Theorem 2: under near-flat priors the states where the unbiased belief in a
-sender type sends `m`, weighted by the prior, are maximised on the
-prior-lexicographic refinement of the light receiver type (83). -/
+/-- Under near-flat priors the states where the unbiased belief in a sender
+type sends `m`, weighted by the prior, are maximised on the prior-lexicographic
+refinement of the light receiver type (83) (Theorem 2). -/
 theorem argmax_prior_mul_uniform_nearFlat (hprior : ∀ t, 0 < G.prior t) (hnf : NearFlat G)
-    {S : T → Finset M} {m : M} (hne : Finset.univ.filter (λ t => m ∈ S t) ≠ ∅) :
-    (Finset.univ.argmax λ t => G.prior t * (S t).uniform m) =
-      ((Finset.univ.filter λ t => m ∈ S t).argmin λ t => (S t).card).argmax G.prior := by
-  set senders := Finset.univ.filter λ t => m ∈ S t with hsenders
-  have hmem : ∀ t, t ∈ senders ↔ m ∈ S t := λ t => by simp [hsenders]
-  have hcard : ∀ t ∈ senders, 0 < (S t).card := λ t ht => Finset.card_pos.mpr ⟨m, (hmem t).mp ht⟩
+    {S : T → Finset M} {m : M} (hne : Finset.univ.filter (fun t ↦ m ∈ S t) ≠ ∅) :
+    (Finset.univ.argmax fun t ↦ G.prior t * (S t).uniform m) =
+      ((Finset.univ.filter fun t ↦ m ∈ S t).argmin fun t ↦ (S t).card).argmax G.prior := by
+  set senders := Finset.univ.filter fun t ↦ m ∈ S t with hsenders
+  have hmem : ∀ t, t ∈ senders ↔ m ∈ S t := fun t ↦ by simp [hsenders]
+  have hcard : ∀ t ∈ senders, 0 < (S t).card := fun t ht ↦ Finset.card_pos.mpr ⟨m, (hmem t).mp ht⟩
   -- fewer messages beats any prior difference
   have hlt : ∀ t₁ ∈ senders, ∀ t₂ ∈ senders, (S t₁).card < (S t₂).card →
       G.prior t₂ * (S t₂).uniform m < G.prior t₁ * (S t₁).uniform m := by
@@ -901,37 +901,37 @@ theorem argmax_prior_mul_uniform_nearFlat (hprior : ∀ t, 0 < G.prior t) (hnf :
         linarith [mul_lt_mul_of_pos_right (hnf t₁ t₂) k₂]
   rw [Finset.argmax_eq_argmax_of_support (t := senders) (Finset.filter_subset _ _)
     (Finset.nonempty_iff_ne_empty.mpr hne)
-    (λ t ht => mul_pos (hprior t) (Finset.uniform_pos_iff.mpr ((hmem t).mp ht)))
-    (λ t _ ht => by rw [Finset.uniform_of_notMem (mt (hmem t).mpr ht), mul_zero])]
+    (fun t ht ↦ mul_pos (hprior t) (Finset.uniform_pos_iff.mpr ((hmem t).mp ht)))
+    (fun t _ ht ↦ by rw [Finset.uniform_of_notMem (mt (hmem t).mpr ht), mul_zero])]
   ext t
   simp only [Finset.mem_argmax, Finset.mem_argmin]
   constructor
   · rintro ⟨ht, hmax⟩
-    have hmin : ∀ t' ∈ senders, (S t).card ≤ (S t').card := λ t' ht' => by
+    have hmin : ∀ t' ∈ senders, (S t).card ≤ (S t').card := fun t' ht' ↦ by
       by_contra h
       exact absurd (hmax t' ht') (not_le.mpr (hlt t' ht' t ht (not_le.mp h)))
-    refine ⟨⟨ht, hmin⟩, λ t' ⟨ht', hmin'⟩ => ?_⟩
+    refine ⟨⟨ht, hmin⟩, fun t' ⟨ht', hmin'⟩ ↦ ?_⟩
     have := hmax t' ht'
     rw [Finset.uniform_of_mem ((hmem t).mp ht), Finset.uniform_of_mem ((hmem t').mp ht'),
       show (S t').card = (S t).card from le_antisymm (hmin' t ht) (hmin t' ht')] at this
     exact le_of_mul_le_mul_right this (inv_pos.mpr (by exact_mod_cast hcard t ht))
   · rintro ⟨⟨ht, hmin⟩, hpr⟩
-    refine ⟨ht, λ t' ht' => ?_⟩
+    refine ⟨ht, fun t' ht' ↦ ?_⟩
     rcases lt_or_eq_of_le (hmin t' ht') with h | h
     · exact (hlt t ht t' ht' h).le
     · rw [Finset.uniform_of_mem ((hmem t).mp ht), Finset.uniform_of_mem ((hmem t').mp ht'), ← h]
-      exact mul_le_mul_of_nonneg_right (hpr t' ⟨ht', λ t'' ht'' => h ▸ hmin t'' ht''⟩)
+      exact mul_le_mul_of_nonneg_right (hpr t' ⟨ht', fun t'' ht'' ↦ h ▸ hmin t'' ht''⟩)
         (by positivity)
 
 /-- Theorem 2, as a receiver response. -/
 theorem receiverResponse_uniform_nearFlat (hprior : ∀ t, 0 < G.prior t) (hnf : NearFlat G)
     (S : T → Finset M) (m : M) :
-    receiverResponse G (λ t => (S t).uniform) m = (receiverStepPrior G S m).uniform := by
+    receiverResponse G (fun t ↦ (S t).uniform) m = (receiverStepPrior G S m).uniform := by
   rw [receiverResponse_eq_uniform, receiverStepPrior, receiverStep]
-  by_cases hemp : Finset.univ.filter (λ t => m ∈ S t) = ∅
+  by_cases hemp : Finset.univ.filter (fun t ↦ m ∈ S t) = ∅
   · rw [ite_eq_left ((isSurprise_uniform_iff S m).mpr hemp), ite_eq_left hemp]
-  · rw [ite_eq_right (mt (isSurprise_uniform_iff S m).mp hemp), ite_eq_right hemp, ite_eq_right hemp,
-      argmax_prior_mul_uniform_nearFlat G hprior hnf hemp]
+  · rw [ite_eq_right (mt (isSurprise_uniform_iff S m).mp hemp), ite_eq_right hemp,
+      ite_eq_right hemp, argmax_prior_mul_uniform_nearFlat G hprior hnf hemp]
 
 /-! ### Lemma 3 and Theorem 3: convergence (Appendix B.4)
 
@@ -953,23 +953,23 @@ theorem sender_inner_le (S : T → M → ℚ) (H : M → T → ℚ) (t : T) (hSN
     (hH : ∀ m, 0 ≤ H m t) :
     ∑ m, S t m * H m t ≤ ∑ m, senderResponse G H t m * H m t := by
   rcases (G.trueMessages t).eq_empty_or_nonempty with hemp | hne
-  · have : ∀ m, S t m = 0 := λ m =>
-      hSTruth m λ h => Finset.notMem_empty m (hemp ▸ G.mem_trueMessages.mpr h)
+  · have : ∀ m, S t m = 0 := fun m ↦
+      hSTruth m fun h ↦ Finset.notMem_empty m (hemp ▸ G.mem_trueMessages.mpr h)
     simp only [this, zero_mul, Finset.sum_const_zero]
-    exact Finset.sum_nonneg λ m _ => mul_nonneg Finset.uniform_nonneg (hH m)
+    exact Finset.sum_nonneg fun m _ ↦ mul_nonneg Finset.uniform_nonneg (hH m)
   · obtain ⟨m₀, hm₀⟩ := Finset.argmax_nonempty hne (f := (H · t))
     rw [senderResponse, optimalMessages, Finset.sum_uniform_argmax_mul _ hm₀]
     exact Finset.sum_mul_le_of_support _ _ hSNonneg hSSum
-      (λ m hm => hSTruth m (mt G.mem_trueMessages.mpr hm)) hH hm₀
+      (fun m hm ↦ hSTruth m (mt G.mem_trueMessages.mpr hm)) hH hm₀
 
 omit [DecidableEq T] in
-/-- Lemma 3 (i): the sender step does not decrease expected gain. -/
+/-- The sender step does not decrease expected gain (Lemma 3 (i)). -/
 theorem eg_sender_improvement (S : T → M → ℚ) (H : M → T → ℚ)
     (hPrior : ∀ t, 0 ≤ G.prior t) (hSNonneg : ∀ t m, 0 ≤ S t m)
     (hSSum : ∀ t, ∑ m, S t m ≤ 1) (hSTruth : ∀ t m, ¬ G.meaning m t → S t m = 0)
     (hH : ∀ m t, 0 ≤ H m t) :
     expectedGain G S H ≤ expectedGain G (senderResponse G H) H :=
-  Finset.sum_le_sum λ t _ => mul_le_mul_of_nonneg_left
+  Finset.sum_le_sum fun t _ ↦ mul_le_mul_of_nonneg_left
     (sender_inner_le G S H t (hSNonneg t) (hSSum t) (hSTruth t) (hH · t)) (hPrior t)
 
 omit [Fintype M] [DecidableEq M] in
@@ -979,39 +979,41 @@ theorem receiver_inner_le (S : T → M → ℚ) (H : M → T → ℚ) (m : M)
     (hPrior : ∀ t, 0 ≤ G.prior t) (hSNonneg : ∀ t, 0 ≤ S t m) (hH : ∀ t, 0 ≤ H m t)
     (hHSum : ∑ t, H m t ≤ 1) :
     ∑ t, G.prior t * S t m * H m t ≤ ∑ t, G.prior t * S t m * receiverResponse G S m t := by
-  have hw : ∀ t, 0 ≤ G.prior t * S t m := λ t => mul_nonneg (hPrior t) (hSNonneg t)
+  have hw : ∀ t, 0 ≤ G.prior t * S t m := fun t ↦ mul_nonneg (hPrior t) (hSNonneg t)
   by_cases hs : IsSurprise S m
   · have h0 : ∀ t, S t m = 0 := hs
     simp [h0]
   · obtain ⟨t₁, _⟩ := not_forall.mp hs
     obtain ⟨t₀, ht₀⟩ :=
-      Finset.argmax_nonempty ⟨t₁, Finset.mem_univ t₁⟩ (f := λ t => G.prior t * S t m)
+      Finset.argmax_nonempty ⟨t₁, Finset.mem_univ t₁⟩ (f := fun t ↦ G.prior t * S t m)
     rw [receiverResponse, ite_eq_right hs]
     simp_rw [mul_comm (G.prior _ * S _ m)]
     rw [Finset.sum_uniform_argmax_mul _ ht₀]
-    exact Finset.sum_mul_le_of_support _ _ hH hHSum (λ t ht => absurd (Finset.mem_univ t) ht) hw ht₀
+    exact Finset.sum_mul_le_of_support _ _ hH hHSum (fun t ht ↦ absurd (Finset.mem_univ t) ht) hw
+      ht₀
 
 omit [DecidableEq M] in
-/-- Lemma 3 (ii): the receiver step does not decrease expected gain. -/
+/-- The receiver step does not decrease expected gain (Lemma 3 (ii)). -/
 theorem eg_receiver_improvement (S : T → M → ℚ) (H : M → T → ℚ)
     (hPrior : ∀ t, 0 ≤ G.prior t) (hSNonneg : ∀ t m, 0 ≤ S t m)
     (hH : ∀ m t, 0 ≤ H m t) (hHSum : ∀ m, ∑ t, H m t ≤ 1) :
     expectedGain G S H ≤ expectedGain G S (receiverResponse G S) := by
   unfold expectedGain
   simp_rw [Finset.mul_sum, ← mul_assoc]
-  rw [Finset.sum_comm, Finset.sum_comm (f := λ t m => G.prior t * S t m * receiverResponse G S m t)]
-  exact Finset.sum_le_sum λ m _ =>
+  rw [Finset.sum_comm,
+    Finset.sum_comm (f := fun t m ↦ G.prior t * S t m * receiverResponse G S m t)]
+  exact Finset.sum_le_sum fun m _ ↦
     receiver_inner_le G S H m hPrior (hSNonneg · m) (hH m) (hHSum m)
 
-/-- Lemma 3: expected gain is monotone along the receiver levels. -/
+/-- Expected gain is monotone along the receiver levels (Lemma 3). -/
 theorem eg_monotone (hPrior : ∀ t, 0 ≤ G.prior t) (n : ℕ) :
     expectedGain G (senderResponse G (receiverLevel G n)) (receiverLevel G n) ≤
       expectedGain G (senderResponse G (receiverLevel G (n + 1))) (receiverLevel G (n + 1)) :=
   calc _ ≤ expectedGain G (senderResponse G (receiverLevel G n)) (receiverLevel G (n + 1)) :=
-        eg_receiver_improvement G _ _ hPrior (λ _ _ => Finset.uniform_nonneg)
+        eg_receiver_improvement G _ _ hPrior (fun _ _ ↦ Finset.uniform_nonneg)
           (receiverLevel_nonneg G n) (receiverLevel_sum_le_one G n)
-    _ ≤ _ := eg_sender_improvement G _ _ hPrior (λ _ _ => Finset.uniform_nonneg)
-          (λ _ => Finset.sum_uniform_le_one) (λ _ _ => senderResponse_eq_zero_of_not_meaning G _)
+    _ ≤ _ := eg_sender_improvement G _ _ hPrior (fun _ _ ↦ Finset.uniform_nonneg)
+          (fun _ ↦ Finset.sum_uniform_le_one) (fun _ _ ↦ senderResponse_eq_zero_of_not_meaning G _)
           (receiverLevel_nonneg G _)
 
 omit [DecidableEq T] [DecidableEq M] in
@@ -1019,9 +1021,9 @@ omit [DecidableEq T] [DecidableEq M] in
 theorem expectedGain_le_one (S : T → M → ℚ) (H : M → T → ℚ) (hPriorSum : ∑ t, G.prior t = 1)
     (hPrior : ∀ t, 0 ≤ G.prior t) (hSNonneg : ∀ t m, 0 ≤ S t m) (hSSum : ∀ t, ∑ m, S t m ≤ 1)
     (hH : ∀ m t, H m t ≤ 1) : expectedGain G S H ≤ 1 :=
-  calc expectedGain G S H ≤ ∑ t, G.prior t * 1 := Finset.sum_le_sum λ t _ =>
+  calc expectedGain G S H ≤ ∑ t, G.prior t * 1 := Finset.sum_le_sum fun t _ ↦
         mul_le_mul_of_nonneg_left
-          ((Finset.sum_le_sum λ m _ => mul_le_mul_of_nonneg_left (hH m t) (hSNonneg t m)).trans
+          ((Finset.sum_le_sum fun m _ ↦ mul_le_mul_of_nonneg_left (hH m t) (hSNonneg t m)).trans
             (by simpa using hSSum t)) (hPrior t)
     _ = 1 := by simp [hPriorSum]
 
@@ -1033,10 +1035,10 @@ theorem mem_optimalMessages_of_eg_eq (S : T → M → ℚ) (H : M → T → ℚ)
     (hSSum : ∀ t, ∑ m, S t m ≤ 1) (hSTruth : ∀ t m, ¬ G.meaning m t → S t m = 0)
     (hH : ∀ m t, 0 ≤ H m t) (hEG : expectedGain G S H = expectedGain G (senderResponse G H) H)
     (t : T) (hPt : 0 < G.prior t) (m : M) (hSm : 0 < S t m) : m ∈ optimalMessages G H t := by
-  have hle : ∀ s, ∑ m, S s m * H m s ≤ ∑ m, senderResponse G H s m * H m s := λ s =>
+  have hle : ∀ s, ∑ m, S s m * H m s ≤ ∑ m, senderResponse G H s m * H m s := fun s ↦
     sender_inner_le G S H s (hSNonneg s) (hSSum s) (hSTruth s) (hH · s)
   have hinner : ∑ m, S t m * H m t = ∑ m, senderResponse G H t m * H m t := by
-    have := (Finset.sum_eq_zero_iff_of_nonneg λ s _ =>
+    have := (Finset.sum_eq_zero_iff_of_nonneg fun s _ ↦
       mul_nonneg (hPrior s) (sub_nonneg.mpr (hle s))).mp (by
         unfold expectedGain at hEG
         simp only [mul_sub, Finset.sum_sub_distrib, hEG, sub_self]) t (Finset.mem_univ t)
@@ -1047,14 +1049,14 @@ theorem mem_optimalMessages_of_eg_eq (S : T → M → ℚ) (H : M → T → ℚ)
     by_contra hF; exact absurd hSm (by rw [hSTruth t m hF]; exact lt_irrefl 0)
   obtain ⟨m₀, hm₀⟩ := Finset.argmax_nonempty ⟨m, G.mem_trueMessages.mpr hTrue⟩ (f := (H · t))
   rw [senderResponse, optimalMessages, Finset.sum_uniform_argmax_mul _ hm₀] at hinner
-  refine (mem_optimalMessages G).mpr ⟨hTrue, λ m' hm' => ?_⟩
+  refine (mem_optimalMessages G).mpr ⟨hTrue, fun m' hm' ↦ ?_⟩
   by_contra hne
   have hlt : H m t < H m₀ t := lt_of_le_of_ne
     ((Finset.mem_argmax.mp hm₀).2 m (G.mem_trueMessages.mpr hTrue))
-    λ h => hne (h ▸ (Finset.mem_argmax.mp hm₀).2 m' (G.mem_trueMessages.mpr hm'))
+    fun h ↦ hne (h ▸ (Finset.mem_argmax.mp hm₀).2 m' (G.mem_trueMessages.mpr hm'))
   have : ∑ m', S t m' * H m' t < H m₀ t :=
     calc ∑ m', S t m' * H m' t < ∑ m', S t m' * H m₀ t := by
-          refine Finset.sum_lt_sum (λ m' _ => ?_)
+          refine Finset.sum_lt_sum (fun m' _ ↦ ?_)
             ⟨m, Finset.mem_univ m, mul_lt_mul_of_pos_left hlt hSm⟩
           by_cases hm' : G.meaning m' t
           · exact mul_le_mul_of_nonneg_left ((Finset.mem_argmax.mp hm₀).2 m'
@@ -1069,15 +1071,15 @@ omit [DecidableEq T] in
 theorem optimalMessages_subset_of_eg_eq (H₁ H₂ : M → T → ℚ) (hPrior : ∀ t, 0 < G.prior t)
     (hH₂ : ∀ m t, 0 ≤ H₂ m t)
     (hEG : expectedGain G (senderResponse G H₁) H₂ = expectedGain G (senderResponse G H₂) H₂)
-    (t : T) : optimalMessages G H₁ t ⊆ optimalMessages G H₂ t := λ m hm =>
-  mem_optimalMessages_of_eg_eq G (senderResponse G H₁) H₂ (λ t => (hPrior t).le)
-    (λ _ _ => Finset.uniform_nonneg) (λ _ => Finset.sum_uniform_le_one)
-    (λ _ _ hm' => senderResponse_eq_zero_of_not_meaning G H₁ hm') hH₂ hEG t (hPrior t) m
+    (t : T) : optimalMessages G H₁ t ⊆ optimalMessages G H₂ t := fun m hm ↦
+  mem_optimalMessages_of_eg_eq G (senderResponse G H₁) H₂ (fun t ↦ (hPrior t).le)
+    (fun _ _ ↦ Finset.uniform_nonneg) (fun _ ↦ Finset.sum_uniform_le_one)
+    (fun _ _ hm' ↦ senderResponse_eq_zero_of_not_meaning G H₁ hm') hH₂ hEG t (hPrior t) m
     ((senderResponse_pos_iff G H₁ t m).mpr hm)
 
 theorem monotone_cycle_all_eq {f : ℕ → ℚ} {n p : ℕ} (hMono : ∀ k, f k ≤ f (k + 1))
     (hCycle : f n = f (n + p)) (k : ℕ) (hk : k < p) : f (n + k) = f (n + k + 1) := by
-  have shift : ∀ a j, f a ≤ f (a + j) := λ a j => by
+  have shift : ∀ a j, f a ≤ f (a + j) := fun a j ↦ by
     induction j with
     | zero => simp
     | succ j ih => exact ih.trans (hMono (a + j))
@@ -1099,21 +1101,21 @@ theorem cycle_containment_eq {α : Type*} {p : ℕ} (A : ℕ → Finset α) (hp 
 
 /-- The set of states a receiver level assigns positive probability. -/
 def receiverSupport (n : ℕ) (m : M) : Finset T :=
-  Finset.univ.filter λ t => 0 < receiverLevel G n m t
+  Finset.univ.filter fun t ↦ 0 < receiverLevel G n m t
 
 /-- Receiver levels are uniform over their supports. -/
 theorem receiverLevel_eq_uniform_support (n : ℕ) :
-    receiverLevel G n = λ m => (receiverSupport G n m).uniform := by
-  have : ∀ n, ∃ A : M → Finset T, receiverLevel G n = λ m => (A m).uniform := λ n => by
+    receiverLevel G n = fun m ↦ (receiverSupport G n m).uniform := by
+  have : ∀ n, ∃ A : M → Finset T, receiverLevel G n = fun m ↦ (A m).uniform := fun n ↦ by
     cases n with
     | zero => exact ⟨G.trueStates, rfl⟩
-    | succ n => exact ⟨_, funext λ m => receiverResponse_eq_uniform G _ m⟩
+    | succ n => exact ⟨_, funext fun m ↦ receiverResponse_eq_uniform G _ m⟩
   obtain ⟨A, hA⟩ := this n
   rw [hA]; funext m; congr 1; ext t
   rw [receiverSupport, Finset.mem_filter, hA]
   simp [Finset.uniform_pos_iff]
 
-/-- The receiver levels repeat: there are finitely many supports. -/
+/-- The receiver levels repeat, since there are finitely many supports. -/
 theorem receiverLevel_repeats :
     ∃ n₁ n₂, n₁ < n₂ ∧ receiverLevel G n₁ = receiverLevel G n₂ := by
   obtain ⟨n₁, n₂, hne, heq⟩ := Finite.exists_ne_map_eq_of_infinite (receiverSupport G)
@@ -1123,37 +1125,37 @@ theorem receiverLevel_repeats :
   · exact ⟨n₁, n₂, h, hstrat⟩
   · exact ⟨n₂, n₁, h, hstrat.symm⟩
 
-/-- Theorem 3: the receiver levels reach a fixed point. -/
+/-- The receiver levels reach a fixed point (Theorem 3). -/
 theorem receiverLevel_reaches_fixedPoint (hPrior : ∀ t, 0 < G.prior t) :
     ∃ n, IsFixedPoint G (receiverLevel G n) := by
   obtain ⟨n₁, n₂, hlt, heq⟩ := receiverLevel_repeats G
   have hperiod : receiverLevel G n₁ = receiverLevel G (n₁ + (n₂ - n₁)) := by
     rwa [Nat.add_sub_cancel' hlt.le]
-  set eg := λ n => expectedGain G (senderResponse G (receiverLevel G n)) (receiverLevel G n)
+  set eg := fun n ↦ expectedGain G (senderResponse G (receiverLevel G n)) (receiverLevel G n)
   have hOptSub : ∀ k, k < n₂ - n₁ → ∀ t, optimalMessages G (receiverLevel G (n₁ + k)) t ⊆
       optimalMessages G (receiverLevel G (n₁ + k + 1)) t := by
     intro k hk
-    have hEGk := monotone_cycle_all_eq (eg_monotone G λ t => (hPrior t).le)
+    have hEGk := monotone_cycle_all_eq (eg_monotone G fun t ↦ (hPrior t).le)
       (show eg n₁ = eg (n₁ + (n₂ - n₁)) by simp only [eg]; rw [hperiod]) k hk
     refine optimalMessages_subset_of_eg_eq G _ _ hPrior (receiverLevel_nonneg G _)
       (le_antisymm ?_ ?_)
-    · exact eg_sender_improvement G _ _ (λ t => (hPrior t).le) (λ _ _ => Finset.uniform_nonneg)
-        (λ _ => Finset.sum_uniform_le_one) (λ _ _ => senderResponse_eq_zero_of_not_meaning G _)
+    · exact eg_sender_improvement G _ _ (fun t ↦ (hPrior t).le) (fun _ _ ↦ Finset.uniform_nonneg)
+        (fun _ ↦ Finset.sum_uniform_le_one) (fun _ _ ↦ senderResponse_eq_zero_of_not_meaning G _)
         (receiverLevel_nonneg G _)
     · have := eg_receiver_improvement G (senderResponse G (receiverLevel G (n₁ + k)))
-        (receiverLevel G (n₁ + k)) (λ t => (hPrior t).le) (λ _ _ => Finset.uniform_nonneg)
+        (receiverLevel G (n₁ + k)) (fun t ↦ (hPrior t).le) (fun _ _ ↦ Finset.uniform_nonneg)
         (receiverLevel_nonneg G _) (receiverLevel_sum_le_one G _)
       have hlev : receiverLevel G (n₁ + k + 1) =
           receiverResponse G (senderResponse G (receiverLevel G (n₁ + k))) := rfl
       rw [← hEGk, hlev]; exact this
   have hOptEq : ∀ t, optimalMessages G (receiverLevel G n₁) t =
-      optimalMessages G (receiverLevel G (n₁ + 1)) t := λ t =>
-    cycle_containment_eq (λ k => optimalMessages G (receiverLevel G (n₁ + k)) t) (by omega)
-      (λ k hk => hOptSub k hk t)
+      optimalMessages G (receiverLevel G (n₁ + 1)) t := fun t ↦
+    cycle_containment_eq (fun k ↦ optimalMessages G (receiverLevel G (n₁ + k)) t) (by omega)
+      (fun k hk ↦ hOptSub k hk t)
       (by show optimalMessages G (receiverLevel G (n₁ + (n₂ - n₁))) t = _; rw [← hperiod]; rfl)
   refine ⟨n₁ + 1, ?_⟩
   have hS : senderResponse G (receiverLevel G (n₁ + 1)) = senderResponse G (receiverLevel G n₁) :=
-    funext λ t => by simp only [senderResponse, hOptEq t]
+    funext fun t ↦ by simp only [senderResponse, hOptEq t]
   show receiverResponse G (senderResponse G (receiverLevel G (n₁ + 1))) =
     receiverResponse G (senderResponse G (receiverLevel G n₁))
   rw [hS]
@@ -1167,12 +1169,12 @@ after a surprise message the receiver keeps the literal belief. -/
 def posterior (S : T → M → ℚ) (m : M) (t : T) : ℚ :=
   if IsSurprise S m then G.literal m t else G.prior t * S t m / ∑ s, G.prior s * S s m
 
-/-- Sender rationality (116): every message sent maximises the chance of
+/-- By sender rationality (116), every message sent maximises the chance of
 being understood. -/
 def SenderRational (S : T → M → ℚ) (H : M → T → ℚ) : Prop :=
   ∀ t m, 0 < S t m → m ∈ optimalMessages G H t
 
-/-- Receiver rationality (120): every interpretation chosen is maximum a
+/-- By receiver rationality (120), every interpretation chosen is maximum a
 posteriori. -/
 def ReceiverRational (H : M → T → ℚ) (S : T → M → ℚ) : Prop :=
   ∀ m t, 0 < H m t → t ∈ Finset.univ.argmax (posterior G S m)
@@ -1181,28 +1183,28 @@ def ReceiverRational (H : M → T → ℚ) (S : T → M → ℚ) : Prop :=
 def IsPBE (S : T → M → ℚ) (H : M → T → ℚ) : Prop :=
   SenderRational G S H ∧ ReceiverRational G H S
 
-/-- Theorem 4: a fixed point of the heavy dynamics, with its sender response,
-is a perfect Bayesian equilibrium. -/
+/-- A fixed point of the heavy dynamics, with its sender response, is a perfect
+Bayesian equilibrium (Theorem 4). -/
 theorem isPBE_of_fixedPoint (hprior : ∀ t, 0 < G.prior t) {H : M → T → ℚ}
     (hH : IsFixedPoint G H) : IsPBE G (senderResponse G H) H := by
-  refine ⟨λ t m h => (senderResponse_pos_iff G H t m).mp h, λ m t hpos => ?_⟩
+  refine ⟨fun t m h ↦ (senderResponse_pos_iff G H t m).mp h, fun m t hpos ↦ ?_⟩
   rw [← hH, receiverResponse_eq_uniform, Finset.uniform_pos_iff] at hpos
   unfold posterior
   split_ifs at hpos ⊢ with hs
-  · show t ∈ Finset.univ.argmax λ t => (G.trueStates m).uniform t
+  · show t ∈ Finset.univ.argmax fun t ↦ (G.trueStates m).uniform t
     rw [Finset.argmax_eq_argmax_of_support (t := G.trueStates m) (Finset.subset_univ _) ⟨t, hpos⟩
-      (λ t ht => Finset.uniform_pos_iff.mpr ht) (λ t _ ht => Finset.uniform_of_notMem ht),
-      Finset.argmax_eq_self_of_forall_le λ t ht t' ht' => by
+      (fun t ht ↦ Finset.uniform_pos_iff.mpr ht) (fun t _ ht ↦ Finset.uniform_of_notMem ht),
+      Finset.argmax_eq_self_of_forall_le fun t ht t' ht' ↦ by
         rw [Finset.uniform_of_mem ht, Finset.uniform_of_mem ht']]
     exact hpos
   · have hz : 0 < ∑ s, G.prior s * senderResponse G H s m := by
       obtain ⟨s, hs⟩ := not_forall.mp hs
-      exact Finset.sum_pos' (λ s _ => mul_nonneg (hprior s).le Finset.uniform_nonneg)
+      exact Finset.sum_pos' (fun s _ ↦ mul_nonneg (hprior s).le Finset.uniform_nonneg)
         ⟨s, Finset.mem_univ s,
           mul_pos (hprior s) (lt_of_le_of_ne Finset.uniform_nonneg (Ne.symm hs))⟩
     simp_rw [div_eq_mul_inv]
-    show t ∈ Finset.univ.argmax ((λ x => x * (∑ s, G.prior s * senderResponse G H s m)⁻¹) ∘
-      λ s => G.prior s * senderResponse G H s m)
+    show t ∈ Finset.univ.argmax ((fun x ↦ x * (∑ s, G.prior s * senderResponse G H s m)⁻¹) ∘
+      fun s ↦ G.prior s * senderResponse G H s m)
     rwa [Finset.argmax_comp_strictMono (strictMono_mul_right_of_pos (inv_pos.mpr hz))]
 
 /-! ### Level-1 interpretation and minimal-models exhaustification (§10)
@@ -1212,29 +1214,30 @@ where fewest alternatives are true (107); minimal-models exhaustification
 keeps the states minimal in the inclusion order on true alternatives. -/
 
 /-- The alternatives of a game as propositions over states. -/
-def alternatives : Set (Set T) := {λ t => G.meaning m t | m : M}
+def alternatives : Set (Set T) := {fun t ↦ G.meaning m t | m : M}
 
 /-- The prejacent of a message. -/
-def prejacent (m : M) : Set T := λ t => G.meaning m t
+def prejacent (m : M) : Set T := fun t ↦ G.meaning m t
 
 omit [Fintype T] [DecidableEq T] [DecidableEq M] in
 theorem trueMessages_ssubset_of_ltALT {t' t : T} (h : ltALT (alternatives G) t' t) :
     G.trueMessages t' ⊂ G.trueMessages t := by
-  refine Finset.ssubset_iff_subset_ne.mpr ⟨λ m hm => ?_, λ heq => h.2 λ a ha hat => ?_⟩
+  refine Finset.ssubset_iff_subset_ne.mpr ⟨fun m hm ↦ ?_, fun heq ↦ h.2 fun a ha hat ↦ ?_⟩
   · exact G.mem_trueMessages.mpr (h.1 _ ⟨m, rfl⟩ (G.mem_trueMessages.mp hm))
   · obtain ⟨m, rfl⟩ := ha
     exact G.mem_trueMessages.mp (heq ▸ G.mem_trueMessages.mpr hat)
 
-/-- Fact 1: `R₁(m) ⊆ ExhMM(m)`. -/
+/-- The level-1 receiver's reading entails minimal-models exhaustification,
+`R₁(m) ⊆ ExhMM(m)` (Fact 1). -/
 theorem receiver1_subset_exhMW (m : M) (t : T) (ht : t ∈ receiverStep G G.trueMessages m) :
     exhMW (alternatives G) (prejacent G m) t := by
   rw [mem_receiverStep] at ht
-  have hne : Finset.univ.filter (λ t => m ∈ G.trueMessages t) ≠ ∅ := by
+  have hne : Finset.univ.filter (fun t ↦ m ∈ G.trueMessages t) ≠ ∅ := by
     rintro h
     simp only [h, ite_true] at ht
     exact Finset.eq_empty_iff_forall_notMem.mp h t (by simpa using ht)
   rw [ite_eq_right hne] at ht
-  refine ⟨G.mem_trueMessages.mp ht.1, λ ⟨t', ht', hlt⟩ => ?_⟩
+  refine ⟨G.mem_trueMessages.mp ht.1, fun ⟨t', ht', hlt⟩ ↦ ?_⟩
   exact absurd (Finset.card_lt_card (trueMessages_ssubset_of_ltALT G hlt))
     (not_lt.mpr (ht.2 t' (G.mem_trueMessages.mpr ht')))
 
@@ -1252,36 +1255,36 @@ section Appendix
 
 variable {W : Type*} (ALT : Set (Set W)) (φ : Set W)
 
-/-- `A` is a monotone function of the alternatives in `X`: whenever every
+/-- `A` is a monotone function of the alternatives in `X` when, whenever every
 `X`-alternative true at `w` is true at `v`, `A` at `w` forces `A` at `v`. -/
 def MonotoneDetermined (A : Set W) : Prop := ∀ w v, leALT ALT w v → w ∈ A → v ∈ A
 
-/-- Fact 2, for monotonically determined alternatives: the strict order is
-unchanged. -/
+/-- Adding monotonically determined alternatives leaves the strict order
+unchanged (Fact 2). -/
 theorem ltALT_insert_of_monotoneDetermined {A : Set W} (hA : MonotoneDetermined ALT A) :
     ltALT (insert A ALT) = ltALT ALT := by
-  have key : ∀ w v, leALT (insert A ALT) w v ↔ leALT ALT w v := λ w v =>
-    ⟨λ h a ha => h a (Set.mem_insert_of_mem _ ha),
-     λ h a ha => (Set.mem_insert_iff.mp ha).elim (λ e => e ▸ hA w v h) (h a)⟩
+  have key : ∀ w v, leALT (insert A ALT) w v ↔ leALT ALT w v := fun w v ↦
+    ⟨fun h a ha ↦ h a (Set.mem_insert_of_mem _ ha),
+     fun h a ha ↦ (Set.mem_insert_iff.mp ha).elim (fun e ↦ e ▸ hA w v h) (h a)⟩
   funext w v; simp only [ltALT, key]
 
-/-- Fact 2 as printed fails: over two worlds with one alternative, adding its
-negation — truth-determined, but not monotonically — destroys the strict
-order between the worlds. -/
+/-- Fact 2 as printed fails. Over two worlds with one alternative, adding its
+negation, truth-determined but not monotonically, destroys the strict order
+between the worlds. -/
 theorem not_ltALT_insert_compl :
     ltALT ({(· = true)} : Set (Set Bool)) false true ∧
       ¬ ltALT (insert (· = false) {(· = true)}) false true := by
-  refine ⟨⟨λ a ha h => ?_, λ h => ?_⟩, λ h => ?_⟩
+  refine ⟨⟨fun a ha h ↦ ?_, fun h ↦ ?_⟩, fun h ↦ ?_⟩
   · rw [Set.mem_singleton_iff] at ha; subst ha; exact absurd h Bool.false_ne_true
   · exact Bool.false_ne_true (h _ rfl rfl)
   · exact absurd (h.1 (· = false) (Set.mem_insert _ _) rfl) (by decide)
 
-/-- Lemma 1: innocent exclusion keeps the `φ`-worlds indistinguishable from
-the minimal worlds by any alternative — every alternative false throughout
-`ExhMM` is false at them. -/
-theorem exhIE_eq_exhMW_indistinguishable (hfin : ALT.Finite) :
+/-- Innocent exclusion keeps the `φ`-worlds indistinguishable from the minimal
+worlds by any alternative, since every alternative false throughout `ExhMM` is
+false at them (Lemma 1). -/
+theorem exhIE_eq_exhMW_indistinguishable :
     exhIE ALT φ = {w | w ∈ φ ∧ ∀ a ∈ ALT, exhMW ALT φ ⊆ aᶜ → w ∉ a} :=
-  exhIE_eq_phi_and_exhMW_negated ALT φ hfin
+  exhIE_eq_setOf_exhMW_subset_compl ALT φ
 
 end Appendix
 
