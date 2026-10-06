@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Data.Examples.KrizChemla2015
-public import Linglib.Data.Generalizations.HomogeneityGap
+public import Linglib.Data.Experiments.KrizChemla2015
 public import Linglib.Semantics.Homogeneity.Plural
 public import Linglib.Semantics.Quantification.NumberTree
 public import Linglib.Studies.Magri2014
@@ -10,59 +10,47 @@ public import Mathlib.Data.List.Sections
 /-!
 # Križ and Chemla (2015): Two Methods to Find Truth-Value Gaps and Their Application to the Projection Problem of Homogeneity
 
-Križ and Chemla introduce two experimental methods for detecting truth-value gaps, separate
-completely-true and completely-false tasks (Experiments A0 to A3) and one-shot ternary judgments
-(Experiments B1 to B3 and C2 to C4), and use them to test whether the homogeneity gap of a plural
-definite projects from the scope of sentential negation, *every*, *no* and *exactly 2*. It
-projects in every tested environment except the gap? configuration, where the variants of the
-sentence with *some* and with *all* in place of the definite are both false, and under *no* it
-emerges only in Experiment C2.
-
-A display gives each boy the trivalent value of *he found his presents*, the bare plural over his
-nine presents. Resolving every partial cell to truth gives the existential variant and resolving
-every one to falsity the universal variant, and the embedding quantifier, a number tree, is
-evaluated on the resolution. The approaches the paper assesses are Spector's supervaluation over
-the two variants, Magri's double strengthening, which compares the literal meaning with the
-globally exhaustified one, and the universal projection of a homogeneity presupposition after
-Schwarzschild, Löbner and Gajewski.
+Križ and Chemla introduce two experimental methods for detecting truth-value gaps and use them to
+ask where the homogeneity gap of a plural definite survives embedding, under sentential negation,
+*all*, *no* and *exactly 2*. A display gives each of four cells, or boys, the trivalent value of
+the bare plural over its nine symbols, or presents, and a sentence is evaluated by its quantifier
+on the display resolved existentially or universally, the variants with *some* and with *all* in
+place of the definite. Gaps were found exactly where the two variants differ, which includes the
+GAP?? configuration of *exactly 2* and excludes its GAP? configuration. Of the accounts the paper
+assesses, Spector's supervaluation over the two resolutions fits every finding; comparing the
+literal with the globally exhaustified meaning, after Magri, misses the gaps under negation, under
+*no* and in the GAP?? configuration; and the universal projection of a homogeneity presupposition
+predicts gaps where false was found.
 
 ## Main results
 
-* `supervaluation_matches_data`: the supervaluation reproduces every judgment on the displays of
-  Table 13.
+* `items_variants`: every display of Table 13 realizes its condition, except the faulty A2 and B2
+  *no* items (`faulty_items`) and the GAP? item 5599 (`misprinted_gapQQ`).
+* `found_iff`: Table 2 finds a gap exactly outside GAP?, apart from the discounted *no* tests.
+* `supervaluation_eq_true_iff_condition`, `supervaluation_eq_indet_iff_found`: the supervaluation
+  predicts every designed value and every finding.
+* `globalConstrual_misfit_iff`: the implicature construal misfits exactly the downward-entailing
+  GAP items and the GAP?? items; `globalConstrual_wideScope`: a wide-scope definite rescues it
+  under plain negation.
+* `pointwise_ne_iff`: supervaluating over per-boy resolutions departs exactly on GAP?.
+* `situations_variants`: Table 12's parses and construals follow from its six situations.
 * `globalExh_iff_mem_strengthened`: global exhaustification is Magri's double strengthening.
-* `globalConstrual_eq_supervaluation_of_scopeMonotone`,
-  `globalConstrual_ne_indet_of_scopeAntitone`: the global construals agree with the
-  supervaluation under monotone quantifiers and never gap under antitone ones.
-* `globalConstrual_divergence`: they fail on exactly the C2 *no* gap and the C4 gap?? gap.
-* `universalPresupposition_divergence`: universal projection fails on exactly the bivalently
-  judged conditions whose displays contain partial cells.
-* `toFlat_pointwise_le`, `pointwise_divergence`: supervaluating over resolutions that treat the
-  partial cells one by one only adds gaps, exactly the gap? condition's.
 
 ## Implementation notes
 
-A display records, for each of four arrays of nine objects, how many are target-colored or found.
-A resolution is a list of booleans, one per boy, and a number tree holds of it according to how
-many boys it puts out of and into the scope (`holds`). The uniform resolutions read each cell at
-one designation standard of `Trivalent.designated`, LP (non-false) for the existential variant and
-K3 (true) for the universal one; the per-boy resolutions choose the standard boy by boy
-(`resolutions`), so the uniform ones are their least and greatest elements.
-
-The (si2)/(si4) construals of §6.1.2 are identified with the supervaluation by Table 12's
-lit ≠ loc column: the implicature (31b) is a different formula, but for *exactly* Table 12
-compares the literal meaning with the locally exhaustified one, as (39) does. The observed value
-of a gap-family row is read by `Generalizations.HomogeneityGap.gapTruth`, `.indet` when the gap
-was detected and the recorded bivalent value otherwise. `bareLiteralNegative` and
-`wideScopeParse` reconstruct the diagnosis in §6.1.3 of the downward-entailing problem for the
-implicature approach: the bare existential literal meaning predicts no gap under negation, and
-parsing the definite above negation restores the fit for plain negation but not for *no*, whose
-definite contains a variable bound by the quantifier, as Steedman observes.
+The stimuli and findings are the tables of `Data/Experiments/KrizChemla2015`. The E-neg tests reuse
+the E-∅ displays with the negated sentence, whose designed values swap (`negationItems`), and
+sentential negation is the outer negation `notAll` of the unembedded sentence. The weak and strong
+variants are the some- and all-substituted readings, exchanged under a downward-entailing scope,
+which is how §3's principle, stated for upward-entailing contexts, extends to negation and *no*.
+The A2 and B2 *no* tests are discounted, as footnotes 10 and 14 do. The statistics are stored as
+printed and not re-thresholded; the (si2) and (si4) construals are the supervaluation by Table
+12's lit ≠ loc column.
 
 ## TODO
 
 * The trivalent projection theory after George that §6.3 credits with matching the
-  supervaluation predictions is not implemented.
+  supervaluation is not implemented.
 
 ## References
 
@@ -84,7 +72,7 @@ definite contains a variable bound by the quantifier, as Steedman observes.
 
 namespace KrizChemla2015
 
-open Generalizations Quantifier
+open Quantifier
 open Trivalent (Designation designated)
 
 /-! ### Displays and their resolutions -/
@@ -111,11 +99,6 @@ theorem designated_lp_cell (n : ℕ) : designated .lp (cell n) ↔ 1 ≤ n := by
   exact ⟨fun h ↦ by obtain ⟨j, -, hj⟩ := h ⟨0, by simp⟩; omega,
     fun h _ ↦ ⟨0, by omega, h⟩⟩
 
-/-- The display recorded on a row, read cell by cell from its digits. -/
-def displayOf? (e : Datum) : Option Display :=
-  (e.feature? "display").bind fun s ↦
-    s.toList.mapM fun ch ↦ if ch.isDigit then some (cell (ch.toNat - '0'.toNat)) else none
-
 /-- A number tree holds of a resolution according to how many boys it resolves out of and into
 the scope. -/
 def holds (q : NumberTree) (c : List Bool) : Prop := q (c.count false) (c.count true)
@@ -123,9 +106,27 @@ def holds (q : NumberTree) (c : List Bool) : Prop := q (c.count false) (c.count 
 instance (q : NumberTree) [DecidableRel q] (c : List Bool) : Decidable (holds q c) :=
   inferInstanceAs (Decidable (q _ _))
 
+/-- Reversing every boy's resolution evaluates the inner negation. -/
+theorem holds_map_not (q : NumberTree) (c : List Bool) :
+    holds q (c.map not) ↔ holds q.innerNeg c := by
+  have h (b : Bool) : (c.map not).count b = c.count (!b) := by
+    induction c with
+    | nil => rfl
+    | cons x xs ih => cases x <;> cases b <;> simp [ih]
+  simp [holds, NumberTree.innerNeg, h]
+
 /-- The uniform resolution of a display at a designation standard puts each boy in the scope
 when his value is designated. -/
 def resolve (δ : Designation) (d : Display) : List Bool := d.map fun v ↦ decide (designated δ v)
+
+/-- Negating every cell resolves at the dual standard and reverses the result. -/
+theorem resolve_map_neg (δ : Designation) (d : Display) :
+    resolve δ (d.map Trivalent.neg) = (resolve δ.dual d).map not := by
+  simp only [resolve, List.map_map]
+  refine List.map_congr_left fun v _ ↦ ?_
+  have := Trivalent.designated_neg_iff δ.dual v
+  rw [Trivalent.Designation.dual_dual] at this
+  simp [this]
 
 /-- The resolutions of a display that choose a designation standard boy by boy. -/
 def resolutions (d : Display) : List (List Bool) :=
@@ -207,6 +208,12 @@ theorem reading_all (δ : Designation) : reading NumberTree.all d δ ↔ ∀ v �
 theorem reading_no (δ : Designation) : reading NumberTree.no d δ ↔ ∀ v ∈ d, ¬ designated δ v := by
   simp [reading, holds, resolve, NumberTree.no, List.count_eq_zero]
 
+/-- Negating the predicate in every cell evaluates the inner negation of the quantifier at the
+dual standard, so it exchanges the some- and all-substituted readings. -/
+theorem reading_map_neg (δ : Designation) :
+    reading q (d.map Trivalent.neg) δ ↔ reading q.innerNeg d δ.dual := by
+  rw [reading, reading, resolve_map_neg, holds_map_not]
+
 /-- On a display without partial cells the two resolutions coincide. -/
 theorem someReading_iff_allReading (h : ∀ v ∈ d, v.isDefined) :
     someReading q d ↔ allReading q d := by
@@ -244,18 +251,8 @@ variable {p q : Prop} [Decidable p] [Decidable q]
     Bool.exists_bool, Bool.false_eq_true, ite_false, ite_true]
   tauto
 
-/-- Two components that agree yield their common classical value. -/
-theorem gapValue_of_iff (h : p ↔ q) : gapValue p q = .ofProp p := by
-  by_cases hp : p
-  · rw [gapValue_eq_true_iff.2 ⟨hp, h.1 hp⟩, Trivalent.ofProp_eq_true_iff.2 hp]
-  · rw [gapValue_eq_false_iff.2 ⟨hp, fun hq ↦ hp (h.2 hq)⟩, Trivalent.ofProp_eq_false_iff.2 hp]
-
 /-- Two components that agree yield a bivalent verdict. -/
 theorem gapValue_ne_indet (h : p ↔ q) : gapValue p q ≠ .indet := by simp [h]
-
-/-- Negating both components negates the verdict. -/
-theorem gapValue_not : gapValue (¬ p) (¬ q) = (gapValue p q).neg := by
-  cases h : gapValue p q <;> simp_all [not_iff_not]
 
 end GapValue
 
@@ -265,10 +262,8 @@ section Approaches
 
 variable (q : NumberTree) [DecidableRel q] (d : Display)
 
-/-- The two-candidate supervaluation of [spector-2013b] (§6.2) supervaluates over the existential
-and universal resolutions of the definite. Extensionally this is also the (si2)/(si4) implicature
-construal of §6.1.2, a gap iff the literal and locally exhaustified meanings conflict, which is
-how §6.2 argues the two approaches make the same projection predictions. -/
+/-- The supervaluation of [spector-2013b] (§6.2) makes the sentence true when both its existential
+and its universal resolution are true and false when neither is. -/
 def supervaluation : Trivalent := gapValue (someReading q d) (allReading q d)
 
 /-- The globally double-exhaustified meaning, (30) and (39), is the conjunction of the some- and
@@ -298,9 +293,48 @@ def pointwise : Trivalent := Trivalent.supervaluation (resolutions d).toFinset (
 
 variable {q d}
 
+/-- The supervaluation ranges over the two designation standards, the sentence being true however
+the definite is resolved and false however it is resolved. -/
+theorem supervaluation_eq_designations :
+    supervaluation q d = Trivalent.supervaluation Finset.univ (reading q d) := by
+  have h : (Finset.univ : Finset Bool).image (if · then Designation.lp else .k3) =
+      Finset.univ := by decide
+  rw [← h, Trivalent.supervaluation_image, supervaluation, gapValue]
+  exact Trivalent.supervaluation_congr fun b _ ↦ by cases b <;> rfl
+
+/-- The supervaluation is true when both variants are. -/
+theorem supervaluation_eq_true_iff :
+    supervaluation q d = .true ↔ someReading q d ∧ allReading q d :=
+  gapValue_eq_true_iff
+
+/-- The supervaluation is false when neither variant is true. -/
+theorem supervaluation_eq_false_iff :
+    supervaluation q d = .false ↔ ¬ someReading q d ∧ ¬ allReading q d :=
+  gapValue_eq_false_iff
+
+/-- The supervaluation gaps when the variants differ. -/
+theorem supervaluation_eq_indet_iff :
+    supervaluation q d = .indet ↔ ¬ (someReading q d ↔ allReading q d) :=
+  gapValue_eq_indet_iff
+
 /-- A display without partial cells gets a bivalent verdict, whatever the quantifier. -/
-theorem supervaluation_ne_indet (h : ∀ v ∈ d, v.isDefined) : supervaluation q d ≠ .indet :=
-  gapValue_ne_indet (someReading_iff_allReading h)
+theorem supervaluation_ne_indet (h : ∀ v ∈ d, v.isDefined) : supervaluation q d ≠ .indet := by
+  simp [supervaluation_eq_indet_iff, someReading_iff_allReading h]
+
+/-- The supervaluation does not see the scope of the definite relative to a negation inside the
+cells, since negating every cell gives the supervaluation of the inner negation. -/
+theorem supervaluation_map_neg :
+    supervaluation q (d.map Trivalent.neg) = supervaluation q.innerNeg d := by
+  have h : (Finset.univ : Finset Designation).image Designation.dual = Finset.univ := by decide
+  rw [supervaluation_eq_designations, supervaluation_eq_designations]
+  conv_rhs => rw [← h, Trivalent.supervaluation_image]
+  exact Trivalent.supervaluation_congr fun δ _ ↦ reading_map_neg δ
+
+/-- The outer negation of the quantifier negates the supervaluation. -/
+theorem supervaluation_compl : supervaluation qᶜ d = (supervaluation q d).neg := by
+  rw [supervaluation_eq_designations, supervaluation_eq_designations,
+    ← Trivalent.supervaluation_not _ Finset.univ_nonempty]
+  rfl
 
 omit [DecidableRel q] in
 /-- Under a downward-entailing quantifier global exhaustification is vacuous. -/
@@ -308,31 +342,69 @@ theorem globalExh_iff_of_scopeAntitone (hq : q.ScopeAntitone) :
     globalExh q d ↔ someReading q d :=
   ⟨And.left, fun h ↦ ⟨h, someReading_imp_allReading hq h⟩⟩
 
+/-- The global construal gaps where the literal meaning holds and the all-substituted one fails. -/
+theorem globalConstrual_eq_indet_iff :
+    globalConstrual q d = .indet ↔ someReading q d ∧ ¬ allReading q d := by
+  rw [globalConstrual, gapValue_eq_indet_iff, globalExh]
+  tauto
+
 /-- The global construals depart from supervaluation exactly where the literal meaning is false
 and the locally exhaustified meaning true. -/
 theorem globalConstrual_ne_supervaluation_iff :
     globalConstrual q d ≠ supervaluation q d ↔ ¬ someReading q d ∧ allReading q d := by
-  unfold globalConstrual supervaluation globalExh
-  by_cases hs : someReading q d <;> by_cases ha : allReading q d <;> simp [hs, ha]
-  decide
+  rcases h₁ : globalConstrual q d with _ | _ | _ <;>
+    rcases h₂ : supervaluation q d with _ | _ | _ <;>
+    simp_all [globalConstrual, globalExh, supervaluation_eq_true_iff, supervaluation_eq_false_iff,
+      supervaluation_eq_indet_iff]
 
 /-- In the scope of a scope-monotone quantifier such as *every* the implicature construals all
-align: comparing the literal meaning with global exhaustification and with local exhaustification
-comes to the same thing (§6.1.3). -/
+align, since comparing the literal meaning with global exhaustification and with local
+exhaustification comes to the same thing (§6.1.3). -/
 theorem globalConstrual_eq_supervaluation_of_scopeMonotone (hq : q.ScopeMonotone) :
     globalConstrual q d = supervaluation q d :=
   not_not.1 fun h ↦ (globalConstrual_ne_supervaluation_iff.1 h).elim fun hs ha ↦
     hs (allReading_imp_someReading hq ha)
 
-/-- Without local exhaustification, no gap can arise in the scope of a downward-entailing
-quantifier such as *no*: exhaustification is vacuous there, so the literal and globally
-exhaustified meanings never conflict. The observed C2 gap therefore forces either local
-exhaustification or the supervaluation and presupposition alternatives. -/
+/-- Without local exhaustification no gap can arise in the scope of a downward-entailing
+quantifier such as *no*, since exhaustification is vacuous there and the literal and globally
+exhaustified meanings never conflict. -/
 theorem globalConstrual_ne_indet_of_scopeAntitone (hq : q.ScopeAntitone) :
     globalConstrual q d ≠ .indet :=
   gapValue_ne_indet (globalExh_iff_of_scopeAntitone hq).symm
 
+/-- Universal projection fails exactly on the displays with a partial cell. -/
+theorem universalPresupposition_eq_indet_iff :
+    universalPresupposition q d = .indet ↔ .indet ∈ d := by
+  rw [universalPresupposition, Trivalent.meetWeak_eq_indet_iff]
+  simp only [Trivalent.presuppose_eq_indet_iff, Trivalent.ofProp_ne_indet, or_false, Ne,
+    Trivalent.ofProp_eq_true_iff, not_forall, exists_prop]
+  constructor
+  · rintro ⟨v, hv, h⟩
+    cases v <;> simp_all [Trivalent.isDefined]
+  · exact fun h ↦ ⟨_, h, by simp [Trivalent.isDefined]⟩
+
 end Approaches
+
+/-! ### Negation and the wide-scope parse (§6.1.3) -/
+
+/-- Over one cell the unembedded sentence takes the cell's value. -/
+theorem supervaluation_all_singleton (v : Trivalent) : supervaluation NumberTree.all [v] = v := by
+  cases v <;> decide
+
+/-- The literal-against-global construal never gaps under plain negation, which is downward
+entailing. -/
+theorem globalConstrual_notAll_ne_indet (v : Trivalent) :
+    globalConstrual NumberTree.notAll [v] ≠ .indet :=
+  globalConstrual_ne_indet_of_scopeAntitone NumberTree.scopeAntitone_notAll
+
+/-- On the parse (35) where the definite takes scope over negation, the literal-against-global
+construal of *the shapes are not green* is the supervaluation of its narrow-scope negation, so it
+gaps exactly on the mixed cell. No such parse is available under *no*, whose definite contains a
+variable the quantifier binds. -/
+theorem globalConstrual_wideScope (v : Trivalent) :
+    globalConstrual NumberTree.all [v.neg] = supervaluation NumberTree.notAll [v] := by
+  rw [globalConstrual_eq_supervaluation_of_scopeMonotone NumberTree.scopeMonotone_all]
+  exact supervaluation_map_neg (q := NumberTree.all) (d := [v]) |>.trans (by cases v <;> decide)
 
 /-! ### Global exhaustification is double strengthening -/
 
@@ -382,28 +454,11 @@ variable {q : NumberTree} [DecidableRel q] {d : Display}
 theorem supervaluation_eq_image :
     supervaluation q d =
       Trivalent.supervaluation (Finset.univ.image fun δ ↦ resolve δ d) (holds q) := by
-  have hall : (∀ c ∈ Finset.univ.image fun δ ↦ resolve δ d, holds q c) ↔
-      someReading q d ∧ allReading q d := by
-    simp only [Finset.mem_image, Finset.mem_univ, true_and, forall_exists_index,
-      forall_apply_eq_imp_iff]
-    exact ⟨fun h ↦ ⟨h _, h _⟩, fun ⟨h₁, h₂⟩ δ ↦ by cases δ <;> assumption⟩
-  have hex : (∃ c ∈ Finset.univ.image fun δ ↦ resolve δ d, holds q c) ↔
-      someReading q d ∨ allReading q d := by
-    simp only [Finset.mem_image, Finset.mem_univ, true_and, exists_exists_eq_and]
-    exact ⟨fun ⟨δ, h⟩ ↦ by cases δ <;> simp [reading, h], fun h ↦ h.elim (⟨_, ·⟩) (⟨_, ·⟩)⟩
-  have hne : (Finset.univ.image fun δ ↦ resolve δ d).Nonempty := Finset.univ_nonempty.image _
-  cases h : supervaluation q d
-  · exact ((Trivalent.supervaluation_eq_true_iff ..).2 (hall.2 (gapValue_eq_true_iff.1 h))).symm
-  · refine ((Trivalent.supervaluation_eq_false_iff ..).2 ⟨hne, fun c hc hq' ↦ ?_⟩).symm
-    exact (gapValue_eq_false_iff.1 h).elim fun h₁ h₂ ↦ (hex.1 ⟨c, hc, hq'⟩).elim h₁ h₂
-  · have hni := gapValue_eq_indet_iff.1 h
-    refine ((Trivalent.supervaluation_eq_indet_iff ..).2 ⟨hex.2 (by tauto), ?_⟩).symm
-    by_contra hn
-    push Not at hn
-    exact hni (iff_of_true (hall.1 hn).1 (hall.1 hn).2)
+  rw [supervaluation_eq_designations, Trivalent.supervaluation_image]
+  rfl
 
-/-- Richer candidates can only add gaps: whatever the quantifier, the per-boy supervaluation is
-at most as informative as the two-candidate one. -/
+/-- Richer candidates can only add gaps, since whatever the quantifier the per-boy supervaluation
+is at most as informative as the two-candidate one. -/
 theorem toFlat_pointwise_le :
     Trivalent.toFlat (pointwise q d) ≤ Trivalent.toFlat (supervaluation q d) := by
   rw [supervaluation_eq_image]
@@ -411,7 +466,7 @@ theorem toFlat_pointwise_le :
   obtain ⟨δ, -, rfl⟩ := Finset.mem_image.1 hc
   exact List.mem_toFinset.2 (resolve_mem_resolutions δ d)
 
-/-- Under a scope-monotone quantifier the per-boy resolutions add no gap: the uniform ones are
+/-- Under a scope-monotone quantifier the per-boy resolutions add no gap, the uniform ones being
 their extremes. -/
 theorem pointwise_eq_supervaluation_of_scopeMonotone (hq : q.ScopeMonotone) :
     pointwise q d = supervaluation q d := by
@@ -425,17 +480,15 @@ theorem pointwise_eq_supervaluation_of_scopeMonotone (hq : q.ScopeMonotone) :
       (resolve_le_of_mem_resolutions (List.mem_toFinset.1 hc)).2 h, fun h ↦ ⟨_, hlp, h⟩⟩
   have hle := allReading_imp_someReading (d := d) hq
   cases h : supervaluation q d
-  · exact (Trivalent.supervaluation_eq_true_iff ..).2 (hall.2 (gapValue_eq_true_iff.1 h).2)
+  · exact (Trivalent.supervaluation_eq_true_iff ..).2 (hall.2 (supervaluation_eq_true_iff.1 h).2)
   · exact (Trivalent.supervaluation_eq_false_iff ..).2 ⟨⟨_, hk3⟩,
-      fun c hc hq' ↦ (gapValue_eq_false_iff.1 h).1 (hex.1 ⟨c, hc, hq'⟩)⟩
+      fun c hc hq' ↦ (supervaluation_eq_false_iff.1 h).1 (hex.1 ⟨c, hc, hq'⟩)⟩
   · have ⟨hs, ha⟩ : someReading q d ∧ ¬ allReading q d := by
-      have := gapValue_eq_indet_iff.1 h
+      have := supervaluation_eq_indet_iff.1 h
       tauto
     exact (Trivalent.supervaluation_eq_indet_iff ..).2 ⟨hex.2 hs, _, hk3, ha⟩
 
-theorem supervaluation_compl : supervaluation qᶜ d = (supervaluation q d).neg :=
-  gapValue_not
-
+/-- The outer negation of the quantifier negates the per-boy supervaluation. -/
 theorem pointwise_compl : pointwise qᶜ d = (pointwise q d).neg :=
   Trivalent.supervaluation_not _ ⟨_, List.mem_toFinset.2 (resolve_mem_resolutions .k3 d)⟩
 
@@ -447,181 +500,191 @@ theorem pointwise_eq_supervaluation_of_scopeAntitone (hq : q.ScopeAntitone) :
 
 end Pointwise
 
-/-! ### The tested grid -/
+/-! ### The experiments -/
 
-/-- The embedding quantifiers of the C-series conditions of Table 2 are *every*, *no* and
-*exactly two*. -/
-inductive Operator where
-  | every
-  | no
-  | exactlyTwo
-  deriving DecidableEq, Repr
-
-/-- The number tree each embedding quantifier denotes. -/
-def Operator.tree : Operator → NumberTree
-  | .every => NumberTree.all
+/-- The number tree of each environment; sentential negation is the outer negation of the
+unembedded sentence over its one cell. -/
+def Embedding.tree : Embedding → NumberTree
+  | .unembedded => NumberTree.all
+  | .negation => NumberTree.notAll
+  | .all => NumberTree.all
   | .no => NumberTree.no
-  | .exactlyTwo => NumberTree.cardinal {2}
+  | .exactly => NumberTree.cardinal {numeral}
 
-instance : (op : Operator) → DecidableRel op.tree
-  | .every => inferInstanceAs (DecidableRel NumberTree.all)
+instance : (e : Embedding) → DecidableRel e.tree
+  | .unembedded | .all => inferInstanceAs (DecidableRel NumberTree.all)
+  | .negation => inferInstanceAs (DecidableRel NumberTree.notAll)
   | .no => inferInstanceAs (DecidableRel NumberTree.no)
-  | .exactlyTwo => inferInstanceAs (DecidableRel (NumberTree.cardinal {2}))
+  | .exactly => inferInstanceAs (DecidableRel (NumberTree.cardinal {2}))
 
-/-- The conditions of Table 2 are the clearly true and clearly false situations and three gap
-candidates, the gap?? condition being the one Experiment C4 adds under *exactly*. -/
-inductive Condition where
-  | clearlyTrue
-  | clearlyFalse
-  | gap
-  | gapQ
-  | gapQQ
-  deriving DecidableEq, Repr
+/-- Negation and *no* are downward entailing; the other environments are not. -/
+instance : (e : Embedding) → Decidable e.tree.ScopeAntitone
+  | .unembedded | .all => isFalse fun h ↦ Nat.one_ne_zero (h 0 0 rfl)
+  | .negation => isTrue NumberTree.scopeAntitone_notAll
+  | .no => isTrue NumberTree.scopeAntitone_no
+  | .exactly => isFalse fun h ↦ by simpa [Embedding.tree, numeral] using h 0 1
 
-/-- A row records a tested condition with its quantifier, its Table 13 display, and the judgment
-the results commit to. -/
-structure Row where
-  operator : Operator
-  condition : Condition
-  display : Display
-  observed : Trivalent
-  deriving Repr
+/-- The display of an item, each cell's trivalent value. -/
+def Item.display (i : Item) : Display := i.cells.map cell
 
-/-- A datum reads as a row with its display, a clear condition taking its clear value and a
-gap-family condition its recorded one (`HomogeneityGap.gapTruth`). -/
-def Row.ofDatum (e : Datum) : Option Row := do
-  let op ← e.parse? "operator" [("every", .every), ("no", .no), ("exactlyTwo", .exactlyTwo)]
-  let c ← e.parse? "condition" [("TRUE", .clearlyTrue), ("FALSE", .clearlyFalse),
-    ("GAP", .gap), ("GAP?", .gapQ), ("GAP??", .gapQQ)]
-  let d ← displayOf? e
-  let observed ← match c with
-    | .clearlyTrue => some .true
-    | .clearlyFalse => some .false
-    | _ => HomogeneityGap.gapTruth e.paperFeatures
-  some ⟨op, c, d, observed⟩
+/-- The designed value of the negated sentence swaps TRUE and FALSE. -/
+def Condition.neg : Condition → Condition
+  | .clearlyTrue => .clearlyFalse
+  | .clearlyFalse => .clearlyTrue
+  | c => c
 
-/-- The embedded conditions of Experiments C2 to C4. -/
-def data : List Row := Examples.all.filterMap Row.ofDatum
+/-- The E-neg items are the E-∅ displays judged with the negated sentence. -/
+def negationItems : List Item :=
+  (items.filter (·.embedding = .unembedded)).map fun i ↦
+    { i with embedding := .negation, condition := i.condition.neg }
 
-/-- Each condition is realized by a display with the intended pattern of variants: both true in
-the clearly true condition, differing in the gap and gap?? conditions, and both false otherwise. -/
-theorem condition_pattern :
-    ∀ t ∈ data, (t.condition = .clearlyTrue ↔
-        someReading t.operator.tree t.display ∧ allReading t.operator.tree t.display) ∧
-      (t.condition ∈ [.gap, .gapQQ] ↔
-        ¬ (someReading t.operator.tree t.display ↔ allReading t.operator.tree t.display)) := by
+/-- The items judged in the experiments, Table 13's and the E-neg ones. -/
+def tested : List Item := items ++ negationItems
+
+/-- The weak variant of the sentence, which the strong one entails, is the some-substituted
+reading, or under a downward-entailing scope the all-substituted one. -/
+def weak (e : Embedding) (d : Display) : Prop :=
+  if e.tree.ScopeAntitone then allReading e.tree d else someReading e.tree d
+
+/-- The strong variant of the sentence. -/
+def strong (e : Embedding) (d : Display) : Prop :=
+  if e.tree.ScopeAntitone then someReading e.tree d else allReading e.tree d
+
+instance (e : Embedding) (d : Display) : Decidable (weak e d) := by
+  unfold weak; infer_instance
+
+instance (e : Embedding) (d : Display) : Decidable (strong e d) := by
+  unfold strong; infer_instance
+
+/-- The GAP? item 5599 of Table 13, whose two full cells §3.3.2's description of the GAP? items
+excludes. -/
+def misprinted : Item := ⟨.exactly, .gapQ, [5, 5, 9, 9], .used⟩
+
+/-- The item is printed in Table 13. -/
+theorem misprinted_mem : misprinted ∈ items := by decide
+
+/-- The item realizes the GAP?? pattern, its all-variant true and its some-variant false. -/
+theorem misprinted_gapQQ :
+    ¬ weak .exactly misprinted.display ∧ strong .exactly misprinted.display := by
   decide
 
-/-! ### Predictions against the data -/
-
-/-- The supervaluation (equivalently, local-exhaustification) prediction reproduces every
-embedded judgment, the bottom line of §6.4. The fit is bought either by allowing local
-exhaustification in downward-entailing contexts, contra [chierchia-fox-spector-2012], or by
-restricting the supervaluation candidates to the existential and universal resolutions. -/
-theorem supervaluation_matches_data :
-    ∀ t ∈ data, supervaluation t.operator.tree t.display = t.observed := by
+/-- Every tested item realizes its condition by §3's principle, read with the entailment
+direction of its scope, the weak variant holding in the TRUE and GAP conditions and the strong one
+in the TRUE and GAP?? conditions. -/
+theorem items_variants : ∀ i ∈ tested, i.status ≠ .faulty → i ≠ misprinted →
+    (weak i.embedding i.display ↔ i.condition ∈ [.clearlyTrue, .gap]) ∧
+      (strong i.embedding i.display ↔ i.condition ∈ [.clearlyTrue, .gapQQ]) := by
   decide
 
-/-- Construals locating the gap in a literal-vs-global-exhaustification conflict fail on
-exactly two cells: the small-but-robust *no* gap of Experiment C2, where no implicature
-arises in a downward-entailing context (§6.1.3), and the gap?? gap of Experiment C4, where
-the literal meaning and the implicature are false and true respectively, so their
-conjunction is simply false. Both cells are predicted clearly false but observed gappy. -/
-theorem globalConstrual_divergence :
-    ∀ t ∈ data, (globalConstrual t.operator.tree t.display ≠ t.observed ↔
-      (t.operator, t.condition) ∈ [(.no, .gap), (.exactlyTwo, .gapQQ)]) := by
+/-- Because of the coding error of §3.2.4, the faulty E-no items, coded FALSE, realize the GAP
+pattern. -/
+theorem faulty_items : ∀ i ∈ items, i.status = .faulty →
+    weak i.embedding i.display ∧ ¬ strong i.embedding i.display := by
   decide
 
-/-- Universal projection of the homogeneity presupposition fails on exactly the bivalently
-judged conditions whose displays contain partial cells, the argument from (42) of §6.3: the
-clearly false conditions of Experiments C2 and C3 and the gap? condition, where a presupposition
-failure is predicted but falsity observed. -/
-theorem universalPresupposition_divergence :
-    ∀ t ∈ data, (universalPresupposition t.operator.tree t.display ≠ t.observed ↔
-      t.observed ≠ .indet ∧ .indet ∈ t.display) := by
+/-- A test is discounted when it is one of the A2 and B2 tests of *no*, whose sentences lacked
+negative inversion (fn 10) and were plausibly read with an unbound definite (fn 14). -/
+def GapTest.Discounted (t : GapTest) : Prop := t.experiment ∈ [.a2, .b2] ∧ t.embedding = .no
+
+instance (t : GapTest) : Decidable t.Discounted := inferInstanceAs (Decidable (_ ∧ _))
+
+/-- Table 2 found a gap in every GAP and GAP?? test and in no GAP? test, except in the discounted
+tests. -/
+theorem found_iff : ∀ t ∈ gapTests, (t.found = .yes ↔ t.condition ≠ .gapQ) ↔ ¬ t.Discounted := by
   decide
 
-/-- Resolving the partial cells boy by boy predicts a gap in the gap? condition, where two boys
-found some but not all of their presents and resolving one each way makes exactly two finders;
-falsity was observed. Every other condition is predicted as by the two-candidate
-supervaluation. -/
-theorem pointwise_divergence :
-    ∀ t ∈ data, (pointwise t.operator.tree t.display ≠ t.observed ↔
-      (t.operator, t.condition) = (.exactlyTwo, .gapQ)) := by
+/-- Table 2 tests only the gap conditions. -/
+theorem gapTests_condition : ∀ t ∈ gapTests, t.condition ∈ [.gap, .gapQ, .gapQQ] := by decide
+
+/-- The supervaluation is true exactly on the variants' agreement in truth. -/
+theorem supervaluation_eq_true_iff_weak (e : Embedding) (d : Display) :
+    supervaluation e.tree d = .true ↔ weak e d ∧ strong e d := by
+  unfold weak strong
+  split_ifs <;> simp [supervaluation_eq_true_iff, and_comm]
+
+/-- The supervaluation gaps exactly where the variants differ. -/
+theorem supervaluation_eq_indet_iff_weak (e : Embedding) (d : Display) :
+    supervaluation e.tree d = .indet ↔ ¬ (weak e d ↔ strong e d) := by
+  unfold weak strong
+  split_ifs <;> simp [supervaluation_eq_indet_iff, Iff.comm]
+
+/-- The supervaluation is true exactly on the items designed true. -/
+theorem supervaluation_eq_true_iff_condition : ∀ i ∈ tested, i.status ≠ .faulty →
+    i ≠ misprinted → (supervaluation i.embedding.tree i.display = .true ↔
+      i.condition = .clearlyTrue) := by
+  intro i hi hs hm
+  obtain ⟨h₁, h₂⟩ := items_variants i hi hs hm
+  rw [supervaluation_eq_true_iff_weak, h₁, h₂]
+  cases i.condition <;> simp
+
+/-- The supervaluation gaps on an item exactly when its environment and condition were found to
+gap, outside the discounted tests. -/
+theorem supervaluation_eq_indet_iff_found : ∀ i ∈ tested, i.status ≠ .faulty → i ≠ misprinted →
+    ∀ t ∈ gapTests, ¬ t.Discounted → t.embedding = i.embedding → t.condition = i.condition →
+      (supervaluation i.embedding.tree i.display = .indet ↔ t.found = .yes) := by
+  intro i hi hs hm t ht hd _ hc
+  obtain ⟨h₁, h₂⟩ := items_variants i hi hs hm
+  have hg := gapTests_condition t ht
+  rw [supervaluation_eq_indet_iff_weak, h₁, h₂, (found_iff t ht).2 hd, hc]
+  rw [hc] at hg
+  revert hg
+  cases i.condition <;> simp
+
+/-- The literal-against-global construal misfits exactly the GAP items under a downward-entailing
+scope, sentential negation and *no*, and the GAP?? items, where the all-variant is true and the
+some-variant false (§6.1.3). -/
+theorem globalConstrual_misfit_iff : ∀ i ∈ tested, i.status ≠ .faulty → i ≠ misprinted →
+    ∀ t ∈ gapTests, ¬ t.Discounted → t.embedding = i.embedding → t.condition = i.condition →
+      (¬ (globalConstrual i.embedding.tree i.display = .indet ↔ t.found = .yes) ↔
+        (i.embedding.tree.ScopeAntitone ∧ i.condition = .gap) ∨ i.condition = .gapQQ) := by
   decide
 
-/-! ### The unembedded grid
+/-- Universal projection predicts a presupposition failure on a FALSE item of *all*, where the
+sentence was judged false as soon as one cell has no target symbols, the argument from (42). -/
+theorem universalPresupposition_false_item :
+    ∃ i ∈ items, i.embedding = .all ∧ i.condition = .clearlyFalse ∧
+      universalPresupposition i.embedding.tree i.display = .indet := by
+  decide
 
-The polarity × scenario cells of Exps. A0/A1/B1 are pooled in [[Generalizations.HomogeneityGap]].
-An unembedded display is a single cell, nine shapes of which all, some, or none are
-target-colored; the positive sentence is the scope-monotone and its negation the scope-antitone
-corner of the square over it. -/
+/-- The per-boy supervaluation departs from the two-candidate one on exactly the GAP? items. -/
+theorem pointwise_ne_iff : ∀ i ∈ tested, i.status ≠ .faulty → i ≠ misprinted →
+    (pointwise i.embedding.tree i.display ≠ supervaluation i.embedding.tree i.display ↔
+      i.condition = .gapQ) := by
+  decide
 
-/-- The paper's unembedded rows, read by the pool's adapter. -/
-def gapData : List HomogeneityGap.GapDatum := Examples.all.filterMap HomogeneityGap.fromDatum
+/-- The at-least reading of *exactly 2* that §3.4 discusses. -/
+def atLeastTwo : NumberTree := NumberTree.cardinal {b | 2 ≤ b}
 
-/-- The value of the single cell realizing each unembedded scenario. -/
-def scenarioValue : HomogeneityGap.GapScenario → Trivalent
+instance : DecidableRel atLeastTwo := fun _ b ↦ inferInstanceAs (Decidable (2 ≤ b))
+
+/-- On the at-least reading the GAP? items are gap items. -/
+theorem atLeastTwo_gapQ : ∀ i ∈ items, i.condition = .gapQ → i ≠ misprinted →
+    supervaluation atLeastTwo i.display = .indet := by
+  decide
+
+/-- On the at-least reading the FALSE items of *exactly* with three or more full cells are true,
+the items with elevated true responses in Fig. 10. -/
+theorem atLeastTwo_false : ∀ i ∈ items, i.embedding = .exactly → i.condition = .clearlyFalse →
+    (supervaluation atLeastTwo i.display = .true ↔ 3 ≤ i.cells.count 9) := by
+  decide
+
+/-- A teacher's cell in a situation of Table 12. -/
+def Share.value : Share → Trivalent
   | .all => .true
+  | .half => .indet
   | .none => .false
-  | .gap => .indet
 
-/-- The quantifier an unembedded sentence of each polarity applies to its one cell. -/
-def unembedded : Polarity → NumberTree
-  | .positive => NumberTree.all
-  | .negative => NumberTree.no
+/-- The display of a situation of Table 12, Bill's, Mary's and Sue's cells. -/
+def Situation.display (s : Situation) : Display := [s.bill, s.mary, s.sue].map Share.value
 
-instance : (pol : Polarity) → DecidableRel (unembedded pol)
-  | .positive => inferInstanceAs (DecidableRel NumberTree.all)
-  | .negative => inferInstanceAs (DecidableRel NumberTree.no)
-
-/-- The supervaluation over the unembedded grid resolves the definite existentially and
-universally, under negation at the negative polarity. -/
-def supervaluationGap (pol : Polarity) (sc : HomogeneityGap.GapScenario) : Trivalent :=
-  supervaluation (unembedded pol) [scenarioValue sc]
-
-/-- The unembedded positive prediction is the cell's own value. -/
-theorem supervaluationGap_positive (sc : HomogeneityGap.GapScenario) :
-    supervaluationGap .positive sc = scenarioValue sc := by
-  cases sc <;> decide
-
-/-- The unembedded negative prediction is the negation of the cell's value. -/
-theorem supervaluationGap_negative (sc : HomogeneityGap.GapScenario) :
-    supervaluationGap .negative sc = (scenarioValue sc).neg := by
-  cases sc <;> decide
-
-/-- The supervaluation account reproduces the paper's unembedded and negated judgments: truth on
-uniform displays, the gap on mixed ones, projected through negation (Exps. A1/B1). -/
-theorem supervaluationGap_matches_data :
-    ∀ d ∈ gapData, supervaluationGap d.polarity d.scenario = d.observed := by
-  decide
-
-/-- The bare implicature construal assigns a negated sentence its existential literal meaning
-outright: negation is downward-entailing, so no implicature arises and no gap is predicted
-(§6.1.3). -/
-def bareLiteralNegative (sc : HomogeneityGap.GapScenario) : Trivalent :=
-  .ofProp (someReading NumberTree.no [scenarioValue sc])
-
-/-- The E-neg gap of Exps. A1/B1 refutes the bare implicature construal: the negated mixed-display
-cell is observed gappy but predicted clearly false. This is §6.1.3's downward-entailing problem,
-which for plain negation the wide-scope parse solves (`wideScopeParse_matches_data`) but for
-`no`, whose definite contains a variable bound by the quantifier ([steedman-2012]), nothing
-does. -/
-theorem bareLiteral_misses_negation_gap :
-    ∃ d ∈ gapData, d.polarity = .negative ∧ d.scenario = .gap ∧
-      bareLiteralNegative d.scenario ≠ d.observed := by
-  decide
-
-/-- The wide-scope parse of the negated sentence (§6.1.3) puts the definite above negation, with
-the literal meaning *some of the shapes are not green* and the strengthening *all of the shapes
-are not green*. -/
-def wideScopeParse (sc : HomogeneityGap.GapScenario) : Trivalent :=
-  gapValue (¬ designated .k3 (scenarioValue sc)) (¬ designated .lp (scenarioValue sc))
-
-/-- With the wide-scope parse, the implicature construal again reproduces the negated judgments,
-the paper's rescue for plain negation. -/
-theorem wideScopeParse_matches_data :
-    ∀ d ∈ gapData, d.polarity = .negative → wideScopeParse d.scenario = d.observed := by
+/-- Table 12 follows from its situations. The literal and locally exhaustified parses hold as its
+corresponding conditions require, the (si2) and (si4) construals, the supervaluation, gap exactly
+where a gap was found, and the (si1) and (si3) construals miss the GAP?? situation. -/
+theorem situations_variants : ∀ s ∈ situations,
+    (someReading Embedding.exactly.tree s.display ↔ s.condition ∈ [.clearlyTrue, .gap]) ∧
+      (allReading Embedding.exactly.tree s.display ↔ s.condition ∈ [.clearlyTrue, .gapQQ]) ∧
+      (supervaluation Embedding.exactly.tree s.display = .indet ↔ s.found = .yes) ∧
+      (globalConstrual Embedding.exactly.tree s.display = .indet ↔ s.condition = .gap) := by
   decide
 
 end KrizChemla2015

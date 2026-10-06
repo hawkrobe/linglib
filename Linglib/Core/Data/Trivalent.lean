@@ -718,6 +718,12 @@ theorem supervaluation_congr {Q : α → Prop} [DecidablePred Q] (h : ∀ a ∈ 
   · simp only [supervaluation_eq_true_iff]
     exact forall₂_congr h
 
+/-- Supervaluating over the image of a family is supervaluating the composite over the family. -/
+theorem supervaluation_image {β : Type*} [DecidableEq β] (f : α → β) (Q : β → Prop)
+    [DecidablePred Q] : supervaluation (s.image f) Q = supervaluation s (Q ∘ f) := by
+  refine eq_of_indet_iff_of_true_iff ?_ ?_ <;>
+    simp [supervaluation_eq_indet_iff, supervaluation_eq_true_iff]
+
 variable {s} in
 /-- Over a nonempty family a constant predicate supervaluates to its classical value. -/
 theorem supervaluation_const (hs : s.Nonempty) (q : Prop) [Decidable q] :
