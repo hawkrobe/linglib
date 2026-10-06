@@ -15,7 +15,9 @@ gives an operator from event predicates to interval predicates, and the operator
 is that of its relation; the imperfective, perfective and prospective operators of Knick and
 Sharf are instances. The perfect takes an interval predicate to a predicate of world-time points
 through a perfect time span, which a perfect-level adverbial in the sense of Iatridou,
-Anagnostopoulou and Izvorski restricts.
+Anagnostopoulou and Izvorski restricts. An interval adverbial is read durative, the predicate
+holding at every subinterval of its interval, or inclusive, at some subinterval, as Dowty,
+Mittwoch and Vlach distinguish them.
 
 ## Main definitions
 
@@ -25,6 +27,8 @@ Anagnostopoulou and Izvorski restricts.
 * `Aspect.UNBOUNDED`: Pancheva's non-strict imperfective.
 * `Aspect.PERF_XN`: the perfect with a left boundary drawn from a domain restriction.
 * `Aspect.PERF_ADV`: the perfect over the spans a perfect-level adverbial admits.
+* `Aspect.IntervalPred.durative`, `Aspect.IntervalPred.inclusive`: the durative and inclusive
+  readings of an interval adverbial.
 
 ## Main results
 
@@ -54,6 +58,9 @@ Anagnostopoulou and Izvorski restricts.
 * [knick-sharf-2026]
 * [pancheva-2003]
 * [iatridou-anagnostopoulou-izvorski-2001]
+* [dowty-1979]
+* [mittwoch-1988]
+* [vlach-1993]
 -/
 
 @[expose] public section
@@ -236,5 +243,25 @@ theorem perf_adv_iff_perf_xn_image (adv : NonemptyInterval T → Prop) (w : W) (
       have : pts' = pts :=
         NonemptyInterval.ext (Prod.ext (hfst.trans hLB.symm) (hRB'.trans hRB.symm))
       ⟨pts, this ▸ hadv, hRB, hp⟩⟩
+
+/-! ### Durative and inclusive readings -/
+
+/-- `p.durative` holds at a span when `p` holds at every subinterval of it, the durative reading
+of an interval adverbial, *throughout*. -/
+def IntervalPred.durative (p : IntervalPred W T) : IntervalPred W T := fun w i ↦ ∀ j ≤ i, p w j
+
+/-- `p.inclusive` holds at a span when `p` holds at some subinterval of it, the inclusive reading
+of an interval adverbial, *in*. -/
+def IntervalPred.inclusive (p : IntervalPred W T) : IntervalPred W T := fun w i ↦ ∃ j ≤ i, p w j
+
+variable {p} {w : W} {i : NonemptyInterval T}
+
+theorem IntervalPred.inclusive_iff_mem_upperClosure :
+    p.inclusive w i ↔ i ∈ upperClosure {j | p w j} :=
+  ⟨fun ⟨j, hj, hp⟩ ↦ mem_upperClosure.2 ⟨j, hp, hj⟩,
+    fun h ↦ let ⟨j, hp, hj⟩ := mem_upperClosure.1 h; ⟨j, hj, hp⟩⟩
+
+theorem IntervalPred.inclusive_of_durative (h : p.durative w i) : p.inclusive w i :=
+  ⟨i, le_rfl, h i le_rfl⟩
 
 end Aspect

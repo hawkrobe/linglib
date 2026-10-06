@@ -41,7 +41,9 @@ the punctual words, and its stativity diagnostics from homogeneity with negation
   perfective description places it within the reference interval, an imperfective one strictly
   around it. The until interval is required to be nondegenerate, which is what excludes a single
   event from satisfying the durative condition at both its endpoints.
-* Homogeneity is the subinterval property of `Aspect/SubintervalProperty.lean`.
+* Homogeneity is the subinterval property of `Aspect/SubintervalProperty.lean`, and durative
+  UNTIL is the durative reading `IntervalPred.durative` at a nondegenerate span ending at the
+  until time.
 * The relation of each connective is read off its fragment entry. Which words are punctual
   *until*s, Greek *para monon*, Icelandic *fyrr en* and Dutch *pas*, is the paper's
   classification (`Connective.Punctual`). The polarity of the eventive words is read off their
@@ -70,17 +72,16 @@ variable {W T E : Type*} [LinearOrder T] [Event.TemporalTrace E T]
 
 /-! ### Durative UNTIL and homogeneity -/
 
-/-- Durative UNTIL holds when the description holds at every subinterval of a nondegenerate interval
-ending at the until time. -/
+/-- Durative UNTIL holds when the description holds throughout a nondegenerate interval ending at
+the until time, at every one of its subintervals. -/
 def durativeUntil (p : IntervalPred W T) (w : W) (t' : T) : Prop :=
-  ∃ i : NonemptyInterval T, i.fst < i.snd ∧ i.snd = t' ∧ ∀ j ≤ i, p w j
+  ∃ i : NonemptyInterval T, i.fst < i.snd ∧ RB i t' ∧ p.durative w i
 
 /-- A homogeneous description need only hold at the until interval itself. -/
 theorem durativeUntil_iff_of_hasSubintervalProperty {p : IntervalPred W T}
     (hp : p.HasSubintervalProperty) (w : W) (t' : T) :
-    durativeUntil p w t' ↔ ∃ i : NonemptyInterval T, i.fst < i.snd ∧ i.snd = t' ∧ p w i :=
-  ⟨fun ⟨i, hi, ht, h⟩ ↦ ⟨i, hi, ht, h i le_rfl⟩,
-    fun ⟨i, hi, ht, h⟩ ↦ ⟨i, hi, ht, fun _ hj ↦ hp w hj h⟩⟩
+    durativeUntil p w t' ↔ ∃ i : NonemptyInterval T, i.fst < i.snd ∧ RB i t' ∧ p w i := by
+  simp only [durativeUntil, IntervalPred.durative_iff_of_hasSubintervalProperty hp]
 
 /-- A perfective description of a single event is incompatible with durative UNTIL, since an
 achievement or accomplishment cannot lie within both endpoints of the until interval. -/
