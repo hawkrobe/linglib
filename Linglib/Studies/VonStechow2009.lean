@@ -1,46 +1,67 @@
 module
 
-public import Linglib.Semantics.Tense.Defs
+public import Linglib.Semantics.Tense.Quantificational
+public import Linglib.Semantics.Aspect.Viewpoint
+public import Linglib.Semantics.Mereology
+public import Linglib.Studies.BeaverCondoravdi2003
 public import Linglib.Data.Examples.VonStechow2009
-public import Mathlib.Order.Bounds.Basic
+public import Mathlib.Order.Cover
 
 /-!
-# von Stechow (2009): Tenses in Compositional Semantics
+# von Stechow (2009): Tenses in compositional semantics
 
-This file formalizes [von-stechow-2009]'s compositional fragment for English tense. The
-semantic tenses are the deictic Present, the speech time, and an indefinite relative Past that
-shifts the local evaluation time backwards (22), with the auxiliaries *have* and *will* the
-past and its mirror image (26), (29) and *be* a transmitter (24); tensed verbs are tenseless
-and their morphology is licensed by the feature a semantic tense transmits to the variable it
-binds (33). Frame adverbials combine by predicate modification and interact scopally with the
-perfect auxiliary (43), and a quantified adverbial must be restricted to the past (44), (45).
-Against [partee-1973]'s referential Past (47) with a perfective operator (50), the indefinite
-Past with a contextual domain restriction (53) gives the same truth conditions for the stove
-sentence (54) and, unlike the referential one, lets negation and quantifiers scope over tense
-(58), (61); the restriction also keeps the event of a future perfect after the speech time
-(57). In relative clauses the tense is an obligatorily bound temporal pronoun, whence the
-simultaneous and the deictic readings of a present under *will* (66), (67). Under attitudes
-the anaphoric analysis makes Mary at five believe that five is six (77), so, after
-[lewis-1979-attitudes], the complement is a property of times and belief quantifies over
-world–time pairs (78), of which Hintikka's propositional belief is the time-independent case
-(74). Before- and after-clauses take the earliest time of the clause (91) after
-[beaver-condoravdi-2003], from which [anscombe-1964]'s asymmetric universal *before* and
-existential *after* follow.
+Von Stechow gives English tense a compositional semantics. The Present denotes the speech time;
+the Past is indefinite, an existential quantifier over the times before its local evaluation
+time, and so is the auxiliary *have*; *will* is its mirror image and *be* passes its time on.
+Against Partee's referential Past, the indefinite Past restricted to the times the speaker has
+in mind gives the truth conditions of her stove sentence and, unlike the referential one, lets
+negation and quantifiers scope over tense. Relative-clause tenses are bound pronouns, attitude
+complements are properties of times, and *before* and *after* take the earliest time of their
+clause. Along the way he argues that achievements need moments but not discrete time.
+
+A time is a moment, a point of a linear order, or an interval of moments, mathlib's
+`NonemptyInterval`, whose `≤` is the subinterval relation. A tense is possibility `◇` along the
+accessibility relation of its cell (`Semantics/Tense/Quantificational.lean`).
+
+## Main statements
+
+* `not_dowtyAchievement`, `achievement_rat`: Dowty's interval semantics for achievements is
+  unsatisfiable in dense time, von Stechow's moment semantics is not.
+* `not_perfAdv_yesterday`: the present perfect with *yesterday* is contradictory.
+* `every_sunday`: *John worked on every Sunday* is true on the reading restricted to past
+  Sundays, and false on both unrestricted scopings, of a calendar where John works on Sundays.
+* `restrictedPast_Iic_iff_prfv`: the Past restricted to the subintervals of a past time is the
+  perfective at that time.
+* `exists_not_prfv_past`: *It didn't rain today* is too weak on the referential analysis.
+* `anaphoric_report_iff`: on the anaphoric analysis *At five Mary thought it was six* ascribes
+  inconsistent beliefs to Mary.
+* `before_earliest_iff_beforeEver`, `after_earliest_iff_after`: *before* and *after* the earliest
+  time of the clause are Anscombe's *before ever* and *after*.
 
 ## Implementation notes
 
-Times form a linear order, the interval structure entering only through a parameter for the
-subinterval relation where the perfective and *on* need it. Feature transmission and the
-tense-deletion rule of [ogihara-1989] are described, not formalized; the extended-now perfect,
-the progressive and the type-driven syntax of PRO movement are not formalized. The paper's
-examples are the rows of `Data.Examples.VonStechow2009`.
+The tense entries, relative clauses, attitudes and adjunct clauses are stated on moments, the
+arguments about the perfective, frame adverbials and the extended now on intervals, where
+*before* is `NonemptyInterval.precedes`; *on* and *in* are `≤`, *at* is equality. The
+referential Past (47), which von Stechow takes from Heim, is the presupposition
+`Perspective.Presup ⟦past⟧`; the Perfective (50) and the extended-now perfect (28) are
+`Aspect.PRFV` and `Aspect.PERF`, and quantization (12) is Krifka's `Mereology.QUA`. The printed
+restricted Past (53) compares the quantified time with the speech time where its λ-bound
+argument is meant, as (57) shows; the printed EARLIEST (91) requires the earliest time to
+precede every time of the clause, itself included, and is read as `IsLeast`. Doxastic
+alternatives are relations on worlds indexed by times, or on world–time pairs. Feature
+transmission, PRO movement, the deletion of tenses under tenses, the progressive and the
+operators THR, ST and EV are not formalized. The examples are the rows of
+`Data.Examples.VonStechow2009`.
 
 ## References
 
 * [von-stechow-2009]
+* [dowty-1979]
+* [krifka-1989]
 * [partee-1973]
+* [heim-1994-comments]
 * [lewis-1979-attitudes]
-* [ogihara-1989]
 * [beaver-condoravdi-2003]
 * [anscombe-1964]
 -/
@@ -49,225 +70,392 @@ examples are the rows of `Data.Examples.VonStechow2009`.
 
 namespace VonStechow2009
 
-open Semantics
+open Semantics Tense Aspect ModalLogic
+open scoped SetRel
+open Reference (Index)
 
-variable {T : Type*} {s t : T} {P Q : T → Prop}
+variable {T : Type*} [LinearOrder T] {s : T} {P : T → Prop}
 
-/-! ### Tenses and auxiliaries (§5) -/
+/-! ### Achievements -/
 
-section Tenses
+section Achievements
 
-variable [LinearOrder T]
+variable {φ : T → Prop} {t : NonemptyInterval T}
 
-/-- The semantic Past (22b) and the auxiliary *have* (26): some time before the local
-evaluation time satisfies the predicate. -/
-def past (t : T) (P : T → Prop) : Prop := ∃ t', t' < t ∧ P t'
+/-- Dowty's semantics for an achievement such as *find* (10) holds of an interval at whose left
+bound `φ` fails and at whose right bound it holds, no proper subinterval being such a change. -/
+def DowtyAchievement (φ : T → Prop) (t : NonemptyInterval T) : Prop :=
+  ¬ φ t.fst ∧ φ t.snd ∧ ¬ ∃ t' < t, ¬ φ t'.fst ∧ φ t'.snd
 
-/-- The auxiliary *will* (29), the mirror image of *have*. -/
-def future (t : T) (P : T → Prop) : Prop := ∃ t', t < t' ∧ P t'
+/-- An interval satisfying Dowty's semantics consists of two adjacent moments (footnote 7). -/
+theorem dowtyAchievement_iff : DowtyAchievement φ t ↔ ¬ φ t.fst ∧ φ t.snd ∧ t.fst ⋖ t.snd := by
+  constructor
+  · rintro ⟨h₁, h₂, h₃⟩
+    refine ⟨h₁, h₂, lt_of_le_of_ne t.fst_le_snd fun h ↦ h₁ (h ▸ h₂), fun m hm hm' ↦ h₃ ?_⟩
+    by_cases hφ : φ m
+    · exact ⟨⟨(t.fst, m), hm.le⟩, lt_of_le_of_ne ⟨le_rfl, hm'.le⟩
+        fun h ↦ hm'.ne (congrArg (·.snd) h), h₁, hφ⟩
+    · exact ⟨⟨(m, t.snd), hm'.le⟩, lt_of_le_of_ne ⟨hm.le, le_rfl⟩
+        fun h ↦ hm.ne' (congrArg (·.fst) h), hφ, h₂⟩
+  · rintro ⟨h₁, h₂, hcov⟩
+    refine ⟨h₁, h₂, fun ⟨t', hlt, h₁', h₂'⟩ ↦ hlt.ne ?_⟩
+    have hle := NonemptyInterval.le_def.1 hlt.le
+    have hlt' : t'.fst < t'.snd := lt_of_le_of_ne t'.fst_le_snd fun h ↦ h₁' (h ▸ h₂')
+    refine NonemptyInterval.ext (Prod.ext ?_ ?_)
+    · exact (hle.1.lt_or_eq.resolve_left fun h ↦ hcov.2 h (hlt'.trans_le hle.2)).symm
+    · exact hle.2.lt_or_eq.resolve_left fun h ↦ hcov.2 (hle.1.trans_lt hlt') h
 
-/-- The temporal auxiliary *be* (24) passes the evaluation time on. -/
-def be (t : T) (P : T → Prop) : Prop := P t
+/-- In dense time no interval satisfies Dowty's semantics (footnote 7). -/
+theorem not_dowtyAchievement [DenselyOrdered T] (φ : T → Prop) (t : NonemptyInterval T) :
+    ¬ DowtyAchievement φ t := fun h ↦
+  have hcov := (dowtyAchievement_iff.1 h).2.2
+  let ⟨_, h₁, h₂⟩ := exists_between hcov.lt
+  hcov.2 h₁ h₂
 
-/-- The Past is the past cell of `Tense` quantified existentially. -/
-theorem past_iff_cell : past t P ↔ ∃ t', compare t' t ∈ ⟦Tense.past⟧ ∧ P t' := by
-  simp only [past, Tense.compare_mem_past]
+/-- Von Stechow's semantics for an achievement (11) holds at a moment where `φ` holds, approached
+from the left by a stretch where it fails. -/
+def Achievement (φ : T → Prop) (m : T) : Prop :=
+  (∃ n₁ < m, ¬ φ n₁ ∧ ∀ n₂, n₁ < n₂ → n₂ < m → ¬ φ n₂) ∧ φ m
 
-/-- The pluperfect (27), *John had called*: a past time before a past time. -/
-theorem pluperfect_iff : past s (λ t₁ => past t₁ P) ↔ ∃ t₁, t₁ < s ∧ ∃ t₂, t₂ < t₁ ∧ P t₂ :=
-  Iff.rfl
+/-- Von Stechow's semantics is satisfiable in the rationals. -/
+theorem achievement_rat : Achievement (fun q : ℚ ↦ 0 ≤ q) 0 :=
+  ⟨⟨-1, by norm_num, by norm_num, fun _ _ h ↦ not_le.2 h⟩, le_rfl⟩
 
-end Tenses
+/-- A predicate true only of moments is quantized (12). -/
+theorem qua_of_isPoint (Q : NonemptyInterval T → Prop) (h : ∀ t, Q t → t.IsPoint) :
+    Mereology.QUA Q := by
+  intro a ha b hb hab hle
+  obtain ⟨h₁, h₂⟩ := NonemptyInterval.le_def.1 hle
+  have ha' : a.fst = a.snd := h a ha
+  have hb' : b.fst = b.snd := h b hb
+  exact hab (NonemptyInterval.ext (Prod.ext
+    (le_antisymm (ha'.le.trans (h₂.trans hb'.symm.le)) h₁)
+    (le_antisymm h₂ (hb'.symm.le.trans (h₁.trans ha'.le)))))
 
-/-! ### Temporal adverbials (§7) -/
+end Achievements
 
-/-- (43): *Mary had left at six* is ambiguous between modification of the past reference time
-and of the event time; with the leaving at five and six a past time, the first reading holds
-and the second fails. -/
-theorem exists_referenceTime_ne_eventTime :
-    ∃ (s six : ℕ) (leave : ℕ → Prop),
-      past s (λ t => t = six ∧ past t leave) ∧
-        ¬ past s (λ t => past t (λ t' => t' = six ∧ leave t')) :=
-  ⟨10, 6, (· = 5), ⟨6, by omega, rfl, 5, by omega, rfl⟩, by
-    rintro ⟨t, -, t', -, rfl, h⟩
-    exact absurd h (by decide)⟩
+/-! ### Tenses and auxiliaries -/
+
+/-- The pluperfect *John had called* (27) places the calling before the speech time. -/
+theorem pluperfect_before_speech
+    (h : ◇[accessibility ⟦past⟧] (◇[accessibility ⟦past⟧] P) s) : ∃ t < s, P t := by
+  simpa using diamond_diamond_accessibility h
+
+/-- Without a restriction on *have*, the future perfect *John will have left at six* (55) can
+place the leaving before the speech time. -/
+theorem exists_future_perfect_before_speech :
+    ∃ (s six : ℤ) (leave : ℤ → Prop),
+      ◇[accessibility ⟦future⟧] (fun t ↦ t = six ∧ ◇[accessibility ⟦past⟧] leave t) s ∧
+        ∀ t, leave t → t < s :=
+  ⟨0, 6, (· = -1), by simp, fun _ ht ↦ by omega⟩
+
+/-- With the content of *will* added to the restriction of *have* (57), the future perfect places
+the leaving after the speech time. -/
+theorem future_perfect_after_speech {six : T}
+    (h : ◇[accessibility ⟦future⟧]
+      (fun t ↦ t = six ∧ ◇[accessibility ⟦past⟧] (fun t' ↦ s < t' ∧ P t') t) s) :
+    ∃ t', s < t' ∧ P t' :=
+  let ⟨_, _, _, t', _, hs, hP⟩ := h; ⟨t', hs, hP⟩
+
+/-! ### Temporal adverbials -/
+
+/-- The extended-now perfect (28) at the speech time is the perfect of `Aspect`. -/
+theorem xn_iff_perf {W : Type*} (p : IntervalPred W T) (w : W) :
+    (∃ t, (NonemptyInterval.pure s).finalSubinterval t ∧ p w t) ↔ PERF p (w, s) := by
+  refine exists_congr fun t ↦ and_congr_left fun _ ↦ ?_
+  change (NonemptyInterval.pure s ≤ t ∧ s = t.snd) ↔ t.snd = s
+  rw [NonemptyInterval.le_def]
+  exact ⟨fun h ↦ h.2.symm, fun h ↦ ⟨⟨h ▸ t.fst_le_snd, h.ge⟩, h.symm⟩⟩
+
+/-- In *John has called yesterday* (42, `Examples.ex_42`) *yesterday* modifies the extended-now
+interval, which ends at the speech time, so the sentence is contradictory unless the speech time
+is on yesterday. -/
+theorem not_perfAdv_yesterday {W : Type*} (call : IntervalPred W T)
+    (yesterday : NonemptyInterval T) (w : W) (hs : s ∉ yesterday) :
+    ¬ PERF_ADV call (· ≤ yesterday) (w, s) := by
+  rintro ⟨t, hle, hRB, -⟩
+  obtain ⟨h₁, h₂⟩ := NonemptyInterval.le_def.1 hle
+  have e : t.snd = s := hRB
+  exact hs (NonemptyInterval.mem_def.2 ⟨h₁.trans (t.fst_le_snd.trans e.le), e ▸ h₂⟩)
+
+/-- *Mary had left at six* (43) modifies the reference time or the event time; with the leaving
+at five, the first reading holds and the second fails. -/
+theorem reference_time_reading_not_event_time_reading :
+    ∃ (s six : ℤ) (leave : ℤ → Prop),
+      ◇[accessibility ⟦past⟧] (fun t ↦ t = six ∧ ◇[accessibility ⟦past⟧] leave t) s ∧
+        ¬ ◇[accessibility ⟦past⟧]
+          (fun t ↦ ◇[accessibility ⟦past⟧] (fun t' ↦ t' = six ∧ leave t') t) s :=
+  ⟨10, 6, (· = 5), by simp, by simp⟩
+
+/-- With the leaving at six, the second reading of *Mary had left at six* holds and the first
+fails. -/
+theorem event_time_reading_not_reference_time_reading :
+    ∃ (s six : ℤ) (leave : ℤ → Prop),
+      ◇[accessibility ⟦past⟧]
+          (fun t ↦ ◇[accessibility ⟦past⟧] (fun t' ↦ t' = six ∧ leave t') t) s ∧
+        ¬ ◇[accessibility ⟦past⟧] (fun t ↦ t = six ∧ ◇[accessibility ⟦past⟧] leave t) s :=
+  ⟨10, 6, (· = 6), ⟨7, by simp, 6, by simp, rfl, rfl⟩, by simp⟩
 
 section Quantified
 
-variable [LinearOrder T] (onDay : T → T → Prop) (sunday work : T → Prop)
+variable (sunday work : NonemptyInterval T → Prop) {σ : NonemptyInterval T}
 
-/-- Reading (44a), the adverbial quantifier under the Past, entails a past time on every Sunday. -/
-theorem exists_on_of_quantifier_narrow (h : past s (λ t => ∀ t', sunday t' → onDay t t' ∧ work t)) :
-    ∃ t, ∀ t', sunday t' → onDay t t' :=
-  match h with | ⟨t, _, h⟩ => ⟨t, λ t' ht' => (h t' ht').1⟩
+/-- *John worked on every Sunday* with the quantifier under the Past (44a) entails a past time
+on every Sunday. -/
+theorem past_time_on_every_sunday
+    (h : ◇[Perspective.accessibility ⟦past⟧] (fun t ↦ ∀ t', sunday t' → t ≤ t' ∧ work t) σ) :
+    ∃ t, ∀ t', sunday t' → t ≤ t' :=
+  let ⟨t, _, h⟩ := h; ⟨t, fun t' ht' ↦ (h t' ht').1⟩
 
-/-- Reading (44b), the quantifier over the Past, entails that every Sunday contains a time
-before the speech time. -/
-theorem forall_exists_of_quantifier_wide
-    (h : ∀ t', sunday t' → past s (λ t => onDay t t' ∧ work t)) :
-    ∀ t', sunday t' → ∃ t, t < s ∧ onDay t t' :=
-  λ t' ht' => match h t' ht' with | ⟨t, hts, h⟩ => ⟨t, hts, h.1⟩
-
-/-- (45): the wanted reading restricts the Sundays to the past; it follows from (44b) but not
-conversely, a future Sunday being a counterexample. -/
-theorem restricted_of_quantifier_wide (h : ∀ t', sunday t' → past s (λ t => onDay t t' ∧ work t)) :
-    ∀ t', sunday t' ∧ t' < s → past s (λ t => onDay t t' ∧ work t) :=
-  λ t' ht' => h t' ht'.1
-
-theorem exists_restricted_not_quantifier_wide :
-    ∃ (s : ℕ) (onDay : ℕ → ℕ → Prop) (sunday work : ℕ → Prop),
-      (∀ t', sunday t' ∧ t' < s → past s (λ t => onDay t t' ∧ work t)) ∧
-        ¬ ∀ t', sunday t' → past s (λ t => onDay t t' ∧ work t) :=
-  ⟨1, Eq, (· = 2), λ _ => True, λ t' ht' => absurd ht' (by omega),
-    λ h => match h 2 rfl with | ⟨_, ht, _, _⟩ => by omega⟩
+/-- With the quantifier over the Past (44b) it entails that every Sunday contains a past time. -/
+theorem every_sunday_contains_past_time
+    (h : ∀ t', sunday t' → ◇[Perspective.accessibility ⟦past⟧] (fun t ↦ t ≤ t' ∧ work t) σ) :
+    ∀ t', sunday t' → ∃ t, t.precedes σ ∧ t ≤ t' :=
+  fun t' ht' ↦ let ⟨t, hts, h⟩ := h t' ht'; ⟨t, Perspective.presup_past.1 hts, h.1⟩
 
 end Quantified
 
-/-! ### Referential and indefinite Past (§§8–9) -/
+/-- A Sunday is the day starting at a multiple of seven. -/
+def sunday (t : NonemptyInterval ℕ) : Prop := t.fst % 7 = 0 ∧ t.snd = t.fst + 1
+
+/-- If John works on every Sunday, *John worked on every Sunday* said on day ten is true on the
+reading restricted to past Sundays (45), and false with the quantifier under the Past (44a), two
+Sundays sharing no time, and with the quantifier over the Past (44b), a Sunday being in the
+future. -/
+theorem every_sunday :
+    (∀ t', sunday t' ∧ t'.precedes (.pure 10) →
+      ◇[Perspective.accessibility ⟦past⟧] (fun t ↦ t ≤ t' ∧ sunday t) (.pure 10)) ∧
+    ¬ ◇[Perspective.accessibility ⟦past⟧]
+      (fun t ↦ ∀ t', sunday t' → t ≤ t' ∧ sunday t) (.pure 10) ∧
+    ¬ ∀ t', sunday t' →
+      ◇[Perspective.accessibility ⟦past⟧] (fun t ↦ t ≤ t' ∧ sunday t) (.pure 10) := by
+  refine ⟨fun t' ⟨h, hs⟩ ↦ ⟨t', Perspective.presup_past.2 hs, le_rfl, h⟩, ?_, fun h ↦ ?_⟩
+  · rintro ⟨t, -, h⟩
+    have h₀ := NonemptyInterval.le_def.1 (h ⟨(0, 1), by decide⟩ ⟨rfl, rfl⟩).1
+    have h₇ := NonemptyInterval.le_def.1 (h ⟨(7, 8), by decide⟩ ⟨rfl, rfl⟩).1
+    have := t.fst_le_snd
+    simp only at h₀ h₇
+    omega
+  · obtain ⟨t, hs, hle, -⟩ := h ⟨(14, 15), by decide⟩ ⟨rfl, rfl⟩
+    have hp : t.snd < 10 := Perspective.presup_past.1 hs
+    have h₁₄ := NonemptyInterval.le_def.1 hle
+    have := t.fst_le_snd
+    simp only at h₁₄
+    omega
+
+/-! ### Partee's stove, the Perfective and the restricted Past -/
 
 section Partee
 
-variable [LinearOrder T] (sub : T → T → Prop) (C : T → Prop)
+variable {W : Type*} (turnOff rain : IntervalPred W T) (w : W) {σ t₅ today : NonemptyInterval T}
+  {K : Set (NonemptyInterval T)} {Q : NonemptyInterval T → Prop}
 
-/-- The referential Past (47): the argument time is presupposed to precede the speech time. -/
-def refPast (s t : T) : Prop := t < s
+/-- The contextually restricted Past (53) holds of a predicate at `σ` when some interval of the
+domain `K` before `σ` satisfies it. -/
+def RestrictedPast (K : Set (NonemptyInterval T)) (Q : NonemptyInterval T → Prop)
+    (σ : NonemptyInterval T) : Prop :=
+  ◇[Perspective.accessibility ⟦past⟧] (fun t ↦ t ∈ K ∧ Q t) σ
 
-/-- The Perfective (50): the event time is a subinterval of the reference time. -/
-def pf (t : T) (P : T → Prop) : Prop := ∃ t', sub t' t ∧ P t'
+/-- Restricted to the subintervals of a time that the referential Past (47) admits, the
+indefinite Past is the Perfective (50) at that time, so *I didn't turn off the stove* means the
+same on the referential analysis with the Perfective (52) and on the indefinite analysis with a
+restriction (54). -/
+theorem restrictedPast_Iic_iff_prfv (h : Perspective.Presup ⟦past⟧ σ t₅) :
+    RestrictedPast (Set.Iic t₅) (turnOff w) σ ↔ PRFV turnOff w t₅ :=
+  ⟨fun ⟨t, _, ht, hQ⟩ ↦ ⟨t, ht, hQ⟩, fun ⟨t, ht, hQ⟩ ↦ ⟨t, Perspective.presup_past.2
+    (NonemptyInterval.precedes_of_le_of_precedes ht (Perspective.presup_past.1 h)), ht, hQ⟩⟩
 
-/-- The contextually restricted Past (53). -/
-def pastC (t : T) (P : T → Prop) : Prop := ∃ t', C t' ∧ t' < t ∧ P t'
+/-- The negation of the unrestricted Past (46b) entails that of the restricted Past (54). -/
+theorem not_restrictedPast_of_not_past (h : ¬ ◇[Perspective.accessibility ⟦past⟧] Q σ) :
+    ¬ RestrictedPast K Q σ :=
+  fun ⟨t, hts, _, hQ⟩ ↦ h ⟨t, hts, hQ⟩
 
-/-- Without a restriction the restricted Past is the Past. -/
-theorem pastC_true : pastC (λ _ => True) t P ↔ past t P := by
-  simp only [pastC, past, true_and]
+/-- The converse fails, so (46b) is too strong, as when the stove was turned off before the
+interval the speaker has in mind. -/
+theorem exists_not_restrictedPast_past :
+    ∃ (σ : NonemptyInterval ℤ) (K : Set (NonemptyInterval ℤ)) (Q : NonemptyInterval ℤ → Prop),
+      ¬ RestrictedPast K Q σ ∧ ◇[Perspective.accessibility ⟦past⟧] Q σ := by
+  refine ⟨.pure 10, Set.Iic ⟨(5, 6), by decide⟩, (· = .pure 1), ?_, .pure 1, by decide, rfl⟩
+  rintro ⟨t, -, hK, rfl⟩
+  exact absurd (NonemptyInterval.le_def.1 hK).1 (by decide)
 
-/-- (52) and (54): negation over the referential Past with the Perfective, and negation over
-the Past restricted to the subintervals of the time the speaker has in mind, are the same
-truth condition once the subintervals of a past time are past. -/
-theorem not_pastC_sub_iff_not_pf {t₅ : T} (hsub : ∀ t', sub t' t₅ → t' < s) :
-    ¬ pastC (sub · t₅) s P ↔ ¬ pf sub t₅ P := by
-  simp only [pastC, pf, not_exists, not_and]
-  exact ⟨λ h t' ht' => h t' ht' (hsub t' ht'), λ h t' ht' _ => h t' ht'⟩
+/-- *It didn't rain today*, with negation over the indefinite Past (58), entails its referential
+analysis with the Perfective (59) at any past reference time on today. -/
+theorem not_prfv_of_not_past (h : ¬ ◇[Perspective.accessibility ⟦past⟧]
+      (fun t ↦ t ≤ today ∧ rain w t) σ)
+    (h₅ : Perspective.Presup ⟦past⟧ σ t₅) (h₅' : t₅ ≤ today) : ¬ PRFV rain w t₅ :=
+  fun ⟨t, ht, hr⟩ ↦ h ⟨t, Perspective.presup_past.2
+    (NonemptyInterval.precedes_of_le_of_precedes ht (Perspective.presup_past.1 h₅)),
+    ht.trans h₅', hr⟩
 
-/-- (56), (57): with the content of the superordinate future added to its restriction, the
-event of a future perfect lies after the speech time. -/
-theorem lt_of_future_pastC {atSix : T → Prop}
-    (h : future s (λ t => atSix t ∧ pastC (s < ·) t P)) : ∃ t', s < t' ∧ P t' :=
-  match h with | ⟨_, _, _, t', hs, _, hP⟩ => ⟨t', hs, hP⟩
+/-- The referential analysis (59) is too weak, since a short reference time leaves room for rain
+elsewhere in today. -/
+theorem exists_not_prfv_past :
+    ∃ (σ t₅ today : NonemptyInterval ℤ) (rain : IntervalPred Unit ℤ),
+      (Perspective.Presup ⟦past⟧ σ t₅ ∧ t₅ ≤ today ∧ ¬ PRFV rain () t₅) ∧
+        ◇[Perspective.accessibility ⟦past⟧] (fun t ↦ t ≤ today ∧ rain () t) σ := by
+  refine ⟨.pure 20, ⟨(0, 1), by decide⟩, ⟨(0, 10), by decide⟩, fun _ t ↦ t = .pure 5,
+    ⟨by decide, by decide, ?_⟩, .pure 5, by decide, by decide, rfl⟩
+  rintro ⟨t, ht, rfl⟩
+  exact absurd (NonemptyInterval.le_def.1 ht).2 (by decide)
+
+/-- With the reference time as long as possible, containing every past subinterval of today,
+the referential analysis (59) is the indefinite one (58). -/
+theorem not_prfv_iff_not_past (hmax : ∀ t ≤ today, t.precedes σ → t ≤ t₅)
+    (h₅ : Perspective.Presup ⟦past⟧ σ t₅) (h₅' : t₅ ≤ today) :
+    ¬ PRFV rain w t₅ ↔ ¬ ◇[Perspective.accessibility ⟦past⟧] (fun t ↦ t ≤ today ∧ rain w t) σ :=
+  ⟨fun h ⟨t, ht, hle, hr⟩ ↦ h ⟨t, hmax t hle (Perspective.presup_past.1 ht), hr⟩,
+    fun h ↦ not_prfv_of_not_past rain w h h₅ h₅'⟩
 
 end Partee
 
-/-! ### Scope interactions (§10) -/
+/-! ### Quantifiers and tense -/
 
 section Scope
 
-variable [LinearOrder T] {X : Type*} (boot : X → Prop) (polish : X → T → Prop)
+variable {X : Type*} (boot : X → Prop) (polish : X → T → Prop)
 
-/-- (61): a quantifier over the Past follows from the Past over the quantifier. -/
-theorem forall_past_of_past_forall (h : past s (λ t => ∀ x, boot x → polish x t)) :
-    ∀ x, boot x → past s (polish x) :=
-  λ x hx => match h with | ⟨t, hts, h⟩ => ⟨t, hts, h x hx⟩
+/-- *John polished every boot* with the Past over the quantifier entails the reading with the
+quantifier over the Past (61). -/
+theorem forall_past_of_past_forall
+    (h : ◇[accessibility ⟦past⟧] (fun t ↦ ∀ x, boot x → polish x t) s) :
+    ∀ x, boot x → ◇[accessibility ⟦past⟧] (polish x) s :=
+  fun x hx ↦ let ⟨t, hts, h⟩ := h; ⟨t, hts, h x hx⟩
 
-/-- The converse fails: the boots are polished at different past times. -/
+/-- The converse fails when the boots are polished at different past times. -/
 theorem exists_forall_past_not_past_forall :
-    ∃ (s : ℕ) (boot : Bool → Prop) (polish : Bool → ℕ → Prop),
-      (∀ x, boot x → past s (polish x)) ∧ ¬ past s (λ t => ∀ x, boot x → polish x t) :=
-  ⟨5, λ _ => True, λ b t => t = if b then 1 else 2,
-    λ b _ => ⟨if b then 1 else 2, by cases b <;> decide, rfl⟩,
-    λ ⟨t, _, h⟩ => by have := h true trivial; have := h false trivial; simp_all⟩
+    ∃ (s : ℤ) (boot : Bool → Prop) (polish : Bool → ℤ → Prop),
+      (∀ x, boot x → ◇[accessibility ⟦past⟧] (polish x) s) ∧
+        ¬ ◇[accessibility ⟦past⟧] (fun t ↦ ∀ x, boot x → polish x t) s :=
+  ⟨5, fun _ ↦ True, fun b t ↦ t = if b then 1 else 2,
+    fun b _ ↦ ⟨if b then 1 else 2, by cases b <;> decide, rfl⟩,
+    fun ⟨t, _, h⟩ ↦ by have := h true trivial; have := h false trivial; simp_all⟩
+
+omit [LinearOrder T] in
+/-- Without the Perfective, a referential Past predicates the polishing of every boot of the one
+reference time, which boots polished one at a time exclude. -/
+theorem not_forall_referential {t₅ : T} {x y : X} (hx : boot x) (hy : boot y)
+    (hsep : ∀ t, polish x t → ¬ polish y t) : ¬ ∀ z, boot z → polish z t₅ :=
+  fun h ↦ hsep t₅ (h x hx) (h y hy)
 
 end Scope
 
-/-! ### Tense in relative clauses (§11.1) -/
+/-! ### Tense in relative clauses -/
 
 section Relative
 
-variable [LinearOrder T] {X : Type*} (fish : X → Prop) (alive : X → T → Prop) (buy : X → T → Prop)
+variable {X : Type*} (fish : X → Prop) (alive buy : X → T → Prop)
 
-/-- (66), the simultaneous reading of (62): the fish is alive at the buying time, the
-relative-clause pronoun bound by *will*. -/
-def simultaneous (s : T) : Prop := future s (λ t => ∃ x, fish x ∧ alive x t ∧ buy x t)
+/-- In the simultaneous reading (66) of *Mary will buy a fish that is alive* the relative-clause
+pronoun is bound by *will*, so the fish is alive at the buying. -/
+def Simultaneous (s : T) : Prop :=
+  ◇[accessibility ⟦future⟧] (fun t ↦ ∃ x, fish x ∧ alive x t ∧ buy x t) s
 
-/-- (67), the deictic reading: the pronoun bound by the matrix Present. -/
-def deictic (s : T) : Prop := future s (λ t => ∃ x, fish x ∧ alive x s ∧ buy x t)
+/-- In the deictic reading (67) the pronoun is bound by the matrix Present, so the fish is alive
+now. -/
+def Deictic (s : T) : Prop :=
+  ◇[accessibility ⟦future⟧] (fun t ↦ ∃ x, fish x ∧ alive x s ∧ buy x t) s
 
-/-- The two readings are independent. -/
-theorem simultaneous_deictic_independent :
-    ∃ (s : ℕ) (fish : Unit → Prop) (alive buy : Unit → ℕ → Prop),
-      simultaneous fish alive buy s ∧ ¬ deictic fish alive buy s :=
-  ⟨0, λ _ => True, λ _ t => t = 1, λ _ t => t = 1, ⟨1, by omega, (), trivial, rfl, rfl⟩,
-    λ ⟨_, _, _, _, h, _⟩ => by simp at h⟩
+/-- The simultaneous reading does not entail the deictic one. -/
+theorem exists_simultaneous_not_deictic :
+    ∃ (s : ℤ) (fish : Unit → Prop) (alive buy : Unit → ℤ → Prop),
+      Simultaneous fish alive buy s ∧ ¬ Deictic fish alive buy s :=
+  ⟨0, fun _ ↦ True, fun _ t ↦ t = 1, fun _ t ↦ t = 1, ⟨1, by decide, (), trivial, rfl, rfl⟩,
+    fun ⟨_, _, _, _, h, _⟩ ↦ by simp at h⟩
+
+/-- The deictic reading does not entail the simultaneous one. -/
+theorem exists_deictic_not_simultaneous :
+    ∃ (s : ℤ) (fish : Unit → Prop) (alive buy : Unit → ℤ → Prop),
+      Deictic fish alive buy s ∧ ¬ Simultaneous fish alive buy s :=
+  ⟨0, fun _ ↦ True, fun _ t ↦ t = 0, fun _ t ↦ t = 1, ⟨1, by decide, (), trivial, rfl, rfl⟩,
+    fun ⟨_, _, _, _, h, h'⟩ ↦ by simp_all⟩
 
 end Relative
 
-/-! ### Tense under attitudes (§11.2) -/
+/-! ### Tense under attitudes -/
 
 section Attitudes
 
 variable {W : Type*}
 
-/-- Hintikka's belief (74): the complement is a proposition, true throughout the doxastic
-alternatives. -/
-def believeH (dox : W → T → Set W) (p : W → Prop) (w : W) (t : T) : Prop :=
-  ∀ w' ∈ dox w t, p w'
+/-- On the anaphoric analysis (77), *At five o'clock Mary thought it was six o'clock* says that at
+a past time that is five, every doxastic alternative of Mary's makes that time six; with five not
+six, it holds exactly when Mary has no alternatives at five, believing a contradiction. -/
+theorem anaphoric_report_iff (Dox : T → SetRel W W) {five six : T} (hne : five ≠ six) (w : W) :
+    ◇[accessibility ⟦past⟧] (fun t ↦ t = five ∧ □[Dox t] (fun _ ↦ t = six) w) s ↔
+      five < s ∧ ∀ w', ¬ w ~[Dox five] w' := by
+  simp only [diamond_accessibility_past]
+  constructor
+  · rintro ⟨_, hs, rfl, hb⟩
+    exact ⟨hs, fun w' hw' ↦ hne (hb w' hw')⟩
+  · rintro ⟨hs, he⟩
+    exact ⟨five, hs, rfl, fun w' hw' ↦ absurd hw' (he w')⟩
 
-/-- (77): on the anaphoric analysis the complement of *at five Mary thought it was six* is
-the proposition that the matrix time is six, which the matrix time makes empty. -/
-theorem anaphoric_content_empty {five six t₁ : T} (h₁ : t₁ = five) (hne : five ≠ six) :
-    ∀ w : W, ¬ (λ _ : W => t₁ = six) w :=
-  λ _ h => hne (h₁ ▸ h)
+/-- With the complement a property of times (78), (79), Mary at five consistently locates herself
+at six. -/
+theorem exists_lewis_report :
+    ∃ Dox : SetRel (Index Unit ℤ) (Index Unit ℤ), (∃ i, ((), 5) ~[Dox] i) ∧
+      ◇[accessibility ⟦past⟧] (fun t ↦ t = 5 ∧ □[Dox] (fun i ↦ i.time = 6) ((), t)) 7 :=
+  ⟨{p | p.2.time = 6}, ⟨((), 6), rfl⟩, 5, by decide, rfl, fun _ h ↦ h⟩
 
-/-- Lewis's belief (78): the complement is a property of times, and the doxastic alternatives
-are world–time pairs. -/
-def believeL (dox : W → T → Set (W × T)) (P : W → T → Prop) (w : W) (t : T) : Prop :=
-  ∀ p ∈ dox w t, P p.1 p.2
-
-/-- (79): Mary locates herself at six, whatever the actual time. -/
-theorem believeL_time {dox : W → T → Set (W × T)} {w : W} {t six : T} :
-    believeL dox (λ _ t' => t' = six) w t ↔ ∀ p ∈ dox w t, p.2 = six :=
-  Iff.rfl
-
-/-- A time-independent complement is Hintikka's belief over the world projection of the
-alternatives (74). -/
-theorem believeL_const_iff {dox : W → T → Set (W × T)} {p : W → Prop} {w : W} {t : T} :
-    believeL dox (λ w' _ => p w') w t ↔ believeH (λ w t => Prod.fst '' dox w t) p w t := by
-  simp only [believeL, believeH, Set.forall_mem_image]
+/-- In *John thought that he would buy a fish that was still alive* (82) the relative-clause
+tense is bound by *would*, so the fish may be alive only after the speech time, where no deictic
+Past could place it. -/
+theorem exists_bound_relative_after_speech :
+    ∃ (Dox : SetRel (Index Unit ℤ) (Index Unit ℤ)) (fish : Unit → Prop)
+      (alive buy : Unit → ℤ → Prop),
+      ◇[accessibility ⟦past⟧] (fun t₀ ↦ □[Dox] (fun i ↦ ◇[accessibility ⟦future⟧]
+        (fun t₃ ↦ ∃ x, fish x ∧ alive x t₃ ∧ buy x t₃) i.time) ((), t₀)) 0 ∧
+        ∀ x t, alive x t → 0 < t := by
+  refine ⟨{p | p.2 = ((), -1)}, fun _ ↦ True, fun _ t ↦ t = 5, fun _ t ↦ t = 5,
+    ⟨-1, by decide, fun i hi ↦ ?_⟩, fun _ t ht ↦ by omega⟩
+  obtain rfl : i = ((), -1) := hi
+  exact ⟨5, by decide, (), trivial, rfl, rfl⟩
 
 end Attitudes
 
-section Complement
-
-variable {W : Type*} [LinearOrder T]
-
-/-- The complement tenses of (81): the tenseless PRO, or a Past over it, the shifted reading
-(80). -/
-inductive ComplementTense
-  | pro
-  | pastPro
-
-/-- The property of times a complement denotes. -/
-def ComplementTense.denote (Q : W → T → Prop) : ComplementTense → W → T → Prop
-  | .pro => Q
-  | .pastPro => λ w t => past t (Q w)
-
-end Complement
-
-/-! ### Before- and after-clauses (§11.3) -/
+/-! ### Before- and after-clauses -/
 
 section Before
 
-variable [LinearOrder T] {S : Set T} {m : T}
+variable {W : Type*} (leave arrive : T → Prop)
 
-/-- *Before* the earliest time of the clause (91) is *before* every time of it, Anscombe's
-universal *before*. -/
-theorem lt_isLeast_iff (hm : IsLeast S m) : t < m ↔ ∀ t' ∈ S, t < t' :=
-  ⟨λ h _ ht' => h.trans_le (hm.2 ht'), λ h => h m hm.1⟩
+/-- *Mary left before John arrived* (92) is the uniform *before* of [beaver-condoravdi-2003] with
+trivial historical alternatives, on which Mary leaves at a past time before the earliest past
+time at which John arrives. -/
+theorem before_iff_earliest (alt : HistoricalAlternatives W T) (w : W)
+    (h : ∀ t, alt ⟨w, t⟩ = {w}) :
+    BeaverCondoravdi2003.before {i : Index W T | i.time < s ∧ leave i.time}
+        {i : Index W T | i.time < s ∧ arrive i.time} alt w ↔
+      ∃ t₁, (t₁ < s ∧ leave t₁) ∧ ∃ m, IsLeast {t₂ | t₂ < s ∧ arrive t₂} m ∧ t₁ < m := by
+  rw [BeaverCondoravdi2003.before, BeaverCondoravdi2003.connective_singleton_alt _ _ _ _ _ h]
+  simp only [Set.mem_ofPred_eq, Reference.Index.time_mk]
 
-/-- *After* the earliest time is *after* some time of the clause, Anscombe's existential
-*after*. -/
-theorem isLeast_lt_iff (hm : IsLeast S m) : m < t ↔ ∃ t' ∈ S, t' < t :=
-  ⟨λ h => ⟨m, hm.1, h⟩, λ ⟨_, ht', h⟩ => (hm.2 ht').trans_lt h⟩
+/-- With *will* in the adjunct of *John will enter the room before Mary will leave* (84e), the
+times after the speech time before some leaving have no earliest member in dense time, so
+EARLIEST is undefined. -/
+theorem not_exists_earliest_will [DenselyOrdered T] :
+    ¬ ∃ m, IsLeast {t | s < t ∧ ∃ t', t < t' ∧ leave t'} m := by
+  rintro ⟨m, ⟨hsm, t', hmt, hl⟩, hmin⟩
+  obtain ⟨c, hsc, hcm⟩ := exists_between hsm
+  exact absurd (hmin ⟨hsc, t', hcm.trans hmt, hl⟩) (not_le.2 hcm)
+
+/-- When the clause has an earliest time, *before* the earliest time is the *before ever* of
+[anscombe-1964], the universal *before* that von Stechow attributes to her. -/
+theorem before_earliest_iff_beforeEver {A B : Set T} {m : T} (hm : IsLeast B m) :
+    (∃ t ∈ A, t < m) ↔ Anscombe1964.Anscombe.beforeEver (NonemptyInterval.pure '' A)
+      (NonemptyInterval.pure '' B) := by
+  rw [Anscombe1964.beforeEver_iff_lt_least (lb := m)]
+  · simp [Tense.timeTrace_image]
+  · simpa [Tense.timeTrace_image] using hm
+
+/-- And *after* the earliest time is the existential *after* of [anscombe-1964]. -/
+theorem after_earliest_iff_after {A B : Set T} {m : T} (hm : IsLeast B m) :
+    (∃ t ∈ A, m < t) ↔
+      Anscombe1964.Anscombe.after (NonemptyInterval.pure '' A) (NonemptyInterval.pure '' B) := by
+  rw [Anscombe1964.after_iff_least_lt (lb := m)]
+  · simp [Tense.timeTrace_image]
+  · simpa [Tense.timeTrace_image] using hm
 
 end Before
 

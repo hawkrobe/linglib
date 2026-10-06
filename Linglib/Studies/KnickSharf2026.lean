@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Aspect.Viewpoint
-public import Linglib.Semantics.Quantification.Basic
+public import Linglib.Semantics.Tense.Quantificational
 
 /-!
 # Knick and Sharf (2026): On focus and the perfect aspect
@@ -31,11 +31,6 @@ rules it out there. Among the focus alternatives, a domain further in the past i
   (`Aspect.PERF_XN`).
 * `later_lb_stronger_prfv`, the reversed ordering under the perfective, is not drawn in the paper.
 
-## TODO
-
-* The existential past and future restate the Priorean operators of `Studies/Musan1995`,
-  `Studies/VonStechow2009` and `Studies/Sharvit2014`, which should share one definition.
-
 ## References
 
 * [knick-sharf-2026]
@@ -45,7 +40,7 @@ rules it out there. Among the focus alternatives, a domain further in the past i
 
 namespace KnickSharf2026
 
-open Reference
+open Reference Semantics ModalLogic
 
 open Aspect
 open Event (τ)
@@ -58,26 +53,14 @@ variable {W T E : Type*} [LinearOrder T] [Event.TemporalTrace E T]
 def evalPres (p : PointPred W T) (tc : T) (w : W) : Prop :=
   p ⟨w, tc⟩
 
-/-- Existential tense evaluation is `Quantifier.GQ.some` over the times `rel`-related to the
-evaluation time `tc`, with scope `p` at `⟨w, ·⟩`; `evalPast` and `evalFut` are the `<` and `>`
-instances. -/
-def evalRel (rel : T → T → Prop) (p : PointPred W T) (tc : T) (w : W) : Prop :=
-  Quantifier.GQ.some (fun t => rel t tc) (fun t => p ⟨w, t⟩)
-
-omit [LinearOrder T] in
-/-- Existential tense evaluation is monotone in the point predicate. -/
-theorem evalRel_mono {rel : T → T → Prop} {p q : PointPred W T}
-    (h : ∀ x, p x → q x) {tc : T} {w : W} :
-    evalRel rel p tc w → evalRel rel q tc w :=
-  Quantifier.GQ.scopeMonotone_some _ fun _ hp => h _ hp
-
-/-- The existential past evaluates a point predicate at some time before `tc`. -/
+/-- The past tense evaluates a point predicate at some time before the speech time `tc`, the
+quantificational past of `Semantics/Tense/Quantificational.lean`. -/
 def evalPast (p : PointPred W T) (tc : T) (w : W) : Prop :=
-  evalRel (· < ·) p tc w
+  ◇[Tense.accessibility ⟦Tense.past⟧] (fun t ↦ p (w, t)) tc
 
-/-- The existential future evaluates a point predicate at some time after `tc`. -/
+/-- The future tense evaluates a point predicate at some time after the speech time `tc`. -/
 def evalFut (p : PointPred W T) (tc : T) (w : W) : Prop :=
-  evalRel (· > ·) p tc w
+  ◇[Tense.accessibility ⟦Tense.future⟧] (fun t ↦ p (w, t)) tc
 
 /-! ### Composed forms -/
 
@@ -131,8 +114,9 @@ theorem presPerfProgXN_unfold (V : W → E → Prop) (tᵣ : Set T)
 
 /-! ### Results -/
 
-/-- The U-perfect (39b) entails its simple present competitor (39a) whatever the domain `tᵣ`: a
-perfect time span ending at `tc` inside the run time of an event puts `tc` itself inside it. -/
+/-- The U-perfect (39b) entails its simple present competitor (39a) whatever the domain `tᵣ`,
+since a perfect time span ending at `tc` inside the run time of an event puts `tc` itself inside
+it. -/
 theorem u_perf_entails_simple_present (V : W → E → Prop)
     (tᵣ : Set T) (tc : T) (w : W) :
     presPerfProgXN V tᵣ tc w → simplePresent V tc w := by
@@ -158,7 +142,7 @@ theorem broad_focus_equiv (V : W → E → Prop) (tc : T) (w : W) :
     exact ⟨NonemptyInterval.pure tc, tc, Set.mem_univ _, rfl, rfl, h⟩
 
 /-- An earlier left boundary is stronger under the imperfective, the ordering of the focus
-alternatives in (33) and (35): an event whose run time contains the perfect time span from
+alternatives in (33) and (35), since an event whose run time contains the perfect time span from
 `tLB₁` also contains the shorter one from a later `tLB₂`. -/
 theorem earlier_lb_stronger_impf (V : W → E → Prop)
     (tLB₁ tLB₂ : T) (tc : T) (w : W) (h : tLB₁ < tLB₂) (htc : tLB₂ ≤ tc) :
@@ -199,8 +183,8 @@ theorem later_lb_stronger_prfv (V : W → E → Prop)
   · -- (τ e).snd ≤ tc: from (τ e).snd ≤ pts.snd = tc
     exact le_trans hS2 (le_of_eq hRB)
 
-/-- The ordering is strict, as the state `s''` of (33) shows: an event going on since `tLB₂`
-need not have been going on since an earlier `tLB₁`. The counterexample takes the boundaries
+/-- The ordering is strict, as the state `s''` of (33) shows, since an event going on since
+`tLB₂` need not have been going on since an earlier `tLB₁`. The counterexample takes the boundaries
 `0` and `2`, speech time `4`, and an event running over `[1, 5]`. -/
 theorem earlier_lb_not_weaker_impf :
     ¬ ∀ (V : Unit → NonemptyInterval ℤ → Prop) (tLB₁ tLB₂ : ℤ) (tc : ℤ) (w : Unit),
