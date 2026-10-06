@@ -31,6 +31,14 @@
       [
         "implicature",
         "Not all boys came in."
+      ],
+      [
+        "signal",
+        "f12"
+      ],
+      [
+        "world",
+        "w2"
       ]
     ],
     "comment": ""
@@ -72,10 +80,10 @@
     "comment": ""
   },
   {
-    "id": "jaeger2014_3a",
+    "id": "jaeger2014_2a",
     "source": {
       "bibkey": "jaeger-2014",
-      "paperLabel": "(3a)"
+      "paperLabel": "(2a)"
     },
     "language": "stan1293",
     "primaryText": "John's book is good.",
@@ -104,10 +112,10 @@
     "comment": ""
   },
   {
-    "id": "jaeger2014_3b",
+    "id": "jaeger2014_2b",
     "source": {
       "bibkey": "jaeger-2014",
-      "paperLabel": "(3b)"
+      "paperLabel": "(2b)"
     },
     "language": "stan1293",
     "primaryText": "a secretary",
@@ -136,10 +144,10 @@
     "comment": ""
   },
   {
-    "id": "jaeger2014_3c",
+    "id": "jaeger2014_2c",
     "source": {
       "bibkey": "jaeger-2014",
-      "paperLabel": "(3c)"
+      "paperLabel": "(2c)"
     },
     "language": "stan1293",
     "primaryText": "road",
@@ -168,10 +176,10 @@
     "comment": ""
   },
   {
-    "id": "jaeger2014_4a",
+    "id": "jaeger2014_3a",
     "source": {
       "bibkey": "jaeger-2014",
-      "paperLabel": "(4a)"
+      "paperLabel": "(3a)"
     },
     "language": "stan1293",
     "primaryText": "John stopped the car.",
@@ -183,7 +191,7 @@
     "alternatives": [],
     "readings": [
       {
-        "name": "John stopped the car in a regular way, using the foot brake",
+        "name": "John stopped the car in a regular way, like using the foot brake",
         "judgment": "acceptable"
       }
     ],
@@ -212,10 +220,10 @@
     "comment": "The cheap synonym of Example 6, read as the frequent world."
   },
   {
-    "id": "jaeger2014_4b",
+    "id": "jaeger2014_3b",
     "source": {
       "bibkey": "jaeger-2014",
-      "paperLabel": "(4b)"
+      "paperLabel": "(3b)"
     },
     "language": "stan1293",
     "primaryText": "John made the car stop.",
@@ -256,10 +264,10 @@
     "comment": "The costly synonym of Example 6, read as the rare world."
   },
   {
-    "id": "jaeger2014_5",
+    "id": "jaeger2014_4",
     "source": {
       "bibkey": "jaeger-2014",
-      "paperLabel": "(5)"
+      "paperLabel": "(4)"
     },
     "language": "stan1293",
     "primaryText": "John brought the car to a stop.",
@@ -285,16 +293,16 @@
         "M"
       ]
     ],
-    "comment": "A third, still more complex form; pragmatic rationalizability predicts no further specialization between (4b) and (5), unlike bidirectional OT."
+    "comment": "A third, still more complex form; pragmatic rationalizability predicts no further specialization between (3b) and (4), unlike bidirectional OT."
   },
   {
-    "id": "jaeger2014_6a",
+    "id": "jaeger2014_5a",
     "source": {
       "bibkey": "jaeger-2014",
-      "paperLabel": "(6a)"
+      "paperLabel": "(5a)"
     },
     "language": "stan1293",
-    "primaryText": "The distance is one hundred meter.",
+    "primaryText": "The distance is 100 m.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -328,13 +336,13 @@
     "comment": ""
   },
   {
-    "id": "jaeger2014_6b",
+    "id": "jaeger2014_5b",
     "source": {
       "bibkey": "jaeger-2014",
-      "paperLabel": "(6b)"
+      "paperLabel": "(5b)"
     },
     "language": "stan1293",
-    "primaryText": "The distance is one hundred and one meter.",
+    "primaryText": "The distance is 101 m.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -364,13 +372,13 @@
     "comment": ""
   },
   {
-    "id": "jaeger2014_7",
+    "id": "jaeger2014_6",
     "source": {
       "bibkey": "jaeger-2014",
-      "paperLabel": "(7)"
+      "paperLabel": "(6)"
     },
     "language": "stan1293",
-    "primaryText": "The distance is exactly one hundred meter.",
+    "primaryText": "The distance is exactly 100 m.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
