@@ -25,6 +25,8 @@ quantifiers such as *most* and *few* are in `Quantification/Counting.lean`.
 * `every_eq_sInf_image`, `some_eq_sSup_image`, `no_eq_compl_sSup_image`: the three determiners
   are the infimum, the supremum and the complement of the supremum of the scope over the
   restrictor.
+* `every_iff_le`, `no_iff_disjoint`: the universal determiners are the pointwise order and
+  disjointness on predicates.
 * `square_relations`: with a non-empty restrictor the four stand in all six relations of the
   square, so its cells (`Aristotelian.Square.cell`) divide the scopes into those covering all of
   the restrictor, some but not all of it, and none of it.
@@ -66,6 +68,18 @@ theorem the_iff {α : Type*} (R S : α → Prop) :
     exact ⟨⟨x, (hx x).2 rfl, fun y hy ↦ (hx y).1 hy⟩, fun y hy ↦ (hx y).1 hy ▸ hS⟩
   · rintro ⟨⟨x, hx, huniq⟩, hS⟩
     exact ⟨x, fun y ↦ ⟨huniq y, fun h ↦ h ▸ hx⟩, hS x hx⟩
+
+/-! ### The order on predicates -/
+
+/-- *Every* is the pointwise order on predicates, the standard formulation `R ⊆ S`. -/
+theorem every_iff_le {α : Type*} {R S : α → Prop} : every R S ↔ R ≤ S := Iff.rfl
+
+/-- *No* is inclusion in the complement. -/
+theorem no_iff_le_compl {α : Type*} {R S : α → Prop} : no R S ↔ R ≤ Sᶜ := Iff.rfl
+
+/-- *No* is disjointness of restrictor and scope. -/
+theorem no_iff_disjoint {α : Type*} {R S : α → Prop} : no R S ↔ Disjoint R S :=
+  no_iff_le_compl.trans le_compl_iff_disjoint_right
 
 section Decidable
 
