@@ -42,11 +42,11 @@ has no universal perfect, except where an activity fills the span exactly.
   consequence the prose draws, that neither boundary is asserted to be part of the eventuality,
   is `inclusive_silent_at_rb`.
 * The adverbial classes of (16), the two levels of adverbials and the position of *for*,
-  (23)–(24), are lexical and syntactic premises. Perfect-level *since t₀* is `LB t₀` under either
-  reading; *ever since*, *at least since*, *always* and perfect-level *for* are durative; *lately*
-  and the covert adverbial are inclusive; and a sentence-initial *for* is perfect-level because
-  it has merged above the eventuality. The study states the consequences of the readings, not
-  the classification.
+  (23)–(24), are lexical and syntactic premises. Perfect-level *since t₀* admits the spans
+  starting at `t₀` under either reading; *ever since*, *at least since*, *always* and
+  perfect-level *for* are durative; *lately* and the covert adverbial are inclusive; and a
+  sentence-initial *for* is perfect-level because it has merged above the eventuality. The study
+  states the consequences of the readings, not the classification.
 * The Greek perfect participle is built on the perfective stem only, the Bulgarian imperfective
   and neutral participles are unbounded, and in English the progressive realizes [unbounded] on
   nonstatives while statives are nonprogressive under either feature, (42). These enter as the
@@ -82,7 +82,7 @@ open Aspect
 
 variable {W T E : Type*} [LinearOrder T] [Event.TemporalTrace E T]
   {p : W → Set (NonemptyInterval T)} {P : W → E → Prop} {w : W} {i : NonemptyInterval T}
-  {adv : NonemptyInterval T → Prop} {t t₀ : T}
+  {t t₀ : T}
 
 /-! ### The four expansions of (43)
 
@@ -91,26 +91,26 @@ The perfect asserts a span in or throughout which there is a bounded or unbounde
 
 /-- An unbounded eventuality throughout the span, (44a), is one event whose run time contains
 the span. -/
-theorem durative_unbounded_iff : i ∈ durative (UNBOUNDED P) w ↔ i ∈ UNBOUNDED P w := by
-  rw [durative_eq_of_isLowerSet (isLowerSet_unbounded P w)]
+theorem durative_unbounded : durative (UNBOUNDED P) = UNBOUNDED P :=
+  funext fun w ↦ durative_eq_of_isLowerSet (isLowerSet_unbounded P w)
 
 /-- An unbounded eventuality in the span, (44b), is one event whose run time overlaps it. -/
 theorem inclusive_unbounded_iff :
     i ∈ inclusive (UNBOUNDED P) w ↔ ∃ e, P w e ∧ (τ e).overlaps i := by
   constructor
-  · rintro ⟨j, hj, e, he, hP⟩
+  · rintro ⟨j, ⟨e, he, hP⟩, hj⟩
     obtain ⟨hj₁, hj₂⟩ := NonemptyInterval.le_def.1 hj
     obtain ⟨he₁, he₂⟩ := NonemptyInterval.le_def.1 he
     exact ⟨e, hP, (he₁.trans j.fst_le_snd).trans hj₂, (hj₁.trans j.fst_le_snd).trans he₂⟩
   · rintro ⟨e, hP, h₁, h₂⟩
-    refine ⟨⟨(max (τ e).fst i.fst, min (τ e).snd i.snd), ?_⟩, ?_, e, ?_, hP⟩
+    refine ⟨⟨(max (τ e).fst i.fst, min (τ e).snd i.snd), ?_⟩, ⟨e, ?_, hP⟩, ?_⟩
     · exact max_le (le_min (τ e).fst_le_snd h₁) (le_min h₂ i.fst_le_snd)
-    · exact NonemptyInterval.le_def.2 ⟨le_max_right _ _, min_le_right _ _⟩
     · exact NonemptyInterval.le_def.2 ⟨le_max_left _ _, min_le_left _ _⟩
+    · exact NonemptyInterval.le_def.2 ⟨le_max_right _ _, min_le_right _ _⟩
 
 /-- A bounded eventuality in the span, (44c), is one event whose run time lies inside it. -/
-theorem inclusive_prfv_iff : i ∈ inclusive (PRFV P) w ↔ i ∈ PRFV P w :=
-  ⟨fun ⟨_, hj, e, he, hP⟩ ↦ ⟨e, he.trans hj, hP⟩, fun h ↦ ⟨i, le_rfl, h⟩⟩
+theorem inclusive_prfv : inclusive (PRFV P) = PRFV P :=
+  funext fun w ↦ inclusive_eq_of_isUpperSet (isUpperSet_prfv P w)
 
 /-- A bounded eventuality that takes time, a telic one in (44d), holds throughout no span, since
 the span's points are among its subintervals and contain no such eventuality. -/
@@ -130,20 +130,17 @@ theorem durative_prfv_of_eq (hP : HasSubintervalProperty P) {e : E} (he : P w e)
 
 /-! ### Point 1: the universal perfect at both boundaries -/
 
-/-- Whatever the adverbial, a durative perfect asserts the predicate at the right boundary, the
-time tense supplies. -/
-theorem durative_at_rb (h : ⟨w, t⟩ ∈ PERF_ADV (durative p) adv) : .pure t ∈ p w := by
-  obtain ⟨pts, _, hrb, hd⟩ := h
-  have hrb' : pts.snd = t := hrb
-  exact hd (show NonemptyInterval.pure t ∈ Set.Iic pts from
-    NonemptyInterval.le_def.2 ⟨hrb' ▸ pts.fst_le_snd, hrb'.ge⟩)
+/-- A durative perfect asserts the predicate at the right boundary, the time tense supplies, and
+so does one restricted by any adverbial. -/
+theorem durative_at_rb (h : ⟨w, t⟩ ∈ PERF (durative p)) : .pure t ∈ p w :=
+  let ⟨pts, hd, hrb⟩ := mem_perf.1 h
+  hd (Set.mem_Iic.2 (NonemptyInterval.le_def.2 ⟨hrb ▸ pts.fst_le_snd, hrb.ge⟩))
 
 /-- With *since t₀* a durative perfect asserts the predicate at the left boundary. -/
-theorem durative_at_lb (h : ⟨w, t⟩ ∈ PERF_ADV (durative p) (LB t₀)) : .pure t₀ ∈ p w := by
-  obtain ⟨pts, hlb, _, hd⟩ := h
-  have hlb' : pts.fst = t₀ := hlb
-  exact hd (show NonemptyInterval.pure t₀ ∈ Set.Iic pts from
-    NonemptyInterval.le_def.2 ⟨hlb'.le, hlb' ▸ pts.fst_le_snd⟩)
+theorem durative_at_lb (h : ⟨w, t⟩ ∈ PERF ({pts | pts.fst = t₀} ∩ durative p ·)) :
+    .pure t₀ ∈ p w :=
+  let ⟨pts, ⟨hlb, hd⟩, _⟩ := h
+  hd (Set.mem_Iic.2 (NonemptyInterval.le_def.2 ⟨hlb.le, hlb ▸ pts.fst_le_snd⟩))
 
 /-- The non-strict imperfective holds at a moment when the moment lies in the run time of an
 event. -/
@@ -153,20 +150,21 @@ theorem unbounded_pure_iff : .pure t ∈ UNBOUNDED P w ↔ ∃ e, P w e ∧ t �
 
 /-- The universal perfect holds at the right boundary, the utterance time in the present perfect,
 so (6a–b) are contradictions, and a past or future time in the past and future perfect, (7). -/
-theorem universal_at_rb (h : ⟨w, t⟩ ∈ PERF_ADV (durative (UNBOUNDED P)) adv) :
+theorem universal_at_rb (h : ⟨w, t⟩ ∈ PERF (durative (UNBOUNDED P))) :
     ∃ e, P w e ∧ t ∈ τ e :=
   unbounded_pure_iff.1 (durative_at_rb h)
 
 /-- With *since t₀* the universal perfect holds at `t₀`, the observation of [mittwoch-1988]. -/
-theorem universal_at_lb (h : ⟨w, t⟩ ∈ PERF_ADV (durative (UNBOUNDED P)) (LB t₀)) :
+theorem universal_at_lb (h : ⟨w, t⟩ ∈ PERF ({pts | pts.fst = t₀} ∩ durative (UNBOUNDED P) ·)) :
     ∃ e, P w e ∧ t₀ ∈ τ e :=
   unbounded_pure_iff.1 (durative_at_lb h)
 
 /-- One eventuality covering the span from `t₀` to `t` makes the universal perfect with *since t₀*
 true at `t`, (2a) and (18a). -/
 theorem universal_of_covers {e : E} (he : P w e) (h₀ : t₀ ≤ t) (h₁ : (τ e).fst ≤ t₀)
-    (h₂ : t ≤ (τ e).snd) : ⟨w, t⟩ ∈ PERF_ADV (durative (UNBOUNDED P)) (LB t₀) :=
-  ⟨⟨(t₀, t), h₀⟩, rfl, rfl, durative_unbounded_iff.2 ⟨e, NonemptyInterval.le_def.2 ⟨h₁, h₂⟩, he⟩⟩
+    (h₂ : t ≤ (τ e).snd) : ⟨w, t⟩ ∈ PERF ({pts | pts.fst = t₀} ∩ durative (UNBOUNDED P) ·) :=
+  ⟨⟨(t₀, t), h₀⟩,
+    ⟨rfl, fun _ hj ↦ ⟨e, (Set.mem_Iic.1 hj).trans (NonemptyInterval.le_def.2 ⟨h₁, h₂⟩), he⟩⟩, rfl⟩
 
 /-! ### Point 2: an unmodified perfect is silent about the right boundary -/
 
@@ -177,15 +175,15 @@ and *I have been cooking* can go on *but she is fine now* and *but I'm done now*
 theorem inclusive_silent_at_rb {e₀ : E} (h : (τ e₀).snd < t) :
     ⟨w, t⟩ ∈ PERF (inclusive (UNBOUNDED fun (_ : W) e ↦ e = e₀)) ∧
       ∀ e, (fun (_ : W) e ↦ e = e₀) w e → t ∉ τ e :=
-  ⟨⟨⟨((τ e₀).fst, t), (τ e₀).fst_le_snd.trans h.le⟩, rfl, τ e₀,
-      NonemptyInterval.le_def.2 ⟨le_rfl, h.le⟩, e₀, le_rfl, rfl⟩,
+  ⟨⟨⟨((τ e₀).fst, t), (τ e₀).fst_le_snd.trans h.le⟩,
+      ⟨τ e₀, ⟨e₀, le_rfl, rfl⟩, NonemptyInterval.le_def.2 ⟨le_rfl, h.le⟩⟩, rfl⟩,
     fun _ he ht ↦ (NonemptyInterval.mem_def.1 ht).2.not_gt (he ▸ h)⟩
 
 /-- An unmodified perfect does not entail the universal perfect, which is therefore never its
 reading. -/
 theorem unmodified_not_universal {e₀ : E} (h : (τ e₀).snd < t) :
     ¬ ∀ P : W → E → Prop, ⟨w, t⟩ ∈ PERF (inclusive (UNBOUNDED P)) →
-      ⟨w, t⟩ ∈ PERF_ADV (durative (UNBOUNDED P)) ⊤ := fun hall ↦
+      ⟨w, t⟩ ∈ PERF (durative (UNBOUNDED P)) := fun hall ↦
   let ⟨hperf, hnot⟩ := inclusive_silent_at_rb (w := w) h
   let ⟨e, he, ht⟩ := universal_at_rb (hall _ hperf)
   hnot e he ht
@@ -195,19 +193,18 @@ theorem unmodified_not_universal {e₀ : E} (h : (τ e₀).snd < t) :
 /-- With *since 1991* the span starts in 1991 while its only eventuality lies in the fall of
 1993, (28): the left boundary is set by the adverbial, not by the eventuality. -/
 theorem span_lb_before_event {lb : T} {e₀ : E} (h₁ : lb < (τ e₀).fst) (h₂ : (τ e₀).snd ≤ t) :
-    ∃ pts : NonemptyInterval T, LB lb pts ∧ RB pts t ∧
-      pts ∈ inclusive (PRFV fun (_ : W) e ↦ e = e₀) w ∧ pts.fst < (τ e₀).fst :=
-  ⟨⟨(lb, t), h₁.le.trans ((τ e₀).fst_le_snd.trans h₂)⟩, rfl, rfl,
-    inclusive_prfv_iff.2 ⟨e₀, NonemptyInterval.le_def.2 ⟨h₁.le, h₂⟩, rfl⟩, h₁⟩
+    ⟨w, t⟩ ∈ PERF ({pts | pts.fst = lb} ∩ inclusive (PRFV fun (_ : W) e ↦ e = e₀) ·) :=
+  ⟨⟨(lb, t), h₁.le.trans ((τ e₀).fst_le_snd.trans h₂)⟩,
+    ⟨rfl, τ e₀, ⟨e₀, le_rfl, rfl⟩, NonemptyInterval.le_def.2 ⟨h₁.le, h₂⟩⟩, rfl⟩
 
 /-! ### Point 4: the aspect of the participle -/
 
 /-- A perfective participle on a predicate whose eventualities take time, a telic or a stative
-that the perfective makes inchoative, has no universal perfect with any adverbial: Greek (30) and
-(34), Bulgarian (35) and the English nonprogressives of (41). -/
+that the perfective makes inchoative, has no universal perfect, so none with any adverbial: Greek
+(30) and (34), Bulgarian (35) and the English nonprogressives of (41). -/
 theorem no_universal_of_prfv (h : ∀ e, P w e → (τ e).fst < (τ e).snd) :
-    ⟨w, t⟩ ∉ PERF_ADV (durative (PRFV P)) adv :=
-  fun ⟨_, _, _, hd⟩ ↦ not_durative_prfv h hd
+    ⟨w, t⟩ ∉ PERF (durative (PRFV P)) :=
+  fun ⟨_, hd, _⟩ ↦ not_durative_prfv h hd
 
 /-- The perfective holds at a moment when an event's run time is that moment. -/
 theorem prfv_pure_iff : .pure t ∈ PRFV P w ↔ ∃ e, P w e ∧ τ e = .pure t :=
@@ -221,26 +218,23 @@ true when an eventuality fills the span exactly, and then holds at the utterance
 universal perfect, (45). -/
 theorem bounded_activity_fills {e : E} (hP : HasSubintervalProperty P) (he : P w e)
     (h₀ : t₀ ≤ t) (hτ : τ e = ⟨(t₀, t), h₀⟩) :
-    ⟨w, t⟩ ∈ PERF_ADV (durative (PRFV P)) (LB t₀) ∧ ∃ e', P w e' ∧ t ∈ τ e' :=
-  have hperf : ⟨w, t⟩ ∈ PERF_ADV (durative (PRFV P)) (LB t₀) :=
-    ⟨⟨(t₀, t), h₀⟩, rfl, rfl, durative_prfv_of_eq hP he hτ⟩
-  ⟨hperf, let ⟨e', hP', hτ'⟩ := prfv_pure_iff.1 (durative_at_rb hperf)
+    ⟨w, t⟩ ∈ PERF ({pts | pts.fst = t₀} ∩ durative (PRFV P) ·) ∧ ∃ e', P w e' ∧ t ∈ τ e' :=
+  ⟨⟨⟨(t₀, t), h₀⟩, ⟨rfl, durative_prfv_of_eq hP he hτ⟩, rfl⟩,
+    let ⟨e', hP', hτ'⟩ := prfv_pure_iff.1 (durative_at_rb ⟨_, durative_prfv_of_eq hP he hτ, rfl⟩)
     ⟨e', hP', hτ' ▸ NonemptyInterval.mem_pure_self t⟩⟩
 
 /-! ### Point 5: anteriority derived -/
 
 /-- An experiential perfect places the end of its eventuality by the time of tense, before the
 utterance time in the present perfect and before a past time in the pluperfect, (1). -/
-theorem experiential_ends_by_rb (h : ⟨w, t⟩ ∈ PERF_ADV (inclusive (PRFV P)) adv) :
-    ∃ e, P w e ∧ (τ e).snd ≤ t := by
-  obtain ⟨pts, _, hrb, hinc⟩ := h
-  obtain ⟨e, hle, hP⟩ := inclusive_prfv_iff.1 hinc
-  have hrb' : pts.snd = t := hrb
-  exact ⟨e, hP, hrb' ▸ (NonemptyInterval.le_def.1 hle).2⟩
+theorem experiential_ends_by_rb (h : ⟨w, t⟩ ∈ PERF (inclusive (PRFV P))) :
+    ∃ e, P w e ∧ (τ e).snd ≤ t :=
+  let ⟨_, ⟨_, ⟨e, hle, hP⟩, hj⟩, hrb⟩ := mem_perf.1 h
+  ⟨e, hP, hrb ▸ (NonemptyInterval.le_def.1 (hle.trans hj)).2⟩
 
 /-- The universal perfect is not anterior, since its eventuality has not ended at the time of
 tense, so an anteriority operator in the perfect would make it underivable. -/
-theorem universal_not_anterior (h : ⟨w, t⟩ ∈ PERF_ADV (durative (UNBOUNDED P)) adv) :
+theorem universal_not_anterior (h : ⟨w, t⟩ ∈ PERF (durative (UNBOUNDED P))) :
     ∃ e, P w e ∧ ¬ (τ e).snd < t :=
   let ⟨e, hP, ht⟩ := universal_at_rb h
   ⟨e, hP, (NonemptyInterval.mem_def.1 ht).2.not_gt⟩
@@ -252,11 +246,11 @@ theorem future_perfect_underspecified {now : T} {e₁ e₂ : E} (h₁ : (τ e₁
     (∃ P : W → E → Prop, ⟨w, t⟩ ∈ PERF (inclusive (PRFV P)) ∧ ∀ e, P w e → (τ e).snd < now) ∧
       ∃ P : W → E → Prop, ⟨w, t⟩ ∈ PERF (inclusive (PRFV P)) ∧ ∀ e, P w e → now < (τ e).fst :=
   have hn : now < t := h₂.trans_le ((τ e₂).fst_le_snd.trans h₂')
-  ⟨⟨fun _ e ↦ e = e₁, ⟨⟨((τ e₁).fst, t), (τ e₁).fst_le_snd.trans (h₁.trans hn).le⟩, rfl,
-      inclusive_prfv_iff.2 ⟨e₁, NonemptyInterval.le_def.2 ⟨le_rfl, (h₁.trans hn).le⟩, rfl⟩⟩,
+  ⟨⟨fun _ e ↦ e = e₁, ⟨⟨((τ e₁).fst, t), (τ e₁).fst_le_snd.trans (h₁.trans hn).le⟩,
+      ⟨τ e₁, ⟨e₁, le_rfl, rfl⟩, NonemptyInterval.le_def.2 ⟨le_rfl, (h₁.trans hn).le⟩⟩, rfl⟩,
       fun _ he ↦ he ▸ h₁⟩,
-    ⟨fun _ e ↦ e = e₂, ⟨⟨((τ e₂).fst, t), (τ e₂).fst_le_snd.trans h₂'⟩, rfl,
-      inclusive_prfv_iff.2 ⟨e₂, NonemptyInterval.le_def.2 ⟨le_rfl, h₂'⟩, rfl⟩⟩,
+    ⟨fun _ e ↦ e = e₂, ⟨⟨((τ e₂).fst, t), (τ e₂).fst_le_snd.trans h₂'⟩,
+      ⟨τ e₂, ⟨e₂, le_rfl, rfl⟩, NonemptyInterval.le_def.2 ⟨le_rfl, h₂'⟩⟩, rfl⟩,
       fun _ he ↦ he ▸ h₂⟩⟩
 
 end IatridouEtAl2001

@@ -75,25 +75,23 @@ variable {W T E : Type*} [LinearOrder T] [Event.TemporalTrace E T]
 /-- Durative UNTIL holds when the description holds throughout a nondegenerate interval ending at
 the until time, at every one of its subintervals. -/
 def durativeUntil (p : W → Set (NonemptyInterval T)) (w : W) (t' : T) : Prop :=
-  ∃ i : NonemptyInterval T, i.fst < i.snd ∧ RB i t' ∧ i ∈ durative p w
+  ∃ i ∈ durative p w, i.fst < i.snd ∧ i.snd = t'
 
 /-- A homogeneous description need only hold at the until interval itself. -/
 theorem durativeUntil_iff_of_isLowerSet {p : W → Set (NonemptyInterval T)} {w : W}
     (hp : IsLowerSet (p w)) (t' : T) :
-    durativeUntil p w t' ↔ ∃ i : NonemptyInterval T, i.fst < i.snd ∧ RB i t' ∧ i ∈ p w := by
+    durativeUntil p w t' ↔ ∃ i ∈ p w, i.fst < i.snd ∧ i.snd = t' := by
   simp only [durativeUntil, durative_eq_of_isLowerSet hp]
 
 /-- A perfective description of a single event is incompatible with durative UNTIL, since an
 achievement or accomplishment cannot lie within both endpoints of the until interval. -/
 theorem not_durativeUntil_prfv {P : W → E → Prop} {w : W}
     (hP : ∀ e e', P w e → P w e' → e = e') (t' : T) : ¬ durativeUntil (PRFV P) w t' := by
-  rintro ⟨i, hi, -, h⟩
-  obtain ⟨e₁, h₁, he₁⟩ :=
-    h (Set.mem_Iic.2 (NonemptyInterval.le_def.mpr ⟨le_rfl, (i.fst_le_snd : i.fst ≤ i.snd)⟩) :
-      NonemptyInterval.pure i.fst ∈ Set.Iic i)
-  obtain ⟨e₂, h₂, he₂⟩ :=
-    h (Set.mem_Iic.2 (NonemptyInterval.le_def.mpr ⟨(i.fst_le_snd : i.fst ≤ i.snd), le_rfl⟩) :
-      NonemptyInterval.pure i.snd ∈ Set.Iic i)
+  rintro ⟨i, h, hi, -⟩
+  obtain ⟨e₁, h₁, he₁⟩ := h (show NonemptyInterval.pure i.fst ∈ Set.Iic i from
+    NonemptyInterval.le_def.2 ⟨le_rfl, i.fst_le_snd⟩)
+  obtain ⟨e₂, h₂, he₂⟩ := h (show NonemptyInterval.pure i.snd ∈ Set.Iic i from
+    NonemptyInterval.le_def.2 ⟨i.fst_le_snd, le_rfl⟩)
   obtain rfl := hP e₁ e₂ he₁ he₂
   exact absurd ((NonemptyInterval.le_def.mp h₂).1.trans
     ((τ e₁).fst_le_snd.trans (NonemptyInterval.le_def.mp h₁).2)) (not_le.mpr hi)
@@ -129,7 +127,7 @@ theorem eventiveUntil_actualization {P : W → E → Prop} {w : W} {t : T}
 actualization. -/
 theorem wideScope_of_forall_not {P : W → E → Prop} {w : W} (hP : ∀ e, ¬ P w e) {t t' : T}
     (h : t < t') : wideScope P w t' :=
-  ⟨⟨(t, t'), h.le⟩, h, rfl, fun _ _ e he ↦ absurd he (hP e)⟩
+  ⟨⟨(t, t'), h.le⟩, fun _ _ e he ↦ absurd he (hP e), h, rfl⟩
 
 /-- `runTimes P w` is the set of run times of the events of `P` at the world `w`. -/
 def runTimes (P : W → E → Prop) (w : W) : RunTimes T := {i | ∃ e, P w e ∧ τ e = i}

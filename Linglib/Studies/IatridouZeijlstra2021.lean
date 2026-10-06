@@ -196,32 +196,33 @@ theorem surjective_not : Function.Surjective fun (v : E → Prop) e ↦ ¬ v e :
 /-! ### Domain widening: the actuality and beyond expectation inferences
 
 A boundary adverbial sets one boundary of its span, while tense or the argument of *until* fixes
-the other (`F`, `(RB · t)` for *in years* and `LB t` for *until*). A domain widener stretches its
-boundary as far as is logically possible: its span is the greatest event-free span with the fixed
-boundary, Section 4. The event that stops the widening is the actuality inference, Constant's
-observation, and the span's containing every event-free alternative is the beyond expectation
-inference. A boundary adverbial that names its own boundary, *in (the last) 5 years* or *since
-2015*, leaves the actuality inference cancelable and has no beyond expectation inference. -/
+the other (`F`, the spans ending at `t` for *in years* and those starting at `t` for *until*). A
+domain widener stretches its boundary as far as is logically possible: its span is the greatest
+event-free span with the fixed boundary, Section 4. The event that stops the widening is the
+actuality inference, Constant's observation, and the span's containing every event-free
+alternative is the beyond expectation inference. A boundary adverbial that names its own
+boundary, *in (the last) 5 years* or *since 2015*, leaves the actuality inference cancelable and
+has no beyond expectation inference. -/
 
 section Widening
 
 /-- The span of a domain widener whose other boundary is fixed by `F` is the greatest event-free
 span that `F` admits. -/
-def Widened (F : NonemptyInterval T → Prop) (P : W → E → Prop) (w : W)
+def Widened (F : Set (NonemptyInterval T)) (P : W → E → Prop) (w : W)
     (τ : NonemptyInterval T) : Prop :=
-  IsGreatest {τ' | F τ' ∧ τ' ∉ PRFV P w} τ
+  IsGreatest (F \ PRFV P w) τ
 
-variable {F : NonemptyInterval T → Prop} {P : W → E → Prop} {w : W} {τ τ' : NonemptyInterval T}
+variable {F : Set (NonemptyInterval T)} {P : W → E → Prop} {w : W} {τ τ' : NonemptyInterval T}
 
 /-- Spans ending at the same time are nested. -/
-theorem isChain_rb (t : T) : IsChain (· ≤ ·) {τ : NonemptyInterval T | RB τ t} := by
+theorem isChain_rb (t : T) : IsChain (· ≤ ·) {τ : NonemptyInterval T | τ.snd = t} := by
   intro τ₁ h₁ τ₂ h₂ _
   rcases le_total τ₂.fst τ₁.fst with h | h
   · exact .inl (le_def.2 ⟨h, (h₁.trans h₂.symm).le⟩)
   · exact .inr (le_def.2 ⟨h, (h₂.trans h₁.symm).le⟩)
 
 /-- Spans starting at the same time are nested. -/
-theorem isChain_lb (t : T) : IsChain (· ≤ ·) {τ : NonemptyInterval T | LB t τ} := by
+theorem isChain_lb (t : T) : IsChain (· ≤ ·) {τ : NonemptyInterval T | τ.fst = t} := by
   intro τ₁ h₁ τ₂ h₂ _
   rcases le_total τ₁.snd τ₂.snd with h | h
   · exact .inl (le_def.2 ⟨(h₂.trans h₁.symm).le, h⟩)
@@ -229,34 +230,34 @@ theorem isChain_lb (t : T) : IsChain (· ≤ ·) {τ : NonemptyInterval T | LB t
 
 /-- On a chain of spans sharing the fixed boundary, the widened span is the maximal event-free
 one, the boundary stretched until the sentence would become false. -/
-theorem widened_iff_maximal (hF : IsChain (· ≤ ·) {τ | F τ}) :
-    Widened F P w τ ↔ Maximal (fun τ' ↦ F τ' ∧ τ' ∉ PRFV P w) τ := by
+theorem widened_iff_maximal (hF : IsChain (· ≤ ·) F) :
+    Widened F P w τ ↔ Maximal (· ∈ F \ PRFV P w) τ := by
   refine ⟨fun h ↦ ⟨h.1, fun _ hτ' _ ↦ h.2 hτ'⟩, fun h ↦ ⟨h.1, fun τ' hτ' ↦ ?_⟩⟩
   obtain rfl | hne := eq_or_ne τ' τ
   · exact le_rfl
   · exact (hF hτ'.1 h.1.1 hne).elim id (h.2 hτ')
 
 /-- Every wider span with the fixed boundary contains an event. -/
-theorem Widened.prfv (h : Widened F P w τ) (hτ' : F τ') (hlt : τ < τ') : τ' ∈ PRFV P w :=
+theorem Widened.prfv (h : Widened F P w τ) (hτ' : τ' ∈ F) (hlt : τ < τ') : τ' ∈ PRFV P w :=
   by_contra fun hfree ↦ hlt.not_ge (h.2 ⟨hτ', hfree⟩)
 
 /-- The actuality inference is not cancelable, Constant's observation (22) and (26), since a
 relevant event exists whenever the span could be widened at all. -/
-theorem actuality_inference (h : Widened F P w τ) (hw : ∃ τ', F τ' ∧ τ < τ') : ∃ e, P w e :=
+theorem actuality_inference (h : Widened F P w τ) (hw : ∃ τ' ∈ F, τ < τ') : ∃ e, P w e :=
   let ⟨_, hτ', hlt⟩ := hw
   let ⟨e, _, hP⟩ := h.prfv hτ' hlt
   ⟨e, hP⟩
 
 /-- The beyond expectation inference, (31)–(33) and (119)–(122), is that the widened span contains
 every event-free span with the same fixed boundary. -/
-theorem beyond_expectation_inference (h : Widened F P w τ) (hτ' : F τ')
+theorem beyond_expectation_inference (h : Widened F P w τ) (hτ' : τ' ∈ F)
     (hfree : τ' ∉ PRFV P w) : τ' ≤ τ :=
   h.2 ⟨hτ', hfree⟩
 
 /-- With *in years* the last event starts just before the left boundary of the widened perfect
 time span, (51), since however close to the boundary one looks an event starts there,
 (23)–(24). -/
-theorem event_near_lb {t : T} (h : Widened (RB · t) P w τ) {s : T} (hs : s < τ.fst) :
+theorem event_near_lb {t : T} (h : Widened {τ | τ.snd = t} P w τ) {s : T} (hs : s < τ.fst) :
     ∃ e, P w e ∧ s ≤ (Event.τ e).fst ∧ (Event.τ e).fst < τ.fst := by
   obtain ⟨e, he, hP⟩ := h.prfv (τ' := ⟨(s, τ.snd), hs.le.trans τ.fst_le_snd⟩) h.1.1
     (lt_of_le_of_ne (le_def.2 ⟨hs.le, le_rfl⟩) fun heq ↦ hs.ne' (congrArg (·.fst) heq))
@@ -265,7 +266,7 @@ theorem event_near_lb {t : T} (h : Widened (RB · t) P w τ) {s : T} (hs : s < �
 
 /-- With *until* the event ends just after the right boundary of the widened until time span,
 (123). -/
-theorem event_near_rb {t : T} (h : Widened (LB t) P w τ) {s : T} (hs : τ.snd < s) :
+theorem event_near_rb {t : T} (h : Widened {τ | τ.fst = t} P w τ) {s : T} (hs : τ.snd < s) :
     ∃ e, P w e ∧ (Event.τ e).snd ≤ s ∧ τ.snd < (Event.τ e).snd := by
   obtain ⟨e, he, hP⟩ := h.prfv (τ' := ⟨(τ.fst, s), τ.fst_le_snd.trans hs.le⟩) h.1.1
     (lt_of_le_of_ne (le_def.2 ⟨le_rfl, hs.le⟩) fun heq ↦ hs.ne (congrArg (·.snd) heq))
@@ -274,18 +275,18 @@ theorem event_near_rb {t : T} (h : Widened (LB t) P w τ) {s : T} (hs : τ.snd <
 
 /-- Over the integers, with one seizure at time `0` and the right boundary at `10`, the perfect time
 span of *in years* runs from `1` to `10`. -/
-example : Widened (W := Unit) (E := NonemptyInterval ℤ) (RB · 10)
+example : Widened (W := Unit) (E := NonemptyInterval ℤ) {τ | τ.snd = 10}
     (fun _ e ↦ e = NonemptyInterval.pure 0) () ⟨(1, 10), by decide⟩ := by
   refine ⟨⟨rfl, fun ⟨e, he, hP⟩ ↦ by
     subst hP; simp [ViewpointType.ttTSitRelation, le_def] at he⟩, fun τ' ⟨hrb, hfree⟩ ↦ ?_⟩
   refine le_def.2 ⟨not_lt.1 fun hlt ↦ hfree ⟨.pure 0, le_def.2 ⟨?_, ?_⟩, rfl⟩, hrb.le⟩
   · simp at hlt ⊢; omega
-  · simp [RB] at hrb ⊢; omega
+  · simp at hrb ⊢; omega
 
 /-- In dense time a perfect time span is widened only past infinitely many events, since with
 finitely many an event-free span can always be stretched a little further. -/
 theorem not_widened_rb_of_finite [DenselyOrdered T] [NoMinOrder T] {t : T}
-    (hfin : {e | P w e}.Finite) : ¬ Widened (RB · t) P w τ := fun h ↦ by
+    (hfin : {e | P w e}.Finite) : ¬ Widened {τ | τ.snd = t} P w τ := fun h ↦ by
   obtain ⟨s, hs, hsF⟩ :
       ∃ s < τ.fst, ∀ e, P w e → (Event.τ e).fst < τ.fst → (Event.τ e).fst < s := by
     rcases ({e | P w e ∧ (Event.τ e).fst < τ.fst} : Set E).eq_empty_or_nonempty with hE | hne
@@ -302,9 +303,11 @@ theorem not_widened_rb_of_finite [DenselyOrdered T] [NoMinOrder T] {t : T}
 leaves the actuality inference cancelable, since the negated perfect holds with no relevant event
 at all, (11)–(12), and with the last event before the left boundary, (23). -/
 theorem cancelable_of_lb {t : T} (s : T) (hs : s ≤ t) :
-    (∃ P : W → E → Prop, ∃ τ, LB s τ ∧ RB τ t ∧ τ ∉ PRFV P w ∧ ∀ e, ¬ P w e) ∧
+    (∃ P : W → E → Prop, ∃ τ : NonemptyInterval T, τ.fst = s ∧ τ.snd = t ∧ τ ∉ PRFV P w ∧
+        ∀ e, ¬ P w e) ∧
       ∀ e₀ : E, (Event.τ e₀).snd < s →
-        ∃ P : W → E → Prop, ∃ τ, LB s τ ∧ RB τ t ∧ τ ∉ PRFV P w ∧ P w e₀ :=
+        ∃ P : W → E → Prop, ∃ τ : NonemptyInterval T, τ.fst = s ∧ τ.snd = t ∧ τ ∉ PRFV P w ∧
+          P w e₀ :=
   ⟨⟨fun _ _ ↦ False, ⟨(s, t), hs⟩, rfl, rfl, fun ⟨_, _, h⟩ ↦ h, fun _ ↦ id⟩,
     fun e₀ he₀ ↦ ⟨fun _ e ↦ e = e₀, ⟨(s, t), hs⟩, rfl, rfl,
       fun ⟨_, hle, heq⟩ ↦ (heq ▸ (le_def.1 hle).1 : s ≤ (Event.τ e₀).fst).not_gt
@@ -402,7 +405,7 @@ subinterval property, in a model with no relevant event at all. -/
 theorem two_until_overgenerates (hP : ∀ e, ¬ P w e) {s t : T} (h : s < t) :
     Giannakidou2002.durativeUntil (fun w ↦ (PRFV P w)ᶜ) w t :=
   (Giannakidou2002.durativeUntil_iff_of_isLowerSet (isLowerSet_compl_prfv P w) t).2
-    ⟨⟨(s, t), h.le⟩, h, rfl, fun ⟨e, _, he⟩ ↦ hP e he⟩
+    ⟨⟨(s, t), h.le⟩, fun ⟨e, _, he⟩ ↦ hP e he, h, rfl⟩
 
 /-- *No time but `t₀` is a time of a `P`-event*, the exceptive of *dhen … para mono* with a
 temporal argument on the least-exception semantics, says that `t₀` is the only such time, which
@@ -430,23 +433,19 @@ section RightBoundary
 
 variable {Q : W → E → Prop} {w : W} {e : E}
 
-/-- The moments at which an interval property holds of some span ending there. -/
-def rightBoundaries (q : W → Set (NonemptyInterval T)) (w : W) : Set T :=
-  {s | ∃ τ, RB τ s ∧ τ ∈ q w}
-
 /-- A perfective argument clause sets the right boundary at the completion of its first event. -/
 theorem isLeast_rightBoundaries_prfv (he : Q w e)
     (hfirst : ∀ e', Q w e' → (Event.τ e).snd ≤ (Event.τ e').snd) :
-    IsLeast (rightBoundaries (PRFV Q) w) (Event.τ e).snd :=
-  ⟨⟨Event.τ e, rfl, e, le_rfl, he⟩,
-    fun _ ⟨_, hτ, e', hle, he'⟩ ↦ hτ ▸ (hfirst e' he').trans (le_def.1 hle).2⟩
+    IsLeast ((·.snd) '' PRFV Q w) (Event.τ e).snd :=
+  ⟨⟨Event.τ e, ⟨e, le_rfl, he⟩, rfl⟩,
+    fun _ ⟨_, ⟨e', hle, he'⟩, hτ⟩ ↦ hτ ▸ (hfirst e' he').trans (le_def.1 hle).2⟩
 
 /-- An imperfective argument clause sets the right boundary at the onset of its first event. -/
 theorem isLeast_rightBoundaries_unbounded (he : Q w e)
     (hfirst : ∀ e', Q w e' → (Event.τ e).fst ≤ (Event.τ e').fst) :
-    IsLeast (rightBoundaries (UNBOUNDED Q) w) (Event.τ e).fst :=
-  ⟨⟨.pure (Event.τ e).fst, rfl, e, le_def.2 ⟨le_rfl, (Event.τ e).fst_le_snd⟩, he⟩,
-    fun _ ⟨τ, hτ, e', hle, he'⟩ ↦
+    IsLeast ((·.snd) '' UNBOUNDED Q w) (Event.τ e).fst :=
+  ⟨⟨.pure (Event.τ e).fst, ⟨e, le_def.2 ⟨le_rfl, (Event.τ e).fst_le_snd⟩, he⟩, rfl⟩,
+    fun _ ⟨τ, ⟨e', hle, he'⟩, hτ⟩ ↦
       hτ ▸ ((hfirst e' he').trans (le_def.1 hle).1).trans τ.fst_le_snd⟩
 
 end RightBoundary

@@ -27,8 +27,8 @@ rules it out there. Among the focus alternatives, a domain further in the past i
 
 ## Implementation notes
 
-* A left boundary is a time point, where the paper's left boundary is a subinterval of `tᵣ`
-  (`Aspect.PERF_XN`).
+* A left boundary is a time point, where the paper's left boundary is a subinterval of `tᵣ`; the
+  paper's `PERF_XN` is the perfect over the spans whose left boundary lies in `tᵣ`.
 * `later_lb_stronger_prfv`, the reversed ordering under the perfective, is not drawn in the paper.
 
 ## References
@@ -88,9 +88,9 @@ def presPerfSimple (V : W → E → Prop) (tc : T) (w : W) : Prop :=
 
 /-- The present perfect progressive with Extended Now is `PRES(PERF_XN(IMPF(V), tᵣ))`, the
 U-perfect reading of [knick-sharf-2026]; *John has been running since Monday* restricts the left
-boundary to `tᵣ`. -/
+boundary of the perfect time span to `tᵣ`. -/
 def presPerfProgXN (V : W → E → Prop) (tᵣ : Set T) (tc : T) (w : W) : Prop :=
-  evalPres (PERF_XN (IMPF V) tᵣ) tc w
+  evalPres (PERF ((·.fst) ⁻¹' tᵣ ∩ IMPF V ·)) tc w
 
 /-- The past perfect progressive is `PAST(PERF(IMPF(V)))`, so *John had been running* holds when
 some `t < tc` satisfies `PERF(IMPF(V))`. -/
@@ -107,114 +107,60 @@ theorem simplePresent_unfold (V : W → E → Prop) (tc : T) (w : W) :
 
 /-- The U-perfect under narrow focus, (39b), holds when some perfect time span with its left
 boundary in `tᵣ` and its right boundary at `tc` falls under the imperfective. -/
-theorem presPerfProgXN_unfold (V : W → E → Prop) (tᵣ : Set T)
-    (tc : T) (w : W) :
-    presPerfProgXN V tᵣ tc w ↔
-    ∃ pts : NonemptyInterval T, ∃ tLB ∈ tᵣ,
-      LB tLB pts ∧ RB pts tc ∧ pts ∈ IMPF V w := by
-  rfl
+theorem presPerfProgXN_iff (V : W → E → Prop) (tᵣ : Set T) (tc : T) (w : W) :
+    presPerfProgXN V tᵣ tc w ↔ ∃ pts ∈ IMPF V w, pts.fst ∈ tᵣ ∧ pts.snd = tc :=
+  ⟨fun ⟨pts, ⟨h₁, h₂⟩, h₃⟩ ↦ ⟨pts, h₂, h₁, h₃⟩, fun ⟨pts, h₂, h₁, h₃⟩ ↦ ⟨pts, ⟨h₁, h₂⟩, h₃⟩⟩
 
 /-! ### Results -/
 
 /-- The U-perfect (39b) entails its simple present competitor (39a) whatever the domain `tᵣ`,
 since a perfect time span ending at `tc` inside the run time of an event puts `tc` itself inside
 it. -/
-theorem u_perf_entails_simple_present (V : W → E → Prop)
-    (tᵣ : Set T) (tc : T) (w : W) :
-    presPerfProgXN V tᵣ tc w → simplePresent V tc w := by
-  intro ⟨pts, _, _, _, hRB, e, hlt, hV⟩
-  obtain ⟨hsub, hOr⟩ := NonemptyInterval.lt_def.mp hlt
-  obtain ⟨hS1, hS2⟩ := NonemptyInterval.le_def.mp hsub
-  exact ⟨e, NonemptyInterval.lt_def.mpr
-    ⟨NonemptyInterval.le_def.mpr
-        ⟨le_trans hS1 (le_trans pts.fst_le_snd (le_of_eq hRB)),
-         le_trans (le_of_eq hRB.symm) hS2⟩,
-     hOr.elim
-       (fun h => Or.inl (lt_of_lt_of_le h (le_trans pts.fst_le_snd (le_of_eq hRB))))
-       (fun h => Or.inr (lt_of_eq_of_lt hRB.symm h))⟩, hV⟩
+theorem u_perf_entails_simple_present (V : W → E → Prop) (tᵣ : Set T) (tc : T) (w : W) :
+    presPerfProgXN V tᵣ tc w → simplePresent V tc w := fun h ↦
+  let ⟨pts, ⟨_, e, hlt, hV⟩, hRB⟩ := mem_perf.1 h
+  ⟨e, lt_of_le_of_lt (NonemptyInterval.le_def.2 ⟨hRB ▸ pts.fst_le_snd, hRB.ge⟩) hlt, hV⟩
 
 /-- Under broad focus, where the domain `tᵣ` is the whole line, the U-perfect is equivalent to
 the simple present, the equivalence by which competition rules it out; the converse direction
 takes the point `tc` as the perfect time span. -/
 theorem broad_focus_equiv (V : W → E → Prop) (tc : T) (w : W) :
-    presPerfProgXN V Set.univ tc w ↔ simplePresent V tc w := by
-  constructor
-  · exact u_perf_entails_simple_present V Set.univ tc w
-  · intro h
-    exact ⟨NonemptyInterval.pure tc, tc, Set.mem_univ _, rfl, rfl, h⟩
+    presPerfProgXN V Set.univ tc w ↔ simplePresent V tc w :=
+  ⟨u_perf_entails_simple_present V Set.univ tc w, fun h ↦ ⟨.pure tc, ⟨Set.mem_univ _, h⟩, rfl⟩⟩
 
 /-- An earlier left boundary is stronger under the imperfective, the ordering of the focus
 alternatives in (33) and (35), since an event whose run time contains the perfect time span from
 `tLB₁` also contains the shorter one from a later `tLB₂`. -/
-theorem earlier_lb_stronger_impf (V : W → E → Prop)
-    (tLB₁ tLB₂ : T) (tc : T) (w : W) (h : tLB₁ < tLB₂) (htc : tLB₂ ≤ tc) :
-    ⟨w, tc⟩ ∈ PERF_XN (IMPF V) {tLB₁} → ⟨w, tc⟩ ∈ PERF_XN (IMPF V) {tLB₂} := by
-  intro ⟨pts, tLB, htLB, hLB, hRB, e, hlt, hV⟩
-  obtain ⟨hsub, _hOr⟩ := NonemptyInterval.lt_def.mp hlt
-  obtain ⟨hS1, hS2⟩ := NonemptyInterval.le_def.mp hsub
-  -- tLB = tLB₁ (from singleton), pts = [tLB₁, tc]
-  -- (τ e) ⊃ pts, so (τ e).fst ≤ tLB₁ < tLB₂ and tc ≤ (τ e).snd
-  -- Construct new PTS = [tLB₂, tc]
-  refine ⟨⟨⟨tLB₂, tc⟩, htc⟩, tLB₂, rfl, rfl, rfl, e,
-    NonemptyInterval.lt_def.mpr ⟨NonemptyInterval.le_def.mpr ⟨?_, ?_⟩, ?_⟩, hV⟩
-  · -- (τ e).fst ≤ tLB₂: from (τ e).fst ≤ pts.fst = tLB₁ < tLB₂
-    have : tLB = tLB₁ := htLB
-    exact le_of_lt (lt_of_le_of_lt (this ▸ hLB ▸ hS1) h)
-  · -- tc ≤ (τ e).snd
-    exact le_trans (le_of_eq hRB.symm) hS2
-  · -- proper: (τ e).fst < tLB₂ (left disjunct)
-    have : tLB = tLB₁ := htLB
-    exact Or.inl (lt_of_le_of_lt (this ▸ hLB ▸ hS1) h)
+theorem earlier_lb_stronger_impf (V : W → E → Prop) (tLB₁ tLB₂ : T) (tc : T) (w : W)
+    (h : tLB₁ < tLB₂) (htc : tLB₂ ≤ tc) :
+    presPerfProgXN V {tLB₁} tc w → presPerfProgXN V {tLB₂} tc w := fun hp ↦
+  let ⟨_, ⟨hLB, e, hlt, hV⟩, hRB⟩ := mem_perf.1 hp
+  ⟨⟨(tLB₂, tc), htc⟩, ⟨rfl, e, lt_of_le_of_lt
+    (NonemptyInterval.le_def.2 ⟨(Set.mem_singleton_iff.1 hLB).le.trans h.le, hRB.ge⟩) hlt, hV⟩, rfl⟩
 
 /-- A later left boundary is stronger under the perfective (28), since an event fitting inside
 the shorter span from `tLB₂` also fits inside the longer span from an earlier `tLB₁`. -/
-theorem later_lb_stronger_prfv (V : W → E → Prop)
-    (tLB₁ tLB₂ : T) (tc : T) (w : W) (h : tLB₁ < tLB₂) :
-    ⟨w, tc⟩ ∈ PERF_XN (PRFV V) {tLB₂} → ⟨w, tc⟩ ∈ PERF_XN (PRFV V) {tLB₁} := by
-  intro ⟨pts, tLB, htLB, hLB, hRB, e, hle, hV⟩
-  obtain ⟨hS1, hS2⟩ := NonemptyInterval.le_def.mp hle
-  -- tLB = tLB₂ (singleton), pts = [tLB₂, tc]
-  -- (τ e) ⊆ pts: pts.fst ≤ (τ e).fst ∧ (τ e).snd ≤ pts.snd
-  -- Construct PTS' = [tLB₁, tc], which is larger, so (τ e) ⊆ PTS' too
-  have htLBeq : tLB = tLB₂ := htLB
-  have htc : tLB₂ ≤ tc := htLBeq ▸ hLB ▸ le_trans pts.fst_le_snd (le_of_eq hRB)
-  refine ⟨⟨⟨tLB₁, tc⟩, le_of_lt (lt_of_lt_of_le h htc)⟩, tLB₁, rfl, rfl, rfl, e,
-    NonemptyInterval.le_def.mpr ⟨?_, ?_⟩, hV⟩
-  · -- (τ e).fst ≥ tLB₁: from tLB₁ < tLB₂ = pts.fst ≤ (τ e).fst
-    exact le_of_lt (lt_of_lt_of_le h (htLBeq ▸ hLB ▸ hS1))
-  · -- (τ e).snd ≤ tc: from (τ e).snd ≤ pts.snd = tc
-    exact le_trans hS2 (le_of_eq hRB)
+theorem later_lb_stronger_prfv (V : W → E → Prop) (tLB₁ tLB₂ : T) (tc : T) (w : W)
+    (h : tLB₁ < tLB₂) :
+    ⟨w, tc⟩ ∈ PERF ({pts | pts.fst = tLB₂} ∩ PRFV V ·) →
+      ⟨w, tc⟩ ∈ PERF ({pts | pts.fst = tLB₁} ∩ PRFV V ·) := fun hp ↦
+  let ⟨pts, ⟨hLB, e, hle, hV⟩, hRB⟩ := mem_perf.1 hp
+  have hLB : pts.fst = tLB₂ := hLB
+  ⟨⟨(tLB₁, tc), (h.le.trans hLB.ge).trans (hRB ▸ pts.fst_le_snd)⟩,
+    ⟨rfl, e, hle.trans (NonemptyInterval.le_def.2 ⟨h.le.trans hLB.ge, hRB.le⟩), hV⟩, rfl⟩
 
 /-- The ordering is strict, as the state `s''` of (33) shows, since an event going on since
 `tLB₂` need not have been going on since an earlier `tLB₁`. The counterexample takes the boundaries
 `0` and `2`, speech time `4`, and an event running over `[1, 5]`. -/
 theorem earlier_lb_not_weaker_impf :
-    ¬ ∀ (V : Unit → NonemptyInterval ℤ → Prop) (tLB₁ tLB₂ : ℤ) (tc : ℤ) (w : Unit),
-      tLB₁ < tLB₂ →
-      ⟨w, tc⟩ ∈ PERF_XN (IMPF V) {tLB₂} → ⟨w, tc⟩ ∈ PERF_XN (IMPF V) {tLB₁} := by
-  intro hall
-  -- Counterexample: event runtime [1,5], tLB₁=0, tLB₂=2, tc=4
-  let e₀ : NonemptyInterval ℤ := ⟨⟨1, 5⟩, by omega⟩
-  let V : Unit → NonemptyInterval ℤ → Prop := fun _ e => e = e₀
-  -- Premise: PERF_XN(IMPF(V), {2})(⟨(), 4⟩)
-  -- PTS = [2,4], event [1,5]: [2,4] ⊂ [1,5] ✓
-  have prem : ⟨(), 4⟩ ∈ PERF_XN (IMPF V) {(2 : ℤ)} := by
-    refine ⟨⟨⟨2, 4⟩, by omega⟩, 2, rfl, rfl, rfl, e₀, ?_, rfl⟩
-    dsimp only [e₀]
-    decide
-  -- Conclusion: PERF_XN(IMPF(V), {0})((), 4) — should be false
-  have concl := hall V 0 2 4 () (by omega) prem
-  obtain ⟨pts, tLB, htLB, hLB, hRB, e, hlt, hV⟩ := concl
-  have hS1 := (NonemptyInterval.le_def.mp (NonemptyInterval.lt_def.mp hlt).1).1
-  -- htLB : tLB = 0, hLB : pts.fst = tLB, so pts.fst = 0
-  -- hV : e = e₀, so (τ e).fst = 1
-  -- hS1 : (τ e).fst ≤ pts.fst, i.e. 1 ≤ 0 — contradiction
-  have htLBeq : tLB = (0 : ℤ) := htLB
-  subst htLBeq
-  dsimp only [V] at hV
-  subst hV
-  dsimp only [e₀] at hS1
-  simp only [LB, Event.τ_nonemptyInterval] at hLB hS1
-  omega
+    ¬ ∀ (V : Unit → NonemptyInterval ℤ → Prop) (tLB₁ tLB₂ tc : ℤ) (w : Unit),
+      tLB₁ < tLB₂ → presPerfProgXN V {tLB₂} tc w → presPerfProgXN V {tLB₁} tc w := fun hall ↦ by
+  let e₀ : NonemptyInterval ℤ := ⟨(1, 5), by omega⟩
+  have prem : presPerfProgXN (fun _ e ↦ e = e₀) {2} 4 () :=
+    ⟨⟨(2, 4), by omega⟩, ⟨rfl, e₀, by dsimp only [e₀]; decide, rfl⟩, rfl⟩
+  obtain ⟨pts, ⟨hLB, e, hlt, rfl⟩, -⟩ := mem_perf.1 (hall _ 0 2 4 () (by omega) prem)
+  have h₁ := (NonemptyInterval.le_def.1 hlt.le).1
+  rw [show pts.fst = 0 from hLB] at h₁
+  simp [e₀] at h₁
 
 end KnickSharf2026
