@@ -28,7 +28,7 @@ constituency, which applying the operations as functions would forget.
   `attachAll_injective` says the tree records the affixes and their order
 * `Word.Tree.attachMorphs` — attachment of morphs on the sides their kinds
   give; `attachMorphs_injOn` on sequences of morphs bound on a side, and
-  `words_toList_attachMorphs`: the result is one word
+  `wordsAt_toList_attachMorphs`: the result is one word
 * `Word.Tree.base`, `Word.Tree.stem`, `Word.Tree.roots` — [booij-2012]'s
   relational notions
 * `Word.Tree.IsKindCoherent` — attachment kinds match their positions
@@ -229,11 +229,16 @@ theorem attachMorphs_injOn (root : Morph) :
   exact List.map_injective_iff.mpr (fun m m' hmm ↦ (Prod.ext_iff.mp hmm).2) this
 
 /-- A root with morphs attached on their sides is one word. -/
-theorem words_toList_attachMorphs (root : Morph) (ms : List Morph) :
-    Morph.words (attachMorphs root ms).toList = [(attachMorphs root ms).toList] := by
+theorem wordsAt_toList_attachMorphs (root : Morph) (ms : List Morph) :
+    Morph.wordsAt .clitic (attachMorphs root ms).toList = [(attachMorphs root ms).toList] := by
   rw [attachMorphs, toList_attachAll]
-  exact Morph.words_append_cons root (fun p hp ↦ by simp at hp; exact hp.2)
-    fun s hs ↦ by simp at hs; exact hs.2
+  refine Morph.wordsAt_append_cons root (fun p hp ↦ ?_) fun s hs ↦ ?_
+  · simp at hp
+    obtain ⟨a, ha⟩ := Morph.Kind.side?_eq_some_iff.mp hp.2
+    exact ⟨a, by simp, by simpa using ha⟩
+  · simp at hs
+    obtain ⟨a, ha⟩ := Morph.Kind.side?_eq_some_iff.mp hs.2
+    exact ⟨.after, nofun, a, by simp, by simpa using ha⟩
 
 /-! ### Laws -/
 

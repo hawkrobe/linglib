@@ -27,6 +27,8 @@ free form as a proper part. The definition is deliberately inclusive
 * `IsPrimaryWord` — no proper contiguous part is a free form.
 * `Morph.IsCoreIn` — the root property: occurrence in a primary word.
 * `Morph.IsTypicalAffixIn` — occurrence in secondary words only.
+* `IsMinimalFreeForm` — Bloomfield's word, a free form not analyzable into
+  free forms.
 -/
 
 @[expose] public section
@@ -43,7 +45,7 @@ instance (freeForms : List (List Morph)) (w : List Morph) :
     Decidable (IsPrimaryWord freeForms w) :=
   inferInstanceAs (Decidable (∀ f ∈ freeForms, _ → _))
 
-/-- A **morphological core** — [qin-2025]'s base definition of a root: a
+/-- A **morphological core**, [qin-2025]'s base definition of a root, is a
 morph occurring in some primary word. -/
 def Morph.IsCoreIn (m : Morph) (words freeForms : List (List Morph)) : Prop :=
   ∃ w ∈ words, IsPrimaryWord freeForms w ∧ m ∈ w
@@ -70,5 +72,29 @@ theorem Morph.isCoreIn_of_free_word {words freeForms : List (List Morph)}
     {m : Morph} (hw : [m] ∈ words) (h : [] ∉ freeForms) :
     m.IsCoreIn words freeForms :=
   ⟨[m], hw, isPrimaryWord_singleton h m, List.mem_singleton_self m⟩
+
+/-- A **minimum free form** ([bloomfield-1933]) is a free form that cannot be analyzed into two
+or more parts each of which is a free form. -/
+def IsMinimalFreeForm (freeForms : List (List Morph)) (w : List Morph) : Prop :=
+  w ∈ freeForms ∧ ∀ ps : List (List Morph), ps.flatten = w → [] ∉ ps →
+    (∀ p ∈ ps, p ∈ freeForms) → ps.length ≤ 1
+
+/-- A free form none of whose proper nonempty beginnings is free is a minimum free form, since
+the first of two or more parts would be one. -/
+theorem isMinimalFreeForm_of_take {freeForms : List (List Morph)} {w : List Morph}
+    (hw : w ∈ freeForms) (h : ∀ i < w.length, 0 < i → w.take i ∉ freeForms) :
+    IsMinimalFreeForm freeForms w := by
+  refine ⟨hw, fun ps hps hne hfree ↦ ?_⟩
+  match ps, hps, hne, hfree with
+  | [], _, _, _ => simp
+  | [_], _, _, _ => simp
+  | p :: q :: rest, hps, hne, hfree =>
+    exfalso
+    have hp : p ≠ [] := fun e ↦ hne (e ▸ List.mem_cons_self)
+    have hq : q ≠ [] := fun e ↦ hne (e ▸ List.mem_cons_of_mem _ List.mem_cons_self)
+    subst hps
+    refine h p.length ?_ (List.length_pos_iff.2 hp) ?_
+    · have := List.length_pos_iff.2 hq; simp; omega
+    · simpa using hfree p List.mem_cons_self
 
 end Morphology
