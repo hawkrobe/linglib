@@ -4,6 +4,7 @@ public import Mathlib.Order.LatticeIntervals
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Tactic.FinCases
 public import Linglib.Semantics.Attitudes.Desire.ExpectedValue
+public import Linglib.Core.Probability.UniformOn
 public import Linglib.Studies.Kennedy2007
 public import Linglib.Studies.Lassiter2015
 public import Linglib.Core.MeasureTheory.Measure.Dirac
@@ -131,10 +132,9 @@ section Typology
 
 open Degree
 
-/-- (4.58): the constraints the meaning of a positive standard puts on its scale. A minimum or
-maximum standard needs its endpoint, and a contextual standard fits any scale. Interpretive
-Economy, `Boundedness.Admits`, is (4.59): the same with the contextual standard confined to open
-scales. -/
+/-- A positive standard admits a scale as in (4.58): a minimum or maximum standard needs its
+endpoint, and a contextual standard fits any scale. Interpretive Economy, `Boundedness.Admits`,
+is (4.59), which confines the contextual standard to open scales. -/
 def Coherent (b : Boundedness) (s : PositiveStandard) : Prop := s = .contextual ∨ b.Admits s
 
 /-- What Interpretive Economy admits is coherent. -/
@@ -160,7 +160,7 @@ theorem ofOrder_Ioo_zero_one :
     Boundedness.ofOrder (Set.Ioo (0 : ℝ) 1) = .open_ ∧ (1 : ℝ) ∉ Set.Ioo (0 : ℝ) 1 :=
   ⟨Boundedness.ofOrder_Ioo, fun h ↦ lt_irrefl _ h.2⟩
 
-/-- The book's licensing of maximizers and minimizers (§4.2.9): *completely* takes the positive
+/-- As the book licenses maximizers and minimizers (§4.2.9), *completely* takes the positive
 form of a maximum adjective and *slightly* that of a minimum adjective, whatever the scale. -/
 def LicensesPos : Kennedy2007.DegreeModifier → PositiveStandard → Prop
   | .maximizer, s => s = .maxEndpoint
@@ -190,13 +190,13 @@ open ComparativeProbability Degree
 
 variable {W : Type*} [MeasurableSpace W] (P : Measure W) {A : Set W} {θ : ℝ}
 
-/-- *Likely* and *probable*: a relative adjective, true above a contextual threshold. -/
+/-- *Likely* and *probable* are relative adjectives, true above a contextual threshold. -/
 def likely (θ : ℝ) : Set (Set W) := Comparison.gt.over P.real θ
 
-/-- *Certain* and *sure* (§5.1.5): the maximum standard of the probability scale. -/
+/-- *Certain* and *sure* take the maximum standard of the probability scale (§5.1.5). -/
 def certain : Set (Set W) := Comparison.ge.over P.real 1
 
-/-- *Possible* (§5.2.5): the minimum standard of the probability scale. -/
+/-- *Possible* takes the minimum standard of the probability scale (§5.2.5). -/
 def possible : Set (Set W) := Comparison.gt.over P.real 0
 
 theorem mem_possible_iff : A ∈ possible P ↔ 0 < P.real A := Iff.rfl
@@ -246,7 +246,7 @@ theorem mem_possible_iff_not_mem_certain_compl [DiscreteMeasurableSpace W] :
   have h := Lassiter2015.probMight_iff_not_probMust_compl P 1 A
   rwa [Lassiter2015.probMight, sub_self] at h
 
-/-- (4.51b): *n percent A* compares the degree with the scale's maximum. -/
+/-- *n percent A* compares the degree with the scale's maximum (4.51b). -/
 def percent (n : ℝ) : Set (Set W) := {A | P.real A / P.real Set.univ = n / 100}
 
 /-- *n percent likely* is interpretable because the maximum is a degree of the scale
@@ -281,8 +281,8 @@ theorem rank_injective : Function.Injective rank := fun a b h ↦ by
 
 instance : LinearOrder EpistemicItem := LinearOrder.lift' rank rank_injective
 
-/-- (6.29): *must* and *certain* compare the probability weakly with their thresholds, *might*,
-*likely* and *possible* strictly. -/
+/-- *Must* and *certain* compare the probability weakly with their thresholds, *might*, *likely*
+and *possible* strictly (6.29). -/
 def comparison : EpistemicItem → Degree.Comparison
   | .must | .certain => .ge
   | .possible | .might | .likely => .gt
@@ -334,23 +334,23 @@ theorem antitone_pos (hθ : StrictMono θ) : Antitone (pos P θ) := by
       first | exact absurd h (by decide) | linarith
   · exact hA
 
-/-- (6.16): *must* `A` leaves `¬A` at most `1 − θ_must` likely, so above one half `A` is more
-likely than its negation. -/
+/-- *Must* `A` leaves `¬A` at most `1 − θ_must` likely, so above one half `A` is more likely
+than its negation (6.16). -/
 theorem compl_lt_of_mem_must [DiscreteMeasurableSpace W] [IsProbabilityMeasure P] {θ' : ℝ}
     (hθ : 1 / 2 < θ') (h : A ∈ Comparison.ge.over P.real θ') : P.real Aᶜ < P.real A := by
   have := probReal_add_probReal_compl (μ := P) (.of_discrete : MeasurableSet A)
   change θ' ≤ P.real A at h
   linarith
 
-/-- (6.19): what is more likely than not is a *might*, given `θ_might ≤ 1/2`. -/
+/-- What is more likely than not is a *might*, given `θ_might ≤ 1/2` (6.19). -/
 theorem mem_might_of_compl_lt [DiscreteMeasurableSpace W] [IsProbabilityMeasure P] {θ' : ℝ}
     (hθ : θ' ≤ 1 / 2) (h : P.real Aᶜ < P.real A) : A ∈ Comparison.gt.over P.real θ' := by
   have := probReal_add_probReal_compl (μ := P) (.of_discrete : MeasurableSet A)
   change θ' < P.real A
   linarith
 
-/-- p. 164: under the dualities of *must* and *might* and of *certain* and *possible*, *certain*
-is stronger than *must* iff *might* is stronger than *possible*. -/
+/-- Under the dualities of *must* and *might* and of *certain* and *possible*, *certain* is
+stronger than *must* iff *might* is stronger than *possible* (p. 164). -/
 theorem must_lt_certain_iff_possible_lt_might (hmm : θ .might = 1 - θ .must)
     (hcp : θ .possible = 1 - θ .certain) : θ .must < θ .certain ↔ θ .possible < θ .might := by
   constructor <;> intro h <;> linarith
@@ -383,15 +383,15 @@ theorem exists_mem_possible_not_mem_might {θ : ℝ} (h0 : 0 < θ) (h1 : θ ≤ 
   · simp only [Degree.Comparison.mem_over, Degree.Comparison.rel_gt, hP0, lt_irrefl,
       not_false_eq_true]
 
-open Desire.ExpectedValue Core.DecisionTheory
+open Desire.ExpectedValue
 
 section Constraints
 
-variable {W : Type*} {μ : Set W → ℚ} {ought : Set W → Prop} {alt : Set W → Set (Set W)}
+variable {W : Type*} {μ : Set W → ℝ} {ought : Set W → Prop} {alt : Set W → Set (Set W)}
 
 /-- The constraint set on *ought* relative to a goodness scale `μ` and alternative sets
 `alt`: Sloman's Principle, the Smith Principle, and Weakening. -/
-structure Constraints (μ : Set W → ℚ) (ought : Set W → Prop) (alt : Set W → Set (Set W)) :
+structure Constraints (μ : Set W → ℝ) (ought : Set W → Prop) (alt : Set W → Set (Set W)) :
     Prop where
   sloman : ∀ ⦃φ⦄, ought φ → ∀ ψ ∈ alt φ, ψ ≠ φ → μ ψ < μ φ
   smith : ∀ ⦃φ ψ⦄, φ ∪ ψ = Set.univ → ought φ → ought ψ → ought (φ ∩ ψ)
@@ -400,36 +400,36 @@ structure Constraints (μ : Set W → ℚ) (ought : Set W → Prop) (alt : Set W
 variable [Nonempty W] (h : Constraints μ ought alt) {φ ψ : Set W}
 include h
 
-/-- No conflicting oughts: a proposition and its negation, each an alternative to the
-other, cannot both be obligatory. -/
+/-- A proposition and its negation, each an alternative to the other, cannot both be
+obligatory. -/
 theorem Constraints.not_compl (hφ : φᶜ ∈ alt φ) (hφ' : φ ∈ alt φᶜ) (h₁ : ought φ) :
-    ¬ ought φᶜ := λ h₂ =>
+    ¬ ought φᶜ := fun h₂ ↦
   lt_asymm (h.sloman h₁ _ hφ ne_compl_self.symm) (h.sloman h₂ _ hφ' ne_compl_self)
 
 /-- Weakening carries a failure of Sloman's Principle at a disjunction, one no better than
 its negation, back to the disjuncts. -/
 theorem Constraints.not_and_of_le (hne : (φ ∪ ψ)ᶜ ∈ alt (φ ∪ ψ))
-    (hle : μ (φ ∪ ψ) ≤ μ (φ ∪ ψ)ᶜ) : ¬ (ought φ ∧ ought ψ) := λ ⟨h₁, h₂⟩ =>
+    (hle : μ (φ ∪ ψ) ≤ μ (φ ∪ ψ)ᶜ) : ¬ (ought φ ∧ ought ψ) := fun ⟨h₁, h₂⟩ ↦
   (h.sloman (h.weakening h₁ h₂) _ hne ne_compl_self.symm).not_ge hle
 
 end Constraints
 
 section Goodness
 
-variable {W : Type*} [Fintype W]
+variable {W : Type*} [MeasurableSpace W]
 
-open Classical in
 /-- Goodness as expected value over the whole domain, the book's default `prob(D) = 1`. -/
-noncomputable def goodness (pr V : W → ℚ) (φ : Set W) : ℚ := expectedValue pr V Set.univ φ
+noncomputable def goodness (pr : MeasureTheory.Measure W) (V : W → ℝ) (φ : Set W) : ℝ :=
+  expectedValue pr V Set.univ φ
 
 end Goodness
 
-attribute [local simp] goodness expectedValue cell DecisionProblem.condExpectedUtility
-  toDecisionProblem Finset.sum_filter Fintype.sum_prod_type Fintype.sum_bool
+attribute [local simp] goodness expectedValue_eq_sum Finset.sum_filter Fintype.sum_prod_type
+  Fintype.sum_bool MeasureTheory.uniformOn_univ_real_singleton
 
 /-! ### The Smith scenario -/
 
-/-- Smith's options: military service, alternative service, or neither. -/
+/-- Smith can do military service, alternative service, or neither. -/
 inductive Smith
   | military
   | service
@@ -438,7 +438,11 @@ inductive Smith
 
 namespace Smith
 
-instance : Fintype Smith := ⟨{military, service, neither}, λ w => by cases w <;> simp⟩
+instance : Fintype Smith := ⟨{military, service, neither}, fun w ↦ by cases w <;> simp⟩
+
+instance : MeasurableSpace Smith := ⊤
+
+instance : MeasurableSingletonClass Smith := ⟨fun _ ↦ trivial⟩
 
 /-- Smith serves in the military. -/
 def M : Set Smith := {military}
@@ -446,13 +450,16 @@ def M : Set Smith := {military}
 /-- Smith performs alternative service. -/
 def S : Set Smith := {service}
 
-/-- The sample model's prior: the three options are equiprobable. -/
-def prior : Smith → ℚ := λ _ => 1 / 3
+/-- The sample model's prior makes the three options equiprobable. -/
+noncomputable abbrev prior : MeasureTheory.Measure Smith :=
+  ProbabilityTheory.uniformOn Set.univ
 
-/-- The sample model's values: alternative service alone is worth anything. -/
-def value : Smith → ℚ := λ w => if w = service then 1 else 0
+/-- In the sample model only alternative service is worth anything. -/
+def value : Smith → ℝ := fun w ↦ if w = service then 1 else 0
 
-attribute [local simp] M S prior value Finset.univ Fintype.elems Finset.sum_insert
+private theorem card_eq : Fintype.card Smith = 3 := rfl
+
+attribute [local simp] M S value card_eq Finset.univ Fintype.elems Finset.sum_insert
 
 /-- The sample model meets the Sloman requirements of the premises `ought (M ∨ S)` and
 `ought ¬M` and of the conclusion `ought S`. -/
@@ -460,11 +467,11 @@ theorem sloman :
     goodness prior value (M ∪ S)ᶜ < goodness prior value (M ∪ S) ∧
       goodness prior value M < goodness prior value Mᶜ ∧
       goodness prior value Sᶜ < goodness prior value S := by
-  norm_num [-Finset.sum_const]
+  classical norm_num [-Finset.sum_const]
 
-/-- The Smith argument: the Smith Principle agglomerates the exhaustive premises to
+/-- In the Smith argument, the Smith Principle agglomerates the exhaustive premises to
 `ought S`. -/
-theorem ought_S {μ : Set Smith → ℚ} {ought : Set Smith → Prop} {alt : Set Smith → Set (Set Smith)}
+theorem ought_S {μ : Set Smith → ℝ} {ought : Set Smith → Prop} {alt : Set Smith → Set (Set Smith)}
     (h : Constraints μ ought alt) (h₁ : ought (M ∪ S)) (h₂ : ought Mᶜ) : ought S :=
   have : (M ∪ S) ∩ Mᶜ = S := by ext w; cases w <;> simp
   this ▸ h.smith (by ext w; cases w <;> simp) h₁ h₂
@@ -479,10 +486,10 @@ namespace Cariani
 abbrev World := Bool × Bool
 
 /-- The uniform prior. -/
-def prior : World → ℚ := λ _ => 1 / 4
+noncomputable abbrev prior : MeasureTheory.Measure World := ProbabilityTheory.uniformOn Set.univ
 
-/-- World values: `100` at `A ∧ B`, `-50` at `A ∧ ¬B` and `¬A ∧ B`, `0` at `¬A ∧ ¬B`. -/
-def value : World → ℚ
+/-- A world is worth `100` at `A ∧ B`, `-50` at `A ∧ ¬B` and `¬A ∧ B`, and `0` at `¬A ∧ ¬B`. -/
+def value : World → ℝ
   | (true, true) => 100
   | (true, false) => -50
   | (false, true) => -50
@@ -494,20 +501,25 @@ def A : Set World := {w | w.1 = true}
 /-- The proposition `B`. -/
 def B : Set World := {w | w.2 = true}
 
-attribute [local simp] A B prior value
+attribute [local simp] A B value
 
-theorem goodness_A : goodness prior value A = 25 := by norm_num [-Finset.sum_const]
+theorem goodness_A : goodness prior value A = 25 := by
+  classical norm_num [-Finset.sum_const]
 
-theorem goodness_compl_A : goodness prior value Aᶜ = -25 := by norm_num [-Finset.sum_const]
+theorem goodness_compl_A : goodness prior value Aᶜ = -25 := by
+  classical norm_num [-Finset.sum_const]
 
-theorem goodness_B : goodness prior value B = 25 := by norm_num [-Finset.sum_const]
+theorem goodness_B : goodness prior value B = 25 := by
+  classical norm_num [-Finset.sum_const]
 
-theorem goodness_compl_B : goodness prior value Bᶜ = -25 := by norm_num [-Finset.sum_const]
+theorem goodness_compl_B : goodness prior value Bᶜ = -25 := by
+  classical norm_num [-Finset.sum_const]
 
-theorem goodness_union : goodness prior value (A ∪ B) = 0 := by norm_num [-Finset.sum_const]
+theorem goodness_union : goodness prior value (A ∪ B) = 0 := by
+  classical norm_num [-Finset.sum_const]
 
 theorem goodness_compl_union : goodness prior value (A ∪ B)ᶜ = 0 := by
-  norm_num [-Finset.sum_const]
+  classical norm_num [-Finset.sum_const]
 
 /-- `A` and `B` each satisfy Sloman's Principle against their negations. -/
 theorem sloman :

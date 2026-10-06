@@ -51,9 +51,9 @@ separation argument (see the implementation notes).
 The development is stated entirely over Mathlib's `Kernel` and `bayesRisk` with no further
 dependencies, so it can serve as a `Mathlib.Probability.Decision.Blackwell` candidate. On the
 utility scale, `Core.Probability.Decision.ValueOfInformation` reads the data-processing direction
-as the statement that garbling an experiment never raises its value of information, and
-`Core.Probability.Decision.Duality` identifies the value of information of a deterministic
-experiment with [van-rooy-2003]'s question utility.
+as the statement that garbling an experiment never raises its value of information, and reads
+the converse for deterministic experiments as a comparison of the value of observing
+classifiers.
 
 `Kernel.BlackwellDominates` quantifies over *all* decision problems (every measurable action space
 `𝓨` and loss `ℓ : Θ → 𝓨 → ℝ≥0∞`) and priors: dominance for a single one does not force garbling.
@@ -464,9 +464,7 @@ theorem isGarblingOf_iff_blackwellDominates
 
 A deterministic classifier `f : Θ → 𝓧` is the experiment `Kernel.deterministic f hf`, an
 error-free observation of the cell of `θ` in the partition of `Θ` into the fibers of `f`.
-Between deterministic experiments the garbling order is functional factoring, which
-`Core.Probability.Decision.Duality` uses to read the converse as [van-rooy-2003]'s comparison
-of partition questions. -/
+Between deterministic experiments the garbling order is functional factoring. -/
 
 /-- `deterministic g` is a garbling of `deterministic f` exactly when `g` factors through `f`;
 randomized post-processing gains nothing between deterministic experiments. -/

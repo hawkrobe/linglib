@@ -185,9 +185,7 @@ import Linglib.Core.Order.WellFoundedSet
 import Linglib.Core.Probability.Choice.GumbelLuce
 import Linglib.Core.Probability.ConditionalProbability
 import Linglib.Core.Probability.Constructions
-import Linglib.Core.Probability.Decision.Basic
 import Linglib.Core.Probability.Decision.Blackwell
-import Linglib.Core.Probability.Decision.Duality
 import Linglib.Core.Probability.Distributions.Bernoulli
 import Linglib.Core.Probability.GibbsVariational
 import Linglib.Core.Probability.Gumbel

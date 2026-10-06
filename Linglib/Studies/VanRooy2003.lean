@@ -1,6 +1,7 @@
 module
 
-public import Linglib.Core.Probability.Decision.Duality
+public import Linglib.Core.Order.Partition.Finpartition
+public import Linglib.Core.Probability.Decision.ValueOfInformation
 public import Linglib.Data.Examples.VanRooy2003
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Data.Setoid.Partition
@@ -11,10 +12,10 @@ public import Mathlib.Data.Setoid.Partition
 Van Rooy grounds the meaning of questions in the questioner's decision problem, a prior over
 worlds and a utility for each action in each world. Information resolves the problem when some
 action is optimal in every world it leaves open. A question, a partition of the worlds, is worth
-the average gain in decision value from learning its answer; this value equals the expected value
-of sample information and is never negative (`DecisionProblem.questionUtility_parts_nonneg`), and
-one question refines another exactly when it is at least as useful in every decision problem
-(`DecisionProblem.le_iff_forall_questionUtility_le`). A wh-question denotes the propositions that
+the average gain in decision value from learning its answer. This value is the value of
+information of the experiment that reveals the answer, equals the expected value of sample
+information, and is never negative, and one question refines another exactly when it is at least
+as useful in every decision problem. A wh-question denotes the propositions that
 some value is among the optimal true values of its predicate, those with no more relevant true
 value, and this one rule yields both mention-all and mention-some readings.
 
@@ -22,6 +23,11 @@ value, and this one rule yields both mention-all and mention-some readings.
 
 * `isResolved_iff_exists_subset_optimalityRegion`: information resolves the problem exactly
   when it lies within the worlds where one action is optimal.
+* `questionUtility_eq_valueOfInformation`, `questionUtility_eq_sum_valueSampleInfo`: a
+  question's expected utility value is the value of information of revealing its answer, and its
+  expected value of sample information.
+* `le_iff_forall_questionUtility_le`: one question refines another exactly when it is at least
+  as useful in every decision problem, the case of Blackwell's theorem of section 4.1.
 * `newspaper_station_resolves`, `newspaper_betterAnswer`: in the Italian newspaper example the
   partial answer *at least at the station* resolves the problem and is a better answer than the
   complete one.
@@ -39,7 +45,8 @@ value, and this one rule yields both mention-all and mention-some readings.
 
 ## Implementation notes
 
-Decision problems are real-valued, and questions over a finite set of worlds are `Finpartition`s.
+A decision problem is a real utility on worlds and actions together with a prior measure, the
+actions forming a type, and questions over a finite set of worlds are `Finpartition`s.
 The relevance of a value in a world is a utility into a preorder; the paper's relation `>` orders
 answers, which for the newspaper example of section 5.2 is world-relative, the best place
 differing between worlds. Section 5.3 assumes the questioner most wants to resolve her problem, so
@@ -68,60 +75,66 @@ are rows of `Data.Examples.VanRooy2003`.
 
 namespace VanRooy2003
 
-open Core.DecisionTheory Core.DecisionTheory.DecisionProblem
+open MeasureTheory ProbabilityTheory
 
-variable {W A G R : Type*}
+universe u
+
+variable {W : Type u} {A G R : Type*}
 
 /-! ### Resolving a decision problem -/
 
+/-- Information `C` resolves the decision problem with utility `U` when some action is at least
+as good as every other in every world of `C`. -/
+def IsResolved (U : W → A → ℝ) (C : Set W) : Prop := ∃ a, ∀ b, ∀ w ∈ C, U w b ≤ U w a
+
 /-- The proposition an action induces is the set of worlds where no action is strictly
 better. -/
-def optimalityRegion (dp : DecisionProblem ℝ W A) (acts : Set A) (a : A) : Set W :=
-  {w | ∀ b ∈ acts, dp.utility w b ≤ dp.utility w a}
-
-/-- The propositions the actions induce. -/
-def optimalityRegions (dp : DecisionProblem ℝ W A) (acts : Set A) : Set (Set W) :=
-  optimalityRegion dp acts '' acts
+def optimalityRegion (U : W → A → ℝ) (a : A) : Set W := {w | ∀ b, U w b ≤ U w a}
 
 /-- Information resolves the decision problem exactly when it lies within the optimality
 region of some action. -/
-theorem isResolved_iff_exists_subset_optimalityRegion (dp : DecisionProblem ℝ W A)
-    (acts : Set A) (C : Set W) :
-    IsResolved dp acts C ↔ ∃ a ∈ acts, C ⊆ optimalityRegion dp acts a :=
-  ⟨fun ⟨a, ha, h⟩ ↦ ⟨a, ha, fun _ hw b hb ↦ h b hb _ hw⟩,
-    fun ⟨a, ha, h⟩ ↦ ⟨a, ha, fun _ hb _ hw ↦ h hw _ hb⟩⟩
+theorem isResolved_iff_exists_subset_optimalityRegion (U : W → A → ℝ) (C : Set W) :
+    IsResolved U C ↔ ∃ a, C ⊆ optimalityRegion U a :=
+  ⟨fun ⟨a, h⟩ ↦ ⟨a, fun _ hw b ↦ h b _ hw⟩, fun ⟨a, h⟩ ↦ ⟨a, fun _ _ hw ↦ h hw _⟩⟩
 
 /-- Over finitely many actions every world has an optimal one, so the regions cover the
 worlds. -/
-theorem iUnion_optimalityRegion (dp : DecisionProblem ℝ W A) (acts : Finset A)
-    (hne : acts.Nonempty) : ⋃ a ∈ acts, optimalityRegion dp acts a = Set.univ :=
-  Set.eq_univ_of_forall fun w ↦
-    let ⟨a, ha, hmax⟩ := acts.exists_max_image (dp.utility w) hne
-    Set.mem_iUnion₂.2 ⟨a, ha, hmax⟩
+theorem iUnion_optimalityRegion [Finite A] [Nonempty A] (U : W → A → ℝ) :
+    ⋃ a, optimalityRegion U a = Set.univ :=
+  Set.eq_univ_of_forall fun w ↦ Set.mem_iUnion.2 (Finite.exists_max (U w))
 
 /-- When every world has a strictly best action the regions are pairwise disjoint, and the
 actions induce a partition. -/
-theorem pairwiseDisjoint_optimalityRegion (dp : DecisionProblem ℝ W A) (acts : Set A)
-    (hstrict : ∀ w, ∃ a ∈ acts, ∀ b ∈ acts, b ≠ a → dp.utility w b < dp.utility w a) :
-    acts.PairwiseDisjoint (optimalityRegion dp acts) := by
-  intro a ha a' ha' hne
+theorem pairwise_disjoint_optimalityRegion (U : W → A → ℝ)
+    (hstrict : ∀ w, ∃ a, ∀ b, b ≠ a → U w b < U w a) :
+    Pairwise (Function.onFun Disjoint (optimalityRegion U)) := by
+  intro a a' hne
   refine Set.disjoint_left.2 fun w hw hw' ↦ ?_
-  obtain ⟨c, hc, hbest⟩ := hstrict w
+  obtain ⟨c, hbest⟩ := hstrict w
   by_cases hac : a = c
   · subst hac
-    exact (hw' a ha).not_gt (hbest a' ha' (Ne.symm hne))
-  · exact (hw c hc).not_gt (hbest a ha hac)
+    exact (hw' a).not_gt (hbest a' (Ne.symm hne))
+  · exact (hw c).not_gt (hbest a hac)
+
+/-! ### The value of answers -/
+
+section Value
+
+variable [MeasurableSpace W]
+
+/-- The utility value of learning `C` is the decision value of the prior conditioned on `C`, less
+the decision value of the prior. -/
+noncomputable def utilityValue (U : W → A → ℝ) (μ : Measure W) (C : Set W) : ℝ :=
+  decisionValue U μ[|C] - decisionValue U μ
 
 /-- An answer is better than another when it has a higher utility value, or the same value and
 is strictly less informative. -/
-def BetterAnswer [Fintype W] (dp : DecisionProblem ℝ W A) (acts : Finset A) (C D : Finset W) :
-    Prop :=
-  toLex (dp.utilityValue acts D, D) < toLex (dp.utilityValue acts C, C)
+def BetterAnswer (U : W → A → ℝ) (μ : Measure W) (C D : Set W) : Prop :=
+  toLex (utilityValue U μ D, D) < toLex (utilityValue U μ C, C)
 
-theorem betterAnswer_iff [Fintype W] {dp : DecisionProblem ℝ W A} {acts : Finset A}
-    {C D : Finset W} :
-    BetterAnswer dp acts C D ↔ dp.utilityValue acts D < dp.utilityValue acts C ∨
-      dp.utilityValue acts C = dp.utilityValue acts D ∧ D ⊂ C := by
+theorem betterAnswer_iff {U : W → A → ℝ} {μ : Measure W} {C D : Set W} :
+    BetterAnswer U μ C D ↔ utilityValue U μ D < utilityValue U μ C ∨
+      utilityValue U μ C = utilityValue U μ D ∧ D ⊂ C := by
   simp [BetterAnswer, Prod.Lex.toLex_lt_toLex, eq_comm]
 
 /-! ### The Italian newspaper -/
@@ -133,6 +146,10 @@ inductive NewsW where
   | palace
   | both
   deriving DecidableEq, Fintype, Inhabited
+
+instance : MeasurableSpace NewsW := ⊤
+
+instance : DiscreteMeasurableSpace NewsW := ⟨fun _ ↦ trivial⟩
 
 /-- The actions of the newspaper example are walking to the station and walking to the
 palace. -/
@@ -150,56 +167,62 @@ private theorem sum_newsW {M : Type*} [AddCommMonoid M] (f : NewsW → M) :
   simp [add_assoc]
 
 /-- Walking to a place is worth 1 where the newspaper is sold there (`Examples.ex_12`). -/
-noncomputable def newspaper : DecisionProblem ℝ NewsW Walk where
-  utility
-    | .station, .station | .both, .station | .palace, .palace | .both, .palace => 1
-    | .palace, .station | .station, .palace => 0
-  prior _ := 1 / 3
+def newspaper : NewsW → Walk → ℝ
+  | .station, .station | .both, .station | .palace, .palace | .both, .palace => 1
+  | .palace, .station | .station, .palace => 0
+
+/-- The worlds of the newspaper example are equiprobable. -/
+noncomputable abbrev newsPrior : Measure NewsW := uniformOn Set.univ
 
 /-- The actions induce overlapping propositions, not a partition. -/
 theorem newspaper_optimalityRegions :
-    optimalityRegion newspaper Set.univ .station = {.station, .both} ∧
-      optimalityRegion newspaper Set.univ .palace = {.palace, .both} := by
+    optimalityRegion newspaper .station = {.station, .both} ∧
+      optimalityRegion newspaper .palace = {.palace, .both} := by
   constructor <;> ext w <;> cases w <;> norm_num [optimalityRegion, forall_walk, newspaper]
 
 /-- The mention-some answer *at least at the station* resolves the problem although it is only
 a partial answer to the partition question. -/
-theorem newspaper_station_resolves :
-    IsResolved newspaper Set.univ ({.station, .both} : Set NewsW) :=
-  (isResolved_iff_exists_subset_optimalityRegion _ _ _).2
-    ⟨.station, trivial, newspaper_optimalityRegions.1.ge⟩
+theorem newspaper_station_resolves : IsResolved newspaper ({.station, .both} : Set NewsW) :=
+  (isResolved_iff_exists_subset_optimalityRegion _ _).2
+    ⟨.station, newspaper_optimalityRegions.1.ge⟩
 
-private theorem newspaper_value : newspaper.value Finset.univ = 2 / 3 := by
-  have h (a : Walk) : newspaper.expectedUtility a = 2 / 3 := by
-    cases a <;> norm_num [expectedUtility, sum_newsW, newspaper]
-  rw [value_eq_of_forall_le (Finset.mem_univ .station) fun b _ ↦ ((h b).trans (h _).symm).le, h]
+private theorem newspaper_value : decisionValue newspaper newsPrior = 2 / 3 := by
+  have h (a : Walk) : ∫ w, newspaper w a ∂newsPrior = 2 / 3 := by
+    rw [integral_fintype .of_finite, sum_newsW]
+    cases a <;>
+      simp [uniformOn_univ_real_singleton, newspaper, show Fintype.card NewsW = 3 from rfl] <;>
+      norm_num
+  simp only [decisionValue, h, ciSup_const]
 
 /-- Any answer that leaves the palace out resolves the problem and is worth `1 / 3`. -/
-private theorem newspaper_utilityValue {C : Finset NewsW} (hC : C.Nonempty) (hs : .palace ∉ C) :
-    newspaper.utilityValue Finset.univ C = 1 / 3 := by
-  have hprior (w : NewsW) : 0 ≤ newspaper.prior w := by norm_num [newspaper]
-  have hpos : 0 < newspaper.cellProbability C :=
-    Finset.sum_pos (fun _ _ ↦ by norm_num [newspaper]) hC
-  have hstation : newspaper.condExpectedUtility C .station = 1 := by
-    have h := cellProbability_mul_condExpectedUtility (cell := C) hprior .station
-    rw [Finset.sum_congr rfl fun w hw ↦ show newspaper.prior w * newspaper.utility w .station =
-      newspaper.prior w by cases w <;> simp_all [newspaper]] at h
-    exact mul_left_cancel₀ hpos.ne' (h.trans (mul_one _).symm)
-  have hle (b : Walk) : newspaper.condExpectedUtility C b ≤ 1 := by
-    refine le_of_mul_le_mul_left ?_ hpos
-    rw [cellProbability_mul_condExpectedUtility hprior, mul_one]
-    exact Finset.sum_le_sum fun w _ ↦ by cases w <;> cases b <;> norm_num [newspaper]
-  rw [utilityValue, condValue_eq_of_forall_le (Finset.mem_univ .station)
-    fun b _ ↦ hstation ▸ hle b, hstation, newspaper_value]
+private theorem newspaper_utilityValue {C : Set NewsW} (hC : C.Nonempty) (hs : .palace ∉ C) :
+    utilityValue newspaper newsPrior C = 1 / 3 := by
+  obtain ⟨w₀, hw₀⟩ := hC
+  have hpos : newsPrior C ≠ 0 := fun h ↦ uniformOn_univ_singleton_ne_zero w₀
+    (measure_mono_null (Set.singleton_subset_iff.2 hw₀) h)
+  have := cond_isProbabilityMeasure (μ := newsPrior) hpos
+  have hstation : ∫ w, newspaper w .station ∂newsPrior[|C] = 1 := by
+    rw [integral_congr_ae (g := fun _ ↦ (1 : ℝ)) (ae_iff_of_countable.2 fun w hw ↦ ?_)]
+    · simp
+    · cases w <;> simp_all [newspaper, cond_apply' (measurableSet_singleton _),
+        Set.inter_singleton_eq_empty.2 hs]
+  have hval : decisionValue newspaper newsPrior[|C] = 1 :=
+    le_antisymm (ciSup_le fun a ↦ (integral_mono .of_finite (integrable_const 1) fun w ↦ by
+      cases w <;> cases a <;> simp [newspaper]).trans (by simp))
+      (hstation ▸ integral_le_decisionValue _ Walk.station)
+  rw [utilityValue, hval, newspaper_value]
   norm_num
 
 /-- Taking effort into account, the mention-some answer *at least at the station* is a better
 answer than the complete answer *only at the station*, since both resolve the problem and the
 first says less. -/
 theorem newspaper_betterAnswer :
-    BetterAnswer newspaper Finset.univ {.station, .both} {.station} := by
-  refine betterAnswer_iff.2 (.inr ⟨?_, by decide⟩)
-  rw [newspaper_utilityValue (by simp) (by decide), newspaper_utilityValue (by simp) (by decide)]
+    BetterAnswer newspaper newsPrior {.station, .both} {.station} := by
+  refine betterAnswer_iff.2 (.inr ⟨?_, ?_⟩)
+  · rw [newspaper_utilityValue (by simp) (by simp), newspaper_utilityValue (by simp) (by simp)]
+  · refine Set.ssubset_iff_subset_ne.2 ⟨by simp, fun h ↦ ?_⟩
+    have hb : NewsW.both ∈ ({NewsW.station} : Set NewsW) := by rw [h]; simp
+    simp at hb
 
 /-! ### The utility of questions -/
 
@@ -207,25 +230,101 @@ section Utility
 
 variable [Fintype W] [DecidableEq W]
 
+/-- The expected utility value of a question weights the utility value of each answer by its
+probability. -/
+noncomputable def questionUtility (U : W → A → ℝ) (μ : Measure W)
+    (Q : Finpartition (Finset.univ : Finset W)) : ℝ :=
+  ∑ c ∈ Q.parts, μ.real c * utilityValue U μ c
+
+variable [DiscreteMeasurableSpace W] (U : W → A → ℝ) (μ : Measure W) [IsProbabilityMeasure μ]
+
+private theorem questionUtility_eq (Q : Finpartition (Finset.univ : Finset W)) :
+    questionUtility U μ Q =
+      ∑ c, μ.real (Q.part ⁻¹' {c}) * decisionValue U μ[|Q.part ⁻¹' {c}] - decisionValue U μ := by
+  have hmass : ∑ c ∈ Q.parts, μ.real c = 1 := by
+    rw [Q.sum_parts_eq_sum_preimage_part (F := μ.real) measureReal_empty,
+      sum_measureReal_preimage_singleton _ fun _ _ ↦ .of_discrete]
+    simp
+  simp only [questionUtility, utilityValue, mul_sub, Finset.sum_sub_distrib, ← Finset.sum_mul,
+    hmass, one_mul]
+  rw [Q.sum_parts_eq_sum_preimage_part (F := fun c ↦ μ.real c * decisionValue U μ[|c]) (by simp)]
+
+/-- The expected utility value of a question is the value of information of the experiment that
+reveals its answer. -/
+theorem questionUtility_eq_valueOfInformation [Nonempty W] [MeasurableSpace (Finset W)]
+    [MeasurableSingletonClass (Finset W)] (Q : Finpartition (Finset.univ : Finset W)) :
+    questionUtility U μ Q =
+      valueOfInformation (decisionValue U) (Kernel.deterministic Q.part .of_discrete) μ := by
+  rw [questionUtility_eq, valueOfInformation_deterministic]
+
+/-- A question is never worth less than nothing. -/
+theorem questionUtility_nonneg [Finite A] [Nonempty W] (Q : Finpartition (Finset.univ : Finset W)) :
+    0 ≤ questionUtility U μ Q := by
+  let _ : MeasurableSpace (Finset W) := ⊤
+  have : MeasurableSingletonClass (Finset W) := ⟨fun _ ↦ trivial⟩
+  rw [questionUtility_eq_valueOfInformation]
+  exact valueOfInformation_decisionValue_nonneg U _ μ
+
+/-- A finer question is worth at least as much as a coarser one, since revealing the coarser
+answer garbles the finer. -/
+theorem questionUtility_anti [Finite A] [Nonempty W] {P Q : Finpartition (Finset.univ : Finset W)}
+    (h : P ≤ Q) : questionUtility U μ Q ≤ questionUtility U μ P := by
+  let _ : MeasurableSpace (Finset W) := ⊤
+  have : MeasurableSingletonClass (Finset W) := ⟨fun _ ↦ trivial⟩
+  rw [questionUtility_eq_valueOfInformation, questionUtility_eq_valueOfInformation]
+  exact valueOfInformation_decisionValue_le_of_factorsThrough U _ _
+    (Finpartition.le_iff_factorsThrough_part.1 h) μ
+
 /-- No question is worth more than the finest one, what the world is like, whose value is the
 expected value of perfect information of [raiffa-schlaifer-1961]. -/
-theorem questionUtility_le_bot (dp : DecisionProblem ℝ W A) (acts : Finset A)
-    (hprior : ∀ w, 0 ≤ dp.prior w) (Q : Finpartition (Finset.univ : Finset W)) :
-    dp.questionUtility acts Q.parts ≤
-      dp.questionUtility acts (⊥ : Finpartition (Finset.univ : Finset W)).parts :=
-  questionUtility_anti_of_le dp acts bot_le hprior
+theorem questionUtility_le_bot [Finite A] [Nonempty W]
+    (Q : Finpartition (Finset.univ : Finset W)) :
+    questionUtility U μ Q ≤ questionUtility U μ ⊥ :=
+  questionUtility_anti U μ bot_le
+
+/-- The value of sample information of learning `C` compares the best action after learning `C`
+with the action `a` taken now. -/
+noncomputable def valueSampleInfo (a : A) (C : Set W) : ℝ :=
+  decisionValue U μ[|C] - ∫ w, U w a ∂μ[|C]
+
+/-- When `a` is the best action now, the expected utility value of a question is its expected
+value of sample information. -/
+theorem questionUtility_eq_sum_valueSampleInfo [Nonempty W]
+    (Q : Finpartition (Finset.univ : Finset W)) {a : A}
+    (ha : ∫ w, U w a ∂μ = decisionValue U μ) :
+    questionUtility U μ Q = ∑ c ∈ Q.parts, μ.real c * valueSampleInfo U μ a c := by
+  simp only [valueSampleInfo, mul_sub, Finset.sum_sub_distrib]
+  rw [questionUtility_eq,
+    Q.sum_parts_eq_sum_preimage_part (F := fun c ↦ μ.real c * decisionValue U μ[|c]) (by simp),
+    Q.sum_parts_eq_sum_preimage_part (F := fun c ↦ μ.real c * ∫ w, U w a ∂μ[|c]) (by simp),
+    sum_measureReal_mul_integral_cond, ha]
+
+variable {U μ}
+
+/-- One question refines another exactly when it is at least as useful in every decision problem
+with a probability prior, the special case of [blackwell-1953] stated in section 4.1. -/
+theorem le_iff_forall_questionUtility_le [Nonempty W]
+    (P Q : Finpartition (Finset.univ : Finset W)) :
+    P ≤ Q ↔ ∀ {B : Type u} [Fintype B] (U : W → B → ℝ) (μ : Measure W) [IsProbabilityMeasure μ],
+      questionUtility U μ Q ≤ questionUtility U μ P := by
+  refine ⟨fun h _ _ U μ _ ↦ questionUtility_anti U μ h, fun h ↦ ?_⟩
+  let _ : MeasurableSpace (Finset W) := ⊤
+  have : MeasurableSingletonClass (Finset W) := ⟨fun _ ↦ trivial⟩
+  obtain ⟨ψ, hψ⟩ := exists_eq_comp_of_forall_valueOfInformation_le P.part Q.part fun U ↦ by
+    simpa only [questionUtility_eq_valueOfInformation] using h U (uniformOn Set.univ)
+  exact Finpartition.le_iff_factorsThrough_part.2 fun a b hab ↦ by simp [hψ, hab]
 
 /-- Relative to a decision problem, a question is better than another when it is more useful, or
 as useful and strictly coarser, since one should not ask for irrelevant information. -/
-def BetterQuestion (dp : DecisionProblem ℝ W A) (acts : Finset A)
-    (Q Q' : Finpartition (Finset.univ : Finset W)) : Prop :=
-  toLex (dp.questionUtility acts Q'.parts, Q') < toLex (dp.questionUtility acts Q.parts, Q)
+def BetterQuestion (U : W → A → ℝ) (μ : Measure W) (Q Q' : Finpartition (Finset.univ : Finset W)) :
+    Prop :=
+  toLex (questionUtility U μ Q', Q') < toLex (questionUtility U μ Q, Q)
 
-theorem betterQuestion_iff {dp : DecisionProblem ℝ W A} {acts : Finset A}
-    {Q Q' : Finpartition (Finset.univ : Finset W)} :
-    BetterQuestion dp acts Q Q' ↔
-      dp.questionUtility acts Q'.parts < dp.questionUtility acts Q.parts ∨
-        dp.questionUtility acts Q.parts = dp.questionUtility acts Q'.parts ∧ Q' < Q := by
+omit [DiscreteMeasurableSpace W] [IsProbabilityMeasure μ] in
+theorem betterQuestion_iff {Q Q' : Finpartition (Finset.univ : Finset W)} :
+    BetterQuestion U μ Q Q' ↔
+      questionUtility U μ Q' < questionUtility U μ Q ∨
+        questionUtility U μ Q = questionUtility U μ Q' ∧ Q' < Q := by
   simp [BetterQuestion, Prod.Lex.toLex_lt_toLex, eq_comm]
 
 /-! ### The domain of a wh-phrase -/
@@ -237,6 +336,7 @@ predicate's extension agrees on the domain. -/
 def whQuestion (P : W → Finset D) (dom : Finset D) : Finpartition (Finset.univ : Finset W) :=
   Finpartition.ofFun fun w ↦ dom ∩ P w
 
+omit [MeasurableSpace W] [DiscreteMeasurableSpace W] in
 /-- Enlarging the domain refines the question, since more individuals give more specific
 answers. -/
 theorem whQuestion_anti (P : W → Finset D) {dom dom' : Finset D} (h : dom ⊆ dom') :
@@ -244,26 +344,28 @@ theorem whQuestion_anti (P : W → Finset D) {dom dom' : Finset D} (h : dom ⊆ 
   Finpartition.ofFun_le_ofFun_iff.2 fun w v hwv ↦ by
     rw [← Finset.inter_eq_left.2 h, Finset.inter_assoc, Finset.inter_assoc, hwv]
 
+variable (U μ)
+
 /-- Enlarging the domain cannot lower the value of the question, so the domain should contain
 every individual that could matter. -/
-theorem questionUtility_whQuestion_mono (dp : DecisionProblem ℝ W A) (acts : Finset A)
-    (P : W → Finset D) {dom dom' : Finset D} (h : dom ⊆ dom') (hprior : ∀ w, 0 ≤ dp.prior w) :
-    dp.questionUtility acts (whQuestion P dom).parts ≤
-      dp.questionUtility acts (whQuestion P dom').parts :=
-  questionUtility_anti_of_le dp acts (whQuestion_anti P h) hprior
+theorem questionUtility_whQuestion_mono [Finite A] [Nonempty W] (P : W → Finset D)
+    {dom dom' : Finset D} (h : dom ⊆ dom') :
+    questionUtility U μ (whQuestion P dom) ≤ questionUtility U μ (whQuestion P dom') :=
+  questionUtility_anti U μ (whQuestion_anti P h)
 
+omit [DiscreteMeasurableSpace W] [IsProbabilityMeasure μ] in
 /-- Of two domains yielding equally useful but different questions, the smaller gives the better
 question, so the domain relevance selects contains only individuals that could affect the
 decision. -/
-theorem betterQuestion_whQuestion (dp : DecisionProblem ℝ W A) (acts : Finset A)
-    (P : W → Finset D) {dom dom' : Finset D} (h : dom ⊆ dom')
-    (heq : dp.questionUtility acts (whQuestion P dom).parts =
-      dp.questionUtility acts (whQuestion P dom').parts)
+theorem betterQuestion_whQuestion (P : W → Finset D) {dom dom' : Finset D} (h : dom ⊆ dom')
+    (heq : questionUtility U μ (whQuestion P dom) = questionUtility U μ (whQuestion P dom'))
     (hne : whQuestion P dom' ≠ whQuestion P dom) :
-    BetterQuestion dp acts (whQuestion P dom) (whQuestion P dom') :=
+    BetterQuestion U μ (whQuestion P dom) (whQuestion P dom') :=
   betterQuestion_iff.2 (.inr ⟨heq, (whQuestion_anti P h).lt_of_ne hne⟩)
 
 end Utility
+
+end Value
 
 /-! ### Mention-some and mention-all from one rule -/
 
@@ -312,16 +414,16 @@ theorem questionR_const [Preorder R] (P : W → Set G) (r : R) :
 
 /-- Asking which action is optimal, the rule yields the nonempty propositions the actions
 induce. -/
-theorem questionR_actions (dp : DecisionProblem ℝ W A) (acts : Set A) :
-    questionR (fun _ ↦ acts) dp.utility = {r ∈ optimalityRegions dp acts | r.Nonempty} := by
+theorem questionR_actions (U : W → A → ℝ) :
+    questionR (fun _ ↦ Set.univ) U = {r ∈ Set.range (optimalityRegion U) | r.Nonempty} := by
   ext p
-  simp only [questionR, whAnswers, optimalityRegions, Set.mem_ofPred_eq, Set.mem_image,
-    mem_optimalValues]
+  simp only [questionR, whAnswers, Set.mem_ofPred_eq, Set.mem_range, mem_optimalValues,
+    Set.mem_univ, true_and, forall_const]
   constructor
-  · rintro ⟨w, a, ⟨ha, hw⟩, rfl⟩
-    exact ⟨⟨a, ha, Set.ext fun v ↦ by simp [optimalityRegion, ha]⟩, w, ha, hw⟩
-  · rintro ⟨⟨a, ha, rfl⟩, w, hw⟩
-    exact ⟨w, a, ⟨ha, hw⟩, Set.ext fun v ↦ by simp [optimalityRegion, ha]⟩
+  · rintro ⟨w, a, hw, rfl⟩
+    exact ⟨⟨a, rfl⟩, w, hw⟩
+  · rintro ⟨⟨a, rfl⟩, w, hw⟩
+    exact ⟨w, a, hw, rfl⟩
 
 /-- When an answer is more relevant the more informative it is, the rule asks for the most
 informative true answer, and for a distributive predicate it gives the partition by the
@@ -356,27 +458,25 @@ theorem questionR_entailment {D : Type*} (ext : W → Set D) :
 
 /-- In the second newspaper example the paper is sold at both places in every world, and each
 world is named by its best place (`Examples.ex_20`). -/
-noncomputable def bestPlace : DecisionProblem ℝ NewsW Walk where
-  utility
-    | .station, .station | .palace, .palace => 2
-    | .station, .palace | .palace, .station | .both, _ => 1
-  prior _ := 1 / 3
+def bestPlace : NewsW → Walk → ℝ
+  | .station, .station | .palace, .palace => 2
+  | .station, .palace | .palace, .station | .both, _ => 1
 
 /-- The optimal places are the best place of each world. -/
 theorem bestPlace_optimalValues :
-    optimalValues (fun _ ↦ Set.univ) bestPlace.utility .station = {.station} ∧
-      optimalValues (fun _ ↦ Set.univ) bestPlace.utility .palace = {.palace} ∧
-      optimalValues (fun _ ↦ Set.univ) bestPlace.utility .both = Set.univ := by
+    optimalValues (fun _ ↦ Set.univ) bestPlace .station = {.station} ∧
+      optimalValues (fun _ ↦ Set.univ) bestPlace .palace = {.palace} ∧
+      optimalValues (fun _ ↦ Set.univ) bestPlace .both = Set.univ := by
   refine ⟨?_, ?_, ?_⟩ <;> ext a <;> cases a <;>
     norm_num [mem_optimalValues, forall_walk, bestPlace]
 
 /-- The rule yields the overlapping mention-some answers. -/
 theorem bestPlace_questionR :
-    questionR (fun _ ↦ Set.univ) bestPlace.utility = {{.station, .both}, {.palace, .both}} := by
-  have h (a : Walk) : optimalityRegion bestPlace Set.univ a =
+    questionR (fun _ ↦ Set.univ) bestPlace = {{.station, .both}, {.palace, .both}} := by
+  have h (a : Walk) : optimalityRegion bestPlace a =
       if a = .station then {.station, .both} else {.palace, .both} := by
     ext w; cases a <;> cases w <;> norm_num [optimalityRegion, forall_walk, bestPlace]
-  rw [questionR_actions, optimalityRegions, Set.image_univ]
+  rw [questionR_actions]
   ext p
   simp only [Set.mem_ofPred_eq, Set.mem_range, Set.mem_insert_iff, Set.mem_singleton_iff, h]
   constructor
@@ -388,13 +488,13 @@ theorem bestPlace_questionR :
 
 /-- The rule of footnote 28 adds the trivial answer, which is why the paper rejects it. -/
 theorem bestPlace_overlapCells :
-    overlapCells (optimalValues (fun _ ↦ Set.univ) bestPlace.utility) =
+    overlapCells (optimalValues (fun _ ↦ Set.univ) bestPlace) =
       {{.station, .both}, {.palace, .both}, Set.univ} := by
   obtain ⟨hs, hp, hb⟩ := bestPlace_optimalValues
   have cell (w : NewsW) (S : Set NewsW)
-      (h : ∀ v, (optimalValues (fun _ ↦ Set.univ) bestPlace.utility w ∩
-        optimalValues (fun _ ↦ Set.univ) bestPlace.utility v).Nonempty ↔ v ∈ S) :
-      S ∈ overlapCells (optimalValues (fun _ ↦ Set.univ) bestPlace.utility) :=
+      (h : ∀ v, (optimalValues (fun _ ↦ Set.univ) bestPlace w ∩
+        optimalValues (fun _ ↦ Set.univ) bestPlace v).Nonempty ↔ v ∈ S) :
+      S ∈ overlapCells (optimalValues (fun _ ↦ Set.univ) bestPlace) :=
     ⟨w, (Set.ext h).symm⟩
   ext p
   constructor
@@ -473,18 +573,14 @@ def killer : SpiderW → Set Concept
   | .billGreen => {.bill, .green}
 
 /-- A questioner who has to know the culprit's name decides whom to accuse. -/
-noncomputable def byName : DecisionProblem ℝ SpiderW Concept where
-  utility
-    | .johnBlue, .john | .johnGreen, .john | .billBlue, .bill | .billGreen, .bill => 1
-    | _, _ => 0
-  prior _ := 1 / 4
+def byName : SpiderW → Concept → ℝ
+  | .johnBlue, .john | .johnGreen, .john | .billBlue, .bill | .billGreen, .bill => 1
+  | _, _ => 0
 
 /-- A questioner who has to know what the culprit looks like decides which mask to look for. -/
-noncomputable def byMask : DecisionProblem ℝ SpiderW Concept where
-  utility
-    | .johnBlue, .blue | .johnGreen, .green | .billBlue, .blue | .billGreen, .green => 1
-    | _, _ => 0
-  prior _ := 1 / 4
+def byMask : SpiderW → Concept → ℝ
+  | .johnBlue, .blue | .johnGreen, .green | .billBlue, .blue | .billGreen, .green => 1
+  | _, _ => 0
 
 private theorem prop_lt_iff {p q : Prop} : p < q ↔ ¬ p ∧ q := by
   simp only [lt_iff_le_not_ge, le_Prop_eq]
@@ -495,11 +591,11 @@ private theorem forall_concept {p : Concept → Prop} :
   ⟨fun h ↦ ⟨h _, h _, h _, h _⟩, fun ⟨h₁, h₂, h₃, h₄⟩ c ↦ by cases c <;> assumption⟩
 
 /-- A concept is optimal when its proposition resolves the problem or no true concept's does. -/
-private theorem mem_optimalValues_resolves {dp : DecisionProblem ℝ SpiderW Concept}
+private theorem mem_optimalValues_resolves {U : SpiderW → Concept → ℝ}
     {w : SpiderW} {c : Concept} :
-    c ∈ optimalValues killer (fun _ c ↦ IsResolved dp Set.univ {v | c ∈ killer v}) w ↔
-      c ∈ killer w ∧ ((∃ c' ∈ killer w, IsResolved dp Set.univ {v | c' ∈ killer v}) →
-        IsResolved dp Set.univ {v | c ∈ killer v}) := by
+    c ∈ optimalValues killer (fun _ c ↦ IsResolved U {v | c ∈ killer v}) w ↔
+      c ∈ killer w ∧ ((∃ c' ∈ killer w, IsResolved U {v | c' ∈ killer v}) →
+        IsResolved U {v | c ∈ killer v}) := by
   simp only [optimalValues, Set.mem_ofPred_eq, prop_lt_iff]
   exact and_congr_right fun _ ↦ ⟨fun h ⟨c', hc', hr⟩ ↦ by_contra fun hn ↦ h c' hc' ⟨hn, hr⟩,
     fun h c' hc' ⟨hn, hr⟩ ↦ hn (h ⟨c', hc', hr⟩)⟩
@@ -529,23 +625,23 @@ private theorem whAnswers_pair {f : SpiderW → Concept} {c₁ c₂ : Concept} {
 /-- For a questioner who has to know the culprit's name, *Who killed spiderman?* denotes the
 partition by name, as if quantifying over the cover {John, Bill}. -/
 theorem killer_byName :
-    questionR killer (fun _ c ↦ IsResolved byName Set.univ {v | c ∈ killer v}) =
+    questionR killer (fun _ c ↦ IsResolved byName {v | c ∈ killer v}) =
       {{.johnBlue, .johnGreen}, {.billBlue, .billGreen}} := by
-  have hjohn : IsResolved byName Set.univ {v | .john ∈ killer v} :=
-    ⟨.john, trivial, fun b _ v hv ↦ by cases v <;> cases b <;> simp_all [killer, byName]⟩
-  have hbill : IsResolved byName Set.univ {v | .bill ∈ killer v} :=
-    ⟨.bill, trivial, fun b _ v hv ↦ by cases v <;> cases b <;> simp_all [killer, byName]⟩
-  have hblue : ¬ IsResolved byName Set.univ {v | .blue ∈ killer v} := fun ⟨a, _, h⟩ ↦ by
-    have h₁ := h .john trivial .johnBlue (by simp [killer])
-    have h₂ := h .bill trivial .billBlue (by simp [killer])
+  have hjohn : IsResolved byName {v | .john ∈ killer v} :=
+    ⟨.john, fun b v hv ↦ by cases v <;> cases b <;> simp_all [killer, byName]⟩
+  have hbill : IsResolved byName {v | .bill ∈ killer v} :=
+    ⟨.bill, fun b v hv ↦ by cases v <;> cases b <;> simp_all [killer, byName]⟩
+  have hblue : ¬ IsResolved byName {v | .blue ∈ killer v} := fun ⟨a, h⟩ ↦ by
+    have h₁ := h .john .johnBlue (by simp [killer])
+    have h₂ := h .bill .billBlue (by simp [killer])
     revert h₁ h₂
     cases a <;> norm_num [byName]
-  have hgreen : ¬ IsResolved byName Set.univ {v | .green ∈ killer v} := fun ⟨a, _, h⟩ ↦ by
-    have h₁ := h .john trivial .johnGreen (by simp [killer])
-    have h₂ := h .bill trivial .billGreen (by simp [killer])
+  have hgreen : ¬ IsResolved byName {v | .green ∈ killer v} := fun ⟨a, h⟩ ↦ by
+    have h₁ := h .john .johnGreen (by simp [killer])
+    have h₂ := h .bill .billGreen (by simp [killer])
     revert h₁ h₂
     cases a <;> norm_num [byName]
-  have hop : optimalValues killer (fun _ c ↦ IsResolved byName Set.univ {v | c ∈ killer v}) =
+  have hop : optimalValues killer (fun _ c ↦ IsResolved byName {v | c ∈ killer v}) =
       fun w ↦ {nameOf w} := funext fun w ↦ Set.ext fun c ↦ by
     rw [mem_optimalValues_resolves]
     cases w <;> cases c <;> simp [killer_johnBlue, killer_johnGreen, killer_billBlue,
@@ -563,23 +659,23 @@ theorem killer_byName :
 /-- For a questioner who has to know what the culprit looks like, *Who killed spiderman?*
 denotes the partition by mask, as if quantifying over the cover {blue, green}. -/
 theorem killer_byMask :
-    questionR killer (fun _ c ↦ IsResolved byMask Set.univ {v | c ∈ killer v}) =
+    questionR killer (fun _ c ↦ IsResolved byMask {v | c ∈ killer v}) =
       {{.johnBlue, .billBlue}, {.johnGreen, .billGreen}} := by
-  have hblue : IsResolved byMask Set.univ {v | .blue ∈ killer v} :=
-    ⟨.blue, trivial, fun b _ v hv ↦ by cases v <;> cases b <;> simp_all [killer, byMask]⟩
-  have hgreen : IsResolved byMask Set.univ {v | .green ∈ killer v} :=
-    ⟨.green, trivial, fun b _ v hv ↦ by cases v <;> cases b <;> simp_all [killer, byMask]⟩
-  have hjohn : ¬ IsResolved byMask Set.univ {v | .john ∈ killer v} := fun ⟨a, _, h⟩ ↦ by
-    have h₁ := h .blue trivial .johnBlue (by simp [killer])
-    have h₂ := h .green trivial .johnGreen (by simp [killer])
+  have hblue : IsResolved byMask {v | .blue ∈ killer v} :=
+    ⟨.blue, fun b v hv ↦ by cases v <;> cases b <;> simp_all [killer, byMask]⟩
+  have hgreen : IsResolved byMask {v | .green ∈ killer v} :=
+    ⟨.green, fun b v hv ↦ by cases v <;> cases b <;> simp_all [killer, byMask]⟩
+  have hjohn : ¬ IsResolved byMask {v | .john ∈ killer v} := fun ⟨a, h⟩ ↦ by
+    have h₁ := h .blue .johnBlue (by simp [killer])
+    have h₂ := h .green .johnGreen (by simp [killer])
     revert h₁ h₂
     cases a <;> norm_num [byMask]
-  have hbill : ¬ IsResolved byMask Set.univ {v | .bill ∈ killer v} := fun ⟨a, _, h⟩ ↦ by
-    have h₁ := h .blue trivial .billBlue (by simp [killer])
-    have h₂ := h .green trivial .billGreen (by simp [killer])
+  have hbill : ¬ IsResolved byMask {v | .bill ∈ killer v} := fun ⟨a, h⟩ ↦ by
+    have h₁ := h .blue .billBlue (by simp [killer])
+    have h₂ := h .green .billGreen (by simp [killer])
     revert h₁ h₂
     cases a <;> norm_num [byMask]
-  have hop : optimalValues killer (fun _ c ↦ IsResolved byMask Set.univ {v | c ∈ killer v}) =
+  have hop : optimalValues killer (fun _ c ↦ IsResolved byMask {v | c ∈ killer v}) =
       fun w ↦ {maskOf w} := funext fun w ↦ Set.ext fun c ↦ by
     rw [mem_optimalValues_resolves]
     cases w <;> cases c <;> simp [killer_johnBlue, killer_johnGreen, killer_billBlue,
