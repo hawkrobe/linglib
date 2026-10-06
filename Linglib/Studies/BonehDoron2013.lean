@@ -134,7 +134,7 @@ theorem retro_perfect_forces_point {T : Type*} [LinearOrder T]
   le_antisymm p.fst_le_snd (hf.2.trans_le hb)
 
 /-- Retrospectivity of the state is cancellable, as in *… used to go to. Still do.* (30), since
-the imperfective (19a) bounds only the reference interval: a state whose run time properly
+the imperfective (19a) bounds only the reference interval, so a state whose run time properly
 contains a reference interval before the perspective satisfies *used to* however far it runs. -/
 theorem usedTo_of_persisting_state {W T E : Type*} [LinearOrder T] [Event.TemporalTrace E T]
     {P : W → E → Prop} {w : W} {e : E} (hP : P w e)
@@ -233,7 +233,7 @@ def sheWouldGoByBus : EnglishDatum :=
     form := .would, felicitous := true, exNumber := "(42b)" }
 
 /-- *She used to go to work by bus*, (42c), is false on a single episode. The chapter derives the
-actualization requirement from the aspect: the retrospective's extended reference interval
+actualization requirement from the aspect. The retrospective's extended reference interval
 characterizes a period, and only actualized episodes can characterize one. -/
 def sheUsedToGoByBus : EnglishDatum :=
   { sentence := "She used to go to work by bus"
@@ -259,7 +259,7 @@ def wouldKnowLatin : EnglishDatum :=
     form := .would, felicitous := true, exNumber := "(3a)/(47a)" }
 
 /-- *A French teacher used to know Latin*, (3b), (47b), is ungrammatical, since *used to* is
-aspectual rather than quantificational: the indefinite singular finds no operator below Gen, and
+aspectual rather than quantificational. The indefinite singular finds no operator below Gen, and
 Gen over the whole clause, (50b), gives the wrong truth conditions. A bare plural instead denotes
 the kind and combines directly, (50a). -/
 def usedToKnowLatin : EnglishDatum :=

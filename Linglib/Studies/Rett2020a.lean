@@ -26,9 +26,9 @@ time, `before_iff_beforeEver`.
 
 ## Implementation notes
 
-Run times are the substrate's `RunTimes`, sets of intervals, and an eventuality's duration is
-its `timeTrace`; the coercions act on the trace, so an eventuality's class enters only through
-which coercion `readings` makes available, as in the paper's (19) and (21). Of the typological
+Run times are sets of intervals, and an eventuality's duration is its `timeTrace`; the
+coercions act on the trace, so an eventuality's class enters only through which coercion
+`readings` makes available, as in the paper's (19) and (21). Of the typological
 survey of section 2.4, the rows record the Serbo-Croatian and Tagalog sentences whose overt aspect
 selects a reading, `Marking.select`, with the unambiguous Tagalog *before* and German *after*
 sentences; the veridicality asymmetry and the NPI facts of (25) and (26) receive no proposal in
@@ -63,22 +63,22 @@ variable {T : Type*} [LinearOrder T]
 
 /-- *A before B* (22a) holds when some time of `A` precedes the most informative time of `B` on the
 *before* scale, its least. -/
-def before (A B : RunTimes T) : Prop :=
+def before (A B : Set (NonemptyInterval T)) : Prop :=
   ∃ t ∈ timeTrace A, ∃ m ∈ maxOnScale .lt (timeTrace B), t < m
 
 /-- *A after B* (22b) holds when some time of `A` follows the most informative time of `B` on the
 *after* scale, its greatest. -/
-def after (A B : RunTimes T) : Prop :=
+def after (A B : Set (NonemptyInterval T)) : Prop :=
   ∃ t ∈ timeTrace A, ∃ m ∈ maxOnScale .gt (timeTrace B), m < t
 
 /-- Under inchoative coercion (19) a process may denote the onset of its duration, the greatest
 lower bound of its times. -/
-def inchoative (p : RunTimes T) : RunTimes T :=
+def inchoative (p : Set (NonemptyInterval T)) : Set (NonemptyInterval T) :=
   {i | ∃ g, IsLeast (timeTrace p) g ∧ i = NonemptyInterval.pure g}
 
 /-- Under completive coercion (21) a culmination may denote its telos, the least upper bound of its
 times. -/
-def completive (p : RunTimes T) : RunTimes T :=
+def completive (p : Set (NonemptyInterval T)) : Set (NonemptyInterval T) :=
   {i | ∃ l, IsGreatest (timeTrace p) l ∧ i = NonemptyInterval.pure l}
 
 /-- The paper groups the aspectual classes of Moens and Steedman into processes, states and
@@ -89,11 +89,11 @@ inductive Class where
 
 /-- An embedded eventuality of a class with run times `p` may denote the run times themselves or the
 coercion its class allows. -/
-def readings : Class → RunTimes T → Set (RunTimes T)
+def readings : Class → Set (NonemptyInterval T) → Set (Set (NonemptyInterval T))
   | .process, p => {p, inchoative p}
   | .culmination, p => {p, completive p}
 
-theorem timeTrace_inchoative (p : RunTimes T) :
+theorem timeTrace_inchoative (p : Set (NonemptyInterval T)) :
     timeTrace (inchoative p) = {g | IsLeast (timeTrace p) g} := by
   ext t
   simp only [mem_timeTrace, inchoative, Set.mem_ofPred_eq]
@@ -102,7 +102,7 @@ theorem timeTrace_inchoative (p : RunTimes T) :
     exact (NonemptyInterval.mem_pure.mp ht) ▸ hg
   · exact fun h ↦ ⟨_, ⟨t, h, rfl⟩, NonemptyInterval.mem_pure.mpr rfl⟩
 
-theorem timeTrace_completive (p : RunTimes T) :
+theorem timeTrace_completive (p : Set (NonemptyInterval T)) :
     timeTrace (completive p) = {l | IsGreatest (timeTrace p) l} := by
   ext t
   simp only [mem_timeTrace, completive, Set.mem_ofPred_eq]
@@ -111,7 +111,7 @@ theorem timeTrace_completive (p : RunTimes T) :
     exact (NonemptyInterval.mem_pure.mp ht) ▸ hl
   · exact fun h ↦ ⟨_, ⟨t, h, rfl⟩, NonemptyInterval.mem_pure.mpr rfl⟩
 
-variable {A B : RunTimes T} {m : T}
+variable {A B : Set (NonemptyInterval T)} {m : T}
 
 /-- Against an embedded clause with a first time, *before* is precedence of that time. -/
 theorem before_iff_of_isLeast (h : IsLeast (timeTrace B) m) :
@@ -147,13 +147,13 @@ theorem after_inchoative_iff (h : IsLeast (timeTrace B) m) :
     after A (inchoative B) ↔ ∃ t ∈ timeTrace A, m < t :=
   after_iff_of_isGreatest (by rw [timeTrace_inchoative_of_isLeast h]; exact isGreatest_singleton)
 
-/-- Inchoative coercion leaves *before* as it is: the onset is already its point. -/
+/-- Inchoative coercion leaves *before* as it is, since the onset is already its point. -/
 theorem before_inchoative_iff (h : IsLeast (timeTrace B) m) :
     before A (inchoative B) ↔ before A B := by
   rw [before_iff_of_isLeast h, before_iff_of_isLeast (B := inchoative B)]
   rw [timeTrace_inchoative_of_isLeast h]; exact isLeast_singleton
 
-/-- Completive coercion leaves *after* as it is: the telos is already its point. -/
+/-- Completive coercion leaves *after* as it is, since the telos is already its point. -/
 theorem after_completive_iff (h : IsGreatest (timeTrace B) m) :
     after A (completive B) ↔ after A B := by
   rw [after_iff_of_isGreatest h, after_iff_of_isGreatest (B := completive B)]
@@ -163,28 +163,28 @@ theorem after_completive_iff (h : IsGreatest (timeTrace B) m) :
 
 variable (A) (i : NonemptyInterval T)
 
-theorem isLeast_timeTrace_stative : IsLeast (timeTrace (stativeDenotation i)) i.fst :=
-  ⟨mem_timeTrace_stativeDenotation.mpr ⟨le_rfl, i.fst_le_snd⟩,
-    fun _ ht ↦ (mem_timeTrace_stativeDenotation.mp ht).1⟩
+theorem isLeast_timeTrace_stative : IsLeast (timeTrace (Set.Iic i)) i.fst :=
+  ⟨mem_timeTrace_Iic.mpr ⟨le_rfl, i.fst_le_snd⟩,
+    fun _ ht ↦ (mem_timeTrace_Iic.mp ht).1⟩
 
-theorem isGreatest_timeTrace_stative : IsGreatest (timeTrace (stativeDenotation i)) i.snd :=
-  ⟨mem_timeTrace_stativeDenotation.mpr ⟨i.fst_le_snd, le_rfl⟩,
-    fun _ ht ↦ (mem_timeTrace_stativeDenotation.mp ht).2⟩
+theorem isGreatest_timeTrace_stative : IsGreatest (timeTrace (Set.Iic i)) i.snd :=
+  ⟨mem_timeTrace_Iic.mpr ⟨i.fst_le_snd, le_rfl⟩,
+    fun _ ht ↦ (mem_timeTrace_Iic.mp ht).2⟩
 
 theorem isLeast_timeTrace_accomplishment :
-    IsLeast (timeTrace (accomplishmentDenotation i)) i.fst := by
-  rw [timeTrace_accomplishmentDenotation, ← timeTrace_stativeDenotation]
+    IsLeast (timeTrace {i}) i.fst := by
+  rw [timeTrace_singleton, ← timeTrace_Iic]
   exact isLeast_timeTrace_stative i
 
 theorem isGreatest_timeTrace_accomplishment :
-    IsGreatest (timeTrace (accomplishmentDenotation i)) i.snd := by
-  rw [timeTrace_accomplishmentDenotation, ← timeTrace_stativeDenotation]
+    IsGreatest (timeTrace {i}) i.snd := by
+  rw [timeTrace_singleton, ← timeTrace_Iic]
   exact isGreatest_timeTrace_stative i
 
-/-- Against a process, *before* has one reading, precedence of its onset ((4a)): inchoative
-coercion changes nothing, and completive coercion is unavailable. -/
+/-- Against a process, *before* has one reading, precedence of its onset ((4a)), since inchoative
+coercion changes nothing and completive coercion is unavailable. -/
 theorem before_process :
-    ∀ B ∈ readings .process (stativeDenotation i), (before A B ↔ ∃ t ∈ timeTrace A, t < i.fst) := by
+    ∀ B ∈ readings .process (Set.Iic i), (before A B ↔ ∃ t ∈ timeTrace A, t < i.fst) := by
   simp only [readings, Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, forall_eq]
   exact ⟨before_iff_of_isLeast (isLeast_timeTrace_stative i),
     (before_inchoative_iff (isLeast_timeTrace_stative i)).trans
@@ -193,28 +193,28 @@ theorem before_process :
 /-- Against a culmination, *before* reads as precedence of its start ((5a), the paper's
 (23a)) ... -/
 theorem before_culmination_start :
-    before A (accomplishmentDenotation i) ↔ ∃ t ∈ timeTrace A, t < i.fst :=
+    before A {i} ↔ ∃ t ∈ timeTrace A, t < i.fst :=
   before_iff_of_isLeast (isLeast_timeTrace_accomplishment i)
 
 /-- ... or, under completive coercion, of its telos ((23b)). -/
 theorem before_culmination_telos :
-    before A (completive (accomplishmentDenotation i)) ↔ ∃ t ∈ timeTrace A, t < i.snd :=
+    before A (completive {i}) ↔ ∃ t ∈ timeTrace A, t < i.snd :=
   before_completive_iff (isGreatest_timeTrace_accomplishment i)
 
 /-- Against a process, *after* reads as succession of its end ((5b), the paper's (24a)) ... -/
 theorem after_process_end :
-    after A (stativeDenotation i) ↔ ∃ t ∈ timeTrace A, i.snd < t :=
+    after A (Set.Iic i) ↔ ∃ t ∈ timeTrace A, i.snd < t :=
   after_iff_of_isGreatest (isGreatest_timeTrace_stative i)
 
 /-- ... or, under inchoative coercion, of its onset ((24b)). -/
 theorem after_process_onset :
-    after A (inchoative (stativeDenotation i)) ↔ ∃ t ∈ timeTrace A, i.fst < t :=
+    after A (inchoative (Set.Iic i)) ↔ ∃ t ∈ timeTrace A, i.fst < t :=
   after_inchoative_iff (isLeast_timeTrace_stative i)
 
-/-- Against a culmination, *after* has one reading, succession of its telos ((4b)): completive
-coercion changes nothing, and inchoative coercion is unavailable. -/
+/-- Against a culmination, *after* has one reading, succession of its telos ((4b)), since completive
+coercion changes nothing and inchoative coercion is unavailable. -/
 theorem after_culmination :
-    ∀ B ∈ readings .culmination (accomplishmentDenotation i),
+    ∀ B ∈ readings .culmination {i},
       (after A B ↔ ∃ t ∈ timeTrace A, i.snd < t) := by
   simp only [readings, Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, forall_eq]
   exact ⟨after_iff_of_isGreatest (isGreatest_timeTrace_accomplishment i),
@@ -224,37 +224,37 @@ theorem after_culmination :
 /-- A stative main clause is *before* an embedded clause with a first time iff its onset
 precedes that time. -/
 theorem before_stative_iff (h : IsLeast (timeTrace B) m) :
-    before (stativeDenotation i) B ↔ i.fst < m := by
+    before (Set.Iic i) B ↔ i.fst < m := by
   rw [before_iff_of_isLeast h]
-  exact ⟨fun ⟨_, ht, htm⟩ ↦ (mem_timeTrace_stativeDenotation.mp ht).1.trans_lt htm,
+  exact ⟨fun ⟨_, ht, htm⟩ ↦ (mem_timeTrace_Iic.mp ht).1.trans_lt htm,
     fun h ↦ ⟨i.fst, (isLeast_timeTrace_stative i).1, h⟩⟩
 
 /-- A stative main clause is *after* an embedded clause with a last time iff its end follows
 that time. -/
 theorem after_stative_iff (h : IsGreatest (timeTrace B) m) :
-    after (stativeDenotation i) B ↔ m < i.snd := by
+    after (Set.Iic i) B ↔ m < i.snd := by
   rw [after_iff_of_isGreatest h]
-  exact ⟨fun ⟨_, ht, htm⟩ ↦ htm.trans_le (mem_timeTrace_stativeDenotation.mp ht).2,
+  exact ⟨fun ⟨_, ht, htm⟩ ↦ htm.trans_le (mem_timeTrace_Iic.mp ht).2,
     fun h ↦ ⟨i.snd, (isGreatest_timeTrace_stative i).1, h⟩⟩
 
 variable (j : NonemptyInterval T)
 
 theorem before_stative_accomplishment_iff :
-    before (stativeDenotation i) (accomplishmentDenotation j) ↔ i.fst < j.fst :=
+    before (Set.Iic i) {j} ↔ i.fst < j.fst :=
   before_stative_iff i (isLeast_timeTrace_accomplishment j)
 
 theorem before_stative_completive_iff :
-    before (stativeDenotation i) (completive (accomplishmentDenotation j)) ↔ i.fst < j.snd :=
+    before (Set.Iic i) (completive {j}) ↔ i.fst < j.snd :=
   before_stative_iff i (by
     rw [timeTrace_completive_of_isGreatest (isGreatest_timeTrace_accomplishment j)]
     exact isLeast_singleton)
 
 theorem after_stative_stative_iff :
-    after (stativeDenotation i) (stativeDenotation j) ↔ j.snd < i.snd :=
+    after (Set.Iic i) (Set.Iic j) ↔ j.snd < i.snd :=
   after_stative_iff i (isGreatest_timeTrace_stative j)
 
 theorem after_stative_inchoative_iff :
-    after (stativeDenotation i) (inchoative (stativeDenotation j)) ↔ j.fst < i.snd :=
+    after (Set.Iic i) (inchoative (Set.Iic j)) ↔ j.fst < i.snd :=
   after_stative_iff i (by
     rw [timeTrace_inchoative_of_isLeast (isLeast_timeTrace_stative j)]
     exact isGreatest_singleton)
@@ -262,51 +262,52 @@ theorem after_stative_inchoative_iff :
 /-- In (23) John met Mary at three and Mary climbed the mountain from one to four, so *before* the
 start of the climb is false and *before* its telos true. -/
 theorem example23 :
-    ¬ before {NonemptyInterval.pure 15} (accomplishmentDenotation ⟨⟨13, 16⟩, by omega⟩) ∧
+    ¬ before {NonemptyInterval.pure 15} {⟨⟨13, 16⟩, by omega⟩} ∧
       before {NonemptyInterval.pure 15}
-        (completive (accomplishmentDenotation ⟨⟨13, 16⟩, by omega⟩)) := by
+        (completive {⟨⟨13, 16⟩, by omega⟩}) := by
   simp [before_culmination_start, before_culmination_telos]
 
 /-- In (24) John met Mary in 2022 and Mary was president from 2021 to 2028, so *after* the end of
 her term is false and *after* its onset true. -/
 theorem example24 :
-    ¬ after {NonemptyInterval.pure 2022} (stativeDenotation ⟨⟨2021, 2028⟩, by omega⟩) ∧
+    ¬ after {NonemptyInterval.pure 2022} (Set.Iic ⟨⟨2021, 2028⟩, by omega⟩) ∧
       after {NonemptyInterval.pure 2022}
-        (inchoative (stativeDenotation ⟨⟨2021, 2028⟩, by omega⟩)) := by
+        (inchoative (Set.Iic ⟨⟨2021, 2028⟩, by omega⟩)) := by
   simp [after_process_end, after_process_onset]
 
 /-! ### Monotonicity -/
 
-/-- *Before* on its default reading is downward entailing in the embedded clause: a
+/-- *Before* on its default reading is downward entailing in the embedded clause, since a
 sub-eventuality with a first time starts no earlier. -/
-theorem before_antitone {B' : RunTimes T} (h : timeTrace B' ⊆ timeTrace B)
+theorem before_antitone {B' : Set (NonemptyInterval T)} (h : timeTrace B' ⊆ timeTrace B)
     (hB' : ∃ m', IsLeast (timeTrace B') m') : before A B → before A B' := by
   rintro ⟨t, ht, m, hm, htm⟩
   obtain ⟨m', hm'⟩ := hB'
   rw [maxOnScale_lt_eq] at hm
   exact ⟨t, ht, m', by rw [maxOnScale_lt_eq]; exact hm', htm.trans_le (hm.2 (h hm'.1))⟩
 
-/-- *After* on its default reading is downward entailing in the embedded clause: a
+/-- *After* on its default reading is downward entailing in the embedded clause, since a
 sub-eventuality with a last time ends no later. -/
-theorem after_antitone {B' : RunTimes T} (h : timeTrace B' ⊆ timeTrace B)
+theorem after_antitone {B' : Set (NonemptyInterval T)} (h : timeTrace B' ⊆ timeTrace B)
     (hB' : ∃ m', IsGreatest (timeTrace B') m') : after A B → after A B' := by
   rintro ⟨t, ht, m, hm, htm⟩
   obtain ⟨m', hm'⟩ := hB'
   rw [maxOnScale_gt_eq] at hm
   exact ⟨t, ht, m', by rw [maxOnScale_gt_eq]; exact hm', (hm.2 (h hm'.1)).trans_lt htm⟩
 
-/-- The coerced reading is not: precedence of a telos does not carry over to a
-sub-eventuality with an earlier telos, so a *before* clause licenses NPIs only on its default
+/-- The coerced reading is not downward entailing, since precedence of a telos does not carry over
+to a sub-eventuality with an earlier telos, so a *before* clause licenses NPIs only on its default
 reading (25). -/
 theorem not_before_completive_antitone (h₃ : ∃ a b c : T, a < b ∧ b < c) :
-    ¬ ∀ A B B' : RunTimes T, timeTrace B' ⊆ timeTrace B → (∃ l', IsGreatest (timeTrace B') l') →
-      before A (completive B) → before A (completive B') := by
+    ¬ ∀ A B B' : Set (NonemptyInterval T), timeTrace B' ⊆ timeTrace B →
+      (∃ l', IsGreatest (timeTrace B') l') →
+        before A (completive B) → before A (completive B') := by
   obtain ⟨a, b, c, hab, hbc⟩ := h₃
   intro h
-  have := h {NonemptyInterval.pure b} (accomplishmentDenotation ⟨⟨a, c⟩, hab.le.trans hbc.le⟩)
-    (accomplishmentDenotation (NonemptyInterval.pure a))
+  have := h {NonemptyInterval.pure b} {⟨⟨a, c⟩, hab.le.trans hbc.le⟩}
+    {NonemptyInterval.pure a}
     (by
-      rw [timeTrace_accomplishmentDenotation, timeTrace_accomplishmentDenotation]
+      rw [timeTrace_singleton, timeTrace_singleton]
       rintro t ht
       obtain rfl := NonemptyInterval.mem_pure.mp ht
       exact NonemptyInterval.mem_def.mpr ⟨le_rfl, hab.le.trans hbc.le⟩)
@@ -332,21 +333,21 @@ theorem after_imp_after : after A B → Anscombe.after A B := by
 
 /-! ### Overt aspect marking -/
 
-/-- In a language that grammaticizes the coercion, the aspect of an embedded culmination decides it:
-the Serbo-Croatian perfective and the Tagalog ability-and-involuntary-action perfective are
-culminating, their imperfective and neutral-perfective counterparts non-culminating, (11) and (12).
--/
+/-- In a language that grammaticizes the coercion, the aspect of an embedded culmination decides it.
+The Serbo-Croatian perfective and the Tagalog ability-and-involuntary-action perfective are
+culminating, and their imperfective and neutral-perfective counterparts non-culminating, (11) and
+(12). -/
 inductive Marking
   | nonCulminating
   | culminating
   deriving DecidableEq
 
 /-- A marking selects a culmination's run times, or under a culminating marking their telos. -/
-def Marking.select : Marking → RunTimes T → RunTimes T
+def Marking.select : Marking → Set (NonemptyInterval T) → Set (NonemptyInterval T)
   | .nonCulminating, p => p
   | .culminating, p => completive p
 
-theorem Marking.select_mem_readings (m : Marking) (p : RunTimes T) :
+theorem Marking.select_mem_readings (m : Marking) (p : Set (NonemptyInterval T)) :
     m.select p ∈ readings .culmination p := by
   cases m <;> simp [Marking.select, readings]
 
@@ -370,7 +371,7 @@ def Marking.bound : Marking → Bound
 /-- Against a culmination, *before* under a marking is precedence of the bound the marking
 selects. -/
 theorem before_select (m : Marking) :
-    before A (m.select (accomplishmentDenotation i)) ↔ ∃ t ∈ timeTrace A, t < m.bound.time i := by
+    before A (m.select {i}) ↔ ∃ t ∈ timeTrace A, t < m.bound.time i := by
   cases m
   · exact before_culmination_start A i
   · exact before_culmination_telos A i

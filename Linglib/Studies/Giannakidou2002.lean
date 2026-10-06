@@ -129,14 +129,11 @@ theorem wideScope_of_forall_not {P : W → E → Prop} {w : W} (hP : ∀ e, ¬ P
     (h : t < t') : wideScope P w t' :=
   ⟨⟨(t, t'), h.le⟩, fun _ _ e he ↦ absurd he (hP e), h, rfl⟩
 
-/-- `runTimes P w` is the set of run times of the events of `P` at the world `w`. -/
-def runTimes (P : W → E → Prop) (w : W) : RunTimes T := {i | ∃ e, P w e ∧ τ e = i}
-
 /-- Eventive UNTIL is Karttunen's *not until* together with the actualization his presupposition
 supplies. -/
 theorem eventiveUntil_iff (P : W → E → Prop) (w : W) (t : T) :
-    eventiveUntil P w t ↔ notUntil (runTimes P w) {NonemptyInterval.pure t} ∧
-      when_ (runTimes P w) {NonemptyInterval.pure t} := by
+    eventiveUntil P w t ↔ notUntil (τ '' {e | P w e}) {NonemptyInterval.pure t} ∧
+      when_ (τ '' {e | P w e}) {NonemptyInterval.pure t} := by
   constructor
   · rintro ⟨⟨e, he, ht⟩, hall⟩
     refine ⟨(notUntil_iff _ _).mpr fun s ⟨_, ⟨e', he', rfl⟩, hs⟩ ↦
@@ -156,13 +153,13 @@ theorem eventiveUntil_iff (P : W → E → Prop) (w : W) (t : T) :
 
 /-- Eventive UNTIL entails *not before*, one direction of Karttunen's equivalence. -/
 theorem eventiveUntil_not_before {P : W → E → Prop} {w : W} {t : T}
-    (h : eventiveUntil P w t) : ¬ before (runTimes P w) t :=
+    (h : eventiveUntil P w t) : ¬ before (τ '' {e | P w e}) t :=
   fun ⟨_, ⟨_, ⟨e, he, rfl⟩, hs⟩, hlt⟩ ↦
     absurd ((h.2 e he).trans (NonemptyInterval.mem_def.mp hs).1) (not_le.mpr hlt)
 
 /-- *Not before* carries no actualization, since it holds when nothing P-like ever happens. -/
 theorem not_before_of_forall_not {P : W → E → Prop} {w : W} (hP : ∀ e, ¬ P w e) (t : T) :
-    ¬ before (runTimes P w) t :=
+    ¬ before (τ '' {e | P w e}) t :=
   fun ⟨_, ⟨_, ⟨e, he, _⟩, _⟩, _⟩ ↦ hP e he
 
 /-! ### The paper's sentences -/
@@ -172,8 +169,8 @@ inductive Connective
   | until | mexri | paraMonon | prin | til | fyrrEn | tot | pas
   deriving DecidableEq, Repr
 
-/-- The paper's connective entry for Greek *para monon*, literally 'but only', as an *until*
-word: *i prigipisa dhen eftase para monon ta mesanixta* 'the princess did not arrive until
+/-- The paper's connective entry lists Greek *para monon*, literally 'but only', as an *until*
+word, as in *i prigipisa dhen eftase para monon ta mesanixta* 'the princess did not arrive until
 midnight'. -/
 def paraMononEntry : Tense.Connective := { form := "para monon", relation := .until_ }
 
@@ -198,7 +195,7 @@ def Connective.polarityItem : Connective → Option PolarityItem
   | .pas => some Dutch.PolarityItems.pas
   | _ => none
 
-/-- The punctual *until*s, the words the paper takes to lexicalize Karttunen's eventive UNTIL:
+/-- The punctual *until*s, the words the paper takes to lexicalize Karttunen's eventive UNTIL, are
 Greek *para monon*, Icelandic *fyrr en* and Dutch *pas*. -/
 def Connective.Punctual (c : Connective) : Prop :=
   c = .paraMonon ∨ c = .fyrrEn ∨ c = .pas

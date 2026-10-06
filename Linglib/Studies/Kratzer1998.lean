@@ -21,14 +21,6 @@ event before the reference time, a form describes a past event out of the blue j
 spells out present tense with perfect aspect. The paper's tables assign that combination to the
 English simple past and the German *Perfekt* and never to the *Präteritum*.
 
-## Main definitions
-
-* `tense`: an indexical tense as a pronoun.
-* `zeroTense`: the zero tense.
-* `AspectHead.denote`: the operator of an aspect, from event properties to time properties.
-* `Variety.SpellsOut`: a variety's table of tense forms and what they spell out.
-* `Variety.DescribesPastOutOfTheBlue`: a form describes a past event out of the blue.
-
 ## Main results
 
 * `AspectHead.isAnterior_iff`: only the perfect is anterior.
@@ -344,8 +336,8 @@ theorem rows_outOfTheBlue :
         (r.judgment = .acceptable ↔ v.DescribesPastOutOfTheBlue ℤ f) := by
   decide +kernel
 
-/-- The German rows of (40) are in the form they are labelled with: of the tense forms of
-*bauen*, exactly the labelled one has all its words in the row. -/
+/-- The German rows of (40) are in the form they are labelled with, since of the tense forms of
+*bauen* exactly the labelled one has all its words in the row. -/
 theorem rows_realize :
     ∀ r ∈ [Examples.ex40b, Examples.ex40c], ∀ f ∈ German.tenseForms,
       ((∃ ws ∈ German.Verbs.bauen.principalParts.tenseForm f, ws ⊆ r.surfaceTokens) ↔

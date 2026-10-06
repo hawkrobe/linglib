@@ -7,32 +7,29 @@ public import Linglib.Data.Examples.Karttunen1974
 /-!
 # Karttunen (1974): Until
 
-This file formalizes [karttunen-1974], which argues that English has two *until*s. Durative
-*until* modifies a durative sentence (1a–d) and marks the minimum length of its interval
-(12)–(14), (21): on run-time denotations, where a durative clause holds throughout each of
-its run-times, some run-time of `A` reaches a time of `B` (`until_`). Punctual *until* (1e)
-is a negative polarity item that locates an event in time; negation takes wide scope over it
-(3b), and the standard
-one-*until* arguments that negation makes a sentence durative fail (8)–(10). Its logical
-form is that of *before*: *A not until T* is `NOT(A BEFORE T)` (33) (`notUntil`, the
-negation of [anscombe-1964]'s quantificational *before*), so every occurrence of `A` has a
-time of `T` at or before it (`notUntil_iff`), and its denial is *A before T* (30)–(31)
-(`not_notUntil_iff`).
-What distinguishes it from *before* is a pragmatic presupposition of lateness, (34):
-*A before T or A when T* (`presupposition`, with [heinamaki-1974]'s *when*). The logical
-form holds of a clause that never happens (`notUntil_empty`), so the commitment to *A when
-T* (29b) is not asserted but follows from assertion and presupposition by disjunctive
-syllogism, (36) (`notUntil_when`) — whence *Nancy didn't get married until she died* (23)
-commits the speaker to a marriage at her death, which *before* would not. Finnish separates
-the two *until*s, *kunnes/saakka* against *ennenkuin* (37), and its positive-polarity
-*vasta*, like German *erst*, asserts *A when T* under the same presupposition (38)–(39):
-for point events the two logical forms coincide given the presupposition
-(`notUntil_iff_when_of_presupposition`).
+Karttunen argues that English has two *until*s. Durative *until* modifies a durative sentence and
+marks the minimum length of its interval: some run-time of `A` reaches a time of `B`. Punctual
+*until* is a negative polarity item whose logical form is that of *before*, *A not until T* being
+the negation of Anscombe's quantificational *before* (33). What distinguishes it from *before* is
+a pragmatic presupposition of lateness, *A before T or A when T* (34), with Heinämäki's *when*.
+Since the logical form holds of a clause that never happens, the commitment to *A when T* follows
+from assertion and presupposition by disjunctive syllogism (36), which is why *Nancy didn't get
+married until she died* (23) commits the speaker to a marriage at her death.
+
+## Main statements
+
+* `notUntil_iff`, `not_notUntil_iff`: every occurrence of `A` has a time of `T` at or before it,
+  and the denial is *A before T*.
+* `notUntil_empty`: the logical form holds of a clause that never happens.
+* `notUntil_when`: assertion and presupposition together yield *A when T*.
+* `notUntil_iff_when_of_presupposition`: for point events the two logical forms coincide given
+  the presupposition, as with Finnish *vasta* and German *erst* (38)–(39).
 
 ## References
 
 * [karttunen-1974]
-* [anscombe-1964], [heinamaki-1974]
+* [anscombe-1964]
+* [heinamaki-1974]
 -/
 
 @[expose] public section
@@ -41,19 +38,19 @@ namespace Karttunen1974
 
 open Tense Anscombe1964 Heinamaki1974
 
-variable {T : Type*} [LinearOrder T] (A B : RunTimes T)
+variable {T : Type*} [LinearOrder T] (A B : Set (NonemptyInterval T))
 
-/-- Durative *A until B*: some run-time of `A` reaches a time of `B`. -/
+/-- Durative *A until B* holds when some run-time of `A` reaches a time of `B`. -/
 def until_ : Prop := ∃ t, t ∈ timeTrace A ∧ t ∈ timeTrace B
 
-/-- Punctual *A not until B*, (33): *A not before B*. -/
+/-- Punctual *A not until B*, (33), is *A not before B*. -/
 def notUntil : Prop := ¬ Anscombe.beforeEver A B
 
-/-- The presupposition of lateness, (34): *A before B or A when B*. -/
+/-- The presupposition of lateness, (34), is *A before B or A when B*. -/
 def presupposition : Prop := Anscombe.beforeEver A B ∨ when_ A B
 
 theorem until_veridical_complement : until_ A B → ∃ t, t ∈ timeTrace B :=
-  λ ⟨t, _, ht⟩ => ⟨t, ht⟩
+  fun ⟨t, _, ht⟩ ↦ ⟨t, ht⟩
 
 /-- Every occurrence of `A` has a time of `B` at or before it. -/
 theorem notUntil_iff : notUntil A B ↔ ∀ t ∈ timeTrace A, ∃ t' ∈ timeTrace B, t' ≤ t := by
@@ -63,10 +60,10 @@ theorem notUntil_iff : notUntil A B ↔ ∀ t ∈ timeTrace A, ∃ t' ∈ timeTr
 theorem not_notUntil_iff : ¬ notUntil A B ↔ Anscombe.beforeEver A B := not_not
 
 /-- The logical form holds of a clause that never happens. -/
-theorem notUntil_empty : notUntil (∅ : RunTimes T) B :=
-  λ ⟨_, ⟨_, hi, _⟩, _⟩ => hi
+theorem notUntil_empty : notUntil (∅ : Set (NonemptyInterval T)) B :=
+  fun ⟨_, ⟨_, hi, _⟩, _⟩ ↦ hi
 
-/-- Disjunctive syllogism, (36): assertion and presupposition together yield *A when B*. -/
+/-- By disjunctive syllogism, (36), assertion and presupposition together yield *A when B*. -/
 theorem notUntil_when (h : notUntil A B) (hp : presupposition A B) : when_ A B :=
   hp.resolve_left h
 
@@ -78,7 +75,7 @@ theorem notUntil_iff_when_of_presupposition (a b : T)
       when_ {NonemptyInterval.pure a} {NonemptyInterval.pure b} := by
   simp only [notUntil, Anscombe.beforeEver, when_, presupposition, mem_timeTrace_pure,
     exists_eq_left, forall_eq] at hp ⊢
-  exact ⟨hp.resolve_left, λ h => by subst h; exact lt_irrefl _⟩
+  exact ⟨hp.resolve_left, fun h ↦ by subst h; exact lt_irrefl _⟩
 
 /-! ### The durative selectional restriction -/
 
@@ -89,7 +86,7 @@ subinterval property. -/
 def SatisfiesDurativeRestriction (c : VendlerClass) : Prop :=
   c.telicity = .atelic ∧ c.duration = .durative
 
-instance : DecidablePred SatisfiesDurativeRestriction := λ _ =>
+instance : DecidablePred SatisfiesDurativeRestriction := fun _ ↦
   inferInstanceAs (Decidable (_ ∧ _))
 
 theorem satisfiesDurativeRestriction_iff (c : VendlerClass) :

@@ -56,8 +56,8 @@ def SortedProperty.IsEventuality : SortedProperty W E T → Prop
 
 variable [Event.TemporalTrace E T]
 
-/-- `At t w Q`: the property `Q` is instantiated in `w` at the interval `t`, by inclusion of the
-runtime for events, overlap for states, and application for properties of times. -/
+/-- `At t w Q` says that the property `Q` is instantiated in `w` at the interval `t`, by inclusion
+of the runtime for events, overlap for states, and application for properties of times. -/
 def At (t : Interval (WithTop T)) (w : W) : SortedProperty W E T → Prop
   | .eventive P => ∃ e, P w e ∧ ↑(τ e).withTop ≤ t
   | .stative P => ∃ e, P w e ∧ ¬ Disjoint (↑(τ e).withTop) t
@@ -77,7 +77,7 @@ theorem exists_mem_of_at (hQ : Q.IsEventuality) (h : At r w Q) : ∃ x, x ∈ r 
 
 /-- Nothing is instantiated at the null interval but a property of times. -/
 theorem not_at_bot (hQ : Q.IsEventuality) : ¬ At ⊥ w Q :=
-  λ h => let ⟨_, hx⟩ := exists_mem_of_at hQ h; Interval.notMem_bot hx
+  fun h ↦ let ⟨_, hx⟩ := exists_mem_of_at hQ h; Interval.notMem_bot hx
 
 /-- Instantiation of an eventuality is monotone in the interval. -/
 theorem At.mono (hQ : Q.IsEventuality) (h : r ≤ r') (hr : At r w Q) : At r' w Q := by
@@ -85,7 +85,7 @@ theorem At.mono (hQ : Q.IsEventuality) (h : r ≤ r') (hr : At r w Q) : At r' w 
   | eventive R => obtain ⟨e, he, hle⟩ := hr; exact ⟨e, he, le_trans hle h⟩
   | stative R =>
     obtain ⟨e, he, hd⟩ := hr
-    exact ⟨e, he, λ hd' => hd (hd'.mono_right h)⟩
+    exact ⟨e, he, fun hd' ↦ hd (hd'.mono_right h)⟩
   | temporal R => exact hQ.elim
 
 /-- An event is instantiated at the ray from `t` when it starts no earlier than `t`. -/
@@ -103,7 +103,7 @@ theorem at_eventive_withTop_iff_prfv {i : NonemptyInterval T} :
     At ↑i.withTop w (.eventive P) ↔ i ∈ PRFV P w := by
   simp [At, mem_prfv, and_comm]
 
-/-- The imperfective viewpoint entails stative instantiation: proper inclusion of the interval
+/-- The imperfective viewpoint entails stative instantiation, since proper inclusion of the interval
 in the runtime gives overlap. -/
 theorem at_stative_withTop_of_impf {i : NonemptyInterval T} (h : i ∈ IMPF P w) :
     At ↑i.withTop w (.stative P) := by
