@@ -11,22 +11,25 @@ public import Linglib.Core.Probability.Decision.Basic
 /-!
 # Utility–loss duality for finite decision problems
 
-The bridge between [van-rooy-2003]'s utility scale (`DecisionProblem`,
-`questionUtility` over ℝ) and mathlib's loss scale
-(`ProbabilityTheory.bayesRisk` over `ℝ≥0∞`): for a bound `C` above every
-utility, the Bayes risk of the partition experiment under the regret loss
-`C − U` equals `C` minus the partition's decision value
-(`bayesRisk_deterministic_regretLoss`). Through it, [van-rooy-2003]'s §4.1
-Fact becomes a *biconditional* theorem about the Blackwell order:
+Decision problems measure utility on a real scale, mathlib's `ProbabilityTheory.bayesRisk`
+measures loss in `ℝ≥0∞`. For a bound `C` above every utility, the Bayes risk of observing the
+cell of a partition under the regret loss `C − U` is `C` minus the partition's decision value.
+Through this duality, van Rooy's comparison of questions becomes a statement about the Blackwell
+order on experiments.
 
-* forward (`questionUtility_comp_le`): coarsening the classifier cannot raise
-  question utility — the partition instance of the data-processing inequality
-  `bayesRisk_deterministic_le_deterministic_comp`;
-* converse (`factorsThrough_of_forall_questionUtility_le`): a partition whose
-  question utility is dominated in *every* decision problem factors through
-  the dominating one — the Blackwell–Sherman–Stein converse
-  (`isGarblingOf_of_blackwellDominates`) plus the deterministic factoring
-  characterization (`Kernel.deterministic_isGarblingOf_deterministic_iff`).
+## Main statements
+
+* `bayesRisk_deterministic_regretLoss`: the duality between Bayes risk and decision value.
+* `questionUtility_comp_le`: coarsening a classifier cannot raise question utility.
+* `factorsThrough_of_forall_questionUtility_le`: a classifier never more useful than another
+  factors through it.
+* `le_iff_forall_questionUtility_le`: one partition refines another exactly when it is at least
+  as useful in every decision problem with a probability prior.
+
+## References
+
+* [van-rooy-2003]
+* [blackwell-1953]
 -/
 
 @[expose] public section
@@ -36,10 +39,12 @@ open scoped ENNReal
 
 namespace Core.DecisionTheory.DecisionProblem
 
-variable {W A O O' : Type*} [Fintype W] [DecidableEq W]
+universe u
 
-/-- The prior of a decision problem as a measure: the weighted sum of Dirac
-masses `∑ w, ofReal (prior w) • δ_w`. -/
+variable {W : Type u} {A O O' : Type*} [Fintype W] [DecidableEq W]
+
+/-- The prior of a decision problem as a measure is the weighted sum of Dirac masses
+`∑ w, ofReal (prior w) • δ_w`. -/
 noncomputable def priorMeasure [MeasurableSpace W] (dp : DecisionProblem ℝ W A) :
     Measure W :=
   ∑ w : W, ENNReal.ofReal (dp.prior w) • Measure.dirac w
@@ -75,64 +80,28 @@ theorem isProbabilityMeasure_priorMeasure [MeasurableSpace W]
   simp only [Measure.smul_apply, measure_univ, smul_eq_mul, mul_one]
   rw [← ENNReal.ofReal_sum_of_nonneg fun w _ => hprior w, hsum, ENNReal.ofReal_one]
 
-/-- The regret loss at bound `C`: `ℓ(w, a) = C − U(w, a)`, clamped into
-`ℝ≥0∞`. For `C` above every utility this is the order-reversing change of
-scale between utilities and losses. -/
+/-- The regret loss at bound `C` is `ℓ(w, a) = C − U(w, a)`, clamped into `ℝ≥0∞`. For `C` above
+every utility it reverses the scale between utilities and losses. -/
 noncomputable def regretLoss (dp : DecisionProblem ℝ W A) (C : ℝ) :
     W → A → ℝ≥0∞ :=
-  λ w a => ENNReal.ofReal (C - dp.utility w a)
+  fun w a ↦ ENNReal.ofReal (C - dp.utility w a)
 
 /-- Finite subtypes of actions carry the discrete σ-algebra. -/
 scoped instance (acts : Finset A) : MeasurableSpace acts := ⊤
 
 scoped instance (acts : Finset A) : MeasurableSingletonClass acts :=
-  ⟨λ _ => trivial⟩
+  ⟨fun _ ↦ trivial⟩
 
-omit [Fintype W] [DecidableEq W] in
-/-- `P(cell)·V(D∣cell) = max_{a ∈ acts} ∑_{w ∈ cell} P(w)·U(w,a)`: the
-probability-weighted conditional value equals the unnormalized best-action value
-on the cell. Local specialisation of the private lemma in
-`Core.Probability.Decision.Basic`, restated at `K := ℝ` with an explicit
-nonempty-action hypothesis. -/
-private lemma cellProbability_mul_condValue_sup' (dp : DecisionProblem ℝ W A)
-    {acts : Finset A} (hacts : acts.Nonempty) (cell : Finset W)
-    (hprior : ∀ w, 0 ≤ dp.prior w) :
-    dp.cellProbability cell * dp.condValue acts cell =
-      acts.sup' hacts (fun a => ∑ w ∈ cell, dp.prior w * dp.utility w a) := by
-  rw [condValue_of_nonempty hacts]
-  have htp_nonneg : 0 ≤ dp.cellProbability cell :=
-    Finset.sum_nonneg fun w _ => hprior w
-  by_cases htp : dp.cellProbability cell = 0
-  · have hS : cell.sum dp.prior = 0 := htp
-    rw [htp, zero_mul]
-    have hpw : ∀ w ∈ cell, dp.prior w = 0 :=
-      (Finset.sum_eq_zero_iff_of_nonneg fun w _ => hprior w).mp hS
-    exact (Finset.sup'_eq_of_forall (s := acts) (H := hacts) (a := (0 : ℝ))
-      (f := fun a => ∑ w ∈ cell, dp.prior w * dp.utility w a)
-      (fun a _ => Finset.sum_eq_zero
-        fun w hw => by rw [hpw w hw, zero_mul])).symm
-  · have hS : cell.sum dp.prior ≠ 0 := htp
-    rw [Finset.mul₀_sup' htp_nonneg _ acts hacts]
-    refine Finset.sup'_congr hacts rfl fun a _ => ?_
-    show cell.sum dp.prior * dp.condExpectedUtility cell a
-        = ∑ w ∈ cell, dp.prior w * dp.utility w a
-    rw [condExpectedUtility_of_ne_zero hS, Finset.mul_sum]
-    refine Finset.sum_congr rfl fun w _ => ?_
-    rw [div_mul_eq_mul_div, ← mul_div_assoc, mul_div_cancel_left₀ _ hS]
-
-/-- **Utility–loss duality**: for a classifier `classify : W → O`, the Bayes
-risk of the deterministic experiment "observe the cell of `w`" under the
-regret loss at `C`, with actions restricted to `acts`, is `C` minus the
-partition's decision value `∑_o P(o)·V(D ∣ fiber o)`. The optimal estimator
-is best-action-per-cell, and mathlib's `bayesRisk` and [van-rooy-2003]'s
-conditional value compute the same quantity on opposite scales. -/
+/-- For a classifier `classify : W → O`, the Bayes risk of observing the cell of the world
+under the regret loss at `C`, with actions restricted to `acts`, is `C` minus the partition's
+decision value `∑_o P(o)·V(D ∣ fiber o)`. -/
 theorem bayesRisk_deterministic_regretLoss [MeasurableSpace W]
     [MeasurableSingletonClass W] [Fintype O] [DecidableEq O] [MeasurableSpace O]
     [MeasurableSingletonClass O] (dp : DecisionProblem ℝ W A)
     {acts : Finset A} (hacts : acts.Nonempty) (classify : W → O)
     (hprior : ∀ w, 0 ≤ dp.prior w) (hsum : ∑ w : W, dp.prior w = 1)
     {C : ℝ} (hC : ∀ w, ∀ a ∈ acts, dp.utility w a ≤ C) :
-    bayesRisk (λ w (a : acts) => dp.regretLoss C w a)
+    bayesRisk (fun w (a : acts) ↦ dp.regretLoss C w a)
         (Kernel.deterministic classify (measurable_of_countable classify))
         dp.priorMeasure
       = ENNReal.ofReal (C - ∑ o : O,
@@ -187,7 +156,7 @@ theorem bayesRisk_deterministic_regretLoss [MeasurableSpace W]
     simp_rw [inner_eq]
     rw [← ENNReal.ofReal_iInf (fun a : ↥acts =>
           C * dp.cellProbability (fiber o) - uSum (fiber o) a.val),
-      cellProbability_mul_condValue_sup' dp hacts (fiber o) hprior]
+      cellProbability_mul_condValue (cell := fiber o) hprior hacts]
     congr 1
     rw [← Finset.inf'_univ_eq_ciInf
       (f := fun a : ↥acts => C * dp.cellProbability (fiber o) - uSum (fiber o) a.val)]
@@ -213,7 +182,7 @@ theorem bayesRisk_deterministic_regretLoss [MeasurableSpace W]
   have hcell_nn : ∀ o : O, 0 ≤
       C * dp.cellProbability (fiber o)
         - dp.cellProbability (fiber o) * dp.condValue acts (fiber o) := fun o => by
-    have := cellProbability_mul_condValue_sup' dp hacts (fiber o) hprior
+    have := cellProbability_mul_condValue (cell := fiber o) hprior hacts
     have hsup_le : acts.sup' hacts (uSum (fiber o)) ≤ C * dp.cellProbability (fiber o) :=
       Finset.sup'_le hacts _ fun a ha => hcond_le (fiber o) a ha
     linarith
@@ -235,8 +204,8 @@ theorem bayesRisk_deterministic_regretLoss [MeasurableSpace W]
         rw [hcp_sum, mul_one]
 
 omit [DecidableEq W] in
-/-- The **partition of a classifier** on `Finset.univ` as an image: cells
-indexed by outputs, kept faithful by the fiber-nonempty hypothesis. -/
+/-- With all fibres nonempty, the cells of a classifier are indexed faithfully by its
+outputs. -/
 private lemma cellProbability_sum_fibers (dp : DecisionProblem ℝ W A)
     {O : Type*} [Fintype O] [DecidableEq O] (classify : W → O)
     (hsum : ∑ w : W, dp.prior w = 1) :
@@ -340,7 +309,7 @@ private lemma bayesRisk_deterministic_toReal_utility
             (Finset.mem_univ o')
           linarith
     _ = -(dp.cellProbability cell * dp.condValue Finset.univ cell) := by
-        rw [cellProbability_mul_condValue_sup' dp Finset.univ_nonempty cell hdp_prior]
+        rw [cellProbability_mul_condValue (cell := cell) hdp_prior Finset.univ_nonempty]
 
 omit [DecidableEq W] in
 /-- With all fibers nonempty, the fiber map `o ↦ classify⁻¹ o` is injective on
@@ -373,10 +342,8 @@ private lemma questionUtility_image_eq_sum_sub (dp : DecisionProblem ℝ W A)
   simp only [DecisionProblem.utilityValue, mul_sub, Finset.sum_sub_distrib]
   rw [← Finset.sum_mul, hcp1, one_mul]
 
-/-- **[van-rooy-2003] §4.1, forward direction, from the Blackwell order**:
-coarsening the classifier by post-composition cannot raise question utility.
-The partition instance of `bayesRisk_deterministic_le_deterministic_comp`,
-transported along the duality. -/
+/-- Coarsening a classifier by post-composition cannot raise question utility, the partition
+instance of `bayesRisk_deterministic_le_deterministic_comp` transported along the duality. -/
 theorem questionUtility_comp_le [MeasurableSpace W] [MeasurableSingletonClass W]
     [Fintype O] [DecidableEq O] [MeasurableSpace O] [MeasurableSingletonClass O]
     [Fintype O'] [DecidableEq O'] [MeasurableSpace O'] [MeasurableSingletonClass O']
@@ -384,11 +351,11 @@ theorem questionUtility_comp_le [MeasurableSpace W] [MeasurableSingletonClass W]
     (classify : W → O) (ψ : O → O')
     (hprior : ∀ w, 0 ≤ dp.prior w) (hsum : ∑ w : W, dp.prior w = 1)
     (hfib : ∀ o : O, (Finset.univ.filter (classify · = o)).Nonempty)
-    (hfib' : ∀ o' : O', (Finset.univ.filter (λ w => ψ (classify w) = o')).Nonempty) :
+    (hfib' : ∀ o' : O', (Finset.univ.filter (fun w ↦ ψ (classify w) = o')).Nonempty) :
     dp.questionUtility acts (Finset.univ.image
-        (λ o' : O' => Finset.univ.filter (λ w => ψ (classify w) = o'))) ≤
+        (fun o' : O' ↦ Finset.univ.filter (fun w ↦ ψ (classify w) = o'))) ≤
       dp.questionUtility acts (Finset.univ.image
-        (λ o : O => Finset.univ.filter (classify · = o))) := by
+        (fun o : O ↦ Finset.univ.filter (classify · = o))) := by
   classical
   -- `Nonempty W`, else `hsum` says `0 = 1`.
   have hW : Nonempty W := by
@@ -555,13 +522,9 @@ private lemma questionUtility_image_fibers_eq (dp : DecisionProblem ℝ W A)
         (by rw [hcp_empty, zero_mul])]
   rw [← Finset.sum_mul, hcp1, one_mul]
 
-/-- **[van-rooy-2003] §4.1, converse direction (Blackwell–Sherman–Stein)**:
-if the partition of `g` has question utility dominated by that of `f` in
-*every* decision problem over action space `O'`, then `g` factors through
-`f` — the coarse question is genuinely a coarsening. Chains the utility–loss
-duality against `isGarblingOf_of_bayesRisk_uniform_le` (only finite losses at the
-uniform prior are needed) and the deterministic-factoring characterization
-`Kernel.deterministic_isGarblingOf_deterministic_iff`. -/
+/-- If the partition of `g` is never more useful than that of `f` in a decision problem over
+the action space `O'`, then `g` factors through `f`. This is the Blackwell–Sherman–Stein
+converse `isGarblingOf_of_bayesRisk_uniform_le` transported along the duality. -/
 theorem factorsThrough_of_forall_questionUtility_le [Nonempty W]
     [MeasurableSpace W] [MeasurableSingletonClass W]
     [Fintype O] [DecidableEq O] [MeasurableSpace O] [MeasurableSingletonClass O]
@@ -570,9 +533,9 @@ theorem factorsThrough_of_forall_questionUtility_le [Nonempty W]
     (h : ∀ (dp : DecisionProblem ℝ W O'), (∀ w, 0 ≤ dp.prior w) →
       (∑ w : W, dp.prior w = 1) →
       dp.questionUtility Finset.univ (Finset.univ.image
-          (λ o' : O' => Finset.univ.filter (g · = o'))) ≤
+          (fun o' : O' ↦ Finset.univ.filter (g · = o'))) ≤
         dp.questionUtility Finset.univ (Finset.univ.image
-          (λ o : O => Finset.univ.filter (f · = o)))) :
+          (fun o : O ↦ Finset.univ.filter (f · = o)))) :
     ∃ ψ : O → O', g = ψ ∘ f := by
   classical
   have hcardR : (0 : ℝ) < Fintype.card W := by exact_mod_cast Fintype.card_pos
@@ -637,5 +600,51 @@ theorem factorsThrough_of_forall_questionUtility_le [Nonempty W]
     exact mul_nonpos_of_nonneg_of_nonpos (hcp_nn _) (hval_nonneg _)
   rw [ENNReal.ofReal_le_ofReal_iff hRHS_nn]
   linarith
+
+/-! ### Partitions -/
+
+/-- The fibres of the block map of a partition are its parts and the empty fibre. -/
+private theorem image_filter_part (P : Finpartition (Finset.univ : Finset W)) :
+    Finset.univ.image (fun c ↦ Finset.univ.filter (P.part · = c)) = insert ∅ P.parts := by
+  ext c
+  simp only [Finset.mem_image, Finset.mem_univ, true_and, Finset.mem_insert]
+  constructor
+  · rintro ⟨d, rfl⟩
+    by_cases hd : d ∈ P.parts
+    · exact .inr (by convert hd using 1; ext v; simp [P.part_eq_iff_mem hd])
+    · exact .inl (Finset.filter_eq_empty_iff.2 fun v _ h ↦
+        hd (h ▸ P.part_mem.2 (Finset.mem_univ v)))
+  · rintro (rfl | hc)
+    · exact ⟨∅, Finset.filter_eq_empty_iff.2 fun v _ h ↦
+        P.ne_bot (P.part_mem.2 (Finset.mem_univ v)) (by simp at h)⟩
+    · exact ⟨c, by ext v; simp [P.part_eq_iff_mem hc]⟩
+
+private theorem questionUtility_insert_empty (dp : DecisionProblem ℝ W A) (acts : Finset A)
+    (cells : Finset (Finset W)) :
+    dp.questionUtility acts (insert ∅ cells) = dp.questionUtility acts cells := by
+  by_cases h : ∅ ∈ cells
+  · rw [Finset.insert_eq_of_mem h]
+  · rw [questionUtility, Finset.sum_insert h]
+    simp [cellProbability, questionUtility]
+
+/-- One partition refines another exactly when it is at least as useful in every decision
+problem with a probability prior ([van-rooy-2003]), the partition instance of
+[blackwell-1953]'s theorem. -/
+theorem le_iff_forall_questionUtility_le (P Q : Finpartition (Finset.univ : Finset W)) :
+    P ≤ Q ↔ ∀ {A : Type u} (dp : DecisionProblem ℝ W A) (acts : Finset A),
+      (∀ w, 0 ≤ dp.prior w) → ∑ w, dp.prior w = 1 →
+        dp.questionUtility acts Q.parts ≤ dp.questionUtility acts P.parts := by
+  refine ⟨fun h _ dp acts hprior _ ↦ questionUtility_anti_of_le dp acts h hprior, fun h ↦ ?_⟩
+  rcases isEmpty_or_nonempty W with hW | hW
+  · exact fun b hb ↦ isEmptyElim (P.nonempty_of_mem_parts hb).choose
+  let _ : MeasurableSpace W := ⊤
+  let _ : MeasurableSpace (Finset W) := ⊤
+  have : MeasurableSingletonClass W := ⟨fun _ ↦ trivial⟩
+  have : MeasurableSingletonClass (Finset W) := ⟨fun _ ↦ trivial⟩
+  obtain ⟨ψ, hψ⟩ := factorsThrough_of_forall_questionUtility_le P.part Q.part
+    fun dp hprior hsum ↦ by
+      simpa only [image_filter_part, questionUtility_insert_empty] using
+        h dp Finset.univ hprior hsum
+  exact Finpartition.le_iff_factorsThrough_part.2 fun a b hab ↦ by simp [hψ, hab]
 
 end Core.DecisionTheory.DecisionProblem

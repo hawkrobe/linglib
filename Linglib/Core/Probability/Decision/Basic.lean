@@ -15,59 +15,56 @@ public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import Mathlib.Algebra.Order.GroupWithZero.Finset
 public import Mathlib.Tactic.Linarith
 public import Mathlib.Tactic.Ring
+public import Linglib.Core.Order.Partition.Finpartition
 
 /-!
 # Decision problems and the value of information
 
-Finite decision problems over an arbitrary `LinearOrder`ed `Field K` and
-[van-rooy-2003]'s decision-theoretic values of propositions and questions:
-expected utility, utility value `UV`, question utility `EUV`, value of sample
-information `VSI`/`EVSI`, and the maximin analogues. Theory-neutral: no
-question-semantic imports, so any module (RSA, causal decision theory,
-explanation models) can use decision problems without pulling in the
-`Question` cone.
+A finite decision problem has a prior over worlds and a utility for each action in each world,
+valued in a linearly ordered field. This file defines van Rooy's decision-theoretic values of
+propositions and questions: expected utility, the utility value `UV` of learning a proposition,
+the expected utility value `EUV` of a question, the value of sample information `VSI` and its
+expectation `EVSI`, and their worst-case analogues. It imports no question semantics, so any
+module can use decision problems.
 
 ## Main definitions
 
 * `DecisionProblem`: a utility function `W → A → K` with a prior `W → K`.
   The structure itself is constraint-free; theorems assume
-  `[Field K] [LinearOrder K] [IsStrictOrderedRing K]`. Studies instantiate
-  `K := ℚ` for exact, `decide`-friendly arithmetic;
-  `Studies/HawkinsEtAl2025.lean` uses `K := ℝ` against `eig`.
+  `[Field K] [LinearOrder K] [IsStrictOrderedRing K]`.
 * `DecisionProblem.expectedUtility`, `.value`, `.condExpectedUtility`,
   `.condValue`, `.utilityValue`: `EU(a)`, `V(D)`, `EU(a ∣ C)`, `V(D ∣ C)`,
   and `UV(C) = V(D ∣ C) − V(D)`.
 * `DecisionProblem.questionUtility`: `EUV(Q) = ∑_{q ∈ Q} P(q) · UV(q)`.
-* `DecisionProblem.valueSampleInfo`, `.expectedValueSampleInfo`:
-  [van-rooy-2003]'s `VSI`/`EVSI` (p. 742).
+* `DecisionProblem.valueSampleInfo`, `.expectedValueSampleInfo`: `VSI` and `EVSI`.
 * `DecisionProblem.securityLevel`, `.maximinValue`, `.maximinUtilityValue`,
   `.questionMaximin`: the maximin (worst-case) analogues.
-* `DecisionProblem.IsResolved`: [van-rooy-2003]'s resolution of a decision
-  problem (p. 736).
+* `DecisionProblem.IsResolved`: information resolves a decision problem.
 
 ## Main results
 
-* `DecisionProblem.questionUtility_eq_expectedValueSampleInfo`:
-  `EUV(Q) = EVSI(Q)` ([van-rooy-2003], p. 742).
+* `DecisionProblem.questionUtility_eq_expectedValueSampleInfo`,
+  `.questionUtility_parts_eq_expectedValueSampleInfo`: `EUV(Q) = EVSI(Q)`, so a partition
+  question is never worth less than nothing (`questionUtility_parts_nonneg`).
+* `DecisionProblem.sum_cellProbability_mul_condExpectedUtility`: the law of total
+  expectation over a partition.
 * `DecisionProblem.questionUtility_anti_of_le`: `EUV` is antitone in the `Finpartition`
   refinement order.
 * `DecisionProblem.questionUtility_mono_of_refines`: `EUV` is monotone under
-  partition refinement — the `⟹` direction of [van-rooy-2003]'s §4.1 Fact
-  (p. 743).
+  partition refinement.
 * `DecisionProblem.binary_question_value_decomposition`: the yes/no-question
   instance.
 
-## Design: Fintype + Finset
+## Implementation notes
 
-Functions that sum over the full universe use `[Fintype W]` with `∑ w : W`.
-Functions that operate over action sets or world subsets use `Finset`.
-`questionUtility` and `expectedValueSampleInfo` take `Finset (Finset W)`
-(cells as sets); `questionMaximin` takes a `List (Finset W)` of cells.
-Empty action sets get the junk value `0` (the `Real.sSup` convention), with
-`_of_nonempty` characterization lemmas as the working API.
+Sums over all worlds use `[Fintype W]`; action sets, propositions and the cells of a question
+are `Finset`s, except that `questionMaximin` takes a list of cells. An empty action set gets the
+junk value `0`, with `_of_nonempty` lemmas as the working API.
 
-- [van-rooy-2003]. Questioning to Resolve Decision Problems. L&P 26.
-- [blackwell-1953]. Equivalent Comparisons of Experiments.
+## References
+
+* [van-rooy-2003]
+* [blackwell-1953]
 -/
 
 @[expose] public section
@@ -87,7 +84,7 @@ namespace DecisionProblem
 
 /-- The uniform prior over a `Fintype` of worlds (`0` when `W` is empty,
     since `1 / 0 = 0` in a field). -/
-def uniformPrior [Fintype W] : W → K := λ _ => 1 / Fintype.card W
+def uniformPrior [Fintype W] : W → K := fun _ ↦ 1 / Fintype.card W
 
 /-- Create a decision problem with uniform prior. -/
 def withUniformPrior [Fintype W] (utility : W → A → K) : DecisionProblem K W A where
@@ -102,7 +99,8 @@ variable (dp : DecisionProblem K W A)
 def expectedUtility [Fintype W] (a : A) : K :=
   ∑ w : W, dp.prior w * dp.utility w a
 
-/-- Value of a decision problem: max EU over actions, or `0` if empty. -/
+/-- The value of a decision problem is the best expected utility of an action, or `0` when
+there is no action. -/
 def value [Fintype W] (actions : Finset A) : K :=
   if h : actions.Nonempty then actions.sup' h dp.expectedUtility else 0
 
@@ -110,10 +108,10 @@ def value [Fintype W] (actions : Finset A) : K :=
     (`0` on zero-mass cells). -/
 def condExpectedUtility (cell : Finset W) (a : A) : K :=
   if cell.sum dp.prior = 0 then 0
-  else cell.sum (λ w => (dp.prior w / cell.sum dp.prior) * dp.utility w a)
+  else cell.sum (fun w ↦ (dp.prior w / cell.sum dp.prior) * dp.utility w a)
 
-/-- Value of the decision problem after learning `cell`: best conditional EU
-    among actions. -/
+/-- The value of the decision problem after learning `cell` is the best conditional expected
+utility of an action. -/
 def condValue (actions : Finset A) (cell : Finset W) : K :=
   if h : actions.Nonempty then actions.sup' h (dp.condExpectedUtility cell) else 0
 
@@ -149,12 +147,52 @@ omit [IsStrictOrderedRing K] in
 omit [IsStrictOrderedRing K] in
 theorem condExpectedUtility_of_ne_zero (h : cell.sum dp.prior ≠ 0) (a : A) :
     dp.condExpectedUtility cell a
-      = cell.sum (λ w => (dp.prior w / cell.sum dp.prior) * dp.utility w a) :=
+      = cell.sum (fun w ↦ (dp.prior w / cell.sum dp.prior) * dp.utility w a) :=
   ite_eq_right h
 
 omit [IsStrictOrderedRing K] in
 @[simp] theorem condExpectedUtility_of_eq_zero (h : cell.sum dp.prior = 0) (a : A) :
     dp.condExpectedUtility cell a = 0 := ite_eq_left h
+
+omit [IsStrictOrderedRing K] in
+/-- The value of a decision problem is the expected utility of an action at least as good as
+every other. -/
+theorem value_eq_of_forall_le [Fintype W] {a : A} (ha : a ∈ actions)
+    (h : ∀ b ∈ actions, dp.expectedUtility b ≤ dp.expectedUtility a) :
+    dp.value actions = dp.expectedUtility a := by
+  rw [value_of_nonempty ⟨a, ha⟩]
+  exact le_antisymm (Finset.sup'_le _ _ h) (Finset.le_sup' _ ha)
+
+omit [IsStrictOrderedRing K] in
+/-- The value after learning `cell` is the conditional expected utility of an action at least
+as good as every other there. -/
+theorem condValue_eq_of_forall_le {a : A} (ha : a ∈ actions)
+    (h : ∀ b ∈ actions, dp.condExpectedUtility cell b ≤ dp.condExpectedUtility cell a) :
+    dp.condValue actions cell = dp.condExpectedUtility cell a := by
+  rw [condValue_of_nonempty ⟨a, ha⟩]
+  exact le_antisymm (Finset.sup'_le _ _ h) (Finset.le_sup' _ ha)
+
+/-- Weighting the conditional expected utility by the probability of the cell undoes the
+conditioning, for a nonnegative prior. -/
+theorem cellProbability_mul_condExpectedUtility (hprior : ∀ w, 0 ≤ dp.prior w) (a : A) :
+    dp.cellProbability cell * dp.condExpectedUtility cell a =
+      ∑ w ∈ cell, dp.prior w * dp.utility w a := by
+  by_cases h : cell.sum dp.prior = 0
+  · rw [condExpectedUtility_of_eq_zero h, mul_zero]
+    have h0 := (Finset.sum_eq_zero_iff_of_nonneg fun w _ ↦ hprior w).1 h
+    exact (Finset.sum_eq_zero fun w hw ↦ by rw [h0 w hw, zero_mul]).symm
+  · rw [condExpectedUtility_of_ne_zero h, cellProbability, Finset.mul_sum]
+    exact Finset.sum_congr rfl fun w _ ↦ by
+      rw [div_mul_eq_mul_div, ← mul_div_assoc, mul_div_cancel_left₀ _ h]
+
+/-- Weighting the value after learning `cell` by the probability of the cell gives the best
+unnormalized expected utility on the cell, for a nonnegative prior. -/
+theorem cellProbability_mul_condValue (hprior : ∀ w, 0 ≤ dp.prior w) (hne : actions.Nonempty) :
+    dp.cellProbability cell * dp.condValue actions cell =
+      actions.sup' hne fun a ↦ ∑ w ∈ cell, dp.prior w * dp.utility w a := by
+  have hnn : 0 ≤ dp.cellProbability cell := Finset.sum_nonneg fun w _ ↦ hprior w
+  rw [condValue_of_nonempty hne, Finset.mul₀_sup' hnn]
+  exact Finset.sup'_congr hne rfl fun a _ ↦ cellProbability_mul_condExpectedUtility hprior a
 
 end CharacterizationApi
 
@@ -162,7 +200,7 @@ end CharacterizationApi
 
 /-- `S(a) = min_w U(w, a)`, the security level of action `a`. -/
 def securityLevel (worlds : Finset W) (a : A) : K :=
-  if h : worlds.Nonempty then worlds.inf' h (λ w => dp.utility w a) else 0
+  if h : worlds.Nonempty then worlds.inf' h (fun w ↦ dp.utility w a) else 0
 
 /-- `MV = max_a min_w U(w, a)`, the maximin value. -/
 def maximinValue (worlds : Finset W) (actions : Finset A) : K :=
@@ -174,7 +212,7 @@ variable {dp} {worlds : Finset W} {actions : Finset A} {a : A}
 
 omit [IsStrictOrderedRing K] in
 theorem securityLevel_of_nonempty (h : worlds.Nonempty) :
-    dp.securityLevel worlds a = worlds.inf' h (λ w => dp.utility w a) := dite_eq_left h
+    dp.securityLevel worlds a = worlds.inf' h (fun w ↦ dp.utility w a) := dite_eq_left h
 
 omit [IsStrictOrderedRing K] in
 theorem maximinValue_of_nonempty (h : actions.Nonempty) :
@@ -191,7 +229,7 @@ section InterCells
 
 variable [DecidableEq W]
 
-/-- Conditional security level: worst case within cell `c`. -/
+/-- The conditional security level of an action is its worst utility within the cell `c`. -/
 def condSecurityLevel (worlds : Finset W) (a : A) (c : Finset W) : K :=
   dp.securityLevel (worlds ∩ c) a
 
@@ -209,9 +247,8 @@ variable {dp}
 
 /-! ### Resolution -/
 
-/-- `c` **resolves** decision problem `(dp, acts)`: some action in `acts`
-    weakly dominates every other action on every world in `c`
-    ([van-rooy-2003], p. 736). -/
+/-- Information `c` resolves the decision problem when some action is at least as good as
+every other in every world of `c` ([van-rooy-2003]). -/
 def IsResolved (dp : DecisionProblem K W A) (acts : Set A) (c : Set W) : Prop :=
   ∃ a ∈ acts, ∀ b ∈ acts, ∀ w ∈ c, dp.utility w b ≤ dp.utility w a
 
@@ -228,35 +265,29 @@ instance IsResolved.instDecidable (dp : DecisionProblem K W A) (acts : Set A) (c
     question `Q`. -/
 def questionUtility [Fintype W] (dp : DecisionProblem K W A) (actions : Finset A)
     (cells : Finset (Finset W)) : K :=
-  cells.sum (λ cell => dp.cellProbability cell * dp.utilityValue actions cell)
+  cells.sum (fun cell ↦ dp.cellProbability cell * dp.utilityValue actions cell)
 
 /-- `MV(Q) = min_{q ∈ Q} MV(q)`, the maximin question value. -/
 def questionMaximin [DecidableEq W] (dp : DecisionProblem K W A) (worlds : Finset W)
     (actions : Finset A) (q : List (Finset W)) : K :=
   match q with
   | [] => 0
-  | c :: cs => cs.foldl (λ m cell =>
+  | c :: cs => cs.foldl (fun m cell ↦
       min m (dp.maximinUtilityValue worlds actions cell)
     ) (dp.maximinUtilityValue worlds actions c)
 
 /-! ### Value of sample information -/
 
-/-- Optimal action: the one with highest expected utility.
-
-    Noncomputable because it extracts a witness from an existential
-    (`Finset.exists_max_image` via `Classical.choice`). -/
+/-- The optimal action is an action of highest expected utility, chosen classically. -/
 noncomputable def optimalAction [Fintype W] (dp : DecisionProblem K W A)
     (actions : Finset A) : Option A :=
   if h : actions.Nonempty then
     some (Finset.exists_max_image actions dp.expectedUtility h).choose
   else none
 
-/-- `VSI(C) = V(D ∣ C) − EU(a⁰ ∣ C)`: the value of sample information from
-    learning proposition `C`, where `a⁰` is the current optimal action.
-
-    Unlike `UV(C) = V(D ∣ C) − V(D)`, `VSI` is always non-negative: learning
-    `C` before choosing can never hurt relative to the current best action
-    applied within `C` ([van-rooy-2003], p. 742). -/
+/-- The value of sample information `VSI(C) = V(D ∣ C) − EU(a⁰ ∣ C)` of learning `C` compares
+the best action after learning `C` with the currently optimal action `a⁰`. Unlike the utility
+value it is never negative (`valueSampleInfo_nonneg`). -/
 noncomputable def valueSampleInfo [Fintype W] (dp : DecisionProblem K W A)
     (actions : Finset A) (cell : Finset W) : K :=
   let currentActionEU := match optimalAction dp actions with
@@ -264,11 +295,11 @@ noncomputable def valueSampleInfo [Fintype W] (dp : DecisionProblem K W A)
     | none => 0
   dp.condValue actions cell - currentActionEU
 
-/-- `EVSI(Q) = ∑ P(C) · VSI(C)`: the expected value of sample information
-    from asking question `Q` ([van-rooy-2003], p. 742). -/
+/-- The expected value of sample information `EVSI(Q) = ∑ P(C) · VSI(C)` of asking the
+question `Q`. -/
 noncomputable def expectedValueSampleInfo [Fintype W] (dp : DecisionProblem K W A)
     (actions : Finset A) (cells : Finset (Finset W)) : K :=
-  cells.sum (λ cell => dp.cellProbability cell * valueSampleInfo dp actions cell)
+  cells.sum (fun cell ↦ dp.cellProbability cell * valueSampleInfo dp actions cell)
 
 section EuvEvsi
 
@@ -285,26 +316,20 @@ private lemma optimalAction_expectedUtility_eq_value (dp : DecisionProblem K W A
   · rw [dite_eq_left hne, dite_eq_left hne]; simp only []
     have hspec := (Finset.exists_max_image actions dp.expectedUtility hne).choose_spec
     exact le_antisymm (Finset.le_sup' _ hspec.1)
-      (Finset.sup'_le hne _ λ a ha => hspec.2 a ha)
+      (Finset.sup'_le hne _ fun a ha ↦ hspec.2 a ha)
   · rw [dite_eq_right hne, dite_eq_right hne]
 
 omit [IsStrictOrderedRing K] in
-/-- `EUV(Q) = EVSI(Q)`: the expected utility value of a question equals its
-    expected value of sample information.
-
-    [van-rooy-2003], p. 742: "The expected utility value of a question is
-    equal to its expected value of sample information."
-
-    The two hypotheses are the **law of total expectation**
-    (`∑ P(C) · EU(a ∣ C) = EU(a)` for all actions) and **cell probability
-    normalization** (`∑ P(C) = 1`). -/
+/-- The expected utility value of a question equals its expected value of sample information,
+given the law of total expectation over its cells and cell probabilities summing to one
+([van-rooy-2003]). -/
 theorem questionUtility_eq_expectedValueSampleInfo (dp : DecisionProblem K W A)
     (actions : Finset A) (cells : Finset (Finset W))
-    (hLTE : ∀ a, cells.sum (λ cell =>
+    (hLTE : ∀ a, cells.sum (fun cell ↦
       dp.cellProbability cell * dp.condExpectedUtility cell a) = dp.expectedUtility a)
-    (hSum : cells.sum (λ cell => dp.cellProbability cell) = 1) :
+    (hSum : cells.sum (fun cell ↦ dp.cellProbability cell) = 1) :
     questionUtility dp actions cells = expectedValueSampleInfo dp actions cells := by
-  set S := cells.sum (λ cell =>
+  set S := cells.sum (fun cell ↦
       dp.cellProbability cell * dp.condValue actions cell)
   have hLHS : questionUtility dp actions cells = S - dp.value actions := by
     unfold questionUtility; simp only [utilityValue]; simp_rw [mul_sub]
@@ -319,6 +344,68 @@ theorem questionUtility_eq_expectedValueSampleInfo (dp : DecisionProblem K W A)
     | none => simp
     | some a => exact hLTE a
   rw [hLHS, hRHS]
+
+/-- Sample information is never worth less than nothing. -/
+theorem valueSampleInfo_nonneg (dp : DecisionProblem K W A) (actions : Finset A)
+    (cell : Finset W) : 0 ≤ valueSampleInfo dp actions cell := by
+  unfold valueSampleInfo optimalAction
+  split_ifs with h
+  · rw [condValue_of_nonempty h, sub_nonneg]
+    exact Finset.le_sup' (dp.condExpectedUtility cell)
+      (Finset.exists_max_image actions _ h).choose_spec.1
+  · simp [condValue, h]
+
+/-- The expected value of sample information is never negative. -/
+theorem expectedValueSampleInfo_nonneg (dp : DecisionProblem K W A) (actions : Finset A)
+    (hprior : ∀ w, 0 ≤ dp.prior w) (cells : Finset (Finset W)) :
+    0 ≤ expectedValueSampleInfo dp actions cells :=
+  Finset.sum_nonneg fun _ _ ↦
+    mul_nonneg (Finset.sum_nonneg fun w _ ↦ hprior w) (valueSampleInfo_nonneg dp actions _)
+
+variable [DecidableEq W] (Q : Finpartition (Finset.univ : Finset W))
+
+omit [LinearOrder K] [IsStrictOrderedRing K] in
+/-- The cells of a partition carry the whole prior mass. -/
+theorem sum_cellProbability_parts (dp : DecisionProblem K W A) :
+    ∑ c ∈ Q.parts, dp.cellProbability c = ∑ w, dp.prior w :=
+  Q.sum_parts_sum dp.prior
+
+/-- The law of total expectation over a partition. -/
+theorem sum_cellProbability_mul_condExpectedUtility (dp : DecisionProblem K W A)
+    (hprior : ∀ w, 0 ≤ dp.prior w) (a : A) :
+    ∑ c ∈ Q.parts, dp.cellProbability c * dp.condExpectedUtility c a = dp.expectedUtility a := by
+  simp_rw [cellProbability_mul_condExpectedUtility hprior]
+  exact Q.sum_parts_sum _
+
+/-- The expected utility value of a partition question is its expected value of sample
+information. -/
+theorem questionUtility_parts_eq_expectedValueSampleInfo (dp : DecisionProblem K W A)
+    (actions : Finset A) (hprior : ∀ w, 0 ≤ dp.prior w) (hsum : ∑ w, dp.prior w = 1) :
+    questionUtility dp actions Q.parts = expectedValueSampleInfo dp actions Q.parts :=
+  questionUtility_eq_expectedValueSampleInfo dp actions Q.parts
+    (sum_cellProbability_mul_condExpectedUtility Q dp hprior)
+    ((sum_cellProbability_parts Q dp).trans hsum)
+
+/-- A partition question is never worth less than nothing. -/
+theorem questionUtility_parts_nonneg (dp : DecisionProblem K W A) (actions : Finset A)
+    (hprior : ∀ w, 0 ≤ dp.prior w) (hsum : ∑ w, dp.prior w = 1) :
+    0 ≤ questionUtility dp actions Q.parts :=
+  questionUtility_parts_eq_expectedValueSampleInfo Q dp actions hprior hsum ▸
+    expectedValueSampleInfo_nonneg dp actions hprior _
+
+/-- A partition question is worth nothing when an optimal action stays optimal whatever the
+answer. -/
+theorem questionUtility_parts_eq_zero (dp : DecisionProblem K W A) {actions : Finset A}
+    (hprior : ∀ w, 0 ≤ dp.prior w) (hsum : ∑ w, dp.prior w = 1) {a : A} (hmem : a ∈ actions)
+    (ha : dp.expectedUtility a = dp.value actions)
+    (hdom : ∀ c ∈ Q.parts, ∀ b ∈ actions, dp.condExpectedUtility c b ≤ dp.condExpectedUtility c a) :
+    questionUtility dp actions Q.parts = 0 := by
+  unfold questionUtility
+  simp only [utilityValue]
+  rw [Finset.sum_congr rfl fun c hc ↦ by rw [condValue_eq_of_forall_le hmem (hdom c hc)]]
+  simp only [mul_sub, Finset.sum_sub_distrib,
+    sum_cellProbability_mul_condExpectedUtility Q dp hprior, ← Finset.sum_mul,
+    sum_cellProbability_parts, hsum, one_mul, ha, sub_self]
 
 end EuvEvsi
 
@@ -344,69 +431,41 @@ partition, this gives `questionUtility (finer) ≥ questionUtility (coarser)`. -
 
 section Refinement
 
-/-- The **unnormalized cell value** of `cell`: the best, over actions, of the
-*unnormalized* expected utility `∑_{w∈cell} P(w)·U(w,a)`. This linearizes the
-probability-weighted conditional value `P(cell)·V(D|cell)` (see
-`cellProbability_mul_condValue_eq_uValue`), turning Van Rooy's question utility
-into a sum that splitting a cell can only increase. -/
+/-- The unnormalized value of `cell` is the best unnormalized expected utility
+`∑_{w∈cell} P(w)·U(w,a)` of an action on it. -/
 private def uValue (dp : DecisionProblem K W A) (acts : Finset A) (cell : Finset W) : K :=
   if h : acts.Nonempty then
-    acts.sup' h (λ a => ∑ w ∈ cell, dp.prior w * dp.utility w a)
+    acts.sup' h (fun a ↦ ∑ w ∈ cell, dp.prior w * dp.utility w a)
   else 0
 
-/-- `P(cell)·V(D|cell) = maxₐ ∑_{w∈cell} P(w)·U(w,a)`: the probability-weighted
-conditional value equals the unnormalized cell value. The normalizing `1/P(cell)` in
-`condExpectedUtility` cancels against the `P(cell)` weight; when `P(cell) = 0`, a
-nonnegative prior forces every `P(w) = 0` on the cell, so both sides vanish. -/
+/-- The probability-weighted value after learning `cell` is its unnormalized value. -/
 private lemma cellProbability_mul_condValue_eq_uValue (dp : DecisionProblem K W A)
     (acts : Finset A) (cell : Finset W) (hprior : ∀ w, 0 ≤ dp.prior w) :
     dp.cellProbability cell * dp.condValue acts cell = uValue dp acts cell := by
   unfold uValue
   by_cases hne : acts.Nonempty
-  · rw [condValue_of_nonempty hne, dite_eq_left hne]
-    have htp_nonneg : 0 ≤ dp.cellProbability cell :=
-      Finset.sum_nonneg (λ w _ => hprior w)
-    by_cases htp : dp.cellProbability cell = 0
-    · rw [htp, zero_mul]
-      have hpw : ∀ w ∈ cell, dp.prior w = 0 :=
-        (Finset.sum_eq_zero_iff_of_nonneg (λ w _ => hprior w)).mp htp
-      have hz : ∀ a ∈ acts, (∑ w ∈ cell, dp.prior w * dp.utility w a) = 0 := by
-        intro a _; exact Finset.sum_eq_zero (λ w hw => by rw [hpw w hw, zero_mul])
-      rw [Finset.sup'_congr hne rfl hz, Finset.sup'_const]
-    · have hS : cell.sum dp.prior ≠ 0 := htp
-      rw [Finset.mul₀_sup' htp_nonneg (dp.condExpectedUtility cell) acts hne]
-      refine Finset.sup'_congr hne rfl (λ a _ => ?_)
-      show cell.sum dp.prior * dp.condExpectedUtility cell a
-          = ∑ w ∈ cell, dp.prior w * dp.utility w a
-      rw [condExpectedUtility_of_ne_zero hS, Finset.mul_sum]
-      refine Finset.sum_congr rfl (λ w _ => ?_)
-      rw [div_mul_eq_mul_div, ← mul_div_assoc, mul_div_cancel_left₀ _ hS]
+  · rw [dite_eq_left hne, cellProbability_mul_condValue hprior hne]
   · rw [Finset.not_nonempty_iff_eq_empty.mp hne, condValue_empty, dite_eq_right
       Finset.not_nonempty_empty, mul_zero]
 
 variable [DecidableEq W]
 
-/-- **Superadditivity of unnormalized cell value under splitting**: when `cell` is the
-disjoint union of `c₁` and `c₂`, splitting it can only raise the best-action value,
-`uValue (c₁ ∪ c₂) ≤ uValue c₁ + uValue c₂` (max of a sum ≤ sum of maxes). This is the
-combinatorial heart of [blackwell-1953]'s forward direction. -/
+/-- Splitting a cell into two disjoint pieces cannot lower its unnormalized value, since the
+best of a sum is at most the sum of the bests. -/
 private lemma uValue_union_le (dp : DecisionProblem K W A) (acts : Finset A)
     {c₁ c₂ : Finset W} (hdisj : Disjoint c₁ c₂) :
     uValue dp acts (c₁ ∪ c₂) ≤ uValue dp acts c₁ + uValue dp acts c₂ := by
   unfold uValue
   by_cases hne : acts.Nonempty
   · rw [dite_eq_left hne, dite_eq_left hne, dite_eq_left hne]
-    refine Finset.sup'_le hne _ (λ a ha => ?_)
+    refine Finset.sup'_le hne _ (fun a ha ↦ ?_)
     rw [Finset.sum_union hdisj]
-    exact add_le_add (Finset.le_sup' (λ a => ∑ w ∈ c₁, dp.prior w * dp.utility w a) ha)
-      (Finset.le_sup' (λ a => ∑ w ∈ c₂, dp.prior w * dp.utility w a) ha)
+    exact add_le_add (Finset.le_sup' (fun a ↦ ∑ w ∈ c₁, dp.prior w * dp.utility w a) ha)
+      (Finset.le_sup' (fun a ↦ ∑ w ∈ c₂, dp.prior w * dp.utility w a) ha)
   · rw [dite_eq_right hne, dite_eq_right hne, dite_eq_right hne, add_zero]
 
-/-- **Splitting a cell never decreases its decision value**: for disjoint cells `c₁`, `c₂`
-and a nonnegative prior,
-`P(c₁ ∪ c₂)·V(D|c₁ ∪ c₂) ≤ P(c₁)·V(D|c₁) + P(c₂)·V(D|c₂)`.
-This is [blackwell-1953]'s data-processing inequality for a single binary refinement, the
-building block of [van-rooy-2003]'s §4.1 question-utility monotonicity (p. 743). -/
+/-- Splitting a cell into two disjoint pieces never lowers its probability-weighted decision
+value, the data-processing inequality of [blackwell-1953] for one binary refinement. -/
 theorem cellProbability_mul_condValue_union_le (dp : DecisionProblem K W A)
     (acts : Finset A) {c₁ c₂ : Finset W} (hdisj : Disjoint c₁ c₂)
     (hprior : ∀ w, 0 ≤ dp.prior w) :
@@ -458,9 +517,8 @@ private lemma uValue_empty (dp : DecisionProblem K W A) (acts : Finset A) :
   · rw [dite_eq_left h]; simp only [Finset.sum_empty, Finset.sup'_const]
   · rw [dite_eq_right h]
 
-/-- **General superadditivity of `uValue`**: splitting a union of pairwise-disjoint cells
-into its pieces never lowers the best-action value, `uValue (⨆ parts) ≤ ∑ uValue`. The
-`Finset.induction` engine for the refinement monotonicity below. -/
+/-- Splitting a union of pairwise disjoint cells into its pieces never lowers the unnormalized
+value. -/
 private lemma uValue_sup_le (dp : DecisionProblem K W A) (acts : Finset A) :
     ∀ {parts : Finset (Finset W)},
       (∀ p₁ ∈ parts, ∀ p₂ ∈ parts, p₁ ≠ p₂ → Disjoint p₁ p₂) →
@@ -471,12 +529,12 @@ private lemma uValue_sup_le (dp : DecisionProblem K W A) (acts : Finset A) :
   | insert p s hp ih =>
     intro hdisj
     have hsub : ∀ p₁ ∈ s, ∀ p₂ ∈ s, p₁ ≠ p₂ → Disjoint p₁ p₂ :=
-      λ a ha b hb hab =>
+      fun a ha b hb hab ↦
         hdisj a (Finset.mem_insert_of_mem ha) b (Finset.mem_insert_of_mem hb) hab
     have hdp : Disjoint p (s.sup id) :=
-      Finset.disjoint_sup_right.mpr λ q hq =>
+      Finset.disjoint_sup_right.mpr fun q hq ↦
         hdisj p (Finset.mem_insert_self p s) q (Finset.mem_insert_of_mem hq)
-          (λ h => hp (h ▸ hq))
+          (fun h ↦ hp (h ▸ hq))
     rw [Finset.sup_insert, Finset.sum_insert hp, id_eq]
     calc uValue dp acts (p ⊔ s.sup id)
         ≤ uValue dp acts p + uValue dp acts (s.sup id) := uValue_union_le dp acts hdp
@@ -494,19 +552,18 @@ private lemma cellProbability_sup (dp : DecisionProblem K W A) :
   | insert p s hp ih =>
     intro hdisj
     have hsub : ∀ p₁ ∈ s, ∀ p₂ ∈ s, p₁ ≠ p₂ → Disjoint p₁ p₂ :=
-      λ a ha b hb hab =>
+      fun a ha b hb hab ↦
         hdisj a (Finset.mem_insert_of_mem ha) b (Finset.mem_insert_of_mem hb) hab
     have hdp : Disjoint p (s.sup id) :=
-      Finset.disjoint_sup_right.mpr λ q hq =>
+      Finset.disjoint_sup_right.mpr fun q hq ↦
         hdisj p (Finset.mem_insert_self p s) q (Finset.mem_insert_of_mem hq)
-          (λ h => hp (h ▸ hq))
+          (fun h ↦ hp (h ▸ hq))
     rw [Finset.sup_insert, Finset.sum_insert hp, id_eq, ← ih hsub]
     exact Finset.sum_union hdp
 
 omit [DecidableEq W] in
-/-- `questionUtility` in linearized form: total best-action value minus the baseline value
-weighted by total cell mass. Lets refinement monotonicity reduce to `∑ uValue` superadditivity
-once total mass is shown invariant. -/
+/-- The expected utility value of a question is the total unnormalized value of its cells minus
+the prior value weighted by their total mass. -/
 private lemma questionUtility_eq [Fintype W] (dp : DecisionProblem K W A)
     (acts : Finset A) (cells : Finset (Finset W)) (hprior : ∀ w, 0 ≤ dp.prior w) :
     questionUtility dp acts cells
@@ -514,53 +571,50 @@ private lemma questionUtility_eq [Fintype W] (dp : DecisionProblem K W A)
         - dp.value acts * (∑ c ∈ cells, dp.cellProbability c) := by
   unfold questionUtility
   rw [Finset.mul_sum, ← Finset.sum_sub_distrib]
-  refine Finset.sum_congr rfl (λ c _ => ?_)
+  refine Finset.sum_congr rfl (fun c _ ↦ ?_)
   unfold utilityValue
   rw [mul_sub, cellProbability_mul_condValue_eq_uValue dp acts c hprior]
   ring
 
-/-- **Question utility is monotone under partition refinement** — the `⟹` direction of
-[van-rooy-2003]'s §4.1 Fact (p. 743), in full generality. A finer partition `fine`
-(presented as a refinement of `coarse` via `assign`, with each coarse cell the disjoint
-union of its fiber) has `EUV ≥` the coarser one. By [blackwell-1953]: post-processing the
-finer experiment cannot raise the convex value. Generalizes `questionUtility_split_ge`. -/
+/-- A finer question is worth at least as much as a coarser one, the refinement presented by a
+map `assign` sending each finer cell to the coarser cell that is the union of its fibre. -/
 theorem questionUtility_mono_of_refines [Fintype W] (dp : DecisionProblem K W A)
     (acts : Finset A) {fine coarse : Finset (Finset W)} (assign : Finset W → Finset W)
     (hmaps : ∀ f ∈ fine, assign f ∈ coarse)
-    (hcover : ∀ c ∈ coarse, c = (fine.filter (λ f => assign f = c)).sup id)
+    (hcover : ∀ c ∈ coarse, c = (fine.filter (fun f ↦ assign f = c)).sup id)
     (hdisj : ∀ f₁ ∈ fine, ∀ f₂ ∈ fine, f₁ ≠ f₂ → Disjoint f₁ f₂)
     (hprior : ∀ w, 0 ≤ dp.prior w) :
     questionUtility dp acts coarse ≤ questionUtility dp acts fine := by
-  have hfdisj : ∀ c ∈ coarse, ∀ f₁ ∈ fine.filter (λ f => assign f = c),
-      ∀ f₂ ∈ fine.filter (λ f => assign f = c), f₁ ≠ f₂ → Disjoint f₁ f₂ :=
-    λ c _ f₁ hf₁ f₂ hf₂ hne =>
+  have hfdisj : ∀ c ∈ coarse, ∀ f₁ ∈ fine.filter (fun f ↦ assign f = c),
+      ∀ f₂ ∈ fine.filter (fun f ↦ assign f = c), f₁ ≠ f₂ → Disjoint f₁ f₂ :=
+    fun c _ f₁ hf₁ f₂ hf₂ hne ↦
       hdisj f₁ (Finset.mem_of_mem_filter _ hf₁) f₂ (Finset.mem_of_mem_filter _ hf₂) hne
   have hcell : ∑ c ∈ coarse, dp.cellProbability c
       = ∑ f ∈ fine, dp.cellProbability f := by
-    rw [← Finset.sum_fiberwise_of_maps_to hmaps (λ f => dp.cellProbability f)]
-    refine Finset.sum_congr rfl (λ c hc => ?_)
+    rw [← Finset.sum_fiberwise_of_maps_to hmaps (fun f ↦ dp.cellProbability f)]
+    refine Finset.sum_congr rfl (fun c hc ↦ ?_)
     rw [← cellProbability_sup dp (hfdisj c hc)]
     exact congrArg dp.cellProbability (hcover c hc)
   have huv : ∑ c ∈ coarse, uValue dp acts c ≤ ∑ f ∈ fine, uValue dp acts f := by
     calc ∑ c ∈ coarse, uValue dp acts c
-        = ∑ c ∈ coarse, uValue dp acts ((fine.filter (λ f => assign f = c)).sup id) :=
-          Finset.sum_congr rfl (λ c hc => congrArg (uValue dp acts) (hcover c hc))
-      _ ≤ ∑ c ∈ coarse, ∑ f ∈ fine.filter (λ f => assign f = c), uValue dp acts f :=
-          Finset.sum_le_sum (λ c hc => uValue_sup_le dp acts (hfdisj c hc))
+        = ∑ c ∈ coarse, uValue dp acts ((fine.filter (fun f ↦ assign f = c)).sup id) :=
+          Finset.sum_congr rfl (fun c hc ↦ congrArg (uValue dp acts) (hcover c hc))
+      _ ≤ ∑ c ∈ coarse, ∑ f ∈ fine.filter (fun f ↦ assign f = c), uValue dp acts f :=
+          Finset.sum_le_sum (fun c hc ↦ uValue_sup_le dp acts (hfdisj c hc))
       _ = ∑ f ∈ fine, uValue dp acts f :=
-          Finset.sum_fiberwise_of_maps_to hmaps (λ f => uValue dp acts f)
+          Finset.sum_fiberwise_of_maps_to hmaps (fun f ↦ uValue dp acts f)
   rw [questionUtility_eq dp acts coarse hprior, questionUtility_eq dp acts fine hprior,
     hcell]
   linarith [huv]
 
-/-- Question utility is antitone in the `Finpartition` refinement order: the finer partition
-question is worth at least as much. -/
+/-- The expected utility value of a question is antitone in the refinement order of
+partitions. -/
 theorem questionUtility_anti_of_le [Fintype W] (dp : DecisionProblem K W A) (acts : Finset A)
     {P Q : Finpartition (Finset.univ : Finset W)} (h : P ≤ Q) (hprior : ∀ w, 0 ≤ dp.prior w) :
     questionUtility dp acts Q.parts ≤ questionUtility dp acts P.parts := by
-  choose! assign hmem hsub using λ f (hf : f ∈ P.parts) => h hf
-  refine questionUtility_mono_of_refines dp acts assign hmem (λ c hc => ?_)
-    (λ f₁ hf₁ f₂ hf₂ hne => P.disjoint hf₁ hf₂ hne) hprior
+  choose! assign hmem hsub using fun f (hf : f ∈ P.parts) ↦ h hf
+  refine questionUtility_mono_of_refines dp acts assign hmem (fun c hc ↦ ?_)
+    (fun f₁ hf₁ f₂ hf₂ hne ↦ P.disjoint hf₁ hf₂ hne) hprior
   ext x
   simp only [Finset.mem_sup, Finset.mem_filter, id]
   constructor
@@ -588,8 +642,7 @@ theorem securityLevel_le_utility (dp : DecisionProblem K W A) (worlds : Finset W
   exact Finset.inf'_le _ hw
 
 omit [IsStrictOrderedRing K] in
-/-- The security level is antitone in the world set: a min over fewer elements is
-    at least the min over more. -/
+/-- The security level is antitone in the set of worlds. -/
 theorem securityLevel_anti (dp : DecisionProblem K W A) {S₁ S₂ : Finset W} (a : A)
     (hne : S₁.Nonempty) (hsub : S₁ ⊆ S₂) :
     dp.securityLevel S₂ a ≤ dp.securityLevel S₁ a := by
@@ -603,13 +656,13 @@ theorem maximinValue_anti (dp : DecisionProblem K W A) {S₁ S₂ : Finset W}
     dp.maximinValue S₂ actions ≤ dp.maximinValue S₁ actions := by
   by_cases ha : actions.Nonempty
   · rw [maximinValue_of_nonempty ha, maximinValue_of_nonempty ha]
-    exact Finset.sup'_mono_fun λ a _ => securityLevel_anti dp a hne hsub
+    exact Finset.sup'_mono_fun fun a _ ↦ securityLevel_anti dp a hne hsub
   · rw [Finset.not_nonempty_iff_eq_empty.mp ha, maximinValue_empty, maximinValue_empty]
 
 variable [DecidableEq W]
 
-/-- Maximin utility value is antitone in the cell: learning a more specific
-    proposition (subset of worlds) gives a higher MUV. -/
+/-- The maximin utility value is antitone in the cell, so a more specific proposition is worth
+more. -/
 theorem maximinUtilityValue_anti (dp : DecisionProblem K W A) (worlds : Finset W)
     (actions : Finset A) {c₁ c₂ : Finset W} (hsub : c₁ ⊆ c₂)
     (hne : (worlds ∩ c₁).Nonempty) :
@@ -619,8 +672,7 @@ theorem maximinUtilityValue_anti (dp : DecisionProblem K W A) (worlds : Finset W
   have hsub' : worlds ∩ c₁ ⊆ worlds ∩ c₂ := Finset.inter_subset_inter_left hsub
   linarith [maximinValue_anti dp actions hne hsub']
 
-/-- Maximin value of information is non-negative for nonempty cells: the maximin
-    over `worlds ∩ c ⊆ worlds` considers fewer worst cases. -/
+/-- The maximin value of information is nonnegative for nonempty cells. -/
 theorem maximinUtilityValue_nonneg (dp : DecisionProblem K W A) (worlds : Finset W)
     (actions : Finset A) (c : Finset W) (hne : (worlds ∩ c).Nonempty) :
     0 ≤ dp.maximinUtilityValue worlds actions c := by
@@ -637,7 +689,7 @@ variable {α : Type*}
 
 omit [Field K] [IsStrictOrderedRing K] in
 private lemma foldl_min_le_init (f : α → K) (xs : List α) (init : K) :
-    xs.foldl (λ m x => min m (f x)) init ≤ init := by
+    xs.foldl (fun m x ↦ min m (f x)) init ≤ init := by
   induction xs generalizing init with
   | nil => exact le_refl _
   | cons x xs ih => exact le_trans (ih _) (min_le_left _ _)
@@ -645,14 +697,14 @@ private lemma foldl_min_le_init (f : α → K) (xs : List α) (init : K) :
 omit [Field K] [IsStrictOrderedRing K] in
 private lemma foldl_min_le_of_mem (f : α → K) (xs : List α) (init : K)
     {x : α} (hx : x ∈ xs) :
-    xs.foldl (λ m x => min m (f x)) init ≤ f x := by
+    xs.foldl (fun m x ↦ min m (f x)) init ≤ f x := by
   induction xs generalizing init with
   | nil => exact absurd hx List.not_mem_nil
   | cons y ys ih =>
     rcases List.mem_cons.mp hx with rfl | h
-    · show ys.foldl (λ m z => min m (f z)) (min init (f x)) ≤ f x
+    · show ys.foldl (fun m z ↦ min m (f z)) (min init (f x)) ≤ f x
       exact le_trans (foldl_min_le_init _ _ _) (min_le_right _ _)
-    · show ys.foldl (λ m z => min m (f z)) (min init (f y)) ≤ f x
+    · show ys.foldl (fun m z ↦ min m (f z)) (min init (f y)) ≤ f x
       exact ih _ h
 
 omit [IsStrictOrderedRing K] in
@@ -684,7 +736,7 @@ def completeInformation [DecidableEq W] : DecisionProblem K W W where
   utility w a := if a = w then 1 else 0
   prior _ := 1
 
-/-- A mention-some DP: any satisfier resolves the problem. -/
+/-- In the mention-some decision problem any satisfier resolves the problem. -/
 def mentionSome (satisfies : W → Prop) [DecidablePred satisfies] :
     DecisionProblem K W Bool where
   utility w a := if a ∧ satisfies w then 1 else 0
@@ -712,12 +764,8 @@ theorem cellProbability_filter_add_filter_not (dp : DecisionProblem K W A)
   rw [← Finset.sum_union (Finset.disjoint_filter_filter_not _ _ P),
     Finset.filter_union_filter_not_eq P Finset.univ, hPrior]
 
-/-- **Binary question value decomposition**: for a binary partition `{P, ¬P}`,
-
-        `∑ P(cell) · V(D|cell) = EUV({P, ¬P}, D) + V(D)`
-
-    where the LHS is the probability-weighted sum of conditional DP values,
-    `EUV` is `questionUtility`, and `V(D)` is `value`. -/
+/-- For a yes-no question `{P, ¬P}` the probability-weighted values after its two answers sum
+to its expected utility value plus the prior value. -/
 theorem binary_question_value_decomposition (dp : DecisionProblem K W A)
     (actions : Finset A) (P : W → Prop) [DecidablePred P]
     (hPrior : Finset.univ.sum dp.prior = 1) :

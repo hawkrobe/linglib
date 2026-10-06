@@ -6,22 +6,25 @@ public import Mathlib.Data.Set.Card
 public import Mathlib.MeasureTheory.Measure.Real
 public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
 public import Mathlib.Order.Partition.Finpartition
-public import Mathlib.Tactic.FieldSimp
 
 /-!
 # Merin (1999): Negative Attributes, Partitions, and Rational Decisions
 
-This file formalizes the decision-theoretic rationale in [merin-1999] for attribute spaces
-being partitions and its epistemic, syntax-independent characterization of negative
-attributes as proper coarsenings. The complements of a partition's cells form a partition
-exactly when the partition is binary (FACT 1, `compl_isPartition_iff`); under a probability
-measure the complement probabilities sum to one less than the number of cells, so they form a
-distribution exactly for two cells (FACTs 2 and 3, `sum_measureReal_compl`,
-`sum_measureReal_compl_eq_one_iff`); the partition of a cell and its complement is the coarsest
-coarsening preserving the cell (FACT 4, `isGreatest_polar_cell`); an attribute is negative with
-respect to a partition when its complement is a cell and its polar partition properly coarsens
-the partition (`IsNegativeAttribute`); and expected utility computed cell by cell does not depend
-on the partition (`eu_eq_partitionEU`, `partitionEU_congr`).
+Merin argues that attribute spaces are partitions for decision-theoretic reasons and
+characterizes negative attributes epistemically, as proper coarsenings, rather than by their
+form. The complements of a partition's cells form a partition, and their probabilities a
+distribution, only when the partition has two cells. The partition of a cell and its complement
+is the coarsest coarsening that decides the cell, and an attribute is negative when its
+complement is a cell and its two-cell partition properly coarsens the partition.
+
+## Main statements
+
+* `compl_isPartition_iff`: the complements of the cells form a partition exactly for two cells.
+* `sum_measureReal_compl`, `sum_measureReal_compl_eq_one_iff`: the complement probabilities sum
+  to one less than the number of cells, and to one exactly for two cells.
+* `isGreatest_polar_cell`: a cell and its complement give the coarsest coarsening deciding it.
+* `eu_eq_partitionEU`, `partitionEU_congr`: expected utility computed cell by cell does not
+  depend on the partition.
 
 ## Implementation notes
 
@@ -50,9 +53,8 @@ open Core.DecisionTheory Core.DecisionTheory.DecisionProblem
 
 /-! ### FACT 1: complement families -/
 
-/-- FACT 1 ([merin-1999] p. 261): for a partition `F` of a
-nonempty type, the complements of its cells form a partition iff `F`
-has exactly two cells. -/
+/-- The complements of the cells of a partition of a nonempty type form a partition exactly
+when it has two cells (FACT 1 of [merin-1999]). -/
 theorem compl_isPartition_iff {W : Type*} [Nonempty W] {F : Set (Set W)}
     (hF : Setoid.IsPartition F) :
     Setoid.IsPartition (compl '' F) ↔ F.encard = 2 := by
@@ -130,8 +132,8 @@ open MeasureTheory
 variable {M : Type*} [MeasurableSpace M] (μ : Measure M) [IsProbabilityMeasure μ]
   {F : Finset (Set M)}
 
-/-- FACT 3 ([merin-1999] p. 261): under a probability measure, the probabilities of the
-complements of the `n` cells of a finite partition sum to `n − 1`. -/
+/-- Under a probability measure the probabilities of the complements of the `n` cells of a
+finite partition sum to `n − 1` (FACT 3 of [merin-1999]). -/
 theorem sum_measureReal_compl (hF : Setoid.IsPartition (F : Set (Set M)))
     (hm : ∀ c ∈ F, MeasurableSet c) :
     ∑ c ∈ F, μ.real cᶜ = F.card - 1 := by
@@ -142,9 +144,8 @@ theorem sum_measureReal_compl (hF : Setoid.IsPartition (F : Set (Set M)))
   rw [Finset.sum_congr rfl fun c hc ↦ probReal_compl_eq_one_sub (hm c hc),
     Finset.sum_sub_distrib, hsum, Finset.sum_const, nsmul_eq_mul, mul_one]
 
-/-- FACT 3's second clause ([merin-1999] p. 261): the complement probabilities sum to one iff the
-partition has two cells. Hence FACT 2: for more than two cells they are not a probability
-distribution. -/
+/-- The complement probabilities sum to one exactly when the partition has two cells, so for
+more than two cells they are not a distribution (FACTs 2 and 3 of [merin-1999]). -/
 theorem sum_measureReal_compl_eq_one_iff (hF : Setoid.IsPartition (F : Set (Set M)))
     (hm : ∀ c ∈ F, MeasurableSet c) :
     ∑ c ∈ F, μ.real cᶜ = 1 ↔ F.card = 2 := by
@@ -160,19 +161,18 @@ end Probability
 
 /-! ### Coarsening and negative attributes -/
 
-/-- Q properly coarsens Q': Q is strictly coarser than Q' in the refinement order, which over
-a finite domain is coarsening with strictly fewer cells ([merin-1999] p. 262 definition). -/
+/-- `Q` properly coarsens `Q'` when it is strictly coarser in the refinement order, which over
+a finite domain means coarsening with strictly fewer cells ([merin-1999]). -/
 def IsProperCoarsening {M : Type*} (q q' : Setoid M) : Prop := q' < q
 
-/-- FACT 4 ([merin-1999] p. 263): for a cell P of a partition, the partition {P, ¬P} is the
-coarsest coarsening of it that preserves P, i.e. that decides P. -/
+/-- For a cell `P` of a partition, the partition `{P, ¬P}` is its coarsest coarsening that
+decides `P` (FACT 4 of [merin-1999]). -/
 theorem isGreatest_polar_cell {M : Type*} (q : Setoid M) (w : M) :
     IsGreatest {q' | q ≤ q' ∧ q'.Decides (q.cell w)} (Setoid.polar (q.cell w)) :=
   ⟨⟨Setoid.decides_cell w, Setoid.polar_decides⟩, fun _ h ↦ h.2⟩
 
-/-- `R` is a **negative attribute** with respect to `q` ([merin-1999] p. 263): the complement
-of `R` is a cell of `q`, and the two-cell partition `{R, ¬R}` properly coarsens `q`. Negativity
-is epistemic (partition-kinetic), not morphological. -/
+/-- An attribute `R` is negative with respect to `q` when the complement of `R` is a cell of `q`
+and the partition `{R, ¬R}` properly coarsens `q` ([merin-1999]). -/
 def IsNegativeAttribute {M : Type*} (R : Set M) (q : Setoid M) : Prop :=
   (∃ w, q.cell w = Rᶜ) ∧ IsProperCoarsening (Setoid.polar R) q
 
@@ -180,42 +180,20 @@ def IsNegativeAttribute {M : Type*} (R : Set M) (q : Setoid M) : Prop :=
 
 variable {K M A : Type*} [Field K] [LinearOrder K] [IsStrictOrderedRing K]
 
-/-- Expected utility computed via a partition: weight each cell's conditional EU by the
-cell's probability (`EU_Q(a) = Σ_{c ∈ cells Q} P(c) · EU(a | c)`). -/
+/-- The expected utility of an act computed through a partition weights each cell's
+conditional expected utility by the cell's probability. -/
 def partitionEU [Fintype M] [DecidableEq M] (dp : DecisionProblem K M A) (q : Setoid M)
     [DecidableRel q] (a : A) : K :=
   ∑ cell ∈ (Finpartition.ofSetoid q).parts, cell.sum dp.prior * condExpectedUtility dp cell a
 
-/-- Cell probability times conditional EU is the raw weighted sum, for non-negative priors. -/
-private theorem cellProb_mul_conditionalEU [DecidableEq M]
-    (dp : DecisionProblem K M A) (cell : Finset M) (a : A)
-    (hprior : ∀ w, dp.prior w ≥ 0) :
-    cell.sum dp.prior * condExpectedUtility dp cell a =
-    cell.sum (fun w ↦ dp.prior w * dp.utility w a) := by
-  simp only [condExpectedUtility]
-  by_cases htot : cell.sum dp.prior = 0
-  · simp only [htot, ite_true, mul_zero]
-    symm; apply Finset.sum_eq_zero; intro w hw
-    have hle : dp.prior w ≤ cell.sum dp.prior :=
-      Finset.single_le_sum (fun x _ ↦ hprior x) hw
-    have hzero : dp.prior w = 0 := le_antisymm (by linarith) (hprior w)
-    simp [hzero]
-  · simp only [htot, ite_false]
-    rw [Finset.mul_sum]
-    congr 1; ext w; field_simp
-
-/-- Law of total expectation: the unconditional expected utility equals the
-partition-relative EU, for any partition (non-negative priors). -/
+/-- Expected utility computed through any partition is the expected utility, for a nonnegative
+prior. -/
 theorem eu_eq_partitionEU [Fintype M] [DecidableEq M] (dp : DecisionProblem K M A) (a : A)
     (q : Setoid M) [DecidableRel q] (hprior : ∀ w, dp.prior w ≥ 0) :
-    expectedUtility dp a = partitionEU dp q a := by
-  simp only [expectedUtility, partitionEU]
-  conv_lhs => rw [← (Finpartition.ofSetoid q).biUnion_parts]
-  rw [Finset.sum_biUnion (Finpartition.ofSetoid q).supIndep.pairwiseDisjoint]
-  exact Finset.sum_congr rfl (fun cell _ ↦ (cellProb_mul_conditionalEU dp cell a hprior).symm)
+    expectedUtility dp a = partitionEU dp q a :=
+  (sum_cellProbability_mul_condExpectedUtility (Finpartition.ofSetoid q) dp hprior a).symm
 
-/-- Partition-relative EU does not depend on the partition: any two partitions compute the
-unconditional EU. -/
+/-- Expected utility computed through a partition does not depend on the partition. -/
 theorem partitionEU_congr [Fintype M] [DecidableEq M] (dp : DecisionProblem K M A)
     (q q' : Setoid M) [DecidableRel q] [DecidableRel q'] (a : A)
     (hprior : ∀ w, dp.prior w ≥ 0) :
