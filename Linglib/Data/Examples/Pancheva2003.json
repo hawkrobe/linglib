@@ -1,84 +1,280 @@
 [
   {
     "id": "pancheva2003_ex1a_U",
-    "source": {"bibkey": "pancheva-2003", "paperLabel": "(1a)"},
+    "source": {
+      "bibkey": "pancheva-2003",
+      "paperLabel": "(1a)"
+    },
     "language": "stan1293",
     "primaryText": "Since 2000, Alexandra has lived in LA.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "Universal (U) perfect. Asserts that the underlying eventuality (live in LA) holds throughout an interval delimited by 2000 (LB) and the utterance time (RB). Requires adverbial modification (here: `since 2000`).",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
-    "readings": [
-      {"name": "universal (live-in-LA holds throughout 2000-now)", "judgment": "acceptable"}
-    ],
-    "comment": "Pancheva 2003 §1 ex (1a). One of the three canonical perfect-reading exemplars. Universal reading requires stative or progressive participial aspect (Pancheva §2 thesis)."
+    "readings": [],
+    "comment": "",
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "reading",
+        "UNIVERSAL"
+      ]
+    ]
   },
   {
     "id": "pancheva2003_ex1b_EXP",
-    "source": {"bibkey": "pancheva-2003", "paperLabel": "(1b)"},
+    "source": {
+      "bibkey": "pancheva-2003",
+      "paperLabel": "(1b)"
+    },
     "language": "stan1293",
     "primaryText": "Alexandra has been in LA (before).",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "Experiential (EXP) perfect. Asserts that the underlying eventuality holds at a proper subset of an interval extending back from the utterance time. No claim about the eventuality holding now.",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
-    "readings": [
-      {"name": "experiential (LA-being at some past subinterval)", "judgment": "acceptable"}
-    ],
-    "comment": "Pancheva 2003 §1 ex (1b). Subsumed under EXISTENTIAL by McCawley 1971, Mittwoch 1988 (umbrella for Experiential + Resultative); Pancheva keeps the finer Experiential/Resultative distinction."
+    "readings": [],
+    "comment": "",
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "reading",
+        "EXPERIENTIAL"
+      ]
+    ]
   },
   {
     "id": "pancheva2003_ex1c_RES",
-    "source": {"bibkey": "pancheva-2003", "paperLabel": "(1c)"},
+    "source": {
+      "bibkey": "pancheva-2003",
+      "paperLabel": "(1c)"
+    },
     "language": "stan1293",
     "primaryText": "Alexandra has (just) arrived in LA.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "Resultative (RES) perfect. Same temporal assertion as Experiential, with the added meaning that the result state (be in LA) holds at the utterance time.",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
-    "readings": [
-      {"name": "resultative (arrived + still in LA at utterance)", "judgment": "acceptable"}
-    ],
-    "comment": "Pancheva 2003 §1 ex (1c). The Resultative reading requires a telic predicate (Kratzer 1994: only telic events have a natural result state); see (5)/(6) for the telic vs atelic contrast."
+    "readings": [],
+    "comment": "",
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "reading",
+        "RESULTATIVE"
+      ]
+    ]
   },
   {
     "id": "pancheva2003_ex5a_atelic",
-    "source": {"bibkey": "pancheva-2003", "paperLabel": "(5a)"},
+    "source": {
+      "bibkey": "pancheva-2003",
+      "paperLabel": "(5a)"
+    },
     "language": "stan1293",
     "primaryText": "I have run.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "Atelic activity participle (`run`). Cannot yield a Resultative reading because activities have no inherent result state (Kratzer 1994). Only the Experiential reading is available.",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
-    "readings": [
-      {"name": "experiential (running at some past time)", "judgment": "acceptable"},
-      {"name": "resultative", "judgment": "ungrammatical"}
-    ],
-    "comment": "Pancheva 2003 §2 ex (5a). Diagnostic for the telic-only restriction on Resultative reading."
+    "readings": [],
+    "comment": "An activity has no lexically inherent result state.",
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "reading",
+        "EXP"
+      ]
+    ]
+  },
+  {
+    "id": "pancheva2003_ex5b",
+    "source": {
+      "bibkey": "pancheva-2003",
+      "paperLabel": "(5b)"
+    },
+    "language": "stan1293",
+    "primaryText": "I have built sandcastles.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "comment": "",
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "reading",
+        "EXP"
+      ]
+    ]
   },
   {
     "id": "pancheva2003_ex6a_telic",
-    "source": {"bibkey": "pancheva-2003", "paperLabel": "(6a)"},
+    "source": {
+      "bibkey": "pancheva-2003",
+      "paperLabel": "(6a)"
+    },
     "language": "stan1293",
     "primaryText": "I have lost my glasses.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "Telic achievement participle (`lose my glasses`). Has both Experiential and Resultative readings. On the Resultative reading, the glasses must still be lost at the utterance time; on the Experiential reading, no such requirement.",
+    "context": "",
     "judgment": "acceptable",
     "alternatives": [],
-    "readings": [
-      {"name": "experiential (lost at some past time)", "judgment": "acceptable"},
-      {"name": "resultative (lost + still missing now)", "judgment": "acceptable"}
-    ],
-    "comment": "Pancheva 2003 §2 ex (6a). The telic contrast partner to (5a). Demonstrates that telic predicates license both readings; atelic predicates only EXP."
+    "readings": [],
+    "comment": "",
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "reading",
+        "EXP or RES"
+      ]
+    ]
+  },
+  {
+    "id": "pancheva2003_ex6b",
+    "source": {
+      "bibkey": "pancheva-2003",
+      "paperLabel": "(6b)"
+    },
+    "language": "stan1293",
+    "primaryText": "I have built a sandcastle.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "comment": "",
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ],
+      [
+        "reading",
+        "EXP or RES"
+      ]
+    ]
+  },
+  {
+    "id": "pancheva2003_ex13a",
+    "source": {
+      "bibkey": "pancheva-2003",
+      "paperLabel": "(13a)"
+    },
+    "language": "stan1293",
+    "primaryText": "I have been sick lately.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "comment": "",
+    "paperFeatures": [
+      [
+        "section",
+        "3.2"
+      ],
+      [
+        "reading",
+        "EXP"
+      ],
+      [
+        "aspect",
+        "NEUTRAL"
+      ]
+    ]
+  },
+  {
+    "id": "pancheva2003_ex16a",
+    "source": {
+      "bibkey": "pancheva-2003",
+      "paperLabel": "(16a)"
+    },
+    "language": "stan1293",
+    "primaryText": "I have been sick previously.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "comment": "",
+    "paperFeatures": [
+      [
+        "section",
+        "3.2"
+      ],
+      [
+        "reading",
+        "EXP"
+      ],
+      [
+        "aspect",
+        "BOUNDED"
+      ]
+    ]
+  },
+  {
+    "id": "pancheva2003_ex30c",
+    "source": {
+      "bibkey": "pancheva-2003",
+      "paperLabel": "(30c)"
+    },
+    "language": "stan1293",
+    "primaryText": "I have been drinking this cup of coffee right now.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "comment": "The resultative perfect does not take the progressive.",
+    "paperFeatures": [
+      [
+        "section",
+        "5.2"
+      ],
+      [
+        "reading",
+        "RES"
+      ]
+    ]
   }
 ]

@@ -46,6 +46,8 @@ is the predicate itself.
   property as interval predicates.
 * `Aspect.IntervalPred.durative_iff_of_hasSubintervalProperty`: a predicate with the property
   holds throughout a span exactly when it holds at the span.
+* `Aspect.IntervalPred.perfect_iff_of_hasSubintervalProperty`: the perfect of such a predicate
+  holds at a reference interval exactly when the predicate does.
 
 ## Implementation notes
 
@@ -164,5 +166,11 @@ the span. -/
 theorem IntervalPred.durative_iff_of_hasSubintervalProperty (hp : p.HasSubintervalProperty) :
     p.durative w t ↔ p w t :=
   ⟨fun h ↦ h t le_rfl, fun h _ hj ↦ hp w hj h⟩
+
+/-- A perfect over a predicate with the subinterval property asserts the predicate at the
+reference interval, and conversely. -/
+theorem IntervalPred.perfect_iff_of_hasSubintervalProperty (hp : p.HasSubintervalProperty) :
+    p.perfect w t ↔ p w t :=
+  ⟨fun ⟨_, hf, hp'⟩ ↦ hp w hf.1 hp', fun h ↦ ⟨t, NonemptyInterval.finalSubinterval_refl t, h⟩⟩
 
 end Aspect

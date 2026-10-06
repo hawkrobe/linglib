@@ -14,18 +14,11 @@ world of a gnomic modal base, with only an initiating event that indicates a dis
 actual world. The English auxiliaries mark neither; *would* marks mood, a special case of Gen,
 and *used to* is the imperfective under a retrospective aspect, which places the reference
 interval before the perspective interval. The operators are built on Link's sum closure,
-Kratzer's modal base, Klein's imperfective and Pancheva's final-subinterval perfect; Del Prete's
-Italian Same-Object Effect is the configuration of `same_object_infelicity`.
+Kratzer's modal base, Klein's imperfective and Pancheva's final-subinterval perfect
+(`Aspect.IntervalPred.perfect`); Del Prete's Italian Same-Object Effect is the configuration of
+`same_object_infelicity`.
 
-## Main definitions
-
-* `gen`: Gen, with every case normal and a modalized matrix.
-* `hab`: Hab, with iteration as `Mereology.IsPlural`.
-* `retro`: the retrospective aspect.
-* `usedToOp`: *used to*, the retrospective over the imperfective.
-* `perfectOp`: the perfect over interval predicates.
-
-## Main results
+## Main statements
 
 * `same_object_infelicity`: an indefinite scoping over Hab makes an unrepeatable event recur.
 * `gen_admits_fresh_objects`: Gen's universal lets the object vary.
@@ -131,12 +124,6 @@ def retro {W T : Type*} [LinearOrder T] (A : IntervalPred W T) :
 def usedToOp {W T E : Type*} [LinearOrder T] [Event.TemporalTrace E T] (P : W → E → Prop) :
     IntervalPred W T :=
   retro (IMPF P)
-
-/-- The perfect holds at a perspective interval that is a final subinterval of some reference
-interval satisfying the description, (34a). -/
-def perfectOp {W T : Type*} [LinearOrder T] (A : IntervalPred W T) :
-    IntervalPred W T :=
-  fun w p => ∃ i, A w i ∧ p.finalSubinterval i
 
 /-- One reference interval serves the retrospective and the perfect at once only for an
 instantaneous perspective, (32)–(34). The two form the Horn scale behind the retrospectivity

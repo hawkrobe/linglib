@@ -25,6 +25,9 @@ Mittwoch and Vlach distinguish them.
 * `Aspect.IMPF`: the imperfective.
 * `Aspect.PRFV`: the perfective.
 * `Aspect.UNBOUNDED`: Pancheva's non-strict imperfective.
+* `Aspect.IntervalPred.perfect`: the perfect as an operator on interval predicates, whose
+  reference interval is a final subinterval of the perfect time span; `Aspect.PERF` is its value
+  at a point.
 * `Aspect.PERF_XN`: the perfect with a left boundary drawn from a domain restriction.
 * `Aspect.PERF_ADV`: the perfect over the spans a perfect-level adverbial admits.
 * `Aspect.IntervalPred.durative`, `Aspect.IntervalPred.inclusive`: the durative and inclusive
@@ -199,6 +202,23 @@ theorem perf_monotone {p q : IntervalPred W T} (h : ∀ w t, p w t → q w t) (w
 the non-perfect forms do. -/
 def IntervalPred.atPoint (p : IntervalPred W T) : PointPred W T :=
   fun s ↦ p s.world (NonemptyInterval.pure s.time)
+
+/-- `p.perfect` holds at a reference interval that is a final subinterval of some perfect time
+span at which `p` holds, the perfect as an operator on interval predicates. -/
+def IntervalPred.perfect (p : IntervalPred W T) : IntervalPred W T :=
+  fun w i ↦ ∃ pts : NonemptyInterval T, i.finalSubinterval pts ∧ p w pts
+
+/-- The perfect at a point is the perfect at the degenerate reference interval of that point. -/
+theorem perf_iff_perfect_atPoint (p : IntervalPred W T) (s : Reference.Index W T) :
+    PERF p s ↔ p.perfect.atPoint s := by
+  refine exists_congr fun pts ↦ and_congr_left fun _ ↦ ?_
+  change pts.snd = s.time ↔ NonemptyInterval.pure s.time ≤ pts ∧ s.time = pts.snd
+  rw [NonemptyInterval.le_def]
+  exact ⟨fun h ↦ ⟨⟨h ▸ pts.fst_le_snd, h.ge⟩, h.symm⟩, fun h ↦ h.2.symm⟩
+
+theorem IntervalPred.perfect_mono {p q : IntervalPred W T} (h : ∀ w t, p w t → q w t) {w : W}
+    {i : NonemptyInterval T} : p.perfect w i → q.perfect w i :=
+  fun ⟨pts, hf, hp⟩ ↦ ⟨pts, hf, h w pts hp⟩
 
 /-! ### The perfect-level adverbial -/
 

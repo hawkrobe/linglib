@@ -162,11 +162,8 @@ theorem future_perfect_after_speech {six : T}
 
 /-- The extended-now perfect (28) at the speech time is the perfect of `Aspect`. -/
 theorem xn_iff_perf {W : Type*} (p : IntervalPred W T) (w : W) :
-    (∃ t, (NonemptyInterval.pure s).finalSubinterval t ∧ p w t) ↔ PERF p (w, s) := by
-  refine exists_congr fun t ↦ and_congr_left fun _ ↦ ?_
-  change (NonemptyInterval.pure s ≤ t ∧ s = t.snd) ↔ t.snd = s
-  rw [NonemptyInterval.le_def]
-  exact ⟨fun h ↦ h.2.symm, fun h ↦ ⟨⟨h ▸ t.fst_le_snd, h.ge⟩, h.symm⟩⟩
+    p.perfect w (.pure s) ↔ PERF p (w, s) :=
+  (perf_iff_perfect_atPoint p (w, s)).symm
 
 /-- In *John has called yesterday* (42, `Examples.ex_42`) *yesterday* modifies the extended-now
 interval, which ends at the speech time, so the sentence is contradictory unless the speech time
