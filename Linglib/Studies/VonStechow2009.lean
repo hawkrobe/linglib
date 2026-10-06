@@ -170,11 +170,10 @@ interval, which ends at the speech time, so the sentence is contradictory unless
 is on yesterday. -/
 theorem not_perfAdv_yesterday {W : Type*} (call : W → Set (NonemptyInterval T))
     (yesterday : NonemptyInterval T) (w : W) (hs : s ∉ yesterday) :
-    (w, s) ∉ PERF_ADV call (· ≤ yesterday) := by
-  rintro ⟨t, hle, hRB, -⟩
-  obtain ⟨h₁, h₂⟩ := NonemptyInterval.le_def.1 hle
-  have e : t.snd = s := hRB
-  exact hs (NonemptyInterval.mem_def.2 ⟨h₁.trans (t.fst_le_snd.trans e.le), e ▸ h₂⟩)
+    (w, s) ∉ PERF (Set.Iic yesterday ∩ call ·) := fun h ↦
+  let ⟨t, ⟨hle, _⟩, e⟩ := mem_perf.1 h
+  let ⟨h₁, h₂⟩ := NonemptyInterval.le_def.1 hle
+  hs (NonemptyInterval.mem_def.2 ⟨h₁.trans (t.fst_le_snd.trans e.le), e ▸ h₂⟩)
 
 /-- *Mary had left at six* (43) modifies the reference time or the event time; with the leaving
 at five, the first reading holds and the second fails. -/

@@ -166,14 +166,14 @@ theorem universal_at_rb (h : i ∈ perfect (UNBOUNDED P) w) : ∃ e, P w e ∧ i
 the eventuality has begun by the right boundary of the reference interval. -/
 theorem neutral_experiential_begun_by_rb (h : i ∈ perfect (NEUTRAL P) w) :
     ∃ e, P w e ∧ (τ e).fst ≤ i.snd :=
-  let ⟨_, hf, e, hrel, hP⟩ := h
+  let ⟨_, ⟨e, hrel, hP⟩, hf⟩ := h
   ⟨e, hP, hf.2 ▸ hrel.1.2⟩
 
 /-- The bounded experiential, (15), places the whole event time inside the span, so the
 eventuality has ended by the right boundary of the reference interval. -/
 theorem bounded_experiential_ended_by_rb (h : i ∈ perfect (BOUNDED P) w) :
     ∃ e, P w e ∧ (τ e).snd ≤ i.snd :=
-  let ⟨_, hf, e, hlt, hP⟩ := h
+  let ⟨_, ⟨e, hlt, hP⟩, hf⟩ := h
   ⟨e, hP, hf.2 ▸ (NonemptyInterval.le_def.1 hlt.le).2⟩
 
 omit [Event.TemporalTrace E T] in
@@ -181,7 +181,7 @@ omit [Event.TemporalTrace E T] in
 reference interval, overlapping the reference interval and continuing past it. -/
 theorem resultative_state_at_rb (h : i ∈ perfect (RESULTATIVE Q) w) :
     ∃ e s, Q w s e ∧ i.snd ∈ τ s ∧ (τ s).overlaps i ∧ i.snd < (τ s).snd :=
-  let ⟨_, hf, e, s, hrel, hQ⟩ := h
+  let ⟨_, ⟨e, s, hrel, hQ⟩, hf⟩ := h
   have h₁ : (τ s).fst ≤ i.snd := hf.2 ▸ hrel.2.1
   have h₂ : i.snd < (τ s).snd := hf.2 ▸ hrel.2.2
   ⟨e, s, hQ, NonemptyInterval.mem_def.2 ⟨h₁, h₂.le⟩, ⟨h₁, i.fst_le_snd.trans h₂.le⟩, h₂⟩
@@ -209,15 +209,15 @@ of the reference interval. -/
 theorem neutral_experiential_iff : i ∈ perfect (NEUTRAL P) w ↔ ∃ e, P w e ∧ (τ e).fst ≤ i.snd := by
   refine ⟨neutral_experiential_begun_by_rb, fun ⟨e, hP, h⟩ ↦ ?_⟩
   obtain ⟨pts, hf, hlt⟩ := exists_span i (τ e).fst
-  exact ⟨pts, hf, e, ⟨⟨hlt.le.trans (τ e).fst_le_snd, hf.2 ▸ h⟩, hlt⟩, hP⟩
+  exact ⟨pts, ⟨e, ⟨⟨hlt.le.trans (τ e).fst_le_snd, hf.2 ▸ h⟩, hlt⟩, hP⟩, hf⟩
 
 /-- The bounded experiential asserts exactly that an eventuality has ended by the right boundary
 of the reference interval. -/
 theorem bounded_experiential_iff : i ∈ perfect (BOUNDED P) w ↔ ∃ e, P w e ∧ (τ e).snd ≤ i.snd := by
   refine ⟨bounded_experiential_ended_by_rb, fun ⟨e, hP, h⟩ ↦ ?_⟩
   obtain ⟨pts, hf, hlt⟩ := exists_span i (τ e).fst
-  exact ⟨pts, hf, e, NonemptyInterval.lt_def.2
-    ⟨NonemptyInterval.le_def.2 ⟨hlt.le, hf.2 ▸ h⟩, Or.inl hlt⟩, hP⟩
+  exact ⟨pts, ⟨e, NonemptyInterval.lt_def.2
+    ⟨NonemptyInterval.le_def.2 ⟨hlt.le, hf.2 ▸ h⟩, Or.inl hlt⟩, hP⟩, hf⟩
 
 omit [Event.TemporalTrace E T] in
 /-- The resultative perfect asserts exactly that a result state holds at the right boundary of
@@ -228,12 +228,12 @@ theorem resultative_perfect_iff :
   · obtain ⟨e, s, hQ, hm, -, h₂⟩ := resultative_state_at_rb h
     exact ⟨e, s, hQ, (NonemptyInterval.mem_def.1 hm).1, h₂⟩
   · obtain ⟨pts, hf, hlt⟩ := exists_span i (τ s).fst
-    exact ⟨pts, hf, e, s, ⟨hlt, hf.2 ▸ h₁, hf.2 ▸ h₂⟩, hQ⟩
+    exact ⟨pts, ⟨e, s, ⟨hlt, hf.2 ▸ h₁, hf.2 ▸ h₂⟩, hQ⟩, hf⟩
 
 /-- The proper containment of footnote 8 makes no difference under the perfect, since the span
 may start earlier, so the bounded aspect and the perfective give the same perfect. -/
 theorem bounded_perfect_iff_prfv_perfect : i ∈ perfect (BOUNDED P) w ↔ i ∈ perfect (PRFV P) w := by
-  refine ⟨fun h ↦ perfect_mono (fun w ↦ bounded_subset_prfv P w) w h, fun ⟨_, hf, e, hle, hP⟩ ↦ ?_⟩
+  refine ⟨(perfect_mono (bounded_subset_prfv P) w ·), fun ⟨_, ⟨e, hle, hP⟩, hf⟩ ↦ ?_⟩
   exact bounded_experiential_iff.2 ⟨e, hP, hf.2 ▸ (NonemptyInterval.le_def.1 hle).2⟩
 
 /-- A universal perfect is also a neutral experiential one, so (13) is compatible with the
@@ -288,12 +288,12 @@ begun by the time of tense. -/
 theorem perf_inclusive_unbounded_iff :
     ⟨w, t⟩ ∈ PERF (inclusive (UNBOUNDED P)) ↔ ∃ e, P w e ∧ (τ e).fst ≤ t := by
   constructor
-  · rintro ⟨pts, hRB, hinc⟩
+  · rintro ⟨pts, hinc, hRB⟩
     obtain ⟨e, hP, hov⟩ := IatridouEtAl2001.inclusive_unbounded_iff.1 hinc
     exact ⟨e, hP, hov.1.trans_eq hRB⟩
   · rintro ⟨e, hP, h⟩
-    exact ⟨⟨(min t (τ e).fst, t), min_le_left _ _⟩, rfl, IatridouEtAl2001.inclusive_unbounded_iff.2
-      ⟨e, hP, h, (min_le_right _ _).trans (τ e).fst_le_snd⟩⟩
+    exact ⟨⟨(min t (τ e).fst, t), min_le_left _ _⟩, IatridouEtAl2001.inclusive_unbounded_iff.2
+      ⟨e, hP, h, (min_le_right _ _).trans (τ e).fst_le_snd⟩, rfl⟩
 
 /-- At a moment of reference the neutral experiential is the older account's inclusive perfect
 of an unbounded eventuality. -/
@@ -305,17 +305,17 @@ theorem neutral_experiential_iff_inclusive_unbounded :
 of a bounded eventuality. -/
 theorem bounded_experiential_iff_inclusive_bounded :
     .pure t ∈ perfect (BOUNDED P) w ↔ ⟨w, t⟩ ∈ PERF (inclusive (PRFV P)) := by
-  rw [bounded_perfect_iff_prfv_perfect, perf_eq_atPoint_perfect]
-  exact exists_congr fun _ ↦ and_congr_right fun _ ↦ IatridouEtAl2001.inclusive_prfv_iff.symm
+  rw [bounded_perfect_iff_prfv_perfect, perf_eq_atPoint_perfect, IatridouEtAl2001.inclusive_prfv]
+  rfl
 
 end NoMin
 
 /-- At a moment of reference the universal perfect is the older account's durative perfect of an
 unbounded eventuality, with the covert adverbial. -/
 theorem universal_iff_durative_unbounded :
-    .pure t ∈ perfect (UNBOUNDED P) w ↔ ⟨w, t⟩ ∈ PERF_ADV (durative (UNBOUNDED P)) ⊤ := by
-  rw [perf_adv_top, perf_eq_atPoint_perfect]
-  exact exists_congr fun _ ↦ and_congr_right fun _ ↦ IatridouEtAl2001.durative_unbounded_iff.symm
+    .pure t ∈ perfect (UNBOUNDED P) w ↔ ⟨w, t⟩ ∈ PERF (durative (UNBOUNDED P)) := by
+  rw [perf_eq_atPoint_perfect, IatridouEtAl2001.durative_unbounded]
+  rfl
 
 /-! ### Greek and Portuguese -/
 
@@ -323,14 +323,14 @@ theorem universal_iff_durative_unbounded :
 so a perfect that cannot embed the unbounded aspect, as in Greek, has no universal reading. -/
 theorem neutral_span_not_covered (h : i ∈ perfect (NEUTRAL P) w) :
     ∃ pts, i.finalSubinterval pts ∧ ∃ e, P w e ∧ ¬ pts ≤ τ e :=
-  let ⟨pts, hf, e, hrel, hP⟩ := h
+  let ⟨pts, ⟨e, hrel, hP⟩, hf⟩ := h
   ⟨pts, hf, e, hP, fun hle ↦ hrel.2.not_ge (NonemptyInterval.le_def.1 hle).1⟩
 
 /-- A perfect over the bounded aspect never has its span inside the run time of its eventuality.
 -/
 theorem bounded_span_not_covered (h : i ∈ perfect (BOUNDED P) w) :
     ∃ pts, i.finalSubinterval pts ∧ ∃ e, P w e ∧ ¬ pts ≤ τ e :=
-  let ⟨pts, hf, e, hlt, hP⟩ := h
+  let ⟨pts, ⟨e, hlt, hP⟩, hf⟩ := h
   ⟨pts, hf, e, hP, hlt.not_ge⟩
 
 /-- A perfect over the unbounded aspect, the only one the Portuguese perfect embeds, never places

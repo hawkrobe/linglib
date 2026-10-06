@@ -157,7 +157,7 @@ theorem durative_eq_of_isLowerSet (hp : IsLowerSet (p w)) : durative p w = p w :
 /-- For an interval property with the subinterval property, the perfect is the property
 itself. -/
 theorem perfect_eq_of_isLowerSet (hp : IsLowerSet (p w)) : perfect p w = p w :=
-  Set.ext fun i ↦ ⟨fun ⟨_, hf, hp'⟩ ↦ hp hf.1 hp',
-    fun h ↦ ⟨i, NonemptyInterval.finalSubinterval_refl i, h⟩⟩
+  Set.ext fun i ↦ ⟨fun ⟨_, hp', hf⟩ ↦ hp hf.1 hp',
+    fun h ↦ ⟨i, h, NonemptyInterval.finalSubinterval_refl i⟩⟩
 
 end Aspect

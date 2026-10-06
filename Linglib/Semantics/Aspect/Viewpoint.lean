@@ -27,8 +27,6 @@ some subinterval, as Dowty, Mittwoch and Vlach distinguish them.
 * `Aspect.UNBOUNDED`: Pancheva's non-strict imperfective.
 * `Aspect.perfect`: the perfect as an operator on interval properties, whose reference interval
   is a final subinterval of the perfect time span; `Aspect.PERF` is its value at a point.
-* `Aspect.PERF_XN`: the perfect with a left boundary drawn from a domain restriction.
-* `Aspect.PERF_ADV`: the perfect over the spans a perfect-level adverbial admits.
 * `Aspect.durative`, `Aspect.inclusive`: the durative and inclusive readings of an interval
   adverbial.
 
@@ -38,8 +36,6 @@ some subinterval, as Dowty, Mittwoch and Vlach distinguish them.
   run times.
 * `Aspect.unbounded_eq_lowerClosure`: the non-strict imperfective holds on their lower closure.
 * `Aspect.inclusive_eq_upperClosure`: the inclusive reading is the upper closure.
-* `Aspect.mem_perf_adv_iff_mem_perf_xn_image`: at a fixed right boundary an adverbial is a
-  domain restriction on the left boundary.
 
 ## Implementation notes
 
@@ -49,8 +45,10 @@ some subinterval, as Dowty, Mittwoch and Vlach distinguish them.
 * The operators follow Knick and Sharf's equations, with a boundary a time point where the
   paper has a final or initial subinterval. The predicate applies to the outer reference time,
   which beneath the perfect is the perfect time span.
-* A perfect-level adverbial is a predicate on spans: *since t₀* is `LB t₀`, and the covert
-  adverbial of an unmodified perfect is `⊤`.
+* A perfect-level adverbial is a set of spans, which the perfect intersects with the interval
+  property, `PERF (adv ∩ p ·)`: *since t₀* admits the spans starting at `t₀`, Knick and Sharf's
+  domain restriction `tᵣ` the spans starting in `tᵣ`, and the covert adverbial of an unmodified
+  perfect every span.
 * Event predicates range over any event domain with a temporal trace (`Event.TemporalTrace`).
 * An interval property is a family of sets of intervals indexed by worlds,
   `W → Set (NonemptyInterval T)`, so that mathlib's order closures and lower and upper sets apply
@@ -161,37 +159,17 @@ theorem isLowerSet_unbounded (P : W → E → Prop) (w : W) : IsLowerSet (UNBOUN
 theorem isUpperSet_prfv (P : W → E → Prop) (w : W) : IsUpperSet (PRFV P w) := by
   rw [prfv_eq_upperClosure]; exact (upperClosure _).upper
 
-/-- `RB pts t` says that the perfect time span `pts` ends at the reference time `t`, (22a). -/
-def RB (pts : NonemptyInterval T) (t : T) : Prop := pts.snd = t
-
-/-- `LB tLB pts` says that the perfect time span `pts` starts at `tLB`, (23a). -/
-def LB (tLB : T) (pts : NonemptyInterval T) : Prop := pts.fst = tLB
-
-/-- The perfect, (22b), holds at the world-time points where some perfect time span
-right-bounded by the time belongs to the interval property. -/
+/-- The perfect, (22b), holds at the world-time points whose time is the right boundary, (22a),
+of some perfect time span belonging to the interval property. -/
 def PERF (p : W → Set (NonemptyInterval T)) : Set (Reference.Index W T) :=
-  {s | ∃ pts : NonemptyInterval T, RB pts s.time ∧ pts ∈ p s.world}
-
-/-- The perfect with a left boundary drawn from the domain restriction `tᵣ`, (23b), holds where
-some perfect time span starting in `tᵣ` and right-bounded by the reference time belongs to the
-interval property; narrow focus on the participle generates alternatives over `tᵣ`. -/
-def PERF_XN (p : W → Set (NonemptyInterval T)) (tᵣ : Set T) : Set (Reference.Index W T) :=
-  {s | ∃ pts : NonemptyInterval T, ∃ tLB ∈ tᵣ, LB tLB pts ∧ RB pts s.time ∧ pts ∈ p s.world}
+  {s | ∃ pts ∈ p s.world, pts.snd = s.time}
 
 variable {p q : W → Set (NonemptyInterval T)}
 
-/-- With no domain restriction the left boundary is idle. -/
-theorem perf_xn_univ (p : W → Set (NonemptyInterval T)) : PERF_XN p Set.univ = PERF p :=
-  Set.ext fun _ ↦ ⟨fun ⟨pts, _, _, _, hRB, hp⟩ ↦ ⟨pts, hRB, hp⟩,
-    fun ⟨pts, hRB, hp⟩ ↦ ⟨pts, pts.fst, Set.mem_univ _, rfl, hRB, hp⟩⟩
-
-/-- A narrower domain restriction is stronger. -/
-theorem perf_xn_mono (p : W → Set (NonemptyInterval T)) {tᵣ₁ tᵣ₂ : Set T} (hSub : tᵣ₁ ⊆ tᵣ₂) :
-    PERF_XN p tᵣ₁ ⊆ PERF_XN p tᵣ₂ :=
-  fun _ ⟨pts, tLB, hmem, hLB, hRB, hp⟩ ↦ ⟨pts, tLB, hSub hmem, hLB, hRB, hp⟩
+@[simp] theorem mem_perf {t : T} : (w, t) ∈ PERF p ↔ ∃ pts ∈ p w, pts.snd = t := Iff.rfl
 
 theorem perf_mono (h : ∀ w, p w ⊆ q w) : PERF p ⊆ PERF q :=
-  fun _ ⟨pts, hRB, hp⟩ ↦ ⟨pts, hRB, h _ hp⟩
+  fun _ ⟨pts, hp, hRB⟩ ↦ ⟨pts, h _ hp, hRB⟩
 
 /-- `atPoint p` holds at the world-time points whose degenerate interval belongs to `p`, as the
 non-perfect forms are evaluated. -/
@@ -201,65 +179,18 @@ def atPoint (p : W → Set (NonemptyInterval T)) : Set (Reference.Index W T) :=
 /-- `perfect p` holds at a reference interval that is a final subinterval of some perfect time
 span belonging to `p`, the perfect as an operator on interval properties. -/
 def perfect (p : W → Set (NonemptyInterval T)) : W → Set (NonemptyInterval T) :=
-  fun w ↦ {i | ∃ pts : NonemptyInterval T, i.finalSubinterval pts ∧ pts ∈ p w}
+  fun w ↦ {i | ∃ pts ∈ p w, i.finalSubinterval pts}
 
 /-- The perfect at a point is the perfect at the degenerate reference interval of that point. -/
 theorem perf_eq_atPoint_perfect (p : W → Set (NonemptyInterval T)) :
     PERF p = atPoint (perfect p) := by
-  refine Set.ext fun s ↦ exists_congr fun pts ↦ and_congr_left fun _ ↦ ?_
+  refine Set.ext fun s ↦ exists_congr fun pts ↦ and_congr_right fun _ ↦ ?_
   change pts.snd = s.time ↔ NonemptyInterval.pure s.time ≤ pts ∧ s.time = pts.snd
   rw [NonemptyInterval.le_def]
   exact ⟨fun h ↦ ⟨⟨h ▸ pts.fst_le_snd, h.ge⟩, h.symm⟩, fun h ↦ h.2.symm⟩
 
 theorem perfect_mono (h : ∀ w, p w ⊆ q w) (w : W) : perfect p w ⊆ perfect q w :=
-  fun _ ⟨pts, hf, hp⟩ ↦ ⟨pts, hf, h w hp⟩
-
-/-! ### The perfect-level adverbial -/
-
-/-- The perfect over the spans that a perfect-level adverbial admits holds where some admissible
-span right-bounded by the reference time belongs to the interval property. -/
-def PERF_ADV (p : W → Set (NonemptyInterval T)) (adv : NonemptyInterval T → Prop) :
-    Set (Reference.Index W T) :=
-  {s | ∃ pts : NonemptyInterval T, adv pts ∧ RB pts s.time ∧ pts ∈ p s.world}
-
-variable (p)
-
-/-- The covert adverbial of an unmodified perfect admits every span. -/
-theorem perf_adv_top : PERF_ADV p ⊤ = PERF p :=
-  Set.ext fun _ ↦ ⟨fun ⟨pts, _, hRB, hp⟩ ↦ ⟨pts, hRB, hp⟩,
-    fun ⟨pts, hRB, hp⟩ ↦ ⟨pts, trivial, hRB, hp⟩⟩
-
-/-- A perfect-level adverbial intersects the interval property. -/
-theorem perf_adv_eq_perf_inter (adv : NonemptyInterval T → Prop) :
-    PERF_ADV p adv = PERF fun w ↦ {pts | adv pts} ∩ p w :=
-  Set.ext fun _ ↦ ⟨fun ⟨pts, hadv, hRB, hp⟩ ↦ ⟨pts, hRB, hadv, hp⟩,
-    fun ⟨pts, hRB, hadv, hp⟩ ↦ ⟨pts, hadv, hRB, hp⟩⟩
-
-/-- A weaker adverbial admits more spans. -/
-theorem perf_adv_mono {adv adv' : NonemptyInterval T → Prop} (h : ∀ pts, adv pts → adv' pts) :
-    PERF_ADV p adv ⊆ PERF_ADV p adv' :=
-  fun _ ⟨pts, hadv, hRB, hp⟩ ↦ ⟨pts, h pts hadv, hRB, hp⟩
-
-/-- A domain restriction on the left boundary is the adverbial admitting the spans that start
-in it. -/
-theorem perf_xn_eq_perf_adv (tᵣ : Set T) : PERF_XN p tᵣ = PERF_ADV p (·.fst ∈ tᵣ) :=
-  Set.ext fun _ ↦ ⟨fun ⟨pts, _, hmem, hLB, hRB, hp⟩ ↦ ⟨pts, Set.mem_of_eq_of_mem hLB hmem, hRB, hp⟩,
-    fun ⟨pts, hmem, hRB, hp⟩ ↦ ⟨pts, pts.fst, hmem, rfl, hRB, hp⟩⟩
-
-/-- For *since t₀*, the spans with left boundary `t₀` are the singleton domain restriction. -/
-theorem perf_adv_lb (t₀ : T) : PERF_ADV p (LB t₀) = PERF_XN p {t₀} :=
-  Set.ext fun _ ↦ ⟨fun ⟨pts, hLB, hRB, hp⟩ ↦ ⟨pts, t₀, rfl, hLB, hRB, hp⟩,
-    fun ⟨pts, _, htLB, hLB, hRB, hp⟩ ↦ ⟨pts, hLB.trans htLB, hRB, hp⟩⟩
-
-/-- At a fixed right boundary an adverbial is a domain restriction on the left boundary, namely
-the left boundaries of the admissible spans ending there. -/
-theorem mem_perf_adv_iff_mem_perf_xn_image (adv : NonemptyInterval T → Prop) (w : W) (t : T) :
-    ⟨w, t⟩ ∈ PERF_ADV p adv ↔ ⟨w, t⟩ ∈ PERF_XN p ((·.fst) '' {pts | adv pts ∧ RB pts t}) :=
-  ⟨fun ⟨pts, hadv, hRB, hp⟩ ↦ ⟨pts, pts.fst, ⟨pts, ⟨hadv, hRB⟩, rfl⟩, rfl, hRB, hp⟩,
-    fun ⟨pts, _, ⟨pts', ⟨hadv, hRB'⟩, hfst⟩, hLB, hRB, hp⟩ ↦
-      have : pts' = pts :=
-        NonemptyInterval.ext (Prod.ext (hfst.trans hLB.symm) (hRB'.trans hRB.symm))
-      ⟨pts, this ▸ hadv, hRB, hp⟩⟩
+  fun _ ⟨pts, hp, hf⟩ ↦ ⟨pts, h w hp, hf⟩
 
 /-! ### Durative and inclusive readings -/
 
@@ -271,16 +202,17 @@ def durative (p : W → Set (NonemptyInterval T)) : W → Set (NonemptyInterval 
 /-- `inclusive p` holds at a span when `p` holds at some subinterval of it, the inclusive reading
 of an interval adverbial, *in*. -/
 def inclusive (p : W → Set (NonemptyInterval T)) : W → Set (NonemptyInterval T) :=
-  fun w ↦ {i | ∃ j ≤ i, j ∈ p w}
-
-variable {p}
+  fun w ↦ {i | ∃ j ∈ p w, j ≤ i}
 
 /-- The inclusive reading is the upper closure of the interval property. -/
 theorem inclusive_eq_upperClosure : inclusive p w = upperClosure (p w) :=
-  Set.ext fun _ ↦ ⟨fun ⟨j, hj, hp⟩ ↦ mem_upperClosure.2 ⟨j, hp, hj⟩,
-    fun h ↦ let ⟨j, hp, hj⟩ := mem_upperClosure.1 h; ⟨j, hj, hp⟩⟩
+  rfl
+
+/-- On an upper set the inclusive reading is the set itself. -/
+theorem inclusive_eq_of_isUpperSet (hp : IsUpperSet (p w)) : inclusive p w = p w :=
+  hp.upperClosure
 
 theorem durative_subset_inclusive : durative p w ⊆ inclusive p w :=
-  fun i h ↦ ⟨i, le_rfl, h (Set.mem_Iic.2 le_rfl)⟩
+  fun i h ↦ ⟨i, h (Set.mem_Iic.2 le_rfl), le_rfl⟩
 
 end Aspect
