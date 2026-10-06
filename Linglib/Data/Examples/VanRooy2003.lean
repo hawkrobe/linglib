@@ -119,6 +119,19 @@ def ex_19 : Datum :=
     readings := []
     paperFeatures := [("type", "degree question"), ("optimal value", "minimal")] }
 
+def ex_20 : Datum :=
+  { id := "vanrooy2003_20"
+    source := ⟨"van-rooy-2003", "(20)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Where can I buy an Italian newspaper?"
+    glossedTokens := []
+    context := "The newspaper is sold at the station and at the palace; the best place is the station in one world, the palace in another, and either in a third."
+    judgment := .acceptable
+    alternatives := []
+    readings := [("mention-some: {u,w},{v,w}", .acceptable)]
+    paperFeatures := [("type", "mention-some")] }
+
 def ex_21 : Datum :=
   { id := "vanrooy2003_21"
     source := ⟨"van-rooy-2003", "(21)"⟩
@@ -184,6 +197,19 @@ def ex_25 : Datum :=
     readings := [("mention-some", .acceptable)]
     paperFeatures := [("type", "degree question"), ("reading", "mention-some")] }
 
-def all : List Datum := [ex_3, ex_12, ex_14, ex_15, ex_16, ex_17, ex_18b, ex_19, ex_21, ex_22, ex_23, ex_24, ex_25]
+def ex_26 : Datum :=
+  { id := "vanrooy2003_26"
+    source := ⟨"van-rooy-2003", "(26)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "Which Beatles' autograph do you have?"
+    glossedTokens := []
+    context := "A Lennon autograph makes the others irrelevant, and a Harrison autograph makes a Starr autograph irrelevant."
+    judgment := .acceptable
+    alternatives := []
+    readings := [("scalar: one resolving answer per Beatle", .acceptable)]
+    paperFeatures := [("type", "scalar question")] }
+
+def all : List Datum := [ex_3, ex_12, ex_14, ex_15, ex_16, ex_17, ex_18b, ex_19, ex_20, ex_21, ex_22, ex_23, ex_24, ex_25, ex_26]
 
 end VanRooy2003.Examples

@@ -152,6 +152,26 @@
     "comment": "The minimal value is the most informative true answer."
   },
   {
+    "id": "vanrooy2003_20",
+    "source": {"bibkey": "van-rooy-2003", "paperLabel": "(20)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Where can I buy an Italian newspaper?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "The newspaper is sold at the station and at the palace; the best place is the station in one world, the palace in another, and either in a third.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "mention-some: {u,w},{v,w}", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["type", "mention-some"]
+    ],
+    "comment": "The rule asking for the optimal values gives the mention-some meaning; Hamblin's rule gives only the trivial answer, and the rule of footnote 28 adds it."
+  },
+  {
     "id": "vanrooy2003_21",
     "source": {"bibkey": "van-rooy-2003", "paperLabel": "(21)"},
     "reportedIn": null,
@@ -250,5 +270,25 @@
       ["reading", "mention-some"]
     ],
     "comment": "A degree question with a mention-some reading."
+  },
+  {
+    "id": "vanrooy2003_26",
+    "source": {"bibkey": "van-rooy-2003", "paperLabel": "(26)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Which Beatles' autograph do you have?",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A Lennon autograph makes the others irrelevant, and a Harrison autograph makes a Starr autograph irrelevant.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "scalar: one resolving answer per Beatle", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["type", "scalar question"]
+    ],
+    "comment": "Not the partition with seven or eight complete answers but three resolving answers, one for each Beatle."
   }
 ]
