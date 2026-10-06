@@ -52,8 +52,8 @@ The development is stated entirely over Mathlib's `Kernel` and `bayesRisk` with 
 dependencies, so it can serve as a `Mathlib.Probability.Decision.Blackwell` candidate. On the
 utility scale, `Core.Probability.Decision.ValueOfInformation` reads the data-processing direction
 as the statement that garbling an experiment never raises its value of information, and
-`Core.Probability.Decision.Duality` identifies the Bayes risk of a deterministic experiment with
-[van-rooy-2003]'s question utility.
+`Core.Probability.Decision.Duality` identifies the value of information of a deterministic
+experiment with [van-rooy-2003]'s question utility.
 
 `Kernel.BlackwellDominates` quantifies over *all* decision problems (every measurable action space
 `𝓨` and loss `ℓ : Θ → 𝓨 → ℝ≥0∞`) and priors: dominance for a single one does not force garbling.
@@ -464,29 +464,9 @@ theorem isGarblingOf_iff_blackwellDominates
 
 A deterministic classifier `f : Θ → 𝓧` is the experiment `Kernel.deterministic f hf`, an
 error-free observation of the cell of `θ` in the partition of `Θ` into the fibers of `f`.
-Coarsening the partition is a deterministic garbling, so a finer partition Blackwell-dominates
-every coarsening. On the utility scale this is the monotonicity of question utility under
-refinement, `Core.DecisionTheory.DecisionProblem.questionUtility_mono_of_refines`, which
-[van-rooy-2003] presents as a special case of [blackwell-1953]. -/
-
-/-- Post-processing by `g` turns the experiment observing `f θ` into the one observing
-`g (f θ)`, so a coarsened classifier is a garbling of the classifier it factors through. -/
-theorem Kernel.deterministic_comp_isGarblingOf_deterministic {𝓨 : Type*} [MeasurableSpace 𝓨]
-    {f : Θ → 𝓧} {g : 𝓧 → 𝓨} (hf : Measurable f) (hg : Measurable g) :
-    (Kernel.deterministic (g ∘ f) (hg.comp hf)).IsGarblingOf (Kernel.deterministic f hf) :=
-  ⟨Kernel.deterministic g hg, inferInstance,
-    (Kernel.deterministic_comp_deterministic hf hg).symm⟩
-
-/-- In every decision problem, observing `f θ` has Bayes risk at most that of observing
-`g (f θ)`, so a finer partition is worth at least as much as any coarsening. -/
-theorem bayesRisk_deterministic_le_deterministic_comp {𝓨 : Type u} [MeasurableSpace 𝓨]
-    {𝓨' : Type u} [MeasurableSpace 𝓨']
-    {f : Θ → 𝓧'} {g : 𝓧' → 𝓨} (hf : Measurable f) (hg : Measurable g)
-    (ℓ : Θ → 𝓨' → ℝ≥0∞) (π : Measure Θ) :
-    bayesRisk ℓ (Kernel.deterministic f hf) π ≤
-      bayesRisk ℓ (Kernel.deterministic (g ∘ f) (hg.comp hf)) π :=
-  bayesRisk_le_of_isGarblingOf ℓ
-    (Kernel.deterministic_comp_isGarblingOf_deterministic hf hg) π
+Between deterministic experiments the garbling order is functional factoring, which
+`Core.Probability.Decision.Duality` uses to read the converse as [van-rooy-2003]'s comparison
+of partition questions. -/
 
 /-- `deterministic g` is a garbling of `deterministic f` exactly when `g` factors through `f`;
 randomized post-processing gains nothing between deterministic experiments. -/
@@ -517,93 +497,5 @@ theorem Kernel.deterministic_isGarblingOf_deterministic_iff {𝓨 : Type*}
   · rintro ⟨ψ, rfl⟩
     exact ⟨Kernel.deterministic ψ (measurable_of_countable ψ), inferInstance,
       (Kernel.deterministic_comp_deterministic hf (measurable_of_countable ψ)).symm⟩
-
-/-- The average risk of an estimator `κ` on the deterministic experiment `f` regroups by cell
-as `∑_x ∑_y κ(x){y} · ∑_{θ ∈ fiber x} π{θ}·ℓ(θ, y)`. -/
-private lemma avgRisk_deterministic_fintype_eq [Fintype Θ] [Fintype 𝓧]
-    [DecidableEq 𝓧] [MeasurableSingletonClass Θ] [MeasurableSingletonClass 𝓧]
-    {𝓨 : Type u} [MeasurableSpace 𝓨] [Fintype 𝓨] [MeasurableSingletonClass 𝓨]
-    {f : Θ → 𝓧} (hf : Measurable f) (ℓ : Θ → 𝓨 → ℝ≥0∞) (π : Measure Θ)
-    (κ : Kernel 𝓧 𝓨) :
-    avgRisk ℓ (Kernel.deterministic f hf) κ π =
-      ∑ x : 𝓧, ∑ y : 𝓨, κ x {y} *
-        ∑ θ ∈ Finset.univ.filter (f · = x), π {θ} * ℓ θ y := by
-  rw [avgRisk_fintype]
-  calc ∑ θ, (∫⁻ y, ℓ θ y ∂((κ ∘ₖ Kernel.deterministic f hf) θ)) * π {θ}
-      = ∑ θ, ∑ y : 𝓨, κ (f θ) {y} * (π {θ} * ℓ θ y) := by
-        refine Finset.sum_congr rfl fun θ _ => ?_
-        rw [Kernel.comp_deterministic_eq_comap, Kernel.comap_apply, lintegral_fintype,
-          Finset.sum_mul]
-        exact Finset.sum_congr rfl fun y _ => by ring
-    _ = ∑ x, ∑ θ ∈ Finset.univ.filter (f · = x),
-            ∑ y : 𝓨, κ x {y} * (π {θ} * ℓ θ y) := by
-        rw [← Finset.sum_fiberwise_of_maps_to (fun θ _ => Finset.mem_univ (f θ))
-              (fun θ => ∑ y : 𝓨, κ (f θ) {y} * (π {θ} * ℓ θ y))]
-        refine Finset.sum_congr rfl fun x _ => Finset.sum_congr rfl fun θ hθ => ?_
-        rw [(Finset.mem_filter.mp hθ).2]
-    _ = ∑ x, ∑ y : 𝓨, κ x {y} *
-            ∑ θ ∈ Finset.univ.filter (f · = x), π {θ} * ℓ θ y := by
-        refine Finset.sum_congr rfl fun x _ => ?_
-        rw [Finset.sum_comm]
-        exact Finset.sum_congr rfl fun y _ => by rw [Finset.mul_sum]
-
-/-- On finite spaces, the Bayes risk of a deterministic experiment is the sum over cells of the
-least expected loss of an action on the cell, since the optimal estimator picks the best action
-in each cell. -/
-theorem bayesRisk_deterministic [Fintype Θ] [Fintype 𝓧] [DecidableEq 𝓧]
-    [MeasurableSingletonClass Θ] [MeasurableSingletonClass 𝓧] {𝓨 : Type u}
-    [MeasurableSpace 𝓨] [Fintype 𝓨] [Nonempty 𝓨] [MeasurableSingletonClass 𝓨]
-    {f : Θ → 𝓧} (hf : Measurable f) (ℓ : Θ → 𝓨 → ℝ≥0∞) (π : Measure Θ)
-    [IsFiniteMeasure π] :
-    bayesRisk ℓ (Kernel.deterministic f hf) π =
-      ∑ x : 𝓧, ⨅ y : 𝓨, ∑ θ ∈ Finset.univ.filter (f · = x), π {θ} * ℓ θ y := by
-  classical
-  set F : 𝓧 → 𝓨 → ℝ≥0∞ :=
-    fun x y => ∑ θ ∈ Finset.univ.filter (f · = x), π {θ} * ℓ θ y with hF_def
-  -- Best action per cell.
-  have hbest : ∀ x : 𝓧, ∃ y : 𝓨, ∀ y' : 𝓨, F x y ≤ F x y' := fun x => by
-    obtain ⟨y, _, hy⟩ :=
-      Finset.exists_min_image Finset.univ (F x) Finset.univ_nonempty
-    exact ⟨y, fun y' => hy y' (Finset.mem_univ y')⟩
-  choose ystar hystar using hbest
-  have h_meas : Measurable ystar := measurable_of_countable ystar
-  have hstar_min : ∀ x, F x (ystar x) = ⨅ y : 𝓨, F x y := fun x =>
-    le_antisymm (le_iInf fun y => hystar x y) (iInf_le _ _)
-  refine le_antisymm ?_ ?_
-  · -- `≤`: the best-response estimator `κ* = deterministic ystar` attains the RHS.
-    calc bayesRisk ℓ (Kernel.deterministic f hf) π
-        ≤ avgRisk ℓ (Kernel.deterministic f hf)
-            (Kernel.deterministic ystar h_meas) π :=
-          bayesRisk_le_avgRisk _ _ _ _
-      _ = ∑ θ, ℓ θ (ystar (f θ)) * π {θ} := by
-          rw [avgRisk_fintype]
-          refine Finset.sum_congr rfl fun θ _ => ?_
-          rw [Kernel.deterministic_comp_deterministic hf h_meas,
-            Kernel.deterministic_apply, lintegral_dirac]; rfl
-      _ = ∑ x, ∑ θ ∈ Finset.univ.filter (f · = x), ℓ θ (ystar (f θ)) * π {θ} :=
-          (Finset.sum_fiberwise_of_maps_to (fun θ _ => Finset.mem_univ (f θ)) _).symm
-      _ = ∑ x, F x (ystar x) := by
-          refine Finset.sum_congr rfl fun x _ => ?_
-          simp only [hF_def]
-          refine Finset.sum_congr rfl fun θ hθ => ?_
-          rw [(Finset.mem_filter.mp hθ).2, mul_comm]
-      _ = ∑ x, ⨅ y : 𝓨, F x y := Finset.sum_congr rfl fun x _ => hstar_min x
-  · -- `≥`: every Markov estimator's cellwise risk exceeds the cellwise infimum.
-    rw [bayesRisk]
-    refine le_iInf fun κ => le_iInf fun hκ => ?_
-    have := hκ
-    rw [avgRisk_deterministic_fintype_eq hf ℓ π κ]
-    refine Finset.sum_le_sum fun x _ => ?_
-    calc (⨅ y : 𝓨, F x y)
-        = (⨅ y : 𝓨, F x y) * 1 := (mul_one _).symm
-      _ = (⨅ y : 𝓨, F x y) * κ x Set.univ := by rw [measure_univ]
-      _ = (⨅ y : 𝓨, F x y) * ∑ y : 𝓨, κ x {y} := by
-          congr 1
-          rw [← Finset.coe_univ (α := 𝓨),
-            ← sum_measure_singleton (μ := κ x) (s := Finset.univ)]
-      _ = ∑ y : 𝓨, (⨅ y' : 𝓨, F x y') * κ x {y} := Finset.mul_sum _ _ _
-      _ ≤ ∑ y : 𝓨, F x y * κ x {y} := by gcongr with y _; exact iInf_le _ _
-      _ = ∑ y : 𝓨, κ x {y} * F x y :=
-          Finset.sum_congr rfl fun y _ => mul_comm _ _
 
 end ProbabilityTheory

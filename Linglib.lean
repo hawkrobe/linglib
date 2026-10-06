@@ -35,7 +35,6 @@ import Linglib.Core.Algebra.RootedTree.PreLie.InsertionUnordered
 import Linglib.Core.Algebra.RotaBaxter
 import Linglib.Core.Algebra.RotaBaxterLaurent
 import Linglib.Core.Algebra.Group.IdempotentPower
-import Linglib.Core.Analysis.Convex.Function
 import Linglib.Core.Analysis.LeastSquares
 import Linglib.Core.Analysis.SpecialFunctions.Sigmoid
 import Linglib.Core.Analysis.SpecialFunctions.Softmax
