@@ -7,15 +7,17 @@ module
 
 public import Mathlib.Data.Fintype.Basic
 public import Mathlib.Data.Setoid.Basic
+public import Mathlib.Data.Setoid.Partition
 
 /-!
 # Kernel monotonicity, meets, and decidable equality for setoids
 
 This file adds to `Mathlib/Data/Setoid/Basic.lean` the monotonicity of `Setoid.ker` under
 composition and its equality case for an injective outer map, the relation of an indexed meet
-of setoids, and decidable equality of setoids on a finite type. Mathlib has the monotonicity
-for algebraic kernels (`LinearMap.ker_le_ker_comp`, `MonoidHom.comap_ker`,
-`RingHom.ker_comp_of_injective`) but not for the plain `Setoid.ker` they specialize. [UPSTREAM]
+of setoids, the classes of a meet and the order in terms of classes, and decidable equality of
+setoids on a finite type. Mathlib has the monotonicity for algebraic kernels
+(`LinearMap.ker_le_ker_comp`, `MonoidHom.comap_ker`, `RingHom.ker_comp_of_injective`) but not for
+the plain `Setoid.ker` they specialize. [UPSTREAM]
 -/
 
 @[expose] public section
@@ -38,6 +40,32 @@ theorem Setoid.iInf_iff {α : Type*} {ι : Sort*} {f : ι → Setoid α} {a b : 
     (⨅ i, f i) a b ↔ ∀ i, f i a b := by
   rw [iInf, Setoid.sInf_iff]
   simp
+
+/-- The classes of a meet of setoids are the nonempty intersections of their classes.
+[UPSTREAM] -/
+theorem Setoid.classes_inf {α : Type*} (r s : Setoid α) :
+    (r ⊓ s).classes = {c | ∃ a ∈ r.classes, ∃ b ∈ s.classes, c = a ∩ b ∧ c.Nonempty} := by
+  ext c
+  constructor
+  · rintro ⟨y, rfl⟩
+    exact ⟨_, r.mem_classes y, _, s.mem_classes y, Set.ext fun _ ↦ Setoid.inf_iff_and, y,
+      r.refl' y, s.refl' y⟩
+  · rintro ⟨a, ⟨x, rfl⟩, b, ⟨y, rfl⟩, rfl, z, hzx, hzy⟩
+    refine ⟨z, Set.ext fun v ↦ ?_⟩
+    change r v x ∧ s v y ↔ (r ⊓ s) v z
+    exact ⟨fun ⟨h₁, h₂⟩ ↦
+        Setoid.inf_iff_and.2 ⟨r.trans' h₁ (r.symm' hzx), s.trans' h₂ (s.symm' hzy)⟩,
+      fun h ↦ let ⟨h₁, h₂⟩ := Setoid.inf_iff_and.1 h; ⟨r.trans' h₁ hzx, s.trans' h₂ hzy⟩⟩
+
+/-- One setoid is finer than another when each of its classes lies in a class of the other.
+[UPSTREAM] -/
+theorem Setoid.le_iff_forall_classes {α : Type*} {r s : Setoid α} :
+    r ≤ s ↔ ∀ a ∈ r.classes, ∃ b ∈ s.classes, a ⊆ b := by
+  refine ⟨?_, fun h ↦ Setoid.le_def.2 fun {x y} hxy ↦ ?_⟩
+  · rintro h a ⟨y, rfl⟩
+    exact ⟨_, s.mem_classes y, fun _ hx ↦ h hx⟩
+  · obtain ⟨b, hb, hab⟩ := h _ (r.mem_classes y)
+    exact s.rel_iff_exists_classes.2 ⟨b, hb, hab hxy, hab (r.refl' y)⟩
 
 /-- The kernel of a map into a type with decidable equality is decidable. [UPSTREAM] -/
 instance Setoid.ker.decidableRel {α β : Type*} (f : α → β) [DecidableEq β] :
