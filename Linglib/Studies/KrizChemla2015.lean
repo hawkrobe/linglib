@@ -262,9 +262,10 @@ section Approaches
 
 variable (q : NumberTree) [DecidableRel q] (d : Display)
 
-/-- The supervaluation of [spector-2013b] (§6.2) makes the sentence true when both its existential
-and its universal resolution are true and false when neither is. -/
-def supervaluation : Trivalent := gapValue (someReading q d) (allReading q d)
+/-- The supervaluation of [spector-2013b] (§6.2) makes the sentence true when it is true however
+the definite is resolved, existentially or universally, and false when it is false however it is
+resolved. -/
+def supervaluation : Trivalent := Trivalent.supervaluation Finset.univ (reading q d)
 
 /-- The globally double-exhaustified meaning, (30) and (39), is the conjunction of the some- and
 all-substituted readings, [magri-2014]'s double strengthening
@@ -293,29 +294,31 @@ def pointwise : Trivalent := Trivalent.supervaluation (resolutions d).toFinset (
 
 variable {q d}
 
-/-- The supervaluation ranges over the two designation standards, the sentence being true however
-the definite is resolved and false however it is resolved. -/
+/-- The supervaluation ranges over the two designation standards. -/
 theorem supervaluation_eq_designations :
-    supervaluation q d = Trivalent.supervaluation Finset.univ (reading q d) := by
-  have h : (Finset.univ : Finset Bool).image (if · then Designation.lp else .k3) =
-      Finset.univ := by decide
-  rw [← h, Trivalent.supervaluation_image, supervaluation, gapValue]
-  exact Trivalent.supervaluation_congr fun b _ ↦ by cases b <;> rfl
+    supervaluation q d = Trivalent.supervaluation Finset.univ (reading q d) :=
+  rfl
+
+private theorem forall_designation {P : Designation → Prop} : (∀ δ, P δ) ↔ P .lp ∧ P .k3 :=
+  ⟨fun h ↦ ⟨h _, h _⟩, fun ⟨h₁, h₂⟩ δ ↦ by cases δ <;> assumption⟩
 
 /-- The supervaluation is true when both variants are. -/
 theorem supervaluation_eq_true_iff :
-    supervaluation q d = .true ↔ someReading q d ∧ allReading q d :=
-  gapValue_eq_true_iff
+    supervaluation q d = .true ↔ someReading q d ∧ allReading q d := by
+  simp [supervaluation, Trivalent.supervaluation_eq_true_iff, forall_designation]
 
 /-- The supervaluation is false when neither variant is true. -/
 theorem supervaluation_eq_false_iff :
-    supervaluation q d = .false ↔ ¬ someReading q d ∧ ¬ allReading q d :=
-  gapValue_eq_false_iff
+    supervaluation q d = .false ↔ ¬ someReading q d ∧ ¬ allReading q d := by
+  simp [supervaluation, Trivalent.supervaluation_eq_false_iff, forall_designation]
 
 /-- The supervaluation gaps when the variants differ. -/
 theorem supervaluation_eq_indet_iff :
-    supervaluation q d = .indet ↔ ¬ (someReading q d ↔ allReading q d) :=
-  gapValue_eq_indet_iff
+    supervaluation q d = .indet ↔ ¬ (someReading q d ↔ allReading q d) := by
+  have h {P : Designation → Prop} : (∃ δ, P δ) ↔ P .lp ∨ P .k3 :=
+    ⟨fun ⟨δ, h⟩ ↦ by cases δ <;> tauto, fun h ↦ h.elim (⟨_, ·⟩) (⟨_, ·⟩)⟩
+  simp only [supervaluation, Trivalent.supervaluation_eq_indet_iff, Finset.mem_univ, true_and, h]
+  tauto
 
 /-- A display without partial cells gets a bivalent verdict, whatever the quantifier. -/
 theorem supervaluation_ne_indet (h : ∀ v ∈ d, v.isDefined) : supervaluation q d ≠ .indet := by
@@ -326,14 +329,13 @@ cells, since negating every cell gives the supervaluation of the inner negation.
 theorem supervaluation_map_neg :
     supervaluation q (d.map Trivalent.neg) = supervaluation q.innerNeg d := by
   have h : (Finset.univ : Finset Designation).image Designation.dual = Finset.univ := by decide
-  rw [supervaluation_eq_designations, supervaluation_eq_designations]
+  rw [supervaluation, supervaluation]
   conv_rhs => rw [← h, Trivalent.supervaluation_image]
   exact Trivalent.supervaluation_congr fun δ _ ↦ reading_map_neg δ
 
 /-- The outer negation of the quantifier negates the supervaluation. -/
 theorem supervaluation_compl : supervaluation qᶜ d = (supervaluation q d).neg := by
-  rw [supervaluation_eq_designations, supervaluation_eq_designations,
-    ← Trivalent.supervaluation_not _ Finset.univ_nonempty]
+  rw [supervaluation, supervaluation, ← Trivalent.supervaluation_not _ Finset.univ_nonempty]
   rfl
 
 omit [DecidableRel q] in
@@ -454,7 +456,7 @@ variable {q : NumberTree} [DecidableRel q] {d : Display}
 theorem supervaluation_eq_image :
     supervaluation q d =
       Trivalent.supervaluation (Finset.univ.image fun δ ↦ resolve δ d) (holds q) := by
-  rw [supervaluation_eq_designations, Trivalent.supervaluation_image]
+  rw [supervaluation, Trivalent.supervaluation_image]
   rfl
 
 /-- Richer candidates can only add gaps, since whatever the quantifier the per-boy supervaluation
