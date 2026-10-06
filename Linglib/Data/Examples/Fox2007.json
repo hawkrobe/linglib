@@ -2,8 +2,8 @@
   {
     "id": "fox2007_ex16",
     "source": {
-      "bibkey": "kamp-1973",
-      "paperLabel": "free choice permission"
+      "bibkey": "fox-2007",
+      "paperLabel": "(16)"
     },
     "language": "stan1293",
     "primaryText": "You're allowed to eat the cake or the ice-cream.",
@@ -19,37 +19,8 @@
         "judgment": "acceptable"
       }
     ],
-    "paperFeatures": [
-      [
-        "quantifier",
-        "possibility"
-      ],
-      [
-        "number",
-        "none"
-      ],
-      [
-        "connective",
-        "or"
-      ],
-      [
-        "scope",
-        "narrow"
-      ],
-      [
-        "fc",
-        "yes"
-      ],
-      [
-        "status",
-        "accounted"
-      ]
-    ],
-    "comment": "Free choice permission (17), Kamp's inference.",
-    "reportedIn": {
-      "bibkey": "fox-2007",
-      "paperLabel": "(16)"
-    }
+    "paperFeatures": [],
+    "comment": "Kamp (1973) is credited with the free choice inference (17)."
   },
   {
     "id": "fox2007_ex21",
@@ -71,33 +42,8 @@
         "judgment": "unacceptable"
       }
     ],
-    "paperFeatures": [
-      [
-        "quantifier",
-        "negatedPossibility"
-      ],
-      [
-        "number",
-        "none"
-      ],
-      [
-        "connective",
-        "or"
-      ],
-      [
-        "scope",
-        "narrow"
-      ],
-      [
-        "fc",
-        "no"
-      ],
-      [
-        "status",
-        "accounted"
-      ]
-    ],
-    "comment": "The negation of the standard meaning, not of free choice: no trace of FC under a downward-entailing operator."
+    "paperFeatures": [],
+    "comment": "The negation of the standard meaning, not of free choice: no trace of free choice under a downward-entailing operator. The paper gives no derivation in the exhaustification system."
   },
   {
     "id": "fox2007_ex25",
@@ -119,33 +65,8 @@
         "judgment": "acceptable"
       }
     ],
-    "paperFeatures": [
-      [
-        "quantifier",
-        "negatedNecessity"
-      ],
-      [
-        "number",
-        "none"
-      ],
-      [
-        "connective",
-        "and"
-      ],
-      [
-        "scope",
-        "narrow"
-      ],
-      [
-        "fc",
-        "yes"
-      ],
-      [
-        "status",
-        "accounted"
-      ]
-    ],
-    "comment": "Inference (26): not required to clear the table and not required to do the dishes."
+    "paperFeatures": [],
+    "comment": "Inference (26): not required to clear the table and not required to do the dishes; also inference (35a): required to clear the table or do the dishes."
   },
   {
     "id": "fox2007_ex28a",
@@ -167,32 +88,7 @@
         "judgment": "acceptable"
       }
     ],
-    "paperFeatures": [
-      [
-        "quantifier",
-        "possibility"
-      ],
-      [
-        "number",
-        "none"
-      ],
-      [
-        "connective",
-        "or"
-      ],
-      [
-        "scope",
-        "narrow"
-      ],
-      [
-        "fc",
-        "yes"
-      ],
-      [
-        "status",
-        "accounted"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": ""
   },
   {
@@ -202,7 +98,7 @@
       "paperLabel": "(28b)"
     },
     "language": "stan1293",
-    "primaryText": "He can climb Mt. Everest or ski the Matterhorn.",
+    "primaryText": "He is a very talented man. He can climb Mt. Everest or ski the Matterhorn.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -215,32 +111,7 @@
         "judgment": "acceptable"
       }
     ],
-    "paperFeatures": [
-      [
-        "quantifier",
-        "possibility"
-      ],
-      [
-        "number",
-        "none"
-      ],
-      [
-        "connective",
-        "or"
-      ],
-      [
-        "scope",
-        "narrow"
-      ],
-      [
-        "fc",
-        "yes"
-      ],
-      [
-        "status",
-        "accounted"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": ""
   },
   {
@@ -265,28 +136,8 @@
     ],
     "paperFeatures": [
       [
-        "quantifier",
-        "existential"
-      ],
-      [
         "number",
         "mass"
-      ],
-      [
-        "connective",
-        "or"
-      ],
-      [
-        "scope",
-        "narrow"
-      ],
-      [
-        "fc",
-        "yes"
-      ],
-      [
-        "status",
-        "accounted"
       ]
     ],
     "comment": ""
@@ -313,28 +164,8 @@
     ],
     "paperFeatures": [
       [
-        "quantifier",
-        "existential"
-      ],
-      [
         "number",
         "plural"
-      ],
-      [
-        "connective",
-        "or"
-      ],
-      [
-        "scope",
-        "narrow"
-      ],
-      [
-        "fc",
-        "yes"
-      ],
-      [
-        "status",
-        "accounted"
       ]
     ],
     "comment": ""
@@ -361,28 +192,8 @@
     ],
     "paperFeatures": [
       [
-        "quantifier",
-        "existential"
-      ],
-      [
         "number",
         "plural"
-      ],
-      [
-        "connective",
-        "or"
-      ],
-      [
-        "scope",
-        "narrow"
-      ],
-      [
-        "fc",
-        "yes"
-      ],
-      [
-        "status",
-        "accounted"
       ]
     ],
     "comment": ""
@@ -409,28 +220,8 @@
     ],
     "paperFeatures": [
       [
-        "quantifier",
-        "existential"
-      ],
-      [
         "number",
         "singular"
-      ],
-      [
-        "connective",
-        "or"
-      ],
-      [
-        "scope",
-        "narrow"
-      ],
-      [
-        "fc",
-        "no"
-      ],
-      [
-        "status",
-        "accounted"
       ]
     ],
     "comment": ""
@@ -457,31 +248,11 @@
     ],
     "paperFeatures": [
       [
-        "quantifier",
-        "existential"
-      ],
-      [
         "number",
         "singular"
-      ],
-      [
-        "connective",
-        "or"
-      ],
-      [
-        "scope",
-        "narrow"
-      ],
-      [
-        "fc",
-        "no"
-      ],
-      [
-        "status",
-        "accounted"
       ]
     ],
-    "comment": ""
+    "comment": "The manuscript numbers the items of (30) a, c, d."
   },
   {
     "id": "fox2007_ex30d",
@@ -505,31 +276,11 @@
     ],
     "paperFeatures": [
       [
-        "quantifier",
-        "existential"
-      ],
-      [
         "number",
         "singular"
-      ],
-      [
-        "connective",
-        "or"
-      ],
-      [
-        "scope",
-        "narrow"
-      ],
-      [
-        "fc",
-        "no"
-      ],
-      [
-        "status",
-        "accounted"
       ]
     ],
-    "comment": ""
+    "comment": "The manuscript numbers the items of (30) a, c, d."
   },
   {
     "id": "fox2007_ex32",
@@ -551,33 +302,8 @@
         "judgment": "acceptable"
       }
     ],
-    "paperFeatures": [
-      [
-        "quantifier",
-        "negatedUniversal"
-      ],
-      [
-        "number",
-        "none"
-      ],
-      [
-        "connective",
-        "and"
-      ],
-      [
-        "scope",
-        "narrow"
-      ],
-      [
-        "fc",
-        "yes"
-      ],
-      [
-        "status",
-        "accounted"
-      ]
-    ],
-    "comment": ""
+    "paperFeatures": [],
+    "comment": "Inference (35b): we gave every student of ours a stipend or a tuition waiver."
   },
   {
     "id": "fox2007_ex34a",
@@ -599,32 +325,7 @@
         "judgment": "unacceptable"
       }
     ],
-    "paperFeatures": [
-      [
-        "quantifier",
-        "negation"
-      ],
-      [
-        "number",
-        "none"
-      ],
-      [
-        "connective",
-        "and"
-      ],
-      [
-        "scope",
-        "narrow"
-      ],
-      [
-        "fc",
-        "no"
-      ],
-      [
-        "status",
-        "accounted"
-      ]
-    ],
+    "paperFeatures": [],
     "comment": "Conjunction does not outscope negation without an intervening universal."
   },
   {
@@ -647,33 +348,194 @@
         "judgment": "unacceptable"
       }
     ],
+    "paperFeatures": [],
+    "comment": "Surface scope of the conjunction above the universal."
+  },
+  {
+    "id": "fox2007_ex48",
+    "source": {
+      "bibkey": "fox-2007",
+      "paperLabel": "(48)"
+    },
+    "language": "stan1293",
+    "primaryText": "You're required to talk to Mary or Sue.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "not required to talk to Mary",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "not required to talk to Sue",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [],
+    "comment": "Repeated as (65)."
+  },
+  {
+    "id": "fox2007_ex49",
+    "source": {
+      "bibkey": "fox-2007",
+      "paperLabel": "(49)"
+    },
+    "language": "stan1293",
+    "primaryText": "Every friend of mine has a boy friend or a girl friend.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "not every friend has a boy friend",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "not every friend has a girl friend",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [],
+    "comment": "Repeated as (66)."
+  },
+  {
+    "id": "fox2007_ex59",
+    "source": {
+      "bibkey": "fox-2007",
+      "paperLabel": "(59)"
+    },
+    "language": "stan1293",
+    "primaryText": "Some GIRL",
+    "discourseSegments": [
+      "Who did Fred talk to?",
+      "Some GIRL"
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "There are three girls, Mary, Sue, and Jane, and no non-girls.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "exactly one girl",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [],
+    "comment": "Fox credits the question-answer pair to Groenendijk and Stokhof (1984); (63) computes the answer as 'Fred talked to exactly one girl'."
+  },
+  {
+    "id": "fox2007_ex69",
+    "source": {
+      "bibkey": "fox-2007",
+      "paperLabel": "(69)"
+    },
+    "language": "stan1293",
+    "primaryText": "I ate the cake or the ice-cream.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "exclusive or",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [],
+    "comment": "Exhaustification yields the exclusive reading (70), and further layers do not change it."
+  },
+  {
+    "id": "fox2007_ex82a",
+    "source": {
+      "bibkey": "fox-2007",
+      "paperLabel": "(82a)"
+    },
+    "language": "stan1293",
+    "primaryText": "There is a bottle of beer in the fridge.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "not two bottles",
+        "judgment": "acceptable"
+      }
+    ],
     "paperFeatures": [
       [
-        "quantifier",
-        "negation"
-      ],
-      [
         "number",
-        "none"
-      ],
-      [
-        "connective",
-        "and"
-      ],
-      [
-        "scope",
-        "narrow"
-      ],
-      [
-        "fc",
-        "no"
-      ],
-      [
-        "status",
-        "accounted"
+        "singular"
       ]
     ],
-    "comment": "Surface scope of the conjunction above the universal."
+    "comment": "Implicature: there aren't two bottles of beer in the fridge."
+  },
+  {
+    "id": "fox2007_ex82b",
+    "source": {
+      "bibkey": "fox-2007",
+      "paperLabel": "(82b)"
+    },
+    "language": "stan1293",
+    "primaryText": "Some student talked to Mary",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "not two students",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "number",
+        "singular"
+      ]
+    ],
+    "comment": "Implicature: it's not true that two students talked to Mary."
+  },
+  {
+    "id": "fox2007_ex89",
+    "source": {
+      "bibkey": "simons-2005",
+      "paperLabel": ""
+    },
+    "language": "stan1293",
+    "primaryText": "Jane may sing or dance.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "free choice",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [],
+    "comment": "Possible reading: Jane may sing and Jane may dance, compatible with permission to do both.",
+    "reportedIn": {
+      "bibkey": "fox-2007",
+      "paperLabel": "(89)"
+    }
   },
   {
     "id": "fox2007_ex91a",
@@ -697,28 +559,8 @@
     ],
     "paperFeatures": [
       [
-        "quantifier",
-        "possibility"
-      ],
-      [
-        "number",
-        "none"
-      ],
-      [
-        "connective",
-        "or"
-      ],
-      [
         "scope",
         "narrow"
-      ],
-      [
-        "fc",
-        "yes"
-      ],
-      [
-        "status",
-        "accounted"
       ]
     ],
     "comment": ""
@@ -745,28 +587,8 @@
     ],
     "paperFeatures": [
       [
-        "quantifier",
-        "possibility"
-      ],
-      [
-        "number",
-        "none"
-      ],
-      [
-        "connective",
-        "or"
-      ],
-      [
         "scope",
         "wide"
-      ],
-      [
-        "fc",
-        "no"
-      ],
-      [
-        "status",
-        "accounted"
       ]
     ],
     "comment": "Either marks wide scope of the disjunction."
@@ -775,7 +597,7 @@
     "id": "fox2007_ex92",
     "source": {
       "bibkey": "zimmermann-2000",
-      "paperLabel": "free choice disjunction"
+      "paperLabel": ""
     },
     "language": "stan1293",
     "primaryText": "You may eat the cake or you may eat the ice-cream.",
@@ -793,28 +615,8 @@
     ],
     "paperFeatures": [
       [
-        "quantifier",
-        "possibility"
-      ],
-      [
-        "number",
-        "none"
-      ],
-      [
-        "connective",
-        "or"
-      ],
-      [
         "scope",
         "wide"
-      ],
-      [
-        "fc",
-        "yes"
-      ],
-      [
-        "status",
-        "open"
       ]
     ],
     "comment": "Zimmermann's observation; the paper leaves it unresolved.",
@@ -830,7 +632,7 @@
       "paperLabel": "(93a)"
     },
     "language": "stan1293",
-    "primaryText": "Some students waited 3 semesters to complete this course or never finished it at all.",
+    "primaryText": "Some students waited 3 semester to complete this course or never finished it at all.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -845,28 +647,12 @@
     ],
     "paperFeatures": [
       [
-        "quantifier",
-        "existential"
-      ],
-      [
         "number",
         "plural"
       ],
       [
-        "connective",
-        "or"
-      ],
-      [
         "scope",
         "narrow"
-      ],
-      [
-        "fc",
-        "yes"
-      ],
-      [
-        "status",
-        "accounted"
       ]
     ],
     "comment": ""
@@ -878,7 +664,7 @@
       "paperLabel": "(93b)"
     },
     "language": "stan1293",
-    "primaryText": "Some students either waited 3 semesters to complete this course or never finished it at all.",
+    "primaryText": "Some students either waited 3 semester to complete this course or never finished it at all.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -893,28 +679,12 @@
     ],
     "paperFeatures": [
       [
-        "quantifier",
-        "existential"
-      ],
-      [
         "number",
         "plural"
       ],
       [
-        "connective",
-        "or"
-      ],
-      [
         "scope",
         "narrow"
-      ],
-      [
-        "fc",
-        "yes"
-      ],
-      [
-        "status",
-        "accounted"
       ]
     ],
     "comment": ""
@@ -926,7 +696,7 @@
       "paperLabel": "(93c)"
     },
     "language": "stan1293",
-    "primaryText": "Either some students waited 3 semesters to complete this course or some students never finished it at all.",
+    "primaryText": "(Either) Some students waited 3 semester to complete this course or some students never finished it at all.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -941,28 +711,12 @@
     ],
     "paperFeatures": [
       [
-        "quantifier",
-        "existential"
-      ],
-      [
         "number",
         "plural"
       ],
       [
-        "connective",
-        "or"
-      ],
-      [
         "scope",
         "wide"
-      ],
-      [
-        "fc",
-        "no"
-      ],
-      [
-        "status",
-        "accounted"
       ]
     ],
     "comment": ""

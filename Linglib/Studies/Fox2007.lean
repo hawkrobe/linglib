@@ -2,39 +2,74 @@ module
 
 public import Linglib.Semantics.Exhaustification.InnocentExclusion
 public import Linglib.Semantics.Questions.Closure
-public import Linglib.Logic.Modal.Basic
+public import Linglib.Core.Relation.SetRel
 public import Linglib.Data.Examples.Fox2007
+public import Mathlib.Order.OrderIsoNat
 
 /-!
-# Fox (2007): Free Choice and the Theory of Scalar Implicatures
+# Free choice by recursive exhaustification
 
-This file formalizes [fox-2007]'s derivation of free-choice inferences by recursive
-exhaustification. The exhaustivity operator denies the innocently excludable alternatives
-(`Exhaustification.exhIE`); a second layer, `exh₂`, exhaustifies the result against the
-exhaustified alternatives. The Appendix theorem `exh₂_eq_anEx` identifies the second layer
-with the anti-exhaustivity reading `anEx` whenever that reading is consistent, and the theorem
-of the paper's note on the diamond configuration, `IsDiamond.exh₂_eq` and
-`IsDiamond.exh₂_vacuous_iff`, derives free choice for any four alternatives `w = s ∪ n ⊇ e`
-exactly when `e` is stronger than `s ∩ n`. Disjunction under a possibility modal, under an
-existential quantifier, and conjunction under a negated necessity modal instantiate the diamond
-with `e` strictly stronger; unembedded disjunction has `e = s ∩ n`, so its second
-exhaustification is vacuous. `exhIE_conjClosure` is the paper's `some GIRL` computation: against
-the Hamblin alternatives closed under conjunction, innocent exclusion yields *exactly one*.
+From *You may eat the cake or the ice-cream* hearers infer that each option is allowed, though the
+sentence only says that one of them is. Fox derives this free choice inference by exhaustifying
+the sentence twice. The exhaustivity operator `exhIE` asserts its prejacent and denies the
+innocently excludable alternatives, those in every maximal set of alternatives that can be denied
+together consistently with the prejacent. `exhIter C n` applies it `n` times, each layer
+exhaustifying the previous layer's prejacent against the previous layer's alternatives.
+
+The alternatives of a disjunction under an operator `O` are the disjunction, each disjunct and the
+conjunction, all under `O`. When `O` distributes over the disjunction but not over the
+conjunction, as possibility modals and existential quantifiers do, the second layer asserts each
+disjunct under `O`. A negated universal over a conjunction is the same case at the complements.
+When `O` does not distribute over the disjunction, as with necessity modals and universal
+quantifiers, the first layer denies both disjuncts instead, and plain disjunction stays exclusive
+at every layer.
+
+## Main statements
+
+* `exists_exhIter_eq`: over finitely many alternatives, iterated exhaustification eventually
+  stops changing.
+* `exhIter_two_eq_anEx`: the second layer denies the exhaustification of every other
+  alternative, whenever that is consistent.
+* `IsDiamond.exhIter_two_eq_iff`: for a disjunction of two independent alternatives and a fourth
+  alternative stronger than both, the second layer adds something exactly when the fourth is
+  stronger than their conjunction.
+* `IsDiamond.disjoint_exhMW`: exhaustifying by minimal worlds instead contradicts free choice.
+* `free_choice_permission`, `free_choice_not_required`, `existential_free_choice`,
+  `conjunctive_free_choice`: free choice under possibility modals, negated necessity modals,
+  existential quantifiers and negated universal quantifiers.
+* `required_implicatures`, `universal_implicatures`: under necessity modals and universal
+  quantifiers, exhaustification denies both disjuncts.
+* `exclusive_or_of_one_le`: plain disjunction is exclusive at every layer.
+* `singular_no_free_choice`: a singular indefinite, whose alternatives include a plural one, has
+  no free choice reading at any layer.
+* `embedded_scalar_implicature`: for *the reading or some of the homework*, exhaustification
+  denies *all of the homework* but not *the reading*.
+* `exhIE_conjClosure`, `sauerland_exclusion_eq_empty`: against the answers to a question,
+  innocent exclusion yields *exactly one*, while denying every answer that passes Sauerland's
+  test is contradictory.
 
 ## Implementation notes
 
-Propositions are sets of worlds and alternative sets are `Set (Set W)`, so the theorems hold
-over any model; the paper's four-member Sauerland sets are the literal `{w, s, n, e}`. The
-negated-necessity instance uses the four alternatives of the necessity modal alone; the paper
-notes that adding the possibility variants does not change the result. The Zimmermann sentence,
-which the paper leaves unresolved, is a row with the `open` status and is outside the row
-theorem. Example and note numbers follow the manuscript version of the paper.
+Propositions are sets of worlds, so the theorems hold over any model. Example and note numbers
+follow the 2006 manuscript. `exhIter C 0` is the prejacent itself, so the paper's first layer is
+`exhIter C 1`. The sentence before (85) names the plural conjunctive alternative as excludable,
+but (85) needs the plural disjunctive one, which `exhIE_singular` shows is excludable too. The
+examples the paper leaves to scope or to an economy condition on exhaustification ((21), (34),
+(91b), (93c)) and the case it leaves open (92) are rows of `Data.Examples.Fox2007` without a
+theorem.
+
+## TODO
+
+* The paper equates the innocently excludable alternatives with those for which Sauerland's
+  pragmatic system derives secondary implicatures. Stating this needs a belief operator.
 
 ## References
 
 * [fox-2007]
 * [sauerland-2004]
 * [kratzer-shimoyama-2002]
+* [chierchia-2004]
+* [groenendijk-stokhof-1984]
 * [simons-2005]
 * [zimmermann-2000]
 -/
@@ -43,8 +78,7 @@ theorem. Example and note numbers follow the manuscript version of the paper.
 
 namespace Fox2007
 
-open Exhaustification Set ModalLogic
-open SetRel
+open Exhaustification Set
 
 variable {W : Type*}
 
@@ -52,31 +86,80 @@ variable {W : Type*}
 
 section Recursive
 
-variable (C : Set (Set W)) (p : Set W)
+variable (C : Set (Set W))
 
-/-- The second layer of exhaustification: the exhaustified prejacent against the exhaustified
-alternatives `{Exh(C)(q) : q ∈ C}`. -/
-def exh₂ : Set W := exhIE (exhIE C '' C) (exhIE C p)
+/-- Layer `n + 1` of exhaustification exhaustifies layer `n` of the prejacent against layer `n` of
+every alternative; layer `0` is the prejacent itself. -/
+def exhIter : ℕ → Set W → Set W
+  | 0 => id
+  | n + 1 => fun p ↦ exhIE (exhIter n '' C) (exhIter n p)
 
-/-- The anti-exhaustivity reading of the Appendix: the exhaustified prejacent with the
-exhaustification of every other alternative that is not innocently excludable denied. -/
+@[simp] theorem exhIter_zero : exhIter C 0 = id := rfl
+
+theorem exhIter_succ (n : ℕ) (p : Set W) :
+    exhIter C (n + 1) p = exhIE (exhIter C n '' C) (exhIter C n p) := rfl
+
+@[simp] theorem exhIter_one : exhIter C 1 = exhIE C := by
+  ext1 p
+  rw [exhIter_succ, exhIter_zero, image_id, id]
+
+theorem exhIter_two (p : Set W) : exhIter C 2 p = exhIE (exhIE C '' C) (exhIE C p) := by
+  rw [exhIter_succ, exhIter_one]
+
+theorem exhIter_succ_subset (n : ℕ) (p : Set W) : exhIter C (n + 1) p ⊆ exhIter C n p :=
+  exhIE_subset _ _
+
+theorem antitone_exhIter (p : Set W) : Antitone (exhIter C · p) :=
+  antitone_nat_of_succ_le fun n ↦ exhIter_succ_subset C n p
+
+variable {C}
+
+/-- Once a layer leaves every alternative unchanged, so do all later layers. -/
+theorem exhIter_eq_of_succ_eq {n : ℕ} (h : ∀ q ∈ C, exhIter C (n + 1) q = exhIter C n q)
+    {m : ℕ} (hm : n ≤ m) {q : Set W} (hq : q ∈ C) : exhIter C m q = exhIter C n q := by
+  induction m, hm using Nat.le_induction generalizing q with
+  | base => rfl
+  | succ m _ ih => rw [exhIter_succ, image_congr fun r hr ↦ ih hr, ih hq, ← exhIter_succ, h q hq]
+
+/-- Over finitely many alternatives, iterated exhaustification of every alternative eventually
+stops changing, as Spector observed. Every layer is a union of classes of worlds verifying the
+same alternatives, and there are finitely many such unions. -/
+theorem exists_exhIter_eq (hC : C.Finite) :
+    ∃ n, ∀ m, n ≤ m → ∀ q ∈ C, exhIter C m q = exhIter C n q := by
+  let f : W → Set C := fun u ↦ {c | u ∈ (c : Set W)}
+  have hsat : ∀ n, ∀ q ∈ C, f ⁻¹' (f '' exhIter C n q) = exhIter C n q := by
+    intro n
+    induction n with
+    | zero =>
+      refine fun q hq ↦ (subset_preimage_image f _).antisymm' ?_
+      rintro u ⟨v, hv, hvu⟩
+      have : (⟨q, hq⟩ : C) ∈ f v := hv
+      rwa [hvu] at this
+    | succ n ih =>
+      exact fun q hq ↦ exhIE_preimage_image _ _ (hC.image _) (ih q hq)
+        (by rintro _ ⟨r, hr, rfl⟩; exact ih r hr)
+  have : Finite C := hC.to_subtype
+  have hanti : Antitone fun n (q : C) ↦ f '' exhIter C n q :=
+    fun _ _ hij q ↦ image_mono (antitone_exhIter C q.1 hij)
+  obtain ⟨n, hn⟩ := WellFoundedLT.antitone_chain_condition hanti
+  refine ⟨n, fun m hm q hq ↦ ?_⟩
+  rw [← hsat m q hq, ← hsat n q hq, ← congrFun (hn m hm) ⟨q, hq⟩]
+
+variable (C) (p : Set W)
+
+/-- The anti-exhaustivity reading asserts the exhaustified prejacent and denies the
+exhaustification of every other alternative that is not innocently excludable. -/
 def anEx : Set W :=
   exhIE C p ∩ ⋂ q ∈ (C \ {q | IsInnocentlyExcludable C p q}) \ {p}, (exhIE C q)ᶜ
-
-/-- Exhaustifying the prejacent denies the exhaustification of an innocently excludable
-alternative. -/
-theorem exhIE_subset_compl_exhIE {q : Set W} (hq : IsInnocentlyExcludable C p q) :
-    exhIE C p ⊆ (exhIE C q)ᶜ :=
-  λ _ hu hq' => hu qᶜ hq.2 (hq' q (self_mem_IE C q))
 
 /-- The anti-exhaustivity reading denies the exhaustification of every other alternative. -/
 theorem anEx_eq : anEx C p = exhIE C p ∩ ⋂ q ∈ C \ {p}, (exhIE C q)ᶜ := by
   ext u
   simp only [anEx, mem_inter_iff, mem_iInter₂, mem_sdiff, mem_singleton_iff, mem_ofPred_eq,
     mem_compl_iff]
-  refine and_congr_right λ hu => ⟨λ h q hq => ?_, λ h q hq => h q ⟨hq.1.1, hq.2⟩⟩
+  refine and_congr_right fun hu ↦ ⟨fun h q hq ↦ ?_, fun h q hq ↦ h q ⟨hq.1.1, hq.2⟩⟩
   by_cases hIE : IsInnocentlyExcludable C p q
-  · exact exhIE_subset_compl_exhIE C p hIE hu
+  · exact hIE.exhIE_subset_compl_exhIE hu
   · exact h q ⟨⟨hq.1, hIE⟩, hq.2⟩
 
 /-- The anti-exhaustivity reading for alternatives listed apart from the prejacent. -/
@@ -86,116 +169,42 @@ theorem anEx_insert {C₀ : Set (Set W)} (hp : p ∉ C₀) :
   congr 1
   ext u
   simp only [mem_iInter₂, mem_sdiff, mem_insert_iff, mem_singleton_iff]
-  exact ⟨λ h q hq => h q ⟨Or.inr hq, λ hqp => hp (hqp ▸ hq)⟩,
-    λ h q hq => h q (hq.1.resolve_left hq.2)⟩
+  exact ⟨fun h q hq ↦ h q ⟨Or.inr hq, fun hqp ↦ hp (hqp ▸ hq)⟩,
+    fun h q hq ↦ h q (hq.1.resolve_left hq.2)⟩
 
-/-- The Appendix theorem: a consistent anti-exhaustivity reading is the second layer. -/
-theorem exh₂_eq_anEx (hfin : C.Finite) (hp : p ∈ C) (h : (anEx C p).Nonempty) :
-    exh₂ C p = anEx C p := by
+/-- A consistent anti-exhaustivity reading denies every exhaustified alternative that the
+exhaustified prejacent does not entail. -/
+theorem anEx_eq_exh (h : (anEx C p).Nonempty) : anEx C p = exh (exhIE C '' C) (exhIE C p) := by
   rw [anEx_eq] at h ⊢
   obtain ⟨w, hw, hw'⟩ := h
   have hw'' := mem_iInter₂.1 hw'
-  have hfin' : (exhIE C '' C).Finite := hfin.image _
   ext u
-  rw [exh₂, mem_exhIE_iff _ _ hfin', mem_inter_iff, mem_iInter₂]
-  refine and_congr_right λ hu => ⟨λ h q hq => h _ ?_, λ h b hb => ?_⟩
-  · refine .of_forall_subset_or_notMem (mem_image_of_mem _ hq.1) hw (hw'' q hq) ?_
-    rintro _ ⟨q', hq', rfl⟩
-    by_cases hqp : q' = p
-    · exact Or.inl (hqp ▸ subset_rfl)
-    · exact Or.inr (hw'' q' ⟨hq', hqp⟩)
-  · obtain ⟨q, hq, rfl⟩ := hb.1
+  simp only [mem_inter_iff, mem_iInter₂, mem_exh, mem_sdiff, mem_singleton_iff, mem_compl_iff]
+  refine and_congr_right fun hu ↦ ⟨fun h' _ ⟨q, hq, hqe⟩ huq ↦ ?_, fun h' q ⟨hq, hqp⟩ huq ↦ ?_⟩
+  · subst hqe
     by_cases hqp : q = p
-    · subst hqp
-      exact (not_isInnocentlyExcludable_of_phi_subset hfin' ⟨u, hu⟩ subset_rfl hb).elim
-    · exact h q ⟨hq, hqp⟩
+    · exact hqp ▸ subset_rfl
+    · exact (h' q ⟨hq, hqp⟩ huq).elim
+  · exact hw'' q ⟨hq, hqp⟩ (h' _ (mem_image_of_mem _ hq) huq hw)
+
+/-- A consistent anti-exhaustivity reading is the second layer of exhaustification, as the
+paper's Appendix proves. -/
+theorem exhIter_two_eq_anEx (h : (anEx C p).Nonempty) : exhIter C 2 p = anEx C p := by
+  have he := anEx_eq_exh C p h
+  rw [exhIter_two, exhIE_eq_exh_of_nonempty _ _ (he ▸ h), he]
 
 end Recursive
 
-/-! ### Disjunction and its disjuncts -/
-
-/-- A disjunction against its disjuncts and one further alternative: only the further
-alternative is innocently excludable, when each disjunct can hold without the other and
-without it. -/
-theorem isInnocentlyExcludable_pair_iff {A B D : Set W} (hA : ((A \ B) \ D).Nonempty)
-    (hB : ((B \ A) \ D).Nonempty) {q : Set W} (hq : q ∈ ({A ∪ B, A, B, D} : Set (Set W))) :
-    IsInnocentlyExcludable {A ∪ B, A, B, D} (A ∪ B) q ↔ q = D := by
-  obtain ⟨a, ha⟩ := hA
-  obtain ⟨b, hb⟩ := hB
-  have notIE : ∀ {A B : Set W} {a : W}, a ∈ (A \ B) \ D →
-      ¬ IsInnocentlyExcludable {A ∪ B, A, B, D} (A ∪ B) A := by
-    intro A B a ha
-    rw [isInnocentlyExcludable_iff_exhMW_subset_compl {A ∪ B, A, B, D} (A ∪ B) A (by simp)]
-    refine λ h => h ⟨Or.inl ha.1.1, ?_⟩ ha.1.1
-    rintro ⟨v, hv, hva, hnav⟩
-    rcases hv with hvA | hvB
-    · refine hnav λ c hc hac => ?_
-      simp only [mem_insert_iff, mem_singleton_iff] at hc
-      obtain h1 | h1 | h1 | h1 := hc <;> subst c
-      · exact Or.inl hvA
-      · exact hvA
-      · exact (ha.1.2 hac).elim
-      · exact (ha.2 hac).elim
-    · exact ha.1.2 (hva B (by simp) hvB)
-  have hD : IsInnocentlyExcludable {A ∪ B, A, B, D} (A ∪ B) D := by
-    refine .of_extension_consistent (by simp) λ E hE => ?_
-    obtain ⟨v, hv⟩ := hE.1.2.2
-    have key : ∀ {A B : Set W} {b : W}, b ∈ (B \ A) \ D → Bᶜ ∉ E → A ∪ B ∈ E →
-        (∀ ψ ∈ E, ψ = A ∪ B ∨ ∃ c ∈ ({A ∪ B, A, B, D} : Set (Set W)), ψ = cᶜ) →
-        b ∈ ⋂₀ (E ∪ {Dᶜ}) := by
-      intro A B b hb hBE hPE hE'
-      rintro ψ (hψ | hψ)
-      · rcases hE' ψ hψ with rfl | ⟨c, hc, rfl⟩
-        · exact Or.inr hb.1.1
-        · simp only [mem_insert_iff, mem_singleton_iff] at hc
-          obtain h1 | h1 | h1 | h1 := hc <;> subst c
-          · exact (hv _ hψ (hv _ hPE)).elim
-          · exact hb.1.2
-          · exact (hBE hψ).elim
-          · exact hb.2
-      · rw [mem_singleton_iff] at hψ
-        exact hψ ▸ hb.2
-    by_cases hBE : Bᶜ ∈ E
-    · have hAE : Aᶜ ∉ E := λ hAE =>
-        (hv _ hE.1.1).elim (hv _ hAE) (hv _ hBE)
-      have hE' : ∀ ψ ∈ E, ψ = B ∪ A ∨ ∃ c ∈ ({B ∪ A, B, A, D} : Set (Set W)), ψ = cᶜ := by
-        rw [union_comm B A, insert_comm B A]
-        exact hE.1.2.1
-      exact ⟨a, key ha hAE (union_comm B A ▸ hE.1.1) hE'⟩
-    · exact ⟨b, key hb hBE hE.1.1 hE.1.2.1⟩
-  simp only [mem_insert_iff, mem_singleton_iff] at hq
-  obtain h1 | h1 | h1 | h1 := hq <;> subst q
-  · exact iff_of_false (not_isInnocentlyExcludable_of_phi_subset (toFinite _) ⟨a, Or.inl ha.1.1⟩
-      subset_rfl) λ h => ha.2 (h ▸ Or.inl ha.1.1)
-  · exact iff_of_false (notIE ha) λ h => ha.2 (h ▸ ha.1.1)
-  · refine iff_of_false ?_ λ h => hb.2 (h ▸ hb.1.1)
-    have := notIE hb
-    rwa [union_comm B A, insert_comm B A] at this
-  · exact iff_of_true hD rfl
-
-/-- Exhaustifying the disjunction denies only the further alternative. -/
-theorem exhIE_pair {A B D : Set W} (hA : ((A \ B) \ D).Nonempty)
-    (hB : ((B \ A) \ D).Nonempty) : exhIE {A ∪ B, A, B, D} (A ∪ B) = (A ∪ B) \ D := by
-  rw [exhIE_eq_of_iff _ _ (toFinite _) λ q hq => isInnocentlyExcludable_pair_iff hA hB hq]
-  ext u
-  exact ⟨λ ⟨hu, h⟩ => ⟨hu, h D (by simp) rfl⟩, λ ⟨hu, huD⟩ => ⟨hu, λ _ _ hqD => hqD ▸ huD⟩⟩
-
-/-- Exclusive *or*: the Sauerland alternatives of a disjunction exclude only the conjunction. -/
-theorem exhIE_or {p q : Set W} (hp : (p \ q).Nonempty) (hq : (q \ p).Nonempty) :
-    exhIE {p ∪ q, p, q, p ∩ q} (p ∪ q) = (p ∪ q) \ (p ∩ q) :=
-  exhIE_pair ⟨hp.some, hp.some_mem, λ h => hp.some_mem.2 h.2⟩
-    ⟨hq.some, hq.some_mem, λ h => hq.some_mem.2 h.1⟩
-
 /-! ### The diamond -/
 
-/-- Four alternatives in the diamond configuration of the paper's note on §8: `w` is the
-disjunction of the logically independent `s` and `n`, and `e` is stronger than both. -/
+/-- Four alternatives form a diamond when the weakest `w` is the disjunction of the logically
+independent `s` and `n`, and the strongest `e` entails both. -/
 structure IsDiamond (w s n e : Set W) : Prop where
   union : w = s ∪ n
-  le_s : e ⊆ s
-  le_n : e ⊆ n
-  sn : (s \ n).Nonempty
-  ns : (n \ s).Nonempty
+  subset_left : e ⊆ s
+  subset_right : e ⊆ n
+  nonempty_sdiff_left : (s \ n).Nonempty
+  nonempty_sdiff_right : (n \ s).Nonempty
 
 namespace IsDiamond
 
@@ -203,75 +212,88 @@ variable {w s n e : Set W} (h : IsDiamond w s n e)
 include h
 
 theorem symm : IsDiamond w n s e :=
-  ⟨h.union.trans (union_comm _ _), h.le_n, h.le_s, h.ns, h.sn⟩
+  ⟨h.union.trans (union_comm _ _), h.subset_right, h.subset_left, h.nonempty_sdiff_right,
+    h.nonempty_sdiff_left⟩
 
 theorem notMem : w ∉ ({s, n, e} : Set (Set W)) := by
-  obtain ⟨rfl, hs, hn, ⟨a, ha⟩, ⟨b, hb⟩⟩ := h
-  rintro (h1 | h1 | h1)
-  · exact hb.2 (h1 ▸ (Or.inr hb.1 : b ∈ s ∪ n))
-  · exact ha.2 (h1 ▸ (Or.inl ha.1 : a ∈ s ∪ n))
-  · exact ha.2 (hn (h1 ▸ (Or.inl ha.1 : a ∈ s ∪ n)))
+  obtain ⟨rfl, -, hn, ⟨a, has, han⟩, ⟨b, hbn, hbs⟩⟩ := h
+  rintro (h' | h' | h')
+  · exact hbs (h' ▸ Or.inr hbn)
+  · exact han (h' ▸ Or.inl has)
+  · exact han (hn (h' ▸ Or.inl has))
 
-/-- Only the strongest alternative is innocently excludable given the weakest. -/
+/-- The minimal worlds of the weakest alternative are those of exactly one middle alternative. -/
+theorem exhMW_eq : exhMW {w, s, n, e} w = symmDiff s n := by
+  obtain ⟨rfl, hs, hn, ⟨a, has, han⟩, -⟩ := h
+  ext u
+  change (u ∈ s ∪ n ∧ ¬ ∃ v, v ∈ s ∪ n ∧ (v <[{s ∪ n, s, n, e}] u)) ↔ _
+  simp only [ltALT, leALT, mem_insert_iff, mem_singleton_iff, forall_eq_or_imp, forall_eq,
+    Set.mem_symmDiff, mem_union]
+  refine ⟨fun ⟨hu, hmin⟩ ↦ by_contra fun hc ↦ hmin ⟨a, Or.inl has, ⟨fun _ ↦ hu, fun _ ↦ by tauto,
+    fun h' ↦ (han h').elim, fun h' ↦ (han (hn h')).elim⟩, fun h' ↦ han (h'.2.2.1 (by tauto))⟩, ?_⟩
+  rintro (⟨hus, hun⟩ | ⟨hun, hus⟩)
+  · refine ⟨Or.inl hus, fun ⟨v, hv, hvu, huv⟩ ↦ huv ⟨fun _ ↦ hv, fun _ ↦ ?_,
+      fun h' ↦ (hun h').elim, fun h' ↦ (hun (hn h')).elim⟩⟩
+    exact hv.resolve_right fun hvn ↦ hun (hvu.2.2.1 hvn)
+  · refine ⟨Or.inr hun, fun ⟨v, hv, hvu, huv⟩ ↦ huv ⟨fun _ ↦ hv, fun h' ↦ (hus h').elim,
+      fun _ ↦ ?_, fun h' ↦ (hus (hs h')).elim⟩⟩
+    exact hv.resolve_left fun hvs ↦ hus (hvu.2.1 hvs)
+
+/-- Exhaustification by minimal worlds contradicts the conjunction of the middle alternatives,
+so on a diamond it can never yield free choice. -/
+theorem disjoint_exhMW : Disjoint (exhMW {w, s, n, e} w) (s ∩ n) := by
+  rw [h.exhMW_eq]
+  exact Set.disjoint_left.2 fun u hu hu' ↦ hu.elim (fun h' ↦ h'.2 hu'.2) fun h' ↦ h'.2 hu'.1
+
+/-- Given the weakest alternative only the strongest is innocently excludable, since it alone
+fails at every minimal world. -/
 theorem isInnocentlyExcludable_iff {q : Set W} (hq : q ∈ ({w, s, n, e} : Set (Set W))) :
     IsInnocentlyExcludable {w, s, n, e} w q ↔ q = e := by
-  obtain ⟨rfl, hs, hn, ⟨a, ha⟩, ⟨b, hb⟩⟩ := h
-  exact isInnocentlyExcludable_pair_iff ⟨a, ha, λ hae => ha.2 (hn hae)⟩
-    ⟨b, hb, λ hbe => hb.2 (hs hbe)⟩ hq
+  rw [isInnocentlyExcludable_iff_exhMW_subset_compl _ _ _ hq, h.exhMW_eq]
+  obtain ⟨rfl, hs, hn, ⟨a, has, han⟩, ⟨b, hbn, hbs⟩⟩ := h
+  have ha : a ∈ symmDiff s n := Or.inl ⟨has, han⟩
+  have hb : b ∈ symmDiff s n := Or.inr ⟨hbn, hbs⟩
+  rcases hq with rfl | rfl | rfl | rfl
+  · exact iff_of_false (fun h' ↦ h' ha (Or.inl has)) fun h' ↦ han (hn (h' ▸ Or.inl has))
+  · exact iff_of_false (fun h' ↦ h' ha has) fun h' ↦ han (hn (h' ▸ has))
+  · exact iff_of_false (fun h' ↦ h' hb hbn) fun h' ↦ hbs (hs (h' ▸ hbn))
+  · refine iff_of_true ?_ rfl
+    rintro u (⟨-, hun⟩ | ⟨-, hus⟩) hue
+    exacts [hun (hn hue), hus (hs hue)]
 
 theorem exhIE_w : exhIE {w, s, n, e} w = w \ e := by
-  obtain ⟨rfl, hs, hn, ⟨a, ha⟩, ⟨b, hb⟩⟩ := h
-  exact exhIE_pair ⟨a, ha, λ hae => ha.2 (hn hae)⟩ ⟨b, hb, λ hbe => hb.2 (hs hbe)⟩
-
-/-- Given an independent alternative, the other and the strongest are innocently
-excludable. -/
-theorem exhIE_s : exhIE {w, s, n, e} s = s \ n := by
-  obtain ⟨rfl, hs, hn, ⟨a, ha⟩, -⟩ := h
+  rw [exhIE_eq_of_iff _ _ (toFinite _) fun q hq ↦ h.isInnocentlyExcludable_iff hq]
   ext u
-  rw [mem_exhIE_iff _ _ (toFinite _), mem_sdiff]
-  refine and_congr_right λ hu => ⟨λ h' => h' n ?_, λ hun c hc => ?_⟩
-  · refine .of_forall_subset_or_notMem (by simp) ha.1 ha.2 ?_
-    intro c hc
-    simp only [mem_insert_iff, mem_singleton_iff] at hc
-    obtain h1 | h1 | h1 | h1 := hc <;> subst c
-    · exact Or.inl subset_union_left
-    · exact Or.inl subset_rfl
-    · exact Or.inr ha.2
-    · exact Or.inr λ hae => ha.2 (hn hae)
-  · have hc1 := hc.1
-    simp only [mem_insert_iff, mem_singleton_iff] at hc1
-    obtain h1 | h1 | h1 | h1 := hc1 <;> subst c
-    · exact (not_isInnocentlyExcludable_of_phi_subset (toFinite _) ⟨u, hu⟩ subset_union_left
-        hc).elim
-    · exact (not_isInnocentlyExcludable_of_phi_subset (toFinite _) ⟨u, hu⟩ subset_rfl hc).elim
-    · exact hun
-    · exact λ hue => hun (hn hue)
+  exact ⟨fun ⟨hu, h'⟩ ↦ ⟨hu, h' e (by simp) rfl⟩, fun ⟨hu, hue⟩ ↦ ⟨hu, fun _ _ hq ↦ hq ▸ hue⟩⟩
+
+/-- Given a middle alternative, every alternative it does not entail is denied. -/
+theorem exhIE_s : exhIE {w, s, n, e} s = s \ n := by
+  obtain ⟨rfl, -, hn, ⟨a, has, han⟩, -⟩ := h
+  have hexh : exh {s ∪ n, s, n, e} s = s \ n := by
+    ext u
+    simp only [mem_exh, mem_insert_iff, mem_singleton_iff, forall_eq_or_imp, forall_eq,
+      mem_sdiff]
+    refine and_congr_right fun _ ↦ ⟨fun h' hun ↦ han (h'.2.2.1 hun has), fun hun ↦
+      ⟨fun _ ↦ subset_union_left, fun _ ↦ subset_rfl, fun h' ↦ (hun h').elim,
+        fun h' ↦ (hun (hn h')).elim⟩⟩
+  rw [exhIE_eq_exh_of_nonempty _ _ (hexh ▸ ⟨a, has, han⟩), hexh]
 
 theorem exhIE_n : exhIE {w, s, n, e} n = n \ s := by
-  have := h.symm.exhIE_s
-  rwa [insert_comm n s] at this
+  simpa only [insert_comm n s] using h.symm.exhIE_s
 
-/-- Nothing is innocently excludable given the strongest alternative. -/
+/-- The strongest alternative entails all the others, so exhaustifying it is vacuous. -/
 theorem exhIE_e : exhIE {w, s, n, e} e = e := by
+  refine exhIE_eq_self_of_forall _ _ fun q hq _ ↦ ?_
   obtain ⟨rfl, hs, hn, -, -⟩ := h
-  refine Subset.antisymm (λ u hu => hu e (self_mem_IE _ _)) λ u hu => ?_
-  rw [mem_exhIE_iff _ _ (toFinite _)]
-  refine ⟨hu, λ c hc => ?_⟩
-  have hc1 := hc.1
-  simp only [mem_insert_iff, mem_singleton_iff] at hc1
-  refine (not_isInnocentlyExcludable_of_phi_subset (toFinite _) ⟨u, hu⟩ ?_ hc).elim
-  obtain h1 | h1 | h1 | h1 := hc1 <;> subst c
-  · exact hs.trans subset_union_left
-  · exact hs
-  · exact hn
-  · exact subset_rfl
+  rcases hq with rfl | rfl | rfl | rfl
+  exacts [hs.trans subset_union_left, hs, hn, subset_rfl]
 
-/-- The second-layer alternatives. -/
+/-- The alternatives of the second layer. -/
 theorem image_exhIE : exhIE {w, s, n, e} '' {w, s, n, e} = {w \ e, s \ n, n \ s, e} := by
   rw [image_insert_eq, image_insert_eq, image_pair, h.exhIE_w, h.exhIE_s, h.exhIE_n, h.exhIE_e]
 
-/-- The anti-exhaustivity reading of the weakest alternative asserts both independent
-alternatives and denies the strongest. -/
+/-- The anti-exhaustivity reading of the weakest alternative asserts both middle alternatives and
+denies the strongest. -/
 theorem anEx_w : anEx {w, s, n, e} w = (s ∩ n) \ e := by
   rw [anEx_insert _ h.notMem, biInter_insert, biInter_insert, biInter_singleton, h.exhIE_w,
     h.exhIE_s, h.exhIE_n, h.exhIE_e, h.union]
@@ -279,167 +301,547 @@ theorem anEx_w : anEx {w, s, n, e} w = (s ∩ n) \ e := by
   simp only [mem_inter_iff, mem_sdiff, mem_compl_iff, mem_union]
   tauto
 
-/-- Free choice: when the strongest alternative is stronger than the conjunction of the
-independent ones, the second layer asserts both and denies the strongest. -/
-theorem exh₂_eq (hne : ((s ∩ n) \ e).Nonempty) : exh₂ {w, s, n, e} w = (s ∩ n) \ e := by
-  rw [exh₂_eq_anEx _ _ (toFinite _) (mem_insert _ _) (h.anEx_w ▸ hne), h.anEx_w]
+/-- When the strongest alternative is stronger than the conjunction of the middle ones, the
+second layer asserts both and denies the strongest. -/
+theorem exhIter_two_eq (hne : ((s ∩ n) \ e).Nonempty) :
+    exhIter {w, s, n, e} 2 w = (s ∩ n) \ e := by
+  rw [exhIter_two_eq_anEx _ _ (h.anEx_w ▸ hne), h.anEx_w]
 
-/-- When the strongest alternative is the conjunction of the independent ones, as for
-unembedded disjunction, the second layer is vacuous. -/
-theorem exh₂_eq_of_eq_inter (he : e = s ∩ n) : exh₂ {w, s, n, e} w = exhIE {w, s, n, e} w := by
-  rw [exh₂, h.image_exhIE, h.exhIE_w]
-  obtain ⟨rfl, -, -, ⟨a, ha⟩, ⟨b, hb⟩⟩ := h
-  subst he
-  have hsd : (s ∪ n) \ (s ∩ n) = (s \ n) ∪ (n \ s) := by
+/-- When the strongest alternative is the conjunction of the middle ones, the second layer is
+the exclusive disjunction of the middle ones, as the first layer was. -/
+theorem exhIter_two_eq_of_eq_inter (he : e = s ∩ n) :
+    exhIter {w, s, n, e} 2 w = symmDiff s n := by
+  have hsd : (s ∪ n) \ (s ∩ n) = symmDiff s n := by
     ext u
-    simp only [mem_sdiff, mem_union, mem_inter_iff]
+    simp only [mem_sdiff, mem_union, mem_inter_iff, Set.mem_symmDiff]
     tauto
-  rw [hsd, exhIE_pair ⟨a, ⟨ha, λ h' => ha.2 h'.1⟩, λ h' => ha.2 h'.2⟩
-    ⟨b, ⟨hb, λ h' => hb.2 h'.1⟩, λ h' => hb.2 h'.1⟩]
-  ext u
-  simp only [mem_sdiff, mem_union, mem_inter_iff]
-  tauto
+  rw [exhIter_two, h.image_exhIE, h.exhIE_w, h.union, he, hsd]
+  obtain ⟨-, -, -, ⟨a, has, han⟩, ⟨b, hbn, hbs⟩⟩ := h
+  refine (exhIE_eq_self_iff _ _ (toFinite _)).2 fun q hq ↦ ?_
+  rcases id hq.1 with rfl | rfl | rfl | rfl
+  · exact (not_isInnocentlyExcludable_of_phi_subset (toFinite _) ⟨a, Or.inl ⟨has, han⟩⟩
+      subset_rfl hq).elim
+  · refine absurd hq (not_isInnocentlyExcludable_of_subset_union _ _ (toFinite _) (by simp)
+      (q := n \ s) (by simp) (fun u hu ↦ hu) ?_)
+    exact ⟨a, Or.inl ⟨has, han⟩, fun h' ↦ h'.2 has⟩
+  · refine absurd hq (not_isInnocentlyExcludable_of_subset_union _ _ (toFinite _) (by simp)
+      (q := s \ n) (by simp) (fun u hu ↦ hu.symm) ?_)
+    exact ⟨b, Or.inr ⟨hbn, hbs⟩, fun h' ↦ h'.2 hbn⟩
+  · exact Set.disjoint_left.2 fun u hu hu' ↦ hu.elim (fun h' ↦ h'.2 hu'.2) fun h' ↦ h'.2 hu'.1
 
-/-- The second layer is vacuous exactly when the strongest alternative is the conjunction of
-the independent ones. -/
-theorem exh₂_vacuous_iff : exh₂ {w, s, n, e} w = exhIE {w, s, n, e} w ↔ e = s ∩ n := by
-  refine ⟨λ hv => by_contra λ hne => ?_, h.exh₂_eq_of_eq_inter⟩
-  have hne' : ((s ∩ n) \ e).Nonempty := by
-    rw [nonempty_iff_ne_empty, Ne, sdiff_eq_empty]
-    exact λ hle => hne (subset_antisymm (subset_inter h.le_s h.le_n) hle)
-  rw [h.exh₂_eq hne', h.exhIE_w, h.union] at hv
-  obtain ⟨a, ha⟩ := h.sn
-  have : a ∈ (s ∪ n) \ e := ⟨Or.inl ha.1, λ hae => ha.2 (h.le_n hae)⟩
-  rw [← hv] at this
-  exact ha.2 this.1.2
+/-- The second layer adds nothing exactly when the strongest alternative is the conjunction of
+the middle ones. -/
+theorem exhIter_two_eq_iff :
+    exhIter {w, s, n, e} 2 w = exhIE {w, s, n, e} w ↔ e = s ∩ n := by
+  refine ⟨fun hv ↦ by_contra fun hne ↦ ?_, fun he ↦ ?_⟩
+  · have hne' : ((s ∩ n) \ e).Nonempty := sdiff_nonempty.2 fun hle ↦
+      hne (subset_antisymm (subset_inter h.subset_left h.subset_right) hle)
+    obtain ⟨a, has, han⟩ := h.nonempty_sdiff_left
+    have : a ∈ w \ e := ⟨h.union ▸ Or.inl has, fun hae ↦ han (h.subset_right hae)⟩
+    rw [← h.exhIE_w, ← hv, h.exhIter_two_eq hne'] at this
+    exact han this.1.2
+  · rw [h.exhIter_two_eq_of_eq_inter he, h.exhIE_w, h.union, he]
+    ext u
+    simp only [mem_sdiff, mem_union, mem_inter_iff, Set.mem_symmDiff]
+    tauto
 
 end IsDiamond
 
-/-! ### Instances of the diamond -/
+/-! ### Alternatives under an operator -/
 
-/-- Unembedded disjunction: the second layer adds nothing to exclusive *or*. -/
-theorem exh₂_or {p q : Set W} (hp : (p \ q).Nonempty) (hq : (q \ p).Nonempty) :
-    exh₂ {p ∪ q, p, q, p ∩ q} (p ∪ q) = (p ∪ q) \ (p ∩ q) :=
-  (IsDiamond.exh₂_eq_of_eq_inter ⟨rfl, inter_subset_left, inter_subset_right, hp, hq⟩ rfl).trans
-    (exhIE_or hp hq)
+section Operator
+
+variable {α : Type*} [Lattice α]
+
+/-- The Sauerland alternatives of a disjunction under an operator `O` are the disjunction, each
+disjunct and the conjunction, each under `O`. -/
+def sauerlandAlt (O : α → Set W) (a b : α) : Set (Set W) := {O (a ⊔ b), O a, O b, O (a ⊓ b)}
+
+variable {O : α → Set W} {a b : α}
+
+/-- Under a monotone operator that distributes over the disjunction, the Sauerland alternatives
+form a diamond whenever each disjunct can hold under `O` without the other. -/
+theorem isDiamond_sauerlandAlt (hO : Monotone O) (hab : O (a ⊔ b) ⊆ O a ∪ O b)
+    (ha : (O a \ O b).Nonempty) (hb : (O b \ O a).Nonempty) :
+    IsDiamond (O (a ⊔ b)) (O a) (O b) (O (a ⊓ b)) :=
+  ⟨hab.antisymm (union_subset (hO le_sup_left) (hO le_sup_right)), hO inf_le_left,
+    hO inf_le_right, ha, hb⟩
+
+/-- Under a monotone operator that distributes over the disjunction, the second layer asserts
+each disjunct under `O` and denies the conjunction under `O`, whenever `O` does not distribute
+over that conjunction. This is free choice. -/
+theorem free_choice (hO : Monotone O) (hab : O (a ⊔ b) ⊆ O a ∪ O b)
+    (ha : (O a \ O b).Nonempty) (hb : (O b \ O a).Nonempty)
+    (hfc : ((O a ∩ O b) \ O (a ⊓ b)).Nonempty) :
+    exhIter (sauerlandAlt O a b) 2 (O (a ⊔ b)) = (O a ∩ O b) \ O (a ⊓ b) :=
+  (isDiamond_sauerlandAlt hO hab ha hb).exhIter_two_eq hfc
+
+/-- Under a monotone operator that does not distribute over the disjunction, the first layer
+denies both disjuncts under `O`. -/
+theorem exhIE_sauerlandAlt_of_not_subset (hO : Monotone O)
+    (h : (O (a ⊔ b) \ (O a ∪ O b)).Nonempty) :
+    exhIE (sauerlandAlt O a b) (O (a ⊔ b)) = O (a ⊔ b) \ (O a ∪ O b) := by
+  obtain ⟨u, hu, hu'⟩ := h
+  have hexh : exh (sauerlandAlt O a b) (O (a ⊔ b)) = O (a ⊔ b) \ (O a ∪ O b) := by
+    ext v
+    simp only [sauerlandAlt, mem_exh, mem_insert_iff, mem_singleton_iff, forall_eq_or_imp,
+      forall_eq, mem_sdiff, mem_union]
+    refine and_congr_right fun _ ↦ ⟨fun ⟨_, ha, hb, _⟩ hv ↦ hu' ?_, fun hv ↦
+      ⟨fun _ ↦ subset_rfl, fun h' ↦ (hv (Or.inl h')).elim, fun h' ↦ (hv (Or.inr h')).elim,
+        fun h' ↦ (hv (Or.inl (hO inf_le_left h'))).elim⟩⟩
+    rcases hv with hv | hv
+    exacts [Or.inl (ha hv hu), Or.inr (hb hv hu)]
+  rw [exhIE_eq_exh_of_nonempty _ _ (hexh ▸ ⟨u, hu, hu'⟩), hexh]
+
+/-- The alternatives of `O (a ⊔ b)` generated by the Horn sets `{O, O'}` and Sauerland's
+`{or, L, R, and}` are the Sauerland alternatives under `O` and under `O'`. -/
+def hornAlt (O O' : α → Set W) (a b : α) : Set (Set W) :=
+  {O (a ⊔ b), O a, O b, O (a ⊓ b), O' (a ⊔ b), O' a, O' b, O' (a ⊓ b)}
+
+variable {O' : α → Set W}
+
+theorem finite_hornAlt : (hornAlt O O' a b).Finite := by
+  simp [hornAlt]
+
+theorem hornAlt_comm : hornAlt O O' b a = hornAlt O O' a b := by
+  rw [hornAlt, hornAlt, sup_comm, inf_comm, insert_comm (O b), insert_comm (O' b)]
+
+/-- Every alternative other than the disjunction and the disjuncts under `O` entails the
+conjunction under `O` or the disjunction under `O'`. -/
+private theorem mem_hornAlt (hO' : Monotone O') {c : Set W} (hc : c ∈ hornAlt O O' a b) :
+    c = O (a ⊔ b) ∨ c = O a ∨ c = O b ∨ c ⊆ O (a ⊓ b) ∪ O' (a ⊔ b) := by
+  rcases hc with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl
+  · exact Or.inl rfl
+  · exact Or.inr (Or.inl rfl)
+  · exact Or.inr (Or.inr (Or.inl rfl))
+  · exact Or.inr (Or.inr (Or.inr subset_union_left))
+  · exact Or.inr (Or.inr (Or.inr subset_union_right))
+  · exact Or.inr (Or.inr (Or.inr ((hO' le_sup_left).trans subset_union_right)))
+  · exact Or.inr (Or.inr (Or.inr ((hO' le_sup_right).trans subset_union_right)))
+  · exact Or.inr (Or.inr (Or.inr ((hO' (inf_le_left.trans le_sup_left)).trans subset_union_right)))
+
+section Horn
+
+variable (hO : Monotone O) (hO' : Monotone O') (hab : O (a ⊔ b) ⊆ O a ∪ O b)
+include hO hO' hab
+
+/-- A world where only the first disjunct holds under `O` and the disjunction fails under `O'`,
+and its mirror image, represent the minimal worlds of the disjunction under `O`. -/
+theorem isMinimalCover_hornAlt {x y : W} (hx : x ∈ O a \ (O b ∪ O' (a ⊔ b)))
+    (hy : y ∈ O b \ (O a ∪ O' (a ⊔ b))) :
+    IsMinimalCover (hornAlt O O' a b) (O (a ⊔ b)) {x, y} := by
+  have hxK : x ∉ O (a ⊓ b) ∪ O' (a ⊔ b) := fun h ↦
+    h.elim (fun h' ↦ hx.2 (Or.inl (hO inf_le_right h'))) fun h' ↦ hx.2 (Or.inr h')
+  have hyK : y ∉ O (a ⊓ b) ∪ O' (a ⊔ b) := fun h ↦
+    h.elim (fun h' ↦ hy.2 (Or.inl (hO inf_le_left h'))) fun h' ↦ hy.2 (Or.inr h')
+  refine ⟨?_, fun w hw ↦ ?_, ?_⟩
+  · rintro v (rfl | rfl)
+    exacts [hO le_sup_left hx.1, hO le_sup_right hy.1]
+  · rcases hab hw with hwa | hwb
+    · refine ⟨x, Or.inl rfl, fun c hc hxc ↦ ?_⟩
+      rcases mem_hornAlt hO' hc with rfl | rfl | rfl | hcK
+      exacts [hw, hwa, (hx.2 (Or.inl hxc)).elim, (hxK (hcK hxc)).elim]
+    · refine ⟨y, Or.inr rfl, fun c hc hyc ↦ ?_⟩
+      rcases mem_hornAlt hO' hc with rfl | rfl | rfl | hcK
+      exacts [hw, (hy.2 (Or.inl hyc)).elim, hwb, (hyK (hcK hyc)).elim]
+  · rintro v (rfl | rfl) u (rfl | rfl) huv
+    · exact leALT_refl _ _
+    · exact (hx.2 (Or.inl (huv (O b) (by simp [hornAlt]) hy.1))).elim
+    · exact (hy.2 (Or.inl (huv (O a) (by simp [hornAlt]) hx.1))).elim
+    · exact leALT_refl _ _
+
+variable (ha : (O a \ (O b ∪ O' (a ⊔ b))).Nonempty) (hb : (O b \ (O a ∪ O' (a ⊔ b))).Nonempty)
+include ha hb
+
+/-- Exhaustifying the disjunction under `O` against the alternatives of both Horn sets denies
+the conjunction under `O` and the disjunction under `O'`. -/
+theorem exhIE_hornAlt :
+    exhIE (hornAlt O O' a b) (O (a ⊔ b)) = O (a ⊔ b) \ (O (a ⊓ b) ∪ O' (a ⊔ b)) := by
+  obtain ⟨x, hx⟩ := ha
+  obtain ⟨y, hy⟩ := hb
+  rw [(isMinimalCover_hornAlt hO hO' hab hx hy).exhIE_eq finite_hornAlt]
+  ext u
+  simp only [mem_ofPred_eq, mem_insert_iff, mem_singleton_iff, forall_eq_or_imp, forall_eq,
+    mem_sdiff]
+  refine and_congr_right fun hu ↦ ⟨fun h huK ↦ ?_, fun huK c hc hc' ↦ ?_⟩
+  · rcases huK with huK | huK
+    · refine h _ (by simp [hornAlt]) ⟨fun h' ↦ hx.2 (Or.inl (hO inf_le_right h')),
+        fun h' ↦ hy.2 (Or.inl (hO inf_le_left h'))⟩ huK
+    · exact h _ (by simp [hornAlt]) ⟨fun h' ↦ hx.2 (Or.inr h'), fun h' ↦ hy.2 (Or.inr h')⟩ huK
+  · rcases mem_hornAlt hO' hc with rfl | rfl | rfl | hcK
+    · exact (hc'.1 (hO le_sup_left hx.1)).elim
+    · exact (hc'.1 hx.1).elim
+    · exact (hc'.2 hy.1).elim
+    · exact fun huc ↦ huK (hcK huc)
+
+omit hab hb in
+/-- Exhaustifying the first disjunct under `O` denies everything it does not entail. -/
+theorem exhIE_hornAlt_left : exhIE (hornAlt O O' a b) (O a) = O a \ (O b ∪ O' (a ⊔ b)) := by
+  obtain ⟨x, hx⟩ := ha
+  have hexh : exh (hornAlt O O' a b) (O a) = O a \ (O b ∪ O' (a ⊔ b)) := by
+    ext u
+    simp only [mem_exh, mem_sdiff]
+    refine and_congr_right fun hu ↦ ⟨fun h hub ↦ ?_, fun hub c hc huc ↦ ?_⟩
+    · rcases hub with hub | hub
+      · exact hx.2 (Or.inl (h _ (by simp [hornAlt]) hub hx.1))
+      · exact hx.2 (Or.inr (h _ (by simp [hornAlt]) hub hx.1))
+    · rcases mem_hornAlt hO' hc with rfl | rfl | rfl | hcK
+      · exact hO le_sup_left
+      · exact subset_rfl
+      · exact (hub (Or.inl huc)).elim
+      · exact ((hcK huc).elim (fun h' ↦ hub (Or.inl (hO inf_le_right h')))
+          fun h' ↦ hub (Or.inr h')).elim
+  rw [exhIE_eq_exh_of_nonempty _ _ (hexh ▸ ⟨x, hx⟩), hexh]
+
+/-- Against the alternatives of both Horn sets, the second layer asserts each disjunct under `O`
+and denies the conjunction under `O` and the disjunction under `O'`. -/
+theorem free_choice_hornAlt (hfc : ((O a ∩ O b) \ (O (a ⊓ b) ∪ O' (a ⊔ b))).Nonempty) :
+    exhIter (hornAlt O O' a b) 2 (O (a ⊔ b)) = (O a ∩ O b) \ (O (a ⊓ b) ∪ O' (a ⊔ b)) := by
+  have hl := exhIE_hornAlt_left hO hO' ha
+  have hr : exhIE (hornAlt O O' a b) (O b) = O b \ (O a ∪ O' (a ⊔ b)) := by
+    rw [← hornAlt_comm, ← sup_comm]
+    exact exhIE_hornAlt_left hO hO' (by rwa [sup_comm])
+  obtain ⟨x, hx⟩ := ha
+  obtain ⟨y, hy⟩ := hb
+  have hxy : O a ≠ O (a ⊔ b) := fun h' ↦ hy.2 (Or.inl (h' ▸ hO le_sup_right hy.1))
+  have hyx : O b ≠ O (a ⊔ b) := fun h' ↦ hx.2 (Or.inl (h' ▸ hO le_sup_left hx.1))
+  have hanEx : anEx (hornAlt O O' a b) (O (a ⊔ b)) = (O a ∩ O b) \ (O (a ⊓ b) ∪ O' (a ⊔ b)) := by
+    rw [anEx_eq, exhIE_hornAlt hO hO' hab ⟨x, hx⟩ ⟨y, hy⟩]
+    ext u
+    simp only [mem_inter_iff, mem_iInter₂, mem_sdiff, mem_singleton_iff, mem_compl_iff]
+    constructor
+    · rintro ⟨⟨hu, huK⟩, h⟩
+      have hua := h (O a) ⟨by simp [hornAlt], hxy⟩
+      have hub := h (O b) ⟨by simp [hornAlt], hyx⟩
+      rw [hl, mem_sdiff] at hua
+      rw [hr, mem_sdiff] at hub
+      refine ⟨(hab hu).elim (fun h' ↦ ⟨h', ?_⟩) fun h' ↦ ⟨?_, h'⟩, huK⟩
+      · exact by_contra fun h'' ↦ hua ⟨h', fun h₃ ↦ h₃.elim h'' fun h₄ ↦ huK (Or.inr h₄)⟩
+      · exact by_contra fun h'' ↦ hub ⟨h', fun h₃ ↦ h₃.elim h'' fun h₄ ↦ huK (Or.inr h₄)⟩
+    · rintro ⟨⟨hua, hub⟩, huK⟩
+      refine ⟨⟨hO le_sup_left hua, huK⟩, fun c ⟨hc, hcφ⟩ huc ↦ ?_⟩
+      rcases mem_hornAlt hO' hc with rfl | rfl | rfl | hcK
+      · exact hcφ rfl
+      · rw [hl] at huc
+        exact huc.2 (Or.inl hub)
+      · rw [hr] at huc
+        exact huc.2 (Or.inl hua)
+      · exact huK (hcK (exhIE_subset _ _ huc))
+  rw [exhIter_two_eq_anEx _ _ (hanEx ▸ hfc), hanEx]
+
+end Horn
+
+end Operator
+
+/-! ### Plain disjunction -/
+
+section Disjunction
+
+variable {p q : Set W}
+
+theorem isDiamond_or (hp : (p \ q).Nonempty) (hq : (q \ p).Nonempty) :
+    IsDiamond (p ∪ q) p q (p ∩ q) :=
+  isDiamond_sauerlandAlt (O := id) monotone_id subset_rfl hp hq
+
+/-- Without innocent exclusion, denying every alternative the disjunction does not entail
+contradicts it. -/
+theorem exh_or (hp : (p \ q).Nonempty) (hq : (q \ p).Nonempty) :
+    exh {p ∪ q, p, q, p ∩ q} (p ∪ q) = ∅ := by
+  obtain ⟨a, hap, haq⟩ := hp
+  obtain ⟨b, hbq, hbp⟩ := hq
+  refine eq_empty_of_forall_notMem fun u ⟨hu, h⟩ ↦ ?_
+  rcases hu with hu | hu
+  · exact hbp ((h p (by simp) hu) (Or.inr hbq))
+  · exact haq ((h q (by simp) hu) (Or.inl hap))
+
+/-- Innocent exclusion denies only the conjunction of a disjunction, giving exclusive *or*. -/
+theorem exclusive_or (hp : (p \ q).Nonempty) (hq : (q \ p).Nonempty) :
+    exhIE {p ∪ q, p, q, p ∩ q} (p ∪ q) = symmDiff p q := by
+  rw [(isDiamond_or hp hq).exhIE_w]
+  ext u
+  simp only [mem_sdiff, mem_union, mem_inter_iff, Set.mem_symmDiff]
+  tauto
+
+/-- Plain disjunction is exclusive at every layer of exhaustification, so no layer yields the
+conjunctive reading. -/
+theorem exclusive_or_of_one_le (hp : (p \ q).Nonempty) (hq : (q \ p).Nonempty) {n : ℕ}
+    (hn : 1 ≤ n) : exhIter {p ∪ q, p, q, p ∩ q} n (p ∪ q) = symmDiff p q := by
+  have h := isDiamond_or hp hq
+  rw [exhIter_eq_of_succ_eq ?_ hn (mem_insert _ _), exhIter_one, exclusive_or hp hq]
+  have hvac : ∀ r, (∀ c ∈ ({(p ∪ q) \ (p ∩ q), p \ q, q \ p, p ∩ q} : Set (Set W)),
+      (exhIE {p ∪ q, p, q, p ∩ q} r ∩ c).Nonempty → exhIE {p ∪ q, p, q, p ∩ q} r ⊆ c) →
+      exhIter {p ∪ q, p, q, p ∩ q} 2 r = exhIter {p ∪ q, p, q, p ∩ q} 1 r := fun r hr ↦ by
+    rw [exhIter_two, h.image_exhIE, exhIter_one, exhIE_eq_self_of_forall _ _ hr]
+  rintro r (rfl | rfl | rfl | rfl)
+  · rw [h.exhIter_two_eq_of_eq_inter rfl, exhIter_one, exclusive_or hp hq]
+  · refine hvac _ ?_
+    rw [h.exhIE_s]
+    rintro c (rfl | rfl | rfl | rfl) ⟨u, hu, hu'⟩
+    · exact fun v hv ↦ ⟨Or.inl hv.1, fun h' ↦ hv.2 h'.2⟩
+    · exact subset_rfl
+    · exact (hu'.2 hu.1).elim
+    · exact (hu.2 hu'.2).elim
+  · refine hvac _ ?_
+    rw [h.exhIE_n]
+    rintro c (rfl | rfl | rfl | rfl) ⟨u, hu, hu'⟩
+    · exact fun v hv ↦ ⟨Or.inr hv.1, fun h' ↦ hv.2 h'.1⟩
+    · exact (hu'.2 hu.1).elim
+    · exact subset_rfl
+    · exact (hu.2 hu'.1).elim
+  · refine hvac _ ?_
+    rw [h.exhIE_e]
+    rintro c (rfl | rfl | rfl | rfl) ⟨u, hu, hu'⟩
+    · exact (hu'.2 hu).elim
+    · exact (hu'.2 hu.2).elim
+    · exact (hu'.2 hu.1).elim
+    · exact subset_rfl
+
+end Disjunction
+
+/-! ### Modals -/
 
 section Modal
 
-variable {R : SetRel W W} (p q : Set W)
+variable {R : SetRel W W} {p q : Set W}
 
-/-- The Sauerland alternatives of `◇(p ∨ q)` form a diamond whenever each disjunct can be
-permitted without the other. -/
-theorem isDiamond_poss (hp : (R.preimage p \ R.preimage q).Nonempty)
-    (hq : (R.preimage q \ R.preimage p).Nonempty) :
-    IsDiamond (R.preimage (p ∪ q)) (R.preimage p) (R.preimage q) (R.preimage (p ∩ q)) where
-  union := preimage_union ..
-  le_s := preimage_mono inter_subset_left
-  le_n := preimage_mono inter_subset_right
-  sn := hp
-  ns := hq
-
-/-- Free choice permission: with a world where each disjunct is permitted but not both, the
-doubly exhaustified `◇(p ∨ q)` asserts both permissions and denies the joint one. -/
-theorem free_choice (hp : (R.preimage p \ R.preimage q).Nonempty)
+/-- Free choice permission. Given a world where each option is allowed without the other and one
+where each is allowed but not both, the doubly exhaustified `◇(p ∨ q)` asserts both permissions
+and denies the joint one. -/
+theorem free_choice_permission (hp : (R.preimage p \ R.preimage q).Nonempty)
     (hq : (R.preimage q \ R.preimage p).Nonempty)
     (h : ((R.preimage p ∩ R.preimage q) \ R.preimage (p ∩ q)).Nonempty) :
-    exh₂ {R.preimage (p ∪ q), R.preimage p, R.preimage q, R.preimage (p ∩ q)} (R.preimage (p ∪ q))
-      = (R.preimage p ∩ R.preimage q) \ R.preimage (p ∩ q) :=
-  (isDiamond_poss p q hp hq).exh₂_eq h
+    exhIter {R.preimage (p ∪ q), R.preimage p, R.preimage q, R.preimage (p ∩ q)} 2
+      (R.preimage (p ∪ q)) = (R.preimage p ∩ R.preimage q) \ R.preimage (p ∩ q) :=
+  free_choice SetRel.preimage_mono (SetRel.preimage_union (R := R) (t₁ := p) (t₂ := q)).le hp hq h
 
-/-- The Sauerland alternatives of `¬□(p ∧ q)` form a diamond whenever each conjunct can be
-required without the other. -/
-theorem isDiamond_not_nec (hp : ((R.core p)ᶜ \ (R.core q)ᶜ).Nonempty)
-    (hq : ((R.core q)ᶜ \ (R.core p)ᶜ).Nonempty) :
-    IsDiamond (R.core (p ∩ q))ᶜ (R.core p)ᶜ (R.core q)ᶜ (R.core (p ∪ q))ᶜ where
-  union := by rw [core_inter, compl_inter]
-  le_s := compl_subset_compl.2 (core_mono subset_union_left)
-  le_n := compl_subset_compl.2 (core_mono subset_union_right)
-  sn := hp
-  ns := hq
+/-- Against the necessity alternatives too, the doubly exhaustified `◇(p ∨ q)` asserts both
+permissions and denies the joint permission and the requirement of the disjunction. -/
+theorem free_choice_permission_with_necessity
+    (hp : (R.preimage p \ (R.preimage q ∪ R.core (p ∪ q))).Nonempty)
+    (hq : (R.preimage q \ (R.preimage p ∪ R.core (p ∪ q))).Nonempty)
+    (h : ((R.preimage p ∩ R.preimage q) \ (R.preimage (p ∩ q) ∪ R.core (p ∪ q))).Nonempty) :
+    exhIter {R.preimage (p ∪ q), R.preimage p, R.preimage q, R.preimage (p ∩ q),
+        R.core (p ∪ q), R.core p, R.core q, R.core (p ∩ q)} 2 (R.preimage (p ∪ q))
+      = (R.preimage p ∩ R.preimage q) \ (R.preimage (p ∩ q) ∪ R.core (p ∪ q)) :=
+  free_choice_hornAlt SetRel.preimage_mono SetRel.core_mono
+    (SetRel.preimage_union (R := R) (t₁ := p) (t₂ := q)).le hp hq h
 
-/-- Free choice under a negated necessity modal: the doubly exhaustified `¬□(p ∧ q)` asserts
-that neither conjunct is required and that their disjunction is. -/
-theorem free_choice_not_nec (hp : ((R.core p)ᶜ \ (R.core q)ᶜ).Nonempty)
-    (hq : ((R.core q)ᶜ \ (R.core p)ᶜ).Nonempty)
-    (h : (((R.core p)ᶜ ∩ (R.core q)ᶜ) \ (R.core (p ∪ q))ᶜ).Nonempty) :
-    exh₂ {(R.core (p ∩ q))ᶜ, (R.core p)ᶜ, (R.core q)ᶜ, (R.core (p ∪ q))ᶜ}
+/-- Free choice under a negated necessity modal. Against the alternatives under `¬□` and `¬◇`,
+the doubly exhaustified `¬□(p ∧ q)` asserts that neither conjunct is required, that their
+disjunction is required and that their conjunction is allowed. It is free choice permission for
+the negated conjuncts. -/
+theorem free_choice_not_required
+    (hp : ((R.core p)ᶜ \ ((R.core q)ᶜ ∪ (R.preimage (p ∩ q))ᶜ)).Nonempty)
+    (hq : ((R.core q)ᶜ \ ((R.core p)ᶜ ∪ (R.preimage (p ∩ q))ᶜ)).Nonempty)
+    (h : (((R.core p)ᶜ ∩ (R.core q)ᶜ) \ ((R.core (p ∪ q))ᶜ ∪ (R.preimage (p ∩ q))ᶜ)).Nonempty) :
+    exhIter {(R.core (p ∩ q))ᶜ, (R.core p)ᶜ, (R.core q)ᶜ, (R.core (p ∪ q))ᶜ,
+        (R.preimage (p ∩ q))ᶜ, (R.preimage p)ᶜ, (R.preimage q)ᶜ, (R.preimage (p ∪ q))ᶜ} 2
         (R.core (p ∩ q))ᶜ
-      = ((R.core p)ᶜ ∩ (R.core q)ᶜ) \ (R.core (p ∪ q))ᶜ :=
-  (isDiamond_not_nec p q hp hq).exh₂_eq h
+      = ((R.core p)ᶜ ∩ (R.core q)ᶜ) \ ((R.core (p ∪ q))ᶜ ∪ (R.preimage (p ∩ q))ᶜ) := by
+  simp only [← SetRel.preimage_compl, ← SetRel.core_compl, compl_inter, compl_union] at *
+  exact free_choice_permission_with_necessity hp hq h
 
-/-- Simons's reading: with each disjunct exhaustified first, the joint alternative is empty, so
-free choice arrives without the anti-conjunctive inference. -/
-theorem free_choice_exhaustified_disjuncts
-    (hp : (R.preimage (p \ q) \ R.preimage (q \ p)).Nonempty)
-    (hq : (R.preimage (q \ p) \ R.preimage (p \ q)).Nonempty)
-    (h : (R.preimage (p \ q) ∩ R.preimage (q \ p)).Nonempty) :
-    exh₂ {R.preimage (p \ q ∪ q \ p), R.preimage (p \ q), R.preimage (q \ p),
-        R.preimage ((p \ q) ∩ (q \ p))}
-        (R.preimage (p \ q ∪ q \ p))
-      = R.preimage (p \ q) ∩ R.preimage (q \ p) := by
-  have he : R.preimage ((p \ q) ∩ (q \ p)) = (∅ : Set W) := by
-    rw [show (p \ q) ∩ (q \ p) = ∅ from sdiff_inf_sdiff, preimage_empty_right]
-  rw [free_choice _ _ hp hq (by rw [he, sdiff_empty]; exact h), he, sdiff_empty]
+/-- When `□(p ∨ q)` is consistent with denying `□p` and `□q`, exhaustification denies both,
+since a necessity modal does not distribute over disjunction. -/
+theorem required_implicatures (h : (R.core (p ∪ q) \ (R.core p ∪ R.core q)).Nonempty) :
+    exhIE {R.core (p ∪ q), R.core p, R.core q, R.core (p ∩ q)} (R.core (p ∪ q))
+      = R.core (p ∪ q) \ (R.core p ∪ R.core q) :=
+  exhIE_sauerlandAlt_of_not_subset SetRel.core_mono h
+
+/-- Simons's reading. When the disjuncts are incompatible, as they are once each is exhaustified
+against the other, the joint alternative is empty, so free choice arrives without the
+anti-conjunctive inference. -/
+theorem free_choice_of_disjoint (hpq : Disjoint p q) (hp : (R.preimage p \ R.preimage q).Nonempty)
+    (hq : (R.preimage q \ R.preimage p).Nonempty) (h : (R.preimage p ∩ R.preimage q).Nonempty) :
+    exhIter {R.preimage (p ∪ q), R.preimage p, R.preimage q, R.preimage (p ∩ q)} 2
+      (R.preimage (p ∪ q)) = R.preimage p ∩ R.preimage q := by
+  have he : R.preimage (p ∩ q) = ∅ := by rw [hpq.inter_eq, SetRel.preimage_empty_right]
+  rw [free_choice_permission hp hq (by rw [he, sdiff_empty]; exact h), he, sdiff_empty]
 
 end Modal
 
-section Existential
+/-! ### Quantifiers -/
 
-variable {ι : Type*} (P Q : ι → Set W)
+section Quantifier
 
-/-- The Sauerland alternatives of `∃x (P x ∨ Q x)` form a diamond whenever each disjunct can be
-witnessed without the other. -/
-theorem isDiamond_iUnion (hp : ((⋃ x, P x) \ ⋃ x, Q x).Nonempty)
-    (hq : ((⋃ x, Q x) \ ⋃ x, P x).Nonempty) :
-    IsDiamond (⋃ x, P x ∪ Q x) (⋃ x, P x) (⋃ x, Q x) (⋃ x, P x ∩ Q x) where
-  union := iUnion_union_distrib P Q
-  le_s := iUnion_mono λ _ => inter_subset_left
-  le_n := iUnion_mono λ _ => inter_subset_right
-  sn := hp
-  ns := hq
+variable {ι : Type*} {P Q : ι → Set W}
 
-/-- Existential free choice: with a witness for each disjunct but none for both, the doubly
-exhaustified `∃x (P x ∨ Q x)` asserts witnesses for each and denies a joint one. -/
-theorem free_choice_iUnion (hp : ((⋃ x, P x) \ ⋃ x, Q x).Nonempty)
+/-- Existential free choice. Given a witness for each disjunct but none for both, the doubly
+exhaustified `∃x (P x ∨ Q x)` asserts witnesses for each disjunct and denies a joint one. -/
+theorem existential_free_choice (hp : ((⋃ x, P x) \ ⋃ x, Q x).Nonempty)
     (hq : ((⋃ x, Q x) \ ⋃ x, P x).Nonempty)
     (h : (((⋃ x, P x) ∩ ⋃ x, Q x) \ ⋃ x, P x ∩ Q x).Nonempty) :
-    exh₂ {⋃ x, P x ∪ Q x, ⋃ x, P x, ⋃ x, Q x, ⋃ x, P x ∩ Q x} (⋃ x, P x ∪ Q x)
+    exhIter {⋃ x, P x ∪ Q x, ⋃ x, P x, ⋃ x, Q x, ⋃ x, P x ∩ Q x} 2 (⋃ x, P x ∪ Q x)
       = ((⋃ x, P x) ∩ ⋃ x, Q x) \ ⋃ x, P x ∩ Q x :=
-  (isDiamond_iUnion P Q hp hq).exh₂_eq h
+  free_choice (O := fun P : ι → Set W ↦ ⋃ x, P x) (fun _ _ h ↦ iUnion_mono h)
+    (iUnion_union_distrib P Q).le hp hq h
 
-end Existential
+/-- Against the universal alternatives too, the doubly exhaustified `∃x (P x ∨ Q x)` asserts
+witnesses for each disjunct and denies a joint witness and that everything satisfies the
+disjunction. -/
+theorem existential_free_choice_with_universal
+    (hp : ((⋃ x, P x) \ ((⋃ x, Q x) ∪ ⋂ x, P x ∪ Q x)).Nonempty)
+    (hq : ((⋃ x, Q x) \ ((⋃ x, P x) ∪ ⋂ x, P x ∪ Q x)).Nonempty)
+    (h : (((⋃ x, P x) ∩ ⋃ x, Q x) \ ((⋃ x, P x ∩ Q x) ∪ ⋂ x, P x ∪ Q x)).Nonempty) :
+    exhIter {⋃ x, P x ∪ Q x, ⋃ x, P x, ⋃ x, Q x, ⋃ x, P x ∩ Q x,
+        ⋂ x, P x ∪ Q x, ⋂ x, P x, ⋂ x, Q x, ⋂ x, P x ∩ Q x} 2 (⋃ x, P x ∪ Q x)
+      = ((⋃ x, P x) ∩ ⋃ x, Q x) \ ((⋃ x, P x ∩ Q x) ∪ ⋂ x, P x ∪ Q x) :=
+  free_choice_hornAlt (O := fun P : ι → Set W ↦ ⋃ x, P x) (O' := fun P : ι → Set W ↦ ⋂ x, P x)
+    (fun _ _ h ↦ iUnion_mono h) (fun _ _ h ↦ iInter_mono h) (iUnion_union_distrib P Q).le hp hq h
 
-/-! ### Hamblin alternatives -/
+/-- Conjunctive free choice. Against the alternatives under `¬∀` and `¬∃`, the doubly
+exhaustified `¬∀x (P x ∧ Q x)` asserts that something lacks each conjunct, that everything has
+one of them and that something has both. -/
+theorem conjunctive_free_choice
+    (hp : ((⋂ x, P x)ᶜ \ ((⋂ x, Q x)ᶜ ∪ (⋃ x, P x ∩ Q x)ᶜ)).Nonempty)
+    (hq : ((⋂ x, Q x)ᶜ \ ((⋂ x, P x)ᶜ ∪ (⋃ x, P x ∩ Q x)ᶜ)).Nonempty)
+    (h : (((⋂ x, P x)ᶜ ∩ (⋂ x, Q x)ᶜ) \ ((⋂ x, P x ∪ Q x)ᶜ ∪ (⋃ x, P x ∩ Q x)ᶜ)).Nonempty) :
+    exhIter {(⋂ x, P x ∩ Q x)ᶜ, (⋂ x, P x)ᶜ, (⋂ x, Q x)ᶜ, (⋂ x, P x ∪ Q x)ᶜ,
+        (⋃ x, P x ∩ Q x)ᶜ, (⋃ x, P x)ᶜ, (⋃ x, Q x)ᶜ, (⋃ x, P x ∪ Q x)ᶜ} 2 (⋂ x, P x ∩ Q x)ᶜ
+      = ((⋂ x, P x)ᶜ ∩ (⋂ x, Q x)ᶜ) \ ((⋂ x, P x ∪ Q x)ᶜ ∪ (⋃ x, P x ∩ Q x)ᶜ) := by
+  simp only [compl_iInter, compl_iUnion, compl_inter, compl_union] at *
+  exact existential_free_choice_with_universal hp hq h
+
+/-- When `∀x (P x ∨ Q x)` is consistent with denying `∀x P x` and `∀x Q x`, exhaustification
+denies both, since a universal quantifier does not distribute over disjunction. -/
+theorem universal_implicatures (h : ((⋂ x, P x ∪ Q x) \ ((⋂ x, P x) ∪ ⋂ x, Q x)).Nonempty) :
+    exhIE {⋂ x, P x ∪ Q x, ⋂ x, P x, ⋂ x, Q x, ⋂ x, P x ∩ Q x} (⋂ x, P x ∪ Q x)
+      = (⋂ x, P x ∪ Q x) \ ((⋂ x, P x) ∪ ⋂ x, Q x) :=
+  exhIE_sauerlandAlt_of_not_subset (O := fun P : ι → Set W ↦ ⋂ x, P x)
+    (fun _ _ h ↦ iInter_mono h) h
+
+/-- At least two individuals satisfy `P`, the plural alternative of a singular indefinite. -/
+def atLeastTwo (P : ι → Set W) : Set W := {u | {x | u ∈ P x}.Nontrivial}
+
+theorem atLeastTwo_mono : Monotone (atLeastTwo (W := W) (ι := ι)) :=
+  fun _ _ h _ hu ↦ hu.mono fun x hx ↦ h x hx
+
+/-- A world where exactly one individual satisfies `P` and none satisfies `Q` verifies the
+indefinite with `P` and refutes the one with `Q` and the plural one with `P ∨ Q`. -/
+private theorem mem_singular {u : W} (hP : ∃! x, u ∈ P x) (hQ : ∀ x, u ∉ Q x) :
+    u ∈ (⋃ x, P x) \ ((⋃ x, Q x) ∪ atLeastTwo (P ⊔ Q)) := by
+  obtain ⟨x₀, hx₀, huniq⟩ := hP
+  refine ⟨mem_iUnion.2 ⟨x₀, hx₀⟩, ?_⟩
+  rintro (h | ⟨x, hx, y, hy, hxy⟩)
+  · obtain ⟨x, hx⟩ := mem_iUnion.1 h
+    exact hQ x hx
+  · exact hxy ((huniq x (hx.resolve_right (hQ x))).trans (huniq y (hy.resolve_right (hQ y))).symm)
+
+/-- Exhaustifying a singular indefinite over a disjunction, against the alternatives of the
+indefinite and of its plural counterpart, denies a joint witness and a second witness. The
+hypotheses supply, for each disjunct, a world where exactly one individual satisfies it and none
+satisfies the other. -/
+theorem exhIE_singular (hP : ∃ u, (∃! x, u ∈ P x) ∧ ∀ x, u ∉ Q x)
+    (hQ : ∃ u, (∃! x, u ∈ Q x) ∧ ∀ x, u ∉ P x) :
+    exhIE {⋃ x, P x ∪ Q x, ⋃ x, P x, ⋃ x, Q x, ⋃ x, P x ∩ Q x,
+        atLeastTwo (P ⊔ Q), atLeastTwo P, atLeastTwo Q, atLeastTwo (P ⊓ Q)} (⋃ x, P x ∪ Q x)
+      = (⋃ x, P x ∪ Q x) \ ((⋃ x, P x ∩ Q x) ∪ atLeastTwo (P ⊔ Q)) := by
+  obtain ⟨u, hu⟩ := hP
+  obtain ⟨v, hv⟩ := hQ
+  have hv' := mem_singular hv.1 hv.2
+  rw [sup_comm Q P] at hv'
+  exact exhIE_hornAlt (O := fun P : ι → Set W ↦ ⋃ x, P x) (fun _ _ h ↦ iUnion_mono h)
+    atLeastTwo_mono (iUnion_union_distrib P Q).le ⟨u, mem_singular hu.1 hu.2⟩ ⟨v, hv'⟩
+
+/-- A singular indefinite over a disjunction has no free choice reading, since every layer of
+exhaustification contradicts a witness for each disjunct. -/
+theorem singular_no_free_choice (hP : ∃ u, (∃! x, u ∈ P x) ∧ ∀ x, u ∉ Q x)
+    (hQ : ∃ u, (∃! x, u ∈ Q x) ∧ ∀ x, u ∉ P x) {n : ℕ} (hn : 1 ≤ n) :
+    Disjoint (exhIter {⋃ x, P x ∪ Q x, ⋃ x, P x, ⋃ x, Q x, ⋃ x, P x ∩ Q x,
+        atLeastTwo (P ⊔ Q), atLeastTwo P, atLeastTwo Q, atLeastTwo (P ⊓ Q)} n (⋃ x, P x ∪ Q x))
+      ((⋃ x, P x) ∩ ⋃ x, Q x) := by
+  refine Set.disjoint_left.2 fun u hu ⟨hPu, hQu⟩ ↦ ?_
+  have hu1 : u ∈ exhIter _ 1 _ := antitone_exhIter _ _ hn hu
+  rw [exhIter_one, exhIE_singular hP hQ] at hu1
+  obtain ⟨x, hx⟩ := mem_iUnion.1 hPu
+  obtain ⟨y, hy⟩ := mem_iUnion.1 hQu
+  by_cases hxy : x = y
+  · subst hxy
+    exact hu1.2 (Or.inl (mem_iUnion.2 ⟨x, hx, hy⟩))
+  · exact hu1.2 (Or.inr ⟨x, Or.inl hx, y, Or.inr hy, hxy⟩)
+
+end Quantifier
+
+/-! ### Disjunction with an embedded scalar item -/
+
+section Chierchia
+
+variable {r sh ah : Set W}
+
+/-- Against the eight alternatives of Chierchia's *John did the reading or some of the
+homework*, innocent exclusion denies *all of the homework* and the conjunction but not *the
+reading*. -/
+theorem embedded_scalar_implicature (hah : ah ⊆ sh) (hsh : (sh \ (r ∪ ah)).Nonempty)
+    (hr : (r \ sh).Nonempty) :
+    exhIE {r ∪ sh, r, sh, r ∩ sh, r ∪ ah, r, ah, r ∩ ah} (r ∪ sh) = (r ∪ sh) \ (ah ∪ (r ∩ sh)) := by
+  obtain ⟨x, hxs, hx⟩ := hsh
+  obtain ⟨y, hyr, hys⟩ := hr
+  have hM : IsMinimalCover {r ∪ sh, r, sh, r ∩ sh, r ∪ ah, r, ah, r ∩ ah} (r ∪ sh) {x, y} := by
+    refine ⟨?_, fun w hw ↦ ?_, ?_⟩
+    · rintro v (rfl | rfl)
+      exacts [Or.inr hxs, Or.inl hyr]
+    · rcases hw with hwr | hws
+      · refine ⟨y, Or.inr rfl, fun c hc hyc ↦ ?_⟩
+        rcases hc with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl
+        exacts [Or.inl hwr, hwr, (hys hyc).elim, (hys hyc.2).elim, Or.inl hwr, hwr,
+          (hys (hah hyc)).elim, (hys (hah hyc.2)).elim]
+      · refine ⟨x, Or.inl rfl, fun c hc hxc ↦ ?_⟩
+        rcases hc with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl
+        exacts [Or.inr hws, (hx (Or.inl hxc)).elim, hws, (hx (Or.inl hxc.1)).elim,
+          (hx hxc).elim, (hx (Or.inl hxc)).elim, (hx (Or.inr hxc)).elim, (hx (Or.inl hxc.1)).elim]
+    · rintro v (rfl | rfl) u (rfl | rfl) huv
+      · exact leALT_refl _ _
+      · exact (hx (Or.inl (huv r (by simp) hyr))).elim
+      · exact (hys (huv sh (by simp) hxs)).elim
+      · exact leALT_refl _ _
+  rw [hM.exhIE_eq (toFinite _)]
+  ext u
+  simp only [mem_ofPred_eq, mem_insert_iff, mem_singleton_iff, forall_eq_or_imp, forall_eq,
+    mem_sdiff, mem_union, mem_inter_iff]
+  refine and_congr_right fun hu ↦ ⟨fun h huK ↦ ?_, fun huK ↦ ?_⟩
+  · rcases huK with hua | hurs
+    · exact h.2.2.2.2.2.2.1 ⟨fun h' ↦ hx (Or.inr h'), fun h' ↦ hys (hah h')⟩ hua
+    · exact h.2.2.2.1 ⟨fun h' ↦ hx (Or.inl h'.1), fun h' ↦ hys h'.2⟩ hurs
+  · refine ⟨fun h' ↦ (h'.1 (Or.inr hxs)).elim, fun h' ↦ (h'.2 hyr).elim,
+      fun h' ↦ (h'.1 hxs).elim, fun _ h' ↦ huK (Or.inr h'), fun h' ↦ (h'.2 (Or.inl hyr)).elim,
+      fun h' ↦ (h'.2 hyr).elim, fun _ h' ↦ huK (Or.inl h'), fun _ h' ↦ huK (Or.inl h'.2)⟩
+
+end Chierchia
+
+/-! ### Answers to a question -/
 
 section Hamblin
 
 open Question
 
-variable {ι : Type*} {a : ι → Set W}
-variable (hsolo : ∀ i, ∃ u, u ∈ a i ∧ ∀ j, j ≠ i → u ∉ a j)
-include hsolo
+/-- Sauerland's test lets an alternative the prejacent does not entail be excluded when denying
+it, given the prejacent, forces no other such alternative. -/
+def IsSauerlandExcludable (C : Set (Set W)) (p q : Set W) : Prop :=
+  q ∈ C ∧ ¬ p ⊆ q ∧ ∀ r ∈ C, ¬ p ⊆ r → ¬ p \ q ⊆ r
+
+variable {ι : Type*} {a : ι → Set W} (ha : Irredundant a)
+include ha
 
 /-- A group of two or more is innocently excludable given the existential answer. -/
 theorem isInnocentlyExcludable_conj {S : Finset ι} {i j : ι} (hi : i ∈ S) (hj : j ∈ S)
     (hij : i ≠ j) : IsInnocentlyExcludable (conjClosure a) (⋃ i, a i) (conjFamily a S) := by
-  refine .of_extension_consistent (conjFamily_mem_conjClosure ⟨i, hi⟩) λ E hE => ?_
+  refine .of_extension_consistent (conjFamily_mem_conjClosure ⟨i, hi⟩) fun E hE ↦ ?_
   obtain ⟨v, hv⟩ := hE.1.2.2
   by_cases hvS : v ∈ conjFamily a S
-  · obtain ⟨u, hui, hu⟩ := hsolo i
+  · obtain ⟨u, hui, hu⟩ := ha i
     refine ⟨u, ?_⟩
     rintro ψ (hψ | hψ)
     · rcases hE.1.2.1 ψ hψ with rfl | ⟨c, ⟨T, -, rfl⟩, rfl⟩
       · exact mem_iUnion.2 ⟨i, hui⟩
       · intro huT
-        have hTi : ∀ k ∈ T, k = i := λ k hk =>
-          by_contra λ hki => hu k hki (mem_conjFamily.1 huT k hk)
-        refine hv _ hψ (mem_conjFamily.2 λ k hk => ?_)
+        have hTi : ∀ k ∈ T, k = i := fun k hk ↦
+          by_contra fun hki ↦ hu k hki (mem_conjFamily.1 huT k hk)
+        refine hv _ hψ (mem_conjFamily.2 fun k hk ↦ ?_)
         rw [hTi k hk]
         exact mem_conjFamily.1 hvS i hi
     · rw [mem_singleton_iff] at hψ
       subst hψ
-      exact λ huS => hu j hij.symm (mem_conjFamily.1 huS j hj)
+      exact fun huS ↦ hu j hij.symm (mem_conjFamily.1 huS j hj)
   · refine ⟨v, ?_⟩
     rintro ψ (hψ | hψ)
     · exact hv ψ hψ
@@ -449,19 +851,19 @@ theorem isInnocentlyExcludable_conj {S : Finset ι} {i j : ι} (hi : i ∈ S) (h
 /-- A single individual is not innocently excludable given the existential answer. -/
 theorem not_isInnocentlyExcludable_atom (i : ι) :
     ¬ IsInnocentlyExcludable (conjClosure a) (⋃ i, a i) (a i) := by
-  obtain ⟨u, hui, hu⟩ := hsolo i
-  have hmem : ∀ k, a k ∈ conjClosure a := λ k =>
+  obtain ⟨u, hui, hu⟩ := ha i
+  have hmem : ∀ k, a k ∈ conjClosure a := fun k ↦
     conjFamily_singleton (a := a) k ▸ conjFamily_mem_conjClosure ⟨k, Finset.mem_singleton_self k⟩
   rw [isInnocentlyExcludable_iff_exhMW_subset_compl _ _ _ (hmem i)]
-  refine λ h => h ⟨mem_iUnion.2 ⟨i, hui⟩, ?_⟩ hui
+  refine fun h ↦ h ⟨mem_iUnion.2 ⟨i, hui⟩, ?_⟩ hui
   rintro ⟨v, hv, hvu, hnuv⟩
   obtain ⟨k, hkv⟩ := mem_iUnion.1 hv
-  have hki : k = i := by_contra λ hki => hu k hki (hvu _ (hmem k) hkv)
+  have hki : k = i := by_contra fun hki ↦ hu k hki (hvu _ (hmem k) hkv)
   subst k
-  refine hnuv λ c hc huc => ?_
+  refine hnuv fun c hc huc ↦ ?_
   obtain ⟨T, -, rfl⟩ := hc
-  refine mem_conjFamily.2 λ m hm => ?_
-  have hmi : m = i := by_contra λ hmi => hu m hmi (mem_conjFamily.1 huc m hm)
+  refine mem_conjFamily.2 fun m hm ↦ ?_
+  have hmi : m = i := by_contra fun hmi ↦ hu m hmi (mem_conjFamily.1 huc m hm)
   rw [hmi]
   exact hkv
 
@@ -473,38 +875,94 @@ theorem exhIE_conjClosure [Fintype ι] [DecidableEq ι] :
   rw [mem_exhIE_iff _ _ conjClosure_finite, mem_iUnion, mem_ofPred_eq]
   constructor
   · rintro ⟨⟨i, hi⟩, h⟩
-    refine ⟨i, hi, λ j hj => by_contra λ hji =>
-      h (conjFamily a {i, j}) ?_ (mem_conjFamily.2 λ m hm => ?_)⟩
-    · exact isInnocentlyExcludable_conj hsolo (S := {i, j}) (Finset.mem_insert_self i _)
-        (Finset.mem_insert_of_mem (Finset.mem_singleton_self j)) λ h' => hji h'.symm
+    refine ⟨i, hi, fun j hj ↦ by_contra fun hji ↦
+      h (conjFamily a {i, j}) ?_ (mem_conjFamily.2 fun m hm ↦ ?_)⟩
+    · exact isInnocentlyExcludable_conj ha (S := {i, j}) (Finset.mem_insert_self i _)
+        (Finset.mem_insert_of_mem (Finset.mem_singleton_self j)) fun h' ↦ hji h'.symm
     · rcases Finset.mem_insert.1 hm with h1 | h1
       · rw [h1]
         exact hi
       · rw [Finset.mem_singleton.1 h1]
         exact hj
   · rintro ⟨i, hi, huniq⟩
-    refine ⟨⟨i, hi⟩, λ c hc huc => ?_⟩
+    refine ⟨⟨i, hi⟩, fun c hc huc ↦ ?_⟩
     obtain ⟨S, hS, rfl⟩ := hc.1
     by_cases hSi : ∀ j ∈ S, j = i
     · obtain ⟨j, hj⟩ := hS
       have : S = {i} := Finset.eq_singleton_iff_unique_mem.2 ⟨hSi j hj ▸ hj, hSi⟩
       rw [this, conjFamily_singleton] at hc
-      exact not_isInnocentlyExcludable_atom hsolo i hc
+      exact not_isInnocentlyExcludable_atom ha i hc
     · obtain ⟨j, hj⟩ := not_forall.1 hSi
       obtain ⟨hjS, hji⟩ := Classical.not_imp.1 hj
       exact hji (huniq j (mem_conjFamily.1 huc j hjS))
+
+/-- With two individuals, denying every answer that the existential answer does not entail
+contradicts it. -/
+theorem exh_conjClosure_eq_empty {i j : ι} (hij : i ≠ j) :
+    exh (conjClosure a) (⋃ i, a i) = ∅ := by
+  refine eq_empty_of_forall_notMem fun u ⟨hu, h⟩ ↦ ?_
+  obtain ⟨l, hl⟩ := mem_iUnion.1 hu
+  obtain ⟨m, hml⟩ : ∃ m, m ≠ l := (eq_or_ne i l).elim (fun h' ↦ ⟨j, h' ▸ hij.symm⟩) fun h' ↦ ⟨i, h'⟩
+  obtain ⟨v, hvm, hv⟩ := ha m
+  have hmem : a l ∈ conjClosure a :=
+    conjFamily_singleton (a := a) l ▸ conjFamily_mem_conjClosure ⟨l, Finset.mem_singleton_self l⟩
+  exact hv l hml.symm (h _ hmem hl (mem_iUnion.2 ⟨m, hvm⟩))
+
+/-- With three individuals, every answer passes Sauerland's test. -/
+theorem isSauerlandExcludable_conjClosure {i j k : ι} (hij : i ≠ j) (hik : i ≠ k)
+    (hjk : j ≠ k) {q : Set W} (hq : q ∈ conjClosure a) :
+    IsSauerlandExcludable (conjClosure a) (⋃ i, a i) q := by
+  choose u hum hu using ha
+  have hin : ∀ m, u m ∈ ⋃ i, a i := fun m ↦ mem_iUnion.2 ⟨m, hum m⟩
+  -- the sole witness of `m` verifies a group only if the group is `{m}`
+  have hout : ∀ m (S : Finset ι), S.Nonempty → S ≠ {m} → u m ∉ conjFamily a S := by
+    intro m S ⟨l, hl⟩ hSm h
+    refine hSm (Finset.eq_singleton_iff_unique_mem.2 ⟨?_, fun l' hl' ↦ ?_⟩)
+    · exact by_contra fun hm ↦ hu m l (fun hlm ↦ hm (hlm ▸ hl)) (mem_conjFamily.1 h l hl)
+    · exact by_contra fun hlm ↦ hu m l' hlm (mem_conjFamily.1 h l' hl')
+  have hne : ∀ {m m' : ι}, m ≠ m' → ∀ {S : Finset ι}, S = {m} → S ≠ {m'} :=
+    fun hmm' _ hS h ↦ hmm' (Finset.singleton_inj.1 (hS.symm.trans h))
+  obtain ⟨S, hS, rfl⟩ := id hq
+  refine ⟨hq, fun h ↦ ?_, ?_⟩
+  · by_cases hSi : S = {i}
+    · exact hout j S hS (hne hij hSi) (h (hin j))
+    · exact hout i S hS hSi (h (hin i))
+  · rintro _ ⟨T, hT, rfl⟩ -
+    have pick : ∀ m, S ≠ {m} → T ≠ {m} → ¬ (⋃ i, a i) \ conjFamily a S ⊆ conjFamily a T :=
+      fun m hSm hTm h ↦ hout m T hT hTm (h ⟨hin m, hout m S hS hSm⟩)
+    by_cases hSi : S = {i}
+    · by_cases hTj : T = {j}
+      · exact pick k (hne hik hSi) (hne hjk hTj)
+      · exact pick j (hne hij hSi) hTj
+    · by_cases hTi : T = {i}
+      · by_cases hSj : S = {j}
+        · exact pick k (hne hjk hSj) (hne hik hTi)
+        · exact pick j hSj (hne hij hTi)
+      · exact pick i hSi hTi
+
+/-- With three individuals, denying every answer that passes Sauerland's test contradicts the
+existential answer. -/
+theorem sauerland_exclusion_eq_empty {i j k : ι} (hij : i ≠ j) (hik : i ≠ k) (hjk : j ≠ k) :
+    exh {q | IsSauerlandExcludable (conjClosure a) (⋃ i, a i) q} (⋃ i, a i) = ∅ := by
+  refine eq_empty_of_forall_notMem fun u ⟨hu, h⟩ ↦ ?_
+  obtain ⟨l, hl⟩ := mem_iUnion.1 hu
+  have hmem : a l ∈ conjClosure a :=
+    conjFamily_singleton (a := a) l ▸ conjFamily_mem_conjClosure ⟨l, Finset.mem_singleton_self l⟩
+  have hex := isSauerlandExcludable_conjClosure ha hij hik hjk hmem
+  exact hex.2.1 (h _ hex hl)
 
 end Hamblin
 
 /-! ### A finite model -/
 
-/-- The accessibility edges of a seven-world model: from `0` every option is permitted, from
-`4` only the first, from `5` only the second, from `6` each but not both. -/
+/-- In this seven-world model every option is permitted from `0`, only the first from `4`, only
+the second from `5`, and each but not both from `6`. -/
 def edges : List (ℕ × ℕ) := [(0, 1), (0, 2), (0, 3), (4, 1), (5, 2), (6, 1), (6, 2)]
 
-def R : SetRel (Fin 7) (Fin 7) := {p | (p.1.val, p.2.val) ∈ edges}
+/-- The accessibility relation of the model. -/
+def R : SetRel (Fin 7) (Fin 7) := {e | (e.1.val, e.2.val) ∈ edges}
 
-instance (w v : Fin 7) : Decidable (w ~[R] v) :=
+instance (w v : Fin 7) : Decidable ((w, v) ∈ R) :=
   inferInstanceAs (Decidable ((w.val, v.val) ∈ edges))
 
 /-- The first option holds at worlds `1` and `3`. -/
@@ -513,104 +971,29 @@ def p : Set (Fin 7) := {v | v.val ∈ [1, 3]}
 /-- The second option holds at worlds `2` and `3`. -/
 def q : Set (Fin 7) := {v | v.val ∈ [2, 3]}
 
-instance : DecidablePred (· ∈ p) := λ v => inferInstanceAs (Decidable (v.val ∈ [1, 3]))
-instance : DecidablePred (· ∈ q) := λ v => inferInstanceAs (Decidable (v.val ∈ [2, 3]))
+instance : DecidablePred (· ∈ p) := fun v ↦ inferInstanceAs (Decidable (v.val ∈ [1, 3]))
+instance : DecidablePred (· ∈ q) := fun v ↦ inferInstanceAs (Decidable (v.val ∈ [2, 3]))
 
 /-- From world `6`, where each option is permitted but not both, the doubly exhaustified
 permission holds. -/
-example : (6 : Fin 7) ∈ exh₂ {R.preimage (p ∪ q), R.preimage p, R.preimage q, R.preimage (p ∩ q)}
-    (R.preimage (p ∪ q)) := by
-  rw [free_choice p q ⟨4, by decide⟩ ⟨5, by decide⟩ ⟨6, by decide⟩]
+example : (6 : Fin 7) ∈ exhIter {R.preimage (p ∪ q), R.preimage p, R.preimage q,
+    R.preimage (p ∩ q)} 2 (R.preimage (p ∪ q)) := by
+  rw [free_choice_permission ⟨4, by decide⟩ ⟨5, by decide⟩ ⟨6, by decide⟩]
   decide
 
-/-- From world `0`, where both options are jointly permitted, it fails: the anti-conjunctive
-inference. -/
-example : (0 : Fin 7) ∉ exh₂ {R.preimage (p ∪ q), R.preimage p, R.preimage q, R.preimage (p ∩ q)}
-    (R.preimage (p ∪ q)) := by
-  rw [free_choice p q ⟨4, by decide⟩ ⟨5, by decide⟩ ⟨6, by decide⟩]
+/-- From world `0`, where both options are jointly permitted, it fails, which is the
+anti-conjunctive inference. -/
+example : (0 : Fin 7) ∉ exhIter {R.preimage (p ∪ q), R.preimage p, R.preimage q,
+    R.preimage (p ∩ q)} 2 (R.preimage (p ∪ q)) := by
+  rw [free_choice_permission ⟨4, by decide⟩ ⟨5, by decide⟩ ⟨6, by decide⟩]
   decide
 
-/-- With the disjuncts exhaustified first, world `0` verifies Simons's free-choice reading
-together with the joint permission. -/
-example : (0 : Fin 7) ∈ exh₂ {R.preimage (p \ q ∪ q \ p), R.preimage (p \ q), R.preimage (q \ p),
-      R.preimage ((p \ q) ∩ (q \ p))} (R.preimage (p \ q ∪ q \ p)) ∧
+/-- With the options exhaustified against each other first, world `0` verifies Simons's free
+choice reading together with the joint permission. -/
+example : (0 : Fin 7) ∈ exhIter {R.preimage (p \ q ∪ q \ p), R.preimage (p \ q),
+      R.preimage (q \ p), R.preimage ((p \ q) ∩ (q \ p))} 2 (R.preimage (p \ q ∪ q \ p)) ∧
     (0 : Fin 7) ∈ R.preimage (p ∩ q) := by
-  rw [free_choice_exhaustified_disjuncts p q ⟨4, by decide⟩ ⟨5, by decide⟩ ⟨0, by decide⟩]
-  decide
-
-/-! ### The distribution of free choice -/
-
-/-- The operator taking scope over the connective. -/
-inductive Operator
-  | possibility
-  | negatedPossibility
-  | existential
-  | negatedNecessity
-  | negatedUniversal
-  | negation
-  deriving DecidableEq
-
-/-- Number marking on an existential. -/
-inductive Number
-  | none
-  | mass
-  | plural
-  | singular
-  deriving DecidableEq
-
-inductive Connective
-  | or
-  | and
-  deriving DecidableEq
-
-/-- A sentence of the data: its operator, number marking, connective, whether the connective
-takes narrow scope, and whether it has the free-choice reading. -/
-structure Row where
-  operator : Operator
-  number : Number
-  connective : Connective
-  narrow : Bool
-  fc : Bool
-  deriving DecidableEq
-
-/-- Existential free choice: disjunction in the scope of a possibility modal or a non-singular
-existential. -/
-def Row.ExistentialFC (r : Row) : Prop :=
-  r.connective = .or ∧ r.narrow = true ∧
-    (r.operator = .possibility ∨ r.operator = .existential ∧ r.number ≠ .singular)
-
-/-- Conjunctive free choice: conjunction in the scope of a negated universal. -/
-def Row.ConjunctiveFC (r : Row) : Prop :=
-  r.connective = .and ∧ (r.operator = .negatedNecessity ∨ r.operator = .negatedUniversal)
-
-instance : DecidablePred Row.ExistentialFC := λ _ => by unfold Row.ExistentialFC; infer_instance
-instance : DecidablePred Row.ConjunctiveFC := λ _ => by unfold Row.ConjunctiveFC; infer_instance
-
-def operatorTable : List (String × Operator) :=
-  [("possibility", .possibility), ("negatedPossibility", .negatedPossibility),
-    ("existential", .existential), ("negatedNecessity", .negatedNecessity),
-    ("negatedUniversal", .negatedUniversal), ("negation", .negation)]
-
-def numberTable : List (String × Number) :=
-  [("none", .none), ("mass", .mass), ("plural", .plural), ("singular", .singular)]
-
-def yesNoTable : List (String × Bool) := [("yes", true), ("no", false)]
-
-/-- The rows the paper accounts for; the sentence it leaves open is skipped. -/
-def Row.ofDatum (ex : Datum) : Option Row := do
-  let o ← ex.parse? "quantifier" operatorTable
-  let n ← ex.parse? "number" numberTable
-  let c ← ex.parse? "connective" [("or", Connective.or), ("and", Connective.and)]
-  let s ← ex.parse? "scope" [("narrow", true), ("wide", false)]
-  let f ← ex.parse? "fc" yesNoTable
-  let st ← ex.feature? "status"
-  if st = "accounted" then pure ⟨o, n, c, s, f⟩ else none
-
-def rows : List Row := Examples.all.filterMap Row.ofDatum
-
-/-- The two generalizations of §3 fit the data: a sentence has the free-choice reading exactly
-when it falls under existential or conjunctive free choice. -/
-theorem rows_predicted : ∀ r ∈ rows, (r.fc = true ↔ r.ExistentialFC ∨ r.ConjunctiveFC) := by
+  rw [free_choice_of_disjoint disjoint_sdiff_sdiff ⟨4, by decide⟩ ⟨5, by decide⟩ ⟨0, by decide⟩]
   decide
 
 end Fox2007
