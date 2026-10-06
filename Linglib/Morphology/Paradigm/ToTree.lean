@@ -172,11 +172,11 @@ theorem isKindCoherent_blocksEval
     exact ih (fun b hb => hbs b (List.mem_cons_of_mem _ hb)) _
       (isKindCoherent_evalBlockForm LindexZ b (hbs b (List.mem_cons_self ..)) t ht σ)
 
-/-- A kind-coherent vocabulary over a root-or-free stem leaf emits a
+/-- A kind-coherent vocabulary over kind-coherent stem leaves emits a
 kind-coherent tree. -/
 theorem isKindCoherent_paradigmFunction_tree (stemLeaf : L × P → Morph)
     (hbs : ∀ b ∈ blocks, ∀ r ∈ b, KindCoherent r.payload)
-    (hstem : ∀ c : L × P, (stemLeaf c).kind = .root ∨ (stemLeaf c).kind = .free) (c : L × P) :
+    (hstem : ∀ c : L × P, (Tree.root (stemLeaf c)).IsKindCoherent) (c : L × P) :
     (paradigmFunction (fun t => LindexZ t.toList) (fun c => .root (stemLeaf c))
         (blocks.map (List.map (Rule.mapPayload attachTreeAction))) c).1.IsKindCoherent := by
   simp only [paradigmFunction]

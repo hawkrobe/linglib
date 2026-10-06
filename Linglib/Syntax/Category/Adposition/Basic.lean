@@ -24,7 +24,7 @@ takes. An adposition may occur without its term when the term is understood (Hag
 * `Adposition.IsPreposition`, `IsPostposition`, `IsCircumposition`, `IsAmbiposition`: the
   position classes.
 * `Adposition.Takes`, `IsIntransitive`, `IsTransitive`, `IsParticle`: valence.
-* `Adposition.IsComplex`, `IsBound`, `form`, `toWord`: the exponent.
+* `Adposition.IsComplex`, `form`, `toWord`: the exponent.
 * `Adposition.kinds`, `kind?`, `IsSpatial`: the types of case among the values marked.
 
 ## Main results
@@ -111,8 +111,8 @@ variable (a : Adposition)
 
 /-! ### The exponent -/
 
-/-- The surface form joins the pieces of the exponent, in boundary notation, with spaces. -/
-def form : String := " ".intercalate (a.morphs.map toString)
+/-- The surface form of the exponent in boundary notation. -/
+def form : String := Morph.surface a.morphs
 
 instance : Repr Adposition := ⟨fun a _ ↦ a.form⟩
 
@@ -120,11 +120,6 @@ instance : Repr Adposition := ⟨fun a _ ↦ a.form⟩
 def IsComplex : Prop := 1 < a.morphs.length
 
 instance : Decidable a.IsComplex := inferInstanceAs (Decidable (_ < _))
-
-/-- A bound adposition has no free piece, as a clitic flag does. -/
-def IsBound : Prop := ∀ m ∈ a.morphs, m.kind ≠ .free
-
-instance : Decidable a.IsBound := inferInstanceAs (Decidable (∀ m ∈ a.morphs, _))
 
 /-- The adposition as a word, UD category `ADP`. -/
 def toWord : Word := { form := a.form, cat := .ADP }
