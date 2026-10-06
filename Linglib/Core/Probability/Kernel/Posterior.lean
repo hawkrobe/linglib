@@ -24,8 +24,9 @@ product parameter space, to comparisons of prior-weighted likelihood sums.
 * `ProbabilityTheory.posterior_const`: an observation whose law does not depend on the state
   leaves the prior unchanged.
 * `ProbabilityTheory.posterior_real_finset_lt_iff`: event comparison of the posterior.
-* `ProbabilityTheory.integral_posterior`: the posterior expectation is the prior expectation
-  of the likelihood-weighted statistic over the observation's marginal.
+* `ProbabilityTheory.integral_posterior`, `comp_real_mul_integral_posterior`: the posterior
+  expectation is the prior expectation of the likelihood-weighted statistic over the
+  observation's marginal.
 * `ProbabilityTheory.integral_le_integral_posterior`: conditioning on an observation raises
   the expectation of a statistic that monovaries with the observation's likelihood.
 * `ProbabilityTheory.posterior_fst_real_lt_iff`, `posterior_snd_real_lt_iff`: marginal
@@ -169,6 +170,15 @@ theorem comp_real_mul_posterior_real [Fintype Ω] (ω : Ω) (x : 𝓧) :
       ← ENNReal.toReal_mul, h0, ENNReal.toReal_zero]
   · rw [posterior_real_singleton κ μ hx, mul_div_cancel₀]
     rwa [Ne, measureReal_eq_zero_iff (measure_ne_top _ _)]
+
+/-- At every observation, the observation marginal times the posterior expectation of a
+statistic is the prior expectation of the statistic weighted by the likelihood. -/
+theorem comp_real_mul_integral_posterior [Fintype Ω] (f : Ω → ℝ) (x : 𝓧) :
+    (κ ∘ₘ μ).real {x} * ∫ ω, f ω ∂((κ†μ) x) = ∫ ω, f ω * (κ ω).real {x} ∂μ := by
+  rw [integral_fintype .of_finite, integral_fintype .of_finite, Finset.mul_sum]
+  refine Finset.sum_congr rfl fun ω _ ↦ ?_
+  rw [smul_eq_mul, smul_eq_mul, ← mul_assoc, comp_real_mul_posterior_real]
+  ring
 
 /-- The posterior exceeds the prior at a state exactly when the state's likelihood of the
 observation exceeds the observation's marginal. -/
