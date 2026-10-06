@@ -154,6 +154,11 @@ theorem precedes_trans {i₃ : NonemptyInterval α} (h₁₂ : i₁.precedes i�
     i₁.precedes i₃ :=
   (h₁₂.trans_le i₂.fst_le_snd).trans h₂₃
 
+/-- A subinterval of an interval preceding `i₃` precedes `i₃`. -/
+theorem precedes_of_le_of_precedes {i₃ : NonemptyInterval α} (h₁ : i₁ ≤ i₂)
+    (h₂ : i₂.precedes i₃) : i₁.precedes i₃ :=
+  (le_def.1 h₁).2.trans_lt h₂
+
 /-- Precedence and overlap are mutually exclusive. -/
 theorem precedes_not_overlaps (h : i₁.precedes i₂) : ¬ i₁.overlaps i₂ :=
   fun ⟨_, h₂⟩ ↦ lt_irrefl _ (h.trans_le h₂)

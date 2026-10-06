@@ -1,12 +1,13 @@
 module
 
+public import Linglib.Semantics.Tense.Quantificational
 public import Mathlib.Order.Nat
 
 /-!
 # Musan (1995): On the Temporal Interpretation of Noun Phrases
 
-This file formalizes the pragmatic account of life-time effects in the second chapter of
-[musan-1995]. Out of the blue, *Gregory was from America* suggests that Gregory is dead
+Musan's dissertation accounts pragmatically for life-time effects in its second chapter. Out
+of the blue, *Gregory was from America* suggests that Gregory is dead
 while *Gregory was silent* does not. Tenses quantify existentially over times, every
 predicate carries a life-time presupposition that its argument exists at the predication
 time (`holdsAt`), and an individual-level predicate holds of an individual at every time of
@@ -19,7 +20,8 @@ implicature but not the second (`no_lifetime_effect_of_stage_level`).
 
 ## Implementation notes
 
-Times are the points of a linear order and the present tense is evaluation at the utterance
+Times are the points of a linear order, the past tense is the quantificational past of
+`Semantics/Tense/Quantificational.lean`, and the present tense is evaluation at the utterance
 time, where the dissertation quantifies over intervals surrounding it. The neutralization of
 life-time effects in temporally specific contexts, the existence-independent predicates, and
 the third chapter's account of the predication times of noun phrases are not represented.
@@ -33,14 +35,13 @@ the third chapter's account of the predication times of noun phrases are not rep
 
 namespace Musan1995
 
+open Semantics Tense ModalLogic
+
 variable {T : Type*} [LinearOrder T]
 
-/-- A predicate with its life-time presupposition: it holds at a time only of an individual
-alive at that time. -/
+/-- `holdsAt alive P` is the predicate `P` with its life-time presupposition, holding at a time
+only of an individual alive at that time. -/
 def holdsAt (alive P : T → Prop) (t : T) : Prop := alive t ∧ P t
-
-/-- The past tense: the proposition held at some earlier time. -/
-def past (φ : T → Prop) (t : T) : Prop := ∃ t' < t, φ t'
 
 /-- An individual-level predicate holds throughout the individual's life if it holds at all. -/
 def IndividualLevel (alive P : T → Prop) : Prop :=
@@ -51,29 +52,29 @@ variable {alive P : T → Prop} {now : T}
 /-- For an individual-level predicate of an individual alive before now, the present-tense
 sentence entails the past-tense one. -/
 theorem present_entails_past (hP : IndividualLevel alive P) (hborn : ∃ t < now, alive t)
-    (h : holdsAt alive P now) : past (holdsAt alive P) now :=
+    (h : holdsAt alive P now) : ◇[accessibility ⟦past⟧] (holdsAt alive P) now :=
   let ⟨t, ht, hat⟩ := hborn
-  ⟨t, ht, hat, hP ⟨now, h⟩ t hat⟩
+  ⟨t, by simpa using ht, hat, hP ⟨now, h⟩ t hat⟩
 
-/-- The past-tense sentence does not entail the present-tense one: the individual may have
-died. -/
+/-- The past-tense sentence does not entail the present-tense one, since the individual may
+have died. -/
 theorem past_not_entails_present :
-    ∃ alive P : ℕ → Prop,
-      IndividualLevel alive P ∧ past (holdsAt alive P) 1 ∧ ¬ holdsAt alive P 1 :=
-  ⟨(· = 0), λ _ => True, λ _ _ _ => trivial, ⟨0, Nat.zero_lt_one, rfl, trivial⟩,
-    λ h => Nat.one_ne_zero h.1⟩
+    ∃ alive P : ℕ → Prop, IndividualLevel alive P ∧
+      ◇[accessibility ⟦past⟧] (holdsAt alive P) 1 ∧ ¬ holdsAt alive P 1 :=
+  ⟨(· = 0), fun _ ↦ True, fun _ _ _ ↦ trivial, ⟨0, by decide, rfl, trivial⟩,
+    fun h ↦ Nat.one_ne_zero h.1⟩
 
-/-- The life-time effect: the past-tense sentence together with the implicature that the
+/-- In the life-time effect, the past-tense sentence together with the implicature that the
 property is over yields, for an individual-level predicate, that the individual no longer
 exists. -/
-theorem lifetime_effect (hP : IndividualLevel alive P) (h : past (holdsAt alive P) now)
-    (hover : ¬ P now) : ¬ alive now :=
-  λ hnow => hover (hP (let ⟨t, _, ht⟩ := h; ⟨t, ht⟩) now hnow)
+theorem lifetime_effect (hP : IndividualLevel alive P)
+    (h : ◇[accessibility ⟦past⟧] (holdsAt alive P) now) (hover : ¬ P now) : ¬ alive now :=
+  fun hnow ↦ hover (hP (let ⟨t, _, ht⟩ := h; ⟨t, ht⟩) now hnow)
 
-/-- Without the individual-level property the same implicature leaves existence open: an
-individual who was silent and is silent no longer is still alive. -/
+/-- Without the individual-level property the same implicature leaves existence open, as for an
+individual who was silent, is silent no longer, and is still alive. -/
 theorem no_lifetime_effect_of_stage_level :
-    ∃ alive P : ℕ → Prop, past (holdsAt alive P) 1 ∧ ¬ P 1 ∧ alive 1 :=
-  ⟨λ _ => True, (· = 0), ⟨0, Nat.zero_lt_one, trivial, rfl⟩, Nat.one_ne_zero, trivial⟩
+    ∃ alive P : ℕ → Prop, ◇[accessibility ⟦past⟧] (holdsAt alive P) 1 ∧ ¬ P 1 ∧ alive 1 :=
+  ⟨fun _ ↦ True, (· = 0), ⟨0, by decide, trivial, rfl⟩, Nat.one_ne_zero, trivial⟩
 
 end Musan1995
