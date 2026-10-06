@@ -153,6 +153,8 @@ def value_lit(v, t, types: Types, where: str) -> str:
 
 
 def paren(s: str) -> str:
+    if s.startswith("-"):
+        return f"({s})"
     return f"({s})" if " " in s and not s.startswith(("[", "⟨", "(")) else s
 
 
