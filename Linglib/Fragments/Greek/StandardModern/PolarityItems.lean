@@ -1,15 +1,14 @@
 module
 
 public import Linglib.Semantics.Polarity.Licensing
-public import Linglib.Fragments.Greek.StandardModern.TemporalConnectives
 
 /-!
 # Greek polarity items
 
-Polarity items of Modern Greek typed by `PolarityItem`: *para monon*, literally 'but only', the
-punctual *until* of a negated clause and a negative polarity item in the sense of
-[giannakidou-1998], licensed by negation and *xoris* 'without' and not by *amfivalo* 'I doubt' or
-a rhetorical question ([giannakidou-2002], the paper's (36)–(42)).
+Polarity items of Modern Greek typed by `PolarityItem`: *para monon*, literally 'but only', which
+with a negated clause renders English punctual *until*. It is a negative polarity item in the
+sense of Giannakidou's nonveridicality theory, licensed by negation and *xoris* 'without' and not
+by *amfivalo* 'I doubt' or a rhetorical question, by her 2002 paper's (36)–(42).
 
 ## References
 
@@ -23,10 +22,10 @@ namespace Greek.StandardModern.PolarityItems
 
 open PolarityItem
 
-/-- *para monon* is the punctual *until*, licensed by negation and *xoris* 'without'. Its
-connective entry is `Greek.StandardModern.TemporalConnectives.paraMonon`. -/
+/-- *para monon* (παρά μόνον) 'but only' is licensed by negation and *xoris* 'without', as in
+*i prigipisa dhen eftase para monon ta mesanixta* 'the princess did not arrive until midnight'. -/
 def paraMonon : PolarityItem :=
-  { form := TemporalConnectives.paraMonon.form
+  { form := "para monon"
   , licensor := some .antiAdditive
   , licensingContexts := [.negation, .withoutClause] }
 

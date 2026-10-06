@@ -1,293 +1,452 @@
 module
 
-public import Linglib.Semantics.Aspect.Viewpoint
-public import Linglib.Studies.IatridouEtAl2001
+public import Linglib.Semantics.Aspect.SubintervalProperty
+public import Linglib.Semantics.Exhaustification.Excluder
+public import Linglib.Semantics.Quantification.Exceptive
+public import Linglib.Studies.Giannakidou2002
+public import Mathlib.Data.Set.Finite.Lemmas
 
 /-!
 # Iatridou and Zeijlstra (2021): The Complex Beauty of Boundary Adverbials
 
 Iatridou and Zeijlstra analyze *in years* and *until* as boundary adverbials that are domain
-wideners. A negated perfect asserts that no event lies in the perfect time span; *in years*
-introduces the subinterval alternatives of the span and is exhaustified, which contradicts the
-positive claim whenever the events are shorter than the span and is vacuous under negation, so *in
-years* is an NPI. As a domain widener it sets its boundary as far as is logically possible, from
-which the actuality inference at the boundary and the beyond expectation inference follow. *Until*
-is the mirror image with the left boundary fixed: with an imperfective predicate every alternative
-is entailed and exhaustification is vacuous, and with a perfective predicate only the construal
-exhaustifying the negated claim survives.
+wideners. *In years* introduces the subintervals of the perfect time span as domain alternatives,
+which exhaustification turns into a contradiction for the positive perfective claim and leaves
+vacuous under negation, so it is a negative polarity item. As a domain widener it stretches its
+left boundary as far as is logically possible, to the greatest event-free span, which forces an
+event just beyond that boundary, the noncancelable actuality inference, and makes the span
+contain every event-free alternative, the beyond expectation inference. *Until* is the mirror
+image with the left boundary fixed: with an imperfective predicate exhaustification is vacuous,
+and with a perfective one only the construal exhaustifying the negated claim survives, so the
+punctual and durative *until*s of Karttunen and Giannakidou are one word. Against their ambiguity
+account, negation yields the subinterval property, so its durative *until* would accept a negated
+perfective with no event at all, and Greek *para mono* is an exceptive whose meaning already
+gives the punctual one.
 
-## Main definitions
+## Main statements
 
-* `Exh`: exhaustification over the subinterval alternatives of a span.
-* `Widened`: the span of a domain-widening boundary adverbial.
-
-## Main results
-
-* `not_exh_prfv`: the exhaustified positive claim is contradictory when events are shorter than the
-  span.
-* `exh_not_prfv_iff`: under negation exhaustification is vacuous.
-* `exists_event_of_widened`: the actuality inference of a domain widener is not cancelable.
-* `le_of_widened`: the beyond expectation inference.
-* `not_exh_not_unbounded`: with an imperfective predicate the not-throughout construal is
-  contradictory.
+* `in_years_contradictory`: exhaustified, the positive perfective claim is contradictory when
+  the events are shorter than the span.
+* `negated_perfective_exh_vacuous`, `throughout_exh_vacuous`: exhaustification is vacuous for a
+  negated perfective and for a predicate holding throughout the span.
+* `not_throughout_exh_contradictory`: exhaustifying the claim that an imperfective predicate does
+  not hold throughout the span is contradictory.
+* `actuality_inference`, `event_near_lb`, `event_near_rb`: a widened span forces a relevant event
+  just beyond its widened boundary.
+* `beyond_expectation_inference`: the widened span contains every event-free alternative.
+* `widened_iff_maximal`: the widened span is the event-free span stretched until the sentence
+  would become false.
+* `not_widened_rb_of_finite`: in dense time no span is widened past finitely many events.
+* `two_until_overgenerates`: the durative *until* of the ambiguity account accepts a negated
+  perfective with no event at all.
+* `eventiveUntil_of_exceptive`: *para mono* with a temporal argument under negation, read as an
+  exceptive, entails the punctual *until* meaning, the event included.
+* `isLeast_rightBoundaries_prfv`, `isLeast_rightBoundaries_unbounded`: a perfective argument of
+  *until* sets the right boundary at the completion of its event, an imperfective one at the
+  onset.
 
 ## Implementation notes
 
-* Exhaustification negates the proper subinterval alternatives that the claim does not entail as a
-  schema, over every event predicate and world, the logical entailment of the paper's "stronger
-  alternatives". Entailment is relative to the event domain, so refuting one assumes the domain
-  rich, every interval the run time of some event (`Function.Surjective Event.τ`, Krifka's
-  richness).
-* The paper's contradiction for the not-throughout claim under exhaustification, (142), is not a
-  matter of logic alone: `unbounded_of_forall_lt` needs the events to sum and the span to have an
-  interior point.
-* The paper's summary of the three scopal construals in Section 7.2 has the labels of the first two
-  interchanged relative to (146) and (148); the theorems follow (146) and (148).
-* Section 8's fact that *in*-adverbials lack the universal perfect, (153), is not derived.
+* Exhaustification is the shared `Exhaustification.exh` over the domain alternatives, the claim
+  at every subinterval. Entailment between the alternatives is logical, inclusion between sets of
+  interpretations of the event predicate: a claim is stated for `P : V → E → Prop` reaching every
+  extension (`Function.Surjective P`), the extensions themselves (`P = id`, `V = E → Prop`) or
+  their negations (`surjective_not`). A predicate at a world is its extension, `PRFV P w τ` being
+  `PRFV id (P w) τ` by definition. Refuting an entailment assumes the event domain rich, every
+  interval the run time of some event (`Function.Surjective Event.τ`).
+* The paper calls the exhaustified positive claim a logical contradiction. It needs the events to
+  be shorter than the span, as Chierchia's culminated event inside a period of weeks is; an event
+  filling the span exactly survives exhaustification (`mem_exh_prfv_iff`). The contradiction for
+  the not-throughout claim, (142), needs overlapping events to sum and an interior point of the
+  span.
+* The widened span is `IsGreatest` among the event-free spans with the fixed boundary, its other
+  boundary the right one set by tense for *in years* and the contextual left one for *until*.
+  With closed spans and inclusion the forced event lies strictly beyond the widened boundary, and
+  in dense time such a span exists only past infinitely many events; the paper puts "issues of
+  density aside".
+* The paper's meaning for *para mono*, after von Fintel and Iatridou, is an existential that does
+  not itself entail the exception; for the entailment it appeals to "one's favorite semantics" of
+  exceptives. Von Fintel's least-exception semantics, `Quantifier.Exceptive`, supplies it.
+* The paper's summary of the three scopal construals in Section 7.2 has the labels of the first
+  two interchanged relative to (146) and (148), and Section 8 once attaches throughout-not and
+  not-throughout to (148c2) and (148c1), the reverse of (148); the theorems follow (146) and
+  (148).
+
+## TODO
+
+* Section 8's fact that *in*-adverbials lack the universal perfect, (153), on which the
+  exclusion of (154c1–2) rests, is taken as given by the paper and not derived.
+* The satisfaction of the actuality inference on a future branch, (155)–(162), and the hypothesis
+  that a presupposed span makes a domain widener a strong polarity item, after Gajewski's account
+  of strong items by enriched meanings, are not formalized.
 
 ## References
 
 * [iatridou-zeijlstra-2021]
 * [iatridou-anagnostopoulou-izvorski-2001]
 * [chierchia-2013]
-* [krifka-1998]
+* [kadmon-landman-1993]
+* [karttunen-1974]
+* [giannakidou-2002]
+* [von-fintel-1993]
+* [von-fintel-fox-iatridou-2014]
+* [gajewski-2011]
 -/
 
 @[expose] public section
 
 namespace IatridouZeijlstra2021
 
-
-open Aspect NonemptyInterval
+open Aspect NonemptyInterval Exhaustification
 
 variable {W T E : Type*} [LinearOrder T] [Event.TemporalTrace E T]
 
-/-! ### Subdomain alternatives and exhaustification -/
+/-! ### Domain alternatives and exhaustification -/
 
-/-- A span schema is a claim about a time span for any event predicate and world. -/
-abbrev Schema (W E T : Type*) [LinearOrder T] := (W → E → Prop) → IntervalPred W T
+section Exhaustification
 
-/-- The schema at `τ` entails its alternative at `τ'` when it holds at `τ'` in every model in
-which it holds at `τ`. -/
-def Entails (Φ : Schema W E T) (τ τ' : NonemptyInterval T) : Prop := ∀ P w, Φ P w τ → Φ P w τ'
+variable {V : Type*} {p : IntervalPred V T} {τ : NonemptyInterval T}
 
-/-- Exhaustification over the subdomain alternatives of the span, (49b) and (127), conjoins the
-claim with the negation of every proper subinterval alternative it does not entail
-([chierchia-2013]). -/
-def Exh (Φ : Schema W E T) (P : W → E → Prop) (w : W) (τ : NonemptyInterval T) : Prop :=
-  Φ P w τ ∧ ∀ τ' < τ, ¬ Entails Φ τ τ' → ¬ Φ P w τ'
+/-- The domain alternatives of the claim `p` at the span `τ` are the claim at each of its
+subintervals, (45b), (49b) and (127). -/
+def domainAlternatives (p : IntervalPred V T) (τ : NonemptyInterval T) : Set (Set V) :=
+  (fun τ' ↦ {v | p v τ'}) '' Set.Iic τ
 
-variable {Φ : Schema W E T} {P : W → E → Prop} {w : W} {τ τ' : NonemptyInterval T}
+/-- A claim with the subinterval property entails its domain alternatives, so exhaustifying them
+is vacuous. -/
+theorem exh_domainAlternatives_eq_self (hp : p.HasSubintervalProperty) :
+    exh (domainAlternatives p τ) {v | p v τ} = {v | p v τ} :=
+  exh_eq_self <| by rintro _ ⟨τ', hτ', rfl⟩ v hv; exact hp v hτ' hv
 
-omit [Event.TemporalTrace E T] in
-/-- Exhaustification is vacuous for a schema that entails its subinterval alternatives. -/
-theorem exh_of_antitone (h : ∀ P w τ τ', τ' ≤ τ → Φ P w τ → Φ P w τ') :
-    Exh Φ P w τ ↔ Φ P w τ :=
-  ⟨And.left, λ hφ => ⟨hφ, λ _ hτ' hne => absurd (λ P w => h P w _ _ hτ'.le) hne⟩⟩
+/-- When the claim at one span entails it at another exactly when the second contains the first,
+exhaustification negates the claim at every proper subinterval. -/
+theorem mem_exh_domainAlternatives_iff (hp : ∀ τ₁ τ₂, {v | p v τ₁} ⊆ {v | p v τ₂} ↔ τ₁ ≤ τ₂)
+    {v : V} : v ∈ exh (domainAlternatives p τ) {v | p v τ} ↔ p v τ ∧ ∀ τ' < τ, ¬ p v τ' := by
+  simp only [mem_exh, domainAlternatives, Set.forall_mem_image, Set.mem_Iic, Set.mem_ofPred_eq,
+    hp]
+  refine and_congr_right fun _ ↦ ⟨fun h τ' hlt hv ↦ hlt.not_ge (h hlt.le hv), fun h τ' hle hv ↦ ?_⟩
+  obtain rfl | hlt := hle.eq_or_lt
+  · exact le_rfl
+  · exact absurd hv (h τ' hlt)
 
-/-! ### The perfect of the perfective and the NPI-hood of *in years*
+end Exhaustification
+
+/-! ### *In years*: the perfective claim and its negation
 
 The assertion of a perfect of the perfective, (14e) and (49a), is `Aspect.PRFV`: some event's
-runtime is inside the span. Its subinterval alternatives are stronger and not entailed, so
-exhaustification negates them all; the event would have to fill the span exactly, which a
-culminated event shorter than weeks cannot, (44) and (49). Under negation, (50), every
-alternative is weaker and exhaustification is vacuous. -/
+run time lies inside the span. Its domain alternatives are stronger and not entailed, so
+exhaustification negates them all and the event would have to fill the span, which a culminated
+event shorter than weeks cannot, (44) and (49). The negated perfective has the subinterval
+property (`Aspect.hasSubintervalProperty_not_prfv`), so under negation every alternative is
+entailed and exhaustification is vacuous, (50). With *until* the same holds of the until time
+span: the positive perfective (128)–(132) is contradictory, and so is (146a), exhaustifying the
+perfective of the negated predicate, while the construal exhaustifying the negated claim, (148b),
+is vacuous. -/
 
-/-- An event inside a subinterval is inside the span, (49). -/
-theorem prfv_mono (h : τ' ≤ τ) : PRFV P w τ' → PRFV P w τ :=
-  λ ⟨e, he, hP⟩ => ⟨e, he.trans h, hP⟩
+section Perfective
 
-/-- The event claim at a span does not entail it at a proper subinterval. -/
-theorem not_entails_prfv [Nonempty W]
-    (hrich : Function.Surjective (Event.τ : E → NonemptyInterval T))
-    (h : τ' < τ) : ¬ Entails (PRFV : Schema W E T) τ τ' := λ hent =>
-  let ⟨e₀, he₀⟩ := hrich τ
-  let ⟨_, he, heq⟩ := hent (λ _ e => Event.τ e = τ) (Classical.arbitrary W) ⟨e₀, he₀.le, he₀⟩
-  absurd (heq ▸ he : τ ≤ τ') (not_le_of_gt h)
+variable {V : Type*} {P : V → E → Prop} {τ : NonemptyInterval T}
 
-/-- Exhaustifying the positive event claim negates every proper subinterval alternative, so the
-event must fill the span. -/
-theorem exh_prfv_iff [Nonempty W]
-    (hrich : Function.Surjective (Event.τ : E → NonemptyInterval T)) :
-    Exh PRFV P w τ ↔ (∃ e, Event.τ e = τ ∧ P w e) ∧ ∀ τ' < τ, ¬ PRFV P w τ' := by
-  constructor
-  · rintro ⟨⟨e, he, hP⟩, hex⟩
-    have hex' : ∀ τ' < τ, ¬ PRFV P w τ' := λ τ' hτ' => hex τ' hτ' (not_entails_prfv hrich hτ')
-    exact ⟨⟨e, eq_of_le_of_not_lt he (λ hlt => hex' _ hlt ⟨e, le_rfl, hP⟩), hP⟩, hex'⟩
-  · rintro ⟨⟨e, rfl, hP⟩, hex⟩
-    exact ⟨⟨e, le_rfl, hP⟩, λ τ' hτ' _ => hex τ' hτ'⟩
+/-- Where every extension is available and the event domain is rich, the perfective claim at one
+span entails it at another exactly when the second contains the first. -/
+theorem prfv_subset_prfv_iff (hP : Function.Surjective P)
+    (hrich : Function.Surjective (Event.τ : E → NonemptyInterval T)) {τ₁ τ₂ : NonemptyInterval T} :
+    {v | PRFV P v τ₁} ⊆ {v | PRFV P v τ₂} ↔ τ₁ ≤ τ₂ := by
+  refine ⟨fun h ↦ ?_, fun h _ ⟨e, he, hv⟩ ↦ ⟨e, he.trans h, hv⟩⟩
+  obtain ⟨v, hv⟩ := hP (Event.τ · = τ₁)
+  obtain ⟨e₀, he₀⟩ := hrich τ₁
+  obtain ⟨e, he, heq⟩ := h (a := v) ⟨e₀, he₀.le, (congrFun hv e₀).mpr he₀⟩
+  exact (congrFun hv e).mp heq ▸ he
+
+/-- Exhaustified, the positive perfective claim requires an event filling the span and none
+inside a proper subinterval. -/
+theorem mem_exh_prfv_iff (hP : Function.Surjective P)
+    (hrich : Function.Surjective (Event.τ : E → NonemptyInterval T)) {v : V} :
+    v ∈ exh (domainAlternatives (PRFV P) τ) {v | PRFV P v τ} ↔
+      (∃ e, Event.τ e = τ ∧ P v e) ∧ ∀ τ' < τ, ¬ PRFV P v τ' := by
+  rw [mem_exh_domainAlternatives_iff fun _ _ ↦ prfv_subset_prfv_iff hP hrich]
+  exact ⟨fun ⟨⟨e, he, hv⟩, h⟩ ↦ ⟨⟨e, he.eq_of_not_lt fun hlt ↦ h _ hlt ⟨e, le_rfl, hv⟩, hv⟩, h⟩,
+    fun ⟨⟨e, he, hv⟩, h⟩ ↦ ⟨⟨e, he.le, hv⟩, h⟩⟩
 
 /-- Where every relevant event is shorter than the span, the exhaustified positive claim is
-contradictory, so *in years* is an NPI, (44), (49); (152b) and the presupposition of (180) are
-instances. -/
-theorem not_exh_prfv [Nonempty W] (hrich : Function.Surjective (Event.τ : E → NonemptyInterval T))
-    (hshort : ∀ e, P w e → Event.τ e ≠ τ) : ¬ Exh PRFV P w τ :=
-  λ h => let ⟨⟨e, he, hP⟩, _⟩ := (exh_prfv_iff hrich).1 h; hshort e hP he
+contradictory, so *in years* is a negative polarity item, (44) and (49). The positive *until*
+sentence (128), the perfect of (152b), the perfective of the negated predicate in (146a) and the
+presupposition of (180) are instances. -/
+theorem in_years_contradictory (hP : Function.Surjective P)
+    (hrich : Function.Surjective (Event.τ : E → NonemptyInterval T)) {v : V}
+    (hshort : ∀ e, P v e → Event.τ e ≠ τ) :
+    v ∉ exh (domainAlternatives (PRFV P) τ) {v | PRFV P v τ} := fun h ↦
+  let ⟨⟨e, he, hv⟩, _⟩ := (mem_exh_prfv_iff hP hrich).1 h
+  hshort e hv he
 
-/-- Under negation exhaustification is vacuous, (50). -/
-theorem exh_not_prfv_iff : Exh (λ P w τ => ¬ PRFV P w τ) P w τ ↔ ¬ PRFV P w τ :=
-  exh_of_antitone λ _ _ _ _ h hn hp => hn (prfv_mono h hp)
+/-- Under negation exhaustification is vacuous, (50) and (126)–(127), and so is the construal of
+*until* that exhaustifies the negated perfective, (148b). -/
+theorem negated_perfective_exh_vacuous :
+    exh (domainAlternatives (fun v τ ↦ ¬ PRFV P v τ) τ) {v | ¬ PRFV P v τ} =
+      {v | ¬ PRFV P v τ} :=
+  exh_domainAlternatives_eq_self (hasSubintervalProperty_not_prfv P)
+
+end Perfective
+
+/-- Negating the extension of the event predicate reaches every extension. -/
+theorem surjective_not : Function.Surjective fun (v : E → Prop) e ↦ ¬ v e :=
+  fun u ↦ ⟨fun e ↦ ¬ u e, funext fun _ ↦ propext not_not⟩
 
 /-! ### Domain widening: the actuality and beyond expectation inferences
 
-A boundary adverbial sets one boundary of its span, Tense or the argument of *until* fixing
-the other (`fixed`). A domain widener stretches its boundary as far as is logically possible:
-the span is event-free and every wider span with the same fixed boundary contains an event
-(`Widened`, Section 4). The event that bounds the widening is the actuality inference, at the
-boundary and not cancelable, Constant's observation; the span's containing every event-free
-alternative is the beyond expectation inference. *In years* widens leftward from the right
-boundary, *until* rightward from the left boundary (Section 6). -/
+A boundary adverbial sets one boundary of its span, while tense or the argument of *until* fixes
+the other (`F`, `(RB · t)` for *in years* and `LB t` for *until*). A domain widener stretches its
+boundary as far as is logically possible: its span is the greatest event-free span with the fixed
+boundary, Section 4. The event that stops the widening is the actuality inference, Constant's
+observation, and the span's containing every event-free alternative is the beyond expectation
+inference. A boundary adverbial that names its own boundary, *in (the last) 5 years* or *since
+2015*, leaves the actuality inference cancelable and has no beyond expectation inference. -/
 
-/-- `fixed` is the boundary fixed for the adverbial, the right boundary of a perfect time span,
-set by Tense, (14b), or the left boundary of an until time span, set contextually. -/
-def fixed : IatridouEtAl2001.BoundaryKind → T → NonemptyInterval T → Prop
-  | .right, t => (RB · t)
-  | .left, t => LB t
+section Widening
 
-/-- Spans sharing a fixed boundary are comparable. -/
-theorem fixed_le_or_le {b : IatridouEtAl2001.BoundaryKind} {t : T} {τ₁ τ₂ : NonemptyInterval T}
-    (h₁ : fixed b t τ₁) (h₂ : fixed b t τ₂) : τ₁ ≤ τ₂ ∨ τ₂ ≤ τ₁ := by
-  cases b
-  · rcases le_total τ₁.snd τ₂.snd with h | h
-    · exact Or.inl (le_def.2 ⟨(h₂.trans h₁.symm).le, h⟩)
-    · exact Or.inr (le_def.2 ⟨(h₁.trans h₂.symm).le, h⟩)
-  · rcases le_total τ₂.fst τ₁.fst with h | h
-    · exact Or.inl (le_def.2 ⟨h, (h₁.trans h₂.symm).le⟩)
-    · exact Or.inr (le_def.2 ⟨h, (h₂.trans h₁.symm).le⟩)
-
-/-- The span of a domain-widening boundary adverbial is event-free and has its other boundary
-fixed at `t`, and every wider such span contains an event. -/
-def Widened (b : IatridouEtAl2001.BoundaryKind) (t : T) (P : W → E → Prop) (w : W)
+/-- The span of a domain widener whose other boundary is fixed by `F` is the greatest event-free
+span that `F` admits. -/
+def Widened (F : NonemptyInterval T → Prop) (P : W → E → Prop) (w : W)
     (τ : NonemptyInterval T) : Prop :=
-  fixed b t τ ∧ ¬ PRFV P w τ ∧ ∀ τ', fixed b t τ' → τ < τ' → PRFV P w τ'
+  IsGreatest {τ' | F τ' ∧ ¬ PRFV P w τ'} τ
 
-variable {b : IatridouEtAl2001.BoundaryKind} {t : T}
+variable {F : NonemptyInterval T → Prop} {P : W → E → Prop} {w : W} {τ τ' : NonemptyInterval T}
 
-/-- By the actuality inference at the boundary, every wider span with the same fixed boundary
-contains an event that the widened span does not. -/
-theorem event_of_widened (h : Widened b t P w τ) (hτ' : fixed b t τ') (hlt : τ < τ') :
-    ∃ e, P w e ∧ Event.τ e ≤ τ' ∧ ¬ Event.τ e ≤ τ :=
-  let ⟨e, he, hP⟩ := h.2.2 τ' hτ' hlt
-  ⟨e, hP, he, λ hle => h.2.1 ⟨e, hle, hP⟩⟩
+/-- Spans ending at the same time are nested. -/
+theorem isChain_rb (t : T) : IsChain (· ≤ ·) {τ : NonemptyInterval T | RB τ t} := by
+  intro τ₁ h₁ τ₂ h₂ _
+  rcases le_total τ₂.fst τ₁.fst with h | h
+  · exact .inl (le_def.2 ⟨h, (h₁.trans h₂.symm).le⟩)
+  · exact .inr (le_def.2 ⟨h, (h₂.trans h₁.symm).le⟩)
 
-/-- The actuality inference of a domain widener is not cancelable, as Constant observes, a relevant
-event existing whenever the span could be widened at all, (22) and (26). -/
-theorem exists_event_of_widened (h : Widened b t P w τ) (hw : ∃ τ', fixed b t τ' ∧ τ < τ') :
-    ∃ e, P w e :=
+/-- Spans starting at the same time are nested. -/
+theorem isChain_lb (t : T) : IsChain (· ≤ ·) {τ : NonemptyInterval T | LB t τ} := by
+  intro τ₁ h₁ τ₂ h₂ _
+  rcases le_total τ₁.snd τ₂.snd with h | h
+  · exact .inl (le_def.2 ⟨(h₂.trans h₁.symm).le, h⟩)
+  · exact .inr (le_def.2 ⟨(h₁.trans h₂.symm).le, h⟩)
+
+/-- On a chain of spans sharing the fixed boundary, the widened span is the maximal event-free
+one, the boundary stretched until the sentence would become false. -/
+theorem widened_iff_maximal (hF : IsChain (· ≤ ·) {τ | F τ}) :
+    Widened F P w τ ↔ Maximal (fun τ' ↦ F τ' ∧ ¬ PRFV P w τ') τ := by
+  refine ⟨fun h ↦ ⟨h.1, fun _ hτ' _ ↦ h.2 hτ'⟩, fun h ↦ ⟨h.1, fun τ' hτ' ↦ ?_⟩⟩
+  obtain rfl | hne := eq_or_ne τ' τ
+  · exact le_rfl
+  · exact (hF hτ'.1 h.1.1 hne).elim id (h.2 hτ')
+
+/-- Every wider span with the fixed boundary contains an event. -/
+theorem Widened.prfv (h : Widened F P w τ) (hτ' : F τ') (hlt : τ < τ') : PRFV P w τ' :=
+  by_contra fun hfree ↦ hlt.not_ge (h.2 ⟨hτ', hfree⟩)
+
+/-- The actuality inference is not cancelable, Constant's observation (22) and (26), since a
+relevant event exists whenever the span could be widened at all. -/
+theorem actuality_inference (h : Widened F P w τ) (hw : ∃ τ', F τ' ∧ τ < τ') : ∃ e, P w e :=
   let ⟨_, hτ', hlt⟩ := hw
-  let ⟨e, hP, _⟩ := event_of_widened h hτ' hlt
+  let ⟨e, _, hP⟩ := h.prfv hτ' hlt
   ⟨e, hP⟩
 
-/-- By the beyond expectation inference, the widened span contains every event-free span with
-the same fixed boundary, so the boundary lies beyond any contextual alternative, (31)–(33)
-and (119)–(122). -/
-theorem le_of_widened (h : Widened b t P w τ) {τc : NonemptyInterval T} (hc : fixed b t τc)
-    (hfree : ¬ PRFV P w τc) : τc ≤ τ := by
-  rcases fixed_le_or_le hc h.1 with hle | hle
-  · exact hle
-  · rcases hle.lt_or_eq with hlt | heq
-    · exact absurd (h.2.2 τc hc hlt) hfree
-    · exact heq.symm.le
+/-- The beyond expectation inference, (31)–(33) and (119)–(122), is that the widened span contains
+every event-free span with the same fixed boundary. -/
+theorem beyond_expectation_inference (h : Widened F P w τ) (hτ' : F τ')
+    (hfree : ¬ PRFV P w τ') : τ' ≤ τ :=
+  h.2 ⟨hτ', hfree⟩
 
-/-- With *in years* the last event lies at the left boundary of the widened perfect time span,
-(51), since however close to the boundary one looks an event starts there, (23)–(24). -/
-theorem event_near_lb (h : Widened .right t P w τ) {s : T} (hs : s < τ.fst) :
+/-- With *in years* the last event starts just before the left boundary of the widened perfect
+time span, (51), since however close to the boundary one looks an event starts there,
+(23)–(24). -/
+theorem event_near_lb {t : T} (h : Widened (RB · t) P w τ) {s : T} (hs : s < τ.fst) :
     ∃ e, P w e ∧ s ≤ (Event.τ e).fst ∧ (Event.τ e).fst < τ.fst := by
-  have hτ' : fixed .right t ⟨(s, τ.snd), hs.le.trans τ.fst_le_snd⟩ := h.1
-  obtain ⟨e, hP, he, hne⟩ := event_of_widened h hτ'
-    (lt_of_le_of_ne (le_def.2 ⟨hs.le, le_rfl⟩) λ heq => hs.ne' (congrArg (·.fst) heq))
-  exact ⟨e, hP, (le_def.1 he).1, lt_of_not_ge λ hge => hne (le_def.2 ⟨hge, (le_def.1 he).2⟩)⟩
+  obtain ⟨e, he, hP⟩ := h.prfv (τ' := ⟨(s, τ.snd), hs.le.trans τ.fst_le_snd⟩) h.1.1
+    (lt_of_le_of_ne (le_def.2 ⟨hs.le, le_rfl⟩) fun heq ↦ hs.ne' (congrArg (·.fst) heq))
+  exact ⟨e, hP, (le_def.1 he).1,
+    lt_of_not_ge fun hge ↦ h.1.2 ⟨e, le_def.2 ⟨hge, (le_def.1 he).2⟩, hP⟩⟩
 
-/-- With *until* the event lies at the right boundary of the widened until time span, (123). -/
-theorem event_near_rb (h : Widened .left t P w τ) {s : T} (hs : τ.snd < s) :
+/-- With *until* the event ends just after the right boundary of the widened until time span,
+(123). -/
+theorem event_near_rb {t : T} (h : Widened (LB t) P w τ) {s : T} (hs : τ.snd < s) :
     ∃ e, P w e ∧ (Event.τ e).snd ≤ s ∧ τ.snd < (Event.τ e).snd := by
-  have hτ' : fixed .left t ⟨(τ.fst, s), τ.fst_le_snd.trans hs.le⟩ := h.1
-  obtain ⟨e, hP, he, hne⟩ := event_of_widened h hτ'
-    (lt_of_le_of_ne (le_def.2 ⟨le_rfl, hs.le⟩) λ heq => hs.ne (congrArg (·.snd) heq))
-  exact ⟨e, hP, (le_def.1 he).2, lt_of_not_ge λ hge => hne (le_def.2 ⟨(le_def.1 he).1, hge⟩)⟩
+  obtain ⟨e, he, hP⟩ := h.prfv (τ' := ⟨(τ.fst, s), τ.fst_le_snd.trans hs.le⟩) h.1.1
+    (lt_of_le_of_ne (le_def.2 ⟨le_rfl, hs.le⟩) fun heq ↦ hs.ne (congrArg (·.snd) heq))
+  exact ⟨e, hP, (le_def.1 he).2,
+    lt_of_not_ge fun hge ↦ h.1.2 ⟨e, le_def.2 ⟨(le_def.1 he).1, hge⟩, hP⟩⟩
 
-/-- A boundary adverbial that fixes its own boundary, *in (the last) 5 years* or *since 2015*
-setting the left boundary at `s` (`Aspect.LB`), leaves the actuality inference cancelable, since the
-negated perfect holds in a model with no relevant event at all, (11)–(12) and (23). -/
-theorem cancelable_of_lb (s : T) (hs : s ≤ t) :
-    ∃ P : W → E → Prop, ∃ τ, LB s τ ∧ RB τ t ∧ ¬ PRFV P w τ ∧ ∀ e, ¬ P w e :=
-  ⟨λ _ _ => False, ⟨(s, t), hs⟩, rfl, rfl, λ ⟨_, _, h⟩ => h, λ _ => id⟩
+/-- Over the integers, with one seizure at time `0` and the right boundary at `10`, the perfect time
+span of *in years* runs from `1` to `10`. -/
+example : Widened (W := Unit) (E := NonemptyInterval ℤ) (RB · 10)
+    (fun _ e ↦ e = NonemptyInterval.pure 0) () ⟨(1, 10), by decide⟩ := by
+  refine ⟨⟨rfl, fun ⟨e, he, hP⟩ ↦ by
+    subst hP; simp [ViewpointType.ttTSitRelation, le_def] at he⟩, fun τ' ⟨hrb, hfree⟩ ↦ ?_⟩
+  refine le_def.2 ⟨not_lt.1 fun hlt ↦ hfree ⟨.pure 0, le_def.2 ⟨?_, ?_⟩, rfl⟩, hrb.le⟩
+  · simp at hlt ⊢; omega
+  · simp [RB] at hrb ⊢; omega
+
+/-- In dense time a perfect time span is widened only past infinitely many events, since with
+finitely many an event-free span can always be stretched a little further. -/
+theorem not_widened_rb_of_finite [DenselyOrdered T] [NoMinOrder T] {t : T}
+    (hfin : {e | P w e}.Finite) : ¬ Widened (RB · t) P w τ := fun h ↦ by
+  obtain ⟨s, hs, hsF⟩ :
+      ∃ s < τ.fst, ∀ e, P w e → (Event.τ e).fst < τ.fst → (Event.τ e).fst < s := by
+    rcases ({e | P w e ∧ (Event.τ e).fst < τ.fst} : Set E).eq_empty_or_nonempty with hE | hne
+    · obtain ⟨s, hs⟩ := exists_lt τ.fst
+      exact ⟨s, hs, fun e hP hlt ↦ (hE.subset ⟨hP, hlt⟩).elim⟩
+    · obtain ⟨m, ⟨_, hm⟩, hmax⟩ :=
+        Set.exists_max_image _ (fun e ↦ (Event.τ e).fst) (hfin.subset fun _ he ↦ he.1) hne
+      obtain ⟨s, hms, hs⟩ := exists_between hm
+      exact ⟨s, hs, fun e hP hlt ↦ (hmax e ⟨hP, hlt⟩).trans_lt hms⟩
+  obtain ⟨e, hP, hse, hlt⟩ := event_near_lb h hs
+  exact (hsF e hP hlt).not_ge hse
+
+/-- A boundary adverbial that names its left boundary `s`, *in (the last) 5 years* or *since 2015*,
+leaves the actuality inference cancelable, since the negated perfect holds with no relevant event
+at all, (11)–(12), and with the last event before the left boundary, (23). -/
+theorem cancelable_of_lb {t : T} (s : T) (hs : s ≤ t) :
+    (∃ P : W → E → Prop, ∃ τ, LB s τ ∧ RB τ t ∧ ¬ PRFV P w τ ∧ ∀ e, ¬ P w e) ∧
+      ∀ e₀ : E, (Event.τ e₀).snd < s →
+        ∃ P : W → E → Prop, ∃ τ, LB s τ ∧ RB τ t ∧ ¬ PRFV P w τ ∧ P w e₀ :=
+  ⟨⟨fun _ _ ↦ False, ⟨(s, t), hs⟩, rfl, rfl, fun ⟨_, _, h⟩ ↦ h, fun _ ↦ id⟩,
+    fun e₀ he₀ ↦ ⟨fun _ e ↦ e = e₀, ⟨(s, t), hs⟩, rfl, rfl,
+      fun ⟨_, hle, heq⟩ ↦ (heq ▸ (le_def.1 hle).1 : s ≤ (Event.τ e₀).fst).not_gt
+        ((Event.τ e₀).fst_le_snd.trans_lt he₀), rfl⟩⟩
+
+end Widening
 
 /-! ### *Until* with an imperfective predicate
 
 The predicate holds throughout the until time span, (137): `Aspect.UNBOUNDED`, the span inside
-the event's runtime. Every subinterval alternative is then entailed and exhaustification is
-vacuous, for the affirmative (148a) as for the throughout-not reading with the negated event
-(148c1) and the not-throughout reading with negation above the exhaustifier (148c2). The
-remaining construal, exhaustifying the not-throughout claim (148b), makes every proper
-subinterval a throughout, (142), which is contradictory once overlapping events sum. -/
+the event's run time. Every domain alternative is then entailed and exhaustification is vacuous,
+for the affirmative (148a) as for the throughout-not reading with the negated event predicate,
+(139) and (148c1), and the not-throughout reading with negation above the exhaustifier, (148c2).
+The remaining construal, exhaustifying the not-throughout claim (148b), makes the predicate hold
+throughout every proper subinterval, (142), which is contradictory once overlapping events
+sum. -/
 
-/-- The predicate holding throughout a span holds throughout its subintervals. -/
-theorem unbounded_anti (h : τ' ≤ τ) : UNBOUNDED P w τ → UNBOUNDED P w τ' :=
-  λ ⟨e, he, hP⟩ => ⟨e, h.trans he, hP⟩
+section Imperfective
 
-/-- Exhaustifying the throughout claim is vacuous, (137), (139) and (141). -/
-theorem exh_unbounded_iff : Exh UNBOUNDED P w τ ↔ UNBOUNDED P w τ :=
-  exh_of_antitone λ _ _ _ _ h => unbounded_anti h
+variable {V : Type*} {P : V → E → Prop} {τ : NonemptyInterval T}
 
-/-- The proper subinterval alternatives of the not-throughout claim are stronger and not
-entailed, (142). -/
-theorem not_entails_not_unbounded [Nonempty W]
-    (hrich : Function.Surjective (Event.τ : E → NonemptyInterval T)) (h : τ' < τ) :
-    ¬ Entails (λ P w τ => ¬ UNBOUNDED P w τ : Schema W E T) τ τ' := λ hent =>
-  let ⟨e₀, he₀⟩ := hrich τ'
-  hent (λ _ e => Event.τ e = τ') (Classical.arbitrary W)
-    (λ ⟨_, he, heq⟩ => absurd (heq ▸ he : τ ≤ τ') (not_le_of_gt h)) ⟨e₀, he₀.ge, he₀⟩
+/-- Exhaustifying the throughout claim is vacuous, (137) with (144), and (139) with (141) for the
+negated event predicate. -/
+theorem throughout_exh_vacuous :
+    exh (domainAlternatives (UNBOUNDED P) τ) {v | UNBOUNDED P v τ} = {v | UNBOUNDED P v τ} :=
+  exh_domainAlternatives_eq_self (hasSubintervalProperty_unbounded P)
+
+/-- Where every extension is available and the event domain is rich, the not-throughout claim at
+one span entails it at another exactly when the second contains the first, (142). -/
+theorem not_unbounded_subset_iff (hP : Function.Surjective P)
+    (hrich : Function.Surjective (Event.τ : E → NonemptyInterval T)) {τ₁ τ₂ : NonemptyInterval T} :
+    {v | ¬ UNBOUNDED P v τ₁} ⊆ {v | ¬ UNBOUNDED P v τ₂} ↔ τ₁ ≤ τ₂ := by
+  refine ⟨fun h ↦ ?_, fun h _ hn ⟨e, he, hv⟩ ↦ hn ⟨e, h.trans he, hv⟩⟩
+  obtain ⟨v, hv⟩ := hP (Event.τ · = τ₂)
+  obtain ⟨e₀, he₀⟩ := hrich τ₂
+  by_contra hle
+  exact h (a := v) (fun ⟨e, he, heq⟩ ↦ hle ((congrFun hv e).mp heq ▸ he))
+    ⟨e₀, he₀.ge, (congrFun hv e₀).mpr he₀⟩
 
 /-- Exhaustifying the not-throughout claim makes the predicate hold throughout every proper
 subinterval. -/
-theorem exh_not_unbounded_iff [Nonempty W]
-    (hrich : Function.Surjective (Event.τ : E → NonemptyInterval T)) :
-    Exh (λ P w τ => ¬ UNBOUNDED P w τ) P w τ ↔ ¬ UNBOUNDED P w τ ∧ ∀ τ' < τ, UNBOUNDED P w τ' :=
-  ⟨λ ⟨h, hex⟩ => ⟨h, λ τ' hτ' => not_not.1 (hex τ' hτ' (not_entails_not_unbounded hrich hτ'))⟩,
-    λ ⟨h, hall⟩ => ⟨h, λ τ' hτ' _ => not_not.2 (hall τ' hτ')⟩⟩
+theorem mem_exh_not_unbounded_iff (hP : Function.Surjective P)
+    (hrich : Function.Surjective (Event.τ : E → NonemptyInterval T)) {v : V} :
+    v ∈ exh (domainAlternatives (fun v τ ↦ ¬ UNBOUNDED P v τ) τ) {v | ¬ UNBOUNDED P v τ} ↔
+      ¬ UNBOUNDED P v τ ∧ ∀ τ' < τ, UNBOUNDED P v τ' := by
+  rw [mem_exh_domainAlternatives_iff fun _ _ ↦ not_unbounded_subset_iff hP hrich]
+  simp only [not_not]
 
 /-- Where overlapping events sum to an event and the span has an interior point, a predicate
 holding throughout every proper subinterval holds throughout the span. -/
-theorem unbounded_of_forall_lt [DenselyOrdered T]
-    (hsum : ∀ e₁ e₂, P w e₁ → P w e₂ → (Event.τ e₁).overlaps (Event.τ e₂) →
-      ∃ e, P w e ∧ Event.τ e₁ ≤ Event.τ e ∧ Event.τ e₂ ≤ Event.τ e)
-    (hτ : τ.fst < τ.snd) (h : ∀ τ' < τ, UNBOUNDED P w τ') : UNBOUNDED P w τ := by
-  obtain ⟨m, hm₁, hm₂⟩ := exists_between hτ
+theorem unbounded_of_forall_lt {v : V}
+    (hsum : ∀ e₁ e₂, P v e₁ → P v e₂ → (Event.τ e₁).overlaps (Event.τ e₂) →
+      ∃ e, P v e ∧ Event.τ e₁ ≤ Event.τ e ∧ Event.τ e₂ ≤ Event.τ e)
+    {m : T} (hm₁ : τ.fst < m) (hm₂ : m < τ.snd) (h : ∀ τ' < τ, UNBOUNDED P v τ') :
+    UNBOUNDED P v τ := by
   obtain ⟨e₁, he₁, hP₁⟩ := h ⟨(τ.fst, m), hm₁.le⟩
-    (lt_of_le_of_ne (le_def.2 ⟨le_rfl, hm₂.le⟩) λ heq => hm₂.ne (congrArg (·.snd) heq))
+    (lt_of_le_of_ne (le_def.2 ⟨le_rfl, hm₂.le⟩) fun heq ↦ hm₂.ne (congrArg (·.snd) heq))
   obtain ⟨e₂, he₂, hP₂⟩ := h ⟨(m, τ.snd), hm₂.le⟩
-    (lt_of_le_of_ne (le_def.2 ⟨hm₁.le, le_rfl⟩) λ heq => hm₁.ne' (congrArg (·.fst) heq))
+    (lt_of_le_of_ne (le_def.2 ⟨hm₁.le, le_rfl⟩) fun heq ↦ hm₁.ne' (congrArg (·.fst) heq))
   obtain ⟨he₁f, he₁s⟩ := le_def.1 he₁
   obtain ⟨he₂f, he₂s⟩ := le_def.1 he₂
   obtain ⟨e, hP, h₁, h₂⟩ := hsum e₁ e₂ hP₁ hP₂
     ⟨(he₁f.trans hm₁.le).trans (hm₂.le.trans he₂s), he₂f.trans he₁s⟩
   exact ⟨e, le_def.2 ⟨(le_def.1 h₁).1.trans he₁f, he₂s.trans (le_def.1 h₂).2⟩, hP⟩
 
-/-- With an imperfective predicate (148b) is ruled out, since exhaustifying the not-throughout
-claim is contradictory. -/
-theorem not_exh_not_unbounded [Nonempty W] [DenselyOrdered T]
-    (hrich : Function.Surjective (Event.τ : E → NonemptyInterval T))
-    (hsum : ∀ e₁ e₂, P w e₁ → P w e₂ → (Event.τ e₁).overlaps (Event.τ e₂) →
-      ∃ e, P w e ∧ Event.τ e₁ ≤ Event.τ e ∧ Event.τ e₂ ≤ Event.τ e)
-    (hτ : τ.fst < τ.snd) : ¬ Exh (λ P w τ => ¬ UNBOUNDED P w τ) P w τ := λ h =>
-  let ⟨hn, hall⟩ := (exh_not_unbounded_iff hrich).1 h
-  hn (unbounded_of_forall_lt hsum hτ hall)
+/-- With an imperfective predicate the construal exhaustifying the not-throughout claim, (148b), is
+contradictory, (142). -/
+theorem not_throughout_exh_contradictory (hP : Function.Surjective P)
+    (hrich : Function.Surjective (Event.τ : E → NonemptyInterval T)) {v : V}
+    (hsum : ∀ e₁ e₂, P v e₁ → P v e₂ → (Event.τ e₁).overlaps (Event.τ e₂) →
+      ∃ e, P v e ∧ Event.τ e₁ ≤ Event.τ e ∧ Event.τ e₂ ≤ Event.τ e)
+    {m : T} (hm₁ : τ.fst < m) (hm₂ : m < τ.snd) :
+    v ∉ exh (domainAlternatives (fun v τ ↦ ¬ UNBOUNDED P v τ) τ) {v | ¬ UNBOUNDED P v τ} :=
+  fun h ↦
+    let ⟨hn, hall⟩ := (mem_exh_not_unbounded_iff hP hrich).1 h
+    hn (unbounded_of_forall_lt hsum hm₁ hm₂ hall)
 
-/-! ### *Until* with a perfective predicate
+end Imperfective
 
-With a perfective predicate, (126)–(132), the positive claim exhaustified is contradictory
-(`not_exh_prfv`), which excludes the affirmative (128) and the construals exhaustifying below
-negation, (146b), or exhaustifying the negated event inside the span, (146a) with the negated
-predicate in `not_exh_prfv`; exhaustifying the negated claim, (148b), is vacuous
-(`exh_not_prfv_iff`), the construal the literature calls *until-p*, with the noncancelable
-actuality inference and beyond expectation inference of its widened span (`event_near_rb`,
-`le_of_widened`). -/
+/-! ### Against the lexical ambiguity of *until*
 
-/-- In (148b) the negated perfective claim survives exhaustification, and its widened until time
-span has an event at its right boundary. -/
-theorem untilP (h : Widened .left t P w τ) :
-    Exh (λ P w τ => ¬ PRFV P w τ) P w τ ∧ ∀ s, τ.snd < s → ∃ e, P w e ∧ τ.snd < (Event.τ e).snd :=
-  ⟨exh_not_prfv_iff.2 h.2.1, λ _ hs => let ⟨e, hP, _, h⟩ := event_near_rb h hs; ⟨e, hP, h⟩⟩
+The ambiguity account must deny that negation yields the subinterval property, Section 5.2.2:
+otherwise its durative *until* takes a negated perfective on the throughout-not reading, which has
+no actuality inference, and *She did not leave until 5 p.m. and maybe she didn't leave at all*,
+(83), would not be a contradiction. Greek, Section 5.2.1.1, offers no separate punctual *until*:
+*para mono* is the exceptive 'but only', and *Dhen thimose para mono htes* 'he didn't get angry
+except yesterday', (69), means what the punctual *until* is said to mean. -/
+
+section Ambiguity
+
+variable {P : W → E → Prop} {w : W}
+
+/-- The durative *until* of [giannakidou-2002] accepts a negated perfective, which has the
+subinterval property, in a model with no relevant event at all. -/
+theorem two_until_overgenerates (hP : ∀ e, ¬ P w e) {s t : T} (h : s < t) :
+    Giannakidou2002.durativeUntil (fun w τ ↦ ¬ PRFV P w τ) w t :=
+  (Giannakidou2002.durativeUntil_iff_of_hasSubintervalProperty
+    (hasSubintervalProperty_not_prfv P) w t).2 ⟨⟨(s, t), h.le⟩, h, rfl, fun ⟨e, _, he⟩ ↦ hP e he⟩
+
+/-- *No time but `t₀` is a time of a `P`-event*, the exceptive of *dhen … para mono* with a
+temporal argument on the least-exception semantics, says that `t₀` is the only such time, which
+entails the punctual *until* of [giannakidou-2002], the event at `t₀` included. -/
+theorem eventiveUntil_of_exceptive {t₀ : T}
+    (h : Quantifier.Exceptive.IsExceptionSet .no ⊤ (· = t₀) fun t ↦ ∃ e, P w e ∧ t ∈ Event.τ e) :
+    Giannakidou2002.eventiveUntil P w t₀ := by
+  have key : ∀ t, (∃ e, P w e ∧ t ∈ Event.τ e) ↔ t = t₀ := fun t ↦ by
+    simpa using congrFun (Quantifier.Exceptive.isExceptionSet_no_iff.1 h) t
+  exact ⟨(key t₀).2 rfl,
+    fun e hP ↦ ((key _).1 ⟨e, hP, mem_def.2 ⟨le_rfl, (Event.τ e).fst_le_snd⟩⟩).ge⟩
+
+end Ambiguity
+
+/-! ### Setting the right boundary
+
+The argument of *until* contains a definite description over intervals, which picks the
+maximally informative interval as von Fintel, Fox and Iatridou have definites do, so the right
+boundary is the first moment at which the argument clause holds of a span ending there. A
+perfective argument, *until she read Anna Karenina*, (170)–(171), sets it at the completion of
+the reading, an imperfective one, *until she was working at the grocery store*, (172)–(175), at
+the onset. -/
+
+section RightBoundary
+
+variable {Q : W → E → Prop} {w : W} {e : E}
+
+/-- The moments at which an interval predicate holds of some span ending there. -/
+def rightBoundaries (q : IntervalPred W T) (w : W) : Set T := {s | ∃ τ, RB τ s ∧ q w τ}
+
+/-- A perfective argument clause sets the right boundary at the completion of its first event. -/
+theorem isLeast_rightBoundaries_prfv (he : Q w e)
+    (hfirst : ∀ e', Q w e' → (Event.τ e).snd ≤ (Event.τ e').snd) :
+    IsLeast (rightBoundaries (PRFV Q) w) (Event.τ e).snd :=
+  ⟨⟨Event.τ e, rfl, e, le_rfl, he⟩,
+    fun _ ⟨_, hτ, e', hle, he'⟩ ↦ hτ ▸ (hfirst e' he').trans (le_def.1 hle).2⟩
+
+/-- An imperfective argument clause sets the right boundary at the onset of its first event. -/
+theorem isLeast_rightBoundaries_unbounded (he : Q w e)
+    (hfirst : ∀ e', Q w e' → (Event.τ e).fst ≤ (Event.τ e').fst) :
+    IsLeast (rightBoundaries (UNBOUNDED Q) w) (Event.τ e).fst :=
+  ⟨⟨.pure (Event.τ e).fst, rfl, e, le_def.2 ⟨le_rfl, (Event.τ e).fst_le_snd⟩, he⟩,
+    fun _ ⟨τ, hτ, e', hle, he'⟩ ↦
+      hτ ▸ ((hfirst e' he').trans (le_def.1 hle).1).trans τ.fst_le_snd⟩
+
+end RightBoundary
 
 end IatridouZeijlstra2021

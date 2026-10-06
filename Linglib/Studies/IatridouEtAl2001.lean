@@ -17,14 +17,7 @@ Perfect-level adverbials differ in the quantification over the span they permit,
 covert adverbial of an unmodified perfect is inclusive. Only an unbounded participle can fill
 the span, so Greek, whose participle is perfective, has no universal perfect.
 
-## Main definitions
-
-* `universal`: the universal reading.
-* `existential`: the existential reading.
-* `PerfectAdverbial.quantifications`: the quantifications a perfect-level adverbial permits.
-* `UniversalAvailable`: the availability of the universal perfect in a language.
-
-## Main results
+## Main statements
 
 * `universal_at_rb`: the universal perfect holds at the right boundary.
 * `bounded_before_rb`: a bounded eventuality ends by the right boundary.
@@ -38,7 +31,6 @@ the span, so Greek, whose participle is perfective, has no universal perfect.
   universal reading is inclusion of the span in the runtime and the bounded existential
   reading inclusion of the runtime in the span; the paper's *properly included* is weakened
   to inclusion, as in the library's `Aspect.PRFV`.
-* `BoundaryKind` is consumed by `IatridouZeijlstra2021`.
 
 ## References
 
@@ -57,25 +49,18 @@ variable {W T E : Type*} [LinearOrder T] [Event.TemporalTrace E T]
 
 /-! ### The perfect time span and its two readings -/
 
-/-- A `BoundaryKind` says which boundary of a time span is set, the left boundary by the argument of
-the perfect-level adverbial, the right boundary by tense (Section 3.1). -/
-inductive BoundaryKind where
-  | left
-  | right
-  deriving DecidableEq, Repr
-
 /-- The universal reading, (18c), asserts the eventuality at every point of the span, its
 endpoints included. -/
 def universal (P : W → E → Prop) : IntervalPred W T :=
-  λ w pts => ∃ e, P w e ∧ ∀ t ∈ pts, t ∈ (τ e)
+  fun w pts ↦ ∃ e, P w e ∧ ∀ t ∈ pts, t ∈ (τ e)
 
 /-- The existential reading, (18e), asserts the eventuality at some point of the span. -/
 def existential (P : W → E → Prop) : IntervalPred W T :=
-  λ w pts => ∃ e, P w e ∧ ∃ t ∈ pts, t ∈ (τ e)
+  fun w pts ↦ ∃ e, P w e ∧ ∃ t ∈ pts, t ∈ (τ e)
 
 /-- A bounded eventuality, (44c), is asserted complete and lies inside the span. -/
 def bounded (P : W → E → Prop) : IntervalPred W T :=
-  λ w pts => ∃ e, P w e ∧ τ e ≤ pts
+  fun w pts ↦ ∃ e, P w e ∧ τ e ≤ pts
 
 variable (P : W → E → Prop)
 
@@ -129,7 +114,7 @@ theorem bounded_before_rb {adv : NonemptyInterval T → Prop} {w : W} {t : T}
 and (45). -/
 theorem bounded_fills_iff (e : E) (pts : NonemptyInterval T) :
     τ e ≤ pts ∧ pts ≤ τ e ↔ τ e = pts :=
-  ⟨λ h => le_antisymm h.1 h.2, λ h => ⟨h.le, h.ge⟩⟩
+  ⟨fun h ↦ le_antisymm h.1 h.2, fun h ↦ ⟨h.le, h.ge⟩⟩
 
 /-! ### Perfect-level adverbials -/
 

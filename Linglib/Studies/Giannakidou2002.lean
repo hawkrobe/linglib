@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Aspect.Viewpoint
+public import Linglib.Semantics.Aspect.SubintervalProperty
 public import Linglib.Studies.Karttunen1974
 public import Linglib.Fragments.English.TemporalConnectives
 public import Linglib.Fragments.English.PolarityItems
@@ -18,23 +18,16 @@ public import Linglib.Data.Examples.Giannakidou2002
 Giannakidou argues for Karttunen's two *until*s against the one-*until* analysis of Mittwoch
 and de Swart, on which negation is an aspectual stativizer. Durative UNTIL asks its description
 to hold at every subinterval of an interval ending at the until time, which a homogeneous
-description supplies and a perfective description of a single event cannot; since the
-imperfective is homogeneous, Greek, which marks aspect overtly, lets *mexri* combine with
-imperfectives and not with negated perfectives, where the polarity item *para monon* stands in.
-Under negation the analyses part ways: the wide-scope reading holds when nothing P-like ever
-happens, whereas eventive UNTIL entails the event and is Karttunen's *not until* with the
-actualization his presupposition supplies. The paper's Greek, English, Icelandic and Dutch
-judgments follow from the fragment entries of the connectives, and its stativity diagnostics
-from homogeneity with negation playing no role.
+description, one with the subinterval property, supplies and a perfective description of a
+single event cannot; since the imperfective is homogeneous, Greek, which marks aspect overtly,
+lets *mexri* combine with imperfectives and not with negated perfectives, where the polarity item
+*para monon* stands in. Under negation the analyses part ways: the wide-scope reading holds when
+nothing P-like ever happens, whereas eventive UNTIL entails the event and is Karttunen's *not
+until* with the actualization his presupposition supplies. The paper's Greek, English, Icelandic
+and Dutch judgments follow from the fragment entries of the connectives and its classification of
+the punctual words, and its stativity diagnostics from homogeneity with negation playing no role.
 
-## Main definitions
-
-* `durativeUntil`: durative UNTIL.
-* `eventiveUntil`: Karttunen's eventive UNTIL.
-* `wideScope`: Mittwoch's wide-scope reading.
-* `Predicted`: the judgment the two-*until* analysis predicts for a row.
-
-## Main results
+## Main statements
 
 * `not_durativeUntil_prfv`: a perfective description of a single event rules out durative UNTIL.
 * `wideScope_of_forall_not`: the wide-scope reading carries no actualization.
@@ -48,10 +41,12 @@ from homogeneity with negation playing no role.
   perfective description places it within the reference interval, an imperfective one strictly
   around it. The until interval is required to be nondegenerate, which is what excludes a single
   event from satisfying the durative condition at both its endpoints.
-* Which connectives are durative and which punctual is read off the fragments' `relation` and
-  `punctual`, and the polarity of the eventive words off their polarity-item entries: *para
-  monon*, *fyrr en* and English *until* are negative polarity items and need an antiveridical
-  licenser, Dutch *pas* is a positive one.
+* Homogeneity is the subinterval property of `Aspect/SubintervalProperty.lean`.
+* The relation of each connective is read off its fragment entry. Which words are punctual
+  *until*s, Greek *para monon*, Icelandic *fyrr en* and Dutch *pas*, is the paper's
+  classification (`Connective.Punctual`). The polarity of the eventive words is read off their
+  polarity-item entries: *para monon*, *fyrr en* and English *until* are negative polarity items
+  and need an antiveridical licenser, Dutch *pas* is a positive one.
 * The oddity of *Nancy didn't get married until she died* and of its Greek counterpart, which the
   actualization entailment explains, is pragmatic and is left in prose.
 
@@ -75,28 +70,17 @@ variable {W T E : Type*} [LinearOrder T] [Event.TemporalTrace E T]
 
 /-! ### Durative UNTIL and homogeneity -/
 
-/-- A description of intervals is homogeneous when it holds at every subinterval of an interval
-it holds at. -/
-def Homogeneous (p : IntervalPred W T) : Prop :=
-  ∀ w, ∀ i j : NonemptyInterval T, j ≤ i → p w i → p w j
-
-theorem impf_homogeneous (P : W → E → Prop) : Homogeneous (IMPF P) :=
-  λ _ _ _ hji ⟨e, hlt, he⟩ => ⟨e, lt_of_le_of_lt hji hlt, he⟩
-
-theorem unbounded_homogeneous (P : W → E → Prop) : Homogeneous (UNBOUNDED P) :=
-  λ _ _ _ hji ⟨e, hle, he⟩ => ⟨e, hji.trans hle, he⟩
-
 /-- Durative UNTIL holds when the description holds at every subinterval of a nondegenerate interval
 ending at the until time. -/
 def durativeUntil (p : IntervalPred W T) (w : W) (t' : T) : Prop :=
   ∃ i : NonemptyInterval T, i.fst < i.snd ∧ i.snd = t' ∧ ∀ j ≤ i, p w j
 
 /-- A homogeneous description need only hold at the until interval itself. -/
-theorem durativeUntil_iff_of_homogeneous {p : IntervalPred W T} (hp : Homogeneous p) (w : W)
-    (t' : T) :
+theorem durativeUntil_iff_of_hasSubintervalProperty {p : IntervalPred W T}
+    (hp : p.HasSubintervalProperty) (w : W) (t' : T) :
     durativeUntil p w t' ↔ ∃ i : NonemptyInterval T, i.fst < i.snd ∧ i.snd = t' ∧ p w i :=
-  ⟨λ ⟨i, hi, ht, h⟩ => ⟨i, hi, ht, h i le_rfl⟩,
-    λ ⟨i, hi, ht, h⟩ => ⟨i, hi, ht, λ j hj => hp w i j hj h⟩⟩
+  ⟨fun ⟨i, hi, ht, h⟩ ↦ ⟨i, hi, ht, h i le_rfl⟩,
+    fun ⟨i, hi, ht, h⟩ ↦ ⟨i, hi, ht, fun _ hj ↦ hp w hj h⟩⟩
 
 /-- A perfective description of a single event is incompatible with durative UNTIL, since an
 achievement or accomplishment cannot lie within both endpoints of the until interval. -/
@@ -116,10 +100,11 @@ theorem not_durativeUntil_prfv {P : W → E → Prop} {w : W}
 /-- The state of not-P-ing, which a stativizing negation would deliver, holds when no P-event
 overlaps the interval. -/
 def notState (P : W → E → Prop) : IntervalPred W T :=
-  λ w i => ∀ e, P w e → ∀ a ∈ (τ e), a ∉ i
+  fun w i ↦ ∀ e, P w e → ∀ a ∈ (τ e), a ∉ i
 
-theorem notState_homogeneous (P : W → E → Prop) : Homogeneous (notState P) :=
-  λ _ _ _ hji h e he a ha haj => h e he a ha (NonemptyInterval.coe_subset_coe.mpr hji haj)
+theorem hasSubintervalProperty_notState (P : W → E → Prop) :
+    (notState P : IntervalPred W T).HasSubintervalProperty :=
+  fun _ _ _ hji h e he a ha haj ↦ h e he a ha (NonemptyInterval.coe_subset_coe.mpr hji haj)
 
 /-- Mittwoch's wide-scope reading is durative UNTIL of the state of not-P-ing. -/
 def wideScope (P : W → E → Prop) (w : W) (t' : T) : Prop := durativeUntil (notState P) w t'
@@ -140,7 +125,7 @@ theorem eventiveUntil_actualization {P : W → E → Prop} {w : W} {t : T}
 actualization. -/
 theorem wideScope_of_forall_not {P : W → E → Prop} {w : W} (hP : ∀ e, ¬ P w e) {t t' : T}
     (h : t < t') : wideScope P w t' :=
-  ⟨⟨(t, t'), h.le⟩, h, rfl, λ _ _ e he => absurd he (hP e)⟩
+  ⟨⟨(t, t'), h.le⟩, h, rfl, fun _ _ e he ↦ absurd he (hP e)⟩
 
 /-- `runTimes P w` is the set of run times of the events of `P` at the world `w`. -/
 def runTimes (P : W → E → Prop) (w : W) : RunTimes T := {i | ∃ e, P w e ∧ τ e = i}
@@ -152,7 +137,7 @@ theorem eventiveUntil_iff (P : W → E → Prop) (w : W) (t : T) :
       when_ (runTimes P w) {NonemptyInterval.pure t} := by
   constructor
   · rintro ⟨⟨e, he, ht⟩, hall⟩
-    refine ⟨(notUntil_iff _ _).mpr λ s ⟨_, ⟨e', he', rfl⟩, hs⟩ =>
+    refine ⟨(notUntil_iff _ _).mpr fun s ⟨_, ⟨e', he', rfl⟩, hs⟩ ↦
       ⟨t, ⟨_, rfl, NonemptyInterval.mem_pure_self t⟩,
         (hall e' he').trans (NonemptyInterval.mem_def.mp hs).1⟩,
       t, ⟨τ e, ⟨e, he, rfl⟩, ht⟩, ⟨_, rfl, NonemptyInterval.mem_pure_self t⟩⟩
@@ -160,7 +145,7 @@ theorem eventiveUntil_iff (P : W → E → Prop) (w : W) (t : T) :
     obtain rfl := Set.mem_singleton_iff.mp hj
     rw [NonemptyInterval.mem_pure] at hsj
     subst hsj
-    refine ⟨⟨e, he, hs⟩, λ e' he' => ?_⟩
+    refine ⟨⟨e, he, hs⟩, fun e' he' ↦ ?_⟩
     obtain ⟨t', ⟨j, hj, ht'⟩, hle⟩ := (notUntil_iff _ _).mp hnu (τ e').fst
       ⟨τ e', ⟨e', he', rfl⟩, NonemptyInterval.mem_def.mpr ⟨le_rfl, (τ e').fst_le_snd⟩⟩
     obtain rfl := Set.mem_singleton_iff.mp hj
@@ -170,13 +155,13 @@ theorem eventiveUntil_iff (P : W → E → Prop) (w : W) (t : T) :
 /-- Eventive UNTIL entails *not before*, one direction of Karttunen's equivalence. -/
 theorem eventiveUntil_not_before {P : W → E → Prop} {w : W} {t : T}
     (h : eventiveUntil P w t) : ¬ before (runTimes P w) t :=
-  λ ⟨_, ⟨_, ⟨e, he, rfl⟩, hs⟩, hlt⟩ =>
+  fun ⟨_, ⟨_, ⟨e, he, rfl⟩, hs⟩, hlt⟩ ↦
     absurd ((h.2 e he).trans (NonemptyInterval.mem_def.mp hs).1) (not_le.mpr hlt)
 
 /-- *Not before* carries no actualization, since it holds when nothing P-like ever happens. -/
 theorem not_before_of_forall_not {P : W → E → Prop} {w : W} (hP : ∀ e, ¬ P w e) (t : T) :
     ¬ before (runTimes P w) t :=
-  λ ⟨_, ⟨_, ⟨e, he, _⟩, _⟩, _⟩ => hP e he
+  fun ⟨_, ⟨_, ⟨e, he, _⟩, _⟩, _⟩ ↦ hP e he
 
 /-! ### The paper's sentences -/
 
@@ -185,11 +170,17 @@ inductive Connective
   | until | mexri | paraMonon | prin | til | fyrrEn | tot | pas
   deriving DecidableEq, Repr
 
-/-- `c.entry` is the fragment entry of the connective `c`. -/
+/-- The paper's connective entry for Greek *para monon*, literally 'but only', as an *until*
+word: *i prigipisa dhen eftase para monon ta mesanixta* 'the princess did not arrive until
+midnight'. -/
+def paraMononEntry : Tense.Connective := { form := "para monon", relation := .until_ }
+
+/-- `c.entry` is the connective entry of `c`, the fragment's, or the paper's own for *para
+monon*. -/
 def Connective.entry : Connective → Tense.Connective
   | .until => English.TemporalConnectives.until_
   | .mexri => Greek.StandardModern.TemporalConnectives.mexri
-  | .paraMonon => Greek.StandardModern.TemporalConnectives.paraMonon
+  | .paraMonon => paraMononEntry
   | .prin => Greek.StandardModern.TemporalConnectives.prin
   | .til => Icelandic.TemporalConnectives.thangadTil
   | .fyrrEn => Icelandic.TemporalConnectives.fyrrEn
@@ -205,14 +196,21 @@ def Connective.polarityItem : Connective → Option PolarityItem
   | .pas => some Dutch.PolarityItems.pas
   | _ => none
 
+/-- The punctual *until*s, the words the paper takes to lexicalize Karttunen's eventive UNTIL:
+Greek *para monon*, Icelandic *fyrr en* and Dutch *pas*. -/
+def Connective.Punctual (c : Connective) : Prop :=
+  c = .paraMonon ∨ c = .fyrrEn ∨ c = .pas
+
+instance : DecidablePred Connective.Punctual := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _ ∨ _))
+
 /-- A connective is durative UNTIL when it is an *until* entry that is not punctual. -/
 abbrev Connective.Durative (c : Connective) : Prop :=
-  c.entry.relation = .until_ ∧ ¬ c.entry.punctual
+  c.entry.relation = .until_ ∧ ¬ c.Punctual
 
-/-- A connective is eventive UNTIL when it is a punctual entry or an *until* with a
-polarity-item use. -/
+/-- A connective is eventive UNTIL when it is punctual or an *until* with a polarity-item
+use. -/
 abbrev Connective.Eventive (c : Connective) : Prop :=
-  c.entry.punctual ∨ c.polarityItem.isSome = true
+  c.Punctual ∨ c.polarityItem.isSome = true
 
 abbrev Connective.Before (c : Connective) : Prop := c.entry.relation = .before
 
@@ -271,7 +269,7 @@ def Predicted (r : Row) : Prop :=
   (r.test = .noEventContinuation →
     (r.connective.Durative ∧ WideScopeForm r.aspect) ∨ r.connective.Before)
 
-instance : DecidablePred Predicted := λ _ => by unfold Predicted; infer_instance
+instance : DecidablePred Predicted := fun _ ↦ by unfold Predicted; infer_instance
 
 def Row.ofDatum (ex : Datum) : Option Row := do
   let connective ← ex.parse? "connective" [("until", Connective.until), ("mexri", .mexri),

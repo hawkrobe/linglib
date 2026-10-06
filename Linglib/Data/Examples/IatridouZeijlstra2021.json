@@ -243,7 +243,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "Fred's licence was suspended for 10 years after a car accident 25 years ago; 15 years ago a ladder accident paralysed him.",
-    "judgment": "unacceptable",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -301,7 +301,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "Fred is 40 and has never driven.",
-    "judgment": "unacceptable",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -310,11 +310,15 @@
         "1"
       ],
       [
+        "truth",
+        "false"
+      ],
+      [
         "ai",
         "not cancelable"
       ]
     ],
-    "comment": "Grammatical but not truthfully utterable of someone who never drove."
+    "comment": "Printed unmarked: grammatical, but not truthfully utterable of someone who never drove."
   },
   {
     "id": "iz2021_s27a",
@@ -2279,7 +2283,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "ungrammatical",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -2296,7 +2300,7 @@
         "strong: the presupposition is exhaustified"
       ]
     ],
-    "comment": ""
+    "comment": "Printed unmarked; the text calls it odd, after Chierchia, since its presupposition exhaustified is contradictory."
   },
   {
     "id": "iz2021_s182a",
