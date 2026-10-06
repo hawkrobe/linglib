@@ -1,5 +1,46 @@
 [
   {
+    "id": "krizchemla2015_41a",
+    "source": {"bibkey": "kriz-chemla-2015", "paperLabel": "(41a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The triangles are green.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["The", "DEF"], ["triangles", "triangle.PL"], ["are", "COP.PL"], ["green", "green"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["embedding", "E-∅"]
+    ],
+    "comment": "The positive unembedded sentence, the form of the E-∅ targets of Exps. A0–A3 and B1–B3."
+  },
+  {
+    "id": "krizchemla2015_41b",
+    "source": {"bibkey": "kriz-chemla-2015", "paperLabel": "(41b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The triangles are not green.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["The", "DEF"], ["triangles", "triangle.PL"], ["are", "COP.PL"], ["not", "NEG"],
+      ["green", "green"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["embedding", "E-∅"]
+    ],
+    "comment": "The negative unembedded sentence, the form of the E-neg targets of Exps. A1 and B1."
+  },
+  {
     "id": "krizchemla2015_14a",
     "source": {"bibkey": "kriz-chemla-2015", "paperLabel": "(14a)"},
     "reportedIn": null,
@@ -146,139 +187,5 @@
       ["embedding", "E-exactly"]
     ],
     "comment": "Target sentence of Exps. C3 and C4."
-  },
-  {
-    "id": "krizchemla2015_pos_A1_all",
-    "source": {"bibkey": "kriz-chemla-2015", "paperLabel": "Exp. A1, the+E-∅, 9/9 target-color display"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "The triangles are blue.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["The", "DEF"], ["triangles", "triangle.PL"], ["are", "COP.PL"], ["blue", "blue"]
-    ],
-    "translation": "",
-    "context": "Nine triangles in the display; all nine are blue.",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["polarity", "positive"],
-      ["condition", "ALL"],
-      ["embedding", "unembedded"]
-    ],
-    "comment": "Judged completely true. Exp. A1 target sentences had the form 'The [shapes] are [color]' (schema (6a)/(8a)), judged against displays of nine shapes with 0, 2, 4, 6, 8, or 9 in the target color. All three gap diagnostics significant for E-∅ (Table 3); replicated with the ternary method in Exp. B1 (Table 6)."
-  },
-  {
-    "id": "krizchemla2015_pos_A1_none",
-    "source": {"bibkey": "kriz-chemla-2015", "paperLabel": "Exp. A1, the+E-∅, 0/9 target-color display"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "The triangles are blue.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["The", "DEF"], ["triangles", "triangle.PL"], ["are", "COP.PL"], ["blue", "blue"]
-    ],
-    "translation": "",
-    "context": "Nine triangles in the display; none is blue.",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["polarity", "positive"],
-      ["condition", "NONE"],
-      ["embedding", "unembedded"]
-    ],
-    "comment": "Judged completely false. Exp. A1 target sentences had the form 'The [shapes] are [color]' (schema (6a)/(8a)), judged against displays of nine shapes with 0, 2, 4, 6, 8, or 9 in the target color. All three gap diagnostics significant for E-∅ (Table 3); replicated with the ternary method in Exp. B1 (Table 6)."
-  },
-  {
-    "id": "krizchemla2015_pos_A1_gap",
-    "source": {"bibkey": "kriz-chemla-2015", "paperLabel": "Exp. A1, the+E-∅, mixed display"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "The triangles are blue.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["The", "DEF"], ["triangles", "triangle.PL"], ["are", "COP.PL"], ["blue", "blue"]
-    ],
-    "translation": "",
-    "context": "Nine triangles in the display; four are blue, five are another color.",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["polarity", "positive"],
-      ["condition", "GAP"],
-      ["embedding", "unembedded"],
-      ["gap_detected", "true"]
-    ],
-    "comment": "Judged neither completely true nor completely false: the unembedded homogeneity gap. Exp. A1 target sentences had the form 'The [shapes] are [color]' (schema (6a)/(8a)), judged against displays of nine shapes with 0, 2, 4, 6, 8, or 9 in the target color. All three gap diagnostics significant for E-∅ (Table 3); replicated with the ternary method in Exp. B1 (Table 6)."
-  },
-  {
-    "id": "krizchemla2015_neg_A1_all",
-    "source": {"bibkey": "kriz-chemla-2015", "paperLabel": "Exp. A1, the+E-neg, 9/9 target-color display"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "The triangles aren't blue.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["The", "DEF"], ["triangles", "triangle.PL"], ["aren't", "COP.PL.NEG"], ["blue", "blue"]
-    ],
-    "translation": "",
-    "context": "Nine triangles in the display; all nine are blue.",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["polarity", "negative"],
-      ["condition", "ALL"],
-      ["embedding", "unembedded"]
-    ],
-    "comment": "Judged completely false. Exp. A1 negated targets had the form 'The [shapes] aren't [color]' (schema (8b)); homogeneity projects through sentential negation. All three gap diagnostics significant for E-neg (Table 3); replicated with the ternary method in Exp. B1 (Table 6)."
-  },
-  {
-    "id": "krizchemla2015_neg_A1_none",
-    "source": {"bibkey": "kriz-chemla-2015", "paperLabel": "Exp. A1, the+E-neg, 0/9 target-color display"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "The triangles aren't blue.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["The", "DEF"], ["triangles", "triangle.PL"], ["aren't", "COP.PL.NEG"], ["blue", "blue"]
-    ],
-    "translation": "",
-    "context": "Nine triangles in the display; none is blue.",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["polarity", "negative"],
-      ["condition", "NONE"],
-      ["embedding", "unembedded"]
-    ],
-    "comment": "Judged completely true: the negated sentence requires total absence, not mere non-totality. Exp. A1 negated targets had the form 'The [shapes] aren't [color]' (schema (8b)); homogeneity projects through sentential negation. All three gap diagnostics significant for E-neg (Table 3); replicated with the ternary method in Exp. B1 (Table 6)."
-  },
-  {
-    "id": "krizchemla2015_neg_A1_gap",
-    "source": {"bibkey": "kriz-chemla-2015", "paperLabel": "Exp. A1, the+E-neg, mixed display"},
-    "reportedIn": null,
-    "language": "stan1293",
-    "primaryText": "The triangles aren't blue.",
-    "discourseSegments": [],
-    "glossedTokens": [
-      ["The", "DEF"], ["triangles", "triangle.PL"], ["aren't", "COP.PL.NEG"], ["blue", "blue"]
-    ],
-    "translation": "",
-    "context": "Nine triangles in the display; four are blue, five are another color.",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["polarity", "negative"],
-      ["condition", "GAP"],
-      ["embedding", "unembedded"],
-      ["gap_detected", "true"]
-    ],
-    "comment": "Judged neither completely true nor completely false: the gap projects through negation. Exp. A1 negated targets had the form 'The [shapes] aren't [color]' (schema (8b)); homogeneity projects through sentential negation. All three gap diagnostics significant for E-neg (Table 3); replicated with the ternary method in Exp. B1 (Table 6)."
   }
 ]

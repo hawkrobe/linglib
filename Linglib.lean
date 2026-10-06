@@ -280,7 +280,6 @@ import Linglib.Data.Examples.Kennedy1999
 import Linglib.Data.Examples.Klecha2016
 import Linglib.Data.Examples.Kratzer1998
 import Linglib.Data.Examples.Krifka1998
-import Linglib.Data.Examples.Kriz2015
 import Linglib.Data.Examples.KrizChemla2015
 import Linglib.Data.Examples.Kubota2026
 import Linglib.Data.Examples.Landau2026
@@ -327,7 +326,6 @@ import Linglib.Data.Examples.VonFintelIatridou2005
 import Linglib.Data.Examples.Wellwood2015
 import Linglib.Data.Examples.Westergaard2009
 import Linglib.Data.Examples.Wurmbrand2014
-import Linglib.Data.Generalizations.HomogeneityGap
 import Linglib.Data.Generalizations.Projectivity
 import Linglib.Data.PHOIBLE.Inventories.Arabic
 import Linglib.Data.PHOIBLE.Inventories.English

@@ -15,6 +15,32 @@ this module; declarations live in `namespace KrizChemla2015.Examples`.
 
 namespace KrizChemla2015.Examples
 
+def ex_41a : Datum :=
+  { id := "krizchemla2015_41a"
+    source := ⟨"kriz-chemla-2015", "(41a)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "The triangles are green."
+    glossedTokens := [("The", "DEF"), ("triangles", "triangle.PL"), ("are", "COP.PL"), ("green", "green")]
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("embedding", "E-∅")] }
+
+def ex_41b : Datum :=
+  { id := "krizchemla2015_41b"
+    source := ⟨"kriz-chemla-2015", "(41b)"⟩
+    reportedIn := none
+    language := "stan1293"
+    primaryText := "The triangles are not green."
+    glossedTokens := [("The", "DEF"), ("triangles", "triangle.PL"), ("are", "COP.PL"), ("not", "NEG"), ("green", "green")]
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("embedding", "E-∅")] }
+
 def ex_14a : Datum :=
   { id := "krizchemla2015_14a"
     source := ⟨"kriz-chemla-2015", "(14a)"⟩
@@ -106,84 +132,6 @@ def ex_24 : Datum :=
     readings := []
     paperFeatures := [("embedding", "E-exactly")] }
 
-def pos_A1_all : Datum :=
-  { id := "krizchemla2015_pos_A1_all"
-    source := ⟨"kriz-chemla-2015", "Exp. A1, the+E-∅, 9/9 target-color display"⟩
-    reportedIn := none
-    language := "stan1293"
-    primaryText := "The triangles are blue."
-    glossedTokens := [("The", "DEF"), ("triangles", "triangle.PL"), ("are", "COP.PL"), ("blue", "blue")]
-    context := "Nine triangles in the display; all nine are blue."
-    judgment := .acceptable
-    alternatives := []
-    readings := []
-    paperFeatures := [("polarity", "positive"), ("condition", "ALL"), ("embedding", "unembedded")] }
-
-def pos_A1_none : Datum :=
-  { id := "krizchemla2015_pos_A1_none"
-    source := ⟨"kriz-chemla-2015", "Exp. A1, the+E-∅, 0/9 target-color display"⟩
-    reportedIn := none
-    language := "stan1293"
-    primaryText := "The triangles are blue."
-    glossedTokens := [("The", "DEF"), ("triangles", "triangle.PL"), ("are", "COP.PL"), ("blue", "blue")]
-    context := "Nine triangles in the display; none is blue."
-    judgment := .acceptable
-    alternatives := []
-    readings := []
-    paperFeatures := [("polarity", "positive"), ("condition", "NONE"), ("embedding", "unembedded")] }
-
-def pos_A1_gap : Datum :=
-  { id := "krizchemla2015_pos_A1_gap"
-    source := ⟨"kriz-chemla-2015", "Exp. A1, the+E-∅, mixed display"⟩
-    reportedIn := none
-    language := "stan1293"
-    primaryText := "The triangles are blue."
-    glossedTokens := [("The", "DEF"), ("triangles", "triangle.PL"), ("are", "COP.PL"), ("blue", "blue")]
-    context := "Nine triangles in the display; four are blue, five are another color."
-    judgment := .acceptable
-    alternatives := []
-    readings := []
-    paperFeatures := [("polarity", "positive"), ("condition", "GAP"), ("embedding", "unembedded"), ("gap_detected", "true")] }
-
-def neg_A1_all : Datum :=
-  { id := "krizchemla2015_neg_A1_all"
-    source := ⟨"kriz-chemla-2015", "Exp. A1, the+E-neg, 9/9 target-color display"⟩
-    reportedIn := none
-    language := "stan1293"
-    primaryText := "The triangles aren't blue."
-    glossedTokens := [("The", "DEF"), ("triangles", "triangle.PL"), ("aren't", "COP.PL.NEG"), ("blue", "blue")]
-    context := "Nine triangles in the display; all nine are blue."
-    judgment := .acceptable
-    alternatives := []
-    readings := []
-    paperFeatures := [("polarity", "negative"), ("condition", "ALL"), ("embedding", "unembedded")] }
-
-def neg_A1_none : Datum :=
-  { id := "krizchemla2015_neg_A1_none"
-    source := ⟨"kriz-chemla-2015", "Exp. A1, the+E-neg, 0/9 target-color display"⟩
-    reportedIn := none
-    language := "stan1293"
-    primaryText := "The triangles aren't blue."
-    glossedTokens := [("The", "DEF"), ("triangles", "triangle.PL"), ("aren't", "COP.PL.NEG"), ("blue", "blue")]
-    context := "Nine triangles in the display; none is blue."
-    judgment := .acceptable
-    alternatives := []
-    readings := []
-    paperFeatures := [("polarity", "negative"), ("condition", "NONE"), ("embedding", "unembedded")] }
-
-def neg_A1_gap : Datum :=
-  { id := "krizchemla2015_neg_A1_gap"
-    source := ⟨"kriz-chemla-2015", "Exp. A1, the+E-neg, mixed display"⟩
-    reportedIn := none
-    language := "stan1293"
-    primaryText := "The triangles aren't blue."
-    glossedTokens := [("The", "DEF"), ("triangles", "triangle.PL"), ("aren't", "COP.PL.NEG"), ("blue", "blue")]
-    context := "Nine triangles in the display; four are blue, five are another color."
-    judgment := .acceptable
-    alternatives := []
-    readings := []
-    paperFeatures := [("polarity", "negative"), ("condition", "GAP"), ("embedding", "unembedded"), ("gap_detected", "true")] }
-
-def all : List Datum := [ex_14a, ex_15, ex_16b, ex_19, ex_20, ex_23, ex_24, pos_A1_all, pos_A1_none, pos_A1_gap, neg_A1_all, neg_A1_none, neg_A1_gap]
+def all : List Datum := [ex_41a, ex_41b, ex_14a, ex_15, ex_16b, ex_19, ex_20, ex_23, ex_24]
 
 end KrizChemla2015.Examples
