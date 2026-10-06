@@ -3,26 +3,33 @@ module
 public import Linglib.Semantics.Exhaustification.Disjunctive
 public import Linglib.Semantics.Questions.Partition.Basic
 public import Linglib.Semantics.Homogeneity.Plural
-public import Linglib.Data.Generalizations.HomogeneityGap
+public import Linglib.Data.Experiments.KrizChemla2015
 public import Linglib.Data.Examples.BarLev2021
 
 /-!
-# Bar-Lev 2021: an implicature account of homogeneity and non-maximality
+# Bar-Lev (2021): An Implicature Account of Homogeneity and Non-Maximality
 
-In this file we formalize the implicature account of homogeneity. Plural predication is the
-existential `existsPlural D x P`, that some atom of `x` in the domain `D` satisfies `P`, and
-its alternatives `subdomainAlts D x P` replace `D` by its subsets. Writing `∃-PL` as the
-disjunction of its atoms and applying `Exhaustification.exhIEII_subDisjs`, we prove that
-exhaustification over the alternatives yields the universal reading
-(`exhIEII_existsPlural`), that over the negated alternatives of the negated sentence it is
-vacuous (`exhIEII_compl_existsPlural`), and that over the alternatives with subdomains of
-size `m` it yields "at least `n + 1 - m`" (`exhIEII_prunedAlts`). A partition `Q : Setoid W`
-selects the strongest of these readings it decides (`IsReading`), which for the polar
-question whether at least `k` atoms satisfy `P` is "at least `k`" (`isReading_polar_atLeast`).
-A world is `Gappy` when it verifies the reading of one partition and falsifies another's,
-which happens exactly where Križ's trivalent plural predication is undefined
-(`gappy_iff_barePlural_eq_indet`). The paper's examples are instances in the model whose
-worlds are the sets of atoms satisfying the predicate.
+Bar-Lev derives homogeneity as an implicature. A plural definite means existential
+pluralization, that some atom of the plurality in a domain has the property, and its alternatives
+replace the domain by its subsets. Exhaustifying over them gives the universal reading, while
+under negation exhaustification is vacuous. Pruning the alternatives to subdomains of a fixed size
+gives the threshold readings of non-maximality, the question the context raises selects among
+them, and a world is gappy when it verifies the reading one question selects and falsifies
+another's.
+
+## Main results
+
+* `exhIEII_existsPlural`, `exhIEII_compl_existsPlural`: the maximality implicature, and its
+  absence under negation.
+* `exhIEII_prunedAlts`, `isReading_polar_atLeast`: pruning yields the threshold readings, and a
+  polar question on a threshold selects it.
+* `gappy_iff_barePlural_eq_indet`: the gappy worlds are those where Križ's trivalent plural is
+  undefined; `neg_barePlural_eq_indet_and_notMem_exhIEII_compl`: the accounts part under negation.
+* `gappy_iff_krizChemla_gap`, `krizChemla_negation_residue`: on Križ and Chemla's unembedded
+  displays the account predicts their gaps for the positive sentence and misses those under
+  negation.
+* `disjunction_not_both`, `plural_both`, `reading_66`, `reading_80`, `reading_81`: the paper's
+  examples.
 
 ## Implementation notes
 
@@ -37,7 +44,7 @@ fixing the partition removes the gap is carried by `reading_80` and `reading_81`
 
 * The negative sentence is modelled only at the LF with negation over `∃-PL`; the LF with
   `∃-PL` over negation and the cover-restricted `∃-PL` of §5.3, the paper's source of the
-  marginal negative non-maximal readings and of the pooled negative gap rows, are not
+  marginal negative non-maximal readings and of Križ and Chemla's negative gaps, are not
   formalized.
 * The paper's full set of readings, and the non-distributive extension of §8.
 
@@ -69,7 +76,7 @@ variable {Atom W : Type*} {D x : Finset Atom} {P : Atom → W → Prop}
 /-! ### Existential pluralization and its subdomain alternatives -/
 
 variable (D x P) in
-/-- The existential pluralization operator `∃-PL_D`: some atom of `x` in the domain `D`
+/-- The existential pluralization `∃-PL_D` holds when some atom of `x` in the domain `D`
 satisfies `P`. Replacing `D` by a subset yields the subdomain alternatives. -/
 def existsPlural : Set W := {w | ∃ a ∈ x, a ∈ D ∧ P a w}
 
@@ -96,7 +103,7 @@ theorem existsPlural_eq_disj : existsPlural D x P = disj (x ∩ D) (atom P) := b
   ext w; simp [existsPlural, atom, disj, subDisj, Finset.mem_inter, and_assoc]
 
 variable (D x P) in
-/-- The subdomain alternatives: `∃-PL_{D'} P x` for `D' ⊆ D` meeting `x`. -/
+/-- The subdomain alternatives are `∃-PL_{D'} P x` for the `D' ⊆ D` meeting `x`. -/
 def subdomainAlts : Set (Set W) :=
   {q | ∃ D' ⊆ D, (x ∩ D').Nonempty ∧ q = existsPlural D' x P}
 
@@ -120,16 +127,16 @@ structure Separating : Prop where
 
 /-! ### Homogeneity -/
 
-/-- The maximality implicature: exhaustifying `∃-PL` over its subdomain alternatives gives the
-universal reading. -/
+/-- Exhaustifying `∃-PL` over its subdomain alternatives gives the universal reading, the
+maximality implicature. -/
 theorem exhIEII_existsPlural (h : Separating D x P) (hne : (x ∩ D).Nonempty) :
     exhIEII (subdomainAlts D x P) (existsPlural D x P) = {w | ∀ a ∈ x, a ∈ D → P a w} := by
   rw [subdomainAlts_eq, existsPlural_eq_disj, exhIEII_subDisjs (p := atom P) h.single hne h.all]
   ext w; simp [atom, Finset.mem_inter]
 
-/-- The asymmetry: with negation over `∃-PL`, every negated subdomain alternative is entailed
-by the negated prejacent, so exhaustification over any of them is vacuous and no pruning yields
-a non-maximal reading. -/
+/-- With negation over `∃-PL` every negated subdomain alternative is entailed by the negated
+prejacent, so exhaustification over any of them is vacuous and no pruning yields a non-maximal
+reading. -/
 theorem exhIEII_compl_existsPlural {C : Set (Set W)} (hC : C ⊆ compl '' subdomainAlts D x P)
     (hsat : (existsPlural D x P)ᶜ.Nonempty) :
     exhIEII C (existsPlural D x P)ᶜ = (existsPlural D x P)ᶜ := by
@@ -137,7 +144,7 @@ theorem exhIEII_compl_existsPlural {C : Set (Set W)} (hC : C ⊆ compl '' subdom
   obtain ⟨_, ⟨D', hD', -, rfl⟩, rfl⟩ := hC hq
   exact Set.compl_subset_compl.2 fun v ⟨a, ha, haD', hPa⟩ ↦ ⟨a, ha, hD' haD', hPa⟩
 
-/-- (6a): the existential basic meaning does not entail that a given kid laughed. -/
+/-- The existential basic meaning does not entail that a given kid laughed, (6a). -/
 theorem exists_mem_existsPlural_and_not (h : Separating D x P) {a : Atom} (ha : a ∈ x ∩ D)
     (h2 : 2 ≤ (x ∩ D).card) : ∃ w ∈ existsPlural D x P, ¬ P a w := by
   obtain ⟨b, hb, hba⟩ := Finset.exists_mem_ne (by omega : 1 < (x ∩ D).card) a
@@ -145,13 +152,13 @@ theorem exists_mem_existsPlural_and_not (h : Separating D x P) {a : Atom} (ha : 
   exact ⟨w, ⟨b, (Finset.mem_inter.1 hb).1, (Finset.mem_inter.1 hb).2, (hw b hb).2 rfl⟩,
     fun hPa ↦ hba ((hw a ha).1 hPa).symm⟩
 
-/-- (6b): its negation entails that no given kid did. -/
+/-- Its negation entails that no given kid laughed, (6b). -/
 theorem not_of_notMem_existsPlural {w : W} (hw : w ∉ existsPlural D x P) {a : Atom}
     (ha : a ∈ x ∩ D) : ¬ P a w :=
   notMem_existsPlural_iff.1 hw a (Finset.mem_inter.1 ha).1 (Finset.mem_inter.1 ha).2
 
 /-- Simple disjunction, whose alternatives include the conjunction, is strengthened the other
-way: the conjunction is denied. -/
+way, the conjunction being denied. -/
 theorem not_forall_of_mem_exhIEII_insert_iInter (h : Separating D x P) (h2 : 2 ≤ (x ∩ D).card)
     {w : W} (hw : w ∈ exhIEII (insert (⋂ a ∈ x ∩ D, atom P a) (subdomainAlts D x P))
       (existsPlural D x P)) : ¬ ∀ a ∈ x ∩ D, P a w := by
@@ -220,7 +227,7 @@ theorem exhIEII_prunedAlts (h : Separating D x P) {m : ℕ} (hm : 0 < m)
   omega
 
 variable (D x P) in
-/-- The readings of *the kids laughed*: the maximal one and the pruned ones. -/
+/-- The readings of *the kids laughed* are the maximal one and the pruned ones. -/
 def readings : Set (Set W) :=
   {q | ∃ m, 0 < m ∧ m ≤ (x ∩ D).card ∧ q = exhIEII (prunedAlts D x P m) (existsPlural D x P)}
 
@@ -235,7 +242,7 @@ theorem mem_readings_iff (h : Separating D x P) {q : Set W} :
     rw [exhIEII_prunedAlts h (by omega) (by omega)]
     congr 1; omega
 
-/-- Pruning only weakens: the maximal reading entails every pruned one. -/
+/-- Pruning only weakens, the maximal reading entailing every pruned one. -/
 theorem exhIEII_subdomainAlts_subset_exhIEII_prunedAlts (h : Separating D x P)
     (hne : (x ∩ D).Nonempty) {m : ℕ} (hm : 0 < m) (hmn : m ≤ (x ∩ D).card) :
     exhIEII (subdomainAlts D x P) (existsPlural D x P) ⊆
@@ -246,7 +253,7 @@ theorem exhIEII_subdomainAlts_subset_exhIEII_prunedAlts (h : Separating D x P)
 /-! ### Relevance and gappiness -/
 
 variable (D x P) in
-/-- The reading given a partition: the strongest reading the partition decides. -/
+/-- The reading a partition selects is the strongest reading it decides. -/
 def IsReading (Q : Setoid W) (q : Set W) : Prop :=
   q ∈ readings D x P ∧ Q.Decides q ∧ ∀ r ∈ readings D x P, Q.Decides r → q ⊆ r
 
@@ -272,7 +279,8 @@ theorem isReading_polar_atLeast (h : Separating D x P)
   omega
 
 variable (D x P) in
-/-- Gappiness: true given the reading some partition selects, false given another's. -/
+/-- A world is gappy when it is true on the reading some partition selects and false on another's.
+-/
 def Gappy (w : W) : Prop :=
   (∃ (Q : Setoid W) (q : Set W), IsReading D x P Q q ∧ w ∈ q) ∧
     ∃ (Q : Setoid W) (q : Set W), IsReading D x P Q q ∧ w ∉ q
@@ -291,8 +299,8 @@ theorem gappy_iff (h : Separating D x P) (hcount : ∀ k ≤ (x ∩ D).card, ∃
     exact ⟨⟨_, _, isReading_polar_atLeast h hcount hpos (count_le_card w), mem_atLeast.2 le_rfl⟩,
       ⟨_, _, isReading_polar_atLeast h hcount (Nat.succ_pos _) hlt, by simp⟩⟩
 
-/-- Where the accounts agree: a plain positive definite plural is gappy exactly where
-[kriz-2016]'s trivalent plural predication is literally undefined. -/
+/-- A plain positive definite plural is gappy exactly where [kriz-2016]'s trivalent plural
+predication is undefined, where the accounts agree. -/
 theorem gappy_iff_barePlural_eq_indet (h : Separating D x P)
     (hcount : ∀ k ≤ (x ∩ D).card, ∃ w, count D x P w = k) (w : W) :
     Gappy D x P w ↔ Homogeneity.barePlural P (x ∩ D) w = .indet := by
@@ -301,9 +309,9 @@ theorem gappy_iff_barePlural_eq_indet (h : Separating D x P)
   exact and_congr_right fun _ ↦ ⟨fun hlt ↦ Finset.ssubset_iff_subset_ne.2
     ⟨Finset.filter_subset _ _, ne_of_apply_ne _ hlt.ne⟩, Finset.card_lt_card⟩
 
-/-- Where the accounts part: at a gappy world the trivalent negation is still undefined, while
-the negative sentence with negation over `∃-PL`, exhaustified over any of its alternatives, is
-plainly false. -/
+/-- At a gappy world the trivalent negation is still undefined, while the negative sentence with
+negation over `∃-PL`, exhaustified over any of its alternatives, is plainly false, where the
+accounts part. -/
 theorem neg_barePlural_eq_indet_and_notMem_exhIEII_compl (h : Separating D x P)
     (hcount : ∀ k ≤ (x ∩ D).card, ∃ w, count D x P w = k) {w : W} (hw : Gappy D x P w)
     (C : Set (Set W)) :
@@ -319,8 +327,8 @@ end Pruning
 
 section Model
 
-/-- The model whose worlds record which atoms satisfy the predicate: `a` satisfies it at the
-world `w`, the set of atoms that do, when `a ∈ w`. -/
+/-- In the model whose worlds are the sets of atoms satisfying the predicate, `a` satisfies it at
+the world `w` when `a ∈ w`. -/
 abbrev holds (a : Atom) (w : Finset Atom) : Prop := a ∈ w
 
 variable (D x)
@@ -361,7 +369,7 @@ abbrev kellyLaughed : Set (Finset Kid) := atom holds .kelly
 /-- *Jane laughed*. -/
 abbrev janeLaughed : Set (Finset Kid) := atom holds .jane
 
-/-- (41a): *Kelly or Jane laughed*, whose alternatives include the conjunction, is strengthened
+/-- *Kelly or Jane laughed*, (41a), whose alternatives include the conjunction, is strengthened
 to "not both". -/
 theorem disjunction_not_both :
     exhIEII {kellyLaughed ∪ janeLaughed, kellyLaughed, janeLaughed, kellyLaughed ∩ janeLaughed}
@@ -371,7 +379,7 @@ theorem disjunction_not_both :
     ⟨{.kelly}, ⟨Or.inl (Finset.mem_singleton_self _), Finset.mem_singleton_self _⟩, by decide⟩
     ⟨{.jane}, ⟨Or.inr (Finset.mem_singleton_self _), Finset.mem_singleton_self _⟩, by decide⟩
 
-/-- (41b): *the kids laughed*, whose alternatives are the subdomain alternatives alone, is
+/-- *The kids laughed*, (41b), whose alternatives are the subdomain alternatives alone, is
 strengthened to "both". -/
 theorem plural_both :
     exhIEII (subdomainAlts pair pair holds) (existsPlural pair pair holds) = {w | pair ⊆ w} := by
@@ -406,21 +414,47 @@ theorem reading_81 :
       (atLeast books books holds 10) :=
   isReading_polar_atLeast_holds books books (by decide) (by decide)
 
-/-! ### The example rows and the pooled gap rows -/
+/-! ### Križ and Chemla's unembedded displays
 
-open Generalizations.HomogeneityGap (GapDatum allData)
+An unembedded display of [kriz-chemla-2015] shows nine symbols, some number of which have the
+target color, so its worlds are the sets of target-colored symbols. -/
 
-/-- The pooled unembedded homogeneity-gap rows of the plural-definite papers available to the
-paper. -/
-def pluralDefiniteRows : List GapDatum :=
-  allData.filter fun d ↦ d.source.bibkey == "kriz-2015" || d.source.bibkey == "kriz-chemla-2015"
+section KrizChemla
 
-/-- The pooled positive rows are judged neither true nor false exactly in the some-but-not-all
-cells, as `gappy_iff` predicts; the negative rows, also gappy there, are the residue the paper
-attributes to the LF with `∃-PL` over negation. -/
-theorem pool_indet_iff_gap : ∀ d ∈ pluralDefiniteRows, d.polarity = .positive →
-    (d.observed = .indet ↔ d.scenario = .gap) := by
+open KrizChemla2015 (items gapTests)
+
+/-- The symbols of a display. -/
+abbrev Symbol := Fin 9
+
+private theorem krizChemla_unembedded : ∀ i ∈ items, i.embedding = .unembedded →
+    ∀ n ∈ i.cells, (0 < n ∧ n < 9 ↔ i.condition = .gap) := by
   decide
+
+/-- On Križ and Chemla's unembedded displays the account makes the positive sentence gappy
+exactly at the GAP displays, and every experiment that tested them found a gap there (Table 2).
+-/
+theorem gappy_iff_krizChemla_gap :
+    (∀ i ∈ items, i.embedding = .unembedded → ∀ w : Finset Symbol, i.cells = [w.card] →
+      (Gappy Finset.univ Finset.univ holds w ↔ i.condition = .gap)) ∧
+    ∀ t ∈ gapTests, t.embedding = .unembedded → t.found = .yes := by
+  refine ⟨fun i hi he w hw ↦ ?_, by decide⟩
+  have h := krizChemla_unembedded i hi he w.card (by simp [hw])
+  rw [gappy_iff (separating_holds _ _) (exists_count_holds_eq _ _), count_holds]
+  simpa using h
+
+/-- Under negation the account, with negation over `∃-PL`, makes every GAP display plainly false
+whatever is pruned, while Table 2 found a gap there in Experiments A1 and B1, the residue the
+paper attributes to the LF with `∃-PL` over negation. -/
+theorem krizChemla_negation_residue :
+    (∀ i ∈ items, i.embedding = .unembedded → i.condition = .gap → ∀ w : Finset Symbol,
+      i.cells = [w.card] → ∀ C, w ∉ exhIEII C (existsPlural Finset.univ Finset.univ holds)ᶜ) ∧
+    ∀ t ∈ gapTests, t.embedding = .negation → t.found = .yes := by
+  refine ⟨fun i hi he hc w hw C ↦ ?_, by decide⟩
+  have hg := (gappy_iff_krizChemla_gap.1 i hi he w hw).2 hc
+  exact (neg_barePlural_eq_indet_and_notMem_exhIEII_compl (separating_holds _ _)
+    (exists_count_holds_eq _ _) hg C).2
+
+end KrizChemla
 
 /-- The paper's examples report gappiness for positive sentences and reduced gappiness for the
 negative (82b), the asymmetry `neg_barePlural_eq_indet_and_notMem_exhIEII_compl` idealizes. -/

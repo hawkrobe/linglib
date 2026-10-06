@@ -1,45 +1,42 @@
 module
 
 public import Linglib.Semantics.Homogeneity.Usable
-public import Linglib.Data.Generalizations.HomogeneityGap
+public import Linglib.Semantics.Polarity.Basic
 public import Linglib.Data.Examples.AghaJeretic2022
 public import Mathlib.Order.Minimal
 
 /-!
-# Weak necessity modals as homogeneous pluralities of worlds
+# Agha and Jeretič (2022): Weak Necessity Modals as Homogeneous Pluralities of Worlds
 
-Weak necessity modals take obligatory apparent wide scope over negation, whether the negation is
-clausemate or in a higher clause: *you shouldn't go* cannot be continued by *but you are allowed to
-go*, where *you don't have to go* can. The pattern is that of plural definites, and Agha and Jeretič
+Weak necessity modals take obligatory apparent wide scope over negation: *you shouldn't go* cannot
+be continued by *but you are allowed to go*, where *you don't have to go* can. Agha and Jeretič
 propose that *should* is to *must* what *the* is to *all*: strong necessity quantifies universally
-over the best worlds while weak necessity predicates the prejacent of their plurality. This file
-instantiates Križ's plural predication with worlds as the atoms: `should D p` is the supervaluation
-`Trivalent.supervaluation` over the best worlds `D w` and `must D p` the universal quantifier, so
-the gap arises exactly in mixed domains (`should_eq_indet_iff`), negation is symmetric and hence
-scopeless (`should_not`), a true negated *should* contradicts the existential continuation where a
-negated *must* does not (`not_exists_of_should_not`, `must_false_of_indet`), and *necessarily* is
-the same gap remover as *all*, `Prop3.metaAssert`, which turns *should* into *must*
-(`must_eq_metaAssert_should`, `necessarily_removes_gap`). Križ's sufficient truth and addressing
-give the exception tolerance of the perfect-grade scenario under one question but not the other, and
-the unusability of *have to* under either (`exception_tolerance`), and the two-doors scenario where
-*should* is indeterminate and *must* false (`two_doors`).
+over the best worlds, while weak necessity predicates the prejacent of their plurality, which is
+neither true nor false when some best worlds satisfy it and some do not. Weak necessity is derived
+from strong necessity by an operator picking out the unique minimal set of a quantifier, which
+possibility lacks.
 
-Weak necessity is derived from strong necessity by an operator picking the unique minimal set
-in the quantifier, taken as the family of sets it holds of ([barwise-cooper-1981]): for *must*
-this is the domain itself, so the result is the plurality *should* denotes (`x_must`), while
-possibility has one minimal set per best world (`minimal_inter_nonempty_iff`), so the operator
-is undefined on it — Javanese NE attaches to necessity only — whereas a counterfactual marker
-needing only some minimal set applies to both, as French *devrais* and *pourrais* show
-(`possibility_witnesses`). Domain restriction, on which *should* quantifies over
-a proper subset of the worlds *allowed* ranges over, cannot make the negated modal contradict
-the existential continuation (`domainRestriction_no_contradiction`); run over the pooled
-polarity-by-scenario rows it matches the classical cells and fails exactly the gap cells
-(`domainRestriction_fails_exactly_gap`), which the plural semantics reproduces
-(`should_matches_grid`). The continuation, remover, and derivation patterns of the paper's
-examples are stated over its rows (`weak_negated_contradicts`, `strong_extraclausal_compatible`,
-`necessarily_licenses_continuation`, `ne_only_necessity`). The proportional and degree-based
-rivals, and the conditionals, generics, and habituals of the closing section, are discussed
-without a formal counterpart here.
+## Main results
+
+* `should_eq_indet_iff`, `should_not`: the gap arises exactly in mixed domains, and negation is
+  symmetric and hence scopeless.
+* `not_exists_of_should_not`, `must_false_of_indet`: a true negated *should* contradicts the
+  existential continuation, where a negated *must* does not.
+* `must_eq_metaAssert_should`, `necessarily_removes_gap`: *necessarily* removes the gap as *all*
+  does.
+* `exception_tolerance`, `two_doors`: Križ's usability gives the exception tolerance of the
+  perfect-grade scenario and the indeterminacy of the two-doors scenario.
+* `x_must`, `possibility_witnesses`: the derivation of weak necessity applies to necessity only.
+* `should_matches_grid`, `domainRestriction_fails_exactly_gap`: over the paper's grid of
+  judgments the plural semantics fits every cell, and domain restriction fails exactly the gaps.
+
+## Implementation notes
+
+`should D p` is Križ's plural predication with the best worlds `D w` as atoms. The grid reads each
+example row as a cell (`Cell.ofDatum`): its polarity, its scenario, and the value judged, the
+classical value the polarity fixes where all or no best worlds satisfy the prejacent, and the gap
+or the recorded classical value in the mixed scenario. The proportional and degree-based rivals,
+and the conditionals, generics and habituals of the closing section, are not formalized.
 
 ## References
 
@@ -59,16 +56,15 @@ namespace AghaJeretic2022
 open Trivalent (Prop3 supervaluation supervaluation_eq_true_iff supervaluation_eq_false_iff
   supervaluation_eq_indet_iff supervaluation_not metaAssert_supervaluation)
 open Homogeneity
-open Generalizations.HomogeneityGap (GapDatum GapScenario fromDatum)
 
 variable {W : Type*} (D : W → Finset W) (p : W → Prop) [DecidablePred p]
 
 /-! ### Weak necessity as plural predication over worlds -/
 
-/-- `should D p`: the prejacent predicated of the plurality of best worlds `D w`. -/
+/-- Weak necessity `should D p` predicates the prejacent of the plurality of best worlds `D w`. -/
 def should : Prop3 W := fun w ↦ supervaluation (D w) p
 
-/-- `must D p`: the prejacent holds in every best world. -/
+/-- Strong necessity `must D p` holds when the prejacent holds in every best world. -/
 def must : Prop3 W := fun w => Trivalent.ofBool (decide (∀ w' ∈ D w, p w'))
 
 theorem should_eq_true_iff (w : W) : should D p w = .true ↔ ∀ w' ∈ D w, p w' :=
@@ -78,13 +74,13 @@ theorem should_eq_false_iff (w : W) :
     should D p w = .false ↔ (D w).Nonempty ∧ ∀ w' ∈ D w, ¬ p w' :=
   supervaluation_eq_false_iff ..
 
-/-- The gap: some best worlds satisfy the prejacent and some do not. -/
+/-- The sentence has a gap when some best worlds satisfy the prejacent and some do not. -/
 theorem should_eq_indet_iff (w : W) :
     should D p w = .indet ↔ (∃ w' ∈ D w, p w') ∧ ∃ w' ∈ D w, ¬ p w' :=
   supervaluation_eq_indet_iff ..
 
-/-- Homogeneity: over a nonempty domain, negating the prejacent negates the modal sentence, so
-the gap is symmetric and negation is scopeless. -/
+/-- Over a nonempty domain negating the prejacent negates the modal sentence, so the gap is
+symmetric and negation is scopeless. -/
 theorem should_not (w : W) (hne : (D w).Nonempty) :
     should D (fun w' => ¬ p w') w = (should D p w).neg :=
   supervaluation_not _ hne
@@ -104,8 +100,8 @@ theorem must_false_of_indet (w : W) (h : should D p w = .indet) :
 
 /-! ### Homogeneity removal -/
 
-/-- *Must* is *should* with its gap removed: the universal quantifier is the meta-assertion of
-the plural predication, as *all* is of *the*. -/
+/-- *Must* is *should* with its gap removed, the universal quantifier being the meta-assertion
+of the plural predication, as *all* is of *the*. -/
 theorem must_eq_metaAssert_should : must D p = (should D p).metaAssert :=
   funext fun w ↦ (metaAssert_supervaluation (D w) p).symm
 
@@ -142,7 +138,7 @@ theorem two_doors : ∀ w, should doors (· = .right) w = .indet ∧
     ¬ usable strict (should doors (· = .right)) w ∧ must doors (· = .right) w = .false := by
   decide
 
-/-- Worlds of the perfect-grade scenario: the rules require every exercise or only most, and
+/-- In a world of the perfect-grade scenario the rules require every exercise or only most, and
 the addressee does every exercise or only most. -/
 inductive Grade
   | strictAll
@@ -239,8 +235,8 @@ theorem x_must :
 variable [DecidableEq W]
 
 open scoped Finset in
-/-- Possibility over two or more best worlds has minimal sets but no unique one: a marker that
-needs only some minimal set applies to it, one that needs the unique minimal set does not. -/
+/-- Possibility over two or more best worlds has minimal sets but no unique one, so a marker that
+needs only some minimal set applies to it and one that needs the unique minimal set does not. -/
 theorem possibility_witnesses (h : 1 < #(D w)) :
     (∃ X, Minimal (fun X ↦ (D w ∩ X).Nonempty) X) ∧
       ¬ ∃! X, Minimal (fun X ↦ (D w ∩ X).Nonempty) X :=
@@ -249,34 +245,60 @@ theorem possibility_witnesses (h : 1 < #(D w)) :
 
 /-! ### The data -/
 
-/-- The paper's rows in the cross-paper homogeneity pool. -/
-def gapData : List GapDatum := Examples.all.filterMap fromDatum
+/-- In the scenarios of the grid all, none, or some but not all of the best worlds satisfy the
+prejacent. -/
+inductive Scenario where
+  | all
+  | none
+  | gap
+  deriving DecidableEq, Repr
+
+/-- A cell of the grid records the polarity of a sentence, its scenario and the value judged. -/
+structure Cell where
+  /-- The polarity of the sentence. -/
+  polarity : Polarity
+  /-- The scenario. -/
+  scenario : Scenario
+  /-- The value judged. -/
+  observed : Trivalent
+  deriving DecidableEq, Repr
+
+/-- A row reads as a cell from its polarity and scenario. The value judged is the one the
+polarity fixes where all or no best worlds satisfy the prejacent, and in the mixed scenario the gap
+where the paper reports one and the recorded classical value otherwise. -/
+def Cell.ofDatum (e : Datum) : Option Cell := do
+  let pol ← e.parse? "polarity" [("positive", .positive), ("negative", .negative)]
+  let sc ← e.parse? "condition" [("ALL", .all), ("NONE", .none), ("GAP", .gap)]
+  let observed ← match sc, pol with
+    | .all, .positive | .none, .negative => some .true
+    | .all, .negative | .none, .positive => some .false
+    | .gap, _ =>
+      if e.feature? "gap_detected" = some "true" then some .indet
+      else e.parse? "classical_value" [("true", .true), ("false", .false)]
+  some ⟨pol, sc, observed⟩
 
 /-- The polarity-by-scenario grid for *should*. -/
-def shouldGrid : List GapDatum :=
-  (Examples.all.filter (·.feature? "modal" == some "should")).filterMap fromDatum
+def shouldGrid : List Cell :=
+  (Examples.all.filter (·.feature? "modal" == some "should")).filterMap Cell.ofDatum
 
-/-- A representative domain for each scenario; a world is the prejacent's truth value at it. -/
-def scenarioDomain : GapScenario → Finset Bool
+/-- A representative domain for each scenario, a world being the prejacent's truth value at it. -/
+def scenarioDomain : Scenario → Finset Bool
   | .all => {true}
   | .none => {false}
   | .gap => {true, false}
 
-/-- The plural semantics' value at a cell: negative polarity predicates the negated prejacent. -/
-def shouldPredict (pol : Polarity) (s : GapScenario) : Trivalent :=
+/-- The plural semantics' value at a cell predicates the negated prejacent at negative polarity. -/
+def shouldPredict (pol : Polarity) (s : Scenario) : Trivalent :=
   match pol with
   | .positive => should (fun _ => scenarioDomain s) (· = true) true
   | .negative => should (fun _ => scenarioDomain s) (· = false) true
 
-/-- Domain restriction's value at a cell: universal quantification, negated by Strong Kleene
+/-- Domain restriction's value at a cell is universal quantification, negated by strong Kleene
 negation. -/
-def domainRestrictionPredict (pol : Polarity) (s : GapScenario) : Trivalent :=
+def domainRestrictionPredict (pol : Polarity) (s : Scenario) : Trivalent :=
   match pol with
   | .positive => must (fun _ => scenarioDomain s) (· = true) true
   | .negative => (must (fun _ => scenarioDomain s) (· = true) true).neg
-
-theorem gapData_subset_allData : ∀ d ∈ gapData, d ∈ Generalizations.HomogeneityGap.allData := by
-  decide
 
 /-- The plural semantics reproduces every cell of the *should* grid. -/
 theorem should_matches_grid :
