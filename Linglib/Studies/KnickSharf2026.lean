@@ -56,11 +56,11 @@ def evalPres (p : PointPred W T) (tc : T) (w : W) : Prop :=
 /-- The past tense evaluates a point predicate at some time before the speech time `tc`, the
 quantificational past of `Semantics/Tense/Quantificational.lean`. -/
 def evalPast (p : PointPred W T) (tc : T) (w : W) : Prop :=
-  ◇[Tense.accessibility ⟦Tense.past⟧] (fun t ↦ p (w, t)) tc
+  ◇[Tense.toSetRel ⟦Tense.past⟧] (fun t ↦ p (w, t)) tc
 
 /-- The future tense evaluates a point predicate at some time after the speech time `tc`. -/
 def evalFut (p : PointPred W T) (tc : T) (w : W) : Prop :=
-  ◇[Tense.accessibility ⟦Tense.future⟧] (fun t ↦ p (w, t)) tc
+  ◇[Tense.toSetRel ⟦Tense.future⟧] (fun t ↦ p (w, t)) tc
 
 /-! ### Composed forms -/
 
