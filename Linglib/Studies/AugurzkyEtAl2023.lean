@@ -6,82 +6,58 @@ public import Linglib.Semantics.Homogeneity.Usable
 public import Linglib.Data.Experiments.AugurzkyEtAl2023
 
 /-!
-# Augurzky et al. 2023: plural definites in context
+# Augurzky et al. (2023): Putting plural definites into context
 
-Plural definites are homogeneous — *every boy opened his presents* is understood as *all* of
-them, its negation as *none* — and non-maximal: where all that matters is whether any present
-was opened, the sentence passes though a few presents stayed closed. The implicature approach
-gives the definite an existential meaning, strengthened to the universal by an implicature in
-positive environments only, so that pruning alternatives yields non-maximality there and
-nowhere else. The non-implicature approach gives the sentence a truth-value gap in mixed
-scenarios and lets the question the context raises group the gap with truth or with falsity,
-symmetrically for positive and negative sentences. Two picture-verification experiments put the
-plural definite under *every* and a negative quantifier, *no* in Experiment 1 and *not every* in
-Experiment 2, while a family rule made it relevant whether any or whether all presents were
-opened. The context affected *every* more than *no*, as only the implicature approach predicts,
-and *every* and *not every* alike, as only the non-implicature approach predicts, so each
-approach is challenged by one of the experiments.
-
-Both approaches are derived from their sources. The non-implicature verdict is [kriz-2016]'s
-usability of the trivalent sentence relative to the question the context raises
-(`Homogeneity.usable`), which comes to truth at the resolution of the gap that the question
-picks (`usable_iff_of_le`). The implicature verdict is the existential literal meaning,
-strengthened to the universal one where an implicature arises and the context does not prune
-it; for the unembedded sentence of Table 1 this is the reading [bar-lev-2021]'s pruning selects
-under a polar question, and Križ's usability under that question agrees with it
-(`usable_iff_mem_of_isReading`). The approaches agree wherever implicatures arise
-(`implicature_iff_nonImplicature`), so they can part only under a downward-entailing
-quantifier, where the non-implicature verdict negates under the complement of the quantifier
-(`nonImplicature_compl`) while the implicature verdict ignores the context
-(`implicature_context_free`). An approach predicts an interaction of context and polarity when
-the context changes its verdict on one quantifier's mixed picture and not on the other's, and
-the printed tests decide which prediction each experiment bears out.
-
-## Main definitions
-
-* `Quantifier.tree`, `Context.designation`, `Context.issue`: the paper's quantifiers as van
-  Benthem number trees, the resolution each context makes and the question it raises.
-* `nonImplicature`, `Strengthens`, `implicature`: the two verdicts on a display.
-* `Quantifier.enriched`: *not every* together with its own implicature, the rescue of §4.2.
-* `Approach`, `Approach.PredictsInteraction`, `InteractionSignificant`: the accounts against the
-  printed tests.
+A plural definite is homogeneous, *every boy opened his presents* being understood of all his
+presents and *no boy opened his presents* of none, and non-maximal: if all that matters is whether
+any present was opened, the first sentence passes though some stayed closed. The implicature
+approach strengthens an existential definite by an implicature, absent in downward-entailing
+scopes, so that pruning yields non-maximality in positive sentences only; the non-implicature
+approach gives the sentence a truth-value gap that the question the context raises resolves, for
+positive and negative sentences alike. Two picture-verification experiments put the definite under
+*every* and *no* (Experiment 1) or *not every* (Experiment 2) while a family rule made it relevant
+whether any or whether all presents were opened. Experiment 1 found the context affecting *every*
+more than *no*, and Experiment 2 found it affecting *every* and *not every* alike, so each approach
+is challenged by one experiment.
 
 ## Main results
 
-* `usable_iff_of_le`, `nonImplicature_iff`, `not_usable_rule`: usability under any question
-  between the resolution and the reading, and failure under the question whether the rule was
-  respected.
-* `implicature_iff_nonImplicature`, `nonImplicature_compl`, `implicature_context_free`: where
-  the approaches agree and how they part (§1.3).
-* `table1_implicature`, `table1_nonImplicature`, `usable_iff_mem_of_isReading`, `table2`: the
-  predictions of Tables 1 and 2.
-* `implicature_fits_iff`, `nonImplicature_fits_iff`, `enrichedImplicature_fits`: each approach
-  fits the interaction test of one experiment, and the §4.2 rescue fits both.
-* `exactlyTwo_symmetric`: the non-implicature prediction for the test (20) proposed in §4.3.
+* `pictures_truth`: the TRUTH VALUE of each picture of Figures 1 and 4 is its sentence's
+  supervaluation.
+* `nonImplicature_iff`: Križ's usability relative to the context's question is truth at the
+  context's resolution; `not_addressesIssue_respected`: the question as §3 states it does not
+  serve.
+* `mem_reading_iff_designated_cell`: the reading Bar-Lev's pruning selects is that resolution.
+* `nonImplicature_nonmaximal_iff`, `implicature_nonmaximal_iff`, `table1`: Tables 1 and 2 on every
+  mixed display.
+* `implicature_existential_iff`, `krizChemla_asymmetry_of_existential`: in an existential context
+  the approaches agree, which yields Križ and Chemla's asymmetry between *every* and *no*.
+* `enriched_nonmaximal_iff`: the amendment of §4.2 accepts *every* and *not every* in their lax
+  contexts and *no* in neither.
+* `exactlyTwo_positive`, `exactlyTwo_negative`: the non-implicature prediction for the test (20).
 
 ## Implementation notes
 
-The paper states the questions (12) and (13) only for the unembedded sentence. For the
-quantified sentences the context's question is lifted boy by boy, to which boys opened any, or
-which opened all, of their presents (`Context.issue`); any question between that one and the
-polar question on the reading serves as well (`usable_iff_of_le`), but the literal question of
-the secondary task, whether the rule was respected, is not among them (`not_usable_rule`). The
-implicature verdict strengthens the definite of each boy, as the embedded implicature of (17)
-does, and the resolution each context makes is the reading its question selects for a boy's
-nine presents (`designated_cell`). The figures' pictures are examples of their conditions, and
-the text of §3.2.1 misdescribes Experiment 2's mixed picture (`text_picture_notEvery`). The
-verdicts are bivalent, so they register whether the context changes a judgment and not by how
-much: the smaller context effect for *no*, which §3.1.2 also counts against the simple
-implicature approach, is invisible to them.
+A picture is a display of Križ and Chemla, one trivalent cell per boy. The question §3 states,
+whether the family rule was respected, is lifted boy by boy (`Context.issue`). Table 1 is stated
+for one boy's nine presents, the model of Bar-Lev's pruning being identified with the cell
+(`barePlural_holds_eq_cell`). The verdicts are bivalent, so they register whether the context
+changes a judgment and not by how much; the printed tests are reported in docstrings, not
+re-thresholded. The text of §3.2.1 describes the true control of *not every* as its mixed picture.
+
+## TODO
+
+* Bar-Lev's cover-based route to non-maximality under negation (footnote 6) is not formalized.
+* The test sentences (18) and (19) of §4.2 need disjunctive alternatives and are not modelled.
 
 ## References
 
 * [augurzky-etal-2023]
 * [kriz-chemla-2015]
-* [magri-2014]
 * [bar-lev-2021]
 * [kriz-2016]
 * [kriz-spector-2021]
+* [magri-2014]
 -/
 
 open Quantifier (NumberTree)
@@ -90,10 +66,9 @@ open Quantifier (NumberTree)
 
 namespace AugurzkyEtAl2023
 
-open Data.Experiments
 open Trivalent (Designation designated)
 open KrizChemla2015 (Display cell resolve reading someReading allReading supervaluation
-  gapValue_eq_true_iff gapValue_eq_false_iff reading_all reading_no)
+  supervaluation_eq_indet_iff supervaluation_eq_designations reading_no)
 
 /-! ### Quantifiers and pictures -/
 
@@ -108,70 +83,51 @@ instance : (q : Quantifier) → DecidableRel q.tree
   | .no => inferInstanceAs (DecidableRel NumberTree.no)
   | .notEvery => inferInstanceAs (DecidableRel NumberTree.notAll)
 
-/-- A picture as a display: each boy's value is *he opened his presents* over his nine. -/
+instance : Decidable NumberTree.all.ScopeAntitone := isFalse fun h ↦ Nat.one_ne_zero (h 0 0 rfl)
+instance : Decidable NumberTree.no.ScopeAntitone := isTrue NumberTree.scopeAntitone_no
+instance : Decidable NumberTree.notAll.ScopeAntitone := isTrue NumberTree.scopeAntitone_notAll
+
+/-- *no* and *not every* are downward entailing; *every* is not. -/
+instance : (q : Quantifier) → Decidable q.tree.ScopeAntitone
+  | .every => inferInstanceAs (Decidable NumberTree.all.ScopeAntitone)
+  | .no => inferInstanceAs (Decidable NumberTree.no.ScopeAntitone)
+  | .notEvery => inferInstanceAs (Decidable NumberTree.notAll.ScopeAntitone)
+
+/-- A picture is the display giving each boy *he opened his presents* over his nine. -/
 def Picture.display (p : Picture) : Display := p.opened.map cell
 
-/-- The negative quantifier of an experiment. -/
-def Experiment.negative : Experiment → Quantifier
-  | .one => .no
-  | .two => .notEvery
+/-- The trivalent value a level of TRUTH VALUE names, a mixed picture being one on which the
+sentence's two resolutions disagree. -/
+def Truth.value : Truth → Trivalent
+  | .trueControl => .true
+  | .falseControl => .false
+  | .mixed => .indet
 
-/-- A mixed picture for *every* and *not every*: some boy opened some but not all of his
-presents, and the others opened all of theirs. -/
-def PositiveMixed (d : Display) : Prop := .indet ∈ d ∧ .false ∉ d
-
-/-- A mixed picture for *no*: some boy opened some but not all of his presents, and the others
-opened none of theirs. -/
-def NegativeMixed (d : Display) : Prop := .indet ∈ d ∧ .true ∉ d
-
-instance : DecidablePred PositiveMixed := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
-
-instance : DecidablePred NegativeMixed := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
-
-/-- Each experiment pairs *every* with its negative quantifier. -/
-theorem pictures_quantifier :
-    ∀ p ∈ pictures, p.quantifier = .every ∨ p.quantifier = p.experiment.negative := by
-  decide
-
-/-- The mixed pictures are mixed in the sense their quantifier needs. -/
-theorem pictures_mixed : ∀ p ∈ pictures, p.truth = .mixed →
-    if p.quantifier = .no then NegativeMixed p.display else PositiveMixed p.display := by
-  decide
-
-/-- The controls are clearly true or clearly false: both resolutions of the definite agree. -/
-theorem pictures_controls : ∀ p ∈ pictures, p.truth ≠ .mixed →
-    supervaluation p.quantifier.tree p.display =
-      if p.truth = .trueControl then .true else .false := by
-  decide
-
-/-- The picture §3.2.1's text describes for Experiment 2's mixed condition, two boys with all
-their presents open and two with none, would make *not every* clearly true. -/
-theorem text_picture_notEvery :
-    supervaluation NumberTree.notAll ([9, 9, 0, 0].map cell) = .true := by
+/-- The TRUTH VALUE of every picture of Figures 1 and 4 is the supervaluation of its sentence. -/
+theorem pictures_truth :
+    ∀ p ∈ pictures, supervaluation p.quantifier.tree p.display = p.truth.value := by
   decide
 
 /-! ### Contexts -/
 
-/-- The resolution of a partially opened set that each context makes: the existential context
-designates what is not false, the universal one only what is true. -/
+/-- The resolution of a boy's partially opened presents that each context makes. -/
 def Context.designation : Context → Designation
   | .existential => .lp
   | .universal => .k3
 
-/-- The question the family rule raises about the boys: which of them opened any of their
-presents, or which opened all of them. -/
+/-- The question the context raises about the boys, which of them opened any of their presents
+or which of them opened all. -/
 def Context.issue (ctx : Context) : Setoid Display := Setoid.ker (resolve ctx.designation)
 
-/-- Each boy's value resolved at a designation standard. -/
-private def complete (δ : Designation) (d : Display) : Display :=
-  d.map fun v ↦ .ofProp (designated δ v)
+/-- Over one boy the issue is the partition of (12) or (13). -/
+theorem issue_singleton (ctx : Context) (v v' : Trivalent) :
+    ctx.issue [v] [v'] ↔ (designated ctx.designation v ↔ designated ctx.designation v') := by
+  simp [Setoid.ker_def, resolve]
 
-/-- A completed display looks the same at every standard: the one it was completed at. -/
-private theorem resolve_complete (δ δ' : Designation) (d : Display) :
-    resolve δ' (complete δ d) = resolve δ d := by
-  simp only [resolve, complete, List.map_map]
-  exact List.map_congr_left fun v _ ↦ by
-    simp [Function.comp, Trivalent.ofProp, Trivalent.designated_ofBool]
+/-- A resolution, read back as a display, resolves to itself at every standard. -/
+private theorem resolve_map_ofBool (δ : Designation) (c : List Bool) :
+    resolve δ (c.map Trivalent.ofBool) = c := by
+  simp [resolve, List.map_map, Function.comp_def, Trivalent.designated_ofBool]
 
 /-! ### The non-implicature approach -/
 
@@ -179,199 +135,244 @@ section NonImplicature
 
 variable (q : NumberTree) [DecidableRel q]
 
-/-- Under any question coarser than the resolution at `δ` and fine enough to decide the reading
-at `δ`, the trivalent sentence is usable exactly where that reading holds: no cell holds both a
-true and a false display, and a gapped display shares its cell with its completion at `δ`. -/
-theorem usable_iff_of_le {Q : Setoid Display} {δ : Designation}
+/-- Under any question at least as fine as the polar question on the reading at `δ` and at most
+as fine as the resolution at `δ`, the trivalent sentence is usable exactly where that reading
+holds. -/
+theorem usable_iff_reading {Q : Setoid Display} {δ : Designation}
     (h₁ : Setoid.ker (resolve δ) ≤ Q) (h₂ : Q.Decides {d | reading q d δ}) (d : Display) :
     Homogeneity.usable Q (supervaluation q) d ↔ reading q d δ := by
-  have hcell : ∀ {d d'}, Q d d' → (reading q d δ ↔ reading q d' δ) :=
-    fun h ↦ Setoid.polar_iff.1 (h₂ h)
+  have hcell : ∀ {d d'}, Q d d' → (reading q d δ ↔ reading q d' δ) := fun h ↦ h₂.iff h
   have htrue : ∀ d', supervaluation q d' = .true → reading q d' δ := fun d' h ↦ by
-    have := gapValue_eq_true_iff.1 h
-    cases δ <;> tauto
+    rw [supervaluation_eq_designations, Trivalent.supervaluation_eq_true_iff] at h
+    exact h δ (Finset.mem_univ δ)
   have hfalse : ∀ d', supervaluation q d' = .false → ¬ reading q d' δ := fun d' h ↦ by
-    have := gapValue_eq_false_iff.1 h
-    cases δ <;> tauto
-  have hres : ∀ δ', reading q (complete δ d) δ' ↔ reading q d δ := fun δ' ↦ by
-    rw [reading, reading, resolve_complete]
+    rw [supervaluation_eq_designations, Trivalent.supervaluation_eq_false_iff] at h
+    exact h.2 δ (Finset.mem_univ δ)
   refine ⟨fun ⟨_, ⟨d', hd', h'⟩, _⟩ ↦ (hcell hd').2 (htrue d' h'), fun h ↦
-    ⟨fun hf ↦ hfalse d hf h, ⟨complete δ d, h₁ (resolve_complete δ δ d).symm,
-      gapValue_eq_true_iff.2 ⟨(hres _).2 h, (hres _).2 h⟩⟩,
+    ⟨fun hf ↦ hfalse d hf h, ⟨(resolve δ d).map Trivalent.ofBool,
+      h₁ (Setoid.ker_def.2 (resolve_map_ofBool δ _).symm), ?_⟩,
       fun ⟨d₁, d₂, h₁₂, ht, hf⟩ ↦ hfalse d₂ hf ((hcell h₁₂).1 (htrue d₁ ht))⟩⟩
+  rw [supervaluation_eq_designations, Trivalent.supervaluation_eq_true_iff]
+  intro δ' _
+  rw [reading, resolve_map_ofBool]
+  exact h
 
-/-- The non-implicature verdict ([kriz-2016]): the trivalent sentence is usable at the display
-relative to the question the context raises. -/
+/-- The non-implicature verdict is the usability of the trivalent sentence at the display relative
+to the question the context raises. -/
 def nonImplicature (ctx : Context) (d : Display) : Prop :=
   Homogeneity.usable ctx.issue (supervaluation q) d
 
 /-- The non-implicature verdict is truth at the resolution the context makes. -/
 theorem nonImplicature_iff (ctx : Context) (d : Display) :
     nonImplicature q ctx d ↔ reading q d ctx.designation :=
-  usable_iff_of_le q le_rfl (fun _ _ h ↦ Setoid.polar_iff.2 <|
-    show reading q _ _ ↔ reading q _ _ by
-      rw [reading, reading, show resolve ctx.designation _ = resolve ctx.designation _ from h]) d
+  usable_iff_reading q le_rfl (fun _ _ h ↦ Setoid.polar_iff.2 <|
+    show reading q _ _ ↔ reading q _ _ by rw [reading, reading, Setoid.ker_def.1 h]) d
 
 instance (ctx : Context) (d : Display) : Decidable (nonImplicature q ctx d) :=
   decidable_of_iff _ (nonImplicature_iff q ctx d).symm
 
-/-- The non-implicature approach is symmetric: under the complement of a quantifier, *not
-every* for *every*, the verdict is negated in every context. -/
+/-- Under the outer negation of a quantifier the verdict is negated in every context. -/
 theorem nonImplicature_compl (ctx : Context) (d : Display) :
     nonImplicature qᶜ ctx d ↔ ¬ nonImplicature q ctx d := by
   rw [nonImplicature_iff, nonImplicature_iff]
   rfl
 
+variable {q} {d : Display}
+
+/-- A mixed picture for a scope-monotone quantifier is accepted exactly in the existential
+context. -/
+theorem nonImplicature_existential_of_scopeMonotone (hq : q.ScopeMonotone)
+    (hd : supervaluation q d = .indet) (ctx : Context) :
+    nonImplicature q ctx d ↔ ctx = .existential := by
+  have h := supervaluation_eq_indet_iff.1 hd
+  have h' := KrizChemla2015.allReading_imp_someReading (d := d) hq
+  rw [nonImplicature_iff]
+  cases ctx <;> simp only [Context.designation, reduceCtorEq, iff_true, iff_false] <;> tauto
+
+/-- A mixed picture for a scope-antitone quantifier is accepted exactly in the universal
+context. -/
+theorem nonImplicature_universal_of_scopeAntitone (hq : q.ScopeAntitone)
+    (hd : supervaluation q d = .indet) (ctx : Context) :
+    nonImplicature q ctx d ↔ ctx = .universal := by
+  have h := supervaluation_eq_indet_iff.1 hd
+  have h' := KrizChemla2015.someReading_imp_allReading (d := d) hq
+  rw [nonImplicature_iff]
+  cases ctx <;> simp only [Context.designation, reduceCtorEq, iff_true, iff_false] <;> tauto
+
 end NonImplicature
 
-/-- The question the secondary task asks, whether the family rule was respected: that no present
-was opened, or that all were. -/
-def Context.rule : Context → Set Display
+/-- The family rule is respected where no present was opened, or where all were; the question
+whether it was is the question §3 states. -/
+def Context.respected : Context → Set Display
   | .existential => {d | ∀ v ∈ d, v = .false}
   | .universal => {d | ∀ v ∈ d, v = .true}
 
-/-- Under the question whether the rule was respected, *every boy opened his presents* is usable
-nowhere in the existential context: the rule is broken both where every boy opened all his
-presents and where one opened none, so the question does not separate truth from falsity. -/
-theorem not_usable_rule (d : Display) :
-    ¬ Homogeneity.usable (Setoid.polar Context.existential.rule)
-      (supervaluation Quantifier.every.tree) d := by
-  refine fun ⟨_, _, h⟩ ↦ h ⟨[.true, .true], [.false, .true], ?_, by decide, by decide⟩
-  exact Setoid.polar_iff.2 (iff_of_false (by simp [Context.rule]) (by simp [Context.rule]))
+/-- Under the question whether the rule was respected, *every boy opened his presents* does not
+address the existential issue, nor *no boy opened his presents* the universal one, so neither is
+usable anywhere and the question that yields Table 2 is the boy-by-boy one. -/
+theorem not_addressesIssue_respected :
+    ¬ Homogeneity.addressesIssue (Setoid.polar Context.existential.respected)
+        (supervaluation NumberTree.all) ∧
+      ¬ Homogeneity.addressesIssue (Setoid.polar Context.universal.respected)
+        (supervaluation NumberTree.no) := by
+  refine ⟨fun h ↦ h ⟨[.true, .true], [.false, .true], ?_, by decide, by decide⟩,
+    fun h ↦ h ⟨[.false, .false], [.true, .false], ?_, by decide, by decide⟩⟩ <;>
+  exact Setoid.polar_iff.2 (by simp [Context.respected])
 
 /-! ### The implicature approach -/
 
 section Implicature
 
-/-- Implicatures arise in the scope of a quantifier unless it is downward entailing, as *no* and
-*not every* are. -/
-def Strengthens (q : NumberTree) : Prop := ¬ q.ScopeAntitone
+variable (q : NumberTree) [DecidableRel q] [Decidable q.ScopeAntitone]
 
-instance : (q : Quantifier) → Decidable (Strengthens q.tree)
-  | .every => isTrue fun h ↦ absurd (h 0 0 rfl) (Nat.succ_ne_zero 0)
-  | .no => isFalse (not_not.2 NumberTree.scopeAntitone_no)
-  | .notEvery => isFalse (not_not.2 NumberTree.scopeAntitone_notAll)
-
-variable (q : NumberTree) [DecidableRel q] [Decidable (Strengthens q)]
-
-/-- The implicature verdict: the existential literal meaning, strengthened boy by boy to the
-universal one where an implicature arises, unless the existential context prunes the
-alternatives that strengthen it. -/
+/-- The implicature verdict. In a downward-entailing scope exhaustification is vacuous and the
+definite keeps its existential literal meaning; elsewhere each boy's definite is exhaustified
+over the alternatives the context leaves, to the threshold reading the context's question
+selects, which is its resolution at the context's standard (`mem_reading_iff_designated_cell`). -/
 def implicature (ctx : Context) (d : Display) : Prop :=
-  if Strengthens q ∧ ctx = .universal then allReading q d else someReading q d
+  if q.ScopeAntitone then someReading q d else reading q d ctx.designation
 
-instance (ctx : Context) (d : Display) : Decidable (implicature q ctx d) :=
-  inferInstanceAs
-    (Decidable (if Strengthens q ∧ ctx = .universal then allReading q d else someReading q d))
+instance (ctx : Context) (d : Display) : Decidable (implicature q ctx d) := by
+  unfold implicature; infer_instance
 
-variable {q}
+variable {q} {d : Display}
 
-/-- §1.3: wherever implicatures arise the two approaches agree. -/
-theorem implicature_iff_nonImplicature (h : Strengthens q) (ctx : Context) (d : Display) :
+/-- Wherever implicatures arise the two approaches agree. -/
+theorem implicature_iff_nonImplicature (h : ¬ q.ScopeAntitone) (ctx : Context) :
     implicature q ctx d ↔ nonImplicature q ctx d := by
-  rw [nonImplicature_iff]
-  cases ctx <;> simp [implicature, h, Context.designation]
+  rw [nonImplicature_iff]; simp [implicature, h]
 
 omit [DecidableRel q] in
-/-- Where no implicature arises, the verdict is the literal meaning. -/
-theorem implicature_of_not_strengthens (h : ¬ Strengthens q) (ctx : Context) (d : Display) :
-    implicature q ctx d ↔ someReading q d := by
+/-- Under a downward-entailing quantifier the implicature verdict ignores the context. -/
+theorem implicature_context_free (h : q.ScopeAntitone) (ctx ctx' : Context) :
+    implicature q ctx d ↔ implicature q ctx' d := by
   simp [implicature, h]
 
-omit [DecidableRel q] in
-/-- §1.3: under a downward-entailing quantifier the implicature verdict ignores the context. -/
-theorem implicature_context_free (h : ¬ Strengthens q) (ctx ctx' : Context) (d : Display) :
-    implicature q ctx d ↔ implicature q ctx' d := by
-  rw [implicature_of_not_strengthens h, implicature_of_not_strengthens h]
+/-- In the existential context the two verdicts agree on every quantifier, both being the
+existential resolution, so an experiment that does not control the context cannot separate the
+approaches (§2). -/
+theorem implicature_existential_iff :
+    implicature q .existential d ↔ nonImplicature q .existential d := by
+  rw [nonImplicature_iff]
+  by_cases h : q.ScopeAntitone <;> simp [implicature, h, Context.designation]
+
+/-- The implicature approach rejects every mixed picture of a downward-entailing quantifier. -/
+theorem not_implicature_of_scopeAntitone (hq : q.ScopeAntitone)
+    (hd : supervaluation q d = .indet) (ctx : Context) : ¬ implicature q ctx d := by
+  have h := supervaluation_eq_indet_iff.1 hd
+  have h' := KrizChemla2015.someReading_imp_allReading (d := d) hq
+  simp only [implicature, hq, ite_true]
+  tauto
+
+/-- The implicature approach accepts a mixed picture of a scope-monotone quantifier exactly in
+the existential context. -/
+theorem implicature_existential_of_scopeMonotone (hq : q.ScopeMonotone)
+    (hd : supervaluation q d = .indet) (ctx : Context) :
+    implicature q ctx d ↔ ctx = .existential := by
+  have h := supervaluation_eq_indet_iff.1 hd
+  have h' := KrizChemla2015.allReading_imp_someReading (d := d) hq
+  have hq' : ¬ q.ScopeAntitone := fun ha ↦
+    h (iff_of_true (by tauto) (KrizChemla2015.someReading_imp_allReading ha (by tauto)))
+  rw [implicature_iff_nonImplicature hq']
+  exact nonImplicature_existential_of_scopeMonotone hq hd ctx
 
 end Implicature
 
-/-! ### Table 1: the unembedded sentence
+/-! ### Table 2 and the recoding of Figures 3 and 5 -/
 
-*Frank opened his presents* in the model of [bar-lev-2021] whose worlds are the sets of presents
-Frank opened, for any plurality of presents `x`. -/
+/-- The context favouring a non-maximal reading, as Figures 3 and 5 recode CONTEXT, is the
+existential one for *every* and the universal one for the negative quantifiers. -/
+def Quantifier.lax : Quantifier → Context
+  | .every => .existential
+  | _ => .universal
 
-section Table1
+variable {d : Display}
 
-open BarLev2021 (holds atLeast existsPlural subdomainAlts IsReading)
-open Exhaustification (exhIEII)
+/-- On the non-implicature approach every quantifier's mixed picture is accepted exactly in its lax
+context (Table 2), so the context affects every quantifier alike and no interaction of context
+and polarity is predicted. Experiment 2 found none (χ²(1) = 2.1, p = .15, §3.2.2), but Experiment
+1 found one (χ²(1) = 11, p < .001, §3.1.2). -/
+theorem nonImplicature_nonmaximal_iff (q : Quantifier) (hd : supervaluation q.tree d = .indet)
+    (ctx : Context) : nonImplicature q.tree ctx d ↔ ctx = q.lax := by
+  cases q
+  · exact nonImplicature_existential_of_scopeMonotone NumberTree.scopeMonotone_all hd ctx
+  · exact nonImplicature_universal_of_scopeAntitone NumberTree.scopeAntitone_no hd ctx
+  · exact nonImplicature_universal_of_scopeAntitone NumberTree.scopeAntitone_notAll hd ctx
+
+/-- On the implicature approach only *every*'s mixed picture is accepted, in its lax context
+(Table 2), so an interaction of context and polarity is predicted in both experiments. Experiment 1
+found it (χ²(1) = 11, p < .001, §3.1.2), though with a context effect on *no* that the approach
+does not predict, and Experiment 2 did not (χ²(1) = 2.1, p = .15, §3.2.2). -/
+theorem implicature_nonmaximal_iff (q : Quantifier) (hd : supervaluation q.tree d = .indet)
+    (ctx : Context) : implicature q.tree ctx d ↔ q = .every ∧ ctx = q.lax := by
+  cases q
+  · exact (implicature_existential_of_scopeMonotone (q := Quantifier.every.tree)
+      NumberTree.scopeMonotone_all hd ctx).trans (by simp [Quantifier.lax])
+  · exact iff_of_false (not_implicature_of_scopeAntitone (q := Quantifier.no.tree)
+      NumberTree.scopeAntitone_no hd ctx) (by simp)
+  · exact iff_of_false (not_implicature_of_scopeAntitone (q := Quantifier.notEvery.tree)
+      NumberTree.scopeAntitone_notAll hd ctx) (by simp)
+
+/-- Table 1 is Table 2 over one boy. In a mixed scenario the positive sentence is accepted exactly
+in the existential context on both approaches, and the negative one is rejected in both contexts
+on the implicature approach and accepted exactly in the universal one on the other. -/
+theorem table1 (ctx : Context) :
+    (implicature NumberTree.all ctx [.indet] ↔ ctx = .existential) ∧
+      ¬ implicature NumberTree.notAll ctx [.indet] ∧
+      (nonImplicature NumberTree.all ctx [.indet] ↔ ctx = .existential) ∧
+      (nonImplicature NumberTree.notAll ctx [.indet] ↔ ctx = .universal) :=
+  ⟨(implicature_nonmaximal_iff (d := [.indet]) .every (by decide) ctx).trans
+      (by simp [Quantifier.lax]),
+    fun h ↦ by
+      simpa using (implicature_nonmaximal_iff (d := [.indet]) .notEvery (by decide) ctx).1 h,
+    nonImplicature_nonmaximal_iff (d := [.indet]) .every (by decide) ctx,
+    nonImplicature_nonmaximal_iff (d := [.indet]) .notEvery (by decide) ctx⟩
+
+/-! ### Križ and Chemla's asymmetry under an accommodated existential context (§2) -/
+
+/-- The faulty items of Križ and Chemla were coded FALSE. -/
+private theorem krizChemla_faulty_clearlyFalse :
+    ∀ i ∈ KrizChemla2015.items, i.status = .faulty → i.condition = .clearlyFalse := by
+  decide
+
+/-- With an existential context accommodated throughout, the non-implicature approach accepts
+every GAP item of *every* and rejects every GAP item of *no* in Križ and Chemla's experiments,
+the asymmetry they found. -/
+theorem krizChemla_asymmetry_of_existential :
+    ∀ i ∈ KrizChemla2015.items, i.condition = .gap → i.embedding = .all ∨ i.embedding = .no →
+      (nonImplicature i.embedding.tree .existential i.display ↔ i.embedding = .all) := by
+  intro i hi hc he
+  have hm : i ≠ KrizChemla2015.misprinted := fun h ↦ by
+    rcases he with he | he <;> simp [h, KrizChemla2015.misprinted] at he
+  have hs : i.status ≠ .faulty := fun h ↦ by
+    simp [krizChemla_faulty_clearlyFalse i hi h] at hc
+  obtain ⟨hw, hst⟩ := KrizChemla2015.items_variants i (List.mem_append_left _ hi) hs hm
+  have hgap : supervaluation i.embedding.tree i.display = .indet :=
+    (KrizChemla2015.supervaluation_eq_indet_iff_weak _ _).2 (by rw [hw, hst]; simp [hc])
+  rcases he with he | he <;> rw [he] at hgap ⊢
+  · exact iff_of_true ((nonImplicature_existential_of_scopeMonotone (q := NumberTree.all)
+      NumberTree.scopeMonotone_all hgap _).2 rfl) rfl
+  · exact iff_of_false (fun h ↦ by simpa using (nonImplicature_universal_of_scopeAntitone
+      (q := NumberTree.no) NumberTree.scopeAntitone_no hgap _).1 h) (by decide)
+
+/-! ### The boy-wise strengthening is the reading pruning selects -/
+
+section BarLev
+
+open BarLev2021 (atLeast IsReading)
 
 variable {α : Type*} [DecidableEq α] (x : Finset α)
 
-/-- How many presents the context's question asks about: any, or all. -/
+/-- The number of presents the context's question asks about is one, or all of them. -/
 def Context.threshold : Context → ℕ
   | .existential => 1
   | .universal => x.card
 
-/-- The questions (12), whether Frank opened any of his presents, and (13), whether he opened
-all of them. -/
+/-- The questions (12) and (13) in the model whose worlds are the sets of presents opened. -/
 def Context.question (ctx : Context) : Setoid (Finset α) :=
-  Setoid.polar (atLeast x x holds (ctx.threshold x))
+  Setoid.polar (atLeast x x BarLev2021.holds (ctx.threshold x))
 
 variable {x}
-
-private theorem mem_atLeast_iff {k : ℕ} {w : Finset α} :
-    w ∈ atLeast x x holds k ↔ k ≤ (x ∩ w).card := by
-  simp [atLeast, BarLev2021.count_holds, Finset.inter_self]
-
-private theorem barePlural_eq_true_iff {w : Finset α} :
-    Homogeneity.barePlural holds x w = .true ↔ x ⊆ w := by
-  simp [Homogeneity.barePlural, Trivalent.supervaluation_eq_true_iff, Finset.subset_iff]
-
-private theorem card_eq_zero_of_barePlural_eq_false {w : Finset α}
-    (h : Homogeneity.barePlural holds x w = .false) : (x ∩ w).card = 0 := by
-  simp only [Homogeneity.barePlural, Trivalent.supervaluation_eq_false_iff] at h
-  exact Finset.card_eq_zero.2 (Finset.eq_empty_of_forall_notMem fun a ha ↦
-    h.2 a (Finset.mem_inter.1 ha).1 (Finset.mem_inter.1 ha).2)
-
-private theorem mem_atLeast_of_barePlural_eq_true {k : ℕ} (hkx : k ≤ x.card) {w : Finset α}
-    (h : Homogeneity.barePlural holds x w = .true) : w ∈ atLeast x x holds k := by
-  rwa [mem_atLeast_iff, Finset.inter_eq_left.2 (barePlural_eq_true_iff.1 h)]
-
-private theorem notMem_atLeast_of_barePlural_eq_false {k : ℕ} (hk : 0 < k) {w : Finset α}
-    (h : Homogeneity.barePlural holds x w = .false) : w ∉ atLeast x x holds k := by
-  rw [mem_atLeast_iff, card_eq_zero_of_barePlural_eq_false h]
-  omega
-
-/-- Under the polar question whether at least `k` of the presents were opened, the trivalent
-positive sentence is usable exactly where at least `k` were. -/
-theorem usable_barePlural_iff {k : ℕ} (hk : 0 < k) (hkx : k ≤ x.card) (w : Finset α) :
-    Homogeneity.usable (Setoid.polar (atLeast x x holds k)) (Homogeneity.barePlural holds x) w ↔
-      w ∈ atLeast x x holds k := by
-  have hx := mem_atLeast_of_barePlural_eq_true hkx (barePlural_eq_true_iff.2 subset_rfl)
-  refine ⟨fun ⟨_, ⟨w', hw', h⟩, _⟩ ↦
-    (Setoid.polar_iff.1 hw').2 (mem_atLeast_of_barePlural_eq_true hkx h), fun hw ↦
-    ⟨fun hf ↦ notMem_atLeast_of_barePlural_eq_false hk hf hw,
-      ⟨x, Setoid.polar_iff.2 (iff_of_true hw hx), barePlural_eq_true_iff.2 subset_rfl⟩,
-      fun ⟨_, _, h₁₂, h₁, h₂⟩ ↦ notMem_atLeast_of_barePlural_eq_false hk h₂
-        ((Setoid.polar_iff.1 h₁₂).1 (mem_atLeast_of_barePlural_eq_true hkx h₁))⟩⟩
-
-/-- Under the same question the negated sentence is usable exactly where fewer than `k` were
-opened. -/
-theorem usable_neg_barePlural_iff {k : ℕ} (hk : 0 < k) (hkx : k ≤ x.card) (w : Finset α) :
-    Homogeneity.usable (Setoid.polar (atLeast x x holds k))
-      (fun w ↦ (Homogeneity.barePlural holds x w).neg) w ↔ w ∉ atLeast x x holds k := by
-  have hne : x.Nonempty := Finset.card_pos.1 (by omega)
-  have hfalse : Homogeneity.barePlural holds x ∅ = .false := by
-    simp [Homogeneity.barePlural, Trivalent.supervaluation_eq_false_iff, hne]
-  have h0 := notMem_atLeast_of_barePlural_eq_false hk hfalse
-  refine ⟨fun ⟨_, ⟨w', hw', h⟩, _⟩ hw ↦ notMem_atLeast_of_barePlural_eq_false hk
-    (Trivalent.neg_eq_true_iff.1 h) ((Setoid.polar_iff.1 hw').1 hw), fun hw ↦
-    ⟨fun hf ↦ hw (mem_atLeast_of_barePlural_eq_true hkx (Trivalent.neg_eq_false_iff.1 hf)),
-      ⟨∅, Setoid.polar_iff.2 (iff_of_false hw h0), by simp [hfalse]⟩,
-      fun ⟨_, _, h₁₂, h₁, h₂⟩ ↦ notMem_atLeast_of_barePlural_eq_false hk
-        (Trivalent.neg_eq_true_iff.1 h₁) ((Setoid.polar_iff.1 h₁₂).2
-          (mem_atLeast_of_barePlural_eq_true hkx (Trivalent.neg_eq_false_iff.1 h₂)))⟩⟩
-
-/-- Where the approaches meet: under a polar question on a number of presents, Križ's usability
-of the positive sentence is membership in the reading [bar-lev-2021]'s pruning selects. -/
-theorem usable_iff_mem_of_isReading {k : ℕ} (hk : 0 < k) (hkx : k ≤ x.card)
-    {r : Set (Finset α)} (hr : IsReading x x holds (Setoid.polar (atLeast x x holds k)) r)
-    (w : Finset α) :
-    Homogeneity.usable (Setoid.polar (atLeast x x holds k)) (Homogeneity.barePlural holds x) w ↔
-      w ∈ r := by
-  rw [hr.unique (BarLev2021.isReading_polar_atLeast_holds x x hk (by rwa [Finset.inter_self])),
-    usable_barePlural_iff hk hkx]
 
 omit [DecidableEq α] in
 private theorem threshold_pos (hx : x.Nonempty) (ctx : Context) : 0 < ctx.threshold x := by
@@ -385,79 +386,70 @@ private theorem threshold_le (hx : x.Nonempty) (ctx : Context) : ctx.threshold x
   · exact Finset.card_pos.2 hx
   · exact le_rfl
 
-/-- The implicature row of Table 1 in a mixed scenario, where Frank opened some but not all of
-his presents: the positive sentence means the reading the context's question selects, true
-under the existential question only; the negative sentence is exhaustified vacuously, whatever
-alternatives are pruned, and is false. -/
-theorem table1_implicature (hx : x.Nonempty) {w : Finset α} (h₀ : 0 < (x ∩ w).card)
-    (h₁ : (x ∩ w).card < x.card) (ctx : Context) :
-    (∀ r, IsReading x x holds (ctx.question x) r → (w ∈ r ↔ ctx = .existential)) ∧
-    ∀ C ⊆ compl '' subdomainAlts x x holds, w ∉ exhIEII C (existsPlural x x holds)ᶜ := by
-  refine ⟨fun r hr ↦ ?_, fun C hC ↦ ?_⟩
-  · rw [hr.unique (BarLev2021.isReading_polar_atLeast_holds x x (threshold_pos hx ctx)
-      (by rw [Finset.inter_self]; exact threshold_le hx ctx)), mem_atLeast_iff]
-    cases ctx
-    · exact iff_of_true h₀ rfl
-    · exact iff_of_false (Nat.not_le.2 h₁) (by decide)
-  · rw [BarLev2021.exhIEII_compl_existsPlural hC ⟨∅, by simp [existsPlural]⟩]
-    obtain ⟨a, ha⟩ := Finset.card_pos.1 h₀
-    exact fun h ↦ h ⟨a, (Finset.mem_inter.1 ha).1, (Finset.mem_inter.1 ha).1,
-      (Finset.mem_inter.1 ha).2⟩
+/-- The context's question selects, in the sense of pruning, the threshold reading at the
+number of presents it asks about. -/
+theorem isReading_question (hx : x.Nonempty) (ctx : Context) :
+    IsReading x x BarLev2021.holds (ctx.question x)
+      (atLeast x x BarLev2021.holds (ctx.threshold x)) :=
+  BarLev2021.isReading_polar_atLeast_holds x x (threshold_pos hx ctx) (by
+    rw [Finset.inter_self]; exact threshold_le hx ctx)
 
-/-- The non-implicature row of Table 1 in a mixed scenario: the gapped positive sentence is
-usable under the existential question (12), and its negation under the universal one (13). -/
-theorem table1_nonImplicature (hx : x.Nonempty) {w : Finset α} (h₀ : 0 < (x ∩ w).card)
-    (h₁ : (x ∩ w).card < x.card) (ctx : Context) :
-    (Homogeneity.usable (ctx.question x) (Homogeneity.barePlural holds x) w ↔
-        ctx = .existential) ∧
-      (Homogeneity.usable (ctx.question x) (fun w ↦ (Homogeneity.barePlural holds x w).neg) w ↔
-        ctx = .universal) := by
-  rw [Context.question, usable_barePlural_iff (threshold_pos hx ctx) (threshold_le hx ctx),
-    usable_neg_barePlural_iff (threshold_pos hx ctx) (threshold_le hx ctx), mem_atLeast_iff]
-  cases ctx
-  · exact ⟨iff_of_true h₀ rfl, iff_of_false (not_not.2 h₀) (by decide)⟩
-  · exact ⟨iff_of_false (Nat.not_le.2 h₁) (by decide), iff_of_true (Nat.not_le.2 h₁) rfl⟩
+/-- A boy's nine presents, the objects of a cell. -/
+def nine : Finset ℕ := Finset.range 9
 
-end Table1
-
-/-- The resolution a context makes of a boy's cell is the reading its question selects for his
-nine presents: at least one opened under the existential question, all nine under the universal
-one. -/
+/-- The resolution a context makes of a boy's cell is the threshold its question selects for his
+nine presents. -/
 theorem designated_cell (ctx : Context) (n : ℕ) :
-    designated ctx.designation (cell n) ↔ ctx.threshold (Finset.range 9) ≤ n := by
+    designated ctx.designation (cell n) ↔ ctx.threshold nine ≤ n := by
   cases ctx
   · exact KrizChemla2015.designated_lp_cell n
-  · rw [Context.threshold, Finset.card_range]
+  · rw [Context.threshold, nine, Finset.card_range]
     exact KrizChemla2015.designated_k3_cell n
 
-/-! ### Table 2 -/
+/-- The reading pruning selects for a boy's presents under the context's question holds of the
+presents he opened exactly when the context's standard designates his cell. -/
+theorem mem_reading_iff_designated_cell (ctx : Context) {r : Set (Finset ℕ)}
+    (hr : IsReading nine nine BarLev2021.holds (ctx.question nine) r) (w : Finset ℕ) :
+    w ∈ r ↔ designated ctx.designation (cell (nine ∩ w).card) := by
+  rw [hr.unique (isReading_question ⟨0, by simp [nine]⟩ ctx), BarLev2021.mem_atLeast,
+    BarLev2021.count_holds, Finset.inter_self, designated_cell]
 
-/-- Table 2, on any mixed picture: both approaches accept *every* exactly in the existential
-context; the implicature approach rejects *no* and *not every* in both contexts, the
-non-implicature approach accepts both exactly in the universal context. -/
-theorem table2 (ctx : Context) {d d' : Display} (hd : PositiveMixed d) (hd' : NegativeMixed d') :
-    (implicature Quantifier.every.tree ctx d ↔ ctx = .existential) ∧
-      ¬ implicature Quantifier.no.tree ctx d' ∧ ¬ implicature Quantifier.notEvery.tree ctx d ∧
-      (nonImplicature Quantifier.every.tree ctx d ↔ ctx = .existential) ∧
-      (nonImplicature Quantifier.no.tree ctx d' ↔ ctx = .universal) ∧
-      (nonImplicature Quantifier.notEvery.tree ctx d ↔ ctx = .universal) := by
-  have hk3 : ¬ reading NumberTree.all d .k3 := fun h ↦ by simpa using (reading_all _).1 h _ hd.1
-  have hlp : reading NumberTree.all d .lp := (reading_all _).2 fun v hv ↦ by
-    cases v <;> simp_all [PositiveMixed]
-  have hk3' : reading NumberTree.no d' .k3 := (reading_no _).2 fun v hv ↦ by
-    cases v <;> simp_all [NegativeMixed]
-  have hlp' : ¬ reading NumberTree.no d' .lp := fun h ↦ by simpa using (reading_no _).1 h _ hd'.1
-  have hc : ∀ δ, reading NumberTree.notAll d δ ↔ ¬ reading NumberTree.all d δ := fun _ ↦ Iff.rfl
-  rw [implicature_iff_nonImplicature (by decide), implicature_of_not_strengthens (by decide),
-    implicature_of_not_strengthens (by decide), nonImplicature_iff, nonImplicature_iff,
-    nonImplicature_iff]
-  cases ctx <;> simp [Context.designation, Quantifier.tree, someReading, hc, hk3, hlp, hk3', hlp']
+/-- A boy's trivalent value in the model whose worlds are the sets of presents opened is his
+cell at the number he opened. -/
+theorem barePlural_holds_eq_cell (w : Finset ℕ) :
+    Homogeneity.barePlural BarLev2021.holds nine w = cell (nine ∩ w).card := by
+  have h1 : Homogeneity.barePlural BarLev2021.holds nine w = .true ↔
+      cell (nine ∩ w).card = .true := by
+    rw [← Trivalent.designated_k3_iff (cell _), KrizChemla2015.designated_k3_cell,
+      Homogeneity.barePlural, Trivalent.supervaluation_eq_true_iff]
+    constructor
+    · intro h
+      rw [Finset.inter_eq_left.2 fun a ha ↦ h a ha]
+      simp [nine]
+    · intro h a ha
+      have := Finset.eq_of_subset_of_card_le (Finset.inter_subset_left : nine ∩ w ⊆ nine)
+        (by simpa [nine] using h)
+      rw [← this] at ha
+      exact (Finset.mem_inter.1 ha).2
+  have h2 : Homogeneity.barePlural BarLev2021.holds nine w = .false ↔
+      cell (nine ∩ w).card = .false := by
+    rw [← not_iff_not, ← Ne, ← Ne, ← Trivalent.designated_lp_iff (cell _),
+      KrizChemla2015.designated_lp_cell, Homogeneity.barePlural, Ne,
+      Trivalent.supervaluation_eq_false_iff, Nat.one_le_iff_ne_zero, Ne, Finset.card_eq_zero,
+      ← Ne, ← Finset.nonempty_iff_ne_empty]
+    simp only [nine, BarLev2021.holds, Finset.Nonempty, Finset.mem_inter, Finset.mem_range,
+      not_and, not_forall, not_not, exists_prop]
+    exact ⟨fun h ↦ h ⟨0, by omega⟩, fun h _ ↦ h⟩
+  rcases h₁ : Homogeneity.barePlural BarLev2021.holds nine w with _ | _ | _ <;>
+    rcases h₂ : cell (nine ∩ w).card with _ | _ | _ <;> simp_all
+
+end BarLev
 
 /-! ### The implicature approach amended (§4.2) -/
 
-/-- The quantifier together with its own scalar implicature, (16): *not every* strengthened by
-the negation of its stronger alternative *no*, that some boy did. The other quantifiers have no
-stronger alternative to deny. -/
+/-- The quantifier together with its own scalar implicature (16) strengthens *not every* by the
+denial of its stronger alternative *no*. The other quantifiers have no stronger alternative to
+deny. -/
 def Quantifier.enriched : Quantifier → NumberTree
   | .notEvery => NumberTree.notAll ⊓ NumberTree.some
   | q => q.tree
@@ -467,119 +459,81 @@ instance : (q : Quantifier) → DecidableRel q.enriched
   | .no => inferInstanceAs (DecidableRel NumberTree.no)
   | .notEvery => fun a b ↦ inferInstanceAs (Decidable (a ≠ 0 ∧ b ≠ 0))
 
-/-- Together with its implicature, *not every* is no longer downward entailing, so implicatures
-can arise in its scope, the added assumption of §4.2. -/
-instance : (q : Quantifier) → Decidable (Strengthens q.enriched)
-  | .every => isTrue fun h ↦ absurd (h 0 0 rfl) (Nat.succ_ne_zero 0)
-  | .no => isFalse (not_not.2 NumberTree.scopeAntitone_no)
-  | .notEvery => isTrue fun h ↦ (h 1 0 ⟨one_ne_zero, one_ne_zero⟩).2 rfl
+/-- Together with its implicature *not every* is non-monotonic, the observation of §4.2. -/
+theorem enriched_notEvery_nonmonotone :
+    ¬ Quantifier.notEvery.enriched.ScopeMonotone ∧ ¬ Quantifier.notEvery.enriched.ScopeAntitone :=
+  ⟨fun h ↦ (h 0 1 ⟨one_ne_zero, one_ne_zero⟩).1 rfl,
+    fun h ↦ (h 1 0 ⟨one_ne_zero, one_ne_zero⟩).2 rfl⟩
 
-/-- Nor is it upward entailing: the enriched environment is non-monotonic (§4.2). -/
-theorem not_scopeMonotone_enriched_notEvery : ¬ Quantifier.notEvery.enriched.ScopeMonotone :=
-  fun h ↦ (h 0 1 ⟨one_ne_zero, one_ne_zero⟩).1 rfl
+instance : (q : Quantifier) → Decidable q.enriched.ScopeAntitone
+  | .every => isFalse fun h ↦ Nat.one_ne_zero (h 0 0 rfl)
+  | .no => isTrue NumberTree.scopeAntitone_no
+  | .notEvery => isFalse enriched_notEvery_nonmonotone.2
 
-/-! ### The experiments -/
+private theorem reading_inf {p q : NumberTree} (d : Display) (δ : Designation) :
+    reading (p ⊓ q) d δ ↔ reading p d δ ∧ reading q d δ := Iff.rfl
 
-/-- The accounts assessed: the two approaches, and the implicature approach amended by §4.2. -/
-inductive Approach where
-  | implicature
-  | nonImplicature
-  | enrichedImplicature
-  deriving DecidableEq
+private theorem reading_some (d : Display) (δ : Designation) :
+    reading NumberTree.some d δ ↔ ∃ v ∈ d, designated δ v := by
+  rw [← NumberTree.compl_no, show reading NumberTree.noᶜ d δ ↔ ¬ reading NumberTree.no d δ from
+    Iff.rfl, reading_no]
+  simp
 
-/-- An approach's verdict on a quantifier's sentence in a context. -/
-def Approach.verdict : Approach → Quantifier → Context → Display → Prop
-  | .implicature, q => AugurzkyEtAl2023.implicature q.tree
-  | .nonImplicature, q => AugurzkyEtAl2023.nonImplicature q.tree
-  | .enrichedImplicature, q => AugurzkyEtAl2023.implicature q.enriched
-
-instance : (a : Approach) → (q : Quantifier) → (ctx : Context) → (d : Display) →
-    Decidable (a.verdict q ctx d)
-  | .implicature, q, ctx, d => inferInstanceAs (Decidable (implicature q.tree ctx d))
-  | .nonImplicature, q, ctx, d => inferInstanceAs (Decidable (nonImplicature q.tree ctx d))
-  | .enrichedImplicature, q, ctx, d => inferInstanceAs (Decidable (implicature q.enriched ctx d))
-
-/-- The context favouring a non-maximal reading, as Figures 3 and 5 recode it: the existential
-one for *every*, the universal one for the negative quantifiers. -/
-def Quantifier.lax : Quantifier → Context
-  | .every => .existential
-  | _ => .universal
-
-/-- The context favouring a maximal reading. -/
-def Quantifier.strict : Quantifier → Context
-  | .every => .universal
-  | _ => .existential
-
-/-- An approach predicts that the lax context accepts a picture the strict context rejects. -/
-def Approach.LaxEffect (a : Approach) (q : Quantifier) (d : Display) : Prop :=
-  a.verdict q q.lax d ∧ ¬ a.verdict q q.strict d
-
-instance (a : Approach) (q : Quantifier) (d : Display) : Decidable (a.LaxEffect q d) :=
-  inferInstanceAs (Decidable (_ ∧ _))
-
-/-- An approach predicts an interaction of context and polarity in an experiment when it
-predicts the lax context's effect on one of its quantifiers' mixed pictures but not on the
-other's. -/
-def Approach.PredictsInteraction (a : Approach) (e : Experiment) : Prop :=
-  ∃ p ∈ pictures, ∃ p' ∈ pictures, p.experiment = e ∧ p'.experiment = e ∧ p.truth = .mixed ∧
-    p'.truth = .mixed ∧
-      ¬ (a.LaxEffect p.quantifier p.display ↔ a.LaxEffect p'.quantifier p'.display)
-
-instance (a : Approach) (e : Experiment) : Decidable (a.PredictsInteraction e) :=
-  inferInstanceAs (Decidable (∃ _ ∈ _, _))
-
-/-- A printed p-value is below 0.05: an upper bound at most 0.05, or a value under it. -/
-def Bound.Significant : Bound → Decimal → Prop
-  | .below, p => p.toRat ≤ 5 / 100
-  | .exact, p => p.toRat < 5 / 100
-
-instance : ∀ b p, Decidable (Bound.Significant b p)
-  | .below, _ => inferInstanceAs (Decidable (_ ≤ _))
-  | .exact, _ => inferInstanceAs (Decidable (_ < _))
-
-/-- The mixed conditions of an experiment show a significant interaction of context and
-polarity. -/
-def InteractionSignificant (e : Experiment) : Prop :=
-  ∃ t ∈ tests, t.experiment = e ∧ t.model = .mixed ∧ t.effect = .interaction ∧
-    t.bound.Significant t.p
-
-instance (e : Experiment) : Decidable (InteractionSignificant e) :=
-  inferInstanceAs (Decidable (∃ _ ∈ _, _))
-
-/-- The implicature approach predicts the interaction of Experiment 1 and misses the absence of
-one in Experiment 2, where *not every* behaved like *every*. -/
-theorem implicature_fits_iff (e : Experiment) :
-    (Approach.implicature.PredictsInteraction e ↔ InteractionSignificant e) ↔ e = .one := by
-  cases e <;> decide +kernel
-
-/-- The non-implicature approach predicts the absence of an interaction in Experiment 2 and
-misses the interaction of Experiment 1, where *no* resisted the universal context. -/
-theorem nonImplicature_fits_iff (e : Experiment) :
-    (Approach.nonImplicature.PredictsInteraction e ↔ InteractionSignificant e) ↔ e = .two := by
-  cases e <;> decide +kernel
-
-/-- The amendment of §4.2 "would capture our results": it predicts the outcome of both
-interaction tests. -/
-theorem enrichedImplicature_fits (e : Experiment) :
-    Approach.enrichedImplicature.PredictsInteraction e ↔ InteractionSignificant e := by
-  cases e <;> decide +kernel
+/-- On the mixed pictures of the experiments, where some boy opened all of his presents, the amended
+implicature approach accepts *every* and *not every* exactly in their lax contexts and *no* in
+neither. It thus predicts an interaction of context and polarity in Experiment 1 and none in
+Experiment 2, the outcome of both (§4.2). -/
+theorem enriched_nonmaximal_iff (q : Quantifier) (hd : supervaluation q.tree d = .indet)
+    (ht : .true ∈ d) (ctx : Context) :
+    implicature q.enriched ctx d ↔ q ≠ .no ∧ ctx = q.lax := by
+  cases q
+  · exact (implicature_existential_of_scopeMonotone (q := Quantifier.every.enriched)
+      NumberTree.scopeMonotone_all hd ctx).trans (by simp [Quantifier.lax])
+  · exact iff_of_false (not_implicature_of_scopeAntitone (q := Quantifier.no.enriched)
+      NumberTree.scopeAntitone_no hd ctx) (by simp)
+  · have h := supervaluation_eq_indet_iff.1 hd
+    have h' := KrizChemla2015.someReading_imp_allReading (d := d) NumberTree.scopeAntitone_notAll
+    have hk3 : reading NumberTree.some d .k3 := (reading_some d .k3).2 ⟨_, ht, by simp⟩
+    have hne : ¬ (NumberTree.notAll ⊓ NumberTree.some).ScopeAntitone :=
+      enriched_notEvery_nonmonotone.2
+    simp only [Quantifier.tree] at h
+    simp only [implicature, Quantifier.enriched, hne, ite_false, reading_inf]
+    cases ctx <;> simp only [Context.designation, Quantifier.lax, ne_eq, reduceCtorEq,
+      not_false_eq_true, true_and, iff_false, iff_true] <;> tauto
 
 /-! ### The proposed test (§4.3) -/
 
-/-- (20) in a mixed scenario for its positive part: two boys opened some but not all of their
-presents and the others opened none. -/
-def exactlyTwoPositive : Display := [.indet, .indet, .false, .false]
+private theorem count_resolve_lp (d : Display) :
+    (resolve .lp d).count true = d.count .true + d.count .indet := by
+  induction d with
+  | nil => rfl
+  | cons v d ih => cases v <;> simp [resolve] at ih ⊢ <;> omega
 
-/-- (20) in a mixed scenario for its negative part: two boys opened all of their presents and two
-opened some but not all. -/
-def exactlyTwoNegative : Display := [.true, .true, .indet, .indet]
+private theorem count_resolve_k3 (d : Display) : (resolve .k3 d).count true = d.count .true := by
+  induction d with
+  | nil => rfl
+  | cons v d ih => cases v <;> simp [resolve] at ih ⊢ <;> omega
 
-/-- With the prior bias of the sentence held constant, the non-implicature approach predicts the
-symmetric pattern: the positive part's gap resolved to truth by the existential question, the
-negative part's by the universal one. -/
-theorem exactlyTwo_symmetric (ctx : Context) :
-    (nonImplicature (NumberTree.cardinal {2}) ctx exactlyTwoPositive ↔ ctx = .existential) ∧
-      (nonImplicature (NumberTree.cardinal {2}) ctx exactlyTwoNegative ↔ ctx = .universal) := by
-  cases ctx <;> decide
+private theorem reading_cardinal {s : Set ℕ} [DecidablePred (· ∈ s)] (d : Display)
+    (δ : Designation) : reading (NumberTree.cardinal s) d δ ↔ (resolve δ d).count true ∈ s :=
+  Iff.rfl
+
+/-- (20) in a mixed scenario for its positive part, where two boys opened some but not all of
+their presents and the others none, is accepted exactly in the existential context. -/
+theorem exactlyTwo_positive (h₂ : d.count .indet = 2) (ht : .true ∉ d) (ctx : Context) :
+    nonImplicature (NumberTree.cardinal {2}) ctx d ↔ ctx = .existential := by
+  have h0 := List.count_eq_zero.2 ht
+  rw [nonImplicature_iff]
+  cases ctx <;>
+    simp [Context.designation, reading_cardinal, count_resolve_lp, count_resolve_k3, h₂, h0]
+
+/-- (20) in a mixed scenario for its negative part, where two boys opened all of their presents
+and some opened some but not all, is accepted exactly in the universal context. -/
+theorem exactlyTwo_negative (h₂ : d.count .true = 2) (hi : .indet ∈ d) (ctx : Context) :
+    nonImplicature (NumberTree.cardinal {2}) ctx d ↔ ctx = .universal := by
+  have h0 := List.count_pos_iff.2 hi
+  rw [nonImplicature_iff]
+  cases ctx <;> simp [Context.designation, reading_cardinal, count_resolve_lp, count_resolve_k3, h₂]
+  omega
 
 end AugurzkyEtAl2023

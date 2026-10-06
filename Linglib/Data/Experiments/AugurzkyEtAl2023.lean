@@ -161,8 +161,7 @@ def pictures : List Picture :=
      .mixed,
      [5, 9, 3, 9]⟩]
 
-/-- A row of §3.1.2, §3.2.2: a likelihood-ratio test of a term of a cumulative logistic mixed-
-effects model. -/
+/-- A row of §3.1.2, §3.2.2: a χ² test of a term of a cumulative logistic mixed-effects model. -/
 structure Test where
   /-- The experiment. -/
   experiment : Experiment
