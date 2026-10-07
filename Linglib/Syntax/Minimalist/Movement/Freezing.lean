@@ -21,13 +21,13 @@ monotone under extending the derivation and blind to the sides of External Merge
 
 ## Main definitions
 
-* `Minimalist.SyntacticObject.Derivation.Frozen`
+* `Minimalist.Derivation.Frozen`
 
 ## Main results
 
-* `Minimalist.SyntacticObject.Derivation.frozen_append_iff`: extending a derivation freezes
+* `Minimalist.Derivation.frozen_append_iff`: extending a derivation freezes
   what its new movers contain and nothing else.
-* `Minimalist.SyntacticObject.Derivation.Frozen.append`, `frozen_leftward_iff`.
+* `Minimalist.Derivation.Frozen.append`, `frozen_leftward_iff`.
 
 ## References
 
@@ -37,7 +37,9 @@ monotone under extending the derivation and blind to the sides of External Merge
 
 @[expose] public section
 
-namespace Minimalist.SyntacticObject.Derivation
+namespace Minimalist.Derivation
+
+open SyntacticObject
 
 variable {d : Derivation} {steps : List Step} {x : SyntacticObject}
 
@@ -61,4 +63,4 @@ theorem Frozen.append (h : d.Frozen x) : (d.append steps).Frozen x :=
 @[simp] theorem frozen_leftward_iff : d.leftward.Frozen x ↔ d.Frozen x := by
   unfold Frozen; rw [movedItems_leftward]
 
-end Minimalist.SyntacticObject.Derivation
+end Minimalist.Derivation

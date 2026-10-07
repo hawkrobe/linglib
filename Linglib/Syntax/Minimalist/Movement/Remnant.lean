@@ -28,11 +28,11 @@ smaller one still inside it.
 
 ## Main definitions
 
-* `Minimalist.SyntacticObject.Derivation.IsRemnantStep`
+* `Minimalist.Derivation.IsRemnantStep`
 
 ## Main results
 
-* `Minimalist.SyntacticObject.Derivation.IsRemnantStep.append`: a remnant step of a derivation
+* `Minimalist.Derivation.IsRemnantStep.append`: a remnant step of a derivation
   is one of every extension.
 
 ## References
@@ -49,7 +49,9 @@ smaller one still inside it.
 
 @[expose] public section
 
-namespace Minimalist.SyntacticObject.Derivation
+namespace Minimalist.Derivation
+
+open SyntacticObject
 
 variable {d : Derivation} {steps : List Step} {i : Nat}
 
@@ -68,4 +70,4 @@ theorem IsRemnantStep.append (h : d.IsRemnantStep i) : (d.append steps).IsRemnan
   · rwa [Derivation.append, List.getElem?_append_left hi]
   · rwa [take_append_of_le hi.le]
 
-end Minimalist.SyntacticObject.Derivation
+end Minimalist.Derivation

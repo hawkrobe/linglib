@@ -22,13 +22,13 @@ at some stage is monotone under extending the derivation; binding at the surface
 
 ## Main definitions
 
-* `Minimalist.SyntacticObject.Derivation.CCommandsAt`, `BindsAtSurface`, `BindsAtSomeStage`
+* `Minimalist.Derivation.CCommandsAt`, `BindsAtSurface`, `BindsAtSomeStage`
 
 ## Main results
 
-* `Minimalist.SyntacticObject.Derivation.CCommandsAt.cCommandsIn_stageAt`: the predicate speaks
+* `Minimalist.Derivation.CCommandsAt.cCommandsIn_stageAt`: the predicate speaks
   of the derivation's own stage.
-* `Minimalist.SyntacticObject.Derivation.cCommandsAt_append_of_le`, `BindsAtSomeStage.append`.
+* `Minimalist.Derivation.cCommandsAt_append_of_le`, `BindsAtSomeStage.append`.
 
 ## References
 
@@ -37,7 +37,9 @@ at some stage is monotone under extending the derivation; binding at the surface
 
 @[expose] public section
 
-namespace Minimalist.SyntacticObject.Derivation
+namespace Minimalist.Derivation
+
+open SyntacticObject
 
 variable {d : Derivation} {steps : List Step} {n : Nat} {x y : SyntacticObject}
 
@@ -83,4 +85,4 @@ theorem BindsAtSomeStage.append (h : d.BindsAtSomeStage x y) :
   ⟨n, by rw [length_append]; exact hn.trans (Nat.le_add_right _ _),
     (cCommandsAt_append_of_le hn).2 hc⟩
 
-end Minimalist.SyntacticObject.Derivation
+end Minimalist.Derivation

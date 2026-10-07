@@ -20,13 +20,13 @@ stages therefore form a chain of economical transformations.
 
 ## Main definitions
 
-* `Minimalist.SyntacticObject.Derivation.workspaces`: the workspaces of a derivation's stages.
+* `Minimalist.Derivation.workspaces`: the workspaces of a derivation's stages.
 
 ## Main results
 
-* `Minimalist.SyntacticObject.Step.noComplexityLoss`, `Step.minimalYield`: an admissible step is
+* `Minimalist.Step.noComplexityLoss`, `Step.minimalYield`: an admissible step is
   economical.
-* `Minimalist.SyntacticObject.Derivation.isChain_noComplexityLoss`, `isChain_minimalYield`: so is
+* `Minimalist.Derivation.isChain_noComplexityLoss`, `isChain_minimalYield`: so is
   every step of an admissible derivation.
 
 ## References
@@ -55,7 +55,13 @@ theorem exists_eq_merge_of_count_terms {mover current : SyntacticObject}
     exact absurd (Multiset.mem_singleton.mp (Multiset.count_pos.mp (by omega))).symm hne
   | merge l r _ _ => exact ⟨l, r, rfl⟩
 
-theorem value_isLeft_apply (step : Step) (current : SyntacticObject) :
+end Minimalist.SyntacticObject
+
+namespace Minimalist
+
+open SyntacticObject ConnesKreimer
+
+theorem Step.value_isLeft_apply (step : Step) (current : SyntacticObject) :
     (step.apply current).val.value.isLeft := by
   cases step with
   | em side item => cases side <;> simp [Step.apply]
@@ -160,8 +166,8 @@ theorem isChain_minimalYield {d : Derivation} (hd : d.Admissible)
     d.workspaces.IsChain (fun W W' : Workspace ↦
       MinimalYield UnorderedTree.accessibleCount (W.map Subtype.val) (W'.map Subtype.val)) :=
   isChain_of_step (P := fun S ↦ S.val.value.isLeft) (fun h hcur hi ↦ Step.minimalYield h hcur hi)
-    value_isLeft_apply d.steps d.initial hd hinit hitems
+    Step.value_isLeft_apply d.steps d.initial hd hinit hitems
 
 end Derivation
 
-end Minimalist.SyntacticObject
+end Minimalist

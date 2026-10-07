@@ -64,7 +64,7 @@ def john_sees_mary : Derivation :=
 /-- The phonological yield of `john_sees_mary` is the SVO string
     "John sees Mary": the Minimalist derivation (built by `em .right` then
     `em .left` over `verbToSO`/`nameToSO`) linearizes subject-verb-object via the
-    derivation-grounded computable externalization (`SyntacticObject.Derivation.surfacePhon`). -/
+    derivation-grounded computable externalization (`Derivation.surfacePhon`). -/
 theorem models_svo_word_order :
     String.intercalate " " john_sees_mary.surfacePhon = "John sees Mary" := by decide
 

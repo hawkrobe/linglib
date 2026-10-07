@@ -7,7 +7,7 @@ public import Linglib.Syntax.Minimalist.Movement.Reconstruction
 
 A constituent YP containing XP moves past W, which blocked XP: after the move YP c-commands W and
 W no longer c-commands XP, so a probe above W that W would have intervened for now reaches XP.
-On a derivation this is the step predicate `SyntacticObject.Derivation.IsSmugglingStep`, read
+On a derivation this is the step predicate `Derivation.IsSmugglingStep`, read
 off the replayed stages through `Derivation.CCommandsAt`: the mover of the step contains `xp`,
 `w` c-commands `xp` before the step, and after it the mover c-commands `w` and `w` no longer
 c-commands `xp`. The blocking is rendered as `w`'s c-command of `xp`; the probe it matters for
@@ -22,7 +22,9 @@ of their complement is a question each account answers for itself, and none is f
 
 @[expose] public section
 
-namespace Minimalist.SyntacticObject.Derivation
+namespace Minimalist.Derivation
+
+open SyntacticObject
 
 variable {d : Derivation} {steps : List Step} {i : Nat} {xp w : SyntacticObject}
 
@@ -46,4 +48,4 @@ theorem IsSmugglingStep.append (h : d.IsSmugglingStep i xp w) :
     (cCommandsAt_append_of_le hi.le).2 h₁, (cCommandsAt_append_of_le hi).2 h₂,
     λ h => h₃ ((cCommandsAt_append_of_le hi).1 h)⟩
 
-end Minimalist.SyntacticObject.Derivation
+end Minimalist.Derivation

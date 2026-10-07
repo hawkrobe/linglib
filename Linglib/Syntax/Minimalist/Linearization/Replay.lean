@@ -10,7 +10,7 @@ public import Linglib.Syntax.Minimalist.SyntacticObject.Derivation
 /-!
 # Derivation-grounded externalization
 
-[marcolli-chomsky-berwick-2025] §1.12. `SyntacticObject.Derivation.final` is an unordered
+[marcolli-chomsky-berwick-2025] §1.12. `Derivation.final` is an unordered
 object, so the surface left-to-right order is not recoverable from it, but a `Derivation`
 records the planarization choices, each step placing its new daughter on the left or the right
 edge, MCB's externalization section `σ_L` fixed by the derivation rather
@@ -27,12 +27,12 @@ harmonic order (`Linearization/Externalization.lean`) and Fox–Pesetsky cyclic 
 ## Main definitions
 
 * `Minimalist.PlanarSyntacticObject.move`, `Minimalist.externStep`,
-  `Minimalist.SyntacticObject.Derivation.externalize?`: the replay.
-* `Minimalist.SyntacticObject.Derivation.surfaceTokens`, `surfaceCats`, `surfacePhon`.
+  `Minimalist.Derivation.externalize?`: the replay.
+* `Minimalist.Derivation.surfaceTokens`, `surfaceCats`, `surfacePhon`.
 
 ## Main results
 
-* `Minimalist.SyntacticObject.Derivation.externalize?_faithful`: a successful replay forgets to
+* `Minimalist.Derivation.externalize?_faithful`: a successful replay forgets to
   `final`.
 
 ## References
@@ -248,7 +248,7 @@ def externStep (acc? : Option PlanarSyntacticObject) (step : Step) :
     | .em .right item => item.toPlanarLeaf?.map (PlanarSyntacticObject.merge acc ·)
     | .im mover side => acc.move side mover
 
-namespace SyntacticObject.Derivation
+namespace Derivation
 
 /-- The derivation's ordered object, MCB's `σ_L` for this derivation, or `none` if a merged
     item is complex or a mover is absent. -/
@@ -266,7 +266,7 @@ def surfaceCats (d : Derivation) : List Cat := d.surfaceTokens.map (·.item.oute
 def surfacePhon (d : Derivation) : List String :=
   d.surfaceTokens.filterMap LIToken.phonForm?
 
-end SyntacticObject.Derivation
+end Derivation
 
 /-! ### Faithfulness -/
 
@@ -347,7 +347,7 @@ private theorem foldl_externStep_toSyntacticObject :
 
 /-- By **faithfulness** ([marcolli-chomsky-berwick-2025] §1.12), a successful replay forgets to
     the derived object, so the surface readouts are the word order of `final` itself. -/
-theorem SyntacticObject.Derivation.externalize?_faithful (d : Derivation)
+theorem Derivation.externalize?_faithful (d : Derivation)
     {p : PlanarSyntacticObject} (h : d.externalize? = some p) : p.toSyntacticObject = d.final := by
   rw [Derivation.externalize?] at h
   rcases hinit : d.initial.toPlanarLeaf? with _ | init
@@ -359,7 +359,7 @@ theorem SyntacticObject.Derivation.externalize?_faithful (d : Derivation)
 
 /-- Faithfulness holds for prefixes, since a successful replay of the first `n` steps forgets to
     stage `n`. -/
-theorem SyntacticObject.Derivation.externalize?_take_faithful (d : Derivation) (n : Nat)
+theorem Derivation.externalize?_take_faithful (d : Derivation) (n : Nat)
     {p : PlanarSyntacticObject} (h : (d.take n).externalize? = some p) :
     p.toSyntacticObject = d.stageAt n :=
   externalize?_faithful (d.take n) h

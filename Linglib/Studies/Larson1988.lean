@@ -17,7 +17,7 @@ This file formalizes the analysis of [larson-1988]: a ditransitive verb projects
 oblique dative *send a letter to Mary* is built by merging the *to*-phrase as the complement
 and the theme as the inner specifier, and the double object construction is derived from it by
 the operation of Passive applied within the VP, an internal merge of the indirect object above
-the theme. The derivations are `SyntacticObject.Derivation`s whose movement steps are the same
+the theme. The derivations are `Derivation`s whose movement steps are the same
 internal-merge step as the clausal passive, and the c-command relations of the resulting trees
 give the asymmetries of [barss-lasnik-1986]: in the oblique dative the theme c-commands the goal
 (`oblique_do_ccommands_goal`), in the double object construction the indirect object

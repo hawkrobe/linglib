@@ -248,7 +248,7 @@ theorem optimal_rootFree :
 /-! ### The derivations -/
 
 open Minimalist (LIToken PlanarSyntacticObject)
-open Minimalist.SyntacticObject (Derivation)
+open Minimalist (Derivation)
 
 /-- Each terminal spells out its own lexical item. -/
 def Terminal.token : Terminal → LIToken
@@ -276,7 +276,8 @@ verb. -/
 def remnant : PlanarSyntacticObject :=
   {.traceOf Terminal.object.token, {.leaf Terminal.particle.token, .traceOf Terminal.verb.token}}
 
-open Minimalist.SyntacticObject (Step leaf)
+open Minimalist (Step)
+open Minimalist.SyntacticObject (leaf)
 
 /-- The head and complement of the vP are built as in (31)–(34). The particle and the object
 merge with the verb in a head-final VP, v merges on its right, and the verb adjoins to v on the
