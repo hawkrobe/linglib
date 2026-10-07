@@ -39,8 +39,9 @@ over them. The uniform-prior Boolean specialization with its decision procedure 
 
 * `RSA.speaker_literalListener_indicator_real_singleton_lt_iff` — with Boolean meanings a
   state prefers the utterance with the smaller extension.
-* `RSA.speaker_literalListener_indicator_congr` — with Boolean meanings the speaker sees a
-  state only through the utterances true at it.
+* `RSA.speaker_literalListener_indicator_congr`,
+  `RSA.speaker_literalListener_indicator_le_of_subset` — with Boolean meanings the speaker sees a
+  state only through the utterances true at it, and produces each of them less the more there are.
 * `RSA.jointListener_apply_singleton` — exact Bayes for the joint listener.
 * `RSA.speakerOfScore_eq_tilted`, `RSA.isGreatest_freeEnergy_speakerOfScore` — a score-speaker
   row is the Gibbs measure of its score over the applicable utterances, and so the rational
@@ -147,6 +148,17 @@ theorem literalListener_apply_singleton [Fintype W] [MeasurableSingletonClass W]
     (m : U → W → ℝ≥0∞) (u : U) (w : W) :
     literalListener μ m u {w} = m u w * μ {w} / ∑ w', m u w' * μ {w'} := by
   rw [literalListener_apply_singleton', lintegral_fintype]
+
+/-- A relabelling of the states that carries one prior and meaning to another carries the literal
+listener along. -/
+theorem literalListener_apply_singleton_of_equiv {W' U' : Type*} [MeasurableSpace W']
+    [MeasurableSpace U'] [Countable U'] [MeasurableSingletonClass U'] [Fintype W]
+    [MeasurableSingletonClass W] [Fintype W'] [MeasurableSingletonClass W'] (e : W ≃ W')
+    {μ : Measure W} {μ' : Measure W'} {m : U → W → ℝ≥0∞} {m' : U' → W' → ℝ≥0∞} {u : U} {u' : U'}
+    (hμ : ∀ w, μ' {e w} = μ {w}) (hm : ∀ w, m' u' (e w) = m u w) (w : W) :
+    literalListener μ' m' u' {e w} = literalListener μ m u {w} := by
+  rw [literalListener_apply_singleton, literalListener_apply_singleton, hm, hμ, ← e.sum_comp]
+  simp only [hm, hμ]
 
 /-- The literal listener of an utterance whose meaning has positive finite mass under the prior is
 a probability measure. -/
@@ -294,6 +306,17 @@ noncomputable def speaker (α : ℝ) (cost : U → ℝ≥0∞) (L : Kernel U W) 
     speaker α cost L w {u} = L u {w} ^ α * cost u / ∑ u', L u' {w} ^ α * cost u' :=
   Kernel.ofWeights_apply_singleton _ w u
 
+/-- Relabelling the utterances carries the speaker along, with the cost relabelled with them. A
+listener that treats `τ v` at `w'` as the other treats `v` at `w` makes the speaker at `w'` produce
+`τ u` as the other produces `u` at `w`. -/
+theorem speaker_apply_singleton_of_equiv {W' U' : Type*} [MeasurableSpace W'] [MeasurableSpace U']
+    [Countable W'] [MeasurableSingletonClass W'] [Fintype U'] [MeasurableSingletonClass U']
+    (τ : U ≃ U') (α : ℝ) (cost : U' → ℝ≥0∞) {L : Kernel U W} {L' : Kernel U' W'} {w : W}
+    {w' : W'} (h : ∀ v, L' (τ v) {w'} = L v {w}) (u : U) :
+    speaker α cost L' w' {τ u} = speaker α (cost ∘ τ) L w {u} := by
+  rw [speaker_apply_singleton, speaker_apply_singleton, h, ← τ.sum_comp]
+  simp only [h, Function.comp_apply]
+
 instance (α : ℝ) (cost : U → ℝ≥0∞) (L : Kernel U W) : IsFiniteKernel (speaker α cost L) :=
   inferInstanceAs (IsFiniteKernel (Kernel.ofWeights _))
 
@@ -394,6 +417,46 @@ theorem speaker_literalListener_indicator_congr [DiscreteMeasurableSpace W] {α 
   · rw [literalListener_indicator_apply_singleton_of_notMem μ sem hu,
       literalListener_indicator_apply_singleton_of_notMem μ sem (mt (h u).mpr hu),
       ENNReal.zero_rpow_of_pos hα, zero_mul, zero_mul]
+
+/-- With Boolean meanings the prior cancels from the speaker, which at a state of positive prior
+weights each true utterance by its extension's mass to the power `-α` and by its cost. -/
+theorem speaker_literalListener_indicator_apply_singleton [DiscreteMeasurableSpace W] {α : ℝ}
+    (hα : 0 < α) (cost : U → ℝ≥0∞) (μ : Measure W) [IsFiniteMeasure μ] (sem : U → Set W)
+    {w : W} (hw : μ {w} ≠ 0) (u : U) :
+    speaker α cost (literalListener μ fun u ↦ (sem u).indicator 1) w {u}
+      = (sem u).indicator (fun _ ↦ (μ (sem u))⁻¹ ^ α * cost u) w
+        / ∑ u', (sem u').indicator (fun _ ↦ (μ (sem u'))⁻¹ ^ α * cost u') w := by
+  have key : ∀ v, (literalListener μ fun u ↦ (sem u).indicator 1) v {w} ^ α * cost v
+      = μ {w} ^ α * (sem v).indicator (fun _ ↦ (μ (sem v))⁻¹ ^ α * cost v) w := fun v ↦ by
+    by_cases hv : w ∈ sem v
+    · rw [literalListener_indicator_apply_singleton μ sem hv, Set.indicator_of_mem hv,
+        ENNReal.mul_rpow_of_nonneg _ _ hα.le]
+      ring
+    · rw [literalListener_indicator_apply_singleton_of_notMem μ sem hv,
+        Set.indicator_of_notMem hv, ENNReal.zero_rpow_of_pos hα, zero_mul, mul_zero]
+  rw [speaker_apply_singleton, key, Finset.sum_congr rfl fun v _ ↦ key v, ← Finset.mul_sum,
+    ENNReal.mul_div_mul_left _ _ (weight_rpow_ne_zero hα.le hw)
+      (ENNReal.rpow_ne_top_of_nonneg hα.le (measure_ne_top _ _))]
+
+/-- With Boolean meanings a state verifying more utterances produces each of its true utterances
+less, since the prior cancels from the speaker and only the inclusion of the true utterances
+matters. -/
+theorem speaker_literalListener_indicator_le_of_subset [DiscreteMeasurableSpace W] {α : ℝ}
+    (hα : 0 < α) (cost : U → ℝ≥0∞) (μ : Measure W) [IsFiniteMeasure μ] (sem : U → Set W)
+    {w w' : W} (hw : μ {w} ≠ 0) (hsub : ∀ u, w ∈ sem u → w' ∈ sem u) {u : U} (hu : w ∈ sem u) :
+    speaker α cost (literalListener μ fun u ↦ (sem u).indicator 1) w' {u}
+      ≤ speaker α cost (literalListener μ fun u ↦ (sem u).indicator 1) w {u} := by
+  rcases eq_or_ne (μ {w'}) 0 with hw' | hw'
+  · rw [speaker_apply_singleton_eq_zero hα (not_not.mp fun h ↦
+      ((literalListener_indicator_apply_singleton_ne_zero_iff μ sem u w').mp h).2 hw')]
+    exact zero_le
+  rw [speaker_literalListener_indicator_apply_singleton hα cost μ sem hw,
+    speaker_literalListener_indicator_apply_singleton hα cost μ sem hw',
+    Set.indicator_of_mem hu, Set.indicator_of_mem (hsub u hu)]
+  refine ENNReal.div_le_div_left (Finset.sum_le_sum fun v _ ↦ ?_) _
+  by_cases hv : w ∈ sem v
+  · rw [Set.indicator_of_mem hv, Set.indicator_of_mem (hsub v hv)]
+  · rw [Set.indicator_of_notMem hv]; exact zero_le
 
 /-- Row-preference of the speaker reduces to comparing the weighted listener values; the
 normalization cancels. -/
@@ -854,6 +917,19 @@ theorem familyListener_apply_singleton_eq_zero (L : Λ → Kernel U W) (α : ℝ
     {u : U} (hu : (familySpeaker L α cost ∘ₘ μ) {u} ≠ 0) {p : W × Λ}
     (hp : speaker α cost (L p.2) p.1 {u} = 0) : familyListener L α cost μ u {p} = 0 := by
   rw [familyListener_apply_singleton L α cost hu, hp, mul_zero, ENNReal.zero_div]
+
+/-- A relabelling of states, latents and utterances that carries one family of literal listeners
+and prior to another carries the family listener along, with the cost relabelled. -/
+theorem familyListener_apply_singleton_of_equiv [Fintype W] [Fintype Λ] (e : W ≃ W) (f : Λ ≃ Λ)
+    (τ : U ≃ U) (L L' : Λ → Kernel U W) (α : ℝ) (cost : U → ℝ≥0∞) {μ' : Measure (W × Λ)}
+    [IsFiniteMeasure μ'] (hL : ∀ l v w, L' (f l) (τ v) {e w} = L l v {w})
+    (hμ : ∀ w l, μ' {(e w, f l)} = μ {(w, l)}) {u : U}
+    (hu : (familySpeaker L α (cost ∘ τ) ∘ₘ μ) {u} ≠ 0) (w : W) (l : Λ) :
+    familyListener L' α cost μ' (τ u) {(e w, f l)} = familyListener L α (cost ∘ τ) μ u {(w, l)} :=
+  posterior_apply_singleton_of_equiv _ _ (e.prodCongr f) (fun p ↦ hμ p.1 p.2)
+    (fun p ↦ by
+      rw [Equiv.prodCongr_apply, Prod.map, familySpeaker_apply, familySpeaker_apply]
+      exact speaker_apply_singleton_of_equiv τ α cost (fun v ↦ hL p.2 v p.1) u) hu (w, l)
 
 /-- The state marginal of the family listener is positive at a state exactly when some latent
 pairs a positive prior with a positively produced utterance. -/
