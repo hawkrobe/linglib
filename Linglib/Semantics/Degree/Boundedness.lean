@@ -11,10 +11,10 @@ public import Mathlib.Tactic.DeriveFintype
 
 This file defines `Degree.Boundedness`, the classification of scales by the endpoints they have,
 for which Kennedy and McNally and, independently, Rotstein and Winter gave evidence from degree
-modifiers. A boundedness is
-the endpoint profile of an order, and `Boundedness.ofOrder D` reads it off `D` from the existence of
-a least and a greatest element, so that a scale's tag is a fact about its degrees. The tag is what a
-lexical entry stores, since a record field cannot hold an `OrderTop` instance.
+modifiers. A boundedness is the endpoint profile of an order, and `Boundedness.ofOrder D` reads
+it off `D` from the existence of a least and a greatest element, so that a scale's tag is a fact
+about its degrees. The tag is what a lexical entry stores, since a record field cannot hold an
+`OrderTop` instance.
 
 The negative member of an antonym pair measures on the same degrees in the reverse order, and
 `Boundedness.dual` is that operation on tags. The file also defines the standards of the positive
@@ -33,14 +33,9 @@ endpoint rules out the contextual standard, and a totally closed scale prefers i
 * `Boundedness.Admits`: the standards Interpretive Economy admits on a scale.
 * `Boundedness.defaultStandard`: the standard Interpretive Economy prefers on a scale.
 
-## Main results
+## Main statements
 
 * `Boundedness.ofOrder_orderDual`: the order dual has the dual boundedness.
-* `Boundedness.ofOrder_Ici`: a ray upward has a least degree adjoined.
-* `Boundedness.ofOrder_Iic`: a ray downward has a greatest degree adjoined.
-* `Boundedness.ofOrder_Icc`, `Boundedness.ofOrder_Ioo`, `Boundedness.ofOrder_Ioc`: a closed
-  interval is totally closed, and an open or half-open interval of a dense order is open or upper
-  closed.
 * `Boundedness.ofOrder_degreeShape`: every boundedness is that of a linear order.
 * `Boundedness.admits_withMin_iff`: a scale with a least degree adjoined admits the minimum
   standard, and the maximum exactly when the original scale has one.
@@ -342,11 +337,18 @@ def defaultStandard : Boundedness → PositiveStandard
 theorem admits_defaultStandard (b : Boundedness) : b.Admits b.defaultStandard := by
   cases b <;> decide
 
-/-- A totally closed scale admits the minimum standard as well as the default maximum
-([kennedy-2007] (67)–(68)). -/
-theorem closed_admits_minEndpoint : closed.Admits .minEndpoint := trivial
+@[simp] theorem admits_contextual {b : Boundedness} : b.Admits .contextual ↔ b = .open_ :=
+  Iff.rfl
 
-theorem closed_admits_maxEndpoint : closed.Admits .maxEndpoint := trivial
+@[simp] theorem admits_minEndpoint {b : Boundedness} : b.Admits .minEndpoint ↔ b.HasMin :=
+  Iff.rfl
+
+@[simp] theorem admits_maxEndpoint {b : Boundedness} : b.Admits .maxEndpoint ↔ b.HasMax :=
+  Iff.rfl
+
+@[simp] theorem not_admits_necessity (b : Boundedness) : ¬ b.Admits .necessity := id
+
+@[simp] theorem not_admits_extreme (b : Boundedness) : ¬ b.Admits .extreme := id
 
 /-- Interpretive Economy rules out the contextual standard whenever the scale has an endpoint. -/
 theorem not_admits_contextual_of_ne_open {b : Boundedness} (h : b ≠ .open_) :

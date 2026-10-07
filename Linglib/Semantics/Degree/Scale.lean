@@ -93,7 +93,7 @@ def ScalarDimension.domain : ScalarDimension → PropertyDomain
     (24)–(27), [kennedy-2007] (33), (49)–(50), (60)). Wetness is lower closed, *wet* taking a
     minimum standard and *dry* a maximum one, straightness upper closed, by *fully straight*
     against *??fully bent*, and fullness closed, by *100% full* and *100% empty*. Possibility is
-    lower closed: nothing is less possible than the impossible ([lassiter-2017] §5.2.3), so
+    lower closed, since nothing is less possible than the impossible ([lassiter-2017] §5.2.3), so
     *possible* takes a minimum standard and *impossible* a maximum one, as *wet* and *dry* do;
     whether it also has a maximum turns on the disputed identity of its scale with that of
     *likely*. The negative member of an antonym pair measures on the dual scale. The definition is
@@ -150,6 +150,11 @@ theorem Boundedness.defaultVendlerClass_eq_accomplishment_iff {b : Boundedness} 
     b.defaultVendlerClass = .accomplishment ↔ b.HasMax := by
   cases b <;> decide
 
+/-- A degree achievement on a scale is telic by default exactly when the scale has a maximum. -/
+theorem Boundedness.telicity_defaultVendlerClass_eq_telic_iff {b : Boundedness} :
+    b.defaultVendlerClass.telicity = .telic ↔ b.HasMax := by
+  cases b <;> decide
+
 /-- The default Vendler class of a degree achievement towards the positive pole of a dimension is
     that of the dimension's scale. -/
 def ScalarDimension.defaultVendlerClass (d : ScalarDimension) : VendlerClass :=
@@ -163,8 +168,9 @@ def ScalarDimension.defaultTelicity (d : ScalarDimension) : Telicity :=
 /-- A degree achievement is telic by default exactly when the degrees of its scale have a
     greatest element ([kennedy-levin-2008]). -/
 theorem ScalarDimension.defaultTelicity_telic_iff_hasGreatest (d : ScalarDimension) :
-    d.defaultTelicity = .telic ↔ ∃ m : d.degree, IsTop m := by
-  rw [ScalarDimension.hasGreatest_degree_iff]; cases d <;> decide
+    d.defaultTelicity = .telic ↔ ∃ m : d.degree, IsTop m :=
+  Boundedness.telicity_defaultVendlerClass_eq_telic_iff.trans
+    (ScalarDimension.hasGreatest_degree_iff d).symm
 
 /-- The default Vendler class has the default telicity. -/
 @[simp] theorem ScalarDimension.telicity_defaultVendlerClass (d : ScalarDimension) :
