@@ -10,7 +10,7 @@ public import Linglib.Semantics.Degree.Comparison
 
 /-!
 # Degree predicates + monotonicity
-[fox-hackl-2006] [kennedy-2015] [geurts-nouwen-2007] [nouwen-2010] [partee-1987]
+[fox-hackl-2006] [kennedy-2015] [geurts-nouwen-2007] [nouwen-2010]
 
 Predicate transformers over a measure function `μ : W → α`:
 

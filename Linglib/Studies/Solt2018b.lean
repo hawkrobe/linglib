@@ -1,6 +1,5 @@
 module
 
-public import Linglib.Semantics.Degree.Aggregation
 public import Linglib.Semantics.Degree.Measure.Basic
 public import Mathlib.Algebra.Order.Field.Basic
 
@@ -17,7 +16,7 @@ the paper's account they are unambiguous gradable quantifiers over degrees ([sol
 and a null head Meas introduces a contextually determined measure function, monotone on
 the part-whole order ([schwarzschild-2006]), which may be domain-restricted to the parts of
 a totality and in particular proportional. `proportionalMeasure` divides a part's measure
-by the totality's, an instance of the substrate's `spatialNormalizedScore`; it inherits
+by the totality's; it inherits
 monotonicity (`proportionalMeasure_monotonic`), ranges over the unit interval, and is
 invariant under rescaling of the underlying measure, so degree-denoting *n percent* is a
 point on its scale (`percent_iff_proportionalMeasure`, against the lexical entry for
@@ -58,30 +57,26 @@ Solt's other 2018 paper, the multidimensionality chapter [solt-2018a], is formal
 
 namespace Solt2018b
 
-open Degree Degree.Aggregation
+open Degree
 
 variable {α : Type*} (μ : α → ℚ)
 
 /-! ### The proportional measure function -/
 
-/-- The proportional measure function: a part's measure relative to the totality `tot`,
-and 0 when the totality has measure 0, the zero-extent convention of
-`spatialNormalizedScore`. -/
-def proportionalMeasure (tot y : α) : ℚ :=
-  spatialNormalizedScore [1] [μ] (λ _ => μ tot) y
+/-- The proportional measure function: a part's measure relative to the totality `tot`, and 0
+when the totality has measure 0, as division by zero is. -/
+def proportionalMeasure (tot y : α) : ℚ := μ y / μ tot
 
-theorem proportionalMeasure_eq (tot y : α) (h : μ tot ≠ 0) :
-    proportionalMeasure μ tot y = μ y / μ tot := by
-  simp [proportionalMeasure, spatialNormalizedScore, weightedScore, h]
+theorem proportionalMeasure_eq (tot y : α) : proportionalMeasure μ tot y = μ y / μ tot := rfl
 
 theorem proportionalMeasure_zero (tot y : α) (h : μ tot = 0) :
-    proportionalMeasure μ tot y = 0 :=
-  spatialNormalizedScore_zero _ _ _ _ h
+    proportionalMeasure μ tot y = 0 := by
+  rw [proportionalMeasure_eq, h, div_zero]
 
 /-- The totality is the whole of itself. -/
 theorem proportionalMeasure_self_eq_one (tot : α) (htot : 0 < μ tot) :
     proportionalMeasure μ tot tot = 1 := by
-  rw [proportionalMeasure_eq _ _ _ htot.ne']
+  rw [proportionalMeasure_eq]
   exact div_self htot.ne'
 
 /-- The monotonicity constraint on the measure `Meas` introduces (mathlib's
@@ -89,17 +84,17 @@ theorem proportionalMeasure_self_eq_one (tot : α) (htot : 0 < μ tot) :
 theorem proportionalMeasure_monotonic [Preorder α] (hμ : StrictMono μ)
     (tot : α) {y z : α} (htot : 0 < μ tot) (hyz : y < z) :
     proportionalMeasure μ tot y < proportionalMeasure μ tot z := by
-  rw [proportionalMeasure_eq _ _ _ htot.ne', proportionalMeasure_eq _ _ _ htot.ne']
+  rw [proportionalMeasure_eq, proportionalMeasure_eq]
   exact (div_lt_div_iff_of_pos_right htot).mpr (hμ hyz)
 
 theorem proportionalMeasure_nonneg (hnn : ∀ x, 0 ≤ μ x) (tot y : α) :
     0 ≤ proportionalMeasure μ tot y :=
-  spatialNormalizedScore_nonneg _ _ _ _ (by simpa [weightedScore] using hnn y) (hnn tot)
+  div_nonneg (hnn y) (hnn tot)
 
 theorem proportionalMeasure_le_one [Preorder α] (hμ : Monotone μ)
     (tot y : α) (hy : y ≤ tot) (htot : 0 < μ tot) :
     proportionalMeasure μ tot y ≤ 1 :=
-  spatialNormalizedScore_le_one _ _ _ _ (by simpa [weightedScore] using hμ hy) htot
+  div_le_one_of_le₀ (hμ hy) htot.le
 
 /-- The proportional scale is the unit interval: a part of the totality measures between
 0 and 1. -/
@@ -110,19 +105,15 @@ theorem proportionalMeasure_mem_unit_interval [Preorder α]
 
 /-- Rescaling the underlying measure leaves proportions unchanged: only the cardinal
 reading depends on the unit of measurement. -/
-theorem proportionalMeasure_const_mul (k : ℚ) (hk : k ≠ 0)
-    (tot y : α) (htot : μ tot ≠ 0) :
-    proportionalMeasure (λ x => k * μ x) tot y = proportionalMeasure μ tot y := by
-  rw [proportionalMeasure_eq _ tot y (mul_ne_zero hk htot),
-      proportionalMeasure_eq _ tot y htot, mul_div_mul_left _ _ hk]
+theorem proportionalMeasure_const_mul (k : ℚ) (hk : k ≠ 0) (tot y : α) :
+    proportionalMeasure (fun x ↦ k * μ x) tot y = proportionalMeasure μ tot y :=
+  mul_div_mul_left _ _ hk
 
 /-- *n percent of x are P* on the lexical entry for *percent* of [ahn-sauerland-2017],
 which lexicalizes the division, holds exactly when the proportional measure of the
 P-part of `x` is the degree `n / 100`, a point on the proportional scale. -/
-theorem percent_iff_proportionalMeasure [SemilatticeInf α] (x p : α) (n : ℚ)
-    (hx : μ x ≠ 0) :
-    μ (x ⊓ p) / μ x = n / 100 ↔ proportionalMeasure μ x (x ⊓ p) = n / 100 := by
-  rw [proportionalMeasure_eq _ _ _ hx]
+theorem percent_iff_proportionalMeasure [SemilatticeInf α] (x p : α) (n : ℚ) :
+    μ (x ⊓ p) / μ x = n / 100 ↔ proportionalMeasure μ x (x ⊓ p) = n / 100 := Iff.rfl
 
 /-! ### The two readings of a quantity comparative -/
 
@@ -137,8 +128,7 @@ def ProportionalReading (A B a b : α) : Prop :=
 
 theorem proportionalReading_iff {A B a b : α} (hA : 0 < μ A) (hB : 0 < μ B) :
     ProportionalReading μ A B a b ↔ μ b * μ A < μ a * μ B := by
-  rw [ProportionalReading, proportionalMeasure_eq _ _ _ hA.ne',
-    proportionalMeasure_eq _ _ _ hB.ne', div_lt_div_iff₀ hB hA]
+  rw [ProportionalReading, proportionalMeasure_eq, proportionalMeasure_eq, div_lt_div_iff₀ hB hA]
 
 /-- The readings come apart: a part that is outmeasured by the other is nonetheless the
 larger share whenever its totality is small enough, as with Ithaca's thirty thousand

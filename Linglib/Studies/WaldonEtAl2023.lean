@@ -1,6 +1,5 @@
 module
 
-public import Linglib.Semantics.Degree.Aggregation
 public import Linglib.Data.Examples.WaldonEtAl2023
 public import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
 
@@ -42,7 +41,7 @@ The paper's examples are the rows of `Data.Examples.WaldonEtAl2023`.
 
 @[expose] public section
 
-open Degree.Aggregation MeasureTheory
+open MeasureTheory
 open scoped ENNReal
 
 namespace WaldonEtAl2023
@@ -71,15 +70,13 @@ inductive Condition (G : Type*)
 variable (N : Norming O G) (γ : ℝ)
 
 /-- The goal-weighted measure of the artifact noun, (13) under an explicit goal and (14) with
-the goal weight split by plausibility: a `weightedScore` over the category and the goal
-dimensions. -/
+the goal weight split by plausibility: a weighted sum of the category and the goal dimensions. -/
 noncomputable def measure : Condition G → O → ℝ
-  | .explicit g => weightedScore [γ, 1 - γ] [N.cat, N.feature g]
-  | .neutral => λ o => γ * N.cat o + (1 - γ) * ∑ g, N.plausibility g * N.feature g o
+  | .explicit g => fun o ↦ γ * N.cat o + (1 - γ) * N.feature g o
+  | .neutral => fun o ↦ γ * N.cat o + (1 - γ) * ∑ g, N.plausibility g * N.feature g o
 
 theorem measure_explicit (g : G) (o : O) :
-    measure N γ (.explicit g) o = γ * N.cat o + (1 - γ) * N.feature g o := by
-  simp [measure, weightedScore]
+    measure N γ (.explicit g) o = γ * N.cat o + (1 - γ) * N.feature g o := rfl
 
 /-- The plausibility-weighted feature lies on the unit interval. -/
 theorem mix_mem_Icc (o : O) : ∑ g, N.plausibility g * N.feature g o ∈ Set.Icc 0 1 :=
@@ -133,7 +130,7 @@ theorem prohibitionPosterior_lt_iff {m m' : ℝ} (hm0 : 0 ≤ m) (hm1 : m ≤ 1)
 
 /-- The Goal Insensitive hypothesis, `γ = 1`: no condition moves any object. -/
 theorem measure_one (c c' : Condition G) (o : O) : measure N 1 c o = measure N 1 c' o := by
-  rcases c with _ | g <;> rcases c' with _ | g' <;> simp [measure, weightedScore]
+  rcases c with _ | g <;> rcases c' with _ | g' <;> simp [measure]
 
 /-- Under Goal Sensitivity, an object's measure across explicit goals orders by its
 goal-relevant features. -/
