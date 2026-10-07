@@ -1,40 +1,39 @@
 module
 
-public import Linglib.Semantics.Attitudes.Preference
+public import Linglib.Semantics.Attitudes.Preferential
 public import Linglib.Data.Examples.UegakiSudo2019
+public import Mathlib.Basic.Real.Basic
 public import Mathlib.Tactic.NormNum
 
 /-!
-# Uegaki and Sudo (2019): The *hope*-wh Puzzle
+# Uegaki and Sudo (2019): The hope-wh Puzzle
 
-This file formalizes [uegaki-sudo-2019]'s explanation of why the non-veridical preferential
-predicates, *hope*, *wish*, *expect*, *fear*, are anti-rogative, (8), while the veridical ones,
-*be surprised*, *be happy*, *like*, *hate*, take interrogative complements, (7). Complements
-denote sets of propositions, declaratives singletons, and a preferential predicate compares the
-subject's degree of preference for an answer with a threshold over a comparison class `C` of
-focus alternatives, the degree semantics of [villalta-2008] and [romero-2015], with `C` a subset
-of the question by the focus operator, (30). The predicate presupposes Threshold Significance,
-that some member of the comparison class clears the threshold, motivated by (41): so *hope*
-with a question, (36), asserts no more than it presupposes, `significance_entails_hope_question`,
-and is true whenever defined, `hope_question_iff_significance`, an L-analytic meaning in the
-sense of [gajewski-2002] and hence ungrammatical. *Hope* with a declarative, (35), is not
-trivial, the assertion concerning the one proposition of the complement,
-`exists_significance_not_hope_declarative`. The veridical predicates restrict the quantification
-over answers to true, believed answers, (26) and (28), `veridicalProp` and `veridicalQuestion`,
-which stay clausally distributive, `veridical_isDistributive`, but whose truth depends on the
-world even under Threshold Significance, `veridicality_breaks_triviality`: a preferred false
-answer does not make *John is happy about who jumped* true.
+Uegaki and Sudo explain why non-veridical preferential predicates such as *hope*, *wish*,
+*expect* and *fear* reject interrogative complements, while veridical ones such as *be happy*
+and *like* accept them. A preferential predicate compares the degree to which its subject prefers
+an answer with a threshold set by a comparison class of focus alternatives, and it presupposes
+Threshold Significance, that some member of the class clears the threshold. With a question, the
+comparison class lies inside the question, so *hope* asserts no more than it presupposes and is
+true whenever defined; a meaning that is trivial in this way is ungrammatical. With a
+declarative, and for veridical predicates, which require the preferred answer to be true and
+believed, the meaning stays contingent.
+
+## Main statements
+
+* `hope_question_iff_significance`: with a question, *hope* asserts its presupposition.
+* `exists_significance_not_hope_declarative`: with a declarative, *hope* is not trivial.
+* `veridical_isDistributive`, `veridicality_breaks_triviality`: veridical predicates are
+  clausally distributive and not trivial.
 
 ## Implementation notes
 
 The non-veridical predicates are the substrate's degree-comparison predicates,
-`Preferential.hope` and `Preferential.ThresholdSignificance`, whose question semantics is the
-existential of (34) without the membership of the answer in the comparison class, which the
-subset condition (30) supplies. The veridical semantics keeps the paper's belief component as a
-predicate parameter and the membership condition. The doxastic condition of
-[anand-hacquard-2013], (39), the selective focus sensitivity and exhaustivity refinements of
-section 4, and the *about*-nominalization of section 5 are not formalized. The examples are the
-rows of `Data.Examples.UegakiSudo2019`.
+`Preferential.degreeComparison`, and Threshold Significance is `Degree.ThresholdSignificant`. A
+veridical predicate is the same degree comparison applied to the answers that are true and
+believed, (26), with belief a predicate parameter. The concrete models measure preference in
+the reals. Anand and Hacquard's doxastic condition, (39), the selective focus sensitivity
+and exhaustivity refinements of section 4, and the *about*-nominalization of section 5 are not
+formalized. The examples are the rows of `Data.Examples.UegakiSudo2019`.
 
 ## References
 
@@ -51,73 +50,72 @@ namespace UegakiSudo2019
 
 open Preferential
 
-variable {W E : Type*} (μ : E → Finset W → ℚ) (θ : List (Finset W) → ℚ)
+variable {W E D : Type*} [LinearOrder D] (μ : E → W → Set W → D) (θ : Set (Set W) → D)
 
 /-! ### Triviality for non-veridical preferentials -/
 
-/-- (36): with the comparison class drawn from the question, (30), Threshold Significance
-entails the assertion of *hope* with a question. -/
-theorem significance_entails_hope_question (x : E) {Q C : List (Finset W)} (hCQ : C ⊆ Q)
-    (h : ThresholdSignificance μ θ x C) : (hope μ θ).questionSemantics x Q C :=
-  let ⟨p, hp, hd⟩ := h; ⟨p, hCQ hp, hd⟩
+/-- With the comparison class drawn from the question, (30), Threshold Significance entails the
+assertion of *hope* with a question (36). -/
+theorem significance_entails_hope_question {C Q : Set (Set W)} (hCQ : C ⊆ Q) (x : E) (w : W)
+    (h : Degree.ThresholdSignificant (μ x w) θ C) : degreeComparison μ θ C x Q w :=
+  (degreeComparison_iff_thresholdSignificant μ θ C hCQ x w).2 h
 
-/-- When the comparison class is the question, the assertion of *hope* with a question is its
-presupposition: the meaning is true whenever defined, [gajewski-2002]'s L-analyticity, which
-makes *hope* anti-rogative. -/
-theorem hope_question_iff_significance (x : E) (Q : List (Finset W)) :
-    (hope μ θ).questionSemantics x Q Q ↔ ThresholdSignificance μ θ x Q :=
-  Iff.rfl
+/-- With the comparison class inside the question, the assertion of *hope* with a question is its
+presupposition, so the meaning is true whenever defined. This is [gajewski-2002]'s L-analyticity,
+which makes *hope* anti-rogative. -/
+theorem hope_question_iff_significance {C Q : Set (Set W)} (hCQ : C ⊆ Q) (x : E) (w : W) :
+    degreeComparison μ θ C x Q w ↔ Degree.ThresholdSignificant (μ x w) θ C :=
+  degreeComparison_iff_thresholdSignificant μ θ C hCQ x w
 
-/-- (35): *hope* with a declarative is not trivial. Threshold Significance over the focus
-alternatives does not settle whether the subject prefers the one proposition of the complement:
-a model with a preferred alternative and a dispreferred complement. -/
+/-- *Hope* with a declarative is not trivial (35). Threshold Significance over the focus
+alternatives does not settle whether the subject prefers the one proposition of the complement,
+as a model with a preferred alternative and a dispreferred complement shows. -/
 theorem exists_significance_not_hope_declarative :
-    ∃ (W E : Type) (μ : E → Finset W → ℚ) (θ : List (Finset W) → ℚ) (x : E) (A : Finset W)
-      (C : List (Finset W)), A ∈ C ∧ ThresholdSignificance μ θ x C ∧
-        ¬ (hope μ θ).questionSemantics x [A] C := by
-  refine ⟨Bool, Unit, λ _ p => if true ∈ p then 1 else -1, λ _ => 0, (), {false},
-    [{true}, {false}], by simp, ⟨{true}, by simp, by norm_num⟩, ?_⟩
-  rintro ⟨p, hp, hd⟩
-  simp only [List.mem_singleton] at hp
-  subst hp
-  norm_num [hope, mkDegreeComparison] at hd
+    ∃ (μ : Unit → Bool → Set Bool → ℝ) (θ : Set (Set Bool) → ℝ) (C : Set (Set Bool))
+      (A : Set Bool), A ∈ C ∧ Degree.ThresholdSignificant (μ () true) θ C ∧
+        ¬ degreeComparison μ θ C () {A} true := by
+  classical
+  refine ⟨fun _ _ p ↦ if true ∈ p then 1 else -1, fun _ ↦ 0, {{true}, {false}}, {false},
+    by simp, ⟨{true}, by simp, by norm_num [Degree.Comparison.over]⟩, ?_⟩
+  rw [degreeComparison_singleton, mem_preferred]
+  norm_num
 
 /-! ### Veridical preferentials -/
 
-variable (believes : E → Finset W → W → Prop)
+variable (believes : E → Set W → W → Prop)
 
-/-- (26): *x is happy that p* at `w` requires the complement to be true at `w`, believed by `x`
-and a member of the comparison class. -/
-def veridicalProp (C : List (Finset W)) (x : E) (p : Finset W) (w : W) : Prop :=
-  w ∈ p ∧ believes x p w ∧ p ∈ C ∧ μ x p > θ C
+/-- A veridical preferential such as *be happy* is the degree comparison over the answers that are
+true at the world of evaluation and believed by the subject, (24) and (26). -/
+def veridical (C : Set (Set W)) (x : E) (Q : Set (Set W)) (w : W) : Prop :=
+  degreeComparison μ θ C x (Q ∩ {p | w ∈ p ∧ believes x p w}) w
 
-/-- (28): *x is happy about Q* at `w`: some true, believed answer in the comparison class clears
-the threshold. -/
-def veridicalQuestion (C : List (Finset W)) (x : E) (Q : List (Finset W)) (w : W) : Prop :=
-  ∃ p ∈ Q, w ∈ p ∧ believes x p w ∧ p ∈ C ∧ μ x p > θ C
-
-/-- Veridical preferentials are clausally distributive: it is veridicality, not a failure of
+/-- Veridical preferentials are clausally distributive, so it is veridicality, not a failure of
 distributivity, that lets them take questions. -/
-theorem veridical_isDistributive (C : List (Finset W)) :
-    Distributivity.IsDistributive (veridicalProp μ θ believes C)
-      (veridicalQuestion μ θ believes C) :=
-  λ _ _ _ => Iff.rfl
+theorem veridical_isDistributive (C : Set (Set W)) :
+    Distributivity.IsDistributive (veridical μ θ believes C) := fun x Q w ↦ by
+  simp only [veridical, degreeComparison, Set.inter_assoc]
+  constructor
+  · rintro ⟨p, hpQ, hp⟩
+    exact ⟨p, hpQ, p, rfl, hp⟩
+  · rintro ⟨p, hpQ, q, rfl, hq⟩
+    exact ⟨q, hpQ, hq⟩
 
-/-- Veridicality breaks the triviality: a model where Threshold Significance holds, so the
-non-veridical assertion is true, but the veridical assertion is false at a world where the true
-answer is not the preferred one. Two worlds, the polar question over them, evaluated at the
-dispreferred world. -/
+/-- Veridicality breaks the triviality. In a model where Threshold Significance holds, so that the
+non-veridical assertion is true, the veridical assertion is false at a world where the true answer
+is not the preferred one. The model has two worlds and the polar question over them, evaluated at
+the dispreferred world. -/
 theorem veridicality_breaks_triviality :
-    ∃ (W E : Type) (μ : E → Finset W → ℚ) (θ : List (Finset W) → ℚ)
-      (believes : E → Finset W → W → Prop) (x : E) (Q : List (Finset W)) (w : W),
-      ThresholdSignificance μ θ x Q ∧ (hope μ θ).questionSemantics x Q Q ∧
-        ¬ veridicalQuestion μ θ believes Q x Q w := by
-  refine ⟨Bool, Unit, λ _ p => if true ∈ p then 1 else -1, λ _ => 0, λ _ _ _ => True, (),
-    [{true}, {false}], false, ⟨{true}, by simp, by norm_num⟩, ⟨{true}, by simp, by norm_num⟩, ?_⟩
-  rintro ⟨p, hp, hw, _, _, hd⟩
-  simp only [List.mem_cons, List.not_mem_nil, or_false] at hp
+    ∃ (μ : Unit → Bool → Set Bool → ℝ) (θ : Set (Set Bool) → ℝ)
+      (believes : Unit → Set Bool → Bool → Prop) (Q : Set (Set Bool)),
+      Degree.ThresholdSignificant (μ () false) θ Q ∧ degreeComparison μ θ Q () Q false ∧
+        ¬ veridical μ θ believes Q () Q false := by
+  classical
+  refine ⟨fun _ _ p ↦ if true ∈ p then 1 else -1, fun _ ↦ 0, fun _ _ _ ↦ True,
+    {{true}, {false}}, ⟨{true}, by simp, by norm_num [Degree.Comparison.over]⟩,
+    ⟨{true}, by simp, by simp, by norm_num [Degree.Comparison.over]⟩, ?_⟩
+  rintro ⟨p, ⟨hp, hw, -⟩, -, hd⟩
   rcases hp with rfl | rfl
   · simp at hw
-  · norm_num [Finset.mem_singleton] at hd
+  · norm_num [Degree.Comparison.over] at hd
 
 end UegakiSudo2019

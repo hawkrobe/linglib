@@ -26,6 +26,8 @@ strictly monotone change of scale.
 * `Degree.Comparison.overSet`: the set-standard predication.
 * `Degree.Comparison.dual`: the antonymous comparison.
 * `Degree.maxOnScale`: Rett's order-sensitive maximality.
+* `Degree.ThresholdSignificant`: some member of the comparison class clears the threshold, the
+  presupposition Uegaki and Sudo attribute to degree constructions.
 
 ## Main results
 
@@ -44,6 +46,7 @@ strictly monotone change of scale.
 * [geurts-nouwen-2007]
 * [nouwen-2010]
 * [rett-2026]
+* [uegaki-sudo-2019]
 -/
 
 @[expose] public section
@@ -150,6 +153,22 @@ instance Comparison.overDecidable {E α : Type*} [Preorder α] [DecidableEq α] 
     (c : Comparison) (n : α) : n ∈ c.interval n ↔ ¬ c.isStrict := by
   cases c <;> simp [Comparison.interval, Comparison.isStrict]
 
+/-! ### Threshold significance
+
+A degree construction whose threshold `θ C` depends on a comparison class `C` presupposes that
+some member of the class exceeds the threshold; otherwise the construction draws no distinction
+in the class. -/
+
+/-- A threshold function `θ` is significant on the comparison class `C` when some member of `C`
+measures above `θ C`. -/
+def ThresholdSignificant {E α : Type*} [Preorder α] (μ : E → α) (θ : Set E → α)
+    (C : Set E) : Prop :=
+  (C ∩ Comparison.gt.over μ (θ C)).Nonempty
+
+theorem thresholdSignificant_iff {E α : Type*} [Preorder α] {μ : E → α} {θ : Set E → α}
+    {C : Set E} : ThresholdSignificant μ θ C ↔ ∃ y ∈ C, θ C < μ y :=
+  ⟨fun ⟨y, hy, h⟩ ↦ ⟨y, hy, h⟩, fun ⟨y, hy, h⟩ ↦ ⟨y, hy, h⟩⟩
+
 /-! ### Set-standard comparison
 
 The than-clause of a comparative supplies not a point but a *set* of degrees.
@@ -197,8 +216,8 @@ theorem Comparison.bounds_singleton {α : Type*} [Preorder α] (c : Comparison) 
 
 /-! ### The antonymous comparison -/
 
-/-- The dual of a comparison reads it on the reversed scale: `>` becomes `<`, `≥` becomes `≤`,
-and `=` is fixed. -/
+/-- The dual of a comparison reads it on the reversed scale, turning `>` into `<` and `≥` into `≤`
+and fixing `=`. -/
 def Comparison.dual : Comparison → Comparison
   | .eq => .eq
   | .ge => .le
@@ -218,7 +237,7 @@ theorem Comparison.dual_involutive : Function.Involutive Comparison.dual := fun 
 @[simp] theorem Comparison.dual_dual (c : Comparison) : c.dual.dual = c :=
   Comparison.dual_involutive c
 
-/-- Antonymy preserves strictness: *fewer than* is Class A, as *more than* is. -/
+/-- Antonymy preserves strictness, so *fewer than* is Class A as *more than* is. -/
 @[simp] theorem Comparison.isStrict_dual (c : Comparison) : c.dual.isStrict ↔ c.isStrict := by
   cases c <;> exact Iff.rfl
 
@@ -226,7 +245,7 @@ section Dual
 
 variable {E α : Type*} [Preorder α] (c : Comparison)
 
-/-- The dual comparison exchanges its arguments: *a is shorter than b* exactly when *b is
+/-- The dual comparison exchanges its arguments, so *a is shorter than b* exactly when *b is
 taller than a*. -/
 theorem Comparison.rel_dual (a b : α) : c.dual.rel a b ↔ c.rel b a := by
   cases c <;> simp only [Comparison.dual, Comparison.rel, eq_comm]
@@ -390,8 +409,8 @@ theorem maxOnScale_ge_eq {α : Type*} [Preorder α] (X : Set α) :
   · exact le_refl _
   · exact hdom y hy hne
 
-/-- Maximality under `<` picks the least element: on a partial order, strictly dominating the other
-elements of `X` on the `<` scale is being the least. -/
+/-- Maximality under `<` picks the least element, since on a partial order strictly dominating
+the other elements of `X` on the `<` scale is being the least. -/
 theorem maxOnScale_lt_eq {α : Type*} [PartialOrder α] (X : Set α) :
     maxOnScale .lt X = {x | IsLeast X x} := by
   ext x
