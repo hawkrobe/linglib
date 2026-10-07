@@ -119,25 +119,20 @@ def pred : Node → Node
   | .laryngeal | .supralaryngeal => .root
   | .manner | .place => .supralaryngeal
 
-/-- A node with its ancestors, the iterates of `pred`. -/
-def up (n : Node) : Finset Node := (Finset.range (Fintype.card Node)).image (pred^[·] n)
+/-- The class nodes form the rooted tree of `pred`, the root as `⊥` and the parent as
+`Order.pred`. -/
+def tree : ParentTree Node :=
+  ⟨pred, .root, rfl, fun n ↦ ⟨Fintype.card Node, by revert n; decide⟩⟩
 
-instance : PartialOrder Node := PartialOrder.lift up (by decide)
+instance : PartialOrder Node := tree.partialOrder
 
-instance : DecidableLE Node := fun a b ↦ inferInstanceAs (Decidable (up a ⊆ up b))
+instance : DecidableLE Node := tree.decidableLE
 
 instance : DecidableLT Node := decidableLTOfDecidableLE
 
-instance : OrderBot Node where
-  bot := .root
-  bot_le := by decide
+instance : OrderBot Node := tree.orderBot
 
-/-- The parent as the predecessor. -/
-instance : PredOrder Node where
-  pred := pred
-  pred_le := by decide
-  min_of_le_pred := by decide
-  le_pred_of_lt := by decide
+instance : PredOrder Node := tree.predOrder
 
 end Node
 

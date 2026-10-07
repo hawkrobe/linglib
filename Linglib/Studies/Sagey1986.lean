@@ -59,8 +59,8 @@ open Phonology Phonology.FeatureGeometry Autosegmental
 
 /-! ### The articulator geometry -/
 
-/-- The class nodes: the root; the laryngeal and supralaryngeal nodes; the soft palate and
-place nodes under the latter; the articulators labial, coronal and dorsal under place. -/
+/-- The class nodes are the root, the laryngeal and supralaryngeal nodes, the soft palate and
+place nodes under the latter, and the articulators labial, coronal and dorsal under place. -/
 inductive Node where
   | root
   | laryngeal
@@ -81,25 +81,20 @@ def pred : Node → Node
   | .softPalate | .place => .supralaryngeal
   | .labial | .coronal | .dorsal => .place
 
-/-- A node with its ancestors: the iterates of `pred`. -/
-def up (n : Node) : Finset Node := (Finset.range (Fintype.card Node)).image (pred^[·] n)
+/-- The class nodes form the rooted tree of `pred`, the root as `⊥` and the parent as
+`Order.pred`. -/
+def tree : ParentTree Node :=
+  ⟨pred, .root, rfl, fun n ↦ ⟨Fintype.card Node, by revert n; decide⟩⟩
 
-instance : PartialOrder Node := PartialOrder.lift up (by decide)
+instance : PartialOrder Node := tree.partialOrder
 
-instance : DecidableLE Node := fun a b ↦ inferInstanceAs (Decidable (up a ⊆ up b))
+instance : DecidableLE Node := tree.decidableLE
 
 instance : DecidableLT Node := decidableLTOfDecidableLE
 
-instance : OrderBot Node where
-  bot := .root
-  bot_le := by decide
+instance : OrderBot Node := tree.orderBot
 
-/-- The parent as the predecessor. -/
-instance : PredOrder Node where
-  pred := pred
-  pred_le := by decide
-  min_of_le_pred := by decide
-  le_pred_of_lt := by decide
+instance : PredOrder Node := tree.predOrder
 
 /-- The class feature of an articulator node, present exactly when the articulator is active
 in the segment. -/
@@ -119,7 +114,7 @@ theorem not_le_of_mem_articulators {a b : Node} (ha : a ∈ articulators) (hb : 
 
 end Node
 
-/-- The class node each terminal feature hangs from: the degree-of-closure features from the
+/-- Each terminal feature hangs from a class node: the degree-of-closure features from the
 root, the glottal features from the laryngeal node, nasality from the soft palate, laterality
 from the supralaryngeal node, and the place features from their articulators. -/
 def node : Feature → Option Node
@@ -173,7 +168,7 @@ theorem isComplex_of_round_of_coronal {s : Segment} (hs : s.Licensed) (hr : (s .
   exact Finset.one_lt_card.2 ⟨.labial, by simp [Segment.articulators, hl], .coronal,
     by simp [Segment.articulators, hc], by decide⟩
 
-/-- The double occlusions of Halle's survey and the Kinyarwanda triple occlusion: the
+/-- The double occlusions of Halle's survey and the Kinyarwanda triple occlusion are the
 labiovelar, labiocoronal, coronovelar and labiocoronovelar stops. -/
 def kp : Segment := Segment.ofSpecs [(.consonantal, true), (.continuant, false),
   (.labial, true), (.dorsal, true)]
@@ -230,15 +225,15 @@ theorem Association.Valid.not_crosses {a b : Association T} (ha : a.Valid) (hb :
 
 /-- A set of association lines satisfies the No-Crossing Constraint when no two of them
 cross. -/
-def IsNoCrossing (S : Set (Association T)) : Prop := S.Pairwise λ a b => ¬ a.Crosses b
+def IsNoCrossing (S : Set (Association T)) : Prop := S.Pairwise fun a b ↦ ¬ a.Crosses b
 
 /-- Any set of valid associations satisfies the No-Crossing Constraint. -/
 theorem isNoCrossing_of_forall_valid {S : Set (Association T)} (h : ∀ a ∈ S, a.Valid) :
     IsNoCrossing S :=
-  λ _ ha _ hb _ => (h _ ha).not_crosses (h _ hb)
+  fun _ ha _ hb _ ↦ (h _ ha).not_crosses (h _ hb)
 
-/-- A realisation of two tiers in time: intervals for the timing positions and for the melodic
-elements, each tier's order realised as precedence. -/
+/-- A realisation places two tiers in time, with intervals for the timing positions and for the
+melodic elements and each tier's order realised as precedence. -/
 structure TierRealization (T : Type*) [LinearOrder T] where
   timing : ℕ → NonemptyInterval T
   melody : ℕ → NonemptyInterval T
