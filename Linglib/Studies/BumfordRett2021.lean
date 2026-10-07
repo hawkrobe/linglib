@@ -30,6 +30,8 @@ is, and so whether the model recovers Rett's categorical classification, is a nu
 * `antonymsExclusive_iff_not_isPolarInvariant`, `expectedDeviation_congr_of_antonymsExclusive`:
   the antonyms exclude each other exactly in the constructions Rett classifies as polar-variant,
   and there each antonym's listener ignores the other antonym's cost.
+* `evaluativity_balances`: weighted by how often the speaker makes each utterance, the listener's
+  expected deviations sum to zero, so an antonym said rarely carries the more extreme inference.
 
 ## Implementation notes
 
@@ -51,15 +53,16 @@ is, and so whether the model recovers Rett's categorical classification, is a nu
 
 ## TODO
 
-* `costlier_antonym_more_evaluative` holds in every model checked numerically, including random
-  priors and thresholds. Both constructions reduce to the deviation `X` alone, with posterior
-  weight `g X * ℓ X` for the symmetric prior `g` and a pooled speaker likelihood `ℓ`, increasing in
-  `X`. When silence never competes, the two antonyms' shares sum to one at each point, so the claim
-  says that the cheaper antonym is uttered more often, which pairing `X` with `-X` shows. In
-  general the claim for every symmetric prior is the copositivity of a quadratic form in `g`. It
-  follows from two facts about the ratio `ρ` of the costlier antonym's `ℓ` to the cheaper one's,
-  that `ρ (-X) ≤ ρ X` for `X > 0` and that `ρ` is increasing on `X ≥ 0`, which hold numerically but
-  are unproved.
+* In the positive construction and the exact equative the costlier antonym should be the more
+  evaluative one at every rationality and cost, as it is in every model checked numerically,
+  including random priors and thresholds. Without silence it follows from
+  `evaluativity_balances`: the antonyms' expected deviations are then inversely proportional to
+  how often each is said, and pairing each point with its reflection shows the costlier antonym is
+  said less often. With silence, both constructions reduce to the deviation `X` alone, with
+  posterior weight `g X * ℓ X`, and the claim for every symmetric prior `g` is the copositivity of a
+  quadratic form. It follows from two facts about the ratio `ρ` of the costlier antonym's `ℓ` to the
+  cheaper one's, that `ρ (-X) ≤ ρ X` for `X > 0` and that `ρ` is increasing on `X ≥ 0`, which hold
+  numerically but are unproved.
 * For the minimum equative the costlier antonym is not always the more evaluative one: it fails
   at high rationality when the two costs are close.
 * The stable iterate of the listener.
@@ -569,6 +572,67 @@ theorem positive_centre_uniform (hα : 0 < α) (hc0 : ∀ u, cost u ≠ 0) (hcto
 
 end Centre
 
+/-! ### Evaluativity balances across the speaker's choices -/
+
+section Balance
+
+variable {α : ℝ} {cost : Utterance → ℝ≥0∞}
+
+/-- The speakers produce a probability distribution over the utterances at every world and
+offset, since silence is true everywhere. -/
+theorem isMarkovKernel_familySpeaker (hα : 0 ≤ α) (hc0 : ∀ u, cost u ≠ 0)
+    (hctop : ∀ u, cost u ≠ ∞) (c : Option Comparison) :
+    IsMarkovKernel (RSA.familySpeaker (literal c) α cost) :=
+  ⟨fun q ↦ by
+    rw [RSA.familySpeaker_apply]
+    exact (RSA.isMarkovKernel_speaker hα hc0 hctop (literal c q.2)
+      (fun u w ↦ literal_apply_le_one c q.2 u w)
+      (fun w ↦ ⟨.silence, literal_ne_zero (c := c) trivial⟩)).isProbabilityMeasure q.1⟩
+
+/-- Weighted by how often the speaker makes each utterance, the listener's expected deviations sum
+to the prior's, which is zero. The listener's beliefs average back to the prior, so an antonym the
+speaker says rarely carries a more extreme inference. -/
+theorem evaluativity_balances (hα : 0 ≤ α) (hc0 : ∀ u, cost u ≠ 0) (hctop : ∀ u, cost u ≠ ∞)
+    (c : Option Comparison) :
+    ∑ u, (RSA.familySpeaker (literal c) α cost ∘ₘ prior.prod Measure.count).real {u} *
+      ∫ w, ((measured c w - w.centre : ℤ) : ℝ) ∂(listener c α cost u).fst = 0 := by
+  have := isMarkovKernel_familySpeaker hα hc0 hctop c
+  set f : World × Finset.Icc (-4 : ℤ) 4 → ℝ := fun q ↦ ((measured c q.1 - q.1.centre : ℤ) : ℝ)
+  have hint : ∀ u, ∫ w, ((measured c w - w.centre : ℤ) : ℝ) ∂(listener c α cost u).fst =
+      ∑ q, (listener c α cost u).real {q} * f q := fun u ↦ by
+    rw [Measure.fst, integral_map measurable_fst.aemeasurable (by fun_prop),
+      integral_fintype .of_finite]
+    simp [f, smul_eq_mul]
+  have hsym : ∑ q, (prior.prod Measure.count).real {q} * f q = 0 := by
+    set e := World.reflect_involutive.toPerm.prodCongr negate_involutive.toPerm
+    have hneg : ∑ q, (prior.prod Measure.count).real {e q} * f (e q) =
+        -∑ q, (prior.prod Measure.count).real {q} * f q := by
+      rw [← Finset.sum_neg_distrib]
+      refine Finset.sum_congr rfl fun q _ ↦ ?_
+      have hm : (prior.prod Measure.count).real {(q.1.reflect, negate q.2)} =
+          (prior.prod Measure.count).real {q} := by
+        rw [measureReal_def, measureReal_def, prior_prod_count_singleton,
+          prior_prod_count_singleton, prior_reflect]
+      have hf : f (q.1.reflect, negate q.2) = -f q := by
+        simp only [f]; rw [measured_reflect]; push_cast; ring
+      simp only [e, Equiv.prodCongr_apply, Prod.map, Function.Involutive.coe_toPerm]
+      rw [hm, hf]; ring
+    rw [e.sum_comp (fun q ↦ (prior.prod Measure.count).real {q} * f q)] at hneg
+    linarith
+  calc ∑ u, (RSA.familySpeaker (literal c) α cost ∘ₘ prior.prod Measure.count).real {u} *
+        ∫ w, ((measured c w - w.centre : ℤ) : ℝ) ∂(listener c α cost u).fst
+      = ∑ q, (∑ u, (RSA.familySpeaker (literal c) α cost ∘ₘ prior.prod Measure.count).real {u} *
+          (listener c α cost u).real {q}) * f q := by
+        simp_rw [hint, Finset.mul_sum, Finset.sum_mul]
+        rw [Finset.sum_comm]
+        simp_rw [mul_assoc]
+    _ = ∑ q, (prior.prod Measure.count).real {q} * f q := by
+        refine Finset.sum_congr rfl fun q _ ↦ ?_
+        rw [listener, RSA.familyListener, ← Measure.comp_real_singleton, posterior_comp_self]
+    _ = 0 := hsym
+
+end Balance
+
 /-! ### Competition between the antonyms and Rett's classification
 
 Rett derives the evaluativity of the marked antonym from its competition with an unmarked antonym
@@ -657,16 +721,6 @@ theorem comparative_negative_eq_neg (hα : 0 < α) (hc0 : ∀ u, cost u ≠ 0)
     expectedDeviation_congr_of_antonymsExclusive (cost := cost ∘ Utterance.antonym) (cost' := cost')
       (p := .positive) hα (fun _ ↦ hc0 _) (fun _ ↦ hctop _) hc0' hctop'
       antonymsExclusive_comparative hp.symm hs.symm]
-
-/-- In the positive construction and the exact equative, whose antonyms between them cover the
-scale under every offset, the costlier antonym is the more evaluative one, at every rationality and
-every cost of silence. With the paper's costs the first listener's values are 2.08 against −3.18
-for the positive and 0.84 against −1.06 for the exact equative. -/
-theorem costlier_antonym_more_evaluative (hα : 0 < α) (hc0 : ∀ u, cost u ≠ 0)
-    (hctop : ∀ u, cost u ≠ ∞) {c : Option Comparison} (hc : c = none ∨ c = some .eq)
-    (hcost : cost (.say .negative) < cost (.say .positive)) :
-    expectedDeviation c α cost .positive < -expectedDeviation c α cost .negative := by
-  sorry
 
 end Competition
 
