@@ -110,7 +110,7 @@ theorem proportionalMeasure_mem_unit_interval [Preorder α]
 
 /-- Rescaling the underlying measure leaves proportions unchanged: only the cardinal
 reading depends on the unit of measurement. -/
-theorem proportionalMeasure_scale_invariant (k : ℚ) (hk : k ≠ 0)
+theorem proportionalMeasure_const_mul (k : ℚ) (hk : k ≠ 0)
     (tot y : α) (htot : μ tot ≠ 0) :
     proportionalMeasure (λ x => k * μ x) tot y = proportionalMeasure μ tot y := by
   rw [proportionalMeasure_eq _ tot y (mul_ne_zero hk htot),

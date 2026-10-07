@@ -34,7 +34,7 @@ strictly monotone change of scale.
 * `Degree.Comparison.overSet_singleton`: a singleton standard is a point standard.
 * `Degree.Comparison.rel_dual`, `Degree.Comparison.over_dual`: antonymy as argument exchange and
   as scale reversal.
-* `Degree.Comparison.over_comp`: invariance under a strictly monotone change of scale.
+* `Degree.Comparison.over_comp`: invariance under an order embedding of the scale.
 * `Degree.Comparison.boundary_mem`: the Class A/B distinction as endpoint membership.
 
 ## References
@@ -365,14 +365,30 @@ theorem Comparison.lt_iff_separating_threshold {x y : E} :
   · rintro ⟨θ, hx, hy⟩
     exact lt_of_lt_of_le (not_le.mp hy) hx
 
-/-- A comparison is invariant under a strictly monotone change of scale. -/
-theorem Comparison.over_comp {β : Type*} [Preorder β] {f : α → β} (hf : StrictMono f)
-    (c : Comparison) (n : α) : c.over (f ∘ μ) (f n) = c.over μ n := by
-  ext x
-  cases c <;> simp [Comparison.over, Comparison.interval, hf.lt_iff_lt, hf.le_iff_le,
-    hf.injective.eq_iff]
-
 end ThresholdLinear
+
+/-! ### Change of scale -/
+
+section Comp
+
+variable {E α β : Type*} [Preorder α] [Preorder β] (μ : E → α)
+
+/-- A comparison is invariant under an order embedding of the scale that moves the threshold
+along with the measure. -/
+theorem Comparison.over_comp (f : α ↪o β) (c : Comparison) (n : α) :
+    c.over (f ∘ μ) (f n) = c.over μ n := by
+  ext x
+  cases c <;> simp [Comparison.over, Comparison.interval, f.lt_iff_lt, f.le_iff_le,
+    f.injective.eq_iff]
+
+/-- A comparison with a fixed threshold is invariant under the automorphisms of the scale that
+fix the threshold. -/
+theorem Comparison.over_comp_of_isFixedPt (g : α ≃o α) (c : Comparison) {n : α}
+    (hn : Function.IsFixedPt g n) : c.over (g ∘ μ) n = c.over μ n := by
+  conv_lhs => rw [← hn.eq]
+  exact Comparison.over_comp μ g.toOrderEmbedding c n
+
+end Comp
 
 /-! ### Scale-sensitive maximality
 

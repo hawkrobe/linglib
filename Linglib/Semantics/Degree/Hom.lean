@@ -55,7 +55,8 @@ threshold induces (`exists_isUpperSet_forall_ne_preimage`).
 * `cresswellSetoid_le_iff`, `factors_through_cresswellDegree`: Cresswell's degrees are the
   antisymmetrization of the comparison; on an equivalence relation the construction returns
   its classes (`cresswellSetoid_setoid`).
-* `maxComparative_comp`, `positive_not_natural`: which operators are natural in the scale.
+* `maxComparative_comp`, `positive_not_natural`, `cross_scale_not_natural`: which operators
+  survive a change of scale.
 
 ## References
 
@@ -356,62 +357,51 @@ theorem cresswellSetoid_setoid {E : Type*} (s : Setoid E) : cresswellSetoid s = 
 
 /-! ### Transport: which operators are natural in the scale
 
-The functoriality table for degree operators under change of scale
-representation (a `StrictMono` map between scales — precisely the
-`admissibleMeasure` condition, so an admissible measure IS a
-scale-morphism): comparatives, equatives, and the max-quantified
-comparative are invariant; the positive form transports only if the
-threshold rides along. This derives the classic observation that
-comparatives are context-independent while the positive form needs a
-contextually fixed standard: *pos* is the one non-natural operator. The
-point-standard comparatives and equatives are `Comparison.over_comp`.
-Comparisons across two scales are natural only between universal degrees
+How degree operators fare under a change of scale, an order embedding `f : D ↪o D'` applied to
+the measure. Comparatives, equatives and the max-quantified comparative are invariant
+(`Comparison.over_comp`, `maxComparative_comp`). The positive form is invariant only when its
+threshold moves with the measure, or under the automorphisms that fix the threshold
+(`Comparison.over_comp_of_isFixedPt`); with a fixed threshold some rescaling changes the verdict
+(`positive_not_natural`), the formal face of the positive form's need for a contextual standard.
+A comparison between measures on two scales survives rescaling both together but not rescaling
+one alone (`cross_scale_not_natural`); universal degrees survive independent rescalings
 (`Degree/UniversalScale`). -/
 
 section TransportMax
 
-variable {Entity D D' : Type*} [LinearOrder D] [LinearOrder D']
-  {f : D → D'} {μ : Entity → D}
+variable {Entity D D' : Type*} [LinearOrder D] [LinearOrder D'] {μ : Entity → D}
 
-/-- The max-quantified comparative is invariant under change of scale
-    representation. Not immediate: `thanDegrees` is a downset and images
-    of downsets need not be downsets, but the greatest element rides
-    along (`f δ` is greatest in the transported set, and conversely any
-    greatest transported degree is `f` of a witness measure). -/
-theorem maxComparative_comp (hf : StrictMono f)
-    (Pmatrix Pthan : Entity → Prop) :
+/-- The max-quantified comparative is invariant under an order embedding of the scale. Not
+immediate: `thanDegrees` is a downset and images of downsets need not be downsets, but the
+greatest element rides along. -/
+theorem maxComparative_comp (f : D ↪o D') (Pmatrix Pthan : Entity → Prop) :
     maxComparative Pmatrix Pthan (f ∘ μ) ↔ maxComparative Pmatrix Pthan μ := by
   constructor
   · rintro ⟨δ', ⟨⟨x₀, hQ, hδx₀⟩, hub⟩, x, hP, hlt⟩
-    have hx₀mem : f (μ x₀) ∈ thanDegrees Pthan (f ∘ μ) := ⟨x₀, hQ, le_rfl⟩
-    have hδeq : δ' = f (μ x₀) := le_antisymm hδx₀ (hub hx₀mem)
-    refine ⟨μ x₀, ⟨⟨x₀, hQ, le_rfl⟩, ?_⟩, x, hP, ?_⟩
-    · rintro d ⟨y, hQy, hdy⟩
-      have : f (μ y) ≤ δ' := hub ⟨y, hQy, le_rfl⟩
-      exact hdy.trans (hf.le_iff_le.mp (hδeq ▸ this))
-    · exact hf.lt_iff_lt.mp (hδeq ▸ hlt)
-  · rintro ⟨δ, ⟨hδmem, hub⟩, x, hP, hlt⟩
-    refine ⟨f δ, ⟨?_, ?_⟩, x, hP, hf hlt⟩
-    · obtain ⟨y, hQy, hδy⟩ := hδmem
-      exact ⟨y, hQy, hf.monotone hδy⟩
-    · rintro d ⟨y, hQy, hdy⟩
-      exact hdy.trans (hf.monotone (hub ⟨y, hQy, le_rfl⟩))
+    have hδeq : δ' = f (μ x₀) := le_antisymm hδx₀ (hub ⟨x₀, hQ, le_rfl⟩)
+    refine ⟨μ x₀, ⟨⟨x₀, hQ, le_rfl⟩, ?_⟩, x, hP, f.lt_iff_lt.mp (hδeq ▸ hlt)⟩
+    rintro d ⟨y, hQy, hdy⟩
+    exact hdy.trans (f.le_iff_le.mp (hδeq ▸ hub ⟨y, hQy, le_rfl⟩))
+  · rintro ⟨δ, ⟨⟨y, hQy, hδy⟩, hub⟩, x, hP, hlt⟩
+    refine ⟨f δ, ⟨⟨y, hQy, f.monotone hδy⟩, ?_⟩, x, hP, f.strictMono hlt⟩
+    rintro d ⟨y, hQy, hdy⟩
+    exact hdy.trans (f.monotone (hub ⟨y, hQy, le_rfl⟩))
 
-/-- The positive form transports only as a *pair*: rescaling the measure
-    commutes with membership when the threshold is rescaled too. -/
-theorem mem_ge_over_comp (hf : StrictMono f) (θ : D) (x : Entity) :
-    x ∈ Degree.Comparison.ge.over (f ∘ μ) (f θ) ↔ x ∈ Degree.Comparison.ge.over μ θ :=
-  hf.le_iff_le
-
-/-- With a *fixed* threshold the positive form is not natural: some
-    strictly monotone rescaling changes the verdict. The one non-natural
-    operator in the table — the formal face of the positive form's
-    context-dependence. -/
+/-- With a fixed threshold the positive form is not natural: some order embedding of the scale
+changes the verdict. -/
 theorem positive_not_natural :
-    ∃ f : ℚ → ℚ, StrictMono f ∧ ∃ (μ : ℚ → ℚ) (θ x : ℚ),
-      x ∈ Degree.Comparison.ge.over μ θ ∧ x ∉ Degree.Comparison.ge.over (f ∘ μ) θ := by
-  refine ⟨(· - 1), fun a b h => by simpa, id, 0, 0, ?_, ?_⟩ <;>
-    simp [Degree.Comparison.mem_over, Degree.Comparison.rel]
+    ∃ f : ℚ ↪o ℚ, ∃ (μ : ℚ → ℚ) (θ x : ℚ),
+      x ∈ Comparison.ge.over μ θ ∧ x ∉ Comparison.ge.over (f ∘ μ) θ :=
+  ⟨OrderEmbedding.ofStrictMono (· - 1) fun _ _ h ↦ by simpa, id, 0, 0, by simp,
+    by simp [Comparison.mem_over, Comparison.rel]⟩
+
+/-- Comparing two measures across scales is not invariant under an order embedding of one of
+them, unlike comparing two measures on one scale rescaled together (`Comparison.over_comp`). -/
+theorem cross_scale_not_natural :
+    ∃ f : ℚ ↪o ℚ, ∃ (μ ν : ℚ → ℚ) (x y : ℚ),
+      x ∈ Comparison.gt.over μ (ν y) ∧ x ∉ Comparison.gt.over (f ∘ μ) (ν y) :=
+  ⟨OrderEmbedding.ofStrictMono (· - 1) fun _ _ h ↦ by simpa, id, id, 1, 0, by simp,
+    by simp [Comparison.mem_over, Comparison.rel]⟩
 
 end TransportMax
 
