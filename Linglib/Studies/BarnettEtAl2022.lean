@@ -1,468 +1,689 @@
 module
 
 public import Linglib.Core.Combinatorics.SetFamily.FourFunctions
-public import Linglib.Core.Order.Hom.Order
 public import Linglib.Core.Probability.Kernel.OfWeights
 public import Linglib.Core.Probability.Kernel.Posterior
 public import Linglib.Core.Probability.UniformOn
-public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+public import Linglib.Pragmatics.RSA.Basic
+public import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
 public import Mathlib.Data.Fin.Tuple.Basic
 public import Mathlib.Data.Fin.VecNotation
-public import Mathlib.Tactic.FieldSimp
+public import Mathlib.Data.List.GetD
 public import Mathlib.Order.UpperLower.Basic
 
 /-!
-# Barnett, Griffiths and Hawkins (2022): A pragmatic account of the weak evidence effect
+# Barnett, Griffiths and Hawkins (2022): A Pragmatic Account of the Weak Evidence Effect
 
-This file formalizes the paper's pragmatic listener for the Stick Contest. A speaker with a
-persuasive goal chooses among the true sticks with weight `L0(longer | u)^β`, so a listener who
-expects such a speaker discounts what they are shown: the states in which stronger evidence was
-available make the speaker's actual choice less likely. The hidden sticks form a distributive
-lattice on which *longer* is an upper set and the speaker's share of the shown stick is
-antitone, so the FKG inequality gives the discount for every stick and every bias `β ≥ 0`. The
-same inequality makes the pragmatic belief monotone in the stick shown, so the evidence that
-backfires is always an initial segment of the weakest evidence. The literal listener's beliefs,
-the `β = 0` column of the simulation, are ratios of multiset counts.
+In the Stick Contest a judge decides whether five hidden sticks, each one to nine inches long,
+are longer than five inches on average, after a contestant who wants the verdict *longer*
+reveals one of them. A literal listener takes the stick at face value. A persuasive speaker reveals a stick
+with weight `L0(longer | u)^β`, so a pragmatic listener who expects such a speaker takes a weak
+stick as a sign that no stronger one was available.
+
+The pragmatic listener discounts every stick and still believes more in *longer* the longer the
+stick shown. The sticks that backfire, evidence for *longer* that lowers the belief in it below
+the prior, therefore form an interval, and there are none without a persuasive goal. As the
+bias grows the speaker shows the longest stick, the listener's belief tends to the probability
+of *longer* given that the longest stick has the length shown, and the sticks of length five to
+seven backfire while the longer ones do not.
+
+## Main results
+
+* `pragmaticListener_real_le_literal`: the pragmatic listener discounts every stick.
+* `pragmaticListener_real_mono`: the belief in *longer* grows with the stick shown.
+* `backfires_zero`, `ordConnected_backfires`: the backfiring sticks form an interval, empty
+  without a persuasive goal.
+* `tendsto_speaker_real_singleton_atTop`, `tendsto_pragmaticListener_real_atTop`: as the bias
+  grows the speaker shows the longest stick and the listener conditions on it being the longest.
+* `eventually_backfires_eq`: for a strongly biased speaker the backfiring sticks are those of
+  length five to seven.
 
 ## Implementation notes
 
-* The model follows the paper's simulation code: the hidden sticks are a multiset of lengths
-  `1`–`9`, *longer* is a total of at least `25`, and the speaker normalizes over the five
-  positions. The listener's state is the hidden sticks, as in the code's Bayes rule, so the
-  speaker enters as the likelihood of the shown stick given them, a finite kernel that is not
-  Markov. Normalizing over the distinct true lengths instead, as the paper's speaker equation
-  reads, would make the share non-monotone in the hidden sticks.
-* A multiset of `n` sticks is a monotone map `Fin n →o Fin 9`, a distributive lattice under the
-  pointwise order. Its `Fintype` instance enumerates the sorted vectors one stick at a time, so
-  the multiset counts are decided.
+* As in the authors' code, the sticks are independent and uniform, an average of exactly five
+  counts as *longer*, the speaker chooses which of the five sticks to reveal, and the literal
+  listener conditions on one given stick having the length shown. The verdict is computed
+  exactly, where the code's floating-point mean misclassifies some ties.
+* The paper's Figure 3A used sticks of length `0` to `10` and measures the effect against `0.5`.
+  Here sticks run from `1` to `9`, as in the experiment and the fitted model, and the effect is
+  measured against the prior; with these sticks a shown `8` does not backfire.
+* Counts are tabulated by total one stick at a time, so the kernel never enumerates tuples.
 
 ## TODO
 
-* The simulation's pragmatic values (a shown `6` backfires at `β = 2`, a shown `9` does not,
-  the backfiring range widens with `β`) are numerical and not certified. The `β → ∞` listener
-  conditions on the shown stick being the longest, a count ratio under which every stick up to
-  `7` backfires; the limit theorem would give the effect for large bias.
+* The finite-bias values of the simulation are numerical: near the fitted bias `β ≈ 2` sticks of
+  length five and six backfire, and the backfiring range widens with `β`. The belief itself is
+  not antitone in `β` (a shown `9` is not), so the widening is a property of the set.
 
 ## References
 
 * [barnett-griffiths-hawkins-2022]
+* [holley-1974]
 -/
 
 @[expose] public section
 
-open Finset Matrix MeasureTheory ProbabilityTheory
+open Finset Filter MeasureTheory ProbabilityTheory Topology
 open scoped ENNReal
 
 namespace BarnettEtAl2022
 
-/-! ### Beliefs under a weight -/
-
-section Belief
-
-variable {X : Type*} [Fintype X] (μ : X → ℝ) (P Q : X → Prop) [DecidablePred P]
-  [DecidablePred Q]
-
-/-- The belief in `P` under the weight `μ`. -/
-noncomputable def belief : ℝ := (∑ x ∈ univ.filter P, μ x) / ∑ x, μ x
-
-/-- A weight is log-supermodular when it is positively correlated across meets and joins. -/
-def LogSupermodular [Lattice X] : Prop := ∀ a b, μ a * μ b ≤ μ (a ⊓ b) * μ (a ⊔ b)
-
-variable {μ P Q}
-
-theorem belief_nonneg (hμ : 0 ≤ μ) : 0 ≤ belief μ P :=
-  div_nonneg (sum_nonneg λ x _ => hμ x) (sum_nonneg λ x _ => hμ x)
-
-theorem belief_pos (hμ : 0 ≤ μ) {x : X} (hx : 0 < μ x) (hP : P x) : 0 < belief μ P :=
-  div_pos (sum_pos' (λ y _ => hμ y) ⟨x, mem_filter.2 ⟨mem_univ x, hP⟩, hx⟩)
-    (sum_pos' (λ y _ => hμ y) ⟨x, mem_univ x, hx⟩)
-
-/-- A weaker event has a smaller belief. -/
-theorem belief_le_belief (hμ : 0 ≤ μ) (h : ∀ x, P x → Q x) : belief μ P ≤ belief μ Q :=
-  div_le_div_of_nonneg_right
-    (sum_le_sum_of_subset_of_nonneg (monotone_filter_right _ λ x _ => h x) λ x _ _ => hμ x)
-    (sum_nonneg λ x _ => hμ x)
-
-/-- Scaling the weight leaves beliefs unchanged. -/
-theorem belief_mul_const {c : ℝ} (hc : c ≠ 0) : belief (μ * λ _ => c) P = belief μ P := by
-  simp only [belief, Pi.mul_apply, ← sum_mul]
-  rw [mul_div_mul_right _ _ hc]
-
-private theorem sum_pos_of_sum_mul_pos {s : X → ℝ} (hμ₀ : 0 ≤ μ)
-    (hpos : 0 < ∑ x, μ x * s x) : 0 < ∑ x, μ x := by
-  refine (sum_nonneg λ x _ => hμ₀ x).lt_of_ne λ h => hpos.ne' ?_
-  rw [eq_comm, sum_eq_zero_iff_of_nonneg (λ x _ => hμ₀ x)] at h
-  exact sum_eq_zero λ x _ => by rw [h x (mem_univ x), zero_mul]
-
-theorem belief_one : belief 1 P = (univ.filter P).card / Fintype.card X := by
-  simp [belief]
-
-private theorem isUpperSet_coe_filter [Preorder X] (hP : IsUpperSet {x | P x}) :
-    IsUpperSet ((univ.filter P : Finset X) : Set X) := by simpa using hP
-
-/-- Reweighting by an antitone factor lowers the belief in an upper set, under a
-log-supermodular weight. -/
-theorem belief_mul_le [DistribLattice X] {s : X → ℝ} (hμ₀ : 0 ≤ μ) (hs₀ : 0 ≤ s)
-    (hs : Antitone s) (hP : IsUpperSet {x | P x}) (hμ : LogSupermodular μ)
-    (hpos : 0 < ∑ x, μ x * s x) : belief (μ * s) P ≤ belief μ P := by
-  classical
-  have key := fkg_antitone_isUpperSet hμ₀ hs₀ hs (isUpperSet_coe_filter hP) hμ
-  simp only [belief, Pi.mul_apply]
-  rw [div_le_div_iff₀ hpos (sum_pos_of_sum_mul_pos hμ₀ hpos)]
-  linarith [key]
-
-/-- Reweighting by a monotone factor raises the belief in an upper set, under a
-log-supermodular weight. -/
-theorem belief_le_belief_mul [DistribLattice X] {s : X → ℝ} (hμ₀ : 0 ≤ μ) (hs₀ : 0 ≤ s)
-    (hs : Monotone s) (hP : IsUpperSet {x | P x}) (hμ : LogSupermodular μ)
-    (hpos : 0 < ∑ x, μ x * s x) : belief μ P ≤ belief (μ * s) P := by
-  classical
-  have key := fkg_monotone_isUpperSet hμ₀ hs₀ hs (isUpperSet_coe_filter hP) hμ
-  simp only [belief, Pi.mul_apply]
-  rw [div_le_div_iff₀ (sum_pos_of_sum_mul_pos hμ₀ hpos) hpos]
-  linarith [key]
-
-end Belief
-
-/-! ### Multisets of sticks -/
-
-/-- `n` hidden sticks of lengths `1`–`9`, as a multiset: a monotone map. -/
-abbrev Sticks (n : ℕ) := Fin n →o Fin 9
-
-variable {n : ℕ}
-
-instance : DecidablePred (Monotone : (Fin n → Fin 9) → Prop) :=
-  λ x => decidable_of_iff (∀ i j, i ≤ j → x i ≤ x j) Iff.rfl
-
-/-- The sticks are sorted and at least `lo`. -/
-def SortedFrom (lo : Fin 9) (x : Fin n → Fin 9) : Prop := Monotone x ∧ ∀ i, lo ≤ x i
-
-theorem sortedFrom_cons {lo a : Fin 9} {x : Fin n → Fin 9} :
-    SortedFrom lo (vecCons a x) ↔ lo ≤ a ∧ SortedFrom a x := by
-  constructor
-  · rintro ⟨hm, hlo⟩
-    refine ⟨by simpa using hlo 0, ?_, λ i => by simpa using hm (Fin.zero_le i.succ)⟩
-    have := hm.comp Fin.strictMono_succ.monotone
-    simpa [Function.comp_def] using this
-  · rintro ⟨hla, hm, hlo⟩
-    refine ⟨?_, λ i => Fin.cases hla (λ j => hla.trans (hlo j)) i⟩
-    rw [Fin.monotone_iff_le_succ]
-    intro i
-    cases n with
-    | zero => exact i.elim0
-    | succ n =>
-      refine Fin.cases ?_ (λ j => ?_) i
-      · simpa using hlo 0
-      · simpa using Fin.monotone_iff_le_succ.1 hm j
-
-/-- Prepending a stick. -/
-def consEmb (a : Fin 9) : (Fin n → Fin 9) ↪ (Fin (n + 1) → Fin 9) :=
-  ⟨vecCons a, λ _ _ h => by simpa using congrArg vecTail h⟩
-
-theorem pairwiseDisjoint_map_consEmb (s : Set (Fin 9))
-    (S : Fin 9 → Finset (Fin n → Fin 9)) :
-    s.PairwiseDisjoint λ a => (S a).map (consEmb a) := λ a _ b _ hab =>
-  disjoint_left.2 λ x hx hx' => hab (by
-    obtain ⟨y, -, rfl⟩ := mem_map.1 hx
-    obtain ⟨z, -, hz⟩ := mem_map.1 hx'
-    have hz' : vecCons b z = vecCons a y := hz
-    simpa using (congrFun hz' 0).symm)
-
-/-- The sorted vectors with entries at least `lo`, enumerated one stick at a time. -/
-def sortedVecs : (n : ℕ) → Fin 9 → Finset (Fin n → Fin 9)
-  | 0, _ => univ
-  | n + 1, lo => (univ.filter (lo ≤ ·)).disjiUnion (λ a => (sortedVecs n a).map (consEmb a))
-      (pairwiseDisjoint_map_consEmb _ _)
-
-theorem mem_sortedVecs {lo : Fin 9} {x : Fin n → Fin 9} :
-    x ∈ sortedVecs n lo ↔ SortedFrom lo x := by
-  induction n generalizing lo with
-  | zero => exact ⟨λ _ => ⟨λ i => i.elim0, λ i => i.elim0⟩, λ _ => mem_univ _⟩
-  | succ n ih =>
-    obtain ⟨a, y, rfl⟩ : ∃ a y, x = vecCons a y := ⟨_, _, (cons_head_tail x).symm⟩
-    rw [sortedVecs, mem_disjiUnion, sortedFrom_cons, ← ih]
-    constructor
-    · rintro ⟨b, hb, hx⟩
-      obtain ⟨z, hz, h⟩ := mem_map.1 hx
-      have h' : vecCons b z = vecCons a y := h
-      obtain ⟨rfl, rfl⟩ : b = a ∧ z = y :=
-        ⟨by simpa using congrFun h' 0, by simpa using congrArg vecTail h'⟩
-      exact ⟨(mem_filter.1 hb).2, hz⟩
-    · rintro ⟨ha, hy⟩
-      exact ⟨a, mem_filter.2 ⟨mem_univ _, ha⟩, mem_map_of_mem (consEmb a) hy⟩
-
-instance : Fintype (Sticks n) where
-  elems := ((sortedVecs n 0).subtype Monotone).map
-    ⟨λ x => ⟨x.1, x.2⟩, λ _ _ h => Subtype.ext (congrArg DFunLike.coe h)⟩
-  complete x := mem_map.2
-    ⟨⟨x, x.mono⟩, mem_subtype.2 (mem_sortedVecs.2 ⟨x.mono, λ _ => Fin.zero_le _⟩), rfl⟩
-
-instance : MeasurableSpace (Sticks n) := ⊤
-
-instance : DiscreteMeasurableSpace (Sticks n) := ⟨λ _ => trivial⟩
-
-instance : Inhabited (Sticks n) := ⟨⊥⟩
-
 /-! ### The Stick Contest -/
 
-/-- The length of a stick. -/
-def length (i : Fin 9) : ℕ := i.val + 1
+/-- The length of a stick, from `1` to `9` inches. -/
+def length (i : Fin 9) : ℕ := i + 1
 
-theorem length_mono : Monotone length := λ _ _ h => Nat.succ_le_succ h
+theorem length_mono : Monotone length := fun _ _ h ↦ Nat.succ_le_succ h
 
-/-- The total length of the hidden sticks. -/
-def total (x : Sticks n) : ℕ := ∑ i, length (x i)
+variable (n : ℕ)
 
-theorem total_mono : Monotone (total (n := n)) :=
-  λ _ _ h => sum_le_sum λ i _ => length_mono (h i)
+/-- The verdict *longer* holds of `n + 1` sticks whose average is at least the midpoint of five
+inches. -/
+def longer : Set (Fin (n + 1) → Fin 9) := {w | 5 * (n + 1) ≤ ∑ i, length (w i)}
 
-/-- The verdict *longer*: the five sticks average at least the midpoint `5`, so with `shown`
-the total of the sticks already shown, the hidden ones bring the total to at least `25`. -/
-def Long (shown : ℕ) (x : Sticks n) : Prop := 25 ≤ shown + total x
+instance (w : Fin (n + 1) → Fin 9) : Decidable (w ∈ longer n) := Nat.decLe _ _
 
-instance (shown : ℕ) : DecidablePred (Long (n := n) shown) := λ _ => Nat.decLe _ _
+theorem isUpperSet_longer : IsUpperSet (longer n) :=
+  fun _ _ hvw hv ↦ hv.trans (sum_le_sum fun i _ ↦ length_mono (hvw i))
 
-theorem long_mono {shown shown' : ℕ} (h : shown ≤ shown') {x : Sticks n} (hx : Long shown x) :
-    Long shown' x :=
-  le_trans hx (Nat.add_le_add_right h _)
+variable {n}
 
-theorem isUpperSet_long (shown : ℕ) : IsUpperSet {x : Sticks n | Long shown x} :=
-  λ _ _ hxy hx => le_trans hx (Nat.add_le_add_left (total_mono hxy) _)
+theorem cons_mem_longer {u : Fin 9} {x : Fin n → Fin 9} :
+    Fin.cons u x ∈ longer n ↔ 5 * (n + 1) ≤ length u + ∑ i, length (x i) := by
+  simp [longer, Fin.sum_univ_succ]
 
-/-! ### The model -/
-
-private theorem setOf_eq_coe_filter {X : Type*} [Fintype X] (P : X → Prop) [DecidablePred P] :
-    {x | P x} = ↑(univ.filter P) := by
-  ext
+/-- Which position holds the shown stick does not matter to the verdict. -/
+theorem insertNth_mem_longer (i : Fin (n + 1)) (u : Fin 9) (x : Fin n → Fin 9) :
+    Fin.insertNth i u x ∈ longer n ↔ Fin.cons u x ∈ longer n := by
+  simp only [longer, Set.mem_ofPred_eq]
+  rw [Fin.sum_univ_succAbove _ i, Fin.sum_univ_succ]
   simp
 
-/-- The literal listener's belief in *longer* after seeing the stick `u`: the hidden sticks
-are uniform. -/
+/-- Every total between `n` and `9 * n` inches is the total of some `n` sticks. -/
+theorem exists_sum_length_eq {t : ℕ} (h₁ : n ≤ t) (h₂ : t ≤ 9 * n) :
+    ∃ x : Fin n → Fin 9, ∑ i, length (x i) = t := by
+  induction n generalizing t with
+  | zero => exact ⟨finZeroElim, by simp; omega⟩
+  | succ n ih =>
+    obtain ⟨x, hx⟩ := ih (t := t - min 9 (t - n)) (by omega) (by omega)
+    refine ⟨Fin.cons ⟨min 9 (t - n) - 1, by omega⟩ x, ?_⟩
+    rw [Fin.sum_univ_succ]
+    simp only [Fin.cons_zero, Fin.cons_succ]
+    rw [hx, length]
+    simp only
+    omega
+
+/-- Sums over `n + 1` sticks are sums over the first stick and the other `n`. -/
+theorem sum_cons {M : Type*} [AddCommMonoid M] (f : (Fin (n + 1) → Fin 9) → M) :
+    ∑ w, f w = ∑ u, ∑ x : Fin n → Fin 9, f (Fin.cons u x) := by
+  rw [← (Fin.consEquiv fun _ ↦ Fin 9).sum_comp, Fintype.sum_prod_type]
+  rfl
+
+/-! ### The literal listener -/
+
+variable (n) in
+/-- The literal listener's belief in *longer* is that of the uniform prior conditioned on the
+revealed stick, taken to be the first, having length `u`. -/
 noncomputable def literal (u : Fin 9) : ℝ :=
-  (uniformOn (Set.univ : Set (Sticks 4))).real {x | Long (length u) x}
+  (uniformOn {w : Fin (n + 1) → Fin 9 | w 0 = u}).real (longer n)
 
-/-- The belief in *longer* before any evidence. -/
-noncomputable def prior : ℝ := (uniformOn (Set.univ : Set (Sticks 5))).real {w | Long 0 w}
+theorem literal_eq_card (u : Fin 9) :
+    literal n u = #{x : Fin n → Fin 9 | Fin.cons u x ∈ longer n} / 9 ^ n := by
+  rw [literal, uniformOn_real_apply]
+  have h : {w : Fin (n + 1) → Fin 9 | w 0 = u} = Fin.cons u '' Set.univ := by
+    ext w
+    refine ⟨fun hw ↦ ⟨Fin.tail w, trivial, by rw [← hw]; exact Fin.cons_self_tail w⟩, ?_⟩
+    rintro ⟨x, -, rfl⟩
+    simp
+  rw [h, ← Set.image_inter_preimage,
+    Set.ncard_image_of_injective _ (Fin.cons_right_injective (α := fun _ ↦ Fin 9) u),
+    Set.ncard_image_of_injective _ (Fin.cons_right_injective (α := fun _ ↦ Fin 9) u),
+    Set.ncard_univ, Nat.card_eq_fintype_card, Set.univ_inter, Fintype.card_fun,
+    Fintype.card_fin, Fintype.card_fin]
+  simp only [show Fin.cons u ⁻¹' longer n =
+      ↑(univ.filter fun x : Fin n → Fin 9 ↦ Fin.cons u x ∈ longer n) by ext; simp,
+    Set.ncard_coe_finset]
+  push_cast
+  rfl
 
-/-- The persuasive weight of showing `u`: the literal support it lends the goal, raised to the
-bias `β`. -/
-noncomputable def persuasive (β : ℝ) (u : Fin 9) : ℝ := literal u ^ β
+/-- The prior belief in *longer* is the average of the literal beliefs over the stick shown. -/
+theorem prior_eq_average :
+    (uniformOn Set.univ).real (longer n) = (∑ u, literal n u) / 9 := by
+  have h : #{w : Fin (n + 1) → Fin 9 | w ∈ longer n} =
+      ∑ u, #{x : Fin n → Fin 9 | Fin.cons u x ∈ longer n} := by
+    simp only [card_filter]
+    exact sum_cons _
+  rw [uniformOn_univ_real_apply, show longer n = ↑(univ.filter (· ∈ longer n)) by ext; simp,
+    Set.ncard_coe_finset, h, Fintype.card_fun, Fintype.card_fin, Fintype.card_fin]
+  simp only [literal_eq_card]
+  push_cast
+  rw [← sum_div, div_div, pow_succ]
 
-/-- The persuasive weight of the hidden sticks: the rivals of the shown stick. -/
-noncomputable def rivals (β : ℝ) (x : Sticks 4) : ℝ := ∑ i, persuasive β (x i)
+variable [NeZero n]
 
-/-- The persuasive speaker's share of showing `u` when the other sticks are `x`. -/
-noncomputable def share (β : ℝ) (u : Fin 9) (x : Sticks 4) : ℝ :=
-  persuasive β u / (persuasive β u + rivals β x)
-
-theorem literal_eq_belief (u : Fin 9) :
-    literal u = belief (1 : Sticks 4 → ℝ) (Long (length u)) := by
-  rw [literal, setOf_eq_coe_filter, uniformOn_univ_real_coe_finset, belief_one]
-
-theorem prior_eq_belief : prior = belief (1 : Sticks 5 → ℝ) (Long 0) := by
-  rw [prior, setOf_eq_coe_filter, uniformOn_univ_real_coe_finset, belief_one]
-
-theorem literal_nonneg (u : Fin 9) : 0 ≤ literal u := measureReal_nonneg
-
-theorem literal_pos (u : Fin 9) : 0 < literal u := by
-  rw [literal_eq_belief]
-  refine belief_pos (λ _ => zero_le_one) (x := (⊤ : Sticks 4)) one_pos ?_
-  have h : total (⊤ : Sticks 4) = 36 := by decide
-  unfold Long
+theorem literal_pos (u : Fin 9) : 0 < literal n u := by
+  rw [literal_eq_card]
+  refine div_pos (Nat.cast_pos.2 (card_pos.2 ⟨⊤, mem_filter.2 ⟨mem_univ _, ?_⟩⟩)) (by positivity)
+  have := NeZero.ne n
+  simp only [cons_mem_longer, Pi.top_apply, Fin.top_eq_last, length, Fin.val_last, sum_const,
+    card_univ, Fintype.card_fin, smul_eq_mul]
   omega
 
-/-- Literal support for *longer* grows with the stick shown. -/
-theorem literal_mono : Monotone literal := λ _ _ h => by
-  rw [literal_eq_belief, literal_eq_belief]
-  exact belief_le_belief (λ _ => zero_le_one) λ _ => long_mono (length_mono h)
+/-- Literal support for *longer* grows strictly with the stick shown. -/
+theorem literal_strictMono : StrictMono (literal n) := fun u v huv ↦ by
+  have hn := NeZero.ne n
+  have hv : 1 ≤ (v : ℕ) := lt_of_le_of_lt (Nat.zero_le _) huv
+  obtain ⟨x, hx⟩ := exists_sum_length_eq (n := n) (t := 5 * (n + 1) - length v)
+    (by simp only [length]; omega) (by simp only [length]; omega)
+  simp only [literal_eq_card]
+  refine div_lt_div_of_pos_right ?_ (by positivity)
+  refine Nat.cast_lt.2 (card_lt_card ((ssubset_iff_of_subset ?_).2 ⟨x, ?_, ?_⟩))
+  · refine monotone_filter_right _ fun y _ hy ↦ ?_
+    rw [cons_mem_longer] at hy ⊢
+    exact hy.trans (Nat.add_le_add_right (length_mono huv.le) _)
+  · simp only [mem_filter, mem_univ, true_and, cons_mem_longer, hx]
+    omega
+  · simp only [mem_filter, mem_univ, true_and, cons_mem_longer, length] at *
+    omega
 
-theorem persuasive_pos (β : ℝ) (u : Fin 9) : 0 < persuasive β u :=
+theorem literal_mono : Monotone (literal n) := literal_strictMono.monotone
+
+/-! ### The persuasive speaker and the pragmatic listener -/
+
+variable (n) in
+/-- The persuasive speaker chooses which stick to reveal, with weight `L0(longer | u)^β`. -/
+noncomputable def reveal (β : ℝ) : Kernel (Fin (n + 1) → Fin 9) (Fin (n + 1)) :=
+  Kernel.ofWeights fun w i ↦ ENNReal.ofReal (literal n (w i) ^ β)
+
+/-- The revealing speaker is the RSA speaker whose utility is `β` times the log of the literal
+support for *longer*. -/
+theorem reveal_eq_speakerOfScore (β : ℝ) :
+    reveal n β = RSA.speakerOfScore fun w i ↦ ((β * Real.log (literal n (w i)) : ℝ) : EReal) := by
+  unfold reveal RSA.speakerOfScore
+  congr 1
+  funext w i
+  rw [EReal.exp_coe, Real.rpow_def_of_pos (literal_pos _), mul_comm]
+
+instance (β : ℝ) : IsMarkovKernel (reveal n β) :=
+  Kernel.isMarkovKernel_ofWeights
+    (fun _ ↦ ⟨0, (ENNReal.ofReal_pos.2 (Real.rpow_pos_of_pos (literal_pos _) β)).ne'⟩)
+    fun _ _ ↦ ENNReal.ofReal_ne_top
+
+variable (n) in
+/-- The speaker as the listener hears it reports the length of the revealed stick. -/
+noncomputable def speaker (β : ℝ) : Kernel (Fin (n + 1) → Fin 9) (Fin 9) :=
+  Kernel.ofFunOfCountable fun w ↦ (reveal n β w).map w
+
+instance (β : ℝ) : IsMarkovKernel (speaker n β) :=
+  ⟨fun w ↦ by
+    rw [speaker, Kernel.ofFunOfCountable_apply]
+    infer_instance⟩
+
+variable (n) in
+/-- The pragmatic listener is the Bayesian inverse of the speaker against the uniform prior. -/
+noncomputable def pragmaticListener (β : ℝ) : Kernel (Fin 9) (Fin (n + 1) → Fin 9) :=
+  (speaker n β)†(uniformOn Set.univ)
+
+variable (n) in
+/-- The speaker's probability of revealing the stick `u` rather than one of the others `x`. -/
+noncomputable def share (β : ℝ) (u : Fin 9) (x : Fin n → Fin 9) : ℝ :=
+  literal n u ^ β / (literal n u ^ β + ∑ i, literal n (x i) ^ β)
+
+theorem reveal_real_singleton (β : ℝ) (w : Fin (n + 1) → Fin 9) (i : Fin (n + 1)) :
+    (reveal n β w).real {i} = literal n (w i) ^ β / ∑ j, literal n (w j) ^ β := by
+  rw [reveal, Kernel.ofWeights_real_singleton _ _ fun _ ↦ ENNReal.ofReal_ne_top]
+  simp only [ENNReal.toReal_ofReal (Real.rpow_pos_of_pos (literal_pos _) β).le]
+
+private theorem rpow_literal_pos (β : ℝ) (u : Fin 9) : 0 < literal n u ^ β :=
   Real.rpow_pos_of_pos (literal_pos u) β
 
-theorem persuasive_mono {β : ℝ} (hβ : 0 ≤ β) : Monotone (persuasive β) := λ _ _ h =>
-  Real.rpow_le_rpow (literal_nonneg _) (literal_mono h) hβ
+theorem speaker_real_singleton (β : ℝ) (w : Fin (n + 1) → Fin 9) (u : Fin 9) :
+    (speaker n β w).real {u} = ∑ i with w i = u, (reveal n β w).real {i} := by
+  rw [speaker, Kernel.ofFunOfCountable_apply, map_measureReal_apply_of_aemeasurable
+    (measurable_of_countable w).aemeasurable (measurableSet_singleton u),
+    show w ⁻¹' {u} = ↑(univ.filter fun i ↦ w i = u) by ext; simp, sum_measureReal_singleton]
 
-theorem rivals_nonneg (β : ℝ) (x : Sticks 4) : 0 ≤ rivals β x :=
-  sum_nonneg λ _ _ => (persuasive_pos β _).le
+theorem speaker_real_singleton_eq_mul (β : ℝ) (w : Fin (n + 1) → Fin 9) (u : Fin 9) :
+    (speaker n β w).real {u} = #{i | w i = u} * (literal n u ^ β / ∑ j, literal n (w j) ^ β) := by
+  rw [speaker_real_singleton, ← nsmul_eq_mul, ← sum_const]
+  exact sum_congr rfl fun i hi ↦ by rw [reveal_real_singleton, (mem_filter.1 hi).2]
 
-theorem rivals_mono {β : ℝ} (hβ : 0 ≤ β) : Monotone (rivals β) :=
-  λ _ _ hxy => sum_le_sum λ i _ => persuasive_mono hβ (hxy i)
+omit [NeZero n] in
+/-- A sum over all tuples weighted by the number of sticks of length `u` is a sum over the other
+sticks with `u` in front, for a weight that does not depend on where `u` is. -/
+private theorem sum_card_filter_mul {u : Fin 9} {G : (Fin (n + 1) → Fin 9) → ℝ}
+    (hG : ∀ i x, G (Fin.insertNth i u x) = G (Fin.cons u x)) :
+    ∑ w, (#{i | w i = u} : ℝ) * G w = (n + 1) * ∑ x : Fin n → Fin 9, G (Fin.cons u x) := by
+  have h (i : Fin (n + 1)) :
+      ∑ w, (if w i = u then G w else 0) = ∑ x : Fin n → Fin 9, G (Fin.cons u x) := by
+    rw [← (Fin.insertNthEquiv (fun _ ↦ Fin 9) i).sum_comp, Fintype.sum_prod_type, sum_comm]
+    simp only [Fin.insertNthEquiv_apply, Fin.insertNth_apply_same, sum_ite_eq', mem_univ,
+      ite_true]
+    exact sum_congr rfl fun x _ ↦ hG i x
+  simp only [card_filter, Nat.cast_sum, Nat.cast_ite, Nat.cast_one, Nat.cast_zero, sum_mul,
+    ite_mul, one_mul, zero_mul]
+  rw [sum_comm]
+  simp only [h, sum_const, card_univ, Fintype.card_fin, nsmul_eq_mul, Nat.cast_succ]
 
-/-- The rivals' weight is modular: meets and joins redistribute the same sticks. -/
-theorem rivals_inf_add_sup (β : ℝ) (x y : Sticks 4) :
-    rivals β (x ⊓ y) + rivals β (x ⊔ y) = rivals β x + rivals β y := by
-  simp only [rivals, ← sum_add_distrib, OrderHom.coe_inf, OrderHom.coe_sup, Pi.inf_apply,
-    Pi.sup_apply]
-  refine sum_congr rfl λ i _ => ?_
+omit [NeZero n] in
+private theorem sum_rpow_insertNth (β : ℝ) (i : Fin (n + 1)) (u : Fin 9) (x : Fin n → Fin 9) :
+    ∑ j, literal n ((Fin.insertNth i u x : Fin (n + 1) → Fin 9) j) ^ β =
+      literal n u ^ β + ∑ j, literal n (x j) ^ β := by
+  rw [Fin.sum_univ_succAbove _ i]
+  simp
+
+omit [NeZero n] in
+private theorem sum_rpow_cons (β : ℝ) (u : Fin 9) (x : Fin n → Fin 9) :
+    ∑ j, literal n ((Fin.cons u x : Fin (n + 1) → Fin 9) j) ^ β =
+      literal n u ^ β + ∑ j, literal n (x j) ^ β := by
+  rw [Fin.sum_univ_succ]
+  simp
+
+theorem share_pos (β : ℝ) (u : Fin 9) (x : Fin n → Fin 9) : 0 < share n β u x :=
+  div_pos (rpow_literal_pos β u)
+    (add_pos_of_pos_of_nonneg (rpow_literal_pos β u)
+      (sum_nonneg fun _ _ ↦ (rpow_literal_pos β _).le))
+
+private theorem sum_speaker_ne_zero (β : ℝ) (u : Fin 9) : ∑ w, speaker n β w {u} ≠ 0 := by
+  intro h
+  have h0 := sum_eq_zero_iff.1 h (fun _ ↦ u) (mem_univ _)
+  rw [speaker, Kernel.ofFunOfCountable_apply, Measure.map_apply (measurable_of_countable _)
+    (measurableSet_singleton u), show (fun _ : Fin (n + 1) ↦ u) ⁻¹' {u} = Set.univ by ext; simp,
+    measure_univ] at h0
+  exact one_ne_zero h0
+
+/-- The pragmatic listener's belief in *longer* is the share-weighted proportion of the other
+sticks on which the shown stick makes *longer* true, as in the authors' code. -/
+theorem pragmaticListener_real_longer (β : ℝ) (u : Fin 9) :
+    (pragmaticListener n β u).real (longer n) =
+      (∑ x with Fin.cons u x ∈ longer n, share n β u x) / ∑ x, share n β u x := by
+  let G : (Fin (n + 1) → Fin 9) → ℝ := fun w ↦ literal n u ^ β / ∑ j, literal n (w j) ^ β
+  have hG (i : Fin (n + 1)) (x : Fin n → Fin 9) : G (Fin.insertNth i u x) = G (Fin.cons u x) := by
+    simp only [G, sum_rpow_insertNth, sum_rpow_cons]
+  have hGl (i : Fin (n + 1)) (x : Fin n → Fin 9) :
+      (if Fin.insertNth i u x ∈ longer n then G (Fin.insertNth i u x) else 0) =
+        if Fin.cons u x ∈ longer n then G (Fin.cons u x) else 0 := by
+    simp only [insertNth_mem_longer, hG]
+  have key := posterior_uniformOn_univ_real_finset (speaker n β) (sum_speaker_ne_zero β u)
+    (univ.filter (· ∈ longer n))
+  simp only [coe_filter, mem_univ, true_and, Set.ofPred_mem_eq] at key
+  have hs (w : Fin (n + 1) → Fin 9) : ((speaker n β w) {u}).toReal = #{i | w i = u} * G w := by
+    rw [← measureReal_def, speaker_real_singleton_eq_mul]
+  rw [pragmaticListener, key, sum_congr rfl fun w _ ↦ hs w, sum_congr rfl fun w _ ↦ hs w,
+    sum_filter]
+  simp_rw [← mul_ite_zero]
+  rw [sum_card_filter_mul hGl, sum_card_filter_mul hG, mul_div_mul_left _ _ (by positivity),
+    sum_filter]
+  simp only [G, sum_rpow_cons]
+  rfl
+
+/-! ### Discounting -/
+
+private theorem rpow_literal_mono {β : ℝ} (hβ : 0 ≤ β) : Monotone fun u ↦ literal n u ^ β :=
+  fun _ _ h ↦ Real.rpow_le_rpow (literal_pos _).le (literal_mono h) hβ
+
+private theorem sum_rpow_mono {β : ℝ} (hβ : 0 ≤ β) :
+    Monotone fun x : Fin n → Fin 9 ↦ ∑ i, literal n (x i) ^ β :=
+  fun _ _ hxy ↦ sum_le_sum fun i _ ↦ rpow_literal_mono hβ (hxy i)
+
+omit [NeZero n] in
+private theorem sum_rpow_inf_add_sup (β : ℝ) (x y : Fin n → Fin 9) :
+    ∑ i, literal n ((x ⊓ y) i) ^ β + ∑ i, literal n ((x ⊔ y) i) ^ β =
+      ∑ i, literal n (x i) ^ β + ∑ i, literal n (y i) ^ β := by
+  simp only [← sum_add_distrib, Pi.inf_apply, Pi.sup_apply]
+  refine sum_congr rfl fun i _ ↦ ?_
   rcases le_total (x i) (y i) with h | h
   · rw [inf_eq_left.2 h, sup_eq_right.2 h]
   · rw [inf_eq_right.2 h, sup_eq_left.2 h, add_comm]
 
-theorem share_pos (β : ℝ) (u : Fin 9) (x : Sticks 4) : 0 < share β u x :=
-  div_pos (persuasive_pos β u)
-    (add_pos_of_pos_of_nonneg (persuasive_pos β u) (rivals_nonneg β x))
+private theorem add_sum_rpow_pos (β : ℝ) (u : Fin 9) (x : Fin n → Fin 9) :
+    0 < literal n u ^ β + ∑ i, literal n (x i) ^ β :=
+  add_pos_of_pos_of_nonneg (rpow_literal_pos β u) (sum_nonneg fun _ _ ↦ (rpow_literal_pos β _).le)
 
-/-- The share of the shown stick falls as the hidden sticks grow: stronger evidence was
-available. -/
-theorem share_antitone {β : ℝ} (hβ : 0 ≤ β) (u : Fin 9) : Antitone (share β u) :=
-  λ x _ hxy => div_le_div_of_nonneg_left (persuasive_pos β u).le
-    (add_pos_of_pos_of_nonneg (persuasive_pos β u) (rivals_nonneg β x))
-    (add_le_add le_rfl (rivals_mono hβ hxy))
+/-- The share of the shown stick falls as the other sticks grow. -/
+theorem share_antitone {β : ℝ} (hβ : 0 ≤ β) (u : Fin 9) : Antitone (share n β u) :=
+  fun x _ hxy ↦ div_le_div_of_nonneg_left (rpow_literal_pos β u).le (add_sum_rpow_pos β u x)
+    (add_le_add le_rfl (sum_rpow_mono hβ hxy))
 
-/-- The share is log-supermodular: a modular denominator spreads less across meets and
-joins. -/
-theorem share_logSupermodular {β : ℝ} (hβ : 0 ≤ β) (u : Fin 9) :
-    LogSupermodular (share β u) := λ x y => by
-  have hp := persuasive_pos β u
-  have h := rivals_inf_add_sup β x y
-  have hx := rivals_mono hβ (inf_le_left : x ⊓ y ≤ x)
-  have hy := rivals_mono hβ (inf_le_right : x ⊓ y ≤ y)
-  have h₀ := rivals_nonneg β (x ⊓ y)
+private theorem mul_le_mul_of_add_eq {p q a b m M : ℝ} (hpq : p ≤ q) (ha : m ≤ a) (hb : m ≤ b)
+    (h : m + M = a + b) : (p + m) * (q + M) ≤ (p + a) * (q + b) := by
+  obtain rfl : M = a + b - m := by linarith
+  nlinarith [mul_nonneg (sub_nonneg.2 ha) (sub_nonneg.2 hpq),
+    mul_nonneg (sub_nonneg.2 ha) (sub_nonneg.2 hb)]
+
+/-- For `u ≤ v` the shares of showing `u` and of showing `v` satisfy the condition of Holley's
+inequality, so a longer shown stick moves the share up the lattice of the other sticks. -/
+theorem share_mul_share_le {β : ℝ} (hβ : 0 ≤ β) {u v : Fin 9} (huv : u ≤ v)
+    (x y : Fin n → Fin 9) :
+    share n β u x * share n β v y ≤ share n β u (x ⊓ y) * share n β v (x ⊔ y) := by
   simp only [share, div_mul_div_comm]
-  refine div_le_div_of_nonneg_left (mul_pos hp hp).le
-    (mul_pos (add_pos_of_pos_of_nonneg hp h₀)
-      (add_pos_of_pos_of_nonneg hp (rivals_nonneg β _))) ?_
-  nlinarith [mul_nonneg (sub_nonneg.2 hx) (sub_nonneg.2 hy)]
+  exact div_le_div_of_nonneg_left (mul_pos (rpow_literal_pos β u) (rpow_literal_pos β v)).le
+    (mul_pos (add_sum_rpow_pos β u _) (add_sum_rpow_pos β v _))
+    (mul_le_mul_of_add_eq (rpow_literal_mono hβ huv) (sum_rpow_mono hβ inf_le_left)
+      (sum_rpow_mono hβ inf_le_right) (sum_rpow_inf_add_sup β x y))
 
-/-- The persuasive speaker as the listener sees it: the likelihood of the shown stick given
-the hidden sticks, the speaker's share of it among the five. -/
-noncomputable def speaker (β : ℝ) : Kernel (Sticks 4) (Fin 9) :=
-  Kernel.ofFunOfCountable λ x => ∑ u, ENNReal.ofReal (share β u x) • Measure.dirac u
+omit [NeZero n] in
+private theorem isUpperSet_cons_mem_longer (u : Fin 9) :
+    IsUpperSet (↑(univ.filter fun x : Fin n → Fin 9 ↦ Fin.cons u x ∈ longer n) :
+      Set (Fin n → Fin 9)) := by
+  simp only [coe_filter, mem_univ, true_and]
+  exact (isUpperSet_longer n).preimage fun _ _ hxy ↦ Fin.cons_le_cons.2 ⟨le_rfl, hxy⟩
 
-theorem speaker_apply_singleton (β : ℝ) (x : Sticks 4) (u : Fin 9) :
-    speaker β x {u} = ENNReal.ofReal (share β u x) :=
-  Measure.sum_smul_dirac_apply_singleton _ u
+private theorem sum_share_pos (β : ℝ) (u : Fin 9) : 0 < ∑ x : Fin n → Fin 9, share n β u x :=
+  sum_pos (fun x _ ↦ share_pos β u x) univ_nonempty
 
-theorem share_le_one (β : ℝ) (u : Fin 9) (x : Sticks 4) : share β u x ≤ 1 :=
-  div_le_one_of_le₀ (le_add_of_nonneg_right (rivals_nonneg β x))
-    (add_pos_of_pos_of_nonneg (persuasive_pos β u) (rivals_nonneg β x)).le
+/-- The pragmatic listener discounts every stick. -/
+theorem pragmaticListener_real_le_literal {β : ℝ} (hβ : 0 ≤ β) (u : Fin 9) :
+    (pragmaticListener n β u).real (longer n) ≤ literal n u := by
+  have h := holley_isUpperSet (g := (1 : (Fin n → Fin 9) → ℝ)) (fun x ↦ (share_pos β u x).le)
+    (fun _ ↦ zero_le_one) (isUpperSet_cons_mem_longer u)
+    fun a b ↦ by simpa using share_antitone hβ u (inf_le_left : a ⊓ b ≤ a)
+  simp only [Pi.one_apply, sum_const, card_univ, nsmul_eq_mul, mul_one, Fintype.card_fun,
+    Fintype.card_fin] at h
+  rw [pragmaticListener_real_longer, literal_eq_card, div_le_div_iff₀ (sum_share_pos β u)
+    (by positivity)]
+  push_cast at h ⊢
+  linarith
 
-instance (β : ℝ) : IsFiniteKernel (speaker β) :=
-  ⟨⟨(9 : ℕ), ENNReal.natCast_lt_top 9, λ x => by
-    rw [speaker, Kernel.ofFunOfCountable_apply, Measure.finsetSum_apply]
-    simp only [Measure.smul_apply, smul_eq_mul, measure_univ, mul_one]
-    calc ∑ u, ENNReal.ofReal (share β u x) ≤ ∑ _u : Fin 9, (1 : ℝ≥0∞) :=
-          sum_le_sum λ u _ => ENNReal.ofReal_le_one.2 (share_le_one β u x)
-      _ = (9 : ℕ) := by simp⟩⟩
+/-- Without a persuasive goal the pragmatic listener is the literal one. -/
+theorem pragmaticListener_zero (u : Fin 9) :
+    (pragmaticListener n 0 u).real (longer n) = literal n u := by
+  have h (x : Fin n → Fin 9) : share n 0 u x = 1 / (n + 1) := by
+    simp only [share, Real.rpow_zero, sum_const, card_univ, Fintype.card_fin, nsmul_eq_mul,
+      mul_one]
+    ring
+  simp only [pragmaticListener_real_longer, h, sum_const, nsmul_eq_mul, literal_eq_card,
+    card_univ, Fintype.card_fun, Fintype.card_fin]
+  push_cast
+  field_simp
 
-/-- The pragmatic listener: the Bayesian inverse of the speaker against the uniform prior. -/
-noncomputable def pragmaticListener (β : ℝ) : Kernel (Fin 9) (Sticks 4) :=
-  (speaker β)†(uniformOn Set.univ)
+/-- The pragmatic belief in *longer* grows with the stick shown. -/
+theorem pragmaticListener_real_mono {β : ℝ} (hβ : 0 ≤ β) :
+    Monotone fun u ↦ (pragmaticListener n β u).real (longer n) := fun u v huv ↦ by
+  have h := holley_isUpperSet (fun x ↦ (share_pos (n := n) β u x).le)
+    (fun x ↦ (share_pos β v x).le) (isUpperSet_cons_mem_longer v) (share_mul_share_le hβ huv)
+  have hsub : ∑ x with Fin.cons u x ∈ longer n, share n β u x ≤
+      ∑ x with Fin.cons v x ∈ longer n, share n β u x := by
+    refine sum_le_sum_of_subset_of_nonneg (monotone_filter_right _ fun x _ hx ↦ ?_)
+      fun x _ _ ↦ (share_pos β u x).le
+    rw [cons_mem_longer] at hx ⊢
+    exact hx.trans (Nat.add_le_add_right (length_mono huv) _)
+  simp only [sum_filter] at h
+  simp only [pragmaticListener_real_longer, sum_filter] at hsub ⊢
+  rw [div_le_div_iff₀ (sum_share_pos (n := n) β u) (sum_share_pos β v)]
+  nlinarith [mul_le_mul_of_nonneg_right hsub (sum_share_pos (n := n) β v).le]
 
-/-- The pragmatic listener's belief in *longer* after seeing `u` from a speaker of bias `β`. -/
-noncomputable def pragmatic (β : ℝ) (u : Fin 9) : ℝ :=
-  (pragmaticListener β u).real {x | Long (length u) x}
+variable (n) in
+/-- A stick backfires at bias `β` when it is literal evidence for *longer* but, revealed by the
+persuasive speaker, lowers the belief in *longer* below the prior. -/
+def backfires (β : ℝ) : Set (Fin 9) :=
+  {u | (uniformOn Set.univ).real (longer n) < literal n u ∧
+    (pragmaticListener n β u).real (longer n) < (uniformOn Set.univ).real (longer n)}
 
-/-- The sticks that backfire at bias `β`: shown, they lower belief in *longer* below the
-prior. -/
-def backfires (β : ℝ) : Set (Fin 9) := {u | pragmatic β u < prior}
+theorem backfires_zero : backfires n 0 = ∅ :=
+  Set.eq_empty_of_forall_notMem fun u ⟨h₁, h₂⟩ ↦ by
+    rw [pragmaticListener_zero] at h₂
+    exact h₂.not_gt h₁
 
-/-- The pragmatic listener's belief is the belief under the speaker's shares. -/
-theorem pragmatic_eq_belief (β : ℝ) (u : Fin 9) :
-    pragmatic β u = belief (share β u) (Long (length u)) := by
-  have hx : ∑ x, speaker β x {u} ≠ 0 := λ h =>
-    (ENNReal.ofReal_pos.2 (share_pos β u default)).ne'
-      (by simpa [speaker_apply_singleton] using Finset.sum_eq_zero_iff.1 h default (mem_univ _))
-  have hs : ∀ x, (ENNReal.ofReal (share β u x)).toReal = share β u x :=
-    λ x => ENNReal.toReal_ofReal (share_pos β u x).le
-  rw [pragmatic, pragmaticListener, setOf_eq_coe_filter,
-    posterior_uniformOn_univ_real_finset _ hx]
-  simp only [speaker_apply_singleton, hs]
+/-- The sticks that backfire form an interval. -/
+theorem ordConnected_backfires {β : ℝ} (hβ : 0 ≤ β) : (backfires n β).OrdConnected :=
+  IsUpperSet.ordConnected (s := {u | (uniformOn Set.univ).real (longer n) < literal n u})
+      (fun _ _ h hu ↦ hu.trans_le (literal_mono h)) |>.inter <|
+    IsLowerSet.ordConnected
+      (s := {u | (pragmaticListener n β u).real (longer n) < (uniformOn Set.univ).real (longer n)})
+      fun _ _ h hu ↦ (pragmaticListener_real_mono hβ h).trans_lt hu
+
+/-! ### A fully persuasive speaker -/
+
+omit [NeZero n] in
+private theorem card_sup_pos (w : Fin (n + 1) → Fin 9) : 0 < #{j | w j = univ.sup w} := by
+  obtain ⟨j, -, hj⟩ := exists_mem_eq_sup univ univ_nonempty w
+  exact card_pos.2 ⟨j, mem_filter.2 ⟨mem_univ _, hj.symm⟩⟩
+
+private theorem tendsto_div_rpow (w : Fin (n + 1) → Fin 9) (j : Fin (n + 1)) :
+    Tendsto (fun β : ℝ ↦ (literal n (w j) / literal n (univ.sup w)) ^ β) atTop
+      (𝓝 (if w j = univ.sup w then 1 else 0)) := by
+  split_ifs with h
+  · simp only [h, div_self (literal_pos _).ne', Real.one_rpow]
+    exact tendsto_const_nhds
+  · exact tendsto_rpow_atTop_of_base_lt_one _
+      (neg_one_lt_zero.trans (div_pos (literal_pos _) (literal_pos _)))
+      ((div_lt_one (literal_pos _)).2
+        (literal_strictMono (lt_of_le_of_ne (le_sup (mem_univ j)) h)))
+
+/-- As the bias grows the speaker reveals one of the longest sticks, each with equal
+probability. -/
+theorem tendsto_reveal_real_singleton_atTop (w : Fin (n + 1) → Fin 9) (i : Fin (n + 1)) :
+    Tendsto (fun β ↦ (reveal n β w).real {i}) atTop
+      (𝓝 ((if w i = univ.sup w then 1 else 0) / #{j | w j = univ.sup w})) := by
+  have hs := literal_pos (n := n) (univ.sup w)
+  have hform (β : ℝ) : (reveal n β w).real {i} =
+      (literal n (w i) / literal n (univ.sup w)) ^ β /
+        ∑ j, (literal n (w j) / literal n (univ.sup w)) ^ β := by
+    rw [reveal_real_singleton]
+    simp only [Real.div_rpow (literal_pos _).le hs.le]
+    rw [← sum_div, div_div_div_cancel_right₀ (Real.rpow_pos_of_pos hs β).ne']
+  simp_rw [hform]
+  rw [← sum_boole]
+  refine (tendsto_div_rpow w i).div (tendsto_finsetSum _ fun j _ ↦ tendsto_div_rpow w j) ?_
+  rw [sum_boole]
+  exact_mod_cast (card_sup_pos w).ne'
+
+/-- As the bias grows the speaker shows the longest stick with certainty. -/
+theorem tendsto_speaker_real_singleton_atTop (w : Fin (n + 1) → Fin 9) (u : Fin 9) :
+    Tendsto (fun β ↦ (speaker n β w).real {u}) atTop (𝓝 (if u = univ.sup w then 1 else 0)) := by
+  simp_rw [speaker_real_singleton]
+  convert tendsto_finsetSum {i | w i = u} fun i _ ↦ tendsto_reveal_real_singleton_atTop w i
+    using 2
+  split_ifs with hu
+  · subst hu
+    rw [sum_congr rfl fun i hi ↦ by rw [ite_eq_left_iff.2 fun h ↦ absurd (mem_filter.1 hi).2 h],
+      sum_const, nsmul_eq_mul, mul_one_div, div_self]
+    exact_mod_cast (card_sup_pos w).ne'
+  · refine (sum_eq_zero fun i hi ↦ ?_).symm
+    rw [ite_eq_right_iff.2 fun h ↦ absurd ((mem_filter.1 hi).2.symm.trans h) hu, zero_div]
+
+/-- As the bias grows the pragmatic listener's beliefs tend to the uniform prior conditioned on
+the shown stick being the longest. -/
+theorem tendsto_pragmaticListener_real_atTop (u : Fin 9) (E : Set (Fin (n + 1) → Fin 9)) :
+    Tendsto (fun β ↦ (pragmaticListener n β u).real E) atTop
+      (𝓝 ((uniformOn {w : Fin (n + 1) → Fin 9 | univ.sup w = u}).real E)) := by
+  classical
+  have hform (β : ℝ) : (pragmaticListener n β u).real E =
+      (∑ w with w ∈ E, ((speaker n β w) {u}).toReal) / ∑ w, ((speaker n β w) {u}).toReal := by
+    have key := posterior_uniformOn_univ_real_finset (speaker n β) (sum_speaker_ne_zero β u)
+      (univ.filter (· ∈ E))
+    simp only [coe_filter, mem_univ, true_and, Set.ofPred_mem_eq] at key
+    rw [pragmaticListener, key]
+  have h (w : Fin (n + 1) → Fin 9) := tendsto_speaker_real_singleton_atTop w u
+  simp only [measureReal_def] at h
+  have hS : {w : Fin (n + 1) → Fin 9 | univ.sup w = u} =
+      ↑(univ.filter fun w : Fin (n + 1) → Fin 9 ↦ u = univ.sup w) := by
+    ext; simp [eq_comm]
+  have hSE : {w : Fin (n + 1) → Fin 9 | univ.sup w = u} ∩ E =
+      ↑(univ.filter fun w : Fin (n + 1) → Fin 9 ↦ w ∈ E ∧ u = univ.sup w) := by
+    ext; simp [eq_comm, and_comm]
+  rw [uniformOn_real_apply, hSE, hS, Set.ncard_coe_finset, Set.ncard_coe_finset, ← filter_filter,
+    ← sum_boole, ← sum_boole]
+  simp_rw [hform]
+  refine (tendsto_finsetSum _ fun w _ ↦ h w).div (tendsto_finsetSum _ fun w _ ↦ h w) ?_
+  rw [sum_boole]
+  exact (Nat.cast_pos.2 (card_pos.2 ⟨fun _ ↦ u, mem_filter.2 ⟨mem_univ _,
+    (sup_const univ_nonempty u).symm⟩⟩)).ne'
+
+omit [NeZero n] in
+/-- A listener who expects the longest stick to be shown conditions the uniform prior on the
+shown stick being the longest. -/
+theorem posterior_deterministic_sup (u : Fin 9) :
+    ((Kernel.deterministic (fun w : Fin (n + 1) → Fin 9 ↦ univ.sup w)
+      (measurable_of_countable _))†(uniformOn Set.univ)) u =
+      uniformOn {w : Fin (n + 1) → Fin 9 | univ.sup w = u} := by
+  have hne : uniformOn (Set.univ : Set (Fin (n + 1) → Fin 9))
+      ((fun w ↦ univ.sup w) ⁻¹' {u}) ≠ 0 := by
+    rw [Ne, uniformOn_eq_zero_iff (Set.toFinite _), Set.univ_inter]
+    exact Set.nonempty_iff_ne_empty.1 ⟨fun _ ↦ u, sup_const univ_nonempty u⟩
+  rw [posterior_deterministic_eq_cond _ (measurable_of_countable _) hne]
+  unfold uniformOn
+  rw [cond_cond_eq_cond_inter MeasurableSet.univ (Set.toFinite _).measurableSet, Set.univ_inter]
   rfl
 
-private theorem sum_mul_pos {s t : Sticks 4 → ℝ} (hs : ∀ x, 0 < s x) (ht : ∀ x, 0 < t x) :
-    0 < ∑ x, s x * t x :=
-  sum_pos (λ x _ => mul_pos (hs x) (ht x)) univ_nonempty
+/-! ### Counting sticks by their total -/
 
-/-- The pragmatic listener discounts every stick: their belief in *longer* is at most the
-literal listener's. -/
-theorem pragmatic_le_literal {β : ℝ} (hβ : 0 ≤ β) (u : Fin 9) : pragmatic β u ≤ literal u := by
-  rw [pragmatic_eq_belief, literal_eq_belief]
-  simpa only [one_mul] using
-    belief_mul_le (μ := 1) (λ _ => zero_le_one) (λ x => (share_pos β u x).le)
-      (share_antitone hβ u) (isUpperSet_long _) (λ _ _ => le_rfl)
-      (sum_mul_pos (λ _ => one_pos) (share_pos β u))
+/-- For each `k`, the number of `n` sticks of index below `m` totalling at least `k` inches,
+tabulated one stick at a time. -/
+private def tails (m : ℕ) : ℕ → List ℕ
+  | 0 => [1]
+  | n + 1 => (List.range (m * (n + 1) + 1)).map fun k ↦
+      ∑ a ∈ range m, (tails m n).getD (k - (a + 1)) 0
 
-/-- Without a persuasive goal the speaker is indifferent among the true sticks and the
-pragmatic listener is the literal one. -/
-theorem pragmatic_zero (u : Fin 9) : pragmatic 0 u = literal u := by
-  have : share 0 u = 1 * λ _ => (1 / 5 : ℝ) := by
-    funext x
-    simp [share, rivals, persuasive]
-    norm_num
-  rw [pragmatic_eq_belief, literal_eq_belief, this, belief_mul_const (by norm_num)]
+private theorem length_tails (m n : ℕ) : (tails m n).length = m * n + 1 := by
+  cases n <;> simp [tails]
 
-/-- The pragmatic listener's belief in *longer* grows with the stick shown: a longer stick
-supports *longer* literally, and the persuasive weight it shifts onto the hidden sticks is
-monotone in them. -/
-theorem pragmatic_mono {β : ℝ} (hβ : 0 ≤ β) : Monotone (pragmatic β) := by
-  intro u v huv
-  have hpu := persuasive_pos β u
-  have hpv := persuasive_pos β v
-  have hpuv := persuasive_mono hβ huv
-  let r : Sticks 4 → ℝ := λ x => persuasive β v / persuasive β u *
-    ((persuasive β u + rivals β x) / (persuasive β v + rivals β x))
-  have hr₀ : ∀ x, 0 < r x := λ x =>
-    mul_pos (div_pos hpv hpu) (div_pos (add_pos_of_pos_of_nonneg hpu (rivals_nonneg β x))
-      (add_pos_of_pos_of_nonneg hpv (rivals_nonneg β x)))
-  have hr : Monotone r := λ x y hxy => by
-    have h := rivals_mono hβ hxy
-    refine mul_le_mul_of_nonneg_left ?_ (div_pos hpv hpu).le
-    rw [div_le_div_iff₀ (add_pos_of_pos_of_nonneg hpv (rivals_nonneg β x))
-      (add_pos_of_pos_of_nonneg hpv (rivals_nonneg β y))]
-    nlinarith [mul_nonneg (sub_nonneg.2 hpuv) (sub_nonneg.2 h)]
-  have hw : share β v = share β u * r := by
-    funext x
-    have hu := (add_pos_of_pos_of_nonneg hpu (rivals_nonneg β x)).ne'
-    have hv := (add_pos_of_pos_of_nonneg hpv (rivals_nonneg β x)).ne'
-    simp only [Pi.mul_apply, share, r]
-    field_simp
-  rw [pragmatic_eq_belief, pragmatic_eq_belief]
-  calc belief (share β u) (Long (length u)) ≤ belief (share β u) (Long (length v)) :=
-        belief_le_belief (λ x => (share_pos β u x).le) λ _ => long_mono (length_mono huv)
-    _ ≤ belief (share β u * r) (Long (length v)) :=
-        belief_le_belief_mul (λ x => (share_pos β u x).le) (λ x => (hr₀ x).le) hr
-          (isUpperSet_long _) (share_logSupermodular hβ u) (sum_mul_pos (share_pos β u) hr₀)
-    _ = belief (share β v) (Long (length v)) := by rw [hw]
+omit [NeZero n] in
+private theorem card_tails {m : ℕ} (hm : m ≤ 9) (k : ℕ) :
+    #{x : Fin n → Fin 9 | (∀ i, (x i : ℕ) < m) ∧ k ≤ ∑ i, length (x i)} =
+      (tails m n).getD k 0 := by
+  induction n generalizing k with
+  | zero => cases k <;> simp [tails]
+  | succ n ih =>
+    have hcons (a : Fin 9) : ∑ y : Fin n → Fin 9,
+        (if (∀ i, ((Fin.cons a y : Fin (n + 1) → Fin 9) i : ℕ) < m) ∧
+          k ≤ ∑ i, length ((Fin.cons a y : Fin (n + 1) → Fin 9) i) then 1 else 0) =
+          if (a : ℕ) < m then (tails m n).getD (k - (a + 1)) 0 else 0 := by
+      simp only [Fin.forall_fin_succ, Fin.cons_zero, Fin.cons_succ, Fin.sum_univ_succ]
+      split_ifs with ha
+      · rw [← ih, card_filter]
+        refine sum_congr rfl fun y _ ↦ ?_
+        simp only [ha, true_and, length, Nat.sub_le_iff_le_add, add_comm]
+      · simp [ha]
+    rw [card_filter, sum_cons]
+    simp only [hcons]
+    rw [Fin.sum_univ_eq_sum_range (fun a ↦ if a < m then (tails m n).getD (k - (a + 1)) 0 else 0),
+      ← sum_filter, show (range 9).filter (· < m) = range m by ext; simp; omega, tails]
+    by_cases hk : k < m * (n + 1) + 1
+    · simp [List.getD_eq_getElem?_getD, hk]
+    · rw [List.getD_eq_getElem?_getD, List.getElem?_eq_none (by simpa using hk), Option.getD_none]
+      refine sum_eq_zero fun a ha ↦ List.getD_eq_default (l := tails m n) (d := 0) ?_
+      rw [length_tails]
+      simp only [mem_range] at ha
+      rw [Nat.mul_succ] at hk
+      generalize m * n = p at *
+      omega
 
-/-- The evidence that backfires is an initial segment of the weakest evidence, at every
-bias. -/
-theorem isLowerSet_backfires {β : ℝ} (hβ : 0 ≤ β) : IsLowerSet (backfires β) :=
-  λ _ _ h hu => (pragmatic_mono hβ h).trans_lt hu
+omit [NeZero n] in
+/-- The tuples whose longest stick is `u` are those of sticks at most `u` that are not all
+shorter than `u`. -/
+private theorem card_sup_eq (u : Fin 9) (E : (Fin (n + 1) → Fin 9) → Prop) [DecidablePred E] :
+    #{w | univ.sup w = u ∧ E w} =
+      #{w | (∀ i, (w i : ℕ) < u + 1) ∧ E w} - #{w | (∀ i, (w i : ℕ) < u) ∧ E w} := by
+  have h := card_filter_add_card_filter_not
+    (s := univ.filter fun w : Fin (n + 1) → Fin 9 ↦ (∀ i, (w i : ℕ) < u + 1) ∧ E w)
+    fun w ↦ ∀ i, (w i : ℕ) < u
+  rw [filter_filter, filter_filter] at h
+  have h₁ : #{w : Fin (n + 1) → Fin 9 | ((∀ i, (w i : ℕ) < u + 1) ∧ E w) ∧ ∀ i, (w i : ℕ) < u} =
+      #{w | (∀ i, (w i : ℕ) < u) ∧ E w} :=
+    congrArg card (filter_congr fun w _ ↦
+      ⟨fun h ↦ ⟨h.2, h.1.2⟩, fun h ↦ ⟨⟨fun i ↦ (h.1 i).trans (Nat.lt_succ_self _), h.2⟩, h.1⟩⟩)
+  have h₂ : #{w : Fin (n + 1) → Fin 9 | ((∀ i, (w i : ℕ) < u + 1) ∧ E w) ∧ ¬∀ i, (w i : ℕ) < u} =
+      #{w | univ.sup w = u ∧ E w} := by
+    refine congrArg card (filter_congr fun w _ ↦ ?_)
+    obtain ⟨j, -, hj⟩ := exists_mem_eq_sup univ univ_nonempty w
+    simp only [Nat.lt_succ_iff, ← Fin.le_def, ← Fin.lt_def, not_forall, not_lt]
+    constructor
+    · rintro ⟨⟨h₁, hE⟩, i, hi⟩
+      exact ⟨(Finset.sup_le fun i _ ↦ h₁ i).antisymm (hi.trans (le_sup (mem_univ i))), hE⟩
+    · rintro ⟨rfl, hE⟩
+      exact ⟨⟨fun i ↦ le_sup (mem_univ i), hE⟩, j, hj.le⟩
+  omega
 
-/-! ### The literal listener's beliefs -/
+/-! ### Five sticks -/
 
-theorem card_sticks_four : Fintype.card (Sticks 4) = 495 := by decide +kernel
-
-theorem card_sticks_five : Fintype.card (Sticks 5) = 1287 := by decide +kernel
-
-/-- The multisets of four hidden sticks on which each stick shown makes *longer* true. -/
-theorem card_long (u : Fin 9) :
-    (univ.filter (Long (length u) : Sticks 4 → Prop)).card =
-      ![141, 169, 200, 231, 264, 295, 326, 354, 381] u := by
-  revert u
+private theorem tails_nine_four : ∀ u : Fin 9, (tails 9 4).getD (25 - length u) 0 =
+      ![1680, 2100, 2556, 3036, 3525, 4005, 4461, 4881, 5256] u := by
   decide +kernel
 
-/-- The multisets of five sticks that are *longer*. -/
-theorem card_long_prior : (univ.filter (Long 0 : Sticks 5 → Prop)).card = 680 := by
-  decide +kernel
+/-- The other four sticks on which each stick shown makes *longer* true. -/
+theorem card_cons_mem_longer (u : Fin 9) : #{x : Fin 4 → Fin 9 | Fin.cons u x ∈ longer 4} =
+    ![1680, 2100, 2556, 3036, 3525, 4005, 4461, 4881, 5256] u := by
+  rw [← tails_nine_four, ← card_tails le_rfl]
+  exact congrArg card (filter_congr fun x _ ↦ by
+    simp [cons_mem_longer, add_comm, Fin.is_lt])
 
-/-- The literal listener's belief in *longer* for each stick shown: the `β = 0` column of
-the simulation. -/
-theorem literal_eq :
-    literal = ![47/165, 169/495, 40/99, 7/15, 8/15, 59/99, 326/495, 118/165, 127/165] := by
-  funext u
-  rw [literal_eq_belief, belief_one, card_long, card_sticks_four]
+/-- The literal listener's belief in *longer* for each stick shown, the `β = 0` column of the
+simulation. -/
+theorem literal_eq (u : Fin 9) :
+    literal 4 u = ![1680, 2100, 2556, 3036, 3525, 4005, 4461, 4881, 5256] u / 6561 := by
+  rw [literal_eq_card, card_cons_mem_longer]
   fin_cases u <;> norm_num
 
-/-- The belief in *longer* before any evidence. -/
-theorem prior_eq : prior = 680 / 1287 := by
-  rw [prior_eq_belief, belief_one, card_long_prior, card_sticks_five]
+theorem prior_eq : (uniformOn Set.univ).real (longer 4) = 3500 / 6561 := by
+  rw [prior_eq_average]
+  simp only [literal_eq, Fin.sum_univ_succ]
   norm_num
 
-/-- A shown `6` is literal evidence for *longer*. -/
-theorem literal_six : prior < literal ⟨5, by decide⟩ := by
+/-- The sticks of length five and up are literal evidence for *longer*. -/
+theorem prior_lt_literal_iff {u : Fin 9} :
+    (uniformOn Set.univ).real (longer 4) < literal 4 u ↔ 5 ≤ length u := by
   rw [prior_eq, literal_eq]
-  norm_num
+  fin_cases u <;> norm_num [length]
+
+private theorem card_lt_mem_longer {m : ℕ} (hm : m ≤ 9) :
+    #{w : Fin (4 + 1) → Fin 9 | (∀ i, (w i : ℕ) < m) ∧ w ∈ longer 4} = (tails m 5).getD 25 0 :=
+  card_tails hm 25
+
+private theorem card_lt {m : ℕ} (hm : m ≤ 9) :
+    #{w : Fin (4 + 1) → Fin 9 | (∀ i, (w i : ℕ) < m) ∧ True} = (tails m 5).getD 0 0 := by
+  rw [← card_tails hm 0]
+  simp
+
+private theorem tails_five : ∀ u : Fin 9,
+    ((tails (u + 1) 5).getD 25 0 - (tails u 5).getD 25 0,
+      (tails (u + 1) 5).getD 0 0 - (tails u 5).getD 0 0) =
+    (![0, 0, 0, 0, 1, 251, 2471, 8821, 19956] u,
+      ![1, 31, 211, 781, 2101, 4651, 9031, 15961, 26281] u) := by
+  decide +kernel
+
+/-- The belief in *longer* given that the longest of the five sticks has length `u`, the limit of
+the pragmatic listener's belief as the bias grows. -/
+theorem limit_eq (u : Fin 9) :
+    (uniformOn {w : Fin 5 → Fin 9 | univ.sup w = u}).real (longer 4) =
+      ![0, 0, 0, 0, 1 / 2101, 251 / 4651, 2471 / 9031, 8821 / 15961, 19956 / 26281] u := by
+  have hu := u.is_lt
+  rw [uniformOn_real_apply,
+    show {w : Fin 5 → Fin 9 | univ.sup w = u} ∩ longer 4 =
+      ↑(univ.filter fun w : Fin 5 → Fin 9 ↦ univ.sup w = u ∧ w ∈ longer 4) by ext; simp,
+    show {w : Fin 5 → Fin 9 | univ.sup w = u} =
+      ↑(univ.filter fun w : Fin 5 → Fin 9 ↦ univ.sup w = u ∧ True) by ext; simp,
+    Set.ncard_coe_finset, Set.ncard_coe_finset, card_sup_eq, card_sup_eq,
+    card_lt_mem_longer (by omega), card_lt_mem_longer (by omega), card_lt (by omega),
+    card_lt (by omega)]
+  obtain ⟨h₁, h₂⟩ := Prod.mk.inj (tails_five u)
+  rw [h₁, h₂]
+  fin_cases u <;> norm_num
+
+/-- For a strongly enough biased speaker the sticks that backfire are exactly those of length
+five to seven. -/
+theorem eventually_backfires_eq : ∀ᶠ β in atTop, backfires 4 β = length ⁻¹' Set.Icc 5 7 := by
+  have hlo : ∀ᶠ β in atTop, (pragmaticListener 4 β 6).real (longer 4) <
+      (uniformOn Set.univ).real (longer 4) :=
+    (tendsto_pragmaticListener_real_atTop 6 (longer 4)).eventually
+      (gt_mem_nhds (by rw [limit_eq, prior_eq]; norm_num))
+  have hhi : ∀ᶠ β in atTop, (uniformOn Set.univ).real (longer 4) <
+      (pragmaticListener 4 β 7).real (longer 4) :=
+    (tendsto_pragmaticListener_real_atTop 7 (longer 4)).eventually
+      (lt_mem_nhds (by rw [limit_eq, prior_eq]; norm_num))
+  filter_upwards [hlo, hhi, eventually_ge_atTop 0] with β hlo hhi hβ
+  ext u
+  simp only [backfires, Set.mem_ofPred_eq, Set.mem_preimage, Set.mem_Icc, prior_lt_literal_iff]
+  refine ⟨fun ⟨h₁, h₂⟩ ↦ ⟨h₁, ?_⟩, fun ⟨h₁, h₂⟩ ↦ ⟨h₁, ?_⟩⟩
+  · by_contra h
+    refine (hhi.trans_le (pragmaticListener_real_mono hβ (Fin.le_iff_val_le_val.2 ?_))).not_gt h₂
+    simp only [length] at h
+    simp
+    omega
+  · refine (pragmaticListener_real_mono hβ (Fin.le_iff_val_le_val.2 ?_)).trans_lt hlo
+    simp only [length] at h₂
+    simp
+    omega
 
 end BarnettEtAl2022
