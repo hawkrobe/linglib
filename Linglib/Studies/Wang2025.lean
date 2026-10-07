@@ -21,7 +21,7 @@ at all for *jiu* 'only' (Table 4.1, `Trigger.altStructure`). Three ranked constr
 competition, (3): Internal Coherence, that the utterance is consistent with the common ground;
 Felicity Presupposition, that a presupposition is entailed by the common ground; and Maximize
 Presupposition, after Heim, that a form is not used when a presuppositionally stronger
-alternative is, so that it is used only within its use condition under competition
+alternative is, so that it is used only where its rival does not block it
 (`violMP_iff`). Coherence outranks felicity, which outranks Maximize Presupposition (`Beats`,
 `ranking`). Utterances and contexts are modelled by the speaker's information
 states: an utterance commits the speaker to a set of states (`Candidate`), and a context
@@ -139,16 +139,16 @@ theorem Candidate.admits_ssubset_univ {c : Candidate W} {p : Set W} (h : c.presu
   exact (hmem (Set.mem_singleton _)).1.ne_empty rfl
 
 /-- Maximize Presupposition is violated by a candidate without a presupposition at a context
-outside its use condition against its rival, (3c). -/
+where its rival blocks it, (3c). -/
 def ViolMP (ctx : Set (Set W)) (rival c : Candidate W) : Prop :=
-  c.presup = none ∧ ctx ∉ Alternatives.useCondition (fun _ ↦ {rival}) Candidate.admits c
+  c.presup = none ∧ ctx ∉ Alternatives.unblocked (fun _ ↦ {rival}) Candidate.admits c
 
 /-- A plain candidate violates Maximize Presupposition exactly when the context entails its
 rival's presupposition. -/
 theorem violMP_iff {ctx : Set (Set W)} {rival c : Candidate W} :
     ViolMP ctx rival c ↔ c.presup = none ∧ ∃ p, rival.presup = some p ∧ ctx ⊆ K p := by
   refine and_congr_right fun hc ↦ ?_
-  rw [Alternatives.mem_useCondition_iff, Candidate.admits_of_presup_none hc]
+  rw [Alternatives.mem_unblocked_iff, Candidate.admits_of_presup_none hc]
   simp only [Set.mem_univ, true_and, Set.mem_singleton_iff, forall_eq, not_forall, not_not]
   constructor
   · rintro ⟨hctx, hss⟩

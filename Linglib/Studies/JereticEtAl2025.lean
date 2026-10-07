@@ -24,7 +24,7 @@ substrate's `Alternatives.indirectFrom`, licenses the Maximize Presupposition co
 parse cannot enter on its own. The worked example runs this on (25): the dual parse is barred,
 pronounceability is thereby derived rather than stipulated, and *tous* violates Maximize
 Presupposition through *les deux* (`tous_blocked_via_indirect`), so that it is used in the domain of
-three cups and not in the domain of two (`useCondition_tous`).
+three cups and not in the domain of two (`unblocked_tous`).
 
 Across languages and quantifier slots a plain quantifier is predicted anti-dual exactly when a
 dual competitor exists, a lexical dual item or a pronounceable dual expression at most as
@@ -379,16 +379,16 @@ private theorem presupFn_eq_univ_of_w3 {t : Tree Cat String} (h : WorldEx.w3 ∈
 /-- *tous V* is used exactly in the domain of three cups, the paper's derivation of its
 anti-duality: in the domain of two the dual presupposition of *les deux V* holds and blocks it,
 and every competitor defined in the domain of three presupposes nothing. -/
-theorem useCondition_tous :
-    useCondition (sameAssertion assertionFn frenchIndirectSrc) presupFn tousVerres = {.w3} := by
+theorem unblocked_tous :
+    unblocked (sameAssertion assertionFn frenchIndirectSrc) presupFn tousVerres = {.w3} := by
   ext w
   cases w
   · simp only [Set.mem_singleton_iff, reduceCtorEq, iff_false]
-    exact Set.disjoint_left.1 (disjoint_useCondition_of_ssubset lesDeux_mem_sameAssertion
+    exact Set.disjoint_left.1 (disjoint_unblocked_of_ssubset lesDeux_mem_sameAssertion
       presupFn_lesDeux_ssubset_tous) (by decide : meaning lesDeuxVerres .w2 = true)
   · simp only [Set.mem_singleton_iff, iff_true]
     have htous : WorldEx.w3 ∈ presupFn tousVerres := rfl
-    exact mem_useCondition_iff.2 ⟨htous, fun ψ _ hψ hss ↦
+    exact mem_unblocked_iff.2 ⟨htous, fun ψ _ hψ hss ↦
       hss.ne ((presupFn_eq_univ_of_w3 hψ).trans (presupFn_eq_univ_of_w3 htous).symm)⟩
 
 end WorkedExample

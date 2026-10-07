@@ -23,7 +23,7 @@ resolutions of the alternative set (`Irredundant.excludes_injOn`), and narrowing
 weakens it (`excludes_antitone`). When the prejacent is maximal among the alternatives, exclusion
 is Rooth's condition that every true alternative *equals* the prejacent
 (`mem_excludes_iff_forall_eq`). Against the strictly stronger alternatives alone, `exh` of a
-content is its use condition under competition (`Alternatives.useCondition_eq_exh`), so
+content is where it is unblocked under competition (`Alternatives.unblocked_eq_exh`), so
 Maximize Presupposition strengthens a presupposition as exhaustification strengthens an
 assertion.
 
@@ -322,19 +322,12 @@ namespace Alternatives
 
 variable {S W : Type*}
 
-/-- A use condition is the content exhaustified against the contents of its strictly stronger
-alternatives. -/
-theorem useCondition_eq_exh (alts : S → Set S) (content : S → Set W) (φ : S) :
-    useCondition alts content φ =
-      Exhaustification.exh (content '' {ψ ∈ alts φ | content ψ ⊂ content φ}) (content φ) := by
-  rw [useCondition_eq_sdiff_biUnion, Exhaustification.exh_eq_sdiff]
-  congr 1
-  ext w
-  simp only [Set.mem_iUnion, Set.mem_sUnion, Set.mem_image, Set.mem_ofPred_eq, exists_prop]
-  constructor
-  · rintro ⟨ψ, ⟨hψ, hss⟩, hw⟩
-    exact ⟨content ψ, ⟨⟨ψ, ⟨hψ, hss⟩, rfl⟩, hss.not_subset⟩, hw⟩
-  · rintro ⟨_, ⟨⟨ψ, hψ, rfl⟩, -⟩, hw⟩
-    exact ⟨ψ, hψ, hw⟩
+/-- An expression is unblocked on its content exhaustified against the contents of its strictly
+stronger alternatives. -/
+theorem unblocked_eq_exh (alts : S → Set S) (content : S → Set W) (φ : S) :
+    unblocked alts content φ =
+      Exhaustification.exh (content '' alts φ ∩ Set.Iio (content φ)) (content φ) := by
+  rw [unblocked, Exhaustification.exh_eq_sdiff,
+    Set.sep_eq_self_iff_mem_true.2 fun _ hq ↦ hq.2.not_ge]
 
 end Alternatives

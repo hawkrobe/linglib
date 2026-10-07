@@ -29,8 +29,8 @@ mentioned, its phrase enters the substitution source, the epithet alternative is
 substituting it for the subject and then *John* for *Pedro*, the paper's derivation (24)
 (`epithet_alternative_priorMention`), and the inference arises (`priorMention_yes_ACI`): the
 bare sentence is then used exactly where the speaker does not hold the attitude
-(`useCondition_priorMention`), where out of the blue it is used whatever the attitude
-(`useCondition_outOfBlue`).
+(`unblocked_priorMention`), where out of the blue it is used whatever the attitude
+(`unblocked_outOfBlue`).
 
 ## Implementation notes
 
@@ -198,23 +198,23 @@ private theorem expressiveCI_johnArrived : expressiveCI johnArrived = Set.univ :
 
 /-- Out of the blue the bare sentence is used whatever the speaker's attitude, so it carries no
 anti-conventional implicature. -/
-theorem useCondition_outOfBlue :
-    useCondition (structuralAlternatives epithetLex) expressiveCI johnArrived = Set.univ := by
-  rw [useCondition_eq_of_not_blocked outOfBlue_no_ACI, expressiveCI_johnArrived]
+theorem unblocked_outOfBlue :
+    unblocked (structuralAlternatives epithetLex) expressiveCI johnArrived = Set.univ := by
+  rw [unblocked_eq_self outOfBlue_no_ACI, expressiveCI_johnArrived]
 
 /-- After the mention the bare sentence is used exactly where the speaker does not hold the
 attitude, the anti-conventional implicature that John is no bastard in the speaker's eyes. -/
-theorem useCondition_priorMention :
-    useCondition (structuralAlternatives priorContextLex) expressiveCI johnArrived = {false} := by
+theorem unblocked_priorMention :
+    unblocked (structuralAlternatives priorContextLex) expressiveCI johnArrived = {false} := by
   ext w
   cases w
   · simp only [Set.mem_singleton_iff, iff_true]
-    refine mem_useCondition_iff.2 ⟨expressiveCI_johnArrived ▸ Set.mem_univ _,
+    refine mem_unblocked_iff.2 ⟨expressiveCI_johnArrived ▸ Set.mem_univ _,
       fun ψ _ hψ hss ↦ hss.ne ?_⟩
     rw [expressiveCI_johnArrived]
     exact Set.eq_univ_of_forall fun _ h ↦ absurd (hψ h) Bool.false_ne_true
   · simp only [Set.mem_singleton_iff, Bool.true_eq_false, iff_false]
-    exact Set.disjoint_left.1 (disjoint_useCondition_of_ssubset epithet_alternative_priorMention
+    exact Set.disjoint_left.1 (disjoint_unblocked_of_ssubset epithet_alternative_priorMention
       epithet_ciStronger_than_bare) (fun _ ↦ rfl)
 
 end LoGuercio2025
