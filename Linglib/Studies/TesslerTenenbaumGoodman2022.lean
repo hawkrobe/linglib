@@ -8,17 +8,17 @@ public import Linglib.Core.InformationTheory.Entropy
 /-!
 # Tessler, Tenenbaum and Goodman (2022): Logic, Probability, and Pragmatics in Syllogistic Reasoning
 
-This file formalizes [tessler-tenenbaum-goodman-2022]'s Rational Speech Act models of
-syllogistic reasoning. A reasoner first acts as a literal listener, conditioning a prior over
-Venn states on the truth-conditional meanings of the two premises, (1)–(2), then as a speaker
-choosing among nine conclusions: the eight quantified relations between the end terms and
-*nothing follows*, formalized as the vacuous utterance true in every state. Three speakers are
-compared. The literal speaker (3) scores a conclusion by its posterior probability of truth;
-the state-communication speaker (4) by the expected log-probability that a naive literal
-listener, who hears the conclusion alone, assigns to the reasoner's state; the belief-alignment
-speaker (6) by the negative Kullback–Leibler divergence from the reasoner's posterior to that
-naive listener's. A figural preference (section 3.1.1) weights conclusions whose subject term
-is the unique end term in subject position in the premises.
+This file formalizes Tessler, Tenenbaum and Goodman's Rational Speech Act models of syllogistic
+reasoning. A reasoner first acts as a literal listener, conditioning a prior over Venn states on the
+truth-conditional meanings of the two premises, (1)–(2), then as a speaker choosing among nine
+conclusions: the eight quantified relations between the end terms and *nothing follows*, formalized
+as the vacuous utterance true in every state. Three speakers are compared. The literal speaker (3)
+scores a conclusion by its posterior probability of truth; the state-communication speaker (4) by
+the expected log-probability that a naive literal listener, who hears the conclusion alone, assigns
+to the reasoner's state; the belief-alignment speaker (6) by the negative Kullback–Leibler
+divergence from the reasoner's posterior to that naive listener's. A figural preference (section
+3.1.1) weights conclusions whose subject term is the unique end term in subject position in the
+premises.
 
 The speakers are score speakers of `Linglib.Pragmatics.RSA.Basic`, so the paper's
 qualitative claims are theorems over the parameters. The state-communication and
@@ -269,11 +269,13 @@ variable (φ : ℝ≥0∞) (μ : Measure VennState)
 /-- The reasoner as listener (2), the prior conditioned on the noisy meanings of both premises,
 each disregarded independently. -/
 noncomputable def reasoner : Kernel Syllogism VennState :=
-  literalListener μ λ syl s => noisy φ (premise1 syl s) * noisy φ (premise2 syl s)
+  gradedListener μ λ syl s => noisy φ (premise1 syl s) * noisy φ (premise2 syl s)
+
+instance : IsFiniteKernel (reasoner φ μ) := inferInstanceAs (IsFiniteKernel (gradedListener _ _))
 
 /-- The naive listener (1), who hears the conclusion alone. -/
 noncomputable def naive : Kernel Conclusion VennState :=
-  literalListener μ λ c s => noisy φ (concMeaning c s)
+  gradedListener μ λ c s => noisy φ (concMeaning c s)
 
 /-- Without noise the reasoner's posterior under the flat prior is uniform on the states
 satisfying the premises. -/
@@ -284,7 +286,7 @@ theorem reasoner_zero (syl : Syllogism) :
     funext syl s
     cases h1 : premise1 syl s <;> cases h2 : premise2 syl s <;>
       simp [coe_states, premises, noisy, h1, h2]
-  rw [reasoner, h, literalListener_indicator, Kernel.ofFunOfCountable_apply, uniformOn_univ_cond]
+  rw [reasoner, h, gradedListener_indicator, literalListener_apply, uniformOn_univ_cond]
 
 /-- Without noise the naive listener's posterior under the flat prior is uniform on the states
 satisfying the conclusion. -/
@@ -294,12 +296,12 @@ theorem naive_zero (c : Conclusion) :
       λ c => (states (concMeaning c) : Set VennState).indicator 1 := by
     funext c s
     cases h : concMeaning c s <;> simp [coe_states, noisy, h]
-  rw [naive, h, literalListener_indicator, Kernel.ofFunOfCountable_apply, uniformOn_univ_cond]
+  rw [naive, h, gradedListener_indicator, literalListener_apply, uniformOn_univ_cond]
 
 /-- With noise and a full-support prior the reasoner's posterior is a probability measure. -/
 theorem isProbabilityMeasure_reasoner [IsFiniteMeasure μ] (hφ : φ ≠ 0) (hφ' : φ ≠ ∞)
     (hμ : ∀ s, μ {s} ≠ 0) (syl : Syllogism) : IsProbabilityMeasure (reasoner φ μ syl) := by
-  refine isProbabilityMeasure_literalListener μ _ syl ?_ ?_ <;> rw [lintegral_fintype]
+  refine isProbabilityMeasure_gradedListener μ _ syl ?_ ?_ <;> rw [lintegral_fintype]
   · intro h
     have := Finset.sum_eq_zero_iff.mp h default (Finset.mem_univ _)
     exact mul_ne_zero (mul_ne_zero (noisy_ne_zero hφ _) (noisy_ne_zero hφ _)) (hμ default) this
@@ -310,7 +312,7 @@ theorem isProbabilityMeasure_reasoner [IsFiniteMeasure μ] (hφ : φ ≠ 0) (hφ
 measure. -/
 theorem isProbabilityMeasure_naive [IsFiniteMeasure μ] (hφ : φ ≠ 0) (hφ' : φ ≠ ∞)
     (hμ : ∀ s, μ {s} ≠ 0) (c : Conclusion) : IsProbabilityMeasure (naive φ μ c) := by
-  refine isProbabilityMeasure_literalListener μ _ c ?_ ?_ <;> rw [lintegral_fintype]
+  refine isProbabilityMeasure_gradedListener μ _ c ?_ ?_ <;> rw [lintegral_fintype]
   · intro h
     have := Finset.sum_eq_zero_iff.mp h default (Finset.mem_univ _)
     exact mul_ne_zero (noisy_ne_zero hφ _) (hμ default) this
@@ -319,7 +321,7 @@ theorem isProbabilityMeasure_naive [IsFiniteMeasure μ] (hφ : φ ≠ 0) (hφ' :
 /-- With noise and a full-support prior the naive listener gives every state positive mass. -/
 theorem naive_apply_ne_zero [IsFiniteMeasure μ] (hφ : φ ≠ 0) (hφ' : φ ≠ ∞)
     (hμ : ∀ s, μ {s} ≠ 0) (c : Conclusion) (s : VennState) : naive φ μ c {s} ≠ 0 := by
-  rw [naive, literalListener_apply_singleton, ENNReal.div_ne_zero]
+  rw [naive, gradedListener_apply_singleton, ENNReal.div_ne_zero]
   exact ⟨mul_ne_zero (noisy_ne_zero hφ _) (hμ s), ENNReal.sum_ne_top.2 λ s _ =>
     ENNReal.mul_ne_top (noisy_ne_top hφ' _) (measure_ne_top _ _)⟩
 
@@ -346,7 +348,7 @@ noncomputable def literalScore (syl : Syllogism) (c : Conclusion) : EReal :=
 noncomputable def literalSpeaker : Kernel Syllogism Conclusion :=
   speakerOfScore (literalScore φ μ α β)
 
-/-- The state-communication utility (4): the expected log-probability the naive listener
+/-- The state-communication utility (4) is the expected log-probability the naive listener
 assigns to the reasoner's state. -/
 noncomputable def stateScore (syl : Syllogism) (c : Conclusion) : EReal :=
   ((Real.log (figuralWeight β syl c) +
@@ -356,7 +358,7 @@ noncomputable def stateScore (syl : Syllogism) (c : Conclusion) : EReal :=
 noncomputable def stateCommunication : Kernel Syllogism Conclusion :=
   speakerOfScore (stateScore φ μ α β)
 
-/-- The belief-alignment utility (5)–(6): the negative divergence from the reasoner's
+/-- The belief-alignment utility (5)–(6) is the negative divergence from the reasoner's
 posterior to the naive listener's. -/
 noncomputable def alignmentScore (syl : Syllogism) (c : Conclusion) : EReal :=
   (Real.log (figuralWeight β syl c) : EReal) -
@@ -417,7 +419,7 @@ theorem alignmentScore_eq_stateScore_add [IsFiniteMeasure μ] (hφ : φ ≠ 0) (
   ring
 
 /-- Under the printed equations the state-communication and belief-alignment speakers are one
-kernel: the entropy term cancels in the softmax over conclusions. -/
+kernel, since the entropy term cancels in the softmax over conclusions. -/
 theorem stateCommunication_eq_beliefAlignment [IsFiniteMeasure μ] (hφ : φ ≠ 0) (hφ' : φ ≠ ∞)
     (hμ : ∀ s, μ {s} ≠ 0) : stateCommunication φ μ α β = beliefAlignment φ μ α β :=
   (speakerOfScore_eq_of_add λ syl c => alignmentScore_eq_stateScore_add hφ hφ' hμ syl c).symm
@@ -429,7 +431,7 @@ theorem figuralWeight_one (syl : Syllogism) (c : Conclusion) : figuralWeight 1 s
   split_ifs <;> rfl
 
 /-- Without the figural preference the literal speaker never prefers a quantified conclusion
-to *nothing follows*: the posterior probability of a tautology is maximal. -/
+to *nothing follows*, since the posterior probability of a tautology is maximal. -/
 theorem literalSpeaker_le_nvc (hα : 0 ≤ α) (syl : Syllogism) (c : Conclusion) :
     (literalSpeaker φ μ α 1 syl).real {c} ≤ (literalSpeaker φ μ α 1 syl).real {.nvc} := by
   refine not_lt.1 λ h => ?_
@@ -442,7 +444,7 @@ theorem literalSpeaker_le_nvc (hα : 0 ≤ α) (syl : Syllogism) (c : Conclusion
   rw [huniv] at h
   exact absurd h (not_lt.2 (add_le_add_right (mul_le_mul_of_nonneg_left
     (measureReal_mono (Set.subset_univ _)
-      (ne_top_of_le_ne_top ENNReal.one_ne_top (literalListener_apply_le_one μ _ syl _))) hα) _))
+      (measure_ne_top _ _)) hα) _))
 
 end Model
 
@@ -553,8 +555,8 @@ theorem allAC_subset_someAC : states (concMeaning .allAC) ⊆ states (concMeanin
     Bool.and_eq_true, decide_eq_true_eq] at hs ⊢
   exact syllAll_imp_syllSome s hasA hasC hs.2 hs.1
 
-/-- Hearing Barbara, the belief-alignment speaker prefers *all A are C* to *some A are C* and
-to *nothing follows*: the entailed conclusion true in the fewest states. -/
+/-- Hearing Barbara, the belief-alignment speaker prefers *all A are C*, the entailed conclusion
+true in the fewest states, to *some A are C* and to *nothing follows*. -/
 theorem barbara_prefers_allAC (hα : 0 < α) (hβ : 1 ≤ β) :
     (beliefAlignment 0 (uniformOn Set.univ) α β barbara).real {.someAC} <
         (beliefAlignment 0 (uniformOn Set.univ) α β barbara).real {.allAC} ∧

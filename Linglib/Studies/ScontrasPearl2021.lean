@@ -297,13 +297,13 @@ variable (D : NumberTree) [DecidableRel D] (n : ℕ)
 /-- The literal listener is uniform on the extension of the utterance under the scope
 interpretation, with no world prior (fn. 6). -/
 noncomputable def L0 (i : Scope) : Kernel Utt (World n) :=
-  literalListener (uniformOn Set.univ) fun u ↦ (↑(ext D n i u) : Set (World n)).indicator 1
+  literalListener (uniformOn Set.univ) fun u ↦ (↑(ext D n i u) : Set (World n))
 
 instance (i : Scope) : IsFiniteKernel (L0 D n i) :=
   inferInstanceAs (IsFiniteKernel (literalListener _ _))
 
 theorem L0_apply (i : Scope) (u : Utt) : L0 D n i u = uniformOn ↑(ext D n i u) := by
-  rw [L0, literalListener_indicator, Kernel.ofFunOfCountable_apply, uniformOn, uniformOn,
+  rw [L0, literalListener_apply, uniformOn, uniformOn,
     cond_cond_eq_cond_inter' MeasurableSet.univ (Finset.measurableSet _) (by simp),
     Set.univ_inter]
 

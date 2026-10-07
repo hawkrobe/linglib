@@ -9,15 +9,14 @@ public import Linglib.Semantics.Reference.Iota
 # Distinguishing descriptions
 
 A description distinguishes its referent from a contrast set when its compatibility with the
-referent strictly exceeds its compatibility with every distractor, compatibility taking values
-in a preorder. At truth values this is the distinguishing description of [dale-reiter-1995],
-which holds of the referent and of no distractor, and the Russellian uniqueness of
-`Reference.iota` over the domain the contrast set restricts. Under a graded semantics it
-says the referent is the literal listener's best guess, since a strictly monotone rescaling of
-compatibility such as the listener's normalization does not change it
-(`RSA.distinguishes_literalListener_uniformOn_iff`). A graded description
-distinguishes exactly when some level set of its compatibility does, so the truth-valued notion
-is the general one at a threshold.
+referent strictly exceeds its compatibility with every distractor, compatibility taking values in a
+preorder. At truth values this is the distinguishing description of Dale and Reiter, which holds of
+the referent and of no distractor, and the Russellian uniqueness of `Reference.iota` over the domain
+the contrast set restricts. Under a graded semantics it says the referent is the literal listener's
+best guess, since a strictly monotone rescaling of compatibility such as the listener's
+normalization does not change it (`RSA.distinguishes_gradedListener_uniformOn_iff`). A graded
+description distinguishes exactly when some level set of its compatibility does, so the truth-valued
+notion is the general one at a threshold.
 
 ## Main definitions
 

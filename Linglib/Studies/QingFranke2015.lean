@@ -7,29 +7,28 @@ public import Mathlib.Analysis.Complex.ExponentialBounds
 /-!
 # Qing and Franke (2015): Variations on a Bayesian Theme
 
-This file formalizes [qing-franke-2015]'s family of models of the referential game of
-[frank-goodman-2012], the rational speech act model decomposed along its design choices (§3):
-the speaker's belief about the literal listener, a uniform prior or the empirically measured
-salience prior; the speaker's goal, the belief-oriented log probability of the referent or the
-action-oriented probability itself; a cost on adjectives (11); and for the listener, its own
-prior and whether it acts on its posterior by a further soft maximization (14). The context is
-the paper's Fig. 3, a square and a circle of one colour and a circle of the other. Speaker
-preference is a threshold on the cost: the speakers that ignore salience prefer the unique word
-at the two objects that have one for every cost within `log 2` of zero in the belief-oriented
-and within `1/2` in the action-oriented model, bounds beyond the paper's cost support of
-`(-0.4, 0.4)`, and prefer the noun at the object with both features shared exactly when nouns
-are cheaper (`belief_blue_lt_iff`, `action_blue_lt_iff`, `belief_shared_lt_iff`), the majority
-directions of Table 1; the salience-belief speaker's threshold at the blue circle,
-`log (169 / 139)`, lies inside the support (`salience_blue_lt_iff`, `salience_threshold_lt`).
-The uniform-prior listener follows pragmatic narrowing on both ambiguous words at every
-rationality
-(`uniform_listener_circle`, `uniform_listener_green`). The salience-prior listener that embeds
-the original speaker follows salience on *circle* below a threshold on the embedded rationality
-and narrowing on *green* only above one (`salience_listener_circle_iff`,
-`salience_listener_green_iff`), the two directions of Table 2; at rationality one it mispredicts
-*green* (`rsa_listener_green`), the model-side face of the paper's rejection of `λ = 1`, and it
-matches both directions on a window of rationalities above one (`salience_listener_window`).
-Acting on the posterior preserves its order (`actionListener_lt_iff`).
+This file formalizes Qing and Franke's family of models of the referential game of Frank and
+Goodman, the rational speech act model decomposed along its design choices (§3): the speaker's
+belief about the literal listener, a uniform prior or the empirically measured salience prior; the
+speaker's goal, the belief-oriented log probability of the referent or the action-oriented
+probability itself; a cost on adjectives (11); and for the listener, its own prior and whether it
+acts on its posterior by a further soft maximization (14). The context is the paper's Fig. 3, a
+square and a circle of one colour and a circle of the other. Speaker preference is a threshold on
+the cost: the speakers that ignore salience prefer the unique word at the two objects that have one
+for every cost within `log 2` of zero in the belief-oriented and within `1/2` in the action-oriented
+model, bounds beyond the paper's cost support of `(-0.4, 0.4)`, and prefer the noun at the object
+with both features shared exactly when nouns are cheaper (`belief_blue_lt_iff`,
+`action_blue_lt_iff`, `belief_shared_lt_iff`), the majority directions of Table 1; the
+salience-belief speaker's threshold at the blue circle, `log (169 / 139)`, lies inside the support
+(`salience_blue_lt_iff`, `salience_threshold_lt`). The uniform-prior listener follows pragmatic
+narrowing on both ambiguous words at every rationality (`uniform_listener_circle`,
+`uniform_listener_green`). The salience-prior listener that embeds the original speaker follows
+salience on *circle* below a threshold on the embedded rationality and narrowing on *green* only
+above one (`salience_listener_circle_iff`, `salience_listener_green_iff`), the two directions of
+Table 2; at rationality one it mispredicts *green* (`rsa_listener_green`), the model-side face of
+the paper's rejection of `λ = 1`, and it matches both directions on a window of rationalities above
+one (`salience_listener_window`). Acting on the posterior preserves its order
+(`actionListener_lt_iff`).
 
 ## Implementation notes
 
@@ -54,8 +53,8 @@ namespace QingFranke2015
 
 /-! ### The context (Fig. 3) -/
 
-/-- The three objects: the square and the circle sharing a colour, and the circle of the other
-colour. -/
+/-- The three objects are the square and the circle sharing a colour, and the circle of the
+other colour. -/
 inductive Object
   | greenSquare | greenCircle | blueCircle
   deriving DecidableEq, Fintype, Repr, Inhabited
@@ -88,7 +87,7 @@ def Word.extension (u : Word) : Set Object := {t | u.AppliesTo t}
 instance (u : Word) : DecidablePred (· ∈ u.extension) := λ t =>
   inferInstanceAs (Decidable (u.AppliesTo t))
 
-/-- The cost (11): `c` on the colour adjectives, nothing on the shape nouns. -/
+/-- The colour adjectives cost `c` and the shape nouns nothing (11). -/
 def Word.cost (c : ℝ) : Word → ℝ
   | .green | .blue => c
   | .circle | .square => 0
@@ -127,16 +126,17 @@ noncomputable abbrev salience : Measure Object := priorOf salienceCount
 
 /-! ### The literal listener and the speakers (§3) -/
 
-/-- The literal listener at a prior (1): the prior conditioned on the word's extension. -/
+/-- The literal listener at a prior (1) conditions the prior on the word's extension. -/
 noncomputable def L0 (μ : Measure Object) : Kernel Word Object :=
-  literalListener μ λ u => u.extension.indicator 1
+  literalListener μ fun u ↦ u.extension
 
 theorem L0_real_of_mem (w : Object → ℕ) {u : Word} {t : Object} (h : t ∈ u.extension) :
     (L0 (priorOf w) u).real {t} = (w t : ℝ) / (priorOf w u.extension).toReal := by
-  rw [L0, measureReal_def, literalListener_indicator_apply_singleton _ _ h, ENNReal.toReal_mul,
+  rw [L0, measureReal_def, literalListener_apply_singleton _ _ h, ENNReal.toReal_mul,
     ENNReal.toReal_inv, priorOf_singleton, ENNReal.toReal_natCast, div_eq_inv_mul]
 
-/-- The literal listener at the uniform prior: the reciprocal of the extension's size. -/
+/-- At the uniform prior the literal listener puts the reciprocal of the extension's size on
+each object of it. -/
 theorem L0_uniform_real_of_mem {u : Word} {t : Object} (h : t ∈ u.extension) :
     (L0 uniform u).real {t} = 1 / (Finset.univ.filter (· ∈ u.extension)).card := by
   rw [L0_real_of_mem _ h, priorOf_apply]
@@ -152,7 +152,7 @@ theorem L0_salience_real_of_mem {u : Word} {t : Object} (h : t ∈ u.extension) 
     ENNReal.toReal_sum λ _ _ => ENNReal.natCast_ne_top _]
   simp only [ENNReal.toReal_natCast]
 
-/-- The speaker's goal: the belief-oriented log probability of the referent (10) or the
+/-- The speaker's goal is the belief-oriented log probability of the referent (10) or the
 action-oriented probability itself (9). -/
 inductive Goal
   | belief | action
@@ -163,13 +163,13 @@ noncomputable def Goal.value : Goal → ℝ → ℝ
   | .belief => log
   | .action => id
 
-/-- The utility of a word at an object: the goal's value of the literal listener's probability
-less the cost, scaled by the rationality; a false word is never used (fn. 13). -/
+/-- The utility of a word at an object is the goal's value of the literal listener's
+probability less the cost, scaled by the rationality; a false word is never used (fn. 13). -/
 noncomputable def score (g : Goal) (μ : Measure Object) (lam c : ℝ) (t : Object) (u : Word) :
     EReal :=
   if t ∈ u.extension then ((lam * (g.value ((L0 μ u).real {t}) - u.cost c) : ℝ) : EReal) else ⊥
 
-/-- The speaker models `σ_xy` of (9) and (10): the score speaker at goal `x` and belief
+/-- The speaker models `σ_xy` of (9) and (10) are the score speakers at goal `x` and belief
 prior `y`. -/
 noncomputable def speaker (g : Goal) (μ : Measure Object) (lam c : ℝ) : Kernel Object Word :=
   speakerOfScore (score g μ lam c)
@@ -369,12 +369,13 @@ theorem salience_threshold_lt : log (169 / 139) < (0.4 : ℝ) := by
 
 /-! ### Listeners (§3), (12) to (15) -/
 
-/-- The belief-oriented listener (15): the posterior of a speaker against the listener's prior. -/
+/-- The belief-oriented listener (15) is the posterior of a speaker against the listener's
+prior. -/
 noncomputable def listener (ν : Measure Object) [IsFiniteMeasure ν] (σ : Kernel Object Word)
     [IsFiniteKernel σ] : Kernel Word Object :=
   σ†ν
 
-/-- The action-oriented listener (14): the soft maximization of a posterior. -/
+/-- The action-oriented listener (14) soft-maximizes a posterior. -/
 noncomputable def actionListener (lamL : ℝ) (ρ : Kernel Word Object) : Kernel Word Object :=
   speakerOfScore λ u t => ((lamL * (ρ u).real {t} : ℝ) : EReal)
 
@@ -467,8 +468,8 @@ theorem comp_speaker_ne_zero (w : Object → ℕ) (hw : ∀ t, w t ≠ 0) (u : W
   · exact key .greenSquare (by decide)
   · exact key .blueCircle (by decide)
 
-/-- The uniform-prior listener hearing *circle* prefers the green circle: a blue-circle speaker
-had *blue*. -/
+/-- The uniform-prior listener hearing *circle* prefers the green circle, since a blue-circle
+speaker had *blue*. -/
 theorem uniform_listener_circle (hlam : 0 < lam) :
     (listener uniform (speaker .belief uniform lam c) .circle).real {.blueCircle}
       < (listener uniform (speaker .belief uniform lam c) .circle).real {.greenCircle} := by
@@ -477,7 +478,7 @@ theorem uniform_listener_circle (hlam : 0 < lam) :
   simp only [Nat.cast_one, ENNReal.toReal_one, one_mul]
   exact sigmoid_lt (by nlinarith [log_pos (by norm_num : (1 : ℝ) < 2)])
 
-/-- Hearing *green* it prefers the green circle: a green-square speaker had *square*. -/
+/-- Hearing *green* it prefers the green circle, since a green-square speaker had *square*. -/
 theorem uniform_listener_green (hlam : 0 < lam) :
     (listener uniform (speaker .belief uniform lam c) .green).real {.greenSquare}
       < (listener uniform (speaker .belief uniform lam c) .green).real {.greenCircle} := by
@@ -527,7 +528,7 @@ theorem salience_listener_green_iff :
 
 end BeliefUniform
 
-/-- The original model `ρ_bS(σ_bU)` at rationality one and no cost mispredicts *green*: the
+/-- The original model `ρ_bS(σ_bU)` at rationality one and no cost mispredicts *green*, as the
 salient green square wins. -/
 theorem rsa_listener_green :
     ¬ (listener salience (speaker .belief uniform 1 0) .green).real {.greenSquare}

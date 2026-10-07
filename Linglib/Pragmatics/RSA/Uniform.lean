@@ -18,12 +18,12 @@ certificates, or at a pinned natural rationality through ℕ inequalities
 
 ## Main definitions
 
-* `RSA.uniformListener` — `literalListener` at a uniform prior and indicator meanings.
+* `RSA.uniformListener` — `literalListener` at a uniform prior.
 * `RSA.uniformSpeaker`, `RSA.uniformJointListener` — the pipeline at those arguments.
 
 ## Main results
 
-* `RSA.distinguishes_literalListener_uniformOn_iff` — a description distinguishes its referent
+* `RSA.distinguishes_gradedListener_uniformOn_iff` — a description distinguishes its referent
   under the literal listener exactly when it does under the meaning, so the referent is the
   listener's best guess.
 * `RSA.uniformSpeaker_real_singleton_lt_of_card_lt` — informativity monotonicity.
@@ -50,16 +50,16 @@ variable {T C O : Type*} [Fintype T] [DecidableEq T] [MeasurableSpace T]
 
 /-- The literal listener at a uniform prior (eq. 5) is uniform on each choice's extension. -/
 noncomputable def uniformListener : Kernel C T :=
-  literalListener (uniformOn Set.univ) fun c => (↑(sem c) : Set T).indicator 1
+  literalListener (uniformOn Set.univ) fun c => ↑(sem c)
 
 instance : IsFiniteKernel (uniformListener sem) :=
   inferInstanceAs (IsFiniteKernel (literalListener _ _))
 
 omit [DecidableEq T] in
 theorem uniformListener_apply (c : C) : uniformListener sem c = uniformOn ↑(sem c) := by
-  rw [uniformListener, literalListener_indicator, Kernel.ofFunOfCountable_apply]
-  rw [uniformOn, uniformOn, cond_cond_eq_cond_inter' MeasurableSet.univ .of_discrete
-    (by rw [Measure.count_apply_finite _ Set.finite_univ]; exact ENNReal.natCast_ne_top _),
+  rw [uniformListener, literalListener_apply, uniformOn, uniformOn,
+    cond_cond_eq_cond_inter' MeasurableSet.univ .of_discrete
+      (by rw [Measure.count_apply_finite _ Set.finite_univ]; exact ENNReal.natCast_ne_top _),
     Set.univ_inter]
 
 theorem uniformListener_apply_singleton (c : C) (t : T) :
@@ -95,10 +95,10 @@ theorem uniformListener_apply_singleton_ne_zero {c : C} {t : T} (h : t ∈ sem c
 omit [DecidableEq T] in
 /-- At a uniform prior a graded meaning normalizes to its share of the row sum, since the
 prior cancels. -/
-theorem literalListener_uniformOn_apply_singleton [Nonempty T] {U : Type*} [MeasurableSpace U]
+theorem gradedListener_uniformOn_apply_singleton [Nonempty T] {U : Type*} [MeasurableSpace U]
     [Countable U] [MeasurableSingletonClass U] (m : U → T → ℝ≥0∞) (u : U) (t : T) :
-    literalListener (uniformOn Set.univ) m u {t} = m u t / ∑ t', m u t' := by
-  rw [literalListener_apply_singleton]
+    gradedListener (uniformOn Set.univ) m u {t} = m u t / ∑ t', m u t' := by
+  rw [gradedListener_apply_singleton]
   have hc : ((Fintype.card T : ℝ≥0∞))⁻¹ ≠ 0 :=
     ENNReal.inv_ne_zero.mpr (ENNReal.natCast_ne_top _)
   have hc' : ((Fintype.card T : ℝ≥0∞))⁻¹ ≠ ∞ :=
@@ -108,24 +108,24 @@ theorem literalListener_uniformOn_apply_singleton [Nonempty T] {U : Type*} [Meas
 
 omit [DecidableEq T] in
 /-- With real-valued meanings the share is the real ratio of the row. -/
-theorem literalListener_uniformOn_ofReal_apply_singleton [Nonempty T] {U : Type*}
+theorem gradedListener_uniformOn_ofReal_apply_singleton [Nonempty T] {U : Type*}
     [MeasurableSpace U] [Countable U] [MeasurableSingletonClass U] (m : U → T → ℝ) (u : U)
     (t : T) (hm : ∀ t', 0 ≤ m u t') (hpos : 0 < ∑ t', m u t') :
-    literalListener (uniformOn Set.univ) (fun u t => ENNReal.ofReal (m u t)) u {t} =
+    gradedListener (uniformOn Set.univ) (fun u t => ENNReal.ofReal (m u t)) u {t} =
       ENNReal.ofReal (m u t / ∑ t', m u t') := by
-  rw [literalListener_uniformOn_apply_singleton, ← ENNReal.ofReal_sum_of_nonneg fun t' _ => hm t',
+  rw [gradedListener_uniformOn_apply_singleton, ← ENNReal.ofReal_sum_of_nonneg fun t' _ => hm t',
     ← ENNReal.ofReal_div_of_pos hpos]
 
 omit [DecidableEq T] in
-/-- At a uniform prior the literal listener's masses on the states are the meaning's values
+/-- At a uniform prior the graded listener's masses on the states are the meaning's values
 rescaled by the row sum, so a description distinguishes its referent under the listener exactly
 when it does under the meaning. -/
-theorem distinguishes_literalListener_uniformOn_iff [Nonempty T] {U : Type*} [MeasurableSpace U]
+theorem distinguishes_gradedListener_uniformOn_iff [Nonempty T] {U : Type*} [MeasurableSpace U]
     [Countable U] [MeasurableSingletonClass U] {m : U → T → ℝ≥0∞} {C : Finset T} {r : T}
     {u : U} (h0 : ∑ t, m u t ≠ 0) (htop : ∑ t, m u t ≠ ∞) :
-    Reference.Distinguishes (fun u t => literalListener (uniformOn Set.univ) m u {t}) C r u ↔
+    Reference.Distinguishes (fun u t => gradedListener (uniformOn Set.univ) m u {t}) C r u ↔
       Reference.Distinguishes m C r u := by
-  simp_rw [literalListener_uniformOn_apply_singleton]
+  simp_rw [gradedListener_uniformOn_apply_singleton]
   exact Reference.distinguishes_comp_iff (φ := fun u x => x / ∑ t', m u t')
     fun _ _ h => ENNReal.div_lt_div_right h0 htop h
 

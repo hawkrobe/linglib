@@ -336,7 +336,7 @@ variable (P : Measure World) [IsFiniteMeasure P] (hP : ∀ w, P {w} ≠ 0) (m : 
 
 /-- The literal listener conditions the prior on the message's extension (eq. 1). -/
 noncomputable def L0 : Kernel Message World :=
-  RSA.literalListener P λ u => (m.extension u).indicator 1
+  RSA.literalListener P m.extension
 
 instance : IsFiniteKernel (L0 P m) := inferInstanceAs (IsFiniteKernel (RSA.literalListener _ _))
 
@@ -346,13 +346,13 @@ theorem L0_ne_top (u : Message) (w : World) : L0 P m u {w} ≠ ∞ := measure_ne
 omit [IsFiniteMeasure P] in
 /-- A message false at a world gets no mass there. -/
 theorem L0_eq_zero {u : Message} {w : World} (h : m.sat u w = false) : L0 P m u {w} = 0 :=
-  RSA.literalListener_indicator_apply_singleton_of_notMem P m.extension
+  RSA.literalListener_apply_singleton_of_notMem P m.extension
     (by rw [Meaning.mem_extension, h]; exact Bool.false_ne_true)
 
 omit [IsFiniteMeasure P] in
 /-- The tautology *A* leaves the prior unchanged. -/
 theorem L0_literal_a [IsProbabilityMeasure P] (w : World) : L0 P literal .a {w} = P {w} :=
-  RSA.literalListener_indicator_apply_singleton_of_eq_univ P literal.extension
+  RSA.literalListener_apply_singleton_of_eq_univ P literal.extension
     (literal.extension_eq_univ λ w => by cases w <;> rfl) w
 
 variable (s : Setting)
@@ -386,19 +386,19 @@ include hP
 
 /-- A message true at a world has positive mass there. -/
 theorem L0_ne_zero {u : Message} {w : World} (h : m.sat u w = true) : L0 P m u {w} ≠ 0 := by
-  rw [L0, RSA.literalListener_indicator_apply_singleton P m.extension h]
+  rw [L0, RSA.literalListener_apply_singleton P m.extension h]
   exact mul_ne_zero (ENNReal.inv_ne_zero.mpr (measure_ne_top _ _)) (hP w)
 
 /-- A message true at one world only puts all its mass there. -/
 theorem L0_eq_one {u : Message} {w : World} (h : ∀ w', m.sat u w' = true ↔ w' = w) :
     L0 P m u {w} = 1 :=
-  RSA.literalListener_indicator_apply_singleton_of_eq_singleton P m.extension
+  RSA.literalListener_apply_singleton_of_eq_singleton P m.extension
     (m.extension_eq_singleton h) (hP w)
 
 /-- The literal listener is a probability measure. -/
 theorem L0_apply_univ (u : Message) : L0 P m u Set.univ = 1 :=
   let ⟨w, hw⟩ := m.exists_world u
-  RSA.literalListener_indicator_apply_univ P m.extension λ h =>
+  RSA.literalListener_apply_univ P m.extension λ h =>
     hP w (measure_mono_null (Set.singleton_subset_iff.mpr hw) h)
 
 /-- On reals, the weight of a message true at a world is the exponential of the paper's scaled
@@ -686,7 +686,7 @@ variable (s : Setting)
 /-- The literal listener of a message under a chosen interpretation (item 1 of the §4.4
 model). -/
 noncomputable def liL0 : Kernel (Message × Interpretation) World :=
-  RSA.literalListener s.prior λ x => (x.2.meaning.extension x.1).indicator 1
+  RSA.literalListener s.prior fun x ↦ x.2.meaning.extension x.1
 
 instance : IsFiniteKernel (liL0 s) := inferInstanceAs (IsFiniteKernel (RSA.literalListener _ _))
 

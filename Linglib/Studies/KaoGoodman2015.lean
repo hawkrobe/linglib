@@ -77,22 +77,18 @@ def sem (u : Weather) : Set Meaning := {m | m.1 = u}
 
 /-- The literal listener conditions the prior on the state named. -/
 noncomputable def L0 (μ : Measure Meaning) : Kernel Weather Meaning :=
-  literalListener μ λ u => (sem u).indicator 1
+  literalListener μ sem
 
 instance (μ : Measure Meaning) : IsFiniteKernel (L0 μ) :=
   inferInstanceAs (IsFiniteKernel (literalListener _ _))
 
-theorem L0_apply_le_one (μ : Measure Meaning) (u : Weather) (s : Set Meaning) :
-    L0 μ u s ≤ 1 :=
-  literalListener_apply_le_one μ _ u s
-
 theorem L0_apply_singleton_ne_zero_iff (μ : Measure Meaning) [IsFiniteMeasure μ] (u : Weather)
     (m : Meaning) : L0 μ u {m} ≠ 0 ↔ m.1 = u ∧ μ {m} ≠ 0 := by
   by_cases h : m ∈ sem u
-  · rw [L0, literalListener_indicator_apply_singleton μ sem h]
+  · rw [L0, literalListener_apply_singleton μ sem h]
     exact ⟨λ h' => ⟨h, (mul_ne_zero_iff.mp h').2⟩,
       λ h' => mul_ne_zero (ENNReal.inv_ne_zero.mpr (measure_ne_top _ _)) h'.2⟩
-  · rw [L0, literalListener_indicator_apply_singleton_of_notMem μ sem h]
+  · rw [L0, literalListener_apply_singleton_of_notMem μ sem h]
     exact iff_of_false (λ h' => h' rfl) (λ h' => h h'.1)
 
 /-- The question-indexed speaker is the best response to the projected literal listener of the

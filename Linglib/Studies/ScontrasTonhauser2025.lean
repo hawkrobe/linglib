@@ -119,7 +119,7 @@ theorem cell_preimage (q : Question) (w : World) : q.answer ⁻¹' {q.answer w} 
 which the utterance is true, projected onto the question's answers. -/
 noncomputable def L0 (A : Finset World) (q : Question) : Kernel Utt World :=
   projListener Question.answer
-    (literalListener (Measure.count.restrict ↑A) λ u => (↑(sem u) : Set World).indicator 1) q
+    (literalListener (Measure.count.restrict ↑A) fun u ↦ (↑(sem u) : Set World)) q
 
 instance (A : Finset World) (q : Question) : IsFiniteKernel (L0 A q) :=
   inferInstanceAs (IsFiniteKernel (projListener _ _ _))
@@ -134,8 +134,8 @@ theorem L0_apply (A : Finset World) (q : Question) (u : Utt) (w : World) :
   have e1 : (↑(sem u) : Set World) ∩ ↑A = ↑(A ∩ sem u) := by ext; simp [and_comm]
   have e2 : (↑(sem u) : Set World) ∩ ↑(cell q w) ∩ ↑A = ↑((A ∩ sem u).filter (· ∈ cell q w)) := by
     ext; simp; tauto
-  rw [L0, projListener_apply_singleton, cell_preimage, literalListener_indicator,
-    Kernel.ofFunOfCountable_apply, cond_apply MeasurableSet.of_discrete,
+  rw [L0, projListener_apply_singleton, cell_preimage, literalListener_apply,
+    cond_apply MeasurableSet.of_discrete,
     Measure.restrict_apply MeasurableSet.of_discrete,
     Measure.restrict_apply MeasurableSet.of_discrete, e1, e2, Measure.count_apply_finset,
     Measure.count_apply_finset, l0, ENNReal.div_eq_inv_mul]
