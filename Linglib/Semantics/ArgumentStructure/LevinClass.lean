@@ -9,14 +9,26 @@ public import Mathlib.Tactic.DeriveFintype
 /-!
 # The verb classes of Levin 1993
 
-The verb classes of [levin-1993] Part II as an enumeration, one constructor per class page
-with a member list, with the page's section number and title. The classes' property tables are in `LevinClass/Properties.lean`, their member lists in
-`LevinClass/Members.lean`, their root entailments in `LevinTheory.lean`, and the
-`levinClasses` field of a `Verb` entry carries the classes listing it.
+`LevinClass` enumerates the verb classes of Part II of Levin's *English Verb Classes and
+Alternations*, one constructor for each class page with a member list, with the section number
+and title the book prints for it. The classes' property tables are in
+`LevinClass/Properties.lean`, their member lists in `LevinClass/Members.lean` and their root
+entailments in `LevinTheory.lean`; the `levinClasses` field of a `Verb` entry carries the classes
+listing it. A class may also carry a default argument-structure template, from which a verb
+entry's argument profiles are derived.
+
+## Implementation notes
+
+The section numbers and titles were checked against the book's section headings. The
+`maxRecDepth` setting on the inductive serves `deriving Fintype`, whose handler for enumerations
+checks its list of the 191 constructors by `rfl`.
 
 ## References
 
-* [levin-1993]
+* [B. Levin, *English verb classes and alternations: a preliminary investigation*
+  (1993)][levin-1993]
+* [D. Dowty, *Thematic proto-roles and argument selection* (1991)][dowty-1991]
+* [B. Levin, M. Rappaport Hovav, *Argument realization* (2005)][levin-rappaport-hovav-2005]
 -/
 
 @[expose] public section
@@ -271,200 +283,6 @@ inductive LevinClass where
   deriving DecidableEq, Repr, Fintype
 
 namespace LevinClass
-
-/-- The section number in Part II. -/
-def number : LevinClass → List ℕ
-  | .put => [9, 1]
-  | .putInSpatialConfiguration => [9, 2]
-  | .funnel => [9, 3]
-  | .putDirection => [9, 4]
-  | .pour => [9, 5]
-  | .coil => [9, 6]
-  | .sprayLoad => [9, 7]
-  | .fill => [9, 8]
-  | .butter => [9, 9]
-  | .pocket => [9, 10]
-  | .remove => [10, 1]
-  | .banish => [10, 2]
-  | .clear => [10, 3]
-  | .wipeManner => [10, 4, 1]
-  | .wipeInstrument => [10, 4, 2]
-  | .steal => [10, 5]
-  | .cheat => [10, 6]
-  | .pit => [10, 7]
-  | .debone => [10, 8]
-  | .mine => [10, 9]
-  | .send => [11, 1]
-  | .slide => [11, 2]
-  | .bringTake => [11, 3]
-  | .carry => [11, 4]
-  | .drive => [11, 5]
-  | .pushPull => [12]
-  | .give => [13, 1]
-  | .contribute => [13, 2]
-  | .futureHaving => [13, 3]
-  | .fulfilling => [13, 4, 1]
-  | .equip => [13, 4, 2]
-  | .get => [13, 5, 1]
-  | .obtain => [13, 5, 2]
-  | .exchange => [13, 6]
-  | .berry => [13, 7]
-  | .learn => [14]
-  | .hold => [15, 1]
-  | .keep => [15, 2]
-  | .conceal => [16]
-  | .throw => [17, 1]
-  | .pelt => [17, 2]
-  | .hit => [18, 1]
-  | .swat => [18, 2]
-  | .spank => [18, 3]
-  | .nonAgentiveImpact => [18, 4]
-  | .poke => [19]
-  | .touch => [20]
-  | .cut => [21, 1]
-  | .carve => [21, 2]
-  | .mix => [22, 1]
-  | .amalgamate => [22, 2]
-  | .shake => [22, 3]
-  | .tape => [22, 4]
-  | .cling => [22, 5]
-  | .separate => [23, 1]
-  | .split => [23, 2]
-  | .disassemble => [23, 3]
-  | .differ => [23, 4]
-  | .color => [24]
-  | .imageImpression => [25, 1]
-  | .scribble => [25, 2]
-  | .illustrate => [25, 3]
-  | .transcribe => [25, 4]
-  | .build => [26, 1]
-  | .grow => [26, 2]
-  | .prepare => [26, 3]
-  | .create => [26, 4]
-  | .knead => [26, 5]
-  | .turn => [26, 6]
-  | .performance => [26, 7]
-  | .engender => [27]
-  | .calve => [28]
-  | .appoint => [29, 1]
-  | .characterize => [29, 2]
-  | .dub => [29, 3]
-  | .declare => [29, 4]
-  | .conjecture => [29, 5]
-  | .masquerade => [29, 6]
-  | .orphan => [29, 7]
-  | .captain => [29, 8]
-  | .see => [30, 1]
-  | .sight => [30, 2]
-  | .peer => [30, 3]
-  | .stimulusSubjectPerception => [30, 4]
-  | .amuse => [31, 1]
-  | .admire => [31, 2]
-  | .marvel => [31, 3]
-  | .appeal => [31, 4]
-  | .want => [32, 1]
-  | .long => [32, 2]
-  | .judgment => [33]
-  | .assessment => [34]
-  | .hunt => [35, 1]
-  | .search => [35, 2]
-  | .stalk => [35, 3]
-  | .investigate => [35, 4]
-  | .rummage => [35, 5]
-  | .ferret => [35, 6]
-  | .correspond => [36, 1]
-  | .marry => [36, 2]
-  | .meet => [36, 3]
-  | .transferOfMessage => [37, 1]
-  | .tell => [37, 2]
-  | .mannerOfSpeaking => [37, 3]
-  | .instrumentOfCommunication => [37, 4]
-  | .talk => [37, 5]
-  | .chitchat => [37, 6]
-  | .say => [37, 7]
-  | .complain => [37, 8]
-  | .advise => [37, 9]
-  | .animalSound => [38]
-  | .eat => [39, 1]
-  | .chew => [39, 2]
-  | .gobble => [39, 3]
-  | .devour => [39, 4]
-  | .dine => [39, 5]
-  | .gorge => [39, 6]
-  | .feed => [39, 7]
-  | .hiccup => [40, 1, 1]
-  | .breathe => [40, 1, 2]
-  | .exhale => [40, 1, 3]
-  | .nonverbalExpression => [40, 2]
-  | .wink => [40, 3, 1]
-  | .crane => [40, 3, 2]
-  | .curtsey => [40, 3, 3]
-  | .snooze => [40, 4]
-  | .flinch => [40, 5]
-  | .bodyInternalStateOfExistence => [40, 6]
-  | .suffocate => [40, 7]
-  | .pain => [40, 8, 1]
-  | .tingle => [40, 8, 2]
-  | .hurt => [40, 8, 3]
-  | .changeOfBodilyState => [40, 8, 4]
-  | .dress => [41, 1, 1]
-  | .groom => [41, 1, 2]
-  | .floss => [41, 2, 1]
-  | .braid => [41, 2, 2]
-  | .simpleDressing => [41, 3, 1]
-  | .dressingWell => [41, 3, 2]
-  | .beingDressed => [41, 3, 3]
-  | .murder => [42, 1]
-  | .poison => [42, 2]
-  | .lightEmission => [43, 1]
-  | .soundEmission => [43, 2]
-  | .smellEmission => [43, 3]
-  | .substanceEmission => [43, 4]
-  | .destroy => [44]
-  | .break_ => [45, 1]
-  | .bend => [45, 2]
-  | .cooking => [45, 3]
-  | .otherChangeOfState => [45, 4]
-  | .entitySpecificChangeOfState => [45, 5]
-  | .calibratableChangeOfState => [45, 6]
-  | .lodge => [46]
-  | .exist => [47, 1]
-  | .entitySpecificModeOfBeing => [47, 2]
-  | .modeOfBeingInvolvingMotion => [47, 3]
-  | .soundExistence => [47, 4]
-  | .swarm => [47, 5, 1]
-  | .herd => [47, 5, 2]
-  | .bulge => [47, 5, 3]
-  | .spatialConfiguration => [47, 6]
-  | .meander => [47, 7]
-  | .contiguousLocation => [47, 8]
-  | .appear => [48, 1, 1]
-  | .reflexiveAppearance => [48, 1, 2]
-  | .disappearance => [48, 2]
-  | .occurrence => [48, 3]
-  | .bodyInternalMotion => [49]
-  | .assumePosition => [50]
-  | .inherentlyDirectedMotion => [51, 1]
-  | .leave => [51, 2]
-  | .roll => [51, 3, 1]
-  | .run => [51, 3, 2]
-  | .vehicleName => [51, 4, 1]
-  | .nonVehicleName => [51, 4, 2]
-  | .waltz => [51, 5]
-  | .chase => [51, 6]
-  | .accompany => [51, 7]
-  | .avoid => [52]
-  | .linger => [53, 1]
-  | .rush => [53, 2]
-  | .register => [54, 1]
-  | .cost => [54, 2]
-  | .fit => [54, 3]
-  | .price => [54, 4]
-  | .bill => [54, 5]
-  | .begin => [55, 1]
-  | .complete => [55, 2]
-  | .weekend => [56]
-  | .weather => [57]
 
 /-- The section number as the book prints it. -/
 def numberString : LevinClass → String
@@ -858,20 +676,16 @@ def name : LevinClass → String
   | .weekend => "Weekend Verbs"
   | .weather => "Weather Verbs"
 
-/-- The chapter of Part II, its top-level class. -/
-def chapter (c : LevinClass) : ℕ := c.number.headD 0
-
 end LevinClass
 
-/-! ### Class → template map
+/-! ### Templates
 
-The argument-structure template each class realizes
-(`ArgumentStructure.Template`); `none` for classes whose profiles haven't
-been determined yet. Consumed by `Verb.Basic` to derive a verb entry's
-default argument profiles from its Levin classes. -/
+Each class realizes an argument-structure template, a `RoleList`, from which `Verb.Basic` derives
+a verb entry's default argument profiles; classes whose template has not been determined map to
+`none`. -/
 
-/-- Map a Levin class to its argument structure template.
-    Returns `none` for classes whose profiles haven't been determined yet. -/
+/-- The argument-structure template a class realizes, `none` where it has not been
+determined. -/
 def LevinClass.roleList : LevinClass → Option RoleList
   -- § 18: Contact by Impact — manner verbs, no CoS entailment
   | .hit | .swat | .spank      => some mannerContact
@@ -918,19 +732,17 @@ def LevinClass.roleList : LevinClass → Option RoleList
   -- Not yet classified
   | _                         => none
 
--- ════════════════════════════════════════════════════
--- § 4. Convenience accessors
--- ════════════════════════════════════════════════════
+/-! ### Profiles -/
 
-/-- Subject entailment profile for a Levin class. -/
+/-- The entailment profile of the subject in a class's template. -/
 def LevinClass.subjectProfile (c : LevinClass) : Option EntailmentProfile :=
   c.roleList.map (·.subjectProfile)
 
-/-- Object entailment profile for a Levin class. -/
+/-- The entailment profile of the object in a class's template, if it has one. -/
 def LevinClass.objectProfile (c : LevinClass) : Option EntailmentProfile :=
   c.roleList.bind (·.objectProfile)
 
-/-- Agreement between two votes on a profile: `none` abstains, `some none` records a
+/-- Two votes on a profile combine by agreement, where `none` abstains and `some none` records a
 disagreement. -/
 def agree :
     Option (Option EntailmentProfile) → Option (Option EntailmentProfile) →
@@ -953,13 +765,11 @@ def LevinClass.commonProfile (f : LevinClass → Option EntailmentProfile)
     (s : Finset LevinClass) : Option EntailmentProfile :=
   (s.fold agree none fun c ↦ (f c).map some).bind id
 
-/-- **The stored linking is never ASP-reversed** ([dowty-1991] via
-    [levin-rappaport-hovav-2005] ch. 2): in no class does the object
-    outrank the subject under the Argument Selection Principle. Where
-    dominance is strict the ASP derives the stored linking; at the psych
-    doublets (*like*/*please*: `Dowty1991.psychStative_alternation`)
-    neither argument outranks, and the class's linking is a lexical
-    choice the role list underdetermines. -/
+/-- In no class's template does the object outrank the subject under [dowty-1991]'s Argument
+    Selection Principle, as [levin-rappaport-hovav-2005] present it. Where dominance is strict
+    the principle derives the stored linking; at the psych doublets *like* and *please*
+    (`Dowty1991.psychStative_alternation`) neither argument outranks the other, and the linking is
+    a lexical choice the template underdetermines. -/
 theorem roleList_not_asp_reversed {c : LevinClass} {r : RoleList}
     {o : EntailmentProfile} (hr : c.roleList = some r)
     (ho : r.objectProfile = some o) :
