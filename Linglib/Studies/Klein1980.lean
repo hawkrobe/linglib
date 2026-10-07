@@ -14,7 +14,7 @@ vocabulary (`Degree.Delineation`) supplies comparison classes, the induced order
 monotonicity and the modifiers *very* and *fairly*; this file adds the paper's claims about
 that apparatus. A delineation that switches criterion with the comparison class, the paper's
 nonlinear adjective *clever*, orders two entities each above the other, which monotonicity
-forbids (`clever_nonlinear`, `monotone_not_nonlinear`). *Very* narrows the comparison class to
+forbids (`clever_nonlinear`, `clever_not_monotone`). *Very* narrows the comparison class to
 the positive extension, entailing the base adjective for measure-induced delineations while the
 converse fails (`measureDelineation_very_entails_base`, `very_strictly_stronger`). Degrees are
 the classes of nondistinct entities and agree with measure equality (`kleinDegree`,
@@ -68,13 +68,10 @@ theorem clever_nonlinear : IsNonlinearDelineation cleverDel :=
     ⟨{Clever2.j}, by simp, by simp [cleverDel], by simp [cleverDel]⟩,
     ⟨{Clever2.m}, by simp, by simp [cleverDel], by simp [cleverDel]⟩⟩
 
-/-- Monotone delineations cannot be nonlinear: monotonicity is what forces a total ordering. -/
-theorem monotone_not_nonlinear {Entity : Type*}
-    (delineation : ComparisonClass Entity → Entity → Prop)
-    (hmono : IsMonotoneDelineation delineation Set.univ)
-    (hnn : IsNonlinearDelineation delineation) : False := by
-  obtain ⟨_, u, u', ⟨X₁, _, hu₁, hnu'₁⟩, ⟨X₂, _, hu'₂, hnu₂⟩⟩ := hnn
-  exact hnu₂ (hmono X₁ X₂ (Set.mem_univ _) (Set.mem_univ _) u u' hu₁ hnu'₁ hu'₂)
+/-- The clever delineation is not monotone, so no measure function induces it: a monotone
+delineation is never nonlinear. -/
+theorem clever_not_monotone : ¬ IsMonotoneDelineation cleverDel Set.univ :=
+  fun h ↦ h.not_isNonlinearDelineation clever_nonlinear
 
 /-! ### *Very* narrows the comparison class (eq. 42)
 

@@ -17,7 +17,6 @@ between them and the strict-separation theorem are in `Degree/Hom.lean`.
 
 * `comparativeSem` — Klein's comparative: `∃ C, tall(a, C) ∧ ¬tall(b, C)`.
 * `IsMonotoneDelineation` — [bochnak-2015]'s Consistency Constraint a.
-* `PartialDelineation` — extension gaps (Klein §2.3, eqs 12–13).
 * `ordering`, `nondistinct` — the context-relative comparison and
   indistinguishability relations (§3.3, eqs 29–30).
 * `IsLinearDelineation`, `IsNonlinearDelineation` — single- vs
@@ -115,39 +114,6 @@ theorem comparative_prevents_superTrue
 
 end Supervaluation
 
-/-! ### Partial extensions (Klein §2.3, eqs 12–13) -/
-
-/-- Klein's partial extension function: each entity lands in the
-    positive extension (`some true`), negative extension (`some false`),
-    or the gap (`none`). The total `delineation` elsewhere in this file
-    is the gap-free special case. -/
-def PartialDelineation (Entity : Type*) :=
-  ComparisonClass Entity → Entity → Option Bool
-
-namespace PartialDelineation
-
-variable (d : PartialDelineation Entity) (C : ComparisonClass Entity)
-
-/-- Positive extension (eq 13i). -/
-def posExt : Set Entity := {x | d C x = some true}
-
-/-- Negative extension (eq 13ii). -/
-def negExt : Set Entity := {x | d C x = some false}
-
-/-- The extension gap: borderline cases. -/
-def extGap : Set Entity := {x | x ∈ C ∧ d C x = none}
-
-/-- Gap-free members fall in the positive or negative extension. -/
-theorem trichotomy {x : Entity} (_hx : x ∈ C) (hdom : d C x ≠ none) :
-    x ∈ d.posExt C ∨ x ∈ d.negExt C := by
-  unfold posExt negExt
-  match hv : d C x with
-  | some true => exact Or.inl hv
-  | some false => exact Or.inr hv
-  | none => exact absurd hv hdom
-
-end PartialDelineation
-
 /-! ### The context-relative ordering (Klein §3.3, eqs 29–30) -/
 
 section Ordering
@@ -239,10 +205,16 @@ def IsLinearDelineation : Prop :=
 
 /-- Nonlinear: the ordering cycles — different subclasses apply
     different criteria (*clever*, *nice*). No measure function induces
-    such a delineation (`Degree/Hom.lean`, `delineation_strictly_more_general`). -/
+    such a delineation (`IsMonotoneDelineation.not_isNonlinearDelineation`). -/
 def IsNonlinearDelineation : Prop :=
   ∃ cc : ComparisonClass Entity, ∃ u u' : Entity,
     ordering delineation cc u u' ∧ ordering delineation cc u' u
+
+variable {delineation} in
+/-- A monotone delineation is never nonlinear: monotonicity makes the ordering asymmetric. -/
+theorem IsMonotoneDelineation.not_isNonlinearDelineation
+    (hmono : IsMonotoneDelineation delineation Set.univ) :
+    ¬ IsNonlinearDelineation delineation := fun ⟨_, _, _, h, h'⟩ ↦ ordering_asymm delineation hmono h h'
 
 end Linearity
 

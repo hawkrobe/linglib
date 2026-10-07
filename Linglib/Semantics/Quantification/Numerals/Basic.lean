@@ -21,8 +21,8 @@ of their own here. The meanings of the modified forms are common ground. Account
 bare numeral, which has the two-sided meaning `Comparison.eq.interval m` for Kennedy and the
 lower-bounded meaning `Comparison.ge.interval m` in the tradition of Horn, each account
 deriving the other reading. Exhaustifying the lower-bounded meaning against the scale of
-higher numerals gives the two-sided one, and Kennedy's type lowering takes the two-sided
-meaning to the lower-bounded one (`Degree.typeLower_eqOver_iff`).
+higher numerals gives the two-sided one, and Kennedy's type lowering, existential closure over
+the two-sided meaning at the degrees above, takes it to the lower-bounded one.
 
 ## Main definitions
 

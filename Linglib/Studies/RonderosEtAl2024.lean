@@ -261,7 +261,7 @@ theorem pragmatic_fails : ¬ ∀ t, pragmatic.PredictsEffect t ↔ Effect t := b
 those for scalar adjectives exactly for the non-gradable types, which need no comparison class
 ([aparicio-xiang-kennedy-2015]). -/
 theorem baseline_higher_iff_not_relative :
-    ∀ t, BaselineHigherThanScalar t ↔ ¬ t.adjectiveClass.IsRelative := by
+    ∀ t, BaselineHigherThanScalar t ↔ t.adjectiveClass ≠ .relative := by
   decide +kernel
 
 /-- Salience does not explain the baseline: material adjectives, whose contrast is not salient,

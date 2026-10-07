@@ -16,7 +16,7 @@ in the two contexts, conjunctive or disjunctive when one is at least three times
 (`classify`), and applied to its sample it yields the paper's three lists (`typology`). Two
 predictors are tested. Antonym polarity: under a negation theory of antonymy the negative
 member of a pair is the negation of the positive one, so De Morgan turns a universal over
-dimensions into an existential, the substrate's `deMorgan_conjunctive_disjunctive`; the
+dimensions into an existential (`DimensionBindingType.negate`); the
 clearly conjunctive adjectives are all judged positive and the clearly disjunctive ones
 negative (`polarity_predicts_binding`), and within an antonym pair the two are never both
 clearly bound the same way (`antonyms_negate`). Standard type: total adjectives should be

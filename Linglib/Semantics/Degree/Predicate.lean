@@ -16,7 +16,6 @@ Predicate transformers over a measure function `μ : W → α`:
 
 - `bimonotone_constant` (information collapse as mathlib's `Function.IsConst`; monotonicity
   is `Monotone`/`Antitone` under the pointwise order on `W → Prop`)
-- `typeLower` (Partee 1987 existential lowering)
 - monotonicity / anti-Horn-scale lemmas about the `Degree.Comparison.over`
   degree predicates (general)
 
@@ -81,43 +80,9 @@ This is the UDM prediction ([fox-hackl-2006]). -/
 -- threshold-monotone: `Comparison.antitone_ge_over`, `antitone_gt_over`,
 -- `monotone_le_over` (Core/Order/Comparison.lean).
 
-/-- On ℕ, `>` collapses to `≥` with successor: "more than m" ↔ "at least m+1".
-    This is the discrete equivalence that density breaks. -/
-theorem gtOver_eq_geOver_succ {W : Type*} (μ : W → ℕ) (m : ℕ) (w : W) :
-    w ∈ Comparison.gt.over μ m ↔ w ∈ Comparison.ge.over μ (m + 1) :=
-  Iff.rfl
-
 /-! IsMaxInf-flavored consequences of these degree predicates
     (`hasMaxInf_ge_over`, `not_hasMaxInf_gt_over`, `isMaxInf_ge_over_iff`,
     `hasMaxInf_gt_over_nat`) live in `Semantics/Alternatives/Extremum.lean`. -/
-
-/-! ### Existential Lowering (Type-Shifting) -/
-
-/-! ## Existential lowering: exact → "at least"
-
-[partee-1987]'s BE + iota + existential closure, applied to a degree
-property: from an exact reading `exact d w` ("the measure equals `d`"),
-existentially close to `∃ d' ≥ d, exact d' w`. On any reflexive linear
-order this collapses to `Comparison.ge.over μ d w` — witness `d' := μ w`.
-
-This is the formal content of [kennedy-2015]'s "de-Fregean" derivation
-of the lower-bound numeral reading from the exact reading. The collapse
-generalizes Numeral type-shifting to arbitrary scales. -/
-
-/-- Existentially lower an exact-style degree property to its lower-bound
-    counterpart: there exists some `d' ≥ d` such that the exact property
-    holds at `d'`. -/
-def typeLower {W : Type*} (exact : α → W → Prop) (d : α) (w : W) : Prop :=
-  ∃ d', d' ≥ d ∧ exact d' w
-
-/-- **Type-shift collapse**: existentially lowering the exact property
-    `Comparison.eq.over μ` yields the lower-bound property `Comparison.ge.over μ`. -/
-theorem typeLower_eqOver_iff {W : Type*} (μ : W → α) (d : α) (w : W) :
-    typeLower (fun d' w => w ∈ Comparison.eq.over μ d') d w ↔ w ∈ Comparison.ge.over μ d := by
-  simp only [Comparison.mem_over, Comparison.rel, typeLower, ge_iff_le]
-  refine ⟨?_, fun h => ⟨μ w, h, rfl⟩⟩
-  rintro ⟨d', hd', heq⟩
-  exact heq.symm ▸ hd'
 
 /-! ### [kennedy-2015]'s De-Fregean GQ -/
 
@@ -205,15 +170,6 @@ theorem eqOver_not_downward_monotone {W : Type*} (μ : W → α)
   simp only [Comparison.mem_over, Comparison.rel]
   intro h
   exact hne ((h d d' hle hμ).symm.trans hμ).symm
-
-/-- Universal closure (the alternative to existential closure) is
-    unsatisfiable when the closure range contains two distinct values:
-    no single `x` can equal two different `k`s. This rules out the
-    universal-closure reading of Partee's iota generally. -/
-theorem distinct_no_universal_witness {α : Type*} (k₁ k₂ : α) (hne : k₁ ≠ k₂) :
-    ¬ ∃ x, ∀ k, k = k₁ ∨ k = k₂ → x = k := by
-  rintro ⟨x, h⟩
-  exact hne ((h k₁ (Or.inl rfl)).symm.trans (h k₂ (Or.inr rfl)))
 
 /-! IsMaxInf-flavored consequences of "at most" (`hasMaxInf_le_over`,
     `isMaxInf_le_over_iff`) live in

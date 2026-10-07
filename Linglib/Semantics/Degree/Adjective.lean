@@ -79,14 +79,6 @@ inductive AdjectiveClass where
   | nonGradable
   deriving Repr, DecidableEq
 
-/-- An adjective class is relative when it is the class `relative`, as against the absolute
-and the other classes. -/
-def AdjectiveClass.IsRelative (c : AdjectiveClass) : Prop :=
-  c = .relative
-
-instance : DecidablePred AdjectiveClass.IsRelative :=
-  fun c => decEq c .relative
-
 /-! ### The gradable adjective -/
 
 /-- A spatial configuration type classifies the spatial state an adjective describes in a
@@ -144,8 +136,8 @@ def adjectiveClass (g : GradableAdjective) : AdjectiveClass :=
     | .necessity   => .mildlyPositive
     | .extreme     => .extreme
 
-/-- An adjective is relative when its class is. -/
-def IsRelative (g : GradableAdjective) : Prop := g.adjectiveClass.IsRelative
+/-- An adjective is relative when its class is the relative one. -/
+def IsRelative (g : GradableAdjective) : Prop := g.adjectiveClass = .relative
 
 instance (g : GradableAdjective) : Decidable g.IsRelative := by
   unfold IsRelative; infer_instance
@@ -249,50 +241,6 @@ inductive DimensionBindingType where
   /-- Context decides between the two, as for *intelligent*. -/
   | mixed
   deriving Repr, DecidableEq
-
-section Binding
-variable {α : Type*}
-
-/-- Conjunctive binding holds of `x` when every dimension does. -/
-def conjunctiveBinding (dims : List (α → Bool)) (x : α) : Bool :=
-  dims.all (· x)
-
-/-- Disjunctive binding holds of `x` when some dimension does. -/
-def disjunctiveBinding (dims : List (α → Bool)) (x : α) : Bool :=
-  dims.any (· x)
-
-private theorem not_all_eq_any_not_map :
-    ∀ (dims : List (α → Bool)) (x : α),
-      (!dims.all (· x)) = (dims.map fun d a ↦ !d a).any (· x)
-  | [], _ => rfl
-  | d :: ds, x => by
-    simp only [List.all_cons, List.map_cons, List.any_cons]
-    cases d x <;> simp [not_all_eq_any_not_map ds x]
-
-private theorem not_any_eq_all_not_map :
-    ∀ (dims : List (α → Bool)) (x : α),
-      (!dims.any (· x)) = (dims.map fun d a ↦ !d a).all (· x)
-  | [], _ => rfl
-  | d :: ds, x => by
-    simp only [List.any_cons, List.map_cons, List.all_cons]
-    cases d x <;> simp [not_any_eq_all_not_map ds x]
-
-/-- Negated conjunctive binding is disjunctive binding over the negated dimensions, so under a
-    negation theory of antonymy a conjunctive positive form has a disjunctive antonym
-    ([sassoon-2013], Hypotheses-set 2, (19a)). -/
-theorem deMorgan_conjunctive_disjunctive
-    (dims : List (α → Bool)) (x : α) :
-    (!conjunctiveBinding dims x) =
-      disjunctiveBinding (dims.map fun d a ↦ !d a) x :=
-  not_all_eq_any_not_map dims x
-
-theorem deMorgan_disjunctive_conjunctive
-    (dims : List (α → Bool)) (x : α) :
-    (!disjunctiveBinding dims x) =
-      conjunctiveBinding (dims.map fun d a ↦ !d a) x :=
-  not_any_eq_all_not_map dims x
-
-end Binding
 
 /-- `b.negate` is the binding type predicted for a negative antonym whose positive counterpart
     binds by `b`, by De Morgan's laws under the negation theory of antonymy. -/
