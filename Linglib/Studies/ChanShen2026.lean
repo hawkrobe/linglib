@@ -41,7 +41,8 @@ structures are schematic Singlish questions (2), (11), and the English, Malay an
 share them, since what the accounts read, the chain of the wh-phrase and where it is pronounced,
 is the same. *The-hell* adjoined to the wh-head is not built: it is carried by the wh-phrase, so
 its position is its host's. The intervention account reads the number of interveners the rows
-record.
+record. The schematic clauses have no T, so C selects the verb phrase and each verb selects its
+subject as well as its complement, and every constituent has a selection or raising head.
 
 ## References
 
@@ -79,20 +80,22 @@ def tok (id : ℕ) (cat : Cat) (sel : SelStack := []) (phon : String := "") (wh 
 /-- The wh-phrase; *the-hell*, adjoined to it, goes where it goes. -/
 def what := tok 0 .D (phon := "what") (wh := true)
 /-- The matrix interrogative C and the embedded C. -/
-def c₁ := tok 1 .C [.T]
-def c₂ := tok 2 .C [.T]
+def c₁ := tok 1 .C [.V]
+def c₂ := tok 2 .C [.V]
 def you := tok 3 .D (phon := "you")
-def think := tok 4 .V [.C] "think"
+def think := tok 4 .V [.C, .D] "think"
 def natalie := tok 5 .D (phon := "Natalie")
-def baking := tok 6 .V [.D] "baking"
+def baking := tok 6 .V [.D, .D] "baking"
 /-- The complex NP of (11): *John like the man that think Mary eat …*. -/
 def john := tok 7 .D (phon := "John")
-def like := tok 8 .V [.D] "like"
+def like := tok 8 .V [.D, .D] "like"
 def the := tok 9 .D [.N] "the"
 def man := tok 10 .N [.C] "man"
 def that := tok 11 .C [.V] "that"
 def mary := tok 12 .D (phon := "Mary")
-def eat := tok 13 .V [.D] "eat"
+def eat := tok 13 .V [.D, .D] "eat"
+/-- *Think* in the relative clause, whose subject is relativized. -/
+def thinkRel := tok 14 .V [.C] "think"
 
 /-- The embedded CP, *Natalie baking x* or, in the island, *Mary eat x*, with `spec` in its
 specifier. -/
@@ -105,7 +108,7 @@ def embedded (island : Bool) (spec : Option PlanarSyntacticObject) (x : PlanarSy
 think …*, with `spec` in matrix Spec-CP. -/
 def matrix (island : Bool) (spec : Option PlanarSyntacticObject) (emb : PlanarSyntacticObject) :
     PlanarSyntacticObject :=
-  let vp := if island then john * (like * (the * (man * (that * (think * emb)))))
+  let vp := if island then john * (like * (the * (man * (that * (thinkRel * emb)))))
     else you * (think * emb)
   (spec.map (· * (c₁ * vp))).getD (c₁ * vp)
 
