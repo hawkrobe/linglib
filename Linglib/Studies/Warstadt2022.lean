@@ -171,7 +171,7 @@ variable [MeasurableSpace (Finset W)] [MeasurableSingletonClass (Finset W)]
 context sets, given the question. -/
 noncomputable def listener (P : W → ℕ) (cell : Q → W → Finset W) (sem : U → Set W) (q : Q)
     (α : ℝ) : Kernel U (W × Finset W) :=
-  familyListener (λ C => L0 P cell sem C q) α 0 (pairPrior P)
+  pragmaticListener (familySpeaker (λ C => L0 P cell sem C q) α 0) (pairPrior P)
 
 /-- The pairs whose world is `w`. -/
 def worldEvent (w : W) : Finset (W × Finset W) := Finset.univ.image λ C => (w, C)
@@ -187,7 +187,7 @@ theorem listener_worldEvent_lt_iff (P : W → ℕ) (cell : Q → W → Finset W)
       ↔ (∑ C, (pairPrior P).real {(w₁, C)} * share P cell sem C q u w₁ α)
         < ∑ C, (pairPrior P).real {(w₂, C)} * share P cell sem C q u w₂ α := by
   unfold listener worldEvent
-  rw [familyListener_real_lt_iff _ _ _ hu,
+  rw [pragmaticListener_real_finset_lt_iff hu,
     Finset.sum_image λ _ _ _ _ h => (Prod.mk.inj h).2,
     Finset.sum_image λ _ _ _ _ h => (Prod.mk.inj h).2]
   rfl

@@ -347,7 +347,7 @@ variable (μ : Measure (World n)) [IsFiniteMeasure μ] (ν : Measure (Scope × Q
 interpretations and questions, against the product of the world prior and a prior on
 interpretations and questions (the paper's `P(i) P(q)`). -/
 noncomputable def L1 : Kernel Utt (World n × (Scope × QUD)) :=
-  familyListener (fun l ↦ projListener (project n) (L0 D n l.1) l.2) α 0 (μ.prod ν)
+  pragmaticListener (S1 D n α) (μ.prod ν)
 
 /-- The endorsing speaker of §3.1 is, at the observed world, the best response at unit rationality
 to the world marginal of the pragmatic listener. -/
@@ -356,12 +356,12 @@ noncomputable def S2 : Kernel (World n) Utt := speaker 1 0 (Kernel.fst (L1 D n �
 /-- With as many horses as the numeral counts, the numeral model on the exact reading is the
 every-not model (§4.2.1). -/
 theorem S2_numeral_eq_self : S2 (numeral .eq n) n α μ ν = S2 NumberTree.all n α μ ν := by
-  simp only [S2, L1, L0, ext_numeral_eq_self]
+  simp only [S2, L1, S1, L0, ext_numeral_eq_self]
 
 /-- With as many horses as the numeral counts, the numeral model on the at-least reading is the
 every-not model (§4.2.1). -/
 theorem S2_numeral_ge_self : S2 (numeral .ge n) n α μ ν = S2 NumberTree.all n α μ ν := by
-  simp only [S2, L1, L0, ext_numeral_ge_self]
+  simp only [S2, L1, S1, L0, ext_numeral_ge_self]
 
 end Model
 
@@ -509,8 +509,7 @@ theorem production_nonneg (w : World n) : 0 ≤ production D n α ν w :=
 
 variable [IsProbabilityMeasure μ] [IsProbabilityMeasure ν]
 
-instance : IsMarkovKernel (L1 D n α μ ν) :=
-  inferInstanceAs (IsMarkovKernel ((familySpeaker _ α 0)†(μ.prod ν)))
+instance : IsMarkovKernel (L1 D n α μ ν) := inferInstanceAs (IsMarkovKernel (pragmaticListener _ _))
 
 theorem expectedProduction_eq_sum :
     expectedProduction D n α μ ν = ∑ w, μ.real {w} * production D n α ν w := by
@@ -626,11 +625,11 @@ theorem S2_real_amb (hα : 0 < α) {w : World n} (hμ : μ {w} ≠ 0)
       sum_measureReal_singleton_eq_one ν]
     rfl
   have hFamb : (Kernel.fst (L1 D n α μ ν) .amb).real {w} = a * m / z :=
-    familyListener_fst_real_singleton _ α 0 μ ν hZamb w
+    pragmaticListener_fst_real_singleton μ ν hZamb w
   have hFnull : (Kernel.fst (L1 D n α μ ν) .null).real {w}
       = a * (∑ l, ν.real {l} * (S1 D n α (w, l)).real {.null})
         / (S1 D n α ∘ₘ μ.prod ν).real {.null} :=
-    familyListener_fst_real_singleton _ α 0 μ ν hZnull w
+    pragmaticListener_fst_real_singleton μ ν hZnull w
   rw [hnull, hZ] at hFnull
   rw [S2, speaker_zero_real_singleton zero_le_one]
   simp only [ENNReal.rpow_one, ← measureReal_def]

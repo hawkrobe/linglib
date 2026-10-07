@@ -114,11 +114,14 @@ the goal at rationality `α`, with no utterance cost. -/
 noncomputable def S1 (μ : Measure Meaning) (α : ℝ) : Kernel (Meaning × Goal) Cat :=
   familySpeaker (projListener project (L0 μ)) α 0
 
+instance (μ : Measure Meaning) (α : ℝ) : IsFiniteKernel (S1 μ α) :=
+  inferInstanceAs (IsFiniteKernel (familySpeaker _ _ _))
+
 /-- The pragmatic listener over meaning and goal is the family listener over the product of
 the meaning prior and the goal prior; its first marginal is the meaning listener. -/
 noncomputable def L1 (μ : Measure Meaning) [IsProbabilityMeasure μ] (ν : Measure Goal)
     [IsProbabilityMeasure ν] (α : ℝ) : Kernel Cat (Meaning × Goal) :=
-  familyListener (projListener project (L0 μ)) α 0 (μ.prod ν)
+  pragmaticListener (S1 μ α) (μ.prod ν)
 
 section Speaker
 
@@ -194,7 +197,7 @@ theorem listener_ne_zero_iff (hα : 0 < α) {u : Cat} (hu : (S1 μ α ∘ₘ μ.
     (m : Meaning) :
     (L1 μ ν α u).fst {m} ≠ 0 ↔ μ {m} ≠ 0 ∧
       ∃ g, ν {g} ≠ 0 ∧ ∃ m', g.feature m'.2 = g.feature m.2 ∧ m'.1 = u ∧ μ {m'} ≠ 0 := by
-  rw [L1, familyListener_fst_apply_singleton_ne_zero_iff _ _ _ hu]
+  rw [L1, pragmaticListener_fst_apply_singleton_ne_zero_iff hu]
   simp only [← S1_apply_singleton_ne_zero_iff μ α hα, S1, ← Set.singleton_prod_singleton,
     Measure.prod_prod, mul_ne_zero_iff]
   exact ⟨λ ⟨g, ⟨hm, hg⟩, hs⟩ => ⟨hm, g, hg, hs⟩, λ ⟨hm, g, hg, hs⟩ => ⟨g, ⟨hm, hg⟩, hs⟩⟩
@@ -222,8 +225,8 @@ theorem category_odds {u : Cat} (hu : (S1 μ α ∘ₘ μ.prod ν) {u} ≠ 0) (c
     λ c => by
       rw [L1, Measure.fst_apply_singleton, Finset.mul_sum]
       refine Finset.sum_congr rfl λ g _ => ?_
-      rw [familyListener_apply_singleton _ _ _ hu, ← Set.singleton_prod_singleton,
-        Measure.prod_prod, ← familySpeaker_apply, ← S1, hS c g, mul_div_assoc, mul_assoc]
+      rw [pragmaticListener_apply_singleton hu, ← Set.singleton_prod_singleton,
+        Measure.prod_prod, hS c g, mul_div_assoc, mul_assoc]
   rw [key c, key c']
   ring
 

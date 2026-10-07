@@ -195,15 +195,17 @@ instance (l : Lex) : IsFiniteKernel (L0 l) := inferInstanceAs (IsFiniteKernel (u
 /-- The speaker (13b). -/
 noncomputable def S1 (l : Lex) : Kernel World Msg := speaker α (cost k) (L0 l)
 
+instance (l : Lex) : IsFiniteKernel (S1 α k l) := inferInstanceAs (IsFiniteKernel (speaker _ _ _))
+
 /-- The uncertainty listener (13c) is the joint posterior over states and lexica at flat priors,
 whose state marginal is the paper's listener. -/
 noncomputable def L1 : Kernel Msg (World × Lex) :=
-  familyListener L0 α (cost k) (uniformOn Set.univ)
+  pragmaticListener (familySpeaker L0 α (cost k)) (uniformOn Set.univ)
 
 /-- The fixed-lexicon pragmatic listener (19b) inverts the base lexicon's speaker at a flat
 prior. -/
 noncomputable def L1fixed : Kernel Msg World :=
-  pragmaticListener α (cost k) (L0 .weak) (uniformOn Set.univ)
+  pragmaticListener (S1 α k .weak) (uniformOn Set.univ)
 
 end Tower
 
@@ -218,7 +220,7 @@ include hα
 message true there. -/
 theorem L1_fst_ne_zero_iff (m : Msg) (w : World) :
     (L1 α k m).fst {w} ≠ 0 ↔ ∃ l, w ∈ sem l m :=
-  familyListener_uniform_fst_apply_singleton_ne_zero_iff sem hα _
+  pragmaticListener_familySpeaker_uniform_fst_apply_singleton_ne_zero_iff sem hα _
     (let ⟨w, h⟩ := sem_weak_nonempty m; ⟨.weak, w, h⟩) w
 
 /-- The fixed-lexicon listener assigns mass to a state exactly when the base lexicon makes the
@@ -227,9 +229,10 @@ theorem L1fixed_ne_zero_iff (m : Msg) (w : World) :
     L1fixed α k m {w} ≠ 0 ↔ w ∈ sem .weak m := by
   obtain ⟨w₀, h₀⟩ := sem_weak_nonempty m
   have hs := speaker_uniformListener_apply_singleton_ne_zero_iff (sem .weak) hα (cost k)
-  rw [L1fixed, pragmaticListener, L0, posterior_apply_singleton_ne_zero_iff _ _
-    (comp_apply_singleton_ne_zero _ _ (uniformOn_univ_singleton_ne_zero w₀) ((hs w₀ m).2 h₀)),
-    and_iff_right (uniformOn_univ_singleton_ne_zero w), hs]
+  rw [L1fixed, pragmaticListener_apply_singleton_ne_zero_iff (comp_apply_singleton_ne_zero
+    (S1 α k .weak) _ (uniformOn_univ_singleton_ne_zero w₀) ((hs w₀ m).2 h₀)),
+    and_iff_right (uniformOn_univ_singleton_ne_zero w)]
+  exact hs w m
 
 /-- Hearing *exactly one player hit some of his shots*, the uncertainty listener gives mass to
 the locally enriched states NSA and SAA, false on the literal construal, and the fixed-lexicon
@@ -257,17 +260,19 @@ theorem no_some_local :
 /-- State preference of the uncertainty listener is the pooled speaker preference. -/
 theorem L1_fst_real_lt_iff (m : Msg) (w₁ w₂ : World) :
     (L1 α k m).fst.real {w₁} < (L1 α k m).fst.real {w₂} ↔
-      ∑ l, (S1 α k l w₁).real {m} < ∑ l, (S1 α k l w₂).real {m} :=
-  let ⟨w₀, h₀⟩ := sem_weak_nonempty m
-  familyListener_fst_real_lt_iff L0 uniformOn_univ_singleton_eq uniformOn_univ_singleton_ne_zero
-    ((speaker_uniformListener_apply_singleton_ne_zero_iff (sem .weak) hα _ w₀ m).2 h₀)
+      ∑ l, (S1 α k l w₁).real {m} < ∑ l, (S1 α k l w₂).real {m} := by
+  obtain ⟨w₀, h₀⟩ := sem_weak_nonempty m
+  rw [L1, pragmaticListener_fst_real_lt_iff (p₀ := (w₀, .weak)) uniformOn_univ_singleton_eq
+    uniformOn_univ_singleton_ne_zero
+    ((speaker_uniformListener_apply_singleton_ne_zero_iff (sem .weak) hα (cost k) w₀ m).2 h₀)]
+  rfl
 
 /-- State preference of the fixed-lexicon listener is the base-lexicon speaker's preference. -/
 theorem L1fixed_real_lt_iff (m : Msg) (w₁ w₂ : World) :
     (L1fixed α k m).real {w₁} < (L1fixed α k m).real {w₂} ↔
       (S1 α k .weak w₁).real {m} < (S1 α k .weak w₂).real {m} :=
   let ⟨w₀, h₀⟩ := sem_weak_nonempty m
-  pragmaticListener_real_lt_iff α (cost k) (L0 .weak) (uniformOn Set.univ)
+  pragmaticListener_real_lt_iff
     uniformOn_univ_singleton_eq uniformOn_univ_singleton_ne_zero
     ((speaker_uniformListener_apply_singleton_ne_zero_iff (sem .weak) hα _ w₀ m).2 h₀)
 

@@ -13,23 +13,22 @@ each intended one weighted by the utterance prior and the channel (`noisyMeaning
 speaker's informativity is the channel-expected log listener, whose exponential is the listener
 mass averaged geometrically over perceptions (`channelMix`), and the speaker is the power-weight
 best response to that mix (`noisySpeaker`, eqs. 4 and 7). The pragmatic listener inverts the
-speaker composed with the channel (`noisyPragmaticListener`, eq. 8). At the identity channel
-each operator is its noiseless counterpart.
+speaker composed with the channel (eq. 8). At the identity channel each operator is its noiseless
+counterpart.
 
 ## Main definitions
 
 * `RSA.noisyMeaning` — the meaning of a perceived utterance, eq. 6's inner sum.
 * `RSA.channelMix` — the listener mass averaged geometrically over the channel.
 * `RSA.noisySpeaker` — eq. 7's speaker, `Kernel.ofWeights` of `channelMix ^ α · exp (-(α C))`.
-* `RSA.noisyPragmaticListener` — eq. 8, `(N ∘ₖ noisySpeaker N α C L)†μ`.
 
 ## Main results
 
 * `RSA.gradedListener_noisyMeaning_id`, `RSA.noisySpeaker_id`,
-  `RSA.noisyPragmaticListener_id` — the identity channel recovers `gradedListener`,
+  `RSA.pragmaticListener_id_comp_noisySpeaker` — the identity channel recovers `gradedListener`,
   `speaker`, and `pragmaticListener`.
-* `RSA.noisySpeaker_real_singleton_lt_iff`, `RSA.noisyPragmaticListener_real_lt_iff` —
-  preference reduces to the channel-mixed listener, and to the channelled speaker.
+* `RSA.noisySpeaker_real_singleton_lt_iff` — preference reduces to the channel-mixed
+  listener.
 * `RSA.channelMix_eq_prod` — the mix over the perceptions the channel can produce.
 
 ## References
@@ -162,47 +161,23 @@ theorem noisySpeaker_id (α : ℝ) (C : U → ℝ) (L : Kernel U W) [IsFiniteKer
 
 end Speaker
 
-/-! ### The pragmatic listener -/
+/-! ### The pragmatic listener
+
+The pragmatic listener over the channel (eq. 8) is
+`pragmaticListener (N ∘ₖ noisySpeaker N α C L) μ`, the Bayesian inverse, against the prior, of
+the speaker followed by the channel. -/
 
 section Listener
 
-variable [Fintype I] [MeasurableSingletonClass I] [MeasurableSingletonClass U] [Countable W]
-  [MeasurableSingletonClass W] [StandardBorelSpace W] [Nonempty W] (N : Kernel I U)
-  [IsFiniteKernel N] (α : ℝ)
-  (C : I → ℝ) (L : Kernel U W) (μ : Measure W) [IsFiniteMeasure μ]
+variable [MeasurableSingletonClass U] [Countable W] [MeasurableSingletonClass W]
+  [StandardBorelSpace W] [Nonempty W]
 
-/-- The pragmatic listener over the channel (eq. 8) is the Bayesian inverse, against the
-prior, of the speaker followed by the channel. -/
-noncomputable def noisyPragmaticListener : Kernel U W := (N ∘ₖ noisySpeaker N α C L)†μ
-
-instance : IsMarkovKernel (noisyPragmaticListener N α C L μ) :=
-  inferInstanceAs (IsMarkovKernel ((N ∘ₖ noisySpeaker N α C L)†μ))
-
-/-- Without noise the pragmatic listener is the noiseless one. -/
-theorem noisyPragmaticListener_id (C : U → ℝ) (L : Kernel U W) [IsFiniteKernel L] :
-    noisyPragmaticListener Kernel.id α C L μ = pragmaticListener α C L μ := by
-  simp only [noisyPragmaticListener, noisySpeaker_id, Kernel.id_comp, pragmaticListener]
-
-variable {N α C L μ}
-
-omit [MeasurableSingletonClass I] in
-/-- At a prior giving every state the same positive mass, listener preference between two
-states is preference of the channelled speaker between them. -/
-theorem noisyPragmaticListener_real_lt_iff (hμeq : ∀ w w', μ {w} = μ {w'})
-    (hμ0 : ∀ w, μ {w} ≠ 0) {u : U} {w₀ : W} (hs : (N ∘ₖ noisySpeaker N α C L) w₀ {u} ≠ 0)
-    {w₁ w₂ : W} :
-    (noisyPragmaticListener N α C L μ u).real {w₁} <
-        (noisyPragmaticListener N α C L μ u).real {w₂} ↔
-      ((N ∘ₖ noisySpeaker N α C L) w₁).real {u} <
-        ((N ∘ₖ noisySpeaker N α C L) w₂).real {u} := by
-  have hx : ((N ∘ₖ noisySpeaker N α C L) ∘ₘ μ) {u} ≠ 0 :=
-    comp_apply_singleton_ne_zero _ _ (hμ0 w₀) hs
-  rw [noisyPragmaticListener, posterior_real_singleton _ _ hx, posterior_real_singleton _ _ hx,
-    div_lt_div_iff_of_pos_right
-      (by rw [measureReal_def]; exact ENNReal.toReal_pos hx (measure_ne_top _ _)),
-    show μ.real {w₁} = μ.real {w₂} by rw [measureReal_def, measureReal_def, hμeq],
-    mul_lt_mul_iff_of_pos_left
-      (by rw [measureReal_def]; exact ENNReal.toReal_pos (hμ0 w₂) (measure_ne_top _ _))]
+/-- Without noise the pragmatic listener over the channel is the noiseless one. -/
+theorem pragmaticListener_id_comp_noisySpeaker (α : ℝ) (C : U → ℝ) (L : Kernel U W)
+    [IsFiniteKernel L] (μ : Measure W) [IsFiniteMeasure μ] :
+    pragmaticListener (Kernel.id ∘ₖ noisySpeaker Kernel.id α C L) μ =
+      pragmaticListener (speaker α C L) μ := by
+  simp only [noisySpeaker_id, Kernel.id_comp]
 
 end Listener
 

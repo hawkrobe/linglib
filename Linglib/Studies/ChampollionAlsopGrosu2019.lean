@@ -165,7 +165,7 @@ noncomputable abbrev speaker (i : Interp) (α : ℝ) : Kernel FCState Utterance 
 at a uniform prior over states and interpretation functions, and `.fst` marginalizes over the
 interpretation. -/
 noncomputable abbrev listener (α : ℝ) : Kernel Utterance (FCState × Interp) :=
-  familyListener (fun i => uniformListener (sem i)) α 0 (uniformOn Set.univ)
+  pragmaticListener (familySpeaker (fun i => uniformListener (sem i)) α 0) (uniformOn Set.univ)
 
 /-- Under the exhaustified function at Only One, *or* is the only true utterance, so the
 speaker produces it with certainty at every rationality (§3.3). -/
@@ -199,8 +199,8 @@ theorem fci_derived :
   intro w hw w' hw'
   rw [Measure.fst_real_singleton, Measure.fst_real_singleton]
   fin_cases hw <;> fin_cases hw' <;>
-    exact familyListener_uniform_real_lt_of_divPowSum sem expressible (k := 100) (D := 20)
-      (by decide +kernel) (by decide +kernel)
+    exact pragmaticListener_familySpeaker_uniform_real_lt_of_divPowSum sem expressible
+      (k := 100) (D := 20) (by decide +kernel) (by decide +kernel)
 
 /-- The free-choice pairs of the joint listener. -/
 def fciPairs : Finset (FCState × Interp) := Finset.univ.filter fun p => HasFCI p.1
@@ -212,7 +212,7 @@ def nonFciPairs : Finset (FCState × Interp) := Finset.univ.filter fun p => ¬ H
 (the paper's "only 70%"). -/
 theorem fci_majority_low_alpha :
     (listener 2 .or_).real ↑nonFciPairs < (listener 2 .or_).real ↑fciPairs :=
-  familyListener_uniform_real_lt_of_divPowSum sem expressible (k := 2) (D := 20)
+  pragmaticListener_familySpeaker_uniform_real_lt_of_divPowSum sem expressible (k := 2) (D := 20)
     (by decide +kernel) (by decide +kernel)
 
 /-! ### Prior sensitivity (Table 6)
@@ -263,7 +263,7 @@ noncomputable def famB (i : Interp) : Kernel Utterance FCState :=
 
 /-- The pragmatic listener at the biased prior. -/
 noncomputable def listenerB (α : ℝ) : Kernel Utterance (FCState × Interp) :=
-  familyListener famB α 0 jointPriorB
+  pragmaticListener (familySpeaker famB α 0) jointPriorB
 
 theorem jointPriorB_real_singleton (p : FCState × Interp) :
     jointPriorB.real {p} = biasedWeight p.1 := by
@@ -288,8 +288,8 @@ theorem anyNumber_of_prior {α : ℝ} (hα : 0 < α) {w : FCState} (hw : w ≠ .
       show Fintype.card Interp = 2 from rfl]
     cases w <;> first | exact absurd rfl hw | norm_num [biasedWeight]
   rw [Measure.fst_real_singleton, Measure.fst_real_singleton, listenerB]
-  exact familyListener_real_lt_of_certain famB α 0 (p₀ := (.anyNumber, .exhaustified))
-    (by simp) hone hlt
+  exact pragmaticListener_real_lt_of_certain (p₀ := (.anyNumber, .exhaustified))
+    (by simp) (fun p ↦ speaker_real_singleton_le_one α 0 (famB p.2) p.1 _) hone hlt
 
 /-! ### No free choice under negation (§4, Table 9) -/
 
@@ -359,14 +359,14 @@ theorem negSem_notOr : ∀ i, negSem i .notOr = {.neither} := by decide
 
 /-- The listener of the negation model. -/
 noncomputable abbrev negListener (α : ℝ) : Kernel NegUtterance (NegState × Interp) :=
-  familyListener (fun i => uniformListener (negSem i)) α 0 (uniformOn Set.univ)
+  pragmaticListener (familySpeaker (fun i => uniformListener (negSem i)) α 0) (uniformOn Set.univ)
 
 /-- Hearing *you may not take an apple or a pear*, the listener assigns no mass to any state
 other than Neither, in particular none to Only A and Only B, where a free-choice reading of the
 negated disjunction would be true. There is no free choice under negation (Table 9). -/
 theorem no_fci_under_negation {α : ℝ} (hα : 0 < α) {p : NegState × Interp}
     (hp : p.1 ≠ .neither) : negListener α .notOr {p} = 0 :=
-  familyListener_uniform_apply_singleton_eq_zero negSem hα ⟨.literal, .neither, by decide⟩
-    (by rw [negSem_notOr, Finset.mem_singleton]; exact hp)
+  pragmaticListener_familySpeaker_uniform_apply_singleton_eq_zero negSem hα
+    ⟨.literal, .neither, by decide⟩ (by rw [negSem_notOr, Finset.mem_singleton]; exact hp)
 
 end ChampollionAlsopGrosu2019

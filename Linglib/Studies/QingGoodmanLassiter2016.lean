@@ -29,14 +29,14 @@ paper discusses, with the common-ground prior of (8) as one instance (`now_cg_mo
 
 The literal listener is `RSA.projListener` of the literal listener at counting measure on the
 context set, the speaker `RSA.speaker` with the utterance prior entering as the cost
-`-log Pr(u) / α`, since (3) multiplies by the prior outside the rationality, and the
-joint listener `RSA.familyListener` with the context set as the state-side latent; the pair
-prior puts the actual world in the context set, as the paper's figures do. Speaker shares are
-evaluated cell by cell from the tables of the literal listener's counts, which `decide`
-certifies. The common-ground prior carries the paper's observation probability of `0.4` and
-`5%` noise, scaled to naturals; the theorems quantify over any prior meeting the ordering
-hypotheses it satisfies. The world marginals of Figure 1 and the questions of Figure 4 are not
-formalized.
+`-log Pr(u) / α`, since (3) multiplies by the prior outside the rationality, and the joint
+listener `RSA.pragmaticListener` of `RSA.familySpeaker`, with the context set as the state-side
+latent; the pair prior puts the actual world in the context set, as the paper's figures do.
+Speaker shares are evaluated cell by cell from the tables of the literal listener's counts, which
+`decide` certifies. The common-ground prior carries the paper's observation probability of
+`0.4` and `5%` noise, scaled to naturals; the theorems quantify over any prior meeting the
+ordering hypotheses it satisfies. The world marginals of Figure 1 and the questions of Figure 4
+are not formalized.
 
 ## References
 
@@ -247,7 +247,7 @@ instance (π : Finset World → ℕ) : IsFiniteMeasure (pairPrior π) :=
 /-- The joint listener (7) is the family listener over context sets. -/
 noncomputable def listener (q : QUD) (π : Finset World → ℕ) (α : ℝ) :
     Kernel Utterance (World × Finset World) :=
-  familyListener (λ C => L0 C q) α (cost α) (pairPrior π)
+  pragmaticListener (familySpeaker (λ C => L0 C q) α (cost α)) (pairPrior π)
 
 /-- The common-ground prior (8) takes the paper's observation probability `0.4` and `5%`
 noise, scaled by `14700`, over the universe, the four single observations, the four pairs, and
@@ -646,8 +646,8 @@ private theorem listener_lt_iff (q : QUD) (π : Finset World → ℕ) (hπ : π 
     (hα : 0 < α) (w₁ w₂ : World) (C₁ C₂ : Finset World) (h₁ : w₁ ∈ C₁) (h₂ : w₂ ∈ C₂) :
     (listener q π α notStopped).real {(w₁, C₁)} < (listener q π α notStopped).real {(w₂, C₂)}
       ↔ (π C₁ : ℝ) * share q C₁ w₁ α < π C₂ * share q C₂ w₂ α := by
-  have h := familyListener_real_lt_iff (L := λ C => L0 C q) (μ := pairPrior π) (α := α)
-    (C := cost α) (comp_ne_zero q π hπ hα) {(w₁, C₁)} {(w₂, C₂)}
+  have h := pragmaticListener_real_finset_lt_iff (S := familySpeaker (λ C => L0 C q) α (cost α))
+    (comp_ne_zero q π hπ hα) {(w₁, C₁)} {(w₂, C₂)}
   simp only [Finset.coe_singleton, Finset.sum_singleton, pairPrior_real π _ _ h₁,
     pairPrior_real π _ _ h₂] at h
   rw [listener]
@@ -660,7 +660,7 @@ private theorem listener_eq (q : QUD) (π : Finset World → ℕ) (hπ : π past
     (hshare : RSA.speaker α (cost α) (L0 C₁ q) w₁ {notStopped}
       = RSA.speaker α (cost α) (L0 C₂ q) w₂ {notStopped}) :
     listener q π α notStopped {(w₁, C₁)} = listener q π α notStopped {(w₂, C₂)} := by
-  rw [listener, familyListener,
+  rw [listener, pragmaticListener,
     posterior_apply_singleton_congr (κ := familySpeaker (λ C => L0 C q) α (cost α))
       (μ := pairPrior π) (comp_ne_zero q π hπ hα) (by simpa using hshare) hprior]
 
@@ -670,7 +670,7 @@ private theorem listener_eq (q : QUD) (π : Finset World → ℕ) (hπ : π past
 /-- The standard listener is the pragmatic listener over the universe with a uniform world
 prior, the first column of Table 2. -/
 noncomputable def standard (α : ℝ) : Kernel Utterance World :=
-  pragmaticListener α (cost α) (L0 Finset.univ .max) (uniformOn Set.univ)
+  pragmaticListener (RSA.speaker α (cost α) (L0 Finset.univ .max)) (uniformOn Set.univ)
 
 private theorem speaker_univ_ne_zero {α : ℝ} (hα : 0 < α) :
     RSA.speaker α (cost α) (L0 Finset.univ .max) .TT {notStopped} ≠ 0 :=

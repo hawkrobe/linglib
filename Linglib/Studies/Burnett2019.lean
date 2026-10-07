@@ -131,7 +131,7 @@ noncomputable abbrev S1 (prior : Measure Persona) : Kernel Persona INGVariant :=
 /-- The pragmatic listener inverts the speaker against the prior. -/
 noncomputable abbrev L1 (prior : Measure Persona) [IsFiniteMeasure prior] :
     Kernel INGVariant Persona :=
-  pragmaticListener 6 (λ _ => 0) (L0 prior) prior
+  pragmaticListener (speaker 6 (λ _ => 0) (L0 prior)) prior
 
 /-! ### The extensions differ in one persona each
 

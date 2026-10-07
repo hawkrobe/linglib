@@ -347,7 +347,7 @@ theorem S1_s3_C : (S1 .s3).real {.C} = 0 := by
 /-! ### The pragmatic listener, Table 2(e) -/
 
 /-- The pragmatic listener of Table 2(e) is the posterior of `S1` against the uniform prior. -/
-noncomputable def L1 : Kernel Utt State := pragmaticListener 1 0 L0 prior
+noncomputable def L1 : Kernel Utt State := pragmaticListener (speaker 1 0 L0) prior
 
 private theorem S1_ne_zero {s : State} {u : Utt} (h : (S1 s).real {u} ≠ 0) : S1 s {u} ≠ 0 :=
   λ h0 => h (by rw [measureReal_def, h0, ENNReal.toReal_zero])

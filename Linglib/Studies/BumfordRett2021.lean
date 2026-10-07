@@ -261,7 +261,7 @@ Bayesian inverse of the speakers indexed by the threshold offsets, against the p
 uniform offsets. -/
 noncomputable def listener (c : Option Comparison) (α : ℝ) (cost : Utterance → ℝ) :
     Kernel Utterance (World × Finset.Icc (-4 : ℤ) 4) :=
-  RSA.familyListener (literal c) α cost (prior.prod Measure.count)
+  RSA.pragmaticListener (RSA.familySpeaker (literal c) α cost) (prior.prod Measure.count)
 
 instance (c : Option Comparison) (α : ℝ) (cost : Utterance → ℝ) :
     IsMarkovKernel (listener c α cost) :=
@@ -299,7 +299,7 @@ private theorem listener_fst_real_singleton (hα : 0 ≤ α) (c : Option Compari
     (listener c α cost u).fst.real {w} =
       (prior {w}).toReal * (∑ σ, (RSA.speaker α cost (literal c σ) w).real {u}) /
         (RSA.familySpeaker (literal c) α cost ∘ₘ prior.prod Measure.count).real {u} := by
-  rw [listener, RSA.familyListener_fst_real_singleton (literal c) α cost prior Measure.count
+  rw [listener, RSA.pragmaticListener_fst_real_singleton prior Measure.count
     (comp_familySpeaker_ne_zero hα c u) w]
   simp [measureReal_def]
 
@@ -381,9 +381,7 @@ variable {α : ℝ} {cost : Utterance → ℝ}
 theorem literal_antonym (c : Option Comparison) (σ : Finset.Icc (-4 : ℤ) 4) (u : Utterance)
     (w : World) : literal c (negate σ) u.antonym {w.reflect} = literal c σ u {w} :=
   RSA.literalListener_apply_singleton_of_equiv World.reflect_involutive.toPerm prior_reflect
-    (fun w ↦ by
-      simp only [Function.Involutive.coe_toPerm, Set.indicator_apply, Set.mem_ofPred_eq,
-        holds_reflect, Pi.one_apply]) w
+    (fun w ↦ by simp only [Function.Involutive.coe_toPerm, Set.mem_ofPred_eq, holds_reflect]) w
 
 /-- Reversing the height scale carries the listener after an antonym to the listener after the
 other antonym, with the costs of the antonyms exchanged. -/
@@ -391,12 +389,15 @@ theorem listener_antonym (hα : 0 ≤ α) (c : Option Comparison) (u : Utterance
     (σ : Finset.Icc (-4 : ℤ) 4) :
     listener c α cost u.antonym {(w.reflect, negate σ)} =
       listener c α (cost ∘ Utterance.antonym) u {(w, σ)} :=
-  RSA.familyListener_apply_singleton_of_equiv World.reflect_involutive.toPerm
-    negate_involutive.toPerm Utterance.antonym_involutive.toPerm (literal c) (literal c) α cost
-    (fun σ v w ↦ literal_antonym c σ v w)
-    (fun w σ ↦ by
-      rw [prior_prod_count_singleton, prior_prod_count_singleton]; exact prior_reflect w)
-    (comp_familySpeaker_ne_zero hα c u) w σ
+  RSA.pragmaticListener_apply_singleton_of_equiv
+    (World.reflect_involutive.toPerm.prodCongr negate_involutive.toPerm)
+    (fun p ↦ by
+      rw [Equiv.prodCongr_apply, Prod.map, prior_prod_count_singleton,
+        prior_prod_count_singleton]
+      exact prior_reflect p.1)
+    (fun p ↦ RSA.speaker_apply_singleton_of_equiv Utterance.antonym_involutive.toPerm α cost
+      (fun v ↦ literal_antonym c p.2 v p.1) u)
+    (comp_familySpeaker_ne_zero hα c u) (w, σ)
 
 theorem measured_reflect (c : Option Comparison) (w : World) :
     measured c w.reflect - w.reflect.centre = -(measured c w - w.centre) := by
@@ -532,8 +533,8 @@ private theorem listener_positive_recentre (hα : 0 < α) (m m' : Finset.Icc (5 
   have hu := comp_familySpeaker_ne_zero (cost := cost) hα.le none u
   rw [Measure.fst_apply_singleton, Measure.fst_apply_singleton]
   refine Finset.sum_congr rfl fun σ _ ↦ ?_
-  rw [listener, RSA.familyListener_apply_singleton _ _ _ hu,
-    RSA.familyListener_apply_singleton _ _ _ hu, prior_prod_count_singleton,
+  rw [listener, RSA.pragmaticListener_apply_singleton hu,
+    RSA.pragmaticListener_apply_singleton hu, prior_prod_count_singleton,
     prior_prod_count_singleton, prior_singleton_congr (w' := w) (by simp [World.recentre])]
   congr 2
   exact congrFun (congrArg _ (RSA.speaker_literalListener_congr hα cost prior
@@ -620,7 +621,7 @@ theorem evaluativity_balances (hα : 0 ≤ α) (c : Option Comparison) :
         simp_rw [mul_assoc]
     _ = ∑ q, (prior.prod Measure.count).real {q} * f q := by
         refine Finset.sum_congr rfl fun q _ ↦ ?_
-        rw [listener, RSA.familyListener, ← Measure.comp_real_singleton, posterior_comp_self]
+        rw [listener, RSA.pragmaticListener, ← Measure.comp_real_singleton, posterior_comp_self]
     _ = 0 := hsym
 
 end Balance

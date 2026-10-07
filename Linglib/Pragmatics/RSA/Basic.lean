@@ -30,12 +30,13 @@ with its decision procedure is `Linglib.Pragmatics.RSA.Uniform`.
   inapplicable utterances.
 * `RSA.speaker` — eqs. 2/6–7: the score speaker at the utility `α * (log L - C)`; its weights
   are `L ^ α * exp (-(α * C))` (`RSA.speaker_eq_ofWeights`).
-* `RSA.pragmaticListener` — eq. 3: `(speaker α C L)†μ`.
+* `RSA.pragmaticListener` — eq. 3: the Bayesian inverse `S†μ` of a speaker `S` against the
+  prior.
 * `RSA.priorOfWeights` — the prior determined by integer weights on the states.
 * `RSA.jointListener` — eqs. 18b/21b: the posterior over (state, choice) given the heard
   form; `.fst` is the state listener, `.snd` the choice posterior.
-* `RSA.familySpeaker`, `RSA.familyListener` — state-side latents (eqs. 11–13): the latent
-  is a speaker argument and normalization is per latent.
+* `RSA.familySpeaker` — state-side latents (eqs. 11–13): the latent is a speaker argument and
+  normalization is per latent; its listener is `pragmaticListener (familySpeaker L α C) μ`.
 
 ## Main results
 
@@ -52,7 +53,7 @@ with its decision procedure is `Linglib.Pragmatics.RSA.Uniform`.
 * `RSA.tendsto_speaker_real_singleton_atTop` — as rationality grows the speaker puts all its mass
   on the utterance the listener most favors.
 * `RSA.jointListener_fst_real_lt_iff`, `RSA.jointListener_snd_real_lt_iff`,
-  `RSA.familyListener_fst_real_lt_iff`, `RSA.familyListener_snd_real_lt_iff` — listener
+  `RSA.pragmaticListener_fst_real_lt_iff`, `RSA.pragmaticListener_snd_real_lt_iff` — listener
   preference as prior-weighted speaker sums.
 
 ## References
@@ -761,39 +762,167 @@ theorem speaker_literalListener_real_singleton_lt_iff [DiscreteMeasurableSpace W
 
 section Listener
 
-variable [StandardBorelSpace W] [Nonempty W] (α : ℝ) (C : U → ℝ) (L : Kernel U W)
-  (μ : Measure W) [IsFiniteMeasure μ]
+variable [StandardBorelSpace W] [Nonempty W]
 
-/-- The pragmatic listener (eq. 3) is the Bayesian inverse of the speaker against the prior. -/
-noncomputable def pragmaticListener : Kernel U W := (speaker α C L)†μ
+/-- The pragmatic listener (eq. 3) is the Bayesian inverse of a speaker against the prior. -/
+noncomputable def pragmaticListener (S : Kernel W U) [IsFiniteKernel S] (μ : Measure W)
+    [IsFiniteMeasure μ] : Kernel U W :=
+  S†μ
 
-instance : IsMarkovKernel (pragmaticListener α C L μ) :=
-  inferInstanceAs (IsMarkovKernel ((speaker α C L)†μ))
+section General
 
-omit [StandardBorelSpace W] [Nonempty W] in
+variable {S : Kernel W U} [IsFiniteKernel S] {μ : Measure W} [IsFiniteMeasure μ]
+
+instance : IsMarkovKernel (pragmaticListener S μ) := inferInstanceAs (IsMarkovKernel (S†μ))
+
+omit [Countable W] [Fintype U] in
+/-- At an utterance of positive marginal the listener's mass on a state is its prior times the
+speaker's production there, over the marginal. -/
+theorem pragmaticListener_apply_singleton {u : U} (hu : (S ∘ₘ μ) {u} ≠ 0) (w : W) :
+    pragmaticListener S μ u {w} = μ {w} * S w {u} / (S ∘ₘ μ) {u} :=
+  posterior_apply_singleton S μ hu w
+
+omit [Countable W] [Fintype U] in
+/-- A state at which the utterance is never produced receives no posterior mass. -/
+theorem pragmaticListener_apply_singleton_eq_zero {u : U} (hu : (S ∘ₘ μ) {u} ≠ 0) {w : W}
+    (hw : S w {u} = 0) : pragmaticListener S μ u {w} = 0 := by
+  rw [pragmaticListener_apply_singleton hu, hw, mul_zero, ENNReal.zero_div]
+
+omit [Countable W] [Fintype U] in
+/-- The listener puts mass on a state exactly when it has positive prior and the speaker produces
+the utterance there. -/
+theorem pragmaticListener_apply_singleton_ne_zero_iff {u : U} (hu : (S ∘ₘ μ) {u} ≠ 0) (w : W) :
+    pragmaticListener S μ u {w} ≠ 0 ↔ μ {w} ≠ 0 ∧ S w {u} ≠ 0 :=
+  posterior_apply_singleton_ne_zero_iff S μ hu w
+
+omit [Countable W] [Fintype U] in
+/-- Comparing the listener's masses on finite events reduces to comparing prior-weighted speaker
+productions. -/
+theorem pragmaticListener_real_finset_lt_iff {u : U} (hu : (S ∘ₘ μ) {u} ≠ 0)
+    (E₁ E₂ : Finset W) :
+    (pragmaticListener S μ u).real ↑E₁ < (pragmaticListener S μ u).real ↑E₂
+      ↔ (∑ w ∈ E₁, μ.real {w} * (S w).real {u}) < ∑ w ∈ E₂, μ.real {w} * (S w).real {u} :=
+  posterior_real_finset_lt_iff S μ hu E₁ E₂
+
+omit [Countable W] [Fintype U] in
+/-- At a prior giving every state the same positive mass, listener preference between two
+states is speaker preference between them, since the prior and the marginal cancel. -/
+theorem pragmaticListener_real_lt_iff (hμeq : ∀ w w', μ {w} = μ {w'}) (hμ0 : ∀ w, μ {w} ≠ 0)
+    {u : U} {w₀ : W} (hs : S w₀ {u} ≠ 0) {w₁ w₂ : W} :
+    (pragmaticListener S μ u).real {w₁} < (pragmaticListener S μ u).real {w₂}
+      ↔ (S w₁).real {u} < (S w₂).real {u} :=
+  posterior_real_singleton_lt_iff_of_eq _ _ (comp_apply_singleton_ne_zero _ _ (hμ0 w₀) hs)
+    (hμeq w₁ w₂) (hμ0 w₁)
+
+omit [Countable W] [Fintype U] in
+/-- A relabelling of states and utterances that carries one speaker and prior to another carries
+the listener along. -/
+theorem pragmaticListener_apply_singleton_of_equiv [Fintype W] {W' U' : Type*}
+    [MeasurableSpace W'] [MeasurableSpace U'] [MeasurableSingletonClass U'] [Fintype W']
+    [MeasurableSingletonClass W'] [StandardBorelSpace W'] [Nonempty W'] {S' : Kernel W' U'}
+    [IsFiniteKernel S'] {μ' : Measure W'} [IsFiniteMeasure μ'] (e : W ≃ W') {u : U} {u' : U'}
+    (hμ : ∀ w, μ' {e w} = μ {w}) (hS : ∀ w, S' (e w) {u'} = S w {u})
+    (hu : (S ∘ₘ μ) {u} ≠ 0) (w : W) :
+    pragmaticListener S' μ' u' {e w} = pragmaticListener S μ u {w} :=
+  posterior_apply_singleton_of_equiv _ _ e hμ hS hu w
+
+end General
+
 /-- With Boolean meanings, hearing an utterance rules out every state it does not fit, once some
 state it fits has prior mass. -/
-theorem pragmaticListener_literalListener_apply_singleton_of_notMem
-    [DiscreteMeasurableSpace W] [StandardBorelSpace W] [Nonempty W] (hα : 0 < α)
+theorem pragmaticListener_literalListener_apply_singleton_of_notMem [DiscreteMeasurableSpace W]
+    (α : ℝ) (C : U → ℝ) (μ : Measure W) [IsFiniteMeasure μ] (hα : 0 < α)
     (sem : U → Set W) {u : U} {w w' : W} (hw : w ∉ sem u) (hw' : w' ∈ sem u) (hμ : μ {w'} ≠ 0) :
-    pragmaticListener α C (literalListener μ sem) μ u {w} = 0 := by
+    pragmaticListener (speaker α C (literalListener μ sem)) μ u {w} = 0 := by
   have hS : speaker α C (literalListener μ sem) w' {u} ≠ 0 :=
     speaker_apply_singleton_ne_zero hα.le (by
       rw [literalListener_apply_singleton μ sem hw']
       exact mul_ne_zero (ENNReal.inv_ne_zero.mpr (measure_ne_top _ _)) hμ)
-  rw [pragmaticListener, posterior_apply_singleton _ _ (comp_apply_singleton_ne_zero _ _ hμ hS),
-    speaker_apply_singleton_eq_zero hα
-      (literalListener_apply_singleton_of_notMem μ sem hw)]
-  simp
+  exact pragmaticListener_apply_singleton_eq_zero (comp_apply_singleton_ne_zero _ _ hμ hS)
+    (speaker_apply_singleton_eq_zero hα (literalListener_apply_singleton_of_notMem μ sem hw))
 
-/-- At a prior giving every state the same positive mass, listener preference between two
-states is speaker preference between them, since the prior and the marginal cancel. -/
-theorem pragmaticListener_real_lt_iff (hμeq : ∀ w w', μ {w} = μ {w'}) (hμ0 : ∀ w, μ {w} ≠ 0)
-    {u : U} {w₀ : W} (hs : speaker α C L w₀ {u} ≠ 0) {w₁ w₂ : W} :
-    (pragmaticListener α C L μ u).real {w₁} < (pragmaticListener α C L μ u).real {w₂}
-      ↔ (speaker α C L w₁).real {u} < (speaker α C L w₂).real {u} :=
-  posterior_real_singleton_lt_iff_of_eq _ _ (comp_apply_singleton_ne_zero _ _ (hμ0 w₀) hs)
-    (hμeq w₁ w₂) (hμ0 w₁)
+section Latent
+
+variable {Λ : Type*} [MeasurableSpace Λ] [StandardBorelSpace Λ] [Nonempty Λ]
+  [MeasurableSingletonClass Λ] {S : Kernel (W × Λ) U} [IsFiniteKernel S] {μ : Measure (W × Λ)}
+  [IsFiniteMeasure μ]
+
+omit [Countable W] [Fintype U] in
+/-- The state marginal of the listener over a latent is positive at a state exactly when some
+latent pairs a positive prior with a positive production. -/
+theorem pragmaticListener_fst_apply_singleton_ne_zero_iff [Fintype Λ] {u : U}
+    (hu : (S ∘ₘ μ) {u} ≠ 0) (w : W) :
+    (pragmaticListener S μ u).fst {w} ≠ 0 ↔ ∃ l, μ {(w, l)} ≠ 0 ∧ S (w, l) {u} ≠ 0 := by
+  rw [Measure.fst_apply_singleton, ne_eq, Finset.sum_eq_zero_iff]
+  simp only [Finset.mem_univ, true_implies, not_forall,
+    pragmaticListener_apply_singleton_ne_zero_iff hu]
+
+omit [Countable W] [Fintype U] in
+/-- At equal priors the listener's state marginal prefers the state with the greater production
+summed over the latent. -/
+theorem pragmaticListener_fst_real_lt_iff [Fintype Λ] (hμeq : ∀ p q : W × Λ, μ {p} = μ {q})
+    (hμ0 : ∀ p : W × Λ, μ {p} ≠ 0) {u : U} {p₀ : W × Λ} (hs : S p₀ {u} ≠ 0) {w₁ w₂ : W} :
+    (pragmaticListener S μ u).fst.real {w₁} < (pragmaticListener S μ u).fst.real {w₂}
+      ↔ (∑ l, (S (w₁, l)).real {u}) < ∑ l, (S (w₂, l)).real {u} := by
+  have key : ∀ w : W, (∑ l, μ.real {(w, l)} * (S (w, l)).real {u})
+      = μ.real {p₀} * ∑ l, (S (w, l)).real {u} := fun w ↦ by
+    rw [Finset.mul_sum]
+    exact Finset.sum_congr rfl fun l _ ↦ by
+      rw [show μ.real {(w, l)} = μ.real {p₀} by rw [measureReal_def, measureReal_def, hμeq]]
+  rw [pragmaticListener, posterior_fst_real_lt_iff _ _
+    (comp_apply_singleton_ne_zero _ _ (hμ0 p₀) hs), key, key, mul_lt_mul_iff_right₀
+      (show (0 : ℝ) < μ.real {p₀} from ENNReal.toReal_pos (hμ0 p₀) (measure_ne_top _ _))]
+
+omit [Countable W] [Fintype U] in
+/-- At equal priors the listener's latent marginal prefers the latent with the greater
+production summed over the states. -/
+theorem pragmaticListener_snd_real_lt_iff [Fintype W] [Countable Λ]
+    (hμeq : ∀ p q : W × Λ, μ {p} = μ {q}) (hμ0 : ∀ p : W × Λ, μ {p} ≠ 0) {u : U} {p₀ : W × Λ}
+    (hs : S p₀ {u} ≠ 0) {l₁ l₂ : Λ} :
+    (pragmaticListener S μ u).snd.real {l₁} < (pragmaticListener S μ u).snd.real {l₂}
+      ↔ (∑ w, (S (w, l₁)).real {u}) < ∑ w, (S (w, l₂)).real {u} := by
+  have key : ∀ l : Λ, (∑ w, μ.real {(w, l)} * (S (w, l)).real {u})
+      = μ.real {p₀} * ∑ w, (S (w, l)).real {u} := fun l ↦ by
+    rw [Finset.mul_sum]
+    exact Finset.sum_congr rfl fun w _ ↦ by
+      rw [show μ.real {(w, l)} = μ.real {p₀} by rw [measureReal_def, measureReal_def, hμeq]]
+  rw [pragmaticListener, posterior_snd_real_lt_iff _ _
+    (comp_apply_singleton_ne_zero _ _ (hμ0 p₀) hs), key, key, mul_lt_mul_iff_right₀
+      (show (0 : ℝ) < μ.real {p₀} from ENNReal.toReal_pos (hμ0 p₀) (measure_ne_top _ _))]
+
+omit [Countable W] [Fintype U] in
+/-- On reals the state marginal of the listener over a product prior is the prior at the state
+times the latent-averaged production, over the observation marginal. -/
+theorem pragmaticListener_fst_real_singleton [Fintype Λ] (μW : Measure W) [IsFiniteMeasure μW]
+    (ν : Measure Λ) [IsFiniteMeasure ν] {u : U} (hu : (S ∘ₘ μW.prod ν) {u} ≠ 0) (w : W) :
+    (pragmaticListener S (μW.prod ν) u).fst.real {w}
+      = μW.real {w} * (∑ l, ν.real {l} * (S (w, l)).real {u}) / (S ∘ₘ μW.prod ν).real {u} := by
+  rw [pragmaticListener, posterior_fst_real_singleton _ _ hu, Finset.mul_sum]
+  simp_rw [Measure.prod_real_singleton, mul_assoc]
+
+omit [Countable W] [Fintype U] in
+/-- A pair producing the utterance with certainty outweighs any event of smaller total prior
+mass, when no pair produces it with probability above one. -/
+theorem pragmaticListener_real_lt_of_certain [Countable Λ] {u : U} {E₁ E₂ : Finset (W × Λ)}
+    {p₀ : W × Λ} (hp₀ : p₀ ∈ E₂) (hle : ∀ p, (S p).real {u} ≤ 1) (hs : S p₀ {u} = 1)
+    (hlt : (∑ p ∈ E₁, μ.real {p}) < μ.real {p₀}) :
+    (pragmaticListener S μ u).real ↑E₁ < (pragmaticListener S μ u).real ↑E₂ := by
+  have hpos : 0 < μ.real {p₀} := (Finset.sum_nonneg fun _ _ ↦ measureReal_nonneg).trans_lt hlt
+  rw [pragmaticListener_real_finset_lt_iff (comp_apply_singleton_ne_zero _ _
+    (ENNReal.toReal_pos_iff.mp hpos).1.ne' (hs ▸ one_ne_zero))]
+  calc ∑ p ∈ E₁, μ.real {p} * (S p).real {u}
+      ≤ ∑ p ∈ E₁, μ.real {p} :=
+        Finset.sum_le_sum fun p _ ↦ mul_le_of_le_one_right measureReal_nonneg (hle p)
+    _ < μ.real {p₀} := hlt
+    _ = μ.real {p₀} * (S p₀).real {u} := by
+        rw [measureReal_def (μ := S p₀), hs, ENNReal.toReal_one, mul_one]
+    _ ≤ ∑ p ∈ E₂, μ.real {p} * (S p).real {u} :=
+        Finset.single_le_sum (f := fun p ↦ μ.real {p} * (S p).real {u})
+          (fun p _ ↦ mul_nonneg measureReal_nonneg measureReal_nonneg) hp₀
+
+end Latent
+
+variable (α : ℝ) (C : U → ℝ) (L : Kernel U W) (μ : Measure W) [IsFiniteMeasure μ]
 
 variable [DiscreteMeasurableSpace U] [StandardBorelSpace U] [Nonempty U] [DecidableEq O]
   (obs : U → O)
@@ -808,7 +937,8 @@ u` of the speaker's choice. The posterior over (state, choice) is then the Bayes
 deterministic observation kernel against the joint of prior and speaker. Its `fst` is the state
 listener, its `snd` the choice posterior. -/
 noncomputable def jointListener : Kernel O (W × U) :=
-  (Kernel.deterministic (fun p : W × U ↦ obs p.2) (measurable_obs_snd obs))†(μ ⊗ₘ speaker α C L)
+  pragmaticListener (Kernel.deterministic (fun p : W × U ↦ obs p.2) (measurable_obs_snd obs))
+    (μ ⊗ₘ speaker α C L)
 
 omit [MeasurableSingletonClass U] [StandardBorelSpace W] [Nonempty W] [StandardBorelSpace U]
   [Nonempty U] [DecidableEq O] [IsFiniteMeasure μ] in
@@ -840,7 +970,7 @@ theorem jointListener_apply_singleton {o : O} (ho : ((speaker α C L ∘ₘ μ).
     jointListener α C L μ obs o {(w, u)}
       = (if obs u = o then μ {w} * speaker α C L w {u} else 0)
         / ((speaker α C L ∘ₘ μ).map obs) {o} := by
-  rw [jointListener, posterior_apply_singleton _ _
+  rw [jointListener, pragmaticListener_apply_singleton
       (by rwa [deterministic_comp_compProd_speaker]),
     deterministic_comp_compProd_speaker, ← Set.singleton_prod_singleton,
     Measure.compProd_apply_prod (.singleton w) (.singleton u), lintegral_singleton,
@@ -938,134 +1068,6 @@ theorem comp_familySpeaker_ne_zero {L : Λ → Kernel U W} {α : ℝ} {C : U →
     {μ : Measure (W × Λ)} {w : W} {l : Λ} {u : U} (hμ : μ {(w, l)} ≠ 0)
     (hs : speaker α C (L l) w {u} ≠ 0) : (familySpeaker L α C ∘ₘ μ) {u} ≠ 0 :=
   comp_apply_singleton_ne_zero _ _ hμ (by rwa [familySpeaker_apply])
-
-variable [StandardBorelSpace W] [Nonempty W] [StandardBorelSpace Λ] [Nonempty Λ]
-
-/-- The family listener (eqs. 12–13) is the Bayesian inverse of the family speaker over the joint
-(state, index) space. -/
-noncomputable def familyListener (L : Λ → Kernel U W) (α : ℝ) (C : U → ℝ)
-    (μ : Measure (W × Λ)) [IsFiniteMeasure μ] : Kernel U (W × Λ) :=
-  (familySpeaker L α C)†μ
-
-variable {μ : Measure (W × Λ)} [IsFiniteMeasure μ]
-
-/-- Exact Bayes for the family listener at a positive-mass utterance. -/
-theorem familyListener_apply_singleton (L : Λ → Kernel U W) (α : ℝ) (C : U → ℝ) {u : U}
-    (hu : (familySpeaker L α C ∘ₘ μ) {u} ≠ 0) (p : W × Λ) :
-    familyListener L α C μ u {p}
-      = μ {p} * speaker α C (L p.2) p.1 {u} / (familySpeaker L α C ∘ₘ μ) {u} := by
-  rw [familyListener, posterior_apply_singleton _ _ hu, familySpeaker_apply]
-
-/-- A pair at which the utterance is never produced receives no posterior mass. -/
-theorem familyListener_apply_singleton_eq_zero (L : Λ → Kernel U W) (α : ℝ) (C : U → ℝ)
-    {u : U} (hu : (familySpeaker L α C ∘ₘ μ) {u} ≠ 0) {p : W × Λ}
-    (hp : speaker α C (L p.2) p.1 {u} = 0) : familyListener L α C μ u {p} = 0 := by
-  rw [familyListener_apply_singleton L α C hu, hp, mul_zero, ENNReal.zero_div]
-
-/-- A relabelling of states, latents and utterances that carries one family of literal listeners
-and prior to another carries the family listener along, with the cost relabelled. -/
-theorem familyListener_apply_singleton_of_equiv [Fintype W] [Fintype Λ] (e : W ≃ W) (f : Λ ≃ Λ)
-    (τ : U ≃ U) (L L' : Λ → Kernel U W) [∀ l, IsFiniteKernel (L l)] [∀ l, IsFiniteKernel (L' l)]
-    (α : ℝ) (C : U → ℝ) {μ' : Measure (W × Λ)}
-    [IsFiniteMeasure μ'] (hL : ∀ l v w, L' (f l) (τ v) {e w} = L l v {w})
-    (hμ : ∀ w l, μ' {(e w, f l)} = μ {(w, l)}) {u : U}
-    (hu : (familySpeaker L α (C ∘ τ) ∘ₘ μ) {u} ≠ 0) (w : W) (l : Λ) :
-    familyListener L' α C μ' (τ u) {(e w, f l)} = familyListener L α (C ∘ τ) μ u {(w, l)} :=
-  posterior_apply_singleton_of_equiv _ _ (e.prodCongr f) (fun p ↦ hμ p.1 p.2)
-    (fun p ↦ by
-      rw [Equiv.prodCongr_apply, Prod.map, familySpeaker_apply, familySpeaker_apply]
-      exact speaker_apply_singleton_of_equiv τ α C (fun v ↦ hL p.2 v p.1) u) hu (w, l)
-
-/-- The state marginal of the family listener is positive at a state exactly when some latent
-pairs a positive prior with a positively produced utterance. -/
-theorem familyListener_fst_apply_singleton_ne_zero_iff [Fintype Λ] (L : Λ → Kernel U W) (α : ℝ)
-    (C : U → ℝ) {u : U} (hu : (familySpeaker L α C ∘ₘ μ) {u} ≠ 0) (w : W) :
-    (familyListener L α C μ u).fst {w} ≠ 0
-      ↔ ∃ l, μ {(w, l)} ≠ 0 ∧ speaker α C (L l) w {u} ≠ 0 := by
-  rw [Measure.fst_apply_singleton, ne_eq, Finset.sum_eq_zero_iff]
-  simp only [Finset.mem_univ, true_implies, familyListener_apply_singleton L α C hu,
-    ENNReal.div_eq_zero_iff, mul_eq_zero, not_forall, not_or]
-  exact ⟨fun ⟨l, h⟩ ↦ ⟨l, h.1⟩, fun ⟨l, h⟩ ↦ ⟨l, h, measure_ne_top _ _⟩⟩
-
-/-- On reals the state marginal of the family listener over a product prior is the prior at the
-state times the latent-averaged member speaker share, over the observation marginal. -/
-theorem familyListener_fst_real_singleton [Fintype Λ] (L : Λ → Kernel U W) (α : ℝ)
-    (C : U → ℝ) (μW : Measure W) [IsFiniteMeasure μW] (ν : Measure Λ) [IsFiniteMeasure ν]
-    {u : U} (hu : (familySpeaker L α C ∘ₘ μW.prod ν) {u} ≠ 0) (w : W) :
-    (familyListener L α C (μW.prod ν) u).fst.real {w}
-      = μW.real {w} * (∑ l, ν.real {l} * (speaker α C (L l) w).real {u})
-        / (familySpeaker L α C ∘ₘ μW.prod ν).real {u} := by
-  rw [familyListener, posterior_fst_real_singleton _ _ hu, Finset.mul_sum]
-  simp_rw [Measure.prod_real_singleton, familySpeaker_apply, mul_assoc]
-
-/-- Event comparison for the family listener reduces to prior-weighted member speaker
-sums. -/
-theorem familyListener_real_lt_iff (L : Λ → Kernel U W) (α : ℝ) (C : U → ℝ) {u : U}
-    (hu : (familySpeaker L α C ∘ₘ μ) {u} ≠ 0) (E₁ E₂ : Finset (W × Λ)) :
-    (familyListener L α C μ u).real ↑E₁ < (familyListener L α C μ u).real ↑E₂
-      ↔ (∑ p ∈ E₁, μ.real {p} * (speaker α C (L p.2) p.1).real {u})
-        < ∑ p ∈ E₂, μ.real {p} * (speaker α C (L p.2) p.1).real {u} := by
-  rw [familyListener, posterior_real_finset_lt_iff _ _ hu]
-  simp_rw [familySpeaker_apply]
-
-/-- At equal priors, the family listener's state marginal prefers the state with the greater
-speaker share summed over the latent family. -/
-theorem familyListener_fst_real_lt_iff [Fintype Λ] (L : Λ → Kernel U W) {α : ℝ}
-    {C : U → ℝ} (hμeq : ∀ p q : W × Λ, μ {p} = μ {q}) (hμ0 : ∀ p : W × Λ, μ {p} ≠ 0)
-    {u : U} {w₀ : W} {l₀ : Λ} (hs : speaker α C (L l₀) w₀ {u} ≠ 0) {w₁ w₂ : W} :
-    (familyListener L α C μ u).fst.real {w₁} < (familyListener L α C μ u).fst.real {w₂}
-      ↔ (∑ l, (speaker α C (L l) w₁).real {u}) < ∑ l, (speaker α C (L l) w₂).real {u} := by
-  set p₀ : W × Λ := Classical.arbitrary _
-  have key : ∀ w : W, (∑ l, μ.real {(w, l)} * (familySpeaker L α C (w, l)).real {u})
-      = μ.real {p₀} * ∑ l, (speaker α C (L l) w).real {u} := fun w ↦ by
-    rw [Finset.mul_sum]
-    exact Finset.sum_congr rfl fun l _ ↦ by
-      rw [familySpeaker_apply, show μ.real {(w, l)} = μ.real {p₀} from by
-        rw [measureReal_def, measureReal_def, hμeq (w, l) p₀]]
-  rw [familyListener,
-    posterior_fst_real_lt_iff _ _ (comp_familySpeaker_ne_zero (hμ0 (w₀, l₀)) hs), key, key,
-    mul_lt_mul_iff_right₀
-      (show (0 : ℝ) < μ.real {p₀} from ENNReal.toReal_pos (hμ0 p₀) (measure_ne_top _ _))]
-
-/-- At equal priors, the family listener's latent marginal prefers the member with the greater
-speaker share summed over the states. -/
-theorem familyListener_snd_real_lt_iff [Fintype W] (L : Λ → Kernel U W) {α : ℝ}
-    {C : U → ℝ} (hμeq : ∀ p q : W × Λ, μ {p} = μ {q}) (hμ0 : ∀ p : W × Λ, μ {p} ≠ 0)
-    {u : U} {w₀ : W} {l₀ : Λ} (hs : speaker α C (L l₀) w₀ {u} ≠ 0) {l₁ l₂ : Λ} :
-    (familyListener L α C μ u).snd.real {l₁} < (familyListener L α C μ u).snd.real {l₂}
-      ↔ (∑ w, (speaker α C (L l₁) w).real {u}) < ∑ w, (speaker α C (L l₂) w).real {u} := by
-  set p₀ : W × Λ := Classical.arbitrary _
-  have key : ∀ l : Λ, (∑ w, μ.real {(w, l)} * (familySpeaker L α C (w, l)).real {u})
-      = μ.real {p₀} * ∑ w, (speaker α C (L l) w).real {u} := fun l ↦ by
-    rw [Finset.mul_sum]
-    exact Finset.sum_congr rfl fun w _ ↦ by
-      rw [familySpeaker_apply, show μ.real {(w, l)} = μ.real {p₀} from by
-        rw [measureReal_def, measureReal_def, hμeq (w, l) p₀]]
-  rw [familyListener,
-    posterior_snd_real_lt_iff _ _ (comp_familySpeaker_ne_zero (hμ0 (w₀, l₀)) hs), key, key,
-    mul_lt_mul_iff_right₀
-      (show (0 : ℝ) < μ.real {p₀} from ENNReal.toReal_pos (hμ0 p₀) (measure_ne_top _ _))]
-
-/-- A pair producing the utterance with certainty outweighs any event of smaller total prior
-mass, in that the listener's posterior on the pair's event exceeds that event's. -/
-theorem familyListener_real_lt_of_certain (L : Λ → Kernel U W) (α : ℝ) (C : U → ℝ)
-    {u : U} {E₁ E₂ : Finset (W × Λ)} {p₀ : W × Λ} (hp₀ : p₀ ∈ E₂)
-    (hs : speaker α C (L p₀.2) p₀.1 {u} = 1) (hlt : (∑ p ∈ E₁, μ.real {p}) < μ.real {p₀}) :
-    (familyListener L α C μ u).real ↑E₁ < (familyListener L α C μ u).real ↑E₂ := by
-  have hpos : 0 < μ.real {p₀} :=
-    (Finset.sum_nonneg fun _ _ ↦ measureReal_nonneg).trans_lt hlt
-  rw [familyListener_real_lt_iff L α C
-    (comp_familySpeaker_ne_zero (w := p₀.1) (l := p₀.2) (ENNReal.toReal_pos_iff.mp hpos).1.ne'
-      (hs ▸ one_ne_zero))]
-  calc ∑ p ∈ E₁, μ.real {p} * (speaker α C (L p.2) p.1).real {u}
-      ≤ ∑ p ∈ E₁, μ.real {p} := Finset.sum_le_sum fun p _ ↦
-        mul_le_of_le_one_right measureReal_nonneg (speaker_real_singleton_le_one _ _ _ _ _)
-    _ < μ.real {p₀} := hlt
-    _ = μ.real {p₀} * (speaker α C (L p₀.2) p₀.1).real {u} := by
-        rw [measureReal_def (μ := speaker α C (L p₀.2) p₀.1), hs, ENNReal.toReal_one, mul_one]
-    _ ≤ ∑ p ∈ E₂, μ.real {p} * (speaker α C (L p.2) p.1).real {u} :=
-        Finset.single_le_sum (f := fun p ↦ μ.real {p} * (speaker α C (L p.2) p.1).real {u})
-          (fun p _ ↦ mul_nonneg measureReal_nonneg measureReal_nonneg) hp₀
 
 end Family
 

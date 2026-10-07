@@ -102,7 +102,7 @@ prior mass. -/
 theorem GroundedField.pragmaticListener_indexation_apply_singleton_of_not_meets
     [Nonempty (Persona G)] (hα : 0 < α) {π' : Persona G}
     (h : π ∉ F.personae m) (h' : π' ∈ F.personae m) (h0 : prior {π'} ≠ 0) :
-    pragmaticListener α (λ _ => c) (literalListener prior F.indexation) prior m {π} = 0 :=
+    pragmaticListener (speaker α (λ _ => c) (literalListener prior F.indexation)) prior m {π} = 0 :=
   pragmaticListener_literalListener_apply_singleton_of_notMem α (λ _ => c) prior hα F.indexation
     (Finset.mem_coe.not.2 h) (Finset.mem_coe.2 h') h0
 

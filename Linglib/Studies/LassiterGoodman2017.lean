@@ -88,13 +88,16 @@ noncomputable def S1 (μ : Measure D) (α : ℝ) (cost : Utterance → ℝ) :
     Kernel (D × (D × D)) Utterance :=
   familySpeaker (L0 μ) α cost
 
+instance (μ : Measure D) (α : ℝ) (cost : Utterance → ℝ) : IsFiniteKernel (S1 μ α cost) :=
+  inferInstanceAs (IsFiniteKernel (familySpeaker _ _ _))
+
 /-- The pragmatic listener (eq. 29) is the family listener against the product of the degree prior
 and the threshold prior. Its first marginal is the degree posterior (eq. 31), its second the
 posterior over assignments (eq. 30). -/
 noncomputable def L1 [Nonempty D] (μ : Measure D) [IsProbabilityMeasure μ]
     (ν : Measure (D × D)) [IsProbabilityMeasure ν] (α : ℝ) (cost : Utterance → ℝ) :
     Kernel Utterance (D × (D × D)) :=
-  familyListener (L0 μ) α cost (μ.prod ν)
+  pragmaticListener (S1 μ α cost) (μ.prod ν)
 
 variable (μ : Measure D) [IsProbabilityMeasure μ] (ν : Measure (D × D)) (α : ℝ)
   (cost : Utterance → ℝ)
@@ -125,8 +128,7 @@ theorem L1_apply_singleton_ne_zero_iff (hα : 0 < α) {u : Utterance}
     (hu : (S1 μ α cost ∘ₘ μ.prod ν) {u} ≠ 0) (d : D) (θ : D × D) :
     L1 μ ν α cost u {(d, θ)} ≠ 0 ↔ μ {d} ≠ 0 ∧ ν {θ} ≠ 0 ∧ d ∈ sem θ u := by
   have hs := S1_apply_singleton_ne_zero_iff μ α cost hα d θ u
-  rw [S1, familySpeaker_apply] at hs
-  rw [L1, familyListener_apply_singleton _ _ _ hu, ← Set.singleton_prod_singleton,
+  rw [L1, pragmaticListener_apply_singleton hu, ← Set.singleton_prod_singleton,
     Measure.prod_prod]
   simp only [ne_eq, ENNReal.div_eq_zero_iff, mul_eq_zero, not_or, measure_ne_top,
     not_false_eq_true, and_true] at hs ⊢

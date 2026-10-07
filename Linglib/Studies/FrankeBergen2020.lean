@@ -468,7 +468,7 @@ instance : IsProbabilityMeasure luPrior :=
 
 /-- The LU listener (eqs. 12–13) is the Bayesian inverse over the joint state. -/
 noncomputable def luListener (α : ℝ) : Kernel Utterance (World × LULex) :=
-  RSA.familyListener luFam α 0 luPrior
+  RSA.pragmaticListener (RSA.familySpeaker luFam α 0) luPrior
 
 theorem luPrior_singleton_eq (p q : World × LULex) : luPrior {p} = luPrior {q} := by
   simp [luPrior, uniformOn_univ]
@@ -502,7 +502,7 @@ noncomputable abbrev perParseFam (p : Parse) : Kernel Utterance World :=
   RSA.uniformListener (ext p)
 
 noncomputable def perParseListener (α : ℝ) : Kernel Utterance (World × Parse) :=
-  RSA.familyListener perParseFam α 0 perParsePrior
+  RSA.pragmaticListener (RSA.familySpeaker perParseFam α 0) perParsePrior
 
 /-! ## The findings -/
 
@@ -576,9 +576,11 @@ lexical-uncertainty listener favors some-but-not-all drinkers over
 all-drinkers. -/
 theorem lu_ss_prefers_wNS {α : ℝ} (hα : 0 < α) :
     (luListener α .ss).fst.real {wNA} < (luListener α .ss).fst.real {wNS} := by
-  rw [luListener, RSA.familyListener_fst_real_lt_iff luFam luPrior_singleton_eq
-      luPrior_singleton_ne_zero (RSA.uniformSpeaker_apply_singleton_ne_zero
-        (ext LULex.lit.toParse) hα.le (by decide +kernel : wNS ∈ ext LULex.lit.toParse .ss))]
+  rw [luListener, RSA.pragmaticListener_fst_real_lt_iff (S := RSA.familySpeaker luFam α 0)
+      (p₀ := (wNS, .lit)) luPrior_singleton_eq luPrior_singleton_ne_zero
+      (RSA.uniformSpeaker_apply_singleton_ne_zero (ext LULex.lit.toParse) hα.le
+        (by decide +kernel : wNS ∈ ext LULex.lit.toParse .ss))]
+  simp only [RSA.familySpeaker_apply]
   calc (∑ l : LULex, (RSA.speaker α 0 (luFam l) wNA).real {.ss})
       = (RSA.uniformSpeaker (ext LULex.lit.toParse) α wNA).real {.ss} :=
         Fintype.sum_eq_single LULex.lit fun
@@ -623,10 +625,11 @@ theorem perParse_ss_prefers_o {α : ℝ} (hα : 0 < α) :
   have hOprof : ∀ w ∈ ({wNS, wNA, wNSA} : Finset World),
       RSA.profile (ext pO) w = Multiset.replicate 3 3 := by decide +kernel
   have hOmem : ∀ w ∈ ({wNS, wNA, wNSA} : Finset World), w ∈ ext pO .ss := by decide +kernel
-  rw [perParseListener, RSA.familyListener_snd_real_lt_iff perParseFam
-      perParsePrior_singleton_eq perParsePrior_singleton_ne_zero
-      (RSA.uniformSpeaker_apply_singleton_ne_zero (ext pM) hα.le
+  rw [perParseListener, RSA.pragmaticListener_snd_real_lt_iff
+      (S := RSA.familySpeaker perParseFam α 0) (p₀ := (wNS, pM)) perParsePrior_singleton_eq
+      perParsePrior_singleton_ne_zero (RSA.uniformSpeaker_apply_singleton_ne_zero (ext pM) hα.le
         (mem_ext.mpr ((m_ss_singleton wNS).mpr rfl)))]
+  simp only [RSA.familySpeaker_apply]
   calc (∑ w : World, (RSA.uniformSpeaker (ext pM) α w).real {.ss})
       = (RSA.uniformSpeaker (ext pM) α wNS).real {.ss} :=
         Fintype.sum_eq_single wNS fun w hw ↦

@@ -179,10 +179,10 @@ variable (P ν E α) [IsFiniteMeasure ν] [Nonempty S] [Nonempty Λ]
 /-- The pragmatic listener inverts the speaker against the product of the state prior and the
 prior over latent parameters. -/
 noncomputable def L1 : Kernel Message (S × Λ) :=
-  familyListener (L0 P E) α (cost c) (P.prod ν)
+  pragmaticListener (S1 P E α c) (P.prod ν)
 
 instance : IsMarkovKernel (L1 P ν E α c) :=
-  inferInstanceAs (IsMarkovKernel ((familySpeaker (L0 P E) α (cost c))†(P.prod ν)))
+  inferInstanceAs (IsMarkovKernel ((S1 P E α c)†(P.prod ν)))
 
 /-- The update of a prior with the positive form is the state marginal of the pragmatic
 listener's posterior. -/
@@ -197,15 +197,14 @@ variable {P ν E α}
 theorem update_real_singleton (hα : 0 < α) (hE : Assertable P ν E) (s : S) :
     (update P ν E α c).real {s}
       = P.real {s} * production P ν E α c s / (S1 P E α c ∘ₘ P.prod ν).real {.positive} :=
-  familyListener_fst_real_singleton (L0 P E) α (cost c) P ν (hE.comp_S1_ne_zero c hα) s
+  pragmaticListener_fst_real_singleton P ν (hE.comp_S1_ne_zero c hα) s
 
 /-- The update keeps exactly the states of positive prior that lie in the extension of some
 latent parameter of positive prior. -/
 theorem update_apply_singleton_ne_zero_iff (hα : 0 < α) (hE : Assertable P ν E) (s : S) :
     update P ν E α c {s} ≠ 0 ↔ P {s} ≠ 0 ∧ ∃ l, ν {l} ≠ 0 ∧ s ∈ E l := by
-  rw [update, L1, familyListener_fst_apply_singleton_ne_zero_iff _ _ _ (hE.comp_S1_ne_zero c hα)]
+  rw [update, L1, pragmaticListener_fst_apply_singleton_ne_zero_iff (hE.comp_S1_ne_zero c hα)]
   have hs := S1_apply_singleton_ne_zero_iff P E α c hα s
-  simp only [S1, familySpeaker_apply] at hs
   simp_rw [← Set.singleton_prod_singleton, Measure.prod_prod, mul_ne_zero_iff, hs, sem]
   exact ⟨fun ⟨l, ⟨h, hl⟩, hsl, _⟩ ↦ ⟨h, l, hl, hsl⟩, fun ⟨h, l, hl, hsl⟩ ↦ ⟨l, ⟨h, hl⟩, hsl, h⟩⟩
 
