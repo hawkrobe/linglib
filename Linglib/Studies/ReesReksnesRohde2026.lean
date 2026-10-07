@@ -1,39 +1,40 @@
 module
 
-public import Mathlib.Algebra.Order.Ring.Rat
-public import Mathlib.Tactic.Ring
+public import Linglib.Core.Probability.Kernel.Posterior
 
 /-!
 # Rees, Reksnes, and Rohde (2026): Why are you telling me this? The availability and timing of relevance inferences
 
-This file formalizes the reasoning the paper attributes to the addressee of a trivial
-utterance such as *the library walls are blue*, and the logic of its timing experiments.
-Speaking rather than staying silent presumes that what is conveyed is worth the speaker's
-while, so an utterance whose content alone falls short of the speaker's bar leaves a
-`deficit` that the addressee makes up by inferring additional meaning: a relevance inference.
-Which reading makes up the deficit depends on the speaker, `Reconciles`. The inference that
-the situation used to be different is warranted only by a speaker who knows the situation over
-time, which licenses it for Suzy's school and not for the Prime Minister's office, the Speaker
-Knowledge effect of all four experiments. A quiet speaker's bar is higher, so the same
-utterance leaves a larger deficit, `deficit_le_deficit`, the Speaker Style effect of
-Experiment 2; for an unfamiliar location the addressee then looks for additional meaning other
-than a change, which is what the paper offers for the interaction it found there. An emphasis
-cue changes neither the bar nor the content, and so nothing, the null effect of Experiment 1.
+Rees, Reksnes and Rohde ask why an addressee takes a trivial remark such as *the library walls
+are blue* to mean that the walls used to be a different colour. A speaker makes a remark only
+when it is worth enough to her, and a quiet speaker's bar is higher. Here the addressee
+conditions a prior over whether the situation changed on the pasts in which the speaker would
+have spoken; a change can make a trivial remark worth making only to a speaker who knows the
+situation over time. Across four experiments the inference is drawn more often for a
+knowledgeable speaker and, in the second, for a quiet one. Two verification experiments with
+opposite question polarity locate a cost when the inference is endorsed, which the paper
+attributes to considering the alternative situation.
 
-Experiments 3 and 4 ask whether the inference is costly with a verification question whose
-polarity endorses the inference in one experiment and rejects it in the other. Under an
-additive model of response times, `ResponseModel.rt`, the contrast within Experiment 3
-confounds the cost of the inference with that of answering *no*, while the contrast between
-the two experiments' *yes* answers identifies it, `yes_contrast`; the model also predicts a
-contrast between the *no* answers, which the paper did not find.
+## Main statements
+
+* `Speaker.prior_lt_posterior_iff`: speaking raises the probability that the situation changed
+  exactly when the remark is trivial on its own and a change would make it worth making.
+* `Speaker.posterior_eq_prior_of_not_knowledgeable`: a speaker who does not know the situation
+  over time conveys nothing about its past by speaking.
+* `Speaker.prior_lt_posterior_of_bar_le`: a quieter speaker licenses whatever a more talkative
+  one does, as long as a change would still be worth mentioning to her.
+* `ResponseModel.exp3_no_eq_exp4_no`, `AdditiveModel.yes_eq_yes_of_no_eq_no`: if considering the
+  alternative is the cost, the *no* answers of the two experiments take equally long, as found;
+  separate costs of a negative answer and of the inference could not also give the slower
+  inference-endorsing *yes*.
 
 ## Implementation notes
 
-Importance and the speaker's bar are exact rationals compared by order, so the model says
-which readings are available, not how often they are chosen; the paper's proportions and
-times belong to it and its data release. Situations are classified as the paper selected its
-items: plausibly changeable for the targets, inevitably changing for the attention checks,
-and constant for what it excluded.
+Conditioning on the decision to speak is Rohde, Hoek, Keshev and Franke's account of the
+listener's expectation, which the paper cites. The speaker speaks exactly when the remark's
+worth to her meets her bar, so the model says which inferences are available, not how often
+participants draw them. Every item describes a situation that may plausibly have changed. The emphasis cue and the paper's post hoc account of
+the interaction in its second experiment are not modelled.
 
 ## References
 
@@ -41,159 +42,236 @@ and constant for what it excluded.
   of relevance inferences* (2026)][rees-reksnes-rohde-2026]
 * [H. Rohde, J. Hoek, M. Keshev, M. Franke, *This better be interesting: a speaker's decision
   to speak cues listeners to expect informative content* (2022)][rohde-etal-2022]
-* [D. Sperber, D. Wilson, *Relevance: communication and cognition* (1986)][sperber-wilson-1986]
-* [H. P. Grice, *Logic and conversation* (1975)][grice-1975]
-* [L. Bergen, D. J. Grodner, *Speaker knowledge influences the comprehension of pragmatic
-  inferences* (2012)][bergen-grodner-2012]
-* [E. Kravtchenko, V. Demberg, *Informationally redundant utterances elicit pragmatic
-  inferences* (2022)][kravtchenko-demberg-2022]
-* [L. Bott, I. A. Noveck, *Some utterances are underinformative: the onset and time course of
-  scalar inferences* (2004)][bott-noveck-2004]
 -/
 
 @[expose] public section
 
+open MeasureTheory ProbabilityTheory
+
 namespace ReesReksnesRohde2026
 
-/-! ### The availability of relevance inferences -/
+/-! ### The decision to speak -/
 
-/-- The addressee's model of the speaker: whether they know the situation over time, and how
-important a contribution must be for them to make it, a quiet speaker's bar being the
-higher. -/
-structure Speaker where
-  knowledgeable : Bool
-  bar : ℚ
-
-/-- How a described situation varies over time: constant, like the white lines of a zebra
-crossing; plausibly changeable, like the colour of walls; or inevitably changing, like the
-leaves of a tree in autumn. -/
-inductive Mutability where
-  | constant
-  | changeable
-  | inevitable
-  deriving DecidableEq
-
-/-- An utterance about a situation: the importance of its content on its own, and how the
-situation varies over time. -/
-structure Utterance where
-  importance : ℚ
-  mutability : Mutability
-
-/-- The importance the decision to speak presumes beyond what the content itself provides. -/
-def deficit (s : Speaker) (u : Utterance) : ℚ := s.bar - u.importance
-
-/-- An utterance is trivial for a speaker when its content alone does not meet their bar. -/
-def Trivial (s : Speaker) (u : Utterance) : Prop := 0 < deficit s u
-
-instance (s : Speaker) (u : Utterance) : Decidable (Trivial s u) :=
-  inferInstanceAs (Decidable (_ < _))
-
-/-- The readings of a trivial utterance the paper distinguishes. -/
-inductive Reading where
-  /-- The content at face value: the walls are blue. -/
-  | literal
-  /-- The situation has changed: the walls used to be a different colour. -/
-  | changed
-  /-- Some other additional meaning, such as that the speaker finds the situation unusual. -/
-  | other
-  /-- Small talk, conveying nothing further. -/
-  | phatic
-  deriving DecidableEq
-
-/-- Whether a reading reconciles the speaker's decision to speak with what they said. The
-face-value reading does when the content meets the bar. The inference of a change does for a
-situation that inevitably changes, for a changeable one when the content falls short and the
-speaker knows the situation over time, and never for a constant one. Some other additional
-meaning does whenever the content falls short, and small talk always. -/
-def Reconciles (s : Speaker) (u : Utterance) : Reading → Prop
-  | .literal => ¬ Trivial s u
-  | .changed =>
-    u.mutability ≠ .constant ∧ (u.mutability = .changeable → Trivial s u ∧ s.knowledgeable = true)
-  | .other => Trivial s u
-  | .phatic => True
-
-instance (s : Speaker) (u : Utterance) : DecidablePred (Reconciles s u) := λ r => by
-  cases r <;> unfold Reconciles <;> infer_instance
-
-variable {s t : Speaker} {u : Utterance}
-
-/-- Whatever a speaker leaves for the addressee to infer, a quieter speaker leaves more. -/
-theorem deficit_le_deficit (h : s.bar ≤ t.bar) : deficit s u ≤ deficit t u :=
-  sub_le_sub_right h _
-
-/-- An utterance trivial for a speaker is trivial for a quieter one. -/
-theorem Trivial.mono (h : Trivial s u) (hb : s.bar ≤ t.bar) : Trivial t u :=
-  lt_of_lt_of_le h (deficit_le_deficit hb)
-
-/-- For a changeable situation, the inference of a change is licensed exactly when the
-content falls short of the bar and the speaker knows the situation over time. -/
-theorem reconciles_changed_iff (hu : u.mutability = .changeable) :
-    Reconciles s u .changed ↔ Trivial s u ∧ s.knowledgeable = true := by
-  simp [Reconciles, hu]
-
-/-- A speaker who does not know the situation over time never licenses the inference of a
-change to a changeable situation: the Prime Minister's office. -/
-theorem not_reconciles_changed (h : s.knowledgeable = false) (hu : u.mutability = .changeable) :
-    ¬ Reconciles s u .changed := by
-  simp [Reconciles, hu, h]
-
-/-- The inference of a change is one way of making up the deficit; when it is unavailable, as
-for a quiet speaker at an unfamiliar location, the addressee still looks for some additional
-meaning. -/
-theorem reconciles_other_of_changed (hu : u.mutability = .changeable)
-    (h : Reconciles s u .changed) : Reconciles s u .other :=
-  ((reconciles_changed_iff hu).1 h).1
-
-/-- The addressee either takes the content at face value or looks for additional meaning. -/
-theorem reconciles_literal_iff : Reconciles s u .literal ↔ ¬ Reconciles s u .other := Iff.rfl
-
-/-- An inevitably changing situation was different before whoever speaks: the attention
-checks. -/
-theorem reconciles_changed_of_inevitable (hu : u.mutability = .inevitable) :
-    Reconciles s u .changed := by
-  simp [Reconciles, hu]
-
-/-! ### The timing of relevance inferences -/
-
-/-- The two verification experiments, which differ in the polarity of the question: *was it
-the same?*, so that *no* endorses the inference, and *was it different?*, so that *yes*
-does. -/
-inductive Experiment where
+/-- A past of the described situation says whether, a few months ago, it was the same as now
+or different. -/
+inductive Past
   | same
   | different
-  deriving DecidableEq
+  deriving DecidableEq, Fintype
 
-/-- Whether an answer endorses the inference. -/
-def Experiment.endorses : Experiment → Bool → Bool
-  | .same, yes => !yes
-  | .different, yes => yes
+instance : MeasurableSpace Past := ⊤
+instance : DiscreteMeasurableSpace Past := ⟨fun _ ↦ trivial⟩
+instance : Nonempty Past := ⟨.same⟩
 
-/-- An additive model of the time to answer a verification question: a cost of the answer's
-polarity, negative answers being the slower, and a cost of endorsing the inference. -/
+/-- The addressee models the speaker making a remark by what the remark is worth to her in each
+past of the situation and by the bar a remark must clear for her to make it. -/
+structure Speaker where
+  worth : Past → ℝ
+  bar : ℝ
+
+namespace Speaker
+
+variable (s : Speaker)
+
+/-- The speaker knows the situation over time when the worth of her remark depends on its
+past. -/
+def Knowledgeable : Prop := s.worth .same ≠ s.worth .different
+
+/-- The remark is trivial when, with nothing changed, it falls short of the speaker's bar. -/
+def Trivial : Prop := s.worth .same < s.bar
+
+/-- The speaker makes the remark exactly in the pasts in which it is worth it to her. -/
+noncomputable def spoke : Kernel Past Bool :=
+  Kernel.deterministic (fun p ↦ decide (s.bar ≤ s.worth p)) .of_discrete
+
+instance : IsMarkovKernel s.spoke := by unfold spoke; infer_instance
+
+private theorem preimage_spoke :
+    (fun p ↦ decide (s.bar ≤ s.worth p)) ⁻¹' {true} = {p | s.bar ≤ s.worth p} := by
+  ext; simp
+
+theorem spoke_real_true (p : Past) :
+    (s.spoke p).real {true} = if s.bar ≤ s.worth p then 1 else 0 := by
+  rw [measureReal_def, spoke, Kernel.deterministic_apply' _ _ (MeasurableSet.singleton _)]
+  split_ifs with h <;> simp [h]
+
+variable {s} {t : Speaker} (μ : Measure Past)
+
+/-- The prior probability that the speaker speaks is that of the pasts in which the remark is
+worth it to her. -/
+theorem spoke_comp_apply_true : (s.spoke ∘ₘ μ) {true} = μ {p | s.bar ≤ s.worth p} := by
+  rw [← preimage_spoke, ← Measure.map_apply .of_discrete (measurableSet_singleton _),
+    ← Measure.deterministic_comp_eq_map]
+  rfl
+
+/-- A quieter speaker with the same view of the situation finds trivial whatever a more
+talkative one does. -/
+theorem Trivial.mono (h : s.Trivial) (hw : s.worth = t.worth) (hb : s.bar ≤ t.bar) :
+    t.Trivial :=
+  lt_of_lt_of_le (hw ▸ h) hb
+
+/-- A speaker who does not know the situation over time would stay silent about a trivial
+remark whatever its past, so no past explains her making it. -/
+theorem spoke_comp_apply_true_eq_zero (hk : ¬ s.Knowledgeable) (ht : s.Trivial) :
+    (s.spoke ∘ₘ μ) {true} = 0 := by
+  have h₁ : s.worth .same < s.bar := ht
+  have h₂ : s.worth .different < s.bar := by rw [← not_not.1 hk]; exact ht
+  have : {p | s.bar ≤ s.worth p} = ∅ := by
+    ext p; cases p <;> simp [not_le.2 h₁, not_le.2 h₂]
+  simp [spoke_comp_apply_true, this]
+
+private theorem pair_support : ∀ p, μ {p} ≠ 0 → p = Past.different ∨ p = Past.same :=
+  fun p _ ↦ by cases p <;> simp
+
+variable [IsProbabilityMeasure μ]
+
+/-- Hearing the remark conditions the prior on the pasts in which the speaker would make it. -/
+theorem posterior_spoke (hx : (s.spoke ∘ₘ μ) {true} ≠ 0) :
+    (s.spoke†μ) true = μ[|{p | s.bar ≤ s.worth p}] := by
+  have := posterior_deterministic_eq_cond μ (f := fun p ↦ decide (s.bar ≤ s.worth p))
+    .of_discrete (x := true) (by rwa [preimage_spoke, ← spoke_comp_apply_true])
+  rwa [preimage_spoke] at this
+
+/-- Speaking raises the probability that the situation used to be different exactly when the
+remark is trivial with nothing changed and worth making had the situation changed. -/
+theorem prior_lt_posterior_iff (hx : (s.spoke ∘ₘ μ) {true} ≠ 0) (hs : μ {.same} ≠ 0)
+    (hd : μ {.different} ≠ 0) :
+    μ.real {.different} < ((s.spoke†μ) true).real {.different} ↔
+      s.Trivial ∧ s.bar ≤ s.worth .different := by
+  rw [real_lt_posterior_real_singleton_iff_of_pair s.spoke μ (by decide) (pair_support μ) hx
+    hd hs, spoke_real_true, spoke_real_true, Trivial]
+  by_cases h₁ : s.bar ≤ s.worth .same <;> by_cases h₂ : s.bar ≤ s.worth .different <;>
+    simp [h₁, h₂, not_le.mp]
+
+/-- A speaker who does not know the situation over time makes the remark in every past or in
+none, so hearing it leaves the prior unchanged. -/
+theorem posterior_eq_prior_of_not_knowledgeable (hk : ¬ s.Knowledgeable)
+    (hx : (s.spoke ∘ₘ μ) {true} ≠ 0) : (s.spoke†μ) true = μ := by
+  have hpre : {p | s.bar ≤ s.worth p} = Set.univ := by
+    refine Set.eq_univ_of_forall fun p ↦ ?_
+    by_contra hp
+    refine hx ?_
+    have h : ∀ q, ¬ s.bar ≤ s.worth q := fun q ↦ by
+      cases p <;> cases q <;> simpa [not_not.1 hk] using hp
+    simp [spoke_comp_apply_true, h]
+  rw [posterior_spoke μ hx, hpre, cond_univ]
+
+/-- In particular such a speaker never licenses the inference that the situation changed, as
+Suzy cannot at the Prime Minister's office. -/
+theorem not_prior_lt_posterior_of_not_knowledgeable (hk : ¬ s.Knowledgeable)
+    (hx : (s.spoke ∘ₘ μ) {true} ≠ 0) :
+    ¬ μ.real {.different} < ((s.spoke†μ) true).real {.different} := by
+  rw [posterior_eq_prior_of_not_knowledgeable μ hk hx]
+  exact lt_irrefl _
+
+/-- A quieter speaker with the same view of the situation licenses the inference whenever a
+more talkative one does, as long as a change would still be worth mentioning to her. -/
+theorem prior_lt_posterior_of_bar_le (hw : s.worth = t.worth) (hb : s.bar ≤ t.bar)
+    (ht : t.bar ≤ t.worth .different) (hx : (s.spoke ∘ₘ μ) {true} ≠ 0)
+    (hx' : (t.spoke ∘ₘ μ) {true} ≠ 0) (hs : μ {.same} ≠ 0) (hd : μ {.different} ≠ 0)
+    (h : μ.real {.different} < ((s.spoke†μ) true).real {.different}) :
+    μ.real {.different} < ((t.spoke†μ) true).real {.different} :=
+  (prior_lt_posterior_iff μ hx' hs hd).2
+    ⟨((prior_lt_posterior_iff μ hx hs hd).1 h).1.mono hw hb, ht⟩
+
+end Speaker
+
+/-- A speaker to whom the remark is worth making only if the situation changed licenses the
+inference under a uniform prior. -/
+example : (uniformOn (Set.univ : Set Past)).real {.different} <
+    (((Speaker.spoke ⟨fun | .same => 0 | .different => 1, 1⟩)†(uniformOn Set.univ)) true).real
+      {.different} := by
+  have hd := uniformOn_univ_singleton_ne_zero (W := Past) .different
+  refine (Speaker.prior_lt_posterior_iff _ ?_ (uniformOn_univ_singleton_ne_zero _) hd).2
+    ⟨show (0 : ℝ) < 1 by norm_num, le_rfl⟩
+  rw [Speaker.spoke_comp_apply_true]
+  exact fun h ↦ hd (measure_mono_null (fun p hp ↦ by simp_all) h)
+
+/-! ### The timing of the inference -/
+
+/-- The past that a *yes* or a *no* to *was it `q` a few months ago?* asserts. -/
+def asserted : Past → Bool → Past
+  | q, true => q
+  | .same, false => .different
+  | .different, false => .same
+
+/-- An answer endorses the inference when it asserts that the situation was different, as *no*
+to *was it the same?* does in Experiment 3 and *yes* to *was it different?* in Experiment 4. -/
+def Endorses (q : Past) (a : Bool) : Prop := asserted q a = .different
+
+/-- Answering considers the alternative to the situation as presented when the answer is
+negative or endorses the inference. -/
+def ConsidersAlternative (q : Past) (a : Bool) : Prop := a = false ∨ Endorses q a
+
+instance : DecidableRel Endorses := fun _ _ ↦ inferInstanceAs (Decidable (_ = _))
+instance : DecidableRel ConsidersAlternative := fun _ _ ↦ inferInstanceAs (Decidable (_ ∨ _))
+
+/-- In the paper's account of the verification times, an answer takes a base time, and longer by
+a fixed cost when it considers the alternative to the situation as presented. -/
 structure ResponseModel where
-  polarity : Bool → ℚ
-  inference : ℚ
+  base : ℝ
+  alternative : ℝ
 
-/-- The predicted response time. -/
-def ResponseModel.rt (m : ResponseModel) (e : Experiment) (yes : Bool) : ℚ :=
-  m.polarity yes + if e.endorses yes then m.inference else 0
+/-- The predicted time to answer `a` to *was it `q`?*. -/
+def ResponseModel.rt (m : ResponseModel) (q : Past) (a : Bool) : ℝ :=
+  m.base + if ConsidersAlternative q a then m.alternative else 0
+
+/-- An additive model of the verification times with separate costs of a negative answer and of
+endorsing the inference. -/
+structure AdditiveModel where
+  base : ℝ
+  negative : ℝ
+  inference : ℝ
+
+/-- The predicted time to answer `a` to *was it `q`?*. -/
+def AdditiveModel.rt (m : AdditiveModel) (q : Past) (a : Bool) : ℝ :=
+  m.base + (if a = false then m.negative else 0) + if Endorses q a then m.inference else 0
+
+namespace ResponseModel
 
 variable (m : ResponseModel)
 
-/-- Within Experiment 3, the contrast between the inference-endorsing *no* and the *yes*
-confounds the cost of the inference with that of a negative answer. -/
-theorem exp3_confounded :
-    m.rt .same false - m.rt .same true = (m.polarity false - m.polarity true) + m.inference := by
-  simp [ResponseModel.rt, Experiment.endorses]; ring
+/-- In Experiment 3 the inference-endorsing *no* is slower than *yes* by the cost of considering
+the alternative. -/
+theorem exp3_contrast : m.rt .same false - m.rt .same true = m.alternative := by
+  simp [rt, ConsidersAlternative, Endorses, asserted]
 
-/-- Across the experiments, the contrast between the *yes* answers isolates the cost of the
+/-- In Experiment 4 *yes* and *no* take equally long. -/
+theorem exp4_yes_eq_no : m.rt .different true = m.rt .different false := by
+  simp [rt, ConsidersAlternative, Endorses, asserted]
+
+/-- The inference-endorsing *yes* of Experiment 4 is slower than the *yes* of Experiment 3 by
+the cost of considering the alternative. -/
+theorem yes_contrast : m.rt .different true - m.rt .same true = m.alternative := by
+  simp [rt, ConsidersAlternative, Endorses, asserted]
+
+/-- The *no* answers of the two experiments take equally long, since both consider the
+alternative. -/
+theorem exp3_no_eq_exp4_no : m.rt .same false = m.rt .different false := by
+  simp [rt, ConsidersAlternative, Endorses, asserted]
+
+end ResponseModel
+
+namespace AdditiveModel
+
+variable (m : AdditiveModel)
+
+/-- In Experiment 3 the contrast between *no* and *yes* confounds the cost of the inference with
+that of a negative answer. -/
+theorem exp3_confounded : m.rt .same false - m.rt .same true = m.negative + m.inference := by
+  simp [rt, Endorses, asserted]; ring
+
+/-- The contrast between the *yes* answers of the two experiments isolates the cost of the
 inference. -/
 theorem yes_contrast : m.rt .different true - m.rt .same true = m.inference := by
-  simp [ResponseModel.rt, Experiment.endorses]
+  simp [rt, Endorses, asserted]
 
-/-- The model likewise predicts that Experiment 3's *no* answers exceed Experiment 4's by the
-cost of the inference, a difference the paper did not find. -/
-theorem no_contrast : m.rt .same false - m.rt .different false = m.inference := by
-  simp [ResponseModel.rt, Experiment.endorses]
+/-- If the *no* answers of the two experiments take equally long, so do the *yes* answers, so the
+additive model cannot give the paper's pattern. -/
+theorem yes_eq_yes_of_no_eq_no (h : m.rt .same false = m.rt .different false) :
+    m.rt .different true = m.rt .same true := by
+  simp [rt, Endorses, asserted] at h ⊢; linarith
+
+end AdditiveModel
 
 end ReesReksnesRohde2026
