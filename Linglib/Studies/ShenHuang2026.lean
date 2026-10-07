@@ -53,6 +53,7 @@ no account predicts the absence of a verb-of-creation effect in Mandarin
 * [huang-1982b]
 * [li-1992]
 * [fox-pesetsky-2005]
+* [chomsky-2000]
 -/
 
 @[expose] public section
@@ -90,7 +91,7 @@ def a : LIToken := ⟨.simple .D [.N] "a", 4⟩
 /-- The main verb. -/
 def verb : LIToken := ⟨.simple .V [.D], 5⟩
 
-/-- The determiner of the object: the demonstrative when it is definite. -/
+/-- The determiner of the object is the demonstrative when it is definite. -/
 def determiner : Definiteness → LIToken
   | .definite => that
   | .indefinite => a
@@ -111,8 +112,9 @@ theorem impenetrable (o : Definiteness) :
 Spec,DP. -/
 def vpEdge : PlanarSyntacticObject := verb * (wh * (that * (book * (about * .traceOf wh))))
 
-/-- At the edge of the phase, the wh-phrase would be outside the reach of the PIC. -/
-theorem edge_not_impenetrable : ¬ (vpEdge : SyntacticObject).WithinComplement that wh := by
+/-- At the edge of the phase, the wh-phrase is in the phase but outside the reach of the PIC. -/
+theorem edge_not_impenetrable :
+    (wh : SyntacticObject) ∈ (vpEdge : SyntacticObject).phaseEdge that := by
   decide
 
 /-- The wh-phrase fronted out of the object DP, leaving a deleted copy in the complement of
@@ -128,7 +130,7 @@ def covert (o : Definiteness) : PlanarSyntacticObject := .traceOf wh * vp o
 example (o : Definiteness) : pfPhon (covert o) = pfPhon (vp o) := by
   cases o <;> decide
 
-/-- The object of a cell: the wh-phrase extracted, or in situ, bound by an operator after
+/-- The object of a cell is the wh-phrase extracted, or in situ, bound by an operator after
 [li-1992]. -/
 def Config.tree (c : Config) : PlanarSyntacticObject :=
   if c.fronted then extracted c.object else vp c.object
@@ -171,6 +173,15 @@ def Constraint.Violated : Constraint → Config → Prop
 instance (k : Constraint) : DecidablePred k.Violated := fun _ ↦ by
   cases k <;> unfold Constraint.Violated <;> infer_instance
 
+/-- The PIC on the links of the chain agrees with the PIC on terms: a link leaves the phase from
+its interior exactly when the deleted copy, within the complement of the cell's phase head, is
+inaccessible to the pronounced one under [chomsky-2000]'s condition. -/
+theorem violatesPIC_iff_not_accessible (c : Config) :
+    c.ViolatesPIC c.tree ↔
+      ¬ (c.tree : SyntacticObject).Accessible c.phaseHead.toList .phase wh (.traceOf wh) := by
+  obtain ⟨f, o, v⟩ := c
+  cases f <;> cases o <;> cases v <;> decide
+
 /-- Fronting out of a definite object under a verb that is not a verb of creation, and nothing
 else, violates the PIC. -/
 theorem pic_violated_iff (c : Config) :
@@ -207,7 +218,7 @@ def phasehood : Finset Constraint := {.pic}
 /-- The Specificity Condition account. -/
 def specificity : Finset Constraint := {.specificity}
 
-/-- The paper's proposal: both constraints. -/
+/-- The paper's proposal combines both constraints. -/
 def combined : Finset Constraint := {.pic, .specificity}
 
 /-- An indefinite object violates nothing under any account: it is neither a phase nor
