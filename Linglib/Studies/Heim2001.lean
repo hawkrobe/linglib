@@ -53,20 +53,20 @@ necessity operator (16) (Section 2.1). -/
 theorem forall_collapse [Finite Entity] {girl : Entity → Prop} (hg : ∃ x, girl x)
     (μ : Entity → D) {U : Set D} (hU : IsUpperSet U) :
     highScope (maxIn U) (every girl) μ ↔ lowScope (maxIn U) (every girl) μ :=
-  highScope_maxIn_iff_lowScope (monotone_every girl) (λ h => let ⟨x, hx⟩ := hg; h x hx) hU
+  highScope_maxIn_iff_lowScope (monotone_every girl) (fun h ↦ let ⟨x, hx⟩ := hg; h x hx) hU
 
 /-- Likewise under *some girl*, (12), (13b), and the possibility operator (15b). -/
 theorem exists_collapse [Finite Entity] (girl : Entity → Prop) (μ : Entity → D) {U : Set D}
     (hU : IsUpperSet U) :
     highScope (maxIn U) (GQ.some girl) μ ↔ lowScope (maxIn U) (GQ.some girl) μ :=
-  highScope_maxIn_iff_lowScope (monotone_some girl) (λ ⟨_, _, h⟩ => h) hU
+  highScope_maxIn_iff_lowScope (monotone_some girl) (fun ⟨_, _, h⟩ ↦ h) hU
 
 /-! ### Monotone decreasing and non-monotone operators -/
 
 /-- The degrees to which Mary is not tall have no maximum (17c). -/
 theorem negation_high_undefined [NoMaxOrder D] (μ : Entity → D) (a : Entity) :
-    ¬ ∃ m, IsGreatest (scopeDegrees (λ S => ¬ S a) μ) m :=
-  not_isGreatest_scopeDegrees (Q := λ S => ¬ S a) (λ _ _ h hT hS => hT (h a hS)) μ
+    ¬ ∃ m, IsGreatest (scopeDegrees (fun S ↦ ¬ S a) μ) m :=
+  not_isGreatest_scopeDegrees (Q := fun S ↦ ¬ S a) (fun _ _ h hT hS ↦ hT (h a hS)) μ
 
 /-- The degrees to which at most two girls are tall have no maximum (18c). -/
 theorem atMost_high_undefined [Fintype Entity] [NoMaxOrder D] (girl : Entity → Prop)
@@ -91,8 +91,8 @@ theorem forall_high_of_low [Finite Entity] {girl : Entity → Prop} (hg : ∃ x,
     (μ : Entity → D) (U : Set D) :
     lowScope (maxIn U) (every girl) μ → highScope (maxIn U) (every girl) μ :=
   have : Nonempty {x // girl x} := let ⟨x, hx⟩ := hg; ⟨⟨x, hx⟩⟩
-  let ⟨⟨x₀, hx₀⟩, hmin⟩ := Finite.exists_min λ x : {x // girl x} => μ x.1
-  highScope_every_of_lowScope ⟨x₀, hx₀, λ y hy => hmin ⟨y, hy⟩⟩
+  let ⟨⟨x₀, hx₀⟩, hmin⟩ := Finite.exists_min fun x : {x // girl x} ↦ μ x.1
+  highScope_every_of_lowScope ⟨x₀, hx₀, fun y hy ↦ hmin ⟨y, hy⟩⟩
 
 /-- Under *some girl* the high scope entails the low one at every interval, the tallest girl
 being a witness, so (21c) is stronger than (21b), and at a type of worlds (29c) than (29b)
@@ -104,7 +104,7 @@ theorem exists_low_of_high (girl : Entity → Prop) (μ : Entity → D) (U : Set
 /-- For two girls, one exactly the standard's height in inches and one taller, the degrees to
 which every girl is tall are those up to the shorter. -/
 private theorem scopeDegrees_heights :
-    scopeDegrees (every λ _ : Fin 2 => True) ![49, 50] = Iic 49 := by
+    scopeDegrees (every fun _ : Fin 2 ↦ True) ![49, 50] = Iic 49 := by
   ext d
   simp [scopeDegrees, every, Fin.forall_fin_two]
   omega
@@ -113,35 +113,35 @@ private theorem scopeDegrees_heights :
 another is taller, so *every girl is exactly 1'' taller than that* is false there and (22c) is
 no reading of it (22). -/
 theorem exactly_high_not_low :
-    highScope (maxIn {49}) (every λ _ : Fin 2 => True) ![49, 50] ∧
-      ¬ lowScope (maxIn {49}) (every λ _ : Fin 2 => True) ![49, 50] :=
+    highScope (maxIn {49}) (every fun _ : Fin 2 ↦ True) ![49, 50] ∧
+      ¬ lowScope (maxIn {49}) (every fun _ : Fin 2 ↦ True) ![49, 50] :=
   ⟨⟨49, rfl, scopeDegrees_heights ▸ isGreatest_Iic⟩,
-    λ h => by simpa using lowScope_maxIn.1 h 1 trivial⟩
+    fun h ↦ by simpa using lowScope_maxIn.1 h 1 trivial⟩
 
 /-- The high scope of *every girl is less tall than that* says only that the shortest girl is,
 and is true where the sentence is false (24). -/
 theorem less_high_not_low :
-    highScope (maxIn (Iio 50)) (every λ _ : Fin 2 => True) ![49, 50] ∧
-      ¬ lowScope (maxIn (Iio 50)) (every λ _ : Fin 2 => True) ![49, 50] :=
+    highScope (maxIn (Iio 50)) (every fun _ : Fin 2 ↦ True) ![49, 50] ∧
+      ¬ lowScope (maxIn (Iio 50)) (every fun _ : Fin 2 ↦ True) ![49, 50] :=
   ⟨⟨49, by decide, scopeDegrees_heights ▸ isGreatest_Iic⟩,
-    λ h => by simpa using lowScope_maxIn.1 h 1 trivial⟩
+    fun h ↦ by simpa using lowScope_maxIn.1 h 1 trivial⟩
 
 /-! ### Intensional verbs -/
 
 /-- *The paper is required to be less long than t* with the DegP over *required* says that the
 paper is not required to be as long as *t* (30c). -/
 theorem required_less [Finite W] {Acc : Set W} (hAcc : Acc.Nonempty) (ℓ : W → D) (t : D) :
-    highScope (maxIn (Iio t)) (every (· ∈ Acc)) ℓ ↔ ¬ every (· ∈ Acc) λ w => t ≤ ℓ w := by
+    highScope (maxIn (Iio t)) (every (· ∈ Acc)) ℓ ↔ ¬ every (· ∈ Acc) fun w ↦ t ≤ ℓ w := by
   have : Nonempty W := hAcc.to_type
   obtain ⟨w₀, hw₀⟩ := Finite.exists_min ℓ
-  exact highScope_maxIn_Iio_iff (monotone_every _) (λ h => let ⟨w, hw⟩ := hAcc; h w hw)
-    ⟨ℓ w₀, λ v _ => hw₀ v⟩
+  exact highScope_maxIn_Iio_iff (monotone_every _) (fun h ↦ let ⟨w, hw⟩ := hAcc; h w hw)
+    ⟨ℓ w₀, fun v _ ↦ hw₀ v⟩
 
 /-- *The paper is allowed to be less long than t* with the DegP over *allowed* says that the
 paper is not allowed to be as long as *t* (31c). -/
 theorem allowed_less [Finite W] {Acc : Set W} (hAcc : Acc.Nonempty) (ℓ : W → D) (t : D) :
-    highScope (maxIn (Iio t)) (GQ.some (· ∈ Acc)) ℓ ↔ ¬ GQ.some (· ∈ Acc) λ w => t ≤ ℓ w :=
-  highScope_maxIn_Iio_iff (monotone_some _) (λ ⟨_, _, h⟩ => h)
+    highScope (maxIn (Iio t)) (GQ.some (· ∈ Acc)) ℓ ↔ ¬ GQ.some (· ∈ Acc) fun w ↦ t ≤ ℓ w :=
+  highScope_maxIn_Iio_iff (monotone_some _) (fun ⟨_, _, h⟩ ↦ h)
     (let ⟨w, hw⟩ := hAcc; ⟨ℓ w, w, hw, le_rfl⟩)
 
 /-- With the maximum of (35), *I want the paper to be less long than t* with the DegP over
@@ -152,14 +152,14 @@ theorem negRaising_collapse [Finite W] [DenselyOrdered D] {Des : Set W} (hDes : 
     (∃ m ∈ Iio t, IsGLB (scopeDegrees (no (· ∈ Des)) ℓ) m) ↔
       lowScope (maxIn (Iio t)) (every (· ∈ Des)) ℓ := by
   have hex : ∃ m, IsGreatest (scopeDegrees (GQ.some (· ∈ Des)) ℓ) m :=
-    let ⟨w, hw⟩ := exists_isGreatest_scopeDegrees (monotone_some _) (λ ⟨_, _, h⟩ => h)
+    let ⟨w, hw⟩ := exists_isGreatest_scopeDegrees (monotone_some _) (fun ⟨_, _, h⟩ ↦ h)
       (let ⟨w, hw⟩ := hDes; ⟨ℓ w, w, hw, le_rfl⟩)
     ⟨_, hw⟩
   rw [scopeDegrees_no, lowScope_maxIn]
-  refine (exists_congr λ m => and_congr_right λ _ =>
+  refine (exists_congr fun m ↦ and_congr_right fun _ ↦
     isGLB_compl_scopeDegrees_iff (monotone_some _) hex).trans
     ((allowed_less hDes ℓ t).trans ?_)
-  exact not_exists.trans (forall_congr' λ _ => not_and.trans (imp_congr_right λ _ => not_le))
+  exact not_exists.trans (forall_congr' fun _ ↦ not_and.trans (imp_congr_right fun _ ↦ not_le))
 
 /-! ### The superlative -/
 
@@ -167,17 +167,21 @@ theorem negRaising_collapse [Finite W] [DenselyOrdered D] {Des : Set W} (hDes : 
 monotone adjective and a comparison class `C` is the max-quantified comparative of `x` against
 the other members. -/
 def est (μ : Entity → D) (C : Set Entity) (x : Entity) : Prop :=
-  maxComparative (· = x) (λ y => y ∈ C ∧ y ≠ x) μ
+  MaxComparative .gt (· = x) (fun y ↦ y ∈ C ∧ y ≠ x) μ
 
 /-- Over a comparison class with someone else in it, *-est* is the absolute superlative (59). -/
 theorem est_iff_absoluteSuperlative [Finite Entity] {μ : Entity → D} {C : Set Entity}
     {x : Entity} (hx : x ∈ C) (hC : ∃ y ∈ C, y ≠ x) : est μ C x ↔ absoluteSuperlative μ C x := by
-  have h := highScope_maxIn_Iio_iff (μ := μ) (t := μ x) (monotone_some λ y => y ∈ C ∧ y ≠ x)
-    (λ ⟨_, _, h⟩ => h) (let ⟨y, hy, hyx⟩ := hC; ⟨μ y, y, ⟨hy, hyx⟩, le_rfl⟩)
-  refine (⟨λ ⟨δ, hδ, _, rfl, hlt⟩ => ⟨δ, hlt, hδ⟩, λ ⟨δ, hlt, hδ⟩ => ⟨δ, hδ, x, rfl, hlt⟩⟩ :
-    est μ C x ↔ highScope (maxIn (Iio (μ x))) (GQ.some λ y => y ∈ C ∧ y ≠ x) μ).trans
+  have h := highScope_maxIn_Iio_iff (μ := μ) (t := μ x) (monotone_some fun y ↦ y ∈ C ∧ y ≠ x)
+    (fun ⟨_, _, h⟩ ↦ h) (let ⟨y, hy, hyx⟩ := hC; ⟨μ y, y, ⟨hy, hyx⟩, le_rfl⟩)
+  have hS (δ : D) : IsGreatest (scopeDegrees (GQ.some fun y ↦ y ∈ C ∧ y ≠ x) μ) δ ↔
+      IsGreatest (μ '' {y | y ∈ C ∧ y ≠ x}) δ := by
+    rw [scopeDegrees_some, isGreatest_lowerClosure_iff]
+  refine (⟨fun ⟨δ, hδ, _, rfl, hlt⟩ ↦ ⟨δ, hlt, (hS δ).2 hδ⟩,
+    fun ⟨δ, hlt, hδ⟩ ↦ ⟨δ, (hS δ).1 hδ, x, rfl, hlt⟩⟩ :
+    est μ C x ↔ highScope (maxIn (Iio (μ x))) (GQ.some fun y ↦ y ∈ C ∧ y ≠ x) μ).trans
     (h.trans (Iff.trans ?_ (and_iff_right hx).symm))
-  exact not_exists.trans (forall_congr' λ _ => not_and.trans (and_imp.trans
-    (imp_congr_right λ _ => imp_congr_right λ _ => not_le)))
+  exact not_exists.trans (forall_congr' fun _ ↦ not_and.trans (and_imp.trans
+    (imp_congr_right fun _ ↦ imp_congr_right fun _ ↦ not_le)))
 
 end Heim2001

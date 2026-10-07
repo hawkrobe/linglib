@@ -54,7 +54,7 @@ The states of all holders form a type `S` with the background preorder, and `hol
 a function, each state having one holder (fn. 9), but not injective, since the than-clause
 maximum ranges over a holder's several states. The presupposition that a state lies in the
 domain of the background is membership in `S`. The comparative's standard degree `d_b` is the
-greatest element of `Degree.thanDegrees`. In (31) the comparative binds `g` but writes
+greatest measure of the standard's states. In (31) the comparative binds `g` but writes
 `background(f)`.
 
 ## TODO
@@ -80,23 +80,23 @@ variable {S X : Type*} [Preorder S] {holder : S → X}
 /-! ### The inference (19) -/
 
 /-- (19) on three heat states `0 < 1 < 2`, Barcelona holding `0` and `1` and Miami `2`, with *hot*
-the states from `1` up and the identity as measure: *Barcelona is hot* and *Miami is hotter than
+the states from `1` up and the identity as measure, *Barcelona is hot* and *Miami is hotter than
 Barcelona*, and so, by upward monotonicity, *Miami is hot*. -/
 example :
     let holder : Fin 3 → Bool := fun s ↦ decide (s = 2)
-    false ∈ holder '' Ici 1 ∧ maxComparative (holder · = true) (holder · = false) id ∧
+    false ∈ holder '' Ici 1 ∧ MaxComparative .gt (holder · = true) (holder · = false) id ∧
       true ∈ holder '' Ici 1 := by
   intro holder
   have hb : false ∈ holder '' Ici 1 := ⟨1, mem_Ici.2 le_rfl, by decide⟩
-  have hc : maxComparative (holder · = true) (holder · = false) id := by
-    refine ⟨1, ⟨⟨1, by decide, le_rfl⟩, ?_⟩, 2, by decide, by decide⟩
-    rintro d ⟨s, hs, hds⟩
-    exact hds.trans ((by decide : ∀ s : Fin 3, decide (s = 2) = false → s ≤ 1) s hs)
+  have hc : MaxComparative .gt (holder · = true) (holder · = false) id := by
+    refine ⟨1, ⟨⟨1, by decide, rfl⟩, ?_⟩, 2, by decide, by decide⟩
+    rintro _ ⟨s, hs, rfl⟩
+    exact (by decide : ∀ s : Fin 3, decide (s = 2) = false → s ≤ 1) s hs
   exact ⟨hb, hc, mem_image_of_maxComparative (isUpperSet_Ici 1) strictMono_id hb hc⟩
 
 /-! ### The equal-temperature cities (§4, fn. 10) -/
 
-/-- The cities of §4: states of distinct holders at equal measure are distinct and, when the
+/-- In the cities of §4, states of distinct holders at equal measure are distinct and, when the
 measure reflects the background into a linear scale, tied, and the background is total. -/
 theorem ne_and_antisymmRel_and_total {D : Type*} [LinearOrder D] {μ : S → D}
     (hμ : ∀ a b, μ a ≤ μ b → a ≤ b) {s t : S} (hne : holder s ≠ holder t) (heq : μ s = μ t) :
@@ -104,7 +104,7 @@ theorem ne_and_antisymmRel_and_total {D : Type*} [LinearOrder D] {μ : S → D}
   ⟨ne_of_apply_ne holder hne, ⟨hμ s t heq.le, hμ t s heq.ge⟩, total_of_reflect_le hμ⟩
 
 /-- On the literal reading of §4 the two cities' states are unordered. Then a threshold can hold
-of one and not of the other at the same temperature: on the componentwise order of `ℕ × ℕ` with
+of one and not of the other at the same temperature. On the componentwise order of `ℕ × ℕ` with
 the sum as measure, `(1, 0)` and `(0, 1)` measure alike, and the states from `(1, 0)` up include
 the one and not the other. -/
 example :
@@ -115,10 +115,10 @@ example :
 
 /-! ### Scale-mates (24)–(26) -/
 
-/-- (24) in the English fragment: *hot* and *warm* measure one dimension. -/
+/-- In the English fragment, *hot* and *warm* measure one dimension (24). -/
 example : English.Adjectives.hot.dimension = English.Adjectives.warm.dimension := rfl
 
-/-- The converse of (26) fails: with *warm* the states from `1` up and *hot* the states from `2`
+/-- The converse of (26) fails. With *warm* the states from `1` up and *hot* the states from `2`
 up on `Fin 3`, a city holding only the state `1` is warm and not hot. -/
 example :
     let holder : Fin 3 → Bool := fun s ↦ decide (s = 1)

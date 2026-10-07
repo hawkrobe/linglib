@@ -31,7 +31,7 @@ the ordering or the degree scale.
 * A holder's confidence states form a type `S` with its background preorder, and `θ : S → Set W`
   assigns themes; the states of all holders are the disjoint sum `Σ a, S a`.
 * The positive form is `p ∈ θ '' Set.Ici c` for a contrast state `c`, *certain* is
-  `p ∈ θ '' {s | IsMax s}`, and the comparative is `Degree.maxComparative (θ · = p) (θ · = q) μ`
+  `p ∈ θ '' {s | IsMax s}`, and the comparative is `Degree.MaxComparative .gt (θ · = p) (θ · = q) μ`
   for `StrictMono μ`.
 * Totality of the ordering is a hypothesis of the theorems that use it.
 * The paper states no semantics for *doubt*, so (63c) is not formalized.
@@ -69,14 +69,14 @@ omit [Preorder S] in
 /-- With one state per theme, the comparative (47) compares the two states' measures, so σ's
 confidence that `p` exceeds the than-clause degree (37). -/
 theorem maxComparative_theme_iff (hθ : θ.Injective) (s t : S) :
-    maxComparative (θ · = θ s) (θ · = θ t) μ ↔ μ t < μ s := by
+    MaxComparative .gt (θ · = θ s) (θ · = θ t) μ ↔ μ t < μ s := by
   simp only [hθ.eq_iff]
   exact maxComparative_eq_iff μ s t
 
 /-- Upward monotonicity (53) holds over the region above a contrast state. If σ is confident
 that `p` and more confident of `q` than of `p`, then σ is confident that `q`. -/
 example [@Std.Total S (· ≤ ·)] (hμ : StrictMono μ) {c : S} {p q : Set W}
-    (hp : p ∈ θ '' Ici c) (h : maxComparative (θ · = q) (θ · = p) μ) : q ∈ θ '' Ici c :=
+    (hp : p ∈ θ '' Ici c) (h : MaxComparative .gt (θ · = q) (θ · = p) μ) : q ∈ θ '' Ici c :=
   mem_image_of_maxComparative (isUpperSet_Ici c) hμ hp h
 
 /-! ### The conjunction fallacy (52) -/
@@ -144,7 +144,7 @@ theorem Ici_eq_setOf_isMax [@Std.Total S (· ≤ ·)] {m : S} (hm : IsMax m) :
 confident of any `q` than of `p`. Admissibility (21) is not enough, since it leaves tied maximal
 states free to be measured apart; the measure must also be monotone. -/
 theorem not_maxComparative_of_isMax [@Std.Total S (· ≤ ·)] (hμ : Monotone μ) {s : S}
-    (hs : IsMax s) {p q : Set W} (hsp : θ s = p) : ¬ maxComparative (θ · = q) (θ · = p) μ :=
+    (hs : IsMax s) {p q : Set W} (hsp : θ s = p) : ¬ MaxComparative .gt (θ · = q) (θ · = p) μ :=
   fun h ↦
     let ⟨y, _, hlt⟩ := h.exists_lt hsp
     (hμ ((total_of (· ≤ ·) y s).elim id fun h ↦ hs h)).not_gt hlt
@@ -152,7 +152,7 @@ theorem not_maxComparative_of_isMax [@Std.Total S (· ≤ ·)] (hμ : Monotone �
 /-- Under admissibility alone (68) fails, since a maximal state measured below another state
 makes σ certain of its theme and more confident of the other's. -/
 theorem maxComparative_of_isMax (hθ : θ.Injective) {s t : S} (hs : IsMax s) (hlt : μ s < μ t) :
-    θ s ∈ θ '' {s | IsMax s} ∧ maxComparative (θ · = θ t) (θ · = θ s) μ :=
+    θ s ∈ θ '' {s | IsMax s} ∧ MaxComparative .gt (θ · = θ t) (θ · = θ s) μ :=
   ⟨⟨s, hs, rfl⟩, (maxComparative_theme_iff hθ t s).2 hlt⟩
 
 /-- Two tied maximal states, as at the top of Figure 3, can be measured apart by an admissible

@@ -18,7 +18,7 @@ is needed, and neither form entails the other.
 The background is a preorder `S` and a threshold property is an upper set `T` of it, the
 monotonicity postulate of the analysis. A map `ρ : S → X` sends each state to its holder, or to
 its theme, so the positive form of `x` is `x ∈ ρ '' T`, and the comparative of `a` over `b` is
-`Degree.maxComparative (ρ · = a) (ρ · = b) μ` for an admissible measure `μ`. This file adds no
+`Degree.MaxComparative .gt (ρ · = a) (ρ · = b) μ` for an admissible measure `μ`. This file adds no
 definitions. It records how the two components interact: the one inference from a comparative
 to a positive form, upward monotonicity, holds on a total background and on no other.
 
@@ -56,7 +56,7 @@ admissible measure on a total background places it above that state, and the thr
 closed. -/
 theorem mem_image_of_maxComparative [@Std.Total S (· ≤ ·)] (hT : IsUpperSet T)
     (hμ : StrictMono μ) {a b : X} (hb : b ∈ ρ '' T)
-    (h : maxComparative (ρ · = a) (ρ · = b) μ) : a ∈ ρ '' T :=
+    (h : MaxComparative .gt (ρ · = a) (ρ · = b) μ) : a ∈ ρ '' T :=
   let ⟨_, hs, hsb⟩ := hb
   let ⟨y, hya, hlt⟩ := h.exists_lt hsb
   ⟨y, hT (hμ.reflect_le hlt.le) hs, hya⟩
@@ -64,7 +64,7 @@ theorem mem_image_of_maxComparative [@Std.Total S (· ≤ ·)] (hT : IsUpperSet 
 /-- Without admissibility upward monotonicity fails even on a total background. On `Bool` with
 the measure reversed, `true` has the property `Ici true` and `false` measures above it. -/
 example :
-    (true : Bool) ∈ id '' Ici true ∧ maxComparative (· = false) (· = true) (fun b : Bool ↦ !b) ∧
+    (true : Bool) ∈ id '' Ici true ∧ MaxComparative .gt (· = false) (· = true) (fun b : Bool ↦ !b) ∧
       false ∉ id '' Ici true := by
   refine ⟨⟨true, mem_Ici.2 le_rfl, rfl⟩, (maxComparative_eq_iff _ _ _).2 (by decide), ?_⟩
   rintro ⟨u, hu, rfl⟩
@@ -75,9 +75,9 @@ holders, `s` is not below `t` but measures below it, and the property is the one
 `s`, the holder of `s` has the property and the holder of `t` has more of it without having it. -/
 theorem not_mem_image_Ici_of_not_le {s t : S} (hst : ¬ s ≤ t) (hlt : μ s < μ t)
     (hs : ∀ u, ρ u = ρ s → u = s) (ht : ∀ u, ρ u = ρ t → u = t) :
-    ρ s ∈ ρ '' Ici s ∧ maxComparative (ρ · = ρ t) (ρ · = ρ s) μ ∧ ρ t ∉ ρ '' Ici s :=
+    ρ s ∈ ρ '' Ici s ∧ MaxComparative .gt (ρ · = ρ t) (ρ · = ρ s) μ ∧ ρ t ∉ ρ '' Ici s :=
   ⟨⟨s, mem_Ici.2 le_rfl, rfl⟩,
-    (maxComparative_unique (Pmatrix := (ρ · = ρ t)) (Pthan := (ρ · = ρ s)) rfl ht rfl hs).2 hlt,
+    (maxComparative_iff_of_unique (P := (ρ · = ρ t)) (Q := (ρ · = ρ s)) rfl ht rfl hs).2 hlt,
     fun ⟨u, hu, hut⟩ ↦ hst (ht u hut ▸ hu)⟩
 
 /-- The failure is realized by an admissible measure. On the componentwise order of `ℕ × ℕ`,
@@ -96,8 +96,8 @@ their holders and `s` measures above `t` without the property, the holder of `s`
 than the holder of `t` without having it. -/
 theorem maxComparative_and_not_mem_image {s t : S} (hlt : μ t < μ s) (hsT : s ∉ T)
     (hs : ∀ u, ρ u = ρ s → u = s) (ht : ∀ u, ρ u = ρ t → u = t) :
-    maxComparative (ρ · = ρ s) (ρ · = ρ t) μ ∧ ρ s ∉ ρ '' T :=
-  ⟨(maxComparative_unique (Pmatrix := (ρ · = ρ s)) (Pthan := (ρ · = ρ t)) rfl hs rfl ht).2 hlt,
+    MaxComparative .gt (ρ · = ρ s) (ρ · = ρ t) μ ∧ ρ s ∉ ρ '' T :=
+  ⟨(maxComparative_iff_of_unique (P := (ρ · = ρ s)) (Q := (ρ · = ρ t)) rfl hs rfl ht).2 hlt,
     fun ⟨u, hu, hus⟩ ↦ hsT (hs u hus ▸ hu)⟩
 
 end Degree
