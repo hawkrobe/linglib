@@ -48,8 +48,8 @@ Conservativity, the existential property and quantity invariance are the substra
 `Conservative`, `Existential` and `QuantityInvariant`, the conservative algebra is `ConsGQ`
 with its `CompleteAtomicBooleanAlgebra` instance, and the counts are `Nat.card`s over a
 `Fintype` universe derived from mathlib's representation theorem
-`CompleteAtomicBooleanAlgebra.toSetOfIsAtom`. `Cardinal` is stated with `Nat.card` rather than
-`count`, keeping the definition free of decidability instances; `count_eq_nat_card` bridges.
+`CompleteAtomicBooleanAlgebra.toSetOfIsAtom`. `Cardinal` is stated with `Nat.card`, which is by
+definition the `Set.ncard` the counting quantifiers count with.
 Canonical witnesses of each size are initial segments of a fixed enumeration (`segment`), which
 nest, unlike arbitrarily chosen subsets. `BooleanSubalgebra.closure` is finitary, so
 `closure_generators` carries `[Finite α]`; the paper closes under arbitrary meets and joins, and
@@ -312,12 +312,6 @@ def segment (k : ℕ) : α → Prop := fun x ↦ ((Fintype.equivFin α) x : ℕ)
 theorem segment_mono {k m : ℕ} (h : k ≤ m) : segment (α := α) k ≤ segment m :=
   fun _ hx ↦ lt_of_lt_of_le hx h
 
-/-- `count` agrees with the instance-free `Nat.card` of the satisfying subtype. -/
-theorem count_eq_nat_card (P : α → Prop) [DecidablePred P] :
-    count P = Nat.card {x // P x} := by
-  rw [Nat.card_eq_fintype_card, Fintype.card_subtype]
-  rfl
-
 theorem card_segment {k : ℕ} (hk : k ≤ Fintype.card α) :
     Nat.card {x : α // segment k x} = k := by
   have e : {x : α // segment k x} ≃ {i : Fin (Fintype.card α) // (i : ℕ) < k} :=
@@ -377,13 +371,8 @@ theorem existentialSubalgebra_le :
   fun _ hf ↦ hf.conservative
 
 /-- *At least n* is existential ((99)–(100)). -/
-theorem existential_atLeast [Fintype α] (n : ℕ) :
-    Existential (atLeast (α := α) n) := by
-  classical
-  intro R T
-  simp only [atLeast]
-  rw [count_eq_decidable (fun x ↦ (R x ∧ T x) ∧ True), count_eq_decidable (fun x ↦ R x ∧ T x),
-    count_congr_iff (Q := fun x ↦ R x ∧ T x) fun _ ↦ iff_of_eq (and_true _)]
+theorem existential_atLeast (n : ℕ) : Existential (atLeast (α := α) n) := fun R T ↦ by
+  simp only [atLeast_apply, and_true]
 
 /-- *every* is not existential, since with a scope lacking one individual *everything is T*
 fails while *every T-thing is an individual* holds (the two-lawyer argument of Section 3.3). -/
@@ -391,35 +380,37 @@ theorem not_existential_every [Nonempty α] : ¬ Existential (every : GQ α) := 
   obtain ⟨b⟩ := ‹Nonempty α›
   exact absurd ((h (fun _ ↦ True) (· ≠ b)).mpr fun _ _ ↦ trivial) fun h' ↦ (h' b trivial) rfl
 
-open Classical in
 /-- *the n* is the universal on a restrictor of exactly `n` individuals ((43)); *both* is
 `theN 2`. -/
-noncomputable def theN [Fintype α] (n : ℕ) : GQ α :=
-  every ⊓ fun R _ ↦ count R = n
+def theN (n : ℕ) : GQ α := every ⊓ fun R _ ↦ {x | R x}.ncard = n
 
-open Classical in
-theorem theN_apply [Fintype α] (n : ℕ) (R T : α → Prop) :
-    theN n R T ↔ every R T ∧ count R = n :=
+theorem theN_apply (n : ℕ) (R T : α → Prop) :
+    theN n R T ↔ every R T ∧ {x | R x}.ncard = n :=
   Iff.rfl
 
 /-- *the two* is *each of the two*. -/
-theorem theN_two_eq_both [Fintype α] : theN 2 = (both : GQ α) := rfl
+theorem theN_two_eq_both [Finite α] : theN 2 = (both : GQ α) := by
+  funext R T
+  have hd : {x | R x ∧ T x}.ncard + {x | R x ∧ ¬ T x}.ncard = {x | R x}.ncard :=
+    Set.ncard_inter_add_ncard_sdiff_eq_ncard _ _
+  have he : every R T ↔ {x | R x ∧ ¬ T x}.ncard = 0 := by rw [every_eq_toGQ_all]; rfl
+  apply propext
+  rw [theN_apply, he]
+  change _ ↔ {x | R x ∧ ¬ T x}.ncard = 0 ∧ {x | R x ∧ T x}.ncard = 2
+  omega
 
 /-- *the n* is not existential below the universe size, since *the n things are the first n*
 fails while *the n first-n things are individuals* holds (Section 3.3's argument for *the two*,
 at every `n`). -/
 theorem not_existential_theN [Fintype α] {n : ℕ} (hn : n < Fintype.card α) :
     ¬ Existential (theN (α := α) n) := fun h ↦ by
-  classical
   have h1 : theN (α := α) n (fun x ↦ True ∧ segment n x) (fun _ ↦ True) := by
     rw [theN_apply]
     refine ⟨fun _ _ ↦ trivial, ?_⟩
-    rw [count_eq_decidable, count_congr_iff (Q := segment n) fun x ↦ iff_of_eq (true_and _),
-      count_eq_nat_card, card_segment hn.le]
-  have h2 := (h (fun _ ↦ True) (segment n)).mpr h1
-  rw [theN_apply] at h2
-  have hcard := h2.2
-  rw [count_eq_decidable, count_univ] at hcard
+    simp only [true_and]
+    exact card_segment hn.le
+  have hcard := ((theN_apply _ _ _).1 ((h (fun _ ↦ True) (segment n)).mpr h1)).2
+  rw [Set.ofPred_true, Set.ncard_univ, Nat.card_eq_fintype_card] at hcard
   omega
 
 /-- *no ... but J* holds when restrictor and scope meet in exactly the individual `a` ((42)). -/
@@ -485,20 +476,12 @@ theorem cardinalSubalgebra_le :
   fun _ hf ↦ Cardinal.existential hf
 
 /-- *at least n* is cardinal. -/
-theorem cardinal_atLeast [Fintype α] (n : ℕ) : Cardinal (atLeast (α := α) n) := by
-  classical
-  intro R T R' T' h
-  simp only [atLeast]
-  rw [count_eq_decidable (fun x ↦ R x ∧ T x), count_eq_decidable (fun x ↦ R' x ∧ T' x),
-    count_eq_nat_card, count_eq_nat_card, h]
+theorem cardinal_atLeast (n : ℕ) : Cardinal (atLeast (α := α) n) :=
+  fun _ _ _ _ h ↦ Iff.of_eq (congrArg (n ≤ ·) h)
 
 /-- *exactly n* is cardinal. -/
-theorem cardinal_exactly [Fintype α] (n : ℕ) : Cardinal (exactly (α := α) n) := by
-  classical
-  intro R T R' T' h
-  simp only [exactly]
-  rw [count_eq_decidable (fun x ↦ R x ∧ T x), count_eq_decidable (fun x ↦ R' x ∧ T' x),
-    count_eq_nat_card, count_eq_nat_card, h]
+theorem cardinal_exactly (n : ℕ) : Cardinal (exactly (α := α) n) :=
+  fun _ _ _ _ h ↦ Iff.of_eq (congrArg (· = n) h)
 
 private theorem card_ident_inter (c : α) : Nat.card {x // ident c x ∧ ident c x} = 1 := by
   rw [Nat.card_congr (Equiv.subtypeEquivRight (q := fun x ↦ x = c) fun x ↦ by simp [ident])]
@@ -578,17 +561,15 @@ theorem isAtom_cardinal_iff [Fintype α] {f : cardinalSubalgebra (α := α)} :
     classical
     show (⟨Nat.card {x // R x ∧ T x}, _⟩ : Fin _) ∈ ({k} : Set _) ↔ _
     rw [Set.mem_singleton_iff, Fin.ext_iff]
-    simp only [exactly]
-    rw [count_eq_decidable (fun x ↦ R x ∧ T x), count_eq_nat_card]
+    exact Iff.rfl
   · rintro ⟨k, hf⟩
     refine ⟨k, ?_⟩
     ext k'
     classical
     show f.1 (segment (k' : ℕ)) (segment (k' : ℕ)) ↔ k' ∈ ({k} : Set _)
-    rw [hf, Set.mem_singleton_iff]
-    simp only [exactly]
-    rw [count_eq_decidable (fun x ↦ segment (k' : ℕ) x ∧ segment (k' : ℕ) x),
-      count_eq_nat_card, card_segment_inter le_rfl (Nat.lt_succ_iff.mp k'.2), Fin.ext_iff]
+    rw [hf, Set.mem_singleton_iff, exactly_apply]
+    change Nat.card {x // segment (k' : ℕ) x ∧ segment (k' : ℕ) x} = _ ↔ _
+    rw [card_segment_inter le_rfl (Nat.lt_succ_iff.mp k'.2), Fin.ext_iff]
 
 /-! ### Logical determiners (Section 3.5 and the Appendix) -/
 
@@ -635,59 +616,6 @@ theorem cardinalSubalgebra_lt_logical [Nontrivial α] :
   rw [← mem_cardinalSubalgebra, h]
   exact logical_every
 
-open Classical in
-private theorem logical_congr_count [Fintype α] {f : GQ α} (hc : Conservative f)
-    (hq : QuantityInvariant f) {R T R' T' : α → Prop}
-    (h1 : count (fun x ↦ R x) = count (fun x ↦ R' x))
-    (h2 : count (fun x ↦ R x ∧ T x) = count (fun x ↦ R' x ∧ T' x)) :
-    f R T ↔ f R' T' := by
-  classical
-  have hQ4 := quantity_of_quantityInvariant f hq
-  rw [hc R T, hc R' T']
-  refine hQ4 R (fun x ↦ R x ∧ T x) R' (fun x ↦ R' x ∧ T' x) ?_ ?_ ?_ ?_
-  · have c1 : count (fun x ↦ R x ∧ (R x ∧ T x)) = count (fun x ↦ R x ∧ T x) :=
-      count_congr_iff fun x ↦ by tauto
-    have c2 : count (fun x ↦ R' x ∧ (R' x ∧ T' x)) = count (fun x ↦ R' x ∧ T' x) :=
-      count_congr_iff fun x ↦ by tauto
-    conv_lhs => rw [count_eq_decidable]
-    conv_rhs => rw [count_eq_decidable]
-    omega
-  · have d1 := count_decompose R T
-    have d2 := count_decompose R' T'
-    have c1 : count (fun x ↦ R x ∧ ¬ (R x ∧ T x)) = count (fun x ↦ R x ∧ ¬ T x) :=
-      count_congr_iff fun x ↦ by tauto
-    have c2 : count (fun x ↦ R' x ∧ ¬ (R' x ∧ T' x)) = count (fun x ↦ R' x ∧ ¬ T' x) :=
-      count_congr_iff fun x ↦ by tauto
-    conv_lhs => rw [count_eq_decidable]
-    conv_rhs => rw [count_eq_decidable]
-    omega
-  · have c1 : count (fun x ↦ ¬ R x ∧ (R x ∧ T x)) = 0 :=
-      countOn_eq_zero_iff.mpr fun x _ hx ↦ hx.1 hx.2.1
-    have c2 : count (fun x ↦ ¬ R' x ∧ (R' x ∧ T' x)) = 0 :=
-      countOn_eq_zero_iff.mpr fun x _ hx ↦ hx.1 hx.2.1
-    conv_lhs => rw [count_eq_decidable]
-    conv_rhs => rw [count_eq_decidable]
-    omega
-  · have d1 := count_decompose (fun x ↦ ¬ R x) (fun x ↦ R x ∧ T x)
-    have d2 := count_decompose (fun x ↦ ¬ R' x) (fun x ↦ R' x ∧ T' x)
-    have e1 := count_decompose (fun _ : α ↦ True) R
-    have e2 := count_decompose (fun _ : α ↦ True) R'
-    have z1 : count (fun x ↦ ¬ R x ∧ (R x ∧ T x)) = 0 :=
-      countOn_eq_zero_iff.mpr fun x _ hx ↦ hx.1 hx.2.1
-    have z2 : count (fun x ↦ ¬ R' x ∧ (R' x ∧ T' x)) = 0 :=
-      countOn_eq_zero_iff.mpr fun x _ hx ↦ hx.1 hx.2.1
-    have w1 : count (fun x ↦ True ∧ R x) = count (fun x ↦ R x) :=
-      count_congr_iff fun x ↦ by tauto
-    have w1' : count (fun x ↦ True ∧ ¬ R x) = count (fun x ↦ ¬ R x) :=
-      count_congr_iff fun x ↦ by tauto
-    have w2 : count (fun x ↦ True ∧ R' x) = count (fun x ↦ R' x) :=
-      count_congr_iff fun x ↦ by tauto
-    have w2' : count (fun x ↦ True ∧ ¬ R' x) = count (fun x ↦ ¬ R' x) :=
-      count_congr_iff fun x ↦ by tauto
-    conv_lhs => rw [count_eq_decidable]
-    conv_rhs => rw [count_eq_decidable]
-    omega
-
 /-- A logical function depends only on the sizes of the restrictor and of its meet with the
 scope, the two-number reduction behind PROP 19. -/
 theorem logical_congr [Fintype α] {f : GQ α} (hf : f ∈ logicalSubalgebra)
@@ -696,12 +624,14 @@ theorem logical_congr [Fintype α] {f : GQ α} (hf : f ∈ logicalSubalgebra)
     (hRT : Nat.card {x // R x ∧ T x} = Nat.card {x // R' x ∧ T' x}) :
     f R T ↔ f R' T' := by
   obtain ⟨hc, hq⟩ := hf
-  classical
-  refine logical_congr_count hc hq ?_ ?_
-  · rw [count_eq_nat_card, count_eq_nat_card]
-    exact hR
-  · rw [count_eq_nat_card, count_eq_nat_card]
-    exact hRT
+  refine GQ.iff_of_ncard_eq hc hq ?_ hRT
+  have d : {x | R x ∧ T x}.ncard + {x | R x ∧ ¬ T x}.ncard = {x | R x}.ncard :=
+    Set.ncard_inter_add_ncard_sdiff_eq_ncard _ _
+  have d' : {x | R' x ∧ T' x}.ncard + {x | R' x ∧ ¬ T' x}.ncard = {x | R' x}.ncard :=
+    Set.ncard_inter_add_ncard_sdiff_eq_ncard _ _
+  change {x | R x}.ncard = {x | R' x}.ncard at hR
+  change {x | R x ∧ T x}.ncard = {x | R' x ∧ T' x}.ncard at hRT
+  omega
 
 /-- The logical atoms are indexed by nested pairs of cardinalities up to the universe size
 (the Appendix's `F_{m',m}` index). -/

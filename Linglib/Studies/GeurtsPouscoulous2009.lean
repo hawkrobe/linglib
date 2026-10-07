@@ -69,8 +69,8 @@ theorem so_pair {φ ψ : Set W} (h : ψ ⊂ φ) : so φ {φ, ψ} = φ \ ψ := by
   ext w
   simp only [so, Set.mem_ofPred_eq, Set.mem_sdiff, Set.mem_insert_iff, Set.mem_singleton_iff,
     forall_eq_or_imp, forall_eq]
-  exact ⟨λ ⟨hw, _, hψ⟩ => ⟨hw, hψ h⟩,
-    λ ⟨hw, hψ⟩ => ⟨hw, λ hφ => absurd hφ (lt_irrefl φ), λ _ => hψ⟩⟩
+  exact ⟨fun ⟨hw, _, hψ⟩ ↦ ⟨hw, hψ h⟩,
+    fun ⟨hw, hψ⟩ ↦ ⟨hw, fun hφ ↦ absurd hφ (lt_irrefl φ), fun _ ↦ hψ⟩⟩
 
 /-- The parse with the operator below the belief verb, on which the agent believes *some* and
 believes *not all*. -/
@@ -140,13 +140,13 @@ abbrev Situation := Fin 3 → Fin 3 → Prop
 
 /-- The situation for *all*, *more than one* and the two downward-entailing sentences, in which
 every square is connected with some circle and two of them with all. -/
-abbrev allSome : Situation := λ s c => s ≠ 0 ∨ c = 0
+abbrev allSome : Situation := fun s c ↦ s ≠ 0 ∨ c = 0
 
 /-- One square connected with some but not all circles, one with all, one with none. -/
-abbrev onePartial : Situation := λ s c => s = 1 ∨ (s = 0 ∧ c = 0)
+abbrev onePartial : Situation := fun s c ↦ s = 1 ∨ (s = 0 ∧ c = 0)
 
 /-- Two squares connected with some but not all circles, one with all. -/
-abbrev twoPartial : Situation := λ s c => s = 2 ∨ c = 0
+abbrev twoPartial : Situation := fun s c ↦ s = 2 ∨ c = 0
 
 /-- *Connected with some of the circles*. -/
 abbrev someC (R : Situation) (s : Fin 3) : Prop := ∃ c, R s c
@@ -165,10 +165,10 @@ def situation : Quant → Trial → Situation
   | _, _ => allSome
 
 /-- The classical construal of a verification item. -/
-def Classical (q : Quant) (t : Trial) : Prop := q.sem (λ _ => True) (someC (situation q t))
+def Classical (q : Quant) (t : Trial) : Prop := q.sem (fun _ ↦ True) (someC (situation q t))
 
 /-- The local-implicature construal of a verification item. -/
-def Local (q : Quant) (t : Trial) : Prop := q.sem (λ _ => True) (someNotAllC (situation q t))
+def Local (q : Quant) (t : Trial) : Prop := q.sem (fun _ ↦ True) (someNotAllC (situation q t))
 
 /-- What mainstream conventionalism predicts of an item, the local construal outside
 downward-entailing scopes and the classical one within them. -/
@@ -176,31 +176,27 @@ def Mainstream (q : Quant) (t : Trial) : Prop :=
   (PredictsLocalSI (q.sem : GQ (Fin 3)) ∧ Local q t) ∨
     (¬ PredictsLocalSI (q.sem : GQ (Fin 3)) ∧ Classical q t)
 
-theorem all_predictsLocalSI : PredictsLocalSI (Quant.all.sem : GQ (Fin 3)) := fun h =>
-  h (fun _ => True) (show ((fun _ : Fin 3 => False) : Fin 3 → Prop) ≤ fun _ => True from
-    fun _ hf => hf.elim) (fun _ _ => trivial) 0 trivial
+theorem all_predictsLocalSI : PredictsLocalSI (Quant.all.sem : GQ (Fin 3)) := fun h ↦
+  h (fun _ ↦ True) (show ((fun _ : Fin 3 ↦ False) : Fin 3 → Prop) ≤ fun _ ↦ True from
+    fun _ hf ↦ hf.elim) (fun _ _ ↦ trivial) 0 trivial
 
 theorem moreThanOne_predictsLocalSI : PredictsLocalSI (Quant.moreThanOne.sem : GQ (Fin 3)) := by
   intro h
-  have key : Quant.moreThanOne.sem (fun _ : Fin 3 => True) (fun _ => True) →
-      Quant.moreThanOne.sem (fun _ : Fin 3 => True) (fun _ => False) :=
-    h (fun _ => True) (show ((fun _ : Fin 3 => False) : Fin 3 → Prop) ≤ fun _ => True from
-      fun _ hf => hf.elim)
-  simp only [Quant.sem, atLeast] at key
-  rw [count_eq_decidable (λ _ : Fin 3 => True ∧ True),
-    count_eq_decidable (λ _ : Fin 3 => True ∧ False)] at key
+  have key : Quant.moreThanOne.sem (fun _ : Fin 3 ↦ True) (fun _ ↦ True) →
+      Quant.moreThanOne.sem (fun _ : Fin 3 ↦ True) (fun _ ↦ False) :=
+    h (fun _ ↦ True) (show ((fun _ : Fin 3 ↦ False) : Fin 3 → Prop) ≤ fun _ ↦ True from
+      fun _ hf ↦ hf.elim)
+  simp only [Quant.sem] at key
   revert key
   decide
 
 theorem exactlyTwo_predictsLocalSI : PredictsLocalSI (Quant.exactlyTwo.sem : GQ (Fin 3)) := by
   intro h
-  have key : Quant.exactlyTwo.sem (fun _ : Fin 3 => True) (fun s => s = 0 ∨ s = 1) →
-      Quant.exactlyTwo.sem (fun _ : Fin 3 => True) (· = 0) :=
-    h (fun _ => True) (show ((· = 0) : Fin 3 → Prop) ≤ fun s => s = 0 ∨ s = 1 from
-      fun _ hs => Or.inl hs)
-  simp only [Quant.sem, exactly] at key
-  rw [count_eq_decidable (λ s : Fin 3 => True ∧ (s = 0 ∨ s = 1)),
-    count_eq_decidable (λ s : Fin 3 => True ∧ s = 0)] at key
+  have key : Quant.exactlyTwo.sem (fun _ : Fin 3 ↦ True) (fun s ↦ s = 0 ∨ s = 1) →
+      Quant.exactlyTwo.sem (fun _ : Fin 3 ↦ True) (· = 0) :=
+    h (fun _ ↦ True) (show ((· = 0) : Fin 3 → Prop) ≤ fun s ↦ s = 0 ∨ s = 1 from
+      fun _ hs ↦ Or.inl hs)
+  simp only [Quant.sem] at key
   revert key
   decide
 
@@ -211,33 +207,27 @@ theorem not_local_all : ¬ Local .all .none :=
   show ¬ ∀ s : Fin 3, True → someNotAllC allSome s by decide
 
 theorem classical_moreThanOne : Classical .moreThanOne .none := by
-  simp only [Classical, Quant.sem, situation, atLeast]
-  rw [count_eq_decidable (λ s : Fin 3 => True ∧ someC allSome s)]
+  simp only [Classical, Quant.sem, situation]
   decide
 
 theorem not_local_moreThanOne : ¬ Local .moreThanOne .none := by
-  simp only [Local, Quant.sem, situation, atLeast]
-  rw [count_eq_decidable (λ s : Fin 3 => True ∧ someNotAllC allSome s)]
+  simp only [Local, Quant.sem, situation]
   decide
 
 theorem classical_exactlyTwo_a : Classical .exactlyTwo .a := by
-  simp only [Classical, Quant.sem, situation, exactly]
-  rw [count_eq_decidable (λ s : Fin 3 => True ∧ someC onePartial s)]
+  simp only [Classical, Quant.sem, situation]
   decide
 
 theorem not_local_exactlyTwo_a : ¬ Local .exactlyTwo .a := by
-  simp only [Local, Quant.sem, situation, exactly]
-  rw [count_eq_decidable (λ s : Fin 3 => True ∧ someNotAllC onePartial s)]
+  simp only [Local, Quant.sem, situation]
   decide
 
 theorem not_classical_exactlyTwo_b : ¬ Classical .exactlyTwo .b := by
-  simp only [Classical, Quant.sem, situation, exactly]
-  rw [count_eq_decidable (λ s : Fin 3 => True ∧ someC twoPartial s)]
+  simp only [Classical, Quant.sem, situation]
   decide
 
 theorem local_exactlyTwo_b : Local .exactlyTwo .b := by
-  simp only [Local, Quant.sem, situation, exactly]
-  rw [count_eq_decidable (λ s : Fin 3 => True ∧ someNotAllC twoPartial s)]
+  simp only [Local, Quant.sem, situation]
   decide
 
 theorem not_classical_notAll : ¬ Classical .notAll .none :=
@@ -247,13 +237,11 @@ theorem local_notAll : Local .notAll .none :=
   show ¬ ∀ s : Fin 3, True → someNotAllC allSome s by decide
 
 theorem not_classical_notMoreThanOne : ¬ Classical .notMoreThanOne .none := by
-  simp only [Classical, Quant.sem, situation, atMost]
-  rw [count_eq_decidable (λ s : Fin 3 => True ∧ someC allSome s)]
+  simp only [Classical, Quant.sem, situation]
   decide
 
 theorem local_notMoreThanOne : Local .notMoreThanOne .none := by
-  simp only [Local, Quant.sem, situation, atMost]
-  rw [count_eq_decidable (λ s : Fin 3 => True ∧ someNotAllC allSome s)]
+  simp only [Local, Quant.sem, situation]
   decide
 
 /-! ### The verification rows -/

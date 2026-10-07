@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Quantification.Witness
-public import Linglib.Semantics.Quantification.NumberTree
+public import Linglib.Semantics.Quantification.Counting
 public import Mathlib.Data.Finset.Powerset
 
 /-!
@@ -95,19 +95,10 @@ theorem sieve_congr {q' : NumberTree} [DecidableRel q']
 
 /-! ### Descriptive quantifier conditions -/
 
-/-- The condition of *most* (§4.8), a reference set outnumbering the complement set. -/
-def most : NumberTree := fun a b ↦ a < b
-
-/-- The condition of *few* in the proportional sense of (38a), a complement set outnumbering the
-reference set. -/
-def few : NumberTree := fun a b ↦ b < a
-
 /-- The condition of *many* (the paper's (39)), a reference set exceeding a contextual standard
 `θ`; a cardinal quantifier. -/
 def many (θ : ℕ) : NumberTree := cardinal (Set.Ioi θ)
 
-instance : DecidableRel most := fun a b ↦ inferInstanceAs (Decidable (a < b))
-instance : DecidableRel few := fun a b ↦ inferInstanceAs (Decidable (b < a))
 instance (θ : ℕ) : DecidableRel (many θ) := fun _ b ↦ inferInstanceAs (Decidable (θ < b))
 
 /-! ### Quantifier perspective and complement-set anaphora -/
@@ -125,8 +116,8 @@ instance (D : Finset (Finset α)) : Decidable (CompsetAccessible D) :=
 theorem compsetAccessible_sieve : CompsetAccessible (sieve q S) ↔ q #S 0 := by
   simp [CompsetAccessible]
 
-/-- *Every N* makes the complement set inaccessible, the noun being nonempty: the paper's (49a),
-*All music lovers admire Reger. #They love Mozart.* -/
+/-- *Every N* makes the complement set inaccessible, the noun being nonempty, as in the paper's
+(49a), *All music lovers admire Reger. #They love Mozart.* -/
 theorem not_compsetAccessible_all (hS : S.Nonempty) :
     ¬ CompsetAccessible (sieve NumberTree.all S) := fun h ↦
   hS.card_pos.ne' ((compsetAccessible_sieve (q := NumberTree.all)).1 h)
@@ -136,14 +127,14 @@ theorem not_compsetAccessible_all (hS : S.Nonempty) :
 theorem compsetAccessible_no : CompsetAccessible (sieve NumberTree.no S) :=
   compsetAccessible_sieve.2 rfl
 
-/-- *Many N* makes the complement set inaccessible: the paper's (43b), *Many music lovers admire
-Reger. #They prefer Mozart.* -/
+/-- *Many N* makes the complement set inaccessible, as in the paper's (43b), *Many music lovers
+admire Reger. #They prefer Mozart.* -/
 theorem not_compsetAccessible_many (θ : ℕ) : ¬ CompsetAccessible (sieve (many θ) S) := fun h ↦
   Nat.not_lt_zero θ ((compsetAccessible_sieve (q := many θ)).1 h)
 
-/-- *Few N* makes the complement set accessible, the noun being nonempty: the paper's (43a),
-*Few music lovers admire Reger. They prefer Mozart.* -/
-theorem compsetAccessible_few (hS : S.Nonempty) : CompsetAccessible (sieve few S) :=
+/-- *Few N* makes the complement set accessible, the noun being nonempty, as in the paper's
+(43a), *Few music lovers admire Reger. They prefer Mozart.* -/
+theorem compsetAccessible_few (hS : S.Nonempty) : CompsetAccessible (sieve NumberTree.few S) :=
   compsetAccessible_sieve.2 hS.card_pos
 
 /-- The reference individual of *a few* (the paper's (46)) requires a nonempty reference set,
@@ -183,22 +174,19 @@ theorem exists_antiPredication_iff :
       (antiPredication_iff (filter_subset _ _)).2 rfl⟩⟩
 
 omit [DecidableEq α] in
-/-- A count over the universe of the members of `S` with a property is a count in `S`. -/
-private theorem count_mem_and [Fintype α] {i : DecidablePred fun x ↦ x ∈ S ∧ B x} :
-    @GQ.count α _ (fun x ↦ x ∈ S ∧ B x) i = #(S.filter B) := by
-  unfold GQ.count GQ.countOn
-  congr 1
-  ext; simp
+/-- The members of `S` with a property number as their filter in `S`. -/
+private theorem ncard_mem_and : {x | x ∈ S ∧ B x}.ncard = #(S.filter B) := by
+  rw [← Set.ncard_coe_finset, Finset.coe_filter]
 
 /-- Referential transparency has the truth conditions of the tree quantifier of its condition,
 a conservative, permutation-invariant generalized quantifier on the head noun. -/
-theorem exists_antiPredication_iff_toGQ [Fintype α] :
+theorem exists_antiPredication_iff_toGQ :
     (∃ R ∈ sieve q S, AntiPredication B S R) ↔ q.toGQ (· ∈ S) B := by
-  rw [exists_antiPredication_iff, toGQ_apply, count_mem_and, count_mem_and, filter_not]
+  rw [exists_antiPredication_iff, toGQ_apply, ncard_mem_and, ncard_mem_and, filter_not]
 
 omit [DecidableEq α] [DecidableRel q] in
 /-- Conservativity holds by construction: the quantifier lives on the head noun. -/
-theorem livesOn_toGQ [Fintype α] : LivesOn (q.toGQ (· ∈ S)) (· ∈ S) :=
+theorem livesOn_toGQ : LivesOn (q.toGQ (· ∈ S)) (· ∈ S) :=
   (conservative_toGQ q).livesOn _
 
 /-! ### Witness sets -/
@@ -206,9 +194,9 @@ theorem livesOn_toGQ [Fintype α] : LivesOn (q.toGQ (· ∈ S)) (· ∈ S) :=
 /-- The witness of a quantified noun phrase is a surviving reference set (the paper's (17)), and
 these are exactly the witness sets of [barwise-cooper-1981] of the tree quantifier on the head
 noun. -/
-theorem mem_sieve_iff_witness [Fintype α] :
+theorem mem_sieve_iff_witness :
     R ∈ sieve q S ↔ Witness (q.toGQ (· ∈ S)) (· ∈ S) (· ∈ R) := by
-  simp only [mem_sieve, Witness, toGQ_apply, count_mem_and, subset_iff]
+  simp only [mem_sieve, Witness, toGQ_apply, ncard_mem_and, subset_iff]
   refine and_congr_right fun hR ↦ ?_
   rw [filter_not, filter_mem_eq_inter, inter_eq_right.2 fun _ h ↦ hR h]
 

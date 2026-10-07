@@ -3,7 +3,7 @@ module
 public import Mathlib.Data.Finset.Image
 public import Mathlib.Data.Setoid.Basic
 public import Mathlib.Logic.Equiv.Defs
-public import Mathlib.Probability.UniformOn
+public import Linglib.Core.Probability.UniformOn
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Semantics.Quantification.Counting
 public import Linglib.Semantics.Quantification.NumberTree
@@ -29,7 +29,7 @@ as local or reflexive.
   that Hesperus is Phosphorus under their own postulates, and do under the reporter's.
 * `nonempty_generalWCIncr_iff_toGQ`, `nonempty_generalWCDecr_iff_toGQ`: the general witness
   conditions are Barwise and Cooper's two procedures for the tree quantifier of their relation.
-* `le_uniformOn_iff`: a probabilistic witness condition of §7.3 is its cardinal one.
+* `witnessType_propAtLeast_iff`: a probabilistic witness condition of §7.3 is its cardinal one.
 * `WitnessCondition.exists_set_subset`: each witness condition can be met by a witness whose
   set lies in the anaphora set it makes available, which `anaphora_rows` checks against the
   book's judgements.
@@ -825,31 +825,15 @@ theorem monotone_compAtMost (θ p : ℕ) : Monotone (compAtMost θ · p) :=
 theorem monotone_compPropAtMost (n d p : ℕ) : Monotone (compPropAtMost n d · p) :=
   fun _ _ hxy h ↦ ⟨h.1, h.2.trans (Nat.mul_le_mul_left d hxy)⟩
 
-/-- A relation is a quantifier on the tree of numbers, whose coordinates `|P \ S|` and `|P ∩ S|` put
-the witness set at `P ∩ S` and the extension at their sum. -/
-def tree (c : CardRel) : NumberTree := fun a b ↦ c b (a + b)
+/-- `noʷ`, read on the tree of numbers, is the tree's *no*. -/
+theorem ofSizes_no : NumberTree.ofSizes no = NumberTree.no := rfl
 
-/-- A relation closed upwards in `|X|` is scope monotone on the tree. -/
-theorem scopeMonotone_tree {c : CardRel} (hc : ∀ p, Monotone (c · p)) :
-    (tree c).ScopeMonotone := fun a b h ↦ by
-  rw [tree, show a + (b + 1) = a + 1 + b by omega]
-  exact hc _ b.le_succ h
+/-- `everyʷ`, read on the tree of numbers, is the tree's *all*. -/
+theorem ofSizes_every : NumberTree.ofSizes every = NumberTree.all := by
+  grind [NumberTree.ofSizes, every, NumberTree.all]
 
-/-- A relation closed downwards in `|X|` is scope antitone on the tree. -/
-theorem scopeAntitone_tree {c : CardRel} (hc : ∀ p, Antitone (c · p)) :
-    (tree c).ScopeAntitone := fun a b h ↦ by
-  rw [tree, show a + 1 + b = a + (b + 1) by omega]
-  exact hc _ b.le_succ h
-
-/-- `noʷ` is the tree's *no*. -/
-theorem tree_no : tree no = NumberTree.no := rfl
-
-/-- `everyʷ` is the tree's *all*. -/
-theorem tree_every : tree every = NumberTree.all := by
-  grind [tree, every, NumberTree.all]
-
-/-- `many_aʷ` and `a_few_aʷ` are the cardinal quantifier *at least `θ`*. -/
-theorem tree_atLeast (θ : ℕ) : tree (atLeast θ) = NumberTree.cardinal (Set.Ici θ) := rfl
+/-- `many_aʷ` and `a_few_aʷ`, read on the tree of numbers, are *at least `θ`*. -/
+theorem ofSizes_atLeast (θ : ℕ) : NumberTree.ofSizes (atLeast θ) = NumberTree.atLeast θ := rfl
 
 end CardRel
 
@@ -868,14 +852,16 @@ variable {P}
 /-- A witness set of `qʷ(P)` is a witness set over `P`, in the sense of [barwise-cooper-1981] (20a),
 of the tree quantifier of `qʷ`'s relation. -/
 theorem witnessType_iff_witness :
-    WitnessType P c X ↔ Witness ((CardRel.tree c).toGQ P) P (· ∈ X) := by
-  classical
+    WitnessType P c X ↔ Witness ((NumberTree.ofSizes c).toGQ P) P (· ∈ X) := by
   have hsub : X ⊆ ({x | P x} : Finset E) ↔ ∀ x, x ∈ X → P x := by simp [Finset.subset_iff]
   refine (and_congr_right fun h ↦ ?_).trans (and_congr_left' hsub)
-  rw [NumberTree.toGQ_apply, CardRel.tree]
-  convert Iff.rfl using 2
-  · unfold count countOn; congr 1; ext a; simpa using fun ha ↦ hsub.1 h a ha
-  · rw [Nat.add_comm]; convert (count_decompose P (· ∈ X)).symm; unfold count countOn; congr
+  have hX : {x | P x ∧ x ∈ X} = (X : Set E) :=
+    Set.ext fun x ↦ ⟨And.right, fun hx ↦ ⟨hsub.1 h x hx, hx⟩⟩
+  have hP : {x | P x ∧ x ∈ X}.ncard + {x | P x ∧ x ∉ X}.ncard = {x | P x}.ncard :=
+    Set.ncard_inter_add_ncard_sdiff_eq_ncard _ _
+  rw [hX, Set.ncard_coe_finset] at hP
+  rw [NumberTree.toGQ_apply, NumberTree.ofSizes_apply, hX, Set.ncard_coe_finset, Nat.add_comm, hP,
+    Set.ncard_setOf_eq_card_filter]
 
 /-- The witness sets of `everyʷ(P)` are the B&C witness sets of `every P`. -/
 theorem everyW_iff_witness : WitnessType P .every X ↔ Witness (every P) P (· ∈ X) := by
@@ -932,23 +918,13 @@ section Probability
 open MeasureTheory ProbabilityTheory
 open scoped Finset ENNReal
 
-variable [MeasurableSpace E] [MeasurableSingletonClass E] [DecidableEq E] {X P : Finset E}
+variable [MeasurableSpace E] [MeasurableSingletonClass E] {X P : Finset E}
 
 /-- The probability of a witness set given the property is the proportion of the extension it takes,
 (51)–(52). -/
 theorem uniformOn_of_subset (h : X ⊆ P) : uniformOn (P : Set E) X = #X / #P := by
-  rw [uniformOn_apply_finset, Finset.inter_eq_right.2 h]
-
-/-- A lower threshold on the probability is one on the cardinality, (42), (50), (53), (54),
-(57), (58). -/
-theorem le_uniformOn_iff (h : X ⊆ P) (hP : P.Nonempty) {θ : ℝ≥0∞} :
-    θ ≤ uniformOn (P : Set E) X ↔ θ * #P ≤ #X := by
-  rw [uniformOn_of_subset h, ENNReal.le_div_iff_mul_le] <;> simp [hP.ne_empty]
-
-/-- An upper threshold on the probability is one on the cardinality, (55), (56). -/
-theorem uniformOn_le_iff (h : X ⊆ P) (hP : P.Nonempty) {θ : ℝ≥0∞} :
-    uniformOn (P : Set E) X ≤ θ ↔ #X ≤ θ * #P := by
-  rw [uniformOn_of_subset h, ENNReal.div_le_iff] <;> simp [hP.ne_empty]
+  rw [uniformOn_apply_of_finite P.finite_toSet, Set.inter_eq_right.2 (Finset.coe_subset.2 h),
+    Set.ncard_coe_finset, Set.ncard_coe_finset]
 
 /-- The probability is `0` exactly for the empty witness set (43). -/
 theorem uniformOn_eq_zero_iff_of_subset (h : X ⊆ P) : uniformOn (P : Set E) X = 0 ↔ X = ∅ := by
@@ -973,7 +949,9 @@ theorem witnessType_propAtLeast_iff [Fintype E] {P : E → Prop} [DecidablePred 
     (hd : 0 < d) (hX : X ⊆ ({x | P x} : Finset E)) (hP : 0 < #{x | P x}) :
     WitnessType P (.propAtLeast n d) X ↔
       (n / d : ℝ≥0∞) ≤ uniformOn (({x | P x} : Finset E) : Set E) X := by
-  rw [le_uniformOn_iff hX (Finset.card_pos.1 hP), ← ENNReal.mul_div_right_comm,
+  rw [le_uniformOn_iff (Finset.finite_toSet _) (Finset.coe_nonempty.2 (Finset.card_pos.1 hP)),
+    Set.inter_eq_right.2 (Finset.coe_subset.2 hX), Set.ncard_coe_finset, Set.ncard_coe_finset,
+    ← ENNReal.mul_div_right_comm,
     ENNReal.div_le_iff (by simpa using hd.ne') (by simp), ← Nat.cast_mul, ← Nat.cast_mul,
     Nat.cast_le, mul_comm _ d]
   exact ⟨fun h ↦ h.2.2, fun h ↦ ⟨hX, hP, h⟩⟩
@@ -1048,9 +1026,9 @@ open Classical in
 /-- For a relation closed upwards in `|X|`, (59a) is witnessed exactly when the tree quantifier
 holds of `P` and `Q`, by Barwise and Cooper's C11(i). -/
 theorem nonempty_generalWCIncr_iff_toGQ (hc : ∀ p, Monotone (c · p)) :
-    Nonempty (GeneralWCIncr P c Q) ↔ (CardRel.tree c).toGQ P fun x ↦ Nonempty (Q x) := by
+    Nonempty (GeneralWCIncr P c Q) ↔ (NumberTree.ofSizes c).toGQ P fun x ↦ Nonempty (Q x) := by
   rw [((NumberTree.conservative_toGQ _).livesOn P).monotone_apply_iff
-    ((CardRel.scopeMonotone_tree hc).toGQ P)]
+    ((NumberTree.scopeMonotone_ofSizes hc).toGQ P)]
   refine ⟨fun ⟨w⟩ ↦ ⟨(· ∈ w.X), witnessType_iff_witness.1 w.witness, fun a ha ↦ ⟨w.f a ha⟩⟩,
     fun ⟨w, hw, hQ⟩ ↦ ⟨⟨{x | w x}, witnessType_iff_witness.2 ?_, fun a ha ↦ (hQ a ?_).some⟩⟩⟩
   · simpa using hw
@@ -1060,9 +1038,9 @@ open Classical in
 /-- For a relation closed downwards in `|X|`, (59b) is witnessed exactly when the tree quantifier
 holds of `P` and `Q`, by C11(ii). -/
 theorem nonempty_generalWCDecr_iff_toGQ (hc : ∀ p, Antitone (c · p)) :
-    Nonempty (GeneralWCDecr P c Q) ↔ (CardRel.tree c).toGQ P fun x ↦ Nonempty (Q x) := by
+    Nonempty (GeneralWCDecr P c Q) ↔ (NumberTree.ofSizes c).toGQ P fun x ↦ Nonempty (Q x) := by
   rw [((NumberTree.conservative_toGQ _).livesOn P).antitone_apply_iff
-    ((CardRel.scopeAntitone_tree hc).toGQ P)]
+    ((NumberTree.scopeAntitone_ofSizes hc).toGQ P)]
   refine ⟨fun ⟨w⟩ ↦ ⟨(· ∈ w.X), witnessType_iff_witness.1 w.witness,
       fun a ⟨hQ, hP⟩ ↦ w.f a hP hQ⟩,
     fun ⟨w, hw, hPQ⟩ ↦ ⟨⟨{x | w x}, witnessType_iff_witness.2 ?_,
@@ -1146,27 +1124,24 @@ theorem nonempty_generalWCIncr_exist_iff [DecidableEq E] :
         Finset.card_singleton a⟩,
       fun _ hb ↦ (Finset.mem_singleton.1 hb).symm ▸ q⟩⟩⟩
 
-open Classical in
 /-- `many_a` (77) and `a_few_a` (89) are the counting quantifier *at least `θ`*. -/
 theorem nonempty_generalWCIncr_atLeast_iff {θ : ℕ} :
     Nonempty (GeneralWCIncr P (.atLeast θ) Q) ↔ atLeast θ P fun a ↦ Nonempty (Q a) :=
-  (nonempty_generalWCIncr_iff (CardRel.monotone_atLeast θ)).trans <| by
-    simp only [CardRel.atLeast, atLeast, count, countOn, ge_iff_le]
+  nonempty_generalWCIncr_iff_toGQ (CardRel.monotone_atLeast θ)
 
-open Classical in
 /-- `few_a` (79) is *at most `θ`*. -/
 theorem nonempty_generalWCDecr_atMost_iff {θ : ℕ} :
     Nonempty (GeneralWCDecr P (.atMost θ) Q) ↔ atMost θ P fun a ↦ Nonempty (Q a) :=
-  (nonempty_generalWCDecr_iff (CardRel.antitone_atMost θ)).trans <| by
-    simp only [CardRel.atMost, atMost, count, countOn]
+  nonempty_generalWCDecr_iff_toGQ (CardRel.antitone_atMost θ)
 
-open Classical in
 /-- `most` (74), `many_p` (78) and `a_few_p` (90) are the proportional threshold quantifier
 over a nonempty restrictor. -/
 theorem nonempty_generalWCIncr_propAtLeast_iff {n d : ℕ} :
     Nonempty (GeneralWCIncr P (.propAtLeast n d) Q) ↔
-      0 < count P ∧ thresholdOn Finset.univ P (fun a ↦ Nonempty (Q a)) n d :=
-  nonempty_generalWCIncr_iff (CardRel.monotone_propAtLeast n d)
+      0 < {x | P x}.ncard ∧ (NumberTree.threshold n d).toGQ P fun a ↦ Nonempty (Q a) := by
+  rw [nonempty_generalWCIncr_iff_toGQ (CardRel.monotone_propAtLeast n d),
+    ← Set.ncard_inter_add_ncard_sdiff_eq_ncard {x | P x} {x | Nonempty (Q x)}]
+  exact and_congr_left' (by rw [Nat.add_comm]; rfl)
 
 open Classical in
 /-- With the threshold `few` and `a few` share (34), `few_a` and `a_few_a` both hold just in
@@ -1182,12 +1157,11 @@ open Classical in
 /-- The objects with `P` split into those with `Q` and those precluding it. -/
 private theorem card_add_card_neg (P : E → Prop) [DecidablePred P] (Q : Ppty E) :
     #{x | P x ∧ Nonempty (Q x)} + #{x | P x ∧ Nonempty (Q x → Empty)} = #{x | P x} := by
-  have h' : #{x | P x ∧ Nonempty (Q x → Empty)} =
-      countOn Finset.univ fun x ↦ P x ∧ ¬ Nonempty (Q x) :=
+  have h' : #{x | P x ∧ Nonempty (Q x → Empty)} = #{x | P x ∧ ¬ Nonempty (Q x)} :=
     congrArg Finset.card <| Finset.filter_congr fun _ _ ↦ and_congr_right fun _ ↦
       ⟨fun ⟨g⟩ ⟨q⟩ ↦ (g q).elim, fun h ↦ ⟨fun q ↦ (h ⟨q⟩).elim⟩⟩
-  rw [h']
-  exact (countOn_decompose Finset.univ P fun a ↦ Nonempty (Q a)).symm
+  rw [h', ← Finset.filter_filter, ← Finset.filter_filter,
+    Finset.card_filter_add_card_filter_not]
 
 /-- The particular condition for `few_a` (85) is witnessed iff the general one (79) is, since its
 complement witness set (81) leaves at most `θ` objects with `P` that may have `Q`. -/

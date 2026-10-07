@@ -32,20 +32,18 @@ open Quantifier Quantifier.GQ GeurtsPouscoulous2009
 circle, all three with some circle or other. -/
 theorem exactlyTwo_not_scopeUp : ¬ ScopeMonotone (Quant.exactlyTwo.sem : GQ (Fin 3)) := by
   intro h
-  have key : Quant.exactlyTwo.sem (fun _ : Fin 3 => True) (fun s => s = 0 ∨ s = 1) →
-      Quant.exactlyTwo.sem (fun _ : Fin 3 => True) (fun _ => True) :=
-    h (fun _ => True) (show ((fun s : Fin 3 => s = 0 ∨ s = 1) : Fin 3 → Prop) ≤ fun _ => True from
-      fun _ _ => trivial)
-  simp only [Quant.sem, exactly] at key
-  rw [count_eq_decidable (λ s : Fin 3 => True ∧ (s = 0 ∨ s = 1)),
-    count_eq_decidable (λ _ : Fin 3 => True ∧ True)] at key
+  have key : Quant.exactlyTwo.sem (fun _ : Fin 3 ↦ True) (fun s ↦ s = 0 ∨ s = 1) →
+      Quant.exactlyTwo.sem (fun _ : Fin 3 ↦ True) (fun _ ↦ True) :=
+    h (fun _ ↦ True) (show ((fun s : Fin 3 ↦ s = 0 ∨ s = 1) : Fin 3 → Prop) ≤ fun _ ↦ True from
+      fun _ _ ↦ trivial)
+  simp only [Quant.sem] at key
   revert key
   decide
 
 /-- *Not all* is not upward entailing in its scope. -/
-theorem notAll_not_scopeUp : ¬ ScopeMonotone (Quant.notAll.sem : GQ (Fin 3)) := fun h =>
-  h (fun _ => True) (show ((fun _ : Fin 3 => False) : Fin 3 → Prop) ≤ fun _ => True from
-    fun _ hf => hf.elim) (fun hall => hall 0 trivial) (fun _ _ => trivial)
+theorem notAll_not_scopeUp : ¬ ScopeMonotone (Quant.notAll.sem : GQ (Fin 3)) := fun h ↦
+  h (fun _ ↦ True) (show ((fun _ : Fin 3 ↦ False) : Fin 3 → Prop) ≤ fun _ ↦ True from
+    fun _ hf ↦ hf.elim) (fun hall ↦ hall 0 trivial) (fun _ _ ↦ trivial)
 
 /-- Section 7.3, (62): every conventionalist theory predicts the local reading under *all* and
 *more than one*; only the stronger versions predict it under *exactly two*, which is neither

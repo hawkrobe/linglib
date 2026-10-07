@@ -1,49 +1,42 @@
 module
 
 public import Linglib.Semantics.Quantification.Basic
-public import Mathlib.Data.Fintype.Basic
-public import Mathlib.Data.Fintype.EquivFin
-public import Mathlib.Data.Finset.Card
-public import Mathlib.Logic.Equiv.Basic
-public import Mathlib.Tactic.NormNum
+public import Linglib.Semantics.Quantification.NumberTree
+public import Linglib.Core.Data.Set.Card
+public import Mathlib.Tactic.Linarith
 
 /-!
 # Counting generalized quantifiers
 
-This file defines the generalized quantifiers whose truth conditions count, among them *most*,
-*few*, *half*, *both*, *neither*, *at least n*, *at most n*, *exactly n*, *all but n* and
-*between n and k*, and proves their conservativity, monotonicity, smoothness and quantity.
-Counting is `countOn`, the number of members of a finite set satisfying a predicate, so the
-operators relativized to an explicit set decide without a `Fintype` on the carrier, and `count`
-is the specialization to the whole carrier. Proportions are compared without division through
-cross-multiplied thresholds. Quantity, the dependence of a quantifier on the four cell
-cardinalities of its two predicates, is Mostowski and van Benthem's permutation invariance on a
-finite carrier, and *most* is the proportional quantifier at the threshold one half.
+The counting quantifiers *most*, *few*, *half*, *both*, *neither*, *at least n*, *at most n*,
+*exactly n*, *all but n* and *between n and k* hold of `A` and `B` according to `|A \ B|` and
+`|A ∩ B|` alone, so each is the quantifier of a set of points on van Benthem's tree of numbers.
+Defined that way they are conservative and permutation invariant by construction, and their
+monotonicity, smoothness and proportionality are read off the tree. Sizes are `Set.ncard`,
+which asks for no decidability. On a finite type with decidable arguments each quantifier is
+decidable through the `Finset` count of each size, so a concrete case closes by `decide`. A
+quantifier restricted to a finite set `s` of individuals is the quantifier with restrictor
+`x ∈ s ∧ A x`.
 
 ## Main definitions
 
-* `countOn`, `count`: counting on an explicit finite set and on the whole carrier.
-* `everyOn`, `someOn`, `noOn`, `mostOn`, `thresholdOn`, `thresholdGtOn`, `prevalenceOn`: the
-  relativized operators.
-* `most`, `few`, `half`, `both`, `neither`, `atLeast`,
-  `atMost`, `exactly`, `allBut`, `between`: the counting
-  denotations, with their families on every finite carrier.
-* `Quantity`, `Proportional`: dependence on the cell cardinalities and on their ratio.
+* `Quantifier.NumberTree.most`, `Quantifier.NumberTree.atLeast`, …: the trees of the counting
+  quantifiers, with `Quantifier.NumberTree.threshold` for a proportion of the restrictor.
+* `Quantifier.GQ.most`, `Quantifier.GQ.atLeast`, …: their quantifiers.
+* `Quantifier.GQ.Proportional`: dependence on the ratio of `|A ∩ B|` to `|A \ B|`.
 
 ## Main results
 
-* `quantityInvariant_of_quantity`, `quantity_of_quantityInvariant`: quantity is quantity
-  invariance.
-* `proportional_most`, `thresholdGtOn_one_two_iff_mostOn`: *most* is proportional and is the
-  threshold at one half.
-* `count_eq_decidable`: the classical instance in a denotation exchanges for a canonical one,
-  so that concrete cases decide.
+* `Quantifier.GQ.smooth_most`, `Quantifier.GQ.proportional_most`: *most* is smooth and
+  proportional.
+* `Quantifier.NumberTree.thresholdGt_one_two`: *more than half* is *most*.
+* `Quantifier.GQ.not_existential_most`, `Quantifier.GQ.not_monotone_half`: *most* is not
+  existential, and *half* is monotone in its scope in neither direction.
 
 ## References
 
 * [barwise-cooper-1981]
 * [keenan-stavi-1986]
-* [mostowski-1957]
 * [peters-westerstahl-2006]
 * [van-benthem-1984]
 * [van-de-pol-etal-2023]
@@ -51,975 +44,359 @@ finite carrier, and *most* is the proportional quantifier at the threshold one h
 
 @[expose] public section
 
-namespace Quantifier.GQ
-
-/-! ### Relativized counting (the maximal-generality primitive)
-
-`countOn` counts over an **explicit** `Finset` domain — decidable with no `Fintype`
-on the carrier. The whole-carrier `count` is its `Finset.univ` specialization
-(`count := countOn Finset.univ`). The threshold/prevalence operators (the
-cross-multiplied `Nat` predicate `thresholdGtOn` and its demoted ℚ view
-`prevalenceOn`, the analogue of `Rel.edgeDensity`) build on `countOn`. -/
-
-/-- `countOn s P` counts the elements of `s` satisfying `P`, without a `Fintype` instance. -/
-def countOn {α : Type*} (s : Finset α) (P : α → Prop) [DecidablePred P] : Nat :=
-  (s.filter P).card
-
-/-- *Most* over `s` holds when strictly more members of `s` are `R ∧ S` than `R ∧ ¬ S`; on the
-whole carrier it is `most` (`mostOn_univ`). -/
-def mostOn {α : Type*} (s : Finset α) (R S : α → Prop)
-    [DecidablePred R] [DecidablePred S] : Prop :=
-  countOn s (fun x => R x ∧ S x) > countOn s (fun x => R x ∧ ¬ S x)
-
-/-- The threshold that at least `num/denom` of the `R`'s in `s` are `S`, cross-multiplied. -/
-def thresholdOn {α : Type*} (s : Finset α) (R S : α → Prop) (num denom : Nat)
-    [DecidablePred R] [DecidablePred S] : Prop :=
-  denom * countOn s (fun x => R x ∧ S x) ≥ num * countOn s R
-
-/-- The threshold that more than `num/denom` of the `R`'s in `s` are `S`, cross-multiplied. -/
-def thresholdGtOn {α : Type*} (s : Finset α) (R S : α → Prop) (num denom : Nat)
-    [DecidablePred R] [DecidablePred S] : Prop :=
-  denom * countOn s (fun x => R x ∧ S x) > num * countOn s R
-
-/-- The prevalence of `S` among the `R`'s in `s`, a rational proportion related to
-`thresholdGtOn` by `thresholdGtOn_iff_prevalenceOn`. -/
-def prevalenceOn {α : Type*} (s : Finset α) (R S : α → Prop)
-    [DecidablePred R] [DecidablePred S] : ℚ :=
-  if countOn s R = 0 then 0
-  else (countOn s (fun x => R x ∧ S x) : ℚ) / (countOn s R : ℚ)
-
-instance mostOn.decidable {α : Type*} (s : Finset α) (R S : α → Prop)
-    [DecidablePred R] [DecidablePred S] : Decidable (mostOn s R S) := by
-  unfold mostOn; infer_instance
-
-instance thresholdOn.decidable {α : Type*} (s : Finset α) (R S : α → Prop)
-    (num denom : Nat) [DecidablePred R] [DecidablePred S] :
-    Decidable (thresholdOn s R S num denom) := by unfold thresholdOn; infer_instance
-
-instance thresholdGtOn.decidable {α : Type*} (s : Finset α) (R S : α → Prop)
-    (num denom : Nat) [DecidablePred R] [DecidablePred S] :
-    Decidable (thresholdGtOn s R S num denom) := by unfold thresholdGtOn; infer_instance
-
-/-- The members of `s` in `R` split into those in `S` and those outside it. -/
-theorem countOn_decompose {α : Type*} (s : Finset α) (R S : α → Prop)
-    [DecidablePred R] [DecidablePred S] :
-    countOn s R =
-      countOn s (fun x => R x ∧ S x) + countOn s (fun x => R x ∧ ¬ S x) := by
-  simp only [countOn]
-  rw [← Finset.filter_filter R S s, ← Finset.filter_filter R (fun x => ¬ S x) s,
-      Finset.card_filter_add_card_filter_not]
-
-/-- The division-free `thresholdGtOn` agrees with "`prevalenceOn` exceeds `num/denom`",
-    justifying the demotion of the ℚ ratio to a derived view. -/
-theorem thresholdGtOn_iff_prevalenceOn {α : Type*} (s : Finset α) (R S : α → Prop)
-    [DecidablePred R] [DecidablePred S] (num denom : Nat)
-    (hdenom : 0 < denom) (hR : 0 < countOn s R) :
-    thresholdGtOn s R S num denom ↔ prevalenceOn s R S > (num : ℚ) / (denom : ℚ) := by
-  unfold thresholdGtOn prevalenceOn
-  rw [ite_eq_right (Nat.pos_iff_ne_zero.mp hR)]
-  have hdQ : (0 : ℚ) < denom := by exact_mod_cast hdenom
-  have hRQ : (0 : ℚ) < countOn s R := by exact_mod_cast hR
-  rw [gt_iff_lt, gt_iff_lt, div_lt_iff₀ hdQ, div_mul_eq_mul_div, lt_div_iff₀ hRQ,
-      mul_comm (countOn s (fun x => R x ∧ S x) : ℚ) (denom : ℚ),
-      ← Nat.cast_mul, ← Nat.cast_mul, Nat.cast_lt]
-
-/-- *More than half* is *most*, since the threshold `1/2` is the cutpoint at the `1 : 1` cell
-ratio. -/
-theorem thresholdGtOn_one_two_iff_mostOn {α : Type*} (s : Finset α) (R S : α → Prop)
-    [DecidablePred R] [DecidablePred S] :
-    thresholdGtOn s R S 1 2 ↔ mostOn s R S := by
-  unfold thresholdGtOn mostOn
-  rw [countOn_decompose s R S]
-  omega
-
-/-! The relativized `∀`/`∃` companions of `Basic`'s whole-carrier `every`, `GQ.some` and `no`
-are bounded over an explicit `Finset`, hence decidable with no `Fintype`
-(`Finset.decidableDforallFinset`). They are not duplicates of the whole-carrier denotations,
-since `every` ranges over the whole (possibly infinite) carrier for the general GQ theory,
-whereas `everyOn s` ranges over `s`; the two meet at `s = Finset.univ` (`everyOn_univ`). -/
-
-/-- `everyOn s R S` says that every `R` in `s` is `S`. -/
-def everyOn {α : Type*} (s : Finset α) (R S : α → Prop) : Prop := ∀ x ∈ s, R x → S x
-
-/-- `someOn s R S` says that some `R` in `s` is `S`. -/
-def someOn {α : Type*} (s : Finset α) (R S : α → Prop) : Prop := ∃ x ∈ s, R x ∧ S x
-
-/-- `noOn s R S` says that no `R` in `s` is `S`. -/
-def noOn {α : Type*} (s : Finset α) (R S : α → Prop) : Prop := ∀ x ∈ s, R x → ¬ S x
-
-instance everyOn.decidable {α : Type*} (s : Finset α) (R S : α → Prop)
-    [DecidablePred R] [DecidablePred S] : Decidable (everyOn s R S) := by
-  unfold everyOn; infer_instance
-
-instance someOn.decidable {α : Type*} (s : Finset α) (R S : α → Prop)
-    [DecidablePred R] [DecidablePred S] : Decidable (someOn s R S) := by
-  unfold someOn; infer_instance
-
-instance noOn.decidable {α : Type*} (s : Finset α) (R S : α → Prop)
-    [DecidablePred R] [DecidablePred S] : Decidable (noOn s R S) := by
-  unfold noOn; infer_instance
-
-/-! ### Characterizations of counting and prevalence -/
-
-theorem countOn_congr {α : Type*} {s : Finset α} {P Q : α → Prop}
-    [DecidablePred P] [DecidablePred Q] (h : ∀ x ∈ s, P x ↔ Q x) :
-    countOn s P = countOn s Q :=
-  congrArg Finset.card (Finset.filter_congr h)
-
-theorem countOn_eq_zero_iff {α : Type*} {s : Finset α} {P : α → Prop} [DecidablePred P] :
-    countOn s P = 0 ↔ ∀ x ∈ s, ¬ P x := by
-  simp [countOn, Finset.card_eq_zero, Finset.filter_eq_empty_iff]
-
-theorem countOn_pos_iff {α : Type*} {s : Finset α} {P : α → Prop} [DecidablePred P] :
-    0 < countOn s P ↔ ∃ x ∈ s, P x := by
-  simp [countOn, Finset.card_pos, Finset.filter_nonempty_iff]
-
-section Prevalence
-
-variable {α : Type*} {s : Finset α} {R S : α → Prop} [DecidablePred R] [DecidablePred S]
-
-/-- A prevalence of `1` over an inhabited reference class is the relativized universal. -/
-theorem prevalenceOn_eq_one_iff (hR : 0 < countOn s R) :
-    prevalenceOn s R S = 1 ↔ everyOn s R S := by
-  unfold prevalenceOn
-  rw [ite_eq_right hR.ne', div_eq_one_iff_eq (by exact_mod_cast hR.ne'), Nat.cast_inj]
-  constructor
-  · intro h x hx hRx
-    by_contra hS
-    have hpos : 0 < countOn s (fun x => R x ∧ ¬ S x) := countOn_pos_iff.mpr ⟨x, hx, hRx, hS⟩
-    have := countOn_decompose s R S
-    omega
-  · intro h
-    exact countOn_congr fun x hx => ⟨And.left, fun hRx => ⟨hRx, h x hx hRx⟩⟩
-
-/-- A prevalence of `0` over an inhabited reference class is the relativized `no`. -/
-theorem prevalenceOn_eq_zero_iff (hR : 0 < countOn s R) :
-    prevalenceOn s R S = 0 ↔ noOn s R S := by
-  unfold prevalenceOn
-  rw [ite_eq_right hR.ne', div_eq_zero_iff,
-    or_iff_left (by exact_mod_cast hR.ne' : ((countOn s R : ℚ)) ≠ 0),
-    Nat.cast_eq_zero, countOn_eq_zero_iff]
-  exact ⟨fun h x hx hRx hS => h x hx ⟨hRx, hS⟩, fun h x hx hRS => h x hx hRS.1 hRS.2⟩
-
-/-- A positive prevalence over an inhabited reference class is the relativized existential. -/
-theorem prevalenceOn_pos_iff (hR : 0 < countOn s R) :
-    0 < prevalenceOn s R S ↔ someOn s R S := by
-  unfold prevalenceOn
-  rw [ite_eq_right hR.ne', lt_div_iff₀ (by exact_mod_cast hR), zero_mul, Nat.cast_pos,
-    countOn_pos_iff]
-  exact Iff.rfl
-
-end Prevalence
-
-/-- `count P` counts the elements satisfying `P`, as `countOn` on `Finset.univ`. -/
-def count {α : Type*} [Fintype α] (P : α → Prop) [DecidablePred P] : Nat :=
-  countOn Finset.univ P
-
-open Classical
-
-variable {α : Type*} [Fintype α]
-
-/-! ### Whole-carrier recovery (`s = Finset.univ`)
-
-The relativized `∀`/`∃` operators reduce to `Basic`'s whole-carrier denotations
-at `s = univ`, exhibiting them as the general layer's finite specialization. -/
-
-@[simp] theorem everyOn_univ (R S : α → Prop) : everyOn Finset.univ R S ↔ every R S := by
-  simp [everyOn, every]
-
-@[simp] theorem someOn_univ (R S : α → Prop) : someOn Finset.univ R S ↔ GQ.some R S := by
-  simp [someOn, GQ.some]
-
-@[simp] theorem noOn_univ (R S : α → Prop) : noOn Finset.univ R S ↔ no R S := by
-  simp [noOn, no]
-
-/-! ### Counting denotations -/
-
-open Classical in
-/-- *Most* `R` are `S` when more of the `R` are `S` than are not, `|R ∩ S| > |R ∖ S|`. -/
-noncomputable def most : GQ α := fun R S =>
-  count (fun x : α => R x ∧ S x) > count (fun x : α => R x ∧ ¬ S x)
-
-open Classical in
-/-- *Few* `R` are `S` when fewer of the `R` are `S` than are not, `|R ∩ S| < |R ∖ S|`, so that
-`few` is the inner negation of `most`. -/
-noncomputable def few : GQ α := fun R S =>
-  count (fun x : α => R x ∧ S x) < count (fun x : α => R x ∧ ¬ S x)
-
-open Classical in
-/-- *Half* the `R` are `S` when `2 * |R ∩ S| = |R|`. -/
-noncomputable def half : GQ α := fun R S =>
-  2 * count (fun x : α => R x ∧ S x) = count (fun x : α => R x)
-
-open Classical in
-/-- *Both* is *every* on a restrictor of exactly two, Keenan and Stavi's *each of the two*. -/
-noncomputable def both : GQ α := fun R S =>
-  every R S ∧ count (fun x : α => R x) = 2
-
-open Classical in
-/-- *Neither* is *no* on a restrictor of exactly two, Keenan and Stavi's *not one of the
-two*. -/
-noncomputable def neither : GQ α :=
-  (no ⊓ (fun (R : α → Prop) _ => count (fun x : α => R x) = 2))
-
-open Classical in
-/-- *At least `n`* `R` are `S` when `|R ∩ S| ≥ n`. -/
-noncomputable def atLeast (n : Nat) : GQ α := fun R S =>
-  count (fun x : α => R x ∧ S x) ≥ n
-
-open Classical in
-/-- *At most `n`* `R` are `S` when `|R ∩ S| ≤ n`. -/
-noncomputable def atMost (n : Nat) : GQ α := fun R S =>
-  count (fun x : α => R x ∧ S x) ≤ n
-
-open Classical in
-/-- *Exactly `n`* `R` are `S` when `|R ∩ S| = n`. -/
-noncomputable def exactly (n : Nat) : GQ α := fun R S =>
-  count (fun x : α => R x ∧ S x) = n
-
-open Classical in
-/-- *All but `n`* `R` are `S` when `|R ∖ S| = n`, the exceptive counterpart of `exactly`, of
-which *every* is the case `n = 0`. -/
-noncomputable def allBut (n : Nat) : GQ α := fun R S =>
-  count (fun x : α => R x ∧ ¬ S x) = n
-
-/-- *Between `n` and `k`* `R` are `S` when `n ≤ |R ∩ S| ≤ k`. -/
-noncomputable def between (n k : Nat) : GQ α :=
-  ((atLeast n) ⊓ (atMost k))
-
-/-! ### `count` helpers -/
-
-/-- Equivalent predicates produce equal counts. -/
-theorem count_congr_iff {P Q : α → Prop}
-    [DecidablePred P] [DecidablePred Q]
-    (h : ∀ x, P x ↔ Q x) : count P = count Q := by
-  unfold count countOn; congr 1; ext x
-  constructor
-  · intro hx; rw [Finset.mem_filter] at hx ⊢; exact ⟨hx.1, (h x).mp hx.2⟩
-  · intro hx; rw [Finset.mem_filter] at hx ⊢; exact ⟨hx.1, (h x).mpr hx.2⟩
-
-/-- The count of `R ∧ S` is that of `R ∧ (R ∧ S)`, at any `DecidablePred` instances. -/
-theorem count_and_idem_any (R S : α → Prop)
-    (inst1 : DecidablePred (fun x : α => R x ∧ S x))
-    (inst2 : DecidablePred (fun x : α => R x ∧ (R x ∧ S x))) :
-    @count _ _ _ inst1 = @count _ _ _ inst2 := by
-  unfold count countOn; congr 1; ext x
-  simp only [Finset.mem_filter, Finset.mem_univ, true_and]
-  exact ⟨fun ⟨hR, hS⟩ => ⟨hR, hR, hS⟩, fun ⟨hR, _, hS⟩ => ⟨hR, hS⟩⟩
-
-/-- If `P` implies `Q` pointwise, then `|filter P| ≤ |filter Q|`. -/
-theorem count_le_of_imp {P Q : α → Prop}
-    [DecidablePred P] [DecidablePred Q]
-    (h : ∀ x, P x → Q x) : count P ≤ count Q := by
-  apply Finset.card_le_card
-  intro x; simp only [Finset.mem_filter, Finset.mem_univ, true_and]; exact h x
-
-/-- The count of `R` is the sum of the counts of `R ∧ S` and `R ∧ ¬ S`. -/
-theorem count_decompose (R S : α → Prop)
-    [DecidablePred R] [DecidablePred S] :
-    count (fun x : α => R x) =
-      count (fun x : α => R x ∧ S x) +
-      count (fun x : α => R x ∧ ¬ S x) :=
-  countOn_decompose _ R S
-
-/-- A count is at most the size of the carrier. -/
-theorem count_le_card (P : α → Prop) [DecidablePred P] : count P ≤ Fintype.card α :=
-  (Finset.card_filter_le _ _).trans_eq Finset.card_univ
-
-/-- The trivial predicate counts the whole carrier. -/
-theorem count_univ : count (fun _ : α => True) = Fintype.card α := by
-  simp [count, countOn]
-
-/-! ### Conservativity of counting GQs -/
-
-/-- A quantifier that reads only the two restrictor cells `|R ∩ S|` and `|R ∖ S|` is
-conservative. -/
-private theorem conservative_of_cells (P : ℕ → ℕ → Prop) :
-    Conservative fun (R S : α → Prop) ↦
-      P (count fun x ↦ R x ∧ S x) (count fun x ↦ R x ∧ ¬ S x) := by
-  intro R S
-  beta_reduce
-  congr! 2 <;> ext x <;> tauto
-
-theorem conservative_most : Conservative (most : GQ α) := conservative_of_cells (· > ·)
-
-theorem conservative_few : Conservative (few : GQ α) := conservative_of_cells (· < ·)
-
-theorem conservative_half : Conservative (half : GQ α) := by
-  intro R S; simp only [half]
-  constructor <;> intro h
-  · rw [← count_and_idem_any R S _ _]; exact h
-  · rw [count_and_idem_any R S _ _]; exact h
-
-theorem conservative_both : Conservative (both : GQ α) := by
-  intro R S; simp only [both]; rw [conservative_every R S]
-
-theorem conservative_neither : Conservative (neither : GQ α) := by
-  intro R S; simp only [neither, inf_apply]; rw [conservative_no R S]
-
-theorem conservative_atLeast (n : Nat) : Conservative (atLeast (α := α) n) :=
-  conservative_of_cells fun a _ => a ≥ n
-
-theorem conservative_atMost (n : Nat) : Conservative (atMost (α := α) n) :=
-  conservative_of_cells fun a _ => a ≤ n
-
-theorem conservative_exactly (n : Nat) : Conservative (exactly (α := α) n) :=
-  conservative_of_cells fun a _ => a = n
-
-theorem conservative_allBut (n : Nat) : Conservative (allBut (α := α) n) :=
-  conservative_of_cells fun _ b => b = n
-
-theorem conservative_between (n k : Nat) :
-    Conservative (between (α := α) n k) := by
-  intro R S; simp only [between, inf_apply]
-  exact Iff.and (conservative_atLeast n R S) (conservative_atMost k R S)
-
-/-! ### Counting quantifier identities -/
-
-/-- *Some* is *at least one*. -/
-theorem some_eq_atLeast_one :
-    (GQ.some : GQ α) = (atLeast (α := α) 1 : GQ α) := by
-  funext R S
-  simp only [GQ.some, atLeast]
-  refine propext ⟨fun ⟨x, hR, hS⟩ => ?_, fun h => ?_⟩
-  · simp only [count, countOn]
-    exact Nat.one_le_iff_ne_zero.mpr (Finset.card_pos.mpr ⟨x, Finset.mem_filter.mpr
-      ⟨Finset.mem_univ _, hR, hS⟩⟩).ne'
-  · simp only [count, countOn] at h
-    have hpos : 0 < (Finset.univ.filter (fun x : α => R x ∧ S x)).card := by omega
-    obtain ⟨x, hx⟩ := Finset.card_pos.mp hpos
-    simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hx
-    exact ⟨x, hx.1, hx.2⟩
-
-/-- `atMost n` is the complement of `atLeast (n + 1)`. -/
-theorem atMost_eq_compl_atLeast_succ (n : Nat) :
-    (atMost (α := α) n : GQ α) =
-    ((atLeast (α := α) (n + 1))ᶜ : GQ α) := by
-  funext R S; simp only [atMost, atLeast, compl_apply]
-  exact propext ⟨fun h hGe => by omega, fun h => by omega⟩
-
-/-- *No* is *at most zero*. -/
-theorem no_eq_atMost_zero :
-    (no : GQ α) = (atMost (α := α) 0 : GQ α) := by
+namespace Quantifier
+
+namespace NumberTree
+
+/-! ### The trees of the counting quantifiers -/
+
+/-- *Most* holds when more of `A` lies inside `B` than outside it. -/
+protected def most : NumberTree := fun a b ↦ a < b
+
+/-- *Few* holds when less of `A` lies inside `B` than outside it. -/
+protected def few : NumberTree := fun a b ↦ b < a
+
+/-- *Half* holds when as much of `A` lies inside `B` as outside it. -/
+protected def half : NumberTree := fun a b ↦ a = b
+
+/-- *Both* holds when `A` has two members, both in `B`. -/
+protected def both : NumberTree := fun a b ↦ a = 0 ∧ b = 2
+
+/-- *Neither* holds when `A` has two members, neither in `B`. -/
+protected def neither : NumberTree := fun a b ↦ a = 2 ∧ b = 0
+
+/-- *At least `n`* holds when at least `n` members of `A` lie in `B`. -/
+protected def atLeast (n : ℕ) : NumberTree := fun _ b ↦ n ≤ b
+
+/-- *At most `n`* holds when at most `n` members of `A` lie in `B`. -/
+protected def atMost (n : ℕ) : NumberTree := fun _ b ↦ b ≤ n
+
+/-- *Exactly `n`* holds when exactly `n` members of `A` lie in `B`. -/
+protected def exactly (n : ℕ) : NumberTree := fun _ b ↦ b = n
+
+/-- *All but `n`* holds when exactly `n` members of `A` lie outside `B`. -/
+protected def allBut (n : ℕ) : NumberTree := fun a _ ↦ a = n
+
+/-- *Between `n` and `k`* holds when between `n` and `k` members of `A` lie in `B`. -/
+protected def between (n k : ℕ) : NumberTree := fun _ b ↦ n ≤ b ∧ b ≤ k
+
+/-- The threshold `n / d` holds when at least that proportion of `A` lies in `B`. -/
+def threshold (n d : ℕ) : NumberTree := ofSizes fun x p ↦ n * p ≤ d * x
+
+/-- The strict threshold `n / d` holds when more than that proportion of `A` lies in `B`. -/
+def thresholdGt (n d : ℕ) : NumberTree := ofSizes fun x p ↦ n * p < d * x
+
+instance : DecidableRel NumberTree.most := fun a b ↦ Nat.decLt a b
+instance : DecidableRel NumberTree.few := fun a b ↦ Nat.decLt b a
+instance : DecidableRel NumberTree.half := fun a b ↦ Nat.decEq a b
+instance : DecidableRel NumberTree.both := fun a b ↦ inferInstanceAs (Decidable (a = 0 ∧ b = 2))
+instance : DecidableRel NumberTree.neither := fun a b ↦ inferInstanceAs (Decidable (a = 2 ∧ b = 0))
+instance (n : ℕ) : DecidableRel (NumberTree.atLeast n) := fun _ b ↦ Nat.decLe n b
+instance (n : ℕ) : DecidableRel (NumberTree.atMost n) := fun _ b ↦ Nat.decLe b n
+instance (n : ℕ) : DecidableRel (NumberTree.exactly n) := fun _ b ↦ Nat.decEq b n
+instance (n : ℕ) : DecidableRel (NumberTree.allBut n) := fun a _ ↦ Nat.decEq a n
+instance (n k : ℕ) : DecidableRel (NumberTree.between n k) := fun _ b ↦
+  inferInstanceAs (Decidable (n ≤ b ∧ b ≤ k))
+instance (n d : ℕ) : DecidableRel (threshold n d) := fun a b ↦
+  inferInstanceAs (Decidable (n * (a + b) ≤ d * b))
+instance (n d : ℕ) : DecidableRel (thresholdGt n d) := fun a b ↦
+  inferInstanceAs (Decidable (n * (a + b) < d * b))
+
+theorem innerNeg_most : NumberTree.most.innerNeg = NumberTree.few := rfl
+
+theorem innerNeg_both : NumberTree.both.innerNeg = NumberTree.neither := by
+  funext a b; exact propext and_comm
+
+theorem compl_atLeast_succ (n : ℕ) : (NumberTree.atLeast (n + 1))ᶜ = NumberTree.atMost n := by
+  funext a b; exact propext (show ¬ n + 1 ≤ b ↔ b ≤ n by omega)
+
+theorem atLeast_inf_atMost (n : ℕ) :
+    NumberTree.atLeast n ⊓ NumberTree.atMost n = NumberTree.exactly n := by
+  funext a b; exact propext (show n ≤ b ∧ b ≤ n ↔ b = n by omega)
+
+/-- *More than half* is *most*. -/
+theorem thresholdGt_one_two : thresholdGt 1 2 = NumberTree.most := by
+  funext a b; exact propext (show 1 * (a + b) < 2 * b ↔ a < b by omega)
+
+theorem scopeMonotone_most : NumberTree.most.ScopeMonotone := fun _ _ h ↦ by
+  grind [NumberTree.most]
+
+theorem scopeAntitone_few : NumberTree.few.ScopeAntitone := scopeMonotone_most.innerNeg
+
+theorem scopeMonotone_atLeast (n : ℕ) : (NumberTree.atLeast n).ScopeMonotone := fun _ _ h ↦ by
+  grind [NumberTree.atLeast]
+
+theorem scopeAntitone_atMost (n : ℕ) : (NumberTree.atMost n).ScopeAntitone := fun _ _ h ↦ by
+  grind [NumberTree.atMost]
+
+/-! ### Proportionality -/
+
+/-- A tree is proportional when on nonempty rows it depends only on the ratio of `b` to `a`. -/
+def Proportional (q : NumberTree) : Prop :=
+  ∀ a b a' b', 0 < a + b → 0 < a' + b' → b * a' = b' * a → (q a b ↔ q a' b')
+
+theorem Proportional.innerNeg {q : NumberTree} (h : q.Proportional) : q.innerNeg.Proportional :=
+  fun a b a' b' h₁ h₂ hx ↦ h b a b' a' (by omega) (by omega) (by linarith)
+
+theorem proportional_most : NumberTree.most.Proportional := fun a b a' b' _ _ _ ↦ by
+  unfold NumberTree.most; constructor <;> intro <;> nlinarith
+
+theorem proportional_few : NumberTree.few.Proportional := proportional_most.innerNeg
+
+theorem proportional_half : NumberTree.half.Proportional := fun a b a' b' _ _ _ ↦ by
+  unfold NumberTree.half; constructor <;> rintro rfl <;> nlinarith
+
+end NumberTree
+
+namespace GQ
+
+variable {α : Type*}
+
+/-! ### The counting quantifiers -/
+
+/-- *Most* `A` are `B` when more of the `A` are `B` than are not. -/
+def most : GQ α := NumberTree.most.toGQ
+
+/-- *Few* `A` are `B` when fewer of the `A` are `B` than are not, the inner negation of
+*most*. -/
+def few : GQ α := NumberTree.few.toGQ
+
+/-- *Half* the `A` are `B` when as many of the `A` are `B` as are not. -/
+def half : GQ α := NumberTree.half.toGQ
+
+/-- *Both* is *every* on a restrictor of two, Keenan and Stavi's *each of the two*. -/
+def both : GQ α := NumberTree.both.toGQ
+
+/-- *Neither* is *no* on a restrictor of two, Keenan and Stavi's *not one of the two*. -/
+def neither : GQ α := NumberTree.neither.toGQ
+
+/-- *At least `n`* `A` are `B` when `n ≤ |A ∩ B|`. -/
+def atLeast (n : ℕ) : GQ α := (NumberTree.atLeast n).toGQ
+
+/-- *At most `n`* `A` are `B` when `|A ∩ B| ≤ n`. -/
+def atMost (n : ℕ) : GQ α := (NumberTree.atMost n).toGQ
+
+/-- *Exactly `n`* `A` are `B` when `|A ∩ B| = n`. -/
+def exactly (n : ℕ) : GQ α := (NumberTree.exactly n).toGQ
+
+/-- *All but `n`* `A` are `B` when `|A \ B| = n`. -/
+def allBut (n : ℕ) : GQ α := (NumberTree.allBut n).toGQ
+
+/-- *Between `n` and `k`* `A` are `B` when `n ≤ |A ∩ B| ≤ k`. -/
+def between (n k : ℕ) : GQ α := (NumberTree.between n k).toGQ
+
+section Decidable
+
+variable [Fintype α] (A B : α → Prop) [DecidablePred A] [DecidablePred B] (n k : ℕ)
+
+instance : Decidable (most A B) := NumberTree.toGQ.decidable ..
+instance : Decidable (few A B) := NumberTree.toGQ.decidable ..
+instance : Decidable (half A B) := NumberTree.toGQ.decidable ..
+instance : Decidable (both A B) := NumberTree.toGQ.decidable ..
+instance : Decidable (neither A B) := NumberTree.toGQ.decidable ..
+instance : Decidable (atLeast n A B) := NumberTree.toGQ.decidable ..
+instance : Decidable (atMost n A B) := NumberTree.toGQ.decidable ..
+instance : Decidable (exactly n A B) := NumberTree.toGQ.decidable ..
+instance : Decidable (allBut n A B) := NumberTree.toGQ.decidable ..
+instance : Decidable (between n k A B) := NumberTree.toGQ.decidable ..
+
+end Decidable
+
+variable {A B : α → Prop} {n : ℕ}
+
+theorem most_apply : most A B ↔ {x | A x ∧ ¬ B x}.ncard < {x | A x ∧ B x}.ncard := Iff.rfl
+
+theorem few_apply : few A B ↔ {x | A x ∧ B x}.ncard < {x | A x ∧ ¬ B x}.ncard := Iff.rfl
+
+theorem half_apply : half A B ↔ {x | A x ∧ ¬ B x}.ncard = {x | A x ∧ B x}.ncard := Iff.rfl
+
+theorem atLeast_apply : atLeast n A B ↔ n ≤ {x | A x ∧ B x}.ncard := Iff.rfl
+
+theorem atMost_apply : atMost n A B ↔ {x | A x ∧ B x}.ncard ≤ n := Iff.rfl
+
+theorem exactly_apply : exactly n A B ↔ {x | A x ∧ B x}.ncard = n := Iff.rfl
+
+theorem conservative_most : Conservative (most : GQ α) := NumberTree.conservative_toGQ _
+
+theorem conservative_atLeast (n : ℕ) : Conservative (atLeast n : GQ α) :=
+  NumberTree.conservative_toGQ _
+
+theorem conservative_exactly (n : ℕ) : Conservative (exactly n : GQ α) :=
+  NumberTree.conservative_toGQ _
+
+/-! ### Identities -/
+
+theorem atMost_eq_compl_atLeast_succ (n : ℕ) : (atMost n : GQ α) = (atLeast (n + 1))ᶜ := by
+  rw [atMost, atLeast, ← NumberTree.toGQ_compl, NumberTree.compl_atLeast_succ]
+
+theorem exactly_eq_atLeast_inf_atMost (n : ℕ) : (exactly n : GQ α) = atLeast n ⊓ atMost n := by
+  rw [exactly, atLeast, atMost, ← NumberTree.toGQ_inf, NumberTree.atLeast_inf_atMost]
+
+/-- On a finite universe *every* is the quantifier of the tree's *all*. -/
+theorem every_eq_toGQ_all [Finite α] : (every : GQ α) = NumberTree.all.toGQ := by
+  funext A B
+  simp only [every, NumberTree.toGQ, NumberTree.all, Set.ncard_eq_zero (Set.toFinite _),
+    Set.eq_empty_iff_forall_notMem, Set.mem_ofPred_eq, not_and, not_not]
+
+/-- On a finite universe *some* is *at least one*. -/
+theorem some_eq_atLeast_one [Finite α] : (GQ.some : GQ α) = atLeast 1 := by
+  funext A B
+  simp only [GQ.some, atLeast, NumberTree.toGQ, NumberTree.atLeast, Nat.one_le_iff_ne_zero,
+    ne_eq, Set.ncard_eq_zero (Set.toFinite _), ← Set.nonempty_iff_ne_empty]
+  rfl
+
+theorem no_eq_atMost_zero [Finite α] : (no : GQ α) = atMost 0 := by
   rw [← compl_some, some_eq_atLeast_one, atMost_eq_compl_atLeast_succ]
 
-/-- *Exactly `n`* is *at least `n`* and *at most `n`*. -/
-theorem exactly_eq_atLeast_inf_atMost (n : Nat) :
-    (exactly (α := α) n : GQ α) =
-    (((atLeast (α := α) n) ⊓ (atMost (α := α) n)) : GQ α) := by
-  funext R S; simp only [exactly, atLeast, atMost, inf_apply]
-  exact propext ⟨fun h => ⟨by omega, by omega⟩, fun ⟨h1, h2⟩ => by omega⟩
+theorem allBut_zero_eq_every [Finite α] : (allBut 0 : GQ α) = every := by
+  rw [every_eq_toGQ_all]; rfl
 
-/-- *All but zero* is *every*. -/
-theorem allBut_zero_eq_every :
-    (allBut (α := α) 0 : GQ α) = (every : GQ α) := by
-  funext R S; simp only [allBut, every]
-  refine propext ⟨fun h x hR => ?_, fun h => ?_⟩
-  · by_contra hS
-    have : 0 < count (fun x : α => R x ∧ ¬ S x) :=
-      Finset.card_pos.mpr ⟨x, Finset.mem_filter.mpr
-        ⟨Finset.mem_univ _, hR, hS⟩⟩
-    omega
-  · simp only [count, countOn, Finset.card_eq_zero, Finset.filter_eq_empty_iff]
-    intro x _ ⟨hR, hNS⟩; exact hNS (h x hR)
+/-! ### Monotonicity -/
 
-/-! ### Scope monotonicity of counting GQs -/
+theorem scopeMonotone_most [Finite α] : ScopeMonotone (most : GQ α) :=
+  NumberTree.scopeMonotone_most.toGQ
 
-theorem scopeAntitone_few : ScopeAntitone (few : GQ α) := by
-  intro R S S' hSS' h
-  simp only [few] at *
-  have h1 : count (fun x : α => R x ∧ S x) ≤
-      count (fun x : α => R x ∧ S' x) :=
-    count_le_of_imp fun x ⟨hR, hS⟩ => ⟨hR, hSS' x hS⟩
-  have h2 : count (fun x : α => R x ∧ ¬ S' x) ≤
-      count (fun x : α => R x ∧ ¬ S x) :=
-    count_le_of_imp fun x ⟨hR, hNS'⟩ => ⟨hR, fun hS => hNS' (hSS' x hS)⟩
-  omega
+theorem scopeAntitone_few [Finite α] : ScopeAntitone (few : GQ α) :=
+  NumberTree.scopeAntitone_few.toGQ
 
-theorem scopeMonotone_most : ScopeMonotone (most : GQ α) := by
-  intro R S S' hSS' h
-  simp only [most] at *
-  have h1 : count (fun x : α => R x ∧ S x) ≤
-      count (fun x : α => R x ∧ S' x) :=
-    count_le_of_imp fun x ⟨hR, hS⟩ => ⟨hR, hSS' x hS⟩
-  have h2 : count (fun x : α => R x ∧ ¬ S' x) ≤
-      count (fun x : α => R x ∧ ¬ S x) :=
-    count_le_of_imp fun x ⟨hR, hNS'⟩ => ⟨hR, fun hS => hNS' (hSS' x hS)⟩
-  omega
+theorem scopeMonotone_atLeast [Finite α] (n : ℕ) : ScopeMonotone (atLeast n : GQ α) :=
+  (NumberTree.scopeMonotone_atLeast n).toGQ
 
-/-- On a nonempty domain `most` is not scope antitone, since `most ⊤ ⊤` holds and `most ⊤ ⊥`
-fails. -/
-theorem not_scopeAntitone_most [Nonempty α] : ¬ ScopeAntitone (most : GQ α) := fun h ↦ by
-  have := h (fun _ ↦ True) (bot_le (a := fun _ ↦ True))
-  simp [most, count, countOn] at this
+theorem scopeAntitone_atMost [Finite α] (n : ℕ) : ScopeAntitone (atMost n : GQ α) :=
+  (NumberTree.scopeAntitone_atMost n).toGQ
 
-theorem scopeMonotone_atLeast (n : Nat) :
-    ScopeMonotone (atLeast (α := α) n) := by
-  intro R S S' hSS' h
-  simp only [atLeast] at *
-  exact le_trans h (count_le_of_imp fun x ⟨hR, hS⟩ => ⟨hR, hSS' x hS⟩)
+theorem monotone_atLeast [Finite α] (n : ℕ) (A : α → Prop) : Monotone (atLeast n A) :=
+  scopeMonotone_atLeast n A
 
-theorem scopeAntitone_atMost (n : Nat) :
-    ScopeAntitone (atMost (α := α) n) := by
-  rw [atMost_eq_compl_atLeast_succ]
-  exact ScopeMonotone.compl _ (scopeMonotone_atLeast _)
+theorem antitone_atMost [Finite α] (n : ℕ) (A : α → Prop) : Antitone (atMost n A) :=
+  scopeAntitone_atMost n A
 
-/-- `at least n R` is a monotone quantifier. -/
-theorem monotone_atLeast (n : Nat) (R : α → Prop) : Monotone (atLeast n R) :=
-  (scopeMonotone_atLeast n) R
+/-- On a nonempty finite universe *most* is not scope antitone, since `most ⊤ ⊤` holds and
+`most ⊤ ⊥` fails. -/
+theorem not_scopeAntitone_most [Finite α] [Nonempty α] : ¬ ScopeAntitone (most : GQ α) :=
+  fun h ↦ by
+    have := h (fun _ ↦ True) (bot_le (a := fun _ ↦ True))
+    simp [most_apply, Set.ncard_univ, Nat.card_pos] at this
 
-/-- `at most n R` is an antitone quantifier. -/
-theorem antitone_atMost (n : Nat) (R : α → Prop) : Antitone (atMost n R) :=
-  (scopeAntitone_atMost n) R
+theorem restrictorMonotone_atLeast [Finite α] (n : ℕ) : RestrictorMonotone (atLeast n : GQ α) :=
+  fun S R R' h hq ↦ (show n ≤ {x | R x ∧ S x}.ncard from hq).trans
+    (Set.ncard_le_ncard (t := {x | R' x ∧ S x}) fun x hx ↦ ⟨h x hx.1, hx.2⟩)
+
+theorem restrictorAntitone_atMost [Finite α] (n : ℕ) : RestrictorAntitone (atMost n : GQ α) := by
+  rw [atMost_eq_compl_atLeast_succ]; exact (restrictorMonotone_atLeast _).compl
 
 /-! ### Smoothness -/
 
-theorem downNE_most : DownNEMon (most : GQ α) := by
-  intro R S R' hSub hKeep hQ
-  simp only [most] at *
-  have hEq : count (fun x : α => R' x ∧ S x) =
-      count (fun x : α => R x ∧ S x) := by
-    simp only [count, countOn]; congr 1; ext x
-    simp only [Finset.mem_filter, Finset.mem_univ, true_and]
-    exact ⟨fun ⟨hR', hS⟩ => ⟨hSub x hR', hS⟩,
-           fun ⟨hR, hS⟩ => ⟨hKeep x hR hS, hS⟩⟩
-  have hLe : count (fun x : α => R' x ∧ ¬ S x) ≤
-      count (fun x : α => R x ∧ ¬ S x) :=
-    count_le_of_imp fun x ⟨hR', hS⟩ => ⟨hSub x hR', hS⟩
-  omega
+theorem downNE_most [Finite α] : DownNEMon (most : GQ α) := by
+  intro R S R' hR' hRS hq
+  rw [most_apply] at *
+  rw [show {x | R' x ∧ S x} = {x | R x ∧ S x} by ext; grind]
+  exact (Set.ncard_le_ncard (t := {x | R x ∧ ¬ S x}) fun x hx ↦ ⟨hR' x hx.1, hx.2⟩).trans_lt hq
 
-theorem upSE_most : UpSEMon (most : GQ α) := by
-  intro R S R' hSub hDiff hQ
-  simp only [most] at *
-  have hEq : count (fun x : α => R' x ∧ ¬ S x) =
-      count (fun x : α => R x ∧ ¬ S x) := by
-    simp only [count, countOn]; congr 1; ext x
-    simp only [Finset.mem_filter, Finset.mem_univ, true_and]
-    exact ⟨fun ⟨hR', hS⟩ => ⟨hDiff x hR' hS, hS⟩,
-           fun ⟨hR, hS⟩ => ⟨hSub x hR, hS⟩⟩
-  have hLe : count (fun x : α => R x ∧ S x) ≤
-      count (fun x : α => R' x ∧ S x) :=
-    count_le_of_imp fun x ⟨hR, hS⟩ => ⟨hSub x hR, hS⟩
-  omega
+theorem upSE_most [Finite α] : UpSEMon (most : GQ α) := by
+  intro R S R' hR hR'S hq
+  rw [most_apply] at *
+  rw [show {x | R' x ∧ ¬ S x} = {x | R x ∧ ¬ S x} by ext; grind]
+  exact hq.trans_le (Set.ncard_le_ncard (t := {x | R' x ∧ S x}) fun x hx ↦ ⟨hR x hx.1, hx.2⟩)
 
-theorem smooth_most : Smooth (most : GQ α) :=
-  ⟨downNE_most, upSE_most⟩
+theorem smooth_most [Finite α] : Smooth (most : GQ α) := ⟨downNE_most, upSE_most⟩
 
-theorem restrictorMonotone_atLeast (n : Nat) :
-    RestrictorMonotone (atLeast (α := α) n) := by
-  intro R R' S hRR' h
-  simp only [atLeast] at *
-  exact le_trans h (count_le_of_imp fun x ⟨hR, hS⟩ => ⟨hRR' x hR, hS⟩)
+theorem smooth_atLeast [Finite α] (n : ℕ) : Smooth (atLeast n : GQ α) := by
+  refine ⟨fun R S R' hR' hRS hq ↦ ?_, (restrictorMonotone_atLeast n).upSE⟩
+  rwa [atLeast_apply, show {x | R' x ∧ S x} = {x | R x ∧ S x} by ext; grind]
 
-theorem downNE_atLeast (n : Nat) :
-    DownNEMon (atLeast (α := α) n) := by
-  intro R S R' hSub hKeep hQ
-  simp only [atLeast] at *
-  have hEq : count (fun x : α => R' x ∧ S x) =
-      count (fun x : α => R x ∧ S x) := by
-    simp only [count, countOn]; congr 1; ext x
-    simp only [Finset.mem_filter, Finset.mem_univ, true_and]
-    exact ⟨fun ⟨hR', hS⟩ => ⟨hSub x hR', hS⟩,
-           fun ⟨hR, hS⟩ => ⟨hKeep x hR hS, hS⟩⟩
-  omega
+theorem coSmooth_atMost [Finite α] (n : ℕ) : CoSmooth (atMost n : GQ α) := by
+  rw [atMost_eq_compl_atLeast_succ]; exact (smooth_iff_coSmooth_compl _).mp (smooth_atLeast _)
 
-theorem smooth_atLeast (n : Nat) :
-    Smooth (atLeast (α := α) n) :=
-  ⟨downNE_atLeast n,
-   RestrictorMonotone.upSE _ (restrictorMonotone_atLeast n)⟩
+/-! ### Proportionality -/
 
-theorem restrictorAntitone_atMost (n : Nat) :
-    RestrictorAntitone (atMost (α := α) n) := by
-  rw [atMost_eq_compl_atLeast_succ]
-  exact RestrictorMonotone.compl _ (restrictorMonotone_atLeast _)
-
-theorem coSmooth_atMost (n : Nat) :
-    CoSmooth (atMost (α := α) n) := by
-  rw [atMost_eq_compl_atLeast_succ]
-  exact (smooth_iff_coSmooth_compl _).mp (smooth_atLeast _)
-
-/-! ### Quantity
-
-Cardinality-based, `Fintype`-gated. `quantityInvariant_of_quantity` and
-`quantity_of_quantityInvariant` bridge to the model-agnostic
-`QuantityInvariant` (in `Defs.lean`): the four Venn cells are the fibers of
-the `Bool × Bool` code `x ↦ (decide (R x), decide (S x))`, and equal cell
-cardinalities glue (`Equiv.ofFiberEquiv`) into a domain bijection. -/
-
-/-- A quantifier has quantity when `Q(A, B)` depends only on the four cardinalities `|A ∩ B|`,
-`|A ∖ B|`, `|B ∖ A|` and `|M ∖ (A ∪ B)|`. -/
-def Quantity (q : GQ α) : Prop :=
-  ∀ (R₁ S₁ R₂ S₂ : α → Prop),
-    count (fun x => R₁ x ∧ S₁ x) =
-      count (fun x => R₂ x ∧ S₂ x) →
-    count (fun x => R₁ x ∧ ¬ S₁ x) =
-      count (fun x => R₂ x ∧ ¬ S₂ x) →
-    count (fun x => ¬ R₁ x ∧ S₁ x) =
-      count (fun x => ¬ R₂ x ∧ S₂ x) →
-    count (fun x => ¬ R₁ x ∧ ¬ S₁ x) =
-      count (fun x => ¬ R₂ x ∧ ¬ S₂ x) →
-    (q R₁ S₁ ↔ q R₂ S₂)
-
-/-- Quantity implies quantity invariance, since a bijection carries each cell of `(A', B')`
-onto the corresponding cell of `(A, B)`. -/
-theorem quantityInvariant_of_quantity (q : GQ α) (hQ : Quantity q) :
-    QuantityInvariant q := by
-  classical
-  intro A B A' B' f hBij hA hB
-  -- For each cell predicate `P`, `count (P A B) = count (P A' B')`. The
-  -- bijection `f` maps the `(A', B')`-cell into the `(A, B)`-cell (membership
-  -- transported by `hA`/`hB`), so the two filters have equal cardinality.
-  have key : ∀ (P Q : α → Prop) [DecidablePred P] [DecidablePred Q],
-      (∀ x, Q x ↔ P (f x)) → count P = count Q := by
-    intro P Q _ _ hPQ
-    refine (Finset.card_bij (fun x _ => f x) ?_ ?_ ?_).symm
-    · intro x hx
-      simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hx ⊢
-      exact (hPQ x).mp hx
-    · intro x₁ _ x₂ _ h; exact hBij.injective h
-    · intro y hy
-      simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hy
-      obtain ⟨x, rfl⟩ := hBij.surjective y
-      refine ⟨x, ?_, rfl⟩
-      simp only [Finset.mem_filter, Finset.mem_univ, true_and]
-      exact (hPQ x).mpr hy
-  refine hQ A B A' B' ?_ ?_ ?_ ?_
-  · exact key _ _ (fun x => by rw [hA x, hB x])
-  · exact key _ _ (fun x => by rw [hA x, hB x])
-  · exact key _ _ (fun x => by rw [hA x, hB x])
-  · exact key _ _ (fun x => by rw [hA x, hB x])
-
-/-- The four Venn cells of `(R, S)` as the fibers of the `Bool × Bool` code
-    `x ↦ (decide (R x), decide (S x))`. The fiber over `(true, true)` is
-    `R ∩ S`, over `(true, false)` is `R ∖ S`, etc. -/
-private def cellCode (R S : α → Prop) [DecidablePred R] [DecidablePred S] :
-    α → Bool × Bool :=
-  fun x => (decide (R x), decide (S x))
-
-/-- Each cell count is the `Fintype.card` of the corresponding `cellCode`
-    fiber. The `b₁`/`b₂` flags select which of the four cells. -/
-private theorem card_cellCode_fiber (R S : α → Prop)
-    [DecidablePred R] [DecidablePred S] (b₁ b₂ : Bool) :
-    Fintype.card { x // cellCode R S x = (b₁, b₂) } =
-      count (fun x => (if b₁ then R x else ¬ R x) ∧
-                      (if b₂ then S x else ¬ S x)) := by
-  rw [Fintype.card_subtype]
-  simp only [count, countOn, cellCode, Prod.mk.injEq]
-  congr 1
-  ext x
-  simp only [Finset.mem_filter, Finset.mem_univ, true_and]
-  cases b₁ <;> cases b₂ <;> simp [decide_eq_true_eq]
-
-/-- Quantity invariance implies quantity, since equal cell cardinalities give an equivalence
-of each `cellCode` fiber and the four glue to a bijection `f` with `R₁ ∘ f ↔ R₂` and
-`S₁ ∘ f ↔ S₂`. -/
-theorem quantity_of_quantityInvariant (q : GQ α)
-    (hQ : QuantityInvariant q) :
-    Quantity q := by
-  classical
-  intro R₁ S₁ R₂ S₂ hTT hTF hFT hFF
-  -- Cell-by-cell equality of `cellCode` fiber cardinalities.
-  have hCard : ∀ c : Bool × Bool,
-      Fintype.card { x // cellCode R₂ S₂ x = c } =
-        Fintype.card { x // cellCode R₁ S₁ x = c } := by
-    rintro ⟨b₁, b₂⟩
-    rw [card_cellCode_fiber R₂ S₂ b₁ b₂, card_cellCode_fiber R₁ S₁ b₁ b₂]
-    cases b₁ <;> cases b₂
-    · -- (false, false): ¬R ∧ ¬S
-      exact hFF.symm
-    · -- (false, true): ¬R ∧ S
-      exact hFT.symm
-    · -- (true, false): R ∧ ¬S
-      exact hTF.symm
-    · -- (true, true): R ∧ S
-      exact hTT.symm
-  -- Per-fiber equivalence, glued into a global bijection of `α`.
-  let e : ∀ c, { x // cellCode R₂ S₂ x = c } ≃ { x // cellCode R₁ S₁ x = c } :=
-    fun c => Fintype.equivOfCardEq (hCard c)
-  let f : α ≃ α := Equiv.ofFiberEquiv e
-  -- `f` preserves the code: `cellCode R₁ S₁ (f x) = cellCode R₂ S₂ x`.
-  have hf : ∀ x, cellCode R₁ S₁ (f x) = cellCode R₂ S₂ x :=
-    fun x => Equiv.ofFiberEquiv_map e x
-  -- Reading off the two components of the code gives the iff hypotheses.
-  have hR : ∀ x, R₁ (f x) ↔ R₂ x := by
-    intro x
-    have := congrArg Prod.fst (hf x)
-    simp only [cellCode, decide_eq_decide] at this
-    exact this
-  have hS : ∀ x, S₁ (f x) ↔ S₂ x := by
-    intro x
-    have := congrArg Prod.snd (hf x)
-    simp only [cellCode, decide_eq_decide] at this
-    exact this
-  exact hQ R₁ S₁ R₂ S₂ f f.bijective hR hS
-
-/-! ### Quantity closure -/
-
-theorem Quantity.compl (q : GQ α) (h : Quantity q) :
-    Quantity (qᶜ) := by
-  intro R₁ S₁ R₂ S₂ hTT hTF hFT hFF
-  simp only [compl_apply]; exact Iff.not (h R₁ S₁ R₂ S₂ hTT hTF hFT hFF)
-
-theorem Quantity.inf (q₁ q₂ : GQ α)
-    (h₁ : Quantity q₁) (h₂ : Quantity q₂) :
-    Quantity ((q₁ ⊓ q₂)) := by
-  intro R₁ S₁ R₂ S₂ hTT hTF hFT hFF
-  simp only [inf_apply]
-  exact Iff.and (h₁ R₁ S₁ R₂ S₂ hTT hTF hFT hFF)
-                (h₂ R₁ S₁ R₂ S₂ hTT hTF hFT hFF)
-
-/-! ### Quantity of concrete GQs -/
-
-theorem quantity_atLeast (n : Nat) :
-    Quantity (atLeast (α := α) n) := by
-  intro R₁ S₁ R₂ S₂ hTT _ _ _
-  simp only [atLeast]; omega
-
-theorem quantity_atMost (n : Nat) :
-    Quantity (atMost (α := α) n) := by
-  intro R₁ S₁ R₂ S₂ hTT _ _ _
-  simp only [atMost]; omega
-
-theorem quantity_exactly (n : Nat) :
-    Quantity (exactly (α := α) n) := by
-  rw [exactly_eq_atLeast_inf_atMost]
-  exact Quantity.inf _ _ (quantity_atLeast n) (quantity_atMost n)
-
-theorem quantity_some : Quantity (GQ.some : GQ α) := by
-  rw [some_eq_atLeast_one]; exact quantity_atLeast 1
-
-theorem quantity_no : Quantity (no : GQ α) := by
-  rw [no_eq_atMost_zero]; exact quantity_atMost 0
-
-theorem quantity_every : Quantity (every : GQ α) :=
-  quantity_of_quantityInvariant _ quantityInvariant_every
-
-theorem quantity_most : Quantity (most : GQ α) := by
-  intro R₁ S₁ R₂ S₂ hTT hTF _ _
-  simp only [most]; omega
-
-theorem quantity_few : Quantity (few : GQ α) := by
-  intro R₁ S₁ R₂ S₂ hTT hTF _ _
-  simp only [few]; omega
-
-theorem quantity_half : Quantity (half : GQ α) := by
-  intro R₁ S₁ R₂ S₂ hTT _ _ _
-  simp only [half]
-  constructor <;> intro h
-  · have h₁ := count_decompose R₁ S₁
-    have h₂ := count_decompose R₂ S₂
-    omega
-  · have h₁ := count_decompose R₁ S₁
-    have h₂ := count_decompose R₂ S₂
-    omega
-
-theorem quantity_allBut (n : Nat) :
-    Quantity (allBut (α := α) n) := by
-  intro R₁ S₁ R₂ S₂ _ hTF _ _
-  simp only [allBut]; omega
-
-theorem quantity_between (n k : Nat) :
-    Quantity (between (α := α) n k) :=
-  Quantity.inf _ _ (quantity_atLeast n) (quantity_atMost k)
-
-/-! ### Satisfies universals (counting) -/
-
-theorem satisfiesUniversals_most : SatisfiesUniversals (most : GQ α) :=
-  ⟨conservative_most, Or.inl scopeMonotone_most⟩
-
-theorem satisfiesUniversals_few : SatisfiesUniversals (few : GQ α) :=
-  ⟨conservative_few, Or.inr scopeAntitone_few⟩
-
-theorem satisfiesUniversals_atLeast (n : Nat) :
-    SatisfiesUniversals (atLeast (α := α) n) :=
-  ⟨conservative_atLeast n, Or.inl (scopeMonotone_atLeast n)⟩
-
-theorem satisfiesUniversals_atMost (n : Nat) :
-    SatisfiesUniversals (atMost (α := α) n) :=
-  ⟨conservative_atMost n, Or.inr (scopeAntitone_atMost n)⟩
-
-/-! ### Proportional quantifiers -/
-
-/-- A quantifier is proportional when its truth value depends only on the ratio
-`|A ∩ B| : |A ∖ B|`. -/
+/-- A quantifier is proportional when on nonempty restrictors its truth depends only on the
+ratio of `|A ∩ B|` to `|A \ B|`. -/
 def Proportional (q : GQ α) : Prop :=
-  ∀ (R₁ S₁ R₂ S₂ : α → Prop),
-    let tt₁ := count (fun x : α => R₁ x ∧ S₁ x)
-    let tf₁ := count (fun x : α => R₁ x ∧ ¬ S₁ x)
-    let tt₂ := count (fun x : α => R₂ x ∧ S₂ x)
-    let tf₂ := count (fun x : α => R₂ x ∧ ¬ S₂ x)
-    0 < tt₁ + tf₁ → 0 < tt₂ + tf₂ →
-    tt₁ * tf₂ = tt₂ * tf₁ →
-    (q R₁ S₁ ↔ q R₂ S₂)
+  ∀ A B A' B' : α → Prop,
+    0 < {x | A x ∧ ¬ B x}.ncard + {x | A x ∧ B x}.ncard →
+    0 < {x | A' x ∧ ¬ B' x}.ncard + {x | A' x ∧ B' x}.ncard →
+    {x | A x ∧ B x}.ncard * {x | A' x ∧ ¬ B' x}.ncard =
+      {x | A' x ∧ B' x}.ncard * {x | A x ∧ ¬ B x}.ncard →
+    (q A B ↔ q A' B')
 
-private theorem cross_ratio_preserves_gt (a₁ b₁ a₂ b₂ : Nat)
-    (hne₂ : 0 < a₂ + b₂)
-    (hcross : a₁ * b₂ = a₂ * b₁)
-    (hgt : a₁ > b₁) :
-    a₂ > b₂ := by
-  by_contra hle
-  push Not at hle
-  rcases Nat.eq_zero_or_pos b₂ with rfl | hb₂pos
-  · omega
-  · have h1 : (b₁ + 1) * b₂ ≤ a₁ * b₂ := Nat.mul_le_mul_right b₂ hgt
-    have h3 : a₂ * b₁ ≤ b₂ * b₁ := Nat.mul_le_mul_right b₁ hle
-    rw [Nat.add_mul] at h1; rw [Nat.mul_comm b₂ b₁] at h3; omega
+/-- The quantifier of a proportional tree is proportional. -/
+theorem _root_.Quantifier.NumberTree.Proportional.toGQ {q : NumberTree} (h : q.Proportional) :
+    Proportional (q.toGQ : GQ α) := fun _ _ _ _ ↦ h _ _ _ _
 
-private theorem cross_ratio_gt_iff (a₁ b₁ a₂ b₂ : Nat)
-    (hne₁ : 0 < a₁ + b₁) (hne₂ : 0 < a₂ + b₂)
-    (hcross : a₁ * b₂ = a₂ * b₁) :
-    a₁ > b₁ ↔ a₂ > b₂ :=
-  ⟨cross_ratio_preserves_gt a₁ b₁ a₂ b₂ hne₂ hcross,
-   cross_ratio_preserves_gt a₂ b₂ a₁ b₁ hne₁ hcross.symm⟩
+theorem proportional_most : Proportional (most : GQ α) := NumberTree.proportional_most.toGQ
 
-private theorem cross_ratio_lt_iff (a₁ b₁ a₂ b₂ : Nat)
-    (hne₁ : 0 < a₁ + b₁) (hne₂ : 0 < a₂ + b₂)
-    (hcross : a₁ * b₂ = a₂ * b₁) :
-    a₁ < b₁ ↔ a₂ < b₂ := by
-  have hcross' : b₁ * a₂ = b₂ * a₁ := by
-    rw [Nat.mul_comm b₁ a₂, Nat.mul_comm b₂ a₁]; exact hcross.symm
-  exact cross_ratio_gt_iff b₁ a₁ b₂ a₂ (by omega) (by omega) hcross'
+theorem proportional_few : Proportional (few : GQ α) := NumberTree.proportional_few.toGQ
 
-private theorem cross_ratio_eq_iff (a₁ b₁ a₂ b₂ : Nat)
-    (hne₁ : 0 < a₁ + b₁) (hne₂ : 0 < a₂ + b₂)
-    (hcross : a₁ * b₂ = a₂ * b₁) :
-    a₁ = b₁ ↔ a₂ = b₂ := by
-  refine ⟨fun heq => ?_, fun heq => ?_⟩
-  · rw [heq] at hcross hne₁
-    rw [Nat.mul_comm a₂ b₁] at hcross
-    exact (Nat.mul_left_cancel (by omega) hcross).symm
-  · rw [heq] at hcross hne₂
-    rw [Nat.mul_comm a₁ b₂] at hcross
-    exact Nat.mul_left_cancel (by omega) hcross
+theorem proportional_half : Proportional (half : GQ α) := NumberTree.proportional_half.toGQ
 
-theorem proportional_most : Proportional (most : GQ α) := by
-  intro R₁ S₁ R₂ S₂ a₁ b₁ a₂ b₂ hNE₁ hNE₂ hCross
-  simp only [most]
-  exact cross_ratio_gt_iff a₁ b₁ a₂ b₂ hNE₁ hNE₂ hCross
+/-! ### Counterexamples on small universes
 
-theorem proportional_few : Proportional (few : GQ α) := by
-  intro R₁ S₁ R₂ S₂ a₁ b₁ a₂ b₂ hNE₁ hNE₂ hCross
-  simp only [few]
-  exact cross_ratio_lt_iff a₁ b₁ a₂ b₂ hNE₁ hNE₂ hCross
+The proportional quantifiers fail `Existential`, the condition for felicity in
+there-sentences, although Barwise and Cooper's Table II labels *few* and *half* weak: their
+truth depends on `|A \ B|`, not just on `|A ∩ B|`. *Few* already fails it on one individual,
+*most* and *half* on two. -/
 
-private theorem half_prop_core (a₁ b₁ a₂ b₂ : Nat)
-    (hNE₁ : 0 < a₁ + b₁) (hNE₂ : 0 < a₂ + b₂)
-    (hCross : a₁ * b₂ = a₂ * b₁) :
-    (2 * a₁ = a₁ + b₁) ↔ (2 * a₂ = a₂ + b₂) := by
-  refine ⟨fun h => ?_, fun h => ?_⟩
-  · have := (cross_ratio_eq_iff a₁ b₁ a₂ b₂ hNE₁ hNE₂ hCross).mp (by omega)
-    omega
-  · have := (cross_ratio_eq_iff a₁ b₁ a₂ b₂ hNE₁ hNE₂ hCross).mpr (by omega)
-    omega
+/-- *Most* fails `Existential`, by `A = ⊤` and `B = {0}` on two individuals. -/
+theorem not_existential_most : ¬ Existential (most : GQ (Fin 2)) := fun h ↦ by
+  have := h (fun _ ↦ True) (· = 0)
+  revert this; decide
 
-theorem proportional_half : Proportional (half : GQ α) := by
-  intro R₁ S₁ R₂ S₂
-  dsimp only []
-  intro hNE₁ hNE₂ hCross
-  simp only [half]
-  rw [count_decompose R₁ S₁, count_decompose R₂ S₂]
-  exact half_prop_core _ _ _ _ hNE₁ hNE₂ hCross
+/-- *Few* fails `Existential`, by `A = ⊤` and `B = ∅` on one individual. -/
+theorem not_existential_few : ¬ Existential (few : GQ (Fin 1)) := fun h ↦ by
+  have := h (fun _ ↦ True) fun _ ↦ False
+  revert this; decide
 
-/-! ### Proportional ⇒ not intersective / not monotone (witnessed counterexamples)
+/-- *Half* fails `Existential`, by `A = ⊤` and `B = {0}` on two individuals. -/
+theorem not_existential_half : ¬ Existential (half : GQ (Fin 2)) := fun h ↦ by
+  have := h (fun _ ↦ True) (· = 0)
+  revert this; decide
 
-The proportional determiners `most`, `few`, `half` are *not* intersective:
-they fail the `Existential` property (felicity in there-sentences), even though
-B&C's Table II labels `few`/`half` "weak". `Existential q` (`q R S ↔ q (R∩S) ⊤`)
-is false for them because the truth value depends on `|R∖S|`, not just on `|R∩S|`.
-Refuting it needs a domain with `|α| ≥ 3` (over `Fin 1`/`Fin 2` `most` is vacuously
-`Existential`), so the witnessed statements pin `α := Fin 3`. `half` is moreover
-non-monotone in scope (goes true→false as the scope grows), and `most` is not
-symmetric. -/
+/-- *Most* is not persistent: enlarging the restrictor from `{0}` to `{0, 2}` loses the
+majority for `B = {0}`. -/
+theorem not_restrictorMonotone_most : ¬ RestrictorMonotone (most : GQ (Fin 3)) := fun h ↦ by
+  have hle : (· = (0 : Fin 3)) ≤ (· ≠ 1) := fun x hx ↦ by subst hx; decide
+  have : most (· = (0 : Fin 3)) (· = 0) → most (· ≠ 1) (· = (0 : Fin 3)) := h _ hle
+  revert this; decide
 
-/-- `count` is independent of the `DecidablePred` instance, so the classical instance frozen
-into the counting denotations exchanges for a canonical one and concrete cases decide. -/
-theorem count_eq_decidable (P : α → Prop) (inst' : DecidablePred P)
-    [DecidablePred P] :
-    @count α _ P inst' = count P := by
-  unfold count countOn; congr 1; apply Finset.filter_congr_decidable
+/-- *Most* is not symmetric, by `A = {0}` and `B = {0, 1}`. -/
+theorem not_symm_most : ¬ Std.Symm (most : GQ (Fin 3)) := fun h ↦ by
+  have := h.symm (· = 0) (fun x ↦ x = 0 ∨ x = 1)
+  revert this; decide
 
-/-- *Both* holds of a restrictor of two. -/
-theorem both_fin2 : both (α := Fin 2) (fun _ => True) (fun _ => True) :=
-  ⟨fun _ _ => trivial, by rw [count_eq_decidable]; decide⟩
+/-- *Half* is not scope monotone: with `A = {0, 1}`, `half A {0}` holds and `half A A` fails. -/
+theorem not_scopeMonotone_half : ¬ ScopeMonotone (half : GQ (Fin 3)) := fun h ↦ by
+  have hle : (· = (0 : Fin 3)) ≤ fun x ↦ x = 0 ∨ x = 1 := fun _ ↦ Or.inl
+  have : half (fun x : Fin 3 ↦ x = 0 ∨ x = 1) (· = 0) →
+      half (fun x : Fin 3 ↦ x = 0 ∨ x = 1) fun x ↦ x = 0 ∨ x = 1 := h _ hle
+  revert this; decide
 
-/-- *Both* fails of a restrictor of three. -/
-theorem not_both_fin3 : ¬ both (α := Fin 3) (fun _ => True) (fun _ => True) := by
-  rintro ⟨-, h⟩
-  rw [count_eq_decidable] at h
-  exact absurd h (by decide)
+/-- *Half* is not scope antitone: with `A = {0, 1}`, `half A {0}` holds and `half A ∅` fails. -/
+theorem not_scopeAntitone_half : ¬ ScopeAntitone (half : GQ (Fin 3)) := fun h ↦ by
+  have hle : (fun _ ↦ False) ≤ (· = (0 : Fin 3)) := fun _ ↦ False.elim
+  have : half (fun x : Fin 3 ↦ x = 0 ∨ x = 1) (· = 0) →
+      half (fun x : Fin 3 ↦ x = 0 ∨ x = 1) fun _ ↦ False := h _ hle
+  revert this; decide
 
-/-- *At most `n`* unfolds at any decidability instance, so that concrete cases evaluate by
-`decide`. -/
-theorem atMost_iff {n : Nat} {R S : α → Prop} [DecidablePred fun x => R x ∧ S x] :
-    atMost n R S ↔ count (fun x => R x ∧ S x) ≤ n := by
-  unfold atMost; rw [count_eq_decidable]
-
-/-- *Few* unfolds at any decidability instance, so that concrete cases evaluate by `decide`. -/
-theorem few_iff {R S : α → Prop} [DecidablePred fun x => R x ∧ S x]
-    [DecidablePred fun x => R x ∧ ¬ S x] :
-    few R S ↔ count (fun x => R x ∧ S x) < count (fun x => R x ∧ ¬ S x) := by
-  unfold few
-  rw [count_eq_decidable (fun x => R x ∧ S x), count_eq_decidable (fun x => R x ∧ ¬ S x)]
-
-/-- *Most* fails `Existential`, witnessed over `Fin 3` by `R = ⊤` and `S = {0}`, where
-`most R S` is false and `most (R ∩ S) ⊤` is true. -/
-theorem not_existential_most : ¬ Existential (most : GQ (Fin 3)) := by
-  intro h
-  have key := h (fun _ => True) (fun x => x = 0)
-  simp only [most, true_and, not_true, and_false, and_true] at key
-  rw [count_eq_decidable (fun x : Fin 3 => x = 0),
-      count_eq_decidable (fun x : Fin 3 => ¬ x = 0),
-      count_eq_decidable (fun _ : Fin 3 => False)] at key
-  simp only [count, countOn] at key
-  revert key; decide
-
-/-- *Most* is not persistent, since enlarging the restrictor can lose a majority, witnessed
-over `Fin 3` by `R = {0} ⊆ R' = {0, 2}` with `S = {0}`. -/
-theorem not_restrictorMonotone_most : ¬ RestrictorMonotone (most : GQ (Fin 3)) := by
-  intro h
-  have key : most (fun x : Fin 3 => x = 0) (fun x => x = 0) →
-      most (fun x : Fin 3 => x ≠ 1) (fun x => x = 0) :=
-    h (fun x => x = 0) (show ((fun x : Fin 3 => x = 0) : Fin 3 → Prop) ≤ fun x => x ≠ 1
-      from fun _ hx h1 => absurd (hx.symm.trans h1) (by decide))
-  simp only [most, and_self, and_not_self_iff] at key
-  rw [count_eq_decidable (fun x : Fin 3 => x = 0), count_eq_decidable (fun _ : Fin 3 => False),
-    count_eq_decidable (fun x : Fin 3 => x ≠ 1 ∧ x = 0),
-    count_eq_decidable (fun x : Fin 3 => x ≠ 1 ∧ ¬ x = 0)] at key
-  simp only [count, countOn] at key
-  revert key; decide
-
-/-- On a singleton restrictor `most` is the scope's value at the singleton. -/
-theorem most_singleton_iff (j : α) (S : α → Prop) :
-    most (fun x => x = j) S ↔ S j := by
-  have h1 : count (fun x => x = j) = 1 := by
-    unfold count countOn
-    exact Finset.card_eq_one.mpr ⟨j, by ext x; simp only [Finset.mem_filter, Finset.mem_univ,
-      true_and, Finset.mem_singleton]⟩
-  have h0 : count (fun _ : α => False) = 0 := countOn_eq_zero_iff.mpr fun _ _ h => h
-  simp only [most]
-  rw [count_eq_decidable (fun x => x = j ∧ S x), count_eq_decidable (fun x => x = j ∧ ¬ S x)]
-  by_cases h : S j
-  · rw [count_congr_iff (P := fun x => x = j ∧ S x) (Q := fun x => x = j)
-        fun x => ⟨And.left, fun hx => ⟨hx, hx ▸ h⟩⟩,
-      count_congr_iff (P := fun x => x = j ∧ ¬ S x) (Q := fun _ => False)
-        fun x => ⟨fun ⟨hx, hn⟩ => hn (hx ▸ h), False.elim⟩, h1, h0]
-    exact iff_of_true (by decide) h
-  · rw [count_congr_iff (P := fun x => x = j ∧ S x) (Q := fun _ => False)
-        fun x => ⟨fun ⟨hx, hs⟩ => h (hx ▸ hs), False.elim⟩,
-      count_congr_iff (P := fun x => x = j ∧ ¬ S x) (Q := fun x => x = j)
-        fun x => ⟨And.left, fun hx => ⟨hx, fun hs => h (hx ▸ hs)⟩⟩, h1, h0]
-    exact iff_of_false (by decide) h
-
-/-- *Few* fails `Existential`, despite Barwise and Cooper's weak label, witnessed over `Fin 3`
-by `R = ⊤` and `S = {0}`, where `few R S` is true and `few (R ∩ S) ⊤` is false. -/
-theorem not_existential_few : ¬ Existential (few : GQ (Fin 3)) := by
-  intro h
-  have key := h (fun _ => True) (fun x => x = 0)
-  simp only [few, true_and, not_true, and_false, and_true] at key
-  rw [count_eq_decidable (fun x : Fin 3 => x = 0),
-      count_eq_decidable (fun x : Fin 3 => ¬ x = 0),
-      count_eq_decidable (fun _ : Fin 3 => False)] at key
-  simp only [count, countOn] at key
-  revert key; decide
-
-/-- *Half* fails `Existential`, despite Barwise and Cooper's weak label, witnessed over `Fin 3`
-by `R = {0, 1}` and `S = {0}`, where `half R S` is true and `half (R ∩ S) ⊤` is false. -/
-theorem not_existential_half : ¬ Existential (half : GQ (Fin 3)) := by
-  intro h
-  have key := h (fun x => x = 0 ∨ x = 1) (fun x => x = 0)
-  simp only [half, and_true,
-    count_eq_decidable (fun x : Fin 3 => (x = 0 ∨ x = 1) ∧ x = 0) _,
-    count_eq_decidable (fun x : Fin 3 => x = 0 ∨ x = 1) _] at key
-  have v1 : (count fun x : Fin 3 => (x = 0 ∨ x = 1) ∧ x = 0) = 1 := by
-    simp only [count, countOn]; decide
-  have v2 : (count fun x : Fin 3 => x = 0 ∨ x = 1) = 2 := by
-    simp only [count, countOn]; decide
-  rw [v1, v2] at key; revert key; decide
-
-/-- `half` is not scope monotone. Over `Fin 3` with `R = {0, 1}` and `S = {0} ⊆ S' = {0, 1}`,
-`half R S` holds since `2 · 1 = |R|` and `half R S'` fails since `2 · 2 ≠ |R|`. -/
-theorem not_scopeMonotone_half : ¬ ScopeMonotone (half : GQ (Fin 3)) := by
-  intro h
-  have key : half (fun x : Fin 3 => x = 0 ∨ x = 1) (fun x => x = 0) →
-      half (fun x : Fin 3 => x = 0 ∨ x = 1) (fun x => x = 0 ∨ x = 1) :=
-    h (fun x => x = 0 ∨ x = 1)
-      (show ((fun x : Fin 3 => x = 0) : Fin 3 → Prop) ≤ fun x => x = 0 ∨ x = 1 from
-        fun _ hx => Or.inl hx)
-  simp only [half,
-    count_eq_decidable (fun x : Fin 3 => (x = 0 ∨ x = 1) ∧ x = 0) _,
-    count_eq_decidable (fun x : Fin 3 => (x = 0 ∨ x = 1) ∧ (x = 0 ∨ x = 1)) _,
-    count_eq_decidable (fun x : Fin 3 => x = 0 ∨ x = 1) _] at key
-  have v0 : (count fun x : Fin 3 => (x = 0 ∨ x = 1) ∧ x = 0) = 1 := by
-    simp only [count, countOn]; decide
-  have v1 : (count fun x : Fin 3 => (x = 0 ∨ x = 1) ∧ (x = 0 ∨ x = 1)) = 2 := by
-    simp only [count, countOn]; decide
-  have v2 : (count fun x : Fin 3 => x = 0 ∨ x = 1) = 2 := by simp only [count, countOn]; decide
-  rw [v0, v1, v2] at key; revert key; decide
-
-/-- `half` is not scope antitone. Over `Fin 3` with `R = {0, 1}` and `S = ∅ ⊆ S' = {0}`,
-`half R S'` holds since `2 · 1 = |R|` and `half R S` fails since `2 · 0 ≠ |R|`. -/
-theorem not_scopeAntitone_half : ¬ ScopeAntitone (half : GQ (Fin 3)) := by
-  intro h
-  have key : half (fun x : Fin 3 => x = 0 ∨ x = 1) (fun x => x = 0) →
-      half (fun x : Fin 3 => x = 0 ∨ x = 1) (fun _ => False) :=
-    h (fun x => x = 0 ∨ x = 1)
-      (show ((fun _ : Fin 3 => False) : Fin 3 → Prop) ≤ fun x => x = 0 from
-        fun _ hx => absurd hx id)
-  simp only [half, and_false,
-    count_eq_decidable (fun x : Fin 3 => (x = 0 ∨ x = 1) ∧ x = 0) _,
-    count_eq_decidable (fun x : Fin 3 => x = 0 ∨ x = 1) _] at key
-  have v0 : (count fun _ : Fin 3 => False) = 0 := by simp only [count, countOn]; decide
-  have v1 : (count fun x : Fin 3 => (x = 0 ∨ x = 1) ∧ x = 0) = 1 := by
-    simp only [count, countOn]; decide
-  have v2 : (count fun x : Fin 3 => x = 0 ∨ x = 1) = 2 := by simp only [count, countOn]; decide
-  rw [v0, v1, v2] at key; revert key; decide
-
-/-- `half` is non-monotone in its scope, neither monotone nor antitone
+/-- *Half* is non-monotone in its scope, neither monotone nor antitone
 ([van-de-pol-etal-2023]). -/
 theorem not_monotone_half :
-    ¬ ScopeMonotone (half : GQ (Fin 3)) ∧
-    ¬ ScopeAntitone (half : GQ (Fin 3)) :=
+    ¬ ScopeMonotone (half : GQ (Fin 3)) ∧ ¬ ScopeAntitone (half : GQ (Fin 3)) :=
   ⟨not_scopeMonotone_half, not_scopeAntitone_half⟩
 
-/-- *Most* is not symmetric, witnessed over `Fin 3` by `R = {0}` and `S = {0, 1}`, where
-`most R S` is true and `most S R` is false. -/
-theorem not_symm_most : ¬ Std.Symm (most : GQ (Fin 3)) := by
-  intro h
-  have key := h.symm (fun x => x = 0) (fun x => x = 0 ∨ x = 1)
-  simp only [most,
-    count_eq_decidable (fun x : Fin 3 => x = 0 ∧ (x = 0 ∨ x = 1)) _,
-    count_eq_decidable (fun x : Fin 3 => x = 0 ∧ ¬ (x = 0 ∨ x = 1)) _,
-    count_eq_decidable (fun x : Fin 3 => (x = 0 ∨ x = 1) ∧ x = 0) _,
-    count_eq_decidable (fun x : Fin 3 => (x = 0 ∨ x = 1) ∧ ¬ x = 0) _] at key
-  have v0 : (count fun x : Fin 3 => x = 0 ∧ (x = 0 ∨ x = 1)) = 1 := by
-    simp only [count, countOn]; decide
-  have v1 : (count fun x : Fin 3 => x = 0 ∧ ¬ (x = 0 ∨ x = 1)) = 0 := by
-    simp only [count, countOn]; decide
-  have v2 : (count fun x : Fin 3 => (x = 0 ∨ x = 1) ∧ x = 0) = 1 := by
-    simp only [count, countOn]; decide
-  have v3 : (count fun x : Fin 3 => (x = 0 ∨ x = 1) ∧ ¬ x = 0) = 1 := by
-    simp only [count, countOn]; decide
-  rw [v0, v1, v2, v3] at key; revert key; decide
+/-- *Both* holds of a restrictor of two and fails of one of three. -/
+theorem both_fin2 : both (α := Fin 2) (fun _ ↦ True) fun _ ↦ True := by decide
 
-/-! ### Whole-carrier recovery for `mostOn` and inherited proportionality
+theorem not_both_fin3 : ¬ both (α := Fin 3) (fun _ ↦ True) fun _ ↦ True := by decide
 
-`mostOn Finset.univ` is the `s = Finset.univ` fibre of the relativized
-`most`, matching the whole-carrier `most` (modulo the
-`DecidablePred`-instance bridge `Finset.filter_congr_decidable`). The
-`Proportional` theorem proved for `most` therefore transfers to it by
-inheritance, not re-proof. -/
-
-@[simp] theorem mostOn_univ (R S : α → Prop) [DecidablePred R] [DecidablePred S] :
-    mostOn Finset.univ R S ↔ most R S := by
-  unfold mostOn most
-  congr! 2
-
-/-- `mostOn` on the whole domain is proportional, since there it is `most`. -/
-theorem mostOn_univ_proportional :
-    Proportional (fun R S => mostOn (Finset.univ : Finset α) R S) := by
-  have h : (fun (R S : α → Prop) => mostOn (Finset.univ : Finset α) R S) = most := by
-    funext R S; exact propext (mostOn_univ R S)
-  rw [h]; exact proportional_most
+/-- On a singleton restrictor *most* is the scope's value at the singleton. -/
+theorem most_singleton_iff (j : α) (B : α → Prop) : most (· = j) B ↔ B j := by
+  by_cases h : B j
+  · rw [most_apply, show {x | x = j ∧ ¬ B x} = ∅ by ext; grind,
+      show {x | x = j ∧ B x} = {j} by ext; grind]
+    simpa using h
+  · rw [most_apply, show {x | x = j ∧ B x} = ∅ by ext; grind]
+    simpa using h
 
 /-! ### The families of the canonical denotations
 
@@ -1037,19 +414,19 @@ def some : Family.{u} := fun _ _ ↦ GQ.some
 /-- `Family.no` is `no` on every finite domain. -/
 def no : Family.{u} := fun _ _ ↦ GQ.no
 /-- `Family.most` is `most` on every finite domain. -/
-noncomputable def most : Family.{u} := fun α inst ↦ @GQ.most α inst
+def most : Family.{u} := fun _ _ ↦ GQ.most
 /-- `Family.few` is `few` on every finite domain. -/
-noncomputable def few : Family.{u} := fun α inst ↦ @GQ.few α inst
+def few : Family.{u} := fun _ _ ↦ GQ.few
 /-- `Family.half` is `half` on every finite domain. -/
-noncomputable def half : Family.{u} := fun α inst ↦ @GQ.half α inst
+def half : Family.{u} := fun _ _ ↦ GQ.half
 /-- `Family.both` is `both` on every finite domain. -/
-noncomputable def both : Family.{u} := fun α inst ↦ @GQ.both α inst
+def both : Family.{u} := fun _ _ ↦ GQ.both
 /-- `Family.neither` is `neither` on every finite domain. -/
-noncomputable def neither : Family.{u} := fun α inst ↦ @GQ.neither α inst
+def neither : Family.{u} := fun _ _ ↦ GQ.neither
 /-- `Family.atLeast n` is `atLeast n` on every finite domain. -/
-noncomputable def atLeast (n : ℕ) : Family.{u} := fun α inst ↦ @GQ.atLeast α inst n
+def atLeast (n : ℕ) : Family.{u} := fun _ _ ↦ GQ.atLeast n
 /-- `Family.exactly n` is `exactly n` on every finite domain. -/
-noncomputable def exactly (n : ℕ) : Family.{u} := fun α inst ↦ @GQ.exactly α inst n
+def exactly (n : ℕ) : Family.{u} := fun _ _ ↦ GQ.exactly n
 
 /-- `some` and `every` are different families, since on an empty restrictor `every` holds and
 `some` fails. -/
@@ -1059,4 +436,6 @@ theorem some_ne_every : some.{u} ≠ every.{u} := fun h ↦ by
 
 end Family
 
-end Quantifier.GQ
+end GQ
+
+end Quantifier

@@ -64,7 +64,8 @@ open Genericity
 
 variable (n : Normality W W)
 
-/-- ∀x(φ(x) > ψ(x)), (2): for each individual, ψ throughout the worlds where it is a normal φ. -/
+/-- The generic `∀x(φ(x) > ψ(x))` of (2) holds when each individual satisfies `ψ` throughout the
+worlds where it is a normal `φ`. -/
 def generic (φ ψ : E → Set W) (w : W) : Prop := ∀ a, w ∈ n.gen (φ a) (ψ a)
 
 /-- Contrary generics select disjoint normal worlds for each individual: if birds fly and
@@ -85,8 +86,8 @@ theorem gen_univ {w : W} (h : n.normal w Set.univ = {w}) (q : Set W) :
     w ∈ n.gen Set.univ q ↔ w ∈ q := by
   simp [h]
 
-/-- (7), (8): with a fixed set of normal worlds, *Birds fly* makes Opus fly in its normal
-penguin worlds, so with *Penguins don't fly* it has none. -/
+/-- With a fixed set of normal worlds, *Birds fly* makes Opus fly in its normal penguin worlds,
+so with *Penguins don't fly* it has none ((7), (8)). -/
 theorem normal_ofAccess_eq_empty {B : W → Set W} {bird penguin fly : Set W} {w : W}
     (hpb : penguin ⊆ bird) (hb : w ∈ (Normality.ofAccess B).gen bird fly)
     (hp : w ∈ (Normality.ofAccess B).gen penguin flyᶜ) :
@@ -94,9 +95,9 @@ theorem normal_ofAccess_eq_empty {B : W → Set W} {bird penguin fly : Set W} {w
   (Normality.ofAccess B).normal_eq_empty_of_disjoint (Conditional.strictImp_anti_left hpb hb) hp
     disjoint_compl_right
 
-/-- (7), (8): with normality from an ordering of worlds, *Birds fly* and *Penguins don't fly* hold
-together and there is a normal Opus-penguin world: the more normal world, where Opus is an
-ordinary bird and flies, is not a penguin world. -/
+/-- With normality from an ordering of worlds, *Birds fly* and *Penguins don't fly* hold together
+and there is a normal Opus-penguin world, since the more normal world, where Opus is an ordinary
+bird and flies, is not a penguin world ((7), (8)). -/
 theorem exists_bird_penguin :
     ∃ (n : Normality Bool Bool) (bird penguin fly : Set Bool), penguin ⊆ bird ∧
       true ∈ n.gen bird fly ∧ true ∈ n.gen penguin flyᶜ ∧ (n.normal true penguin).Nonempty := by
@@ -108,10 +109,10 @@ theorem exists_bird_penguin :
   · rw [show x = true from hx.1.2]
     exact Bool.noConfusion
 
-/-- The teleological construal of a turtle's normality: the worlds where it reaches a hundred. -/
+/-- On the teleological construal a turtle's normal worlds are those where it reaches a hundred. -/
 def teleological : Normality Bool Bool := .ofAccess fun _ ↦ {true}
 
-/-- The statistical construal: the worlds where it dies young. -/
+/-- On the statistical construal a turtle's normal worlds are those where it dies young. -/
 def statistical : Normality Bool Bool := .ofAccess fun _ ↦ {false}
 
 /-- *Turtles live to be 100* is true under the teleological construal and false under the
@@ -138,7 +139,7 @@ theorem existentialReading.normal_subset {Alt : Set (E → Set W)} {T : E → Se
   subst hPT
   exact n.normal_subset w (P c) hv
 
-/-- Double genericity: for each individual, in its normal worlds every appropriate
+/-- A double generic holds when for each individual, in its normal worlds, every appropriate
 circumstance normally has it carry the virus, a disposition rather than a frequency. -/
 def doubleGeneric {Ev : Type*} (φ : E → Set W) (C : Ev → Set W) (ψ : E → Ev → Set W) (w : W) :
     Prop :=
@@ -153,7 +154,7 @@ theorem doubleGeneric_univ {Ev : Type*} (h : ∀ v, n.normal v Set.univ = {v}) (
 
 /-! ### Against the probabilistic account -/
 
-/-- Tails in 11 of 20 equally normal cat cases: just over half. -/
+/-- A cat has a tail in 11 of 20 equally normal cases, just over half. -/
 def tailed : Fin 20 → Prop := fun w ↦ w.val < 11
 
 instance : DecidablePred tailed := fun w ↦ Nat.decLt w.val 11
@@ -163,7 +164,7 @@ account with every case equally normal does not, since a normal case lacks a tai
 theorem cohen_too_weak :
     Cohen1999.gen (Finset.univ : Finset (Fin 20)) (fun _ ↦ True) (fun _ ↦ True) tailed ∧
       (0 : Fin 20) ∉ (⊤ : Normality (Fin 20) (Fin 20)).gen Set.univ {w | tailed w} := by
-  refine ⟨(Cohen1999.gen_iff_thresholdGt _ _ _ _ (by decide)).mpr (by decide), fun h ↦ ?_⟩
+  refine ⟨by decide, fun h ↦ ?_⟩
   exact absurd (h (Set.mem_univ (11 : Fin 20))) (by decide)
 
 variable {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ]

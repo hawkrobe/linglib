@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Core.Probability.UniformOn
 public import Linglib.Semantics.Quantification.Counting
 
 /-!
@@ -37,9 +38,10 @@ Page and definition numbers follow the CSLI edition, a light revision of the 199
 dissertation that renames its independent and dependent readings absolute and relative.
 The alternative set enters the truth conditions only through its extensional disjunction
 and the relative threshold, so it is carried as a single predicate. A conditional
-probability with an empty reference class is undefined in the paper (p. 37, §5.6) and is
-the junk value `0` of `Quantifier.GQ.prevalenceOn` here; theorems carry the non-emptiness
-hypothesis, and a salient cell with an empty reference class imposes no condition.
+probability is the uniform measure on the reference class at the scope; with an empty reference
+class it is undefined in the paper (p. 37, §5.6) and `0` here, so gen is false there and
+decidable through its count form, and a salient cell with an empty reference class imposes no
+condition.
 
 ## TODO
 
@@ -63,77 +65,129 @@ hypothesis, and a salient cell with an empty reference class imposes no conditio
 
 namespace Cohen1999
 
-open Quantifier Quantifier.GQ
+open Quantifier Quantifier.GQ MeasureTheory ProbabilityTheory
+open scoped ENNReal Finset
 
-variable {α : Type*} (domain : Finset α) (ψ alt φ : α → Prop)
-variable [DecidablePred ψ] [DecidablePred alt] [DecidablePred φ]
+variable {α : Type*} [MeasurableSpace α] [MeasurableSingletonClass α] (domain : Finset α)
+  (ψ alt φ : α → Prop) [DecidablePred ψ] [DecidablePred alt] [DecidablePred φ]
 
-/-- Cohen's generic quantifier on its absolute reading (definition 1, p. 37): the
-conditional probability of the scope `φ`, given the restrictor `ψ` and the disjunction
-`alt` of the alternatives to the scope, exceeds one half. -/
-def gen : Prop :=
-  1 / 2 < prevalenceOn domain (fun x => ψ x ∧ alt x) φ
+/-- Cohen's generic quantifier on its absolute reading (definition 1, p. 37) holds when the
+conditional probability of the scope `φ`, given the restrictor `ψ` and the disjunction `alt` of
+the alternatives to the scope, exceeds one half. -/
+def gen : Prop := 2⁻¹ < uniformOn (domain.filter fun x ↦ ψ x ∧ alt x : Set α) {x | φ x}
 
-instance : Decidable (gen domain ψ alt φ) := by unfold gen; infer_instance
-
-/-- The relative reading (definition 3, p. 56): the restrictor raises the probability of
-the scope above its average over the alternatives. -/
+/-- The relative reading (definition 3, p. 56) holds when the restrictor raises the probability
+of the scope above its average over the alternatives. -/
 def genRelative : Prop :=
-  prevalenceOn domain alt φ < prevalenceOn domain (fun x => ψ x ∧ alt x) φ
+  uniformOn (domain.filter alt : Set α) {x | φ x} <
+    uniformOn (domain.filter fun x ↦ ψ x ∧ alt x : Set α) {x | φ x}
 
-instance : Decidable (genRelative domain ψ alt φ) := by unfold genRelative; infer_instance
-
-/-- The final truth conditions (definition 5, p. 83): the absolute threshold within every
+/-- The final truth conditions (definition 5, p. 83) ask for the absolute threshold within every
 salient cell whose reference class is inhabited. -/
 def genSalient {ι : Type*} (cells : ι → α → Prop) [∀ i, DecidablePred (cells i)] : Prop :=
-  ∀ i, 0 < countOn domain (fun x => (ψ x ∧ cells i x) ∧ alt x) →
-    gen domain (fun x => ψ x ∧ cells i x) alt φ
+  ∀ i, (domain.filter fun x ↦ (ψ x ∧ cells i x) ∧ alt x).Nonempty →
+    gen domain (fun x ↦ ψ x ∧ cells i x) alt φ
 
 /-- A frequency adverb applies its lexical requirement to the same conditional probability
-(definition 10, p. 128); gen carries the requirement `(1 / 2 < ·)`, synonymous with
-usually. -/
-def freq (R : ℚ → Prop) : Prop :=
-  R (prevalenceOn domain (fun x => ψ x ∧ alt x) φ)
+(definition 10, p. 128); gen carries the requirement `(2⁻¹ < ·)`, synonymous with usually. -/
+def freq (R : ℝ≥0∞ → Prop) : Prop :=
+  R (uniformOn (domain.filter fun x ↦ ψ x ∧ alt x : Set α) {x | φ x})
 
-/-- Unrestricted homogeneity (definition 4, p. 81, after Salmon): every inhabited
+/-- Unrestricted homogeneity (definition 4, p. 81, after Salmon) holds when every inhabited
 sub-reference class preserves the conditional probability of the scope. -/
 def Homogeneous : Prop :=
-  ∀ (part : α → Prop) [DecidablePred part],
-    0 < countOn domain (fun x => ψ x ∧ part x) →
-    prevalenceOn domain (fun x => ψ x ∧ part x) φ = prevalenceOn domain ψ φ
+  ∀ (part : α → Prop) [DecidablePred part], (domain.filter fun x ↦ ψ x ∧ part x).Nonempty →
+    uniformOn (domain.filter fun x ↦ ψ x ∧ part x : Set α) {x | φ x} =
+      uniformOn (domain.filter ψ : Set α) {x | φ x}
+
+variable {domain ψ alt φ}
+
+/-! ### Probabilities on a finite reference class -/
+
+private theorem inv_two_lt_iff (F : Finset α) :
+    2⁻¹ < uniformOn (F : Set α) {x | φ x} ↔ #F < 2 * #(F.filter φ) := by
+  rcases F.eq_empty_or_nonempty with rfl | hF
+  · simp
+  rw [uniformOn_finset_setOf, ENNReal.lt_div_iff_mul_lt (.inl (by simpa using hF.ne_empty))
+    (.inl (by simp)), ← ENNReal.div_eq_inv_mul, ENNReal.div_lt_iff (by simp) (by simp)]
+  norm_cast
+  omega
+
+private theorem uniformOn_lt_iff {F G : Finset α} (hF : F.Nonempty) (hG : G.Nonempty) :
+    uniformOn (F : Set α) {x | φ x} < uniformOn (G : Set α) {x | φ x} ↔
+      #(F.filter φ) * #G < #(G.filter φ) * #F := by
+  rw [uniformOn_finset_setOf, uniformOn_finset_setOf,
+    ← ENNReal.toReal_lt_toReal (ENNReal.div_ne_top (by simp) (by simpa using hF.ne_empty))
+      (ENNReal.div_ne_top (by simp) (by simpa using hG.ne_empty)),
+    ENNReal.toReal_div, ENNReal.toReal_div]
+  simp only [ENNReal.toReal_natCast]
+  rw [div_lt_div_iff₀ (by exact_mod_cast hF.card_pos) (by exact_mod_cast hG.card_pos)]
+  norm_cast
+
+omit [DecidablePred φ] in
+private theorem uniformOn_eq_one_iff' {F : Finset α} (hF : F.Nonempty) :
+    uniformOn (F : Set α) {x | φ x} = 1 ↔ ∀ x ∈ F, φ x := by
+  rw [uniformOn_eq_one_iff F.finite_toSet (Finset.coe_nonempty.2 hF)]
+  exact ⟨fun h x hx ↦ h hx, fun h x hx ↦ h x hx⟩
+
+omit [DecidablePred φ] in
+private theorem uniformOn_eq_zero_iff' (F : Finset α) :
+    uniformOn (F : Set α) {x | φ x} = 0 ↔ ∀ x ∈ F, ¬ φ x := by
+  rw [uniformOn_eq_zero_iff F.finite_toSet, Set.eq_empty_iff_forall_notMem]
+  exact ⟨fun h x hx hφ ↦ h x ⟨hx, hφ⟩, fun h x hx ↦ h x hx.1 hx.2⟩
 
 /-! ### The absolute reading and the majority quantifier -/
 
-/-- The absolute reading in division-free, kernel-decidable form. -/
-theorem gen_iff_thresholdGt (hR : 0 < countOn domain (fun x => ψ x ∧ alt x)) :
-    gen domain ψ alt φ ↔ thresholdGtOn domain (fun x => ψ x ∧ alt x) φ 1 2 := by
-  rw [gen, thresholdGtOn_iff_prevalenceOn _ _ _ 1 2 (by norm_num) hR]
-  norm_num
+/-- The absolute reading in division-free form, false on an empty reference class. -/
+theorem gen_iff_card :
+    gen domain ψ alt φ ↔
+      #(domain.filter fun x ↦ ψ x ∧ alt x) < 2 * #((domain.filter fun x ↦ ψ x ∧ alt x).filter φ) :=
+  inv_two_lt_iff _
 
-/-- Over an inhabited reference class the absolute reading is the majority quantifier on
-the restricted domain. -/
-theorem gen_iff_mostOn (hR : 0 < countOn domain (fun x => ψ x ∧ alt x)) :
-    gen domain ψ alt φ ↔ mostOn domain (fun x => ψ x ∧ alt x) φ :=
-  (gen_iff_thresholdGt domain ψ alt φ hR).trans (thresholdGtOn_one_two_iff_mostOn _ _ _)
+instance : Decidable (gen domain ψ alt φ) := decidable_of_iff _ gen_iff_card.symm
 
+/-- The relative reading in division-free, kernel-decidable form. -/
+theorem genRelative_iff_card (hA : (domain.filter alt).Nonempty)
+    (hR : (domain.filter fun x ↦ ψ x ∧ alt x).Nonempty) :
+    genRelative domain ψ alt φ ↔
+      #((domain.filter alt).filter φ) * #(domain.filter fun x ↦ ψ x ∧ alt x) <
+        #((domain.filter fun x ↦ ψ x ∧ alt x).filter φ) * #(domain.filter alt) :=
+  uniformOn_lt_iff hA hR
+
+/-- The absolute reading is the majority quantifier on the restricted domain. -/
+theorem gen_iff_most : gen domain ψ alt φ ↔ most (fun x ↦ x ∈ domain ∧ ψ x ∧ alt x) φ := by
+  have h₁ : {x | (x ∈ domain ∧ ψ x ∧ alt x) ∧ φ x}.ncard =
+      #((domain.filter fun x ↦ ψ x ∧ alt x).filter φ) := by
+    rw [← Set.ncard_coe_finset]; congr 1; ext; simp
+  have h₂ : {x | (x ∈ domain ∧ ψ x ∧ alt x) ∧ ¬ φ x}.ncard =
+      #((domain.filter fun x ↦ ψ x ∧ alt x).filter fun x ↦ ¬ φ x) := by
+    rw [← Set.ncard_coe_finset]; congr 1; ext; simp
+  have h₃ := Finset.card_filter_add_card_filter_not (s := domain.filter fun x ↦ ψ x ∧ alt x) φ
+  rw [gen_iff_card, most_apply, h₁, h₂]
+  omega
+
+omit [MeasurableSingletonClass α] [DecidablePred φ] in
 /-- gen is the adverb usually (definition 10, p. 128; p. 131). -/
-theorem gen_iff_freq : gen domain ψ alt φ ↔ freq domain ψ alt φ (1 / 2 < ·) :=
+theorem gen_iff_freq : gen domain ψ alt φ ↔ freq domain ψ alt φ (2⁻¹ < ·) :=
   Iff.rfl
 
 /-- The absolute reading is conservative: intersecting the scope with the restrictor
 changes nothing (p. 54, after Wilkinson). -/
 theorem gen_conservativity :
-    gen domain ψ alt (fun x => ψ x ∧ φ x) ↔ gen domain ψ alt φ := by
-  unfold gen prevalenceOn
-  rw [countOn_congr (P := fun x => (ψ x ∧ alt x) ∧ ψ x ∧ φ x)
-    (Q := fun x => (ψ x ∧ alt x) ∧ φ x) fun x _ => by tauto]
+    gen domain ψ alt (fun x ↦ ψ x ∧ φ x) ↔ gen domain ψ alt φ := by
+  have : (domain.filter fun x ↦ ψ x ∧ alt x).filter (fun x ↦ ψ x ∧ φ x) =
+      (domain.filter fun x ↦ ψ x ∧ alt x).filter φ :=
+    Finset.filter_congr fun x hx ↦ and_iff_right (Finset.mem_filter.1 hx).2.1
+  unfold gen
+  rw [uniformOn_finset_setOf, uniformOn_finset_setOf, this]
 
 /-- A generic whose scope exhausts its alternatives is true on any inhabited reference
-class — the reading of refutation statements, whose negation denies existence (§5.7). -/
-theorem gen_self (hR : 0 < countOn domain (fun x => ψ x ∧ φ x)) :
-    gen domain ψ φ φ := by
-  rw [gen, (prevalenceOn_eq_one_iff hR).mpr fun y _ hy => hy.2]
-  norm_num
+class, the reading of refutation statements, whose negation denies existence (§5.7). -/
+theorem gen_self (hR : (domain.filter fun x ↦ ψ x ∧ φ x).Nonempty) : gen domain ψ φ φ := by
+  rw [gen_iff_card, Finset.filter_true_of_mem (s := domain.filter fun x ↦ ψ x ∧ φ x) (p := φ)
+    fun x hx ↦ (Finset.mem_filter.1 hx).2.2]
+  have := hR.card_pos
+  omega
 
 /-! ### The generalized-quantifier interface
 
@@ -142,79 +196,76 @@ generalized quantifier, hence proportional: its truth depends only on the two ce
 The relativized readings are exactly what departs from this. -/
 
 /-- With trivial alternatives over the whole carrier, gen is `most`. -/
-theorem gen_univ_eq_most_sem {β : Type*} [Fintype β] (R S : β → Prop)
-    [DecidablePred R] [DecidablePred S] (hR : 0 < countOn Finset.univ R) :
-    gen Finset.univ R (fun _ => True) S ↔ Quantifier.GQ.most R S := by
-  have hR' : 0 < countOn Finset.univ (fun x => R x ∧ True) := by
-    rwa [countOn_congr (P := fun x => R x ∧ True) (Q := R) fun x _ => by simp]
-  rw [gen_iff_mostOn _ _ _ _ hR', ← Quantifier.GQ.mostOn_univ]
-  unfold mostOn
-  rw [countOn_congr (P := fun x => (R x ∧ True) ∧ S x) (Q := fun x => R x ∧ S x)
-      fun x _ => by tauto,
-    countOn_congr (P := fun x => (R x ∧ True) ∧ ¬ S x) (Q := fun x => R x ∧ ¬ S x)
-      fun x _ => by tauto]
+theorem gen_univ_iff_most {β : Type*} [Fintype β] [MeasurableSpace β] [MeasurableSingletonClass β]
+    (R S : β → Prop) [DecidablePred R] [DecidablePred S] :
+    gen Finset.univ R (fun _ ↦ True) S ↔ most R S := by
+  simp only [gen_iff_most, Finset.mem_univ, true_and, and_true]
 
 open Classical in
 /-- With trivial alternatives over the whole carrier, gen is proportional
-([peters-westerstahl-2006]) — a property of this operator that the genericity literature's
+([peters-westerstahl-2006]), a property of this operator that the genericity literature's
 counterexamples to majority accounts target. -/
-theorem gen_proportional {β : Type*} [Fintype β] :
-    Proportional (fun R S : β → Prop => gen Finset.univ R (fun _ => True) S) := by
-  intro R₁ S₁ R₂ S₂ tt₁ tf₁ tt₂ tf₂ h1 h2 hcross
-  show gen Finset.univ R₁ _ S₁ ↔ gen Finset.univ R₂ _ S₂
-  have hR1 : 0 < countOn Finset.univ R₁ := by
-    show 0 < count (fun x => R₁ x); rw [count_decompose R₁ S₁]; exact h1
-  have hR2 : 0 < countOn Finset.univ R₂ := by
-    show 0 < count (fun x => R₂ x); rw [count_decompose R₂ S₂]; exact h2
-  rw [gen_univ_eq_most_sem R₁ S₁ hR1, gen_univ_eq_most_sem R₂ S₂ hR2,
-    ← Quantifier.GQ.mostOn_univ, ← Quantifier.GQ.mostOn_univ]
-  exact mostOn_univ_proportional R₁ S₁ R₂ S₂ h1 h2 hcross
+theorem gen_proportional {β : Type*} [Fintype β] [MeasurableSpace β] [MeasurableSingletonClass β] :
+    Proportional (fun R S : β → Prop ↦ gen Finset.univ R (fun _ ↦ True) S) := fun R₁ S₁ R₂ S₂ ↦ by
+  simpa only [gen_univ_iff_most] using proportional_most R₁ S₁ R₂ S₂
 
 /-! ### Homogeneity is degenerate unrestricted (definition 4, p. 82) -/
 
 /-- Salmon's two trivial cases are the only homogeneous reference classes: partitioning by
 the scope itself separates any mixed one (p. 82). Hence definition 5 restricts the
 partitions to the salient ones. -/
-theorem homogeneous_iff (hR : 0 < countOn domain ψ) :
-    Homogeneous domain ψ φ ↔ noOn domain ψ φ ∨ everyOn domain ψ φ := by
+theorem homogeneous_iff (hR : (domain.filter ψ).Nonempty) :
+    Homogeneous domain ψ φ ↔
+      no (fun x ↦ x ∈ domain ∧ ψ x) φ ∨ every (fun x ↦ x ∈ domain ∧ ψ x) φ := by
   constructor
   · intro h
-    by_cases hno : noOn domain ψ φ
+    by_cases hno : no (fun x ↦ x ∈ domain ∧ ψ x) φ
     · exact Or.inl hno
     · refine Or.inr ?_
-      obtain ⟨x, hx, hψx, hφx⟩ : ∃ x ∈ domain, ψ x ∧ φ x := by
+      obtain ⟨x, ⟨hx, hψx⟩, hφx⟩ : ∃ x, (x ∈ domain ∧ ψ x) ∧ φ x := by
         by_contra hc
-        exact hno fun y hy hψ hφ => hc ⟨y, hy, hψ, hφ⟩
-      have hpos : 0 < countOn domain (fun y => ψ y ∧ φ y) :=
-        countOn_pos_iff.mpr ⟨x, hx, hψx, hφx⟩
-      have h1 : prevalenceOn domain (fun y => ψ y ∧ φ y) φ = 1 :=
-        (prevalenceOn_eq_one_iff hpos).mpr fun y _ hy => hy.2
-      exact (prevalenceOn_eq_one_iff hR).mp ((h φ hpos).symm.trans h1)
+        exact hno fun y hy hφ ↦ hc ⟨y, hy, hφ⟩
+      have hpart : (domain.filter fun y ↦ ψ y ∧ φ y).Nonempty :=
+        ⟨x, Finset.mem_filter.2 ⟨hx, hψx, hφx⟩⟩
+      have h1 := (uniformOn_eq_one_iff' hpart).2 fun y hy ↦ (Finset.mem_filter.1 hy).2.2
+      rw [h φ hpart, uniformOn_eq_one_iff' hR] at h1
+      exact fun y hy ↦ h1 y (Finset.mem_filter.2 hy)
   · rintro (hno | hall) part _ hpart
-    · rw [(prevalenceOn_eq_zero_iff hpart).mpr fun y hy hRy => hno y hy hRy.1,
-        (prevalenceOn_eq_zero_iff hR).mpr hno]
-    · rw [(prevalenceOn_eq_one_iff hpart).mpr fun y hy hRy => hall y hy hRy.1,
-        (prevalenceOn_eq_one_iff hR).mpr hall]
+    · rw [(uniformOn_eq_zero_iff' _).2 fun y hy ↦ hno y ⟨(Finset.mem_filter.1 hy).1,
+          (Finset.mem_filter.1 hy).2.1⟩,
+        (uniformOn_eq_zero_iff' _).2 fun y hy ↦ hno y (Finset.mem_filter.1 hy)]
+    · rw [(uniformOn_eq_one_iff' hpart).2 fun y hy ↦ hall y ⟨(Finset.mem_filter.1 hy).1,
+          (Finset.mem_filter.1 hy).2.1⟩,
+        (uniformOn_eq_one_iff' hR).2 fun y hy ↦ hall y (Finset.mem_filter.1 hy)]
 
 /-! ### Frequency adverbs (definition 10, p. 128)
 
-At the extreme thresholds the relativized classical quantifiers reappear; sometimes is the
+At the extreme thresholds the restricted classical quantifiers reappear; sometimes is the
 existential, so a generic over an empty reference class entails nothing (§5.6). -/
 
-/-- always: probability 1 is the relativized universal. -/
-theorem freq_eq_one_iff (hR : 0 < countOn domain (fun x => ψ x ∧ alt x)) :
-    freq domain ψ alt φ (· = 1) ↔ everyOn domain (fun x => ψ x ∧ alt x) φ :=
-  prevalenceOn_eq_one_iff hR
+omit [DecidablePred φ] in
+/-- *Always*, probability 1, is the restricted universal. -/
+theorem freq_eq_one_iff (hR : (domain.filter fun x ↦ ψ x ∧ alt x).Nonempty) :
+    freq domain ψ alt φ (· = 1) ↔ every (fun x ↦ x ∈ domain ∧ ψ x ∧ alt x) φ :=
+  (uniformOn_eq_one_iff' hR).trans
+    ⟨fun h x hx ↦ h x (Finset.mem_filter.2 hx), fun h x hx ↦ h x (Finset.mem_filter.1 hx)⟩
 
-/-- never: probability 0 is the relativized `no`. -/
-theorem freq_eq_zero_iff (hR : 0 < countOn domain (fun x => ψ x ∧ alt x)) :
-    freq domain ψ alt φ (· = 0) ↔ noOn domain (fun x => ψ x ∧ alt x) φ :=
-  prevalenceOn_eq_zero_iff hR
+omit [DecidablePred φ] in
+/-- *Never*, probability 0, is the restricted `no`. -/
+theorem freq_eq_zero_iff :
+    freq domain ψ alt φ (· = 0) ↔ no (fun x ↦ x ∈ domain ∧ ψ x ∧ alt x) φ :=
+  (uniformOn_eq_zero_iff' _).trans
+    ⟨fun h x hx ↦ h x (Finset.mem_filter.2 hx), fun h x hx ↦ h x (Finset.mem_filter.1 hx)⟩
 
-/-- sometimes: positive probability is the relativized existential. -/
-theorem freq_pos_iff (hR : 0 < countOn domain (fun x => ψ x ∧ alt x)) :
-    freq domain ψ alt φ (0 < ·) ↔ someOn domain (fun x => ψ x ∧ alt x) φ :=
-  prevalenceOn_pos_iff hR
+omit [DecidablePred φ] in
+/-- *Sometimes*, positive probability, is the restricted existential. -/
+theorem freq_pos_iff :
+    freq domain ψ alt φ (0 < ·) ↔ GQ.some (fun x ↦ x ∈ domain ∧ ψ x ∧ alt x) φ := by
+  have h := freq_eq_zero_iff (domain := domain) (ψ := ψ) (alt := alt) (φ := φ)
+  unfold freq at h ⊢
+  beta_reduce at h ⊢
+  rw [pos_iff_ne_zero, Ne, h]
+  simp only [no, GQ.some, not_forall, not_not, exists_prop]
 
 /-! ### People have a hard time finding CMU (§3.2.1, after Thomason)
 
@@ -222,15 +273,15 @@ Twenty people, five of whom sought the university: four found it with difficulty
 ease. The alternatives — the levels of difficulty of the search — restrict the reference
 class to the seekers, so the generic holds with no majority among people. -/
 
+section Examples
+
 abbrev soughtCMU : Fin 20 → Prop := (·.val < 5)
 abbrev hardTime : Fin 20 → Prop := (·.val < 4)
 
-theorem cmu_gen : gen Finset.univ (fun _ => True) soughtCMU hardTime := by
-  rw [gen_iff_thresholdGt _ _ _ _ (by decide)]
+theorem cmu_gen : gen Finset.univ (fun _ ↦ True) soughtCMU hardTime := by
   decide
 
-theorem cmu_no_majority : ¬ gen Finset.univ (fun _ => True) (fun _ => True) hardTime := by
-  rw [gen_iff_thresholdGt _ _ _ _ (by decide)]
+theorem cmu_no_majority : ¬ gen Finset.univ (fun _ ↦ True) (fun _ ↦ True) hardTime := by
   decide
 
 /-! ### Mammals bear live young; mammals are not female (§3.2.1 p. 33, §4.4.6 p. 91)
@@ -248,36 +299,30 @@ abbrev procreates : Fin 20 → Prop := (·.val < 8)
 abbrev bearsLive : Fin 20 → Prop := (·.val < 6)
 abbrev female : Fin 20 → Prop := (·.val < 11)
 
-/-- The sex partition: the females and the males. -/
-abbrev sexCell : Bool → Fin 20 → Prop := fun b x => if b then female x else ¬ female x
+/-- The sex partition divides the females from the males. -/
+abbrev sexCell : Bool → Fin 20 → Prop := fun b x ↦ if b then female x else ¬ female x
 
-theorem bearsLive_gen : gen Finset.univ (fun _ => True) procreates bearsLive := by
-  rw [gen_iff_thresholdGt _ _ _ _ (by decide)]
+theorem bearsLive_gen : gen Finset.univ (fun _ ↦ True) procreates bearsLive := by
   decide
 
 theorem bearsLive_no_majority :
-    ¬ gen Finset.univ (fun _ => True) (fun _ => True) bearsLive := by
-  rw [gen_iff_thresholdGt _ _ _ _ (by decide)]
+    ¬ gen Finset.univ (fun _ ↦ True) (fun _ ↦ True) bearsLive := by
   decide
 
 theorem bearsLive_genSalient :
-    genSalient Finset.univ (fun _ => True) procreates bearsLive sexCell := by
+    genSalient Finset.univ (fun _ ↦ True) procreates bearsLive sexCell := by
   intro i hi
   cases i
   · exact absurd hi (by decide)
-  · rw [gen_iff_thresholdGt _ _ _ _ (by decide)]
-    decide
+  · decide
 
-theorem female_gen : gen Finset.univ (fun _ => True) (fun _ => True) female := by
-  rw [gen_iff_thresholdGt _ _ _ _ (by decide)]
+theorem female_gen : gen Finset.univ (fun _ ↦ True) (fun _ ↦ True) female := by
   decide
 
 theorem female_not_genSalient :
-    ¬ genSalient Finset.univ (fun _ => True) (fun _ => True) female sexCell := by
+    ¬ genSalient Finset.univ (fun _ ↦ True) (fun _ ↦ True) female sexCell := by
   intro h
-  have h1 := h false (by decide)
-  rw [gen_iff_thresholdGt _ _ _ _ (by decide)] at h1
-  exact absurd h1 (by decide)
+  exact absurd (h false (by decide)) (by decide)
 
 /-! ### Relative readings (§3.4.3–3.4.4, pp. 54–56)
 
@@ -291,28 +336,32 @@ conservative. -/
 
 abbrev bulgarian : Fin 20 → Prop := (·.val < 5)
 abbrev lifter : Fin 20 → Prop := (·.val < 15)
-abbrev goodLifter : Fin 20 → Prop := fun x => x.val < 2 ∨ x.val = 5
+abbrev goodLifter : Fin 20 → Prop := fun x ↦ x.val < 2 ∨ x.val = 5
 
 theorem bulgarians_relative : genRelative Finset.univ bulgarian lifter goodLifter := by
-  decide +kernel
+  rw [genRelative_iff_card (by decide) (by decide)]
+  decide
 
 theorem bulgarians_not_absolute : ¬ gen Finset.univ bulgarian lifter goodLifter := by
-  rw [gen_iff_thresholdGt _ _ _ _ (by decide)]
   decide
 
 abbrev brazilian : Fin 20 → Prop := (·.val < 5)
 abbrev soccerPlayer : Fin 20 → Prop := (·.val < 15)
-abbrev lousy : Fin 20 → Prop := fun x => x.val = 0 ∨ (5 ≤ x.val ∧ x.val < 13)
+abbrev lousy : Fin 20 → Prop := fun x ↦ x.val = 0 ∨ (5 ≤ x.val ∧ x.val < 13)
 
 theorem brazilians_relative_rejected :
     ¬ genRelative Finset.univ brazilian soccerPlayer lousy := by
-  decide +kernel
+  rw [genRelative_iff_card (by decide) (by decide)]
+  decide
 
 /-- The relative reading is not conservative (p. 55): intersecting the scope with the
 restrictor flips the verdict. -/
 theorem genRelative_not_conservative :
-    ¬ (genRelative Finset.univ brazilian soccerPlayer (fun x => brazilian x ∧ lousy x) ↔
+    ¬ (genRelative Finset.univ brazilian soccerPlayer (fun x ↦ brazilian x ∧ lousy x) ↔
         genRelative Finset.univ brazilian soccerPlayer lousy) := by
-  decide +kernel
+  rw [genRelative_iff_card (by decide) (by decide), genRelative_iff_card (by decide) (by decide)]
+  decide
+
+end Examples
 
 end Cohen1999

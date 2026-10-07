@@ -80,44 +80,48 @@ open Quantifier Quantifier.GQ
 /-- Partee and Rooth's SHIFT, lifting an extensional transitive verb to take a
 quantifier object. -/
 def SHIFT {E : Type*} (V : E → E → Prop) : ((E → Prop) → Prop) → E → Prop :=
-  fun Q x => Q (fun y => V x y)
+  fun Q x ↦ Q (fun y ↦ V x y)
 
 /-- Negating a shifted verb differs from shifting the negated verb, and only the first
 order is attested ((25)): a type-shift applies at its trigger site, before further
 composition. -/
 theorem not_shift_ne_shift_not :
     ∃ (V : Bool → Bool → Prop) (Q : (Bool → Prop) → Prop) (x : Bool),
-      ¬ (¬ SHIFT V Q x ↔ SHIFT (fun a b => ¬ V a b) Q x) :=
-  ⟨fun _ y => y = true, fun P => P true ∨ P false, true, by unfold SHIFT; decide⟩
+      ¬ (¬ SHIFT V Q x ↔ SHIFT (fun a b ↦ ¬ V a b) Q x) :=
+  ⟨fun _ y ↦ y = true, fun P ↦ P true ∨ P false, true, by unfold SHIFT; decide⟩
 
 /-- Predicate Transfer for generics (§13.4.1): a property of individuals becomes the
 property of a kind whose instances generically bear it. -/
-def transfer {Kind Ind : Type*} [Fintype Ind] (instanceOf : Ind → Kind → Prop)
-    [∀ k, DecidablePred (fun y => instanceOf y k)] (P : Ind → Prop) [DecidablePred P] :
+def transfer {Kind Ind : Type*} [MeasurableSpace Ind] [MeasurableSingletonClass Ind]
+    [Fintype Ind] (instanceOf : Ind → Kind → Prop)
+    [∀ k, DecidablePred (fun y ↦ instanceOf y k)] (P : Ind → Prop) [DecidablePred P] :
     Kind → Prop :=
-  fun k => Cohen1999.gen Finset.univ (fun y => instanceOf y k) (fun _ => True) P
+  fun k ↦ Cohen1999.gen Finset.univ (fun y ↦ instanceOf y k) (fun _ ↦ True) P
 
-instance {Kind Ind : Type*} [Fintype Ind] (instanceOf : Ind → Kind → Prop)
-    [∀ k, DecidablePred (fun y => instanceOf y k)] (P : Ind → Prop) [DecidablePred P]
+instance {Kind Ind : Type*} [MeasurableSpace Ind] [MeasurableSingletonClass Ind]
+    [Fintype Ind] (instanceOf : Ind → Kind → Prop)
+    [∀ k, DecidablePred (fun y ↦ instanceOf y k)] (P : Ind → Prop) [DecidablePred P]
     (k : Kind) : Decidable (transfer instanceOf P k) := by
   unfold transfer; infer_instance
 
 /-- The habitual type-shift γ (§13.4.2): a property of intervals becomes the property of
 a moment in whose surrounding interval it generically holds. -/
-def gamma {Interval Moment : Type*} [Fintype Interval]
+def gamma {Interval Moment : Type*} [MeasurableSpace Interval]
+    [MeasurableSingletonClass Interval] [Fintype Interval]
     (containedIn : Interval → Moment → Prop)
-    [∀ t, DecidablePred (fun e => containedIn e t)] (P : Interval → Prop)
+    [∀ t, DecidablePred (fun e ↦ containedIn e t)] (P : Interval → Prop)
     [DecidablePred P] : Moment → Prop :=
-  fun t => Cohen1999.gen Finset.univ (fun e => containedIn e t) (fun _ => True) P
+  fun t ↦ Cohen1999.gen Finset.univ (fun e ↦ containedIn e t) (fun _ ↦ True) P
 
-instance {Interval Moment : Type*} [Fintype Interval]
+instance {Interval Moment : Type*} [MeasurableSpace Interval]
+    [MeasurableSingletonClass Interval] [Fintype Interval]
     (containedIn : Interval → Moment → Prop)
-    [∀ t, DecidablePred (fun e => containedIn e t)] (P : Interval → Prop)
+    [∀ t, DecidablePred (fun e ↦ containedIn e t)] (P : Interval → Prop)
     [DecidablePred P] (t : Moment) : Decidable (gamma containedIn P t) := by
   unfold gamma; infer_instance
 
-/-- The level at which a reinterpretation device applies: the mismatching word itself, or
-the containing phrase. -/
+/-- A reinterpretation device applies at the mismatching word itself or at the containing
+phrase. -/
 inductive Level
   | word
   | phrase
@@ -146,14 +150,14 @@ scopally ambiguous and true on one reading. -/
 abbrev nestsIn : Fin 2 → Fin 2 → Prop := (· = ·)
 
 /-- Every individual stork instantiates the kind. -/
-abbrev storkOf : Fin 2 → Unit → Prop := fun _ _ => True
+abbrev storkOf : Fin 2 → Unit → Prop := fun _ _ ↦ True
 
 /-- The two logical forms of the storks sentence, by level of transfer. -/
 def storksReading : Level → Prop
-  | .word => ∃ a : Fin 2, transfer storkOf (fun s => nestsIn s a) ()
-  | .phrase => transfer storkOf (fun s => ∃ a, nestsIn s a) ()
+  | .word => ∃ a : Fin 2, transfer storkOf (fun s ↦ nestsIn s a) ()
+  | .phrase => transfer storkOf (fun s ↦ ∃ a, nestsIn s a) ()
 
-instance : ∀ l, Decidable (storksReading l) := fun l => by
+instance : ∀ l, Decidable (storksReading l) := fun l ↦ by
   cases l <;> (unfold storksReading; infer_instance)
 
 /-- The two levels yield distinct readings: no single area serves most storks, while
@@ -179,14 +183,14 @@ witness, so its narrow reading is true and the sentence is fine. -/
 abbrev smokes : Fin 3 → Fin 3 → Prop := (· = ·)
 
 /-- Every occasion falls in the interval around the speech moment. -/
-abbrev inSpeechInterval : Fin 3 → Unit → Prop := fun _ _ => True
+abbrev inSpeechInterval : Fin 3 → Unit → Prop := fun _ _ ↦ True
 
 /-- The two logical forms of the cigarette sentence, by level of the shift. -/
 def cigaretteReading : Level → Prop
-  | .word => ∃ c : Fin 3, gamma inSpeechInterval (fun e => smokes c e) ()
-  | .phrase => gamma inSpeechInterval (fun e => ∃ c, smokes c e) ()
+  | .word => ∃ c : Fin 3, gamma inSpeechInterval (fun e ↦ smokes c e) ()
+  | .phrase => gamma inSpeechInterval (fun e ↦ ∃ c, smokes c e) ()
 
-instance : ∀ l, Decidable (cigaretteReading l) := fun l => by
+instance : ∀ l, Decidable (cigaretteReading l) := fun l ↦ by
   cases l <;> (unfold cigaretteReading; infer_instance)
 
 /-- The two levels yield distinct readings: no one cigarette is smoked at most
@@ -195,7 +199,7 @@ theorem cigaretteReading_word_ne_phrase :
     ¬ cigaretteReading .word ∧ cigaretteReading .phrase := by
   constructor <;> decide +kernel
 
-/-- The shift's locality leaves no true reading available: the oddness of the
+/-- The shift's locality leaves no true reading available, which is the oddness of the
 restrictorless habitual. -/
 theorem cigarette_no_true_reading_available :
     ∀ l, Device.typeShift.AppliesAt l → ¬ cigaretteReading l := by
@@ -205,13 +209,13 @@ theorem cigarette_no_true_reading_available :
   exact cigaretteReading_word_ne_phrase.1
 
 /-- One brand, smoked at every occasion. -/
-abbrev smokesBrand : Fin 1 → Fin 3 → Prop := fun _ _ => True
+abbrev smokesBrand : Fin 1 → Fin 3 → Prop := fun _ _ ↦ True
 
 /-- With a constant witness the same local shift yields a true reading: the brand
 variant (17b) is fine. -/
 theorem brand_true_reading_available :
     ∃ l, Device.typeShift.AppliesAt l ∧
-      ∃ b : Fin 1, gamma inSpeechInterval (fun e => smokesBrand b e) () :=
+      ∃ b : Fin 1, gamma inSpeechInterval (fun e ↦ smokesBrand b e) () :=
   ⟨.word, rfl, ⟨0, by decide +kernel⟩⟩
 
 /-! ### Cows do not eat nettles (§13.2.1)
@@ -225,19 +229,19 @@ sentence denies that any cow eats nettles — false here ((9b)). -/
 /-- The one nettle-eating cow among five. -/
 abbrev eatsNettles : Fin 5 → Prop := (·.val = 4)
 
-/-- Every cow eats something: the disjoined alternatives under object focus. -/
-abbrev eatsSomething : Fin 5 → Prop := fun _ => True
+/-- Every cow eats something, the disjunction of the alternatives under object focus. -/
+abbrev eatsSomething : Fin 5 → Prop := fun _ ↦ True
 
-/-- Object focus, generic over negation: most eating cows avoid nettles ((9a)). -/
+/-- With object focus the generic scopes over negation, and most eating cows avoid nettles
+((9a)). -/
 theorem cows_gen_over_neg :
-    Cohen1999.gen Finset.univ (fun _ => True) eatsSomething (fun x => ¬ eatsNettles x) := by
-  rw [Cohen1999.gen_iff_thresholdGt _ _ _ _ (by decide)]
+    Cohen1999.gen Finset.univ (fun _ ↦ True) eatsSomething (fun x ↦ ¬ eatsNettles x) := by
   decide
 
-/-- Auxiliary focus, negation over the generic: the inner refutation reading is true as
+/-- With auxiliary focus negation scopes over the generic, whose refutation reading is true as
 long as one cow eats nettles, so the sentence is false ((9b)). -/
 theorem cows_neg_over_gen_false :
-    Cohen1999.gen Finset.univ (fun _ => True) eatsNettles eatsNettles :=
-  Cohen1999.gen_self _ _ _ (by decide)
+    Cohen1999.gen Finset.univ (fun _ ↦ True) eatsNettles eatsNettles :=
+  Cohen1999.gen_self (by decide)
 
 end Cohen2013
