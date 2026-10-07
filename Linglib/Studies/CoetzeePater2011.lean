@@ -693,56 +693,84 @@ theorem exists_styleSensitive_reorders :
 def indexed (l : Lexeme) (c : Constraint Candidate) : Constraint (Lexeme × Candidate) :=
   fun x ↦ if x.1 = l then c x.2 else 0
 
-/-- The constraint set of (32) is \*CT with the faithfulness constraints of (11) indexed to
-*feast* and to *most*, in the printed order. -/
-def indexedCon : ConstraintSet (Lexeme × Candidate) (Fin 7) :=
-  ![starCT.comap Prod.snd, indexed .feast maxPreV, indexed .feast maxFinal, indexed .feast maxC,
-    indexed .most maxPreV, indexed .most maxFinal, indexed .most maxC]
+/-- The constraints of (32) are those of (11) with each faithfulness constraint indexed to each
+word, `none` being \*CT and `some (l, k)` the faithfulness constraint `con k.succ` indexed to
+`l`. -/
+def indexedCon : ConstraintSet (Lexeme × Candidate) (Option (Lexeme × Fin 3))
+  | none => (con 0).comap Prod.snd
+  | some (l, k) => indexed l (con k.succ)
 
-/-- The weights of (32), in the printed order. -/
-noncomputable def indexedWeights : Fin 7 → ℝ :=
-  ![indexedStarCT.toRat, indexedMaxPreVFeast.toRat, indexedMaxFinalFeast.toRat,
-    indexedMaxFeast.toRat, indexedMaxPreVMost.toRat, indexedMaxFinalMost.toRat,
-    indexedMaxMost.toRat]
+/-- The weights of (32). -/
+noncomputable def indexedWeights : Option (Lexeme × Fin 3) → ℝ
+  | none => indexedStarCT.toRat
+  | some (.feast, k) => (![indexedMaxFeast, indexedMaxPreVFeast, indexedMaxFinalFeast] k).toRat
+  | some (.most, k) => (![indexedMaxMost, indexedMaxPreVMost, indexedMaxFinalMost] k).toRat
 
 /-- The tableau of word `l` before `ctx` under the constraints of (32). -/
-def indexedTableau (l : Lexeme) (ctx : Context) : ConstraintSet Output (Fin 7) :=
+def indexedTableau (l : Lexeme) (ctx : Context) : ConstraintSet Output (Option (Lexeme × Fin 3)) :=
   fun k o ↦ indexedCon k (l, ctx, o)
 
-/-- When each faithfulness weight indexed to *feast* exceeds the matching one indexed to *most*,
-Noisy HG deletes less from *feast* than from *most* in every context (p. 29). -/
-theorem weightNoiseChoiceProb_feast_lt_most {w : Fin 7 → ℝ} (h₁ : w 4 < w 1) (h₂ : w 5 < w 2)
-    (h₃ : w 6 < w 3) {v : ℝ≥0} (hv : v ≠ 0) (ctx : Context) :
+/-- The permutation `exchange` swaps the two words in the indices of (32). -/
+def exchange : Option (Lexeme × Fin 3) ≃ Option (Lexeme × Fin 3) :=
+  Equiv.optionCongr ((Equiv.swap Lexeme.feast .most).prodCongr (Equiv.refl _))
+
+/-- The tableau of *most* is that of *feast* with the two words exchanged. -/
+theorem indexedTableau_most (ctx : Context) :
+    indexedTableau .most ctx = fun k ↦ indexedTableau .feast ctx (exchange k) := by
+  funext k o
+  rcases k with _ | ⟨_ | _, k⟩ <;> rfl
+
+/-- When each faithfulness weight indexed to *feast* exceeds the one indexed to *most*, Noisy HG
+deletes less from *feast* than from *most* in every context (p. 29). -/
+theorem weightNoiseChoiceProb_feast_lt_most {w : Option (Lexeme × Fin 3) → ℝ}
+    (hw : ∀ k, w (some (.most, k)) < w (some (.feast, k))) {v : ℝ≥0} (hv : v ≠ 0)
+    (ctx : Context) :
     weightNoiseChoiceProb (indexedTableau .feast ctx) w v .delete <
       weightNoiseChoiceProb (indexedTableau .most ctx) w v .delete := by
+  set d := (indexedTableau .feast ctx).violationDiff (R := ℝ) .delete .retain
+  have hd : d ≠ 0 := fun h ↦ by simpa [d, ConstraintSet.violationDiff, indexedTableau,
+    indexedCon, con, starCT] using congrFun h none
+  have hmost : (indexedTableau .most ctx).violationDiff (R := ℝ) .delete .retain = d ∘ exchange :=
+    by rw [indexedTableau_most]; rfl
   have hb (c : Output) (hc : c ≠ .delete) : c = .retain := by cases c <;> simp_all
-  have hd (l : Lexeme) :
-      ((indexedTableau l ctx).violationDiff .delete .retain : Fin 7 → ℝ) ≠ 0 := by
-    intro h
-    simpa [ConstraintSet.violationDiff, indexedTableau, indexedCon, starCT] using congrFun h 0
-  rw [weightNoiseChoiceProb_of_forall_ne_eq _ _ _ hv hb (by decide) (hd _),
-    weightNoiseChoiceProb_of_forall_ne_eq _ _ _ hv hb (by decide) (hd _),
-    ENNReal.ofReal_lt_ofReal_iff (gaussianChoiceProb_pos _ _)]
-  have hdd : ((indexedTableau .feast ctx).violationDiff .delete .retain ⬝ᵥ
-        (indexedTableau .feast ctx).violationDiff .delete .retain : ℝ) =
-      (indexedTableau .most ctx).violationDiff .delete .retain ⬝ᵥ
-        (indexedTableau .most ctx).violationDiff .delete .retain := by
-    cases ctx <;> simp [dotProduct, Fin.sum_univ_succ, ConstraintSet.violationDiff,
-      indexedTableau, indexedCon, indexed, starCT, maxC, maxPreV, maxFinal]
-  rw [hdd]
+  rw [weightNoiseChoiceProb_of_forall_ne_eq _ _ _ hv hb (by decide) hd,
+    weightNoiseChoiceProb_of_forall_ne_eq _ _ _ hv hb (by decide)
+      (by
+        rw [hmost]
+        exact fun h ↦ hd (funext fun k ↦ by simpa using congrFun h (exchange.symm k))),
+    ENNReal.ofReal_lt_ofReal_iff (gaussianChoiceProb_pos _ _), harmonyScore_sub,
+    harmonyScore_sub, hmost, show d ∘ exchange ⬝ᵥ d ∘ exchange = d ⬝ᵥ d from
+      exchange.sum_comp fun k ↦ d k * d k]
   refine gaussianChoiceProb_strictMono (Real.sqrt_pos.mpr (mul_pos
-    (NNReal.coe_pos.mpr (pos_iff_ne_zero.mpr hv)) ?_)) ?_
-  · cases ctx <;> simp [dotProduct, Fin.sum_univ_succ, ConstraintSet.violationDiff,
-      indexedTableau, indexedCon, indexed, starCT, maxC, maxPreV, maxFinal] <;> norm_num
-  · cases ctx <;> simp [harmonyScore_eq_neg_sum, Fin.sum_univ_succ, indexedTableau, indexedCon,
-      indexed, starCT, maxC, maxPreV, maxFinal] <;> linarith
+    (NNReal.coe_pos.mpr (pos_iff_ne_zero.mpr hv)) ((Finset.sum_nonneg fun k _ ↦
+      mul_self_nonneg (d k)).lt_of_ne (Ne.symm (mt dotProduct_self_eq_zero.mp hd))))) ?_
+  rw [neg_lt_neg_iff, show w ⬝ᵥ d ∘ exchange = ∑ k, w (exchange.symm k) * d k by
+    rw [dotProduct, ← exchange.symm.sum_comp]; simp]
+  have hf (j : Fin 3) : 0 ≤ d (some (.feast, j)) := by
+    have : ∀ (c : Context) (k : Fin 3), con k.succ (c, .retain) = 0 := by decide
+    simp [d, ConstraintSet.violationDiff, indexedTableau, indexedCon, indexed, this]
+  refine Finset.sum_lt_sum (fun k _ ↦ ?_) ⟨some (.feast, 0), mem_univ _, ?_⟩
+  · rcases k with _ | ⟨_ | _, j⟩
+    · rfl
+    · exact mul_le_mul_of_nonneg_right (hw j).le (hf j)
+    · simp [d, ConstraintSet.violationDiff, indexedTableau, indexedCon, indexed]
+  · rw [show exchange.symm (some (.feast, 0)) = some (.most, 0) from rfl]
+    simpa [d, ConstraintSet.violationDiff, indexedTableau, indexedCon, indexed, con, maxC]
+      using hw 0
 
-/-- The weights of (32) meet that condition, and the learned grammar deletes less from *feast*
-than from *most* in every context, as its learning data do. -/
-example : indexedMaxPreVMost.toRat < indexedMaxPreVFeast.toRat ∧
-      indexedMaxFinalMost.toRat < indexedMaxFinalFeast.toRat ∧
-      indexedMaxMost.toRat < indexedMaxFeast.toRat ∧
-    ∀ ctx, (indexedRates .feast ctx).learned.toRat < (indexedRates .most ctx).learned.toRat := by
-  decide +kernel
+/-- The grammar learned in (32) deletes less from *feast* than from *most* in every context, as
+its learning data do. -/
+theorem weightNoiseChoiceProb_indexedWeights {v : ℝ≥0} (hv : v ≠ 0) (ctx : Context) :
+    weightNoiseChoiceProb (indexedTableau .feast ctx) indexedWeights v .delete <
+      weightNoiseChoiceProb (indexedTableau .most ctx) indexedWeights v .delete :=
+  weightNoiseChoiceProb_feast_lt_most (fun k ↦ by
+    fin_cases k <;> norm_num [indexedWeights, indexedMaxFeast, indexedMaxMost,
+      indexedMaxPreVFeast, indexedMaxPreVMost, indexedMaxFinalFeast, indexedMaxFinalMost,
+      Decimal.toRat]) hv ctx
+
+/-- The learned grammar of (32) deletes less from *feast* than from *most* in every context. -/
+example (ctx : Context) :
+    (indexedRates .feast ctx).learned.toRat < (indexedRates .most ctx).learned.toRat := by
+  cases ctx <;> decide +kernel
 
 end CoetzeePater2011
