@@ -9,24 +9,16 @@ public import Mathlib.Probability.Independence.Basic
 /-!
 # Konuk, Quillien and Mascarenhas (2026): Plural Causes
 
-Konuk, Quillien and Mascarenhas ask whether a conjunction of events, *A and B*, is judged a cause
-in its own right, and extend the Necessity–Sufficiency Model of Icard, Kominsky and Knobe to such
-plural causes. Counterfactual worlds are sampled urn by urn: each urn keeps its actual draw with
-probability `s`, the stability, and is otherwise redrawn from its prior. A plural cause is the
-event that its urns show their actual draws. Its necessity is the probability that the outcome
-fails when its urns are redrawn, short of all showing their actual draws, while the other urns keep
-theirs; its sufficiency is the probability that forcing it on produces the outcome in a world where
-neither holds; its score weights sufficiency by the probability of the cause and necessity by the
-probability of its absence.
+Konuk, Quillien and Mascarenhas extend the Necessity–Sufficiency Model of Icard, Kominsky and
+Knobe from single causes to plural ones, conjunctions of events judged as causes in their own
+right. Counterfactual worlds are sampled urn by urn, each urn keeping its actual draw with
+probability `s`, the stability, and otherwise redrawn from its prior; a cause's score weights its
+sufficiency by its probability and its necessity by the probability of its absence.
 
-In the threshold game of Experiment 1 a pair scores the probability that its two urns agree, so the
-pair of the intermediate and high urns beats the pair of the low and intermediate urns by
-`9/10 · s(1 - s)`: at every stability strictly between 0 and 1, but not at the `s = 0` of the
-paper's exposition. In Experiment 2 the rule is (A ∧ B) ∨ (C ∧ D), and losses are scored against
-either its classical negation or its homogeneous negation, after the homogeneity of plural
-predication described by Križ and Spector, on which each winning condition's plural predication is
-false. A single white ball then scores higher the likelier its urn is to give one under the
-classical loss, and lower under the homogeneous loss, where larger pluralities also score higher.
+Experiment 1 is a game won with two colored balls out of three urns, Experiment 2 one won with
+(A ∧ B) ∨ (C ∧ D). Losses in Experiment 2 are scored against the classical negation of the rule or
+its homogeneous negation, after the homogeneity of plural predication described by Križ and
+Spector, on which each winning condition's plural predication is false.
 
 ## Main statements
 
@@ -51,41 +43,19 @@ classical loss, and lower under the homogeneous loss, where larger pluralities a
 
 ## Implementation notes
 
-* Worlds are draws `ι → Bool`, `true` for a colored ball, and the counterfactual distribution is
-  `Measure.pi` of the urns' propensities, each a mixture of the Dirac measure at the actual draw
-  and the Bernoulli prior. Necessity, sufficiency and the score are `ℝ≥0∞`-valued, built from
-  mathlib's `ProbabilityTheory.cond`; comparisons are proved through `ENNReal.toReal`.
-* Necessity holds every urn outside the plural at its actual draw, as in the worked example on
-  p. 448 (necessity 0.18/0.92 for cake and pie, the cheese kept eaten) and in the authors' code.
-* The score weights by the sampling probability of the plural, as the authors' code does; the text
-  speaks of the plural's prior, which is the same at `s = 0`.
-* Where the conditioning event of sufficiency has probability zero, `cond` is the zero measure;
-  the theorems about the paper's sampling assume `s < 1`, where every world has positive
-  probability.
-* The paper gives the homogeneous loss of the overdetermined round as ¬A ∧ ¬B ∧ ¬C ∧ ¬D, (2), and
-  that of the round with a colored ball from C as ¬A ∧ ¬B ∧ ¬D, the rule negated "as homogeneous as
-  possible, without contradicting the established facts" (p. 468). `homogeneousLoss` reads this as
-  the homogeneous negation of each winning condition over its urns that are white in the actual
-  round, which gives both formulas (`homogeneousLoss_tripleNegative`).
-* Discrepancies with the source. The first line of (2) prints ¬((A ∧ B) ∧ (C ∧ D)) for
-  ¬((A ∧ B) ∨ (C ∧ D)). The NSM ranks the intermediate and high pair highest only for `0 < s`,
-  where p. 451 says so without restriction. On p. 463 the NSM is said to prescribe abnormal
-  deflation for the single balls of the overdetermined win, but in the model, as in the authors'
-  code, the two urns of a color score alike (`partners_scored_alike`). The Experiment 1 code
-  multiplies the pair's necessity term by `1 - P(A)P(B)` a second time and miscounts the triple.
-  The Experiment 2 code mixes the two losses' sufficiencies with weight `w`, where p. 465 draws the
-  loss world by world and so conditions on a mixed event (the necessities, conditioned on the same
-  event under both losses, mix exactly), and its triple-negative function scores single balls
-  against the four-urn loss of (2) rather than the three-urn loss of p. 468.
-* Not represented: the Counterfactual Effect Size Model of [quillien-lucas-2024], the
-  `w`-weighted mixture of the two losses, the fitted parameters, and the linear-combination
-  hypothesis, which the paper tests against the participants' ratings rather than against a model.
+* Necessity holds the urns outside the plural at their actual draws, as in the worked example of
+  p. 448, and the score weights by the plural's sampling probability, its prior at `s = 0`.
+* `homogeneousLoss` negates each winning condition over its urns that are white in the actual
+  round, which gives both of the paper's homogeneous losses, (2) and that of p. 468.
+* Two of the paper's claims about the NSM fail in the model: `intermediate_high_ranked_highest`
+  needs `0 < s`, and `partners_scored_alike` contradicts the abnormal deflation of p. 463.
 
 ## TODO
 
-* The Counterfactual Effect Size Model, with the paper's claim (p. 451) that it ranks the
+* The Counterfactual Effect Size Model of [quillien-lucas-2024], which p. 451 says ranks the
   intermediate and high pair highest at every stability.
-* The mixture of the two losses, a coin drawn in each counterfactual world (p. 465).
+* The `w`-weighted mixture of the two losses, a coin drawn in each counterfactual world
+  (p. 465).
 
 ## References
 
