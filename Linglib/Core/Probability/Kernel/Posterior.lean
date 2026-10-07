@@ -164,6 +164,31 @@ theorem _root_.MeasureTheory.Measure.comp_real_singleton_eq_integral [Fintype Ω
     (κ ∘ₘ μ).real {x} = ∫ ω, (κ ω).real {x} ∂μ := by
   rw [Measure.comp_real_singleton, integral_fintype .of_finite]; rfl
 
+section Equiv
+
+variable {Ω' 𝓧' : Type*} [MeasurableSpace Ω'] [MeasurableSpace 𝓧'] [MeasurableSingletonClass Ω']
+  [MeasurableSingletonClass 𝓧'] {κ' : Kernel Ω' 𝓧'} {μ' : Measure Ω'} {x : 𝓧} {x' : 𝓧'}
+
+omit [StandardBorelSpace Ω] [Nonempty Ω] [IsFiniteMeasure μ] [IsFiniteKernel κ] in
+/-- A relabelling of the states that carries one prior and likelihood to another carries the
+observation marginal along. -/
+theorem _root_.MeasureTheory.Measure.comp_apply_singleton_of_equiv [Fintype Ω] [Fintype Ω']
+    (e : Ω ≃ Ω') (hμ : ∀ ω, μ' {e ω} = μ {ω}) (hκ : ∀ ω, κ' (e ω) {x'} = κ ω {x}) :
+    (κ' ∘ₘ μ') {x'} = (κ ∘ₘ μ) {x} := by
+  rw [Measure.comp_apply_singleton, Measure.comp_apply_singleton, ← e.sum_comp]
+  simp only [hμ, hκ]
+
+/-- A relabelling of the states that carries one prior and likelihood to another carries the
+posterior along, so the posterior is equivariant. -/
+theorem posterior_apply_singleton_of_equiv [Fintype Ω] [Fintype Ω'] [StandardBorelSpace Ω']
+    [Nonempty Ω'] [IsFiniteKernel κ'] [IsFiniteMeasure μ'] (e : Ω ≃ Ω')
+    (hμ : ∀ ω, μ' {e ω} = μ {ω}) (hκ : ∀ ω, κ' (e ω) {x'} = κ ω {x}) (hx : (κ ∘ₘ μ) {x} ≠ 0)
+    (ω : Ω) : (κ'†μ') x' {e ω} = (κ†μ) x {ω} := by
+  have hc := Measure.comp_apply_singleton_of_equiv κ μ e hμ hκ
+  rw [posterior_apply_singleton κ μ hx, posterior_apply_singleton κ' μ' (hc ▸ hx), hμ, hκ, hc]
+
+end Equiv
+
 /-- At an observation of positive mass, Bayes' rule holds on reals. -/
 theorem posterior_real_singleton {x : 𝓧} (hx : (κ ∘ₘ μ) {x} ≠ 0) (ω : Ω) :
     ((κ†μ) x).real {ω} = μ.real {ω} * (κ ω).real {x} / (κ ∘ₘ μ).real {x} := by
