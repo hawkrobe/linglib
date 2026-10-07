@@ -12,7 +12,7 @@ This file formalizes the double-strengthening account of homogeneity of [magri-2
 definite has the plain existential meaning of the indefinite, and its universal reading is an
 implicature of an implicature: the indefinite triggers the *only some* inference, and the definite
 triggers the inference that this inference is false, by the iterated exhaustification (19) of
-[spector-2007] over the exhaustivity operator (18). The paper's abstract configuration (§5.2) is
+[spector-2007b] over the exhaustivity operator (18). The paper's abstract configuration (§5.2) is
 three items, the item displaying homogeneity and the weak and strong poles of the scale it patterns
 with (`Item`), with a non-transitive Horn-mateness that pairs the item with one pole only. In the
 primal theory (52) the item means the weak pole and is a Horn-mate of it (`primal`,
@@ -56,7 +56,7 @@ of the classroom example of [gajewski-2005]; neither is modeled.
 ## References
 
 * [magri-2014]
-* [spector-2007]
+* [spector-2007b]
 * [fox-2007]
 * [sauerland-2004]
 * [szabolcsi-haddican-2004]
@@ -78,7 +78,7 @@ meanings of its Horn-mates. -/
 def exh (mates : ι → Finset ι) (m : ι → Finset W) (i : ι) : Finset W :=
   innocent.exh ((mates i).image m) (m i)
 
-/-- (19): the strengthened meaning is the iterated exhaustification of [spector-2007], the outer
+/-- (19): the strengthened meaning is the iterated exhaustification of [spector-2007b], the outer
 operator denying the strengthened meanings of the Horn-mates. Two iterations suffice for every
 configuration of the paper. -/
 def strengthened (mates : ι → Finset ι) (m : ι → Finset W) : ι → Finset W :=

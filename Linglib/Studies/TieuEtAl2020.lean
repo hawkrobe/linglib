@@ -14,7 +14,7 @@ conveys that she fed none, (2), and the inference likewise disappears in conditi
 antecedents and questions, (3)–(4). The ambiguity approach of [farkas-de-swart-2010] gives the
 plural a weak reading, one or more, and a strong reading, more than one, and selects the
 stronger by the Strongest Meaning Hypothesis, (5)–(7). The implicature approach of
-[spector-2007] and [zweig-2009] gives the plural the weak meaning and derives the multiplicity
+[spector-2007b] and [zweig-2009] gives the plural the weak meaning and derives the multiplicity
 inference by exhaustification against the singular alternative, (13)–(15), which is entailed
 rather than excludable under negation, (16)–(17). The homogeneity approach of [kriz-2015],
 extended to bare plurals, makes the plural predicate undefined of a single giraffe, so the
@@ -48,7 +48,7 @@ are the rows of `Data.Examples.TieuEtAl2020`.
 
 * [tieu-etal-2020]
 * [farkas-de-swart-2010]
-* [spector-2007]
+* [spector-2007b]
 * [zweig-2009]
 * [kriz-2015]
 * [fox-2007]
