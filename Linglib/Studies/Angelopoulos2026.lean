@@ -220,21 +220,22 @@ theorem oti_pu_lexically_distinct :
 
 /-- A situation verb is anchored when it relates agents only to situations realized at the
 evaluation situation. -/
-def Anchored {S X : Type*} (verb : SituationVerb S X) : Prop := ∀ a xs s, verb a xs s → xs.sit s
+def Anchored {S X : Type*} (verb : X → SituationIndividual S → S → Prop) : Prop :=
+  ∀ a xs s, verb a xs s → xs.sit s
 
 /-- An anchored verb's *pu*-report entails its complement — *pu*'s factivity from situation
 semantics (38b). -/
-theorem pu_report_factive {S X : Type*} {verb : SituationVerb S X} (h : Anchored verb) (a : X)
-    (q : S → Prop) (s : S) : existsClosure verb a q s → q s := by
+theorem pu_report_factive {S X : Type*} {verb : X → SituationIndividual S → S → Prop}
+    (h : Anchored verb) (a : X) (q : S → Prop) (s : S) : existsClosure verb a q s → q s := by
   rintro ⟨xs, hv, hq⟩
   rw [← show xs.sit = q from hq]
   exact h a xs s hv
 
 /-- Content reports carry no such entailment (38a). -/
 theorem content_report_not_factive :
-    ¬ ∀ (verb : ContentVerb Bool Unit) (a : Unit) (p : Bool → Prop) (w : Bool),
-        existsClosure verb a p w → p w :=
-  fun h => h (fun _ _ _ => True) () (fun _ => False) true ⟨⟨fun _ => False⟩, trivial, rfl⟩
+    ¬ ∀ (verb : Unit → ContentIndividual Bool → Bool → Prop) (a : Unit) (p : Bool → Prop)
+        (w : Bool), existsClosure verb a p w → p w :=
+  fun h ↦ h (fun _ _ _ ↦ True) () (fun _ ↦ False) true ⟨⟨fun _ ↦ False⟩, trivial, rfl⟩
 
 /-! ### Against the transparent syntax–semantics mapping (§7.3) -/
 
