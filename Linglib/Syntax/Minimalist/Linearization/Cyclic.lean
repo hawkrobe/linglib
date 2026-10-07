@@ -27,7 +27,9 @@ every snapshot as a sub-order (`consistent_iff_exists_linearization`): the deriv
 string. Order Preservation is monotonicity (`SpelloutOrder.mono`), not an axiom; it keeps
 adjacency too, since whatever a later Spell-out places between two terminals adjacent at an earlier
 one was not spelled out with them (`Consistent.notMem_of_isInfix`); the order reads only the set of
-snapshots (`spelloutOrder_perm`); and `Consistent` decides on concrete data.
+snapshots (`spelloutOrder_perm`); two Spell-outs, the later containing the earlier, cohere exactly
+when the earlier is a sub-order of the later (`consistent_pair_iff_sublist`); and `Consistent`
+decides on concrete data.
 
 ## Main results
 
@@ -135,6 +137,17 @@ theorem consistent_of_forall_sublist {l : List α} (h : ∀ p ∈ phases, p <+ l
   consistent_singleton hnd a
     (Relation.TransGen.mono (fun _ _ ⟨p, hp, hs⟩ ↦ ⟨l, mem_singleton_self l, hs.trans (h p hp)⟩)
       a a hab)
+
+/-- Two Spell-outs, the later duplicate-free and containing the earlier, cohere exactly when the
+earlier is a sub-order of the later. -/
+theorem consistent_pair_iff_sublist (hq : q.Nodup) (hpq : p ⊆ q) :
+    Consistent [p, q] ↔ p <+ q := by
+  refine ⟨fun h ↦ sublist_of_forall_pair_sublist (h.nodup (by simp)) hq hpq fun a b hab ↦ ?_,
+    fun h ↦ consistent_of_forall_sublist (by simpa using h) hq⟩
+  have hne : a ≠ b := by
+    rintro rfl; exact h a (Statement.spelloutOrder ⟨p, by simp, hab⟩)
+  exact (pair_sublist_or_pair_sublist (hpq (hab.subset (by simp))) (hpq (hab.subset (by simp)))
+    hne).resolve_right fun hba ↦ not_consistent_of_pair a b ⟨p, by simp, hab⟩ ⟨q, by simp, hba⟩ h
 
 /-- Every terminal mentioned at some Spell-out. -/
 def support (phases : List (List α)) : List α := phases.flatten.dedup

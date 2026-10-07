@@ -313,7 +313,6 @@ inductive Terminal
 section Linearization
 
 open Terminal
-open SyntacticObject (leaf)
 
 /-- Each terminal spells out its own lexical item. -/
 def Terminal.token : Terminal → LIToken
@@ -335,20 +334,20 @@ def embeddedC : LIToken := ⟨.simple .C [], 18⟩
 /-- In the embedded clause *eat* merges with *what*, then *would*, *Mary* and the
 complementizer. -/
 def embeddedSteps : List Step :=
-  [.em .right (leaf what.token), .em .left (leaf would.token), .em .left (leaf mary.token),
-    .em .left (leaf embeddedC)]
+  [.em .right what.token, .em .left would.token, .em .left mary.token,
+    .em .left embeddedC]
 
 /-- In the matrix clause *think*, *you* and *do* merge over the embedded clause. -/
 def matrixSteps : List Step :=
-  [.em .left (leaf think.token), .em .left (leaf you.token), .em .left (leaf «do».token)]
+  [.em .left think.token, .em .left you.token, .em .left «do».token]
 
 /-- *What* moves to the edge of the clause built so far, or stays. -/
-def moveWhat (b : Bool) : List Step := if b then [.im (leaf what.token)] else []
+def moveWhat (b : Bool) : List Step := if b then [.im what.token] else []
 
 /-- In a derivation of (27) *what* stops at the edge of the embedded clause or not, and then
 moves to the edge of the matrix clause or stays in situ. -/
 def derivation (edge front : Bool) : Derivation :=
-  ⟨leaf eat.token, embeddedSteps ++ moveWhat edge ++ matrixSteps ++ moveWhat front⟩
+  ⟨eat.token, embeddedSteps ++ moveWhat edge ++ matrixSteps ++ moveWhat front⟩
 
 /-- The embedded clause is built once *what* has stopped at its edge or not. -/
 def embeddedStage (edge : Bool) : ℕ := (embeddedSteps ++ moveWhat edge).length

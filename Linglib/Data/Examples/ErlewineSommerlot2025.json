@@ -1230,6 +1230,54 @@
     "verified": "page-image"
   },
   {
+    "id": "erlewinesommerlot2025_73_N",
+    "source": {"bibkey": "erlewine-sommerlot-2025", "paperLabel": "(73), N-"},
+    "language": "sara1351",
+    "primaryText": "Apa (nok) kitak n-anam?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Apa", "what"], ["(nok)", "C"], ["kitak", "2"], ["n-anam", "N-plant"]
+    ],
+    "translation": "What did you plant?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["grammar", "kuching"],
+      ["extracted", "theme"],
+      ["subject", "agent"],
+      ["lowAgent", "no"],
+      ["prefix", "N"]
+    ],
+    "comment": "Kuching Malay, Glottolog's Sarawak Malay (sara1351): object extraction across an N- or bare active, N- realizing v. The source cites (Cole et al. 2008:1548–49).",
+    "verified": "page-image"
+  },
+  {
+    "id": "erlewinesommerlot2025_73_bare",
+    "source": {"bibkey": "erlewine-sommerlot-2025", "paperLabel": "(73), bare"},
+    "language": "sara1351",
+    "primaryText": "Apa (nok) kitak tanam?",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Apa", "what"], ["(nok)", "C"], ["kitak", "2"], ["tanam", "plant"]
+    ],
+    "translation": "What did you plant?",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["grammar", "kuching"],
+      ["extracted", "theme"],
+      ["subject", "agent"],
+      ["lowAgent", "no"],
+      ["prefix", "bare"]
+    ],
+    "comment": "Kuching Malay, Glottolog's Sarawak Malay (sara1351): object extraction across an N- or bare active, N- realizing v. The source cites (Cole et al. 2008:1548–49).",
+    "verified": "page-image"
+  },
+  {
     "id": "erlewinesommerlot2025_76a",
     "source": {"bibkey": "jeoung-2017", "paperLabel": "pp. 17, 20"},
     "reportedIn": {"bibkey": "erlewine-sommerlot-2025", "paperLabel": "(76a)"},
