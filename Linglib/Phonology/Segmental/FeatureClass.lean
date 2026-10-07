@@ -11,7 +11,8 @@ The grouping of Hayes's features by the sections of his feature chapter — mann
 (§4.4, including the sonority features), laryngeal (§4.7), and the three major articulators
 (§4.6.1) with their dependents, [round] and [labiodental] under labial (§4.6.3), [anterior],
 [distributed], [strident] and [lateral] under coronal (§4.6.2), and the vowel features (§4.5)
-under dorsal (§4.6.4) — as plain finite sets, with Place their union (Padgett p. 83).
+under dorsal (§4.6.4), with [RTR], which Hayes lacks, beside [ATR] — as plain finite sets, with
+Place their union (Padgett p. 83).
 The grouping is the inventory's own and makes no constituency claim, with no root, no order
 and no `FeatureGeometry` instance, because the current textbooks agree on the flat classes
 but not on a tree: Hayes draws none, nor do Bale and Reiss; Gussenhoven and Jacobs
@@ -86,7 +87,7 @@ def Feature.featureClass : Feature → FeatureClass
   | .voice | .spreadGlottis | .constrGlottis => .laryngeal
   | .labial | .round | .labiodental => .labial
   | .coronal | .anterior | .distributed | .strident | .lateral => .coronal
-  | .dorsal | .high | .low | .front | .back | .tense | .atr => .dorsal
+  | .dorsal | .high | .low | .front | .back | .tense | .atr | .rtr => .dorsal
 
 namespace FeatureClass
 

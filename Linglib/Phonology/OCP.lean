@@ -20,8 +20,8 @@ fusion repair `collapse` is mathlib's
 cleanness, input-strictly-local ([chandlee-heinz-2018]); the blocking repair `block` is
 antigemination, a guard rather than a retraction ([mccarthy-1986]).
 
-Gradient, similarity-scaled OCP ([frisch-pierrehumbert-broe-2004]) is a different object
-and lives in the thresholded-TSL substrate, not here.
+Gradient, similarity-scaled OCP ([frisch-pierrehumbert-broe-2004]), a decreasing function of the
+similarity of the two consonants, is a different object, in that paper's study.
 
 ## Main definitions
 

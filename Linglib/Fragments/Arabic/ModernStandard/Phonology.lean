@@ -1,87 +1,136 @@
 module
 
-public import Mathlib.Data.Finset.Insert
+public import Linglib.Data.PHOIBLE.Inventories.Arabic
+public import Linglib.Phonology.Segmental.PHOIBLE
 
 /-!
 # Modern Standard Arabic phonology
 
-The 28 consonants of Modern Standard Arabic ([ryding-2005]) as `Consonant`, with the labial
-place class `Consonant.IsLabial` consumed by the OCP-Place co-occurrence literature. The
-consensus values /dʒ/ (ج) and /ðˤ/ (ظ) are those of [ryding-2005]; corpus-transcription
-traditions write them as g and zˤ.
+This file defines the 28 consonants of Modern Standard Arabic ([ryding-2005]) as segments named
+by their IPA symbols, with feature values from the PHOIBLE chart.
+
+The chart entries follow the glyphs of PHOIBLE's Arabic inventory 2157, an urban Levantine
+composite, so the coronals are dental and the emphatics are the chart's [+RTR] consonants, which
+differ from their plain counterparts in [RTR] alone. The standard language departs from that
+inventory in four consonants: /t/ and /k/ are plain where 2157 has aspirated t̪ʰ and kʰ, and the
+fricatives خ and غ are the uvular /χ/ and /ʁ/ where 2157 has xʀ̥ and velar ɣ. The inventory's
+lˤ is not a phoneme of the standard language. The values /dʒ/ for ج and /ðˤ/ for ظ are those of
+[ryding-2005]; corpus transcription traditions write them g and zˤ.
+
+## Main definitions
+
+* `b`, `f`, …, `j`: the consonants, and `consonants`, the set of them.
+
+## Main results
+
+* `exists_mem_arb`: every consonant but `t`, `k`, `χ` and `ʁ` is the segment of a phoneme of
+  PHOIBLE's inventory 2157.
+
+## References
+
+* [ryding-2005]
+* [moran-mccloy-2019]
 -/
 
 @[expose] public section
 
-namespace Arabic.ModernStandard
+open Phonology Data.PHOIBLE
 
-/-- The 28 consonants of Modern Standard Arabic ([ryding-2005]), IPA with
-`Emph` for the emphatic (superscript ˁ) series. -/
-inductive Consonant where
-  /-- /b/ — voiced labial stop. -/
-  | b
-  /-- /f/ — voiceless labial fricative. -/
-  | f
-  /-- /m/ — labial nasal. -/
-  | m
-  /-- /t/ — voiceless coronal stop. -/
-  | t
-  /-- /d/ — voiced coronal stop. -/
-  | d
-  /-- /tˁ/ — emphatic voiceless coronal stop. -/
-  | tEmph
-  /-- /dˁ/ — emphatic voiced coronal stop. -/
-  | dEmph
-  /-- /θ/ — voiceless coronal fricative. -/
-  | theta
-  /-- /ð/ — voiced coronal fricative. -/
-  | edh
-  /-- /ðˁ/ (ظ) — emphatic voiced coronal fricative; [zˁ] in many
-  varieties and romanizations. -/
-  | edhEmph
-  /-- /s/ — voiceless coronal sibilant. -/
-  | s
-  /-- /z/ — voiced coronal sibilant. -/
-  | z
-  /-- /sˁ/ — emphatic voiceless coronal sibilant. -/
-  | sEmph
-  /-- /ʃ/ — voiceless palatoalveolar sibilant. -/
-  | esh
-  /-- /dʒ/ (ج) — voiced palatoalveolar affricate; regionally [ʒ] ~ [ɡ]. -/
-  | jim
-  /-- /k/ — voiceless dorsal stop. -/
-  | k
-  /-- /q/ — uvular stop. -/
-  | q
-  /-- /χ/ — voiceless uvular fricative. -/
-  | chi
-  /-- /ʁ/ — voiced uvular fricative. -/
-  | gamma
-  /-- /ħ/ — voiceless pharyngeal fricative. -/
-  | hbar
-  /-- /ʕ/ — voiced pharyngeal fricative. -/
-  | ayin
-  /-- /h/ — voiceless laryngeal fricative. -/
-  | h
-  /-- /ʔ/ — laryngeal stop. -/
-  | glottal
-  /-- /l/ — coronal lateral. -/
-  | l
-  /-- /r/ — coronal rhotic. -/
-  | r
-  /-- /n/ — coronal nasal. -/
-  | n
-  /-- /w/ — labial-velar glide. -/
-  | w
-  /-- /j/ — palatal glide. -/
-  | j
-  deriving DecidableEq
+namespace Arabic.ModernStandard.Phonology
 
-/-- The labial place class `{b, f, m, w}`. -/
-def Consonant.IsLabial (x : Consonant) : Prop :=
-  x ∈ ({.b, .f, .m, .w} : Finset Consonant)
+/-- The voiced bilabial stop /b/ (ب). -/
+def b : Segment := .ofChart .«b»
 
-instance : DecidablePred Consonant.IsLabial :=
-  λ x => inferInstanceAs (Decidable (x ∈ ({.b, .f, .m, .w} : Finset Consonant)))
+/-- The voiceless labiodental fricative /f/ (ف). -/
+def f : Segment := .ofChart .«f»
 
-end Arabic.ModernStandard
+/-- The bilabial nasal /m/ (م). -/
+def m : Segment := .ofChart .«m»
+
+/-- The voiceless dental stop /t/ (ت). -/
+def t : Segment := .ofChart .«t̪»
+
+/-- The voiced dental stop /d/ (د). -/
+def d : Segment := .ofChart .«d̪»
+
+/-- The emphatic voiceless stop /tˤ/ (ط). -/
+def «tˤ» : Segment := .ofChart .«t̪̙ˤ»
+
+/-- The emphatic voiced stop /dˤ/ (ض). -/
+def «dˤ» : Segment := .ofChart .«d̙ˤ»
+
+/-- The voiceless dental fricative /θ/ (ث). -/
+def θ : Segment := .ofChart .«θ̪»
+
+/-- The voiced dental fricative /ð/ (ذ). -/
+def ð : Segment := .ofChart .«ð̪»
+
+/-- The emphatic voiced dental fricative /ðˤ/ (ظ). -/
+def «ðˤ» : Segment := .ofChart .«ð̪̙ˤ»
+
+/-- The voiceless alveolar fricative /s/ (س). -/
+def s : Segment := .ofChart .«s»
+
+/-- The voiced alveolar fricative /z/ (ز). -/
+def z : Segment := .ofChart .«z»
+
+/-- The emphatic voiceless fricative /sˤ/ (ص). -/
+def «sˤ» : Segment := .ofChart .«s̙ˤ»
+
+/-- The voiceless postalveolar fricative /ʃ/ (ش). -/
+def «ʃ» : Segment := .ofChart .«ʃ»
+
+/-- The voiced postalveolar affricate /dʒ/ (ج). -/
+def «dʒ» : Segment := .ofChart .«d̪ʒ»
+
+/-- The voiceless velar stop /k/ (ك). -/
+def k : Segment := .ofChart .«k»
+
+/-- The voiceless uvular stop /q/ (ق). -/
+def q : Segment := .ofChart .«q»
+
+/-- The voiceless uvular fricative /χ/ (خ). -/
+def χ : Segment := .ofChart .«χ»
+
+/-- The voiced uvular fricative /ʁ/ (غ). -/
+def «ʁ» : Segment := .ofChart .«ʁ»
+
+/-- The voiceless pharyngeal fricative /ħ/ (ح). -/
+def ħ : Segment := .ofChart .«ħ»
+
+/-- The voiced pharyngeal fricative /ʕ/ (ع). -/
+def «ʕ» : Segment := .ofChart .«ʕ̙»
+
+/-- The voiceless glottal fricative /h/ (ه). -/
+def h : Segment := .ofChart .«h»
+
+/-- The glottal stop /ʔ/ (ء). -/
+def «ʔ» : Segment := .ofChart .«ʔ»
+
+/-- The lateral /l/ (ل). -/
+def l : Segment := .ofChart .«l»
+
+/-- The trill /r/ (ر). -/
+def r : Segment := .ofChart .«r»
+
+/-- The dental nasal /n/ (ن). -/
+def n : Segment := .ofChart .«n̪»
+
+/-- The labial-velar glide /w/ (و). -/
+def w : Segment := .ofChart .«w»
+
+/-- The palatal glide /j/ (ي). -/
+def j : Segment := .ofChart .«j»
+
+/-- The consonants of Modern Standard Arabic. -/
+def consonants : Finset Segment :=
+  ⟨↑[b, f, m, t, d, «tˤ», «dˤ», θ, ð, «ðˤ», s, z, «sˤ», «ʃ», «dʒ», l, r, n, k, q, χ, «ʁ», ħ,
+    «ʕ», h, «ʔ», w, j], by decide +kernel⟩
+
+/-- Every consonant but `t`, `k`, `χ` and `ʁ` is the segment of a phoneme of PHOIBLE's
+inventory 2157. -/
+theorem exists_mem_arb : ∀ x ∈ consonants, x ∉ ({t, k, χ, «ʁ»} : Finset Segment) →
+    ∃ y ∈ Inventories.Arabic.arb.phonemes, x = .ofChart y.features := by
+  decide +kernel
+
+end Arabic.ModernStandard.Phonology

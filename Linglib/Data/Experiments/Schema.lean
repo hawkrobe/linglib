@@ -48,6 +48,14 @@ def RoundsPercent (d : Decimal) (k n : ℕ) : Prop :=
 instance (d : Decimal) (k n : ℕ) : Decidable (d.RoundsPercent k n) :=
   inferInstanceAs (Decidable (_ ≤ _))
 
+/-- The printed value is the proportion `k / n` rounded to the printed places: the two differ by
+at most half a unit in the last printed place. -/
+def Rounds (d : Decimal) (k n : ℕ) : Prop :=
+  2 * |(10 ^ d.exponent * k : ℤ) - d.mantissa * n| ≤ n
+
+instance (d : Decimal) (k n : ℕ) : Decidable (d.Rounds k n) :=
+  inferInstanceAs (Decidable (_ ≤ _))
+
 /-- Some count out of `n` rounds to the printed percentage. -/
 def AttainablePercent (d : Decimal) (n : ℕ) : Prop := ∃ k : Fin (n + 1), d.RoundsPercent k n
 
