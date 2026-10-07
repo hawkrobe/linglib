@@ -364,7 +364,9 @@ comparative are invariant; the positive form transports only if the
 threshold rides along. This derives the classic observation that
 comparatives are context-independent while the positive form needs a
 contextually fixed standard: *pos* is the one non-natural operator. The
-point-standard comparatives and equatives are `Comparison.over_comp`. -/
+point-standard comparatives and equatives are `Comparison.over_comp`.
+Comparisons across two scales are natural only between universal degrees
+(`Degree/UniversalScale`). -/
 
 section TransportMax
 

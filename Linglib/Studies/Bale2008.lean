@@ -1,10 +1,8 @@
 module
 
-public import Mathlib.Algebra.Order.Field.Rat
-public import Mathlib.Order.Interval.Finset.Nat
 public import Mathlib.Tactic.DeriveFintype
 public import Mathlib.Tactic.NormNum
-public import Linglib.Semantics.Degree.Hom
+public import Linglib.Semantics.Degree.UniversalScale
 public import Linglib.Data.Examples.Bale2008
 
 /-!
@@ -24,9 +22,8 @@ not taller for a man than he is wide for a man.
 
 ## Main statements
 
-* `universalDegree_congr`, `universalDegree_eq_iff`: a universal degree depends only on the
-  quasi-order the adjective induces on the comparison class, and two members share one exactly
-  when they are equivalent in Cresswell's sense.
+* `indirect_comparison`: Betty is more beautiful than Heather is intelligent, but not more
+  intelligent than Evelin is beautiful.
 * `direct_comparison`: with the measurements up to a common bound in the comparison class,
   comparing universal degrees is comparing measurements.
 * `for_a_man`: under the same quasi-orders, Seymour is taller than he is wide but not taller for
@@ -35,10 +32,9 @@ not taller for a man than he is wide for a man.
 
 ## Implementation notes
 
-* An adjective's quasi-order is given by a measure `μ : E → D` into a linear order, and a
-  comparison class by a finite set `C`, which restricts the quasi-order as Klein's comparison
-  classes do. The primary scale, the quotient of the restricted quasi-order, is order-isomorphic
-  to the values `C.image μ`, where the universal degree is computed.
+* Universal degrees are `Degree.universalDegree`: an adjective's quasi-order is given by a
+  measure into a linear order, and a comparison class by a finite set, which restricts the
+  quasi-order as Klein's comparison classes do.
 * The comparative is Kennedy's, as in the paper: MORE applied to the greatest degree the
   than-clause reaches is `Degree.maxComparative` over the two measures (`more_iff`), stated as
   the point comparison `Comparison.gt.over`.
@@ -49,7 +45,6 @@ not taller for a man than he is wide for a man.
 ## References
 
 * [bale-2008]
-* [cresswell-1976]
 * [kennedy-1999]
 * [klein-1980]
 -/
@@ -59,136 +54,6 @@ not taller for a man than he is wide for a man.
 namespace Bale2008
 
 open Finset Degree
-
-/-! ### The universal homomorphism -/
-
-section Rank
-
-variable {D : Type*} [LinearOrder D]
-
-/-- The universal degree of `d` in a finite scale `S` is the share of `S` at or below it: one
-plus the number of values below `d`, over the number of values. -/
-def relativeRank (S : Finset D) (d : D) : ℚ := #(S.filter (· ≤ d)) / #S
-
-/-- The universal homomorphism preserves and reflects the order of the scale. -/
-theorem relativeRank_strictMonoOn (S : Finset D) : StrictMonoOn (relativeRank S) S := by
-  intro a ha b hb hab
-  have hS : (0 : ℚ) < #S := by exact_mod_cast card_pos.2 ⟨a, ha⟩
-  rw [relativeRank, relativeRank, div_lt_div_iff_of_pos_right hS, Nat.cast_lt]
-  refine card_lt_card ((ssubset_iff_of_subset
-    (monotone_filter_right S fun x _ (hx : x ≤ a) ↦ hx.trans hab.le)).2 ⟨b, ?_, ?_⟩)
-  · exact mem_filter.2 ⟨hb, le_rfl⟩
-  · exact fun h ↦ (mem_filter.1 h).2.not_gt hab
-
-/-- The top of a scale has universal degree one. -/
-theorem relativeRank_of_forall_le {S : Finset D} {d : D} (hd : d ∈ S) (h : ∀ x ∈ S, x ≤ d) :
-    relativeRank S d = 1 := by
-  rw [relativeRank, filter_true_of_mem h, div_self]
-  exact_mod_cast (card_pos.2 ⟨d, hd⟩).ne'
-
-/-- The bottom of a scale has universal degree one over the size of the scale. -/
-theorem relativeRank_of_forall_ge {S : Finset D} {d : D} (hd : d ∈ S) (h : ∀ x ∈ S, d ≤ x) :
-    relativeRank S d = 1 / #S := by
-  rw [relativeRank, show S.filter (· ≤ d) = {d} by ext x; grind, card_singleton, Nat.cast_one]
-
-/-- On the scale of the numbers from one to `N`, the universal degree of `n` is `n / N`. -/
-theorem relativeRank_Icc {N n : ℕ} (hn : n ∈ Icc 1 N) : relativeRank (Icc 1 N) n = n / N := by
-  rw [relativeRank, show (Icc 1 N).filter (· ≤ n) = Icc 1 n by ext k; grind]
-  simp
-
-end Rank
-
-/-! ### Universal degrees -/
-
-section Universal
-
-variable {D E F : Type*} [LinearOrder D] [DecidableEq D]
-
-/-- The universal degree of `x` under an adjective whose quasi-order `μ` gives, restricted to the
-comparison class `C`, is the universal homomorphism applied to the class of `x` in the primary
-scale of `C`. -/
-def universalDegree (μ : E → D) (C : Finset E) (x : E) : ℚ := relativeRank (C.image μ) (μ x)
-
-variable {μ : E → D} {C C' : Finset E} {x y : E}
-
-/-- Within one comparison class, universal degrees compare as the adjective's quasi-order
-does. -/
-theorem universalDegree_lt_iff (hx : x ∈ C) (hy : y ∈ C) :
-    universalDegree μ C x < universalDegree μ C y ↔ μ x < μ y :=
-  (relativeRank_strictMonoOn (C.image μ)).lt_iff_lt (mem_image_of_mem μ hx) (mem_image_of_mem μ hy)
-
-/-- Two members of a comparison class share a universal degree exactly when they are
-equivalent in [cresswell-1976]'s sense under the restricted quasi-order. -/
-theorem universalDegree_eq_iff (hx : x ∈ C) (hy : y ∈ C) :
-    universalDegree μ C x = universalDegree μ C y ↔
-      (cresswellSetoid fun a b : C ↦ μ b ≤ μ a).r ⟨x, hx⟩ ⟨y, hy⟩ := by
-  rw [universalDegree, universalDegree,
-    (relativeRank_strictMonoOn _).injOn.eq_iff (mem_image_of_mem μ hx) (mem_image_of_mem μ hy)]
-  refine ⟨fun h ↦ ⟨fun _ ↦ by simp only [h], fun _ ↦ by simp only [h]⟩, fun ⟨h, _⟩ ↦ ?_⟩
-  exact le_antisymm ((h ⟨x, hx⟩).1 le_rfl) ((h ⟨y, hy⟩).2 le_rfl)
-
-/-- Two primary scales with the same classes compare across as the measures do. -/
-theorem universalDegree_lt_iff_of_image_eq {ν : F → D} {C' : Finset F} {y : F}
-    (h : C.image μ = C'.image ν) (hx : x ∈ C) (hy : y ∈ C') :
-    universalDegree μ C x < universalDegree ν C' y ↔ μ x < ν y := by
-  rw [universalDegree, universalDegree, h]
-  exact (relativeRank_strictMonoOn _).lt_iff_lt (h ▸ mem_image_of_mem μ hx)
-    (mem_image_of_mem ν hy)
-
-/-- Members added to a comparison class, each as ADJ as one already there, change no universal
-degree: the classes, not the members, are counted. -/
-theorem universalDegree_eq_of_image_eq (h : C.image μ = C'.image μ) :
-    universalDegree μ C = universalDegree μ C' :=
-  funext fun _ ↦ by rw [universalDegree, universalDegree, h]
-
-/-- A map identifying at least the members another identifies takes no more values. -/
-private theorem card_image_le_of_eq_imp {D₁ D₂ : Type*} [DecidableEq D₁] [DecidableEq D₂]
-    [Nonempty E] {T : Finset E} (f : E → D₁) (g : E → D₂)
-    (h : ∀ a ∈ T, ∀ b ∈ T, g a = g b → f a = f b) : #(T.image f) ≤ #(T.image g) := by
-  refine card_le_card_of_injOn (fun d ↦ g (Function.invFunOn f T d)) ?_ ?_
-  · intro d hd
-    obtain ⟨a, ha, rfl⟩ := mem_image.1 hd
-    exact mem_image_of_mem g (Function.invFunOn_mem ⟨a, ha, rfl⟩)
-  · intro d hd d' hd' hdd
-    obtain ⟨a, ha, rfl⟩ := mem_image.1 hd
-    obtain ⟨b, hb, rfl⟩ := mem_image.1 hd'
-    rw [← Function.invFunOn_eq (f := f) ⟨a, ha, rfl⟩, ← Function.invFunOn_eq (f := f) ⟨b, hb, rfl⟩]
-    exact h _ (Function.invFunOn_mem ⟨a, ha, rfl⟩) _ (Function.invFunOn_mem ⟨b, hb, rfl⟩) hdd
-
-/-- A universal degree depends only on the quasi-order the adjective induces on the comparison
-class, not on the measure that presents it. -/
-theorem universalDegree_congr {D' : Type*} [LinearOrder D'] [DecidableEq D'] {ν : E → D'}
-    (h : ∀ a ∈ C, ∀ b ∈ C, μ a ≤ μ b ↔ ν a ≤ ν b) (hx : x ∈ C) :
-    universalDegree μ C x = universalDegree ν C x := by
-  have : Nonempty E := ⟨x⟩
-  have card_image : ∀ T ⊆ C, #(T.image μ) = #(T.image ν) := fun T hT ↦
-    have heq : ∀ a ∈ T, ∀ b ∈ T, μ a = μ b ↔ ν a = ν b := fun a ha b hb ↦ by grind
-    (card_image_le_of_eq_imp μ ν fun a ha b hb ↦ (heq a ha b hb).2).antisymm
-      (card_image_le_of_eq_imp ν μ fun a ha b hb ↦ (heq a ha b hb).1)
-  rw [universalDegree, universalDegree, relativeRank, relativeRank, filter_image, filter_image,
-    card_image _ (filter_subset _ _), card_image C subset_rfl,
-    filter_congr fun a ha ↦ h a ha x hx]
-
-/-- A member at least as ADJ as every other has universal degree one. -/
-theorem universalDegree_of_forall_le (hx : x ∈ C) (h : ∀ y ∈ C, μ y ≤ μ x) :
-    universalDegree μ C x = 1 :=
-  relativeRank_of_forall_le (mem_image_of_mem μ hx) fun _ hd ↦ by
-    obtain ⟨y, hy, rfl⟩ := mem_image.1 hd; exact h y hy
-
-/-- A member at most as ADJ as every other has universal degree one over the number of
-classes. -/
-theorem universalDegree_of_forall_ge (hx : x ∈ C) (h : ∀ y ∈ C, μ x ≤ μ y) :
-    universalDegree μ C x = 1 / #(C.image μ) :=
-  relativeRank_of_forall_ge (mem_image_of_mem μ hx) fun _ hd ↦ by
-    obtain ⟨y, hy, rfl⟩ := mem_image.1 hd; exact h y hy
-
-/-- When the classes of a comparison class are the numbers from one to `N`, a universal degree
-is the measure over `N`. -/
-theorem universalDegree_of_image_eq_Icc {μ : E → ℕ} {N : ℕ} (h : C.image μ = Icc 1 N)
-    (hx : x ∈ C) : universalDegree μ C x = μ x / N := by
-  rw [universalDegree, h, relativeRank_Icc (h ▸ mem_image_of_mem μ hx)]
-
-end Universal
 
 /-! ### The comparative -/
 
