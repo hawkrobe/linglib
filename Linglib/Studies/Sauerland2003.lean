@@ -3,35 +3,39 @@ module
 public import Linglib.Semantics.Plurality.Algebra
 public import Linglib.Semantics.Presupposition.PhiFeatures
 public import Linglib.Semantics.Presupposition.Basic
-public import Linglib.Semantics.Presupposition.MaximizePresupposition
+public import Linglib.Semantics.Alternatives.Competition
 
 /-!
 # Sauerland (2003): a new semantics for number
 
-[sauerland-2003] locates the interpreted number feature in a φ-head above DP and
-interprets agreement features as presuppositions: `[Sg]` is the identity function
-presupposing an atom (his entry admits an atom or a mass; `Number.dom` keeps the atomic
-case), `[Pl]` the identity with no presupposition, and [heim-1991]'s
-Maximize Presupposition selects the most specific feature whose presupposition holds. The
-coordination *Kai and Lina* is the first argument: each conjunct is an atom but their sum
-is not, so the φ-head above the coordination can only carry `[Pl]` (`coordination_plural`),
-while at an atom Maximize Presupposition blocks `[Pl]` (`mp_selects_sg`, over the constraint
-`phiMP`). The two domains are nested (`sg_domain_ssubset_pl`), an instance of his
-Feature-Subset Principle, and since the features are domain restrictions the competition is
-presuppositional rather than scalar.
+Sauerland locates the interpreted number feature in a φ-head above DP and interprets agreement
+features as presuppositions: `[Sg]` is the identity function presupposing an atom (his entry
+admits an atom or a mass; `Number.dom` keeps the atomic case), `[Pl]` the identity with no
+presupposition, and Heim's Maximize Presupposition has the speaker use the most specific feature
+whose presupposition holds, (7). The plural's non-atomicity is therefore its use condition under
+competition with the singular (`useCondition_plural`), which the coordination *Kai and Lina*
+shows (`coordination_plural`), and it disappears when the singular is blocked by an independent
+factor, singular *they* (13) or polite address (14) (`useCondition_plural_of_singular_blocked`).
+The two domains are nested (`sg_domain_ssubset_pl`), an instance of his Feature-Subset
+Principle (46), and since the features are domain restrictions the competition is
+presuppositional rather than scalar. The person features (44) compete the same way: the second
+person is used outside the first person's domain and the third outside the participants', the
+non-participant presupposition of (47) (`useCondition_second`, `useCondition_third`), except in a
+context whose speaker is part of the addressee, where the first and second person domains
+coincide and competition cannot separate them (`useCondition_second_of_degenerate`).
 
 *Every* decomposes into a definite `DER`, taking the maximal element of a cumulative
 restrictor (`der_unique`; his cover-based `*` is `Mereology.algClosure_iff_exists_sup'`),
 and `JE`, a universal over the atomic parts of a group individual that projects its scope's
-presupposition universally (`JE`), whose assertion is [link-1987]'s distributivity operator
+presupposition universally (`JE`), whose assertion is Link's distributivity operator
 (`je_assertion_eq_D`, `je_assertion_eq_forall`). The indefinite projects existentially
 (`aSem`), so *every boy invited his sister* requires every boy to have a sister while *a boy
 invited his sister* requires one (`projection_asymmetry`), and the weak plural makes *Lina
 didn't harvest tomatoes* entail *Lina didn't harvest a tomato*
 (`negated_pl_entails_negated_sg`). The same mechanism runs Czech gender agreement on
-coordinations — masculine vacuous, feminine presupposing non-masculinity, neuter
-presupposing genderlessness (`czech_gender`) — and predicts that polite address recruits
-the unmarked values, plural and third person (`politeness_unmarked`).
+coordinations, masculine vacuous, feminine presupposing non-masculinity and neuter
+presupposing genderlessness (`czech_gender`), and predicts that polite address recruits the
+unmarked values, plural and third person (`politeness_unmarked`).
 
 ## References
 
@@ -45,7 +49,7 @@ namespace Sauerland2003
 
 open Mereology (Atom AlgClosure cum_maximal_unique algClosure_cum not_atom_sup_of_ne)
 open Plurality.Algebra (D)
-open Presupposition OptimalityTheory Presupposition.MaximizePresupposition
+open Alternatives Presupposition
 
 variable {E : Type*}
 
@@ -72,21 +76,123 @@ theorem der_unique {R : E → Prop} {m₁ m₂ : E} (h₁ : Maximal (AlgClosure 
     (h₂ : Maximal (AlgClosure R) m₂) : m₁ = m₂ :=
   cum_maximal_unique algClosure_cum h₁ h₂
 
+/-- The two number features that can head a φP are each other's alternatives. -/
+def numberAlts : Option Number → Set (Option Number) := fun _ ↦ {some .singular, some .plural}
+
+/-- `[Sg]` is used exactly at the atoms. -/
+theorem useCondition_singular :
+    useCondition numberAlts Number.dom (some .singular) = {x : E | Atom x} := by
+  rw [useCondition_eq_of_not_blocked]
+  · ext x; exact Number.mem_dom_singular x
+  · rintro ⟨ψ, hψ, hss⟩
+    rcases hψ with rfl | rfl
+    · exact hss.ne rfl
+    · exact hss.not_subset fun x _ ↦ by rw [Number.dom_plural]; trivial
+
+/-- `[Pl]` is used exactly at the non-atoms, the non-atomicity derived from Maximize
+Presupposition. -/
+theorem useCondition_plural (ha : Atom a) (hb : Atom b) (hne : a ≠ b) :
+    useCondition numberAlts Number.dom (some .plural) = {x : E | ¬ Atom x} := by
+  rw [useCondition_eq_sdiff (ψ := some .singular) (Set.mem_insert _ _)
+    (sg_domain_ssubset_pl ha hb hne)]
+  · ext x; simp [Number.mem_dom_singular]
+  · rintro χ (rfl | rfl) hss
+    · exact le_rfl
+    · exact absurd rfl hss.ne
+
+/-- With `[Sg]` blocked by an independent factor, `[Pl]` is used of atoms too, (13)–(14). -/
+theorem useCondition_plural_of_singular_blocked :
+    useCondition (fun _ ↦ {some .plural}) (Number.dom (E := E)) (some .plural) = Set.univ := by
+  rw [useCondition_eq_of_not_blocked, Number.dom_plural]
+  rintro ⟨ψ, hψ, hss⟩
+  rw [Set.mem_singleton_iff.1 hψ] at hss
+  exact hss.ne rfl
+
+/-- At an atom `[Pl]` is unusable while `[Sg]` competes and usable once it is blocked. -/
+theorem atom_mem_useCondition_iff (ha : Atom a) (hb : Atom b) (hne : a ≠ b) :
+    a ∉ useCondition numberAlts Number.dom (some .plural) ∧
+      a ∈ useCondition (fun _ ↦ {some .plural}) Number.dom (some .plural) := by
+  rw [useCondition_plural ha hb hne, useCondition_plural_of_singular_blocked]
+  exact ⟨fun h ↦ h ha, Set.mem_univ _⟩
+
 end Number
 
-/-- Maximize Presupposition selects `[Sg]` when both features are candidates: with `phiMP`
-top-ranked, every optimal cell has maximal presuppositional strength. -/
-theorem mp_selects_sg (rest : List (Constraint Number.Features)) :
-    ∀ c ∈ (Tableau.ofRanking [Number.singularF, Number.pluralF] (phiMP :: rest)
-      (List.cons_ne_nil _ _)).optimal, c = Number.singularF := by
-  have hsg : Number.singularF = Finset.univ := by decide
-  intro c hc
-  rw [hsg, ← Finset.card_eq_iff_eq_univ]
-  exact phi_mp_selects_maximal _ rest _ (hsg ▸ .head _) c hc
+/-! ### Person -/
+
+section Person
+
+variable {W P T : Type*} [PartialOrder E] (c : Reference.Context W E P T)
+
+/-- The three person features that can head a φP are each other's alternatives, (44). -/
+def personAlts : Option Person → Set (Option Person) :=
+  fun _ ↦ {some .first, some .second, some .third}
+
+theorem dom_first_ssubset_dom_second (h : ¬ c.agent ≤ c.addressee) :
+    Person.dom c (some .first) ⊂ Person.dom c (some .second) := by
+  refine ⟨fun x hx ↦ (Person.mem_dom_second c x).2 (Or.inl ((Person.mem_dom_first c x).1 hx)),
+    fun hsub ↦ h ?_⟩
+  exact (Person.mem_dom_first c _).1 (hsub ((Person.mem_dom_second c c.addressee).2
+    (Or.inr le_rfl)))
+
+/-- The first person is used on its whole domain. -/
+theorem useCondition_first :
+    useCondition personAlts (Person.dom c) (some .first) = Person.dom c (some .first) := by
+  refine useCondition_eq_of_not_blocked ?_
+  rintro ⟨ψ, hψ, hss⟩
+  simp only [personAlts, Set.mem_insert_iff, Set.mem_singleton_iff] at hψ
+  rcases hψ with rfl | rfl | rfl
+  · exact hss.ne rfl
+  · exact hss.not_subset fun x hx ↦
+      (Person.mem_dom_second c x).2 (Or.inl ((Person.mem_dom_first c x).1 hx))
+  · exact hss.not_subset (Person.dom_third c ▸ Set.subset_univ _)
+
+/-- Unless the speaker is part of the addressee, the second person is used in its domain outside
+the first person's. -/
+theorem useCondition_second (h : ¬ c.agent ≤ c.addressee) :
+    useCondition personAlts (Person.dom c) (some .second) =
+      Person.dom c (some .second) \ Person.dom c (some .first) := by
+  refine useCondition_eq_sdiff (by simp [personAlts]) (dom_first_ssubset_dom_second c h) ?_
+  rintro χ hχ hss
+  simp only [personAlts, Set.mem_insert_iff, Set.mem_singleton_iff] at hχ
+  rcases hχ with rfl | rfl | rfl
+  · exact le_rfl
+  · exact absurd rfl hss.ne
+  · exact absurd (Person.dom_third c ▸ Set.subset_univ _) hss.not_subset
+
+/-- When the speaker is part of the addressee, the first and second person domains coincide and
+competition leaves the second person usable on its whole domain. -/
+theorem useCondition_second_of_degenerate (h : c.agent ≤ c.addressee) :
+    useCondition personAlts (Person.dom c) (some .second) = Person.dom c (some .second) := by
+  refine useCondition_eq_of_not_blocked ?_
+  rintro ⟨ψ, hψ, hss⟩
+  simp only [personAlts, Set.mem_insert_iff, Set.mem_singleton_iff] at hψ
+  rcases hψ with rfl | rfl | rfl
+  · refine hss.not_subset fun x hx ↦ (Person.mem_dom_first c x).2 ?_
+    rcases (Person.mem_dom_second c x).1 hx with hx | hx
+    exacts [hx, h.trans hx]
+  · exact hss.ne rfl
+  · exact hss.not_subset (Person.dom_third c ▸ Set.subset_univ _)
+
+/-- The third person is used outside the participants' domain, the non-participant
+presupposition of (47), when some referent lies outside it. -/
+theorem useCondition_third (h : ∃ x, x ∉ Person.dom c (some .second)) :
+    useCondition personAlts (Person.dom c) (some .third) = (Person.dom c (some .second))ᶜ := by
+  obtain ⟨x, hx⟩ := h
+  have hss : Person.dom c (some .second) ⊂ Person.dom c (some .third) :=
+    Person.dom_third c ▸ Set.ssubset_univ_iff.2 fun h ↦ hx (h ▸ Set.mem_univ x)
+  rw [useCondition_eq_sdiff (by simp [personAlts]) hss, Person.dom_third, Set.compl_eq_univ_sdiff]
+  rintro χ hχ hss'
+  simp only [personAlts, Set.mem_insert_iff, Set.mem_singleton_iff] at hχ
+  rcases hχ with rfl | rfl | rfl
+  · exact fun y hy ↦ (Person.mem_dom_second c y).2 (Or.inl ((Person.mem_dom_first c y).1 hy))
+  · exact le_rfl
+  · exact absurd rfl hss'.ne
+
+end Person
 
 /-! ### *Every* as `JE ∘ DER`, and the indefinite -/
 
-/-- The indefinite: the scope's presupposition projects existentially. -/
+/-- The indefinite projects its scope's presupposition existentially. -/
 def aSem (R S : E → Prop) (domS : E → Prop := fun _ ↦ True) : PartialProp E where
   presup _ := ∃ x, R x ∧ domS x
   assertion _ := ∃ x, R x ∧ S x
@@ -107,7 +213,7 @@ theorem je_assertion_eq_forall {R Q : E → Prop} {maxR : E} (hR : ∀ x, R x �
     (w : E) : (JE maxR Q).assertion w ↔ ∀ x, R x → Q x :=
   ⟨fun h x hx ↦ h x ((hR x).1 hx).1 ((hR x).1 hx).2, fun h a ha hle ↦ h a ((hR a).2 ⟨ha, hle⟩)⟩
 
-/-- Presupposition projection: `JE` projects universally, the indefinite existentially. With
+/-- `JE` projects its scope's presupposition universally and the indefinite existentially. With
 a restrictor atom `a₂ ≤ boys` outside the scope's domain and some `R`-individual inside it,
 *a boy invited his sister* is defined and *every boy invited his sister* is not. -/
 theorem projection_asymmetry {boys a₁ a₂ : E} {R domP : E → Prop} (ha₂ : Atom a₂)
@@ -115,7 +221,7 @@ theorem projection_asymmetry {boys a₁ a₂ : E} {R domP : E → Prop} (ha₂ :
     (aSem R (fun _ ↦ True) domP).defined boys ∧ ¬ (JE boys (fun _ ↦ True) domP).defined boys :=
   ⟨⟨a₁, hR₁, hdom₁⟩, fun h ↦ hdom₂ (h a₂ ha₂ h₂)⟩
 
-/-- The weak plural: *Lina didn't harvest tomatoes* entails *Lina didn't harvest a tomato*,
+/-- Under the weak plural *Lina didn't harvest tomatoes* entails *Lina didn't harvest a tomato*,
 the singular indefinite restricting the plural's assertion to atoms. -/
 theorem negated_pl_entails_negated_sg {starR harvest : E → Prop} {w : E}
     (h : ¬ (aSem starR harvest).assertion w) :
@@ -131,7 +237,7 @@ theorem je_assertion_eq_D [SemilatticeSup E] (X : E) (P : E → Prop) (w : E) :
 
 /-! ### Gender agreement in Czech coordinations -/
 
-/-- A conjunct of one of Sauerland's Czech coordinations: a man, a woman or a child. -/
+/-- A conjunct of one of Sauerland's Czech coordinations is a man, a woman or a child. -/
 inductive Conjunct where
   | man
   | woman
@@ -150,7 +256,7 @@ def janVera : Finset Conjunct := {.man, .woman}
 def matkaDite : Finset Conjunct := {.woman, .child}
 def otecDite : Finset Conjunct := {.man, .child}
 
-/-- Sauerland's Czech coordinations: *Jan a Věra* excludes feminine, *Matka a její dítě* takes
+/-- Of Sauerland's Czech coordinations, *Jan a Věra* excludes feminine, *Matka a její dítě* takes
 feminine but not neuter, and *Otec a jeho dítě* takes only the vacuous masculine. -/
 theorem czech_gender :
     janVera ∉ Gender.dom (some .feminine) ∧

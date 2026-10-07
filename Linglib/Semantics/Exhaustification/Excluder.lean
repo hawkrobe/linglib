@@ -5,6 +5,7 @@ public import Mathlib.Data.Finset.Image
 public import Mathlib.Data.Finset.Lattice.Fold
 public import Mathlib.Data.Finset.Powerset
 public import Mathlib.Data.Fintype.Basic
+public import Linglib.Semantics.Alternatives.Competition
 
 /-!
 # Exhaustification
@@ -21,7 +22,10 @@ Chierchia's operator `O`. Exclusion is anti-additive in the prejacent (`excludes
 resolutions of the alternative set (`Irredundant.excludes_injOn`), and narrowing the alternatives
 weakens it (`excludes_antitone`). When the prejacent is maximal among the alternatives, exclusion
 is Rooth's condition that every true alternative *equals* the prejacent
-(`mem_excludes_iff_forall_eq`).
+(`mem_excludes_iff_forall_eq`). Against the strictly stronger alternatives alone, `exh` of a
+content is its use condition under competition (`Alternatives.useCondition_eq_exh`), so
+Maximize Presupposition strengthens a presupposition as exhaustification strengthens an
+assertion.
 
 An `Excluder` is a selection over finite world types, `Excluder.exh` the resulting operator, and
 `tolerant` is `exh` there, contradiction or not, after Chierchia. `Excluder.restrict` keeps only
@@ -313,3 +317,24 @@ theorem entailed_not_excluded {ALT : Finset (Finset W)} {φ a : Finset W}
   simp [h]
 
 end Exhaustification
+
+namespace Alternatives
+
+variable {S W : Type*}
+
+/-- A use condition is the content exhaustified against the contents of its strictly stronger
+alternatives. -/
+theorem useCondition_eq_exh (alts : S → Set S) (content : S → Set W) (φ : S) :
+    useCondition alts content φ =
+      Exhaustification.exh (content '' {ψ ∈ alts φ | content ψ ⊂ content φ}) (content φ) := by
+  rw [useCondition_eq_sdiff_biUnion, Exhaustification.exh_eq_sdiff]
+  congr 1
+  ext w
+  simp only [Set.mem_iUnion, Set.mem_sUnion, Set.mem_image, Set.mem_ofPred_eq, exists_prop]
+  constructor
+  · rintro ⟨ψ, ⟨hψ, hss⟩, hw⟩
+    exact ⟨content ψ, ⟨⟨ψ, ⟨hψ, hss⟩, rfl⟩, hss.not_subset⟩, hw⟩
+  · rintro ⟨_, ⟨⟨ψ, hψ, rfl⟩, -⟩, hw⟩
+    exact ⟨ψ, hψ, hw⟩
+
+end Alternatives

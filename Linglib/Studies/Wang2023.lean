@@ -3,7 +3,6 @@ module
 public import Linglib.Semantics.Plurality.NumberFeatures
 public import Linglib.Phonology.OptimalityTheory.Tableau
 public import Linglib.Semantics.Presupposition.PhiFeatures
-public import Linglib.Semantics.Presupposition.MaximizePresupposition
 public import Linglib.Data.Examples.Wang2023
 
 /-!
@@ -33,6 +32,15 @@ definiteness bundles have the same shape. The constraints count violations by th
 bundle, the taboo as the size itself and MP! as its shortfall from the full bundle. The ternary
 tableaux are decided by the kernel. The paper's examples are the rows of
 `Data.Examples.Wang2023`.
+
+## TODO
+
+* MP! (59) chooses the strongest presupposition compatible with what is assumed, a condition at
+  the context, while `mpConstraint` counts a bundle's shortfall from the full bundle. On the lower
+  sets of the chain the two agree when every stronger bundle is compatible, the shortfall being
+  the number of strictly stronger competitors; deriving the constraint from
+  `Alternatives.useCondition` over `Number.dom` waits on the dual's minimality domain, which
+  `Number.dom` does not yet restrict.
 
 ## References
 
@@ -67,13 +75,13 @@ constraint it penalizes the shortfall from the maximal strength. -/
 def mpConstraint : Constraint Number.Features :=
   fun c ↦ Fintype.card Number.Feature - c.card
 
-theorem mpConstraint_eq_phiMP : mpConstraint = Presupposition.MaximizePresupposition.phiMP :=
-  rfl
-
 /-- The two maxims order well-formed cells oppositely. -/
 theorem todConstraint_lt_iff (c₁ c₂ : Number.Features) :
-    todConstraint c₁ < todConstraint c₂ ↔ mpConstraint c₂ < mpConstraint c₁ :=
-  Presupposition.MaximizePresupposition.phi_mp_reverses_markedness c₁ c₂
+    todConstraint c₁ < todConstraint c₂ ↔ mpConstraint c₂ < mpConstraint c₁ := by
+  have := Finset.card_le_univ c₁
+  have := Finset.card_le_univ c₂
+  simp only [todConstraint, mpConstraint]
+  omega
 
 /-- A candidate with violations of the top constraint loses to one without. -/
 theorem not_mem_optimal_of_top_pos {C : Type*} [DecidableEq C] {candidates : List C}

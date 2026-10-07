@@ -41,8 +41,8 @@ conceivability presupposition, which fails exactly where the chance of ineffabil
 * `useful_iff_presup`: preferring useful referents yields the conceivability presupposition.
 * `negated_presup_iff_ineffability_ne_one`: the presupposition holds exactly when ineffability is
   not certain.
-* `disjoint_useCondition`, `not_H2_of_isZeroOneMeasure`: competition yields non-overlapping use
-  conditions, and a speaker in complementary distribution is not gradient.
+* `Follows.H1_of_mpPresup`, `not_H2_of_isZeroOneMeasure`: Maximize Presupposition yields the
+  categorical H1, and a speaker in complementary distribution is not gradient.
 * `not_H2_of_follows_bestGuess`: a speaker producing only best guesses is not gradient either.
 
 ## Implementation notes
@@ -386,29 +386,12 @@ theorem H1.not_H2 (h : H1 κ) : ¬ H2 κ :=
   haveI : IsZeroOneMeasure (κ .mix)[|indefinite] := h .mix ▸ inferInstance
   not_H2_of_isZeroOneMeasure
 
-/-! ### Competition yields non-overlapping use conditions -/
+/-! ### Maximize Presupposition over the conditions -/
 
-section Competition
+open Alternatives (useCondition)
 
-variable {S C : Type*} (presup : S → Set C)
-
-/-- `φ` survives competition in the contexts where its presupposition holds and no competitor whose
-presupposition also holds there has a strictly stronger one. This is Maximize Presupposition
-evaluated at the context, for competitors that share their assertion as the negated indefinites
-do. -/
-def useCondition (φ : S) : Set C :=
-  {c ∈ presup φ | ¬ Alternatives.Blocked (fun _ ↦ {ψ | c ∈ presup ψ}) presup φ}
-
-theorem useCondition_subset (φ : S) : useCondition presup φ ⊆ presup φ := fun _ h ↦ h.1
-
-variable {presup} in
-/-- Of two competitors with strictly nested presuppositions, at most one is usable in any
-context (§4.1). -/
-theorem disjoint_useCondition {φ ψ : S} (h : presup φ ⊂ presup ψ) :
-    Disjoint (useCondition presup φ) (useCondition presup ψ) :=
-  Set.disjoint_left.2 fun _ hφ hψ ↦ hψ.2 ⟨φ, hφ.1, h⟩
-
-end Competition
+/-- The English numbers are each other's alternatives. -/
+def englishAlts : Number → Set Number := fun _ ↦ {n | n ∈ numberSystem.values}
 
 /-- In the Maximize Presupposition account of §4.1 the singular presupposes `S` of the condition,
 the plural presupposes nothing, and the values outside English presuppose the impossible. -/
@@ -418,19 +401,25 @@ def mpPresup (S : Set Condition) : Number → Set Condition
   | _ => ∅
 
 theorem useCondition_mpPresup_singular (S : Set Condition) :
-    useCondition (mpPresup S) .singular = S := by
-  ext c
-  refine ⟨And.left, fun hc ↦ ⟨hc, ?_⟩⟩
-  rintro ⟨m, hcm, hm⟩
-  cases m <;> grind [mpPresup]
+    useCondition englishAlts (mpPresup S) .singular = S := by
+  refine Alternatives.useCondition_eq_of_not_blocked ?_
+  rintro ⟨m, hm, hss⟩
+  rcases (by simpa [englishAlts, numberSystem] using hm : m = .singular ∨ m = .plural)
+    with rfl | rfl
+  · exact hss.ne rfl
+  · exact hss.not_subset (Set.subset_univ _)
 
 /-- The plural is used exactly where the singular's presupposition fails. -/
 theorem useCondition_mpPresup_plural {S : Set Condition} (hS : S ≠ Set.univ) :
-    useCondition (mpPresup S) .plural = Sᶜ := by
-  ext c
-  refine ⟨fun h hc ↦ h.2 ⟨.singular, hc, hS.lt_top⟩, fun hc ↦ ⟨trivial, ?_⟩⟩
-  rintro ⟨m, hcm, hm⟩
-  cases m <;> grind [mpPresup]
+    useCondition englishAlts (mpPresup S) .plural = Sᶜ := by
+  rw [Alternatives.useCondition_eq_sdiff (ψ := .singular) (by simp [englishAlts, numberSystem])
+    hS.lt_top, Set.compl_eq_univ_sdiff]
+  · rfl
+  rintro χ hχ hss
+  rcases (by simpa [englishAlts, numberSystem] using hχ : χ = .singular ∨ χ = .plural)
+    with rfl | rfl
+  · exact le_rfl
+  · exact absurd rfl hss.ne
 
 /-- A production kernel follows the use conditions `U` when in every condition it almost surely
 produces a negated indefinite usable there. -/
@@ -449,7 +438,7 @@ theorem Follows.eq_dirac {U : Number → Set Condition} (h : Follows U κ) {c : 
 /-- Maximize Presupposition with the singular presupposing that uniqueness dominates, (8) read
 as uniqueness in most situations, yields H1 (§4.1). -/
 theorem Follows.H1_of_mpPresup [∀ c, IsProbabilityMeasure (κ c)[|indefinite]]
-    (h : Follows (useCondition (mpPresup (Set.Iio .mix))) κ) : H1 κ := fun c ↦
+    (h : Follows (useCondition englishAlts (mpPresup (Set.Iio .mix))) κ) : H1 κ := fun c ↦
   h.eq_dirac fun m ↦ by
     have hS : Set.Iio Condition.mix ≠ Set.univ := fun h ↦
       lt_irrefl Condition.mix (Set.mem_Iio.1 (h ▸ Set.mem_univ _))
@@ -457,7 +446,8 @@ theorem Follows.H1_of_mpPresup [∀ c, IsProbabilityMeasure (κ c)[|indefinite]]
     case singular => rw [useCondition_mpPresup_singular]; split_ifs <;> simp_all
     case plural => rw [useCondition_mpPresup_plural hS]; split_ifs <;> simp_all
     all_goals
-      refine ⟨fun hc ↦ absurd (useCondition_subset _ _ hc) (Set.notMem_empty c), fun h ↦ ?_⟩
+      refine ⟨fun hc ↦ absurd (Alternatives.useCondition_subset _ _ _ hc) (Set.notMem_empty c),
+        fun h ↦ ?_⟩
       split_ifs at h
 
 /-! ### The chance of ineffability -/
