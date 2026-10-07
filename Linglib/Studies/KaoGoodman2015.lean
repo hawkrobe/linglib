@@ -5,15 +5,14 @@ public import Linglib.Pragmatics.RSA.QUD
 /-!
 # Kao and Goodman (2015): Let's Talk (Ironically) About the Weather
 
-This file formalizes the irony model of [kao-goodman-2015] on the RSA kernel pipeline. The
-model is the question-under-discussion RSA of [kao-etal-2014-hyperbole] over a meaning space of
-a weather state and the speaker's affect toward it, the question being the state or a dimension
-of affect (eq. 1); the paper's contribution is the affect space. With valence alone, "The
-weather is terrible" can be hyperbolic, merely bad weather, but not ironic, since a negative
-utterance carries no true information about positive affect; with the arousal dimension the
-paper finds in its elicited emotion ratings alongside valence, the utterance can convey high
-arousal, which terrible and amazing weather share, and the listener can read it as amazing
-weather.
+This file formalizes the irony model of Kao and Goodman on the RSA kernel pipeline. The model is the
+question-under-discussion RSA of Kao and colleagues' hyperbole model over a meaning space of a
+weather state and the speaker's affect toward it, the question being the state or a dimension of
+affect (eq. 1); the paper's contribution is the affect space. With valence alone, "The weather is
+terrible" can be hyperbolic, merely bad weather, but not ironic, since a negative utterance carries
+no true information about positive affect; with the arousal dimension the paper finds in its
+elicited emotion ratings alongside valence, the utterance can convey high arousal, which terrible
+and amazing weather share, and the listener can read it as amazing weather.
 
 Both claims are support theorems. Under the arousal question, "terrible" can mean amazing
 weather with positive valence and high arousal whenever the prior admits high arousal at
@@ -52,13 +51,13 @@ instance : MeasurableSpace Weather := ⊤
 instance : DiscreteMeasurableSpace Weather := ⟨λ _ => trivial⟩
 instance : Nonempty Weather := ⟨.neutral⟩
 
-/-- The speaker's affect: positive valence, and high arousal. -/
+/-- The speaker's affect records positive valence and high arousal. -/
 abbrev Affect := Bool × Bool
 
-/-- A meaning: the weather state and the speaker's affect toward it. -/
+/-- A meaning pairs the weather state with the speaker's affect toward it. -/
 abbrev Meaning := Weather × Affect
 
-/-- The question under discussion: the state, or a dimension of affect. -/
+/-- The question under discussion asks for the state or for a dimension of affect. -/
 inductive QUD
   | state | valence | arousal
   deriving DecidableEq, Repr, Fintype
@@ -67,16 +66,16 @@ instance : MeasurableSpace QUD := ⊤
 instance : DiscreteMeasurableSpace QUD := ⟨λ _ => trivial⟩
 instance : Nonempty QUD := ⟨.state⟩
 
-/-- The projection of a question (eq. 1): the state, the valence, or the arousal. -/
+/-- The projection of a question (eq. 1) reads off the state, the valence, or the arousal. -/
 def project : QUD → Meaning → Weather ⊕ Bool
   | .state, m => .inl m.1
   | .valence, m => .inr m.2.1
   | .arousal, m => .inr m.2.2
 
-/-- The meaning of an utterance: the state named is the state. -/
+/-- An utterance is true of the meanings whose state it names. -/
 def sem (u : Weather) : Set Meaning := {m | m.1 = u}
 
-/-- The literal listener: the prior conditioned on the state named. -/
+/-- The literal listener conditions the prior on the state named. -/
 noncomputable def L0 (μ : Measure Meaning) : Kernel Weather Meaning :=
   literalListener μ λ u => (sem u).indicator 1
 
@@ -96,13 +95,13 @@ theorem L0_apply_singleton_ne_zero_iff (μ : Measure Meaning) [IsFiniteMeasure �
   · rw [L0, literalListener_indicator_apply_singleton_of_notMem μ sem h]
     exact iff_of_false (λ h' => h' rfl) (λ h' => h h'.1)
 
-/-- The question-indexed speaker: the best response to the projected literal listener of the
+/-- The question-indexed speaker is the best response to the projected literal listener of the
 question at rationality `α`, with no utterance cost. -/
 noncomputable def S1 (μ : Measure Meaning) (α : ℝ) : Kernel (Meaning × QUD) Weather :=
   familySpeaker (projListener project (L0 μ)) α 0
 
-/-- The pragmatic listener over meaning and question, whose first marginal is the meaning
-listener: the family listener over the product of the meaning prior and the question prior. -/
+/-- The pragmatic listener over meaning and question is the family listener over the product of
+the meaning prior and the question prior; its first marginal is the meaning listener. -/
 noncomputable def L1 (μ : Measure Meaning) [IsProbabilityMeasure μ] (ν : Measure QUD)
     [IsProbabilityMeasure ν] (α : ℝ) : Kernel Weather (Meaning × QUD) :=
   familyListener (projListener project (L0 μ)) α 0 (μ.prod ν)
@@ -140,9 +139,9 @@ theorem comp_S1_ne_zero (hα : 0 < α) {u : Weather} (h : ∃ m : Meaning, m.1 =
     exact mul_ne_zero hμ hq
   · exact (S1_apply_singleton_ne_zero_iff μ α hα q m u).mpr ⟨m, rfl, hm, hμ⟩
 
-/-- The meaning listener's support: a meaning is a possible interpretation of an utterance
-exactly when it has positive prior and some question of positive prior projects it into the
-cell of a meaning of positive prior at which the utterance is literally true. -/
+/-- A meaning is a possible interpretation of an utterance exactly when it has positive prior
+and some question of positive prior projects it into the cell of a meaning of positive prior at
+which the utterance is literally true. -/
 theorem listener_ne_zero_iff (hα : 0 < α) {u : Weather} (hu : (S1 μ α ∘ₘ μ.prod ν) {u} ≠ 0)
     (m : Meaning) :
     (L1 μ ν α u).fst {m} ≠ 0 ↔ μ {m} ≠ 0 ∧
@@ -152,7 +151,7 @@ theorem listener_ne_zero_iff (hα : 0 < α) {u : Weather} (hu : (S1 μ α ∘ₘ
     Measure.prod_prod, mul_ne_zero_iff]
   exact ⟨λ ⟨q, ⟨hm, hq⟩, hs⟩ => ⟨hm, q, hq, hs⟩, λ ⟨hm, q, hq, hs⟩ => ⟨q, ⟨hm, hq⟩, hs⟩⟩
 
-/-- Hyperbole: under the valence question, "terrible" can mean bad weather with negative
+/-- Under the valence question, "terrible" can hyperbolically mean bad weather with negative
 valence, through the negative valence of terrible weather. -/
 theorem hyperbole (hα : 0 < α) (hν : ν {.valence} ≠ 0) {a a' : Bool}
     (hbad : μ {(.bad, false, a)} ≠ 0) (hterrible : μ {(.terrible, false, a')} ≠ 0) :
@@ -160,7 +159,7 @@ theorem hyperbole (hα : 0 < α) (hν : ν {.valence} ≠ 0) {a a' : Bool}
   rw [listener_ne_zero_iff μ ν α hα (comp_S1_ne_zero μ ν α hα ⟨_, rfl, hterrible⟩)]
   exact ⟨hbad, .valence, hν, (.terrible, false, a'), rfl, rfl, hterrible⟩
 
-/-- Irony: under the arousal question, "terrible" can mean amazing weather with positive
+/-- Under the arousal question, "terrible" can ironically mean amazing weather with positive
 valence and high arousal, through the high arousal of terrible weather. -/
 theorem irony (hα : 0 < α) (hν : ν {.arousal} ≠ 0) {v : Bool}
     (hamazing : μ {(.amazing, true, true)} ≠ 0) (hterrible : μ {(.terrible, v, true)} ≠ 0) :
@@ -169,7 +168,7 @@ theorem irony (hα : 0 < α) (hν : ν {.arousal} ≠ 0) {v : Bool}
   exact ⟨hamazing, .arousal, hν, (.terrible, v, true), rfl, rfl, hterrible⟩
 
 /-- Without the arousal question, a positive-valence reading of "terrible" needs positive
-valence to be possible at terrible weather itself: a negative utterance carries no true
+valence to be possible at terrible weather itself, since a negative utterance carries no true
 information about positive affect. -/
 theorem valence_flip_needs_arousal (hα : 0 < α) (hν : ∀ q, ν {q} ≠ 0 → q ≠ .arousal)
     (hu : (S1 μ α ∘ₘ μ.prod ν) {.terrible} ≠ 0) {s : Weather} {a : Bool}

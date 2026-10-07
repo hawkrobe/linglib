@@ -5,8 +5,8 @@ public import Linglib.Pragmatics.RSA.Uniform
 /-!
 # The null message
 
-The null message of [bergen-levy-goodman-2016]: an utterance true at every state, so that a
-speaker always has a true option, and disfavored by a cost. `WithSilence U` adds it to an
+Bergen, Levy and Goodman's null message is an utterance true at every state, so that a speaker
+always has a true option, and disfavored by a cost. `WithSilence U` adds it to an
 utterance type, `liftMeaning` and `liftSem` give it the universal extension, and
 `liftCost` its own cost. Under the uniform literal listener the null message adds
 the same weight to every row of the speaker, its cost weight times the reciprocal of the number
@@ -29,7 +29,7 @@ namespace RSA
 
 variable {U W : Type*}
 
-/-- The utterances with the null message added: `none` is the null message. -/
+/-- `WithSilence U` adds the null message `none` to the utterances. -/
 abbrev WithSilence (U : Type*) := Option U
 
 /-- A meaning lifted to the null message, which is true at every world. -/
@@ -81,8 +81,8 @@ theorem uniformListener_liftSem_none_apply_singleton (t : T) :
   rw [uniformListener_apply_singleton, liftSem_none, ite_eq_left (Finset.mem_univ t),
     Finset.card_univ]
 
-/-- The share of a content utterance: its informativity weight over the state's profile sum
-plus the null message's weight, the same at every state. -/
+/-- The share of a content utterance is its informativity weight over the state's profile sum
+plus the null message's weight, which is the same at every state. -/
 theorem speaker_liftCost_uniformListener_real_singleton_some {α : ℝ} (hα : 0 < α) (k : ℝ)
     (t : T) (c : C) :
     (speaker α (liftCost k 0) (uniformListener (liftSem sem)) t).real {some c}

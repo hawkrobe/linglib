@@ -75,12 +75,12 @@ namespace CohnGordonEtAl2019
 
 /-! ### Reference games and the incremental semantics (§2.2) -/
 
-/-- A reference game (Figure 1a): a closed set of complete utterances over words `U`, an
+/-- A reference game (Figure 1a) has a closed set of complete utterances over words `U`, an
 utterance-level Boolean semantics, and the referents on display. -/
 structure ReferenceGame (U W : Type) where
   /-- The closed set of available complete utterances. -/
   utterances : List (List U)
-  /-- The global semantics `⟦·⟧`: truth of a complete utterance at a referent. -/
+  /-- The global semantics `⟦·⟧` gives the truth of a complete utterance at a referent. -/
   sem : List U → W → Bool
   /-- The referents on display. -/
   worlds : List W
@@ -111,7 +111,7 @@ theorem trueExts_le_viableExts (hw : ∀ r : W, r ∈ g.worlds) (pfx : List U) (
     rw [Bool.and_eq_true] at h ⊢
     exact ⟨h.1, List.any_eq_true.mpr ⟨r, hw r, h.2⟩⟩
 
-/-- The incremental semantics `⟦pfx⟧(r)` (§2.2): the fraction of complete extensions of
+/-- The incremental semantics `⟦pfx⟧(r)` (§2.2) is the fraction of complete extensions of
 `pfx` true of `r` among those true of some referent on display. -/
 noncomputable def incSem (pfx : List U) (r : W) : ℝ≥0∞ :=
   (g.trueExts pfx r : ℝ≥0∞) / (g.viableExts pfx : ℝ≥0∞)
@@ -121,15 +121,15 @@ noncomputable def incSem (pfx : List U) (r : W) : ℝ≥0∞ :=
 variable [Fintype U] [MeasurableSpace U] [DiscreteMeasurableSpace U]
   [Fintype W] [Nonempty W] [MeasurableSpace W] [DiscreteMeasurableSpace W]
 
-/-- The incremental literal listener at context `ctx` (eq. 4): the uniform prior
-reweighted by `⟦ctx ++ [u]⟧`. -/
+/-- The incremental literal listener at context `ctx` (eq. 4) reweights the uniform prior by
+`⟦ctx ++ [u]⟧`. -/
 noncomputable def l0 (ctx : List U) : Kernel U W :=
   literalListener (uniformOn Set.univ) fun u => g.incSem (ctx ++ [u])
 
 instance (ctx : List U) : IsFiniteKernel (g.l0 ctx) :=
   inferInstanceAs (IsFiniteKernel (literalListener _ _))
 
-/-- The uniform prior and the viable-extension denominator cancel in the listener: each
+/-- The uniform prior and the viable-extension denominator cancel in the listener, so each
 cell is the referent's share of the true-extension counts. -/
 theorem l0_apply (hw : ∀ r : W, r ∈ g.worlds) (ctx : List U) (u : U) (r : W) :
     g.l0 ctx u {r}
@@ -145,16 +145,16 @@ theorem l0_apply (hw : ∀ r : W, r ∈ g.worlds) (ctx : List U) (u : U) (r : W)
       (ENNReal.inv_ne_zero.mpr (ENNReal.natCast_ne_top _))
       (ENNReal.inv_ne_top.mpr (by exact_mod_cast hv.ne'))
 
-/-- Dead end (§2.2): no continuation of `ctx` is true of `r`. -/
+/-- A context `ctx` is a dead end for `r` (§2.2) when no continuation of it is true of `r`. -/
 def DeadEnd (ctx : List U) (r : W) : Prop :=
   ∀ u : U, g.trueExts (ctx ++ [u]) r = 0
 
 instance (ctx : List U) (r : W) : Decidable (g.DeadEnd ctx r) :=
   inferInstanceAs (Decidable (∀ u : U, g.trueExts (ctx ++ [u]) r = 0))
 
-/-- The word-level speaker at context `ctx` (eq. 5): the best response to the incremental
-literal listener; at a dead end, probability is distributed evenly over the words with
-viable continuations. -/
+/-- The word-level speaker at context `ctx` (eq. 5) is the best response to the incremental
+literal listener. At a dead end, probability is distributed evenly over the words with viable
+continuations. -/
 noncomputable def s1 (cost : U → ℝ) (ctx : List U) : Kernel W U :=
   Kernel.ofFunOfCountable fun r =>
     if g.DeadEnd ctx r then
@@ -179,7 +179,7 @@ instance (cost : U → ℝ) (ctx : List U) : IsFiniteKernel (g.s1 cost ctx) :=
     · exact prob_le_one
     · exact Kernel.ofWeights_apply_univ_le_one _ r⟩⟩
 
-/-- The incremental pragmatic listener at context `ctx` (eq. 6): the posterior of the
+/-- The incremental pragmatic listener at context `ctx` (eq. 6) is the posterior of the
 word-level speaker against the uniform prior. -/
 noncomputable def l1 [StandardBorelSpace W] (cost : U → ℝ) (ctx : List U) : Kernel U W :=
   (g.s1 cost ctx)†(uniformOn (Set.univ : Set W))
@@ -188,19 +188,18 @@ instance [StandardBorelSpace W] (cost : U → ℝ) (ctx : List U) :
     IsMarkovKernel (g.l1 cost ctx) :=
   inferInstanceAs (IsMarkovKernel ((g.s1 cost ctx)†(uniformOn (Set.univ : Set W))))
 
-/-- The chain-rule product from context `ctx` on: the word-level speaker's remaining
-choices. -/
+/-- `s1Chain` multiplies the word-level speaker's remaining choices from context `ctx` on. -/
 noncomputable def s1Chain (cost : U → ℝ) (r : W) : List U → List U → ℝ
   | _, [] => 1
   | ctx, u :: rest => (g.s1 cost ctx r).real {u} * s1Chain cost r (ctx ++ [u]) rest
 
-/-- The utterance-level incremental speaker (eq. 7): the chain-rule product of the
+/-- The utterance-level incremental speaker (eq. 7) is the chain-rule product of the
 word-level speaker's choices along the utterance. -/
 noncomputable def s1Utt (cost : U → ℝ) (r : W) (u : List U) : ℝ :=
   g.s1Chain cost r [] u
 
 omit [Nonempty W] in
-/-- The speaker's share in real terms: weighted listener values over their row sum. -/
+/-- On reals, the speaker's share is the weighted listener value over the row sum. -/
 theorem s1_real_singleton {ctx : List U} {r : W} (hnd : ¬ g.DeadEnd ctx r) {cost : U → ℝ}
     (u : U) :
     (g.s1 cost ctx r).real {u}
@@ -221,7 +220,7 @@ instance : MeasurableSpace g.Complete := ⊤
 instance : DiscreteMeasurableSpace g.Complete := ⟨fun _ => trivial⟩
 instance : DecidableEq g.Complete := Subtype.instDecidableEq
 
-/-- The global literal listener (eq. 1): the uniform prior conditioned on the utterance's
+/-- The global literal listener (eq. 1) conditions the uniform prior on the utterance's
 truth. -/
 noncomputable def globalL0 : Kernel g.Complete W :=
   literalListener (uniformOn Set.univ) fun u r => if g.sem u.val r then 1 else 0
@@ -232,7 +231,7 @@ instance : IsFiniteKernel g.globalL0 := inferInstanceAs (IsFiniteKernel (literal
 noncomputable def globalS1 (cost : g.Complete → ℝ) : Kernel W g.Complete :=
   speaker 1 cost g.globalL0
 
-/-- The cost of an utterance: the sum of its words' costs (§3.1). -/
+/-- An utterance costs the sum of its words' costs (§3.1). -/
 def uttCost (cost : U → ℝ) (u : List U) : ℝ := (u.map cost).sum
 
 omit [Fintype U] [MeasurableSpace U] [DiscreteMeasurableSpace U] in
@@ -245,8 +244,8 @@ theorem globalL0_apply (u : g.Complete) (r : W) :
   rw [Finset.sum_boole]
 
 omit [Fintype U] [MeasurableSpace U] [DiscreteMeasurableSpace U] in
-/-- §2.4's weak informativity: a complete utterance true of a referent gives the literal
-listener at least chance probability of it. -/
+/-- A complete utterance true of a referent gives the literal listener at least chance
+probability of it, the weak informativity of §2.4. -/
 theorem globalL0_ge_inv_card {u : g.Complete} {r : W} (htrue : g.sem u.val r = true) :
     ((Fintype.card W : ℝ≥0∞))⁻¹ ≤ g.globalL0 u {r} := by
   rw [globalL0_apply, ite_eq_left htrue]
@@ -267,7 +266,7 @@ theorem l0_apply_eq_zero (hw : ∀ r : W, r ∈ g.worlds) {ctx : List U} {u : U}
     (ht : g.trueExts (ctx ++ [u]) r = 0) : g.l0 ctx u {r} = 0 := by
   rw [l0_apply g hw, ht, Nat.cast_zero, ENNReal.zero_div]
 
-/-- The real-valued listener cell: the referent's share of the true-extension counts. -/
+/-- On reals, a listener cell is the referent's share of the true-extension counts. -/
 theorem l0_real (hw : ∀ r : W, r ∈ g.worlds) (ctx : List U) (u : U) (r : W) :
     (g.l0 ctx u {r}).toReal
       = (g.trueExts (ctx ++ [u]) r : ℝ) / (∑ r', g.trueExts (ctx ++ [u]) r' : ℕ) := by
@@ -305,7 +304,7 @@ theorem s1_apply_eq_one (hw : ∀ r : W, r ∈ g.worlds) {ctx : List U} {r : W} 
   exact speaker_apply_singleton_eq_one one_pos (g.l0_apply_ne_zero hw ht)
     fun u' hu' => g.l0_apply_eq_zero hw (hother u' hu')
 
-/-- Listener preference upon a word compares the speaker's masses: the uniform prior
+/-- Listener preference upon a word compares the speaker's masses, since the uniform prior
 cancels. -/
 theorem l1_real_lt_iff [StandardBorelSpace W] {cost : U → ℝ} {ctx : List U} {u : U}
     (hx : (g.s1 cost ctx ∘ₘ uniformOn (Set.univ : Set W)) {u} ≠ 0) {r r' : W} :
@@ -358,7 +357,7 @@ instance : Nonempty Word := ⟨.red⟩
 instance : MeasurableSpace Word := ⊤
 instance : DiscreteMeasurableSpace Word := ⟨fun _ => trivial⟩
 
-/-- The referents of Figure 1a: the red dress R1, the blue dress R2, the red hat R3. -/
+/-- The referents of Figure 1a are the red dress R1, the blue dress R2, and the red hat R3. -/
 inductive Referent
   | redDress | blueDress | redHat
   deriving DecidableEq, Fintype, Repr
@@ -367,7 +366,7 @@ instance : Nonempty Referent := ⟨.redDress⟩
 instance : MeasurableSpace Referent := ⊤
 instance : DiscreteMeasurableSpace Referent := ⟨fun _ => trivial⟩
 
-/-- Figure 1a: three utterances with word-conjunctive semantics over three referents. -/
+/-- Figure 1a has three utterances with word-conjunctive semantics over three referents. -/
 def figureOne : ReferenceGame Word Referent :=
   .ofLexicon
     (fun u r => match u, r with
@@ -384,8 +383,8 @@ private theorem sum_word {M : Type*} [AddCommMonoid M] (f : Word → M) :
   rw [show (Finset.univ : Finset Word) = {.red, .dress, .object} from by decide,
     Finset.sum_insert (by decide), Finset.sum_insert (by decide), Finset.sum_singleton]
 
-/-- Figure 1c, R1 row: the speaker leads with *red*, keeping both red referents viable,
-while *dress* dilutes the listener over the two dresses. -/
+/-- For R1 the speaker leads with *red*, keeping both red referents viable, while *dress*
+dilutes the listener over the two dresses (Figure 1c). -/
 theorem adj_first_for_target :
     (figureOne.s1 0 [] .redDress).real {Word.dress}
       < (figureOne.s1 0 [] .redDress).real {Word.red} := by
@@ -395,7 +394,7 @@ theorem adj_first_for_target :
   rw [figureOne.l0_apply fig1_hw, figureOne.l0_apply fig1_hw]
   exact natCast_div_lt (by decide) (by decide)
 
-/-- Figure 1c, R1 row after *red*: the speaker completes with *dress*, unique to R1. -/
+/-- For R1 after *red* the speaker completes with *dress*, unique to R1 (Figure 1c). -/
 theorem noun_after_adj :
     (figureOne.s1 0 [.red] .redDress).real {Word.object}
       < (figureOne.s1 0 [.red] .redDress).real {Word.dress} := by
@@ -405,16 +404,16 @@ theorem noun_after_adj :
   rw [figureOne.l0_apply fig1_hw, figureOne.l0_apply fig1_hw]
   exact natCast_div_lt (by decide) (by decide)
 
-/-- Figure 1c, R2 row: the blue dress forces *dress* as the first word. -/
+/-- The blue dress R2 forces *dress* as the first word (Figure 1c). -/
 theorem noun_only_for_r2 : figureOne.s1 0 [] .blueDress {Word.dress} = 1 :=
   figureOne.s1_apply_eq_one fig1_hw (by decide) (by decide) (by decide)
 
-/-- Figure 1c, R3 row: the red hat forces *red* as the first word. -/
+/-- The red hat R3 forces *red* as the first word (Figure 1c). -/
 theorem adj_only_for_r3 : figureOne.s1 0 [] .redHat {Word.red} = 1 :=
   figureOne.s1_apply_eq_one fig1_hw (by decide) (by decide) (by decide)
 
-/-- Figure 1c, R2 row after *red* — the §2.2 dead end: no continuation is true of the blue
-dress, and probability distributes evenly over the words with viable continuations. -/
+/-- For R2 after *red*, the dead end of §2.2, no continuation is true of the blue dress, and
+probability distributes evenly over the words with viable continuations (Figure 1c). -/
 theorem uniform_after_red_for_r2 :
     (figureOne.s1 0 [.red] .blueDress).real {Word.dress} = 1 / 2 ∧
     (figureOne.s1 0 [.red] .blueDress).real {Word.object} = 1 / 2 ∧
@@ -463,9 +462,9 @@ private theorem red_marginal_ne_zero :
     (uniformOn_univ_singleton_ne_zero _)
     (by rw [adj_only_for_r3]; exact one_ne_zero)
 
-/-- Figure 1d — the anticipatory implicature: upon hearing *red*, the incremental listener
-favours the red hat over the red dress, since *red* is the hat's only opening while the
-dress's speaker had alternatives. -/
+/-- Upon hearing *red*, the incremental listener favours the red hat over the red dress,
+since *red* is the hat's only opening while the dress's speaker had alternatives. This is the
+anticipatory implicature of Figure 1d. -/
 theorem listener_anticipation :
     (figureOne.l1 0 [] .red).real {Referent.redDress}
       < (figureOne.l1 0 [] .red).real {Referent.redHat} := by
@@ -477,8 +476,8 @@ private theorem r2_never_opens_red : (figureOne.s1 0 [] .blueDress).real {Word.r
   rw [figureOne.s1_real_counts fig1_hw (by decide)]
   norm_num [show figureOne.trueExts [Word.red] .blueDress = 0 from rfl]
 
-/-- Figure 1d, exactly: `L1(R3 | red) = 1 / (4/7 + 0 + 1) = 7/11 ≈ 0.64` — the paper's
-0.64. -/
+/-- Exactly, `L1(R3 | red) = 1 / (4/7 + 0 + 1) = 7/11 ≈ 0.64`, the paper's 0.64
+(Figure 1d). -/
 theorem listener_anticipation_value :
     (figureOne.l1 0 [] .red).real {Referent.redHat} = 7 / 11 := by
   rw [figureOne.l1_real_singleton red_marginal_ne_zero,
@@ -490,9 +489,9 @@ theorem listener_anticipation_value :
 
 /-! ### Figure 1e: the chain-rule wedge -/
 
-/-- Figure 1e, R1 row: the chain-rule utterance-level speaker (eq. 7) prefers bare *dress*
-(3/7) to *red dress* (4/7 · 2/3 = 8/21) — the architectural wedge against Figure 1b, where
-the global speaker prefers *red dress*. -/
+/-- For R1 the chain-rule utterance-level speaker (eq. 7) prefers bare *dress* (3/7) to
+*red dress* (4/7 · 2/3 = 8/21) (Figure 1e). This is the architectural wedge against Figure 1b,
+where the global speaker prefers *red dress*. -/
 theorem incremental_prefers_bare_noun :
     figureOne.s1Utt 0 .redDress [.red, .dress] < figureOne.s1Utt 0 .redDress [.dress] := by
   obtain ⟨h1, h2, h3, -⟩ := s1_figureOne_values
@@ -505,8 +504,8 @@ theorem incremental_prefers_bare_noun :
 theorem fig1_mem_dress : [Word.dress] ∈ figureOne.utterances := by decide
 theorem fig1_mem_redDress : [Word.red, Word.dress] ∈ figureOne.utterances := by decide
 
-/-- Figure 1b: the global pragmatic speaker prefers *red dress* (1/2) to bare *dress*
-(1/4) for the red dress — the preference the chain rule reverses. -/
+/-- For the red dress the global pragmatic speaker prefers *red dress* (1/2) to bare *dress*
+(1/4), the preference the chain rule reverses (Figure 1b). -/
 theorem global_prefers_red_dress :
     (figureOne.globalS1 0 .redDress).real {⟨[.dress], fig1_mem_dress⟩}
       < (figureOne.globalS1 0 .redDress).real {⟨[.red, .dress], fig1_mem_redDress⟩} := by
@@ -532,7 +531,7 @@ theorem global_prefers_red_dress :
 
 /-! ### §2.4: greedy unrolling and weak informativity -/
 
-/-- The greedy unrolling of Figure 1 (§2.3): the word-by-word argmax trajectory per
+/-- The greedy unrolling of Figure 1 (§2.3) takes the word-by-word argmax trajectory per
 referent. -/
 def greedyUnroll : Referent → List Word
   | .redDress => [.red, .dress]
@@ -547,8 +546,8 @@ theorem greedyUnroll_complete (r : Referent) : greedyUnroll r ∈ figureOne.utte
 theorem greedyUnroll_true (r : Referent) : figureOne.sem (greedyUnroll r) r = true := by
   cases r <;> decide
 
-/-- §2.4's weak informativity for Figure 1: the global literal listener gives the target of
-each greedy output at least chance probability. -/
+/-- In Figure 1 the global literal listener gives the target of each greedy output at least
+chance probability, the weak informativity of §2.4. -/
 theorem greedyUnroll_weakly_informative (r : Referent) :
     ((Fintype.card Referent : ℝ≥0∞))⁻¹
       ≤ figureOne.globalL0 ⟨greedyUnroll r, greedyUnroll_complete r⟩ {r} :=
@@ -579,7 +578,7 @@ instance : Nonempty AbstractWorld := ⟨.W1⟩
 instance : MeasurableSpace AbstractWorld := ⊤
 instance : DiscreteMeasurableSpace AbstractWorld := ⟨fun _ => trivial⟩
 
-/-- Figure 3's game: the semantics is a table, not word-conjunctive. -/
+/-- In Figure 3's game the semantics is a table, not word-conjunctive. -/
 def figureThree : ReferenceGame Letter AbstractWorld where
   utterances := [[.A, .A], [.A, .B], [.B, .A], [.B, .B]]
   sem u r := !(decide (u = [.A, .B]) && decide (r = .W1))
@@ -592,7 +591,7 @@ private theorem sum_letter {M : Type*} [AddCommMonoid M] (f : Letter → M) :
   rw [show (Finset.univ : Finset Letter) = {.A, .B} from by decide,
     Finset.sum_insert (by decide), Finset.sum_singleton]
 
-/-- Figure 3, red: the chain rule strictly prefers AA (0.4) to BA (0.3) for W1. -/
+/-- For W1 the chain rule strictly prefers AA (0.4) to BA (0.3) (Figure 3, red). -/
 theorem figureThree_incremental_prefers_AA :
     figureThree.s1Utt 0 .W1 [.B, .A] < figureThree.s1Utt 0 .W1 [.A, .A] := by
   simp only [ReferenceGame.s1Utt, ReferenceGame.s1Chain, List.nil_append, mul_one]
@@ -616,8 +615,8 @@ theorem figureThree_incremental_prefers_AA :
 theorem fig3_mem_AA : [Letter.A, Letter.A] ∈ figureThree.utterances := by decide
 theorem fig3_mem_BA : [Letter.B, Letter.A] ∈ figureThree.utterances := by decide
 
-/-- Figure 3, green: the global speaker is indifferent between AA and BA for W1 — both are
-true and equally informative, so only the chain rule separates them. -/
+/-- For W1 the global speaker is indifferent between AA and BA (Figure 3, green), which are
+both true and equally informative, so only the chain rule separates them. -/
 theorem figureThree_global_indifferent :
     figureThree.globalS1 0 .W1 {⟨[.A, .A], fig3_mem_AA⟩}
       = figureThree.globalS1 0 .W1 {⟨[.B, .A], fig3_mem_BA⟩} := by
@@ -644,7 +643,7 @@ between STOP and *rojo* is then cost-driven, and any dispreference for longer ut
 
 namespace English
 
-/-- English words: adjective before noun, plus the STOP token. -/
+/-- English puts the adjective before the noun, and STOP closes the utterance. -/
 inductive Word
   | dress | red | hat | blue | stop
   deriving DecidableEq, Fintype, Repr
@@ -653,7 +652,7 @@ instance : Nonempty Word := ⟨.dress⟩
 instance : MeasurableSpace Word := ⊤
 instance : DiscreteMeasurableSpace Word := ⟨fun _ => trivial⟩
 
-/-- The two referents: a red dress and a blue hat. -/
+/-- The two referents are a red dress and a blue hat. -/
 inductive Referent
   | redDress | blueHat
   deriving DecidableEq, Fintype, Repr
@@ -662,7 +661,7 @@ instance : Nonempty Referent := ⟨.redDress⟩
 instance : MeasurableSpace Referent := ⊤
 instance : DiscreteMeasurableSpace Referent := ⟨fun _ => trivial⟩
 
-/-- The English game: adjective–noun order, STOP-terminated. -/
+/-- The English game has adjective–noun order and STOP-terminated utterances. -/
 def game : ReferenceGame Word Referent :=
   .ofLexicon
     (fun u r => match u, r with
@@ -672,7 +671,7 @@ def game : ReferenceGame Word Referent :=
     [[.dress, .stop], [.red, .dress, .stop], [.hat, .stop], [.blue, .hat, .stop]]
     [.redDress, .blueHat]
 
-/-- STOP is semantically inert: appending it changes no utterance's truth value. -/
+/-- STOP is semantically inert, since appending it changes no utterance's truth value. -/
 theorem sem_append_stop (u : List Word) (r : Referent) :
     game.sem (u ++ [.stop]) r = game.sem u r := by
   simp only [game, ReferenceGame.ofLexicon, List.all_append, List.all_cons, List.all_nil,
@@ -682,7 +681,7 @@ theorem sem_append_stop (u : List Word) (r : Referent) :
 theorem utterances_stop_terminated :
     ∀ u ∈ game.utterances, u.getLast? = some Word.stop := by decide
 
-/-- The §3.1 cost: a common cost `c` per content word, none for STOP. -/
+/-- Under the cost of §3.1 every content word costs `c` and STOP nothing. -/
 def cost (c : ℝ) : Word → ℝ := fun u => if u = .stop then 0 else c
 
 private theorem hw : ∀ r : Referent, r ∈ game.worlds := by decide
@@ -726,9 +725,9 @@ private theorem forced_stop_after_red_dress (c : ℝ) :
     game.s1 (cost c) [.red, .dress] .redDress {Word.stop} = 1 :=
   game.s1_apply_eq_one hw (by decide) (by decide) (by decide)
 
-/-- §3.1, English: the incremental speaker is *indifferent* between bare *dress* and
-over-modified *red dress* at every content-word cost — the paper's 0.5/0.5. The first
-word decides on informativity alone, where *dress* and *red* tie, and after *red* the
+/-- In English (§3.1) the incremental speaker is *indifferent* between bare *dress* and
+over-modified *red dress* at every content-word cost, the paper's 0.5/0.5. The first word
+decides on informativity alone, where *dress* and *red* tie, and after *red* the
 over-modifying *dress* is forced. -/
 theorem incremental_indifferent (c : ℝ) :
     game.s1Utt (cost c) .redDress [.dress, .stop]
@@ -744,10 +743,9 @@ theorem mem_dress : [Word.dress, Word.stop] ∈ game.utterances := by decide
 theorem mem_redDress : [Word.red, Word.dress, Word.stop] ∈ game.utterances := by
   decide
 
-/-- §3.1, English, globally: both utterances identify the red dress, so with any
-dispreference for length the global speaker prefers bare *dress* — the paper's 0.73
-against 0.27 at `c = 1`, and the contrast with the incremental speaker's
-indifference. -/
+/-- Globally both English utterances identify the red dress (§3.1), so with any dispreference
+for length the global speaker prefers bare *dress*, the paper's 0.73 against 0.27 at `c = 1`,
+in contrast with the incremental speaker's indifference. -/
 theorem global_prefers_bare_noun {c : ℝ} (hc : 0 < c) :
     (game.globalS1 (fun u => ReferenceGame.uttCost (cost c) u.val) .redDress).real
         {⟨[.red, .dress, .stop], mem_redDress⟩}
@@ -773,7 +771,7 @@ end English
 
 namespace Spanish
 
-/-- Spanish words: noun before adjective, plus the STOP token. -/
+/-- Spanish puts the noun before the adjective, and STOP closes the utterance. -/
 inductive Word
   | vestido | rojo | sombrero | azul | stop
   deriving DecidableEq, Fintype, Repr
@@ -782,7 +780,8 @@ instance : Nonempty Word := ⟨.vestido⟩
 instance : MeasurableSpace Word := ⊤
 instance : DiscreteMeasurableSpace Word := ⟨fun _ => trivial⟩
 
-/-- The Spanish game over the same referents: noun–adjective order, STOP-terminated. -/
+/-- The Spanish game over the same referents has noun–adjective order and STOP-terminated
+utterances. -/
 def game : ReferenceGame Word English.Referent :=
   .ofLexicon
     (fun u r => match u, r with
@@ -835,10 +834,10 @@ private theorem step2 (c : ℝ) :
       rw [div_eq_div_iff (by positivity) hpos.ne']
       ring
 
-/-- §3.1, Spanish: with any dispreference for longer utterances (`0 < c`), the incremental
-speaker prefers bare *vestido* to *vestido rojo* — at `c = 1` the paper's 0.73 against
-0.27. The noun alone already settles the referent, so the second step is a pure cost
-choice between STOP and *rojo*. -/
+/-- In Spanish (§3.1), with any dispreference for longer utterances (`0 < c`), the incremental
+speaker prefers bare *vestido* to *vestido rojo*, at `c = 1` the paper's 0.73 against 0.27. The
+noun alone already settles the referent, so the second step is a pure cost choice between STOP
+and *rojo*. -/
 theorem incremental_prefers_bare_noun {c : ℝ} (hc : 0 < c) :
     game.s1Utt (cost c) .redDress [.vestido, .rojo, .stop]
       < game.s1Utt (cost c) .redDress [.vestido, .stop] := by
@@ -867,7 +866,7 @@ the listener who has updated on *tall* excludes every referent but the pitcher. 
 
 namespace Sedivy
 
-/-- The scene's words: the two scalar adjectives and three category nouns. -/
+/-- The scene's words are the two scalar adjectives and three category nouns. -/
 inductive Word
   | tall | short | cup | pitcher | key
   deriving DecidableEq, Fintype, Repr
@@ -885,7 +884,8 @@ instance : Nonempty Referent := ⟨.tallCup⟩
 instance : MeasurableSpace Referent := ⊤
 instance : DiscreteMeasurableSpace Referent := ⟨fun _ => trivial⟩
 
-/-- Sedivy's display as a reference game: six utterances, word-conjunctive semantics. -/
+/-- Sedivy's display is a reference game with six utterances and word-conjunctive
+semantics. -/
 def game : ReferenceGame Word Referent :=
   .ofLexicon
     (fun u r => match u, r with
@@ -903,8 +903,8 @@ private theorem sum_word {M : Type*} [AddCommMonoid M] (f : Word → M) :
   repeat rw [Finset.sum_insert (by decide)]
   rw [Finset.sum_singleton]
 
-/-- The speaker's use of *tall* as a first word: half the time for the tall cup, a third of
-the time for the tall pitcher, never for the others. -/
+/-- The speaker uses *tall* as a first word half the time for the tall cup, a third of the time
+for the tall pitcher, and never for the others. -/
 theorem s1_tall_values :
     (game.s1 0 [] .tallCup).real {Word.tall} = 1 / 2 ∧
     (game.s1 0 [] .tallPitcher).real {Word.tall} = 1 / 3 ∧
@@ -934,15 +934,16 @@ private theorem tall_marginal_ne_zero :
     (uniformOn_univ_singleton_ne_zero _)
     (game.s1_apply_ne_zero hw (by decide) (by decide))
 
-/-- §3.2: upon hearing *tall*, the incremental listener favours the tall cup over the tall
-pitcher — the anticipatory contrastive inference. -/
+/-- Upon hearing *tall*, the incremental listener favours the tall cup over the tall pitcher,
+the anticipatory contrastive inference of §3.2. -/
 theorem listener_prefers_tall_cup :
     (game.l1 0 [] .tall).real {Referent.tallPitcher}
       < (game.l1 0 [] .tall).real {Referent.tallCup} := by
   rw [game.l1_real_lt_iff tall_marginal_ne_zero, s1_tall_values.1, s1_tall_values.2.1]
   norm_num
 
-/-- §3.2, exactly: 3/5 for the tall cup and 2/5 for the pitcher — the paper's 0.6 and 0.4. -/
+/-- Exactly, the listener puts 3/5 on the tall cup and 2/5 on the pitcher, the paper's 0.6 and
+0.4 (§3.2). -/
 theorem listener_tall_values :
     (game.l1 0 [] .tall).real {Referent.tallCup} = 3 / 5 ∧
     (game.l1 0 [] .tall).real {Referent.tallPitcher} = 2 / 5 := by
@@ -958,12 +959,12 @@ theorem listener_tall_values :
       first | rw [h1] | rw [h2]
       norm_num
 
-/-- The listener who has heard *tall*, hearing *pitcher* next: the posterior of the
+/-- The listener who has heard *tall* and then hears *pitcher* takes the posterior of the
 word-level speaker at context *tall* against the updated prior. -/
 noncomputable def afterTallPitcher : Measure Referent :=
   ((game.s1 0 [.tall])†(game.l1 0 [] .tall)) .pitcher
 
-/-- The implicature cancels: after *tall pitcher* every referent but the pitcher is
+/-- The implicature cancels, since after *tall pitcher* every referent but the pitcher is
 excluded. The tall cup's speaker never continues *tall* with *pitcher*, and the other two
 referents already had no posterior mass. -/
 theorem afterTallPitcher_eq_one : afterTallPitcher {Referent.tallPitcher} = 1 := by

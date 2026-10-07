@@ -26,7 +26,8 @@ and silence was not an option, `posterior_eq_prior_of_asked`.
 The paper gives the conceptualization in prose and its predictions through four
 forced-choice experiments; the speaker with a null message is the model the paper takes from
 its precursors, on the substrate's kernel pipeline, and the null message's cost is the
-parameter the paper's contexts vary; when the speaker is asked, the null message is absent. The experiments' selection rates are not represented.
+parameter the paper's contexts vary; when the speaker is asked, the null message is absent.
+The experiments' selection rates are not represented.
 
 ## References
 
@@ -43,7 +44,7 @@ open scoped ENNReal
 
 namespace RohdeEtAl2022
 
-/-- The two values of the forced choice: one near the mean of the pretest, one a standard
+/-- The forced choice offers two values, one near the mean of the pretest and one a standard
 deviation above it. -/
 inductive Value
   | typical
@@ -63,7 +64,7 @@ section Bayes
 
 variable (μ : Measure Value) [IsProbabilityMeasure μ]
 
-/-- Guessing a reported value: the posterior on the atypical value given that the speaker
+/-- In guessing a reported value, the posterior on the atypical value given that the speaker
 reported exceeds its prior exactly when the atypical situation is the likelier to be reported.
 The think condition asks for the prior, the announce condition for the posterior. -/
 theorem prior_lt_posterior_iff (report : Kernel Value Bool) [IsFiniteKernel report]
@@ -72,7 +73,7 @@ theorem prior_lt_posterior_iff (report : Kernel Value Bool) [IsFiniteKernel repo
       (report .typical).real {true} < (report .atypical).real {true} :=
   real_lt_posterior_real_singleton_iff_of_pair report μ (by decide) (pair_support μ) hx ha ht
 
-/-- The likelihood is separable from the prior and manipulable: between two contexts, the
+/-- The likelihood is separable from the prior and manipulable. Between two contexts, the
 posterior on the atypical value given a report is larger in the context where the atypical
 situation is relatively likelier to be reported. -/
 theorem posterior_lt_posterior_iff (report₁ report₂ : Kernel Value Bool)
@@ -119,7 +120,7 @@ def extension : Utterance → Set Value
 
 variable (μ : Measure Value)
 
-/-- The literal listener: a report conveys its value, silence conveys the prior. -/
+/-- To the literal listener a report conveys its value and silence conveys the prior. -/
 noncomputable def L0 : Kernel Utterance Value :=
   literalListener μ λ u => (extension u).indicator 1
 
@@ -131,13 +132,13 @@ instance : IsFiniteKernel (L0 μ) := inferInstanceAs (IsFiniteKernel (literalLis
 
 variable (α cs cn : ℝ)
 
-/-- The speaker: the informativity speaker over reports, each costing `cs`, with silence
+/-- The speaker is the informativity speaker over reports, each costing `cs`, with silence
 costing `cn`. -/
 noncomputable def S : Kernel Value Utterance := speaker α (liftCost cn λ _ => cs) (L0 μ)
 
 instance : IsFiniteKernel (S μ α cs cn) := inferInstanceAs (IsFiniteKernel (speaker _ _ _))
 
-/-- The speaker when asked: silence is not an option, and she chooses among the reports. -/
+/-- When asked, the speaker has no silence option and chooses among the reports. -/
 noncomputable def askedS : Kernel Value Value :=
   speaker α (λ _ => cs) (literalListener μ λ v => ({v} : Set Value).indicator 1)
 
@@ -145,7 +146,8 @@ instance : IsFiniteKernel (askedS μ α cs) := inferInstanceAs (IsFiniteKernel (
 
 /-! ### The decision to speak as the observation -/
 
-/-- Whether the speaker spoke: the report's form, a value reported or silence. -/
+/-- `spoke` records the report's form, whether a value was reported or the speaker stayed
+silent. -/
 noncomputable def spoke : Kernel Value Bool := (S μ α cs cn).map Option.isSome
 
 instance : IsFiniteKernel (spoke μ α cs cn) :=
@@ -176,8 +178,8 @@ theorem L0_none (v : Value) : L0 μ none {v} = μ {v} :=
 
 /-! ### Newsworthiness -/
 
-/-- The share of a report at its value: the report competes with silence only, and silence is
-weighted by the prior of the value. -/
+/-- At its value a report competes with silence only, and silence is weighted by the prior of
+the value. -/
 theorem S_report (hα : 0 < α) {v : Value} (hv : μ {v} ≠ 0) :
     (S μ α cs cn v).real {some v} =
       Real.exp (-(α * cs)) /
@@ -196,7 +198,7 @@ theorem S_report_pos (hα : 0 < α) {v : Value} (hv : μ {v} ≠ 0) :
   rw [S_report μ α cs cn hα hv]
   positivity
 
-/-- Improbable situations yield likely utterances: the share of a report is greater at the
+/-- Improbable situations yield likely utterances. The share of a report is greater at the
 value with the smaller prior, since silence, which conveys the prior, is the more attractive
 the likelier the value. -/
 theorem S_report_lt (hα : 0 < α) (ht : μ {.typical} ≠ 0) (ha : μ {.atypical} ≠ 0)
@@ -218,7 +220,7 @@ theorem spoke_apply_true_ne_zero (hα : 0 < α) {v : Value} (hv : μ {v} ≠ 0) 
   rw [measureReal_def, h0, ENNReal.toReal_zero] at this
   exact lt_irrefl _ this
 
-/-- A report shifts the guess toward the atypical value: given that the speaker spoke, the
+/-- A report shifts the guess toward the atypical value. Given that the speaker spoke, the
 posterior on the atypical value exceeds the prior that the think condition returns. -/
 theorem prior_lt_posterior (hα : 0 < α) (ht : μ {.typical} ≠ 0) (ha : μ {.atypical} ≠ 0)
     (h : μ {.atypical} < μ {.typical}) :
@@ -229,7 +231,7 @@ theorem prior_lt_posterior (hα : 0 < α) (ht : μ {.typical} ≠ 0) (ha : μ {.
     S_report_lt μ α cs cn hα ht ha h
 
 /-- When the speaker was asked, so that silence was not an option, she speaks at every value,
-and a report carries no information about typicality: the posterior is the prior, as the
+and a report carries no information about typicality. The posterior is the prior, as the
 when-asked and think conditions align. -/
 theorem posterior_eq_prior_of_asked (hα : 0 < α) (ht : μ {.typical} ≠ 0)
     (ha : μ {.atypical} ≠ 0) :
@@ -237,7 +239,8 @@ theorem posterior_eq_prior_of_asked (hα : 0 < α) (ht : μ {.typical} ≠ 0)
   have h1 : ∀ v, μ {v} ≠ 0 → ((askedS μ α cs).map (λ _ => true) v).real {true} = 1 := λ v hv => by
     have hv1 : askedS μ α cs v {v} = 1 :=
       speaker_literalListener_indicator_eq_one hα _ μ _ hv rfl λ _ h hv' => h hv'.symm
-    rw [measureReal_def, Kernel.map_apply' _ measurable_const _ (MeasurableSet.singleton true), askedS,
+    rw [measureReal_def, Kernel.map_apply' _ measurable_const _ (MeasurableSet.singleton true),
+      askedS,
       Set.preimage_const_of_mem (Set.mem_singleton true),
       le_antisymm (speaker_apply_univ_le_one α _ _ v) (hv1 ▸ measure_mono (Set.subset_univ _)),
       ENNReal.toReal_one]
@@ -248,7 +251,7 @@ theorem posterior_eq_prior_of_asked (hα : 0 < α) (ht : μ {.typical} ≠ 0)
     mul_one, mul_one, measureReal_singleton_add_singleton_of_pair μ (by decide) (pair_support μ),
     div_one]
 
-/-- The likelihood of speech is malleable: the cheaper silence is, the more a report shifts the
+/-- The likelihood of speech is malleable. The cheaper silence is, the more a report shifts the
 guess toward the atypical value, as the out-of-the-blue and large-audience conditions increase
 the emphasis on information exchange. -/
 theorem posterior_lt_of_silence_lt (hα : 0 < α) {cn₁ cn₂ : ℝ} (hlt : cn₂ < cn₁)

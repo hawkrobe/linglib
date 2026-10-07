@@ -49,7 +49,7 @@ namespace CremersWilcoxSpector2023
 
 /-! ### Worlds, messages and interpretations -/
 
-/-- The two worlds: only A true, or both A and B true. -/
+/-- In one world only A is true, in the other both A and B are. -/
 inductive World where
   | wa
   | wab
@@ -57,7 +57,7 @@ inductive World where
 
 instance : MeasurableSpace World := ⊤
 
-/-- The three messages: *A*, *A and B*, *A and not B*. -/
+/-- The three messages are *A*, *A and B* and *A and not B*. -/
 inductive Message where
   | a
   | aAndB
@@ -74,7 +74,7 @@ def truth : Message → World → Bool
   | .aAndNotB, .wa => true
   | .aAndNotB, .wab => false
 
-/-- The alternatives of a message: *A* has the scale-mate *A and B*. -/
+/-- *A* has the scale-mate *A and B* as its alternative. -/
 def alternatives : Message → List (World → Bool)
   | .a => [truth .a, truth .aAndB]
   | u => [truth u]
@@ -162,8 +162,8 @@ def FreeInterpretation.meaning : FreeInterpretation → Meaning
   | .exh => exhaustified
   | .antiExh => antiExhaustive
 
-/-- The wonky-world listener's two backgrounds: the speaker assumes a uniform prior or the
-measured one. -/
+/-- The wonky-world listener considers two backgrounds, in which the speaker assumes a uniform
+prior or the measured one. -/
 inductive Background where
   | wonky
   | measured
@@ -171,7 +171,7 @@ inductive Background where
 
 instance : MeasurableSpace Background := ⊤
 
-/-- The questions under discussion: whether A holds, which the two worlds answer alike, or
+/-- The question under discussion asks whether A holds, which the two worlds answer alike, or
 which world obtains. -/
 inductive QUD where
   | coarse
@@ -213,8 +213,8 @@ end Sums
 
 /-! ### Priors and parameters -/
 
-/-- The parameters of a model: the prior probability of both A and B, the rationality, and
-the costs of the two conjunctions, *A* itself costing nothing. -/
+/-- A model is fixed by the prior probability of both A and B, the rationality, and the costs
+of the two conjunctions, *A* itself costing nothing. -/
 structure Setting where
   /-- The prior probability of the world where both A and B hold. -/
   p : ℝ
@@ -241,8 +241,9 @@ def cost : Message → ℝ
   | .aAndB => s.cAndB
   | .aAndNotB => s.cAndNotB
 
-/-- The cost factor of a message: the exponential of its cost scaled by the rationality. -/
-noncomputable abbrev costFactor (u : Message) : ℝ≥0∞ := ENNReal.ofReal (Real.exp (-(s.lam * s.cost u)))
+/-- The cost factor of a message is the exponential of its cost scaled by the rationality. -/
+noncomputable abbrev costFactor (u : Message) : ℝ≥0∞ :=
+  ENNReal.ofReal (Real.exp (-(s.lam * s.cost u)))
 
 theorem costFactor_ne_zero (u : Message) : s.costFactor u ≠ 0 :=
   (ENNReal.ofReal_pos.mpr (Real.exp_pos _)).ne'
@@ -253,7 +254,7 @@ theorem costFactor_toReal (u : Message) :
     (s.costFactor u).toReal = Real.exp (-(s.lam * s.cost u)) :=
   ENNReal.toReal_ofReal (Real.exp_pos _).le
 
-/-- The paper's `f_λ`: the logistic function with rate the rationality. -/
+/-- The paper's `f_λ` is the logistic function with rate the rationality. -/
 noncomputable def logistic (x : ℝ) : ℝ := Real.sigmoid (s.lam * x)
 
 theorem logistic_nonneg (x : ℝ) : 0 ≤ s.logistic x := Real.sigmoid_nonneg _
@@ -307,7 +308,7 @@ theorem prior_real_wab : s.prior.real {.wab} = s.p := by
 
 end Setting
 
-/-- The wonky prior: uniform over the two worlds. -/
+/-- The wonky prior is uniform over the two worlds. -/
 noncomputable def wonkyPrior : Measure World := uniformOn Set.univ
 
 instance : IsProbabilityMeasure wonkyPrior :=
@@ -333,7 +334,7 @@ section Speaker
 
 variable (P : Measure World) [IsFiniteMeasure P] (hP : ∀ w, P {w} ≠ 0) (m : Meaning)
 
-/-- The literal listener: the prior conditioned on the message's extension (eq. 1). -/
+/-- The literal listener conditions the prior on the message's extension (eq. 1). -/
 noncomputable def L0 : Kernel Message World :=
   RSA.literalListener P λ u => (m.extension u).indicator 1
 
@@ -356,8 +357,8 @@ theorem L0_literal_a [IsProbabilityMeasure P] (w : World) : L0 P literal .a {w} 
 
 variable (s : Setting)
 
-/-- The speaker: the softmax of the literal listener's log probability less the cost, scaled by
-the rationality (eqs. 2 and 3). -/
+/-- The speaker is the softmax of the literal listener's log probability less the cost, scaled
+by the rationality (eqs. 2 and 3). -/
 noncomputable def speaker : Kernel World Message := RSA.speaker s.lam s.cost (L0 P m)
 
 instance : IsFiniteKernel (speaker P m s) := inferInstanceAs (IsFiniteKernel (RSA.speaker _ _ _))
@@ -400,7 +401,7 @@ theorem L0_apply_univ (u : Message) : L0 P m u Set.univ = 1 :=
   RSA.literalListener_indicator_apply_univ P m.extension λ h =>
     hP w (measure_mono_null (Set.singleton_subset_iff.mpr hw) h)
 
-/-- The weight of a message true at a world, on reals: the exponential of the paper's scaled
+/-- On reals, the weight of a message true at a world is the exponential of the paper's scaled
 utility. -/
 theorem weight_toReal {u : Message} {w : World} (h : m.sat u w = true) :
     (L0 P m u {w} ^ s.lam * s.costFactor u).toReal =
@@ -609,8 +610,8 @@ theorem comp_luSpeaker_ne_zero (u : Message) : (luSpeaker s ∘ₘ s.prior) {u} 
 noncomputable def luListener : Kernel Message World := (luSpeaker s)†s.prior
 
 /-- Grammatical lexical uncertainty blocks anti-exhaustivity whenever *A and B* costs no more
-than *A and not B*: the exhaustified interpretation never uses *A* in the world of both but
-uses it in the world of A alone more than the literal interpretation uses it in the world of
+than *A and not B*. The exhaustified interpretation never uses *A* in the world of both but uses
+it in the world of A alone more than the literal interpretation uses it in the world of
 both. -/
 theorem luListener_lt_prior (hc : s.cAndB ≤ s.cAndNotB) :
     (luListener s .a).real {.wab} < s.prior.real {.wab} := by
@@ -666,8 +667,8 @@ theorem prior_lt_freeListener_iff :
     speaker_literal_wa_a _ s.prior_ne_zero, Setting.prior_real_wab, Setting.prior_real_wa]
   constructor <;> intro h <;> linarith
 
-/-- With equal costs, free lexical uncertainty is anti-exhaustive exactly when the baseline
-is: for a prior biased towards the world of both. -/
+/-- With equal costs, free lexical uncertainty is anti-exhaustive exactly when the baseline is,
+namely for a prior biased towards the world of both. -/
 theorem prior_lt_freeListener_iff_of_cost_eq (hc : s.cAndB = s.cAndNotB) :
     s.prior.real {.wab} < (freeListener s .a).real {.wab} ↔ 1 / 2 < s.p := by
   rw [prior_lt_freeListener_iff, hc, add_lt_add_iff_right, s.logistic_lt_iff,
@@ -771,8 +772,8 @@ theorem comp_liMessageSpeaker_ne_zero (u : Message) :
 /-- The pragmatic listener of the lexical-intentions model (item 6 of the §4.4 model). -/
 noncomputable def liListener : Kernel Message World := (liMessageSpeaker s)†s.prior
 
-/-- The lexical-intentions model blocks anti-exhaustivity whenever *A and B* costs no more
-than *A and not B*: *A* is never likelier in the world of both than in the world of A
+/-- The lexical-intentions model blocks anti-exhaustivity whenever *A and B* costs no more than
+*A and not B*, since *A* is never likelier in the world of both than in the world of A
 alone. -/
 theorem liListener_lt_prior (hc : s.cAndB ≤ s.cAndNotB) :
     (liListener s .a).real {.wab} < s.prior.real {.wab} := by
@@ -796,8 +797,7 @@ section Supervaluationist
 
 variable (s : Setting)
 
-/-- The cell of a world in a question: the coarse question does not distinguish the worlds,
-the fine one does. -/
+/-- The coarse question puts both worlds in one cell, and the fine one distinguishes them. -/
 def QUD.cell : QUD → World → Set World
   | .coarse, _ => Set.univ
   | .fine, w => {w}
@@ -816,9 +816,9 @@ theorem cell_coarse (i : Interpretation) (u : Message) (w : World) :
 theorem cell_fine (i : Interpretation) (u : Message) (w : World) :
     cell s i .fine u w = s.L0 i.meaning u {w} := rfl
 
-/-- The supervaluationist weight: the geometric mean over the two interpretations, taken
+/-- The supervaluationist weight is the geometric mean over the two interpretations, taken
 equiprobable, of the literal listener's mass on the cell, raised to the rationality, times the
-cost factor; the prior of the question, common to every message, is left out (item 4 of the
+cost factor. The prior of the question, common to every message, is left out (item 4 of the
 §4.2 model). -/
 noncomputable def svWeight (x : World × QUD) (u : Message) : ℝ≥0∞ :=
   cell s .lit x.2 u x.1 ^ (s.lam / 2) * cell s .exh x.2 u x.1 ^ (s.lam / 2) * s.costFactor u
@@ -945,8 +945,7 @@ section Wonky
 
 variable (s : Setting) (ω : ℝ) (hω₀ : 0 ≤ ω) (hω₁ : ω ≤ 1)
 
-/-- The speaker's prior under a background: uniform in the wonky background, measured
-otherwise. -/
+/-- The speaker's prior is uniform in the wonky background and the measured one otherwise. -/
 noncomputable def worldPrior : Background → Measure World
   | .wonky => wonkyPrior
   | .measured => s.prior
@@ -967,14 +966,14 @@ noncomputable def bgSpeaker (b : Background) : Kernel World Message :=
 instance (b : Background) : IsFiniteKernel (bgSpeaker s b) :=
   inferInstanceAs (IsFiniteKernel (speaker _ _ _))
 
-/-- The wonky speaker's use of *A* in the world of both: the logistic function of the cost of
+/-- The wonky speaker uses *A* in the world of both with the logistic function of the cost of
 *A and B* less the log of two. -/
 theorem bgSpeaker_wonky_wab_a :
     (bgSpeaker s .wonky .wab).real {.a} = s.logistic (s.cAndB - Real.log 2) := by
   rw [bgSpeaker, speaker_literal_wab_a _ (worldPrior_ne_zero s .wonky), worldPrior,
     wonkyPrior_real_singleton, Real.log_inv, ← sub_eq_add_neg]
 
-/-- The wonky speaker's use of *A* in the world of A alone: the logistic function of the cost
+/-- The wonky speaker uses *A* in the world of A alone with the logistic function of the cost
 of *A and not B* less the log of two. -/
 theorem bgSpeaker_wonky_wa_a :
     (bgSpeaker s .wonky .wa).real {.a} = s.logistic (s.cAndNotB - Real.log 2) := by
@@ -993,7 +992,7 @@ theorem bgSpeaker_measured_wa_a :
   rw [bgSpeaker, speaker_literal_wa_a _ (worldPrior_ne_zero s .measured), worldPrior,
     Setting.prior_real_wa]
 
-/-- The weight of a background: wonky with the wonkiness. -/
+/-- The wonky background has weight the wonkiness `ω`, and the measured one `1 - ω`. -/
 noncomputable def bgWeight : Background → ℝ≥0∞
   | .wonky => ENNReal.ofReal ω
   | .measured => ENNReal.ofReal (1 - ω)
@@ -1057,7 +1056,8 @@ theorem prior_lt_bayesWonkyListener_iff :
     bgSpeaker_measured_wa_a]
   constructor <;> intro h <;> nlinarith
 
-/-- The prior on backgrounds: wonky with the wonkiness. -/
+/-- The prior on backgrounds puts `ω` on the wonky background and `1 - ω` on the measured
+one. -/
 noncomputable def bgPrior : Measure Background := ∑ b, bgWeight ω b • Measure.dirac b
 
 theorem bgPrior_apply_singleton (b : Background) : bgPrior ω {b} = bgWeight ω b :=
@@ -1076,8 +1076,8 @@ noncomputable def worldKernel : Kernel Background World := Kernel.ofFunOfCountab
 instance : IsMarkovKernel (worldKernel s) :=
   ⟨λ b => by rw [worldKernel, Kernel.ofFunOfCountable_apply]; infer_instance⟩
 
-/-- The prior of the non-Bayesian model: the background, then the world under it (item 4 of
-the §4.1 model). -/
+/-- The prior of the non-Bayesian model draws the background, then the world under it (item 4
+of the §4.1 model). -/
 noncomputable def wonkyJoint : Measure (Background × World) := bgPrior ω ⊗ₘ worldKernel s
 
 instance : IsFiniteMeasure (wonkyJoint s ω) :=

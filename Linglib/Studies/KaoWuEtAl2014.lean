@@ -146,7 +146,7 @@ theorem L0_apply_singleton_ne_zero_iff (μ : Measure Meaning) [IsFiniteMeasure �
   · rw [L0, literalListener_indicator_apply_singleton_of_notMem μ sem h]
     exact iff_of_false (fun h' ↦ h' rfl) (fun h' ↦ h h'.1)
 
-/-- The cost `C(u)` of eq. 7: one at a round price and the fitted parameter `c` at a sharp
+/-- The cost `C(u)` of eq. 7 is one at a round price and the fitted parameter `c` at a sharp
 one. -/
 def cost (c : ℝ) (u : Price) : ℝ := if u.IsRound then 1 else c
 

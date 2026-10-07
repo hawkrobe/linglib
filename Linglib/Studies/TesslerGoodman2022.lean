@@ -6,16 +6,16 @@ public import Linglib.Studies.TesslerGoodman2019
 /-!
 # Tessler and Goodman (2022): Warm (for Winter): Inferring Comparison Classes in Communication
 
-This file formalizes [tessler-goodman-2022]'s model of how a listener infers the comparison
-class of a bare gradable adjective. The literal listener of [lassiter-goodman-2017] interprets
-*tall* and *short* as thresholds on the degree, the threshold drawn from a uniform prior over
-the support of the degree prior, and conditions the prior of the comparison class on the
-utterance with the threshold integrated out (4)–(5), `thresholdMeaning`, `meaning`, `L0`, the
-substrate's `RSA.literalListener` at the threshold prior of [tessler-goodman-2019]. The speaker
-knows the comparison class and chooses among *tall*, *short* and silence to convey the degree
-(3), `S`, the substrate's `RSA.speaker`. The pragmatic listener knows the referent's kind but
-not the class the speaker assumed, and infers the degree and the class jointly at the kind's
-degree prior and a flat class prior (1), `L1`, the substrate's `RSA.familyListener`.
+This file formalizes Tessler and Goodman's model of how a listener infers the comparison class of a
+bare gradable adjective. Lassiter and Goodman's literal listener interprets *tall* and *short* as
+thresholds on the degree, the threshold drawn from a uniform prior over the support of the degree
+prior, and conditions the prior of the comparison class on the utterance with the threshold
+integrated out (4)–(5), `thresholdMeaning`, `meaning`, `L0`, the substrate's `RSA.literalListener`
+at the threshold prior of Tessler and Goodman's generics model. The speaker knows the comparison
+class and chooses among *tall*, *short* and silence to convey the degree (3), `S`, the substrate's
+`RSA.speaker`. The pragmatic listener knows the referent's kind but not the class the speaker
+assumed, and infers the degree and the class jointly at the kind's degree prior and a flat class
+prior (1), `L1`, the substrate's `RSA.familyListener`.
 
 The speaker's share of *tall* at a degree depends on the comparison class only through the
 class's mean degree, and falls as that mean rises, `S_tall_real`, `share_lt_share`: *tall*
@@ -58,7 +58,7 @@ namespace TesslerGoodman2022
 open MeasureTheory ProbabilityTheory RSA TesslerGoodman2019
 open scoped ENNReal
 
-/-- The utterances: the positive adjective, the negative adjective, and silence. -/
+/-- The speaker says the positive adjective, the negative adjective, or nothing. -/
 inductive Utterance
   | tall
   | short
@@ -69,8 +69,8 @@ instance : MeasurableSpace Utterance := ⊤
 
 instance : DiscreteMeasurableSpace Utterance := ⟨λ _ => trivial⟩
 
-/-- The two comparison classes of the idealized case: the referent's own subordinate category,
-or a superordinate category. -/
+/-- In the idealized case the comparison class is the referent's own subordinate category or
+a superordinate category. -/
 inductive ComparisonClass
   | subordinate
   | superordinate
@@ -82,8 +82,8 @@ instance : DiscreteMeasurableSpace ComparisonClass := ⟨λ _ => trivial⟩
 
 instance : Nonempty ComparisonClass := ⟨.subordinate⟩
 
-/-- The threshold semantics (4): *tall* holds of a degree above the threshold, *short* of one
-below it, and silence everywhere. -/
+/-- Under the threshold semantics (4), *tall* holds of a degree above the threshold, *short* of
+one below it, and silence everywhere. -/
 def thresholdMeaning : Utterance → ℝ → ℝ → Prop
   | .tall, θ, x => θ < x
   | .short, θ, x => x < θ
@@ -107,7 +107,7 @@ section Model
 
 variable {X : Type*}
 
-/-- The meaning of (5): the threshold semantics integrated out against the uniform threshold
+/-- The meaning of (5) integrates the threshold semantics out against the uniform threshold
 prior. -/
 noncomputable def meaning (deg : X → ℝ) (u : Utterance) (x : X) : ℝ≥0∞ :=
   uniformThreshold {θ | thresholdMeaning u θ (deg x)}
@@ -127,7 +127,7 @@ theorem meaning_silent (x : X) : meaning deg .silent x = 1 := by
 
 variable [Fintype X] [MeasurableSpace X] [DiscreteMeasurableSpace X]
 
-/-- The literal listener (4)–(5): the comparison class's degree prior conditioned on the
+/-- The literal listener (4)–(5) conditions the comparison class's degree prior on the
 marginalized meaning. -/
 noncomputable def L0 (classPrior : ComparisonClass → Measure X) (c : ComparisonClass) :
     Kernel Utterance X :=
@@ -136,12 +136,12 @@ noncomputable def L0 (classPrior : ComparisonClass → Measure X) (c : Compariso
 instance (classPrior : ComparisonClass → Measure X) (c : ComparisonClass) :
     IsFiniteKernel (L0 deg classPrior c) := inferInstanceAs (IsFiniteKernel (literalListener _ _))
 
-/-- The speaker (3): rationality `α`, equal costs, the comparison class known. -/
+/-- The speaker (3) has rationality `α`, equal costs, and knows the comparison class. -/
 noncomputable def S (α : ℝ) (classPrior : ComparisonClass → Measure X) (c : ComparisonClass) :
     Kernel X Utterance :=
   speaker α 0 (L0 deg classPrior c)
 
-/-- The pragmatic listener (1): the joint posterior over the degree and the comparison class,
+/-- The pragmatic listener (1) is the joint posterior over the degree and the comparison class,
 at the kind's degree prior and a flat class prior. -/
 noncomputable def L1 [Nonempty X] (α : ℝ) (classPrior : ComparisonClass → Measure X)
     (κ : Measure X) [IsFiniteMeasure κ] : Kernel Utterance (X × ComparisonClass) :=
@@ -151,13 +151,13 @@ noncomputable def L1 [Nonempty X] (α : ℝ) (classPrior : ComparisonClass → M
 noncomputable def mean (classPrior : ComparisonClass → Measure X) (c : ComparisonClass) : ℝ :=
   expectedPrevalence (classPrior c) deg
 
-/-- The speaker's share of the positive adjective as a function of the degree `a` and the
-class's mean `m`: its informativity against the negative adjective and silence. -/
+/-- As a function of the degree `a` and the class's mean `m`, the speaker's share of the
+positive adjective is its informativity against the negative adjective and silence. -/
 noncomputable def share (α a m : ℝ) : ℝ :=
   (a / m) ^ α / ((a / m) ^ α + ((1 - a) / (1 - m)) ^ α + 1)
 
-/-- The class marginal of the literal listener (6) at a flat class prior, up to the common
-normalizer: the prior probability under the class that the utterance is true. -/
+/-- At a flat class prior and up to the common normalizer, the class marginal of the literal
+listener (6) is the prior probability under the class that the utterance is true. -/
 noncomputable def literalScore (classPrior : ComparisonClass → Measure X) (u : Utterance)
     (c : ComparisonClass) : ℝ :=
   ∑ x, (classPrior c).real {x} * (meaning deg u x).toReal
@@ -165,7 +165,7 @@ noncomputable def literalScore (classPrior : ComparisonClass → Measure X) (u :
 variable (classPrior : ComparisonClass → Measure X) {α : ℝ}
 
 /-- Comparison-class preference of the pragmatic listener reduces to the kind-prior-weighted
-speaker shares: the flat class prior and the observation marginal cancel. -/
+speaker shares, since the flat class prior and the observation marginal cancel. -/
 theorem L1_snd_real_lt_iff [Nonempty X] (κ : Measure X) [IsFiniteMeasure κ] {u : Utterance}
     (hu : (familySpeaker (L0 deg classPrior) α 0 ∘ₘ κ.prod (uniformOn Set.univ)) {u} ≠ 0)
     (c₁ c₂ : ComparisonClass) :
@@ -309,8 +309,8 @@ theorem S_short_real (hα : 0 < α) (hdeg : ∀ x, 0 < deg x ∧ deg x < 1) (c :
         * (classPrior c).real {x} ^ α by ring,
     mul_div_mul_right _ _ hq.ne']
 
-/-- The share of the positive adjective falls as the class's mean rises: the adjective is the
-more informative the lower the expectations it is measured against. -/
+/-- The share of the positive adjective falls as the class's mean rises, since the adjective
+is the more informative the lower the expectations it is measured against. -/
 theorem share_lt_share (hα : 0 < α) {a m₁ m₂ : ℝ} (ha : 0 < a) (ha1 : a < 1) (hm₁ : 0 < m₁)
     (h : m₁ < m₂) (hm₂ : m₂ < 1) : share α a m₂ < share α a m₁ := by
   unfold share
@@ -356,8 +356,9 @@ theorem comp_ne_zero [Nonempty X] (κ : Measure X) (hα : 0 < α)
 
 variable (κ : Measure X) [IsFiniteMeasure κ]
 
-/-- Polarity by expectations, the positive adjective: hearing *tall*, the listener infers the
-comparison class with the smaller mean degree, against which *tall* is the more informative. -/
+/-- Hearing *tall*, the listener infers the comparison class with the smaller mean degree,
+against which *tall* is the more informative, polarity by expectations for the positive
+adjective. -/
 theorem tall_infers_smaller_mean [Nonempty X] (hα : 0 < α) (hdeg : ∀ x, 0 < deg x ∧ deg x < 1)
     (hsupp : ∀ c x, classPrior c {x} ≠ 0) (hκ : ∀ x, κ {x} ≠ 0) {c₁ c₂ : ComparisonClass}
     (h : mean deg classPrior c₁ < mean deg classPrior c₂) :
@@ -370,8 +371,8 @@ theorem tall_infers_smaller_mean [Nonempty X] (hα : 0 < α) (hdeg : ∀ x, 0 < 
     (mean_pos deg classPrior hdeg c₁) h (mean_lt_one deg classPrior hdeg c₂))
     (ENNReal.toReal_pos (hκ x) (measure_ne_top _ _))
 
-/-- Polarity by expectations, the negative adjective: hearing *short*, the listener infers the
-comparison class with the larger mean degree. -/
+/-- Hearing *short*, the listener infers the comparison class with the larger mean degree,
+polarity by expectations for the negative adjective. -/
 theorem short_infers_larger_mean [Nonempty X] (hα : 0 < α) (hdeg : ∀ x, 0 < deg x ∧ deg x < 1)
     (hsupp : ∀ c x, classPrior c {x} ≠ 0) (hκ : ∀ x, κ {x} ≠ 0) {c₁ c₂ : ComparisonClass}
     (h : mean deg classPrior c₁ < mean deg classPrior c₂) :
@@ -386,8 +387,8 @@ theorem short_infers_larger_mean [Nonempty X] (hα : 0 < α) (hdeg : ∀ x, 0 < 
     (by linarith [mean_lt_one deg classPrior hdeg c₂]) (by linarith)
     (by linarith [mean_pos deg classPrior hdeg c₁])
 
-/-- A kind expected to be tall, such as basketball players, whose degrees exceed the
-superordinate class's: *tall* is read against people and *short* against the kind
+/-- For a kind expected to be tall, such as basketball players, whose degrees exceed the
+superordinate class's, *tall* is read against people and *short* against the kind
 (Figure 1E). -/
 theorem expected_tall [Nonempty X] (hα : 0 < α) (hdeg : ∀ x, 0 < deg x ∧ deg x < 1)
     (hsupp : ∀ c x, classPrior c {x} ≠ 0) (hκ : ∀ x, κ {x} ≠ 0)
@@ -399,8 +400,8 @@ theorem expected_tall [Nonempty X] (hα : 0 < α) (hdeg : ∀ x, 0 < deg x ∧ d
   ⟨tall_infers_smaller_mean deg classPrior κ hα hdeg hsupp hκ h,
     short_infers_larger_mean deg classPrior κ hα hdeg hsupp hκ h⟩
 
-/-- A kind expected to be short, such as jockeys: *tall* is read against the kind and *short*
-against people. -/
+/-- For a kind expected to be short, such as jockeys, *tall* is read against the kind and
+*short* against people. -/
 theorem expected_short [Nonempty X] (hα : 0 < α) (hdeg : ∀ x, 0 < deg x ∧ deg x < 1)
     (hsupp : ∀ c x, classPrior c {x} ≠ 0) (hκ : ∀ x, κ {x} ≠ 0)
     (h : mean deg classPrior .subordinate < mean deg classPrior .superordinate) :
@@ -418,8 +419,8 @@ theorem literalScore_tall (hdeg : ∀ x, 0 < deg x ∧ deg x < 1) (c : Compariso
   refine Finset.sum_congr rfl λ x _ => ?_
   rw [meaning_tall deg (hdeg x).2.le, ENNReal.toReal_ofReal (hdeg x).1.le]
 
-/-- The literal listener (6) prefers, for *tall*, the class with the larger mean: the opposite
-of the pragmatic inference (Figure 2). -/
+/-- For *tall* the literal listener (6) prefers the class with the larger mean, the opposite of
+the pragmatic inference (Figure 2). -/
 theorem literalScore_tall_lt (hdeg : ∀ x, 0 < deg x ∧ deg x < 1) {c₁ c₂ : ComparisonClass}
     (h : mean deg classPrior c₁ < mean deg classPrior c₂) :
     literalScore deg classPrior .tall c₁ < literalScore deg classPrior .tall c₂ := by

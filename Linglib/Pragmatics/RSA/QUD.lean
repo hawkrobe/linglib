@@ -7,11 +7,10 @@ public import Linglib.Pragmatics.RSA.Basic
 
 A communicative goal projects the meaning space onto the topic under discussion, and a speaker
 with that goal is informative about the listener's mass on the cell of the intended meaning
-rather than on the meaning itself: the projected literal listener of [kao-etal-2014-metaphor]
-(eq. 1), [kao-etal-2014-hyperbole] (eq. 6) and [kao-goodman-2015]. `RSA.projListener` is that
-listener as a kernel, so that with the goal as a state-side latent the goal-indexed speaker is
-`RSA.familySpeaker` of the projected listeners and the listener who marginalizes the goal is
-`RSA.familyListener` ([kao-etal-2014-hyperbole] eq. 10).
+rather than on the meaning itself. Kao and colleagues use this projected literal listener for
+metaphor, hyperbole and irony. `RSA.projListener` is that listener as a kernel, so that with
+the goal as a state-side latent the goal-indexed speaker is `RSA.familySpeaker` of the projected
+listeners and the listener who marginalizes the goal is `RSA.familyListener`.
 
 A literally false utterance projects positive mass onto a meaning exactly when the meaning's
 cell contains a literally true one (`RSA.projListener_apply_singleton_ne_zero_iff`), the
@@ -35,9 +34,9 @@ section ProjListener
 variable {W U G X : Type*} [MeasurableSpace W] [MeasurableSpace U] [Countable U]
   [MeasurableSingletonClass U] [Fintype W] [MeasurableSingletonClass W]
 
-/-- The QUD-projected listener: at each meaning, the listener's mass on the meaning's cell under
-the goal's projection. It is not normalized; the speaker's best response reads only its
-weights. -/
+/-- The QUD-projected listener puts at each meaning the listener's mass on the meaning's cell
+under the goal's projection. It is not normalized, since the speaker's best response reads only
+its weights. -/
 noncomputable def projListener (project : G → W → X) (L : Kernel U W) (g : G) : Kernel U W :=
   Kernel.ofFunOfCountable λ u => ∑ w, L u (project g ⁻¹' {project g w}) • Measure.dirac w
 
@@ -48,8 +47,8 @@ variable (project : G → W → X) (L : Kernel U W) (g : G) (u : U) (w : W)
   rw [projListener, Kernel.ofFunOfCountable_apply]
   exact Measure.sum_smul_dirac_apply_singleton (λ w' => L u (project g ⁻¹' {project g w'})) w
 
-/-- The projected listener of a finite kernel is finite: each row puts at most the listener's
-bound on each of the finitely many meanings. -/
+/-- The projected listener of a finite kernel is finite, since each row puts at most the
+listener's bound on each of the finitely many meanings. -/
 instance [IsFiniteKernel L] : IsFiniteKernel (projListener project L g) :=
   ⟨⟨Fintype.card W * L.bound,
     ENNReal.mul_lt_top (ENNReal.natCast_lt_top _) L.bound_lt_top, fun u ↦ by

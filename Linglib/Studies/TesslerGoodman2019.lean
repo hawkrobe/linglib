@@ -8,22 +8,21 @@ public import Mathlib.MeasureTheory.Integral.Bochner.SumMeasure
 /-!
 # Tessler and Goodman (2019): The Language of Generalization
 
-This file formalizes [tessler-goodman-2019]'s model of generic, habitual and causal language.
-A generalization has the threshold semantics of a gradable adjective on the scale of
-prevalence, the probability that an instance of the category has the property (2),
-`genericMeaning`, with the threshold underspecified and drawn from a prior. The interpretation
-model (1) conditions a prior over prevalence on the utterance with the threshold integrated
-out, so the marginalized meaning of the generalization at a prevalence is the threshold prior's
-mass below it, and silence is true everywhere, `meaning`, `listener`, the substrate's
-`RSA.literalListener`. The endorsement model (3) is the speaker who chooses between the
-generalization and silence by how well each conveys the referent prevalence, `endorser`, the
-substrate's `RSA.speaker`. Since silence returns the prior, `listener_silent_apply`, the
-speaker endorses the generalization exactly when the marginalized meaning at the referent
-prevalence exceeds its expectation under the prevalence prior, `endorse_iff`; with the uniform
-threshold prior on the unit interval the marginalized meaning is the prevalence itself,
-`meaning_uniformThreshold`, so a generalization is endorsed exactly when the referent prevalence
-exceeds the prior mean prevalence, `endorse_iff_expectation_lt`, the cue validity of Appendix A,
-whose normalizer is that mean, `expectedPrevalence_map`.
+This file formalizes Tessler and Goodman's model of generic, habitual and causal language. A
+generalization has the threshold semantics of a gradable adjective on the scale of prevalence, the
+probability that an instance of the category has the property (2), `genericMeaning`, with the
+threshold underspecified and drawn from a prior. The interpretation model (1) conditions a prior
+over prevalence on the utterance with the threshold integrated out, so the marginalized meaning of
+the generalization at a prevalence is the threshold prior's mass below it, and silence is true
+everywhere, `meaning`, `listener`, the substrate's `RSA.literalListener`. The endorsement model (3)
+is the speaker who chooses between the generalization and silence by how well each conveys the
+referent prevalence, `endorser`, the substrate's `RSA.speaker`. Since silence returns the prior,
+`listener_silent_apply`, the speaker endorses the generalization exactly when the marginalized
+meaning at the referent prevalence exceeds its expectation under the prevalence prior,
+`endorse_iff`; with the uniform threshold prior on the unit interval the marginalized meaning is the
+prevalence itself, `meaning_uniformThreshold`, so a generalization is endorsed exactly when the
+referent prevalence exceeds the prior mean prevalence, `endorse_iff_expectation_lt`, the cue
+validity of Appendix A, whose normalizer is that mean, `expectedPrevalence_map`.
 
 The worked examples of Table 1 are consequences of the prior mean. Endorsement is monotone in
 prevalence at a fixed prior (Figure 1), `endorse_mono`; at one referent prevalence a property
@@ -64,7 +63,7 @@ namespace TesslerGoodman2019
 open MeasureTheory ProbabilityTheory RSA
 open scoped ENNReal NNReal
 
-/-- The utterances of the endorsement model: the generalization, or silence. -/
+/-- In the endorsement model the speaker says the generalization or stays silent. -/
 inductive Utterance
   | generic
   | silent
@@ -74,15 +73,16 @@ instance : MeasurableSpace Utterance := ⊤
 
 instance : DiscreteMeasurableSpace Utterance := ⟨λ _ => trivial⟩
 
-/-- The threshold semantics of a generalization (2): the prevalence exceeds the threshold. -/
+/-- Under the threshold semantics (2), a generalization is true when the prevalence exceeds the
+threshold. -/
 def genericMeaning (θ p : ℝ) : Prop := θ < p
 
 section Model
 
 variable {W : Type*} [Fintype W] [MeasurableSpace W]
 
-/-- The meaning of (1) with the threshold integrated out against its prior `ν`: for the
-generalization the prior mass of thresholds below the prevalence, for silence one. -/
+/-- With the threshold of (1) integrated out against its prior `ν`, the generalization means
+the prior mass of thresholds below the prevalence, and silence means one. -/
 noncomputable def meaning (ν : Measure ℝ) (prev : W → ℝ) : Utterance → W → ℝ≥0∞
   | .generic, w => ν {θ | genericMeaning θ (prev w)}
   | .silent, _ => 1
@@ -96,7 +96,7 @@ theorem expectedMeaning_ne_top (μ : Measure W) [IsFiniteMeasure μ] (ν : Measu
     [IsFiniteMeasure ν] (prev : W → ℝ) : expectedMeaning μ ν prev ≠ ⊤ :=
   ENNReal.sum_ne_top.2 λ _ _ => ENNReal.mul_ne_top (measure_ne_top ν _) (measure_ne_top μ _)
 
-/-- The interpretation model (1): the prevalence prior conditioned on the marginalized
+/-- The interpretation model (1) conditions the prevalence prior on the marginalized
 meaning. -/
 noncomputable def listener (μ : Measure W) (ν : Measure ℝ) (prev : W → ℝ) :
     Kernel Utterance W :=
@@ -107,7 +107,7 @@ instance (μ : Measure W) (ν : Measure ℝ) (prev : W → ℝ) : IsFiniteKernel
 
 variable [DiscreteMeasurableSpace W]
 
-/-- The endorsement model (3): the speaker at rationality `lam`, choosing between the
+/-- The endorsement model (3) is the speaker at rationality `lam`, choosing between the
 generalization and silence at no cost. -/
 noncomputable def endorser (lam : ℝ) (μ : Measure W) (ν : Measure ℝ) (prev : W → ℝ) :
     Kernel W Utterance :=
@@ -136,8 +136,8 @@ theorem listener_silent_apply (w : W) : listener μ ν prev .silent {w} = μ {w}
 variable [IsFiniteMeasure ν]
 
 /-- The generalization is endorsed exactly when its marginalized meaning at the referent state
-exceeds the prior expectation of that meaning: the comparison of Figure 1C, the listener's
-posterior on hearing the generalization against the prior. -/
+exceeds the prior expectation of that meaning. This is the comparison of Figure 1C, the
+listener's posterior on hearing the generalization against the prior. -/
 theorem endorse_iff (hlam : 0 < lam) (hw : μ {w} ≠ 0) (hZ : expectedMeaning μ ν prev ≠ 0) :
     Endorsed lam μ ν prev w ↔ expectedMeaning μ ν prev < meaning ν prev .generic w := by
   rw [Endorsed, endorser, speaker_real_singleton_lt_iff (L := listener μ ν prev) (w := w) hlam.le
@@ -194,9 +194,9 @@ noncomputable def expectedPrevalence (μ : Measure W) (prev : W → ℝ) : ℝ :
 
 variable (prev : W → ℝ)
 
-/-- Appendix A: the prevalence prior is the pushforward of a prior over categories along their
-prevalences, and the normalizer of cue validity, the mean prevalence over categories, is the
-mean of the prevalence prior. -/
+/-- When the prevalence prior is the pushforward of a prior over categories along their
+prevalences, the normalizer of cue validity, the mean prevalence over categories, is the mean of
+the prevalence prior (Appendix A). -/
 theorem expectedPrevalence_map {K : Type*} [MeasurableSpace K] [DiscreteMeasurableSpace K]
     [Countable K] (P : Measure K) (prevK : K → W) (hprev : Measurable prevK)
     (hf : Measurable prev) :
@@ -220,8 +220,8 @@ theorem expectedMeaning_uniformThreshold (hp : ∀ w, 0 ≤ prev w ∧ prev w �
 
 variable {lam : ℝ} {w : W}
 
-/-- Cue validity (Appendix A): the generalization is endorsed exactly when the referent
-prevalence exceeds the mean prevalence under the prior. -/
+/-- The generalization is endorsed exactly when the referent prevalence exceeds the mean
+prevalence under the prior, the cue validity of Appendix A. -/
 theorem endorse_iff_expectation_lt (hlam : 0 < lam) (hp : ∀ w, 0 ≤ prev w ∧ prev w ≤ 1)
     (hw : μ {w} ≠ 0) (hZ : 0 < expectedPrevalence μ prev) :
     Endorsed lam μ uniformThreshold prev w ↔ expectedPrevalence μ prev < prev w := by
@@ -286,8 +286,8 @@ theorem expectedPrevalence_mixture (ν₁ ν₀ : Measure W) [IsFiniteMeasure ν
   rw [integral_add_measure (.of_finite) (.of_finite), integral_smul_nnreal_measure,
     integral_smul_nnreal_measure, NNReal.smul_def, NNReal.smul_def, smul_eq_mul, smul_eq_mul]
 
-/-- *Robins are female*: a prior symmetric about one half puts a referent prevalence of one
-half exactly at the boundary, where the generalization and silence are produced alike. -/
+/-- For *robins are female*, a prior symmetric about one half puts a referent prevalence of
+one half exactly at the boundary, where the generalization and silence are produced alike. -/
 theorem boundary_of_symm (μ : Measure W) [IsProbabilityMeasure μ] (σ : W ≃ W)
     (hσ : ∀ w, prev (σ w) = 1 - prev w) (hμ : ∀ w, μ {σ w} = μ {w}) {lam : ℝ} (hlam : 0 < lam)
     (hp : ∀ w, 0 ≤ prev w ∧ prev w ≤ 1) {w : W} (hw : μ {w} ≠ 0) (hhalf : prev w = 1 / 2) :
@@ -307,8 +307,8 @@ theorem boundary_of_symm (μ : Measure W) [IsProbabilityMeasure μ] (σ : W ≃ 
     exact lt_irrefl _
   exact le_antisymm (not_lt.1 h1) (not_lt.1 h2)
 
-/-- *Robins lay eggs*: mixing a prior symmetric about one half with a component at zero
-prevalence, the categories without the mechanism, at weight `1 - φ`, gives mean `φ / 2`. -/
+/-- For *robins lay eggs*, mixing a prior symmetric about one half with a component at zero
+prevalence, the categories without the mechanism, at weight `1 - φ` gives mean `φ / 2`. -/
 theorem expectedPrevalence_bimodal (ν₁ : Measure W) [IsProbabilityMeasure ν₁] (σ : W ≃ W)
     (hσ : ∀ w, prev (σ w) = 1 - prev w) (hν : ∀ w, ν₁ {σ w} = ν₁ {w}) (w₀ : W)
     (hw₀ : prev w₀ = 0) {φ : ℝ} (h0 : 0 ≤ φ) :

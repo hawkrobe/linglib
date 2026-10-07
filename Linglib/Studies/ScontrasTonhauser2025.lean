@@ -7,35 +7,33 @@ public import Linglib.Core.Probability.Kernel.Posterior
 /-!
 # Scontras and Tonhauser (2025): Projection without Lexically-Specified Presupposition
 
-This file formalizes the paper's Rational Speech Act model of the projection of the complement
-of *know* from under negation, on the RSA kernel pipeline. A world settles whether Cole believes
-the complement and whether it is true; the six utterances of (3) have the literal meanings of
-(4), *know* factive and *think* not (`literal`, from `Factivity`); the two questions of the
-experiments, whether Cole believes the complement and whether it is true, partition the worlds
+This file formalizes the paper's Rational Speech Act model of the projection of the complement of
+*know* from under negation, on the RSA kernel pipeline. A world settles whether Cole believes the
+complement and whether it is true; the six utterances of (3) have the literal meanings of (4),
+*know* factive and *think* not (`literal`, from `Factivity`); the two questions of the experiments,
+whether Cole believes the complement and whether it is true, partition the worlds
 (`Question.answer`); a literal listener interprets the utterance within the speaker's private
 assumptions, a set of worlds, and answers the question (5) (`L0`); the speaker best-responds at
-rationality `α`, paying a cost that doubles for the complex utterances (6) (`S1`); and the
-pragmatic listener, who hears the utterance and the question, inverts the speaker jointly over
-worlds and assumptions (7) (`L1`), the private-assumption model of
-[qing-goodman-lassiter-2016].
+rationality `α`, paying a cost that doubles for the complex utterances (6) (`S1`); and the pragmatic
+listener, who hears the utterance and the question, inverts the speaker jointly over worlds and
+assumptions (7) (`L1`), the private-assumption model of Qing, Goodman and Lassiter.
 
 The paper's empirical targets (2), which its two experiments establish, are that the complement
 projects more from under negated *know* than negated *think*, more when its prior probability is
-higher, and more when it is not at issue; Figure 7 reports the model's predictions at the
-parameters of [qing-goodman-lassiter-2016]. The prior effect is a theorem of the model: the
-world prior enters at the pragmatic listener alone, so the posterior probability of the
-complement rises with its prior probability under every utterance, question, rationality, cost
-and assumption prior (`L1_c_mono`). The utterance and question effects rest on the speaker.
-Negated *think* is semantically stronger than negated *know*
-(`sem_thinkNeg_ssubset_sem_knowNeg`), so a speaker without assumptions who addresses whether
-Cole believes the complement prefers it at a world where he does not
+higher, and more when it is not at issue; Figure 7 reports the model's predictions at the parameters
+of Qing, Goodman and Lassiter. The prior effect is a theorem of the model: the world prior enters at
+the pragmatic listener alone, so the posterior probability of the complement rises with its prior
+probability under every utterance, question, rationality, cost and assumption prior (`L1_c_mono`).
+The utterance and question effects rest on the speaker. Negated *think* is semantically stronger
+than negated *know* (`sem_thinkNeg_ssubset_sem_knowNeg`), so a speaker without assumptions who
+addresses whether Cole believes the complement prefers it at a world where he does not
 (`S1_univ_bel_knowNeg_lt_thinkNeg`); a speaker who assumes the complement finds the two equally
 informative under either question (`S1_knowNeg_eq_thinkNeg`), negated *know* then answering the
-belief question fully (`L0_knowNeg_bel_eq_one`); and under the belief question the speaker's
-choice depends on the world only through Cole's belief (`S1_bel_congr`). The listener therefore
-reads negated *know* as a sign that the speaker assumed the complement, most under the belief
-question; the sizes of these effects (Figure 7a, c) are computations at the paper's parameters
-and are not restated.
+belief question fully (`L0_knowNeg_bel_eq_one`); and under the belief question the speaker's choice
+depends on the world only through Cole's belief (`S1_bel_congr`). The listener therefore reads
+negated *know* as a sign that the speaker assumed the complement, most under the belief question;
+the sizes of these effects (Figure 7a, c) are computations at the paper's parameters and are not
+restated.
 
 ## Implementation notes
 
@@ -47,7 +45,7 @@ and are not restated.
 * The world prior is a parameter, in the theorems a product of a belief prior and a complement
   prior; the paper's is such a product, the complement twice as likely as not or half as likely.
   The prior over assumption sets is a parameter; the paper's is that of
-  [qing-goodman-lassiter-2016].
+  Qing, Goodman and Lassiter.
 * A simple utterance costs `k` and a complex one `2 * k`, the paper's cost of a simple utterance
   doubled.
 * The revised model of the paper's fourth section, which backs off toward the prior by the
@@ -72,8 +70,8 @@ namespace ScontrasTonhauser2025
 instance : MeasurableSpace (Finset World) := ⊤
 instance : DiscreteMeasurableSpace (Finset World) := ⟨λ _ => trivial⟩
 
-/-- The utterances of (3): *Cole knows that C*, *Cole doesn't know that C*, *Cole thinks that
-C*, *Cole doesn't think that C*, *C* and *not C*. -/
+/-- The utterances of (3) are *Cole knows that C*, *Cole doesn't know that C*, *Cole thinks
+that C*, *Cole doesn't think that C*, *C* and *not C*. -/
 inductive Utt
   | knowPos | knowNeg | thinkPos | thinkNeg | cPos | cNeg
   deriving DecidableEq, Fintype
@@ -88,8 +86,8 @@ instance : DecidablePred Utt.Complex := λ u => inferInstanceAs (Decidable (u �
 
 /-! ### Semantics and questions -/
 
-/-- The literal meanings (4): *know* is factive and *think* is not, and the simple utterances
-assert the complement or its negation. -/
+/-- In the literal meanings (4), *know* is factive and *think* is not, and the simple
+utterances assert the complement or its negation. -/
 def literal : Utt → World → Prop
   | .knowPos => World.Knows
   | .knowNeg => (¬ World.Knows ·)
@@ -103,11 +101,11 @@ instance (u : Utt) : DecidablePred (literal u) := by cases u <;> unfold literal 
 /-- The extension of an utterance. -/
 def sem (u : Utt) : Finset World := Finset.univ.filter (literal u)
 
-/-- Negated *think* is semantically stronger than negated *know*: it excludes the world in which
-Cole believes a false complement as well. -/
+/-- Negated *think* is semantically stronger than negated *know*, since it also excludes the
+world in which Cole believes a false complement. -/
 theorem sem_thinkNeg_ssubset_sem_knowNeg : sem .thinkNeg ⊂ sem .knowNeg := by decide
 
-/-- The cell of a world under a question: the worlds giving the same answer. -/
+/-- The cell of a world under a question holds the worlds giving the same answer. -/
 def cell (q : Question) (w : World) : Finset World :=
   Finset.univ.filter λ w' => q.answer w' = q.answer w
 
@@ -117,8 +115,8 @@ theorem cell_preimage (q : Question) (w : World) : q.answer ⁻¹' {q.answer w} 
 
 /-! ### The literal listener within an assumption set (5) -/
 
-/-- The literal listener within an assumption set (5): uniform on the worlds of the set at which
-the utterance is true, projected onto the question's answers. -/
+/-- The literal listener within an assumption set (5) is uniform on the worlds of the set at
+which the utterance is true, projected onto the question's answers. -/
 noncomputable def L0 (A : Finset World) (q : Question) : Kernel Utt World :=
   projListener Question.answer
     (literalListener (Measure.count.restrict ↑A) λ u => (↑(sem u) : Set World).indicator 1) q
@@ -126,8 +124,8 @@ noncomputable def L0 (A : Finset World) (q : Question) : Kernel Utt World :=
 instance (A : Finset World) (q : Question) : IsFiniteKernel (L0 A q) :=
   inferInstanceAs (IsFiniteKernel (projListener _ _ _))
 
-/-- The counts behind the literal listener: worlds of the assumption set at which the utterance
-is true and the question's answer is the world's, over those at which the utterance is true. -/
+/-- The literal listener counts the worlds of the assumption set at which the utterance is true
+and the question's answer is the world's, over those at which the utterance is true. -/
 def l0 (A : Finset World) (q : Question) (u : Utt) (w : World) : ℕ × ℕ :=
   (((A ∩ sem u).filter (· ∈ cell q w)).card, (A ∩ sem u).card)
 
@@ -142,8 +140,8 @@ theorem L0_apply (A : Finset World) (q : Question) (u : Utt) (w : World) :
     Measure.restrict_apply MeasurableSet.of_discrete, e1, e2, Measure.count_apply_finset,
     Measure.count_apply_finset, l0, ENNReal.div_eq_inv_mul]
 
-/-- A speaker who assumes the complement interprets negated *know* and negated *think* alike:
-within the assumption set, the belief is false under both. -/
+/-- A speaker who assumes the complement interprets negated *know* and negated *think* alike,
+since within the assumption set the belief is false under both. -/
 theorem L0_knowNeg_eq_thinkNeg {A : Finset World} (hA : A ⊆ sem .cPos) (q : Question) :
     L0 A q .knowNeg = L0 A q .thinkNeg := by
   have h : A ∩ sem .knowNeg = A ∩ sem .thinkNeg := by
@@ -190,8 +188,8 @@ theorem L0_univ_bel_thinkNeg {w : World} (hb : w.believes = false) :
     show l0 Finset.univ .belief .thinkNeg ⟨false, c⟩ = (2, 2) from by cases c <;> decide]
   exact ENNReal.div_self (by norm_num) (by norm_num)
 
-/-- Without assumptions, negated *know* leaves the belief question open at such a world: it is
-also true where Cole believes a false complement. -/
+/-- Without assumptions, negated *know* leaves the belief question open at such a world, since
+it is also true where Cole believes a false complement. -/
 theorem L0_univ_bel_knowNeg {w : World} (hb : w.believes = false) :
     L0 Finset.univ .belief .knowNeg {w} = 2 / 3 := by
   obtain ⟨b, c⟩ := w
@@ -203,26 +201,26 @@ theorem L0_univ_bel_knowNeg {w : World} (hb : w.believes = false) :
 
 /-! ### The speaker (6) -/
 
-/-- The cost of (6): `k` for a simple utterance and twice that for a complex one. -/
+/-- A simple utterance costs `k` and a complex one twice that (6). -/
 def cost (k : ℝ) (u : Utt) : ℝ := if u.Complex then 2 * k else k
 
-/-- The speaker within an assumption set (6): the best response at rationality `α` to the literal
-listener projected by the question, less the cost. -/
+/-- The speaker within an assumption set (6) is the best response at rationality `α` to the
+literal listener projected by the question, less the cost. -/
 noncomputable def S1 (α k : ℝ) (A : Finset World) (q : Question) : Kernel World Utt :=
   speaker α (cost k) (L0 A q)
 
 variable (α k : ℝ)
 
-/-- A speaker who assumes the complement produces negated *know* and negated *think* alike,
-under either question: they are equally informative and equally costly. -/
+/-- A speaker who assumes the complement produces negated *know* and negated *think* alike
+under either question, since they are equally informative and equally costly. -/
 theorem S1_knowNeg_eq_thinkNeg {A : Finset World} (hA : A ⊆ sem .cPos) (q : Question) (w : World) :
     S1 α k A q w {.knowNeg} = S1 α k A q w {.thinkNeg} := by
   rw [S1, speaker_apply_singleton, speaker_apply_singleton, L0_knowNeg_eq_thinkNeg hA]
   rfl
 
 /-- Without assumptions, a speaker addressing the belief question at a world in which Cole does
-not believe the complement prefers negated *think* to negated *know*: the stronger utterance is
-the more informative. -/
+not believe the complement prefers negated *think* to negated *know*, since the stronger
+utterance is the more informative. -/
 theorem S1_univ_bel_knowNeg_lt_thinkNeg (hα : 0 < α) {w : World} (hb : w.believes = false) :
     (S1 α k Finset.univ .belief w).real {.knowNeg} <
       (S1 α k Finset.univ .belief w).real {.thinkNeg} := by
@@ -237,7 +235,7 @@ theorem S1_univ_bel_knowNeg_lt_thinkNeg (hα : 0 < α) {w : World} (hb : w.belie
   norm_num
 
 /-- Under the belief question the speaker's choice depends on the world only through Cole's
-belief: the question's cells do. -/
+belief, as the question's cells do. -/
 theorem S1_bel_congr (A : Finset World) {w w' : World} (h : w.believes = w'.believes) :
     S1 α k A .belief w = S1 α k A .belief w' := by
   have hc : cell .belief w = cell .belief w' := by ext; simp [cell, Question.answer, h]
@@ -247,8 +245,8 @@ theorem S1_bel_congr (A : Finset World) {w w' : World} (h : w.believes = w'.beli
 
 /-! ### The pragmatic listener (7) -/
 
-/-- The listener's prior: a world with an assumption set containing it, weighted by the world
-prior and the assumption prior. -/
+/-- The listener's prior weighs a world with an assumption set containing it by the world prior
+and the assumption prior. -/
 noncomputable def pairPrior (μ : Measure World) (ν : Measure (Finset World)) :
     Measure (World × Finset World) :=
   (μ.prod ν).restrict {p | p.1 ∈ p.2}
@@ -268,8 +266,8 @@ theorem pairPrior_singleton [SFinite ν] (w : World) (A : Finset World) :
 instance [IsFiniteMeasure μ] [IsFiniteMeasure ν] : IsFiniteMeasure (pairPrior μ ν) :=
   inferInstanceAs (IsFiniteMeasure ((μ.prod ν).restrict _))
 
-/-- The pragmatic listener (7): the family listener over assumption sets, hearing the utterance
-under a known question. -/
+/-- The pragmatic listener (7) is the family listener over assumption sets, hearing the
+utterance under a known question. -/
 noncomputable def L1 [IsFiniteMeasure μ] [IsFiniteMeasure ν] (q : Question) :
     Kernel Utt (World × Finset World) :=
   familyListener (λ A => L0 A q) α (cost k) (pairPrior μ ν)
@@ -283,7 +281,8 @@ theorem pairPrior_real [IsFiniteMeasure μ] [IsFiniteMeasure ν] (w : World) (A 
 
 /-- An utterance true at a world of positive prior lying in an assumption set of positive prior
 has a positive marginal. -/
-theorem comp_ne_zero [IsFiniteMeasure μ] [IsFiniteMeasure ν] (hα : 0 ≤ α) (q : Question) {u : Utt} {w : World} {A : Finset World} (hw : w ∈ A)
+theorem comp_ne_zero [IsFiniteMeasure μ] [IsFiniteMeasure ν] (hα : 0 ≤ α) (q : Question)
+    {u : Utt} {w : World} {A : Finset World} (hw : w ∈ A)
     (hu : w ∈ sem u) (hμ : μ {w} ≠ 0) (hν : ν {A} ≠ 0) :
     (familySpeaker (λ A => L0 A q) α (cost k) ∘ₘ pairPrior μ ν) {u} ≠ 0 := by
   refine comp_familySpeaker_ne_zero (w := w) (l := A) ?_ ?_
@@ -301,7 +300,7 @@ section PriorEffect
 
 variable (β γ : Measure Bool) (q : Question) (u : Utt)
 
-/-- The listener's evidence for a value of the complement: the speaker's production of the
+/-- The listener's evidence for a value of the complement is the speaker's production of the
 utterance at the worlds with that value, weighted by the belief prior and by the assumption
 prior over the assumption sets containing them. It does not depend on the complement prior. -/
 noncomputable def cWeight (c : Bool) : ℝ :=
@@ -335,7 +334,7 @@ private theorem comp_real :
     refine Finset.sum_congr rfl λ b _ => Finset.sum_congr rfl λ A _ => ?_ <;>
     split_ifs <;> first | rfl | (simp only [S1]; ring)
 
-/-- The posterior probability of the complement (fn. 11): its prior probability times the
+/-- The posterior probability of the complement (fn. 11) is its prior probability times the
 evidence for it, over the evidence for either value. -/
 theorem L1_c_real (hu : (familySpeaker (λ A => L0 A q) α (cost k) ∘ₘ pairPrior (β.prod γ) ν)
     {u} ≠ 0) :
@@ -362,9 +361,9 @@ private theorem real_false_eq (ρ : Measure Bool) [IsProbabilityMeasure ρ] :
   rw [← Finset.coe_univ, ← sum_measureReal_singleton, Fintype.sum_bool] at h
   linarith
 
-/-- The prior effect (2b): the posterior probability of the complement rises with its prior
-probability, under every utterance, question, rationality, cost and assumption prior, since the
-world prior enters the model at the pragmatic listener alone. -/
+/-- The posterior probability of the complement rises with its prior probability, under every
+utterance, question, rationality, cost and assumption prior, since the world prior enters the
+model at the pragmatic listener alone. This is the prior effect (2b). -/
 theorem L1_c_mono (γ' : Measure Bool) [IsProbabilityMeasure γ']
     (hu : (familySpeaker (λ A => L0 A q) α (cost k) ∘ₘ pairPrior (β.prod γ) ν) {u} ≠ 0)
     (hu' : (familySpeaker (λ A => L0 A q) α (cost k) ∘ₘ pairPrior (β.prod γ') ν) {u} ≠ 0)

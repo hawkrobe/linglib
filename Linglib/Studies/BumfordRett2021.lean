@@ -687,8 +687,9 @@ private theorem speaker_congr_of_antonymsExclusive (hα : 0 < α) {c : Option Co
 
 /-- Where the antonyms exclude each other, an antonym's expected deviation depends on the costs only
 through its own cost and silence's, since the other antonym never competes with it. -/
-theorem expectedDeviation_congr_of_antonymsExclusive (hα : 0 < α) {c : Option Comparison} (hex : AntonymsExclusive c) {p : Polarity}
-    (hp : cost (.say p) = cost' (.say p)) (hs : cost .silence = cost' .silence) :
+theorem expectedDeviation_congr_of_antonymsExclusive (hα : 0 < α) {c : Option Comparison}
+    (hex : AntonymsExclusive c) {p : Polarity} (hp : cost (.say p) = cost' (.say p))
+    (hs : cost .silence = cost' .silence) :
     expectedDeviation c α cost p = expectedDeviation c α cost' p := by
   have hS := speaker_congr_of_antonymsExclusive hα hex hp hs
   have hM : (RSA.familySpeaker (literal c) α cost ∘ₘ prior.prod Measure.count) {.say p} =
@@ -700,8 +701,8 @@ theorem expectedDeviation_congr_of_antonymsExclusive (hα : 0 < α) {c : Option 
   rw [listener_fst_real_singleton hα.le, listener_fst_real_singleton hα.le]
   simp only [measureReal_def, hS, hM]
 
-/-- The marked comparative is the unmarked comparative reflected, at the marked antonym's cost:
-markedness acts on the comparative only through the antonym's own cost. -/
+/-- The marked comparative is the unmarked comparative reflected, at the marked antonym's cost,
+so markedness acts on the comparative only through the antonym's own cost. -/
 theorem comparative_negative_eq_neg (hα : 0 < α)
     (hp : cost' (.say .positive) = cost (.say .negative)) (hs : cost' .silence = cost .silence) :
     expectedDeviation (some .gt) α cost .negative =

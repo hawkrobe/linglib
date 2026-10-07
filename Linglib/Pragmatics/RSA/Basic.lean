@@ -384,7 +384,8 @@ literal listener's mass at the state less the cost, scaled by the rationality. A
 number, entering the speaker's weight as `exp (-(α * C u))`, so every weight is positive and
 finite and no hypothesis on the cost is needed. -/
 
-/-- The utility of an utterance at a state: the log of the listener's mass there, less the cost. -/
+/-- The utility of an utterance at a state is the log of the listener's mass there, less the
+cost. -/
 noncomputable def utility (L : Kernel U W) (C : U → ℝ) (w : W) (u : U) : EReal :=
   ENNReal.log (L u {w}) - C u
 
@@ -410,7 +411,8 @@ theorem exp_utility_mul (L : Kernel U W) [IsFiniteKernel L] (C : U → ℝ) (α 
 omit [MeasurableSingletonClass U] in
 /-- The speaker in the power-weight form, `L u {w} ^ α` times the cost weight `exp (-(α * C u))`. -/
 theorem speaker_eq_ofWeights (α : ℝ) (C : U → ℝ) (L : Kernel U W) [IsFiniteKernel L] :
-    speaker α C L = Kernel.ofWeights fun w u ↦ L u {w} ^ α * ENNReal.ofReal (Real.exp (-(α * C u))) := by
+    speaker α C L =
+      Kernel.ofWeights fun w u ↦ L u {w} ^ α * ENNReal.ofReal (Real.exp (-(α * C u))) := by
   unfold speaker speakerOfScore
   simp_rw [exp_utility_mul]
 
@@ -697,7 +699,8 @@ end Gibbs
 
 open Filter Topology in
 /-- As rationality grows, the speaker puts all its mass on the utterance whose listener mass,
-discounted by its cost, is greatest at `w`: the fully rational speaker maximizes the utility. -/
+discounted by its cost, is greatest at `w`, so the fully rational speaker maximizes the
+utility. -/
 theorem tendsto_speaker_real_singleton_atTop [IsFiniteKernel L] (hu : L u {w} ≠ 0)
     (hmax : ∀ u' ≠ u, (L u' {w}).toReal * Real.exp (-C u') < (L u {w}).toReal * Real.exp (-C u)) :
     Tendsto (fun α ↦ (speaker α C L w).real {u}) atTop (𝓝 1) := by

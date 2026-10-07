@@ -7,17 +7,17 @@ public import Linglib.Data.Examples.WaldonDegen2021
 /-!
 # Waldon & Degen (2021): Modeling Cross-Linguistic Production of Referring Expressions
 
-This file formalizes [waldon-degen-2021]'s continuous-incremental Rational Speech Act model
-(CI-RSA) of redundant modification. The model joins the word-by-word production of
-[cohn-gordon-goodman-potts-2019] with the noisy adjective semantics of [degen-etal-2020]: a
-word is true of a referent with its semantic value and false with the complement, an utterance's
-value is the product over its words, and the literal listener interprets a prefix by the
-average value of its grammatical completions among the utterances true of some referent in the
-scene (`prefixMeaning`). The incremental speaker is the softmax of the listener's mass on the
-referent against the word's cost, so a trajectory's probability is the product of its steps
-(`stepSpeaker`, `trajectory`). Where the standard, continuous and incremental models predict
-symmetric or language-blind rates, the paper reports that CI-RSA predicts the English color/size
-asymmetry, less redundant color in a postnominal Spanish, and its reversal there.
+This file formalizes Waldon and Degen's continuous-incremental Rational Speech Act model (CI-RSA) of
+redundant modification. The model joins the word-by-word production of Cohn-Gordon, Goodman and
+Potts with the noisy adjective semantics of Degen and colleagues: a word is true of a referent with
+its semantic value and false with the complement, an utterance's value is the product over its
+words, and the literal listener interprets a prefix by the average value of its grammatical
+completions among the utterances true of some referent in the scene (`prefixMeaning`). The
+incremental speaker is the softmax of the listener's mass on the referent against the word's cost,
+so a trajectory's probability is the product of its steps (`stepSpeaker`, `trajectory`). Where the
+standard, continuous and incremental models predict symmetric or language-blind rates, the paper
+reports that CI-RSA predicts the English color/size asymmetry, less redundant color in a postnominal
+Spanish, and its reversal there.
 
 The paper's Figure 3 locates the difference at the node where the redundant adjective is
 chosen after the informative one: in English, after *small* in the size-sufficient scene, the
@@ -79,7 +79,7 @@ def applies : Word → Referent → Bool
   | .pin, _ => true
   | .stop, _ => true
 
-/-- The continuous lexicon of [degen-etal-2020]: a color word is worth `vc` where true and
+/-- In the continuous lexicon of [degen-etal-2020] a color word is worth `vc` where true and
 `1 − vc` where false, a size word likewise with `vs`, and the noun and the stop token are worth
 one. -/
 def lexicon (vc vs : ℝ) : Word → Referent → ℝ
@@ -98,22 +98,23 @@ theorem lexicon_nonneg (hc : vc ≤ 1) (hc0 : 0 ≤ vc) (hs : vs ≤ 1) (hs0 : 0
 
 /-! ### Languages and scenes (Figure 1) -/
 
-/-- English: prenominal size then color, the noun, the stop. -/
+/-- English utterances put size then color before the noun, closed by the stop. -/
 def english : List (List Word) :=
   [[.blue, .pin, .stop], [.red, .pin, .stop], [.big, .pin, .stop], [.small, .pin, .stop],
    [.small, .blue, .pin, .stop], [.small, .red, .pin, .stop],
    [.big, .blue, .pin, .stop], [.big, .red, .pin, .stop]]
 
-/-- Postnominal Spanish: the noun, color then size, the stop. -/
+/-- Postnominal Spanish utterances put the noun first, then color then size, closed by the
+stop. -/
 def spanish : List (List Word) :=
   [[.pin, .blue, .stop], [.pin, .red, .stop], [.pin, .big, .stop], [.pin, .small, .stop],
    [.pin, .blue, .small, .stop], [.pin, .red, .small, .stop],
    [.pin, .blue, .big, .stop], [.pin, .red, .big, .stop]]
 
-/-- The size-sufficient scene: the target is the only small pin. -/
+/-- In the size-sufficient scene the target is the only small pin. -/
 def ss : Finset Referent := {(true, true), (true, false), (false, true)}
 
-/-- The color-sufficient scene: the target is the only blue pin. -/
+/-- In the color-sufficient scene the target is the only blue pin. -/
 def cs : Finset Referent := {(false, false), (true, false), (false, true)}
 
 /-- The utterances of a language true of some referent of the scene. -/
@@ -127,7 +128,8 @@ def continuations (L : List (List Word)) (scene : Finset Referent) (pfx : List W
 
 /-! ### The literal listener and the incremental speaker -/
 
-/-- The continuous prefix meaning: the average utterance value over the completions. -/
+/-- The continuous meaning of a prefix is the average utterance value over its
+completions. -/
 noncomputable def prefixMeaning (vc vs : ℝ) (L : List (List Word)) (scene : Finset Referent)
     (pfx : List Word) (r : Referent) : ℝ :=
   ((continuations L scene pfx).map (prodMeaning (lexicon vc vs) · r)).sum /
@@ -147,12 +149,12 @@ theorem prefixMeaning_eq_zero {L : List (List Word)} {scene : Finset Referent}
     prefixMeaning vc vs L scene pfx r = 0 := by
   simp [prefixMeaning, h]
 
-/-- The listener's weight on a referent: the prefix meaning within the scene. -/
+/-- The listener weighs a referent of the scene by the prefix meaning. -/
 noncomputable def listenerWeight (vc vs : ℝ) (L : List (List Word)) (scene : Finset Referent)
     (pfx : List Word) (r : Referent) : ℝ≥0∞ :=
   if r ∈ scene then ENNReal.ofReal (prefixMeaning vc vs L scene pfx r) else 0
 
-/-- The literal listener at a context: given the next word, a distribution over the scene's
+/-- Given the next word, the literal listener at a context is a distribution over the scene's
 referents proportional to the prefix meaning. -/
 noncomputable def listener (vc vs : ℝ) (L : List (List Word)) (scene : Finset Referent)
     (ctx : List Word) : Kernel Word Referent :=
@@ -162,7 +164,7 @@ instance (L : List (List Word)) (scene : Finset Referent) (ctx : List Word) :
     IsFiniteKernel (listener vc vs L scene ctx) :=
   inferInstanceAs (IsFiniteKernel (Kernel.ofWeights _))
 
-/-- The incremental speaker at a context: the RSA speaker of rationality `α` against the word
+/-- The incremental speaker at a context is the RSA speaker of rationality `α`, against the word
 costs, over the literal listener at that context. -/
 noncomputable def stepSpeaker (α : ℝ) (cost : Word → ℝ) (vc vs : ℝ) (L : List (List Word))
     (scene : Finset Referent) (ctx : List Word) : Kernel Referent Word :=
@@ -282,12 +284,13 @@ theorem stepSpeaker_real_pair (hα : 0 < α) {u u' : Word} (huu' : u ≠ u')
   simp only [ENNReal.toReal_mul, ← ENNReal.toReal_rpow, measureReal_def,
     ENNReal.toReal_ofReal (Real.exp_pos _).le]
 
-/-- The paper's Figure 3 nodes: with a common cost for the two adjectives, none for the noun
-and the stop, the English redundant color step after *small* in the size-sufficient scene is
-likelier than the Spanish redundant size step after *pin blue* in the color-sufficient scene
+/-- At the paper's Figure 3 nodes, with a common cost for the two adjectives and none for the
+noun and the stop, the English redundant color step after *small* in the size-sufficient scene
+is likelier than the Spanish redundant size step after *pin blue* in the color-sufficient scene
 exactly when color is the more reliable adjective, at every rationality. -/
 theorem english_color_step_gt_spanish_size_step (hα : 0 < α) (hadj : cost .small = cost .blue)
-    (hpin : cost .pin = 0) (hstop : cost .stop = 0) (hc : vc < 1) (hc0 : 0 < vc) (hs : vs < 1) (hs0 : 0 < vs)
+    (hpin : cost .pin = 0) (hstop : cost .stop = 0) (hc : vc < 1) (hc0 : 0 < vc) (hs : vs < 1)
+    (hs0 : 0 < vs)
     (h : vs < vc) :
     (stepSpeaker α cost vc vs spanish cs [.pin, .blue] smallBlue).real {.small} <
       (stepSpeaker α cost vc vs english ss [.small] smallBlue).real {.blue} := by
@@ -321,7 +324,7 @@ theorem english_color_step_gt_spanish_size_step (hα : 0 < α) (hadj : cost .sma
     Real.rpow_pos_of_pos hA' α, Real.rpow_pos_of_pos hB α, Real.rpow_pos_of_pos hB' α]
 
 /-- With equally reliable adjectives, the Boolean case of the incremental model, the two steps
-are equally likely: the symmetry the paper's Figure 3 reports for I-RSA. -/
+are equally likely, the symmetry the paper's Figure 3 reports for I-RSA. -/
 theorem english_color_step_eq_spanish_size_step (hα : 0 < α) (hadj : cost .small = cost .blue)
     (hpin : cost .pin = 0) (hstop : cost .stop = 0)
     (hc : vc < 1) (hc0 : 0 < vc) (hs : vs < 1) (hs0 : 0 < vs) (h : vs = vc) :

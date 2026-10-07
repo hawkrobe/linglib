@@ -74,7 +74,8 @@ judgment is a production decision.
   it would follow from `production` being antitone and the binomial family being stochastically
   increasing in its success probability.
 * Utterances are costless (fn. 8) and the literal listener carries no world prior (fn. 6),
-  following [qing-franke-2015]; the projected listener is that of [kao-etal-2014-hyperbole].
+  following Qing and Franke; the projected listener is that of Kao and colleagues' hyperbole
+  model.
 
 ## References
 
@@ -255,7 +256,7 @@ theorem ext_twoAtLeast_surface : ext twoAtLeast 4 .surface .amb = {0, 1, 2} := b
 interpretation where fewer than two jumped (6). -/
 theorem ext_twoAtLeast_inverse : ext twoAtLeast 4 .inverse .amb = {0, 1} := by decide
 
-/-- The projection of a question ((3), (7)) sends a world to its answer: the number of jumpers
+/-- The projection of a question ((3), (7)) sends a world to its answer, the number of jumpers
 for *how many?*, and for the polar questions whether all, none, exactly two or at least two
 jumped. -/
 def project (n : ℕ) : QUD → World n → World n ⊕ Bool
@@ -456,8 +457,8 @@ private theorem cellMass_mul_cellMass_le_iff {D' : NumberTree} [DecidableRel D']
   exact ⟨fun h ↦ by exact_mod_cast le_of_mul_le_mul_right h hN,
     fun h ↦ mul_le_mul_of_nonneg_right (by exact_mod_cast h) hN.le⟩
 
-/-- Comparing production probabilities across worlds, interpretations, questions and
-determiners: the rationality cancels, leaving a comparison of the odds of the test sentence
+/-- In comparing production probabilities across worlds, interpretations, questions and
+determiners, the rationality cancels, leaving a comparison of the odds of the test sentence
 against silence, each the fraction of the sentence's extension in the world's cell over the
 fraction of all worlds in it. -/
 theorem share_le_share_iff (hα : 0 < α) {D' : NumberTree} [DecidableRel D']
@@ -527,7 +528,8 @@ theorem production_lt_one (hα : 0 ≤ α) (w : World n) : production D n α ν 
   obtain ⟨l, -, hl⟩ := Finset.exists_ne_zero_of_sum_ne_zero
     ((sum_measureReal_singleton_eq_one ν).trans_ne one_ne_zero)
   refine (Finset.sum_lt_sum (fun l _ ↦ mul_le_of_le_one_right measureReal_nonneg
-    (share_le_one D n α l w)) ⟨l, Finset.mem_univ l, ?_⟩).trans_eq (sum_measureReal_singleton_eq_one ν)
+    (share_le_one D n α l w)) ⟨l, Finset.mem_univ l, ?_⟩).trans_eq
+    (sum_measureReal_singleton_eq_one ν)
   exact mul_lt_of_lt_one_right (lt_of_le_of_ne measureReal_nonneg (Ne.symm hl))
     (share_lt_one D n α hα l w)
 
@@ -679,7 +681,7 @@ theorem ext_every_amb_card_pos (hn : 0 < n) (i : Scope) : 0 < (ext NumberTree.al
   Finset.card_pos.mpr ⟨0, zero_mem_ext_every hn i⟩
 
 /-- Under the question *all?* the sentence *every horse didn't jump* fully resolves the question
-in the negative on either interpretation: its projected literal listener is certain of every
+in the negative on either interpretation, as its projected literal listener is certain of every
 world short of total success. -/
 theorem projListener_L0_every_all (hn : 0 < n) (i : Scope) (w : World n) :
     projListener (project n) (L0 NumberTree.all n i) .all .amb {w}
@@ -699,7 +701,7 @@ theorem projListener_L0_every_all (hn : 0 < n) (i : Scope) (w : World n) :
       Finset.mem_coe.mpr ((hcell w').mpr (iff_of_false (hext w' (Finset.mem_coe.mp h)) hw))
 
 /-- Under the question *all?* the two scope interpretations of *every horse didn't jump* produce
-alike at every world: the sentence answers the question in the negative on either reading
+alike at every world, since the sentence answers the question in the negative on either reading
 (§3.2, §5.1). -/
 theorem S1_all_scope (hn : 0 < n) (w : World n) :
     S1 NumberTree.all n α (w, (.surface, .all)) = S1 NumberTree.all n α (w, (.inverse, .all)) := by
@@ -740,9 +742,8 @@ theorem expectedProduction_all (hn : 0 < n) (μ : Measure (World n)) [IsProbabil
   rw [expectedProduction_eq_sum]
   simp only [production_all α ρ hn]
 
-/-- With the question settled as *all?*, endorsement does not depend on the scope prior: the
-scope prior matters only through questions the two interpretations answer differently (§3.2,
-Figure 3). -/
+/-- With the question settled as *all?*, endorsement does not depend on the scope prior, which
+matters only through questions the two interpretations answer differently (§3.2, Figure 3). -/
 theorem S2_real_amb_all (hα : 0 < α) (hn : 0 < n) (μ : Measure (World n)) [IsProbabilityMeasure μ]
     (ρ' : Measure Scope) [IsProbabilityMeasure ρ'] {w : World n} (hμ : μ {w} ≠ 0)
     (hz0 : 0 < expectedProduction NumberTree.all n α μ (ρ.prod (Measure.dirac .all)))
@@ -761,9 +762,9 @@ theorem S2_real_amb_all (hα : 0 < α) (hn : 0 < n) (μ : Measure (World n)) [Is
 private theorem ext_every_two (l : Scope × QUD) : 0 < (ext NumberTree.all 2 l.1 .amb).card :=
   ext_every_amb_card_pos two_pos l.1
 
-/-- At the not-all world of the two-horse scenario, the question *all?* maximizes the production of
-the sentence under either interpretation: the sentence answers it fully on either reading
-(§3.2, Figure 2). -/
+/-- At the not-all world of the two-horse scenario, the question *all?* maximizes the production
+of the sentence under either interpretation, since the sentence answers it fully on either
+reading (§3.2, Figure 2). -/
 theorem share_le_share_all (hα : 0 < α) (i : Scope) (q : QUD) :
     share NumberTree.all 2 α (i, q) 1 ≤ share NumberTree.all 2 α (i, .all) 1 :=
   (share_le_share_iff NumberTree.all 2 α hα (ext_every_two _) (ext_every_two _)).mpr
@@ -783,7 +784,7 @@ theorem share_howMany_lt_share_all (hα : 0 < α) :
   (share_lt_share_iff NumberTree.all 2 α hα (ext_every_two _) (ext_every_two _)).mpr (by decide)
 
 /-- On the inverse interpretation, *none?* has the sentence produced less often than
-*how many?*: the sentence, *not all jumped*, leaves *none?* open. -/
+*how many?*, since the sentence, *not all jumped*, leaves *none?* open. -/
 theorem share_none_lt_share_howMany (hα : 0 < α) :
     share NumberTree.all 2 α (.inverse, .none) 1
       < share NumberTree.all 2 α (.inverse, .howMany) 1 :=
@@ -806,8 +807,8 @@ theorem production_antitone (hα : 0 < α) (ν : Measure (Scope × QUD)) :
 variable (ν : Measure (Scope × QUD)) [IsProbabilityMeasure ν]
 
 /-- Raising the success base rate of the binomial world prior raises endorsement at every world
-(§3.2, Figure 2): the more success is expected, the more the sentence, on either reading, rules
-out. -/
+(§3.2, Figure 2), since the more success is expected, the more the sentence rules out on either
+reading. -/
 theorem S2_real_amb_mono_baseRate (hα : 0 < α) {p p' : I} (hp : 0 < (p : ℝ))
     (hpp' : (p : ℝ) ≤ p') (hp' : (p' : ℝ) < 1) (w : World 2) :
     (S2 NumberTree.all 2 α Bin(World 2, 2, p) ν w).real {.amb}
@@ -849,7 +850,8 @@ variable (α : ℝ)
 
 /-- With four horses and two jumpers, the surface interpretation of the sentence is produced at
 least as often on the exact reading of the numeral as on the at-least reading, whatever the
-question: the exact reading makes the sentence true at that world alone (§4.2.2, Figure 7). -/
+question, since the exact reading makes the sentence true at that world alone (§4.2.2,
+Figure 7). -/
 theorem share_twoAtLeast_le_share_twoExact (hα : 0 < α) (q : QUD) :
     share twoAtLeast 4 α (.surface, q) 2 ≤ share twoExact 4 α (.surface, q) 2 :=
   (share_le_share_iff twoAtLeast 4 α hα
@@ -865,7 +867,7 @@ theorem share_twoAtLeast_lt_share_twoExact (hα : 0 < α) {q : QUD} (hq : q ≠ 
     (show 0 < (ext twoExact 4 .surface .amb).card by decide)).mpr (by revert q hq; decide)
 
 /-- Under the inverse interpretation and the question *all?* the at-least reading is produced
-more often at that world: *not exactly two jumped* is compatible with all four having jumped and
+more often at that world. *Not exactly two jumped* is compatible with all four having jumped and
 so leaves *all?* open, while *not at least two jumped* settles it. This is why the paper's 2-of-4
 fit needs a low prior on inverse scope (§4.2.2, Figure 7). -/
 theorem share_twoExact_lt_share_twoAtLeast (hα : 0 < α) :

@@ -5,13 +5,13 @@ public import Linglib.Pragmatics.RSA.QUD
 /-!
 # Kao, Bergen and Goodman (2014): Formalizing the Pragmatics of Metaphor Understanding
 
-This file formalizes the metaphor model of [kao-etal-2014-metaphor] on the RSA kernel pipeline.
-A meaning pairs a category, the animal named or a person, with a vector of three features; the
-literal listener conditions the prior on the category named, and a speaker whose goal is to
-communicate one feature is informative about the listener's mass on that feature's value
-(eqs. 1 and 2), so that "John is a shark" can convey scariness to a listener who does not
-believe John a shark. The pragmatic listener marginalizes the goal: it is the family listener of
-the goal-indexed projected listeners over the product of the meaning prior and the goal prior.
+This file formalizes the metaphor model of Kao, Bergen and Goodman on the RSA kernel pipeline. A
+meaning pairs a category, the animal named or a person, with a vector of three features; the literal
+listener conditions the prior on the category named, and a speaker whose goal is to communicate one
+feature is informative about the listener's mass on that feature's value (eqs. 1 and 2), so that
+"John is a shark" can convey scariness to a listener who does not believe John a shark. The
+pragmatic listener marginalizes the goal: it is the family listener of the goal-indexed projected
+listeners over the product of the meaning prior and the goal prior.
 
 Two structural theorems carry the paper's qualitative claims. A goal projects the category
 away, so the speaker's choice depends on the features alone and the listener's posterior odds
@@ -43,7 +43,7 @@ open scoped ENNReal
 
 namespace KaoBergenEtAl2014
 
-/-- The categories: the animal named, and a person. -/
+/-- A referent is either the animal named or a person. -/
 inductive Cat
   | animal | person
   deriving DecidableEq, Repr, Fintype
@@ -55,7 +55,7 @@ instance : Nonempty Cat := ⟨.person⟩
 /-- The three features of the paper's example, each present or absent. -/
 abbrev Features := Bool × Bool × Bool
 
-/-- A meaning: the category and the feature vector. -/
+/-- A meaning pairs the category with the feature vector. -/
 abbrev Meaning := Cat × Features
 
 /-- A goal names the feature to communicate, `g_i(f) = f_i`. -/
@@ -76,10 +76,10 @@ def Goal.feature : Goal → Features → Bool
 /-- The projection of a goal (eq. 1) reads the goal's feature and ignores the category. -/
 def project (g : Goal) (m : Meaning) : Bool := g.feature m.2
 
-/-- The meaning of an utterance: the category named is the category. -/
+/-- An utterance is true of the meanings whose category it names. -/
 def sem (u : Cat) : Set Meaning := {m | m.1 = u}
 
-/-- The literal listener: the prior conditioned on the category named. -/
+/-- The literal listener conditions the prior on the category named. -/
 noncomputable def L0 (μ : Measure Meaning) : Kernel Cat Meaning :=
   literalListener μ λ u => (sem u).indicator 1
 
@@ -109,13 +109,13 @@ theorem projListener_eq (μ : Measure Meaning) (g : Goal) (u : Cat) (m : Meaning
   rw [projListener_apply_singleton, L0_apply]
   rfl
 
-/-- The goal-indexed speaker (eq. 2): the best response to the projected literal listener of
+/-- The goal-indexed speaker (eq. 2) is the best response to the projected literal listener of
 the goal at rationality `α`, with no utterance cost. -/
 noncomputable def S1 (μ : Measure Meaning) (α : ℝ) : Kernel (Meaning × Goal) Cat :=
   familySpeaker (projListener project (L0 μ)) α 0
 
-/-- The pragmatic listener over meaning and goal, whose first marginal is the meaning listener:
-the family listener over the product of the meaning prior and the goal prior. -/
+/-- The pragmatic listener over meaning and goal is the family listener over the product of
+the meaning prior and the goal prior; its first marginal is the meaning listener. -/
 noncomputable def L1 (μ : Measure Meaning) [IsProbabilityMeasure μ] (ν : Measure Goal)
     [IsProbabilityMeasure ν] (α : ℝ) : Kernel Cat (Meaning × Goal) :=
   familyListener (projListener project (L0 μ)) α 0 (μ.prod ν)
@@ -187,9 +187,9 @@ theorem comp_S1_ne_zero (hα : 0 < α) {u : Cat} (h : ∃ m : Meaning, m.1 = u �
     exact mul_ne_zero hμ hg
   · exact (S1_apply_singleton_ne_zero_iff μ α hα g m u).mpr ⟨m, rfl, hm, hμ⟩
 
-/-- The meaning listener's support: a meaning is a possible interpretation of an utterance
-exactly when it has positive prior and some goal of positive prior has a feature value it
-shares with a meaning of positive prior bearing the category named. -/
+/-- A meaning is a possible interpretation of an utterance exactly when it has positive prior
+and some goal of positive prior has a feature value it shares with a meaning of positive prior
+bearing the category named. -/
 theorem listener_ne_zero_iff (hα : 0 < α) {u : Cat} (hu : (S1 μ α ∘ₘ μ.prod ν) {u} ≠ 0)
     (m : Meaning) :
     (L1 μ ν α u).fst {m} ≠ 0 ↔ μ {m} ≠ 0 ∧
@@ -199,15 +199,15 @@ theorem listener_ne_zero_iff (hα : 0 < α) {u : Cat} (hu : (S1 μ α ∘ₘ μ.
     Measure.prod_prod, mul_ne_zero_iff]
   exact ⟨λ ⟨g, ⟨hm, hg⟩, hs⟩ => ⟨hm, g, hg, hs⟩, λ ⟨hm, g, hg, hs⟩ => ⟨g, ⟨hm, hg⟩, hs⟩⟩
 
-/-- Nonliteral interpretation: a person with the goal's feature value is a possible meaning of
-the animal's name whenever some animal of positive prior shares the value. -/
+/-- A person with the goal's feature value is a possible, nonliteral meaning of the animal's
+name whenever some animal of positive prior shares the value. -/
 theorem nonliteral (hα : 0 < α) {g : Goal} (hν : ν {g} ≠ 0) {f f' : Features}
     (hp : μ {(.person, f)} ≠ 0) (ha : μ {(.animal, f')} ≠ 0)
     (hf : g.feature f' = g.feature f) : (L1 μ ν α .animal).fst {(.person, f)} ≠ 0 := by
   rw [listener_ne_zero_iff μ ν α hα (comp_S1_ne_zero μ ν α hα ⟨_, rfl, ha⟩)]
   exact ⟨hp, g, hν, (.animal, f'), hf, rfl, ha⟩
 
-/-- Category inference is prior-driven: since a goal projects the category away, the speaker
+/-- Category inference is prior-driven. Since a goal projects the category away, the speaker
 behaves alike at the animal and at the person with the same features, and the listener's
 posterior odds between the two categories at a feature vector are their prior odds. -/
 theorem category_odds {u : Cat} (hu : (S1 μ α ∘ₘ μ.prod ν) {u} ≠ 0) (c c' : Cat)

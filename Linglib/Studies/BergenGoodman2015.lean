@@ -8,19 +8,18 @@ import all Mathlib.Analysis.SpecialFunctions.BinaryEntropy  -- for unfolding `bi
 /-!
 # Bergen & Goodman (2015): The strategic use of noise in pragmatic reasoning
 
-This file formalizes [bergen-goodman-2015]'s two applications of rational speech acts over a
-noisy channel (`Linglib.Pragmatics.RSA.NoisyChannel`): the literal listener decodes the intended
-utterance before interpreting it (eq. 6), the speaker's utility is the channel-expected log
-posterior of the intended meaning (eq. 7), and the pragmatic listener inverts the speaker
-composed with the channel (eq. 8). The channel misperceives each utterance as at most one other,
-at a rate the speaker lowers by stressing a word (`slipChannel`). Sentence fragments have no
-literal meaning, yet both listeners read the fragment "Bob" as the point mass on Bob having gone,
-at every positive deletion rate (`Ellipsis.L0_subject`, `Ellipsis.L1_subject`), because only "Bob
-went to the movies" deletes to it. Stress halves the rate at which a subject is misheard as the
-other, so the exponentiated utility of a subject sentence is `exp (-binEntropy rate) / 2`, and a
-speaker who knows that only Bob went prefers "BOB went" to "Bob went"
-(`Prosody.S1_bobWent_lt_BOB_went`), the form the paper's exhaustive row records
-(`Prosody.model_matches_stress_rows`).
+This file formalizes Bergen and Goodman's two applications of rational speech acts over a noisy
+channel (`Linglib.Pragmatics.RSA.NoisyChannel`): the literal listener decodes the intended utterance
+before interpreting it (eq. 6), the speaker's utility is the channel-expected log posterior of the
+intended meaning (eq. 7), and the pragmatic listener inverts the speaker composed with the channel
+(eq. 8). The channel misperceives each utterance as at most one other, at a rate the speaker lowers
+by stressing a word (`slipChannel`). Sentence fragments have no literal meaning, yet both listeners
+read the fragment "Bob" as the point mass on Bob having gone, at every positive deletion rate
+(`Ellipsis.L0_subject`, `Ellipsis.L1_subject`), because only "Bob went to the movies" deletes to it.
+Stress halves the rate at which a subject is misheard as the other, so the exponentiated utility of
+a subject sentence is `exp (-binEntropy rate) / 2`, and a speaker who knows that only Bob went
+prefers "BOB went" to "Bob went" (`Prosody.S1_bobWent_lt_BOB_went`), the form the paper's exhaustive
+row records (`Prosody.model_matches_stress_rows`).
 
 ## Main definitions
 
@@ -39,13 +38,12 @@ speaker who knows that only Bob went prefers "BOB went" to "Bob went"
 
 ## Implementation notes
 
-Priors are unit weights, the rationality parameter is `1`, and costs are zero. The channel runs
-from the speaker's intended utterances to the perceived ones: for ellipsis the intended
-utterances are the three full sentences (the paper's simplification), for prosody all five
-forms. Prosody is
-perceived, so the stressed and unstressed forms are two copies of the subject-confusion channel
-at rates `ε / 2` and `ε`. The prosody speaker is the paper's knowledgeable one, for whom the
-divergence utility is eq. 7.
+Priors are unit weights, the rationality parameter is `1`, and costs are zero. The channel runs from
+the speaker's intended utterances to the perceived ones: for ellipsis the intended utterances are
+the three full sentences (the paper's simplification), for prosody all five forms. Prosody is
+perceived, so the stressed and unstressed forms are two copies of the subject-confusion channel at
+rates `ε / 2` and `ε`. The prosody speaker is the paper's knowledgeable one, for whom the divergence
+utility is eq. 7.
 
 ## TODO
 
@@ -74,8 +72,8 @@ section Channel
 
 variable {U : Type*} [MeasurableSpace U] [Fintype U] [MeasurableSingletonClass U]
 
-/-- The channel of a slip rate and a slip target: an intended utterance is perceived intact
-with probability `1 - rate u` and as `slip u` with probability `rate u`. -/
+/-- Under the channel of a slip rate and a slip target, an intended utterance is perceived
+intact with probability `1 - rate u` and as `slip u` with probability `rate u`. -/
 noncomputable def slipChannel (rate : U → ℝ) (slip : U → U) : Kernel U U :=
   Kernel.ofFunOfCountable fun u =>
     ENNReal.ofReal (1 - rate u) • Measure.dirac u + ENNReal.ofReal (rate u) • Measure.dirac (slip u)
@@ -117,7 +115,8 @@ inductive Meaning
 
 instance : MeasurableSpace Meaning := ⊤
 
-/-- The full sentences and the fragments deletion leaves: a subject alone or the predicate. -/
+/-- The utterances are the full sentences and the fragments deletion leaves, a subject alone
+or the predicate. -/
 inductive Utterance
   | full (m : Meaning)
   | subject (m : Meaning)
@@ -163,7 +162,8 @@ noncomputable abbrev L0 (δ : ℝ) : Kernel Utterance Meaning :=
 noncomputable abbrev S1 (δ : ℝ) : Kernel Meaning Meaning := noisySpeaker (N δ) 1 0 (L0 δ)
 
 /-- The pragmatic listener (eq. 8). -/
-noncomputable abbrev L1 (δ : ℝ) : Kernel Utterance Meaning := noisyPragmaticListener (N δ) 1 0 (L0 δ) μ
+noncomputable abbrev L1 (δ : ℝ) : Kernel Utterance Meaning :=
+  noisyPragmaticListener (N δ) 1 0 (L0 δ) μ
 
 variable {δ : ℝ} (m : Meaning)
 
@@ -281,7 +281,7 @@ the listener from hearing "Alice went", so stress is worth more to them. -/
 
 namespace Prosody
 
-/-- Who went: one of them alone, or both. -/
+/-- Either one of Alice and Bob went alone, or both went. -/
 inductive Meaning
   | onlyAlice
   | onlyBob
@@ -301,7 +301,7 @@ inductive Utterance
 
 instance : MeasurableSpace Utterance := ⊤
 
-/-- Lower-bound literal meanings: "Alice went" is true whenever Alice went. -/
+/-- Literal meanings are lower-bounded, so "Alice went" is true whenever Alice went. -/
 def lit : Utterance → Set Meaning
   | .aliceWent | .ALICE_went => {.onlyAlice, .both}
   | .bobWent | .BOB_went => {.onlyBob, .both}
@@ -357,8 +357,8 @@ private theorem sum_univ_mean {β : Type*} [AddCommMonoid β] (f : Meaning → �
     sum_insert (by decide), sum_insert (by decide), sum_singleton]
   simp only [add_assoc]
 
-/-- The literal posteriors of `onlyBob`: the intact subject sentence at one minus its rate,
-the confused one at its rate, each over the two meanings a subject sentence is true of. -/
+/-- The literal posterior of `onlyBob` is one minus the rate under the intact subject sentence
+and the rate under the confused one, each over the two meanings a subject sentence is true of. -/
 private theorem L0_onlyBob (hε₀ : 0 ≤ ε) (hε₁ : ε ≤ 1) :
     L0 ε .bobWent {.onlyBob} = ENNReal.ofReal ((1 - ε) / 2) ∧
     L0 ε .aliceWent {.onlyBob} = ENNReal.ofReal (ε / 2) ∧
@@ -379,8 +379,8 @@ private theorem L0_onlyBob (hε₀ : 0 ≤ ε) (hε₁ : ε ≤ 1) :
         add_zero, zero_add, h1, h1', h2, h2', one_add_one_eq_two]
       simp only [ENNReal.ofReal_div_of_pos two_pos, ENNReal.ofReal_ofNat]
 
-/-- Eq. 7 for a subject sentence at slip rate `r`: the exponentiated utility of the meaning it
-is true of alone is `exp (-binEntropy r) / 2`. -/
+/-- By eq. 7, the exponentiated utility of a subject sentence at slip rate `r` for the meaning
+it is true of alone is `exp (-binEntropy r) / 2`. -/
 theorem rpow_mul_rpow_eq_exp_neg_binEntropy {r : ℝ} (hr₀ : 0 < r) (hr₁ : r < 1) :
     ((1 - r) / 2) ^ (1 - r) * (r / 2) ^ r = exp (-binEntropy r) / 2 := by
   rw [rpow_def_of_pos (div_pos (by linarith) two_pos), rpow_def_of_pos (div_pos hr₀ two_pos),
@@ -419,8 +419,8 @@ theorem channelMix_eq_exp_neg_binEntropy (hε₀ : 0 < ε) (hε₁ : ε < 1) :
       ← ENNReal.ofReal_mul (rpow_nonneg (by linarith) _),
       rpow_mul_rpow_eq_exp_neg_binEntropy (half_pos hε₀) (by linarith)]
 
-/-- A speaker who knows that only Bob went prefers "BOB went" to "Bob went": halving the rate
-lowers its binary entropy (Fig. 2, right, at depth one). -/
+/-- A speaker who knows that only Bob went prefers "BOB went" to "Bob went", since halving the
+rate lowers its binary entropy (Fig. 2, right, at depth one). -/
 theorem S1_bobWent_lt_BOB_went (hε₀ : 0 < ε) (hε : ε ≤ 1 / 2) :
     (S1 ε .onlyBob).real {.bobWent} < (S1 ε .onlyBob).real {.BOB_went} := by
   obtain ⟨hb, hB⟩ := channelMix_eq_exp_neg_binEntropy hε₀ (by linarith)
@@ -433,7 +433,7 @@ theorem S1_bobWent_lt_BOB_went (hε₀ : 0 < ε) (hε : ε ≤ 1 / 2) :
   exact binEntropy_strictMonoOn ⟨by linarith, by norm_num; linarith⟩
     ⟨hε₀.le, by norm_num; linarith⟩ (by linarith)
 
-/-- Utterance adapter: a row's `stress` feature as an utterance. -/
+/-- `uttOf` reads a row's `stress` feature as an utterance. -/
 def uttOf (row : Datum) : Option Utterance :=
   match row.feature? "stress" with
   | some "subject" => some .BOB_went

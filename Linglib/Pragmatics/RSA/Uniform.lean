@@ -8,13 +8,13 @@ public import Linglib.Semantics.Reference.Distinguishing
 /-!
 # The uniform-prior RSA model
 
-Finite states, Boolean meanings, a uniform prior, and no cost — the model of
-[franke-bergen-2020] eqs. 5–9 — as the pipeline of `Linglib.Pragmatics.RSA.Basic` at those
-arguments: the literal listener is uniform on each choice's extension, and the speaker's
-and listeners' masses reduce to the informativity profiles of `Linglib.Pragmatics.RSA.Profile`.
-Findings then close by `decide`: uniformly in the rationality through
-`Multiset.StrictDominates` certificates, or at a pinned natural rationality through ℕ
-inequalities (`Multiset.divPowSum`).
+Franke and Bergen's model has finite states, Boolean meanings, a uniform prior and no cost
+(their eqs. 5–9). Here it is the pipeline of `Linglib.Pragmatics.RSA.Basic` at those arguments:
+the literal listener is uniform on each choice's extension, and the speaker's and listeners'
+masses reduce to the informativity profiles of `Linglib.Pragmatics.RSA.Profile`. Findings then
+close by `decide`, uniformly in the rationality through `Multiset.StrictDominates`
+certificates, or at a pinned natural rationality through ℕ inequalities
+(`Multiset.divPowSum`).
 
 ## Main definitions
 
@@ -31,6 +31,10 @@ inequalities (`Multiset.divPowSum`).
   register.
 * `RSA.uniformJointListener_fst_real_lt_of_divPowSum`,
   `RSA.uniformJointListener_snd_real_lt_of_divPowSum` — the evaluation register.
+
+## References
+
+* [franke-bergen-2020]
 -/
 
 @[expose] public section
@@ -44,7 +48,7 @@ variable {T C O : Type*} [Fintype T] [DecidableEq T] [MeasurableSpace T]
   [DiscreteMeasurableSpace T] [Fintype C] [MeasurableSpace C] [DiscreteMeasurableSpace C]
   (sem : C → Finset T)
 
-/-- The literal listener at a uniform prior (eq. 5): uniform on each choice's extension. -/
+/-- The literal listener at a uniform prior (eq. 5) is uniform on each choice's extension. -/
 noncomputable def uniformListener : Kernel C T :=
   literalListener (uniformOn Set.univ) fun c => (↑(sem c) : Set T).indicator 1
 
@@ -89,8 +93,8 @@ theorem uniformListener_apply_singleton_ne_zero {c : C} {t : T} (h : t ∈ sem c
   simp
 
 omit [DecidableEq T] in
-/-- At a uniform prior a graded meaning normalizes to its share of the row sum: the prior
-cancels. -/
+/-- At a uniform prior a graded meaning normalizes to its share of the row sum, since the
+prior cancels. -/
 theorem literalListener_uniformOn_apply_singleton [Nonempty T] {U : Type*} [MeasurableSpace U]
     [Countable U] [MeasurableSingletonClass U] (m : U → T → ℝ≥0∞) (u : U) (t : T) :
     literalListener (uniformOn Set.univ) m u {t} = m u t / ∑ t', m u t' := by
@@ -125,7 +129,8 @@ theorem distinguishes_literalListener_uniformOn_iff [Nonempty T] {U : Type*} [Me
   exact Reference.distinguishes_comp_iff (φ := fun u x => x / ∑ t', m u t')
     fun _ _ h => ENNReal.div_lt_div_right h0 htop h
 
-/-- The speaker at a uniform prior (eq. 7): best response to `uniformListener` at no cost. -/
+/-- The speaker at a uniform prior (eq. 7) is the best response to `uniformListener` at no
+cost. -/
 noncomputable abbrev uniformSpeaker (α : ℝ) : Kernel T C := speaker α 0 (uniformListener sem)
 
 omit [DecidableEq T] in
@@ -179,7 +184,8 @@ theorem uniformSpeaker_apply_singleton_of_profile_eq {α : ℝ} (hα : 0 < α) {
     uniformSpeaker sem α t {c} = uniformSpeaker sem α t' {c} := by
   rw [uniformSpeaker_apply_singleton, uniformSpeaker_apply_singleton,
     sum_rpow_uniformListener sem hα, sum_rpow_uniformListener sem hα, hprof,
-    uniformListener_apply_singleton, uniformListener_apply_singleton, ite_eq_left hmem, ite_eq_left hmem']
+    uniformListener_apply_singleton, uniformListener_apply_singleton, ite_eq_left hmem,
+    ite_eq_left hmem']
 
 theorem sum_fiber_rpow_uniformListener {α : ℝ} (hα : 0 < α) (o : O) (t : T) :
     ∑ c ∈ Finset.univ.filter (obs · = o), uniformListener sem c {t} ^ α
@@ -201,7 +207,7 @@ theorem sum_fiber_uniformSpeaker {α : ℝ} (hα : 0 < α) (o : O) (t : T) :
   rw [sum_fiber_rpow_uniformListener sem obs hα, sum_rpow_uniformListener sem hα,
     ← div_eq_mul_inv]
 
-/-- Exact speaker mass on reals: extension-size weight over the state's partition. -/
+/-- On reals, the speaker's mass is the extension-size weight over the state's partition. -/
 theorem uniformSpeaker_real_singleton {α : ℝ} (hα : 0 < α) (t : T) (c : C) :
     (uniformSpeaker sem α t).real {c}
       = (if t ∈ sem c then (((sem c).card : ℝ))⁻¹ ^ α else 0)
@@ -229,7 +235,7 @@ theorem sum_uniformSpeaker_real_singleton_le_one (α : ℝ) (t : T) (S : Finset 
         rw [measureReal_def, ← ENNReal.toReal_one]
         exact ENNReal.toReal_mono ENNReal.one_ne_top hle
 
-/-- Competition: any other true choice caps a share strictly below one. -/
+/-- Any other true choice caps a share strictly below one. -/
 theorem uniformSpeaker_real_singleton_lt_one [DecidableEq C] {α : ℝ} (hα : 0 ≤ α) {t : T}
     {c c' : C} (hne : c' ≠ c) (hmem' : t ∈ sem c') : (uniformSpeaker sem α t).real {c} < 1 := by
   have hsum := sum_uniformSpeaker_real_singleton_le_one sem α t {c, c'}
@@ -239,9 +245,9 @@ theorem uniformSpeaker_real_singleton_lt_one [DecidableEq C] {α : ℝ} (hα : 0
       (measure_ne_top _ _)
   linarith
 
-/-- Informativity monotonicity ([franke-bergen-2020] eq. 7's qualitative claim): between two
-true choices, the one with the strictly smaller extension is produced with strictly higher
-probability, at every positive rationality. -/
+/-- Of two true choices, the one with the strictly smaller extension is produced with strictly
+higher probability at every positive rationality, the qualitative claim of eq. 7 of
+[franke-bergen-2020]. -/
 theorem uniformSpeaker_real_singleton_lt_of_card_lt {α : ℝ} (hα : 0 < α) {t : T} {c c' : C}
     (hmem : t ∈ sem c) (hmem' : t ∈ sem c') (hcard : (sem c').card < (sem c).card) :
     (uniformSpeaker sem α t).real {c} < (uniformSpeaker sem α t).real {c'} := by
@@ -252,9 +258,8 @@ theorem uniformSpeaker_real_singleton_lt_of_card_lt {α : ℝ} (hα : 0 < α) {t
   simp only [Pi.zero_apply, mul_zero, neg_zero, Real.exp_zero, ENNReal.ofReal_one, mul_one]
   exact ENNReal.rpow_lt_rpow (ENNReal.inv_lt_inv.2 (by exact_mod_cast hcard)) hα
 
-/-- Softmax constant-utility invariance: when every true choice at a state has the same
-extension size, the speaker is uniform on them — each share is `m⁻¹` regardless of the
-rationality. -/
+/-- When every true choice at a state has the same extension size, the speaker is uniform on
+them, each share being `m⁻¹` at every rationality. -/
 theorem uniformSpeaker_real_singleton_of_profile_replicate {α : ℝ} (hα : 0 < α) {t : T}
     {c : C} {m n : ℕ} (hprof : profile sem t = Multiset.replicate m n) (hmem : t ∈ sem c) :
     (uniformSpeaker sem α t).real {c} = (m : ℝ)⁻¹ := by
@@ -301,7 +306,7 @@ theorem uniformSpeaker_real_singleton_divPowSum {k D : ℕ} [NeZero k] [NeZero D
 
 variable [MeasurableSpace O] [MeasurableSingletonClass O] [Nonempty T] [Nonempty C]
 
-/-- The joint listener at a uniform prior (eqs. 18b/21b): the pragmatic listener of
+/-- The joint listener at a uniform prior (eqs. 18b and 21b) is the pragmatic listener of
 `uniformSpeaker`, hearing the form of the speaker's choice. -/
 noncomputable abbrev uniformJointListener (α : ℝ) : Kernel O (T × C) :=
   jointListener α 0 (uniformListener sem) (uniformOn Set.univ) obs
@@ -336,9 +341,9 @@ private theorem sum_div_lt_sum_div_iff {ι : Type*} [Fintype ι] [DecidableEq ι
       mul_div_assoc, div_self (hz i).ne', mul_one]
   rw [← mul_lt_mul_iff_left₀ hP, key, key]
 
-/-- The evaluation register for the choice posterior at a natural rationality: pooled
-preference between two `o`-shaped choices is the ℕ-valued common-denominator comparison over
-all states — a kernel `decide`. The strict inequality carries its own truth witness. -/
+/-- At a natural rationality, pooled preference between two `o`-shaped choices is the
+ℕ-valued common-denominator comparison over all states, which kernel `decide` evaluates. The
+strict inequality carries its own truth witness. -/
 theorem uniformJointListener_snd_real_lt_of_divPowSum (hsem : ∀ t, ∃ c, t ∈ sem c) {k D : ℕ}
     [NeZero k] [NeZero D] (hdvd : ∀ t : T, ∀ n ∈ profile sem t, n ∣ D) {o : O} {c₁ c₂ : C}
     (h₁ : obs c₁ = o) (h₂ : obs c₂ = o)
@@ -372,8 +377,8 @@ theorem uniformJointListener_snd_real_lt_of_divPowSum (hsem : ∀ t, ∃ c, t �
   simp only [ite_mul, zero_mul]
   exact_mod_cast hlt
 
-/-- Listener preference reduces to the cross-multiplied profile comparison, on reals: the
-observation marginal and the shared prior cancel. Both registers' closers enter here. -/
+/-- On reals, listener preference reduces to the cross-multiplied profile comparison, since
+the observation marginal and the shared prior cancel. Both registers' closers enter here. -/
 theorem uniformJointListener_fst_real_lt_iff_invPowSum (hsem : ∀ t, ∃ c, t ∈ sem c) {α : ℝ}
     (hα : 0 < α) {o : O} {t₁ t₂ : T} (h₂ : ∃ c, obs c = o ∧ t₂ ∈ sem c) :
     ((uniformJointListener sem obs α o).fst.real {t₁}
@@ -418,10 +423,10 @@ theorem uniformJointListener_fst_real_lt_iff_invPowSum (hsem : ∀ t, ∃ c, t �
       (ENNReal.mul_ne_top (hWne t₁) (hZne t₂)) (ENNReal.mul_ne_top (hWne t₂) (hZne t₁)),
     ENNReal.toReal_mul, ENNReal.toReal_mul]
 
-/-- The certificate register: strict domination of the fibre-by-rest profile products
-decides listener preference uniformly in the rationality. The certificate carries its own
-truth witness, so a finding is a single decided `Multiset.StrictDominates` fact. An empty
-fibre at `t₁` is the support case: any nonempty product strictly dominates `0`. -/
+/-- Strict domination of the fibre-by-rest profile products decides listener preference
+uniformly in the rationality. The certificate carries its own truth witness, so a finding is a
+single decided `Multiset.StrictDominates` fact. An empty fibre at `t₁` is the support case,
+where any nonempty product strictly dominates `0`. -/
 theorem uniformJointListener_fst_real_lt_of_prodMul_strictDominates
     (hsem : ∀ t, ∃ c, t ∈ sem c) {α : ℝ} (hα : 0 < α) {o : O} {t₁ t₂ : T}
     (hcert : ((fiberProfile sem obs o t₂).prodMul (restProfile sem obs o t₁)).StrictDominates
@@ -433,9 +438,9 @@ theorem uniformJointListener_fst_real_lt_of_prodMul_strictDominates
         hcert.ne_zero (Multiset.prodMul_eq_zero_iff.mpr (Or.inl h)))).mpr
     (invPowSum_odds_lt_of_prodMul_strictDominates sem obs hα hcert)
 
-/-- The evaluation register at a natural rationality: with all profile entries dividing `D`,
-listener preference is the ℕ-valued common-denominator comparison — a kernel `decide`. The
-strict inequality carries its own truth witness. -/
+/-- At a natural rationality, with all profile entries dividing `D`, listener preference is
+the ℕ-valued common-denominator comparison, which kernel `decide` evaluates. The strict
+inequality carries its own truth witness. -/
 theorem uniformJointListener_fst_real_lt_of_divPowSum (hsem : ∀ t, ∃ c, t ∈ sem c) {k D : ℕ}
     [NeZero k] [NeZero D] {o : O} {t₁ t₂ : T}
     (hdvd₁ : ∀ n ∈ profile sem t₁, n ∣ D) (hdvd₂ : ∀ n ∈ profile sem t₂, n ∣ D)
@@ -499,10 +504,10 @@ theorem familyListener_uniform_fst_apply_singleton_ne_zero_iff {Λ : Type*} [Fin
     exact and_iff_right (uniformOn_univ_singleton_ne_zero _)
 
 omit [Nonempty C] in
-/-- The evaluation register for a latent family at a natural rationality and the uniform
-prior on (state, latent) pairs: posterior preference between two events of pairs is the
-ℕ-valued common-denominator comparison — a kernel `decide`. The strict inequality carries
-its own truth witness. -/
+/-- For a latent family at a natural rationality and the uniform prior on (state, latent)
+pairs, posterior preference between two events of pairs is the ℕ-valued common-denominator
+comparison, which kernel `decide` evaluates. The strict inequality carries its own truth
+witness. -/
 theorem familyListener_uniform_real_lt_of_divPowSum {Λ : Type*} [Fintype Λ] [DecidableEq Λ]
     [MeasurableSpace Λ] [DiscreteMeasurableSpace Λ] [Nonempty Λ] (sem : Λ → C → Finset T)
     (hsem : ∀ l t, ∃ c, t ∈ sem l c) {k D : ℕ} [NeZero k] [NeZero D]

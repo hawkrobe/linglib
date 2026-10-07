@@ -62,7 +62,7 @@ instance : Nonempty Utterance := ⟨.silent⟩
 variable {D : Type*} [LinearOrder D] [MeasurableSpace D] [DiscreteMeasurableSpace D]
 
 /-- The meaning of an utterance at a degree under an assignment of thresholds to the adjective
-and its antonym (eqs. 22–23): *tall* holds above the first threshold, *short* below the second,
+and its antonym (eqs. 22–23). *Tall* holds above the first threshold, *short* below the second,
 and silence everywhere. -/
 def sem (θ : D × D) : Utterance → Set D
   | .tall => Set.Ioi θ.1
@@ -142,7 +142,7 @@ instance (u : Utterance) : IsProbabilityMeasure (thresholdPosterior μ ν α cos
   unfold thresholdPosterior; infer_instance
 
 /-- The metalinguistic probability that a degree counts as tall under a threshold measure
-(eq. 32): the mass of thresholds below it. -/
+(eq. 32) is the mass of thresholds below it. -/
 noncomputable def metalinguistic (ρ : Measure D) (d : D) : ℝ≥0∞ := ρ (Set.Iio d)
 
 /-- The metalinguistic probability marginalizes the joint posterior over the degree and the

@@ -62,7 +62,7 @@ open scoped ENNReal
 
 /-! ### States, utterances, interpretation functions (Table 2, (5)–(7)) -/
 
-/-- Permission states (Table 2): Franke's All True split into Any Number and Only Both. -/
+/-- The permission states of Table 2 split Franke's All True into Any Number and Only Both. -/
 inductive FCState where
   | onlyA | onlyB | onlyOne | anyNumber | onlyBoth
   deriving DecidableEq, Repr, Inhabited, Fintype
@@ -80,7 +80,7 @@ instance : MeasurableSpace Utterance := ⊤
 instance : DiscreteMeasurableSpace Utterance := ⟨fun _ => trivial⟩
 instance : MeasurableSingletonClass Utterance := DiscreteMeasurableSpace.toMeasurableSingletonClass
 
-/-- The interpretation functions: classical modal logic and its exhaustification. -/
+/-- An interpretation function is classical modal logic or its exhaustification. -/
 inductive Interp where
   | literal | exhaustified
   deriving DecidableEq, Repr, Inhabited, Fintype
@@ -89,7 +89,7 @@ instance : MeasurableSpace Interp := ⊤
 instance : DiscreteMeasurableSpace Interp := ⟨fun _ => trivial⟩
 instance : MeasurableSingletonClass Interp := DiscreteMeasurableSpace.toMeasurableSingletonClass
 
-/-- Free choice: each fruit may be taken by itself. -/
+/-- Free choice holds when each fruit may be taken by itself. -/
 def HasFCI : FCState → Prop
   | .onlyOne | .anyNumber => True
   | _ => False
@@ -98,7 +98,7 @@ instance : DecidablePred HasFCI
   | .onlyA | .onlyB | .onlyBoth => .isFalse id
   | .onlyOne | .anyNumber => .isTrue trivial
 
-/-- Interpretation function 1 (6): classical modal logic. -/
+/-- Interpretation function 1 (6) is classical modal logic. -/
 def I1 : Utterance → FCState → Prop
   | .a, .onlyB => False
   | .a, _ => True
@@ -111,7 +111,7 @@ def I1 : Utterance → FCState → Prop
 instance : ∀ u, DecidablePred (I1 u) := fun u w => by
   cases u <;> cases w <;> first | exact .isTrue trivial | exact .isFalse id
 
-/-- Interpretation function 2 (7): the exhaustified meanings. -/
+/-- Interpretation function 2 (7) gives the exhaustified meanings. -/
 def I2 : Utterance → FCState → Prop
   | .a, .onlyA => True
   | .a, _ => False
@@ -161,8 +161,8 @@ theorem I2_a_singleton : ∀ w, I2 .a w ↔ w = .onlyA := by decide
 noncomputable abbrev speaker (i : Interp) (α : ℝ) : Kernel FCState Utterance :=
   uniformSpeaker (sem i) α
 
-/-- The pragmatic listener (8c): the Bayesian inverse of the interpretation-indexed speaker
-at a uniform prior over states and interpretation functions; `.fst` marginalizes over the
+/-- The pragmatic listener (8c) is the Bayesian inverse of the interpretation-indexed speaker
+at a uniform prior over states and interpretation functions, and `.fst` marginalizes over the
 interpretation. -/
 noncomputable abbrev listener (α : ℝ) : Kernel Utterance (FCState × Interp) :=
   familyListener (fun i => uniformListener (sem i)) α 0 (uniformOn Set.univ)
@@ -183,15 +183,15 @@ theorem speaker_or_onlyBoth_exh {α : ℝ} (hα : 0 < α) :
     speaker .exhaustified α .onlyBoth {.or_} = 0 :=
   uniformSpeaker_apply_singleton_eq_zero _ hα (by decide)
 
-/-- The avoidance mechanism at the speaker: under the exhaustified function at Only A the
-bare disjunct beats the disjunction at every rationality. -/
+/-- Under the exhaustified function at Only A the speaker prefers the bare disjunct to the
+disjunction at every rationality, the avoidance mechanism. -/
 theorem speaker_prefers_a_at_onlyA_exh {α : ℝ} (hα : 0 < α) :
     (speaker .exhaustified α .onlyA).real {.or_} < (speaker .exhaustified α .onlyA).real {.a} :=
   uniformSpeaker_real_singleton_lt_of_card_lt _ hα (by decide) (by decide) (by decide)
 
-/-- **Free choice derived** (Table 5): hearing *or* at the paper's α = 100, the listener
-ranks each free-choice state — Only One and Any Number, the paper's 0.5 each — above each
-of Only A, Only B, and Only Both (each ≈ 0). -/
+/-- Hearing *or* at the paper's α = 100, the listener ranks each free-choice state, Only One
+and Any Number (the paper's 0.5 each), above each of Only A, Only B, and Only Both (each ≈ 0).
+This derives free choice (Table 5). -/
 theorem fci_derived :
     ∀ w ∈ ({.onlyA, .onlyB, .onlyBoth} : Finset FCState),
       ∀ w' ∈ ({.onlyOne, .anyNumber} : Finset FCState),
@@ -219,7 +219,7 @@ theorem fci_majority_low_alpha :
 
 The prior enters the literal listener (8a) and the pragmatic listener (8c) alike. -/
 
-/-- Prior weights favouring Any Number: 12 against 1 for each other state (75%). -/
+/-- These prior weights favour Any Number, 12 against 1 for each other state (75%). -/
 def biasedWeight : FCState → ℕ
   | .anyNumber => 12
   | _ => 1
@@ -269,10 +269,10 @@ theorem jointPriorB_real_singleton (p : FCState × Interp) :
     jointPriorB.real {p} = biasedWeight p.1 := by
   rw [measureReal_def, jointPriorB_singleton, ENNReal.toReal_natCast]
 
-/-- **Exclusivity tracks the prior** (Table 6): with 75% of the prior on Any Number, the
-listener hearing *or* ranks Any Number above every other state at every rationality —
-under the exhaustified function *or* is produced there with certainty, and no other state
-has a comparable prior. -/
+/-- Exclusivity tracks the prior (Table 6). With 75% of the prior on Any Number, the listener
+hearing *or* ranks Any Number above every other state at every rationality, since under the
+exhaustified function *or* is produced there with certainty and no other state has a comparable
+prior. -/
 theorem anyNumber_of_prior {α : ℝ} (hα : 0 < α) {w : FCState} (hw : w ≠ .anyNumber) :
     (listenerB α .or_).fst.real {w} < (listenerB α .or_).fst.real {.anyNumber} := by
   have hother : ∀ u' ≠ Utterance.or_, FCState.anyNumber ∉ semSet .exhaustified u' := by
@@ -322,7 +322,7 @@ def N1 : NegUtterance → NegState → Prop
   | .notOr, _ => False
   | .notAnd, _ => True
 
-/-- Interpretation function 2 under negation (12): weakened, not strengthened. -/
+/-- Under negation, interpretation function 2 (12) weakens rather than strengthens. -/
 def N2 : NegUtterance → NegState → Prop
   | .notA, .onlyA => False
   | .notA, _ => True
@@ -354,16 +354,16 @@ def negSem (i : Interp) (u : NegUtterance) : Finset NegState :=
 @[simp] theorem mem_negSem {i : Interp} {u : NegUtterance} {w : NegState} :
     w ∈ negSem i u ↔ negMeaning i u w := by simp [negSem]
 
-/-- The negated disjunction is unambiguous: true exactly at Neither under both functions. -/
+/-- The negated disjunction is unambiguous, true exactly at Neither under both functions. -/
 theorem negSem_notOr : ∀ i, negSem i .notOr = {.neither} := by decide
 
 /-- The listener of the negation model. -/
 noncomputable abbrev negListener (α : ℝ) : Kernel NegUtterance (NegState × Interp) :=
   familyListener (fun i => uniformListener (negSem i)) α 0 (uniformOn Set.univ)
 
-/-- **No free choice under negation** (Table 9): hearing *you may not take an apple or a
-pear*, the listener assigns no mass to any state other than Neither — in particular none to
-Only A and Only B, where a free-choice reading of the negated disjunction would be true. -/
+/-- Hearing *you may not take an apple or a pear*, the listener assigns no mass to any state
+other than Neither, in particular none to Only A and Only B, where a free-choice reading of the
+negated disjunction would be true. There is no free choice under negation (Table 9). -/
 theorem no_fci_under_negation {α : ℝ} (hα : 0 < α) {p : NegState × Interp}
     (hp : p.1 ≠ .neither) : negListener α .notOr {p} = 0 :=
   familyListener_uniform_apply_singleton_eq_zero negSem hα ⟨.literal, .neither, by decide⟩

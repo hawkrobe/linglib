@@ -6,25 +6,24 @@ public import Linglib.Data.Examples.Warstadt2022
 /-!
 # Warstadt (2022): Presupposition Triggering Reflects Pragmatic Reasoning About Utterance Utility
 
-This file formalizes [warstadt-2022]'s account of soft presupposition triggers as a listener's
-inference about the common ground the speaker assumed. The model is
-[qing-goodman-lassiter-2016]'s: the literal listener within a context set answers the question
-under discussion (`L0`), the speaker best-responds to it and never says what is false at the
-world (`speaker`), and the pragmatic listener inverts the speaker jointly over worlds and
-context sets, weighting a world within a context set by its prior and every context set
-equally (`listener`). [abusch-2002]'s genus-species presupposition follows: with the question
-whether Tom needs a visa, *Tom doesn't have a green card* makes the listener favour the world
-in which Tom is a non-US citizen over the one in which he is a US citizen, at every rationality
-(`needVisa_nonUS_lt`), because within a context set that already settles that Tom is not a US
-citizen the utterance answers the question while at the US-citizen world it never does better
-than its competitors. Under the question whether Tom gets a free drink the utterance is an
-exhaustive answer in every context set (`freeDrink_exhaustive`), so no context set can make it
-more useful than another; the model still favours the non-US world (`freeDrink_nonUS_lt`),
-though by a narrower margin. The family-genus-species example makes the strength of the
-inference depend on the prior: at the non-athlete world in the universe, *not an Olympic
-sprinter* is barely more informative than silence and less than *not a runner*
-(`other_share_lt`), and it answers the question at the runner world only within context sets
-that exclude both the athlete and the non-athlete world (`notSprinter_exhaustive_iff`).
+This file formalizes Warstadt's account of soft presupposition triggers as a listener's inference
+about the common ground the speaker assumed. The model is Qing, Goodman and Lassiter's: the literal
+listener within a context set answers the question under discussion (`L0`), the speaker
+best-responds to it and never says what is false at the world (`speaker`), and the pragmatic
+listener inverts the speaker jointly over worlds and context sets, weighting a world within a
+context set by its prior and every context set equally (`listener`). Abusch's genus-species
+presupposition follows: with the question whether Tom needs a visa, *Tom doesn't have a green card*
+makes the listener favour the world in which Tom is a non-US citizen over the one in which he is a
+US citizen, at every rationality (`needVisa_nonUS_lt`), because within a context set that already
+settles that Tom is not a US citizen the utterance answers the question while at the US-citizen
+world it never does better than its competitors. Under the question whether Tom gets a free drink
+the utterance is an exhaustive answer in every context set (`freeDrink_exhaustive`), so no context
+set can make it more useful than another; the model still favours the non-US world
+(`freeDrink_nonUS_lt`), though by a narrower margin. The family-genus-species example makes the
+strength of the inference depend on the prior: at the non-athlete world in the universe, *not an
+Olympic sprinter* is barely more informative than silence and less than *not a runner*
+(`other_share_lt`), and it answers the question at the runner world only within context sets that
+exclude both the athlete and the non-athlete world (`notSprinter_exhaustive_iff`).
 
 ## Implementation notes
 
@@ -58,9 +57,9 @@ section Model
 
 variable {W U Q : Type} [DecidableEq W]
 
-/-- The weights behind the literal listener: those of the context-set worlds that make the
-utterance true and share the world's answer, over those that make it true; a false utterance
-counts as `0` over `1`. -/
+/-- The literal listener weighs the context-set worlds that make the utterance true and share
+the world's answer against those that make it true, and a false utterance counts as `0` over
+`1`. -/
 def l0 (P : W → ℕ) (cell : Q → W → Finset W) (sem : U → Set W)
     [∀ u, DecidablePred (· ∈ sem u)] (C : Finset W) (q : Q) (u : U) (w : W) : ℕ × ℕ :=
   if w ∈ sem u then
@@ -73,8 +72,8 @@ section Prior
 variable [MeasurableSpace W] [MeasurableSingletonClass W] [MeasurableSpace (Finset W)]
   [MeasurableSingletonClass (Finset W)]
 
-/-- The prior over pairs of a world and a context set (3d): within a context set a world's
-weight is its prior share of the set, and context sets are equally likely. -/
+/-- In the prior over pairs of a world and a context set (3d), a world's weight within a
+context set is its prior share of the set, and context sets are equally likely. -/
 noncomputable def pairPrior (P : W → ℕ) : Measure (W × Finset W) :=
   Measure.count.withDensity λ p =>
     if p.1 ∈ p.2 then (P p.1 : ℝ≥0∞) / ∑ v ∈ p.2, (P v : ℝ≥0∞) else 0
@@ -119,9 +118,9 @@ end Prior
 variable [Fintype W] [MeasurableSpace W] [MeasurableSingletonClass W] [Fintype U]
   [MeasurableSpace U] [MeasurableSingletonClass U]
 
-/-- The literal listener within a context set (3a), gated by literal truth: the worlds of the
-context set weighted by the prior, conditioned on the utterance and projected onto the cells of
-the question, with no mass at a world where the utterance is false. -/
+/-- The literal listener within a context set (3a) weighs the worlds of the context set by the
+prior, conditions on the utterance and projects onto the cells of the question. It is gated by
+literal truth, putting no mass at a world where the utterance is false. -/
 noncomputable def L0 (P : W → ℕ) (cell : Q → W → Finset W) (sem : U → Set W)
     (C : Finset W) (q : Q) : Kernel U W :=
   Kernel.ofFunOfCountable λ u =>
@@ -169,7 +168,7 @@ theorem speaker_apply_singleton_ne_zero [DiscreteMeasurableSpace W] {α : ℝ} (
 variable [MeasurableSpace (Finset W)] [MeasurableSingletonClass (Finset W)]
   [StandardBorelSpace W] [Nonempty W] [StandardBorelSpace (Finset W)]
 
-/-- The pragmatic listener (3d): the Bayesian inverse of the speaker jointly over worlds and
+/-- The pragmatic listener (3d) is the Bayesian inverse of the speaker jointly over worlds and
 context sets, given the question. -/
 noncomputable def listener (P : W → ℕ) (cell : Q → W → Finset W) (sem : U → Set W) (q : Q)
     (α : ℝ) : Kernel U (W × Finset W) :=
@@ -225,7 +224,7 @@ instance : DiscreteMeasurableSpace Utterance := ⟨λ _ => trivial⟩
 instance : MeasurableSingletonClass Utterance :=
   DiscreteMeasurableSpace.toMeasurableSingletonClass
 
-/-- The truth conditions of Table 1: a negation is the complement. -/
+/-- The truth conditions follow Table 1, and a negation is the complement. -/
 def Utterance.sem : Utterance → Set World
   | .silence => Set.univ
   | .us => {w | w = .usCitizen}
@@ -250,7 +249,7 @@ def QUD.answer : QUD → World → Bool
   | .needVisa, w => decide (w = .nonUS)
   | .freeDrink, w => decide (w = .gcHolder)
 
-/-- The cell of a world: the worlds with the same answer. -/
+/-- The cell of a world holds the worlds with the same answer. -/
 def QUD.cell (q : QUD) (w : World) : Finset World := Finset.univ.filter (q.answer · = q.answer w)
 
 /-- The context sets containing the non-US world, and those containing the US-citizen world. -/
@@ -263,16 +262,17 @@ def usSets : List (Finset World) :=
 /-- The uniform world prior. -/
 def uniform : World → ℕ := λ _ => 1
 
-/-- *Not green card* is an exhaustive answer to the free-drink question in every context set:
-its literal-listener weight at a world where it is true is the whole weight. -/
+/-- *Not green card* is an exhaustive answer to the free-drink question in every context set,
+since its literal-listener weight at a world where it is true is the whole weight. -/
 theorem freeDrink_exhaustive :
     ∀ (C : Finset World) (w : World), w ∈ C → w ∈ Utterance.notGC.sem →
       (l0 uniform QUD.cell Utterance.sem C .freeDrink .notGC w).1
         = (l0 uniform QUD.cell Utterance.sem C .freeDrink .notGC w).2 := by
   decide
 
-/-- Under the visa question it is not: in the universe at the US-citizen world it leaves half
-the answer open, while within the context set that Tom is not a US citizen it settles it. -/
+/-- Under the visa question it is not exhaustive. In the universe at the US-citizen world it
+leaves half the answer open, while within the context set that Tom is not a US citizen it
+settles it. -/
 theorem needVisa_not_exhaustive :
     l0 uniform QUD.cell Utterance.sem {.usCitizen, .gcHolder, .nonUS} .needVisa .notGC
         .usCitizen = (1, 2) ∧
@@ -542,7 +542,7 @@ private theorem half_rpow_lt_one {α : ℝ} (hα : 0 < α) : (1 / 2 : ℝ) ^ α 
   Real.rpow_lt_one (by norm_num) (by norm_num) hα
 
 /-- With the question whether Tom needs a visa, *not green card* makes the listener favour the
-non-US world over the US-citizen world at every rationality: within the context set that Tom is
+non-US world over the US-citizen world at every rationality. Within the context set that Tom is
 not a US citizen the utterance answers the question, whereas at the US-citizen world *US
 citizen* always answers it at least as well (Figure 1). -/
 theorem needVisa_nonUS_lt {α : ℝ} (hα : 0 < α) :
@@ -567,7 +567,7 @@ theorem needVisa_nonUS_lt {α : ℝ} (hα : 0 < α) :
   linarith
 
 /-- With the question whether Tom gets a free drink, *not green card* is an exhaustive answer
-in every context set, yet the listener still favours the non-US world: at the US-citizen world
+in every context set, yet the listener still favours the non-US world. At the US-citizen world
 *US citizen* is an equally good answer, so the utterance's share there never exceeds a half
 (Figure 2 reports the two posteriors as nearly equal). -/
 theorem freeDrink_nonUS_lt {α : ℝ} (hα : 0 < α) :
@@ -636,15 +636,15 @@ def hobbyWeight : Hobby → ℕ
   | .athlete => 10
   | .other => 84
 
-/-- The question which world it is: every cell is a singleton. -/
+/-- Under the question which world it is, every cell is a singleton. -/
 def which (_ : Unit) (w : Hobby) : Finset Hobby := {w}
 
 /-- The universe of hobbies. -/
 def hobbies : Finset Hobby := {.sprinter, .runner, .athlete, .other}
 
 /-- *Not an Olympic sprinter* answers the question at the runner world exactly within context
-sets that exclude the athlete and the non-athlete world: the accommodation the paper describes
-is of a common ground in which Tom is a runner or a sprinter. -/
+sets that exclude the athlete and the non-athlete world, so the accommodation the paper
+describes is of a common ground in which Tom is a runner or a sprinter. -/
 theorem notSprinter_exhaustive_iff :
     ∀ C : Finset Hobby, .runner ∈ C →
       ((l0 hobbyWeight which HobbyUtterance.sem C () .notSprinter .runner).1
@@ -695,7 +695,7 @@ private theorem share_other {α : ℝ} (hα : 0 < α) (u : HobbyUtterance) :
   simp only [L0_apply, l0_O, toReal_frac_rpow]
 
 /-- At the non-athlete world in the universe, *not an Olympic sprinter* is produced more often
-than silence but less often than *not a runner*, which loses to *not an athlete*: Olympic
+than silence but less often than *not a runner*, which loses to *not an athlete*. Olympic
 sprinters are rare, so denying that Tom is one says little (4). -/
 theorem other_share_lt {α : ℝ} (hα : 0 < α) :
     share hobbyWeight which HobbyUtterance.sem hobbies () .silence .other α

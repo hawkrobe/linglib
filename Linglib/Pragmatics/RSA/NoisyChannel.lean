@@ -6,15 +6,15 @@ public import Linglib.Core.Probability.Kernel.Composition.Lemmas
 /-!
 # Rational speech acts over a noisy channel
 
-[bergen-goodman-2015]'s extension of the pipeline of `Linglib.Pragmatics.RSA.Basic` to a
-channel `N : Kernel I U` from the speaker's intended utterances to the perceived ones. The literal listener decodes
-before interpreting: the meaning of a perceived utterance is the meaning of each intended one,
-weighted by the utterance prior and the channel (`noisyMeaning`, eq. 6). The speaker's
-informativity is the channel-expected log listener, whose exponential is the listener mass
-averaged geometrically over perceptions (`channelMix`), so the speaker is the power-weight best
-response to that mix (`noisySpeaker`, eqs. 4 and 7). The pragmatic listener inverts the speaker
-composed with the channel (`noisyPragmaticListener`, eq. 8). At the identity channel each
-operator is its noiseless counterpart.
+Bergen and Goodman extend the pipeline of `Linglib.Pragmatics.RSA.Basic` with a channel
+`N : Kernel I U` from the speaker's intended utterances to the perceived ones. The literal
+listener decodes before interpreting, so the meaning of a perceived utterance is the meaning of
+each intended one weighted by the utterance prior and the channel (`noisyMeaning`, eq. 6). The
+speaker's informativity is the channel-expected log listener, whose exponential is the listener
+mass averaged geometrically over perceptions (`channelMix`), and the speaker is the power-weight
+best response to that mix (`noisySpeaker`, eqs. 4 and 7). The pragmatic listener inverts the
+speaker composed with the channel (`noisyPragmaticListener`, eq. 8). At the identity channel
+each operator is its noiseless counterpart.
 
 ## Main definitions
 
@@ -31,6 +31,10 @@ operator is its noiseless counterpart.
 * `RSA.noisySpeaker_real_singleton_lt_iff`, `RSA.noisyPragmaticListener_real_lt_iff` —
   preference reduces to the channel-mixed listener, and to the channelled speaker.
 * `RSA.channelMix_eq_prod` — the mix over the perceptions the channel can produce.
+
+## References
+
+* [bergen-goodman-2015]
 -/
 
 @[expose] public section
@@ -46,7 +50,7 @@ variable {W I U : Type*} [MeasurableSpace I] [MeasurableSpace U] [Fintype U]
 
 section Meaning
 
-/-- The meaning of a perceived utterance `u_p`: the meaning of each intended utterance,
+/-- The meaning of a perceived utterance `u_p` is the meaning of each intended utterance,
 weighted by the utterance prior and the channel (eq. 6). -/
 noncomputable def noisyMeaning (N : Kernel I U) (π : Measure I) (m : I → W → ℝ≥0∞) (u_p : U)
     (w : W) : ℝ≥0∞ :=
@@ -79,8 +83,9 @@ variable [MeasurableSpace W]
 
 section Speaker
 
-/-- The listener mass at `w` averaged geometrically over the perceptions of `u_i`: the
-exponential of the channel-expected log listener, eq. 7's informativity. -/
+/-- `channelMix N L u_i w` averages the listener mass at `w` geometrically over the
+perceptions of `u_i`; it is the exponential of the channel-expected log listener, eq. 7's
+informativity. -/
 noncomputable def channelMix (N : Kernel I U) (L : Kernel U W) (u_i : I) (w : W) : ℝ≥0∞ :=
   ∏ u_p, L u_p {w} ^ (N u_i {u_p}).toReal
 
@@ -114,8 +119,8 @@ theorem channelMix_id (L : Kernel U W) (u : U) (w : W) : channelMix Kernel.id L 
 
 variable [Fintype I] [MeasurableSingletonClass I] [Countable W] [MeasurableSingletonClass W]
 
-/-- The speaker over the channel (eqs. 4 and 7): power weights of the channel-mixed listener,
-scaled by the cost weight `exp (-(α * C u))` of each utterance. -/
+/-- The speaker over the channel (eqs. 4 and 7) weights each utterance by the channel-mixed
+listener to the power `α`, scaled by the cost weight `exp (-(α * C u))`. -/
 noncomputable def noisySpeaker (N : Kernel I U) (α : ℝ) (C : I → ℝ) (L : Kernel U W) :
     Kernel W I :=
   Kernel.ofWeights fun w u => channelMix N L u w ^ α * ENNReal.ofReal (Real.exp (-(α * C u)))
@@ -162,11 +167,12 @@ end Speaker
 section Listener
 
 variable [Fintype I] [MeasurableSingletonClass I] [MeasurableSingletonClass U] [Countable W]
-  [MeasurableSingletonClass W] [StandardBorelSpace W] [Nonempty W] (N : Kernel I U) [IsFiniteKernel N] (α : ℝ)
+  [MeasurableSingletonClass W] [StandardBorelSpace W] [Nonempty W] (N : Kernel I U)
+  [IsFiniteKernel N] (α : ℝ)
   (C : I → ℝ) (L : Kernel U W) (μ : Measure W) [IsFiniteMeasure μ]
 
-/-- The pragmatic listener over the channel (eq. 8): the Bayesian inverse, against the prior,
-of the speaker followed by the channel. -/
+/-- The pragmatic listener over the channel (eq. 8) is the Bayesian inverse, against the
+prior, of the speaker followed by the channel. -/
 noncomputable def noisyPragmaticListener : Kernel U W := (N ∘ₖ noisySpeaker N α C L)†μ
 
 instance : IsMarkovKernel (noisyPragmaticListener N α C L μ) :=

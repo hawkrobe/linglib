@@ -77,7 +77,7 @@ instance : MeasurableSpace Message := ⊤
 instance : DiscreteMeasurableSpace Message := ⟨fun _ ↦ trivial⟩
 instance : Nonempty Message := ⟨.silent⟩
 
-/-- The cost of a message: `c` for the positive form, nothing for silence. -/
+/-- The positive form costs `c` and silence costs nothing. -/
 def cost (c : ℝ) : Message → ℝ
   | .positive => c
   | .silent => 0
@@ -367,8 +367,8 @@ theorem sequential_mul_le_mul (hα : 0 < α) (hD : Assertable P νD (atLeast mD)
 /-! ### The Goldilocks effect and vacuous intensifiers -/
 
 /-- The Goldilocks effect of evaluation constrains the measure function of an evaluative base
-over a scale of excess: a negative evaluation grows with excess and a positive evaluation
-shrinks with it. -/
+over a scale of excess, so that a negative evaluation grows with excess and a positive
+evaluation shrinks with it. -/
 def Goldilocks (a : Degree.GradableAdjective) (excess : S → X) (m : S → D') : Prop :=
   match a.evaluativeValence with
   | some .negative => ∀ s t, excess s ≤ excess t → m s ≤ m t
@@ -422,7 +422,7 @@ theorem pleasantly_mul_le_mul (hm : Goldilocks English.Adjectives.pleasant exces
   sequential_mul_le_mul_of_positive c c' rfl hm hα hD hA hmA hx
 
 /-- An adverb whose measure function does not distinguish the states, as that of *usual* would
-not if it conveyed the prior, is a vacuous intensifier: the intensified adjective is
+not if it conveyed the prior, is a vacuous intensifier, and the intensified adjective is
 interpreted as the bare adjective. -/
 theorem sequential_eq_positiveForm [IsProbabilityMeasure P] (hα : 0 < α)
     (hD : Assertable P νD (atLeast mD)) (h : ∀ s t, mD s = mD t) :

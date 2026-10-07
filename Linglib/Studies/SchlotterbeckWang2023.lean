@@ -81,13 +81,14 @@ theorem sharp_apply_le_one (ext : U → Finset R → Finset R) (u : U) (C : Fins
   unfold sharp Set.indicator
   split_ifs <;> simp
 
-/-- The sequentially intersective update of a Boolean semantics: the extension of a sequence,
-built from the noun outward. -/
+/-- The sequentially intersective update of a Boolean semantics builds the extension of a
+sequence from the noun outward. -/
 def extSeq [Fintype R] [DecidableEq R] (ext : U → Finset R → Finset R) : List U → Finset R
   | [] => Finset.univ
   | u :: us => extSeq ext us ∩ ext u (extSeq ext us)
 
-/-- The paper's language model: either adjective first, with equal probability, then the other. -/
+/-- The paper's language model puts either adjective first, with equal probability, then the
+other. -/
 noncomputable def alternation [DecidableEq U] (a b : U) : List U → U → ℝ≥0∞
   | [], u => if u = a ∨ u = b then 2⁻¹ else 0
   | [u'], u => if u' = a ∧ u = b ∨ u' = b ∧ u = a then 1 else 0
@@ -121,9 +122,9 @@ variable [Fintype U] [MeasurableSpace U] [DiscreteMeasurableSpace U] [Fintype R]
 
 /-! ### The incremental listener (rows 1–2) -/
 
-/-- Rows (1)–(2): the incremental literal listener on a word sequence in surface order, the
-noun-adjacent word last. That word is interpreted first, against the prior's support, and each
-earlier word against the support of the distribution the later words left. -/
+/-- The incremental literal listener of rows (1)–(2) reads a word sequence in surface order,
+the noun-adjacent word last. That word is interpreted first, against the prior's support, and
+each earlier word against the support of the distribution the later words left. -/
 noncomputable def l0 (μ : Measure R) (sem : U → Finset R → R → ℝ≥0∞) : List U → Measure R
   | [] => μ
   | u :: us => literalListener (l0 μ sem us) (λ u' => sem u' (supp (l0 μ sem us))) u
@@ -139,12 +140,12 @@ theorem l0_apply_le_one {μ : Measure R} {sem : U → Finset R → R → ℝ≥0
 
 variable (μ : Measure R) (sem : U → Finset R → R → ℝ≥0∞)
 
-/-- Row (7): the utility of the sequence `us` for the referent `r` at rationality `β`, with
-`cost n` the cost factor `exp (−β c)` of an `n`-word sequence. -/
+/-- The utility of row (7) scores the sequence `us` for the referent `r` at rationality `β`,
+with `cost n` the cost factor `exp (−β c)` of an `n`-word sequence. -/
 noncomputable def utility (β : ℝ) (cost : ℕ → ℝ≥0∞) (us : List U) (r : R) : ℝ≥0∞ :=
   l0 μ sem us {r} ^ β * cost us.length
 
-/-- Rows (4)–(5) unrolled: the weight of producing `us` word by word, each prefix scored by its
+/-- Unrolling rows (4)–(5), the weight of producing `us` word by word scores each prefix by its
 utility and each word by the language model's probability given the words before it. -/
 noncomputable def seqWeight (β : ℝ) (cost : ℕ → ℝ≥0∞) (pLang : List U → U → ℝ≥0∞) (r : R)
     (us : List U) : ℝ≥0∞ :=
@@ -176,8 +177,8 @@ theorem seqWeight_pair_lt_iff [DecidableEq U] (r : R) (a b : U) :
   rw [seqWeight_pair_alternation, alternation_comm, seqWeight_pair_alternation]
   exact mul_lt_mul_left_iff (by simp) (by simp)
 
-/-- Discriminatory strength: with an order-blind listener, the sequence speaker's preference
-between the two orders is its preference between their first words. -/
+/-- With an order-blind listener, the sequence speaker's preference between the two orders is
+its preference between their first words, the discriminatory strength of the first word. -/
 theorem seqWeight_pair_lt_iff_of_l0_eq [DecidableEq U] [IsProbabilityMeasure μ] (hβ : 0 ≤ β)
     (hcost : ∀ n, cost n ≠ ∞) (hl : l0 μ sem [a, b] = l0 μ sem [b, a])
     (hne : utility μ sem β cost [a, b] r ≠ 0) :
@@ -206,8 +207,8 @@ variable [Fintype U] [MeasurableSpace U] [DiscreteMeasurableSpace U] [Fintype R]
 
 /-! ### Order-blind listeners -/
 
-/-- At a context-independent semantics the incremental listener is the one-shot literal listener
-at the product meaning: Bayesian updates compose. -/
+/-- At a context-independent semantics the incremental listener is the one-shot literal
+listener at the product meaning, since Bayesian updates compose. -/
 theorem l0_contextFree [IsProbabilityMeasure μ] (m : U → R → ℝ≥0∞) (hm : ∀ u r, m u r ≤ 1)
     (us : List U) :
     l0 μ (λ u _ => m u) us = (μ.withDensity (prodMeaning m us))[|Set.univ] := by
@@ -227,7 +228,8 @@ theorem l0_contextFree [IsProbabilityMeasure μ] (m : U → R → ℝ≥0∞) (h
       hfin, show prodMeaning m us * m u = prodMeaning m (u :: us) from
         funext λ r => by simp [prodMeaning_cons, mul_comm]]
 
-/-- The paper's sanity check: a context-independent semantics cannot distinguish word orders. -/
+/-- A context-independent semantics cannot distinguish word orders, the paper's sanity
+check. -/
 theorem l0_perm [IsProbabilityMeasure μ] (m : U → R → ℝ≥0∞) (hm : ∀ u r, m u r ≤ 1)
     {us us' : List U} (h : us.Perm us') :
     l0 μ (λ u _ => m u) us = l0 μ (λ u _ => m u) us' := by
@@ -266,18 +268,19 @@ theorem l0_single_lt_iff [DecidableEq R] (ext : U → Finset R → Finset R)
 
 variable (μ sem)
 
-/-- Rows (4)–(5): the incremental sequence speaker over sequences of length `n`. -/
+/-- The incremental sequence speaker of rows (4)–(5) chooses among sequences of length `n`. -/
 noncomputable def seqSpeaker (β : ℝ) (cost : ℕ → ℝ≥0∞) (pLang : List U → U → ℝ≥0∞) (n : ℕ) :
     Kernel R (Fin n → U) :=
   Kernel.ofWeights λ r v => seqWeight μ sem β cost pLang r (List.ofFn v)
 
-/-- Row (3): the global speaker over sequences of length `n` with utterance prior `P`. -/
+/-- The global speaker of row (3) chooses among sequences of length `n` with utterance
+prior `P`. -/
 noncomputable def globalSpeaker (β : ℝ) (cost : ℕ → ℝ≥0∞) {n : ℕ} (P : (Fin n → U) → ℝ≥0∞) :
     Kernel R (Fin n → U) :=
   Kernel.ofWeights λ r v => utility μ sem β cost (List.ofFn v) r * P v
 
-/-- Row (6): the incremental utterance speaker, a softmax at rationality `α` over the sequence
-speaker with utterance prior `P`. -/
+/-- The incremental utterance speaker of row (6) is a softmax at rationality `α` over the
+sequence speaker with utterance prior `P`. -/
 noncomputable def uttSpeaker (β : ℝ) (cost : ℕ → ℝ≥0∞) (pLang : List U → U → ℝ≥0∞) (α : ℝ)
     {n : ℕ} (P : (Fin n → U) → ℝ≥0∞) : Kernel R (Fin n → U) :=
   Kernel.ofWeights λ r v => seqWeight μ sem β cost pLang r (List.ofFn v) ^ α * P v
@@ -297,14 +300,14 @@ theorem seqSpeaker_real_lt_iff [IsProbabilityMeasure μ] (hβ : 0 ≤ β) (hcost
     (ENNReal.sum_ne_top.mpr λ _ _ => ENNReal.prod_ne_top λ _ _ =>
       ENNReal.mul_ne_top (utility_ne_top hβ hcost _) (hp _ _))
 
-/-- Row (3): a global speaker cannot prefer an order the listener cannot distinguish. -/
+/-- A global speaker (row (3)) cannot prefer an order the listener cannot distinguish. -/
 theorem globalSpeaker_apply_singleton_eq {n : ℕ} {P : (Fin n → U) → ℝ≥0∞} {v v' : Fin n → U}
     (hl : l0 μ sem (List.ofFn v) = l0 μ sem (List.ofFn v')) (hP : P v = P v') :
     globalSpeaker μ sem β cost P r {v} = globalSpeaker μ sem β cost P r {v'} := by
   simp only [globalSpeaker, Kernel.ofWeights_apply_singleton, utility, hl, hP, List.length_ofFn]
 
-/-- Row (6): the utterance speaker's order preference is the sequence speaker's weighed against
-the utterance prior. -/
+/-- The order preference of the utterance speaker (row (6)) is the sequence speaker's, weighed
+against the utterance prior. -/
 theorem uttSpeaker_real_lt_iff [IsProbabilityMeasure μ] (hβ : 0 ≤ β) (hcost : ∀ n, cost n ≠ ∞)
     (hp : ∀ us u, pLang us u ≠ ∞) {α : ℝ} (hα : 0 ≤ α) {n : ℕ} {P : (Fin n → U) → ℝ≥0∞}
     (hP : ∀ v, P v ≠ ∞)
@@ -320,8 +323,8 @@ theorem uttSpeaker_real_lt_iff [IsProbabilityMeasure μ] (hβ : 0 ≤ β) (hcost
       (ENNReal.rpow_ne_top_of_nonneg hα (ENNReal.prod_ne_top λ _ _ =>
         ENNReal.mul_ne_top (utility_ne_top hβ hcost _) (hp _ _))) (hP v))
 
-/-- The relevance effect: at a uniform prior, sharp context-independent meanings and the paper's
-language model, the sequence speaker prefers first the adjective true of fewer referents. -/
+/-- At a uniform prior, sharp context-independent meanings and the paper's language model, the
+sequence speaker prefers first the adjective true of fewer referents, the relevance effect. -/
 theorem seqSpeaker_real_lt_of_card_lt [DecidableEq U] [DecidableEq R] (hβ : 0 < β)
     (hcost0 : ∀ n, cost n ≠ 0)
     (hcost : ∀ n, cost n ≠ ∞) (ext : U → Finset R) (ha : r ∈ ext a) (hb : r ∈ ext b)
@@ -357,13 +360,13 @@ end
 
 /-! ### The k%-semantics (3a) distinguishes the orders -/
 
-/-- (3a): the k%-semantics of a dimension adjective against the comparison class `C`: an object
-is big when its size exceeds the maximum of `C` less `k`% of the range of `C`. -/
+/-- Under the k%-semantics (3a) of a dimension adjective against the comparison class `C`, an
+object is big when its size exceeds the maximum of `C` less `k`% of the range of `C`. -/
 def kPercent [Fintype R] (k : ℕ) (size : R → ℕ) (C : Finset R) : Finset R :=
   Finset.univ.filter λ x =>
     ∃ hC : C.Nonempty, 100 * C.sup' hC size < 100 * size x + k * (C.sup' hC size - C.inf' hC size)
 
-/-- Four stickers: three blue ones of sizes 6, 5 and 1, and a green one of size 10. -/
+/-- The display has three blue stickers of sizes 6, 5 and 1, and a green one of size 10. -/
 inductive Sticker
   | blue6
   | blue5
@@ -395,8 +398,8 @@ def Adj.ext : Adj → Finset Sticker → Finset Sticker
   | .big, C => kPercent 50 Sticker.size C
   | .blue, _ => {.blue6, .blue5, .blue1}
 
-/-- *big blue* and *blue big* resolve differently: interpreted against the blue stickers, *big*
-admits the second-largest one, which it excludes against the whole display. -/
+/-- *Big blue* and *blue big* resolve differently, since *big* interpreted against the blue
+stickers admits the second-largest one, which it excludes against the whole display. -/
 theorem l0_big_blue_ne :
     l0 (uniformOn Set.univ) (sharp Adj.ext) [.big, .blue] ≠
       l0 (uniformOn Set.univ) (sharp Adj.ext) [.blue, .big] := by

@@ -7,17 +7,16 @@ public import Linglib.Studies.Labov2012
 /-!
 # Burnett (2019): Signalling games, sociolinguistic variation and the construction of style
 
-This file formalizes the social meaning games of [burnett-2019]. A speaker choosing between
-*-ing* and *-in'* conveys something about the persona they are constructing, and the paper
-takes that inference to be the equilibrium of a signalling game between a rational speaker and
-listener: each variant is compatible with the personae sharing a property with its indexical
-field, the listener infers a persona from the variant against a prior, and the speaker chooses
-the variant that best conveys the persona they are after. Two kinds of variation come out of
-the one model. A speaker holding a persona fixed changes variants as the context changes the
-listener's prior, style shifting, here [labov-2012]'s Obama who prefers *-in'* at a barbecue and
-*-ing* with the journalists; and a listener holding the variant fixed infers different personae
-from different speakers, so that a strongly stereotyped speaker such as the paper's Bush
-conveys nothing by the choice.
+This file formalizes Burnett's social meaning games. A speaker choosing between *-ing* and *-in'*
+conveys something about the persona they are constructing, and the paper takes that inference to be
+the equilibrium of a signalling game between a rational speaker and listener: each variant is
+compatible with the personae sharing a property with its indexical field, the listener infers a
+persona from the variant against a prior, and the speaker chooses the variant that best conveys the
+persona they are after. Two kinds of variation come out of the one model. A speaker holding a
+persona fixed changes variants as the context changes the listener's prior, style shifting, here
+Labov's Obama who prefers *-in'* at a barbecue and *-ing* with the journalists; and a listener
+holding the variant fixed infers different personae from different speakers, so that a strongly
+stereotyped speaker such as the paper's Bush conveys nothing by the choice.
 
 The property space is the example's two dimensions, competence and warmth, and the four
 personae of example (6) are its maximal consistent sets (`personae_eq`). The meaning of a

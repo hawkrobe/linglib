@@ -218,7 +218,8 @@ include hα
 message true there. -/
 theorem L1_fst_ne_zero_iff (m : Msg) (w : World) :
     (L1 α k m).fst {w} ≠ 0 ↔ ∃ l, w ∈ sem l m :=
-  familyListener_uniform_fst_apply_singleton_ne_zero_iff sem hα _ (let ⟨w, h⟩ := sem_weak_nonempty m; ⟨.weak, w, h⟩) w
+  familyListener_uniform_fst_apply_singleton_ne_zero_iff sem hα _
+    (let ⟨w, h⟩ := sem_weak_nonempty m; ⟨.weak, w, h⟩) w
 
 /-- The fixed-lexicon listener assigns mass to a state exactly when the base lexicon makes the
 message true there. -/
@@ -419,7 +420,8 @@ theorem no_some_literal_first :
   have hab' : 0 < (3 : ℝ)⁻¹ ^ α - (4 : ℝ)⁻¹ ^ α := sub_pos.2 hab
   have key : (4 : ℝ)⁻¹ ^ α / ((3 : ℝ)⁻¹ ^ α + (4 : ℝ)⁻¹ ^ α + Real.exp (-(α * k)) * (10 : ℝ)⁻¹ ^ α)
       < 1 / (1 + ((4 : ℝ)⁻¹ ^ α + 1) + Real.exp (-(α * k)) * (10 : ℝ)⁻¹ ^ α)
-        + (4 : ℝ)⁻¹ ^ α / (1 + ((4 : ℝ)⁻¹ ^ α + (4 : ℝ)⁻¹ ^ α) + Real.exp (-(α * k)) * (10 : ℝ)⁻¹ ^ α) := by
+        + (4 : ℝ)⁻¹ ^ α /
+          (1 + ((4 : ℝ)⁻¹ ^ α + (4 : ℝ)⁻¹ ^ α) + Real.exp (-(α * k)) * (10 : ℝ)⁻¹ ^ α) := by
     rw [div_add_div _ _ (by positivity) (by positivity), div_lt_div_iff₀ (by positivity)
       (by positivity)]
     nlinarith [mul_pos ha ha, mul_pos (mul_pos ha ha) hab', mul_nonneg ha.le ht,

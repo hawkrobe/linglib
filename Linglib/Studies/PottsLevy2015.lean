@@ -6,20 +6,19 @@ public import Linglib.Core.Probability.Kernel.Mixture
 /-!
 # Potts and Levy (2015): Negotiating Lexical Uncertainty and Speaker Expertise with Disjunction
 
-This file formalizes the lexical-uncertainty model of [potts-levy-2015] and its Hurfordian
-context. Disjunctions *A or X* whose disjunct *X* covers *A* violate the generalization of
-[hurford-1974] yet are used, and the listener who hears one infers both that the speaker is
-uncertain between the disjuncts and that her lexicon keeps them apart. The model is a
-rational-speech-acts tower over states, messages, and lexica (§3). A literal listener conditions
-a flat prior on a message's extension under a lexicon (10), a speaker chooses messages by the
-listener's mass at the state under a rationality and a cost (11), and a pragmatic listener
-inverts the speaker (12) (`L0`, `S1`, `l1`); the lexical-uncertainty listener infers state and
-lexicon jointly (14) (`L1`), the expertise speaker weighs the world information and the lexicon
-information a message carries (15) (`S2`), the next listener inverts her (`L2`), and
-marginalization recovers simple signaling (16), (17) (`S2exp`). The state space is closed under
-joins so that a disjunction can convey uncertainty, a join state satisfying a message when all
-its atoms do (§4, Figure 6), and the lexica refine the unknown term *X* (13) (`World`, `Msg`,
-`Lex`, `sem`).
+This file formalizes the lexical-uncertainty model of Potts and Levy and its Hurfordian context.
+Disjunctions *A or X* whose disjunct *X* covers *A* violate the generalization of Hurford yet are
+used, and the listener who hears one infers both that the speaker is uncertain between the disjuncts
+and that her lexicon keeps them apart. The model is a rational-speech-acts tower over states,
+messages, and lexica (§3). A literal listener conditions a flat prior on a message's extension under
+a lexicon (10), a speaker chooses messages by the listener's mass at the state under a rationality
+and a cost (11), and a pragmatic listener inverts the speaker (12) (`L0`, `S1`, `l1`); the
+lexical-uncertainty listener infers state and lexicon jointly (14) (`L1`), the expertise speaker
+weighs the world information and the lexicon information a message carries (15) (`S2`), the next
+listener inverts her (`L2`), and marginalization recovers simple signaling (16), (17) (`S2exp`). The
+state space is closed under joins so that a disjunction can convey uncertainty, a join state
+satisfying a message when all its atoms do (§4, Figure 6), and the lexica refine the unknown term
+*X* (13) (`World`, `Msg`, `Lex`, `sem`).
 
 In the Hurfordian context of §5.2, three atoms, the terms *A*, *B*, *X* with their
 disjunctions, and the lexica reading *X* as the general term, its exclusivization, or the
@@ -74,7 +73,7 @@ inductive Atom where
   | w₃
   deriving DecidableEq, Fintype
 
-/-- The states: the nonempty joins of the atoms (Figure 6). -/
+/-- The states are the nonempty joins of the atoms (Figure 6). -/
 inductive World where
   | w₁
   | w₂
@@ -97,7 +96,7 @@ def World.atoms : World → Finset Atom
   | .w₂₃ => {.w₂, .w₃}
   | .w₁₂₃ => {.w₁, .w₂, .w₃}
 
-/-- The messages: the basic terms, their disjunctions, and the null message. -/
+/-- The messages are the basic terms, their disjunctions, and the null message. -/
 inductive Msg where
   | A
   | B
@@ -119,8 +118,8 @@ def Msg.IsDisjunction : Msg → Prop
 instance : DecidablePred Msg.IsDisjunction := λ m => by
   cases m <;> unfold Msg.IsDisjunction <;> infer_instance
 
-/-- The lexica (13): the base lexicon reading *X* as the general term over the first two atoms,
-its exclusivization to the second atom, and the synonym of *A*. -/
+/-- The lexica (13) are the base lexicon reading *X* as the general term over the first two
+atoms, its exclusivization to the second atom, and the synonym of *A*. -/
 inductive Lex where
   | base
   | excl
@@ -135,8 +134,8 @@ def Lex.x : Lex → Finset Atom
   | .excl => {.w₂}
   | .syn => {.w₁}
 
-/-- The atoms a message denotes under a lexicon: *A* the first atom, *B* the second,
-disjunction union, and the null message everything. -/
+/-- Under a lexicon *A* denotes the first atom, *B* the second, a disjunction the union, and the
+null message every atom. -/
 def atomDen (l : Lex) : Msg → Finset Atom
   | .A => {.w₁}
   | .B => {.w₂}
@@ -147,8 +146,8 @@ def atomDen (l : Lex) : Msg → Finset Atom
   | .AorBorX => {.w₁, .w₂} ∪ l.x
   | .null => Finset.univ
 
-/-- The extension of a message in the join-closed state space: the states all of whose atoms
-the message denotes. -/
+/-- In the join-closed state space, a message is true of the states all of whose atoms it
+denotes. -/
 def sem (l : Lex) (m : Msg) : Finset World :=
   Finset.univ.filter λ w => w.atoms ⊆ atomDen l m
 
@@ -164,8 +163,8 @@ theorem lexica_facts :
 theorem sem_nonempty (l : Lex) (m : Msg) : ∃ w, w ∈ sem l m := by
   revert l m; decide
 
-/-- The extension sizes: seven states for the null message, three for a message denoting two
-atoms, and one otherwise. -/
+/-- The null message is true of seven states, a message denoting two atoms of three, and any
+other message of one. -/
 def semCard : Lex → Msg → ℕ
   | _, .null => 7
   | _, .AorB | _, .AorBorX | .base, .X | .base, .AorX | .base, .BorX | .excl, .AorX
@@ -181,28 +180,29 @@ section Tower
 
 variable (α β c : ℝ)
 
-/-- The cost of a message (9): `c` for a disjunction and 0 otherwise. -/
+/-- A disjunction costs `c` and any other message nothing (9). -/
 def cost (m : Msg) : ℝ := if m.IsDisjunction then c else 0
 
-/-- The literal listener (10) at a flat prior: uniform on the message's extension. -/
+/-- The literal listener (10) at a flat prior is uniform on the message's extension. -/
 noncomputable def L0 (l : Lex) : Kernel Msg World := uniformListener (sem l)
 
 instance (l : Lex) : IsFiniteKernel (L0 l) := inferInstanceAs (IsFiniteKernel (uniformListener _))
 
-/-- The speaker (11): the substrate's speaker, the cost divided by the rationality since the
-paper subtracts it outside. -/
+/-- The speaker (11) is the substrate's speaker, with the cost divided by the rationality
+since the paper subtracts it outside. -/
 noncomputable def S1 (l : Lex) : Kernel World Msg := speaker α (cost c · / α) (L0 l)
 
 instance (l : Lex) : IsFiniteKernel (S1 α c l) := inferInstanceAs (IsFiniteKernel (speaker _ _ _))
 
-/-- The fixed-lexicon pragmatic listener (12): the speaker's Bayesian inverse at a flat prior. -/
+/-- The fixed-lexicon pragmatic listener (12) is the speaker's Bayesian inverse at a flat
+prior. -/
 noncomputable def l1 (l : Lex) : Kernel Msg World :=
   pragmaticListener α (cost c · / α) (L0 l) (uniformOn Set.univ)
 
 instance (l : Lex) : IsMarkovKernel (l1 α c l) :=
   inferInstanceAs (IsMarkovKernel (pragmaticListener _ _ _ _))
 
-/-- The lexical-uncertainty listener (14) at k = 1: the joint posterior over states and lexica
+/-- The lexical-uncertainty listener (14) at k = 1 is the joint posterior over states and lexica
 against a flat prior, the substrate's family listener. -/
 noncomputable def L1 : Kernel Msg (World × Lex) :=
   familyListener L0 α (cost c · / α) (uniformOn Set.univ)
@@ -210,7 +210,7 @@ noncomputable def L1 : Kernel Msg (World × Lex) :=
 instance : IsMarkovKernel (L1 α c) :=
   inferInstanceAs (IsMarkovKernel ((familySpeaker L0 α (cost c · / α))†(uniformOn Set.univ)))
 
-/-- The expertise speaker (15) at k = 2: weights the fixed-lexicon listener's mass at the state
+/-- The expertise speaker (15) at k = 2 weighs the fixed-lexicon listener's mass at the state
 to the rationality, the lexicon posterior to the lexicon weight, and the cost. -/
 noncomputable def S2 : Kernel (World × Lex) Msg :=
   Kernel.ofWeights λ p m => l1 α c p.2 m {p.1} ^ α * (L1 α c m).snd {p.2} ^ β *
@@ -291,7 +291,7 @@ theorem L1_snd_real_lt_iff (m : Msg) (l₁ l₂ : Lex) :
   familyListener_snd_real_lt_iff L0 uniformOn_univ_singleton_eq uniformOn_univ_singleton_ne_zero
     ((S1_ne_zero_iff hα .base w₀ m).2 h₀)
 
-/-- The fixed-lexicon listener's mass on reals: the speaker's share of the message at the
+/-- On reals, the fixed-lexicon listener's mass is the speaker's share of the message at the
 state over its shares at every state. -/
 theorem l1_real (l : Lex) (m : Msg) (w : World) :
     (l1 α c l m).real {w} = (S1 α c l w).real {m} / ∑ w', (S1 α c l w').real {m} := by
@@ -303,13 +303,14 @@ theorem l1_real (l : Lex) (m : Msg) (w : World) :
     posterior_uniformOn_univ_apply_singleton _ hx w, ENNReal.toReal_div,
     ENNReal.toReal_sum λ _ _ => measure_ne_top _ _]
 
-/-- The lexicon posterior on reals: the lexicon's speakers' shares of the message pooled over
+/-- On reals, the lexicon posterior is the lexicon's speakers' shares of the message pooled over
 states, over the shares of every state–lexicon pair. -/
 theorem L1_snd_real (m : Msg) (l : Lex) :
     (L1 α c m).snd.real {l}
       = (∑ w, (S1 α c l w).real {m}) / ∑ p : World × Lex, (S1 α c p.2 p.1).real {m} := by
   obtain ⟨w₀, h₀⟩ := sem_nonempty l m
-  have hx : (familySpeaker L0 α (cost c · / α) ∘ₘ uniformOn (Set.univ : Set (World × Lex))) {m} ≠ 0 :=
+  have hx :
+      (familySpeaker L0 α (cost c · / α) ∘ₘ uniformOn (Set.univ : Set (World × Lex))) {m} ≠ 0 :=
     comp_familySpeaker_ne_zero (uniformOn_univ_singleton_ne_zero (w₀, l))
       ((S1_ne_zero_iff hα l w₀ m).2 h₀)
   rw [L1, familyListener, posterior_snd_real_singleton _ _ hx l, Measure.comp_real_singleton]
@@ -333,7 +334,7 @@ theorem L0_rpow_toReal {α : ℝ} (hα : 0 < α) (l : Lex) (m : Msg) (w : World)
   · rw [← ENNReal.toReal_rpow, ENNReal.toReal_inv, ENNReal.toReal_natCast]
   · rw [ENNReal.zero_rpow_of_pos hα, ENNReal.toReal_zero, Real.zero_rpow hα.ne']
 
-/-- The speaker's share of a message: its weight, the literal listener's mass to the
+/-- The speaker's share of a message is its weight, the literal listener's mass to the
 rationality times the cost factor, over the weights of every message. -/
 theorem S1_real {α : ℝ} (hα : 0 < α) (c : ℝ) (l : Lex) (w : World) (m : Msg) :
     (S1 α c l w).real {m}
@@ -443,39 +444,41 @@ section Findings
 
 variable {c : ℝ}
 
-/-- The ignorance implicature: hearing *A or X*, the lexical-uncertainty listener ranks the
-uncertain state above the first atom and that above the second. -/
+/-- Hearing *A or X*, the lexical-uncertainty listener ranks the uncertain state above the first
+atom and that above the second, the ignorance implicature. -/
 theorem l1_uncertainty (hc : 0 ≤ c) :
     (L1 2 c .AorX).fst.real {.w₂} < (L1 2 c .AorX).fst.real {.w₁} ∧
       (L1 2 c .AorX).fst.real {.w₁} < (L1 2 c .AorX).fst.real {.w₁₂} := by
   have hκ' := Real.exp_pos (-c)
   have hκ1' : Real.exp (-c) ≤ 1 := Real.exp_le_one_iff.2 (neg_nonpos.2 hc)
   simp +decide only [L1_fst_real_lt_iff two_pos, Lex.sum_univ, S1_real two_pos,
-    Msg.sum_univ, l0r, costFactor, cost, neg_zero, Real.exp_zero, card_sem, semCard, ↓reduceIte, Real.rpow_two, Nat.cast_ofNat,
-    Nat.cast_one, inv_one, one_pow, mul_one, zero_pow, zero_mul, add_zero, zero_add, zero_div]
+    Msg.sum_univ, l0r, costFactor, cost, neg_zero, Real.exp_zero, card_sem, semCard, ↓reduceIte,
+    Real.rpow_two, Nat.cast_ofNat, Nat.cast_one, inv_one, one_pow, mul_one, zero_pow, zero_mul,
+    add_zero, zero_add, zero_div]
   generalize Real.exp (-c) = κ at hκ' hκ1' ⊢
   constructor <;> field_simp <;> ring_nf
   · linarith [pow_pos hκ' 2, pow_pos hκ' 3]
   · linarith [bern hκ'.le hκ1' 4 0, bern hκ'.le hκ1' 3 1, bern hκ'.le hκ1' 2 2,
       bern hκ'.le hκ1' 1 3, bern hκ'.le hκ1' 0 4]
 
-/-- The Hurford rescue: hearing *A or X*, the listener ranks the exclusivized lexicon above the
-base lexicon and that above the synonym lexicon. -/
+/-- Hearing *A or X*, the listener ranks the exclusivized lexicon above the base lexicon and
+that above the synonym lexicon, the Hurford rescue. -/
 theorem l1_lexicon (hc : 0 ≤ c) :
     (L1 2 c .AorX).snd.real {.syn} < (L1 2 c .AorX).snd.real {.base} ∧
       (L1 2 c .AorX).snd.real {.base} < (L1 2 c .AorX).snd.real {.excl} := by
   have hκ' := Real.exp_pos (-c)
   have hκ1' : Real.exp (-c) ≤ 1 := Real.exp_le_one_iff.2 (neg_nonpos.2 hc)
   simp +decide only [L1_snd_real_lt_iff two_pos, World.sum_univ, S1_real two_pos,
-    Msg.sum_univ, l0r, costFactor, cost, neg_zero, Real.exp_zero, card_sem, semCard, ↓reduceIte, Real.rpow_two, Nat.cast_ofNat,
-    Nat.cast_one, inv_one, one_pow, mul_one, zero_pow, zero_mul, add_zero, zero_add, zero_div]
+    Msg.sum_univ, l0r, costFactor, cost, neg_zero, Real.exp_zero, card_sem, semCard, ↓reduceIte,
+    Real.rpow_two, Nat.cast_ofNat, Nat.cast_one, inv_one, one_pow, mul_one, zero_pow, zero_mul,
+    add_zero, zero_add, zero_div]
   generalize Real.exp (-c) = κ at hκ' hκ1' ⊢
   constructor <;> field_simp <;> ring_nf
   · linarith [bern hκ'.le hκ1' 3 0, bern hκ'.le hκ1' 2 1, bern hκ'.le hκ1' 1 2,
       bern hκ'.le hκ1' 0 3]
   · linarith [pow_pos hκ' 2, pow_pos hκ' 3]
 
-/-- The exclusivizing speaker uses the disjunction exactly when uncertain: at the uncertain
+/-- The exclusivizing speaker uses the disjunction exactly when uncertain. At the uncertain
 state it beats both bare disjuncts, while knowing the first atom the bare *A* wins. -/
 theorem s1_disjunction_iff_uncertain (hc : 0 ≤ c) :
     (S1 2 c .excl .w₁₂).real {.A} < (S1 2 c .excl .w₁₂).real {.AorX} ∧
@@ -483,49 +486,52 @@ theorem s1_disjunction_iff_uncertain (hc : 0 ≤ c) :
       (S1 2 c .excl .w₁).real {.AorX} < (S1 2 c .excl .w₁).real {.A} := by
   have hκ' := Real.exp_pos (-c)
   have hκ1' : Real.exp (-c) ≤ 1 := Real.exp_le_one_iff.2 (neg_nonpos.2 hc)
-  simp +decide only [ S1_real two_pos, Msg.sum_univ, l0r, costFactor, cost, neg_zero, Real.exp_zero, card_sem,
-    semCard, ↓reduceIte, Real.rpow_two, Nat.cast_ofNat, Nat.cast_one, inv_one, one_pow, mul_one,
-    zero_pow, zero_mul, add_zero, zero_add, zero_div]
+  simp +decide only [S1_real two_pos, Msg.sum_univ, l0r, costFactor, cost, neg_zero,
+    Real.exp_zero, card_sem, semCard, ↓reduceIte, Real.rpow_two, Nat.cast_ofNat, Nat.cast_one,
+    inv_one, one_pow, mul_one, zero_pow, zero_mul, add_zero, zero_add, zero_div]
   refine ⟨by positivity, by positivity, ?_⟩
   generalize Real.exp (-c) = κ at hκ' hκ1' ⊢
   field_simp
   ring_nf
   linarith
 
-/-- The expertise component: at a disjunction cost of at least `log 2`, *A or X* signals the
-exclusivized lexicon more strongly than the bare *A* does, which every lexicon reads alike. -/
+/-- At a disjunction cost of at least `log 2`, *A or X* signals the exclusivized lexicon more
+strongly than the bare *A* does, which every lexicon reads alike. -/
 theorem AorX_signals_excl (hc : Real.log 2 ≤ c) :
     (L1 2 c .A).snd.real {.excl} < (L1 2 c .AorX).snd.real {.excl} := by
   have hκ' := Real.exp_pos (-c)
   have hκ2' : Real.exp (-c) ≤ 1 / 2 :=
-    (Real.exp_le_exp.2 (neg_le_neg hc)).trans_eq (by rw [Real.exp_neg, Real.exp_log two_pos, one_div])
+    (Real.exp_le_exp.2 (neg_le_neg hc)).trans_eq
+      (by rw [Real.exp_neg, Real.exp_log two_pos, one_div])
   simp +decide only [L1_snd_real two_pos, Fintype.sum_prod_type, World.sum_univ,
-    Lex.sum_univ, S1_real two_pos, Msg.sum_univ, l0r, costFactor, cost, neg_zero, Real.exp_zero, card_sem,
-    semCard, ↓reduceIte, Real.rpow_two, Nat.cast_ofNat, Nat.cast_one, inv_one, one_pow, mul_one,
-    zero_pow, zero_mul, add_zero, zero_add, zero_div]
+    Lex.sum_univ, S1_real two_pos, Msg.sum_univ, l0r, costFactor, cost, neg_zero, Real.exp_zero,
+    card_sem, semCard, ↓reduceIte, Real.rpow_two, Nat.cast_ofNat, Nat.cast_one, inv_one, one_pow,
+    mul_one, zero_pow, zero_mul, add_zero, zero_add, zero_div]
   generalize Real.exp (-c) = κ at hκ' hκ2' ⊢
   field_simp
   ring_nf
   linarith [bern hκ'.le hκ2' 6 0, bern hκ'.le hκ2' 5 1, bern hκ'.le hκ2' 4 2, bern hκ'.le hκ2' 3 3,
     bern hκ'.le hκ2' 2 4, bern hκ'.le hκ2' 1 5, bern hκ'.le hκ2' 0 6]
 
-/-- The paper's production claim for the context: at a disjunction cost between `log 10` and
-0, the expertise speaker who observes the uncertain state with the exclusivized lexicon prefers
-*A or X* to every other message. -/
+/-- At a disjunction cost between 0 and `log 10`, the expertise speaker who observes the
+uncertain state with the exclusivized lexicon prefers *A or X* to every other message, the
+paper's production claim for the context. -/
 theorem s2_prefers_disjunction (hc0 : 0 ≤ c) (hc10 : c ≤ Real.log 10) (m : Msg) (hm : m ≠ .AorX) :
     (S2 2 1 c (.w₁₂, .excl)).real {m} < (S2 2 1 c (.w₁₂, .excl)).real {.AorX} := by
   have hκ' := Real.exp_pos (-c)
   have hκ10' : 1 / 10 ≤ Real.exp (-c) :=
-    (Real.exp_le_exp.2 (neg_le_neg hc10)).trans_eq' (by rw [Real.exp_neg, Real.exp_log (by norm_num), one_div])
+    (Real.exp_le_exp.2 (neg_le_neg hc10)).trans_eq'
+      (by rw [Real.exp_neg, Real.exp_log (by norm_num), one_div])
   have hκ1' : Real.exp (-c) ≤ 1 := Real.exp_le_one_iff.2 (neg_nonpos.2 hc0)
   rw [S2_real_lt_iff two_pos zero_le_one]
   cases m
   case AorX => exact absurd rfl hm
   all_goals
     simp +decide only [l1_real two_pos, L1_snd_real two_pos, Fintype.sum_prod_type,
-      World.sum_univ, Lex.sum_univ, Real.rpow_one, S1_real two_pos, Msg.sum_univ, l0r, costFactor, cost, neg_zero, Real.exp_zero,
-      card_sem, semCard, ↓reduceIte, Real.rpow_two, Nat.cast_ofNat, Nat.cast_one, inv_one,
-      one_pow, mul_one, zero_pow, zero_mul, add_zero, zero_add, zero_div]
+      World.sum_univ, Lex.sum_univ, Real.rpow_one, S1_real two_pos, Msg.sum_univ, l0r,
+      costFactor, cost, neg_zero, Real.exp_zero, card_sem, semCard, ↓reduceIte, Real.rpow_two,
+      Nat.cast_ofNat, Nat.cast_one, inv_one, one_pow, mul_one, zero_pow, zero_mul, add_zero,
+      zero_add, zero_div]
   case A => positivity
   case B => positivity
   case X => positivity

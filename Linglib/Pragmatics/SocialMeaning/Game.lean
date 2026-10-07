@@ -6,16 +6,16 @@ public import Linglib.Pragmatics.SocialMeaning.Persona
 /-!
 # Social meaning games
 
-This file instantiates the Rational Speech Act pipeline on personae, the social meaning games
-of [burnett-2019] and [burnett-2023]. A listener holds a prior over the personae of an
+This file instantiates the Rational Speech Act pipeline on personae, Burnett's social meaning
+games. A listener holds a prior over the personae of an
 incompatibility graph, and the meaning of a message is its indexation, one on the personae that
 meet its Eckert–Montague field and zero elsewhere. The literal listener conditions the prior on
 that field, the speaker is the softmax of informativity, and the pragmatic listener inverts the
 speaker, so a persona two messages meet produces the one whose field carries less prior mass
 more often, a persona only one message meets produces it with certainty, and hearing a message
-rules out the personae it does not meet. [henderson-mccready-2024] replace the indexation by a
+rules out the personae it does not meet. Henderson and McCready replace the indexation by a
 listener's graded likelihood of the message given the persona, of which the indexation is the
-lexicalized special case; the review [burnett-2026] takes this family of models as the current
+lexicalized special case, and Burnett's review takes this family of models as the current
 formalization of social meaning as reasoning.
 
 ## Main definitions

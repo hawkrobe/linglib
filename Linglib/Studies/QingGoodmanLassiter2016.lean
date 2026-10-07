@@ -6,25 +6,24 @@ public import Linglib.Semantics.Aspect.Phasal
 /-!
 # Qing, Goodman, and Lassiter (2016): A Rational Speech-Act Model of Projective Content
 
-This file formalizes [qing-goodman-lassiter-2016]'s account of the projective content of
-change-of-state verbs under negation: a listener who jointly infers the world and the context
-set the speaker took for granted, in the rational speech act framework of
-[frank-goodman-2012]. The worlds record whether John smoked and whether he smokes, the
-utterances are the six of Table 1 with their negations and silence, priced by content words
-(1), and the literal listener within a context set answers the question under discussion (5);
-the speaker best-responds within its context set (6) and the listener inverts jointly (7). The
-paper's four models are the standard model, which puts the three worlds compatible with *John
-did not stop smoking* on a par at every rationality (`standard_uniform`), the context-set
-listener with a uniform prior under the maximal question, where the world in which John still
-smokes with the context set that he smoked ties with the world in which he never smoked with
-the context set that he does not smoke (`uniform_tie`) and the changed world with the *change*
-context set trails (`uniform_change_lt`), and the listener under the question whether John
-smokes now, where the tie is broken: a context set that already settles the question, having
-made silence maximally informative, cannot explain the utterance (`now_settled_lt`), the
-*change* context set is dispreferred (`now_change_lt`), and the universe is outrun at every
-rationality of at least one (`now_universe_lt`), so that the pair of the world in which John
-still smokes with the context set that he smoked is the mode against each competitor the paper
-discusses, with the common-ground prior of (8) as one instance (`now_cg_mode`).
+This file formalizes Qing, Goodman and Lassiter's account of the projective content of
+change-of-state verbs under negation: a listener who jointly infers the world and the context set
+the speaker took for granted, in the rational speech act framework of Frank and Goodman. The worlds
+record whether John smoked and whether he smokes, the utterances are the six of Table 1 with their
+negations and silence, priced by content words (1), and the literal listener within a context set
+answers the question under discussion (5); the speaker best-responds within its context set (6) and
+the listener inverts jointly (7). The paper's four models are the standard model, which puts the
+three worlds compatible with *John did not stop smoking* on a par at every rationality
+(`standard_uniform`), the context-set listener with a uniform prior under the maximal question,
+where the world in which John still smokes with the context set that he smoked ties with the world
+in which he never smoked with the context set that he does not smoke (`uniform_tie`) and the changed
+world with the *change* context set trails (`uniform_change_lt`), and the listener under the
+question whether John smokes now, where the tie is broken: a context set that already settles the
+question, having made silence maximally informative, cannot explain the utterance
+(`now_settled_lt`), the *change* context set is dispreferred (`now_change_lt`), and the universe is
+outrun at every rationality of at least one (`now_universe_lt`), so that the pair of the world in
+which John still smokes with the context set that he smoked is the mode against each competitor the
+paper discusses, with the common-ground prior of (8) as one instance (`now_cg_mode`).
 
 ## Implementation notes
 
@@ -55,7 +54,7 @@ namespace QingGoodmanLassiter2016
 
 /-! ### Worlds, utterances, and questions -/
 
-/-- A world: whether John smoked in the past and whether he smokes now. -/
+/-- A world records whether John smoked in the past and whether he smokes now. -/
 inductive World
   | TT | TF | FT | FF
   deriving DecidableEq, Fintype, Repr, Inhabited
@@ -98,7 +97,7 @@ instance : ∀ p : Positive, DecidablePred (· ∈ p.ext)
   | .started, _ => inferInstanceAs (Decidable (Aspect.Phasal.Transition _ _ _))
   | .never, _ => inferInstanceAs (Decidable (¬ _ ∧ ¬ _))
 
-/-- An utterance: silence, or a positive utterance affirmed or negated. -/
+/-- An utterance is silence or a positive utterance, affirmed or negated. -/
 inductive Utterance
   | silence
   | say (p : Positive) (negated : Bool)
@@ -109,7 +108,7 @@ instance : DiscreteMeasurableSpace Utterance := ⟨λ _ => trivial⟩
 instance : MeasurableSingletonClass Utterance :=
   DiscreteMeasurableSpace.toMeasurableSingletonClass
 
-/-- The denotation: silence is true everywhere, and a negation denotes the complement. -/
+/-- Silence is true everywhere, and a negation denotes the complement. -/
 def Utterance.sem : Utterance → Set World
   | .silence => Set.univ
   | .say p false => p.ext
@@ -123,13 +122,14 @@ instance : ∀ u : Utterance, DecidablePred (· ∈ u.sem)
 /-- *John did not stop smoking*. -/
 abbrev notStopped : Utterance := .say .stopped true
 
-/-- The utterance prior (1), a half per content word: negation and auxiliaries are free. -/
+/-- The utterance prior (1) halves with each content word, negation and auxiliaries being
+free. -/
 noncomputable def Utterance.prior : Utterance → ℝ≥0∞
   | .silence => 1
   | .say .smokes _ | .say .smoked _ => 1 / 2
   | .say _ _ => 1 / 4
 
-/-- Questions under discussion: which world, and whether John smokes now. -/
+/-- The question under discussion asks which world it is, or whether John smokes now. -/
 inductive QUD
   | max | now
   deriving DecidableEq, Repr
@@ -162,16 +162,16 @@ def change : Finset World := {.TF, .FT}
 
 /-! ### The literal listener within a context set (5) -/
 
-/-- The literal listener within a context set under a question: counting measure on the
-context set, conditioned on the utterance and projected onto the question's cells. -/
+/-- The literal listener within a context set under a question conditions counting measure on
+the context set on the utterance and projects it onto the question's cells. -/
 noncomputable def L0 (C : Finset World) (q : QUD) : Kernel Utterance World :=
   projListener QUD.cell (literalListener (Measure.count.restrict ↑C) λ u => u.sem.indicator 1) q
 
 instance (C : Finset World) (q : QUD) : IsFiniteKernel (L0 C q) :=
   inferInstanceAs (IsFiniteKernel (projListener _ _ _))
 
-/-- The counts behind the literal listener: worlds of the context set where the utterance is
-true and the question's answer is the world's, over those where the utterance is true. -/
+/-- The literal listener counts the worlds of the context set where the utterance is true and
+the question's answer is the world's, over those where the utterance is true. -/
 def l0 (C : Finset World) (q : QUD) (u : Utterance) (w : World) : ℕ × ℕ :=
   (((C.filter (· ∈ u.sem)).filter (· ∈ q.cell w)).card, (C.filter (· ∈ u.sem)).card)
 
@@ -194,8 +194,8 @@ theorem prior_ne_top (u : Utterance) : u.prior ≠ ∞ := by
   rcases u with _ | ⟨p, b⟩ <;> try cases p
   all_goals simp [Utterance.prior]
 
-/-- The cost of an utterance at rationality `α`: (3) weighs the speaker's choice by the utterance
-prior outside the rationality, which the substrate speaker reads as the cost `-log Pr(u) / α`. -/
+/-- An utterance costs `-log Pr(u) / α` at rationality `α`, since (3) weighs the speaker's
+choice by the utterance prior outside the rationality. -/
 noncomputable def cost (α : ℝ) (u : Utterance) : ℝ := -Real.log u.prior.toReal / α
 
 theorem exp_neg_cost {α : ℝ} (hα : α ≠ 0) (u : Utterance) :
@@ -205,8 +205,8 @@ theorem exp_neg_cost {α : ℝ} (hα : α ≠ 0) (u : Utterance) :
 
 /-! ### Speaker and listeners (6), (7) -/
 
-/-- The speaker within a context set (6): the informativity speaker over the question-projected
-literal listener, weighted by the utterance prior. -/
+/-- The speaker within a context set (6) is the informativity speaker over the
+question-projected literal listener, weighted by the utterance prior. -/
 noncomputable def speaker (q : QUD) (C : Finset World) (α : ℝ) : Kernel World Utterance :=
   RSA.speaker α (cost α) (L0 C q)
 
@@ -225,8 +225,8 @@ instance (π : Finset World → ℕ) : IsFiniteMeasure (ctxPrior π) :=
       tsum_fintype]
     exact ENNReal.sum_lt_top.mpr λ C _ => ENNReal.natCast_lt_top _⟩
 
-/-- The pair prior: a world with a context set containing it, weighted by the context prior;
-the paper's uniform world prior cancels. -/
+/-- The pair prior weighs a world with a context set containing it by the context prior; the
+paper's uniform world prior cancels. -/
 noncomputable def pairPrior (π : Finset World → ℕ) : Measure (World × Finset World) :=
   (Measure.count.prod (ctxPrior π)).restrict {p | p.1 ∈ p.2}
 
@@ -244,14 +244,14 @@ noncomputable def pairPrior (π : Finset World → ℕ) : Measure (World × Fins
 instance (π : Finset World → ℕ) : IsFiniteMeasure (pairPrior π) :=
   inferInstanceAs (IsFiniteMeasure ((Measure.count.prod (ctxPrior π)).restrict _))
 
-/-- The joint listener (7): the family listener over context sets. -/
+/-- The joint listener (7) is the family listener over context sets. -/
 noncomputable def listener (q : QUD) (π : Finset World → ℕ) (α : ℝ) :
     Kernel Utterance (World × Finset World) :=
   familyListener (λ C => L0 C q) α (cost α) (pairPrior π)
 
-/-- The common-ground prior (8) with the paper's observation probability `0.4` and `5%` noise,
-scaled by `14700`: the universe, the four single observations, the four pairs, and the six
-context sets no observations derive. -/
+/-- The common-ground prior (8) takes the paper's observation probability `0.4` and `5%`
+noise, scaled by `14700`, over the universe, the four single observations, the four pairs, and
+the six context sets no observations derive. -/
 def cgWeight (C : Finset World) : ℕ :=
   if C.card = 4 then 2614
   else if C = pastT ∨ C = nowT ∨ C = nowF ∨ C = {.FT, .FF} then 1759
@@ -667,8 +667,8 @@ private theorem listener_eq (q : QUD) (π : Finset World → ℕ) (hπ : π past
 
 /-! ### The standard model (Figure 1a) -/
 
-/-- The standard listener: the pragmatic listener over the universe with a uniform world prior,
-the first column of Table 2. -/
+/-- The standard listener is the pragmatic listener over the universe with a uniform world
+prior, the first column of Table 2. -/
 noncomputable def standard (α : ℝ) : Kernel Utterance World :=
   pragmaticListener α (cost α) (L0 Finset.univ .max) (uniformOn Set.univ)
 
@@ -678,7 +678,8 @@ private theorem speaker_univ_ne_zero {α : ℝ} (hα : 0 < α) :
     (by rw [L0_apply, l0_I]; dsimp only [tblI]; simp)
 
 /-- The standard model puts the three worlds compatible with *did not stop smoking* on a par at
-every rationality: the utterance is equally under-informative at each, so nothing projects. -/
+every rationality, since the utterance is equally under-informative at each, so nothing
+projects. -/
 theorem standard_uniform {α : ℝ} (hα : 0 < α) :
     standard α notStopped {.TT} = standard α notStopped {.FT} ∧
       standard α notStopped {.FT} = standard α notStopped {.FF} := by
@@ -699,20 +700,21 @@ theorem standard_uniform {α : ℝ} (hα : 0 < α) :
 
 /-- With every context set equally likely, the world in which John still smokes taken with the
 context set that he smoked ties with the world in which he never smoked taken with the context
-set that he does not smoke: *did not stop smoking* identifies the world within either. -/
+set that he does not smoke, since *did not stop smoking* identifies the world within either. -/
 theorem uniform_tie {α : ℝ} (hα : 0 < α) :
     listener .max (λ _ => 1) α notStopped {(.TT, pastT)}
       = listener .max (λ _ => 1) α notStopped {(.FF, nowF)} :=
   listener_eq .max _ one_ne_zero hα _ _ _ _
-    (by rw [pairPrior_singleton, pairPrior_singleton, ite_eq_left (by decide), ite_eq_left (by decide)])
+    (by rw [pairPrior_singleton, pairPrior_singleton, ite_eq_left (by decide),
+      ite_eq_left (by decide)])
     ((ENNReal.toReal_eq_toReal_iff' (measure_ne_top _ _) (measure_ne_top _ _)).1
       ((share_F hα).trans (share_G hα).symm))
 
 private theorem half_rpow_lt_one {α : ℝ} (hα : 0 < α) : (1 / 2 : ℝ) ^ α < 1 :=
   Real.rpow_lt_one (by norm_num) (by norm_num) hα
 
-/-- The changed world with the *change* context set trails: *did not stop smoking* identifies it
-there too, but against more informative competitors. -/
+/-- The changed world with the *change* context set trails, since *did not stop smoking*
+identifies it there too, but against more informative competitors. -/
 theorem uniform_change_lt {α : ℝ} (hα : 0 < α) :
     (listener .max (λ _ => 1) α notStopped).real {(.FT, change)}
       < (listener .max (λ _ => 1) α notStopped).real {(.TT, pastT)} := by
@@ -727,7 +729,7 @@ theorem uniform_change_lt {α : ℝ} (hα : 0 < α) :
 /-! ### The question whether John smokes now (Figures 1d, 3) -/
 
 /-- A context set that already settles the question, that he does not smoke or that he does,
-has made silence maximally informative and cannot explain the utterance: either loses to the
+has made silence maximally informative and cannot explain the utterance. Either loses to the
 world in which he still smokes with the context set that he smoked, under any prior weighting
 that context set at least as much. -/
 theorem now_settled_lt (π : Finset World → ℕ) (hπ : π pastT ≠ 0) (hF : π nowF ≤ π pastT)
@@ -764,8 +766,8 @@ theorem now_change_lt (π : Finset World → ℕ) (hπ : π pastT ≠ 0) (h : π
   nlinarith
 
 /-- The universe is outrun at every rationality of at least one under any prior weighting it
-under three halves of the context set that John smoked: there the utterance leaves a third of
-the answer open. -/
+under three halves of the context set that John smoked, since there the utterance leaves a third
+of the answer open. -/
 theorem now_universe_lt (π : Finset World → ℕ) (hπ : π pastT ≠ 0)
     (h : 2 * π Finset.univ ≤ 3 * π pastT) {α : ℝ} (hα : 1 ≤ α) :
     (listener .now π α notStopped).real {(.TT, Finset.univ)}
@@ -785,8 +787,8 @@ theorem now_universe_lt (π : Finset World → ℕ) (hπ : π pastT ≠ 0)
     mul_div_assoc', mul_one_div, div_lt_div_iff₀ (by positivity) (by positivity)]
   nlinarith
 
-/-- The common-ground prior (8) meets the hypotheses: the observed context sets outweigh
-*change*, and the universe weighs under three halves of a single observation. -/
+/-- The common-ground prior (8) meets the hypotheses, since the observed context sets outweigh
+*change* and the universe weighs under three halves of a single observation. -/
 theorem cgWeight_facts :
     cgWeight pastT ≠ 0 ∧ cgWeight nowF ≤ cgWeight pastT ∧ cgWeight nowT ≤ cgWeight pastT ∧
       cgWeight change ≤ cgWeight pastT ∧ 2 * cgWeight Finset.univ ≤ 3 * cgWeight pastT := by
@@ -794,7 +796,7 @@ theorem cgWeight_facts :
 
 /-- Under the common-ground prior and the question whether John smokes now, the world in which
 he still smokes with the context set that he smoked beats every competitor the paper discusses
-at every rationality of at least one: projection as context-set inference (Figure 3). -/
+at every rationality of at least one. Projection is context-set inference (Figure 3). -/
 theorem now_cg_mode {α : ℝ} (hα : 1 ≤ α) :
     (listener .now cgWeight α notStopped).real {(.FF, nowF)}
         < (listener .now cgWeight α notStopped).real {(.TT, pastT)} ∧
