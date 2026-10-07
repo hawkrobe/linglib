@@ -132,9 +132,9 @@ abbrev attended : Fin 5 → Prop := (3 ≤ ·)
 the empty set lies below every rescuer, and without any exclusion it is false. -/
 theorem not_isExceptionSet_most (C : Fin 5 → Prop) : ¬ IsExceptionSet most ⊤ C attended := by
   rintro ⟨h1, h2⟩
-  have hTJ : most (⊤ \ fun x : Fin 5 ↦ x = 0 ∨ x = 1) attended := (mostOn_univ _ _).1 (by decide)
-  have hTH : most (⊤ \ fun x : Fin 5 ↦ x = 0 ∨ x = 2) attended := (mostOn_univ _ _).1 (by decide)
-  have hJH : most (⊤ \ fun x : Fin 5 ↦ x = 1 ∨ x = 2) attended := (mostOn_univ _ _).1 (by decide)
+  have hTJ : most (⊤ \ fun x : Fin 5 ↦ x = 0 ∨ x = 1) attended := by decide
+  have hTH : most (⊤ \ fun x : Fin 5 ↦ x = 0 ∨ x = 2) attended := by decide
+  have hJH : most (⊤ \ fun x : Fin 5 ↦ x = 1 ∨ x = 2) attended := by decide
   have hC : C = ⊥ := le_bot_iff.1 fun x hx ↦ by
     have h01 := h2 hTJ x hx
     have h02 := h2 hTH x hx
@@ -144,17 +144,17 @@ theorem not_isExceptionSet_most (C : Fin 5 → Prop) : ¬ IsExceptionSet most �
   subst hC
   have h1' : most (⊤ \ (⊥ : Fin 5 → Prop)) attended := h1
   rw [sdiff_bot] at h1'
-  exact absurd ((mostOn_univ _ _).2 h1') (by decide)
+  exact absurd h1' (by decide)
 
 theorem not_guaranteesException_most : ¬ GuaranteesException (most : GQ (Fin 5)) := fun h ↦
-  let ⟨C, hC⟩ := h ⊤ attended fun hm ↦ absurd ((mostOn_univ _ _).2 hm) (by decide)
+  let ⟨C, hC⟩ := h ⊤ attended fun hm ↦ absurd hm (by decide)
   not_isExceptionSet_most C hC
 
 /-- In the paper's limiting case, with two students John and Harry of whom only Harry
 attended, *most* has the exception set John. -/
 theorem isExceptionSet_most_two :
     IsExceptionSet most ⊤ (· = (0 : Fin 2)) (· = (1 : Fin 2)) := by
-  refine ⟨(mostOn_univ _ _).1 (by decide), fun S hS x hx ↦ ?_⟩
+  refine ⟨by decide, fun S hS x hx ↦ ?_⟩
   obtain rfl : x = 0 := hx
   have hS' : most (fun x : Fin 2 ↦ True ∧ ¬ S x) (· = 1) := hS
   by_contra h0
@@ -162,11 +162,11 @@ theorem isExceptionSet_most_two :
   · have e : (fun x : Fin 2 ↦ True ∧ ¬ S x) = (· = 0) :=
       funext fun x ↦ propext (by fin_cases x <;> simp [h0, h1])
     rw [e] at hS'
-    exact absurd ((mostOn_univ _ _).2 hS') (by decide)
+    exact absurd hS' (by decide)
   · have e : (fun x : Fin 2 ↦ True ∧ ¬ S x) = fun _ ↦ True :=
       funext fun x ↦ propext (by fin_cases x <;> simp [h0, h1])
     rw [e] at hS'
-    exact absurd ((mostOn_univ _ _).2 hS') (by decide)
+    exact absurd hS' (by decide)
 
 /-! ### What *but* operates on (§1.8) -/
 
@@ -184,7 +184,7 @@ theorem not_exists_nounModifier (hC : C ≠ ⊥) :
 *but*-phrase does, so the free exceptive occurs with *most* (34c). -/
 theorem restrictive_most :
     Restrictive most ⊤ (fun x : Fin 5 ↦ x = 0 ∨ x = 1) attended :=
-  ⟨(mostOn_univ _ _).1 (by decide), fun h ↦ absurd ((mostOn_univ _ _).2 h) (by decide)⟩
+  ⟨by decide, fun h ↦ absurd h (by decide)⟩
 
 /-- With *every* the *but* reading is the pragmatic strengthening of the free exceptive to an
 exception set that contains only exceptions (§2.3). -/

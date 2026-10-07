@@ -104,7 +104,7 @@ theorem exh_notEvery {A : α → Prop} {x y : α} (hx : A x) (hy : A y) (hxy : x
 downward entailing in its scope. -/
 theorem not_scopeDownwardMono_exh {Q : GQ α} {C : Set (GQ α)} {A P : α → Prop}
     (hP : exh Q C A P) (h : ¬ exh Q C A (fun _ ↦ False)) : ¬ ScopeAntitone (exh Q C) :=
-  fun hde => h (hde A (show ((fun _ : α => False) : α → Prop) ≤ P from fun _ hf => hf.elim) hP)
+  fun hde ↦ h (hde A (show ((fun _ : α ↦ False) : α → Prop) ≤ P from fun _ hf ↦ hf.elim) hP)
 
 /-! ### The licensing principles -/
 
@@ -138,12 +138,12 @@ theorem some_not_strong [Nontrivial α] :
 theorem atMostFive_not_strong :
     ¬ ScopeAntitone (exh (atMost 5 : GQ (Fin 6)) {atMost 4}) := by
   have h4 : ¬ atMost 4 (fun _ : Fin 6 ↦ True) (· ≠ 0) := by
-    rw [atMost_iff]; decide
+    decide
   refine not_scopeDownwardMono_exh (A := fun _ ↦ True) (P := (· ≠ 0))
-    (mem_exh.2 ⟨by rw [atMost_iff]; decide,
+    (mem_exh.2 ⟨by decide,
       fun Q' hQ' h ↦ (h4 (Set.mem_singleton_iff.mp hQ' ▸ h)).elim⟩)
-    (exh_not_of_not_le (Set.mem_singleton _) (by rw [atMost_iff]; decide)
-      fun hle ↦ h4 (hle (· ≠ 0) (by rw [atMost_iff]; decide)))
+    (exh_not_of_not_le (Set.mem_singleton _) (by decide)
+      fun hle ↦ h4 (hle (· ≠ 0) (by decide)))
 
 /-- The paper's licensers. -/
 inductive Licenser
@@ -212,9 +212,9 @@ theorem licensed_weak_iff (L : Licenser) : Licensed L .weak ↔ L ≠ .some := b
   | atMostFive => exact iff_of_true (fun {_} ↦ scopeAntitone_atMost 5) nofun
   | some =>
     refine iff_of_false (fun h ↦ ?_) (· rfl)
-    exact (h (α := Bool) (fun _ => True)
-      (show ((fun _ : Bool => False) : Bool → Prop) ≤ fun _ => True from fun _ hf => hf.elim)
-      ⟨true, trivial, trivial⟩).elim fun _ h => h.2
+    exact (h (α := Bool) (fun _ ↦ True)
+      (show ((fun _ : Bool ↦ False) : Bool → Prop) ≤ fun _ ↦ True from fun _ hf ↦ hf.elim)
+      ⟨true, trivial, trivial⟩).elim fun _ h ↦ h.2
   | only => exact iff_of_true isStrawsonDE_only nofun
   | conditional => exact iff_of_true Conditional.isStrawsonDE_horizonCounterfactual nofun
   | sorryThat => exact iff_of_true isStrawsonDE_regret nofun
@@ -241,35 +241,32 @@ theorem isIntolerant_of_isAntiAdditive {f : Set α → Prop} (h : IsAntiAdditive
   rw [Set.union_compl_self] at huniv
   exact hnt (Or.inl fun y ↦ h.antitone (Set.subset_univ y) huniv)
 
-open Classical in
 /-- Proportional *few* is Intolerant, since fewer than half in and fewer than half out is
 impossible. -/
-theorem few_isIntolerant [Fintype α] (A : α → Prop) : IsIntolerant (few A) := fun _ x ↦ by
+theorem few_isIntolerant (A : α → Prop) : IsIntolerant (few A) := fun _ x ↦ by
   by_contra hx
-  rw [not_or, not_not, not_not, few_iff, few_iff] at hx
+  rw [not_or, not_not, not_not, few_apply, few_apply] at hx
   obtain ⟨h₁, h₂⟩ := hx
-  rw [count_congr_iff (P := fun z ↦ A z ∧ xᶜ z) (Q := fun z ↦ A z ∧ ¬ x z) fun _ ↦ Iff.rfl,
-    count_congr_iff (P := fun z ↦ A z ∧ ¬ xᶜ z) (Q := fun z ↦ A z ∧ x z)
-      fun _ ↦ and_congr_right' not_not] at h₂
-  omega
+  have e : {z | A z ∧ ¬ xᶜ z} = {z | A z ∧ x z} := Set.ext fun _ ↦ and_congr_right' not_not
+  rw [e] at h₂
+  exact absurd (h₁.trans h₂) (lt_irrefl _)
 
 /-- Cardinal *fewer than four* is not Intolerant, since with six elements three are in and three
 out. -/
 theorem atMostThree_not_isIntolerant :
     ¬ IsIntolerant (atMost 3 (fun _ : Fin 6 ↦ True)) := fun h ↦ by
-  let _ : DecidablePred fun z : Fin 6 ↦ True ∧ (fun x : Fin 6 ↦ x < 3)ᶜ z :=
-    fun z ↦ inferInstanceAs (Decidable (True ∧ ¬ z < 3))
+  let _ : DecidablePred (fun x : Fin 6 ↦ x < 3)ᶜ := fun z ↦ inferInstanceAs (Decidable (¬ z < 3))
   exact (h (fun ht ↦ ht.elim
-      (fun h ↦ absurd (atMost_iff.1 (h (fun _ ↦ True))) (by decide))
-      fun h ↦ h (fun _ ↦ False) (atMost_iff.2 (by decide))) (· < 3)).elim
-    (· (atMost_iff.2 (by decide))) (· (atMost_iff.2 (by decide)))
+      (fun h ↦ absurd (h (fun _ ↦ True)) (by decide))
+      fun h ↦ h (fun _ ↦ False) (by decide)) (· < 3)).elim
+    (· (by decide)) (· (by decide))
 
 /-- Proportional *few* is downward entailing and Intolerant but not anti-additive, so
 Intolerance is a proper intermediate between anti-additivity and downward entailment. -/
 theorem few_not_rightAntiAdditive : ¬ RightAntiAdditive (few : GQ (Fin 4)) := fun h ↦
   absurd ((h (fun _ ↦ True) (· = 0) (· = 1)).mpr
-      ⟨few_iff.mpr (by decide), few_iff.mpr (by decide)⟩)
-    (few_iff.not.mpr (by decide))
+      ⟨by decide, by decide⟩)
+    (by decide)
 
 /-! ### The paper's sentences -/
 

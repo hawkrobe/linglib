@@ -285,13 +285,10 @@ theorem thereSkeleton_atLeast_two_not_isLAnalytic :
     ¬ (thereSkeleton (atLeast 2 : GQ Bool)).IsLAnalytic := by
   rintro (h | h)
   · have ht := h fun _ _ ↦ False
-    simp only [thereSkeleton, atLeast, ge_iff_le] at ht
-    rw [count_eq_decidable] at ht
+    simp only [thereSkeleton] at ht
     exact absurd ht (by decide)
   · refine h (fun _ _ ↦ True) ?_
     show (atLeast 2 : GQ Bool) _ _
-    simp only [atLeast, ge_iff_le]
-    rw [count_eq_decidable]
     decide
 
 /-! ### But-exceptives (§3.3.2) -/

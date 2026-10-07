@@ -85,9 +85,75 @@ omit [Fintype W] in
 /-- The uniform measure on a subset of a finite set is absolutely continuous with respect to
 the uniform measure on the set. -/
 theorem uniformOn_absolutelyContinuous_of_subset {A B : Set W} (hB : B.Finite) (hAB : A ⊆ B) :
-    uniformOn A ≪ uniformOn B := λ s hs => by
+    uniformOn A ≪ uniformOn B := fun s hs ↦ by
   rw [uniformOn_eq_zero_iff hB] at hs
   rw [uniformOn_eq_zero_iff (hB.subset hAB)]
   exact Set.eq_empty_of_subset_empty (hs ▸ Set.inter_subset_inter_left s hAB)
+
+/-! ### Proportions of a finite set
+
+On a finite set `s` the uniform measure gives `t` the proportion `|s ∩ t| / |s|`, so a bound on the
+measure is a bound on `|s ∩ t|` scaled by `|s|`. -/
+
+section Finite
+
+variable {s t : Set W}
+
+omit [Fintype W] in
+/-- The uniform measure on a finite set gives a set the proportion of `s` lying in it. -/
+theorem uniformOn_apply_of_finite (hs : s.Finite) (t : Set W) :
+    uniformOn s t = (s ∩ t).ncard / s.ncard := by
+  rw [uniformOn, cond_apply hs.measurableSet, Measure.count_apply_finite _ hs,
+    Measure.count_apply_finite _ (hs.inter_of_left t), ← Set.ncard_eq_toFinset_card _ hs,
+    ← Set.ncard_eq_toFinset_card _ (hs.inter_of_left t), ENNReal.div_eq_inv_mul]
+
+omit [Fintype W] in
+/-- The uniform measure on a finset gives a predicate the proportion of the finset satisfying
+it. -/
+theorem uniformOn_finset_setOf (F : Finset W) (p : W → Prop) [DecidablePred p] :
+    uniformOn (F : Set W) {x | p x} = (F.filter p).card / F.card := by
+  have : (F : Set W) ∩ {x | p x} = ↑(F.filter p) := by rw [Finset.coe_filter]; rfl
+  rw [uniformOn_apply_of_finite F.finite_toSet, this, Set.ncard_coe_finset, Set.ncard_coe_finset]
+
+omit [MeasurableSpace W] [MeasurableSingletonClass W] [Fintype W] in
+private theorem ncard_ne_zero_of_nonempty (hs : s.Finite) (hne : s.Nonempty) :
+    (s.ncard : ℝ≥0∞) ≠ 0 := by
+  simpa using ((Set.ncard_pos hs).2 hne).ne'
+
+omit [Fintype W] in
+theorem le_uniformOn_iff (hs : s.Finite) (hne : s.Nonempty) {θ : ℝ≥0∞} :
+    θ ≤ uniformOn s t ↔ θ * s.ncard ≤ (s ∩ t).ncard := by
+  rw [uniformOn_apply_of_finite hs, ENNReal.le_div_iff_mul_le
+    (.inl (ncard_ne_zero_of_nonempty hs hne)) (.inl (by simp))]
+
+omit [Fintype W] in
+theorem lt_uniformOn_iff (hs : s.Finite) (hne : s.Nonempty) {θ : ℝ≥0∞} :
+    θ < uniformOn s t ↔ θ * s.ncard < (s ∩ t).ncard := by
+  rw [uniformOn_apply_of_finite hs, ENNReal.lt_div_iff_mul_lt
+    (.inl (ncard_ne_zero_of_nonempty hs hne)) (.inl (by simp))]
+
+omit [Fintype W] in
+theorem uniformOn_le_iff (hs : s.Finite) (hne : s.Nonempty) {θ : ℝ≥0∞} :
+    uniformOn s t ≤ θ ↔ (s ∩ t).ncard ≤ θ * s.ncard := by
+  rw [uniformOn_apply_of_finite hs, ENNReal.div_le_iff (ncard_ne_zero_of_nonempty hs hne)
+    (by simp)]
+
+omit [Fintype W] in
+/-- The uniform measure on a nonempty finite set gives `t` the measure `1` exactly when `t`
+contains it. -/
+theorem uniformOn_eq_one_iff (hs : s.Finite) (hne : s.Nonempty) : uniformOn s t = 1 ↔ s ⊆ t :=
+  ⟨pred_true_of_uniformOn_eq_one, uniformOn_eq_one_of hs hne⟩
+
+omit [Fintype W] in
+/-- The uniform measure on a nonempty finite set gives `t` the measure `1 / |s|` exactly when
+one member of `s` lies in `t`. -/
+theorem uniformOn_eq_inv_ncard_iff (hs : s.Finite) (hne : s.Nonempty) :
+    uniformOn s t = (s.ncard : ℝ≥0∞)⁻¹ ↔ (s ∩ t).ncard = 1 := by
+  rw [uniformOn_apply_of_finite hs, ENNReal.div_eq_inv_mul]
+  nth_rewrite 2 [← mul_one (s.ncard : ℝ≥0∞)⁻¹]
+  rw [ENNReal.mul_right_inj (by simp) (by simpa using ncard_ne_zero_of_nonempty hs hne),
+    Nat.cast_eq_one]
+
+end Finite
 
 end MeasureTheory

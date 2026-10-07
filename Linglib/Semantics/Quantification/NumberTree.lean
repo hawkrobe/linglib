@@ -1,6 +1,8 @@
 module
 
-public import Linglib.Semantics.Quantification.Counting
+public import Linglib.Semantics.Quantification.Defs
+public import Linglib.Core.Data.Fintype.EquivFin
+public import Linglib.Core.Data.Set.Card
 public import Mathlib.Data.Finset.NatAntidiagonal
 public import Mathlib.Algebra.BigOperators.Intervals
 public import Mathlib.Tactic.Ring
@@ -34,8 +36,9 @@ proof that the corners are the only quantifiers satisfying them, from *all* to t
   `Quantifier.NumberTree.Euclidean`: relational conditions on a quantifier, read off the tree.
 * `Quantifier.NumberTree.Variety`, `Quantifier.NumberTree.Cont`, `Quantifier.NumberTree.Plus`,
   `Quantifier.NumberTree.Uniform`: the postulates VAR, CONT, PLUS and UNIF.
+* `Quantifier.NumberTree.ofSizes`: the tree of a relation between `|A ∩ B|` and `|A|`.
 * `Quantifier.NumberTree.ofGQ`, `Quantifier.NumberTree.toGQ`: the tree of a generalized
-  quantifier over a finite universe, and the quantifier of a tree on one.
+  quantifier over a finite universe, and the quantifier of a tree, counting with `Set.ncard`.
 
 ## Main results
 
@@ -136,6 +139,15 @@ instance {s : Set ℕ} [DecidablePred (· ∈ s)] : DecidableRel (cardinal s) :=
 
 theorem cardinal_singleton_zero : cardinal {0} = NumberTree.no := rfl
 
+/-- The tree of a relation `c` between `|A ∩ B|` and `|A|` holds at `(a, b)` when `c` relates `b`
+to `a + b`, the form in which proportions of the restrictor are stated. -/
+def ofSizes (c : ℕ → ℕ → Prop) : NumberTree := fun a b ↦ c b (a + b)
+
+@[simp] theorem ofSizes_apply {c : ℕ → ℕ → Prop} : ofSizes c a b ↔ c b (a + b) := Iff.rfl
+
+instance {c : ℕ → ℕ → Prop} [DecidableRel c] : DecidableRel (ofSizes c) :=
+  fun a b ↦ inferInstanceAs (Decidable (c b (a + b)))
+
 /-! ### Scope monotonicity
 
 Enlarging the scope `B` by an element of `A` moves one individual from `A \ B` to `A ∩ B`, a step
@@ -167,6 +179,18 @@ theorem ScopeMonotone.shift (h : q.ScopeMonotone) (k : ℕ) {a b : ℕ} (hq : q 
   | succ k ih =>
     have := ih (h _ _ (by rwa [← Nat.add_assoc] at hq))
     rwa [Nat.add_assoc, Nat.add_comm 1 k] at this
+
+/-- A relation closed upwards in `|A ∩ B|` is scope monotone on the tree. -/
+theorem scopeMonotone_ofSizes {c : ℕ → ℕ → Prop} (hc : ∀ p, Monotone (c · p)) :
+    (ofSizes c).ScopeMonotone := fun a b h ↦ by
+  rw [ofSizes_apply, show a + (b + 1) = a + 1 + b by omega]
+  exact hc _ b.le_succ h
+
+/-- A relation closed downwards in `|A ∩ B|` is scope antitone on the tree. -/
+theorem scopeAntitone_ofSizes {c : ℕ → ℕ → Prop} (hc : ∀ p, Antitone (c · p)) :
+    (ofSizes c).ScopeAntitone := fun a b h ↦ by
+  rw [ofSizes_apply, show a + 1 + b = a + (b + 1) by omega]
+  exact hc _ b.le_succ h
 
 theorem scopeMonotone_all : NumberTree.all.ScopeMonotone :=
   fun _ _ h ↦ absurd h (Nat.succ_ne_zero _)
@@ -390,102 +414,147 @@ theorem additive_no : NumberTree.no.Additive := additive_all.innerNeg
 
 theorem additive_some : NumberTree.some.Additive := additive_notAll.innerNeg
 
-/-! ### The tree of a generalized quantifier -/
+/-! ### The tree of a generalized quantifier
+
+A generalized quantifier counts its arguments with `Set.ncard`, which asks for no decidability;
+the counts are meaningful when the sets are finite. -/
 
 section OfGQ
 
-open Classical GQ
+open GQ
 
-variable {α : Type*} [Fintype α] {Q : GQ α} {A B A' B' : α → Prop}
+variable {α : Type*} {Q : GQ α} {A B A' B' : α → Prop}
 
-/-- Counts of equivalent predicates agree, whatever their decidability instances. -/
-private theorem count_congr {P P' : α → Prop} {i : DecidablePred P} {i' : DecidablePred P'}
-    (h : ∀ x, P x ↔ P' x) : @count α _ P i = @count α _ P' i' :=
-  count_congr_iff h
+/-- A quantifier has quantity when `Q(A, B)` depends only on the four cardinalities `|A ∩ B|`,
+`|A \ B|`, `|B \ A|` and `|M \ (A ∪ B)|`. -/
+def _root_.Quantifier.GQ.Quantity (q : GQ α) : Prop :=
+  ∀ R₁ S₁ R₂ S₂ : α → Prop,
+    {x | R₁ x ∧ S₁ x}.ncard = {x | R₂ x ∧ S₂ x}.ncard →
+    {x | R₁ x ∧ ¬ S₁ x}.ncard = {x | R₂ x ∧ ¬ S₂ x}.ncard →
+    {x | ¬ R₁ x ∧ S₁ x}.ncard = {x | ¬ R₂ x ∧ S₂ x}.ncard →
+    {x | ¬ R₁ x ∧ ¬ S₁ x}.ncard = {x | ¬ R₂ x ∧ ¬ S₂ x}.ncard → (q R₁ S₁ ↔ q R₂ S₂)
 
-/-- A conservative, permutation-invariant quantifier holds of `A` and `B` according to
-`|A \ B|` and `|A ∩ B|` alone. -/
-theorem _root_.Quantifier.GQ.iff_of_count_eq (hC : Conservative Q) (hQ : QuantityInvariant Q)
-    (hd : count (fun x ↦ A x ∧ ¬ B x) = count fun x ↦ A' x ∧ ¬ B' x)
-    (hi : count (fun x ↦ A x ∧ B x) = count fun x ↦ A' x ∧ B' x) : Q A B ↔ Q A' B' := by
-  have hn : count (fun x ↦ ¬ A x) = count fun x ↦ ¬ A' x := by
-    have hA := count_decompose A B
-    have hA' := count_decompose A' B'
-    have hN := count_decompose (fun _ : α ↦ True) A
-    have hN' := count_decompose (fun _ : α ↦ True) A'
-    have e : count (fun x ↦ True ∧ A x) = count fun x ↦ A x := count_congr fun _ ↦ by simp
-    have e' : count (fun x ↦ True ∧ A' x) = count fun x ↦ A' x :=
-      count_congr fun _ ↦ by simp
-    have f : count (fun x ↦ True ∧ ¬ A x) = count fun x ↦ ¬ A x :=
-      count_congr fun _ ↦ by simp
-    have f' : count (fun x ↦ True ∧ ¬ A' x) = count fun x ↦ ¬ A' x :=
-      count_congr fun _ ↦ by simp
+open Classical in
+/-- The cells of `R` and `S` are the fibres of `x ↦ (R x, S x)`. -/
+private theorem nat_card_fiber (R S : α → Prop) (p q : Bool) :
+    Nat.card {x // (decide (R x), decide (S x)) = (p, q)} =
+      {x | (R x ↔ p) ∧ (S x ↔ q)}.ncard := by
+  rw [← Nat.card_coe_set_eq]
+  exact Nat.card_congr (Equiv.subtypeEquivRight fun x ↦ by cases p <;> cases q <;> simp)
+
+/-- On a finite universe a permutation-invariant quantifier has quantity, since equal cell
+cardinalities give a permutation carrying each cell of one pair onto the same cell of the
+other. -/
+theorem _root_.Quantifier.GQ.QuantityInvariant.quantity [Finite α] (hQ : QuantityInvariant Q) :
+    Q.Quantity := by
+  classical
+  intro R₁ S₁ R₂ S₂ hTT hTF hFT hFF
+  obtain ⟨e, he⟩ := Equiv.exists_comp_eq_of_card_fiber_eq
+    (f := fun x ↦ (decide (R₁ x), decide (S₁ x))) (g := fun x ↦ (decide (R₂ x), decide (S₂ x)))
+    fun ⟨p, q⟩ ↦ by
+      rw [nat_card_fiber, nat_card_fiber]
+      cases p <;> cases q <;> simp only [Bool.false_eq_true, iff_false, iff_true] <;> symm <;>
+        assumption
+  exact hQ R₁ S₁ R₂ S₂ e e.bijective
+    (fun x ↦ decide_eq_decide.1 (congrArg Prod.fst (congrFun he x)))
+    fun x ↦ decide_eq_decide.1 (congrArg Prod.snd (congrFun he x))
+
+/-- A quantifier with quantity is permutation invariant, since a permutation preserves the
+cardinality of each cell. -/
+theorem _root_.Quantifier.GQ.Quantity.quantityInvariant (hQ : Q.Quantity) :
+    QuantityInvariant Q := by
+  intro A B A' B' f hf hA hB
+  have key (P P' : α → Prop) (h : ∀ x, P (f x) ↔ P' x) : {x | P x}.ncard = {x | P' x}.ncard := by
+    rw [← Set.ncard_preimage_of_injective_subset_range hf.1 (by simp [hf.2.range_eq])]
+    exact congrArg Set.ncard (Set.ext h)
+  exact hQ A B A' B' (key _ _ fun x ↦ by rw [hA, hB]) (key _ _ fun x ↦ by rw [hA, hB])
+    (key _ _ fun x ↦ by rw [hA, hB]) (key _ _ fun x ↦ by rw [hA, hB])
+
+/-- A conservative, permutation-invariant quantifier on a finite universe holds of `A` and `B`
+according to `|A \ B|` and `|A ∩ B|` alone. -/
+theorem _root_.Quantifier.GQ.iff_of_ncard_eq [Finite α] (hC : Conservative Q)
+    (hQ : QuantityInvariant Q) (hd : {x | A x ∧ ¬ B x}.ncard = {x | A' x ∧ ¬ B' x}.ncard)
+    (hi : {x | A x ∧ B x}.ncard = {x | A' x ∧ B' x}.ncard) : Q A B ↔ Q A' B' := by
+  have hA : {x | A x ∧ B x}.ncard + {x | A x ∧ ¬ B x}.ncard = {x | A x}.ncard :=
+    Set.ncard_inter_add_ncard_sdiff_eq_ncard _ _
+  have hA' : {x | A' x ∧ B' x}.ncard + {x | A' x ∧ ¬ B' x}.ncard = {x | A' x}.ncard :=
+    Set.ncard_inter_add_ncard_sdiff_eq_ncard _ _
+  have hn := Set.ncard_add_ncard_compl {x | A x}
+  have hn' := Set.ncard_add_ncard_compl {x | A' x}
+  have hN : {x | ¬ A x}.ncard = {x | ¬ A' x}.ncard := by
+    change {x | A x}ᶜ.ncard = {x | A' x}ᶜ.ncard
     omega
   rw [hC A B, hC A' B']
-  refine quantity_of_quantityInvariant Q hQ _ _ _ _ ?_ ?_ ?_ ?_
-  · exact (count_congr fun x ↦ by tauto).trans (hi.trans (count_congr fun x ↦ by tauto))
-  · exact (count_congr fun x ↦ by tauto).trans (hd.trans (count_congr fun x ↦ by tauto))
-  · exact count_congr fun x ↦ by tauto
-  · exact (count_congr fun x ↦ by tauto).trans (hn.trans (count_congr fun x ↦ by tauto))
+  refine hQ.quantity _ _ _ _ ?_ ?_ ?_ ?_
+  · convert hi using 2 <;> ext <;> simp only [Set.mem_ofPred_eq] <;> tauto
+  · convert hd using 2 <;> ext <;> simp only [Set.mem_ofPred_eq] <;> tauto
+  · congr 1; ext; simp only [Set.mem_ofPred_eq]; tauto
+  · convert hN using 2 <;> ext <;> simp only [Set.mem_ofPred_eq] <;> tauto
 
 /-- The tree of a generalized quantifier holds of `(a, b)` when the quantifier holds of some
 `A` and `B` with `|A \ B| = a` and `|A ∩ B| = b`. -/
 def ofGQ (Q : GQ α) : NumberTree := fun a b ↦
-  ∃ A B : α → Prop, count (fun x ↦ A x ∧ ¬ B x) = a ∧ count (fun x ↦ A x ∧ B x) = b ∧ Q A B
+  ∃ A B : α → Prop, {x | A x ∧ ¬ B x}.ncard = a ∧ {x | A x ∧ B x}.ncard = b ∧ Q A B
 
-/-- A conservative, permutation-invariant quantifier holds of `A` and `B` exactly when its tree
-holds of `|A \ B|` and `|A ∩ B|`. -/
-theorem ofGQ_iff (hC : Conservative Q) (hQ : QuantityInvariant Q) (A B : α → Prop) :
-    ofGQ Q (count fun x ↦ A x ∧ ¬ B x) (count fun x ↦ A x ∧ B x) ↔ Q A B :=
-  ⟨fun ⟨_, _, hd, hi, h⟩ ↦ (GQ.iff_of_count_eq hC hQ hd hi).mp h, fun h ↦ ⟨A, B, rfl, rfl, h⟩⟩
+/-- A conservative, permutation-invariant quantifier on a finite universe holds of `A` and `B`
+exactly when its tree holds of `|A \ B|` and `|A ∩ B|`. -/
+theorem ofGQ_iff [Finite α] (hC : Conservative Q) (hQ : QuantityInvariant Q) (A B : α → Prop) :
+    ofGQ Q {x | A x ∧ ¬ B x}.ncard {x | A x ∧ B x}.ncard ↔ Q A B :=
+  ⟨fun ⟨_, _, hd, hi, h⟩ ↦ (GQ.iff_of_ncard_eq hC hQ hd hi).mp h, fun h ↦ ⟨A, B, rfl, rfl, h⟩⟩
 
-/-- The quantifier of a tree on a finite universe holds of `A` and `B` when the tree holds of
-`|A \ B|` and `|A ∩ B|`. -/
-def toGQ (q : NumberTree) : GQ α := fun A B ↦
-  q (count fun x ↦ A x ∧ ¬ B x) (count fun x ↦ A x ∧ B x)
+/-- The quantifier of a tree holds of `A` and `B` when the tree holds of `|A \ B|` and
+`|A ∩ B|`. -/
+def toGQ (q : NumberTree) : GQ α := fun A B ↦ q {x | A x ∧ ¬ B x}.ncard {x | A x ∧ B x}.ncard
 
 theorem toGQ_apply (q : NumberTree) (A B : α → Prop) :
-    q.toGQ A B ↔ q (count fun x ↦ A x ∧ ¬ B x) (count fun x ↦ A x ∧ B x) := Iff.rfl
+    q.toGQ A B ↔ q {x | A x ∧ ¬ B x}.ncard {x | A x ∧ B x}.ncard := Iff.rfl
+
+@[simp] theorem toGQ_inf (q r : NumberTree) : (q ⊓ r).toGQ = (q.toGQ ⊓ r.toGQ : GQ α) := rfl
+
+@[simp] theorem toGQ_compl (q : NumberTree) : qᶜ.toGQ = (q.toGQᶜ : GQ α) := rfl
+
+/-- On a finite universe the quantifier of a decidable tree is decidable at decidable
+arguments. -/
+instance toGQ.decidable [Fintype α] (q : NumberTree) [DecidableRel q] (A B : α → Prop)
+    [DecidablePred A] [DecidablePred B] : Decidable (q.toGQ A B) :=
+  decidable_of_iff (q (Finset.univ.filter fun x ↦ A x ∧ ¬ B x).card
+    (Finset.univ.filter fun x ↦ A x ∧ B x).card) <| by
+      rw [toGQ_apply, Set.ncard_setOf_eq_card_filter, Set.ncard_setOf_eq_card_filter]
 
 /-- The quantifier of a tree is conservative, since `A \ B` and `A ∩ B` see only `B ∩ A`. -/
-theorem conservative_toGQ (q : NumberTree) : Conservative (q.toGQ : GQ α) := fun A B ↦
-  Iff.of_eq <| congrArg₂ q (count_congr fun _ ↦ by tauto) (count_congr fun _ ↦ by tauto)
+theorem conservative_toGQ (q : NumberTree) : Conservative (q.toGQ : GQ α) := fun A B ↦ by
+  unfold toGQ
+  congr! 3 <;> ext <;> tauto
 
-/-- A bijection of the universe preserves counts. -/
-private theorem count_comp {P : α → Prop} {f : α → α} (hf : Function.Bijective f)
-    {i : DecidablePred P} [DecidablePred fun x ↦ P (f x)] :
-    count (fun x ↦ P (f x)) = @count α _ P i :=
-  Finset.card_bij (fun x _ ↦ f x) (fun _ hx ↦ by simpa using hx) (fun _ _ _ _ h ↦ hf.1 h)
-    fun y hy ↦ let ⟨x, hx⟩ := hf.2 y; ⟨x, by simpa [hx] using hy, hx⟩
+/-- The quantifier of a tree has quantity, depending on two of the four cells. -/
+theorem quantity_toGQ (q : NumberTree) : (q.toGQ : GQ α).Quantity :=
+  fun _ _ _ _ hi hd _ _ ↦ by rw [toGQ_apply, toGQ_apply, hi, hd]
 
-/-- The quantifier of a tree is permutation invariant, since counts are. -/
-theorem quantityInvariant_toGQ (q : NumberTree) : QuantityInvariant (q.toGQ : GQ α) := by
-  intro A B A' B' f hf hA hB
-  simp only [toGQ_apply]
-  rw [← count_comp (P := fun x ↦ A x ∧ ¬ B x) hf, ← count_comp (P := fun x ↦ A x ∧ B x) hf]
-  exact Iff.of_eq (congrArg₂ q (count_congr fun x ↦ by rw [hA, hB])
-    (count_congr fun x ↦ by rw [hA, hB]))
+/-- The quantifier of a tree is permutation invariant. -/
+theorem quantityInvariant_toGQ (q : NumberTree) : QuantityInvariant (q.toGQ : GQ α) :=
+  (quantity_toGQ q).quantityInvariant
 
 /-- The quantifier of a scope-monotone tree is scope monotone: enlarging `B` within `A` moves
-`|A ∩ B' \ B|` individuals from `A \ B` to `A ∩ B`. -/
-theorem ScopeMonotone.toGQ {q : NumberTree} (h : q.ScopeMonotone) :
+`|A \ B ∩ B'|` individuals from `A \ B` to `A ∩ B`. -/
+theorem ScopeMonotone.toGQ [Finite α] {q : NumberTree} (h : q.ScopeMonotone) :
     GQ.ScopeMonotone (q.toGQ : GQ α) := by
   intro A B B' hB hq
-  rw [toGQ_apply] at hq ⊢
-  have h₁ := count_decompose (fun x ↦ A x ∧ B' x) B
-  have h₂ := count_decompose (fun x ↦ A x ∧ ¬ B x) B'
-  have e₁ : count (fun x ↦ (A x ∧ B' x) ∧ B x) = count fun x ↦ A x ∧ B x :=
-    count_congr fun x ↦ ⟨fun h ↦ ⟨h.1.1, h.2⟩, fun h ↦ ⟨⟨h.1, hB x h.2⟩, h.2⟩⟩
-  have e₂ : count (fun x ↦ (A x ∧ ¬ B x) ∧ ¬ B' x) = count fun x ↦ A x ∧ ¬ B' x :=
-    count_congr fun x ↦ ⟨fun h ↦ ⟨h.1.1, h.2⟩, fun h ↦ ⟨⟨h.1, fun hb ↦ h.2 (hB x hb)⟩, h.2⟩⟩
-  have e₃ : count (fun x ↦ (A x ∧ ¬ B x) ∧ B' x) = count fun x ↦ (A x ∧ B' x) ∧ ¬ B x :=
-    count_congr fun x ↦ by tauto
-  rw [h₁, e₁, ← e₃]
-  rw [h₂, e₂, Nat.add_comm] at hq
+  unfold NumberTree.toGQ at hq ⊢
+  have h₁ := Set.ncard_inter_add_ncard_sdiff_eq_ncard {x | A x ∧ ¬ B x} {x | B' x}
+  have h₂ := Set.ncard_inter_add_ncard_sdiff_eq_ncard {x | A x ∧ B' x} {x | B x}
+  replace hB : ∀ x, B x → B' x := hB
+  have e₁ : {x | A x ∧ B' x} ∩ {x | B x} = {x | A x ∧ B x} := by ext x; have := hB x; grind
+  have e₂ : {x | A x ∧ ¬ B x} \ {x | B' x} = {x | A x ∧ ¬ B' x} := by
+    ext x; have := hB x; grind
+  have e₃ : {x | A x ∧ B' x} \ {x | B x} = {x | A x ∧ ¬ B x} ∩ {x | B' x} := by ext; grind
+  rw [e₂] at h₁
+  rw [e₁, e₃] at h₂
+  rw [← h₂]
+  rw [← h₁, Nat.add_comm] at hq
   exact h.shift _ hq
 
 /-- The quantifier of a scope-antitone tree is scope antitone. -/
-theorem ScopeAntitone.toGQ {q : NumberTree} (h : q.ScopeAntitone) :
+theorem ScopeAntitone.toGQ [Finite α] {q : NumberTree} (h : q.ScopeAntitone) :
     GQ.ScopeAntitone (q.toGQ : GQ α) :=
   fun A _ _ hB hq ↦ Classical.byContradiction fun hn ↦ h.compl.toGQ A hB hn hq
 

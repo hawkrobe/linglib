@@ -504,20 +504,17 @@ section Fintype
 
 variable [Fintype α]
 
-private theorem count_eq_ncard (P : α → Prop) [DecidablePred P] : count P = {x | P x}.ncard :=
-  (KeenanStavi1986.count_eq_nat_card P).trans (Nat.card_coe_set_eq _)
-
 theorem atLeast_eq_ofGQ (n : ℕ) : (Det.atLeast n : Det α) = Det.ofGQ (GQ.atLeast n) := by
   funext X
-  simp only [Det.atLeast, Det.ofGQ, GQ.atLeast, count_eq_ncard, setOf_mem_atoms_and, ge_iff_le]
+  simp only [Det.atLeast, Det.ofGQ, atLeast_apply, setOf_mem_atoms_and]
 
 theorem exactly_eq_ofGQ (n : ℕ) : (Det.exactly n : Det α) = Det.ofGQ (GQ.exactly n) := by
   funext X
-  simp only [Det.exactly, Det.ofGQ, GQ.exactly, count_eq_ncard, setOf_mem_atoms_and]
+  simp only [Det.exactly, Det.ofGQ, exactly_apply, setOf_mem_atoms_and]
 
 theorem most_eq_ofGQ : (Det.most : Det α) = Det.ofGQ GQ.most := by
   funext X
-  simp only [Det.most, Det.ofGQ, GQ.most, count_eq_ncard, setOf_mem_atoms_and, gt_iff_lt]
+  simp only [Det.most, Det.ofGQ, most_apply, setOf_mem_atoms_and, gt_iff_lt]
   rw [← atoms_diff_posAtoms]
   rfl
 
