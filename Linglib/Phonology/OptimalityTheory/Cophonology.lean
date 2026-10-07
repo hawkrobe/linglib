@@ -2,7 +2,6 @@ module
 
 public import Linglib.Phonology.OptimalityTheory.Constraint.Defs
 public import Linglib.Phonology.OptimalityTheory.Tableau
-public import Linglib.Syntax.Minimalist.Phase.Basic
 
 /-!
 # Cophonology theory
@@ -16,8 +15,8 @@ what varies across the theory family is the *trigger*:
 * *per Vocabulary Item* ([sande-jenks-2017]; [rolle-2018] Ch 4): the inserted VI's
   R component is the subranking — the `subranking` argument to `cophonologicalEval`;
 * *per ph(r)ase* ([sande-jenks-inkelas-2020]): a spell-out phase (vP, CP, DP) carries
-  the subranking (`PhrasalCophonology`) and activates it over its whole complement at
-  spell-out, deriving cross-word morphologically conditioned effects.
+  the subranking and activates it over its whole complement at spell-out, deriving
+  cross-word morphologically conditioned effects.
 
 ## Main definitions
 
@@ -26,9 +25,6 @@ what varies across the theory family is the *trigger*:
 * `cophonologicalEval`: OT evaluation under the merged ranking. With an empty
   subranking it is standard OT evaluation (`cophonologicalEval_empty_sub`): CPT
   properly generalizes OT.
-* `PhrasalCophonology`: the phasal trigger — a phase-head predicate bundled with its
-  subranking; `selectCophonology` picks the first match from a registry, the elsewhere
-  ordering of [sande-jenks-inkelas-2020].
 
 ## Implementation notes
 
@@ -39,16 +35,13 @@ phonology without violating modularity.
 The substrate implements neither bracket erasure ([kiparsky-1982]) nor DM PF discharge
 ([embick-noyer-2007]) — rival theories of the syntax–phonology interface that
 [sande-clem-dabkowski-2026] §6.2 argues against; it makes the CPT view expressible
-without forcing it on consumers. Consuming studies: `Studies/Rolle2018.lean`
-(per-VI, dominant grammatical tone) and `Studies/SandeClemDabkowski2026.lean` (phasal,
-Guébie discontinuous harmony).
+without forcing it on consumers. The phasal trigger has no formalization yet;
+`Studies/Rolle2018.lean` consumes the per-VI one (dominant grammatical tone).
 -/
 
 @[expose] public section
 
 namespace OptimalityTheory.Cophonology
-
-open Minimalist (Phase SyntacticObject)
 
 variable {L C : Type*}
 
@@ -65,7 +58,7 @@ relative order of the rest. -/
 def mergeRanking (default sub : List (L × Constraint C)) :
     List (L × Constraint C) :=
   let subLabels := sub.map (·.1)
-  sub ++ default.filter (λ c => !subLabels.contains c.1)
+  sub ++ default.filter (fun c ↦ !subLabels.contains c.1)
 
 /-- An empty subranking produces the default ranking unchanged. -/
 theorem mergeRanking_empty_sub (default : List (L × Constraint C)) :
@@ -76,12 +69,8 @@ theorem mergeRanking_empty_sub (default : List (L × Constraint C)) :
 
 variable [DecidableEq C]
 
-/-- Evaluate a candidate set under a cophonology: merge the trigger's subranking with
-the default ranking, then take the optimal candidates. The core of CPT — the same
-candidate set can yield different winners depending on which subranking is active. A
-dominant grammatical-tone trigger, for instance, promotes a basemap-faithfulness
-constraint above the default markedness constraints, forcing the output to match the
-basemap rather than preserve the target's underlying tones ([rolle-2018] Ch 5). -/
+/-- Cophonological evaluation takes the optimal candidates under the default ranking merged
+with the trigger's subranking. -/
 def cophonologicalEval
     (defaultRanking subranking : List (L × Constraint C)) (candidates : List C)
     (h : candidates ≠ [] := by decide) : Finset C :=
@@ -97,16 +86,5 @@ theorem cophonologicalEval_empty_sub
   rw [mergeRanking_empty_sub]
 
 end Eval
-
-/-! ### Cophonologies by ph(r)ase -/
-
-/-- A cophonology triggered by spell-out of a particular kind of phase
-([sande-jenks-inkelas-2020]): a `Minimalist.Phase.Trigger` whose payload is the
-constraint subranking promoted within the matched phase. Per
-[sande-clem-dabkowski-2026], the vP phase carries the ATR-harmony cophonology (the
-selector matches v heads) and the DP phase the definite-marker phonology (the selector
-matches definite D heads). Selection from a registry is `Minimalist.Phase.selectTrigger`
-(first-match, the elsewhere ordering). -/
-abbrev PhrasalCophonology (L C : Type*) := Minimalist.Phase.Trigger (List (L × Constraint C))
 
 end OptimalityTheory.Cophonology

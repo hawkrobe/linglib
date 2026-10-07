@@ -46,9 +46,9 @@ Sato and Ngui find.
 ## Implementation notes
 
 * Positions, not terms, individuate copies: two deleted copies of one token are the same term,
-  so the phase interior of the unordered object (`SyntacticObject.phaseInterior`, the head's
-  c-command domain on terms) cannot tell the links of a successive-cyclic chain apart. `interior`
-  is the same c-command domain on positions.
+  so the phase interior of the unordered object (`SyntacticObject.phaseInterior`, the terms
+  within the head's complement) cannot tell the links of a successive-cyclic chain apart.
+  `interior` is the head's c-command domain on positions.
 * The head of a constituent is found down its right spine (`headPos?`), a left leaf that selects
   nothing being a specifier. Where two saturated phrases are sisters, a specifier and its sister,
   the selection head `SyntacticObject.selHead` is undefined, as Marcolli, Chomsky and Berwick's
@@ -63,8 +63,9 @@ Sato and Ngui find.
 
 * `CCommands t.val a b ↔ a.parent ≤ b ∧ ¬ a ≤ b` on a well-formed object, for `b` not the mother
   of `a`: c-command as sisterhood-plus-dominance.
-* `q ∈ interior t h ↔ (t : SyntacticObject).Impenetrable ℓ s` for the token `ℓ` at `h`, occurring
-  once, and the subtree `s` at `q ≠ ⊥`: the bridge to the unordered phase API.
+* `q ∈ interior t h ↔ (t : SyntacticObject).WithinComplement ℓ s` for a token `ℓ` at `h` that
+  occurs once and projects, and the subtree `s` at `q ≠ ⊥`: the bridge to the unordered phase
+  API.
 * A successful `Derivation.externalize?` has no deleted copy without an antecedent.
 
 ## References
