@@ -86,9 +86,9 @@ def DimensionedMeasure.quantity (μ : DimensionedMeasure E K) (x : E) : Quantity
     (μ.quantity x).2 = .of μ.dimension := rfl
 
 /-- Measuring `n` units is having the quantity `n` times the unit. -/
-theorem DimensionedMeasure.quantity_eq_pure_mul_unit_iff [MulOneClass K] [Preorder K]
+theorem DimensionedMeasure.quantity_eq_pure_mul_unit_iff [MulOneClass K]
     (μ : DimensionedMeasure E K) (n : K) (x : E) :
-    μ.quantity x = .pure n * .unit μ.dimension ↔ μ.applyNumeral n x := by
+    μ.quantity x = .pure n * .unit μ.dimension ↔ μ.apply x = n := by
   simp [Prod.ext_iff]
 
 end Degree

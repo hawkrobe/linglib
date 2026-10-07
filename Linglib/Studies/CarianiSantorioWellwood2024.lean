@@ -116,7 +116,7 @@ theorem maxComparative_theme_iff (hθ : θ.Injective) (s t : S) :
 
 /-- Upward monotonicity (53) is the framework's, over the region above a contrast state: if σ is
 confident that `p` and more confident of `q` than of `p`, then σ is confident that `q`. -/
-example [@Std.Total S (· ≤ ·)] (hμ : admissibleMeasure μ) {c : S} {p q : Set W}
+example [@Std.Total S (· ≤ ·)] (hμ : StrictMono μ) {c : S} {p q : Set W}
     (hp : p ∈ θ '' Ici c) (h : maxComparative (θ · = q) (θ · = p) μ) : q ∈ θ '' Ici c :=
   mem_image_of_maxComparative (isUpperSet_Ici c) hμ hp h
 
@@ -201,7 +201,7 @@ measure: with every state tied, every measure is admissible. The preorder is pas
 since `Bool`'s own order would otherwise be found. -/
 example :
     let tied : Preorder Bool := Preorder.lift fun _ ↦ ()
-    @admissibleMeasure _ _ tied _ Bool.toNat ∧ @IsMax _ tied.toLE false ∧
+    @StrictMono _ _ tied _ Bool.toNat ∧ @IsMax _ tied.toLE false ∧
       Bool.toNat false < Bool.toNat true :=
   ⟨fun _ _ h ↦ absurd h (lt_irrefl ()), fun _ _ ↦ trivial, Nat.zero_lt_one⟩
 

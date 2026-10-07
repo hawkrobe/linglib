@@ -84,9 +84,9 @@ theorem proportionalMeasure_self_eq_one (tot : α) (htot : 0 < μ tot) :
   rw [proportionalMeasure_eq _ _ _ htot.ne']
   exact div_self htot.ne'
 
-/-- The monotonicity constraint on the measure `Meas` introduces (the substrate's
-`admissibleMeasure`) is inherited by the proportional measure. -/
-theorem proportionalMeasure_monotonic [Preorder α] (hμ : admissibleMeasure μ)
+/-- The monotonicity constraint on the measure `Meas` introduces (mathlib's
+`StrictMono`) is inherited by the proportional measure. -/
+theorem proportionalMeasure_monotonic [Preorder α] (hμ : StrictMono μ)
     (tot : α) {y z : α} (htot : 0 < μ tot) (hyz : y < z) :
     proportionalMeasure μ tot y < proportionalMeasure μ tot z := by
   rw [proportionalMeasure_eq _ _ _ htot.ne', proportionalMeasure_eq _ _ _ htot.ne']

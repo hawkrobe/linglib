@@ -132,14 +132,14 @@ measure is admissible and every threshold holding of one holds of the other. The
 passed explicitly, since `Bool`'s own order would otherwise be found. -/
 example :
     let tied : Preorder Bool := Preorder.lift fun _ ↦ ()
-    @admissibleMeasure _ _ tied _ Bool.toNat ∧ maxComparative (· = true) (· = false) Bool.toNat ∧
+    @StrictMono _ _ tied _ Bool.toNat ∧ maxComparative (· = true) (· = false) Bool.toNat ∧
       ∀ T : Set Bool, @IsUpperSet _ tied.toLE T → true ∈ T → false ∈ T :=
   ⟨fun _ _ h ↦ absurd h (lt_irrefl ()), (maxComparative_eq_iff _ _ _).2 Nat.zero_lt_one,
     fun _ hT ht ↦ hT trivial ht⟩
 
 /-- On a total background with an admissible measure a separating threshold yields the
 comparative, when the degrees of `b`'s states have a greatest element. -/
-theorem maxComparative_of_exists_isUpperSet [@Std.Total S (· ≤ ·)] (hμ : admissibleMeasure μ)
+theorem maxComparative_of_exists_isUpperSet [@Std.Total S (· ≤ ·)] (hμ : StrictMono μ)
     {a b : X} (hb : ∃ δ, IsGreatest (thanDegrees (ρ · = b) μ) δ)
     (h : ∃ T, IsUpperSet T ∧ a ∈ ρ '' T ∧ b ∉ ρ '' T) :
     maxComparative (ρ · = a) (ρ · = b) μ := by
@@ -152,7 +152,7 @@ theorem maxComparative_of_exists_isUpperSet [@Std.Total S (· ≤ ·)] (hμ : ad
 
 /-- On a total background with a monotone admissible measure the comparative is Klein's: `a`
 has more than `b` iff some threshold property holds of `a` and not of `b`. -/
-theorem maxComparative_iff_exists_isUpperSet [@Std.Total S (· ≤ ·)] (hμ : admissibleMeasure μ)
+theorem maxComparative_iff_exists_isUpperSet [@Std.Total S (· ≤ ·)] (hμ : StrictMono μ)
     (hm : Monotone μ) {a b : X} (hb : ∃ δ, IsGreatest (thanDegrees (ρ · = b) μ) δ) :
     maxComparative (ρ · = a) (ρ · = b) μ ↔ ∃ T, IsUpperSet T ∧ a ∈ ρ '' T ∧ b ∉ ρ '' T :=
   ⟨exists_isUpperSet_of_maxComparative hm, maxComparative_of_exists_isUpperSet hμ hb⟩

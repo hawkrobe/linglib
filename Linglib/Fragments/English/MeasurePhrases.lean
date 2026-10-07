@@ -2,6 +2,7 @@ module
 
 public import Linglib.Semantics.Degree.Measure.Quantity
 public import Mathlib.Basic.Real.Basic
+public import Mathlib.Data.Rat.Cast.Order
 
 /-!
 # English measure phrases

@@ -55,7 +55,7 @@ the property. The comparative supplies a state of `a`'s measuring above a state 
 property, an admissible measure on a total background places it above that state, and the
 threshold is upward closed. -/
 theorem mem_image_of_maxComparative [@Std.Total S (· ≤ ·)] (hT : IsUpperSet T)
-    (hμ : admissibleMeasure μ) {a b : X} (hb : b ∈ ρ '' T)
+    (hμ : StrictMono μ) {a b : X} (hb : b ∈ ρ '' T)
     (h : maxComparative (ρ · = a) (ρ · = b) μ) : a ∈ ρ '' T :=
   let ⟨_, hs, hsb⟩ := hb
   let ⟨y, hya, hlt⟩ := h.exists_lt hsb
@@ -83,7 +83,7 @@ theorem not_mem_image_Ici_of_not_le {s t : S} (hst : ¬ s ≤ t) (hlt : μ s < �
 /-- The failure is realized by an admissible measure: on the componentwise order of `ℕ × ℕ`,
 the sum of the coordinates is admissible and puts `(1, 0)` below the incomparable `(0, 2)`. -/
 example :
-    admissibleMeasure (fun x : ℕ × ℕ ↦ x.1 + x.2) ∧ ¬ ((1, 0) : ℕ × ℕ) ≤ (0, 2) ∧
+    StrictMono (fun x : ℕ × ℕ ↦ x.1 + x.2) ∧ ¬ ((1, 0) : ℕ × ℕ) ≤ (0, 2) ∧
       (1, 0).1 + (1, 0).2 < (0, 2).1 + (0, 2).2 := by
   refine ⟨fun x y hxy ↦ ?_, by decide, by decide⟩
   rcases Prod.lt_iff.1 hxy with ⟨h₁, h₂⟩ | ⟨h₁, h₂⟩ <;> dsimp only <;> omega
