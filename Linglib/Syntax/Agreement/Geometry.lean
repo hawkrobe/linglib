@@ -34,6 +34,7 @@ the parent `Order.pred`.
 * `Node.defaultDependent?`, `fillDefaults`: the default daughters and their fill-in.
 * `personNodes`, `numberNodes`, `cell`: the geometries of person, of number, and of
   a person–number cell, relative to an active inventory.
+* `personFeatures`: the nodes a person bears, the root and default daughter included.
 * `Licenses`: an inventory licenses a cell when the cell's geometry lies within it.
 
 ## Main results
@@ -56,28 +57,28 @@ the parent `Order.pred`.
 
 namespace Phi.Geometry
 
-/-- The nodes of the geometry: the root, the three organizing nodes, and
+/-- The nodes of the geometry are the root, the three organizing nodes, and
 their dependents. -/
 inductive Node where
-  /-- The root: every pronoun; bare, the third person. -/
+  /-- The root is borne by every pronoun, and alone it is the third person. -/
   | referringExpression
-  /-- Discourse participant: first and second person. -/
+  /-- Discourse participant marks the first and second person. -/
   | participant
   /-- Includes the speaker; Participant's default dependent. -/
   | speaker
-  /-- Includes the speaker and others: a collective first person, expressing
+  /-- Multispeaker includes the speaker and others, a collective first person expressing
   first-person plurality through person where number does not. -/
   | multispeaker
   /-- Includes the addressee. -/
   | addressee
   /-- Number and class. -/
   | individuation
-  /-- More than one: plural. -/
+  /-- Group marks more than one, the plural. -/
   | group
   /-- A minimal set; Individuation's default dependent, singular alone and dual
   together with Group. -/
   | minimal
-  /-- A minimal group and more: paucal or trial. -/
+  /-- Augmented marks a minimal group and more, the paucal or trial. -/
   | augmented
   /-- Gender and class. -/
   | nounClass
@@ -93,8 +94,7 @@ inductive Node where
 
 namespace Node
 
-/-- The nodes a node depends on, nearest first: the tree as the path from each node to
-the root. -/
+/-- The nodes a node depends on, nearest first, form the path from the node to the root. -/
 def ancestors : Node → List Node
   | .referringExpression => []
   | .participant | .individuation => [.referringExpression]
@@ -108,13 +108,19 @@ def ancestors : Node → List Node
 /-- The node a node depends on directly, the root fixed. -/
 def pred (n : Node) : Node := n.ancestors.head?.getD n
 
-/-- A node with its ancestors: the iterates of `pred`. -/
+/-- A node with its ancestors is the set of iterates of `pred`. -/
 def up (n : Node) : Finset Node := (Finset.range (Fintype.card Node)).image (pred^[·] n)
 
 /-- `a ≤ b` when `b` depends on `a`, the dominance of the geometry. -/
 instance : PartialOrder Node := PartialOrder.lift up (by decide)
 
-instance : DecidableLE Node := fun a b ↦ inferInstanceAs (Decidable (up a ⊆ up b))
+/-- Dominance is dependence: `a ≤ b` when `a` is `b` or a node `b` depends on. -/
+theorem le_iff : ∀ a b : Node, a ≤ b ↔ a = b ∨ a ∈ b.ancestors := by
+  show ∀ a b : Node, up a ⊆ up b ↔ a = b ∨ a ∈ b.ancestors
+  decide
+
+/-- Dominance is decided on the ancestors. -/
+instance : DecidableLE Node := fun a b ↦ decidable_of_iff _ (le_iff a b).symm
 
 instance : DecidableLT Node := decidableLTOfDecidableLE
 
@@ -132,9 +138,6 @@ instance : PredOrder Node where
 
 instance : LocallyFiniteOrder Node := Fintype.toLocallyFiniteOrder
 
-/-- Dominance is dependence: `a ≤ b` when `a` is `b` or a node `b` depends on. -/
-theorem le_iff : ∀ a b : Node, a ≤ b ↔ a = b ∨ a ∈ b.ancestors := by decide
-
 /-- The nodes a node depends on, itself included and the root excluded, from the root down:
 the content a privative feature brings with it. -/
 def below (n : Node) : List Node := ((n :: n.ancestors).filter (· ≠ ⊥)).reverse
@@ -146,7 +149,7 @@ theorem toFinset_below : ∀ n : Node, (below n).toFinset = Finset.Ioc ⊥ n := 
 /-- A dependent brings more than what it depends on. -/
 theorem below_subset_below : ∀ {a b : Node}, a ≤ b → below a ⊆ below b := by decide
 
-/-- The default daughter of an organizing node: Speaker, Minimal, Inanimate. -/
+/-- The default daughters of the organizing nodes are Speaker, Minimal, and Inanimate. -/
 def defaultDependent? : Node → Option Node
   | .participant => some .speaker
   | .individuation => some .minimal
@@ -157,8 +160,8 @@ end Node
 
 /-! ### Default fill-in -/
 
-/-- Fill in defaults: an organizing node present without any dependent
-receives its default daughter. The node count of a geometry is taken before
+/-- Default fill-in gives an organizing node present without any dependent
+its default daughter. The node count of a geometry is taken before
 fill-in. -/
 def fillDefaults (s : Finset Node) : Finset Node :=
   s ∪ Finset.univ.filter fun d => ∃ o ∈ s, o.defaultDependent? = some d ∧ ∀ c ∈ s, ¬ o < c
@@ -179,7 +182,7 @@ theorem fillDefaults_isLowerSet {s : Finset Node} (hs : IsLowerSet (↑s : Set N
 
 /-! ### Person and number cells -/
 
-/-- The person geometries: first person is the bare Participant node (Speaker
+/-- In the person geometries first person is the bare Participant node (Speaker
 by default), exclusive Participant with Speaker, inclusive Participant with
 Speaker and Addressee, second Participant with Addressee, third nothing. -/
 def personNodes : Person → Finset Node
@@ -189,7 +192,7 @@ def personNodes : Person → Finset Node
   | .second => {.participant, .addressee}
   | .third => ∅
 
-/-- The number geometries, relative to an active inventory: singular is the bare
+/-- In the number geometries, relative to an active inventory, singular is the bare
 Individuation node, with Minimal where the inventory activates it
 contrastively; plural adds Group; dual Minimal with Group; paucal and trial add
 Augmented; the number-neutral value is nothing. Greater numbers and the
@@ -203,7 +206,7 @@ def numberNodes (active : Finset Node) : Number → Option (Finset Node)
   | .general => some ∅
   | _ => none
 
-/-- The geometry of a person–number cell: the root with the person and number
+/-- The geometry of a person–number cell is the root with the person and number
 nodes, the latter only in an inventory that activates Individuation. -/
 def cell (active : Finset Node) (p : Person) (n : Number) : Option (Finset Node) := do
   let ns ← if Node.individuation ∈ active then numberNodes active n else pure ∅
@@ -219,6 +222,16 @@ instance (active : Finset Node) (p : Person) (n : Number) : Decidable (Licenses 
 theorem personNodes_isLowerSet (p : Person) :
     IsLowerSet (↑(insert ⊥ (personNodes p)) : Set Node) := by
   cases p <;> decide
+
+/-- A person bears the root, the nodes of its person geometry, and the default daughter of a
+bare Participant node, so that the first person bears Speaker. -/
+def personFeatures (p : Person) : Finset Node := fillDefaults (insert ⊥ (personNodes p))
+
+theorem bot_mem_personFeatures (p : Person) : ⊥ ∈ personFeatures p :=
+  subset_fillDefaults _ (Finset.mem_insert_self _ _)
+
+theorem personFeatures_isLowerSet (p : Person) : IsLowerSet (↑(personFeatures p) : Set Node) :=
+  fillDefaults_isLowerSet (personNodes_isLowerSet p)
 
 theorem numberNodes_isLowerSet {active : Finset Node} {n : Number} {ns : Finset Node}
     (h : numberNodes active n = some ns) : IsLowerSet (↑(insert ⊥ ns) : Set Node) := by

@@ -37,7 +37,7 @@ obligatory-operations model of chapter 5 a probe that finds no goal ends unvalue
 
 The probes are the substrate's `Probe.Target.participant` and `.plural`, and their competition
 for the slot (71) is their `Probe.cascade`; the marker is the fragment's Set B exponent of the
-cascade's goal. The paradigm (22) enters as the hierarchy (23) read as `probeResolutionRank`. The
+cascade's goal. The paradigm (22) enters as the hierarchy (23) read as `rank`. The
 morphophonology (§3.4), §4.5–§4.6, and the Zulu and Basque studies of chapter 6 are prose; the
 Zulu analysis is `Studies/Halpert2012.lean`.
 
@@ -87,7 +87,7 @@ def afMarker (subj obj : Bundle) : Option (List Morphology.Morph) :=
 /-- The person restriction (25) allows at most one core argument to bear [participant]. -/
 def PersonRestriction (subj obj : Bundle) : Prop := ¬ (subj.IsParticipant ∧ obj.IsParticipant)
 
-instance : DecidableRel PersonRestriction := λ s o =>
+instance : DecidableRel PersonRestriction := fun s o ↦
   inferInstanceAs (Decidable ¬ (s.IsParticipant ∧ o.IsParticipant))
 
 /-! ### Relativized probing (§4.2, §4.4) -/
@@ -97,16 +97,13 @@ otherwise a plural argument, and otherwise nothing (66), (73). -/
 theorem afTarget_eq (s o : Bundle) :
     afTarget s o = if s.IsParticipant then some s else if o.IsParticipant then some o
       else if s.IsPlural then some s else if o.IsPlural then some o else none := by
-  by_cases h1 : DecomposedPerson.Feature.participant ∈ decomposePerson s.person <;>
-    by_cases h2 : DecomposedPerson.Feature.participant ∈ decomposePerson o.person <;>
+  by_cases h1 : s.IsParticipant <;> by_cases h2 : o.IsParticipant <;>
     by_cases h3 : s.IsPlural <;> by_cases h4 : o.IsPlural <;>
-    simp [afTarget, piProbe, numProbe, Probe.Target.toProbe, Bundle.visibleTo, probeVisible,
-      Bundle.IsParticipant, Probe.cascade, Probe.search, Probe.relativized,
-      List.find?_cons, h1, h2, h3, h4]
+    simp [afTarget, piProbe, numProbe, Probe.Target.toProbe, Bundle.visibleTo, Probe.cascade,
+      Probe.search, Probe.relativized, List.find?_cons, h1, h2, h3, h4]
 
-/-- The rank of a cell on the hierarchy (23) puts [participant] above [plural] above the rest, the
-substrate's probe-resolution rank. -/
-def rank (c : Bundle) : ℕ := probeResolutionRank c.person (decide c.IsPlural)
+/-- The rank of a cell on the hierarchy (23) puts [participant] above [plural] above the rest. -/
+def rank (c : Bundle) : ℕ := if c.IsParticipant then 2 else if c.IsPlural then 1 else 0
 
 /-- The probes derive the hierarchy, since the slot reflects the higher-ranked argument, the
 subject at a tie, and nothing when both rank lowest. -/
@@ -114,11 +111,9 @@ theorem afTarget_eq_rank (s o : Bundle) :
     afTarget s o = if rank s = 0 ∧ rank o = 0 then none
       else if rank o ≤ rank s then some s else some o := by
   rw [afTarget_eq]
-  by_cases h1 : DecomposedPerson.Feature.participant ∈ decomposePerson s.person <;>
-    by_cases h2 : DecomposedPerson.Feature.participant ∈ decomposePerson o.person <;>
+  by_cases h1 : s.IsParticipant <;> by_cases h2 : o.IsParticipant <;>
     by_cases h3 : s.IsPlural <;> by_cases h4 : o.IsPlural <;>
-    simp [rank, probeResolutionRank, Bundle.IsParticipant, Bundle.visibleTo, probeVisible, h1, h2,
-      h3, h4]
+    simp [rank, h1, h2, h3, h4]
 
 /-- The hierarchy (23) as an account is the morphological competition of §3.3.2, in which the slot
 shows the higher-ranked argument's absolutive marker. -/
@@ -146,8 +141,8 @@ arguments (76), since a single person probe licenses at most one [participant] f
 theorem personRestriction_iff_plc (s o : Bundle) : PersonRestriction s o ↔ Plc s o := by
   unfold PersonRestriction Plc piProbe Probe.Target.toProbe
   rw [Probe.relativized_allLicensed_iff]
-  cases hs : s.visibleTo .participant <;> cases ho : o.visibleTo .participant <;>
-    simp [Bundle.IsParticipant, hs, ho]
+  by_cases hs : s.IsParticipant <;> by_cases ho : o.IsParticipant <;>
+    simp [Bundle.visibleTo, hs, ho]
 
 /-- The marker is undefined exactly when the person restriction is violated; two plural
 arguments in particular are never excluded (77). -/
@@ -163,8 +158,8 @@ theorem participant_marker (s o : Bundle) (h : ¬ (s.IsParticipant ∧ o.IsParti
       (o.IsParticipant → afMarker s o = some (exponent o)) := by
   have hplc : Plc s o := (personRestriction_iff_plc s o).1 h
   rw [afMarker, ite_eq_left hplc, afTarget_eq]
-  refine ⟨λ hs => by simp [hs], λ ho => ?_⟩
-  have hs : ¬ s.IsParticipant := λ hs => h ⟨hs, ho⟩
+  refine ⟨fun hs ↦ by simp [hs], fun ho ↦ ?_⟩
+  have hs : ¬ s.IsParticipant := fun hs ↦ h ⟨hs, ho⟩
   simp [hs, ho]
 
 /-! ### Obligatory operations (chapter 5) -/
@@ -183,7 +178,7 @@ probes end unvalued, the derivation converges, and the slot carries the null exp
 theorem failed_agree_tolerated (s o : Bundle) (hs : ¬ s.IsParticipant) (ho : ¬ o.IsParticipant)
     (hsp : ¬ s.IsPlural) (hop : ¬ o.IsPlural) :
     afTarget s o = none ∧ afMarker s o = some [] := by
-  have hplc : Plc s o := (personRestriction_iff_plc s o).1 λ h => hs h.1
+  have hplc : Plc s o := (personRestriction_iff_plc s o).1 fun h ↦ hs h.1
   rw [afMarker, ite_eq_left hplc, afTarget_eq]
   simp [hs, ho, hsp, hop]
 
@@ -192,9 +187,9 @@ must be agreed with, and the slot carries its exponent, the subject's first. -/
 theorem plural_marker (s o : Bundle) (hs : ¬ s.IsParticipant) (ho : ¬ o.IsParticipant) :
     (s.IsPlural → afMarker s o = some (exponent s)) ∧
       (¬ s.IsPlural → o.IsPlural → afMarker s o = some (exponent o)) := by
-  have hplc : Plc s o := (personRestriction_iff_plc s o).1 λ h => hs h.1
+  have hplc : Plc s o := (personRestriction_iff_plc s o).1 fun h ↦ hs h.1
   rw [afMarker, ite_eq_left hplc, afTarget_eq]
-  exact ⟨λ hsp => by simp [hs, ho, hsp], λ hsp hop => by simp [hs, ho, hsp, hop]⟩
+  exact ⟨fun hsp ↦ by simp [hs, ho, hsp], fun hsp hop ↦ by simp [hs, ho, hsp, hop]⟩
 
 /-! ### Against the alternatives (§4.2, chapter 7) -/
 

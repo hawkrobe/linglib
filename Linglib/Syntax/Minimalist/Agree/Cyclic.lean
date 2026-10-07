@@ -1,26 +1,23 @@
 module
 
-public import Linglib.Syntax.Minimalist.Geometry
+public import Linglib.Syntax.Minimalist.Phi.PersonSegment
 public import Linglib.Syntax.Minimalist.Probe.Basic
-public import Linglib.Syntax.Person.Basic
 public import Mathlib.Order.Preorder.Chain
-public import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Cyclic Agree over articulated person probes
 
-Person is decomposed into privative segments ordered by entailment: every person bears `π`,
-speech-act participants also `participant`, and the innermost segments `speaker` and `addressee`
-distinguish first from second person according to a geometry, which fixes which segments a
-language uses. A probe is a list of unvalued segments. A probe on v first meets the internal
-argument and checks every segment it bears; the segments left over, its residue, probe again from
-the next projection of v, where the external argument is the closest goal. The context is direct
-when the external argument checks some residue, and inverse otherwise, when the core probe never
-Agrees with it and its person goes unlicensed.
+Person is decomposed into the privative segments of `Minimalist.PersonSegment`. Every person
+bears `π`, speech-act participants also `participant`, and the innermost segments `speaker` and
+`addressee` distinguish first from second person according to a geometry, which fixes which
+segments a language uses. A probe is a list of unvalued segments. A probe on v first meets the
+internal argument and checks every segment it bears; the segments left over, its residue, probe
+again from the next projection of v, where the external argument is the closest goal. The context
+is direct when the external argument checks some residue, and inverse otherwise, when the core
+probe never Agrees with it and its person goes unlicensed.
 
 ## Main definitions
 
-* `Minimalist.CyclicAgree.Segment`: the person segments, with their entailment order.
 * `Minimalist.CyclicAgree.PersonGeometry`: the standard, addressee and branching geometries.
 * `Minimalist.CyclicAgree.personSpec`: the segments a person bears under a geometry.
 * `Minimalist.CyclicAgree.AgreementSystem`: a geometry and an articulated probe, with the residue,
@@ -48,47 +45,7 @@ Agrees with it and its person goes unlicensed.
 
 namespace Minimalist.CyclicAgree
 
-/-! ### Person segments and geometries -/
-
-/-- A segment of an articulated person feature. -/
-inductive Segment where
-  | pi
-  | participant
-  | speaker
-  | addressee
-  deriving DecidableEq, Repr, Inhabited, Fintype
-
-namespace Segment
-
-/-- A segment entails `π`, and `speaker` and `addressee` entail `participant`. -/
-protected def le (a b : Segment) : Prop :=
-  a = b ∨ a = .pi ∨ (a = .participant ∧ (b = .speaker ∨ b = .addressee))
-
-instance : DecidableRel Segment.le := fun _ _ ↦ inferInstanceAs (Decidable (_ ∨ _))
-
-/-- The entailment order on segments, `a ≤ b` when bearing `b` entails bearing `a`. -/
-instance : PartialOrder Segment where
-  le := Segment.le
-  le_refl _ := Or.inl rfl
-  le_trans := by decide
-  le_antisymm := by decide
-
-instance : DecidableLE Segment := fun a b ↦ inferInstanceAs (Decidable (Segment.le a b))
-
-/-- The segments a segment entails, itself included. -/
-def entailments (s : Segment) : Finset Segment := Finset.univ.filter (· ≤ s)
-
-/-- The segments from the outermost to the innermost. -/
-def all : List Segment := [.pi, .participant, .speaker, .addressee]
-
-end Segment
-
-/-- The segments a person bears when both innermost segments are used; the inclusive bears both. -/
-def universalSpec : Person → List Segment
-  | .first | .firstExclusive => [.pi, .participant, .speaker]
-  | .firstInclusive => [.pi, .participant, .speaker, .addressee]
-  | .second => [.pi, .participant, .addressee]
-  | .third => [.pi]
+/-! ### Person geometries -/
 
 /-- A person geometry fixes which innermost segment distinguishes first from second person. It is
 `speaker` under `standard` and `addressee` under `addressee`, and under `branching` both are sister
@@ -99,37 +56,24 @@ inductive PersonGeometry where
   | branching
   deriving DecidableEq, Repr, Fintype
 
-namespace PersonGeometry
+/-- The segments a geometry uses, from the root down. -/
+def PersonGeometry.nodes : PersonGeometry → List PersonSegment
+  | .standard => [.pi, .participant, .speaker]
+  | .addressee => [.pi, .participant, .addressee]
+  | .branching => [.pi, .participant, .speaker, .addressee]
 
-/-- The segments a geometry uses. -/
-def nodes : PersonGeometry → Finset Segment
-  | .standard => {.pi, .participant, .speaker}
-  | .addressee => {.pi, .participant, .addressee}
-  | .branching => Finset.univ
-
-/-- The feature geometry a person geometry denotes. -/
-def toGeometry (geom : PersonGeometry) : Minimalist.Geometry Segment where
-  nodes := geom.nodes
-  entailments := Segment.entailments
-  mem_entailments_self a := by simp [Segment.entailments]
-  entailments_subset_of_mem a b hb c hc := by
-    rw [Segment.entailments, Finset.mem_filter] at hb hc ⊢
-    exact ⟨Finset.mem_univ _, hc.2.trans hb.2⟩
-
-end PersonGeometry
-
-/-- The segments a person bears under a geometry, from the outermost to the innermost. -/
-def personSpec (geom : PersonGeometry) (p : Person) : List Segment :=
-  Segment.all.filter fun s ↦ decide (s ∈ universalSpec p ∧ s ∈ geom.nodes)
+/-- The segments a person bears under a geometry, from the root down. -/
+def personSpec (geom : PersonGeometry) (p : Person) : List PersonSegment :=
+  geom.nodes.filter (· ∈ PersonSegment.spec p)
 
 /-- Every person bears `π` under every geometry. -/
 theorem pi_mem_personSpec (geom : PersonGeometry) (p : Person) :
-    Segment.pi ∈ personSpec geom p := by
-  cases geom <;> cases p <;> decide +kernel
+    PersonSegment.pi ∈ personSpec geom p := by
+  cases geom <;> simp [personSpec, PersonGeometry.nodes]
 
 /-- A geometry is a chain when the persons' specifications are linearly ordered by inclusion. -/
 def PersonGeometry.IsChain (geom : PersonGeometry) : Prop :=
-  _root_.IsChain (fun l m : List Segment ↦ l ⊆ m) (Set.range (personSpec geom))
+  _root_.IsChain (fun l m : List PersonSegment ↦ l ⊆ m) (Set.range (personSpec geom))
 
 theorem PersonGeometry.standard_isChain : PersonGeometry.standard.IsChain := by
   simp only [PersonGeometry.IsChain, _root_.IsChain, Set.Pairwise, Set.forall_mem_range]
@@ -147,7 +91,7 @@ theorem PersonGeometry.not_branching_isChain : ¬ PersonGeometry.branching.IsCha
 
 /-- An articulated probe is a list of unvalued segments, from the most general to the most
 specific. -/
-abbrev _root_.Minimalist.Probe.Articulation := List Segment
+abbrev _root_.Minimalist.Probe.Articulation := List PersonSegment
 
 /-- The flat probe `[uπ]`. -/
 def flatProbe : Probe.Articulation := [.pi]
@@ -156,8 +100,7 @@ def flatProbe : Probe.Articulation := [.pi]
 def partialProbe : Probe.Articulation := [.pi, .participant]
 
 /-- The full probe of a geometry, every segment the geometry uses. -/
-def fullProbe (geom : PersonGeometry) : Probe.Articulation :=
-  Segment.all.filter (· ∈ geom.nodes)
+def fullProbe (geom : PersonGeometry) : Probe.Articulation := geom.nodes
 
 /-- A language's agreement system is a person geometry together with an articulated probe. -/
 structure AgreementSystem where
@@ -178,7 +121,7 @@ namespace AgreementSystem
 variable (sys : AgreementSystem) (ea ia : Person)
 
 /-- The segments a person bears under the system's geometry. -/
-abbrev spec (p : Person) : List Segment := personSpec sys.geometry p
+abbrev spec (p : Person) : List PersonSegment := personSpec sys.geometry p
 
 /-- The residue of the probe after Agree with the internal argument, the segments it does not
 bear. -/
@@ -212,7 +155,7 @@ def cycles : Probe.Articulation × Probe.Articulation :=
 
 /-- A segment of the probe searches its domain, halting at the closest goal, which bears `π` and
 so intervenes for every segment, and Agrees with that goal iff it bears the segment. -/
-def segProbe (s : Segment) : Probe Person := .ofInt fun p ↦ decide (s ∈ sys.spec p)
+def segProbe (s : PersonSegment) : Probe Person := .ofInt fun p ↦ decide (s ∈ sys.spec p)
 
 /-- The external argument is licensed by the core probe when some segment of the residue Agrees
 with it from the next projection of v, whose domain has the external argument closest and the

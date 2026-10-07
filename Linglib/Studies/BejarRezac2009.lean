@@ -159,8 +159,8 @@ example : basque.IsInverse .first .second ∧ kashmiri.IsDirect .first .second :
 /-- In the full system of Mohawk the only direct context whose two arguments bear [participant]
 is 1N2, the cell of the portmanteau *ku* (26). -/
 theorem kashmiri_participant_direct_iff (ea ia : Person) :
-    kashmiri.IsDirect ea ia ∧ Segment.participant ∈ kashmiri.spec ea ∧
-        Segment.participant ∈ kashmiri.spec ia ↔
+    kashmiri.IsDirect ea ia ∧ PersonSegment.participant ∈ kashmiri.spec ea ∧
+        PersonSegment.participant ∈ kashmiri.spec ia ↔
       (ea = .first ∨ ea = .firstInclusive ∨ ea = .firstExclusive) ∧ ia = .second := by
   revert ea ia
   decide +kernel
@@ -179,7 +179,7 @@ specification as in (12b). The core probe copies the internal argument on vI whe
 matches and the external argument on vII in a direct context, and when the core probe has
 property P the added probe copies the external argument on vII, as in (23). -/
 def valuations (sys : AgreementSystem) (hasP : Bool) (ea ia : Person) :
-    List (Locus × List Segment) :=
+    List (Locus × List PersonSegment) :=
   ((if ∃ s ∈ sys.probe, s ∈ sys.spec ia then [(.vI, sys.spec ia)] else []) ++
     if sys.IsDirect ea ia then [(.vII, sys.spec ea)] else []) ++
     if hasP then [(.vII, sys.spec ea)] else []
@@ -211,7 +211,8 @@ example : Converges kashmiri true .second .first ∧ ¬ Converges kashmiri true 
 
 /-- The value of the probe valued on the highest projection of v, the only probe Kashmiri spells
 out by (24a). -/
-def highestValue (sys : AgreementSystem) (hasP : Bool) (ea ia : Person) : Option (List Segment) :=
+def highestValue (sys : AgreementSystem) (hasP : Bool) (ea ia : Person) :
+    Option (List PersonSegment) :=
   (valuations sys hasP ea ia).getLast?.map Prod.snd
 
 /-- In a convergent derivation the probe valued last is valued by the external argument, so
@@ -228,7 +229,7 @@ theorem highestValue_eq_spec {sys : AgreementSystem} {hasP : Bool} {ea ia : Pers
 /-- The segment `s` of the probe searches nominals with Case. The search halts at the closest
 nominal, which bears `π` and so intervenes for every segment (fn. 6), and Agrees with it iff its
 Case is unvalued and it bears the segment. -/
-def segmentProbe (geom : PersonGeometry) (s : Segment) : Probe BejarRezac2003.Nominal :=
+def segmentProbe (geom : PersonGeometry) (s : PersonSegment) : Probe BejarRezac2003.Nominal :=
   .ofInt fun n ↦ n.isActive && decide (s ∈ personSpec geom n.cell.person)
 
 /-- The root segment `π` is the person probe of [bejar-rezac-2003]. -/
@@ -241,14 +242,14 @@ theorem segmentProbe_pi (geom : PersonGeometry) :
 
 /-- No segment reaches a nominal behind an oblique one, so a participant there goes unlicensed,
 the Person Case Constraint (14). -/
-theorem pcc (geom : PersonGeometry) (s : Segment) (cd cn : Bundle) :
+theorem pcc (geom : PersonGeometry) (s : PersonSegment) (cd cn : Bundle) :
     (segmentProbe geom s).agree [.dat cd, .caseless cn] = none := by
   simp [segmentProbe, Probe.agree, Probe.ofInt_search]
 
 /-- A segment searching for the closest nominal bearing it would skip a third-person dative and
 reach a participant theme, the prediction fn. 6 excludes. -/
 example : (Probe.relativized fun n : BejarRezac2003.Nominal ↦
-    decide (Segment.participant ∈ personSpec .standard n.cell.person)).search
+    decide (PersonSegment.participant ∈ personSpec .standard n.cell.person)).search
       [.dat (.personNumber .third .singular), .caseless (.personNumber .first .singular)] =
     some (.caseless (.personNumber .first .singular)) := by
   decide

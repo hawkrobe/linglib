@@ -2,20 +2,22 @@ module
 
 public import Linglib.Syntax.Minimalist.Probe.Basic
 public import Linglib.Syntax.Agreement.Paradigm
-public import Linglib.Syntax.Minimalist.Phi.Geometry
+public import Linglib.Syntax.Minimalist.Phi.PersonSegment
 public import Linglib.Syntax.Case.Basic
 
 /-!
 # φ-probes
 
 This file specializes `Probe` to φ-features, as probes over `Agreement.Bundle`s relativized by
-the feature they seek (`Probe.Target`, `Phi/Geometry.lean`), Preminger's participant-relativized
-person probe among them, and the φ-goals they search, nominals with or without valued Case.
+the feature they seek, among them Preminger's person probe π⁰, which seeks [participant], and
+number probe #⁰, which seeks [plural], and the φ-goals they search, nominals with or without
+valued Case.
 
 ## Main definitions
 
-* `Agreement.Bundle.visibleTo`: a cell bears the feature a target seeks.
-* `Agreement.Bundle.IsParticipant`: a cell bears an interpretable 1st/2nd person feature.
+* `Agreement.Bundle.IsParticipant`: a cell bears the [participant] segment.
+* `Minimalist.Probe.Target`, `Agreement.Bundle.visibleTo`: the features a relativized probe
+  seeks, and the cells that bear them.
 * `Minimalist.Probe.Target.toProbe`: a target's denotation as a `Probe` over φ-cells.
 * `Minimalist.PhiGoal`: a nominal as a φ-goal, its case if already valued and its φ-cell.
 
@@ -30,18 +32,26 @@ person probe among them, and the φ-goals they search, nominals with or without 
 
 namespace Minimalist
 
-/-- A φ-cell is visible to a relativized probe when it bears the feature the probe seeks
-(`probeVisible`, `Phi/Geometry.lean`). -/
-def _root_.Agreement.Bundle.visibleTo (c : Agreement.Bundle) (t : Probe.Target) : Bool :=
-  probeVisible t c.person (decide c.IsPlural)
-
-/-- A cell bears an interpretable 1st/2nd person feature when it is visible to the participant
-probe, by the person geometry of [harley-ritter-2002]. -/
+/-- A cell bears the [participant] segment, by the person geometry of [harley-ritter-2002]. -/
 def _root_.Agreement.Bundle.IsParticipant (c : Agreement.Bundle) : Prop :=
-  c.visibleTo .participant = true
+  PersonSegment.participant ∈ PersonSegment.spec c.person
 
-instance : DecidablePred Agreement.Bundle.IsParticipant := fun c =>
-  inferInstanceAs (Decidable (c.visibleTo .participant = true))
+instance : DecidablePred Agreement.Bundle.IsParticipant :=
+  fun _ ↦ inferInstanceAs (Decidable (_ ∈ _))
+
+/-- The feature a relativized φ-probe seeks. -/
+inductive Probe.Target where
+  /-- π⁰, the person probe, seeks [participant]. -/
+  | participant
+  /-- #⁰, the number probe, seeks [plural]. -/
+  | plural
+  deriving DecidableEq, Repr
+
+/-- A φ-cell is visible to a relativized probe when it bears the feature the probe seeks; the
+probe skips the cells that lack it. -/
+def _root_.Agreement.Bundle.visibleTo (c : Agreement.Bundle) : Probe.Target → Bool
+  | .participant => decide c.IsParticipant
+  | .plural => decide c.IsPlural
 
 /-- A `Probe.Target` denotes the probe over φ-cells relativized to the feature it seeks, π⁰ being
 `Probe.Target.participant.toProbe`. -/
