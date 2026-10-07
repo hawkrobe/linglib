@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.Reference.Definiteness
 public import Linglib.Fragments.English.Verbs.Inventory
-public import Linglib.Syntax.Minimalist.Linearization.Cyclic
+public import Linglib.Syntax.Minimalist.Linearization.SpelloutDomain
 public import Linglib.Syntax.Minimalist.SyntacticObject.Phase
 public import Linglib.Syntax.Minimalist.Linearization.Spellout
 public import Linglib.Syntax.Minimalist.SyntacticObject.Locality
@@ -27,7 +27,7 @@ an account that a configuration violates (`violations`); of the accounts built f
 constraints, only their combination predicts the observed pattern, a definite island in both
 English and Mandarin with a verb-of-creation effect for fronted wh-phrases alone (`observed_iff`).
 Binding escapes the PIC because it adds no ordering statement under cyclic linearization (§4.2,
-`binding_consistent`). On the LF-movement analysis of wh-in-situ (§5.2), with covert movement
+`binding_linearizes`). On the LF-movement analysis of wh-in-situ (§5.2), with covert movement
 subject to the PIC, an in-situ wh-phrase has a deleted copy above it whose link leaves the DP, and
 no account predicts the absence of a verb-of-creation effect in Mandarin
 (`not_observed_covert`).
@@ -63,9 +63,9 @@ namespace ShenHuang2026
 
 open Reference Minimalist Minimalist.Linearization ArgumentStructure
 
-/-- A cell of the factorial design (20), (21): whether the wh-phrase is fronted, as in English, or
-stays in situ, as in Mandarin; the definiteness of the object DP the wh-element sits in, the
-demonstrative being specific; and whether the main verb is a verb of creation. -/
+/-- A cell of the factorial design (20), (21) fixes whether the wh-phrase is fronted, as in
+English, or stays in situ, as in Mandarin; the definiteness of the object DP the wh-element sits
+in, the demonstrative being specific; and whether the main verb is a verb of creation. -/
 structure Config where
   fronted : Bool
   object : Definiteness
@@ -97,19 +97,19 @@ def determiner : Definiteness → LIToken
   | .definite => that
   | .indefinite => a
 
-/-- The object DP of (25): the wh-phrase in the complement of the determiner. -/
+/-- The object DP of (25) has the wh-phrase in the complement of the determiner. -/
 def dp (o : Definiteness) : PlanarSyntacticObject := determiner o * (book * (about * wh))
 
 /-- The verb phrase of (25). -/
 def vp (o : Definiteness) : PlanarSyntacticObject := verb * dp o
 
-/-- (5): the wh-phrase lies in the domain of the determiner, so the PIC (4) freezes it in any
-phase the determiner heads. -/
+/-- The wh-phrase lies in the domain of the determiner, so the PIC (4) freezes it in any phase the
+determiner heads (5). -/
 theorem impenetrable (o : Definiteness) :
     (vp o : SyntacticObject).WithinComplement (determiner o) wh := by
   cases o <;> decide
 
-/-- The escape hatch the account denies (§2.1): the verb phrase with the wh-phrase moved to
+/-- The escape hatch the account denies (§2.1) is the verb phrase with the wh-phrase moved to
 Spec,DP. -/
 def vpEdge : PlanarSyntacticObject := verb * (wh * (that * (book * (about * .traceOf wh))))
 
@@ -123,8 +123,8 @@ theorem edge_not_impenetrable :
 def extracted (o : Definiteness) : PlanarSyntacticObject :=
   wh * (verb * (determiner o * (book * (about * .traceOf wh))))
 
-/-- The LF-movement analysis of an in-situ wh-phrase ([huang-1982b], §5.2): a deleted copy above
-the pronounced one. -/
+/-- The LF-movement analysis of an in-situ wh-phrase ([huang-1982b], §5.2) puts a deleted copy
+above the pronounced one. -/
 def covert (o : Definiteness) : PlanarSyntacticObject := .traceOf wh * vp o
 
 /-- Covert movement leaves the string of the in-situ object. -/
@@ -142,12 +142,12 @@ def Config.covertTree (c : Config) : PlanarSyntacticObject :=
 
 /-! ### The two constraints -/
 
-/-- The DP phasehood account (§2.1): the demonstrative heads a phase, which a verb of creation
+/-- On the DP phasehood account (§2.1) the demonstrative heads a phase, which a verb of creation
 collapses by incorporating it. -/
 def Config.phaseHead (c : Config) : Option LIToken :=
   if c.object = .definite ∧ c.creation = false then some that else none
 
-/-- The DP that is specific, in [fiengo-1987]'s sense of familiar: the demonstrative-marked one. -/
+/-- The demonstrative-marked DP is the specific one, in [fiengo-1987]'s sense of familiar. -/
 def Config.specific (c : Config) : Option SyntacticObject :=
   if c.object = .definite then some (dp c.object) else none
 
@@ -247,8 +247,8 @@ instance (account : Finset Constraint) (fronted : Bool) :
     Decidable (VOCEffect account fronted) :=
   inferInstanceAs (Decidable (_ < _))
 
-/-- The pattern Experiments 1 and 2 found (Table 2): a definite island for fronted and in-situ
-wh-phrases under every verb class, and a verb-of-creation effect for the fronted ones alone. -/
+/-- Experiments 1 and 2 found (Table 2) a definite island for fronted and in-situ wh-phrases under
+every verb class, and a verb-of-creation effect for the fronted ones alone. -/
 def Observed (account : Finset Constraint) : Prop :=
   (∀ fronted v, IslandEffect account fronted v) ∧ VOCEffect account true ∧
     ¬ VOCEffect account false
@@ -256,15 +256,15 @@ def Observed (account : Finset Constraint) : Prop :=
 instance (account : Finset Constraint) : Decidable (Observed account) :=
   inferInstanceAs (Decidable (_ ∧ _ ∧ _))
 
-/-- DP phasehood alone (Table 1): an island for a fronted wh-phrase under a verb that is not a
-verb of creation only, hence a verb-of-creation effect, and no island in situ. -/
+/-- DP phasehood alone (Table 1) predicts an island for a fronted wh-phrase only under a verb that
+is not a verb of creation, hence a verb-of-creation effect, and no island in situ. -/
 theorem phasehood_predictions :
     IslandEffect phasehood true false ∧ ¬ IslandEffect phasehood true true ∧
       VOCEffect phasehood true ∧ ∀ v, ¬ IslandEffect phasehood false v := by
   decide
 
-/-- The Specificity Condition alone (Table 1): an island for fronted and in-situ wh-phrases
-under every verb class, and no verb-of-creation effect. -/
+/-- The Specificity Condition alone (Table 1) predicts an island for fronted and in-situ
+wh-phrases under every verb class, and no verb-of-creation effect. -/
 theorem specificity_predictions :
     (∀ fronted v, IslandEffect specificity fronted v) ∧
       ∀ fronted, ¬ VOCEffect specificity fronted := by
@@ -285,9 +285,9 @@ def Config.ofDatum (ex : Datum) : Option Config := do
   let v ← ex.parse? "creation" [("yes", true), ("no", false)]
   pure ⟨f, o, v⟩
 
-/-- The verb-of-creation contrasts of [davies-dubinsky-2003], (52)–(54), which the paper's
-Experiment 1 revisits: under the combined account, a non-creation verb with a definite object
-violates one constraint more than a creation verb, and the row is judged no better. -/
+/-- In the verb-of-creation contrasts of [davies-dubinsky-2003], (52)–(54), which the paper's
+Experiment 1 revisits, a non-creation verb with a definite object violates one constraint of the
+combined account more than a creation verb, and the row is judged no better. -/
 theorem stacking_daviesDubinsky :
     ∀ ex₁ ∈ DaviesDubinsky2003.Examples.all, ∀ ex₂ ∈ DaviesDubinsky2003.Examples.all,
       ∀ c₁ ∈ Config.ofDatum ex₁, ∀ c₂ ∈ Config.ofDatum ex₂,
@@ -295,7 +295,7 @@ theorem stacking_daviesDubinsky :
           ex₂.judgment.rank ≤ ex₁.judgment.rank := by
   decide
 
-/-- Constraint stacking on the paper's cited judgments: within a language, an example violating
+/-- Constraints stack on the paper's cited judgments, since within a language an example violating
 strictly more constraints of the combined account is judged no better. -/
 theorem stacking : ∀ ex₁ ∈ Examples.all, ∀ ex₂ ∈ Examples.all, ex₁.language = ex₂.language →
     ∀ c₁ ∈ Config.ofDatum ex₁, ∀ c₂ ∈ Config.ofDatum ex₂,
@@ -305,40 +305,90 @@ theorem stacking : ∀ ex₁ ∈ Examples.all, ∀ ex₂ ∈ Examples.all, ex₁
 
 /-! ### Binding and the PIC under cyclic linearization (§4.2) -/
 
-/-- The terminals of *What do you think Mary would eat?* (27). -/
+/-- A terminal is a word of *What do you think Mary would eat?* (27). -/
 inductive Terminal
   | what | «do» | you | think | mary | would | eat
   deriving DecidableEq, Repr
 
+section Linearization
+
 open Terminal
+open SyntacticObject (Derivation Step leaf)
 
-/-- (27a): the wh-phrase stops at the edge of the embedded CP, so the order fixed there is
-preserved at the matrix Spell-out and the derivation linearizes. -/
-theorem edge_stop_consistent :
-    Consistent [[what, mary, would, eat], [what, «do», you, think, mary, would, eat]] :=
-  consistent_of_forall_sublist (l := [what, «do», you, think, mary, would, eat]) (by decide)
-    (by decide)
+/-- Each terminal spells out its own lexical item. -/
+def Terminal.token : Terminal → LIToken
+  | what => ⟨.simple .D [], 11⟩
+  | «do» => ⟨.simple .T [], 12⟩
+  | you => ⟨.simple .D [], 13⟩
+  | think => ⟨.simple .V [], 14⟩
+  | mary => ⟨.simple .D [], 15⟩
+  | would => ⟨.simple .T [], 16⟩
+  | eat => ⟨.simple .V [], 17⟩
 
-/-- (27b): the wh-phrase stays in situ when the embedded CP is spelled out, so it follows
-*Mary* there and precedes her at the matrix Spell-out, an ordering contradiction: the
+/-- A lexical item spells out at most one terminal. -/
+def Terminal.ofToken? (tok : LIToken) : Option Terminal :=
+  [what, «do», you, think, mary, would, eat].find? (·.token = tok)
+
+/-- The embedded complementizer is silent. -/
+def embeddedC : LIToken := ⟨.simple .C [], 18⟩
+
+/-- In the embedded clause *eat* merges with *what*, then *would*, *Mary* and the
+complementizer. -/
+def embeddedSteps : List Step :=
+  [.em .right (leaf what.token), .em .left (leaf would.token), .em .left (leaf mary.token),
+    .em .left (leaf embeddedC)]
+
+/-- In the matrix clause *think*, *you* and *do* merge over the embedded clause. -/
+def matrixSteps : List Step :=
+  [.em .left (leaf think.token), .em .left (leaf you.token), .em .left (leaf «do».token)]
+
+/-- *What* moves to the edge of the clause built so far, or stays. -/
+def moveWhat (b : Bool) : List Step := if b then [.im (leaf what.token)] else []
+
+/-- In a derivation of (27) *what* stops at the edge of the embedded clause or not, and then
+moves to the edge of the matrix clause or stays in situ. -/
+def derivation (edge front : Bool) : Derivation :=
+  ⟨leaf eat.token, embeddedSteps ++ moveWhat edge ++ matrixSteps ++ moveWhat front⟩
+
+/-- The embedded clause is built once *what* has stopped at its edge or not. -/
+def embeddedStage (edge : Bool) : ℕ := (embeddedSteps ++ moveWhat edge).length
+
+/-- Each clause is spelled out when it is built. -/
+def schedule (edge front : Bool) : List (ℕ × ℕ) :=
+  [(embeddedStage edge, embeddedStage edge),
+    ((derivation edge front).length, (derivation edge front).length)]
+
+/-- The embedded clause is spelled out with *what* first when it stops at the edge, and last when
+it stays in situ (27). -/
+theorem embedded_spellout (edge front : Bool) :
+    ((derivation edge front).spellout (embeddedStage edge) (embeddedStage edge)).filterMap
+      Terminal.ofToken? =
+      if edge then [what, mary, would, eat] else [mary, would, eat, what] := by
+  cases edge <;> cases front <;> decide
+
+/-- When *what* stops at the edge of the embedded clause (27a), the order fixed there is preserved
+at the matrix Spell-out and the derivation linearizes. -/
+theorem edge_stop_linearizes : (derivation true true).Linearizes (schedule true true) := by
+  decide
+
+/-- When *what* stays in situ as the embedded clause is spelled out (27b), it follows *Mary* there
+and precedes her at the matrix Spell-out, an ordering contradiction; this is the
 cyclic-linearization content of the PIC on movement. -/
-theorem phase_skip_inconsistent :
-    ¬ Consistent [[mary, would, eat, what], [what, «do», you, think, mary, would, eat]] :=
-  not_consistent_of_pair mary what ⟨[mary, would, eat, what], by simp, by decide⟩
-    ⟨[what, «do», you, think, mary, would, eat], by simp, by decide⟩
+theorem phase_skip_not_linearizes : ¬ (derivation false true).Linearizes (schedule false true) := by
+  decide
 
-/-- Binding leaves the word order alone: with the wh-phrase in situ at both Spell-outs, no
-ordering statement is added and the derivation linearizes, so a dependency established by
-binding never meets the contradiction that enforces the PIC on movement. -/
-theorem binding_consistent :
-    Consistent [[mary, would, eat, what], [«do», you, think, mary, would, eat, what]] :=
-  consistent_of_forall_sublist (l := [«do», you, think, mary, would, eat, what]) (by decide)
-    (by decide)
+/-- Binding leaves the word order alone: with *what* in situ at both Spell-outs no ordering
+statement is added and the derivation linearizes, so a dependency established by binding never
+meets the contradiction that enforces the PIC on movement. -/
+theorem binding_linearizes : (derivation false false).Linearizes (schedule false false) := by
+  decide
+
+end Linearization
 
 /-! ### Verbs of creation in the Fragment -/
 
-/-- The verbs of creation the paper names, after [davies-dubinsky-2003]'s verbs of creation
-selecting a result nominal, *write* for a book, *tell* for a joke, *paint* for a portrait:
+/-- The paper names as verbs of creation, after [davies-dubinsky-2003]'s verbs of creation
+selecting a result nominal (*write* for a book, *tell* for a joke, *paint* for a portrait),
 *compose* (3), *tell* a joke (20b), *direct* (23), *shoot*, *make* and *compose* a video or
 song (footnote 12), and *write* (25b). The notion is per verb, not a Levin class: *tell* and
 *shoot* belong to no class of creation in [levin-1993]. -/
@@ -351,7 +401,7 @@ instance : DecidablePred IsVerbOfCreation := fun v ↦ inferInstanceAs (Decidabl
 def Config.ofVerb (fronted : Bool) (o : Definiteness) (v : English.Verbs.Verb) : Config :=
   ⟨fronted, o, decide (IsVerbOfCreation v)⟩
 
-/-- (25): *read that book about* violates both constraints and *write that book about* the
+/-- In (25) *read that book about* violates both constraints and *write that book about* the
 Specificity Condition alone, the residual definite island under a verb of creation. -/
 theorem read_write :
     violations combined (Config.ofVerb true .definite English.Verbs.read) = 2 ∧

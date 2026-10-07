@@ -5,7 +5,7 @@ public import Linglib.Phonology.Harmony.Basic
 public import Linglib.Phonology.OptimalityTheory.Correspondence
 public import Linglib.Phonology.OptimalityTheory.Tableau
 public import Linglib.Syntax.Minimalist.Linearization.Cyclic
-public import Linglib.Syntax.Minimalist.Linearization.Replay
+public import Linglib.Syntax.Minimalist.Linearization.SpelloutDomain
 public import Linglib.Syntax.Minimalist.Movement.Remnant
 public import Linglib.Data.Examples.SandeClemDabkowski2026
 public import Mathlib.Data.List.Sections
@@ -22,8 +22,8 @@ there, and the particle keeps its value when the remnant VP that contains it fro
 Koopman's analysis of predicate clefts.
 
 Both Spell-outs are computed from the two parameters of the analysis, whether T holds an
-auxiliary and whether the remnant VP fronts, and each clause's Minimalist derivation produces the
-same word order. Harmony then coincides with the verb's position in v, and under Fox and
+auxiliary and whether the remnant VP fronts, and each clause's Minimalist derivation spells out
+the same two snapshots. Harmony then coincides with the verb's position in v, and under Fox and
 Pesetsky's cyclic linearization, which the paper adopts, nothing that ends up between the fronted
 particle and the verb shares in it. The Wolof relative clauses described by Sy and by Martinović
 show the same profile, the trigger moving instead of the target.
@@ -34,15 +34,16 @@ show the same profile, the trigger moving instead of the target.
   keeps the verb in v (44).
 * `SandeClemDabkowski2026.Clause.notMem_vP_of_between`: what stands between the particle and the
   verb on the surface was not spelled out with them (41).
-* `SandeClemDabkowski2026.Clause.surface_derivation`: the derivations produce the four word
-  orders.
+* `SandeClemDabkowski2026.Clause.spellouts_eq_phases`: the derivations spell out the vP and CP
+  snapshots.
 * `SandeClemDabkowski2026.Clause.vPTableau_optimal`: the vP tableau gives the particle the value
   harmony assigns.
 
 ## Implementation notes
 
-* Spell-outs are lists of overt terminals, the vP's read off the bracketings (45) and (48); the
-  rows omit the tone numerals.
+* The vP Spell-out is the vP's head and complement, the stage before the subject merges; the
+  object shifts to the edge of the whole vP, standing for the VP-external position of footnote 7.
+  The rows omit the tone numerals.
 * The tableau ranks Sande's two constraints, ATRHARM being Agreement by Projection in Hansson's
   sense, and holds the root fixed as root control requires; with the root free the two constraints
   alone would change the root (`optimal_rootFree`).
@@ -51,7 +52,6 @@ show the same profile, the trigger moving instead of the target.
 
 ## TODO
 
-* Read the vP Spell-out off the derivation at the merge of C instead of the bracketing.
 * The verb-doubling orders of plain verb focus, the island and successive-cyclicity diagnostics of
   §3, and the Atchan nasal harmony the paper leaves open.
 
@@ -145,14 +145,6 @@ theorem notMem_vP_of_between (h : c.Harmony) {x : Terminal} (h₁ : [.particle, 
   c.consistent.notMem_of_isInfix (by simp [phases]) (by simp [phases]) (c.isInfix_vP h) h₁ h₂
 
 end Clause
-
-/-- Object shift lets the particle front (§6.2). Had the object stayed in the VP, spelled out
-before the particle, fronting the particle past it would reverse an ordering statement. -/
-theorem not_consistent_without_objectShift :
-    ¬ Consistent [.object :: (Clause.mk true true).vP, (Clause.mk true true).cP] :=
-  not_consistent_of_pair .object .particle
-    ⟨.object :: (Clause.mk true true).vP, by simp, by decide⟩
-    ⟨(Clause.mk true true).cP, by simp, by decide⟩
 
 /-! ### Discontinuous harmony (§7) -/
 
@@ -286,16 +278,24 @@ def remnant : PlanarSyntacticObject :=
 
 open Minimalist.SyntacticObject (Step leaf)
 
-/-- The vP is built as in (31)–(34). The particle and the object merge with the verb in a
-head-final VP, v merges on its right and the verb adjoins to v on the right, the subject merges in
-Spec,vP, and the object shifts above the vP. -/
-def vPSteps : List Step :=
+/-- The head and complement of the vP are built as in (31)–(34). The particle and the object
+merge with the verb in a head-final VP, v merges on its right, and the verb adjoins to v on the
+right. -/
+def vSteps : List Step :=
   [.em .left (leaf Terminal.particle.token), .em .left (leaf Terminal.object.token),
-    .em .right (leaf v₀), .im (leaf Terminal.verb.token) .right,
-    .em .left (leaf Terminal.subject.token), .im (leaf Terminal.object.token)]
+    .em .right (leaf v₀), .im (leaf Terminal.verb.token) .right]
+
+/-- The subject merges in Spec,vP and the object shifts above the vP. -/
+def edgeSteps : List Step :=
+  [.em .left (leaf Terminal.subject.token), .im (leaf Terminal.object.token)]
 
 /-- The subject raises to Spec,TP and C merges. -/
 def cSteps : List Step := [.im (leaf Terminal.subject.token), .em .left (leaf C₀)]
+
+/-- A clause is spelled out twice: the head and complement of its vP when C merges
+(l.1255–1260), and its CP at the end of the derivation. -/
+def vPSchedule (d : Derivation) : List (ℕ × ℕ) :=
+  [(vSteps.length, (d.mergeStage? (leaf C₀)).getD d.length), (d.length, d.length)]
 
 namespace Clause
 
@@ -311,11 +311,17 @@ def focusSteps : List Step := if c.fronted then [.im remnant.toSyntacticObject] 
 
 /-- A clause's derivation starts from the verb. -/
 def derivation : Derivation :=
-  ⟨leaf Terminal.verb.token, vPSteps ++ c.tSteps ++ cSteps ++ c.focusSteps⟩
+  ⟨leaf Terminal.verb.token, vSteps ++ edgeSteps ++ c.tSteps ++ cSteps ++ c.focusSteps⟩
 
-/-- The surface order of a clause's derivation is its CP Spell-out. -/
-theorem surface_derivation : c.derivation.surfaceTokens.filterMap Terminal.ofToken? = c.cP := by
+/-- The derivation's Spell-outs are the vP and CP snapshots. -/
+theorem spellouts_eq_phases :
+    (vPSchedule c.derivation).map (fun p ↦ (c.derivation.spellout p.1 p.2).filterMap
+      Terminal.ofToken?) = c.phases := by
   obtain ⟨_ | _, _ | _⟩ := c <;> decide
+
+/-- Every clause's derivation linearizes. -/
+theorem linearizes : c.derivation.Linearizes (vPSchedule c.derivation) := by
+  obtain ⟨_ | _, _ | _⟩ := c <;> decide +kernel
 
 /-- Focus fronting is remnant movement, the fronted VP holding the trace of the verb (§4.1). -/
 theorem isRemnantStep_derivation (h : c.fronted = true) :
@@ -323,6 +329,18 @@ theorem isRemnantStep_derivation (h : c.fronted = true) :
   obtain ⟨_ | _, _ | _⟩ := c <;> simp at h <;> decide
 
 end Clause
+
+/-- In this variant of the fronted clause with an auxiliary, the object shifts only after C
+merges. -/
+def lateShift : Derivation :=
+  ⟨leaf Terminal.verb.token, vSteps ++ edgeSteps.take 1 ++ (Clause.mk true true).tSteps ++ cSteps ++
+    edgeSteps.drop 1 ++ (Clause.mk true true).focusSteps⟩
+
+/-- Object shift lets the particle front (§6.2). If the object shifted only after C merged, the
+vP would be spelled out with the object before the particle, and fronting the particle past it
+would not linearize. -/
+theorem not_linearizes_lateShift : ¬ lateShift.Linearizes (vPSchedule lateShift) := by
+  decide
 
 /-! ### The Guébie examples -/
 
