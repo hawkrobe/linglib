@@ -250,14 +250,16 @@ def worry_eventive : Verb := .mkRegular {
   form := "worry"
   frames := [ArgumentFrame.np]
   vendlerClass := some .accomplishment
-  levinClasses := {LevinClass.amuse} }
+  levinClasses := {LevinClass.amuse}
+  levinExcluded := {LevinClass.marvel} }
 
 /-- "worry" (stative) — Class II. "The situation worries John." -/
 def worry_stative : Verb := .mkRegular {
   form := "worry"
   frames := [ArgumentFrame.np]
   vendlerClass := some .state
-  levinClasses := {LevinClass.amuse} }
+  levinClasses := {LevinClass.amuse}
+  levinExcluded := {LevinClass.marvel} }
 
 /-- "please" — stative Class II. "The idea pleases John." Related to B&R Class III It.
     *piacere*. -/

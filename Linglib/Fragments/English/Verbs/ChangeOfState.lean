@@ -306,7 +306,8 @@ def turn : Verb := .mkRegular {
   frames := [ArgumentFrame.np, ArgumentFrame.unaccusative,
     ArgumentFrame.np_pp (some Adpositions.into)]
   vendlerClass := some .accomplishment
-  levinClasses := {LevinClass.turn} }
+  levinClasses := {LevinClass.turn}
+  levinExcluded := {LevinClass.crane, .hurt, .meander, .roll} }
 
 /-- "wake up" — the particle verb of awakening; Levin lists *waken* but not *wake*. -/
 def wakeUp : Verb where
@@ -362,7 +363,7 @@ def boil : Verb := .mkRegular {
     ArgumentFrame.np_pp (some Adpositions.with_)]
   vendlerClass := some .accomplishment
   scaleDimension := some .boiling
-  levinClasses := {LevinClass.cooking} }
+  levinClasses := {LevinClass.cooking, .prepare} }
 
 /-- "rust" — Levin 45.5 Entity-Specific CoS verbs. Inchoative only.
     Degree achievement: open scale (no maximum rustedness). -/
