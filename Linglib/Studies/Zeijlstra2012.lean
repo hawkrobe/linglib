@@ -1,14 +1,14 @@
 module
 
 public import Linglib.Syntax.Minimalist.Agree.Basic
-public import Linglib.Syntax.Minimalist.Phase.Domain
+public import Linglib.Syntax.Minimalist.SyntacticObject.Phase
 
 /-!
 # Zeijlstra (2012): There Is Only One Way to Agree
 
 This file formalizes [zeijlstra-2012]'s proposal that Agree applies upward only: an element
 carrying an uninterpretable feature is checked by the closest c-commanding element carrying the
-matching interpretable feature (`isUpwardGoalIn`), reversing the direction of
+matching interpretable feature (`IsUpwardGoalIn`), reversing the direction of
 [chomsky-2000]'s Agree, and several such elements may be checked by one goal at once
 (`MultipleAgree`). The evidence is the concord phenomena, Negative Concord and Sequence of
 Tense, whose configurations place one interpretable feature above one or more uninterpretable
@@ -29,6 +29,9 @@ clause boundary (`sot_licit`) while Negative Concord does not (`nc_across_cp_ill
 * The phase-edge condition is stated for a phase head leaf through the substrate's phase
   domains: when the probe lies in the phase interior and the goal outside the phase, some
   element of the phase edge must carry the uninterpretable feature.
+* The subordinate verb selects its subject as well as its predicate, so that the clause is a
+  constituent the complementizer selects and projects over; the paper's bracketings leave the
+  subject's position open.
 * The semantics of the subordinate past morpheme as a relative non-future, which the paper
   leaves to later work, is not formalized.
 
@@ -49,21 +52,21 @@ variable {root probe goal : SyntacticObject} {pred : SyntacticObject → Prop}
 
 /-! ### Upward Agree -/
 
-/-- Upward Agree: `goal`, carrying the interpretable feature marked by `pred`, c-commands the
+/-- In upward Agree, `goal`, carrying the interpretable feature marked by `pred`, c-commands the
 uninterpretable `probe` and is the closest such element, no other `pred`-node c-commanding the
 probe being asymmetrically c-commanded by it. -/
-def isUpwardGoalIn (root probe goal : SyntacticObject) (pred : SyntacticObject → Prop) : Prop :=
+def IsUpwardGoalIn (root probe goal : SyntacticObject) (pred : SyntacticObject → Prop) : Prop :=
   cCommandsIn root goal probe ∧ pred goal ∧
     ∀ x ∈ root.terms, cCommandsIn root x probe → pred x → ¬ asymCCommandsIn root goal x
 
 instance [DecidablePred pred] (root probe goal : SyntacticObject) :
-    Decidable (isUpwardGoalIn root probe goal pred) :=
+    Decidable (IsUpwardGoalIn root probe goal pred) :=
   inferInstanceAs (Decidable (_ ∧ _ ∧ ∀ x ∈ root.terms, _))
 
-/-- Multiple Agree: every probe in the list is checked by the same goal. -/
+/-- In Multiple Agree every probe in the list is checked by the same goal. -/
 def MultipleAgree (root goal : SyntacticObject) (probes : List SyntacticObject)
     (pred : SyntacticObject → Prop) : Prop :=
-  ∀ p ∈ probes, isUpwardGoalIn root p goal pred
+  ∀ p ∈ probes, IsUpwardGoalIn root p goal pred
 
 instance [DecidablePred pred] (root goal : SyntacticObject) (probes : List SyntacticObject) :
     Decidable (MultipleAgree root goal probes pred) :=
@@ -91,8 +94,8 @@ def said : PlanarSyntacticObject := .leaf ⟨.simple .V [.C] "said", 3⟩
 /-- The embedding complementizer, carrying `[uT]`. -/
 def thatC : PlanarSyntacticObject := .leaf ⟨.simple .C [.V] "that", 4⟩
 def mary : PlanarSyntacticObject := .leaf ⟨.simple .D [] "Mary", 5⟩
-/-- The subordinate verb, with `[uPAST]`. -/
-def was : PlanarSyntacticObject := .leaf ⟨.simple .V [.A] "was", 6⟩
+/-- The subordinate verb, with `[uPAST]`, selecting its predicate and its subject. -/
+def was : PlanarSyntacticObject := .leaf ⟨.simple .V [.A, .D] "was", 6⟩
 def ill : PlanarSyntacticObject := .leaf ⟨.simple .A [] "ill", 7⟩
 
 /-- *John said Mary was ill*, with the past operator above both verbs. -/
@@ -102,12 +105,12 @@ def sot : PlanarSyntacticObject :=
 /-- The bearers of `[iPAST]`. -/
 def iPast (s : SyntacticObject) : Prop := s = opPast
 
-private instance : DecidablePred iPast := λ s => inferInstanceAs (Decidable (s = _))
+private instance : DecidablePred iPast := fun s ↦ inferInstanceAs (Decidable (s = _))
 
-/-- The bearers of `[uPAST]` or `[uT]`: both finite verbs and the complementizer. -/
+/-- The bearers of `[uPAST]` or `[uT]` are both finite verbs and the complementizer. -/
 def uPast (s : SyntacticObject) : Prop := s = said ∨ s = was ∨ s = thatC
 
-private instance : DecidablePred uPast := λ _ => inferInstanceAs (Decidable (_ ∨ _ ∨ _))
+private instance : DecidablePred uPast := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _ ∨ _))
 
 /-- Both past morphemes Agree upward with the single past operator. -/
 theorem sot_multipleAgree : MultipleAgree sot opPast [said, was] iPast := by decide
@@ -120,7 +123,9 @@ theorem sot_not_downward : ¬ cCommandsIn sot said opPast ∧ ¬ cCommandsIn sot
 the phase headed by the complementizer, which itself carries an uninterpretable tense feature
 and so lies in the participating edge. -/
 theorem sot_licit :
-    EdgeParticipates sot was opPast uPast ⟨.simple .C [.V] "that", 4⟩ := by decide
+    (sot : SyntacticObject).WithinComplement ⟨.simple .C [.V] "that", 4⟩ was ∧
+      ¬ (sot : SyntacticObject).WithinProjection ⟨.simple .C [.V] "that", 4⟩ opPast ∧
+      EdgeParticipates sot was opPast uPast ⟨.simple .C [.V] "that", 4⟩ := by decide
 
 /-! ### Negative Concord -/
 
@@ -138,31 +143,32 @@ def che : PlanarSyntacticObject := .leaf ⟨.simple .C [.T] "che", 19⟩
 def ha₂ : PlanarSyntacticObject := .leaf ⟨.simple .T [.V] "ha", 20⟩
 def telefonato : PlanarSyntacticObject := .leaf ⟨.simple .V [.P] "telefonato", 21⟩
 
-/-- *Gianni non ha detto niente a nessuno*: two n-words under one negative marker. -/
+/-- *Gianni non ha detto niente a nessuno* has two n-words under one negative marker. -/
 def ncClausemate : PlanarSyntacticObject :=
   {gianni, {non, {ha, {detto, {niente, {a, nessuno}}}}}}
 
-/-- *Gianni non ha detto che ha telefonato a nessuno*: the n-word inside an embedded clause. -/
+/-- *Gianni non ha detto che ha telefonato a nessuno* has the n-word inside an embedded
+clause. -/
 def ncAcrossCP : PlanarSyntacticObject :=
   {gianni, {non, {ha, {dettoC, {che, {ha₂, {telefonato, {a, nessuno}}}}}}}}
 
 /-- The bearers of `[iNEG]`. -/
 def iNeg (s : SyntacticObject) : Prop := s = non
 
-private instance : DecidablePred iNeg := λ s => inferInstanceAs (Decidable (s = _))
+private instance : DecidablePred iNeg := fun s ↦ inferInstanceAs (Decidable (s = _))
 
 /-- The bearers of `[uNEG]`, the n-words. -/
 def uNeg (s : SyntacticObject) : Prop := s = niente ∨ s = nessuno
 
-private instance : DecidablePred uNeg := λ _ => inferInstanceAs (Decidable (_ ∨ _))
+private instance : DecidablePred uNeg := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
 /-- Both n-words Agree upward with the negative marker. -/
 theorem nc_clausemate_multipleAgree : MultipleAgree ncClausemate non [niente, nessuno] iNeg := by
   decide
 
-/-- Within the clause no phase intervenes, so the concord relation is licit. -/
+/-- Within the clause no complementizer heads a phase, so no phase edge intervenes. -/
 theorem nc_clausemate_licit :
-    EdgeParticipates ncClausemate nessuno non uNeg ⟨.simple .C [.T] "che", 19⟩ := by decide
+    ∀ x ∈ (ncClausemate : SyntacticObject).terms, x.outerCatC ≠ some .C := by decide
 
 /-- Across the embedded clause the complementizer carries no negative feature, so the phase
 edge does not participate and the concord relation is blocked. -/

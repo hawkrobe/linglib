@@ -29,8 +29,8 @@ head functions it is partial: `0` at exocentric nodes.
   `Minimalist.SyntacticObject.selCheck`: the selection algebra
   (`SyntacticObject.mergeAlgebra`), its catamorphism, and the carrier lift.
 * `Minimalist.SyntacticObject.selHead`, `Minimalist.SyntacticObject.outerCatC`:
-  the head token and its outer category — the foundation the Phase API consumes
-  (`isPhaseHeadOf`).
+  the head token and its outer category, the head function of the phases
+  (`SyntacticObject.IsPhaseHead`).
 * `Minimalist.SyntacticObject.selCheckHom`: `selCheck` as a morphism of magmas
   `SyntacticObject →ₙ* SelectionState`, via `SyntacticObject.lift`.
 
@@ -131,9 +131,13 @@ instance : CommMagma SelectionState where
   mul_comm x y := by
     simp only [SelectionState.mul_def, selCombine_comm x y, Option.map_map]; rfl
 
-/-- Exocentricity is a zero divisor: two saturated nonzero states multiply to `0`. -/
+/-- Exocentricity is a zero divisor, since two saturated nonzero states multiply to `0`. -/
 example : ∃ x y : SelectionState, x ≠ 0 ∧ y ≠ 0 ∧ x * y = 0 :=
   ⟨.of (mkTraceToken 0) [], .of (mkTraceToken 0) [], by decide⟩
+
+/-- A state never combines with itself, since of two equal sisters neither selects the other. -/
+@[simp] theorem SelectionState.mul_self (x : SelectionState) : x * x = 0 := by
+  rcases x with ⟨_ | ⟨h, _ | ⟨c, s⟩⟩⟩ <;> rfl
 
 variable {x y}
 
@@ -247,6 +251,10 @@ theorem selHead_node {l r : SyntacticObject} {h : LIToken} (hlr : (merge l r).se
     l.selHead = some h ∨ r.selHead = some h := by
   simp only [selHead, selCheck_node] at hlr ⊢
   exact SelectionState.head_mul hlr
+
+/-- An object merged with itself has no head. -/
+@[simp] theorem selHead_merge_self (x : SyntacticObject) : (merge x x).selHead = none := by
+  simp [selHead]
 
 @[simp] theorem outerCatC_leaf : (SyntacticObject.leaf tok).outerCatC
     = some tok.item.outerCat := rfl

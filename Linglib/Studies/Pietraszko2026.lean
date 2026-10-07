@@ -37,7 +37,7 @@ accessible subject to its specifier and a phase head without EPP freezes it in i
 non-phasal and [EPP, φ] optional on T and Asp. The expletive-pro account of [halpert-2015]
 (§3.2), the antifocus account of [zeller-2015] (§4), the modification of [henderson-2006],
 object dislocation (55) and the information-structural properties of the two orders are prose;
-the substrate's tree-level `Phase.Impenetrable` is the same condition at the level of syntactic
+the substrate's `SyntacticObject.WithinComplement` is the same condition at the level of syntactic
 objects.
 
 ## References
@@ -236,7 +236,8 @@ theorem phase_internal_obligatory {sp : Spine} {i : ℕ} {h : Head} (hi : sp[i]?
     (he : h.epp = true) (ha : Accessible sp i) : i + 1 ≤ landing sp := by
   obtain ⟨hlen, -⟩ := List.getElem?_eq_some_iff.1 hi
   have hstep : stateAt sp (i + 1) = ⟨i + 1, false⟩ := by
-    rw [stateAt_succ_of_getElem? hi, step, ite_eq_right (by simpa [Accessible] using ha), ite_eq_left he]
+    rw [stateAt_succ_of_getElem? hi, step, ite_eq_right (by simpa [Accessible] using ha),
+      ite_eq_left he]
   calc i + 1 = (stateAt sp (i + 1)).height := by rw [hstep]
     _ ≤ landing sp := height_stateAt_mono sp hlen
 

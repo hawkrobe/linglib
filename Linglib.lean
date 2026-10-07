@@ -1951,8 +1951,6 @@ import Linglib.Syntax.Minimalist.Movement.Freezing
 import Linglib.Syntax.Minimalist.Movement.Reconstruction
 import Linglib.Syntax.Minimalist.Movement.Remnant
 import Linglib.Syntax.Minimalist.Movement.Smuggling
-import Linglib.Syntax.Minimalist.Phase.Basic
-import Linglib.Syntax.Minimalist.Phase.Domain
 import Linglib.Syntax.Minimalist.Phi.Geometry
 import Linglib.Syntax.Minimalist.Phi.Lattice
 import Linglib.Syntax.Minimalist.Phi.PersonSpace

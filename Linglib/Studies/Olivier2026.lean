@@ -1,6 +1,5 @@
 module
 
-public import Linglib.Syntax.Minimalist.Phase.Basic
 public import Linglib.Semantics.ArgumentStructure.AuxiliarySelection
 
 /-!
@@ -35,7 +34,6 @@ and the restructuring one `Restructuring.matrixAux`.
 
 namespace Olivier2026
 
-open Minimalist (TransferStyle)
 open ArgumentStructure (PerfectAux TransitivityClass)
 
 /-! ### Person values with identity -/
@@ -121,10 +119,18 @@ example : compound .first .first ⟨.reflexive, some .detachedReflexive⟩ = .ha
 
 /-! ### Restructuring clauses (§5, §7) -/
 
+/-- The transfer of Voice(*)'s φ-features to vMOD (45), after [ouali-2008]: KEEP leaves them on
+Voice(*), SHARE puts them on vMOD as well. Ouali's third operation, DONATE, plays no role in
+the paper. -/
+inductive TransferStyle where
+  | keep
+  | share
+  deriving DecidableEq, Repr
+
 /-- A modal in a compound tense over an infinitive (40): the embedded clause, whether
 Voice(*) KEEPs its φ-features or SHAREs them with vMOD (45), and whether a vAux that
 receives a prepositional clitic's P-feature also receives the internal argument's person
-(§7.3's "rich" vAux; DONATE plays no role in the paper). -/
+(§7.3's "rich" vAux). -/
 structure Restructuring where
   embedded : Clause
   transfer : TransferStyle
@@ -146,7 +152,7 @@ def Restructuring.vAuxPerson (ea ia : Person) (r : Restructuring) : Option Index
   | .share =>
     if (r.embedded.clitic.map Clitic.prepositional).getD false ∧ !r.richAux then none
     else some (voicePerson ea ia r.embedded)
-  | _ => none
+  | .keep => none
 
 /-- The modal's auxiliary. -/
 def Restructuring.matrixAux (ea ia : Person) (r : Restructuring) : PerfectAux :=
@@ -163,7 +169,7 @@ instance (ea ia : Person) (r : Restructuring) : Decidable (r.Switch ea ia) :=
 climbs. -/
 theorem keep_have (ea ia : Person) (r : Restructuring) (h : r.transfer = .keep) :
     r.matrixAux ea ia = .have ∧ ¬ r.climbs := by
-  refine ⟨?_, λ hc => TransferStyle.noConfusion (h.symm.trans hc.2)⟩
+  refine ⟨?_, fun hc ↦ TransferStyle.noConfusion (h.symm.trans hc.2)⟩
   simp [Restructuring.matrixAux, Restructuring.vAuxPerson, h, insert]
 
 /-- Condition 3 derived: under SHARE, with no prepositional clitic, the modal switches to BE
@@ -242,6 +248,6 @@ theorem modernFrench_no_switch (ea ia : Person) (r : Restructuring)
     (hv : Variety.modernFrench.admits r.transfer) : ¬ r.climbs ∧ ¬ r.Switch ea ia := by
   have hk : r.transfer = .keep := hv
   have := keep_have ea ia r hk
-  exact ⟨this.2, λ h => by simp [Restructuring.Switch, this.1] at h⟩
+  exact ⟨this.2, fun h ↦ by simp [Restructuring.Switch, this.1] at h⟩
 
 end Olivier2026

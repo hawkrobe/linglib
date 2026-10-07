@@ -3,7 +3,7 @@ module
 public import Linglib.Semantics.Reference.Definiteness
 public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Syntax.Minimalist.Linearization.Cyclic
-public import Linglib.Syntax.Minimalist.Phase.Domain
+public import Linglib.Syntax.Minimalist.SyntacticObject.Phase
 public import Linglib.Syntax.Minimalist.Linearization.Spellout
 public import Linglib.Data.Examples.ShenHuang2026
 public import Linglib.Data.Examples.DaviesDubinsky2003
@@ -104,7 +104,7 @@ def vp (o : Definiteness) : PlanarSyntacticObject := verb * dp o
 /-- (5): the wh-phrase lies in the domain of the determiner, so the PIC (4) freezes it in any
 phase the determiner heads. -/
 theorem impenetrable (o : Definiteness) :
-    (vp o : SyntacticObject).Impenetrable (determiner o) wh := by
+    (vp o : SyntacticObject).WithinComplement (determiner o) wh := by
   cases o <;> decide
 
 /-- The escape hatch the account denies (§2.1): the verb phrase with the wh-phrase moved to
@@ -112,7 +112,7 @@ Spec,DP. -/
 def vpEdge : PlanarSyntacticObject := verb * (wh * (that * (book * (about * .traceOf wh))))
 
 /-- At the edge of the phase, the wh-phrase would be outside the reach of the PIC. -/
-theorem edge_not_impenetrable : ¬ (vpEdge : SyntacticObject).Impenetrable that wh := by
+theorem edge_not_impenetrable : ¬ (vpEdge : SyntacticObject).WithinComplement that wh := by
   decide
 
 /-- The wh-phrase fronted out of the object DP, leaving a deleted copy in the complement of
