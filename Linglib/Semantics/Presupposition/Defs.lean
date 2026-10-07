@@ -1,105 +1,48 @@
 module
 
 public import Linglib.Logic.Trivalent.Prop3
-public import Mathlib.Data.Part
 
 /-!
-# Partial Propositions
+# Partial propositions
 
-Partial propositions — propositions that may be undefined at some evaluation
-points. References: [heim-1983], [belnap-1970], [bale-schwarz-2022].
+A partial proposition is defined at some evaluation points and not at others. `PartialProp W`
+records where it is defined, its presupposition, and what it asserts there, both as predicates on
+`W`. Evaluation sends it to a three-valued proposition and forgets the assertion outside the
+presupposition.
 
 ## Main declarations
 
-* `PartialProp W` — partial proposition with `presup, assertion : W → Prop`.
-  The canonical type for partial propositions. Fields are `Prop`-valued
-  following the mathlib convention.
-* `PartialValue W α` — presupposed value polymorphic in the at-issue content
-  type (`α = ℚ` for degrees, `α = E` for entities). Presupposition is
-  also `W → Prop`.
-* `eval` — evaluation into `Prop3 W`, with the simp-normal interface
-  `eval_eq_true_iff`/`eval_eq_false_iff`/`eval_eq_indet_iff`;
-  `eval_surjective`/`eval_eq_eval_iff` make precise that `PartialProp` is the
-  total-representative presentation of `Prop3` (values outside the
-  presupposition are inert).
+* `PartialProp W`: partial propositions, with `presup, assertion : W → Prop`.
+* `PartialProp.eval`: evaluation into `Prop3 W`, with `eval_eq_true_iff`, `eval_eq_false_iff` and
+  `eval_eq_indet_iff`; `eval_surjective` and `eval_eq_eval_iff` show that `PartialProp` presents
+  `Prop3` by total representatives.
 
-The connective families on `PartialProp` live in
-`Presupposition.Basic` (classical, filtering, entailment) and
-`Presupposition.Trivalent` (rival trivalent families).
+The connectives on `PartialProp` live in `Presupposition.Basic` (classical, filtering,
+entailment) and `Presupposition.Trivalent` (rival trivalent families).
 
 ## Implementation notes
 
-`PartialProp W` is parametric over the evaluation point. Common instantiations:
-`PartialProp World` (classical possible worlds), `PartialProp (Possibility W ℕ E)`
-(dynamic world-assignment pairs).
+`PartialProp W` is parametric over the evaluation point: `PartialProp World` for possible worlds,
+`PartialProp (Possibility W ℕ E)` for dynamic world-assignment pairs. `open Classical` is in scope
+in the namespace because most theorems case-split on the `Prop`-valued fields, as in mathlib's
+`Order/Filter/Basic.lean`.
 
-`open Classical` is in scope at the namespace level because most
-theorems case-split on `Prop`-valued fields. Mathlib uses the same
-idiom in logic-heavy files such as `Mathlib/Order/Filter/Basic.lean`.
+## References
 
-## Todo
-
-* `PartialProp W = PartialValue W Prop` unification: `PartialValue` already generalizes
-  `PartialProp` at the type level; unifying would let the connective zoo lift
-  to arbitrary at-issue carriers.
+* [heim-1983]
+* [belnap-1970]
 -/
 
 @[expose] public section
-
 
 namespace Presupposition
 
 open Trivalent (Prop3)
 
-/-- A presupposed value: a value that is only defined when its
-presupposition holds.
-
-`PartialValue W α` generalizes presuppositional propositions: the
-presupposition is `W → Prop`, and the at-issue content is any type — a
-truth value (`Bool`), a degree (`ℚ`), a measure, etc.
-
-Linguistic motivation: many presupposition triggers return non-boolean
-values. The revised *per* entry ([bale-schwarz-2022], eq. 43)
-returns a presupposed pure number (`ℚ`). Definite descriptions return
-presupposed entities. `PartialValue` handles all of these uniformly. -/
-structure PartialValue (W : Type*) (α : Type*) where
-  /-- The presupposition (must hold for definedness). -/
-  presup : W → Prop
-  /-- The at-issue content (value). -/
-  value : W → α
-
-namespace PartialValue
-
-variable {W : Type*} {α : Type*}
-
-/-- A presupposed value is defined at w iff its presupposition holds. -/
-def defined (w : W) (pv : PartialValue W α) : Prop := pv.presup w
-
-/-- The mathlib rendering: pointwise, a presupposed value is a `Part`-valued function, the
-presupposition as domain. `PartialValue` is the *total-representative* presentation — the
-record carries a value everywhere (no proof-carrying `Part.get`); `toPart` forgets the
-values outside the presupposition. -/
-def toPart (pv : PartialValue W α) : W → Part α := λ w => ⟨pv.presup w, λ _ => pv.value w⟩
-
-open Classical in
-/-- Every `Part`-valued function has a total representative: `toPart` is surjective, so the
-two presentations differ only by the (linguistically inert) values outside the
-presupposition. -/
-theorem toPart_surjective [Inhabited α] :
-    Function.Surjective (toPart : PartialValue W α → W → Part α) := λ f =>
-  ⟨⟨λ w => (f w).Dom, λ w => if h : (f w).Dom then (f w).get h else default⟩, by
-    funext w
-    exact Part.ext' Iff.rfl (λ h₁ _ => dite_eq_left h₁)⟩
-
-end PartialValue
-
 /-! ### `PartialProp`: Prop-based partial propositions -/
 
-/-- A presuppositional proposition: assertion + presupposition.
-
-    Fields are `Prop`-valued following the Mathlib convention. Construct
-    directly with `{ presup := ..., assertion := ... }`; for finite worlds
-    with `DecidableEq`, the predicates are auto-decidable. -/
+/-- A presuppositional proposition pairs an assertion with the presupposition under which it is
+defined. Construct one directly with `{ presup := ..., assertion := ... }`. -/
 @[ext]
 structure PartialProp (W : Type*) where
   /-- The presupposition (must hold for definedness). -/
@@ -127,7 +70,7 @@ def ofProp3 (p : Prop3 W) : PartialProp W where
   presup := fun w => p w ≠ .indet
   assertion := fun w => p w = .true
 
-/-- Belnap's conditional assertion (A/B): assert B on condition A.
+/-- Belnap's conditional assertion `(A/B)` asserts `B` on condition `A`.
 
     Assertive_w iff A is true at w; what is asserted = B.
     [belnap-1970], (3): "(A/B) is assertive_w just in case
@@ -138,10 +81,10 @@ def condAssert (A B : W → Prop) : PartialProp W where
 
 /-! ### Satisfaction relations -/
 
-/-- Full satisfaction relation: both presupposition and assertion hold. -/
+/-- `p` holds at `w` when both its presupposition and its assertion do. -/
 def holds (w : W) (p : PartialProp W) : Prop := p.presup w ∧ p.assertion w
 
-/-- Definedness relation: presupposition holds at the evaluation point. -/
+/-- `p` is defined at `w` when its presupposition holds there. -/
 def defined (w : W) (p : PartialProp W) : Prop := p.presup w
 
 /-- The worlds where `p` is defined and true. -/
@@ -213,7 +156,7 @@ theorem eval_ofProp3 (p : Prop3 W) : (ofProp3 p).eval = p := by
 /-- `eval` is surjective — every three-valued proposition has a total representative,
     `ofProp3` being a section. -/
 theorem eval_surjective : Function.Surjective (eval : PartialProp W → Prop3 W) :=
-  λ p => ⟨ofProp3 p, eval_ofProp3 p⟩
+  fun p ↦ ⟨ofProp3 p, eval_ofProp3 p⟩
 
 /-- `eval` identifies exactly agreement on definedness and, where defined, on assertion:
     `PartialProp` is the *total-representative* presentation of `Prop3 W`, carrying
@@ -228,7 +171,7 @@ theorem eval_eq_eval_iff (p q : PartialProp W) :
     have hw : p.eval w = q.eval w := congrFun h w
     have hpq : p.presup w ↔ q.presup w := by
       rw [← eval_isDefined p w, ← eval_isDefined q w, hw]
-    refine ⟨hpq, λ hp => ⟨λ ha => ?_, λ ha => ?_⟩⟩
+    refine ⟨hpq, fun hp ↦ ⟨fun ha ↦ ?_, fun ha ↦ ?_⟩⟩
     · exact ((eval_eq_true_iff q w).mp
         (hw.symm.trans ((eval_eq_true_iff p w).mpr ⟨hp, ha⟩))).2
     · exact ((eval_eq_true_iff p w).mp
@@ -239,9 +182,9 @@ theorem eval_eq_eval_iff (p q : PartialProp W) :
     by_cases hp : p.presup w
     · by_cases ha : p.assertion w
       · simp [eval, hp, ha, hpq.mp hp, (himp hp).mp ha]
-      · have hqa : ¬q.assertion w := λ hqa => ha ((himp hp).mpr hqa)
+      · have hqa : ¬q.assertion w := fun hqa ↦ ha ((himp hp).mpr hqa)
         simp [eval, hp, ha, hpq.mp hp, hqa]
-    · have hq : ¬q.presup w := λ hq => hp (hpq.mpr hq)
+    · have hq : ¬q.presup w := fun hq ↦ hp (hpq.mpr hq)
       simp [eval, hp, hq]
 
 end PartialProp

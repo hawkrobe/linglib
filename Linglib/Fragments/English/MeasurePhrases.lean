@@ -1,15 +1,22 @@
 module
 
 public import Linglib.Semantics.Degree.Measure.Quantity
+public import Mathlib.Basic.Real.Basic
 
 /-!
 # English measure phrases
 
-Lexical entries for the English nouns that quantize a mass noun in a pseudo-partitive
-(*three grams of salt*, *three glasses of water*, *three grains of rice*): measure terms,
-which name a unit quantity of a dimension, and the container nouns and atomizers of
-Scontras's classification. A measure term carries the size of its unit relative to the
-dimension's reference unit, so that `kilogram.quantity = pure 1000 * gram.quantity`.
+The English nouns that quantize a mass noun in a pseudo-partitive (*three grams of salt*,
+*three glasses of water*, *three grains of rice*) are measure terms, which name a unit quantity
+of a dimension, and the container nouns and atomizers of Scontras's classification. A measure
+term carries the size of its unit in the dimension's reference unit, so that a kilogram is a
+thousand grams (`kilogram_quantity`).
+
+## Implementation notes
+
+* A unit's size is a convention, and the conventions are exact rationals: the SI prefixes are
+  powers of ten, and the pound and the mile are exact decimals of the kilogram and the meter. The
+  fragment stores them in `ℚ`, and a measure term denotes a quantity with real magnitude.
 
 ## References
 
@@ -30,13 +37,38 @@ structure MeasureTerm where
   /-- The unit's symbol in the quantity calculus (`g`, `mL`, `km`). -/
   symbol : String
   dimension : Dimension
-  /-- Size of the unit relative to the dimension's reference unit (gram, milliliter, meter,
-  second): a kilogram is `1000` grams, a mile `1609.344` meters. -/
+  /-- The size of the unit in the dimension's reference unit (gram, milliliter, meter, second):
+  a kilogram is `1000` grams, a mile `1609.344` meters. -/
   magnitude : ℚ := 1
-  deriving Repr, BEq
+  magnitude_pos : 0 < magnitude := by decide +kernel
+  deriving Repr
 
-/-- The unit quantity a measure term denotes. -/
-def MeasureTerm.quantity (t : MeasureTerm) : Degree.Quantity ℚ := (t.magnitude, .of t.dimension)
+namespace MeasureTerm
+
+open Degree
+
+/-- The unit quantity a measure term denotes, its size in the reference unit times the unit
+quantity of its dimension. -/
+def quantity (t : MeasureTerm) : Quantity ℝ := ((t.magnitude : ℝ), .of t.dimension)
+
+variable {t t' : MeasureTerm} {k : ℝ}
+
+@[simp] theorem quantity_fst (t : MeasureTerm) : t.quantity.1 = t.magnitude := rfl
+
+@[simp] theorem quantity_snd (t : MeasureTerm) : t.quantity.2 = .of t.dimension := rfl
+
+/-- A unit has positive size. -/
+theorem cast_magnitude_pos (t : MeasureTerm) : (0 : ℝ) < t.magnitude :=
+  Rat.cast_pos.mpr t.magnitude_pos
+
+/-- One unit is `k` of another when its size is `k` times the other's in their common
+dimension. -/
+theorem quantity_eq_pure_mul_iff :
+    t'.quantity = .pure k * t.quantity ↔
+      (t'.magnitude : ℝ) = k * t.magnitude ∧ t'.dimension = t.dimension := by
+  simp [Prod.ext_iff]
+
+end MeasureTerm
 
 /-- *gram*. -/
 def gram : MeasureTerm :=
@@ -77,6 +109,14 @@ def hour : MeasureTerm :=
 /-- *second*. -/
 def second_ : MeasureTerm :=
   { form := "second", formPlural := "seconds", symbol := "s", dimension := .time }
+
+/-- A kilogram is a thousand grams. -/
+theorem kilogram_quantity : kilogram.quantity = .pure 1000 * gram.quantity := by
+  simp [MeasureTerm.quantity_eq_pure_mul_iff, kilogram, gram]
+
+/-- A liter is a thousand milliliters. -/
+theorem liter_quantity : liter.quantity = .pure 1000 * milliliter.quantity := by
+  simp [MeasureTerm.quantity_eq_pure_mul_iff, liter, milliliter]
 
 /-- The measure terms. -/
 def allMeasureTerms : List MeasureTerm :=

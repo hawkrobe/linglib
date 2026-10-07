@@ -165,6 +165,14 @@ def int? : Option ℤ :=
     | '-' :: cs => (digits? cs).map fun n ↦ -(n : ℤ)
     | cs => (digits? cs).map fun n ↦ (n : ℤ)
 
+/-- `e.decimal? key` is the first value of `key` in `e` read as an unsigned decimal numeral,
+digits with an optional fractional part after a point. -/
+def decimal? : Option Rat :=
+  (e.feature? key).bind fun s ↦
+    match s.toList.span (· ≠ '.') with
+    | (i, []) => (digits? i).map fun n ↦ (n : Rat)
+    | (i, _ :: f) => do pure ((← digits? i) + (← digits? f) / 10 ^ f.length)
+
 variable {e key} {v : String}
 
 @[simp]

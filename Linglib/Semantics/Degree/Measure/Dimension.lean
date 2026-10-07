@@ -37,7 +37,7 @@ inductive Dimension where
   | force
   deriving Repr, DecidableEq, Fintype
 
-/-- The dimensions of the quantity calculus: the free abelian group on the base
+/-- The dimensions of the quantity calculus form the free abelian group on the base
 dimensions, written multiplicatively. -/
 abbrev QuantityDimension := Multiplicative (Dimension → ℤ)
 
@@ -48,15 +48,23 @@ def of (d : Dimension) : QuantityDimension := .ofAdd (Pi.single d 1)
 
 @[simp] theorem of_ne_one (d : Dimension) : of d ≠ 1 := by simp [of, Pi.single_eq_zero_iff]
 
-theorem of_injective : Function.Injective of := λ d d' h => by
+theorem of_injective : Function.Injective of := fun d d' h ↦ by
   simpa [of, Pi.single_apply, eq_comm] using congrFun (Multiplicative.ofAdd.injective h) d
 
 @[simp] theorem of_inj {d d' : Dimension} : of d = of d' ↔ d = d' := of_injective.eq_iff
 
 /-- Dividing by a base dimension changes the dimension. -/
-@[simp] theorem div_of_ne_self (a : QuantityDimension) (d : Dimension) : a / of d ≠ a := λ h => by
+@[simp] theorem div_of_ne_self (a : QuantityDimension) (d : Dimension) : a / of d ≠ a := by
+  intro h
   have := congrFun (congrArg Multiplicative.toAdd h) d
   simp [of] at this; omega
+
+/-- A base dimension is not a quotient of two base dimensions. -/
+theorem of_ne_of_div_of (d a b : Dimension) : of d ≠ of a / of b := fun h ↦ by
+  have h₁ := congrFun (congrArg Multiplicative.toAdd h) d
+  have h₂ := congrFun (congrArg Multiplicative.toAdd h) b
+  simp only [of, toAdd_ofAdd, toAdd_div, Pi.sub_apply, Pi.single_apply] at h₁ h₂
+  grind
 
 end QuantityDimension
 
