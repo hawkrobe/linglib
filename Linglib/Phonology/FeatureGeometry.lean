@@ -29,9 +29,8 @@ their studies.
 ## Implementation notes
 
 The placement is `Option`-valued so that a geometry may leave features of the inventory
-unplaced. A study builds its tree from the parent map with the root fixed: `PartialOrder.lift`
-along the set of a node's iterated parents, the root as `⊥`, and the parent as `Order.pred`,
-every axiom decided. Spreading any set of terminals, Halle, Vaux and Wolfe's partial
+unplaced. A study builds its tree from the parent map as a `ParentTree`, the root as `⊥` and
+the parent as `Order.pred`. Spreading any set of terminals, Halle, Vaux and Wolfe's partial
 spreading, is `Finset.piecewise` on that set, and single-feature spreading is
 `Bundle.assimilate`.
 
@@ -54,7 +53,7 @@ variable {F N : Type*} [Fintype F] [Preorder N] [DecidableLE N] (node : F → Op
 
 /-! ### Natural classes -/
 
-/-- The natural class of a node: the features placed at or below it. -/
+/-- The natural class of a node is the set of features placed at or below it. -/
 def naturalClass (a : N) : Finset F :=
   Finset.univ.filter fun f ↦ ∃ m ∈ node f, a ≤ m
 

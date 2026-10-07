@@ -65,8 +65,8 @@ open Phonology Phonology.FeatureGeometry
 
 /-! ### Tree (1) -/
 
-/-- The nodes of tree (1): the root; Place over Lips, Tongue Blade and Tongue Body; Soft Palate;
-Guttural over Tongue Root and Larynx. -/
+/-- The nodes of tree (1) are the root, Place over Lips, Tongue Blade and Tongue Body, Soft Palate,
+and Guttural over Tongue Root and Larynx. -/
 inductive Node where
   | root | place | lips | tongueBlade | tongueBody | softPalate | guttural | tongueRoot | larynx
   deriving DecidableEq, Repr, Fintype
@@ -80,25 +80,20 @@ def pred : Node → Node
   | .lips | .tongueBlade | .tongueBody => .place
   | .tongueRoot | .larynx => .guttural
 
-/-- A node with its ancestors: the iterates of `pred`. -/
-def up (n : Node) : Finset Node := (Finset.range (Fintype.card Node)).image (pred^[·] n)
+/-- The class nodes form the rooted tree of `pred`, the root as `⊥` and the parent as
+`Order.pred`. -/
+def tree : ParentTree Node :=
+  ⟨pred, .root, rfl, fun n ↦ ⟨Fintype.card Node, by revert n; decide⟩⟩
 
-instance : PartialOrder Node := PartialOrder.lift up (by decide)
+instance : PartialOrder Node := tree.partialOrder
 
-instance : DecidableLE Node := fun a b ↦ inferInstanceAs (Decidable (up a ⊆ up b))
+instance : DecidableLE Node := tree.decidableLE
 
 instance : DecidableLT Node := decidableLTOfDecidableLE
 
-instance : OrderBot Node where
-  bot := .root
-  bot_le := by decide
+instance : OrderBot Node := tree.orderBot
 
-/-- The parent as the predecessor. -/
-instance : PredOrder Node where
-  pred := pred
-  pred_le := by decide
-  min_of_le_pred := by decide
-  le_pred_of_lt := by decide
+instance : PredOrder Node := tree.predOrder
 
 end Node
 
@@ -136,12 +131,12 @@ theorem place_eq_union :
 
 /-! ### Designated articulators (p. 435) -/
 
-/-- The labiovelar stop: `[dorsal, labial, +consonantal, −sonorant, −round, −continuant]`. -/
+/-- The labiovelar stop is `[dorsal, labial, +consonantal, −sonorant, −round, −continuant]`. -/
 def kp : Segment :=
   Segment.ofSpecs [(.dorsal, true), (.labial, true), (.consonantal, true), (.sonorant, false),
     (.round, false), (.continuant, false)]
 
-/-- The labialised velar stop: `[dorsal, +consonantal, −sonorant, +round, −continuant]`, with no
+/-- The labialised velar stop is `[dorsal, +consonantal, −sonorant, +round, −continuant]`, with no
 specification for [labial]. -/
 def kw : Segment :=
   Segment.ofSpecs [(.dorsal, true), (.consonantal, true), (.sonorant, false), (.round, true),
@@ -176,13 +171,13 @@ theorem placeAssimilation_nasal : placeAssimilation src tgt .nasal = tgt .nasal 
 feature [dorsal], not the Tongue Body node. -/
 def dorsalAssimilation : Segment := ({Feature.dorsal} : Finset Feature).piecewise src tgt
 
-/-- (44): spreading the terminal [dorsal] leaves the target's secondary articulation, its
-[back] value, untouched, which is how the palatalised nasal of (44a) keeps its palatalisation
+/-- Spreading the terminal [dorsal] leaves the target's secondary articulation, its [back] value,
+untouched (44), which is how the palatalised nasal of (44a) keeps its palatalisation
 and the plain nasal of (44b) stays plain. -/
 theorem dorsalAssimilation_back : dorsalAssimilation src tgt .back = tgt .back :=
   Finset.piecewise_eq_of_notMem _ _ _ (by decide)
 
-/-- (45): spreading the Tongue Body node instead would carry [back] along with [dorsal], the
+/-- Spreading the Tongue Body node instead would carry [back] along with [dorsal] (45), the
 prediction of a Place-node analysis of (44) that the data refute. -/
 theorem tongueBody_spread_back :
     (naturalClass node Node.tongueBody).piecewise src tgt .back = src .back :=

@@ -2,7 +2,7 @@ module
 
 public import Linglib.Core.Data.Fintype.Order
 public import Mathlib.Data.Fintype.Card
-public import Mathlib.Order.SuccPred.Basic
+public import Linglib.Core.Order.SuccPred.Tree
 public import Linglib.Core.Order.UpperLower.Finset
 public import Linglib.Syntax.Person.Basic
 public import Linglib.Syntax.Number.Basic
@@ -108,35 +108,26 @@ def ancestors : Node → List Node
 /-- The node a node depends on directly, the root fixed. -/
 def pred (n : Node) : Node := n.ancestors.head?.getD n
 
-/-- A node with its ancestors is the set of iterates of `pred`. -/
-def up (n : Node) : Finset Node := (Finset.range (Fintype.card Node)).image (pred^[·] n)
+/-- The geometry is the rooted tree of the parent map, the root as `⊥` and the parent as
+`Order.pred`. -/
+def tree : ParentTree Node :=
+  ⟨pred, .referringExpression, rfl, fun n ↦ ⟨Fintype.card Node, by revert n; decide⟩⟩
 
 /-- `a ≤ b` when `b` depends on `a`, the dominance of the geometry. -/
-instance : PartialOrder Node := PartialOrder.lift up (by decide)
+instance : PartialOrder Node := tree.partialOrder
 
-/-- Dominance is dependence: `a ≤ b` when `a` is `b` or a node `b` depends on. -/
-theorem le_iff : ∀ a b : Node, a ≤ b ↔ a = b ∨ a ∈ b.ancestors := by
-  show ∀ a b : Node, up a ⊆ up b ↔ a = b ∨ a ∈ b.ancestors
-  decide
-
-/-- Dominance is decided on the ancestors. -/
-instance : DecidableLE Node := fun a b ↦ decidable_of_iff _ (le_iff a b).symm
+instance : DecidableLE Node := tree.decidableLE
 
 instance : DecidableLT Node := decidableLTOfDecidableLE
 
-/-- The root dominates every node. -/
-instance : OrderBot Node where
-  bot := .referringExpression
-  bot_le := by decide
+instance : OrderBot Node := tree.orderBot
 
-/-- The parent as the predecessor. -/
-instance : PredOrder Node where
-  pred := pred
-  pred_le := by decide
-  min_of_le_pred := by decide
-  le_pred_of_lt := by decide
+instance : PredOrder Node := tree.predOrder
 
 instance : LocallyFiniteOrder Node := Fintype.toLocallyFiniteOrder
+
+/-- Dominance is dependence: `a ≤ b` when `a` is `b` or a node `b` depends on. -/
+theorem le_iff : ∀ a b : Node, a ≤ b ↔ a = b ∨ a ∈ b.ancestors := by decide
 
 /-- The nodes a node depends on, itself included and the root excluded, from the root down:
 the content a privative feature brings with it. -/
@@ -175,7 +166,8 @@ theorem fillDefaults_isLowerSet {s : Finset Node} (hs : IsLowerSet (↑s : Set N
     true_and] at hb ⊢
   rcases hb with hb | ⟨o, ho, hod, hno⟩
   · exact .inl (hs hab hb)
-  · have key : ∀ o d x : Node, o.defaultDependent? = some d → x ≤ d → x = d ∨ x ≤ o := by decide
+  · have key : ∀ o d x : Node, o.defaultDependent? = some d → x ≤ d → x = d ∨ x ≤ o := by
+      decide +kernel
     rcases key o b a hod hab with rfl | hao
     · exact .inr ⟨o, ho, hod, hno⟩
     · exact .inl (hs hao ho)
