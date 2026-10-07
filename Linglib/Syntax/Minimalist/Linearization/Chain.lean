@@ -46,9 +46,10 @@ Sato and Ngui find.
 
 ## Main statements
 
-* `cCommandsIn_leaf_iff`: c-command by a token occurring once is c-command from its position.
+* `PlanarSyntacticObject.cCommandsIn_termAt_iff`: c-command by a term occurring once is
+  c-command from its position.
 * `withinComplement_iff_exists_mem_interior`: the positions in `interior` carry the terms within
-  the complement of a head that occurs once and projects wherever it occurs.
+  the complement of a phase head occurring once.
 
 ## Implementation notes
 
@@ -68,8 +69,6 @@ Sato and Ngui find.
 
 ## TODO
 
-* `CCommands t.val a b ↔ a.parent ≤ b ∧ ¬ a ≤ b` on a well-formed object, for `b` not the mother
-  of `a`: c-command as sisterhood-plus-dominance.
 * A successful `Derivation.externalize?` has no deleted copy without an antecedent.
 
 ## References
@@ -116,21 +115,6 @@ variable (t : PlanarSyntacticObject) (tok : LIToken)
 /-- The positions of the pronounced copies of `tok`. -/
 def occurrences : List TreePath :=
   (tokenList t.val).filterMap fun x ↦ if x.2 = tok then some x.1 else none
-
-variable {t tok} in
-/-- A position is an occurrence of `tok` exactly when it carries `tok`. -/
-theorem mem_occurrences_iff {p : TreePath} :
-    p ∈ occurrences t tok ↔ ∃ s, t.val.subtreeAt p.toList = some s ∧ s.value = Vertex.lex tok := by
-  simp only [occurrences, List.mem_filterMap, tokenList, Prod.exists]
-  constructor
-  · rintro ⟨q, tok', hq, he⟩
-    split_ifs at he with htok
-    cases he; subst htok
-    obtain ⟨s, hs, hv⟩ := mem_positions_iff.1 hq
-    refine ⟨s, hs, ?_⟩
-    rcases hsv : s.value with o | o <;> rw [hsv] at hv <;> simp_all
-  · rintro ⟨s, hs, hv⟩
-    exact ⟨p, tok, mem_positions_iff.2 ⟨s, hs, by simp [hv]⟩, by simp⟩
 
 /-- The positions of the deleted copies of `tok`. -/
 def traces : List TreePath :=
@@ -226,6 +210,68 @@ theorem links_eq_nil_of_length_le_one (h : (chain t tok).length ≤ 1) : links t
     · simp [hc] at h
   exact not_isLink_self t tok p
 
+/-! ### Terms and positions -/
+
+namespace PlanarSyntacticObject
+
+variable {t : PlanarSyntacticObject} {a : t.val.Positions} {x : SyntacticObject}
+
+/-- In a syntactic object the parent of a position other than the root branches. -/
+theorem isBranchingAt_parent (ha : a ≠ ⊥) : IsBranchingAt t.val a.val.parent := by
+  have hc : a.subtree ∈ (Order.pred a).subtree.children :=
+    Positions.mem_children_subtree.2
+      ⟨a, Order.pred_covBy_of_not_isMin (by simpa [isMin_iff_eq_bot] using ha), rfl⟩
+  have hso := isSyntacticObject_subtree (Order.pred a)
+  refine mem_positionsWhere.2 ⟨_, (Order.pred a).subtreeAt_eq, ?_⟩
+  generalize (Order.pred a).subtree = s at hc hso
+  obtain ⟨v, cs⟩ := s
+  rcases length_eq_zero_or_two hso with h0 | h2 <;>
+    grind [arity, List.length_eq_zero_iff, children_node]
+
+/-- C-command by a term occurring only at `a` is c-command from `a`. -/
+theorem cCommandsIn_termAt_iff (hu : ∀ q, t.termAt q = t.termAt a → q = a) :
+    (t : SyntacticObject).cCommandsIn (t.termAt a) x ↔
+      ∃ q : t.val.Positions, CCommands t.val a q ∧ t.termAt q = x := by
+  constructor
+  · rintro ⟨z, -, ⟨w, hw, haw, hwz, hne⟩, hzx⟩
+    obtain ⟨m, rfl⟩ := mem_terms_iff.1 hw
+    obtain ⟨c, hmc, hca⟩ := immediatelyContains_termAt.1 haw
+    obtain ⟨d, hmd, rfl⟩ := immediatelyContains_termAt.1 hwz
+    obtain ⟨q, hdq, rfl⟩ := containsOrEq_termAt.1 hzx
+    obtain rfl := hu c hca
+    have ha : c ≠ ⊥ := ne_bot_of_gt hmc.lt
+    have hm : m.val = c.val.parent := by rw [← Positions.pred_val, Order.pred_eq_of_covBy hmc]
+    refine ⟨q, (cCommands_iff_parent_lt (fun h ↦ ha (Subtype.ext h)) (isBranchingAt_parent ha)).2
+      ⟨hm ▸ Subtype.coe_lt_coe.2 (hmd.lt.trans_le hdq), fun hcq ↦ hne ?_⟩, rfl⟩
+    have hcd : c = d := by
+      rcases IsLeftLinear.comparable_of_le_common hcq (Subtype.coe_le_coe.2 hdq) with h | h
+      · exact (hmd.eq_or_eq hmc.le (Subtype.coe_le_coe.1 h)).resolve_left hmc.ne'
+      · exact ((hmc.eq_or_eq hmd.le (Subtype.coe_le_coe.1 h)).resolve_left hmd.ne').symm
+    rw [hcd]
+  · rintro ⟨q, hq, rfl⟩
+    have ha : a ≠ ⊥ := fun h ↦ hq.2.1 (h ▸ bot_le)
+    obtain ⟨hpq, haq⟩ :=
+      (cCommands_iff_parent_lt (fun h ↦ ha (Subtype.ext h)) (isBranchingAt_parent ha)).1 hq
+    obtain ⟨d, hpd, hdq⟩ := exists_covBy_le_of_lt (show Order.pred a < q from hpq)
+    refine ⟨t.termAt d, mem_terms_iff.2 ⟨d, rfl⟩, ⟨_, mem_terms_iff.2 ⟨Order.pred a, rfl⟩,
+      immediatelyContains_termAt.2
+        ⟨a, Order.pred_covBy_of_not_isMin (by simpa [isMin_iff_eq_bot] using ha), rfl⟩,
+      immediatelyContains_termAt.2 ⟨d, hpd, rfl⟩, fun h ↦ ?_⟩, containsOrEq_termAt.2 ⟨q, hdq, rfl⟩⟩
+    obtain rfl := hu d h.symm
+    exact haq hdq
+
+/-- A term immediately containing the term at `a`, which occurs only there, is the term at its
+parent. -/
+theorem eq_termAt_pred_of_immediatelyContains (hu : ∀ q, t.termAt q = t.termAt a → q = a)
+    {m : SyntacticObject} (hm : m ∈ (t : SyntacticObject).terms)
+    (h : immediatelyContains m (t.termAt a)) : m = t.termAt (Order.pred a) := by
+  obtain ⟨m, rfl⟩ := mem_terms_iff.1 hm
+  obtain ⟨c, hmc, hca⟩ := immediatelyContains_termAt.1 h
+  obtain rfl := hu c hca
+  rw [Order.pred_eq_of_covBy hmc]
+
+end PlanarSyntacticObject
+
 /-! ### Locality -/
 
 /-- The interior of the phase headed at `h` is the set of positions the head c-commands. -/
@@ -234,114 +280,22 @@ def interior (h : TreePath) : Set TreePath := {q | CCommands t.val h q}
 instance (h q : TreePath) : Decidable (q ∈ interior t h) :=
   inferInstanceAs (Decidable (CCommands _ _ _))
 
-/-- C-command by a token occurring once, at `h`, is c-command from `h`: the leaf of the token
-c-commands a term exactly when the term stands at a position `h` c-commands. -/
-theorem cCommandsIn_leaf_iff {t : PlanarSyntacticObject} {ℓ : LIToken} {h : TreePath}
-    (hocc : occurrences t ℓ = [h]) (x : SyntacticObject) :
-    (t : SyntacticObject).cCommandsIn (SyntacticObject.leaf ℓ) x ↔
-      ∃ q s, t.val.subtreeAt q.toList = some s ∧ UnorderedTree.mk s = x.val ∧
-        CCommands t.val h q := by
-  have hocc' : ∀ p, p ∈ occurrences t ℓ ↔ p = h := fun p ↦ by rw [hocc, List.mem_singleton]
-  constructor
-  · rintro ⟨z, -, ⟨w, hw, hwℓ, hwz, hne⟩, hzx⟩
-    obtain ⟨pw, sw, hsw, hmw⟩ := PlanarSyntacticObject.mem_terms_iff.1 hw
-    have hc : (SyntacticObject.leaf ℓ).val ∈ (UnorderedTree.mk sw).children := hmw ▸ hwℓ
-    have hd : z.val ∈ (UnorderedTree.mk sw).children := hmw ▸ hwz
-    rw [UnorderedTree.children_mk, Multiset.mem_coe, List.mem_map] at hc hd
-    obtain ⟨c, hcmem, hcℓ⟩ := hc
-    obtain ⟨d, hdmem, hdz⟩ := hd
-    obtain ⟨i, hi⟩ := List.mem_iff_getElem?.1 hcmem
-    obtain ⟨j, hj⟩ := List.mem_iff_getElem?.1 hdmem
-    have hci : t.val.subtreeAt (pw ++ [i]) = some c := by simp [subtreeAt_append, hsw, hi]
-    have hpos : (⟨pw ++ [i]⟩ : TreePath) = h :=
-      (hocc' _).1 (mem_occurrences_iff.2 ⟨c, hci, (PlanarSyntacticObject.mk_eq_leaf_iff hci).1 hcℓ⟩)
-    have hij : j ≠ i := by
-      rintro rfl
-      rw [hi] at hj
-      cases hj
-      exact hne (Subtype.ext (hcℓ.symm.trans hdz))
-    have hx : x.val ∈ UnorderedTree.subtrees z.val := by
-      rw [← map_val_terms]; exact Multiset.mem_map_of_mem _ (mem_terms.2 hzx)
-    rw [← hdz, UnorderedTree.subtrees_mk, RoseTree.mem_unorderedSubtrees] at hx
-    obtain ⟨r, s, hs, hsx⟩ := hx
-    refine ⟨⟨pw ++ [j] ++ r⟩, s, by simp [subtreeAt_append, hsw, hj, hs], hsx, ?_, ?_, ?_⟩
-    · intro y _ hyh
-      rw [← hpos] at hyh
-      refine (TreePath.le_parent_of_lt hyh).trans ?_
-      simp [TreePath.le_def, List.append_assoc]
-    · rw [← hpos, TreePath.mk_le_mk, List.append_assoc, List.prefix_append_right_inj]
-      simpa using hij.symm
-    · rw [← hpos, TreePath.mk_le_mk, List.append_assoc, List.prefix_append_right_inj]
-      simp [hij]
-  · rintro ⟨q, s, hs, hsx, hcc, hhq, hqh⟩
-    obtain ⟨c, hc, hcv⟩ := mem_occurrences_iff.1 ((hocc' h).2 rfl)
-    obtain ⟨pw, i, hpi⟩ : ∃ pw i, h.toList = pw ++ [i] := by
-      rcases List.eq_nil_or_concat h.toList with h0 | ⟨pw, i, hpi⟩
-      · exact absurd (TreePath.le_def.2 (by rw [h0]; exact List.nil_prefix)) hhq
-      · exact ⟨pw, i, by simpa using hpi⟩
-    rw [hpi, subtreeAt_append] at hc
-    cases hpw : t.val.subtreeAt pw with
-    | none => simp [hpw] at hc
-    | some sw =>
-    have hi : sw.children[i]? = some c := by simpa [hpw] using hc
-    have hci : t.val.subtreeAt (pw ++ [i]) = some c := by simp [subtreeAt_append, hpw, hi]
-    have hbr : IsBranchingAt t.val ⟨pw⟩ := by
-      refine mem_positionsWhere.2 ⟨sw, hpw, ?_⟩
-      obtain ⟨y, -, hy⟩ := PlanarSyntacticObject.exists_mem_terms_of_subtreeAt hpw
-      obtain ⟨a, cs⟩ := sw
-      have hne : cs ≠ [] := by rintro rfl; simp at hi
-      rcases length_eq_zero_or_two (hy ▸ y.2) with h0 | h2
-      · exact absurd (List.length_eq_zero_iff.1 h0) hne
-      · simp [arity, h2]
-    have hlt : (⟨pw⟩ : TreePath) < h := by
-      refine lt_of_le_of_ne (TreePath.le_def.2 (by rw [hpi]; exact List.prefix_append _ _)) ?_
-      intro he
-      have := congrArg (fun p : TreePath ↦ p.toList.length) he
-      simp [hpi] at this
-    obtain ⟨rest, hrest⟩ := TreePath.le_def.1 (hcc ⟨pw⟩ hbr hlt)
-    rcases rest with _ | ⟨j, r⟩
-    · exact absurd (TreePath.le_def.2 (by rw [← hrest, hpi]; simp)) hqh
-    have hij : j ≠ i := by
-      rintro rfl
-      exact hhq (TreePath.le_def.2 (by rw [hpi, ← hrest]; simp))
-    rw [← hrest, show pw ++ j :: r = pw ++ [j] ++ r by simp, subtreeAt_append, subtreeAt_append,
-      hpw] at hs
-    obtain ⟨d, hj, hds⟩ : ∃ d, sw.children[j]? = some d ∧ d.subtreeAt r = some s := by
-      cases hjd : sw.children[j]? with
-      | none => simp [hjd] at hs
-      | some d => exact ⟨d, rfl, by simpa [hjd] using hs⟩
-    have hdj : t.val.subtreeAt (pw ++ [j]) = some d := by simp [subtreeAt_append, hpw, hj]
-    obtain ⟨w, hw, hwv⟩ := PlanarSyntacticObject.exists_mem_terms_of_subtreeAt hpw
-    obtain ⟨z, hz, hzv⟩ := PlanarSyntacticObject.exists_mem_terms_of_subtreeAt hdj
-    refine ⟨z, hz, ⟨w, hw, ?_, ?_, ?_⟩, ?_⟩
-    · show (SyntacticObject.leaf ℓ).val ∈ w.val.children
-      rw [hwv, UnorderedTree.children_mk, Multiset.mem_coe, List.mem_map]
-      exact ⟨c, List.mem_of_getElem? hi, (PlanarSyntacticObject.mk_eq_leaf_iff hci).2 hcv⟩
-    · show z.val ∈ w.val.children
-      rw [hwv, hzv, UnorderedTree.children_mk, Multiset.mem_coe]
-      exact List.mem_map_of_mem (List.mem_of_getElem? hj)
-    · intro hlz
-      have hd : d.value = Vertex.lex ℓ :=
-        (PlanarSyntacticObject.mk_eq_leaf_iff hdj).1 (hzv ▸ congrArg Subtype.val hlz.symm)
-      have he := congrArg TreePath.toList
-        ((hocc' ⟨pw ++ [j]⟩).1 (mem_occurrences_iff.2 ⟨d, hdj, hd⟩))
-      rw [hpi] at he
-      exact hij (by simpa using he)
-    · refine mem_terms.1 ?_
-      rw [← Multiset.mem_map_of_injective Subtype.val_injective, map_val_terms, hzv]
-      exact RoseTree.mem_unorderedSubtrees.2 ⟨r, s, hds, hsx⟩
-
-/-- The positions in the interior at `h` carry the terms within the complement of a token
-occurring once, at `h`, and projecting wherever it occurs. -/
+/-- The interior positions of a phase head occurring only at `a` carry the terms within its
+complement. -/
 theorem withinComplement_iff_exists_mem_interior {t : PlanarSyntacticObject} {ℓ : LIToken}
-    {h : TreePath} (hocc : occurrences t ℓ = [h])
-    (hproj : ∀ m ∈ (t : SyntacticObject).terms,
-      immediatelyContains m (SyntacticObject.leaf ℓ) → m.raisingHead = some ℓ)
-    (x : SyntacticObject) :
-    (t : SyntacticObject).WithinComplement ℓ x ↔
-      ∃ q s, t.val.subtreeAt q.toList = some s ∧ UnorderedTree.mk s = x.val ∧ q ∈ interior t h := by
-  rw [← mem_phaseInterior, phaseInterior_eq_domainIn hproj, mem_domainIn]
-  exact cCommandsIn_leaf_iff hocc x
+    {a : t.val.Positions} {x : SyntacticObject}
+    (hu : ∀ q, t.termAt q = SyntacticObject.leaf ℓ ↔ q = a)
+    (hph : (t : SyntacticObject).IsPhaseHead ℓ) :
+    (t : SyntacticObject).WithinComplement ℓ x ↔ ∃ q : t.val.Positions, ↑q ∈ interior t a ∧
+      t.termAt q = x := by
+  have ha : t.termAt a = SyntacticObject.leaf ℓ := (hu a).2 rfl
+  have hu' : ∀ q, t.termAt q = t.termAt a → q = a := fun q hq ↦ (hu q).1 (hq.trans ha)
+  obtain ⟨m₀, hm₀, hℓ, hm₀ℓ⟩ := hph
+  rw [← mem_phaseInterior, phaseInterior_eq_domainIn fun m hm hmℓ ↦ ?_, mem_domainIn, ← ha]
+  · exact PlanarSyntacticObject.cCommandsIn_termAt_iff hu'
+  · rw [PlanarSyntacticObject.eq_termAt_pred_of_immediatelyContains hu' hm (by rwa [ha]),
+      ← PlanarSyntacticObject.eq_termAt_pred_of_immediatelyContains hu' hm₀ (by rwa [ha])]
+    exact hℓ
 
 /-- A link of the chain of `tok` leaves the phase headed at `h` when it runs from the interior to
 a position outside the head's maximal projection; the Phase Impenetrability Condition forbids it,

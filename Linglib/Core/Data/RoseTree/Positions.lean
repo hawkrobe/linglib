@@ -11,7 +11,10 @@ The positions of a rose tree `t` form `RoseTree.Positions t`, a subtype of `Tree
 is the least position, the parent of a position and the meet of two positions are again positions,
 and strict dominance is well founded, so `Positions t` is a rooted tree in the sense of
 `Mathlib/Order/SuccPred/Tree.lean`. Covering in `Positions t` is covering in `TreePath`
-(`Positions.covBy_iff`), so the daughters of a position are its valid daughters.
+(`Positions.covBy_iff`), so the daughters of a position are its valid daughters, and the subtree
+at a position (`Positions.subtree`) has the subtrees at its covers as daughters
+(`Positions.mem_children_subtree`) and the subtrees at the positions below it as subtrees
+(`Positions.isSubtree_subtree`).
 
 The positions whose subtree satisfies a predicate form `RoseTree.positionsWhere P t`, decidable
 when the predicate is, which picks out the positions of a label, of a branching node, or of any
@@ -24,6 +27,7 @@ its prefixes, and those below it in the tree are among `vertices`.
 ## Main declarations
 
 * `RoseTree.Positions`: the positions of a tree, a rooted tree under the prefix order.
+* `RoseTree.Positions.subtree`: the subtree at a position.
 * `RoseTree.positionsWhere`: the positions whose subtree satisfies a predicate.
 -/
 
@@ -87,6 +91,48 @@ theorem covBy_iff {p q : Positions t} : p ⋖ q ↔ p.val ⋖ q.val := by
     have hpq : p < q := Subtype.coe_lt_coe.mp h.lt
     have hc : Order.pred q ⋖ q := Order.pred_covBy_of_not_isMin (not_isMin_of_lt hpq)
     rwa [hpred] at hc
+
+variable {p : Positions t} {c s : RoseTree α}
+
+/-- The subtree of `t` at a position. -/
+def subtree (p : Positions t) : RoseTree α := (t.subtreeAt p.val.toList).get p.2
+
+theorem subtreeAt_eq (p : Positions t) : t.subtreeAt p.val.toList = some p.subtree :=
+  (Option.some_get p.2).symm
+
+@[simp] theorem subtree_bot : (⊥ : Positions t).subtree = t := rfl
+
+theorem subtree_eq_iff : p.subtree = s ↔ t.subtreeAt p.val.toList = some s := by
+  rw [subtreeAt_eq, Option.some_inj]
+
+/-- The subtrees of the subtree at a position are the subtrees at the positions below it. -/
+theorem isSubtree_subtree : IsSubtree s p.subtree ↔ ∃ q, p ≤ q ∧ q.subtree = s := by
+  rw [isSubtree_iff_exists_subtreeAt]
+  constructor
+  · rintro ⟨r, hr⟩
+    have hq : t.subtreeAt (p.val.toList ++ r) = some s := by
+      rw [subtreeAt_append, subtreeAt_eq]; exact hr
+    exact ⟨⟨⟨p.val.toList ++ r⟩, by simp [validPaths, hq]⟩,
+      TreePath.le_def.2 (List.prefix_append _ _), subtree_eq_iff.2 hq⟩
+  · rintro ⟨q, hpq, rfl⟩
+    obtain ⟨r, hr⟩ := TreePath.le_def.1 hpq
+    refine ⟨r, ?_⟩
+    have := q.subtreeAt_eq
+    rwa [← hr, subtreeAt_append, subtreeAt_eq, Option.bind_some] at this
+
+/-- The daughters of the subtree at a position are the subtrees at its covers. -/
+theorem mem_children_subtree : c ∈ p.subtree.children ↔ ∃ q, p ⋖ q ∧ q.subtree = c := by
+  simp only [covBy_iff, TreePath.covBy_iff]
+  constructor
+  · intro hc
+    obtain ⟨i, hi⟩ := List.mem_iff_getElem?.1 hc
+    have hq : t.subtreeAt (p.val.toList ++ [i]) = some c := by
+      simp [subtreeAt_append, subtreeAt_eq, hi]
+    exact ⟨⟨⟨p.val.toList ++ [i]⟩, by simp [validPaths, hq]⟩, ⟨i, rfl⟩, subtree_eq_iff.2 hq⟩
+  · rintro ⟨q, ⟨i, hi⟩, rfl⟩
+    have := q.subtreeAt_eq
+    rw [hi, subtreeAt_append, subtreeAt_eq, Option.bind_some] at this
+    exact List.mem_of_getElem? (by simpa using this)
 
 end Positions
 
