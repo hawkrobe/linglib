@@ -1,7 +1,8 @@
 module
 
 public import Mathlib.Analysis.SpecialFunctions.BinaryEntropy
-public import Linglib.Pragmatics.RSA.NoisyChannel
+public import Linglib.Pragmatics.RSA.Basic
+public import Linglib.Core.Probability.Kernel.Composition.Lemmas
 public import Linglib.Data.Examples.BergenGoodman2015
 import all Mathlib.Analysis.SpecialFunctions.BinaryEntropy  -- for unfolding `binEntropy`
 
@@ -9,23 +10,17 @@ import all Mathlib.Analysis.SpecialFunctions.BinaryEntropy  -- for unfolding `bi
 # Bergen & Goodman (2015): The strategic use of noise in pragmatic reasoning
 
 This file formalizes Bergen and Goodman's two applications of rational speech acts over a noisy
-channel (`Linglib.Pragmatics.RSA.NoisyChannel`): the literal listener decodes the intended utterance
-before interpreting it (eq. 6), the speaker's utility is the channel-expected log posterior of the
-intended meaning (eq. 7), and the pragmatic listener inverts the speaker composed with the channel
-(eq. 8). The channel misperceives each utterance as at most one other, at a rate the speaker lowers
-by stressing a word (`slipChannel`). Sentence fragments have no literal meaning, yet both listeners
-read the fragment "Bob" as the point mass on Bob having gone, at every positive deletion rate
-(`Ellipsis.L0_subject`, `Ellipsis.L1_subject`), because only "Bob went to the movies" deletes to it.
-Stress halves the rate at which a subject is misheard as the other, so the exponentiated utility of
-a subject sentence is `exp (-binEntropy rate) / 2`, and a speaker who knows that only Bob went
-prefers "BOB went" to "Bob went" (`Prosody.S1_bobWent_lt_BOB_went`), the form the paper's exhaustive
-row records (`Prosody.model_matches_stress_rows`).
-
-## Main definitions
-
-* `slipChannel` — the channel of a slip rate and a slip target.
-* `Ellipsis.L0`, `Ellipsis.S1`, `Ellipsis.L1`, `Prosody.L0`, `Prosody.S1` — eqs. 6–8 for the
-  two models.
+channel from the speaker's intended utterances to the perceived ones: the literal listener decodes
+the intended utterance before interpreting it (eq. 6), the speaker's utility is the channel-expected
+log posterior of the intended meaning (eq. 7), and the pragmatic listener inverts the speaker
+composed with the channel (eq. 8). The channel misperceives each utterance as at most one other, at
+a rate the speaker lowers by stressing a word (`slipChannel`). Sentence fragments have no literal
+meaning, yet both listeners read the fragment "Bob" as the point mass on Bob having gone, at every
+positive deletion rate (`Ellipsis.L0_subject`, `Ellipsis.L1_subject`), because only "Bob went to the
+movies" deletes to it. Stress halves the rate at which a subject is misheard as the other, so the
+exponentiated utility of a subject sentence is `exp (-binEntropy rate) / 2`, and a speaker who knows
+that only Bob went prefers "BOB went" to "Bob went" (`Prosody.S1_bobWent_lt_BOB_went`), the form the
+paper's exhaustive row records (`Prosody.model_matches_stress_rows`).
 
 ## Main results
 
@@ -99,6 +94,148 @@ theorem slipChannel_apply_singleton [DecidableEq U] (rate : U → ℝ) (slip : U
 
 end Channel
 
+/-! ### Rational speech acts over the channel
+
+The literal listener decodes before interpreting, so the meaning of a perceived utterance is the
+meaning of each intended one weighted by the utterance prior and the channel (eq. 6). The
+speaker's informativity is the channel-expected log listener, whose exponential is the listener
+mass averaged geometrically over perceptions (`channelMix`), and the speaker is the power-weight
+best response to that mix (`noisySpeaker`, eqs. 4 and 7). The pragmatic listener inverts the
+speaker composed with the channel (eq. 8). At the identity channel each operator is its
+noiseless counterpart. -/
+
+section NoisyRSA
+
+variable {W I U : Type*} [MeasurableSpace I] [MeasurableSpace U] [Fintype U]
+
+section Meaning
+
+/-- The meaning of a perceived utterance `u_p` is the meaning of each intended utterance,
+weighted by the utterance prior and the channel (eq. 6). -/
+noncomputable def noisyMeaning (N : Kernel I U) (ρ : Measure I) (m : I → W → ℝ≥0∞) (u_p : U)
+    (w : W) : ℝ≥0∞ :=
+  ∫⁻ u_i, N u_i {u_p} * m u_i w ∂ρ
+
+variable [Fintype I] [MeasurableSingletonClass I]
+
+omit [Fintype U] in
+theorem noisyMeaning_apply (N : Kernel I U) (ρ : Measure I) (m : I → W → ℝ≥0∞) (u_p : U)
+    (w : W) : noisyMeaning N ρ m u_p w = ∑ u_i, N u_i {u_p} * m u_i w * ρ {u_i} :=
+  lintegral_fintype _
+
+variable [MeasurableSingletonClass U]
+
+/-- Without noise the perceived utterance is the intended one, weighted by its prior. -/
+theorem noisyMeaning_id (ρ : Measure U) (m : U → W → ℝ≥0∞) (u : U) (w : W) :
+    noisyMeaning Kernel.id ρ m u w = ρ {u} * m u w := by
+  rw [noisyMeaning_apply, sum_eq_single u]
+  · rw [Kernel.id_apply, Measure.dirac_apply_of_mem (Set.mem_singleton u), one_mul, mul_comm]
+  · intro v _ hv
+    rw [Kernel.id_apply, Measure.dirac_apply' _ (.singleton u),
+      Set.indicator_of_notMem (Set.notMem_singleton_iff.mpr hv), zero_mul, zero_mul]
+  · exact fun h => absurd (mem_univ u) h
+
+end Meaning
+
+variable [MeasurableSpace W]
+
+section Speaker
+
+/-- `channelMix N L u_i w` averages the listener mass at `w` geometrically over the
+perceptions of `u_i`; it is the exponential of the channel-expected log listener, eq. 7's
+informativity. -/
+noncomputable def channelMix (N : Kernel I U) (L : Kernel U W) (u_i : I) (w : W) : ℝ≥0∞ :=
+  ∏ u_p, L u_p {w} ^ (N u_i {u_p}).toReal
+
+/-- The mix over the perceptions the channel can produce. -/
+theorem channelMix_eq_prod (N : Kernel I U) (L : Kernel U W) {u_i : I} {s : Finset U}
+    (hs : ∀ u_p ∉ s, N u_i {u_p} = 0) (w : W) :
+    channelMix N L u_i w = ∏ u_p ∈ s, L u_p {w} ^ (N u_i {u_p}).toReal :=
+  (prod_subset (subset_univ s) fun u_p _ hu => by
+    rw [hs u_p hu, ENNReal.toReal_zero, ENNReal.rpow_zero]).symm
+
+theorem channelMix_ne_top (N : Kernel I U) (L : Kernel U W) [IsFiniteKernel L] (u_i : I)
+    (w : W) : channelMix N L u_i w ≠ ∞ :=
+  ENNReal.prod_ne_top fun _ _ => ENNReal.rpow_ne_top_of_nonneg ENNReal.toReal_nonneg
+    (measure_ne_top _ _)
+
+variable [MeasurableSingletonClass U]
+
+/-- Without noise the literal listener is the noiseless one at every utterance of positive
+finite prior mass. -/
+theorem gradedListener_noisyMeaning_id (μ : Measure W) (ρ : Measure U) (m : U → W → ℝ≥0∞)
+    {u : U} (h0 : ρ {u} ≠ 0) (htop : ρ {u} ≠ ∞) :
+    gradedListener μ (noisyMeaning Kernel.id ρ m) u = gradedListener μ m u :=
+  gradedListener_apply_eq_of_eq_mul μ h0 htop (noisyMeaning_id ρ m u)
+
+theorem channelMix_id (L : Kernel U W) (u : U) (w : W) : channelMix Kernel.id L u w = L u {w} := by
+  rw [channelMix_eq_prod _ _ (s := {u}) fun v hv => by
+      rw [Kernel.id_apply, Measure.dirac_apply' _ (.singleton v),
+        Set.indicator_of_notMem (Set.notMem_singleton_iff.mpr fun h => hv (by simp [h]))],
+    prod_singleton, Kernel.id_apply, Measure.dirac_apply_of_mem (Set.mem_singleton u),
+    ENNReal.toReal_one, ENNReal.rpow_one]
+
+variable [Fintype I] [MeasurableSingletonClass I] [Countable W] [MeasurableSingletonClass W]
+
+/-- The speaker over the channel (eqs. 4 and 7) weights each utterance by the channel-mixed
+listener to the power `α`, scaled by the cost weight `exp (-(α * C u))`. -/
+noncomputable def noisySpeaker (N : Kernel I U) (α : ℝ) (C : I → ℝ) (L : Kernel U W) :
+    Kernel W I :=
+  Kernel.ofWeights fun w u => channelMix N L u w ^ α * ENNReal.ofReal (Real.exp (-(α * C u)))
+
+omit [MeasurableSingletonClass U] in
+@[simp] theorem noisySpeaker_apply_singleton (N : Kernel I U) (α : ℝ) (C : I → ℝ)
+    (L : Kernel U W) (w : W) (u : I) :
+    noisySpeaker N α C L w {u} =
+      channelMix N L u w ^ α * ENNReal.ofReal (Real.exp (-(α * C u)))
+        / ∑ u', channelMix N L u' w ^ α * ENNReal.ofReal (Real.exp (-(α * C u'))) :=
+  Kernel.ofWeights_apply_singleton _ w u
+
+instance (N : Kernel I U) (α : ℝ) (C : I → ℝ) (L : Kernel U W) :
+    IsFiniteKernel (noisySpeaker N α C L) :=
+  inferInstanceAs (IsFiniteKernel (Kernel.ofWeights _))
+
+omit [MeasurableSingletonClass U] in
+/-- Row preference of the speaker reduces to comparing the weighted channel-mixed listener
+values; the normalization cancels. -/
+theorem noisySpeaker_real_singleton_lt_iff {N : Kernel I U} {α : ℝ} (hα : 0 ≤ α) {C : I → ℝ}
+    {L : Kernel U W} [IsFiniteKernel L] {w : W}
+    (h0 : ∃ u, channelMix N L u w ^ α * ENNReal.ofReal (Real.exp (-(α * C u))) ≠ 0) {u u' : I} :
+    (noisySpeaker N α C L w).real {u} < (noisySpeaker N α C L w).real {u'} ↔
+      channelMix N L u w ^ α * ENNReal.ofReal (Real.exp (-(α * C u)))
+        < channelMix N L u' w ^ α * ENNReal.ofReal (Real.exp (-(α * C u'))) :=
+  Kernel.ofWeights_real_singleton_lt_iff w
+    (fun h => let ⟨u₀, hu₀⟩ := h0; hu₀ (sum_eq_zero_iff.mp h u₀ (mem_univ _)))
+    (ENNReal.sum_ne_top.mpr fun u _ => ENNReal.mul_ne_top
+      (ENNReal.rpow_ne_top_of_nonneg hα (channelMix_ne_top N L u w)) ENNReal.ofReal_ne_top)
+
+/-- Without noise the speaker is the noiseless one. -/
+theorem noisySpeaker_id (α : ℝ) (C : U → ℝ) (L : Kernel U W) [IsFiniteKernel L] :
+    noisySpeaker Kernel.id α C L = speaker α C L := by
+  rw [speaker_eq_ofWeights]
+  unfold noisySpeaker
+  congr 1
+  funext w u
+  rw [channelMix_id]
+
+end Speaker
+
+section Listener
+
+variable [MeasurableSingletonClass U] [Countable W] [MeasurableSingletonClass W]
+  [StandardBorelSpace W] [Nonempty W]
+
+/-- Without noise the pragmatic listener over the channel is the noiseless one. -/
+theorem pragmaticListener_id_comp_noisySpeaker (α : ℝ) (C : U → ℝ) (L : Kernel U W)
+    [IsFiniteKernel L] (μ : Measure W) [IsFiniteMeasure μ] :
+    pragmaticListener (Kernel.id ∘ₖ noisySpeaker Kernel.id α C L) μ =
+      pragmaticListener (speaker α C L) μ := by
+  simp only [noisySpeaker_id, Kernel.id_comp]
+
+end Listener
+
+end NoisyRSA
+
 /-! ## Ellipsis
 
 Three meanings and the full sentences expressing them; deletion strikes the predicate, leaving a
@@ -146,10 +283,10 @@ noncomputable abbrev N (δ : ℝ) : Kernel Meaning Utterance :=
   (slipChannel (rate δ) slip).comap Utterance.full (measurable_of_countable _)
 
 /-- The speaker's full sentences are equally likely. -/
-noncomputable abbrev uttPrior : Measure Meaning := priorOfWeights 1
+noncomputable abbrev uttPrior : Measure Meaning := Measure.count
 
 /-- The uniform meaning prior. -/
-noncomputable abbrev μ : Measure Meaning := priorOfWeights 1
+noncomputable abbrev μ : Measure Meaning := Measure.count
 
 /-- The graded literal meaning of a full sentence. -/
 noncomputable abbrev lit' : Meaning → Meaning → ℝ≥0∞ := fun m => (lit (.full m)).indicator 1
@@ -325,10 +462,10 @@ def slip : Utterance → Utterance
 noncomputable abbrev N (ε : ℝ) : Kernel Utterance Utterance := slipChannel (rate ε) slip
 
 /-- The uniform utterance prior. -/
-noncomputable abbrev uttPrior : Measure Utterance := priorOfWeights 1
+noncomputable abbrev uttPrior : Measure Utterance := Measure.count
 
 /-- The uniform meaning prior. -/
-noncomputable abbrev μ : Measure Meaning := priorOfWeights 1
+noncomputable abbrev μ : Measure Meaning := Measure.count
 
 /-- The graded literal meaning. -/
 noncomputable abbrev lit' : Utterance → Meaning → ℝ≥0∞ := fun u => (lit u).indicator 1
@@ -373,7 +510,7 @@ private theorem L0_onlyBob (hε₀ : 0 ≤ ε) (hε₁ : ε ≤ 1) :
   refine ⟨?_, ?_, ?_, ?_⟩ <;>
     · rw [L0, gradedListener_apply_singleton]
       simp only [noisyMeaning_apply, sum_univ_utt, sum_univ_mean, slipChannel_apply_singleton,
-        rate, slip, lit', lit, priorOfWeights_singleton, Pi.one_apply, Nat.cast_one,
+        rate, slip, lit', lit, Measure.count_singleton, Pi.one_apply,
         Set.indicator_apply, Set.mem_insert_iff, Set.mem_singleton_iff]
       simp only [reduceCtorEq, ite_true, ite_false, or_false, false_or, mul_one, mul_zero,
         add_zero, zero_add, h1, h1', h2, h2', one_add_one_eq_two]

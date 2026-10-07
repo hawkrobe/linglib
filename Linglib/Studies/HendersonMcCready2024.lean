@@ -161,7 +161,7 @@ def speakerValue : Persona → ℤ := λ _ => 0
 /-- A listener's literal listener is Bayes' rule over their likelihood, Burnett's literal
 listener when the likelihood is an indexation. -/
 noncomputable def L0 (t : ListenerType) : Kernel Message Persona :=
-  gradedListener (priorOfWeights priorWeight) λ m π => (likelihood t m π : ℝ≥0∞)
+  gradedListener (Measure.ofWeights (priorWeight ·)) λ m π => (likelihood t m π : ℝ≥0∞)
 
 /-- The posterior a listener assigns a persona on hearing a message, as a real number. -/
 theorem L0_real_singleton (t : ListenerType) (m : Message) (π : Persona) :

@@ -222,20 +222,20 @@ Every prediction about the speaker is an instance of `prefers_iff`. -/
 leader out, is the more informative variant, and a persona either variant can convey is conveyed
 by it. That is Obama's cool guy, predicted to use *-in'* about 69% of the time (p. 435). -/
 theorem casual_coolGuy_prefers_apical :
-    (S1 (priorOfWeights casualWeight) coolGuy).real {.velar}
-      < (S1 (priorOfWeights casualWeight) coolGuy).real {.apical} :=
+    (S1 (Measure.ofWeights (casualWeight ·)) coolGuy).real {.velar}
+      < (S1 (Measure.ofWeights (casualWeight ·)) coolGuy).real {.apical} :=
   (prefers_iff _ (by decide) (by decide +kernel) (by decide +kernel)
-    (priorOfWeights_singleton_ne_zero _ (by decide +kernel))).mpr (by
-      simp only [excluded, priorOfWeights_singleton]
+    (Measure.ofWeights_apply_singleton_ne_zero (Nat.cast_ne_zero.2 (by decide +kernel)))).mpr (by
+      simp only [excluded, Measure.ofWeights_apply_singleton]
       exact_mod_cast (by decide +kernel : casualWeight doofus < casualWeight sternLeader))
 
 /-- The asshole, also conveyable either way, goes the same way at the barbecue. -/
 theorem casual_asshole_prefers_apical :
-    (S1 (priorOfWeights casualWeight) asshole).real {.velar}
-      < (S1 (priorOfWeights casualWeight) asshole).real {.apical} :=
+    (S1 (Measure.ofWeights (casualWeight ·)) asshole).real {.velar}
+      < (S1 (Measure.ofWeights (casualWeight ·)) asshole).real {.apical} :=
   (prefers_iff _ (by decide) (by decide +kernel) (by decide +kernel)
-    (priorOfWeights_singleton_ne_zero _ (by decide +kernel))).mpr (by
-      simp only [excluded, priorOfWeights_singleton]
+    (Measure.ofWeights_apply_singleton_ne_zero (Nat.cast_ne_zero.2 (by decide +kernel)))).mpr (by
+      simp only [excluded, Measure.ofWeights_apply_singleton]
       exact_mod_cast (by decide +kernel : casualWeight doofus < casualWeight sternLeader))
 
 /-- Style shifting arises because with the journalists the doofus outweighs the stern leader
@@ -243,11 +243,11 @@ instead, so *-ing* is now the more informative variant and the same cool guy pre
 Neither the speaker nor the meaning has changed, only the context's prior, and with it which
 variant rules more out. -/
 theorem careful_coolGuy_prefers_velar :
-    (S1 (priorOfWeights carefulWeight) coolGuy).real {.apical}
-      < (S1 (priorOfWeights carefulWeight) coolGuy).real {.velar} :=
+    (S1 (Measure.ofWeights (carefulWeight ·)) coolGuy).real {.apical}
+      < (S1 (Measure.ofWeights (carefulWeight ·)) coolGuy).real {.velar} :=
   (prefers_iff _ (by decide) (by decide +kernel) (by decide +kernel)
-    (priorOfWeights_singleton_ne_zero _ (by decide +kernel))).mpr (by
-      simp only [excluded, priorOfWeights_singleton]
+    (Measure.ofWeights_apply_singleton_ne_zero (Nat.cast_ne_zero.2 (by decide +kernel)))).mpr (by
+      simp only [excluded, Measure.ofWeights_apply_singleton]
       exact_mod_cast (by decide +kernel : carefulWeight sternLeader < carefulWeight doofus))
 
 /-- Bulletproofing arises because Bush's listeners are almost certain he is inarticulate and
@@ -255,35 +255,35 @@ aloof, and the two personae the variants distinguish carry the same small weight
 variant rules out more than the other, the speaker is indifferent, and variant choice conveys
 nothing at all (pp. 444–445). -/
 theorem bush_indifferent :
-    ¬ (S1 (priorOfWeights bushWeight) asshole).real {.velar}
-        < (S1 (priorOfWeights bushWeight) asshole).real {.apical} ∧
-      ¬ (S1 (priorOfWeights bushWeight) asshole).real {.apical}
-        < (S1 (priorOfWeights bushWeight) asshole).real {.velar} := by
+    ¬ (S1 (Measure.ofWeights (bushWeight ·)) asshole).real {.velar}
+        < (S1 (Measure.ofWeights (bushWeight ·)) asshole).real {.apical} ∧
+      ¬ (S1 (Measure.ofWeights (bushWeight ·)) asshole).real {.apical}
+        < (S1 (Measure.ofWeights (bushWeight ·)) asshole).real {.velar} := by
   constructor <;>
     · rw [prefers_iff _ (by decide) (by decide +kernel) (by decide +kernel)
-        (priorOfWeights_singleton_ne_zero _ (by decide +kernel))]
-      simp only [excluded, priorOfWeights_singleton]
+        (Measure.ofWeights_apply_singleton_ne_zero (Nat.cast_ne_zero.2 (by decide +kernel)))]
+      simp only [excluded, Measure.ofWeights_apply_singleton]
       exact_mod_cast (by decide +kernel : ¬ bushWeight _ < bushWeight _)
 
 /-- The same holds of Rice, whose listeners have no prior beliefs to speak of. -/
 theorem rice_indifferent :
-    ¬ (S1 (priorOfWeights riceWeight) coolGuy).real {.velar}
-        < (S1 (priorOfWeights riceWeight) coolGuy).real {.apical} ∧
-      ¬ (S1 (priorOfWeights riceWeight) coolGuy).real {.apical}
-        < (S1 (priorOfWeights riceWeight) coolGuy).real {.velar} := by
+    ¬ (S1 (Measure.ofWeights (riceWeight ·)) coolGuy).real {.velar}
+        < (S1 (Measure.ofWeights (riceWeight ·)) coolGuy).real {.apical} ∧
+      ¬ (S1 (Measure.ofWeights (riceWeight ·)) coolGuy).real {.apical}
+        < (S1 (Measure.ofWeights (riceWeight ·)) coolGuy).real {.velar} := by
   constructor <;>
     · rw [prefers_iff _ (by decide) (by decide +kernel) (by decide +kernel)
-        (priorOfWeights_singleton_ne_zero _ (by decide +kernel))]
+        (Measure.ofWeights_apply_singleton_ne_zero (Nat.cast_ne_zero.2 (by decide +kernel)))]
       simp [excluded, riceWeight]
 
 /-- The predicted direction is the observed one, the cool guy taking *-in'* at the barbecue
 and *-ing* with the journalists while Obama's rate of *-in'* falls from the casual through the
 careful to the formal style ([labov-2012]). -/
 theorem matches_labov_direction :
-    (S1 (priorOfWeights casualWeight) coolGuy).real {.velar}
-        < (S1 (priorOfWeights casualWeight) coolGuy).real {.apical} ∧
-      (S1 (priorOfWeights carefulWeight) coolGuy).real {.apical}
-        < (S1 (priorOfWeights carefulWeight) coolGuy).real {.velar} ∧
+    (S1 (Measure.ofWeights (casualWeight ·)) coolGuy).real {.velar}
+        < (S1 (Measure.ofWeights (casualWeight ·)) coolGuy).real {.apical} ∧
+      (S1 (Measure.ofWeights (carefulWeight ·)) coolGuy).real {.apical}
+        < (S1 (Measure.ofWeights (carefulWeight ·)) coolGuy).real {.velar} ∧
       Labov2012.obama_ING.casual > Labov2012.obama_ING.careful ∧
       Labov2012.obama_ING.careful > Labov2012.obama_ING.formal :=
   ⟨casual_coolGuy_prefers_apical, careful_coolGuy_prefers_velar,
@@ -300,35 +300,37 @@ points at the stern leader, a flapped one at the doofus. -/
 /-- The stern leader can only be conveyed by *-ing* and the doofus only by *-in'*, so each is
 produced with certainty by the persona it is exclusive to. -/
 theorem sternLeader_certain {w : Persona → ℕ} (hw : ∀ p, w p ≠ 0) :
-    S1 (priorOfWeights w) sternLeader {.velar} = 1 ∧
-      S1 (priorOfWeights w) doofus {.apical} = 1 :=
+    S1 (Measure.ofWeights (w ·)) sternLeader {.velar} = 1 ∧
+      S1 (Measure.ofWeights (w ·)) doofus {.apical} = 1 :=
   ⟨ingField.speaker_indexation_eq_one_of_exclusive _ (by norm_num)
-      (priorOfWeights_singleton_ne_zero _ (hw _)) (by decide +kernel) (by decide +kernel),
+      (Measure.ofWeights_apply_singleton_ne_zero (Nat.cast_ne_zero.2 (hw _))) (by decide +kernel)
+      (by decide +kernel),
     ingField.speaker_indexation_eq_one_of_exclusive _ (by norm_num)
-      (priorOfWeights_singleton_ne_zero _ (hw _)) (by decide +kernel) (by decide +kernel)⟩
+      (Measure.ofWeights_apply_singleton_ne_zero (Nat.cast_ne_zero.2 (hw _))) (by decide +kernel)
+      (by decide +kernel)⟩
 
 /-- A variant gives no posterior mass to a persona it cannot convey, so hearing *-ing* rules
 out the doofus and hearing *-in'* rules out the stern leader, whatever the listener believed
 beforehand. -/
 theorem L1_eq_zero_of_excluded {w : Persona → ℕ} (hw : ∀ p, w p ≠ 0) (v : INGVariant) :
-    L1 (priorOfWeights w) v {excluded v} = 0 := by
+    L1 (Measure.ofWeights (w ·)) v {excluded v} = 0 := by
   cases v
   · exact ingField.pragmaticListener_indexation_apply_singleton_of_not_meets _ (by norm_num)
       (π' := coolGuy) (by decide +kernel) (by decide +kernel)
-      (priorOfWeights_singleton_ne_zero _ (hw _))
+      (Measure.ofWeights_apply_singleton_ne_zero (Nat.cast_ne_zero.2 (hw _)))
   · exact ingField.pragmaticListener_indexation_apply_singleton_of_not_meets _ (by norm_num)
       (π' := coolGuy) (by decide +kernel) (by decide +kernel)
-      (priorOfWeights_singleton_ne_zero _ (hw _))
+      (Measure.ofWeights_apply_singleton_ne_zero (Nat.cast_ne_zero.2 (hw _)))
 
 /-- With no prior beliefs the literal listener spreads its mass evenly over the three personae
 the variant can convey, the game-theoretic literal listener of Definition 4.1. -/
 theorem L0_uniform_apply {v : INGVariant} {p : Persona} (hp : p ∈ ingField.personae v) :
-    L0 (priorOfWeights riceWeight) v {p} = 3⁻¹ := by
+    L0 (Measure.ofWeights (riceWeight ·)) v {p} = 3⁻¹ := by
   have hcard : (ingField.personae v).card = 3 := by cases v <;> decide +kernel
-  rw [ingField.literalListener_indexation_apply_singleton _ hp, priorOfWeights_singleton,
+  rw [ingField.literalListener_indexation_apply_singleton _ hp, Measure.ofWeights_apply_singleton,
     ← sum_measure_singleton]
-  simp only [priorOfWeights_singleton, riceWeight, Nat.cast_one, Finset.sum_const, nsmul_eq_mul,
-    mul_one, hcard]
+  simp only [Measure.ofWeights_apply_singleton, riceWeight, Nat.cast_one, Finset.sum_const,
+    nsmul_eq_mul, mul_one, hcard]
   norm_num
 
 end Burnett2019

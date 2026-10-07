@@ -13,9 +13,9 @@ public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
 # Finite sums of Dirac measures
 
 On a finite type with measurable singletons, `∑ b, w b • dirac b` gives a set the total weight
-of its points. With nonnegative real weights its real values are sums of those weights, and it
-is a probability measure when they sum to one. `[UPSTREAM]` candidate for
-`Mathlib/MeasureTheory/Measure/Dirac.lean`.
+of its points; `Measure.ofWeights w` names it. With nonnegative real weights its real values are
+sums of those weights, and it is a probability measure when they sum to one. `[UPSTREAM]`
+candidate for `Mathlib/MeasureTheory/Measure/Dirac.lean`.
 -/
 
 @[expose] public section
@@ -53,5 +53,31 @@ theorem isProbabilityMeasure_sum_ofReal_smul_dirac {w : β → ℝ} (hw : ∀ b,
     (h : ∑ b, w b = 1) : IsProbabilityMeasure (∑ b, ENNReal.ofReal (w b) • dirac b) :=
   ⟨by rw [sum_smul_dirac_apply, Set.indicator_univ,
     ← ENNReal.ofReal_sum_of_nonneg fun b _ ↦ hw b, h, ENNReal.ofReal_one]⟩
+
+omit [MeasurableSingletonClass β] in
+/-- The measure on a finite type giving each point its weight. -/
+noncomputable def ofWeights (w : β → ℝ≥0∞) : Measure β := ∑ b, w b • dirac b
+
+@[simp] theorem ofWeights_apply_singleton (w : β → ℝ≥0∞) (b : β) : ofWeights w {b} = w b :=
+  sum_smul_dirac_apply_singleton w b
+
+theorem ofWeights_apply_singleton_ne_zero {w : β → ℝ≥0∞} {b : β} (h : w b ≠ 0) :
+    ofWeights w {b} ≠ 0 := by
+  rwa [ofWeights_apply_singleton]
+
+/-- The weight measure of a finite set is the sum of its points' weights. -/
+theorem ofWeights_apply_finset (w : β → ℝ≥0∞) (s : Finset β) :
+    ofWeights w ↑s = ∑ b ∈ s, w b := by
+  rw [← sum_measure_singleton]
+  simp only [ofWeights_apply_singleton]
+
+/-- Finite weights give a finite measure. -/
+theorem isFiniteMeasure_ofWeights {w : β → ℝ≥0∞} (hw : ∀ b, w b ≠ ∞) :
+    IsFiniteMeasure (ofWeights w) :=
+  ⟨by rw [← Finset.coe_univ, ofWeights_apply_finset]; exact ENNReal.sum_lt_top.2 fun b _ ↦
+    (hw b).lt_top⟩
+
+instance (w : β → ℕ) : IsFiniteMeasure (ofWeights fun b ↦ (w b : ℝ≥0∞)) :=
+  isFiniteMeasure_ofWeights fun _ ↦ ENNReal.natCast_ne_top _
 
 end MeasureTheory.Measure

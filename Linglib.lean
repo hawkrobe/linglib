@@ -830,10 +830,8 @@ import Linglib.Pragmatics.Implicature.Diagnostics
 import Linglib.Pragmatics.NeoGricean.Basic
 import Linglib.Pragmatics.RSA.Basic
 import Linglib.Pragmatics.RSA.Uniform
-import Linglib.Pragmatics.RSA.Profile
 import Linglib.Pragmatics.RSA.Incremental
 import Linglib.Pragmatics.RSA.QUD
-import Linglib.Pragmatics.RSA.Silence
 import Linglib.Pragmatics.SignalingGame.Basic
 import Linglib.Pragmatics.SignalingGame.Interpretation
 import Linglib.Pragmatics.SocialMeaning.IndexicalField

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Pragmatics.RSA.Silence
+public import Linglib.Pragmatics.RSA.Basic
 
 /-!
 # Rohde, Hoek, Keshev and Franke (2022): This better be interesting
@@ -108,7 +108,7 @@ end Bayes
 /-! ### Informativity and the null message -/
 
 /-- A report of a value, or silence. -/
-abbrev Utterance := WithSilence Value
+abbrev Utterance := Option Value
 
 instance : MeasurableSpace Utterance := ⊤
 instance : DiscreteMeasurableSpace Utterance := ⟨λ _ => trivial⟩
@@ -134,7 +134,7 @@ variable (α cs cn : ℝ)
 
 /-- The speaker is the informativity speaker over reports, each costing `cs`, with silence
 costing `cn`. -/
-noncomputable def S : Kernel Value Utterance := speaker α (liftCost cn λ _ => cs) (L0 μ)
+noncomputable def S : Kernel Value Utterance := speaker α (Option.elim · cn fun _ ↦ cs) (L0 μ)
 
 instance : IsFiniteKernel (S μ α cs cn) := inferInstanceAs (IsFiniteKernel (speaker _ _ _))
 
@@ -190,7 +190,7 @@ theorem S_report (hα : 0 < α) {v : Value} (hv : μ {v} ≠ 0) :
         rw [L0_some_of_ne μ hw, ENNReal.zero_rpow_of_pos hα, ENNReal.toReal_zero, zero_mul])
       (λ h => absurd (Finset.mem_univ v) h),
     L0_some_self μ hv, L0_none, ENNReal.one_rpow, ENNReal.toReal_one, one_mul,
-    liftCost_some, liftCost_none, add_comm, mul_comm (μ {v} ^ α).toReal]
+    Option.elim_some, Option.elim_none, add_comm, mul_comm (μ {v} ^ α).toReal]
 
 /-- The share of a report is positive. -/
 theorem S_report_pos (hα : 0 < α) {v : Value} (hv : μ {v} ≠ 0) :
