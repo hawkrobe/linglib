@@ -52,9 +52,8 @@ threshold induces (`exists_isUpperSet_forall_ne_preimage`).
   degree thresholds iff the measure reflects the background, which forces totality.
 * `Comparison.ge_over_eq_Ici`: a threshold above a contrast state is the degree-threshold
   positive form at its degree.
-* `cresswellSetoid_le_iff`, `factors_through_cresswellDegree`: Cresswell's degrees are the
-  antisymmetrization of the comparison; on an equivalence relation the construction returns
-  its classes (`cresswellSetoid_setoid`).
+* `cresswellSetoid_le_iff`: Cresswell's degrees are the antisymmetrization of the comparison; on
+  an equivalence relation the construction returns its classes (`cresswellSetoid_setoid`).
 * `maxComparative_comp`, `positive_not_natural`, `cross_scale_not_natural`: which operators
   survive a change of scale.
 
@@ -404,13 +403,5 @@ theorem cross_scale_not_natural :
     by simp [Comparison.mem_over, Comparison.rel]⟩
 
 end TransportMax
-
-/-- Any φ-invariant map factors through `CresswellDegree φ`, so the quotient is the initial scale a
-comparison relation determines. -/
-theorem factors_through_cresswellDegree {E X : Type*} {φ : E → E → Prop}
-    (g : E → X) (hg : ∀ a b, (cresswellSetoid φ).r a b → g a = g b) :
-    ∃ ĝ : CresswellDegree φ → X, ĝ ∘ (Quotient.mk (cresswellSetoid φ)) = g :=
-  ⟨Quotient.lift g hg, rfl⟩
-
 
 end Degree
