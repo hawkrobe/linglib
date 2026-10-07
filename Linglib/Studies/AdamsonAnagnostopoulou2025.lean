@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Syntax.Minimalist.Agree.Coordination
+public import Mathlib.Data.List.Iterate
 public import Linglib.Syntax.WordOrder
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 public import Linglib.Fragments.Greek.StandardModern.Gender
@@ -41,8 +42,13 @@ by its neuter gender and the geometry by its referent (`Icelandic.corbett_skald_
 Bosnian/Croatian/Serbian MASC sits under INDIV, ANIM under MASC, and neuter is mass; a plural
 coordination bears GRP and hence INDIV (`System.plural`), so every coordination realizes
 masculine, even of two neuters (`BCS.human_mismatch`, `BCS.inanimate_mismatch`,
-`BCS.neuter_pair`). All three geometries satisfy mismatch resolution (`mismatchResolution`),
-and Table 2 follows from the geometries alone (`table2`).
+`BCS.neuter_pair`). Every node of the three geometries entails CLASS, so they satisfy mismatch
+resolution (`mismatchResolution`), and Table 2 follows from the geometries alone (`table2`).
+
+## Implementation notes
+
+A geometry is given by its parent map on the six gender nodes, rooted in CLASS; the nodes a
+language does not use hang from CLASS and are never contributed.
 
 ## References
 
@@ -84,11 +90,11 @@ inductive Referent where
   | mass
   deriving DecidableEq, Repr
 
-/-- A three-gender system is a geometry, the node a referent contributes as interpretable
-gender and a grammatical gender contributes as uninterpretable gender, the features a plural
-coordination adds, and a vocabulary. -/
+/-- A three-gender system is a geometry, given by the node each node depends on directly, the node
+a referent contributes as interpretable gender and a grammatical gender contributes as
+uninterpretable gender, the features a plural coordination adds, and a vocabulary. -/
 structure System where
-  geometry : Minimalist.Geometry Node
+  parent : Node → Node
   iNode : Referent → Node
   uNode : Gender → Bool → Node
   plural : Finset Node := ∅
@@ -98,12 +104,15 @@ namespace System
 
 variable (L : System)
 
+/-- A node entails itself and the nodes it depends on, read up the parent map. -/
+def entailments (n : Node) : Finset Node := (List.iterate L.parent n (Fintype.card Node)).toFinset
+
 /-- The interpretable features of a nominal with referent `r`. -/
-def conceptual (r : Referent) : Bundle Node := .ofInterp (L.geometry.entailments (L.iNode r))
+def conceptual (r : Referent) : Bundle Node := .ofInterp (L.entailments (L.iNode r))
 
 /-- The uninterpretable features of a nominal of grammatical gender `g`. -/
 def arbitrary (g : Gender) (human : Bool := false) : Bundle Node :=
-  .ofUninterp (L.geometry.entailments (L.uNode g human))
+  .ofUninterp (L.entailments (L.uNode g human))
 
 /-- The exponent of a feature set under the Subset Principle. -/
 def realize (fs : Finset Node) : Option Gender :=
@@ -140,15 +149,9 @@ open _root_.Greek.StandardModern.Gender
 
 /-- CLASS > MASC > FEM. -/
 def system : System where
-  geometry :=
-    { nodes := {.cls, .masc, .fem}
-      entailments
-        | .fem => {.fem, .masc, .cls}
-        | .masc => {.masc, .cls}
-        | .cls => {.cls}
-        | n => {n}
-      mem_entailments_self := by decide
-      entailments_subset_of_mem := by decide }
+  parent
+    | .fem => .masc
+    | _ => .cls
   iNode
     | .man => .masc
     | .woman => .fem
@@ -164,7 +167,7 @@ def system : System where
 def inanimate (n : Greek.StandardModern.Gender.Noun) : Bundle Node :=
   system.conceptual .thing ∪ system.arbitrary n.gender
 
-theorem masc_mem_entailments_fem : .masc ∈ system.geometry.entailments .fem := by decide
+theorem masc_mem_entailments_fem : .masc ∈ system.entailments .fem := by decide
 
 /-- Uniform humans resolve to their shared gender. -/
 theorem human_uniform :
@@ -270,15 +273,7 @@ open _root_.Icelandic.Nouns
 
 /-- CLASS above independent MASC and FEM. -/
 def system : System where
-  geometry :=
-    { nodes := {.cls, .masc, .fem}
-      entailments
-        | .fem => {.fem, .cls}
-        | .masc => {.masc, .cls}
-        | .cls => {.cls}
-        | n => {n}
-      mem_entailments_self := by decide
-      entailments_subset_of_mem := by decide }
+  parent _ := .cls
   iNode
     | .man => .masc
     | .woman => .fem
@@ -293,7 +288,7 @@ def system : System where
 def inanimate (n : Icelandic.Nouns.Noun) : Bundle Node :=
   system.conceptual .thing ∪ system.arbitrary n.gender
 
-theorem masc_not_mem_entailments_fem : .masc ∉ system.geometry.entailments .fem := by decide
+theorem masc_not_mem_entailments_fem : .masc ∉ system.entailments .fem := by decide
 
 /-- *Maðurinn og konan eru þreytt*, where only CLASS survives. -/
 theorem human_mismatch : system.resolved .man .woman = some .neuter := by decide
@@ -344,17 +339,11 @@ open _root_.Serbian.Gender
 /-- CLASS > INDIV > {GRP, MASC > ANIM > FEM}; a plural coordination bears GRP, and with it
 INDIV. -/
 def system : System where
-  geometry :=
-    { nodes := {.cls, .indiv, .grp, .masc, .anim, .fem}
-      entailments
-        | .fem => {.fem, .anim, .masc, .indiv, .cls}
-        | .anim => {.anim, .masc, .indiv, .cls}
-        | .masc => {.masc, .indiv, .cls}
-        | .grp => {.grp, .indiv, .cls}
-        | .indiv => {.indiv, .cls}
-        | .cls => {.cls}
-      mem_entailments_self := by decide
-      entailments_subset_of_mem := by decide }
+  parent
+    | .fem => .anim
+    | .anim => .masc
+    | .masc | .grp => .indiv
+    | _ => .cls
   iNode
     | .man => .anim
     | .woman => .fem
@@ -391,17 +380,23 @@ theorem neuter_pair : system.converted (inanimate selo) (inanimate brdo) = some 
   decide
 
 /-- Neuter alone is mass, so without GRP it stays neuter. -/
-theorem neuter_mass : system.realize (system.geometry.entailments .cls) = some .neuter := by decide
+theorem neuter_mass : system.realize (system.entailments .cls) = some .neuter := by decide
 
 end BCS
 
 /-! ### The geometries -/
 
-/-- All three geometries satisfy mismatch resolution, so no pair of nodes needs a default. -/
-theorem mismatchResolution :
-    Greek.system.geometry.MismatchResolution ∧ Icelandic.system.geometry.MismatchResolution ∧
-      BCS.system.geometry.MismatchResolution := by
+/-- Every node of the three geometries entails CLASS. -/
+theorem cls_mem_entailments :
+    ∀ L ∈ [Greek.system, Icelandic.system, BCS.system], ∀ n, .cls ∈ L.entailments n := by
   decide
+
+/-- All three geometries satisfy mismatch resolution: any two nodes share CLASS, so no pair of
+nodes needs a default. -/
+theorem mismatchResolution :
+    ∀ L ∈ [Greek.system, Icelandic.system, BCS.system], ∀ a b,
+      (L.entailments a ∩ L.entailments b).Nonempty := fun L hL a b ↦
+  ⟨.cls, Finset.mem_inter.2 ⟨cls_mem_entailments L hL a, cls_mem_entailments L hL b⟩⟩
 
 /-- The resolution of mismatched humans and of mismatched inanimates in Greek, Icelandic, and
 Bosnian/Croatian/Serbian (Table 2). -/
