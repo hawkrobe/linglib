@@ -48,13 +48,13 @@ open Function
 /-- The differential comparative *A is d-much Adj-er than B* holds when `μ A - μ B = d`. It needs
 subtraction, not just an ordering, which makes measure-phrase differentials more restrictive than
 bare comparatives. -/
-def differentialComparative {Entity D : Type*} [Sub D]
+def DifferentialComparative {Entity D : Type*} [Sub D]
     (μ : Entity → D) (a b : Entity) (diff : D) : Prop :=
   μ a - μ b = diff
 
 /-- The factor-phrase equative *A is n times as tall as B* holds when `μ A = n * μ B`, which needs a
 meaningful zero, a ratio scale. -/
-def factorEquative {Entity D : Type*} [Mul D]
+def FactorEquative {Entity D : Type*} [Mul D]
     (μ : Entity → D) (a b : Entity) (factor : D) : Prop :=
   μ a = factor * μ b
 
@@ -62,7 +62,7 @@ def factorEquative {Entity D : Type*} [Mul D]
 theorem differentialComparative_lt_of_pos {Entity D : Type*}
     [AddCommGroup D] [LinearOrder D] [IsOrderedAddMonoid D]
     (μ : Entity → D) (a b : Entity) {diff : D} (hdiff : 0 < diff)
-    (h : differentialComparative μ a b diff) : μ b < μ a :=
+    (h : DifferentialComparative μ a b diff) : μ b < μ a :=
   sub_pos.mp (h.symm ▸ hdiff)
 
 /-! ### Differentials under a change of scale -/
@@ -75,14 +75,14 @@ variable {E D : Type*}
 amount. -/
 theorem differentialComparative_comp_of_commute [AddGroup D] {g : D → D} (hg : Injective g)
     {d : D} (hc : Function.Commute g (d + ·)) (μ : E → D) (a b : E) :
-    differentialComparative (g ∘ μ) a b d ↔ differentialComparative μ a b d := by
+    DifferentialComparative (g ∘ μ) a b d ↔ DifferentialComparative μ a b d := by
   have h : g (d + μ b) = d + g (μ b) := hc (μ b)
-  rw [differentialComparative, differentialComparative, comp_apply, comp_apply,
+  rw [DifferentialComparative, DifferentialComparative, comp_apply, comp_apply,
     sub_eq_iff_eq_add, sub_eq_iff_eq_add, ← h, hg.eq_iff]
 
 /-- A differential survives translating the scale. -/
 theorem differentialComparative_add_const [AddGroup D] (μ : E → D) (c : D) (a b : E) (d : D) :
-    differentialComparative (fun x ↦ μ x + c) a b d ↔ differentialComparative μ a b d :=
+    DifferentialComparative (fun x ↦ μ x + c) a b d ↔ DifferentialComparative μ a b d :=
   differentialComparative_comp_of_commute (g := (· + c)) (add_left_injective c)
     (fun x ↦ add_assoc d x c) μ a b
 
@@ -90,18 +90,18 @@ theorem differentialComparative_add_const [AddGroup D] (μ : E → D) (c : D) (a
 same unit. -/
 theorem differentialComparative_const_mul_add_const {k : Type*} [CommRing k] [IsDomain k]
     (μ : E → k) {a : k} (ha : a ≠ 0) (b : k) (x y : E) (d : k) :
-    differentialComparative (fun e ↦ a * μ e + b) x y (a * d) ↔
-      differentialComparative μ x y d := by
+    DifferentialComparative (fun e ↦ a * μ e + b) x y (a * d) ↔
+      DifferentialComparative μ x y d := by
   rw [differentialComparative_add_const (μ := fun e ↦ a * μ e)]
-  simp only [differentialComparative, ← mul_sub, (mul_right_injective₀ ha).eq_iff]
+  simp only [DifferentialComparative, ← mul_sub, (mul_right_injective₀ ha).eq_iff]
 
 /-- A differential does not survive every order embedding of the scale, so it is not meaningful on
 an ordinal scale. -/
 theorem differentialComparative_not_natural :
     ∃ f : ℚ ↪o ℚ, ∃ (μ : ℚ → ℚ) (a b d : ℚ),
-      differentialComparative μ a b d ∧ ¬ differentialComparative (f ∘ μ) a b d :=
+      DifferentialComparative μ a b d ∧ ¬ DifferentialComparative (f ∘ μ) a b d :=
   ⟨(OrderIso.mulLeft₀ 2 two_pos).toOrderEmbedding, id, 1, 0, 1,
-    by norm_num [differentialComparative], by norm_num [differentialComparative]⟩
+    by norm_num [DifferentialComparative], by norm_num [DifferentialComparative]⟩
 
 end Differential
 
@@ -115,23 +115,23 @@ variable {E D : Type*}
 factor. -/
 theorem factorEquative_comp_of_commute [Mul D] {g : D → D} (hg : Injective g) {n : D}
     (hc : Function.Commute g (n * ·)) (μ : E → D) (a b : E) :
-    factorEquative (g ∘ μ) a b n ↔ factorEquative μ a b n := by
+    FactorEquative (g ∘ μ) a b n ↔ FactorEquative μ a b n := by
   have h : g (n * μ b) = n * g (μ b) := hc (μ b)
-  simp only [factorEquative, comp_apply, ← h, hg.eq_iff]
+  simp only [FactorEquative, comp_apply, ← h, hg.eq_iff]
 
 /-- A factor phrase survives scaling the measure. -/
 theorem factorEquative_const_mul [CommMonoidWithZero D] [IsCancelMulZero D] (μ : E → D) {c : D}
     (hc : c ≠ 0) (a b : E) (n : D) :
-    factorEquative (fun x ↦ c * μ x) a b n ↔ factorEquative μ a b n :=
+    FactorEquative (fun x ↦ c * μ x) a b n ↔ FactorEquative μ a b n :=
   factorEquative_comp_of_commute (g := (c * ·)) (mul_right_injective₀ hc)
     (fun x ↦ mul_left_comm c n x) μ a b
 
-/-- A factor phrase does not survive translating the scale: moving the zero point destroys
+/-- A factor phrase does not survive translating the scale, since moving the zero point destroys
 ratios. -/
 theorem factorEquative_not_add_const :
     ∃ (μ : ℚ → ℚ) (c a b n : ℚ),
-      factorEquative μ a b n ∧ ¬ factorEquative (fun x ↦ μ x + c) a b n := by
-  refine ⟨id, 1, 2, 1, 2, ?_, ?_⟩ <;> norm_num [factorEquative]
+      FactorEquative μ a b n ∧ ¬ FactorEquative (fun x ↦ μ x + c) a b n := by
+  refine ⟨id, 1, 2, 1, 2, ?_, ?_⟩ <;> norm_num [FactorEquative]
 
 end Factor
 

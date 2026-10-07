@@ -143,7 +143,7 @@ theorem moreSem_comparative_bridge [AddCommMonoid D] [IsOrderedCancelAddMonoid D
 /-- An exact differential entails R4's at-least semantics. -/
 theorem moreSem_differential_bridge [AddCommGroup D] [IsOrderedAddMonoid D]
     (μ : Entity → D) (a b : Entity) (diff : D)
-    (h : differentialComparative μ a b diff) : moreSem μ a diff (μ b) :=
+    (h : DifferentialComparative μ a b diff) : moreSem μ a diff (μ b) :=
   le_of_eq (by rw [← h, sub_add_cancel])
 
 /-- R5 at factor 1 is the equative. -/
@@ -153,7 +153,7 @@ theorem asSem_equative_bridge [MulOneClass D] (μ : Entity → D) (a b : Entity)
 
 /-- A tight factor phrase entails R5's at-least semantics. -/
 theorem asSem_factor_bridge [Mul D] (μ : Entity → D) (a b : Entity)
-    (factor : D) (h : factorEquative μ a b factor) : asSem μ a factor (μ b) :=
+    (factor : D) (h : FactorEquative μ a b factor) : asSem μ a factor (μ b) :=
   le_of_eq h.symm
 
 /-- Synthesis rule R13 (§XIII) is

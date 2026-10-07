@@ -12,7 +12,7 @@ public import Linglib.Logic.Natural.Additivity
 
 This file defines the denotations of degree phrases as quantifiers over degrees and their scope
 relative to a quantifier over entities or worlds. A degree phrase says that the maximum of its
-degree predicate lies in an interval, `maxIn U P`; under a quantifier `Q` it scopes low, applied
+degree predicate lies in an interval, `MaxIn U P`; under a quantifier `Q` it scopes low, applied
 to each entity's own degrees, or high, applied to `scopeDegrees Q μ`, the degrees at which `Q`
 holds. Under `some` the degree set is the lower closure of the measures, the than-clause degree
 set, and the max-quantified comparative `MaxComparative c` compares a matrix witness with its
@@ -20,11 +20,11 @@ greatest measure by the comparison `c`.
 
 ## Main definitions
 
-* `maxIn U P`: the greatest element of `P` lies in `U`.
+* `MaxIn U P`: the greatest element of `P` lies in `U`.
 * `scopeDegrees Q μ`: the degrees `d` such that `Q` holds of the entities measuring at least `d`.
-* `lowScope 𝒟 Q μ`, `highScope 𝒟 Q μ`: the degree quantifier `𝒟` under and over `Q`.
+* `LowScope 𝒟 Q μ`, `HighScope 𝒟 Q μ`: the degree quantifier `𝒟` under and over `Q`.
 * `MaxComparative c P Q μ`: the max-quantified comparative, the equative at `c = .ge`.
-* `absoluteSuperlative μ C x`: `x` measures above every other member of `C`.
+* `AbsoluteSuperlative μ C x`: `x` measures above every other member of `C`.
 
 ## Main results
 
@@ -64,9 +64,9 @@ variable [Preorder D] {Q : NP α} {μ : α → D} {d : D}
 /-- The greatest element of `P` lies in `U`. These are the degree quantifiers of [heim-2001],
 *-er than `t`* at `U = Ioi t`, *less than `t`* at `Iio t`, *exactly `δ` -er than `t`* at
 `{t + δ}`, and the equative at `Ici t`. -/
-def maxIn (U P : Set D) : Prop := ∃ m ∈ U, IsGreatest P m
+def MaxIn (U P : Set D) : Prop := ∃ m ∈ U, IsGreatest P m
 
-theorem maxIn_singleton {P : Set D} {a : D} : maxIn {a} P ↔ IsGreatest P a := exists_eq_left
+theorem maxIn_singleton {P : Set D} {a : D} : MaxIn {a} P ↔ IsGreatest P a := exists_eq_left
 
 /-- The degrees at which `Q` holds of the entities reaching them, the degree predicate abstracted
 over the scope of `Q`. Membership at `d` is `Q (μ ⁻¹' Set.Ici d)`. -/
@@ -75,11 +75,11 @@ def scopeDegrees (Q : NP α) (μ : α → D) : Set D := {d | Q fun x ↦ d ≤ �
 theorem mem_scopeDegrees : d ∈ scopeDegrees Q μ ↔ Q fun x ↦ d ≤ μ x := Iff.rfl
 
 /-- A degree quantifier `𝒟` scoping under `Q`, applied to each entity's own degrees. -/
-def lowScope (𝒟 : Set D → Prop) (Q : NP α) (μ : α → D) : Prop :=
+def LowScope (𝒟 : Set D → Prop) (Q : NP α) (μ : α → D) : Prop :=
   Q fun x ↦ 𝒟 (Iic (μ x))
 
 /-- A degree quantifier `𝒟` scoping over `Q`. -/
-def highScope (𝒟 : Set D → Prop) (Q : NP α) (μ : α → D) : Prop :=
+def HighScope (𝒟 : Set D → Prop) (Q : NP α) (μ : α → D) : Prop :=
   𝒟 (scopeDegrees Q μ)
 
 /-- `some R` yields the lower closure of the measures of `R`, the than-clause degree set. -/
@@ -124,32 +124,32 @@ end Preorder
 section PartialOrder
 variable [PartialOrder D] {U P : Set D} {Q : NP α} {μ : α → D}
 
-theorem maxIn_Iic {a : D} : maxIn U (Iic a) ↔ a ∈ U :=
+theorem maxIn_Iic {a : D} : MaxIn U (Iic a) ↔ a ∈ U :=
   ⟨fun ⟨_, hm, h⟩ ↦ h.unique isGreatest_Iic ▸ hm, fun h ↦ ⟨a, h, isGreatest_Iic⟩⟩
 
 /-- The degree quantifier at the complementary interval is the negated one under the
 presupposition that the maximum exists, the scope splitting of *less than t* as *not as … as
 t*. -/
-theorem maxIn_compl : maxIn Uᶜ P ↔ (∃ m, IsGreatest P m) ∧ ¬ maxIn U P :=
+theorem maxIn_compl : MaxIn Uᶜ P ↔ (∃ m, IsGreatest P m) ∧ ¬ MaxIn U P :=
   ⟨fun ⟨m, hm, h⟩ ↦ ⟨⟨m, h⟩, fun ⟨_, hm', h'⟩ ↦ hm (h'.unique h ▸ hm')⟩,
     fun ⟨⟨m, h⟩, hn⟩ ↦ ⟨m, fun hm ↦ hn ⟨m, hm, h⟩, h⟩⟩
 
 /-- The low scope of an interval degree quantifier is `Q` of the entities measuring into the
 interval, the preimage of that interval. -/
-theorem lowScope_maxIn : lowScope (maxIn U) Q μ ↔ Q fun x ↦ μ x ∈ U := by
-  simp only [lowScope, maxIn_Iic]
+theorem lowScope_maxIn : LowScope (MaxIn U) Q μ ↔ Q fun x ↦ μ x ∈ U := by
+  simp only [LowScope, maxIn_Iic]
 
 /-- The high scope at an upper set entails the low one over a monotone quantifier, since if the
 shortest girl is taller than `t` every girl is. -/
 theorem lowScope_of_highScope (hQ : Monotone Q) (hU : IsUpperSet U)
-    (h : highScope (maxIn U) Q μ) : lowScope (maxIn U) Q μ :=
+    (h : HighScope (MaxIn U) Q μ) : LowScope (MaxIn U) Q μ :=
   let ⟨_, hmU, hm⟩ := h; lowScope_maxIn.2 (hQ (fun _ hx ↦ hU hx hmU) hm.1)
 
 /-- The low scope entails the high one under `every` at every interval when the restrictor has
 a least-measuring member, since if every girl's height lies in the interval so does the
 shortest girl's. -/
 theorem highScope_every_of_lowScope {R : α → Prop} (hR : ∃ x, R x ∧ ∀ y, R y → μ x ≤ μ y)
-    (h : lowScope (maxIn U) (every R) μ) : highScope (maxIn U) (every R) μ := by
+    (h : LowScope (MaxIn U) (every R) μ) : HighScope (MaxIn U) (every R) μ := by
   rw [lowScope_maxIn] at h
   obtain ⟨x₀, hx₀, hmin⟩ := hR
   exact ⟨μ x₀, h x₀ hx₀, hmin, fun _ hd ↦ hd x₀ hx₀⟩
@@ -157,18 +157,18 @@ theorem highScope_every_of_lowScope {R : α → Prop} (hR : ∃ x, R x ∧ ∀ y
 /-- Over `every R` the greatest degree every `R`-witness reaches is the infimum of their measures.
 -/
 theorem highScope_maxIn_singleton_every {R : α → Prop} {m : D} :
-    highScope (maxIn {m}) (every R) μ ↔ IsGLB (μ '' {x | R x}) m := by
-  rw [highScope, maxIn_singleton, scopeDegrees_every]; rfl
+    HighScope (MaxIn {m}) (every R) μ ↔ IsGLB (μ '' {x | R x}) m := by
+  rw [HighScope, maxIn_singleton, scopeDegrees_every]; rfl
 
 /-- Over `some R` the greatest degree some `R`-witness reaches is the greatest of their measures. -/
 theorem highScope_maxIn_singleton_some {R : α → Prop} {m : D} :
-    highScope (maxIn {m}) (GQ.some R) μ ↔ IsGreatest (μ '' {x | R x}) m := by
-  rw [highScope, maxIn_singleton, scopeDegrees_some, isGreatest_lowerClosure_iff]
+    HighScope (MaxIn {m}) (GQ.some R) μ ↔ IsGreatest (μ '' {x | R x}) m := by
+  rw [HighScope, maxIn_singleton, scopeDegrees_some, isGreatest_lowerClosure_iff]
 
 /-- The high scope entails the low one under `some` at every interval, the tallest witness being
 a witness. -/
-theorem lowScope_some_of_highScope {R : α → Prop} (h : highScope (maxIn U) (GQ.some R) μ) :
-    lowScope (maxIn U) (GQ.some R) μ := by
+theorem lowScope_some_of_highScope {R : α → Prop} (h : HighScope (MaxIn U) (GQ.some R) μ) :
+    LowScope (MaxIn U) (GQ.some R) μ := by
   obtain ⟨m, hmU, ⟨x, hx, hmx⟩, hub⟩ := h
   exact lowScope_maxIn.2 ⟨x, hx, show μ x ∈ U from hmx.antisymm (hub ⟨x, hx, le_rfl⟩) ▸ hmU⟩
 
@@ -200,7 +200,7 @@ theorem exists_isGreatest_scopeDegrees [Finite α] (hQ : Monotone Q) (hQ₀ : ¬
 /-- The low scope at an upper set entails the high one over a monotone quantifier on a finite
 domain, since if every girl is taller than `t` so is the shortest. -/
 theorem highScope_of_lowScope [Finite α] (hQ : Monotone Q) (hQ₀ : ¬ Q ⊥) (hU : IsUpperSet U)
-    (h : lowScope (maxIn U) Q μ) : highScope (maxIn U) Q μ := by
+    (h : LowScope (MaxIn U) Q μ) : HighScope (MaxIn U) Q μ := by
   rw [lowScope_maxIn] at h
   have : Nonempty {x // μ x ∈ U} :=
     not_isEmpty_iff.1 fun h' ↦ hQ₀ (hQ (fun x hx ↦ h'.false ⟨x, hx⟩) h)
@@ -212,14 +212,14 @@ theorem highScope_of_lowScope [Finite α] (hQ : Monotone Q) (hQ₀ : ¬ Q ⊥) (
 /-- Over a monotone quantifier on a finite domain, a degree quantifier at an upper set,
 comparative or equative, takes scope without truth-conditional effect. -/
 theorem highScope_maxIn_iff_lowScope [Finite α] (hQ : Monotone Q) (hQ₀ : ¬ Q ⊥)
-    (hU : IsUpperSet U) : highScope (maxIn U) Q μ ↔ lowScope (maxIn U) Q μ :=
+    (hU : IsUpperSet U) : HighScope (MaxIn U) Q μ ↔ LowScope (MaxIn U) Q μ :=
   ⟨lowScope_of_highScope hQ hU, highScope_of_lowScope hQ hQ₀ hU⟩
 
 /-- *Less than `t`* over a monotone quantifier, high, is *not as … as `t`*, low, the
 scope-splitting reading `NEG + as … as`. -/
 theorem highScope_maxIn_Iio_iff [Finite α] (hQ : Monotone Q) (hQ₀ : ¬ Q ⊥)
     (hne : (scopeDegrees Q μ).Nonempty) {t : D} :
-    highScope (maxIn (Iio t)) Q μ ↔ ¬ Q fun x ↦ t ≤ μ x := by
+    HighScope (MaxIn (Iio t)) Q μ ↔ ¬ Q fun x ↦ t ≤ μ x := by
   have h := highScope_maxIn_iff_lowScope (μ := μ) hQ hQ₀ (isUpperSet_Ici t)
   simp only [lowScope_maxIn, mem_Ici] at h
   rw [← compl_Ici, ← h]
@@ -264,11 +264,11 @@ variable [Preorder D] {c : Comparison} {P Q R : α → Prop} {μ : α → D}
 `Q`-witnesses have a greatest element `δ` and the measure of some `P`-witness stands in `c` to
 `δ`. -/
 def MaxComparative (c : Comparison) (P Q : α → Prop) (μ : α → D) : Prop :=
-  ∃ δ, IsGreatest (μ '' {x | Q x}) δ ∧ ∃ x, P x ∧ c.rel (μ x) δ
+  ∃ δ, IsGreatest (μ '' {x | Q x}) δ ∧ ∃ x, P x ∧ c.Rel (μ x) δ
 
 /-- A max-quantified comparative entails the comparatives with weaker comparisons, the equative
 from the strict comparative in particular. -/
-theorem MaxComparative.mono {c' : Comparison} (hc : ∀ a b : D, c.rel a b → c'.rel a b)
+theorem MaxComparative.mono {c' : Comparison} (hc : ∀ a b : D, c.Rel a b → c'.Rel a b)
     (h : MaxComparative c P Q μ) : MaxComparative c' P Q μ :=
   let ⟨δ, hδ, x, hx, hr⟩ := h
   ⟨δ, hδ, x, hx, hc _ _ hr⟩
@@ -291,7 +291,7 @@ theorem MaxComparative.trans (h₁ : MaxComparative .gt P Q μ) (h₂ : MaxCompa
 measures directly. -/
 theorem maxComparative_iff_of_unique {xa xb : α} (ha : P xa) (ha_unique : ∀ x, P x → x = xa)
     (hb : Q xb) (hb_unique : ∀ x, Q x → x = xb) :
-    MaxComparative c P Q μ ↔ c.rel (μ xa) (μ xb) := by
+    MaxComparative c P Q μ ↔ c.Rel (μ xa) (μ xb) := by
   have hQ : {x | Q x} = {xb} := Set.ext fun x ↦ ⟨hb_unique x, fun h ↦ h ▸ hb⟩
   refine ⟨fun ⟨δ, hδ, x, hx, hr⟩ ↦ ?_, fun hr ↦ ⟨_, hQ ▸ image_singleton ▸ isGreatest_singleton,
     xa, ha, hr⟩⟩
@@ -300,7 +300,7 @@ theorem maxComparative_iff_of_unique {xa xb : α} (ha : P xa) (ha_unique : ∀ x
 
 /-- Comparing two individuals is comparing their measures. -/
 theorem maxComparative_eq_iff (μ : α → D) (xa xb : α) :
-    MaxComparative c (· = xa) (· = xb) μ ↔ c.rel (μ xa) (μ xb) :=
+    MaxComparative c (· = xa) (· = xb) μ ↔ c.Rel (μ xa) (μ xb) :=
   maxComparative_iff_of_unique rfl (fun _ h ↦ h) rfl (fun _ h ↦ h)
 
 /-- With greatest witnesses on both sides and measures monotone on each side, the
@@ -401,17 +401,17 @@ variable [LinearOrder D] {μ : α → D} {C : Set α} {x y : α}
 
 /-- The absolute superlative holds of `x` when `x` is in the comparison class `C` and beats every
 other member on the comparative. -/
-def absoluteSuperlative (μ : α → D) (C : Set α) (x : α) : Prop :=
+def AbsoluteSuperlative (μ : α → D) (C : Set α) (x : α) : Prop :=
   x ∈ C ∧ ∀ y ∈ C, y ≠ x → μ y < μ x
 
 /-- At most one entity satisfies the absolute superlative. -/
-theorem absoluteSuperlative_unique (hx : absoluteSuperlative μ C x)
-    (hy : absoluteSuperlative μ C y) : x = y :=
+theorem absoluteSuperlative_unique (hx : AbsoluteSuperlative μ C x)
+    (hy : AbsoluteSuperlative μ C y) : x = y :=
   by_contra fun hne ↦ lt_asymm (hx.2 y hy.1 (Ne.symm hne)) (hy.2 x hx.1 hne)
 
 /-- The absolute superlative makes `μ x` the greatest element of the degree image `μ '' C`; the
 converse fails under ties. -/
-theorem absoluteSuperlative_isGreatest (h : absoluteSuperlative μ C x) :
+theorem absoluteSuperlative_isGreatest (h : AbsoluteSuperlative μ C x) :
     IsGreatest (μ '' C) (μ x) :=
   ⟨mem_image_of_mem μ h.1, forall_mem_image.2 fun y hy ↦
     (eq_or_ne y x).elim (fun e ↦ e ▸ le_rfl) fun hne ↦ (h.2 y hy hne).le⟩

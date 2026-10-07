@@ -298,7 +298,7 @@ variable {W : Type*} [MeasurableSpace W] (P : Measure W) (θ : EpistemicItem →
 /-- The positive form of an item under a profile of thresholds. -/
 def pos (i : EpistemicItem) : Set (Set W) := P.real ⁻¹' i.comparison.interval (θ i)
 
-theorem mem_pos_iff (i : EpistemicItem) : A ∈ pos P θ i ↔ i.comparison.rel (P.real A) (θ i) :=
+theorem mem_pos_iff (i : EpistemicItem) : A ∈ pos P θ i ↔ i.comparison.Rel (P.real A) (θ i) :=
   Comparison.mem_interval _ _ _
 
 /-- (6.29a) is [lassiter-2015]'s *must*. -/

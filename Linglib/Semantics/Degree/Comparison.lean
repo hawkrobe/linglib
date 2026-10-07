@@ -22,7 +22,7 @@ strictly monotone change of scale.
 
 ## Main definitions
 
-* `Degree.Comparison`, with `Comparison.rel` and `Comparison.interval`.
+* `Degree.Comparison`, with `Comparison.Rel` and `Comparison.interval`.
 * `Degree.Comparison.bounds`: the set-standard interval.
 * `Degree.Comparison.dual`: the antonymous comparison.
 * `Degree.maxOnScale`: Rett's order-sensitive maximality.
@@ -71,15 +71,15 @@ inductive Comparison where
 /-- A comparison is strict when it excludes its threshold, as `>` and `<` do; the Class A/B split of
 modified numerals ([geurts-nouwen-2007], [nouwen-2010]) is strictness restricted to the four
 modified forms. -/
-def Comparison.isStrict : Comparison → Prop
+def Comparison.IsStrict : Comparison → Prop
   | .gt | .lt => True
   | _         => False
 
-instance : DecidablePred Comparison.isStrict := fun c => by
-  cases c <;> unfold Comparison.isStrict <;> infer_instance
+instance : DecidablePred Comparison.IsStrict := fun c => by
+  cases c <;> unfold Comparison.IsStrict <;> infer_instance
 
 /-- The order relation a `Comparison` stands for. -/
-def Comparison.rel {α : Type*} [Preorder α] : Comparison → α → α → Prop
+def Comparison.Rel {α : Type*} [Preorder α] : Comparison → α → α → Prop
   | .eq => (· = ·) | .ge => (· ≥ ·) | .gt => (· > ·)
   | .le => (· ≤ ·) | .lt => (· < ·)
 
@@ -101,17 +101,17 @@ variable {α : Type*} [Preorder α] (a n : α)
 @[simp] theorem Comparison.interval_le : Comparison.le.interval n = Set.Iic n := rfl
 @[simp] theorem Comparison.interval_lt : Comparison.lt.interval n = Set.Iio n := rfl
 
-@[simp] theorem Comparison.rel_eq : Comparison.eq.rel a n ↔ a = n := Iff.rfl
-@[simp] theorem Comparison.rel_ge : Comparison.ge.rel a n ↔ n ≤ a := Iff.rfl
-@[simp] theorem Comparison.rel_gt : Comparison.gt.rel a n ↔ n < a := Iff.rfl
-@[simp] theorem Comparison.rel_le : Comparison.le.rel a n ↔ a ≤ n := Iff.rfl
-@[simp] theorem Comparison.rel_lt : Comparison.lt.rel a n ↔ a < n := Iff.rfl
+@[simp] theorem Comparison.rel_eq : Comparison.eq.Rel a n ↔ a = n := Iff.rfl
+@[simp] theorem Comparison.rel_ge : Comparison.ge.Rel a n ↔ n ≤ a := Iff.rfl
+@[simp] theorem Comparison.rel_gt : Comparison.gt.Rel a n ↔ n < a := Iff.rfl
+@[simp] theorem Comparison.rel_le : Comparison.le.Rel a n ↔ a ≤ n := Iff.rfl
+@[simp] theorem Comparison.rel_lt : Comparison.lt.Rel a n ↔ a < n := Iff.rfl
 
 end
 
 @[simp] theorem Comparison.mem_interval {α : Type*} [Preorder α]
-    (c : Comparison) (a n : α) : a ∈ c.interval n ↔ c.rel a n := by
-  cases c <;> simp [Comparison.interval, Comparison.rel]
+    (c : Comparison) (a n : α) : a ∈ c.interval n ↔ c.Rel a n := by
+  cases c <;> simp [Comparison.interval, Comparison.Rel]
 
 /-- The interval of a comparison is convex. -/
 instance Comparison.ordConnected_interval {α : Type*} [PartialOrder α] (c : Comparison) (n : α) :
@@ -120,8 +120,8 @@ instance Comparison.ordConnected_interval {α : Type*} [PartialOrder α] (c : Co
     infer_instance
 
 instance Comparison.relDecidable {α : Type*} [Preorder α] [DecidableEq α] [DecidableLE α]
-    [DecidableLT α] (c : Comparison) (a n : α) : Decidable (c.rel a n) := by
-  cases c <;> simp only [Comparison.rel, ge_iff_le, gt_iff_lt] <;> infer_instance
+    [DecidableLT α] (c : Comparison) (a n : α) : Decidable (c.Rel a n) := by
+  cases c <;> simp only [Comparison.Rel, ge_iff_le, gt_iff_lt] <;> infer_instance
 
 instance Comparison.intervalDecidable {α : Type*} [Preorder α] [DecidableEq α] [DecidableLE α]
     [DecidableLT α] (c : Comparison) (a n : α) : Decidable (a ∈ c.interval n) :=
@@ -130,8 +130,8 @@ instance Comparison.intervalDecidable {α : Type*} [Preorder α] [DecidableEq α
 /-- A comparison keeps its threshold exactly when it is not strict, so the Class A/B distinction
 ([geurts-nouwen-2007], [nouwen-2010]) is membership of the interval's endpoint. -/
 @[simp] theorem Comparison.boundary_mem {α : Type*} [Preorder α]
-    (c : Comparison) (n : α) : n ∈ c.interval n ↔ ¬ c.isStrict := by
-  cases c <;> simp [Comparison.interval, Comparison.isStrict]
+    (c : Comparison) (n : α) : n ∈ c.interval n ↔ ¬ c.IsStrict := by
+  cases c <;> simp [Comparison.interval, Comparison.IsStrict]
 
 /-! ### Threshold significance
 
@@ -204,7 +204,7 @@ theorem Comparison.dual_involutive : Function.Involutive Comparison.dual := fun 
   Comparison.dual_involutive c
 
 /-- Antonymy preserves strictness, so *fewer than* is Class A as *more than* is. -/
-@[simp] theorem Comparison.isStrict_dual (c : Comparison) : c.dual.isStrict ↔ c.isStrict := by
+@[simp] theorem Comparison.isStrict_dual (c : Comparison) : c.dual.IsStrict ↔ c.IsStrict := by
   cases c <;> exact Iff.rfl
 
 section Dual
@@ -213,12 +213,12 @@ variable {α : Type*} [Preorder α] (c : Comparison)
 
 /-- The dual comparison exchanges its arguments, so *a is shorter than b* exactly when *b is
 taller than a*. -/
-theorem Comparison.rel_dual (a b : α) : c.dual.rel a b ↔ c.rel b a := by
-  cases c <;> simp only [Comparison.dual, Comparison.rel, eq_comm]
+theorem Comparison.rel_dual (a b : α) : c.dual.Rel a b ↔ c.Rel b a := by
+  cases c <;> simp only [Comparison.dual, Comparison.Rel, eq_comm]
 
 /-- The dual comparison on a scale is the comparison on the dual scale. -/
 theorem Comparison.rel_dual_toDual (a b : α) :
-    c.dual.rel a b ↔ c.rel (OrderDual.toDual a) (OrderDual.toDual b) := by
+    c.dual.Rel a b ↔ c.Rel (OrderDual.toDual a) (OrderDual.toDual b) := by
   cases c <;> exact Iff.rfl
 
 /-- The interval of the dual comparison is the interval of the comparison on the dual scale. -/
@@ -243,8 +243,8 @@ variable {α β : Type*} [Preorder α] [Preorder β]
 
 /-- An order embedding of the scale preserves and reflects every comparison. -/
 theorem Comparison.rel_map_iff (f : α ↪o β) (c : Comparison) {a n : α} :
-    c.rel (f a) (f n) ↔ c.rel a n := by
-  cases c <;> simp [Comparison.rel, f.lt_iff_lt, f.le_iff_le, f.injective.eq_iff]
+    c.Rel (f a) (f n) ↔ c.Rel a n := by
+  cases c <;> simp [Comparison.Rel, f.lt_iff_lt, f.le_iff_le, f.injective.eq_iff]
 
 /-- An order embedding of the scale pulls the interval at `f n` back to the interval at `n`, so a
 comparison is invariant when its threshold moves along with the measure. -/
@@ -272,7 +272,7 @@ operator in mathlib's `IsLeast` / `IsGreatest`, and the interval evaluations are
 /-- Order-sensitive maximality, [rett-2026] (44), picks the elements of `X` that dominate every
 other element under the comparison `c`. -/
 def maxOnScale {α : Type*} [Preorder α] (c : Comparison) (X : Set α) : Set α :=
-  { x | x ∈ X ∧ ∀ x' ∈ X, x' ≠ x → c.rel x x' }
+  { x | x ∈ X ∧ ∀ x' ∈ X, x' ≠ x → c.Rel x x' }
 
 /-- Maximality on a singleton returns the singleton, for any comparison. -/
 theorem maxOnScale_singleton {α : Type*} [Preorder α] (c : Comparison) (x : α) :
@@ -288,7 +288,7 @@ theorem maxOnScale_singleton {α : Type*} [Preorder α] (c : Comparison) (x : α
 theorem maxOnScale_ge_eq {α : Type*} [Preorder α] (X : Set α) :
     maxOnScale .ge X = {x | IsGreatest X x} := by
   ext x
-  simp only [maxOnScale, Comparison.rel, Set.mem_ofPred_eq, IsGreatest,
+  simp only [maxOnScale, Comparison.Rel, Set.mem_ofPred_eq, IsGreatest,
     upperBounds, ge_iff_le]
   refine ⟨fun ⟨hx, hdom⟩ => ⟨hx, fun y hy => ?_⟩,
     fun ⟨hx, hub⟩ => ⟨hx, fun y hy _ => hub hy⟩⟩
@@ -301,7 +301,7 @@ the other elements of `X` on the `<` scale is being the least. -/
 theorem maxOnScale_lt_eq {α : Type*} [PartialOrder α] (X : Set α) :
     maxOnScale .lt X = {x | IsLeast X x} := by
   ext x
-  simp only [maxOnScale, Comparison.rel, Set.mem_ofPred_eq, IsLeast, lowerBounds]
+  simp only [maxOnScale, Comparison.Rel, Set.mem_ofPred_eq, IsLeast, lowerBounds]
   refine ⟨fun ⟨hx, hdom⟩ => ⟨hx, fun y hy => ?_⟩, fun ⟨hx, hlb⟩ => ⟨hx, fun y hy hne => ?_⟩⟩
   · rcases eq_or_ne y x with rfl | hne
     · exact le_refl _
@@ -312,7 +312,7 @@ theorem maxOnScale_lt_eq {α : Type*} [PartialOrder α] (X : Set α) :
 theorem maxOnScale_gt_eq {α : Type*} [PartialOrder α] (X : Set α) :
     maxOnScale .gt X = {x | IsGreatest X x} := by
   ext x
-  simp only [maxOnScale, Comparison.rel, Set.mem_ofPred_eq, IsGreatest, upperBounds,
+  simp only [maxOnScale, Comparison.Rel, Set.mem_ofPred_eq, IsGreatest, upperBounds,
     gt_iff_lt]
   refine ⟨fun ⟨hx, hdom⟩ => ⟨hx, fun y hy => ?_⟩, fun ⟨hx, hub⟩ => ⟨hx, fun y hy hne => ?_⟩⟩
   · rcases eq_or_ne y x with rfl | hne
@@ -339,7 +339,7 @@ theorem maxOnScale_gt_closedInterval {α : Type*} [LinearOrder α]
 /-- A scalar construction `f` is ambidirectional at `B` when it returns the same result on `B` and
 on its complement, as maximality does when it picks the same boundary from both; this is the
 mechanism behind expletive negation. -/
-def isAmbidirectional {α : Type*} (f : Set α → Prop) (B : Set α) : Prop :=
+def IsAmbidirectional {α : Type*} (f : Set α → Prop) (B : Set α) : Prop :=
   f B ↔ f Bᶜ
 
 end Degree

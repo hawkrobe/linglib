@@ -73,11 +73,11 @@ def comparative (x : X) (P : Ad) (y : X) (Q : Ad) (v : Profile Ad X ℝ) : Prop 
 
 /-- *x is d-much P-er than y is Q*. -/
 def differential (x : X) (P : Ad) (y : X) (Q : Ad) (d : ℝ) (v : Profile Ad X ℝ) : Prop :=
-  differentialComparative (pairs v) (x, P) (y, Q) d
+  DifferentialComparative (pairs v) (x, P) (y, Q) d
 
 /-- *x is n times as P as y is Q*. -/
 def factor (x : X) (P : Ad) (y : X) (Q : Ad) (n : ℝ) (v : Profile Ad X ℝ) : Prop :=
-  factorEquative (pairs v) (x, P) (y, Q) n
+  FactorEquative (pairs v) (x, P) (y, Q) n
 
 /-- *x is P-er than y by more than z is Q-er than w*. -/
 def differenceComparative (x y : X) (P : Ad) (z w : X) (Q : Ad) (v : Profile Ad X ℝ) : Prop :=
@@ -137,9 +137,9 @@ theorem not_factor_cardinalFull [DecidableEq X] [DecidableEq Ad] (hne : (x, P) �
   let f : Ad → ℝ → ℝ := fun _ t ↦ 1 * t + 1
   have hf : f ∈ (cardinalFull : Set (Ad → ℝ → ℝ)) := ⟨1, one_pos, 1, fun _ _ ↦ rfl⟩
   have h₁ : factor x P y Q 2 v := by
-    simp [factor, factorEquative, pairs, v, hyQ]
+    simp [factor, FactorEquative, pairs, v, hyQ]
   have h₂ : ¬ factor x P y Q 2 (v.transform f) := by
-    simp [factor, factorEquative, pairs, Profile.transform, v, f, hyQ]; norm_num
+    simp [factor, FactorEquative, pairs, Profile.transform, v, f, hyQ]; norm_num
   exact h₂ (h f hf v ▸ h₁)
 
 /-- Comparing differences on two adjectives survives a common unit with a separate origin per
@@ -174,7 +174,7 @@ increasing map per adjective, so a ratio across adjectives becomes meaningful al
 adjective's measure is only ordinal. -/
 theorem factor_universal_ordinal (C : Finset X) (x y : X) (P Q : Ad) (n : ℚ) :
     Invariant ordinal fun v : Profile Ad X ℝ ↦
-      factorEquative (pairs (universal v C)) (x, P) (y, Q) n := by
+      FactorEquative (pairs (universal v C)) (x, P) (y, Q) n := by
   intro f hf v
   simp only [universal_transform hf]
 
@@ -199,16 +199,16 @@ end Universal
 /-- Measuring shortness as a fixed number minus height, after Sassoon, *y is d shorter than x*
 holds exactly when *x is d taller than y*, whatever the number. -/
 theorem shorter_iff_taller {E : Type*} (height : E → ℝ) (m : ℝ) (x y : E) (d : ℝ) :
-    differentialComparative (fun z ↦ m - height z) y x d ↔
-      differentialComparative height x y d := by
-  simp only [differentialComparative]
+    DifferentialComparative (fun z ↦ m - height z) y x d ↔
+      DifferentialComparative height x y d := by
+  simp only [DifferentialComparative]
   constructor <;> intro h <;> linarith
 
 /-- Ratios of shortness are not meaningful, since shortnesses of six and two make one three times
 as short, and moving the origin by one makes the ratio five. -/
 theorem three_times_as_short_not_meaningful :
-    factorEquative ![(-6 : ℝ), -2] 0 1 3 ∧ ¬ factorEquative (fun i ↦ ![(-6 : ℝ), -2] i + 1) 0 1 3 :=
-  ⟨by norm_num [factorEquative], by norm_num [factorEquative]⟩
+    FactorEquative ![(-6 : ℝ), -2] 0 1 3 ∧ ¬ FactorEquative (fun i ↦ ![(-6 : ℝ), -2] i + 1) 0 1 3 :=
+  ⟨by norm_num [FactorEquative], by norm_num [FactorEquative]⟩
 
 /-- Aggregating the dimensions of a multidimensional adjective by a weighted sum is not
 meaningful on a co-ordinal scale, unlike aggregating by the minimum

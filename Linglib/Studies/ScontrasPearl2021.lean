@@ -191,13 +191,13 @@ theorem mem_ext_every_inverse : w ∈ ext NumberTree.all n .inverse .amb ↔ w �
 /-- On its surface interpretation a numeral sentence is true where the number of non-jumpers
 stands in the numeral's comparison to its value (6). -/
 theorem mem_ext_numeral_surface :
-    w ∈ ext (numeral c k) n .surface .amb ↔ c.rel (n - w) k := by
+    w ∈ ext (numeral c k) n .surface .amb ↔ c.Rel (n - w) k := by
   simp only [mem_ext_surface, numeral, NumberTree.cardinal_apply, Degree.Comparison.mem_interval]
 
 /-- On its inverse interpretation a numeral sentence is true where the number of jumpers does
 not stand in the numeral's comparison to its value (6). -/
 theorem mem_ext_numeral_inverse :
-    w ∈ ext (numeral c k) n .inverse .amb ↔ ¬ c.rel (w : ℕ) k := by
+    w ∈ ext (numeral c k) n .inverse .amb ↔ ¬ c.Rel (w : ℕ) k := by
   simp only [mem_ext_inverse, numeral, NumberTree.cardinal_apply, Degree.Comparison.mem_interval]
 
 /-- The extension sees a determiner only at counts that sum to the number of horses, a row of
@@ -217,7 +217,7 @@ outside. -/
 theorem numeral_eq_iff_all {a b : ℕ} (h : a + b = n) :
     numeral .eq n a b ↔ NumberTree.all a b := by
   simp only [numeral, NumberTree.cardinal_apply, NumberTree.all, Degree.Comparison.mem_interval,
-    Degree.Comparison.rel]
+    Degree.Comparison.Rel]
   omega
 
 /-- Among `n` restrictor members, at least `n` lie inside the scope just in case none lies
@@ -225,7 +225,7 @@ outside. -/
 theorem numeral_ge_iff_all {a b : ℕ} (h : a + b = n) :
     numeral .ge n a b ↔ NumberTree.all a b := by
   simp only [numeral, NumberTree.cardinal_apply, NumberTree.all, Degree.Comparison.mem_interval,
-    Degree.Comparison.rel]
+    Degree.Comparison.Rel]
   omega
 
 /-- With as many horses as the numeral counts, the numeral sentence on the exact reading is true

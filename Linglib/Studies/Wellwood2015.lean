@@ -115,7 +115,7 @@ theorem derivation_eq_comparativeTruth {Measured : Type*} (role : Ent → α →
     ext; simp [thanClause, absDegP, Degree.scopeDegrees, Quantifier.GQ.some, and_assoc]
   rw [this, Degree.scopeDegrees_some]
   simp only [comparativeTruth, MaxComparative, isGreatest_lowerClosure_iff, matrixClause,
-    matrixDegP, Degree.Comparison.rel, and_assoc]
+    matrixDegP, Degree.Comparison.Rel, and_assoc]
 
 end Derivation
 
