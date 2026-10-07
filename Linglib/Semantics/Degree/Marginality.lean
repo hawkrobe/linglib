@@ -46,7 +46,9 @@ ordered group (`MLScale.ofAddSubgroup`), such as the infinitesimals among the hy
   largely smaller than is a strict weak order whose incomparability is at most marginal
   difference.
 * `Degree.MLScale.L.infinite_setOf`: infinitely many degrees lie between largely different ones.
-* `Degree.MLScale.ofSetoid_atMostMarginalSetoid`: every ML scale is the scale of its blocks.
+* `Degree.MLScale.ofSetoid_atMostMarginalSetoid`, `Degree.MLScale.atMostMarginalSetoid_ofSetoid`:
+  ML scales correspond to their partitions into blocks, and the blocks of the scale of a subgroup
+  are its cosets (`Degree.MLScale.atMostMarginalSetoid_ofAddSubgroup`).
 * `Degree.MLScale.isHom_lex_iff`: a map into a lexicographic ML scale is a homomorphism exactly
   when its block coordinate pulls back largely smaller than and its location coordinate grows
   along marginal steps.
@@ -258,6 +260,15 @@ theorem ofSetoid_atMostMarginalSetoid :
         (.inl hm))⟩).2; ⟨w, hw.lt, .single (.inl hw)⟩) = ml :=
   ext fun _ _ ↦ m_iff_lt_and_atMostMarginal.symm
 
+/-- The blocks of the scale built from a partition are the cells of the partition. -/
+theorem atMostMarginalSetoid_ofSetoid {s : Setoid α} {hconv hne hgt hlt} :
+    (ofSetoid s hconv hne hgt hlt).atMostMarginalSetoid = s := by
+  refine Setoid.ext fun x y ↦ ⟨fun h ↦ ?_, fun h ↦ atMostMarginal_iff.2 ?_⟩
+  · rcases atMostMarginal_iff.1 h with rfl | h | h
+    exacts [s.refl _, h.2, s.symm h.2]
+  · rcases lt_trichotomy x y with hxy | rfl | hxy
+    exacts [.inr (.inl ⟨hxy, h⟩), .inl rfl, .inr (.inr ⟨hxy, s.symm h⟩)]
+
 section Lex
 
 variable (β γ : Type*) [LinearOrder β] [LinearOrder γ] [Nontrivial β] [Nonempty γ]
@@ -324,6 +335,16 @@ def ofAddSubgroup (H : AddSubgroup G) (hconv : (H : Set G).OrdConnected) (hbot :
 theorem ofAddSubgroup_m_iff {H : AddSubgroup G} {hconv hbot htop} {x y : G} :
     (ofAddSubgroup H hconv hbot htop).M x y ↔ x < y ∧ y - x ∈ H := by
   simp [ofAddSubgroup, ofSetoid, QuotientAddGroup.leftRel_apply, neg_add_eq_sub]
+
+/-- The blocks of the scale built from a subgroup are its cosets. -/
+theorem atMostMarginalSetoid_ofAddSubgroup {H : AddSubgroup G} {hconv hbot htop} :
+    (ofAddSubgroup H hconv hbot htop).atMostMarginalSetoid = QuotientAddGroup.leftRel H :=
+  atMostMarginalSetoid_ofSetoid
+
+theorem ofAddSubgroup_atMostMarginal_iff {H : AddSubgroup G} {hconv hbot htop} {x y : G} :
+    (ofAddSubgroup H hconv hbot htop).AtMostMarginal x y ↔ y - x ∈ H := by
+  rw [← neg_add_eq_sub, ← QuotientAddGroup.leftRel_apply, ← atMostMarginalSetoid_ofAddSubgroup]
+  rfl
 
 end AddSubgroup
 

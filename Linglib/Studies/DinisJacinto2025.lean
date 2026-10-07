@@ -3,6 +3,7 @@ module
 public import Linglib.Core.Order.CountableDenseLinearOrder
 public import Linglib.Core.Order.SuccPred.LinearLocallyFinite
 public import Linglib.Semantics.Degree.Marginality
+public import Linglib.Studies.Itzhaki2021
 public import Mathlib.Analysis.Real.Hyperreal
 public import Mathlib.Order.ConditionallyCompleteLattice.Basic
 
@@ -34,6 +35,9 @@ makes the premises jointly satisfiable.
 * `DinisJacinto2025.IsHom.comp_cautiouslyMonotone`,
   `DinisJacinto2025.IsHom.exists_cautiouslyMonotone`: representations are unique up to cautiously
   monotone-increasing transformations.
+* `DinisJacinto2025.finite_l_iff`, `DinisJacinto2025.heap_iff_bald`: Itzhaki's relations of being
+  infinitely less, finitely close and indistinguishable are those of the finite and the
+  infinitesimal scales, and his heaps are exactly what is not largely smaller than a clear case.
 * `DinisJacinto2025.Bald.tolerance`, `DinisJacinto2025.not_transGen_m`: baldness is tolerant,
   and no finite chain of marginal steps leads from someone not bald to the last member.
 
@@ -42,8 +46,8 @@ makes the premises jointly satisfiable.
 * The project's ML scales are those of [dinis-jacinto-2026], over a linear order with marginally
   smaller than primitive, and the results after the axioms are stated for them; a homomorphism
   then preserves and reflects smaller than and marginally smaller than, and is injective.
-* The nonstandard models are mathlib's hyperreals, infinitesimal differences being those of
-  positive archimedean class. The finite-difference reading of Dean and Itzhaki (§5, §6), stated
+* The nonstandard models are mathlib's hyperreals, built from the infinitesimal and the finite
+  numbers of [itzhaki-2021]. The finite-difference reading of Dean and Itzhaki (§5, §6), stated
   for nonstandard integers, is taken on the hyperreals.
 
 ## TODO
@@ -127,32 +131,32 @@ open ArchimedeanClass Hyperreal
 
 /-- The hyperreals with infinitesimal differences marginal, the model `ℑ2` of Theorem 3.1. -/
 noncomputable def infinitesimal : MLScale ℝ* :=
-  ofAddSubgroup (ballAddSubgroup 0) (ordConnected_ballAddSubgroup 0)
+  ofAddSubgroup Itzhaki2021.infinitesimals (ordConnected_ballAddSubgroup 0)
     (fun h ↦ by
-      have : ε ∈ ballAddSubgroup (0 : ArchimedeanClass ℝ*) :=
-        (mem_ballAddSubgroup_iff (by simp)).2 archimedeanClassMk_epsilon_pos
-      simp_all [epsilon_ne_zero])
+      have := Itzhaki2021.mem_infinitesimals.2 archimedeanClassMk_epsilon_pos
+      rw [h, AddSubgroup.mem_bot] at this
+      exact epsilon_ne_zero this)
     (fun h ↦ by
-      have : (1 : ℝ*) ∈ ballAddSubgroup (0 : ArchimedeanClass ℝ*) := h ▸ AddSubgroup.mem_top _
+      have : (1 : ℝ*) ∈ Itzhaki2021.infinitesimals := h ▸ AddSubgroup.mem_top _
       simp at this)
 
 theorem infinitesimal_m_iff {x y : ℝ*} : infinitesimal.M x y ↔ x < y ∧ 0 < mk (y - x) := by
-  rw [infinitesimal, ofAddSubgroup_m_iff, mem_ballAddSubgroup_iff (by simp)]
+  rw [infinitesimal, ofAddSubgroup_m_iff, Itzhaki2021.mem_infinitesimals]
 
 /-- The hyperreals with finite differences marginal, the reading of Dean (§5) and of Itzhaki
 (§6). -/
 noncomputable def finite : MLScale ℝ* :=
-  ofAddSubgroup (closedBallAddSubgroup 0) (ordConnected_closedBallAddSubgroup 0)
+  ofAddSubgroup Itzhaki2021.finites (ordConnected_closedBallAddSubgroup 0)
     (fun h ↦ by
-      have : (1 : ℝ*) ∈ closedBallAddSubgroup (0 : ArchimedeanClass ℝ*) := by
-        simp
-      simp_all)
+      have : (1 : ℝ*) ∈ Itzhaki2021.finites := Itzhaki2021.mem_finites.2 (by simp)
+      rw [h, AddSubgroup.mem_bot] at this
+      exact one_ne_zero this)
     (fun h ↦ by
-      have : ω ∈ closedBallAddSubgroup (0 : ArchimedeanClass ℝ*) := h ▸ AddSubgroup.mem_top _
-      exact (mem_closedBallAddSubgroup_iff.1 this).not_gt archimedeanClassMk_omega_neg)
+      have : ω ∈ Itzhaki2021.finites := h ▸ AddSubgroup.mem_top _
+      exact (Itzhaki2021.mem_finites.1 this).not_gt archimedeanClassMk_omega_neg)
 
 theorem finite_m_iff {x y : ℝ*} : finite.M x y ↔ x < y ∧ 0 ≤ mk (y - x) := by
-  rw [finite, ofAddSubgroup_m_iff, mem_closedBallAddSubgroup_iff]
+  rw [finite, ofAddSubgroup_m_iff, Itzhaki2021.mem_finites]
 
 example : infinitesimal.M 0 ε ∧ infinitesimal.L 0 1 :=
   ⟨infinitesimal_m_iff.2 ⟨epsilon_pos, by simp [archimedeanClassMk_epsilon_pos]⟩,
@@ -319,5 +323,42 @@ example : ¬ Bald rep (toLex (1, 0)) (toLex (0, 0)) ∧ Bald rep (toLex (1, 0)) 
   ⟨not_not.2 (lex_l_iff.2 zero_lt_one), bald_of_le le_rfl⟩
 
 end Sorites
+
+/-! ### Itzhaki's nonstandard heuristics -/
+
+/-- Itzhaki's indistinguishability is at most marginal difference on the infinitesimal
+scale. -/
+theorem infinitesimal_atMostMarginal_iff {x y : ℝ*} :
+    infinitesimal.AtMostMarginal x y ↔ Itzhaki2021.InfinitesimallyClose x y := by
+  rw [infinitesimal, ofAddSubgroup_atMostMarginal_iff, Itzhaki2021.InfinitesimallyClose,
+    ← AddSubgroup.neg_mem_iff, neg_sub]
+
+/-- Itzhaki's finite closeness is at most marginal difference on the finite scale (§6). -/
+theorem finite_atMostMarginal_iff {x y : ℝ*} :
+    finite.AtMostMarginal x y ↔ Itzhaki2021.FinitelyClose x y := by
+  rw [finite, ofAddSubgroup_atMostMarginal_iff, Itzhaki2021.FinitelyClose,
+    ← AddSubgroup.neg_mem_iff, neg_sub]
+
+/-- Being infinitely less, in Itzhaki's sense, is being largely smaller on the finite scale
+(§6). -/
+theorem finite_l_iff {x y : ℝ*} : finite.L x y ↔ Itzhaki2021.InfinitelyLess x y := by
+  rw [L, Itzhaki2021.InfinitelyLess, m_iff_lt_and_atMostMarginal, finite_atMostMarginal_iff]
+  tauto
+
+/-- Under Itzhaki's qualitative size, the heaps are exactly what is not largely smaller than a
+clear case on the finite scale, the baldness of §5 (§6). -/
+theorem heap_iff_bald {De : Type*} {heap known : De → Prop} [DecidablePred heap]
+    [DecidablePred known] {size : De → ℕ} {H : ℝ*} (hH : mk H < 0) (hpos : 0 < H) {e x : De}
+    (he : heap e) : heap x ↔ Bald finite (Itzhaki2021.qualSize heap known size H e)
+      (Itzhaki2021.qualSize heap known size H x) := by
+  rw [Bald, finite_l_iff]
+  refine ⟨fun hx h ↦ h.2 (Itzhaki2021.finitelyClose_qualSize hx he),
+    fun h ↦ by_contra fun hx ↦ h ?_⟩
+  rw [Itzhaki2021.qualSize_of_not_heap hx]
+  refine ⟨Itzhaki2021.natCast_lt_qualSize hH hpos he _, fun hf ↦ ?_⟩
+  have hq := Itzhaki2021.finites.sub_mem
+    (Itzhaki2021.mem_finites.2 (mk_natCast_nonneg (size x))) hf
+  rw [sub_sub_cancel, Itzhaki2021.mem_finites] at hq
+  exact hq.not_gt (Itzhaki2021.mk_qualSize_neg hH he)
 
 end DinisJacinto2025
