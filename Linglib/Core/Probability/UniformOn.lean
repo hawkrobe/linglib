@@ -6,8 +6,8 @@ public import Mathlib.MeasureTheory.Measure.Real
 /-!
 # The uniform measure on a finite type
 
-Evaluation of `ProbabilityTheory.uniformOn` on a finset or on `Set.univ` at singletons and
-finite sets, in `ℝ≥0∞` and on reals.
+Evaluation of `ProbabilityTheory.uniformOn` on a finset or on `Set.univ` at singletons, finite
+sets and predicates, in `ℝ≥0∞` and on reals.
 -/
 
 @[expose] public section
@@ -20,7 +20,7 @@ namespace MeasureTheory
 variable {W : Type*} [MeasurableSpace W] [MeasurableSingletonClass W] [Fintype W]
 
 omit [Fintype W] in
-/-- The uniform measure on a finset at a singleton: `1 / #A` on `A` and `0` off it. -/
+/-- The uniform measure on a finset gives a singleton `1 / #A` on `A` and `0` off it. -/
 theorem uniformOn_finset_apply_singleton [DecidableEq W] (A : Finset W) (w : W) :
     uniformOn ↑A {w} = if w ∈ A then (A.card : ℝ≥0∞)⁻¹ else 0 := by
   rw [← Finset.coe_singleton, uniformOn_apply_finset]
@@ -50,7 +50,7 @@ theorem uniformOn_univ_real_coe_finset (s : Finset W) :
     ENNReal.toReal_natCast, ENNReal.toReal_natCast]
 
 omit [Fintype W] in
-/-- The uniform measure on a set at a set, on reals: the proportion of the atoms of `s` lying
+/-- The uniform measure on a set gives a set, on reals, the proportion of the atoms of `s` lying
 in `e`, with `0 / 0 = 0` when `s` is empty. -/
 theorem uniformOn_real_apply [Finite W] (s e : Set W) :
     (uniformOn s).real e = (s ∩ e).ncard / s.ncard := by
@@ -58,6 +58,16 @@ theorem uniformOn_real_apply [Finite W] (s e : Set W) :
     Measure.count_apply_finite _ (Set.toFinite _), Measure.count_apply_finite _ (Set.toFinite _),
     ← Set.ncard_eq_toFinset_card, ← Set.ncard_eq_toFinset_card, ENNReal.toReal_mul,
     ENNReal.toReal_inv, ENNReal.toReal_natCast, ENNReal.toReal_natCast, inv_mul_eq_div]
+
+omit [Fintype W] in
+/-- The uniform measure on a finset gives a predicate, on reals, the proportion of the finset
+satisfying it. -/
+theorem uniformOn_finset_real_setOf [Finite W] (A : Finset W) (p : W → Prop) [DecidablePred p] :
+    (uniformOn (A : Set W)).real {w | p w} = (A.filter p).card / A.card := by
+  rw [uniformOn_real_apply, Set.ncard_coe_finset]
+  congr 2
+  rw [← Set.ncard_coe_finset, Finset.coe_filter]
+  rfl
 
 /-- On a finite type the uniform measure gives a set, on reals, the proportion of atoms in it. -/
 theorem uniformOn_univ_real_apply (A : Set W) :

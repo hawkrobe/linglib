@@ -4,6 +4,7 @@ public import Linglib.Phonology.OptimalityTheory.ElementaryRankingCondition
 public import Linglib.Phonology.OptimalityTheory.Antimatroid
 public import Linglib.Phonology.OptimalityTheory.Grammar
 public import Linglib.Core.GroupTheory.Perm.MinOn
+public import Linglib.Core.Probability.UniformOn
 public import Mathlib.Algebra.BigOperators.Field
 public import Mathlib.Data.Prod.Basic
 public import Mathlib.Order.Extension.Linear
@@ -15,9 +16,10 @@ public import Mathlib.Order.Preorder.Finite
 This file defines the partially ordered constraints (POC) model of variation of Kiparsky and
 Anttila. A POC grammar is a partial order on the constraint set, and each evaluation samples a
 total order consistent with it, a linear extension, whose OT optimum is the output. A single
-grammar therefore induces a distribution over outputs, uniform over its consistent linear
-extensions. The central identities are division-free cardinality equations, and `winProb` and its
-rate theorems restate them over `ℚ`.
+grammar therefore induces a distribution over outputs: Anttila's quantitative interpretation
+is the uniform measure `uniformOn` on the grammar's linear extensions, and the probability of an
+output is that measure at the rankings picking it. The central identities are division-free
+cardinality equations, which the rate theorems restate as values of the measure.
 
 ## Main definitions
 
@@ -28,8 +30,6 @@ rate theorems restate them over `ℚ`.
 * `consistentTotalOrders r`: the `Finset` of linear extensions of `r`, nonempty by Szpilrajn.
 * `toGrammar`, `orderIdealAntimatroid`: a POC grammar as a `Grammar`, and its order-ideal
   antimatroid.
-* `winProb cands con r i o`: the probability that sampling under `r` selects output `o` for input
-  `i`.
 * `active con i o o'`, `favoring con i o o'`: the constraints distinguishing a candidate pair, and
   those preferring `o`.
 
@@ -37,14 +37,16 @@ rate theorems restate them over `ℚ`.
 
 * `consistentTotalOrders_eq_linearExtensions`: the linear extensions of a POC grammar are those
   of its simple ERC encoding `toERCs`.
-* `sum_winProb_eq_one`: `winProb` is a probability distribution, which produces intermediate
+* `sum_measure_setOf_picksAt`: under any probability measure on rankings, POC's uniform one or
+  stochastic OT's, the outputs' probabilities sum to one, which produces intermediate
   frequencies, such as Coetzee and Pater's t/d-deletion rates, that no single ranking reproduces.
 * `picksAt_binary_iff_exists_favoring_isMinOn`: a binary competition is decided by its
   σ-earliest active constraint.
-* `winProb_discrete_binary_rate`, `winProb_stratified_binary_rate`: `chosen` wins at rate
-  `|favoring ∩ active| / |active|`, restricted to the deciding stratum in the stratified case.
-* `winProb_stratified_eq_one`: a candidate that dominates every rival at the deciding stratum is
-  the categorical output.
+* `uniformOn_real_picksAt_discrete_binary`, `uniformOn_real_picksAt_stratified_binary`: `chosen`
+  wins at rate `|favoring ∩ active| / |active|`, restricted to the deciding stratum in the
+  stratified case.
+* `uniformOn_picksAt_stratified_eq_one`: a candidate that dominates every rival at the deciding
+  stratum is the categorical output.
 
 ## Implementation notes
 
@@ -70,7 +72,7 @@ mathlib's own idiom for orders treated as data (Szpilrajn's `extend_partialOrder
 
 namespace OptimalityTheory
 
-open Finset
+open Finset MeasureTheory ProbabilityTheory
 
 variable {n : ℕ}
 
@@ -368,7 +370,16 @@ def toGrammar (r : Fin n → Fin n → Prop) [IsPartialOrder (Fin n) r]
   show (Grammar.ofERCs (toERCs r) (toERCs_consistent r)).legs = consistentTotalOrders r
   rw [Grammar.legs_ofERCs, consistentTotalOrders_eq_linearExtensions]
 
-/-! ### Probabilistic POC — winProb -/
+/-! ### The quantitative interpretation
+
+A POC grammar draws one of its linear extensions uniformly at each evaluation
+([anttila-1997]), so it is the probability measure `uniformOn ↑(consistentTotalOrders r)` on
+rankings, and the probability that it selects `o` for input `i` is that measure at
+`{σ | PicksAt cands con σ i o}`: the fraction of linear extensions picking `o`. -/
+
+instance (r : Fin n → Fin n → Prop) [IsPartialOrder (Fin n) r] [DecidableRel r] :
+    IsProbabilityMeasure (uniformOn (consistentTotalOrders r : Set (Ranking (Fin n) n))) :=
+  isProbabilityMeasure_uniformOn (Set.toFinite _) (consistentTotalOrders_nonempty r)
 
 variable {Input Output : Type*}
 variable {cands : Input → Finset Output} {con : ConstraintSet (Input × Output) (Fin n)}
@@ -434,60 +445,9 @@ instance {ι : Type*} (cands : Input → Finset Output) (con : ConstraintSet (In
     Decidable (PicksAt cands con σ i o) := by
   unfold PicksAt; infer_instance
 
-/-- The probability that sampling under grammar `r` selects output o for
-    input i — the fraction of consistent extensions picking o. The denominator
-    is positive (`consistentTotalOrders_card_pos`), so this is a genuine
-    probability. -/
-def winProb (cands : Input → Finset Output) (con : ConstraintSet (Input × Output) (Fin n))
-    (r : Fin n → Fin n → Prop) [DecidableRel r] (i : Input) (o : Output) : ℚ :=
-  (((consistentTotalOrders r).filter
-    (fun σ => PicksAt cands con σ i o)).card : ℚ) /
-  ((consistentTotalOrders r).card : ℚ)
-
-/-- For the σ-induced total order, `winProb` collapses to a point mass —
-    probability 1 if σ picks o and 0 otherwise. -/
-theorem winProb_toRel :
-    winProb cands con σ.toRel i o =
-    if PicksAt cands con σ i o then 1 else 0 := by
-  simp only [winProb,
-    consistentTotalOrders_toRel,
-    Finset.card_singleton, Nat.cast_one, div_one, Finset.filter_singleton]
-  by_cases h : PicksAt cands con σ i o
-  · simp [ite_eq_left h]
-  · simp [ite_eq_right h]
-
-/-- Under the discrete grammar, `winProb` is the fraction of all `n!`
-    rankings picking o. -/
-theorem winProb_discrete :
-    winProb cands con (· = ·) i o =
-    ((Finset.univ.filter
-      (fun σ : Ranking (Fin n) n => PicksAt cands con σ i o)).card : ℚ) /
-    (Finset.univ : Finset (Ranking (Fin n) n)).card := by
-  simp only [winProb, consistentTotalOrders_discrete]
-
-/-! #### `winProb` is a probability distribution -/
-
-theorem winProb_nonneg [DecidableRel r] : 0 ≤ winProb cands con r i o :=
-  div_nonneg (Nat.cast_nonneg _) (Nat.cast_nonneg _)
-
-theorem winProb_le_one [IsPartialOrder (Fin n) r] [DecidableRel r] :
-    winProb cands con r i o ≤ 1 := by
-  unfold winProb
-  rw [div_le_one (by exact_mod_cast consistentTotalOrders_card_pos r)]
-  exact_mod_cast Finset.card_filter_le _ _
-
-/-- `winProb` is monotone under implication of the picking predicates on the
-    consistent rankings. -/
-theorem winProb_mono [DecidableRel r] {i' : Input}
-    (h : ∀ σ, IsConsistent r σ → PicksAt cands con σ i o → PicksAt cands con σ i' o') :
-    winProb cands con r i o ≤ winProb cands con r i' o' :=
-  div_le_div_of_nonneg_right (Nat.cast_le.mpr (Finset.card_le_card
-    (Finset.monotone_filter_right _ λ σ hσ => h σ (mem_consistentTotalOrders.mp hσ))))
-    (Nat.cast_nonneg _)
-
 /-- With pairwise-distinct violation profiles the picks-fibers over the
-    candidate set partition the consistent extensions — the division-free core
-    of `sum_winProb_eq_one`. -/
+    candidate set partition the consistent extensions, the division-free form of
+    `sum_measure_setOf_picksAt`. -/
 theorem sum_card_filter_picksAt [DecidableRel r]
     (h_ne : (cands i).Nonempty) (h_inj : Set.InjOn (fun o ↦ (con · (i, o))) (cands i)) :
     ∑ o ∈ cands i, ((consistentTotalOrders r).filter
@@ -515,16 +475,6 @@ theorem sum_card_filter_picksAt [DecidableRel r]
         (Finset.card_biUnion h_disjoint).symm
     _ = (consistentTotalOrders r).card := by rw [h_union]
 
-/-- Over a candidate set with pairwise-distinct violation profiles the win
-    probabilities sum to 1, for any grammar — every consistent ranking picks
-    exactly one winner. -/
-theorem sum_winProb_eq_one [IsPartialOrder (Fin n) r] [DecidableRel r]
-    (h_ne : (cands i).Nonempty) (h_inj : Set.InjOn (fun o ↦ (con · (i, o))) (cands i)) :
-    ∑ o ∈ cands i, winProb cands con r i o = 1 := by
-  unfold winProb
-  rw [← Finset.sum_div, ← Nat.cast_sum, sum_card_filter_picksAt h_ne h_inj]
-  exact div_self (by exact_mod_cast (consistentTotalOrders_card_pos r).ne')
-
 /-- Two distinct candidates with distinct violation profiles partition the
     consistent rankings. -/
 theorem card_filter_picksAt_binary_add [DecidableRel r]
@@ -544,15 +494,20 @@ theorem card_filter_picksAt_binary_add [DecidableRel r]
     (by rw [h_two]; exact Finset.insert_nonempty _ _) h_inj
   rwa [h_two, Finset.sum_pair h_ne] at h
 
-/-- Two distinct candidates with distinct violation profiles split the
-    probability mass. -/
-theorem winProb_binary_add_eq_one [IsPartialOrder (Fin n) r] [DecidableRel r]
-    {o₁ o₂ : Output} (h_two : cands i = {o₁, o₂}) (h_ne : o₁ ≠ o₂)
-    (h_vp : (con · (i, o₁)) ≠ (con · (i, o₂))) :
-    winProb cands con r i o₁ + winProb cands con r i o₂ = 1 := by
-  unfold winProb
-  rw [← add_div, ← Nat.cast_add, card_filter_picksAt_binary_add h_two h_ne h_vp]
-  exact div_self (by exact_mod_cast (consistentTotalOrders_card_pos r).ne')
+omit [DecidableEq Output] in
+/-- With pairwise-distinct violation profiles every ranking picks exactly one candidate, so under
+any probability measure on rankings, a POC grammar's or stochastic OT's, the candidates'
+probabilities sum to one. -/
+theorem sum_measure_setOf_picksAt (μ : Measure (Ranking (Fin n) n)) [IsProbabilityMeasure μ]
+    (h_ne : (cands i).Nonempty) (h_inj : Set.InjOn (fun o ↦ (con · (i, o))) (cands i)) :
+    ∑ o ∈ cands i, μ {σ | PicksAt cands con σ i o} = 1 := by
+  rw [← measure_biUnion_finset (f := fun o ↦ {σ | PicksAt cands con σ i o})
+      (fun _ _ _ _ hne ↦ Set.disjoint_left.mpr fun _ h h' ↦ hne (picksAt_unique h h'))
+      fun _ _ ↦ .of_discrete, ← measure_univ (μ := μ)]
+  congr 1
+  refine Set.eq_univ_of_forall fun σ ↦ ?_
+  obtain ⟨o, ho, h⟩ := exists_picksAt h_ne h_inj σ
+  exact Set.mem_biUnion ho h
 
 /-! ### Binary competitions are decided by the earliest active constraint
 
@@ -622,19 +577,21 @@ theorem card_filter_picksAt_discrete_binary
   simpa using Equiv.Perm.card_filter_isMinOn_symm_univ_mul_card (active con i chosen other)
     (favoring con i chosen other)
 
-/-- The fraction of all `n!` rankings picking `chosen` is `|favoring ∩ active| / |active|`. -/
-theorem winProb_discrete_binary_rate
+/-- Under the discrete grammar, with every ranking a linear extension, the uniform measure on
+rankings picks `chosen` at rate `|favoring ∩ active| / |active|`. -/
+theorem uniformOn_real_picksAt_discrete_binary
     (h_two : cands i = {chosen, other}) (h_ne : chosen ≠ other) :
-    winProb cands con (· = ·) i chosen =
-      ((favoring con i chosen other ∩ active con i chosen other).card : ℚ) /
-        ((active con i chosen other).card : ℚ) := by
+    (uniformOn (Set.univ : Set (Ranking (Fin n) n))).real {σ | PicksAt cands con σ i chosen} =
+      ((favoring con i chosen other ∩ active con i chosen other).card : ℝ) /
+        (active con i chosen other).card := by
+  rw [← Finset.coe_univ, uniformOn_finset_real_setOf]
   rcases (active con i chosen other).eq_empty_or_nonempty with h | h
   · -- no constraint distinguishes the pair, so no ranking picks `chosen`
-    rw [winProb_discrete, h, inter_empty, card_empty, Nat.cast_zero, zero_div,
+    rw [h, inter_empty, card_empty, Nat.cast_zero, zero_div,
       Finset.filter_false_of_mem fun σ _ => by
         simp [picksAt_binary_iff_exists_favoring_isMinOn h_two h_ne σ, h],
       card_empty, Nat.cast_zero, zero_div]
-  · rw [winProb_discrete, Finset.card_univ, Fintype.card_perm, Fintype.card_fin,
+  · rw [Finset.card_univ, Fintype.card_perm, Fintype.card_fin,
       div_eq_div_iff (by positivity) (by exact_mod_cast h.card_pos.ne')]
     exact_mod_cast (card_filter_picksAt_discrete_binary h_two h_ne).trans (Nat.mul_comm _ _)
 
@@ -708,20 +665,22 @@ theorem card_filter_picksAt_stratified_binary
       (isConsistent_swap_mul h_triv (Finset.mem_filter.mp h₁).2 (Finset.mem_filter.mp h₂).2
         (mem_consistentTotalOrders.mp hσ))
 
-/-- The deciding-stratum rate is `|favoring ∩ Dₖ| / |Dₖ|`. -/
-theorem winProb_stratified_binary_rate
+/-- Under a stratified grammar, the uniform measure on its linear extensions picks `chosen` at
+the deciding-stratum rate `|favoring ∩ Dₖ| / |Dₖ|`. -/
+theorem uniformOn_real_picksAt_stratified_binary
     {stratumOf : Fin n → Fin s} {inner : Fin n → Fin n → Prop}
     [IsPartialOrder (Fin n) inner] [DecidableRel inner] {k : Fin s}
     (h_two : cands i = {chosen, other}) (h_ne : chosen ≠ other)
     (h_triv : ∀ a b, stratumOf a = k → stratumOf b = k → inner a b → a = b)
     (h_tie : ∀ c, stratumOf c < k → con c (i, chosen) = con c (i, other))
     (h_dec : ((active con i chosen other).filter (stratumOf · = k)).Nonempty) :
-    winProb cands con (stratified stratumOf inner) i chosen =
+    (uniformOn (consistentTotalOrders (stratified stratumOf inner) : Set (Ranking (Fin n) n))).real
+        {σ | PicksAt cands con σ i chosen} =
       ((favoring con i chosen other ∩
-          (active con i chosen other).filter (stratumOf · = k)).card : ℚ) /
-        (((active con i chosen other).filter (stratumOf · = k)).card : ℚ) := by
-  unfold winProb
-  rw [div_eq_div_iff (by exact_mod_cast (consistentTotalOrders_card_pos _).ne')
+          (active con i chosen other).filter (stratumOf · = k)).card : ℝ) /
+        ((active con i chosen other).filter (stratumOf · = k)).card := by
+  rw [uniformOn_finset_real_setOf, div_eq_div_iff
+    (by exact_mod_cast (consistentTotalOrders_card_pos _).ne')
     (by exact_mod_cast h_dec.card_pos.ne')]
   exact_mod_cast (card_filter_picksAt_stratified_binary h_two h_ne h_triv h_tie h_dec).trans
     (Nat.mul_comm _ _)
@@ -745,18 +704,18 @@ theorem picksAt_stratified_of_dominates
   obtain ⟨hxA, hminA⟩ := (isMinOn_active_iff_isMinOn_filter_stratum hσ h_tie h_dec).2 ⟨hx, hmin⟩
   exact (lex_lt_iff_exists_favoring_isMinOn σ).2 ⟨x, mem_inter.2 ⟨h_sub hx, hxA⟩, hminA⟩
 
+omit [DecidableEq Output] in
 /-- A candidate dominating every rival at the deciding stratum wins with probability one. -/
-theorem winProb_stratified_eq_one
+theorem uniformOn_picksAt_stratified_eq_one
     {stratumOf : Fin n → Fin s} {inner : Fin n → Fin n → Prop}
     [IsPartialOrder (Fin n) inner] [DecidableRel inner] (ho : o ∈ cands i)
     (h : ∀ o' ∈ cands i, o' ≠ o → ∃ k : Fin s,
       (∀ c, stratumOf c < k → con c (i, o) = con c (i, o')) ∧
       ((active con i o o').filter (stratumOf · = k)).Nonempty ∧
       (active con i o o').filter (stratumOf · = k) ⊆ favoring con i o o') :
-    winProb cands con (stratified stratumOf inner) i o = 1 := by
-  unfold winProb
-  rw [Finset.filter_true_of_mem fun σ hσ =>
-    picksAt_stratified_of_dominates (mem_consistentTotalOrders.mp hσ) ho h]
-  exact div_self (by exact_mod_cast (consistentTotalOrders_card_pos _).ne')
+    uniformOn (consistentTotalOrders (stratified stratumOf inner) : Set (Ranking (Fin n) n))
+      {σ | PicksAt cands con σ i o} = 1 :=
+  uniformOn_eq_one_of (Set.toFinite _) (consistentTotalOrders_nonempty _) fun _ hσ ↦
+    picksAt_stratified_of_dominates (mem_consistentTotalOrders.mp (Finset.mem_coe.mp hσ)) ho h
 
 end OptimalityTheory

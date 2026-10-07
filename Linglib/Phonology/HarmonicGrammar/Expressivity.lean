@@ -520,7 +520,7 @@ theorem RealizationProblem.IsOTRealizable.isPartialOrderRealizable
     fun τ hτ => Ranking.toRel_le_toRel_iff.mp hτ ▸ hσ⟩
 
 /-- Under categorical realizability, OT and partial orders coincide; the
-    partial order's advantage is probabilistic, captured by `winProb`. -/
+    partial order's advantage is probabilistic, the uniform measure on its linear extensions. -/
 theorem RealizationProblem.isOTRealizable_iff_isPartialOrderRealizable
     (P : RealizationProblem Input Output (Fin n)) :
     P.IsOTRealizable ↔ P.IsPartialOrderRealizable :=

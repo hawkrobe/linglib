@@ -8,6 +8,7 @@ public import Mathlib.Order.PiLex
 public import Mathlib.Order.Preorder.Finite
 public import Mathlib.Order.RelClasses
 public import Mathlib.Data.Fintype.Card
+public import Mathlib.MeasureTheory.MeasurableSpace.Defs
 public import Linglib.Core.Order.PiLex
 
 /-!
@@ -22,7 +23,8 @@ reflexive closure, from which the ranking is recoverable (`toRel_le_toRel_iff`).
 violation vectors in rank order and comparing them lexicographically is `Pi.Lex` under dominance
 (`toLex_comp_lt_iff`). The `Tableau` machinery evaluates under a ranking, and the
 elementary-ranking-condition layer (`ElementaryRankingCondition.lean`) infers rankings from
-winner–loser pairs.
+winner–loser pairs. Rankings carry the discrete σ-algebra, so that a distribution over rankings,
+a partially ordered grammar's or stochastic OT's, is a `Measure`.
 
 ## Implementation notes
 
@@ -47,6 +49,11 @@ namespace OptimalityTheory
 abbrev Ranking (ι : Type*) (n : ℕ) := Fin n ≃ ι
 
 variable {ι : Type*} {n : ℕ}
+
+/-- There are finitely many rankings of `n` constraints, and every set of them is measurable. -/
+instance : MeasurableSpace (Ranking ι n) := ⊤
+
+instance : DiscreteMeasurableSpace (Ranking ι n) := ⟨fun _ ↦ trivial⟩
 
 /-- A total relation is maximal among antisymmetric relations, so an antisymmetric relation
 above it in the pointwise lattice equals it. -/

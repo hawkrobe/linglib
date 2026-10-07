@@ -46,7 +46,7 @@ substitution on voiced velar *g* entails substitution on every stop (`g_implies_
 
 namespace Zuraw2010
 
-open OptimalityTheory Finset
+open OptimalityTheory Finset ProbabilityTheory
 
 /-! ### Stems and substitution decisions -/
 
@@ -154,13 +154,14 @@ private theorem nsCands_two (c : StemC) : nsCands c = {SubSt.yes, SubSt.no} := b
   cases o <;> simp
 
 /-- `subProb c` is the share of the 720 total orders on which stem `c` substitutes. -/
-def subProb (c : StemC) : ℚ := winProb nsCands con (· = ·) c .yes
+noncomputable def subProb (c : StemC) : ℝ :=
+  (uniformOn (Set.univ : Set (Ranking (Fin 6) 6))).real {σ | PicksAt nsCands con σ c .yes}
 
 /-- The share is the fraction of distinguishing constraints that favour substitution. -/
 private theorem subProb_eq_rate (c : StemC) :
-    subProb c = ((favoring con c .yes .no ∩ active con c .yes .no).card : ℚ) /
+    subProb c = ((favoring con c .yes .no ∩ active con c .yes .no).card : ℝ) /
       (active con c .yes .no).card :=
-  winProb_discrete_binary_rate (nsCands_two c) (λ heq => SubSt.noConfusion heq)
+  uniformOn_real_picksAt_discrete_binary (nsCands_two c) fun heq ↦ SubSt.noConfusion heq
 
 theorem subProb_p : subProb .p = 1/2 := by
   rw [subProb_eq_rate, show (favoring con .p .yes .no ∩ active con .p .yes .no).card = 2 by
