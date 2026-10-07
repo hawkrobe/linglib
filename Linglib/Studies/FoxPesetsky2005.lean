@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Syntax.Minimalist.Linearization.Cyclic
+public import Linglib.Syntax.Minimalist.Linearization.SpelloutDomain
 public import Linglib.Data.Examples.FoxPesetsky2005
 
 /-!
@@ -11,8 +11,9 @@ Generalization under cyclic linearization (`Minimalist.Linearization.Consistent`
 derivational scenarios (13)–(15) are theorems over arbitrary terminals: movement from the left
 edge of a domain converges, movement from a non-edge position crashes on the pair it reorders,
 and moving the edge material along restores the order. Swedish Object Shift is these scenarios
-with the verb, the object and an intervener as the terminals, and the paper's sketches of its
-sentences (`Sketch.phases`) predict their judgments (`rows_predicted`).
+with the verb, the object and an intervener as the terminals. The derivations the paper sketches
+for its sentences spell out the snapshots it draws (`Sketch.spellouts_eq_phases`), and whether
+they linearize predicts the sentences' judgments (`rows_predicted`).
 
 ## References
 
@@ -29,17 +30,17 @@ variable {α : Type*} {X Y Z a : α}
 
 /-! ### Derivational scenarios -/
 
-/-- Scenario 1 (13): leftward movement from the left edge of a domain converges. -/
+/-- In Scenario 1 (13) leftward movement from the left edge of a domain converges. -/
 theorem scenario1 [DecidableEq α] (hnd : [X, a, Y, Z].Nodup) :
     Consistent [[X, Y, Z], [X, a, Y, Z]] :=
   consistent_of_forall_sublist (by simp) hnd
 
-/-- Scenario 2 (14): leftward movement from a non-edge position reorders the moved element and
+/-- In Scenario 2 (14) leftward movement from a non-edge position reorders the moved element and
 the edge, and the derivation crashes whatever else it contains. -/
 theorem scenario2 : ¬ Consistent [[X, Y, Z], [Y, a, X, Z]] :=
   not_consistent_of_pair X Y ⟨[X, Y, Z], by simp, by simp⟩ ⟨[Y, a, X, Z], by simp, by simp⟩
 
-/-- Scenario 3 (15): moving the edge material along with the non-edge element preserves their
+/-- In Scenario 3 (15) moving the edge material along with the non-edge element preserves their
 order, so the derivation converges. -/
 theorem scenario3 [DecidableEq α] (hnd : [X, Y, a, Z].Nodup) :
     Consistent [[X, Y, Z], [X, Y, a, Z]] :=
@@ -57,19 +58,20 @@ section Holmberg
 
 variable {S V O adv C aux XP : α}
 
-/-- Object Shift with the verb in C (20): VP orders the verb before the object and CP keeps it
-so. -/
+/-- With the verb in C (20), VP orders the verb before the shifted object and CP keeps it so. -/
 theorem objectShift_verbToC [DecidableEq α] (hnd : [S, V, O, adv].Nodup) :
     Consistent [[V, O], [S, V, O, adv]] :=
-  consistent_of_forall_sublist (by simp [List.sublist_cons_iff]) hnd
+  consistent_of_forall_sublist (by
+    simp only [List.forall_mem_cons, List.not_mem_nil, IsEmpty.forall_iff, implies_true, and_true]
+    exact ⟨(List.sublist_append_left [V, O] [adv]).cons S, .refl _⟩) hnd
 
-/-- Object Shift in an embedded clause (21), where the verb stays in VP: the shifted object
-precedes the verb at CP against VP, and the derivation crashes. -/
+/-- In an embedded clause (21), where the verb stays in VP, the shifted object precedes the verb at
+CP against VP, and the derivation crashes. -/
 theorem objectShift_embedded : ¬ Consistent [[V, O], [C, S, O, adv, V]] :=
   not_consistent_of_pair V O ⟨[V, O], by simp, by simp⟩
     ⟨[C, S, O, adv, V], by simp, by simp [List.sublist_cons_iff]⟩
 
-/-- Object Shift under an auxiliary in C (22): the same contradiction. -/
+/-- Object Shift under an auxiliary in C (22) meets the same contradiction. -/
 theorem objectShift_aux : ¬ Consistent [[V, O], [S, aux, O, adv, V]] :=
   not_consistent_of_pair V O ⟨[V, O], by simp, by simp⟩
     ⟨[S, aux, O, adv, V], by simp, by simp [List.sublist_cons_iff]⟩
@@ -84,37 +86,92 @@ theorem objectShift_intervener : ¬ Consistent [[V, XP, O], [S, V, O, adv, XP]] 
 established at VP is the order at CP. -/
 theorem objectShift_intervener_fronted [DecidableEq α] (hnd : [XP, V, S, O, adv].Nodup) :
     Consistent [[XP, V, O], [XP, V, S, O, adv]] :=
-  consistent_of_forall_sublist (by simp [List.sublist_cons_iff]) hnd
+  consistent_of_forall_sublist (by
+    simp only [List.forall_mem_cons, List.not_mem_nil, IsEmpty.forall_iff, implies_true, and_true]
+    exact ⟨.cons_cons XP (.cons_cons V (.cons S (.cons_cons O (List.nil_sublist _)))), .refl _⟩)
+    hnd
 
 end Holmberg
 
 /-! ### The Swedish data -/
 
-/-- The terminals of the paper's Object Shift sketches. -/
+/-- A terminal is a word or phrase of the paper's Object Shift sketches. -/
 inductive Terminal
   | S | V | O | adv | C | aux | XP
   deriving DecidableEq, Repr
 
-/-- The paper's sketch of an Object Shift sentence's derivation: which of (20)–(22), (24) and
-(26) the sentence instantiates. -/
+open Minimalist (LIToken)
+
+/-- Each terminal spells out its own lexical item. -/
+def Terminal.token : Terminal → LIToken
+  | .S => ⟨.simple .D [], 1⟩
+  | .V => ⟨.simple .V [], 2⟩
+  | .O => ⟨.simple .D [], 3⟩
+  | .adv => ⟨.simple .Neg [], 4⟩
+  | .C => ⟨.simple .C [], 5⟩
+  | .aux => ⟨.simple .T [], 6⟩
+  | .XP => ⟨.simple .P [], 7⟩
+
+/-- A lexical item spells out at most one terminal. -/
+def Terminal.ofToken? (tok : LIToken) : Option Terminal :=
+  [Terminal.S, .V, .O, .adv, .C, .aux, .XP].find? (·.token = tok)
+
+/-- The paper sketches the derivation of an Object Shift sentence as one of (20)–(22), (24) and
+(26). -/
 inductive Sketch
-  /-- (20): the finite verb moves to C. -/
+  /-- The finite verb moves to C (20). -/
   | verbToC
-  /-- (21): an embedded clause, whose complementizer keeps the verb in VP. -/
+  /-- The complementizer of an embedded clause keeps the verb in VP (21). -/
   | embedded
-  /-- (22): an auxiliary moves to C and the verb stays in VP. -/
+  /-- An auxiliary moves to C and the verb stays in VP (22). -/
   | auxiliary
-  /-- (24): a first object or particle precedes the object in VP. -/
+  /-- A first object or particle precedes the object in VP (24). -/
   | intervener
-  /-- (26): the intervener fronts through the VP edge. -/
+  /-- The intervener fronts through the VP edge (26). -/
   | intervenerFronted
   deriving DecidableEq, Repr
 
 namespace Sketch
 
 open Terminal
+open Minimalist.SyntacticObject (Derivation Step leaf)
 
-/-- The VP and CP snapshots as the paper draws them. -/
+/-- The VP of a sketch is the verb with its object, preceded in (24) and (26) by the intervener,
+which in (26) moves to the VP edge. -/
+def vpSteps : Sketch → List Step
+  | verbToC | embedded | auxiliary => [.em .right (leaf O.token)]
+  | intervener => [.em .right (leaf XP.token), .em .right (leaf O.token)]
+  | intervenerFronted =>
+    [.em .right (leaf XP.token), .em .right (leaf O.token), .im (leaf XP.token)]
+
+/-- Above the VP the adverb adjoins, the object shifts and the subject merges, and then the
+verb, the auxiliary or the intervener moves to C, as the bracketings (20b)–(22b), (24) and (26)
+show. -/
+def cpSteps : Sketch → List Step
+  | verbToC =>
+    [.em .left (leaf adv.token), .im (leaf O.token), .em .left (leaf S.token),
+      .im (leaf V.token), .im (leaf S.token)]
+  | embedded =>
+    [.em .left (leaf adv.token), .im (leaf O.token), .em .left (leaf S.token),
+      .em .left (leaf C.token)]
+  | auxiliary =>
+    [.em .left (leaf aux.token), .em .left (leaf adv.token), .im (leaf O.token),
+      .em .left (leaf S.token), .im (leaf aux.token), .im (leaf S.token)]
+  | intervener =>
+    [.em .left (leaf adv.token), .im (leaf O.token), .em .left (leaf S.token),
+      .im (leaf V.token), .im (leaf S.token)]
+  | intervenerFronted =>
+    [.em .left (leaf adv.token), .im (leaf O.token), .em .left (leaf S.token),
+      .im (leaf V.token), .im (leaf XP.token)]
+
+/-- A sketch's derivation starts from the verb. -/
+def derivation (s : Sketch) : Derivation := ⟨leaf V.token, s.vpSteps ++ s.cpSteps⟩
+
+/-- The VP is spelled out when it is built, and the CP at the end of the derivation. -/
+def schedule (s : Sketch) : List (ℕ × ℕ) :=
+  [(s.vpSteps.length, s.vpSteps.length), (s.derivation.length, s.derivation.length)]
+
+/-- The paper draws these VP and CP snapshots. -/
 def phases : Sketch → List (List Terminal)
   | verbToC => [[V, O], [S, V, O, adv]]
   | embedded => [[V, O], [C, S, O, adv, V]]
@@ -122,16 +179,22 @@ def phases : Sketch → List (List Terminal)
   | intervener => [[V, XP, O], [S, V, O, adv, XP]]
   | intervenerFronted => [[XP, V, O], [XP, V, S, O, adv]]
 
-/-- The feature values naming the sketches in the example data. -/
+/-- The derivations spell out the snapshots the paper draws. -/
+theorem spellouts_eq_phases (s : Sketch) :
+    s.schedule.map (fun p ↦ (s.derivation.spellout p.1 p.2).filterMap Terminal.ofToken?) =
+      s.phases := by
+  cases s <;> decide
+
+/-- These feature values name the sketches in the example data. -/
 def table : List (String × Sketch) :=
   [("verbToC", verbToC), ("embedded", embedded), ("auxiliary", auxiliary),
     ("intervener", intervener), ("intervenerFronted", intervenerFronted)]
 
 end Sketch
 
-/-- The paper's Swedish sentences are acceptable exactly when their sketches linearize. -/
+/-- The paper's Swedish sentences are acceptable exactly when their derivations linearize. -/
 theorem rows_predicted : ∀ ex ∈ Examples.all, ∀ s ∈ ex.parse? "sketch" Sketch.table,
-    (ex.judgment = .acceptable ↔ Consistent s.phases) := by
+    (ex.judgment = .acceptable ↔ s.derivation.Linearizes s.schedule) := by
   decide
 
 end FoxPesetsky2005
