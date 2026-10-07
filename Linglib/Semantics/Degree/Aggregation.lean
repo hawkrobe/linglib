@@ -16,8 +16,9 @@ public import Mathlib.Order.Defs.Unbundled
 
 This file defines aggregation rules over the dimensions of a multidimensional predicate, which
 ranks two objects according to how they stand on several underlying dimensions. The rules follow
-the value-function framework of Sen, as D'Ambrosio and Hedden transpose it to dimensions: a profile assigns each object its vector of dimensional values, and a rule sends
-profiles to an overall relation on the objects, read `x ⪰ y`. Sen's informational requirements are
+the value-function framework of Sen, as D'Ambrosio and Hedden transpose it to dimensions. A
+profile assigns each object its vector of dimensional values, and a rule sends profiles to an
+overall relation on the objects, read `x ⪰ y`. Sen's informational requirements are
 invariance under a class of transformation vectors (strictly increasing maps, common-unit positive
 affine maps, similarities, and the comparability classes that apply one map to every
 dimension). Arrow's conditions and the strong Pareto, Pareto-indifference and
@@ -470,8 +471,8 @@ variable [Fintype ι] [Nonempty ι] [LinearOrder K]
 def maximin : Rule ι α K := fun v x y ↦
   univ.inf' univ_nonempty (v y) ≤ univ.inf' univ_nonempty (v x)
 
-/-- The maximin rule needs only ordinal level comparability: a common strictly increasing map
-moves every lowest value alike. -/
+/-- The maximin rule needs only ordinal level comparability, since a common strictly increasing
+map moves every lowest value alike. -/
 theorem maximin_ordinalLevelInvariant : Invariant ordinalLevel (maximin : Rule ι α K) := by
   rintro f ⟨u, hu, hf⟩ v
   have key : ∀ z, univ.inf' univ_nonempty ((v.transform f) z) = u (univ.inf' univ_nonempty (v z)) :=

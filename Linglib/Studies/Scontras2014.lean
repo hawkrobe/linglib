@@ -101,8 +101,8 @@ theorem containerReading_subset (P : E → Prop) (filledWith : E → E → Prop)
 theorem measureReading_subset (μ : DimensionedMeasure E D) (k : E → Prop) (n : D) :
     ∀ x, measureReading μ k n x → k x := fun _ h ↦ h.1
 
-/-- The measure reading with numeral `n` is quantity-uniform under the term's measure, the
-condition (44) that number marking checks: the measure takes the single value `n` on it. -/
+/-- The measure reading with numeral `n` is quantity-uniform under the term's measure, since the
+measure takes the single value `n` on it. -/
 theorem measureReading_quantity_uniform (μ : DimensionedMeasure E D) (k : E → Prop) (n : D) :
     (μ.apply '' {x | measureReading μ k n x}).Subsingleton := by
   rintro _ ⟨_, hx, rfl⟩ _ ⟨_, hy, rfl⟩

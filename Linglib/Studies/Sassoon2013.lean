@@ -48,22 +48,21 @@ namespace Sassoon2013
 
 open Degree
 
-/-- The paper's criterion: an adjective is conjunctive when its dimensional uses in positive
-contexts are at least three times those in negated contexts, disjunctive in the converse case,
-and mixed otherwise. -/
+/-- An adjective is conjunctive when its dimensional uses in positive contexts are at least three
+times those in negated contexts, disjunctive in the converse case, and mixed otherwise. -/
 def classify (conj disj : ℕ) : DimensionBindingType :=
   if 3 * disj ≤ conj then .conjunctive else if 3 * conj ≤ disj then .disjunctive else .mixed
 
 /-- A sampled adjective's binding type from its corpus percentages. -/
 def binding? (x : Datum) : Option DimensionBindingType :=
-  (x.nat? "conj").bind λ c => (x.nat? "disj").map (classify c)
+  (x.nat? "conj").bind fun c ↦ (x.nat? "disj").map (classify c)
 
 /-- The row of an adjective. -/
 def rowOf (form : String) : Option Datum :=
   Examples.all.find? (·.primaryText == form)
 
-/-- The criterion applied to the sample yields the paper's lists: the conjunctive adjectives,
-the disjunctive ones, and the mixed remainder. -/
+/-- The criterion applied to the sample yields the paper's lists of conjunctive, disjunctive and
+mixed adjectives. -/
 theorem typology :
     ∀ x ∈ Examples.all, ∀ b ∈ binding? x,
       (b = .conjunctive ↔
@@ -74,7 +73,7 @@ theorem typology :
 
 /-! ### Antonym polarity -/
 
-/-- The polarity judgments confirm the a priori classification: the positive adjectives are
+/-- The polarity judgments confirm the a priori classification, since the positive adjectives are
 judged above the midpoint of the scale and the negative ones below it. -/
 theorem polarity_judgments :
     ∀ x ∈ Examples.all, ∀ p ∈ x.nat? "polarity",
@@ -107,8 +106,8 @@ theorem total_not_disjunctive :
       s = .maxEndpoint → b ≠ .disjunctive := by
   decide +kernel
 
-/-- A partial adjective can be conjunctive, against the standard-type hypothesis: *familiar*
-and the comparative *healthier* are partial by the inference tests yet clearly conjunctive. -/
+/-- A partial adjective can be conjunctive, against the standard-type hypothesis. *Familiar* and
+the comparative *healthier* are partial by the inference tests yet clearly conjunctive. -/
 theorem partial_conjunctive_exists :
     ∃ x ∈ Examples.all, x.parse? "standard" standards = some .minEndpoint ∧
       binding? x = some .conjunctive ∧ predictedBinding .minEndpoint ≠ .conjunctive := by
@@ -116,8 +115,8 @@ theorem partial_conjunctive_exists :
 
 /-! ### Comparatives -/
 
-/-- A comparative inherits the binding of its base unless the base is clearly disjunctive:
-*healthier* is conjunctive like *healthy* and *better* mixed like *good*, while *worse* is
+/-- A comparative inherits the binding of its base unless the base is clearly disjunctive.
+*Healthier* is conjunctive like *healthy* and *better* mixed like *good*, while *worse* is
 mixed although *bad* is disjunctive, the pair whose difference the paper finds significant. -/
 theorem comparatives_inherit :
     ∀ x ∈ Examples.all, ∀ f ∈ x.feature? "base", ∀ y ∈ rowOf f,

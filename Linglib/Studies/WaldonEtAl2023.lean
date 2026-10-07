@@ -4,24 +4,23 @@ public import Linglib.Data.Examples.WaldonEtAl2023
 public import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
 
 /-!
-# Waldon, Condoravdi, Levin & Degen (2023): On the Context Dependence of Artifact Noun Interpretation
+# Waldon et al. (2023): On the Context Dependence of Artifact Noun Interpretation
 
-This file formalizes [waldon-etal-2023]'s account of how a policy goal shapes the boundary of an
-artifact noun category, *no electronic devices are allowed in the theater* read with the goal of
-limiting light or of limiting noise. Following [sassoon-fadlon-2017], an artifact noun denotes
-an additive, weighted, multi-dimensional measure (2), whereas a natural kind composes its
-dimensions multiplicatively (3), so that one failed dimension excludes an entity from the kind
-but not from the artifact category. The proposal (8) makes the dimensions and their weights
-contextual: an explicit goal weights the context-independent category measure by `γ` and the
-goal-relevant feature by `1 − γ` (13), and with no goal stated the goal weight is split by the
-goals' plausibility (14) (`Norming`, `measure`). The interpreter's posterior that an object is
-prohibited (12), under the paper's simplifying assumptions of a uniform threshold on `[0, 1]`
-and an even prior, is the measure itself (`prohibitionPosterior_eq`). The Goal Insensitive
-hypothesis is `γ = 1`, under which no condition moves any object; under Goal Sensitivity an
-object's prohibition orders across explicit goals by its goal-relevant features, and one goal
-raises an object above the neutral baseline while lowering another, which no single shift of
-the standard of comparison can do (`not_threshold_shift`). The experiment's Bayesian data
-analysis estimates `γ` at about 0.76, with 1 outside the credible interval.
+Waldon, Condoravdi, Levin and Degen ask how a policy goal shapes the boundary of an artifact
+noun category, as in *no electronic devices are allowed in the theater* read with the goal of
+limiting light or of limiting noise. Following Sassoon and Fadlon, an artifact noun denotes an
+additive, weighted measure over several dimensions. The paper makes the weights contextual: an
+explicit goal weights the category measure by `γ` and the goal-relevant feature by `1 − γ`, and
+with no goal stated the goal weight is split by the goals' plausibility. With a uniform
+threshold and an even prior, the posterior that an object is prohibited is the measure itself.
+The Goal Insensitive hypothesis is `γ = 1`; the experiment's Bayesian analysis estimates `γ` at
+about 0.76, with 1 outside the credible interval.
+
+## Main statements
+
+* `prohibitionPosterior_eq`: the posterior that an object is prohibited is its measure.
+* `not_threshold_shift`: one goal raising an object and lowering another is not a shift of the
+  standard of comparison.
 
 ## Implementation notes
 
@@ -50,7 +49,7 @@ variable {O G : Type*} [Fintype G]
 
 /-! ### The norming data and the contextual measure -/
 
-/-- The measures the norming studies supply (§3.1): the category-membership measure `cat`, the
+/-- The norming studies (§3.1) supply the category-membership measure `cat` and the
 goal-relevant feature measures, on the unit interval, and the plausibility of the goals, a
 distribution. -/
 structure Norming (O G : Type*) [Fintype G] where
@@ -62,7 +61,7 @@ structure Norming (O G : Type*) [Fintype G] where
   plausibility_nonneg : ∀ g, 0 ≤ plausibility g
   plausibility_sum : ∑ g, plausibility g = 1
 
-/-- An experimental condition: no goal stated, or an explicit policy goal. -/
+/-- An experimental condition states no goal or an explicit policy goal. -/
 inductive Condition (G : Type*)
   | neutral
   | explicit (g : G)
@@ -70,7 +69,8 @@ inductive Condition (G : Type*)
 variable (N : Norming O G) (γ : ℝ)
 
 /-- The goal-weighted measure of the artifact noun, (13) under an explicit goal and (14) with
-the goal weight split by plausibility: a weighted sum of the category and the goal dimensions. -/
+the goal weight split by plausibility, is a weighted sum of the category and the goal
+dimensions. -/
 noncomputable def measure : Condition G → O → ℝ
   | .explicit g => fun o ↦ γ * N.cat o + (1 - γ) * N.feature g o
   | .neutral => fun o ↦ γ * N.cat o + (1 - γ) * ∑ g, N.plausibility g * N.feature g o
@@ -80,8 +80,8 @@ theorem measure_explicit (g : G) (o : O) :
 
 /-- The plausibility-weighted feature lies on the unit interval. -/
 theorem mix_mem_Icc (o : O) : ∑ g, N.plausibility g * N.feature g o ∈ Set.Icc 0 1 :=
-  ⟨Finset.sum_nonneg λ g _ => mul_nonneg (N.plausibility_nonneg g) (N.feature_mem g o).1,
-    (Finset.sum_le_sum λ g _ => mul_le_of_le_one_right (N.plausibility_nonneg g)
+  ⟨Finset.sum_nonneg fun g _ ↦ mul_nonneg (N.plausibility_nonneg g) (N.feature_mem g o).1,
+    (Finset.sum_le_sum fun g _ ↦ mul_le_of_le_one_right (N.plausibility_nonneg g)
       (N.feature_mem g o).2).trans_eq N.plausibility_sum⟩
 
 /-- For `γ` on the unit interval the measure lies on the unit interval, as the threshold reads
@@ -100,14 +100,14 @@ theorem measure_mem_Icc (hγ0 : 0 ≤ γ) (hγ1 : γ ≤ 1) (c : Condition G) (o
 
 /-! ### The interpretive model (12) -/
 
-/-- The probability that a measure meets a standard uniform on the unit interval: the Lebesgue
+/-- The probability that a measure meets a standard uniform on the unit interval is the Lebesgue
 mass of `[0, m]`. -/
 noncomputable def meetsProb (m : ℝ) : ℝ≥0∞ := volume (Set.Icc (0 : ℝ) m)
 
 theorem meetsProb_eq (m : ℝ) : meetsProb m = ENNReal.ofReal m := by
   rw [meetsProb, Real.volume_Icc, sub_zero]
 
-/-- The posterior that an object of measure `m` is prohibited: the Bayes ratio of (12) with an
+/-- The posterior that an object of measure `m` is prohibited is the Bayes ratio of (12) with an
 even prior and the threshold marginalized. -/
 noncomputable def prohibitionPosterior (m : ℝ) : ℝ≥0∞ :=
   2⁻¹ * meetsProb m / (2⁻¹ * meetsProb m + 2⁻¹ * (1 - meetsProb m))
@@ -122,13 +122,14 @@ theorem prohibitionPosterior_eq {m : ℝ} (hm1 : m ≤ 1) :
     ENNReal.mul_div_right_comm, ENNReal.div_self (by norm_num) (by norm_num), one_mul]
 
 /-- Every prediction is a comparison of measures. -/
-theorem prohibitionPosterior_lt_iff {m m' : ℝ} (hm0 : 0 ≤ m) (hm1 : m ≤ 1) (hm1' : m' ≤ 1) : prohibitionPosterior m < prohibitionPosterior m' ↔ m < m' := by
+theorem prohibitionPosterior_lt_iff {m m' : ℝ} (hm0 : 0 ≤ m) (hm1 : m ≤ 1) (hm1' : m' ≤ 1) :
+    prohibitionPosterior m < prohibitionPosterior m' ↔ m < m' := by
   rw [prohibitionPosterior_eq hm1, prohibitionPosterior_eq hm1',
     ENNReal.ofReal_lt_ofReal_iff_of_nonneg hm0]
 
 /-! ### Goal sensitivity (§4.3) -/
 
-/-- The Goal Insensitive hypothesis, `γ = 1`: no condition moves any object. -/
+/-- Under the Goal Insensitive hypothesis, `γ = 1`, no condition moves any object. -/
 theorem measure_one (c c' : Condition G) (o : O) : measure N 1 c o = measure N 1 c' o := by
   rcases c with _ | g <;> rcases c' with _ | g' <;> simp [measure]
 
@@ -149,7 +150,7 @@ theorem measure_explicit_sub_neutral (g : G) (o : O) :
   simp only [measure]
   ring
 
-/-- Bidirectionality: under Goal Sensitivity one goal raises an object whose feature exceeds
+/-- Under Goal Sensitivity one goal raises an object whose feature exceeds
 the mix and lowers one whose feature falls short of it, the flashlight and the boombox under
 the goal of limiting light. -/
 theorem measure_bidirectional (hγ : γ < 1) {g : G} {o o' : O}
@@ -163,11 +164,11 @@ theorem measure_bidirectional (hγ : γ < 1) {g : G} {o o' : O}
   · have := measure_explicit_sub_neutral N γ g o'
     nlinarith
 
-/-- No single shift of the standard of comparison is bidirectional: with one measure and two
+/-- No single shift of the standard of comparison is bidirectional. With one measure and two
 thresholds, an object included under the second but not the first and another included under
 the first but not the second cannot both exist. -/
 theorem not_threshold_shift (m : O → ℝ) (θ θ' : ℝ) (o o' : O) :
     ¬ ((m o < θ ∧ θ' ≤ m o) ∧ (θ ≤ m o' ∧ m o' < θ')) :=
-  λ ⟨⟨h1, h2⟩, h3, h4⟩ => by linarith
+  fun ⟨⟨h1, h2⟩, h3, h4⟩ ↦ by linarith
 
 end WaldonEtAl2023

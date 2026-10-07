@@ -9,142 +9,73 @@ public import Linglib.Semantics.Degree.Boundedness
 public import Linglib.Semantics.Degree.Comparison
 
 /-!
-# Degree predicates + monotonicity
-[fox-hackl-2006] [kennedy-2015] [geurts-nouwen-2007] [nouwen-2010]
+# Degree predicates
 
-Predicate transformers over a measure function `μ : W → α`:
+A measure `μ : W → α` and a degree `d` determine five degree predicates, the meanings of
+*exactly*, *at least*, *more than*, *at most* and *less than*: the sets
+`Degree.Comparison.{eq,ge,gt,le,lt}.over μ d`. Kennedy gives modified and bare numerals one
+denotation that differs only in this comparison relation, and Geurts and Nouwen's split between
+Class A and Class B modifiers is whether the relation keeps its boundary.
 
-- `bimonotone_constant` (information collapse as mathlib's `Function.IsConst`; monotonicity
-  is `Monotone`/`Antitone` under the pointwise order on `W → Prop`)
-- monotonicity / anti-Horn-scale lemmas about the `Degree.Comparison.over`
-  degree predicates (general)
+A family of propositions indexed by degrees is upward monotone when it is `Monotone` under the
+pointwise order on `W → Prop`, and downward monotone when it is `Antitone`. Exact readings are
+neither, which is why bare numerals do not form a Horn scale.
 
-The five degree predicates ("exactly", "at least", "more than", "at most",
-"less than") are `Degree.Comparison.{eq,ge,gt,le,lt}.over μ` directly: the
-reified `Degree.Comparison` IS the canonical scale-comparison primitive, so
-there is no separate named family. `c.over μ n` is a `Set W`; `w ∈ c.over μ n ↔
-c.rel (μ w) n` (`Comparison.mem_over`), and `c.rel` unfolds to the order
-relation per case.
+## Main statements
+
+* `bimonotone_constant`: a family that is both upward and downward monotone is constant.
+* `eqOver_not_upward_monotone`, `eqOver_not_downward_monotone`: exact readings are not monotone
+  in the degree.
+
+## References
+
+* [kennedy-2015]
+* [geurts-nouwen-2007]
+* [nouwen-2010]
 -/
 
 @[expose] public section
 
 namespace Degree
 
-
-/-! ### Informativity on Scales -/
-
 variable {α : Type*} [LinearOrder α]
 
--- A family of propositions indexed by scale values is **upward monotone**
--- (entailments go from smaller to larger; Kennedy: if x is tall, x is
--- tall-or-more; Rouillard: telic E-TIA) exactly when it is mathlib's
--- `Monotone` under the pointwise order on `W → Prop` (`p ≤ q ↔ p → q`);
--- downward monotone (atelic E-TIA) is `Antitone`. No local aliases.
-
+/-- A family of propositions that is both upward and downward monotone in the degree is
+constant. -/
 theorem bimonotone_constant {W : Type*} (P : α → W → Prop)
-    (hUp : Monotone P) (hDown : Antitone P) : Function.IsConst P := λ x y =>
-  (le_total x y).elim (λ h => le_antisymm (hUp h) (hDown h))
-    (λ h => le_antisymm (hDown h) (hUp h))
+    (hUp : Monotone P) (hDown : Antitone P) : Function.IsConst P := fun x y ↦
+  (le_total x y).elim (fun h ↦ le_antisymm (hUp h) (hDown h))
+    (fun h ↦ le_antisymm (hDown h) (hUp h))
 
-/-! ### Maximal informativity is downstream -/
+/-! ### Exact readings against the other degree predicates -/
 
-/-! The cross-world `IsMaxInf` (`IsLeast` of the image of the true set under the degree
-    property) lives in `Semantics/Alternatives/Extremum.lean`; the per-world reading is
-    `IsLeast {y | w ∈ P y} x`, and mathlib's `Monotone.map_isLeast` bridges the two. -/
-
-/-! ### Licensing Predictions (Data-Level) -/
-
-/-! ### Degree Properties ([fox-hackl-2006]) -/
-
-/-! ### Degree properties as `Comparison.over`
-
-The five degree predicates covering all comparison relations are
-`Degree.Comparison.{eq,ge,gt,le,lt}.over μ` directly — there is no separate
-named family. `c.over μ d : Set W`, with `w ∈ c.over μ d ↔ c.rel (μ w) d`
-(`Comparison.mem_over`). These are the numeral meanings, at the identity
-measure the intervals `c.interval d` (`Comparison.over_id`), and the building
-blocks of degree question semantics.
-
-- `Comparison.ge.over μ`: closed `≥`, always has max⊨
-- `Comparison.gt.over μ`: open `>`, fails on dense scales
-- `Comparison.eq.over μ`: equality `=`, trivially has max⊨
-- `Comparison.le.over μ`: closed `≤`
-- `Comparison.lt.over μ`: open `<`
-
-The key divergence: on ℕ, `>` collapses to `≥` with successor, so both
-have `HasMaxInf`. On dense scales, `>` yields an open set with no max⊨.
-This is the UDM prediction ([fox-hackl-2006]). -/
-
--- "At least"/"more than" are threshold-antitone and "at most" is
--- threshold-monotone: `Comparison.antitone_ge_over`, `antitone_gt_over`,
--- `monotone_le_over` (Core/Order/Comparison.lean).
-
-/-! IsMaxInf-flavored consequences of these degree predicates
-    (`hasMaxInf_ge_over`, `not_hasMaxInf_gt_over`, `isMaxInf_ge_over_iff`,
-    `hasMaxInf_gt_over_nat`) live in `Semantics/Alternatives/Extremum.lean`. -/
-
-/-! ### [kennedy-2015]'s De-Fregean GQ -/
-
-/-! ## A unified GQ denotation via `Degree.Comparison`
-
-[kennedy-2015] proposes a single denotation for modified and
-unmodified numerals: `λP. max{d | #P ≥ d} REL m`, where the only parameter
-distinguishing surface forms is the relation `REL ∈ {=, ≥, >, ≤, <}`.
-
-Specialised to a property of the form `Comparison.ge.over μ`, the maximum degree
-satisfying `Comparison.ge.over μ d w` is `μ w` itself, so Kennedy's denotation
-collapses to `c.rel (μ w) m` — i.e. `w ∈ c.over μ m` (`Comparison.mem_over`).
-The reified `Degree.Comparison` (in `Comparison.lean`) IS this canonical
-comparison primitive; it selects which `rel`/`interval` to use, and the Class
-A vs Class B distinction ([geurts-nouwen-2007], [nouwen-2010]) is its
-`Comparison.boundary_mem` (non-strict comparisons keep the endpoint). -/
-
-/-! ### Anti-Horn-Scale Lemmas (general) -/
-
-/-! ## Why exact bare numerals are not part of a Horn scale
-
-[kennedy-2015] argues that bare numerals (under their exact reading) are
-**not monotone in their numerical argument** — neither upward nor downward —
-so they fail the Horn-scale criterion. The classic Horn scale `⟨1, 2, 3, …⟩`
-presupposes upward monotonicity; the dual scale `⟨…, 3, 2, 1⟩` presupposes
-downward monotonicity. Kennedy's unified GQ accommodates both modifier
-directions without needing a Horn scale at all.
-
-The lemmas below state the failure-of-monotonicity and weakness-vs-exact
-results purely in terms of `Comparison.{eq,ge,gt}.over` — independent of any
-specific scale. The Nat-specific results in `Semantics/Numerals/Basic.lean`
-are immediate corollaries. -/
-
-/-- "More than `d`" and "exactly `d`" are disjoint (general). -/
+/-- *More than `d`* and *exactly `d`* are disjoint. -/
 theorem gtOver_disjoint_eqOver {W : Type*} (μ : W → α) (d : α) (w : W) :
     ¬ (w ∈ Comparison.eq.over μ d ∧ w ∈ Comparison.gt.over μ d) := by
   simp only [Comparison.mem_over, Comparison.rel, gt_iff_lt]
   rintro ⟨h₁, h₂⟩
   exact lt_irrefl d (h₁ ▸ h₂)
 
-/-- "Less than `d`" and "exactly `d`" are disjoint (general). -/
+/-- *Less than `d`* and *exactly `d`* are disjoint. -/
 theorem ltOver_disjoint_eqOver {W : Type*} (μ : W → α) (d : α) (w : W) :
     ¬ (w ∈ Comparison.eq.over μ d ∧ w ∈ Comparison.lt.over μ d) := by
   simp only [Comparison.mem_over, Comparison.rel]
   rintro ⟨h₁, h₂⟩
   exact lt_irrefl d (h₁ ▸ h₂)
 
-/-- Bare exact meaning entails "at least" (general half of Class B inclusion). -/
+/-- *Exactly `d`* entails *at least `d`*. -/
 theorem eqOver_imp_geOver {W : Type*} (μ : W → α) (d : α) (w : W) :
     w ∈ Comparison.eq.over μ d → w ∈ Comparison.ge.over μ d := by
   simp only [Comparison.mem_over, Comparison.rel, ge_iff_le]
   exact fun h => h ▸ le_refl _
 
-/-- Bare exact meaning entails "at most" (general; symmetric to above). -/
+/-- *Exactly `d`* entails *at most `d`*. -/
 theorem eqOver_imp_leOver {W : Type*} (μ : W → α) (d : α) (w : W) :
     w ∈ Comparison.eq.over μ d → w ∈ Comparison.le.over μ d := by
   simp only [Comparison.mem_over, Comparison.rel]
   exact fun h => h ▸ le_refl _
 
-/-- "At least `d`" is strictly weaker than "exactly `d`" (general). Given a
-    witness world `w` with `μ w = d'` where `d < d'`, "at least `d`" holds
-    but "exactly `d`" fails. -/
+/-- A world that measures above `d` satisfies *at least `d`* but not *exactly `d`*. -/
 theorem geOver_strictly_weaker_than_eqOver {W : Type*} (μ : W → α)
     {d d' : α} (hlt : d < d') {w : W} (hμ : μ w = d') :
     w ∈ Comparison.ge.over μ d ∧ w ∉ Comparison.eq.over μ d := by
@@ -153,9 +84,7 @@ theorem geOver_strictly_weaker_than_eqOver {W : Type*} (μ : W → α)
   · rw [hμ]; exact le_of_lt hlt
   · rw [hμ]; exact ne_of_gt hlt
 
-/-- Exact equality is **not upward-monotone** (general). Given two distinct
-    boundary values `d ≤ d'` and a witness world with `μ w = d`, the universal
-    "if exact at `d` then exact at `d'`" fails — `μ w` cannot equal both. -/
+/-- *Exactly* is not upward monotone in the degree as soon as the scale has two degrees. -/
 theorem eqOver_not_upward_monotone {W : Type*} (μ : W → α)
     {d d' : α} (hne : d ≠ d') (hle : d ≤ d') {w : W} (hμ : μ w = d) :
     ¬ ∀ x y, x ≤ y → w ∈ Comparison.eq.over μ x → w ∈ Comparison.eq.over μ y := by
@@ -163,16 +92,12 @@ theorem eqOver_not_upward_monotone {W : Type*} (μ : W → α)
   intro h
   exact hne ((h d d' hle hμ).symm.trans hμ).symm
 
-/-- Exact equality is **not downward-monotone** (general). Symmetric to above. -/
+/-- *Exactly* is not downward monotone in the degree as soon as the scale has two degrees. -/
 theorem eqOver_not_downward_monotone {W : Type*} (μ : W → α)
     {d d' : α} (hne : d ≠ d') (hle : d' ≤ d) {w : W} (hμ : μ w = d) :
     ¬ ∀ x y, y ≤ x → w ∈ Comparison.eq.over μ x → w ∈ Comparison.eq.over μ y := by
   simp only [Comparison.mem_over, Comparison.rel]
   intro h
   exact hne ((h d d' hle hμ).symm.trans hμ).symm
-
-/-! IsMaxInf-flavored consequences of "at most" (`hasMaxInf_le_over`,
-    `isMaxInf_le_over_iff`) live in
-    `Semantics/Alternatives/Extremum.lean`. -/
 
 end Degree

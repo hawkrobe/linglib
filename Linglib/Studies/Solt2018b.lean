@@ -6,39 +6,31 @@ public import Mathlib.Algebra.Order.Field.Basic
 /-!
 # Solt (2018): Proportional Comparatives and Relative Scales
 
-This file formalizes the measurement-based account of proportional comparatives of
-[solt-2018b]. *More residents of Ithaca than New York City know their neighbors* has a
-salient true reading comparing proportions although the absolute counts point the other
-way, so the degrees a quantity comparative ranges over must include degrees of proportion.
-Two accounts deliver them. On the ambiguity account, *many* and *few* have a cardinal and
-a proportional lexical entry ([partee-1989], in the degree versions of [romero-2015]). On
-the paper's account they are unambiguous gradable quantifiers over degrees ([solt-2015]),
-and a null head Meas introduces a contextually determined measure function, monotone on
-the part-whole order ([schwarzschild-2006]), which may be domain-restricted to the parts of
-a totality and in particular proportional. `proportionalMeasure` divides a part's measure
-by the totality's; it inherits
-monotonicity (`proportionalMeasure_monotonic`), ranges over the unit interval, and is
-invariant under rescaling of the underlying measure, so degree-denoting *n percent* is a
-point on its scale (`percent_iff_proportionalMeasure`, against the lexical entry for
-*percent* of [ahn-sauerland-2017]). `readings_diverge` states when the cardinal and
-proportional readings of a comparative come apart.
+*More residents of Ithaca than New York City know their neighbors* has a true reading that
+compares proportions although the absolute counts point the other way. Solt accounts for it with
+measurement: *many* and *few* are unambiguous gradable quantifiers, and a null head Meas
+introduces a contextual measure function, monotone on the part-whole order, which may be
+restricted to the parts of a totality and in particular be proportional. The rival ambiguity
+account, after Partee and Romero, gives *many* and *few* a cardinal and a proportional entry.
+The accounts part on the distribution of readings. With an individual-level predicate or in a
+partitive the measure is domain-restricted, and then the positive form reads proportionally only
+while the comparative keeps its cardinal reading; the ambiguity account predicts that both lose
+it.
 
-The accounts part on the distribution of readings. With an individual-level predicate
-([carlson-1977], [milsark-1977]) or in a partitive, the measure is domain-restricted; the
-standard range of the positive morpheme then sits inside the bounded segment of the
-scale, so the positive form is proportional only, while the comparative composes with the
-measure directly and keeps its cardinal reading. `reading` states how each form reads a
-kind of measure and `Licensed` the readings a context leaves open; `restricted_asymmetry`
-derives the asymmetry. The ambiguity account has no relative-but-not-proportional
-measurement, and once an individual-level predicate confines it to the proportional entry,
-the comparative loses its cardinal reading too (`ambiguity_symmetric`).
+## Main statements
+
+* `percent_iff_proportionalMeasure`: *n percent* is a point on the proportional scale.
+* `readings_diverge`: when the cardinal and proportional readings of a comparative come apart.
+* `restricted_asymmetry`: with only restricted measures, the comparative keeps its cardinal
+  reading and the positive form loses it.
+* `ambiguity_symmetric`: on the ambiguity account both forms read alike.
 
 ## Implementation notes
 
 The paper reports the populations of Ithaca and New York City in prose and no counts of
 residents who know their neighbours, so the divergence of the two readings is stated
 symbolically: a smaller part is the larger share exactly when its totality is small enough.
-Solt's other 2018 paper, the multidimensionality chapter [solt-2018a], is formalized in
+Solt's other 2018 paper, the multidimensionality chapter, is formalized in
 `Studies/Solt2018a.lean`.
 
 ## References
@@ -63,8 +55,8 @@ variable {α : Type*} (μ : α → ℚ)
 
 /-! ### The proportional measure function -/
 
-/-- The proportional measure function: a part's measure relative to the totality `tot`, and 0
-when the totality has measure 0, as division by zero is. -/
+/-- The proportional measure function gives a part's measure relative to the totality `tot`, and
+0 when the totality has measure 0, as division by zero does. -/
 def proportionalMeasure (tot y : α) : ℚ := μ y / μ tot
 
 theorem proportionalMeasure_eq (tot y : α) : proportionalMeasure μ tot y = μ y / μ tot := rfl
@@ -96,15 +88,14 @@ theorem proportionalMeasure_le_one [Preorder α] (hμ : Monotone μ)
     proportionalMeasure μ tot y ≤ 1 :=
   div_le_one_of_le₀ (hμ hy) htot.le
 
-/-- The proportional scale is the unit interval: a part of the totality measures between
-0 and 1. -/
+/-- A part of the totality measures between 0 and 1 on the proportional scale. -/
 theorem proportionalMeasure_mem_unit_interval [Preorder α]
     (hnn : ∀ x, 0 ≤ μ x) (hμ : Monotone μ) (tot y : α) (hy : y ≤ tot) (htot : 0 < μ tot) :
     proportionalMeasure μ tot y ∈ Set.Icc (0 : ℚ) 1 :=
   ⟨proportionalMeasure_nonneg μ hnn tot y, proportionalMeasure_le_one μ hμ tot y hy htot⟩
 
-/-- Rescaling the underlying measure leaves proportions unchanged: only the cardinal
-reading depends on the unit of measurement. -/
+/-- Rescaling the underlying measure leaves proportions unchanged, so only the cardinal reading
+depends on the unit of measurement. -/
 theorem proportionalMeasure_const_mul (k : ℚ) (hk : k ≠ 0) (tot y : α) :
     proportionalMeasure (fun x ↦ k * μ x) tot y = proportionalMeasure μ tot y :=
   mul_div_mul_left _ _ hk
@@ -117,12 +108,12 @@ theorem percent_iff_proportionalMeasure [SemilatticeInf α] (x p : α) (n : ℚ)
 
 /-! ### The two readings of a quantity comparative -/
 
-/-- *More A than B Q* on the cardinal reading: the A-part with the property outmeasures
+/-- On the cardinal reading, *more A than B Q* says that the A-part with the property outmeasures
 the B-part. -/
 def CardinalReading (a b : α) : Prop := μ b < μ a
 
-/-- *More A than B Q* on the proportional reading, with the measure `Meas` introduces
-proportional to each clause's totality: the A-part is the larger share of its totality. -/
+/-- On the proportional reading, where the measure `Meas` introduces is proportional to each
+clause's totality, *more A than B Q* says that the A-part is the larger share of its totality. -/
 def ProportionalReading (A B a b : α) : Prop :=
   proportionalMeasure μ B b < proportionalMeasure μ A a
 
@@ -130,7 +121,7 @@ theorem proportionalReading_iff {A B a b : α} (hA : 0 < μ A) (hB : 0 < μ B) :
     ProportionalReading μ A B a b ↔ μ b * μ A < μ a * μ B := by
   rw [ProportionalReading, proportionalMeasure_eq, proportionalMeasure_eq, div_lt_div_iff₀ hB hA]
 
-/-- The readings come apart: a part that is outmeasured by the other is nonetheless the
+/-- The readings come apart, since a part that is outmeasured by the other is nonetheless the
 larger share whenever its totality is small enough, as with Ithaca's thirty thousand
 residents against New York City's eight million. -/
 theorem readings_diverge {A B a b : α} (hA : 0 < μ A) (hB : 0 < μ B)
@@ -140,8 +131,8 @@ theorem readings_diverge {A B a b : α} (hA : 0 < μ A) (hB : 0 < μ B)
 
 /-! ### The distribution of readings -/
 
-/-- The varieties of measure function `Meas` may introduce: unrestricted, restricted to
-the parts of a totality, and the proportional special case of the latter. -/
+/-- The measure function `Meas` introduces is unrestricted, restricted to the parts of a
+totality, or the proportional special case of the latter. -/
 inductive MeasureKind where
   | unrestricted
   | domainRestricted
@@ -192,7 +183,7 @@ theorem unrestricted_licensed (f : QForm) (r : Reading) : Licensed (fun _ ↦ Tr
     | exact ⟨.proportional, trivial, rfl⟩
 
 /-- With only restricted kinds available, as under an individual-level predicate, which forces
-a domain-restricted measure, the positive form is proportional: *few egg-laying mammals suckle
+a domain-restricted measure, the positive form is proportional, so *few egg-laying mammals suckle
 their young* cannot mean that there are few. -/
 theorem restricted_positive_iff (r : Reading) :
     Licensed MeasureKind.IsRestricted .positive r ↔ r = .proportional := by
@@ -200,27 +191,27 @@ theorem restricted_positive_iff (r : Reading) :
   · rintro ⟨k, hk, rfl⟩; cases k <;> simp_all [MeasureKind.IsRestricted, reading]
   · rintro rfl; exact ⟨.domainRestricted, trivial, rfl⟩
 
-/-- The asymmetry that adjudicates: with only restricted kinds available, under an
-individual-level predicate or in a partitive, the comparative keeps its cardinal reading
-through an ordinary domain-restricted measure while the positive form loses it. -/
+/-- With only restricted kinds available, under an individual-level predicate or in a partitive,
+the comparative keeps its cardinal reading through an ordinary domain-restricted measure while
+the positive form loses it. -/
 theorem restricted_asymmetry :
     Licensed MeasureKind.IsRestricted .comparative .cardinal ∧
     ¬ Licensed MeasureKind.IsRestricted .positive .cardinal :=
   ⟨⟨.domainRestricted, trivial, rfl⟩, by simp [restricted_positive_iff]⟩
 
-/-- The ambiguity account's inventory: a cardinal and a proportional entry, and no
+/-- The ambiguity account has a cardinal and a proportional entry, and no
 relative-but-not-proportional measurement. -/
 def ambiguityKinds : MeasureKind → Prop
   | .domainRestricted => False
   | _ => True
 
 /-- On the ambiguity account, whatever confines the positive form to its proportional
-reading confines the comparative too: with the inventory reduced to the proportional
+reading confines the comparative too. With the inventory reduced to the proportional
 entry, both forms read alike, and the cardinal reading of *more residents of Ithaca than
 New York City know their neighbors* is lost. -/
 theorem ambiguity_symmetric (r : Reading) :
-    Licensed (λ k => ambiguityKinds k ∧ k.IsRestricted) .positive r ↔
-      Licensed (λ k => ambiguityKinds k ∧ k.IsRestricted) .comparative r := by
+    Licensed (fun k ↦ ambiguityKinds k ∧ k.IsRestricted) .positive r ↔
+      Licensed (fun k ↦ ambiguityKinds k ∧ k.IsRestricted) .comparative r := by
   constructor <;> rintro ⟨k, hk, rfl⟩ <;>
     cases k <;> simp_all [ambiguityKinds, MeasureKind.IsRestricted, reading] <;>
     exact ⟨.proportional, ⟨trivial, trivial⟩, rfl⟩

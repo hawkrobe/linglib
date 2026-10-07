@@ -51,8 +51,8 @@ def unit [One K] (d : Dimension) : Quantity K := (1, .of d)
 
 variable [CommGroupWithZero K]
 
-/-- Scaling both quantities by the same nonzero pure number leaves their quotient
-unchanged: `0.1 kg / L = 0.1 g / mL`. -/
+/-- Scaling both quantities by the same nonzero pure number leaves their quotient unchanged, so
+that `0.1 kg / L = 0.1 g / mL`. -/
 theorem pure_mul_div_pure_mul {k : K} (hk : k ≠ 0) (q r : Quantity K) :
     pure k * q / (pure k * r) = q / r := by
   ext <;> simp [mul_div_mul_left _ _ hk]

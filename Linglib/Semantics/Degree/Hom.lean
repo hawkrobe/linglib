@@ -117,8 +117,8 @@ theorem isMonotoneDelineation_upperSets_iff :
     exact hts (h (Ici s) (Ici t) (isUpperSet_Ici s) (isUpperSet_Ici t) s t le_rfl hst le_rfl)
   · exact (htot a b).elim (fun hab ↦ absurd (h₁ hab ha) hb) fun hba ↦ h₂ hba hb₂
 
-/-- With a monotone measure the comparative yields a separating threshold: if `a` has more than
-`b`, some threshold property holds of `a` and not of `b`. -/
+/-- With a monotone measure, if `a` has more than `b` then some threshold property holds of `a`
+and not of `b`. -/
 theorem exists_isUpperSet_of_maxComparative (hm : Monotone μ) {a b : X}
     (h : maxComparative (ρ · = a) (ρ · = b) μ) :
     ∃ T, IsUpperSet T ∧ a ∈ ρ '' T ∧ b ∉ ρ '' T := by
@@ -127,7 +127,7 @@ theorem exists_isUpperSet_of_maxComparative (hm : Monotone μ) {a b : X}
   rintro ⟨t, hst, htb⟩
   exact ((hδ.2 ⟨t, htb, le_rfl⟩).trans_lt hlt).not_ge (hm hst)
 
-/-- Admissibility alone does not yield a separating threshold: with two tied states every
+/-- Admissibility alone does not yield a separating threshold. With two tied states every
 measure is admissible and every threshold holding of one holds of the other. The preorder is
 passed explicitly, since `Bool`'s own order would otherwise be found. -/
 example :
@@ -150,8 +150,8 @@ theorem maxComparative_of_exists_isUpperSet [@Std.Total S (· ≤ ·)] (hμ : St
   exact ⟨δ, hδ, s, hsa, hδt.trans_lt (hμ (lt_of_le_not_ge
     ((total_of (· ≤ ·) t s).resolve_right hst) hst))⟩
 
-/-- On a total background with a monotone admissible measure the comparative is Klein's: `a`
-has more than `b` iff some threshold property holds of `a` and not of `b`. -/
+/-- On a total background with a monotone admissible measure, `a` has more than `b` iff some
+threshold property holds of `a` and not of `b`, as in Klein's comparative. -/
 theorem maxComparative_iff_exists_isUpperSet [@Std.Total S (· ≤ ·)] (hμ : StrictMono μ)
     (hm : Monotone μ) {a b : X} (hb : ∃ δ, IsGreatest (thanDegrees (ρ · = b) μ) δ) :
     maxComparative (ρ · = a) (ρ · = b) μ ↔ ∃ T, IsUpperSet T ∧ a ∈ ρ '' T ∧ b ∉ ρ '' T :=
@@ -242,8 +242,8 @@ instance {E : Type*} {φ : E → E → Prop} : LT (CresswellDegree φ) :=
     (⟦a⟧ : CresswellDegree φ) < ⟦b⟧ ↔ φ b a :=
   Iff.rfl
 
-/-- On a preorder, φ-indistinguishability under `≤` is mathlib's
-    `AntisymmRel`: the Cresswell quotient IS `Antisymmetrization`. -/
+/-- On a preorder, φ-indistinguishability under `≤` is `AntisymmRel`, so the Cresswell quotient
+is `Antisymmetrization`. -/
 theorem cresswellSetoid_le_iff {E : Type*} [Preorder E] (a b : E) :
     (cresswellSetoid (· ≤ ·)).r a b ↔ AntisymmRel (· ≤ ·) a b := by
   constructor
@@ -253,8 +253,8 @@ theorem cresswellSetoid_le_iff {E : Type*} [Preorder E] (a b : E) :
     exact ⟨fun c => ⟨hba.trans, hab.trans⟩,
            fun c => ⟨(le_trans · hab), (le_trans · hba)⟩⟩
 
-/-- On an equivalence relation, φ-indistinguishability is the relation itself: the construction
-returns the cells of a partition as well as degrees, [mendia-2020]'s (17)–(18). -/
+/-- On an equivalence relation, φ-indistinguishability is the relation itself, so the
+construction returns the cells of a partition as well as degrees. -/
 theorem cresswellSetoid_setoid {E : Type*} (s : Setoid E) : cresswellSetoid s = s :=
   Setoid.ext fun _ b ↦ ⟨fun h ↦ (h.1 b).2 (s.refl' b), fun h ↦
     ⟨fun _ ↦ ⟨s.trans' (s.symm' h), s.trans' h⟩,
@@ -276,9 +276,9 @@ section TransportMax
 
 variable {Entity D D' : Type*} [LinearOrder D] [LinearOrder D'] {μ : Entity → D}
 
-/-- The max-quantified comparative is invariant under an order embedding of the scale. Not
-immediate: `thanDegrees` is a downset and images of downsets need not be downsets, but the
-greatest element rides along. -/
+/-- The max-quantified comparative is invariant under an order embedding of the scale. The image
+of the downset `thanDegrees` need not be a downset, but its greatest element maps to the greatest
+element of the image. -/
 theorem maxComparative_comp (f : D ↪o D') (Pmatrix Pthan : Entity → Prop) :
     maxComparative Pmatrix Pthan (f ∘ μ) ↔ maxComparative Pmatrix Pthan μ := by
   constructor
@@ -292,8 +292,8 @@ theorem maxComparative_comp (f : D ↪o D') (Pmatrix Pthan : Entity → Prop) :
     rintro d ⟨y, hQy, hdy⟩
     exact hdy.trans (f.monotone (hub ⟨y, hQy, le_rfl⟩))
 
-/-- With a fixed threshold the positive form is not natural: some order embedding of the scale
-changes the verdict. -/
+/-- With a fixed threshold the positive form is not natural, since some order embedding of the
+scale changes the verdict. -/
 theorem positive_not_natural :
     ∃ f : ℚ ↪o ℚ, ∃ (μ : ℚ → ℚ) (θ x : ℚ),
       x ∈ Comparison.ge.over μ θ ∧ x ∉ Comparison.ge.over (f ∘ μ) θ :=

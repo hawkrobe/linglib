@@ -80,7 +80,7 @@ def crossPolarRows : List Datum :=
   , Examples.incomm_tall_clever, Examples.incomm_tragic_heavy ]
 
 /-- A subdeletion comparative is acceptable exactly when the compared extents are of the same
-sort on a shared scale: cross-polar anomaly and incommensurability under one condition. -/
+sort on a shared scale, which covers cross-polar anomaly and incommensurability at once. -/
 theorem comparison_defined_iff :
     ∀ e ∈ crossPolarRows, e.judgment = .acceptable ↔ (samePolarity e ∧ sharedScale e) := by
   decide
