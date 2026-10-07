@@ -444,12 +444,9 @@ instance : DecidablePred TestedForCausative := fun _ ↦ inferInstanceAs (Decida
 creation and the psych causatives have causative-result roots that the hypothesis predicts to
 alternate although the pages star the alternation. The other classes have pages that attest it
 without a manner-free causative root, namely the manner-and-result roots, the internally caused
-results, the pure-manner roots with causative uses, and the property-concept roots of the
-emission classes. -/
+result of the grow verbs, and the pure-manner roots of the coil and roll verbs. -/
 def rootHypothesisResidue : Finset LevinClass :=
-  {LevinClass.build, .create, .engender, .amuse,
-    .split, .knead, .cooking, .grow, .calibratableChangeOfState, .pour, .coil, .roll, .rush,
-    .lightEmission, .soundEmission, .substanceEmission}
+  {LevinClass.build, .create, .engender, .amuse, .split, .knead, .cooking, .grow, .coil, .roll}
 
 /-- Outside the residue, the root hypothesis agrees with every tested class page. -/
 theorem rootHypothesis_matches_profile :

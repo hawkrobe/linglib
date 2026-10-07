@@ -1,0 +1,12334 @@
+{
+ "book": "Levin1993",
+ "bibkey": "levin-1993",
+ "description": "The verb classes of Part II of Levin's English Verb Classes and Alternations, one per class page with a member list, in the book's order: the section number and title the book prints, the book page on which the class begins, the members by citation form, with her parenthetical glosses dropped, and those she marks with a question mark, and the property table. A property line names an alternation by its section number in Part One or a further property of the page, with the page's asterisk or question mark, its scope ('some verbs', 'most verbs'), and any further qualifier it prints. An attested family heading is the Part One subsection that lists the class: an unqualified 'Causative Alternation' is Part One's other causative alternations (1.1.2.3), as the book states in 1.1.2, and an attested 'Locative Alternation' is the spray/load, wipe or swarm alternation whose Part One list carries the class; the unintentional-interpretation headings that print a reflexive and a body-part sub-line are two lines. The lists and tables were checked against the book's pages.",
+ "classes": [
+  {
+   "number": "9.1",
+   "title": "Put Verbs",
+   "page": 111,
+   "members": [
+    "arrange",
+    "immerse",
+    "install",
+    "lodge",
+    "mount",
+    "place",
+    "position",
+    "put",
+    "set",
+    "situate",
+    "sling",
+    "stash",
+    "stow"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      3
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "zeroRelatedNominal",
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "9.2",
+   "title": "Verbs of Putting in a Spatial Configuration",
+   "page": 112,
+   "members": [
+    "dangle",
+    "hang",
+    "lay",
+    "lean",
+    "perch",
+    "rest",
+    "sit",
+    "stand",
+    "suspend"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      3
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "zeroRelatedNominal",
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "9.3",
+   "title": "Funnel Verbs",
+   "page": 113,
+   "members": [
+    "bang",
+    "channel",
+    "dip",
+    "dump",
+    "funnel",
+    "hammer",
+    "ladle",
+    "pound",
+    "push",
+    "rake",
+    "ram",
+    "scoop",
+    "scrape",
+    "shake",
+    "shovel",
+    "siphon",
+    "spoon",
+    "squash",
+    "squeeze",
+    "squish",
+    "sweep",
+    "tuck",
+    "wad",
+    "wedge",
+    "wipe",
+    "wring"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      3
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "zeroRelatedNominal",
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "9.4",
+   "title": "Verbs of Putting with a Specified Direction",
+   "page": 114,
+   "members": [
+    "drop",
+    "hoist",
+    "lift",
+    "lower",
+    "raise"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      3
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      2,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "zeroRelatedNominal",
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "9.5",
+   "title": "Pour Verbs",
+   "page": 115,
+   "members": [
+    "dribble",
+    "drip",
+    "pour",
+    "slop",
+    "slosh",
+    "spew",
+    "spill",
+    "spurt"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      3
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      3
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2,
+      3
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      7,
+      7
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "zeroRelatedNominal",
+     "diacritic": "",
+     "scope": "few",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "9.6",
+   "title": "Coil Verbs",
+   "page": 116,
+   "members": [
+    "coil",
+    "curl",
+    "loop",
+    "roll",
+    "spin",
+    "twirl",
+    "twist",
+    "whirl",
+    "wind"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      3
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      3
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2,
+      1
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      1
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      7,
+      7
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "zeroRelatedNominal",
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "9.7",
+   "title": "Spray/Load Verbs",
+   "page": 117,
+   "members": [
+    "brush",
+    "cram",
+    "crowd",
+    "cultivate",
+    "dab",
+    "daub",
+    "drape",
+    "drizzle",
+    "dust",
+    "hang",
+    "heap",
+    "inject",
+    "jam",
+    "load",
+    "mound",
+    "pack",
+    "pile",
+    "plant",
+    "plaster",
+    "prick",
+    "pump",
+    "rub",
+    "scatter",
+    "seed",
+    "settle",
+    "sew",
+    "shower",
+    "slather",
+    "smear",
+    "smudge",
+    "sow",
+    "spatter",
+    "splash",
+    "splatter",
+    "spray",
+    "spread",
+    "sprinkle",
+    "spritz",
+    "squirt",
+    "stack",
+    "stick",
+    "stock",
+    "strew",
+    "string",
+    "stuff",
+    "swab",
+    "vest",
+    "wash",
+    "wrap"
+   ],
+   "doubtful": [
+    "prick",
+    "vest",
+    "wash"
+   ],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      3,
+      1
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2,
+      3
+     ],
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": "based on locative variant"
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": "based on with variant"
+    },
+    {
+     "alternation": [
+      1,
+      3
+     ],
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      7,
+      7
+     ],
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    },
+    {
+     "property": "zeroRelatedNominal",
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "9.8",
+   "title": "Fill Verbs",
+   "page": 119,
+   "members": [
+    "adorn",
+    "anoint",
+    "bandage",
+    "bathe",
+    "bestrew",
+    "bind",
+    "blanket",
+    "block",
+    "blot",
+    "bombard",
+    "carpet",
+    "choke",
+    "cloak",
+    "clog",
+    "clutter",
+    "coat",
+    "contaminate",
+    "cover",
+    "dam",
+    "dapple",
+    "deck",
+    "decorate",
+    "deluge",
+    "dirty",
+    "dot",
+    "douse",
+    "drench",
+    "edge",
+    "embellish",
+    "emblazon",
+    "encircle",
+    "encrust",
+    "endow",
+    "enrich",
+    "entangle",
+    "face",
+    "festoon",
+    "fill",
+    "fleck",
+    "flood",
+    "frame",
+    "garland",
+    "garnish",
+    "imbue",
+    "impregnate",
+    "infect",
+    "inlay",
+    "interlace",
+    "interlard",
+    "interleave",
+    "intersperse",
+    "interweave",
+    "inundate",
+    "lard",
+    "lash",
+    "line",
+    "litter",
+    "mask",
+    "mottle",
+    "ornament",
+    "pad",
+    "pave",
+    "plate",
+    "plug",
+    "pollute",
+    "replenish",
+    "repopulate",
+    "riddle",
+    "ring",
+    "ripple",
+    "robe",
+    "saturate",
+    "season",
+    "shroud",
+    "smother",
+    "soak",
+    "soil",
+    "speckle",
+    "splotch",
+    "spot",
+    "staff",
+    "stain",
+    "stipple",
+    "stop up",
+    "stud",
+    "suffuse",
+    "surround",
+    "swaddle",
+    "swathe",
+    "taint",
+    "tile",
+    "trim",
+    "veil",
+    "vein",
+    "wreathe"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      3
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      3,
+      5
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "withAlternatesWithIn",
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "9.9",
+   "title": "Butter Verbs",
+   "page": 120,
+   "members": [
+    "asphalt",
+    "bait",
+    "blanket",
+    "blindfold",
+    "board",
+    "bread",
+    "brick",
+    "bridle",
+    "bronze",
+    "butter",
+    "buttonhole",
+    "cap",
+    "carpet",
+    "caulk",
+    "chrome",
+    "cloak",
+    "cork",
+    "crown",
+    "diaper",
+    "drug",
+    "feather",
+    "fence",
+    "flour",
+    "forest",
+    "frame",
+    "fuel",
+    "gag",
+    "garland",
+    "glove",
+    "graffiti",
+    "gravel",
+    "grease",
+    "groove",
+    "halter",
+    "harness",
+    "heel",
+    "ink",
+    "label",
+    "leash",
+    "leaven",
+    "lipstick",
+    "mantle",
+    "mulch",
+    "muzzle",
+    "nickel",
+    "oil",
+    "ornament",
+    "panel",
+    "paper",
+    "parquet",
+    "patch",
+    "pepper",
+    "perfume",
+    "pitch",
+    "plank",
+    "plaster",
+    "poison",
+    "polish",
+    "pomade",
+    "poster",
+    "postmark",
+    "powder",
+    "putty",
+    "robe",
+    "roof",
+    "rosin",
+    "rouge",
+    "rut",
+    "saddle",
+    "salt",
+    "salve",
+    "sand",
+    "seed",
+    "sequin",
+    "shawl",
+    "shingle",
+    "shoe",
+    "shutter",
+    "silver",
+    "slate",
+    "slipcover",
+    "sod",
+    "sole",
+    "spice",
+    "stain",
+    "starch",
+    "stopper",
+    "stress",
+    "string",
+    "stucco",
+    "sugar",
+    "sulphur",
+    "tag",
+    "tar",
+    "tarmac",
+    "tassel",
+    "thatch",
+    "ticket",
+    "tile",
+    "turf",
+    "veil",
+    "veneer",
+    "wallpaper",
+    "water",
+    "wax",
+    "whitewash",
+    "wreathe",
+    "yoke",
+    "zipcode"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      7,
+      2
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      2,
+      3
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      3
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "9.10",
+   "title": "Pocket Verbs",
+   "page": 121,
+   "members": [
+    "archive",
+    "bag",
+    "bank",
+    "beach",
+    "bed",
+    "bench",
+    "berth",
+    "billet",
+    "bin",
+    "bottle",
+    "box",
+    "cage",
+    "can",
+    "case",
+    "cellar",
+    "cloister",
+    "coop",
+    "corral",
+    "crate",
+    "dock",
+    "drydock",
+    "file",
+    "fork",
+    "garage",
+    "ground",
+    "hangar",
+    "house",
+    "jail",
+    "jar",
+    "jug",
+    "kennel",
+    "land",
+    "lodge",
+    "pasture",
+    "pen",
+    "pillory",
+    "pocket",
+    "pot",
+    "sheathe",
+    "shelter",
+    "shelve",
+    "shoulder",
+    "skewer",
+    "snare",
+    "spindle",
+    "spit",
+    "spool",
+    "stable",
+    "string",
+    "tin",
+    "trap",
+    "tree",
+    "warehouse"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      7,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      2,
+      3
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "10.1",
+   "title": "Remove Verbs",
+   "page": 122,
+   "members": [
+    "abstract",
+    "cull",
+    "delete",
+    "discharge",
+    "disengage",
+    "disgorge",
+    "dislodge",
+    "dismiss",
+    "draw",
+    "eject",
+    "eliminate",
+    "eradicate",
+    "evict",
+    "excise",
+    "excommunicate",
+    "expel",
+    "extirpate",
+    "extract",
+    "extrude",
+    "lop",
+    "omit",
+    "ostracize",
+    "oust",
+    "partition",
+    "pry",
+    "reap",
+    "remove",
+    "separate",
+    "sever",
+    "shoo",
+    "subtract",
+    "uproot",
+    "winkle",
+    "withdraw",
+    "wrench"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      3
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      3
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "10.2",
+   "title": "Banish Verbs",
+   "page": 123,
+   "members": [
+    "banish",
+    "deport",
+    "evacuate",
+    "expel",
+    "extradite",
+    "recall",
+    "remove"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      3
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      3
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "10.3",
+   "title": "Clear Verbs",
+   "page": 124,
+   "members": [
+    "clean",
+    "clear",
+    "drain",
+    "empty"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      3,
+      2
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": "transitive"
+    },
+    {
+     "alternation": [
+      2,
+      3,
+      5
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": "intransitive"
+    },
+    {
+     "alternation": [
+      1,
+      3
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2,
+      1
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": "except clean"
+    },
+    {
+     "alternation": [
+      7,
+      5
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "zeroRelatedAdjective",
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      5,
+      3
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "10.4.1",
+   "title": "Manner Subclass",
+   "page": 125,
+   "members": [
+    "bail",
+    "buff",
+    "dab",
+    "distill",
+    "dust",
+    "erase",
+    "expunge",
+    "flush",
+    "leach",
+    "lick",
+    "pluck",
+    "polish",
+    "prune",
+    "purge",
+    "rinse",
+    "rub",
+    "scour",
+    "scrape",
+    "scratch",
+    "scrub",
+    "shave",
+    "skim",
+    "smooth",
+    "soak",
+    "squeeze",
+    "strain",
+    "strip",
+    "suck",
+    "suction",
+    "swab",
+    "sweep",
+    "trim",
+    "wash",
+    "wear",
+    "weed",
+    "whisk",
+    "winnow",
+    "wipe",
+    "wring"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      3,
+      3
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      3
+     ],
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      2,
+      1
+     ],
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    },
+    {
+     "property": "unspecifiedObjectPlusLocativePP",
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      7,
+      5
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "zeroRelatedNominal",
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "10.4.2",
+   "title": "Instrument Subclass",
+   "page": 127,
+   "members": [
+    "brush",
+    "comb",
+    "file",
+    "filter",
+    "hoover",
+    "hose",
+    "iron",
+    "mop",
+    "plow",
+    "rake",
+    "sandpaper",
+    "shear",
+    "shovel",
+    "siphon",
+    "sponge",
+    "towel",
+    "vacuum"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      3,
+      3
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      3
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      2,
+      1
+     ],
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    },
+    {
+     "property": "unspecifiedObjectPlusLocativePP",
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      7,
+      5
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "zeroRelatedNominal",
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "10.5",
+   "title": "Verbs of Possessional Deprivation: Steal Verbs",
+   "page": 128,
+   "members": [
+    "abduct",
+    "cadge",
+    "capture",
+    "confiscate",
+    "cop",
+    "emancipate",
+    "embezzle",
+    "exorcise",
+    "extort",
+    "extract",
+    "filch",
+    "flog",
+    "grab",
+    "impound",
+    "kidnap",
+    "liberate",
+    "lift",
+    "nab",
+    "pilfer",
+    "pinch",
+    "pirate",
+    "plagiarize",
+    "purloin",
+    "reclaim",
+    "recover",
+    "redeem",
+    "regain",
+    "repossess",
+    "rescue",
+    "retrieve",
+    "rustle",
+    "seize",
+    "smuggle",
+    "snatch",
+    "sneak",
+    "sponge",
+    "steal",
+    "swipe",
+    "take",
+    "thieve",
+    "wangle",
+    "weasel",
+    "winkle",
+    "withdraw",
+    "wrest"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      3
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      2,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      3
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "10.6",
+   "title": "Verbs of Possessional Deprivation: Cheat Verbs",
+   "page": 129,
+   "members": [
+    "absolve",
+    "acquit",
+    "balk",
+    "bereave",
+    "bilk",
+    "bleed",
+    "break",
+    "burgle",
+    "cheat",
+    "cleanse",
+    "con",
+    "cull",
+    "cure",
+    "defraud",
+    "denude",
+    "deplete",
+    "depopulate",
+    "deprive",
+    "despoil",
+    "disabuse",
+    "disarm",
+    "disencumber",
+    "dispossess",
+    "divest",
+    "drain",
+    "ease",
+    "exonerate",
+    "fleece",
+    "free",
+    "gull",
+    "milk",
+    "mulct",
+    "pardon",
+    "plunder",
+    "purge",
+    "purify",
+    "ransack",
+    "relieve",
+    "render",
+    "rid",
+    "rifle",
+    "rob",
+    "sap",
+    "strip",
+    "swindle",
+    "unburden",
+    "void",
+    "wean"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      3
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "ofAlternatesWithOut",
+     "diacritic": "",
+     "scope": "few",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "10.7",
+   "title": "Pit Verbs",
+   "page": 130,
+   "members": [
+    "bark",
+    "beard",
+    "bone",
+    "burl",
+    "core",
+    "gill",
+    "gut",
+    "head",
+    "hull",
+    "husk",
+    "lint",
+    "louse",
+    "milk",
+    "peel",
+    "pinion",
+    "pip",
+    "pit",
+    "pith",
+    "pod",
+    "poll",
+    "pulp",
+    "rind",
+    "scale",
+    "scalp",
+    "seed",
+    "shell",
+    "shuck",
+    "skin",
+    "snail",
+    "stalk",
+    "stem",
+    "stone",
+    "string",
+    "tail",
+    "tassel",
+    "top",
+    "vein",
+    "weed",
+    "wind",
+    "worm",
+    "zest"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      7,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "10.8",
+   "title": "Debone Verbs",
+   "page": 130,
+   "members": [
+    "deaccent",
+    "debark",
+    "debone",
+    "debowel",
+    "debug",
+    "debur",
+    "declaw",
+    "defang",
+    "defat",
+    "defeather",
+    "deflea",
+    "deflesh",
+    "defoam",
+    "defog",
+    "deforest",
+    "defrost",
+    "defuzz",
+    "degas",
+    "degerm",
+    "deglaze",
+    "degrease",
+    "degrit",
+    "degum",
+    "degut",
+    "dehair",
+    "dehead",
+    "dehorn",
+    "dehull",
+    "dehusk",
+    "deice",
+    "deink",
+    "delint",
+    "delouse",
+    "deluster",
+    "demast",
+    "derat",
+    "derib",
+    "derind",
+    "desalt",
+    "descale",
+    "desex",
+    "desprout",
+    "destarch",
+    "destress",
+    "detassel",
+    "detusk",
+    "devein",
+    "dewater",
+    "dewax",
+    "deworm"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      7,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "10.9",
+   "title": "Mine Verbs",
+   "page": 131,
+   "members": [
+    "mine",
+    "quarry"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      7,
+      2
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "11.1",
+   "title": "Send Verbs",
+   "page": 132,
+   "members": [
+    "airmail",
+    "convey",
+    "deliver",
+    "dispatch",
+    "express",
+    "FedEx",
+    "forward",
+    "hand",
+    "mail",
+    "pass",
+    "port",
+    "post",
+    "return",
+    "send",
+    "shift",
+    "ship",
+    "shunt",
+    "slip",
+    "smuggle",
+    "sneak",
+    "transfer",
+    "transport",
+    "UPS"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      1
+     ],
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      3
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      7,
+      7
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "11.2",
+   "title": "Slide Verbs",
+   "page": 133,
+   "members": [
+    "bounce",
+    "float",
+    "move",
+    "roll",
+    "slide"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      1
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": "except move"
+    },
+    {
+     "alternation": [
+      1,
+      3
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2,
+      1
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      1
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "coreferentialInterpretationVaries",
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "11.3",
+   "title": "Bring and Take",
+   "page": 134,
+   "members": [
+    "bring",
+    "take"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      1
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      3
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      7,
+      5
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      7,
+      7
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "11.4",
+   "title": "Carry Verbs",
+   "page": 135,
+   "members": [
+    "carry",
+    "drag",
+    "haul",
+    "heave",
+    "heft",
+    "hoist",
+    "kick",
+    "lug",
+    "pull",
+    "push",
+    "schlep",
+    "shove",
+    "tote",
+    "tow",
+    "tug"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      1
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      3
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "coreferentialInterpretationVaries",
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "11.5",
+   "title": "Drive Verbs",
+   "page": 136,
+   "members": [
+    "barge",
+    "bus",
+    "cart",
+    "drive",
+    "ferry",
+    "fly",
+    "row",
+    "shuttle",
+    "truck",
+    "wheel",
+    "wire"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      1
+     ],
+     "diacritic": "?",
+     "scope": "some",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      3
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      7,
+      7
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "12",
+   "title": "Verbs of Exerting Force: Push/Pull Verbs",
+   "page": 137,
+   "members": [
+    "draw",
+    "heave",
+    "jerk",
+    "press",
+    "pull",
+    "push",
+    "shove",
+    "thrust",
+    "tug",
+    "yank"
+   ],
+   "doubtful": [
+    "draw",
+    "thrust"
+   ],
+   "properties": [
+    {
+     "alternation": [
+      1,
+      3
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      2,
+      7
+     ],
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      7,
+      7
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      7,
+      5
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "zeroRelatedNominal",
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "13.1",
+   "title": "Give Verbs",
+   "page": 138,
+   "members": [
+    "feed",
+    "give",
+    "lease",
+    "lend",
+    "loan",
+    "pass",
+    "pay",
+    "peddle",
+    "refund",
+    "render",
+    "rent",
+    "repay",
+    "sell",
+    "serve",
+    "trade"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      1
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      2,
+      6
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "13.2",
+   "title": "Contribute Verbs",
+   "page": 138,
+   "members": [
+    "administer",
+    "contribute",
+    "disburse",
+    "distribute",
+    "donate",
+    "extend",
+    "forfeit",
+    "proffer",
+    "refer",
+    "reimburse",
+    "relinquish",
+    "remit",
+    "restore",
+    "return",
+    "sacrifice",
+    "submit",
+    "surrender",
+    "transfer"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      2,
+      6
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "13.3",
+   "title": "Verbs of Future Having",
+   "page": 139,
+   "members": [
+    "advance",
+    "allocate",
+    "allot",
+    "assign",
+    "award",
+    "bequeath",
+    "cede",
+    "concede",
+    "extend",
+    "grant",
+    "guarantee",
+    "issue",
+    "leave",
+    "offer",
+    "owe",
+    "promise",
+    "vote",
+    "will",
+    "yield"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      1
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      2,
+      6
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "13.4.1",
+   "title": "Verbs of Fulfilling",
+   "page": 140,
+   "members": [
+    "credit",
+    "entrust",
+    "furnish",
+    "issue",
+    "leave",
+    "present",
+    "provide",
+    "serve",
+    "supply",
+    "trust"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      6
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "13.4.2",
+   "title": "Equip Verbs",
+   "page": 141,
+   "members": [
+    "arm",
+    "burden",
+    "charge",
+    "compensate",
+    "equip",
+    "invest",
+    "ply",
+    "regale",
+    "reward",
+    "saddle"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      6
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      2,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "13.5.1",
+   "title": "Get Verbs",
+   "page": 141,
+   "members": [
+    "book",
+    "buy",
+    "call",
+    "cash",
+    "catch",
+    "charter",
+    "choose",
+    "earn",
+    "fetch",
+    "find",
+    "gain",
+    "gather",
+    "get",
+    "hire",
+    "keep",
+    "lease",
+    "leave",
+    "order",
+    "phone",
+    "pick",
+    "pluck",
+    "procure",
+    "pull",
+    "reach",
+    "rent",
+    "reserve",
+    "save",
+    "secure",
+    "shoot",
+    "slaughter",
+    "steal",
+    "vote",
+    "win"
+   ],
+   "doubtful": [
+    "choose"
+   ],
+   "properties": [
+    {
+     "property": "fromPhrase",
+     "diacritic": "",
+     "scope": "most",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      2,
+      2
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      2,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      2,
+      3
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      3,
+      9
+     ],
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "13.5.2",
+   "title": "Obtain Verbs",
+   "page": 142,
+   "members": [
+    "accept",
+    "accumulate",
+    "acquire",
+    "appropriate",
+    "borrow",
+    "cadge",
+    "collect",
+    "exact",
+    "grab",
+    "inherit",
+    "obtain",
+    "purchase",
+    "receive",
+    "recover",
+    "regain",
+    "retrieve",
+    "seize",
+    "select",
+    "snatch"
+   ],
+   "doubtful": [
+    "cadge"
+   ],
+   "properties": [
+    {
+     "property": "fromPhrase",
+     "diacritic": "",
+     "scope": "most",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      2,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      2,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      2,
+      3
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      3,
+      9
+     ],
+     "diacritic": "",
+     "scope": "few",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "13.6",
+   "title": "Verbs of Exchange",
+   "page": 143,
+   "members": [
+    "barter",
+    "change",
+    "exchange",
+    "substitute",
+    "swap",
+    "trade"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      2,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "13.7",
+   "title": "Berry Verbs",
+   "page": 144,
+   "members": [
+    "antique",
+    "berry",
+    "birdnest",
+    "blackberry",
+    "clam",
+    "crab",
+    "fish",
+    "fowl",
+    "grouse",
+    "hay",
+    "log",
+    "mushroom",
+    "nest",
+    "nut",
+    "oyster",
+    "pearl",
+    "prawn",
+    "rabbit",
+    "seal",
+    "shark",
+    "shrimp",
+    "snail",
+    "snipe",
+    "sponge",
+    "whale",
+    "whelk"
+   ],
+   "doubtful": [],
+   "properties": []
+  },
+  {
+   "number": "14",
+   "title": "Learn Verbs",
+   "page": 144,
+   "members": [
+    "acquire",
+    "cram",
+    "glean",
+    "learn",
+    "memorize",
+    "read",
+    "study"
+   ],
+   "doubtful": [],
+   "properties": []
+  },
+  {
+   "number": "15.1",
+   "title": "Hold Verbs",
+   "page": 145,
+   "members": [
+    "clasp",
+    "clutch",
+    "grasp",
+    "grip",
+    "handle",
+    "hold",
+    "wield"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      1,
+      3
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      2,
+      12
+     ],
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "15.2",
+   "title": "Keep Verbs",
+   "page": 145,
+   "members": [
+    "hoard",
+    "keep",
+    "leave",
+    "store"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      3
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "zeroRelatedNominal",
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "16",
+   "title": "Verbs of Concealment",
+   "page": 146,
+   "members": [
+    "block",
+    "cloister",
+    "conceal",
+    "curtain",
+    "hide",
+    "isolate",
+    "quarantine",
+    "screen",
+    "seclude",
+    "sequester",
+    "shelter"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      3
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "17.1",
+   "title": "Throw Verbs",
+   "page": 146,
+   "members": [
+    "bash",
+    "bat",
+    "bunt",
+    "cast",
+    "catapult",
+    "chuck",
+    "fire",
+    "flick",
+    "fling",
+    "flip",
+    "hit",
+    "hurl",
+    "kick",
+    "knock",
+    "lob",
+    "loft",
+    "nudge",
+    "pass",
+    "pitch",
+    "punt",
+    "shoot",
+    "shove",
+    "slam",
+    "slap",
+    "sling",
+    "smash",
+    "tap",
+    "throw",
+    "tip",
+    "toss"
+   ],
+   "doubtful": [
+    "cast",
+    "loft"
+   ],
+   "properties": [
+    {
+     "alternation": [
+      7,
+      8
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      2,
+      1
+     ],
+     "diacritic": "",
+     "scope": "most",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      2,
+      8
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      3
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "zeroRelatedNominal",
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "17.2",
+   "title": "Pelt Verbs",
+   "page": 147,
+   "members": [
+    "bombard",
+    "buffet",
+    "pelt",
+    "shower",
+    "stone"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      7,
+      8
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      3
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      2,
+      8
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      2,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "18.1",
+   "title": "Hit Verbs",
+   "page": 148,
+   "members": [
+    "bang",
+    "bash",
+    "batter",
+    "beat",
+    "bump",
+    "butt",
+    "dash",
+    "drum",
+    "hammer",
+    "hit",
+    "kick",
+    "knock",
+    "lash",
+    "pound",
+    "rap",
+    "slap",
+    "smack",
+    "smash",
+    "strike",
+    "tamp",
+    "tap",
+    "thump",
+    "thwack",
+    "whack"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      8
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      2,
+      9
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      3
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      2,
+      12
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      2,
+      5,
+      2
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": "transitive"
+    },
+    {
+     "alternation": [
+      2,
+      5,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": "transitive"
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      3,
+      3
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      7,
+      6,
+      1
+     ],
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      7,
+      6,
+      2
+     ],
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      7,
+      5
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "zeroRelatedNominal",
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "18.2",
+   "title": "Swat Verbs",
+   "page": 150,
+   "members": [
+    "bite",
+    "claw",
+    "paw",
+    "peck",
+    "punch",
+    "scratch",
+    "shoot",
+    "slug",
+    "stab",
+    "swat",
+    "swipe"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      8
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      2,
+      9
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      3
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      2,
+      12
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      3,
+      3
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      7,
+      5
+     ],
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    },
+    {
+     "property": "zeroRelatedNominal",
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "18.3",
+   "title": "Spank Verbs",
+   "page": 151,
+   "members": [
+    "belt",
+    "birch",
+    "bludgeon",
+    "bonk",
+    "brain",
+    "cane",
+    "clobber",
+    "club",
+    "conk",
+    "cosh",
+    "cudgel",
+    "cuff",
+    "flog",
+    "knife",
+    "paddle",
+    "paddywhack",
+    "pummel",
+    "sock",
+    "spank",
+    "strap",
+    "thrash",
+    "truncheon",
+    "wallop",
+    "whip",
+    "whisk"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      8
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      2,
+      9
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      3
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      2,
+      12
+     ],
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      3,
+      3
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      7,
+      5
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "ingNominal",
+     "diacritic": "",
+     "scope": "most",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "18.4",
+   "title": "Non-Agentive Verbs of Impact by Contact",
+   "page": 153,
+   "members": [
+    "bang",
+    "brush",
+    "bump",
+    "crash",
+    "hit",
+    "knock",
+    "ram",
+    "slam",
+    "smash",
+    "thud"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      5,
+      4
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": "intransitive"
+    },
+    {
+     "alternation": [
+      2,
+      5,
+      5
+     ],
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": "intransitive"
+    }
+   ]
+  },
+  {
+   "number": "19",
+   "title": "Poke Verbs",
+   "page": 154,
+   "members": [
+    "dig",
+    "jab",
+    "pierce",
+    "poke",
+    "prick",
+    "stick"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      9
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      2,
+      8
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      3
+     ],
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      2,
+      12
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      3,
+      3
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "zeroRelatedNominal",
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "20",
+   "title": "Verbs of Contact: Touch Verbs",
+   "page": 155,
+   "members": [
+    "caress",
+    "graze",
+    "kiss",
+    "lick",
+    "nudge",
+    "pat",
+    "peck",
+    "pinch",
+    "prod",
+    "sting",
+    "stroke",
+    "tickle",
+    "touch"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      8
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      2,
+      9
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      3
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      2,
+      12
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      3,
+      3
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      7,
+      6
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      7,
+      5
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "zeroRelatedNominal",
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "21.1",
+   "title": "Cut Verbs",
+   "page": 156,
+   "members": [
+    "chip",
+    "clip",
+    "cut",
+    "hack",
+    "hew",
+    "saw",
+    "scrape",
+    "scratch",
+    "slash",
+    "snip"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      1,
+      3
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      2,
+      12
+     ],
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      1
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      3,
+      3
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      2,
+      6,
+      2
+     ],
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      7,
+      6,
+      1
+     ],
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      7,
+      6,
+      2
+     ],
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    },
+    {
+     "property": "pathPhrase",
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      7,
+      5
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "zeroRelatedNominal",
+     "diacritic": "",
+     "scope": "most",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "21.2",
+   "title": "Carve Verbs",
+   "page": 157,
+   "members": [
+    "bore",
+    "bruise",
+    "carve",
+    "chip",
+    "chop",
+    "crop",
+    "crush",
+    "cube",
+    "dent",
+    "dice",
+    "drill",
+    "file",
+    "fillet",
+    "gash",
+    "gouge",
+    "grate",
+    "grind",
+    "mangle",
+    "mash",
+    "mince",
+    "mow",
+    "nick",
+    "notch",
+    "perforate",
+    "prune",
+    "pulverize",
+    "punch",
+    "shred",
+    "slice",
+    "slit",
+    "spear",
+    "squash",
+    "squish"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      1,
+      3
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      2,
+      12
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      1
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      3,
+      3
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      2,
+      6,
+      2
+     ],
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    },
+    {
+     "property": "zeroRelatedNominal",
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "22.1",
+   "title": "Mix Verbs",
+   "page": 159,
+   "members": [
+    "add",
+    "blend",
+    "combine",
+    "commingle",
+    "concatenate",
+    "connect",
+    "cream",
+    "fuse",
+    "join",
+    "link",
+    "merge",
+    "mingle",
+    "mix",
+    "network",
+    "pool"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      5,
+      1
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": "transitive"
+    },
+    {
+     "alternation": [
+      2,
+      5,
+      4
+     ],
+     "diacritic": "",
+     "scope": "most",
+     "qualifier": "intransitive"
+    },
+    {
+     "alternation": [
+      2,
+      5,
+      2
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": "transitive"
+    },
+    {
+     "alternation": [
+      2,
+      5,
+      5
+     ],
+     "diacritic": "",
+     "scope": "most",
+     "qualifier": "intransitive"
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2,
+      1
+     ],
+     "diacritic": "",
+     "scope": "most",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      1
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "22.2",
+   "title": "Amalgamate Verbs",
+   "page": 160,
+   "members": [
+    "affiliate",
+    "alternate",
+    "amalgamate",
+    "associate",
+    "coalesce",
+    "coincide",
+    "compare",
+    "confederate",
+    "confuse",
+    "conjoin",
+    "consolidate",
+    "contrast",
+    "correlate",
+    "criss-cross",
+    "engage",
+    "entangle",
+    "entwine",
+    "harmonize",
+    "incorporate",
+    "integrate",
+    "interchange",
+    "interconnect",
+    "interlace",
+    "interlink",
+    "interlock",
+    "intermingle",
+    "interrelate",
+    "intersperse",
+    "intertwine",
+    "interweave",
+    "introduce",
+    "marry",
+    "mate",
+    "muddle",
+    "oppose",
+    "pair",
+    "rhyme",
+    "team",
+    "total",
+    "unify",
+    "unite",
+    "wed"
+   ],
+   "doubtful": [
+    "pair",
+    "team"
+   ],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      5,
+      1
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": "transitive"
+    },
+    {
+     "alternation": [
+      2,
+      5,
+      4
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": "intransitive"
+    },
+    {
+     "alternation": [
+      2,
+      5,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": "transitive"
+    },
+    {
+     "alternation": [
+      2,
+      5,
+      5
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": "intransitive"
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2,
+      1
+     ],
+     "diacritic": "",
+     "scope": "most",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      1
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "22.3",
+   "title": "Shake Verbs",
+   "page": 161,
+   "members": [
+    "append",
+    "attach",
+    "band",
+    "baste",
+    "beat",
+    "bind",
+    "bond",
+    "bundle",
+    "cluster",
+    "collate",
+    "collect",
+    "fasten",
+    "fuse",
+    "gather",
+    "glom",
+    "graft",
+    "group",
+    "herd",
+    "jumble",
+    "lump",
+    "mass",
+    "moor",
+    "package",
+    "pair",
+    "roll",
+    "scramble",
+    "sew",
+    "shake",
+    "shuffle",
+    "splice",
+    "stick",
+    "stir",
+    "swirl",
+    "weld",
+    "whip",
+    "whisk"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      5,
+      2
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": "transitive"
+    },
+    {
+     "alternation": [
+      2,
+      5,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": "transitive"
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "most",
+     "qualifier": "with a few exceptions"
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      1
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "22.4",
+   "title": "Tape Verbs",
+   "page": 162,
+   "members": [
+    "anchor",
+    "band",
+    "belt",
+    "bolt",
+    "bracket",
+    "buckle",
+    "button",
+    "cement",
+    "chain",
+    "clamp",
+    "clasp",
+    "clip",
+    "epoxy",
+    "fetter",
+    "glue",
+    "gum",
+    "handcuff",
+    "harness",
+    "hinge",
+    "hitch",
+    "hook",
+    "knot",
+    "lace",
+    "lash",
+    "lasso",
+    "latch",
+    "leash",
+    "link",
+    "lock",
+    "loop",
+    "manacle",
+    "moor",
+    "muzzle",
+    "nail",
+    "padlock",
+    "paste",
+    "peg",
+    "pin",
+    "plaster",
+    "rivet",
+    "rope",
+    "screw",
+    "seal",
+    "shackle",
+    "skewer",
+    "solder",
+    "staple",
+    "stitch",
+    "strap",
+    "string",
+    "tack",
+    "tape",
+    "tether",
+    "thumbtack",
+    "tie",
+    "trammel",
+    "wire",
+    "yoke",
+    "zip"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      3
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      2,
+      5,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": "transitive"
+    },
+    {
+     "alternation": [
+      2,
+      5,
+      2
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": "transitive"
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      1
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      7,
+      5
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      7,
+      2
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "zeroRelatedNominal",
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "22.5",
+   "title": "Cling Verbs",
+   "page": 164,
+   "members": [
+    "adhere",
+    "cleave",
+    "cling"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      5,
+      4
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": "intransitive"
+    },
+    {
+     "alternation": [
+      2,
+      5,
+      5
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": "intransitive"
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "23.1",
+   "title": "Separate Verbs",
+   "page": 165,
+   "members": [
+    "decouple",
+    "differentiate",
+    "disconnect",
+    "disentangle",
+    "dissociate",
+    "distinguish",
+    "divide",
+    "divorce",
+    "part",
+    "segregate",
+    "separate",
+    "sever"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      5,
+      1
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": "transitive"
+    },
+    {
+     "alternation": [
+      2,
+      5,
+      4
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": "intransitive"
+    },
+    {
+     "alternation": [
+      2,
+      5,
+      3
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": "transitive"
+    },
+    {
+     "alternation": [
+      2,
+      5,
+      6
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": "intransitive"
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2,
+      1
+     ],
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      1
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      2,
+      3
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "23.2",
+   "title": "Split Verbs",
+   "page": 166,
+   "members": [
+    "blow",
+    "break",
+    "cut",
+    "draw",
+    "hack",
+    "hew",
+    "kick",
+    "knock",
+    "pry",
+    "pull",
+    "push",
+    "rip",
+    "roll",
+    "saw",
+    "shove",
+    "slip",
+    "split",
+    "tear",
+    "tug",
+    "yank"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      5,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": "transitive"
+    },
+    {
+     "alternation": [
+      2,
+      5,
+      4
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": "intransitive"
+    },
+    {
+     "alternation": [
+      2,
+      5,
+      3
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": "transitive"
+    },
+    {
+     "alternation": [
+      2,
+      5,
+      6
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": "intransitive"
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2,
+      1
+     ],
+     "diacritic": "",
+     "scope": "most",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      1
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "23.3",
+   "title": "Disassemble Verbs",
+   "page": 167,
+   "members": [
+    "detach",
+    "disassemble",
+    "disconnect",
+    "partition",
+    "sift",
+    "sunder",
+    "unbolt",
+    "unbuckle",
+    "unbutton",
+    "unchain",
+    "unclamp",
+    "unclasp",
+    "unclip",
+    "unfasten",
+    "unglue",
+    "unhinge",
+    "unhitch",
+    "unhook",
+    "unlace",
+    "unlatch",
+    "unleash",
+    "unlock",
+    "unpeg",
+    "unpin",
+    "unscrew",
+    "unshackle",
+    "unstaple",
+    "unstitch",
+    "untie",
+    "unzip"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      5,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": "transitive"
+    },
+    {
+     "alternation": [
+      2,
+      5,
+      3
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": "transitive"
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "most",
+     "qualifier": "a few exceptions"
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      1
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "23.4",
+   "title": "Differ Verbs",
+   "page": 167,
+   "members": [
+    "differ",
+    "diverge"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      5,
+      4
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": "intransitive"
+    },
+    {
+     "alternation": [
+      2,
+      5,
+      6
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": "intransitive"
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "24",
+   "title": "Verbs of Coloring",
+   "page": 168,
+   "members": [
+    "color",
+    "distemper",
+    "dye",
+    "enamel",
+    "glaze",
+    "japan",
+    "lacquer",
+    "paint",
+    "shellac",
+    "spraypaint",
+    "stain",
+    "tint",
+    "varnish"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      7,
+      5
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      7,
+      2
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "25.1",
+   "title": "Verbs of Image Impression",
+   "page": 169,
+   "members": [
+    "appliqué",
+    "emboss",
+    "embroider",
+    "engrave",
+    "etch",
+    "imprint",
+    "incise",
+    "inscribe",
+    "mark",
+    "paint",
+    "set",
+    "sign",
+    "stamp",
+    "tattoo"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      7
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      2,
+      1
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "processNominal",
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "resultNominal",
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "25.2",
+   "title": "Scribble Verbs",
+   "page": 170,
+   "members": [
+    "carve",
+    "chalk",
+    "charcoal",
+    "copy",
+    "crayon",
+    "doodle",
+    "draw",
+    "forge",
+    "ink",
+    "paint",
+    "pencil",
+    "plot",
+    "print",
+    "scratch",
+    "scrawl",
+    "scribble",
+    "sketch",
+    "spraypaint",
+    "stencil",
+    "trace",
+    "type",
+    "write"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      7
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      2,
+      1
+     ],
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    },
+    {
+     "property": "zeroRelatedNominal",
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "25.3",
+   "title": "Illustrate Verbs",
+   "page": 171,
+   "members": [
+    "address",
+    "adorn",
+    "autograph",
+    "brand",
+    "date",
+    "decorate",
+    "embellish",
+    "endorse",
+    "illuminate",
+    "illustrate",
+    "initial",
+    "label",
+    "letter",
+    "monogram",
+    "ornament",
+    "tag"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      7
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "processNominal",
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    },
+    {
+     "property": "resultNominal",
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    },
+    {
+     "property": "zeroRelatedNominal",
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "25.4",
+   "title": "Transcribe Verbs",
+   "page": 171,
+   "members": [
+    "copy",
+    "film",
+    "forge",
+    "microfilm",
+    "photocopy",
+    "photograph",
+    "record",
+    "tape",
+    "televise",
+    "transcribe",
+    "type"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      7
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "zeroRelatedNominal",
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "26.1",
+   "title": "Build Verbs",
+   "page": 173,
+   "members": [
+    "arrange",
+    "assemble",
+    "bake",
+    "blow",
+    "build",
+    "carve",
+    "cast",
+    "chisel",
+    "churn",
+    "compile",
+    "cook",
+    "crochet",
+    "cut",
+    "develop",
+    "embroider",
+    "fashion",
+    "fold",
+    "forge",
+    "grind",
+    "grow",
+    "hack",
+    "hammer",
+    "hatch",
+    "knit",
+    "make",
+    "mold",
+    "pound",
+    "roll",
+    "sculpt",
+    "sew",
+    "shape",
+    "spin",
+    "stitch",
+    "weave",
+    "whittle"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      4,
+      1
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": "transitive"
+    },
+    {
+     "alternation": [
+      2,
+      4,
+      3
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": "transitive"
+    },
+    {
+     "alternation": [
+      1,
+      2,
+      1
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      2,
+      2
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      3,
+      8
+     ],
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      3,
+      9
+     ],
+     "diacritic": "",
+     "scope": "few",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "26.2",
+   "title": "Grow Verbs",
+   "page": 174,
+   "members": [
+    "develop",
+    "evolve",
+    "grow",
+    "hatch",
+    "mature"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      4,
+      2
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": "intransitive"
+    },
+    {
+     "alternation": [
+      2,
+      4,
+      4
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": "intransitive"
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2,
+      1
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "26.3",
+   "title": "Verbs of Preparing",
+   "page": 175,
+   "members": [
+    "bake",
+    "blend",
+    "boil",
+    "brew",
+    "clean",
+    "clear",
+    "cook",
+    "fix",
+    "fry",
+    "grill",
+    "hardboil",
+    "iron",
+    "light",
+    "mix",
+    "poach",
+    "pour",
+    "prepare",
+    "roast",
+    "roll",
+    "run",
+    "scramble",
+    "set",
+    "softboil",
+    "toast",
+    "toss",
+    "wash"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      4,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": "transitive"
+    },
+    {
+     "alternation": [
+      2,
+      2
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "26.4",
+   "title": "Create Verbs",
+   "page": 175,
+   "members": [
+    "coin",
+    "compose",
+    "compute",
+    "concoct",
+    "construct",
+    "create",
+    "derive",
+    "design",
+    "dig",
+    "fabricate",
+    "form",
+    "invent",
+    "manufacture",
+    "mint",
+    "model",
+    "organize",
+    "produce",
+    "recreate",
+    "style",
+    "synthesize"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      4,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": "transitive"
+    },
+    {
+     "alternation": [
+      2,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "most",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      3,
+      8
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "26.5",
+   "title": "Knead Verbs",
+   "page": 176,
+   "members": [
+    "beat",
+    "bend",
+    "coil",
+    "collect",
+    "compress",
+    "fold",
+    "freeze",
+    "knead",
+    "melt",
+    "shake",
+    "squash",
+    "squeeze",
+    "squish",
+    "twirl",
+    "twist",
+    "wad",
+    "whip",
+    "wind",
+    "work"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      4,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": "transitive"
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2,
+      1
+     ],
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      3,
+      8
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      2,
+      4,
+      3
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": "transitive"
+    }
+   ]
+  },
+  {
+   "number": "26.6",
+   "title": "Turn Verbs",
+   "page": 177,
+   "members": [
+    "alter",
+    "change",
+    "convert",
+    "metamorphose",
+    "transform",
+    "transmute",
+    "turn"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      4,
+      3
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": "transitive"
+    },
+    {
+     "alternation": [
+      2,
+      4,
+      4
+     ],
+     "diacritic": "",
+     "scope": "most",
+     "qualifier": "intransitive"
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2,
+      1
+     ],
+     "diacritic": "",
+     "scope": "most",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      2,
+      4,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": "transitive"
+    },
+    {
+     "alternation": [
+      2,
+      4,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": "intransitive"
+    }
+   ]
+  },
+  {
+   "number": "26.7",
+   "title": "Performance Verbs",
+   "page": 178,
+   "members": [
+    "chant",
+    "choreograph",
+    "compose",
+    "dance",
+    "direct",
+    "draw",
+    "hum",
+    "intone",
+    "paint",
+    "perform",
+    "play",
+    "produce",
+    "recite",
+    "silkscreen",
+    "sing",
+    "spin",
+    "take",
+    "whistle",
+    "write"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      1
+     ],
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      2,
+      2
+     ],
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      2,
+      1
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "27",
+   "title": "Engender Verbs",
+   "page": 179,
+   "members": [
+    "beget",
+    "cause",
+    "create",
+    "engender",
+    "generate",
+    "shape",
+    "spawn"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "28",
+   "title": "Calve Verbs",
+   "page": 180,
+   "members": [
+    "calve",
+    "cub",
+    "fawn",
+    "foal",
+    "kitten",
+    "lamb",
+    "litter",
+    "pup",
+    "spawn",
+    "whelp"
+   ],
+   "doubtful": [],
+   "properties": []
+  },
+  {
+   "number": "29.1",
+   "title": "Appoint Verbs",
+   "page": 181,
+   "members": [
+    "acknowledge",
+    "adopt",
+    "appoint",
+    "consider",
+    "crown",
+    "deem",
+    "designate",
+    "elect",
+    "esteem",
+    "imagine",
+    "mark",
+    "nominate",
+    "ordain",
+    "proclaim",
+    "rate",
+    "reckon",
+    "report",
+    "want"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      14
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      2,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "infinitivalCopularClause",
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "29.2",
+   "title": "Characterize Verbs",
+   "page": 181,
+   "members": [
+    "accept",
+    "address",
+    "appreciate",
+    "bill",
+    "cast",
+    "certify",
+    "characterize",
+    "choose",
+    "cite",
+    "class",
+    "classify",
+    "confirm",
+    "count",
+    "define",
+    "describe",
+    "diagnose",
+    "disguise",
+    "employ",
+    "engage",
+    "enlist",
+    "enroll",
+    "enter",
+    "envisage",
+    "establish",
+    "esteem",
+    "hail",
+    "herald",
+    "hire",
+    "honor",
+    "identify",
+    "imagine",
+    "incorporate",
+    "induct",
+    "intend",
+    "lampoon",
+    "offer",
+    "oppose",
+    "paint",
+    "portray",
+    "praise",
+    "qualify",
+    "rank",
+    "recollect",
+    "recommend",
+    "regard",
+    "reinstate",
+    "reject",
+    "remember",
+    "represent",
+    "repudiate",
+    "reveal",
+    "salute",
+    "see",
+    "select",
+    "stigmatize",
+    "take",
+    "train",
+    "treat",
+    "use",
+    "value",
+    "view",
+    "visualize"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      14
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "infinitivalCopularClause",
+     "diacritic": "",
+     "scope": "few",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "29.3",
+   "title": "Dub Verbs",
+   "page": 182,
+   "members": [
+    "anoint",
+    "baptize",
+    "brand",
+    "call",
+    "christen",
+    "consecrate",
+    "crown",
+    "decree",
+    "dub",
+    "label",
+    "make",
+    "name",
+    "nickname",
+    "pronounce",
+    "rule",
+    "stamp",
+    "style",
+    "term",
+    "vote"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      14
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      2,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "infinitivalCopularClause",
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "29.4",
+   "title": "Declare Verbs",
+   "page": 182,
+   "members": [
+    "adjudge",
+    "adjudicate",
+    "assume",
+    "avow",
+    "believe",
+    "confess",
+    "declare",
+    "fancy",
+    "find",
+    "judge",
+    "presume",
+    "profess",
+    "prove",
+    "suppose",
+    "think",
+    "warrant"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      14
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      2,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "infinitivalCopularClause",
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "29.5",
+   "title": "Conjecture Verbs",
+   "page": 183,
+   "members": [
+    "admit",
+    "allow",
+    "assert",
+    "conjecture",
+    "deny",
+    "discover",
+    "feel",
+    "figure",
+    "grant",
+    "guarantee",
+    "guess",
+    "hold",
+    "know",
+    "maintain",
+    "mean",
+    "observe",
+    "recognize",
+    "repute",
+    "show",
+    "suspect"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      14
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "infinitivalCopularClause",
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "29.6",
+   "title": "Masquerade Verbs",
+   "page": 183,
+   "members": [
+    "act",
+    "behave",
+    "camouflage",
+    "count",
+    "masquerade",
+    "officiate",
+    "qualify",
+    "rank",
+    "rate",
+    "serve"
+   ],
+   "doubtful": [],
+   "properties": []
+  },
+  {
+   "number": "29.7",
+   "title": "Orphan Verbs",
+   "page": 184,
+   "members": [
+    "apprentice",
+    "canonize",
+    "cripple",
+    "cuckold",
+    "knight",
+    "martyr",
+    "orphan",
+    "outlaw",
+    "pauper",
+    "recruit",
+    "widow"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      5,
+      1
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "29.8",
+   "title": "Captain Verbs",
+   "page": 184,
+   "members": [
+    "boss",
+    "bully",
+    "butcher",
+    "butler",
+    "caddy",
+    "captain",
+    "champion",
+    "chaperone",
+    "chauffeur",
+    "clerk",
+    "coach",
+    "cox",
+    "crew",
+    "doctor",
+    "emcee",
+    "escort",
+    "guard",
+    "host",
+    "model",
+    "mother",
+    "nurse",
+    "partner",
+    "pilot",
+    "pioneer",
+    "police",
+    "referee",
+    "shepherd",
+    "skipper",
+    "sponsor",
+    "star",
+    "tailor",
+    "tutor",
+    "umpire",
+    "understudy",
+    "usher",
+    "valet",
+    "volunteer",
+    "witness"
+   ],
+   "doubtful": [],
+   "properties": []
+  },
+  {
+   "number": "30.1",
+   "title": "See Verbs",
+   "page": 185,
+   "members": [
+    "detect",
+    "discern",
+    "feel",
+    "hear",
+    "notice",
+    "see",
+    "sense",
+    "smell",
+    "taste"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      1,
+      1,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      2,
+      13,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      2,
+      13,
+      2
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "30.2",
+   "title": "Sight Verbs",
+   "page": 186,
+   "members": [
+    "descry",
+    "discover",
+    "espy",
+    "examine",
+    "eye",
+    "glimpse",
+    "inspect",
+    "investigate",
+    "note",
+    "observe",
+    "overhear",
+    "perceive",
+    "recognize",
+    "regard",
+    "savor",
+    "scan",
+    "scent",
+    "scrutinize",
+    "sight",
+    "spot",
+    "spy",
+    "study",
+    "survey",
+    "view",
+    "watch",
+    "witness"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      1,
+      1,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "30.3",
+   "title": "Peer Verbs",
+   "page": 187,
+   "members": [
+    "check",
+    "gape",
+    "gawk",
+    "gaze",
+    "glance",
+    "glare",
+    "goggle",
+    "leer",
+    "listen",
+    "look",
+    "ogle",
+    "peek",
+    "peep",
+    "peer",
+    "sniff",
+    "snoop",
+    "squint",
+    "stare"
+   ],
+   "doubtful": [],
+   "properties": []
+  },
+  {
+   "number": "30.4",
+   "title": "Stimulus Subject Perception Verbs",
+   "page": 187,
+   "members": [
+    "feel",
+    "look",
+    "smell",
+    "sound",
+    "taste"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      5,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "31.1",
+   "title": "Amuse Verbs",
+   "page": 189,
+   "members": [
+    "abash",
+    "affect",
+    "afflict",
+    "affront",
+    "aggravate",
+    "agitate",
+    "agonize",
+    "alarm",
+    "alienate",
+    "amaze",
+    "amuse",
+    "anger",
+    "annoy",
+    "antagonize",
+    "appall",
+    "appease",
+    "arouse",
+    "asperate",
+    "assuage",
+    "astonish",
+    "astound",
+    "awe",
+    "baffle",
+    "beguile",
+    "bewilder",
+    "bewitch",
+    "boggle",
+    "bore",
+    "bother",
+    "bug",
+    "calm",
+    "captivate",
+    "chagrin",
+    "charm",
+    "cheer",
+    "chill",
+    "comfort",
+    "concern",
+    "confound",
+    "confuse",
+    "console",
+    "content",
+    "convince",
+    "cow",
+    "crush",
+    "cut",
+    "daunt",
+    "daze",
+    "dazzle",
+    "deject",
+    "delight",
+    "demolish",
+    "demoralize",
+    "depress",
+    "devastate",
+    "disappoint",
+    "disarm",
+    "discombobulate",
+    "discomfit",
+    "discompose",
+    "disconcert",
+    "discourage",
+    "disgrace",
+    "disgruntle",
+    "disgust",
+    "dishearten",
+    "disillusion",
+    "dismay",
+    "dispirit",
+    "disquiet",
+    "dissatisfy",
+    "distract",
+    "distress",
+    "disturb",
+    "dumbfound",
+    "elate",
+    "elecdisplease",
+    "embarrass",
+    "embolden",
+    "enchant",
+    "encourage",
+    "engage",
+    "engross",
+    "enlighten",
+    "enrage",
+    "enrapture",
+    "entertain",
+    "enthrall",
+    "enthuse",
+    "entice",
+    "entrance",
+    "excite",
+    "exenliven",
+    "exhaust",
+    "exhilarate",
+    "fascinate",
+    "faze",
+    "flabbergast",
+    "flatter",
+    "floor",
+    "fluster",
+    "frighten",
+    "frustrate",
+    "gall",
+    "galvanize",
+    "gladden",
+    "gratify",
+    "grieve",
+    "harass",
+    "haunt",
+    "hearten",
+    "horrify",
+    "humble",
+    "humiliate",
+    "hurt",
+    "hypnotize",
+    "impress",
+    "incense",
+    "infuriate",
+    "inspire",
+    "insult",
+    "interest",
+    "intimidate",
+    "intoxicate",
+    "intrigue",
+    "invigorate",
+    "irk",
+    "irritate",
+    "ize",
+    "jar",
+    "jollify",
+    "jolt",
+    "lull",
+    "madden",
+    "mesmerize",
+    "miff",
+    "mollify",
+    "mortify",
+    "move",
+    "muddle",
+    "mystify",
+    "nauseate",
+    "nettle",
+    "numb",
+    "obsess",
+    "offend",
+    "outrage",
+    "overawe",
+    "overwhelm",
+    "pacify",
+    "pain",
+    "peeve",
+    "perplex",
+    "perturb",
+    "pique",
+    "placate",
+    "plague",
+    "please",
+    "preoccupy",
+    "puzzle",
+    "rankle",
+    "reassure",
+    "refresh",
+    "relax",
+    "relieve",
+    "repel",
+    "repulse",
+    "revitalprovoke",
+    "revolt",
+    "rile",
+    "ruffle",
+    "sadden",
+    "satisfy",
+    "scandalize",
+    "scare",
+    "shake",
+    "shame",
+    "shock",
+    "sicken",
+    "sober",
+    "solace",
+    "soothe",
+    "spellbind",
+    "spook",
+    "stagger",
+    "startle",
+    "stimulate",
+    "sting",
+    "stir",
+    "strike",
+    "stump",
+    "stun",
+    "stupefy",
+    "surprise",
+    "tantalize",
+    "tease",
+    "tempt",
+    "terrify",
+    "terrorize",
+    "threaten",
+    "thrill",
+    "throw",
+    "tickle",
+    "tire",
+    "titillate",
+    "torment",
+    "touch",
+    "transport",
+    "trify",
+    "trouble",
+    "try",
+    "unnerve",
+    "unsettle",
+    "uplift",
+    "upset",
+    "vex",
+    "weary",
+    "worry",
+    "wound",
+    "wow"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "most",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      1
+     ],
+     "diacritic": "",
+     "scope": "most",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      2,
+      5
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "extraposition",
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "passivePrepositionChoice",
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      7,
+      5
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "derivedNominal",
+     "reading": "passive",
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "erNominal",
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    },
+    {
+     "property": "ableAdjective",
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "31.2",
+   "title": "Admire Verbs",
+   "page": 191,
+   "members": [
+    "abhor",
+    "admire",
+    "adore",
+    "appreciate",
+    "cherish",
+    "deplore",
+    "despise",
+    "detest",
+    "disdain",
+    "dislike",
+    "distrust",
+    "dread",
+    "enjoy",
+    "envy",
+    "esteem",
+    "exalt",
+    "execrate",
+    "fancy",
+    "favor",
+    "fear",
+    "hate",
+    "idolize",
+    "lament",
+    "like",
+    "loathe",
+    "love",
+    "miss",
+    "mourn",
+    "pity",
+    "prize",
+    "regret",
+    "relish",
+    "resent",
+    "respect",
+    "revere",
+    "rue",
+    "savor",
+    "stand",
+    "support",
+    "tolerate",
+    "treasure",
+    "trust",
+    "value",
+    "venerate",
+    "worship"
+   ],
+   "doubtful": [
+    "rue"
+   ],
+   "properties": [
+    {
+     "alternation": [
+      1,
+      1,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      2,
+      13,
+      1
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      2,
+      13,
+      2
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      2,
+      14
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "sententialComplement",
+     "goal": "unspecified",
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    },
+    {
+     "property": "extraposition",
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    },
+    {
+     "property": "derivedNominal",
+     "reading": "active",
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "ableAdjective",
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "erNominal",
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "31.3",
+   "title": "Marvel Verbs",
+   "page": 192,
+   "members": [
+    "ache",
+    "anger",
+    "anguish",
+    "approve",
+    "bask",
+    "beware",
+    "bleed",
+    "bother",
+    "care",
+    "cheer",
+    "cringe",
+    "cry",
+    "delight",
+    "despair",
+    "disapprove",
+    "enthuse",
+    "exult",
+    "fear",
+    "feel",
+    "fret",
+    "fume",
+    "gladden",
+    "gloat",
+    "glory",
+    "grieve",
+    "groove",
+    "gush",
+    "hunger",
+    "hurt",
+    "luxuriate",
+    "madden",
+    "marvel",
+    "mind",
+    "moon",
+    "mope",
+    "mourn",
+    "obsess",
+    "puzzle",
+    "rage",
+    "rave",
+    "react",
+    "rejoice",
+    "revel",
+    "rhapsodize",
+    "sadden",
+    "salivate",
+    "seethe",
+    "sicken",
+    "sorrow",
+    "suffer",
+    "swoon",
+    "thrill",
+    "tire",
+    "wallow",
+    "weary",
+    "weep",
+    "wonder",
+    "worry"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      5,
+      1
+     ],
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "31.4",
+   "title": "Appeal Verbs",
+   "page": 193,
+   "members": [
+    "appeal",
+    "grate",
+    "jar",
+    "matter",
+    "niggle"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      5,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "32.1",
+   "title": "Want Verbs",
+   "page": 194,
+   "members": [
+    "covet",
+    "crave",
+    "desire",
+    "fancy",
+    "need",
+    "want"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      13,
+      1
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      2,
+      13,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      2,
+      14
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      5,
+      1
+     ],
+     "diacritic": "?",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "32.2",
+   "title": "Long Verbs",
+   "page": 194,
+   "members": [
+    "ache",
+    "crave",
+    "dangle",
+    "fall",
+    "hanker",
+    "hope",
+    "hunger",
+    "itch",
+    "long",
+    "lust",
+    "pine",
+    "pray",
+    "thirst",
+    "wish",
+    "yearn"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      5,
+      1
+     ],
+     "diacritic": "?",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "33",
+   "title": "Judgment Verbs",
+   "page": 195,
+   "members": [
+    "abuse",
+    "acclaim",
+    "applaud",
+    "backbite",
+    "bless",
+    "calumniate",
+    "castigate",
+    "celebrate",
+    "censure",
+    "chasten",
+    "chastise",
+    "chide",
+    "commend",
+    "compensate",
+    "compliment",
+    "condemn",
+    "congratulate",
+    "criticize",
+    "decry",
+    "defame",
+    "denigrate",
+    "denounce",
+    "deprecate",
+    "deride",
+    "disparage",
+    "eulogize",
+    "excuse",
+    "extol",
+    "fault",
+    "felicitate",
+    "fine",
+    "forgive",
+    "greet",
+    "hail",
+    "honor",
+    "impeach",
+    "insult",
+    "lambaste",
+    "laud",
+    "malign",
+    "mock",
+    "pardon",
+    "penalize",
+    "persecute",
+    "praise",
+    "prosecute",
+    "punish",
+    "rebuke",
+    "recompense",
+    "remunerate",
+    "repay",
+    "reprimand",
+    "reproach",
+    "reprove",
+    "revile",
+    "reward",
+    "ridicule",
+    "salute",
+    "scold",
+    "scorn",
+    "shame",
+    "snub",
+    "thank",
+    "toast",
+    "upbraid",
+    "victimize",
+    "vilify",
+    "welcome"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      1,
+      1,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      2,
+      13,
+      1
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      2,
+      13,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      2,
+      14
+     ],
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    },
+    {
+     "property": "processNominal",
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "34",
+   "title": "Verbs of Assessment",
+   "page": 196,
+   "members": [
+    "analyze",
+    "assess",
+    "audit",
+    "evaluate",
+    "review",
+    "scrutinize",
+    "study"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      13,
+      1
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      2,
+      13,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "35.1",
+   "title": "Hunt Verbs",
+   "page": 197,
+   "members": [
+    "dig",
+    "feel",
+    "fish",
+    "hunt",
+    "mine",
+    "poach",
+    "scrounge"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      1,
+      2,
+      1
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "35.2",
+   "title": "Search Verbs",
+   "page": 198,
+   "members": [
+    "advertise",
+    "check",
+    "comb",
+    "dive",
+    "drag",
+    "dredge",
+    "excavate",
+    "patrol",
+    "plumb",
+    "probe",
+    "prospect",
+    "prowl",
+    "quarry",
+    "rake",
+    "rifle",
+    "scavenge",
+    "scour",
+    "scout",
+    "search",
+    "shop",
+    "sift",
+    "trawl",
+    "troll",
+    "watch"
+   ],
+   "doubtful": [],
+   "properties": []
+  },
+  {
+   "number": "35.3",
+   "title": "Stalk Verbs",
+   "page": 198,
+   "members": [
+    "smell",
+    "stalk",
+    "taste",
+    "track"
+   ],
+   "doubtful": [],
+   "properties": []
+  },
+  {
+   "number": "35.4",
+   "title": "Investigate Verbs",
+   "page": 198,
+   "members": [
+    "canvass",
+    "examine",
+    "explore",
+    "frisk",
+    "inspect",
+    "investigate",
+    "observe",
+    "quiz",
+    "raid",
+    "ransack",
+    "riffle",
+    "scan",
+    "scrutinize",
+    "survey",
+    "tap"
+   ],
+   "doubtful": [],
+   "properties": []
+  },
+  {
+   "number": "35.5",
+   "title": "Rummage Verbs",
+   "page": 199,
+   "members": [
+    "bore",
+    "burrow",
+    "delve",
+    "forage",
+    "fumble",
+    "grope",
+    "leaf",
+    "listen",
+    "look",
+    "page",
+    "paw",
+    "poke",
+    "rifle",
+    "root",
+    "rummage",
+    "scrabble",
+    "scratch",
+    "snoop",
+    "thumb",
+    "tunnel"
+   ],
+   "doubtful": [],
+   "properties": []
+  },
+  {
+   "number": "35.6",
+   "title": "Ferret Verbs",
+   "page": 199,
+   "members": [
+    "ferret",
+    "nose",
+    "seek",
+    "tease"
+   ],
+   "doubtful": [],
+   "properties": []
+  },
+  {
+   "number": "36.1",
+   "title": "Correspond Verbs",
+   "page": 200,
+   "members": [
+    "agree",
+    "argue",
+    "banter",
+    "bargain",
+    "bicker",
+    "brawl",
+    "clash",
+    "coexist",
+    "collaborate",
+    "collide",
+    "combat",
+    "commiserate",
+    "communicate",
+    "compete",
+    "concur",
+    "confabulate",
+    "conflict",
+    "consort",
+    "cooperate",
+    "correspond",
+    "dicker",
+    "differ",
+    "disagree",
+    "dispute",
+    "dissent",
+    "duel",
+    "elope",
+    "feud",
+    "flirt",
+    "haggle",
+    "hobnob",
+    "jest",
+    "joke",
+    "joust",
+    "mate",
+    "mingle",
+    "mix",
+    "neck",
+    "negotiate",
+    "pair",
+    "plot",
+    "quarrel",
+    "quibble",
+    "rendezvous",
+    "scuffle",
+    "skirmish",
+    "spar",
+    "spat",
+    "spoon",
+    "squabble",
+    "struggle",
+    "tilt",
+    "tussle",
+    "vie",
+    "war",
+    "wrangle",
+    "wrestle"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "property": "collectiveNPSubject",
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      2,
+      5,
+      4
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": "intransitive"
+    },
+    {
+     "alternation": [
+      1,
+      2,
+      4
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      4,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "36.2",
+   "title": "Marry Verbs",
+   "page": 201,
+   "members": [
+    "court",
+    "cuddle",
+    "date",
+    "divorce",
+    "embrace",
+    "hug",
+    "kiss",
+    "marry",
+    "nuzzle",
+    "pass",
+    "pet"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      5,
+      4
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": "intransitive"
+    },
+    {
+     "alternation": [
+      1,
+      2,
+      4
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      4,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "36.3",
+   "title": "Meet Verbs",
+   "page": 201,
+   "members": [
+    "battle",
+    "box",
+    "consult",
+    "debate",
+    "fight",
+    "meet",
+    "play",
+    "visit"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      5,
+      4
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": "intransitive"
+    },
+    {
+     "alternation": [
+      1,
+      2,
+      4
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      4,
+      2
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "37.1",
+   "title": "Verbs of Transfer of a Message",
+   "page": 202,
+   "members": [
+    "ask",
+    "cite",
+    "demonstrate",
+    "dictate",
+    "explain",
+    "explicate",
+    "narrate",
+    "pose",
+    "preach",
+    "quote",
+    "read",
+    "recite",
+    "relay",
+    "show",
+    "teach",
+    "tell",
+    "write"
+   ],
+   "doubtful": [
+    "pose"
+   ],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      1
+     ],
+     "diacritic": "",
+     "scope": "most",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "37.2",
+   "title": "Tell",
+   "page": 203,
+   "members": [
+    "tell"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      1
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "sententialComplement",
+     "goal": "required object",
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "sententialComplement",
+     "goal": "required toPhrase",
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "sententialComplement",
+     "goal": "absent",
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "directSpeech",
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "parentheticalUse",
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      5,
+      1
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "impersonalPassive",
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "zeroRelatedNominal",
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "37.3",
+   "title": "Verbs of Manner of Speaking",
+   "page": 204,
+   "members": [
+    "babble",
+    "bark",
+    "bawl",
+    "bellow",
+    "bleat",
+    "boom",
+    "bray",
+    "burble",
+    "cackle",
+    "call",
+    "carol",
+    "chant",
+    "chatter",
+    "chirp",
+    "cluck",
+    "coo",
+    "croak",
+    "croon",
+    "crow",
+    "cry",
+    "drawl",
+    "drone",
+    "gabble",
+    "gibber",
+    "groan",
+    "growl",
+    "grumble",
+    "grunt",
+    "hiss",
+    "holler",
+    "hoot",
+    "howl",
+    "jabber",
+    "lilt",
+    "lisp",
+    "moan",
+    "mumble",
+    "murmur",
+    "mutter",
+    "purr",
+    "rage",
+    "rasp",
+    "roar",
+    "rumble",
+    "scream",
+    "screech",
+    "shout",
+    "shriek",
+    "sing",
+    "snap",
+    "snarl",
+    "snuffle",
+    "splutter",
+    "squall",
+    "squawk",
+    "squeak",
+    "squeal",
+    "stammer",
+    "stutter",
+    "thunder",
+    "tisk",
+    "trill",
+    "trumpet",
+    "twitter",
+    "wail",
+    "warble",
+    "wheeze",
+    "whimper",
+    "whine",
+    "whisper",
+    "whistle",
+    "whoop",
+    "yammer",
+    "yap",
+    "yell",
+    "yelp",
+    "yodel"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "sententialComplement",
+     "goal": "optional toPhrase",
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "directSpeech",
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "parentheticalUse",
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      5,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      7,
+      3
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      7,
+      1
+     ],
+     "diacritic": "?",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "zeroRelatedNominal",
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "37.4",
+   "title": "Verbs of Instrument of Communication",
+   "page": 206,
+   "members": [
+    "cable",
+    "e-mail",
+    "fax",
+    "modem",
+    "netmail",
+    "phone",
+    "radio",
+    "relay",
+    "satellite",
+    "semaphore",
+    "sign",
+    "signal",
+    "telecast",
+    "telegraph",
+    "telephone",
+    "telex",
+    "wire",
+    "wireless"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      1
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "sententialComplement",
+     "goal": "optional object",
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "sententialComplement",
+     "goal": "optional toPhrase",
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "directSpeech",
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "parentheticalUse",
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "zeroRelatedNominal",
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "37.5",
+   "title": "Talk Verbs",
+   "page": 207,
+   "members": [
+    "speak",
+    "talk"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "property": "sententialComplement",
+     "goal": "unspecified",
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      2,
+      5,
+      4
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": "intransitive"
+    },
+    {
+     "alternation": [
+      2,
+      5,
+      5
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": "intransitive"
+    },
+    {
+     "alternation": [
+      1,
+      2,
+      4
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      4,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "zeroRelatedNominal",
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "37.6",
+   "title": "Chitchat Verbs",
+   "page": 208,
+   "members": [
+    "argue",
+    "chat",
+    "chatter",
+    "chitchat",
+    "confer",
+    "converse",
+    "gab",
+    "gossip",
+    "rap",
+    "schmooze",
+    "yak"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "property": "sententialComplement",
+     "goal": "unspecified",
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      2,
+      5,
+      4
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": "intransitive"
+    },
+    {
+     "alternation": [
+      2,
+      5,
+      5
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": "intransitive"
+    },
+    {
+     "alternation": [
+      1,
+      2,
+      4
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      4,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "37.7",
+   "title": "Say Verbs",
+   "page": 209,
+   "members": [
+    "announce",
+    "articulate",
+    "blab",
+    "blurt",
+    "claim",
+    "confess",
+    "confide",
+    "convey",
+    "declare",
+    "mention",
+    "note",
+    "observe",
+    "proclaim",
+    "propose",
+    "recount",
+    "reiterate",
+    "relate",
+    "remark",
+    "repeat",
+    "report",
+    "reveal",
+    "say",
+    "state",
+    "suggest"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "37.8",
+   "title": "Complain Verbs",
+   "page": 210,
+   "members": [
+    "boast",
+    "brag",
+    "complain",
+    "crab",
+    "gripe",
+    "grouch",
+    "grouse",
+    "grumble",
+    "kvetch",
+    "object"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "property": "sententialComplement",
+     "goal": "optional toPhrase",
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "directSpeech",
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "parentheticalUse",
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      7,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "zeroRelatedNominal",
+     "diacritic": "",
+     "scope": "most",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "37.9",
+   "title": "Advise Verbs",
+   "page": 211,
+   "members": [
+    "admonish",
+    "advise",
+    "alert",
+    "caution",
+    "counsel",
+    "instruct",
+    "warn"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      1,
+      2,
+      5
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": "except alert"
+    },
+    {
+     "property": "sententialComplement",
+     "goal": "optional object",
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "directSpeech",
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "parentheticalUse",
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "zeroRelatedNominal",
+     "diacritic": "*",
+     "scope": "most",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "38",
+   "title": "Verbs of Sounds Made by Animals",
+   "page": 212,
+   "members": [
+    "baa",
+    "bark",
+    "bay",
+    "bellow",
+    "blat",
+    "bleat",
+    "bray",
+    "buzz",
+    "cackle",
+    "call",
+    "caw",
+    "chatter",
+    "cheep",
+    "chirp",
+    "chirrup",
+    "chitter",
+    "cluck",
+    "coo",
+    "croak",
+    "crow",
+    "cuckoo",
+    "drone",
+    "gobble",
+    "growl",
+    "grunt",
+    "hee-haw",
+    "hiss",
+    "honk",
+    "hoot",
+    "howl",
+    "low",
+    "meow",
+    "mew",
+    "moo",
+    "neigh",
+    "oink",
+    "peep",
+    "pipe",
+    "purr",
+    "quack",
+    "roar",
+    "scrawk",
+    "scream",
+    "screech",
+    "sing",
+    "snap",
+    "snarl",
+    "snort",
+    "snuffle",
+    "squawk",
+    "squeak",
+    "squeal",
+    "stridulate",
+    "trill",
+    "tweet",
+    "twitter",
+    "wail",
+    "warble",
+    "whimper",
+    "whinny",
+    "whistle",
+    "woof",
+    "yap",
+    "yell",
+    "yelp",
+    "yip",
+    "yowl"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      7,
+      8
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      7,
+      3
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      7,
+      5
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "39.1",
+   "title": "Eat Verbs",
+   "page": 213,
+   "members": [
+    "drink",
+    "eat"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      1,
+      2,
+      1
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      3
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      3,
+      3
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      7,
+      5
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "zeroRelatedNominal",
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "39.2",
+   "title": "Chew Verbs",
+   "page": 214,
+   "members": [
+    "chew",
+    "chomp",
+    "crunch",
+    "gnaw",
+    "lick",
+    "munch",
+    "nibble",
+    "peck",
+    "pick",
+    "sip",
+    "slurp",
+    "suck"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      1,
+      2,
+      1
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      3
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "zeroRelatedNominal",
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "39.3",
+   "title": "Gobble Verbs",
+   "page": 214,
+   "members": [
+    "bolt",
+    "gobble",
+    "gulp",
+    "guzzle",
+    "quaff",
+    "swallow",
+    "swig",
+    "wolf"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      1,
+      2,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      3
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "zeroRelatedNominal",
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "39.4",
+   "title": "Devour Verbs",
+   "page": 215,
+   "members": [
+    "consume",
+    "devour",
+    "imbibe",
+    "ingest",
+    "swill"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      1,
+      2,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      3
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "zeroRelatedNominal",
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "39.5",
+   "title": "Dine Verbs",
+   "page": 215,
+   "members": [
+    "banquet",
+    "breakfast",
+    "luncheon",
+    "nosh",
+    "picnic",
+    "snack",
+    "sup"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      1,
+      2,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      3
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "39.6",
+   "title": "Gorge Verbs",
+   "page": 216,
+   "members": [
+    "exist",
+    "feed",
+    "flourish",
+    "gorge",
+    "live",
+    "prosper",
+    "survive",
+    "thrive"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      1,
+      2,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      3
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "39.7",
+   "title": "Verbs of Feeding",
+   "page": 216,
+   "members": [
+    "bottlefeed",
+    "breastfeed",
+    "feed",
+    "forcefeed",
+    "handfeed",
+    "spoonfeed"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      1
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "40.1.1",
+   "title": "Hiccup Verbs",
+   "page": 217,
+   "members": [
+    "belch",
+    "blush",
+    "burp",
+    "flush",
+    "hiccup",
+    "pant",
+    "sneeze",
+    "sniffle",
+    "snore",
+    "snuffle",
+    "swallow",
+    "wheeze",
+    "yawn"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      7,
+      1
+     ],
+     "diacritic": "?",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      7,
+      5
+     ],
+     "diacritic": "?",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "zeroRelatedNominal",
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "40.1.2",
+   "title": "Breathe Verbs",
+   "page": 218,
+   "members": [
+    "bleed",
+    "breathe",
+    "cough",
+    "cry",
+    "dribble",
+    "drool",
+    "puke",
+    "spit",
+    "sweat",
+    "vomit",
+    "weep"
+   ],
+   "doubtful": [
+    "weep"
+   ],
+   "properties": [
+    {
+     "alternation": [
+      7,
+      1
+     ],
+     "diacritic": "",
+     "scope": "few",
+     "qualifier": null
+    },
+    {
+     "property": "substanceObject",
+     "diacritic": "",
+     "scope": "most",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      7,
+      5
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "zeroRelatedNominal",
+     "diacritic": "",
+     "scope": "most",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "40.1.3",
+   "title": "Exhale Verbs",
+   "page": 218,
+   "members": [
+    "exhale",
+    "inhale",
+    "perspire"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      7,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "zeroRelatedNominal",
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "40.2",
+   "title": "Verbs of Nonverbal Expression",
+   "page": 219,
+   "members": [
+    "beam",
+    "cackle",
+    "chortle",
+    "chuckle",
+    "cough",
+    "cry",
+    "frown",
+    "gape",
+    "gasp",
+    "gawk",
+    "giggle",
+    "glare",
+    "glower",
+    "goggle",
+    "grimace",
+    "grin",
+    "groan",
+    "growl",
+    "guffaw",
+    "howl",
+    "jeer",
+    "laugh",
+    "moan",
+    "pout",
+    "scowl",
+    "sigh",
+    "simper",
+    "smile",
+    "smirk",
+    "sneeze",
+    "snicker",
+    "sniff",
+    "snigger",
+    "snivel",
+    "snore",
+    "snort",
+    "sob",
+    "titter",
+    "weep",
+    "whistle",
+    "yawn"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      7,
+      1
+     ],
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      7,
+      3
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      7,
+      5
+     ],
+     "diacritic": "",
+     "scope": "most",
+     "qualifier": null
+    },
+    {
+     "property": "zeroRelatedNominal",
+     "diacritic": "",
+     "scope": "most",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "40.3.1",
+   "title": "Wink Verbs",
+   "page": 220,
+   "members": [
+    "blink",
+    "clap",
+    "nod",
+    "point",
+    "shrug",
+    "squint",
+    "wag",
+    "wave",
+    "wink"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      1,
+      2,
+      2
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      5,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      7,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      7,
+      3
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "zeroRelatedNominal",
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "40.3.2",
+   "title": "Crane Verbs",
+   "page": 221,
+   "members": [
+    "arch",
+    "bare",
+    "bat",
+    "beat",
+    "blow",
+    "clench",
+    "click",
+    "close",
+    "cock",
+    "crane",
+    "crook",
+    "cross",
+    "drum",
+    "flap",
+    "flash",
+    "flex",
+    "flick",
+    "flutter",
+    "fold",
+    "gnash",
+    "grind",
+    "hang",
+    "hunch",
+    "kick",
+    "knit",
+    "open",
+    "pucker",
+    "purse",
+    "raise",
+    "roll",
+    "rub",
+    "shake",
+    "show",
+    "shuffle",
+    "smack",
+    "snap",
+    "stamp",
+    "stretch",
+    "toss",
+    "turn",
+    "twiddle",
+    "twitch",
+    "wag",
+    "waggle",
+    "wiggle",
+    "wring",
+    "wrinkle"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      1,
+      2,
+      2
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      7,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      5,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "zeroRelatedNominal",
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "40.3.3",
+   "title": "Curtsey Verbs",
+   "page": 222,
+   "members": [
+    "bob",
+    "bow",
+    "curtsey",
+    "genuflect",
+    "kneel",
+    "salaam",
+    "salute"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      7,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      7,
+      3
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "zeroRelatedNominal",
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "40.4",
+   "title": "Snooze Verbs",
+   "page": 222,
+   "members": [
+    "catnap",
+    "doze",
+    "drowse",
+    "nap",
+    "sleep",
+    "slumber",
+    "snooze"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      7,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": "except sleep"
+    },
+    {
+     "property": "zeroRelatedNominal",
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "40.5",
+   "title": "Flinch Verbs",
+   "page": 223,
+   "members": [
+    "balk",
+    "cower",
+    "cringe",
+    "flinch",
+    "recoil",
+    "shrink",
+    "wince"
+   ],
+   "doubtful": [
+    "balk"
+   ],
+   "properties": [
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      7,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      7,
+      3
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "40.6",
+   "title": "Verbs of Body-Internal States of Existence",
+   "page": 223,
+   "members": [
+    "convulse",
+    "cower",
+    "quake",
+    "quiver",
+    "shake",
+    "shiver",
+    "shudder",
+    "tremble",
+    "writhe"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "40.7",
+   "title": "Suffocate Verbs",
+   "page": 224,
+   "members": [
+    "asphyxiate",
+    "choke",
+    "drown",
+    "stifle",
+    "suffocate"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      1,
+      1,
+      2,
+      3
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      1
+     ],
+     "diacritic": "?",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      7,
+      5
+     ],
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "40.8.1",
+   "title": "Pain Verbs",
+   "page": 224,
+   "members": [
+    "ache",
+    "bother",
+    "hurt",
+    "itch",
+    "pain"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      7,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      5,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "40.8.2",
+   "title": "Tingle Verbs",
+   "page": 225,
+   "members": [
+    "burn",
+    "hum",
+    "pound",
+    "prickle",
+    "pucker",
+    "reel",
+    "smart",
+    "spin",
+    "split",
+    "sting",
+    "swim",
+    "throb",
+    "tickle",
+    "tingle"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      7,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "40.8.3",
+   "title": "Hurt Verbs",
+   "page": 225,
+   "members": [
+    "bark",
+    "bite",
+    "break",
+    "bruise",
+    "bump",
+    "burn",
+    "chip",
+    "cut",
+    "fracture",
+    "hurt",
+    "injure",
+    "nick",
+    "prick",
+    "pull",
+    "rupture",
+    "scald",
+    "scratch",
+    "skin",
+    "split",
+    "sprain",
+    "strain",
+    "stub",
+    "turn",
+    "twist"
+   ],
+   "doubtful": [],
+   "properties": []
+  },
+  {
+   "number": "40.8.4",
+   "title": "Verbs of Change of Bodily State",
+   "page": 226,
+   "members": [
+    "blanch",
+    "faint",
+    "sicken",
+    "swoon"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      7,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "41.1.1",
+   "title": "Dress Verbs",
+   "page": 227,
+   "members": [
+    "bathe",
+    "change",
+    "disrobe",
+    "dress",
+    "exercise",
+    "preen",
+    "primp",
+    "shave",
+    "shower",
+    "strip",
+    "undress",
+    "wash"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      1,
+      1,
+      2,
+      3
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      2,
+      3
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "41.1.2",
+   "title": "Groom Verbs",
+   "page": 228,
+   "members": [
+    "curry",
+    "groom"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      1,
+      2,
+      3
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "41.2.1",
+   "title": "Floss Verbs",
+   "page": 228,
+   "members": [
+    "brush",
+    "floss",
+    "shave",
+    "wash"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      1,
+      2,
+      3
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      2,
+      2
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "41.2.2",
+   "title": "Braid Verbs",
+   "page": 229,
+   "members": [
+    "bob",
+    "braid",
+    "brush",
+    "clip",
+    "coldcream",
+    "comb",
+    "condition",
+    "crimp",
+    "crop",
+    "curl",
+    "cut",
+    "dye",
+    "file",
+    "henna",
+    "lather",
+    "manicure",
+    "part",
+    "perm",
+    "plait",
+    "pluck",
+    "powder",
+    "rinse",
+    "rouge",
+    "set",
+    "shampoo",
+    "soap",
+    "talc",
+    "tease",
+    "towel",
+    "trim",
+    "wave"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      1,
+      2,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      2,
+      3
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "41.3.1",
+   "title": "Simple Verbs of Dressing",
+   "page": 229,
+   "members": [
+    "doff",
+    "don",
+    "wear"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      1,
+      2,
+      3
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "41.3.2",
+   "title": "Verbs of Dressing Well",
+   "page": 229,
+   "members": [
+    "doll",
+    "dress",
+    "spruce",
+    "tog"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      5,
+      3
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "41.3.3",
+   "title": "Verbs of Being Dressed",
+   "page": 230,
+   "members": [
+    "attire",
+    "clad",
+    "garb",
+    "robe"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      1,
+      2,
+      3
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "42.1",
+   "title": "Murder Verbs",
+   "page": 230,
+   "members": [
+    "assassinate",
+    "butcher",
+    "dispatch",
+    "eliminate",
+    "execute",
+    "immolate",
+    "kill",
+    "liquidate",
+    "massacre",
+    "murder",
+    "slaughter",
+    "slay"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      3,
+      3
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": "except kill"
+    },
+    {
+     "alternation": [
+      7,
+      5
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": "except kill"
+    },
+    {
+     "property": "zeroRelatedNominal",
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "42.2",
+   "title": "Poison Verbs",
+   "page": 232,
+   "members": [
+    "asphyxiate",
+    "crucify",
+    "drown",
+    "electrocute",
+    "garrotte",
+    "hang",
+    "knife",
+    "poison",
+    "shoot",
+    "smother",
+    "stab",
+    "strangle",
+    "suffocate"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": "except asphyxiate, drown, suffocate"
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      7,
+      5
+     ],
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    },
+    {
+     "property": "zeroRelatedNominal",
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "43.1",
+   "title": "Verbs of Light Emission",
+   "page": 233,
+   "members": [
+    "beam",
+    "blaze",
+    "blink",
+    "burn",
+    "flame",
+    "flare",
+    "flash",
+    "flicker",
+    "glare",
+    "gleam",
+    "glimmer",
+    "glint",
+    "glisten",
+    "glitter",
+    "glow",
+    "incandesce",
+    "scintillate",
+    "shimmer",
+    "shine",
+    "sparkle",
+    "twinkle"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      3,
+      4
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      6,
+      2
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      6,
+      1
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2,
+      3
+     ],
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      5,
+      4
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "erNominal",
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "zeroRelatedNominal",
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "43.2",
+   "title": "Verbs of Sound Emission",
+   "page": 234,
+   "members": [
+    "babble",
+    "bang",
+    "beat",
+    "beep",
+    "bellow",
+    "blare",
+    "blast",
+    "blat",
+    "boom",
+    "bubble",
+    "burble",
+    "burr",
+    "buzz",
+    "chatter",
+    "chime",
+    "chink",
+    "chir",
+    "chitter",
+    "chug",
+    "clack",
+    "clang",
+    "clank",
+    "clap",
+    "clash",
+    "clatter",
+    "click",
+    "cling",
+    "clink",
+    "clomp",
+    "clump",
+    "clunk",
+    "crack",
+    "crackle",
+    "crash",
+    "creak",
+    "crepitate",
+    "crunch",
+    "cry",
+    "ding",
+    "dong",
+    "explode",
+    "fizz",
+    "fizzle",
+    "groan",
+    "growl",
+    "gurgle",
+    "hiss",
+    "hoot",
+    "howl",
+    "hum",
+    "jangle",
+    "jingle",
+    "knell",
+    "knock",
+    "lilt",
+    "moan",
+    "murmur",
+    "patter",
+    "peal",
+    "ping",
+    "pink",
+    "pipe",
+    "plink",
+    "plonk",
+    "plop",
+    "plunk",
+    "pop",
+    "purr",
+    "putter",
+    "rap",
+    "rasp",
+    "rattle",
+    "ring",
+    "roar",
+    "roll",
+    "rumble",
+    "rustle",
+    "scream",
+    "screech",
+    "shriek",
+    "shrill",
+    "sing",
+    "sizzle",
+    "snap",
+    "splash",
+    "splutter",
+    "sputter",
+    "squawk",
+    "squeak",
+    "squeal",
+    "squelch",
+    "strike",
+    "swish",
+    "swoosh",
+    "thrum",
+    "thud",
+    "thump",
+    "thunder",
+    "thunk",
+    "tick",
+    "ting",
+    "tinkle",
+    "toll",
+    "toot",
+    "tootle",
+    "trill",
+    "trumpet",
+    "twang",
+    "ululate",
+    "vroom",
+    "wail",
+    "wheeze",
+    "whine",
+    "whir",
+    "whish",
+    "whistle",
+    "whoosh",
+    "whump",
+    "zing"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      3,
+      4
+     ],
+     "diacritic": "",
+     "scope": "most",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      6,
+      2
+     ],
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      6,
+      1
+     ],
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2,
+      3
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      7,
+      8
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      5,
+      4
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "erNominal",
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "zeroRelatedNominal",
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "43.3",
+   "title": "Verbs of Smell Emission",
+   "page": 236,
+   "members": [
+    "reek",
+    "smell",
+    "stink"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      3
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "zeroRelatedNominal",
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "43.4",
+   "title": "Verbs of Substance Emission",
+   "page": 237,
+   "members": [
+    "belch",
+    "bleed",
+    "bubble",
+    "dribble",
+    "drip",
+    "drool",
+    "emanate",
+    "exude",
+    "foam",
+    "gush",
+    "leak",
+    "ooze",
+    "pour",
+    "puff",
+    "radiate",
+    "seep",
+    "shed",
+    "slop",
+    "spew",
+    "spill",
+    "spout",
+    "sprout",
+    "spurt",
+    "squirt",
+    "steam",
+    "stream",
+    "sweat"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      1,
+      1,
+      2,
+      3
+     ],
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      3
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      2,
+      3,
+      4
+     ],
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      6,
+      2
+     ],
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      6,
+      1
+     ],
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      5,
+      4
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "erNominal",
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "zeroRelatedNominal",
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "44",
+   "title": "Destroy Verbs",
+   "page": 239,
+   "members": [
+    "annihilate",
+    "blitz",
+    "decimate",
+    "demolish",
+    "destroy",
+    "devastate",
+    "exterminate",
+    "extirpate",
+    "obliterate",
+    "ravage",
+    "raze",
+    "ruin",
+    "waste",
+    "wreck"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      2,
+      4,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": "transitive"
+    },
+    {
+     "alternation": [
+      2,
+      4,
+      3
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      3,
+      3
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      3
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      7,
+      5
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "zeroRelatedNominal",
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "45.1",
+   "title": "Break Verbs",
+   "page": 241,
+   "members": [
+    "break",
+    "chip",
+    "crack",
+    "crash",
+    "crush",
+    "fracture",
+    "rip",
+    "shatter",
+    "smash",
+    "snap",
+    "splinter",
+    "split",
+    "tear"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      1,
+      1,
+      2,
+      1
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      1
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      3,
+      3
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      2,
+      8
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      3
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      2,
+      12
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      7,
+      6,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "some",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      7,
+      6,
+      2
+     ],
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      7,
+      5
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "zeroRelatedNominal",
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "45.2",
+   "title": "Bend Verbs",
+   "page": 242,
+   "members": [
+    "bend",
+    "crease",
+    "crinkle",
+    "crumple",
+    "fold",
+    "rumple",
+    "wrinkle"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      1,
+      1,
+      2,
+      1
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      1
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      3,
+      3
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      2,
+      8
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      3
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      2,
+      12
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      7,
+      5
+     ],
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    },
+    {
+     "property": "zeroRelatedNominal",
+     "diacritic": "",
+     "scope": "most",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "45.3",
+   "title": "Cooking Verbs",
+   "page": 243,
+   "members": [
+    "bake",
+    "barbecue",
+    "blanch",
+    "boil",
+    "braise",
+    "broil",
+    "brown",
+    "charbroil",
+    "charcoal-broil",
+    "coddle",
+    "cook",
+    "crisp",
+    "deep-fry",
+    "French fry",
+    "fry",
+    "grill",
+    "hardboil",
+    "heat",
+    "microwave",
+    "oven-fry",
+    "oven-poach",
+    "overcook",
+    "pan-broil",
+    "pan-fry",
+    "parboil",
+    "parch",
+    "percolate",
+    "perk",
+    "plank",
+    "poach",
+    "pot-roast",
+    "rissole",
+    "roast",
+    "sauté",
+    "scald",
+    "scallop",
+    "shirr",
+    "simmer",
+    "softboil",
+    "steam",
+    "steam-bake",
+    "stew",
+    "stir-fry",
+    "toast"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      1,
+      1,
+      2,
+      1
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      3,
+      3
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      3
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      7,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      7,
+      5
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      5,
+      3
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "45.4",
+   "title": "Other Alternating Verbs of Change of State",
+   "page": 244,
+   "members": [
+    "abate",
+    "accelerate",
+    "acetify",
+    "acidify",
+    "advance",
+    "age",
+    "agglomerate",
+    "air",
+    "alkalify",
+    "alter",
+    "ameliorate",
+    "americanize",
+    "atrophy",
+    "attenuate",
+    "awake",
+    "awaken",
+    "balance",
+    "blacken",
+    "blast",
+    "blunt",
+    "blur",
+    "brighten",
+    "broaden",
+    "brown",
+    "burn",
+    "burst",
+    "calcify",
+    "capsize",
+    "caramelize",
+    "carbonify",
+    "carbonize",
+    "change",
+    "char",
+    "cheapen",
+    "chill",
+    "clean",
+    "clear",
+    "clog",
+    "close",
+    "coagulate",
+    "coarsen",
+    "collapse",
+    "collect",
+    "compress",
+    "condense",
+    "contract",
+    "cool",
+    "corrode",
+    "crimson",
+    "crisp",
+    "crumble",
+    "crystallize",
+    "dampen",
+    "darken",
+    "de-escalate",
+    "decelerate",
+    "decentralize",
+    "decompose",
+    "decrease",
+    "deepen",
+    "deflate",
+    "defrost",
+    "degenerate",
+    "degrade",
+    "dehumidify",
+    "demagnetize",
+    "democratize",
+    "depressurize",
+    "desiccate",
+    "destabilize",
+    "deteriorate",
+    "detonate",
+    "dim",
+    "diminish",
+    "dirty",
+    "disintegrate",
+    "dissipate",
+    "dissolve",
+    "distend",
+    "divide",
+    "double",
+    "drain",
+    "dry",
+    "dull",
+    "ease",
+    "empty",
+    "emulsify",
+    "energize",
+    "enlarge",
+    "equalize",
+    "evaporate",
+    "even",
+    "expand",
+    "explode",
+    "fade",
+    "fatten",
+    "federate",
+    "fill",
+    "firm",
+    "flatten",
+    "flood",
+    "fossilize",
+    "fray",
+    "freeze",
+    "freshen",
+    "frost",
+    "fructify",
+    "fuse",
+    "gasify",
+    "gelatinize",
+    "gladden",
+    "glutenize",
+    "granulate",
+    "gray",
+    "green",
+    "grow",
+    "halt",
+    "harden",
+    "harmonize",
+    "hasten",
+    "heal",
+    "heat",
+    "heighten",
+    "humidify",
+    "hush",
+    "hybridize",
+    "ignite",
+    "improve",
+    "increase",
+    "incubate",
+    "inflate",
+    "intensify",
+    "iodize",
+    "ionize",
+    "kindle",
+    "lengthen",
+    "lessen",
+    "level",
+    "levitate",
+    "light",
+    "lighten",
+    "lignify",
+    "liquefy",
+    "loop",
+    "loose",
+    "loosen",
+    "macerate",
+    "magnetize",
+    "magnify",
+    "mature",
+    "mellow",
+    "melt",
+    "moisten",
+    "muddy",
+    "multiply",
+    "narrow",
+    "neaten",
+    "neutralize",
+    "nitrify",
+    "open",
+    "operate",
+    "ossify",
+    "overturn",
+    "oxidize",
+    "pale",
+    "petrify",
+    "polarize",
+    "pop",
+    "proliferate",
+    "propagate",
+    "pulverize",
+    "purify",
+    "purple",
+    "putrefy",
+    "quadruple",
+    "quicken",
+    "quiet",
+    "quieten",
+    "redden",
+    "regularize",
+    "rekindle",
+    "reopen",
+    "reproduce",
+    "ripen",
+    "roughen",
+    "round",
+    "rupture",
+    "scorch",
+    "sear",
+    "sharpen",
+    "short",
+    "shortcircuit",
+    "shorten",
+    "shrink",
+    "shrivel",
+    "shut",
+    "sicken",
+    "silicify",
+    "silver",
+    "singe",
+    "sink",
+    "slack",
+    "slacken",
+    "slim",
+    "slow",
+    "smarten",
+    "smooth",
+    "soak",
+    "sober",
+    "soften",
+    "solidify",
+    "sour",
+    "splay",
+    "sprout",
+    "stabilize",
+    "steady",
+    "steep",
+    "steepen",
+    "stiffen",
+    "straighten",
+    "stratify",
+    "strengthen",
+    "stretch",
+    "submerge",
+    "subside",
+    "sweeten",
+    "tame",
+    "tan",
+    "taper",
+    "tauten",
+    "tense",
+    "thaw",
+    "thicken",
+    "thin",
+    "tighten",
+    "tilt",
+    "tire",
+    "topple",
+    "toughen",
+    "triple",
+    "ulcerate",
+    "unfold",
+    "unionize",
+    "vaporize",
+    "vary",
+    "vibrate",
+    "vitrify",
+    "volatilize",
+    "waken",
+    "warm",
+    "warp",
+    "weaken",
+    "westernize",
+    "whiten",
+    "widen",
+    "worsen",
+    "yellow"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      1,
+      1,
+      2,
+      1
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      1
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      3,
+      3
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      3
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      2,
+      3,
+      4
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": "intransitive"
+    },
+    {
+     "alternation": [
+      2,
+      3,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": "transitive"
+    },
+    {
+     "alternation": [
+      6,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      6,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      7,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      7,
+      5
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      5,
+      3
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "45.5",
+   "title": "Verbs of Entity-Specific Change of State",
+   "page": 246,
+   "members": [
+    "blister",
+    "bloom",
+    "blossom",
+    "burn",
+    "corrode",
+    "decay",
+    "deteriorate",
+    "erode",
+    "ferment",
+    "flower",
+    "germinate",
+    "molder",
+    "molt",
+    "rot",
+    "rust",
+    "sprout",
+    "stagnate",
+    "swell",
+    "tarnish",
+    "wilt",
+    "wither"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      7,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      5,
+      4
+     ],
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "45.6",
+   "title": "Verbs of Calibratable Changes of State",
+   "page": 247,
+   "members": [
+    "appreciate",
+    "balloon",
+    "climb",
+    "decline",
+    "decrease",
+    "depreciate",
+    "differ",
+    "diminish",
+    "drop",
+    "fall",
+    "fluctuate",
+    "gain",
+    "grow",
+    "increase",
+    "jump",
+    "mushroom",
+    "plummet",
+    "plunge",
+    "rise",
+    "rocket",
+    "skyrocket",
+    "soar",
+    "surge",
+    "tumble",
+    "vary"
+   ],
+   "doubtful": [
+    "mushroom"
+   ],
+   "properties": [
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      6,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      6,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      7,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      5,
+      4
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "46",
+   "title": "Lodge Verbs",
+   "page": 248,
+   "members": [
+    "bivouac",
+    "board",
+    "camp",
+    "dwell",
+    "live",
+    "lodge",
+    "reside",
+    "settle",
+    "shelter",
+    "stay",
+    "stop"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      6,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      6,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      2,
+      3
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2,
+      3
+     ],
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      5,
+      3
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "erNominal",
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "47.1",
+   "title": "Exist Verbs",
+   "page": 249,
+   "members": [
+    "coexist",
+    "correspond",
+    "depend",
+    "dwell",
+    "endure",
+    "exist",
+    "extend",
+    "flourish",
+    "languish",
+    "linger",
+    "live",
+    "loom",
+    "lurk",
+    "overspread",
+    "persist",
+    "predominate",
+    "prevail",
+    "prosper",
+    "remain",
+    "reside",
+    "shelter",
+    "stay",
+    "survive",
+    "thrive",
+    "tower",
+    "wait"
+   ],
+   "doubtful": [
+    "correspond",
+    "depend"
+   ],
+   "properties": [
+    {
+     "alternation": [
+      6,
+      1
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      6,
+      2
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      2,
+      3
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      5,
+      4
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "47.2",
+   "title": "Verbs of Entity-Specific Modes of Being",
+   "page": 250,
+   "members": [
+    "billow",
+    "bloom",
+    "blossom",
+    "blow",
+    "breathe",
+    "bristle",
+    "bulge",
+    "burn",
+    "cascade",
+    "corrode",
+    "decay",
+    "decompose",
+    "effervesce",
+    "erode",
+    "ferment",
+    "fester",
+    "fizz",
+    "flow",
+    "flower",
+    "foam",
+    "froth",
+    "germinate",
+    "grow",
+    "molt",
+    "propagate",
+    "rage",
+    "ripple",
+    "roil",
+    "rot",
+    "rust",
+    "seethe",
+    "smoke",
+    "smolder",
+    "spread",
+    "sprout",
+    "stagnate",
+    "stream",
+    "sweep",
+    "tarnish",
+    "trickle",
+    "wilt",
+    "wither"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      6,
+      1
+     ],
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      6,
+      2
+     ],
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      2,
+      3,
+      4
+     ],
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "most",
+     "qualifier": "with a few exceptions"
+    },
+    {
+     "alternation": [
+      5,
+      4
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "erNominal",
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "47.3",
+   "title": "Verbs of Modes of Being Involving Motion",
+   "page": 251,
+   "members": [
+    "bob",
+    "bow",
+    "creep",
+    "dance",
+    "drift",
+    "eddy",
+    "flap",
+    "float",
+    "flutter",
+    "hover",
+    "jiggle",
+    "joggle",
+    "oscillate",
+    "pulsate",
+    "quake",
+    "quiver",
+    "revolve",
+    "rock",
+    "rotate",
+    "shake",
+    "stir",
+    "sway",
+    "swirl",
+    "teeter",
+    "throb",
+    "totter",
+    "tremble",
+    "undulate",
+    "vibrate",
+    "waft",
+    "wave",
+    "waver",
+    "wiggle",
+    "wobble",
+    "writhe"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      3
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      6,
+      1
+     ],
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      6,
+      2
+     ],
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2,
+      3
+     ],
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      5,
+      4
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "47.4",
+   "title": "Verbs of Sound Existence",
+   "page": 252,
+   "members": [
+    "din",
+    "echo",
+    "resonate",
+    "resound",
+    "reverberate",
+    "sound"
+   ],
+   "doubtful": [
+    "din"
+   ],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      3,
+      4
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      6,
+      1
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      6,
+      2
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      5,
+      4
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "erNominal",
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "47.5.1",
+   "title": "Swarm Verbs",
+   "page": 253,
+   "members": [
+    "abound",
+    "bustle",
+    "crawl",
+    "creep",
+    "hop",
+    "run",
+    "swarm",
+    "swim",
+    "teem",
+    "throng"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      3,
+      4
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      6,
+      2
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      6,
+      1
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "47.5.2",
+   "title": "Herd Verbs",
+   "page": 254,
+   "members": [
+    "accumulate",
+    "aggregate",
+    "amass",
+    "assemble",
+    "cluster",
+    "collect",
+    "congregate",
+    "convene",
+    "flock",
+    "gather",
+    "group",
+    "herd",
+    "huddle",
+    "mass"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      3
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2,
+      3
+     ],
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    },
+    {
+     "property": "zeroRelatedNominal",
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "47.5.3",
+   "title": "Bulge Verbs",
+   "page": 254,
+   "members": [
+    "bristle",
+    "bulge",
+    "seethe"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      3
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "47.6",
+   "title": "Verbs of Spatial Configuration",
+   "page": 255,
+   "members": [
+    "balance",
+    "bend",
+    "bow",
+    "crouch",
+    "dangle",
+    "flop",
+    "fly",
+    "hang",
+    "hover",
+    "jut",
+    "kneel",
+    "lean",
+    "lie",
+    "loll",
+    "loom",
+    "lounge",
+    "nestle",
+    "open",
+    "perch",
+    "plop",
+    "project",
+    "protrude",
+    "recline",
+    "rest",
+    "rise",
+    "roost",
+    "sag",
+    "sit",
+    "slope",
+    "slouch",
+    "slump",
+    "sprawl",
+    "squat",
+    "stand",
+    "stoop",
+    "straddle",
+    "swing",
+    "tilt",
+    "tower"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      6,
+      1
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      6,
+      2
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2,
+      3
+     ],
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      5,
+      4
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "47.7",
+   "title": "Meander Verbs",
+   "page": 256,
+   "members": [
+    "cascade",
+    "climb",
+    "crawl",
+    "cut",
+    "drop",
+    "go",
+    "meander",
+    "plunge",
+    "run",
+    "straggle",
+    "stretch",
+    "sweep",
+    "tumble",
+    "turn",
+    "twist",
+    "wander",
+    "weave",
+    "wind"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      6,
+      2
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      6,
+      1
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "47.8",
+   "title": "Verbs of Contiguous Location",
+   "page": 257,
+   "members": [
+    "abut",
+    "adjoin",
+    "blanket",
+    "border",
+    "bound",
+    "bracket",
+    "bridge",
+    "cap",
+    "contain",
+    "cover",
+    "cross",
+    "dominate",
+    "edge",
+    "encircle",
+    "enclose",
+    "fence",
+    "fill",
+    "flank",
+    "follow",
+    "frame",
+    "head",
+    "hit",
+    "hug",
+    "intersect",
+    "line",
+    "meet",
+    "miss",
+    "overhang",
+    "precede",
+    "rim",
+    "ring",
+    "skirt",
+    "span",
+    "straddle",
+    "support",
+    "surmount",
+    "surround",
+    "top",
+    "touch",
+    "underlie"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      5,
+      3
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      2,
+      4
+     ],
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "48.1.1",
+   "title": "Appear Verbs",
+   "page": 258,
+   "members": [
+    "appear",
+    "arise",
+    "awake",
+    "awaken",
+    "break",
+    "burst",
+    "come",
+    "dawn",
+    "derive",
+    "develop",
+    "emanate",
+    "emerge",
+    "erupt",
+    "evolve",
+    "exude",
+    "flow",
+    "form",
+    "grow",
+    "gush",
+    "issue",
+    "materialize",
+    "open",
+    "plop",
+    "pop up",
+    "result",
+    "rise",
+    "show up",
+    "spill",
+    "spread",
+    "steal",
+    "stem",
+    "stream",
+    "supervene",
+    "surge",
+    "turn up",
+    "wax"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      6,
+      1
+     ],
+     "diacritic": "",
+     "scope": "most",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      6,
+      2
+     ],
+     "diacritic": "",
+     "scope": "most",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "many",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      5,
+      4
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "48.1.2",
+   "title": "Reflexive Verbs of Appearance",
+   "page": 259,
+   "members": [
+    "assert",
+    "declare",
+    "define",
+    "express",
+    "form",
+    "intrude",
+    "manifest",
+    "offer",
+    "pose",
+    "present",
+    "proffer",
+    "recommend",
+    "shape",
+    "show",
+    "suggest"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      6,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      6,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      4,
+      2
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": "except intrude"
+    }
+   ]
+  },
+  {
+   "number": "48.2",
+   "title": "Verbs of Disappearance",
+   "page": 260,
+   "members": [
+    "die",
+    "disappear",
+    "expire",
+    "lapse",
+    "perish",
+    "vanish"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      6,
+      1
+     ],
+     "diacritic": "?",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      6,
+      2
+     ],
+     "diacritic": "?",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      5,
+      4
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "48.3",
+   "title": "Verbs of Occurrence",
+   "page": 260,
+   "members": [
+    "ensue",
+    "eventuate",
+    "happen",
+    "occur",
+    "recur",
+    "transpire"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      6,
+      1
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      6,
+      2
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "49",
+   "title": "Verbs of Body-Internal Motion",
+   "page": 261,
+   "members": [
+    "buck",
+    "fidget",
+    "flap",
+    "gyrate",
+    "kick",
+    "rock",
+    "squirm",
+    "sway",
+    "teeter",
+    "totter",
+    "twitch",
+    "waggle",
+    "wiggle",
+    "wobble",
+    "wriggle"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "bodyPartObject",
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      7,
+      5
+     ],
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      7,
+      8
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "50",
+   "title": "Verbs of Assuming a Position",
+   "page": 262,
+   "members": [
+    "bend",
+    "bow",
+    "crouch",
+    "flop",
+    "hang",
+    "kneel",
+    "lean",
+    "lie",
+    "perch",
+    "plop",
+    "rise",
+    "sit",
+    "slouch",
+    "slump",
+    "sprawl",
+    "squat",
+    "stand",
+    "stoop",
+    "straddle"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      6,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      6,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "51.1",
+   "title": "Verbs of Inherently Directed Motion",
+   "page": 263,
+   "members": [
+    "advance",
+    "arrive",
+    "ascend",
+    "climb",
+    "come",
+    "cross",
+    "depart",
+    "descend",
+    "enter",
+    "escape",
+    "exit",
+    "fall",
+    "flee",
+    "go",
+    "leave",
+    "plunge",
+    "recede",
+    "return",
+    "rise",
+    "tumble"
+   ],
+   "doubtful": [
+    "climb",
+    "cross"
+   ],
+   "properties": [
+    {
+     "alternation": [
+      1,
+      4,
+      1
+     ],
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "measurePhrase",
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      5,
+      4
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "depictivePhrase",
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      7,
+      5
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "51.2",
+   "title": "Leave Verbs",
+   "page": 264,
+   "members": [
+    "abandon",
+    "desert",
+    "leave"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      5,
+      3
+     ],
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "51.3.1",
+   "title": "Roll Verbs",
+   "page": 264,
+   "members": [
+    "bounce",
+    "coil",
+    "drift",
+    "drop",
+    "float",
+    "glide",
+    "move",
+    "revolve",
+    "roll",
+    "rotate",
+    "slide",
+    "spin",
+    "swing",
+    "turn",
+    "twirl",
+    "twist",
+    "whirl",
+    "wind"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      1,
+      1,
+      2,
+      1
+     ],
+     "diacritic": "",
+     "scope": "most",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      4,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      7,
+      5
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      5,
+      3
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "51.3.2",
+   "title": "Run Verbs",
+   "page": 265,
+   "members": [
+    "amble",
+    "backpack",
+    "bolt",
+    "bounce",
+    "bound",
+    "bowl",
+    "canter",
+    "carom",
+    "cavort",
+    "charge",
+    "clamber",
+    "climb",
+    "clump",
+    "coast",
+    "crawl",
+    "creep",
+    "dart",
+    "dash",
+    "dodder",
+    "drift",
+    "file",
+    "flit",
+    "float",
+    "fly",
+    "frolic",
+    "gallop",
+    "gambol",
+    "glide",
+    "goosestep",
+    "hasten",
+    "hike",
+    "hobble",
+    "hop",
+    "hurry",
+    "hurtle",
+    "inch",
+    "jog",
+    "journey",
+    "jump",
+    "leap",
+    "limp",
+    "lollop",
+    "lope",
+    "lumber",
+    "lurch",
+    "march",
+    "meander",
+    "mince",
+    "mosey",
+    "nip",
+    "pad",
+    "parade",
+    "perambulate",
+    "plod",
+    "prance",
+    "promenade",
+    "prowl",
+    "race",
+    "ramble",
+    "roam",
+    "roll",
+    "romp",
+    "rove",
+    "run",
+    "rush",
+    "sashay",
+    "saunter",
+    "scamper",
+    "scoot",
+    "scram",
+    "scramble",
+    "scud",
+    "scurry",
+    "scutter",
+    "scuttle",
+    "shamble",
+    "shuffle",
+    "sidle",
+    "skedaddle",
+    "skip",
+    "skitter",
+    "skulk",
+    "sleepwalk",
+    "slide",
+    "slink",
+    "slither",
+    "slog",
+    "slouch",
+    "sneak",
+    "somersault",
+    "speed",
+    "stagger",
+    "stomp",
+    "stray",
+    "streak",
+    "stride",
+    "stroll",
+    "strut",
+    "stumble",
+    "stump",
+    "swagger",
+    "sweep",
+    "swim",
+    "tack",
+    "tear",
+    "tiptoe",
+    "toddle",
+    "totter",
+    "traipse",
+    "tramp",
+    "travel",
+    "trek",
+    "troop",
+    "trot",
+    "trudge",
+    "trundle",
+    "vault",
+    "waddle",
+    "wade",
+    "walk",
+    "wander",
+    "whiz",
+    "zigzag",
+    "zoom"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      1,
+      1,
+      2,
+      2
+     ],
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      4,
+      1
+     ],
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      6,
+      1
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      6,
+      2
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "measurePhrase",
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      7,
+      5
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      5,
+      3
+     ],
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      5,
+      4
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      7,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "property": "zeroRelatedNominal",
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "51.4.1",
+   "title": "Verbs That Are Vehicle Names",
+   "page": 267,
+   "members": [
+    "balloon",
+    "bicycle",
+    "bike",
+    "boat",
+    "bobsled",
+    "bus",
+    "cab",
+    "canoe",
+    "chariot",
+    "coach",
+    "cycle",
+    "dogsled",
+    "ferry",
+    "gondola",
+    "helicopter",
+    "jeep",
+    "jet",
+    "kayak",
+    "moped",
+    "motor",
+    "motorbike",
+    "motorcycle",
+    "parachute",
+    "punt",
+    "raft",
+    "rickshaw",
+    "rocket",
+    "skate",
+    "skateboard",
+    "ski",
+    "sled",
+    "sledge",
+    "sleigh",
+    "taxi",
+    "toboggan",
+    "tram",
+    "trolley",
+    "van",
+    "yacht"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      1,
+      1,
+      2,
+      2
+     ],
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      4,
+      1
+     ],
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      7,
+      5
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "51.4.2",
+   "title": "Verbs That Are Not Vehicle Names",
+   "page": 268,
+   "members": [
+    "cruise",
+    "drive",
+    "fly",
+    "oar",
+    "paddle",
+    "pedal",
+    "ride",
+    "row",
+    "sail",
+    "tack"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      1,
+      1,
+      2,
+      2
+     ],
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      4,
+      1
+     ],
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      7,
+      5
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "51.5",
+   "title": "Waltz Verbs",
+   "page": 268,
+   "members": [
+    "boogie",
+    "bop",
+    "cancan",
+    "clog",
+    "conga",
+    "dance",
+    "foxtrot",
+    "jig",
+    "jitterbug",
+    "jive",
+    "pirouette",
+    "polka",
+    "quickstep",
+    "rumba",
+    "samba",
+    "shuffle",
+    "squaredance",
+    "tango",
+    "tapdance",
+    "waltz"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      1,
+      1,
+      2,
+      2
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      7,
+      5
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      7,
+      1
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "51.6",
+   "title": "Chase Verbs",
+   "page": 269,
+   "members": [
+    "chase",
+    "follow",
+    "pursue",
+    "shadow",
+    "tail",
+    "track",
+    "trail"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "51.7",
+   "title": "Accompany Verbs",
+   "page": 270,
+   "members": [
+    "accompany",
+    "conduct",
+    "escort",
+    "guide",
+    "lead",
+    "shepherd"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "52",
+   "title": "Avoid Verbs",
+   "page": 270,
+   "members": [
+    "avoid",
+    "boycott",
+    "dodge",
+    "duck",
+    "elude",
+    "evade",
+    "shun",
+    "sidestep"
+   ],
+   "doubtful": [
+    "boycott"
+   ],
+   "properties": []
+  },
+  {
+   "number": "53.1",
+   "title": "Verbs of Lingering",
+   "page": 271,
+   "members": [
+    "dally",
+    "dawdle",
+    "delay",
+    "dither",
+    "hesitate",
+    "linger",
+    "loiter",
+    "tarry"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "53.2",
+   "title": "Verbs of Rushing",
+   "page": 271,
+   "members": [
+    "hasten",
+    "hurry",
+    "rush"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      1,
+      1,
+      2,
+      3
+     ],
+     "diacritic": "",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "54.1",
+   "title": "Register Verbs",
+   "page": 272,
+   "members": [
+    "measure",
+    "read",
+    "register",
+    "total",
+    "weigh"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      5,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "54.2",
+   "title": "Cost Verbs",
+   "page": 272,
+   "members": [
+    "carry",
+    "cost",
+    "last",
+    "take"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      5,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "54.3",
+   "title": "Fit Verbs",
+   "page": 273,
+   "members": [
+    "carry",
+    "contain",
+    "feed",
+    "fit",
+    "hold",
+    "house",
+    "seat",
+    "serve",
+    "sleep",
+    "store",
+    "take",
+    "use"
+   ],
+   "doubtful": [],
+   "properties": []
+  },
+  {
+   "number": "54.4",
+   "title": "Price Verbs",
+   "page": 273,
+   "members": [
+    "appraise",
+    "assess",
+    "estimate",
+    "fix",
+    "peg",
+    "price",
+    "rate",
+    "value"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "54.5",
+   "title": "Bill Verbs",
+   "page": 274,
+   "members": [
+    "bet",
+    "bill",
+    "charge",
+    "fine",
+    "mulct",
+    "overcharge",
+    "save",
+    "spare",
+    "tax",
+    "tip",
+    "undercharge",
+    "wager"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      2,
+      1
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    },
+    {
+     "alternation": [
+      2,
+      14
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "55.1",
+   "title": "Begin Verbs",
+   "page": 274,
+   "members": [
+    "begin",
+    "cease",
+    "commence",
+    "continue",
+    "end",
+    "finish",
+    "halt",
+    "keep",
+    "proceed",
+    "repeat",
+    "resume",
+    "start",
+    "stop",
+    "terminate"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      1,
+      1,
+      2,
+      3
+     ],
+     "diacritic": "",
+     "scope": "some",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "55.2",
+   "title": "Complete Verbs",
+   "page": 275,
+   "members": [
+    "complete",
+    "discontinue",
+    "initiate",
+    "quit"
+   ],
+   "doubtful": [],
+   "properties": [
+    {
+     "alternation": [
+      1,
+      1,
+      2
+     ],
+     "diacritic": "*",
+     "scope": "all",
+     "qualifier": null
+    }
+   ]
+  },
+  {
+   "number": "56",
+   "title": "Weekend Verbs",
+   "page": 275,
+   "members": [
+    "summer",
+    "vacation",
+    "weekend",
+    "winter"
+   ],
+   "doubtful": [],
+   "properties": []
+  },
+  {
+   "number": "57",
+   "title": "Weather Verbs",
+   "page": 276,
+   "members": [
+    "blow",
+    "clear",
+    "drizzle",
+    "fog",
+    "freeze",
+    "gust",
+    "hail",
+    "howl",
+    "lightning",
+    "mist",
+    "mizzle",
+    "pelt",
+    "pour",
+    "precipitate",
+    "rain",
+    "roar",
+    "shower",
+    "sleet",
+    "snow",
+    "spit",
+    "spot",
+    "sprinkle",
+    "storm",
+    "swelter",
+    "teem",
+    "thaw",
+    "thunder"
+   ],
+   "doubtful": [],
+   "properties": []
+  }
+ ]
+}

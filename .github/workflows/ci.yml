@@ -33,6 +33,9 @@ jobs:
       - name: Check generated example data
         run: python3 scripts/gen_examples.py --check
 
+      - name: Check generated verb class data
+        run: python3 scripts/gen_verb_classes.py --check
+
       - name: Check example literals in studies
         run: python3 scripts/check_examples.py
 
