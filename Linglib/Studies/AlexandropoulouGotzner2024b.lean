@@ -21,7 +21,7 @@ the complex forms fill. On a two-threshold scale this is exactly the observed
 profile — both negated weak forms come apart from their simple antonyms
 (`relative_like`) yet the residues are mirror images (`residues_symmetric`),
 whereas at a single threshold neither distinction exists
-(`Degree.AntonymForm.contradictoryDenot_synonymy`).
+(`Degree.AntonymForm.contradictoryDenotation_synonymy`).
 
 ## References
 
@@ -44,19 +44,21 @@ variable {D : Type*} [LinearOrder D] (tp : ThresholdPair D)
 /-- The two residues are the same region, the gap, so the distinctions are symmetric across
 polarity. -/
 theorem residues_symmetric :
-    AntonymForm.strengthenedDenot tp .notNegative \ AntonymForm.strengthenedDenot tp .positive =
-      AntonymForm.strengthenedDenot tp .notPositive \ AntonymForm.strengthenedDenot tp .negative :=
-  (AntonymForm.strengthenedDenot_notNegative_diff_positive tp).trans
-    (AntonymForm.strengthenedDenot_notPositive_diff_negative tp).symm
+    AntonymForm.strengthenedDenotation tp .notNegative \
+        AntonymForm.strengthenedDenotation tp .positive =
+      AntonymForm.strengthenedDenotation tp .notPositive \
+        AntonymForm.strengthenedDenotation tp .negative :=
+  (AntonymForm.strengthenedDenotation_notNegative_diff_positive tp).trans
+    (AntonymForm.strengthenedDenotation_notPositive_diff_negative tp).symm
 
 /-- Under a precision-opened gap, *not dirty* is not *clean* and *not clean* is not *dirty*,
 the relative-like distinctions of the single-statement data. -/
 theorem relative_like (h : tp.neg ≤ tp.pos) :
-    (AntonymForm.strengthenedDenot tp .notNegative \
-        AntonymForm.strengthenedDenot tp .positive).Nonempty ∧
-      (AntonymForm.strengthenedDenot tp .notPositive \
-        AntonymForm.strengthenedDenot tp .negative).Nonempty := by
-  rw [← residues_symmetric, and_self, AntonymForm.strengthenedDenot_notNegative_diff_positive]
+    (AntonymForm.strengthenedDenotation tp .notNegative \
+        AntonymForm.strengthenedDenotation tp .positive).Nonempty ∧
+      (AntonymForm.strengthenedDenotation tp .notPositive \
+        AntonymForm.strengthenedDenotation tp .negative).Nonempty := by
+  rw [← residues_symmetric, and_self, AntonymForm.strengthenedDenotation_notNegative_diff_positive]
   exact tp.gap_nonempty_iff.2 h
 
 /-! ### Rows -/

@@ -66,10 +66,10 @@ instance : DecidablePred Cell.IsStrong :=
   fun c ↦ inferInstanceAs (Decidable (c.pair.pos.standard = .extreme))
 
 /-- A cell is relative when its scale is, an open scale with no endpoint to fix a standard. -/
-def Cell.IsRelative (c : Cell) : Prop := c.pair.pos.scaleType.IsRelative
+def Cell.IsRelative (c : Cell) : Prop := c.pair.pos.boundedness.IsRelative
 
 instance : DecidablePred Cell.IsRelative :=
-  fun c ↦ inferInstanceAs (Decidable c.pair.pos.scaleType.IsRelative)
+  fun c ↦ inferInstanceAs (Decidable c.pair.pos.boundedness.IsRelative)
 
 /-- The pair leaves a semantic extension gap when its poles do not take complementary standards. -/
 def Cell.HasGap (c : Cell) : Prop := ¬ c.pair.ComplementaryStandards
@@ -240,7 +240,7 @@ its standard is extreme and relative exactly when its scale is. -/
 theorem row_factors :
     ∀ row ∈ Examples.all, ∀ a ∈ (row.feature? "adjective").bind entryOf,
       (row.feature? "strength" = some "strong" ↔ a.standard = .extreme) ∧
-        (row.feature? "adjectiveType" = some "relative" ↔ a.scaleType.IsRelative) := by
+        (row.feature? "adjectiveType" = some "relative" ↔ a.boundedness.IsRelative) := by
   decide
 
 /-- A statement is in a negated condition exactly when it contains *not*. -/

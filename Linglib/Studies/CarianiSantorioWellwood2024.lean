@@ -129,7 +129,7 @@ theorem image_Ici_subset_image_Ici_iff_isMax [@Std.Total S (· ≤ ·)] (hθ : �
 open English.Adjectives in
 /-- The English fragment agrees with Figure 3, in which *confident* and *certain* measure on one
 upper-closed scale, *certain* at its maximum and *confident* at a contextual standard. -/
-example : confident.dimension = certain.dimension ∧ confident.scaleType = .upperClosed ∧
+example : confident.dimension = certain.dimension ∧ confident.boundedness = .upperClosed ∧
     certain.standard = .maxEndpoint ∧ confident.standard = .contextual := by
   decide
 

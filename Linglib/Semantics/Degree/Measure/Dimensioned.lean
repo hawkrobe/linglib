@@ -38,13 +38,13 @@ structure DimensionedMeasure (E : Type*) (D : Type := ℝ) where
   /-- Which dimension this function measures. -/
   dimension : Dimension
   /-- The function sends an entity to its magnitude. -/
-  apply : E → D
+  toFun : E → D
 
 variable {D : Type}
 
 /-- A dimensioned measure coerces to its function. -/
 instance {E : Type*} : CoeFun (DimensionedMeasure E D) (fun _ => E → D) where
-  coe μ := μ.apply
+  coe μ := μ.toFun
 
 /-! ### Measure-Term Application -/
 

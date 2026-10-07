@@ -368,10 +368,4 @@ theorem maxOnScale_gt_closedInterval {α : Type*} [LinearOrder α]
   exact Set.eq_singleton_iff_unique_mem.mpr
     ⟨isGreatest_Icc hsf, fun _ h => h.unique (isGreatest_Icc hsf)⟩
 
-/-- A scalar construction `f` is ambidirectional at `B` when it returns the same result on `B` and
-on its complement, as maximality does when it picks the same boundary from both; this is the
-mechanism behind expletive negation. -/
-def IsAmbidirectional {α : Type*} (f : Set α → Prop) (B : Set α) : Prop :=
-  f B ↔ f Bᶜ
-
 end Degree

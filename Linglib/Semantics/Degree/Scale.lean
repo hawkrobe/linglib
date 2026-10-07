@@ -129,13 +129,13 @@ def ScalarDimension.dimension? : ScalarDimension → Option Degree.QuantityDimen
 /-! ### Degrees -/
 
 /-- The degrees of a dimension are the canonical linear order of its scale's shape. -/
-abbrev ScalarDimension.degree (d : ScalarDimension) : Type := d.boundedness.degreeShape
-instance instLinearOrderDimensionDegree (d : ScalarDimension) : LinearOrder d.degree :=
+abbrev ScalarDimension.Scale (d : ScalarDimension) : Type := d.boundedness.DegreeShape
+instance instLinearOrderScale (d : ScalarDimension) : LinearOrder d.Scale :=
   inferInstance
 
 /-- The degrees of a dimension have a greatest element exactly when its scale has a maximum. -/
-theorem ScalarDimension.hasGreatest_degree_iff (d : ScalarDimension) :
-    (∃ m : d.degree, IsTop m) ↔ d.boundedness.HasMax :=
+theorem ScalarDimension.hasGreatest_scale_iff (d : ScalarDimension) :
+    (∃ m : d.Scale, IsTop m) ↔ d.boundedness.HasMax :=
   Boundedness.exists_isTop_degreeShape d.boundedness
 
 /-! ### Degree achievements -/
@@ -168,9 +168,9 @@ def ScalarDimension.defaultTelicity (d : ScalarDimension) : Telicity :=
 /-- A degree achievement is telic by default exactly when the degrees of its scale have a
     greatest element ([kennedy-levin-2008]). -/
 theorem ScalarDimension.defaultTelicity_telic_iff_hasGreatest (d : ScalarDimension) :
-    d.defaultTelicity = .telic ↔ ∃ m : d.degree, IsTop m :=
+    d.defaultTelicity = .telic ↔ ∃ m : d.Scale, IsTop m :=
   Boundedness.telicity_defaultVendlerClass_eq_telic_iff.trans
-    (ScalarDimension.hasGreatest_degree_iff d).symm
+    (ScalarDimension.hasGreatest_scale_iff d).symm
 
 /-- The default Vendler class has the default telicity. -/
 @[simp] theorem ScalarDimension.telicity_defaultVendlerClass (d : ScalarDimension) :

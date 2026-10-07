@@ -81,7 +81,7 @@ def containerReading (P : E → Prop) (filledWith : E → E → Prop) (k : E →
 /-- The measure reading ((41), (42)) of a measure term with measure `μ`, numeral `n` and
 substance `k` holds of the instances of the substance that measure `n`. -/
 def measureReading (μ : DimensionedMeasure E D) (k : E → Prop) (n : D) (x : E) : Prop :=
-  k x ∧ μ.apply x = n
+  k x ∧ μ x = n
 
 /-- The atomizing reading (77) of an atomizer with partitioning function `π` and substance `k`
 holds of what `π` returns for `k`. -/
@@ -104,7 +104,7 @@ theorem measureReading_subset (μ : DimensionedMeasure E D) (k : E → Prop) (n 
 /-- The measure reading with numeral `n` is quantity-uniform under the term's measure, since the
 measure takes the single value `n` on it. -/
 theorem measureReading_quantity_uniform (μ : DimensionedMeasure E D) (k : E → Prop) (n : D) :
-    (μ.apply '' {x | measureReading μ k n x}).Subsingleton := by
+    (⇑μ '' {x | measureReading μ k n x}).Subsingleton := by
   rintro _ ⟨_, hx, rfl⟩ _ ⟨_, hy, rfl⟩
   exact hx.2.trans hy.2.symm
 

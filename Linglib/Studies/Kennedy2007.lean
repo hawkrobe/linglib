@@ -162,12 +162,12 @@ open English.Adjectives in
 *??completely wet*, *completely dry* but *??slightly dry*, *slightly bent* but *??fully bent*,
 *fully straight*, and nothing on the open height scale. -/
 theorem fragment_pairs_table61 :
-    Licenses .maximizer full.scaleType ∧ Licenses .maximizer empty.scaleType ∧
-    Licenses .minimizer wet.scaleType ∧ ¬ Licenses .maximizer wet.scaleType ∧
-    Licenses .maximizer dry.scaleType ∧ ¬ Licenses .minimizer dry.scaleType ∧
-    Licenses .minimizer bent.scaleType ∧ ¬ Licenses .maximizer bent.scaleType ∧
-    Licenses .maximizer straight.scaleType ∧
-    ¬ Licenses .maximizer tall.scaleType ∧ ¬ Licenses .minimizer short.scaleType := by
+    Licenses .maximizer full.boundedness ∧ Licenses .maximizer empty.boundedness ∧
+    Licenses .minimizer wet.boundedness ∧ ¬ Licenses .maximizer wet.boundedness ∧
+    Licenses .maximizer dry.boundedness ∧ ¬ Licenses .minimizer dry.boundedness ∧
+    Licenses .minimizer bent.boundedness ∧ ¬ Licenses .maximizer bent.boundedness ∧
+    Licenses .maximizer straight.boundedness ∧
+    ¬ Licenses .maximizer tall.boundedness ∧ ¬ Licenses .minimizer short.boundedness := by
   decide
 
 /-! ### Interpretive Economy (§4.2–§4.3) -/

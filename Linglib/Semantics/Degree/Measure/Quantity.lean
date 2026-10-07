@@ -88,7 +88,7 @@ def DimensionedMeasure.quantity (μ : DimensionedMeasure E K) (x : E) : Quantity
 /-- Measuring `n` units is having the quantity `n` times the unit. -/
 theorem DimensionedMeasure.quantity_eq_pure_mul_unit_iff [MulOneClass K]
     (μ : DimensionedMeasure E K) (n : K) (x : E) :
-    μ.quantity x = .pure n * .unit μ.dimension ↔ μ.apply x = n := by
+    μ.quantity x = .pure n * .unit μ.dimension ↔ μ x = n := by
   simp [Prod.ext_iff]
 
 end Degree

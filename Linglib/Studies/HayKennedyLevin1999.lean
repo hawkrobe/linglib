@@ -278,7 +278,7 @@ def openRange : List GradableAdjective :=
 /-- The fragment's adjectives agree with the paper's classification, a closed-range adjective
     having a scale with a maximum and an open-range one a scale without. -/
 theorem fragment_range :
-    (∀ a ∈ closedRange, a.scaleType.HasMax) ∧ ∀ a ∈ openRange, ¬ a.scaleType.HasMax := by
+    (∀ a ∈ closedRange, a.boundedness.HasMax) ∧ ∀ a ∈ openRange, ¬ a.boundedness.HasMax := by
   decide
 
 /-- The fragment's degree achievements measure change on scales of the same kind as their base
@@ -296,7 +296,7 @@ theorem defaultTelicity_iff (d : ScalarDimension) (i top : ℚ) (hi : i < top) :
     d.defaultTelicity = .telic ↔
       HasTelic ⟨if d.boundedness.HasMax then some top else none, none⟩ i .none := by
   rw [ScalarDimension.defaultTelicity_telic_iff_hasGreatest,
-    ScalarDimension.hasGreatest_degree_iff]
+    ScalarDimension.hasGreatest_scale_iff]
   by_cases hmax : d.boundedness.HasMax
   · rw [ite_eq_left hmax]
     exact iff_of_true hmax (hasTelic_of_bound rfl hi)
