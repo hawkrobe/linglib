@@ -1,51 +1,63 @@
 module
 
 public import Linglib.Fragments.Guebie.ParticleVerbs
-public import Linglib.Studies.Casali2003
+public import Linglib.Phonology.Harmony.Basic
+public import Linglib.Phonology.OptimalityTheory.Correspondence
 public import Linglib.Phonology.OptimalityTheory.Tableau
 public import Linglib.Syntax.Minimalist.Linearization.Cyclic
+public import Linglib.Syntax.Minimalist.Linearization.Replay
 public import Linglib.Syntax.Minimalist.Movement.Remnant
-public import Linglib.Syntax.Minimalist.SyntacticObject.Derivation
 public import Linglib.Data.Examples.SandeClemDabkowski2026
+public import Mathlib.Data.List.Sections
 
 /-!
-# Sande, Clem & Dąbkowski (2026): Discontinuous Vowel Harmony in Guébie
+# Sande, Clem and Dąbkowski (2026): Discontinuous vowel harmony in Guébie: Cyclic interleaving of syntax and phonology
 
-This file formalizes the paper's account of discontinuous ATR harmony in Guébie particle-verb
-focus constructions, where a fronted particle harmonizes with the clause-final verb across the
-intervening subject, auxiliary and object. The syntax is remnant-VP fronting after
-[koopman-1997]: the object shifts out of the VP, the verb raises to T unless an auxiliary
-occupies T, in which case it stays in v, and the remnant VP fronts to Spec,CP, so two
-parameters derive the four attested orders (`ClauseConfig`, `WordOrder`). Harmony is local at
-the spell-out of the vP phase, which contains the particle and, exactly when an auxiliary blocks
-verb raising, the verb, and the particle keeps the value it received when the remnant later
-fronts (`ClauseConfig.harmony`, `surfaceATR`); this derives the paper's correlation between
-harmony and the verb's spell-out position (`harmony_eq_hasAux`) and the surface discontinuity
-(`discontinuous_harmony`). The local harmony is the ranking of [sande-2019] in Agreement by
-Projection ([hansson-2014]) (`optimal_eq_surfaceATR`), the fronting is narrow-syntactic remnant
-movement on the Minimalist carrier (`guebie_remnant_fronting`), and spelled-out material stays
-accessible to later movement, as Cyclic Linearization ([fox-pesetsky-2005]) allows for the
-leftmost element of a phase (`all_clauses_consistent`). The rows are the paper's examples, and
-their particle forms and word orders follow from the two parameters (`harmony_rows`,
-`order_rows`). Wolof relative clauses ([sy-2005], [martinovic-2019]) show the same profile with
-the trigger rather than the target moving (`wolof_rows`, `wolof_profile`). Guébie's ten
-vowels make a five-height system in [casali-2003]'s typology, so its System-Dependent [ATR]
-Dominance specifies [+ATR]; the particle's [−ATR] default outside harmony is then the weak
-assimilatory [+ATR] dominance that account predicts, and its surface value is what the
-root-control ranking there derives (`casali_weakAssimilatory`, `surfaceATR_eq_casali`).
+This file formalizes the account of discontinuous harmony in [sande-clem-dabkowski-2026]. In
+Guébie verb focus the particle of a particle verb fronts, yet it agrees in [ATR] with the
+clause-final verb across the subject, the auxiliary and the object. The paper derives this from
+local harmony followed by movement. The vP is spelled out when C merges, and it then holds the
+particle and, exactly when an auxiliary keeps the verb from raising to T, the verb; harmony applies
+there, and the particle keeps its value when the remnant VP that contains it fronts, as in
+Koopman's analysis of predicate clefts.
+
+Both Spell-outs are computed from the two parameters of the analysis, whether T holds an
+auxiliary and whether the remnant VP fronts, and each clause's Minimalist derivation produces the
+same word order. Harmony then coincides with the verb's position in v, and under Fox and
+Pesetsky's cyclic linearization, which the paper adopts, nothing that ends up between the fronted
+particle and the verb shares in it. The Wolof relative clauses described by Sy and by Martinović
+show the same profile, the trigger moving instead of the target.
+
+## Main statements
+
+* `SandeClemDabkowski2026.Clause.harmony_iff_hasAux`: harmony applies exactly when an auxiliary
+  keeps the verb in v (44).
+* `SandeClemDabkowski2026.Clause.notMem_vP_of_between`: what stands between the particle and the
+  verb on the surface was not spelled out with them (41).
+* `SandeClemDabkowski2026.Clause.surface_derivation`: the derivations produce the four word
+  orders.
+* `SandeClemDabkowski2026.Clause.vPTableau_optimal`: the vP tableau gives the particle the value
+  harmony assigns.
 
 ## Implementation notes
 
-Spell-out snapshots are lists of terminal labels, and the rows omit the paper's tone numerals.
-The paper deems the implementation of local harmony inessential, so the tableau renders only
-the ranking of its two constraints. The verb-doubling orders of plain verb focus, the
-diagnostics of successive cyclicity and island sensitivity, and the Atchan nasal harmony the
-paper leaves open are not formalized.
+* Spell-outs are lists of overt terminals, the vP's read off the bracketings (45) and (48); the
+  rows omit the tone numerals.
+* The tableau ranks Sande's two constraints, ATRHARM being Agreement by Projection in Hansson's
+  sense, and holds the root fixed as root control requires; with the root free the two constraints
+  alone would change the root (`optimal_rootFree`).
+* The verb adjoins to the head-final v by Internal Merge on the right, which merges it with the
+  whole vP rather than forming a complex head.
+
+## TODO
+
+* Read the vP Spell-out off the derivation at the merge of C instead of the bracketing.
+* The verb-doubling orders of plain verb focus, the island and successive-cyclicity diagnostics of
+  §3, and the Atchan nasal harmony the paper leaves open.
 
 ## References
 
 * [sande-clem-dabkowski-2026]
-* [casali-2003]
 * [koopman-1997]
 * [fox-pesetsky-2005]
 * [sande-2019]
@@ -58,247 +70,325 @@ paper leaves open are not formalized.
 
 namespace SandeClemDabkowski2026
 
-open List
-open Minimalist.Linearization (Consistent)
-open OptimalityTheory (Constraint)
-open OptimalityTheory
+open List Minimalist.Linearization OptimalityTheory Guebie
 
-/-- The particle's lexical [ATR] value (`true` = [+ATR]), surfacing when no harmony trigger is
-local; the model is the particle /jɔkʊ/ of the fragment. -/
-def particleDefaultATR : Bool := Guebie.jOkU.atr
+/-! ### Predicate fronting and its two Spell-outs -/
 
-/-! ### The two parameters of predicate fronting -/
+/-- A terminal is an overt word of a particle-verb clause. -/
+inductive Terminal
+  | particle
+  | subject
+  | aux
+  | verb
+  | object
+  deriving DecidableEq, Repr, Fintype
 
-/-- The two parameters of the predicate-fronting analysis: an auxiliary in T blocks verb
-raising, and the remnant VP containing the particle may front to Spec,CP. -/
-structure ClauseConfig where
+/-- A clause is fixed by the two parameters of predicate fronting, whether an auxiliary in T stops
+the verb in v and whether focus fronts the remnant VP to Spec,CP. -/
+structure Clause where
   hasAux : Bool
   fronted : Bool
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
-/-- The verb stays in v, inside the vP spell-out, exactly when an auxiliary occupies T. -/
-def ClauseConfig.verbInVP (c : ClauseConfig) : Bool := c.hasAux
+/-- The remnant VP holds only the particle, the object having shifted out and the verb having
+raised to v. -/
+def remnantVP : List Terminal := [.particle]
 
-/-- The overt terminals spelled out within vP: the particle, and the verb when it has not
-raised; the object has shifted out. -/
-def ClauseConfig.vPSpellOut (c : ClauseConfig) : List String :=
-  "Part" :: if c.verbInVP then ["V"] else []
+namespace Clause
 
-/-- The surface clause: the fronted particle, the subject, the auxiliary or raised verb, the
-object, the in-situ particle, and the clause-final verb. -/
-def ClauseConfig.surfaceOrder (c : ClauseConfig) : List String :=
-  (if c.fronted then ["Part"] else []) ++ ["S"]
-    ++ (if c.hasAux then ["Aux"] else ["V"]) ++ ["O"]
-    ++ (if c.fronted then [] else ["Part"])
-    ++ (if c.hasAux then ["V"] else [])
+variable (c : Clause)
 
-/-- The two-phase derivation: the vP spell-out, then the surface clause. -/
-def ClauseConfig.derivation (c : ClauseConfig) : List (List String) :=
-  [c.vPSpellOut, c.surfaceOrder]
+/-- The verb sits head-finally in v when an auxiliary in T stops it there. -/
+def verbInV : List Terminal := if c.hasAux then [.verb] else []
 
-/-- The four attested word orders. -/
-inductive WordOrder where
-  | SVOPart
-  | SAuxOPartV
-  | PartSVO
-  | PartSAuxOV
-  deriving DecidableEq, Repr
+/-- The vP Spell-out (45), (48) holds the phase head v and its complement when C merges. -/
+def vP : List Terminal := remnantVP ++ c.verbInV
 
-/-- The parameter setting behind each order. -/
-def WordOrder.config : WordOrder → ClauseConfig
-  | .SVOPart => ⟨false, false⟩
-  | .SAuxOPartV => ⟨true, false⟩
-  | .PartSVO => ⟨false, true⟩
-  | .PartSAuxOV => ⟨true, true⟩
+/-- The subject in Spec,TP precedes the auxiliary or raised verb in T and the shifted object. -/
+def middle : List Terminal := [.subject, if c.hasAux then .aux else .verb, .object]
 
-/-- Every parameter setting linearizes consistently across the two phases. -/
-theorem all_clauses_consistent :
-    ∀ aux fronted : Bool, Consistent (ClauseConfig.derivation ⟨aux, fronted⟩) := by
+/-- In the CP Spell-out the remnant VP stays between the object and v, or fronts to Spec,CP. -/
+def cP : List Terminal :=
+  if c.fronted then remnantVP ++ c.middle ++ c.verbInV else c.middle ++ remnantVP ++ c.verbInV
+
+/-- A clause is spelled out at vP and at CP. -/
+def phases : List (List Terminal) := [c.vP, c.cP]
+
+theorem vP_sublist_cP : c.vP <+ c.cP := by
+  grind [vP, cP]
+
+theorem cP_nodup : c.cP.Nodup := by
+  obtain ⟨_ | _, _ | _⟩ := c <;> decide
+
+/-- Every clause linearizes, since the particle is the left edge of the vP Spell-out and its
+fronting reverses no ordering statement (§6.2). -/
+theorem consistent : Consistent c.phases :=
+  consistent_of_forall_sublist (by simpa [phases] using c.vP_sublist_cP) c.cP_nodup
+
+/-- Harmony applies when the verb is spelled out with the particle (§6.1). -/
+def Harmony : Prop := Terminal.verb ∈ c.vP
+
+instance : Decidable c.Harmony := inferInstanceAs (Decidable (_ ∈ _))
+
+/-- Harmony applies exactly when an auxiliary keeps the verb in v, fronted or not (44). -/
+theorem harmony_iff_hasAux : c.Harmony ↔ c.hasAux = true := by
+  grind [Harmony, vP, verbInV, remnantVP]
+
+/-- Under harmony the particle and the verb are adjacent in the vP Spell-out. -/
+theorem isInfix_vP (h : c.Harmony) : [.particle, .verb] <:+: c.vP := by
+  grind [Harmony, vP, verbInV, remnantVP]
+
+/-- What stands between the particle and the verb on the surface was not spelled out with them,
+so the harmony of the vP does not reach it (41). -/
+theorem notMem_vP_of_between (h : c.Harmony) {x : Terminal} (h₁ : [.particle, x] <+ c.cP)
+    (h₂ : [x, .verb] <+ c.cP) : x ∉ c.vP :=
+  c.consistent.notMem_of_isInfix (by simp [phases]) (by simp [phases]) (c.isInfix_vP h) h₁ h₂
+
+end Clause
+
+/-- Object shift lets the particle front (§6.2). Had the object stayed in the VP, spelled out
+before the particle, fronting the particle past it would reverse an ordering statement. -/
+theorem not_consistent_without_objectShift :
+    ¬ Consistent [.object :: (Clause.mk true true).vP, (Clause.mk true true).cP] :=
+  not_consistent_of_pair .object .particle
+    ⟨.object :: (Clause.mk true true).vP, by simp, by decide⟩
+    ⟨(Clause.mk true true).cP, by simp, by decide⟩
+
+/-! ### Discontinuous harmony (§7) -/
+
+/-- Harmony is discontinuous when its trigger and target are adjacent at one Spell-out and
+separated at another, in a derivation that linearizes. -/
+structure Discontinuous {α : Type*} (phases : List (List α)) (a b : α) : Prop where
+  consistent : Consistent phases
+  adjacent : ∃ p ∈ phases, [a, b] <:+: p
+  separated : ∃ q ∈ phases, ∃ x, [a, x] <+ q ∧ [x, b] <+ q
+
+/-- Under discontinuous harmony some Spell-out puts between the two terminals material that the
+Spell-out where they were adjacent did not hold, so they did not stay together (§7). -/
+theorem Discontinuous.exists_notMem {α : Type*} {phases : List (List α)} {a b : α}
+    (h : Discontinuous phases a b) :
+    ∃ p ∈ phases, [a, b] <:+: p ∧ ∃ q ∈ phases, ∃ x ∈ q, x ∉ p := by
+  obtain ⟨p, hp, hab⟩ := h.adjacent
+  obtain ⟨q, hq, x, h₁, h₂⟩ := h.separated
+  exact ⟨p, hp, hab, q, hq, x, h₁.subset (by simp), h.consistent.notMem_of_isInfix hp hq hab h₁ h₂⟩
+
+/-- The fronted clause with an auxiliary is discontinuous harmony, the target moving. -/
+theorem discontinuous_partSAuxOV :
+    Discontinuous (Clause.mk true true).phases .particle .verb where
+  consistent := Clause.consistent _
+  adjacent := ⟨(Clause.mk true true).vP, by simp [Clause.phases], Clause.isInfix_vP _ (by decide)⟩
+  separated := ⟨(Clause.mk true true).cP, by simp [Clause.phases], .subject, by decide, by decide⟩
+
+/-! ### Harmony within the vP Spell-out -/
+
+/-- Every vowel takes part in [ATR] harmony (§5.1). -/
+def atrPattern : Phonology.Harmony.Pattern Vowel Bool where
+  value v := some v.atr
+  participation _ := .participating
+
+/-- ATRHARM (47) is an Agreement by Projection constraint, violated once by an output in which a
+vowel precedes a vowel of the other [ATR] value on the tier of vowels. -/
+def atrHarm : Constraint (List Vowel) := .binary fun out ↦ ¬ atrPattern.Harmonic out
+
+/-- IDENT-IO(ATR) (46) is violated once by each vowel whose [ATR] value departs from its
+input. -/
+def identIO (input : List Vowel) : Constraint (List Vowel) := fun out ↦
+  (Correspondence.parallel input out).identViolFeature Vowel.atr .lhs .rhs
+
+/-- A revaluation of a string of vowels gives each vowel either [ATR] value. -/
+def revaluations (l : List Vowel) : List (List Vowel) :=
+  (l.map fun v ↦ [v.withATR true, v.withATR false]).sections
+
+theorem revaluations_ne_nil (l : List Vowel) : revaluations l ≠ [] :=
+  ne_nil_of_mem (a := l.map (·.withATR true)) <| mem_sections.2 <| by
+    simp [forall₂_map_left_iff, forall₂_map_right_iff, forall₂_same]
+
+/-- The vP tableau ranks ATRHARM above IDENT-IO(ATR) over every revaluation of the particle,
+followed by the root vowels the vP Spell-out holds. -/
+def vPTableau (part : Morpheme) (root : List Vowel) : Tableau (List Vowel) 2 :=
+  Tableau.ofRanking ((revaluations part.vowels).map (· ++ root))
+    [atrHarm, identIO (part.vowels ++ root)] (by simpa using revaluations_ne_nil part.vowels)
+
+/-- Over the particle verbs of (10)–(12), the vP tableau's unique winner gives the particle the
+root's value when the root is in the vP Spell-out, and keeps it faithful when it is not. -/
+theorem vPTableau_optimal : ∀ pv ∈ particleVerbs,
+    (vPTableau pv.particle pv.verb.vowels).optimal =
+        {pv.particle.vowels.map (·.withATR pv.verb.atr) ++ pv.verb.vowels} ∧
+      (vPTableau pv.particle []).optimal = {pv.particle.vowels} := by
+  decide +kernel
+
+namespace Clause
+
+variable (c : Clause) (part verb : Morpheme)
+
+/-- The vP Spell-out holds the verb's vowels under harmony and no root vowels otherwise. -/
+def rootVowels : List Vowel := if c.Harmony then verb.vowels else []
+
+/-- The particle surfaces with the root's [ATR] value under harmony and with its own otherwise
+((12), (13)). -/
+def particleATR : Bool := if c.Harmony then verb.atr else part.atr
+
+/-- In every clause the vP tableau gives each particle vowel the value harmony assigns. -/
+theorem vPTableau_optimal {pv : ParticleVerb} (hpv : pv ∈ particleVerbs) :
+    (vPTableau pv.particle (c.rootVowels pv.verb)).optimal =
+      {pv.particle.vowels.map (·.withATR (c.particleATR pv.particle pv.verb)) ++
+        c.rootVowels pv.verb} := by
+  obtain ⟨h₁, h₂⟩ := SandeClemDabkowski2026.vPTableau_optimal pv hpv
+  unfold rootVowels particleATR
+  split
+  · exact h₁
+  · rw [h₂, ((particleVerbs_ATRUniform pv hpv).1).map_withATR, append_nil]
+
+end Clause
+
+/-- This tableau ranks ATRHARM above IDENT-IO(ATR) over every revaluation of an input, the root's
+vowels included. -/
+def rootFreeTableau (input : List Vowel) : Tableau (List Vowel) 2 :=
+  Tableau.ofRanking (revaluations input) [atrHarm, identIO input] (revaluations_ne_nil input)
+
+/-- With the root free, the two constraints alone repair /jɔkʊ-ni/ at the root, against (12a),
+since one changed vowel beats two, and they leave /mɛ-nu/ undecided, against (10e). -/
+theorem optimal_rootFree :
+    (rootFreeTableau (jOkU.vowels ++ ni.vowels)).optimal = {[.O, .U, .I]} ∧
+      (rootFreeTableau (mE.vowels ++ nu.vowels)).optimal = {[.e, .u], [.E, .U]} := by
   decide
 
-/-- The particle can front because it is the leftmost overt element of the vP at spell-out: a
-vP that spelled it out after the verb could not front it without an ordering conflict. -/
-theorem nonedge_particle_fronting_crashes :
-    ¬ Consistent [["V", "Part"], ["Part", "S", "Aux", "O", "V"]] := by
-  decide
+/-! ### The derivations -/
 
-/-! ### Harmony at the spell-out of vP -/
+open Minimalist (LIToken PlanarSyntacticObject)
+open Minimalist.SyntacticObject (Derivation)
 
-/-- Harmony applies exactly when the trigger verb is spelled out within vP. -/
-def ClauseConfig.harmony (c : ClauseConfig) : Bool := c.vPSpellOut.contains "V"
+/-- Each terminal spells out its own lexical item. -/
+def Terminal.token : Terminal → LIToken
+  | .particle => ⟨.simple .P [], 1⟩
+  | .subject => ⟨.simple .D [], 2⟩
+  | .aux => ⟨.simple .T [], 3⟩
+  | .verb => ⟨.simple .V [], 4⟩
+  | .object => ⟨.simple .D [], 5⟩
 
-/-- The paper's correlation: harmony iff an auxiliary keeps the verb in vP, whether or not the
-particle fronts. -/
-theorem harmony_eq_hasAux (aux fronted : Bool) :
-    (ClauseConfig.mk aux fronted).harmony = aux := by
-  decide +revert
+/-- A lexical item spells out at most one terminal. -/
+def Terminal.ofToken? (tok : LIToken) : Option Terminal :=
+  [Terminal.particle, .subject, .aux, .verb, .object].find? (·.token = tok)
 
-/-- In the fronted clause with an auxiliary the particle and the verb are not adjacent on the
-surface in either order, yet harmony applies. -/
-theorem discontinuous_harmony :
-    (ClauseConfig.mk true true).harmony = true ∧
-      ¬ (["Part", "V"] <:+: (ClauseConfig.mk true true).surfaceOrder ∨
-        ["V", "Part"] <:+: (ClauseConfig.mk true true).surfaceOrder) := by
-  decide
+/-- The light verb v is silent. -/
+def v₀ : LIToken := ⟨.simple .v [], 6⟩
 
-/-- The particle's surface value: the verb root's under harmony, its lexical default
-otherwise. -/
-def surfaceATR (c : ClauseConfig) (vRoot : Bool) : Bool :=
-  if c.harmony then vRoot else particleDefaultATR
+/-- The T a raised verb adjoins to is silent. -/
+def T₀ : LIToken := ⟨.simple .T [], 7⟩
 
-/-- An output candidate for the particle at vP spell-out: its lexical value, the domain-local
-trigger when the verb is in the domain, and its output value. -/
-structure HarmonyCand where
-  lexical : Bool
-  trigger : Option Bool
-  out : Bool
-  deriving DecidableEq, Repr
+/-- The complementizer C is silent. -/
+def C₀ : LIToken := ⟨.simple .C [], 8⟩
 
-/-- Faithfulness to the input value. -/
-def identIO : Constraint HarmonyCand := Constraint.binary fun c ↦ c.out ≠ c.lexical
+/-- The remnant VP that fronts holds the particle between the traces of the object and the
+verb. -/
+def remnant : PlanarSyntacticObject :=
+  {.traceOf Terminal.object.token, {.leaf Terminal.particle.token, .traceOf Terminal.verb.token}}
 
-/-- Agreement with a domain-local trigger. -/
-def atrHarm : Constraint HarmonyCand := Constraint.binary fun c ↦ ∃ t ∈ c.trigger, t ≠ c.out
+open Minimalist.SyntacticObject (Step leaf)
 
-/-- The domain-local trigger: the verb root's value when the verb is spelled out in vP. -/
-def vPTrigger (c : ClauseConfig) (vRoot : Bool) : Option Bool :=
-  if c.harmony then some vRoot else none
+/-- The vP is built as in (31)–(34). The particle and the object merge with the verb in a
+head-final VP, v merges on its right and the verb adjoins to v on the right, the subject merges in
+Spec,vP, and the object shifts above the vP. -/
+def vPSteps : List Step :=
+  [.em .left (leaf Terminal.particle.token), .em .left (leaf Terminal.object.token),
+    .em .right (leaf v₀), .im (leaf Terminal.verb.token) .right,
+    .em .left (leaf Terminal.subject.token), .im (leaf Terminal.object.token)]
 
-/-- The vP-domain tableau over the two output values, harmony ranked above faithfulness. -/
-def harmonyTableau (lex : Bool) (trig : Option Bool) : Tableau HarmonyCand 2 :=
-  Tableau.ofRanking [⟨lex, trig, true⟩, ⟨lex, trig, false⟩] [atrHarm, identIO]
-    (List.cons_ne_nil _ _)
+/-- The subject raises to Spec,TP and C merges. -/
+def cSteps : List Step := [.im (leaf Terminal.subject.token), .em .left (leaf C₀)]
 
-/-- The unique winner under the ranking surfaces with exactly the value harmony assigns:
-agreeing when a trigger is local, faithful to the default otherwise. -/
-theorem optimal_eq_surfaceATR (aux fronted : Bool) (vRoot : Bool) :
-    (harmonyTableau particleDefaultATR (vPTrigger ⟨aux, fronted⟩ vRoot)).optimal
-      = {⟨particleDefaultATR, vPTrigger ⟨aux, fronted⟩ vRoot,
-          surfaceATR ⟨aux, fronted⟩ vRoot⟩} := by
-  cases aux <;> cases fronted <;> cases vRoot <;> decide
+namespace Clause
 
-/-- Guébie's inventory is a five-height system, whose System-Dependent [ATR] Dominance
-specifies [+ATR]; the particle's [−ATR] default outside harmony is the weak assimilatory
-[+ATR] dominance [casali-2003] predicts for harmonizing affixes in non-harmonic contexts. -/
-theorem casali_weakAssimilatory :
-    Casali2003.inventoryType? Guebie.inventory = some .fiveHeight ∧
-      particleDefaultATR = !Casali2003.InventoryType.fiveHeight.specifiedValue := by
-  decide
+variable (c : Clause)
 
-/-- The particle's surface value is what [casali-2003]'s root-control ranking derives for a
-five-height language: the root's value under harmony, the unspecified value in isolation
-(`Casali2003.rootControl_optimal`, `Casali2003.isolated_optimal`). -/
-theorem surfaceATR_eq_casali (c : ClauseConfig) (vRoot : Bool) :
-    surfaceATR c vRoot =
-      if c.harmony then vRoot else !Casali2003.InventoryType.fiveHeight.specifiedValue := by
-  obtain ⟨aux, fronted⟩ := c
-  cases aux <;> cases fronted <;> cases vRoot <;> decide
+/-- Either the auxiliary merges in T, or T merges and the verb raises to it. -/
+def tSteps : List Step :=
+  if c.hasAux then [.em .left (leaf Terminal.aux.token)]
+  else [.em .left (leaf T₀), .im (leaf Terminal.verb.token)]
 
-/-! ### Predicate fronting is narrow-syntactic movement -/
+/-- Focus fronts the remnant VP to Spec,CP. -/
+def focusSteps : List Step := if c.fronted then [.im remnant.toSyntacticObject] else []
 
-open Minimalist (SyntacticObject LIToken PlanarSyntacticObject)
-open Minimalist.SyntacticObject
+/-- A clause's derivation starts from the verb. -/
+def derivation : Derivation :=
+  ⟨leaf Terminal.verb.token, vPSteps ++ c.tSteps ++ cSteps ++ c.focusSteps⟩
 
-def V₀ : LIToken := ⟨.simple .V [], 1⟩
-def Part₀ : LIToken := ⟨.simple .P [], 2⟩
-def T₀ : LIToken := ⟨.simple .T [], 3⟩
-def C₀ : LIToken := ⟨.simple .C [], 4⟩
+/-- The surface order of a clause's derivation is its CP Spell-out. -/
+theorem surface_derivation : c.derivation.surfaceTokens.filterMap Terminal.ofToken? = c.cP := by
+  obtain ⟨_ | _, _ | _⟩ := c <;> decide
 
-/-- The remnant VP: the particle over the verb's trace. -/
-def remnantVP : PlanarSyntacticObject :=
-  {PlanarSyntacticObject.leaf Part₀, PlanarSyntacticObject.traceOf V₀}
+/-- Focus fronting is remnant movement, the fronted VP holding the trace of the verb (§4.1). -/
+theorem isRemnantStep_derivation (h : c.fronted = true) :
+    c.derivation.IsRemnantStep (c.derivation.length - 1) := by
+  obtain ⟨_ | _, _ | _⟩ := c <;> simp at h <;> decide
 
-/-- The derivation of a fronted clause: the verb merges with the particle and raises to T, and
-the remnant VP fronts to Spec,CP. -/
-def guebieFronting : Derivation :=
-  ⟨V₀, [.em .left Part₀, .em .left T₀, .im V₀, .em .left C₀, .im remnantVP]⟩
+end Clause
 
-/-- The verb is a mover and the VP fronts as a remnant, so the fronting configuration is built
-in the narrow syntax. -/
-theorem guebie_remnant_fronting :
-    (V₀ : SyntacticObject) ∈ guebieFronting.movedItems ∧ guebieFronting.IsRemnantStep 4 := by
-  decide
+/-! ### The Guébie examples -/
 
-/-! ### The paper's examples -/
+/-- `rowsIn lang` lists the rows in the language `lang`. -/
+def rowsIn (lang : String) : List Datum := Examples.all.filter (·.language == lang)
 
-def orders : List (String × WordOrder) :=
-  [("SVOPart", .SVOPart), ("SAuxOPartV", .SAuxOPartV), ("PartSVO", .PartSVO),
-    ("PartSAuxOV", .PartSAuxOV)]
+def patterns : List (String × List Terminal) :=
+  [("S Aux O Part V", [.subject, .aux, .object, .particle, .verb]),
+    ("S V O Part", [.subject, .verb, .object, .particle]),
+    ("Part S V O", [.particle, .subject, .verb, .object]),
+    ("Part S Aux O V", [.particle, .subject, .aux, .object, .verb]),
+    ("S Part V O", [.subject, .particle, .verb, .object]),
+    ("Part V S V O", [.particle, .verb, .subject, .verb, .object]),
+    ("V S V O Part", [.verb, .subject, .verb, .object, .particle]),
+    ("V S O Part", [.verb, .subject, .object, .particle]),
+    ("Part S V O Part", [.particle, .subject, .verb, .object, .particle])]
 
-def verbs : List (String × Guebie.Morpheme) :=
-  [("ni", Guebie.ni), ("ngwOsa", Guebie.ngwOsa)]
+def verbs : List (String × Morpheme) := [("ni", ni), ("ngwOsa", ngwOsa)]
 
 def atrs : List (String × Bool) := [("plus", true), ("minus", false)]
 
-def patterns : List (String × List String) :=
-  [("S Aux O Part V", ["S", "Aux", "O", "Part", "V"]), ("S V O Part", ["S", "V", "O", "Part"]),
-    ("Part S V O", ["Part", "S", "V", "O"]), ("Part S Aux O V", ["Part", "S", "Aux", "O", "V"]),
-    ("S Part V O", ["S", "Part", "V", "O"]), ("Part V S V O", ["Part", "V", "S", "V", "O"]),
-    ("V S V O Part", ["V", "S", "V", "O", "Part"]), ("V S O Part", ["V", "S", "O", "Part"]),
-    ("Part S V O Part", ["Part", "S", "V", "O", "Part"])]
-
-/-- The rows in a language. -/
-def rowsIn (lang : String) : List Datum := Examples.all.filter (·.language == lang)
-
-/-- The Guébie rows' particles surface with the value harmony assigns from the row's order and
-verb root. -/
-theorem harmony_rows :
-    ∀ x ∈ rowsIn "gabo1234", ∀ o ∈ x.parse? "order" orders, ∀ v ∈ x.parse? "verb" verbs,
-      ∀ a ∈ x.parse? "particleATR" atrs, a = surfaceATR o.config v.atr := by
-  decide +kernel
-
-/-- A Guébie row's word order is acceptable exactly when some parameter setting derives it. -/
+/-- A Guébie row's word order is acceptable exactly when some clause spells it out. -/
 theorem order_rows :
     ∀ x ∈ rowsIn "gabo1234", ∀ p ∈ x.parse? "pattern" patterns,
-      (x.judgment = .acceptable ↔
-        ∃ aux fronted : Bool, (⟨aux, fronted⟩ : ClauseConfig).surfaceOrder = p) := by
+      (x.judgment = .acceptable ↔ ∃ c : Clause, c.cP = p) := by
   decide +kernel
 
-/-! ### The prediction beyond Guébie -/
+/-- In every Guébie row the particle /jɔkʊ/ bears the value of the clause that spells out the
+row's order, and the material the row records between the particle and the verb does not. -/
+theorem harmony_rows :
+    ∀ x ∈ rowsIn "gabo1234", ∀ p ∈ x.parse? "pattern" patterns, ∀ v ∈ x.parse? "verb" verbs,
+      ∀ c : Clause, c.cP = p →
+        (∀ a ∈ x.parse? "particleATR" atrs, a = c.particleATR jOkU v) ∧
+          ∀ i ∈ x.parse? "interveningATR" atrs, i ≠ c.particleATR jOkU v := by
+  decide +kernel
 
-/-- The prediction schema: trigger and target are spelled out together in a low phase, and the
-two-phase derivation linearizes consistently. -/
-def HarmonyProfile (low surface : List String) (trigger target : String) : Prop :=
-  trigger ∈ low ∧ target ∈ low ∧ Consistent [low, surface]
+/-! ### Wolof relative clauses (§7) -/
 
-instance (low surface : List String) (trigger target : String) :
-    Decidable (HarmonyProfile low surface trigger target) := by
-  unfold HarmonyProfile; infer_instance
-
-/-- The fronted clause with an auxiliary instantiates the schema: verb and particle are spelled
-out together in vP, and the surface clause linearizes consistently. -/
-theorem guebie_profile :
-    HarmonyProfile (ClauseConfig.mk true true).vPSpellOut
-      (ClauseConfig.mk true true).surfaceOrder "V" "Part" := by
-  decide
-
-/-- The Wolof shapes: a bare noun and demonstrative, or a relative clause with the head noun
-moved past the stative verb. -/
-inductive WolofShape where
-  | localDP
-  | relClause
+/-- A nominal is an overt word of a Wolof noun phrase. -/
+inductive Nominal
+  | noun
+  | rel
+  | stative
+  | dem
   deriving DecidableEq, Repr
 
-/-- The head noun and the demonstrative are spelled out together at the DP phase in both
-shapes. -/
-def WolofShape.dpSpellOut : WolofShape → List String := λ _ => ["head", "dem"]
+/-- The DP Spell-out (49) holds the head noun and its distal demonstrative. -/
+def dP : List Nominal := [.noun, .dem]
 
-/-- The surface strings of the two shapes. -/
-def WolofShape.surfaceOrder : WolofShape → List String
-  | .localDP => ["head", "dem"]
-  | .relClause => ["head", "rel", "stative", "dem"]
+/-- A relative clause (50) has the head noun at its left edge, then the relativizer, the stative
+verb and the demonstrative. -/
+def relClause : List Nominal := [.noun, .rel, .stative, .dem]
 
-/-- Both Wolof shapes instantiate the schema, with the trigger rather than the target
-moving. -/
-theorem wolof_profile (sh : WolofShape) :
-    HarmonyProfile sh.dpSpellOut sh.surfaceOrder "head" "dem" := by
-  cases sh <;> decide
+def shapes : List (String × List Nominal) := [("localDP", dP), ("relClause", relClause)]
 
-/-- In the Wolof rows the demonstrative bears the head noun's value, whether or not the stative
-verb between them shares it. -/
+/-- The relative clause is discontinuous harmony, the trigger moving. -/
+theorem discontinuous_relClause : Discontinuous [dP, relClause] .noun .dem where
+  consistent := by decide
+  adjacent := ⟨dP, by simp, by simp [dP]⟩
+  separated := ⟨relClause, by simp, .stative, by decide, by decide⟩
+
+/-- Every Wolof row's shape linearizes with the DP Spell-out, and its demonstrative bears the
+head noun's value whatever the stative verb between them bears. -/
 theorem wolof_rows :
-    ∀ x ∈ rowsIn "nucl1347", ∀ h ∈ x.parse? "headATR" atrs, ∀ d ∈ x.parse? "demATR" atrs,
-      d = h := by
+    ∀ x ∈ rowsIn "nucl1347", (∀ s ∈ x.parse? "shape" shapes, Consistent [dP, s]) ∧
+      ∀ h ∈ x.parse? "headATR" atrs, ∀ d ∈ x.parse? "demATR" atrs, d = h := by
   decide +kernel
 
 end SandeClemDabkowski2026

@@ -12,8 +12,8 @@ public import Linglib.Syntax.Minimalist.SyntacticObject.Derivation
 
 [marcolli-chomsky-berwick-2025] §1.12. `SyntacticObject.Derivation.final` is an unordered
 object, so the surface left-to-right order is not recoverable from it, but a `Derivation`
-records the planarization choices: `em .left` and `im` place material on the left edge,
-`em .right` on the right, MCB's externalization section `σ_L` fixed by the derivation rather
+records the planarization choices, each step placing its new daughter on the left or the right
+edge, MCB's externalization section `σ_L` fixed by the derivation rather
 than by a noncanonical choice of representative. `Derivation.externalize?` replays the steps on
 an ordered accumulator, a `PlanarSyntacticObject`, so surface orders `decide`; it is partial by
 design, `none` when a merged item is complex or a mover is absent. Traces are unpronounced,
@@ -26,7 +26,7 @@ harmonic order (`Linearization/Externalization.lean`) and Fox–Pesetsky cyclic 
 
 ## Main definitions
 
-* `Minimalist.PlanarSyntacticObject.moveLeft`, `Minimalist.externStep`,
+* `Minimalist.PlanarSyntacticObject.move`, `Minimalist.externStep`,
   `Minimalist.SyntacticObject.Derivation.externalize?`: the replay.
 * `Minimalist.SyntacticObject.Derivation.surfaceTokens`, `surfaceCats`, `surfacePhon`.
 
@@ -213,24 +213,30 @@ def SyntacticObject.tracePlanar (s : SyntacticObject) : PlanarSyntacticObject :=
 namespace PlanarSyntacticObject
 
 /-- Internal Merge on the ordered accumulator raises the leftmost subtree projecting to `mover`
-    to the left edge, leaving the trace of its head; `none` if absent. -/
-def moveLeft (acc : PlanarSyntacticObject) (mover : SyntacticObject) :
+    to the edge on `side`, leaving the trace of its head; `none` if absent. -/
+def move (side : Side) (acc : PlanarSyntacticObject) (mover : SyntacticObject) :
     Option PlanarSyntacticObject :=
-  (find? mover acc).map fun s => merge s (replaceWhere mover mover.tracePlanar acc)
+  (find? mover acc).map fun s => match side with
+    | .left => merge s (replaceWhere mover mover.tracePlanar acc)
+    | .right => merge (replaceWhere mover mover.tracePlanar acc) s
 
 /-- Internal Merge on the ordered accumulator forgets to Internal Merge on the object. -/
-theorem toSyntacticObject_moveLeft {acc p' : PlanarSyntacticObject} {mover : SyntacticObject}
-    (h : moveLeft acc mover = some p') :
+theorem toSyntacticObject_move {side : Side} {acc p' : PlanarSyntacticObject}
+    {mover : SyntacticObject} (h : move side acc mover = some p') :
     p'.toSyntacticObject = SyntacticObject.merge
       (deleteAccessible mover acc.toSyntacticObject) mover := by
-  unfold moveLeft at h
+  unfold move at h
   rcases hf : find? mover acc with _ | s
   · rw [hf, Option.map_none] at h; exact absurd h (by simp)
   · rw [hf, Option.map_some] at h
     obtain rfl := Option.some.inj h
-    rw [toSyntacticObject_merge, toSyntacticObject_find? hf, toSyntacticObject_replaceWhere,
-      toSyntacticObject_tracePlanar, SyntacticObject.merge_comm]
-    rfl
+    cases side
+    · rw [toSyntacticObject_merge, toSyntacticObject_find? hf, toSyntacticObject_replaceWhere,
+        toSyntacticObject_tracePlanar, SyntacticObject.merge_comm]
+      rfl
+    · rw [toSyntacticObject_merge, toSyntacticObject_find? hf, toSyntacticObject_replaceWhere,
+        toSyntacticObject_tracePlanar]
+      rfl
 
 end PlanarSyntacticObject
 
@@ -240,7 +246,7 @@ def externStep (acc? : Option PlanarSyntacticObject) (step : Step) :
   acc?.bind fun acc => match step with
     | .em .left item => item.toPlanarLeaf?.map (PlanarSyntacticObject.merge · acc)
     | .em .right item => item.toPlanarLeaf?.map (PlanarSyntacticObject.merge acc ·)
-    | .im mover => acc.moveLeft mover
+    | .im mover side => acc.move side mover
 
 namespace SyntacticObject.Derivation
 
@@ -314,9 +320,9 @@ private theorem externStep_toSyntacticObject {acc p' : PlanarSyntacticObject} {s
         obtain rfl := Option.some.inj h
         rw [Step.apply_em_right, PlanarSyntacticObject.toSyntacticObject_merge,
           toPlanarLeaf?_toSyntacticObject hip]
-  | im mover =>
-    change acc.moveLeft mover = some p' at h
-    rw [Step.apply]; exact PlanarSyntacticObject.toSyntacticObject_moveLeft h
+  | im mover side =>
+    change acc.move side mover = some p' at h
+    rw [Step.apply]; exact PlanarSyntacticObject.toSyntacticObject_move h
 
 /-- `none` is absorbing for the replay fold. -/
 private theorem foldl_externStep_none (steps : List Step) :

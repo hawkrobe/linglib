@@ -10,35 +10,34 @@ public import Linglib.Fragments.Guebie.Phonology
 /-!
 # Guébie particle verbs
 
-The particle-verb lexicon of Guébie ([sande-clem-dabkowski-2026] (10)–(12)) over the
-vowels of `Fragments/Guebie/Phonology.lean`. Particle verbs are phrasal
-idioms — a prefixing particle plus a verb, with noncompositional meaning; the
-particle harmonizes with the verb root in ATR when both are spelled out in the
-same phase, and carries its lexical value otherwise.
+A Guébie particle verb is a phrasal idiom of a prefixing particle and a verb, with a meaning that
+is not compositional. This file lists the particle verbs of [sande-clem-dabkowski-2026] over the
+vowels of `Fragments/Guebie/Phonology.lean`; the vowels of a morpheme agree in [ATR].
 
 ## Main definitions
 
-* `Guebie.Morpheme`: a transcription with vowel skeleton; `Morpheme.atr` is its
-  lexical ATR value (morpheme-internal vowels agree, `Morpheme.ATRUniform`).
-* `Guebie.ParticleVerb`, `Guebie.particleVerbs`: the (10) inventory plus the
-  (11)–(12) /jɔkʊ/+/ni/ 'see' pair; `harmonizedParticleATR` is the SAuxOV
-  surface value.
+* `Guebie.Morpheme`, `Guebie.Morpheme.atr`: a morpheme and its lexical [ATR] value.
+* `Guebie.particleVerbs`: the sample (10) with the pairs of (11) and (12).
+
+## References
+
+* [sande-clem-dabkowski-2026]
 -/
 
 @[expose] public section
 
 namespace Guebie
 
-/-- A Guébie morpheme: transcription, vowel skeleton, optional gloss. -/
+/-- A Guébie morpheme has a transcription, a vowel skeleton and an optional gloss. -/
 structure Morpheme where
   form   : String
   vowels : List Vowel
   gloss  : Option String := none
   deriving DecidableEq, Repr
 
-/-- The lexical ATR value: the value of the morpheme's (agreeing) vowels. The
-    rare vowelless morphemes are treated as `[−ATR]`; they neither trigger nor
-    block (kɔ-ɲ 'give' surfaces −ATR, (10)). -/
+/-- A morpheme's lexical [ATR] value is the value of its agreeing vowels. The rare vowelless
+morphemes count as [−ATR] and neither trigger nor block harmony (kɔ-ɲ 'give' surfaces −ATR,
+(10)). -/
 def Morpheme.atr (m : Morpheme) : Bool :=
   (m.vowels.head?.map Vowel.atr).getD false
 
@@ -48,6 +47,12 @@ def Morpheme.ATRUniform (m : Morpheme) : Prop :=
 
 instance (m : Morpheme) : Decidable m.ATRUniform := by
   unfold Morpheme.ATRUniform; infer_instance
+
+/-- Giving an ATR-uniform morpheme's vowels its own value changes nothing. -/
+theorem Morpheme.ATRUniform.map_withATR {m : Morpheme} (h : m.ATRUniform) :
+    m.vowels.map (·.withATR m.atr) = m.vowels :=
+  (List.map_congr_left (g := id) fun v hv ↦ by rw [← h v hv, Vowel.withATR_atr, id]).trans
+    (List.map_id _)
 
 /-! ### Particles ([sande-clem-dabkowski-2026] (10)–(12))
 
@@ -68,7 +73,7 @@ def salI : Morpheme := ⟨"salɪ", [.a, .I], none⟩
 def nu : Morpheme := ⟨"nu", [.u], some "hear"⟩
 def silije : Morpheme := ⟨"silije", [.i, .i, .e], none⟩
 def djE : Morpheme := ⟨"ɟɛ", [.E], none⟩
-def pulo : Morpheme := ⟨"pulo", [.u, .o], some "be fast"⟩
+def pUlU : Morpheme := ⟨"pʊlʊ", [.U, .U], some "be fast"⟩
 def ny : Morpheme := ⟨"ɲ", [], none⟩
 def ggO : Morpheme := ⟨"ggɔ", [.O], none⟩
 def wa : Morpheme := ⟨"wa", [.a], none⟩
@@ -77,36 +82,25 @@ def ngwOsa : Morpheme := ⟨"ŋwɔsa", [.O, .a], some "scrape"⟩
 
 /-! ### Particle verbs -/
 
-/-- A particle-verb pair: a phrasal idiom with noncompositional meaning
-    ([sande-clem-dabkowski-2026] (10)). -/
+/-- A particle verb pairs a particle with a verb in a phrasal idiom
+([sande-clem-dabkowski-2026] (10)). -/
 structure ParticleVerb where
   particle : Morpheme
   verb     : Morpheme
   gloss    : String
   deriving DecidableEq, Repr
 
-/-- The particle's surface ATR in SAuxOV contexts: the verb root's value
-    ([sande-clem-dabkowski-2026] (12)). -/
-def ParticleVerb.harmonizedParticleATR (pv : ParticleVerb) : Bool :=
-  pv.verb.atr
-
 /-- The (10) inventory, plus the (11)–(12) /jɔkʊ/+/ni/ and /jɔkʊ/+/ŋwɔsa/ pairs. -/
 def particleVerbs : List ParticleVerb :=
   [⟨mE, tE, "be strong"⟩, ⟨mE, trO, "be long"⟩, ⟨mE, para, "enter"⟩,
    ⟨mE, salI, "tell"⟩, ⟨mE, nu, "understand"⟩,
    ⟨kO, silije, "straighten"⟩, ⟨kO, trO, "be tall"⟩, ⟨kO, salI, "diminish"⟩,
-   ⟨kO, djE, "take"⟩, ⟨kO, pulo, "hurry"⟩, ⟨kO, ny, "give"⟩,
+   ⟨kO, djE, "take"⟩, ⟨kO, pUlU, "hurry"⟩, ⟨kO, ny, "give"⟩,
    ⟨dakO, ggO, "move"⟩, ⟨dakO, wa, "hide"⟩,
    ⟨jOkU, ni, "see"⟩, ⟨jOkU, ngwOsa, "scrape"⟩]
 
 /-- Every morpheme in the lexicon is ATR-uniform. -/
 theorem particleVerbs_ATRUniform :
     ∀ pv ∈ particleVerbs, pv.particle.ATRUniform ∧ pv.verb.ATRUniform := by decide
-
-/-- The (11)–(12) alternation: −ATR /jɔkʊ/ surfaces +ATR ([joku]) under harmony
-    with the +ATR root /ni/ 'see'. -/
-theorem joku_alternation :
-    jOkU.atr = false ∧ (ParticleVerb.mk jOkU ni "see").harmonizedParticleATR = true := by
-  decide
 
 end Guebie

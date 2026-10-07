@@ -24,8 +24,10 @@ A derivation is its list of phase snapshots. A snapshot contributes the ordering
 irreflexivity of this candidate order, so the crash condition is exactly that Spell-out induces a
 strict order (`consistent_iff_isStrictOrder`), equivalently that some duplicate-free string has
 every snapshot as a sub-order (`consistent_iff_exists_linearization`): the derivation has a PF
-string. Order Preservation is monotonicity (`SpelloutOrder.mono`), not an axiom; the order reads
-only the set of snapshots (`spelloutOrder_perm`); and `Consistent` decides on concrete data.
+string. Order Preservation is monotonicity (`SpelloutOrder.mono`), not an axiom; it keeps
+adjacency too, since whatever a later Spell-out places between two terminals adjacent at an earlier
+one was not spelled out with them (`Consistent.notMem_of_isInfix`); the order reads only the set of
+snapshots (`spelloutOrder_perm`); and `Consistent` decides on concrete data.
 
 ## Main results
 
@@ -45,19 +47,19 @@ namespace Minimalist.Linearization
 
 open List
 
-variable {α : Type*} {phases ps qs : List (List α)} {p : List α} {a b : α}
+variable {α : Type*} {phases ps qs : List (List α)} {p q : List α} {a b c : α}
 
-/-- An ordering statement `a < b` established at some Spell-out: the pair `[a, b]` is a
-sub-order of a phase snapshot ([fox-pesetsky-2005] (10), (52)). -/
+/-- An ordering statement `a < b` is established when the pair `[a, b]` is a sub-order of some
+phase snapshot ([fox-pesetsky-2005] (10), (52)). -/
 def Statement (phases : List (List α)) (a b : α) : Prop := ∃ p ∈ phases, [a, b] <+ p
 
-/-- The candidate order induced by a derivation: the transitive closure of its ordering
+/-- The candidate order induced by a derivation is the transitive closure of its ordering
 statements. -/
 def SpelloutOrder (phases : List (List α)) : α → α → Prop :=
   Relation.TransGen (Statement phases)
 
-/-- The derivation linearizes: the candidate order is irreflexive, so with transitivity free it
-is a strict order with no ordering cycle of any length ([fox-pesetsky-2005]'s convergence
+/-- A derivation linearizes when its candidate order is irreflexive, so that, transitivity being
+free, it is a strict order with no ordering cycle of any length ([fox-pesetsky-2005]'s convergence
 condition). -/
 def Consistent (phases : List (List α)) : Prop := ∀ a, ¬ SpelloutOrder phases a a
 
@@ -69,7 +71,7 @@ theorem consistent_iff_isStrictOrder :
   ⟨fun h ↦ { irrefl := h, trans := fun _ _ _ ↦ Relation.TransGen.trans },
    fun h ↦ h.toIrrefl.irrefl⟩
 
-/-- Order Preservation ((52)): ordering statements are never deleted, so a larger derivation
+/-- By Order Preservation ((52)) ordering statements are never deleted, so a larger derivation
 induces a larger order. -/
 theorem SpelloutOrder.mono (h : ∀ p ∈ ps, p ∈ qs) (hab : SpelloutOrder ps a b) :
     SpelloutOrder qs a b :=
@@ -91,6 +93,22 @@ theorem not_consistent_of_pair (a b : α) (h₁ : Statement phases a b) (h₂ : 
 theorem Consistent.nodup (h : Consistent phases) (hp : p ∈ phases) : p.Nodup :=
   nodup_iff_sublist.mpr fun a hs ↦ h a (Statement.spelloutOrder ⟨p, hp, hs⟩)
 
+/-- By Order Preservation, whatever a later Spell-out places between two terminals adjacent at an
+earlier one was not spelled out with them. -/
+theorem Consistent.notMem_of_isInfix (h : Consistent phases) (hp : p ∈ phases) (hq : q ∈ phases)
+    (hab : [a, b] <:+: p) (hac : [a, c] <+ q) (hcb : [c, b] <+ q) : c ∉ p := by
+  intro hc
+  obtain ⟨s, t, rfl⟩ := hab
+  simp only [mem_append, mem_cons, not_mem_nil, or_false] at hc
+  rcases hc with (hs | rfl | rfl) | ht
+  · refine not_consistent_of_pair c a ⟨_, hp, ?_⟩ ⟨q, hq, hac⟩ h
+    rw [append_assoc]
+    exact (singleton_sublist.2 hs).append (by simp)
+  · exact h c (Statement.spelloutOrder ⟨q, hq, hac⟩)
+  · exact h c (Statement.spelloutOrder ⟨q, hq, hcb⟩)
+  · refine not_consistent_of_pair b c ⟨_, hp, ?_⟩ ⟨q, hq, hcb⟩ h
+    exact (show [b] <+ s ++ [a, b] by simp).append (singleton_sublist.2 ht)
+
 variable [DecidableEq α]
 
 /-- On a single duplicate-free snapshot, the induced order is index order. -/
@@ -110,8 +128,8 @@ theorem spelloutOrder_singleton_idxOf (hnd : p.Nodup) (h : SpelloutOrder [p] a b
 theorem consistent_singleton (hnd : p.Nodup) : Consistent [p] :=
   fun _ h ↦ Nat.lt_irrefl _ (spelloutOrder_singleton_idxOf hnd h)
 
-/-- Order Preservation at work: a derivation every one of whose Spell-outs is a sub-order of
-one duplicate-free string linearizes. -/
+/-- A derivation every one of whose Spell-outs is a sub-order of one duplicate-free string
+linearizes. -/
 theorem consistent_of_forall_sublist {l : List α} (h : ∀ p ∈ phases, p <+ l) (hnd : l.Nodup) :
     Consistent phases := fun a hab ↦
   consistent_singleton hnd a
