@@ -134,7 +134,9 @@ inductive Sketch
 namespace Sketch
 
 open Terminal
-open Minimalist.SyntacticObject (Derivation Step leaf)
+open Minimalist (Derivation)
+open Minimalist.Derivation (Step)
+open Minimalist.SyntacticObject (leaf)
 
 /-- The VP of a sketch is the verb with its object, preceded in (24) and (26) by the intervener,
 which in (26) moves to the VP edge. -/

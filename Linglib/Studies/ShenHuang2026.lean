@@ -313,7 +313,8 @@ inductive Terminal
 section Linearization
 
 open Terminal
-open SyntacticObject (Derivation Step leaf)
+open Derivation (Step)
+open SyntacticObject (leaf)
 
 /-- Each terminal spells out its own lexical item. -/
 def Terminal.token : Terminal → LIToken

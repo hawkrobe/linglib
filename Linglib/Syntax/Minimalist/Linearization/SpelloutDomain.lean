@@ -29,15 +29,15 @@ of a verb-plus-v head is spelled out with v.
 
 ## Main definitions
 
-* `Minimalist.SyntacticObject.Derivation.spelloutDomain`, `Derivation.spellout`: a domain at a
+* `Minimalist.Derivation.spelloutDomain`, `Derivation.spellout`: a domain at a
   later stage, and its Spell-out.
-* `Minimalist.SyntacticObject.Derivation.Linearizes`: a derivation linearizes under a schedule.
+* `Minimalist.Derivation.Linearizes`: a derivation linearizes under a schedule.
 
 ## Main statements
 
-* `Minimalist.SyntacticObject.Derivation.spellout_self`: a domain spelled out when it is built
+* `Minimalist.Derivation.spellout_self`: a domain spelled out when it is built
   reads the surface of its stage.
-* `Minimalist.SyntacticObject.Derivation.spellout_append_of_le`: extending a derivation changes
+* `Minimalist.Derivation.spellout_append_of_le`: extending a derivation changes
   no earlier Spell-out.
 
 ## References
@@ -48,7 +48,9 @@ of a verb-plus-v head is spelled out with v.
 
 @[expose] public section
 
-namespace Minimalist.SyntacticObject
+namespace Minimalist.Derivation
+
+open SyntacticObject
 
 /-- Inside a constituent built earlier, External Merge does nothing, and Internal Merge replaces
 the mover by its trace, unless the constituent is itself the mover, which then moves intact. -/
@@ -58,8 +60,6 @@ def Step.applyInside (step : Step) (D : PlanarSyntacticObject) : PlanarSyntactic
   | .im mover _ =>
     if D.toSyntacticObject = mover then D
     else PlanarSyntacticObject.replaceWhere mover mover.tracePlanar D
-
-namespace Derivation
 
 variable (d : Derivation) (m n : ℕ)
 
@@ -117,6 +117,4 @@ theorem Linearizes.nodup {sched : List (ℕ × ℕ)} (h : d.Linearizes sched) {p
     (hp : p ∈ sched) : (d.spellout p.1 p.2).Nodup :=
   Linearization.Consistent.nodup h (List.mem_map_of_mem hp)
 
-end Derivation
-
-end Minimalist.SyntacticObject
+end Minimalist.Derivation

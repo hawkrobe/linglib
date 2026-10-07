@@ -29,21 +29,21 @@ changes no stage and no mover.
 
 ## Main definitions
 
-* `Minimalist.SyntacticObject.Side`, `Step`, `Step.apply`, `Step.mover?`, `Step.mergeOp`,
+* `Minimalist.Derivation.Side`, `Derivation.Step`, `Step.apply`, `Step.mover?`, `Step.mergeOp`,
   `Step.Admissible`
-* `Minimalist.SyntacticObject.Derivation`, `Derivation.final`, `stageAt`, `movedItems`, `take`,
-  `append`, `leftward`, `items`, `Admissible`
+* `Minimalist.Derivation`, `Derivation.final`, `stageAt`, `movedItems`, `take`, `append`,
+  `leftward`, `items`, `Admissible`
 
 ## Main results
 
-* `Minimalist.SyntacticObject.Step.apply_em`: the sides build the same object.
-* `Minimalist.SyntacticObject.Step.mergeOp_workspace`: an admissible step is the algebraic Merge
+* `Minimalist.Derivation.Step.apply_em`: the sides build the same object.
+* `Minimalist.Derivation.Step.mergeOp_workspace`: an admissible step is the algebraic Merge
   on the workspace.
-* `Minimalist.SyntacticObject.Derivation.mergeOpList_initial`: an admissible derivation is the
+* `Minimalist.Derivation.mergeOpList_initial`: an admissible derivation is the
   iterated algebraic Merge.
-* `Minimalist.SyntacticObject.Derivation.stageAt_append_of_le`, `movedItems_append`: extension
+* `Minimalist.Derivation.stageAt_append_of_le`, `movedItems_append`: extension
   keeps the early stages and the movers.
-* `Minimalist.SyntacticObject.Derivation.stageAt_leftward`, `movedItems_leftward`: the sides
+* `Minimalist.Derivation.stageAt_leftward`, `movedItems_leftward`: the sides
   change no stage and no mover.
 
 ## References
@@ -58,7 +58,7 @@ namespace Minimalist
 
 open RoseTree UnorderedTree SyntacticObject
 
-namespace SyntacticObject
+namespace Derivation
 
 /-! ### Steps -/
 
@@ -221,12 +221,14 @@ theorem Step.mergeOpList_workspace :
 
 /-! ### Derivations -/
 
+end Derivation
+
 /-- An initial syntactic object with a sequence of steps. -/
 structure Derivation where
   /-- The initial syntactic object (a lexical item, in canonical derivations). -/
   initial : SyntacticObject
   /-- The ordered sequence of Merge/Move steps. -/
-  steps : List Step
+  steps : List Derivation.Step
 
 namespace Derivation
 
@@ -333,7 +335,7 @@ theorem mergeOpList_initial {d : Derivation} (hd : d.Admissible) :
 
 end Derivation
 
-end SyntacticObject
+open Derivation
 
 /-! ### Carrier tests -/
 
