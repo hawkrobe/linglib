@@ -2,6 +2,7 @@ module
 
 public import Linglib.Core.Data.Setoid.Basic
 public import Linglib.Core.Probability.Moments.Standardize
+public import Linglib.Core.Probability.UniformOn
 public import Linglib.Syntax.ConstructionGrammar.Basic
 public import Mathlib.Analysis.InnerProductSpace.PiL2
 public import Mathlib.Geometry.Euclidean.Angle.Unoriented.Basic
@@ -23,8 +24,8 @@ sampled comparisons.
 
 The two standardizations do what the book says they are for. Standardizing frequencies makes the
 distances blind to how frequent a construction is overall, standardizing distances keeps their
-ranking, and a set of comparisons has a negative mean standardized distance exactly when its
-samples are more similar than the average pair.
+ranking, and the sign of a set of comparisons' mean standardized distance says whether its
+samples are more or less similar than the average pair.
 
 ## Main statements
 
@@ -34,8 +35,8 @@ samples are more similar than the average pair.
   samples changes no standardized distance.
 * `standardizedDistance_le_standardizedDistance_iff`: the standardized distances rank the
   comparisons as the cosine distances do.
-* `integral_standardizedDistance_neg_iff`: a set of comparisons is more homogeneous than average
-  exactly when its mean standardized distance is negative.
+* `sign_integral_standardizedDistance`: the sign of a set of comparisons' mean standardized
+  distance says whether its samples are more or less similar than average.
 
 ## Implementation notes
 
@@ -292,18 +293,16 @@ theorem integral_standardizedDistance [Nonempty P] :
     (uniformOn Set.univ)[standardizedDistance freq W pair] = 0 :=
   integral_standardize .of_discrete
 
-/-- A set of comparisons, such as those between individuals of one city, has a negative mean
-standardized distance exactly when its mean distance is below the mean over all comparisons, so
-that its samples are more similar to one another than the average pair. -/
-theorem integral_standardizedDistance_neg_iff
-    (h : 0 < Var[sampleDistance freq W pair; uniformOn Set.univ]) {T : Finset P}
-    (hT : T.Nonempty) :
-    (uniformOn ↑T)[standardizedDistance freq W pair] < 0 ↔
-      (uniformOn ↑T)[sampleDistance freq W pair] <
-        (uniformOn Set.univ)[sampleDistance freq W pair] := by
+/-- Comparisons within `T` are more similar than average exactly when their mean standardized
+distance is negative, and more different exactly when it is positive. -/
+theorem sign_integral_standardizedDistance {T : Finset P} (hT : T.Nonempty) :
+    SignType.sign (uniformOn ↑T)[standardizedDistance freq W pair] =
+      SignType.sign ((uniformOn ↑T)[sampleDistance freq W pair] -
+        (uniformOn Set.univ)[sampleDistance freq W pair]) := by
+  have : Nonempty P := ⟨hT.choose⟩
   have := isProbabilityMeasure_uniformOn T.finite_toSet hT
-  rw [standardizedDistance, integral_standardize_eq .of_finite, div_lt_iff₀ (Real.sqrt_pos.2 h),
-    zero_mul, sub_neg]
+  exact sign_integral_standardize .of_discrete
+    (uniformOn_absolutelyContinuous_of_subset Set.finite_univ (Set.subset_univ _)) .of_finite
 
 end Pipeline
 

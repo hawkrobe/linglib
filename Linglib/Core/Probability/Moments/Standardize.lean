@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Mathlib.Basic.Sign.Basic
 public import Mathlib.Probability.Moments.Variance
 
 /-!
@@ -25,8 +26,8 @@ centres them, scales them to unit variance, and forgets any positive affine chan
   `X` is not almost surely constant, variance `1`.
 * `standardize_const_mul_add_const`: standardization is invariant under `X ↦ a * X + b` for
   `0 < a`.
-* `integral_standardize_eq`: the mean of the standardized values under another probability
-  measure, such as a subpopulation.
+* `sign_integral_standardize`: under a subpopulation `ν ≪ μ` the mean standardized value has the
+  sign of `ν[X] - μ[X]`.
 
 ## Implementation notes
 
@@ -97,5 +98,15 @@ theorem variance_standardize (h : 0 < Var[X; μ]) : Var[standardize X μ; μ] = 
     ext ω; rw [standardize, div_eq_inv_mul]
   rw [this, variance_const_mul, variance_sub_const hX.aestronglyMeasurable, inv_pow,
     Real.sq_sqrt (variance_nonneg _ _), inv_mul_cancel₀ h.ne']
+
+/-- Under a measure `ν ≪ μ` the mean standardized value has the sign of `ν[X] - μ[X]`. -/
+theorem sign_integral_standardize [IsProbabilityMeasure ν] (hνμ : ν ≪ μ) (hXν : Integrable X ν) :
+    SignType.sign ν[standardize X μ] = SignType.sign (ν[X] - μ[X]) := by
+  rw [integral_standardize_eq hXν]
+  rcases (variance_nonneg X μ).eq_or_lt with h | h
+  · have hae : ∀ᵐ ω ∂ν, X ω = μ[X] := hνμ.ae_le (ae_eq_integral_of_variance_eq_zero hX h.symm)
+    rw [integral_congr_ae hae, integral_const, probReal_univ, one_smul, ← h]
+    simp
+  · rw [div_eq_mul_inv, sign_mul, sign_pos (inv_pos.2 (Real.sqrt_pos.2 h)), mul_one]
 
 end ProbabilityTheory
