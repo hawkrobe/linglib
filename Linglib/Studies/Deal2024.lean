@@ -2,8 +2,7 @@ module
 
 public import Linglib.Syntax.Agreement.PersonCaseConstraint
 public import Linglib.Syntax.Minimalist.Probe.Basic
-public import Linglib.Syntax.Minimalist.Geometry
-public import Linglib.Syntax.Minimalist.Phi.Geometry
+public import Linglib.Syntax.Minimalist.Phi.PersonSegment
 public import Linglib.Studies.CoonKeine2021
 public import Linglib.Studies.Haspelmath2021
 public import Linglib.Syntax.Clause.Scenario
@@ -42,11 +41,13 @@ condition that the scenario be downstream under their rankings
 
 ## Implementation notes
 
-The interaction condition is the set of features copied so far, a goal being visible when it
-bears them all, which is the set conception the paper's footnote 10 allows; the paper's single
-interaction feature is the most specific one copied. A second person and an inclusive first person
-bear [ADDR]. Table (1) has no reflexive cells, so the classification of grammars ranges over
-its six cells; the mechanism's verdicts on reflexive combinations are not stated.
+The features of the geometry (7) are the person segments of `Minimalist.PersonSegment`, [φ] its
+root `π`, [PART] `participant`, [SPKR] `speaker` and [ADDR] `addressee`, so a second person and an
+inclusive first person bear [ADDR]. The interaction condition is the set of features copied so
+far, a goal being visible when it bears them all, which is the set conception the paper's
+footnote 10 allows; the paper's single interaction feature is the most specific one copied.
+Table (1) has no reflexive cells, so the classification of grammars ranges over its six cells;
+the mechanism's verdicts on reflexive combinations are not stated.
 
 ## References
 
@@ -60,81 +61,42 @@ its six cells; the mechanism's verdicts on reflexive combinations are not stated
 
 namespace Deal2024
 
-open Minimalist
-
-/-! ### The feature geometry (7) -/
-
-/-- The person features of the geometry (7): [φ] dominates [PART], which dominates [SPKR] and
-[ADDR]. -/
-inductive PersonFeature where
-  | phi
-  | part
-  | spkr
-  | addr
-  deriving DecidableEq, Repr, Fintype
-
-/-- The entailments of a feature, itself and its dominators. -/
-def PersonFeature.entailments : PersonFeature → Finset PersonFeature
-  | .phi => {.phi}
-  | .part => {.phi, .part}
-  | .spkr => {.phi, .part, .spkr}
-  | .addr => {.phi, .part, .addr}
-
-/-- The person geometry, [φ] at the bottom and [SPKR] and [ADDR] maximal. -/
-def personGeometry : Minimalist.Geometry PersonFeature where
-  nodes := Finset.univ
-  entailments := PersonFeature.entailments
-  mem_entailments_self := by decide
-  entailments_subset_of_mem := by decide
-
-/-- Whether a person bears a feature, from the shared decomposition: [PART] is participant,
-[SPKR] is author, and [ADDR] is borne by the second person and the inclusive first. -/
-def bears (p : Person) : PersonFeature → Bool
-  | .phi => true
-  | .part => decide (.participant ∈ decomposePerson p)
-  | .spkr => decide (.author ∈ decomposePerson p)
-  | .addr => p == .second || p == .firstInclusive
-
-/-- Bearing a feature entails bearing its entailments. -/
-theorem bears_of_mem_entailments {f g : PersonFeature} (h : f ∈ personGeometry.entailments g)
-    (p : Person) (hp : bears p g = true) : bears p f = true := by
-  revert h hp
-  cases f <;> cases g <;> cases p <;> decide
+open Minimalist PersonSegment
 
 /-! ### Probes and their runs -/
 
-/-- A grammar: the satisfaction condition, none for an insatiable probe, and the features that
-interact dynamically, copied into the interaction condition when a goal bears them. -/
+/-- A grammar fixes the satisfaction condition, none for an insatiable probe, and the features
+that interact dynamically, copied into the interaction condition when a goal bears them. -/
 structure Grammar where
-  satisfaction : Option PersonFeature
-  dynamic : Finset PersonFeature
+  satisfaction : Option PersonSegment
+  dynamic : Finset PersonSegment
   deriving DecidableEq, Fintype
 
-/-- The state of a probe during its walk over the goals: the interaction condition, whether the
-probe has been satisfied, and the positions of the goals it has interacted with. -/
+/-- The state of a probe during its walk over the goals records the interaction condition,
+whether the probe has been satisfied, and the positions of the goals it has interacted with. -/
 structure ProbeState where
-  int : Finset PersonFeature
+  int : Finset PersonSegment
   satisfied : Bool
   agreed : List ℕ
   deriving DecidableEq
 
-/-- The initial state: [INT:φ], unsatisfied, nothing agreed. -/
-def ProbeState.initial : ProbeState := ⟨{.phi}, false, []⟩
+/-- The initial state is [INT:φ], unsatisfied, with nothing agreed. -/
+def ProbeState.initial : ProbeState := ⟨{.pi}, false, []⟩
 
-/-- The probe a state denotes: a goal is visible when it bears every feature of the interaction
+/-- The probe a state denotes sees a goal when the goal bears every feature of the interaction
 condition. -/
 def ProbeState.probe (st : ProbeState) : Probe Person :=
-  .relativized fun p ↦ decide (∀ f ∈ st.int, bears p f = true)
+  .relativized fun p ↦ decide (st.int ⊆ spec p)
 
-/-- One step of the walk: a satisfied probe is inert, (8b); otherwise a visible goal is
+/-- In one step of the walk a satisfied probe is inert, (8b); otherwise a visible goal is
 interacted with, its position recorded, the goal's dynamic features are copied into the
 interaction condition, and the probe is satisfied when the goal bears the satisfaction
 feature, (44) and (45). -/
 def step (g : Grammar) (st : ProbeState) (t : Person × ℕ) : ProbeState :=
   if st.satisfied || !st.probe.sat t.1 then st
   else
-    { int := st.int ∪ g.dynamic.filter (bears t.1 · = true)
-      satisfied := g.satisfaction.any (bears t.1 ·)
+    { int := st.int ∪ g.dynamic ∩ spec t.1
+      satisfied := g.satisfaction.any (· ∈ spec t.1)
       agreed := st.agreed ++ [t.2] }
 
 /-- The run of a probe over a goal sequence in interaction order. -/
@@ -153,7 +115,7 @@ theorem int_subset_step (g : Grammar) (st : ProbeState) (t : Person × ℕ) :
 theorem probe_sat_antitone (g : Grammar) (st : ProbeState) (t : Person × ℕ) (a : Person)
     (h : (step g st t).probe.sat a = true) : st.probe.sat a = true := by
   simp only [ProbeState.probe, Probe.relativized, decide_eq_true_eq] at h ⊢
-  exact fun f hf ↦ h f (int_subset_step g st t hf)
+  exact (int_subset_step g st t).trans h
 
 /-- A satisfied probe is inert. -/
 theorem step_of_satisfied (g : Grammar) (st : ProbeState) (t : Person × ℕ)
@@ -170,26 +132,26 @@ instance (g : Grammar) (io do_ : Person) : Decidable (Licit g io do_) :=
 
 /-! ### The grammars -/
 
-/-- The strong PCC: [INT:φ, SAT:PART], (15). -/
-def strong : Grammar := ⟨some .part, ∅⟩
+/-- The strong PCC is the probe [INT:φ, SAT:PART], (15). -/
+def strong : Grammar := ⟨some .participant, ∅⟩
 
-/-- The me-first PCC: [INT:φ, SAT:SPKR], (33). -/
-def meFirst : Grammar := ⟨some .spkr, ∅⟩
+/-- The me-first PCC is the probe [INT:φ, SAT:SPKR], (33). -/
+def meFirst : Grammar := ⟨some .speaker, ∅⟩
 
-/-- No PCC: the insatiable probe [INT:φ, SAT:-] of Ubykh and Moro. -/
+/-- The insatiable probe [INT:φ, SAT:-] of Ubykh and Moro derives no PCC. -/
 def noPCC : Grammar := ⟨none, ∅⟩
 
-/-- The weak PCC: an insatiable probe with [PART] interacting dynamically, (38). -/
-def weak : Grammar := ⟨none, {.part}⟩
+/-- The weak PCC is an insatiable probe with [PART] interacting dynamically, (38). -/
+def weak : Grammar := ⟨none, {.participant}⟩
 
-/-- The strictly descending PCC: [SAT:SPKR] with [PART] interacting dynamically, (50). -/
-def strictlyDescending : Grammar := ⟨some .spkr, {.part}⟩
+/-- The strictly descending PCC is [SAT:SPKR] with [PART] interacting dynamically, (50). -/
+def strictlyDescending : Grammar := ⟨some .speaker, {.participant}⟩
 
-/-- The you-first PCC: [SAT:ADDR], section 6.1. -/
-def youFirst : Grammar := ⟨some .addr, ∅⟩
+/-- The you-first PCC is [SAT:ADDR], section 6.1. -/
+def youFirst : Grammar := ⟨some .addressee, ∅⟩
 
-/-- The A-descending PCC: [SAT:ADDR] with [PART] interacting dynamically, section 6.1. -/
-def aDescending : Grammar := ⟨some .addr, {.part}⟩
+/-- The A-descending PCC is [SAT:ADDR] with [PART] interacting dynamically, section 6.1. -/
+def aDescending : Grammar := ⟨some .addressee, {.participant}⟩
 
 /-! ### The typology -/
 
@@ -206,7 +168,7 @@ def addresseeRank : Person → ℕ
   | .first | .firstInclusive | .firstExclusive => 1
   | .third => 0
 
-/-- The PCC varieties: the four of table (1), the two the feature [ADDR] adds, and none. -/
+/-- The PCC varieties are the four of table (1), the two the feature [ADDR] adds, and none. -/
 inductive PCCType where
   | strong
   | weak
@@ -217,17 +179,18 @@ inductive PCCType where
   | none
   deriving DecidableEq, Repr, Fintype
 
-/-- The descriptive statements, (2) and section 6.1: the direct object must be third person;
-if there is a third person, the direct object must be third person; if there is a first person,
-it must be the indirect object; the indirect object must outrank the direct object on 1 > 2 > 3;
-if there is a second person, it must be the indirect object; the indirect object must outrank
-the direct object on 2 > 1 > 3; and no restriction. -/
+/-- The descriptive statements of (2) and section 6.1, one per variety, say that the direct
+object must be third person; that if there is a third person, the direct object must be third
+person; that if there is a first person, it must be the indirect object; that the indirect object
+must outrank the direct object on 1 > 2 > 3; that if there is a second person, it must be the
+indirect object; that the indirect object must outrank the direct object on 2 > 1 > 3; and
+nothing. -/
 def PCCType.Licit : PCCType → Person → Person → Prop
   | .strong, _, do_ => ¬ do_.IsSAP
   | .weak, io, do_ => ¬ io.IsSAP → ¬ do_.IsSAP
   | .meFirst, _, do_ => ¬ do_.IncludesSpeaker
   | .strictlyDescending, io, do_ => do_.prominence < io.prominence
-  | .youFirst, _, do_ => bears do_ .addr = false
+  | .youFirst, _, do_ => addressee ∉ spec do_
   | .aDescending, io, do_ => addresseeRank do_ < addresseeRank io
   | .none, _, _ => True
 
@@ -236,7 +199,7 @@ instance : (t : PCCType) → (io do_ : Person) → Decidable (t.Licit io do_)
   | .weak, _, _ => inferInstanceAs (Decidable (_ → _))
   | .meFirst, _, _ => inferInstanceAs (Decidable (¬ _))
   | .strictlyDescending, _, _ => inferInstanceAs (Decidable (_ < _))
-  | .youFirst, _, _ => inferInstanceAs (Decidable (_ = _))
+  | .youFirst, _, _ => inferInstanceAs (Decidable (¬ _))
   | .aDescending, _, _ => inferInstanceAs (Decidable (_ < _))
   | .none, _, _ => inferInstanceAs (Decidable True)
 
@@ -253,13 +216,13 @@ theorem aDescending_iff_downstream (io do_ : Person) :
       (Clause.Scenario.mk io do_).kindBy addresseeRank = .downstream :=
   (Clause.Scenario.kindBy_eq_downstream_iff (s := ⟨io, do_⟩) _).symm
 
-/-- A variety as an argument coding: the clitic cluster where the combination is licit, the
-longer repair where it is not. -/
+/-- A variety codes a combination as the clitic cluster where it is licit and as the longer
+repair where it is not. -/
 def PCCType.coding (t : PCCType) (s : Scenario Person) : ℕ :=
   if t.Licit s.high s.low then 0 else 1
 
-/-- Usualness on the cells of table (1) under a person ranking: a cell is the more usual when its
-kind is the higher. -/
+/-- Under a person ranking, a cell of table (1) is more usual than another when its kind is
+higher. -/
 def MoreUsualOn {β : Type*} [LinearOrder β] (rank : Person → β) (s t : Scenario Person) : Prop :=
   s ∈ cells ∧ t ∈ cells ∧ t.kindBy rank < s.kindBy rank
 
@@ -267,14 +230,14 @@ instance {β : Type*} [LinearOrder β] (rank : Person → β) (s t : Scenario Pe
     Decidable (MoreUsualOn rank s t) :=
   inferInstanceAs (Decidable (_ ∧ _ ∧ _))
 
-/-- Section 7.1 of [haspelmath-2021] on table (1): under the person scale 1 > 2 > 3, a variety
-never bans a more usual combination while allowing a less usual one exactly when it is the
-strong, weak, me-first or strictly descending PCC. The addressee-first varieties ban the
-downstream `1 > 2`. -/
+/-- Under the person scale 1 > 2 > 3, a variety never bans a more usual combination of table (1)
+while allowing a less usual one exactly when it is the strong, weak, me-first or strictly
+descending PCC, as section 7.1 of [haspelmath-2021] requires. The addressee-first varieties ban
+the downstream `1 > 2`. -/
 theorem universal5_prominence (t : PCCType) :
     Haspelmath2021.RoleReferenceUniversal (MoreUsualOn Person.prominence) t.coding ↔
       t ∈ [PCCType.strong, .weak, .meFirst, .strictlyDescending, .none] := by
-  revert t; decide
+  revert t; decide +kernel
 
 /-- Under the ranking 2 > 1 > 3 it is the strong, weak, you-first and A-descending varieties
 that obey the scenario universal; me-first and strictly descending ban the then-downstream
@@ -282,10 +245,10 @@ that obey the scenario universal; me-first and strictly descending ban the then-
 theorem universal5_addressee (t : PCCType) :
     Haspelmath2021.RoleReferenceUniversal (MoreUsualOn addresseeRank) t.coding ↔
       t ∈ [PCCType.strong, .weak, .youFirst, .aDescending, .none] := by
-  revert t; decide
+  revert t; decide +kernel
 
-/-- The person-role universal 9b of [haspelmath-2021]: every variety allows a participant IO
-with a third-person DO, the `⟨⊤, ⊥⟩` of the binary person scale. -/
+/-- Every variety allows a participant IO with a third-person DO, the `⟨⊤, ⊥⟩` of the binary
+person scale, as the person-role universal 9b of [haspelmath-2021] requires. -/
 theorem participant_third_licit (t : PCCType) (io : Person) (h : io.IsSAP) :
     t.Licit io .third := by
   revert h; cases t <;> cases io <;> decide
@@ -300,7 +263,7 @@ theorem strong_iff_greekT (io do_ : Person) :
 def PCCType.all : List PCCType :=
   [.strong, .weak, .meFirst, .strictlyDescending, .youFirst, .aDescending, .none]
 
-/-- The variety a grammar derives: the one whose statement it matches on the six cells. -/
+/-- The variety a grammar derives is the one whose statement it matches on the six cells. -/
 def Grammar.pattern (g : Grammar) : Option PCCType :=
   PCCType.all.find? fun t ↦ decide (∀ c ∈ cells, Licit g c.high c.low ↔ t.Licit c.high c.low)
 
@@ -309,21 +272,21 @@ table (53) as its rows and columns without [ADDR]; a probe satisfied by [φ] Agr
 direct object alone and derives no variety, and dynamic [φ] changes nothing. -/
 def table57 (g : Grammar) : Option PCCType :=
   match g.satisfaction with
-  | some .phi => none
-  | some .part => some .strong
-  | some .spkr =>
-      some (if .addr ∈ g.dynamic then .strong
-        else if .part ∈ g.dynamic then .strictlyDescending else .meFirst)
-  | some .addr =>
-      some (if .spkr ∈ g.dynamic then .strong
-        else if .part ∈ g.dynamic then .aDescending else .youFirst)
+  | some .pi => none
+  | some .participant => some .strong
+  | some .speaker =>
+      some (if .addressee ∈ g.dynamic then .strong
+        else if .participant ∈ g.dynamic then .strictlyDescending else .meFirst)
+  | some .addressee =>
+      some (if .speaker ∈ g.dynamic then .strong
+        else if .participant ∈ g.dynamic then .aDescending else .youFirst)
   | none =>
-      some (if .spkr ∈ g.dynamic ∧ .addr ∈ g.dynamic then .strong
-        else if .part ∈ g.dynamic ∧ .spkr ∈ g.dynamic then .strictlyDescending
-        else if .part ∈ g.dynamic ∧ .addr ∈ g.dynamic then .aDescending
-        else if .part ∈ g.dynamic then .weak
-        else if .spkr ∈ g.dynamic then .meFirst
-        else if .addr ∈ g.dynamic then .youFirst
+      some (if .speaker ∈ g.dynamic ∧ .addressee ∈ g.dynamic then .strong
+        else if .participant ∈ g.dynamic ∧ .speaker ∈ g.dynamic then .strictlyDescending
+        else if .participant ∈ g.dynamic ∧ .addressee ∈ g.dynamic then .aDescending
+        else if .participant ∈ g.dynamic then .weak
+        else if .speaker ∈ g.dynamic then .meFirst
+        else if .addressee ∈ g.dynamic then .youFirst
         else .none)
 
 /-- The runs derive the tables: every grammar derives the variety table (57) gives it. -/
@@ -334,17 +297,18 @@ theorem typology (g : Grammar) : g.pattern = table57 g := by
 /-- Satisfaction by [PART] absorbs dynamic interaction: a direct object bearing a dynamic
 feature bears [PART] and satisfies the probe first, so every column-one grammar of the table
 licenses exactly what the strong PCC does, for every pair of persons. -/
-theorem licit_of_sat_part (d : Finset PersonFeature) (io do_ : Person) :
-    Licit ⟨some .part, d⟩ io do_ ↔ Licit strong io do_ := by
+theorem licit_of_sat_part (d : Finset PersonSegment) (io do_ : Person) :
+    Licit ⟨some .participant, d⟩ io do_ ↔ Licit strong io do_ := by
   revert d io do_
-  decide
+  decide +kernel
 
-/-- The strictly descending PCC off the diagonal: for objects of distinct person, the indirect
-object must outrank the direct object on 1 > 2 > 3. -/
+/-- Off the diagonal, for objects of distinct person, the strictly descending PCC requires the
+indirect object to outrank the direct object on 1 > 2 > 3. -/
 theorem sd_off_diagonal_iff_outranks (io do_ : Person)
-    (h : decomposePerson io ≠ decomposePerson do_) :
+    (h : io.prominence ≠ do_.prominence) :
     Licit strictlyDescending io do_ ↔ do_.prominence < io.prominence := by
-  cases io <;> cases do_ <;> first | exact absurd rfl h | decide
+  revert io do_
+  decide +kernel
 
 /-! ### The competitors (section 7) -/
 
@@ -357,7 +321,7 @@ theorem agrees_with_pConstraint :
         (Licit meFirst c.high c.low ↔ PCC.IsLicit PCC.meFirstGrammar c.high c.low) ∧
         (Licit strictlyDescending c.high c.low ↔
           PCC.IsLicit PCC.ultraStrongGrammar c.high c.low) := by
-  decide
+  decide +kernel
 
 /-- On the six cells the four varieties coincide with the gluttony probes of
 [coon-keine-2021]: a probe that stops too early and one that agrees too much draw the same
@@ -372,7 +336,7 @@ theorem agrees_with_gluttony :
           ¬ CoonKeine2021.PCCViolation CoonKeine2021.meFirstProbe false c.high c.low) ∧
         (Licit strictlyDescending c.high c.low ↔
           ¬ CoonKeine2021.PCCViolation CoonKeine2021.ultrastrongProbe false c.high c.low) := by
-  decide
+  decide +kernel
 
 /-! ### The rows -/
 
@@ -383,7 +347,8 @@ def personOf (e : Datum) (key : String) : Option Person :=
   | some "3" => some .third
   | _ => none
 
-/-- The grammars a row's language has: Slovenian speakers have a strong or a weak PCC. -/
+/-- The grammars of a row's language are listed by its pattern, Slovenian speakers having a strong
+or a weak PCC. -/
 def grammarsOf (e : Datum) : List Grammar :=
   match e.feature? "pattern" with
   | some "strong" => [strong]
@@ -400,6 +365,6 @@ theorem rows :
     ∀ e ∈ Examples.all, ∀ g ∈ grammarsOf e, ∀ io ∈ personOf e "io", ∀ do_ ∈ personOf e "do",
       (e.judgment = .acceptable ↔
         if e.feature? "preference" = some "io" then Licit g do_ io else Licit g io do_) := by
-  decide
+  decide +kernel
 
 end Deal2024

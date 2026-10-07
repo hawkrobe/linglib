@@ -78,7 +78,7 @@ its probe, and so global case splits range over the hierarchy effects of agreeme
 
 namespace ClemDeal2024
 
-open Deal2024
+open Deal2024 Minimalist.PersonSegment
 
 /-! ### Dependent case as the flag of a second goal -/
 
@@ -88,18 +88,18 @@ open Deal2024
 def flag (g : Deal2024.Grammar) (goals : List Person) : Option (List Person) :=
   let agreed := (runProbe g goals).agreed
   let last := goals.length - 1
-  if last ∈ agreed then some ((agreed.filter (· < last)).filterMap λ i => goals[i]?) else none
+  if last ∈ agreed then some ((agreed.filter (· < last)).filterMap fun i ↦ goals[i]?) else none
 
-/-- Dependent case ((31), (34), (43)): the last goal's flag carries the φ-features of an earlier
-    goal, the structure a dependent-case vocabulary item realizes. -/
+/-- A probe assigns dependent case when the last goal's flag carries the φ-features of an
+    earlier goal, the structure a dependent-case vocabulary item realizes ((31), (34), (43)). -/
 def DependentCase (g : Deal2024.Grammar) (goals : List Person) : Prop :=
   ∃ p l, flag g goals = some (p :: l)
 
 instance (g : Deal2024.Grammar) (goals : List Person) : Decidable (DependentCase g goals) :=
   match h : flag g goals with
   | some (p :: l) => isTrue ⟨p, l, h⟩
-  | some [] => isFalse λ ⟨_, _, h'⟩ => by simp [h] at h'
-  | none => isFalse λ ⟨_, _, h'⟩ => by simp [h] at h'
+  | some [] => isFalse fun ⟨_, _, h'⟩ ↦ by simp [h] at h'
+  | none => isFalse fun ⟨_, _, h'⟩ ↦ by simp [h] at h'
 
 /-- With two goals, dependent case on the second is [deal-2024]'s licit Agree with both, the
     probe meeting the first goal in the direct-object slot and the second in the indirect-object
@@ -107,19 +107,18 @@ instance (g : Deal2024.Grammar) (goals : List Person) : Decidable (DependentCase
 theorem dependentCase_iff_licit (g : Deal2024.Grammar) (g₁ g₂ : Person) :
     DependentCase g [g₁, g₂] ↔ Licit g g₂ g₁ := by
   revert g g₁ g₂
-  decide
+  decide +kernel
 
 /-! ### Shawi: the v probe and the position of the object -/
 
-/-- Where a Shawi object sits ((30)): in the specifier of the categorizing v, above the phase
-    boundary and visible to the v probe, or in its base position inside that phase, invisible
-    to it. -/
+/-- A Shawi object sits in the specifier of the categorizing v, above the phase boundary and
+    visible to the v probe, or in its base position inside that phase, invisible to it ((30)). -/
 inductive ObjectPosition
   | high
   | low
   deriving DecidableEq, Repr
 
-/-- The surface syntax of an object: after the subject (SOV or SVO), fronted over it (OSV), or
+/-- On the surface an object follows the subject (SOV or SVO), is fronted over it (OSV), or is
     dropped. -/
 inductive ObjectSyntax
   | inSitu
@@ -127,23 +126,22 @@ inductive ObjectSyntax
   | dropped
   deriving DecidableEq, Repr
 
-/-- The positions open to an object of person `p` with surface syntax `x` (§3.2): local persons
-    move to the high position obligatorily and third persons optionally; fronting over the
-    subject ((26b)) and pro-drop ((21a), as in Dinka [van-urk-2015]) require it. -/
+/-- An object of person `p` with surface syntax `x` may occupy these positions (§3.2). Local
+    persons move to the high position obligatorily and third persons optionally, and fronting
+    over the subject ((26b)) and pro-drop ((21a), as in Dinka [van-urk-2015]) require it. -/
 def positions (p : Person) : ObjectSyntax → List ObjectPosition
   | .inSitu => if p.IsSAP then [.high] else [.high, .low]
   | .fronted | .dropped => [.high]
 
-/-- The goals the v probe meets, in order ([bejar-rezac-2009]'s cyclic expansion, (13)): a high
-    object and then the subject ((22)), or the subject alone when the object is low or absent
-    ((24)). -/
+/-- The v probe meets a high object and then the subject ((22)), or the subject alone when the
+    object is low or absent ((24)), by the cyclic expansion of [bejar-rezac-2009] ((13)). -/
 def goals (subj obj : Person) : ObjectPosition → List Person
   | .high => [obj, subj]
   | .low => [subj]
 
-/-- Ergative on the subject: v, with [INT:φ, SAT:SPKR] and [PART] interacting dynamically
-    (`Deal2024.strictlyDescending`, §3.1), Agrees with the subject as its second goal, and *-ri*
-    realizes the φ root of the flag it leaves there ((34)). -/
+/-- The subject is ergative when v, with [INT:φ, SAT:SPKR] and [PART] interacting dynamically
+    (`Deal2024.strictlyDescending`, §3.1), Agrees with it as its second goal; *-ri* realizes the
+    φ root of the flag it leaves there ((34)). -/
 def Ergative (subj obj : Person) (pos : ObjectPosition) : Prop :=
   DependentCase strictlyDescending (goals subj obj pos)
 
@@ -152,29 +150,29 @@ instance (subj obj : Person) (pos : ObjectPosition) : Decidable (Ergative subj o
 
 /-! ### The derivations behind Table 4 -/
 
-/-- (15): a first-person object bears [SPKR] and satisfies the probe, which halts; the subject is
-    never reached, whatever its person. -/
-theorem halt_of_spkr_object (subj obj : Person) (h : bears obj .spkr = true) :
+/-- A first-person object bears [SPKR] and satisfies the probe, which halts, so the subject is
+    never reached, whatever its person (15). -/
+theorem halt_of_spkr_object (subj obj : Person) (h : .speaker ∈ spec obj) :
     (runProbe strictlyDescending [obj, subj]).satisfied = true ∧
       flag strictlyDescending [obj, subj] = none := by
   revert h; cases obj <;> cases subj <;> decide
 
-/-- (17) and (19): a second-person object lacks [SPKR] but bears [PART], so the probe is not
-    satisfied but narrows to [INT:PART]; it then reaches the subject exactly when the subject
-    bears [PART]. -/
-theorem narrow_of_part_object (subj obj : Person) (h₁ : bears obj .spkr = false)
-    (h₂ : bears obj .part = true) :
-    (runProbe strictlyDescending [obj, subj]).int = {.phi, .part} ∧
-      (flag strictlyDescending [obj, subj] = some [obj] ↔ bears subj .part = true) := by
+/-- A second-person object lacks [SPKR] but bears [PART], so the probe is not satisfied but
+    narrows to [INT:PART]; it then reaches the subject exactly when the subject bears [PART]
+    ((17), (19)). -/
+theorem narrow_of_part_object (subj obj : Person) (h₁ : .speaker ∉ spec obj)
+    (h₂ : .participant ∈ spec obj) :
+    (runProbe strictlyDescending [obj, subj]).int = {.pi, .participant} ∧
+      (flag strictlyDescending [obj, subj] = some [obj] ↔ .participant ∈ spec subj) := by
   revert h₁ h₂; cases obj <;> cases subj <;> decide
 
-/-- (22): a third-person object neither satisfies nor narrows the probe, so the subject is
-    reached whatever its person. -/
-theorem flag_of_third_object (subj obj : Person) (h : bears obj .part = false) :
+/-- A third-person object neither satisfies nor narrows the probe, so the subject is reached
+    whatever its person (22). -/
+theorem flag_of_third_object (subj obj : Person) (h : .participant ∉ spec obj) :
     flag strictlyDescending [obj, subj] = some [obj] := by
   revert h; cases obj <;> cases subj <;> decide
 
-/-- (24): with a low or absent object the probe expands and Agrees with the subject alone; the
+/-- With a low or absent object the probe expands and Agrees with the subject alone (24). The
     subject is Agreed with but is not a second goal, so its flag is empty and there is no
     ergative ((25)). -/
 theorem flag_of_low_object (subj : Person) : flag strictlyDescending [subj] = some [] := by
@@ -193,15 +191,15 @@ inductive Marking
   | impossible
   deriving DecidableEq, Repr
 
-/-- Table 4's cell for a subject and an in-situ object: ergative in every position open to the
-    object, in some, or in none. -/
+/-- Table 4's cell for a subject and an in-situ object records whether the subject is ergative in
+    every position open to the object, in some, or in none. -/
 def marking (subj obj : Person) : Marking :=
   if ∀ pos ∈ positions obj .inSitu, Ergative subj obj pos then .obligatory
   else if ∃ pos ∈ positions obj .inSitu, Ergative subj obj pos then .optional
   else .impossible
 
-/-- Table 4: obligatory at 1→2, impossible at 2→1, 3→1 and 3→2, optional with a third-person
-    object. -/
+/-- Ergative is obligatory at 1→2, impossible at 2→1, 3→1 and 3→2, and optional with a
+    third-person object, as in Table 4. -/
 theorem table4 :
     marking .first .second = .obligatory ∧ marking .first .third = .optional ∧
     marking .second .first = .impossible ∧ marking .second .third = .optional ∧
@@ -213,21 +211,21 @@ theorem table4 :
     is optional exactly when the object may stay low. -/
 theorem marking_optional_iff (subj obj : Person) :
     marking subj obj = .optional ↔ ¬ obj.IsSAP := by
-  cases subj <;> cases obj <;> decide
+  cases subj <;> cases obj <;> decide +kernel
 
-/-- (20)–(21), (26): a third-person object fronted over the subject or dropped has moved high, and
-    ergative becomes obligatory. -/
+/-- A third-person object fronted over the subject or dropped has moved high, and ergative
+    becomes obligatory ((20)–(21), (26)). -/
 theorem ergative_of_fronted_or_dropped (subj : Person) (x : ObjectSyntax) (hx : x ≠ .inSitu) :
     ∀ pos ∈ positions .third x, Ergative subj .third pos := by
   cases x <;> first | exact absurd rfl hx | (cases subj <;> decide)
 
 /-! ### Object agreement on the subject -/
 
-/-- Object agreement on the subject: the object-agreement exponent of the person the subject's
+/-- Object agreement on the subject is the object-agreement exponent of the person the subject's
     flag carries, with the object's number ((36)), realizing the [PART, v] remainder of the flag
     once *-ri* has realized its φ root (§3.3). -/
 def oagrOnS (subj obj : Person) (n : Number) (pos : ObjectPosition) : Option String :=
-  (flag strictlyDescending (goals subj obj pos)).bind λ
+  (flag strictlyDescending (goals subj obj pos)).bind fun
     | [o] => Kawapanan.Shawi.objectMarker o n
     | _ => none
 
@@ -235,14 +233,14 @@ def oagrOnS (subj obj : Person) (n : Number) (pos : ObjectPosition) : Option Str
     diagonal, overt only for a first-person subject and a second-person object (§3.3): a
     third-person object has no exponent, and no other pair lets the subject Agree. -/
 theorem oagrOnS_isSome {subj obj : Person} {n : Number} {pos : ObjectPosition}
-    (hne : Minimalist.decomposePerson subj ≠ Minimalist.decomposePerson obj)
+    (hne : subj.prominence ≠ obj.prominence)
     (h : (oagrOnS subj obj n pos).isSome) :
-    Ergative subj obj pos ∧ bears subj .spkr = true ∧ obj = .second := by
-  revert hne h; cases subj <;> cases obj <;> cases n <;> cases pos <;> decide
+    Ergative subj obj pos ∧ .speaker ∈ spec subj ∧ obj = .second := by
+  cases pos <;> revert subj obj n <;> decide +kernel
 
-/-- (12): a first-person exclusive augmented subject with a second-person augmented object bears
-    *-ri* and the object's marker; (11): a second-person subject with a first-person object bears
-    neither; (23a): a third-person object leaves *-ri* nothing to accompany. -/
+/-- A first-person exclusive augmented subject with a second-person augmented object bears *-ri*
+    and the object's marker (12), a second-person subject with a first-person object bears
+    neither (11), and a third-person object leaves *-ri* nothing to accompany (23a). -/
 theorem oagrOnS_examples :
     oagrOnS .firstExclusive .second .augmented .high = some "-((n)ke)ma'" ∧
     oagrOnS .second .firstExclusive .minimal .high = none ∧
@@ -269,13 +267,13 @@ theorem rule1_overgenerates :
 theorem no_1_3_2_hierarchy (g : Deal2024.Grammar) (h : DependentCase g [.second, .third]) :
     DependentCase g [.third, .second] := by
   revert g
-  decide
+  decide +kernel
 
 /-! ### The typology of global case splits (§5) -/
 
-/-- Where the probe sits: on v, between object and subject, so the object is its first goal and
-    the dependent case of the subject is ergative ((40)); or on T above both, so the subject is
-    first and the dependent case of the object is accusative ((41)). -/
+/-- The probe sits on v, between object and subject, so the object is its first goal and the
+    dependent case of the subject is ergative ((40)), or on T above both, so the subject is first
+    and the dependent case of the object is accusative ((41)). -/
 inductive Locus
   | v
   | T
@@ -286,55 +284,55 @@ def Locus.goals : Locus → Person → Person → List Person
   | .v, subj, obj => [obj, subj]
   | .T, subj, obj => [subj, obj]
 
-/-- Dependent case without a split (§5.1): an insatiable probe with no dynamic interaction
-    Agrees with both arguments whatever their persons, ergative on v (Nez Perce [deal-2010],
-    Amahuaca [clem-2019]) and accusative on T (Sakha, [baker-vinokurova-2010]). -/
+/-- Without a split (§5.1), an insatiable probe with no dynamic interaction Agrees with both
+    arguments whatever their persons, giving ergative on v (Nez Perce [deal-2010], Amahuaca
+    [clem-2019]) and accusative on T (Sakha, [baker-vinokurova-2010]). -/
 theorem dependentCase_noPCC (l : Locus) (subj obj : Person) :
     DependentCase noPCC (l.goals subj obj) := by
   cases l <;> cases subj <;> cases obj <;> decide
 
-/-- Table 7, strong PCC: dependent case iff the first goal is third person, on the subject when
-    the object is third (Shiwilu, [valenzuela-2011]) and on the object when the subject is third
-    (Yurok). -/
+/-- Under the strong PCC of Table 7 there is dependent case iff the first goal is third person,
+    on the subject when the object is third (Shiwilu, [valenzuela-2011]) and on the object when
+    the subject is third (Yurok). -/
 theorem dependentCase_strong_iff (g₁ g₂ : Person) :
-    DependentCase strong [g₁, g₂] ↔ bears g₁ .part = false := by
+    DependentCase strong [g₁, g₂] ↔ .participant ∉ spec g₁ := by
   cases g₁ <;> cases g₂ <;> decide
 
-/-- Shiwilu (45a), (46b): no ergative at 1→2, ergative at 3→3. -/
+/-- Shiwilu has no ergative at 1→2 and ergative at 3→3 ((45a), (46b)). -/
 example : ¬ DependentCase strong (Locus.v.goals .first .second) ∧
     DependentCase strong (Locus.v.goals .third .third) := by decide
 
-/-- Table 7, weak PCC: dependent case unless the first goal is local and the second is third, so
-    on the object except in local→third (Kolyma Yukaghir, [maslova-2003]). -/
+/-- Under the weak PCC of Table 7 there is dependent case unless the first goal is local and the
+    second is third, so on the object except in local→third (Kolyma Yukaghir, [maslova-2003]). -/
 theorem dependentCase_weak_iff (g₁ g₂ : Person) :
     DependentCase weak [g₁, g₂] ↔
-      (bears g₁ .part = true → bears g₂ .part = true) := by
+      (.participant ∈ spec g₁ → .participant ∈ spec g₂) := by
   cases g₁ <;> cases g₂ <;> decide
 
-/-- Table 7, strictly descending: dependent case iff the first goal lacks [SPKR] and the second
-    bears [PART] whenever the first does. -/
+/-- Under the strictly descending PCC of Table 7 there is dependent case iff the first goal lacks
+    [SPKR] and the second bears [PART] whenever the first does. -/
 theorem dependentCase_sd_iff (g₁ g₂ : Person) :
     DependentCase strictlyDescending [g₁, g₂] ↔
-      bears g₁ .spkr = false ∧ (bears g₁ .part = true → bears g₂ .part = true) := by
+      .speaker ∉ spec g₁ ∧ (.participant ∈ spec g₁ → .participant ∈ spec g₂) := by
   cases g₁ <;> cases g₂ <;> decide
 
 /-- Off the diagonal the strictly descending split is the hierarchy 1>2>3: dependent case iff the
     second goal outranks the first, the subject over the object with the probe on v (Shawi) and
     the object over the subject with it on T (Kashmiri, fn. 42). -/
 theorem dependentCase_sd_off_diagonal_iff (g₁ g₂ : Person)
-    (h : Minimalist.decomposePerson g₁ ≠ Minimalist.decomposePerson g₂) :
+    (h : g₁.prominence ≠ g₂.prominence) :
     DependentCase strictlyDescending [g₁, g₂] ↔ g₂.prominence > g₁.prominence :=
   (dependentCase_iff_licit _ _ _).trans (sd_off_diagonal_iff_outranks g₂ g₁ h.symm)
 
-/-- Kolyma Yukaghir accusative ((52)): *-ul* realizes [φ, PART] in the object's flag and *-gele*
-    its φ root, so the form records whether the subject T Agreed with first was a local
+/-- In the Kolyma Yukaghir accusative ((52)), *-ul* realizes [φ, PART] in the object's flag and
+    *-gele* its φ root, so the form records whether the subject T Agreed with first was a local
     person. -/
 def kolymaYukaghirAccusative (subj obj : Person) : Option String :=
-  (flag weak (Locus.T.goals subj obj)).bind λ
-    | [s] => some (if bears s .part then "-ul" else "-gele")
+  (flag weak (Locus.T.goals subj obj)).bind fun
+    | [s] => some (if .participant ∈ spec s then "-ul" else "-gele")
     | _ => none
 
-/-- (49): *-gele* at 3→1, *-ul* at 1→2, and no accusative at 1→3. -/
+/-- The accusative is *-gele* at 3→1 and *-ul* at 1→2, and there is none at 1→3 (49). -/
 theorem kolymaYukaghirAccusative_49 :
     kolymaYukaghirAccusative .third .first = some "-gele" ∧
     kolymaYukaghirAccusative .first .second = some "-ul" ∧

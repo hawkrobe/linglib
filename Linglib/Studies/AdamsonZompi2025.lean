@@ -137,7 +137,7 @@ theorem deal_licenses_lei : ∀ g ∈ [Deal2024.weak, Deal2024.strong],
 /-- Feature gluttony, read over agreement person, licenses accusative LEI, since a third person
 dative and a third person accusative do not glutton the Weak probe. -/
 theorem gluttony_licenses_lei :
-    Morphosyntactic (λ p q => ¬ CoonKeine2021.PCCViolation CoonKeine2021.weakProbe false p q)
+    Morphosyntactic (fun p q ↦ ¬ CoonKeine2021.PCCViolation CoonKeine2021.weakProbe false p q)
       lui lei_formal := by
   decide
 
@@ -190,6 +190,6 @@ theorem assumed_identity :
       (∀ p ∈ German.Pronouns.ihr.person,
         Gluttonous Goal.personSegments weakProbe [dpPl .third, dpPl p]) ∧
       Gluttonous Goal.numberSegments (numberProbe weakProbe) [dp .third, dpPl .third] := by
-  decide
+  decide +kernel
 
 end AdamsonZompi2025
