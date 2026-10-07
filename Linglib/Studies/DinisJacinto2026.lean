@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Core.Relation.ReflTransGen
 public import Linglib.Semantics.Degree.Comparison
 public import Linglib.Semantics.Degree.Marginality
 public import Linglib.Studies.DinisJacinto2025
@@ -31,7 +32,7 @@ extension must have become smaller on the scale.
   most marginally different degrees are alike for the positive form, Fara's similarity
   constraint, so its extension is clustered and tolerant.
 * `DinisJacinto2026.exists_large_step_of_soritical`: a Soritical sequence for the positive form
-  has a large step.
+  crosses into the extension at a large step.
 * `DinisJacinto2026.setOf_positive_eq_gt_over`, `DinisJacinto2026.exists_isHom_setOf_positive_eq`:
   under a representation, which the representation theorem of [dinis-jacinto-2025] supplies for
   countable, finitely marginal scales, the positive form is the strict comparison of the block
@@ -164,20 +165,17 @@ theorem positive_iff_of_reflTransGen (h : Relation.ReflTransGen ml.M (μ w a) (�
   rw [Relation.reflTransGen_eq_reflGen] at h
   exact positive_iff_of_atMostMarginal (h.mono fun _ _ ↦ .inl)
 
-/-- In a Soritical sequence for the positive form, ordered by degree, whose first member is out
-of the extension and whose last member is in it, some member is largely greater than its
-predecessor, the nonstandard primitivist solution to the Sorites (§3, §6.1). -/
-theorem exists_large_step_of_soritical {l : List O} (hl : l.IsChain fun x y ↦ μ w x < μ w y)
-    (hne : l ≠ []) (h₁ : ¬ Positive ml μ norm w (l.head hne))
-    (h₂ : Positive ml μ norm w (l.getLast hne)) :
-    ∃ l₁ l₂ x y, l = l₁ ++ x :: y :: l₂ ∧ ml.L (μ w x) (μ w y) := by
-  by_contra! h
-  have hm : l.IsChain fun x y ↦ ml.M (μ w x) (μ w y) :=
-    List.isChain_iff_forall_rel_of_append_cons_cons.2 fun _ _ _ _ e ↦
-      (m_or_l_of_lt (List.isChain_iff_forall_rel_of_append_cons_cons.1 hl e)).resolve_right
-        (h _ _ _ _ e)
-  exact h₁ ((positive_iff_of_reflTransGen
-    ((List.relationReflTransGen_of_exists_isChain l hm hne).lift (μ w) fun _ _ ↦ id)).2 h₂)
+/-- In a Soritical sequence for the positive form, a chain of steps each raising the degree
+from someone out of the extension to someone in it, some step is large, the nonstandard
+primitivist solution to the Sorites (§3, §6.1). -/
+theorem exists_large_step_of_soritical {R : O → O → Prop} (hR : ∀ ⦃x y⦄, R x y → μ w x < μ w y)
+    (h : Relation.ReflTransGen R a b) (h₁ : ¬ Positive ml μ norm w a)
+    (h₂ : Positive ml μ norm w b) :
+    ∃ x y, R x y ∧ ¬ Positive ml μ norm w x ∧ Positive ml μ norm w y ∧ ml.L (μ w x) (μ w y) := by
+  obtain ⟨x, y, hxy, hx, hy, -⟩ :=
+    h.exists_boundary (S := {x | ¬ Positive ml μ norm w x}) h₁ (not_not.2 h₂)
+  refine ⟨x, y, hxy, hx, not_not.1 hy, (m_or_l_of_lt (hR hxy)).resolve_left fun hm ↦ hx ?_⟩
+  exact (positive_iff_of_atMostMarginal (.single (.inl hm))).2 (not_not.1 hy)
 
 variable (ml) in
 /-- A property is clustered when something has it iff its degree differs at most marginally
