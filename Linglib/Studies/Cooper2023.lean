@@ -44,7 +44,9 @@ as local or reflexive.
 * Proportional thresholds are cross-multiplied `n / d` over a nonempty extension, and the
   thresholds `θ_q(P)` are parameters, shared by *few* and *a few* only where stated.
 * Context labels are chosen distinct by hand rather than incremented at combination, and a
-  stored quantifier keeps its foreground, its background merged at storage.
+  stored quantifier keeps its foreground, its background merged at storage. Localisation folds
+  the whole assignment into a property's domain, and alignment supplies the constant assignment
+  at the antecedent's witness.
 
 ## TODO
 
@@ -97,6 +99,9 @@ abbrev Ppty (E : Type) := E → Type
 /-- A quantifier maps properties to types, as Montague's ⟨⟨e,t⟩,t⟩ does. -/
 abbrev Quant (E : Type) := Ppty E → Type
 
+/-- A property is witnessed at an individual of its property extension `[↓P]`. -/
+abbrev Ppty.Witnessed (P : Ppty E) (a : E) : Prop := Nonempty (P a)
+
 /-- `SemPropName(a)` (33) applies a property to the individual `a`. -/
 def SemPropName (a : E) : Quant E := fun P ↦ P a
 
@@ -117,30 +122,25 @@ structure ParticularWCNo (P Q : Ppty E) where
   /-- `f` precludes the second property by each witness of the first. -/
   f : (a : E) → P a → Q a → Empty
 
-/-- `exist(P, Q)` is witnessed iff the extensions of `P` and `Q` overlap. -/
+/-- `exist(P, Q)` is witnessed iff the property extensions of `P` and `Q` overlap, (55). -/
 theorem nonempty_particularWCExist_iff {P Q : Ppty E} :
     Nonempty (ParticularWCExist P Q) ↔ ∃ a, Nonempty (P a) ∧ Nonempty (Q a) :=
   ⟨fun ⟨w⟩ ↦ ⟨w.x, ⟨w.pWit⟩, ⟨w.qWit⟩⟩, fun ⟨a, ⟨p⟩, ⟨q⟩⟩ ↦ ⟨⟨a, p, q⟩⟩⟩
 
 /-- A witness of the particular condition for `exist` verifies the classical `some`. -/
 theorem some_of_particularWCExist {P Q : Ppty E} (w : ParticularWCExist P Q) :
-    GQ.some (fun a ↦ Nonempty (P a)) (fun a ↦ Nonempty (Q a)) :=
+    GQ.some P.Witnessed Q.Witnessed :=
   ⟨w.x, ⟨w.pWit⟩, ⟨w.qWit⟩⟩
 
 /-- A witness of the particular condition for `no` verifies the classical `no`. -/
-theorem no_sem_of_particularWCNo {P Q : Ppty E} (w : ParticularWCNo P Q) :
-    no (fun a ↦ Nonempty (P a)) (fun a ↦ Nonempty (Q a)) :=
+theorem no_of_particularWCNo {P Q : Ppty E} (w : ParticularWCNo P Q) :
+    no P.Witnessed Q.Witnessed :=
   fun a ⟨p⟩ ⟨q⟩ ↦ (w.f a p q).elim
 
 /-- `SemIndefArt` (37) sends a restrictor property to the existential quantifier over it, whose
 witness under the particular condition of Ch. 7 (63) is an individual with the restrictor and the
 scope. -/
 def SemIndefArt (restr : Ppty E) : Quant E := ParticularWCExist restr
-
-/-- `exist(P, Q)` is witnessed iff the property extensions of `P` and `Q` overlap, (55). -/
-theorem nonempty_semIndefArt_iff (restr scope : Ppty E) :
-    Nonempty (SemIndefArt restr scope) ↔ ∃ a, Nonempty (restr a) ∧ Nonempty (scope a) :=
-  nonempty_particularWCExist_iff
 
 /-- `SemBe` (78), Montague's copula, is the property of being the quantifier's witness. -/
 def SemBe (Q : Quant E) : Ppty E := fun x ↦ Q fun y ↦ PLift (x = y)
@@ -183,9 +183,6 @@ structure Parametric (C : Type*) where
   bg : Type
   /-- `fg` is the foreground, the content in each such context. -/
   fg : bg → C
-
-/-- A parametric property is a parametric content whose contents are properties. -/
-abbrev PPpty (E : Type) := Parametric (Ppty E)
 
 /-! #### The Dudamel fragment
 
@@ -835,6 +832,25 @@ theorem ofSizes_every : NumberTree.ofSizes every = NumberTree.all := by
 /-- `many_aʷ` and `a_few_aʷ`, read on the tree of numbers, are *at least `θ`*. -/
 theorem ofSizes_atLeast (θ : ℕ) : NumberTree.ofSizes (atLeast θ) = NumberTree.atLeast θ := rfl
 
+/-- `few_aʷ`, read on the tree of numbers, is *at most `θ`*. -/
+theorem ofSizes_atMost (θ : ℕ) : NumberTree.ofSizes (atMost θ) = NumberTree.atMost θ := rfl
+
+/-- The complement witness sets of `few_a` (81b), read on the tree of numbers, are the inner
+negation of `few_aʷ`. -/
+theorem innerNeg_ofSizes_compAtMost (θ : ℕ) :
+    (NumberTree.ofSizes (compAtMost θ)).innerNeg = NumberTree.ofSizes (atMost θ) := by
+  funext a b; grind [NumberTree.innerNeg_apply, NumberTree.ofSizes_apply, compAtMost, atMost]
+
+/-- The complement witness sets of `few_p` (82b), read on the tree of numbers, are the inner
+negation of `few_pʷ`. -/
+theorem innerNeg_ofSizes_compPropAtMost (n d : ℕ) :
+    (NumberTree.ofSizes (compPropAtMost n d)).innerNeg = NumberTree.ofSizes (propAtMost n d) := by
+  funext a b
+  simp only [NumberTree.innerNeg_apply, NumberTree.ofSizes_apply, compPropAtMost, propAtMost,
+    eq_iff_iff]
+  rw [Nat.sub_mul, Nat.mul_add, Nat.mul_add, Nat.mul_add]
+  omega
+
 end CardRel
 
 section WitnessType
@@ -865,16 +881,11 @@ theorem witnessType_iff_witness :
 
 /-- The witness sets of `everyʷ(P)` are the B&C witness sets of `every P`. -/
 theorem everyW_iff_witness : WitnessType P .every X ↔ Witness (every P) P (· ∈ X) := by
-  simp only [WitnessType, CardRel.every, Witness, every]
-  exact ⟨fun ⟨h, hc⟩ ↦ ⟨fun a ha ↦ (Finset.mem_filter.1 (h ha)).2, fun a ha ↦
-      Finset.eq_of_subset_of_card_le h hc.ge ▸ Finset.mem_filter.2 ⟨Finset.mem_univ a, ha⟩⟩,
-    fun ⟨h, hP⟩ ↦
-      have hX : X = ({x | P x} : Finset E) := Finset.ext fun a ↦ by simpa using ⟨h a, hP a⟩
-      ⟨hX.le, congrArg Finset.card hX⟩⟩
+  rw [witnessType_iff_witness, CardRel.ofSizes_every, ← every_eq_toGQ_all]
 
 /-- The witness set of `noʷ(P)` is the B&C witness set of `no P`. -/
 theorem noW_iff_witness : WitnessType P .no X ↔ Witness (no P) P (· ∈ X) := by
-  grind [WitnessType, CardRel.no, Witness, no, Finset.card_eq_zero]
+  rw [witnessType_iff_witness, CardRel.ofSizes_no, ← no_eq_toGQ_no]
 
 /-- Cooper's singleton witness sets for `exist` (21) are the minimal B&C witness sets of
 `some P`. -/
@@ -928,21 +939,21 @@ theorem uniformOn_of_subset (h : X ⊆ P) : uniformOn (P : Set E) X = #X / #P :=
 
 /-- The probability is `0` exactly for the empty witness set (43). -/
 theorem uniformOn_eq_zero_iff_of_subset (h : X ⊆ P) : uniformOn (P : Set E) X = 0 ↔ X = ∅ := by
-  rw [uniformOn_of_subset h, ENNReal.div_eq_zero_iff]
-  simp only [Nat.cast_eq_zero, Finset.card_eq_zero, ENNReal.natCast_ne_top, or_false]
+  rw [uniformOn_eq_zero_iff P.finite_toSet, Set.inter_eq_right.2 (Finset.coe_subset.2 h),
+    Finset.coe_eq_empty]
 
 /-- The probability is `1 / |[↓P]|` exactly for a singleton witness set (41). -/
 theorem uniformOn_eq_inv_iff_of_subset (h : X ⊆ P) (hP : P.Nonempty) :
     uniformOn (P : Set E) X = (#P : ℝ≥0∞)⁻¹ ↔ #X = 1 := by
-  rw [uniformOn_of_subset h, ENNReal.div_eq_inv_mul]
-  nth_rewrite 2 [← mul_one (#P : ℝ≥0∞)⁻¹]
-  rw [ENNReal.mul_right_inj (by simp) (by simp [hP.ne_empty]), Nat.cast_eq_one]
+  have := uniformOn_eq_inv_ncard_iff (t := X) P.finite_toSet (Finset.coe_nonempty.2 hP)
+  rwa [Set.inter_eq_right.2 (Finset.coe_subset.2 h), Set.ncard_coe_finset,
+    Set.ncard_coe_finset] at this
 
 /-- The probability is `1` exactly for the whole extension (44). -/
 theorem uniformOn_eq_one_iff_of_subset (h : X ⊆ P) (hP : P.Nonempty) :
     uniformOn (P : Set E) X = 1 ↔ X = P := by
-  rw [uniformOn_of_subset h, ENNReal.div_eq_one_iff (by simp [hP.ne_empty]) (by simp)]
-  exact ⟨fun hc ↦ Finset.eq_of_subset_of_card_le h (by exact_mod_cast hc.ge), fun hX ↦ hX ▸ rfl⟩
+  rw [uniformOn_eq_one_iff P.finite_toSet (Finset.coe_nonempty.2 hP), Finset.coe_subset]
+  exact ⟨h.antisymm, Eq.ge⟩
 
 /-- The probabilistic witness condition for *most* (50) is the cardinal one (29). -/
 theorem witnessType_propAtLeast_iff [Fintype E] {P : E → Prop} [DecidablePred P] {n d : ℕ}
@@ -1004,7 +1015,7 @@ structure GeneralWCDecr where
   /-- `witness` makes it of the type `qʷ(P)`. -/
   witness : WitnessType P c X
   /-- `f` puts each object with both properties into it. -/
-  f : ∀ a, P a → Nonempty (Q a) → a ∈ X
+  f : ∀ a, P a → Q.Witnessed a → a ∈ X
 
 variable (P c Q) in
 /-- The particular witness conditions for `no` over `everyʷ(P)` (70) and for `few` over its
@@ -1026,7 +1037,7 @@ open Classical in
 /-- For a relation closed upwards in `|X|`, (59a) is witnessed exactly when the tree quantifier
 holds of `P` and `Q`, by Barwise and Cooper's C11(i). -/
 theorem nonempty_generalWCIncr_iff_toGQ (hc : ∀ p, Monotone (c · p)) :
-    Nonempty (GeneralWCIncr P c Q) ↔ (NumberTree.ofSizes c).toGQ P fun x ↦ Nonempty (Q x) := by
+    Nonempty (GeneralWCIncr P c Q) ↔ (NumberTree.ofSizes c).toGQ P Q.Witnessed := by
   rw [((NumberTree.conservative_toGQ _).livesOn P).monotone_apply_iff
     ((NumberTree.scopeMonotone_ofSizes hc).toGQ P)]
   refine ⟨fun ⟨w⟩ ↦ ⟨(· ∈ w.X), witnessType_iff_witness.1 w.witness, fun a ha ↦ ⟨w.f a ha⟩⟩,
@@ -1038,7 +1049,7 @@ open Classical in
 /-- For a relation closed downwards in `|X|`, (59b) is witnessed exactly when the tree quantifier
 holds of `P` and `Q`, by C11(ii). -/
 theorem nonempty_generalWCDecr_iff_toGQ (hc : ∀ p, Antitone (c · p)) :
-    Nonempty (GeneralWCDecr P c Q) ↔ (NumberTree.ofSizes c).toGQ P fun x ↦ Nonempty (Q x) := by
+    Nonempty (GeneralWCDecr P c Q) ↔ (NumberTree.ofSizes c).toGQ P Q.Witnessed := by
   rw [((NumberTree.conservative_toGQ _).livesOn P).antitone_apply_iff
     ((NumberTree.scopeAntitone_ofSizes hc).toGQ P)]
   refine ⟨fun ⟨w⟩ ↦ ⟨(· ∈ w.X), witnessType_iff_witness.1 w.witness,
@@ -1050,7 +1061,7 @@ theorem nonempty_generalWCDecr_iff_toGQ (hc : ∀ p, Antitone (c · p)) :
 open Classical in
 /-- Under (59a) the witness set consists of objects with both properties. -/
 theorem GeneralWCIncr.X_subset (w : GeneralWCIncr P c Q) :
-    w.X ⊆ ({x | P x ∧ Nonempty (Q x)} : Finset E) :=
+    w.X ⊆ ({x | P x ∧ Q.Witnessed x} : Finset E) :=
   fun a ha ↦ Finset.mem_filter.2
     ⟨Finset.mem_univ a, (Finset.mem_filter.1 (w.witness.1 ha)).2, ⟨w.f a ha⟩⟩
 
@@ -1058,46 +1069,22 @@ open Classical in
 /-- Under a condition with negated scope the witness set consists of objects with the first
 property and not the second. -/
 theorem ParticularWCNeg.X_subset (w : ParticularWCNeg P c Q) :
-    w.X ⊆ ({x | P x ∧ IsEmpty (Q x)} : Finset E) :=
+    w.X ⊆ ({x | P x ∧ ¬ Q.Witnessed x} : Finset E) :=
   fun a ha ↦ Finset.mem_filter.2
-    ⟨Finset.mem_univ a, (Finset.mem_filter.1 (w.witness.1 ha)).2, ⟨fun q ↦ (w.f a ha q).elim⟩⟩
-
-/-- Under (59b) the witness set lies within the first property. -/
-theorem GeneralWCDecr.X_subset (w : GeneralWCDecr P c Q) : w.X ⊆ ({x | P x} : Finset E) :=
-  w.witness.1
+    ⟨Finset.mem_univ a, (Finset.mem_filter.1 (w.witness.1 ha)).2, fun ⟨q⟩ ↦ (w.f a ha q).elim⟩
 
 open Classical in
 /-- Under (59b) the witness set contains every object with both properties. -/
 theorem GeneralWCDecr.subset_X (w : GeneralWCDecr P c Q) :
-    ({x | P x ∧ Nonempty (Q x)} : Finset E) ⊆ w.X :=
+    ({x | P x ∧ Q.Witnessed x} : Finset E) ⊆ w.X :=
   fun a ha ↦ (Finset.mem_filter.1 ha).2.elim (w.f a)
-
-open Classical in
-/-- For a relation closed upwards in `|X|`, (59a) holds when the relation holds of `|[↓P] ∩ [↓Q]|`
-and `|[↓P]|`. -/
-theorem nonempty_generalWCIncr_iff (hc : ∀ p, Monotone (c · p)) :
-    Nonempty (GeneralWCIncr P c Q) ↔ c #{x | P x ∧ Nonempty (Q x)} #{x | P x} :=
-  ⟨fun ⟨w⟩ ↦ hc _ (Finset.card_le_card w.X_subset) w.witness.2,
-    fun h ↦ ⟨⟨{x | P x ∧ Nonempty (Q x)},
-      ⟨Finset.monotone_filter_right _ fun _ _ h ↦ h.1, h⟩,
-      fun _ ha ↦ (Finset.mem_filter.1 ha).2.2.some⟩⟩⟩
-
-open Classical in
-/-- For a relation closed downwards in `|X|`, (59b) holds when the relation holds of `|[↓P] ∩ [↓Q]|`
-and `|[↓P]|`. -/
-theorem nonempty_generalWCDecr_iff (hc : ∀ p, Antitone (c · p)) :
-    Nonempty (GeneralWCDecr P c Q) ↔ c #{x | P x ∧ Nonempty (Q x)} #{x | P x} :=
-  ⟨fun ⟨w⟩ ↦ hc _ (Finset.card_le_card w.subset_X) w.witness.2,
-    fun h ↦ ⟨⟨{x | P x ∧ Nonempty (Q x)},
-      ⟨Finset.monotone_filter_right _ fun _ _ h ↦ h.1, h⟩,
-      fun a hP hQ ↦ Finset.mem_filter.2 ⟨Finset.mem_univ a, hP, hQ⟩⟩⟩⟩
 
 open Classical in
 /-- Under (59b) with a relation closed downwards, a witness can be traded for one whose witness set
 is exactly the objects with both properties, which is the sense in which the general condition for
 *few* makes REFSET anaphora available (p. 315). -/
 theorem GeneralWCDecr.exists_X_eq (hc : ∀ p, Antitone (c · p)) (w : GeneralWCDecr P c Q) :
-    ∃ w' : GeneralWCDecr P c Q, w'.X = ({x | P x ∧ Nonempty (Q x)} : Finset E) :=
+    ∃ w' : GeneralWCDecr P c Q, w'.X = ({x | P x ∧ Q.Witnessed x} : Finset E) :=
   ⟨⟨_, ⟨Finset.monotone_filter_right _ fun _ _ h ↦ h.1,
       hc _ (Finset.card_le_card w.subset_X) w.witness.2⟩,
     fun a hP hQ ↦ Finset.mem_filter.2 ⟨Finset.mem_univ a, hP, hQ⟩⟩, rfl⟩
@@ -1105,16 +1092,16 @@ theorem GeneralWCDecr.exists_X_eq (hc : ∀ p, Antitone (c · p)) (w : GeneralWC
 /-- `everyʷ` is not closed upwards, but a witness set within `[↓P]` of its cardinality is all of it,
 which gives the truth condition of (72). -/
 theorem nonempty_generalWCIncr_every_iff :
-    Nonempty (GeneralWCIncr P .every Q) ↔ ∀ a, P a → Nonempty (Q a) :=
+    Nonempty (GeneralWCIncr P .every Q) ↔ every P Q.Witnessed :=
   ⟨fun ⟨w⟩ a ha ↦ ⟨w.f a (Finset.eq_of_subset_of_card_le w.witness.1 w.witness.2.ge ▸
       Finset.mem_filter.2 ⟨Finset.mem_univ a, ha⟩)⟩,
     fun h ↦ ⟨⟨{x | P x}, ⟨subset_rfl, rfl⟩,
       fun a ha ↦ (h a (Finset.mem_filter.1 ha).2).some⟩⟩⟩
 
 /-- A singleton set of an object with `P` all of whose members have `Q` exists just in case an
-object has both (62), the truth condition of (60). -/
+object has both (62), so the truth condition of (60) is *some*. -/
 theorem nonempty_generalWCIncr_exist_iff [DecidableEq E] :
-    Nonempty (GeneralWCIncr P .exist Q) ↔ ∃ a, P a ∧ Nonempty (Q a) :=
+    Nonempty (GeneralWCIncr P .exist Q) ↔ GQ.some P Q.Witnessed :=
   ⟨fun ⟨w⟩ ↦
       have ⟨a, ha⟩ := Finset.card_eq_one.1 w.witness.2
       have haX : a ∈ w.X := ha ▸ Finset.mem_singleton_self a
@@ -1126,69 +1113,55 @@ theorem nonempty_generalWCIncr_exist_iff [DecidableEq E] :
 
 /-- `many_a` (77) and `a_few_a` (89) are the counting quantifier *at least `θ`*. -/
 theorem nonempty_generalWCIncr_atLeast_iff {θ : ℕ} :
-    Nonempty (GeneralWCIncr P (.atLeast θ) Q) ↔ atLeast θ P fun a ↦ Nonempty (Q a) :=
+    Nonempty (GeneralWCIncr P (.atLeast θ) Q) ↔ atLeast θ P Q.Witnessed :=
   nonempty_generalWCIncr_iff_toGQ (CardRel.monotone_atLeast θ)
 
 /-- `few_a` (79) is *at most `θ`*. -/
 theorem nonempty_generalWCDecr_atMost_iff {θ : ℕ} :
-    Nonempty (GeneralWCDecr P (.atMost θ) Q) ↔ atMost θ P fun a ↦ Nonempty (Q a) :=
+    Nonempty (GeneralWCDecr P (.atMost θ) Q) ↔ atMost θ P Q.Witnessed :=
   nonempty_generalWCDecr_iff_toGQ (CardRel.antitone_atMost θ)
 
 /-- `most` (74), `many_p` (78) and `a_few_p` (90) are the proportional threshold quantifier
 over a nonempty restrictor. -/
 theorem nonempty_generalWCIncr_propAtLeast_iff {n d : ℕ} :
     Nonempty (GeneralWCIncr P (.propAtLeast n d) Q) ↔
-      0 < {x | P x}.ncard ∧ (NumberTree.threshold n d).toGQ P fun a ↦ Nonempty (Q a) := by
+      0 < {x | P x}.ncard ∧ (NumberTree.threshold n d).toGQ P Q.Witnessed := by
   rw [nonempty_generalWCIncr_iff_toGQ (CardRel.monotone_propAtLeast n d),
-    ← Set.ncard_inter_add_ncard_sdiff_eq_ncard {x | P x} {x | Nonempty (Q x)}]
+    ← Set.ncard_inter_add_ncard_sdiff_eq_ncard {x | P x} {x | Q.Witnessed x}]
   exact and_congr_left' (by rw [Nat.add_comm]; rfl)
 
-open Classical in
-/-- With the threshold `few` and `a few` share (34), `few_a` and `a_few_a` both hold just in
-case exactly `θ` objects have both properties. -/
+/-- With the threshold `few` and `a few` share (34), `few_a` and `a_few_a` together are *exactly
+`θ`*. -/
 theorem few_and_aFew_iff {θ : ℕ} :
     Nonempty (GeneralWCDecr P (.atMost θ) Q) ∧ Nonempty (GeneralWCIncr P (.atLeast θ) Q) ↔
-      #{x | P x ∧ Nonempty (Q x)} = θ := by
-  rw [nonempty_generalWCDecr_iff (CardRel.antitone_atMost θ),
-    nonempty_generalWCIncr_iff (CardRel.monotone_atLeast θ)]
-  exact le_antisymm_iff.symm
+      exactly θ P Q.Witnessed := by
+  rw [nonempty_generalWCDecr_atMost_iff, nonempty_generalWCIncr_atLeast_iff,
+    exactly_eq_atLeast_inf_atMost]
+  exact and_comm
 
-open Classical in
-/-- The objects with `P` split into those with `Q` and those precluding it. -/
-private theorem card_add_card_neg (P : E → Prop) [DecidablePred P] (Q : Ppty E) :
-    #{x | P x ∧ Nonempty (Q x)} + #{x | P x ∧ Nonempty (Q x → Empty)} = #{x | P x} := by
-  have h' : #{x | P x ∧ Nonempty (Q x → Empty)} = #{x | P x ∧ ¬ Nonempty (Q x)} :=
-    congrArg Finset.card <| Finset.filter_congr fun _ _ ↦ and_congr_right fun _ ↦
-      ⟨fun ⟨g⟩ ⟨q⟩ ↦ (g q).elim, fun h ↦ ⟨fun q ↦ (h ⟨q⟩).elim⟩⟩
-  rw [h', ← Finset.filter_filter, ← Finset.filter_filter,
-    Finset.card_filter_add_card_filter_not]
+/-- For a relation closed upwards in `|X|`, a condition with negated scope is witnessed exactly
+when the inner negation of the relation's tree quantifier holds of `P` and `Q`. -/
+theorem nonempty_particularWCNeg_iff_toGQ (hc : ∀ p, Monotone (c · p)) :
+    Nonempty (ParticularWCNeg P c Q) ↔ (NumberTree.ofSizes c).innerNeg.toGQ P Q.Witnessed := by
+  rw [nonempty_generalWCIncr_iff_toGQ hc, NumberTree.toGQ_innerNeg]
+  exact iff_of_eq (congrArg ((NumberTree.ofSizes c).toGQ P) (funext fun _ ↦
+    propext ⟨fun ⟨g⟩ ⟨q⟩ ↦ (g q).elim, fun h ↦ ⟨fun q ↦ (h ⟨q⟩).elim⟩⟩))
 
-/-- The particular condition for `few_a` (85) is witnessed iff the general one (79) is, since its
-complement witness set (81) leaves at most `θ` objects with `P` that may have `Q`. -/
+/-- The particular condition for `few_a` (85) is witnessed iff the general one (79) is, its
+complement witness sets being the inner negation of `few_aʷ`. -/
 theorem nonempty_particularWCNeg_compAtMost_iff {θ : ℕ} :
     Nonempty (ParticularWCNeg P (.compAtMost θ) Q) ↔ Nonempty (GeneralWCDecr P (.atMost θ) Q) := by
-  rw [nonempty_generalWCIncr_iff (CardRel.monotone_compAtMost θ),
-    nonempty_generalWCDecr_iff (CardRel.antitone_atMost θ)]
-  have := card_add_card_neg P Q
-  simp only [CardRel.compAtMost, CardRel.atMost]
-  omega
+  rw [nonempty_particularWCNeg_iff_toGQ (CardRel.monotone_compAtMost θ),
+    CardRel.innerNeg_ofSizes_compAtMost,
+    nonempty_generalWCDecr_iff_toGQ (CardRel.antitone_atMost θ)]
 
 /-- The particular condition for `few_p` (86) is witnessed iff the general one (80) is. -/
 theorem nonempty_particularWCNeg_compPropAtMost_iff {n d : ℕ} :
     Nonempty (ParticularWCNeg P (.compPropAtMost n d) Q) ↔
       Nonempty (GeneralWCDecr P (.propAtMost n d) Q) := by
-  classical
-  rw [nonempty_generalWCIncr_iff (CardRel.monotone_compPropAtMost n d),
-    nonempty_generalWCDecr_iff (CardRel.antitone_propAtMost n d)]
-  have hkm := card_add_card_neg P Q
-  simp only [CardRel.compPropAtMost, CardRel.propAtMost]
-  refine and_congr_right fun _ ↦ ?_
-  generalize #{x | P x ∧ Nonempty (Q x)} = k at *
-  generalize #{x | P x ∧ Nonempty (Q x → Empty)} = m at *
-  generalize #{x | P x} = p at *
-  subst hkm
-  rw [Nat.sub_mul, Nat.mul_add, Nat.mul_add]
-  omega
+  rw [nonempty_particularWCNeg_iff_toGQ (CardRel.monotone_compPropAtMost n d),
+    CardRel.innerNeg_ofSizes_compPropAtMost,
+    nonempty_generalWCDecr_iff_toGQ (CardRel.antitone_propAtMost n d)]
 
 /-- The set-based `no`, the witness set of every object with `P` each precluding `Q`, is
 witnessed iff the particular condition (70) is. -/
@@ -1240,9 +1213,9 @@ open Classical in
 /-- `ref.set P Q` is the set each anaphora-set kind names over the properties `P` and `Q`. -/
 noncomputable def AnaphoraRef.set [Fintype E] (P : E → Prop) [DecidablePred P] (Q : Ppty E) :
     AnaphoraRef → Finset E
-  | .refset => {x | P x ∧ Nonempty (Q x)}
+  | .refset => {x | P x ∧ Q.Witnessed x}
   | .maxset => {x | P x}
-  | .compset => {x | P x ∧ IsEmpty (Q x)}
+  | .compset => {x | P x ∧ ¬ Q.Witnessed x}
 
 /-- REFSET and COMPSET are disjoint, so a nonempty witness set within the one is not within the
 other, and no witness of (59a) supplies COMPSET, as (76) and (92) show for *most* and *a few*. -/
@@ -1250,7 +1223,7 @@ theorem AnaphoraRef.disjoint_set_refset_compset [Fintype E] (P : E → Prop) [De
     (Q : Ppty E) : Disjoint (AnaphoraRef.refset.set P Q) (AnaphoraRef.compset.set P Q) := by
   classical
   simp only [AnaphoraRef.set, Finset.disjoint_left, Finset.mem_filter]
-  exact fun _ h h' ↦ h'.2.2.false h.2.2.some
+  exact fun _ h h' ↦ h'.2.2 h.2.2
 
 /-- The witness conditions of §7.4 are told apart by the paths their witnesses provide. -/
 inductive WitnessCondition where
@@ -1634,9 +1607,9 @@ end Hugging
 
 /-! ### Localisation and donkey anaphora (§8.3) -/
 
-/-- Localisation `ℒ` (49) folds the context a parametric property requires into the property's
-domain under the label `𝔠`, giving a restricted property. -/
-def localize (P : PPpty E) : Restricted E := ⟨fun _ ↦ P.bg, fun x c ↦ P.fg c x⟩
+/-- Localisation `ℒ` (49) folds the assignment a content requires into the property's domain under
+the label `𝔠`, giving a restricted property. -/
+def localize (P : Content E (Ppty E)) : Restricted E := ⟨fun _ ↦ ℕ → E, fun x g ↦ P.fg g x⟩
 
 /-! #### *No dog which chases a cat catches it* (46a)
 
@@ -1667,18 +1640,23 @@ def Chase : Ind → Ind → Type
   | .dog₁, .cat₁ | .dog₂, .cat₂ => PUnit
   | _, _ => Empty
 
-/-- In *catches it* (47) the context supplies the pronoun's referent. -/
-def catchesIt (Catch : Ind → Ind → Type) : PPpty Ind := ⟨Ind, fun y x ↦ Catch x y⟩
+/-- *catches* is a transitive verb over its object quantifier (Ch. 6, (63)). -/
+def catches (Catch : Ind → Ind → Type) : Content Ind (Quant Ind → Ppty Ind) :=
+  ⟨∅, fun _ Q x ↦ Q (Catch x)⟩
+
+/-- In *catches it* (47) the context supplies the referent of the pronoun's label. -/
+def catchesIt (Catch : Ind → Ind → Type) : Content Ind (Ppty Ind) :=
+  (catches Catch).app (Content.pronoun 1)
 
 /-- The restrictor *dog which chases a cat*, as the domain of (50), holds a dog with a cat it
 chases. -/
 def DogChasesACat : Ppty Ind := fun x ↦ Dog x × ((c : Ind) × Cat c × Chase x c)
 
-/-- The scope (51) is *catches it* localised, restricted by the restrictor and aligned so that `it`
-is the chased cat. -/
+/-- The scope (51) is *catches it* localised, restricted by the restrictor and aligned so that the
+pronoun's label is the chased cat. -/
 def scope (Catch : Ind → Ind → Type) : Restricted Ind :=
   ((localize (catchesIt Catch)).restrictBy DogChasesACat).align DogChasesACat
-    fun _ r ↦ (r, r.2.1)
+    fun _ r ↦ (r, fun _ ↦ r.2.1)
 
 /-- The sentence (55) is `no(restr, scope)` with the scope purified. -/
 def Sentence (Catch : Ind → Ind → Type) : Type := SemNo DogChasesACat (Purify (scope Catch))
@@ -1730,10 +1708,14 @@ def Like : Ind → Ind → Type
 /-- *farmer who owns a donkey* holds a farmer with a donkey she owns. -/
 def FarmerOwnsADonkey : Ppty Ind := fun x ↦ Farmer x × ((d : Ind) × Donkey d × Own x d)
 
-/-- *likes it* (61) is localised (62)–(63), restricted (64) and aligned (65). -/
+/-- *likes* is a transitive verb over its object quantifier (Ch. 6, (63)). -/
+def likes : Content Ind (Quant Ind → Ppty Ind) := ⟨∅, fun _ Q x ↦ Q (Like x)⟩
+
+/-- *likes it* (61) is localised (62)–(63), restricted (64) and aligned (65), the pronoun's label
+being the owned donkey. -/
 def likesIt : Restricted Ind :=
-  ((localize ⟨Ind, fun y x ↦ Like x y⟩).restrictBy FarmerOwnsADonkey).align FarmerOwnsADonkey
-    fun _ r ↦ (r, r.2.1)
+  ((localize (likes.app (Content.pronoun 1))).restrictBy FarmerOwnsADonkey).align FarmerOwnsADonkey
+    fun _ r ↦ (r, fun _ ↦ r.2.1)
 
 /-- The weak reading (59) holds, every farmer who owns a donkey liking some donkey she owns. -/
 def weak : SemUniversal FarmerOwnsADonkey (Purify likesIt)

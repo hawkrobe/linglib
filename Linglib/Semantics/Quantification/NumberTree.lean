@@ -513,6 +513,10 @@ theorem toGQ_apply (q : NumberTree) (A B : α → Prop) :
 
 @[simp] theorem toGQ_compl (q : NumberTree) : qᶜ.toGQ = (q.toGQᶜ : GQ α) := rfl
 
+/-- The quantifier of a tree's inner negation is the inner negation of its quantifier. -/
+@[simp] theorem toGQ_innerNeg (q : NumberTree) : q.innerNeg.toGQ = (q.toGQ : GQ α).innerNeg := by
+  funext A B; simp only [toGQ, innerNeg_apply, GQ.innerNeg, not_not]
+
 /-- On a finite universe the quantifier of a decidable tree is decidable at decidable
 arguments. -/
 instance toGQ.decidable [Fintype α] (q : NumberTree) [DecidableRel q] (A B : α → Prop)
