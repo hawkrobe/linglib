@@ -8,6 +8,7 @@ public import Mathlib.Order.PiLex
 public import Mathlib.Order.Preorder.Finite
 public import Mathlib.Order.RelClasses
 public import Mathlib.Data.Fintype.Card
+public import Mathlib.Data.Fintype.Fin
 public import Mathlib.MeasureTheory.MeasurableSpace.Defs
 public import Linglib.Core.Order.PiLex
 
@@ -19,7 +20,8 @@ enumeration `r : Fin n ≃ ι` of the constraints in rank order: `r p` is the co
 position `p`, position `0` most dominant, and `r.symm i` is the rank position of `i`. For
 `ι = Fin n` a ranking is a permutation, `Equiv.Perm (Fin n)`. `Ranking.Dominates` is the induced
 strict dominance relation, a strict total order on the constraints, and `Ranking.toRel` its
-reflexive closure, from which the ranking is recoverable (`toRel_le_toRel_iff`). Reading two
+reflexive closure, from which the ranking is recoverable (`toRel_le_toRel_iff`); `Ranking.take r k`
+is the set of its top `k` constraints. Reading two
 violation vectors in rank order and comparing them lexicographically is `Pi.Lex` under dominance
 (`toLex_comp_lt_iff`). The `Tableau` machinery evaluates under a ranking, and the
 elementary-ranking-condition layer (`ElementaryRankingCondition.lean`) infers rankings from
@@ -97,7 +99,7 @@ theorem toLex_comp_lt_iff {β : Type*} [LT β] (v w : ι → β) :
 @[simp] theorem one_dominates_iff {i j : Fin n} : (1 : Ranking (Fin n) n).Dominates i j ↔ i < j :=
   Iff.rfl
 
-/-- The ranking's *reading* of a lex-ordered vector: coordinate `p` of `r • v` is the
+/-- A ranking reads a lex-ordered vector in rank order, so that coordinate `p` of `r • v` is the
 value of `v` at the constraint ranked `p`-th. Reordering is the one operation that
 breaks and reconstitutes the lex order — the `Sₙ` action whose orbit structure is
 constraint ranking. (With this convention the action is a right action:
@@ -128,11 +130,64 @@ theorem exists_forall_dominates (i : Fin n) :
   exact Nat.pos_of_ne_zero fun h0 ↦ hj <| (Equiv.swap ⟨0, i.pos⟩ i).symm.injective <|
     Fin.ext (h0.trans (congrArg Fin.val hi).symm)
 
+/-! ### The top constraints of a ranking -/
+
+/-- The top `k` constraints of a ranking. -/
+def take (k : Fin (n + 1)) : Finset ι :=
+  ({p : Fin n | (p : ℕ) < k} : Finset (Fin n)).map r.toEmbedding
+
+@[simp] theorem mem_take {k : Fin (n + 1)} {i : ι} : i ∈ r.take k ↔ (r.symm i : ℕ) < k := by
+  simp only [take, Finset.mem_map_equiv, Finset.mem_filter, Finset.mem_univ, true_and]
+
+@[simp] theorem card_take (k : Fin (n + 1)) : (r.take k).card = k := by
+  rw [take, Finset.card_map, Fin.card_filter_val_lt, min_eq_right (Nat.lt_succ_iff.mp k.isLt)]
+
+@[simp] theorem take_zero : r.take 0 = ∅ := by
+  ext; simp
+
+@[simp] theorem take_last [Fintype ι] : r.take (Fin.last n) = Finset.univ := by
+  ext; simp
+
+/-- Passing from the top `k` constraints to the top `k + 1` adds the constraint ranked `k`. -/
+theorem take_succ [DecidableEq ι] (k : Fin n) :
+    r.take k.succ = insert (r k) (r.take k.castSucc) := by
+  ext i
+  simp only [mem_take, Finset.mem_insert, Fin.val_succ, Fin.val_castSucc]
+  refine ⟨fun h ↦ (Nat.lt_succ_iff_lt_or_eq.mp h).symm.imp (fun h' ↦ ?_) id, ?_⟩
+  · rw [← Fin.ext h', Equiv.apply_symm_apply]
+  · rintro (rfl | h')
+    · rw [Equiv.symm_apply_apply]; omega
+    · omega
+
+theorem apply_notMem_take (k : Fin n) : r k ∉ r.take k.castSucc := by
+  simp
+
+/-- A constraint that dominates a member of a prefix is in the prefix. -/
+theorem mem_take_of_dominates {k : Fin (n + 1)} {i j : ι} (h : r.Dominates i j)
+    (hj : j ∈ r.take k) : i ∈ r.take k := by
+  rw [mem_take] at hj ⊢
+  exact lt_trans (Fin.lt_def.mp h) hj
+
+/-- A set of constraints that dominate every constraint outside it is a prefix. -/
+theorem exists_take_eq (D : Finset ι) (hD : ∀ i ∈ D, ∀ j ∉ D, r.Dominates i j) :
+    ∃ k, r.take k = D := by
+  have hcard : D.card ≤ n :=
+    (D.card_map r.symm.toEmbedding ▸ Finset.card_le_univ _).trans_eq (Fintype.card_fin n)
+  refine ⟨⟨D.card, Nat.lt_succ_of_le hcard⟩, Finset.eq_of_subset_of_card_le (fun j hj ↦ ?_)
+    (by rw [card_take])⟩
+  by_contra hjD
+  rw [mem_take] at hj
+  have hsub : D ⊆ r.take ⟨r.symm j, by omega⟩ := fun i hi ↦
+    (mem_take r).mpr (Fin.lt_def.mp (hD i hi j hjD))
+  have := Finset.card_le_card hsub
+  rw [card_take] at this
+  exact absurd hj (not_lt.mpr this)
+
 /-! ### The ranking as a total order -/
 
-/-- The ranking as its dominance-or-equal relation: `r.toRel i j` iff `i` is
-ranked at least as high as `j` — the reflexive closure of `Dominates`
-(`toRel_iff`), and a total order on constraints. -/
+/-- The dominance-or-equal relation of a ranking holds of `i` and `j` when `i` is ranked at least
+as high as `j`; it is the reflexive closure of `Dominates` (`toRel_iff`) and a total order on the
+constraints. -/
 def toRel : ι → ι → Prop := fun i j => r.symm i ≤ r.symm j
 
 instance (i j : ι) : Decidable (r.toRel i j) :=
@@ -195,6 +250,18 @@ theorem exists_toRel_eq [Fintype ι] (s : ι → ι → Prop) [IsLinearOrder ι 
     (show e.symm a ≤ e.symm b from hab)
   rwa [show (Finset.univ.sort s).get (e.symm a) = a from e.apply_symm_apply a,
     show (Finset.univ.sort s).get (e.symm b) = b from e.apply_symm_apply b] at h
+
+/-- Constraints keyed injectively into a linear order are ranked by their keys. -/
+theorem exists_dominates_iff [Fintype ι] {β : Type*} [LinearOrder β] (f : ι → β)
+    (hf : Function.Injective f) (h : Fintype.card ι = n := by simp) :
+    ∃ σ : Ranking ι n, ∀ i j, σ.Dominates i j ↔ f i < f j := by
+  let _ : LinearOrder ι := LinearOrder.lift' f hf
+  obtain ⟨σ, hσ⟩ := exists_toRel_eq (ι := ι) (· ≤ ·) h
+  refine ⟨σ, fun i j ↦ ?_⟩
+  have := congrFun₂ hσ j i
+  simp only [toRel] at this
+  rw [Dominates, ← not_le, this, not_le]
+  rfl
 
 end Ranking
 end OptimalityTheory
