@@ -20,17 +20,17 @@ off the surface segments. Gemination is a one-to-many association from one
 melody element to several slots ([mccarthy-1981]); a slot with no
 association line receives no phonetic realization.
 
-Association *conventions* — one-to-one left-to-right, spreading, erasure
-rules — are derivational recipes and live with the studies that state them
-(`Studies/McCarthy1981.lean`, `Studies/Faust2026.lean`); this file provides
-the representations they manipulate.
+The universal association conventions that build the lines are in
+`Morphology/Morphotactics/Association.lean`; this file provides the
+representations they manipulate.
 
 ## Main declarations
 
 * `CVSlot`, `CVTemplate` — skeletal slots and templates.
 * `Association` — a sourced melody-to-slot association line.
 * `TemplateMatch` — a root, vocalism, and affix matched to a template.
-* `TemplateMatch.spellout` — the surface segments of a match.
+* `TemplateMatch.spellout` — the surface segments of a match, and
+  `TemplateMatch.map`, which relabels its melodies.
 * `TemplateMatch.OrderedOn` — the tier-internal well-formedness condition.
 * `TemplateMatch.links` — the per-tier link sets, in the coordinates of the
   autosegmental substrate.
@@ -42,6 +42,8 @@ the representations they manipulate.
   prohibition against many-to-one associations (`SlotUnique`), so the
   list-level representation here interprets into
   `Phonology/Autosegmental/NonCrossing.lean` rather than duplicating it.
+* `TemplateMatch.spellout_map` — relabeling the melodies relabels the surface
+  segments.
 -/
 
 @[expose] public section
@@ -215,7 +217,42 @@ instance : Decidable (m.inBounds) :=
   inferInstanceAs (Decidable (∀ a ∈ m.associations, _ ∧ _))
 
 instance (s : AssocSource) : Decidable (m.OrderedOn s) :=
-  inferInstanceAs (Decidable (∀ a ∈ m.associations, ∀ b ∈ m.associations, _))
+  decidable_of_iff (m.associations.all fun a ↦ m.associations.all fun b ↦
+      !(a.source == s && b.source == s && decide (a.melodyIndex < b.melodyIndex)) ||
+        decide (a.slotIndex < b.slotIndex)) <| by
+    simp only [List.all_eq_true, Bool.or_eq_true, Bool.not_eq_true', Bool.and_eq_false_iff,
+      beq_eq_false_iff_ne, decide_eq_false_iff_not, decide_eq_true_eq, OrderedOn]
+    refine forall₂_congr fun a _ ↦ forall₂_congr fun b _ ↦ ?_
+    by_cases h₁ : a.source = s <;> by_cases h₂ : b.source = s <;>
+      simp [h₁, h₂, Decidable.imp_iff_not_or]
+
+/-- The match with each melodic element relabeled. -/
+def map {β : Type*} (f : α → β) : TemplateMatch β :=
+  { root := m.root.map f, vocalism := m.vocalism.map f, affix := m.affix.map f,
+    template := m.template, associations := m.associations }
+
+section map
+
+variable {β : Type*} (f : α → β)
+
+@[simp] theorem associations_map : (m.map f).associations = m.associations := rfl
+
+@[simp] theorem template_map : (m.map f).template = m.template := rfl
+
+@[simp] theorem melody_map (s : AssocSource) : (m.map f).melody s = (m.melody s).map f := by
+  cases s <;> rfl
+
+theorem segmentAt_map (a : Association) : (m.map f).segmentAt a = (m.segmentAt a).map f := by
+  simp [segmentAt, List.getElem?_map]
+
+/-- Relabeling the melodic elements relabels the surface segments. -/
+theorem spellout_map : (m.map f).spellout = m.spellout.map f := by
+  simp only [spellout, associations_map, template_map, List.map_filterMap, segmentAt_map]
+  congr 1
+  funext i
+  cases m.associations.find? (·.slotIndex == i) <;> simp
+
+end map
 
 /-- A match with no associations spells out to nothing. -/
 theorem spellout_nil (r : ConsonantalRoot α) (t : CVTemplate) :

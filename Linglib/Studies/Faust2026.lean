@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Studies.McCarthy1981
+public import Linglib.Morphology.Morphotactics.Association
 public import Linglib.Fragments.Hebrew.ConsonantalRoots
 public import Linglib.Fragments.Amharic.ConsonantalRoots
 public import Linglib.Syntax.Gender.Basic
@@ -14,8 +14,8 @@ not be template-final — and the two template-satisfaction strategies it leaves
 final radical cannot associate to a [+consonantal] C-slot: leaving the slot vacant (Hebrew
 [kala], the QaTaT–QaTa problem of (3)–(4)) or filling it with the consonant of the feminine
 suffix (Hebrew [tadmit] (10), Amharic [fäʤt-o] (8) and [mäsmat] (13a)). The derivations run
-[mccarthy-1981]'s association conventions, as implemented in `Studies/McCarthy1981.lean`,
-over the substrate `Morphology.TemplateMatch`: the [+c] specification bars glides and vowels
+[mccarthy-1981]'s association conventions (`Morphology.TemplateMatch.associate`) over the
+substrate `Morphology.TemplateMatch`: the [+c] specification bars glides and vowels
 from a slot, Amharic joins a barred glide to the preceding consonant and merges a barred vowel
 with the vocalization ((7), (13)), and an unsatisfied final syllable is truncated (7a). Template
 satisfaction by spreading (1) is the candidate *Misalignment rules out for j-final roots
@@ -145,12 +145,11 @@ structure Pattern where
   /-- An unsatisfied final syllable is deleted (7a). -/
   truncates : Bool := false
 
-/-- One-to-one left-to-right association of the root with the C-slots, the final radical
-spreading onto leftover slots ([mccarthy-1981]'s conventions, `McCarthy1981.associateLR`), plus
-the pattern's vocalization lines. -/
+/-- The root associated with the C-slots by the conventions, one to one from left to right
+with the final radical spreading onto leftover slots, plus the pattern's vocalization lines. -/
 def lines (p : Pattern) (r : ConsonantalRoot String) : TemplateMatch String :=
-  { root := r, vocalism := p.vocalism, template := p.template,
-    associations := McCarthy1981.associateLR .root r.arity p.template.cSlots ++ p.vocLines }
+  (({ root := r, vocalism := p.vocalism, template := p.template, associations := [] } :
+    TemplateMatch String).associate .root).link p.vocLines
 
 /-- `m.Admits a`: the slot's specification admits the segment — a [+c] slot hosts consonants
 only ((4), (7), (13)), a plain C-slot anything but a vowel. -/
@@ -163,20 +162,13 @@ def Admits (m : TemplateMatch String) (a : Association) : Prop :=
 instance (m : TemplateMatch String) (a : Association) : Decidable (Admits m a) := by
   unfold Admits; split <;> infer_instance
 
-/-- The root line on the immediate left of slot `i`. -/
-def rootLeft (m : TemplateMatch String) (i : Nat) : Option Association :=
-  (m.associations.filter λ a => a.source == .root && decide (a.slotIndex < i)).foldl
-    (λ acc a => match acc with
-      | none => some a
-      | some b => if b.slotIndex < a.slotIndex then some a else some b) none
-
 /-- The V-slots flanking slot `i`. -/
 def flankingV (m : TemplateMatch String) (i : Nat) : List Nat :=
-  [i - 1, i + 1].filter λ s => m.template.slotAt s = some .V
+  [i - 1, i + 1].filter fun s ↦ m.template.slotAt s = some .V
 
 /-- The vocalization line at slot `s`. -/
 def vocAt (m : TemplateMatch String) (s : Nat) : Option Association :=
-  m.associations.find? λ a => a.source == .vocalism && a.slotIndex == s
+  m.associations.find? fun a ↦ a.source == .vocalism && a.slotIndex == s
 
 /-- Where a barred root element goes. A glide joins the slot of the consonant on its left,
 where the pattern's language does that ((7): Amharic, not Hebrew). A nonconsonantal radical
@@ -187,7 +179,7 @@ def join (p : Pattern) (m : TemplateMatch String) (a : Association) : TemplateMa
   match (m.segmentAt a).map segClass with
   | some .glide =>
     if p.joinsGlide then
-      match rootLeft m a.slotIndex with
+      match m.leftLine .root a.slotIndex with
       | some b =>
         { m with associations := m.associations ++ [⟨.root, a.melodyIndex, b.slotIndex⟩] }
       | none => m
@@ -196,8 +188,8 @@ def join (p : Pattern) (m : TemplateMatch String) (a : Association) : TemplateMa
     let vs := flankingV m a.slotIndex
     match vs.findSome? (vocAt m) with
     | some v =>
-      { m with associations := m.associations ++ vs.map (λ s => ⟨.root, a.melodyIndex, s⟩) ++
-          (vs.filter λ s => (vocAt m s).isNone).map λ s => ⟨.vocalism, v.melodyIndex, s⟩ }
+      { m with associations := m.associations ++ vs.map (fun s ↦ ⟨.root, a.melodyIndex, s⟩) ++
+          (vs.filter fun s ↦ (vocAt m s).isNone).map fun s ↦ ⟨.vocalism, v.melodyIndex, s⟩ }
     | none => m
   | _ => m
 
@@ -205,14 +197,8 @@ def join (p : Pattern) (m : TemplateMatch String) (a : Association) : TemplateMa
 elements joined or merged as the pattern's language allows. -/
 def associate (p : Pattern) (r : ConsonantalRoot String) : TemplateMatch String :=
   let m := lines p r
-  (m.associations.filter λ a => ¬ Admits m a).foldl (join p)
+  (m.associations.filter fun a ↦ ¬ Admits m a).foldl (join p)
     { m with associations := m.associations.filter (Admits m ·) }
-
-/-- Template satisfaction by spreading (1): each vacant C-slot receives the root element on
-its immediate left. -/
-def spread (m : TemplateMatch String) : TemplateMatch String :=
-  { m with associations := m.associations ++ m.unfilledCSlots.filterMap λ s =>
-      (rootLeft m s).map λ b => ⟨.root, b.melodyIndex, s⟩ }
 
 /-! ### Intrusion -/
 
@@ -281,8 +267,8 @@ theorem derive_of_category_ne_noun (p : Pattern) (r : ConsonantalRoot String)
 
 /-- The segments a slot hosts: vocalization first, then root, then affix lines. -/
 def hosted (m : TemplateMatch String) (s : Nat) : List String :=
-  [AssocSource.vocalism, .root, .affix].flatMap λ src =>
-    (m.associations.filter λ a => a.source == src && a.slotIndex == s).filterMap m.segmentAt
+  [AssocSource.vocalism, .root, .affix].flatMap fun src ↦
+    (m.associations.filter fun a ↦ a.source == src && a.slotIndex == s).filterMap m.segmentAt
 
 /-- The realization of a slot: the hosted segments merged onto the first. -/
 def realizeSlot (m : TemplateMatch String) (s : Nat) : Option String :=
@@ -316,7 +302,7 @@ def truncate (p : Pattern) (m : TemplateMatch String) : CVTemplate :=
 /-- The surface segments of a match in a pattern: the realized slots, a filled prespecified
 geminate slot counting twice ({C C} in (7)), between the pattern's outer material. -/
 def realize (p : Pattern) (m : TemplateMatch String) : List String :=
-  p.pre ++ collapse false ((truncate p m).slots.zipIdx.flatMap λ (c, i) =>
+  p.pre ++ collapse false ((truncate p m).slots.zipIdx.flatMap fun (c, i) ↦
     let e := (c, realizeSlot m i)
     if p.geminate = some i ∧ e.2.isSome then [e, e] else [e]) ++ p.post
 
@@ -363,8 +349,8 @@ would yield [kalal] with the nonfinal l template-final, which *Misalignment rule
 theorem klj_spread_misaligned :
     (derive hebrewPst Hebrew.klj).unfilledCSlots = [4] ∧
     ¬ Misaligned (derive hebrewPst Hebrew.klj) ∧
-    Misaligned (spread (derive hebrewPst Hebrew.klj)) ∧
-    realize hebrewPst (spread (derive hebrewPst Hebrew.klj)) = ["k", "a", "l", "a", "l"] := by
+    Misaligned ((derive hebrewPst Hebrew.klj).spread .root) ∧
+    realize hebrewPst ((derive hebrewPst Hebrew.klj).spread .root) = ["k", "a", "l", "a", "l"] := by
   decide
 
 /-- (3c): the final slots of QTiLa and QaTuL are unspecified, so j associates and surfaces. -/
@@ -378,7 +364,7 @@ with the feminine morph, whose t associates from the right, the template is sati
 misalignment. -/
 theorem dmj_taqtil :
     (associate hebrewTaqtil Hebrew.dmj).unfilledCSlots = [3] ∧
-    Misaligned (spread (associate hebrewTaqtil Hebrew.dmj)) ∧
+    Misaligned ((associate hebrewTaqtil Hebrew.dmj).spread .root) ∧
     ⟨.affix, 0, 3⟩ ∈ (derive hebrewTaqtil Hebrew.dmj).associations ∧
     (derive hebrewTaqtil Hebrew.dmj).allCSlotsFilled ∧
     ¬ Misaligned (derive hebrewTaqtil Hebrew.dmj) := by
@@ -411,7 +397,7 @@ theorem fdj_pfv :
     ⟨.root, 2, 2⟩ ∈ (derive amharicPfv Amharic.fdj).associations ∧
     (derive amharicPfv Amharic.fdj).unfilledCSlots = [4] ∧
     ¬ Misaligned (derive amharicPfv Amharic.fdj) ∧
-    Misaligned (spread (derive amharicPfv Amharic.fdj)) := by
+    Misaligned ((derive amharicPfv Amharic.fdj).spread .root) := by
   decide
 
 /-- √wd (5b): the biradical satisfies the PFV template by spreading its final d without

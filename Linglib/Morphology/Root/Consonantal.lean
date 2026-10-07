@@ -53,6 +53,12 @@ variable {α : Type*}
 /-- The number of root segments. -/
 def arity (r : ConsonantalRoot α) : Nat := r.segments.length
 
+/-- The root with each segment relabeled. -/
+def map {β : Type*} (f : α → β) (r : ConsonantalRoot α) : ConsonantalRoot β := ⟨r.segments.map f⟩
+
+@[simp] theorem segments_map {β : Type*} (f : α → β) (r : ConsonantalRoot α) :
+    (r.map f).segments = r.segments.map f := rfl
+
 /-- Position `i` is the *final* root position. -/
 def IsFinal (r : ConsonantalRoot α) (i : Nat) : Prop := i + 1 = r.arity
 

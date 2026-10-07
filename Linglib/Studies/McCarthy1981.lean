@@ -1,341 +1,705 @@
 module
 
-public import Linglib.Morphology.Morphotactics.CVTemplate
-public import Linglib.Morphology.Paradigm.Basic
 public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Morphology.Morphotactics.Association
+public import Linglib.Fragments.Arabic.ModernStandard.ConsonantalRoots
+public import Linglib.Data.Forms.McCarthy1981
 
 /-!
 # McCarthy (1981): A Prosodic Theory of Nonconcatenative Morphology
 
-This file formalizes the analysis of the Classical Arabic verb in [mccarthy-1981] as three
-morphemes on separate autosegmental tiers, a consonantal root, a vocalic melody, and affixal
-material, associated to a prosodic template. The language-particular apparatus is the
-template schema with its elimination rule, the affixes, the Eighth Binyan Flop, and the
-Erasure rule; everything else is the universal association convention, one-to-one from left
-to right and then spreading of the element on the immediate left. The pipeline `assemble`
-places affixes, associates, spreads, and optionally erases, and it generates the perfective
-active of all fifteen triliteral binyanim and the perfective passive of the nine that have
-one, matching the paper's table for the root *ktb* (`perfective_active_matches_table1`,
-`perfective_passive_matches_table1`). Gemination falls out as one-to-many association,
-automatic spreading in IX and XI, Erasure with reassociation in II, V, and XII, and
-final-radical spreading for biradical roots, so *sasam* is underivable
-(`biradical_geminates_final_radical`); surface geminate verbs come from OCP-clean biradicals
-(`geminate_roots_are_biradical`), and a quinqueliteral root strands its final consonant.
+This file formalizes the analysis of the Classical Arabic verb in [mccarthy-1981]. A verb stem
+is a prosodic template of C- and V-slots with a consonantal root, a vowel melody and affixal
+material on separate autosegmental tiers, and the melodies are associated with the slots by the
+universal conventions of `Morphology.TemplateMatch.associate`. The language-particular
+apparatus is the template schema (14), the affixes and their placement, the Eighth Binyan Flop
+(19) and Erasure (24), together with the vowel melodies (39)–(43) and Vowel Association (41).
+With it the derivation produces every form of the paper's table of the triliteral root ktb in
+fifteen binyanim and the quadriliteral root dḥrj in four, in the perfective, imperfective and
+participle, active and passive (`forms_derived`), except the participles of the first binyan,
+which the paper leaves to McCarthy (1979).
+
+Gemination is one root element linked to several slots: the medial radical of the second
+binyan, after Erasure and respreading, and the final radical of a biliteral root, which the
+conventions spread rightward only, so that *sasam* is underivable (`consonantism_biliteral`).
+The quadriliterals are the second, fifth, fourteenth and eleventh binyanim with a fourth
+radical, Erasure being undone by the conventions (`consonantism_quadriliteral`), and the
+twelfth and thirteenth binyanim differ only in which tier respreads after Erasure. The
+derivation never looks at the melodic elements themselves (`stem_map`).
+
+## Main definitions
+
+* `McCarthy1981.consonantism`, `McCarthy1981.stem`: the consonantism of a binyan and the stem of
+  a cell of the table.
+
+## Main results
+
+* `McCarthy1981.forms_derived`: the derivation produces the paper's forms.
+* `McCarthy1981.schema_elide_eq`: the schema (14a) with rule (14b) generates all and only the
+  templates (13).
+* `McCarthy1981.consonantism_quadriliteral`: the quadriliteral binyanim are triliteral ones.
+* `McCarthy1981.metathesisSites_samam`, `McCarthy1981.metathesisSites_ktatab`: the cluster
+  rule (37) applies to identical consonants linked to one root element, not to identical
+  consonants of different morphemes.
 
 ## Implementation notes
 
-The templates and matches are the substrate's `Morphology.TemplateMatch`; Binyan XIII differs
-from XII only in which tier reassociates after Erasure, a choice the analysis leaves open, so
-it is given representationally.
-
-## TODO
-
-The paper is not on file; example and table locators are transcribed from an earlier
-version of this file and are UNVERIFIED.
+* The forms are compared in the paper's transcription; `stem_map` carries a derivation over to
+  the segments of the Arabic fragment, and `seg` reads the transcription as those segments.
+* The consonantism of a stem is derived first and the prefix [CV] of imperfectives and
+  participles added after it, so the root never reaches the prefixal C, which the participle
+  fills with m and which the table's imperfectives, stems without agreement, leave empty.
+* The first convention associates any number of unassociated elements one to one, as the
+  paper's placement of a single affix on the leftmost C-slot (16)–(18) requires. It is then
+  the first convention, not the second as on p. 395, that restores the fourth radical of a
+  quadriliteral after Erasure; the second never changes a derivation here.
+* The [+seg] slot of the eleventh binyan is V with a triliteral root and C with a quadriliteral
+  one (31d); the first binyan's vowels are the a of rule (44) and the root's ablaut vowel (45),
+  associated by the conventions.
 
 ## References
 
 * [mccarthy-1981]
+* [clements-ford-1979]
 -/
 
 @[expose] public section
 
+open Morphology Arabic.ModernStandard
+
 namespace McCarthy1981
 
-open Morphology
+variable {α β : Type*}
 
-/-! ### Roots -/
+/-! ### Prosodic templates -/
 
-/-- The citation root ktb "write". -/
-def ktb : ConsonantalRoot String := ⟨["k", "t", "b"]⟩
-
-/-- The biradical root sm "poison" (surface samam, sammam). -/
-def sm : ConsonantalRoot String := ⟨["s", "m"]⟩
-
-/-- The root qlq, with identical first and third radicals — unremarkable
-for the OCP, which constrains adjacent elements only. -/
-def qlq : ConsonantalRoot String := ⟨["q", "l", "q"]⟩
-
-/-! ### Templates ((13) and the schema (14a)) -/
-
-/-- CVCVC (13a): binyan I. -/
+/-- CVCVC (13a). -/
 def cvcvc : CVTemplate := ⟨[.C, .V, .C, .V, .C]⟩
 
-/-- CVCCVC (13b): binyanim II and IV. -/
+/-- CVCCVC (13b). -/
 def cvccvc : CVTemplate := ⟨[.C, .V, .C, .C, .V, .C]⟩
 
-/-- CVVCVC (13c): binyan III. -/
+/-- CVVCVC (13c). -/
 def cvvcvc : CVTemplate := ⟨[.C, .V, .V, .C, .V, .C]⟩
 
-/-- CVCVCCVC (13d): binyan V. -/
+/-- CVCVCCVC (13d). -/
 def cvcvccvc : CVTemplate := ⟨[.C, .V, .C, .V, .C, .C, .V, .C]⟩
 
-/-- CVCVVCVC (13e): binyan VI. -/
+/-- CVCVVCVC (13e). -/
 def cvcvvcvc : CVTemplate := ⟨[.C, .V, .C, .V, .V, .C, .V, .C]⟩
 
-/-- CCVCVC (13f): binyanim VII, VIII, IX. -/
+/-- CCVCVC (13f). -/
 def ccvcvc : CVTemplate := ⟨[.C, .C, .V, .C, .V, .C]⟩
 
-/-- CCVCCVC (13g): binyanim X and XII–XV. -/
+/-- CCVCCVC (13g). -/
 def ccvccvc : CVTemplate := ⟨[.C, .C, .V, .C, .C, .V, .C]⟩
 
-/-- CCVVCVC (13h): binyan XI. -/
+/-- CCVVCVC (13h). -/
 def ccvvcvc : CVTemplate := ⟨[.C, .C, .V, .V, .C, .V, .C]⟩
 
-/-- The canonical perfective patterns (13a–h). -/
+/-- The canonical patterns of the triliteral perfective (13). -/
 def binyanTemplates : List CVTemplate :=
   [cvcvc, cvccvc, cvvcvc, cvcvccvc, cvcvvcvc, ccvcvc, ccvccvc, ccvvcvc]
 
-/-- The prosodic-template schema (14a): `[({C,CV}) CV ([+seg]) CVC]`. A
-template is generated by choosing the optional first expansion (C or CV),
-the optional [+seg] element (realized C or V), and the fixed CV and CVC. -/
-def SatisfiesSchema (t : CVTemplate) : Prop :=
-  ∃ pre ∈ [[], [CVSlot.C], [CVSlot.C, CVSlot.V]],
-    ∃ seg ∈ [[], [CVSlot.C], [CVSlot.V]],
-      t.slots = pre ++ [CVSlot.C, CVSlot.V] ++ seg ++ [CVSlot.C, CVSlot.V, CVSlot.C]
+/-- CVCVCVC, the one template of the schema with two light syllables. -/
+def cvcvcvc : CVTemplate := ⟨[.C, .V, .C, .V, .C, .V, .C]⟩
 
-instance : DecidablePred SatisfiesSchema := λ _ =>
-  inferInstanceAs (Decidable (∃ pre ∈ _, ∃ seg ∈ _, _))
+/-- The prosodic template schema (14a), `[({C, CV}) CV ([+seg]) CVC]`: the nine templates its
+optional choices generate. -/
+def schema : List CVTemplate :=
+  ([[], [.C], [.C, .V]] : List (List CVSlot)).flatMap fun pre ↦
+    ([[], [.C], [.V]] : List (List CVSlot)).map fun s ↦ ⟨pre ++ [.C, .V] ++ s ++ [.C, .V, .C]⟩
 
-/-- Every canonical pattern of (13) is generated by the schema (14a). -/
-theorem templates_satisfy_schema : ∀ t ∈ binyanTemplates, SatisfiesSchema t := by
-  decide
+/-- Rule (14b), `V → ∅ / [CVC _ CVC]`: the middle vowel of the whole template CVCVCVC elides. -/
+def elide (t : CVTemplate) : CVTemplate := if t = cvcvcvc then cvccvc else t
 
-/-- The schema also generates the unattested CVCVCVC — two light syllables
-followed by CVC — which rule (14b), `V → ∅ / [CVC _ CVC]`, eliminates:
-deleting the offending V yields the attested CVCCVC. -/
-theorem rule14b_eliminates_cvcvcvc :
-    SatisfiesSchema ⟨[.C, .V, .C, .V, .C, .V, .C]⟩ ∧
-    ([.C, .V, .C, .V, .C, .V, .C] : List CVSlot).eraseIdx 3 = cvccvc.slots := by
-  exact ⟨by decide, by decide⟩
+/-- The schema generates the templates (13) and CVCVCVC. -/
+theorem schema_eq : schema.toFinset = insert cvcvcvc binyanTemplates.toFinset := by decide
 
-/-! ### The association conventions as a pipeline
+/-- The schema with rule (14b) generates all and only the templates (13). -/
+theorem schema_elide_eq : (schema.map elide).toFinset = binyanTemplates.toFinset := by decide
 
-Conventions (i) and (iii) (his §2.2, after Clements and Ford): melodic
-elements associate one-to-one left-to-right with the listed slots; each
-leftover slot receives the melody of the element on its immediate left.
-Rule (41) associates the final element of a plural vocalism with the final
-V-slot before the conventions run. Affixal material associates before the
-root tier (p. 389), so affixes claim their slots first. -/
+/-! ### The consonantism of the binyanim -/
 
-/-- One-to-one left-to-right association of an `n`-element melody with the
-listed slots; leftover slots spread the final element. Leftover *melodic*
-elements stay unassociated and receive no realization (his (38)). -/
-def associateLR (src : AssocSource) (n : Nat) (slots : List Nat) : List Association :=
-  if n = 0 then [] else slots.zipIdx.map λ (s, k) => ⟨src, min k (n - 1), s⟩
-
-/-- Vocalism association: rule (41) anchors the final melodic element to
-the final V-slot; the remaining elements associate left-to-right with the
-remaining V-slots and the last of them spreads. -/
-def vocalismAssocs (n : Nat) (vs : List Nat) : List Association :=
-  if n ≤ 1 then associateLR .vocalism n vs
-  else
-    associateLR .vocalism (n - 1) vs.dropLast ++
-      (vs.getLast?.map λ s => [⟨.vocalism, n - 1, s⟩]).getD []
-
-/-- The Erasure rule (24), generalized per his (28)–(29): remove the root
-association at the pre-final C-slot (the C before the final VC), then
-reassociate that slot from the root association nearest on its left. For a
-geminate-root input the respread reinstates the erased line, so Erasure is
-vacuous there (his (34)). -/
-def eraseRespread (t : CVTemplate) (assocs : List Association) : List Association :=
-  let s := t.length - 3
-  let kept := assocs.filter λ a => !(a.source == .root && a.slotIndex == s)
-  let left := (kept.filter λ a => a.source == .root && decide (a.slotIndex < s)).foldl
-    (init := none) λ acc a =>
-      match acc with
-      | none => some a
-      | some b => if b.slotIndex < a.slotIndex then some a else some b
-  match left with
-  | some a => kept ++ [⟨.root, a.melodyIndex, s⟩]
-  | none => kept
-
-/-- Assemble a match: the affix claims `affixSlots`, the root associates
-left-to-right with the remaining C-slots (spreading onto leftovers),
-Erasure applies if `erase`, and the vocalism associates with the V-slots
-per rule (41). -/
-def assemble (t : CVTemplate) (affixSegs : List String) (affixSlots : List Nat)
-    (erase : Bool) (voc : List String) (r : ConsonantalRoot String) : TemplateMatch String :=
-  let affixAssocs := affixSlots.zipIdx.map λ (s, k) => ⟨.affix, k, s⟩
-  let rootSlots := t.cSlots.filter (· ∉ affixSlots)
-  let rootAssocs := associateLR .root r.arity rootSlots
-  let rootAssocs := if erase then eraseRespread t rootAssocs else rootAssocs
-  { root := r, vocalism := voc, affix := affixSegs, template := t,
-    associations := affixAssocs ++ rootAssocs ++ vocalismAssocs voc.length t.vSlots }
-
-/-! ### The fifteen triliteral binyanim -/
-
-/-- The triliteral binyanim of Table 1. -/
+/-- The triliteral binyanim. -/
 inductive Binyan where
   | I | II | III | IV | V | VI | VII | VIII | IX | X | XI | XII | XIII | XIV | XV
   deriving DecidableEq, Repr, Fintype
 
-/-- Binyan XIII (ktawwab): after Erasure on CCVCCVC, reassociation may come
-from the infixed w-tier rather than the root tier — the choice point
-distinguishing XIII from XII (his (30)). Given representationally: the
-affix w is doubly linked, the root associates around it. -/
-def formXIII (voc : List String) (r : ConsonantalRoot String) : TemplateMatch String :=
-  { root := r, vocalism := voc, affix := ["w"], template := ccvccvc,
-    associations :=
-      [⟨.root, 0, 0⟩, ⟨.root, 1, 1⟩, ⟨.affix, 0, 3⟩, ⟨.affix, 0, 4⟩, ⟨.root, 2, 6⟩] ++
-        vocalismAssocs voc.length ccvccvc.vSlots }
+/-- The quadriliteral binyanim QI–QIV, which are II, V, XIV and XI with a four-consonant root
+(31). -/
+def Binyan.ofQuadriliteral : Fin 4 → Binyan
+  | 0 => .II | 1 => .V | 2 => .XIV | 3 => .XI
 
-/-- The derived match of a binyan: its template, affixal material with the
-paper's placements — first C-slot(s) for ʔ, t, n, st ((16), (18)), second
-C-slot for the VIII reflexive after the Flop (19), medial and final slots
-for the rare XII–XV affixes (27) — and Erasure for II, V, and XII. -/
-def perfMatch (voc : List String) (r : ConsonantalRoot String) : Binyan → TemplateMatch String
-  | .I => assemble cvcvc [] [] false voc r
-  | .II => assemble cvccvc [] [] true voc r
-  | .III => assemble cvvcvc [] [] false voc r
-  | .IV => assemble cvccvc ["ʔ"] [0] false voc r
-  | .V => assemble cvcvccvc ["t"] [0] true voc r
-  | .VI => assemble cvcvvcvc ["t"] [0] false voc r
-  | .VII => assemble ccvcvc ["n"] [0] false voc r
-  | .VIII => assemble ccvcvc ["t"] [1] false voc r
-  | .IX => assemble ccvcvc [] [] false voc r
-  | .X => assemble ccvccvc ["s", "t"] [0, 1] false voc r
-  | .XI => assemble ccvvcvc [] [] false voc r
-  | .XII => assemble ccvccvc ["w"] [3] true voc r
-  | .XIII => formXIII voc r
-  | .XIV => assemble ccvccvc ["n"] [3] false voc r
-  | .XV => assemble ccvccvc ["n", "y"] [3, 6] false voc r
+/-- The affixal consonants: ʔ, t, n, st of (26b), w, n, y of (27), and the m of the
+participle prefix. -/
+structure Affixes (α : Type*) where
+  /-- The glottal stop of IV. -/
+  glottal : α
+  /-- The t of V, VI, VIII and X. -/
+  t : α
+  /-- The n of VII, XIV and XV. -/
+  n : α
+  /-- The s of X. -/
+  s : α
+  /-- The w of XII and XIII. -/
+  w : α
+  /-- The y of XV. -/
+  y : α
+  /-- The m of the participle prefix. -/
+  m : α
 
-/-- The perfective active vocalism: the single melody a, spreading over
-every V-slot (his (39)/(40a)). -/
-def activeVoc : List String := ["a"]
+/-- The affixal consonants relabeled. -/
+def Affixes.map (f : α → β) (ax : Affixes α) : Affixes β :=
+  ⟨f ax.glottal, f ax.t, f ax.n, f ax.s, f ax.w, f ax.y, f ax.m⟩
 
-/-- The perfective passive vocalism u–i: i anchors to the final V-slot by
-rule (41), u spreads over the rest (his (39)/(40b)). -/
-def passiveVoc : List String := ["u", "i"]
+/-- Where a binyan's affix goes: on the leftmost free C-slots by the conventions (p. 389), there
+and then a slot to the right by the Flop (19), or on slots fixed by the rules (27). -/
+inductive Placement where
+  | leftmost
+  | flop
+  | fixed (slots : List ℕ)
 
-/-! ### Table 1: the perfective forms of ktb -/
+/-- What the grammar specifies for a binyan (pp. 392–393): its template, its affix and where the
+affix goes, whether Erasure (24) applies, and the tier that respreads after Erasure (30). -/
+structure Spec (α : Type*) where
+  /-- The prosodic template. -/
+  template : CVTemplate
+  /-- The affixal material. -/
+  affix : List α := []
+  /-- Where the affix goes. -/
+  placement : Placement := .leftmost
+  /-- Whether Erasure applies. -/
+  erasure : Bool := false
+  /-- The tier that respreads after Erasure. -/
+  respread : AssocSource := .root
 
-/-- The perfective active column of Table 1 for ktb. -/
-def table1Active : Binyan → List String
-  | .I => ["k", "a", "t", "a", "b"]
-  | .II => ["k", "a", "t", "t", "a", "b"]
-  | .III => ["k", "a", "a", "t", "a", "b"]
-  | .IV => ["ʔ", "a", "k", "t", "a", "b"]
-  | .V => ["t", "a", "k", "a", "t", "t", "a", "b"]
-  | .VI => ["t", "a", "k", "a", "a", "t", "a", "b"]
-  | .VII => ["n", "k", "a", "t", "a", "b"]
-  | .VIII => ["k", "t", "a", "t", "a", "b"]
-  | .IX => ["k", "t", "a", "b", "a", "b"]
-  | .X => ["s", "t", "a", "k", "t", "a", "b"]
-  | .XI => ["k", "t", "a", "a", "b", "a", "b"]
-  | .XII => ["k", "t", "a", "w", "t", "a", "b"]
-  | .XIII => ["k", "t", "a", "w", "w", "a", "b"]
-  | .XIV => ["k", "t", "a", "n", "b", "a", "b"]
-  | .XV => ["k", "t", "a", "n", "b", "a", "y"]
+/-- The specification of a binyan, with `plusSeg` the realization of the [+seg] slot of XI. -/
+def spec (ax : Affixes α) (plusSeg : CVSlot) : Binyan → Spec α
+  | .I => { template := cvcvc }
+  | .II => { template := cvccvc, erasure := true }
+  | .III => { template := cvvcvc }
+  | .IV => { template := cvccvc, affix := [ax.glottal] }
+  | .V => { template := cvcvccvc, affix := [ax.t], erasure := true }
+  | .VI => { template := cvcvvcvc, affix := [ax.t] }
+  | .VII => { template := ccvcvc, affix := [ax.n] }
+  | .VIII => { template := ccvcvc, affix := [ax.t], placement := .flop }
+  | .IX => { template := ccvcvc }
+  | .X => { template := ccvccvc, affix := [ax.s, ax.t] }
+  | .XI => { template := ⟨[.C, .C, .V, plusSeg, .C, .V, .C]⟩ }
+  | .XII => { template := ccvccvc, affix := [ax.w], placement := .fixed [3], erasure := true }
+  | .XIII =>
+    { template := ccvccvc
+      affix := [ax.w]
+      placement := .fixed [3]
+      erasure := true
+      respread := .affix }
+  | .XIV => { template := ccvccvc, affix := [ax.n], placement := .fixed [3] }
+  | .XV => { template := ccvccvc, affix := [ax.n, ax.y], placement := .fixed [3, 6] }
 
-/-- The pipeline derives the entire perfective active column of Table 1. -/
-theorem perfective_active_matches_table1 :
-    ∀ b : Binyan, (perfMatch activeVoc ktb b).spellout = table1Active b := by
+/-- The specification with its affix relabeled. -/
+def Spec.map (f : α → β) (sp : Spec α) : Spec β :=
+  { template := sp.template, affix := sp.affix.map f, placement := sp.placement,
+    erasure := sp.erasure, respread := sp.respread }
+
+@[simp] theorem Spec.erasure_map (f : α → β) (sp : Spec α) : (sp.map f).erasure = sp.erasure :=
+  rfl
+
+@[simp] theorem Spec.respread_map (f : α → β) (sp : Spec α) : (sp.map f).respread = sp.respread :=
+  rfl
+
+/-- The Eighth Binyan Flop (19): an affix line on the first of two adjacent C-slots moves to
+the second. -/
+def flop (m : TemplateMatch α) : TemplateMatch α :=
+  match m.template.slots with
+  | .C :: .C :: _ => { m with associations := m.associations.map fun a ↦
+      if a.source == .affix && a.slotIndex == 0 then { a with slotIndex := 1 } else a }
+  | _ => m
+
+/-- The affixes of a binyan placed before the root associates (p. 389). -/
+def placeAffixes (sp : Spec α) (r : ConsonantalRoot α) : TemplateMatch α :=
+  let m : TemplateMatch α :=
+    { root := r
+      affix := sp.affix
+      template := sp.template
+      associations := [] }
+  match sp.placement with
+  | .leftmost => m.associateOneToOne .affix
+  | .flop => flop (m.associateOneToOne .affix)
+  | .fixed slots => m.link (slots.zipIdx.map fun (i, k) ↦ ⟨.affix, k, i⟩)
+
+/-- Erasure (24), generalized (p. 393): the root line on the C-slot of the final CVC is
+removed. -/
+def erasure (m : TemplateMatch α) : TemplateMatch α :=
+  { m with associations := m.associations.filter fun a ↦
+      !(a.source == .root && a.slotIndex == m.template.length - 3) }
+
+/-- The consonantism of a binyan: the affixes placed, the root associated by the conventions,
+and, where Erasure applies, the conventions again with the binyan's respreading tier. -/
+def consonantism (ax : Affixes α) (plusSeg : CVSlot) (b : Binyan) (r : ConsonantalRoot α) :
+    TemplateMatch α :=
+  let sp := spec ax plusSeg b
+  let m := (placeAffixes sp r).associate .root
+  if sp.erasure then
+    (((erasure m).associateOneToOne .root).associateRemaining .root).spread sp.respread
+  else m
+
+/-- The number of lines from an element of a tier. -/
+def linkCount (m : TemplateMatch α) (s : AssocSource) (k : ℕ) : ℕ :=
+  m.associations.countP fun a ↦ a.source == s && a.melodyIndex == k
+
+/-! ### The vocalism -/
+
+/-- The vowels of the melodies, archisegments abbreviated a, i, u (fn. 8). -/
+inductive Vowel where
+  | a | i | u
+  deriving DecidableEq, Repr
+
+/-- The verbal categories of the table: aspect and voice. -/
+inductive Category where
+  | perfActive | perfPassive | imperfActive | imperfPassive | partActive | partPassive
+  deriving DecidableEq, Repr, Fintype
+
+/-- The imperfectives and participles prefix [CV] (p. 400). -/
+def Category.prefixed : Category → Bool
+  | .perfActive | .perfPassive => false
+  | _ => true
+
+/-- The participles. -/
+def Category.participle : Category → Bool
+  | .partActive | .partPassive => true
+  | _ => false
+
+/-- The ablaut class of a root (45): the vowel of the second syllable of the first binyan active
+in the perfective and the imperfective. -/
+structure Ablaut where
+  /-- The perfective vowel. -/
+  perf : Vowel
+  /-- The imperfective vowel. -/
+  imperf : Vowel
+
+/-- The vowel melody of a cell: (39) and (43), and for the first binyan active the a of (44)
+with the root's ablaut vowel. -/
+def melody (abl : Ablaut) : Category → Binyan → List Vowel
+  | .perfActive, .I => [.a, abl.perf]
+  | .perfActive, _ => [.a]
+  | .perfPassive, _ => [.u, .i]
+  | .imperfActive, .I => [.a, abl.imperf]
+  | .imperfActive, .II | .imperfActive, .III | .imperfActive, .IV => [.u, .a, .i]
+  | .imperfActive, .V | .imperfActive, .VI => [.a]
+  | .imperfActive, _ => [.a, .i]
+  | .imperfPassive, _ => [.u, .a]
+  | .partActive, _ => [.u, .a, .i]
+  | .partPassive, _ => [.u, .a]
+
+/-- The prefix [CV]: every line moves two slots right. -/
+def prefixCV (m : TemplateMatch α) : TemplateMatch α :=
+  { m with
+    template := ⟨[.C, .V] ++ m.template.slots⟩
+    associations := m.associations.map fun a ↦ { a with slotIndex := a.slotIndex + 2 } }
+
+/-- Rule (14b) on a match: the middle V-slot of CVCVCVC goes, the lines after it move left. -/
+def elideMatch (m : TemplateMatch α) : TemplateMatch α :=
+  if m.template = cvcvcvc then
+    { m with
+      template := cvccvc
+      associations := (m.associations.filter (·.slotIndex != 3)).map fun a ↦
+        if 3 < a.slotIndex then { a with slotIndex := a.slotIndex - 1 } else a }
+  else m
+
+/-- The participle's m on the prefixal C-slot, before the binyan's affixes. -/
+def prefixM (ax : Affixes α) (m : TemplateMatch α) : TemplateMatch α :=
+  { m with
+    affix := ax.m :: m.affix
+    associations := ⟨.affix, 0, 0⟩ :: m.associations.map fun a ↦
+      if a.source == .affix then { a with melodyIndex := a.melodyIndex + 1 } else a }
+
+/-- Vowel Association (41): an i ending the melody goes to the final V-slot first. -/
+def vowelAssociation (mel : List Vowel) (m : TemplateMatch α) : TemplateMatch α :=
+  match mel.getLast?, m.template.vSlots.getLast? with
+  | some .i, some s => m.link [⟨.vocalism, mel.length - 1, s⟩]
+  | _, _ => m
+
+/-- The stem of a cell: the consonantism, the prefix of imperfectives and participles with rule
+(14b), the participle's m, and the melody associated by (41) and the conventions. -/
+def stem (ax : Affixes α) (v : Vowel → α) (abl : Ablaut) (c : Category) (b : Binyan)
+    (r : ConsonantalRoot α) : TemplateMatch α :=
+  let m := consonantism ax (if r.arity = 4 then .C else .V) b r
+  let m := if c.prefixed then elideMatch (prefixCV m) else m
+  let m := if c.participle then prefixM ax m else m
+  let mel := melody abl c b
+  (vowelAssociation mel { m with vocalism := mel.map v }).associate .vocalism
+
+/-! ### The derivation never looks at the melody -/
+
+section Map
+
+variable (f : α → β) (ax : Affixes α) (m : TemplateMatch α)
+
+theorem spec_map (plusSeg : CVSlot) (b : Binyan) :
+    spec (ax.map f) plusSeg b = (spec ax plusSeg b).map f := by
+  cases b <;> rfl
+
+theorem flop_map : flop (m.map f) = (flop m).map f := by
+  unfold flop
+  simp only [TemplateMatch.template_map]
+  split <;> rfl
+
+theorem placeAffixes_map (sp : Spec α) (r : ConsonantalRoot α) :
+    placeAffixes (sp.map f) (r.map f) = (placeAffixes sp r).map f := by
+  obtain ⟨t, af, pl, er, rs⟩ := sp
+  have h : ({ root := r.map f, affix := af.map f, template := t, associations := [] } :
+      TemplateMatch β) =
+      ({ root := r, affix := af, template := t, associations := [] } : TemplateMatch α).map f :=
+    rfl
+  cases pl <;> simp only [placeAffixes, Spec.map, h, TemplateMatch.associateOneToOne_map,
+    flop_map, TemplateMatch.link_map]
+
+theorem erasure_map : erasure (m.map f) = (erasure m).map f := rfl
+
+theorem consonantism_map (plusSeg : CVSlot) (b : Binyan) (r : ConsonantalRoot α) :
+    consonantism (ax.map f) plusSeg b (r.map f) = (consonantism ax plusSeg b r).map f := by
+  simp only [consonantism, spec_map, placeAffixes_map, TemplateMatch.associate_map,
+    Spec.erasure_map, Spec.respread_map]
+  split <;> simp only [erasure_map, TemplateMatch.associateOneToOne_map,
+    TemplateMatch.associateRemaining_map, TemplateMatch.spread_map]
+
+theorem prefixCV_map : prefixCV (m.map f) = (prefixCV m).map f := rfl
+
+theorem elideMatch_map : elideMatch (m.map f) = (elideMatch m).map f := by
+  unfold elideMatch
+  simp only [TemplateMatch.template_map]
+  split <;> rfl
+
+theorem prefixM_map : prefixM (ax.map f) (m.map f) = (prefixM ax m).map f := by
+  simp [prefixM, TemplateMatch.map, Affixes.map]
+
+theorem vowelAssociation_map (mel : List Vowel) :
+    vowelAssociation mel (m.map f) = (vowelAssociation mel m).map f := by
+  unfold vowelAssociation
+  simp only [TemplateMatch.template_map]
+  split <;> rfl
+
+/-- Relabeling the melodic elements relabels the stem. -/
+theorem stem_map (v : Vowel → α) (abl : Ablaut) (c : Category) (b : Binyan)
+    (r : ConsonantalRoot α) :
+    stem (ax.map f) (f ∘ v) abl c b (r.map f) = (stem ax v abl c b r).map f := by
+  have hvoc (m : TemplateMatch α) (mel : List Vowel) :
+      { m.map f with vocalism := mel.map (f ∘ v) } = ({ m with vocalism := mel.map v }).map f := by
+    simp [TemplateMatch.map]
+  have harity : (r.map f).arity = r.arity := by simp [ConsonantalRoot.arity]
+  simp only [stem, harity, consonantism_map]
+  split <;> split <;>
+    simp only [prefixCV_map, elideMatch_map, prefixM_map, hvoc, vowelAssociation_map,
+      TemplateMatch.associate_map]
+
+end Map
+
+/-! ### Gemination, quadriliterals and stranding
+
+The consonantism of any root is that of a root of numerals relabeled (`consonantism_map`), so
+each claim about arbitrary radicals is decided on numerals. -/
+
+section Symbolic
+
+/-- Numerals for the affixal consonants. -/
+private def numeralAffixes : Affixes ℕ := ⟨100, 101, 102, 103, 104, 105, 106⟩
+
+/-- The relabeling of numerals by the radicals `xs` and the affixal consonants `ax`. -/
+private def label (ax : Affixes α) (xs : List α) : ℕ → α
+  | 100 => ax.glottal | 101 => ax.t | 102 => ax.n | 103 => ax.s | 104 => ax.w | 105 => ax.y
+  | 106 => ax.m | k => xs.getD k ax.m
+
+variable (ax : Affixes α) (v w x y z : α)
+
+private theorem consonantism_eq_map {p : CVSlot} {b : Binyan} {xs : List α}
+    {r : ConsonantalRoot ℕ} (hr : r.map (label ax xs) = ⟨xs⟩) :
+    consonantism ax p b ⟨xs⟩ = (consonantism numeralAffixes p b r).map (label ax xs) := by
+  rw [← consonantism_map, hr]
+  rfl
+
+private theorem spellout_eq {p : CVSlot} {b : Binyan} {xs : List α} {r : ConsonantalRoot ℕ}
+    (hr : r.map (label ax xs) = ⟨xs⟩) {out : List ℕ}
+    (h : (consonantism numeralAffixes p b r).spellout = out) :
+    (consonantism ax p b ⟨xs⟩).spellout = out.map (label ax xs) := by
+  rw [consonantism_eq_map ax hr, TemplateMatch.spellout_map, h]
+
+private theorem linkCount_eq {p : CVSlot} {b : Binyan} {xs : List α} {r : ConsonantalRoot ℕ}
+    (hr : r.map (label ax xs) = ⟨xs⟩) (s : AssocSource) (k : ℕ) :
+    linkCount (consonantism ax p b ⟨xs⟩) s k =
+      linkCount (consonantism numeralAffixes p b r) s k := by
+  rw [consonantism_eq_map ax hr]
+  rfl
+
+/-- The second binyan geminates its medial radical by Erasure and respreading (17), (25). -/
+theorem consonantism_II :
+    (consonantism ax .V .II ⟨[x, y, z]⟩).spellout = [x, y, y, z] ∧
+      linkCount (consonantism ax .V .II ⟨[x, y, z]⟩) .root 1 = 2 :=
+  ⟨spellout_eq ax (r := ⟨[0, 1, 2]⟩) rfl (out := [0, 1, 1, 2]) (by decide),
+    (linkCount_eq ax (r := ⟨[0, 1, 2]⟩) rfl _ _).trans (by decide)⟩
+
+/-- The twelfth binyan respreads the root after Erasure, the thirteenth the infix w (30). -/
+theorem consonantism_XII_XIII :
+    (consonantism ax .V .XII ⟨[x, y, z]⟩).spellout = [x, y, ax.w, y, z] ∧
+      (consonantism ax .V .XIII ⟨[x, y, z]⟩).spellout = [x, y, ax.w, ax.w, z] :=
+  ⟨spellout_eq ax (r := ⟨[0, 1, 2]⟩) rfl (out := [0, 1, 104, 1, 2]) (by decide),
+    spellout_eq ax (r := ⟨[0, 1, 2]⟩) rfl (out := [0, 1, 104, 104, 2]) (by decide)⟩
+
+/-- A biliteral root geminates its final radical and never its first: samam, never *sasam
+(33). In the second and fifth binyanim the effect of Erasure is undone (34). -/
+theorem consonantism_biliteral :
+    (consonantism ax .V .I ⟨[x, y]⟩).spellout = [x, y, y] ∧
+      linkCount (consonantism ax .V .I ⟨[x, y]⟩) .root 0 = 1 ∧
+      (consonantism ax .V .II ⟨[x, y]⟩).spellout = [x, y, y, y] ∧
+      (consonantism ax .V .V ⟨[x, y]⟩).spellout = [ax.t, x, y, y, y] :=
+  ⟨spellout_eq ax (r := ⟨[0, 1]⟩) rfl (out := [0, 1, 1]) (by decide),
+    (linkCount_eq ax (r := ⟨[0, 1]⟩) rfl _ _).trans (by decide),
+    spellout_eq ax (r := ⟨[0, 1]⟩) rfl (out := [0, 1, 1, 1]) (by decide),
+    spellout_eq ax (r := ⟨[0, 1]⟩) rfl (out := [101, 0, 1, 1, 1]) (by decide)⟩
+
+/-- The quadriliteral binyanim QI–QIV (32), the effect of Erasure in QI and QII undone by the
+second convention. -/
+theorem consonantism_quadriliteral :
+    (consonantism ax .C .II ⟨[w, x, y, z]⟩).spellout = [w, x, y, z] ∧
+      (consonantism ax .C .V ⟨[w, x, y, z]⟩).spellout = [ax.t, w, x, y, z] ∧
+      (consonantism ax .C .XIV ⟨[w, x, y, z]⟩).spellout = [w, x, ax.n, y, z] ∧
+      (consonantism ax .C .XI ⟨[w, x, y, z]⟩).spellout = [w, x, y, z, z] :=
+  ⟨spellout_eq ax (r := ⟨[0, 1, 2, 3]⟩) rfl (out := [0, 1, 2, 3]) (by decide),
+    spellout_eq ax (r := ⟨[0, 1, 2, 3]⟩) rfl (out := [101, 0, 1, 2, 3]) (by decide),
+    spellout_eq ax (r := ⟨[0, 1, 2, 3]⟩) rfl (out := [0, 1, 102, 2, 3]) (by decide),
+    spellout_eq ax (r := ⟨[0, 1, 2, 3]⟩) rfl (out := [0, 1, 2, 3, 3]) (by decide)⟩
+
+/-- A quinqueliteral root in QI strands its fifth radical (38). -/
+theorem consonantism_quinqueliteral :
+    (consonantism ax .C .II ⟨[v, w, x, y, z]⟩).spellout = [v, w, x, y] ∧
+      (consonantism ax .C .II ⟨[v, w, x, y, z]⟩).unassociated .root = [4] :=
+  ⟨spellout_eq ax (r := ⟨[0, 1, 2, 3, 4]⟩) rfl (out := [0, 1, 2, 3]) (by decide), by
+    rw [consonantism_eq_map ax (r := ⟨[0, 1, 2, 3, 4]⟩) rfl, TemplateMatch.unassociated_map]
+    decide⟩
+
+end Symbolic
+
+/-! ### The paper's forms -/
+
+/-- The affixal consonants in the paper's transcription. -/
+def transcribedAffixes : Affixes String := ⟨"ʔ", "t", "n", "s", "w", "y", "m"⟩
+
+/-- The vowels in the paper's transcription. -/
+def Vowel.transcription : Vowel → String
+  | .a => "a" | .i => "i" | .u => "u"
+
+/-- The ablaut class of ktb, katab–yaktub, and of smm, samam–yasummu (45b). -/
+def ktbAblaut : Ablaut := ⟨.a, .u⟩
+
+/-- The binyan of a label of the table, a quadriliteral one being its triliteral binyan (31). -/
+def binyan? : String → Option Binyan
+  | "I" => some .I | "II" => some .II | "III" => some .III | "IV" => some .IV | "V" => some .V
+  | "VI" => some .VI | "VII" => some .VII | "VIII" => some .VIII | "IX" => some .IX
+  | "X" => some .X | "XI" => some .XI | "XII" => some .XII | "XIII" => some .XIII
+  | "XIV" => some .XIV | "XV" => some .XV
+  | "QI" => some (.ofQuadriliteral 0) | "QII" => some (.ofQuadriliteral 1)
+  | "QIII" => some (.ofQuadriliteral 2) | "QIV" => some (.ofQuadriliteral 3)
+  | _ => none
+
+/-- The category of an aspect and a voice of the table. -/
+def category? : String → String → Option Category
+  | "perfective", "active" => some .perfActive
+  | "perfective", "passive" => some .perfPassive
+  | "imperfective", "active" => some .imperfActive
+  | "imperfective", "passive" => some .imperfPassive
+  | "participle", "active" => some .partActive
+  | "participle", "passive" => some .partPassive
+  | _, _ => none
+
+/-- The root of a concept in the paper's transcription, the root of 'poison' being the
+biliteral that the OCP (11) makes of smm (p. 396). -/
+def root? : String → Option (ConsonantalRoot String)
+  | "write" => some ⟨["k", "t", "b"]⟩
+  | "roll" => some ⟨["d", "ḥ", "r", "j"]⟩
+  | "poison" => some ⟨OCP.collapse ["s", "m", "m"]⟩
+  | "magnetize" => some ⟨["m", "ğ", "n", "ṭ", "š"]⟩
+  | _ => none
+
+/-- A cell: a binyan, a category and a root. -/
+structure Cell where
+  /-- The binyan. -/
+  binyan : Binyan
+  /-- The category. -/
+  category : Category
+  /-- The root. -/
+  root : ConsonantalRoot String
+
+/-- The cell of a form, read off its columns and its concept. -/
+def cell? (f : Data.Forms.Form) : Option Cell := do
+  let b ← (f.column? "Binyan").bind binyan?
+  let c ← category? (← f.column? "Aspect") (← f.column? "Voice")
+  pure ⟨b, c, ← root? f.parameterId⟩
+
+/-- A cell the analysis covers: every cell but the participles of the first binyan, which the
+paper leaves to McCarthy (1979) (p. 402). -/
+def Cell.Covered (x : Cell) : Prop := ¬(x.binyan = .I ∧ x.category.participle = true)
+
+instance (x : Cell) : Decidable x.Covered := inferInstanceAs (Decidable ¬_)
+
+/-- The stem of a cell in the paper's transcription. -/
+def Cell.stem (x : Cell) : TemplateMatch String :=
+  McCarthy1981.stem transcribedAffixes Vowel.transcription ktbAblaut x.category x.binyan x.root
+
+/-- Every form has a cell. -/
+theorem isSome_cell? : ∀ f ∈ Forms.all, (cell? f).isSome := by decide +kernel
+
+/-- The derivation produces every form of the table and of (33), (34) and (38) whose cell the
+analysis covers. -/
+theorem forms_derived :
+    ∀ f ∈ Forms.all, ∀ x ∈ cell? f, x.Covered → x.stem.spellout = f.segments := by
+  decide +kernel
+
+/-- The forms of uncovered cells are the participles kaatib and maktuub, which the derivation
+does not produce. -/
+theorem forms_uncovered :
+    (Forms.all.filter fun f ↦ ∃ x ∈ cell? f, ¬x.Covered).map (·.form) = ["kaatib", "maktuub"] ∧
+      ∀ f ∈ Forms.all, ∀ x ∈ cell? f, ¬x.Covered → x.stem.spellout ≠ f.segments := by
+  decide +kernel
+
+/-- Every stem of ktb and of dḥrj is well formed on each tier: no association lines cross and no
+slot has two lines from one tier. -/
+theorem orderedOn_stem :
+    (∀ b c, ∀ s ∈ [AssocSource.root, .affix, .vocalism],
+      (McCarthy1981.stem transcribedAffixes Vowel.transcription ktbAblaut c b
+        ⟨["k", "t", "b"]⟩).OrderedOn s) ∧
+    ∀ q, ∀ c, ∀ s ∈ [AssocSource.root, .affix, .vocalism],
+      (McCarthy1981.stem transcribedAffixes Vowel.transcription ktbAblaut c (.ofQuadriliteral q)
+        ⟨["d", "ḥ", "r", "j"]⟩).OrderedOn s := by
+  decide +kernel
+
+/-- The paper's transcription as segments of the Arabic fragment: j is ج, ğ is غ, y the glide,
+ḥ the pharyngeal fricative, ṭ the emphatic t and š the postalveolar fricative. -/
+def seg : String → Phonology.Segment
+  | "b" => Phonology.b | "d" => Phonology.d | "k" => Phonology.k | "l" => Phonology.l
+  | "m" => Phonology.m | "n" => Phonology.n | "q" => Phonology.q | "r" => Phonology.r
+  | "s" => Phonology.s | "t" => Phonology.t | "w" => Phonology.w | "y" => Phonology.j
+  | "j" => Phonology.«dʒ» | "ğ" => Phonology.«ʁ» | "ḥ" => Phonology.ħ
+  | "ṭ" => Phonology.«tˤ» | "š" => Phonology.«ʃ» | "ʔ" => Phonology.«ʔ»
+  | "a" => Phonology.a | "i" => Phonology.i | "u" => Phonology.u | _ => ⊥
+
+/-- The roots of the forms are the fragment's ktb, dḥrj and mğnṭš. -/
+theorem root?_map_seg : (root? "write").map (·.map seg) = some ktb ∧
+    (root? "roll").map (·.map seg) = some «dḥrj» ∧
+    (root? "magnetize").map (·.map seg) = some «mğnṭš» := ⟨rfl, rfl, rfl⟩
+
+/-- Over the fragment's segments the derivation produces the forms read as segments. -/
+theorem forms_derived_seg : ∀ f ∈ Forms.all, ∀ x ∈ cell? f, x.Covered →
+    (McCarthy1981.stem (transcribedAffixes.map seg) (seg ∘ Vowel.transcription) ktbAblaut
+      x.category x.binyan (x.root.map seg)).spellout = f.segments.map seg := by
+  intro f hf x hx hc
+  rw [stem_map, TemplateMatch.spellout_map]
+  exact congrArg _ (forms_derived f hf x hx hc)
+
+/-! ### The OCP and Metathesis -/
+
+/-- The revised OCP (11) represents the geminate root smm as the biliteral sm (p. 396). -/
+theorem collapse_smm : OCP.collapse smm.segments = [Phonology.s, Phonology.m] := by
+  decide +kernel
+
+/-- The roots of the forms observe the OCP; smm does not, nor do the hypothetical *ddrj and
+*drrj (p. 397). -/
+theorem isOCPClean_roots :
+    ktb.IsOCPClean ∧ «dḥrj».IsOCPClean ∧ qlq.IsOCPClean ∧ «mğnṭš».IsOCPClean ∧
+      (⟨OCP.collapse smm.segments⟩ : ConsonantalRoot Phonology.Segment).IsOCPClean ∧
+      ¬smm.IsOCPClean ∧
+      ¬(⟨[Phonology.d, Phonology.d, Phonology.r, Phonology.«dʒ»]⟩ :
+        ConsonantalRoot Phonology.Segment).IsOCPClean ∧
+      ¬(⟨[Phonology.d, Phonology.r, Phonology.r, Phonology.«dʒ»]⟩ :
+        ConsonantalRoot Phonology.Segment).IsOCPClean := by
+  decide +kernel
+
+/-- The structural description of Metathesis (37): the C-slots `i` and `i + 2` on either side of
+a V-slot are linked to one melodic element, which has no line left of `i`. -/
+def MetathesisSite (m : TemplateMatch α) (i : ℕ) : Prop :=
+  m.template.slotAt (i + 1) = some .V ∧ ∃ a ∈ m.associations, a.slotIndex = i ∧
+    (∃ b ∈ m.associations, b.slotIndex = i + 2 ∧ b.source = a.source ∧
+      b.melodyIndex = a.melodyIndex) ∧
+    ∀ c ∈ m.associations, c.source = a.source → c.melodyIndex = a.melodyIndex → i ≤ c.slotIndex
+
+instance (m : TemplateMatch α) (i : ℕ) : Decidable (MetathesisSite m i) := by
+  unfold MetathesisSite; infer_instance
+
+/-- The sites of Metathesis in a match. -/
+def metathesisSites (m : TemplateMatch α) : List ℕ :=
+  (List.range m.template.length).filter (MetathesisSite m ·)
+
+theorem metathesisSite_iff (m : TemplateMatch α) (i : ℕ) :
+    MetathesisSite m i ↔ i ∈ metathesisSites m := by
+  refine ⟨fun h ↦ List.mem_filter.2 ⟨List.mem_range.2 ?_, decide_eq_true h⟩,
+    fun h ↦ of_decide_eq_true (List.mem_filter.1 h).2⟩
+  have := h.1
+  simp only [CVTemplate.slotAt, List.getElem?_eq_some_iff] at this
+  obtain ⟨hlt, -⟩ := this
+  exact Nat.lt_of_succ_lt hlt
+
+theorem metathesisSites_map (f : α → β) (m : TemplateMatch α) :
+    metathesisSites (m.map f) = metathesisSites m := rfl
+
+section Metathesis
+
+variable (ax : Affixes α) (x y z : α)
+
+/-- In samam the two m's are one root element, and Metathesis applies (35a). -/
+theorem metathesisSites_samam : metathesisSites (consonantism ax .V .I ⟨[x, y]⟩) = [2] := by
+  rw [consonantism_eq_map ax (r := ⟨[0, 1]⟩) rfl, metathesisSites_map]
   decide
 
-/-- The binyanim with a perfective passive in Table 1 (the gaps are
-regularly intransitive or stative binyanim), with their forms for ktb. -/
-def table1Passive : List (Binyan × List String) :=
-  [(.I, ["k", "u", "t", "i", "b"]),
-   (.II, ["k", "u", "t", "t", "i", "b"]),
-   (.III, ["k", "u", "u", "t", "i", "b"]),
-   (.IV, ["ʔ", "u", "k", "t", "i", "b"]),
-   (.V, ["t", "u", "k", "u", "t", "t", "i", "b"]),
-   (.VI, ["t", "u", "k", "u", "u", "t", "i", "b"]),
-   (.VII, ["n", "k", "u", "t", "i", "b"]),
-   (.VIII, ["k", "t", "u", "t", "i", "b"]),
-   (.X, ["s", "t", "u", "k", "t", "i", "b"])]
-
-/-- Swapping in the u–i vocalism derives the perfective passive column —
-the voice contrast is a vocalism morpheme, nothing else changes. -/
-theorem perfective_passive_matches_table1 :
-    ∀ p ∈ table1Passive, (perfMatch passiveVoc ktb p.1).spellout = p.2 := by
+/-- In ktatab the two t's are the affix and a root element, and Metathesis does not apply. -/
+theorem metathesisSites_ktatab : metathesisSites (consonantism ax .V .VIII ⟨[x, y, z]⟩) = [] := by
+  rw [consonantism_eq_map ax (r := ⟨[0, 1, 2]⟩) rfl, metathesisSites_map]
   decide
 
-/-- Every derived match associates its root tier without crossing lines. -/
-theorem perfMatch_ordered_on_root :
-    ∀ b : Binyan, (perfMatch activeVoc ktb b).OrderedOn .root := by
+/-- In sammam the second m is the first element linked further left, and the revision (37)
+keeps Metathesis from applying. -/
+theorem metathesisSites_sammam : metathesisSites (consonantism ax .V .II ⟨[x, y]⟩) = [] := by
+  rw [consonantism_eq_map ax (r := ⟨[0, 1]⟩) rfl, metathesisSites_map]
   decide
 
-/-! ### Gemination as one-to-many association -/
+end Metathesis
 
-/-- The number of association lines from root element `i`. -/
-def rootLinkCount (m : TemplateMatch String) (i : Nat) : Nat :=
-  (m.associations.filter λ a => a.source == .root && a.melodyIndex == i).length
+/-! ### Ablaut -/
 
-/-- Binyan II gemination (kattab, his (17)): the medial radical is doubly
-linked — Erasure removes the final radical's medial line and reassociation
-respreads the medial radical — while the outer radicals stay single. -/
-theorem formII_geminates_medial_radical :
-    rootLinkCount (perfMatch activeVoc ktb .II) 1 = 2 ∧
-    rootLinkCount (perfMatch activeVoc ktb .II) 0 = 1 ∧
-    rootLinkCount (perfMatch activeVoc ktb .II) 2 = 1 := by
+/-- Whether a vowel is [+high]. -/
+def Vowel.high : Vowel → Bool
+  | .a => false | .i | .u => true
+
+/-- Whether a vowel is [+back]. -/
+def Vowel.back : Vowel → Bool
+  | .i => false | .a | .u => true
+
+/-- Ablaut (46): an imperfective [αhigh] vowel goes with a perfective [−αhigh, αback] one. -/
+def Vowel.ablaut (v : Vowel) : Vowel := if v.high then .a else .i
+
+theorem Vowel.ablaut_eq_iff (v w : Vowel) :
+    v.ablaut = w ↔ w.high = !v.high ∧ w.back = v.high := by
+  cases v <;> cases w <;> decide
+
+/-- Ablaut relates the perfective and imperfective vowels of the classes (45a–c), and not those
+of (45d). -/
+theorem ablaut_classes :
+    (∀ c ∈ [(⟨.a, .i⟩ : Ablaut), ⟨.a, .u⟩, ⟨.i, .a⟩], c.imperf.ablaut = c.perf) ∧
+      (⟨.u, .u⟩ : Ablaut).imperf.ablaut ≠ .u := by
   decide
 
-/-- Biradical sm in binyan I surfaces as samam (his (33)): left-to-right
-association reaches the second radical before the leftover slot, so only
-the *final* radical geminates — *sasam, with a geminated first radical, is
-underivable from the conventions. -/
-theorem biradical_geminates_final_radical :
-    (perfMatch activeVoc sm .I).spellout = ["s", "a", "m", "a", "m"] ∧
-    rootLinkCount (perfMatch activeVoc sm .I) 1 = 2 ∧
-    rootLinkCount (perfMatch activeVoc sm .I) 0 = 1 := by
-  decide
+/-- The melody with Ablaut on its last element. -/
+def ablautLast (mel : List Vowel) : List Vowel :=
+  mel.dropLast ++ (mel.getLast?.map Vowel.ablaut).toList
 
-/-- Biradical sm in binyan II surfaces as sammam (his (34)): Erasure
-applies but reassociation reinstates the erased line, so its effect is
-automatically reversed. -/
-theorem biradical_formII_sammam :
-    (perfMatch activeVoc sm .II).spellout = ["s", "a", "m", "m", "a", "m"] := by
-  decide
+/-- The perfective active melody of the derived binyanim is the basic imperfective melody u–a–i
+with Ablaut on its last element, the OCP, and its initial u erased (47), (48). -/
+theorem melody_perfActive (abl : Ablaut) (b : Binyan) (hb : b ≠ .I) :
+    melody abl .perfActive b = (OCP.collapse (ablautLast [.u, .a, .i])).tail := by
+  cases b <;> first | exact absurd rfl hb | rfl
 
-/-! ### The OCP argument (pp. 395–397)
-
-Surface geminate verbs (samam) come from OCP-clean biradicals plus
-spreading, so the root inventory needs no roots with adjacent identical
-radicals; qlq-type roots, identical only at a distance, are unconstrained.
-The OCP also excludes quadriliteral *ddrj — and indeed no QI verbs of the
-type *dadraj occur. -/
-
-/-- The biradical sm and the first-third-identical qlq are OCP-clean. -/
-theorem attested_roots_ocp_clean : sm.IsOCPClean ∧ qlq.IsOCPClean := by decide
-
-/-- Hypothetical smm and ddrj, with adjacent identical radicals, violate
-the root-level OCP — the shapes the theory correctly excludes from the
-lexicon. -/
-theorem geminate_roots_are_biradical :
-    ¬ (⟨["s", "m", "m"]⟩ : ConsonantalRoot String).IsOCPClean ∧
-    ¬ (⟨["d", "d", "r", "j"]⟩ : ConsonantalRoot String).IsOCPClean := by
-  decide
-
-/-! ### Stranding (his (38)) -/
-
-/-- The denominal quinqueliteral root mġnṭš on the QI template CVCCVC:
-left-to-right association exhausts the C-slots at the fourth radical, the
-final š remains unassociated and unrealized — maġnaṭ, with loss at the
-right edge, exactly as attested. -/
-theorem quinqueliteral_strands_final_consonant :
-    (assemble cvccvc [] [] false activeVoc ⟨["m", "ġ", "n", "ṭ", "š"]⟩).spellout
-      = ["m", "a", "ġ", "n", "a", "ṭ"] := by
-  decide
-
-/-! ### The binyan paradigm as a cell-realization map -/
-
-/-- The binyanim in Table 1 order. -/
-def binyanList : List Binyan :=
-  [.I, .II, .III, .IV, .V, .VI, .VII, .VIII, .IX, .X, .XI, .XII, .XIII, .XIV, .XV]
-
-/-- The perfective active paradigm of a root: the substrate `Paradigm` over
-the fifteen binyan cells, realized by the association pipeline. The root is
-the lexeme index; each cell contributes its template, affix, and Erasure
-setting. -/
-def perfectiveActiveParadigm (r : ConsonantalRoot String) : Paradigm 15 (List String) :=
-  λ i => (perfMatch activeVoc r (binyanList.getD i .I)).spellout
-
-/-- The paradigm of ktb reads off Table 1 cell by cell. -/
-theorem perfectiveActiveParadigm_ktb :
-    ∀ i : Fin 15, perfectiveActiveParadigm ktb i = table1Active (binyanList.getD i .I) := by
-  decide
+/-- The perfective passive melody is the imperfective passive melody with Ablaut on its last
+element (49). -/
+theorem melody_perfPassive (abl : Ablaut) (b : Binyan) :
+    melody abl .perfPassive b = ablautLast (melody abl .imperfPassive b) := by
+  cases b <;> rfl
 
 end McCarthy1981

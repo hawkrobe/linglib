@@ -6,8 +6,9 @@ public import Linglib.Phonology.Segmental.PHOIBLE
 /-!
 # Modern Standard Arabic phonology
 
-This file defines the 28 consonants of Modern Standard Arabic ([ryding-2005]) as segments named
-by their IPA symbols, with feature values from the PHOIBLE chart.
+This file defines the 28 consonants and the three vowels of Modern Standard Arabic
+([ryding-2005]) as segments named by their IPA symbols, with feature values from the PHOIBLE
+chart. A long vowel is not a further phoneme here.
 
 The chart entries follow the glyphs of PHOIBLE's Arabic inventory 2157, an urban Levantine
 composite, so the coronals are dental and the emphatics are the chart's [+RTR] consonants, which
@@ -20,6 +21,7 @@ lˤ is not a phoneme of the standard language. The values /dʒ/ for ج and /ðˤ
 ## Main definitions
 
 * `b`, `f`, …, `j`: the consonants, and `consonants`, the set of them.
+* `a`, `i`, `u`: the vowels, and `vowels`, the set of them.
 
 ## Main results
 
@@ -126,6 +128,18 @@ def j : Segment := .ofChart .«j»
 def consonants : Finset Segment :=
   ⟨↑[b, f, m, t, d, «tˤ», «dˤ», θ, ð, «ðˤ», s, z, «sˤ», «ʃ», «dʒ», l, r, n, k, q, χ, «ʁ», ħ,
     «ʕ», h, «ʔ», w, j], by decide +kernel⟩
+
+/-- The open vowel /a/. -/
+def a : Segment := .ofChart .«a»
+
+/-- The close front vowel /i/. -/
+def i : Segment := .ofChart .«i»
+
+/-- The close back vowel /u/. -/
+def u : Segment := .ofChart .«u»
+
+/-- The vowels of Modern Standard Arabic. -/
+def vowels : Finset Segment := ⟨↑[a, i, u], by decide +kernel⟩
 
 /-- Every consonant but `t`, `k`, `χ` and `ʁ` is the segment of a phoneme of PHOIBLE's
 inventory 2157. -/
