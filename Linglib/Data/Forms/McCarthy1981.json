@@ -1,0 +1,2283 @@
+{
+  "FormTable": [
+    {
+      "ID": "mccarthy1981_ktb_I_perf_act",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "katab",
+      "Segments": [
+        "k",
+        "a",
+        "t",
+        "a",
+        "b"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "I",
+      "Aspect": "perfective",
+      "Voice": "active"
+    },
+    {
+      "ID": "mccarthy1981_ktb_I_perf_pas",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "kutib",
+      "Segments": [
+        "k",
+        "u",
+        "t",
+        "i",
+        "b"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "I",
+      "Aspect": "perfective",
+      "Voice": "passive"
+    },
+    {
+      "ID": "mccarthy1981_ktb_I_impe_act",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "aktub",
+      "Segments": [
+        "a",
+        "k",
+        "t",
+        "u",
+        "b"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "I",
+      "Aspect": "imperfective",
+      "Voice": "active"
+    },
+    {
+      "ID": "mccarthy1981_ktb_I_impe_pas",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "uktab",
+      "Segments": [
+        "u",
+        "k",
+        "t",
+        "a",
+        "b"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "I",
+      "Aspect": "imperfective",
+      "Voice": "passive"
+    },
+    {
+      "ID": "mccarthy1981_ktb_I_part_act",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "kaatib",
+      "Segments": [
+        "k",
+        "a",
+        "a",
+        "t",
+        "i",
+        "b"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "I",
+      "Aspect": "participle",
+      "Voice": "active"
+    },
+    {
+      "ID": "mccarthy1981_ktb_I_part_pas",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "maktuub",
+      "Segments": [
+        "m",
+        "a",
+        "k",
+        "t",
+        "u",
+        "u",
+        "b"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "I",
+      "Aspect": "participle",
+      "Voice": "passive"
+    },
+    {
+      "ID": "mccarthy1981_ktb_II_perf_act",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "kattab",
+      "Segments": [
+        "k",
+        "a",
+        "t",
+        "t",
+        "a",
+        "b"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "II",
+      "Aspect": "perfective",
+      "Voice": "active"
+    },
+    {
+      "ID": "mccarthy1981_ktb_II_perf_pas",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "kuttib",
+      "Segments": [
+        "k",
+        "u",
+        "t",
+        "t",
+        "i",
+        "b"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "II",
+      "Aspect": "perfective",
+      "Voice": "passive"
+    },
+    {
+      "ID": "mccarthy1981_ktb_II_impe_act",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "ukattib",
+      "Segments": [
+        "u",
+        "k",
+        "a",
+        "t",
+        "t",
+        "i",
+        "b"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "II",
+      "Aspect": "imperfective",
+      "Voice": "active"
+    },
+    {
+      "ID": "mccarthy1981_ktb_II_impe_pas",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "ukattab",
+      "Segments": [
+        "u",
+        "k",
+        "a",
+        "t",
+        "t",
+        "a",
+        "b"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "II",
+      "Aspect": "imperfective",
+      "Voice": "passive"
+    },
+    {
+      "ID": "mccarthy1981_ktb_II_part_act",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "mukattib",
+      "Segments": [
+        "m",
+        "u",
+        "k",
+        "a",
+        "t",
+        "t",
+        "i",
+        "b"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "II",
+      "Aspect": "participle",
+      "Voice": "active"
+    },
+    {
+      "ID": "mccarthy1981_ktb_II_part_pas",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "mukattab",
+      "Segments": [
+        "m",
+        "u",
+        "k",
+        "a",
+        "t",
+        "t",
+        "a",
+        "b"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "II",
+      "Aspect": "participle",
+      "Voice": "passive"
+    },
+    {
+      "ID": "mccarthy1981_ktb_III_perf_act",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "kaatab",
+      "Segments": [
+        "k",
+        "a",
+        "a",
+        "t",
+        "a",
+        "b"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "III",
+      "Aspect": "perfective",
+      "Voice": "active"
+    },
+    {
+      "ID": "mccarthy1981_ktb_III_perf_pas",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "kuutib",
+      "Segments": [
+        "k",
+        "u",
+        "u",
+        "t",
+        "i",
+        "b"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "III",
+      "Aspect": "perfective",
+      "Voice": "passive"
+    },
+    {
+      "ID": "mccarthy1981_ktb_III_impe_act",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "ukaatib",
+      "Segments": [
+        "u",
+        "k",
+        "a",
+        "a",
+        "t",
+        "i",
+        "b"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "III",
+      "Aspect": "imperfective",
+      "Voice": "active"
+    },
+    {
+      "ID": "mccarthy1981_ktb_III_impe_pas",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "ukaatab",
+      "Segments": [
+        "u",
+        "k",
+        "a",
+        "a",
+        "t",
+        "a",
+        "b"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "III",
+      "Aspect": "imperfective",
+      "Voice": "passive"
+    },
+    {
+      "ID": "mccarthy1981_ktb_III_part_act",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "mukaatib",
+      "Segments": [
+        "m",
+        "u",
+        "k",
+        "a",
+        "a",
+        "t",
+        "i",
+        "b"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "III",
+      "Aspect": "participle",
+      "Voice": "active"
+    },
+    {
+      "ID": "mccarthy1981_ktb_III_part_pas",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "mukaatab",
+      "Segments": [
+        "m",
+        "u",
+        "k",
+        "a",
+        "a",
+        "t",
+        "a",
+        "b"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "III",
+      "Aspect": "participle",
+      "Voice": "passive"
+    },
+    {
+      "ID": "mccarthy1981_ktb_IV_perf_act",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "ʔaktab",
+      "Segments": [
+        "ʔ",
+        "a",
+        "k",
+        "t",
+        "a",
+        "b"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "IV",
+      "Aspect": "perfective",
+      "Voice": "active"
+    },
+    {
+      "ID": "mccarthy1981_ktb_IV_perf_pas",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "ʔuktib",
+      "Segments": [
+        "ʔ",
+        "u",
+        "k",
+        "t",
+        "i",
+        "b"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "IV",
+      "Aspect": "perfective",
+      "Voice": "passive"
+    },
+    {
+      "ID": "mccarthy1981_ktb_IV_impe_act",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "uʔaktib",
+      "Segments": [
+        "u",
+        "ʔ",
+        "a",
+        "k",
+        "t",
+        "i",
+        "b"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "IV",
+      "Aspect": "imperfective",
+      "Voice": "active"
+    },
+    {
+      "ID": "mccarthy1981_ktb_IV_impe_pas",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "uʔaktab",
+      "Segments": [
+        "u",
+        "ʔ",
+        "a",
+        "k",
+        "t",
+        "a",
+        "b"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "IV",
+      "Aspect": "imperfective",
+      "Voice": "passive"
+    },
+    {
+      "ID": "mccarthy1981_ktb_IV_part_act",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "muʔaktib",
+      "Segments": [
+        "m",
+        "u",
+        "ʔ",
+        "a",
+        "k",
+        "t",
+        "i",
+        "b"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "IV",
+      "Aspect": "participle",
+      "Voice": "active"
+    },
+    {
+      "ID": "mccarthy1981_ktb_IV_part_pas",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "muʔaktab",
+      "Segments": [
+        "m",
+        "u",
+        "ʔ",
+        "a",
+        "k",
+        "t",
+        "a",
+        "b"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "IV",
+      "Aspect": "participle",
+      "Voice": "passive"
+    },
+    {
+      "ID": "mccarthy1981_ktb_V_perf_act",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "takattab",
+      "Segments": [
+        "t",
+        "a",
+        "k",
+        "a",
+        "t",
+        "t",
+        "a",
+        "b"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "V",
+      "Aspect": "perfective",
+      "Voice": "active"
+    },
+    {
+      "ID": "mccarthy1981_ktb_V_perf_pas",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "tukuttib",
+      "Segments": [
+        "t",
+        "u",
+        "k",
+        "u",
+        "t",
+        "t",
+        "i",
+        "b"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "V",
+      "Aspect": "perfective",
+      "Voice": "passive"
+    },
+    {
+      "ID": "mccarthy1981_ktb_V_impe_act",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "atakattab",
+      "Segments": [
+        "a",
+        "t",
+        "a",
+        "k",
+        "a",
+        "t",
+        "t",
+        "a",
+        "b"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "V",
+      "Aspect": "imperfective",
+      "Voice": "active"
+    },
+    {
+      "ID": "mccarthy1981_ktb_V_impe_pas",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "utakattab",
+      "Segments": [
+        "u",
+        "t",
+        "a",
+        "k",
+        "a",
+        "t",
+        "t",
+        "a",
+        "b"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "V",
+      "Aspect": "imperfective",
+      "Voice": "passive"
+    },
+    {
+      "ID": "mccarthy1981_ktb_V_part_act",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "mutakattib",
+      "Segments": [
+        "m",
+        "u",
+        "t",
+        "a",
+        "k",
+        "a",
+        "t",
+        "t",
+        "i",
+        "b"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "V",
+      "Aspect": "participle",
+      "Voice": "active"
+    },
+    {
+      "ID": "mccarthy1981_ktb_V_part_pas",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "mutakattab",
+      "Segments": [
+        "m",
+        "u",
+        "t",
+        "a",
+        "k",
+        "a",
+        "t",
+        "t",
+        "a",
+        "b"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "V",
+      "Aspect": "participle",
+      "Voice": "passive"
+    },
+    {
+      "ID": "mccarthy1981_ktb_VI_perf_act",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "takaatab",
+      "Segments": [
+        "t",
+        "a",
+        "k",
+        "a",
+        "a",
+        "t",
+        "a",
+        "b"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "VI",
+      "Aspect": "perfective",
+      "Voice": "active"
+    },
+    {
+      "ID": "mccarthy1981_ktb_VI_perf_pas",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "tukuutib",
+      "Segments": [
+        "t",
+        "u",
+        "k",
+        "u",
+        "u",
+        "t",
+        "i",
+        "b"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "VI",
+      "Aspect": "perfective",
+      "Voice": "passive"
+    },
+    {
+      "ID": "mccarthy1981_ktb_VI_impe_act",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "atakaatab",
+      "Segments": [
+        "a",
+        "t",
+        "a",
+        "k",
+        "a",
+        "a",
+        "t",
+        "a",
+        "b"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "VI",
+      "Aspect": "imperfective",
+      "Voice": "active"
+    },
+    {
+      "ID": "mccarthy1981_ktb_VI_impe_pas",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "utakaatab",
+      "Segments": [
+        "u",
+        "t",
+        "a",
+        "k",
+        "a",
+        "a",
+        "t",
+        "a",
+        "b"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "VI",
+      "Aspect": "imperfective",
+      "Voice": "passive"
+    },
+    {
+      "ID": "mccarthy1981_ktb_VI_part_act",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "mutakaatib",
+      "Segments": [
+        "m",
+        "u",
+        "t",
+        "a",
+        "k",
+        "a",
+        "a",
+        "t",
+        "i",
+        "b"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "VI",
+      "Aspect": "participle",
+      "Voice": "active"
+    },
+    {
+      "ID": "mccarthy1981_ktb_VI_part_pas",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "mutakaatab",
+      "Segments": [
+        "m",
+        "u",
+        "t",
+        "a",
+        "k",
+        "a",
+        "a",
+        "t",
+        "a",
+        "b"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "VI",
+      "Aspect": "participle",
+      "Voice": "passive"
+    },
+    {
+      "ID": "mccarthy1981_ktb_VII_perf_act",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "nkatab",
+      "Segments": [
+        "n",
+        "k",
+        "a",
+        "t",
+        "a",
+        "b"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "VII",
+      "Aspect": "perfective",
+      "Voice": "active"
+    },
+    {
+      "ID": "mccarthy1981_ktb_VII_perf_pas",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "nkutib",
+      "Segments": [
+        "n",
+        "k",
+        "u",
+        "t",
+        "i",
+        "b"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "VII",
+      "Aspect": "perfective",
+      "Voice": "passive"
+    },
+    {
+      "ID": "mccarthy1981_ktb_VII_impe_act",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "ankatib",
+      "Segments": [
+        "a",
+        "n",
+        "k",
+        "a",
+        "t",
+        "i",
+        "b"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "VII",
+      "Aspect": "imperfective",
+      "Voice": "active"
+    },
+    {
+      "ID": "mccarthy1981_ktb_VII_impe_pas",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "unkatab",
+      "Segments": [
+        "u",
+        "n",
+        "k",
+        "a",
+        "t",
+        "a",
+        "b"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "VII",
+      "Aspect": "imperfective",
+      "Voice": "passive"
+    },
+    {
+      "ID": "mccarthy1981_ktb_VII_part_act",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "munkatib",
+      "Segments": [
+        "m",
+        "u",
+        "n",
+        "k",
+        "a",
+        "t",
+        "i",
+        "b"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "VII",
+      "Aspect": "participle",
+      "Voice": "active"
+    },
+    {
+      "ID": "mccarthy1981_ktb_VII_part_pas",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "munkatab",
+      "Segments": [
+        "m",
+        "u",
+        "n",
+        "k",
+        "a",
+        "t",
+        "a",
+        "b"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "VII",
+      "Aspect": "participle",
+      "Voice": "passive"
+    },
+    {
+      "ID": "mccarthy1981_ktb_VIII_perf_act",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "ktatab",
+      "Segments": [
+        "k",
+        "t",
+        "a",
+        "t",
+        "a",
+        "b"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "VIII",
+      "Aspect": "perfective",
+      "Voice": "active"
+    },
+    {
+      "ID": "mccarthy1981_ktb_VIII_perf_pas",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "ktutib",
+      "Segments": [
+        "k",
+        "t",
+        "u",
+        "t",
+        "i",
+        "b"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "VIII",
+      "Aspect": "perfective",
+      "Voice": "passive"
+    },
+    {
+      "ID": "mccarthy1981_ktb_VIII_impe_act",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "aktatib",
+      "Segments": [
+        "a",
+        "k",
+        "t",
+        "a",
+        "t",
+        "i",
+        "b"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "VIII",
+      "Aspect": "imperfective",
+      "Voice": "active"
+    },
+    {
+      "ID": "mccarthy1981_ktb_VIII_impe_pas",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "uktatab",
+      "Segments": [
+        "u",
+        "k",
+        "t",
+        "a",
+        "t",
+        "a",
+        "b"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "VIII",
+      "Aspect": "imperfective",
+      "Voice": "passive"
+    },
+    {
+      "ID": "mccarthy1981_ktb_VIII_part_act",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "muktatib",
+      "Segments": [
+        "m",
+        "u",
+        "k",
+        "t",
+        "a",
+        "t",
+        "i",
+        "b"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "VIII",
+      "Aspect": "participle",
+      "Voice": "active"
+    },
+    {
+      "ID": "mccarthy1981_ktb_VIII_part_pas",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "muktatab",
+      "Segments": [
+        "m",
+        "u",
+        "k",
+        "t",
+        "a",
+        "t",
+        "a",
+        "b"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "VIII",
+      "Aspect": "participle",
+      "Voice": "passive"
+    },
+    {
+      "ID": "mccarthy1981_ktb_IX_perf_act",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "ktabab",
+      "Segments": [
+        "k",
+        "t",
+        "a",
+        "b",
+        "a",
+        "b"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "IX",
+      "Aspect": "perfective",
+      "Voice": "active"
+    },
+    {
+      "ID": "mccarthy1981_ktb_IX_impe_act",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "aktabib",
+      "Segments": [
+        "a",
+        "k",
+        "t",
+        "a",
+        "b",
+        "i",
+        "b"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "IX",
+      "Aspect": "imperfective",
+      "Voice": "active"
+    },
+    {
+      "ID": "mccarthy1981_ktb_IX_part_act",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "muktabib",
+      "Segments": [
+        "m",
+        "u",
+        "k",
+        "t",
+        "a",
+        "b",
+        "i",
+        "b"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "IX",
+      "Aspect": "participle",
+      "Voice": "active"
+    },
+    {
+      "ID": "mccarthy1981_ktb_X_perf_act",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "staktab",
+      "Segments": [
+        "s",
+        "t",
+        "a",
+        "k",
+        "t",
+        "a",
+        "b"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "X",
+      "Aspect": "perfective",
+      "Voice": "active"
+    },
+    {
+      "ID": "mccarthy1981_ktb_X_perf_pas",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "stuktib",
+      "Segments": [
+        "s",
+        "t",
+        "u",
+        "k",
+        "t",
+        "i",
+        "b"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "X",
+      "Aspect": "perfective",
+      "Voice": "passive"
+    },
+    {
+      "ID": "mccarthy1981_ktb_X_impe_act",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "astaktib",
+      "Segments": [
+        "a",
+        "s",
+        "t",
+        "a",
+        "k",
+        "t",
+        "i",
+        "b"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "X",
+      "Aspect": "imperfective",
+      "Voice": "active"
+    },
+    {
+      "ID": "mccarthy1981_ktb_X_impe_pas",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "ustaktab",
+      "Segments": [
+        "u",
+        "s",
+        "t",
+        "a",
+        "k",
+        "t",
+        "a",
+        "b"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "X",
+      "Aspect": "imperfective",
+      "Voice": "passive"
+    },
+    {
+      "ID": "mccarthy1981_ktb_X_part_act",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "mustaktib",
+      "Segments": [
+        "m",
+        "u",
+        "s",
+        "t",
+        "a",
+        "k",
+        "t",
+        "i",
+        "b"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "X",
+      "Aspect": "participle",
+      "Voice": "active"
+    },
+    {
+      "ID": "mccarthy1981_ktb_X_part_pas",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "mustaktab",
+      "Segments": [
+        "m",
+        "u",
+        "s",
+        "t",
+        "a",
+        "k",
+        "t",
+        "a",
+        "b"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "X",
+      "Aspect": "participle",
+      "Voice": "passive"
+    },
+    {
+      "ID": "mccarthy1981_ktb_XI_perf_act",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "ktaabab",
+      "Segments": [
+        "k",
+        "t",
+        "a",
+        "a",
+        "b",
+        "a",
+        "b"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "XI",
+      "Aspect": "perfective",
+      "Voice": "active"
+    },
+    {
+      "ID": "mccarthy1981_ktb_XI_impe_act",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "aktaabib",
+      "Segments": [
+        "a",
+        "k",
+        "t",
+        "a",
+        "a",
+        "b",
+        "i",
+        "b"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "XI",
+      "Aspect": "imperfective",
+      "Voice": "active"
+    },
+    {
+      "ID": "mccarthy1981_ktb_XI_part_act",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "muktaabib",
+      "Segments": [
+        "m",
+        "u",
+        "k",
+        "t",
+        "a",
+        "a",
+        "b",
+        "i",
+        "b"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "XI",
+      "Aspect": "participle",
+      "Voice": "active"
+    },
+    {
+      "ID": "mccarthy1981_ktb_XII_perf_act",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "ktawtab",
+      "Segments": [
+        "k",
+        "t",
+        "a",
+        "w",
+        "t",
+        "a",
+        "b"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "XII",
+      "Aspect": "perfective",
+      "Voice": "active"
+    },
+    {
+      "ID": "mccarthy1981_ktb_XII_impe_act",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "aktawtib",
+      "Segments": [
+        "a",
+        "k",
+        "t",
+        "a",
+        "w",
+        "t",
+        "i",
+        "b"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "XII",
+      "Aspect": "imperfective",
+      "Voice": "active"
+    },
+    {
+      "ID": "mccarthy1981_ktb_XII_part_act",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "muktawtib",
+      "Segments": [
+        "m",
+        "u",
+        "k",
+        "t",
+        "a",
+        "w",
+        "t",
+        "i",
+        "b"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "XII",
+      "Aspect": "participle",
+      "Voice": "active"
+    },
+    {
+      "ID": "mccarthy1981_ktb_XIII_perf_act",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "ktawwab",
+      "Segments": [
+        "k",
+        "t",
+        "a",
+        "w",
+        "w",
+        "a",
+        "b"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "XIII",
+      "Aspect": "perfective",
+      "Voice": "active"
+    },
+    {
+      "ID": "mccarthy1981_ktb_XIII_impe_act",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "aktawwib",
+      "Segments": [
+        "a",
+        "k",
+        "t",
+        "a",
+        "w",
+        "w",
+        "i",
+        "b"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "XIII",
+      "Aspect": "imperfective",
+      "Voice": "active"
+    },
+    {
+      "ID": "mccarthy1981_ktb_XIII_part_act",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "muktawwib",
+      "Segments": [
+        "m",
+        "u",
+        "k",
+        "t",
+        "a",
+        "w",
+        "w",
+        "i",
+        "b"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "XIII",
+      "Aspect": "participle",
+      "Voice": "active"
+    },
+    {
+      "ID": "mccarthy1981_ktb_XIV_perf_act",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "ktanbab",
+      "Segments": [
+        "k",
+        "t",
+        "a",
+        "n",
+        "b",
+        "a",
+        "b"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "XIV",
+      "Aspect": "perfective",
+      "Voice": "active"
+    },
+    {
+      "ID": "mccarthy1981_ktb_XIV_impe_act",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "aktanbib",
+      "Segments": [
+        "a",
+        "k",
+        "t",
+        "a",
+        "n",
+        "b",
+        "i",
+        "b"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "XIV",
+      "Aspect": "imperfective",
+      "Voice": "active"
+    },
+    {
+      "ID": "mccarthy1981_ktb_XIV_part_act",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "muktanbib",
+      "Segments": [
+        "m",
+        "u",
+        "k",
+        "t",
+        "a",
+        "n",
+        "b",
+        "i",
+        "b"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "XIV",
+      "Aspect": "participle",
+      "Voice": "active"
+    },
+    {
+      "ID": "mccarthy1981_ktb_XV_perf_act",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "ktanbay",
+      "Segments": [
+        "k",
+        "t",
+        "a",
+        "n",
+        "b",
+        "a",
+        "y"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "XV",
+      "Aspect": "perfective",
+      "Voice": "active"
+    },
+    {
+      "ID": "mccarthy1981_ktb_XV_impe_act",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "aktanbiy",
+      "Segments": [
+        "a",
+        "k",
+        "t",
+        "a",
+        "n",
+        "b",
+        "i",
+        "y"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "XV",
+      "Aspect": "imperfective",
+      "Voice": "active"
+    },
+    {
+      "ID": "mccarthy1981_ktb_XV_part_act",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "write",
+      "Form": "muktanbiy",
+      "Segments": [
+        "m",
+        "u",
+        "k",
+        "t",
+        "a",
+        "n",
+        "b",
+        "i",
+        "y"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "XV",
+      "Aspect": "participle",
+      "Voice": "active"
+    },
+    {
+      "ID": "mccarthy1981_dhrj_QI_perf_act",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "roll",
+      "Form": "daḥraj",
+      "Segments": [
+        "d",
+        "a",
+        "ḥ",
+        "r",
+        "a",
+        "j"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "QI",
+      "Aspect": "perfective",
+      "Voice": "active"
+    },
+    {
+      "ID": "mccarthy1981_dhrj_QI_perf_pas",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "roll",
+      "Form": "duḥrij",
+      "Segments": [
+        "d",
+        "u",
+        "ḥ",
+        "r",
+        "i",
+        "j"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "QI",
+      "Aspect": "perfective",
+      "Voice": "passive"
+    },
+    {
+      "ID": "mccarthy1981_dhrj_QI_impe_act",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "roll",
+      "Form": "udaḥrij",
+      "Segments": [
+        "u",
+        "d",
+        "a",
+        "ḥ",
+        "r",
+        "i",
+        "j"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "QI",
+      "Aspect": "imperfective",
+      "Voice": "active"
+    },
+    {
+      "ID": "mccarthy1981_dhrj_QI_impe_pas",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "roll",
+      "Form": "udaḥraj",
+      "Segments": [
+        "u",
+        "d",
+        "a",
+        "ḥ",
+        "r",
+        "a",
+        "j"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "QI",
+      "Aspect": "imperfective",
+      "Voice": "passive"
+    },
+    {
+      "ID": "mccarthy1981_dhrj_QI_part_act",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "roll",
+      "Form": "mudaḥrij",
+      "Segments": [
+        "m",
+        "u",
+        "d",
+        "a",
+        "ḥ",
+        "r",
+        "i",
+        "j"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "QI",
+      "Aspect": "participle",
+      "Voice": "active"
+    },
+    {
+      "ID": "mccarthy1981_dhrj_QI_part_pas",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "roll",
+      "Form": "mudaḥraj",
+      "Segments": [
+        "m",
+        "u",
+        "d",
+        "a",
+        "ḥ",
+        "r",
+        "a",
+        "j"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "QI",
+      "Aspect": "participle",
+      "Voice": "passive"
+    },
+    {
+      "ID": "mccarthy1981_dhrj_QII_perf_act",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "roll",
+      "Form": "tadaḥraj",
+      "Segments": [
+        "t",
+        "a",
+        "d",
+        "a",
+        "ḥ",
+        "r",
+        "a",
+        "j"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "QII",
+      "Aspect": "perfective",
+      "Voice": "active"
+    },
+    {
+      "ID": "mccarthy1981_dhrj_QII_perf_pas",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "roll",
+      "Form": "tuduḥrij",
+      "Segments": [
+        "t",
+        "u",
+        "d",
+        "u",
+        "ḥ",
+        "r",
+        "i",
+        "j"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "QII",
+      "Aspect": "perfective",
+      "Voice": "passive"
+    },
+    {
+      "ID": "mccarthy1981_dhrj_QII_impe_act",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "roll",
+      "Form": "atadaḥraj",
+      "Segments": [
+        "a",
+        "t",
+        "a",
+        "d",
+        "a",
+        "ḥ",
+        "r",
+        "a",
+        "j"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "QII",
+      "Aspect": "imperfective",
+      "Voice": "active"
+    },
+    {
+      "ID": "mccarthy1981_dhrj_QII_impe_pas",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "roll",
+      "Form": "utadaḥraj",
+      "Segments": [
+        "u",
+        "t",
+        "a",
+        "d",
+        "a",
+        "ḥ",
+        "r",
+        "a",
+        "j"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "QII",
+      "Aspect": "imperfective",
+      "Voice": "passive"
+    },
+    {
+      "ID": "mccarthy1981_dhrj_QII_part_act",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "roll",
+      "Form": "mutadaḥrij",
+      "Segments": [
+        "m",
+        "u",
+        "t",
+        "a",
+        "d",
+        "a",
+        "ḥ",
+        "r",
+        "i",
+        "j"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "QII",
+      "Aspect": "participle",
+      "Voice": "active"
+    },
+    {
+      "ID": "mccarthy1981_dhrj_QII_part_pas",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "roll",
+      "Form": "mutadaḥraj",
+      "Segments": [
+        "m",
+        "u",
+        "t",
+        "a",
+        "d",
+        "a",
+        "ḥ",
+        "r",
+        "a",
+        "j"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "QII",
+      "Aspect": "participle",
+      "Voice": "passive"
+    },
+    {
+      "ID": "mccarthy1981_dhrj_QIII_perf_act",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "roll",
+      "Form": "dḥanraj",
+      "Segments": [
+        "d",
+        "ḥ",
+        "a",
+        "n",
+        "r",
+        "a",
+        "j"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "QIII",
+      "Aspect": "perfective",
+      "Voice": "active"
+    },
+    {
+      "ID": "mccarthy1981_dhrj_QIII_perf_pas",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "roll",
+      "Form": "dḥunrij",
+      "Segments": [
+        "d",
+        "ḥ",
+        "u",
+        "n",
+        "r",
+        "i",
+        "j"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "QIII",
+      "Aspect": "perfective",
+      "Voice": "passive"
+    },
+    {
+      "ID": "mccarthy1981_dhrj_QIII_impe_act",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "roll",
+      "Form": "adḥanrij",
+      "Segments": [
+        "a",
+        "d",
+        "ḥ",
+        "a",
+        "n",
+        "r",
+        "i",
+        "j"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "QIII",
+      "Aspect": "imperfective",
+      "Voice": "active"
+    },
+    {
+      "ID": "mccarthy1981_dhrj_QIII_impe_pas",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "roll",
+      "Form": "udḥanraj",
+      "Segments": [
+        "u",
+        "d",
+        "ḥ",
+        "a",
+        "n",
+        "r",
+        "a",
+        "j"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "QIII",
+      "Aspect": "imperfective",
+      "Voice": "passive"
+    },
+    {
+      "ID": "mccarthy1981_dhrj_QIII_part_act",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "roll",
+      "Form": "mudḥanrij",
+      "Segments": [
+        "m",
+        "u",
+        "d",
+        "ḥ",
+        "a",
+        "n",
+        "r",
+        "i",
+        "j"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "QIII",
+      "Aspect": "participle",
+      "Voice": "active"
+    },
+    {
+      "ID": "mccarthy1981_dhrj_QIII_part_pas",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "roll",
+      "Form": "mudḥanraj",
+      "Segments": [
+        "m",
+        "u",
+        "d",
+        "ḥ",
+        "a",
+        "n",
+        "r",
+        "a",
+        "j"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "QIII",
+      "Aspect": "participle",
+      "Voice": "passive"
+    },
+    {
+      "ID": "mccarthy1981_dhrj_QIV_perf_act",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "roll",
+      "Form": "dḥarjaj",
+      "Segments": [
+        "d",
+        "ḥ",
+        "a",
+        "r",
+        "j",
+        "a",
+        "j"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "QIV",
+      "Aspect": "perfective",
+      "Voice": "active"
+    },
+    {
+      "ID": "mccarthy1981_dhrj_QIV_perf_pas",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "roll",
+      "Form": "dḥurjij",
+      "Segments": [
+        "d",
+        "ḥ",
+        "u",
+        "r",
+        "j",
+        "i",
+        "j"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "QIV",
+      "Aspect": "perfective",
+      "Voice": "passive"
+    },
+    {
+      "ID": "mccarthy1981_dhrj_QIV_impe_act",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "roll",
+      "Form": "adḥarjij",
+      "Segments": [
+        "a",
+        "d",
+        "ḥ",
+        "a",
+        "r",
+        "j",
+        "i",
+        "j"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "QIV",
+      "Aspect": "imperfective",
+      "Voice": "active"
+    },
+    {
+      "ID": "mccarthy1981_dhrj_QIV_impe_pas",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "roll",
+      "Form": "udḥarjaj",
+      "Segments": [
+        "u",
+        "d",
+        "ḥ",
+        "a",
+        "r",
+        "j",
+        "a",
+        "j"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "QIV",
+      "Aspect": "imperfective",
+      "Voice": "passive"
+    },
+    {
+      "ID": "mccarthy1981_dhrj_QIV_part_act",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "roll",
+      "Form": "mudḥarjij",
+      "Segments": [
+        "m",
+        "u",
+        "d",
+        "ḥ",
+        "a",
+        "r",
+        "j",
+        "i",
+        "j"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "QIV",
+      "Aspect": "participle",
+      "Voice": "active"
+    },
+    {
+      "ID": "mccarthy1981_dhrj_QIV_part_pas",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "roll",
+      "Form": "mudḥarjaj",
+      "Segments": [
+        "m",
+        "u",
+        "d",
+        "ḥ",
+        "a",
+        "r",
+        "j",
+        "a",
+        "j"
+      ],
+      "Comment": "",
+      "Source": [
+        "mccarthy-1981[Table 1]"
+      ],
+      "Binyan": "QIV",
+      "Aspect": "participle",
+      "Voice": "passive"
+    },
+    {
+      "ID": "mccarthy1981_poison_I_perf_act",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "poison",
+      "Form": "samam",
+      "Segments": [
+        "s",
+        "a",
+        "m",
+        "a",
+        "m"
+      ],
+      "Comment": "the biliteral root sm",
+      "Source": [
+        "mccarthy-1981[(33)]"
+      ],
+      "Binyan": "I",
+      "Aspect": "perfective",
+      "Voice": "active"
+    },
+    {
+      "ID": "mccarthy1981_poison_II_perf_act",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "poison",
+      "Form": "sammam",
+      "Segments": [
+        "s",
+        "a",
+        "m",
+        "m",
+        "a",
+        "m"
+      ],
+      "Comment": "the biliteral root sm",
+      "Source": [
+        "mccarthy-1981[(34a)]"
+      ],
+      "Binyan": "II",
+      "Aspect": "perfective",
+      "Voice": "active"
+    },
+    {
+      "ID": "mccarthy1981_poison_V_perf_act",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "poison",
+      "Form": "tasammam",
+      "Segments": [
+        "t",
+        "a",
+        "s",
+        "a",
+        "m",
+        "m",
+        "a",
+        "m"
+      ],
+      "Comment": "the biliteral root sm",
+      "Source": [
+        "mccarthy-1981[(34b)]"
+      ],
+      "Binyan": "V",
+      "Aspect": "perfective",
+      "Voice": "active"
+    },
+    {
+      "ID": "mccarthy1981_magnetize_QI_perf_act",
+      "Language_ID": "clas1259",
+      "Parameter_ID": "magnetize",
+      "Form": "mağnaṭ",
+      "Segments": [
+        "m",
+        "a",
+        "ğ",
+        "n",
+        "a",
+        "ṭ"
+      ],
+      "Comment": "the quinqueliteral root mğnṭš, from mağnaṭiiš 'magnet'",
+      "Source": [
+        "mccarthy-1981[(38)]"
+      ],
+      "Binyan": "QI",
+      "Aspect": "perfective",
+      "Voice": "active"
+    }
+  ],
+  "ParameterTable": [
+    {
+      "ID": "write",
+      "Name": "write",
+      "Description": "the root ktb"
+    },
+    {
+      "ID": "roll",
+      "Name": "roll",
+      "Description": "the root dḥrj"
+    },
+    {
+      "ID": "poison",
+      "Name": "poison",
+      "Description": "the root sm"
+    },
+    {
+      "ID": "magnetize",
+      "Name": "magnetize",
+      "Description": "the root mğnṭš"
+    }
+  ]
+}
