@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Linglib.Core.Data.RoseTree.Get
 public import Linglib.Core.Data.UnorderedTree.Basic
 
 /-!
@@ -22,6 +23,8 @@ the quotient because a permutation of children permutes the subtree multiset.
 
 * `UnorderedTree.card_subtrees`: one subtree per vertex.
 * `UnorderedTree.mem_subtrees_node_pair`: membership at a binary node.
+* `RoseTree.mem_unorderedSubtrees`: the nonplanar subtrees of a planar tree are the images of its
+  subtrees at its positions.
 -/
 
 @[expose] public section
@@ -70,6 +73,29 @@ theorem card_unorderedSubtreesList (cs : List (RoseTree α)) :
   | c :: cs => rw [unorderedSubtreesList, Multiset.card_add, card_unorderedSubtrees,
                    card_unorderedSubtreesList, List.map_cons, List.sum_cons]
 end
+
+mutual
+/-- The nonplanar subtrees of a planar tree are the images of its subtrees. -/
+theorem unorderedSubtrees_eq_map (p : RoseTree α) :
+    unorderedSubtrees p = (p.subtrees.map UnorderedTree.mk : Multiset (UnorderedTree α)) := by
+  obtain ⟨a, cs⟩ := p
+  rw [unorderedSubtrees, subtrees_node, List.map_cons, ← Multiset.cons_coe,
+    unorderedSubtreesList_eq_map]
+theorem unorderedSubtreesList_eq_map (cs : List (RoseTree α)) :
+    unorderedSubtreesList cs =
+      ((cs.flatMap subtrees).map UnorderedTree.mk : Multiset (UnorderedTree α)) := by
+  match cs with
+  | [] => rfl
+  | c :: cs =>
+    rw [unorderedSubtreesList, unorderedSubtrees_eq_map, unorderedSubtreesList_eq_map,
+      List.flatMap_cons, List.map_append, Multiset.coe_add]
+end
+
+theorem mem_unorderedSubtrees {p : RoseTree α} {x : UnorderedTree α} :
+    x ∈ unorderedSubtrees p ↔ ∃ q s, p.subtreeAt q = some s ∧ UnorderedTree.mk s = x := by
+  simp only [unorderedSubtrees_eq_map, Multiset.mem_coe, List.mem_map, mem_subtrees,
+    isSubtree_iff_exists_subtreeAt]
+  exact ⟨fun ⟨s, ⟨q, hq⟩, hx⟩ ↦ ⟨q, s, hq, hx⟩, fun ⟨q, s, hq, hx⟩ ↦ ⟨s, ⟨q, hq⟩, hx⟩⟩
 
 end RoseTree
 

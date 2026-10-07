@@ -43,6 +43,8 @@ a well-founded strict order and decides it.
 * `SyntacticObject.wellFounded_flip_contains`: the proper term relation is
   well-founded.
 * `SyntacticObject.card_accessibleTerms`: one accessible term per edge.
+* `PlanarSyntacticObject.mem_terms_iff`: the terms of a planar object are its subtrees at
+  positions.
 
 ## Implementation notes
 
@@ -334,5 +336,48 @@ theorem not_asymCCommandsIn_of_areSistersIn (h : areSistersIn root x y) :
   fun h' ↦ h'.2 (cCommandsIn_of_areSistersIn h.symm)
 
 end SyntacticObject
+
+/-! ### Terms at positions -/
+
+namespace PlanarSyntacticObject
+
+variable {t : PlanarSyntacticObject} {p : List ℕ} {s : RoseTree SyntacticObject.Vertex}
+  {x : SyntacticObject} {tok : LIToken}
+
+/-- The terms of a planar object are its subtrees at positions. -/
+theorem mem_terms_iff :
+    x ∈ t.toSyntacticObject.terms ↔
+      ∃ q s, t.val.subtreeAt q = some s ∧ UnorderedTree.mk s = x.val := by
+  rw [← Multiset.mem_map_of_injective Subtype.val_injective, SyntacticObject.map_val_terms]
+  exact RoseTree.mem_unorderedSubtrees
+
+/-- The subtree at a position is a term. -/
+theorem exists_mem_terms_of_subtreeAt (hs : t.val.subtreeAt p = some s) :
+    ∃ y ∈ t.toSyntacticObject.terms, y.val = UnorderedTree.mk s :=
+  have hm : UnorderedTree.mk s ∈ UnorderedTree.subtrees t.toSyntacticObject.val :=
+    RoseTree.mem_unorderedSubtrees.2 ⟨p, s, hs, rfl⟩
+  ⟨⟨_, isSyntacticObject_of_mem_subtrees _ _ hm⟩, mem_terms_iff.2 ⟨p, s, hs, rfl⟩, rfl⟩
+
+/-- A position carrying a lexical item is a leaf. -/
+theorem children_eq_nil_of_subtreeAt (hs : t.val.subtreeAt p = some s)
+    (hv : s.value = SyntacticObject.Vertex.lex tok) : s.children = [] := by
+  obtain ⟨y, -, hy⟩ := exists_mem_terms_of_subtreeAt hs
+  obtain ⟨a, cs⟩ := s
+  by_contra hne
+  have := SyntacticObject.eq_bare_of_ne_nil (hy ▸ y.2) hne
+  simp_all
+
+/-- The subtree at a position is the leaf of `tok` exactly when the position carries `tok`. -/
+theorem mk_eq_leaf_iff (hs : t.val.subtreeAt p = some s) :
+    UnorderedTree.mk s = (SyntacticObject.leaf tok).val ↔
+      s.value = SyntacticObject.Vertex.lex tok := by
+  refine ⟨fun h ↦ (UnorderedTree.mk_eq_mk_iff.1 h).value_eq, fun hv ↦ ?_⟩
+  obtain ⟨a, cs⟩ := s
+  have hcs := children_eq_nil_of_subtreeAt hs hv
+  simp only [RoseTree.children_node, RoseTree.value_node] at hcs hv
+  subst hcs hv
+  rfl
+
+end PlanarSyntacticObject
 
 end Minimalist
