@@ -83,7 +83,7 @@ instance : MulAction Polarity Boundedness where
   rfl
 
 /-- The negative member of an antonym pair compares on the reversed scale, so its comparison is
-the dual one: *shorter* is `Polarity.negative • Comparison.gt`. -/
+the dual one, so that *shorter* is `Polarity.negative • Comparison.gt`. -/
 instance : MulAction Polarity Comparison where
   smul
     | .positive, c => c
@@ -182,12 +182,6 @@ def complexity : AntonymForm → Nat
   | .negative    => 2
   | .notPositive => 3
   | .notNegative => 5
-
-theorem complexity_strictMono :
-    complexity .positive < complexity .negative ∧
-    complexity .negative < complexity .notPositive ∧
-    complexity .notPositive < complexity .notNegative := by
-  decide
 
 section Denotation
 variable {D : Type*}
