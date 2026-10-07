@@ -135,9 +135,11 @@ theorem initialIdentity_map (hf : Function.Injective f) (r : ConsonantalRoot α)
 /-- The root of kathath ends in identical consonants and the root of thathak begins with
 them, so the restriction rejects thathak alone, although /θ/ is not a Hebrew consonant. -/
 theorem initialIdentity_theta :
-    ¬ InitialIdentity (⟨["k", "θ", "θ"]⟩ : ConsonantalRoot String) ∧
-      InitialIdentity (⟨["θ", "θ", "k"]⟩ : ConsonantalRoot String) :=
-  ⟨not_initialIdentity_double_right (by decide), initialIdentity_double_left _ _⟩
+    ¬ InitialIdentity (⟨[English.Phonology.k, English.Phonology.θ, English.Phonology.θ]⟩ :
+        ConsonantalRoot Phonology.Segment) ∧
+      InitialIdentity (⟨[English.Phonology.θ, English.Phonology.θ, English.Phonology.k]⟩ :
+        ConsonantalRoot Phonology.Segment) :=
+  ⟨not_initialIdentity_double_right (by decide +kernel), initialIdentity_double_left _ _⟩
 
 /-- The preference for reduplication carries over to the image of the constituents under
 an injective relabelling, so it extends to handshapes the language lacks. -/
