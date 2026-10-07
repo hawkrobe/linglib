@@ -120,19 +120,19 @@ theorem isMonotoneDelineation_upperSets_iff :
 /-- With a monotone measure, if `a` has more than `b` then some threshold property holds of `a`
 and not of `b`. -/
 theorem exists_isUpperSet_of_maxComparative (hm : Monotone μ) {a b : X}
-    (h : maxComparative (ρ · = a) (ρ · = b) μ) :
+    (h : MaxComparative .gt (ρ · = a) (ρ · = b) μ) :
     ∃ T, IsUpperSet T ∧ a ∈ ρ '' T ∧ b ∉ ρ '' T := by
   obtain ⟨δ, hδ, s, hsa, hlt⟩ := h
   refine ⟨Ici s, isUpperSet_Ici s, ⟨s, mem_Ici.2 le_rfl, hsa⟩, ?_⟩
   rintro ⟨t, hst, htb⟩
-  exact ((hδ.2 ⟨t, htb, le_rfl⟩).trans_lt hlt).not_ge (hm hst)
+  exact ((hδ.2 ⟨t, htb, rfl⟩).trans_lt hlt).not_ge (hm hst)
 
 /-- Admissibility alone does not yield a separating threshold. With two tied states every
 measure is admissible and every threshold holding of one holds of the other. The preorder is
 passed explicitly, since `Bool`'s own order would otherwise be found. -/
 example :
     let tied : Preorder Bool := Preorder.lift fun _ ↦ ()
-    @StrictMono _ _ tied _ Bool.toNat ∧ maxComparative (· = true) (· = false) Bool.toNat ∧
+    @StrictMono _ _ tied _ Bool.toNat ∧ MaxComparative .gt (· = true) (· = false) Bool.toNat ∧
       ∀ T : Set Bool, @IsUpperSet _ tied.toLE T → true ∈ T → false ∈ T :=
   ⟨fun _ _ h ↦ absurd h (lt_irrefl ()), (maxComparative_eq_iff _ _ _).2 Nat.zero_lt_one,
     fun _ hT ht ↦ hT trivial ht⟩
@@ -140,21 +140,20 @@ example :
 /-- On a total background with an admissible measure a separating threshold yields the
 comparative, when the degrees of `b`'s states have a greatest element. -/
 theorem maxComparative_of_exists_isUpperSet [@Std.Total S (· ≤ ·)] (hμ : StrictMono μ)
-    {a b : X} (hb : ∃ δ, IsGreatest (thanDegrees (ρ · = b) μ) δ)
+    {a b : X} (hb : ∃ δ, IsGreatest (μ '' {s | ρ s = b}) δ)
     (h : ∃ T, IsUpperSet T ∧ a ∈ ρ '' T ∧ b ∉ ρ '' T) :
-    maxComparative (ρ · = a) (ρ · = b) μ := by
+    MaxComparative .gt (ρ · = a) (ρ · = b) μ := by
   obtain ⟨δ, hδ⟩ := hb
   obtain ⟨T, hT, ⟨s, hsT, hsa⟩, hbT⟩ := h
-  obtain ⟨t, htb, hδt⟩ := hδ.1
+  obtain ⟨t, htb, rfl⟩ := hδ.1
   have hst : ¬ s ≤ t := fun hst ↦ hbT ⟨t, hT hst hsT, htb⟩
-  exact ⟨δ, hδ, s, hsa, hδt.trans_lt (hμ (lt_of_le_not_ge
-    ((total_of (· ≤ ·) t s).resolve_right hst) hst))⟩
+  exact ⟨_, hδ, s, hsa, hμ (lt_of_le_not_ge ((total_of (· ≤ ·) t s).resolve_right hst) hst)⟩
 
 /-- On a total background with a monotone admissible measure, `a` has more than `b` iff some
 threshold property holds of `a` and not of `b`, as in Klein's comparative. -/
 theorem maxComparative_iff_exists_isUpperSet [@Std.Total S (· ≤ ·)] (hμ : StrictMono μ)
-    (hm : Monotone μ) {a b : X} (hb : ∃ δ, IsGreatest (thanDegrees (ρ · = b) μ) δ) :
-    maxComparative (ρ · = a) (ρ · = b) μ ↔ ∃ T, IsUpperSet T ∧ a ∈ ρ '' T ∧ b ∉ ρ '' T :=
+    (hm : Monotone μ) {a b : X} (hb : ∃ δ, IsGreatest (μ '' {s | ρ s = b}) δ) :
+    MaxComparative .gt (ρ · = a) (ρ · = b) μ ↔ ∃ T, IsUpperSet T ∧ a ∈ ρ '' T ∧ b ∉ ρ '' T :=
   ⟨exists_isUpperSet_of_maxComparative hm, maxComparative_of_exists_isUpperSet hμ hb⟩
 
 /-- Every threshold property of the background is a degree threshold pulled back along the
@@ -276,21 +275,17 @@ section TransportMax
 
 variable {Entity D D' : Type*} [LinearOrder D] [LinearOrder D'] {μ : Entity → D}
 
-/-- The max-quantified comparative is invariant under an order embedding of the scale. The image
-of the downset `thanDegrees` need not be a downset, but its greatest element maps to the greatest
-element of the image. -/
-theorem maxComparative_comp (f : D ↪o D') (Pmatrix Pthan : Entity → Prop) :
-    maxComparative Pmatrix Pthan (f ∘ μ) ↔ maxComparative Pmatrix Pthan μ := by
+/-- The max-quantified comparative under any comparison is invariant under an order embedding of
+the scale. -/
+theorem maxComparative_comp (f : D ↪o D') (c : Comparison) (P Q : Entity → Prop) :
+    MaxComparative c P Q (f ∘ μ) ↔ MaxComparative c P Q μ := by
+  rw [MaxComparative, MaxComparative, Set.image_comp]
   constructor
-  · rintro ⟨δ', ⟨⟨x₀, hQ, hδx₀⟩, hub⟩, x, hP, hlt⟩
-    have hδeq : δ' = f (μ x₀) := le_antisymm hδx₀ (hub ⟨x₀, hQ, le_rfl⟩)
-    refine ⟨μ x₀, ⟨⟨x₀, hQ, le_rfl⟩, ?_⟩, x, hP, f.lt_iff_lt.mp (hδeq ▸ hlt)⟩
-    rintro d ⟨y, hQy, hdy⟩
-    exact hdy.trans (f.le_iff_le.mp (hδeq ▸ hub ⟨y, hQy, le_rfl⟩))
-  · rintro ⟨δ, ⟨⟨y, hQy, hδy⟩, hub⟩, x, hP, hlt⟩
-    refine ⟨f δ, ⟨⟨y, hQy, f.monotone hδy⟩, ?_⟩, x, hP, f.strictMono hlt⟩
-    rintro d ⟨y, hQy, hdy⟩
-    exact hdy.trans (f.monotone (hub ⟨y, hQy, le_rfl⟩))
+  · rintro ⟨_, hδ, x, hx, hr⟩
+    obtain ⟨δ, -, rfl⟩ := hδ.1
+    exact ⟨δ, f.strictMono.map_isGreatest.1 hδ, x, hx, (Comparison.rel_map_iff f c).1 hr⟩
+  · rintro ⟨δ, hδ, x, hx, hr⟩
+    exact ⟨f δ, f.strictMono.map_isGreatest.2 hδ, x, hx, (Comparison.rel_map_iff f c).2 hr⟩
 
 /-- With a fixed threshold the positive form is not natural, since some order embedding of the
 scale changes the verdict. -/

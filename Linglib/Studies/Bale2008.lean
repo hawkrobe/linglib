@@ -36,7 +36,7 @@ not taller for a man than he is wide for a man.
   measure into a linear order, and a comparison class by a finite set, which restricts the
   quasi-order as Klein's comparison classes do.
 * The comparative is Kennedy's, as in the paper: MORE applied to the greatest degree the
-  than-clause reaches is `Degree.maxComparative` over the two measures (`more_iff`), stated as
+  than-clause reaches is `Degree.MaxComparative .gt` over the two measures (`more_iff`), stated as
   the point comparison `Comparison.gt.over`.
 * Universal degrees are rationals: the paper's universal scale is the rationals from zero to one.
 * Measurements are individuals `.inr n` of `n` inches, bounded by the comparison class; heights
@@ -60,12 +60,12 @@ open Finset Degree
 /-- MORE applied to the greatest degree to which `y` is ADJ₂, the meaning of *x is more ADJ₁ than
 y is ADJ₂*, holds of `x` exactly when the degree of `x` exceeds that of `y`. -/
 theorem more_iff {E F : Type*} (μ₁ : E → ℚ) (μ₂ : F → ℚ) (x : E) (y : F) :
-    maxComparative (· = .inl x) (· = .inr y) (Sum.elim μ₁ μ₂) ↔
+    MaxComparative .gt (· = .inl x) (· = .inr y) (Sum.elim μ₁ μ₂) ↔
       x ∈ Comparison.gt.over μ₁ (μ₂ y) :=
   maxComparative_eq_iff _ _ _
 
-/-- A member lowest on one scale is not more ADJ₁ than a member highest on another is ADJ₂: its
-degree is at most one over the number of classes and the standard's is one. -/
+/-- A member lowest on one scale is not more ADJ₁ than a member highest on another is ADJ₂, since
+its degree is at most one over the number of classes and the standard's is one. -/
 theorem not_more_of_least_of_greatest {D D' E F : Type*} [LinearOrder D] [DecidableEq D]
     [LinearOrder D'] [DecidableEq D'] {μ : E → D} {ν : F → D'} {C : Finset E} {C' : Finset F}
     {x : E} {y : F} (hx : x ∈ C) (hy : y ∈ C') (hmin : ∀ z ∈ C, μ x ≤ μ z)
@@ -119,7 +119,7 @@ theorem indirect_comparison :
   norm_num [beauty, intelligence]
 
 /-- The expanded committee assigns every member the universal degrees the original committee
-does: each newcomer joins an existing class. -/
+does, since each newcomer joins an existing class. -/
 theorem expanded :
     universalDegree beauty univ = universalDegree beauty original ∧
     universalDegree intelligence univ = universalDegree intelligence original :=
@@ -151,7 +151,7 @@ theorem universalDegree_withMeasurements (hμ : ∀ n, μ (.inr n) = n)
 
 /-- When the comparison class keeps the measurements up to a common bound, each measuring itself
 on both scales, and everyone measures within the bound, comparing universal degrees is
-comparing measurements: a direct comparison. -/
+comparing measurements, as in a direct comparison. -/
 theorem direct_comparison (hμ : ∀ n, μ (.inr n) = n) (hν : ∀ n, ν (.inr n) = n)
     (hPμ : ∀ x ∈ P, μ (.inl x) ∈ Icc 1 N) (hPν : ∀ x ∈ P, ν (.inl x) ∈ Icc 1 N)
     {z w : E ⊕ ℕ} (hz : z ∈ withMeasurements P N) (hw : w ∈ withMeasurements P N) :
@@ -167,13 +167,13 @@ inductive Person
   | a | b | c | d | e | f | s
   deriving DecidableEq, Fintype, Repr
 
-/-- Heights are in inches: a is six foot three, b six foot two, c six foot, d, e and f five foot
+/-- Heights are in inches. Man a is six foot three, b six foot two, c six foot, d, e and f five foot
 ten and Seymour five foot two, and a measurement is as tall as itself. -/
 def height : Person ⊕ ℕ → ℕ
   | .inl .a => 75 | .inl .b => 74 | .inl .c => 72 | .inl .d | .inl .e | .inl .f => 70
   | .inl .s => 62 | .inr n => n
 
-/-- Widths are in inches: Seymour is three feet wide, f two foot five, b two foot two and the
+/-- Widths are in inches. Seymour is three feet wide, f two foot five, b two foot two and the
 rest two foot one, and a measurement is as wide as itself. -/
 def width : Person ⊕ ℕ → ℕ
   | .inl .s => 36 | .inl .f => 29 | .inl .b => 26
@@ -207,13 +207,13 @@ inductive Man
   | a | b | c | d | e | f | g | h | i | j | k | l | m | n | o | p | q | r | s
   deriving DecidableEq, Fintype, Repr
 
-/-- A man's height class counts from the shortest: Seymour is alone at the bottom, followed by
+/-- A man's height class counts from the shortest. Seymour is alone at the bottom, followed by
 o and p; k, l, m and n; q and c; f, g, h and i; d and e; j and r; and a and b. -/
 def heightClass : Man → ℕ
   | .s => 1 | .o | .p => 2 | .k | .l | .m | .n => 3 | .q | .c => 4
   | .f | .g | .h | .i => 5 | .d | .e => 6 | .j | .r => 7 | .a | .b => 8
 
-/-- A man's width class counts from the narrowest: q, r and a are at the bottom, followed by p;
+/-- A man's width class counts from the narrowest. Men q, r and a are at the bottom, then p;
 n and o; j, k, l and m; f, g and h; b, c, d and e; and Seymour and i at the top. -/
 def widthClass : Man → ℕ
   | .q | .r | .a => 1 | .p => 2 | .n | .o => 3 | .j | .k | .l | .m => 4
@@ -222,8 +222,8 @@ def widthClass : Man → ℕ
 /-- The comparison class that *for a man* fixes holds the men and no measurements. -/
 def men : Finset (Man ⊕ ℕ) := univ.map .inl
 
-/-- Seymour, five feet tall and three feet wide, among men ordered as above and measurements up
-to eighty inches: he is taller than he is wide, but restricted to men his height degree is one
+/-- Seymour is five feet tall and three feet wide. Among men ordered as above and measurements up
+to eighty inches he is taller than he is wide, but restricted to men his height degree is one
 eighth and his width degree one, so he is not taller for a man than he is wide for a man. -/
 theorem for_a_man {τ ω : Man ⊕ ℕ → ℕ}
     (hτ : ∀ x y, τ (.inl x) ≤ τ (.inl y) ↔ heightClass x ≤ heightClass y)
@@ -253,8 +253,8 @@ theorem for_a_man {τ ω : Man ⊕ ℕ → ℕ}
   simp only [Comparison.over, Comparison.interval_gt, Set.mem_preimage, Set.mem_Ioi, hτC, hωC]
   norm_num
 
-/-- The hypotheses of `for_a_man` are consistent: some heights and widths in inches induce the
-two orders of the men. -/
+/-- The hypotheses of `for_a_man` are consistent, since some heights and widths in inches induce
+the two orders of the men. -/
 example : ∃ τ ω : Man ⊕ ℕ → ℕ,
     (∀ x y, τ (.inl x) ≤ τ (.inl y) ↔ heightClass x ≤ heightClass y) ∧
     (∀ x y, ω (.inl x) ≤ ω (.inl y) ↔ widthClass x ≤ widthClass y) ∧
@@ -283,9 +283,9 @@ def Man.parse? : String → Option Man
   | "k" => some .k | "l" => some .l | "m" => some .m | "n" => some .n | "o" => some .o
   | "p" => some .p | "q" => some .q | "r" => some .r | "s" => some .s | _ => none
 
-/-- The universal degree a row assigns one of its participants on one of its scales, in the
-comparison class of its situation: the original committee, the people with the measurements up
-to eighty inches, or the men. -/
+/-- A row assigns one of its participants a universal degree on one of its scales in the
+comparison class of its situation, which is the original committee, the people with the
+measurements up to eighty inches, or the men. -/
 def degree? (r : Datum) (who scale : String) : Option ℚ := do
   let n ← r.feature? who
   match r.feature? "model", r.feature? scale with
@@ -307,8 +307,8 @@ def truth? (r : Datum) : Option Bool :=
   | some "false" => some false
   | _ => none
 
-/-- Every sentence the paper evaluates in one of its situations has the truth value it reports:
-the subject's universal degree exceeds the standard's exactly when the paper says the sentence
+/-- Every sentence the paper evaluates in one of its situations has the truth value it reports,
+since the subject's universal degree exceeds the standard's exactly when the paper says the sentence
 is true. -/
 theorem rows_truth : ∀ r ∈ Examples.all, (r.feature? "model").isSome →
     ∃ t ∈ truth? r, ∃ d₁ ∈ degree? r "subject" "subjectScale",

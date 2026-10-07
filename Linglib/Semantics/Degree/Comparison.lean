@@ -373,6 +373,11 @@ section Comp
 
 variable {E α β : Type*} [Preorder α] [Preorder β] (μ : E → α)
 
+/-- An order embedding of the scale preserves and reflects every comparison. -/
+theorem Comparison.rel_map_iff (f : α ↪o β) (c : Comparison) {a n : α} :
+    c.rel (f a) (f n) ↔ c.rel a n := by
+  cases c <;> simp [Comparison.rel, f.lt_iff_lt, f.le_iff_le, f.injective.eq_iff]
+
 /-- A comparison is invariant under an order embedding of the scale that moves the threshold
 along with the measure. -/
 theorem Comparison.over_comp (f : α ↪o β) (c : Comparison) (n : α) :

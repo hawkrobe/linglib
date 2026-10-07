@@ -12,7 +12,8 @@ order-convex hull of a set — the smallest `OrdConnected` superset — as a bun
 `ClosureOperator (Set α)`. It is the order-theoretic twin of `convexHull`
 (segment-convexity), built the same way, via `ClosureOperator.ofCompletePred`
 over the intersection-closed predicate `OrdConnected` (`Set.ordConnected_sInter`).
-In a partial order, the minimal elements of an upper closure are those of the generating set.
+In a partial order, the minimal elements of an upper closure are those of the generating set, and
+so is its least element.
 
 mathlib already has the characterization
 `ordConnected_iff_upperClosure_inter_lowerClosure` and `Set.OrdConnected`, but not
@@ -30,6 +31,8 @@ file is deleted.
   `upperClosure`/`lowerClosure`.
 * `minimal_mem_upperClosure_iff`, `maximal_mem_lowerClosure_iff` — the minimal (maximal)
   elements of an upper (lower) closure.
+* `isLeast_upperClosure_iff`, `isGreatest_lowerClosure_iff` — the least (greatest) element of an
+  upper (lower) closure.
 -/
 
 @[expose] public section
@@ -110,5 +113,14 @@ theorem minimal_mem_upperClosure_iff : Minimal (· ∈ upperClosure s) x ↔ Min
   obtain ⟨a, has, hax⟩ := h.prop
   obtain rfl := h.eq_of_ge (subset_upperClosure has) hax
   exact h.mono (fun _ ↦ (subset_upperClosure ·)) has
+
+/-- A set and its upper closure have the same least element. -/
+@[to_dual /-- A set and its lower closure have the same greatest element. -/]
+theorem isLeast_upperClosure_iff : IsLeast (upperClosure s : Set α) x ↔ IsLeast s x := by
+  refine ⟨fun ⟨⟨a, has, hax⟩, hx⟩ ↦ ?_, fun ⟨hx, hlb⟩ ↦ ⟨subset_upperClosure hx, ?_⟩⟩
+  · exact ⟨(hax.antisymm (hx (subset_upperClosure has))).symm ▸ has,
+      fun b hb ↦ hx (subset_upperClosure hb)⟩
+  · rintro b ⟨a, has, hab⟩
+    exact (hlb has).trans hab
 
 end PartialOrder

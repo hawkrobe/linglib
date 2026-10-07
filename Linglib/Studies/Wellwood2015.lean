@@ -68,18 +68,18 @@ open Degree
 `P` and measures strictly above the maximal than-clause degree of `b`. -/
 def comparativeTruth {Ent α Measured : Type*} (role : Ent → α → Prop) (P : α → Prop)
     (extract : α → Measured) (μ : Measured → ℚ) (a b : Ent) : Prop :=
-  maxComparative (fun e ↦ role a e ∧ P e) (fun e ↦ role b e ∧ P e) (fun e ↦ μ (extract e))
+  MaxComparative .gt (fun e ↦ role a e ∧ P e) (fun e ↦ role b e ∧ P e) (fun e ↦ μ (extract e))
 
 /-- The equative, (27ii), is the comparative with a weak comparison. -/
 def equativeTruth {Ent α Measured : Type*} (role : Ent → α → Prop) (P : α → Prop)
     (extract : α → Measured) (μ : Measured → ℚ) (a b : Ent) : Prop :=
-  maxEquative (fun e ↦ role a e ∧ P e) (fun e ↦ role b e ∧ P e) (fun e ↦ μ (extract e))
+  MaxComparative .ge (fun e ↦ role a e ∧ P e) (fun e ↦ role b e ∧ P e) (fun e ↦ μ (extract e))
 
 theorem comparativeTruth_entails_equativeTruth {Ent α Measured : Type*}
     (role : Ent → α → Prop) (P : α → Prop) (extract : α → Measured)
     (μ : Measured → ℚ) (a b : Ent) :
     comparativeTruth role P extract μ a b → equativeTruth role P extract μ a b :=
-  maxComparative_entails_maxEquative _ _ _
+  MaxComparative.mono fun _ _ ↦ le_of_lt
 
 /-! ### The derivation -/
 
@@ -110,9 +110,12 @@ theorem derivation_eq_comparativeTruth {Measured : Type*} (role : Ent → α →
     (∃ δ, IsGreatest (thanClause role P (fun e ↦ μ (extract e)) b) δ ∧
         matrixClause role P (fun e ↦ μ (extract e)) a δ) ↔
       comparativeTruth role P extract μ a b := by
-  simp only [comparativeTruth, maxComparative, Degree.thanDegrees, Degree.scopeDegrees,
-    Quantifier.GQ.some, thanClause, matrixClause,
-    matrixDegP, absDegP, and_assoc]
+  have : thanClause role P (fun e ↦ μ (extract e)) b =
+      Degree.scopeDegrees (Quantifier.GQ.some fun e ↦ role b e ∧ P e) fun e ↦ μ (extract e) := by
+    ext; simp [thanClause, absDegP, Degree.scopeDegrees, Quantifier.GQ.some, and_assoc]
+  rw [this, Degree.scopeDegrees_some]
+  simp only [comparativeTruth, MaxComparative, isGreatest_lowerClosure_iff, matrixClause,
+    matrixDegP, Degree.Comparison.rel, and_assoc]
 
 end Derivation
 

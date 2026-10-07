@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Data.Fintype.Lattice
 public import Mathlib.Order.Interval.Set.LinearOrder
-public import Mathlib.Order.UpperLower.Basic
+public import Linglib.Core.Order.UpperLower.Closure
 public import Linglib.Semantics.Degree.Comparison
 public import Linglib.Semantics.Quantification.Basic
 public import Linglib.Logic.Natural.Additivity
@@ -14,16 +14,16 @@ This file defines the denotations of degree phrases as quantifiers over degrees 
 relative to a quantifier over entities or worlds. A degree phrase says that the maximum of its
 degree predicate lies in an interval, `maxIn U P`; under a quantifier `Q` it scopes low, applied
 to each entity's own degrees, or high, applied to `scopeDegrees Q μ`, the degrees at which `Q`
-holds. The than-clause degree set `thanDegrees` is the existential case, and the max-quantified
-comparative `maxComparative` compares a matrix witness with its maximum.
+holds. Under `some` the degree set is the lower closure of the measures, the than-clause degree
+set, and the max-quantified comparative `MaxComparative c` compares a matrix witness with its
+greatest measure by the comparison `c`.
 
 ## Main definitions
 
 * `maxIn U P`: the greatest element of `P` lies in `U`.
 * `scopeDegrees Q μ`: the degrees `d` such that `Q` holds of the entities measuring at least `d`.
 * `lowScope 𝒟 Q μ`, `highScope 𝒟 Q μ`: the degree quantifier `𝒟` under and over `Q`.
-* `thanDegrees P μ`, `maxComparative`, `maxEquative`: the than-clause degree set and the
-  max-quantified comparative and equative over it.
+* `MaxComparative c P Q μ`: the max-quantified comparative, the equative at `c = .ge`.
 * `absoluteSuperlative μ C x`: `x` measures above every other member of `C`.
 
 ## Main results
@@ -35,12 +35,8 @@ comparative `maxComparative` compares a matrix witness with its maximum.
   quantifier over `every` names the infimum of the measures and over `some` their greatest.
 * `isGreatest_scopeDegrees_of_inf`: under a meet with an antitone quantifier the maximum is the
   other conjunct's.
-* `maxComparative_unique`: with unique witnesses the max-quantified comparative is direct
+* `maxComparative_iff_of_unique`: with unique witnesses the max-quantified comparative is direct
   measure comparison.
-* `maxComparative_trans`, `maxEquative_antisymm`, `maxEquative_total`,
-  `maxComparative_trichotomy`: the max-quantified comparative is transitive, and the equative
-  antisymmetric and, on a linear scale, total.
-* `gtOverSet_isAntiAdditive`: the set-standard comparative is anti-additive in its standard.
 
 ## References
 
@@ -86,15 +82,11 @@ def lowScope (𝒟 : Set D → Prop) (Q : NP α) (μ : α → D) : Prop :=
 def highScope (𝒟 : Set D → Prop) (Q : NP α) (μ : α → D) : Prop :=
   𝒟 (scopeDegrees Q μ)
 
-/-- The than-clause degree set, the degrees reached by some `P`-witness. -/
-def thanDegrees (P : α → Prop) (μ : α → D) : Set D := scopeDegrees (GQ.some P) μ
-
-theorem mem_thanDegrees {P : α → Prop} : d ∈ thanDegrees P μ ↔ ∃ x, P x ∧ d ≤ μ x := Iff.rfl
-
-/-- A unique witness collapses the than-clause degree set to the principal lower set of its
-measure, the phrasal standard. -/
-theorem thanDegrees_singleton (μ : α → D) (b : α) : thanDegrees (· = b) μ = Iic (μ b) := by
-  ext d; simp [mem_thanDegrees]
+/-- `some R` yields the lower closure of the measures of `R`, the than-clause degree set. -/
+theorem scopeDegrees_some (R : α → Prop) (μ : α → D) :
+    scopeDegrees (GQ.some R) μ = lowerClosure (μ '' {x | R x}) := by
+  ext d
+  simp [mem_scopeDegrees, GQ.some, mem_lowerClosure]
 
 /-- `every R` yields the lower bounds of the measures of `R`. -/
 theorem scopeDegrees_every (R : α → Prop) (μ : α → D) :
@@ -104,7 +96,7 @@ theorem scopeDegrees_every (R : α → Prop) (μ : α → D) :
 
 /-- `no R` yields the degrees no `R`-witness reaches. -/
 theorem scopeDegrees_no (R : α → Prop) (μ : α → D) :
-    scopeDegrees (no R) μ = (thanDegrees R μ)ᶜ := by
+    scopeDegrees (no R) μ = (scopeDegrees (GQ.some R) μ)ᶜ := by
   ext d
   exact (not_exists.trans (forall_congr' fun _ ↦ not_and)).symm
 
@@ -126,11 +118,6 @@ theorem scopeDegrees_eq_Iic (hQ : Monotone Q) {m : D} (hm : IsGreatest (scopeDeg
     scopeDegrees Q μ = Iic m :=
   (mem_upperBounds_iff_subset_Iic.1 hm.2).antisymm
     ((isLowerSet_scopeDegrees hQ μ).Iic_subset hm.1)
-
-/-- A than-clause degree set with a maximum is the principal lower set of the maximum. -/
-theorem thanDegrees_eq_Iic {P : α → Prop} {m : D} (hm : IsGreatest (thanDegrees P μ) m) :
-    thanDegrees P μ = Iic m :=
-  scopeDegrees_eq_Iic (monotone_some P) hm
 
 end Preorder
 
@@ -176,13 +163,7 @@ theorem highScope_maxIn_singleton_every {R : α → Prop} {m : D} :
 /-- Over `some R` the greatest degree some `R`-witness reaches is the greatest of their measures. -/
 theorem highScope_maxIn_singleton_some {R : α → Prop} {m : D} :
     highScope (maxIn {m}) (GQ.some R) μ ↔ IsGreatest (μ '' {x | R x}) m := by
-  rw [highScope, maxIn_singleton]
-  constructor
-  · rintro ⟨⟨x, hx, hmx⟩, hub⟩
-    exact ⟨⟨x, hx, (hub ⟨x, hx, le_rfl⟩).antisymm hmx⟩,
-      fun _ ⟨y, hy, hdy⟩ ↦ hdy ▸ hub ⟨y, hy, le_rfl⟩⟩
-  · rintro ⟨⟨x, hx, rfl⟩, hub⟩
-    exact ⟨⟨x, hx, le_rfl⟩, fun _ ⟨y, hy, hdy⟩ ↦ hdy.trans (hub ⟨y, hy, rfl⟩)⟩
+  rw [highScope, maxIn_singleton, scopeDegrees_some, isGreatest_lowerClosure_iff]
 
 /-- The high scope entails the low one under `some` at every interval, the tallest witness being
 a witness. -/
@@ -271,118 +252,104 @@ end LinearOrder
 
 /-! ### The max-quantified comparative
 
-The clausal comparative of [von-stechow-1984] and [rullmann-1995]: some matrix witness measures
-strictly above the maximum of the than-clause degree set. Matrix and than-clause restrictions
-are independent predicates over a witness sort, so heterogeneous comparatives are the general
-case. -/
+The clausal comparative of von Stechow and Rullmann: some matrix witness stands in a comparison to
+the greatest measure of the than-clause witnesses, *more P than Q* at `.gt` and *as P as Q* at
+`.ge`. Matrix and than-clause restrictions are independent predicates over a witness sort, so
+heterogeneous comparatives are the general case. -/
 
-section MaxQuantified
-variable [Preorder D] {Pmatrix Pthan : α → Prop} {μ : α → D}
+section MaxComparative
+variable [Preorder D] {c : Comparison} {P Q R : α → Prop} {μ : α → D}
 
-/-- The max-quantified comparative holds when the `Pthan` degree set has a greatest element `δ`
-and some `Pmatrix`-witness measures strictly above `δ`. -/
-def maxComparative (Pmatrix Pthan : α → Prop) (μ : α → D) : Prop :=
-  ∃ δ, IsGreatest (thanDegrees Pthan μ) δ ∧ ∃ x, Pmatrix x ∧ δ < μ x
+/-- The max-quantified comparative under the comparison `c` holds when the measures of the
+`Q`-witnesses have a greatest element `δ` and the measure of some `P`-witness stands in `c` to
+`δ`. -/
+def MaxComparative (c : Comparison) (P Q : α → Prop) (μ : α → D) : Prop :=
+  ∃ δ, IsGreatest (μ '' {x | Q x}) δ ∧ ∃ x, P x ∧ c.rel (μ x) δ
 
-/-- The max-quantified equative, `maxComparative` with the weak threshold. -/
-def maxEquative (Pmatrix Pthan : α → Prop) (μ : α → D) : Prop :=
-  ∃ δ, IsGreatest (thanDegrees Pthan μ) δ ∧ ∃ x, Pmatrix x ∧ δ ≤ μ x
-
-/-- The strict comparative entails the equative. -/
-theorem maxComparative_entails_maxEquative (Pmatrix Pthan : α → Prop) (μ : α → D) :
-    maxComparative Pmatrix Pthan μ → maxEquative Pmatrix Pthan μ :=
-  fun ⟨δ, hδ, x, hx, hlt⟩ ↦ ⟨δ, hδ, x, hx, hlt.le⟩
+/-- A max-quantified comparative entails the comparatives with weaker comparisons, the equative
+from the strict comparative in particular. -/
+theorem MaxComparative.mono {c' : Comparison} (hc : ∀ a b : D, c.rel a b → c'.rel a b)
+    (h : MaxComparative c P Q μ) : MaxComparative c' P Q μ :=
+  let ⟨δ, hδ, x, hx, hr⟩ := h
+  ⟨δ, hδ, x, hx, hc _ _ hr⟩
 
 /-- Every than-clause witness is exceeded by some matrix witness. -/
-theorem maxComparative.exists_lt (h : maxComparative Pmatrix Pthan μ) {x : α} (hx : Pthan x) :
-    ∃ y, Pmatrix y ∧ μ x < μ y :=
+theorem MaxComparative.exists_lt (h : MaxComparative .gt P Q μ) {x : α} (hx : Q x) :
+    ∃ y, P y ∧ μ x < μ y :=
   let ⟨_, hδ, y, hy, hlt⟩ := h
-  ⟨y, hy, (hδ.2 ⟨x, hx, le_rfl⟩).trans_lt hlt⟩
+  ⟨y, hy, (hδ.2 ⟨x, hx, rfl⟩).trans_lt hlt⟩
 
-/-- The max-quantified comparative is transitive: *more P than Q* and *more Q than R* give
-*more P than R*, with no uniqueness assumption on any of the three sides. -/
-theorem maxComparative_trans {Pthan' : α → Prop} (h₁ : maxComparative Pmatrix Pthan μ)
-    (h₂ : maxComparative Pthan Pthan' μ) : maxComparative Pmatrix Pthan' μ :=
+/-- The max-quantified comparative is transitive, so *more P than Q* and *more Q than R* give
+*more P than R* with no uniqueness assumption on any of the three sides. -/
+theorem MaxComparative.trans (h₁ : MaxComparative .gt P Q μ) (h₂ : MaxComparative .gt Q R μ) :
+    MaxComparative .gt P R μ :=
   let ⟨_, hδ, _, hy, hlt⟩ := h₂
   let ⟨z, hz, hlt'⟩ := h₁.exists_lt hy
   ⟨_, hδ, z, hz, hlt.trans hlt'⟩
 
-/-- A unique `Pthan`-witness makes its measure the greatest than-clause degree. -/
-theorem isGreatest_thanDegrees_of_unique {xb : α} (hb : Pthan xb)
-    (hb_unique : ∀ x, Pthan x → x = xb) : IsGreatest (thanDegrees Pthan μ) (μ xb) :=
-  ⟨⟨xb, hb, le_rfl⟩, fun _ ⟨x, hx, hle⟩ ↦ hb_unique x hx ▸ hle⟩
+/-- Under unique matrix and than-clause witnesses, the max-quantified comparative compares their
+measures directly. -/
+theorem maxComparative_iff_of_unique {xa xb : α} (ha : P xa) (ha_unique : ∀ x, P x → x = xa)
+    (hb : Q xb) (hb_unique : ∀ x, Q x → x = xb) :
+    MaxComparative c P Q μ ↔ c.rel (μ xa) (μ xb) := by
+  have hQ : {x | Q x} = {xb} := Set.ext fun x ↦ ⟨hb_unique x, fun h ↦ h ▸ hb⟩
+  refine ⟨fun ⟨δ, hδ, x, hx, hr⟩ ↦ ?_, fun hr ↦ ⟨_, hQ ▸ image_singleton ▸ isGreatest_singleton,
+    xa, ha, hr⟩⟩
+  rw [hQ, image_singleton] at hδ
+  exact hδ.1 ▸ ha_unique x hx ▸ hr
 
-/-- Under unique matrix and than-clause witnesses, the max-quantified comparative is direct
-measure comparison. -/
-theorem maxComparative_unique {xa xb : α} (ha : Pmatrix xa) (ha_unique : ∀ x, Pmatrix x → x = xa)
-    (hb : Pthan xb) (hb_unique : ∀ x, Pthan x → x = xb) :
-    maxComparative Pmatrix Pthan μ ↔ μ xb < μ xa :=
-  ⟨fun ⟨_, hδ, x, hx, hlt⟩ ↦ (hδ.2 ⟨xb, hb, le_rfl⟩).trans_lt (ha_unique x hx ▸ hlt),
-    fun hlt ↦ ⟨_, isGreatest_thanDegrees_of_unique hb hb_unique, xa, ha, hlt⟩⟩
-
-/-- Comparing unique individuals is direct measure comparison. -/
+/-- Comparing two individuals is comparing their measures. -/
 theorem maxComparative_eq_iff (μ : α → D) (xa xb : α) :
-    maxComparative (· = xa) (· = xb) μ ↔ μ xb < μ xa :=
-  maxComparative_unique rfl (fun _ h ↦ h) rfl (fun _ h ↦ h)
-
-/-- A greatest than-clause witness under a measure monotone on the witnesses makes its measure
-the greatest than-clause degree. -/
-theorem isGreatest_thanDegrees_of_isGreatest [Preorder α] {xb : α}
-    (hb : IsGreatest {x | Pthan x} xb) (hμ : MonotoneOn μ {x | Pthan x}) :
-    IsGreatest (thanDegrees Pthan μ) (μ xb) :=
-  ⟨⟨xb, hb.1, le_rfl⟩, fun _ ⟨_, hx, hle⟩ ↦ hle.trans (hμ hx hb.1 (hb.2 hx))⟩
+    MaxComparative c (· = xa) (· = xb) μ ↔ c.rel (μ xa) (μ xb) :=
+  maxComparative_iff_of_unique rfl (fun _ h ↦ h) rfl (fun _ h ↦ h)
 
 /-- With greatest witnesses on both sides and measures monotone on each side, the
 max-quantified comparative compares the greatest witnesses' measures. -/
-theorem maxComparative_of_isGreatest [Preorder α] {xa xb : α}
-    (ha : IsGreatest {x | Pmatrix x} xa) (hμa : MonotoneOn μ {x | Pmatrix x})
-    (hb : IsGreatest {x | Pthan x} xb) (hμb : MonotoneOn μ {x | Pthan x}) :
-    maxComparative Pmatrix Pthan μ ↔ μ xb < μ xa :=
+theorem maxComparative_gt_iff_of_isGreatest [Preorder α] {xa xb : α}
+    (ha : IsGreatest {x | P x} xa) (hμa : MonotoneOn μ {x | P x})
+    (hb : IsGreatest {x | Q x} xb) (hμb : MonotoneOn μ {x | Q x}) :
+    MaxComparative .gt P Q μ ↔ μ xb < μ xa :=
   ⟨fun ⟨_, hδ, _, hx, hlt⟩ ↦
-      (hδ.2 ⟨xb, hb.1, le_rfl⟩).trans_lt (hlt.trans_le (hμa hx ha.1 (ha.2 hx))),
-    fun hlt ↦ ⟨_, isGreatest_thanDegrees_of_isGreatest hb hμb, xa, ha.1, hlt⟩⟩
+      (hδ.2 ⟨xb, hb.1, rfl⟩).trans_lt (hlt.trans_le (hμa hx ha.1 (ha.2 hx))),
+    fun hlt ↦ ⟨_, hμb.map_isGreatest hb, xa, ha.1, hlt⟩⟩
 
-end MaxQuantified
+end MaxComparative
 
-section MaxQuantifiedPartialOrder
-variable [PartialOrder D] {P Q : α → Prop} {μ : α → D}
-
-/-- The max-quantified equative is antisymmetric: when each side is at least as great as the
-other, the two degree sets coincide. -/
-theorem maxEquative_antisymm (h₁ : maxEquative P Q μ) (h₂ : maxEquative Q P μ) :
-    thanDegrees P μ = thanDegrees Q μ := by
-  obtain ⟨a, ha, x, hx, hax⟩ := h₂
-  obtain ⟨b, hb, y, hy, hby⟩ := h₁
-  rw [thanDegrees_eq_Iic ha, thanDegrees_eq_Iic hb,
-    (hax.trans (hb.2 ⟨x, hx, le_rfl⟩)).antisymm (hby.trans (ha.2 ⟨y, hy, le_rfl⟩))]
-
-end MaxQuantifiedPartialOrder
-
-section MaxQuantifiedLinearOrder
+section MaxComparativeLinearOrder
 variable [LinearOrder D] {P Q : α → Prop} {μ : α → D} {a b : D}
 
-/-- On a linear scale the max-quantified equative is total whenever both degree sets have a
-maximum. -/
-theorem maxEquative_total (ha : IsGreatest (thanDegrees P μ) a)
-    (hb : IsGreatest (thanDegrees Q μ) b) : maxEquative P Q μ ∨ maxEquative Q P μ := by
-  obtain ⟨x, hx, hax⟩ := ha.1
-  obtain ⟨y, hy, hby⟩ := hb.1
-  exact (le_total b a).imp (fun h ↦ ⟨b, hb, x, hx, h.trans hax⟩)
-    (fun h ↦ ⟨a, ha, y, hy, h.trans hby⟩)
+/-- The max-quantified equative is antisymmetric. When each side is at least as great as the
+other, the greatest measures coincide. -/
+theorem MaxComparative.antisymm (ha : IsGreatest (μ '' {x | P x}) a)
+    (hb : IsGreatest (μ '' {x | Q x}) b) (h₁ : MaxComparative .ge P Q μ)
+    (h₂ : MaxComparative .ge Q P μ) : a = b := by
+  obtain ⟨b', hb', y, hy, hby⟩ := h₁
+  obtain ⟨a', ha', x, hx, hax⟩ := h₂
+  rw [ha.unique ha', hb.unique hb']
+  exact (hax.trans (hb'.2 ⟨x, hx, rfl⟩)).antisymm (hby.trans (ha'.2 ⟨y, hy, rfl⟩))
 
-/-- On a linear scale, when both degree sets have a maximum, one side exceeds the other or the
-degree sets coincide. -/
-theorem maxComparative_trichotomy (ha : IsGreatest (thanDegrees P μ) a)
-    (hb : IsGreatest (thanDegrees Q μ) b) :
-    maxComparative P Q μ ∨ thanDegrees P μ = thanDegrees Q μ ∨ maxComparative Q P μ := by
-  obtain ⟨x, hx, hax⟩ := ha.1
-  obtain ⟨y, hy, hby⟩ := hb.1
-  rcases lt_trichotomy b a with h | rfl | h
-  · exact .inl ⟨b, hb, x, hx, h.trans_le hax⟩
-  · exact .inr (.inl ((thanDegrees_eq_Iic ha).trans (thanDegrees_eq_Iic hb).symm))
-  · exact .inr (.inr ⟨a, ha, y, hy, h.trans_le hby⟩)
+/-- On a linear scale the max-quantified equative is total whenever both sides have a greatest
+measure. -/
+theorem maxComparative_ge_total (ha : IsGreatest (μ '' {x | P x}) a)
+    (hb : IsGreatest (μ '' {x | Q x}) b) :
+    MaxComparative .ge P Q μ ∨ MaxComparative .ge Q P μ := by
+  obtain ⟨x, hx, rfl⟩ := ha.1
+  obtain ⟨y, hy, rfl⟩ := hb.1
+  exact (le_total (μ y) (μ x)).imp (fun h ↦ ⟨_, hb, x, hx, h⟩) fun h ↦ ⟨_, ha, y, hy, h⟩
 
-end MaxQuantifiedLinearOrder
+/-- On a linear scale, when both sides have a greatest measure, one side exceeds the other or the
+greatest measures coincide. -/
+theorem maxComparative_gt_trichotomy (ha : IsGreatest (μ '' {x | P x}) a)
+    (hb : IsGreatest (μ '' {x | Q x}) b) :
+    MaxComparative .gt P Q μ ∨ a = b ∨ MaxComparative .gt Q P μ := by
+  obtain ⟨x, hx, rfl⟩ := ha.1
+  obtain ⟨y, hy, rfl⟩ := hb.1
+  rcases lt_trichotomy (μ y) (μ x) with h | h | h
+  · exact .inl ⟨_, hb, x, hx, h⟩
+  · exact .inr (.inl h.symm)
+  · exact .inr (.inr ⟨_, ha, y, hy, h⟩)
+
+end MaxComparativeLinearOrder
 
 /-! ### Set-of-degrees comparative
 
@@ -413,12 +380,12 @@ theorem gtOverSet_eq_singleton_of_isGreatest {m : D} (hm : IsGreatest Δ m) :
   simp only [mem_gtOverSet_iff_subset_Iio, singleton_subset_iff, mem_Iio]
   exact ⟨(· hm.1), fun h _ hd ↦ (hm.2 hd).trans_lt h⟩
 
-/-- When the than-clause degree set has a maximum, a matrix witness clears it iff it clears the
-whole set. -/
-theorem maxComparative_iff_gtOverSet (Pmatrix Pthan : α → Prop) :
-    maxComparative Pmatrix Pthan μ ↔
-      (∃ δ, IsGreatest (thanDegrees Pthan μ) δ) ∧
-        ∃ x, Pmatrix x ∧ x ∈ Comparison.gt.overSet μ (thanDegrees Pthan μ) :=
+/-- When the than-clause measures have a greatest element, a matrix witness clears it iff it
+clears them all. -/
+theorem maxComparative_gt_iff_gtOverSet (P Q : α → Prop) :
+    MaxComparative .gt P Q μ ↔
+      (∃ δ, IsGreatest (μ '' {x | Q x}) δ) ∧
+        ∃ x, P x ∧ x ∈ Comparison.gt.overSet μ (μ '' {x | Q x}) :=
   ⟨fun ⟨δ, hδ, x, hx, hlt⟩ ↦ ⟨⟨δ, hδ⟩, x, hx, fun _ hd ↦ (hδ.2 hd).trans_lt hlt⟩,
     fun ⟨⟨δ, hδ⟩, x, hx, hclear⟩ ↦ ⟨δ, hδ, x, hx, hclear hδ.1⟩⟩
 
