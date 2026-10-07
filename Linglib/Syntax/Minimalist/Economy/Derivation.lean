@@ -59,7 +59,7 @@ theorem value_isLeft_apply (step : Step) (current : SyntacticObject) :
     (step.apply current).val.value.isLeft := by
   cases step with
   | em side item => cases side <;> simp [Step.apply]
-  | im mover => simp [Step.apply]
+  | im mover _ => simp [Step.apply]
 
 private theorem traceLeafCount_lt_numNodes {S : SyntacticObject} (h : S.val.value.isLeft) :
     S.val.traceLeafCount < S.val.numNodes := by
@@ -85,7 +85,7 @@ theorem Step.noComplexityLoss (h : step.Admissible current W) :
     rw [Step.apply_em, merge_comm]
     simp only [Step.items, Multiset.map_add, Multiset.map_singleton, merge_val]
     exact NoComplexityLoss.em_case1 Vertex.bare current.val item.val _
-  | im mover =>
+  | im mover _ =>
     obtain ⟨hm, hc, hne, -⟩ := h
     have hw := cutSummandsCN_numNodes traceEncoder current.val _ (mem_cutSummandsCN_mover hm hc hne)
     simp only [Multiset.map_singleton, Multiset.sum_singleton, Multiset.card_singleton] at hw
@@ -106,7 +106,7 @@ theorem Step.minimalYield (h : step.Admissible current W) (hcur : current.val.va
     simp only [Step.items, Multiset.map_add, Multiset.map_singleton, merge_val]
     exact (MinimalYield.em_pair_accessibleCount none (traceLeafCount_lt_numNodes hcur)
       (traceLeafCount_lt_numNodes hitems)).add_right _
-  | im mover =>
+  | im mover _ =>
     obtain ⟨hm, hc, hne, -⟩ := h
     have hp := mem_cutSummandsCN_mover hm hc hne
     obtain ⟨l, r, rfl⟩ := exists_eq_merge_of_count_terms hc hne

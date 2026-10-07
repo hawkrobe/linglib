@@ -139,7 +139,7 @@ def step (m : LIToken) (st : Stage) : List Stage :=
   ⟨d, p, st.marks, st.raises⟩ ::
     (st.planar.val.subtrees.filter hasN).filterMap fun s =>
       if h : IsSyntacticObject (UnorderedTree.mk s) then
-        (p.moveLeft (PlanarSyntacticObject.toSyntacticObject ⟨s, h⟩)).map fun p' =>
+        (p.move .left (PlanarSyntacticObject.toSyntacticObject ⟨s, h⟩)).map fun p' =>
           ⟨⟨d.initial, d.steps ++ [.im (PlanarSyntacticObject.toSyntacticObject ⟨s, h⟩)]⟩, p',
             (markOf st.planar.val s).toList ++ st.marks, st.raises + 1⟩
       else none

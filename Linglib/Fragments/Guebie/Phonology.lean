@@ -10,16 +10,21 @@ public import Linglib.Phonology.Segmental.Basic
 /-!
 # Guébie vowels
 
-The ten-vowel ±ATR inventory of Guébie (Kru; Côte d'Ivoire), [sande-2022] §3.2: five
-[+ATR] vowels /i e ə o u/ paired with five [−ATR] vowels /ɪ ɛ a ɔ ʊ/, the pairs
-agreeing in height, backness and rounding. Vowels within a morpheme agree in ATR, and
-affixes harmonize with roots.
+Guébie (Kru; Côte d'Ivoire) has ten vowels, five [+ATR] vowels /i e ə o u/ paired with five
+[−ATR] vowels /ɪ ɛ a ɔ ʊ/ ([sande-2022] §3.2). The pairs agree in backness and rounding, and in
+height except for /ə a/. Vowels within a morpheme agree in [ATR], and affixes harmonize with
+roots.
 
 ## Main definitions
 
 * `Guebie.Vowel`, `Guebie.Vowel.segment`, `Guebie.inventory`: the ten vowels, their
   segments, and the inventory.
 * `Guebie.Vowel.atr`: the ±ATR split, read off the segment.
+* `Guebie.Vowel.withATR`: the member of a vowel's pair with a given [ATR] value.
+
+## References
+
+* [sande-2022]
 -/
 
 @[expose] public section
@@ -28,7 +33,7 @@ namespace Guebie
 
 open Phonology
 
-/-- The ten Guébie vowels ([sande-2022] §3.2). Constructor names ASCII-ize the
+/-- Guébie has ten vowels ([sande-2022] §3.2). Constructor names ASCII-ize the
     IPA (capital = lax −ATR counterpart): `schwa` = ə, `I` = ɪ, `E` = ɛ,
     `O` = ɔ, `U` = ʊ. -/
 inductive Vowel where
@@ -41,7 +46,7 @@ def vowel (ht : Segment.Height) (bk : Segment.Backness) (round atr : Bool) :
     Segment :=
   ((Segment.vowel ht bk).setFeature .round round).setFeature .atr atr
 
-/-- Each vowel's segment: the ±ATR pairs /i ɪ/, /e ɛ/, /o ɔ/, /u ʊ/ and /ə a/. -/
+/-- Each vowel has its segment, the ±ATR pairs being /i ɪ/, /e ɛ/, /o ɔ/, /u ʊ/ and /ə a/. -/
 def Vowel.segment : Vowel → Segment
   | .i => vowel .high .front false true
   | .e => vowel .mid .front false true
@@ -59,5 +64,20 @@ def inventory : Finset Segment := Finset.univ.image Vowel.segment
 
 /-- The ±ATR split, read off the segment. -/
 def Vowel.atr (v : Vowel) : Bool := decide (v.segment.HasValue .atr true)
+
+/-- The member of a vowel's pair with the given [ATR] value. The pair /ə a/ differs in height
+too, so this is not `Segment.setFeature .atr` on the segment. -/
+def Vowel.withATR : Vowel → Bool → Vowel
+  | .i, b | .I, b => if b then .i else .I
+  | .e, b | .E, b => if b then .e else .E
+  | .schwa, b | .a, b => if b then .schwa else .a
+  | .o, b | .O, b => if b then .o else .O
+  | .u, b | .U, b => if b then .u else .U
+
+@[simp] theorem Vowel.atr_withATR (v : Vowel) (b : Bool) : (v.withATR b).atr = b := by
+  cases v <;> cases b <;> decide
+
+@[simp] theorem Vowel.withATR_atr (v : Vowel) : v.withATR v.atr = v := by
+  cases v <;> decide
 
 end Guebie

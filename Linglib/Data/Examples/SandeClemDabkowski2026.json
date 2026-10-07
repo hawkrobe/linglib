@@ -14,7 +14,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["order", "SAuxOPartV"],
       ["pattern", "S Aux O Part V"],
       ["verb", "ni"],
       ["particleATR", "plus"]
@@ -36,7 +35,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["order", "SVOPart"],
       ["pattern", "S V O Part"],
       ["verb", "ni"],
       ["particleATR", "minus"]
@@ -78,7 +76,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["order", "SAuxOPartV"],
       ["pattern", "S Aux O Part V"],
       ["verb", "ngwOsa"],
       ["particleATR", "minus"]
@@ -101,7 +98,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["order", "SVOPart"],
       ["pattern", "S V O Part"],
       ["verb", "ngwOsa"],
       ["particleATR", "minus"]
@@ -123,7 +119,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["order", "PartSVO"],
       ["pattern", "Part S V O"],
       ["verb", "ni"],
       ["particleATR", "minus"]
@@ -221,7 +216,6 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["order", "PartSAuxOV"],
       ["pattern", "Part S Aux O V"],
       ["verb", "ni"],
       ["particleATR", "plus"]
@@ -245,12 +239,33 @@
     ],
     "readings": [],
     "paperFeatures": [
-      ["order", "PartSAuxOV"],
       ["pattern", "Part S Aux O V"],
       ["verb", "ni"],
       ["particleATR", "plus"]
     ],
     "comment": "The fronted particle harmonizes with the clause-final verb across the subject, auxiliary and object."
+  },
+  {
+    "id": "sandeclemdabkowski2026_ex41",
+    "source": {"bibkey": "sande-clem-dabkowski-2026", "paperLabel": "(41)"},
+    "language": "gabo1234",
+    "primaryText": "joku ɔ ka ɟɔkʷɪ-a ni",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["joku", "PART"], ["ɔ", "3SG.NOM"], ["ka", "PROSP"], ["ɟɔkʷɪ-a", "bird-PL"], ["ni", "see"]
+    ],
+    "translation": "He will SEE birds.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "Part S Aux O V"],
+      ["verb", "ni"],
+      ["particleATR", "plus"],
+      ["interveningATR", "minus"]
+    ],
+    "comment": "The subject, auxiliary and object, plural suffix included, surface -ATR between the +ATR particle and verb."
   },
   {
     "id": "sandeclemdabkowski2026_ex49a",

@@ -26,7 +26,7 @@ def ex11a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("order", "SAuxOPartV"), ("pattern", "S Aux O Part V"), ("verb", "ni"), ("particleATR", "plus")] }
+    paperFeatures := [("pattern", "S Aux O Part V"), ("verb", "ni"), ("particleATR", "plus")] }
 
 def ex11b : Datum :=
   { id := "sandeclemdabkowski2026_ex11b"
@@ -39,7 +39,7 @@ def ex11b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("order", "SVOPart"), ("pattern", "S V O Part"), ("verb", "ni"), ("particleATR", "minus")] }
+    paperFeatures := [("pattern", "S V O Part"), ("verb", "ni"), ("particleATR", "minus")] }
 
 def ex11c : Datum :=
   { id := "sandeclemdabkowski2026_ex11c"
@@ -65,7 +65,7 @@ def ex12b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("order", "SAuxOPartV"), ("pattern", "S Aux O Part V"), ("verb", "ngwOsa"), ("particleATR", "minus")] }
+    paperFeatures := [("pattern", "S Aux O Part V"), ("verb", "ngwOsa"), ("particleATR", "minus")] }
 
 def ex13b : Datum :=
   { id := "sandeclemdabkowski2026_ex13b"
@@ -78,7 +78,7 @@ def ex13b : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("order", "SVOPart"), ("pattern", "S V O Part"), ("verb", "ngwOsa"), ("particleATR", "minus")] }
+    paperFeatures := [("pattern", "S V O Part"), ("verb", "ngwOsa"), ("particleATR", "minus")] }
 
 def ex21a : Datum :=
   { id := "sandeclemdabkowski2026_ex21a"
@@ -91,7 +91,7 @@ def ex21a : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("order", "PartSVO"), ("pattern", "Part S V O"), ("verb", "ni"), ("particleATR", "minus")] }
+    paperFeatures := [("pattern", "Part S V O"), ("verb", "ni"), ("particleATR", "minus")] }
 
 def ex21b : Datum :=
   { id := "sandeclemdabkowski2026_ex21b"
@@ -156,7 +156,7 @@ def ex22 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("order", "PartSAuxOV"), ("pattern", "Part S Aux O V"), ("verb", "ni"), ("particleATR", "plus")] }
+    paperFeatures := [("pattern", "Part S Aux O V"), ("verb", "ni"), ("particleATR", "plus")] }
 
 def ex24b : Datum :=
   { id := "sandeclemdabkowski2026_ex24b"
@@ -169,7 +169,20 @@ def ex24b : Datum :=
     judgment := .acceptable
     alternatives := [("jɔkʊ ɔ ji ɟaci ni", .ungrammatical)]
     readings := []
-    paperFeatures := [("order", "PartSAuxOV"), ("pattern", "Part S Aux O V"), ("verb", "ni"), ("particleATR", "plus")] }
+    paperFeatures := [("pattern", "Part S Aux O V"), ("verb", "ni"), ("particleATR", "plus")] }
+
+def ex41 : Datum :=
+  { id := "sandeclemdabkowski2026_ex41"
+    source := ⟨"sande-clem-dabkowski-2026", "(41)"⟩
+    reportedIn := none
+    language := "gabo1234"
+    primaryText := "joku ɔ ka ɟɔkʷɪ-a ni"
+    glossedTokens := [("joku", "PART"), ("ɔ", "3SG.NOM"), ("ka", "PROSP"), ("ɟɔkʷɪ-a", "bird-PL"), ("ni", "see")]
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("pattern", "Part S Aux O V"), ("verb", "ni"), ("particleATR", "plus"), ("interveningATR", "minus")] }
 
 def ex49a : Datum :=
   { id := "sandeclemdabkowski2026_ex49a"
@@ -249,6 +262,6 @@ def ex50d : Datum :=
     readings := []
     paperFeatures := [("shape", "relClause"), ("headATR", "plus"), ("stativeATR", "minus"), ("demATR", "plus")] }
 
-def all : List Datum := [ex11a, ex11b, ex11c, ex12b, ex13b, ex21a, ex21b, ex21c, ex21d, ex21e, ex22, ex24b, ex49a, ex49b, ex50a, ex50b, ex50c, ex50d]
+def all : List Datum := [ex11a, ex11b, ex11c, ex12b, ex13b, ex21a, ex21b, ex21c, ex21d, ex21e, ex22, ex24b, ex41, ex49a, ex49b, ex50a, ex50b, ex50c, ex50d]
 
 end SandeClemDabkowski2026.Examples

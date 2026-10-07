@@ -11,20 +11,21 @@ public import Linglib.Syntax.Minimalist.Merge.SyntacticObject
 /-!
 # Derivations
 
-An ordered derivation is an initial syntactic object with a sequence of Merge steps. External Merge
-adds an item as the daughter on a side, and Internal Merge raises a mover: the step re-merges the
-mover with the remainder `deleteAccessible mover current`, the current object with the mover's
-occurrences replaced by the trace of the mover's head. Each step is the algebraic Merge on the
-workspace of the current object, the items it introduces, and the items still to come, when it
-matches no accessible term of those items and an Internal Merge raises a uniquely accessible term
-(`Step.mergeOp_workspace`); an admissible derivation is then the iterated algebraic Merge on the
-workspace of its initial object and its items (`Derivation.mergeOpList_initial`). The node being
-commutative, the two sides build the same object; the side is a planarization datum that matters
-only for the surface order, which `Linearization/Replay.lean` recovers on an ordered planar
-accumulator, since the final object is an unordered quotient. Since `node` is noncomputable, so are
-`Step.apply` and `Derivation.final`, while the movers are read off the steps. A derivation extends
-by further steps, whose early stages and movers are the original's, and normalizes by moving every
-External Merge to the left, which changes no stage and no mover.
+An ordered derivation is an initial syntactic object with a sequence of Merge steps, each placing
+its new daughter on a side. External Merge adds an item, and Internal Merge raises a mover: the
+step re-merges the mover with the remainder `deleteAccessible mover current`, the current object
+with the mover's occurrences replaced by the trace of the mover's head. Each step is the algebraic
+Merge on the workspace of the current object, the items it introduces, and the items still to
+come, when it matches no accessible term of those items and an Internal Merge raises a uniquely
+accessible term (`Step.mergeOp_workspace`); an admissible derivation is then the iterated
+algebraic Merge on the workspace of its initial object and its items
+(`Derivation.mergeOpList_initial`). The node being commutative, the two sides build the same
+object; the side is a planarization datum that matters only for the surface order, which
+`Linearization/Replay.lean` recovers on an ordered planar accumulator, since the final object is an
+unordered quotient. Since `node` is noncomputable, so are `Step.apply` and `Derivation.final`,
+while the movers are read off the steps. A derivation extends by further steps, whose early stages
+and movers are the original's, and normalizes by moving every new daughter to the left, which
+changes no stage and no mover.
 
 ## Main definitions
 
@@ -61,7 +62,7 @@ namespace SyntacticObject
 
 /-! ### Steps -/
 
-/-- External Merge attaches the new item on a side, a planarization datum that externalization
+/-- A Merge step attaches its new daughter on a side, a planarization datum that externalization
     reads and the derived object ignores. -/
 inductive Side where
   | left
@@ -72,8 +73,9 @@ inductive Side where
 inductive Step where
   /-- External Merge, the new item as the daughter on `side`. -/
   | em (side : Side) (item : SyntacticObject)
-  /-- Internal Merge raises `mover`, leaving the trace of its head in its place. -/
-  | im (mover : SyntacticObject)
+  /-- Internal Merge raises `mover` to the daughter on `side`, the left unless stated otherwise,
+  leaving the trace of its head in its place. -/
+  | im (mover : SyntacticObject) (side : Side := .left)
 
 /-- A step builds a node: External Merge with the item on the given side, Internal Merge of the
     remainder and the mover. -/
@@ -81,7 +83,7 @@ noncomputable def Step.apply (step : Step) (current : SyntacticObject) : Syntact
   match step with
   | .em .left item => merge item current
   | .em .right item => merge current item
-  | .im mover => merge (deleteAccessible mover current) mover
+  | .im mover _ => merge (deleteAccessible mover current) mover
 
 theorem Step.apply_em_left (item current : SyntacticObject) :
     (Step.em .left item).apply current = merge item current := rfl
@@ -89,8 +91,8 @@ theorem Step.apply_em_left (item current : SyntacticObject) :
 theorem Step.apply_em_right (item current : SyntacticObject) :
     (Step.em .right item).apply current = merge current item := rfl
 
-theorem Step.apply_im (mover current : SyntacticObject) :
-    (Step.im mover).apply current = merge (deleteAccessible mover current) mover := rfl
+theorem Step.apply_im (mover : SyntacticObject) (side : Side) (current : SyntacticObject) :
+    (Step.im mover side).apply current = merge (deleteAccessible mover current) mover := rfl
 
 /-- The sides build the same object; they differ only at externalization. -/
 theorem Step.apply_em (side : Side) (item current : SyntacticObject) :
@@ -101,24 +103,26 @@ theorem Step.apply_em (side : Side) (item current : SyntacticObject) :
 
 /-- The mover of an Internal-Merge step. -/
 def Step.mover? : Step → Option SyntacticObject
-  | .im mover => some mover
+  | .im mover _ => some mover
   | .em _ _ => none
 
 @[simp] theorem Step.mover?_em (side : Side) (item : SyntacticObject) :
     (Step.em side item).mover? = none := rfl
 
-@[simp] theorem Step.mover?_im (mover : SyntacticObject) : (Step.im mover).mover? = some mover :=
+@[simp] theorem Step.mover?_im (mover : SyntacticObject) (side : Side) :
+    (Step.im mover side).mover? = some mover :=
   rfl
 
-/-- The step with its External Merge on the left; Internal Merge is unchanged. -/
+/-- The step with its new daughter on the left. -/
 def Step.leftward : Step → Step
   | .em _ item => .em .left item
-  | .im mover => .im mover
+  | .im mover _ => .im mover
 
 @[simp] theorem Step.leftward_em (side : Side) (item : SyntacticObject) :
     (Step.em side item).leftward = .em .left item := rfl
 
-@[simp] theorem Step.leftward_im (mover : SyntacticObject) : (Step.im mover).leftward = .im mover :=
+@[simp] theorem Step.leftward_im (mover : SyntacticObject) (side : Side) :
+    (Step.im mover side).leftward = .im mover :=
   rfl
 
 @[simp] theorem Step.mover?_leftward (step : Step) : step.leftward.mover? = step.mover? := by
@@ -129,7 +133,7 @@ theorem Step.apply_leftward (step : Step) (current : SyntacticObject) :
     step.leftward.apply current = step.apply current := by
   cases step with
   | em side item => rw [Step.leftward_em, Step.apply_em, Step.apply_em]
-  | im _ => rfl
+  | im _ _ => rfl
 
 /-! ### Derivations as workspace Merges
 
@@ -142,7 +146,7 @@ initial object and its items (`mergeOpList_initial`). -/
 /-- The item an External Merge step introduces. -/
 def Step.items : Step → Workspace
   | .em _ item => {item}
-  | .im _ => 0
+  | .im _ _ => 0
 
 /-- The items a list of steps introduces. -/
 def Step.itemsList (steps : List Step) : Workspace :=
@@ -161,7 +165,7 @@ noncomputable def Step.mergeOp (step : Step)
     ConnesKreimer ℤ (UnorderedTree Vertex) →ₗ[ℤ] ConnesKreimer ℤ (UnorderedTree Vertex) :=
   match step with
   | .em _ item => Merge.mergeOpC traceEncoder Vertex.bare current.val item.val
-  | .im mover => Merge.mergeOpC traceEncoder Vertex.bare (deleteAccessible mover current).val
+  | .im mover _ => Merge.mergeOpC traceEncoder Vertex.bare (deleteAccessible mover current).val
       mover.val ∘ₗ Merge.mergeOpUnitC traceEncoder mover.val
 
 /-- A step at the current object is admissible beside a spectator workspace `W` when it matches
@@ -170,7 +174,7 @@ noncomputable def Step.mergeOp (step : Step)
 def Step.Admissible (current : SyntacticObject)
     (W : Workspace) : Step → Prop
   | .em _ item => ∀ U ∈ W, current ∉ U.terms ∧ item ∉ U.terms
-  | .im mover => mover.val.value.isLeft ∧ current.terms.count mover = 1 ∧ current ≠ mover ∧
+  | .im mover _ => mover.val.value.isLeft ∧ current.terms.count mover = 1 ∧ current ≠ mover ∧
       ∀ U ∈ W, deleteAccessible mover current ∉ U.terms ∧ mover ∉ U.terms
 
 /-- An admissible step is the algebraic Merge on the workspace of the current object, the items
@@ -183,7 +187,7 @@ theorem Step.mergeOp_workspace {step : Step}
   | em side item =>
     rw [Step.apply_em, merge_comm]
     exact mergeOpC_node_residual traceEncoder current item h
-  | im mover =>
+  | im mover _ =>
     obtain ⟨hm, hc, hne, hW⟩ := h
     exact mergeOpC_im_residual hm hc hne hW
 
@@ -295,13 +299,13 @@ theorem lt_length_of_mem_mover? {d : Derivation} {i : Nat} {m : SyntacticObject}
   rw [List.getElem?_eq_none (Nat.le_of_not_lt hlt)] at h
   simp at h
 
-/-! ### The sides of External Merge
+/-! ### The sides of Merge
 
-The node being commutative, the derived object does not depend on the sides at which External
-Merge attaches the items; `leftward` is the normal form, and the stages and movers of a
-derivation are those of its normal form. -/
+The node being commutative, the derived object does not depend on the sides at which the steps
+attach their daughters; `leftward` is the normal form, and the stages and movers of a derivation
+are those of its normal form. -/
 
-/-- The derivation with every External Merge on the left. -/
+/-- The derivation with every new daughter on the left. -/
 def leftward (d : Derivation) : Derivation := ⟨d.initial, d.steps.map Step.leftward⟩
 
 @[simp] theorem stageAt_leftward (d : Derivation) (n : Nat) :
@@ -337,8 +341,8 @@ private def demoTok (i : Nat) : SyntacticObject := SyntacticObject.leaf ⟨.simp
 
 example :
     (Derivation.mk (demoTok 0)
-      [Step.em .left (demoTok 1), Step.im (demoTok 1),
-       Step.em .right (demoTok 2), Step.im (demoTok 2)]).movedItems = [demoTok 1, demoTok 2] := by
+      [Step.em .left (demoTok 1), Step.im (demoTok 1), Step.em .right (demoTok 2),
+        Step.im (demoTok 2) .right]).movedItems = [demoTok 1, demoTok 2] := by
   simp [Derivation.movedItems, demoTok]
 
 example : (Derivation.mk (demoTok 0) [Step.em .left (demoTok 1)]).length = 1 := rfl
