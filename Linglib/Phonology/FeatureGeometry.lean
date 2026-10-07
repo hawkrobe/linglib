@@ -29,10 +29,10 @@ their studies.
 ## Implementation notes
 
 The placement is `Option`-valued so that a geometry may leave features of the inventory
-unplaced. A study builds its tree from the parent map as a `ParentTree`, the root as `⊥` and
-the parent as `Order.pred`. Spreading any set of terminals, Halle, Vaux and Wolfe's partial
-spreading, is `Finset.piecewise` on that set, and single-feature spreading is
-`Bundle.assimilate`.
+unplaced. A study orders its tree by the parent map, `a ≤ b` when `a` lies on the walk from `b`
+up to the root, the root as `⊥` and the parent as `Order.pred`, every axiom decided. Spreading
+any set of terminals, Halle, Vaux and Wolfe's partial spreading, is `Finset.piecewise` on that
+set, and single-feature spreading is `Bundle.assimilate`.
 
 ## References
 

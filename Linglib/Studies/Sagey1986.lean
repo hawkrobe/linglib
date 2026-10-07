@@ -4,6 +4,7 @@ public import Linglib.Core.Data.Fintype.Order
 public import Mathlib.Data.Fintype.Card
 public import Mathlib.Data.Fintype.EquivFin
 public import Linglib.Phonology.FeatureGeometry
+public import Mathlib.Data.List.Iterate
 public import Linglib.Phonology.Segmental.FeatureClass
 public import Linglib.Phonology.Autosegmental.NonCrossing
 public import Linglib.Core.Order.Interval
@@ -81,20 +82,28 @@ def pred : Node → Node
   | .softPalate | .place => .supralaryngeal
   | .labial | .coronal | .dorsal => .place
 
-/-- The class nodes form the rooted tree of `pred`, the root as `⊥` and the parent as
-`Order.pred`. -/
-def tree : ParentTree Node :=
-  ⟨pred, .root, rfl, fun n ↦ ⟨Fintype.card Node, by revert n; decide⟩⟩
+/-- `a ≤ b` when `a` lies on the walk from `b` up to the root, so the root is `⊥` and the parent
+is `Order.pred`. -/
+instance : PartialOrder Node where
+  le a b := a ∈ List.iterate pred b (Fintype.card Node)
+  le_refl := by decide
+  le_trans := by decide +kernel
+  le_antisymm := by decide
 
-instance : PartialOrder Node := tree.partialOrder
-
-instance : DecidableLE Node := tree.decidableLE
+instance : DecidableLE Node := fun a b ↦ inferInstanceAs (Decidable (a ∈ List.iterate pred b _))
 
 instance : DecidableLT Node := decidableLTOfDecidableLE
 
-instance : OrderBot Node := tree.orderBot
+instance : OrderBot Node where
+  bot := .root
+  bot_le := by decide
 
-instance : PredOrder Node := tree.predOrder
+/-- The parent as the predecessor. -/
+instance : PredOrder Node where
+  pred := pred
+  pred_le := by decide
+  min_of_le_pred := by decide
+  le_pred_of_lt := by decide
 
 /-- The class feature of an articulator node, present exactly when the articulator is active
 in the segment. -/

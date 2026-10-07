@@ -2,7 +2,7 @@ module
 
 public import Linglib.Core.Data.Fintype.Order
 public import Mathlib.Data.Fintype.Card
-public import Linglib.Core.Order.SuccPred.Tree
+public import Mathlib.Order.SuccPred.Basic
 public import Linglib.Core.Order.UpperLower.Finset
 public import Linglib.Syntax.Person.Basic
 public import Linglib.Syntax.Number.Basic
@@ -108,26 +108,34 @@ def ancestors : Node → List Node
 /-- The node a node depends on directly, the root fixed. -/
 def pred (n : Node) : Node := n.ancestors.head?.getD n
 
-/-- The geometry is the rooted tree of the parent map, the root as `⊥` and the parent as
-`Order.pred`. -/
-def tree : ParentTree Node :=
-  ⟨pred, .referringExpression, rfl, fun n ↦ ⟨Fintype.card Node, by revert n; decide⟩⟩
+/-- `a ≤ b` when `b` depends on `a`, the dominance of the geometry: `a` is `b` or one of the nodes
+`b` depends on. -/
+instance : PartialOrder Node where
+  le a b := a = b ∨ a ∈ b.ancestors
+  le_refl := by decide
+  le_trans := by decide +kernel
+  le_antisymm := by decide
 
-/-- `a ≤ b` when `b` depends on `a`, the dominance of the geometry. -/
-instance : PartialOrder Node := tree.partialOrder
-
-instance : DecidableLE Node := tree.decidableLE
+instance : DecidableLE Node := fun a b ↦ inferInstanceAs (Decidable (a = b ∨ a ∈ b.ancestors))
 
 instance : DecidableLT Node := decidableLTOfDecidableLE
 
-instance : OrderBot Node := tree.orderBot
+/-- The root dominates every node. -/
+instance : OrderBot Node where
+  bot := .referringExpression
+  bot_le := by decide
 
-instance : PredOrder Node := tree.predOrder
+/-- The parent as the predecessor. -/
+instance : PredOrder Node where
+  pred := pred
+  pred_le := by decide
+  min_of_le_pred := by decide
+  le_pred_of_lt := by decide
 
 instance : LocallyFiniteOrder Node := Fintype.toLocallyFiniteOrder
 
-/-- Dominance is dependence: `a ≤ b` when `a` is `b` or a node `b` depends on. -/
-theorem le_iff : ∀ a b : Node, a ≤ b ↔ a = b ∨ a ∈ b.ancestors := by decide
+/-- Dominance is dependence. -/
+theorem le_iff {a b : Node} : a ≤ b ↔ a = b ∨ a ∈ b.ancestors := Iff.rfl
 
 /-- The nodes a node depends on, itself included and the root excluded, from the root down:
 the content a privative feature brings with it. -/
