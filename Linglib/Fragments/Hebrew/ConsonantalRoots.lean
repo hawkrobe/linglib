@@ -1,155 +1,142 @@
 module
 
 public import Linglib.Morphology.Root.Consonantal
+public import Linglib.Fragments.Hebrew.Phonology
 
 /-!
 # Modern Hebrew consonantal roots
 
-This file defines a small inventory of Modern Hebrew consonantal roots, as `ConsonantalRoot`
-values over IPA symbols, for the templatic-morphology studies. The first group is Faust's: the
-roots of the QaTaT–QaTa triplet *kalat*, *kalal*, *kala*, where the identical final consonants
-of *kalal* arise from a biradical root by template satisfaction in McCarthy's sense and the
-final *j* of √klj surfaces only outside the past tense, and the roots of the taQTiL nouns, a
-*t*-final root behind the masculine *taskit* against *j*-final roots behind the feminine
-*tavnit*, *taglit*, *tadmit* and *tarmit*. The second group is Arad's: the roots of the seven
-binyanim as she numbers them, P1 to P7, of her active–passive pairs in P3–P4 and P5–P6, of the
-geminate slot of P3 and P7, of her roots across many patterns and of her conjugation classes.
-Each author's roots are in that author's transcription.
+This file defines the Modern Hebrew consonantal roots of the templatic-morphology studies as
+roots of segments. A radical that alternates between a stop and a fricative is the archisegment
+`Phonology.B`, `Phonology.K` or `Phonology.P`; the /k/ of ק is the plain `Phonology.k`, so a root
+is the same root in Arad's transcription (√qlt) and in Faust's (√klt). Roots are named in a
+transliteration that writes ח as x, ש as š and צ as c.
 
 ## Main definitions
 
-* `Hebrew.klt`, `Hebrew.kl`, `Hebrew.klj`: the roots of Faust's triplet.
+* `Hebrew.klt`, `Hebrew.kl`, `Hebrew.klj`: the roots of Faust's QaTaT–QaTa triplet.
 * `Hebrew.dmj`, `Hebrew.bnj`, `Hebrew.glj`, `Hebrew.rmj`, `Hebrew.skt`, `Hebrew.ktv`: the
   roots of his taQTiL nouns and their bases.
-* `Hebrew.lmd`, `Hebrew.spr`, `Hebrew.qlt`, `Hebrew.pll`, `Hebrew.npc`, `Hebrew.xlq`,
-  `Hebrew.str`, `Hebrew.pqd`: Arad's binyan roots.
-* `Hebrew.trgm`, `Hebrew.qbl`, `Hebrew.rkk`: her roots of the geminate slot.
-* `Hebrew.xšb`, `Hebrew.sgr`, `Hebrew.šmn`: her roots across many patterns.
-* `Hebrew.ptx`, `Hebrew.qpʔ`, `Hebrew.mss`, `Hebrew.xmm`, `Hebrew.bhr`, `Hebrew.ʔdm`: her roots
-  of the conjugation classes.
+* `Hebrew.lmd`, …, `Hebrew.ʔdm`: Arad's roots of the binyanim, the geminate slot, roots across
+  patterns and conjugation classes.
 
 ## References
 
 * [arad-2005]
 * [faust-2026]
-* [mccarthy-1981]
 -/
 
 @[expose] public section
 
-namespace Hebrew
+open Morphology Phonology Hebrew.Phonology
 
-open Morphology
+namespace Hebrew
 
 /-! ### The QaTaT–QaTa triplet -/
 
-/-- √klt, the root of *kalat* 'received', the action noun *klita* and the passive participle
-*kalut*. -/
-def klt : ConsonantalRoot String := ⟨["k", "l", "t"]⟩
+/-- √klt (קלט), the root of *kalat* 'received', *klita* and *kalut*, and of *hiqlit* 'record',
+which Arad writes √qlt. -/
+def klt : ConsonantalRoot Segment := ⟨[k, l, t]⟩
 
-/-- √kl, the biradical root of *kalal* 'included', *klila* and *kalul*, whose identical final
-consonants arise by template satisfaction. -/
-def kl : ConsonantalRoot String := ⟨["k", "l"]⟩
+/-- √kl (כלל), the biradical root of *kalal* 'included', *klila* and *kalul*, whose identical
+final consonants arise by template satisfaction. -/
+def kl : ConsonantalRoot Segment := ⟨[K, l]⟩
 
-/-- √klj, the root of *kala* 'roasted', *klija* and *kaluj*, whose final *j* surfaces only
+/-- √klj (קלה), the root of *kala* 'roasted', *klija* and *kaluj*, whose final *j* surfaces only
 outside the past tense. -/
-def klj : ConsonantalRoot String := ⟨["k", "l", "j"]⟩
+def klj : ConsonantalRoot Segment := ⟨[k, l, j]⟩
 
 /-! ### The taQTiL nouns -/
 
-/-- √dmj, the root of *dimuj* 'simile' and the feminine *tadmit* '(public) image'. -/
-def dmj : ConsonantalRoot String := ⟨["d", "m", "j"]⟩
+/-- √dmj (דמה), the root of *dimuj* 'simile' and the feminine *tadmit* '(public) image'. -/
+def dmj : ConsonantalRoot Segment := ⟨[d, m, j]⟩
 
-/-- √bnj, the root of *banuj* 'built' and the feminine *tavnit* 'mold'. -/
-def bnj : ConsonantalRoot String := ⟨["b", "n", "j"]⟩
+/-- √bnj (בנה), the root of *banuj* 'built' and the feminine *tavnit* 'mold'. -/
+def bnj : ConsonantalRoot Segment := ⟨[B, n, j]⟩
 
-/-- √glj, the root of *galuj* 'apparent' and the feminine *taglit* 'discovery'. -/
-def glj : ConsonantalRoot String := ⟨["g", "l", "j"]⟩
+/-- √glj (גלה), the root of *galuj* 'apparent' and the feminine *taglit* 'discovery'. -/
+def glj : ConsonantalRoot Segment := ⟨[«ɡ», l, j]⟩
 
-/-- √rmj, the root of *remija* 'cheating' and the feminine *tarmit* 'hoax'. -/
-def rmj : ConsonantalRoot String := ⟨["r", "m", "j"]⟩
+/-- √rmj (רמה), the root of *remija* 'cheating' and the feminine *tarmit* 'hoax'. -/
+def rmj : ConsonantalRoot Segment := ⟨[«ʁ», m, j]⟩
 
-/-- √skt, the *t*-final root of the masculine *taskit* 'radio drama'. -/
-def skt : ConsonantalRoot String := ⟨["s", "k", "t"]⟩
+/-- √skt (סכת), the *t*-final root of the masculine *taskit* 'radio drama'. -/
+def skt : ConsonantalRoot Segment := ⟨[s, K, t]⟩
 
-/-- √ktv, the root of *katuv* 'written', *kituv* 'script' and *ktiva* 'writing', the regular
-comparanda of the nouns above. -/
-def ktv : ConsonantalRoot String := ⟨["k", "t", "v"]⟩
+/-- √ktv (כתב), the root of *katuv* 'written', *kituv* 'script' and *ktiva* 'writing'. -/
+def ktv : ConsonantalRoot Segment := ⟨[K, t, B]⟩
 
-/-! ### The binyan roots -/
+/-! ### The binyanim -/
 
-/-- √lmd, the root of *lamad* 'learn' in P1 and its passive *nilmad* in P2. -/
-def lmd : ConsonantalRoot String := ⟨["l", "m", "d"]⟩
+/-- √lmd (למד), the root of *lamad* 'learn' and its passive *nilmad*. -/
+def lmd : ConsonantalRoot Segment := ⟨[l, m, d]⟩
 
-/-- √spr, the root of *siper* 'tell' in P3 and its passive *supar* in P4. -/
-def spr : ConsonantalRoot String := ⟨["s", "p", "r"]⟩
+/-- √spr (ספר), the root of *siper* 'tell' and its passive *supar*. -/
+def spr : ConsonantalRoot Segment := ⟨[s, P, «ʁ»]⟩
 
-/-- √qlt, the root of *hiqlit* 'record' in P5 and its passive *huqlat* in P6. -/
-def qlt : ConsonantalRoot String := ⟨["q", "l", "t"]⟩
+/-- √pll (פלל), the root of *hitpalel* 'pray'. -/
+def pll : ConsonantalRoot Segment := ⟨[P, l, l]⟩
 
-/-- √pll, the root of *hitpalel* 'pray' in P7. -/
-def pll : ConsonantalRoot String := ⟨["p", "l", "l"]⟩
+/-- √npc (נפץ), the root of *nipec* 'shatter' and its passive *nupac*. -/
+def npc : ConsonantalRoot Segment := ⟨[n, P, ts]⟩
 
-/-- √npc, the root of *nipec* 'shatter' in P3 and its passive *nupac* in P4. -/
-def npc : ConsonantalRoot String := ⟨["n", "p", "c"]⟩
+/-- √xlq (חלק), the root of *xileq* 'divide' and its passive *xulaq*. -/
+def xlq : ConsonantalRoot Segment := ⟨[x, l, k]⟩
 
-/-- √xlq, the root of *xileq* 'divide' in P3 and its passive *xulaq* in P4. -/
-def xlq : ConsonantalRoot String := ⟨["x", "l", "q"]⟩
+/-- √str (סתר), the root of *histir* 'hide' and its passive *hustar*. -/
+def str : ConsonantalRoot Segment := ⟨[s, t, «ʁ»]⟩
 
-/-- √str, the root of *histir* 'hide' in P5 and its passive *hustar* in P6. -/
-def str : ConsonantalRoot String := ⟨["s", "t", "r"]⟩
+/-- √pqd (פקד), the root of *hifqid* 'deposit' and its passive *hufqad*. -/
+def pqd : ConsonantalRoot Segment := ⟨[P, k, d]⟩
 
-/-- √pqd, the root of *hifqid* 'deposit' in P5 and its passive *hufqad* in P6. -/
-def pqd : ConsonantalRoot String := ⟨["p", "q", "d"]⟩
-
-/-- √šmr, the root of *šamar* 'guard' in P1. -/
-def «šmr» : ConsonantalRoot String := ⟨["š", "m", "r"]⟩
+/-- √šmr (שמר), the root of *šamar* 'guard'. -/
+def «šmr» : ConsonantalRoot Segment := ⟨[«ʃ», m, «ʁ»]⟩
 
 /-! ### The geminate slot -/
 
-/-- √trgm, the quadriliteral root of *tirgem* 'translate' in P3, whose fourth consonant takes
+/-- √trgm (תרגם), the quadriliteral root of *tirgem* 'translate', whose fourth consonant takes
 the geminate slot. -/
-def trgm : ConsonantalRoot String := ⟨["t", "r", "g", "m"]⟩
+def trgm : ConsonantalRoot Segment := ⟨[t, «ʁ», «ɡ», m]⟩
 
-/-- √qbl, the root of *qibel* 'receive' in P3, where the geminate *b* does not spirantize. -/
-def qbl : ConsonantalRoot String := ⟨["q", "b", "l"]⟩
+/-- √qbl (קבל), the root of *qibel* 'receive', where the geminate *b* does not spirantize. -/
+def qbl : ConsonantalRoot Segment := ⟨[k, B, l]⟩
 
-/-- √rkk, the root of *hitrakex* 'become soft' in P7, where the geminate *k* does not
+/-- √rkk (רכך), the root of *hitrakex* 'become soft', where the geminate *k* does not
 spirantize. -/
-def rkk : ConsonantalRoot String := ⟨["r", "k", "k"]⟩
+def rkk : ConsonantalRoot Segment := ⟨[«ʁ», K, K]⟩
 
 /-! ### Roots across patterns -/
 
-/-- √šmn, the root of *šemen* 'oil', *šamenet* 'cream', *šuman* 'fat', *hišmin* 'fatten' and
-*šimen* 'grease'. -/
-def «šmn» : ConsonantalRoot String := ⟨["š", "m", "n"]⟩
+/-- √šmn (שמן), the root of *šemen* 'oil', *šamenet* 'cream', *hišmin* 'fatten' and *šimen*
+'grease'. -/
+def «šmn» : ConsonantalRoot Segment := ⟨[«ʃ», m, n]⟩
 
-/-- √xšb, the root of *xašav* 'think', *xišev* 'calculate', *maxšev* 'computer' and *xešbon*
-'arithmetic'. -/
-def «xšb» : ConsonantalRoot String := ⟨["x", "š", "b"]⟩
+/-- √xšb (חשב), the root of *xašav* 'think', *xišev* 'calculate', *maxšev* 'computer' and
+*xešbon* 'arithmetic'. -/
+def «xšb» : ConsonantalRoot Segment := ⟨[x, «ʃ», B]⟩
 
-/-- √sgr, the root of *sagar* 'close', *hisgir* 'extradite', *seger* 'closure' and *misgeret*
-'frame'. -/
-def sgr : ConsonantalRoot String := ⟨["s", "g", "r"]⟩
+/-- √sgr (סגר), the root of *sagar* 'close', *hisgir* 'extradite', *seger* 'closure' and
+*misgeret* 'frame'. -/
+def sgr : ConsonantalRoot Segment := ⟨[s, «ɡ», «ʁ»]⟩
 
 /-! ### The conjugation classes -/
 
-/-- √ptx, the root of *patax* 'open' in P1 and its inchoative *niftax* in P2. -/
-def ptx : ConsonantalRoot String := ⟨["p", "t", "x"]⟩
+/-- √ptx (פתח), the root of *patax* 'open' and its inchoative *niftax*. -/
+def ptx : ConsonantalRoot Segment := ⟨[P, t, x]⟩
 
-/-- √qpʔ, the root of *qafaʔ* 'freeze' in P1 and its causative *hiqpiʔ* in P5. -/
-def «qpʔ» : ConsonantalRoot String := ⟨["q", "p", "ʔ"]⟩
+/-- √qpʔ (קפא), the root of *qafaʔ* 'freeze' and its causative *hiqpiʔ*. -/
+def «qpʔ» : ConsonantalRoot Segment := ⟨[k, P, «ʔ»]⟩
 
-/-- √mss, the root of *namas* 'melt' in P2 and its causative *hemes* in P5. -/
-def mss : ConsonantalRoot String := ⟨["m", "s", "s"]⟩
+/-- √mss (מסס), the root of *namas* 'melt' and its causative *hemes*. -/
+def mss : ConsonantalRoot Segment := ⟨[m, s, s]⟩
 
-/-- √xmm, the root of *ximem* 'heat' in P3 and its inchoative *hitxamem* in P7. -/
-def xmm : ConsonantalRoot String := ⟨["x", "m", "m"]⟩
+/-- √xmm (חמם), the root of *ximem* 'heat' and its inchoative *hitxamem*. -/
+def xmm : ConsonantalRoot Segment := ⟨[x, m, m]⟩
 
-/-- √bhr, the root of *hivhir* 'make clear' in P5 and its inchoative *hitbaher* in P7. -/
-def bhr : ConsonantalRoot String := ⟨["b", "h", "r"]⟩
+/-- √bhr (בהר), the root of *hivhir* 'make clear' and its inchoative *hitbaher*. -/
+def bhr : ConsonantalRoot Segment := ⟨[B, h, «ʁ»]⟩
 
-/-- √ʔdm, the root of *heʔedim* 'redden, be red' in P5. -/
-def «ʔdm» : ConsonantalRoot String := ⟨["ʔ", "d", "m"]⟩
+/-- √ʔdm (אדם), the root of *heʔedim* 'redden, be red'. -/
+def «ʔdm» : ConsonantalRoot Segment := ⟨[«ʔ», d, m]⟩
 
 end Hebrew

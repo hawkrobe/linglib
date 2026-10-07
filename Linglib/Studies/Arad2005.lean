@@ -23,8 +23,9 @@ single out the natural pairs.
 
 ## Main statements
 
-* `verbs_derived`: every root-derived verb of the data is derived, except *hexšiv* and
-  *histager*, whose guttural and metathesis phonology is not modelled.
+* `words_derived_seg`: over the fragment's roots and segments, every root-derived word of the
+  data is derived but five verbs whose guttural, metathesis or geminate-root phonology is not
+  modelled.
 * `spirantize_before_degeminate`: the opposite order would give \*sifer, \*qivel, \*hitraxex.
 * `denominals`: every noun-derived verb is a stem modification of its base, except the
   {o, e} verbs of (41a, b), and none is the verb its base's root derives.
@@ -40,6 +41,9 @@ single out the natural pairs.
   properties it names instead: the prefix is carried, the base's consonants occur in order, and
   the vowels are Voice's (Bat El's melodic overwriting, p. 47). A `+` in the base marks the
   suffixes (32) prints as outside the stem.
+* The derivations run over the book's transcription, and a relabeling lifts them to the
+  fragment's segments. There the alternating stops are archisegments that spirantization
+  realizes by continuancy, as the one stop or fricative of the inventory that refines them.
 * The data's patterns 1–7 are the numbers of (3). Ch. 7 prints CaCaC, hiCCiC, CiCCeC and
   hitCaCCeC, which p. 43 equates with them.
 * The prose of p. 226 says "insertable below v" where its grid says "above". The grid is read.
@@ -226,34 +230,34 @@ def linked (m : TemplateMatch α) : List (ℕ × Association × α) :=
   (List.range m.template.length).filterMap fun i ↦
     (m.associations.find? (·.slotIndex == i)).bind fun a ↦ (m.segmentAt a).map (i, a, ·)
 
-/-- `spirantize f m` applies `f` to a segment after a V-slot, except on the first slot of a
-geminate, whose element also occupies the next slot. -/
-def spirantize (f : α → α) (m : TemplateMatch α) : List (ℕ × Association × α) :=
+/-- `spirantize f m` realizes each segment by `f`, given whether it follows a V-slot and is not
+the first slot of a geminate, whose element also occupies the next slot. -/
+def spirantize (f : Bool → α → α) (m : TemplateMatch α) : List (ℕ × Association × α) :=
   let l := linked m
   l.zipIdx.map fun ((i, a, x), j) ↦
-    let postVocalic := 0 < i ∧ m.template.slots[i - 1]? = some .V
+    let postVocalic := 0 < i && m.template.slots[i - 1]? == some .V
     let geminate := match l[j + 1]? with
       | some (_, b, _) => sameElement a b
       | none => false
-    (i, a, if postVocalic ∧ !geminate then f x else x)
+    (i, a, f (postVocalic && !geminate) x)
 
 /-- Since Modern Hebrew has no geminates (p. 28), slots linked to one element surface once. -/
 def degeminate (l : List (ℕ × Association × α)) : List α :=
   (l.destutter fun p q ↦ !sameElement p.2.1 q.2.1).map (·.2.2)
 
 /-- `surface f m` is the stem spirantized by `f` and degeminated. -/
-def surface (f : α → α) (m : TemplateMatch α) : List α := degeminate (spirantize f m)
+def surface (f : Bool → α → α) (m : TemplateMatch α) : List α := degeminate (spirantize f m)
 
 /-- `verb` is the surface of the stem of a root-derived verb. -/
-def verb (px : Prefixes α) (v : Vowel → α) (f : α → α) (b : Binyan) (voice : Voice)
+def verb (px : Prefixes α) (v : Vowel → α) (f : Bool → α → α) (b : Binyan) (voice : Voice)
     (r : ConsonantalRoot α) : Option (List α) :=
   (stem px v b voice r).map (surface f)
 
 /-- `surfaceDegeminatedFirst` applies the rules in the order the book rules out, degemination before
 the spirantization of whatever follows a vowel. -/
-def surfaceDegeminatedFirst (isV : α → Bool) (f : α → α) (m : TemplateMatch α) : List α :=
+def surfaceDegeminatedFirst (isV : α → Bool) (f : Bool → α → α) (m : TemplateMatch α) : List α :=
   let w := degeminate (linked m)
-  w.zipIdx.map fun (x, j) ↦ if 0 < j ∧ (w[j - 1]?.map isV).getD false then f x else x
+  w.zipIdx.map fun (x, j) ↦ f (0 < j && (w[j - 1]?.map isV).getD false) x
 
 /-! ### The mišqalim (24a) -/
 
@@ -358,30 +362,33 @@ theorem linked_map (f : α → β) (m : TemplateMatch α) :
   | none => rfl
   | some a => cases h : m.segmentAt a <;> simp [h]
 
-/-- Spirantization commutes with a relabeling that commutes with the fricative map. -/
-theorem spirantize_map (g : α → β) (f : α → α) (f' : β → β) (hf : ∀ x, f' (g x) = g (f x))
-    (m : TemplateMatch α) :
-    spirantize f' (m.map g) = (spirantize f m).map fun (i, a, x) ↦ (i, a, g x) := by
+/-- Spirantization commutes with relabeling the underlying segments by `g` and the surface
+segments by `h`, where the two realizations agree. -/
+theorem spirantize_map (g h : α → β) (f : Bool → α → α) (f' : Bool → β → β)
+    (hf : ∀ b x, f' b (g x) = h (f b x)) (m : TemplateMatch α) :
+    spirantize f' (m.map g) = (spirantize f m).map fun (i, a, x) ↦ (i, a, h x) := by
   simp only [spirantize, linked_map, TemplateMatch.template_map, List.zipIdx_map, List.map_map,
     List.getElem?_map]
   refine List.map_congr_left fun ⟨⟨i, a, x⟩, j⟩ _ ↦ ?_
-  rcases h : (linked m)[j + 1]? with _ | ⟨_, b, _⟩ <;> simp [h, hf, apply_ite g]
+  rcases hj : (linked m)[j + 1]? with _ | ⟨_, b, _⟩ <;> simp [hj, hf]
 
-theorem surface_map (g : α → β) (f : α → α) (f' : β → β) (hf : ∀ x, f' (g x) = g (f x))
-    (m : TemplateMatch α) : surface f' (m.map g) = (surface f m).map g := by
-  simp only [surface, degeminate, spirantize_map g f f' hf]
-  rw [← List.map_destutter (f := fun x : ℕ × Association × α ↦ (x.1, x.2.1, g x.2.2))
+theorem surface_map (g h : α → β) (f : Bool → α → α) (f' : Bool → β → β)
+    (hf : ∀ b x, f' b (g x) = h (f b x)) (m : TemplateMatch α) :
+    surface f' (m.map g) = (surface f m).map h := by
+  simp only [surface, degeminate, spirantize_map g h f f' hf]
+  rw [← List.map_destutter (f := fun x : ℕ × Association × α ↦ (x.1, x.2.1, h x.2.2))
     fun _ _ _ _ ↦ Iff.rfl, List.map_map, List.map_map]
   rfl
 
-/-- A verb over relabeled segments is the relabeled verb. -/
-theorem verb_map (g : α → β) (f : α → α) (f' : β → β) (hf : ∀ x, f' (g x) = g (f x))
-    (px : Prefixes α) (v : Vowel → α) (b : Binyan) (voice : Voice) (r : ConsonantalRoot α) :
-    verb (px.map g) (g ∘ v) f' b voice (r.map g) = (verb px v f b voice r).map (·.map g) := by
+/-- A verb over relabeled underlying segments is the relabeled surface verb. -/
+theorem verb_map (g h : α → β) (f : Bool → α → α) (f' : Bool → β → β)
+    (hf : ∀ b x, f' b (g x) = h (f b x)) (px : Prefixes α) (v : Vowel → α) (b : Binyan)
+    (voice : Voice) (r : ConsonantalRoot α) :
+    verb (px.map g) (g ∘ v) f' b voice (r.map g) = (verb px v f b voice r).map (·.map h) := by
   simp only [verb, stem_map, Option.map_map]
   congr 1
   funext m
-  exact surface_map g f f' hf m
+  exact surface_map g h f f' hf m
 
 /-! ### The geminate slot and the vowel slots -/
 
@@ -454,12 +461,13 @@ def Vowel.transcription : Vowel → String
 /-- `isVowel s` says that the transcribed segment `s` is a vowel. -/
 def isVowel (s : String) : Bool := s ∈ ["a", "e", "i", "o", "u"]
 
-/-- `fricative` sends each stop that spirantizes, *p*, *b* and *k*, to its fricative (p. 29). -/
-def fricative : String → String
-  | "p" => "f"
-  | "b" => "v"
-  | "k" => "x"
-  | s => s
+/-- `fricative post x` is the radical `x` after a vowel (`post`) or elsewhere, the stops *p*, *b*,
+*k* spirantizing to *f*, *v*, *x* after a vowel (p. 29). -/
+def fricative : Bool → String → String
+  | true, "p" => "f"
+  | true, "b" => "v"
+  | true, "k" => "x"
+  | _, s => s
 
 /-- `binyan?` reads a pattern number of (3) as a binyan and a voice, 4 and 6 being the passives of 3
 and 5. -/
@@ -486,39 +494,40 @@ def mishqal? : String → Option Mishqal
   | "CuCaC" => some .CuCaC
   | _ => none
 
-/-- `root?` reads a root label of the data as the fragment's root. -/
+/-- `root? label` is the root of a label of the data in the book's transcription, in which *q*
+is the /k/ of ק and *b*, *k*, *p* spirantize. -/
 def root? : String → Option (ConsonantalRoot String)
-  | "lmd" => some Hebrew.lmd
-  | "spr" => some Hebrew.spr
-  | "qlt" => some Hebrew.qlt
-  | "pll" => some Hebrew.pll
-  | "npc" => some Hebrew.npc
-  | "xlq" => some Hebrew.xlq
-  | "str" => some Hebrew.str
-  | "pqd" => some Hebrew.pqd
-  | "šmr" => some Hebrew.«šmr»
-  | "trgm" => some Hebrew.trgm
-  | "qbl" => some Hebrew.qbl
-  | "rkk" => some Hebrew.rkk
-  | "šmn" => some Hebrew.«šmn»
-  | "xšb" => some Hebrew.«xšb»
-  | "sgr" => some Hebrew.sgr
-  | "ptx" => some Hebrew.ptx
-  | "qpʔ" => some Hebrew.«qpʔ»
-  | "mss" => some Hebrew.mss
-  | "xmm" => some Hebrew.xmm
-  | "bhr" => some Hebrew.bhr
-  | "ʔdm" => some Hebrew.«ʔdm»
+  | "lmd" => some ⟨["l", "m", "d"]⟩
+  | "spr" => some ⟨["s", "p", "r"]⟩
+  | "qlt" => some ⟨["q", "l", "t"]⟩
+  | "pll" => some ⟨["p", "l", "l"]⟩
+  | "npc" => some ⟨["n", "p", "c"]⟩
+  | "xlq" => some ⟨["x", "l", "q"]⟩
+  | "str" => some ⟨["s", "t", "r"]⟩
+  | "pqd" => some ⟨["p", "q", "d"]⟩
+  | "šmr" => some ⟨["š", "m", "r"]⟩
+  | "trgm" => some ⟨["t", "r", "g", "m"]⟩
+  | "qbl" => some ⟨["q", "b", "l"]⟩
+  | "rkk" => some ⟨["r", "k", "k"]⟩
+  | "šmn" => some ⟨["š", "m", "n"]⟩
+  | "xšb" => some ⟨["x", "š", "b"]⟩
+  | "sgr" => some ⟨["s", "g", "r"]⟩
+  | "ptx" => some ⟨["p", "t", "x"]⟩
+  | "qpʔ" => some ⟨["q", "p", "ʔ"]⟩
+  | "mss" => some ⟨["m", "s", "s"]⟩
+  | "xmm" => some ⟨["x", "m", "m"]⟩
+  | "bhr" => some ⟨["b", "h", "r"]⟩
+  | "ʔdm" => some ⟨["ʔ", "d", "m"]⟩
   | _ => none
 
 /-- `verbCell?` reads the binyan, voice and root of a root-derived verb of the data. -/
-def verbCell? (f : Data.Forms.Form) : Option (Binyan × Voice × ConsonantalRoot String) := do
-  let (b, v) ← (f.column? "Binyan").bind binyan?
-  pure (b, v, ← (f.column? "Root").bind root?)
+def verbCell? (f : Data.Forms.Form) : Option (Binyan × Voice × ConsonantalRoot String) :=
+  ((f.column? "Binyan").bind binyan?).bind fun x ↦
+    ((f.column? "Root").bind root?).map fun r ↦ (x.1, x.2, r)
 
 /-- `nounCell?` reads the mišqal and root of a root-derived noun of the data. -/
-def nounCell? (f : Data.Forms.Form) : Option (Mishqal × ConsonantalRoot String) := do
-  pure (← (f.column? "Pattern").bind mishqal?, ← (f.column? "Root").bind root?)
+def nounCell? (f : Data.Forms.Form) : Option (Mishqal × ConsonantalRoot String) :=
+  ((f.column? "Pattern").bind mishqal?).bind fun q ↦ ((f.column? "Root").bind root?).map (q, ·)
 
 /-- Every verb with a root has its cell. -/
 theorem isSome_verbCell? : ∀ f ∈ Forms.all, (f.column? "Root").isSome →
@@ -541,14 +550,15 @@ theorem nouns_derived : ∀ f ∈ Forms.all, ∀ x ∈ nounCell? f,
 
 /-- The passive of *lamad* is the binyan nVCCVC, *nilmad* (25), (3). -/
 theorem passive_lamad :
-    verb transcribedPx Vowel.transcription fricative .cvcvc .passive Hebrew.lmd =
+    verb transcribedPx Vowel.transcription fricative .cvcvc .passive ⟨["l", "m", "d"]⟩ =
       some ["n", "i", "l", "m", "a", "d"] := by
   decide +kernel
 
 /-- Spirantization applies before degemination. In the opposite order the geminate would spirantize,
 giving \*sifer, \*qivel, \*hitraxex for *siper*, *qibel*, *hitrakex* (p. 29). -/
 theorem spirantize_before_degeminate :
-    [(Binyan.cvccvc, Hebrew.spr), (.cvccvc, Hebrew.qbl), (.hitcvccvc, Hebrew.rkk)].map
+    [(Binyan.cvccvc, ⟨["s", "p", "r"]⟩), (.cvccvc, ⟨["q", "b", "l"]⟩),
+        (.hitcvccvc, ⟨["r", "k", "k"]⟩)].map
         (fun (b, r) ↦ (stem transcribedPx Vowel.transcription b .active r).map fun m ↦
           (surface fricative m, surfaceDegeminatedFirst isVowel fricative m)) =
       [some (["s", "i", "p", "e", "r"], ["s", "i", "f", "e", "r"]),
@@ -717,6 +727,158 @@ theorem conjugations_natural :
     (∀ p ∈ natural57, ∃ x ∈ conjugations, s(x.2.1, x.2.2) = p) ∧
     ∀ x ∈ conjugations, ¬(x.2.1.Intransitive ↔ x.2.2.Intransitive) → ¬x.2.1.Intransitive := by
   decide +kernel
+
+/-! ### Over the fragment's segments -/
+
+/-- `uncovered` lists the root-derived verbs the derivation leaves out, for guttural lowering in
+*hexšiv* and *heʔedim*, t–sibilant metathesis in *histager*, and the biliteral allomorphy of √mss.
+-/
+def uncovered : List String := ["hexšiv", "histager", "namas", "hemes", "heʔedim"]
+
+/-- `fillContinuant post s` realizes an alternating stop, a consonant unspecified for
+continuancy, as its fricative after a vowel and as its stop elsewhere; any other segment is
+itself. -/
+def fillContinuant (post : Bool) (s : Phonology.Segment) : Phonology.Segment :=
+  if s.Unspecified .continuant ∧ s.IsConsonant then
+    if s.HasValue .dorsal true then if post then Hebrew.Phonology.x else Hebrew.Phonology.k
+    else if s.HasValue .voice true then if post then Hebrew.Phonology.v else Hebrew.Phonology.b
+    else if post then Hebrew.Phonology.f else Hebrew.Phonology.p
+  else s
+
+/-- The rule realizes each alternating stop as the one consonant that refines it with the
+contextual continuancy. -/
+theorem naturalClass_fillContinuant (post : Bool) :
+    ∀ a ∈ [Hebrew.Phonology.B, Hebrew.Phonology.K, Hebrew.Phonology.P],
+      (a.setFeature .continuant post).naturalClass Hebrew.Phonology.consonants =
+        {fillContinuant post a} := by
+  obtain ⟨hb, hv, hk, hx, hp, hf⟩ := Hebrew.Phonology.naturalClass_setFeature_continuant
+  simp only [List.forall_mem_cons, List.not_mem_nil, IsEmpty.forall_iff, implies_true, and_true]
+  cases post
+  · exact ⟨hb, hk, hp⟩
+  · exact ⟨hv, hx, hf⟩
+
+/-- `segment x` reads a letter of the book's transcription as a segment of the fragment, *b*, *k*,
+*p* as the archisegments of the alternating stops, *q* as the /k/ of ק, *r* as /ʁ/, *c* as /ts/ and
+*e* as /ɛ/. -/
+def segment : String → Phonology.Segment
+  | "b" => Hebrew.Phonology.B
+  | "k" => Hebrew.Phonology.K
+  | "p" => Hebrew.Phonology.P
+  | "q" => Hebrew.Phonology.k
+  | "d" => Hebrew.Phonology.d
+  | "f" => Hebrew.Phonology.f
+  | "g" => Hebrew.Phonology.«ɡ»
+  | "h" => Hebrew.Phonology.h
+  | "y" => Hebrew.Phonology.j
+  | "l" => Hebrew.Phonology.l
+  | "m" => Hebrew.Phonology.m
+  | "n" => Hebrew.Phonology.n
+  | "r" => Hebrew.Phonology.«ʁ»
+  | "s" => Hebrew.Phonology.s
+  | "š" => Hebrew.Phonology.«ʃ»
+  | "t" => Hebrew.Phonology.t
+  | "c" => Hebrew.Phonology.ts
+  | "v" => Hebrew.Phonology.v
+  | "x" => Hebrew.Phonology.x
+  | "z" => Hebrew.Phonology.z
+  | "ʔ" => Hebrew.Phonology.«ʔ»
+  | "a" => Hebrew.Phonology.a
+  | "e" => Hebrew.Phonology.«ɛ»
+  | "i" => Hebrew.Phonology.i
+  | "o" => Hebrew.Phonology.o
+  | "u" => Hebrew.Phonology.u
+  | _ => ⊥
+
+/-- `surfaceSegment x` reads a letter of a surface form, an alternating stop as the stop. -/
+def surfaceSegment (x : String) : Phonology.Segment := fillContinuant false (segment x)
+
+theorem fillContinuant_eq_self {s : Phonology.Segment}
+    (h : ¬(s.Unspecified .continuant ∧ s.IsConsonant)) (post : Bool) :
+    fillContinuant post s = s := by
+  simp [fillContinuant, h]
+
+/-- Only *b*, *k* and *p* read as alternating stops. -/
+theorem not_alternating_segment (x : String) (hp : x ≠ "p") (hb : x ≠ "b") (hk : x ≠ "k") :
+    ¬((segment x).Unspecified .continuant ∧ (segment x).IsConsonant) := by
+  unfold segment
+  split <;> first | contradiction | decide +kernel
+
+/-- Filling continuancy over the fragment's segments agrees with spirantizing the
+transcription. -/
+theorem fillContinuant_segment (post : Bool) (x : String) :
+    fillContinuant post (segment x) = surfaceSegment (fricative post x) := by
+  cases post
+  · rfl
+  by_cases hp : x = "p"
+  · subst hp; decide +kernel
+  by_cases hb : x = "b"
+  · subst hb; decide +kernel
+  by_cases hk : x = "k"
+  · subst hk; decide +kernel
+  have hx : fricative true x = x := by unfold fricative; split <;> simp_all
+  have h := not_alternating_segment x hp hb hk
+  rw [surfaceSegment, hx, fillContinuant_eq_self h, fillContinuant_eq_self h]
+
+/-- The roots of the data in the fragment, by label; Arad's √qlt is the fragment's √klt. -/
+def fragmentRoots : List (String × ConsonantalRoot Phonology.Segment) :=
+  [("lmd", Hebrew.lmd), ("spr", Hebrew.spr), ("qlt", Hebrew.klt), ("pll", Hebrew.pll),
+    ("npc", Hebrew.npc), ("xlq", Hebrew.xlq), ("str", Hebrew.str), ("pqd", Hebrew.pqd),
+    ("šmr", Hebrew.«šmr»), ("trgm", Hebrew.trgm), ("qbl", Hebrew.qbl), ("rkk", Hebrew.rkk),
+    ("šmn", Hebrew.«šmn»), ("xšb", Hebrew.«xšb»), ("sgr", Hebrew.sgr), ("ptx", Hebrew.ptx),
+    ("qpʔ", Hebrew.«qpʔ»), ("mss", Hebrew.mss), ("xmm", Hebrew.xmm), ("bhr", Hebrew.bhr),
+    ("ʔdm", Hebrew.«ʔdm»)]
+
+/-- Each root of the transcription, read letter by letter, is the fragment's root. -/
+theorem root?_map_segment :
+    ∀ p ∈ fragmentRoots, (root? p.1).map (·.map segment) = some p.2 := by
+  simp only [fragmentRoots, List.forall_mem_cons, List.not_mem_nil, IsEmpty.forall_iff,
+    implies_true, and_true]
+  exact ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl,
+    rfl, rfl, rfl⟩
+
+private theorem verb_eq_of_not_mem_uncovered {f : Data.Forms.Form} (hf : f ∈ Forms.all)
+    {x : Binyan × Voice × ConsonantalRoot String} (hx : x ∈ verbCell? f) (hu : f.form ∉ uncovered) :
+    verb transcribedPx Vowel.transcription fricative x.1 x.2.1 x.2.2 = some f.segments := by
+  by_contra hne
+  by_cases hc : f.column? "Conjugation" = none
+  · have h : f.form ∈ ["hexšiv", "histager"] := by
+      rw [← verbs_derived]
+      exact List.mem_map_of_mem (List.mem_filter.2 ⟨hf, decide_eq_true ⟨hc, x, hx, hne⟩⟩)
+    exact hu ((by decide : ∀ y ∈ _, y ∈ uncovered) _ h)
+  · have h : f.form ∈ ["namas", "hemes", "heʔedim", "heʔedim"] := by
+      rw [← conjugation_verbs_derived]
+      exact List.mem_map_of_mem (List.mem_filter.2 ⟨hf, decide_eq_true ⟨hc, x, hx, hne⟩⟩)
+    exact hu ((by decide : ∀ y ∈ _, y ∈ uncovered) _ h)
+
+/-- Over the fragment's roots and segments, the derivation produces every root-derived word of
+the data read as segments, the alternating stops realized by continuancy, except the verbs it
+leaves out. -/
+theorem words_derived_seg : ∀ p ∈ fragmentRoots, ∀ f ∈ Forms.all, f.column? "Root" = some p.1 →
+    (∀ x ∈ verbCell? f, f.form ∉ uncovered →
+      verb (transcribedPx.map segment) (segment ∘ Vowel.transcription) fillContinuant x.1 x.2.1
+        p.2 = some (f.segments.map surfaceSegment)) ∧
+    ∀ x ∈ nounCell? f, surface fillContinuant
+      (nounStem (transcribedPx.map segment) (segment ∘ Vowel.transcription) x.1 p.2) =
+        f.segments.map surfaceSegment := by
+  intro p hp f hf hroot
+  have hr : ∀ r, root? p.1 = some r → p.2 = r.map segment := fun r h ↦ by
+    simpa [h] using (root?_map_segment p hp).symm
+  refine ⟨fun x hx hu ↦ ?_, fun x hx ↦ ?_⟩
+  · have hx' : root? p.1 = some x.2.2 := by
+      simp only [verbCell?, hroot, Option.bind_some, Option.mem_def, Option.bind_eq_some_iff,
+        Option.map_eq_some_iff] at hx
+      obtain ⟨_, -, r, hr', rfl⟩ := hx
+      exact hr'
+    rw [hr _ hx', verb_map segment surfaceSegment fricative fillContinuant fillContinuant_segment,
+      verb_eq_of_not_mem_uncovered hf hx hu]
+    rfl
+  · have hx' : root? p.1 = some x.2 := by
+      simp only [nounCell?, hroot, Option.bind_some, Option.mem_def, Option.bind_eq_some_iff,
+        Option.map_eq_some_iff] at hx
+      obtain ⟨_, -, r, hr', rfl⟩ := hx
+      exact hr'
+    rw [hr _ hx', nounStem_map, surface_map segment surfaceSegment fricative fillContinuant
+      fillContinuant_segment, nouns_derived f hf x hx]
 
 /-! ### Multiple Contextualized Meaning (Ch. 3, Ch. 7) -/
 
