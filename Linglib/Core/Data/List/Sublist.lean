@@ -24,14 +24,16 @@ Two additions to the `List.Sublist` API.
   pair-sublist relation is the strict linear order a duplicate-free list carries. It is
   transitive (`List.Nodup.pair_sublist_trans`), so it is a strict order on the whole type
   (`List.Nodup.isStrictOrder_pair_sublist`) in which elements off the list are related to
-  nothing.
+  nothing; two distinct members are ordered one way or the other
+  (`List.pair_sublist_or_pair_sublist`), and a duplicate-free list whose members lie in another,
+  each pair in the same order there, is a sublist of it (`List.sublist_of_forall_pair_sublist`).
 -/
 
 @[expose] public section
 
 namespace List
 
-variable {α : Type*} {a b : α} {l : List α}
+variable {α : Type*} {a b : α} {l p q : List α}
 
 section Replicate
 
@@ -79,6 +81,32 @@ theorem Nodup.isStrictOrder_pair_sublist (hl : l.Nodup) :
     IsStrictOrder α fun a b ↦ [a, b] <+ l where
   irrefl a := nodup_iff_sublist.1 hl a
   trans _ _ _ := hl.pair_sublist_trans
+
+/-- A duplicate-free list whose members lie in a duplicate-free list, each of its pairs in the
+same order there, is a sublist of it. -/
+theorem sublist_of_forall_pair_sublist (hp : p.Nodup) (hq : q.Nodup) (hpq : p ⊆ q)
+    (h : ∀ a b, [a, b] <+ p → [a, b] <+ q) : p <+ q := by
+  induction q generalizing p with
+  | nil => simp [eq_nil_of_subset_nil hpq]
+  | cons x q ih =>
+    rw [nodup_cons] at hq
+    have hpair : ∀ a b, a ≠ x → [a, b] <+ x :: q → [a, b] <+ q := fun a b hax hab ↦
+      (sublist_cons_iff_of_head?_ne (by simpa using hax)).1 hab
+    by_cases hx : x ∈ p
+    · obtain _ | ⟨y, p⟩ := p
+      · simp at hx
+      obtain rfl : y = x := by
+        by_contra hyx
+        have hxp : x ∈ p := (mem_cons.1 hx).resolve_left (Ne.symm hyx)
+        exact hq.1 ((hpair y x hyx (h y x ((singleton_sublist.2 hxp).cons_cons y))).subset
+          (by simp))
+      rw [nodup_cons] at hp
+      refine (ih hp.2 hq.2 (fun a ha ↦ ?_) fun a b hab ↦ ?_).cons_cons y
+      · exact (mem_cons.1 (hpq (mem_cons_of_mem y ha))).resolve_left fun e ↦ hp.1 (e ▸ ha)
+      · exact hpair a b (fun e ↦ hp.1 (e ▸ hab.subset (by simp))) (h a b (hab.cons y))
+    · refine (ih hp hq.2 (fun a ha ↦ ?_) fun a b hab ↦ ?_).cons x
+      · exact (mem_cons.1 (hpq ha)).resolve_left fun e ↦ hx (e ▸ ha)
+      · exact hpair a b (fun e ↦ hx (e ▸ hab.subset (by simp))) (h a b hab)
 
 variable [DecidableEq α]
 
@@ -128,6 +156,13 @@ theorem pair_sublist_iff_idxOf_lt (hnd : l.Nodup) :
     [a, b] <+ l ↔ a ∈ l ∧ b ∈ l ∧ l.idxOf a < l.idxOf b :=
   ⟨fun h => ⟨h.subset (by simp), h.subset (by simp), idxOf_lt_of_pair_sublist hnd h⟩,
    fun ⟨ha, hb, hlt⟩ => pair_sublist_of_idxOf_lt ha hb hlt⟩
+
+/-- Two distinct members of a list occur in it in one order or the other. -/
+theorem pair_sublist_or_pair_sublist (ha : a ∈ l) (hb : b ∈ l) (hab : a ≠ b) :
+    [a, b] <+ l ∨ [b, a] <+ l := by
+  rcases Nat.lt_or_gt_of_ne (mt (idxOf_inj ha).mp hab) with h | h
+  · exact .inl (pair_sublist_of_idxOf_lt ha hb h)
+  · exact .inr (pair_sublist_of_idxOf_lt hb ha h)
 
 /-- On a `Nodup` list, an element positioned between two elements of an infix belongs to the
 infix. -/

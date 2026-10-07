@@ -665,6 +665,32 @@ def ex_72 : Datum :=
     readings := []
     paperFeatures := [("grammar", "jakarta"), ("extracted", "theme"), ("subject", "agent"), ("lowAgent", "no"), ("prefix", "bare")] }
 
+def ex_73_N : Datum :=
+  { id := "erlewinesommerlot2025_73_N"
+    source := ⟨"erlewine-sommerlot-2025", "(73), N-"⟩
+    reportedIn := none
+    language := "sara1351"
+    primaryText := "Apa (nok) kitak n-anam?"
+    glossedTokens := [("Apa", "what"), ("(nok)", "C"), ("kitak", "2"), ("n-anam", "N-plant")]
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("grammar", "kuching"), ("extracted", "theme"), ("subject", "agent"), ("lowAgent", "no"), ("prefix", "N")] }
+
+def ex_73_bare : Datum :=
+  { id := "erlewinesommerlot2025_73_bare"
+    source := ⟨"erlewine-sommerlot-2025", "(73), bare"⟩
+    reportedIn := none
+    language := "sara1351"
+    primaryText := "Apa (nok) kitak tanam?"
+    glossedTokens := [("Apa", "what"), ("(nok)", "C"), ("kitak", "2"), ("tanam", "plant")]
+    context := ""
+    judgment := .acceptable
+    alternatives := []
+    readings := []
+    paperFeatures := [("grammar", "kuching"), ("extracted", "theme"), ("subject", "agent"), ("lowAgent", "no"), ("prefix", "bare")] }
+
 def ex_76a : Datum :=
   { id := "erlewinesommerlot2025_76a"
     source := ⟨"jeoung-2017", "pp. 17, 20"⟩
@@ -795,6 +821,6 @@ def ex_80_N : Datum :=
     readings := []
     paperFeatures := [("grammar", "familiarMadurese"), ("extracted", "theme"), ("subject", "agent"), ("lowAgent", "no"), ("prefix", "N")] }
 
-def all : List Datum := [ex_1a, ex_1b, ex_1c, ex_2, ex_2_meN, ex_8, ex_8_low, ex_17, ex_21, ex_22, ex_22_meN, ex_41a, ex_41b, ex_41c, ex_54, ex_54_meN, ex_60, ex_5_N, ex_5_meN, ex_9, ex_10, ex_12_N, ex_12_bare, ex_12_meN, ex_13, ex_13_bare, ex_14b, ex_14b_di, ex_16, ex_16_low, ex_23a, ex_23b, ex_24, ex_25, ex_25_meN, ex_26, ex_26_high, ex_40a_N, ex_40a_meN, ex_40b, ex_47, ex_47_N, ex_47_meN, ex_71a_N, ex_71a_bare, ex_71b, ex_71b_bare, ex_71c_N, ex_71c_bare, ex_72, ex_76a, ex_76b, ex_76c, ex_77a, ex_77b, ex_77c, ex_79, ex_79_N, ex_80, ex_80_N]
+def all : List Datum := [ex_1a, ex_1b, ex_1c, ex_2, ex_2_meN, ex_8, ex_8_low, ex_17, ex_21, ex_22, ex_22_meN, ex_41a, ex_41b, ex_41c, ex_54, ex_54_meN, ex_60, ex_5_N, ex_5_meN, ex_9, ex_10, ex_12_N, ex_12_bare, ex_12_meN, ex_13, ex_13_bare, ex_14b, ex_14b_di, ex_16, ex_16_low, ex_23a, ex_23b, ex_24, ex_25, ex_25_meN, ex_26, ex_26_high, ex_40a_N, ex_40a_meN, ex_40b, ex_47, ex_47_N, ex_47_meN, ex_71a_N, ex_71a_bare, ex_71b, ex_71b_bare, ex_71c_N, ex_71c_bare, ex_72, ex_73_N, ex_73_bare, ex_76a, ex_76b, ex_76c, ex_77a, ex_77b, ex_77c, ex_79, ex_79_N, ex_80, ex_80_N]
 
 end ErlewineSommerlot2025.Examples

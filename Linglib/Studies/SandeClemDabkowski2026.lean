@@ -70,7 +70,7 @@ show the same profile, the trigger moving instead of the target.
 
 namespace SandeClemDabkowski2026
 
-open List Minimalist.Linearization OptimalityTheory Guebie
+open List Minimalist Linearization OptimalityTheory Guebie
 
 /-! ### Predicate fronting and its two Spell-outs -/
 
@@ -247,8 +247,6 @@ theorem optimal_rootFree :
 
 /-! ### The derivations -/
 
-open Minimalist (LIToken PlanarSyntacticObject)
-open Minimalist (Derivation)
 
 /-- Each terminal spells out its own lexical item. -/
 def Terminal.token : Terminal → LIToken
@@ -276,27 +274,25 @@ verb. -/
 def remnant : PlanarSyntacticObject :=
   {.traceOf Terminal.object.token, {.leaf Terminal.particle.token, .traceOf Terminal.verb.token}}
 
-open Minimalist (Step)
-open Minimalist.SyntacticObject (leaf)
 
 /-- The head and complement of the vP are built as in (31)–(34). The particle and the object
 merge with the verb in a head-final VP, v merges on its right, and the verb adjoins to v on the
 right. -/
 def vSteps : List Step :=
-  [.em .left (leaf Terminal.particle.token), .em .left (leaf Terminal.object.token),
-    .em .right (leaf v₀), .im (leaf Terminal.verb.token) .right]
+  [.em .left Terminal.particle.token, .em .left Terminal.object.token,
+    .em .right v₀, .im Terminal.verb.token .right]
 
 /-- The subject merges in Spec,vP and the object shifts above the vP. -/
 def edgeSteps : List Step :=
-  [.em .left (leaf Terminal.subject.token), .im (leaf Terminal.object.token)]
+  [.em .left Terminal.subject.token, .im Terminal.object.token]
 
 /-- The subject raises to Spec,TP and C merges. -/
-def cSteps : List Step := [.im (leaf Terminal.subject.token), .em .left (leaf C₀)]
+def cSteps : List Step := [.im Terminal.subject.token, .em .left C₀]
 
 /-- A clause is spelled out twice: the head and complement of its vP when C merges
 (l.1255–1260), and its CP at the end of the derivation. -/
 def vPSchedule (d : Derivation) : List (ℕ × ℕ) :=
-  [(vSteps.length, (d.mergeStage? (leaf C₀)).getD d.length), (d.length, d.length)]
+  [(vSteps.length, (d.mergeStage? C₀).getD d.length), (d.length, d.length)]
 
 namespace Clause
 
@@ -304,15 +300,15 @@ variable (c : Clause)
 
 /-- Either the auxiliary merges in T, or T merges and the verb raises to it. -/
 def tSteps : List Step :=
-  if c.hasAux then [.em .left (leaf Terminal.aux.token)]
-  else [.em .left (leaf T₀), .im (leaf Terminal.verb.token)]
+  if c.hasAux then [.em .left Terminal.aux.token]
+  else [.em .left T₀, .im Terminal.verb.token]
 
 /-- Focus fronts the remnant VP to Spec,CP. -/
 def focusSteps : List Step := if c.fronted then [.im remnant.toSyntacticObject] else []
 
 /-- A clause's derivation starts from the verb. -/
 def derivation : Derivation :=
-  ⟨leaf Terminal.verb.token, vSteps ++ edgeSteps ++ c.tSteps ++ cSteps ++ c.focusSteps⟩
+  ⟨Terminal.verb.token, vSteps ++ edgeSteps ++ c.tSteps ++ cSteps ++ c.focusSteps⟩
 
 /-- The derivation's Spell-outs are the vP and CP snapshots. -/
 theorem spellouts_eq_phases :
@@ -334,7 +330,7 @@ end Clause
 /-- In this variant of the fronted clause with an auxiliary, the object shifts only after C
 merges. -/
 def lateShift : Derivation :=
-  ⟨leaf Terminal.verb.token, vSteps ++ edgeSteps.take 1 ++ (Clause.mk true true).tSteps ++ cSteps ++
+  ⟨Terminal.verb.token, vSteps ++ edgeSteps.take 1 ++ (Clause.mk true true).tSteps ++ cSteps ++
     edgeSteps.drop 1 ++ (Clause.mk true true).focusSteps⟩
 
 /-- Object shift lets the particle front (§6.2). If the object shifted only after C merged, the

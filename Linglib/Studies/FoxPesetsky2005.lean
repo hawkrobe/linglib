@@ -24,7 +24,7 @@ they linearize predicts the sentences' judgments (`rows_predicted`).
 
 namespace FoxPesetsky2005
 
-open Minimalist.Linearization
+open Minimalist Linearization
 
 variable {α : Type*} {X Y Z a : α}
 
@@ -100,7 +100,6 @@ inductive Terminal
   | S | V | O | adv | C | aux | XP
   deriving DecidableEq, Repr
 
-open Minimalist (LIToken)
 
 /-- Each terminal spells out its own lexical item. -/
 def Terminal.token : Terminal → LIToken
@@ -134,39 +133,37 @@ inductive Sketch
 namespace Sketch
 
 open Terminal
-open Minimalist (Derivation Step)
-open Minimalist.SyntacticObject (leaf)
 
 /-- The VP of a sketch is the verb with its object, preceded in (24) and (26) by the intervener,
 which in (26) moves to the VP edge. -/
 def vpSteps : Sketch → List Step
-  | verbToC | embedded | auxiliary => [.em .right (leaf O.token)]
-  | intervener => [.em .right (leaf XP.token), .em .right (leaf O.token)]
+  | verbToC | embedded | auxiliary => [.em .right O.token]
+  | intervener => [.em .right XP.token, .em .right O.token]
   | intervenerFronted =>
-    [.em .right (leaf XP.token), .em .right (leaf O.token), .im (leaf XP.token)]
+    [.em .right XP.token, .em .right O.token, .im XP.token]
 
 /-- Above the VP the adverb adjoins, the object shifts and the subject merges, and then the
 verb, the auxiliary or the intervener moves to C, as the bracketings (20b)–(22b), (24) and (26)
 show. -/
 def cpSteps : Sketch → List Step
   | verbToC =>
-    [.em .left (leaf adv.token), .im (leaf O.token), .em .left (leaf S.token),
-      .im (leaf V.token), .im (leaf S.token)]
+    [.em .left adv.token, .im O.token, .em .left S.token,
+      .im V.token, .im S.token]
   | embedded =>
-    [.em .left (leaf adv.token), .im (leaf O.token), .em .left (leaf S.token),
-      .em .left (leaf C.token)]
+    [.em .left adv.token, .im O.token, .em .left S.token,
+      .em .left C.token]
   | auxiliary =>
-    [.em .left (leaf aux.token), .em .left (leaf adv.token), .im (leaf O.token),
-      .em .left (leaf S.token), .im (leaf aux.token), .im (leaf S.token)]
+    [.em .left aux.token, .em .left adv.token, .im O.token,
+      .em .left S.token, .im aux.token, .im S.token]
   | intervener =>
-    [.em .left (leaf adv.token), .im (leaf O.token), .em .left (leaf S.token),
-      .im (leaf V.token), .im (leaf S.token)]
+    [.em .left adv.token, .im O.token, .em .left S.token,
+      .im V.token, .im S.token]
   | intervenerFronted =>
-    [.em .left (leaf adv.token), .im (leaf O.token), .em .left (leaf S.token),
-      .im (leaf V.token), .im (leaf XP.token)]
+    [.em .left adv.token, .im O.token, .em .left S.token,
+      .im V.token, .im XP.token]
 
 /-- A sketch's derivation starts from the verb. -/
-def derivation (s : Sketch) : Derivation := ⟨leaf V.token, s.vpSteps ++ s.cpSteps⟩
+def derivation (s : Sketch) : Derivation := ⟨V.token, s.vpSteps ++ s.cpSteps⟩
 
 /-- The VP is spelled out when it is built, and the CP at the end of the derivation. -/
 def schedule (s : Sketch) : List (ℕ × ℕ) :=
