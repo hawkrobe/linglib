@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Degree.Aggregation
+public import Linglib.Core.SocialChoice.Rules
 public import Linglib.Semantics.Degree.MeasurePhrase
 public import Linglib.Semantics.Degree.UniversalScale
 
@@ -31,8 +31,8 @@ across adjectives meaningful from merely ordinal measures, which van Rooij count
 
 ## Implementation notes
 
-* A measure on individual–adjective pairs is a profile of `Degree.Aggregation` with adjectives as
-  dimensions, following the paper's analogy with interpersonal comparisons of utility. The
+* A measure on individual–adjective pairs is a profile of `SocialChoice` with adjectives as its
+  individuals, following the paper's analogy with interpersonal comparisons of utility. The
   co-ordinal, co-interval and co-ratio scales are Sen's comparability classes `ordinalLevel`,
   `cardinalFull` and `ratioFull`, and separate scales per adjective are `ordinal`.
 * Measures are real-valued, as in the paper; universal degrees are rational.
@@ -54,7 +54,7 @@ across adjectives meaningful from merely ordinal measures, which van Rooij count
 
 namespace VanRooij2011
 
-open Degree Degree.Aggregation Finset
+open Degree SocialChoice Finset
 
 variable {X Ad K : Type*}
 
@@ -66,7 +66,8 @@ theorem pairs_transform (f : Ad → K → K) (v : Profile Ad X K) (p : X × Ad) 
 
 /-! ### Comparisons across adjectives -/
 
-/-- *x is P-er than y is Q*: the pair of `x` and P measures more than the pair of `y` and Q. -/
+/-- *x is P-er than y is Q* holds when the pair of `x` and P measures more than the pair of `y`
+and Q. -/
 def comparative (x : X) (P : Ad) (y : X) (Q : Ad) (v : Profile Ad X ℝ) : Prop :=
   (x, P) ∈ Comparison.gt.over (pairs v) (pairs v (y, Q))
 
@@ -171,7 +172,7 @@ theorem universal_transform {f : Ad → ℝ → ℝ} (hf : f ∈ (ordinal : Set 
     (v · P) C) x
 
 /-- Read through universal degrees, *x is n times as P as y is Q* survives a separate strictly
-increasing map per adjective: a ratio across adjectives becomes meaningful although each
+increasing map per adjective, so a ratio across adjectives becomes meaningful although each
 adjective's measure is only ordinal. -/
 theorem factor_universal_ordinal (C : Finset X) (x y : X) (P Q : Ad) (n : ℚ) :
     Invariant ordinal fun v : Profile Ad X ℝ ↦
@@ -179,7 +180,7 @@ theorem factor_universal_ordinal (C : Finset X) (x y : X) (P Q : Ad) (n : ℚ) :
   intro f hf v
   simp only [universal_transform hf]
 
-/-- Universal degrees are not in general an affine function of a measure on a ratio scale:
+/-- Universal degrees are not in general an affine function of a measure on a ratio scale, since
 heights of one, two and four give universal degrees of one third, two thirds and one. -/
 theorem universal_not_affine :
     ¬ ∃ a b : ℚ, ∀ i, universalDegree ![(1 : ℕ), 2, 4] univ i = a * ![(1 : ℚ), 2, 4] i + b := by
@@ -205,15 +206,15 @@ theorem shorter_iff_taller {E : Type*} (height : E → ℝ) (m : ℝ) (x y : E) 
   simp only [differentialComparative]
   constructor <;> intro h <;> linarith
 
-/-- Ratios of shortness are not meaningful: shortnesses of six and two make one three times as
-short, and moving the origin by one makes the ratio five. -/
+/-- Ratios of shortness are not meaningful, since shortnesses of six and two make one three times
+as short, and moving the origin by one makes the ratio five. -/
 theorem three_times_as_short_not_meaningful :
     factorEquative ![(-6 : ℝ), -2] 0 1 3 ∧ ¬ factorEquative (fun i ↦ ![(-6 : ℝ), -2] i + 1) 0 1 3 :=
   ⟨by norm_num [factorEquative], by norm_num [factorEquative]⟩
 
 /-- Aggregating the dimensions of a multidimensional adjective by a weighted sum is not
 meaningful on a co-ordinal scale, unlike aggregating by the minimum
-(`Degree.Aggregation.maximin_ordinalLevelInvariant`). -/
+(`SocialChoice.maximin_ordinalLevelInvariant`). -/
 theorem not_utilitarian_ordinalLevel :
     ¬ Invariant ordinalLevel (utilitarian ![(1 : ℚ), 1] : Rule (Fin 2) (Fin 2) ℚ) := by
   intro h
