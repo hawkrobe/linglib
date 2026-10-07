@@ -307,6 +307,10 @@ def number : DiathesisAlternation → List ℕ
   | .directionalPhrase => [7, 8]
   | .obligatoryPassive => [8, 1]
 
+/-- The alternation numbered `n` in Part One, if there is one. -/
+def ofNumber? (n : List ℕ) : Option DiathesisAlternation :=
+  DiathesisAlternation.enumList.find? (·.number = n)
+
 /-- The section title in Part One. -/
 def name : DiathesisAlternation → String
   | .objectOfTransitiveSubjectOfIntransitive =>

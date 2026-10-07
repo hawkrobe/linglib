@@ -1,14 +1,18 @@
 #!/usr/bin/env python3
 """Check that every English verb entry's `levinClasses` equals the set of Levin classes whose
-member lists (Linglib/Semantics/ArgumentStructure/LevinClass/Members.lean) carry its citation
-form, less its `levinExcluded`. Exit status 1 on any mismatch."""
-import re, sys, collections, pathlib
+member lists (Linglib/Data/VerbClasses/Levin1993.json, read through `LevinClass.members`) carry its
+citation form, less its `levinExcluded`. Exit status 1 on any mismatch."""
+import re, sys, json, collections, pathlib
 root = pathlib.Path(__file__).resolve().parent.parent
-members = (root / "Linglib/Semantics/ArgumentStructure/LevinClass/Members.lean").read_text()
-body = members[members.index("def members : LevinClass → List String"):members.index("/-- The classes whose member lists carry the form.")]
+data = json.loads((root / "Linglib/Data/VerbClasses/Levin1993.json").read_text(encoding="utf-8"))
+enum = (root / "Linglib/Semantics/ArgumentStructure/LevinClass.lean").read_text(encoding="utf-8")
+ctors = re.findall(r"^  \| (\w+)\s", enum.split("inductive LevinClass where")[1].split("deriving")[0],
+                   re.M)
+if len(ctors) != len(data["classes"]):
+    sys.exit(f"{len(ctors)} LevinClass constructors but {len(data['classes'])} classes in the data")
 verb2 = collections.defaultdict(set)
-for ctor, lst in re.findall(r"\| \.(\w+) => \[([\s\S]*?)\]\n", body):
-    for w in re.findall(r'"([^"]*)"', lst):
+for ctor, cls in zip(ctors, data["classes"]):
+    for w in cls["members"]:
         verb2[w].add(ctor)
 frag = "\n".join(f.read_text() for f in sorted((root / "Linglib/Fragments/English/Verbs").glob("*.lean")))
 blocks = re.split(r"(?=^(?:/--(?:(?!-/).)*?-/\n)?def \w+ : Verb)", frag, flags=re.M | re.S)

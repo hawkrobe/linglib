@@ -478,8 +478,7 @@ def tap : Verb := .mkRegular {
 def flash : Verb := .mkRegular {
   form := "flash"
   frames := [ArgumentFrame.intransitive, ArgumentFrame.np, ArgumentFrame.unaccusative,
-    ⟨some .nominal, [.nominal, .adpositional (some .spatial)]⟩,
-    ArgumentFrame.np_pp (some Adpositions.with_)]
+    ArgumentFrame.pp none, ArgumentFrame.np_pp (some Adpositions.with_)]
   passivizable := false
   vendlerClass := some .semelfactive
   levinClasses := {LevinClass.crane, .lightEmission} }
@@ -514,8 +513,7 @@ def drown : Verb := .mkRegular {
 /-- "glow" — Levin 43.1 Light Emission verbs. -/
 def glow : Verb := .mkRegular {
   form := "glow"
-  frames := [ArgumentFrame.unaccusative, ArgumentFrame.np,
-    ⟨some .nominal, [.nominal, .adpositional (some .spatial)]⟩,
+  frames := [ArgumentFrame.unaccusative, ArgumentFrame.np, ArgumentFrame.pp none,
     ArgumentFrame.np_pp (some Adpositions.with_)]
   passivizable := false
   vendlerClass := some .state

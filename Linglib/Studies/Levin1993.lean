@@ -251,9 +251,9 @@ refining both frames of each schema the page attests for the whole class, and no
 schema it stars. -/
 theorem frames_realize_class :
     ∀ v ∈ English.Verbs.verbs, v.levinClasses.Nonempty → ∃ c ∈ v.levinClasses,
-      ∀ p ∈ c.properties, ∀ a ∈ p.property.alternation?, ∀ σ ∈ schema? a,
-        (p.attestation = .attested → p.scope = .all → v.toVerb.Alternates σ) ∧
-          (p.attestation = .starred → ¬ v.toVerb.Alternates σ) := by
+      ∀ p ∈ c.properties, ∀ a ∈ p.alternation?, ∀ σ ∈ schema? a,
+        (p.diacritic = .none → p.scope = .all → v.toVerb.Alternates σ) ∧
+          (p.diacritic = .star → ¬ v.toVerb.Alternates σ) := by
   decide +kernel
 
 end Levin1993

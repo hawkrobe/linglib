@@ -100,6 +100,21 @@ at fixed sentence lengths, as a paper prints them (values as scaled integers).
 - **Generator**: `scripts/gen_ud_deplength.py` (`--check` verifies sync)
 - **Input/Output**: `Linglib/Data/UD/DependencyLength/{Paper}.json` → `{Paper}.lean`
 
+### Verb class catalogues
+
+A book's catalogue of verb classes, one entry per class in the book's order: the section number
+and title it prints, the page on which the class begins, the members by citation form and those
+the book marks as doubtful, and the property table, each line naming an alternation by its section
+number in the book's catalogue of alternations or a further property, with the book's diacritic,
+scope and any further qualifier. The vocabulary is Levin's (1993); a catalogue with another
+vocabulary needs its own schema. `LevinClass.entry` reads a class's entry by constructor index,
+checked against the section numbers.
+
+- **Schema**: `Linglib/Data/VerbClasses/Schema.lean`
+- **Generator**: `scripts/gen_verb_classes.py` (`--check` verifies sync; alternation numbers are
+  validated against `DiathesisAlternation.number`)
+- **Input/Output**: `Linglib/Data/VerbClasses/{Book}.json` → `{Book}.lean`
+
 ### Hiatus resolution samples
 
 A paper's survey of which vowel elides where two vowels meet: for each language of the sample,
