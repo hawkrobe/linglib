@@ -317,39 +317,41 @@ theorem toERCs_consistent : (ERC.linearExtensions (toERCs r)).Nonempty := by
   obtain ⟨σ, hσ⟩ := exists_isConsistent r
   exact ⟨σ, ERC.mem_linearExtensions.mpr (satisfiedBy_toERCs.mpr hσ)⟩
 
-/-- The **order-ideal antimatroid** of a grammar — the simple-ERC Birkhoff
-antimatroid (`Antimat.ofSimple`) of its Hasse-edge encoding, whose feasible
-sets are exactly the order ideals of `r`
-(`orderIdealAntimatroid_isFeasible_iff`). -/
+/-- The order-ideal antimatroid of a partial order is the antimatroid of its encoding as simple
+ERCs, whose feasible sets are its order ideals (`orderIdealAntimatroid_isFeasible_iff`). -/
 def orderIdealAntimatroid : Antimatroid (Fin n) :=
-  Antimat.ofSimple (toERCs r) (toERCs_consistent r) (toERCs_isSimple_or_isTrivial r)
+  ERC.toAntimatroid _ ((ERC.linearExtensions_nonempty_iff _).mp (toERCs_consistent r))
 
-omit [IsPartialOrder (Fin n) r] in
-/-- Local feasibility against `toERCs r` is exactly the order-ideal
-condition — whenever `b ∈ S` and `a` dominates `b`, also `a ∈ S`. -/
-theorem feasible_toERCs_iff {S : Finset (Fin n)} :
-    Feasible (toERCs r) S ↔ ∀ a b, r a b → b ∈ S → a ∈ S := by
-  constructor
-  · intro h a b hrel hbS
-    rcases eq_or_ne a b with rfl | hab
+/-- A set is feasible for each ERC of the encoding of `r` exactly when it is an order ideal of
+`r`, containing every constraint above one of its members. -/
+theorem forall_isFeasible_toERCs_iff {S : Finset (Fin n)} :
+    (∀ α ∈ toERCs r, ERC.IsFeasible {α} (S : Set (Fin n))) ↔ ∀ a b, r a b → b ∈ S → a ∈ S := by
+  obtain ⟨σ, hσ⟩ := toERCs_consistent r
+  have hsat : ∀ α ∈ toERCs r, ∃ σ : Ranking (Fin n) n, ERC.SatisfiedBy σ α :=
+    fun α hα ↦ ⟨σ, ERC.mem_linearExtensions.mp hσ α hα⟩
+  refine ⟨fun h a b hrel hbS ↦ ?_, fun h α hα ↦ ?_⟩
+  · rcases eq_or_ne a b with rfl | hab
     · exact hbS
-    · obtain ⟨w, hwW, hwS⟩ :=
-        h (simpleERC a b) (mem_toERCs.mpr ⟨a, b, hrel, rfl⟩)
-          ⟨b, simpleERC_apply_L hab, hbS⟩
+    · have hα := mem_toERCs.mpr ⟨a, b, hrel, rfl⟩
+      obtain ⟨w, hwS, hwW⟩ := (ERC.isFeasible_singleton_iff (hsat _ hα) S).mp (h _ hα)
+        ⟨b, hbS, simpleERC_apply_L hab⟩
       rwa [(simpleERC_eq_W_iff w).mp hwW] at hwS
-  · intro h α hα
+  · rw [ERC.isFeasible_singleton_iff (hsat α hα)]
     obtain ⟨a, b, hrel, rfl⟩ := mem_toERCs.mp hα
-    rintro ⟨l, hlL, hlS⟩
+    rintro ⟨l, hlS, hlL⟩
     have hab : a ≠ b := by rintro rfl; exact simpleERC_self_isTrivial a l hlL
     rw [(simpleERC_eq_L_iff hab l).mp hlL] at hlS
-    exact ⟨a, simpleERC_apply_W, h a b hrel hlS⟩
+    exact ⟨a, h a b hrel hlS, simpleERC_apply_W⟩
 
-/-- The feasible sets of `orderIdealAntimatroid` are the order ideals of `r` — the
-Birkhoff correspondence, made concrete and decidable. -/
+/-- The feasible sets of `orderIdealAntimatroid` are the order ideals of `r`. -/
 @[simp] theorem orderIdealAntimatroid_isFeasible_iff {S : Finset (Fin n)} :
     (orderIdealAntimatroid r).IsFeasible (↑S : Set (Fin n)) ↔
       ∀ a b, r a b → b ∈ S → a ∈ S := by
-  simp only [orderIdealAntimatroid, ofSimple_isFeasible_coe, feasible_toERCs_iff]
+  rw [orderIdealAntimatroid, ERC.toAntimatroid_isFeasible,
+    ERC.isFeasible_iff_forall_singleton_of_simple
+      ((ERC.linearExtensions_nonempty_iff _).mp (toERCs_consistent r))
+      (toERCs_isSimple_or_isTrivial r)]
+  exact forall_isFeasible_toERCs_iff r
 
 variable {r}
 

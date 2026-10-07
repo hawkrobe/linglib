@@ -78,13 +78,11 @@ structure SetSystem (α : Type*) where
 structure AccessibleSetSystem (α : Type*) extends SetSystem α where
   /-- The ground set is feasible. -/
   ground_feasible : IsFeasible E
-  /-- **Augmentation**: every feasible set that is not the ground set
-      can be extended by adding one element from `E` to produce another
-      feasible set. -/
+  /-- Every feasible set other than the ground set extends by an element of the ground set to
+      a feasible set. -/
   augmentation : ∀ S, IsFeasible S → S ≠ E →
     ∃ x ∈ E, x ∉ S ∧ IsFeasible (insert x S)
-  /-- **Removal**: every non-empty feasible set can be shrunk by
-      removing one element to produce another feasible set. -/
+  /-- Every nonempty feasible set shrinks by one of its elements to a feasible set. -/
   removal : ∀ S, IsFeasible S → S.Nonempty →
     ∃ x ∈ S, IsFeasible (S \ {x})
 
@@ -102,13 +100,8 @@ structure AccessibleSetSystem (α : Type*) extends SetSystem α where
 
     [merchant-riggle-2016] Definition 5. -/
 structure Antimatroid (α : Type*) extends AccessibleSetSystem α where
-  /-- **Union closure**: the union of any two feasible sets is feasible.
-
-      This property distinguishes antimatroids from arbitrary accessible
-      set systems. It corresponds to the fact that consistent ERC sets
-      have "disjunctive" ranking requirements — if two partial rankings
-      are consistent, their union (combining their requirements) is also
-      consistent. -/
+  /-- The union of two feasible sets is feasible, which distinguishes antimatroids among
+      accessible set systems. -/
   union_closed : ∀ S T, IsFeasible S → IsFeasible T → IsFeasible (S ∪ T)
 
 /-! ### Finiteness -/
@@ -125,6 +118,13 @@ theorem Antimatroid.ground_finite {α : Type*} (A : Antimatroid α)
 /-! ### Basic properties -/
 
 variable {α : Type*}
+
+/-- Antimatroids with the same ground set and the same feasible sets are equal. -/
+@[ext] theorem Antimatroid.ext {A B : Antimatroid α} (hE : A.E = B.E)
+    (hF : A.IsFeasible = B.IsFeasible) : A = B := by
+  obtain ⟨⟨⟨E, F, _, _⟩, _, _, _⟩, _⟩ := A
+  obtain ⟨⟨⟨E', F', _, _⟩, _, _, _⟩, _⟩ := B
+  cases hE; cases hF; rfl
 
 /-- The ground set of an antimatroid is feasible. -/
 theorem Antimatroid.ground_isFeasible (A : Antimatroid α) :
@@ -213,7 +213,7 @@ def Antimatroid.trace (A : Antimatroid α) (S : Set α) (_hS : S ⊆ A.E) :
 
     Rooted circuits are the minimal subsets of `E` that encode actual
     ranking requirements. Each rooted circuit corresponds to exactly
-    one ERC under the `RCErc` map.
+    one ERC under `OptimalityTheory.ERC.ofRootedCircuit`.
 
     The **root** of the circuit is the unique element `r ∈ S` such that
     `{r}` is not feasible in `A : S`.
@@ -240,9 +240,8 @@ structure Antimatroid.RootedCircuit (A : Antimatroid α) where
 
 /-! ### Rooted-circuit extraction ([dietrich-1987]) -/
 
-/-- Inside a finite feasible set, every element has a *first appearance*: a
-    feasible subset not containing it whose one-element extension by it is
-    feasible and stays inside. Repeated `removal` finds the step. -/
+/-- Every element of a finite feasible set enters it at some step: some feasible subset without
+    the element stays feasible when the element is added. Repeated `removal` finds the step. -/
 theorem Antimatroid.exists_insert_step (A : Antimatroid α) {G : Set α}
     (hfin : G.Finite) (hG : A.IsFeasible G) {x : α} (hx : x ∈ G) :
     ∃ H, A.IsFeasible H ∧ H ⊆ G ∧ x ∉ H ∧ A.IsFeasible (insert x H) := by
@@ -257,9 +256,9 @@ theorem Antimatroid.exists_insert_step (A : Antimatroid α) {G : Set α}
         (hfin.subset Set.sdiff_subset) hz_feas ⟨hx, hzx.symm⟩ rfl
       exact ⟨H, h1, h2.trans Set.sdiff_subset, h3, h4⟩
 
-/-- **Rooted-circuit extraction** ([dietrich-1987]; [merchant-riggle-2016]
-    Lemmas 7, 9): if no feasible set meets `W` exactly in `{x}`, some rooted
-    circuit rooted at `x` has its carrier inside `W`. The carrier is a
+/-- If no feasible set meets `W` exactly in `{x}`, some rooted circuit rooted at `x` has its
+    carrier inside `W`. This is the hard direction of [dietrich-1987]'s characterization of the
+    feasible sets by the rooted circuits, Lemma 8 of [merchant-riggle-2016]. The carrier is a
     cardinality-minimal critical subset; minimality forces every proper trace
     free, via the two-point sets `F ∩ C = {x, w}` that near-critical
     subsets provide. -/
