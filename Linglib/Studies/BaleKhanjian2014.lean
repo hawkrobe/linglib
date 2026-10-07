@@ -53,7 +53,7 @@ definite singular.
 * [singh-2011] — Maximize Presupposition in local contexts
 * [donabedian-1993] — general number in Western Armenian
 * [link-1983] — the supremum operator
-* [sauerland-2003], [krifka-1989], [spector-2007] — number competition
+* [sauerland-2003], [krifka-1989], [spector-2007b] — number competition
 -/
 
 @[expose] public section

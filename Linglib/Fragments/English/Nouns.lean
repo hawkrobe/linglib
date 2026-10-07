@@ -17,6 +17,7 @@ count noun is not, which Chierchia derives from the Nominal Mapping Parameter
 
 ## Main definitions
 
+* `numberSystem`: the singular and the plural.
 * `Noun`: the entry, with `Noun.realize` giving its form at a number.
 * `Noun.toWordSg`, `Noun.toWord`: the entry as a `Word` token.
 
@@ -56,12 +57,20 @@ def Noun.common (form : String) : Noun :=
 /-- A mass noun, which no numeral counts and which has no plural. -/
 def Noun.mass (form : String) : Noun := { form, gloss := form, counters := ∅ }
 
+/-- English nouns distinguish two numbers, the singular and the plural. -/
+def numberSystem : Number.System := { values := [.singular, .plural] }
+
 /-- The form at a number is the citation form in the singular and the plural where the noun has
 one. -/
 def Noun.realize (n : Noun) : Number → Option String
   | .singular => some n.form
   | .plural => n.plural
   | _ => none
+
+/-- A noun has no form at a number outside the system. -/
+theorem Noun.realize_eq_none (n : Noun) {m : Number} (hm : m ∉ numberSystem.values) :
+    n.realize m = none := by
+  cases m <;> simp_all [numberSystem, Noun.realize]
 
 /-- The singular word token is a `NOUN` with the gender where the entry has one. -/
 def Noun.toWordSg (n : Noun) : Word :=

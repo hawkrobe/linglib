@@ -8,14 +8,16 @@ module
 public import Mathlib.MeasureTheory.Measure.Dirac.Basic
 public import Mathlib.MeasureTheory.Measure.Real
 public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
+public import Mathlib.MeasureTheory.Measure.Typeclasses.ZeroOne
 
 /-!
-# Finite sums of Dirac measures
+# Dirac measures and their finite sums
 
-On a finite type with measurable singletons, `∑ b, w b • dirac b` gives a set the total weight
-of its points; `Measure.ofWeights w` names it. With nonnegative real weights its real values are
-sums of those weights, and it is a probability measure when they sum to one. `[UPSTREAM]`
-candidate for `Mathlib/MeasureTheory/Measure/Dirac.lean`.
+A Dirac measure is a zero-one measure, and a probability measure almost surely equal to a point
+is the Dirac measure at it. On a finite type with measurable singletons, `∑ b, w b • dirac b`
+gives a set the total weight of its points; `Measure.ofWeights w` names it. With nonnegative real
+weights its real values are sums of those weights, and it is a probability measure when they sum
+to one. `[UPSTREAM]` candidate for `Mathlib/MeasureTheory/Measure/Dirac.lean`.
 -/
 
 @[expose] public section
@@ -23,6 +25,27 @@ candidate for `Mathlib/MeasureTheory/Measure/Dirac.lean`.
 open scoped ENNReal
 
 namespace MeasureTheory.Measure
+
+section PointMass
+
+variable {α : Type*} [MeasurableSpace α]
+
+instance (a : α) : IsZeroOneMeasure (dirac a) := ⟨fun _ _ ↦ dirac_apply_eq_zero_or_one⟩
+
+/-- A probability measure almost surely equal to a point is the Dirac measure at it. -/
+theorem eq_dirac_of_ae_eq [MeasurableSingletonClass α] {μ : Measure α} [IsProbabilityMeasure μ]
+    {a : α} (h : ∀ᵐ x ∂μ, x = a) : μ = dirac a := by
+  have h0 : μ {a}ᶜ = 0 := by have := ae_iff.1 h; exact this
+  ext s hs
+  rw [dirac_apply' _ hs, ← measure_inter_add_sdiff s (measurableSet_singleton a),
+    measure_mono_null (s := s \ {a}) (fun _ hx ↦ hx.2) h0, add_zero]
+  by_cases has : a ∈ s
+  · rw [Set.inter_eq_right.2 (Set.singleton_subset_iff.2 has), Set.indicator_of_mem has,
+      Pi.one_apply, ← prob_compl_eq_zero_iff (measurableSet_singleton a), h0]
+  · rw [Set.indicator_of_notMem has]
+    exact measure_mono_null (fun x hx (hxa : x = a) ↦ has (hxa ▸ hx.1)) h0
+
+end PointMass
 
 variable {β : Type*} [MeasurableSpace β] [Fintype β] [MeasurableSingletonClass β]
 
