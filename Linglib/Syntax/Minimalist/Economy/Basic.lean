@@ -14,8 +14,7 @@ is built once; and the Agree operations and applications of ellipsis that
 [citko-gracanin-yuksek-2025] weigh alongside them. Costs are ordered pointwise: a derivation is
 more economical than another when it is no worse on every dimension and better on one. The order
 is well-founded (Dickson's lemma, `Pi.wellFoundedLT`), so every reference set has a winner
-(`WellFoundedLT.exists_minimal`). The cost of a planar object is read off its terms by
-`Minimalist.planarCost` in `Linearization/Chain.lean`.
+(`WellFoundedLT.exists_minimal`). A study reads the cost of a planar object off its terms.
 
 ## Main definitions
 

@@ -23,7 +23,7 @@ on how accessible terms are cut out, so the operator is defined over an arbitrar
 unit stage `M_{β,1}` of Internal Merge (Proposition 1.4.2) has no grafting step (`mergeOpUnitG`).
 
 External, Internal and Sideward Merge are in `Merge/External.lean`, `Merge/Internal.lean` and
-`Merge/Sideward.lean`; the Minimal-Search weighting is in `Economy/MinimalSearch.lean`.
+`Merge/Sideward.lean`; the Minimal-Search weighting is in `Merge/MinimalSearch.lean`.
 
 ## Main definitions
 

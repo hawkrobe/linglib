@@ -31,7 +31,7 @@ the second deletion silences nothing new, and it forces the nonpaired sluice to 
 complementizers, only one bearing [E]. In right node raising the same economy prefers sharing
 the pivot to building it twice and, when the verbs match, sharing the verb phrase to eliding it.
 
-Each candidate is a planar syntactic object with the chains of `Linearization/Chain.lean`, spelled
+Each candidate is a planar syntactic object with the chains of `SyntacticObject/Chain.lean`, spelled
 out as `Linearization/Spellout.lean` does: a token at two positions is shared, a moved wh-phrase
 leaves the traces of its head at the vP edge and its base position, and the coordinator is left
 out, so a string is its conjuncts' words. The predictions decide: the pronounced strings, the
