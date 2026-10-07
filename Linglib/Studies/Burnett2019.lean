@@ -7,17 +7,16 @@ public import Linglib.Studies.Labov2012
 /-!
 # Burnett (2019): Signalling games, sociolinguistic variation and the construction of style
 
-This file formalizes the social meaning games of [burnett-2019]. A speaker choosing between
-*-ing* and *-in'* conveys something about the persona they are constructing, and the paper
-takes that inference to be the equilibrium of a signalling game between a rational speaker and
-listener: each variant is compatible with the personae sharing a property with its indexical
-field, the listener infers a persona from the variant against a prior, and the speaker chooses
-the variant that best conveys the persona they are after. Two kinds of variation come out of
-the one model. A speaker holding a persona fixed changes variants as the context changes the
-listener's prior, style shifting, here [labov-2012]'s Obama who prefers *-in'* at a barbecue and
-*-ing* with the journalists; and a listener holding the variant fixed infers different personae
-from different speakers, so that a strongly stereotyped speaker such as the paper's Bush
-conveys nothing by the choice.
+This file formalizes Burnett's social meaning games. A speaker choosing between *-ing* and *-in'*
+conveys something about the persona they are constructing, and the paper takes that inference to be
+the equilibrium of a signalling game between a rational speaker and listener: each variant is
+compatible with the personae sharing a property with its indexical field, the listener infers a
+persona from the variant against a prior, and the speaker chooses the variant that best conveys the
+persona they are after. Two kinds of variation come out of the one model. A speaker holding a
+persona fixed changes variants as the context changes the listener's prior, style shifting, here
+Labov's Obama who prefers *-in'* at a barbecue and *-ing* with the journalists; and a listener
+holding the variant fixed infers different personae from different speakers, so that a strongly
+stereotyped speaker such as the paper's Bush conveys nothing by the choice.
 
 The property space is the example's two dimensions, competence and warmth, and the four
 personae of example (6) are its maximal consistent sets (`personae_eq`). The meaning of a
@@ -127,12 +126,12 @@ noncomputable abbrev L0 (prior : Measure Persona) : Kernel INGVariant Persona :=
 
 /-- The speaker, the softmax of the literal listener at rationality 6 (p. 435), without costs. -/
 noncomputable abbrev S1 (prior : Measure Persona) : Kernel Persona INGVariant :=
-  speaker 6 (λ _ => 1) (L0 prior)
+  speaker 6 (λ _ => 0) (L0 prior)
 
 /-- The pragmatic listener inverts the speaker against the prior. -/
 noncomputable abbrev L1 (prior : Measure Persona) [IsFiniteMeasure prior] :
     Kernel INGVariant Persona :=
-  pragmaticListener 6 (λ _ => 1) (L0 prior) prior
+  pragmaticListener 6 (λ _ => 0) (L0 prior) prior
 
 /-! ### The extensions differ in one persona each
 
@@ -191,8 +190,8 @@ theorem prefers_iff (prior : Measure Persona) [IsFiniteMeasure prior] {p : Perso
     (h₂ : p ∈ ingField.personae v₂) (h0 : prior {p} ≠ 0) :
     (S1 prior p).real {v₁} < (S1 prior p).real {v₂}
       ↔ prior {excluded v₁} < prior {excluded v₂} := by
-  rw [ingField.speaker_indexation_real_singleton_lt_iff prior (by norm_num) one_ne_zero
-    ENNReal.one_ne_top h0 h₁ h₂, measure_personae_lt_iff prior hne]
+  rw [ingField.speaker_indexation_real_singleton_lt_iff prior (by norm_num) h0 h₁ h₂,
+    measure_personae_lt_iff prior hne]
 
 /-! ### The contexts
 
@@ -303,9 +302,9 @@ produced with certainty by the persona it is exclusive to. -/
 theorem sternLeader_certain {w : Persona → ℕ} (hw : ∀ p, w p ≠ 0) :
     S1 (priorOfWeights w) sternLeader {.velar} = 1 ∧
       S1 (priorOfWeights w) doofus {.apical} = 1 :=
-  ⟨ingField.speaker_indexation_eq_one_of_exclusive _ (by norm_num) one_ne_zero ENNReal.one_ne_top
+  ⟨ingField.speaker_indexation_eq_one_of_exclusive _ (by norm_num)
       (priorOfWeights_singleton_ne_zero _ (hw _)) (by decide +kernel) (by decide +kernel),
-    ingField.speaker_indexation_eq_one_of_exclusive _ (by norm_num) one_ne_zero ENNReal.one_ne_top
+    ingField.speaker_indexation_eq_one_of_exclusive _ (by norm_num)
       (priorOfWeights_singleton_ne_zero _ (hw _)) (by decide +kernel) (by decide +kernel)⟩
 
 /-- A variant gives no posterior mass to a persona it cannot convey, so hearing *-ing* rules
@@ -315,10 +314,10 @@ theorem L1_eq_zero_of_excluded {w : Persona → ℕ} (hw : ∀ p, w p ≠ 0) (v 
     L1 (priorOfWeights w) v {excluded v} = 0 := by
   cases v
   · exact ingField.pragmaticListener_indexation_apply_singleton_of_not_meets _ (by norm_num)
-      one_ne_zero ENNReal.one_ne_top (π' := coolGuy) (by decide +kernel) (by decide +kernel)
+      (π' := coolGuy) (by decide +kernel) (by decide +kernel)
       (priorOfWeights_singleton_ne_zero _ (hw _))
   · exact ingField.pragmaticListener_indexation_apply_singleton_of_not_meets _ (by norm_num)
-      one_ne_zero ENNReal.one_ne_top (π' := coolGuy) (by decide +kernel) (by decide +kernel)
+      (π' := coolGuy) (by decide +kernel) (by decide +kernel)
       (priorOfWeights_singleton_ne_zero _ (hw _))
 
 /-- With no prior beliefs the literal listener spreads its mass evenly over the three personae

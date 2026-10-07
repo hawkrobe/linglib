@@ -47,8 +47,9 @@ open scoped ENNReal
 
 /-! ### States, utterances, parses (Tables 1–2) -/
 
-/-- The seven permission states (Table 1): the accessible worlds among taking nothing, only
-Semantics, only Phonology, or both; taking nothing is always accessible. -/
+/-- A permission state (Table 1) is the set of accessible worlds among taking nothing, only
+Semantics, only Phonology, or both. There are seven, since taking nothing is always
+accessible. -/
 inductive State where
   | onlyS | onlyP | only1 | anyNum | only2 | sOr2 | pOr2
   deriving DecidableEq, Repr, Fintype, Inhabited
@@ -64,9 +65,9 @@ inductive Utterance where
 instance : MeasurableSpace Utterance := ⊤
 instance : DiscreteMeasurableSpace Utterance := ⟨fun _ => trivial⟩
 
-/-- The twelve utterance–parse pairs (32)–(35), `a` the weakest parse of each utterance.
-*May any* has two: the weak parse (34a), Szabolcsi's meaning, and the strong parse (34b),
-Dayal's. -/
+/-- The twelve utterance–parse pairs are those of (32)–(35), with `a` the weakest parse of each
+utterance. *May any* has two, the weak parse (34a) giving Szabolcsi's meaning and the strong
+parse (34b) Dayal's. -/
 inductive Parse where
   | sA | sB | sC
   | pA | pB | pC
@@ -122,12 +123,12 @@ theorem literallyTrue_iff (s : State) : LiterallyTrue s ↔ meaning .anyA s := b
 
 /-! ### The Global Intentions model (36)–(41) -/
 
-/-- The speaker's joint choice of utterance and parse (37)–(38) at a uniform prior:
+/-- The speaker chooses utterance and parse jointly (37)–(38) at a uniform prior, with
 `S1(u,p|s) ∝ L0(s|u,p)^α` at equal costs. -/
 noncomputable abbrev speaker (α : ℝ) : Kernel State Parse := uniformSpeaker sem α
 
-/-- The pragmatic listener (40) at a uniform prior: the joint posterior over state and
-intended parse given the utterance; `.fst` is its state marginal (41). -/
+/-- The pragmatic listener (40) at a uniform prior is the joint posterior over state and
+intended parse given the utterance, and `.fst` is its state marginal (41). -/
 noncomputable abbrev listener (α : ℝ) : Kernel Utterance (State × Parse) :=
   uniformJointListener sem Parse.utt α
 
@@ -135,7 +136,7 @@ noncomputable abbrev listener (α : ℝ) : Kernel Utterance (State × Parse) :=
 pragmatic listener (40) alike — the setting of Tables 5–9. -/
 noncomputable def listenerWith (μ : Measure State) [IsFiniteMeasure μ] (α : ℝ) :
     Kernel Utterance (State × Parse) :=
-  jointListener α 1 (literalListener μ fun p => (↑(sem p) : Set State).indicator 1) μ Parse.utt
+  jointListener α 0 (literalListener μ fun p => (↑(sem p) : Set State).indicator 1) μ Parse.utt
 
 /-- At the uniform prior, `listenerWith` is `listener`. -/
 theorem listenerWith_uniformOn (α : ℝ) : listenerWith (uniformOn Set.univ) α = listener α := rfl
@@ -143,8 +144,8 @@ theorem listenerWith_uniformOn (α : ℝ) : listenerWith (uniformOn Set.univ) α
 /-! ### The findings -/
 
 /-- At an exclusiveness state the speaker prefers the strong parse (34b) of *may any* to the
-weak parse (34a) at every rationality: the weak parse is true in five states, the strong in
-two. At `α = 100` the ratio is `(5/2)^100`, the paper's "almost 100% of the time". -/
+weak parse (34a) at every rationality, since the weak parse is true in five states and the
+strong in two. At `α = 100` the ratio is `(5/2)^100`, the paper's "almost 100% of the time". -/
 theorem speaker_prefers_strong_parse {α : ℝ} (hα : 0 < α) {s : State} (hs : meaning .anyB s) :
     (speaker α s).real {.anyA} < (speaker α s).real {.anyB} :=
   uniformSpeaker_real_singleton_lt_of_card_lt sem hα
@@ -172,10 +173,10 @@ theorem mayEvery_rules_out_onlyS {α : ℝ} (hα : 0 < α) (p : Parse) :
       mul_zero, ENNReal.zero_div]
   · exact ENNReal.zero_div
 
-/-- **The exclusiveness implicature** (Table 3): hearing *may any* at a uniform prior, the
-listener prefers each exclusiveness state — Only 1 and Any #, where each class may be taken
-on its own (the paper's 0.50 + 0.50) — to each of Only 2, S or 2, and P or 2 (each ≈ 0), at
-every rationality. -/
+/-- Hearing *may any* at a uniform prior, the listener prefers each exclusiveness state, Only 1
+and Any #, where each class may be taken on its own (the paper's 0.50 + 0.50), to each of
+Only 2, S or 2, and P or 2 (each ≈ 0), at every rationality. This is the exclusiveness
+implicature of Table 3. -/
 theorem exclusiveness_derived {α : ℝ} (hα : 0 < α) :
     ∀ s ∈ ({.only2, .sOr2, .pOr2} : Finset State), ∀ s' ∈ ({.only1, .anyNum} : Finset State),
       (listener α .mayAny).fst.real {s} < (listener α .mayAny).fst.real {s'} := by
@@ -185,24 +186,24 @@ theorem exclusiveness_derived {α : ℝ} (hα : 0 < α) :
       expressible hα (by decide +kernel)
 
 /-- Hearing *may any* at the paper's α = 100, the listener infers the strong parse (34b) over
-the weak parse (34a): the speaker's near-categorical parse preference, pooled over states. -/
+the weak parse (34a), the speaker's near-categorical parse preference pooled over states. -/
 theorem listener_infers_strong_parse :
     (listener 100 .mayAny).snd.real {.anyA} < (listener 100 .mayAny).snd.real {.anyB} :=
   uniformJointListener_snd_real_lt_of_divPowSum sem Parse.utt expressible (k := 100) (D := 60)
     (by decide +kernel) rfl rfl (by decide +kernel)
 
-/-- Hearing *may S*, the listener prefers Only S to S or 2 at every rationality (Table 3:
-0.67 vs 0.33): the doubly exhaustified parse (32c) is available only at Only S. -/
+/-- Hearing *may S*, the listener prefers Only S to S or 2 at every rationality (0.67 against
+0.33 in Table 3), since the doubly exhaustified parse (32c) is available only at Only S. -/
 theorem literal_s_communicates_onlyS {α : ℝ} (hα : 0 < α) :
     (listener α .mayS).fst.real {.sOr2} < (listener α .mayS).fst.real {.onlyS} :=
   uniformJointListener_fst_real_lt_of_prodMul_strictDominates sem Parse.utt expressible hα
     (by decide +kernel)
 
 /-- Hearing *may any* at a uniform prior, Only 1 is strictly likelier than Any # at every
-rationality: both parses of *may any* weigh the same at the two states, but the parse (35b)
-of *may every* is true at Any # and not at Only 1, inflating the speaker's partition there.
-Table 3 reports 0.50/0.50 (at α = 100 the difference is ≈ 2·10⁻³¹); the same asymmetry
-drives the *not every* implicature under an Only-1-favouring prior (Table 6). -/
+rationality. Both parses of *may any* weigh the same at the two states, but the parse (35b) of
+*may every* is true at Any # and not at Only 1, inflating the speaker's partition there.
+Table 3 reports 0.50/0.50 (at α = 100 the difference is ≈ 2·10⁻³¹); the same asymmetry drives
+the *not every* implicature under an Only-1-favouring prior (Table 6). -/
 theorem only1_over_anyNum {α : ℝ} (hα : 0 < α) :
     (listener α .mayAny).fst.real {.anyNum} < (listener α .mayAny).fst.real {.only1} :=
   uniformJointListener_fst_real_lt_of_prodMul_strictDominates sem Parse.utt expressible hα
@@ -218,16 +219,16 @@ def rowState (row : Datum) : Option State :=
   | some "only2" => some .only2
   | _ => none
 
-/-- Whether the row's literal truth is judged: an explicit `literal` reading, else the
-row's own judgment. -/
+/-- A row's literal truth is judged by its explicit `literal` reading if it has one, and
+otherwise by the row's own judgment. -/
 def observedLiteral (row : Datum) : Bool :=
   match row.readings.lookup "literal" with
   | some j => j == .acceptable
   | none => row.judgment == .acceptable
 
 /-- At every scenario with a fixed state, *may any* is literally true exactly where the
-paper judges it so, and the exclusiveness reading holds exactly where Dayal's parse (34b)
-is true: the all-or-nothing scenarios are true but not exclusive. -/
+paper judges it so, and the exclusiveness reading holds exactly where Dayal's parse (34b) is
+true, so the all-or-nothing scenarios are true but not exclusive. -/
 theorem rows_agree : ∀ row ∈ Examples.all, ∀ s ∈ rowState row,
     (LiterallyTrue s ↔ observedLiteral row = true) ∧
       ∀ j ∈ row.readings.lookup "exclusiveness", (meaning .anyB s ↔ j = .acceptable) := by

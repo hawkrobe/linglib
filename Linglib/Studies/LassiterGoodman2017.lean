@@ -62,7 +62,7 @@ instance : Nonempty Utterance := ⟨.silent⟩
 variable {D : Type*} [LinearOrder D] [MeasurableSpace D] [DiscreteMeasurableSpace D]
 
 /-- The meaning of an utterance at a degree under an assignment of thresholds to the adjective
-and its antonym (eqs. 22–23): *tall* holds above the first threshold, *short* below the second,
+and its antonym (eqs. 22–23). *Tall* holds above the first threshold, *short* below the second,
 and silence everywhere. -/
 def sem (θ : D × D) : Utterance → Set D
   | .tall => Set.Ioi θ.1
@@ -83,8 +83,8 @@ section Model
 variable [Fintype D]
 
 /-- The speaker at an assignment (eq. 28) is the family speaker over degrees and assignments at
-rationality `α` with cost factors `cost`. -/
-noncomputable def S1 (μ : Measure D) (α : ℝ) (cost : Utterance → ℝ≥0∞) :
+rationality `α` with costs `cost`. -/
+noncomputable def S1 (μ : Measure D) (α : ℝ) (cost : Utterance → ℝ) :
     Kernel (D × (D × D)) Utterance :=
   familySpeaker (L0 μ) α cost
 
@@ -92,28 +92,27 @@ noncomputable def S1 (μ : Measure D) (α : ℝ) (cost : Utterance → ℝ≥0�
 and the threshold prior. Its first marginal is the degree posterior (eq. 31), its second the
 posterior over assignments (eq. 30). -/
 noncomputable def L1 [Nonempty D] (μ : Measure D) [IsProbabilityMeasure μ]
-    (ν : Measure (D × D)) [IsProbabilityMeasure ν] (α : ℝ) (cost : Utterance → ℝ≥0∞) :
+    (ν : Measure (D × D)) [IsProbabilityMeasure ν] (α : ℝ) (cost : Utterance → ℝ) :
     Kernel Utterance (D × (D × D)) :=
   familyListener (L0 μ) α cost (μ.prod ν)
 
 variable (μ : Measure D) [IsProbabilityMeasure μ] (ν : Measure (D × D)) (α : ℝ)
-  (cost : Utterance → ℝ≥0∞)
+  (cost : Utterance → ℝ)
 
 /-- The speaker produces an utterance at a degree and assignment exactly when it is true there
 and the degree has positive prior. -/
-theorem S1_apply_singleton_ne_zero_iff (hα : 0 < α) (hc0 : ∀ u, cost u ≠ 0)
-    (hctop : ∀ u, cost u ≠ ∞) (d : D) (θ : D × D) (u : Utterance) :
+theorem S1_apply_singleton_ne_zero_iff (hα : 0 < α) (d : D) (θ : D × D) (u : Utterance) :
     S1 μ α cost (d, θ) {u} ≠ 0 ↔ d ∈ sem θ u ∧ μ {d} ≠ 0 :=
-  speaker_literalListener_indicator_apply_singleton_ne_zero_iff hα hc0 hctop μ (sem θ) u d
+  speaker_literalListener_indicator_apply_singleton_ne_zero_iff hα cost μ (sem θ) u d
 
 /-- An utterance true at a degree of positive prior under an assignment of positive prior has
 a positive marginal. -/
-theorem comp_S1_ne_zero (hα : 0 < α) (hc0 : ∀ u, cost u ≠ 0) (hctop : ∀ u, cost u ≠ ∞)
-    {u : Utterance} {d : D} {θ : D × D} (hd : μ {d} ≠ 0) (hθ : ν {θ} ≠ 0) (hu : d ∈ sem θ u) :
+theorem comp_S1_ne_zero (hα : 0 < α) {u : Utterance} {d : D} {θ : D × D} (hd : μ {d} ≠ 0)
+    (hθ : ν {θ} ≠ 0) (hu : d ∈ sem θ u) :
     (S1 μ α cost ∘ₘ μ.prod ν) {u} ≠ 0 :=
   comp_familySpeaker_ne_zero (w := d) (l := θ)
     (by rw [← Set.singleton_prod_singleton, Measure.prod_prod]; exact mul_ne_zero hd hθ)
-    ((S1_apply_singleton_ne_zero_iff μ α cost hα hc0 hctop d θ u).mpr ⟨hu, hd⟩)
+    ((S1_apply_singleton_ne_zero_iff μ α cost hα d θ u).mpr ⟨hu, hd⟩)
 
 variable [Nonempty D] [IsProbabilityMeasure ν]
 
@@ -122,11 +121,10 @@ instance : IsMarkovKernel (L1 μ ν α cost) :=
 
 /-- The pragmatic listener is truthful, putting positive mass on a degree and assignment exactly
 when both have positive prior and the utterance is true at the degree under the assignment. -/
-theorem L1_apply_singleton_ne_zero_iff (hα : 0 < α) (hc0 : ∀ u, cost u ≠ 0)
-    (hctop : ∀ u, cost u ≠ ∞) {u : Utterance} (hu : (S1 μ α cost ∘ₘ μ.prod ν) {u} ≠ 0)
-    (d : D) (θ : D × D) :
+theorem L1_apply_singleton_ne_zero_iff (hα : 0 < α) {u : Utterance}
+    (hu : (S1 μ α cost ∘ₘ μ.prod ν) {u} ≠ 0) (d : D) (θ : D × D) :
     L1 μ ν α cost u {(d, θ)} ≠ 0 ↔ μ {d} ≠ 0 ∧ ν {θ} ≠ 0 ∧ d ∈ sem θ u := by
-  have hs := S1_apply_singleton_ne_zero_iff μ α cost hα hc0 hctop d θ u
+  have hs := S1_apply_singleton_ne_zero_iff μ α cost hα d θ u
   rw [S1, familySpeaker_apply] at hs
   rw [L1, familyListener_apply_singleton _ _ _ hu, ← Set.singleton_prod_singleton,
     Measure.prod_prod]
@@ -144,7 +142,7 @@ instance (u : Utterance) : IsProbabilityMeasure (thresholdPosterior μ ν α cos
   unfold thresholdPosterior; infer_instance
 
 /-- The metalinguistic probability that a degree counts as tall under a threshold measure
-(eq. 32): the mass of thresholds below it. -/
+(eq. 32) is the mass of thresholds below it. -/
 noncomputable def metalinguistic (ρ : Measure D) (d : D) : ℝ≥0∞ := ρ (Set.Iio d)
 
 /-- The metalinguistic probability marginalizes the joint posterior over the degree and the

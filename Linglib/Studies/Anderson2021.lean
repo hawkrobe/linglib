@@ -45,8 +45,8 @@ section Update
 
 variable {W : Type*} [MeasurableSpace W]
 
-/-- §6: the common ground incremented by the pragmatic listener's posterior, discounted by the
-learning rate `lr` — the convex mixture of the two. -/
+/-- The common ground of §6 is incremented by the pragmatic listener's posterior, discounted by
+the learning rate `lr`, as the convex mixture of the two. -/
 noncomputable def updateCG (cg post : Measure W) (lr : ℝ≥0) : Measure W :=
   (1 - lr) • cg + lr • post
 
@@ -65,15 +65,15 @@ theorem updateCG_zero (cg post : Measure W) : updateCG cg post 0 = cg := by
 theorem updateCG_one (cg post : Measure W) : updateCG cg post 1 = post := by
   rw [updateCG, tsub_self, zero_smul, one_smul, zero_add]
 
-/-- At learning rate one the update is Stalnakerian intersection: a world the posterior rules
-out leaves the context set. -/
+/-- At learning rate one the update is Stalnakerian intersection, so a world the posterior
+rules out leaves the context set. -/
 theorem notMem_contextSet_updateCG_one (cg post : Measure W) {w : W} (h : post {w} = 0) :
     w ∉ HasCommonGround.contextSet (updateCG cg post 1) := by
   rw [updateCG_one, HasCommonGround.contextSet_measure]
   exact fun hw => hw h
 
-/-- Footnote 7: below learning rate one the prior keeps every world it supports, so a world the
-posterior rules out can regain probability. -/
+/-- Below learning rate one the prior keeps every world it supports, so a world the posterior
+rules out can regain probability (footnote 7). -/
 theorem mem_contextSet_updateCG (cg post : Measure W) {lr : ℝ≥0} (hlr : lr < 1) {w : W}
     (hcg : cg {w} ≠ 0) : w ∈ HasCommonGround.contextSet (updateCG cg post lr) := by
   rw [HasCommonGround.contextSet_measure]
@@ -84,15 +84,15 @@ theorem mem_contextSet_updateCG (cg post : Measure W) {lr : ℝ≥0} (hlr : lr <
 
 /-! ### Selecting observations (§7) -/
 
-/-- Weighted sampling: a world's weight is its probability under the speaker's beliefs. -/
+/-- In weighted sampling a world's weight is its probability under the speaker's beliefs. -/
 noncomputable def weightedSample (bel : Measure W) (w : W) : ℝ := bel.real {w}
 
-/-- Thresholded sampling: worlds below the confidence threshold are dropped. -/
+/-- Thresholded sampling drops the worlds below the confidence threshold. -/
 noncomputable def thresholdedSample (bel : Measure W) (θ : ℝ) (w : W) : ℝ :=
   if θ ≤ bel.real {w} then bel.real {w} else 0
 
-/-- Difference-based sampling: a world's weight is its positive gain over the common ground
-(footnote 14: reductions are not assertable). -/
+/-- In difference-based sampling a world's weight is its positive gain over the common ground,
+since reductions are not assertable (footnote 14). -/
 noncomputable def differenceSample (bel cg : Measure W) (w : W) : ℝ :=
   max 0 (bel.real {w} - cg.real {w})
 
@@ -102,7 +102,7 @@ theorem weightedSample_uniformOn [Fintype W] [MeasurableSingletonClass W] (w w' 
     weightedSample (uniformOn Set.univ) w = weightedSample (uniformOn Set.univ) w' := by
   simp [weightedSample, uniformOn_univ_real_singleton]
 
-/-- A threshold above one drops every world: the speaker passes (Figure 13). -/
+/-- A threshold above one drops every world, and the speaker passes (Figure 13). -/
 theorem thresholdedSample_eq_zero (bel : Measure W) [IsProbabilityMeasure bel] {θ : ℝ}
     (hθ : 1 < θ) (w : W) : thresholdedSample bel θ w = 0 :=
   ite_eq_right (not_le.mpr (lt_of_le_of_lt measureReal_le_one hθ))
@@ -184,13 +184,13 @@ noncomputable abbrev L0 (cg : Measure World) : Kernel Utterance World :=
   literalListener cg fun u => (semSet u).indicator 1
 
 /-- The pragmatic speaker, without softmax terms or costs (footnote 3). -/
-noncomputable abbrev S1 (cg : Measure World) : Kernel World Utterance := speaker 1 1 (L0 cg)
+noncomputable abbrev S1 (cg : Measure World) : Kernel World Utterance := speaker 1 0 (L0 cg)
 
 /-- The pragmatic listener inverts the speaker against the common ground. -/
 noncomputable abbrev L1 (cg : Measure World) [IsFiniteMeasure cg] : Kernel Utterance World :=
-  pragmaticListener 1 1 (L0 cg) cg
+  pragmaticListener 1 0 (L0 cg) cg
 
-/-- One Figure-2 turn: the listener's posterior is mixed into the common ground unless the
+/-- In one Figure-2 turn the listener's posterior is mixed into the common ground unless the
 speaker passed (§7.1.1). -/
 noncomputable def step (cg : Measure World) [IsFiniteMeasure cg] (u : Utterance) (lr : ℝ≥0) :
     Measure World :=
@@ -199,16 +199,6 @@ noncomputable def step (cg : Measure World) [IsFiniteMeasure cg] (u : Utterance)
 section Agents
 
 variable (cg : Measure World) [IsFiniteMeasure cg]
-
-theorem L0_apply_singleton_le_one (u : Utterance) (w : World) : L0 cg u {w} ≤ 1 := by
-  by_cases h : w ∈ sem u
-  · exact literalListener_indicator_apply_singleton_le_one cg semSet (measure_ne_top _ _)
-      (Finset.mem_coe.mpr h)
-  · rw [literalListener_indicator_apply_singleton_of_notMem cg semSet (Finset.mem_coe.not.mpr h)]
-    exact zero_le_one
-
-theorem L0_apply_singleton_ne_top (u : Utterance) (w : World) : L0 cg u {w} ≠ ∞ :=
-  ne_top_of_le_ne_top ENNReal.one_ne_top (L0_apply_singleton_le_one cg u w)
 
 variable {cg}
 
@@ -219,9 +209,7 @@ theorem L0_apply_singleton_ne_zero {u : Utterance} {w : World} (hw : w ∈ sem u
 
 theorem S1_apply_singleton_ne_zero {u : Utterance} {w : World} (hw : w ∈ sem u)
     (hcg : cg {w} ≠ 0) : S1 cg w {u} ≠ 0 :=
-  speaker_apply_singleton_ne_zero zero_le_one (fun _ => one_ne_zero)
-    (fun _ => ENNReal.one_ne_top) (fun u' => L0_apply_singleton_le_one cg u' w)
-    (L0_apply_singleton_ne_zero hw hcg)
+  speaker_apply_singleton_ne_zero zero_le_one (L0_apply_singleton_ne_zero hw hcg)
 
 theorem comp_S1_ne_zero {u : Utterance} {w : World} (hw : w ∈ sem u) (hcg : cg {w} ≠ 0) :
     (S1 cg ∘ₘ cg) {u} ≠ 0 :=
@@ -243,12 +231,12 @@ theorem L1_apply_singleton_ne_zero {u : Utterance} {w : World} (hw : w ∈ sem u
   exact fun h => (ENNReal.div_eq_zero_iff.mp h).elim
     (mul_ne_zero hcg (S1_apply_singleton_ne_zero hw hcg)) (measure_ne_top _ _)
 
+omit [IsFiniteMeasure cg] in
 /-- The speaker's real share of an utterance, as a ratio of literal-listener values. -/
 theorem S1_real_singleton (w : World) (u : Utterance) :
     (S1 cg w).real {u} = (L0 cg u {w}).toReal / ∑ u', (L0 cg u' {w}).toReal := by
-  rw [measureReal_def, speaker_apply_singleton]
-  simp only [ENNReal.rpow_one, Pi.one_apply, mul_one]
-  rw [ENNReal.toReal_div, ENNReal.toReal_sum fun u' _ => L0_apply_singleton_ne_top cg u' w]
+  rw [S1, speaker_zero_real_singleton zero_le_one]
+  simp only [ENNReal.rpow_one]
 
 theorem L0_toReal {u : Utterance} {w : World} (hw : w ∈ sem u) :
     (L0 cg u {w}).toReal = cg.real {w} / ∑ x ∈ sem u, cg.real {x} := by
@@ -270,8 +258,8 @@ end Agents
 /-- The empty common ground (Figure 2). -/
 noncomputable abbrev cg₁ : Measure World := uniformOn Set.univ
 
-/-- The first speaker: a false utterance is never produced, a specific true utterance beats
-the null one, and the two specific true utterances tie. -/
+/-- The first speaker never produces a false utterance, prefers a specific true utterance to
+the null one, and ties the two specific true utterances. -/
 theorem s1_turn1_informativity :
     (S1 cg₁ .nancy).real {.studyScience} = 0 ∧
     (S1 cg₁ .nancy).real {.null} < (S1 cg₁ .nancy).real {.studyHumanity} ∧
@@ -285,13 +273,13 @@ theorem s1_turn1_informativity :
     ite_eq_left (by decide), ite_eq_left (by decide),
     show (sem .studyHumanity).card = (sem .likeOutdoors).card by decide]
 
-/-- Every world has the same profile at the first turn: two true specific utterances of
+/-- At the first turn every world has the same profile, two true specific utterances of
 extension size two and the null utterance. -/
 theorem profile_eq (w w' : World) : profile sem w = profile sem w' := by
   cases w <;> cases w' <;> decide
 
-/-- The first listener: *they study a humanity* rules out Ina and keeps Nancy, and *they like
-being outdoors* leaves Katie and Nancy tied. -/
+/-- For the first listener, *they study a humanity* rules out Ina and keeps Nancy, and *they
+like being outdoors* leaves Katie and Nancy tied. -/
 theorem l1_turn1_inferences :
     L1 cg₁ .studyHumanity {.ina} = 0 ∧ L1 cg₁ .studyHumanity {.nancy} ≠ 0 ∧
     L1 cg₁ .likeOutdoors {.katie} = L1 cg₁ .likeOutdoors {.nancy} :=
@@ -305,7 +293,7 @@ theorem l1_turn1_inferences :
         (c := .likeOutdoors) (by decide) (by decide))
       (uniformOn_univ_singleton_eq _ _)⟩
 
-/-- The null utterance conveys nothing: the listener stays uniform. -/
+/-- The null utterance conveys nothing, and the listener stays uniform. -/
 theorem l1_null_uniform (w w' : World) : L1 cg₁ .null {w} = L1 cg₁ .null {w'} :=
   posterior_apply_singleton_congr _ _
     (comp_S1_ne_zero (u := .null) (w := w) (by cases w <;> decide)
@@ -362,20 +350,20 @@ variable (μ : Measure World) [IsFiniteMeasure μ] (hik : μ {.ina} = μ {.katie
 
 include hik hns hlt hi
 
-/-- Redundancy aversion: Nancy's speaker now prefers *they like being outdoors* to
-re-asserting *they study a humanity*, and Ina's *they study a science* to *they like being
-indoors* — the literal listener reads the common ground, so an established utterance
+/-- Nancy's speaker now prefers *they like being outdoors* to re-asserting *they study a
+humanity*, and Ina's *they study a science* to *they like being indoors*. This is redundancy
+aversion, since the literal listener reads the common ground and an established utterance
 discriminates less. -/
 theorem s1_prefers_new :
     (S1 μ .nancy).real {.studyHumanity} < (S1 μ .nancy).real {.likeOutdoors} ∧
     (S1 μ .ina).real {.likeIndoors} < (S1 μ .ina).real {.studyScience} := by
   have hn : μ {.nancy} ≠ 0 := (zero_le.trans_lt hlt).ne'
   constructor
-  · rw [speaker_real_singleton_lt_iff (cost := 1) (L := L0 μ) (w := .nancy) zero_le_one
-      (fun _ => ENNReal.one_ne_top) (fun u => L0_apply_singleton_le_one μ u .nancy)
-      ⟨.studyHumanity, by simpa using
-        L0_apply_singleton_ne_zero (cg := μ) (u := .studyHumanity) (w := .nancy) (by decide) hn⟩]
-    simp only [ENNReal.rpow_one, Pi.one_apply, mul_one]
+  · rw [speaker_real_singleton_lt_iff (L := L0 μ) (w := .nancy) zero_le_one
+      ⟨.studyHumanity, L0_apply_singleton_ne_zero (cg := μ) (u := .studyHumanity) (w := .nancy)
+        (by decide) hn⟩]
+    simp only [ENNReal.rpow_one, Pi.zero_apply, mul_zero, neg_zero, Real.exp_zero,
+      ENNReal.ofReal_one, mul_one]
     rw [literalListener_indicator_apply_singleton μ semSet (u := .studyHumanity) (by decide),
       literalListener_indicator_apply_singleton μ semSet (u := .likeOutdoors) (by decide),
       ENNReal.mul_lt_mul_iff_left hn (measure_ne_top _ _), ENNReal.inv_lt_inv,
@@ -384,11 +372,11 @@ theorem s1_prefers_new :
       show sem .studyHumanity = {.nancy, .sally} by decide, Finset.sum_pair (by decide),
       Finset.sum_pair (by decide), ← hik, ← hns, add_comm]
     exact ENNReal.add_lt_add_left (measure_ne_top μ _) hlt
-  · rw [speaker_real_singleton_lt_iff (cost := 1) (L := L0 μ) (w := .ina) zero_le_one
-      (fun _ => ENNReal.one_ne_top) (fun u => L0_apply_singleton_le_one μ u .ina)
-      ⟨.studyScience, by simpa using
-        L0_apply_singleton_ne_zero (cg := μ) (u := .studyScience) (w := .ina) (by decide) hi⟩]
-    simp only [ENNReal.rpow_one, Pi.one_apply, mul_one]
+  · rw [speaker_real_singleton_lt_iff (L := L0 μ) (w := .ina) zero_le_one
+      ⟨.studyScience, L0_apply_singleton_ne_zero (cg := μ) (u := .studyScience) (w := .ina)
+        (by decide) hi⟩]
+    simp only [ENNReal.rpow_one, Pi.zero_apply, mul_zero, neg_zero, Real.exp_zero,
+      ENNReal.ofReal_one, mul_one]
     rw [literalListener_indicator_apply_singleton μ semSet (u := .likeIndoors) (by decide),
       literalListener_indicator_apply_singleton μ semSet (u := .studyScience) (by decide),
       ENNReal.mul_lt_mul_iff_left hi (measure_ne_top _ _), ENNReal.inv_lt_inv,
@@ -417,9 +405,9 @@ theorem real_univ : μ.real Set.univ =
     Finset.sum_insert (by decide : World.katie ∉ ({.nancy, .sally} : Finset World)),
     Finset.sum_pair (by decide : World.nancy ≠ .sally), add_assoc, add_assoc]
 
-/-- *They like being outdoors* now favours Nancy over Katie: Nancy's world carries more of
-the common ground, and Nancy's speaker also produces the utterance more readily, since her
-other true utterance discriminates less than Katie's. -/
+/-- *They like being outdoors* now favours Nancy over Katie. Nancy's world carries more of the
+common ground, and Nancy's speaker also produces the utterance more readily, since her other
+true utterance discriminates less than Katie's. -/
 theorem l1_katie_lt_nancy :
     (L1 μ .likeOutdoors).real {.katie} < (L1 μ .likeOutdoors).real {.nancy} := by
   have hn : μ {.nancy} ≠ 0 := (zero_le.trans_lt hlt).ne'
@@ -468,8 +456,8 @@ theorem l1_katie_lt_nancy :
 
 end Shaped
 
-/-- The key multi-turn prediction: *they like being outdoors* tied Katie and Nancy at the
-first turn; at the updated common ground it favours Nancy. -/
+/-- *They like being outdoors* tied Katie and Nancy at the first turn, and at the updated common
+ground it favours Nancy, the key multi-turn prediction. -/
 theorem turn2_breaks_symmetry :
     L1 cg₁ .likeOutdoors {.katie} = L1 cg₁ .likeOutdoors {.nancy} ∧
     (L1 cg₂ .likeOutdoors).real {.katie} < (L1 cg₂ .likeOutdoors).real {.nancy} :=

@@ -11,23 +11,21 @@ public import Linglib.Core.Probability.UniformOn
 /-!
 # Grusdt, Lassiter, and Franke (2022): Rational Communication with Conditionals
 
-This file formalizes the toy example of section 2.3 of [grusdt-lassiter-franke-2022],
-"Probabilistic modeling of rational communication with conditionals", together with the two
-arguments of section 5 that rest on its assertability conditions alone. A state is a
-probability measure on the four worlds that fix the truth of `A` and `C`; an utterance is
-assertable in a state by the conditions of Table 1, `P(A ∧ C) ≥ θ` for the conjunction,
-`P(C) ≥ θ` for the literal, `P(C | A) ≥ θ` for the conditional, and `P(C) > 1/2` for *likely C*
-(`Assertable`); and the vanilla Rational Speech Act model of section 2.1, the library's
-`RSA.speaker` and `RSA.pragmaticListener` at `α = 1` without costs, runs over the three states
-of Table 2. Its predictions are derived: the extensions of Table 2(b), the speaker shares of
-Table 2(d), and the listener posteriors of Table 2(e), on which hearing *if A then C* favors
-the state where the conditional is the most informative assertable utterance over the one
-where the literal was available (`l1_conditional_prefers_s2`). Section 5's observations hold
-for every state: when antecedent and consequent are independent the conditional is assertable
-only where the literal is, so a speaker never prefers it, which is what lies behind the
-infelicity of missing-link conditionals (`assertable_C_of_indep`), and a speaker who can assert
-both *if A then C* and *if not A then C* could have asserted *C* outright
-(`assertable_C_of_conditionals`).
+This file formalizes the toy example of section 2.3 of Grusdt, Lassiter and Franke, "Probabilistic
+modeling of rational communication with conditionals", together with the two arguments of section 5
+that rest on its assertability conditions alone. A state is a probability measure on the four worlds
+that fix the truth of `A` and `C`; an utterance is assertable in a state by the conditions of Table
+1, `P(A ∧ C) ≥ θ` for the conjunction, `P(C) ≥ θ` for the literal, `P(C | A) ≥ θ` for the
+conditional, and `P(C) > 1/2` for *likely C* (`Assertable`); and the vanilla Rational Speech Act
+model of section 2.1, the library's `RSA.speaker` and `RSA.pragmaticListener` at `α = 1` without
+costs, runs over the three states of Table 2. Its predictions are derived: the extensions of Table
+2(b), the speaker shares of Table 2(d), and the listener posteriors of Table 2(e), on which hearing
+*if A then C* favors the state where the conditional is the most informative assertable utterance
+over the one where the literal was available (`l1_conditional_prefers_s2`). Section 5's observations
+hold for every state: when antecedent and consequent are independent the conditional is assertable
+only where the literal is, so a speaker never prefers it, which is what lies behind the infelicity
+of missing-link conditionals (`assertable_C_of_indep`), and a speaker who can assert both *if A then
+C* and *if not A then C* could have asserted *C* outright (`assertable_C_of_conditionals`).
 
 ## Implementation notes
 
@@ -74,7 +72,7 @@ theorem Ac_eq : Aᶜ = ↑({(false, true), (false, false)} : Finset (Bool × Boo
 theorem Ac_inter_Cc_eq : Aᶜ ∩ Cᶜ = ↑({(false, false)} : Finset (Bool × Bool)) := by
   ext ⟨a, c⟩; cases a <;> cases c <;> simp [A, C]
 
-/-- The utterances of the toy example, in Table 1's order of informativity: the conjunction
+/-- The toy example's utterances, in Table 1's order of informativity, are the conjunction
 *A and C*, the literal *C*, the conditional *if A then C*, and *likely C*. -/
 inductive Utt
   | conjAC
@@ -96,8 +94,9 @@ private theorem sum_Utt {M : Type*} [AddCommMonoid M] (f : Utt → M) :
 /-- The assertability threshold of Table 2, `θ = 0.9`. -/
 noncomputable def θ : ℝ := 9 / 10
 
-/-- Table 1: an utterance is assertable in a state `μ` when the probability it conveys reaches
-the threshold, `P(A ∧ C) ≥ θ`, `P(C) ≥ θ`, `P(C | A) ≥ θ`, and *likely C* when `P(C) > 1/2`. -/
+/-- By Table 1, an utterance is assertable in a state `μ` when the probability it conveys
+reaches the threshold, `P(A ∧ C) ≥ θ`, `P(C) ≥ θ`, `P(C | A) ≥ θ`, and *likely C* when
+`P(C) > 1/2`. -/
 def Assertable (θ : ℝ) : Utt → Measure (Bool × Bool) → Prop
   | .conjAC, μ => θ ≤ μ.real (A ∩ C)
   | .C, μ => θ ≤ μ.real C
@@ -143,8 +142,8 @@ theorem assertable_C_of_conditionals {μ : Measure (Bool × Bool)} [IsProbabilit
 
 /-! ### The toy example, section 2.3 and Table 2 -/
 
-/-- The three states of Table 2(a): in `s1` and `s3` Alex and Chris come to the party
-independently, in `s2` "usually not without each other". -/
+/-- In the three states of Table 2(a), Alex and Chris come to the party independently in `s1`
+and `s3`, and in `s2` "usually not without each other". -/
 inductive State
   | s1
   | s2
@@ -160,7 +159,7 @@ private theorem sum_State {M : Type*} [AddCommMonoid M] (f : State → M) :
   rw [show (Finset.univ : Finset State) = {.s1, .s2, .s3} by decide,
     Finset.sum_insert (by decide), Finset.sum_insert (by decide), Finset.sum_singleton]
 
-/-- Table 2(a): the probability of each world `(A, C)` in each state. -/
+/-- Table 2(a) gives the probability of each world `(A, C)` in each state. -/
 noncomputable def State.cell : State → Bool × Bool → ℝ≥0
   | .s1, (true, true) => 81 / 100
   | .s1, (true, false) => 9 / 100
@@ -213,21 +212,21 @@ theorem real_Ac_inter_Cc (s : State) : s.dist.real (Aᶜ ∩ Cᶜ) = s.cell (fal
 /-- The assertability extension of an utterance at the threshold `θ`. -/
 def ext (u : Utt) : Set State := {s | Assertable θ u s.dist}
 
-/-- Table 2(b): *likely C* is assertable everywhere. -/
+/-- *Likely C* is assertable everywhere (Table 2(b)). -/
 theorem ext_likelyC : ext .likelyC = Set.univ := by
   ext s; cases s <;> simp [ext, Assertable, real_C, State.cell] <;> norm_num
 
-/-- Table 2(b): the conditional is assertable in `s1` and `s2`, where `P(C | A)` is `9/10` and
-`12/13`, and not in `s3`, where it is `3/5`. -/
+/-- The conditional is assertable in `s1` and `s2`, where `P(C | A)` is `9/10` and `12/13`, and
+not in `s3`, where it is `3/5` (Table 2(b)). -/
 theorem ext_conditional : ext .conditional = ↑({State.s1, .s2} : Finset State) := by
   ext s; cases s <;> simp [ext, Assertable, real_cond, real_A, real_A_inter_C, State.cell, θ] <;>
     norm_num
 
-/-- Table 2(b): *C* is assertable in `s1` only. -/
+/-- *C* is assertable in `s1` only (Table 2(b)). -/
 theorem ext_C : ext .C = ↑({State.s1} : Finset State) := by
   ext s; cases s <;> simp [ext, Assertable, real_C, State.cell, θ] <;> norm_num
 
-/-- Table 2(b): *A and C* is assertable nowhere. -/
+/-- *A and C* is assertable nowhere (Table 2(b)). -/
 theorem ext_conjAC : ext .conjAC = ∅ := by
   ext s; cases s <;> simp [ext, Assertable, real_A_inter_C, State.cell, θ] <;> norm_num
 
@@ -250,8 +249,10 @@ theorem prior_singleton (s : State) : prior {s} = 3⁻¹ := by
 theorem prior_real_singleton (s : State) : prior.real {s} = 1 / 3 := by
   rw [measureReal_def, prior_singleton, ENNReal.toReal_inv, one_div]; simp
 
-/-- The literal listener: the prior conditioned on the utterance's extension. -/
+/-- The literal listener conditions the prior on the utterance's extension. -/
 noncomputable def L0 : Kernel Utt State := literalListener prior λ u => (ext u).indicator 1
+
+instance : IsFiniteKernel L0 := inferInstanceAs (IsFiniteKernel (literalListener _ _))
 
 /-- The literal listener is uniform on the extension. -/
 theorem L0_apply (u : Utt) : L0 u = uniformOn (ext u) := by
@@ -292,17 +293,18 @@ theorem L0_real_C_s3 : (L0 .C).real {.s3} = 0 := by
 theorem L0_ne_top (u : Utt) (s : State) : L0 u {s} ≠ ⊤ := by
   rw [L0_apply]; exact measure_ne_top _ _
 
-/-- The speaker of Table 2(d): `RSA.speaker` at `α = 1` without costs. -/
-noncomputable def S1 : Kernel State Utt := speaker 1 (λ _ => 1) L0
+/-- The speaker of Table 2(d) is `RSA.speaker` at `α = 1` without costs. -/
+noncomputable def S1 : Kernel State Utt := speaker 1 0 L0
 
 instance : IsFiniteKernel S1 := inferInstanceAs (IsFiniteKernel (speaker _ _ _))
 
 theorem S1_real (s : State) (u : Utt) :
     (S1 s).real {u} = (L0 u).real {s} / ∑ u', (L0 u').real {s} := by
-  simp only [S1, measureReal_def, speaker_apply_singleton, ENNReal.rpow_one, mul_one]
+  simp only [S1, measureReal_def, speaker_zero_apply_singleton, ENNReal.rpow_one]
   rw [ENNReal.toReal_div, ENNReal.toReal_sum λ u' _ => L0_ne_top u' s]
 
-/-- Table 2(d), `s1`: `C` with share `6/11`, the conditional `3/11`, *likely C* `2/11`. -/
+/-- In `s1` the speaker says `C` with share `6/11`, the conditional `3/11`, and *likely C*
+`2/11` (Table 2(d)). -/
 theorem S1_s1_C : (S1 .s1).real {.C} = 6 / 11 := by
   rw [S1_real, sum_Utt, L0_real_conjAC, L0_real_C_s1, L0_real_conditional_s1, L0_real_likelyC]
   norm_num
@@ -315,7 +317,8 @@ theorem S1_s1_likelyC : (S1 .s1).real {.likelyC} = 2 / 11 := by
   rw [S1_real, sum_Utt, L0_real_conjAC, L0_real_C_s1, L0_real_conditional_s1, L0_real_likelyC]
   norm_num
 
-/-- Table 2(d), `s2`: the conditional with share `3/5`, *likely C* `2/5`, `C` never. -/
+/-- In `s2` the speaker says the conditional with share `3/5`, *likely C* `2/5`, and `C` never
+(Table 2(d)). -/
 theorem S1_s2_conditional : (S1 .s2).real {.conditional} = 3 / 5 := by
   rw [S1_real, sum_Utt, L0_real_conjAC, L0_real_C_s2, L0_real_conditional_s2, L0_real_likelyC]
   norm_num
@@ -328,7 +331,7 @@ theorem S1_s2_C : (S1 .s2).real {.C} = 0 := by
   rw [S1_real, sum_Utt, L0_real_conjAC, L0_real_C_s2, L0_real_conditional_s2, L0_real_likelyC]
   norm_num
 
-/-- Table 2(d), `s3`: *likely C* with certainty. -/
+/-- In `s3` the speaker says *likely C* with certainty (Table 2(d)). -/
 theorem S1_s3_likelyC : (S1 .s3).real {.likelyC} = 1 := by
   rw [S1_real, sum_Utt, L0_real_conjAC, L0_real_C_s3, L0_real_conditional_s3, L0_real_likelyC]
   norm_num
@@ -343,8 +346,8 @@ theorem S1_s3_C : (S1 .s3).real {.C} = 0 := by
 
 /-! ### The pragmatic listener, Table 2(e) -/
 
-/-- The pragmatic listener of Table 2(e): the posterior of `S1` against the uniform prior. -/
-noncomputable def L1 : Kernel Utt State := pragmaticListener 1 (λ _ => 1) L0 prior
+/-- The pragmatic listener of Table 2(e) is the posterior of `S1` against the uniform prior. -/
+noncomputable def L1 : Kernel Utt State := pragmaticListener 1 0 L0 prior
 
 private theorem S1_ne_zero {s : State} {u : Utt} (h : (S1 s).real {u} ≠ 0) : S1 s {u} ≠ 0 :=
   λ h0 => h (by rw [measureReal_def, h0, ENNReal.toReal_zero])
@@ -368,8 +371,8 @@ theorem L1_real (u : Utt) (hu : (S1 ∘ₘ prior) {u} ≠ 0) (s : State) :
   simp_rw [prior_real_singleton, ← Finset.mul_sum]
   rw [mul_div_mul_left _ _ (by norm_num)]
 
-/-- Table 2(e): hearing the conditional, the listener puts `11/16` on `s2`, `5/16` on `s1` and
-nothing on `s3`. -/
+/-- Hearing the conditional, the listener puts `11/16` on `s2`, `5/16` on `s1` and nothing on
+`s3` (Table 2(e)). -/
 theorem L1_conditional_s2 : (L1 .conditional).real {.s2} = 11 / 16 := by
   rw [L1_real _ comp_conditional_ne_zero, sum_State, S1_s1_conditional, S1_s2_conditional,
     S1_s3_conditional]
@@ -385,13 +388,13 @@ theorem L1_conditional_s3 : (L1 .conditional).real {.s3} = 0 := by
     S1_s3_conditional]
   norm_num
 
-/-- Table 2(e): hearing `C`, the listener identifies `s1`. -/
+/-- Hearing `C`, the listener identifies `s1` (Table 2(e)). -/
 theorem L1_C_s1 : (L1 .C).real {.s1} = 1 := by
   rw [L1_real _ comp_C_ne_zero, sum_State, S1_s1_C, S1_s2_C, S1_s3_C]
   norm_num
 
-/-- Table 2(e): hearing *likely C*, the listener puts `55/87` on `s3`, `22/87` on `s2` and
-`10/87` on `s1`. -/
+/-- Hearing *likely C*, the listener puts `55/87` on `s3`, `22/87` on `s2` and `10/87` on `s1`
+(Table 2(e)). -/
 theorem L1_likelyC_s3 : (L1 .likelyC).real {.s3} = 55 / 87 := by
   rw [L1_real _ comp_likelyC_ne_zero, sum_State, S1_s1_likelyC, S1_s2_likelyC, S1_s3_likelyC]
   norm_num
@@ -404,15 +407,15 @@ theorem L1_likelyC_s1 : (L1 .likelyC).real {.s1} = 10 / 87 := by
   rw [L1_real _ comp_likelyC_ne_zero, sum_State, S1_s1_likelyC, S1_s2_likelyC, S1_s3_likelyC]
   norm_num
 
-/-- Hearing *if A then C*, the listener prefers `s2` to `s1`: the speaker in `s1` would have
+/-- Hearing *if A then C*, the listener prefers `s2` to `s1`. The speaker in `s1` would have
 said *C* (`S1_s1_C`), so the conditional signals the state where it is the most informative
 assertable utterance. -/
 theorem l1_conditional_prefers_s2 :
     (L1 .conditional).real {.s1} < (L1 .conditional).real {.s2} := by
   rw [L1_conditional_s1, L1_conditional_s2]; norm_num
 
-/-- Hearing *likely C*, the listener prefers `s3` to `s1`: in `s1` and `s2` a stronger utterance
-was available. -/
+/-- Hearing *likely C*, the listener prefers `s3` to `s1`, since in `s1` and `s2` a stronger
+utterance was available. -/
 theorem l1_likelyC_prefers_s3 : (L1 .likelyC).real {.s1} < (L1 .likelyC).real {.s3} := by
   rw [L1_likelyC_s1, L1_likelyC_s3]; norm_num
 

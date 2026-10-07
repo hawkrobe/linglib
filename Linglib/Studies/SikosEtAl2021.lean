@@ -5,28 +5,27 @@ public import Linglib.Pragmatics.RSA.Basic
 /-!
 # Sikos, Venhuizen, Drenhaus and Crocker (2021): Reevaluating Pragmatic Reasoning in Language Games
 
-This file formalizes the paper's baseline model and its relation to the rational speech act model
-of [frank-goodman-2012] in one-shot reference games. RSA's listener (1) is the Bayesian inverse,
-against a salience prior, of a speaker (3) who chooses among the words that apply to the referent
-in proportion to their informativity, the reciprocal of the number of objects each applies to;
-that speaker is the best response at rationality one to the literal listener with a uniform
-prior (`L0`, `rsaSpeaker`, `rsaListener`). The baseline literal listener model (4) keeps the
-Bayesian structure but replaces the speaker by literal meaning alone, a uniform choice among the
-applicable words (`baselineSpeaker`, `baselineListener`). Since every object of the paper's
-displays has one color and one shape, the baseline is RSA's literal listener with the salience
-prior (`baselineListener_eq_literalListener`), and the two models agree wherever a word applies
-to a single object or fails to apply, the predictions of one hundred and of zero percent that
-dominate the original materials (`rsaListener_apply_singleton_of_eq_singleton`,
+This file formalizes the paper's baseline model and its relation to the rational speech act model of
+Frank and Goodman in one-shot reference games. RSA's listener (1) is the Bayesian inverse, against a
+salience prior, of a speaker (3) who chooses among the words that apply to the referent in
+proportion to their informativity, the reciprocal of the number of objects each applies to; that
+speaker is the best response at rationality one to the literal listener with a uniform prior (`L0`,
+`rsaSpeaker`, `rsaListener`). The baseline literal listener model (4) keeps the Bayesian structure
+but replaces the speaker by literal meaning alone, a uniform choice among the applicable words
+(`baselineSpeaker`, `baselineListener`). Since every object of the paper's displays has one color
+and one shape, the baseline is RSA's literal listener with the salience prior
+(`baselineListener_eq_literalListener`), and the two models agree wherever a word applies to a
+single object or fails to apply, the predictions of one hundred and of zero percent that dominate
+the original materials (`rsaListener_apply_singleton_of_eq_singleton`,
 `baselineListener_apply_singleton_of_eq_singleton`, `rsaListener_apply_singleton_of_notMem`,
-`baselineListener_apply_singleton_of_notMem`). The models differ only in the pragmatic
-conditions: in a pragmatically solvable context the informative speaker makes RSA prefer the
-pragmatic referent to the color competitor where the baseline is at chance
-(`solvable_rsa_prefers`, `solvable_baseline_indifferent`), and in a pragmatically reducible
-context it makes RSA prefer the two pragmatic referents to the competitor
-(`reducible_rsa_prefers`). Listener preference is the comparison of prior mass times speaker
-likelihood (`rsaListener_real_lt_iff`), so a salient competitor overrides the informative
-speaker exactly when its prior advantage exceeds the likelihood ratio, the way the prior
-reverses RSA's pragmatic component in the reducible conditions (§7.2).
+`baselineListener_apply_singleton_of_notMem`). The models differ only in the pragmatic conditions:
+in a pragmatically solvable context the informative speaker makes RSA prefer the pragmatic referent
+to the color competitor where the baseline is at chance (`solvable_rsa_prefers`,
+`solvable_baseline_indifferent`), and in a pragmatically reducible context it makes RSA prefer the
+two pragmatic referents to the competitor (`reducible_rsa_prefers`). Listener preference is the
+comparison of prior mass times speaker likelihood (`rsaListener_real_lt_iff`), so a salient
+competitor overrides the informative speaker exactly when its prior advantage exceeds the likelihood
+ratio, the way the prior reverses RSA's pragmatic component in the reducible conditions (§7.2).
 
 ## Implementation notes
 
@@ -65,13 +64,15 @@ instance : IsFiniteMeasure (uniform (W := W)) :=
 /-- The literal listener with the uniform prior, RSA's `L0`. -/
 noncomputable def L0 : Kernel U W := literalListener uniform λ u => (sem u).indicator 1
 
-/-- The informative speaker (3): the best response to `L0` at rationality one and constant
+instance : IsFiniteKernel (L0 sem) := inferInstanceAs (IsFiniteKernel (literalListener _ _))
+
+/-- The informative speaker (3) is the best response to `L0` at rationality one and constant
 cost, choosing among the applicable words in proportion to their informativity. -/
-noncomputable def rsaSpeaker : Kernel W U := speaker 1 1 (L0 sem)
+noncomputable def rsaSpeaker : Kernel W U := speaker 1 0 (L0 sem)
 
 instance : IsFiniteKernel (rsaSpeaker sem) := inferInstanceAs (IsFiniteKernel (speaker _ _ _))
 
-/-- The baseline speaker (4): literal meaning alone, a uniform choice among the words that
+/-- The baseline speaker (4) uses literal meaning alone, choosing uniformly among the words that
 apply to the referent. -/
 noncomputable def baselineSpeaker : Kernel W U :=
   Kernel.ofWeights λ w u => (sem u).indicator 1 w
@@ -87,11 +88,6 @@ theorem L0_apply_singleton {w : W} {u : U} (h : w ∈ sem u) :
 theorem L0_apply_singleton_of_notMem {w : W} {u : U} (h : w ∉ sem u) : L0 sem u {w} = 0 :=
   literalListener_indicator_apply_singleton_of_notMem uniform sem h
 
-theorem L0_le_one (u : U) (w : W) : L0 sem u {w} ≤ 1 := by
-  by_cases h : w ∈ sem u
-  · exact literalListener_indicator_apply_singleton_le_one uniform sem (measure_ne_top _ _) h
-  · rw [L0_apply_singleton_of_notMem sem h]; exact zero_le_one
-
 theorem L0_ne_zero {w : W} {u : U} (h : w ∈ sem u) : L0 sem u {w} ≠ 0 := by
   rw [L0_apply_singleton sem h]
   exact ENNReal.inv_ne_zero.mpr (measure_ne_top _ _)
@@ -103,8 +99,7 @@ theorem rsaSpeaker_apply_singleton_of_notMem {w : W} {u : U} (h : w ∉ sem u) :
 
 theorem rsaSpeaker_apply_singleton_ne_zero {w : W} {u : U} (h : w ∈ sem u) :
     rsaSpeaker sem w {u} ≠ 0 :=
-  speaker_apply_singleton_ne_zero zero_le_one (λ _ => one_ne_zero) (λ _ => ENNReal.one_ne_top)
-    (L0_le_one sem · w) (L0_ne_zero sem h)
+  speaker_apply_singleton_ne_zero zero_le_one (L0_ne_zero sem h)
 
 theorem baselineSpeaker_apply_singleton_of_notMem {w : W} {u : U} (h : w ∉ sem u) :
     baselineSpeaker sem w {u} = 0 :=
@@ -173,15 +168,15 @@ theorem posterior_apply_singleton_eq_one [StandardBorelSpace W] [Nonempty W] {κ
 
 variable [StandardBorelSpace W] [Nonempty W] (μ : Measure W) [IsFiniteMeasure μ]
 
-/-- RSA's listener (1): the inverse of the informative speaker against the salience prior. -/
-noncomputable def rsaListener : Kernel U W := pragmaticListener 1 1 (L0 sem) μ
+/-- RSA's listener (1) inverts the informative speaker against the salience prior. -/
+noncomputable def rsaListener : Kernel U W := pragmaticListener 1 0 (L0 sem) μ
 
-/-- The baseline literal listener model (4): the inverse of the baseline speaker against the
-salience prior. -/
+/-- The baseline literal listener model (4) inverts the baseline speaker against the salience
+prior. -/
 noncomputable def baselineListener : Kernel U W := (baselineSpeaker sem)†μ
 
 omit [∀ u, DecidablePred (· ∈ sem u)] in
-/-- A trivial condition: the word applies to one object of positive prior mass, and RSA is
+/-- In a trivial condition the word applies to one object of positive prior mass, and RSA is
 certain of it, a prediction of one hundred percent. -/
 theorem rsaListener_apply_singleton_of_eq_singleton {u : U} {w₀ : W} (h : sem u = {w₀})
     (hμ : μ {w₀} ≠ 0) : rsaListener sem μ u {w₀} = 1 :=
@@ -197,8 +192,8 @@ theorem baselineListener_apply_singleton_of_eq_singleton {u : U} {w₀ : W} (h :
     (baselineSpeaker_apply_singleton_ne_zero sem (by rw [h]; exact Set.mem_singleton w₀)) hμ
 
 omit [∀ u, DecidablePred (· ∈ sem u)] in
-/-- An excluded object: a word that does not apply gives it no mass under RSA, a prediction of
-zero percent. -/
+/-- An object to which the word does not apply gets no mass under RSA, a prediction of zero
+percent. -/
 theorem rsaListener_apply_singleton_of_notMem {u : U} {w w' : W} (hw : w ∉ sem u)
     (hw' : w' ∈ sem u) (hμ' : μ {w'} ≠ 0) : rsaListener sem μ u {w} = 0 :=
   posterior_apply_singleton_eq_zero μ (rsaSpeaker_apply_singleton_of_notMem sem hw) hμ'
@@ -211,8 +206,8 @@ theorem baselineListener_apply_singleton_of_notMem {u : U} {w w' : W} (hw : w �
     (baselineSpeaker_apply_singleton_ne_zero sem hw')
 
 /-- When every object has the same number of applicable words, one color and one shape in the
-paper's displays, the baseline listener is RSA's literal listener with the salience prior: the
-baseline is `L0` itself, informed by the prior. -/
+paper's displays, the baseline listener is RSA's literal listener with the salience prior, that
+is, `L0` itself informed by the prior. -/
 theorem baselineListener_eq_literalListener {k : ℕ} (hk : k ≠ 0)
     (hcard : ∀ w, (applicable sem w).card = k) {u : U} (hμ : μ (sem u) ≠ 0) (w : W) :
     baselineListener sem μ u {w} = literalListener μ (λ u => (sem u).indicator 1) u {w} := by
@@ -240,9 +235,9 @@ theorem baselineListener_eq_literalListener {k : ℕ} (hk : k ≠ 0)
     simp
 
 omit [∀ u, DecidablePred (· ∈ sem u)] in
-/-- Listener preference between two objects is the comparison of prior mass times speaker
-likelihood: a salient competitor wins against the informative speaker's preferred referent
-exactly when its prior advantage exceeds the likelihood ratio. -/
+/-- Listener preference between two objects compares prior mass times speaker likelihood, so a
+salient competitor wins against the informative speaker's preferred referent exactly when its
+prior advantage exceeds the likelihood ratio. -/
 theorem rsaListener_real_lt_iff {u : U} {w₀ : W} (hw₀ : w₀ ∈ sem u) (hμ₀ : μ {w₀} ≠ 0)
     (w₁ w₂ : W) :
     (rsaListener sem μ u).real {w₁} < (rsaListener sem μ u).real {w₂} ↔
@@ -275,7 +270,7 @@ inductive Word
 instance : MeasurableSpace Word := ⊤
 instance : DiscreteMeasurableSpace Word := ⟨λ _ => trivial⟩
 
-/-- A display: three positions, each with a color and a shape. -/
+/-- A display has three positions, each with a color and a shape. -/
 structure Display where
   color : Fin 3 → Color
   shape : Fin 3 → Shape
@@ -309,16 +304,15 @@ variable (d : Display)
 theorem rsaSpeaker_real (i : Fin 3) (u : Word) :
     (rsaSpeaker d.sem i).real {u} =
       (L0 d.sem u {i}).toReal / ∑ u', (L0 d.sem u' {i}).toReal := by
-  rw [rsaSpeaker,
-    speaker_real_singleton (cost := 1) zero_le_one (λ _ => ENNReal.one_ne_top) (L0_le_one _ · i)]
-  simp only [ENNReal.rpow_one, Pi.one_apply, ENNReal.toReal_one, mul_one]
+  rw [rsaSpeaker, speaker_zero_real_singleton zero_le_one]
+  simp only [ENNReal.rpow_one]
 
-/-- The pragmatically solvable display of Tables 5 and 9: the blue boot is the pragmatic
-referent, the blue mitt the color competitor, the green boot the shape competitor. -/
+/-- In the pragmatically solvable display of Tables 5 and 9 the blue boot is the pragmatic
+referent, the blue mitt the color competitor, and the green boot the shape competitor. -/
 def solvable : Display := ⟨![.blue, .blue, .green], ![.boot, .mitt, .boot]⟩
 
 /-- With a uniform prior, RSA prefers the pragmatic referent to the color competitor on hearing
-the color word: for the blue mitt the speaker had the more informative *mitt*. -/
+the color word, since for the blue mitt the speaker had the more informative *mitt*. -/
 theorem solvable_rsa_prefers :
     (rsaListener solvable.sem uniform (.color .blue)).real {1} <
       (rsaListener solvable.sem uniform (.color .blue)).real {0} := by
@@ -353,12 +347,12 @@ theorem solvable_baseline_indifferent :
   simp only [baselineSpeaker_apply_singleton _ h0, baselineSpeaker_apply_singleton _ h1,
     card_applicable]
 
-/-- The pragmatically reducible display of Tables 4 and 8: two blue boots, the pragmatic
+/-- The pragmatically reducible display of Tables 4 and 8 has two blue boots, the pragmatic
 referents, and a blue mitt, the competitor with the unique feature. -/
 def reducible : Display := ⟨![.blue, .blue, .blue], ![.boot, .boot, .mitt]⟩
 
 /-- With a uniform prior, RSA prefers each pragmatic referent to the competitor on hearing the
-color word, which applies to all three: pragmatic reasoning reduces the ambiguity without
+color word, which applies to all three, so pragmatic reasoning reduces the ambiguity without
 resolving it. -/
 theorem reducible_rsa_prefers :
     (rsaListener reducible.sem uniform (.color .blue)).real {2} <

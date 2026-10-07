@@ -5,13 +5,13 @@ public import Linglib.Pragmatics.RSA.QUD
 /-!
 # Kao, Bergen and Goodman (2014): Formalizing the Pragmatics of Metaphor Understanding
 
-This file formalizes the metaphor model of [kao-etal-2014-metaphor] on the RSA kernel pipeline.
-A meaning pairs a category, the animal named or a person, with a vector of three features; the
-literal listener conditions the prior on the category named, and a speaker whose goal is to
-communicate one feature is informative about the listener's mass on that feature's value
-(eqs. 1 and 2), so that "John is a shark" can convey scariness to a listener who does not
-believe John a shark. The pragmatic listener marginalizes the goal: it is the family listener of
-the goal-indexed projected listeners over the product of the meaning prior and the goal prior.
+This file formalizes the metaphor model of Kao, Bergen and Goodman on the RSA kernel pipeline. A
+meaning pairs a category, the animal named or a person, with a vector of three features; the literal
+listener conditions the prior on the category named, and a speaker whose goal is to communicate one
+feature is informative about the listener's mass on that feature's value (eqs. 1 and 2), so that
+"John is a shark" can convey scariness to a listener who does not believe John a shark. The
+pragmatic listener marginalizes the goal: it is the family listener of the goal-indexed projected
+listeners over the product of the meaning prior and the goal prior.
 
 Two structural theorems carry the paper's qualitative claims. A goal projects the category
 away, so the speaker's choice depends on the features alone and the listener's posterior odds
@@ -43,7 +43,7 @@ open scoped ENNReal
 
 namespace KaoBergenEtAl2014
 
-/-- The categories: the animal named, and a person. -/
+/-- A referent is either the animal named or a person. -/
 inductive Cat
   | animal | person
   deriving DecidableEq, Repr, Fintype
@@ -55,7 +55,7 @@ instance : Nonempty Cat := ⟨.person⟩
 /-- The three features of the paper's example, each present or absent. -/
 abbrev Features := Bool × Bool × Bool
 
-/-- A meaning: the category and the feature vector. -/
+/-- A meaning pairs the category with the feature vector. -/
 abbrev Meaning := Cat × Features
 
 /-- A goal names the feature to communicate, `g_i(f) = f_i`. -/
@@ -76,18 +76,18 @@ def Goal.feature : Goal → Features → Bool
 /-- The projection of a goal (eq. 1) reads the goal's feature and ignores the category. -/
 def project (g : Goal) (m : Meaning) : Bool := g.feature m.2
 
-/-- The meaning of an utterance: the category named is the category. -/
+/-- An utterance is true of the meanings whose category it names. -/
 def sem (u : Cat) : Set Meaning := {m | m.1 = u}
 
-/-- The literal listener: the prior conditioned on the category named. -/
+/-- The literal listener conditions the prior on the category named. -/
 noncomputable def L0 (μ : Measure Meaning) : Kernel Cat Meaning :=
   literalListener μ λ u => (sem u).indicator 1
 
+instance (μ : Measure Meaning) : IsFiniteKernel (L0 μ) :=
+  inferInstanceAs (IsFiniteKernel (literalListener _ _))
+
 theorem L0_apply (μ : Measure Meaning) (u : Cat) : L0 μ u = μ[|sem u] := by
   rw [L0, literalListener_indicator, Kernel.ofFunOfCountable_apply]
-
-theorem L0_apply_le_one (μ : Measure Meaning) (u : Cat) (s : Set Meaning) : L0 μ u s ≤ 1 :=
-  literalListener_apply_le_one μ _ u s
 
 theorem L0_apply_singleton_ne_zero_iff (μ : Measure Meaning) [IsFiniteMeasure μ] (u : Cat)
     (m : Meaning) : L0 μ u {m} ≠ 0 ↔ m.1 = u ∧ μ {m} ≠ 0 := by
@@ -109,16 +109,16 @@ theorem projListener_eq (μ : Measure Meaning) (g : Goal) (u : Cat) (m : Meaning
   rw [projListener_apply_singleton, L0_apply]
   rfl
 
-/-- The goal-indexed speaker (eq. 2): the best response to the projected literal listener of
+/-- The goal-indexed speaker (eq. 2) is the best response to the projected literal listener of
 the goal at rationality `α`, with no utterance cost. -/
 noncomputable def S1 (μ : Measure Meaning) (α : ℝ) : Kernel (Meaning × Goal) Cat :=
-  familySpeaker (projListener project (L0 μ)) α 1
+  familySpeaker (projListener project (L0 μ)) α 0
 
-/-- The pragmatic listener over meaning and goal, whose first marginal is the meaning listener:
-the family listener over the product of the meaning prior and the goal prior. -/
+/-- The pragmatic listener over meaning and goal is the family listener over the product of
+the meaning prior and the goal prior; its first marginal is the meaning listener. -/
 noncomputable def L1 (μ : Measure Meaning) [IsProbabilityMeasure μ] (ν : Measure Goal)
     [IsProbabilityMeasure ν] (α : ℝ) : Kernel Cat (Meaning × Goal) :=
-  familyListener (projListener project (L0 μ)) α 1 (μ.prod ν)
+  familyListener (projListener project (L0 μ)) α 0 (μ.prod ν)
 
 section Speaker
 
@@ -129,8 +129,8 @@ odds of the goal's feature value under the animal against the person. -/
 theorem speaker_odds :
     S1 μ α (m, g) {.animal} * featureProb μ .person g (g.feature m.2) ^ α
       = S1 μ α (m, g) {.person} * featureProb μ .animal g (g.feature m.2) ^ α := by
-  simp only [S1, familySpeaker_apply, speaker_apply_singleton, projListener_eq, Pi.one_apply,
-    mul_one, ENNReal.div_eq_inv_mul]
+  simp only [S1, familySpeaker_apply, speaker_zero_apply_singleton, projListener_eq,
+    ENNReal.div_eq_inv_mul]
   ring
 
 /-- The speaker names the animal rather than the person exactly when the goal's feature value
@@ -140,20 +140,14 @@ theorem names_animal_iff (hα : 0 < α)
       featureProb μ .person g (g.feature m.2) ≠ 0) :
     (S1 μ α (m, g)).real {.person} < (S1 μ α (m, g)).real {.animal}
       ↔ featureProb μ .person g (g.feature m.2) < featureProb μ .animal g (g.feature m.2) := by
-  have hle : ∀ u, projListener project (L0 μ) g u {m} ≤ 1 :=
-    λ u => projListener_apply_singleton_le_one _ _ _ _ _ (L0_apply_le_one μ)
-  have h0' : ∃ u, projListener project (L0 μ) g u {m} ^ α * (1 : Cat → ℝ≥0∞) u ≠ 0 := by
+  have h0' : ∃ u, projListener project (L0 μ) g u {m} ≠ 0 := by
     rcases h0 with h | h
-    · refine ⟨.animal, ?_⟩
-      rw [projListener_eq, Pi.one_apply, mul_one]
-      exact weight_rpow_ne_zero hα.le h
-    · refine ⟨.person, ?_⟩
-      rw [projListener_eq, Pi.one_apply, mul_one]
-      exact weight_rpow_ne_zero hα.le h
+    · exact ⟨.animal, by rwa [projListener_eq]⟩
+    · exact ⟨.person, by rwa [projListener_eq]⟩
   rw [S1, familySpeaker_apply]
   dsimp only
-  rw [speaker_real_singleton_lt_iff (cost := 1) hα.le (λ _ => ENNReal.one_ne_top) hle h0',
-    projListener_eq, projListener_eq, Pi.one_apply, Pi.one_apply, mul_one, mul_one,
+  rw [speaker_real_singleton_lt_iff hα.le h0', projListener_eq, projListener_eq]
+  simp only [Pi.zero_apply, mul_zero, neg_zero, Real.exp_zero, ENNReal.ofReal_one, mul_one,
     ENNReal.rpow_lt_rpow_iff hα]
 
 end Speaker
@@ -176,8 +170,7 @@ theorem S1_apply_singleton_ne_zero_iff (hα : 0 < α) (g : Goal) (m : Meaning) (
     obtain ⟨m', hm', h0⟩ := hL
     exact ⟨m', hm', (L0_apply_singleton_ne_zero_iff μ u m').mp h0⟩
   · rintro ⟨m', hm', hu, hμ⟩
-    exact speaker_apply_singleton_ne_zero hα.le (λ _ => one_ne_zero) (λ _ => ENNReal.one_ne_top)
-      (λ u' => projListener_apply_singleton_le_one _ _ _ _ _ (L0_apply_le_one μ))
+    exact speaker_apply_singleton_ne_zero hα.le
       ((projListener_apply_singleton_ne_zero_iff _ _ _ _ _).mpr
         ⟨m', hm', (L0_apply_singleton_ne_zero_iff μ u m').mpr ⟨hu, hμ⟩⟩)
 
@@ -194,9 +187,9 @@ theorem comp_S1_ne_zero (hα : 0 < α) {u : Cat} (h : ∃ m : Meaning, m.1 = u �
     exact mul_ne_zero hμ hg
   · exact (S1_apply_singleton_ne_zero_iff μ α hα g m u).mpr ⟨m, rfl, hm, hμ⟩
 
-/-- The meaning listener's support: a meaning is a possible interpretation of an utterance
-exactly when it has positive prior and some goal of positive prior has a feature value it
-shares with a meaning of positive prior bearing the category named. -/
+/-- A meaning is a possible interpretation of an utterance exactly when it has positive prior
+and some goal of positive prior has a feature value it shares with a meaning of positive prior
+bearing the category named. -/
 theorem listener_ne_zero_iff (hα : 0 < α) {u : Cat} (hu : (S1 μ α ∘ₘ μ.prod ν) {u} ≠ 0)
     (m : Meaning) :
     (L1 μ ν α u).fst {m} ≠ 0 ↔ μ {m} ≠ 0 ∧
@@ -206,23 +199,24 @@ theorem listener_ne_zero_iff (hα : 0 < α) {u : Cat} (hu : (S1 μ α ∘ₘ μ.
     Measure.prod_prod, mul_ne_zero_iff]
   exact ⟨λ ⟨g, ⟨hm, hg⟩, hs⟩ => ⟨hm, g, hg, hs⟩, λ ⟨hm, g, hg, hs⟩ => ⟨g, ⟨hm, hg⟩, hs⟩⟩
 
-/-- Nonliteral interpretation: a person with the goal's feature value is a possible meaning of
-the animal's name whenever some animal of positive prior shares the value. -/
+/-- A person with the goal's feature value is a possible, nonliteral meaning of the animal's
+name whenever some animal of positive prior shares the value. -/
 theorem nonliteral (hα : 0 < α) {g : Goal} (hν : ν {g} ≠ 0) {f f' : Features}
     (hp : μ {(.person, f)} ≠ 0) (ha : μ {(.animal, f')} ≠ 0)
     (hf : g.feature f' = g.feature f) : (L1 μ ν α .animal).fst {(.person, f)} ≠ 0 := by
   rw [listener_ne_zero_iff μ ν α hα (comp_S1_ne_zero μ ν α hα ⟨_, rfl, ha⟩)]
   exact ⟨hp, g, hν, (.animal, f'), hf, rfl, ha⟩
 
-/-- Category inference is prior-driven: since a goal projects the category away, the speaker
+/-- Category inference is prior-driven. Since a goal projects the category away, the speaker
 behaves alike at the animal and at the person with the same features, and the listener's
 posterior odds between the two categories at a feature vector are their prior odds. -/
 theorem category_odds {u : Cat} (hu : (S1 μ α ∘ₘ μ.prod ν) {u} ≠ 0) (c c' : Cat)
     (f : Features) :
     (L1 μ ν α u).fst {(c, f)} * μ {(c', f)} = (L1 μ ν α u).fst {(c', f)} * μ {(c, f)} := by
-  have hS : ∀ c g, S1 μ α ((c, f), g) = S1 μ α ((.person, f), g) := λ c g =>
-    Kernel.ofWeights_apply_eq_of_mul one_ne_zero ENNReal.one_ne_top λ u => by
-      simp only [projListener_eq, Pi.one_apply, mul_one]
+  have hS : ∀ c g, S1 μ α ((c, f), g) = S1 μ α ((.person, f), g) := λ c g => by
+    simp only [S1, familySpeaker_apply, speaker_eq_ofWeights]
+    exact Kernel.ofWeights_apply_eq_of_mul one_ne_zero ENNReal.one_ne_top λ u => by
+      simp only [projListener_eq, mul_one]
   have key : ∀ c, (L1 μ ν α u).fst {(c, f)}
       = μ {(c, f)} * ∑ g, ν {g} * (S1 μ α ((.person, f), g) {u} / (S1 μ α ∘ₘ μ.prod ν) {u}) :=
     λ c => by

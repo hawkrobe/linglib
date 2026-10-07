@@ -5,23 +5,23 @@ public import Linglib.Pragmatics.RSA.Basic
 /-!
 # Frank and Goodman (2012): Predicting Pragmatic Reasoning in Language Games
 
-This file formalizes [frank-goodman-2012]'s rational speech act model at the paper's stimulus:
-three objects, a blue square, a blue circle and a green square, described by the four words
-*blue*, *green*, *square* and *circle*. A word applies to the objects it describes
-(`Feature.AppliesTo`). The literal listener hears a word as the uniform distribution over the
-objects it applies to (`literal`), and a speaker who wants to refer to an object chooses a word in
-proportion to the literal listener's probability of the object, the reciprocal of the number of
-objects the word applies to (the paper's second equation, `speaker`). The speaker is the
-substrate's `RSA.speaker`, a score speaker at the informativity utility, and so inherits its
-characterization as the rational optimizer (`RSA.isGreatest_freeEnergy_speakerOfScore`). At the
-stimulus the speaker prefers the word with the smaller extension wherever both apply
-(`size_principle`), so it prefers the uniquely identifying *circle* to the ambiguous *blue* for the
-blue circle, with all its mass in the limit of full rationality (`prefers_informative`,
-`fully_rational_picks_circle`); it uses an ambiguous word less at an object that a unique word
-identifies (`narrowing_blue`, `narrowing_square`), and never uses a word where it does not apply
-(`unique_green`, `unique_circle`). These asymmetries are what the paper's listener, the Bayesian
-posterior of the speaker against the empirically measured salience prior (its first equation),
-inverts; the paper reports the fit of speaker and listener bets to the model's predictions.
+This file formalizes Frank and Goodman's rational speech act model at the paper's stimulus: three
+objects, a blue square, a blue circle and a green square, described by the four words *blue*,
+*green*, *square* and *circle*. A word applies to the objects it describes (`Feature.AppliesTo`).
+The literal listener hears a word as the uniform distribution over the objects it applies to
+(`literal`), and a speaker who wants to refer to an object chooses a word in proportion to the
+literal listener's probability of the object, the reciprocal of the number of objects the word
+applies to (the paper's second equation, `speaker`). The speaker is the substrate's `RSA.speaker`, a
+score speaker at the informativity utility, and so inherits its characterization as the rational
+optimizer (`RSA.isGreatest_freeEnergy_speakerOfScore`). At the stimulus the speaker prefers the word
+with the smaller extension wherever both apply (`size_principle`), so it prefers the uniquely
+identifying *circle* to the ambiguous *blue* for the blue circle, with all its mass in the limit of
+full rationality (`prefers_informative`, `fully_rational_picks_circle`); it uses an ambiguous word
+less at an object that a unique word identifies (`narrowing_blue`, `narrowing_square`), and never
+uses a word where it does not apply (`unique_green`, `unique_circle`). These asymmetries are what
+the paper's listener, the Bayesian posterior of the speaker against the empirically measured
+salience prior (its first equation), inverts; the paper reports the fit of speaker and listener bets
+to the model's predictions.
 
 ## Implementation notes
 
@@ -79,13 +79,15 @@ instance : DecidableRel Feature.AppliesTo := fun w o ↦ by
 /-- The extension of a word, the objects it applies to; its size is the paper's `|w|`. -/
 def Feature.extension (w : Feature) : Finset Object := Finset.univ.filter w.AppliesTo
 
-/-- The literal listener: on hearing a word, the uniform distribution over its extension. -/
+/-- On hearing a word, the literal listener is uniform over its extension. -/
 noncomputable def literal : Kernel Feature Object :=
   RSA.literalListener Measure.count fun w ↦ (↑w.extension : Set Object).indicator 1
 
-/-- The speaker at rationality `α`, without cost: `S₁(w | r) ∝ L₀(r | w) ^ α`, the paper's second
-equation at `α = 1`. -/
-noncomputable def speaker (α : ℝ) : Kernel Object Feature := RSA.speaker α (fun _ ↦ 1) literal
+instance : IsFiniteKernel literal := inferInstanceAs (IsFiniteKernel (RSA.literalListener _ _))
+
+/-- The speaker at rationality `α` and no cost is `S₁(w | r) ∝ L₀(r | w) ^ α`, the paper's
+second equation at `α = 1`. -/
+noncomputable def speaker (α : ℝ) : Kernel Object Feature := RSA.speaker α 0 literal
 
 theorem mem_extension {w : Feature} {r : Object} :
     r ∈ (↑w.extension : Set Object) ↔ w.AppliesTo r := by
@@ -101,20 +103,17 @@ theorem literal_apply_singleton (w : Feature) (r : Object) :
   · exact RSA.literalListener_indicator_apply_singleton_of_notMem Measure.count
       (fun w : Feature ↦ (↑w.extension : Set Object)) (mt mem_extension.1 h)
 
-theorem literal_apply_singleton_le_one (w : Feature) (r : Object) : literal w {r} ≤ 1 :=
-  RSA.literalListener_apply_le_one _ _ w {r}
-
 /-! ### Predictions -/
 
-/-- The size principle: of two words that apply to an object, the speaker prefers the one with the
-smaller extension. -/
+/-- By the size principle, of two words that apply to an object the speaker prefers the one with
+the smaller extension. -/
 theorem size_principle {α : ℝ} (hα : 0 < α) {r : Object} {w₁ w₂ : Feature} (h₁ : w₁.AppliesTo r)
     (h₂ : w₂.AppliesTo r) :
     (speaker α r).real {w₁} < (speaker α r).real {w₂} ↔ w₂.extension.card < w₁.extension.card := by
-  rw [speaker, literal, RSA.speaker_literalListener_indicator_real_singleton_lt_iff hα one_ne_zero
-      ENNReal.one_ne_top Measure.count (fun w : Feature ↦ (↑w.extension : Set Object)) (by simp)
-      (mem_extension.2 h₁) (mem_extension.2 h₂),
-    Measure.count_apply_finset, Measure.count_apply_finset, Nat.cast_lt]
+  refine (RSA.speaker_literalListener_indicator_real_singleton_lt_iff hα 0 Measure.count
+    (fun w : Feature ↦ (↑w.extension : Set Object)) (by simp) (mem_extension.2 h₁)
+    (mem_extension.2 h₂)).trans ?_
+  rw [Measure.count_apply_finset, Measure.count_apply_finset, Nat.cast_lt]
 
 /-- For the blue circle the speaker prefers *circle*, which identifies it, to the ambiguous
 *blue*. -/
@@ -125,11 +124,11 @@ theorem prefers_informative {α : ℝ} (hα : 0 < α) :
 /-- As rationality grows without bound the speaker puts all its mass on *circle*. -/
 theorem fully_rational_picks_circle :
     Filter.Tendsto (fun α ↦ (speaker α .blueCircle).real {.circle}) Filter.atTop (𝓝 1) := by
-  refine RSA.tendsto_speaker_real_singleton_atTop (fun _ ↦ one_ne_zero)
-    (fun _ ↦ ENNReal.one_ne_top) (fun u ↦ literal_apply_singleton_le_one u _) ?_ fun u hu ↦ ?_
+  refine RSA.tendsto_speaker_real_singleton_atTop ?_ fun u hu ↦ ?_
   · rw [literal_apply_singleton, ite_eq_left (by decide)]
     simp [show Feature.circle.extension.card = 1 from by decide]
-  · rw [literal_apply_singleton, literal_apply_singleton,
+  · simp only [Pi.zero_apply, neg_zero, Real.exp_zero, mul_one]
+    rw [literal_apply_singleton, literal_apply_singleton,
       ite_eq_left (by decide : Feature.circle.AppliesTo _),
       show Feature.circle.extension.card = 1 from by decide]
     cases u
@@ -139,20 +138,18 @@ theorem fully_rational_picks_circle :
     · rw [ite_eq_right (by decide)]; norm_num
     · exact absurd rfl hu
 
-/-- The speaker's probability of a word at an object, on reals: the literal listener's probability
-raised to the rationality, over its total across the words. -/
+/-- On reals, the speaker's probability of a word at an object is the literal listener's
+probability raised to the rationality, over its total across the words. -/
 theorem speaker_real_singleton {α : ℝ} (hα : 0 ≤ α) (r : Object) (w : Feature) :
-    (speaker α r).real {w} = (literal w {r} ^ α).toReal / ∑ v, (literal v {r} ^ α).toReal := by
-  rw [speaker, RSA.speaker_real_singleton hα (fun _ ↦ ENNReal.one_ne_top)
-    (fun u ↦ literal_apply_singleton_le_one u r)]
-  simp
+    (speaker α r).real {w} = (literal w {r} ^ α).toReal / ∑ v, (literal v {r} ^ α).toReal :=
+  RSA.speaker_zero_real_singleton hα w
 
 private theorem univ_feature : (Finset.univ : Finset Feature) = {.blue, .green, .square, .circle} :=
   by decide
 
-/-- Narrowing: *blue* is used less for the blue circle, where *circle* competes, than for the
-blue square, where the only competitor is as ambiguous. A listener hearing *blue* narrows toward
-the blue square. -/
+/-- *Blue* is used less for the blue circle, where *circle* competes, than for the blue square,
+where the only competitor is as ambiguous, so a listener hearing *blue* narrows toward the blue
+square. -/
 theorem narrowing_blue {α : ℝ} (hα : 0 < α) :
     (speaker α .blueCircle).real {.blue} < (speaker α .blueSquare).real {.blue} := by
   set x : ℝ := ((2 : ℝ≥0∞)⁻¹ ^ α).toReal
@@ -171,7 +168,7 @@ theorem narrowing_blue {α : ℝ} (hα : 0 < α) :
   rw [div_lt_div_iff_of_pos_left hx0 (by positivity) (by positivity)]
   linarith
 
-/-- Narrowing for *square*: used less for the green square, which *green* identifies. -/
+/-- *Square* is likewise used less for the green square, which *green* identifies. -/
 theorem narrowing_square {α : ℝ} (hα : 0 < α) :
     (speaker α .greenSquare).real {.square} < (speaker α .blueSquare).real {.square} := by
   set x : ℝ := ((2 : ℝ≥0∞)⁻¹ ^ α).toReal
@@ -198,14 +195,12 @@ private theorem unique {α : ℝ} (hα : 0 < α) {w : Feature} {r r' : Object}
   rw [measureReal_def, measureReal_def, speaker,
     RSA.speaker_apply_singleton_eq_zero hα (by rw [literal_apply_singleton, ite_eq_right hr]),
     ENNReal.toReal_zero]
-  refine ENNReal.toReal_pos (RSA.speaker_apply_singleton_ne_zero hα.le (fun _ ↦ one_ne_zero)
-    (fun _ ↦ ENNReal.one_ne_top) (fun u ↦ literal_apply_singleton_le_one u r') ?_)
-    (measure_ne_top _ _)
+  refine ENNReal.toReal_pos (RSA.speaker_apply_singleton_ne_zero hα.le ?_) (measure_ne_top _ _)
   rw [literal_apply_singleton, ite_eq_left hr']
   simp
 
-/-- Unique reference: *green* is never used for the blue square and is used for the green square,
-so a listener hearing it identifies the green square. -/
+/-- *Green* is never used for the blue square and is used for the green square, so a listener
+hearing it identifies the green square. -/
 theorem unique_green {α : ℝ} (hα : 0 < α) :
     (speaker α .blueSquare).real {.green} < (speaker α .greenSquare).real {.green} :=
   unique hα (by decide) (by decide)

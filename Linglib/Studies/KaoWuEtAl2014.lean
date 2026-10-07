@@ -132,8 +132,8 @@ noncomputable def L0 (μ : Measure Meaning) : Kernel Price Meaning :=
 theorem L0_apply (μ : Measure Meaning) (u : Price) : L0 μ u = μ[|sem u] := by
   rw [L0, literalListener_indicator, Kernel.ofFunOfCountable_apply]
 
-theorem L0_apply_le_one (μ : Measure Meaning) (u : Price) (s : Set Meaning) : L0 μ u s ≤ 1 :=
-  literalListener_apply_le_one μ _ u s
+instance (μ : Measure Meaning) : IsFiniteKernel (L0 μ) :=
+  inferInstanceAs (IsFiniteKernel (literalListener _ _))
 
 /-- The literal listener gives a meaning mass exactly when the utterance names its price and
 the prior gives it mass. -/
@@ -146,18 +146,12 @@ theorem L0_apply_singleton_ne_zero_iff (μ : Measure Meaning) [IsFiniteMeasure �
   · rw [L0, literalListener_indicator_apply_singleton_of_notMem μ sem h]
     exact iff_of_false (fun h' ↦ h' rfl) (fun h' ↦ h h'.1)
 
-/-- The cost factor `e^{-C(u)}` of eq. 7 takes `C(u) = 1` at a round price and the fitted parameter
-`c` at a sharp one. -/
-noncomputable def cost (c : ℝ) (u : Price) : ℝ≥0∞ :=
-  ENNReal.ofReal (Real.exp (-(if u.IsRound then 1 else c)))
-
-theorem cost_ne_zero (c : ℝ) (u : Price) : cost c u ≠ 0 :=
-  (ENNReal.ofReal_pos.mpr (Real.exp_pos _)).ne'
-
-theorem cost_ne_top (c : ℝ) (u : Price) : cost c u ≠ ∞ := ENNReal.ofReal_ne_top
+/-- The cost `C(u)` of eq. 7 is one at a round price and the fitted parameter `c` at a sharp
+one. -/
+def cost (c : ℝ) (u : Price) : ℝ := if u.IsRound then 1 else c
 
 /-- The goal-indexed speaker, eqs. 5 to 8, is the best response to the projected literal listener of
-the goal, at unit rationality, weighted by the cost factor. -/
+the goal, at unit rationality, less the cost. -/
 noncomputable def S1 (μ : Measure Meaning) (c : ℝ) : Kernel (Meaning × Goal) Price :=
   familySpeaker (projListener project (L0 μ)) 1 (cost c)
 
@@ -185,8 +179,7 @@ theorem S1_apply_singleton_ne_zero_iff (g : Goal) (m : Meaning) (u : Price) :
     obtain ⟨m', hm', h0⟩ := hL
     exact ⟨m', hm', (L0_apply_singleton_ne_zero_iff μ u m').mp h0⟩
   · rintro ⟨m', hm', hu, hμ⟩
-    exact speaker_apply_singleton_ne_zero zero_le_one (cost_ne_zero c) (cost_ne_top c)
-      (fun u' ↦ projListener_apply_singleton_le_one _ _ _ _ _ (L0_apply_le_one μ))
+    exact speaker_apply_singleton_ne_zero zero_le_one
       ((projListener_apply_singleton_ne_zero_iff _ _ _ _ _).mpr
         ⟨m', hm', (L0_apply_singleton_ne_zero_iff μ u m').mpr ⟨hu, hμ⟩⟩)
 
@@ -269,14 +262,12 @@ theorem approximate_prefers_round {p : Price} (hp : ¬ p.IsRound) (h₁ : μ (se
     (h₂ : μ (sem p.round) ≠ 0) (a : Bool) :
     (S1 μ c ((p, a), (.approximate, .price))).real {p}
         < (S1 μ c ((p, a), (.approximate, .price))).real {p.round} ↔ 1 < c := by
-  have hle : ∀ u, projListener project (L0 μ) (.approximate, .price) u {(p, a)} ≤ 1 :=
-    fun u ↦ projListener_apply_singleton_le_one _ _ _ _ _ (L0_apply_le_one μ)
-  rw [S1, familySpeaker_apply, speaker_real_singleton_lt_iff zero_le_one (cost_ne_top c) hle
-    ⟨p, by rw [projListener_approximate μ h₁ rfl]; simp [cost_ne_zero]⟩,
+  rw [S1, familySpeaker_apply, speaker_real_singleton_lt_iff zero_le_one
+    ⟨p, by rw [projListener_approximate μ h₁ rfl]; simp⟩,
     projListener_approximate μ h₁ rfl, projListener_approximate μ h₂ (Price.round_round p),
-    ENNReal.one_rpow, one_mul, one_mul, cost, cost, ite_eq_right hp,
-    ite_eq_left (Price.isRound_round p),
-    ENNReal.ofReal_lt_ofReal_iff (Real.exp_pos _), Real.exp_lt_exp, neg_lt_neg_iff]
+    ENNReal.one_rpow, cost, cost, ite_eq_right hp, ite_eq_left (Price.isRound_round p)]
+  simp only [one_mul]
+  rw [ENNReal.ofReal_lt_ofReal_iff (Real.exp_pos _), Real.exp_lt_exp, neg_lt_neg_iff]
 
 end Halo
 
