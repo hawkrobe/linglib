@@ -215,6 +215,12 @@ end Times
 
 section NotAmbidirectional
 
+/-- A scalar construction `f` is ambidirectional at `B` when it returns the same result on `B` and
+on its complement, as maximality does when it picks the same boundary from both; this is the
+mechanism behind expletive negation. -/
+def IsAmbidirectional {α : Type*} (f : Set α → Prop) (B : Set α) : Prop :=
+  f B ↔ f Bᶜ
+
 variable {T : Type*}
 
 /-- *After* is not ambidirectional under complementation, since with two times *after* the earlier
