@@ -45,7 +45,6 @@ harmonic order (`Linearization/Externalization.lean`) and Fox–Pesetsky cyclic 
 namespace Minimalist
 
 open RoseTree UnorderedTree SyntacticObject
-open Derivation (Side Step)
 
 /-! ### Operations on ordered trees -/
 

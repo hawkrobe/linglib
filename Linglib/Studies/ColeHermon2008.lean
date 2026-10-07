@@ -100,7 +100,6 @@ open ArgumentStructure
 namespace ColeHermon2008
 
 open Minimalist SyntacticObject
-open Derivation (Side Step)
 
 /-! ### The clause and its derivations (§4.1–§4.2) -/
 

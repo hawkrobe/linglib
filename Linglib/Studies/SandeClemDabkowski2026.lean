@@ -276,7 +276,7 @@ verb. -/
 def remnant : PlanarSyntacticObject :=
   {.traceOf Terminal.object.token, {.leaf Terminal.particle.token, .traceOf Terminal.verb.token}}
 
-open Minimalist.Derivation (Step)
+open Minimalist (Step)
 open Minimalist.SyntacticObject (leaf)
 
 /-- The head and complement of the vP are built as in (31)–(34). The particle and the object

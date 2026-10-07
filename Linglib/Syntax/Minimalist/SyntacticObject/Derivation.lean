@@ -29,15 +29,15 @@ changes no stage and no mover.
 
 ## Main definitions
 
-* `Minimalist.Derivation.Side`, `Derivation.Step`, `Step.apply`, `Step.mover?`, `Step.mergeOp`,
+* `Minimalist.Side`, `Minimalist.Step`, `Step.apply`, `Step.mover?`, `Step.mergeOp`,
   `Step.Admissible`
 * `Minimalist.Derivation`, `Derivation.final`, `stageAt`, `movedItems`, `take`, `append`,
   `leftward`, `items`, `Admissible`
 
 ## Main results
 
-* `Minimalist.Derivation.Step.apply_em`: the sides build the same object.
-* `Minimalist.Derivation.Step.mergeOp_workspace`: an admissible step is the algebraic Merge
+* `Minimalist.Step.apply_em`: the sides build the same object.
+* `Minimalist.Step.mergeOp_workspace`: an admissible step is the algebraic Merge
   on the workspace.
 * `Minimalist.Derivation.mergeOpList_initial`: an admissible derivation is the
   iterated algebraic Merge.
@@ -58,7 +58,6 @@ namespace Minimalist
 
 open RoseTree UnorderedTree SyntacticObject
 
-namespace Derivation
 
 /-! ### Steps -/
 
@@ -221,14 +220,12 @@ theorem Step.mergeOpList_workspace :
 
 /-! ### Derivations -/
 
-end Derivation
-
 /-- An initial syntactic object with a sequence of steps. -/
 structure Derivation where
   /-- The initial syntactic object (a lexical item, in canonical derivations). -/
   initial : SyntacticObject
   /-- The ordered sequence of Merge/Move steps. -/
-  steps : List Derivation.Step
+  steps : List Step
 
 namespace Derivation
 
@@ -334,8 +331,6 @@ theorem mergeOpList_initial {d : Derivation} (hd : d.Admissible) :
   Step.mergeOpList_workspace d.steps d.initial hd
 
 end Derivation
-
-open Derivation
 
 /-! ### Carrier tests -/
 

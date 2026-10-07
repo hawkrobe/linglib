@@ -149,7 +149,6 @@ version of this file and are UNVERIFIED against the published text.
 namespace MarcolliChomskyBerwick2025
 
 open RoseTree UnorderedTree Minimalist SyntacticObject ConnesKreimer
-open Derivation (Side Step)
 
 /-! ### Internal Merge: an example (§1.4.4) -/
 

@@ -86,7 +86,6 @@ is the θ-uniformity the analysis was built for.
 namespace Collins2005
 
 open Minimalist SyntacticObject
-open Derivation (Side Step)
 
 /-! ### The passive and its rival derivations (§2–§5) -/
 

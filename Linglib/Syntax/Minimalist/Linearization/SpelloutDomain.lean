@@ -48,7 +48,7 @@ of a verb-plus-v head is spelled out with v.
 
 @[expose] public section
 
-namespace Minimalist.Derivation
+namespace Minimalist
 
 open SyntacticObject
 
@@ -60,6 +60,8 @@ def Step.applyInside (step : Step) (D : PlanarSyntacticObject) : PlanarSyntactic
   | .im mover _ =>
     if D.toSyntacticObject = mover then D
     else PlanarSyntacticObject.replaceWhere mover mover.tracePlanar D
+
+namespace Derivation
 
 variable (d : Derivation) (m n : ℕ)
 
@@ -117,4 +119,6 @@ theorem Linearizes.nodup {sched : List (ℕ × ℕ)} (h : d.Linearizes sched) {p
     (hp : p ∈ sched) : (d.spellout p.1 p.2).Nodup :=
   Linearization.Consistent.nodup h (List.mem_map_of_mem hp)
 
-end Minimalist.Derivation
+end Derivation
+
+end Minimalist

@@ -49,7 +49,6 @@ open ArgumentStructure
 namespace Larson1988
 
 open Minimalist SyntacticObject
-open Derivation (Side Step)
 open RoseTree UnorderedTree
 
 /-! ### Lexical items -/

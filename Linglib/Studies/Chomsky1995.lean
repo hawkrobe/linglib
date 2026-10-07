@@ -29,7 +29,6 @@ off its complement type.
 namespace Chomsky1995
 
 open Minimalist SyntacticObject
-open Derivation (Side Step)
 
 /-- The category a complement position c-selects: a nominal is `.D` (the DP hypothesis), a
     finite or interrogative clause `.C`, an infinitive `.T`, a nominalized or participial

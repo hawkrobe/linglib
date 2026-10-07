@@ -44,7 +44,6 @@ The demonstrative is `Cat.Dem`.
 namespace Cinque2005
 
 open Minimalist SyntacticObject RoseTree UnorderedTree
-open Derivation (Side Step)
 
 /-! ### The orders and their frequencies (6) -/
 

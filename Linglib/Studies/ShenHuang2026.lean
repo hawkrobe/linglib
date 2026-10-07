@@ -313,7 +313,6 @@ inductive Terminal
 section Linearization
 
 open Terminal
-open Derivation (Step)
 open SyntacticObject (leaf)
 
 /-- Each terminal spells out its own lexical item. -/

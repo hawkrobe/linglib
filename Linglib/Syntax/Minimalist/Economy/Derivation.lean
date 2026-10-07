@@ -24,7 +24,7 @@ stages therefore form a chain of economical transformations.
 
 ## Main results
 
-* `Minimalist.Derivation.Step.noComplexityLoss`, `Step.minimalYield`: an admissible step is
+* `Minimalist.Step.noComplexityLoss`, `Step.minimalYield`: an admissible step is
   economical.
 * `Minimalist.Derivation.isChain_noComplexityLoss`, `isChain_minimalYield`: so is
   every step of an admissible derivation.
@@ -57,7 +57,7 @@ theorem exists_eq_merge_of_count_terms {mover current : SyntacticObject}
 
 end Minimalist.SyntacticObject
 
-namespace Minimalist.Derivation
+namespace Minimalist
 
 open SyntacticObject ConnesKreimer
 
@@ -145,6 +145,8 @@ private theorem isChain_of_step {R : Workspace → Workspace → Prop} {P : Synt
     rw [← add_assoc]
     exact hR h hcur fun i hi ↦ hitems i (Multiset.mem_add.mpr (.inl hi))
 
+namespace Derivation
+
 /-- The workspaces of a derivation's stages hold the initial object beside its items, then after
     each step the object built so far beside the items still to come. -/
 noncomputable def workspaces (d : Derivation) : List Workspace :=
@@ -166,4 +168,6 @@ theorem isChain_minimalYield {d : Derivation} (hd : d.Admissible)
   isChain_of_step (P := fun S ↦ S.val.value.isLeft) (fun h hcur hi ↦ Step.minimalYield h hcur hi)
     Step.value_isLeft_apply d.steps d.initial hd hinit hitems
 
-end Minimalist.Derivation
+end Derivation
+
+end Minimalist
