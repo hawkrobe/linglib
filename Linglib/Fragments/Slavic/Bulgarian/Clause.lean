@@ -71,7 +71,7 @@ def sazhaljavam : Verb where
   form := "săžaljavam"
   frames := emotiveFrames
   predicateClass := some .commentative
-  attitude := some (.preferential (.degreeComparison .negative))
+  attitude := some (.preferential .negative true)
   factivity := some .full
 
 /-- *vinoven săm* 'be one's fault' ((57b)). -/
@@ -79,7 +79,7 @@ def vinovenSam : Verb where
   form := "vinoven săm"
   frames := emotiveFrames
   predicateClass := some .commentative
-  attitude := some (.preferential (.degreeComparison .negative))
+  attitude := some (.preferential .negative true)
   factivity := some .full
 
 /-- *jad me e* 'be sorry, regret' ((56b)). -/
@@ -87,7 +87,7 @@ def jadMeE : Verb where
   form := "jad me e"
   frames := emotiveFrames
   predicateClass := some .commentative
-  attitude := some (.preferential (.degreeComparison .negative))
+  attitude := some (.preferential .negative true)
   factivity := some .full
 
 /-- *radvam se* 'be happy'. -/
@@ -95,7 +95,7 @@ def radvamSe : Verb where
   form := "radvam se"
   frames := emotiveFrames
   predicateClass := some .commentative
-  attitude := some (.preferential (.degreeComparison .positive))
+  attitude := some (.preferential .positive true)
   factivity := some .full
 
 /-- *nedovolstvam* 'be dissatisfied'. -/
@@ -103,7 +103,7 @@ def nedovolstvam : Verb where
   form := "nedovolstvam"
   frames := emotiveFrames
   predicateClass := some .commentative
-  attitude := some (.preferential (.degreeComparison .negative))
+  attitude := some (.preferential .negative true)
   factivity := some .full
 
 /-- *pritesnjavam se* 'worry'. -/
@@ -111,7 +111,7 @@ def pritesnjavamSe : Verb where
   form := "pritesnjavam se"
   frames := emotiveFrames
   predicateClass := some .commentative
-  attitude := some (.preferential .uncertaintyBased)
+  attitude := some (.preferential .negative false)
   factivity := some .full
 
 /-- *žal mi e* 'be sorry'. -/
@@ -119,7 +119,7 @@ def zhalMiE : Verb where
   form := "žal mi e"
   frames := emotiveFrames
   predicateClass := some .commentative
-  attitude := some (.preferential (.degreeComparison .negative))
+  attitude := some (.preferential .negative true)
   factivity := some .full
 
 /-- *măčno mi e* 'be sad'. -/
@@ -127,7 +127,7 @@ def machnoMiE : Verb where
   form := "măčno mi e"
   frames := emotiveFrames
   predicateClass := some .commentative
-  attitude := some (.preferential (.degreeComparison .negative))
+  attitude := some (.preferential .negative true)
   factivity := some .full
 
 /-- *sram me e* 'feel ashamed'. -/
@@ -135,7 +135,7 @@ def sramMeE : Verb where
   form := "sram me e"
   frames := emotiveFrames
   predicateClass := some .commentative
-  attitude := some (.preferential (.degreeComparison .negative))
+  attitude := some (.preferential .negative true)
   factivity := some .full
 
 /-- *văzmuštavam se* 'resent', emotive and factive but without a *za* phrase ((58a)). -/
@@ -143,7 +143,7 @@ def vazmushtavamSe : Verb where
   form := "văzmuštavam se"
   frames := [ArgumentFrame.finiteClause]
   predicateClass := some .commentative
-  attitude := some (.preferential (.degreeComparison .negative))
+  attitude := some (.preferential .negative true)
   factivity := some .full
 
 /-- *razbiram* 'comprehend', a transitive factive on Kiparsky and Kiparsky's list. -/

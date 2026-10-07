@@ -39,7 +39,7 @@ def soeng : Verb :=
   { form := "soeng2", hanzi := "想", predicateClass := .desiderative,
     frames := [ArgumentFrame.infinitival],
     passivizable := false, opaqueContext := true,
-    attitude := some (.preferential (.degreeComparison .positive)) }
+    attitude := some (.preferential .positive true) }
 
 /-- *hyun* 勸 'urge'. -/
 def hyun : Verb :=
@@ -60,7 +60,7 @@ def giu : Verb :=
 def daasyun : Verb :=
   { form := "daa2syun3", hanzi := "打算", predicateClass := .desiderative,
     frames := [ArgumentFrame.infinitival], passivizable := false, opaqueContext := true,
-    attitude := some (.preferential (.degreeComparison .positive)) }
+    attitude := some (.preferential .positive true) }
 
 /-- *seon* 信 'believe'. -/
 def seon : Verb :=

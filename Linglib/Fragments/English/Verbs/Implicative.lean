@@ -68,7 +68,7 @@ def persuade : Verb := .mkRegular {
   readings := [{ frame := ArgumentFrame.infinitival, control := some .objectControl }]
   vendlerClass := some .accomplishment
   opaqueContext := true
-  attitude := some (.preferential (.degreeComparison .positive)) }
+  attitude := some (.preferential .positive true) }
 
 /-- "promise" — subject control across an object, "promise X to VP". A desiderative attitude
     verb whose subject commits to a future action; [landau-2015] (5c) classifies it as
@@ -80,7 +80,7 @@ def promise : Verb := .mkRegular {
   readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   vendlerClass := some .achievement
   opaqueContext := true
-  attitude := some (.preferential (.degreeComparison .positive))
+  attitude := some (.preferential .positive true)
   levinClasses := {LevinClass.futureHaving} }
 
 /-- "remember" — implicative with infinitival ("remember to call") -/

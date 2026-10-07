@@ -76,7 +76,7 @@ def kork : Verb where
   frames := [ArgumentFrame.gerund, nominalizedQuestion]
   passivizable := false
   opaqueContext := true
-  attitude := some (.preferential (.degreeComparison .negative))
+  attitude := some (.preferential .negative true)
 
 /-- *um-* 'hope', a positive preference by comparison of degrees. -/
 def um : Verb where
@@ -85,7 +85,7 @@ def um : Verb where
   frames := [ArgumentFrame.gerund]
   passivizable := false
   opaqueContext := true
-  attitude := some (.preferential (.degreeComparison .positive))
+  attitude := some (.preferential .positive true)
 
 /-- *endişelen-* 'worry', a preference relative to uncertainty. -/
 def endişelen : Verb where
@@ -94,7 +94,7 @@ def endişelen : Verb where
   frames := [ArgumentFrame.gerund, nominalizedQuestion]
   passivizable := false
   opaqueContext := true
-  attitude := some (.preferential .uncertaintyBased)
+  attitude := some (.preferential .negative false)
 
 /-! ### Motion -/
 

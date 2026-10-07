@@ -59,7 +59,7 @@ def kes : Morphology.Word := { form := "kes", cat := .NOUN }
 def yukamsulewehayta : Verb where
   form := "yukamsulewehay-ta"
   frames := [ArgumentFrame.finiteClause]
-  attitude := some (.preferential (.degreeComparison .negative))
+  attitude := some (.preferential .negative true)
   vendlerClass := some .state
 
 /-- *mit-ta* 'believe', a stative non-veridical doxastic. -/

@@ -47,7 +47,7 @@ def qidai : Verb := {
   frames := [ArgumentFrame.finiteClause]
   passivizable := false
   opaqueContext := true
-  attitude := some (.preferential (.relevanceBased .positive)) }
+  attitude := some (.preferential .positive false) }
 
 /-- 担心 *dānxīn* 'worry' is a negative preferential attitude. -/
 def danxin : Verb := {
@@ -56,7 +56,7 @@ def danxin : Verb := {
   frames := [ArgumentFrame.finiteClause]
   passivizable := false
   opaqueContext := true
-  attitude := some (.preferential .uncertaintyBased) }
+  attitude := some (.preferential .negative false) }
 
 /-- 希望 *xīwàng* 'hope' is a positive preferential attitude that takes no questions. -/
 def xiwang : Verb := {
@@ -65,7 +65,7 @@ def xiwang : Verb := {
   frames := [ArgumentFrame.finiteClause]
   passivizable := false
   opaqueContext := true
-  attitude := some (.preferential (.degreeComparison .positive)) }
+  attitude := some (.preferential .positive true) }
 
 /-- 害怕 *hàipà* 'fear' is a negative preferential attitude that takes questions. -/
 def haipa : Verb := {
@@ -74,7 +74,7 @@ def haipa : Verb := {
   frames := [ArgumentFrame.finiteClause]
   passivizable := false
   opaqueContext := true
-  attitude := some (.preferential (.degreeComparison .negative)) }
+  attitude := some (.preferential .negative true) }
 
 /-- 以为 *yǐwéi* 'be under the impression that' is a nonveridical doxastic attitude. -/
 def yiwei : Verb := {
@@ -112,7 +112,7 @@ def houhui : Verb := {
   frames := [ArgumentFrame.finiteClause]
   passivizable := false
   opaqueContext := true
-  attitude := some (.preferential (.degreeComparison .negative))
+  attitude := some (.preferential .negative true)
   factivity := some .full }
 
 /-- 开始 *kāishǐ* 'start', presupposing that the action or state was not under way before. -/
@@ -136,7 +136,7 @@ def xiang : Verb := {
   frames := [ArgumentFrame.infinitival]
   passivizable := false
   opaqueContext := true
-  attitude := some (.preferential (.degreeComparison .positive)) }
+  attitude := some (.preferential .positive true) }
 
 /-- 让 *ràng* 'let' is a manipulative verb with a nonfinite complement. -/
 def rang : Verb := {
@@ -178,7 +178,7 @@ def dasuan : Verb := {
   frames := [ArgumentFrame.infinitival]
   passivizable := false
   opaqueContext := true
-  attitude := some (.preferential (.degreeComparison .positive)) }
+  attitude := some (.preferential .positive true) }
 
 /-- 设法 *shèfǎ* 'try' is an achievement verb with a nonfinite complement. -/
 def shefa : Verb := {

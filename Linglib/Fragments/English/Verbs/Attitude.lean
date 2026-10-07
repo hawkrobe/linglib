@@ -55,7 +55,7 @@ def regret : Verb where
   frames := [ArgumentFrame.finiteClause]
   vendlerClass := some .state
   passivizable := false
-  attitude := some (.preferential (.degreeComparison .negative))
+  attitude := some (.preferential .negative true)
   factivity := some .full
   levinClasses := {LevinClass.admire}
 
@@ -126,7 +126,7 @@ def want : Verb := .mkRegular {
   vendlerClass := some .state
   passivizable := false
   opaqueContext := true
-  attitude := some (.preferential (.degreeComparison .positive))
+  attitude := some (.preferential .positive true)
   levinClasses := {LevinClass.appoint, .want} }
 
 /-- "intend" — intention-reporting attitude verb ([grano-2024]).
@@ -142,7 +142,7 @@ def intend : Verb := .mkRegular {
   vendlerClass := some .state
   passivizable := false
   opaqueContext := true
-  attitude := some (.preferential (.degreeComparison .positive))
+  attitude := some (.preferential .positive true)
   levinClasses := {LevinClass.characterize} }
 
 /-- "decide" — belief/intention hybrid attitude verb ([grano-2024], §6.1).
@@ -156,7 +156,7 @@ def decide_ : Verb := .mkRegular {
   readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   vendlerClass := some .achievement
   opaqueContext := true
-  attitude := some (.preferential (.degreeComparison .positive)) }
+  attitude := some (.preferential .positive true) }
 
 /-- "hope" — preferential attitude verb.
     Primary frame: finite clause ("hope that John leaves").
@@ -168,7 +168,7 @@ def hope : Verb := .mkRegular {
   vendlerClass := some .state
   passivizable := false
   opaqueContext := true
-  attitude := some (.preferential (.degreeComparison .positive))
+  attitude := some (.preferential .positive true)
   levinClasses := {LevinClass.long} }
 
 /-- "pray" — preferential attitude verb, permits future temporal orientation.
@@ -183,7 +183,7 @@ def pray : Verb := .mkRegular {
   vendlerClass := some .state
   passivizable := false
   opaqueContext := true
-  attitude := some (.preferential (.degreeComparison .positive))
+  attitude := some (.preferential .positive true)
   levinClasses := {LevinClass.long} }
 
 /-- "expect" — preferential attitude verb -/
@@ -193,7 +193,7 @@ def expect : Verb := .mkRegular {
   vendlerClass := some .state
   passivizable := false
   opaqueContext := true
-  attitude := some (.preferential (.degreeComparison .positive)) }
+  attitude := some (.preferential .positive true) }
 
 /-- "wish" — preferential attitude verb -/
 def wish : Verb where
@@ -206,7 +206,7 @@ def wish : Verb where
   vendlerClass := some .state
   passivizable := false
   opaqueContext := true
-  attitude := some (.preferential (.degreeComparison .positive))
+  attitude := some (.preferential .positive true)
   levinClasses := {LevinClass.long}
 
 /-- "fear" — a preferential attitude verb of Class 2, which takes questions. -/
@@ -216,7 +216,7 @@ def fear : Verb := .mkRegular {
   vendlerClass := some .state
   passivizable := false
   opaqueContext := true
-  attitude := some (.preferential (.degreeComparison .negative))
+  attitude := some (.preferential .negative true)
   levinClasses := {LevinClass.admire, .marvel} }
 
 /-- "dread" — a preferential attitude verb of Class 2, which takes questions. -/
@@ -226,7 +226,7 @@ def dread : Verb := .mkRegular {
   vendlerClass := some .state
   passivizable := false
   opaqueContext := true
-  attitude := some (.preferential (.degreeComparison .negative))
+  attitude := some (.preferential .negative true)
   levinClasses := {LevinClass.admire} }
 
 /-- "worry" — preferential attitude verb -/
@@ -240,7 +240,7 @@ def worry : Verb where
   vendlerClass := some .state
   passivizable := false
   opaqueContext := true
-  attitude := some (.preferential .uncertaintyBased)
+  attitude := some (.preferential .negative false)
   levinClasses := {LevinClass.amuse}
 
 /-! ### Clause-Embedding Predicates -/

@@ -47,7 +47,7 @@ def tanoshimi : Verb where
   frames := [ArgumentFrame.finiteClause]
   passivizable := false
   opaqueContext := true
-  attitude := some (.preferential (.relevanceBased .positive))
+  attitude := some (.preferential .positive false)
 
 /-- 恐れ *osore* 'fear', a negative preference by comparison of degrees. -/
 def osore : Verb where
@@ -56,7 +56,7 @@ def osore : Verb where
   frames := [ArgumentFrame.finiteClause]
   passivizable := false
   opaqueContext := true
-  attitude := some (.preferential (.degreeComparison .negative))
+  attitude := some (.preferential .negative true)
 
 /-- 期待 *kitai* 'expect, hope', a positive preference by comparison of degrees. -/
 def kitai : Verb where
@@ -65,7 +65,7 @@ def kitai : Verb where
   frames := [ArgumentFrame.finiteClause]
   passivizable := false
   opaqueContext := true
-  attitude := some (.preferential (.degreeComparison .positive))
+  attitude := some (.preferential .positive true)
 
 /-- 望む *nozomu* 'hope', a positive preference by comparison of degrees. -/
 def nozomu : Verb where
@@ -74,7 +74,7 @@ def nozomu : Verb where
   frames := [ArgumentFrame.finiteClause]
   passivizable := false
   opaqueContext := true
-  attitude := some (.preferential (.degreeComparison .positive))
+  attitude := some (.preferential .positive true)
 
 /-- 心配 *shinpai* 'worry', a preference relative to uncertainty. -/
 def shinpai : Verb where
@@ -83,7 +83,7 @@ def shinpai : Verb where
   frames := [ArgumentFrame.finiteClause]
   passivizable := false
   opaqueContext := true
-  attitude := some (.preferential .uncertaintyBased)
+  attitude := some (.preferential .negative false)
 
 /-! ### Causatives -/
 

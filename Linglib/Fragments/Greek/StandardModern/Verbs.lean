@@ -97,7 +97,7 @@ stativity restriction. -/
 def metaniono : Verb where
   form := "metanióno"
   frames := [ArgumentFrame.finiteClause]
-  attitude := some (.preferential (.degreeComparison .negative))
+  attitude := some (.preferential .negative true)
   vendlerClass := some .state
 
 /-- *aréso* (αρέσω) 'appeal to / be liked by' — Class III experiencer,
@@ -105,7 +105,7 @@ def metaniono : Verb where
 def areso : Verb where
   form := "aréso"
   frames := [{ ArgumentFrame.finiteClause with external := none }]
-  attitude := some (.preferential (.degreeComparison .positive))
+  attitude := some (.preferential .positive true)
   vendlerClass := some .state
 
 /-- *xérome* (χαίρομαι) 'be happy/glad' — preferential positive,
@@ -113,7 +113,7 @@ def areso : Verb where
 def xerome : Verb where
   form := "xérome"
   frames := [ArgumentFrame.finiteClause]
-  attitude := some (.preferential (.degreeComparison .positive))
+  attitude := some (.preferential .positive true)
   vendlerClass := some .state
 
 /-! ### Verbs compatible with both *oti* and *pu*
@@ -152,7 +152,7 @@ def thimameStat : Verb where
 def thimono : Verb where
   form := "thimóno"
   frames := [ArgumentFrame.finiteClause]
-  attitude := some (.preferential (.degreeComparison .negative))
+  attitude := some (.preferential .negative true)
   vendlerClass := some .achievement
 
 /-- *thimóno* — stative 'be angry' sense, the one available with *pu*
@@ -161,7 +161,7 @@ def thimonoStat : Verb where
   form := "thimóno"
   frames := [ArgumentFrame.finiteClause]
   senseTag := .stative
-  attitude := some (.preferential (.degreeComparison .negative))
+  attitude := some (.preferential .negative true)
   vendlerClass := some .state
 
 /-- *nomízo* (νομίζω) 'think' — doxastic, non-veridical, stative; takes *oti*, and *na*
@@ -196,7 +196,7 @@ def antilamvanome : Verb where
 def anisixo : Verb where
   form := "anisixó"
   frames := [ArgumentFrame.finiteClause]
-  attitude := some (.preferential (.degreeComparison .negative))
+  attitude := some (.preferential .negative true)
   vendlerClass := some .state
 
 /-! ### Interrogative and volitional predicates -/
@@ -213,7 +213,7 @@ def anarotjeme : Verb where
 def thelo : Verb where
   form := "thélo"
   frames := [{ complements := [.clausal (coding := some .subjunctive)] }]
-  attitude := some (.preferential (.degreeComparison .positive))
+  attitude := some (.preferential .positive true)
   vendlerClass := some .state
 
 /-- *elpízo* (ελπίζω) 'hope' — takes a *na*-clause or an *oti*-clause ([grano-2024],
@@ -224,7 +224,7 @@ def elpizo : Verb where
     [{ complements := [.clausal (coding := some .subjunctive)] }, ArgumentFrame.finiteClause]
   passivizable := false
   opaqueContext := true
-  attitude := some (.preferential (.degreeComparison .positive))
+  attitude := some (.preferential .positive true)
   vendlerClass := some .state
 
 /-- *protítheme* (προτίθεμαι) 'intend' — takes only a *na*-clause ([grano-2024], from
@@ -234,7 +234,7 @@ def protitheme : Verb where
   frames := [{ complements := [.clausal (coding := some .subjunctive)] }]
   passivizable := false
   opaqueContext := true
-  attitude := some (.preferential (.degreeComparison .positive))
+  attitude := some (.preferential .positive true)
   vendlerClass := some .state
 
 /-- *vázo* (βάζω) 'put', causative 'make' — takes an object and a *na*-clause
