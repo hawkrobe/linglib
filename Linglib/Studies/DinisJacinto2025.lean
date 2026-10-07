@@ -22,24 +22,13 @@ makes the premises jointly satisfiable.
 
 ## Main statements
 
-* `DinisJacinto2025.IsMLModel`: the eleven axioms, along a strict weak order with marginally and
-  largely smaller than both primitive.
-* `DinisJacinto2025.infinite_of_mlScale`, `DinisJacinto2025.instIsEmptyMLScale`: every ML scale
-  is infinite, and no conditionally complete order, such as the naturals or the reals, carries
-  one.
-* `DinisJacinto2025.infinitesimal_m_iff`, `DinisJacinto2025.finite_m_iff`: infinitesimal and
-  finite differences of hyperreals are the marginal differences of ML scales.
-* `DinisJacinto2025.exists_isHom_rep`: every countable, finitely marginal ML scale maps
-  homomorphically into the representative model; `DinisJacinto2025.exists_isHom_lex_rat`: every
-  countable one maps into rational-indexed blocks of rational-indexed locations.
-* `DinisJacinto2025.IsHom.comp_cautiouslyMonotone`,
-  `DinisJacinto2025.IsHom.exists_cautiouslyMonotone`: representations are unique up to cautiously
-  monotone-increasing transformations.
-* `DinisJacinto2025.finite_l_iff`, `DinisJacinto2025.heap_iff_bald`: Itzhaki's relations of being
-  infinitely less, finitely close and indistinguishable are those of the finite and the
-  infinitesimal scales, and his heaps are exactly what is not largely smaller than a clear case.
-* `DinisJacinto2025.Bald.tolerance`, `DinisJacinto2025.not_transGen_m`: baldness is tolerant,
-  and no finite chain of marginal steps leads from someone not bald to the last member.
+* `instIsEmptyMarginalScale`: no conditionally complete order, such as the naturals or the
+  reals, carries an ML scale.
+* `exists_isHom_lex_rat_int`: every countable, finitely marginal ML scale maps homomorphically
+  into the representative model `ℚ ×ₗ ℤ`.
+* `heap_iff_bald`: Itzhaki's heaps are exactly what is not largely smaller than a clear case.
+* `not_transGen_marginallyLT`: no finite chain of marginal steps leads from someone not bald to
+  the last member of a Sorites series.
 
 ## Implementation notes
 
@@ -67,9 +56,9 @@ makes the premises jointly satisfiable.
 
 namespace DinisJacinto2025
 
-open Degree MLScale
+open Degree MarginalScale
 
-variable {α : Type*} [LinearOrder α] {ml : MLScale α} {x y : α}
+variable {α : Type*} [LinearOrder α] {ml : MarginalScale α} {x y : α}
 
 /-! ### The theory -/
 
@@ -98,11 +87,11 @@ theorem IsMLModel.l_iff {M L : α → α → Prop} (h : IsMLModel (· < ·) M L)
 /-- No conditionally complete linear order carries an ML scale (Theorem 2.12). The supremum of
 the degrees above `x` and largely below `y` would lie in the block of `y`, and a degree marginally
 below it would be a smaller upper bound. -/
-instance instIsEmptyMLScale {α : Type*} [ConditionallyCompleteLinearOrder α] :
-    IsEmpty (MLScale α) := by
+instance instIsEmptyMarginalScale {α : Type*} [ConditionallyCompleteLinearOrder α] :
+    IsEmpty (MarginalScale α) := by
   refine ⟨fun ml ↦ ?_⟩
   obtain ⟨x, y, hxy⟩ := ml.exists_large
-  set S := {z | x < z ∧ ml.L z y}
+  set S := {z | x < z ∧ ml.LargelyLT z y}
   obtain ⟨z₀, hxz₀, hz₀y⟩ := (ml.decomposition hxy).1
   have hS : S.Nonempty := ⟨z₀, hxz₀.lt, hz₀y⟩
   have hb : BddAbove S := ⟨y, fun z hz ↦ hz.2.lt.le⟩
@@ -112,25 +101,25 @@ instance instIsEmptyMLScale {α : Type*} [ConditionallyCompleteLinearOrder α] :
       obtain ⟨w, hlw, hwy⟩ := (ml.decomposition h).1
       exact (le_csSup hb ⟨hxl.trans hlw.lt, hwy⟩).not_gt hlw.lt,
     fun h ↦ (csSup_le hS fun z hz ↦ hz.2.lt.le).not_gt h.lt⟩
-  obtain ⟨w, hwl, -, hxw⟩ := (ml.decomposition (hly.l_congr_right.2 hxy)).2
+  obtain ⟨w, hwl, -, hxw⟩ := (ml.decomposition (hly.largelyLT_congr_right.2 hxy)).2
   exact (csSup_le hS fun a ha ↦
-    ((ml.irrelevance a hwl).1 (hly.l_congr_right.2 ha.2)).1.le).not_gt hwl.lt
+    ((ml.irrelevance a hwl).1 (hly.largelyLT_congr_right.2 ha.2)).1.le).not_gt hwl.lt
 
 /-- Every ML scale is infinite (p. 521). -/
-theorem infinite_of_mlScale (ml : MLScale α) : Infinite α :=
+theorem infinite_of_marginalScale (ml : MarginalScale α) : Infinite α :=
   let ⟨_, _, h⟩ := ml.exists_large
-  Set.infinite_univ_iff.1 ((L.infinite_Ioo h).mono (Set.subset_univ _))
+  Set.infinite_univ_iff.1 ((LargelyLT.infinite_Ioo h).mono (Set.subset_univ _))
 
-example : IsEmpty (MLScale ℕ) := inferInstance
+example : IsEmpty (MarginalScale ℕ) := inferInstance
 
-example : IsEmpty (MLScale ℝ) := inferInstance
+example : IsEmpty (MarginalScale ℝ) := inferInstance
 
 /-! ### Nonstandard models -/
 
 open ArchimedeanClass Hyperreal
 
 /-- The hyperreals with infinitesimal differences marginal, the model `ℑ2` of Theorem 3.1. -/
-noncomputable def infinitesimal : MLScale ℝ* :=
+noncomputable def infinitesimal : MarginalScale ℝ* :=
   ofAddSubgroup Itzhaki2021.infinitesimals (ordConnected_ballAddSubgroup 0)
     (fun h ↦ by
       have := Itzhaki2021.mem_infinitesimals.2 archimedeanClassMk_epsilon_pos
@@ -140,12 +129,13 @@ noncomputable def infinitesimal : MLScale ℝ* :=
       have : (1 : ℝ*) ∈ Itzhaki2021.infinitesimals := h ▸ AddSubgroup.mem_top _
       simp at this)
 
-theorem infinitesimal_m_iff {x y : ℝ*} : infinitesimal.M x y ↔ x < y ∧ 0 < mk (y - x) := by
-  rw [infinitesimal, ofAddSubgroup_m_iff, Itzhaki2021.mem_infinitesimals]
+theorem infinitesimal_marginallyLT_iff {x y : ℝ*} :
+    infinitesimal.MarginallyLT x y ↔ x < y ∧ 0 < mk (y - x) := by
+  rw [infinitesimal, ofAddSubgroup_marginallyLT_iff, Itzhaki2021.mem_infinitesimals]
 
 /-- The hyperreals with finite differences marginal, the reading of Dean (§5) and of Itzhaki
 (§6). -/
-noncomputable def finite : MLScale ℝ* :=
+noncomputable def finite : MarginalScale ℝ* :=
   ofAddSubgroup Itzhaki2021.finites (ordConnected_closedBallAddSubgroup 0)
     (fun h ↦ by
       have : (1 : ℝ*) ∈ Itzhaki2021.finites := Itzhaki2021.mem_finites.2 (by simp)
@@ -155,28 +145,30 @@ noncomputable def finite : MLScale ℝ* :=
       have : ω ∈ Itzhaki2021.finites := h ▸ AddSubgroup.mem_top _
       exact (Itzhaki2021.mem_finites.1 this).not_gt archimedeanClassMk_omega_neg)
 
-theorem finite_m_iff {x y : ℝ*} : finite.M x y ↔ x < y ∧ 0 ≤ mk (y - x) := by
-  rw [finite, ofAddSubgroup_m_iff, Itzhaki2021.mem_finites]
+theorem finite_marginallyLT_iff {x y : ℝ*} : finite.MarginallyLT x y ↔ x < y ∧ 0 ≤ mk (y - x) := by
+  rw [finite, ofAddSubgroup_marginallyLT_iff, Itzhaki2021.mem_finites]
 
-example : infinitesimal.M 0 ε ∧ infinitesimal.L 0 1 :=
-  ⟨infinitesimal_m_iff.2 ⟨epsilon_pos, by simp [archimedeanClassMk_epsilon_pos]⟩,
-    zero_lt_one, fun h ↦ by simpa using (infinitesimal_m_iff.1 h).2⟩
+example : infinitesimal.MarginallyLT 0 ε ∧ infinitesimal.LargelyLT 0 1 :=
+  ⟨infinitesimal_marginallyLT_iff.2 ⟨epsilon_pos, by simp [archimedeanClassMk_epsilon_pos]⟩,
+    zero_lt_one, fun h ↦ by simpa using (infinitesimal_marginallyLT_iff.1 h).2⟩
 
-example : finite.M 0 1 ∧ finite.L 0 ω :=
-  ⟨finite_m_iff.2 ⟨zero_lt_one, by simp⟩, omega_pos,
-    fun h ↦ (finite_m_iff.1 h).2.not_gt (by simp [archimedeanClassMk_omega_neg])⟩
+example : finite.MarginallyLT 0 1 ∧ finite.LargelyLT 0 ω :=
+  ⟨finite_marginallyLT_iff.2 ⟨zero_lt_one, by simp⟩, omega_pos,
+    fun h ↦ (finite_marginallyLT_iff.1 h).2.not_gt (by simp [archimedeanClassMk_omega_neg])⟩
 
 /-! ### Representation -/
 
 variable (ml) in
 /-- `y` is a weakly marginal successor of `x` when `x` is marginally smaller than `y` and no
 degree marginally above `x` is marginally below `y` (Definition 4.4). -/
-def MarginalSucc (x y : α) : Prop := ml.M x y ∧ ∀ z, ml.M x z → ¬ ml.M z y
+def MarginalSucc (x y : α) : Prop :=
+  ml.MarginallyLT x y ∧ ∀ z, ml.MarginallyLT x z → ¬ ml.MarginallyLT z y
 
 variable (ml) in
 /-- An ML scale is finitely marginal when finitely many weakly marginal successions lead from
 any degree to any marginally greater one (Definition 4.5). -/
-def FinitelyMarginal : Prop := ∀ ⦃x y⦄, ml.M x y → Relation.TransGen (MarginalSucc ml) x y
+def FinitelyMarginal : Prop :=
+  ∀ ⦃x y⦄, ml.MarginallyLT x y → Relation.TransGen (MarginalSucc ml) x y
 
 theorem MarginalSucc.Icc_subset (h : MarginalSucc ml x y) : Set.Icc x y ⊆ {x, y} :=
   fun z ⟨hxz, hzy⟩ ↦ by
@@ -205,9 +197,9 @@ theorem FinitelyMarginal.finite_Icc_block (hf : FinitelyMarginal ml)
 
 /-- When every block embeds in `γ`, the degrees can be given locations in `γ` that grow along
 marginal steps. -/
-theorem exists_lt_of_m {γ : Type*} [Preorder γ]
+theorem exists_lt_of_marginallyLT {γ : Type*} [Preorder γ]
     (h : ∀ q : Quotient ml.atMostMarginalSetoid, ∃ g : {y // ⟦y⟧ = q} → γ, StrictMono g) :
-    ∃ G : α → γ, ∀ ⦃x y⦄, ml.M x y → G x < G y := by
+    ∃ G : α → γ, ∀ ⦃x y⦄, ml.MarginallyLT x y → G x < G y := by
   choose g hg using h
   have e (z : α) (q) (h : ⟦z⟧ = q) : g ⟦z⟧ ⟨z, rfl⟩ = g q ⟨z, h⟩ := by subst h; rfl
   refine ⟨fun z ↦ g ⟦z⟧ ⟨z, rfl⟩, fun x y h ↦ ?_⟩
@@ -217,10 +209,10 @@ theorem exists_lt_of_m {γ : Type*} [Preorder γ]
 
 /-- Every countable, finitely marginal ML scale maps homomorphically into the representative
 model (Theorem 4.7). -/
-theorem exists_isHom_rep [Countable α] (hf : FinitelyMarginal ml) :
-    ∃ f : α → ℚ ×ₗ ℤ, ml.IsHom rep f := by
-  obtain ⟨F, hF⟩ := Order.exists_rat_rel_iff_lt ml.L
-  obtain ⟨G, hG⟩ := exists_lt_of_m fun q ↦ by
+theorem exists_isHom_lex_rat_int [Countable α] (hf : FinitelyMarginal ml) :
+    ∃ f : α → ℚ ×ₗ ℤ, ml.IsHom (lex ℚ ℤ) f := by
+  obtain ⟨F, hF⟩ := Order.exists_rat_rel_iff_lt ml.LargelyLT
+  obtain ⟨G, hG⟩ := exists_lt_of_marginallyLT fun q ↦ by
     let := LocallyFiniteOrder.ofFiniteIcc (hf.finite_Icc_block q)
     obtain ⟨e⟩ := nonempty_orderEmbedding_int {y // ⟦y⟧ = q}
     exact ⟨e, e.strictMono⟩
@@ -228,9 +220,9 @@ theorem exists_isHom_rep [Countable α] (hf : FinitelyMarginal ml) :
 
 /-- Every countable ML scale maps homomorphically into rational-indexed blocks of
 rational-indexed locations (§4.4). -/
-theorem exists_isHom_lex_rat [Countable α] : ∃ f : α → ℚ ×ₗ ℚ, ml.IsHom (lex ℚ ℚ) f := by
-  obtain ⟨F, hF⟩ := Order.exists_rat_rel_iff_lt ml.L
-  obtain ⟨G, hG⟩ := exists_lt_of_m (γ := ℚ) fun q ↦ by
+theorem exists_isHom_lex_rat_rat [Countable α] : ∃ f : α → ℚ ×ₗ ℚ, ml.IsHom (lex ℚ ℚ) f := by
+  obtain ⟨F, hF⟩ := Order.exists_rat_rel_iff_lt ml.LargelyLT
+  obtain ⟨G, hG⟩ := exists_lt_of_marginallyLT (γ := ℚ) fun q ↦ by
     obtain ⟨e⟩ := Order.embedding_from_countable_to_dense {y : α // ⟦y⟧ = q} ℚ
     exact ⟨e, e.strictMono⟩
   exact ⟨fun x ↦ toLex (F x, G x), isHom_lex_iff.2 ⟨hF, hG⟩⟩
@@ -285,7 +277,8 @@ theorem IsHom.exists_cautiouslyMonotone {h u : α → β ×ₗ γ} (hh : ml.IsHo
     rw [hf, hf, ← huL, hhL]
     exact hxy
   · rintro b₁ ⟨x, hx⟩ b₂ ⟨y, hy⟩ hb
-    have := huM ((hh.m_iff x y).1 (by rw [hx, hy]; exact lex_m_iff.2 ⟨rfl, hb⟩))
+    have := huM ((hh.marginallyLT_iff x y).1
+      (by rw [hx, hy]; exact lex_marginallyLT_iff.2 ⟨rfl, hb⟩))
     simp only [← hg, hx, hy, ofLex_toLex] at this ⊢
     exact this
 
@@ -298,7 +291,7 @@ section Sorites
 variable (ml) in
 /-- In the Sorites of §5, to be bald is not to be largely less bald than the last member `e` of
 the series. -/
-def Bald (e x : α) : Prop := ¬ ml.L x e
+def Bald (e x : α) : Prop := ¬ ml.LargelyLT x e
 
 variable {e : α}
 
@@ -308,19 +301,22 @@ theorem bald_of_le (h : e ≤ x) : Bald ml e x := fun hl ↦ (hl.lt.trans_le h).
 /-- Baldness is tolerant. What is marginally balder than someone not bald is not bald, and what
 is marginally less bald than someone bald is bald. -/
 theorem Bald.tolerance :
-    (¬ Bald ml e x → ml.M x y → ¬ Bald ml e y) ∧ (Bald ml e x → ml.M y x → Bald ml e y) := by
+    (¬ Bald ml e x → ml.MarginallyLT x y → ¬ Bald ml e y) ∧
+      (Bald ml e x → ml.MarginallyLT y x → Bald ml e y) := by
   unfold Bald
-  grind [ml.irrelevance, L]
+  grind [ml.irrelevance, LargelyLT]
 
 /-- No finite chain of marginal steps leads from someone not bald to the last member, so a
 series in which each member is marginally balder than the one before satisfies the premises of
 the Sorites only if it is infinite. -/
-theorem not_transGen_m (hx : ¬ Bald ml e x) : ¬ Relation.TransGen ml.M x e := fun h ↦ by
+theorem not_transGen_marginallyLT (hx : ¬ Bald ml e x) :
+    ¬ Relation.TransGen ml.MarginallyLT x e := fun h ↦ by
   rw [Relation.transGen_eq_self] at h
-  exact h.not_l (not_not.1 hx)
+  exact h.not_largelyLT (not_not.1 hx)
 
-example : ¬ Bald rep (toLex (1, 0)) (toLex (0, 0)) ∧ Bald rep (toLex (1, 0)) (toLex (1, 0)) :=
-  ⟨not_not.2 (lex_l_iff.2 zero_lt_one), bald_of_le le_rfl⟩
+example :
+    ¬ Bald (lex ℚ ℤ) (toLex (1, 0)) (toLex (0, 0)) ∧ Bald (lex ℚ ℤ) (toLex (1, 0)) (toLex (1, 0)) :=
+  ⟨not_not.2 (lex_largelyLT_iff.2 zero_lt_one), bald_of_le le_rfl⟩
 
 end Sorites
 
@@ -341,8 +337,10 @@ theorem finite_atMostMarginal_iff {x y : ℝ*} :
 
 /-- Being infinitely less, in Itzhaki's sense, is being largely smaller on the finite scale
 (§6). -/
-theorem finite_l_iff {x y : ℝ*} : finite.L x y ↔ Itzhaki2021.InfinitelyLess x y := by
-  rw [L, Itzhaki2021.InfinitelyLess, m_iff_lt_and_atMostMarginal, finite_atMostMarginal_iff]
+theorem finite_largelyLT_iff {x y : ℝ*} :
+    finite.LargelyLT x y ↔ Itzhaki2021.InfinitelyLess x y := by
+  rw [LargelyLT, Itzhaki2021.InfinitelyLess, marginallyLT_iff_lt_and_atMostMarginal,
+    finite_atMostMarginal_iff]
   tauto
 
 /-- Under Itzhaki's qualitative size, the heaps are exactly what is not largely smaller than a
@@ -351,7 +349,7 @@ theorem heap_iff_bald {De : Type*} {heap known : De → Prop} [DecidablePred hea
     [DecidablePred known] {size : De → ℕ} {H : ℝ*} (hH : mk H < 0) (hpos : 0 < H) {e x : De}
     (he : heap e) : heap x ↔ Bald finite (Itzhaki2021.qualSize heap known size H e)
       (Itzhaki2021.qualSize heap known size H x) := by
-  rw [Bald, finite_l_iff]
+  rw [Bald, finite_largelyLT_iff]
   refine ⟨fun hx h ↦ h.2 (Itzhaki2021.finitelyClose_qualSize hx he),
     fun h ↦ by_contra fun hx ↦ h ?_⟩
   rw [Itzhaki2021.qualSize_of_not_heap hx]
