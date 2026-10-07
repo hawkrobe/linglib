@@ -23,13 +23,15 @@ file.
 dimensions: a profile assigns each object its vector of dimensional values, and a rule sends
 profiles to an overall relation on the objects, read `x ⪰ y`. Sen's informational requirements are
 invariance under a class of transformation vectors (strictly increasing maps, common-unit positive
-affine maps, similarities). Arrow's conditions and the strong Pareto, Pareto-indifference and
-anonymity conditions are predicates on rules. Four classical rules are stated with the conditions
+affine maps, similarities, and the comparability classes that apply one map to every
+dimension). Arrow's conditions and the strong Pareto, Pareto-indifference and
+anonymity conditions are predicates on rules. Five classical rules are stated with the conditions
 they meet or fail: majority, after May, meets every Arrow condition but weak-ordering outputs,
 which Condorcet's cycle refutes; the Pareto rule, after Weymark, is a quasi-ordering that leaves
 every trade-off incomparable; the utilitarian rule meets every Arrow condition but ordinal
 invariance, failing even ratio-scale invariance; the Cobb–Douglas rule, after Tsui and Weymark, is
-ratio-scale invariant on non-negative profiles. The Pareto rule is the unanimous verdict of the
+ratio-scale invariant on non-negative profiles; the maximin rule needs only ordinal level
+comparability. The Pareto rule is the unanimous verdict of the
 utilitarian rules with positive weights (`paretoRule_iff_forall_utilitarian`), so a trade-off is
 exactly a pair that two positive weightings rank oppositely.
 
@@ -106,17 +108,25 @@ def Profile.transform (f : ι → K → K) (v : Profile ι α K) : Profile ι α
 
 /-! ### Informational invariance -/
 
-/-- Invariance of a rule under a class of transformation vectors. -/
-def Invariant (T : Set (ι → K → K)) (a : Rule ι α K) : Prop :=
+/-- Invariance of a function of profiles, such as a rule or a statement about values, under a class
+of transformation vectors. -/
+def Invariant {β : Type*} (T : Set (ι → K → K)) (a : Profile ι α K → β) : Prop :=
   ∀ f ∈ T, ∀ v, a (v.transform f) = a v
 
-theorem Invariant.mono {S T : Set (ι → K → K)} (h : S ⊆ T) {a : Rule ι α K}
+theorem Invariant.mono {β : Type*} {S T : Set (ι → K → K)} (h : S ⊆ T) {a : Profile ι α K → β}
     (ha : Invariant T a) : Invariant S a :=
   fun f hf ↦ ha f (h hf)
 
 /-- Vectors of strictly increasing transformations; invariance under them is ordinal
 non-comparability. -/
 def ordinal [Preorder K] : Set (ι → K → K) := {f | ∀ i, StrictMono (f i)}
+
+/-- Vectors applying one strictly increasing transformation to every dimension; invariance under
+them is ordinal level comparability. -/
+def ordinalLevel [Preorder K] : Set (ι → K → K) := {f | ∃ u : K → K, StrictMono u ∧ ∀ i, f i = u}
+
+theorem ordinalLevel_subset_ordinal [Preorder K] : ordinalLevel ⊆ (ordinal : Set (ι → K → K)) :=
+  fun _ ⟨_, hu, hf⟩ i ↦ hf i ▸ hu
 
 section Cardinal
 
@@ -131,7 +141,28 @@ def cardinalUnit : Set (ι → K → K) :=
 non-comparability. -/
 def ratio : Set (ι → K → K) := {f | ∃ a : ι → K, (∀ i, 0 < a i) ∧ ∀ i t, f i t = a i * t}
 
+/-- Vectors applying one positive affine transformation to every dimension; invariance under them
+is cardinal full comparability. -/
+def cardinalFull : Set (ι → K → K) := {f | ∃ a : K, 0 < a ∧ ∃ b : K, ∀ i t, f i t = a * t + b}
+
+/-- Vectors applying one similarity transformation to every dimension; invariance under them is
+ratio-scale full comparability. -/
+def ratioFull : Set (ι → K → K) := {f | ∃ a : K, 0 < a ∧ ∀ i t, f i t = a * t}
+
+theorem cardinalFull_subset_cardinalUnit : cardinalFull ⊆ (cardinalUnit : Set (ι → K → K)) :=
+  fun _ ⟨a, ha, b, hf⟩ ↦ ⟨a, ha, fun _ ↦ b, hf⟩
+
+theorem ratioFull_subset_cardinalFull : ratioFull ⊆ (cardinalFull : Set (ι → K → K)) :=
+  fun _ ⟨a, ha, hf⟩ ↦ ⟨a, ha, 0, fun i t ↦ by rw [hf, add_zero]⟩
+
+theorem ratioFull_subset_ratio : ratioFull ⊆ (ratio : Set (ι → K → K)) :=
+  fun _ ⟨a, ha, hf⟩ ↦ ⟨fun _ ↦ a, fun _ ↦ ha, hf⟩
+
 variable [IsStrictOrderedRing K]
+
+theorem cardinalFull_subset_ordinalLevel : cardinalFull ⊆ (ordinalLevel : Set (ι → K → K)) :=
+  fun _ ⟨a, ha, b, hf⟩ ↦ ⟨(a * · + b), fun _ _ hst ↦ add_lt_add_left
+    (mul_lt_mul_of_pos_left hst ha) _, fun i ↦ funext (hf i)⟩
 
 theorem cardinalUnit_subset_ordinal : cardinalUnit ⊆ (ordinal : Set (ι → K → K)) := by
   rintro f ⟨a, ha, b, hf⟩ i s t hst
@@ -448,6 +479,30 @@ theorem asymmRel_paretoRule_iff_forall_utilitarian :
   · exact (h 1 fun _ ↦ one_pos).2 (paretoRule_iff_forall_utilitarian.1 h' 1 fun _ ↦ one_pos)
 
 end Utilitarian
+
+/-! ### The maximin rule -/
+
+section Maximin
+
+variable [Fintype ι] [Nonempty ι] [LinearOrder K]
+
+/-- Under the maximin rule, `x ⪰ y` iff the lowest value of `x` is at least the lowest value of
+`y`. -/
+def maximin : Rule ι α K := fun v x y ↦
+  univ.inf' univ_nonempty (v y) ≤ univ.inf' univ_nonempty (v x)
+
+/-- The maximin rule needs only ordinal level comparability: a common strictly increasing map
+moves every lowest value alike. -/
+theorem maximin_ordinalLevelInvariant : Invariant ordinalLevel (maximin : Rule ι α K) := by
+  rintro f ⟨u, hu, hf⟩ v
+  have key : ∀ z, univ.inf' univ_nonempty ((v.transform f) z) = u (univ.inf' univ_nonempty (v z)) :=
+    fun z ↦ by
+      rw [apply_inf'_eq_inf'_comp univ_nonempty u fun a b ↦ hu.monotone.map_min]
+      simp [Profile.transform, hf]
+  funext x y
+  simp only [maximin, key, hu.le_iff_le]
+
+end Maximin
 
 /-! ### The Cobb–Douglas rule -/
 
