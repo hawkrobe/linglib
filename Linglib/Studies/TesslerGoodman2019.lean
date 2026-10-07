@@ -102,13 +102,16 @@ noncomputable def listener (μ : Measure W) (ν : Measure ℝ) (prev : W → ℝ
     Kernel Utterance W :=
   literalListener μ (meaning ν prev)
 
+instance (μ : Measure W) (ν : Measure ℝ) (prev : W → ℝ) : IsFiniteKernel (listener μ ν prev) :=
+  inferInstanceAs (IsFiniteKernel (literalListener _ _))
+
 variable [DiscreteMeasurableSpace W]
 
 /-- The endorsement model (3): the speaker at rationality `lam`, choosing between the
 generalization and silence at no cost. -/
 noncomputable def endorser (lam : ℝ) (μ : Measure W) (ν : Measure ℝ) (prev : W → ℝ) :
     Kernel W Utterance :=
-  speaker lam 1 (listener μ ν prev)
+  speaker lam 0 (listener μ ν prev)
 
 /-- The generalization is endorsed at a state when the speaker produces it more readily than
 silence. -/
@@ -137,12 +140,9 @@ exceeds the prior expectation of that meaning: the comparison of Figure 1C, the 
 posterior on hearing the generalization against the prior. -/
 theorem endorse_iff (hlam : 0 < lam) (hw : μ {w} ≠ 0) (hZ : expectedMeaning μ ν prev ≠ 0) :
     Endorsed lam μ ν prev w ↔ expectedMeaning μ ν prev < meaning ν prev .generic w := by
-  rw [Endorsed, endorser, speaker_real_singleton_lt_iff (cost := 1) (L := listener μ ν prev)
-    (w := w) hlam.le (λ _ => ENNReal.one_ne_top) (λ u => literalListener_apply_le_one μ _ u _)
-    ⟨.silent, by
-      rw [listener_silent_apply, Pi.one_apply, mul_one]
-      exact weight_rpow_ne_zero hlam.le hw⟩]
-  simp only [Pi.one_apply, mul_one]
+  rw [Endorsed, endorser, speaker_real_singleton_lt_iff (L := listener μ ν prev) (w := w) hlam.le
+    ⟨.silent, by rwa [listener_silent_apply]⟩]
+  simp only [Pi.zero_apply, mul_zero, neg_zero, Real.exp_zero, ENNReal.ofReal_one, mul_one]
   rw [ENNReal.rpow_lt_rpow_iff hlam, listener_silent_apply, listener_generic_apply,
     ENNReal.lt_div_iff_mul_lt (Or.inl hZ) (Or.inl (expectedMeaning_ne_top μ ν prev)), mul_comm,
     ENNReal.mul_lt_mul_iff_left hw (measure_ne_top μ _)]
@@ -298,12 +298,9 @@ theorem boundary_of_symm (μ : Measure W) [IsProbabilityMeasure μ] (σ : W ≃ 
   have h1 := not_endorse_of_le_expectation prev μ hlam hp hw hZ (by rw [hE, hhalf])
   have h2 : ¬ (endorser lam μ uniformThreshold prev w).real {.generic} <
       (endorser lam μ uniformThreshold prev w).real {.silent} := by
-    rw [endorser, speaker_real_singleton_lt_iff (cost := 1) (L := listener μ uniformThreshold prev)
-      (w := w) hlam.le (λ _ => ENNReal.one_ne_top) (λ u => literalListener_apply_le_one μ _ u _)
-      ⟨.silent, by
-        rw [listener_silent_apply, Pi.one_apply, mul_one]
-        exact weight_rpow_ne_zero hlam.le hw⟩]
-    simp only [Pi.one_apply, mul_one]
+    rw [endorser, speaker_real_singleton_lt_iff (L := listener μ uniformThreshold prev) (w := w)
+      hlam.le ⟨.silent, by rwa [listener_silent_apply]⟩]
+    simp only [Pi.zero_apply, mul_zero, neg_zero, Real.exp_zero, ENNReal.ofReal_one, mul_one]
     rw [ENNReal.rpow_lt_rpow_iff hlam, listener_silent_apply, listener_generic_apply,
       expectedMeaning_uniformThreshold prev μ hp, meaning_uniformThreshold prev hp, hE, hhalf,
       ENNReal.div_lt_iff (Or.inl (by simp)) (Or.inl ENNReal.ofReal_ne_top), mul_comm]

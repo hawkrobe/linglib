@@ -468,7 +468,7 @@ instance : IsProbabilityMeasure luPrior :=
 
 /-- The LU listener (eqs. 12–13) is the Bayesian inverse over the joint state. -/
 noncomputable def luListener (α : ℝ) : Kernel Utterance (World × LULex) :=
-  RSA.familyListener luFam α 1 luPrior
+  RSA.familyListener luFam α 0 luPrior
 
 theorem luPrior_singleton_eq (p q : World × LULex) : luPrior {p} = luPrior {q} := by
   simp [luPrior, uniformOn_univ]
@@ -502,7 +502,7 @@ noncomputable abbrev perParseFam (p : Parse) : Kernel Utterance World :=
   RSA.uniformListener (ext p)
 
 noncomputable def perParseListener (α : ℝ) : Kernel Utterance (World × Parse) :=
-  RSA.familyListener perParseFam α 1 perParsePrior
+  RSA.familyListener perParseFam α 0 perParsePrior
 
 /-! ## The findings -/
 
@@ -579,7 +579,7 @@ theorem lu_ss_prefers_wNS {α : ℝ} (hα : 0 < α) :
   rw [luListener, RSA.familyListener_fst_real_lt_iff luFam luPrior_singleton_eq
       luPrior_singleton_ne_zero (RSA.uniformSpeaker_apply_singleton_ne_zero
         (ext LULex.lit.toParse) hα.le (by decide +kernel : wNS ∈ ext LULex.lit.toParse .ss))]
-  calc (∑ l : LULex, (RSA.speaker α 1 (luFam l) wNA).real {.ss})
+  calc (∑ l : LULex, (RSA.speaker α 0 (luFam l) wNA).real {.ss})
       = (RSA.uniformSpeaker (ext LULex.lit.toParse) α wNA).real {.ss} :=
         Fintype.sum_eq_single LULex.lit fun
           | .lit, hl => absurd rfl hl
@@ -599,9 +599,9 @@ theorem lu_ss_prefers_wNS {α : ℝ} (hα : 0 < α) :
           (by decide +kernel : wNA ∈ ext LULex.lit.toParse .ss)
           (by decide +kernel : wNA ∈ ext LULex.lit.toParse .sa) (by decide +kernel)
         linarith
-    _ ≤ ∑ l : LULex, (RSA.speaker α 1 (luFam l) wNS).real {.ss} :=
+    _ ≤ ∑ l : LULex, (RSA.speaker α 0 (luFam l) wNS).real {.ss} :=
         Finset.single_le_sum
-          (fun l _ ↦ measureReal_nonneg (μ := RSA.speaker α 1 (luFam l) wNS))
+          (fun l _ ↦ measureReal_nonneg (μ := RSA.speaker α 0 (luFam l) wNS))
           (Finset.mem_univ LULex.oi)
 
 /-! ### The position of the latent parameter -/

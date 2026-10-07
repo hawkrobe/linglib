@@ -155,7 +155,8 @@ variable {μ : Measure R} {sem : U → Finset R → R → ℝ≥0∞} {β : ℝ}
 
 theorem utility_ne_top [IsProbabilityMeasure μ] (hβ : 0 ≤ β) (hcost : ∀ n, cost n ≠ ∞)
     (us : List U) : utility μ sem β cost us r ≠ ∞ :=
-  ENNReal.mul_ne_top (weight_rpow_ne_top hβ (l0_apply_le_one us _)) (hcost _)
+  ENNReal.mul_ne_top (ENNReal.rpow_ne_top_of_nonneg hβ
+    (ne_top_of_le_ne_top ENNReal.one_ne_top (l0_apply_le_one us _))) (hcost _)
 
 /-! ### Two adjectives -/
 
@@ -336,7 +337,7 @@ theorem seqSpeaker_real_lt_of_card_lt [DecidableEq U] [DecidableEq R] (hβ : 0 <
     exact ENNReal.inv_ne_zero.2 (ENNReal.natCast_ne_top _)
   have hu : ∀ us, r ∈ extSeq (λ u _ => ext u) us →
       utility (uniformOn Set.univ) (sharp λ u _ => ext u) β cost us r ≠ 0 := λ us hus =>
-    mul_ne_zero (weight_rpow_ne_zero hβ.le (hl0 us hus)) (hcost0 _)
+    mul_ne_zero ((ENNReal.rpow_eq_zero_iff_of_pos hβ).not.2 (hl0 us hus)) (hcost0 _)
   have hl : l0 (uniformOn Set.univ) (sharp λ u _ => ext u) [b, a] =
       l0 (uniformOn Set.univ) (sharp λ u _ => ext u) [a, b] :=
     l0_perm (m := λ u => ((ext u : Set R)).indicator 1) (sharp_apply_le_one (λ u _ => ext u) · ∅)

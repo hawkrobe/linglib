@@ -184,11 +184,11 @@ noncomputable abbrev L0 (cg : Measure World) : Kernel Utterance World :=
   literalListener cg fun u => (semSet u).indicator 1
 
 /-- The pragmatic speaker, without softmax terms or costs (footnote 3). -/
-noncomputable abbrev S1 (cg : Measure World) : Kernel World Utterance := speaker 1 1 (L0 cg)
+noncomputable abbrev S1 (cg : Measure World) : Kernel World Utterance := speaker 1 0 (L0 cg)
 
 /-- The pragmatic listener inverts the speaker against the common ground. -/
 noncomputable abbrev L1 (cg : Measure World) [IsFiniteMeasure cg] : Kernel Utterance World :=
-  pragmaticListener 1 1 (L0 cg) cg
+  pragmaticListener 1 0 (L0 cg) cg
 
 /-- One Figure-2 turn: the listener's posterior is mixed into the common ground unless the
 speaker passed (§7.1.1). -/
@@ -200,16 +200,6 @@ section Agents
 
 variable (cg : Measure World) [IsFiniteMeasure cg]
 
-theorem L0_apply_singleton_le_one (u : Utterance) (w : World) : L0 cg u {w} ≤ 1 := by
-  by_cases h : w ∈ sem u
-  · exact literalListener_indicator_apply_singleton_le_one cg semSet (measure_ne_top _ _)
-      (Finset.mem_coe.mpr h)
-  · rw [literalListener_indicator_apply_singleton_of_notMem cg semSet (Finset.mem_coe.not.mpr h)]
-    exact zero_le_one
-
-theorem L0_apply_singleton_ne_top (u : Utterance) (w : World) : L0 cg u {w} ≠ ∞ :=
-  ne_top_of_le_ne_top ENNReal.one_ne_top (L0_apply_singleton_le_one cg u w)
-
 variable {cg}
 
 theorem L0_apply_singleton_ne_zero {u : Utterance} {w : World} (hw : w ∈ sem u)
@@ -219,9 +209,7 @@ theorem L0_apply_singleton_ne_zero {u : Utterance} {w : World} (hw : w ∈ sem u
 
 theorem S1_apply_singleton_ne_zero {u : Utterance} {w : World} (hw : w ∈ sem u)
     (hcg : cg {w} ≠ 0) : S1 cg w {u} ≠ 0 :=
-  speaker_apply_singleton_ne_zero zero_le_one (fun _ => one_ne_zero)
-    (fun _ => ENNReal.one_ne_top) (fun u' => L0_apply_singleton_le_one cg u' w)
-    (L0_apply_singleton_ne_zero hw hcg)
+  speaker_apply_singleton_ne_zero zero_le_one (L0_apply_singleton_ne_zero hw hcg)
 
 theorem comp_S1_ne_zero {u : Utterance} {w : World} (hw : w ∈ sem u) (hcg : cg {w} ≠ 0) :
     (S1 cg ∘ₘ cg) {u} ≠ 0 :=
@@ -243,12 +231,12 @@ theorem L1_apply_singleton_ne_zero {u : Utterance} {w : World} (hw : w ∈ sem u
   exact fun h => (ENNReal.div_eq_zero_iff.mp h).elim
     (mul_ne_zero hcg (S1_apply_singleton_ne_zero hw hcg)) (measure_ne_top _ _)
 
+omit [IsFiniteMeasure cg] in
 /-- The speaker's real share of an utterance, as a ratio of literal-listener values. -/
 theorem S1_real_singleton (w : World) (u : Utterance) :
     (S1 cg w).real {u} = (L0 cg u {w}).toReal / ∑ u', (L0 cg u' {w}).toReal := by
-  rw [measureReal_def, speaker_apply_singleton]
-  simp only [ENNReal.rpow_one, Pi.one_apply, mul_one]
-  rw [ENNReal.toReal_div, ENNReal.toReal_sum fun u' _ => L0_apply_singleton_ne_top cg u' w]
+  rw [S1, speaker_zero_real_singleton zero_le_one]
+  simp only [ENNReal.rpow_one]
 
 theorem L0_toReal {u : Utterance} {w : World} (hw : w ∈ sem u) :
     (L0 cg u {w}).toReal = cg.real {w} / ∑ x ∈ sem u, cg.real {x} := by
@@ -371,11 +359,10 @@ theorem s1_prefers_new :
     (S1 μ .ina).real {.likeIndoors} < (S1 μ .ina).real {.studyScience} := by
   have hn : μ {.nancy} ≠ 0 := (zero_le.trans_lt hlt).ne'
   constructor
-  · rw [speaker_real_singleton_lt_iff (cost := 1) (L := L0 μ) (w := .nancy) zero_le_one
-      (fun _ => ENNReal.one_ne_top) (fun u => L0_apply_singleton_le_one μ u .nancy)
-      ⟨.studyHumanity, by simpa using
-        L0_apply_singleton_ne_zero (cg := μ) (u := .studyHumanity) (w := .nancy) (by decide) hn⟩]
-    simp only [ENNReal.rpow_one, Pi.one_apply, mul_one]
+  · rw [speaker_real_singleton_lt_iff (L := L0 μ) (w := .nancy) zero_le_one
+      ⟨.studyHumanity, L0_apply_singleton_ne_zero (cg := μ) (u := .studyHumanity) (w := .nancy) (by decide) hn⟩]
+    simp only [ENNReal.rpow_one, Pi.zero_apply, mul_zero, neg_zero, Real.exp_zero,
+      ENNReal.ofReal_one, mul_one]
     rw [literalListener_indicator_apply_singleton μ semSet (u := .studyHumanity) (by decide),
       literalListener_indicator_apply_singleton μ semSet (u := .likeOutdoors) (by decide),
       ENNReal.mul_lt_mul_iff_left hn (measure_ne_top _ _), ENNReal.inv_lt_inv,
@@ -384,11 +371,10 @@ theorem s1_prefers_new :
       show sem .studyHumanity = {.nancy, .sally} by decide, Finset.sum_pair (by decide),
       Finset.sum_pair (by decide), ← hik, ← hns, add_comm]
     exact ENNReal.add_lt_add_left (measure_ne_top μ _) hlt
-  · rw [speaker_real_singleton_lt_iff (cost := 1) (L := L0 μ) (w := .ina) zero_le_one
-      (fun _ => ENNReal.one_ne_top) (fun u => L0_apply_singleton_le_one μ u .ina)
-      ⟨.studyScience, by simpa using
-        L0_apply_singleton_ne_zero (cg := μ) (u := .studyScience) (w := .ina) (by decide) hi⟩]
-    simp only [ENNReal.rpow_one, Pi.one_apply, mul_one]
+  · rw [speaker_real_singleton_lt_iff (L := L0 μ) (w := .ina) zero_le_one
+      ⟨.studyScience, L0_apply_singleton_ne_zero (cg := μ) (u := .studyScience) (w := .ina) (by decide) hi⟩]
+    simp only [ENNReal.rpow_one, Pi.zero_apply, mul_zero, neg_zero, Real.exp_zero,
+      ENNReal.ofReal_one, mul_one]
     rw [literalListener_indicator_apply_singleton μ semSet (u := .likeIndoors) (by decide),
       literalListener_indicator_apply_singleton μ semSet (u := .studyScience) (by decide),
       ENNReal.mul_lt_mul_iff_left hi (measure_ne_top _ _), ENNReal.inv_lt_inv,

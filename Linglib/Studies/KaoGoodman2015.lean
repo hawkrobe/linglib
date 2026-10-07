@@ -80,6 +80,9 @@ def sem (u : Weather) : Set Meaning := {m | m.1 = u}
 noncomputable def L0 (μ : Measure Meaning) : Kernel Weather Meaning :=
   literalListener μ λ u => (sem u).indicator 1
 
+instance (μ : Measure Meaning) : IsFiniteKernel (L0 μ) :=
+  inferInstanceAs (IsFiniteKernel (literalListener _ _))
+
 theorem L0_apply_le_one (μ : Measure Meaning) (u : Weather) (s : Set Meaning) :
     L0 μ u s ≤ 1 :=
   literalListener_apply_le_one μ _ u s
@@ -96,13 +99,13 @@ theorem L0_apply_singleton_ne_zero_iff (μ : Measure Meaning) [IsFiniteMeasure �
 /-- The question-indexed speaker: the best response to the projected literal listener of the
 question at rationality `α`, with no utterance cost. -/
 noncomputable def S1 (μ : Measure Meaning) (α : ℝ) : Kernel (Meaning × QUD) Weather :=
-  familySpeaker (projListener project (L0 μ)) α 1
+  familySpeaker (projListener project (L0 μ)) α 0
 
 /-- The pragmatic listener over meaning and question, whose first marginal is the meaning
 listener: the family listener over the product of the meaning prior and the question prior. -/
 noncomputable def L1 (μ : Measure Meaning) [IsProbabilityMeasure μ] (ν : Measure QUD)
     [IsProbabilityMeasure ν] (α : ℝ) : Kernel Weather (Meaning × QUD) :=
-  familyListener (projListener project (L0 μ)) α 1 (μ.prod ν)
+  familyListener (projListener project (L0 μ)) α 0 (μ.prod ν)
 
 variable (μ : Measure Meaning) [IsProbabilityMeasure μ] (ν : Measure QUD)
   [IsProbabilityMeasure ν] (α : ℝ)
@@ -120,8 +123,7 @@ theorem S1_apply_singleton_ne_zero_iff (hα : 0 < α) (q : QUD) (m : Meaning) (u
     obtain ⟨m', hm', h0⟩ := hL
     exact ⟨m', hm', (L0_apply_singleton_ne_zero_iff μ u m').mp h0⟩
   · rintro ⟨m', hm', hu, hμ⟩
-    exact speaker_apply_singleton_ne_zero hα.le (λ _ => one_ne_zero) (λ _ => ENNReal.one_ne_top)
-      (λ u' => projListener_apply_singleton_le_one _ _ _ _ _ (L0_apply_le_one μ))
+    exact speaker_apply_singleton_ne_zero hα.le
       ((projListener_apply_singleton_ne_zero_iff _ _ _ _ _).mpr
         ⟨m', hm', (L0_apply_singleton_ne_zero_iff μ u m').mpr ⟨hu, hμ⟩⟩)
 

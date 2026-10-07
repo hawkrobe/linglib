@@ -133,16 +133,19 @@ noncomputable def L0 (classPrior : ComparisonClass → Measure X) (c : Compariso
     Kernel Utterance X :=
   literalListener (classPrior c) (meaning deg)
 
+instance (classPrior : ComparisonClass → Measure X) (c : ComparisonClass) :
+    IsFiniteKernel (L0 deg classPrior c) := inferInstanceAs (IsFiniteKernel (literalListener _ _))
+
 /-- The speaker (3): rationality `α`, equal costs, the comparison class known. -/
 noncomputable def S (α : ℝ) (classPrior : ComparisonClass → Measure X) (c : ComparisonClass) :
     Kernel X Utterance :=
-  speaker α 1 (L0 deg classPrior c)
+  speaker α 0 (L0 deg classPrior c)
 
 /-- The pragmatic listener (1): the joint posterior over the degree and the comparison class,
 at the kind's degree prior and a flat class prior. -/
 noncomputable def L1 [Nonempty X] (α : ℝ) (classPrior : ComparisonClass → Measure X)
     (κ : Measure X) [IsFiniteMeasure κ] : Kernel Utterance (X × ComparisonClass) :=
-  familyListener (L0 deg classPrior) α 1 (κ.prod (uniformOn Set.univ))
+  familyListener (L0 deg classPrior) α 0 (κ.prod (uniformOn Set.univ))
 
 /-- The mean degree under a comparison class. -/
 noncomputable def mean (classPrior : ComparisonClass → Measure X) (c : ComparisonClass) : ℝ :=
@@ -164,7 +167,7 @@ variable (classPrior : ComparisonClass → Measure X) {α : ℝ}
 /-- Comparison-class preference of the pragmatic listener reduces to the kind-prior-weighted
 speaker shares: the flat class prior and the observation marginal cancel. -/
 theorem L1_snd_real_lt_iff [Nonempty X] (κ : Measure X) [IsFiniteMeasure κ] {u : Utterance}
-    (hu : (familySpeaker (L0 deg classPrior) α 1 ∘ₘ κ.prod (uniformOn Set.univ)) {u} ≠ 0)
+    (hu : (familySpeaker (L0 deg classPrior) α 0 ∘ₘ κ.prod (uniformOn Set.univ)) {u} ≠ 0)
     (c₁ c₂ : ComparisonClass) :
     (L1 deg α classPrior κ u).snd.real {c₁} < (L1 deg α classPrior κ u).snd.real {c₂} ↔
       ∑ x, κ.real {x} * (S deg α classPrior c₁ x).real {u} <
@@ -255,9 +258,8 @@ theorem L0_short_real (hdeg : ∀ x, 0 < deg x ∧ deg x < 1) (c : ComparisonCla
 theorem S_tall_real (hα : 0 < α) (hdeg : ∀ x, 0 < deg x ∧ deg x < 1) (c : ComparisonClass)
     {x : X} (hx : classPrior c {x} ≠ 0) :
     (S deg α classPrior c x).real {.tall} = share α (deg x) (mean deg classPrior c) := by
-  rw [S, speaker_real_singleton (cost := 1) (L := L0 deg classPrior c) hα.le
-    (λ _ => ENNReal.one_ne_top) (λ u => literalListener_apply_le_one _ _ u _), sum_utterance]
-  simp only [Pi.one_apply, ENNReal.toReal_one, mul_one, ← ENNReal.toReal_rpow]
+  rw [S, speaker_zero_real_singleton hα.le, sum_utterance]
+  simp only [← ENNReal.toReal_rpow]
   rw [L0_silent_apply, ← measureReal_def, ← measureReal_def, ← measureReal_def,
     L0_tall_real deg classPrior hdeg, L0_short_real deg classPrior hdeg]
   have hp : 0 < (classPrior c).real {x} := ENNReal.toReal_pos hx (measure_ne_top _ _)
@@ -284,9 +286,8 @@ theorem S_short_real (hα : 0 < α) (hdeg : ∀ x, 0 < deg x ∧ deg x < 1) (c :
     {x : X} (hx : classPrior c {x} ≠ 0) :
     (S deg α classPrior c x).real {.short} =
       share α (1 - deg x) (1 - mean deg classPrior c) := by
-  rw [S, speaker_real_singleton (cost := 1) (L := L0 deg classPrior c) hα.le
-    (λ _ => ENNReal.one_ne_top) (λ u => literalListener_apply_le_one _ _ u _), sum_utterance]
-  simp only [Pi.one_apply, ENNReal.toReal_one, mul_one, ← ENNReal.toReal_rpow]
+  rw [S, speaker_zero_real_singleton hα.le, sum_utterance]
+  simp only [← ENNReal.toReal_rpow]
   rw [L0_silent_apply, ← measureReal_def, ← measureReal_def, ← measureReal_def,
     L0_tall_real deg classPrior hdeg, L0_short_real deg classPrior hdeg]
   have hp : 0 < (classPrior c).real {x} := ENNReal.toReal_pos hx (measure_ne_top _ _)
@@ -346,12 +347,10 @@ observation has positive marginal. -/
 theorem comp_ne_zero [Nonempty X] (κ : Measure X) (hα : 0 < α)
     (hdeg : ∀ x, 0 < deg x ∧ deg x < 1) (hsupp : ∀ c x, classPrior c {x} ≠ 0)
     (hκ : ∀ x, κ {x} ≠ 0) (u : Utterance) :
-    (familySpeaker (L0 deg classPrior) α 1 ∘ₘ κ.prod (uniformOn Set.univ)) {u} ≠ 0 := by
+    (familySpeaker (L0 deg classPrior) α 0 ∘ₘ κ.prod (uniformOn Set.univ)) {u} ≠ 0 := by
   obtain ⟨x⟩ := ‹Nonempty X›
   refine comp_familySpeaker_ne_zero (w := x) (l := .subordinate) ?_
-    (speaker_apply_singleton_ne_zero hα.le (λ _ => one_ne_zero) (λ _ => ENNReal.one_ne_top)
-      (λ u' => literalListener_apply_le_one _ _ u' _)
-      (L0_apply_ne_zero deg classPrior hdeg hsupp _ u x))
+    (speaker_apply_singleton_ne_zero hα.le (L0_apply_ne_zero deg classPrior hdeg hsupp _ u x))
   rw [← Set.singleton_prod_singleton, Measure.prod_prod]
   exact mul_ne_zero (hκ x) (uniformOn_univ_singleton_ne_zero _)
 

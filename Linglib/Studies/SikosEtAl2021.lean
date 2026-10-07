@@ -65,9 +65,11 @@ instance : IsFiniteMeasure (uniform (W := W)) :=
 /-- The literal listener with the uniform prior, RSA's `L0`. -/
 noncomputable def L0 : Kernel U W := literalListener uniform λ u => (sem u).indicator 1
 
+instance : IsFiniteKernel (L0 sem) := inferInstanceAs (IsFiniteKernel (literalListener _ _))
+
 /-- The informative speaker (3): the best response to `L0` at rationality one and constant
 cost, choosing among the applicable words in proportion to their informativity. -/
-noncomputable def rsaSpeaker : Kernel W U := speaker 1 1 (L0 sem)
+noncomputable def rsaSpeaker : Kernel W U := speaker 1 0 (L0 sem)
 
 instance : IsFiniteKernel (rsaSpeaker sem) := inferInstanceAs (IsFiniteKernel (speaker _ _ _))
 
@@ -87,11 +89,6 @@ theorem L0_apply_singleton {w : W} {u : U} (h : w ∈ sem u) :
 theorem L0_apply_singleton_of_notMem {w : W} {u : U} (h : w ∉ sem u) : L0 sem u {w} = 0 :=
   literalListener_indicator_apply_singleton_of_notMem uniform sem h
 
-theorem L0_le_one (u : U) (w : W) : L0 sem u {w} ≤ 1 := by
-  by_cases h : w ∈ sem u
-  · exact literalListener_indicator_apply_singleton_le_one uniform sem (measure_ne_top _ _) h
-  · rw [L0_apply_singleton_of_notMem sem h]; exact zero_le_one
-
 theorem L0_ne_zero {w : W} {u : U} (h : w ∈ sem u) : L0 sem u {w} ≠ 0 := by
   rw [L0_apply_singleton sem h]
   exact ENNReal.inv_ne_zero.mpr (measure_ne_top _ _)
@@ -103,8 +100,7 @@ theorem rsaSpeaker_apply_singleton_of_notMem {w : W} {u : U} (h : w ∉ sem u) :
 
 theorem rsaSpeaker_apply_singleton_ne_zero {w : W} {u : U} (h : w ∈ sem u) :
     rsaSpeaker sem w {u} ≠ 0 :=
-  speaker_apply_singleton_ne_zero zero_le_one (λ _ => one_ne_zero) (λ _ => ENNReal.one_ne_top)
-    (L0_le_one sem · w) (L0_ne_zero sem h)
+  speaker_apply_singleton_ne_zero zero_le_one (L0_ne_zero sem h)
 
 theorem baselineSpeaker_apply_singleton_of_notMem {w : W} {u : U} (h : w ∉ sem u) :
     baselineSpeaker sem w {u} = 0 :=
@@ -174,7 +170,7 @@ theorem posterior_apply_singleton_eq_one [StandardBorelSpace W] [Nonempty W] {κ
 variable [StandardBorelSpace W] [Nonempty W] (μ : Measure W) [IsFiniteMeasure μ]
 
 /-- RSA's listener (1): the inverse of the informative speaker against the salience prior. -/
-noncomputable def rsaListener : Kernel U W := pragmaticListener 1 1 (L0 sem) μ
+noncomputable def rsaListener : Kernel U W := pragmaticListener 1 0 (L0 sem) μ
 
 /-- The baseline literal listener model (4): the inverse of the baseline speaker against the
 salience prior. -/
@@ -309,9 +305,8 @@ variable (d : Display)
 theorem rsaSpeaker_real (i : Fin 3) (u : Word) :
     (rsaSpeaker d.sem i).real {u} =
       (L0 d.sem u {i}).toReal / ∑ u', (L0 d.sem u' {i}).toReal := by
-  rw [rsaSpeaker,
-    speaker_real_singleton (cost := 1) zero_le_one (λ _ => ENNReal.one_ne_top) (L0_le_one _ · i)]
-  simp only [ENNReal.rpow_one, Pi.one_apply, ENNReal.toReal_one, mul_one]
+  rw [rsaSpeaker, speaker_zero_real_singleton zero_le_one]
+  simp only [ENNReal.rpow_one]
 
 /-- The pragmatically solvable display of Tables 5 and 9: the blue boot is the pragmatic
 referent, the blue mitt the color competitor, the green boot the shape competitor. -/

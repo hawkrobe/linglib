@@ -33,7 +33,7 @@ step is the likelier exactly when color is the more reliable adjective
 
 Referents are pairs of a size and a color, scenes are finsets of them, and the two languages
 are the utterance lists of Figure 1 closed by a stop token. Semantic values, the rationality and
-the per-adjective cost factor are free real parameters with the bounds the paper's values
+the per-adjective cost are free real parameters with the bounds the paper's values
 satisfy, in place of the simulated `v_size = 0.8`, `v_color = 0.95`, `α = 7` and cost `0.1`;
 the whole-trajectory and cross-scene comparisons of Figures 2 and 4 are reported from the
 paper's simulations and not proved. The paper's Spanish examples are the rows of
@@ -158,14 +158,18 @@ noncomputable def listener (vc vs : ℝ) (L : List (List Word)) (scene : Finset 
     (ctx : List Word) : Kernel Word Referent :=
   Kernel.ofWeights λ w r => listenerWeight vc vs L scene (ctx ++ [w]) r
 
-/-- The incremental speaker at a context: the RSA speaker of rationality `α` against the cost
-factors, over the literal listener at that context. -/
-noncomputable def stepSpeaker (α : ℝ) (cost : Word → ℝ≥0∞) (vc vs : ℝ) (L : List (List Word))
+instance (L : List (List Word)) (scene : Finset Referent) (ctx : List Word) :
+    IsFiniteKernel (listener vc vs L scene ctx) :=
+  inferInstanceAs (IsFiniteKernel (Kernel.ofWeights _))
+
+/-- The incremental speaker at a context: the RSA speaker of rationality `α` against the word
+costs, over the literal listener at that context. -/
+noncomputable def stepSpeaker (α : ℝ) (cost : Word → ℝ) (vc vs : ℝ) (L : List (List Word))
     (scene : Finset Referent) (ctx : List Word) : Kernel Referent Word :=
   speaker α cost (listener vc vs L scene ctx)
 
 /-- The probability of an utterance is the product of its steps, the chain rule. -/
-noncomputable def trajectory (α : ℝ) (cost : Word → ℝ≥0∞) (vc vs : ℝ) (L : List (List Word))
+noncomputable def trajectory (α : ℝ) (cost : Word → ℝ) (vc vs : ℝ) (L : List (List Word))
     (scene : Finset Referent) (r : Referent) (u : List Word) : ℝ :=
   ((List.range u.length).map λ k =>
     (stepSpeaker α cost vc vs L scene (u.take k) r).real {u.getD k .stop}).prod
@@ -251,7 +255,7 @@ end Nodes
 
 section Speaker
 
-variable {α : ℝ} {cost : Word → ℝ≥0∞} {L : List (List Word)} {scene : Finset Referent}
+variable {α : ℝ} {cost : Word → ℝ} {L : List (List Word)} {scene : Finset Referent}
   {ctx : List Word}
 
 /-- A next word with no completion receives no listener mass. -/
@@ -259,45 +263,42 @@ theorem listener_apply_eq_zero {w : Word} (h : continuations L scene (ctx ++ [w]
     (r : Referent) : listener vc vs L scene ctx w {r} = 0 :=
   Kernel.ofWeights_apply_singleton_eq_zero (by simp [listenerWeight, prefixMeaning_eq_zero h])
 
-theorem listener_apply_le_one (w : Word) (r : Referent) : listener vc vs L scene ctx w {r} ≤ 1 :=
-  (measure_mono (Set.subset_univ _)).trans (Kernel.ofWeights_apply_univ_le_one _ _)
-
 /-- At a node with two applicable words the speaker's share of one is its weight against the
-other's, the weight being the listener's mass raised to the rationality times the cost factor. -/
-theorem stepSpeaker_real_pair (hα : 0 < α) (hcost : ∀ w, cost w ≠ ∞) {u u' : Word}
-    (huu' : u ≠ u') (hsupp : ∀ w, w ≠ u → w ≠ u' → continuations L scene (ctx ++ [w]) = [])
-    (r : Referent) :
+other's, the weight being the listener's mass raised to the rationality, discounted by the cost. -/
+theorem stepSpeaker_real_pair (hα : 0 < α) {u u' : Word} (huu' : u ≠ u')
+    (hsupp : ∀ w, w ≠ u → w ≠ u' → continuations L scene (ctx ++ [w]) = []) (r : Referent) :
     (stepSpeaker α cost vc vs L scene ctx r).real {u} =
-      (listener vc vs L scene ctx u).real {r} ^ α * (cost u).toReal /
-        ((listener vc vs L scene ctx u).real {r} ^ α * (cost u).toReal +
-          (listener vc vs L scene ctx u').real {r} ^ α * (cost u').toReal) := by
-  rw [stepSpeaker, speaker, Kernel.ofWeights_real_singleton_of_pair r huu'
-      (λ w => ENNReal.mul_ne_top (weight_rpow_ne_top hα.le (listener_apply_le_one _ _)) (hcost w))
+      (listener vc vs L scene ctx u).real {r} ^ α * Real.exp (-(α * cost u)) /
+        ((listener vc vs L scene ctx u).real {r} ^ α * Real.exp (-(α * cost u)) +
+          (listener vc vs L scene ctx u').real {r} ^ α * Real.exp (-(α * cost u'))) := by
+  rw [stepSpeaker, speaker_eq_ofWeights, Kernel.ofWeights_real_singleton_of_pair r huu'
+      (λ w => ENNReal.mul_ne_top (ENNReal.rpow_ne_top_of_nonneg hα.le (measure_ne_top _ _))
+        ENNReal.ofReal_ne_top)
       (λ w hw => by
         by_contra hne
         push Not at hne
         exact hw (by rw [listener_apply_eq_zero (hsupp w hne.1 hne.2), ENNReal.zero_rpow_of_pos hα,
           zero_mul]))]
-  simp only [ENNReal.toReal_mul, ENNReal.toReal_rpow, measureReal_def]
+  simp only [ENNReal.toReal_mul, ← ENNReal.toReal_rpow, measureReal_def,
+    ENNReal.toReal_ofReal (Real.exp_pos _).le]
 
 /-- The paper's Figure 3 nodes: with a common cost for the two adjectives, none for the noun
 and the stop, the English redundant color step after *small* in the size-sufficient scene is
 likelier than the Spanish redundant size step after *pin blue* in the color-sufficient scene
 exactly when color is the more reliable adjective, at every rationality. -/
-theorem english_color_step_gt_spanish_size_step (hα : 0 < α) (hcost : ∀ w, cost w ≠ ∞)
-    (hadj : cost .small = cost .blue) (hblue : cost .blue ≠ 0) (hpin : cost .pin = 1)
-    (hstop : cost .stop = 1) (hc : vc < 1) (hc0 : 0 < vc) (hs : vs < 1) (hs0 : 0 < vs)
+theorem english_color_step_gt_spanish_size_step (hα : 0 < α) (hadj : cost .small = cost .blue)
+    (hpin : cost .pin = 0) (hstop : cost .stop = 0) (hc : vc < 1) (hc0 : 0 < vc) (hs : vs < 1) (hs0 : 0 < vs)
     (h : vs < vc) :
     (stepSpeaker α cost vc vs spanish cs [.pin, .blue] smallBlue).real {.small} <
       (stepSpeaker α cost vc vs english ss [.small] smallBlue).real {.blue} := by
-  rw [stepSpeaker_real_pair hα hcost (u := .small) (u' := .stop) (by decide)
+  rw [stepSpeaker_real_pair hα (u := .small) (u' := .stop) (by decide)
       (λ w h1 h2 => by cases w <;> first | decide | exact absurd rfl h1 | exact absurd rfl h2),
-    stepSpeaker_real_pair hα hcost (u := .blue) (u' := .pin) (by decide)
+    stepSpeaker_real_pair hα (u := .blue) (u' := .pin) (by decide)
       (λ w h1 h2 => by cases w <;> first | decide | exact absurd rfl h1 | exact absurd rfl h2),
     listener_cs_pin_blue_small hc hc0 hs hs0, listener_cs_pin_blue_stop hc hc0 hs hs0,
     listener_ss_small_blue hc hc0 hs hs0, listener_ss_small_pin hc hc0 hs hs0, hadj, hpin, hstop,
-    ENNReal.toReal_one, mul_one]
-  have hcpos : 0 < (cost .blue).toReal := ENNReal.toReal_pos hblue (hcost _)
+    mul_zero, neg_zero, Real.exp_zero, mul_one]
+  have hcpos : 0 < Real.exp (-(α * cost .blue)) := Real.exp_pos _
   have hD : 0 < vs * vc + (1 - vs) := by nlinarith
   have hD' : 0 < vc * vs + (1 - vc) := by nlinarith
   have hA : 0 < vs * vc / (vs * vc + (1 - vs)) := div_pos (by positivity) hD
@@ -321,14 +322,14 @@ theorem english_color_step_gt_spanish_size_step (hα : 0 < α) (hcost : ∀ w, c
 
 /-- With equally reliable adjectives, the Boolean case of the incremental model, the two steps
 are equally likely: the symmetry the paper's Figure 3 reports for I-RSA. -/
-theorem english_color_step_eq_spanish_size_step (hα : 0 < α) (hcost : ∀ w, cost w ≠ ∞)
-    (hadj : cost .small = cost .blue) (hpin : cost .pin = 1) (hstop : cost .stop = 1)
+theorem english_color_step_eq_spanish_size_step (hα : 0 < α) (hadj : cost .small = cost .blue)
+    (hpin : cost .pin = 0) (hstop : cost .stop = 0)
     (hc : vc < 1) (hc0 : 0 < vc) (hs : vs < 1) (hs0 : 0 < vs) (h : vs = vc) :
     (stepSpeaker α cost vc vs spanish cs [.pin, .blue] smallBlue).real {.small} =
       (stepSpeaker α cost vc vs english ss [.small] smallBlue).real {.blue} := by
-  rw [stepSpeaker_real_pair hα hcost (u := .small) (u' := .stop) (by decide)
+  rw [stepSpeaker_real_pair hα (u := .small) (u' := .stop) (by decide)
       (λ w h1 h2 => by cases w <;> first | decide | exact absurd rfl h1 | exact absurd rfl h2),
-    stepSpeaker_real_pair hα hcost (u := .blue) (u' := .pin) (by decide)
+    stepSpeaker_real_pair hα (u := .blue) (u' := .pin) (by decide)
       (λ w h1 h2 => by cases w <;> first | decide | exact absurd rfl h1 | exact absurd rfl h2),
     listener_cs_pin_blue_small hc hc0 hs hs0, listener_cs_pin_blue_stop hc hc0 hs hs0,
     listener_ss_small_blue hc hc0 hs hs0, listener_ss_small_pin hc hc0 hs hs0, hadj, hpin, hstop,

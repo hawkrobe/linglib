@@ -8,11 +8,11 @@ public import Linglib.Pragmatics.RSA.Uniform
 The null message of [bergen-levy-goodman-2016]: an utterance true at every state, so that a
 speaker always has a true option, and disfavored by a cost. `WithSilence U` adds it to an
 utterance type, `liftMeaning` and `liftSem` give it the universal extension, and
-`liftCostFactor` its own cost factor. Under the uniform literal listener the null message adds
-the same weight to every row of the speaker, its cost factor times the reciprocal of the number
+`liftCost` its own cost. Under the uniform literal listener the null message adds
+the same weight to every row of the speaker, its cost weight times the reciprocal of the number
 of states to the power of the rationality, so the share of a content utterance is its
 informativity weight over the state's profile sum plus that constant
-(`RSA.speaker_liftCostFactor_uniformListener_real_singleton_some`): predictions about the
+(`RSA.speaker_liftCost_uniformListener_real_singleton_some`): predictions about the
 content utterances are uniform in the null message's cost.
 
 ## References
@@ -59,16 +59,14 @@ def liftSem [Fintype W] (sem : U → Finset W) : WithSilence U → Finset W
 @[simp] theorem liftSem_none [Fintype W] (sem : U → Finset W) :
     liftSem sem none = Finset.univ := rfl
 
-/-- A cost factor lifted to the null message, which is weighted `κ`. -/
-def liftCostFactor (κ : ℝ≥0∞) (c : U → ℝ≥0∞) : WithSilence U → ℝ≥0∞
-  | some u => c u
-  | none => κ
+/-- A cost lifted to the null message, which costs `k`. -/
+def liftCost (k : ℝ) (C : U → ℝ) : WithSilence U → ℝ
+  | some u => C u
+  | none => k
 
-@[simp] theorem liftCostFactor_some (κ : ℝ≥0∞) (c : U → ℝ≥0∞) (u : U) :
-    liftCostFactor κ c (some u) = c u := rfl
+@[simp] theorem liftCost_some (k : ℝ) (C : U → ℝ) (u : U) : liftCost k C (some u) = C u := rfl
 
-@[simp] theorem liftCostFactor_none (κ : ℝ≥0∞) (c : U → ℝ≥0∞) :
-    liftCostFactor κ c none = κ := rfl
+@[simp] theorem liftCost_none (k : ℝ) (C : U → ℝ) : liftCost k C none = k := rfl
 
 /-! ### The uniform speaker with a null message -/
 
@@ -85,16 +83,16 @@ theorem uniformListener_liftSem_none_apply_singleton (t : T) :
 
 /-- The share of a content utterance: its informativity weight over the state's profile sum
 plus the null message's weight, the same at every state. -/
-theorem speaker_liftCostFactor_uniformListener_real_singleton_some {α : ℝ} (hα : 0 < α)
-    {κ : ℝ≥0∞} (hκ : κ ≠ ∞) (t : T) (c : C) :
-    (speaker α (liftCostFactor κ 1) (uniformListener (liftSem sem)) t).real {some c}
+theorem speaker_liftCost_uniformListener_real_singleton_some {α : ℝ} (hα : 0 < α) (k : ℝ)
+    (t : T) (c : C) :
+    (speaker α (liftCost k 0) (uniformListener (liftSem sem)) t).real {some c}
       = (if t ∈ sem c then (((sem c).card : ℝ))⁻¹ ^ α else 0)
-        / (((profile sem t).invPowSum α).toReal + κ.toReal * ((Fintype.card T : ℝ))⁻¹ ^ α) := by
-  rw [speaker_real_singleton hα.le (fun u => by cases u <;> simp [hκ])
-    (fun u => uniformListener_apply_singleton_le_one _ u t), Fintype.sum_option,
+        / (((profile sem t).invPowSum α).toReal
+          + Real.exp (-(α * k)) * ((Fintype.card T : ℝ))⁻¹ ^ α) := by
+  rw [speaker_real_singleton hα.le, Fintype.sum_option,
     uniformListener_liftSem_none_apply_singleton, profile_invPowSum_toReal sem hα.le]
-  simp only [uniformListener_apply_singleton, liftSem_some, liftCostFactor_some,
-    liftCostFactor_none, Pi.one_apply, ENNReal.toReal_one, mul_one, apply_ite (· ^ α),
+  simp only [uniformListener_apply_singleton, liftSem_some, liftCost_some, liftCost_none,
+    Pi.zero_apply, mul_zero, neg_zero, Real.exp_zero, mul_one, apply_ite (· ^ α),
     ENNReal.zero_rpow_of_pos hα, apply_ite ENNReal.toReal, ENNReal.toReal_zero,
     ← ENNReal.toReal_rpow, ENNReal.toReal_inv, ENNReal.toReal_natCast]
   rw [add_comm, mul_comm]

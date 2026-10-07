@@ -68,14 +68,6 @@ def l0 (P : W → ℕ) (cell : Q → W → Finset W) (sem : U → Set W)
       ∑ v ∈ C.filter (· ∈ sem u), P v)
   else (0, 1)
 
-theorem l0_fst_le_snd (P : W → ℕ) (cell : Q → W → Finset W) (sem : U → Set W)
-    [∀ u, DecidablePred (· ∈ sem u)] (C : Finset W) (q : Q) (u : U) (w : W) :
-    (l0 P cell sem C q u w).1 ≤ (l0 P cell sem C q u w).2 := by
-  unfold l0
-  split_ifs
-  · exact Finset.sum_le_sum_of_subset (Finset.filter_subset _ _)
-  · exact zero_le_one
-
 section Prior
 
 variable [MeasurableSpace W] [MeasurableSingletonClass W] [MeasurableSpace (Finset W)]
@@ -136,6 +128,13 @@ noncomputable def L0 (P : W → ℕ) (cell : Q → W → Finset W) (sem : U → 
     (projListener cell (literalListener ((priorOfWeights P).restrict ↑C) λ u =>
       (sem u).indicator 1) q u).restrict (sem u)
 
+instance (P : W → ℕ) (cell : Q → W → Finset W) (sem : U → Set W) (C : Finset W) (q : Q) :
+    IsFiniteKernel (L0 P cell sem C q) :=
+  ⟨⟨_, Kernel.bound_lt_top (projListener cell (literalListener ((priorOfWeights P).restrict ↑C)
+      λ u => (sem u).indicator 1) q), λ u => by
+    rw [L0, Kernel.ofFunOfCountable_apply]
+    exact (Measure.restrict_apply_le _ _).trans (Kernel.measure_le_bound _ _ _)⟩⟩
+
 variable (P : W → ℕ) (cell : Q → W → Finset W) (sem : U → Set W)
   [∀ u, DecidablePred (· ∈ sem u)] (C : Finset W) (q : Q) (u : U) (w : W)
 
@@ -150,12 +149,8 @@ theorem L0_apply [DiscreteMeasurableSpace W] :
   · rw [Set.singleton_inter_eq_empty.mpr h, measure_empty]
     simp [l0, ite_eq_right h]
 
-theorem L0_le_one [DiscreteMeasurableSpace W] : L0 P cell sem C q u {w} ≤ 1 := by
-  rw [L0_apply]
-  exact ENNReal.div_le_of_le_mul (by rw [one_mul]; exact_mod_cast l0_fst_le_snd P cell sem C q u w)
-
 /-- The speaker within a context set (3b), with no cost. -/
-noncomputable def speaker (α : ℝ) : Kernel W U := RSA.speaker α (λ _ => 1) (L0 P cell sem C q)
+noncomputable def speaker (α : ℝ) : Kernel W U := RSA.speaker α 0 (L0 P cell sem C q)
 
 /-- The share of an utterance at a world within a context set, on reals. -/
 noncomputable def share (α : ℝ) : ℝ := (speaker P cell sem C q α w).real {u}
@@ -164,8 +159,7 @@ variable {P cell sem C q u w}
 
 theorem speaker_apply_singleton_ne_zero [DiscreteMeasurableSpace W] {α : ℝ} (hα : 0 < α)
     (h : w ∈ sem u) (hC : w ∈ C) (hP : P w ≠ 0) : speaker P cell sem C q α w {u} ≠ 0 :=
-  RSA.speaker_apply_singleton_ne_zero hα.le (λ _ => one_ne_zero) (λ _ => ENNReal.one_ne_top)
-    (L0_le_one P cell sem C q · w) (by
+  RSA.speaker_apply_singleton_ne_zero hα.le (by
       rw [L0_apply, ne_eq, ENNReal.div_eq_zero_iff, not_or]
       refine ⟨?_, ENNReal.natCast_ne_top _⟩
       simp only [l0, ite_eq_left h, Nat.cast_eq_zero]
@@ -179,7 +173,7 @@ variable [MeasurableSpace (Finset W)] [MeasurableSingletonClass (Finset W)]
 context sets, given the question. -/
 noncomputable def listener (P : W → ℕ) (cell : Q → W → Finset W) (sem : U → Set W) (q : Q)
     (α : ℝ) : Kernel U (W × Finset W) :=
-  familyListener (λ C => L0 P cell sem C q) α (λ _ => 1) (pairPrior P)
+  familyListener (λ C => L0 P cell sem C q) α 0 (pairPrior P)
 
 /-- The pairs whose world is `w`. -/
 def worldEvent (w : W) : Finset (W × Finset W) := Finset.univ.image λ C => (w, C)
@@ -188,7 +182,7 @@ def worldEvent (w : W) : Finset (W × Finset W) := Finset.univ.image λ C => (w,
 comparison of prior-weighted speaker shares summed over context sets. -/
 theorem listener_worldEvent_lt_iff (P : W → ℕ) (cell : Q → W → Finset W) (sem : U → Set W)
     [∀ u, DecidablePred (· ∈ sem u)] (q : Q) {α : ℝ} {u : U}
-    (hu : (familySpeaker (λ C => L0 P cell sem C q) α (λ _ => 1) ∘ₘ pairPrior P) {u} ≠ 0)
+    (hu : (familySpeaker (λ C => L0 P cell sem C q) α 0 ∘ₘ pairPrior P) {u} ≠ 0)
     (w₁ w₂ : W) :
     (listener P cell sem q α u).real ↑(worldEvent w₁)
         < (listener P cell sem q α u).real ↑(worldEvent w₂)
@@ -303,9 +297,8 @@ private theorem share_expand (C : Finset World) (q : QUD) (w : World) {α : ℝ}
         (((tbl .silence).1 / (tbl .silence).2) ^ α + ((tbl .us).1 / (tbl .us).2) ^ α
           + ((tbl .notUS).1 / (tbl .notUS).2) ^ α + ((tbl .gc).1 / (tbl .gc).2) ^ α
           + ((tbl .notGC).1 / (tbl .notGC).2) ^ α) := by
-  rw [share, speaker, speaker_real_singleton hα.le (λ _ => ENNReal.one_ne_top)
-    (L0_le_one uniform QUD.cell Utterance.sem C q · w), sum_utterance]
-  simp only [L0_apply, htbl, toReal_frac_rpow, ENNReal.toReal_one, mul_one]
+  rw [share, speaker, speaker_zero_real_singleton hα.le, sum_utterance]
+  simp only [L0_apply, htbl, toReal_frac_rpow]
 
 section Tables
 
@@ -539,7 +532,7 @@ private theorem card_three : ({.usCitizen, .gcHolder, .nonUS} : Finset World).ca
   decide
 
 private theorem comp_ne_zero (q : QUD) {α : ℝ} (hα : 0 < α) :
-    (familySpeaker (λ C => L0 uniform QUD.cell Utterance.sem C q) α (λ _ => 1)
+    (familySpeaker (λ C => L0 uniform QUD.cell Utterance.sem C q) α 0
       ∘ₘ pairPrior uniform) {.notGC} ≠ 0 :=
   comp_familySpeaker_ne_zero (w := .nonUS) (l := {.nonUS})
     (by rw [pairPrior_singleton, ite_eq_left (by decide)]; simp [uniform])
@@ -698,9 +691,8 @@ private theorem share_other {α : ℝ} (hα : 0 < α) (u : HobbyUtterance) :
           + ((tblO .notRunner).1 / (tblO .notRunner).2) ^ α
           + ((tblO .athlete).1 / (tblO .athlete).2) ^ α
           + ((tblO .notAthlete).1 / (tblO .notAthlete).2) ^ α) := by
-  rw [share, speaker, speaker_real_singleton hα.le (λ _ => ENNReal.one_ne_top)
-    (L0_le_one hobbyWeight which HobbyUtterance.sem hobbies () · .other), sum_hobbyUtterance]
-  simp only [L0_apply, l0_O, toReal_frac_rpow, ENNReal.toReal_one, mul_one]
+  rw [share, speaker, speaker_zero_real_singleton hα.le, sum_hobbyUtterance]
+  simp only [L0_apply, l0_O, toReal_frac_rpow]
 
 /-- At the non-athlete world in the universe, *not an Olympic sprinter* is produced more often
 than silence but less often than *not a runner*, which loses to *not an athlete*: Olympic

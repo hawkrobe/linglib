@@ -25,8 +25,8 @@ and silence was not an option, `posterior_eq_prior_of_asked`.
 
 The paper gives the conceptualization in prose and its predictions through four
 forced-choice experiments; the speaker with a null message is the model the paper takes from
-its precursors, on the substrate's kernel pipeline, and the null message's weight is the
-parameter the paper's contexts vary. The experiments' selection rates are not represented.
+its precursors, on the substrate's kernel pipeline, and the null message's cost is the
+parameter the paper's contexts vary; when the speaker is asked, the null message is absent. The experiments' selection rates are not represented.
 
 ## References
 
@@ -127,27 +127,34 @@ theorem L0_some_of_ne {v w : Value} (h : v ≠ w) : L0 μ (some v) {w} = 0 :=
   literalListener_indicator_apply_singleton_of_notMem μ extension
     (by simp [extension, Ne.symm h])
 
-variable (α : ℝ) (κs κn : ℝ≥0∞)
+instance : IsFiniteKernel (L0 μ) := inferInstanceAs (IsFiniteKernel (literalListener _ _))
 
-/-- The speaker: the informativity speaker over reports, weighted `κs`, with silence weighted
-`κn`. -/
-noncomputable def S : Kernel Value Utterance := speaker α (liftCostFactor κn λ _ => κs) (L0 μ)
+variable (α cs cn : ℝ)
 
-instance : IsFiniteKernel (S μ α κs κn) :=
-  inferInstanceAs (IsFiniteKernel (speaker α (liftCostFactor κn λ _ => κs) (L0 μ)))
+/-- The speaker: the informativity speaker over reports, each costing `cs`, with silence
+costing `cn`. -/
+noncomputable def S : Kernel Value Utterance := speaker α (liftCost cn λ _ => cs) (L0 μ)
+
+instance : IsFiniteKernel (S μ α cs cn) := inferInstanceAs (IsFiniteKernel (speaker _ _ _))
+
+/-- The speaker when asked: silence is not an option, and she chooses among the reports. -/
+noncomputable def askedS : Kernel Value Value :=
+  speaker α (λ _ => cs) (literalListener μ λ v => ({v} : Set Value).indicator 1)
+
+instance : IsFiniteKernel (askedS μ α cs) := inferInstanceAs (IsFiniteKernel (speaker _ _ _))
 
 /-! ### The decision to speak as the observation -/
 
 /-- Whether the speaker spoke: the report's form, a value reported or silence. -/
-noncomputable def spoke : Kernel Value Bool := (S μ α κs κn).map Option.isSome
+noncomputable def spoke : Kernel Value Bool := (S μ α cs cn).map Option.isSome
 
-instance : IsFiniteKernel (spoke μ α κs κn) :=
-  inferInstanceAs (IsFiniteKernel ((S μ α κs κn).map Option.isSome))
+instance : IsFiniteKernel (spoke μ α cs cn) :=
+  inferInstanceAs (IsFiniteKernel ((S μ α cs cn).map Option.isSome))
 
 /-- The probability of speaking at a value is the share of the report of that value, the
 other report being false there. -/
 theorem spoke_apply_true (hα : 0 < α) (v : Value) :
-    spoke μ α κs κn v {true} = S μ α κs κn v {some v} := by
+    spoke μ α cs cn v {true} = S μ α cs cn v {some v} := by
   rw [spoke, Kernel.map_apply' _ Measurable.of_discrete _ (MeasurableSet.singleton true),
     show (Option.isSome ⁻¹' ({true} : Set Bool) : Set Utterance) =
       {some .typical} ∪ {some .atypical} by ext u; rcases u with _ | (_ | _) <;> simp,
@@ -167,130 +174,105 @@ theorem L0_some_self {v : Value} (hv : μ {v} ≠ 0) : L0 μ (some v) {v} = 1 :=
 theorem L0_none (v : Value) : L0 μ none {v} = μ {v} :=
   literalListener_indicator_apply_singleton_of_eq_univ μ extension rfl v
 
-theorem L0_le_one (u : Utterance) (v : Value) : L0 μ u {v} ≤ 1 := by
-  rcases u with _ | w
-  · rw [L0_none]; exact prob_le_one
-  · by_cases h : w = v
-    · subst h
-      by_cases hv : μ {w} = 0
-      · rw [L0, literalListener_indicator_apply_singleton μ extension (Set.mem_singleton w),
-          hv, mul_zero]
-        exact zero_le_one
-      · rw [L0_some_self μ hv]
-    · rw [L0_some_of_ne μ h]; exact zero_le_one
-
 /-! ### Newsworthiness -/
-
-
-private theorem cost_ne_top (hκs : κs ≠ ∞) (hκn : κn ≠ ∞) :
-    ∀ u : Utterance, liftCostFactor κn (λ _ => κs) u ≠ ∞ := by
-  rintro (_ | _) <;> simpa
 
 /-- The share of a report at its value: the report competes with silence only, and silence is
 weighted by the prior of the value. -/
-theorem S_report (hα : 0 < α) (hκs : κs ≠ ∞) (hκn : κn ≠ ∞) {v : Value}
-    (hv : μ {v} ≠ 0) :
-    (S μ α κs κn v).real {some v} =
-      κs.toReal / (κs.toReal + κn.toReal * (μ {v} ^ α).toReal) := by
-  rw [S, speaker_real_singleton hα.le (cost_ne_top κs κn hκs hκn) (L0_le_one μ · v),
-    Fintype.sum_option,
+theorem S_report (hα : 0 < α) {v : Value} (hv : μ {v} ≠ 0) :
+    (S μ α cs cn v).real {some v} =
+      Real.exp (-(α * cs)) /
+        (Real.exp (-(α * cs)) + Real.exp (-(α * cn)) * (μ {v} ^ α).toReal) := by
+  rw [S, speaker_real_singleton hα.le, Fintype.sum_option,
     Finset.sum_eq_single v
       (λ w _ hw => by
         rw [L0_some_of_ne μ hw, ENNReal.zero_rpow_of_pos hα, ENNReal.toReal_zero, zero_mul])
       (λ h => absurd (Finset.mem_univ v) h),
     L0_some_self μ hv, L0_none, ENNReal.one_rpow, ENNReal.toReal_one, one_mul,
-    liftCostFactor_some, liftCostFactor_none, add_comm, mul_comm (κn.toReal)]
+    liftCost_some, liftCost_none, add_comm, mul_comm (μ {v} ^ α).toReal]
 
 /-- The share of a report is positive. -/
-theorem S_report_pos (hα : 0 < α) (hκs0 : κs ≠ 0) (hκs : κs ≠ ∞) (hκn : κn ≠ ∞)
-    {v : Value} (hv : μ {v} ≠ 0) : 0 < (S μ α κs κn v).real {some v} := by
-  rw [S_report μ α κs κn hα hκs hκn hv]
-  have hs : 0 < κs.toReal := ENNReal.toReal_pos hκs0 hκs
-  exact div_pos hs (add_pos_of_pos_of_nonneg hs (by positivity))
+theorem S_report_pos (hα : 0 < α) {v : Value} (hv : μ {v} ≠ 0) :
+    0 < (S μ α cs cn v).real {some v} := by
+  rw [S_report μ α cs cn hα hv]
+  positivity
 
 /-- Improbable situations yield likely utterances: the share of a report is greater at the
 value with the smaller prior, since silence, which conveys the prior, is the more attractive
 the likelier the value. -/
-theorem S_report_lt (hα : 0 < α) (hκs0 : κs ≠ 0) (hκs : κs ≠ ∞) (hκn0 : κn ≠ 0)
-    (hκn : κn ≠ ∞) (ht : μ {.typical} ≠ 0) (ha : μ {.atypical} ≠ 0)
+theorem S_report_lt (hα : 0 < α) (ht : μ {.typical} ≠ 0) (ha : μ {.atypical} ≠ 0)
     (h : μ {.atypical} < μ {.typical}) :
-    (S μ α κs κn .typical).real {some .typical} <
-      (S μ α κs κn .atypical).real {some .atypical} := by
-  rw [S_report μ α κs κn hα hκs hκn ht, S_report μ α κs κn hα hκs hκn ha]
-  have hs : 0 < κs.toReal := ENNReal.toReal_pos hκs0 hκs
-  have hn : 0 < κn.toReal := ENNReal.toReal_pos hκn0 hκn
+    (S μ α cs cn .typical).real {some .typical} <
+      (S μ α cs cn .atypical).real {some .atypical} := by
+  rw [S_report μ α cs cn hα ht, S_report μ α cs cn hα ha]
   have hpow : (μ {Value.atypical} ^ α).toReal < (μ {Value.typical} ^ α).toReal :=
     (ENNReal.toReal_lt_toReal (ENNReal.rpow_ne_top_of_nonneg hα.le (measure_ne_top _ _))
       (ENNReal.rpow_ne_top_of_nonneg hα.le (measure_ne_top _ _))).mpr (ENNReal.rpow_lt_rpow h hα)
-  rw [div_lt_div_iff_of_pos_left hs (add_pos_of_pos_of_nonneg hs (by positivity))
-    (add_pos_of_pos_of_nonneg hs (by positivity))]
-  exact add_lt_add_right (mul_lt_mul_of_pos_left hpow hn) _
+  rw [div_lt_div_iff_of_pos_left (Real.exp_pos _) (by positivity) (by positivity)]
+  exact add_lt_add_right (mul_lt_mul_of_pos_left hpow (Real.exp_pos _)) _
 
-theorem spoke_apply_true_ne_zero (hα : 0 < α) (hκs0 : κs ≠ 0) (hκs : κs ≠ ∞)
-    (hκn : κn ≠ ∞) {v : Value} (hv : μ {v} ≠ 0) : spoke μ α κs κn v {true} ≠ 0 := by
-  rw [spoke_apply_true μ α κs κn hα]
+theorem spoke_apply_true_ne_zero (hα : 0 < α) {v : Value} (hv : μ {v} ≠ 0) :
+    spoke μ α cs cn v {true} ≠ 0 := by
+  rw [spoke_apply_true μ α cs cn hα]
   intro h0
-  have := S_report_pos μ α κs κn hα hκs0 hκs hκn hv
+  have := S_report_pos μ α cs cn hα hv
   rw [measureReal_def, h0, ENNReal.toReal_zero] at this
   exact lt_irrefl _ this
 
 /-- A report shifts the guess toward the atypical value: given that the speaker spoke, the
 posterior on the atypical value exceeds the prior that the think condition returns. -/
-theorem prior_lt_posterior (hα : 0 < α) (hκs0 : κs ≠ 0) (hκs : κs ≠ ∞)
-    (hκn0 : κn ≠ 0) (hκn : κn ≠ ∞) (ht : μ {.typical} ≠ 0) (ha : μ {.atypical} ≠ 0)
+theorem prior_lt_posterior (hα : 0 < α) (ht : μ {.typical} ≠ 0) (ha : μ {.atypical} ≠ 0)
     (h : μ {.atypical} < μ {.typical}) :
-    μ.real {.atypical} < (((spoke μ α κs κn)†μ) true).real {.atypical} := by
+    μ.real {.atypical} < (((spoke μ α cs cn)†μ) true).real {.atypical} := by
   rw [prior_lt_posterior_iff μ _
-    (comp_apply_singleton_ne_zero _ _ ht
-      (spoke_apply_true_ne_zero μ α κs κn hα hκs0 hκs hκn ht)) ht ha]
-  simpa only [measureReal_def, spoke_apply_true μ α κs κn hα] using
-    S_report_lt μ α κs κn hα hκs0 hκs hκn0 hκn ht ha h
+    (comp_apply_singleton_ne_zero _ _ ht (spoke_apply_true_ne_zero μ α cs cn hα ht)) ht ha]
+  simpa only [measureReal_def, spoke_apply_true μ α cs cn hα] using
+    S_report_lt μ α cs cn hα ht ha h
 
-/-- When the speaker was asked, so that silence was not an option, a report carries no
-information about typicality: the posterior is the prior, as the when-asked and think
-conditions align. -/
-theorem posterior_eq_prior_of_asked (hα : 0 < α) (hκs0 : κs ≠ 0) (hκs : κs ≠ ∞)
-    (ht : μ {.typical} ≠ 0) (ha : μ {.atypical} ≠ 0) :
-    (((spoke μ α κs 0)†μ) true).real {.atypical} = μ.real {.atypical} := by
-  have h1 : ∀ v, μ {v} ≠ 0 → (spoke μ α κs 0 v).real {true} = 1 := λ v hv => by
-    rw [measureReal_def, spoke_apply_true μ α κs 0 hα, ← measureReal_def,
-      S_report μ α κs 0 hα hκs ENNReal.zero_ne_top hv, ENNReal.toReal_zero, zero_mul, add_zero]
-    exact div_self (ENNReal.toReal_pos hκs0 hκs).ne'
-  rw [posterior_real_singleton _ _
-      (comp_apply_singleton_ne_zero _ _ ht
-        (spoke_apply_true_ne_zero μ α κs 0 hα hκs0 hκs ENNReal.zero_ne_top ht)),
+/-- When the speaker was asked, so that silence was not an option, she speaks at every value,
+and a report carries no information about typicality: the posterior is the prior, as the
+when-asked and think conditions align. -/
+theorem posterior_eq_prior_of_asked (hα : 0 < α) (ht : μ {.typical} ≠ 0)
+    (ha : μ {.atypical} ≠ 0) :
+    ((((askedS μ α cs).map λ _ => true)†μ) true).real {.atypical} = μ.real {.atypical} := by
+  have h1 : ∀ v, μ {v} ≠ 0 → ((askedS μ α cs).map (λ _ => true) v).real {true} = 1 := λ v hv => by
+    have hv1 : askedS μ α cs v {v} = 1 :=
+      speaker_literalListener_indicator_eq_one hα _ μ _ hv rfl λ _ h hv' => h hv'.symm
+    rw [measureReal_def, Kernel.map_apply' _ measurable_const _ (MeasurableSet.singleton true), askedS,
+      Set.preimage_const_of_mem (Set.mem_singleton true),
+      le_antisymm (speaker_apply_univ_le_one α _ _ v) (hv1 ▸ measure_mono (Set.subset_univ _)),
+      ENNReal.toReal_one]
+  have hx : (((askedS μ α cs).map λ _ => true) ∘ₘ μ) {true} ≠ 0 :=
+    comp_apply_singleton_ne_zero _ _ ht λ h => by simpa [measureReal_def, h] using h1 _ ht
+  rw [posterior_real_singleton _ _ hx,
     Measure.comp_real_singleton_of_pair _ _ (by decide) (pair_support μ), h1 _ ha, h1 _ ht,
     mul_one, mul_one, measureReal_singleton_add_singleton_of_pair μ (by decide) (pair_support μ),
     div_one]
 
-/-- The likelihood of speech is malleable: the more available silence is, the more a report
-shifts the guess toward the atypical value, as the out-of-the-blue and large-audience
-conditions increase the emphasis on information exchange. -/
-theorem posterior_lt_of_silence_lt (hα : 0 < α) (hκs0 : κs ≠ 0) (hκs : κs ≠ ∞)
-    {κn₁ κn₂ : ℝ≥0∞} (hκn₂ : κn₂ ≠ ∞) (hlt : κn₁ < κn₂) (ht : μ {.typical} ≠ 0)
-    (ha : μ {.atypical} ≠ 0) (h : μ {.atypical} < μ {.typical}) :
-    (((spoke μ α κs κn₁)†μ) true).real {.atypical} <
-      (((spoke μ α κs κn₂)†μ) true).real {.atypical} := by
-  have hκn₁ : κn₁ ≠ ∞ := ne_top_of_lt hlt
+/-- The likelihood of speech is malleable: the cheaper silence is, the more a report shifts the
+guess toward the atypical value, as the out-of-the-blue and large-audience conditions increase
+the emphasis on information exchange. -/
+theorem posterior_lt_of_silence_lt (hα : 0 < α) {cn₁ cn₂ : ℝ} (hlt : cn₂ < cn₁)
+    (ht : μ {.typical} ≠ 0) (ha : μ {.atypical} ≠ 0) (h : μ {.atypical} < μ {.typical}) :
+    (((spoke μ α cs cn₁)†μ) true).real {.atypical} <
+      (((spoke μ α cs cn₂)†μ) true).real {.atypical} := by
   rw [posterior_lt_posterior_iff μ _ _
-    (comp_apply_singleton_ne_zero _ _ ht
-      (spoke_apply_true_ne_zero μ α κs κn₁ hα hκs0 hκs hκn₁ ht))
-    (comp_apply_singleton_ne_zero _ _ ht
-      (spoke_apply_true_ne_zero μ α κs κn₂ hα hκs0 hκs hκn₂ ht)) ht ha]
-  simp only [measureReal_def, spoke_apply_true μ α κs _ hα]
+    (comp_apply_singleton_ne_zero _ _ ht (spoke_apply_true_ne_zero μ α cs cn₁ hα ht))
+    (comp_apply_singleton_ne_zero _ _ ht (spoke_apply_true_ne_zero μ α cs cn₂ hα ht)) ht ha]
+  simp only [measureReal_def, spoke_apply_true μ α cs _ hα]
   rw [← measureReal_def, ← measureReal_def, ← measureReal_def, ← measureReal_def,
-    S_report μ α κs κn₁ hα hκs hκn₁ ha, S_report μ α κs κn₂ hα hκs hκn₂ ht,
-    S_report μ α κs κn₂ hα hκs hκn₂ ha, S_report μ α κs κn₁ hα hκs hκn₁ ht]
-  have hs : 0 < κs.toReal := ENNReal.toReal_pos hκs0 hκs
-  have hn : κn₁.toReal < κn₂.toReal := (ENNReal.toReal_lt_toReal hκn₁ hκn₂).mpr hlt
-  have hn₁ : 0 ≤ κn₁.toReal := ENNReal.toReal_nonneg
+    S_report μ α cs cn₁ hα ha, S_report μ α cs cn₂ hα ht,
+    S_report μ α cs cn₂ hα ha, S_report μ α cs cn₁ hα ht]
+  have hn : Real.exp (-(α * cn₁)) < Real.exp (-(α * cn₂)) :=
+    Real.exp_lt_exp.2 (neg_lt_neg (mul_lt_mul_of_pos_left hlt hα))
   have hAB : (μ {Value.atypical} ^ α).toReal < (μ {Value.typical} ^ α).toReal :=
     (ENNReal.toReal_lt_toReal (ENNReal.rpow_ne_top_of_nonneg hα.le (measure_ne_top _ _))
       (ENNReal.rpow_ne_top_of_nonneg hα.le (measure_ne_top _ _))).mpr (ENNReal.rpow_lt_rpow h hα)
+  have hs := Real.exp_pos (-(α * cs))
+  have hn₁ := (Real.exp_pos (-(α * cn₁))).le
   have hB : 0 ≤ (μ {Value.atypical} ^ α).toReal := ENNReal.toReal_nonneg
-  set s := κs.toReal
-  set n₁ := κn₁.toReal
-  set n₂ := κn₂.toReal
+  set s := Real.exp (-(α * cs))
+  set n₁ := Real.exp (-(α * cn₁))
+  set n₂ := Real.exp (-(α * cn₂))
   set A := (μ {Value.typical} ^ α).toReal
   set B := (μ {Value.atypical} ^ α).toReal
   have hA : 0 ≤ A := hB.trans hAB.le

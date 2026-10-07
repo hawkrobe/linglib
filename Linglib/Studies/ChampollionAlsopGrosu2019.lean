@@ -165,7 +165,7 @@ noncomputable abbrev speaker (i : Interp) (α : ℝ) : Kernel FCState Utterance 
 at a uniform prior over states and interpretation functions; `.fst` marginalizes over the
 interpretation. -/
 noncomputable abbrev listener (α : ℝ) : Kernel Utterance (FCState × Interp) :=
-  familyListener (fun i => uniformListener (sem i)) α 1 (uniformOn Set.univ)
+  familyListener (fun i => uniformListener (sem i)) α 0 (uniformOn Set.univ)
 
 /-- Under the exhaustified function at Only One, *or* is the only true utterance, so the
 speaker produces it with certainty at every rationality (§3.3). -/
@@ -263,7 +263,7 @@ noncomputable def famB (i : Interp) : Kernel Utterance FCState :=
 
 /-- The pragmatic listener at the biased prior. -/
 noncomputable def listenerB (α : ℝ) : Kernel Utterance (FCState × Interp) :=
-  familyListener famB α 1 jointPriorB
+  familyListener famB α 0 jointPriorB
 
 theorem jointPriorB_real_singleton (p : FCState × Interp) :
     jointPriorB.real {p} = biasedWeight p.1 := by
@@ -278,8 +278,8 @@ theorem anyNumber_of_prior {α : ℝ} (hα : 0 < α) {w : FCState} (hw : w ≠ .
   have hother : ∀ u' ≠ Utterance.or_, FCState.anyNumber ∉ semSet .exhaustified u' := by
     simp only [ne_eq, mem_semSet]; decide
   have hμ : priorB {.anyNumber} ≠ 0 := by rw [priorB_singleton]; simp [biasedWeight]
-  have hone := speaker_literalListener_indicator_eq_one (cost := 1) (u := .or_) (w := .anyNumber)
-    hα one_ne_zero ENNReal.one_ne_top priorB (semSet .exhaustified) hμ
+  have hone := speaker_literalListener_indicator_eq_one (u := Utterance.or_)
+    (w := FCState.anyNumber) hα 0 priorB (semSet .exhaustified) hμ
     ((mem_semSet (i := .exhaustified) (u := .or_) (w := .anyNumber)).mpr trivial) hother
   have hlt : (∑ p ∈ ({w} ×ˢ Finset.univ : Finset (FCState × Interp)), jointPriorB.real {p})
       < jointPriorB.real {(.anyNumber, .exhaustified)} := by
@@ -288,7 +288,7 @@ theorem anyNumber_of_prior {α : ℝ} (hα : 0 < α) {w : FCState} (hw : w ≠ .
       show Fintype.card Interp = 2 from rfl]
     cases w <;> first | exact absurd rfl hw | norm_num [biasedWeight]
   rw [Measure.fst_real_singleton, Measure.fst_real_singleton, listenerB]
-  exact familyListener_real_lt_of_certain famB α 1 (p₀ := (.anyNumber, .exhaustified))
+  exact familyListener_real_lt_of_certain famB α 0 (p₀ := (.anyNumber, .exhaustified))
     (by simp) hone hlt
 
 /-! ### No free choice under negation (§4, Table 9) -/
@@ -359,7 +359,7 @@ theorem negSem_notOr : ∀ i, negSem i .notOr = {.neither} := by decide
 
 /-- The listener of the negation model. -/
 noncomputable abbrev negListener (α : ℝ) : Kernel NegUtterance (NegState × Interp) :=
-  familyListener (fun i => uniformListener (negSem i)) α 1 (uniformOn Set.univ)
+  familyListener (fun i => uniformListener (negSem i)) α 0 (uniformOn Set.univ)
 
 /-- **No free choice under negation** (Table 9): hearing *you may not take an apple or a
 pear*, the listener assigns no mass to any state other than Neither — in particular none to

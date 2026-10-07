@@ -29,7 +29,8 @@ discusses, with the common-ground prior of (8) as one instance (`now_cg_mode`).
 ## Implementation notes
 
 The literal listener is `RSA.projListener` of the literal listener at counting measure on the
-context set, the speaker `RSA.speaker` with the utterance prior as its cost factor, and the
+context set, the speaker `RSA.speaker` with the utterance prior entering as the cost
+`-log Pr(u) / α`, since (3) multiplies by the prior outside the rationality, and the
 joint listener `RSA.familyListener` with the context set as the state-side latent; the pair
 prior puts the actual world in the context set, as the paper's figures do. Speaker shares are
 evaluated cell by cell from the tables of the literal listener's counts, which `decide`
@@ -166,6 +167,9 @@ context set, conditioned on the utterance and projected onto the question's cell
 noncomputable def L0 (C : Finset World) (q : QUD) : Kernel Utterance World :=
   projListener QUD.cell (literalListener (Measure.count.restrict ↑C) λ u => u.sem.indicator 1) q
 
+instance (C : Finset World) (q : QUD) : IsFiniteKernel (L0 C q) :=
+  inferInstanceAs (IsFiniteKernel (projListener _ _ _))
+
 /-- The counts behind the literal listener: worlds of the context set where the utterance is
 true and the question's answer is the world's, over those where the utterance is true. -/
 def l0 (C : Finset World) (q : QUD) (u : Utterance) (w : World) : ℕ × ℕ :=
@@ -182,11 +186,6 @@ theorem L0_apply (C : Finset World) (q : QUD) (u : Utterance) (w : World) :
     Measure.restrict_apply MeasurableSet.of_discrete, e1, e2, Measure.count_apply_finset,
     Measure.count_apply_finset, l0, ENNReal.div_eq_inv_mul]
 
-theorem L0_le_one (C : Finset World) (q : QUD) (u : Utterance) (w : World) :
-    L0 C q u {w} ≤ 1 := by
-  rw [L0_apply]
-  exact ENNReal.div_le_of_le_mul (by rw [one_mul]; exact_mod_cast Finset.card_filter_le _ _)
-
 theorem prior_ne_zero (u : Utterance) : u.prior ≠ 0 := by
   rcases u with _ | ⟨p, b⟩ <;> try cases p
   all_goals simp [Utterance.prior]
@@ -195,12 +194,21 @@ theorem prior_ne_top (u : Utterance) : u.prior ≠ ∞ := by
   rcases u with _ | ⟨p, b⟩ <;> try cases p
   all_goals simp [Utterance.prior]
 
+/-- The cost of an utterance at rationality `α`: (3) weighs the speaker's choice by the utterance
+prior outside the rationality, which the substrate speaker reads as the cost `-log Pr(u) / α`. -/
+noncomputable def cost (α : ℝ) (u : Utterance) : ℝ := -Real.log u.prior.toReal / α
+
+theorem exp_neg_cost {α : ℝ} (hα : α ≠ 0) (u : Utterance) :
+    Real.exp (-(α * cost α u)) = u.prior.toReal := by
+  rw [cost, mul_div_cancel₀ _ hα, neg_neg,
+    Real.exp_log (ENNReal.toReal_pos (prior_ne_zero u) (prior_ne_top u))]
+
 /-! ### Speaker and listeners (6), (7) -/
 
 /-- The speaker within a context set (6): the informativity speaker over the question-projected
-literal listener, with the utterance prior as cost factor. -/
+literal listener, weighted by the utterance prior. -/
 noncomputable def speaker (q : QUD) (C : Finset World) (α : ℝ) : Kernel World Utterance :=
-  RSA.speaker α Utterance.prior (L0 C q)
+  RSA.speaker α (cost α) (L0 C q)
 
 /-- The prior over context sets determined by a weighting. -/
 noncomputable def ctxPrior (π : Finset World → ℕ) : Measure (Finset World) :=
@@ -239,7 +247,7 @@ instance (π : Finset World → ℕ) : IsFiniteMeasure (pairPrior π) :=
 /-- The joint listener (7): the family listener over context sets. -/
 noncomputable def listener (q : QUD) (π : Finset World → ℕ) (α : ℝ) :
     Kernel Utterance (World × Finset World) :=
-  familyListener (λ C => L0 C q) α Utterance.prior (pairPrior π)
+  familyListener (λ C => L0 C q) α (cost α) (pairPrior π)
 
 /-- The common-ground prior (8) with the paper's observation probability `0.4` and `5%` noise,
 scaled by `14700`: the universe, the four single observations, the four pairs, and the six
@@ -280,11 +288,12 @@ private theorem sum_utterance {M : Type*} [AddCommMonoid M] (f : Utterance → M
 noncomputable def share (q : QUD) (C : Finset World) (w : World) (α : ℝ) : ℝ :=
   (speaker q C α w).real {notStopped}
 
-private theorem share_eq (q : QUD) (C : Finset World) (w : World) {α : ℝ} (hα : 0 ≤ α) :
+private theorem share_eq (q : QUD) (C : Finset World) (w : World) {α : ℝ} (hα : 0 < α) :
     share q C w α =
       ((L0 C q notStopped {w} ^ α).toReal * (notStopped.prior).toReal
-        / ∑ u, (L0 C q u {w} ^ α).toReal * u.prior.toReal) :=
-  speaker_real_singleton hα prior_ne_top (L0_le_one C q · w) notStopped
+        / ∑ u, (L0 C q u {w} ^ α).toReal * u.prior.toReal) := by
+  rw [share, speaker, speaker_real_singleton hα.le]
+  simp only [exp_neg_cost hα.ne']
 
 /-- The literal listener's cells at `pastT`, `now`, `TT`. -/
 private def tblA : Utterance → ℕ × ℕ
@@ -519,7 +528,7 @@ private theorem share_expand (q : QUD) (C : Finset World) (w : World) {α : ℝ}
           + ((tbl (.say .never false)).1 / (tbl (.say .never false)).2) ^ α * (1 / 4)
           + ((tbl (.say .never true)).1 / (tbl (.say .never true)).2) ^ α * (1 / 4)) := by
   obtain ⟨h0, h1, h2, h3, h4, h5, h6⟩ := prior_toReal
-  rw [share_eq _ _ _ hα.le, sum_utterance]
+  rw [share_eq _ _ _ hα, sum_utterance]
   simp only [L0_apply, htbl, toReal_frac_rpow, h0, h1, h2, h3, h4, h5, h6]
 
 section Cells
@@ -616,8 +625,8 @@ private theorem pairPrior_real (π : Finset World → ℕ) (w : World) (C : Fins
 /-- The speaker at the world in which John still smokes, within the context set that he smoked,
 produces *did not stop smoking*. -/
 private theorem speaker_pastT_ne_zero (q : QUD) {α : ℝ} (hα : 0 < α) :
-    RSA.speaker α Utterance.prior (L0 pastT q) .TT {notStopped} ≠ 0 :=
-  speaker_apply_singleton_ne_zero hα.le prior_ne_zero prior_ne_top (L0_le_one _ _ · _)
+    RSA.speaker α (cost α) (L0 pastT q) .TT {notStopped} ≠ 0 :=
+  speaker_apply_singleton_ne_zero hα.le
     (by
       cases q
       · rw [L0_apply, l0_F]; dsimp only [tblF]; simp
@@ -625,10 +634,10 @@ private theorem speaker_pastT_ne_zero (q : QUD) {α : ℝ} (hα : 0 < α) :
 
 private theorem comp_ne_zero (q : QUD) (π : Finset World → ℕ) (hπ : π pastT ≠ 0) {α : ℝ}
     (hα : 0 < α) :
-    (familySpeaker (λ C => L0 C q) α Utterance.prior ∘ₘ pairPrior π) {notStopped} ≠ 0 := by
+    (familySpeaker (λ C => L0 C q) α (cost α) ∘ₘ pairPrior π) {notStopped} ≠ 0 := by
   have hμ : pairPrior π {(World.TT, pastT)} ≠ 0 := by
     rw [pairPrior_singleton, ite_eq_left (by decide)]; exact_mod_cast hπ
-  have h := comp_familySpeaker_ne_zero (L := λ C => L0 C q) (α := α) (cost := Utterance.prior)
+  have h := comp_familySpeaker_ne_zero (L := λ C => L0 C q) (α := α) (C := cost α)
     (μ := pairPrior π) (w := .TT) (l := pastT) (u := notStopped) hμ (speaker_pastT_ne_zero q hα)
   exact h
 
@@ -638,7 +647,7 @@ private theorem listener_lt_iff (q : QUD) (π : Finset World → ℕ) (hπ : π 
     (listener q π α notStopped).real {(w₁, C₁)} < (listener q π α notStopped).real {(w₂, C₂)}
       ↔ (π C₁ : ℝ) * share q C₁ w₁ α < π C₂ * share q C₂ w₂ α := by
   have h := familyListener_real_lt_iff (L := λ C => L0 C q) (μ := pairPrior π) (α := α)
-    (cost := Utterance.prior) (comp_ne_zero q π hπ hα) {(w₁, C₁)} {(w₂, C₂)}
+    (C := cost α) (comp_ne_zero q π hπ hα) {(w₁, C₁)} {(w₂, C₂)}
   simp only [Finset.coe_singleton, Finset.sum_singleton, pairPrior_real π _ _ h₁,
     pairPrior_real π _ _ h₂] at h
   rw [listener]
@@ -648,11 +657,11 @@ private theorem listener_lt_iff (q : QUD) (π : Finset World → ℕ) (hπ : π 
 private theorem listener_eq (q : QUD) (π : Finset World → ℕ) (hπ : π pastT ≠ 0) {α : ℝ}
     (hα : 0 < α) (w₁ w₂ : World) (C₁ C₂ : Finset World)
     (hprior : pairPrior π {(w₁, C₁)} = pairPrior π {(w₂, C₂)})
-    (hshare : RSA.speaker α Utterance.prior (L0 C₁ q) w₁ {notStopped}
-      = RSA.speaker α Utterance.prior (L0 C₂ q) w₂ {notStopped}) :
+    (hshare : RSA.speaker α (cost α) (L0 C₁ q) w₁ {notStopped}
+      = RSA.speaker α (cost α) (L0 C₂ q) w₂ {notStopped}) :
     listener q π α notStopped {(w₁, C₁)} = listener q π α notStopped {(w₂, C₂)} := by
   rw [listener, familyListener,
-    posterior_apply_singleton_congr (κ := familySpeaker (λ C => L0 C q) α Utterance.prior)
+    posterior_apply_singleton_congr (κ := familySpeaker (λ C => L0 C q) α (cost α))
       (μ := pairPrior π) (comp_ne_zero q π hπ hα) (by simpa using hshare) hprior]
 
 
@@ -661,11 +670,11 @@ private theorem listener_eq (q : QUD) (π : Finset World → ℕ) (hπ : π past
 /-- The standard listener: the pragmatic listener over the universe with a uniform world prior,
 the first column of Table 2. -/
 noncomputable def standard (α : ℝ) : Kernel Utterance World :=
-  pragmaticListener α Utterance.prior (L0 Finset.univ .max) (uniformOn Set.univ)
+  pragmaticListener α (cost α) (L0 Finset.univ .max) (uniformOn Set.univ)
 
 private theorem speaker_univ_ne_zero {α : ℝ} (hα : 0 < α) :
-    RSA.speaker α Utterance.prior (L0 Finset.univ .max) .TT {notStopped} ≠ 0 :=
-  speaker_apply_singleton_ne_zero hα.le prior_ne_zero prior_ne_top (L0_le_one _ _ · _)
+    RSA.speaker α (cost α) (L0 Finset.univ .max) .TT {notStopped} ≠ 0 :=
+  speaker_apply_singleton_ne_zero hα.le
     (by rw [L0_apply, l0_I]; dsimp only [tblI]; simp)
 
 /-- The standard model puts the three worlds compatible with *did not stop smoking* on a par at

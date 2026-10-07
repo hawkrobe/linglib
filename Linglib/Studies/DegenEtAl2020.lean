@@ -139,8 +139,11 @@ theorem meaning_nonneg (hs0 : 0 ≤ xs) (hs1 : xs ≤ 1) (hc0 : 0 ≤ xc) (hc1 :
 noncomputable def L0 (xs xc : ℝ) : Kernel Utterance World :=
   literalListener (uniformOn Set.univ) λ u w => ENNReal.ofReal (meaning xs xc u w)
 
+instance (xs xc : ℝ) : IsFiniteKernel (L0 xs xc) :=
+  inferInstanceAs (IsFiniteKernel (literalListener _ _))
+
 /-- The speaker, (3) and (4), with unit informativeness weight and no cost. -/
-noncomputable def S1 (xs xc : ℝ) : Kernel World Utterance := speaker 1 1 (L0 xs xc)
+noncomputable def S1 (xs xc : ℝ) : Kernel World Utterance := speaker 1 0 (L0 xs xc)
 
 private theorem sum_world (f : World → ℝ) : ∑ w, f w = f .bigBlue + f .bigRed + f .smallBlue := by
   rw [show (Finset.univ : Finset World) = {.bigBlue, .bigRed, .smallBlue} from rfl,
@@ -158,10 +161,9 @@ under `u'`; the normalization cancels. -/
 theorem S1_real_lt_iff (w : World) (u u' : Utterance) (h : L0 xs xc u' {w} ≠ 0) :
     (S1 xs xc w).real {u} < (S1 xs xc w).real {u'} ↔ L0 xs xc u {w} < L0 xs xc u' {w} := by
   rw [S1]
-  refine (speaker_real_singleton_lt_iff (cost := 1) (L := L0 xs xc) (w := w) zero_le_one
-    (λ _ => ENNReal.one_ne_top) (λ u => literalListener_apply_le_one _ _ u _) ⟨u', ?_⟩).trans ?_
-  · simpa only [ENNReal.rpow_one, Pi.one_apply, mul_one] using h
-  · simp only [ENNReal.rpow_one, Pi.one_apply, mul_one]
+  refine (speaker_real_singleton_lt_iff (L := L0 xs xc) (w := w) zero_le_one ⟨u', h⟩).trans ?_
+  simp only [ENNReal.rpow_one, Pi.zero_apply, mul_zero, neg_zero, Real.exp_zero,
+    ENNReal.ofReal_one, mul_one]
 
 end Model
 
@@ -280,7 +282,7 @@ theorem boolean_no_preference :
   simp only [meaning, channel, Utterance.size, Utterance.color, World.big, World.blue,
     ↓reduceIte] at h1 h2
   norm_num at h1 h2
-  simp only [S1, measureReal_def, speaker_apply_singleton, h1, h2, Pi.one_apply]
+  simp only [S1, measureReal_def, speaker_zero_apply_singleton, h1, h2]
 
 end Overmodification
 
@@ -314,8 +316,10 @@ variable (typ : NomUtterance → NomWorld → ℝ)
 noncomputable def nomL0 : Kernel NomUtterance NomWorld :=
   literalListener (uniformOn Set.univ) λ u w => ENNReal.ofReal (typ u w)
 
+instance : IsFiniteKernel (nomL0 typ) := inferInstanceAs (IsFiniteKernel (literalListener _ _))
+
 /-- The nominal speaker with unit informativeness weight and no cost. -/
-noncomputable def nomS1 : Kernel NomWorld NomUtterance := speaker 1 1 (nomL0 typ)
+noncomputable def nomS1 : Kernel NomWorld NomUtterance := speaker 1 0 (nomL0 typ)
 
 /-- The subordinate term is preferred to the basic-level one for the target exactly when it is
 the more informative about it: its typicality for the target, relative to its typicality over
@@ -331,12 +335,12 @@ theorem subordinate_preferred_iff (hnn : ∀ u w, 0 ≤ typ u w) (hsub : 0 < typ
   have h2 := literalListener_uniformOn_ofReal_apply_singleton typ .sub NomWorld.dalmatian
     (hnn .sub) (hsum _ hsub)
   rw [nomS1]
-  refine (speaker_real_singleton_lt_iff (cost := 1) (L := nomL0 typ) (w := NomWorld.dalmatian)
-    zero_le_one (λ _ => ENNReal.one_ne_top) (λ u => literalListener_apply_le_one _ _ u _)
+  refine (speaker_real_singleton_lt_iff (L := nomL0 typ) (w := NomWorld.dalmatian) zero_le_one
     ⟨.sub, ?_⟩).trans ?_
-  · rw [ENNReal.rpow_one, Pi.one_apply, mul_one, nomL0, h2]
+  · rw [nomL0, h2]
     exact (ENNReal.ofReal_pos.mpr (div_pos hsub (hsum _ hsub))).ne'
-  · simp only [ENNReal.rpow_one, Pi.one_apply, mul_one, nomL0]
+  · simp only [ENNReal.rpow_one, Pi.zero_apply, mul_zero, neg_zero, Real.exp_zero,
+      ENNReal.ofReal_one, mul_one, nomL0]
     rw [h1, h2, ENNReal.ofReal_lt_ofReal_iff (div_pos hsub (hsum _ hsub)),
       div_lt_div_iff₀ (hsum _ hbasic) (hsum _ hsub)]
 

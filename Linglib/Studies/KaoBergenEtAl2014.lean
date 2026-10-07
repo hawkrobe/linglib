@@ -83,11 +83,11 @@ def sem (u : Cat) : Set Meaning := {m | m.1 = u}
 noncomputable def L0 (μ : Measure Meaning) : Kernel Cat Meaning :=
   literalListener μ λ u => (sem u).indicator 1
 
+instance (μ : Measure Meaning) : IsFiniteKernel (L0 μ) :=
+  inferInstanceAs (IsFiniteKernel (literalListener _ _))
+
 theorem L0_apply (μ : Measure Meaning) (u : Cat) : L0 μ u = μ[|sem u] := by
   rw [L0, literalListener_indicator, Kernel.ofFunOfCountable_apply]
-
-theorem L0_apply_le_one (μ : Measure Meaning) (u : Cat) (s : Set Meaning) : L0 μ u s ≤ 1 :=
-  literalListener_apply_le_one μ _ u s
 
 theorem L0_apply_singleton_ne_zero_iff (μ : Measure Meaning) [IsFiniteMeasure μ] (u : Cat)
     (m : Meaning) : L0 μ u {m} ≠ 0 ↔ m.1 = u ∧ μ {m} ≠ 0 := by
@@ -112,13 +112,13 @@ theorem projListener_eq (μ : Measure Meaning) (g : Goal) (u : Cat) (m : Meaning
 /-- The goal-indexed speaker (eq. 2): the best response to the projected literal listener of
 the goal at rationality `α`, with no utterance cost. -/
 noncomputable def S1 (μ : Measure Meaning) (α : ℝ) : Kernel (Meaning × Goal) Cat :=
-  familySpeaker (projListener project (L0 μ)) α 1
+  familySpeaker (projListener project (L0 μ)) α 0
 
 /-- The pragmatic listener over meaning and goal, whose first marginal is the meaning listener:
 the family listener over the product of the meaning prior and the goal prior. -/
 noncomputable def L1 (μ : Measure Meaning) [IsProbabilityMeasure μ] (ν : Measure Goal)
     [IsProbabilityMeasure ν] (α : ℝ) : Kernel Cat (Meaning × Goal) :=
-  familyListener (projListener project (L0 μ)) α 1 (μ.prod ν)
+  familyListener (projListener project (L0 μ)) α 0 (μ.prod ν)
 
 section Speaker
 
@@ -129,8 +129,8 @@ odds of the goal's feature value under the animal against the person. -/
 theorem speaker_odds :
     S1 μ α (m, g) {.animal} * featureProb μ .person g (g.feature m.2) ^ α
       = S1 μ α (m, g) {.person} * featureProb μ .animal g (g.feature m.2) ^ α := by
-  simp only [S1, familySpeaker_apply, speaker_apply_singleton, projListener_eq, Pi.one_apply,
-    mul_one, ENNReal.div_eq_inv_mul]
+  simp only [S1, familySpeaker_apply, speaker_zero_apply_singleton, projListener_eq,
+    ENNReal.div_eq_inv_mul]
   ring
 
 /-- The speaker names the animal rather than the person exactly when the goal's feature value
@@ -140,20 +140,14 @@ theorem names_animal_iff (hα : 0 < α)
       featureProb μ .person g (g.feature m.2) ≠ 0) :
     (S1 μ α (m, g)).real {.person} < (S1 μ α (m, g)).real {.animal}
       ↔ featureProb μ .person g (g.feature m.2) < featureProb μ .animal g (g.feature m.2) := by
-  have hle : ∀ u, projListener project (L0 μ) g u {m} ≤ 1 :=
-    λ u => projListener_apply_singleton_le_one _ _ _ _ _ (L0_apply_le_one μ)
-  have h0' : ∃ u, projListener project (L0 μ) g u {m} ^ α * (1 : Cat → ℝ≥0∞) u ≠ 0 := by
+  have h0' : ∃ u, projListener project (L0 μ) g u {m} ≠ 0 := by
     rcases h0 with h | h
-    · refine ⟨.animal, ?_⟩
-      rw [projListener_eq, Pi.one_apply, mul_one]
-      exact weight_rpow_ne_zero hα.le h
-    · refine ⟨.person, ?_⟩
-      rw [projListener_eq, Pi.one_apply, mul_one]
-      exact weight_rpow_ne_zero hα.le h
+    · exact ⟨.animal, by rwa [projListener_eq]⟩
+    · exact ⟨.person, by rwa [projListener_eq]⟩
   rw [S1, familySpeaker_apply]
   dsimp only
-  rw [speaker_real_singleton_lt_iff (cost := 1) hα.le (λ _ => ENNReal.one_ne_top) hle h0',
-    projListener_eq, projListener_eq, Pi.one_apply, Pi.one_apply, mul_one, mul_one,
+  rw [speaker_real_singleton_lt_iff hα.le h0', projListener_eq, projListener_eq]
+  simp only [Pi.zero_apply, mul_zero, neg_zero, Real.exp_zero, ENNReal.ofReal_one, mul_one,
     ENNReal.rpow_lt_rpow_iff hα]
 
 end Speaker
@@ -176,8 +170,7 @@ theorem S1_apply_singleton_ne_zero_iff (hα : 0 < α) (g : Goal) (m : Meaning) (
     obtain ⟨m', hm', h0⟩ := hL
     exact ⟨m', hm', (L0_apply_singleton_ne_zero_iff μ u m').mp h0⟩
   · rintro ⟨m', hm', hu, hμ⟩
-    exact speaker_apply_singleton_ne_zero hα.le (λ _ => one_ne_zero) (λ _ => ENNReal.one_ne_top)
-      (λ u' => projListener_apply_singleton_le_one _ _ _ _ _ (L0_apply_le_one μ))
+    exact speaker_apply_singleton_ne_zero hα.le
       ((projListener_apply_singleton_ne_zero_iff _ _ _ _ _).mpr
         ⟨m', hm', (L0_apply_singleton_ne_zero_iff μ u m').mpr ⟨hu, hμ⟩⟩)
 
@@ -220,9 +213,10 @@ posterior odds between the two categories at a feature vector are their prior od
 theorem category_odds {u : Cat} (hu : (S1 μ α ∘ₘ μ.prod ν) {u} ≠ 0) (c c' : Cat)
     (f : Features) :
     (L1 μ ν α u).fst {(c, f)} * μ {(c', f)} = (L1 μ ν α u).fst {(c', f)} * μ {(c, f)} := by
-  have hS : ∀ c g, S1 μ α ((c, f), g) = S1 μ α ((.person, f), g) := λ c g =>
-    Kernel.ofWeights_apply_eq_of_mul one_ne_zero ENNReal.one_ne_top λ u => by
-      simp only [projListener_eq, Pi.one_apply, mul_one]
+  have hS : ∀ c g, S1 μ α ((c, f), g) = S1 μ α ((.person, f), g) := λ c g => by
+    simp only [S1, familySpeaker_apply, speaker_eq_ofWeights]
+    exact Kernel.ofWeights_apply_eq_of_mul one_ne_zero ENNReal.one_ne_top λ u => by
+      simp only [projListener_eq, mul_one]
   have key : ∀ c, (L1 μ ν α u).fst {(c, f)}
       = μ {(c, f)} * ∑ g, ν {g} * (S1 μ α ((.person, f), g) {u} / (S1 μ α ∘ₘ μ.prod ν) {u}) :=
     λ c => by

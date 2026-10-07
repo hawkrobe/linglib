@@ -41,8 +41,7 @@ and a measure function is any map from states to a linear order, so the adverb's
 the proposition a cell expresses is a function on states like the adjective's. The three
 models are instances of one update over a family of extensions indexed by a latent parameter:
 a threshold, or a pair of thresholds for the conjunctive model. The threshold prior is a
-parameter; the paper sums over thresholds unweighted. The cost `c` of the paper's utility
-`ln π - c` enters the speaker as the factor `exp (-α * c)`.
+parameter; the paper sums over thresholds unweighted.
 
 ## TODO
 
@@ -78,19 +77,10 @@ instance : MeasurableSpace Message := ⊤
 instance : DiscreteMeasurableSpace Message := ⟨fun _ ↦ trivial⟩
 instance : Nonempty Message := ⟨.silent⟩
 
-/-- The cost factor of a message at rationality `α` is `exp (-α * c)` for the positive form of
-cost `c` and one for the free silent message. -/
-noncomputable def costFactor (α c : ℝ) : Message → ℝ≥0∞
-  | .positive => ENNReal.ofReal (Real.exp (-α * c))
-  | .silent => 1
-
-theorem costFactor_ne_zero (α c : ℝ) : ∀ u, costFactor α c u ≠ 0
-  | .positive => (ENNReal.ofReal_pos.mpr (Real.exp_pos _)).ne'
-  | .silent => one_ne_zero
-
-theorem costFactor_ne_top (α c : ℝ) : ∀ u, costFactor α c u ≠ ∞
-  | .positive => ENNReal.ofReal_ne_top
-  | .silent => ENNReal.one_ne_top
+/-- The cost of a message: `c` for the positive form, nothing for silence. -/
+def cost (c : ℝ) : Message → ℝ
+  | .positive => c
+  | .silent => 0
 
 variable {S Λ : Type*} [Fintype S] [MeasurableSpace S] [DiscreteMeasurableSpace S]
   [Fintype Λ] [MeasurableSpace Λ] [DiscreteMeasurableSpace Λ]
@@ -108,10 +98,13 @@ message. -/
 noncomputable def L0 (P : Measure S) (E : Λ → Set S) (l : Λ) : Kernel Message S :=
   literalListener P fun u ↦ (sem E l u).indicator 1
 
+instance (P : Measure S) (E : Λ → Set S) (l : Λ) : IsFiniteKernel (L0 P E l) :=
+  inferInstanceAs (IsFiniteKernel (literalListener _ _))
+
 /-- The speaker at a state and a latent parameter soft-maximizes the literal listener's log
 probability of the state minus the cost of the message. -/
 noncomputable def S1 (P : Measure S) (E : Λ → Set S) (α c : ℝ) : Kernel (S × Λ) Message :=
-  familySpeaker (L0 P E) α (costFactor α c)
+  familySpeaker (L0 P E) α (cost c)
 
 instance (P : Measure S) (E : Λ → Set S) (α c : ℝ) : IsFiniteKernel (S1 P E α c) :=
   inferInstanceAs (IsFiniteKernel (familySpeaker _ _ _))
@@ -122,8 +115,7 @@ variable (P : Measure S) [IsFiniteMeasure P] (ν : Measure Λ) (E : Λ → Set S
 there and the state has positive prior. -/
 theorem S1_apply_singleton_ne_zero_iff (hα : 0 < α) (s : S) (l : Λ) (u : Message) :
     S1 P E α c (s, l) {u} ≠ 0 ↔ s ∈ sem E l u ∧ P {s} ≠ 0 :=
-  speaker_literalListener_indicator_apply_singleton_ne_zero_iff hα (costFactor_ne_zero α c)
-    (costFactor_ne_top α c) P (sem E l) u s
+  speaker_literalListener_indicator_apply_singleton_ne_zero_iff hα (cost c) P (sem E l) u s
 
 /-- The positive form is assertable when some state of positive prior lies in the extension of
 some latent parameter of positive prior. -/
@@ -187,10 +179,10 @@ variable (P ν E α) [IsFiniteMeasure ν] [Nonempty S] [Nonempty Λ]
 /-- The pragmatic listener inverts the speaker against the product of the state prior and the
 prior over latent parameters. -/
 noncomputable def L1 : Kernel Message (S × Λ) :=
-  familyListener (L0 P E) α (costFactor α c) (P.prod ν)
+  familyListener (L0 P E) α (cost c) (P.prod ν)
 
 instance : IsMarkovKernel (L1 P ν E α c) :=
-  inferInstanceAs (IsMarkovKernel ((familySpeaker (L0 P E) α (costFactor α c))†(P.prod ν)))
+  inferInstanceAs (IsMarkovKernel ((familySpeaker (L0 P E) α (cost c))†(P.prod ν)))
 
 /-- The update of a prior with the positive form is the state marginal of the pragmatic
 listener's posterior. -/
@@ -205,7 +197,7 @@ variable {P ν E α}
 theorem update_real_singleton (hα : 0 < α) (hE : Assertable P ν E) (s : S) :
     (update P ν E α c).real {s}
       = P.real {s} * production P ν E α c s / (S1 P E α c ∘ₘ P.prod ν).real {.positive} :=
-  familyListener_fst_real_singleton (L0 P E) α (costFactor α c) P ν (hE.comp_S1_ne_zero c hα) s
+  familyListener_fst_real_singleton (L0 P E) α (cost c) P ν (hE.comp_S1_ne_zero c hα) s
 
 /-- The update keeps exactly the states of positive prior that lie in the extension of some
 latent parameter of positive prior. -/

@@ -39,9 +39,10 @@ speaker who knows that only Bob went prefers "BOB went" to "Bob went"
 
 ## Implementation notes
 
-Priors are unit weights, the rationality parameter is `1`, and the speaker's alternatives are
-the utterances of positive prior, entering as the cost factor: the three full sentences for
-ellipsis (the paper's simplification) and all five prosodic forms for prosody. Prosody is
+Priors are unit weights, the rationality parameter is `1`, and costs are zero. The channel runs
+from the speaker's intended utterances to the perceived ones: for ellipsis the intended
+utterances are the three full sentences (the paper's simplification), for prosody all five
+forms. Prosody is
 perceived, so the stressed and unstressed forms are two copies of the subject-confusion channel
 at rates `ε / 2` and `ε`. The prosody speaker is the paper's knowledgeable one, for whom the
 divergence utility is eq. 7.
@@ -140,31 +141,29 @@ def slip : Utterance → Utterance
   | .full m => .subject m
   | u => u
 
-/-- The deletion channel at rate `δ`. -/
-noncomputable abbrev N (δ : ℝ) : Kernel Utterance Utterance := slipChannel (rate δ) slip
+/-- The deletion channel at rate `δ`, from the speaker's full sentences, indexed by the meaning
+they express, to the perceived utterances. -/
+noncomputable abbrev N (δ : ℝ) : Kernel Meaning Utterance :=
+  (slipChannel (rate δ) slip).comap Utterance.full (measurable_of_countable _)
 
-/-- The speaker produces full sentences. -/
-noncomputable abbrev uttPrior : Measure Utterance := priorOfWeights fun
-  | .full _ => 1
-  | _ => 0
+/-- The speaker's full sentences are equally likely. -/
+noncomputable abbrev uttPrior : Measure Meaning := priorOfWeights 1
 
 /-- The uniform meaning prior. -/
 noncomputable abbrev μ : Measure Meaning := priorOfWeights 1
 
-/-- The graded literal meaning. -/
-noncomputable abbrev lit' : Utterance → Meaning → ℝ≥0∞ := fun u => (lit u).indicator 1
+/-- The graded literal meaning of a full sentence. -/
+noncomputable abbrev lit' : Meaning → Meaning → ℝ≥0∞ := fun m => (lit (.full m)).indicator 1
 
 /-- The literal listener (eq. 6). -/
 noncomputable abbrev L0 (δ : ℝ) : Kernel Utterance Meaning :=
   literalListener μ (noisyMeaning (N δ) uttPrior lit')
 
-/-- The speaker (eq. 7), over the full sentences. -/
-noncomputable abbrev S1 (δ : ℝ) : Kernel Meaning Utterance :=
-  noisySpeaker (N δ) 1 (uttPrior {·}) (L0 δ)
+/-- The speaker (eq. 7), choosing among the full sentences. -/
+noncomputable abbrev S1 (δ : ℝ) : Kernel Meaning Meaning := noisySpeaker (N δ) 1 0 (L0 δ)
 
 /-- The pragmatic listener (eq. 8). -/
-noncomputable abbrev L1 (δ : ℝ) : Kernel Utterance Meaning :=
-  noisyPragmaticListener (N δ) 1 (uttPrior {·}) (L0 δ) μ
+noncomputable abbrev L1 (δ : ℝ) : Kernel Utterance Meaning := noisyPragmaticListener (N δ) 1 0 (L0 δ) μ
 
 variable {δ : ℝ} (m : Meaning)
 
@@ -172,18 +171,20 @@ variable {δ : ℝ} (m : Meaning)
 theorem noisyMeaning_subject (w : Meaning) :
     noisyMeaning (N δ) uttPrior lit' (.subject m) w =
       ENNReal.ofReal δ * ({m} : Set Meaning).indicator 1 w := by
-  rw [noisyMeaning_apply, sum_eq_single (.full m)]
-  · simp [slipChannel_apply_singleton, rate, slip, lit', lit]
-  · rintro (m' | m' | _) _ h <;> simp_all [slipChannel_apply_singleton, rate, slip, lit', lit]
+  rw [noisyMeaning_apply, sum_eq_single m]
+  · simp [Kernel.comap_apply, slipChannel_apply_singleton, rate, slip, lit', lit]
+  · intro m' _ h
+    simp [Kernel.comap_apply, slipChannel_apply_singleton, rate, slip, lit', lit, h]
   · exact fun h => absurd (mem_univ _) h
 
 /-- Only the full sentence for `m` survives as itself. -/
 theorem noisyMeaning_full (w : Meaning) :
     noisyMeaning (N δ) uttPrior lit' (.full m) w =
       ENNReal.ofReal (1 - δ) * ({m} : Set Meaning).indicator 1 w := by
-  rw [noisyMeaning_apply, sum_eq_single (.full m)]
-  · simp [slipChannel_apply_singleton, rate, slip, lit', lit]
-  · rintro (m' | m' | _) _ h <;> simp_all [slipChannel_apply_singleton, rate, slip, lit', lit]
+  rw [noisyMeaning_apply, sum_eq_single m]
+  · simp [Kernel.comap_apply, slipChannel_apply_singleton, rate, slip, lit', lit]
+  · intro m' _ h
+    simp [Kernel.comap_apply, slipChannel_apply_singleton, rate, slip, lit', lit, h]
   · exact fun h => absurd (mem_univ _) h
 
 private theorem L0_of_noisyMeaning {c : ℝ} (hc : 0 < c) {u : Utterance}
@@ -218,14 +219,15 @@ include hδ₀ hδ₁
 /-- The full sentence for `m'` is heard as itself or as its subject, so its channel-mixed
 listener at `m` is `1` when `m' = m` and `0` otherwise. -/
 theorem channelMix_full (m' : Meaning) :
-    channelMix (N δ) (L0 δ) (.full m') m = if m' = m then 1 else 0 := by
+    channelMix (N δ) (L0 δ) m' m = if m' = m then 1 else 0 := by
   rw [channelMix_eq_prod _ _ (s := {.full m', .subject m'}) fun u hu => by
-      rcases u with m'' | m'' | _ <;> simp_all [slipChannel_apply_singleton, rate, slip] <;>
+      rcases u with m'' | m'' | _ <;>
+        simp_all [Kernel.comap_apply, slipChannel_apply_singleton, rate, slip] <;>
         exact fun h => absurd h.symm hu,
     prod_pair (by simp), L0_full m' hδ₁, L0_subject m' hδ₀]
   have h1 : (ENNReal.ofReal (1 - δ)).toReal = 1 - δ := ENNReal.toReal_ofReal (by linarith)
   have h2 : (ENNReal.ofReal δ).toReal = δ := ENNReal.toReal_ofReal hδ₀.le
-  simp only [slipChannel_apply_singleton, rate, slip, ite_true, mul_one,
+  simp only [Kernel.comap_apply, slipChannel_apply_singleton, rate, slip, ite_true, mul_one,
     Measure.dirac_apply' _ (.singleton m), Set.indicator_apply, Set.mem_singleton_iff,
     Pi.one_apply]
   by_cases h : m' = m
@@ -233,23 +235,20 @@ theorem channelMix_full (m' : Meaning) :
   · simp [h, h1, h2, hδ₀, sub_pos.mpr hδ₁]
 
 /-- The speaker utters the full sentence for its meaning. -/
-theorem S1_apply : S1 δ m = Measure.dirac (.full m) := by
-  refine Kernel.ofWeights_apply_eq_dirac one_ne_zero ENNReal.one_ne_top fun u => ?_
-  rcases u with m' | m' | _
-  · rw [channelMix_full m hδ₀ hδ₁, ENNReal.rpow_one]
-    simp
-  · simp
-  · simp
+theorem S1_apply : S1 δ m = Measure.dirac m := by
+  refine Kernel.ofWeights_apply_eq_dirac one_ne_zero ENNReal.one_ne_top fun m' => ?_
+  rw [channelMix_full m hδ₀ hδ₁, ENNReal.rpow_one]
+  simp [eq_comm]
 
 /-- The channelled speaker reaches the subject fragment for `m` only from `m`, with the deletion
 rate. -/
 theorem comp_apply_subject (w : Meaning) :
     (N δ ∘ₖ S1 δ) w {.subject m} = if w = m then ENNReal.ofReal δ else 0 := by
-  rw [Kernel.comp_apply_singleton, sum_eq_single (.full w)]
+  rw [Kernel.comp_apply_singleton, sum_eq_single w]
   · rw [S1_apply w hδ₀ hδ₁, Measure.dirac_apply_of_mem (Set.mem_singleton _), one_mul]
     by_cases h : w = m
-    · subst h; simp [slipChannel_apply_singleton, rate, slip]
-    · simp [slipChannel_apply_singleton, rate, slip, h]
+    · subst h; simp [Kernel.comap_apply, slipChannel_apply_singleton, rate, slip]
+    · simp [Kernel.comap_apply, slipChannel_apply_singleton, rate, slip, h]
   · intro u _ hu
     rw [S1_apply w hδ₀ hδ₁, Measure.dirac_apply' _ (.singleton u),
       Set.indicator_of_notMem (by simpa using Ne.symm hu), zero_mul]
@@ -340,7 +339,7 @@ noncomputable abbrev L0 (ε : ℝ) : Kernel Utterance Meaning :=
 
 /-- The knowledgeable speaker (eq. 7), over all five forms. -/
 noncomputable abbrev S1 (ε : ℝ) : Kernel Meaning Utterance :=
-  noisySpeaker (N ε) 1 (fun _ => 1) (L0 ε)
+  noisySpeaker (N ε) 1 0 (L0 ε)
 
 variable {ε : ℝ}
 
@@ -425,12 +424,11 @@ lowers its binary entropy (Fig. 2, right, at depth one). -/
 theorem S1_bobWent_lt_BOB_went (hε₀ : 0 < ε) (hε : ε ≤ 1 / 2) :
     (S1 ε .onlyBob).real {.bobWent} < (S1 ε .onlyBob).real {.BOB_went} := by
   obtain ⟨hb, hB⟩ := channelMix_eq_exp_neg_binEntropy hε₀ (by linarith)
-  rw [S1, noisySpeaker_real_singleton_lt_iff zero_le_one (fun _ => ENNReal.one_ne_top)
-      (fun u => literalListener_apply_le_one _ _ _ _)
-      ⟨.BOB_went, by rw [ENNReal.rpow_one, mul_one, hB]; exact (ENNReal.ofReal_pos.mpr
-        (by positivity)).ne'⟩,
-    ENNReal.rpow_one, ENNReal.rpow_one, mul_one, mul_one, hb, hB,
-    ENNReal.ofReal_lt_ofReal_iff (by positivity)]
+  rw [S1, noisySpeaker_real_singleton_lt_iff zero_le_one
+      ⟨.BOB_went, by simpa [hB] using (ENNReal.ofReal_pos.mpr (by positivity)).ne'⟩]
+  simp only [ENNReal.rpow_one, Pi.zero_apply, mul_zero, neg_zero, Real.exp_zero,
+    ENNReal.ofReal_one, mul_one]
+  rw [hb, hB, ENNReal.ofReal_lt_ofReal_iff (by positivity)]
   refine div_lt_div_of_pos_right (exp_lt_exp.2 (neg_lt_neg ?_)) two_pos
   exact binEntropy_strictMonoOn ⟨by linarith, by norm_num; linarith⟩
     ⟨hε₀.le, by norm_num; linarith⟩ (by linarith)

@@ -237,19 +237,6 @@ instance : IsProbabilityMeasure s.prior :=
       prior_apply_singleton, ← ENNReal.ofReal_add (s.statePrior_pos _).le (s.statePrior_pos _).le]
     simp [statePrior]⟩
 
-/-- The cost factor of an utterance: the exponential of its cost scaled by the rationality. -/
-noncomputable def costFactor (u : Utterance) : ℝ≥0∞ :=
-  ENNReal.ofReal (Real.exp (-(s.α * s.cost u)))
-
-theorem costFactor_ne_zero (u : Utterance) : s.costFactor u ≠ 0 :=
-  (ENNReal.ofReal_pos.2 (Real.exp_pos _)).ne'
-
-theorem costFactor_ne_top (u : Utterance) : s.costFactor u ≠ ∞ := ENNReal.ofReal_ne_top
-
-theorem costFactor_toReal (u : Utterance) :
-    (s.costFactor u).toReal = Real.exp (-(s.α * s.cost u)) :=
-  ENNReal.toReal_ofReal (Real.exp_pos _).le
-
 end Setting
 
 /-! ### The literal listener and the speaker, (1) to (3) -/
@@ -262,11 +249,9 @@ variable (P : Measure State) (m : Meaning)
 noncomputable def L0 : Kernel Utterance State :=
   literalListener P λ u st => ENNReal.ofReal (m u st)
 
-theorem L0_le_one (u : Utterance) (st : State) : L0 P m u {st} ≤ 1 :=
-  literalListener_apply_le_one _ _ _ _
+instance : IsFiniteKernel (L0 P m) := inferInstanceAs (IsFiniteKernel (literalListener _ _))
 
-theorem L0_ne_top (u : Utterance) (st : State) : L0 P m u {st} ≠ ∞ :=
-  ne_top_of_le_ne_top ENNReal.one_ne_top (L0_le_one P m u st)
+theorem L0_ne_top (u : Utterance) (st : State) : L0 P m u {st} ≠ ∞ := measure_ne_top _ _
 
 theorem L0_eq_zero {u : Utterance} {st : State} (h : m u st = 0) : L0 P m u {st} = 0 := by
   rw [L0, literalListener_apply_singleton, h, ENNReal.ofReal_zero, zero_mul, ENNReal.zero_div]
@@ -299,18 +284,19 @@ section Speaker
 
 variable (P : Measure State) (m : Meaning) (s : Setting)
 
-/-- The speaker of (3): the power-weight best response to the literal listener, with the
-rationality as exponent and the cost factors as weights. -/
-noncomputable def speaker : Kernel State Utterance := RSA.speaker s.α s.costFactor (L0 P m)
+/-- The speaker of (3): the softmax of the literal listener's log probability less the cost,
+scaled by the rationality. -/
+noncomputable def speaker : Kernel State Utterance := RSA.speaker s.α s.cost (L0 P m)
 
 instance : IsFiniteKernel (speaker P m s) := inferInstanceAs (IsFiniteKernel (RSA.speaker _ _ _))
 
 theorem weight_ne_top (u : Utterance) (st : State) :
-    L0 P m u {st} ^ s.α * s.costFactor u ≠ ∞ :=
-  ENNReal.mul_ne_top (weight_rpow_ne_top s.α_pos.le (L0_le_one P m u st)) (s.costFactor_ne_top u)
+    L0 P m u {st} ^ s.α * ENNReal.ofReal (Real.exp (-(s.α * s.cost u))) ≠ ∞ :=
+  ENNReal.mul_ne_top (ENNReal.rpow_ne_top_of_nonneg s.α_pos.le (L0_ne_top P m u st))
+    ENNReal.ofReal_ne_top
 
 theorem weight_eq_zero {u : Utterance} {st : State} (h : m u st = 0) :
-    L0 P m u {st} ^ s.α * s.costFactor u = 0 := by
+    L0 P m u {st} ^ s.α * ENNReal.ofReal (Real.exp (-(s.α * s.cost u))) = 0 := by
   rw [L0_eq_zero P m h, ENNReal.zero_rpow_of_pos s.α_pos, zero_mul]
 
 /-- An utterance not holding at a state is never used there. -/
@@ -324,25 +310,21 @@ theorem speaker_real_eq_zero {u : Utterance} {st : State} (h : m u st = 0) :
 
 variable [IsFiniteMeasure P]
 
-theorem weight_ne_zero {u : Utterance} {st : State} (h : 0 < m u st) (hst : P {st} ≠ 0) :
-    L0 P m u {st} ^ s.α * s.costFactor u ≠ 0 :=
-  mul_ne_zero (weight_rpow_ne_zero s.α_pos.le (L0_ne_zero P m h hst)) (s.costFactor_ne_zero u)
-
 /-- The weight of an utterance holding at a state, on reals: the exponential of the scaled
 utility of (3). -/
 theorem weight_toReal {u : Utterance} {st : State} (h : 0 < m u st) (hst : P {st} ≠ 0) :
-    (L0 P m u {st} ^ s.α * s.costFactor u).toReal =
+    (L0 P m u {st} ^ s.α * ENNReal.ofReal (Real.exp (-(s.α * s.cost u)))).toReal =
       Real.exp (s.α * (Real.log (L0 P m u {st}).toReal - s.cost u)) := by
   rw [ENNReal.toReal_mul, ← ENNReal.toReal_rpow, Real.rpow_def_of_pos
-    (ENNReal.toReal_pos (L0_ne_zero P m h hst) (L0_ne_top P m u st)), Setting.costFactor_toReal,
+    (ENNReal.toReal_pos (L0_ne_zero P m h hst) (L0_ne_top P m u st)),
+    ENNReal.toReal_ofReal (Real.exp_pos _).le,
     ← Real.exp_add]
   congr 1; ring
 
 /-- An utterance holding at a state is used there. -/
 theorem speaker_ne_zero {u : Utterance} {st : State} (h : 0 < m u st) (hst : P {st} ≠ 0) :
     speaker P m s st {u} ≠ 0 :=
-  RSA.speaker_apply_singleton_ne_zero s.α_pos.le s.costFactor_ne_zero s.costFactor_ne_top
-    (λ v => L0_le_one P m v st) (L0_ne_zero P m h hst)
+  RSA.speaker_apply_singleton_ne_zero s.α_pos.le (L0_ne_zero P m h hst)
 
 theorem speaker_real_pos {u : Utterance} {st : State} (h : 0 < m u st) (hst : P {st} ≠ 0) :
     0 < (speaker P m s st).real {u} :=
@@ -354,8 +336,7 @@ theorem speaker_real_lt_iff {u v : Utterance} {st : State} (hu : 0 < m u st) (hv
     (hst : P {st} ≠ 0) :
     (speaker P m s st).real {u} < (speaker P m s st).real {v} ↔
       Real.log (L0 P m u {st}).toReal - s.cost u < Real.log (L0 P m v {st}).toReal - s.cost v := by
-  rw [speaker, RSA.speaker_real_singleton_lt_iff s.α_pos.le s.costFactor_ne_top
-      (λ v => L0_le_one P m v st) ⟨u, weight_ne_zero P m s hu hst⟩,
+  rw [speaker, RSA.speaker_real_singleton_lt_iff s.α_pos.le ⟨u, L0_ne_zero P m hu hst⟩,
     ← ENNReal.toReal_lt_toReal (weight_ne_top P m s u st) (weight_ne_top P m s v st),
     weight_toReal P m s hu hst, weight_toReal P m s hv hst, Real.exp_lt_exp,
     mul_lt_mul_iff_of_pos_left s.α_pos]
@@ -368,7 +349,7 @@ theorem speaker_real_of_pair (hm : ∀ u st, 0 ≤ m u st) {u v : Utterance} {st
     (speaker P m s st).real {u} =
       Real.sigmoid (s.α * ((Real.log (L0 P m u {st}).toReal - s.cost u) -
         (Real.log (L0 P m v {st}).toReal - s.cost v))) := by
-  rw [speaker, RSA.speaker, Kernel.ofWeights_real_singleton_of_pair st huv
+  rw [speaker, RSA.speaker_eq_ofWeights, Kernel.ofWeights_real_singleton_of_pair st huv
       (λ x => weight_ne_top P m s x st) (λ x hx => hsupp x
         (lt_of_le_of_ne (hm x st) (Ne.symm (mt (weight_eq_zero P m s) hx)))),
     weight_toReal P m s hu hst, weight_toReal P m s hv hst, Real.exp_div_add_exp_eq_sigmoid]
@@ -610,7 +591,7 @@ theorem worldPrior_real_wonky (st : State) : (s.worldPrior .wonky).real {st} = 1
 /-- The wonky speaker of (14) and (15): in each world, the speaker under that world's prior
 and meaning, the world riding in the state. -/
 noncomputable def wonkySpeaker (m : World → Meaning) : Kernel (State × World) Utterance :=
-  familySpeaker (λ w => L0 (s.worldPrior w) (m w)) s.α s.costFactor
+  familySpeaker (λ w => L0 (s.worldPrior w) (m w)) s.α s.cost
 
 theorem wonkySpeaker_apply (m : World → Meaning) (st : State) (w : World) :
     s.wonkySpeaker m (st, w) = HeKaiserIskarous2025.speaker (s.worldPrior w) (m w) s st := rfl
@@ -641,7 +622,7 @@ theorem wonkyJoint_real_singleton {ω : ℝ} (hω0 : 0 ≤ ω) (hω1 : ω ≤ 1)
 /-- The wonky listener of (16): the Bayesian inverse of the wonky speaker over states and
 worlds against the prior of (16). -/
 noncomputable def wonkyListener (m : World → Meaning) (ω : ℝ) : Kernel Utterance (State × World) :=
-  familyListener (λ w => L0 (s.worldPrior w) (m w)) s.α s.costFactor (s.wonkyJoint ω)
+  familyListener (λ w => L0 (s.worldPrior w) (m w)) s.α s.cost (s.wonkyJoint ω)
 
 theorem wonkyListener_eq (m : World → Meaning) (ω : ℝ) :
     s.wonkyListener m ω = (s.wonkySpeaker m)†(s.wonkyJoint ω) := rfl

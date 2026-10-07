@@ -101,8 +101,11 @@ theorem meaning_nonneg (hs0 : 0 ≤ xs) (hs1 : xs ≤ 1) (hr0 : 0 ≤ xr) (hr1 :
 noncomputable def L0 (xs xr : ℝ) : Kernel Utterance World :=
   literalListener (uniformOn Set.univ) λ u w => ENNReal.ofReal (meaning xs xr u w)
 
+instance (xs xr : ℝ) : IsFiniteKernel (L0 xs xr) :=
+  inferInstanceAs (IsFiniteKernel (literalListener _ _))
+
 /-- The speaker with unit informativeness weight and no cost. -/
-noncomputable def S1 (xs xr : ℝ) : Kernel World Utterance := speaker 1 1 (L0 xs xr)
+noncomputable def S1 (xs xr : ℝ) : Kernel World Utterance := speaker 1 0 (L0 xs xr)
 
 private theorem sum_world (f : World → ℝ) :
     ∑ w, f w = f .target + f .competitor + f .distractor₁ + f .distractor₂ := by
@@ -139,12 +142,12 @@ theorem redundant_preferred_iff (hs0 : 0 < xs) (hs1 : xs < 1) (hr0 : 0 < xr) (hr
   have hm2 : meaning xs xr .redundant .target = xs * xr := by
     simp [meaning, channel, World.hasSufficient, World.hasRedundant]
   rw [S1]
-  refine (speaker_real_singleton_lt_iff (cost := 1) (L := L0 xs xr) (w := World.target)
-    zero_le_one (λ _ => ENNReal.one_ne_top) (λ u => literalListener_apply_le_one _ _ u _)
+  refine (speaker_real_singleton_lt_iff (L := L0 xs xr) (w := World.target) zero_le_one
     ⟨.redundant, ?_⟩).trans ?_
-  · rw [ENNReal.rpow_one, Pi.one_apply, mul_one, L0, h2, row_redundant, hm2]
+  · rw [L0, h2, row_redundant, hm2]
     exact (ENNReal.ofReal_pos.mpr (div_pos (mul_pos hs0 hr0) hred)).ne'
-  · simp only [ENNReal.rpow_one, Pi.one_apply, mul_one, L0]
+  · simp only [ENNReal.rpow_one, Pi.zero_apply, mul_zero, neg_zero, Real.exp_zero,
+      ENNReal.ofReal_one, mul_one, L0]
     rw [h1, h2, row_sufficient, row_redundant, hm1, hm2,
       ENNReal.ofReal_lt_ofReal_iff (div_pos (mul_pos hs0 hr0) hred), div_lt_div_iff₀ hsuf hred]
     have hk : 0 < xs * (1 - xs) := mul_pos hs0 (by linarith)

@@ -48,6 +48,15 @@ variable (project : G → W → X) (L : Kernel U W) (g : G) (u : U) (w : W)
   rw [projListener, Kernel.ofFunOfCountable_apply]
   exact Measure.sum_smul_dirac_apply_singleton (λ w' => L u (project g ⁻¹' {project g w'})) w
 
+/-- The projected listener of a finite kernel is finite: each row puts at most the listener's
+bound on each of the finitely many meanings. -/
+instance [IsFiniteKernel L] : IsFiniteKernel (projListener project L g) :=
+  ⟨⟨Fintype.card W * L.bound,
+    ENNReal.mul_lt_top (ENNReal.natCast_lt_top _) L.bound_lt_top, fun u ↦ by
+      rw [← Finset.coe_univ, ← sum_measure_singleton, ← nsmul_eq_mul, ← Finset.card_univ]
+      exact Finset.sum_le_card_nsmul _ _ _ fun w _ ↦ by
+        rw [projListener_apply_singleton]; exact L.measure_le_bound u _⟩⟩
+
 /-- The cell's mass is the sum of the listener's masses over the cell. -/
 theorem projListener_apply_singleton_eq_sum [DecidableEq X] :
     projListener project L g u {w}

@@ -253,6 +253,8 @@ theorem prior_real_singleton (s : State) : prior.real {s} = 1 / 3 := by
 /-- The literal listener: the prior conditioned on the utterance's extension. -/
 noncomputable def L0 : Kernel Utt State := literalListener prior λ u => (ext u).indicator 1
 
+instance : IsFiniteKernel L0 := inferInstanceAs (IsFiniteKernel (literalListener _ _))
+
 /-- The literal listener is uniform on the extension. -/
 theorem L0_apply (u : Utt) : L0 u = uniformOn (ext u) := by
   rw [L0, literalListener_indicator, Kernel.ofFunOfCountable_apply, prior, uniformOn,
@@ -293,13 +295,13 @@ theorem L0_ne_top (u : Utt) (s : State) : L0 u {s} ≠ ⊤ := by
   rw [L0_apply]; exact measure_ne_top _ _
 
 /-- The speaker of Table 2(d): `RSA.speaker` at `α = 1` without costs. -/
-noncomputable def S1 : Kernel State Utt := speaker 1 (λ _ => 1) L0
+noncomputable def S1 : Kernel State Utt := speaker 1 0 L0
 
 instance : IsFiniteKernel S1 := inferInstanceAs (IsFiniteKernel (speaker _ _ _))
 
 theorem S1_real (s : State) (u : Utt) :
     (S1 s).real {u} = (L0 u).real {s} / ∑ u', (L0 u').real {s} := by
-  simp only [S1, measureReal_def, speaker_apply_singleton, ENNReal.rpow_one, mul_one]
+  simp only [S1, measureReal_def, speaker_zero_apply_singleton, ENNReal.rpow_one]
   rw [ENNReal.toReal_div, ENNReal.toReal_sum λ u' _ => L0_ne_top u' s]
 
 /-- Table 2(d), `s1`: `C` with share `6/11`, the conditional `3/11`, *likely C* `2/11`. -/
@@ -344,7 +346,7 @@ theorem S1_s3_C : (S1 .s3).real {.C} = 0 := by
 /-! ### The pragmatic listener, Table 2(e) -/
 
 /-- The pragmatic listener of Table 2(e): the posterior of `S1` against the uniform prior. -/
-noncomputable def L1 : Kernel Utt State := pragmaticListener 1 (λ _ => 1) L0 prior
+noncomputable def L1 : Kernel Utt State := pragmaticListener 1 0 L0 prior
 
 private theorem S1_ne_zero {s : State} {u : Utt} (h : (S1 s).real {u} ≠ 0) : S1 s {u} ≠ 0 :=
   λ h0 => h (by rw [measureReal_def, h0, ENNReal.toReal_zero])

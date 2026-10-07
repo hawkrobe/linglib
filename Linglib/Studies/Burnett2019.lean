@@ -127,12 +127,12 @@ noncomputable abbrev L0 (prior : Measure Persona) : Kernel INGVariant Persona :=
 
 /-- The speaker, the softmax of the literal listener at rationality 6 (p. 435), without costs. -/
 noncomputable abbrev S1 (prior : Measure Persona) : Kernel Persona INGVariant :=
-  speaker 6 (λ _ => 1) (L0 prior)
+  speaker 6 (λ _ => 0) (L0 prior)
 
 /-- The pragmatic listener inverts the speaker against the prior. -/
 noncomputable abbrev L1 (prior : Measure Persona) [IsFiniteMeasure prior] :
     Kernel INGVariant Persona :=
-  pragmaticListener 6 (λ _ => 1) (L0 prior) prior
+  pragmaticListener 6 (λ _ => 0) (L0 prior) prior
 
 /-! ### The extensions differ in one persona each
 
@@ -191,8 +191,8 @@ theorem prefers_iff (prior : Measure Persona) [IsFiniteMeasure prior] {p : Perso
     (h₂ : p ∈ ingField.personae v₂) (h0 : prior {p} ≠ 0) :
     (S1 prior p).real {v₁} < (S1 prior p).real {v₂}
       ↔ prior {excluded v₁} < prior {excluded v₂} := by
-  rw [ingField.speaker_indexation_real_singleton_lt_iff prior (by norm_num) one_ne_zero
-    ENNReal.one_ne_top h0 h₁ h₂, measure_personae_lt_iff prior hne]
+  rw [ingField.speaker_indexation_real_singleton_lt_iff prior (by norm_num) h0 h₁ h₂,
+    measure_personae_lt_iff prior hne]
 
 /-! ### The contexts
 
@@ -303,9 +303,9 @@ produced with certainty by the persona it is exclusive to. -/
 theorem sternLeader_certain {w : Persona → ℕ} (hw : ∀ p, w p ≠ 0) :
     S1 (priorOfWeights w) sternLeader {.velar} = 1 ∧
       S1 (priorOfWeights w) doofus {.apical} = 1 :=
-  ⟨ingField.speaker_indexation_eq_one_of_exclusive _ (by norm_num) one_ne_zero ENNReal.one_ne_top
+  ⟨ingField.speaker_indexation_eq_one_of_exclusive _ (by norm_num)
       (priorOfWeights_singleton_ne_zero _ (hw _)) (by decide +kernel) (by decide +kernel),
-    ingField.speaker_indexation_eq_one_of_exclusive _ (by norm_num) one_ne_zero ENNReal.one_ne_top
+    ingField.speaker_indexation_eq_one_of_exclusive _ (by norm_num)
       (priorOfWeights_singleton_ne_zero _ (hw _)) (by decide +kernel) (by decide +kernel)⟩
 
 /-- A variant gives no posterior mass to a persona it cannot convey, so hearing *-ing* rules
@@ -315,10 +315,10 @@ theorem L1_eq_zero_of_excluded {w : Persona → ℕ} (hw : ∀ p, w p ≠ 0) (v 
     L1 (priorOfWeights w) v {excluded v} = 0 := by
   cases v
   · exact ingField.pragmaticListener_indexation_apply_singleton_of_not_meets _ (by norm_num)
-      one_ne_zero ENNReal.one_ne_top (π' := coolGuy) (by decide +kernel) (by decide +kernel)
+      (π' := coolGuy) (by decide +kernel) (by decide +kernel)
       (priorOfWeights_singleton_ne_zero _ (hw _))
   · exact ingField.pragmaticListener_indexation_apply_singleton_of_not_meets _ (by norm_num)
-      one_ne_zero ENNReal.one_ne_top (π' := coolGuy) (by decide +kernel) (by decide +kernel)
+      (π' := coolGuy) (by decide +kernel) (by decide +kernel)
       (priorOfWeights_singleton_ne_zero _ (hw _))
 
 /-- With no prior beliefs the literal listener spreads its mass evenly over the three personae
