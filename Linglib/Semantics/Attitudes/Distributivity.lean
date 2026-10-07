@@ -1,29 +1,34 @@
 module
 
-public import Mathlib.Data.Finset.Basic
+public import Mathlib.Data.Set.Basic
 
 /-!
 # Clausal distributivity
 
-A clause-embedding predicate is *clausally distributive* — written
-C(lausal)-distributive in [qing-uegaki-2025] — when its question
-semantics is existential quantification over its propositional
-semantics: ⟦x V Q⟧ ↔ ∃p ∈ Q. ⟦x V p⟧ ([uegaki-sudo-2019];
-[uegaki-2022]). `IsDistributive` states the property for a pair of
-propositional and question semantics, so it is proved from a
-predicate's semantic structure rather than stipulated per predicate.
+A clause-embedding predicate relates an agent to a set of propositions: the answers of a question,
+or the singleton of a declarative's proposition. The predicate is clausally distributive when it
+relates an agent to a question exactly when it relates her to some answer. Most responsive
+predicates are distributive, such as *know*. A predicate that relates an agent to a question while
+relating her to none of its answers is not; this is the diagnostic Elliott and colleagues apply to
+*care* and Qing and colleagues to *worry*.
 
-The degree-comparison preferentials of `Preference.lean` are
-distributive by construction
-(`Preferential.mkDegreeComparison_isDistributive`); predicates whose
-question semantics outruns the existential — global uncertainty for
-*worry*, decision-relevance for *care* ([elliott-etal-2017]) — are
-not (`Preferential.worry_not_distributive`). Veridical preferentials
-instantiate the world-sensitive form (`Studies/UegakiSudo2019.lean`).
+## Main definitions
 
-Questions are alternative lists over `Finset W` propositions,
-matching the question representation of
-`Semantics/Attitudes/Desire/`.
+* `Distributivity.IsDistributive`: the predicate relates an agent to a question exactly when it
+  relates her to some answer.
+
+## Main statements
+
+* `Distributivity.not_isDistributive_of_forall_not`: a predicate that holds of a question but of
+  none of its answers is not distributive.
+
+## References
+
+* [spector-egre-2015]
+* [uegaki-sudo-2019]
+* [uegaki-2022]
+* [elliott-etal-2017]
+* [qing-uegaki-2025]
 -/
 
 @[expose] public section
@@ -32,12 +37,14 @@ namespace Distributivity
 
 variable {W E : Type*}
 
-/-- A predicate with propositional semantics `Vprop` and question
-    semantics `Vquestion` is clausally distributive iff
-    `Vquestion x Q w ↔ ∃ p ∈ Q, Vprop x p w`. -/
-def IsDistributive (Vprop : E → Finset W → W → Prop)
-    (Vquestion : E → List (Finset W) → W → Prop) : Prop :=
-  ∀ (x : E) (Q : List (Finset W)) (w : W),
-    Vquestion x Q w ↔ ∃ p ∈ Q, Vprop x p w
+/-- A clause-embedding predicate `V` is clausally distributive when it relates an agent to a set
+of propositions exactly when it relates her to the singleton of one of them. -/
+def IsDistributive (V : E → Set (Set W) → W → Prop) : Prop :=
+  ∀ x Q w, V x Q w ↔ ∃ p ∈ Q, V x {p} w
+
+/-- A predicate that holds of a question but of none of its answers is not distributive. -/
+theorem not_isDistributive_of_forall_not {V : E → Set (Set W) → W → Prop} {x : E}
+    {Q : Set (Set W)} {w : W} (hQ : V x Q w) (h : ∀ p ∈ Q, ¬ V x {p} w) : ¬ IsDistributive V :=
+  fun hV ↦ let ⟨p, hp, hxp⟩ := (hV x Q w).1 hQ; h p hp hxp
 
 end Distributivity

@@ -3,65 +3,45 @@ module
 public import Mathlib.Order.Defs.Unbundled
 public import Mathlib.Order.Preorder.Chain
 public import Mathlib.Data.Set.Lattice.Bounded
-public import Mathlib.Data.Rat.Defs
-public import Linglib.Semantics.Attitudes.Basic
-public import Linglib.Semantics.Attitudes.Distributivity
 public import Linglib.Core.Order.Minimals
 
 /-!
-# Preference in attitude semantics
+# Preference structures
 
-This file defines the two mathematizations of preference that attitude semantics runs on,
-qualitative preference orderings on propositions and quantitative preference degrees measured
-against thresholds.
+A preference structure, in the sense of Condoravdi and Lauer, is a set of propositions with a
+strict ranking by importance. *Want* relates an agent to the maximal elements of the structure
+its context supplies. A structure is consistent with an information state when any family of its
+preferences that the information rules out jointly contains a strictly ranked pair, and realistic
+when each preference is compatible with the information. Consistency entails realism and makes
+the maximal preferences jointly realizable. The maximal preferences also order worlds, as an
+ordering source does for Kratzer.
 
-A preference structure, in the sense of Condoravdi and Lauer, is a pair of a set of
-propositions and a strict partial order on them. It is the mathematical spine of their
-effective-preference framework, and is consumed by the *want* semantics in `Desire.lean` and by
-the dynamic necessity operator of `Semantics/Dynamic/Expectation.lean`. `maxElts`
-collects the maximal elements. Relative to an information state `B`, a structure is `Consistent`
-when any subfamily of preferences jointly incompatible with `B` contains a strictly ranked pair,
-and `Realistic` when every preference is compatible with `B`, which follows from consistency
-(`Consistent.realistic`). A preference incompatible with a maximal one is ranked strictly below
-it (`Consistent.prec_of_mem_maxElts`), so the maximal preferences of a consistent structure are
-jointly compatible with the information (`Consistent.inter_sInter_maxElts_nonempty`, and for a
-pair `Consistent.inter_inter_nonempty_of_mem_maxElts`), and a chain of realistic preferences is
-consistent (`consistent_of_realistic_of_isChain`). `maxPreorder` is the preorder on worlds that
-the maximal preferences induce, by Kratzer's derivation of a world ordering from an ordering
-source, and `best` gives its minimal worlds in a domain, which are exactly the worlds realizing
-every maximal preference when there are any (`best_eq_of_nonempty`). `discrete` is the unranked
-structure on a set of preferences and `single` its one-preference case.
+## Main definitions
 
-A preferential predicate, in the sense of Villalta, measures preference as a degree, with
-⟦x V p⟧(C) = μ(x, p) > θ(C) for a preference degree function μ and a contextual threshold θ over
-a comparison class C. The degree-comparison predicates built here are clausally distributive by
-construction (`mkDegreeComparison_isDistributive`), and a predicate that holds of a question but
-of none of its answers is not (`PreferentialPredicate.not_isDistributive_of_forall_not`). This
-is the diagnostic that Elliott and colleagues apply to *care*, and that Qing and colleagues
-apply to *worry* and Mandarin *qidai* in `Studies/QingEtAl2025.lean`. `ThresholdSignificance` is
-the presupposition that Uegaki and Sudo posit for degree constructions, from which the
-anti-rogativity of *hope* is derived in `Studies/UegakiSudo2019.lean`. The emotive doxastic
-refinement of *hope* and *fear* due to Anand and Hacquard is in
-`Studies/AnandHacquard2013.lean`.
+* `PreferenceStructure`, with `maxElts`, `Consistent` and `Realistic`.
+* `PreferenceStructure.maxPreorder`, `PreferenceStructure.best`: the world order of the maximal
+  preferences and its best worlds.
+* `PreferenceStructure.discrete`: the unranked structure on a set of preferences.
+
+## Main statements
+
+* `PreferenceStructure.Consistent.realistic`: consistency entails realism.
+* `PreferenceStructure.Consistent.inter_sInter_maxElts_nonempty`: the maximal preferences of a
+  consistent structure are jointly compatible with the information.
+* `PreferenceStructure.consistent_of_realistic_of_isChain`: a realistic chain is consistent.
+
+## Implementation notes
+
+The ranking is a strict order on all of `Set W`, of which only its restriction to the preferences
+is observed.
 
 ## References
 
-* [C. Condoravdi and S. Lauer, *Performative Verbs and Performative Acts*
-  (2011)][condoravdi-lauer-2011]
-* [C. Condoravdi and S. Lauer, *Imperatives: Meaning and Illocutionary Force*
-  (2012)][condoravdi-lauer-2012]
-* [C. Condoravdi and S. Lauer, *Anankastic Conditionals are Just Conditionals*
-  (2016)][condoravdi-lauer-2016]
-* [S. Lauer, *Towards a Dynamic Pragmatics* (2013)][lauer-2013]
-* [A. Kratzer, *The Notional Category of Modality* (1981)][kratzer-1981]
-* [E. Villalta, *Mood and Gradability: An Investigation of the Subjunctive Mood in Spanish*
-  (2008)][villalta-2008]
-* [W. Uegaki and Y. Sudo, *The hope-wh puzzle* (2019)][uegaki-sudo-2019]
-* [C. Qing, D. Özyıldız, F. Roelofsen, M. Romero and W. Uegaki, *When can non-veridical
-  preferential attitude predicates take questions?* (2025)][qing-uegaki-2025]
-* [P. Anand and V. Hacquard, *Epistemics and attitudes* (2013)][anand-hacquard-2013]
-* [P. D. Elliott, N. Klinedinst, Y. Sudo and W. Uegaki, *Predicates of Relevance and Theories of
-  Question Embedding* (2017)][elliott-etal-2017]
+* [condoravdi-lauer-2011]
+* [condoravdi-lauer-2012]
+* [condoravdi-lauer-2016]
+* [lauer-2013]
+* [kratzer-1981]
 -/
 
 @[expose] public section
@@ -211,98 +191,3 @@ theorem consistent_single {p B : Set W} (h : (p ∩ B).Nonempty) : (single p).Co
   consistent_discrete (by rwa [Set.sInter_singleton, Set.inter_comm])
 
 end PreferenceStructure
-
-/-! ### Degree-comparison preferential predicates -/
-
-namespace Preferential
-
-variable {W E : Type*}
-
-/-- A preferential attitude predicate consists of an evaluative valence, a preference degree
-function, a contextual threshold, and propositional and question semantics relative to a comparison
-class of propositions. -/
-structure PreferentialPredicate (W E : Type*) where
-  /-- Evaluative valence (positive for *hope*, negative for *fear*). -/
-  valence : Valence
-  /-- The preference degree `μ x p` is how strongly `x` prefers, or for negative valence dreads,
-  `p`. -/
-  μ : E → Finset W → ℚ
-  /-- Contextual threshold over a comparison class. -/
-  θ : List (Finset W) → ℚ
-  /-- ⟦x V p⟧(C), the propositional semantics. -/
-  propSemantics : E → Finset W → List (Finset W) → Prop
-  /-- ⟦x V Q⟧(C), the question semantics. -/
-  questionSemantics : E → List (Finset W) → List (Finset W) → Prop
-
-/-- A preferential predicate is clausally distributive when its question semantics is the
-existential over its propositional semantics. This is the world-free instance of
-`Distributivity.IsDistributive`, since preferential semantics are world-independent for
-non-veridical predicates. -/
-def PreferentialPredicate.IsDistributive (V : PreferentialPredicate W E) : Prop :=
-  ∀ (x : E) (Q C : List (Finset W)),
-    V.questionSemantics x Q C ↔ ∃ p ∈ Q, V.propSemantics x p C
-
-/-- A predicate that holds of a question but of none of its answers is not clausally distributive.
--/
-theorem PreferentialPredicate.not_isDistributive_of_forall_not {V : PreferentialPredicate W E}
-    {x : E} {Q C : List (Finset W)} (hQ : V.questionSemantics x Q C)
-    (h : ∀ p ∈ Q, ¬ V.propSemantics x p C) : ¬ V.IsDistributive :=
-  fun hV ↦ let ⟨p, hp, hxp⟩ := (hV x Q C).1 hQ; h p hp hxp
-
-/-! ### Degree-comparison predicates -/
-
-/-- A degree-comparison predicate has ⟦x V p⟧(C) = μ(x, p) > θ(C), with the pointwise existential as
-its question semantics. -/
-def mkDegreeComparison (valence : Valence)
-    (μ : E → Finset W → ℚ) (θ : List (Finset W) → ℚ) :
-    PreferentialPredicate W E where
-  valence := valence
-  μ := μ
-  θ := θ
-  propSemantics x p C := μ x p > θ C
-  questionSemantics x Q C := ∃ p ∈ Q, μ x p > θ C
-
-/-- Degree-comparison predicates are clausally distributive by construction, since the question
-semantics is the existential over the propositional semantics. -/
-theorem mkDegreeComparison_isDistributive (valence : Valence)
-    (μ : E → Finset W → ℚ) (θ : List (Finset W) → ℚ) :
-    (mkDegreeComparison valence μ θ).IsDistributive :=
-  fun _ _ _ ↦ Iff.rfl
-
-/-- The predicate *hope* is a degree comparison of positive valence. Its difference from *want* is
-an additional doxastic component, formalized in `Studies/AnandHacquard2013.lean`. -/
-def hope (μ : E → Finset W → ℚ) (θ : List (Finset W) → ℚ) :
-    PreferentialPredicate W E :=
-  mkDegreeComparison .positive μ θ
-
-/-- The predicate *fear* is a degree comparison of negative valence. -/
-def fear (μ : E → Finset W → ℚ) (θ : List (Finset W) → ℚ) :
-    PreferentialPredicate W E :=
-  mkDegreeComparison .negative μ θ
-
-/-- The predicate *expect* is a degree comparison of positive valence. -/
-def expect (μ : E → Finset W → ℚ) (θ : List (Finset W) → ℚ) :
-    PreferentialPredicate W E :=
-  mkDegreeComparison .positive μ θ
-
-/-- The predicate *wish* is a degree comparison of positive valence. -/
-def wish (μ : E → Finset W → ℚ) (θ : List (Finset W) → ℚ) :
-    PreferentialPredicate W E :=
-  mkDegreeComparison .positive μ θ
-
-/-- The predicate *dread* is a degree comparison of negative valence. -/
-def dread (μ : E → Finset W → ℚ) (θ : List (Finset W) → ℚ) :
-    PreferentialPredicate W E :=
-  mkDegreeComparison .negative μ θ
-
-/-! ### Threshold significance -/
-
-/-- The Threshold Significance Presupposition says that some member of the comparison class clears
-the threshold. Degree constructions presuppose it generally. Positive preferentials trigger it while
-negative ones do not, which is how predicates of the *fear* type escape the anti-rogativity
-triviality derived in `Studies/UegakiSudo2019.lean`. -/
-def ThresholdSignificance (μ : E → Finset W → ℚ)
-    (θ : List (Finset W) → ℚ) (x : E) (C : List (Finset W)) : Prop :=
-  ∃ p ∈ C, μ x p > θ C
-
-end Preferential

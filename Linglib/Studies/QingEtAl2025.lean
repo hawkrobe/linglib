@@ -12,49 +12,41 @@ public import Linglib.Data.Examples.QingEtAl2025
 /-!
 # Qing et al. (2025): When Can Non-Veridical Preferential Attitude Predicates Take Questions?
 
-This file formalizes the classification of non-veridical preferential predicates by clausal
-distributivity and evaluative valence due to Qing, Özyıldız, Roelofsen, Romero and Uegaki.
-Uegaki and Sudo derive the anti-rogativity of *hope* from two assumptions, that the predicate
-is clausally distributive and that it carries the Threshold Significance Presupposition, under
-which its composition with a question is true whenever defined. Neither holds of preferentials
-in general. A predicate that holds of a question but of none of its answers is not
-distributive, the diagnostic the paper
-applies to *worry* and Mandarin *qidai* (`relational_not_isDistributive`), and evaluatively
-negative predicates lack the presupposition. Composition with a question is therefore trivial,
-and the predicate anti-rogative, exactly for the distributive positive class
-(`trivial_iff_class`), where the class of a predicate is read off the compositional strategy
-its lexical entry records. The paper's judgments from English, Mandarin, Japanese, Spanish, and
-Turkish are the rows: every acceptable interrogative complement is under a predicate of the two
-responsive classes (`responsive_rows`), and no class 3 predicate takes one canonically. The
-finite verbs of the Turkish rows are the Fragment's entries inflected by its morphotactics and
-phonology (`turkish_forms`).
+Qing, Özyıldız, Roelofsen, Romero and Uegaki classify non-veridical preferential predicates by
+clausal distributivity and evaluative valence. Uegaki and Sudo derive the anti-rogativity of
+*hope* from two assumptions, that the predicate is clausally distributive and that it presupposes
+Threshold Significance. Neither holds in general: *worry* and Mandarin *qidai* relate the agent
+to the question rather than to an answer, and negative predicates such as *fear* lack the
+presupposition. Composition with a question is therefore trivial, and the predicate
+anti-rogative, exactly for the distributive positive class. Apparent uses of *hope* with a polar
+question are non-canonical, and the asymmetry between hoping for the radical and for its negation
+follows from the goals of a hopeful wondering.
 
-Apparent question-taking by *hope* is non-canonical composition. Composing with the highlighted
-content of a polar question is the declarative meaning, which yields the interpretive asymmetry
-of *hope whether p* but not its inquisitive implication; the preferred analysis, modelled on
-Turkish *diye* clauses as Özyıldız and Uegaki analyse them, takes the question as a report of
-wondering adjoined to the predicate and derives the asymmetry pragmatically. Under Tabatowski's
-convention that wondering whether `p` prefers learning `p`, a hopeful wondering whose goals are
-the hoped-for proposition or its belief is coherent when the agent hopes for the radical and
-incoherent when they hope for its negation, while fear constrains no goal (`hopes_negation`);
-the truth-value and felicity judgments of the polar cases follow the pattern (`asymmetry_rows`).
+## Main statements
+
+* `relational_not_isDistributive`: a predicate related to a question but to none of its answers
+  is not clausally distributive.
+* `trivial_iff_class`: composition with a question is trivial exactly for the distributive
+  positive class.
+* `responsive_rows`, `anti_rogative_rows`, `tsp_rows`, `nondistributive_rows`: the paper's
+  judgments in five languages.
+* `hopes_radical`, `hopes_negation`: hoping for the radical licenses the wondering and hoping for
+  its negation does not.
 
 ## Implementation notes
 
 Triviality quantifies over the degree function and threshold, the non-logical constants of
-Gajewski's analyticity, with the question as its own comparison class as in Uegaki and
-Sudo's account. A relational predicate carries its relation to the question as a parameter,
-since the paper characterizes the class only as a relation to the question not reducible to one
-to any answer. The pragmatic derivation compares the two outcomes the paper's gloss of
-Tabatowski's condition compares, coming to believe the radical or not, by Kratzer's
-ordering with the event's goals as ordering source, leaving the doxastic and similarity
-machinery of (82) aside; the event summation of the adjunction analysis is not formalized. The
-Spanish predicates without a Fragment entry, *temer* and *preocupar*, are classified in this
-file. The rows carry
-the paper's truth values where it gives them and its felicity judgments otherwise; the attested
-*hope whether* examples, (63a) included, are recorded as marginal following the paper's own
-assessment of the construction, and *temer* with a polar question and *haipa* with a
-constituent question, which the paper sets aside, are recorded but not predicted.
+Gajewski's analyticity, with the question as its own comparison class, and the concrete models
+measure preference in the reals. A relational predicate is a parameter relating the agent to the
+question, since the paper characterizes the class only as a relation to the question not
+reducible to one to any answer. The class of a predicate is read off the compositional strategy
+its lexical entry records. The pragmatic derivation compares coming to believe the radical or not
+by Kratzer's ordering with the event's goals as ordering source; the event summation of the
+adjunction analysis is not formalized. The Spanish predicates without a Fragment entry, *temer*
+and *preocupar*, are classified here. Rows carry the paper's truth values where it gives them and
+its felicity judgments otherwise; the attested *hope whether* examples are recorded as marginal,
+and *temer* with a polar question and *haipa* with a constituent question are recorded but not
+predicted.
 
 ## References
 
@@ -78,85 +70,71 @@ open Examples Preferential Modality
 
 variable {W E : Type*}
 
-/-- A preference degree function `μ` gives the degree `μ x p` to which `x` prefers, or for a
-negative predicate dreads, `p`. -/
-abbrev Degree (W E : Type*) := E → Finset W → ℚ
+/-! ### The two escapes from triviality (§3)
 
-/-- A threshold assigns a degree to each comparison class. -/
-abbrev Threshold (W : Type*) := List (Finset W) → ℚ
+The concrete models measure preference in the reals. -/
 
-/-! ### The two escapes from triviality (§3) -/
-
-/-- A preferential predicate whose question use is a relation to the question itself, anxious
-uncertainty for *worry* (§3.1.2) or anticipation of resolution for Mandarin *qidai* (§3.1.1),
-while its declarative use is the degree comparison. -/
-def relational (valence : Valence) (μ : Degree W E) (θ : Threshold W)
-    (R : E → List (Finset W) → Prop) : PreferentialPredicate W E where
-  valence := valence
-  μ := μ
-  θ := θ
-  propSemantics x p C := μ x p > θ C
-  questionSemantics x Q _ := R x Q
-
-/-- An agent anxious to find out where he can dock, and happy to dock anywhere, worries where
-he can dock without worrying that he can dock at any particular place, so *worry* is not
-clausally distributive. This is the diagnostic of (23) to (25). -/
-theorem relational_not_isDistributive (v : Valence) (μ : Degree W E) (θ : Threshold W)
-    (R : E → List (Finset W) → Prop) {x : E} {Q C : List (Finset W)} (hR : R x Q)
-    (h : ∀ p ∈ Q, ¬ μ x p > θ C) : ¬ (relational v μ θ R).IsDistributive :=
-  PreferentialPredicate.not_isDistributive_of_forall_not (V := relational v μ θ R) hR h
+/-- A predicate that relates an agent to a question without relating her to any of its answers,
+anxious uncertainty for *worry* (§3.1.2) or anticipation of resolution for Mandarin *qidai*
+(§3.1.1), is not clausally distributive. This is the diagnostic of (23) to (25). -/
+theorem relational_not_isDistributive (R : E → Set (Set W) → W → Prop) {x : E}
+    {Q : Set (Set W)} {w : W} (hR : R x Q w) (h : ∀ p ∈ Q, ¬ R x {p} w) :
+    ¬ Distributivity.IsDistributive R :=
+  Distributivity.not_isDistributive_of_forall_not hR h
 
 /-- Composition of a predicate family with a question is trivial under a presupposition when in
-every model the presupposition entails the assertion, the question serving as comparison class
-as in Uegaki and Sudo's account. The composition is then true whenever defined, which is
+every model the presupposition entails the assertion, the question serving as its own comparison
+class as in Uegaki and Sudo's account. The composition is then true whenever defined, which is
 Gajewski's analyticity with the degree function and threshold as the non-logical constants. -/
-def Trivial (V : Degree W E → Threshold W → PreferentialPredicate W E)
-    (π : Degree W E → Threshold W → E → List (Finset W) → Prop) : Prop :=
-  ∀ μ θ x Q, π μ θ x Q → (V μ θ).questionSemantics x Q Q
+def Trivial
+    (V : (E → W → Set W → ℝ) → (Set (Set W) → ℝ) → Set (Set W) → E → Set (Set W) → W → Prop)
+    (π : (E → W → Set W → ℝ) → (Set (Set W) → ℝ) → E → Set (Set W) → W → Prop) : Prop :=
+  ∀ μ θ x Q w, π μ θ x Q w → V μ θ Q x Q w
 
 /-- A positive preferential predicate presupposes threshold significance of a question. A
-negative one triggers no such presupposition (§3.2) and presupposes only that the question has
-an answer in the comparison class. -/
-def presupposition : Valence → Degree W E → Threshold W → E → List (Finset W) → Prop
-  | .positive => ThresholdSignificance
-  | .negative => fun _ _ _ Q ↦ Q ≠ []
+negative one triggers no such presupposition (§3.2) and presupposes only that the question has an
+answer in the comparison class. -/
+def presupposition :
+    Valence → (E → W → Set W → ℝ) → (Set (Set W) → ℝ) → E → Set (Set W) → W → Prop
+  | .positive => fun μ θ x Q w ↦ Degree.ThresholdSignificant (μ x w) θ Q
+  | .negative => fun _ _ _ Q _ ↦ Q.Nonempty
 
 /-- A distributive positive predicate composed with a question is trivial, as Uegaki and Sudo
 show. -/
 theorem trivial_positive :
-    Trivial (mkDegreeComparison (W := W) (E := E) .positive) (presupposition .positive) :=
-  fun μ θ x Q h ↦ (UegakiSudo2019.hope_question_iff_significance μ θ x Q).2 h
+    Trivial (W := W) (E := E) degreeComparison (presupposition .positive) :=
+  fun μ θ x _ w h ↦ (UegakiSudo2019.hope_question_iff_significance μ θ subset_rfl x w).2 h
 
 /-- Without threshold significance, *x fears Q* says only that some answer is feared, which a
 model falsifies. -/
-theorem not_trivial_negative [Inhabited E] :
-    ¬ Trivial (mkDegreeComparison (W := W) (E := E) .negative) (presupposition .negative) :=
-  fun h ↦ by
-    have := h (fun _ _ ↦ 0) (fun _ ↦ 0) default [∅] (by simp [presupposition])
-    simp [mkDegreeComparison] at this
+theorem not_trivial_negative [Inhabited E] [Inhabited W] :
+    ¬ Trivial (W := W) (E := E) degreeComparison (presupposition .negative) := fun h ↦ by
+  obtain ⟨p, -, -, hp⟩ :=
+    h (fun _ _ _ ↦ 0) (fun _ ↦ 0) default {∅} default (Set.singleton_nonempty _)
+  simp [Degree.Comparison.over] at hp
 
 /-- A relational predicate is not trivial even under threshold significance, since some agent
 does not stand in the relation to a question an answer of which clears the threshold. -/
-theorem not_trivial_relational (v : Valence) (R : E → List (Finset W) → Prop)
-    (hR : ∃ x Q, Q ≠ [] ∧ ¬ R x Q) :
-    ¬ Trivial (fun μ θ ↦ relational v μ θ R) (presupposition v) :=
-  fun h ↦ by
-    obtain ⟨x, Q, hQ, hxQ⟩ := hR
-    refine hxQ (h (fun _ _ ↦ 1) (fun _ ↦ 0) x Q ?_)
-    cases v
-    · obtain ⟨p, hp⟩ := List.exists_mem_of_ne_nil Q hQ
-      exact ⟨p, hp, by simp⟩
-    · exact hQ
+theorem not_trivial_relational (v : Valence) (R : E → Set (Set W) → W → Prop)
+    (hR : ∃ x Q w, Q.Nonempty ∧ ¬ R x Q w) :
+    ¬ Trivial (fun _ _ _ ↦ R) (presupposition v) := fun h ↦ by
+  obtain ⟨x, Q, w, hQ, hxQ⟩ := hR
+  refine hxQ (h (fun _ _ _ ↦ 1) (fun _ ↦ 0) x Q w ?_)
+  cases v
+  · obtain ⟨p, hp⟩ := hQ
+    exact ⟨p, hp, by norm_num [Degree.Comparison.over]⟩
+  · exact hQ
 
 /-! ### The classification (Table 2) -/
 
 /-- The three classes of non-veridical preferential predicates. -/
 inductive PredicateClass
-  /-- Class 1: not clausally distributive, of either valence. -/
+  /-- Class 1 consists of the predicates that are not clausally distributive, of either valence. -/
   | nonDistributive
-  /-- Class 2: distributive and negative. -/
+  /-- Class 2 consists of the distributive negative predicates. -/
   | distributiveNegative
-  /-- Class 3: distributive and positive, the class Uegaki and Sudo describe. -/
+  /-- Class 3 consists of the distributive positive predicates, the class Uegaki and Sudo
+  describe. -/
   | distributivePositive
   deriving DecidableEq, Repr
 
@@ -166,17 +144,18 @@ def classOf : Strategy → PredicateClass
   | .degreeComparison .negative => .distributiveNegative
   | .uncertaintyBased | .relevanceBased _ => .nonDistributive
 
-/-- The semantics of a strategy, the relational ones over a relation `R` to the question. -/
-def semantics (R : E → List (Finset W) → Prop) :
-    Strategy → Degree W E → Threshold W → PreferentialPredicate W E
-  | .degreeComparison v => mkDegreeComparison v
-  | .uncertaintyBased => fun μ θ ↦ relational .negative μ θ R
-  | .relevanceBased v => fun μ θ ↦ relational v μ θ R
+/-- The interrogative use of a strategy, the relational ones over a relation `R` to the
+question. -/
+def semantics (R : E → Set (Set W) → W → Prop) :
+    Strategy → (E → W → Set W → ℝ) → (Set (Set W) → ℝ) → Set (Set W) → E → Set (Set W) → W →
+      Prop
+  | .degreeComparison _ => degreeComparison
+  | .uncertaintyBased | .relevanceBased _ => fun _ _ _ ↦ R
 
 /-- Canonical composition with a question is trivial, hence anti-rogative, exactly for the
 distributive positive class (Table 2). -/
-theorem trivial_iff_class [Inhabited E] (k : Strategy)
-    (R : E → List (Finset W) → Prop) (hR : ∃ x Q, Q ≠ [] ∧ ¬ R x Q) :
+theorem trivial_iff_class [Inhabited E] [Inhabited W] (k : Strategy)
+    (R : E → Set (Set W) → W → Prop) (hR : ∃ x Q w, Q.Nonempty ∧ ¬ R x Q w) :
     Trivial (semantics R k) (presupposition k.valence) ↔ classOf k = .distributivePositive := by
   cases k with
   | degreeComparison v =>
@@ -311,11 +290,10 @@ theorem dolan_isIntransitive : Turkish.dolan.IsIntransitive := by decide
 /-- Composed with the highlighted content of *whether p*, the singleton of the radical, a
 degree-comparison predicate means its declarative (70). This first candidate analysis (§4.2)
 yields the interpretive asymmetry but not the inquisitive implication. -/
-theorem highlighted_eq_declarative (v : Valence) (μ : Degree W E) (θ : Threshold W)
-    (x : E) (p : Finset W) (C : List (Finset W)) :
-    (mkDegreeComparison v μ θ).questionSemantics x [p] C ↔
-      (mkDegreeComparison v μ θ).propSemantics x p C := by
-  simp [mkDegreeComparison]
+theorem highlighted_eq_declarative (μ : E → W → Set W → ℝ) (θ : Set (Set W) → ℝ)
+    (C : Set (Set W)) (x : E) (p : Set W) (w : W) :
+    degreeComparison μ θ C x {p} w ↔ p ∈ preferred μ θ C x w :=
+  degreeComparison_singleton μ θ C x p w
 
 section Asymmetry
 

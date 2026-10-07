@@ -37,26 +37,27 @@ published label. Speech-act predicates are outside the classification.
 
 @[expose] public section
 
-/-- Veridicality of a doxastic predicate: *know* and *discover* entail their complement,
-*believe* and *think* do not. -/
+/-- A doxastic predicate is veridical when it entails its complement, as *know* and *discover* do
+and *believe* and *think* do not. -/
 inductive Doxastic.Veridicality
   | veridical
   | nonVeridical
   deriving DecidableEq, Repr
 
-/-- Evaluative valence of a preferential predicate: positive for *hope* and *wish*, negative for
-*fear* and *worry*. -/
+/-- The evaluative valence of a preferential predicate is positive for *hope* and *wish* and
+negative for *fear* and *worry*. -/
 inductive Preferential.Valence
   | positive
   | negative
   deriving DecidableEq, Repr
 
-/-- The compositional strategy of a preferential predicate, from which its clausal
-distributivity is derived: a degree comparison's question use is the existential over answers
-(`Preferential.mkDegreeComparison_isDistributive`), while a relation to the question holds of
-no particular answer (`Preferential.PreferentialPredicate.not_isDistributive_of_forall_not`). -/
+/-- The compositional strategy of a preferential predicate determines its clausal
+distributivity. The interrogative use of a degree comparison is the existential over answers
+(`Preferential.isDistributive_degreeComparison`), while a relation to the question can hold of no
+particular answer (`Distributivity.not_isDistributive_of_forall_not`). -/
 inductive Preferential.Strategy
-  /-- Degree comparison ([villalta-2008]): ⟦x V p⟧ = μ(x, p) > θ. -/
+  /-- A degree comparison asserts that the agent prefers the complement above a threshold
+  ([villalta-2008]). -/
   | degreeComparison (valence : Preferential.Valence)
   /-- Anxious uncertainty about the question (*worry*). -/
   | uncertaintyBased
@@ -75,9 +76,8 @@ def valence : Strategy → Valence
 
 end Preferential.Strategy
 
-/-- The semantic classification of an attitude predicate: doxastic, with an accessibility
-semantics ([hintikka-1962]) and a veridicality, or preferential, with a degree semantics and a
-strategy. -/
+/-- An attitude predicate is doxastic, with an accessibility semantics ([hintikka-1962]) and a
+veridicality, or preferential, with a degree semantics and a strategy. -/
 inductive Attitude
   | doxastic (veridicality : Doxastic.Veridicality)
   | preferential (strategy : Preferential.Strategy)
