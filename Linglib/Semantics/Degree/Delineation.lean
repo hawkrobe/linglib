@@ -5,29 +5,32 @@ public import Linglib.Semantics.Supervaluation
 /-!
 # Delineation semantics
 
-In delineation semantics a gradable adjective has no degree argument. A delineation decides, for
-each comparison class (a set of entities the adjective is evaluated against), which entities the
-adjective holds of, and *a is taller than b* holds when some comparison class puts `a` in the
-extension and leaves `b` out. Klein develops this analysis from Kamp's account of the comparative.
-A measure function induces a delineation whose ordering is degree comparison, so the threshold
-analysis embeds in this one; `Degree/Hom.lean` relates the two further.
+In delineation semantics a gradable adjective has no degree argument. A delineation sends each
+comparison class, a set of entities the adjective is evaluated against, to the adjective's
+extension relative to it, and *a is taller than b* holds when some comparison class puts `a` in
+the extension and leaves `b` out. Klein develops this analysis from Kamp's account of the
+comparative. A measure function induces a delineation whose ordering is degree comparison, so the
+threshold analysis embeds in this one; `Degree/Hom.lean` relates the two further.
 
 ## Main definitions
 
-* `comparativeSem`: Klein's comparative.
-* `IsMonotoneDelineation`: no comparison class reverses a ranking another class makes.
-* `ordering`, `nondistinct`: comparison and indistinguishability within a comparison class.
-* `IsLinearDelineation`, `IsNonlinearDelineation`: single-criterion adjectives such as *tall*
-  and multi-criteria adjectives such as *clever*.
-* `measureDelineation`: the delineation a measure function induces.
+* `Degree.Delineation`: a delineation, applied to a comparison class as a function.
+* `Degree.Delineation.Comparative`: Klein's comparative.
+* `Degree.Delineation.IsMonotoneOn`: no comparison class in a set reverses a ranking another
+  class in it makes.
+* `Degree.Delineation.Outranks`, `Degree.Delineation.Nondistinct`: comparison and
+  indistinguishability within a comparison class.
+* `Degree.Delineation.ofMeasure`: the delineation a measure function induces.
+* `Degree.Delineation.very`, `Degree.Delineation.fairly`: the modifiers *very* and *fairly*.
 
 ## Main statements
 
-* `ordering_asymm`, `ordering_trans`, `ordering_neg_trans`: under monotonicity the ordering is a
-  strict weak order.
-* `ordering_iff_degree`: under a measure-induced delineation the ordering is degree comparison.
-* `IsMonotoneDelineation.not_isNonlinearDelineation`: a monotone delineation is never nonlinear,
-  so no measure function induces a nonlinear one.
+* `Degree.Delineation.IsMonotone.outranks_asymm`, `Degree.Delineation.Outranks.cotrans`: under
+  monotonicity the ordering is a strict weak order.
+* `Degree.Delineation.outranks_ofMeasure_iff`: under a measure-induced delineation the ordering is
+  degree comparison.
+* `Degree.Delineation.IsMonotone.not_isNonlinear`: a monotone delineation is never nonlinear, so no
+  measure function induces a nonlinear one.
 
 ## References
 
@@ -43,291 +46,218 @@ analysis embeds in this one; `Degree/Hom.lean` relates the two further.
 
 @[expose] public section
 
-namespace Degree.Delineation
+namespace Degree
+
+/-- A delineation sends each comparison class to the extension of a gradable adjective relative
+to it. -/
+@[ext]
+structure Delineation (E : Type*) where
+  /-- The extension relative to a comparison class. -/
+  toFun : Set E → Set E
+
+namespace Delineation
 
 open Semantics.Supervaluation (SpecSpace superTrue superTrue_true_iff)
 
-/-- A comparison class is the set of entities a gradable predicate is evaluated against, the only
-contextual parameter of a delineation. -/
-abbrev ComparisonClass (Entity : Type*) := Set Entity
+variable {E : Type*}
 
-variable {Entity : Type*}
+instance : CoeFun (Delineation E) fun _ ↦ Set E → Set E := ⟨toFun⟩
+
+@[simp] theorem coe_mk (f : Set E → Set E) : ⇑(⟨f⟩ : Delineation E) = f := rfl
+
+variable (d : Delineation E)
 
 /-! ### The comparative -/
 
-section Comparative
-
-variable (delineation : ComparisonClass Entity → Entity → Prop)
-
 /-- Klein's comparative holds of `a` and `b` when some comparison class puts `a` in the extension
 and leaves `b` out. -/
-def comparativeSem (a b : Entity) : Prop :=
-  ∃ C, delineation C a ∧ ¬ delineation C b
+def Comparative (a b : E) : Prop :=
+  ∃ C, a ∈ d C ∧ b ∉ d C
 
 /-- A delineation is monotone on a set of comparison classes when no class in the set puts `b` in
-the extension and leaves `a` out once another class has put `a` in and left `b` out. -/
-def IsMonotoneDelineation (allClasses : Set (ComparisonClass Entity)) : Prop :=
-  ∀ C₁ C₂ : ComparisonClass Entity,
-    C₁ ∈ allClasses → C₂ ∈ allClasses →
-    ∀ a b : Entity,
-      delineation C₁ a → ¬ delineation C₁ b →
-      delineation C₂ b → delineation C₂ a
+the extension and leaves `a` out once another class in it has put `a` in and left `b` out. -/
+def IsMonotoneOn (S : Set (Set E)) : Prop :=
+  ∀ C₁ ∈ S, ∀ C₂ ∈ S, ∀ a b, a ∈ d C₁ → b ∉ d C₁ → b ∈ d C₂ → a ∈ d C₂
 
-end Comparative
+/-- A delineation is monotone when it is monotone on all comparison classes. -/
+def IsMonotone : Prop := d.IsMonotoneOn Set.univ
 
 /-! ### The Fine duality
 
-Comparison classes are specification points: Klein's comparative is the
-existential dual of [fine-1975]'s supervaluation. -/
+Comparison classes are specification points: Klein's comparative is the existential dual of
+Fine's supervaluation. -/
 
 section Supervaluation
 
-variable (delineation : ComparisonClass Entity → Entity → Prop)
-  [∀ C (x : Entity), Decidable (delineation C x)]
-  (a b : Entity) (S : SpecSpace (ComparisonClass Entity))
+variable [∀ C (x : E), Decidable (x ∈ d C)] {a b : E} (S : SpecSpace (Set E))
 
-/-- Under a monotone delineation, if some admissible class ranks `a` above `b` and `b` is in the
-extension of every admissible class, then so is `a`. -/
-theorem monotone_comparative_superTrue
-    (hmono : ∀ C₁ ∈ S.admissible, ∀ C₂ ∈ S.admissible,
-      ∀ x y : Entity, delineation C₁ x → ¬ delineation C₁ y →
-      delineation C₂ y → delineation C₂ x)
-    (hdisc : ∃ C ∈ S.admissible, delineation C a ∧ ¬ delineation C b)
-    (hb : superTrue (fun C => decide (delineation C b)) S = .true) :
-    superTrue (fun C => decide (delineation C a)) S = .true := by
+variable {d} in
+/-- Under a delineation monotone on the admissible classes, if some admissible class ranks `a`
+above `b` and `b` is in the extension of every admissible class, then so is `a`. -/
+theorem IsMonotoneOn.superTrue_of_comparative (hmono : d.IsMonotoneOn ↑S.admissible)
+    (hdisc : ∃ C ∈ S.admissible, a ∈ d C ∧ b ∉ d C)
+    (hb : superTrue (b ∈ d ·) S = .true) : superTrue (a ∈ d ·) S = .true := by
   rw [superTrue_true_iff] at hb ⊢
-  intro C hC
   obtain ⟨C₀, hC₀, haC₀, hnotbC₀⟩ := hdisc
-  simp only [decide_eq_true_eq] at hb ⊢
-  exact hmono C₀ hC₀ C hC a b haC₀ hnotbC₀ (hb C hC)
+  exact fun C hC ↦ hmono C₀ hC₀ C hC a b haC₀ hnotbC₀ (hb C hC)
 
 /-- A discriminating class in the space falsifies `b`'s super-truth. -/
-theorem comparative_prevents_superTrue
-    (hdisc : ∃ C ∈ S.admissible, delineation C a ∧ ¬ delineation C b) :
-    superTrue (fun C => decide (delineation C b)) S ≠ .true := by
-  intro h
-  obtain ⟨C₀, hC₀, _, hnotb⟩ := hdisc
-  have := (superTrue_true_iff _ S).mp h C₀ hC₀
-  simp only [decide_eq_true_eq] at this
-  exact hnotb this
+theorem superTrue_ne_true_of_comparative (hdisc : ∃ C ∈ S.admissible, a ∈ d C ∧ b ∉ d C) :
+    superTrue (b ∈ d ·) S ≠ .true := fun h ↦
+  let ⟨C₀, hC₀, _, hnotb⟩ := hdisc
+  hnotb ((superTrue_true_iff _ S).mp h C₀ hC₀)
 
 end Supervaluation
 
 /-! ### The ordering within a comparison class -/
 
-section Ordering
+/-- Within the comparison class `C`, `u` outranks `v` when some subclass of `C` puts `u` in the
+extension and leaves `v` out. -/
+def Outranks (C : Set E) (u v : E) : Prop :=
+  ∃ X ⊆ C, u ∈ d X ∧ v ∉ d X
 
-variable (delineation : ComparisonClass Entity → Entity → Prop)
+/-- Klein's comparative is the ordering within the universal class. -/
+theorem comparative_iff_outranks_univ {a b : E} : d.Comparative a b ↔ d.Outranks Set.univ a b :=
+  ⟨fun ⟨C, h1, h2⟩ ↦ ⟨C, Set.subset_univ C, h1, h2⟩, fun ⟨C, _, h1, h2⟩ ↦ ⟨C, h1, h2⟩⟩
 
-/-- Within the comparison class `cc`, `u` is ordered above `u'` when some subclass of `cc` puts `u`
-in the extension and leaves `u'` out. -/
-def ordering (cc : ComparisonClass Entity) (u u' : Entity) : Prop :=
-  ∃ X, X ⊆ cc ∧ delineation X u ∧ ¬ delineation X u'
-
-/-- `comparativeSem` is the ordering over the universal class. -/
-theorem comparativeSem_eq_ordering_univ (a b : Entity) :
-    comparativeSem delineation a b ↔ ordering delineation Set.univ a b :=
-  ⟨fun ⟨C, h1, h2⟩ => ⟨C, Set.subset_univ C, h1, h2⟩,
-   fun ⟨C, _, h1, h2⟩ => ⟨C, h1, h2⟩⟩
-
-variable {cc : ComparisonClass Entity} {u v w : Entity}
+variable {d} {C : Set E} {u v w : E}
 
 /-- Under monotonicity the ordering is asymmetric. -/
-theorem ordering_asymm
-    (hmono : IsMonotoneDelineation delineation Set.univ) :
-    ordering delineation cc u v → ¬ ordering delineation cc v u := by
-  intro ⟨X₁, _, hu₁, hnv₁⟩ ⟨X₂, _, hv₂, hnu₂⟩
-  exact hnu₂ (hmono X₁ X₂ (Set.mem_univ _) (Set.mem_univ _) u v hu₁ hnv₁ hv₂)
+theorem IsMonotone.outranks_asymm (hmono : d.IsMonotone) :
+    d.Outranks C u v → ¬ d.Outranks C v u := fun ⟨X₁, _, hu₁, hnv₁⟩ ⟨X₂, _, hv₂, hnu₂⟩ ↦
+  hnu₂ (hmono X₁ (Set.mem_univ _) X₂ (Set.mem_univ _) u v hu₁ hnv₁ hv₂)
 
 /-- Under monotonicity the ordering is transitive. -/
-theorem ordering_trans
-    (hmono : IsMonotoneDelineation delineation Set.univ) :
-    ordering delineation cc u v → ordering delineation cc v w →
-    ordering delineation cc u w := by
-  intro ⟨X₁, _, hu₁, hnv₁⟩ ⟨X₂, hX₂, hv₂, hnw₂⟩
-  exact ⟨X₂, hX₂, hmono X₁ X₂ (Set.mem_univ _) (Set.mem_univ _) u v hu₁ hnv₁ hv₂, hnw₂⟩
+theorem IsMonotone.outranks_trans (hmono : d.IsMonotone) :
+    d.Outranks C u v → d.Outranks C v w → d.Outranks C u w :=
+  fun ⟨X₁, _, hu₁, hnv₁⟩ ⟨X₂, hX₂, hv₂, hnw₂⟩ ↦
+    ⟨X₂, hX₂, hmono X₁ (Set.mem_univ _) X₂ (Set.mem_univ _) u v hu₁ hnv₁ hv₂, hnw₂⟩
 
-/-- The ordering is negatively transitive for every delineation, so together with asymmetry it is
-a strict weak order. -/
-theorem ordering_neg_trans :
-    ordering delineation cc u w →
-    ordering delineation cc u v ∨ ordering delineation cc v w := by
-  intro ⟨X, hX, hu, hnw⟩
-  by_cases hdel : delineation X v
-  · exact Or.inr ⟨X, hX, hdel, hnw⟩
-  · exact Or.inl ⟨X, hX, hu, hdel⟩
+/-- The ordering is cotransitive for every delineation, so together with asymmetry it is a strict
+weak order. -/
+theorem Outranks.cotrans (h : d.Outranks C u w) (v : E) :
+    d.Outranks C u v ∨ d.Outranks C v w := by
+  obtain ⟨X, hX, hu, hnw⟩ := h
+  by_cases hv : v ∈ d X
+  · exact .inr ⟨X, hX, hv, hnw⟩
+  · exact .inl ⟨X, hX, hu, hv⟩
 
-/-- Two entities are nondistinct in `cc` when no subclass of `cc` containing both puts one in the
+variable (d) in
+/-- Two entities are nondistinct in `C` when no subclass of `C` containing both puts one in the
 extension and leaves the other out. The relation is reflexive and symmetric, and transitive
 only for linear adjectives. -/
-def nondistinct (cc : ComparisonClass Entity) (u u' : Entity) : Prop :=
-  ∀ X, X ⊆ cc → u ∈ X → u' ∈ X →
-    (delineation X u ↔ delineation X u')
+def Nondistinct (C : Set E) (u v : E) : Prop :=
+  ∀ X ⊆ C, u ∈ X → v ∈ X → (u ∈ d X ↔ v ∈ d X)
 
-variable {delineation}
+theorem Nondistinct.refl (C : Set E) (u : E) : d.Nondistinct C u u :=
+  fun _ _ _ _ ↦ Iff.rfl
 
-theorem nondistinct_refl : nondistinct delineation cc u u :=
-  fun _ _ _ _ => Iff.rfl
+theorem Nondistinct.symm (h : d.Nondistinct C u v) : d.Nondistinct C v u :=
+  fun X hX hv hu ↦ (h X hX hu hv).symm
 
-theorem nondistinct_symm (h : nondistinct delineation cc u v) :
-    nondistinct delineation cc v u :=
-  fun X hX hu hv => (h X hX hv hu).symm
-
-/-- Incomparable entities are nondistinct. The converse holds under
-    Klein's domain restriction (witness classes contain both entities). -/
-theorem nondistinct_of_incomparable
-    (hno1 : ¬ ordering delineation cc u v)
-    (hno2 : ¬ ordering delineation cc v u) :
-    nondistinct delineation cc u v := by
-  intro X hX _ _
-  constructor
-  · intro hdu; exact by_contra fun hdnu' => hno1 ⟨X, hX, hdu, hdnu'⟩
-  · intro hdu'; exact by_contra fun hdnu => hno2 ⟨X, hX, hdu', hdnu⟩
-
-end Ordering
+/-- Incomparable entities are nondistinct. The converse holds under Klein's domain restriction,
+that witness classes contain both entities. -/
+theorem nondistinct_of_not_outranks (h₁ : ¬ d.Outranks C u v) (h₂ : ¬ d.Outranks C v u) :
+    d.Nondistinct C u v := fun X hX _ _ ↦
+  ⟨fun hu ↦ by_contra fun hv ↦ h₁ ⟨X, hX, hu, hv⟩,
+    fun hv ↦ by_contra fun hu ↦ h₂ ⟨X, hX, hv, hu⟩⟩
 
 /-! ### Linear and nonlinear adjectives -/
 
-section Linearity
-
-variable (delineation : ComparisonClass Entity → Entity → Prop)
-
+variable (d) in
 /-- A delineation is linear when any two members of a comparison class are ordered one way or the
 other or nondistinct, as for single-criterion adjectives such as *tall* and *heavy*. -/
-def IsLinearDelineation : Prop :=
-  ∀ cc : ComparisonClass Entity, ∀ u u' : Entity,
-    u ∈ cc → u' ∈ cc → u ≠ u' →
-    ordering delineation cc u u' ∨
-    ordering delineation cc u' u ∨
-    nondistinct delineation cc u u'
+def IsLinear : Prop :=
+  ∀ C, ∀ u ∈ C, ∀ v ∈ C, u ≠ v → d.Outranks C u v ∨ d.Outranks C v u ∨ d.Nondistinct C u v
 
+variable (d) in
 /-- A delineation is nonlinear when its ordering ranks two entities each above the other, as when
 different subclasses apply different criteria for *clever* or *nice*. -/
-def IsNonlinearDelineation : Prop :=
-  ∃ cc : ComparisonClass Entity, ∃ u u' : Entity,
-    ordering delineation cc u u' ∧ ordering delineation cc u' u
+def IsNonlinear : Prop :=
+  ∃ C u v, d.Outranks C u v ∧ d.Outranks C v u
 
-variable {delineation} in
 /-- A monotone delineation is never nonlinear, since monotonicity makes its ordering asymmetric. -/
-theorem IsMonotoneDelineation.not_isNonlinearDelineation
-    (hmono : IsMonotoneDelineation delineation Set.univ) :
-    ¬ IsNonlinearDelineation delineation :=
-  fun ⟨_, _, _, h, h'⟩ ↦ ordering_asymm delineation hmono h h'
-
-end Linearity
+theorem IsMonotone.not_isNonlinear (hmono : d.IsMonotone) : ¬ d.IsNonlinear :=
+  fun ⟨_, _, _, h, h'⟩ ↦ hmono.outranks_asymm h h'
 
 /-! ### The delineation of a measure
 
-`measureDelineation` maps threshold semantics into delineation semantics, and
-`ordering_iff_degree` says the map is faithful. -/
+`ofMeasure` maps threshold semantics into delineation semantics, and `outranks_ofMeasure_iff`
+says the map is faithful. -/
 
 section Measure
 
-variable {E D : Type*} [LinearOrder D] (μ : E → D)
+variable {D : Type*} [LinearOrder D] (μ : E → D)
 
 /-- The delineation a measure induces puts `x` in the extension relative to `C` when `x` measures
 strictly more than some member of `C`. -/
-def measureDelineation : ComparisonClass E → E → Prop :=
-  fun C x => ∃ y ∈ C, μ y < μ x
+def ofMeasure : Delineation E := ⟨fun C ↦ {x | ∃ y ∈ C, μ y < μ x}⟩
+
+@[simp] theorem mem_ofMeasure {C : Set E} {x : E} : x ∈ ofMeasure μ C ↔ ∃ y ∈ C, μ y < μ x :=
+  Iff.rfl
 
 /-- Measure-induced delineations are monotone. -/
-theorem measureDelineation_monotone :
-    IsMonotoneDelineation (measureDelineation μ) Set.univ := by
-  intro C₁ C₂ _ _ a b ha hnotb hb
-  obtain ⟨y₁, hy₁, hlt_a⟩ := ha
-  obtain ⟨y₂, hy₂, hlt_b⟩ := hb
-  have hle : μ b ≤ μ y₁ := not_lt.mp fun h => hnotb ⟨y₁, hy₁, h⟩
-  exact ⟨y₂, hy₂, lt_trans hlt_b (lt_of_le_of_lt hle hlt_a)⟩
+theorem isMonotone_ofMeasure : (ofMeasure μ).IsMonotone := by
+  rintro C₁ - C₂ - a b ⟨y₁, hy₁, hlt_a⟩ hnotb ⟨y₂, hy₂, hlt_b⟩
+  have hle : μ b ≤ μ y₁ := not_lt.mp fun h ↦ hnotb ⟨y₁, hy₁, h⟩
+  exact ⟨y₂, hy₂, hlt_b.trans (hle.trans_lt hlt_a)⟩
 
-/-- Under a measure-induced delineation, membership of a fixed `x` is monotone in the comparison
-class, since a larger class only adds witnesses. -/
-theorem measureDelineation_mono_in_class (x : E) :
-    Monotone (fun C => measureDelineation μ C x) :=
-  fun _ _ hle ⟨y, hy, hlt⟩ => ⟨y, hle hy, hlt⟩
-
-/-- Klein's ordering entails degree comparison. -/
-theorem ordering_implies_degree (cc : ComparisonClass E) (a b : E) :
-    ordering (measureDelineation μ) cc a b → μ b < μ a := by
-  intro ⟨_, _, hpos, hneg⟩
-  obtain ⟨y, hy, hlt⟩ := hpos
-  have hle : μ b ≤ μ y := not_lt.mp fun h => hneg ⟨y, hy, h⟩
-  exact lt_of_le_of_lt hle hlt
-
-/-- Degree comparison entails Klein's ordering for class-mates, with
-    the two-element class `{a, b}` as witness. -/
-theorem degree_implies_ordering (cc : ComparisonClass E) (a b : E)
-    (ha : a ∈ cc) (hb : b ∈ cc) :
-    μ b < μ a → ordering (measureDelineation μ) cc a b := by
-  intro hlt
-  refine ⟨{a, b}, ?_, ⟨b, Set.mem_insert_of_mem _ rfl, hlt⟩, ?_⟩
-  · intro x hx; rcases hx with rfl | rfl <;> assumption
-  · intro ⟨y, hy, hlt_y⟩
-    rcases hy with rfl | rfl
-    · exact absurd hlt_y (not_lt.mpr (le_of_lt hlt))
-    · exact absurd hlt_y (lt_irrefl _)
+/-- The extension of a measure-induced delineation is monotone in the comparison class, since a
+larger class only adds witnesses. -/
+theorem monotone_ofMeasure : Monotone (ofMeasure μ) :=
+  fun _ _ hle _ ⟨y, hy, hlt⟩ ↦ ⟨y, hle hy, hlt⟩
 
 /-- Under a measure-induced delineation, the ordering of two members of a comparison class is
 degree comparison. -/
-theorem ordering_iff_degree (cc : ComparisonClass E) (a b : E)
-    (ha : a ∈ cc) (hb : b ∈ cc) :
-    ordering (measureDelineation μ) cc a b ↔ μ b < μ a :=
-  ⟨ordering_implies_degree μ cc a b, degree_implies_ordering μ cc a b ha hb⟩
+theorem outranks_ofMeasure_iff {C : Set E} {a b : E} (ha : a ∈ C) (hb : b ∈ C) :
+    (ofMeasure μ).Outranks C a b ↔ μ b < μ a := by
+  refine ⟨fun ⟨_, _, ⟨y, hy, hlt⟩, hneg⟩ ↦ ?_, fun hlt ↦ ?_⟩
+  · exact (not_lt.mp fun h ↦ hneg ⟨y, hy, h⟩).trans_lt hlt
+  · refine ⟨{a, b}, Set.insert_subset ha (Set.singleton_subset_iff.2 hb),
+      ⟨b, Set.mem_insert_of_mem _ rfl, hlt⟩, ?_⟩
+    rintro ⟨y, hy | hy, hlt_y⟩ <;> subst hy
+    · exact hlt.not_gt hlt_y
+    · exact lt_irrefl _ hlt_y
 
 /-- Measure-induced delineations are linear. -/
-theorem measureDelineation_is_linear :
-    IsLinearDelineation (measureDelineation μ) := by
-  intro cc u u' hu hu' _
-  rcases lt_trichotomy (μ u) (μ u') with hlt | heq | hgt
-  · right; left; exact degree_implies_ordering μ cc u' u hu' hu hlt
-  · right; right; intro X _ _ _
-    simp only [measureDelineation, heq]
-  · left; exact degree_implies_ordering μ cc u u' hu hu' hgt
+theorem isLinear_ofMeasure : (ofMeasure μ).IsLinear := by
+  intro C u hu v hv _
+  rcases lt_trichotomy (μ u) (μ v) with hlt | heq | hgt
+  · exact .inr (.inl ((outranks_ofMeasure_iff μ hv hu).2 hlt))
+  · exact .inr (.inr fun X _ _ _ ↦ by simp [heq])
+  · exact .inl ((outranks_ofMeasure_iff μ hu hv).2 hgt)
 
 end Measure
 
 /-! ### Degree modifiers as narrowings of the comparison class -/
 
-section Modifiers
-
-variable (delineation : ComparisonClass Entity → Entity → Prop)
-
+variable (d) in
 /-- Klein's *very A* holds of `x` relative to `C` when *A* holds of `x` relative to the members of
 `C` that *A* holds of. -/
-def veryDelineation (C : ComparisonClass Entity) (x : Entity) : Prop :=
-  delineation {u | delineation C u} x
+def very : Delineation E := ⟨fun C ↦ d (d C)⟩
 
+variable (d) in
 /-- Klein's *fairly A* holds of `x` relative to `C` when *A* holds of `x` relative to the members of
 `C` that *very A* does not hold of. -/
-def fairlyDelineation (C : ComparisonClass Entity) (x : Entity) : Prop :=
-  let veryPos : ComparisonClass Entity := {u | delineation {v | delineation C v} u}
-  delineation {u | u ∈ C ∧ u ∉ veryPos} x
-
-variable {delineation} {C : ComparisonClass Entity} {x : Entity}
+def fairly : Delineation E := ⟨fun C ↦ d (C \ d.very C)⟩
 
 /-- *very A* entails *A* when the delineation classifies only members of the comparison class. -/
-theorem very_entails_base (hcc : ∀ C x, delineation C x → x ∈ C)
-    (hv : veryDelineation delineation C x) :
-    delineation C x :=
-  hcc _ x hv
+theorem very_subset (hcc : ∀ C, d C ⊆ C) (C : Set E) : d.very C ⊆ d C :=
+  hcc _
 
 /-- *fairly A* excludes *very A*. -/
-theorem fairly_excludes_very (hcc : ∀ C x, delineation C x → x ∈ C)
-    (hf : fairlyDelineation delineation C x) :
-    ¬ veryDelineation delineation C x :=
-  (hcc _ x hf).2
-
-end Modifiers
+theorem fairly_disjoint_very (hcc : ∀ C, d C ⊆ C) (C : Set E) : Disjoint (d.fairly C) (d.very C) :=
+  Set.disjoint_left.2 fun _ hf ↦ (hcc _ hf).2
 
 /-! ### The equative -/
 
+variable (d) in
 /-- In the equative preorder `u ≤ v` holds when every comparison class whose extension contains `v`
 also contains `u`, so `u ≤ v` says that *u is as A as v*. -/
-@[reducible] def kleinPreorder
-    (delineation : ComparisonClass Entity → Entity → Prop) :
-    Preorder Entity where
-  le u v := ∀ C, delineation C v → delineation C u
-  le_refl _ := fun _ h => h
-  le_trans _ _ _ hab hbc := fun C hc => hab C (hbc C hc)
+abbrev preorder : Preorder E :=
+  Preorder.lift fun u ↦ OrderDual.toDual {C | u ∈ d C}
+
+theorem preorder_le_iff : (d.preorder).le u v ↔ ∀ C, v ∈ d C → u ∈ d C := Iff.rfl
 
 /-! ### Faithfulness to a scalar relation
 
@@ -338,50 +268,41 @@ tolerant semantics of Cobreros and colleagues, similar pairs would defeat strict
 
 section Faithfulness
 
-variable {del : ComparisonClass Entity → Entity → Prop}
-  {R : Entity → Entity → Prop}
-
+variable (d) in
 /-- A delineation is sound for a scalar relation `R` when every class that puts `x` in the
 extension and leaves `y` out witnesses `R x y`. -/
-class IsSoundDelineation
-    (del : ComparisonClass Entity → Entity → Prop)
-    (R : Entity → Entity → Prop) : Prop where
-  /-- Per-context separation implies the scalar relation. -/
-  sound : ∀ C x y, del C x → ¬ del C y → R x y
+def IsSoundFor (R : E → E → Prop) : Prop :=
+  ∀ C x y, x ∈ d C → y ∉ d C → R x y
 
+variable (d) in
 /-- A delineation is complete for a scalar relation `R` when every pair related by `R` is
 separated by some comparison class. -/
-class IsCompleteDelineation
-    (del : ComparisonClass Entity → Entity → Prop)
-    (R : Entity → Entity → Prop) : Prop where
-  /-- `R`-distinguished pairs admit a discriminating context. -/
-  complete : ∀ x y, R x y → ∃ C, del C x ∧ ¬ del C y
+def IsCompleteFor (R : E → E → Prop) : Prop :=
+  ∀ x y, R x y → d.Comparative x y
 
 /-- Klein's comparative coincides with any scalar relation the delineation is sound and complete
 for. -/
-theorem comparativeSem_iff_of_sound_and_complete
-    [hSound : IsSoundDelineation del R]
-    [hComplete : IsCompleteDelineation del R]
-    {x y : Entity} : comparativeSem del x y ↔ R x y :=
-  ⟨fun ⟨C, hpos, hneg⟩ => hSound.sound C x y hpos hneg,
-   hComplete.complete x y⟩
+theorem comparative_iff_of_isSoundFor_of_isCompleteFor {R : E → E → Prop} (hs : d.IsSoundFor R)
+    (hc : d.IsCompleteFor R) {x y : E} : d.Comparative x y ↔ R x y :=
+  ⟨fun ⟨C, hpos, hneg⟩ ↦ hs C x y hpos hneg, hc x y⟩
+
+variable {D : Type*} [LinearOrder D] (μ : E → D)
+
+theorem isSoundFor_ofMeasure : (ofMeasure μ).IsSoundFor fun a b ↦ μ b < μ a :=
+  fun C x y hpos hneg ↦ (outranks_ofMeasure_iff μ (Set.mem_univ x) (Set.mem_univ y)).1
+    ⟨C, Set.subset_univ _, hpos, hneg⟩
+
+theorem isCompleteFor_ofMeasure : (ofMeasure μ).IsCompleteFor fun a b ↦ μ b < μ a :=
+  fun x y hR ↦ (comparative_iff_outranks_univ _).2
+    ((outranks_ofMeasure_iff μ (Set.mem_univ x) (Set.mem_univ y)).2 hR)
+
+/-- Klein's comparative under a measure-induced delineation is comparison of measures. -/
+theorem comparative_ofMeasure_iff {x y : E} : (ofMeasure μ).Comparative x y ↔ μ y < μ x :=
+  comparative_iff_of_isSoundFor_of_isCompleteFor (isSoundFor_ofMeasure μ)
+    (isCompleteFor_ofMeasure μ)
 
 end Faithfulness
 
-instance instSoundMeasureDelineation {E D : Type*} [LinearOrder D]
-    (μ : E → D) :
-    IsSoundDelineation (measureDelineation μ) (fun a b => μ b < μ a) where
-  sound C x y hpos hneg :=
-    ordering_implies_degree μ Set.univ x y
-      ⟨C, Set.subset_univ _, hpos, hneg⟩
+end Delineation
 
-instance instCompleteMeasureDelineation {E D : Type*} [LinearOrder D]
-    (μ : E → D) :
-    IsCompleteDelineation (measureDelineation μ) (fun a b => μ b < μ a) where
-  complete x y hR := by
-    obtain ⟨C, _, hpos, hneg⟩ :=
-      degree_implies_ordering μ Set.univ x y
-        (Set.mem_univ _) (Set.mem_univ _) hR
-    exact ⟨C, hpos, hneg⟩
-
-end Degree.Delineation
+end Degree

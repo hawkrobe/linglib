@@ -114,13 +114,13 @@ theorem maxDeg_witness {acc : Set W} {μA μB : W → D} {maxA maxB : D}
   exact ⟨w, hw, fun v hv ↦ lt_of_le_of_lt (hmaxB.2 ⟨v, hv, rfl⟩) hgt⟩
 
 /-- Klein's degree-free ordering ([klein-1980]; §XI) matches degree
-comparison on simple comparatives via `measureDelineation`; the divergence
+comparison on simple comparatives via `Delineation.ofMeasure`; the divergence
 is confined to differential and factor constructions ((171a)–(171c)). -/
 theorem klein_agrees_on_simple (μ : Entity → D) (cc : Set Entity)
     (a b : Entity) (ha : a ∈ cc) (hb : b ∈ cc) :
     μ b < μ a ↔
-      Delineation.ordering (Delineation.measureDelineation μ) cc a b :=
-  (Delineation.ordering_iff_degree μ cc a b ha hb).symm
+      (Delineation.ofMeasure μ).Outranks cc a b :=
+  (Delineation.outranks_ofMeasure_iff μ ha hb).symm
 
 /-! ### Synthesis rules R4 (`moreSem`), R5 (`asSem`), R13 (*too*) (§XIII) -/
 

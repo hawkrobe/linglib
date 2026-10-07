@@ -19,15 +19,15 @@ two entities each above the other, which monotonicity forbids. Klein's *as … a
 ## Main statements
 
 * `clever_not_monotone`: the delineation for *clever* is not monotone, so no measure induces it.
-* `klein_strict_weak_order`: under monotonicity the ordering is a strict weak order.
-* `kleinDegree_measureDelineation`: Klein's degrees agree with equality of measure.
-* `kleinPreorder_eq_kampPreorder`: the equative is Kamp's *at least as* over all completions.
+* `isStrictWeakOrder_outranks`: under monotonicity the ordering is a strict weak order.
+* `kleinDegree_ofMeasure`: Klein's degrees agree with equality of measure.
+* `preorder_le_iff_kampPreorder_le`: the equative is Kamp's *at least as* over all completions.
 
 ## Implementation notes
 
 * The measure-induced delineation, its monotonicity and its ordering-to-degree equivalence are
-  substrate (`measureDelineation`, `ordering_iff_degree`); the study states what the paper
-  adds on top of them.
+  substrate (`Delineation.ofMeasure`, `Delineation.outranks_ofMeasure_iff`); the study states
+  what the paper adds on top of them.
 
 ## References
 
@@ -39,7 +39,7 @@ two entities each above the other, which monotonicity forbids. Klein's *as … a
 
 namespace Klein1980
 
-open Degree.Delineation
+open Degree
 
 /-! ### Linear and nonlinear adjectives (§2.2, §3.3)
 
@@ -54,47 +54,42 @@ inductive Clever2
 
 /-- This delineation for *clever* applies two conflicting criteria. Jude is clever when Mona is
 absent from the comparison class, Mona when Jude is, and neither when both are present. -/
-def cleverDel : ComparisonClass Clever2 → Clever2 → Prop
-  | C, .j => Clever2.m ∉ C
-  | C, .m => Clever2.j ∉ C
+def cleverDel : Delineation Clever2 :=
+  ⟨fun C ↦ {x | match x with | .j => Clever2.m ∉ C | .m => Clever2.j ∉ C}⟩
 
 /-- The clever delineation is nonlinear, since in the class of both each is ordered above the
 other. -/
-theorem clever_nonlinear : IsNonlinearDelineation cleverDel :=
+theorem clever_nonlinear : cleverDel.IsNonlinear :=
   ⟨{Clever2.j, Clever2.m}, Clever2.j, Clever2.m,
     ⟨{Clever2.j}, by simp, by simp [cleverDel], by simp [cleverDel]⟩,
     ⟨{Clever2.m}, by simp, by simp [cleverDel], by simp [cleverDel]⟩⟩
 
 /-- The clever delineation is not monotone, so no measure function induces it. -/
-theorem clever_not_monotone : ¬ IsMonotoneDelineation cleverDel Set.univ :=
-  fun h ↦ h.not_isNonlinearDelineation clever_nonlinear
+theorem clever_not_monotone : ¬ cleverDel.IsMonotone :=
+  fun h ↦ h.not_isNonlinear clever_nonlinear
 
 /-! ### *Very* narrows the comparison class (eq. 42)
 
 *Very* narrows the comparison class to the positive extension. The substrate's
-`very_entails_base` needs Klein's domain restriction, that a delineation classifies only members
-of its class; measure-induced delineations lack it, yet `very A → A` holds for them by
+`Delineation.very_subset` needs Klein's domain restriction, that a delineation classifies only
+members of its class; measure-induced delineations lack it, yet *very A* entails *A* for them by
 transitivity of the measure order, while being tall does not make one very tall. -/
 
+variable {E D : Type*} [LinearOrder D]
+
 /-- Under a measure-induced delineation *very A* entails *A*. -/
-theorem measureDelineation_very_entails_base {E D : Type*} [LinearOrder D]
-    (μ : E → D) (C : ComparisonClass E) (x : E)
-    (hv : veryDelineation (measureDelineation μ) C x) :
-    measureDelineation μ C x := by
-  obtain ⟨y, hy, hlt⟩ := hv
-  obtain ⟨z, hz, hlt'⟩ := hy
-  exact ⟨z, hz, lt_trans hlt' hlt⟩
+theorem very_ofMeasure_subset (μ : E → D) (C : Set E) :
+    (Delineation.ofMeasure μ).very C ⊆ Delineation.ofMeasure μ C :=
+  fun _ ⟨_, ⟨z, hz, hlt'⟩, hlt⟩ ↦ ⟨z, hz, hlt'.trans hlt⟩
 
 /-- An entity tall relative to everyone need not be tall relative to the tall; such an entity is
 *fairly tall*. -/
-theorem very_strictly_stronger :
-    ∃ (E : Type) (del : ComparisonClass E → E → Prop) (C : ComparisonClass E) (x : E),
-      del C x ∧ ¬ veryDelineation del C x := by
-  refine ⟨Fin 3, fun C x ↦ ∃ y ∈ C, (y : Fin 3) < x, Set.univ, (1 : Fin 3),
-    ⟨0, Set.mem_univ _, by omega⟩, ?_⟩
-  intro ⟨y, hy, hlt⟩
-  simp only [Set.mem_ofPred_eq] at hy
-  obtain ⟨z, _, hlt_z⟩ := hy
+theorem exists_mem_not_mem_very :
+    ∃ x : Fin 3, x ∈ Delineation.ofMeasure id Set.univ ∧
+      x ∉ (Delineation.ofMeasure id).very Set.univ := by
+  refine ⟨1, ⟨0, Set.mem_univ _, by decide⟩, ?_⟩
+  rintro ⟨y, ⟨z, -, hzy⟩, hy⟩
+  simp only [id] at hzy hy
   omega
 
 /-! ### Degrees recovered (§4.2, eq. 62)
@@ -104,81 +99,51 @@ of entities nondistinct from `u`, so degrees emerge from comparison classes rath
 primitive. -/
 
 /-- Klein's degree of `u` at a comparison class is the set of entities nondistinct from `u`. -/
-def kleinDegree {E : Type*} (delineation : ComparisonClass E → E → Prop)
-    (cc : ComparisonClass E) (u : E) : Set E :=
-  {u' | nondistinct delineation cc u u'}
+def kleinDegree (d : Delineation E) (C : Set E) (u : E) : Set E :=
+  {v | d.Nondistinct C u v}
 
 /-- For measure-induced delineations, two entities share a Klein degree iff they share a
 measure value. -/
-theorem kleinDegree_measureDelineation {E D : Type*} [LinearOrder D]
-    (μ : E → D) (cc : ComparisonClass E) (a b : E) (ha : a ∈ cc) (hb : b ∈ cc) :
-    b ∈ kleinDegree (measureDelineation μ) cc a ↔ μ a = μ b := by
-  simp only [kleinDegree, Set.mem_ofPred_eq, nondistinct, measureDelineation]
-  constructor
-  · intro h
-    by_contra hne
-    rcases lt_or_gt_of_ne hne with hlt | hgt
-    · have := (h {a, b} (by intro x hx; rcases hx with rfl | rfl <;> assumption)
-        (Set.mem_insert _ _) (Set.mem_insert_of_mem _ rfl)).mpr ⟨a, Set.mem_insert _ _, hlt⟩
-      obtain ⟨y, hy, hlt_y⟩ := this
-      rcases hy with rfl | rfl
-      · exact absurd hlt_y (lt_irrefl _)
-      · exact absurd hlt_y (not_lt.mpr (le_of_lt hlt))
-    · have := (h {a, b} (by intro x hx; rcases hx with rfl | rfl <;> assumption)
-        (Set.mem_insert _ _) (Set.mem_insert_of_mem _ rfl)).mp
-          ⟨b, Set.mem_insert_of_mem _ rfl, hgt⟩
-      obtain ⟨y, hy, hlt_y⟩ := this
-      rcases hy with rfl | rfl
-      · exact absurd hlt_y (not_lt.mpr (le_of_lt hgt))
-      · exact absurd hlt_y (lt_irrefl _)
-  · intro heq X _ _ _
-    simp [heq]
+theorem kleinDegree_ofMeasure (μ : E → D) {C : Set E} {a b : E} (ha : a ∈ C) (hb : b ∈ C) :
+    b ∈ kleinDegree (Delineation.ofMeasure μ) C a ↔ μ a = μ b := by
+  have hab : ({a, b} : Set E) ⊆ C := Set.insert_subset ha (Set.singleton_subset_iff.2 hb)
+  refine ⟨fun h ↦ by_contra fun hne ↦ ?_, fun heq X _ _ _ ↦ by simp [heq]⟩
+  have key := h {a, b} hab (Set.mem_insert _ _) (Set.mem_insert_of_mem _ rfl)
+  simp only [Delineation.mem_ofMeasure, Set.mem_insert_iff, Set.mem_singleton_iff,
+    exists_eq_or_imp, exists_eq_left, lt_irrefl, false_or, or_false] at key
+  rcases lt_or_gt_of_ne hne with hlt | hgt
+  · exact lt_asymm (key.2 hlt) hlt
+  · exact lt_asymm hgt (key.1 hgt)
 
 /-! ### Non-triviality (§5) -/
 
 /-- A delineation is non-trivial when every comparison class with at least two members contains
 a member in the extension and a member outside it. -/
-def IsNontrivialDelineation {Entity : Type*}
-    (delineation : ComparisonClass Entity → Entity → Prop) : Prop :=
-  ∀ C : ComparisonClass Entity, (∃ a b : Entity, a ∈ C ∧ b ∈ C ∧ a ≠ b) →
-    ∃ u v : Entity, u ∈ C ∧ v ∈ C ∧ delineation C u ∧ ¬ delineation C v
+def IsNontrivial (d : Delineation E) : Prop :=
+  ∀ C : Set E, (∃ a ∈ C, ∃ b ∈ C, a ≠ b) → ∃ u ∈ C, ∃ v ∈ C, u ∈ d C ∧ v ∉ d C
 
 /-! ### The ordering is a strict weak order (§6)
 
-Under monotonicity the context-relative ordering is asymmetric and negatively transitive, the
-same ordering structure a degree scale would give without degrees in the ontology; transitivity
-and almost connectedness follow. -/
+Under monotonicity the context-relative ordering is irreflexive, transitive and has transitive
+incomparability, the ordering structure a degree scale would give without degrees in the
+ontology. -/
 
 /-- Under monotonicity the ordering is a strict weak order. -/
-theorem klein_strict_weak_order {Entity : Type*}
-    (delineation : ComparisonClass Entity → Entity → Prop)
-    (hmono : IsMonotoneDelineation delineation Set.univ) (cc : ComparisonClass Entity) :
-    (∀ u v, ordering delineation cc u v → ¬ ordering delineation cc v u) ∧
-      (∀ u v w, ordering delineation cc u w →
-        ordering delineation cc u v ∨ ordering delineation cc v w) :=
-  ⟨fun _ _ ↦ ordering_asymm delineation hmono, fun _ _ _ ↦ ordering_neg_trans delineation⟩
-
-/-- Transitivity from asymmetry and negative transitivity. -/
-theorem klein_transitivity_derived {Entity : Type*}
-    (delineation : ComparisonClass Entity → Entity → Prop)
-    (hmono : IsMonotoneDelineation delineation Set.univ) (cc : ComparisonClass Entity)
-    (u v w : Entity) (huv : ordering delineation cc u v) (hvw : ordering delineation cc v w) :
-    ordering delineation cc u w := by
-  rcases ordering_neg_trans (v := u) delineation hvw with h | h
-  · exact absurd h (ordering_asymm delineation hmono huv)
-  · exact h
+theorem isStrictWeakOrder_outranks {d : Delineation E} (hmono : d.IsMonotone) (C : Set E) :
+    IsStrictWeakOrder E (d.Outranks C) where
+  irrefl _ := fun ⟨_, _, h, h'⟩ ↦ h' h
+  trans _ _ _ := hmono.outranks_trans
+  incomp_trans _ b _ := fun ⟨hab, hba⟩ ⟨hbc, hcb⟩ ↦
+    ⟨fun hac ↦ (hac.cotrans b).elim hab hbc, fun hca ↦ (hca.cotrans b).elim hcb hba⟩
 
 /-- Any two entities are ordered one way or the other or are nondistinct. -/
-theorem klein_almost_connected {Entity : Type*}
-    (delineation : ComparisonClass Entity → Entity → Prop) (cc : ComparisonClass Entity)
-    (u v : Entity) :
-    ordering delineation cc u v ∨ ordering delineation cc v u ∨
-      nondistinct delineation cc u v := by
-  by_cases h1 : ordering delineation cc u v
-  · exact Or.inl h1
-  · by_cases h2 : ordering delineation cc v u
-    · exact Or.inr (Or.inl h2)
-    · exact Or.inr (Or.inr (nondistinct_of_incomparable h1 h2))
+theorem outranks_or_outranks_or_nondistinct (d : Delineation E) (C : Set E) (u v : E) :
+    d.Outranks C u v ∨ d.Outranks C v u ∨ d.Nondistinct C u v := by
+  by_cases h1 : d.Outranks C u v
+  · exact .inl h1
+  · by_cases h2 : d.Outranks C v u
+    · exact .inr (.inl h2)
+    · exact .inr (.inr (Delineation.nondistinct_of_not_outranks h1 h2))
 
 /-! ### *As … as* and Kamp's *at least as* (§5.3)
 
@@ -186,9 +151,8 @@ Both quantify universally over ways of making the predicate precise, completions
 comparison classes for Klein, so over all completions the two preorders coincide. -/
 
 /-- Klein's preorder is Kamp's over all completions of the same extension function. -/
-theorem kleinPreorder_eq_kampPreorder {E : Type*}
-    (delineation : ComparisonClass E → E → Prop) (u u' : E) :
-    (kleinPreorder delineation).le u u' ↔ (Kamp1975.kampPreorder delineation Set.univ).le u u' :=
-  ⟨fun h c _ ↦ h c, fun h c ↦ h c (Set.mem_univ _)⟩
+theorem preorder_le_iff_kampPreorder_le (d : Delineation E) (u v : E) :
+    d.preorder.le u v ↔ (Kamp1975.kampPreorder (fun C x ↦ x ∈ d C) Set.univ).le u v :=
+  d.preorder_le_iff.trans ⟨fun h c _ ↦ h c, fun h c ↦ h c (Set.mem_univ _)⟩
 
 end Klein1980

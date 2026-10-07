@@ -646,16 +646,13 @@ variable (ord : SemanticOrdering I) (R : L.Relations 1) (w : W)
 /-- The delineation induced by a ranked interpretation family takes the extensions of `R` in the
 ≤-cone as the admissible comparison classes, and `x` is `R` in `C` iff `x ∈ C`. It instantiates
 Klein's comparison-class parameter. -/
-def interpretationDelineation (i : I) :
-    Degree.Delineation.ComparisonClass E → E → Prop :=
-  fun C x ↦
-    (∃ i', ord.le i' i ∧ C = ext₁ (interp i' w) R) ∧ x ∈ C
+def interpretationDelineation (i : I) : Degree.Delineation E :=
+  ⟨fun C ↦ {x | (∃ i', ord.le i' i ∧ C = ext₁ (interp i' w) R) ∧ x ∈ C}⟩
 
 /-- The delineation comparative over the induced delineation is the existential witness clause of
 the metalinguistic comparative, under which some cone extension separates `a` from `b`. -/
-theorem delineation_comparativeSem_iff (i : I) (a b : E) :
-    Degree.Delineation.comparativeSem
-      (interpretationDelineation interp ord R w i) a b ↔
+theorem delineation_comparative_iff (i : I) (a b : E) :
+    (interpretationDelineation interp ord R w i).Comparative a b ↔
     ∃ i', ord.le i' i ∧ a ∈ ext₁ (interp i' w) R ∧ b ∉ ext₁ (interp i' w) R := by
   constructor
   · rintro ⟨C, ⟨⟨i', h_le, rfl⟩, h_aC⟩, h_nb⟩
@@ -665,14 +662,14 @@ theorem delineation_comparativeSem_iff (i : I) (a b : E) :
       fun h ↦ h_b h.2⟩
 
 /-- Under No Reversal, the metalinguistic comparative for a gradable predicate is Klein's
-delineation comparative (`Delineation.comparativeSem`) over the delineation that the interpretations
+delineation comparative (`Delineation.Comparative`) over the delineation that the interpretations
 induce, since No Reversal makes the domination clause of the comparative redundant. -/
 theorem eval_mc_iff_delineation_of_noReversal (i : I) (a b : E)
     (hnr : NoReversal interp ord R w b a) :
     Eval interp (.comp (.matom R a) (.matom R b)) ord i w ↔
-    Degree.Delineation.comparativeSem
-      (interpretationDelineation interp ord R w i) a b := by
-  rw [Eval, ComparativeFormula.realize_comp_iff, delineation_comparativeSem_iff]
+    (interpretationDelineation interp ord R w i).Comparative
+      a b := by
+  rw [Eval, ComparativeFormula.realize_comp_iff, delineation_comparative_iff]
   simp only [ComparativeFormula.realize_matom, ← mem_ext₁]
   constructor
   · rintro ⟨i', h_le, h_A, h_B, -⟩
@@ -979,7 +976,7 @@ theorem strictlyBetter_irrefl (X : Finset I) :
   intro ⟨i', hi', _, _, _⟩
   simp at hi'
 
-/-- Equivalence refutes strict ordering: equivalent sets are incomparable. -/
+/-- Equivalence refutes strict ordering, since equivalent sets are incomparable. -/
 theorem degreeEquiv_not_strictlyBetter (X Y : Finset I) :
     degreeEquiv ord i X Y → ¬ strictlyBetter ord i X Y := by
   intro h_eq ⟨i', h_sdiff, _, h_ymx, h_inner⟩
@@ -1749,10 +1746,10 @@ there. -/
 theorem diverge_without_noReversal :
     ¬ NoReversal reversing ord₃ Pred1.tall .w0 .ben .ann ∧
     ¬ Eval reversing (.comp Ta Tb) ord₃ .i2 .w0 ∧
-    Degree.Delineation.comparativeSem
-      (interpretationDelineation reversing ord₃ Pred1.tall .w0 .i2) .ann .ben :=
+    (interpretationDelineation reversing ord₃ Pred1.tall .w0 .i2).Comparative
+      .ann .ben :=
   ⟨by decide, by decide,
-    (delineation_comparativeSem_iff reversing ord₃ Pred1.tall .w0 .i2 .ann .ben).mpr
+    (delineation_comparative_iff reversing ord₃ Pred1.tall .w0 .i2 .ann .ben).mpr
       ⟨.i0, by decide, by decide, by decide⟩⟩
 
 /-! ### Equative transitivity -/
