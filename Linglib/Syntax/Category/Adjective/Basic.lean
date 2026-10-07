@@ -19,7 +19,7 @@ same type with `dimension = none`.
 The **degree-semantic** layer lives one layer up, in `Semantics/Degree/Adjective.lean`, where the
 scale's boundedness, positive standard, and Kennedy class *become relevant*: the
 `GradableAdjective` refinement there `extends Adjective` with the `lexicalStandard`
-and derives `scaleType`/`standard`/`adjectiveClass` from the (shape, pole, override).
+and derives `boundedness`/`standard`/`adjectiveClass` from the (shape, pole, override).
 This file deliberately does not depend on the Degree/Kennedy semantics.
 
 ## Deferred (earn their consumers, cf. `Pronoun`'s deferred capability tower)
@@ -41,16 +41,16 @@ open Degree (ScalarDimension)
 
 /-! ### Comparison morphology -/
 
-/-- How a comparative or superlative grade is formed: by affixation or by a degree word.
-Suppletion is orthogonal, recorded by the root pattern `suppletion`; *better* is synthetic and
+/-- A comparative or superlative grade is formed by affixation or by a degree word. Suppletion is
+orthogonal, recorded by the root pattern `suppletion`; *better* is synthetic and
 suppletive. -/
 inductive Adjective.ComparisonStrategy
   | synthetic | periphrastic
   deriving DecidableEq, Repr, BEq
 
-/-- The comparison paradigm of an adjective: the comparative and superlative forms, how each
-    grade is formed, and the root pattern over the three grades, whose *ABA constraint lives in
-    `Morphology/Paradigm/Contiguity.lean` ([bobaljik-2012]). -/
+/-- The comparison paradigm of an adjective records the comparative and superlative forms, how
+    each grade is formed, and the root pattern over the three grades, whose *ABA constraint lives
+    in `Morphology/Paradigm/Contiguity.lean` ([bobaljik-2012]). -/
 structure Adjective.Comparison where
   formComp  : Option String := none
   formSuper : Option String := none
@@ -67,16 +67,17 @@ namespace Adjective.Comparison
 /-- No comparison forms recorded (the default). -/
 def regular : Adjective.Comparison := {}
 
-/-- Synthetic comparison: a comparative and a superlative form on one root. -/
+/-- Synthetic comparison forms a comparative and a superlative on one root. -/
 def synthetic (comparative superlative : String) : Adjective.Comparison :=
   { formComp := comparative, formSuper := superlative }
 
-/-- Periphrastic comparison: *more X* and *most X*. -/
+/-- Periphrastic comparison forms *more X* and *most X*. -/
 def periphrastic (comparative superlative : String) : Adjective.Comparison :=
   { formComp := comparative, formSuper := superlative
   , comparativeStrategy := .periphrastic, superlativeStrategy := .periphrastic }
 
-/-- Synthetic comparison on another root, in the given root pattern: *good – better – best*. -/
+/-- Suppletive comparison forms the grades on another root, in the given root pattern, as in
+*good – better – best*. -/
 def suppletive (comparative superlative : String)
     (pattern : Morphology.Paradigm 3 ℕ := Morphology.Paradigm.abb) : Adjective.Comparison :=
   { formComp := comparative, formSuper := superlative, suppletion := pattern }
@@ -85,16 +86,11 @@ end Adjective.Comparison
 
 /-! ### The adjective object -/
 
-/-- The adjective lexeme: the syntactic core every adjective shares — surface form,
-    the scalar `dimension` key + lexicalized pole, comparison morphology, and lexical
-    antonymy. Carries no denotation of its own (cf. `Pronoun`); the degree-semantic
-    interpretation of `dimension`/pole is derived one layer up, on `GradableAdjective`
-    in `Semantics/Degree/Adjective.lean`.
-
-    Gradability is **not** a type split: it is the derived predicate `IsGradable`
-    (`dimension.isSome`); a non-gradable adjective is the same type with
-    `dimension = none`. Coexists with `namespace Adjective` (a type and a namespace may
-    share a name). -/
+/-- An adjective lexeme records the syntactic core every adjective shares, its surface form, its
+    scalar dimension and pole, its comparison morphology and its lexical antonym. It carries no
+    denotation of its own; the degree semantics is `GradableAdjective` in
+    `Semantics/Degree/Adjective.lean`. Gradability is the derived predicate `IsGradable`, and a
+    non-gradable adjective has no dimension. -/
 structure Adjective where
   /-- Surface form (citation/positive-grade). -/
   form : String
@@ -104,7 +100,7 @@ structure Adjective where
       `none` for classifying/relational adjectives (*wooden*, *former*, *medical*)
       and other non-gradables. -/
   dimension : Option ScalarDimension := none
-  /-- The direction of the ordering the adjective imposes on its `dimension`: antonyms share a
+  /-- The direction of the ordering the adjective imposes on its `dimension`. Antonyms share a
       dimension and reverse the ordering (*tall* positive, *short* negative), so the negative
       member measures on the dual scale. -/
   polarity : Polarity := .positive

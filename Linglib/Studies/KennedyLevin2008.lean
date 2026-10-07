@@ -188,7 +188,7 @@ end Modifiers
 /-- For any measure function into a dimension's degrees, a degree achievement on the dimension
 is by default an accomplishment when the preferred standard on the scale of its measure of
 change is the maximum, and an activity otherwise. -/
-theorem defaultVendlerClass_eq {α T : Type*} (d : ScalarDimension) (m : α → T → d.degree)
+theorem defaultVendlerClass_eq {α T : Type*} (d : ScalarDimension) (m : α → T → d.Scale)
     (x : α) (i : T) :
     d.defaultVendlerClass =
       if (Boundedness.ofOrder (Ici (m x i))).defaultStandard = .maxEndpoint then .accomplishment
@@ -225,7 +225,7 @@ def pairs : List (GradableAdjective × Verb) :=
 
 /-- A degree achievement measures on its adjective's scale. -/
 theorem adjective_verb_scales :
-    ∀ p ∈ pairs, p.2.changeScale = some p.1.scaleType := by
+    ∀ p ∈ pairs, p.2.changeScale = some p.1.boundedness := by
   decide
 
 /-- A degree achievement takes *in X* exactly when its scale is closed above, and *for X*

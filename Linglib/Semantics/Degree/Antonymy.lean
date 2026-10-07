@@ -36,18 +36,18 @@ or a bad property, is a second axis on which the poles differ, distinct from pol
   order dual.
 * `EvaluativeValence`: whether a gradable predicate denotes a good, a bad or a neutral property.
 * `ThresholdPair` and its `ThresholdPair.gap`, the interval between the two thresholds.
-* `AntonymForm` with `AntonymForm.contradictoryDenot`, `AntonymForm.strengthenedDenot` and
+* `AntonymForm` with `AntonymForm.contradictoryDenotation`, `AntonymForm.strengthenedDenotation` and
   `AntonymForm.complexity`.
 
 ## Main results
 
-* `AntonymForm.contradictoryDenot_notPositive`: contradictory negation is the complement, so
+* `AntonymForm.contradictoryDenotation_notPositive`: contradictory negation is the complement, so
   double negation eliminates.
-* `ThresholdPair.gap_nonempty_iff`, `AntonymForm.strengthenedDenot_notNegative_diff_positive`,
-  `AntonymForm.strengthenedDenot_notPositive_diff_negative`: a pair leaves a gap when its lower
+* `ThresholdPair.gap_nonempty_iff`, `AntonymForm.strengthenedDenotation_notNegative_diff_positive`,
+  `AntonymForm.strengthenedDenotation_notPositive_diff_negative`: a pair leaves a gap when its lower
   threshold does not exceed its upper one, and the gap is what each negated form adds to the
   opposite simple form.
-* `isCompl_contradictoryDenot`, `isContrary_strengthenedDenot`: the two denotations
+* `isCompl_contradictoryDenotation`, `isContrary_strengthenedDenotation`: the two denotations
   realize the two cells of the Aristotelian square.
 
 ## References
@@ -71,7 +71,7 @@ namespace Degree
 ordering, so the antonym of *short* is *tall*. Markedness is a separate matter, since equipollent
 pairs like *hot* and *cold* have no unmarked member. Sentential negation acts on the adjective's
 denotation by complement instead, so *not short* is the contradictory of *short* and does not
-entail *tall* (`AntonymForm.strengthenedDenot`). -/
+entail *tall* (`AntonymForm.strengthenedDenotation`). -/
 instance : MulAction Polarity Boundedness where
   smul
     | .positive, b => b
@@ -190,14 +190,14 @@ variable {D : Type*}
 that the four forms collapse to two, *happy* and *not unhappy* above it, *not happy* and
 *unhappy* at or below it. This is the literal semantics [krifka-2007b] attributes to a pair
 before pragmatic strengthening. -/
-def contradictoryDenot [Preorder D] (θ : D) : AntonymForm → Set D
+def contradictoryDenotation [Preorder D] (θ : D) : AntonymForm → Set D
   | .positive | .notNegative => Set.Ioi θ
   | .notPositive | .negative => Set.Iic θ
 
 /-- The strengthened denotation of a form on a threshold pair, whose gap lifts *not unhappy*
 away from *happy* and *not happy* away from *unhappy*. This is the effective semantics after
 strengthening ([krifka-2007b]) or the lexical one ([alexandropoulou-gotzner-2024a]). -/
-def strengthenedDenot [Preorder D] (tp : ThresholdPair D) : AntonymForm → Set D
+def strengthenedDenotation [Preorder D] (tp : ThresholdPair D) : AntonymForm → Set D
   | .positive => Set.Ioi tp.pos
   | .notPositive => Set.Iic tp.pos
   | .negative => Set.Iio tp.neg
@@ -206,42 +206,43 @@ def strengthenedDenot [Preorder D] (tp : ThresholdPair D) : AntonymForm → Set 
 variable [LinearOrder D] (θ : D) (tp : ThresholdPair D)
 
 /-- Under the contradictory denotation *unhappy* is *not happy* and *not unhappy* is *happy*. -/
-theorem contradictoryDenot_synonymy :
-    contradictoryDenot θ .negative = contradictoryDenot θ .notPositive ∧
-      contradictoryDenot θ .notNegative = contradictoryDenot θ .positive :=
+theorem contradictoryDenotation_synonymy :
+    contradictoryDenotation θ .negative = contradictoryDenotation θ .notPositive ∧
+      contradictoryDenotation θ .notNegative = contradictoryDenotation θ .positive :=
   ⟨rfl, rfl⟩
 
 /-- Contradictory negation is the complement of the positive form, so double negation
 eliminates and *not unhappy* is *happy*, the puzzle Krifka solves pragmatically. -/
-theorem contradictoryDenot_notPositive :
-    contradictoryDenot θ .notPositive = (contradictoryDenot θ .positive)ᶜ :=
+theorem contradictoryDenotation_notPositive :
+    contradictoryDenotation θ .notPositive = (contradictoryDenotation θ .positive)ᶜ :=
   Set.compl_Ioi.symm
 
 /-- What *not unhappy* adds to *happy* under the strengthened denotation is the gap. -/
-theorem strengthenedDenot_notNegative_diff_positive :
-    strengthenedDenot tp .notNegative \ strengthenedDenot tp .positive = tp.gap := by
-  rw [strengthenedDenot, strengthenedDenot, Set.sdiff_eq, Set.compl_Ioi, Set.Ici_inter_Iic,
-    ThresholdPair.gap]
+theorem strengthenedDenotation_notNegative_diff_positive :
+    strengthenedDenotation tp .notNegative \ strengthenedDenotation tp .positive = tp.gap := by
+  rw [strengthenedDenotation, strengthenedDenotation, Set.sdiff_eq, Set.compl_Ioi,
+    Set.Ici_inter_Iic, ThresholdPair.gap]
 
 /-- What *not happy* adds to *unhappy* under the strengthened denotation is the gap too. -/
-theorem strengthenedDenot_notPositive_diff_negative :
-    strengthenedDenot tp .notPositive \ strengthenedDenot tp .negative = tp.gap := by
-  rw [strengthenedDenot, strengthenedDenot, Set.sdiff_eq, Set.compl_Iio, Set.inter_comm,
+theorem strengthenedDenotation_notPositive_diff_negative :
+    strengthenedDenotation tp .notPositive \ strengthenedDenotation tp .negative = tp.gap := by
+  rw [strengthenedDenotation, strengthenedDenotation, Set.sdiff_eq, Set.compl_Iio, Set.inter_comm,
     Set.Ici_inter_Iic, ThresholdPair.gap]
 
 /-- With one threshold the negative form is the complement of the positive form, so the pair is
 contradictory. -/
-theorem isCompl_contradictoryDenot :
-    IsCompl (contradictoryDenot θ .positive) (contradictoryDenot θ .negative) :=
-  contradictoryDenot_notPositive θ ▸ isCompl_compl
+theorem isCompl_contradictoryDenotation :
+    IsCompl (contradictoryDenotation θ .positive) (contradictoryDenotation θ .negative) :=
+  contradictoryDenotation_notPositive θ ▸ isCompl_compl
 
 open Aristotelian in
 /-- With a pair that leaves a gap the positive and negative forms are disjoint but not
 exhaustive, so the pair is contrary. -/
-theorem isContrary_strengthenedDenot (h : tp.neg ≤ tp.pos) :
-    IsContrary (strengthenedDenot tp .positive) (strengthenedDenot tp .negative) :=
+theorem isContrary_strengthenedDenotation (h : tp.neg ≤ tp.pos) :
+    IsContrary (strengthenedDenotation tp .positive) (strengthenedDenotation tp .negative) :=
   ⟨Set.Ioi_disjoint_Iio_of_le h, fun hco ↦ by
-    have hmem : tp.neg ∈ strengthenedDenot tp .positive ⊔ strengthenedDenot tp .negative := by
+    have hmem :
+        tp.neg ∈ strengthenedDenotation tp .positive ⊔ strengthenedDenotation tp .negative := by
       rw [hco.eq_top]; trivial
     exact hmem.elim (fun hp ↦ h.not_gt hp) (lt_irrefl _)⟩
 

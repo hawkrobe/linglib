@@ -28,7 +28,7 @@ endpoint rules out the contextual standard, and a totally closed scale prefers i
 * `Boundedness.dual`: the boundedness with its ends exchanged.
 * `Boundedness.withMin`: the boundedness with a least degree adjoined.
 * `Boundedness.withMax`: the boundedness with a greatest degree adjoined.
-* `Boundedness.degreeShape`: a linear order of each boundedness.
+* `Boundedness.DegreeShape`: a linear order of each boundedness.
 * `PositiveStandard`: the standards of the positive form.
 * `Boundedness.Admits`: the standards Interpretive Economy admits on a scale.
 * `Boundedness.defaultStandard`: the standard Interpretive Economy prefers on a scale.
@@ -235,19 +235,19 @@ end Interval
 
 /-! ### A linear order of each shape -/
 
-/-- `b.degreeShape` is the integers with the endpoints of `b` adjoined, a linear order of each
+/-- `b.DegreeShape` is the integers with the endpoints of `b` adjoined, a linear order of each
 boundedness. -/
-abbrev degreeShape : Boundedness → Type
+abbrev DegreeShape : Boundedness → Type
   | .open_ => ℤ
   | .lowerClosed => WithBot ℤ
   | .upperClosed => WithTop ℤ
   | .closed => WithTop (WithBot ℤ)
 
-instance instLinearOrderDegreeShape (b : Boundedness) : LinearOrder b.degreeShape := by
+instance instLinearOrderDegreeShape (b : Boundedness) : LinearOrder b.DegreeShape := by
   cases b <;> exact inferInstance
 
-/-- Every boundedness is that of a linear order, since `degreeShape` is a section of `ofOrder`. -/
-@[simp] theorem ofOrder_degreeShape : ∀ b : Boundedness, ofOrder b.degreeShape = b
+/-- Every boundedness is that of a linear order, since `DegreeShape` is a section of `ofOrder`. -/
+@[simp] theorem ofOrder_degreeShape : ∀ b : Boundedness, ofOrder b.DegreeShape = b
   | .open_ => ext (iff_of_false not_hasMin_ofOrder id) (iff_of_false not_hasMax_ofOrder id)
   | .lowerClosed =>
     ext (iff_of_true hasMin_ofOrder_of_orderBot trivial) (iff_of_false not_hasMax_ofOrder id)
@@ -257,10 +257,10 @@ instance instLinearOrderDegreeShape (b : Boundedness) : LinearOrder b.degreeShap
     ext (iff_of_true hasMin_ofOrder_of_orderBot trivial)
       (iff_of_true hasMax_ofOrder_of_orderTop trivial)
 
-theorem exists_isBot_degreeShape (b : Boundedness) : (∃ m : b.degreeShape, IsBot m) ↔ b.HasMin := by
+theorem exists_isBot_degreeShape (b : Boundedness) : (∃ m : b.DegreeShape, IsBot m) ↔ b.HasMin := by
   rw [← hasMin_ofOrder, ofOrder_degreeShape]
 
-theorem exists_isTop_degreeShape (b : Boundedness) : (∃ m : b.degreeShape, IsTop m) ↔ b.HasMax := by
+theorem exists_isTop_degreeShape (b : Boundedness) : (∃ m : b.DegreeShape, IsTop m) ↔ b.HasMax := by
   rw [← hasMax_ofOrder, ofOrder_degreeShape]
 
 end Boundedness

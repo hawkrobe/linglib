@@ -25,7 +25,7 @@ relative to a contextual range, is left to the studies.
 
 * `AdjectiveClass`: Kennedy's classes of gradable adjectives.
 * `GradableAdjective`: a syntactic adjective with its degree semantics.
-* `GradableAdjective.scaleType`: the scale an adjective measures on.
+* `GradableAdjective.boundedness`: the scale an adjective measures on.
 * `GradableAdjective.standard`: the positive standard of an adjective.
 * `AntonymPair`: the two polar adjectives of one scale.
 * `AntonymPair.ComplementaryStandards`: the poles take the minimum and the maximum, and so are
@@ -110,17 +110,17 @@ namespace GradableAdjective
 
 /-- The scale an adjective measures on is its dimension's, dualized for the negative member of
 an antonym pair, and open for a non-gradable adjective, which has none. -/
-def scaleType (g : GradableAdjective) : Boundedness :=
+def boundedness (g : GradableAdjective) : Boundedness :=
   (g.dimension.map fun d ↦ g.polarity • d.boundedness).getD .open_
 
 /-- The positive standard of an adjective is its lexically fixed one if any, and otherwise its
 scale's default. -/
 def standard (g : GradableAdjective) : PositiveStandard :=
-  g.lexicalStandard.getD g.scaleType.defaultStandard
+  g.lexicalStandard.getD g.boundedness.defaultStandard
 
 /-- Without a lexically fixed standard, the standard is one the scale admits. -/
 theorem admits_standard (g : GradableAdjective) (h : g.lexicalStandard = none) :
-    g.scaleType.Admits g.standard := by
+    g.boundedness.Admits g.standard := by
   simp [standard, h, Boundedness.admits_defaultStandard]
 
 /-- Kennedy's class of an adjective is read off its standard, and is non-gradable exactly when
@@ -222,7 +222,7 @@ theorem complementaryStandards_iff_of_lexicalStandard_none (p : AntonymPair)
     (hp : p.posLexicalStandard = none) (hn : p.negLexicalStandard = none) :
     p.ComplementaryStandards ↔
       p.dimension.boundedness = .lowerClosed ∨ p.dimension.boundedness = .upperClosed := by
-  simp only [ComplementaryStandards, GradableAdjective.standard, GradableAdjective.scaleType, pos,
+  simp only [ComplementaryStandards, GradableAdjective.standard, GradableAdjective.boundedness, pos,
     neg, hp, hn, Option.getD_none, Option.map_some, Boundedness.negative_smul]
   generalize p.dimension.boundedness = b
   cases b <;> decide
