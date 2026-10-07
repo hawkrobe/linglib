@@ -2,14 +2,13 @@ module
 
 public import Mathlib.Basic.NNReal.Basic
 public import Mathlib.Data.Set.Card
-public import Mathlib.Probability.Distributions.Uniform
-public import Linglib.Core.Probability.Constructions
+public import Linglib.Core.Probability.UniformOn
 public import Linglib.Data.Examples.CaoWhiteLassiter2025
 public import Mathlib.Probability.ConditionalProbability
 public import Linglib.Studies.NadathurLauer2020
 
 /-!
-# Cao, White and Lassiter (2025)
+# Cao, White and Lassiter (2025): Cause, make, and force as graded causatives
 
 Cao, White and Lassiter treat English *cause*, *make* and *force* as graded causatives. Where
 Nadathur and Lauer give *make* a categorical truth condition, causal sufficiency, they measure
@@ -23,20 +22,11 @@ soft-optimality policy.
 The paper's in-text judgments, its examples (3)–(11), are rows in
 `Data/Examples/CaoWhiteLassiter2025.json`; the regression estimates stay in prose.
 
-## Main definitions
+## Main statements
 
-* `softOptimalPolicy`: the move distribution of a player of skill `ρ`
-* `altCount`, `intentionDegree`, `modelIntention`: the ALT and INT measures
-* `suf`: the SUF measure, Pearl's probability of sufficiency over a causal model
-* `TimeIndex`: the paper's time-indexed causal models (definition 1)
-
-## Main results
-
-* `softOptimalPolicy_zero`, `softOptimalPolicy_one`: the infant and the professional
 * `intentionDegree_eq_one_of_altCount_eq_zero`: an action with no alternative comes out maximally
   intentional, so the simplified INT drops Frankfurt's alternative-possibilities condition and
   ALT carries it instead
-* `suf_dirac`: with a certain context SUF is the {0,1} indicator of the counterfactual outcome
 * `suf_eq_one_of_make`: where Nadathur and Lauer's *make* holds, SUF is 1 under every
   distribution over contexts
 * `judgment_differs_make_force`: the paper's (8) separates *make* from *force*
@@ -70,26 +60,34 @@ under which the paper's worked SUF contrast between two board states collapses, 
 deterministic professional. -/
 
 section
-variable {A : Type*} [Fintype A] [Nonempty A] (best : A) (ρ : ℝ≥0) (hρ : ρ ≤ 1)
+variable {A : Type*} [MeasurableSpace A] (best : A) (ρ : ℝ≥0∞)
+
+open MeasureTheory ProbabilityTheory
 
 /-- A player of skill `ρ` plays the highest-utility move `best` with probability `ρ` and otherwise a
 uniform random move. -/
-noncomputable def softOptimalPolicy : PMF A :=
-  PMF.mix ρ hρ (PMF.uniformOfFintype A) (PMF.pure best)
+noncomputable def softOptimalPolicy : Measure A :=
+  (1 - ρ) • uniformOn Set.univ + ρ • Measure.dirac best
 
-@[simp] theorem softOptimalPolicy_apply_best :
-    softOptimalPolicy best ρ hρ best = ρ + (1 - ρ : ℝ≥0) / Fintype.card A := by
-  simp [softOptimalPolicy, div_eq_mul_inv, add_comm]
+theorem isProbabilityMeasure_softOptimalPolicy [Finite A] [Nonempty A] (hρ : ρ ≤ 1) :
+    IsProbabilityMeasure (softOptimalPolicy best ρ) :=
+  ⟨by simp [softOptimalPolicy, tsub_add_cancel_of_le hρ]⟩
 
-@[simp] theorem softOptimalPolicy_apply_of_ne {a : A} (h : a ≠ best) :
-    softOptimalPolicy best ρ hρ a = (1 - ρ : ℝ≥0) / Fintype.card A := by
-  simp [softOptimalPolicy, PMF.pure_apply_of_ne _ _ h, div_eq_mul_inv]
+theorem softOptimalPolicy_zero : softOptimalPolicy best 0 = uniformOn Set.univ := by
+  simp [softOptimalPolicy]
 
-theorem softOptimalPolicy_zero :
-    softOptimalPolicy best 0 zero_le_one = PMF.uniformOfFintype A := PMF.mix_zero _ _
+theorem softOptimalPolicy_one : softOptimalPolicy best 1 = Measure.dirac best := by
+  simp [softOptimalPolicy]
 
-theorem softOptimalPolicy_one :
-    softOptimalPolicy best 1 le_rfl = PMF.pure best := PMF.mix_one _ _
+variable [Fintype A] [MeasurableSingletonClass A]
+
+@[simp] theorem softOptimalPolicy_singleton_best :
+    softOptimalPolicy best ρ {best} = ρ + (1 - ρ) / Fintype.card A := by
+  simp [softOptimalPolicy, uniformOn_univ_apply_singleton, div_eq_mul_inv, add_comm]
+
+@[simp] theorem softOptimalPolicy_singleton_of_ne {a : A} (h : a ≠ best) :
+    softOptimalPolicy best ρ {a} = (1 - ρ) / Fintype.card A := by
+  simp [softOptimalPolicy, uniformOn_univ_apply_singleton, h.symm, div_eq_mul_inv]
 
 end
 
@@ -100,15 +98,16 @@ taken — `ALT(Y₁) = 5` at the paper's fig. 2a board state. `ALT = 0` is the F
 could-not-have-done-otherwise configuration. -/
 
 section
-variable {A : Type*} [Fintype A] (p : PMF A) (taken : A)
+variable {A : Type*} [Fintype A] (taken : A)
 
-/-- The number of alternative actions available to the causee is the size of the support of the
-action distribution, less the action taken. -/
-noncomputable def altCount : ℕ :=
-  (p.support \ {taken}).ncard
+/-- The number of alternative actions available to the causee is the number of actions of
+positive probability other than the one taken. -/
+noncomputable def altCount [MeasurableSpace A] (μ : MeasureTheory.Measure A) : ℕ :=
+  ({a | μ {a} ≠ 0} \ {taken}).ncard
 
 /-- The causee had no alternative exactly when every other action had probability zero. -/
-theorem altCount_eq_zero_iff : altCount p taken = 0 ↔ ∀ a ≠ taken, p a = 0 := by
+theorem altCount_eq_zero_iff [MeasurableSpace A] (μ : MeasureTheory.Measure A) :
+    altCount taken μ = 0 ↔ ∀ a ≠ taken, μ {a} = 0 := by
   rw [altCount, Set.ncard_eq_zero (Set.toFinite _), Set.sdiff_eq_empty,
     Set.subset_singleton_iff]
   exact forall_congr' fun b => not_imp_comm
@@ -146,14 +145,6 @@ theorem intentionDegree_le_one : intentionDegree pr w a ≤ 1 :=
     simpa using Finset.single_le_sum (f := fun a' => pr a' * w a') (fun _ _ => zero_le)
       (Finset.mem_univ a)
 
-/-- With nonzero finite total mass, INT is mathlib's `PMF.normalize` of
-    the goal-weighted masses, evaluated at the taken action — the
-    `PMF.reweight`/`PMF.posterior` family of `Core/Probability/Posterior`. -/
-theorem intentionDegree_eq_normalize (h0 : (∑' a', pr a' * w a') ≠ 0)
-    (htop : (∑' a', pr a' * w a') ≠ ∞) :
-    intentionDegree pr w a = PMF.normalize (fun a' => pr a' * w a') h0 htop a := by
-  rw [intentionDegree, PMF.normalize_apply, div_eq_mul_inv, tsum_fintype]
-
 /-- An action that is the only goal-conducive one carries the whole normalized weight. -/
 theorem intentionDegree_eq_one_of_no_alternatives
     (h : ∀ a ≠ taken, pr a = 0) (h0 : pr taken ≠ 0) (hw : w taken ≠ 0)
@@ -164,15 +155,16 @@ theorem intentionDegree_eq_one_of_no_alternatives
   exact ENNReal.div_self (mul_ne_zero h0 (ENNReal.coe_ne_zero.mpr hw))
     (ENNReal.mul_ne_top htop ENNReal.coe_ne_top)
 
-/-- An agent who could not have done otherwise comes out maximally intentional: the simplified
-INT does not carry the alternative-possibilities condition, and ALT is what separates *made* from
-*forced*. -/
-theorem intentionDegree_eq_one_of_altCount_eq_zero
-    (hle : pr ≤ ⇑p) (h : altCount p taken = 0) (h0 : pr taken ≠ 0) (hw : w taken ≠ 0) :
-    intentionDegree pr w taken = 1 :=
+/-- An agent who could not have done otherwise comes out maximally intentional, since the
+simplified INT does not carry the alternative-possibilities condition; ALT is what separates
+*made* from *forced*. -/
+theorem intentionDegree_eq_one_of_altCount_eq_zero [MeasurableSpace A]
+    (μ : MeasureTheory.Measure A) [MeasureTheory.IsFiniteMeasure μ]
+    (hle : ∀ a, pr a ≤ μ {a}) (h : altCount taken μ = 0) (h0 : pr taken ≠ 0)
+    (hw : w taken ≠ 0) : intentionDegree pr w taken = 1 :=
   intentionDegree_eq_one_of_no_alternatives taken pr w
-    (fun a ha => le_zero_iff.mp ((altCount_eq_zero_iff p taken).mp h a ha ▸ hle a))
-    h0 hw (ne_top_of_le_ne_top (p.apply_ne_top taken) (hle taken))
+    (fun a ha => le_zero_iff.mp ((altCount_eq_zero_iff taken μ).mp h a ha ▸ hle a))
+    h0 hw (ne_top_of_le_ne_top (MeasureTheory.measure_ne_top μ _) (hle taken))
 
 end
 
@@ -189,8 +181,9 @@ noncomputable def modelIntention (ν : MeasureTheory.Measure U) (I : ∀ v, Flat
     (act : V) [Fintype (α act)] (goal : Set (∀ v, α v)) (w : α act → ℝ≥0) (a : α act) : ℝ≥0∞ :=
   intentionDegree (fun a' ↦ ν {u | M.solve I u act = a' ∧ M.solve I u ∈ goal}) w a
 
-/-- SUF, Pearl's probability of sufficiency ([pearl-2019]): among the contexts drawn from `ν`
-    in which the observation `obs` holds, the probability that setting `c := x` makes `e = y`. -/
+/-- SUF, Pearl's probability of sufficiency ([pearl-2019]), is the probability, among the
+    contexts drawn from `ν` in which the observation `obs` holds, that setting `c := x` makes
+    `e = y`. -/
 noncomputable def suf (ν : MeasureTheory.Measure U) (obs : ∀ v, Flat (α v)) (c : V) (x : α c)
     (e : V) (y : α e) : ℝ≥0∞ :=
   ProbabilityTheory.cond ν (M.contexts obs) {u | M.solve [c ← x] u e = y}
@@ -258,7 +251,7 @@ causee's alternatives, which ALT measures. -/
 theorem judgment_differs_make_force :
     Examples.cwl2025_ex8a.judgment ≠ Examples.cwl2025_ex8b.judgment := by decide
 
-/-- The gym triplets (5)–(7) grade the stronger verbs against a constant *cause*: the same three
+/-- The gym triplets (5)–(7) grade the stronger verbs against a constant *cause*. The same three
 causing events leave *caused* acceptable throughout while *forced* switches, which is why the
 account measures the causal relation rather than classifying it. -/
 theorem gym_grades_stronger_verbs :
@@ -310,7 +303,7 @@ theorem effect_iff (b : Bool) :
     model.solve [.cause ← true] b .effect = true ↔ b = true := by
   cases b <;> decide
 
-/-- SUF is the probability of the noise: graded, as the paper's measure requires. -/
+/-- SUF is the probability of the noise, graded as the paper's measure requires. -/
 theorem suf_eq {p : ℝ≥0∞} (hp : p ≤ 1) :
     suf model (background p) ⊥ .cause true .effect true = p := by
   have : MeasureTheory.IsProbabilityMeasure (background p) :=
