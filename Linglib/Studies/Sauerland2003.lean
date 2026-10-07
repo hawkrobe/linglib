@@ -12,17 +12,17 @@ Sauerland locates the interpreted number feature in a φ-head above DP and inter
 features as presuppositions: `[Sg]` is the identity function presupposing an atom (his entry
 admits an atom or a mass; `Number.dom` keeps the atomic case), `[Pl]` the identity with no
 presupposition, and Heim's Maximize Presupposition has the speaker use the most specific feature
-whose presupposition holds, (7). The plural's non-atomicity is therefore its use condition under
-competition with the singular (`useCondition_plural`), which the coordination *Kai and Lina*
-shows (`coordination_plural`), and it disappears when the singular is blocked by an independent
-factor, singular *they* (13) or polite address (14) (`useCondition_plural_of_singular_blocked`).
+whose presupposition holds, (7). In competition with the singular the plural is therefore
+unblocked only at non-atoms (`unblocked_plural`), which the coordination *Kai and Lina* shows
+(`coordination_plural`), and at atoms too once the singular is blocked by an independent factor,
+singular *they* (13) or polite address (14) (`unblocked_plural_of_singular_blocked`).
 The two domains are nested (`sg_domain_ssubset_pl`), an instance of his Feature-Subset
 Principle (46), and since the features are domain restrictions the competition is
 presuppositional rather than scalar. The person features (44) compete the same way: the second
 person is used outside the first person's domain and the third outside the participants', the
-non-participant presupposition of (47) (`useCondition_second`, `useCondition_third`), except in a
+non-participant presupposition of (47) (`unblocked_second`, `unblocked_third`), except in a
 context whose speaker is part of the addressee, where the first and second person domains
-coincide and competition cannot separate them (`useCondition_second_of_degenerate`).
+coincide and competition cannot separate them (`unblocked_second_of_degenerate`).
 
 *Every* decomposes into a definite `DER`, taking the maximal element of a cumulative
 restrictor (`der_unique`; his cover-based `*` is `Mereology.algClosure_iff_exists_sup'`),
@@ -80,9 +80,9 @@ theorem der_unique {R : E → Prop} {m₁ m₂ : E} (h₁ : Maximal (AlgClosure 
 def numberAlts : Option Number → Set (Option Number) := fun _ ↦ {some .singular, some .plural}
 
 /-- `[Sg]` is used exactly at the atoms. -/
-theorem useCondition_singular :
-    useCondition numberAlts Number.dom (some .singular) = {x : E | Atom x} := by
-  rw [useCondition_eq_of_not_blocked]
+theorem unblocked_singular :
+    unblocked numberAlts Number.dom (some .singular) = {x : E | Atom x} := by
+  rw [unblocked_eq_self]
   · ext x; exact Number.mem_dom_singular x
   · rintro ⟨ψ, hψ, hss⟩
     rcases hψ with rfl | rfl
@@ -91,9 +91,9 @@ theorem useCondition_singular :
 
 /-- `[Pl]` is used exactly at the non-atoms, the non-atomicity derived from Maximize
 Presupposition. -/
-theorem useCondition_plural (ha : Atom a) (hb : Atom b) (hne : a ≠ b) :
-    useCondition numberAlts Number.dom (some .plural) = {x : E | ¬ Atom x} := by
-  rw [useCondition_eq_sdiff (ψ := some .singular) (Set.mem_insert _ _)
+theorem unblocked_plural (ha : Atom a) (hb : Atom b) (hne : a ≠ b) :
+    unblocked numberAlts Number.dom (some .plural) = {x : E | ¬ Atom x} := by
+  rw [unblocked_eq_sdiff (ψ := some .singular) (Set.mem_insert _ _)
     (sg_domain_ssubset_pl ha hb hne)]
   · ext x; simp [Number.mem_dom_singular]
   · rintro χ (rfl | rfl) hss
@@ -101,18 +101,18 @@ theorem useCondition_plural (ha : Atom a) (hb : Atom b) (hne : a ≠ b) :
     · exact absurd rfl hss.ne
 
 /-- With `[Sg]` blocked by an independent factor, `[Pl]` is used of atoms too, (13)–(14). -/
-theorem useCondition_plural_of_singular_blocked :
-    useCondition (fun _ ↦ {some .plural}) (Number.dom (E := E)) (some .plural) = Set.univ := by
-  rw [useCondition_eq_of_not_blocked, Number.dom_plural]
+theorem unblocked_plural_of_singular_blocked :
+    unblocked (fun _ ↦ {some .plural}) (Number.dom (E := E)) (some .plural) = Set.univ := by
+  rw [unblocked_eq_self, Number.dom_plural]
   rintro ⟨ψ, hψ, hss⟩
   rw [Set.mem_singleton_iff.1 hψ] at hss
   exact hss.ne rfl
 
 /-- At an atom `[Pl]` is unusable while `[Sg]` competes and usable once it is blocked. -/
-theorem atom_mem_useCondition_iff (ha : Atom a) (hb : Atom b) (hne : a ≠ b) :
-    a ∉ useCondition numberAlts Number.dom (some .plural) ∧
-      a ∈ useCondition (fun _ ↦ {some .plural}) Number.dom (some .plural) := by
-  rw [useCondition_plural ha hb hne, useCondition_plural_of_singular_blocked]
+theorem atom_mem_unblocked_iff (ha : Atom a) (hb : Atom b) (hne : a ≠ b) :
+    a ∉ unblocked numberAlts Number.dom (some .plural) ∧
+      a ∈ unblocked (fun _ ↦ {some .plural}) Number.dom (some .plural) := by
+  rw [unblocked_plural ha hb hne, unblocked_plural_of_singular_blocked]
   exact ⟨fun h ↦ h ha, Set.mem_univ _⟩
 
 end Number
@@ -135,9 +135,9 @@ theorem dom_first_ssubset_dom_second (h : ¬ c.agent ≤ c.addressee) :
     (Or.inr le_rfl)))
 
 /-- The first person is used on its whole domain. -/
-theorem useCondition_first :
-    useCondition personAlts (Person.dom c) (some .first) = Person.dom c (some .first) := by
-  refine useCondition_eq_of_not_blocked ?_
+theorem unblocked_first :
+    unblocked personAlts (Person.dom c) (some .first) = Person.dom c (some .first) := by
+  refine unblocked_eq_self ?_
   rintro ⟨ψ, hψ, hss⟩
   simp only [personAlts, Set.mem_insert_iff, Set.mem_singleton_iff] at hψ
   rcases hψ with rfl | rfl | rfl
@@ -148,10 +148,10 @@ theorem useCondition_first :
 
 /-- Unless the speaker is part of the addressee, the second person is used in its domain outside
 the first person's. -/
-theorem useCondition_second (h : ¬ c.agent ≤ c.addressee) :
-    useCondition personAlts (Person.dom c) (some .second) =
+theorem unblocked_second (h : ¬ c.agent ≤ c.addressee) :
+    unblocked personAlts (Person.dom c) (some .second) =
       Person.dom c (some .second) \ Person.dom c (some .first) := by
-  refine useCondition_eq_sdiff (by simp [personAlts]) (dom_first_ssubset_dom_second c h) ?_
+  refine unblocked_eq_sdiff (by simp [personAlts]) (dom_first_ssubset_dom_second c h) ?_
   rintro χ hχ hss
   simp only [personAlts, Set.mem_insert_iff, Set.mem_singleton_iff] at hχ
   rcases hχ with rfl | rfl | rfl
@@ -161,9 +161,9 @@ theorem useCondition_second (h : ¬ c.agent ≤ c.addressee) :
 
 /-- When the speaker is part of the addressee, the first and second person domains coincide and
 competition leaves the second person usable on its whole domain. -/
-theorem useCondition_second_of_degenerate (h : c.agent ≤ c.addressee) :
-    useCondition personAlts (Person.dom c) (some .second) = Person.dom c (some .second) := by
-  refine useCondition_eq_of_not_blocked ?_
+theorem unblocked_second_of_degenerate (h : c.agent ≤ c.addressee) :
+    unblocked personAlts (Person.dom c) (some .second) = Person.dom c (some .second) := by
+  refine unblocked_eq_self ?_
   rintro ⟨ψ, hψ, hss⟩
   simp only [personAlts, Set.mem_insert_iff, Set.mem_singleton_iff] at hψ
   rcases hψ with rfl | rfl | rfl
@@ -175,12 +175,12 @@ theorem useCondition_second_of_degenerate (h : c.agent ≤ c.addressee) :
 
 /-- The third person is used outside the participants' domain, the non-participant
 presupposition of (47), when some referent lies outside it. -/
-theorem useCondition_third (h : ∃ x, x ∉ Person.dom c (some .second)) :
-    useCondition personAlts (Person.dom c) (some .third) = (Person.dom c (some .second))ᶜ := by
+theorem unblocked_third (h : ∃ x, x ∉ Person.dom c (some .second)) :
+    unblocked personAlts (Person.dom c) (some .third) = (Person.dom c (some .second))ᶜ := by
   obtain ⟨x, hx⟩ := h
   have hss : Person.dom c (some .second) ⊂ Person.dom c (some .third) :=
     Person.dom_third c ▸ Set.ssubset_univ_iff.2 fun h ↦ hx (h ▸ Set.mem_univ x)
-  rw [useCondition_eq_sdiff (by simp [personAlts]) hss, Person.dom_third, Set.compl_eq_univ_sdiff]
+  rw [unblocked_eq_sdiff (by simp [personAlts]) hss, Person.dom_third, Set.compl_eq_univ_sdiff]
   rintro χ hχ hss'
   simp only [personAlts, Set.mem_insert_iff, Set.mem_singleton_iff] at hχ
   rcases hχ with rfl | rfl | rfl

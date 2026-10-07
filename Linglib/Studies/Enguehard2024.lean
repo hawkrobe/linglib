@@ -41,8 +41,9 @@ conceivability presupposition, which fails exactly where the chance of ineffabil
 * `useful_iff_presup`: preferring useful referents yields the conceivability presupposition.
 * `negated_presup_iff_ineffability_ne_one`: the presupposition holds exactly when ineffability is
   not certain.
-* `Follows.H1_of_mpPresup`, `not_H2_of_isZeroOneMeasure`: Maximize Presupposition yields the
-  categorical H1, and a speaker in complementary distribution is not gradient.
+* `unblocked_mpPresup_isCompl`, `not_H2_of_isZeroOneMeasure`: Maximize Presupposition puts the
+  two numbers in complementary distribution, and a speaker in complementary distribution is not
+  gradient.
 * `not_H2_of_follows_bestGuess`: a speaker producing only best guesses is not gradient either.
 
 ## Implementation notes
@@ -388,7 +389,7 @@ theorem H1.not_H2 (h : H1 κ) : ¬ H2 κ :=
 
 /-! ### Maximize Presupposition over the conditions -/
 
-open Alternatives (useCondition)
+open Alternatives (unblocked)
 
 /-- The English numbers are each other's alternatives. -/
 def englishAlts : Number → Set Number := fun _ ↦ {n | n ∈ numberSystem.values}
@@ -400,9 +401,9 @@ def mpPresup (S : Set Condition) : Number → Set Condition
   | .plural => Set.univ
   | _ => ∅
 
-theorem useCondition_mpPresup_singular (S : Set Condition) :
-    useCondition englishAlts (mpPresup S) .singular = S := by
-  refine Alternatives.useCondition_eq_of_not_blocked ?_
+theorem unblocked_mpPresup_singular (S : Set Condition) :
+    unblocked englishAlts (mpPresup S) .singular = S := by
+  refine Alternatives.unblocked_eq_self ?_
   rintro ⟨m, hm, hss⟩
   rcases (by simpa [englishAlts, numberSystem] using hm : m = .singular ∨ m = .plural)
     with rfl | rfl
@@ -410,9 +411,9 @@ theorem useCondition_mpPresup_singular (S : Set Condition) :
   · exact hss.not_subset (Set.subset_univ _)
 
 /-- The plural is used exactly where the singular's presupposition fails. -/
-theorem useCondition_mpPresup_plural {S : Set Condition} (hS : S ≠ Set.univ) :
-    useCondition englishAlts (mpPresup S) .plural = Sᶜ := by
-  rw [Alternatives.useCondition_eq_sdiff (ψ := .singular) (by simp [englishAlts, numberSystem])
+theorem unblocked_mpPresup_plural {S : Set Condition} (hS : S ≠ Set.univ) :
+    unblocked englishAlts (mpPresup S) .plural = Sᶜ := by
+  rw [Alternatives.unblocked_eq_sdiff (ψ := .singular) (by simp [englishAlts, numberSystem])
     hS.lt_top, Set.compl_eq_univ_sdiff]
   · rfl
   rintro χ hχ hss
@@ -420,6 +421,14 @@ theorem useCondition_mpPresup_plural {S : Set Condition} (hS : S ≠ Set.univ) :
     with rfl | rfl
   · exact le_rfl
   · exact absurd rfl hss.ne
+
+/-- Maximize Presupposition puts the two numbers in complementary distribution over the
+conditions, as §4.1 says competition must. -/
+theorem unblocked_mpPresup_isCompl {S : Set Condition} (hS : S ≠ Set.univ) :
+    IsCompl (unblocked englishAlts (mpPresup S) .singular)
+      (unblocked englishAlts (mpPresup S) .plural) := by
+  rw [unblocked_mpPresup_singular, unblocked_mpPresup_plural hS]
+  exact isCompl_compl
 
 /-- A production kernel follows the use conditions `U` when in every condition it almost surely
 produces a negated indefinite usable there. -/
@@ -438,15 +447,15 @@ theorem Follows.eq_dirac {U : Number → Set Condition} (h : Follows U κ) {c : 
 /-- Maximize Presupposition with the singular presupposing that uniqueness dominates, (8) read
 as uniqueness in most situations, yields H1 (§4.1). -/
 theorem Follows.H1_of_mpPresup [∀ c, IsProbabilityMeasure (κ c)[|indefinite]]
-    (h : Follows (useCondition englishAlts (mpPresup (Set.Iio .mix))) κ) : H1 κ := fun c ↦
+    (h : Follows (unblocked englishAlts (mpPresup (Set.Iio .mix))) κ) : H1 κ := fun c ↦
   h.eq_dirac fun m ↦ by
     have hS : Set.Iio Condition.mix ≠ Set.univ := fun h ↦
       lt_irrefl Condition.mix (Set.mem_Iio.1 (h ▸ Set.mem_univ _))
     cases m
-    case singular => rw [useCondition_mpPresup_singular]; split_ifs <;> simp_all
-    case plural => rw [useCondition_mpPresup_plural hS]; split_ifs <;> simp_all
+    case singular => rw [unblocked_mpPresup_singular]; split_ifs <;> simp_all
+    case plural => rw [unblocked_mpPresup_plural hS]; split_ifs <;> simp_all
     all_goals
-      refine ⟨fun hc ↦ absurd (Alternatives.useCondition_subset _ _ _ hc) (Set.notMem_empty c),
+      refine ⟨fun hc ↦ absurd (Alternatives.unblocked_subset _ _ _ hc) (Set.notMem_empty c),
         fun h ↦ ?_⟩
       split_ifs at h
 
