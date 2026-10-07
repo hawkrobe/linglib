@@ -11,7 +11,7 @@ public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Logic.Trivalent.Prop3
 public import Linglib.Semantics.Reference.Iota
 public import Linglib.Semantics.Dynamic.Partial
-public import Linglib.Semantics.Presupposition.MaximizePresupposition
+public import Linglib.Semantics.Alternatives.Competition
 public import Linglib.Semantics.Focus.Particles
 public import Linglib.Data.Examples.CoppockBeaver2015
 
@@ -562,10 +562,10 @@ theorem sentence_the_only_eq_an_only :
 level, although `an_only_blocked` blocks it at expression level: Maximize Presupposition
 must compare expressions rather than sentences. -/
 theorem not_blocked_sentence_an_only :
-    ¬ Presupposition.MaximizePresupposition.Blocked
-        (fun _ ↦ {fun w ↦ F w (the (only (π w)))})
-        (fun p ↦ {w | p w ≠ .indet}) (fun p ↦ {w | p w = .true})
-        (fun w ↦ F w (an (only (π w)))) := by
+    ¬ Alternatives.Blocked
+        (Alternatives.sameAssertion (fun p ↦ {w | p w = .true})
+          (fun _ ↦ {fun w ↦ F w (the (only (π w)))}))
+        (fun p ↦ {w | p w ≠ .indet}) (fun w ↦ F w (an (only (π w)))) := by
   rw [← sentence_the_only_eq_an_only]
   rintro ⟨q, ⟨hq, -⟩, hss⟩
   rw [Set.mem_singleton_iff] at hq

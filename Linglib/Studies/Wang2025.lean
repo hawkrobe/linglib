@@ -7,6 +7,7 @@ public import Linglib.Semantics.Presupposition.Iterative
 public import Mathlib.Data.Finset.Powerset
 public import Mathlib.Data.Set.Lattice.Bounded
 public import Mathlib.Data.Fintype.Prod
+public import Linglib.Semantics.Alternatives.Competition
 
 /-!
 # Wang (2025): Presupposition, Competition, and Coherence
@@ -20,8 +21,9 @@ at all for *jiu* 'only' (Table 4.1, `Trigger.altStructure`). Three ranked constr
 competition, (3): Internal Coherence, that the utterance is consistent with the common ground;
 Felicity Presupposition, that a presupposition is entailed by the common ground; and Maximize
 Presupposition, after Heim, that a form is not used when a presuppositionally stronger
-alternative is. Coherence outranks felicity, which outranks Maximize Presupposition
-(`Beats`, `ranking`). Utterances and contexts are modelled by the speaker's information
+alternative is, so that it is used only within its use condition under competition
+(`violMP_iff`). Coherence outranks felicity, which outranks Maximize Presupposition (`Beats`,
+`ranking`). Utterances and contexts are modelled by the speaker's information
 states: an utterance commits the speaker to a set of states (`Candidate`), and a context
 admits a set of states, so that coherence is overlap and entailment is inclusion in the
 belief set `K`.
@@ -114,10 +116,47 @@ the context does not entail. -/
 def ViolFP (ctx : Set (Set W)) (c : Candidate W) : Prop :=
   ∃ p, c.presup = some p ∧ ¬ ctx ⊆ K p
 
-/-- Maximize Presupposition is violated by the non-presuppositional candidate when its rival's
-presupposition is entailed by the context. -/
+/-- A context admits a candidate when every admissible state believes its presupposition, if it
+has one. -/
+def Candidate.admits (c : Candidate W) : Set (Set (Set W)) :=
+  {ctx | ∀ p, c.presup = some p → ctx ⊆ K p}
+
+theorem Candidate.admits_of_presup_none {c : Candidate W} (h : c.presup = none) :
+    c.admits = Set.univ := by
+  ext ctx; simp [Candidate.admits, h]
+
+theorem Candidate.admits_of_presup_some {c : Candidate W} {p : Set W} (h : c.presup = some p) :
+    c.admits = {ctx | ctx ⊆ K p} := by
+  ext ctx; simp [Candidate.admits, h]
+
+/-- A presuppositional candidate is admitted by fewer contexts than a plain one, since the
+context `{∅}` admits no presupposition. -/
+theorem Candidate.admits_ssubset_univ {c : Candidate W} {p : Set W} (h : c.presup = some p) :
+    c.admits ⊂ Set.univ := by
+  rw [Candidate.admits_of_presup_some h]
+  refine Set.ssubset_univ_iff.2 fun huniv ↦ ?_
+  have hmem : ({∅} : Set (Set W)) ∈ {ctx | ctx ⊆ K p} := by rw [huniv]; trivial
+  exact (hmem (Set.mem_singleton _)).1.ne_empty rfl
+
+/-- Maximize Presupposition is violated by a candidate without a presupposition at a context
+outside its use condition against its rival, (3c). -/
 def ViolMP (ctx : Set (Set W)) (rival c : Candidate W) : Prop :=
-  c.presup = none ∧ ∃ p, rival.presup = some p ∧ ctx ⊆ K p
+  c.presup = none ∧ ctx ∉ Alternatives.useCondition (fun _ ↦ {rival}) Candidate.admits c
+
+/-- A plain candidate violates Maximize Presupposition exactly when the context entails its
+rival's presupposition. -/
+theorem violMP_iff {ctx : Set (Set W)} {rival c : Candidate W} :
+    ViolMP ctx rival c ↔ c.presup = none ∧ ∃ p, rival.presup = some p ∧ ctx ⊆ K p := by
+  refine and_congr_right fun hc ↦ ?_
+  rw [Alternatives.mem_useCondition_iff, Candidate.admits_of_presup_none hc]
+  simp only [Set.mem_univ, true_and, Set.mem_singleton_iff, forall_eq, not_forall, not_not]
+  constructor
+  · rintro ⟨hctx, hss⟩
+    rcases hr : rival.presup with _ | p
+    · rw [Candidate.admits_of_presup_none hr] at hss; exact absurd rfl hss.ne
+    · exact ⟨p, rfl, by rwa [Candidate.admits_of_presup_some hr] at hctx⟩
+  · rintro ⟨p, hp, hctx⟩
+    exact ⟨(Candidate.admits_of_presup_some hp).symm ▸ hctx, Candidate.admits_ssubset_univ hp⟩
 
 /-- Strict-domination comparison along a list of violation predicates: `a` beats `b` at the
 first constraint on which they differ. -/
@@ -163,7 +202,7 @@ theorem presup_beats_of_entailed {ctx : Set (Set W)} {p a : Set W} {c : Candidat
   Or.inr ⟨⟨fun h ↦ absurd h hsp, fun h ↦ absurd h hc⟩,
     Or.inr ⟨⟨fun ⟨q, hq, hnq⟩ ↦ absurd hp (Option.some.inj hq ▸ hnq), fun ⟨q, hq, _⟩ ↦ by
       simp [hc0] at hq⟩,
-      Or.inl ⟨fun ⟨h, _⟩ ↦ by simp [presupSentence] at h, ⟨hc0, p, rfl, hp⟩⟩⟩⟩
+      Or.inl ⟨fun h ↦ absurd h.1 (by simp [presupSentence]), violMP_iff.2 ⟨hc0, p, rfl, hp⟩⟩⟩⟩
 
 /-! ### The tableaux -/
 

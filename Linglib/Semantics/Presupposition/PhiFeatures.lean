@@ -22,7 +22,7 @@ utterance, number at atomicity, and gender at the gender a referent is socially 
 mixed gender take, with feminine presupposing non-masculinity and neuter genderlessness, so the
 neuter domain lies inside the feminine one. The person domains are the participant-set extents
 of `Person.Bears` pulled back along the participants of a referent, and a tripartition value
-denotes the referents in its domain and in no stronger one, Maximize Presupposition.
+denotes the referents in its domain and in no stronger one.
 
 ## Main definitions
 
@@ -46,10 +46,11 @@ a gender feature is defined of it, the account of singular *they* of Bjorkman an
 Cowper. The person entries take the agent and the addressee as parts of the referent where
 Sauerland has them overlap it; the two coincide for an atomic agent and addressee. The
 two-feature decomposition does not see clusivity, so the inclusive is refined to referents
-including the addressee. The cells of the tripartition are stated one by one: a general
-Maximize-Presupposition form fails when the agent is part of the addressee, which collapses the
-first and second person domains. The dual's minimality domain needs a mereological predicate the
-entity domain's order does not supply, so the dual restricts nothing.
+including the addressee. The cells of the tripartition are stated one by one, since
+Maximize Presupposition (`Alternatives.useCondition`) yields them only when the agent is not
+part of the addressee; otherwise the first and second person domains coincide
+(`Sauerland2003.useCondition_second_of_degenerate`). The dual's minimality domain needs a
+mereological predicate the entity domain's order does not supply, so the dual restricts nothing.
 
 ## References
 

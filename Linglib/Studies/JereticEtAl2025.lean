@@ -2,7 +2,7 @@ module
 
 public import Linglib.Data.Examples.JereticEtAl2025
 public import Linglib.Syntax.Cat
-public import Linglib.Semantics.Presupposition.MaximizePresupposition
+public import Linglib.Semantics.Alternatives.Competition
 public import Linglib.Semantics.Alternatives.Structural
 public import Linglib.Fragments.Romance.French.Determiners
 public import Linglib.Fragments.English.Determiners
@@ -354,7 +354,7 @@ theorem lesDeux_indirectAlt_tous : lesDeuxVerres ∈ frenchIndirectSrc tousVerre
 licensed by the silent witness, which is the paper's derivation of the anti-duality of
 *tous*. -/
 theorem tous_blocked_via_indirect :
-    Presupposition.MaximizePresupposition.Blocked frenchIndirectSrc presupFn assertionFn
+    Alternatives.Blocked (Alternatives.sameAssertion assertionFn frenchIndirectSrc) presupFn
       tousVerres := by
   refine ⟨lesDeuxVerres, ⟨lesDeux_indirectAlt_tous, rfl⟩,
     LE.le.ssubset_of_not_superset ?_ (Set.not_subset.2 ⟨WorldEx.w3, ?_, ?_⟩)⟩
