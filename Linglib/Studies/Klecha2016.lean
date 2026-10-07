@@ -108,7 +108,7 @@ end ModalBase
 preferential verb either. -/
 def modalBases : Attitude → Finset ModalBase
   | .doxastic _ => {.dox}
-  | .preferential _ => {.dox, .cir}
+  | .preferential _ _ => {.dox, .cir}
 
 /-- The orientations open to a clause of underlying tense `τ` embedded under an attitude of
 class `a`: those admitted both by one of the attitude's modal bases and by the tense. -/
