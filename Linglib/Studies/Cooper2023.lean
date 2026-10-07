@@ -109,17 +109,13 @@ def SemPropName (a : E) : Quant E := fun P ↦ P a
 first property and the second. Its `x`-field is what singular anaphora picks up in *A dog is
 barking. It is right outside my window* (Ch. 7, (64)). -/
 structure ParticularWCExist (P Q : Ppty E) where
-  /-- `x` is the individual. -/
   x : E
-  /-- `pWit` witnesses its first property. -/
   pWit : P x
-  /-- `qWit` witnesses its second. -/
   qWit : Q x
 
 /-- The particular witness condition for `no(P, Q)` (Ch. 7, (70)) shows that every witness of the
 first property precludes the second, by a function into the negated type (69). -/
 structure ParticularWCNo (P Q : Ppty E) where
-  /-- `f` precludes the second property by each witness of the first. -/
   f : (a : E) → P a → Q a → Empty
 
 /-- `exist(P, Q)` is witnessed iff the property extensions of `P` and `Q` overlap, (55). -/
@@ -127,12 +123,10 @@ theorem nonempty_particularWCExist_iff {P Q : Ppty E} :
     Nonempty (ParticularWCExist P Q) ↔ ∃ a, Nonempty (P a) ∧ Nonempty (Q a) :=
   ⟨fun ⟨w⟩ ↦ ⟨w.x, ⟨w.pWit⟩, ⟨w.qWit⟩⟩, fun ⟨a, ⟨p⟩, ⟨q⟩⟩ ↦ ⟨⟨a, p, q⟩⟩⟩
 
-/-- A witness of the particular condition for `exist` verifies the classical `some`. -/
 theorem some_of_particularWCExist {P Q : Ppty E} (w : ParticularWCExist P Q) :
     GQ.some P.Witnessed Q.Witnessed :=
   ⟨w.x, ⟨w.pWit⟩, ⟨w.qWit⟩⟩
 
-/-- A witness of the particular condition for `no` verifies the classical `no`. -/
 theorem no_of_particularWCNo {P Q : Ppty E} (w : ParticularWCNo P Q) :
     no P.Witnessed Q.Witnessed :=
   fun a ⟨p⟩ ⟨q⟩ ↦ (w.f a p q).elim
@@ -172,41 +166,26 @@ property. -/
 def Quant.IsMonIncr (Q : Quant E) : Prop :=
   ∀ P P' : Ppty E, (∀ x, P x → P' x) → Nonempty (Q P) → Nonempty (Q P')
 
-/-- The indefinite article is monotone increasing. -/
 theorem isMonIncr_semIndefArt (restr : Ppty E) : Quant.IsMonIncr (SemIndefArt restr) :=
   fun _ _ h ⟨w⟩ ↦ ⟨⟨w.x, w.pWit, h _ w.qWit⟩⟩
 
 /-- A parametric content (§4.3, (14)) pairs a background type, the context it requires, with a
 foreground function from contexts of that type to contents. -/
 structure Parametric (C : Type*) where
-  /-- `bg` is the background, the type of contexts the content requires. -/
   bg : Type
-  /-- `fg` is the foreground, the content in each such context. -/
   fg : bg → C
 
-/-! #### The Dudamel fragment
-
-*Dudamel is a conductor* (82c), the existential quantifier under the copula, is witnessed
-by Dudamel's conducting, and *Beethoven is a conductor* is not. -/
+/-! #### *Dudamel is a conductor* (82c) -/
 
 namespace Dudamel
 
-/-- Dudamel and Beethoven are the individuals. -/
-inductive Ind
-  | dudamel | beethoven
-  deriving DecidableEq, Repr
-
-/-- The ptype `conductor(x)` is witnessed by Dudamel's conducting. -/
-inductive Conductor : Ind → Type
-  | mk : Conductor .dudamel
+inductive Ind | dudamel | beethoven deriving DecidableEq, Repr
+inductive Conductor : Ind → Type | mk : Conductor .dudamel
 
 /-- *is a conductor* (81c) is the copula over the indefinite article. -/
 def IsAConductor : Ppty Ind := SemBe (SemIndefArt Conductor)
-
-/-- *Dudamel is a conductor* is true. -/
 def dudamelIsAConductor : SemPropName .dudamel IsAConductor := ⟨.dudamel, .mk, ⟨rfl⟩⟩
 
-/-- *Beethoven is a conductor* is false. -/
 theorem beethovenIsAConductor_isEmpty : IsEmpty (SemPropName .beethoven IsAConductor) :=
   ⟨fun | ⟨.dudamel, _, ⟨h⟩⟩ => nomatch h | ⟨.beethoven, h, _⟩ => nomatch h⟩
 
@@ -214,26 +193,16 @@ end Dudamel
 
 /-! ## Modality and intensionality without possible worlds (Ch. 6)
 
-A modal type system (§1.4.3.5, (54); §6.3) is a family of possibilities sharing their types
-but differing in which objects witness them. Equivalence, subtyping, necessity and
-possibility are defined over all possibilities, (1), or over those in which the types occur,
-(2), whose proof rules (4) settle the inclusive notions. Necessity and possibility in language
-are relativised, as in Kratzer's semantics, to a background type and a topos, a dependent type
-from situations to types standing in for the accessibility relation, (20)–(24).
-Intensionality replaces sets of worlds by types (§6.5): an attitude holds when the type of
-the agent's long-term memory, religious beliefs or desires is, up to relabelling, a subtype
-of its complement in the modal system, directly or through a point of view, (39)–(92). -/
+A modal type system is a family of possibilities over shared types, and modality and the
+attitudes compare witnesses across its possibilities. -/
 
 /-! ### Modal type systems (§6.3) -/
 
 /-- A possibility says which types occur in it and which objects witness them. Only a type of the
 possibility has witnesses in it. -/
 structure Possibility (Ty Obj : Type) where
-  /-- `occurs T` says that `T` is a type of the possibility's type system. -/
   occurs : Ty → Prop
-  /-- `witnesses T a` says that `a` is of type `T` in the possibility. -/
   witnesses : Ty → Obj → Prop
-  /-- A witnessed type is a type of the possibility. -/
   occurs_of_witnesses ⦃T : Ty⦄ ⦃a : Obj⦄ : witnesses T a → occurs T
 
 /-- A modal system of types (§1.4.3.5, (54)) is a family of possibilities over shared types. -/
@@ -295,7 +264,6 @@ theorem SubtypeR.trans {T₃ : Ty} (h : ms.SubtypeR T₁ T₂) (h' : ms.SubtypeR
     ms.SubtypeR T₁ T₃ :=
   le_trans h h'
 
-/-- The restrictive notions entail the inclusive ones (§6.3). -/
 theorem SubtypeR.subtypeI (h : ms.SubtypeR T₁ T₂) : ms.SubtypeI T₁ T₂ := fun p _ _ ↦ h p
 
 theorem EquivR.equivI (h : ms.EquivR T₁ T₂) : ms.EquivI T₁ T₂ := fun p _ _ ↦ congrFun h p
@@ -317,21 +285,13 @@ end ModalSystem
 
 /-! #### Restrictive against inclusive necessity
 
-Two possibilities over the types `rain` and `snow`: snow is witnessed only in the first, so it
-is possible but not necessary; and when snow does not occur in the second at all, it is
-inclusively but not restrictively necessary, so the entailment of §6.3 does not reverse. -/
+Snow is possible but not necessary, and once it does not occur in the second possibility it is
+inclusively but not restrictively necessary. -/
 
 namespace Weather
 
-/-- Rain and snow are the types. -/
-inductive Ty
-  | rain | snow
-  deriving DecidableEq
-
-/-- `a` and `b` are the objects. -/
-inductive Obj
-  | a | b
-  deriving DecidableEq
+inductive Ty | rain | snow deriving DecidableEq
+inductive Obj | a | b deriving DecidableEq
 
 /-- Both types occur in both possibilities; rain is witnessed in both, snow in the first. -/
 def system : ModalSystem (Fin 2) Ty Obj
@@ -361,9 +321,7 @@ end Weather
 
 /-! ### Modality with topoi (§6.4)
 
-The witness conditions for `nec` and `poss` go through four versions; the last, (23)–(24),
-takes a topos in place of Kratzer's ideal, and, as Cooper notes, has no counterpart of the
-ordering source. -/
+The last version of `nec` and `poss`, (23)–(24), takes a topos in place of Kratzer's ideal. -/
 
 /-- A topos (20) is a dependent type from situations of a background type to types. -/
 abbrev Topos := Parametric Type
@@ -374,21 +332,15 @@ def Compatible (T₁ T₂ : Type) : Prop := Nonempty (T₁ × T₂)
 /-- A witness of `nec(T, B, τ)` (23) is a situation of the background type `B`, with `B` a subtype
 of the topos's domain and the type the topos returns for the situation a subtype of `T`. -/
 structure Nec (T B : Type) (τ : Topos) where
-  /-- `sit` is the situation. -/
   sit : B
-  /-- `sub` makes the background type a subtype of the topos's domain. -/
   sub : B → τ.bg
-  /-- `incl` makes the type the topos returns a subtype of `T`. -/
   incl : τ.fg (sub sit) → T
 
 /-- A witness of `poss(T, B, τ)` (24) is as for `Nec`, with the returned type compatible with
 `T`. -/
 structure Poss (T B : Type) (τ : Topos) where
-  /-- `sit` is the situation. -/
   sit : B
-  /-- `sub` makes the background type a subtype of the topos's domain. -/
   sub : B → τ.bg
-  /-- `compat` makes the type the topos returns compatible with `T`. -/
   compat : Compatible (τ.fg (sub sit)) T
 
 /-- Necessity yields possibility when the topos returns an inhabited type. -/
@@ -398,80 +350,37 @@ def Nec.toPoss {T B : Type} {τ : Topos} (h : Nec T B τ) (hne : Nonempty (τ.fg
 
 /-! #### *Mary should eat her broccoli* (25)–(31)
 
-The base situation (26) has the broccoli on Mary's plate and Mary loving it; the deontic
-topos (28a) sends a situation of a child with food on her plate to her eating it, the bouletic
-topos (28b) a situation of a child loving some food to her eating it, and
-`nec([e:eat(m,b)], T_broc, τ)` is witnessed by either, (29)–(30). -/
+Eating the broccoli is necessary under the deontic topos and under the bouletic one, (29). -/
 
 namespace Dinner
 
-/-- The broccoli, Mary and the plate are the individuals. -/
-inductive Ind
-  | broccoli | mary | plate
-  deriving DecidableEq, Repr
+inductive Ind | broccoli | mary | plate deriving DecidableEq, Repr
 
-/-- The ptypes of the base situation (26), each witnessed by its fact. -/
-inductive Broccoli : Ind → Type
-  | mk : Broccoli .broccoli
-
-/-- Mary is a child. -/
-inductive Child : Ind → Type
-  | mk : Child .mary
-
-/-- The plate is a plate. -/
-inductive Plate : Ind → Type
-  | mk : Plate .plate
-
-/-- Mary has the plate. -/
-inductive Have : Ind → Ind → Type
-  | mk : Have .mary .plate
-
-/-- The broccoli is on the plate. -/
-inductive On : Ind → Ind → Type
-  | mk : On .broccoli .plate
-
-/-- Mary loves the broccoli. -/
-inductive Love : Ind → Ind → Type
-  | mk : Love .mary .broccoli
-
-/-- Mary eats the broccoli. -/
-inductive Eat : Ind → Ind → Type
-  | mk : Eat .mary .broccoli
+-- The ptypes of the base situation (26), each witnessed by its fact.
+inductive Broccoli : Ind → Type | mk : Broccoli .broccoli
+inductive Child : Ind → Type | mk : Child .mary
+inductive Plate : Ind → Type | mk : Plate .plate
+inductive Have : Ind → Ind → Type | mk : Have .mary .plate
+inductive On : Ind → Ind → Type | mk : On .broccoli .plate
+inductive Love : Ind → Ind → Type | mk : Love .mary .broccoli
+inductive Eat : Ind → Ind → Type | mk : Eat .mary .broccoli
 
 /-- Food, of which broccoli is a subtype (27), is witnessed by broccoli. -/
-inductive Food : Ind → Type
-  | ofBroccoli {x : Ind} : Broccoli x → Food x
+inductive Food : Ind → Type | ofBroccoli {x : Ind} : Broccoli x → Food x
 
 /-- The base situation type (26) has its manifest fields fixed here by the ptypes' witnesses. -/
 structure Base where
-  x : Ind
-  c₁ : Broccoli x
-  y : Ind
-  c₂ : Child y
-  z : Ind
-  c₃ : Plate z
-  e₁ : Have y z
-  e₂ : On x z
-  e₃ : Love y x
+  (x : Ind) (c₁ : Broccoli x) (y : Ind) (c₂ : Child y) (z : Ind) (c₃ : Plate z)
+  (e₁ : Have y z) (e₂ : On x z) (e₃ : Love y x)
 
 /-- The background of the deontic topos (28a) is a child with food on her plate. -/
 structure OnPlate where
-  x : Ind
-  c₁ : Food x
-  y : Ind
-  c₂ : Child y
-  z : Ind
-  c₃ : Plate z
-  e₁ : Have y z
-  e₂ : On x z
+  (x : Ind) (c₁ : Food x) (y : Ind) (c₂ : Child y) (z : Ind) (c₃ : Plate z)
+  (e₁ : Have y z) (e₂ : On x z)
 
 /-- The background of the bouletic topos (28b) is a child loving some food. -/
 structure Loves where
-  x : Ind
-  c₁ : Food x
-  y : Ind
-  c₂ : Child y
-  e₃ : Love y x
+  (x : Ind) (c₁ : Food x) (y : Ind) (c₂ : Child y) (e₃ : Love y x)
 
 /-- The deontic topos τ₁ (28a) sends a child with food on her plate to her eating it. -/
 def deontic : Topos := ⟨OnPlate, fun r ↦ Eat r.y r.x⟩
@@ -499,13 +408,8 @@ end Dinner
 
 /-! ### Intensionality (§6.5)
 
-Subtyping is modal (§1.4.3.5; Ch. 1, (55)): `T₁ ⊑ T₂` when, in every possibility, whatever is of
-`T₁` is of `T₂`, whether because the type system requires it, as a record type with more
-fields is a subtype of one with fewer (structural subtyping, (50a)), or because a postulate
-restricts attention to the possibilities where it holds, as `sell(a, b, c) ⊑ buy(c, b, a)`
-(postulated subtyping, (50b)). An attitude matches its complement against a type of the
-agent's information state, up to relabelling (39)–(41), so which postulates the modal system
-carries, the agent's or the reporter's, decides the report (pp. 261–262). -/
+An attitude matches its complement against a type of the agent's information state up to
+relabelling, so whose postulates restrict the possibilities decides the report (pp. 261–262). -/
 
 namespace ModalSystem
 
@@ -533,11 +437,8 @@ end ModalSystem
 religious beliefs and desires, and records which types are merges of a type with a complete point of
 view on it (55). -/
 structure InfoState (Agent Ty : Type) where
-  /-- `ltm a` is the type of `a`'s long-term memory. -/
   ltm : Agent → Ty
-  /-- `rbel a` is the type of `a`'s religious beliefs. -/
   rbel : Agent → Ty
-  /-- `des a` is the type of `a`'s desires. -/
   des : Agent → Ty
   /-- `pov M T` says that `M` is the asymmetric merge `T ∧̣ T'` of `T` with a complete point of view
   `T'` on it. -/
@@ -576,32 +477,20 @@ end InfoState.Matches
 
 /-! #### Hesperus and Phosphorus, (52)–(53)
 
-The ancients' long-term memory has a body named Hesperus rising in the evening and a body
-named Phosphorus rising in the morning (52); on learning that they are one body, it gains the
-field identifying them (53). Records are reduced to the bodies in their two `x`-fields. Under
-the ancients' postulates Phosphorus may be another body than Venus, so they do not believe
-that Hesperus is Phosphorus; a reporter who knows that both are Venus considers only the
-actual possibility, and can report that they do (p. 262). -/
+The ancients cannot exclude a possibility in which Phosphorus is another body than Venus; the
+reporter can (p. 262). -/
 
 namespace Venus
 
-/-- Venus and Mars are the bodies. -/
-inductive Body
-  | venus | mars
+inductive Body | venus | mars
 
 /-- The types are (52), and (53b), which identifies the second body with the first. -/
-inductive Ty
-  | twoStars | oneStar
+inductive Ty | twoStars | oneStar
 
 /-- In the actual possibility Phosphorus is Venus; in the other, which the ancients cannot exclude,
 it is Mars. -/
-inductive Possib
-  | actual | alternative
-
-/-- `phosphorus p` is the body named Phosphorus in the possibility `p`. -/
-def phosphorus : Possib → Body
-  | .actual => .venus
-  | .alternative => .mars
+inductive Possib | actual | alternative
+def phosphorus : Possib → Body | .actual => .venus | .alternative => .mars
 
 /-- In the modal system Hesperus is Venus throughout, and the records are the pairs of their two
 bodies. -/
@@ -620,7 +509,6 @@ theorem oneStar_subtypeR : system.SubtypeR .oneStar .twoStars := fun _ _ h ↦ h
 theorem not_twoStars_subtypeI : ¬ system.SubtypeI .twoStars .oneStar := fun h ↦
   nomatch (h .alternative trivial trivial (a := (.venus, .mars)) ⟨rfl, rfl⟩).2
 
-/-- The ancients believe (52). -/
 theorem believe_twoStars : ancients.Matches system ⊥ (ancients.ltm ()) .twoStars :=
   .subtype ⟨_, rfl, fun _ _ _ _ h ↦ h⟩
 
@@ -643,17 +531,13 @@ end Venus
 
 /-! #### Intensional transitive verbs, (63)–(68), (87)
 
-Following Montague, a transitive verb's predicate may take a quantifier (64). The postulate
-(65) makes it extensional, equivalent to the quantifier exported over a predicate between
-individuals; (66) makes a successful search a finding; (87) makes booking require a
-monotone increasing quantifier's worth of things to be, without a specific one. -/
+Following Montague a transitive verb's predicate takes a quantifier (64), and postulates make
+it extensional (65), a successful search a finding (66), and booking require existence (87). -/
 
 /-- A transitive verb has a predicate taking a quantifier (64) and a variant `p†` between
 individuals. -/
 structure TransVerb (E : Type) where
-  /-- `pred` is the ptype of the verb over an individual and a quantifier. -/
   pred : E → Quant E → Type
-  /-- `dagger` is the variant `p†` over two individuals. -/
   dagger : E → E → Type
 
 /-- A verb is extensional (65) when its ptype is equivalent to the quantifier exported over `p†`. -/
@@ -670,9 +554,7 @@ theorem TransVerb.IsExtensional.exists_of_semIndefArt {v : TransVerb E} (hv : v.
 
 /-- A successful search is a finding (66). -/
 structure SuccessfulSeek (E : Type) (seek find : E → Quant E → Type) where
-  /-- `successful T` is the ptype of an event's success. -/
   successful : Type → Type
-  /-- `findOfSuccessful` is the subtyping `successful(seek(a, Q)) ⊑ find(a, Q)`. -/
   findOfSuccessful : ∀ a Q, successful (seek a Q) → find a Q
 
 /-- With (66), and (65) for *find*, a successful search for a unicorn finds one, so there is
@@ -697,20 +579,13 @@ theorem exists_of_book {book : E → Quant E → Type} {be : Ppty E} (h : BookRe
 
 /-! ## Witness-based quantification (Ch. 7)
 
-A property may be restricted by conditions in its domain beyond the required `x`-field,
-(7b), and purification lowers the restriction into the body existentially, `𝔓` (12), or
-universally, `𝔓∀` (13). The cardinality conditions on witness sets (20)–(35) have
-frequentist probabilistic forms (41)–(58), estimable from an agent's experience base of
-remembered judgements (37)–(39). The particular witness conditions for `exist` (63) and
-`no` (70) are types equivalent to the general ones (59) whose witnesses carry what discourse
-anaphora picks up. -/
+Purification lowers a property's restriction into its body, and a quantified ptype is witnessed
+by a witness set with a function into or out of it. -/
 
 /-- A restricted property (7b) places conditions on the individual in its domain and returns a
 body. -/
 structure Restricted (E : Type) where
-  /-- `restr` gives the conditions the domain places on the individual. -/
   restr : E → Type
-  /-- `body` is the type returned for an individual meeting the restriction. -/
   body : (x : E) → restr x → Type
 
 /-- A property is pure (7a) when its restriction is trivial. -/
@@ -752,12 +627,8 @@ theorem Restricted.IsPure.nonempty_purify_iff_nonempty_purifyUniv {P : Restricte
 
 /-! ### Types of witness sets (§7.2.4)
 
-A witness set `X` of type `qʷ(P)` meets two conditions, (20)–(35): it is a subset of the
-property extension `[↓P]`, which (20a) makes the link to the witness sets of
-[barwise-cooper-1981], and its cardinality stands in a relation fixed by `q` to that of
-`[↓P]`. Read on van Benthem's tree of numbers, whose perspective on determiners as relations
-Cooper adopts (p. 298), the relation is a quantifier, and a witness set of `qʷ(P)` is a witness
-set in the sense of [barwise-cooper-1981] for it (`witnessType_iff_witness`). -/
+A witness set of `qʷ(P)` is a subset of `[↓P]` whose cardinality stands in a relation to
+`|[↓P]|`, read on van Benthem's tree of numbers as Cooper reads determiners (p. 298). -/
 
 /-- The cardinality clause of a type of witness sets is a relation between `|X|` and `|[↓P]|`. -/
 abbrev CardRel := ℕ → ℕ → Prop
@@ -797,42 +668,31 @@ def compAtMost (θ : ℕ) : CardRel := fun x p ↦ p - θ ≤ x
 nonempty extension. -/
 def compPropAtMost (n d : ℕ) : CardRel := fun x p ↦ 0 < p ∧ (d - n) * p ≤ d * x
 
-/-- `exist_plʷ` is closed upwards. -/
 theorem monotone_existPl (p : ℕ) : Monotone (existPl · p) := fun _ _ hxy h ↦ h.trans hxy
 
-/-- At least `θ` is closed upwards. -/
 theorem monotone_atLeast (θ p : ℕ) : Monotone (atLeast θ · p) := fun _ _ hxy h ↦ h.trans hxy
 
-/-- At most `θ` is closed downwards. -/
 theorem antitone_atMost (θ p : ℕ) : Antitone (atMost θ · p) := fun _ _ hxy h ↦ hxy.trans h
 
-/-- At least a proportion is closed upwards. -/
 theorem monotone_propAtLeast (n d p : ℕ) : Monotone (propAtLeast n d · p) :=
   fun _ _ hxy h ↦ ⟨h.1, h.2.trans (Nat.mul_le_mul_left d hxy)⟩
 
-/-- At most a proportion is closed downwards. -/
 theorem antitone_propAtMost (n d p : ℕ) : Antitone (propAtMost n d · p) :=
   fun _ _ hxy h ↦ ⟨h.1, (Nat.mul_le_mul_left d hxy).trans h.2⟩
 
-/-- The complement relation (81b) is closed upwards. -/
 theorem monotone_compAtMost (θ p : ℕ) : Monotone (compAtMost θ · p) :=
   fun _ _ hxy h ↦ h.trans hxy
 
-/-- The complement relation (82b) is closed upwards. -/
 theorem monotone_compPropAtMost (n d p : ℕ) : Monotone (compPropAtMost n d · p) :=
   fun _ _ hxy h ↦ ⟨h.1, h.2.trans (Nat.mul_le_mul_left d hxy)⟩
 
-/-- `noʷ`, read on the tree of numbers, is the tree's *no*. -/
 theorem ofSizes_no : NumberTree.ofSizes no = NumberTree.no := rfl
 
-/-- `everyʷ`, read on the tree of numbers, is the tree's *all*. -/
 theorem ofSizes_every : NumberTree.ofSizes every = NumberTree.all := by
   grind [NumberTree.ofSizes, every, NumberTree.all]
 
-/-- `many_aʷ` and `a_few_aʷ`, read on the tree of numbers, are *at least `θ`*. -/
 theorem ofSizes_atLeast (θ : ℕ) : NumberTree.ofSizes (atLeast θ) = NumberTree.atLeast θ := rfl
 
-/-- `few_aʷ`, read on the tree of numbers, is *at most `θ`*. -/
 theorem ofSizes_atMost (θ : ℕ) : NumberTree.ofSizes (atMost θ) = NumberTree.atMost θ := rfl
 
 /-- The complement witness sets of `few_a` (81b), read on the tree of numbers, are the inner
@@ -879,11 +739,9 @@ theorem witnessType_iff_witness :
   rw [NumberTree.toGQ_apply, NumberTree.ofSizes_apply, hX, Set.ncard_coe_finset, Nat.add_comm, hP,
     Set.ncard_setOf_eq_card_filter]
 
-/-- The witness sets of `everyʷ(P)` are the B&C witness sets of `every P`. -/
 theorem everyW_iff_witness : WitnessType P .every X ↔ Witness (every P) P (· ∈ X) := by
   rw [witnessType_iff_witness, CardRel.ofSizes_every, ← every_eq_toGQ_all]
 
-/-- The witness set of `noʷ(P)` is the B&C witness set of `no P`. -/
 theorem noW_iff_witness : WitnessType P .no X ↔ Witness (no P) P (· ∈ X) := by
   rw [witnessType_iff_witness, CardRel.ofSizes_no, ← no_eq_toGQ_no]
 
@@ -919,10 +777,8 @@ end WitnessType
 
 /-! ### Witness sets and probabilities (§7.3)
 
-The frequentist conditional probability `p(T₁ ‖ T₂)` (36), `|[↓T₁ ∧ T₂]| / |[↓T₂]|` and `0`
-when `T₂` is unwitnessed, is the uniform measure on the extension of `T₂` at that of `T₁`. For a
-witness set `X` within `[↓P]` it is `|X| / |[↓P]|`, (51)–(52), so each probabilistic witness
-condition (41)–(58) is its cardinal one. -/
+The probability (36) of a witness set within `[↓P]` is `|X| / |[↓P]|`, (51)–(52), so each
+probabilistic witness condition (41)–(58) is its cardinal one. -/
 
 section Probability
 
@@ -981,13 +837,8 @@ def ExperienceBase.extension {Ty : Type} [DecidableEq E] [DecidableEq Ty]
 
 /-! ### Witness conditions for quantificational ptypes (§7.4)
 
-The general witness conditions (59) are the two procedures of [barwise-cooper-1981] for
-monotone quantifiers (p. 298): for an increasing quantifier (59a), a witness set of `qʷ(P)`
-and a function from its members into the scope; for a decreasing one (59b), a witness set and
-a function into it from the objects with both properties. The restrictor enters only through
-the witness-set type. By Barwise and Cooper's C11 each is witnessed exactly when the tree
-quantifier of `qʷ`'s relation holds of `P` and `Q`, provided the relation is closed upwards,
-respectively downwards, in `|X|`; `every` is not, and has its own truth condition. -/
+The general conditions (59) are Barwise and Cooper's two procedures for monotone quantifiers
+(p. 298), so by their C11 each holds when the tree quantifier of `qʷ` does. -/
 
 section WitnessCondition
 
@@ -999,22 +850,16 @@ variable (P c Q) in
 /-- The general witness condition for monotone increasing quantifiers (59a) provides a witness set
 and a function from its members into the scope. -/
 structure GeneralWCIncr where
-  /-- `X` is the witness set. -/
   X : Finset E
-  /-- `witness` makes it of the type `qʷ(P)`. -/
   witness : WitnessType P c X
-  /-- `f` gives the scope for each of its members. -/
   f : ∀ a ∈ X, Q a
 
 variable (P c Q) in
 /-- The general witness condition for monotone decreasing quantifiers (59b) provides a witness set
 and a function into it from the objects with both properties. -/
 structure GeneralWCDecr where
-  /-- `X` is the witness set. -/
   X : Finset E
-  /-- `witness` makes it of the type `qʷ(P)`. -/
   witness : WitnessType P c X
-  /-- `f` puts each object with both properties into it. -/
   f : ∀ a, P a → Q.Witnessed a → a ∈ X
 
 variable (P c Q) in
@@ -1059,22 +904,18 @@ theorem nonempty_generalWCDecr_iff_toGQ (hc : ∀ p, Antitone (c · p)) :
   simpa using hw
 
 open Classical in
-/-- Under (59a) the witness set consists of objects with both properties. -/
 theorem GeneralWCIncr.X_subset (w : GeneralWCIncr P c Q) :
     w.X ⊆ ({x | P x ∧ Q.Witnessed x} : Finset E) :=
   fun a ha ↦ Finset.mem_filter.2
     ⟨Finset.mem_univ a, (Finset.mem_filter.1 (w.witness.1 ha)).2, ⟨w.f a ha⟩⟩
 
 open Classical in
-/-- Under a condition with negated scope the witness set consists of objects with the first
-property and not the second. -/
 theorem ParticularWCNeg.X_subset (w : ParticularWCNeg P c Q) :
     w.X ⊆ ({x | P x ∧ ¬ Q.Witnessed x} : Finset E) :=
   fun a ha ↦ Finset.mem_filter.2
     ⟨Finset.mem_univ a, (Finset.mem_filter.1 (w.witness.1 ha)).2, fun ⟨q⟩ ↦ (w.f a ha q).elim⟩
 
 open Classical in
-/-- Under (59b) the witness set contains every object with both properties. -/
 theorem GeneralWCDecr.subset_X (w : GeneralWCDecr P c Q) :
     ({x | P x ∧ Q.Witnessed x} : Finset E) ⊆ w.X :=
   fun a ha ↦ (Finset.mem_filter.1 ha).2.elim (w.f a)
@@ -1139,8 +980,6 @@ theorem few_and_aFew_iff {θ : ℕ} :
     exactly_eq_atLeast_inf_atMost]
   exact and_comm
 
-/-- For a relation closed upwards in `|X|`, a condition with negated scope is witnessed exactly
-when the inner negation of the relation's tree quantifier holds of `P` and `Q`. -/
 theorem nonempty_particularWCNeg_iff_toGQ (hc : ∀ p, Monotone (c · p)) :
     Nonempty (ParticularWCNeg P c Q) ↔ (NumberTree.ofSizes c).innerNeg.toGQ P Q.Witnessed := by
   rw [nonempty_generalWCIncr_iff_toGQ hc, NumberTree.toGQ_innerNeg]
@@ -1187,14 +1026,8 @@ end WitnessCondition
 
 /-! ### Anaphora sets (§7.4.1)
 
-The anaphora sets of [moxey-sanford-1987], as Cooper attributes them (p. 313), are REFSET, the
-objects with both properties, MAXSET, the restrictor's extension, and COMPSET, the objects with
-the first property and not the second. MAXSET is the path `s.restr` of the content records
-(102), (107), (112), named in (103a), (108a) and (113a). The others come from the set a witness
-carries. The individual of the particular condition for `exist` and the witness set of (59a)
-lie in REFSET, the witness set of a condition with negated scope, for `no` and for `few`, in
-COMPSET, and a witness of (59b) can be traded for one whose witness set is REFSET
-(`WitnessCondition.exists_set_subset`). -/
+REFSET, MAXSET and COMPSET ([moxey-sanford-1987], p. 313) are read off the sets the witnesses
+carry, MAXSET being the content's `restr` path. -/
 
 /-- REFSET, MAXSET and COMPSET are the anaphora sets a quantified noun phrase can make available. -/
 inductive AnaphoraRef where
@@ -1311,36 +1144,20 @@ def anaphoraAvailable (q : QuantName) : List AnaphoraRef :=
 
 /-! ### The dogs fragment
 
-With `dog'` and `bark'` the properties (61a–b), a witness for `exist(dog', bark')` under the
-particular condition (63) is a dog that barks, whose `x`-field is what *it* picks up in
-*A dog is barking. It is right outside my window* (64); under the particular condition for
-`no` (70), *No dog barked. They were all busy gnawing on a bone* (71) has *they* pick up the
-witness set of every dog, complement set anaphora; and under the general condition for
-`most` (74), *they* in (75) picks up the witness set of most dogs. The properties are
-decidable predicates lifted to types, as the set-based conditions require. -/
+Three dogs, two of them barking, witness *a dog barks* (63), *most dogs bark* (74) and *few
+dogs barked* (87), and refute *no dog barks*. -/
 
 namespace Dogs
 
 open MeasureTheory ProbabilityTheory
 open scoped Finset ENNReal
 
-/-- Fido, Rex, Spot and Luna are the individuals. -/
-inductive Ind
-  | fido | rex | spot | luna
-  deriving DecidableEq, Repr, Fintype
-
+inductive Ind | fido | rex | spot | luna deriving DecidableEq, Repr, Fintype
 instance : MeasurableSpace Ind := ⊤
-
 instance : MeasurableSingletonClass Ind := ⟨fun _ ↦ trivial⟩
-
-/-- Fido, Rex and Spot are dogs. -/
 def IsDog (x : Ind) : Prop := x ≠ .luna
-
 instance : DecidablePred IsDog := fun _ ↦ by unfold IsDog; infer_instance
-
-/-- Fido and Spot bark. -/
 def Bark (x : Ind) : Prop := x = .fido ∨ x = .spot
-
 instance : DecidablePred Bark := fun _ ↦ by unfold Bark; infer_instance
 
 /-- The property `dog'` (61a) lifts being a dog to a type. -/
@@ -1352,7 +1169,6 @@ def bark : Ppty Ind := fun x ↦ PLift (Bark x)
 /-- *A dog barks* (63) is witnessed by Fido. -/
 def aDogBarks : SemIndefArt dog bark := ⟨.fido, ⟨nofun⟩, ⟨.inl rfl⟩⟩
 
-/-- *No dog barks* is false, since Fido is a dog that barks. -/
 theorem noDogBarks_isEmpty : IsEmpty (SemNo dog bark) :=
   ⟨fun ⟨f⟩ ↦ (f .fido ⟨nofun⟩ ⟨.inl rfl⟩).elim⟩
 
@@ -1386,10 +1202,7 @@ bark. -/
 theorem fewDogsBark_general : Nonempty (GeneralWCDecr IsDog (.propAtMost 2 3) bark) :=
   nonempty_particularWCNeg_compPropAtMost_iff.1 ⟨fewDogsBark⟩
 
-/-- Being a dog and barking are the types judged. -/
-inductive Ty
-  | dog | bark
-  deriving DecidableEq, Repr
+inductive Ty | dog | bark deriving DecidableEq, Repr
 
 /-- An experience base of three dogs, two of which were judged to bark. -/
 def experience : ExperienceBase Ind Ty :=
@@ -1407,18 +1220,9 @@ end Dogs
 
 /-! ## Type-based underspecification (Ch. 8)
 
-The content of an utterance is raised to a type of contents, the readings being the closure
-of the compositional content under the operations of this section. Storage puts a
-parametric quantifier into the context's store, leaving in its place the content of a label's
-value (17), and retrieval quantifies the stored quantifier back in over the content as a
-property of that value (19). Anaphoric combination identifies a pronoun's label with an
-antecedent's (28) unless the pronoun is marked local, the marking cleared at the sentence
-boundary (77); reflexives are marked (83), bound by reflexivisation (84) and required to be
-bound at the verb phrase (85)–(88). Donkey anaphora goes through localisation (49), which
-folds the context into the property's domain so that the indefinite's witness in the
-restrictor can be aligned with the pronoun (51)–(52); `𝔓` then gives the weak reading
-(55)–(59) and `𝔓∀` the strong one (60)–(66), quantifying over farmers and not farmer–donkey
-pairs. -/
+Storage and retrieval give scope ambiguity (17)–(19), locality marking constrains anaphoric
+combination (28)–(88), and localisation with purification gives the donkey readings
+(49)–(66). -/
 
 /-! ### Parametric contents and their context types (§8.2–8.3) -/
 
@@ -1426,13 +1230,9 @@ pairs. -/
 namely the quantifiers in the store `𝔮` (11) under their labels and the labels of pronouns, `𝔰`,
 among them those marked local, `𝔩`, and reflexive, `𝔯`. -/
 structure CntxtType (E : Type) where
-  /-- The store `𝔮` holds the quantifier stored under each label, if any. -/
   store : ℕ → Option ((ℕ → E) → Quant E)
-  /-- `pronouns` holds the labels of pronouns, `𝔰`. -/
   pronouns : Finset ℕ
-  /-- `locals` holds the labels of pronouns marked local, `𝔩`. -/
   locals : Finset ℕ
-  /-- `reflexives` holds the labels of reflexives, `𝔯`. -/
   reflexives : Finset ℕ
 
 namespace CntxtType
@@ -1455,9 +1255,7 @@ end CntxtType
 /-- A parametric content (14) over the contexts of Ch. 8, which assign individuals to labels, pairs
 a background context type with a foreground giving a content for each assignment. -/
 structure Content (E : Type) (C : Type*) where
-  /-- `bg` is the background, the context type the content requires. -/
   bg : CntxtType E
-  /-- `fg` is the foreground, the content under each assignment. -/
   fg : (ℕ → E) → C
 
 namespace Content
@@ -1537,36 +1335,16 @@ end Content
 
 /-! #### *Every boy hugged a dog* (§8.1, (1))
 
-Two boys each hugging a different dog: the reading (1a) with the quantifiers in surface
-order is witnessed, and the reading (1b), the object quantifier stored and retrieved over
-the sentence, is not. -/
+With each boy hugging a different dog, the surface reading (1a) is witnessed and the inverse
+reading (1b) is not. -/
 
 namespace Hugging
 
-/-- Tom, Bill, Fido and Rex are the individuals. -/
-inductive Ind
-  | tom | bill | fido | rex
-  deriving DecidableEq
-
-/-- Tom and Bill are boys. -/
-def Boy : Ppty Ind
-  | .tom | .bill => PUnit
-  | _ => Empty
-
-/-- Fido and Rex are dogs. -/
-def Dog : Ppty Ind
-  | .fido | .rex => PUnit
-  | _ => Empty
-
-/-- Tom hugs Fido, Bill hugs Rex. -/
-def Hug : Ind → Ind → Type
-  | .tom, .fido | .bill, .rex => PUnit
-  | _, _ => Empty
-
-/-- *every boy* requires nothing of the context. -/
+inductive Ind | tom | bill | fido | rex deriving DecidableEq
+def Boy : Ppty Ind | .tom | .bill => PUnit | _ => Empty
+def Dog : Ppty Ind | .fido | .rex => PUnit | _ => Empty
+def Hug : Ind → Ind → Type | .tom, .fido | .bill, .rex => PUnit | _, _ => Empty
 def everyBoy : Content Ind (Quant Ind) := ⟨∅, fun _ ↦ SemUniversal Boy⟩
-
-/-- *a dog* requires nothing of the context. -/
 def aDog : Content Ind (Quant Ind) := ⟨∅, fun _ ↦ SemIndefArt Dog⟩
 
 /-- *hugged* is a transitive verb over its object quantifier (Ch. 6, (63)). -/
@@ -1578,13 +1356,10 @@ def surface : Content Ind Type := everyBoy.app (hugged.app aDog)
 /-- Reading (1b) stores the object quantifier (17) and retrieves it (19) over the sentence. -/
 def inverse : Content Ind Type := (everyBoy.app (hugged.app (Content.store 0 aDog))).retrieve 0
 
-/-- Storage leaves the sentence unplugged. -/
 theorem not_isPlugged_stored : ¬ (everyBoy.app (hugged.app (Content.store 0 aDog))).IsPlugged :=
   fun h ↦ nomatch h 0
 
-/-- Retrieval plugs it again. -/
-theorem isPlugged_inverse : inverse.IsPlugged := fun i ↦ by
-  rcases i with _ | i <;> rfl
+theorem isPlugged_inverse : inverse.IsPlugged := fun i ↦ by rcases i with _ | i <;> rfl
 
 /-- (1b) is the indefinite over the universal. -/
 theorem inverse_fg (g : ℕ → Ind) :
@@ -1613,32 +1388,15 @@ def localize (P : Content E (Ppty E)) : Restricted E := ⟨fun _ ↦ ℕ → E, 
 
 /-! #### *No dog which chases a cat catches it* (46a)
 
-The scope is the localised *catches it* restricted by the restrictor and aligned so that the
-caught cat is the chased one (50)–(51); under the particular condition for `no` the sentence
-(55) says that every dog which chases a cat fails to be a dog which chases a cat and catches
-it. -/
+Under the particular condition for `no`, (55) says that no dog which chases a cat catches the
+cat it chases. -/
 
 namespace Chasing
 
-/-- Two dogs and two cats are the individuals. -/
-inductive Ind
-  | dog₁ | dog₂ | cat₁ | cat₂
-  deriving DecidableEq
-
-/-- `dog₁` and `dog₂` are the dogs. -/
-def Dog : Ppty Ind
-  | .dog₁ | .dog₂ => PUnit
-  | _ => Empty
-
-/-- `cat₁` and `cat₂` are the cats. -/
-def Cat : Ppty Ind
-  | .cat₁ | .cat₂ => PUnit
-  | _ => Empty
-
-/-- Each dog chases one cat. -/
-def Chase : Ind → Ind → Type
-  | .dog₁, .cat₁ | .dog₂, .cat₂ => PUnit
-  | _, _ => Empty
+inductive Ind | dog₁ | dog₂ | cat₁ | cat₂ deriving DecidableEq
+def Dog : Ppty Ind | .dog₁ | .dog₂ => PUnit | _ => Empty
+def Cat : Ppty Ind | .cat₁ | .cat₂ => PUnit | _ => Empty
+def Chase : Ind → Ind → Type | .dog₁, .cat₁ | .dog₂, .cat₂ => PUnit | _, _ => Empty
 
 /-- *catches* is a transitive verb over its object quantifier (Ch. 6, (63)). -/
 def catches (Catch : Ind → Ind → Type) : Content Ind (Quant Ind → Ppty Ind) :=
@@ -1672,38 +1430,21 @@ end Chasing
 
 /-! #### *Every farmer who owns a donkey likes it* (58)–(66)
 
-The localised *likes it* restricted by *farmer who owns a donkey* and aligned (65) is the
-property of being a farmer who owns a donkey and likes that donkey; its purification `𝔓`
-gives the weak reading, some donkey she owns, and `𝔓∀` (66) the strong one, every donkey
-she owns, the readings of [kanazawa-1994]. A farmer who owns two donkeys and likes one
-separates them. -/
+`𝔓` gives the weak reading and `𝔓∀` the strong one of [kanazawa-1994], separated by a farmer who
+owns two donkeys and likes one. -/
 
 namespace Donkeys
 
-/-- Two farmers and two donkeys are the individuals. -/
-inductive Ind
-  | farmer₁ | farmer₂ | donkey₁ | donkey₂
-  deriving DecidableEq
-
-/-- `farmer₁` and `farmer₂` are the farmers. -/
-def Farmer : Ppty Ind
-  | .farmer₁ | .farmer₂ => PUnit
-  | _ => Empty
-
-/-- `donkey₁` and `donkey₂` are the donkeys. -/
-def Donkey : Ppty Ind
-  | .donkey₁ | .donkey₂ => PUnit
-  | _ => Empty
+inductive Ind | farmer₁ | farmer₂ | donkey₁ | donkey₂ deriving DecidableEq
+def Farmer : Ppty Ind | .farmer₁ | .farmer₂ => PUnit | _ => Empty
+def Donkey : Ppty Ind | .donkey₁ | .donkey₂ => PUnit | _ => Empty
 
 /-- The first farmer owns both donkeys, the second the second. -/
 def Own : Ind → Ind → Type
   | .farmer₁, .donkey₁ | .farmer₁, .donkey₂ | .farmer₂, .donkey₂ => PUnit
   | _, _ => Empty
 
-/-- Each farmer likes one donkey. -/
-def Like : Ind → Ind → Type
-  | .farmer₁, .donkey₁ | .farmer₂, .donkey₂ => PUnit
-  | _, _ => Empty
+def Like : Ind → Ind → Type | .farmer₁, .donkey₁ | .farmer₂, .donkey₂ => PUnit | _, _ => Empty
 
 /-- *farmer who owns a donkey* holds a farmer with a donkey she owns. -/
 def FarmerOwnsADonkey : Ppty Ind := fun x ↦ Farmer x × ((d : Ind) × Donkey d × Own x d)
@@ -1732,44 +1473,22 @@ end Donkeys
 
 /-! ### Pronouns, locality and reflexives (30)–(36), (67)–(88)
 
-With the subject stored, its label is available for anaphoric combination with the pronoun
-of *thinks she failed*, whose local marking the embedded sentence's boundary has cleared;
-retrieval then quantifies over the property of being a girl who thinks she failed, (36c).
-In *Sam likes him* the pronoun is still marked local when the subject combines, so the
-combination is undefined, Principle B; *likes himself* reflexivised is `like(x, x)`, its
-marking cleared for the verb phrase's filter, which excludes the reflexive left unbound,
-Principle A. -/
+A stored *no girl* binds *she* past the embedded boundary, the local *him* of *Sam likes him*
+cannot combine with *Sam* (Principle B), and *himself* is bound by reflexivisation. -/
 
 namespace Binding
 
-/-- Sam, Kim and Ann are the individuals. -/
-inductive Ind
-  | sam | kim | ann
-  deriving DecidableEq
-
-/-- Ann is the girl. -/
-def Girl : Ppty Ind
-  | .ann => PUnit
-  | _ => Empty
-
-/-- Nobody failed. -/
+inductive Ind | sam | kim | ann deriving DecidableEq
+def Girl : Ppty Ind | .ann => PUnit | _ => Empty
 inductive Fail : Ind → Type
-
-/-- Sam likes himself. -/
-inductive Like : Ind → Ind → Type
-  | mk : Like .sam .sam
+inductive Like : Ind → Ind → Type | mk : Like .sam .sam
 
 /-- A witness of `think(x, T)` is a thought with the type's witness. -/
 structure Think (x : Ind) (T : Type) where
   thought : T
 
-/-- *Sam* (70) requires nothing of the context. -/
 def sam : Content Ind (Quant Ind) := ⟨∅, fun _ ↦ SemPropName .sam⟩
-
-/-- *no girl* (33) requires nothing of the context. -/
 def noGirl : Content Ind (Quant Ind) := ⟨∅, fun _ ↦ SemNo Girl⟩
-
-/-- *failed* requires nothing of the context. -/
 def failed : Content Ind (Ppty Ind) := ⟨∅, fun _ ↦ Fail⟩
 
 /-- *thinks* takes a ptype of thinking. -/
@@ -1788,7 +1507,6 @@ theorem anaphoricDefined_thinksSheFailed :
     (Content.store 0 noGirl).AnaphoricDefined 0 1 thinksSheFailed := by
   decide
 
-/-- Without the boundary of the embedded sentence the pronoun would still be local. -/
 theorem not_anaphoricDefined_of_no_boundary :
     ¬ (Content.store 0 noGirl).AnaphoricDefined 0 1
       (thinks.app ((Content.pronoun 1).app failed)) := by
@@ -1819,7 +1537,6 @@ theorem likesHimself_fg (g : ℕ → Ind) (x : Ind) : likesHimself.fg g x = Like
 /-- Reflexivisation clears the marking for the verb phrase's filter (88). -/
 theorem isAnaphorFree_likesHimself : likesHimself.IsAnaphorFree := by decide
 
-/-- The filter excludes the reflexive left unbound. -/
 theorem not_isAnaphorFree_likesReflexive : ¬ (likes.app (Content.reflexive 1)).IsAnaphorFree := by
   decide
 
@@ -1832,30 +1549,14 @@ end Binding
 
 /-! #### *A man walked. He whistled.* (37)–(44)
 
-The pronoun's label is identified with the man of the previous utterance's witness (42) and
-the dependency on the label replaced by one on the man (43)–(44). -/
+The pronoun's label is given the man of the previous utterance's witness (42)–(44). -/
 
 namespace Whistling
 
-/-- John and Mary are the individuals. -/
-inductive Ind
-  | john | mary
-  deriving DecidableEq
-
-/-- John is a man. -/
-def Man : Ppty Ind
-  | .john => PUnit
-  | .mary => Empty
-
-/-- John walks. -/
-def Walk : Ppty Ind
-  | .john => PUnit
-  | .mary => Empty
-
-/-- John whistles. -/
-def Whistle : Ppty Ind
-  | .john => PUnit
-  | .mary => Empty
+inductive Ind | john | mary deriving DecidableEq
+def Man : Ppty Ind | .john => PUnit | .mary => Empty
+def Walk : Ppty Ind | .john => PUnit | .mary => Empty
+def Whistle : Ppty Ind | .john => PUnit | .mary => Empty
 
 /-- The content of *a man walked* (38) is the particular condition for `exist`. -/
 def AManWalked : Type := SemIndefArt Man Walk
@@ -1873,17 +1574,15 @@ theorem heWhistled_given (w : AManWalked) (g : ℕ → Ind) :
     (heWhistled.given 0 w.x).bg.pronouns = ∅ ∧ (heWhistled.given 0 w.x).fg g = Whistle w.x :=
   ⟨rfl, rfl⟩
 
-/-- The man of the previous utterance whistled. -/
 def heWhistledWitness (g : ℕ → Ind) : (heWhistled.given 0 aManWalked.x).fg g := ⟨⟩
 
 end Whistling
 
 /-! ### The book's examples
 
-A selection of the English examples of Chs. 3, 6, 7 and 8 are the rows of
-`Data/Examples/Cooper2023.json`. The rows with a `quantifier` feature are the
-discourse-anaphora examples of §7.4, §7.4.1 and §8.3, each reading named by the anaphora
-set the pronoun picks up. -/
+The rows of `Data/Examples/Cooper2023.json` with a `quantifier` feature are the anaphora
+examples of §7.4, §7.4.1 and §8.3, each reading named by the anaphora set its pronoun picks
+up. -/
 
 /-- `quantNames` pairs each row's determiner with the quantifier relation it names. -/
 def quantNames : List (String × QuantName) :=
