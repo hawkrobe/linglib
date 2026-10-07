@@ -1,54 +1,51 @@
 module
 
 public import Linglib.Morphology.Morphotactics.Association
-public import Linglib.Fragments.Hebrew.ConsonantalRoots
 public import Linglib.Fragments.Amharic.ConsonantalRoots
+public import Linglib.Studies.Arad2005
 public import Linglib.Syntax.Gender.Basic
 public import Linglib.Data.Examples.Faust2026
 
 /-!
 # Faust (2026): Intrusion as template satisfaction and the QaTaT–QaTa problem in Semitic
 
-This file formalizes [faust-2026]'s *Misalignment principle — a nonfinal root element must
-not be template-final — and the two template-satisfaction strategies it leaves to a root whose
-final radical cannot associate to a [+consonantal] C-slot: leaving the slot vacant (Hebrew
-[kala], the QaTaT–QaTa problem of (3)–(4)) or filling it with the consonant of the feminine
-suffix (Hebrew [tadmit] (10), Amharic [fäʤt-o] (8) and [mäsmat] (13a)). The derivations run
-[mccarthy-1981]'s association conventions (`Morphology.TemplateMatch.associate`) over the
-substrate `Morphology.TemplateMatch`: the [+c] specification bars glides and vowels
-from a slot, Amharic joins a barred glide to the preceding consonant and merges a barred vowel
-with the vocalization ((7), (13)), and an unsatisfied final syllable is truncated (7a). Template
-satisfaction by spreading (1) is the candidate *Misalignment rules out for j-final roots
-((4), (6a)) and permits for biradicals (√wd, [wäddäd-ä]); intrusion never misaligns because the
-intruder is not a radical, and its absence from the hollow verbs (13b–c) follows from the
-No-Crossing Constraint on the root-plus-suffix melody. The feminine morph is inherent
-inflection on n, so only a nominal base merges with it (11): that gives the distribution of the
-intruder across the Amharic paradigms (5) and (12) that [broselow-1984]'s default consonant
-left unexplained. The pipeline reproduces the paradigms (3), (5), (12) and the taQTiL nouns
-(9) whose roots the squib identifies (`Data/Examples/Faust2026.json`).
+Faust's *Misalignment principle bars a nonfinal root element from the template-final slot. A
+root whose final radical cannot take a [+consonantal] C-slot then satisfies the template in one
+of two ways: it leaves the slot vacant, as in Hebrew [kala], or the consonant of the feminine
+suffix fills it, as in Hebrew [tadmit] and Amharic [fäʤt-o]. The derivations run McCarthy's
+association conventions with slot specifications that bar glides and vowels from [+c] slots,
+and the feminine morph, inherent inflection on n, merges only with a nominal base. That gives
+the distribution of the intruding [t] across the Amharic paradigms, which Broselow's default
+consonant left unexplained, and the No-Crossing Constraint keeps it out of the hollow verbs.
+
+## Main statements
+
+* `klj_spread_misaligned`: spreading the final consonant of √klj would misalign the root, so
+  the final slot stays vacant.
+* `isNonCrossing_melodyLinks_intrude`: the intruder's line crosses no root line.
+* `rows_surface`: the derivations reproduce the squib's paradigms.
+* `intruder_distribution`: the intruder occurs exactly in the nominal cells of the roots whose
+  final radical is barred.
 
 ## Implementation notes
 
-* A plain C-slot admits a glide (kaluj, klija) but no vowel; a [+c] slot admits consonants
-  only. `segClass` classifies the segments of the two fragments accordingly, and `merge`
-  states the three mergers the squib names: d + j to ʤ, ä + a to a, ä + i to e.
-* The medial gemination of the Amharic PFV is prespecified ({C C} in (7)) and doubled at
-  realization; truncation deletes the final VC when the final C-slot is vacant and the
-  pattern truncates (Amharic, not Hebrew).
-* The suffix consonant is the melody element after the root on the consonantal melody of the
-  merged base (`melodyLinks`), and it associates to the rightmost vacant C-slot only if that
-  slot lies in its `Autosegmental.window`, where its line crosses no root line
-  ([goldsmith-1976]); `isNonCrossing_melodyLinks_intrude` is the guarantee. The morph's vowel
-  (√(a)t) does not surface in the forms derived, so the affix carries only t.
-* The squib labels (13c) [mähid] while (12e) and its merger /i,ä/ to [e] give [mähed]; the
-  rows follow (12e).
-* Not derived: the IPFV and JUSS, whose prefixal templates the squib does not draw, and the
-  PFV of √sma, where the final radical merges with the suffix vowel outside the template.
+* The derivations run over the squib's transcription. `fragment_roots` shows that its roots,
+  read as segments, are the Hebrew and Amharic fragments' roots, the alternating stops of √kl
+  and √skt realized as stops by Arad's rule.
+* `segClass` lets a plain C-slot host a glide but no vowel and a [+c] slot only consonants, and
+  `merge` states the squib's mergers d + j to ʤ, ä + a to a and ä + i to e.
+* The medial geminate of the Amharic PFV is prespecified ({C C} in (7)). The suffix consonant
+  associates to the rightmost vacant C-slot only inside its `Autosegmental.window`, and the
+  morph's vowel does not surface, so the affix carries only t.
+* The squib labels (13c) [mähid] where (12e) and its merger give [mähed], and the rows follow
+  (12e). The IPFV and JUSS, whose templates the squib does not draw, and the PFV of √sma are
+  not derived.
 
 ## References
 
 * [faust-2026]
 * [mccarthy-1981]
+* [arad-2005]
 * [broselow-1984]
 * [greenberg-1950]
 * [leslau-1995]
@@ -67,8 +64,8 @@ variable {α : Type*}
 
 /-! ### *Misalignment -/
 
-/-- *Misalignment (2), (6b): some nonfinal root element is associated to the template-final
-slot. -/
+/-- `Misaligned m` holds when some nonfinal root element is associated to the template-final slot,
+which *Misalignment (2), (6b) bans. -/
 def Misaligned (m : TemplateMatch α) : Prop :=
   ∃ a ∈ m.associations,
     a.source = .root ∧ m.root.IsNonfinal a.melodyIndex ∧ m.template.isFinalSlot a.slotIndex
@@ -82,7 +79,7 @@ theorem misaligned_append (m : TemplateMatch α) (l : List Association) :
         m.template.isFinalSlot a.slotIndex := by
   simp only [Misaligned, List.mem_append, or_and_right, exists_or]
 
-/-- Lines from the affix tier never misalign the root: the intruder "is not a radical" ((8),
+/-- Lines from the affix tier never misalign the root, since the intruder "is not a radical" ((8),
 (10)). -/
 theorem misaligned_append_affix (m : TemplateMatch α) (l : List Association)
     (h : ∀ a ∈ l, a.source = .affix) :
@@ -107,8 +104,8 @@ def segClass : String → SegClass
   | "a" | "i" => .vowel
   | _ => .consonant
 
-/-- The mergers of two elements sharing a slot that the squib states: a glide joined to the
-preceding consonant palatalizes it ((7), [fäʤʤ-ä]), and a nonconsonantal radical merges with
+/-- `merge` states the mergers of two elements sharing a slot that the squib names. A glide joined
+to the preceding consonant palatalizes it ((7), [fäʤʤ-ä]), and a nonconsonantal radical merges with
 the vocalization, /a,ä/ yielding [a] and /i,ä/ yielding [e] (13). -/
 def merge : String → String → String
   | "d", "j" => "ʤ"
@@ -116,16 +113,16 @@ def merge : String → String → String
   | "ä", "i" => "e"
   | x, _ => x
 
-/-- The category of the base a template builds: gender markers are inherent inflection on n,
-so only a nominal base merges with the feminine morph (11). -/
+/-- `Category` is the category of the base a template builds. Gender markers are inherent inflection
+on n, so only a nominal base merges with the feminine morph (11). -/
 inductive Category where
   | noun
   | verb
   | adjective
   deriving DecidableEq, Repr
 
-/-- A template with its lexical shape: skeleton, category, vocalization and its lines,
-segmental material outside the skeleton, and the parameters of the squib's derivations. -/
+/-- A pattern is a template with its lexical shape, namely its skeleton, category, vocalization and
+lines, segmental material outside the skeleton, and the parameters of the squib's derivations. -/
 structure Pattern where
   /-- The skeleton. -/
   template : CVTemplate
@@ -151,8 +148,8 @@ def lines (p : Pattern) (r : ConsonantalRoot String) : TemplateMatch String :=
   (({ root := r, vocalism := p.vocalism, template := p.template, associations := [] } :
     TemplateMatch String).associate .root).link p.vocLines
 
-/-- `m.Admits a`: the slot's specification admits the segment — a [+c] slot hosts consonants
-only ((4), (7), (13)), a plain C-slot anything but a vowel. -/
+/-- `m.Admits a` says that the slot's specification admits the segment. A [+c] slot hosts consonants
+only ((4), (7), (13)), and a plain C-slot anything but a vowel. -/
 def Admits (m : TemplateMatch String) (a : Association) : Prop :=
   match m.template.slotAt a.slotIndex, m.segmentAt a with
   | some .Cspec, some x => segClass x = .consonant
@@ -170,11 +167,11 @@ def flankingV (m : TemplateMatch String) (i : Nat) : List Nat :=
 def vocAt (m : TemplateMatch String) (s : Nat) : Option Association :=
   m.associations.find? fun a ↦ a.source == .vocalism && a.slotIndex == s
 
-/-- Where a barred root element goes. A glide joins the slot of the consonant on its left,
-where the pattern's language does that ((7): Amharic, not Hebrew). A nonconsonantal radical
-merges with the vocalization on the V-slots flanking its slot, the vocalization element
-spreading to a flanking V-slot it did not occupy: the merger "occupies the two vocalic
-positions around the C position" (13b–c). -/
+/-- `join` places a barred root element. A glide joins the slot of the consonant on its left where
+the pattern's language does that, Amharic and not Hebrew (7). A nonconsonantal radical merges with
+the vocalization on the V-slots flanking its slot, the vocalization element spreading to a flanking
+V-slot it did not occupy, so that the merger "occupies the two vocalic positions around the C
+position" (13b–c). -/
 def join (p : Pattern) (m : TemplateMatch String) (a : Association) : TemplateMatch String :=
   match (m.segmentAt a).map segClass with
   | some .glide =>
@@ -193,8 +190,8 @@ def join (p : Pattern) (m : TemplateMatch String) (a : Association) : TemplateMa
     | none => m
   | _ => m
 
-/-- Association under the slot specifications: the rejected lines are removed and their
-elements joined or merged as the pattern's language allows. -/
+/-- Association under the slot specifications removes the rejected lines and joins or merges their
+elements as the pattern's language allows. -/
 def associate (p : Pattern) (r : ConsonantalRoot String) : TemplateMatch String :=
   let m := lines p r
   (m.associations.filter fun a ↦ ¬ Admits m a).foldl (join p)
@@ -216,9 +213,9 @@ theorem melodyLinks_intrudeAt (m : TemplateMatch String) (s : Nat) :
   ext p
   simp [melodyLinks, intrudeAt, TemplateMatch.links, List.filter_append]
 
-/-- Intrusion (10b–c): the morph's consonant associates from right to left, to the rightmost
-vacant C-slot, provided that slot lies in its window, so that its line crosses none of the
-root's; otherwise it floats (13b–c). -/
+/-- Intrusion (10b–c) associates the morph's consonant from right to left to the rightmost vacant
+C-slot, provided that slot lies in its window, so that its line crosses none of the root's;
+otherwise the consonant floats (13b–c). -/
 def intrude (m : TemplateMatch String) : TemplateMatch String :=
   match m.unfilledCSlots.max? with
   | some s =>
@@ -229,7 +226,7 @@ theorem misaligned_intrudeAt (m : TemplateMatch String) (s : Nat) :
     Misaligned (intrudeAt m s) ↔ Misaligned m :=
   misaligned_append_affix m [⟨.affix, 0, s⟩] (by simp)
 
-/-- Intrusion is template satisfaction without misalignment: the intruder never misaligns the
+/-- Intrusion is template satisfaction without misalignment, since the intruder never misaligns the
 root ((8), (10)). -/
 theorem misaligned_intrude (m : TemplateMatch String) : Misaligned (intrude m) ↔ Misaligned m := by
   unfold intrude
@@ -239,7 +236,7 @@ theorem misaligned_intrude (m : TemplateMatch String) : Misaligned (intrude m) �
     · exact Iff.rfl
   · exact Iff.rfl
 
-/-- The intruder's line never crosses a root line: intrusion keeps the merged melody
+/-- The intruder's line never crosses a root line, so intrusion keeps the merged melody
 non-crossing. -/
 theorem isNonCrossing_melodyLinks_intrude (m : TemplateMatch String)
     (h : IsNonCrossing (melodyLinks m)) : IsNonCrossing (melodyLinks (intrude m)) := by
@@ -251,13 +248,13 @@ theorem isNonCrossing_melodyLinks_intrude (m : TemplateMatch String)
     · exact h
   · exact h
 
-/-- The derivation of a root in a pattern: association under the slot specifications, then,
-for a nominal base whose template is unsatisfied, merger of the feminine morph ((10b), (11)). -/
+/-- The derivation of a root in a pattern is association under the slot specifications followed, for
+a nominal base whose template is unsatisfied, by merger of the feminine morph ((10b), (11)). -/
 def derive (p : Pattern) (r : ConsonantalRoot String) : TemplateMatch String :=
   let m := associate p r
   if p.category = .noun ∧ ¬ m.allCSlotsFilled then intrude m else m
 
-/-- Only a nominal base merges with the feminine morph (11): a verbal or adjectival base is
+/-- Only a nominal base merges with the feminine morph (11), so a verbal or adjectival base is
 realized as associated. -/
 theorem derive_of_category_ne_noun (p : Pattern) (r : ConsonantalRoot String)
     (h : p.category ≠ .noun) : derive p r = associate p r := by
@@ -265,41 +262,42 @@ theorem derive_of_category_ne_noun (p : Pattern) (r : ConsonantalRoot String)
 
 /-! ### Realization -/
 
-/-- The segments a slot hosts: vocalization first, then root, then affix lines. -/
+/-- `hosted m s` lists the segments slot `s` hosts, vocalization first, then root, then affix lines.
+-/
 def hosted (m : TemplateMatch String) (s : Nat) : List String :=
   [AssocSource.vocalism, .root, .affix].flatMap fun src ↦
     (m.associations.filter fun a ↦ a.source == src && a.slotIndex == s).filterMap m.segmentAt
 
-/-- The realization of a slot: the hosted segments merged onto the first. -/
+/-- `realizeSlot m s` merges the segments slot `s` hosts onto the first. -/
 def realizeSlot (m : TemplateMatch String) (s : Nat) : Option String :=
   match hosted m s with
   | [] => none
   | x :: xs => some (xs.foldl merge x)
 
-/-- `collapses x l`: the V-slot realized `x` is followed by a vacant C-slot and a V-slot
+/-- `collapses x l` says that the V-slot realized `x` is followed by a vacant C-slot and a V-slot
 realized the same. -/
 def collapses (x : String) : List (CVSlot × Option String) → Bool
   | (c, none) :: (.V, some y) :: _ => c.IsC && x == y
   | _ => false
 
-/-- The realized slots in order, V-slots around a vacant C-slot with the same realization
-surfacing once: "the phonological length of these vowels is not translated to phonetic
-length" (13). The flag records that the vowel has already been realized. -/
+/-- `collapse` lists the realized slots in order, V-slots around a vacant C-slot with the same
+realization surfacing once, since "the phonological length of these vowels is not translated to
+phonetic length" (13). The flag records that the vowel has already been realized. -/
 def collapse : Bool → List (CVSlot × Option String) → List String
   | _, [] => []
   | skip, (_, none) :: tl => collapse skip tl
   | true, (.V, some _) :: tl => collapse false tl
   | _, (s, some x) :: tl => x :: collapse (s == .V && collapses x tl) tl
 
-/-- Truncation (7a): when the pattern truncates and the final C-slot is vacant, the final
-syllable — that slot and the V-slot before it — is deleted. -/
+/-- Truncation (7a) deletes the final syllable, the final C-slot and the V-slot before it, when the
+pattern truncates and that slot is vacant. -/
 def truncate (p : Pattern) (m : TemplateMatch String) : CVTemplate :=
   match m.unfilledCSlots.max?, m.template.cSlots.max? with
   | some s, some s' =>
     if p.truncates ∧ s = s' then ⟨m.template.slots.take (s - 1)⟩ else m.template
   | _, _ => m.template
 
-/-- The surface segments of a match in a pattern: the realized slots, a filled prespecified
+/-- The surface segments of a match in a pattern are the realized slots, a filled prespecified
 geminate slot counting twice ({C C} in (7)), between the pattern's outer material. -/
 def realize (p : Pattern) (m : TemplateMatch String) : List String :=
   p.pre ++ collapse false ((truncate p m).slots.zipIdx.flatMap fun (c, i) ↦
@@ -312,6 +310,47 @@ def surface (p : Pattern) (r : ConsonantalRoot String) : List String := realize 
 /-- The surface form as characters, for comparison with a transcription. -/
 def surfaceChars (p : Pattern) (r : ConsonantalRoot String) : List Char :=
   (surface p r).flatMap String.toList
+
+/-! ### The roots, in the squib's transcription -/
+
+/-- The root √klt of *kalat* 'received'. -/
+def klt : ConsonantalRoot String := ⟨["k", "l", "t"]⟩
+
+/-- The root the biradical √kl of *kalal* 'included'. -/
+def kl : ConsonantalRoot String := ⟨["k", "l"]⟩
+
+/-- The root √klj of *kala* 'roasted'. -/
+def klj : ConsonantalRoot String := ⟨["k", "l", "j"]⟩
+
+/-- The root √dmj of *tadmit*. -/
+def dmj : ConsonantalRoot String := ⟨["d", "m", "j"]⟩
+
+/-- The root √glj of *taglit*. -/
+def glj : ConsonantalRoot String := ⟨["g", "l", "j"]⟩
+
+/-- The root √rmj of *tarmit*. -/
+def rmj : ConsonantalRoot String := ⟨["r", "m", "j"]⟩
+
+/-- The root the t-final √skt of *taskit*. -/
+def skt : ConsonantalRoot String := ⟨["s", "k", "t"]⟩
+
+/-- The root Amharic √sbr 'break'. -/
+def sbr : ConsonantalRoot String := ⟨["s", "b", "r"]⟩
+
+/-- The root Amharic √wd 'like'. -/
+def wd : ConsonantalRoot String := ⟨["w", "d"]⟩
+
+/-- The root Amharic √fdj 'scorch'. -/
+def fdj : ConsonantalRoot String := ⟨["f", "d", "j"]⟩
+
+/-- The root Amharic √sma 'hear'. -/
+def sma : ConsonantalRoot String := ⟨["s", "m", "a"]⟩
+
+/-- The root Amharic √sam 'kiss'. -/
+def sam : ConsonantalRoot String := ⟨["s", "a", "m"]⟩
+
+/-- The root Amharic √hid 'go'. -/
+def hid : ConsonantalRoot String := ⟨["h", "i", "d"]⟩
 
 /-! ### Modern Hebrew: the QaTaT–QaTa problem (3)–(4) and taQTiL (9)–(10) -/
 
@@ -330,51 +369,50 @@ def hebrewQatul : Pattern :=
   { template := ⟨[.C, .V, .C, .V, .C]⟩, category := .adjective, vocalism := ["a", "u"],
     vocLines := [⟨.vocalism, 0, 1⟩, ⟨.vocalism, 1, 3⟩] }
 
-/-- The resultative nominal template taQTiL[+c] ((9)–(10)): its fixed ta precedes the
-skeleton. -/
+/-- The resultative nominal template taQTiL[+c] ((9)–(10)) has its fixed ta before the skeleton. -/
 def hebrewTaqtil : Pattern :=
   { template := ⟨[.C, .C, .V, .Cspec]⟩, category := .noun, vocalism := ["i"],
     vocLines := [⟨.vocalism, 0, 2⟩], pre := ["ta"] }
 
-/-- (3a–b), (1): √klt fills CaCaC[+c] radical by radical, and the biradical √kl satisfies it by
-spreading its final l — QaTaT, never QaQaT — with no misalignment. -/
+/-- √klt fills CaCaC[+c] radical by radical, and the biradical √kl satisfies it by spreading its
+final l, QaTaT and never QaQaT, with no misalignment ((3a–b), (1)). -/
 theorem klt_kl_satisfy :
-    (derive hebrewPst Hebrew.klt).allCSlotsFilled ∧ ¬ Misaligned (derive hebrewPst Hebrew.klt) ∧
-    (derive hebrewPst Hebrew.kl).allCSlotsFilled ∧ ¬ Misaligned (derive hebrewPst Hebrew.kl) ∧
-    ⟨.root, 1, 4⟩ ∈ (derive hebrewPst Hebrew.kl).associations := by
+    (derive hebrewPst klt).allCSlotsFilled ∧ ¬ Misaligned (derive hebrewPst klt) ∧
+    (derive hebrewPst kl).allCSlotsFilled ∧ ¬ Misaligned (derive hebrewPst kl) ∧
+    ⟨.root, 1, 4⟩ ∈ (derive hebrewPst kl).associations := by
   decide
 
-/-- (4), (6): for √klj the [+c] final slot stays vacant; template satisfaction by spreading
-would yield [kalal] with the nonfinal l template-final, which *Misalignment rules out. -/
+/-- For √klj the [+c] final slot stays vacant; template satisfaction by spreading would yield
+[kalal] with the nonfinal l template-final, which *Misalignment rules out ((4), (6)). -/
 theorem klj_spread_misaligned :
-    (derive hebrewPst Hebrew.klj).unfilledCSlots = [4] ∧
-    ¬ Misaligned (derive hebrewPst Hebrew.klj) ∧
-    Misaligned ((derive hebrewPst Hebrew.klj).spread .root) ∧
-    realize hebrewPst ((derive hebrewPst Hebrew.klj).spread .root) = ["k", "a", "l", "a", "l"] := by
+    (derive hebrewPst klj).unfilledCSlots = [4] ∧
+    ¬ Misaligned (derive hebrewPst klj) ∧
+    Misaligned ((derive hebrewPst klj).spread .root) ∧
+    realize hebrewPst ((derive hebrewPst klj).spread .root) = ["k", "a", "l", "a", "l"] := by
   decide
 
-/-- (3c): the final slots of QTiLa and QaTuL are unspecified, so j associates and surfaces. -/
+/-- The final slots of QTiLa and QaTuL are unspecified, so j associates and surfaces (3c). -/
 theorem klj_qtila_qatul :
-    (derive hebrewQtila Hebrew.klj).allCSlotsFilled ∧
-    (derive hebrewQatul Hebrew.klj).allCSlotsFilled := by
+    (derive hebrewQtila klj).allCSlotsFilled ∧
+    (derive hebrewQatul klj).allCSlotsFilled := by
   decide
 
-/-- (10): √dmj leaves the [+c] final slot of taQTiL vacant and spreading would misalign; merged
-with the feminine morph, whose t associates from the right, the template is satisfied without
-misalignment. -/
+/-- √dmj leaves the [+c] final slot of taQTiL vacant and spreading would misalign; merged with the
+feminine morph, whose t associates from the right, the template is satisfied without misalignment
+(10). -/
 theorem dmj_taqtil :
-    (associate hebrewTaqtil Hebrew.dmj).unfilledCSlots = [3] ∧
-    Misaligned ((associate hebrewTaqtil Hebrew.dmj).spread .root) ∧
-    ⟨.affix, 0, 3⟩ ∈ (derive hebrewTaqtil Hebrew.dmj).associations ∧
-    (derive hebrewTaqtil Hebrew.dmj).allCSlotsFilled ∧
-    ¬ Misaligned (derive hebrewTaqtil Hebrew.dmj) := by
+    (associate hebrewTaqtil dmj).unfilledCSlots = [3] ∧
+    Misaligned ((associate hebrewTaqtil dmj).spread .root) ∧
+    ⟨.affix, 0, 3⟩ ∈ (derive hebrewTaqtil dmj).associations ∧
+    (derive hebrewTaqtil dmj).allCSlotsFilled ∧
+    ¬ Misaligned (derive hebrewTaqtil dmj) := by
   decide
 
 /-! ### Amharic: (5), (7)–(8), (12)–(13) -/
 
-/-- The type A PFV.3MSG stem CäCCäC[+c] ((5), (7)): the medial C prespecified geminate, the
-final slot [+c], the person suffix -ä outside; a barred glide joins the consonant on its left,
-and an unsatisfied final syllable is truncated (7a). -/
+/-- The type A PFV.3MSG stem CäCCäC[+c] ((5), (7)) has its medial C prespecified geminate, its final
+slot [+c] and the person suffix -ä outside; a barred glide joins the consonant on its left, and an
+unsatisfied final syllable is truncated (7a). -/
 def amharicPfv : Pattern :=
   { template := ⟨[.C, .V, .C, .V, .Cspec]⟩, category := .verb, vocalism := ["ä"],
     vocLines := [⟨.vocalism, 0, 1⟩, ⟨.vocalism, 0, 3⟩], post := ["-ä"], geminate := some 2,
@@ -385,51 +423,51 @@ def amharicGrnd : Pattern :=
   { template := ⟨[.C, .V, .C, .Cspec]⟩, category := .noun, vocalism := ["ä"],
     vocLines := [⟨.vocalism, 0, 1⟩], post := ["-o"], joinsGlide := true }
 
-/-- The INF: the prefix mä- and, in Strict CV terms (13), the skeleton CVC[+c]VC[+c] with ä on
+/-- The INF has the prefix mä- and, in Strict CV terms (13), the skeleton CVC[+c]VC[+c] with ä on
 the second V-slot. -/
 def amharicInf : Pattern :=
   { template := ⟨[.C, .V, .Cspec, .V, .Cspec]⟩, category := .noun, vocalism := ["ä"],
     vocLines := [⟨.vocalism, 0, 3⟩], pre := ["mä"], joinsGlide := true }
 
-/-- (7): √fdj in the PFV — the barred j joins d at the geminate slot, the final slot stays
-vacant, no misalignment; spreading d there would misalign. -/
+/-- In the PFV the barred j of √fdj joins d at the geminate slot and the final slot stays vacant,
+with no misalignment; spreading d there would misalign (7). -/
 theorem fdj_pfv :
-    ⟨.root, 2, 2⟩ ∈ (derive amharicPfv Amharic.fdj).associations ∧
-    (derive amharicPfv Amharic.fdj).unfilledCSlots = [4] ∧
-    ¬ Misaligned (derive amharicPfv Amharic.fdj) ∧
-    Misaligned ((derive amharicPfv Amharic.fdj).spread .root) := by
+    ⟨.root, 2, 2⟩ ∈ (derive amharicPfv fdj).associations ∧
+    (derive amharicPfv fdj).unfilledCSlots = [4] ∧
+    ¬ Misaligned (derive amharicPfv fdj) ∧
+    Misaligned ((derive amharicPfv fdj).spread .root) := by
   decide
 
-/-- √wd (5b): the biradical satisfies the PFV template by spreading its final d without
-misalignment and is OCP-clean; [broselow-1984]'s √wdd is not. -/
+/-- The biradical √wd satisfies the PFV template by spreading its final d without misalignment and
+is OCP-clean, while [broselow-1984]'s √wdd is not (5b). -/
 theorem wd_pfv :
-    (derive amharicPfv Amharic.wd).allCSlotsFilled ∧ ¬ Misaligned (derive amharicPfv Amharic.wd) ∧
-    Amharic.wd.IsOCPClean ∧ ¬ (⟨["w", "d", "d"]⟩ : ConsonantalRoot String).IsOCPClean := by
+    (derive amharicPfv wd).allCSlotsFilled ∧ ¬ Misaligned (derive amharicPfv wd) ∧
+    wd.IsOCPClean ∧ ¬ (⟨["w", "d", "d"]⟩ : ConsonantalRoot String).IsOCPClean := by
   decide
 
-/-- (8): in the GRND the intruder fills the vacant final slot, satisfying the template without
-misalignment. -/
+/-- In the GRND the intruder fills the vacant final slot, satisfying the template without
+misalignment (8). -/
 theorem fdj_grnd :
-    ⟨.affix, 0, 3⟩ ∈ (derive amharicGrnd Amharic.fdj).associations ∧
-    (derive amharicGrnd Amharic.fdj).allCSlotsFilled ∧
-    ¬ Misaligned (derive amharicGrnd Amharic.fdj) ∧
-    IsNonCrossing (melodyLinks (derive amharicGrnd Amharic.fdj)) := by
+    ⟨.affix, 0, 3⟩ ∈ (derive amharicGrnd fdj).associations ∧
+    (derive amharicGrnd fdj).allCSlotsFilled ∧
+    ¬ Misaligned (derive amharicGrnd fdj) ∧
+    IsNonCrossing (melodyLinks (derive amharicGrnd fdj)) := by
   decide
 
-/-- (13): all three INF derivations leave a C-slot vacant, but the intruder associates only
-in (13a), where the vacancy is final; in (13b–c) its line to the medial vacancy would cross the
-final radical's, so it floats, and no representation is misaligned. -/
+/-- All three INF derivations leave a C-slot vacant, but the intruder associates only in (13a),
+where the vacancy is final; in (13b–c) its line to the medial vacancy would cross the final
+radical's, so it floats, and no representation is misaligned. -/
 theorem inf_intrusion :
-    (associate amharicInf Amharic.sma).unfilledCSlots = [4] ∧
-    (associate amharicInf Amharic.sam).unfilledCSlots = [2] ∧
-    (associate amharicInf Amharic.hid).unfilledCSlots = [2] ∧
-    ⟨.affix, 0, 4⟩ ∈ (derive amharicInf Amharic.sma).associations ∧
-    2 ∉ window (melodyLinks (associate amharicInf Amharic.sam)) Amharic.sam.arity ∧
-    2 ∉ window (melodyLinks (associate amharicInf Amharic.hid)) Amharic.hid.arity ∧
-    (derive amharicInf Amharic.sam).unfilledCSlots = [2] ∧
-    (derive amharicInf Amharic.hid).unfilledCSlots = [2] ∧
-    ¬ Misaligned (derive amharicInf Amharic.sam) ∧
-    ¬ Misaligned (derive amharicInf Amharic.hid) := by
+    (associate amharicInf sma).unfilledCSlots = [4] ∧
+    (associate amharicInf sam).unfilledCSlots = [2] ∧
+    (associate amharicInf hid).unfilledCSlots = [2] ∧
+    ⟨.affix, 0, 4⟩ ∈ (derive amharicInf sma).associations ∧
+    2 ∉ window (melodyLinks (associate amharicInf sam)) sam.arity ∧
+    2 ∉ window (melodyLinks (associate amharicInf hid)) hid.arity ∧
+    (derive amharicInf sam).unfilledCSlots = [2] ∧
+    (derive amharicInf hid).unfilledCSlots = [2] ∧
+    ¬ Misaligned (derive amharicInf sam) ∧
+    ¬ Misaligned (derive amharicInf hid) := by
   decide
 
 /-! ### The paradigms (3), (5), (12) and the nouns (9) -/
@@ -462,7 +500,7 @@ def Cell.pattern? : Cell → Option Pattern
   | .inf => some amharicInf
   | .ipfv | .juss => none
 
-/-- The cells with a nominal base: the Amharic GRND and INF, whose subjects are marked as
+/-- The cells with a nominal base are the Amharic GRND and INF, whose subjects are marked as
 possessors (§4.2), and the Hebrew action noun. -/
 def Cell.IsNominal (c : Cell) : Prop := c.pattern?.map Pattern.category = some .noun
 
@@ -486,10 +524,45 @@ structure NounRow where
 def langTable : List (String × Lang) := [("hebr1245", .hebrew), ("amha1245", .amharic)]
 
 def rootTable : List (String × ConsonantalRoot String) :=
-  [("klt", Hebrew.klt), ("kl", Hebrew.kl), ("klj", Hebrew.klj), ("dmj", Hebrew.dmj),
-   ("glj", Hebrew.glj), ("rmj", Hebrew.rmj), ("skt", Hebrew.skt), ("sbr", Amharic.sbr),
-   ("wd", Amharic.wd), ("fdj", Amharic.fdj), ("sma", Amharic.sma), ("sam", Amharic.sam),
-   ("hid", Amharic.hid)]
+  [("klt", klt), ("kl", kl), ("klj", klj), ("dmj", dmj),
+   ("glj", glj), ("rmj", rmj), ("skt", skt), ("sbr", sbr),
+   ("wd", wd), ("fdj", fdj), ("sma", sma), ("sam", sam),
+   ("hid", hid)]
+
+/-- `segment l x` reads a letter of the squib's transcription of a root of language `l` as a
+segment of that language's fragment. -/
+def segment : Lang → String → Phonology.Segment
+  | .hebrew, "k" => Hebrew.Phonology.k
+  | .hebrew, "l" => Hebrew.Phonology.l
+  | .hebrew, "t" => Hebrew.Phonology.t
+  | .hebrew, "j" => Hebrew.Phonology.j
+  | .hebrew, "d" => Hebrew.Phonology.d
+  | .hebrew, "m" => Hebrew.Phonology.m
+  | .hebrew, "g" => Hebrew.Phonology.«ɡ»
+  | .hebrew, "r" => Hebrew.Phonology.«ʁ»
+  | .hebrew, "s" => Hebrew.Phonology.s
+  | .amharic, "s" => Amharic.Phonology.s
+  | .amharic, "b" => Amharic.Phonology.b
+  | .amharic, "r" => Amharic.Phonology.«ɾ»
+  | .amharic, "w" => Amharic.Phonology.w
+  | .amharic, "d" => Amharic.Phonology.d
+  | .amharic, "f" => Amharic.Phonology.f
+  | .amharic, "j" => Amharic.Phonology.j
+  | .amharic, "m" => Amharic.Phonology.m
+  | .amharic, "a" => Amharic.Phonology.a
+  | .amharic, "h" => Amharic.Phonology.h
+  | .amharic, "i" => Amharic.Phonology.i
+  | _, _ => ⊥
+
+/-- The squib's roots, read as segments, are the fragments' roots, the Hebrew alternating stops
+of √kl and √skt realized as the stops the squib writes. -/
+theorem fragment_roots :
+    [Hebrew.klt, Hebrew.kl, Hebrew.klj, Hebrew.dmj, Hebrew.glj, Hebrew.rmj, Hebrew.skt].map
+        (·.map (Arad2005.fillContinuant false)) =
+      [klt, kl, klj, dmj, glj, rmj, skt].map (·.map (segment .hebrew)) ∧
+    [Amharic.sbr, Amharic.wd, Amharic.fdj, Amharic.sma, Amharic.sam, Amharic.hid] =
+      [sbr, wd, fdj, sma, sam, hid].map (·.map (segment .amharic)) :=
+  ⟨rfl, rfl⟩
 
 def cellTable : List (String × Cell) :=
   [("pst3msg", .pst3msg), ("actionNoun", .actionNoun), ("passPrtc", .passPrtc), ("pfv", .pfv),
@@ -521,19 +594,19 @@ def Row.surface? (r : Row) : Option (List Char) := r.cell.pattern?.map (surfaceC
 /-- The pipeline reproduces every cell of (3), (5), (12) that has a pattern, except the PFV
 of √sma, where the final radical merges with the suffix vowel. -/
 theorem rows_surface :
-    ∀ r ∈ rows, r.cell.pattern?.isSome → (r.root, r.cell) ≠ (Amharic.sma, .pfv) →
+    ∀ r ∈ rows, r.cell.pattern?.isSome → (r.root, r.cell) ≠ (sma, .pfv) →
       r.surface? = some r.form.toList := by
   decide
 
-/-- (3): the final j of √klj surfaces in the action noun and the passive participle and not in
-the PST.3MSG. -/
+/-- The final j of √klj surfaces in the action noun and the passive participle and not in the
+PST.3MSG (3). -/
 theorem j_surfaces :
     ∀ r ∈ rows, r.lang = .hebrew →
-      ('j' ∈ r.form.toList ↔ r.root = Hebrew.klj ∧ r.cell ≠ .pst3msg) := by
+      ('j' ∈ r.form.toList ↔ r.root = klj ∧ r.cell ≠ .pst3msg) := by
   decide
 
-/-- The root's final radical is barred from a [+c] slot: the glide of √klj and √fdj, the vowel
-of √sma. -/
+/-- A root's final radical is barred from a [+c] slot when it is a glide, as in √klj and √fdj, or a
+vowel, as in √sma. -/
 def BarredFinal (r : ConsonantalRoot String) : Prop :=
   match r.finalSegment with
   | some x => segClass x ≠ .consonant
@@ -550,14 +623,14 @@ theorem intruder_distribution :
       ('t' ∈ r.form.toList ∧ "t" ∉ r.root.segments ↔ r.cell.IsNominal ∧ BarredFinal r.root) := by
   decide
 
-/-- (9): a taQTiL noun whose last consonant is not [t] is masculine. -/
+/-- A taQTiL noun whose last consonant is not [t] is masculine (9). -/
 theorem masculine_of_not_t_final :
     ∀ r ∈ nounRows, r.form.toList.getLast? ≠ some 't' → r.gender = .masculine := by
   decide
 
-/-- The taQTiL derivation of a noun's root reproduces the noun, and the noun is feminine iff
-the derivation merged the feminine morph: [taskit] from t-final √skt is masculine, the nouns
-from j-final roots feminine (9b). -/
+/-- The taQTiL derivation of a noun's root reproduces the noun, and the noun is feminine iff the
+derivation merged the feminine morph, so [taskit] from t-final √skt is masculine and the nouns from
+j-final roots feminine (9b). -/
 def NounRow.Derived (r : NounRow) : Prop :=
   match r.root with
   | some ρ =>
