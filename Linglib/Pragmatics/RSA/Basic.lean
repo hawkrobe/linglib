@@ -32,7 +32,6 @@ with its decision procedure is `Linglib.Pragmatics.RSA.Uniform`.
   are `L ^ α * exp (-(α * C))` (`RSA.speaker_eq_ofWeights`).
 * `RSA.pragmaticListener` — eq. 3: the Bayesian inverse `S†μ` of a speaker `S` against the
   prior.
-* `RSA.priorOfWeights` — the prior determined by integer weights on the states.
 * `RSA.jointListener` — eqs. 18b/21b: the posterior over (state, choice) given the heard
   form; `.fst` is the state listener, `.snd` the choice posterior.
 * `RSA.familySpeaker` — state-side latents (eqs. 11–13): the latent is a speaker argument and
@@ -250,45 +249,15 @@ theorem literalListener_apply_singleton_of_equiv {W' U' : Type*} [MeasurableSpac
 
 end Boolean
 
-/-- The prior determined by natural-number weights on the states. Only the ratios matter to
-the pipeline, so a paper's table of percentages is recorded as integer weights. -/
-noncomputable def priorOfWeights [Fintype W] (w : W → ℕ) : Measure W :=
-  ∑ x, (w x : ℝ≥0∞) • Measure.dirac x
-
-section PriorOfWeights
-
-variable [Fintype W] [MeasurableSingletonClass W] (w : W → ℕ)
-
-@[simp] theorem priorOfWeights_singleton (x : W) : priorOfWeights w {x} = w x :=
-  Measure.sum_smul_dirac_apply_singleton (fun x ↦ (w x : ℝ≥0∞)) x
-
-instance : IsFiniteMeasure (priorOfWeights w) :=
-  ⟨by
-    rw [priorOfWeights, Measure.finsetSum_apply]
-    exact ENNReal.sum_lt_top.mpr fun x _ ↦ by
-      rw [Measure.smul_apply, smul_eq_mul, Measure.dirac_apply_of_mem (Set.mem_univ _), mul_one]
-      exact ENNReal.natCast_lt_top _⟩
-
-theorem priorOfWeights_singleton_ne_zero {x : W} (h : w x ≠ 0) : priorOfWeights w {x} ≠ 0 := by
-  rw [priorOfWeights_singleton]
-  exact_mod_cast h
-
-/-- The mass of a finite set under the weight prior is the sum of its weights. -/
-theorem priorOfWeights_apply_finset (s : Finset W) :
-    priorOfWeights w ↑s = ∑ x ∈ s, (w x : ℝ≥0∞) := by
-  rw [← sum_measure_singleton]
-  simp only [priorOfWeights_singleton]
-
 /-- On natural-number weights and likelihoods the graded literal listener is the weighted
 likelihood over its total. -/
-theorem gradedListener_natCast_real_singleton (lik : U → W → ℕ) (u : U) (x : W) :
-    (gradedListener (priorOfWeights w) (fun u x ↦ (lik u x : ℝ≥0∞)) u).real {x}
+theorem gradedListener_natCast_real_singleton [Fintype W] [MeasurableSingletonClass W]
+    (w : W → ℕ) (lik : U → W → ℕ) (u : U) (x : W) :
+    (gradedListener (Measure.ofWeights (w ·)) (fun u x ↦ (lik u x : ℝ≥0∞)) u).real {x}
       = (lik u x * w x : ℝ) / ∑ x', (lik u x' * w x' : ℝ) := by
   rw [measureReal_def, gradedListener_apply_singleton, ENNReal.toReal_div,
     ENNReal.toReal_sum fun _ _ ↦ ENNReal.mul_ne_top (ENNReal.natCast_ne_top _) (measure_ne_top _ _)]
   simp [ENNReal.toReal_mul]
-
-end PriorOfWeights
 
 end LiteralListener
 

@@ -56,10 +56,10 @@ variable {W U : Type*} [Fintype W] [MeasurableSpace W] [DiscreteMeasurableSpace 
   [Fintype U] [MeasurableSpace U] [DiscreteMeasurableSpace U] (sem : U → Set W)
 
 /-- The uniform prior over the objects of the display. -/
-noncomputable def uniform : Measure W := priorOfWeights λ _ => 1
+noncomputable def uniform : Measure W := Measure.count
 
 instance : IsFiniteMeasure (uniform (W := W)) :=
-  inferInstanceAs (IsFiniteMeasure (priorOfWeights _))
+  inferInstanceAs (IsFiniteMeasure (Measure.count : Measure W))
 
 /-- The literal listener with the uniform prior, RSA's `L0`. -/
 noncomputable def L0 : Kernel U W := literalListener uniform sem
@@ -82,9 +82,10 @@ instance : IsFiniteKernel (baselineSpeaker sem) :=
 
 theorem L0_apply_singleton {w : W} {u : U} (h : w ∈ sem u) :
     L0 sem u {w} = (uniform (sem u))⁻¹ := by
-  rw [L0, literalListener_apply_singleton uniform sem h, uniform,
-    priorOfWeights_singleton, Nat.cast_one, mul_one]
+  rw [L0, literalListener_apply_singleton uniform sem h, uniform, Measure.count_singleton,
+    mul_one]
 
+omit [Fintype W] in
 theorem L0_apply_singleton_of_notMem {w : W} {u : U} (h : w ∉ sem u) : L0 sem u {w} = 0 :=
   literalListener_apply_singleton_of_notMem uniform sem h
 
@@ -127,9 +128,10 @@ omit [∀ u, DecidablePred (· ∈ sem u)] in
 /-- The uniform prior counts the objects of a set. -/
 theorem uniform_apply (s : Set W) [DecidablePred (· ∈ s)] :
     uniform s = ((Finset.univ.filter (· ∈ s)).card : ℝ≥0∞) := by
-  rw [uniform, priorOfWeights, Measure.finsetSum_apply]
-  simp only [Nat.cast_one, one_smul, Measure.dirac_apply' _ (MeasurableSet.of_discrete),
-    Set.indicator_apply, Pi.one_apply, Finset.sum_boole]
+  rw [uniform, ← Measure.count_apply_finset]
+  congr 1
+  ext
+  simp
 
 /-- The real value of the literal listener with the uniform prior. -/
 theorem L0_toReal (u : U) (w : W) :
@@ -321,10 +323,10 @@ theorem solvable_rsa_prefers :
   have hbo : (Finset.univ.filter (· ∈ solvable.sem (.shape .boot))).card = 2 := by decide
   have hmi : (Finset.univ.filter (· ∈ solvable.sem (.shape .mitt))).card = 1 := by decide
   rw [rsaListener_real_lt_iff _ _ (w₀ := 0) (by decide)
-      (by rw [uniform, priorOfWeights_singleton]; simp),
+      (by simp [uniform]),
     rsaSpeaker_real, rsaSpeaker_real]
   simp only [sum_word, L0_toReal, hb, hg, hbo, hmi, uniform, measureReal_def,
-    priorOfWeights_singleton, Nat.cast_one]
+    Measure.count_singleton]
   rw [ite_eq_left (by decide : (1 : Fin 3) ∈ solvable.sem (.color .blue)),
     ite_eq_right (by decide : (1 : Fin 3) ∉ solvable.sem (.color .green)),
     ite_eq_right (by decide : (1 : Fin 3) ∉ solvable.sem (.shape .boot)),
@@ -342,7 +344,7 @@ theorem solvable_baseline_indifferent :
   have h0 : (0 : Fin 3) ∈ solvable.sem (.color .blue) := by decide
   have h1 : (1 : Fin 3) ∈ solvable.sem (.color .blue) := by decide
   refine posterior_apply_singleton_congr _ _
-    (comp_apply_singleton_ne_zero _ _ (w := 0) (by rw [uniform, priorOfWeights_singleton]; simp)
+    (comp_apply_singleton_ne_zero _ _ (w := 0) (by simp [uniform])
       (baselineSpeaker_apply_singleton_ne_zero _ h0)) ?_ (by simp [uniform])
   simp only [baselineSpeaker_apply_singleton _ h0, baselineSpeaker_apply_singleton _ h1,
     card_applicable]
@@ -362,10 +364,10 @@ theorem reducible_rsa_prefers :
   have hbo : (Finset.univ.filter (· ∈ reducible.sem (.shape .boot))).card = 2 := by decide
   have hmi : (Finset.univ.filter (· ∈ reducible.sem (.shape .mitt))).card = 1 := by decide
   rw [rsaListener_real_lt_iff _ _ (w₀ := 0) (by decide)
-      (by rw [uniform, priorOfWeights_singleton]; simp),
+      (by simp [uniform]),
     rsaSpeaker_real, rsaSpeaker_real]
   simp only [sum_word, L0_toReal, hb, hg, hbo, hmi, uniform, measureReal_def,
-    priorOfWeights_singleton, Nat.cast_one]
+    Measure.count_singleton]
   rw [ite_eq_left (by decide : (2 : Fin 3) ∈ reducible.sem (.color .blue)),
     ite_eq_right (by decide : (2 : Fin 3) ∉ reducible.sem (.color .green)),
     ite_eq_right (by decide : (2 : Fin 3) ∉ reducible.sem (.shape .boot)),

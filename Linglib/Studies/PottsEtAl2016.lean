@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Pragmatics.RSA.Silence
+public import Linglib.Pragmatics.RSA.Uniform
 public import Linglib.Logic.Aristotelian.Square
 
 /-!
@@ -147,12 +147,12 @@ instance (l : Lex) (s : Stmt) : DecidablePred (s.Truth l) := fun w ↦
 def stmtSem (l : Lex) (s : Stmt) : Finset World := Finset.univ.filter (s.Truth l)
 
 /-- The messages (18c) are the statements and the null message of (12a). -/
-abbrev Msg := WithSilence Stmt
+abbrev Msg := Option Stmt
 
 instance : MeasurableSpace Msg := ⊤
 
 /-- The extension of a message under a lexicon, the null message true at every state. -/
-def sem (l : Lex) : Msg → Finset World := liftSem (stmtSem l)
+def sem (l : Lex) (m : Msg) : Finset World := m.elim Finset.univ (stmtSem l)
 
 /-- *Every player hit some of his shots*. -/
 abbrev everySome : Stmt := (.every, .some_)
@@ -185,7 +185,7 @@ section Tower
 variable (α k : ℝ)
 
 /-- The cost (18d) is `k` for the null message and 0 for every statement. -/
-def cost : Msg → ℝ := liftCost k 0
+def cost (m : Msg) : ℝ := m.elim k fun _ ↦ 0
 
 /-- The literal listener (13a) at a flat prior is uniform on the message's extension. -/
 noncomputable def L0 (l : Lex) : Kernel Msg World := uniformListener (sem l)
@@ -283,10 +283,14 @@ theorem S1_real (l : Lex) (w : World) (s : Stmt) :
       = (if w ∈ stmtSem l s then (((stmtSem l s).card : ℝ))⁻¹ ^ α else 0)
         / ((∑ s', if w ∈ stmtSem l s' then (((stmtSem l s').card : ℝ))⁻¹ ^ α else 0)
             + Real.exp (-(α * k)) * (10 : ℝ)⁻¹ ^ α) := by
-  have h := speaker_liftCost_uniformListener_real_singleton_some (stmtSem l) hα k w s
-  rw [profile_invPowSum_toReal _ hα.le, (by decide : Fintype.card World = 10),
-    Nat.cast_ofNat] at h
-  exact h
+  rw [S1, speaker_real_singleton hα.le, Fintype.sum_option]
+  simp only [L0, uniformListener_apply_singleton, sem, cost, Option.elim_some, Option.elim_none,
+    Finset.mem_univ, ↓reduceIte, Finset.card_univ, (by decide : Fintype.card World = 10),
+    mul_zero, neg_zero, Real.exp_zero, mul_one, apply_ite (· ^ α),
+    ENNReal.zero_rpow_of_pos hα, apply_ite ENNReal.toReal, ENNReal.toReal_zero,
+    ← ENNReal.toReal_rpow, ENNReal.toReal_inv, ENNReal.toReal_natCast, ENNReal.toReal_ofNat,
+    Nat.cast_ofNat]
+  rw [add_comm, mul_comm]
 
 end Model
 
