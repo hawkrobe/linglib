@@ -261,6 +261,38 @@ theorem Comparison.preimage_interval_of_isFixedPt (g : α ≃o α) (c : Comparis
 
 end Comp
 
+section CompLinear
+
+variable {α : Type*} [LinearOrder α]
+
+theorem Comparison.interval_injective (c : Comparison) :
+    Function.Injective (c.interval : α → Set α) := by
+  cases c
+  exacts [Set.singleton_injective, Set.Ici_injective, Set.Ioi_injective, Set.Iic_injective,
+    Set.Iio_injective]
+
+/-- An automorphism of the scale fixes the interval at `n` exactly when it fixes `n`, so a
+comparison with a fixed threshold, the positive form, is invariant under a rescaling only when the
+rescaling fixes the threshold. -/
+theorem Comparison.preimage_interval_eq_iff (g : α ≃o α) (c : Comparison) (n : α) :
+    g ⁻¹' c.interval n = c.interval n ↔ Function.IsFixedPt g n := by
+  have h : g ⁻¹' c.interval n = c.interval (g.symm n) := by
+    simpa using Comparison.preimage_interval g.toOrderEmbedding c (g.symm n)
+  rw [h, c.interval_injective.eq_iff, g.symm_apply_eq, eq_comm]
+  rfl
+
+/-- A comparison against every threshold is invariant under an automorphism of the scale only when
+the automorphism is the identity, so comparing measures on two scales does not survive rescaling
+one of them. -/
+theorem Comparison.forall_preimage_interval_eq_iff (g : α ≃o α) (c : Comparison) :
+    (∀ n, g ⁻¹' c.interval n = c.interval n) ↔ g = OrderIso.refl α := by
+  simp only [Comparison.preimage_interval_eq_iff, Function.IsFixedPt]
+  refine ⟨fun h ↦ OrderIso.ext (funext h), ?_⟩
+  rintro rfl n
+  rfl
+
+end CompLinear
+
 /-! ### Scale-sensitive maximality
 
 [rett-2026]: MAX_c(X) picks the element(s) of X that c-dominate all other members. For the

@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Data.Sigma.Order
-public import Linglib.Semantics.Degree.Hom
+public import Linglib.Semantics.Degree.Quotient
 public import Linglib.Semantics.Polarity.Basic
 public import Linglib.Semantics.Conditionals.SelectionFunction
 public import Linglib.Data.Examples.Cresswell1976
@@ -75,7 +75,7 @@ theorem erThan_singleton_toDual : ErThan {toDual a} {toDual b} ↔ a < b :=
 omit [LT D] in
 @[simp] theorem exactly_singleton : Exactly {a} {b} ↔ a = b := by simp [Exactly]
 
-/-- A disjoined standard is compared universally: *taller than Arabella or Clarissa* is taller
+/-- A disjoined standard is compared universally, so *taller than Arabella or Clarissa* is taller
 than both (footnote 10). -/
 theorem erThan_union (h₁ : ω₁.Nonempty) (h₂ : ω₂.Nonempty) :
     ErThan ω (ω₁ ∪ ω₂) ↔ ErThan ω ω₁ ∧ ErThan ω ω₂ :=
@@ -84,7 +84,7 @@ theorem erThan_union (h₁ : ω₁.Nonempty) (h₂ : ω₂.Nonempty) :
    fun ⟨⟨h, _, hlt₁⟩, ⟨_, _, hlt₂⟩⟩ ↦
     ⟨h, h₁.inl, fun a ha b hb ↦ hb.elim (hlt₁ a ha b) (hlt₂ a ha b)⟩⟩
 
-/-- Reading a scale downward reverses the comparison: *shorter than* is *taller than* with the
+/-- Reading a scale downward reverses the comparison, so *shorter than* is *taller than* with the
 terms exchanged ((39), (72)). -/
 theorem erThan_image_toDual : ErThan (toDual '' ω) (toDual '' ω') ↔ ErThan ω' ω := by
   simp only [ErThan, Set.image_nonempty, Set.forall_mem_image, toDual_lt_toDual, and_left_comm]
@@ -113,8 +113,8 @@ theorem ErThan.fst_eq (h : ErThan ω ω') {a b : Σ i, P i} (ha : a ∈ ω) (hb 
     a.1 = b.1 :=
   (Sigma.lt_def.1 (h.2.2 a ha b hb)).1.symm
 
-/-- Degree properties on distinct scales are never compared: the anomaly of (23), (65) and
-(69). -/
+/-- Degree properties on distinct scales are never compared, which is the anomaly of (23), (65)
+and (69). -/
 theorem not_erThan_of_fst_ne (h : ∀ a ∈ ω, ∀ b ∈ ω', a.1 ≠ b.1) : ¬ ErThan ω ω' :=
   fun he ↦ let ⟨a, ha⟩ := he.1; let ⟨b, hb⟩ := he.2.1; h a ha b hb (he.fst_eq ha hb)
 
@@ -186,8 +186,8 @@ def tot : Set D := {u | IsGreatest {d | ∃ c, ω' c ∧ ω c d} u}
 /-- *Est* holds when `a` bears a unique degree at or above every degree of anything (2.6). -/
 def Est (a : E) : Prop := ∃! b, ω a b ∧ b ∈ upperBounds {d | ∃ c, ω c d}
 
-/-- The superlative of a measure holds of a greatest value, ties allowed as in (2.6): *tallest
-spy* (27). -/
+/-- The superlative of a measure holds of a greatest value, ties allowed as in (2.6), as in
+*tallest spy* (27). -/
 theorem est_iff (μ : E → D) (a : E) : Est (fun c d ↦ μ c = d) a ↔ ∀ c, μ c ≤ μ a := by
   simp [Est, upperBounds, ExistsUnique]
 
@@ -200,7 +200,7 @@ variable {E D : Type*} [PartialOrder D] {ω : E → D → Prop} {ω' : E → Pro
 theorem tot_eq_singleton {u : D} (h : IsGreatest {d | ∃ c, ω' c ∧ ω c d} u) : tot ω ω' = {u} :=
   Set.eq_singleton_iff_unique_mem.2 ⟨h, fun _ h' ↦ h'.unique h⟩
 
-/-- The comparative of two totalities compares their greatest degrees: *more water ebbs than
+/-- The comparative of two totalities compares their greatest degrees, so *more water ebbs than
 mud flows* compares two volumes ((42), (44)). -/
 theorem erThan_tot_tot {E' : Type*} {ω₁ : E' → D → Prop} {ω₁' : E' → Prop} {u u₁ : D}
     (h : IsGreatest {d | ∃ c, ω' c ∧ ω c d} u) (h₁ : IsGreatest {d | ∃ c, ω₁' c ∧ ω₁ c d} u₁) :
@@ -223,7 +223,7 @@ def All {A B : Type*} (ω : A → B → Prop) (ω' : A → Prop) : Prop :=
   (∃ a b, ω a b) ∧ ∀ a, (∃ b, ω a b) → ω' a
 
 /-- The totality of the sets satisfying a distributive predicate is the number of things
-satisfying it: *more men walk* counts the walking men ((54), (55)). -/
+satisfying it, so *more men walk* counts the walking men ((54), (55)). -/
 theorem tot_pl [DecidablePred pred] (h : (noun.filter pred).Nonempty) :
     tot (Pl noun) (fun a ↦ ∀ x ∈ a, pred x) = {(noun.filter pred).card} := by
   refine tot_eq_singleton ⟨⟨noun.filter pred, fun _ hx ↦ (Finset.mem_filter.1 hx).2,
@@ -252,8 +252,8 @@ end Plural
 
 /-! ### Degrees from comparisons (§4) -/
 
-/-- On the degrees a comparison relation constructs, the comparative is the relation itself:
-*Arabella is more beautiful than Clarissa* ((62), (4.2)). -/
+/-- On the degrees a comparison relation constructs, the comparative is the relation itself, as
+in *Arabella is more beautiful than Clarissa* ((62), (4.2)). -/
 theorem erThan_singleton_mk {E : Type*} (φ : E → E → Prop) (a b : E) :
     ErThan ({⟦a⟧} : Set (CresswellDegree φ)) {⟦b⟧} ↔ φ a b :=
   erThan_singleton.trans CresswellDegree.mk_lt_mk
@@ -272,8 +272,8 @@ theorem erThan_sel :
       height (s.sel w smokes) < height w :=
   erThan_singleton_toDual
 
-/-- A smoker would not be shorter than he is: the nearest world where he smokes is the actual
-one. -/
+/-- A smoker would not be shorter than he is, since the nearest world where he smokes is the
+actual one. -/
 theorem not_erThan_sel_of_mem (hw : w ∈ smokes) :
     ¬ ErThan {toDual (height (s.sel w smokes))} {toDual (height w)} := by
   rw [erThan_sel, s.centering w smokes hw]

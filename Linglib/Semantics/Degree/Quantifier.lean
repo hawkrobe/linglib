@@ -418,4 +418,24 @@ theorem absoluteSuperlative_isGreatest (h : AbsoluteSuperlative μ C x) :
 
 end Superlative
 
+/-! ### Change of scale -/
+
+section ChangeOfScale
+
+variable {D' : Type*} [LinearOrder D] [LinearOrder D'] {μ : α → D}
+
+/-- The max-quantified comparative under any comparison is invariant under an order embedding of
+the scale. -/
+theorem maxComparative_comp (f : D ↪o D') (c : Comparison) (P Q : α → Prop) :
+    MaxComparative c P Q (f ∘ μ) ↔ MaxComparative c P Q μ := by
+  rw [MaxComparative, MaxComparative, Set.image_comp]
+  constructor
+  · rintro ⟨_, hδ, x, hx, hr⟩
+    obtain ⟨δ, -, rfl⟩ := hδ.1
+    exact ⟨δ, f.strictMono.map_isGreatest.1 hδ, x, hx, (Comparison.rel_map_iff f c).1 hr⟩
+  · rintro ⟨δ, hδ, x, hx, hr⟩
+    exact ⟨f δ, f.strictMono.map_isGreatest.2 hδ, x, hx, (Comparison.rel_map_iff f c).2 hr⟩
+
+end ChangeOfScale
+
 end Degree
