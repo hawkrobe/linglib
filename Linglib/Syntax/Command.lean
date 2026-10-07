@@ -46,6 +46,8 @@ union, through the maximal generator of a relation.
   node below `c` exactly when it commands `c`.
 * `PhraseStructure.commandByRelation_union_subset` and `commandByRelation_inf_subset`, the Union
   Theorem, whose converse needs the ancestors of a node linearly ordered (`IsLeftLinear`).
+* `PhraseStructure.cCommands_iff_parent_lt`: c-command is sisterhood plus dominance, a position
+  c-commanding what lies properly below its parent and not below itself.
 * `PhraseStructure.mem_cCommandAt_replaceAt` and `PhraseStructure.cCommands_replaceAt_of_le`:
   replacing a subtree leaves what the positions outside it c-command unchanged, and its positions
   are c-commanded by what c-commanded its root, the configuration of reconstruction.
@@ -313,6 +315,21 @@ def CCommands (t : RoseTree β) (a b : TreePath) : Prop :=
 
 instance (t : RoseTree β) : DecidableRel (CCommands t) :=
   fun _ _ ↦ inferInstanceAs (Decidable (_ ∧ _ ∧ _))
+
+/-- C-command is sisterhood plus dominance: a position whose parent branches c-commands exactly
+the positions properly below its parent and not below itself. -/
+theorem cCommands_iff_parent_lt {t : RoseTree β} {a b : TreePath} (ha : a ≠ ⊥)
+    (hp : IsBranchingAt t a.parent) : CCommands t a b ↔ a.parent < b ∧ ¬ a ≤ b := by
+  have hcov : a.parent ⋖ a := by
+    rw [← TreePath.pred_eq_parent]
+    exact Order.pred_covBy_of_not_isMin (by simpa [isMin_iff_eq_bot] using ha)
+  have hcc : (a, b) ∈ cCommandAt t ↔ a.parent ≤ b :=
+    Set.ext_iff.1 (commandRelation_eq_Ici (P := {p | IsBranchingAt t p}) hp hcov.lt
+      fun _ _ hx ↦ TreePath.le_parent_of_lt hx) b
+  rw [CCommands, hcc]
+  refine ⟨fun ⟨hpb, hab, hba⟩ ↦ ⟨lt_of_le_of_ne hpb fun he ↦ hba (he ▸ hcov.le), hab⟩,
+    fun ⟨hpb, hab⟩ ↦ ⟨hpb.le, hab, fun hba ↦ hab ?_⟩⟩
+  exact ((hcov.eq_or_eq hpb.le hba).resolve_left hpb.ne').ge
 
 /-- Relabelling preserves the branching positions. -/
 theorem isBranchingAt_map {γ : Type*} (f : β → γ) (t : RoseTree β) (p : TreePath) :
