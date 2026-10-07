@@ -1,7 +1,7 @@
 module
 
+public import Mathlib.Algebra.Order.Ring.Defs
 public import Mathlib.Algebra.Order.GroupWithZero.OrderIso
-public import Mathlib.Tactic.NormNum
 
 /-!
 # Measure phrases and the changes of scale they survive
@@ -18,14 +18,13 @@ neither.
 
 ## Main statements
 
-* `differentialComparative_comp_of_commute`, `factorEquative_comp_of_commute`: a differential or a
-  factor phrase survives any injective change of scale that commutes with adding its amount or
-  multiplying by its factor.
-* `differentialComparative_add_const`, `differentialComparative_const_mul_add_const`: a
-  differential survives translations, and a change of unit rescales its amount.
-* `factorEquative_const_mul`, `factorEquative_not_add_const`: a factor phrase survives scalings
-  but not translations.
-* `differentialComparative_not_natural`: a differential does not survive every order embedding.
+* `differentialComparative_comp_iff_commute`, `factorEquative_comp_iff_commute`: a differential or
+  a factor phrase survives an injective change of scale exactly when the change commutes with
+  adding its amount or multiplying by its factor.
+* `differentialComparative_const_mul_add_const`: a differential survives translations, and a
+  change of unit rescales its amount.
+* `factorEquative_add_const_iff`: a factor phrase survives a translation only when the factor fixes
+  the translation, so in a domain only the trivial factor or translation.
 
 ## References
 
@@ -95,13 +94,18 @@ theorem differentialComparative_const_mul_add_const {k : Type*} [CommRing k] [Is
   rw [differentialComparative_add_const (μ := fun e ↦ a * μ e)]
   simp only [DifferentialComparative, ← mul_sub, (mul_right_injective₀ ha).eq_iff]
 
-/-- A differential does not survive every order embedding of the scale, so it is not meaningful on
-an ordinal scale. -/
-theorem differentialComparative_not_natural :
-    ∃ f : ℚ ↪o ℚ, ∃ (μ : ℚ → ℚ) (a b d : ℚ),
-      DifferentialComparative μ a b d ∧ ¬ DifferentialComparative (f ∘ μ) a b d :=
-  ⟨(OrderIso.mulLeft₀ 2 two_pos).toOrderEmbedding, id, 1, 0, 1,
-    by norm_num [DifferentialComparative], by norm_num [DifferentialComparative]⟩
+/-- A differential survives an injective change of scale for every measure exactly when the change
+commutes with adding its amount, so it is not meaningful on an ordinal scale. -/
+theorem differentialComparative_comp_iff_commute [AddGroup D] [Nontrivial E] {g : D → D}
+    (hg : Injective g) {d : D} :
+    (∀ (μ : E → D) a b, DifferentialComparative (g ∘ μ) a b d ↔ DifferentialComparative μ a b d) ↔
+      Function.Commute g (d + ·) := by
+  refine ⟨fun h x ↦ ?_, fun hc μ a b ↦ differentialComparative_comp_of_commute hg hc μ a b⟩
+  classical
+  obtain ⟨a, b, hab⟩ := exists_pair_ne E
+  have := (h (fun e ↦ if e = a then d + x else x) a b).2 (by
+    simp [DifferentialComparative, hab.symm])
+  simpa [DifferentialComparative, hab.symm, sub_eq_iff_eq_add] using this
 
 end Differential
 
@@ -126,12 +130,25 @@ theorem factorEquative_const_mul [CommMonoidWithZero D] [IsCancelMulZero D] (μ 
   factorEquative_comp_of_commute (g := (c * ·)) (mul_right_injective₀ hc)
     (fun x ↦ mul_left_comm c n x) μ a b
 
-/-- A factor phrase does not survive translating the scale, since moving the zero point destroys
-ratios. -/
-theorem factorEquative_not_add_const :
-    ∃ (μ : ℚ → ℚ) (c a b n : ℚ),
-      FactorEquative μ a b n ∧ ¬ FactorEquative (fun x ↦ μ x + c) a b n := by
-  refine ⟨id, 1, 2, 1, 2, ?_, ?_⟩ <;> norm_num [FactorEquative]
+/-- A factor phrase survives an injective change of scale for every measure exactly when the change
+commutes with multiplying by its factor. -/
+theorem factorEquative_comp_iff_commute [Mul D] [Nontrivial E] {g : D → D} (hg : Injective g)
+    {n : D} :
+    (∀ (μ : E → D) a b, FactorEquative (g ∘ μ) a b n ↔ FactorEquative μ a b n) ↔
+      Function.Commute g (n * ·) := by
+  refine ⟨fun h x ↦ ?_, fun hc μ a b ↦ factorEquative_comp_of_commute hg hc μ a b⟩
+  classical
+  obtain ⟨a, b, hab⟩ := exists_pair_ne E
+  have := (h (fun e ↦ if e = a then n * x else x) a b).2 (by simp [FactorEquative, hab.symm])
+  simpa [FactorEquative, hab.symm] using this
+
+/-- A factor phrase survives translating the scale by `c` for every measure exactly when the factor
+fixes `c`, since moving the zero point destroys ratios. -/
+theorem factorEquative_add_const_iff [Ring D] [Nontrivial E] (c n : D) :
+    (∀ (μ : E → D) a b, FactorEquative (fun x ↦ μ x + c) a b n ↔ FactorEquative μ a b n) ↔
+      n * c = c := by
+  refine (factorEquative_comp_iff_commute (E := E) (add_left_injective c)).trans
+    ⟨fun h ↦ by simpa using (h 0).symm, fun h x ↦ by simp [mul_add, h]⟩
 
 end Factor
 
