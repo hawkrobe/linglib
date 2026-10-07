@@ -57,8 +57,9 @@ instance : IsFiniteKernel (uniformListener sem) :=
 
 omit [DecidableEq T] in
 theorem uniformListener_apply (c : C) : uniformListener sem c = uniformOn ↑(sem c) := by
-  rw [uniformListener, literalListener_apply, uniformOn, uniformOn, cond_cond_eq_cond_inter' MeasurableSet.univ .of_discrete
-    (by rw [Measure.count_apply_finite _ Set.finite_univ]; exact ENNReal.natCast_ne_top _),
+  rw [uniformListener, literalListener_apply, uniformOn, uniformOn,
+    cond_cond_eq_cond_inter' MeasurableSet.univ .of_discrete
+      (by rw [Measure.count_apply_finite _ Set.finite_univ]; exact ENNReal.natCast_ne_top _),
     Set.univ_inter]
 
 theorem uniformListener_apply_singleton (c : C) (t : T) :

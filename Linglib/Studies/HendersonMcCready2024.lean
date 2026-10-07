@@ -7,19 +7,18 @@ public import Mathlib.Tactic.DeriveFintype
 /-!
 # Henderson and McCready (2024): Signaling without Saying
 
-This file formalizes the social meaning games for identifying dogwhistles of Chapter 4 of
-[henderson-mccready-2024]. A dogwhistle sends one message to an in-group and another to an
-out-group, and the book models it by loosening [burnett-2019]'s social meaning games in two
-ways. A listener holds, besides a prior over personae, a likelihood of each message given each
-persona, so that the literal listener is Bayes' rule over that likelihood and Burnett's
-indexation is the lexicalized special case (`L0`). And the speaker's social utility for a
-message toward a listener sums, over the personae, the log posterior with the speaker's and the
-listener's values of the persona weighted by the posterior (`socialUtility`); the utility toward
-an audience is the sum over its listeners (`groupUtility`), and the speaker is the softmax of
-the utility. A message is a dogwhistle to a population when the likelihood listeners assign it
-correlates with their approval of the personae it signals, so that those who hear the whistle
-and approve reward it, those who hear it and disapprove punish it, and those who do not hear it
-react to its innocuous reading alone.
+This file formalizes the social meaning games for identifying dogwhistles of Chapter 4 of Henderson
+and McCready. A dogwhistle sends one message to an in-group and another to an out-group, and the
+book models it by loosening Burnett's social meaning games in two ways. A listener holds, besides a
+prior over personae, a likelihood of each message given each persona, so that the literal listener
+is Bayes' rule over that likelihood and Burnett's indexation is the lexicalized special case (`L0`).
+And the speaker's social utility for a message toward a listener sums, over the personae, the log
+posterior with the speaker's and the listener's values of the persona weighted by the posterior
+(`socialUtility`); the utility toward an audience is the sum over its listeners (`groupUtility`),
+and the speaker is the softmax of the utility. A message is a dogwhistle to a population when the
+likelihood listeners assign it correlates with their approval of the personae it signals, so that
+those who hear the whistle and approve reward it, those who hear it and disapprove punish it, and
+those who do not hear it react to its innocuous reading alone.
 
 The case study has Jill Stein choosing between *big pharma*, which savvy listeners tie to the
 anti-vaxxer persona and unsavvy ones read as merely anti-corporate, and *corporate scientists*.
@@ -127,7 +126,7 @@ instance : DecidablePred ListenerType.Savvy
   | .unsavvyProVax => inferInstanceAs (Decidable False)
 
 /-- Every listener holds the same prior about Stein, probably anti-corporate, pro- or anti-vax
-equally, and pro-corporate only if anti-vax, in the proportions 8 : 8 : 3 : 1. -/
+equally, and pro-corporate only if anti-vax, with weights 8, 8, 3 and 1. -/
 def priorWeight (π : Persona) : ℕ :=
   if .antiCorporate ∈ π.1 then 8 else if .antiVax ∈ π.1 then 3 else 1
 

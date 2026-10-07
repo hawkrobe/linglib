@@ -8,17 +8,17 @@ public import Linglib.Core.InformationTheory.Entropy
 /-!
 # Tessler, Tenenbaum and Goodman (2022): Logic, Probability, and Pragmatics in Syllogistic Reasoning
 
-This file formalizes [tessler-tenenbaum-goodman-2022]'s Rational Speech Act models of
-syllogistic reasoning. A reasoner first acts as a literal listener, conditioning a prior over
-Venn states on the truth-conditional meanings of the two premises, (1)–(2), then as a speaker
-choosing among nine conclusions: the eight quantified relations between the end terms and
-*nothing follows*, formalized as the vacuous utterance true in every state. Three speakers are
-compared. The literal speaker (3) scores a conclusion by its posterior probability of truth;
-the state-communication speaker (4) by the expected log-probability that a naive literal
-listener, who hears the conclusion alone, assigns to the reasoner's state; the belief-alignment
-speaker (6) by the negative Kullback–Leibler divergence from the reasoner's posterior to that
-naive listener's. A figural preference (section 3.1.1) weights conclusions whose subject term
-is the unique end term in subject position in the premises.
+This file formalizes Tessler, Tenenbaum and Goodman's Rational Speech Act models of syllogistic
+reasoning. A reasoner first acts as a literal listener, conditioning a prior over Venn states on the
+truth-conditional meanings of the two premises, (1)–(2), then as a speaker choosing among nine
+conclusions: the eight quantified relations between the end terms and *nothing follows*, formalized
+as the vacuous utterance true in every state. Three speakers are compared. The literal speaker (3)
+scores a conclusion by its posterior probability of truth; the state-communication speaker (4) by
+the expected log-probability that a naive literal listener, who hears the conclusion alone, assigns
+to the reasoner's state; the belief-alignment speaker (6) by the negative Kullback–Leibler
+divergence from the reasoner's posterior to that naive listener's. A figural preference (section
+3.1.1) weights conclusions whose subject term is the unique end term in subject position in the
+premises.
 
 The speakers are score speakers of `Linglib.Pragmatics.RSA.Basic`, so the paper's
 qualitative claims are theorems over the parameters. The state-communication and
@@ -348,7 +348,7 @@ noncomputable def literalScore (syl : Syllogism) (c : Conclusion) : EReal :=
 noncomputable def literalSpeaker : Kernel Syllogism Conclusion :=
   speakerOfScore (literalScore φ μ α β)
 
-/-- The state-communication utility (4): the expected log-probability the naive listener
+/-- The state-communication utility (4) is the expected log-probability the naive listener
 assigns to the reasoner's state. -/
 noncomputable def stateScore (syl : Syllogism) (c : Conclusion) : EReal :=
   ((Real.log (figuralWeight β syl c) +
@@ -358,7 +358,7 @@ noncomputable def stateScore (syl : Syllogism) (c : Conclusion) : EReal :=
 noncomputable def stateCommunication : Kernel Syllogism Conclusion :=
   speakerOfScore (stateScore φ μ α β)
 
-/-- The belief-alignment utility (5)–(6): the negative divergence from the reasoner's
+/-- The belief-alignment utility (5)–(6) is the negative divergence from the reasoner's
 posterior to the naive listener's. -/
 noncomputable def alignmentScore (syl : Syllogism) (c : Conclusion) : EReal :=
   (Real.log (figuralWeight β syl c) : EReal) -
@@ -419,7 +419,7 @@ theorem alignmentScore_eq_stateScore_add [IsFiniteMeasure μ] (hφ : φ ≠ 0) (
   ring
 
 /-- Under the printed equations the state-communication and belief-alignment speakers are one
-kernel: the entropy term cancels in the softmax over conclusions. -/
+kernel, since the entropy term cancels in the softmax over conclusions. -/
 theorem stateCommunication_eq_beliefAlignment [IsFiniteMeasure μ] (hφ : φ ≠ 0) (hφ' : φ ≠ ∞)
     (hμ : ∀ s, μ {s} ≠ 0) : stateCommunication φ μ α β = beliefAlignment φ μ α β :=
   (speakerOfScore_eq_of_add λ syl c => alignmentScore_eq_stateScore_add hφ hφ' hμ syl c).symm
@@ -431,7 +431,7 @@ theorem figuralWeight_one (syl : Syllogism) (c : Conclusion) : figuralWeight 1 s
   split_ifs <;> rfl
 
 /-- Without the figural preference the literal speaker never prefers a quantified conclusion
-to *nothing follows*: the posterior probability of a tautology is maximal. -/
+to *nothing follows*, since the posterior probability of a tautology is maximal. -/
 theorem literalSpeaker_le_nvc (hα : 0 ≤ α) (syl : Syllogism) (c : Conclusion) :
     (literalSpeaker φ μ α 1 syl).real {c} ≤ (literalSpeaker φ μ α 1 syl).real {.nvc} := by
   refine not_lt.1 λ h => ?_
@@ -555,8 +555,8 @@ theorem allAC_subset_someAC : states (concMeaning .allAC) ⊆ states (concMeanin
     Bool.and_eq_true, decide_eq_true_eq] at hs ⊢
   exact syllAll_imp_syllSome s hasA hasC hs.2 hs.1
 
-/-- Hearing Barbara, the belief-alignment speaker prefers *all A are C* to *some A are C* and
-to *nothing follows*: the entailed conclusion true in the fewest states. -/
+/-- Hearing Barbara, the belief-alignment speaker prefers *all A are C*, the entailed conclusion
+true in the fewest states, to *some A are C* and to *nothing follows*. -/
 theorem barbara_prefers_allAC (hα : 0 < α) (hβ : 1 ≤ β) :
     (beliefAlignment 0 (uniformOn Set.univ) α β barbara).real {.someAC} <
         (beliefAlignment 0 (uniformOn Set.univ) α β barbara).real {.allAC} ∧

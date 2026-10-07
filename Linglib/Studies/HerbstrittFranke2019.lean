@@ -10,26 +10,25 @@ public import Mathlib.InformationTheory.KullbackLeibler.Basic
 /-!
 # Herbstritt and Franke (2019): Complex probability expressions and higher-order uncertainty
 
-This file formalizes the rational speech act model of [herbstritt-franke-2019] for a speaker
-who has drawn some balls from an urn of ten and tells a listener how likely the next draw is
-to be red. The speaker's belief of (12) is the posterior over the number of red balls given
-her observation, `belief`, the Bayesian inverse of the hypergeometric observation kernel;
-a simple expression holds at a state by the threshold semantics of (13) and (14),
-`Thresholds.meaning`, and the literal listener of (15) conditions the prior on the extension.
-The speaker of (16) and (17), `speaker`, is the softmax of the negative Hellinger distance
-between her belief and the literal listener's, and the pragmatic listener of (18) inverts her
-against the joint prior over states, observations and accesses, whose marginals are (19) and
-(20). A complex expression holds at an observation by (23) when the belief it induces gives
-the inner expression's extension more than the outer threshold, `ComplexThresholds.complex`.
+This file formalizes the rational speech act model of Herbstritt and Franke for a speaker who has
+drawn some balls from an urn of ten and tells a listener how likely the next draw is to be red. The
+speaker's belief of (12) is the posterior over the number of red balls given her observation,
+`belief`, the Bayesian inverse of the hypergeometric observation kernel; a simple expression holds
+at a state by the threshold semantics of (13) and (14), `Thresholds.meaning`, and the literal
+listener of (15) conditions the prior on the extension. The speaker of (16) and (17), `speaker`, is
+the softmax of the negative Hellinger distance between her belief and the literal listener's, and
+the pragmatic listener of (18) inverts her against the joint prior over states, observations and
+accesses, whose marginals are (19) and (20). A complex expression holds at an observation by (23)
+when the belief it induces gives the inner expression's extension more than the outer threshold,
+`ComplexThresholds.complex`.
 
-Because the Hellinger distance is bounded, every message is used with positive probability
-at every observation (`speaker_apply_singleton_ne_zero`), where the Kullback–Leibler speaker
-of [goodman-stuhlmuller-2013] never uses a message whose extension misses a state of
-positive belief, the paper's *probably red* after three red balls of four. With complete
-access the belief is a point mass, so a true message beats a false one, and among true
-messages the one whose extension carries less prior mass wins, the scalar implicature of
-the paper's introductory example; the pragmatic listener never rules a state out entirely;
-and with complete access an outer modifier below one is vacuous.
+Because the Hellinger distance is bounded, every message is used with positive probability at every
+observation (`speaker_apply_singleton_ne_zero`), where the Kullback–Leibler speaker of Goodman and
+Stuhlmüller never uses a message whose extension misses a state of positive belief, the paper's
+*probably red* after three red balls of four. With complete access the belief is a point mass, so a
+true message beats a false one, and among true messages the one whose extension carries less prior
+mass wins, the scalar implicature of the paper's introductory example; the pragmatic listener never
+rules a state out entirely; and with complete access an outer modifier below one is vacuous.
 
 ## Implementation notes
 
@@ -61,13 +60,13 @@ namespace HerbstrittFranke2019
 open MeasureTheory ProbabilityTheory RSA InformationTheory
 open scoped ENNReal
 
-/-- A state: how many of the ten balls in the urn are red. -/
+/-- A state records how many of the ten balls in the urn are red. -/
 abbrev State := Fin 11
 
-/-- The speaker's access: how many balls she draws. -/
+/-- The speaker's access is how many balls she draws. -/
 abbrev Access := Fin 11
 
-/-- An observation: how many of the drawn balls are red. -/
+/-- An observation records how many of the drawn balls are red. -/
 abbrev Obs := Fin 11
 
 /-- The probability of drawing a red ball in a state. -/
@@ -114,7 +113,7 @@ section Belief
 
 variable (P : Measure State) [IsFiniteMeasure P]
 
-/-- The speaker's rational belief of (12): the posterior over states given an observation at
+/-- The speaker's rational belief of (12) is the posterior over states given an observation at
 an access, against the prior. -/
 noncomputable def belief (a : Access) : Kernel Obs State := (obs a)†P
 
@@ -173,8 +172,8 @@ namespace Thresholds
 
 variable (θ : Thresholds)
 
-/-- The threshold semantics of (13) and (14): a positive expression holds where the
-proportion of red balls exceeds its threshold, a negated one where the proportion falls below
+/-- Under the threshold semantics of (13) and (14), a positive expression holds where the
+proportion of red balls exceeds its threshold, and a negated one where the proportion falls below
 one less the threshold. -/
 def meaning : SimpleExpr → State → Prop
   | .certainly, s => θ.certainly < proportion s
@@ -206,7 +205,7 @@ section Listener
 
 variable (θ : Thresholds) (P : Measure State)
 
-/-- The literal listener of (15): the prior conditioned on the expression's extension. -/
+/-- The literal listener of (15) conditions the prior on the expression's extension. -/
 noncomputable def L0 : Kernel SimpleExpr State := literalListener P θ.ext
 
 theorem L0_apply_singleton_of_notMem {m : SimpleExpr} {s : State} (h : s ∉ θ.ext m) :
@@ -234,17 +233,17 @@ section Speaker
 
 variable (lam : ℝ) (θ : Thresholds) (P : Measure State) [IsFiniteMeasure P]
 
-/-- The expected utility of (16): the negative Hellinger distance between the speaker's belief
-after her observation and the literal listener's belief after the message. -/
+/-- The expected utility of (16) is the negative Hellinger distance between the speaker's
+belief after her observation and the literal listener's belief after the message. -/
 noncomputable def utility (x : Obs × Access) (m : SimpleExpr) : ℝ :=
   -hellingerDist (belief P x.2 x.1) (L0 θ P m)
 
-/-- The speaker of (17): the softmax of the utility at the rationality `lam`. -/
+/-- The speaker of (17) is the softmax of the utility at the rationality `lam`. -/
 noncomputable def speaker : Kernel (Obs × Access) SimpleExpr :=
   speakerOfScore λ x m => ((lam * utility θ P x m : ℝ) : EReal)
 
 /-- The Hellinger utility is finite, so every message is used with positive probability at
-every observation: pragmatically true-enough messages can be sent. -/
+every observation, and pragmatically true-enough messages can be sent. -/
 theorem speaker_apply_singleton_ne_zero (x : Obs × Access) (m : SimpleExpr) :
     speaker lam θ P x {m} ≠ 0 :=
   speakerOfScore_apply_singleton_ne_zero (EReal.coe_ne_bot _) λ _ => EReal.coe_ne_top _
@@ -275,7 +274,7 @@ theorem klSpeaker_apply_singleton_eq_zero (hlam : 0 < lam) {x : Obs × Access} {
   speakerOfScore_apply_singleton_eq_zero
     (by rw [klDiv_of_not_ac h, EReal.coe_ennreal_top, EReal.coe_mul_top_of_pos hlam, EReal.neg_top])
 
-/-- The paper's example: after three red balls of four, *probably* excludes a state of three
+/-- In the paper's example, after three red balls of four, *probably* excludes a state of three
 red balls that keeps positive belief, so the Kullback–Leibler speaker never says it. -/
 theorem klSpeaker_probably_eq_zero (hlam : 0 < lam) (hθ : 3 / 10 ≤ θ.probably)
     (hP : P {3} ≠ 0) : klSpeaker lam θ P (3, 4) {.probably} = 0 := by
@@ -314,7 +313,7 @@ theorem speaker_full_lt_of_notMem_of_mem (hlam : 0 < lam) (hP : P {s} ≠ 0) {m 
   exact div_pos hs (hs.trans_le (measureReal_mono (Set.singleton_subset_iff.2 h')))
 
 /-- With complete access, among true messages the one whose extension carries less prior
-mass is preferred: the more informative one. -/
+mass, the more informative one, is preferred. -/
 theorem speaker_full_lt_iff_of_mem (hlam : 0 < lam) (hP : P {s} ≠ 0) {m m' : SimpleExpr}
     (h : s ∈ θ.ext m) (h' : s ∈ θ.ext m') :
     (speaker lam θ P (s, 10)).real {m} < (speaker lam θ P (s, 10)).real {m'} ↔
@@ -330,9 +329,9 @@ theorem speaker_full_lt_iff_of_mem (hlam : 0 < lam) (hP : P {s} ≠ 0) {m m' : S
     Real.sqrt_lt_sqrt_iff (by linarith), sub_lt_sub_iff_left,
     Real.sqrt_lt_sqrt_iff (div_nonneg hs.le hE.le), div_lt_div_iff_of_pos_left hs hE hE']
 
-/-- The scalar implicature of the introductory example: with complete access and a prior
-positive on every state, a message strictly entailing another is preferred to it whenever
-both are true. -/
+/-- With complete access and a prior positive on every state, a message strictly entailing
+another is preferred to it whenever both are true, the scalar implicature of the introductory
+example. -/
 theorem speaker_full_lt_of_ssubset (hlam : 0 < lam) (hP : ∀ s, P {s} ≠ 0) {m m' : SimpleExpr}
     (hsub : θ.ext m ⊂ θ.ext m') (h : s ∈ θ.ext m) :
     (speaker lam θ P (s, 10)).real {m'} < (speaker lam θ P (s, 10)).real {m} := by
@@ -354,8 +353,8 @@ section PragmaticListener
 
 variable (lam : ℝ) (θ : Thresholds) (P : Measure State) (A : Measure Access)
 
-/-- The joint prior of (18) over states, observations and accesses: the state prior, the
-access prior, and the observation given both. -/
+/-- The joint prior of (18) over states, observations and accesses combines the state prior,
+the access prior, and the observation given both. -/
 noncomputable def joint : Measure (State × (Obs × Access)) :=
   ∑ x, (P {x.1} * A {x.2.2} * obs x.2.2 x.1 {x.2.1}) • Measure.dirac x
 
@@ -375,23 +374,22 @@ instance : IsFiniteMeasure (joint P A) :=
       exact ENNReal.mul_lt_top (ENNReal.mul_lt_top (measure_lt_top _ _) (measure_lt_top _ _))
         (measure_lt_top _ _)⟩
 
-/-- The speaker as the listener models her: her choice depends on the observation and the
-access alone. -/
+/-- As the listener models the speaker, her choice depends on the observation and the access
+alone. -/
 noncomputable def jointSpeaker : Kernel (State × (Obs × Access)) SimpleExpr :=
   Kernel.ofFunOfCountable λ x => speaker lam θ P x.2
 
 instance : IsMarkovKernel (jointSpeaker lam θ P) :=
   ⟨λ x => by rw [jointSpeaker, Kernel.ofFunOfCountable_apply]; infer_instance⟩
 
-/-- The pragmatic listener of (18): the Bayesian inverse of the speaker against the joint
+/-- The pragmatic listener of (18) is the Bayesian inverse of the speaker against the joint
 prior; its first marginal is the state listener of (19), its second the observation listener
 of (20). -/
 noncomputable def listener : Kernel SimpleExpr (State × (Obs × Access)) :=
   (jointSpeaker lam θ P)†(joint P A)
 
-/-- No state is ruled out by any message: a state of positive prior keeps positive posterior
-whenever drawing nothing has positive prior, since the speaker who drew nothing may send
-any message. -/
+/-- No message rules out a state. A state of positive prior keeps positive posterior whenever
+drawing nothing has positive prior, since the speaker who drew nothing may send any message. -/
 theorem listener_fst_apply_singleton_ne_zero {s : State} (hP : P {s} ≠ 0) (hA : A {0} ≠ 0)
     (m : SimpleExpr) : (listener lam θ P A m).fst {s} ≠ 0 := by
   have hj : joint P A {(s, (0, 0))} ≠ 0 := by
@@ -464,14 +462,14 @@ def innerExt (X : Inner) : Set State := {s | θ.inner X s}
 
 variable (P : Measure State) [IsFiniteMeasure P]
 
-/-- The compositional semantics of (23): a complex expression holds at an observation exactly
-when the belief it induces gives the inner expression's extension more than the outer
+/-- Under the compositional semantics of (23), a complex expression holds at an observation
+exactly when the belief it induces gives the inner expression's extension more than the outer
 threshold. -/
 def complex (Y : Outer) (X : Inner) : Set (Obs × Access) :=
   {x | θ.outer Y < (belief P x.2 x.1).real (θ.innerExt X)}
 
 /-- With complete access the belief is a point mass, so an outer modifier of threshold below
-one is vacuous: the complex expression holds exactly where the inner one does. -/
+one is vacuous and the complex expression holds exactly where the inner one does. -/
 theorem mem_complex_full {s : State} (hP : P {s} ≠ 0) {Y : Outer} (h0 : 0 ≤ θ.outer Y)
     (X : Inner) : (s, 10) ∈ θ.complex P Y X ↔ s ∈ θ.innerExt X ∧ θ.outer Y < 1 := by
   classical
@@ -481,8 +479,8 @@ theorem mem_complex_full {s : State} (hP : P {s} ≠ 0) {Y : Outer} (h0 : 0 ≤ 
   · simp [hs]
   · simpa [hs] using h0
 
-/-- The literal listener for complex expressions of (25): the observation prior of (24), the
-marginal of the joint prior, conditioned on the expression's extension. -/
+/-- The literal listener for complex expressions of (25) conditions the observation prior of
+(24), the marginal of the joint prior, on the expression's extension. -/
 noncomputable def complexL0 (A : Measure Access) [IsFiniteMeasure A] :
     Kernel (Outer × Inner) (Obs × Access) :=
   literalListener (joint P A).snd λ m : Outer × Inner => θ.complex P m.1 m.2
