@@ -26,12 +26,11 @@ Kennedy (measure functions)     — specialization: single linear scale
 Scontras / Bale & Schwarz (typed measurement)
 ```
 
-Kennedy embeds in Klein directly by `Delineation.measureDelineation`, whose ordering is degree
-comparison (`Delineation.ordering_iff_degree`). Delineation expresses nonlinear adjectives
-("clever") that no degree function induces, since a measure induces a monotone delineation and a
-monotone delineation is never nonlinear
-(`Delineation.IsMonotoneDelineation.not_isNonlinearDelineation`), and a non-total background has
-thresholds that no degree threshold induces (`exists_isUpperSet_forall_ne_preimage`).
+Kennedy embeds in Klein directly by `Delineation.ofMeasure`, whose ordering is degree comparison
+(`Delineation.outranks_ofMeasure_iff`). Delineation expresses nonlinear adjectives ("clever") that
+no degree function induces, since a measure induces a monotone delineation and a monotone
+delineation is never nonlinear (`Delineation.IsMonotone.not_isNonlinear`), and a non-total
+background has thresholds that no degree threshold induces (`exists_isUpperSet_forall_ne_preimage`).
 
 ## What each framework adds
 
@@ -44,8 +43,8 @@ thresholds that no degree threshold induces (`exists_isUpperSet_forall_ne_preima
 
 ## Main results
 
-* `isMonotoneDelineation_upperSets_iff`: the thresholds of a background form a monotone
-  delineation iff the background is total.
+* `isMonotoneOn_upperSets_iff`: the thresholds of a background form a monotone delineation iff
+  the background is total.
 * `maxComparative_iff_exists_isUpperSet`: on a total background the comparative is Klein's.
 * `forall_isUpperSet_exists_preimage_iff`, `total_of_reflect_le`: thresholds are pulled-back
   degree thresholds iff the measure reflects the background, which forces totality.
@@ -73,21 +72,15 @@ thresholds that no degree threshold induces (`exists_isUpperSet_forall_ne_preima
 
 namespace Degree
 
-open Degree.Delineation
-
 /-! ### Measurement → Degree → Delineation
 
-The maps themselves carry no new definitions: measurement forgets to a
-bare degree function by the `DimensionedMeasure.apply` projection
-([scontras-2014]'s insight that measure terms and CARD are one
-degree-assigning operation), and any degree function `μ` over a linear
-order induces a Klein delineation via `Degree.Delineation.measureDelineation`
-— the embedding of measure-function degree semantics ([kennedy-1999],
-developed in [kennedy-2007]) into [klein-1980]'s framework. The embedding is faithful
-(`ordering_iff_degree`: Klein's ordering under the induced delineation
-is exactly degree comparison) and lands in the monotone, linear
-fragment (`measureDelineation_monotone`, `measureDelineation_is_linear`).
--/
+The maps themselves carry no new definitions. Measurement forgets to a bare degree function by
+the `DimensionedMeasure.apply` projection, Scontras's observation that measure terms and CARD are
+one degree-assigning operation, and any degree function `μ` over a linear order induces a Klein
+delineation, `Delineation.ofMeasure μ`. This embeds Kennedy's measure-function semantics into
+Klein's framework faithfully, since the induced ordering is degree comparison
+(`Delineation.outranks_ofMeasure_iff`), and lands in the monotone, linear fragment
+(`Delineation.isMonotone_ofMeasure`, `Delineation.isLinear_ofMeasure`). -/
 
 /-! ### Background orderings ([cariani-santorio-wellwood-2023])
 
@@ -109,12 +102,11 @@ variable {S X D : Type*} [Preorder S] [Preorder D] {ρ : S → X} {μ : S → D}
 
 /-- The upper sets of a background, as extensions, form a monotone delineation iff the
 background is total. Two incomparable states give the cycle of a nonlinear delineation. -/
-theorem isMonotoneDelineation_upperSets_iff :
-    IsMonotoneDelineation (fun (C : Set S) s ↦ s ∈ C) {C | IsUpperSet C} ↔
-      ∀ s t : S, s ≤ t ∨ t ≤ s := by
-  refine ⟨fun h s t ↦ by_contra fun hst ↦ ?_, fun htot C₁ C₂ h₁ h₂ a b ha hb hb₂ ↦ ?_⟩
+theorem isMonotoneOn_upperSets_iff :
+    (⟨id⟩ : Delineation S).IsMonotoneOn {C | IsUpperSet C} ↔ ∀ s t : S, s ≤ t ∨ t ≤ s := by
+  refine ⟨fun h s t ↦ by_contra fun hst ↦ ?_, fun htot C₁ h₁ C₂ h₂ a b ha hb hb₂ ↦ ?_⟩
   · obtain ⟨hst, hts⟩ := not_or.1 hst
-    exact hts (h (Ici s) (Ici t) (isUpperSet_Ici s) (isUpperSet_Ici t) s t le_rfl hst le_rfl)
+    exact hts (h (Ici s) (isUpperSet_Ici s) (Ici t) (isUpperSet_Ici t) s t le_rfl hst le_rfl)
   · exact (htot a b).elim (fun hab ↦ absurd (h₁ hab ha) hb) fun hba ↦ h₂ hba hb₂
 
 /-- With a monotone measure, if `a` has more than `b` then some threshold property holds of `a`
