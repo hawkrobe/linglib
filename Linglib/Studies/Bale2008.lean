@@ -2,6 +2,7 @@ module
 
 public import Mathlib.Tactic.DeriveFintype
 public import Mathlib.Tactic.NormNum
+public import Linglib.Semantics.Degree.Quantifier
 public import Linglib.Semantics.Degree.UniversalScale
 public import Linglib.Data.Examples.Bale2008
 

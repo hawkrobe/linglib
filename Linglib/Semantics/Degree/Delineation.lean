@@ -10,7 +10,7 @@ comparison class, a set of entities the adjective is evaluated against, to the a
 extension relative to it, and *a is taller than b* holds when some comparison class puts `a` in
 the extension and leaves `b` out. Klein develops this analysis from Kamp's account of the
 comparative. A measure function induces a delineation whose ordering is degree comparison, so the
-threshold analysis embeds in this one; `Degree/Hom.lean` relates the two further.
+threshold analysis embeds in this one.
 
 ## Main definitions
 

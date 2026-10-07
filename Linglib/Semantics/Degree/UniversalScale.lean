@@ -3,7 +3,8 @@ module
 public import Mathlib.Algebra.Order.Field.Rat
 public import Mathlib.Data.Setoid.Basic
 public import Mathlib.Order.Interval.Finset.Nat
-public import Linglib.Semantics.Degree.Hom
+public import Linglib.Semantics.Degree.Comparison
+public import Linglib.Semantics.Degree.Quotient
 
 /-!
 # The universal scale
@@ -14,8 +15,8 @@ the number of classes below it, over the number of classes, a rational between z
 Universal degrees record positions and nothing else. They are unchanged by any order embedding of
 the scale, and on a comparison class two measures give the same universal degrees exactly when
 they induce the same quasi-order. Comparing two measures directly is not invariant under
-rescaling one of them (`Degree.cross_scale_not_natural`), but comparing their universal degrees
-is, which is what makes a comparison between different adjectives meaningful.
+rescaling one of them (`Degree.Comparison.forall_preimage_interval_eq_iff`), but comparing their
+universal degrees is, which is what makes a comparison between different adjectives meaningful.
 
 ## Main definitions
 
@@ -58,8 +59,8 @@ section Rank
 
 variable {D : Type*} [LinearOrder D]
 
-/-- The relative rank of `d` in a finite scale `S` is the share of `S` at or below it: one plus
-the number of values below `d`, over the number of values. -/
+/-- The relative rank of `d` in a finite scale `S` is the share of `S` at or below it, one plus
+the number of values below `d` over the number of values. -/
 def relativeRank (S : Finset D) (d : D) : ℚ := #(S.filter (· ≤ d)) / #S
 
 /-- Relative rank preserves and reflects the order of the scale. -/
@@ -142,8 +143,8 @@ theorem universalDegree_congr {ν : E → D'} (h : ∀ a ∈ C, ∀ b ∈ C, μ 
     filter_congr fun a ha ↦ h a ha x hx]
 
 /-- On a comparison class, universal degrees are a complete invariant of the quasi-order a
-measure induces: two measures give the same universal degrees exactly when they order the class
-alike. -/
+measure induces, so two measures give the same universal degrees exactly when they order the
+class alike. -/
 theorem ker_universalDegree (C : Finset E) :
     Setoid.ker (fun (μ : E → D) (x : C) ↦ universalDegree μ C x) =
       Setoid.ker fun (μ : E → D) (a b : C) ↦ μ a ≤ μ b := by
@@ -171,7 +172,7 @@ theorem universalDegree_lt_iff_of_image_eq {ν : F → D} {C' : Finset F} {y : F
   exact (relativeRank_strictMonoOn _).lt_iff_lt (h ▸ mem_image_of_mem μ hx)
     (mem_image_of_mem ν hy)
 
-/-- Comparison classes with the same classes give the same universal degrees: members added to a
+/-- Comparison classes with the same classes give the same universal degrees, so members added to a
 comparison class, each measuring as one already there, change no universal degree. -/
 theorem universalDegree_eq_of_image_eq (h : C.image μ = C'.image μ) :
     universalDegree μ C = universalDegree μ C' :=

@@ -1,52 +1,28 @@
 module
 
 public import Linglib.Semantics.Degree.Background
-public import Linglib.Semantics.Degree.Hom
 public import Linglib.Fragments.English.Adjectives
 
 /-!
-# Cariani, Santorio and Wellwood 2023: positive gradable adjectives without positive morphemes
+# Cariani, Santorio and Wellwood (2023): Positive gradable adjective ascriptions without positive morphemes
 
-[cariani-santorio-wellwood-2023] give a gradable adjective two components (4), (17): a
-background ordering of states, the states of having some heat for *hot*, and a
-context-dependent threshold property, true of the states that count as hot. The positive form
-says that the subject holds a state with the threshold property (20). The comparative bypasses
-the threshold (22): some state of the subject's measures, under an admissible measure, above the
-greatest degree of the standard's (23), the comparative of [wellwood-2015]. The positive form
-therefore needs no covert *pos*, and neither form entails the other. Scale-mates such as *warm*
-and *hot* share their background and differ in threshold (24), so their comparatives are one
-comparison (25) while the higher threshold's positive form entails the lower's (26).
+Cariani, Santorio and Wellwood give a gradable adjective a background ordering of states, the
+states of having some heat for *hot*, and a context-dependent threshold property, the states that
+count as hot. The positive form says that the subject holds a state with the threshold property;
+the comparative bypasses the threshold, comparing an admissible measure of the subject's states
+with the greatest degree of the standard's, Wellwood's comparative. The positive form therefore
+needs no covert *pos*, and neither form entails the other. The framework, with its relations to
+Klein's delineations and to degree thresholds, is `Semantics/Degree/Background.lean`; this file
+checks the paper's claims against it. The paper argues from two cities of equal temperature that
+the background is not linear, but its premises make the background total and refute only
+antisymmetry, the two states sharing one degree.
 
-The framework is `Semantics/Degree/Background.lean`, and its relations to [klein-1980]'s
-delineations and to degree thresholds are in `Semantics/Degree/Hom.lean`; this file checks the
-paper's claims against it. The inference (19), from *Barcelona is hot* and *Miami is hotter than
-Barcelona* to *Miami is hot*, which the paper grounds in its monotonicity postulate (18), holds
-for an admissible measure on a total background (`Degree.mem_image_of_maxComparative`) and fails
-on any non-total one (`Degree.not_mem_image_Ici_of_not_le`). The paper argues from two cities of
-equal temperature that the background is not linear (§4). Its premises, distinct holders and
-equal measure, make the two states distinct and tied whenever the measure reflects the ordering,
-as (15b)'s *as much heat as* requires, and then make the background total
-(`ne_and_antisymmRel_and_total`): the argument refutes antisymmetry, not comparability, and the
-two states share one degree, the class of fn. 10. Read as the text words it, with the two
-states unordered, the background would refute (19) and let a threshold count one city hot and
-the other not at the same temperature.
-
-The monotonicity postulate parallels Klein's Consistency Postulate (fn. 11): the thresholds of a
-background form a consistent delineation exactly when the background is total
-(`Degree.isMonotoneDelineation_upperSets_iff`). The injection of §6 into a degree semantics with
-a lexical threshold degree (28)–(32) is exact when the measure reflects the background: a
-threshold above a contrast state is then the degree threshold at its degree
-(`Degree.Comparison.ge_over_eq_Ici`), and every threshold is a pulled-back degree threshold
-(`Degree.forall_isUpperSet_exists_preimage_iff`). On a non-total background some threshold is no
-degree threshold (`Degree.exists_isUpperSet_forall_ne_preimage`), the difference the paper's
-Coda credits to states.
-
-## Main results
+## Main statements
 
 * `ne_and_antisymmRel_and_total`: the equal-temperature cities of §4 hold distinct, tied states
   of a total background.
-* The examples check (19) on a three-state model, the split verdict of the literal reading of
-  §4, (24) against the English fragment, and the failure of the converse of (26).
+* The examples check the inference (19) on a three-state model, the split verdict of the literal
+  reading of §4, (24) against the English fragment, and the failure of the converse of (26).
 
 ## Implementation notes
 
