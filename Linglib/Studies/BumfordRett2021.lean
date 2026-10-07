@@ -53,10 +53,13 @@ is, and so whether the model recovers Rett's categorical classification, is a nu
 
 * `costlier_antonym_more_evaluative` holds in every model checked numerically, including random
   priors and thresholds. Both constructions reduce to the deviation `X` alone, with posterior
-  weight `g X * ℓ X`, `g` the symmetric prior and `ℓ X` a sum of speaker shares over the offsets.
-  When silence never competes, the two antonyms' `ℓ` differ by a function symmetric about `0`,
-  which pulls the cheaper antonym's expectation towards `0`. With silence competing, raising either
-  antonym's cost alone is not monotone, so the proof must compare the antonyms directly.
+  weight `g X * ℓ X` for the symmetric prior `g` and a pooled speaker likelihood `ℓ`, increasing in
+  `X`. When silence never competes, the two antonyms' shares sum to one at each point, so the claim
+  says that the cheaper antonym is uttered more often, which pairing `X` with `-X` shows. In
+  general the claim for every symmetric prior is the copositivity of a quadratic form in `g`. It
+  follows from two facts about the ratio `ρ` of the costlier antonym's `ℓ` to the cheaper one's,
+  that `ρ (-X) ≤ ρ X` for `X > 0` and that `ρ` is increasing on `X ≥ 0`, which hold numerically but
+  are unproved.
 * For the minimum equative the costlier antonym is not always the more evaluative one: it fails
   at high rationality when the two costs are close.
 * The stable iterate of the listener.
