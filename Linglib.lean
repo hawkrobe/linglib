@@ -1929,7 +1929,6 @@ import Linglib.Syntax.Minimalist.Agree.Coordination
 import Linglib.Syntax.Minimalist.Agree.Cyclic
 import Linglib.Syntax.Minimalist.Defs
 import Linglib.Syntax.Minimalist.Economy.Basic
-import Linglib.Syntax.Minimalist.Economy.MinimalSearch
 import Linglib.Syntax.Minimalist.Economy.MinimalYield.Basic
 import Linglib.Syntax.Minimalist.Economy.MinimalYield.Laurent
 import Linglib.Syntax.Minimalist.Economy.NoComplexityLoss
@@ -1937,7 +1936,6 @@ import Linglib.Syntax.Minimalist.Ellipsis
 import Linglib.Syntax.Minimalist.Features
 import Linglib.Syntax.Minimalist.LateMerger
 import Linglib.Syntax.Minimalist.LeftPeriphery
-import Linglib.Syntax.Minimalist.Linearization.Chain
 import Linglib.Syntax.Minimalist.Linearization.Cyclic
 import Linglib.Syntax.Minimalist.Linearization.Externalization
 import Linglib.Syntax.Minimalist.Linearization.Replay

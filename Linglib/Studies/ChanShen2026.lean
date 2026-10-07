@@ -4,6 +4,7 @@ public import Linglib.Data.Examples.ChanShen2026
 public import Linglib.Fragments.Mandarin.Questions
 public import Linglib.Fragments.Singlish.Questions
 public import Linglib.Syntax.Minimalist.Linearization.Spellout
+public import Linglib.Syntax.Minimalist.SyntacticObject.Locality
 
 /-!
 # Chan and Shen (2026): Conditions on *wh-the-hell* licensing

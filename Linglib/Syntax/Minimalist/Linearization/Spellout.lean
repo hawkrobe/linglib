@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.Minimalist.Linearization.Chain
+public import Linglib.Syntax.Minimalist.SyntacticObject.Chain
 
 /-!
 # Spell-out of planar syntactic objects
