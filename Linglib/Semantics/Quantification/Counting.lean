@@ -238,6 +238,12 @@ theorem every_eq_toGQ_all [Finite α] : (every : GQ α) = NumberTree.all.toGQ :=
   simp only [every, NumberTree.toGQ, NumberTree.all, Set.ncard_eq_zero (Set.toFinite _),
     Set.eq_empty_iff_forall_notMem, Set.mem_ofPred_eq, not_and, not_not]
 
+/-- On a finite universe *no* is the quantifier of the tree's *no*. -/
+theorem no_eq_toGQ_no [Finite α] : (no : GQ α) = NumberTree.no.toGQ := by
+  funext A B
+  simp only [no, NumberTree.toGQ, NumberTree.no, Set.ncard_eq_zero (Set.toFinite _),
+    Set.eq_empty_iff_forall_notMem, Set.mem_ofPred_eq, not_and]
+
 /-- On a finite universe *some* is *at least one*. -/
 theorem some_eq_atLeast_one [Finite α] : (GQ.some : GQ α) = atLeast 1 := by
   funext A B
