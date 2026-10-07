@@ -4,6 +4,7 @@ public import Linglib.Core.Order.CountableDenseLinearOrder
 public import Linglib.Core.Order.SuccPred.LinearLocallyFinite
 public import Linglib.Semantics.Degree.Marginality
 public import Mathlib.Analysis.Real.Hyperreal
+public import Mathlib.Order.ConditionallyCompleteLattice.Basic
 
 /-!
 # Dinis and Jacinto (2025): A Theory of Marginal and Large Difference
@@ -20,7 +21,11 @@ makes the premises jointly satisfiable.
 
 ## Main statements
 
-* `DinisJacinto2025.infinite_of_mlScale`: every ML scale is infinite.
+* `DinisJacinto2025.IsMLModel`: the eleven axioms, along a strict weak order with marginally and
+  largely smaller than both primitive.
+* `DinisJacinto2025.infinite_of_mlScale`, `DinisJacinto2025.instIsEmptyMLScale`: every ML scale
+  is infinite, and no conditionally complete order, such as the naturals or the reals, carries
+  one.
 * `DinisJacinto2025.infinitesimal_m_iff`, `DinisJacinto2025.finite_m_iff`: infinitesimal and
   finite differences of hyperreals are the marginal differences of ML scales.
 * `DinisJacinto2025.exists_isHom_rep`: every countable, finitely marginal ML scale maps
@@ -34,10 +39,9 @@ makes the premises jointly satisfiable.
 
 ## Implementation notes
 
-* The eleven axioms are `Degree.MLScale.IsMLModel`. The project's ML scales are those of
-  [dinis-jacinto-2026], over a linear order with marginally smaller than primitive, and the
-  results here are stated for them; a homomorphism then preserves and reflects smaller than and
-  marginally smaller than, and is injective.
+* The project's ML scales are those of [dinis-jacinto-2026], over a linear order with marginally
+  smaller than primitive, and the results after the axioms are stated for them; a homomorphism
+  then preserves and reflects smaller than and marginally smaller than, and is injective.
 * The nonstandard models are mathlib's hyperreals, infinitesimal differences being those of
   positive archimedean class. The finite-difference reading of Dean and Itzhaki (§5, §6), stated
   for nonstandard integers, is taken on the hyperreals.
@@ -63,7 +67,50 @@ open Degree MLScale
 
 variable {α : Type*} [LinearOrder α] {ml : MLScale α} {x y : α}
 
-/-! ### Infinitude -/
+/-! ### The theory -/
+
+/-- The eleven axioms of §2 on marginally and largely smaller than, `M` and `L`, along a strict
+weak order `R`, both relations primitive. -/
+structure IsMLModel {β : Type*} (R M L : β → β → Prop) : Prop where
+  isStrictWeakOrder : IsStrictWeakOrder β R
+  exists_l : ∃ x y, L x y
+  r_of_m : ∀ ⦃x y⦄, M x y → R x y
+  r_of_l : ∀ ⦃x y⦄, L x y → R x y
+  m_trans : ∀ ⦃x y z⦄, M x y → M y z → M x z
+  not_l_of_m : ∀ ⦃x y⦄, M x y → ¬ L x y
+  irrelevance : ∀ ⦃x y⦄ z, M x y → (L z y → L z x) ∧ (L x z → L y z)
+  l_of_r_of_l : ∀ ⦃x y z⦄, R x y → L y z → L x z
+  l_of_l_of_r : ∀ ⦃x y z⦄, L x y → R y z → L x z
+  m_or_l_of_r : ∀ ⦃x y⦄, R x y → M x y ∨ L x y
+  decomposition : ∀ ⦃x y⦄, L x y → (∃ z, M x z ∧ L z y) ∧ ∃ w, M w y ∧ L x w
+  m_bounded : ∀ ⦃x y z⦄, M x z → R x y → R y z → M x y ∧ M y z
+
+/-- Along a linear order, largely smaller than is smaller than but not marginally smaller
+than. -/
+theorem IsMLModel.l_iff {M L : α → α → Prop} (h : IsMLModel (· < ·) M L) :
+    L x y ↔ x < y ∧ ¬ M x y := by
+  grind [h.r_of_l, h.not_l_of_m, h.m_or_l_of_r]
+
+/-- No conditionally complete linear order carries an ML scale (Theorem 2.12). The supremum of
+the degrees above `x` and largely below `y` would lie in the block of `y`, and a degree marginally
+below it would be a smaller upper bound. -/
+instance instIsEmptyMLScale {α : Type*} [ConditionallyCompleteLinearOrder α] :
+    IsEmpty (MLScale α) := by
+  refine ⟨fun ml ↦ ?_⟩
+  obtain ⟨x, y, hxy⟩ := ml.exists_large
+  set S := {z | x < z ∧ ml.L z y}
+  obtain ⟨z₀, hxz₀, hz₀y⟩ := (ml.decomposition hxy).1
+  have hS : S.Nonempty := ⟨z₀, hxz₀.lt, hz₀y⟩
+  have hb : BddAbove S := ⟨y, fun z hz ↦ hz.2.lt.le⟩
+  have hxl : x < sSup S := hxz₀.lt.trans_le (le_csSup hb ⟨hxz₀.lt, hz₀y⟩)
+  have hly : ml.AtMostMarginal (sSup S) y := atMostMarginal_iff_incompRel.2
+    ⟨fun h ↦ by
+      obtain ⟨w, hlw, hwy⟩ := (ml.decomposition h).1
+      exact (le_csSup hb ⟨hxl.trans hlw.lt, hwy⟩).not_gt hlw.lt,
+    fun h ↦ (csSup_le hS fun z hz ↦ hz.2.lt.le).not_gt h.lt⟩
+  obtain ⟨w, hwl, -, hxw⟩ := (ml.decomposition (hly.l_congr_right.2 hxy)).2
+  exact (csSup_le hS fun a ha ↦
+    ((ml.irrelevance a hwl).1 (hly.l_congr_right.2 ha.2)).1.le).not_gt hwl.lt
 
 /-- Every ML scale is infinite (p. 521). -/
 theorem infinite_of_mlScale (ml : MLScale α) : Infinite α :=

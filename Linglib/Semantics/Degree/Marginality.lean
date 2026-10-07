@@ -10,7 +10,6 @@ public import Mathlib.Data.Prod.Lex
 public import Mathlib.Data.Setoid.Basic
 public import Mathlib.GroupTheory.Coset.Defs
 public import Mathlib.Order.Comparable
-public import Mathlib.Order.ConditionallyCompleteLattice.Basic
 public import Mathlib.Order.Preorder.Finite
 public import Mathlib.Order.RelClasses
 public import Linglib.Core.Algebra.Order.Archimedean.Class
@@ -39,8 +38,6 @@ ordered group (`MLScale.ofAddSubgroup`), such as the infinitesimals among the hy
 * `Degree.MLScale.ofSetoid`, `Degree.MLScale.lex`, `Degree.MLScale.ofAddSubgroup`: ML scales
   from order-connected partitions, lexicographic pairs, and order-connected subgroups.
 * `Degree.MLScale.rep`: the representative model.
-* `Degree.MLScale.IsMLModel`: the eleven axioms of the original theory, along a strict weak
-  order with both relations primitive.
 * `Degree.MLScale.IsHom`: a homomorphism of ML scales.
 
 ## Main results
@@ -48,8 +45,7 @@ ordered group (`MLScale.ofAddSubgroup`), such as the infinitesimals among the hy
 * `Degree.MLScale.instIsStrictWeakOrderL`, `Degree.MLScale.atMostMarginal_iff_incompRel`:
   largely smaller than is a strict weak order whose incomparability is at most marginal
   difference.
-* `Degree.MLScale.L.infinite_setOf`, `Degree.MLScale.instIsEmpty`: infinitely many degrees lie
-  between largely different ones, so no conditionally complete order carries an ML scale.
+* `Degree.MLScale.L.infinite_setOf`: infinitely many degrees lie between largely different ones.
 * `Degree.MLScale.ofSetoid_atMostMarginalSetoid`: every ML scale is the scale of its blocks.
 * `Degree.MLScale.isHom_lex_iff`: a map into a lexicographic ML scale is a homomorphism exactly
   when its block coordinate pulls back largely smaller than and its location coordinate grows
@@ -207,50 +203,6 @@ theorem L.infinite_Ioo (h : ml.L x y) : (Set.Ioo x y).Infinite :=
 /-- The degrees largely greater than a given one form an upper set. -/
 theorem isUpperSet_setOf_l (x : α) : IsUpperSet {y | ml.L x y} :=
   fun _ _ hle h ↦ hle.eq_or_lt.elim (· ▸ h) h.trans_lt
-
-/-- No conditionally complete linear order carries an ML scale. The supremum of the degrees above
-`x` and largely below `y` would lie in the block of `y`, and a degree marginally below it would be
-a smaller upper bound. -/
-instance instIsEmpty {α : Type*} [ConditionallyCompleteLinearOrder α] : IsEmpty (MLScale α) := by
-  refine ⟨fun ml ↦ ?_⟩
-  obtain ⟨x, y, hxy⟩ := ml.exists_large
-  set S := {z | x < z ∧ ml.L z y}
-  obtain ⟨z₀, hxz₀, hz₀y⟩ := (ml.decomposition hxy).1
-  have hS : S.Nonempty := ⟨z₀, hxz₀.lt, hz₀y⟩
-  have hb : BddAbove S := ⟨y, fun z hz ↦ hz.2.lt.le⟩
-  have hxl : x < sSup S := hxz₀.lt.trans_le (le_csSup hb ⟨hxz₀.lt, hz₀y⟩)
-  have hly : ml.AtMostMarginal (sSup S) y := atMostMarginal_iff_incompRel.2
-    ⟨fun h ↦ by
-      obtain ⟨w, hlw, hwy⟩ := (ml.decomposition h).1
-      exact (le_csSup hb ⟨hxl.trans hlw.lt, hwy⟩).not_gt hlw.lt,
-    fun h ↦ (csSup_le hS fun z hz ↦ hz.2.lt.le).not_gt h.lt⟩
-  obtain ⟨w, hwl, -, hxw⟩ := (ml.decomposition (hly.l_congr_right.2 hxy)).2
-  exact (csSup_le hS fun a ha ↦
-    ((ml.irrelevance a hwl).1 (hly.l_congr_right.2 ha.2)).1.le).not_gt hwl.lt
-
-/-! ### The original axioms -/
-
-/-- The eleven axioms of [dinis-jacinto-2025] on marginally and largely smaller than, `M` and
-`L`, along a strict weak order `R`, both relations primitive. -/
-structure IsMLModel {β : Type*} (R M L : β → β → Prop) : Prop where
-  isStrictWeakOrder : IsStrictWeakOrder β R
-  exists_l : ∃ x y, L x y
-  r_of_m : ∀ ⦃x y⦄, M x y → R x y
-  r_of_l : ∀ ⦃x y⦄, L x y → R x y
-  m_trans : ∀ ⦃x y z⦄, M x y → M y z → M x z
-  not_l_of_m : ∀ ⦃x y⦄, M x y → ¬ L x y
-  irrelevance : ∀ ⦃x y⦄ z, M x y → (L z y → L z x) ∧ (L x z → L y z)
-  l_of_r_of_l : ∀ ⦃x y z⦄, R x y → L y z → L x z
-  l_of_l_of_r : ∀ ⦃x y z⦄, L x y → R y z → L x z
-  m_or_l_of_r : ∀ ⦃x y⦄, R x y → M x y ∨ L x y
-  decomposition : ∀ ⦃x y⦄, L x y → (∃ z, M x z ∧ L z y) ∧ ∃ w, M w y ∧ L x w
-  m_bounded : ∀ ⦃x y z⦄, M x z → R x y → R y z → M x y ∧ M y z
-
-/-- Along a linear order, largely smaller than is smaller than but not marginally smaller
-than. -/
-theorem IsMLModel.l_iff {M L : α → α → Prop} (h : IsMLModel (· < ·) M L) :
-    L x y ↔ x < y ∧ ¬ M x y := by
-  grind [h.r_of_l, h.not_l_of_m, h.m_or_l_of_r]
 
 /-! ### Constructions -/
 

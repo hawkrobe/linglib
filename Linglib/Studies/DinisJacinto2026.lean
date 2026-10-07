@@ -2,6 +2,7 @@ module
 
 public import Linglib.Semantics.Degree.Comparison
 public import Linglib.Semantics.Degree.Marginality
+public import Linglib.Studies.DinisJacinto2025
 public import Mathlib.Order.Lattice.Nat
 
 /-!
@@ -31,14 +32,15 @@ extension must have become smaller on the scale.
   constraint, so its extension is clustered and tolerant.
 * `DinisJacinto2026.exists_large_step_of_soritical`: a Soritical sequence for the positive form
   has a large step.
-* `DinisJacinto2026.setOf_positive_eq_gt_over`: under a representation, the positive form is the
-  strict comparison of the block coordinate with the standard's block.
+* `DinisJacinto2026.setOf_positive_eq_gt_over`, `DinisJacinto2026.exists_isHom_setOf_positive_eq`:
+  under a representation, which the representation theorem of [dinis-jacinto-2025] supplies for
+  countable, finitely marginal scales, the positive form is the strict comparison of the block
+  coordinate with the standard's block.
 
 ## Implementation notes
 
 * ML scales and their theory are `Degree.MLScale`, whose five axioms are those of Figure 1 with
-  largely smaller than unfolded. The representation theorem the paper invokes is
-  `DinisJacinto2025.exists_isHom_rep`.
+  largely smaller than unfolded.
 * A measure function takes a circumstance of evaluation and an object to a degree. The context
   enters only through the standard of comparison and the scale, which are held fixed.
 * The text calls marginal difference transitive and large difference possibly intransitive
@@ -87,7 +89,7 @@ example : IsEmpty (MLScale ℕ) := inferInstance
 /-! ### The simplified theory -/
 
 /-- An ML scale satisfies the eleven axioms of [dinis-jacinto-2025], Theorem 2.2 among them. -/
-theorem isMLModel (ml : MLScale α) : IsMLModel (· < ·) ml.M ml.L where
+theorem isMLModel (ml : MLScale α) : DinisJacinto2025.IsMLModel (· < ·) ml.M ml.L where
   isStrictWeakOrder := isStrictWeakOrder_of_isOrderConnected
   exists_l := ml.exists_large
   r_of_m _ _ := M.lt
@@ -103,8 +105,8 @@ theorem isMLModel (ml : MLScale α) : IsMLModel (· < ·) ml.M ml.L where
 
 /-- Along a linear order, the five axioms are the eleven of [dinis-jacinto-2025], with largely
 smaller than defined as smaller than but not marginally smaller than (§2). -/
-def mlScaleEquiv :
-    MLScale α ≃ {p : (α → α → Prop) × (α → α → Prop) // IsMLModel (· < ·) p.1 p.2} where
+def mlScaleEquiv : MLScale α ≃
+    {p : (α → α → Prop) × (α → α → Prop) // DinisJacinto2025.IsMLModel (· < ·) p.1 p.2} where
   toFun ml := ⟨(ml.M, ml.L), isMLModel ml⟩
   invFun p :=
     { M := p.1.1
@@ -202,6 +204,16 @@ theorem setOf_positive_eq_gt_over {f : α → ℚ ×ₗ ℤ} (hf : ml.IsHom rep 
     {x | Positive ml μ norm w x} =
       Degree.Comparison.gt.over (fun x ↦ (ofLex (f (μ w x))).1) (ofLex (f norm)).1 :=
   Set.ext fun _ ↦ hf.l_iff.symm.trans lex_l_iff
+
+/-- Every countable, finitely marginal scale has a representation under which the positive form,
+for every measure function, standard and circumstance, compares blocks, so reasoning about it can
+be carried out in the representative model (§5.2). -/
+theorem exists_isHom_setOf_positive_eq [Countable α] (hf : DinisJacinto2025.FinitelyMarginal ml) :
+    ∃ f : α → ℚ ×ₗ ℤ, ml.IsHom rep f ∧ ∀ (μ : C → O → α) (norm : α) (w : C),
+      {x | Positive ml μ norm w x} =
+        Degree.Comparison.gt.over (fun x ↦ (ofLex (f (μ w x))).1) (ofLex (f norm)).1 :=
+  let ⟨f, hf⟩ := DinisJacinto2025.exists_isHom_rep hf
+  ⟨f, hf, fun _ _ _ ↦ setOf_positive_eq_gt_over hf⟩
 
 /-- If a representation places the standard and Ronaldo in block `0` and Zidane in block `1`,
 then Zidane is balder than Ronaldo, and Zidane is bald where Ronaldo, though balder than the
