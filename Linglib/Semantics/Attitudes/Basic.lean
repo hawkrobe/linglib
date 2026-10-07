@@ -1,5 +1,7 @@
 module
 
+public import Linglib.Semantics.Degree.Antonymy
+
 /-!
 # Attitude predicates: the classification
 
@@ -7,22 +9,22 @@ This file is the root of the attitude API: the semantic classification a clause-
 predicate's lexical entry records, from which its combinatorial properties are derived. A
 doxastic predicate is veridical or not, the classical cut between *know* and *believe*
 (`Doxastic.Veridicality`); [karttunen-1971b]'s finer split of the factives into emotive and
-semi-factive is `Factivity`, on the presupposition facet. A preferential predicate has an evaluative
-valence, positive for *hope* and negative for *fear* (`Preferential.Valence`), and a
-compositional strategy (`Preferential.Strategy`): the degree comparison of [villalta-2008],
-whose question use is the existential over answers, or a relation to the question itself,
-anxious uncertainty for *worry* ([anand-hacquard-2013]) or anticipation of resolution for
-Mandarin *qidai* and relevance for *care* ([elliott-etal-2017]), which holds of no particular
-answer. `Attitude` composes the two dimensions, and its projections are what verb entries and
-the semantics of `Doxastic.lean` and the `Preference/` files read.
+semi-factive is `Factivity`, on the presupposition facet. A preferential predicate has the
+evaluative valence of a gradable predicate, positive for *hope* and negative for *fear*, and is
+clausally distributive or not. The degree comparison of [villalta-2008] relates its subject to a
+question exactly when it relates her to some answer, while *worry* ([anand-hacquard-2013]),
+Mandarin *qidai* and *care* ([elliott-etal-2017]) relate her to the question itself and can hold
+of no particular answer. `Attitude` composes the two dimensions, and its projections are what
+verb entries and the semantics of `Doxastic.lean` and the `Preference/` files read.
 
 ## Implementation notes
 
 The binary cut between veridical and non-veridical is the classical default;
 [giannakidou-1998]'s three-way veridical, nonveridical, and antiveridical taxonomy and finer
-attitude typologies ([anand-hacquard-2013]) cut the space differently. The strategies are the
-ones whose clausal distributivity [qing-uegaki-2025] contrast; relevance-based is not a
-published label. Speech-act predicates are outside the classification.
+attitude typologies ([anand-hacquard-2013]) cut the space differently. Clausal distributivity is
+recorded, as in [qing-uegaki-2025]'s classification, rather than derived, since the
+non-distributive predicates share no denotation. Speech-act predicates are outside the
+classification.
 
 ## References
 
@@ -44,43 +46,13 @@ inductive Doxastic.Veridicality
   | nonVeridical
   deriving DecidableEq, Repr
 
-/-- The evaluative valence of a preferential predicate is positive for *hope* and *wish* and
-negative for *fear* and *worry*. -/
-inductive Preferential.Valence
-  | positive
-  | negative
-  deriving DecidableEq, Repr
-
-/-- The compositional strategy of a preferential predicate determines its clausal
-distributivity. The interrogative use of a degree comparison is the existential over answers
-(`Preferential.isDistributive_degreeComparison`), while a relation to the question can hold of no
-particular answer (`Distributivity.not_isDistributive_of_forall_not`). -/
-inductive Preferential.Strategy
-  /-- A degree comparison asserts that the agent prefers the complement above a threshold
-  ([villalta-2008]). -/
-  | degreeComparison (valence : Preferential.Valence)
-  /-- Anxious uncertainty about the question (*worry*). -/
-  | uncertaintyBased
-  /-- Anticipation of the question's resolution (Mandarin *qidai*) or its relevance
-  (*care*). -/
-  | relevanceBased (valence : Preferential.Valence)
-  deriving DecidableEq, Repr
-
-namespace Preferential.Strategy
-
-/-- The valence of a strategy; *worry* is negative. -/
-def valence : Strategy → Valence
-  | .degreeComparison v => v
-  | .uncertaintyBased => .negative
-  | .relevanceBased v => v
-
-end Preferential.Strategy
-
 /-- An attitude predicate is doxastic, with an accessibility semantics ([hintikka-1962]) and a
-veridicality, or preferential, with a degree semantics and a strategy. -/
+veridicality, or preferential, with an evaluative valence and a record of whether it is clausally
+distributive in the sense of `Distributivity.IsDistributive`, as the degree comparisons are
+(`Preferential.isDistributive_degreeComparison`) and *worry* is not. -/
 inductive Attitude
   | doxastic (veridicality : Doxastic.Veridicality)
-  | preferential (strategy : Preferential.Strategy)
+  | preferential (valence : Degree.EvaluativeValence) (distributive : Bool)
   deriving DecidableEq, Repr
 
 namespace Attitude
@@ -88,31 +60,26 @@ namespace Attitude
 /-- The veridicality of a predicate; preferential predicates are non-veridical. -/
 def veridicality : Attitude → Doxastic.Veridicality
   | .doxastic v => v
-  | .preferential _ => .nonVeridical
+  | .preferential _ _ => .nonVeridical
 
 /-- The attitude is doxastic. -/
 def IsDoxastic : Attitude → Prop
   | .doxastic _ => True
-  | .preferential _ => False
+  | .preferential _ _ => False
 
 instance : DecidablePred IsDoxastic := fun a ↦ by unfold IsDoxastic; split <;> infer_instance
 
 /-- The attitude is preferential. -/
 def IsPreferential : Attitude → Prop
   | .doxastic _ => False
-  | .preferential _ => True
+  | .preferential _ _ => True
 
 instance : DecidablePred IsPreferential := fun a ↦ by
   unfold IsPreferential; split <;> infer_instance
 
-/-- The strategy of a preferential predicate. -/
-def strategy? : Attitude → Option Preferential.Strategy
-  | .doxastic _ => none
-  | .preferential s => some s
-
 /-- The valence of a preferential predicate. -/
-def valence : Attitude → Option Preferential.Valence
+def valence : Attitude → Option Degree.EvaluativeValence
   | .doxastic _ => none
-  | .preferential s => some s.valence
+  | .preferential v _ => some v
 
 end Attitude

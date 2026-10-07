@@ -183,7 +183,7 @@ def derivedLandauClass (v : Verb) : Option PredicateClass :=
   else if v.TakesQuestion ∧ v.attitude = none then some .interrogative
   else match v.attitude with
     | some (.doxastic _)     => some .propositional
-    | some (.preferential _) => some .desiderative
+    | some (.preferential _ _) => some .desiderative
     | none                   => none
 
 /-- A fragment control verb is on the tier of its class, or else logophoric exactly when it

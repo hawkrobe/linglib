@@ -38,15 +38,16 @@ follows from the goals of a hopeful wondering.
 Triviality quantifies over the degree function and threshold, the non-logical constants of
 Gajewski's analyticity, with the question as its own comparison class, and the concrete models
 measure preference in the reals. A relational predicate is a parameter relating the agent to the
-question, since the paper characterizes the class only as a relation to the question not
-reducible to one to any answer. The class of a predicate is read off the compositional strategy
-its lexical entry records. The pragmatic derivation compares coming to believe the radical or not
-by Kratzer's ordering with the event's goals as ordering source; the event summation of the
-adjunction analysis is not formalized. The Spanish predicates without a Fragment entry, *temer*
-and *preocupar*, are classified here. Rows carry the paper's truth values where it gives them and
-its felicity judgments otherwise; the attested *hope whether* examples are recorded as marginal,
-and *temer* with a polar question and *haipa* with a constituent question are recorded but not
-predicted.
+question, since the paper characterizes the class only as a relation to the question not reducible
+to one to any answer. The class of a predicate is read off the valence and distributivity its
+lexical entry records. The paper contrasts positive with negative predicates; a neutral one is taken
+to lack threshold significance, as a negative one does. The pragmatic derivation compares coming to
+believe the radical or not by Kratzer's ordering with the event's goals as ordering source; the
+event summation of the adjunction analysis is not formalized. The Spanish predicates without a
+Fragment entry, *temer* and *preocupar*, are classified here. Rows carry the paper's truth values
+where it gives them and its felicity judgments otherwise; the attested *hope whether* examples are
+recorded as marginal, and *temer* with a polar question and *haipa* with a constituent question are
+recorded but not predicted.
 
 ## References
 
@@ -94,10 +95,10 @@ def Trivial
 /-- A positive preferential predicate presupposes threshold significance of a question. A
 negative one triggers no such presupposition (§3.2) and presupposes only that the question has an
 answer in the comparison class. -/
-def presupposition :
-    Valence → (E → W → Set W → ℝ) → (Set (Set W) → ℝ) → E → Set (Set W) → W → Prop
+def presupposition : Degree.EvaluativeValence →
+    (E → W → Set W → ℝ) → (Set (Set W) → ℝ) → E → Set (Set W) → W → Prop
   | .positive => fun μ θ x Q w ↦ Degree.ThresholdSignificant (μ x w) θ Q
-  | .negative => fun _ _ _ Q _ ↦ Q.Nonempty
+  | .negative | .neutral => fun _ _ _ Q _ ↦ Q.Nonempty
 
 /-- A distributive positive predicate composed with a question is trivial, as Uegaki and Sudo
 show. -/
@@ -107,15 +108,16 @@ theorem trivial_positive :
 
 /-- Without threshold significance, *x fears Q* says only that some answer is feared, which a
 model falsifies. -/
-theorem not_trivial_negative [Inhabited E] [Inhabited W] :
-    ¬ Trivial (W := W) (E := E) degreeComparison (presupposition .negative) := fun h ↦ by
-  obtain ⟨p, -, -, hp⟩ :=
-    h (fun _ _ _ ↦ 0) (fun _ ↦ 0) default {∅} default (Set.singleton_nonempty _)
-  simp [Degree.Comparison.over] at hp
+theorem not_trivial_negative [Inhabited E] [Inhabited W] {v : Degree.EvaluativeValence}
+    (hv : v ≠ .positive) : ¬ Trivial (W := W) (E := E) degreeComparison (presupposition v) :=
+  fun h ↦ by
+    obtain ⟨p, -, -, hp⟩ := h (fun _ _ _ ↦ 0) (fun _ ↦ 0) default {∅} default <| by
+      cases v <;> simp_all [presupposition]
+    simp [Degree.Comparison.over] at hp
 
 /-- A relational predicate is not trivial even under threshold significance, since some agent
 does not stand in the relation to a question an answer of which clears the threshold. -/
-theorem not_trivial_relational (v : Valence) (R : E → Set (Set W) → W → Prop)
+theorem not_trivial_relational (v : Degree.EvaluativeValence) (R : E → Set (Set W) → W → Prop)
     (hR : ∃ x Q w, Q.Nonempty ∧ ¬ R x Q w) :
     ¬ Trivial (fun _ _ _ ↦ R) (presupposition v) := fun h ↦ by
   obtain ⟨x, Q, w, hQ, hxQ⟩ := hR
@@ -123,7 +125,7 @@ theorem not_trivial_relational (v : Valence) (R : E → Set (Set W) → W → Pr
   cases v
   · obtain ⟨p, hp⟩ := hQ
     exact ⟨p, hp, by norm_num [Degree.Comparison.over]⟩
-  · exact hQ
+  all_goals exact hQ
 
 /-! ### The classification (Table 2) -/
 
@@ -138,32 +140,32 @@ inductive PredicateClass
   | distributivePositive
   deriving DecidableEq, Repr
 
-/-- The class of a predicate, read off the compositional strategy its lexical entry records. -/
-def classOf : Strategy → PredicateClass
-  | .degreeComparison .positive => .distributivePositive
-  | .degreeComparison .negative => .distributiveNegative
-  | .uncertaintyBased | .relevanceBased _ => .nonDistributive
+/-- The class of a predicate, read off the valence and distributivity its lexical entry records.
+A distributive predicate of neutral valence is outside the classification. -/
+def classOf : Attitude → Option PredicateClass
+  | .preferential _ false => some .nonDistributive
+  | .preferential .negative true => some .distributiveNegative
+  | .preferential .positive true => some .distributivePositive
+  | _ => none
 
-/-- The interrogative use of a strategy, the relational ones over a relation `R` to the
-question. -/
+/-- The interrogative use of a preferential predicate is a degree comparison when it is
+distributive and a relation `R` to the question otherwise. -/
 def semantics (R : E → Set (Set W) → W → Prop) :
-    Strategy → (E → W → Set W → ℝ) → (Set (Set W) → ℝ) → Set (Set W) → E → Set (Set W) → W →
-      Prop
-  | .degreeComparison _ => degreeComparison
-  | .uncertaintyBased | .relevanceBased _ => fun _ _ _ ↦ R
+    Bool → (E → W → Set W → ℝ) → (Set (Set W) → ℝ) → Set (Set W) → E → Set (Set W) → W → Prop
+  | true => degreeComparison
+  | false => fun _ _ _ ↦ R
 
 /-- Canonical composition with a question is trivial, hence anti-rogative, exactly for the
 distributive positive class (Table 2). -/
-theorem trivial_iff_class [Inhabited E] [Inhabited W] (k : Strategy)
+theorem trivial_iff_class [Inhabited E] [Inhabited W] (v : Degree.EvaluativeValence) (d : Bool)
     (R : E → Set (Set W) → W → Prop) (hR : ∃ x Q w, Q.Nonempty ∧ ¬ R x Q w) :
-    Trivial (semantics R k) (presupposition k.valence) ↔ classOf k = .distributivePositive := by
-  cases k with
-  | degreeComparison v =>
-    cases v
+    Trivial (semantics R d) (presupposition v) ↔
+      classOf (.preferential v d) = some .distributivePositive := by
+  cases d
+  · exact iff_of_false (not_trivial_relational v R hR) (by simp [classOf])
+  · cases v
     · exact iff_of_true trivial_positive rfl
-    · exact iff_of_false not_trivial_negative (by decide)
-  | uncertaintyBased => exact iff_of_false (not_trivial_relational _ R hR) (by simp [classOf])
-  | relevanceBased v => exact iff_of_false (not_trivial_relational v R hR) (by simp [classOf])
+    all_goals exact iff_of_false (not_trivial_negative nofun) (by simp [classOf])
 
 /-! ### The paper's judgments -/
 
@@ -185,18 +187,18 @@ def attitude? : String → Option Attitude
   | "kork" => Turkish.kork.attitude
   | "um" => Turkish.um.attitude
   | "endiselen" => Turkish.endişelen.attitude
-  | "preocupar" => some (.preferential .uncertaintyBased)
-  | "temer" => some (.preferential (.degreeComparison .negative))
+  | "preocupar" => some (.preferential .negative false)
+  | "temer" => some (.preferential .negative true)
   | "esperar" => Spanish.Verbs.esperar.attitude
   | _ => none
 
 /-- The class of a row's predicate. -/
 def class? (r : Datum) : Option PredicateClass :=
-  ((r.feature? "predicate").bind attitude?).bind Attitude.strategy? |>.map classOf
+  ((r.feature? "predicate").bind attitude?).bind classOf
 
 /-- The valence of a row's predicate, or of its manner adverb or veridical preferential where
 the paper's argument turns on valence alone. -/
-def valence? (r : Datum) : Option Valence :=
+def valence? (r : Datum) : Option Degree.EvaluativeValence :=
   match r.feature? "valence" with
   | some "positive" => some .positive
   | some "negative" => some .negative

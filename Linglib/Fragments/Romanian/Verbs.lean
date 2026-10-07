@@ -54,7 +54,7 @@ def a_vrea : Verb where
   frames := [saClause]
   passivizable := false
   opaqueContext := true
-  attitude := some (.preferential (.degreeComparison .positive))
+  attitude := some (.preferential .positive true)
 
 /-- *a spera* 'hope' takes a *să* clause or a *că* clause. -/
 def a_spera : Verb where
@@ -62,7 +62,7 @@ def a_spera : Verb where
   frames := [saClause, ArgumentFrame.finiteClause]
   passivizable := false
   opaqueContext := true
-  attitude := some (.preferential (.degreeComparison .positive))
+  attitude := some (.preferential .positive true)
 
 /-- *a intenționa* 'intend' takes a *să* clause. -/
 def a_intentiona : Verb where
@@ -70,7 +70,7 @@ def a_intentiona : Verb where
   frames := [saClause]
   passivizable := false
   opaqueContext := true
-  attitude := some (.preferential (.degreeComparison .positive))
+  attitude := some (.preferential .positive true)
 
 /-- The causative *a face* 'make' takes an object and a *să* clause. -/
 def a_face : Verb where

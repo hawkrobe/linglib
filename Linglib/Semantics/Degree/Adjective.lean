@@ -11,8 +11,8 @@ public import Linglib.Syntax.Category.Adjective.Basic
 This file defines `Degree.GradableAdjective`, a syntactic adjective together with its degree
 semantics. The scale an adjective measures on, its positive standard and its Kennedy class are
 derived from its dimension, its polarity and any lexically fixed standard, so that *wet* and *dry*
-share one scale and differ only in pole. The file also defines antonym pairs, evaluative valence,
-and the ways a multidimensional adjective binds its dimensions.
+share one scale and differ only in pole. The file also defines antonym pairs and the ways a
+multidimensional adjective binds its dimensions.
 
 An antonym pair is contradictory when its poles take complementary standards, the minimum and the
 maximum of one scale, as Kennedy and McNally explain for *open* and *closed*. A pair of extreme
@@ -24,7 +24,6 @@ relative to a contextual range, is left to the studies.
 ## Main definitions
 
 * `AdjectiveClass`: Kennedy's classes of gradable adjectives.
-* `EvaluativeValence`: whether a predicate denotes a good, a bad or a neutral property.
 * `GradableAdjective`: a syntactic adjective with its degree semantics.
 * `GradableAdjective.scaleType`: the scale an adjective measures on.
 * `GradableAdjective.standard`: the positive standard of an adjective.
@@ -87,25 +86,6 @@ def AdjectiveClass.IsRelative (c : AdjectiveClass) : Prop :=
 
 instance : DecidablePred AdjectiveClass.IsRelative :=
   fun c => decEq c .relative
-
-/-! ### Evaluative valence -/
-
-/-- The evaluative valence of a gradable predicate records whether it denotes a good, a bad or
-an evaluatively neutral property, which is distinct from scalar polarity ([nouwen-2024]).
-Negative valence yields high-degree intensifiers and positive valence moderate-degree ones, which
-Nouwen explains by the Goldilocks effect, the negative evaluation of a scale's extremes. -/
-inductive EvaluativeValence where
-  | positive
-  | negative
-  | neutral
-  deriving Repr, DecidableEq
-
-/-- The valence of the opposite pole of an antonym pair swaps positive and negative and keeps
-neutral. -/
-def EvaluativeValence.flip : EvaluativeValence → EvaluativeValence
-  | .positive => .negative
-  | .negative => .positive
-  | .neutral => .neutral
 
 /-! ### The gradable adjective -/
 

@@ -27,6 +27,7 @@ def IsPreferential (v : Verb) : Prop := ∃ a ∈ v.attitude, a.IsPreferential
 instance : DecidablePred IsPreferential := fun _ ↦ inferInstanceAs (Decidable (∃ a ∈ _, _))
 
 /-- The valence of the verb's preferential attitude, if it has one. -/
-def preferentialValence? (v : Verb) : Option Preferential.Valence := v.attitude.bind (·.valence)
+def preferentialValence? (v : Verb) : Option Degree.EvaluativeValence :=
+  v.attitude.bind (·.valence)
 
 end Verb

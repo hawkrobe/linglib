@@ -61,7 +61,7 @@ def funa : Verb where
     [{ complements := [.clausal (coding := some .subjunctive) (types := .only .declarative)] },
       ArgumentFrame.np]
   predicateClass := .desiderative
-  attitude := some (.preferential (.degreeComparison .positive))
+  attitude := some (.preferential .positive true)
 
 /-- *zwa* 'hear', attested as a hearsay report ((18)). -/
 def zwa : Verb where

@@ -27,12 +27,14 @@ positive form true above its upper threshold and the negative form below its low
 `Degree.AntonymForm` is the quadruplet *happy*, *not happy*, *unhappy*, *not unhappy* that
 sentential negation generates from a pair, with a contradictory denotation on one threshold,
 where *not unhappy* collapses to *happy*, and a strengthened denotation on a pair, where the gap
-keeps them apart, as in Krifka's account.
+keeps them apart, as in Krifka's account. Evaluative valence, whether a predicate denotes a good
+or a bad property, is a second axis on which the poles differ, distinct from polarity.
 
 ## Main definitions
 
 * The actions of `Polarity` on `Boundedness` and on `Comparison`, the negative polarity by the
   order dual.
+* `EvaluativeValence`: whether a gradable predicate denotes a good, a bad or a neutral property.
 * `ThresholdPair` and its `ThresholdPair.gap`, the interval between the two thresholds.
 * `AntonymForm` with `AntonymForm.contradictoryDenot`, `AntonymForm.strengthenedDenot` and
   `AntonymForm.complexity`.
@@ -56,6 +58,7 @@ keeps them apart, as in Krifka's account.
 * [horn-1989]
 * [krifka-2007b]
 * [tessler-franke-2019]
+* [nouwen-2024]
 -/
 
 @[expose] public section
@@ -90,6 +93,25 @@ instance : MulAction Polarity Comparison where
 
 @[simp] theorem Comparison.negative_smul (c : Comparison) : Polarity.negative • c = c.dual :=
   rfl
+
+/-! ### Evaluative valence -/
+
+/-- The evaluative valence of a gradable predicate records whether it denotes a good, a bad or
+an evaluatively neutral property, which is distinct from scalar polarity ([nouwen-2024]).
+Negative valence yields high-degree intensifiers and positive valence moderate-degree ones, which
+Nouwen explains by the Goldilocks effect, the negative evaluation of a scale's extremes. -/
+inductive EvaluativeValence where
+  | positive
+  | negative
+  | neutral
+  deriving Repr, DecidableEq
+
+/-- The valence of the opposite pole of an antonym pair swaps positive and negative and keeps
+neutral. -/
+def EvaluativeValence.flip : EvaluativeValence → EvaluativeValence
+  | .positive => .negative
+  | .negative => .positive
+  | .neutral => .neutral
 
 /-! ### The two-threshold model of a contrary pair -/
 
