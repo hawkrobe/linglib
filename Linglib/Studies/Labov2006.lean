@@ -1,44 +1,44 @@
 module
 
-public import Mathlib.Order.Monotone.Basic
-public import Mathlib.Tactic.NormNum
-public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Data.Experiments.Labov2006
+public import Mathlib.Algebra.Order.Ring.Rat
+public import Mathlib.Order.Interval.Set.Basic
+public import Mathlib.Order.Monotone.Defs
 
 /-!
 # Labov (2006): The Social Stratification of English in New York City
 
-This file formalizes the stratification data of [labov-2006], the second edition of the 1966
-Lower East Side survey. The department store survey of Chapter 3 orders the stores by the
-prestige variant of (r) and by stops in *fourth* (`deptStore_stratification`,
-`thStop_strictAnti`). The class stratification table of Chapter 7 gives the indices of the five
-phonological variables (r), (æh), (oh), (th), and (dh) for three class groups across the
-contextual styles; its cells are the rows of `table78`, and the two regularities Labov reads
-off the stratification diagrams are stated over them: at each style the classes are ordered
-toward the standard with class (`ClassStratified`), and within each class the index moves
-toward the standard with formality (`StyleShifted`). Four variables show both
-(`r_stratified`, `aeh_stratified`, `th_stratified`, `dh_stratified`); (oh) shows the one
-real deviation, the lower class neither stratified against the other classes nor shifting
-with style (`oh_real_deviation`), which Labov takes to mean that (oh) is not a variable for
-lower-class speakers, while the other two classes shift regularly
-(`oh_shift_working_middle`). The (ing) indices of Chapter 10 by age and class show, for
-older speakers, the stable stigmatized pattern of Case I-A, except that in casual speech the
-highest class does not use the least */in/*, a crossover between the two middle groups
-(`ingOlder_case_IA`, `ingOlder_crossover`). Of the five phonological variables, (r) is a change
-from above, (æh) and (oh) changes from below, and (th) and (dh) stable (`Variable.change`).
+Labov's survey of the Lower East Side measures phonological variables by social class, by
+contextual style from casual speech to minimal pairs, and by age. This file
+states what the book reads off its printed tables: the stratification of three department
+stores, the class and stylistic stratification of every variable except the lower class's (oh),
+and the fit of each variable's table of age by class to Labov's models of a stigmatized feature,
+stable or changing, and of an incoming prestige feature.
+
+## Main statements
+
+* `classDeviant_iff_styleDeviant`: a class group deviates from class stratification exactly when
+  it deviates from stylistic stratification.
+* `r_caseIIB`: (r) is distributed as a prestige feature in change.
+* `ing_careful_caseIA`: (ing) in careful speech is distributed as a stable stigmatized feature.
 
 ## Implementation notes
 
-Indices follow the book: (r) is the percentage of the constricted variant, (æh) and (oh) are
-vowel-height indices on which a higher value is closer to the standard, and (th) and (dh) are
-percentages of non-fricative variants, so `Variable.standardUp` records the direction in
-which each index approaches the standard. Cells of Table 7.8 are rows because the styles
-measured differ by variable, five for (r), four for the vowels, three for the consonants. The
-(r) crossover of the lower middle class above the upper middle class in the two formal
-styles appears in Figures 7.10 and 7.11 over six class groups without a table and is not
-encoded; the crossover predicate is exercised on the (ing) table instead. The (ing) table
-groups the socioeconomic index as 0–2, 3–6, 7–8, and 9, differently from Table 7.8. The
-book's classification of all five variables as markers is their class stratification together
-with their style shifting, the theorems above, and is not restated as a table.
+* The printed tables are `Data/Experiments/Labov2006.json`. `Variable.toStandard` negates the
+  (th) and (dh) indexes, which score stops and affricates above the prestige fricative, so that
+  every signed index grows toward the standard.
+* The models keep the cells the prose explains: an extreme word puts the lowest or highest class
+  at that age's extreme, and a comparative compares the two ages within the middle-ranking
+  classes. The lower class gets no age clause, being parenthesized in the model of a changing
+  stigmatized feature and flat in the (r) table Labov matches to an incoming prestige feature.
+* The deviation predicates use weak order, so the (æh) tie in word lists is no deviation, as the
+  book reads it.
+
+## TODO
+
+* Change from below is not formalized: Labov reads (æh) as Case III-B from the lower-class rise
+  and (oh) as Case III-A from the ethnic table, and the ethnic table of (æh) is not stored.
+* The (r) crossover of the lower middle class appears only in figures over six class groups.
 
 ## References
 
@@ -49,298 +49,278 @@ with their style shifting, the theorems above, and is not restated as a table.
 
 namespace Labov2006
 
-/-! ### Class groups -/
+open Data.Experiments
 
-/-- The three class groups of Table 7.8: socioeconomic index 0–2, 3–5, and 6–9, with 23, 28,
-and 30 informants. -/
-inductive ClassGroup where
-  | lower
-  | working
-  | middle
-  deriving DecidableEq, Repr, Fintype
+/-! ### The scales -/
 
-/-- The rank of a class group. -/
-@[simp] def ClassGroup.rank : ClassGroup → ℕ
-  | .lower => 0
-  | .working => 1
-  | .middle => 2
+instance : LinearOrder Store := LinearOrder.lift' Store.ctorIdx (by decide)
+instance : LinearOrder Style := LinearOrder.lift' Style.ctorIdx (by decide)
+instance : LinearOrder ClassGroup := LinearOrder.lift' ClassGroup.ctorIdx (by decide)
+instance : LinearOrder SocioeconomicClass :=
+  LinearOrder.lift' SocioeconomicClass.ctorIdx (by decide)
+instance : LinearOrder SocialClass := LinearOrder.lift' SocialClass.ctorIdx (by decide)
+instance : LinearOrder AehAgeLevel := LinearOrder.lift' AehAgeLevel.ctorIdx (by decide)
+instance : LinearOrder OhAgeLevel := LinearOrder.lift' OhAgeLevel.ctorIdx (by decide)
 
-instance : LinearOrder ClassGroup :=
-  LinearOrder.lift' ClassGroup.rank (λ a b h => by cases a <;> cases b <;> simp_all)
+instance : BoundedOrder SocioeconomicClass where
+  top := .upperMiddle
+  le_top := by decide
+  bot := .lower
+  bot_le := by decide
 
-/-! ### The department store survey (Chapter 3) -/
+instance : BoundedOrder SocialClass where
+  top := .sc4
+  le_top := by decide
+  bot := .sc1
+  bot_le := by decide
 
-/-- The three stores, ordered by prestige. -/
-inductive Store where
-  | klein
-  | macys
-  | saks
-  deriving DecidableEq, Repr
+/-- `a.toLevel` is the age level of the (r) table that the adult age group `a` names. -/
+def AgeGroup.toLevel : AgeGroup → AgeLevel
+  | .younger => .younger
+  | .older => .older
 
-/-- The rank of a store. -/
-@[simp] def Store.rank : Store → ℕ
-  | .klein => 0
-  | .macys => 1
-  | .saks => 2
+/-! ### The department store survey -/
 
-instance : LinearOrder Store :=
-  LinearOrder.lift' Store.rank (λ a b h => by cases a <;> cases b <;> simp_all)
+/-- `anyR1 s` is the percentage of the employees of `s` who used constricted [r] in all or some
+positions. -/
+def anyR1 (s : Store) : ℕ := (completeResponses s).allR1 + (completeResponses s).someR1
 
-/-- The distribution of (r) among complete responses, Table 3.4: the percentages of employees
-using the constricted variant in all four positions, in some, and in none. -/
-structure DeptStoreResult where
-  /-- Percentage with (r-1) in all four positions. -/
-  allR1 : ℕ
-  /-- Percentage with (r-1) in some positions. -/
-  someR1 : ℕ
-  /-- Percentage with no (r-1). -/
-  noR1 : ℕ
-  deriving Repr
+/-- Constricted [r] rises with the prestige of the store. -/
+theorem anyR1_strictMono : StrictMono anyR1 := by decide
 
-/-- Table 3.4, over 33, 48, and 34 employees. -/
-def deptStore : Store → DeptStoreResult
-  | .saks => ⟨24, 46, 30⟩
-  | .macys => ⟨22, 37, 41⟩
-  | .klein => ⟨6, 12, 82⟩
+/-- Stops in *fourth* fall with the prestige of the store. -/
+theorem fourthStops_strictAnti : StrictAnti fun s ↦ (fourthStops s).percent := by decide
 
-/-- The percentage of employees with any constricted (r). -/
-def anyR1 (s : Store) : ℕ := (deptStore s).allR1 + (deptStore s).someR1
+/-! ### Class and stylistic stratification -/
 
-/-- Any use of (r-1) increases with the prestige of the store. -/
-theorem deptStore_stratification : StrictMono anyR1 := by
-  intro a b h; cases a <;> cases b <;> revert h <;> decide
+/-- `cell v g s` is the printed index of `v` for the class group `g` in the style `s`, if `v` was
+measured there. -/
+def cell (v : Variable) (g : ClassGroup) : Style → Option Decimal
+  | .casual => (classStratification g v).casual
+  | .careful => (classStratification g v).careful
+  | .reading => (classStratification g v).reading
+  | .wordList => (classStratification g v).wordList
+  | .minimalPair => (classStratification g v).minimalPair
 
-/-- The percentage of employees using a stop in *fourth*. -/
-def thStop : Store → ℕ
-  | .saks => 0
-  | .macys => 4
-  | .klein => 15
+/-- `v.styles` is the set of styles in which `v` was measured. -/
+def Variable.styles (v : Variable) : Set Style := {s | ∀ g, (cell v g s).isSome}
 
-/-- Stops in *fourth* decrease with the prestige of the store. -/
-theorem thStop_strictAnti : StrictAnti thStop := by
-  intro a b h; cases a <;> cases b <;> revert h <;> decide
+instance (v : Variable) : DecidablePred (· ∈ v.styles) := fun s ↦
+  inferInstanceAs (Decidable (∀ g, (cell v g s).isSome))
 
-/-! ### Table 7.8: class stratification of the five variables -/
+/-- (r) was measured in all five styles, the vowels in all but minimal pairs, and the consonants
+in the three styles of connected speech. -/
+theorem mem_styles (s : Style) :
+    s ∈ Variable.r.styles ∧ (s ∈ Variable.aeh.styles ↔ s ≤ .wordList) ∧
+      (s ∈ Variable.oh.styles ↔ s ≤ .wordList) ∧ (s ∈ Variable.th.styles ↔ s ≤ .reading) ∧
+      (s ∈ Variable.dh.styles ↔ s ≤ .reading) := by
+  cases s <;> decide
 
-/-- The five phonological variables of the survey. -/
-inductive Variable where
-  | r
-  | aeh
-  | oh
-  | th
-  | dh
-  deriving DecidableEq, Repr
+/-- `v.toStandard` signs an index of `v` so that it grows toward the prestige form. The (r) index
+counts the constricted variant and the vowel indexes grow toward the corrected low vowels, while
+the (th) and (dh) indexes score the stop and the affricate above the fricative and are negated. -/
+def Variable.toStandard : Variable → ℚ → ℚ
+  | .r | .aeh | .oh => id
+  | .th | .dh => Neg.neg
 
-/-- The contextual styles of Chapter 4, in order of the attention paid to speech, are casual
-speech (A), careful interview speech (B), reading (C), word lists (D), and minimal pairs (D'). -/
-inductive ContextualStyle where
-  | casual
-  | careful
-  | reading
-  | wordList
-  | minimalPair
-  deriving DecidableEq, Repr
+/-- `standardIndex v g s` is the signed index of `v` for `g` in `s`, and `0` where nothing was
+measured. -/
+def standardIndex (v : Variable) (g : ClassGroup) (s : Style) : ℚ :=
+  v.toStandard (((cell v g s).map Decimal.toRat).getD 0)
 
-/-- The rank of a style. -/
-@[simp] def ContextualStyle.rank : ContextualStyle → ℕ
-  | .casual => 0
-  | .careful => 1
-  | .reading => 2
-  | .wordList => 3
-  | .minimalPair => 4
-
-instance : LinearOrder ContextualStyle :=
-  LinearOrder.lift' ContextualStyle.rank (λ a b h => by cases a <;> cases b <;> simp_all)
-
-/-- Whether a higher index is closer to the standard: so for (r), the percentage of the
-constricted variant, and for the vowel-height indices (æh) and (oh); not for (th) and (dh),
-percentages of non-fricative variants. -/
-def Variable.standardUp : Variable → Bool
-  | .r | .aeh | .oh => true
-  | .th | .dh => false
-
-/-- A cell of Table 7.8. -/
-structure Cell where
-  /-- The variable. -/
-  var : Variable
-  /-- The class group. -/
-  group : ClassGroup
-  /-- The contextual style. -/
-  style : ContextualStyle
-  /-- The index. -/
-  value : ℚ
-  deriving DecidableEq, Repr
-
-/-- Table 7.8: (r) at five styles, (æh) and (oh) at four, (th) and (dh) at three. -/
-def table78 : List Cell :=
-  [⟨.r, .lower, .casual, 5/2⟩, ⟨.r, .lower, .careful, 21/2⟩, ⟨.r, .lower, .reading, 29/2⟩,
-   ⟨.r, .lower, .wordList, 47/2⟩, ⟨.r, .lower, .minimalPair, 99/2⟩,
-   ⟨.r, .working, .casual, 4⟩, ⟨.r, .working, .careful, 25/2⟩, ⟨.r, .working, .reading, 21⟩,
-   ⟨.r, .working, .wordList, 35⟩, ⟨.r, .working, .minimalPair, 55⟩,
-   ⟨.r, .middle, .casual, 25/2⟩, ⟨.r, .middle, .careful, 25⟩, ⟨.r, .middle, .reading, 29⟩,
-   ⟨.r, .middle, .wordList, 111/2⟩, ⟨.r, .middle, .minimalPair, 70⟩,
-   ⟨.aeh, .lower, .casual, 23⟩, ⟨.aeh, .lower, .careful, 27⟩, ⟨.aeh, .lower, .reading, 29⟩,
-   ⟨.aeh, .lower, .wordList, 32⟩,
-   ⟨.aeh, .working, .casual, 25⟩, ⟨.aeh, .working, .careful, 28⟩,
-   ⟨.aeh, .working, .reading, 61/2⟩, ⟨.aeh, .working, .wordList, 32⟩,
-   ⟨.aeh, .middle, .casual, 27⟩, ⟨.aeh, .middle, .careful, 30⟩, ⟨.aeh, .middle, .reading, 34⟩,
-   ⟨.aeh, .middle, .wordList, 35⟩,
-   ⟨.oh, .lower, .casual, 23⟩, ⟨.oh, .lower, .careful, 24⟩, ⟨.oh, .lower, .reading, 24⟩,
-   ⟨.oh, .lower, .wordList, 21⟩,
-   ⟨.oh, .working, .casual, 39/2⟩, ⟨.oh, .working, .careful, 22⟩,
-   ⟨.oh, .working, .reading, 23⟩, ⟨.oh, .working, .wordList, 24⟩,
-   ⟨.oh, .middle, .casual, 20⟩, ⟨.oh, .middle, .careful, 47/2⟩, ⟨.oh, .middle, .reading, 53/2⟩,
-   ⟨.oh, .middle, .wordList, 59/2⟩,
-   ⟨.th, .lower, .casual, 78⟩, ⟨.th, .lower, .careful, 65⟩, ⟨.th, .lower, .reading, 87/2⟩,
-   ⟨.th, .working, .casual, 68⟩, ⟨.th, .working, .careful, 107/2⟩,
-   ⟨.th, .working, .reading, 27⟩,
-   ⟨.th, .middle, .casual, 51/2⟩, ⟨.th, .middle, .careful, 33/2⟩, ⟨.th, .middle, .reading, 10⟩,
-   ⟨.dh, .lower, .casual, 157/2⟩, ⟨.dh, .lower, .careful, 56⟩, ⟨.dh, .lower, .reading, 49⟩,
-   ⟨.dh, .working, .casual, 127/2⟩, ⟨.dh, .working, .careful, 89/2⟩,
-   ⟨.dh, .working, .reading, 34⟩,
-   ⟨.dh, .middle, .casual, 59/2⟩, ⟨.dh, .middle, .careful, 33/2⟩, ⟨.dh, .middle, .reading, 13⟩]
-
-/-- `a` is closer to the standard than `b` on variable `v`. -/
-def Variable.Closer (v : Variable) (a b : ℚ) : Prop :=
-  if v.standardUp then b < a else a < b
-
-instance (v : Variable) (a b : ℚ) : Decidable (v.Closer a b) := by
-  unfold Variable.Closer; infer_instance
-
-/-- Class stratification of `v` on the groups satisfying `P`: at every style, a higher class
-is closer to the standard. -/
-def ClassStratified (v : Variable) (P : ClassGroup → Prop) [DecidablePred P] : Prop :=
-  ∀ c₁ ∈ table78, ∀ c₂ ∈ table78, c₁.var = v → c₂.var = v → P c₁.group →
-    P c₂.group → c₁.style = c₂.style → c₁.group < c₂.group → v.Closer c₂.value c₁.value
-
-/-- Style shifting of `v` within the group `g`: a more formal style is closer to the
+/-- `v` is class stratified in the style `s` when a higher class group is closer to the
 standard. -/
-def StyleShifted (v : Variable) (g : ClassGroup) : Prop :=
-  ∀ c₁ ∈ table78, ∀ c₂ ∈ table78, c₁.var = v → c₂.var = v → c₁.group = g →
-    c₂.group = g → c₁.style < c₂.style → v.Closer c₂.value c₁.value
+def ClassStratified (v : Variable) (s : Style) : Prop := StrictMono fun g ↦ standardIndex v g s
 
-instance (v : Variable) (P : ClassGroup → Prop) [DecidablePred P] :
-    Decidable (ClassStratified v P) := by
+/-- `v` is stylistically stratified in the class group `g` when a more formal style is closer to
+the standard. -/
+def StyleStratified (v : Variable) (g : ClassGroup) : Prop :=
+  StrictMonoOn (standardIndex v g) v.styles
+
+/-- A class group deviates from the class stratification of `v` when the groups are out of
+order in some style and the other groups are in order in every style. -/
+def ClassDeviant (v : Variable) (g : ClassGroup) : Prop :=
+  (∃ s ∈ v.styles, ¬ Monotone fun g' ↦ standardIndex v g' s) ∧
+    ∀ s ∈ v.styles, MonotoneOn (fun g' ↦ standardIndex v g' s) {g' | g' ≠ g}
+
+/-- A class group deviates from the stylistic stratification of `v` when its index does not
+move toward the standard with formality. -/
+def StyleDeviant (v : Variable) (g : ClassGroup) : Prop :=
+  ¬ MonotoneOn (standardIndex v g) v.styles
+
+instance (v : Variable) (s : Style) : Decidable (ClassStratified v s) := by
   unfold ClassStratified; infer_instance
 
-instance (v : Variable) (g : ClassGroup) : Decidable (StyleShifted v g) := by
-  unfold StyleShifted; infer_instance
+instance (v : Variable) (g : ClassGroup) : Decidable (StyleStratified v g) := by
+  unfold StyleStratified; infer_instance
 
-/-- (r): the three classes are differentiated at every style, and every class rises toward the
-standard with formality, at all fifteen points of Figure 7.1. -/
-theorem r_stratified : ClassStratified .r (λ _ => True) ∧ ∀ g, StyleShifted .r g := by
+instance (v : Variable) (g : ClassGroup) : Decidable (ClassDeviant v g) := by
+  unfold ClassDeviant; infer_instance
+
+instance (v : Variable) (g : ClassGroup) : Decidable (StyleDeviant v g) := by
+  unfold StyleDeviant; infer_instance
+
+/-- The class groups are differentiated on (r) in every style, and every group's (r) rises with
+formality, at all fifteen points of the table. -/
+theorem r_stratified :
+    (∀ s ∈ Variable.r.styles, ClassStratified .r s) ∧ ∀ g, StyleStratified .r g := by
   decide +kernel
 
-/-- (æh): every class shifts with style, and the classes are differentiated except that the
-lower and working classes converge in word lists (Figure 7.2). -/
+/-- Every class group shifts (æh) with style, and the groups are differentiated except that the
+lower and working classes reach the same point in word lists. -/
 theorem aeh_stratified :
-    (∀ g, StyleShifted .aeh g) ∧ ClassStratified .aeh (· ≠ .lower) ∧
-      ClassStratified .aeh (· ≠ .working) := by
+    (∀ g, StyleStratified .aeh g) ∧
+      (∀ s ∈ Variable.aeh.styles, s ≠ .wordList → ClassStratified .aeh s) ∧
+      Monotone (fun g ↦ standardIndex .aeh g .wordList) ∧
+      standardIndex .aeh .lower .wordList = standardIndex .aeh .working .wordList := by
   decide +kernel
 
-/-- (th): regular class and style stratification (Figure 7.4). -/
-theorem th_stratified : ClassStratified .th (λ _ => True) ∧ ∀ g, StyleShifted .th g := by
+/-- (th) is stratified regularly by class and by style. -/
+theorem th_stratified :
+    (∀ s ∈ Variable.th.styles, ClassStratified .th s) ∧ ∀ g, StyleStratified .th g := by
   decide +kernel
 
-/-- (dh): regular class and style stratification (Figure 7.5). -/
-theorem dh_stratified : ClassStratified .dh (λ _ => True) ∧ ∀ g, StyleShifted .dh g := by
+/-- (dh) is stratified regularly by class and by style. -/
+theorem dh_stratified :
+    (∀ s ∈ Variable.dh.styles, ClassStratified .dh s) ∧ ∀ g, StyleStratified .dh g := by
   decide +kernel
 
-/-- The real deviation of (oh), Figure 7.3: the lower class neither stands in the class
-stratification, its casual index lying beyond the middle class's, nor shifts with style, its
-word-list index lying below its casual one. -/
-theorem oh_real_deviation :
-    ¬ ClassStratified .oh (λ _ => True) ∧ ¬ StyleShifted .oh .lower := by
+/-- On (oh) the lower class deviates from class and from stylistic stratification, while the
+working and middle classes are stratified against each other and each shifts with style. -/
+theorem oh_double_deviation :
+    ClassDeviant .oh .lower ∧ StyleDeviant .oh .lower ∧ (∀ g ≠ .lower, StyleStratified .oh g) ∧
+      ∀ s ∈ Variable.oh.styles,
+        StrictMonoOn (fun g ↦ standardIndex .oh g s) {g | g ≠ .lower} := by
   decide +kernel
 
-/-- The working and middle classes shift (oh) regularly with style and are stratified. -/
-theorem oh_shift_working_middle :
-    StyleShifted .oh .working ∧ StyleShifted .oh .middle ∧ ClassStratified .oh (· ≠ .lower) := by
-  decide +kernel
+/-- On the table, a class group deviates from class stratification exactly when it deviates from
+stylistic stratification, as Labov's hypothesis has it. -/
+theorem classDeviant_iff_styleDeviant (v : Variable) (g : ClassGroup) :
+    ClassDeviant v g ↔ StyleDeviant v g := by
+  revert v g; decide +kernel
 
-/-! ### (ing) by age and class (Table 10.10) -/
+/-- The lower class on (oh) is the only deviation in the table. -/
+theorem classDeviant_iff (v : Variable) (g : ClassGroup) :
+    ClassDeviant v g ↔ v = .oh ∧ g = .lower := by
+  revert v g; decide +kernel
 
-/-- The socioeconomic groups of Table 10.10: index 0–2, 3–6, 7–8, and 9. -/
-inductive INGClass where
-  | sc1
-  | sc2
-  | sc3
-  | sc4
-  deriving DecidableEq, Repr, Fintype
+/-! ### Apparent time -/
 
-/-- The rank of a group. -/
-@[simp] def INGClass.rank : INGClass → ℕ
-  | .sc1 => 0
-  | .sc2 => 1
-  | .sc3 => 2
-  | .sc4 => 3
+section Cases
 
-instance : LinearOrder INGClass :=
-  LinearOrder.lift' INGClass.rank (λ a b h => by cases a <;> cases b <;> simp_all)
+variable {κ β : Type*} [LinearOrder κ] [BoundedOrder κ] [Preorder β] (f : AgeGroup → κ → β)
 
-/-- The two styles of Table 10.10, casual and careful speech. -/
-inductive INGStyle where
-  | A
-  | B
-  deriving DecidableEq, Repr, Fintype
+/-- `CaseIA f` says that the use `f` of a feature by age and class is Labov's Case I-A, a
+stigmatized feature with no change in progress. The lowest-ranking class uses it most and the
+highest least at either age, and the middle-ranking classes use it less as they age. -/
+def CaseIA : Prop :=
+  (∀ a c, f a c ≤ f a ⊥) ∧ (∀ a c, f a ⊤ ≤ f a c) ∧ ∀ c ∈ Set.Ioo ⊥ ⊤, f .older c < f .younger c
 
-/-- The rank of a style. -/
-@[simp] def INGStyle.rank : INGStyle → ℕ
-  | .A => 0
-  | .B => 1
+/-- `CaseIB f` says that `f` is Labov's Case I-B, a stigmatized feature with change in
+progress. The highest-ranking class uses it least at either age, and the middle-ranking classes
+use it more as they age. -/
+def CaseIB : Prop := (∀ a c, f a ⊤ ≤ f a c) ∧ ∀ c ∈ Set.Ioo ⊥ ⊤, f .younger c < f .older c
 
-instance : LinearOrder INGStyle :=
-  LinearOrder.lift' INGStyle.rank (λ a b h => by cases a <;> cases b <;> simp_all)
+/-- `CaseIIB f` says that `f` is Labov's Case II-B, a prestige feature with change in progress.
+The highest-ranking class leads the younger speakers and uses it more when young than when old,
+and the middle-ranking classes acquire it as they age. -/
+def CaseIIB : Prop :=
+  (∀ c, f .younger c ≤ f .younger ⊤) ∧ f .older ⊤ < f .younger ⊤ ∧
+    ∀ c ∈ Set.Ioo ⊥ ⊤, f .younger c < f .older c
 
-/-- The (ing) index, the percentage of */in/*, of speakers aged 20–39, by class and style. -/
-def ingYoung : INGClass → INGStyle → ℚ
-  | .sc1, .A => 90 | .sc1, .B => 75
-  | .sc2, .A => 60 | .sc2, .B => 45
-  | .sc3, .A => 43 | .sc3, .B => 50
-  | .sc4, .A => 0 | .sc4, .B => 2
+/-- `ReversesAtTop f` says that below the highest-ranking class the younger speakers use the
+feature more than the older, and that the highest class reverses this. -/
+def ReversesAtTop : Prop := (∀ c < ⊤, f .older c < f .younger c) ∧ f .younger ⊤ < f .older ⊤
 
-/-- The (ing) index of speakers aged 40 and over. -/
-def ingOlder : INGClass → INGStyle → ℚ
-  | .sc1, .A => 85 | .sc1, .B => 50
-  | .sc2, .A => 48 | .sc2, .B => 27
-  | .sc3, .A => 21 | .sc3, .B => 12
-  | .sc4, .A => 23 | .sc4, .B => 2
+variable {f} in
+/-- The two schemes for a stigmatized feature are opposite in the middle-ranking classes. -/
+theorem CaseIA.not_caseIB {c : κ} (hc : c ∈ Set.Ioo ⊥ ⊤) (h : CaseIA f) : ¬ CaseIB f :=
+  fun h' ↦ lt_asymm (h.2.2 c hc) (h'.2 c hc)
 
-/-- Younger speakers are stratified in casual speech, the index falling with class. -/
-theorem ingYoung_antitone_casual : Antitone (ingYoung · .A) := by
-  intro a b h; cases a <;> cases b <;> revert h <;> decide
+variable [Fintype κ] [DecidableLT κ] [DecidableLE β] [DecidableLT β]
 
-/-- Older speakers show the pattern of Case I-A, a stigmatized feature not involved in change:
-every class shifts toward the standard in careful speech, in which the classes are
-stratified. -/
-theorem ingOlder_case_IA : (∀ g, Antitone (ingOlder g)) ∧ Antitone (ingOlder · .B) := by
-  refine ⟨λ g a b h => ?_, λ a b h => ?_⟩ <;> cases a <;> cases b <;> revert h <;>
-    first | cases g <;> decide | decide
+instance : Decidable (CaseIA f) := by unfold CaseIA; infer_instance
+instance : Decidable (CaseIB f) := by unfold CaseIB; infer_instance
+instance : Decidable (CaseIIB f) := by unfold CaseIIB; infer_instance
+instance : Decidable (ReversesAtTop f) := by unfold ReversesAtTop; infer_instance
 
-/-- The one departure from Case I-A: in casual speech the highest group does not use the least
-*/in/*, crossing the lower middle group. -/
-theorem ingOlder_crossover :
-    ingOlder .sc4 .B < ingOlder .sc3 .B ∧ ingOlder .sc3 .A < ingOlder .sc4 .A := by
+end Cases
+
+/-- /ʌy/ is distributed as a stigmatized feature in change. -/
+theorem upgliding_caseIB : CaseIB fun a c ↦ (upglidingByAgeAndClass a c).percent := by decide
+
+/-- (r) in casual speech is distributed as a prestige feature in change, in every detail. -/
+theorem r_caseIIB : CaseIIB fun a c ↦ (rCasualByAgeAndClass a.toLevel c).index := by decide
+
+/-- The stratification of (r) sharpens, the upper middle class's lead in using any (r-1) in
+casual speech being wider among the younger speakers. -/
+theorem r_gap_widens :
+    ((someRCasualByAge .older).upperMiddle : ℤ) - (someRCasualByAge .older).lowerClasses <
+      ((someRCasualByAge .younger).upperMiddle : ℤ) - (someRCasualByAge .younger).lowerClasses := by
   decide
 
-/-! ### The variables' change status -/
+/-- By social class, (æh) is distributed as a prestige feature in change, the corrected low
+vowel. Labov goes on to read it as change from below with a later correction from above,
+since the lower class also raises the vowel (`aeh_lowerClass_monotone`). -/
+theorem aeh_caseIIB : CaseIIB fun a c ↦ (aehByAgeAndClass a c).index := by decide
 
-/-- A variable is stable, or a change from above, the prestige variant spreading from the
-highest-status group as an overt norm, or a change from below, spreading from interior groups
-below conscious awareness. -/
-inductive ChangeStatus where
-  | stable
-  | changeFromAbove
-  | changeFromBelow
-  deriving DecidableEq, Repr
+/-- The lower class raises (æh) steadily, its index falling from the oldest level to the
+youngest. -/
+theorem aeh_lowerClass_monotone : Monotone fun a ↦ (aehLowerClassByAge a).index := by decide
 
-/-- Each variable's change status, (r) a change from above, (æh) and (oh) changes from below,
-(th) and (dh) stable. -/
-def Variable.change : Variable → ChangeStatus
-  | .r => .changeFromAbove
-  | .aeh => .changeFromBelow
-  | .oh => .changeFromBelow
-  | .th => .stable
-  | .dh => .stable
+/-- By social class, (oh) shows none of the models' age contrasts. -/
+theorem oh_no_case :
+    ¬ CaseIA (fun a c ↦ (ohByAgeAndClass a c).index) ∧
+      ¬ CaseIB (fun a c ↦ (ohByAgeAndClass a c).index) ∧
+      ¬ CaseIIB (fun a c ↦ (ohByAgeAndClass a c).index) := by
+  decide
+
+/-- In each ethnic group of the three lower social classes the oldest speakers have the lowest
+(oh) vowels, and the Italian index falls level by level toward the young. -/
+theorem oh_oldest_lowest :
+    (∀ a ≠ .age60, (ohByAgeAndEthnicity a).jews < (ohByAgeAndEthnicity .age60).jews ∧
+      (ohByAgeAndEthnicity a).italians < (ohByAgeAndEthnicity .age60).italians ∧
+      (ohByAgeAndEthnicity a).others < (ohByAgeAndEthnicity .age60).others) ∧
+      Monotone fun a ↦ (ohByAgeAndEthnicity a).italians := by
+  decide
+
+/-- (th), (dh) and casual (ing) share one pattern, in which the younger speakers of the three
+lower social classes use more of the stigmatized form and the upper middle class reverses this. -/
+theorem same_pattern :
+    ReversesAtTop (fun a c ↦ (thDhByAgeAndClass a c).th) ∧
+      ReversesAtTop (fun a c ↦ (thDhByAgeAndClass a c).dh) ∧
+      ReversesAtTop (fun a c ↦ (ingByAgeAndClass a c).casual) := by
+  decide
+
+/-- Pooling the three lower social classes reverses the age relation for (th) and (dh) but not
+for (r), whose classes below the upper middle already have the older speakers at or above the
+younger. The pooled (r) is by social class and the (r) table by socioeconomic class, a crossing
+the book makes. -/
+theorem pooled_reversal :
+    (pooledLowerClasses .younger).th < (pooledLowerClasses .older).th ∧
+      (pooledLowerClasses .younger).dh < (pooledLowerClasses .older).dh ∧
+      (∀ c < ⊤, (rCasualByAgeAndClass .younger c).index ≤ (rCasualByAgeAndClass .older c).index) ∧
+      (pooledLowerClasses .younger).r < (pooledLowerClasses .older).r := by
+  decide
+
+/-- The older members of the three lower social classes use less /in/ than the younger, in
+both styles. -/
+theorem ing_older_less : ∀ c < ⊤,
+    (ingByAgeAndClass .older c).casual < (ingByAgeAndClass .younger c).casual ∧
+      (ingByAgeAndClass .older c).careful < (ingByAgeAndClass .younger c).careful := by
+  decide
+
+/-- (ing) in careful speech is distributed as a stable stigmatized feature. -/
+theorem ing_careful_caseIA : CaseIA fun a c ↦ (ingByAgeAndClass a c).careful := by decide
+
+/-- (ing) in casual speech departs from a stable stigmatized feature only in that the older
+upper middle class does not use it least. -/
+theorem ing_casual_departure :
+    (∀ a c, (ingByAgeAndClass a c).casual ≤ (ingByAgeAndClass a ⊥).casual) ∧
+      (∀ c ∈ Set.Ioo ⊥ ⊤,
+        (ingByAgeAndClass .older c).casual < (ingByAgeAndClass .younger c).casual) ∧
+      (∀ c, (ingByAgeAndClass .younger ⊤).casual ≤ (ingByAgeAndClass .younger c).casual) ∧
+      (ingByAgeAndClass .older .sc3).casual < (ingByAgeAndClass .older ⊤).casual := by
+  decide
 
 end Labov2006
