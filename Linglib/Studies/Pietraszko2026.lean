@@ -1,6 +1,7 @@
 module
 
-public import Linglib.Syntax.Minimalist.Defs
+public import Linglib.Syntax.Minimalist.SyntacticObject.Build
+public import Linglib.Syntax.Minimalist.SyntacticObject.Phase
 
 /-!
 # Pietraszko (2026): In Defense of the Clause-Internal Phase
@@ -36,14 +37,17 @@ accessible subject to its specifier and a phase head without EPP freezes it in i
 (`stateAt`, `landing`, `Accessible`). The rival account is the same derivation with Voice
 non-phasal and [EPP, φ] optional on T and Asp. The expletive-pro account of [halpert-2015]
 (§3.2), the antifocus account of [zeller-2015] (§4), the modification of [henderson-2006],
-object dislocation (55) and the information-structural properties of the two orders are prose;
-the substrate's `SyntacticObject.WithinComplement` is the same condition at the level of syntactic
-objects.
+object dislocation (55) and the information-structural properties of the two orders are prose.
+The trees the derivation builds (`treeAt`) tie the spine to the substrate's phases: on them the
+spine's accessibility is [chomsky-2000]'s condition (`simple_accessible_iff`,
+`auxV_accessible_iff`, `reduced_accessible_iff`), and [chomsky-2001]'s would let T reach a subject
+left in VoiceP (`nextPhase_overgenerates`).
 
 ## References
 
 * [pietraszko-2026]
 * [chomsky-2000]
+* [chomsky-2001]
 * [preminger-2014]
 * [carstens-mletshe-2015]
 * [halpert-2015]
@@ -59,8 +63,8 @@ open Minimalist
 
 /-! ### Clauses and the derivation (§2.2) -/
 
-/-- A head of the clausal spine as subject movement sees it: its category, and whether it
-bears EPP, a φ-probe, and heads a phase. -/
+/-- A head of the clausal spine, as subject movement sees it, has a category and records whether
+it bears EPP, a φ-probe, and heads a phase. -/
 structure Head where
   cat : Cat
   epp : Bool
@@ -68,19 +72,19 @@ structure Head where
   phase : Bool
   deriving DecidableEq, Repr
 
-/-- A clause: the heads above the subject's base position, bottom-up. -/
+/-- A clause is the list of heads above the subject's base position, bottom-up. -/
 abbrev Spine := List Head
 
-/-- The derivational state of the subject: its height, 0 in situ and `i + 1` in the specifier
-of the head at index `i`, and whether it is frozen in a phase's complement. -/
+/-- The derivational state of the subject records its height, 0 in situ and `i + 1` in the
+specifier of the head at index `i`, and whether it is frozen in a phase's complement. -/
 structure State where
   height : ℕ
   frozen : Bool
   deriving DecidableEq, Repr
 
-/-- Merging the head at index `i`: an EPP head attracts an accessible subject to its specifier,
-a phase head without EPP freezes an accessible subject in its complement, and otherwise the
-subject stays where it is. -/
+/-- When the head at index `i` is merged, an EPP head attracts an accessible subject to its
+specifier, a phase head without EPP freezes an accessible subject in its complement, and
+otherwise the subject stays where it is. -/
 def step (i : ℕ) (h : Head) (s : State) : State :=
   if s.frozen then s else if h.epp then ⟨i + 1, false⟩ else if h.phase then ⟨s.height, true⟩
   else s
@@ -93,15 +97,16 @@ def stateAt (sp : Spine) : ℕ → State
     | some h => step n h (stateAt sp n)
     | none => stateAt sp n
 
-/-- The subject's landing site: its height once the clause is built. -/
+/-- The subject's landing site is its height once the clause is built. -/
 def landing (sp : Spine) : ℕ := (stateAt sp sp.length).height
 
-/-- The subject is accessible to the head at index `i`: not frozen when that head is merged. -/
+/-- The subject is accessible to the head at index `i` when it is not frozen as that head is
+merged. -/
 def Accessible (sp : Spine) (i : ℕ) : Prop := (stateAt sp i).frozen = false
 
 instance (sp : Spine) (i : ℕ) : Decidable (Accessible sp i) := inferInstanceAs (Decidable (_ = _))
 
-/-- The head at index `i` agrees with the subject: it bears a φ-probe and the subject is
+/-- The head at index `i` agrees with the subject when it bears a φ-probe and the subject is
 accessible to it. -/
 def Agrees (sp : Spine) (i : ℕ) : Prop :=
   match sp[i]? with
@@ -251,7 +256,7 @@ theorem cross_phasal_frozen {sp : Spine} {i : ℕ} {h : Head} (hi : sp[i]? = som
     rw [stateAt_succ_of_getElem? hi, step, ite_eq_right (by simpa [Accessible] using ha),
       ite_eq_right (by simp [he]), ite_eq_left hp]
   obtain ⟨hlen, -⟩ := List.getElem?_eq_some_iff.1 hi
-  refine ⟨?_, λ j hij hj => ?_⟩
+  refine ⟨?_, fun j hij hj ↦ ?_⟩
   · rw [landing, frozen_stateAt_of_le hlen (by rw [hstep]), hstep]
     exact height_stateAt_le sp i
   · have := frozen_stateAt_of_le (m := i + 1) hij (by rw [hstep])
@@ -277,8 +282,8 @@ bears [EPP, φ] optionally, Asp with `a` and T with `t`. -/
 def optionalT (a t : Bool) : Spine :=
   [⟨.Voice, false, false, false⟩, ⟨.Asp, a, a, false⟩, ⟨.T, t, t, false⟩]
 
-/-- Raising to object on that account: an embedded T optionally without [EPP, φ] below C and a
-raising verb. -/
+/-- On that account an embedded T may lack [EPP, φ] below C and a raising verb, the configuration
+of raising to object. -/
 def optionalTRaising (t : Bool) : Spine :=
   [⟨.Voice, false, false, false⟩, ⟨.T, t, t, false⟩, ⟨.C, true, false, true⟩, raisingV]
 
@@ -291,6 +296,71 @@ theorem optional_T_overgenerates :
     (landing (optionalT false true) = 3 ∧ ¬ Agrees (optionalT false true) 1 ∧
       Agrees (optionalT false true) 2) ∧
     (landing (optionalTRaising false) = 4 ∧ ¬ Agrees (optionalTRaising false) 1) := by
+  decide
+
+/-! ### The trees the derivation builds -/
+
+/-- The object. -/
+def obj : LIToken := ⟨.simple .D [] "obj", 0⟩
+
+/-- The subject. -/
+def subj : LIToken := ⟨.simple .D [] "subj", 1⟩
+
+/-- The verb. -/
+def V : LIToken := ⟨.simple .V [.D] "V", 2⟩
+
+/-- The head that introduces the subject, below Voice (fn. 3). -/
+def v : LIToken := ⟨.simple .v [.V, .D] "v", 3⟩
+
+/-- The head at index `i` of a spine, selecting the category of the head below it. -/
+def tokOf (sp : Spine) (i : ℕ) (hd : Head) : LIToken :=
+  ⟨.simple hd.cat [if i = 0 then .v else ((sp[i - 1]?).map Head.cat).getD .v] "", 10 + i⟩
+
+/-- The phase heads of a spine. -/
+def phaseHeads (sp : Spine) : List LIToken :=
+  (sp.zipIdx.filter (·.1.phase)).map fun x ↦ tokOf sp x.2 x.1
+
+/-- The copy of the subject at height `j`, when it is pronounced at height `k`. -/
+def copyAt (k j : ℕ) : PlanarSyntacticObject := if j = k then .leaf subj else .traceOf subj
+
+/-- Once the first `n` heads are merged, the tree has the subject pronounced at its height then,
+with deleted copies at its base and in every specifier it passed through. -/
+def treeAt (sp : Spine) (n : ℕ) : PlanarSyntacticObject :=
+  let k := (stateAt sp n).height
+  (sp.take n).zipIdx.foldl (fun t x ↦
+    let hp : PlanarSyntacticObject := .leaf (tokOf sp x.2 x.1) * t
+    if x.1.epp ∧ x.2 + 1 ≤ k then copyAt k (x.2 + 1) * hp else hp)
+    (copyAt k 0 * (v * (V * obj)))
+
+/-- The subject is accessible under the condition `s` to the head at index `i`, merged on the tree
+built so far. -/
+def TreeAccessible (s : Impenetrability) (sp : Spine) (i : ℕ) : Prop :=
+  ∀ hd ∈ sp[i]?, ((.leaf (tokOf sp i hd) * treeAt sp i : PlanarSyntacticObject) :
+    SyntacticObject).Accessible (phaseHeads sp) s (tokOf sp i hd) subj
+
+instance (s : Impenetrability) (sp : Spine) (i : ℕ) : Decidable (TreeAccessible s sp i) :=
+  inferInstanceAs (Decidable (∀ _ ∈ _, _))
+
+/-- In simple clauses (9)–(14) the subject is accessible to a head exactly when it is under
+[chomsky-2000]'s condition on the tree the derivation has built. -/
+theorem simple_accessible_iff (e : Bool) :
+    ∀ i < 2, Accessible (simple e) i ↔ TreeAccessible .phase (simple e) i := by
+  cases e <;> decide
+
+/-- The same in auxiliary constructions (16)–(21). -/
+theorem auxV_accessible_iff (e : Bool) :
+    ∀ i < 3, Accessible (auxV e) i ↔ TreeAccessible .phase (auxV e) i := by
+  cases e <;> decide
+
+/-- The same in reduced clauses (34)–(42). -/
+theorem reduced_accessible_iff (e : Bool) :
+    ∀ i < 2, Accessible (reduced e) i ↔ TreeAccessible .phase (reduced e) i := by
+  cases e <;> decide
+
+/-- Under [chomsky-2001]'s condition T would reach a subject left in the complement of Voice and
+agree with it, against the default agreement of (6) and (11). -/
+theorem nextPhase_overgenerates :
+    ¬ TreeAccessible .phase (simple false) 1 ∧ TreeAccessible .nextPhase (simple false) 1 := by
   decide
 
 end Pietraszko2026

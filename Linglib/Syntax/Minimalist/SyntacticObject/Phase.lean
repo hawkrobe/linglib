@@ -5,17 +5,20 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.Minimalist.SyntacticObject.Selection
+public import Linglib.Syntax.Minimalist.SyntacticObject.Label
 public import Linglib.Syntax.Minimalist.SyntacticObject.Term
 
 /-!
 # Phases
 
-The phases of [marcolli-chomsky-berwick-2025] §1.14, after [chomsky-2000], with the selection head
-`SyntacticObject.selHead` as head function. A lexical item heads a phase when it projects, and its
-complement is the sister it projects over. The phase is what lies within the terms the head
-heads; its interior is what lies within the complement, the domain the Phase Impenetrability
-Condition freezes; and its edge is the rest of the phase, the head and what is merged above it.
+The phases of [marcolli-chomsky-berwick-2025] §1.14, after [chomsky-2013], with the raising head
+`SyntacticObject.raisingHead` as head function. A lexical item heads a phase when it projects, and
+its complement is the sister it projects over. The phase is what lies within the terms the head
+heads; its interior is what lies within the complement; and its edge is the rest of the phase, the
+head and what is merged above it, a phrase raised to the edge included. The Phase
+Impenetrability Condition seals the interior: under [chomsky-2000]'s condition to everything
+outside the phase, under [chomsky-2001]'s only once the next phase head up is merged, to what lies
+outside its interior.
 
 ## Main definitions
 
@@ -25,6 +28,8 @@ Condition freezes; and its edge is the rest of the phase, the head and what is m
   projection or the complement of a head.
 * `SyntacticObject.phase`, `SyntacticObject.phaseInterior`, `SyntacticObject.phaseEdge`: the
   phase of a head, its interior, and its edge.
+* `Impenetrability`, `SyntacticObject.Accessible`: the two conditions, and the goals each leaves
+  accessible to a probe.
 
 ## Main statements
 
@@ -33,15 +38,16 @@ Condition freezes; and its edge is the rest of the phase, the head and what is m
 * `SyntacticObject.phaseInterior_add_phaseEdge`: the interior and the edge partition the phase.
 * `SyntacticObject.phaseInterior_eq_domainIn`: the interior of a head that projects wherever it
   occurs is its c-command domain.
+* `SyntacticObject.Accessible.nextPhase_of_phase`: [chomsky-2000]'s condition is the stronger.
 
 ## Implementation notes
 
-* Terms are values, not occurrences, so all copies of a head share one phase; positions tell
-  copies apart in `Linearization/Chain.lean`.
-* Every head that projects heads a phase, as in the book; which heads a study treats as phase
-  heads (C alone, or also v, D, or Voice) is its choice of head.
-* A selection head projects only over a sister it selects, so the book's empty complement and
-  modifiers of the head do not arise, and a specifier blocks projection above it.
+* Terms are values, not occurrences, so all copies of a head share one phase, and the lower
+  copies of a moved phrase are one term; positions tell copies apart in `Linearization/Chain.lean`.
+* Every head that projects heads a phase, as in the book; the heads a study counts as phase heads
+  (C alone, or also v, D, or Voice) are the list `Accessible` takes.
+* Under the raising head a phrase raised to the edge of a head lies in its phase; a phrase merged
+  there in place lies in it only when the head selects it.
 
 ## TODO
 
@@ -51,31 +57,44 @@ Condition freezes; and its edge is the rest of the phase, the head and what is m
 ## References
 
 * [marcolli-chomsky-berwick-2025]
+* [chomsky-2013]
 * [chomsky-2000]
+* [chomsky-2001]
 -/
 
 @[expose] public section
 
-namespace Minimalist.SyntacticObject
+namespace Minimalist
+
+/-- When the Phase Impenetrability Condition seals the interior of a phase head. -/
+inductive Impenetrability
+  /-- Once the phase is built, to everything outside it ([chomsky-2000]). -/
+  | phase
+  /-- Once the next phase head up is merged, to everything outside its interior
+  ([chomsky-2001]). -/
+  | nextPhase
+  deriving DecidableEq, Repr
+
+namespace SyntacticObject
 
 open Relation
 
 variable (T : SyntacticObject) (ℓ : LIToken) (x z : SyntacticObject)
 
 /-- `ℓ` heads a phase of `T` when it projects, heading a mother of its leaf. -/
-def IsPhaseHead : Prop := ∃ m ∈ T.terms, m.selHead = some ℓ ∧ immediatelyContains m (leaf ℓ)
+def IsPhaseHead : Prop := ∃ m ∈ T.terms, m.raisingHead = some ℓ ∧ immediatelyContains m (leaf ℓ)
 
 instance : Decidable (IsPhaseHead T ℓ) := Multiset.decidableExistsMultiset
 
 /-- `z` is the complement of `ℓ` in `T` when `ℓ` projects over its sister `z`. -/
 def IsComplementOf : Prop :=
-  ∃ m ∈ T.terms, m.selHead = some ℓ ∧ immediatelyContains m (leaf ℓ) ∧
+  ∃ m ∈ T.terms, m.raisingHead = some ℓ ∧ immediatelyContains m (leaf ℓ) ∧
     immediatelyContains m z ∧ z ≠ leaf ℓ
 
 instance : Decidable (IsComplementOf T ℓ z) := Multiset.decidableExistsMultiset
 
 /-- `x` lies within the projection of `ℓ` in `T` when a term of `T` that `ℓ` heads contains it. -/
-def WithinProjection : Prop := ∃ p ∈ T.terms, p.selHead = some ℓ ∧ containsOrEq p x
+def WithinProjection : Prop := ∃ p ∈ T.terms, p.raisingHead = some ℓ ∧ containsOrEq p x
 
 instance : Decidable (WithinProjection T ℓ x) := Multiset.decidableExistsMultiset
 
@@ -138,8 +157,8 @@ theorem WithinComplement.cCommandsIn (h : WithinComplement T ℓ x) : T.cCommand
     x ∈ T.phaseEdge ℓ ↔ WithinProjection T ℓ x ∧ ¬ WithinComplement T ℓ x :=
   Multiset.mem_filter.trans (and_congr mem_phase (not_congr mem_phaseInterior))
 
-/-- A head projects exactly when it has a complement, since a head never selects a copy of
-itself. -/
+/-- A head projects exactly when it has a complement, since an object merged with itself has no
+head. -/
 theorem isPhaseHead_iff_exists_isComplementOf : IsPhaseHead T ℓ ↔ ∃ z, IsComplementOf T ℓ z := by
   refine ⟨fun ⟨m, hm, hℓ, hmℓ⟩ ↦ ?_, fun ⟨_, m, hm, hℓ, hmℓ, _⟩ ↦ ⟨m, hm, hℓ, hmℓ⟩⟩
   induction m using SyntacticObject.ind with
@@ -176,9 +195,33 @@ theorem phaseInterior_le_domainIn : T.phaseInterior ℓ ≤ T.domainIn (leaf ℓ
 
 /-- The interior of a head that projects wherever it occurs is its c-command domain. -/
 theorem phaseInterior_eq_domainIn
-    (h : ∀ m ∈ T.terms, immediatelyContains m (leaf ℓ) → m.selHead = some ℓ) :
+    (h : ∀ m ∈ T.terms, immediatelyContains m (leaf ℓ) → m.raisingHead = some ℓ) :
     T.phaseInterior ℓ = T.domainIn (leaf ℓ) :=
   Multiset.filter_congr fun _ _ ↦ by
     grind [WithinComplement, IsComplementOf, cCommandsIn, areSistersIn]
 
-end Minimalist.SyntacticObject
+/-! ### The Phase Impenetrability Condition -/
+
+variable (T) in
+/-- `goal` is accessible to `probe` in `T` under the condition `s`, the phase heads being `heads`:
+a goal within the complement of a phase head is reachable only from within its phase, under
+[chomsky-2001]'s condition only once a phase head above it is merged and the probe lies outside
+that head's interior. -/
+def Accessible (heads : List LIToken) : Impenetrability → SyntacticObject → SyntacticObject → Prop
+  | .phase, probe, goal => ∀ H ∈ heads, T.WithinComplement H goal → T.WithinProjection H probe
+  | .nextPhase, probe, goal => ∀ H ∈ heads, T.WithinComplement H goal → ∀ Z ∈ heads, Z ≠ H →
+      T.WithinProjection Z (leaf H) → ¬ T.WithinComplement Z probe → T.WithinProjection H probe
+
+instance (heads : List LIToken) (s : Impenetrability) (probe goal : SyntacticObject) :
+    Decidable (T.Accessible heads s probe goal) := by
+  cases s <;> dsimp only [Accessible] <;> infer_instance
+
+/-- [chomsky-2000]'s condition is the stronger: what it leaves accessible, [chomsky-2001]'s does
+too. -/
+theorem Accessible.nextPhase_of_phase {heads : List LIToken} {probe goal : SyntacticObject}
+    (h : T.Accessible heads .phase probe goal) : T.Accessible heads .nextPhase probe goal :=
+  fun H hH hg _ _ _ _ _ ↦ h H hH hg
+
+end SyntacticObject
+
+end Minimalist

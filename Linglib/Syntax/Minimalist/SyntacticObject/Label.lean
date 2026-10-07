@@ -25,19 +25,27 @@ to label their sum (`label_merge_traceOf`), and two saturated phrases leave it u
 (`label_merge_eq_none`), the configuration [chomsky-2013] takes to force successive-cyclic
 movement.
 
+[marcolli-chomsky-berwick-2025] also require the head function to be raising (Definition 1.15.1):
+the object Internal Merge forms is headed by the head of what it raised out of, so the landing site
+of a wh-phrase in the specifier of a C is headed by C. The raising head `raisingHead` reads this
+off the finished object: where two phrases merge and the head of one has a lower copy inside the
+other, the first has raised out of the second, which projects. It extends the label
+(`raisingHead_eq_of_label`).
+
 ## Implementation notes
 
-[marcolli-chomsky-berwick-2025] require the head function to be raising (Definition 1.15.1): the
-object Internal Merge forms is headed by the head of what it raised out of, so the landing site of
-a wh-phrase in the specifier of a C would be headed by C. The selection head is not raising, and
-leaves that object, two saturated phrases, without a head, as [chomsky-2013]'s (21) requires of
-an intermediate landing site.
+* The selection head and the label are not raising: they leave a landing site, two saturated
+  phrases, without a head, as [chomsky-2013]'s (21) requires of an intermediate landing site.
+* The raising head reads Definition 1.15.1 on the finished object, a lower copy recording the token
+  that heads the phrase it copies; the phases of `SyntacticObject/Phase.lean` are delimited by it.
 
 ## Main definitions
 
 * `Minimalist.LabelState`: a selection state or a lower copy, a commutative magma with zero.
 * `Minimalist.SyntacticObject.labelCheck`, `Minimalist.SyntacticObject.label`: the labeling state
   and the label of a syntactic object.
+* `Minimalist.RaisingState`, `Minimalist.SyntacticObject.raisingHead`: the raising state and the
+  raising head of a syntactic object.
 
 ## TODO
 
@@ -59,7 +67,7 @@ namespace Minimalist
 
 open SyntacticObject
 
-/-- A constituent's labeling state: its selection state, or a lower copy of the phrase a token
+/-- A constituent's labeling state is its selection state, or a lower copy of the phrase a token
 heads, which satisfies selection as that phrase and is otherwise invisible to the labeling
 algorithm. -/
 inductive LabelState where
@@ -106,16 +114,23 @@ instance : MulZeroClass LabelState where
     | sel x => congrArg sel (mul_zero x)
     | copy a => by rw [show (0 : LabelState) = sel 0 from rfl, copy_mul_sel]; simp
 
-/-- The label a labeling state provides: the head of a visible constituent, none for a lower
+/-- The label a labeling state provides is the head of a visible constituent, and none for a lower
 copy. -/
 def label : LabelState → Option LIToken
   | sel x => x.head
   | copy _ => none
 
+/-- A labeling state never combines with itself. -/
+@[simp] theorem mul_self (l : LabelState) : l * l = 0 := by
+  rcases l with x | a
+  · show sel (x * x) = sel 0
+    rw [SelectionState.mul_self]
+  · rfl
+
 end LabelState
 
-/-- The labeling state of a trace: the lower copy of the phrase its token heads, and for the bare
-trace, which remembers no token and belongs to no chain, its selection state. -/
+/-- A trace's labeling state is the lower copy of the phrase its token heads; the bare trace, which
+remembers no token and belongs to no chain, keeps its selection state. -/
 def labelTraceState : Option LIToken → LabelState
   | some tok => .copy tok
   | none => .sel (traceState none)
@@ -187,6 +202,107 @@ theorem label_merge_eq_none {l r : SyntacticObject} {a b : LIToken}
     (merge l r).label = none := by
   rw [label, labelCheck_merge, hl, hr, LabelState.sel_mul_sel]
   rfl
+
+end SyntacticObject
+
+/-! ### The raising head -/
+
+/-- The raising state of a constituent pairs its labeling state with the tokens whose lower copies
+it contains. -/
+structure RaisingState where
+  /-- The labeling state. -/
+  label : LabelState
+  /-- The tokens heading the phrases of which the constituent contains a lower copy. -/
+  copies : Multiset LIToken
+  deriving DecidableEq
+
+namespace RaisingState
+
+instance : Zero RaisingState := ⟨⟨0, 0⟩⟩
+
+/-- Under raising, two merged constituents take the labeling product where it is defined, and
+otherwise the labeling state of the one containing a lower copy of the other's head, since the
+other raised out of it and it projects. -/
+def raise (x y : RaisingState) : LabelState :=
+  if x.label * y.label ≠ 0 then x.label * y.label else
+  match x.label.label, y.label.label with
+  | some a, some b =>
+    if a ∈ y.copies ∧ b ∉ x.copies then y.label
+    else if b ∈ x.copies ∧ a ∉ y.copies then x.label else 0
+  | _, _ => 0
+
+instance : Mul RaisingState := ⟨fun x y ↦ ⟨raise x y, x.copies + y.copies⟩⟩
+
+theorem mul_def (x y : RaisingState) : x * y = ⟨raise x y, x.copies + y.copies⟩ := rfl
+
+theorem raise_comm (x y : RaisingState) : raise x y = raise y x := by
+  unfold raise
+  rw [mul_comm y.label]
+  split_ifs with h₁
+  · rfl
+  · rcases hx : x.label.label with _ | a <;> rcases hy : y.label.label with _ | b <;> simp only
+    grind
+
+instance : CommMagma RaisingState where
+  mul_comm x y := by simp only [mul_def, raise_comm, add_comm]
+
+end RaisingState
+
+/-- A trace's raising state is the lower copy of the phrase its token heads, with the token recorded
+among the copies; the bare trace remembers no token. -/
+def raisingTraceState : Option LIToken → RaisingState
+  | some tok => ⟨.copy tok, {tok}⟩
+  | none => ⟨.sel (traceState none), 0⟩
+
+namespace SyntacticObject
+
+variable (s : SyntacticObject)
+
+/-- The raising state of a syntactic object. -/
+def raisingCheck : RaisingState :=
+  liftFun (fun tok ↦ ⟨.sel (.of tok tok.item.outerSel), 0⟩) raisingTraceState s
+
+/-- The raising head of a syntactic object, [marcolli-chomsky-berwick-2025]'s raising head
+function: the label where there is one, and at a landing site the head of the phrase moved out
+of. -/
+def raisingHead : Option LIToken := s.raisingCheck.label.label
+
+@[simp] theorem raisingCheck_merge (l r : SyntacticObject) :
+    (merge l r).raisingCheck = l.raisingCheck * r.raisingCheck :=
+  liftFun_merge _ _ l r
+
+/-- The raising state refines the labeling state. -/
+theorem raisingCheck_label_eq_or : s.raisingCheck.label = s.labelCheck ∨ s.labelCheck = 0 := by
+  induction s using SyntacticObject.ind with
+  | leaf tok => exact .inl rfl
+  | trace => exact .inl rfl
+  | traceOf tok => exact .inl rfl
+  | merge l r ihl ihr =>
+    rw [raisingCheck_merge, labelCheck_merge, RaisingState.mul_def]
+    rcases ihl with hl | hl
+    · rcases ihr with hr | hr
+      · simp only [RaisingState.raise, hl, hr]
+        split_ifs with h0
+        · exact .inl rfl
+        · exact .inr (not_not.1 h0)
+      · exact .inr (by rw [hr, mul_zero])
+    · exact .inr (by rw [hl, zero_mul])
+
+/-- The raising head extends the label. -/
+theorem raisingHead_eq_of_label {a : LIToken} (hs : s.label = some a) : s.raisingHead = some a := by
+  rcases s.raisingCheck_label_eq_or with hl | hl
+  · rw [raisingHead, hl]; exact hs
+  · rw [label, hl] at hs
+    exact absurd (show (none : Option LIToken) = some a from hs) (Option.some_ne_none a).symm
+
+/-- An object merged with itself has no raising head. -/
+@[simp] theorem raisingHead_merge_self (x : SyntacticObject) : (merge x x).raisingHead = none := by
+  rw [raisingHead, raisingCheck_merge, RaisingState.mul_def]
+  simp only [RaisingState.raise, LabelState.mul_self, ne_eq, not_true_eq_false, ↓reduceIte]
+  rcases x.raisingCheck.label.label with _ | a
+  · rfl
+  · dsimp only
+    split_ifs with h₁ <;> first | rfl | exact (h₁.2 h₁.1).elim
 
 end SyntacticObject
 
