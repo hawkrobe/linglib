@@ -5,15 +5,18 @@ public import Linglib.Semantics.ArgumentStructure.LevinClass
 /-!
 # The member lists of the Levin classes
 
-The `Class Members` list of every class page of [levin-1993] Part II, by citation form, and
-the classes that list a form (`LevinClass.classesOf`), which is how an English verb entry's
-Levin classes are read.
+`LevinClass.members` records the `Class Members` list of every class page of Part II of Levin's
+*English Verb Classes and Alternations*, by citation form, and `LevinClass.classesOf` the classes
+whose lists carry a form. An English verb entry's `levinClasses` are the classes listing its form,
+less those that list it in a sense the entry does not have, and `scripts/check_levin_classes.py`
+checks every entry against `classesOf` in CI.
 
 ## Implementation notes
 
-The lists are transcribed mechanically from the pages, dropping Levin's question marks on
-doubtful members and her parenthetical glosses; a form she lists under several classes is a
-member of each.
+The lists follow the pages, including Levin's second list on a page and the lists she groups by
+preposition or by suffix, with her parenthetical glosses dropped and her question marks on
+doubtful members dropped; a form she lists under several classes is a member of each. The lists
+were checked against the book's pages.
 
 ## References
 
@@ -51,8 +54,8 @@ def members : LevinClass → List String
       "inundate", "lard", "lash", "line", "litter", "mask", "mottle", "ornament", "pad", "pave",
       "plate", "plug", "pollute", "replenish", "repopulate", "riddle", "ring", "ripple", "robe",
       "saturate", "season", "shroud", "smother", "soak", "soil", "speckle", "splotch", "spot",
-      "staff", "stain", "stipple", "stud", "suffuse", "surround", "swaddle", "swathe", "taint",
-      "tile", "trim", "veil", "vein", "wreathe"]
+      "staff", "stain", "stipple", "stop up", "stud", "suffuse", "surround", "swaddle", "swathe",
+      "taint", "tile", "trim", "veil", "vein", "wreathe"]
   | .butter => ["asphalt", "bait", "blanket", "blindfold", "board", "bread", "brick", "bridle",
       "bronze", "butter", "buttonhole", "cap", "carpet", "caulk", "chrome", "cloak", "cork",
       "crown", "diaper", "drug", "feather", "fence", "flour", "forest", "frame", "fuel", "gag",
@@ -107,9 +110,9 @@ def members : LevinClass → List String
       "demast", "derat", "derib", "derind", "desalt", "descale", "desex", "desprout", "destarch",
       "destress", "detassel", "detusk", "devein", "dewater", "dewax", "deworm"]
   | .mine => ["mine", "quarry"]
-  | .send => ["airmail", "convey", "deliver", "dispatch", "express", "fedex", "forward", "hand",
-      "mail", "pass", "port", "post", "return", "send", "shift", "ship", "shunt", "slip",
-      "smuggle", "sneak", "transfer", "transport", "ups"]
+  | .send => ["airmail", "convey", "deliver", "dispatch", "express", "FedEx", "forward", "hand",
+      "mail", "pass", "port", "post", "return", "send", "shift", "ship", "shunt", "slip", "smuggle",
+      "sneak", "transfer", "transport", "UPS"]
   | .slide => ["bounce", "float", "move", "roll", "slide"]
   | .bringTake => ["bring", "take"]
   | .carry => ["carry", "drag", "haul", "heave", "heft", "hoist", "kick", "lug", "pull", "push",
@@ -131,7 +134,7 @@ def members : LevinClass → List String
   | .equip => ["arm", "burden", "charge", "compensate", "equip", "invest", "ply", "regale",
       "reward", "saddle"]
   | .get => ["book", "buy", "call", "cash", "catch", "charter", "choose", "earn", "fetch", "find",
-      "gain", "gather", "get", "hire", "keep", "lease", "leave", "order", "phone", "pluck",
+      "gain", "gather", "get", "hire", "keep", "lease", "leave", "order", "phone", "pick", "pluck",
       "procure", "pull", "reach", "rent", "reserve", "save", "secure", "shoot", "slaughter",
       "steal", "vote", "win"]
   | .obtain => ["accept", "accumulate", "acquire", "appropriate", "borrow", "cadge", "collect",
@@ -168,18 +171,18 @@ def members : LevinClass → List String
       "drill", "file", "fillet", "gash", "gouge", "grate", "grind", "mangle", "mash", "mince",
       "mow", "nick", "notch", "perforate", "prune", "pulverize", "punch", "shred", "slice", "slit",
       "spear", "squash", "squish"]
-  | .mix => ["combine", "commingle", "concatenate", "connect", "cream", "fuse", "join", "link",
-      "merge", "mingle", "mix", "network"]
-  | .amalgamate => ["alternate", "amalgamate", "associate", "coalesce", "coincide", "compare",
-      "confederate", "confuse", "conjoin", "consolidate", "contrast", "correlate", "criss-cross",
-      "entangle", "entwine", "harmonize", "incorporate", "integrate", "interchange",
-      "interconnect", "interlace", "interlink", "interlock", "intermingle", "interrelate",
-      "intersperse", "intertwine", "interweave", "introduce", "marry", "mate", "muddle", "oppose",
-      "pair", "rhyme", "team", "total", "unify", "wed"]
-  | .shake => ["attach", "baste", "beat", "bind", "bond", "bundle", "cluster", "collate",
-      "collect", "fasten", "fuse", "gather", "glom", "graft", "group", "herd", "jumble", "lump",
-      "mass", "moor", "package", "pair", "roll", "scramble", "sew", "shake", "shuffle", "splice",
-      "stick", "stir", "swirl", "weld", "whip"]
+  | .mix => ["add", "blend", "combine", "commingle", "concatenate", "connect", "cream", "fuse",
+      "join", "link", "merge", "mingle", "mix", "network", "pool"]
+  | .amalgamate => ["affiliate", "alternate", "amalgamate", "associate", "coalesce", "coincide",
+      "compare", "confederate", "confuse", "conjoin", "consolidate", "contrast", "correlate",
+      "criss-cross", "engage", "entangle", "entwine", "harmonize", "incorporate", "integrate",
+      "interchange", "interconnect", "interlace", "interlink", "interlock", "intermingle",
+      "interrelate", "intersperse", "intertwine", "interweave", "introduce", "marry", "mate",
+      "muddle", "oppose", "pair", "rhyme", "team", "total", "unify", "unite", "wed"]
+  | .shake => ["append", "attach", "band", "baste", "beat", "bind", "bond", "bundle", "cluster",
+      "collate", "collect", "fasten", "fuse", "gather", "glom", "graft", "group", "herd", "jumble",
+      "lump", "mass", "moor", "package", "pair", "roll", "scramble", "sew", "shake", "shuffle",
+      "splice", "stick", "stir", "swirl", "weld", "whip", "whisk"]
   | .tape => ["anchor", "band", "belt", "bolt", "bracket", "buckle", "button", "cement", "chain",
       "clamp", "clasp", "clip", "epoxy", "fetter", "glue", "gum", "handcuff", "harness", "hinge",
       "hitch", "hook", "knot", "lace", "lash", "lasso", "latch", "leash", "link", "lock", "loop",
@@ -189,8 +192,8 @@ def members : LevinClass → List String
   | .cling => ["adhere", "cleave", "cling"]
   | .separate => ["decouple", "differentiate", "disconnect", "disentangle", "dissociate",
       "distinguish", "divide", "divorce", "part", "segregate", "separate", "sever"]
-  | .split => ["break", "cut", "draw", "hack", "hew", "kick", "knock", "pry", "pull", "push",
-      "rip", "roll", "saw", "shove", "slip", "split", "tear", "tug", "yank"]
+  | .split => ["blow", "break", "cut", "draw", "hack", "hew", "kick", "knock", "pry", "pull",
+      "push", "rip", "roll", "saw", "shove", "slip", "split", "tear", "tug", "yank"]
   | .disassemble => ["detach", "disassemble", "disconnect", "partition", "sift", "sunder",
       "unbolt", "unbuckle", "unbutton", "unchain", "unclamp", "unclasp", "unclip", "unfasten",
       "unglue", "unhinge", "unhitch", "unhook", "unlace", "unlatch", "unleash", "unlock", "unpeg",
@@ -198,8 +201,8 @@ def members : LevinClass → List String
   | .differ => ["differ", "diverge"]
   | .color => ["color", "distemper", "dye", "enamel", "glaze", "japan", "lacquer", "paint",
       "shellac", "spraypaint", "stain", "tint", "varnish"]
-  | .imageImpression => ["emboss", "embroider", "engrave", "etch", "imprint", "incise", "inscribe",
-      "mark", "paint", "set", "sign", "stamp", "tattoo"]
+  | .imageImpression => ["appliqué", "emboss", "embroider", "engrave", "etch", "imprint", "incise",
+      "inscribe", "mark", "paint", "set", "sign", "stamp", "tattoo"]
   | .scribble => ["carve", "chalk", "charcoal", "copy", "crayon", "doodle", "draw", "forge", "ink",
       "paint", "pencil", "plot", "print", "scratch", "scrawl", "scribble", "sketch", "spraypaint",
       "stencil", "trace", "type", "write"]
@@ -208,12 +211,12 @@ def members : LevinClass → List String
       "tag"]
   | .transcribe => ["copy", "film", "forge", "microfilm", "photocopy", "photograph", "record",
       "tape", "televise", "transcribe", "type"]
-  | .build => ["arrange", "assemble", "bake", "build", "carve", "cast", "chisel", "churn",
+  | .build => ["arrange", "assemble", "bake", "blow", "build", "carve", "cast", "chisel", "churn",
       "compile", "cook", "crochet", "cut", "develop", "embroider", "fashion", "fold", "forge",
-      "grind", "grow", "hack", "hammer", "hatch", "knit", "make", "mold", "pound", "roll",
-      "sculpt", "sew", "shape", "spin", "stitch", "weave", "whittle"]
+      "grind", "grow", "hack", "hammer", "hatch", "knit", "make", "mold", "pound", "roll", "sculpt",
+      "sew", "shape", "spin", "stitch", "weave", "whittle"]
   | .grow => ["develop", "evolve", "grow", "hatch", "mature"]
-  | .prepare => ["bake", "blend", "brew", "clean", "clear", "cook", "fix", "fry", "grill",
+  | .prepare => ["bake", "blend", "boil", "brew", "clean", "clear", "cook", "fix", "fry", "grill",
       "hardboil", "iron", "light", "mix", "poach", "pour", "prepare", "roast", "roll", "run",
       "scramble", "set", "softboil", "toast", "toss", "wash"]
   | .create => ["coin", "compose", "compute", "concoct", "construct", "create", "derive", "design",
@@ -222,8 +225,9 @@ def members : LevinClass → List String
   | .knead => ["beat", "bend", "coil", "collect", "compress", "fold", "freeze", "knead", "melt",
       "shake", "squash", "squeeze", "squish", "twirl", "twist", "wad", "whip", "wind", "work"]
   | .turn => ["alter", "change", "convert", "metamorphose", "transform", "transmute", "turn"]
-  | .performance => ["chant", "choreograph", "compose", "dance", "draw", "hum", "intone", "paint",
-      "perform", "produce", "recite", "silkscreen", "sing", "spin", "take", "whistle", "write"]
+  | .performance => ["chant", "choreograph", "compose", "dance", "direct", "draw", "hum", "intone",
+      "paint", "perform", "play", "produce", "recite", "silkscreen", "sing", "spin", "take",
+      "whistle", "write"]
   | .engender => ["beget", "cause", "create", "engender", "generate", "shape", "spawn"]
   | .calve => ["calve", "cub", "fawn", "foal", "kitten", "lamb", "litter", "pup", "spawn", "whelp"]
   | .appoint => ["acknowledge", "adopt", "appoint", "consider", "crown", "deem", "designate",
@@ -293,15 +297,17 @@ def members : LevinClass → List String
       "execrate", "fancy", "favor", "fear", "hate", "idolize", "lament", "like", "loathe", "love",
       "miss", "mourn", "pity", "prize", "regret", "relish", "resent", "respect", "revere", "rue",
       "savor", "stand", "support", "tolerate", "treasure", "trust", "value", "venerate", "worship"]
-  | .marvel => ["anguish", "beware", "care", "cringe", "cry", "delight", "despair", "disapprove",
-      "enthuse", "exult", "fear", "feel", "fret", "fume", "gladden", "gloat", "glory", "grieve",
-      "gush", "hunger", "hurt", "luxuriate", "madden", "marvel", "mind", "moon", "mope", "mourn",
-      "obsess", "puzzle", "rage", "rave", "rejoice", "revel", "rhapsodize", "sadden", "salivate",
-      "seethe", "sicken", "sorrow", "swoon", "tage", "thrill", "tire", "wonder"]
-  | .appeal => ["matter"]
+  | .marvel => ["ache", "anger", "anguish", "approve", "bask", "beware", "bleed", "bother", "care",
+      "cheer", "cringe", "cry", "delight", "despair", "disapprove", "enthuse", "exult", "fear",
+      "feel", "fret", "fume", "gladden", "gloat", "glory", "grieve", "groove", "gush", "hunger",
+      "hurt", "luxuriate", "madden", "marvel", "mind", "moon", "mope", "mourn", "obsess", "puzzle",
+      "rage", "rave", "react", "rejoice", "revel", "rhapsodize", "sadden", "salivate", "seethe",
+      "sicken", "sorrow", "suffer", "swoon", "thrill", "tire", "wallow", "weary", "weep", "wonder",
+      "worry"]
+  | .appeal => ["appeal", "grate", "jar", "matter", "niggle"]
   | .want => ["covet", "crave", "desire", "fancy", "need", "want"]
-  | .long => ["crave", "fall", "hanker", "hope", "hunger", "itch", "long", "lust", "pine", "pray",
-      "thirst", "wish", "yearn"]
+  | .long => ["ache", "crave", "dangle", "fall", "hanker", "hope", "hunger", "itch", "long", "lust",
+      "pine", "pray", "thirst", "wish", "yearn"]
   | .judgment => ["abuse", "acclaim", "applaud", "backbite", "bless", "calumniate", "castigate",
       "celebrate", "censure", "chasten", "chastise", "chide", "commend", "compensate",
       "compliment", "condemn", "congratulate", "criticize", "decry", "defame", "denigrate",
@@ -384,10 +390,11 @@ def members : LevinClass → List String
       "smile", "smirk", "sneeze", "snicker", "sniff", "snigger", "snivel", "snore", "snort", "sob",
       "titter", "weep", "whistle", "yawn"]
   | .wink => ["blink", "clap", "nod", "point", "shrug", "squint", "wag", "wave", "wink"]
-  | .crane => ["bare", "bat", "beat", "blow", "clench", "close", "cock", "crane", "crook", "drum",
-      "eyes", "fist", "flap", "flash", "flex", "flick", "flutter", "fold", "gnash", "grind",
-      "hang", "hips", "hunch", "kick", "knit", "open", "pucker", "purse", "roll", "rub", "show",
-      "shuffle", "smack", "snap", "stamp", "stretch", "toss", "turn", "twiddle", "waggle", "wring"]
+  | .crane => ["arch", "bare", "bat", "beat", "blow", "clench", "click", "close", "cock", "crane",
+      "crook", "cross", "drum", "flap", "flash", "flex", "flick", "flutter", "fold", "gnash",
+      "grind", "hang", "hunch", "kick", "knit", "open", "pucker", "purse", "raise", "roll", "rub",
+      "shake", "show", "shuffle", "smack", "snap", "stamp", "stretch", "toss", "turn", "twiddle",
+      "twitch", "wag", "waggle", "wiggle", "wring", "wrinkle"]
   | .curtsey => ["bob", "bow", "curtsey", "genuflect", "kneel", "salaam", "salute"]
   | .snooze => ["catnap", "doze", "drowse", "nap", "sleep", "slumber", "snooze"]
   | .flinch => ["balk", "cower", "cringe", "flinch", "recoil", "shrink", "wince"]
@@ -395,19 +402,20 @@ def members : LevinClass → List String
       "shudder", "tremble", "writhe"]
   | .suffocate => ["asphyxiate", "choke", "drown", "stifle", "suffocate"]
   | .pain => ["ache", "bother", "hurt", "itch", "pain"]
-  | .tingle => ["burn", "hum", "prickle", "pucker", "reel", "smart", "spin", "split", "sting",
-      "swim", "throb", "tickle", "tingle"]
-  | .hurt => ["back", "bark", "bite", "break", "bruise", "bump", "burn", "chip", "cut", "fracture",
-      "her", "hurt", "injure", "knee", "prick", "pull", "rupture", "scald", "scratch", "skin",
-      "split", "strain", "stub", "turn"]
+  | .tingle => ["burn", "hum", "pound", "prickle", "pucker", "reel", "smart", "spin", "split",
+      "sting", "swim", "throb", "tickle", "tingle"]
+  | .hurt => ["bark", "bite", "break", "bruise", "bump", "burn", "chip", "cut", "fracture", "hurt",
+      "injure", "nick", "prick", "pull", "rupture", "scald", "scratch", "skin", "split", "sprain",
+      "strain", "stub", "turn", "twist"]
   | .changeOfBodilyState => ["blanch", "faint", "sicken", "swoon"]
   | .dress => ["bathe", "change", "disrobe", "dress", "exercise", "preen", "primp", "shave",
       "shower", "strip", "undress", "wash"]
   | .groom => ["curry", "groom"]
-  | .floss => ["brush", "floss"]
+  | .floss => ["brush", "floss", "shave", "wash"]
   | .braid => ["bob", "braid", "brush", "clip", "coldcream", "comb", "condition", "crimp", "crop",
-      "curl", "cut", "dye", "file", "henna", "manicure", "part", "perm", "plait", "pluck", "set",
-      "shampoo", "talc", "tease", "wave"]
+      "curl", "cut", "dye", "file", "henna", "lather", "manicure", "part", "perm", "plait", "pluck",
+      "powder", "rinse", "rouge", "set", "shampoo", "soap", "talc", "tease", "towel", "trim",
+      "wave"]
   | .simpleDressing => ["doff", "don", "wear"]
   | .dressingWell => ["doll", "dress", "spruce", "tog"]
   | .beingDressed => ["attire", "clad", "garb", "robe"]
@@ -441,10 +449,11 @@ def members : LevinClass → List String
       "snap", "splinter", "split", "tear"]
   | .bend => ["bend", "crease", "crinkle", "crumple", "fold", "rumple", "wrinkle"]
   | .cooking => ["bake", "barbecue", "blanch", "boil", "braise", "broil", "brown", "charbroil",
-      "charcoal-broil", "coddle", "cook", "crisp", "deep-fry", "fry", "grill", "hardboil", "heat",
-      "microwave", "oven-fry", "oven-poach", "overcook", "pan-broil", "pan-fry", "parboil",
-      "parch", "percolate", "perk", "plank", "poach", "pot-roast", "rissole", "roast", "scald",
-      "scallop", "shirr", "simmer", "softboil", "steam", "steam-bake", "stew", "stir-fry", "toast"]
+      "charcoal-broil", "coddle", "cook", "crisp", "deep-fry", "French fry", "fry", "grill",
+      "hardboil", "heat", "microwave", "oven-fry", "oven-poach", "overcook", "pan-broil", "pan-fry",
+      "parboil", "parch", "percolate", "perk", "plank", "poach", "pot-roast", "rissole", "roast",
+      "sauté", "scald", "scallop", "shirr", "simmer", "softboil", "steam", "steam-bake", "stew",
+      "stir-fry", "toast"]
   | .otherChangeOfState => ["abate", "accelerate", "acetify", "acidify", "advance", "age",
       "agglomerate", "air", "alkalify", "alter", "ameliorate", "americanize", "atrophy",
       "attenuate", "awake", "awaken", "balance", "blacken", "blast", "blunt", "blur", "brighten",
@@ -458,24 +467,24 @@ def members : LevinClass → List String
       "disintegrate", "dissipate", "dissolve", "distend", "divide", "double", "drain", "dry",
       "dull", "ease", "empty", "emulsify", "energize", "enlarge", "equalize", "evaporate", "even",
       "expand", "explode", "fade", "fatten", "federate", "fill", "firm", "flatten", "flood",
-      "fossilize", "fray", "freeze", "freshen", "frost", "fructify", "fuse", "gasify",
-      "gelatinize", "gladden", "glutenize", "granulate", "gray", "green", "grow", "halt", "harden",
-      "harmonize", "hasten", "heal", "heat", "heighten", "humidify", "hush", "hybridize", "ignite",
-      "improve", "increase", "incubate", "inflate", "intensify", "iodize", "ionize", "kindle",
-      "lengthen", "lessen", "level", "levitate", "light", "lighten", "lignify", "liquefy", "loop",
-      "loose", "loosen", "macerate", "magnetize", "magnify", "mature", "mellow", "melt", "moisten",
-      "muddy", "multiply", "narrow", "neaten", "neutralize", "nitrify", "open", "operate",
-      "ossify", "overturn", "oxidize", "pale", "petrify", "polarize", "pop", "proliferate",
-      "propagate", "pulverize", "purify", "purple", "putrefy", "quadruple", "quicken", "quiet",
-      "quieten", "redden", "regularize", "rekindle", "reopen", "reproduce", "ripen", "roughen",
-      "round", "rupture", "scorch", "sear", "sharpen", "short", "shortcircuit", "shorten",
-      "shrink", "shrivel", "shut", "sicken", "silicify", "silver", "singe", "sink", "slack",
-      "slacken", "slim", "slow", "smarten", "smooth", "soak", "sober", "soften", "solidify",
-      "sour", "splay", "sprout", "stabilize", "steady", "steep", "steepen", "stiffen",
-      "straighten", "stratify", "strengthen", "stretch", "submerge", "subside", "sweeten", "tame",
-      "tan", "taper", "tauten", "tense", "thaw", "thicken", "thin", "tighten", "tilt", "tire",
-      "topple", "toughen", "triple", "ulcerate", "unfold", "unionize", "vaporize", "vary",
-      "vibrate", "volatilize", "waken", "warm", "warp", "weaken", "whiten", "widen"]
+      "fossilize", "fray", "freeze", "freshen", "frost", "fructify", "fuse", "gasify", "gelatinize",
+      "gladden", "glutenize", "granulate", "gray", "green", "grow", "halt", "harden", "harmonize",
+      "hasten", "heal", "heat", "heighten", "humidify", "hush", "hybridize", "ignite", "improve",
+      "increase", "incubate", "inflate", "intensify", "iodize", "ionize", "kindle", "lengthen",
+      "lessen", "level", "levitate", "light", "lighten", "lignify", "liquefy", "loop", "loose",
+      "loosen", "macerate", "magnetize", "magnify", "mature", "mellow", "melt", "moisten", "muddy",
+      "multiply", "narrow", "neaten", "neutralize", "nitrify", "open", "operate", "ossify",
+      "overturn", "oxidize", "pale", "petrify", "polarize", "pop", "proliferate", "propagate",
+      "pulverize", "purify", "purple", "putrefy", "quadruple", "quicken", "quiet", "quieten",
+      "redden", "regularize", "rekindle", "reopen", "reproduce", "ripen", "roughen", "round",
+      "rupture", "scorch", "sear", "sharpen", "short", "shortcircuit", "shorten", "shrink",
+      "shrivel", "shut", "sicken", "silicify", "silver", "singe", "sink", "slack", "slacken",
+      "slim", "slow", "smarten", "smooth", "soak", "sober", "soften", "solidify", "sour", "splay",
+      "sprout", "stabilize", "steady", "steep", "steepen", "stiffen", "straighten", "stratify",
+      "strengthen", "stretch", "submerge", "subside", "sweeten", "tame", "tan", "taper", "tauten",
+      "tense", "thaw", "thicken", "thin", "tighten", "tilt", "tire", "topple", "toughen", "triple",
+      "ulcerate", "unfold", "unionize", "vaporize", "vary", "vibrate", "vitrify", "volatilize",
+      "waken", "warm", "warp", "weaken", "westernize", "whiten", "widen", "worsen", "yellow"]
   | .entitySpecificChangeOfState => ["blister", "bloom", "blossom", "burn", "corrode", "decay",
       "deteriorate", "erode", "ferment", "flower", "germinate", "molder", "molt", "rot", "rust",
       "sprout", "stagnate", "swell", "tarnish", "wilt", "wither"]
@@ -487,7 +496,8 @@ def members : LevinClass → List String
       "stay", "stop"]
   | .exist => ["coexist", "correspond", "depend", "dwell", "endure", "exist", "extend", "flourish",
       "languish", "linger", "live", "loom", "lurk", "overspread", "persist", "predominate",
-      "prosper", "remain", "reside", "shelter", "stay", "survive", "thrive", "tower"]
+      "prevail", "prosper", "remain", "reside", "shelter", "stay", "survive", "thrive", "tower",
+      "wait"]
   | .entitySpecificModeOfBeing => ["billow", "bloom", "blossom", "blow", "breathe", "bristle",
       "bulge", "burn", "cascade", "corrode", "decay", "decompose", "effervesce", "erode",
       "ferment", "fester", "fizz", "flow", "flower", "foam", "froth", "germinate", "grow", "molt",
@@ -503,10 +513,10 @@ def members : LevinClass → List String
   | .herd => ["accumulate", "aggregate", "amass", "assemble", "cluster", "collect", "congregate",
       "convene", "flock", "gather", "group", "herd", "huddle", "mass"]
   | .bulge => ["bristle", "bulge", "seethe"]
-  | .spatialConfiguration => ["bend", "bow", "crouch", "dangle", "flop", "fly", "hang", "hover",
-      "jut", "kneel", "lean", "lie", "loll", "loom", "lounge", "nestle", "open", "perch", "plop",
-      "project", "protrude", "recline", "rest", "rise", "roost", "sag", "sit", "slope", "slouch",
-      "slump", "sprawl", "squat", "stand", "stoop", "straddle", "swing", "tilt", "tower"]
+  | .spatialConfiguration => ["balance", "bend", "bow", "crouch", "dangle", "flop", "fly", "hang",
+      "hover", "jut", "kneel", "lean", "lie", "loll", "loom", "lounge", "nestle", "open", "perch",
+      "plop", "project", "protrude", "recline", "rest", "rise", "roost", "sag", "sit", "slope",
+      "slouch", "slump", "sprawl", "squat", "stand", "stoop", "straddle", "swing", "tilt", "tower"]
   | .meander => ["cascade", "climb", "crawl", "cut", "drop", "go", "meander", "plunge", "run",
       "straggle", "stretch", "sweep", "tumble", "turn", "twist", "wander", "weave", "wind"]
   | .contiguousLocation => ["abut", "adjoin", "blanket", "border", "bound", "bracket", "bridge",
@@ -516,8 +526,8 @@ def members : LevinClass → List String
       "surmount", "surround", "top", "touch", "underlie"]
   | .appear => ["appear", "arise", "awake", "awaken", "break", "burst", "come", "dawn", "derive",
       "develop", "emanate", "emerge", "erupt", "evolve", "exude", "flow", "form", "grow", "gush",
-      "issue", "materialize", "open", "plop", "result", "rise", "spill", "spread", "steal", "stem",
-      "stream", "supervene", "surge", "wax"]
+      "issue", "materialize", "open", "plop", "pop up", "result", "rise", "show up", "spill",
+      "spread", "steal", "stem", "stream", "supervene", "surge", "turn up", "wax"]
   | .reflexiveAppearance => ["assert", "declare", "define", "express", "form", "intrude",
       "manifest", "offer", "pose", "present", "proffer", "recommend", "shape", "show", "suggest"]
   | .disappearance => ["die", "disappear", "expire", "lapse", "perish", "vanish"]
@@ -537,13 +547,13 @@ def members : LevinClass → List String
       "drift", "file", "flit", "float", "fly", "frolic", "gallop", "gambol", "glide", "goosestep",
       "hasten", "hike", "hobble", "hop", "hurry", "hurtle", "inch", "jog", "journey", "jump",
       "leap", "limp", "lollop", "lope", "lumber", "lurch", "march", "meander", "mince", "mosey",
-      "nip", "pad", "parade", "plod", "prance", "promenade", "prowl", "race", "ramble", "roam",
-      "roll", "romp", "rove", "run", "rush", "sashay", "saunter", "scamper", "scoot", "scram",
-      "scramble", "scud", "scurry", "scutter", "scuttle", "shamble", "shuffle", "sidle",
-      "skedaddle", "skip", "skitter", "skulk", "sleepwalk", "slide", "slink", "slither", "slog",
-      "slouch", "sneak", "somersault", "speed", "stagger", "stomp", "stray", "streak", "stride",
-      "stroll", "strut", "stumble", "stump", "swagger", "sweep", "swim", "tack", "tear", "tiptoe",
-      "toddle", "totter", "traipse", "tramp", "travel", "trek", "troop", "trot", "trudge",
+      "nip", "pad", "parade", "perambulate", "plod", "prance", "promenade", "prowl", "race",
+      "ramble", "roam", "roll", "romp", "rove", "run", "rush", "sashay", "saunter", "scamper",
+      "scoot", "scram", "scramble", "scud", "scurry", "scutter", "scuttle", "shamble", "shuffle",
+      "sidle", "skedaddle", "skip", "skitter", "skulk", "sleepwalk", "slide", "slink", "slither",
+      "slog", "slouch", "sneak", "somersault", "speed", "stagger", "stomp", "stray", "streak",
+      "stride", "stroll", "strut", "stumble", "stump", "swagger", "sweep", "swim", "tack", "tear",
+      "tiptoe", "toddle", "totter", "traipse", "tramp", "travel", "trek", "troop", "trot", "trudge",
       "trundle", "vault", "waddle", "wade", "walk", "wander", "whiz", "zigzag", "zoom"]
   | .vehicleName => ["balloon", "bicycle", "bike", "boat", "bobsled", "bus", "cab", "canoe",
       "chariot", "coach", "cycle", "dogsled", "ferry", "gondola", "helicopter", "jeep", "jet",
@@ -563,7 +573,7 @@ def members : LevinClass → List String
   | .register => ["measure", "read", "register", "total", "weigh"]
   | .cost => ["carry", "cost", "last", "take"]
   | .fit => ["carry", "contain", "feed", "fit", "hold", "house", "seat", "serve", "sleep", "store",
-      "take"]
+      "take", "use"]
   | .price => ["appraise", "assess", "estimate", "fix", "peg", "price", "rate", "value"]
   | .bill => ["bet", "bill", "charge", "fine", "mulct", "overcharge", "save", "spare", "tax",
       "tip", "undercharge", "wager"]

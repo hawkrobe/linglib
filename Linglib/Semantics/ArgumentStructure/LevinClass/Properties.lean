@@ -6,27 +6,41 @@ public import Linglib.Semantics.ArgumentStructure.DiathesisAlternation
 /-!
 # The property tables of the Levin classes
 
-The `Properties` table of every class page of [levin-1993] Part II: each property Levin
-lists, an alternation of Part One or one of the further properties the pages name (derived
-nominals, sentential complements, cognate and reaction objects, and so on), with the diacritic
-the page gives it, an asterisk for a property the class lacks and a question mark for a
-marginal one, and the scope qualifier of the entry where the page has one ("some verbs",
-"most verbs", "a few verbs"). The alternation profile of a class is read off the table:
-`LevinClass.alternations` are the alternations attested without diacritic and
-`LevinClass.starredAlternations` the starred ones, with `LevinClass.Participates` the attested
-relation.
+`LevinClass.properties` records the `Properties` table of every class page of Part II of Levin's
+*English Verb Classes and Alternations*: each property the page lists, an alternation of Part One
+or one of the further properties the pages name (derived nominals, sentential complements,
+cognate and reaction objects, and so on), with the page's diacritic, an asterisk for a property
+the class lacks and a question mark for a marginal one, and the scope qualifier the page gives
+("some verbs", "most verbs", "many verbs", "a few verbs"). `LevinClass.Participates` and
+`LevinClass.Stars` read the alternations a page attests and stars off the table, and
+`LevinClass.Tests` holds when the page does either.
 
 ## Implementation notes
 
-The tables are transcribed from the class pages mechanically; a property Levin phrases as a
-denial ("Unintentional interpretation not available", "Coreferential interpretation of
-pronouns not possible") is the corresponding alternation starred. Where a page qualifies a
-locative alternation as transitive or intransitive, the entry is the Part One subsection the
-page's examples instantiate: the *of* variants of the clear page are the clear alternations,
-and the *with* variants the change-of-state pages star are the spray/load and swarm
-alternations. A page that lists one alternation twice with different bases, as the spray/load
-page attests the causative alternation of the locative variant and stars that of the *with*
-variant, has both entries, so `Participates` and `Stars` are not disjoint.
+* A property Levin phrases as a denial ("Unintentional interpretation not available",
+  "Coreferential interpretation of pronouns not possible") is the corresponding alternation
+  starred. A starred heading qualified "with a few exceptions" has scope `most`; exceptions Levin
+  names ("except *kill*") are not recorded.
+* Where a page qualifies a locative alternation as transitive or intransitive, the entry is the
+  Part One subsection the page's examples instantiate: the *of* variants of the clear page are the
+  clear alternations, and the *with* variants the change-of-state pages star are the spray/load
+  and swarm alternations.
+* A page that lists one alternation twice with different bases, as the spray/load page attests
+  the causative alternation of the locative variant and stars that of the *with* variant, has both
+  entries, so `Participates` and `Stars` are not disjoint.
+* The diacritics and scopes were checked against the book's pages.
+
+## TODO
+
+* A page attesting a family heading such as "Causative Alternations" is entered as the family on
+  some pages (pour, spray/load) and as the subsection its examples instantiate on others, and
+  `Participates` lets an attested family stand for each of its subsections, so `pour.Participates
+  .inducedAction` holds. Resolve each attested family heading to its subsection and drop the
+  family clause from `Participates`, keeping it in `Stars`.
+* The unintentional-interpretation headings of the touch, cut and break pages print two sub-lines,
+  reflexive and body-part object, which `unintentionalInterpretationReflexive` and
+  `unintentionalInterpretationBodyPart` would record; the bases a page gives ("based on the *with*
+  variant", "transitive") are not recorded.
 
 ## References
 
@@ -37,7 +51,7 @@ variant, has both entries, so `Participates` and `Stars` are not disjoint.
 
 namespace ArgumentStructure
 
-/-- A property a class page of [levin-1993] Part II lists: an alternation of Part One or one
+/-- A property a class page of [levin-1993] Part II lists is an alternation of Part One or one
 of the further properties the pages name. -/
 inductive LevinProperty where
   /-- An alternation or construction of Part One. -/
@@ -113,14 +127,14 @@ def LevinProperty.alternation? : LevinProperty → Option DiathesisAlternation
   | .alternation a => some a
   | _ => none
 
-/-- The diacritic a class page gives a property: none, an asterisk, or a question mark. -/
+/-- A class page marks a property with no diacritic, an asterisk, or a question mark. -/
 inductive Attestation where
   | attested | starred | marginal
   deriving DecidableEq, Repr
 
 /-- The scope qualifier of a property entry. -/
 inductive PropertyScope where
-  | all | most | some | few
+  | all | most | many | some | few
   deriving DecidableEq, Repr
 
 /-- One line of a class page's property table. -/
@@ -345,7 +359,7 @@ def properties : LevinClass → List ClassProperty
      ⟨.alternation .causativeInchoative, .attested, .most⟩, ⟨.alternation .middle, .attested, .all⟩]
   | .shake =>
     [⟨.alternation .togetherReciprocal, .attested, .all⟩,
-     ⟨.alternation .simpleReciprocal, .starred, .all⟩, ⟨.alternation .causative, .starred, .few⟩,
+     ⟨.alternation .simpleReciprocal, .starred, .all⟩, ⟨.alternation .causative, .starred, .most⟩,
      ⟨.alternation .middle, .attested, .all⟩]
   | .tape =>
     [⟨.alternation .locative, .starred, .all⟩, ⟨.alternation .simpleReciprocal, .starred, .all⟩,
@@ -373,7 +387,7 @@ def properties : LevinClass → List ClassProperty
      ⟨.alternation .causativeInchoative, .attested, .most⟩, ⟨.alternation .middle, .attested, .all⟩]
   | .disassemble =>
     [⟨.alternation .simpleReciprocal, .starred, .all⟩,
-     ⟨.alternation .apartReciprocal, .starred, .all⟩, ⟨.alternation .causative, .starred, .few⟩,
+     ⟨.alternation .apartReciprocal, .starred, .all⟩, ⟨.alternation .causative, .starred, .most⟩,
      ⟨.alternation .middle, .attested, .all⟩]
   | .differ =>
     [⟨.alternation .simpleReciprocalIntransitive, .attested, .all⟩,
@@ -620,7 +634,7 @@ def properties : LevinClass → List ClassProperty
   | .lightEmission =>
     [⟨.alternation .locative, .attested, .all⟩, ⟨.alternation .locativeInversion, .attested, .all⟩,
      ⟨.alternation .thereInsertion, .attested, .all⟩, ⟨.alternation .causative, .attested, .some⟩,
-     ⟨.alternation .adjectivalPerfectParticiple, .attested, .all⟩, ⟨.erNominal, .attested, .all⟩,
+     ⟨.alternation .adjectivalPerfectParticiple, .starred, .all⟩, ⟨.erNominal, .attested, .all⟩,
      ⟨.zeroRelatedNominal, .attested, .all⟩]
   | .soundEmission =>
     [⟨.alternation .locative, .attested, .most⟩,
@@ -692,7 +706,7 @@ def properties : LevinClass → List ClassProperty
   | .entitySpecificModeOfBeing =>
     [⟨.alternation .thereInsertion, .attested, .some⟩,
      ⟨.alternation .locativeInversion, .attested, .some⟩,
-     ⟨.alternation .locative, .attested, .some⟩, ⟨.alternation .causative, .starred, .few⟩,
+     ⟨.alternation .locative, .attested, .some⟩, ⟨.alternation .causative, .starred, .most⟩,
      ⟨.alternation .adjectivalPerfectParticiple, .starred, .all⟩, ⟨.erNominal, .starred, .all⟩]
   | .modeOfBeingInvolvingMotion =>
     [⟨.alternation .locative, .starred, .all⟩, ⟨.alternation .thereInsertion, .attested, .some⟩,
@@ -724,7 +738,7 @@ def properties : LevinClass → List ClassProperty
   | .appear =>
     [⟨.alternation .thereInsertion, .attested, .most⟩,
      ⟨.alternation .locativeInversion, .attested, .most⟩,
-     ⟨.alternation .causative, .starred, .all⟩,
+     ⟨.alternation .causative, .starred, .many⟩,
      ⟨.alternation .adjectivalPerfectParticiple, .attested, .all⟩]
   | .reflexiveAppearance =>
     [⟨.alternation .thereInsertion, .starred, .all⟩,
@@ -792,33 +806,27 @@ def properties : LevinClass → List ClassProperty
   | .weekend => []
   | .weather => []
 
-/-- The alternations the class page lists with the given diacritic. -/
-def alternationsWith (c : LevinClass) (m : Attestation) : Finset DiathesisAlternation :=
-  (c.properties.filterMap fun p ↦
-    match p.property with
-    | .alternation a => if p.attestation = m then some a else none
-    | _ => none).toFinset
+/-- The class page lists the alternation with the given diacritic. -/
+def Lists (c : LevinClass) (a : DiathesisAlternation) (m : Attestation) : Prop :=
+  ∃ p ∈ c.properties, p.property = .alternation a ∧ p.attestation = m
 
-/-- The alternations the class page attests. -/
-def alternations (c : LevinClass) : Finset DiathesisAlternation := c.alternationsWith .attested
+instance (c : LevinClass) (a : DiathesisAlternation) (m : Attestation) :
+    Decidable (c.Lists a m) :=
+  inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
-/-- The alternations the class page stars. -/
-def starredAlternations (c : LevinClass) : Finset DiathesisAlternation :=
-  c.alternationsWith .starred
-
-/-- The class shows the alternation in [levin-1993] Part II: its page attests it, or attests
-the section grouping it, as a page attesting the causative alternations attests the
+/-- The class shows the alternation in [levin-1993] Part II when its page attests it or the
+section grouping it, as a page attesting the causative alternations attests the
 causative/inchoative one. -/
 def Participates (c : LevinClass) (a : DiathesisAlternation) : Prop :=
-  a ∈ c.alternations ∨ ∃ p ∈ a.parent?, p ∈ c.alternations
+  c.Lists a .attested ∨ ∃ p ∈ a.parent?, c.Lists p .attested
 
 instance (c : LevinClass) (a : DiathesisAlternation) : Decidable (c.Participates a) :=
   inferInstanceAs (Decidable (_ ∨ _))
 
-/-- The class lacks the alternation in [levin-1993] Part II: its page stars it, or stars the
+/-- The class lacks the alternation in [levin-1993] Part II when its page stars it or the
 section grouping it. -/
 def Stars (c : LevinClass) (a : DiathesisAlternation) : Prop :=
-  a ∈ c.starredAlternations ∨ ∃ p ∈ a.parent?, p ∈ c.starredAlternations
+  c.Lists a .starred ∨ ∃ p ∈ a.parent?, c.Lists p .starred
 
 instance (c : LevinClass) (a : DiathesisAlternation) : Decidable (c.Stars a) :=
   inferInstanceAs (Decidable (_ ∨ _))

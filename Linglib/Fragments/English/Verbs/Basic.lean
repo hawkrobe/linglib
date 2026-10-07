@@ -123,7 +123,8 @@ def sleep : Verb where
 def sneeze : Verb := .mkRegular {
   form := "sneeze"
   frames := [ArgumentFrame.intransitive]
-  passivizable := false }
+  passivizable := false
+  levinClasses := {LevinClass.hiccup, .nonverbalExpression} }
 
 /-- "run" — intransitive, no presupposition -/
 def run : Verb where
@@ -149,7 +150,8 @@ def dance : Verb := .mkRegular {
   form := "dance"
   frames := [ArgumentFrame.intransitive]
   passivizable := false
-  vendlerClass := some .activity }
+  vendlerClass := some .activity
+  levinClasses := {LevinClass.modeOfBeingInvolvingMotion, .performance, .waltz} }
 
 /-- "arrive" — unaccusative intransitive -/
 def arrive : Verb := .mkRegular {
@@ -185,6 +187,7 @@ def go : Verb where
   passivizable := false
   vendlerClass := some .achievement
   levinClasses := {LevinClass.inherentlyDirectedMotion}
+  levinExcluded := {LevinClass.meander}
 
 /-- In *run into the room* a bounded goal phrase makes a verb of manner of motion directed and
 telic, while *run behind the house* leaves it as it is, and so does any path phrase *sleep*, which

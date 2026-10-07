@@ -241,7 +241,7 @@ def worry : Verb where
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential .negative false)
-  levinClasses := {LevinClass.amuse}
+  levinClasses := {LevinClass.amuse, .marvel}
 
 /-! ### Clause-Embedding Predicates -/
 

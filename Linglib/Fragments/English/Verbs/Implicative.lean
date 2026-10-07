@@ -159,7 +159,7 @@ def bother : Verb := .mkRegular {
   vendlerClass := some .achievement
   passivizable := false
   implicative := ⟨.some .positive, .some .negative⟩
-  levinClasses := {LevinClass.amuse, .pain} }
+  levinClasses := {LevinClass.amuse, .marvel, .pain} }
 
 /-- "hesitate" — polarity-reversing one-way implicative.
     "Amira hesitated to drink a beer" ↛ "Amira did not drink a beer."

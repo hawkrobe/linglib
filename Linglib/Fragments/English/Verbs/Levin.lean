@@ -554,7 +554,7 @@ def bleed : Verb where
     ArgumentFrame.np_pp (some Adpositions.with_)]
   passivizable := false
   vendlerClass := some .activity
-  levinClasses := {LevinClass.breathe, .cheat, .substanceEmission}
+  levinClasses := {LevinClass.breathe, .cheat, .marvel, .substanceEmission}
 
 /-! ### Existence, Appearance, Position (§ 47–50) -/
 
@@ -588,7 +588,7 @@ def wiggle : Verb := .mkRegular {
   form := "wiggle"
   frames := [ArgumentFrame.intransitive, ArgumentFrame.np]
   vendlerClass := some .activity
-  levinClasses := {LevinClass.modeOfBeingInvolvingMotion, .bodyInternalMotion} }
+  levinClasses := {LevinClass.modeOfBeingInvolvingMotion, .bodyInternalMotion, .crane} }
 
 /-- "wriggle" — Levin 49 Body-Internal Motion verbs. -/
 def wriggle : Verb := .mkRegular {
