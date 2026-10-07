@@ -169,4 +169,7 @@ def relations : List FormRelation := [
     ] }
 ]
 
+/-- The form and the target of each relation, in the order of `relations`. -/
+def relationForms : List (Form × Form) := [(string, strung), (strike, struck), (sneak, snuck), (drag, drug)]
+
 end Bybee1995.Forms

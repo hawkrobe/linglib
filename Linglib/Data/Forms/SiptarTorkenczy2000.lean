@@ -870,4 +870,7 @@ def relations : List FormRelation := [
     ] }
 ]
 
+/-- The form and the target of each relation, in the order of `relations`. -/
+def relationForms : List (Form × Form) := [(haz, hazunk), (haz, haztol), (haz, haznak), (haz, hazhoz), (tuz, tuzunk), (tuz, tuztol), (tuz, tuznek), (tuz, tuzhoz), (viz, vizunk), (viz, viztol), (viz, viznek), (viz, vizhez), (piros, pirosunk), (piros, pirostol), (piros, pirosnak), (piros, piroshoz), (nuansz, nuanszunk), (nuansz, nuansztol), (nuansz, nuansznak), (nuansz, nuanszhoz), (oreg, oregunk), (oreg, oregtol), (oreg, oregnek), (oreg, oreghez), (szemolcs, szemolcsunk), (szemolcs, szemolcstol), (szemolcs, szemolcsnek), (szemolcs, szemolcshoz), (sofor, soforunk), (sofor, sofortol), (sofor, sofornek), (sofor, soforhoz), (papir, papirunk), (papir, papirtol), (papir, papirnak), (papir, papirhoz), (hid, hidunk), (hid, hidtol), (hid, hidnak), (hid, hidhoz), (kodex, kodexunk), (kodex, kodextol), (kodex, kodexnek), (kodex, kodexhez), (dzsungel, dzsungelban), (dzsungel, dzsungelben)]
+
 end SiptarTorkenczy2000.Forms

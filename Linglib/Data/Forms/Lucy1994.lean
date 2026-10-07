@@ -871,4 +871,7 @@ def relations : List FormRelation := [
     ] }
 ]
 
+/-- The form and the target of each relation, in the order of `relations`. -/
+def relationForms : List (Form × Form) := [(siit, siit_t), (tziib, AFCT), (miis, AFCT), (cheh, AFCT), (paak, AFCT), (kuc, kuc_0), (kos, ROOT), (pis, ROOT), (hats, ROOT), (los, ROOT), (ah, ah_s), (wen, wen_s), (siih, siih_s), (kiim, kiim_s), (tuub, tuub_s), (kaah, kaah_s), (chuun, chuun_s), (chen, chen_s), (hoop, hoop_s), (haaw, haaw_s), (heel, heel_s), (paat, paat_s), (maan, maan_s), (peek, peek_s), (bin, bin_s), (taal, taal_s), (uul, uul_s), (ok, ok_s), (luub, luub_s), (liik, liik_s), (naak, naak_s), (cin, cin_0), (cin, cin_lah), (cil, POS)]
+
 end Lucy1994.Forms

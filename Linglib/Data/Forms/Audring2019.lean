@@ -121,4 +121,7 @@ def relations : List FormRelation := [
     ] }
 ]
 
+/-- The form and the target of each relation, in the order of `relations`. -/
+def relationForms : List (Form × Form) := [(boyish, foolish), (boyish, childish), (foolish, childish), (careful, careless)]
+
 end Audring2019.Forms

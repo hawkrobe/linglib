@@ -208,4 +208,7 @@ def relations : List FormRelation := [
     ] }
 ]
 
+/-- The form and the target of each relation, in the order of `relations`. -/
+def relationForms : List (Form × Form) := [(tamu, tetamu), (jawah, jejawah), (geni, gegeni), (kibiir, akbar), (tixiin, atxan)]
+
 end Booij2019.Forms

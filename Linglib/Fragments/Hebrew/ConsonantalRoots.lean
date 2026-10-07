@@ -12,7 +12,8 @@ of *kalal* arise from a biradical root by template satisfaction in McCarthy's se
 final *j* of √klj surfaces only outside the past tense, and the roots of the taQTiL nouns, a
 *t*-final root behind the masculine *taskit* against *j*-final roots behind the feminine
 *tavnit*, *taglit*, *tadmit* and *tarmit*. The second group is Arad's: the roots of the seven
-binyanim as she numbers them, P1 to P7, and of her active–passive pairs in P3–P4 and P5–P6.
+binyanim as she numbers them, P1 to P7, of her active–passive pairs in P3–P4 and P5–P6, of the
+geminate slot of P3 and P7, of her roots across many patterns and of her conjugation classes.
 Each author's roots are in that author's transcription.
 
 ## Main definitions
@@ -22,6 +23,10 @@ Each author's roots are in that author's transcription.
   roots of his taQTiL nouns and their bases.
 * `Hebrew.lmd`, `Hebrew.spr`, `Hebrew.qlt`, `Hebrew.pll`, `Hebrew.npc`, `Hebrew.xlq`,
   `Hebrew.str`, `Hebrew.pqd`: Arad's binyan roots.
+* `Hebrew.trgm`, `Hebrew.qbl`, `Hebrew.rkk`: her roots of the geminate slot.
+* `Hebrew.xšb`, `Hebrew.sgr`, `Hebrew.šmn`: her roots across many patterns.
+* `Hebrew.ptx`, `Hebrew.qpʔ`, `Hebrew.mss`, `Hebrew.xmm`, `Hebrew.bhr`, `Hebrew.ʔdm`: her roots
+  of the conjugation classes.
 
 ## References
 
@@ -96,5 +101,55 @@ def str : ConsonantalRoot String := ⟨["s", "t", "r"]⟩
 
 /-- √pqd, the root of *hifqid* 'deposit' in P5 and its passive *hufqad* in P6. -/
 def pqd : ConsonantalRoot String := ⟨["p", "q", "d"]⟩
+
+/-- √šmr, the root of *šamar* 'guard' in P1. -/
+def «šmr» : ConsonantalRoot String := ⟨["š", "m", "r"]⟩
+
+/-! ### The geminate slot -/
+
+/-- √trgm, the quadriliteral root of *tirgem* 'translate' in P3, whose fourth consonant takes
+the geminate slot. -/
+def trgm : ConsonantalRoot String := ⟨["t", "r", "g", "m"]⟩
+
+/-- √qbl, the root of *qibel* 'receive' in P3, where the geminate *b* does not spirantize. -/
+def qbl : ConsonantalRoot String := ⟨["q", "b", "l"]⟩
+
+/-- √rkk, the root of *hitrakex* 'become soft' in P7, where the geminate *k* does not
+spirantize. -/
+def rkk : ConsonantalRoot String := ⟨["r", "k", "k"]⟩
+
+/-! ### Roots across patterns -/
+
+/-- √šmn, the root of *šemen* 'oil', *šamenet* 'cream', *šuman* 'fat', *hišmin* 'fatten' and
+*šimen* 'grease'. -/
+def «šmn» : ConsonantalRoot String := ⟨["š", "m", "n"]⟩
+
+/-- √xšb, the root of *xašav* 'think', *xišev* 'calculate', *maxšev* 'computer' and *xešbon*
+'arithmetic'. -/
+def «xšb» : ConsonantalRoot String := ⟨["x", "š", "b"]⟩
+
+/-- √sgr, the root of *sagar* 'close', *hisgir* 'extradite', *seger* 'closure' and *misgeret*
+'frame'. -/
+def sgr : ConsonantalRoot String := ⟨["s", "g", "r"]⟩
+
+/-! ### The conjugation classes -/
+
+/-- √ptx, the root of *patax* 'open' in P1 and its inchoative *niftax* in P2. -/
+def ptx : ConsonantalRoot String := ⟨["p", "t", "x"]⟩
+
+/-- √qpʔ, the root of *qafaʔ* 'freeze' in P1 and its causative *hiqpiʔ* in P5. -/
+def «qpʔ» : ConsonantalRoot String := ⟨["q", "p", "ʔ"]⟩
+
+/-- √mss, the root of *namas* 'melt' in P2 and its causative *hemes* in P5. -/
+def mss : ConsonantalRoot String := ⟨["m", "s", "s"]⟩
+
+/-- √xmm, the root of *ximem* 'heat' in P3 and its inchoative *hitxamem* in P7. -/
+def xmm : ConsonantalRoot String := ⟨["x", "m", "m"]⟩
+
+/-- √bhr, the root of *hivhir* 'make clear' in P5 and its inchoative *hitbaher* in P7. -/
+def bhr : ConsonantalRoot String := ⟨["b", "h", "r"]⟩
+
+/-- √ʔdm, the root of *heʔedim* 'redden, be red' in P5. -/
+def «ʔdm» : ConsonantalRoot String := ⟨["ʔ", "d", "m"]⟩
 
 end Hebrew

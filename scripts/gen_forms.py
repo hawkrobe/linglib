@@ -193,6 +193,10 @@ def emit_module(author_year: str, data: dict) -> str:
         params_def = params_def.replace(":=\n", ":= [\n", 1)
     if rels:
         rels_def = rels_def.replace(":=\n", ":= [\n", 1)
+        local_of = {req_id(r, "ID", "FormTable row"): l for r, (l, _) in zip(forms, locals_and_defs)}
+        pairs = ", ".join(f"({local_of[r['Form_ID']]}, {local_of[r['Target_ID']]})" for r in rels)
+        rels_def += ("\n\n/-- The form and the target of each relation, in the order of `relations`. -/"
+                     f"\ndef relationForms : List (Form × Form) := [{pairs}]")
     return f"""import Linglib.Data.Forms.Schema
 
 /-!
