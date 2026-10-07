@@ -4,23 +4,31 @@ public import Linglib.Studies.BaleSchwarz2022
 public import Linglib.Data.Examples.BaleSchwarz2026
 
 /-!
-# Bale and Schwarz 2026: natural language and external conventions, re-examining *per*
+# Bale and Schwarz (2026): Natural language and external conventions: re-examining per
 
-*Per*-phrases come in two kinds. Saturating a predicate of a simplex dimension, as in
-*this sample weighs thirteen grams per milliliter* or *the train covered thirty miles per
-hour*, they compose in the grammar, and the entries for *per* of both Coppock and Bale and
-Schwarz can be restated with pure numbers and multiplication alone, the pure number being
-the unique `n` with `n ⋅ mL = μ_VOL(x)`; so neither commits the grammar to quantity
-division, which the No Division Hypothesis denies it altogether. Saturating a predicate of a
-quotient dimension, as in *the density of that sample is thirteen grams per milliliter*,
-they are math speak: verbalizations of the quantity-calculus term `13 g/mL`, whose meaning
-comes from the external notation as a mixed quotation's does. Two diagnostics separate the
-kinds. An unambiguous verbalization, *thirteen gee over em el*, substitutes for a math-speak
-phrase but yields nonsense for a compositional one; and a compositional *per*-PP can be
-fronted while a math-speak one, lacking structure the grammar can see, cannot. Both reduce
-to the dimension facts of the 2022 paper: a composed *per*-phrase has its head unit's
-dimension, so it can be a weight but never a density, while the quotient `13 g/mL` is a
-density and never a weight.
+*Per*-phrases come in two kinds. Saturating a predicate of a simplex dimension, as in *this
+sample weighs thirteen grams per milliliter*, they compose in the grammar, and both Coppock's
+entry for *per* and the anaphoric entry of the 2022 paper can be restated with pure numbers and
+multiplication alone, so neither commits the grammar to the quantity division that the No Division
+Hypothesis denies it. Saturating a predicate of a quotient dimension, as in *the density of that
+sample is thirteen grams per milliliter*, they are math speak, verbalizations of the term
+`13 g/mL` whose meaning comes from the external notation as a mixed quotation's does. A
+verbalization such as *thirteen gee over em el* substitutes only for math speak, and
+only a composed *per*-PP can be fronted. Both facts reduce to dimensions: a composed
+*per*-phrase has its head unit's dimension, so it can be a weight but never a density, while
+`13 g/mL` is a density and never a weight.
+
+## Main statements
+
+* `existsUnique_pure_mul`: the pure number the anaphoric *per* denotes is the unique `n` with
+  `n ⋅ r = μ(y)`, so the entry needs no division.
+* `coppockPer_much_iff`: Coppock's entry and the anaphoric measure phrase derive the same truth
+  conditions.
+* `ratio_eq_mathSpeak_iff`, `ratio_ne_anaphoricMP`, `not_much_mathSpeak`: a predicate of a
+  quotient dimension accepts the verbalized quotient and never a composed *per*-phrase, and a
+  predicate of a simplex dimension never accepts the verbalized quotient.
+* `rows_dimension`: the *per*-phrase's dimension matches the predicate's exactly in the
+  felicitous examples.
 
 ## References
 
@@ -37,23 +45,24 @@ namespace BaleSchwarz2026
 
 open Degree Quantity English.MeasurePhrases BaleSchwarz2022
 
-variable {E : Type*} {w : World E} {D D₁ D₂ : Dimension} {x y : E} {n : ℚ} {u r : MeasureTerm}
+noncomputable section
+
+variable {E : Type*} {w : World E} {D D₁ D₂ : Dimension} {x y : E} {n : ℝ} {u r : MeasureTerm}
 
 /-! ### Multiplication only -/
 
 /-- The pure number `μ_dim(r)(y) / r` is the unique `n` with `n ⋅ r = μ_dim(r)(y)` ((21)). -/
-theorem anaphoricPer_eq_pure_iff (hr : r.magnitude ≠ 0) :
+theorem anaphoricPer_eq_pure_iff :
     anaphoricPer w r y = pure n ↔ pure n * r.quantity = w.quantity r.dimension y :=
-  div_eq_pure_iff hr rfl
+  div_eq_pure_iff r.cast_magnitude_pos.ne' rfl
 
-theorem existsUnique_pure_mul (hr : r.magnitude ≠ 0) :
-    ∃! n : ℚ, pure n * r.quantity = w.quantity r.dimension y :=
-  ⟨(anaphoricPer w r y).1, (anaphoricPer_eq_pure_iff hr).1 (Prod.ext rfl anaphoricPer_snd),
-    λ _ h => congrArg Prod.fst ((anaphoricPer_eq_pure_iff hr).2 h).symm⟩
+theorem existsUnique_pure_mul : ∃! n : ℝ, pure n * r.quantity = w.quantity r.dimension y :=
+  ⟨(anaphoricPer w r y).1, anaphoricPer_eq_pure_iff.1 (Prod.ext rfl anaphoricPer_snd),
+    fun _ h ↦ congrArg Prod.fst (anaphoricPer_eq_pure_iff.2 h).symm⟩
 
-/-- Coppock's *per* ((9), (15)): `λq λr λf λx. max{d | f d x} = μ_dim(q)(x) / q ⋅ r`, taking
-the measure predicate `f` as an argument. -/
-def coppockPer (w : World E) (r : MeasureTerm) (q : Quantity ℚ) (f : Quantity ℚ → E → Prop)
+/-- Coppock's *per* ((9), (15)) takes the measure predicate `f` as an argument,
+`λq λr λf λx. max{d | f d x} = μ_dim(q)(x) / q ⋅ r`. -/
+def coppockPer (w : World E) (r : MeasureTerm) (q : Quantity ℝ) (f : Quantity ℝ → E → Prop)
     (x : E) : Prop :=
   ∃ d, IsGreatest {d | f d x} d ∧ d = anaphoricPer w r x * q
 
@@ -64,16 +73,17 @@ theorem coppockPer_much_iff :
       much (w.quantity D) (anaphoricMP w n u r x) x := by
   simp only [coppockPer, much, Set.ofPred_eq_eq_singleton', anaphoricMP,
     mul_comm _ (anaphoricPer w r x)]
-  exact ⟨λ ⟨_, hd, h⟩ => (hd.unique isGreatest_singleton).symm.trans h,
-    λ h => ⟨_, isGreatest_singleton, h⟩⟩
+  exact ⟨fun ⟨_, hd, h⟩ ↦ (hd.unique isGreatest_singleton).symm.trans h,
+    fun h ↦ ⟨_, isGreatest_singleton, h⟩⟩
 
 /-! ### Math speak -/
 
 /-- A verbalization of the quantity-calculus term `n u / r` denotes that quotient. -/
-def mathSpeak (n : ℚ) (u r : MeasureTerm) : Quantity ℚ := divisionMP n u r
+def mathSpeak (n : ℝ) (u r : MeasureTerm) : Quantity ℝ := divisionMP n u r
 
-/-- The measure `μ_{D₁} / μ_{D₂}` of a quotient dimension: density, speed. -/
-def ratio (w : World E) (D₁ D₂ : Dimension) (x : E) : Quantity ℚ :=
+/-- `ratio w D₁ D₂` is the measure `μ_{D₁} / μ_{D₂}` of a quotient dimension, such as density or
+speed. -/
+def ratio (w : World E) (D₁ D₂ : Dimension) (x : E) : Quantity ℝ :=
   w.quantity D₁ x / w.quantity D₂ x
 
 @[simp] theorem ratio_snd : (ratio w D₁ D₂ x).2 = .of D₁ / .of D₂ := by simp [ratio]
@@ -84,16 +94,16 @@ theorem density_eq_ratio : density w x = ratio w .mass .volume x := rfl
 `μ_{D₁}(x) / μ_{D₂}(x) = n u / r`. -/
 theorem ratio_eq_mathSpeak_iff (hu : u.dimension = D₁) (hr : r.dimension = D₂) :
     ratio w D₁ D₂ x = mathSpeak n u r ↔ w D₁ x / w D₂ x = n * u.magnitude / r.magnitude := by
-  simp [ratio, mathSpeak, divisionMP, divisionPer, Prod.ext_iff, MeasureTerm.quantity, hu, hr]
+  simp [ratio, mathSpeak, divisionMP, divisionPer, Prod.ext_iff, hu, hr]
 
 /-- It never accepts a composed *per*-phrase ((27), (28)): fronting forces composition, and a
 quantity of the head unit's dimension is no quotient. -/
 theorem ratio_ne_anaphoricMP (hu : u.dimension = D₁) : ratio w D₁ D₂ x ≠ anaphoricMP w n u r y :=
-  λ h => by simpa [hu] using congrArg Prod.snd h
+  fun h ↦ by simpa [hu] using congrArg Prod.snd h
 
 /-- A predicate of a simplex dimension never accepts the verbalized quotient ((26)). -/
-theorem not_much_mathSpeak (hu : u.dimension = D) : ¬ much (w.quantity D) (mathSpeak n u r) x :=
-  not_much_divisionMP hu
+theorem not_much_mathSpeak : ¬ much (w.quantity D) (mathSpeak n u r) x :=
+  not_much_divisionMP
 
 /-! ### The paper's examples -/
 
@@ -141,5 +151,7 @@ def dimensions? (e : Datum) : Option (QuantityDimension × QuantityDimension) :=
 theorem rows_dimension : ∀ e ∈ Examples.all, ∀ p ∈ dimensions? e,
     (p.1 = p.2 ↔ e.judgment = .acceptable) := by
   decide +kernel
+
+end
 
 end BaleSchwarz2026

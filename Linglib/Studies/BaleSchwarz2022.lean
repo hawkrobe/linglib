@@ -1,38 +1,63 @@
 module
 
 public import Linglib.Semantics.Degree.Measure.Quantity
-public import Linglib.Semantics.Presupposition.Defs
 public import Linglib.Fragments.English.MeasurePhrases
 public import Linglib.Data.Examples.BaleSchwarz2022
+public import Mathlib.Data.PFun
+public import Mathlib.Data.Rat.Cast.Order
+public import Mathlib.Tactic.FieldSimp
+public import Mathlib.Tactic.NormNum
 
 /-!
-# Bale and Schwarz 2022: measurements from *per* without complex dimensions
+# Bale and Schwarz (2022): Measurements from "per" without complex dimensions
 
-Two semantics for the preposition *per*. On the division theory, *per* divides
-quantities: *0.9 grams per milliliter* denotes the density `0.9 g/mL`. On the anaphoric
-theory, *per* measures a covert pronoun: *per milliliter* maps *pro* to its volume in
-milliliters, a pure number that multiplies `0.9 g` without leaving the dimension of mass.
-The paper argues for the anaphoric theory on two grounds. A measurement verb equates its
-subject's mass with its complement, so the division theory hands *weighs* a density and
-*the sample weighs 0.9 grams per milliliter* comes out contradictory, while the polysemous
-*weigh* that would rescue it predicts a same-density reading of *this cube weighs what that
-cube weighs* that nobody gets; the anaphoric measure phrase stays in the verb's dimension.
-And *0.1 grams per milliliter* and *0.1 kilograms per liter* denote one and the same
-quotient, yet only the former is felicitous of a 5-millilitre sample; the anaphoric *per* can
-carry the presupposition that the pronoun's referent measures at least one unit, which no
-constituent of the division theory's structure could state. Where both theories compose,
-in measurement-verb and pseudo-partitive sentences alike, they derive the same truth
-conditions. The paper closes on *the sample's density is 0.9 grams per milliliter*, which
-the anaphoric theory predicts to be as odd as *#the sample's density is 0.9 grams*.
+On Coppock's division theory the preposition *per* divides quantities, so that *0.9 grams per
+milliliter* denotes the density `0.9 g/mL`. On Bale and Schwarz's anaphoric theory *per
+milliliter* measures a covert pronoun in milliliters, a pure number that multiplies `0.9 g`, and
+the measure phrase stays in the dimension of mass. The division theory undergenerates: *weigh*
+measures weight, so it cannot take a quotient, and the polysemous *weigh* that would let it
+predicts a same-density reading of *this cube weighs what that cube weighs* that the sentence
+lacks. It also overgenerates: it gives *0.1 grams per milliliter* and *0.1 kilograms per liter*
+one meaning, while the anaphoric *per*, which sees the pronoun's referent, presupposes that the
+referent measures at least one unit. Where both theories compose they agree.
 
-Worlds assign each base dimension its measure function; the covert pronoun's referent is a
-parameter, resolved to the matrix subject. Units come from the English measure-term
-fragment.
+A world assigns each base dimension a real-valued measure function, and the units are the English
+measure terms.
+
+## Main statements
+
+* `not_much_divisionMP`: a measurement verb never takes a measure phrase of the division theory,
+  whatever its units.
+* `density_reading`: the polysemous *weigh* makes *this cube weighs what that cube weighs* true
+  of a one-kilogram and a two-kilogram cube.
+* `anaphoricMP_snd`: an anaphoric measure phrase has the dimension of its head unit.
+* `much_divisionMP_iff_anaphoricMP`, `contains_divisionMP_iff_anaphoricMP`: where both theories
+  compose, they derive the same truth conditions.
+* `divisionMP_kilogram_liter`: the division theory identifies *0.1 kilograms per liter* with
+  *0.1 grams per milliliter*.
+* `unit_sensitivity`: on the anaphoric theory the two pseudo-partitives assert the same thing,
+  but one presupposes a volume of at least a milliliter and the other of at least a liter.
+* `division_overgenerates`: at a world where the sample measures a tenth of a milliliter, the
+  division theory makes *the 0.1 milliliter sample contained 0.1 grams of salt per milliliter*
+  true, while on the anaphoric theory it is undefined.
+* `acceptable_iff_mem_dom`: a *per*-sentence is defined at a world where its subject measures as
+  the example states exactly when the example is felicitous.
+* `density_ne_anaphoricMP`: the anaphoric theory makes *the sample's density is 0.9 grams per
+  milliliter* contradictory, the puzzle the paper ends on.
+
+## Implementation notes
+
+* A sentence with *per* denotes a partial proposition `World E →. Prop`, after the
+  Heim–Kratzer notation of (43). It maps its truth conditions over the value of the *per*-phrase,
+  so the sentence is defined where *per* is: the global projection the paper assumes (p. 557).
+* The covert pronoun is a parameter, resolved to the matrix subject.
+* (43) compares two quantities of one dimension; the file compares their magnitudes.
 
 ## References
 
 * [bale-schwarz-2022]
 * [coppock-2021]
+* [heim-kratzer-1998]
 * [nakanishi-2007]
 * [schwarzschild-2006]
 -/
@@ -41,18 +66,20 @@ fragment.
 
 namespace BaleSchwarz2022
 
-open Degree Quantity English.MeasurePhrases Presupposition
+open Degree Quantity English.MeasurePhrases
+
+noncomputable section
 
 variable {E : Type*}
 
 /-- A world assigns each base dimension `D` its measure function `μ_D`. -/
-abbrev World (E : Type*) := Dimension → E → ℚ
+abbrev World (E : Type*) := Dimension → E → ℝ
 
-/-- `μ_D` as a dimensioned measure. -/
-def World.measure (w : World E) (D : Dimension) : DimensionedMeasure E ℚ := ⟨D, w D⟩
+/-- `w.measure D` is the measure function `μ_D` as a measure of dimension `D`. -/
+def World.measure (w : World E) (D : Dimension) : DimensionedMeasure E ℝ := ⟨D, w D⟩
 
-/-- `μ_D(x)` as a quantity of dimension `D`. -/
-def World.quantity (w : World E) (D : Dimension) (x : E) : Quantity ℚ :=
+/-- `w.quantity D x` is `μ_D(x)`, a quantity of dimension `D`. -/
+def World.quantity (w : World E) (D : Dimension) (x : E) : Quantity ℝ :=
   (w.measure D).quantity x
 
 @[simp] theorem World.quantity_fst (w : World E) (D : Dimension) (x : E) :
@@ -61,14 +88,15 @@ def World.quantity (w : World E) (D : Dimension) (x : E) : Quantity ℚ :=
 @[simp] theorem World.quantity_snd (w : World E) (D : Dimension) (x : E) :
     (w.quantity D x).2 = .of D := rfl
 
-variable {w : World E} {D : Dimension} {x y : E} {q : Quantity ℚ} {n k : ℚ}
-  {u u' r r' : MeasureTerm}
+variable {w : World E} {D : Dimension} {x y m : E} {q : Quantity ℝ} {n k : ℝ}
+  {u u' r r' : MeasureTerm} {salt : E → Prop} {contain : E → E → Prop}
 
 /-! ### Measure predication -/
 
-/-- `λq λx. μ(x) = q`: the measurement verb *weigh* with `μ = μ_WT` ((5)), and the covert
-`MUCH` of pseudo-partitives with `μ` underspecified ((25)). -/
-def much (μ : E → Quantity ℚ) (q : Quantity ℚ) (x : E) : Prop := μ x = q
+/-- `much μ q x` says that `x` measures `q` under `μ`, `λq λx. μ(x) = q`. It is the measurement
+verb *weigh* with `μ = μ_WT` ((5)), and the covert `MUCH` of pseudo-partitives with `μ`
+underspecified ((25)). -/
+def much (μ : E → Quantity ℝ) (q : Quantity ℝ) (x : E) : Prop := μ x = q
 
 theorem much_quantity_iff : much (w.quantity D) q x ↔ w D x = q.1 ∧ q.2 = .of D := by
   simp [much, Prod.ext_iff, eq_comm]
@@ -77,63 +105,64 @@ theorem much_quantity_iff : much (w.quantity D) q x ↔ w D x = q.1 ∧ q.2 = .o
 theorem not_much_quantity_of_snd_ne (h : q.2 ≠ .of D) : ¬ much (w.quantity D) q x := by
   simp [much_quantity_iff, h]
 
-/-- `∃x[salt(x) ∧ μ(x) = q ∧ contain(m, x)]` ((26)). -/
-def contains (salt : E → Prop) (contain : E → E → Prop) (μ : E → Quantity ℚ) (q : Quantity ℚ)
+/-- `contains salt contain μ q m` says that `m` contains salt of measure `q` under `μ`,
+`∃x[salt(x) ∧ μ(x) = q ∧ contain(m, x)]` ((26)). -/
+def contains (salt : E → Prop) (contain : E → E → Prop) (μ : E → Quantity ℝ) (q : Quantity ℝ)
     (m : E) : Prop :=
   ∃ x, salt x ∧ much μ q x ∧ contain m x
 
 /-! ### The division theory -/
 
-/-- `⟦per⟧ = λr λq. q / r` ((1)). -/
-def divisionPer (r q : Quantity ℚ) : Quantity ℚ := q / r
+/-- Coppock's *per* divides its second argument by its first, `⟦per⟧ = λr λq. q / r` ((1)). -/
+def divisionPer (r q : Quantity ℝ) : Quantity ℝ := q / r
 
-/-- `⟦n u per r⟧ = n u / r` ((2)). -/
-def divisionMP (n : ℚ) (u r : MeasureTerm) : Quantity ℚ :=
+/-- On the division theory *n u per r* denotes the quotient `n u / r` ((2)). -/
+def divisionMP (n : ℝ) (u r : MeasureTerm) : Quantity ℝ :=
   divisionPer r.quantity (pure n * u.quantity)
 
 @[simp] theorem divisionMP_snd :
     (divisionMP n u r).2 = .of u.dimension / .of r.dimension := by
-  simp [divisionMP, divisionPer, MeasureTerm.quantity]
+  simp [divisionMP, divisionPer]
 
-/-- The division theory undergenerates ((7)): a measure of dimension `D` never equates with
-a *per*-phrase headed by a `D`-unit. -/
-theorem not_much_divisionMP (hu : u.dimension = D) :
-    ¬ much (w.quantity D) (divisionMP n u r) x :=
-  not_much_quantity_of_snd_ne (by simp [hu])
+/-- The division theory undergenerates ((7)): a measure of a base dimension never equates with a
+*per*-phrase, whose dimension is a quotient. -/
+theorem not_much_divisionMP : ¬ much (w.quantity D) (divisionMP n u r) x :=
+  not_much_quantity_of_snd_ne <| divisionMP_snd ▸ (QuantityDimension.of_ne_of_div_of _ _ _).symm
 
-/-- `μ_{WT/VOL}`, the measure of the polysemous *weigh* of (8). -/
-def density (w : World E) (x : E) : Quantity ℚ := w.quantity .mass x / w.quantity .volume x
+/-- The polysemous *weigh* of (8) measures density, `μ_{WT/VOL}`. -/
+def density (w : World E) (x : E) : Quantity ℝ := w.quantity .mass x / w.quantity .volume x
 
-/-- With the free relative denoting `y`'s measure, (10) equates the two measures ((12)). -/
+/-- With the free relative denoting `y`'s measure, *x weighs what y weighs* equates the two
+measures ((12)). -/
 theorem much_quantity_quantity_iff : much (w.quantity D) (w.quantity D y) x ↔ w D x = w D y := by
   simp [much_quantity_iff]
 
-/-- The polysemous *weigh* adds a same-density reading ((13)) that holds of cubes of
-unequal weight. -/
+/-- The polysemous *weigh* gives *this cube weighs what that cube weighs* a same-density reading
+((13)) that is true of a one-kilogram and a two-kilogram cube, where the weight reading ((12)) is
+false. -/
 theorem density_reading :
-    ∃ w : World Bool, much (density w) (density w false) true ∧ w .mass true ≠ w .mass false :=
-  ⟨λ D b => match D, b with
-    | .mass, true => 1000 | .mass, false => 2000 | .volume, true => 1 | .volume, false => 2
-    | _, _ => 0,
-   by simp [much, density, World.quantity, World.measure, DimensionedMeasure.quantity]; norm_num,
-   by norm_num⟩
+    ∃ w : World (Fin 2), much (density w) (density w 1) 0 ∧
+      ¬ much (w.quantity .mass) (w.quantity .mass 1) 0 := by
+  refine ⟨fun D i ↦ (i.val + 1 : ℝ) * if D = .mass then 1000 else 1, ?_, ?_⟩
+  · ext <;> simp [density]
+    norm_num
+  · simp [much_quantity_iff]
 
 /-! ### The anaphoric theory -/
 
-/-- `⟦per⟧ = λq λx. μ_dim(q)(x) / q` ((16)): the pronoun's referent measured in the unit, a
-pure number. -/
-def anaphoricPer (w : World E) (r : MeasureTerm) (y : E) : Quantity ℚ :=
+/-- Bale and Schwarz's *per* measures its pronoun's referent in units of its quantity argument,
+`⟦per⟧ = λq λx. μ_dim(q)(x) / q` ((16)), a pure number. -/
+def anaphoricPer (w : World E) (r : MeasureTerm) (y : E) : Quantity ℝ :=
   w.quantity r.dimension y / r.quantity
 
 @[simp] theorem anaphoricPer_fst :
     (anaphoricPer w r y).1 = w r.dimension y / r.magnitude := rfl
 
-@[simp] theorem anaphoricPer_snd : (anaphoricPer w r y).2 = 1 := by
-  simp [anaphoricPer, MeasureTerm.quantity]
+@[simp] theorem anaphoricPer_snd : (anaphoricPer w r y).2 = 1 := by simp [anaphoricPer]
 
-/-- `⟦[MP [MP n u] [PP pro per r]]⟧ = n u ⋅ μ_dim(r)(pro) / r` ((18)), `pro` resolved to
-`y`. -/
-def anaphoricMP (w : World E) (n : ℚ) (u r : MeasureTerm) (y : E) : Quantity ℚ :=
+/-- The anaphoric *n u per r*, its pronoun resolved to `y`, denotes `n u ⋅ μ_dim(r)(y) / r`
+((18)). -/
+def anaphoricMP (w : World E) (n : ℝ) (u r : MeasureTerm) (y : E) : Quantity ℝ :=
   pure n * u.quantity * anaphoricPer w r y
 
 @[simp] theorem anaphoricMP_fst :
@@ -141,7 +170,7 @@ def anaphoricMP (w : World E) (n : ℚ) (u r : MeasureTerm) (y : E) : Quantity �
 
 /-- The anaphoric measure phrase stays in its head unit's dimension ((19)). -/
 @[simp] theorem anaphoricMP_snd : (anaphoricMP w n u r y).2 = .of u.dimension := by
-  simp [anaphoricMP, MeasureTerm.quantity]
+  simp [anaphoricMP]
 
 /-- The measurement-verb sentence composes ((22)): `μ_D(x) = n u ⋅ μ_dim(r)(y) / r`. -/
 theorem much_anaphoricMP_iff (hu : u.dimension = D) :
@@ -149,153 +178,199 @@ theorem much_anaphoricMP_iff (hu : u.dimension = D) :
       w D x = n * u.magnitude * (w r.dimension y / r.magnitude) := by
   simp [much_quantity_iff, hu]
 
-/-- Where both theories compose they agree: (9) and (22) with the pronoun's referent the
-subject, (31) and (32) with it the container. -/
-theorem much_divisionMP_iff_anaphoricMP (hy : w r.dimension y ≠ 0) (hr : r.magnitude ≠ 0) :
-    much (λ x => w.quantity D x / w.quantity r.dimension y) (divisionMP n u r) x ↔
+/-- Where both theories compose they agree: (9) and (22) with the pronoun's referent the subject,
+(31) and (32) with it the container. -/
+theorem much_divisionMP_iff_anaphoricMP (hy : w r.dimension y ≠ 0) :
+    much (fun x ↦ w.quantity D x / w.quantity r.dimension y) (divisionMP n u r) x ↔
       much (w.quantity D) (anaphoricMP w n u r y) x :=
-  div_eq_div_iff_eq_mul_div hy hr
+  div_eq_div_iff_eq_mul_div hy r.cast_magnitude_pos.ne'
 
-theorem contains_divisionMP_iff_anaphoricMP {salt : E → Prop} {contain : E → E → Prop} {m : E}
-    (hm : w r.dimension m ≠ 0) (hr : r.magnitude ≠ 0) :
-    contains salt contain (λ x => w.quantity D x / w.quantity r.dimension m) (divisionMP n u r)
-        m ↔
+theorem contains_divisionMP_iff_anaphoricMP (hm : w r.dimension m ≠ 0) :
+    contains salt contain (fun x ↦ w.quantity D x / w.quantity r.dimension m)
+        (divisionMP n u r) m ↔
       contains salt contain (w.quantity D) (anaphoricMP w n u r m) m :=
-  exists_congr λ _ => and_congr_right λ _ => and_congr_left λ _ =>
-    much_divisionMP_iff_anaphoricMP hm hr
+  exists_congr fun _ ↦ and_congr_right fun _ ↦ and_congr_left fun _ ↦
+    much_divisionMP_iff_anaphoricMP hm
 
-/-! ### Unit sensitivity -/
+/-! ### Units of different sizes -/
 
-/-- `u'` is `k` times the unit `u`: a kilogram is `1000` grams, a liter `1000` milliliters. -/
-def Scales (k : ℚ) (u' u : MeasureTerm) : Prop :=
-  u'.dimension = u.dimension ∧ u'.magnitude = k * u.magnitude
-
-theorem kilogram_scales_gram : Scales 1000 kilogram gram := ⟨rfl, by norm_num [kilogram, gram]⟩
-
-theorem liter_scales_milliliter : Scales 1000 liter milliliter :=
-  ⟨rfl, by norm_num [liter, milliliter]⟩
-
-theorem Scales.quantity (h : Scales k u' u) : u'.quantity = pure k * u.quantity := by
-  ext <;> simp [MeasureTerm.quantity, h.1, h.2]
-
-/-- The division theory identifies scaled measure phrases, `0.1 kg / L = 0.1 g / mL`, so (27)
-and (36a) receive one meaning ((36b)). -/
-theorem divisionMP_scales (hk : k ≠ 0) (hu : Scales k u' u) (hr : Scales k r' r) :
+/-- The division theory identifies measure phrases whose units are scaled alike ((36b)). -/
+theorem divisionMP_scales (hk : k ≠ 0) (hu : u'.quantity = pure k * u.quantity)
+    (hr : r'.quantity = pure k * r.quantity) :
     divisionMP n u' r' = divisionMP n u r := by
-  rw [divisionMP, divisionMP, divisionPer, divisionPer, hu.quantity, hr.quantity, mul_left_comm,
+  rw [divisionMP, divisionMP, divisionPer, divisionPer, hu, hr, mul_left_comm,
     pure_mul_div_pure_mul hk]
 
-/-- So does the anaphoric measure phrase. -/
-theorem anaphoricMP_scales (hk : k ≠ 0) (hu : Scales k u' u) (hr : Scales k r' r) :
+/-- So it gives *0.1 kilograms per liter* the meaning of *0.1 grams per milliliter*, since
+`kg / L = g / mL` ((36)). -/
+theorem divisionMP_kilogram_liter : divisionMP n kilogram liter = divisionMP n gram milliliter :=
+  divisionMP_scales (by norm_num) kilogram_quantity liter_quantity
+
+/-- So does the anaphoric theory. -/
+theorem anaphoricMP_scales (hk : k ≠ 0) (hu : u'.quantity = pure k * u.quantity)
+    (hr : r'.quantity = pure k * r.quantity) :
     anaphoricMP w n u' r' y = anaphoricMP w n u r y := by
+  rw [MeasureTerm.quantity_eq_pure_mul_iff] at hu hr
   ext
-  · simp only [anaphoricMP_fst, hu.2, hr.1, hr.2]; field_simp
-  · simp [hu.1]
-
-/-- (43): *per* presupposes that the pronoun's referent measures at least one unit,
-`μ_dim(r)(y) ≥ r`. -/
-def perPresup (r : MeasureTerm) (y : E) (w : World E) : Prop := r.magnitude ≤ w r.dimension y
-
-/-- The revised *per* ((43)) as a presupposed value. -/
-def anaphoricPer' (r : MeasureTerm) (y : E) : PartialValue (World E) (Quantity ℚ) where
-  presup := perPresup r y
-  value w := anaphoricPer w r y
-
-/-- A sentence whose *per*-PP triggers (43), the presupposition projecting globally. -/
-def perSentence (r : MeasureTerm) (y : E) (p : World E → Prop) : PartialProp (World E) where
-  presup := (anaphoricPer' r y).presup
-  assertion := p
-
-@[simp] theorem perSentence_presup {p : World E → Prop} :
-    (perSentence r y p).presup w ↔ r.magnitude ≤ w r.dimension y := Iff.rfl
-
-/-- *y weighs n u per r*, the pronoun resolved to the subject ((20)). -/
-def weighs (n : ℚ) (u r : MeasureTerm) (y : E) : PartialProp (World E) :=
-  perSentence r y λ w => much (w.quantity .mass) (anaphoricMP w n u r y) y
-
-/-- *m contains n u per r of salt*, the pronoun resolved to the container ((41)). -/
-def containsPer (salt : E → Prop) (contain : E → E → Prop) (n : ℚ) (u r : MeasureTerm)
-    (m : E) : PartialProp (World E) :=
-  perSentence r m λ w => contains salt contain (w.quantity .mass) (anaphoricMP w n u r m) m
-
-/-- Scaling the units leaves the assertion unchanged. -/
-theorem weighs_assertion_scales (hk : k ≠ 0) (hu : Scales k u' u) (hr : Scales k r' r) :
-    (weighs n u' r' y).assertion = (weighs n u r y).assertion := by
-  funext w; simp [weighs, perSentence, anaphoricMP_scales hk hu hr]
-
-theorem containsPer_assertion_scales {salt : E → Prop} {contain : E → E → Prop} {m : E}
-    (hk : k ≠ 0) (hu : Scales k u' u) (hr : Scales k r' r) :
-    (containsPer salt contain n u' r' m).assertion =
-      (containsPer salt contain n u r m).assertion := by
-  funext w; simp [containsPer, perSentence, anaphoricMP_scales hk hu hr]
-
-/-- Scaling the *per*-unit raises the presupposition's bound from `r` to `k r`. -/
-theorem perPresup_scales (hr : Scales k r' r) :
-    perPresup r' y w ↔ k * r.magnitude ≤ w r.dimension y := by
-  simp [perPresup, hr.1, hr.2]
-
-/-- Unit sensitivity: a referent measuring at least one small unit but less than one large
-unit satisfies the small unit's presupposition and not the large one's, though the two
-sentences assert the same thing ((37) against (38a), (44) against (45a)). -/
-theorem perPresup_of_between (hr : Scales k r' r) (h₁ : r.magnitude ≤ w r.dimension y)
-    (h₂ : w r.dimension y < k * r.magnitude) : perPresup r y w ∧ ¬ perPresup r' y w :=
-  ⟨h₁, by simp [perPresup_scales hr, h₂]⟩
+  · simp only [anaphoricMP_fst, hu.1, hr.1, hr.2]; field_simp
+  · simp [hu.2]
 
 /-! ### The copular puzzle -/
 
-/-- No quantity of mass is a density: (47), and (46) on the anaphoric theory, are
+/-- No quantity of mass is a density, so *the sample's density is 0.9 grams* ((47)) is
 contradictory. -/
-theorem density_ne_of_snd (hq : q.2 = .of .mass) : density w x ≠ q := λ h => by
+theorem density_ne_of_snd (hq : q.2 = .of .mass) : density w x ≠ q := fun h ↦ by
   simpa [density, hq] using congrArg Prod.snd h
 
+theorem density_ne_pure_mul (hu : u.dimension = .mass) : density w x ≠ pure n * u.quantity :=
+  density_ne_of_snd (by simp [hu])
+
+/-- On the anaphoric theory so is *the sample's density is 0.9 grams per milliliter* ((46)),
+which reports the sample's density. -/
 theorem density_ne_anaphoricMP (hu : u.dimension = .mass) :
     density w x ≠ anaphoricMP w n u r y :=
   density_ne_of_snd (by simp [hu])
 
-theorem density_ne_pure_mul (hu : u.dimension = .mass) : density w x ≠ pure n * u.quantity :=
-  density_ne_of_snd (by simp [MeasureTerm.quantity, hu])
-
-/-- On the division theory, (46) equates the sample's density with `n u / r`. -/
+/-- On the division theory (46) equates the sample's density with `n u / r`. -/
 theorem density_eq_divisionMP_iff (hu : u.dimension = .mass) (hr : r.dimension = .volume) :
-    density w x = divisionMP n u r ↔ w .mass x / w .volume x = n * u.magnitude / r.magnitude := by
-  simp [density, divisionMP, divisionPer, Prod.ext_iff, MeasureTerm.quantity, hu, hr]
+    density w x = divisionMP n u r ↔
+      w .mass x / w .volume x = n * u.magnitude / r.magnitude := by
+  simp [density, divisionMP, divisionPer, Prod.ext_iff, hu, hr]
+
+/-! ### Unit sensitivity -/
+
+section UnitSensitivity
+
+/-- The revised *per* of (43), `λq λx: μ_dim(q)(x) ≥ q. μ_dim(q)(x) / q`, is `anaphoricPer`
+restricted to the referents that measure at least one unit. -/
+def per (w : World E) (r : MeasureTerm) : E →. Quantity ℝ :=
+  PFun.res (anaphoricPer w r) {y | (r.magnitude : ℝ) ≤ w r.dimension y}
+
+theorem mem_dom_per : y ∈ (per w r).Dom ↔ (r.magnitude : ℝ) ≤ w r.dimension y := Iff.rfl
+
+/-- `perSentence r y φ` is a sentence whose *per*-phrase, its pronoun resolved to `y`, feeds the
+truth conditions `φ`. At each world it maps `φ` over the phrase's value, so the sentence is
+defined where *per* is. -/
+def perSentence (r : MeasureTerm) (y : E) (φ : World E → Quantity ℝ → Prop) :
+    World E →. Prop :=
+  fun w ↦ (per w r y).map (φ w)
+
+variable {φ : World E → Quantity ℝ → Prop}
+
+/-- A *per*-sentence asserts its truth conditions where it presupposes that the pronoun's
+referent measures at least one unit. -/
+theorem perSentence_eq_res : perSentence r y φ =
+    PFun.res (fun w ↦ φ w (anaphoricPer w r y)) {w | (r.magnitude : ℝ) ≤ w r.dimension y} := rfl
+
+@[simp] theorem mem_dom_perSentence :
+    w ∈ (perSentence r y φ).Dom ↔ (r.magnitude : ℝ) ≤ w r.dimension y := Iff.rfl
+
+/-- *y weighs n u per r*, the pronoun resolved to the subject ((20)). -/
+def weighs (n : ℝ) (u r : MeasureTerm) (y : E) : World E →. Prop :=
+  perSentence r y fun w a ↦ much (w.quantity .mass) (pure n * u.quantity * a) y
+
+/-- *m contains n u per r of salt*, the pronoun resolved to the container ((41)). -/
+def containsPer (salt : E → Prop) (contain : E → E → Prop) (n : ℝ) (u r : MeasureTerm) (m : E) :
+    World E →. Prop :=
+  perSentence r m fun w a ↦ contains salt contain (w.quantity .mass) (pure n * u.quantity * a) m
+
+/-- Scaling the units by `k` keeps a *per*-sentence's assertion and raises the bound its
+presupposition sets from one unit to `k` units. -/
+theorem weighs_scales (hk : k ≠ 0) (hu : u'.quantity = pure k * u.quantity)
+    (hr : r'.quantity = pure k * r.quantity) :
+    weighs n u' r' y = PFun.res (fun w ↦ much (w.quantity .mass) (anaphoricMP w n u r y) y)
+      {w | k * r.magnitude ≤ w r.dimension y} := by
+  obtain ⟨hm, hd⟩ := MeasureTerm.quantity_eq_pure_mul_iff.mp hr
+  rw [weighs, perSentence_eq_res, hm, hd]
+  congr
+  funext w
+  rw [← anaphoricMP_scales hk hu hr]; rfl
+
+theorem containsPer_scales (hk : k ≠ 0) (hu : u'.quantity = pure k * u.quantity)
+    (hr : r'.quantity = pure k * r.quantity) :
+    containsPer salt contain n u' r' m =
+      PFun.res (fun w ↦ contains salt contain (w.quantity .mass) (anaphoricMP w n u r m) m)
+        {w | k * r.magnitude ≤ w r.dimension m} := by
+  obtain ⟨hm, hd⟩ := MeasureTerm.quantity_eq_pure_mul_iff.mp hr
+  rw [containsPer, perSentence_eq_res, hm, hd]
+  congr
+  funext w
+  rw [← anaphoricMP_scales hk hu hr]; rfl
+
+/-- The anaphoric theory is unit sensitive ((27), (36)). *The mixture contains 0.1 grams per
+milliliter of salt* and *the mixture contains 0.1 kilograms per liter of salt* assert the same
+thing, but the first presupposes that the mixture measures at least a milliliter and the second
+at least a liter. -/
+theorem unit_sensitivity :
+    ∃ A : World E → Prop,
+      containsPer salt contain n gram milliliter m = PFun.res A {w | 1 ≤ w .volume m} ∧
+      containsPer salt contain n kilogram liter m = PFun.res A {w | 1000 ≤ w .volume m} := by
+  refine ⟨fun w ↦ contains salt contain (w.quantity .mass) (anaphoricMP w n gram milliliter m) m,
+    ?_, ?_⟩
+  · rw [containsPer, perSentence_eq_res]; congr 1; ext; simp [milliliter]
+  · rw [containsPer_scales (by norm_num) kilogram_quantity liter_quantity]
+    congr 1; ext; simp [milliliter]
+
+/-- The division theory's truth conditions for *m contains n u per r of salt* ((31)) can hold
+whatever `m` measures in the *per*-unit's dimension. -/
+theorem contains_divisionMP_satisfiable (hu : u.dimension = .mass) {v : ℝ} (hv : v ≠ 0) :
+    ∃ w : World (Fin 2), w r.dimension 0 = v ∧
+      contains (· = 1) (fun a b ↦ a = 0 ∧ b = 1)
+        (fun x ↦ w.quantity .mass x / w.quantity r.dimension 0) (divisionMP n u r) 0 := by
+  refine ⟨fun D i ↦ if i = 0 then (if D = r.dimension then v else 0)
+    else if D = .mass then n * u.magnitude / r.magnitude * v else 0, by simp, 1, rfl, ?_, rfl, rfl⟩
+  ext
+  · simp [divisionMP, divisionPer]
+    field_simp
+  · simp [hu]
+
+/-- So the division theory overgenerates ((38b)): where the sample measures a tenth of a
+milliliter it makes *the 0.1 milliliter sample contained 0.1 grams of salt per milliliter* true,
+while on the anaphoric theory the sentence is undefined there. -/
+theorem division_overgenerates :
+    ∃ w : World (Fin 2),
+      contains (· = 1) (fun a b ↦ a = 0 ∧ b = 1)
+        (fun x ↦ w.quantity .mass x / w.quantity .volume 0)
+        (divisionMP (1 / 10) gram milliliter) 0 ∧
+      w ∉ (containsPer (· = 1) (fun a b ↦ a = 0 ∧ b = 1) (1 / 10) gram milliliter 0).Dom := by
+  obtain ⟨w, hw, h⟩ := contains_divisionMP_satisfiable (n := 1 / 10) (r := milliliter) (u := gram)
+    rfl (v := 1 / 10) (by norm_num)
+  refine ⟨w, h, ?_⟩
+  simp only [containsPer, mem_dom_perSentence, hw]
+  norm_num [milliliter]
 
 /-! ### The paper's examples -/
 
-
-/-- The natural number a digit string denotes. -/
-def nat? (cs : List Char) : Option ℕ :=
-  if cs.all Char.isDigit then some (cs.foldl (λ a c => 10 * a + (c.toNat - 48)) 0) else none
-
-/-- The rational a decimal numeral denotes. -/
-def decimal? (s : String) : Option ℚ :=
-  match s.toList.span (· ≠ '.') with
-  | (int, []) => nat? int
-  | (int, _ :: frac) => do pure ((← nat? int) + (← nat? frac) / 10 ^ frac.length)
-
-/-- A row's *per*-unit and its subject's stated measure in the same dimension. -/
+/-- An example's *per*-unit, and the measure in that unit's dimension that its subject is stated
+to have, in the dimension's reference unit. -/
 structure Scenario where
   per : MeasureTerm
   subjectMeasure : ℚ
-  subjectUnit : MeasureTerm
 
+/-- `scenario? e` reads the scenario off a row that states its subject's measure. -/
 def scenario? (e : Datum) : Option Scenario := do
   let per ← measureTerm? (← e.feature? "per_unit")
-  let m ← decimal? (← e.feature? "subject_measure")
+  let m ← e.decimal? "subject_measure"
   let su ← measureTerm? (← e.feature? "subject_unit")
   guard (su.dimension = per.dimension)
-  pure ⟨per, m, su⟩
+  pure ⟨per, m * su.magnitude⟩
 
-/-- The subject measures at least one *per*-unit exactly in the felicitous examples. -/
-theorem rows_perPresup : ∀ e ∈ Examples.all, ∀ s ∈ scenario? e,
-    (s.per.magnitude ≤ s.subjectMeasure * s.subjectUnit.magnitude ↔ e.judgment = .acceptable) := by
+/-- The subject measures at least one *per*-unit exactly in the felicitous examples ((37), (38),
+(44), (45)). -/
+theorem rows_unit_sensitivity : ∀ e ∈ Examples.all, ∀ s ∈ scenario? e,
+    (s.per.magnitude ≤ s.subjectMeasure ↔ e.judgment = .acceptable) := by
   decide +kernel
 
-/-- At any world where the subject measures as stated, a *per*-sentence's presupposition
-holds iff the example is felicitous. -/
-theorem rows_presup (e : Datum) (he : e ∈ Examples.all) (s : Scenario)
-    (hs : s ∈ scenario? e) (hy : w s.per.dimension y = s.subjectMeasure * s.subjectUnit.magnitude)
-    (p : World E → Prop) : (perSentence s.per y p).presup w ↔ e.judgment = .acceptable := by
-  rw [perSentence_presup, hy]; exact rows_perPresup e he s hs
+/-- At a world where its subject measures as the example states, a *per*-sentence is defined
+exactly when the example is felicitous. -/
+theorem acceptable_iff_mem_dom {e : Datum} (he : e ∈ Examples.all)
+    {s : Scenario} (hs : s ∈ scenario? e) (hy : w s.per.dimension y = s.subjectMeasure) :
+    e.judgment = .acceptable ↔ w ∈ (perSentence s.per y φ).Dom := by
+  rw [mem_dom_perSentence, hy, Rat.cast_le]
+  exact (rows_unit_sensitivity e he s hs).symm
+
+end UnitSensitivity
+
+end
 
 end BaleSchwarz2022
