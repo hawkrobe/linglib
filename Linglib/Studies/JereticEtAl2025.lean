@@ -16,14 +16,15 @@ anti-duality of French *tous*. English *all* and *every* are unusable in a domai
 two individuals because Maximize Presupposition prefers *both* (Percus, Sauerland); *tous* is
 anti-dual too although French has no word for *both*, the puzzle of Chemla taken by Buccola,
 Križ and Chemla to show a conceptual alternative at work.
-The account posits a dual number feature in every language, syncretic with the plural in
-French, so that the string *tous les NP* is ambiguous between a plural and a dual parse; Avoid
-Ambiguity (`Blocked`) bars the dual parse from pronunciation because *les deux NP* realizes its
-meaning at no greater node count, and that expression, an indirect alternative in the sense of
-the substrate's `Alternatives.indirectFrom`, licenses the Maximize Presupposition competition
-the silent parse cannot enter on its own. The worked example runs this on (25): the dual parse
-is blocked, pronounceability is thereby derived rather than stipulated, and *tous* violates
-Maximize Presupposition through *les deux* (`tous_blocked_via_indirect`).
+The account posits a dual number feature in every language, syncretic with the plural in French, so
+that the string *tous les NP* is ambiguous between a plural and a dual parse; Avoid Ambiguity
+(`BarredByAmbiguity`) bars the dual parse from pronunciation because *les deux NP* realizes its
+meaning at no greater node count, and that expression, an indirect alternative in the sense of the
+substrate's `Alternatives.indirectFrom`, licenses the Maximize Presupposition competition the silent
+parse cannot enter on its own. The worked example runs this on (25): the dual parse is barred,
+pronounceability is thereby derived rather than stipulated, and *tous* violates Maximize
+Presupposition through *les deux* (`tous_blocked_via_indirect`), so that it is used in the domain of
+three cups and not in the domain of two (`useCondition_tous`).
 
 Across languages and quantifier slots a plain quantifier is predicted anti-dual exactly when a
 dual competitor exists, a lexical dual item or a pronounceable dual expression at most as
@@ -188,7 +189,7 @@ theorem direct_account_misses_indirect :
 (37): if a string is ambiguous between two parses and a string at most as complex realizes
 the meaning of the first parse but has no parse equivalent to the second, the string cannot
 realize the first parse; complexity is node count (38). The paper restricts the principle's
-domain of application; `Blocked` is the unrestricted (37). -/
+domain of application; `BarredByAmbiguity` is the unrestricted (37). -/
 
 section AvoidAmbiguity
 
@@ -201,7 +202,7 @@ def IsAmbiguous (parses : S → List P) (meaning : P → M) (s : S) : Prop :=
 /-- Under Avoid Ambiguity (37), `s` cannot realize its parse `p₁` when `s` is ambiguous between `p₁`
 and some `p₂`, and a string `s'` at most as complex realizes `p₁`'s meaning but has no parse
 equivalent to `p₂`. -/
-def Blocked (parses : S → List P) (meaning : P → M) (size : S → Nat)
+def BarredByAmbiguity (parses : S → List P) (meaning : P → M) (size : S → Nat)
     (s : S) (p₁ : P) : Prop :=
   p₁ ∈ parses s ∧
   ∃ p₂ ∈ parses s, meaning p₂ ≠ meaning p₁ ∧
@@ -214,14 +215,14 @@ variable {parses : S → List P} {meaning : P → M} {size : S → Nat}
 
 /-- Only ambiguous strings block, so unambiguous synonyms never compete under Avoid
 Ambiguity. -/
-theorem Blocked.isAmbiguous (h : Blocked parses meaning size s p₁) :
+theorem BarredByAmbiguity.isAmbiguous (h : BarredByAmbiguity parses meaning size s p₁) :
     IsAmbiguous parses meaning s :=
   let ⟨h₁, p₂, h₂, hne, _⟩ := h
   ⟨p₂, h₂, p₁, h₁, hne⟩
 
 instance [DecidableEq P] [DecidableEq M] [Fintype S] :
-    Decidable (Blocked parses meaning size s p₁) := by
-  unfold Blocked; infer_instance
+    Decidable (BarredByAmbiguity parses meaning size s p₁) := by
+  unfold BarredByAmbiguity; infer_instance
 
 end AvoidAmbiguity
 
@@ -282,7 +283,7 @@ def hasLesDeux (t : Tree Cat String) : Bool :=
     | _ => false
 
 /-- Under French pronounceability, trees containing the silent dual marker are silent. Stipulated
-here and derived from Avoid Ambiguity in `frenchPron_iff_not_blocked`. -/
+here and derived from Avoid Ambiguity in `frenchPron_iff_not_barred`. -/
 abbrev frenchPron : Tree Cat String → Prop := fun t ↦ hasDualMarker t = false
 
 /-- In the toy semantics *tous V* asserts that all cups are full with a trivial presupposition;
@@ -309,28 +310,28 @@ def strParses : Str → List (Tree Cat String)
 /-- String complexity is the maximal node count over the string's parses, uniform here. -/
 def strSize (s : Str) : Nat := ((strParses s).map RoseTree.numNodes).foldr max 0
 
-/-- The dual parse of *tous les verres* is blocked by (37), witnessed by *les deux verres*. -/
-theorem tousDual_blocked : Blocked strParses meaning strSize .tousV tousDualVerres := by
+/-- The dual parse of *tous les verres* is barred by (37), witnessed by *les deux verres*. -/
+theorem tousDual_barred : BarredByAmbiguity strParses meaning strSize .tousV tousDualVerres := by
   decide
 
 /-- The plural parse survives, since *les deux verres* does not realize the plural meaning and
 no other string is simple enough. -/
-theorem tousPl_not_blocked : ¬ Blocked strParses meaning strSize .tousV tousVerres := by
+theorem tousPl_not_barred : ¬ BarredByAmbiguity strParses meaning strSize .tousV tousVerres := by
   decide
 
 /-- Pronounceability is Avoid Ambiguity, since on the strings of the example a parse is
 pronounceable iff (37) does not block it, which derives the predicate the indirect-alternative
 source consumes. -/
-theorem frenchPron_iff_not_blocked :
-    ∀ st : Str, ∀ p ∈ strParses st, (frenchPron p ↔ ¬ Blocked strParses meaning strSize st p) := by
+theorem frenchPron_iff_not_barred : ∀ st : Str, ∀ p ∈ strParses st,
+    (frenchPron p ↔ ¬ BarredByAmbiguity strParses meaning strSize st p) := by
   decide
 
-/-- The presupposition, definedness of the sentence, `meaning` lifted to `Prop`. -/
-def presupFn : Tree Cat String → WorldEx → Prop := fun t w ↦ meaning t w = true
+/-- The presupposition is the set of worlds where the sentence is defined. -/
+def presupFn (t : Tree Cat String) : Set WorldEx := {w | meaning t w = true}
 
 /-- The at-issue assertion, uniform across the three sentences, which differ only in
 presupposition. -/
-def assertionFn : Tree Cat String → WorldEx → Prop := fun _ _ ↦ True
+def assertionFn : Tree Cat String → Set WorldEx := fun _ ↦ Set.univ
 
 /-- The indirect-alternative source (43) filters Katzir alternatives by pronounceability and
 meaning-equivalence to a silent witness, with complexity measured by `RoseTree.numNodes`. -/
@@ -350,19 +351,45 @@ theorem lesDeux_indirectAlt_tous : lesDeuxVerres ∈ frenchIndirectSrc tousVerre
   refine ⟨by decide, by decide, tousDualVerres, tousDual_katzir_alt, by decide, ?_⟩
   funext w; cases w <;> rfl
 
+/-- *les deux V* competes with *tous V* as an indirect alternative with the same assertion. -/
+theorem lesDeux_mem_sameAssertion :
+    lesDeuxVerres ∈ sameAssertion assertionFn frenchIndirectSrc tousVerres :=
+  ⟨lesDeux_indirectAlt_tous, rfl⟩
+
+/-- The dual presupposition of *les deux V* is strictly stronger than the trivial one of
+*tous V*. -/
+theorem presupFn_lesDeux_ssubset_tous : presupFn lesDeuxVerres ⊂ presupFn tousVerres :=
+  LE.le.ssubset_of_not_superset (fun w _ ↦ by cases w <;> rfl)
+    (Set.not_subset.2 ⟨.w3, rfl, (by decide : ¬ meaning lesDeuxVerres .w3 = true)⟩)
+
 /-- *tous V* violates Maximize Presupposition through the indirect alternative *les deux V*,
-licensed by the silent witness, which is the paper's derivation of the anti-duality of
-*tous*. -/
+licensed by the silent witness. -/
 theorem tous_blocked_via_indirect :
-    Alternatives.Blocked (Alternatives.sameAssertion assertionFn frenchIndirectSrc) presupFn
-      tousVerres := by
-  refine ⟨lesDeuxVerres, ⟨lesDeux_indirectAlt_tous, rfl⟩,
-    LE.le.ssubset_of_not_superset ?_ (Set.not_subset.2 ⟨WorldEx.w3, ?_, ?_⟩)⟩
-  · intro w _
-    show meaning tousVerres w = true
-    cases w <;> rfl
-  · show meaning tousVerres .w3 = true; rfl
-  · show ¬ (meaning lesDeuxVerres .w3 = true); decide
+    Blocked (sameAssertion assertionFn frenchIndirectSrc) presupFn tousVerres :=
+  ⟨lesDeuxVerres, lesDeux_mem_sameAssertion, presupFn_lesDeux_ssubset_tous⟩
+
+/-- A sentence defined in the domain of three cups presupposes nothing. -/
+private theorem presupFn_eq_univ_of_w3 {t : Tree Cat String} (h : WorldEx.w3 ∈ presupFn t) :
+    presupFn t = Set.univ :=
+  Set.eq_univ_of_forall fun w ↦ by
+    simp only [presupFn, Set.mem_ofPred_eq, meaning] at h ⊢
+    split_ifs at h ⊢
+    simp_all
+
+/-- *tous V* is used exactly in the domain of three cups, the paper's derivation of its
+anti-duality: in the domain of two the dual presupposition of *les deux V* holds and blocks it,
+and every competitor defined in the domain of three presupposes nothing. -/
+theorem useCondition_tous :
+    useCondition (sameAssertion assertionFn frenchIndirectSrc) presupFn tousVerres = {.w3} := by
+  ext w
+  cases w
+  · simp only [Set.mem_singleton_iff, reduceCtorEq, iff_false]
+    exact Set.disjoint_left.1 (disjoint_useCondition_of_ssubset lesDeux_mem_sameAssertion
+      presupFn_lesDeux_ssubset_tous) (by decide : meaning lesDeuxVerres .w2 = true)
+  · simp only [Set.mem_singleton_iff, iff_true]
+    have htous : WorldEx.w3 ∈ presupFn tousVerres := rfl
+    exact mem_useCondition_iff.2 ⟨htous, fun ψ _ hψ hss ↦
+      hss.ne ((presupFn_eq_univ_of_w3 hψ).trans (presupFn_eq_univ_of_w3 htous).symm)⟩
 
 end WorkedExample
 
