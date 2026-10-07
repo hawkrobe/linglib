@@ -53,7 +53,7 @@ def HasPositiveBeliefMass : Prop := μ (bel ∩ p) ≠ 0
 
 /-- `a wants p` when `p` lies above the threshold on the expected-value scale, the positive form of
 a gradable predicate. -/
-def Want : Prop := p ∈ Degree.Comparison.gt.over (expectedValue μ V bel) θ
+def Want : Prop := p ∈ (expectedValue μ V bel) ⁻¹' Set.Ioi θ
 
 variable {μ V θ bel p} in
 theorem want_iff : Want μ V θ bel p ↔ θ < expectedValue μ V bel p := Iff.rfl

@@ -98,8 +98,9 @@ propositions whose probability meets it are closed under conjunction elimination
 measure is monotone. -/
 theorem image_Ici_ne_ge_over [MeasurableSpace W] (P : Measure W) (t : ℝ≥0∞) {c : S}
     {φ ψ : Set W} (h₁ : φ ∩ ψ ∈ θ '' Ici c) (h₂ : φ ∉ θ '' Ici c) :
-    θ '' Ici c ≠ Comparison.ge.over P t :=
-  fun h ↦ h₂ (h ▸ Comparison.mem_ge_over_of_le P (h ▸ h₁) (measure_mono inter_subset_left))
+    θ '' Ici c ≠ P ⁻¹' Set.Ici t :=
+  fun h ↦ h₂ <| h ▸ (show φ ∈ P ⁻¹' Set.Ici t from
+    le_trans (show φ ∩ ψ ∈ P ⁻¹' Set.Ici t from h ▸ h₁) (measure_mono inter_subset_left))
 
 /-! ### *Certain* and *confident* (§5.2) -/
 

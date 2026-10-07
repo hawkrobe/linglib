@@ -69,7 +69,7 @@ theorem pairs_transform (f : Ad → K → K) (v : Profile Ad X K) (p : X × Ad) 
 /-- *x is P-er than y is Q* holds when the pair of `x` and P measures more than the pair of `y`
 and Q. -/
 def comparative (x : X) (P : Ad) (y : X) (Q : Ad) (v : Profile Ad X ℝ) : Prop :=
-  (x, P) ∈ Comparison.gt.over (pairs v) (pairs v (y, Q))
+  (x, P) ∈ (pairs v) ⁻¹' Set.Ioi (pairs v (y, Q))
 
 /-- *x is d-much P-er than y is Q*. -/
 def differential (x : X) (P : Ad) (y : X) (Q : Ad) (d : ℝ) (v : Profile Ad X ℝ) : Prop :=
@@ -93,8 +93,7 @@ theorem comparative_ordinalLevel : Invariant ordinalLevel (comparative x P y Q) 
   have : pairs (v.transform f) = u ∘ pairs v := funext fun p ↦ by
     rw [pairs_transform, hf]; rfl
   simp only [comparative, this]
-  exact congrArg ((x, P) ∈ ·)
-    (Comparison.over_comp (pairs v) (OrderEmbedding.ofStrictMono u hu) .gt (pairs v (y, Q)))
+  exact propext hu.lt_iff_lt
 
 /-- With a separate strictly increasing map for each adjective, comparing across two adjectives
 is not meaningful. -/
@@ -106,10 +105,9 @@ theorem not_comparative_ordinal [DecidableEq Ad] (hPQ : P ≠ Q) :
   have hf : f ∈ (ordinal : Set (Ad → ℝ → ℝ)) := fun i a b hab ↦ by
     by_cases hi : i = Q <;> simp [f, hi, hab]
   have h₁ : comparative x P y Q v := by
-    simp [comparative, Comparison.mem_over, Comparison.rel, pairs, v, hPQ.symm]
+    simp [comparative, pairs, v, hPQ.symm]
   have h₂ : ¬ comparative x P y Q (v.transform f) := by
-    simp [comparative, Comparison.mem_over, Comparison.rel, pairs, Profile.transform, v, f, hPQ,
-      hPQ.symm]
+    simp [comparative, pairs, Profile.transform, v, f, hPQ, hPQ.symm]
   exact h₂ (h f hf v ▸ h₁)
 
 /-- A differential across adjectives holds up to a common change of unit and origin, once its

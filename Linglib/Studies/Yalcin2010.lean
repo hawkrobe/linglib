@@ -516,7 +516,7 @@ variable {W : Type*} [MeasurableSpace W] (P : Measure W)
 
 /-- *Probably* with threshold `n` holds when `Pr(A) > n`, the strict positive form of the
 probability scale. -/
-def probablyAt (n : ℝ) (A : Set W) : Prop := A ∈ Degree.Comparison.gt.over P.real n
+def probablyAt (n : ℝ) (A : Set W) : Prop := A ∈ P.real ⁻¹' Set.Ioi n
 
 /-- With a threshold of at least one half, a proposition and its complement are not both
 probable. -/
@@ -524,7 +524,7 @@ theorem probablyAt_V1 [DiscreteMeasurableSpace W] [IsProbabilityMeasure P] {n : 
     (hn : 1 / 2 ≤ n) (A : Set W) : probablyAt P n A → ¬probablyAt P n Aᶜ := by
   intro hA hAc
   have := probReal_add_probReal_compl (μ := P) (.of_discrete : MeasurableSet A)
-  simp only [probablyAt, Degree.Comparison.mem_over, Degree.Comparison.rel] at hA hAc
+  simp only [probablyAt, Set.mem_preimage, Set.mem_Ioi] at hA hAc
   linarith
 
 end Threshold
@@ -535,7 +535,7 @@ theorem probablyAt_refutes_V1 :
     probablyAt (uniformOn (Set.univ : Set (Fin 2))) (1 / 3) {0} ∧
       probablyAt (uniformOn (Set.univ : Set (Fin 2))) (1 / 3) ({0} : Set (Fin 2))ᶜ := by
   have hc : ({0} : Set (Fin 2))ᶜ = {1} := by ext x; fin_cases x <;> simp
-  simp only [probablyAt, Degree.Comparison.mem_over, Degree.Comparison.rel, hc,
+  simp only [probablyAt, Set.mem_preimage, Set.mem_Ioi, hc,
     uniformOn_univ_real_singleton, Fintype.card_fin]
   norm_num
 

@@ -1,7 +1,8 @@
 module
 
 public import Mathlib.Order.Bounds.Image
-public import Linglib.Semantics.Degree.Predicate
+public import Mathlib.Order.Interval.Set.Monotone
+public import Linglib.Semantics.Degree.Comparison
 public import Linglib.Semantics.Exhaustification.Chain
 
 /-!
@@ -48,8 +49,8 @@ open OrderDual
 
 variable {α W : Type*}
 
-/-- `P x` is maximally informative at `w`: true at `w`, and the least under `⊆` among the
-members of the family true at `w`. -/
+/-- `P x` is maximally informative at `w` when it is true at `w` and the least under `⊆` among
+the members of the family true at `w`. -/
 def IsMaxInf (P : α → Set W) (x : α) (w : W) : Prop :=
   IsLeast (P '' {y | w ∈ P y}) (P x)
 
@@ -94,8 +95,8 @@ section
 variable [Preorder α] (μ : W → α) (w : W)
 
 /-- "At least `d`" is maximally informative at the true measure. -/
-theorem hasMaxInf_ge_over : HasMaxInf (Comparison.ge.over μ) w :=
-  ⟨μ w, (Comparison.antitone_ge_over μ).map_isGreatest isGreatest_Iic⟩
+theorem hasMaxInf_ge_over : HasMaxInf (μ ⁻¹' Set.Ici ·) w :=
+  ⟨μ w, (Set.monotone_preimage.comp_antitone antitone_Ici).map_isGreatest isGreatest_Iic⟩
 
 end
 
@@ -105,7 +106,7 @@ variable [PartialOrder α] (μ : W → α) {m : α} (w : W)
 /-- The maximally informative "at least" degree is the true measure, whenever `m` is
 realized. -/
 theorem isMaxInf_ge_over_iff (hm : m ∈ Set.range μ) :
-    IsMaxInf (Comparison.ge.over μ) m w ↔ μ w = m := by
+    IsMaxInf (μ ⁻¹' Set.Ici ·) m w ↔ μ w = m := by
   refine isMaxInf_iff.trans ⟨fun ⟨hmw, hent⟩ => ?_, ?_⟩
   · obtain ⟨v, rfl⟩ := hm
     exact le_antisymm (hent (μ w) le_rfl le_rfl) hmw
@@ -120,34 +121,36 @@ variable [LinearOrder α] (μ : W → α) {m : α} (w : W)
 /-- On a dense scale every degree of which is realized, "more than `d`" has no maximally
 informative degree ([fox-hackl-2006]). -/
 theorem not_hasMaxInf_gt_over [DenselyOrdered α] (hSurj : Function.Surjective μ) :
-    ¬ HasMaxInf (Comparison.gt.over μ) w :=
-  (hasMaxInf_iff_isGreatest (Comparison.strictAnti_gt_over μ hSurj)).not.2 fun ⟨g, hg⟩ =>
+    ¬ HasMaxInf (μ ⁻¹' Set.Ioi ·) w :=
+  (hasMaxInf_iff_isGreatest ((Set.monotone_preimage.comp_antitone antitone_Ioi)
+    |>.strictAnti_of_injective ((Set.preimage_injective.2 hSurj).comp Set.Ioi_injective))).not.2
+    fun ⟨g, hg⟩ =>
     let ⟨y, hgy, hyw⟩ := exists_between (hg.1 : g < μ w)
-    not_le.2 hgy (hg.2 (hyw : w ∈ Comparison.gt.over μ y))
+    not_le.2 hgy (hg.2 (hyw : w ∈ μ ⁻¹' Set.Ioi y))
 
 /-- On a dense scale every degree of which is realized, "less than `d`" has no maximally
-informative degree: `not_hasMaxInf_gt_over` on the dual scale. -/
+informative degree, by `not_hasMaxInf_gt_over` on the dual scale. -/
 theorem not_hasMaxInf_lt_over [DenselyOrdered α] (hSurj : Function.Surjective μ) :
-    ¬ HasMaxInf (Comparison.lt.over μ) w :=
+    ¬ HasMaxInf (μ ⁻¹' Set.Iio ·) w :=
   not_hasMaxInf_gt_over (toDual ∘ μ) w (toDual.surjective.comp hSurj)
 
-/-- "At most `d`" is maximally informative at the true measure: `hasMaxInf_ge_over` on the
+/-- "At most `d`" is maximally informative at the true measure, by `hasMaxInf_ge_over` on the
 dual scale. -/
-theorem hasMaxInf_le_over : HasMaxInf (Comparison.le.over μ) w :=
+theorem hasMaxInf_le_over : HasMaxInf (μ ⁻¹' Set.Iic ·) w :=
   hasMaxInf_ge_over (toDual ∘ μ) w
 
 /-- The maximally informative "at most" degree is the true measure ([rouillard-2026]'s
-direction): `isMaxInf_ge_over_iff` on the dual scale. -/
+direction), by `isMaxInf_ge_over_iff` on the dual scale. -/
 theorem isMaxInf_le_over_iff (hm : m ∈ Set.range μ) :
-    IsMaxInf (Comparison.le.over μ) m w ↔ μ w = m :=
+    IsMaxInf (μ ⁻¹' Set.Iic ·) m w ↔ μ w = m :=
   isMaxInf_ge_over_iff (toDual ∘ μ) (m := toDual m) w hm
 
 end
 
-/-- On `ℕ`, "more than `d`" has a maximally informative degree, `μ w - 1`: the discrete
+/-- On `ℕ`, "more than `d`" has a maximally informative degree, `μ w - 1`, so the discrete
 scale rescues what density forbids. -/
-theorem hasMaxInf_gt_over_nat (μ : W → ℕ) (w : W) (hw : w ∈ Comparison.gt.over μ 0) :
-    HasMaxInf (Comparison.gt.over μ) w :=
+theorem hasMaxInf_gt_over_nat (μ : W → ℕ) (w : W) (hw : w ∈ μ ⁻¹' Set.Ioi 0) :
+    HasMaxInf (μ ⁻¹' Set.Ioi ·) w :=
   ⟨μ w - 1, isMaxInf_iff.2 ⟨by have : μ w > 0 := hw; show μ w > μ w - 1; omega,
     fun d hd w' hw' => by
       have : μ w' > μ w - 1 := hw'; have : μ w > d := hd; show μ w' > d; omega⟩⟩

@@ -40,7 +40,7 @@ Definition 7, and the grading relation `x > y` is `μ y < μ x`. The results on 
 NP-comparative need neither of the paper's conditions on grading relations (Definitions 1
 and 2). The homomorphism preserves arbitrary unions and intersections, which Fact 2 needs on
 infinite domains (the paper's footnote 11). The S-comparative of Definition 8 is
-`Degree.Comparison.gt.overSet μ`, and its anti-additivity (Fact 5) is
+`(μ ⁻¹' strictUpperBounds ·)`, and its anti-additivity (Fact 5) is
 `Degree.gtOverSet_isAntiAdditive`.
 
 ## References
@@ -64,7 +64,7 @@ variable {Entity D : Type*} [Preorder D] (μ : Entity → D)
 below `x` on the scale `μ` form a set in `Q`. As a preimage map it preserves intersections,
 unions and complements, which is (22). -/
 def npComparative : CompleteLatticeHom (Set (Set Entity)) (Set Entity) :=
-  setPreimage fun x ↦ Comparison.lt.over μ (μ x)
+  setPreimage fun x ↦ μ ⁻¹' Set.Iio (μ x)
 
 /-- The NP-comparative is monotone increasing (Fact 3), as every homomorphism is. -/
 theorem npComparative_monotone : Monotone (npComparative μ) :=
@@ -119,14 +119,14 @@ variable (μ)
 
 /-- The S-comparative is monotone decreasing in its set of degrees (§3.8), since it is
 anti-additive (Fact 5) and anti-additive maps are monotone decreasing (Fact 4). -/
-theorem gtOverSet_antitone : Antitone (Comparison.gt.overSet μ) :=
+theorem gtOverSet_antitone : Antitone (μ ⁻¹' strictUpperBounds ·) :=
   (gtOverSet_isAntiAdditive μ).antitone
 
 /-- The NP-comparative of a proper name is the S-comparative of the singleton of its degree
 (§3.9), which accounts for the equivalence of *I am bigger than you* and *I am bigger than you
 are* in (44). -/
 theorem npComparative_individual (b : Entity) :
-    npComparative μ (NP.individual b) = Comparison.gt.overSet μ {μ b} := by
+    npComparative μ (NP.individual b) = μ ⁻¹' strictUpperBounds {μ b} := by
   ext a
   exact (npComparative_preservesOrdering μ a b).symm.trans (by simp)
 

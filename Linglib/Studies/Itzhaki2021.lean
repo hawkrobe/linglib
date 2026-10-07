@@ -368,7 +368,7 @@ variable {E : Type*} {tall : E → ℝ} {S U : ℝ} {e : ℝ*}
 standard part of the height of anyone tall, less the qualitative millimetre, still meets the
 standard. -/
 theorem induction_premise (he : e ∈ infinitesimals) (hU : 1 < U) {x : E}
-    (hx : x ∈ Degree.Comparison.ge.over tall S) :
+    (hx : x ∈ tall ⁻¹' Set.Ici S) :
     S ≤ stdPart ((tall x : ℝ*) - qualUnit U e 1) := by
   rw [show qualUnit U e 1 = e by simp [qualUnit, hU], stdPart_sub_infinitesimal _ he]
   exact hx
@@ -395,9 +395,9 @@ theorem not_forall_sub_natCast_ge (hU : U ≤ 1) (hS : 1000 < S) :
 /-- In the model (71), heights run in millimetres, the standard is `1800` and the smallest
 relevant unit `2`; two metres is tall, one metre is not, and the induction premise and the
 conclusion hold. -/
-example : (2000 : ℕ) ∈ Degree.Comparison.ge.over (fun i : ℕ ↦ (i : ℝ)) 1800 ∧
-    (1000 : ℕ) ∉ Degree.Comparison.ge.over (fun i : ℕ ↦ (i : ℝ)) 1800 ∧
-    (∀ x ∈ Degree.Comparison.ge.over (fun i : ℕ ↦ (i : ℝ)) 1800,
+example : (2000 : ℕ) ∈ (fun i : ℕ ↦ (i : ℝ)) ⁻¹' Set.Ici 1800 ∧
+    (1000 : ℕ) ∉ (fun i : ℕ ↦ (i : ℝ)) ⁻¹' Set.Ici 1800 ∧
+    (∀ x ∈ (fun i : ℕ ↦ (i : ℝ)) ⁻¹' Set.Ici 1800,
       1800 ≤ stdPart (((x : ℝ) : ℝ*) - qualUnit 2 ε 1)) ∧
     ∀ n : ℕ, 1800 ≤ stdPart ((2000 : ℝ*) - n * qualUnit 2 ε 1) := by
   have he : ε ∈ infinitesimals := mem_infinitesimals.2 archimedeanClassMk_epsilon_pos

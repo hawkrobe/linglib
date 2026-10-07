@@ -132,7 +132,7 @@ variable {ml μ} {norm : α} {w u v : C} {a b : O}
 
 /-- An object in the positive form's extension exceeds the standard of comparison. -/
 theorem setOf_positive_subset_gt_over :
-    {x | Positive ml μ norm w x} ⊆ Degree.Comparison.gt.over (μ w) norm :=
+    {x | Positive ml μ norm w x} ⊆ (μ w) ⁻¹' Set.Ioi norm :=
   fun _ h ↦ h.lt
 
 /-- An object whose degree exceeds the standard only marginally is not in the positive form's
@@ -197,7 +197,7 @@ theorem clustered_positive : Clustered ml (Positive ml μ norm w) (μ w) := fun 
 with the standard's block. -/
 theorem setOf_positive_eq_gt_over {f : α → ℚ ×ₗ ℤ} (hf : ml.IsHom (lex ℚ ℤ) f) :
     {x | Positive ml μ norm w x} =
-      Degree.Comparison.gt.over (fun x ↦ (ofLex (f (μ w x))).1) (ofLex (f norm)).1 :=
+      (fun x ↦ (ofLex (f (μ w x))).1) ⁻¹' Set.Ioi (ofLex (f norm)).1 :=
   Set.ext fun _ ↦ hf.largelyLT_iff.symm.trans lex_largelyLT_iff
 
 /-- Every countable, finitely marginal scale has a representation under which the positive form,
@@ -206,7 +206,7 @@ be carried out in the representative model (§5.2). -/
 theorem exists_isHom_setOf_positive_eq [Countable α] (hf : DinisJacinto2025.FinitelyMarginal ml) :
     ∃ f : α → ℚ ×ₗ ℤ, ml.IsHom (lex ℚ ℤ) f ∧ ∀ (μ : C → O → α) (norm : α) (w : C),
       {x | Positive ml μ norm w x} =
-        Degree.Comparison.gt.over (fun x ↦ (ofLex (f (μ w x))).1) (ofLex (f norm)).1 :=
+        (fun x ↦ (ofLex (f (μ w x))).1) ⁻¹' Set.Ioi (ofLex (f norm)).1 :=
   let ⟨f, hf⟩ := DinisJacinto2025.exists_isHom_lex_rat_int hf
   ⟨f, hf, fun _ _ _ ↦ setOf_positive_eq_gt_over hf⟩
 

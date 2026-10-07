@@ -7,7 +7,7 @@ public import Linglib.Logic.Modal.Defs
 /-!
 # Fox and Hackl (2006): The Universal Density of Measurement
 
-This file formalizes [fox-hackl-2006]'s Universal Density of Measurement, the claim that the
+This file formalizes Fox and Hackl's Universal Density of Measurement, the claim that the
 measurement scales of natural language semantics are dense, and the single mechanism it drives
 through scalar implicatures, *only*, degree questions and definite descriptions. Each maximizes
 a property of degrees with MAXinf, the most informative true degree (`Alternatives.IsMaxInf`),
@@ -46,16 +46,17 @@ variable {D W : Type*} [LinearOrder D]
 
 /-! ### Necessarily open properties -/
 
-/-- A property of degrees necessarily describes an open interval: at every world some degree
+/-- A property of degrees necessarily describes an open interval when at every world some degree
 fails it and every smaller degree satisfies it. -/
 def IsNecessarilyOpen (φ : D → Set W) : Prop :=
   ∀ w, ∃ d, w ∉ φ d ∧ ∀ d' < d, w ∈ φ d'
 
-/-- The downward-monotone mirror image: some degree fails and every larger degree holds. -/
+/-- A property is necessarily open from below when at every world some degree fails it and every
+larger degree satisfies it. -/
 abbrev IsNecessarilyOpenBelow (φ : D → Set W) : Prop :=
   IsNecessarilyOpen fun d : Dᵒᵈ => φ (ofDual d)
 
-/-- (42) The Constraint on Interval Maximization: on a dense scale a necessarily open
+/-- By the Constraint on Interval Maximization (42), on a dense scale a necessarily open
 upward-monotone property has no most informative degree. -/
 theorem not_hasMaxInf_of_isNecessarilyOpen [DenselyOrdered D] {φ : D → Set W}
     (hφ : StrictAnti φ) (hopen : IsNecessarilyOpen φ) (w : W) : ¬ HasMaxInf φ w :=
@@ -72,22 +73,23 @@ theorem not_hasMaxInf_of_isNecessarilyOpenBelow [DenselyOrdered D] {φ : D → S
 
 /-! ### Implicatures and *only* -/
 
-/-- *More than d* necessarily describes an open interval: the true degrees at `w` are those
+/-- *More than d* necessarily describes an open interval, since the true degrees at `w` are those
 below the count. -/
-theorem isNecessarilyOpen_gt_over (μ : W → D) : IsNecessarilyOpen (Comparison.gt.over μ) :=
+theorem isNecessarilyOpen_gt_over (μ : W → D) : IsNecessarilyOpen (μ ⁻¹' Set.Ioi ·) :=
   fun w => ⟨μ w, lt_irrefl _, fun _ h => h⟩
 
-/-- (2), (5), (7b–c): on a dense scale *more than d* has no most informative degree, so it
-carries no scalar implicature and rejects *only*. -/
+/-- On a dense scale *more than d* has no most informative degree, so it carries no scalar
+implicature and rejects *only* ((2), (5), (7b–c)). -/
 theorem moreThan_not_hasMaxInf [DenselyOrdered D] (μ : W → D) (hμ : Function.Surjective μ)
-    (w : W) : ¬ HasMaxInf (Comparison.gt.over μ) w :=
-  not_hasMaxInf_of_isNecessarilyOpen (Comparison.strictAnti_gt_over μ hμ)
+    (w : W) : ¬ HasMaxInf (μ ⁻¹' Set.Ioi ·) w :=
+  not_hasMaxInf_of_isNecessarilyOpen ((Set.monotone_preimage.comp_antitone antitone_Ioi)
+    |>.strictAnti_of_injective ((Set.preimage_injective.2 hμ).comp Set.Ioi_injective))
     (isNecessarilyOpen_gt_over μ) w
 
 /-! ### Modal operators -/
 
-/-- The deontic modal base whose only requirement is `φ a`: the worlds where `φ` holds of
-some degree above `a`. -/
+/-- The deontic modal base whose only requirement is `φ a` is the set of worlds where `φ` holds
+of some degree above `a`. -/
 abbrev requirementBase (φ : D → Set W) (a : D) : SetRel W W :=
   {p | ∃ d, a < d ∧ p.2 ∈ φ d}
 
@@ -106,16 +108,16 @@ theorem box_eq_Iic [DenselyOrdered D] {φ : D → Set W} (hφ : StrictAnti φ) (
     obtain ⟨d, had, hu⟩ := hu
     exact hφ.antitone ((hd' : d' ≤ a).trans had.le) hu
 
-/-- (13), (46): a universal modal closes the interval, so *required to φ more than d* has a
-most informative degree, `a` itself. -/
+/-- A universal modal closes the interval, so *required to φ more than d* has a most informative
+degree, `a` itself ((13), (46)). -/
 theorem hasMaxInf_box [DenselyOrdered D] {φ : D → Set W} (hφ : StrictAnti φ) (a : D)
     (w : W) : HasMaxInf (fun d => (requirementBase φ a).core (φ d)) w := by
   have hanti : Antitone fun d => (requirementBase φ a).core (φ d) :=
     fun _ _ h _ hv _ hu => hφ.antitone h (hv hu)
   exact ⟨a, hanti.map_isGreatest (box_eq_Iic hφ a w ▸ isGreatest_Iic)⟩
 
-/-- (14), (47): no existential modal closes the interval — the true degrees of *allowed to
-φ d* have no greatest element, so the constraint still applies. -/
+/-- No existential modal closes the interval, since the true degrees of *allowed to φ d* have no
+greatest element, so the constraint still applies ((14), (47)). -/
 theorem not_isGreatest_diamond [DenselyOrdered D] {φ : D → Set W} (hφ : StrictAnti φ)
     (hopen : IsNecessarilyOpen φ) (R : SetRel W W) (w : W) :
     ¬ ∃ m, IsGreatest {d | w ∈ R.preimage (φ d)} m := by
@@ -127,25 +129,27 @@ theorem not_isGreatest_diamond [DenselyOrdered D] {φ : D → Set W} (hφ : Stri
 
 /-! ### Negative islands -/
 
-/-- *Not … d* is necessarily open from below: the true degrees are those above the measure. -/
+/-- *Not … d* is necessarily open from below, since the true degrees are those above the
+measure. -/
 theorem isNecessarilyOpenBelow_lt_over (μ : W → D) :
-    IsNecessarilyOpenBelow (Comparison.lt.over μ) :=
+    IsNecessarilyOpenBelow (μ ⁻¹' Set.Iio ·) :=
   isNecessarilyOpen_gt_over (toDual ∘ μ)
 
-/-- (16), (19a), (25): on a dense scale the negated degree property has no most informative
-(least true) degree, so a degree question or definite description over it is undefined. -/
+/-- On a dense scale the negated degree property has no most informative (least true) degree, so
+a degree question or definite description over it is undefined ((16), (19a), (25)). -/
 theorem negation_not_hasMaxInf [DenselyOrdered D] (μ : W → D) (hμ : Function.Surjective μ)
-    (w : W) : ¬ HasMaxInf (Comparison.lt.over μ) w :=
-  not_hasMaxInf_of_isNecessarilyOpenBelow (Comparison.strictMono_lt_over μ hμ)
+    (w : W) : ¬ HasMaxInf (μ ⁻¹' Set.Iio ·) w :=
+  not_hasMaxInf_of_isNecessarilyOpenBelow ((Set.monotone_preimage.comp monotone_Iio)
+    |>.strictMono_of_injective ((Set.preimage_injective.2 hμ).comp Set.Iio_injective))
     (isNecessarilyOpenBelow_lt_over μ) w
 
-/-- (27b), (28a), (29a): *required not to φ d* — a universal modal over a downward-monotone
-property closes the interval from below. -/
+/-- In *required not to φ d* a universal modal over a downward-monotone property closes the
+interval from below ((27b), (28a), (29a)). -/
 theorem hasMaxInf_box_below [DenselyOrdered D] {φ : D → Set W} (hφ : StrictMono φ) (a : D)
     (w : W) : HasMaxInf (fun d => SetRel.core {p | ∃ d, d < a ∧ p.2 ∈ φ d} (φ d)) w :=
   hasMaxInf_box (φ := fun d : Dᵒᵈ => φ (ofDual d)) (fun _ _ h => hφ h) (toDual a) w
 
-/-- (28b), (29b), (47): *allowed not to φ d* stays open from below. -/
+/-- *Allowed not to φ d* stays open from below ((28b), (29b), (47)). -/
 theorem not_isLeast_diamond [DenselyOrdered D] {φ : D → Set W} (hφ : StrictMono φ)
     (hopen : IsNecessarilyOpenBelow φ) (R : SetRel W W) (w : W) :
     ¬ ∃ m, IsLeast {d | w ∈ R.preimage (φ d)} m :=
@@ -153,10 +157,10 @@ theorem not_isLeast_diamond [DenselyOrdered D] {φ : D → Set W} (hφ : StrictM
 
 /-! ### Cardinality as a level of granularity -/
 
-/-- (73)–(75): at cardinality granularity *more than n* is *at least n + 1*, whose most
-informative degree is the count, so *only more than 15F* means *exactly 16*. -/
+/-- At cardinality granularity *more than n* is *at least n + 1*, whose most informative degree
+is the count, so *only more than 15F* means *exactly 16* ((73)–(75)). -/
 theorem moreThan_exact_nat (μ : W → ℕ) (hμ : Function.Surjective μ) (m : ℕ) (w : W) :
-    IsMaxInf (Comparison.gt.over μ) m w ↔ μ w = m + 1 := by
+    IsMaxInf (μ ⁻¹' Set.Ioi ·) m w ↔ μ w = m + 1 := by
   refine isMaxInf_iff.trans ⟨fun ⟨h1, h2⟩ => ?_, fun h => ⟨?_, fun y hy => ?_⟩⟩
   · obtain ⟨v, hv⟩ := hμ (m + 1)
     by_contra hne
@@ -165,6 +169,6 @@ theorem moreThan_exact_nat (μ : W → ℕ) (hμ : Function.Surjective μ) (m : 
       h2 (m + 1) (by change m + 1 < μ w; omega) (by change m < μ v; omega)
     omega
   · change m < μ w; omega
-  · exact Comparison.antitone_gt_over μ (by change y < μ w at hy; omega)
+  · exact Set.preimage_mono (Set.Ioi_subset_Ioi (by change y < μ w at hy; omega))
 
 end FoxHackl2006

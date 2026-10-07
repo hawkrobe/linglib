@@ -113,7 +113,7 @@ theorem not_trivial_negative [Inhabited E] [Inhabited W] {v : Degree.EvaluativeV
   fun h ↦ by
     obtain ⟨p, -, -, hp⟩ := h (fun _ _ _ ↦ 0) (fun _ ↦ 0) default {∅} default <| by
       cases v <;> simp_all [presupposition]
-    simp [Degree.Comparison.over] at hp
+    simp at hp
 
 /-- A relational predicate is not trivial even under threshold significance, since some agent
 does not stand in the relation to a question an answer of which clears the threshold. -/
@@ -124,7 +124,7 @@ theorem not_trivial_relational (v : Degree.EvaluativeValence) (R : E → Set (Se
   refine hxQ (h (fun _ _ _ ↦ 1) (fun _ ↦ 0) x Q w ?_)
   cases v
   · obtain ⟨p, hp⟩ := hQ
-    exact ⟨p, hp, by norm_num [Degree.Comparison.over]⟩
+    exact ⟨p, hp, by norm_num⟩
   all_goals exact hQ
 
 /-! ### The classification (Table 2) -/

@@ -50,7 +50,7 @@ variable {W E D : Type*} [LinearOrder D] (μ : E → W → Set W → D) (θ : Se
 /-- The preferred members of the comparison class `C` for `x` at `w` are those that `x` prefers
 at `w` above the threshold of `C`. -/
 def preferred (x : E) (w : W) : Set (Set W) :=
-  C ∩ Degree.Comparison.gt.over (μ x w) (θ C)
+  C ∩ (μ x w) ⁻¹' Set.Ioi (θ C)
 
 /-- A degree-comparison predicate relates `x` at `w` to a set of propositions when one of them is
 preferred. -/

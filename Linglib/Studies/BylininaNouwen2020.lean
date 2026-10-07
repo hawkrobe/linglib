@@ -8,21 +8,21 @@ public import Mathlib.Data.Fintype.EquivFin
 /-!
 # Bylinina and Nouwen (2020): Numeral semantics
 
-This file formalizes the type landscape of [bylinina-nouwen-2020]. A bare numeral has been taken
+This file formalizes the type landscape of Bylinina and Nouwen. A bare numeral has been taken
 to denote a number, a predicate counting the atoms of a plurality, or a quantifier over degree
 properties, and the survey's point is that the three are notational variants related by
 type-shifts: the counting operator `MANY` takes the number to the predicate ((22), (23)), the
-survey's `CARD` takes the predicate back to the number ((24), (25)), and [partee-1987]'s `BE` and
-`iota`, the Russellian `iota`, lower [kennedy-2015]'s degree quantifier, `λP. max(P) = n`,
+survey's `CARD` takes the predicate back to the number ((24), (25)), and Partee's `BE` and
+`iota`, the Russellian `iota`, lower Kennedy's degree quantifier, `λP. max(P) = n`,
 to the number ((49), (50)). The survey then fills the empty slot in the landscape with a lower-bound
 degree quantifier, the Montague lift of the number ((52)), and an operator `MAX` sending a
 quantifier to the properties whose maximum lies in every member of it ((53)), which turns the
 lower-bound quantifier into the exactly-reading one ((54)) while keeping the lower bound basic, as
-the polarity behaviour of *zero* argues it should ([bylinina-nouwen-2018]).
+the polarity behaviour of *zero* argues it should (Bylinina and Nouwen 2018).
 
 ## Main definitions
 
-* `MANY d`: the pluralities with `d` atoms, the cardinality instance of `Comparison.eq.over`.
+* `MANY d`: the pluralities with `d` atoms, the fibre of the cardinality map at `d`.
 * `CARD P`: the degrees `d` with `Finset.card '' P = {d}`, the graph of `ιd. ∀x[P(x) → #x = d]`.
 * `MAX D`: `Degree.maxIn (⋂₀ D)`, the properties whose maximum lies in every member of `D`.
 
@@ -67,7 +67,7 @@ the counting operator at its number, so the two views differ only in whether the
 into the numeral or supplied by an operator. -/
 
 /-- `MANY d` is the property of pluralities with `d` atoms, `λx. #x = d`. -/
-def MANY (d : ℕ) : Set (Finset α) := Comparison.eq.over Finset.card d
+def MANY (d : ℕ) : Set (Finset α) := Finset.card ⁻¹' {d}
 
 theorem mem_MANY {d : ℕ} {x : Finset α} : x ∈ MANY d ↔ x.card = d := Iff.rfl
 
@@ -78,12 +78,12 @@ def CARD (P : Set (Finset α)) : Set ℕ := {d | Finset.card '' P = {d}}
 /-- `CARD` recovers the number a modifier meaning counts, given a plurality of that size. -/
 theorem CARD_MANY {n : ℕ} (hn : ∃ x : Finset α, x.card = n) : CARD (MANY (α := α) n) = {n} := by
   ext d
-  simp only [CARD, MANY, Comparison.over, Comparison.interval, mem_ofPred_eq,
+  simp only [CARD, MANY, mem_ofPred_eq,
     image_preimage_eq_of_subset (singleton_subset_iff.2 (hn : n ∈ range Finset.card)),
     singleton_eq_singleton_iff, mem_singleton_iff]
   exact eq_comm
 
-/-- The modifier view determines the numeral exactly when there are pluralities of every size: on
+/-- The modifier view determines the numeral exactly when there are pluralities of every size. On
 a finite domain of atoms every numeral beyond its size denotes the empty property. -/
 theorem MANY_injective_iff : Function.Injective (MANY (α := α)) ↔ Infinite α := by
   refine ⟨fun h => not_finite_iff_infinite.1 fun _ => ?_, fun _ => ?_⟩
@@ -100,8 +100,8 @@ A numeral may instead denote a quantifier over degree properties: Kennedy's, hol
 properties whose greatest element it is, `maxIn {n}`, or the lower-bound one holding of the
 properties containing it, `individual n`. -/
 
-/-- `BE` lowers the exactly-reading quantifier to the number ((49)): the properties whose greatest
-element is `n` share the single degree `n`. -/
+/-- `BE` lowers the exactly-reading quantifier to the number ((49)), since the properties whose
+greatest element is `n` share the single degree `n`. -/
 theorem BE_maxIn_singleton (n : ℕ) : BE (maxIn {n}) = ident n := by
   funext x
   exact propext ⟨fun h => ((maxIn_singleton.1 h).1 : n = x).symm, fun h => by
@@ -123,7 +123,7 @@ The empty slot in the landscape is a lower-bound degree quantifier, the Montague
 ((53), (54)), so the lower bound stays basic and the exactly reading is derived, the direction the
 polarity behaviour of *zero* requires ([bylinina-nouwen-2018]). -/
 
-/-- `MAX D` holds of the degree properties whose maximum lies in every member of `D`:
+/-- `MAX D` holds of the degree properties whose maximum lies in every member of `D`, as in
 `λD λP. max(P) ∈ ∩D`. -/
 def MAX (D : Set (Set ℕ)) : Set ℕ → Prop := maxIn (⋂₀ D)
 
@@ -133,7 +133,7 @@ theorem MAX_individual (n : ℕ) : MAX (individual n) = maxIn {n} := by
   rw [MAX, sInter_individual]
 
 /-- The exactly-reading quantifier is strictly stronger than the lower-bound one, so `MAX` does
-real work: a property with greatest element `n` contains `n`, and `{n, n + 1}` contains `n`
+real work. A property with greatest element `n` contains `n`, and `{n, n + 1}` contains `n`
 without `n` being its greatest element. -/
 theorem maxIn_singleton_lt_individual (n : ℕ) : maxIn {n} < (individual n : Set ℕ → Prop) :=
   lt_of_le_not_ge (fun _ h => (maxIn_singleton.1 h).1) fun h =>
