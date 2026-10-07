@@ -6,7 +6,7 @@ public import Linglib.Semantics.Conditionals.Horizon
 public import Linglib.Semantics.Degree.Superlative
 public import Linglib.Semantics.Modality.Kratzer.Ordering
 public import Linglib.Semantics.Focus.Particles
-public import Linglib.Semantics.Attitudes.Desire.BestWorlds
+public import Linglib.Semantics.Attitudes.Preference.BestWorlds
 
 /-!
 # Strawson entailment

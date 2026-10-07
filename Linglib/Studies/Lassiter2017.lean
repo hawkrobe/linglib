@@ -3,7 +3,7 @@ module
 public import Mathlib.Order.LatticeIntervals
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Tactic.FinCases
-public import Linglib.Semantics.Attitudes.Desire.ExpectedValue
+public import Linglib.Semantics.Attitudes.Preference.ExpectedValue
 public import Linglib.Core.Probability.UniformOn
 public import Linglib.Studies.Kennedy2007
 public import Linglib.Studies.Lassiter2015

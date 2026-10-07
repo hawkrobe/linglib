@@ -1,8 +1,8 @@
 module
 
 public import Linglib.Semantics.Questions.Partition.Basic
-public import Linglib.Semantics.Attitudes.Desire.BestWorlds
-public import Linglib.Semantics.Attitudes.Desire.Conditional
+public import Linglib.Semantics.Attitudes.Preference.BestWorlds
+public import Linglib.Semantics.Attitudes.Preference.Conditional
 public import Linglib.Semantics.Presupposition.Basic
 public import Linglib.Core.Order.OfCriteria
 public import Mathlib.Order.Preorder.Finite
@@ -51,7 +51,7 @@ is diverse, does not stack the deck, and the beliefs are sensitive to it (`Defin
   cost. The Anti-deckstacking Constraint quantifies over all propositions; read so, it admits
   only the finest partition (`antiDeckstacking_univ_singleton`), so it is restricted here to a
   list of salient propositions, the issues of each case.
-* Heim's semantics is the conditional one of `Desire/Conditional`. Levinson's expected-value
+* Heim's semantics is the conditional one, `Desire.Conditional.Want`. Levinson's expected-value
   comparison, the sufficient-desirability semantics of §2.4, and the Heimian question-based
   semantics of footnote 16 are prose.
 

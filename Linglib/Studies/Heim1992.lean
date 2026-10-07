@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Attitudes.Desire.Conditional
+public import Linglib.Semantics.Attitudes.Preference.Conditional
 public import Linglib.Semantics.Dynamic.Partial
 public import Linglib.Logic.Modal.Defs
 public import Mathlib.Data.Set.Lattice.Bounded

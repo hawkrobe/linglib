@@ -9,12 +9,19 @@ public import Linglib.Core.Order.Minimals
 # Preference structures
 
 A preference structure, in the sense of Condoravdi and Lauer, is a set of propositions with a
-strict ranking by importance. *Want* relates an agent to the maximal elements of the structure
-its context supplies. A structure is consistent with an information state when any family of its
-preferences that the information rules out jointly contains a strictly ranked pair, and realistic
-when each preference is compatible with the information. Consistency entails realism and makes
-the maximal preferences jointly realizable. The maximal preferences also order worlds, as an
+strict ranking by importance. A structure is consistent with an information state when any family
+of its preferences that the information rules out jointly contains a strictly ranked pair, and
+realistic when each preference is compatible with the information. Consistency entails realism and
+makes the maximal preferences jointly realizable. The maximal preferences also order worlds, as an
 ordering source does for Kratzer.
+
+*Want* relates an agent to the maximal elements of the effective preference structure its context
+supplies, which plays the role of a Kratzerian conversational background. Its readings differ in
+how a maximal preference relates to the complement: identity is the exact-match reading, a
+preference the complement entails gives the success-oriented reading, downward entailing in the
+complement, and a preference that entails the complement gives the Quine–Hintikka reading, upward
+entailing. Over a consistent background, *want φ* and *want ¬φ* do not hold together on the
+exact-match reading.
 
 ## Main definitions
 
@@ -22,6 +29,9 @@ ordering source does for Kratzer.
 * `PreferenceStructure.maxPreorder`, `PreferenceStructure.best`: the world order of the maximal
   preferences and its best worlds.
 * `PreferenceStructure.discrete`: the unranked structure on a set of preferences.
+* `Desire.Preferential.Want`, `Desire.Preferential.WantSufficient`,
+  `Desire.Preferential.WantNecessary`: the exact-match, success-oriented and Quine–Hintikka
+  readings of *want*.
 
 ## Main statements
 
@@ -29,6 +39,10 @@ ordering source does for Kratzer.
 * `PreferenceStructure.Consistent.inter_sInter_maxElts_nonempty`: the maximal preferences of a
   consistent structure are jointly compatible with the information.
 * `PreferenceStructure.consistent_of_realistic_of_isChain`: a realistic chain is consistent.
+* `Desire.Preferential.WantSufficient.anti`, `Desire.Preferential.WantNecessary.mono`: the
+  success-oriented reading is downward and the Quine–Hintikka reading upward entailing.
+* `Desire.Preferential.Want.not_compl`: over a consistent background, a proposition and its
+  negation are not both wanted.
 
 ## Implementation notes
 
@@ -41,6 +55,7 @@ is observed.
 * [condoravdi-lauer-2012]
 * [condoravdi-lauer-2016]
 * [lauer-2013]
+* [lauer-condoravdi-2014]
 * [kratzer-1981]
 -/
 
@@ -54,8 +69,7 @@ and only its restriction to `prefs` is ever observed. -/
 structure PreferenceStructure (W : Type*) where
   /-- The propositions the agent has preferences over. -/
   prefs : Set (Set W)
-  /-- The strict ranking. `prec p q` reads "q is strictly preferred
-      to p". -/
+  /-- The strict ranking, where `prec p q` reads "`q` is strictly preferred to `p`". -/
   prec : Set W → Set W → Prop
   /-- The strict-partial-order axioms, packaged as a mathlib typeclass. -/
   isStrictOrder : IsStrictOrder (Set W) prec
@@ -91,8 +105,7 @@ section Consistent
 
 variable {P} {B : Set W}
 
-/-- Realism follows from consistency via the singleton-`X` case combined
-    with irreflexivity. -/
+/-- Consistency entails realism, by the singleton subfamilies and irreflexivity. -/
 theorem Consistent.realistic (hC : P.Consistent B) : P.Realistic B := by
   intro p hp hpB
   obtain ⟨_, rfl, _, rfl, hqr⟩ := hC {p} (Set.singleton_subset_iff.2 hp)
@@ -159,16 +172,15 @@ theorem maxPreorder_le_iff {w v : W} :
 /-- The worlds of `F` that best realize the maximal preferences. -/
 def best (F : Set W) : Set W := P.maxPreorder.minimals F
 
-/-- When some world of `F` realizes every maximal preference, the best worlds of `F` are
-    exactly those. -/
+/-- When some world of `F` realizes every maximal preference, the best worlds of `F` are exactly
+those. -/
 theorem best_eq_of_nonempty {F : Set W} (h : (F ∩ ⋂₀ P.maxElts).Nonempty) :
     P.best F = F ∩ ⋂₀ P.maxElts :=
   Preorder.minimals_ofCriteria_eq h
 
 /-! ### Unranked preferences -/
 
-/-- The discrete structure has the preferences `S` and no ranking, so every preference is maximal.
--/
+/-- The discrete structure has the preferences `S` and no ranking, so all of them are maximal. -/
 def discrete (S : Set (Set W)) : PreferenceStructure W where
   prefs := S
   prec _ _ := False
@@ -191,3 +203,44 @@ theorem consistent_single {p B : Set W} (h : (p ∩ B).Nonempty) : (single p).Co
   consistent_discrete (by rwa [Set.sInter_singleton, Set.inter_comm])
 
 end PreferenceStructure
+
+/-! ### Effective-preference *want* -/
+
+namespace Desire.Preferential
+
+variable {Agent W : Type*} (P : Agent → W → PreferenceStructure W) (a : Agent) (φ : Set W)
+  (w : W)
+
+/-- On the exact-match reading, `a` wants `φ` at `w` when `φ` is itself a maximal preference of
+the background `P a w`. -/
+def Want : Prop := φ ∈ (P a w).maxElts
+
+/-- On the success-oriented reading, `a` wants `φ` when `φ` entails a maximal preference, which
+`φ` then satisfies. -/
+def WantSufficient : Prop := ∃ p ∈ (P a w).maxElts, φ ⊆ p
+
+/-- On the Quine–Hintikka reading, `a` wants `φ` when a maximal preference entails `φ`, so that the
+preference is satisfied only if `φ` holds. -/
+def WantNecessary : Prop := ∃ p ∈ (P a w).maxElts, p ⊆ φ
+
+variable {P a φ w}
+
+theorem Want.wantSufficient (h : Want P a φ w) : WantSufficient P a φ w := ⟨φ, h, subset_rfl⟩
+
+theorem Want.wantNecessary (h : Want P a φ w) : WantNecessary P a φ w := ⟨φ, h, subset_rfl⟩
+
+/-- Over a consistent background a proposition and its negation are not both wanted. -/
+theorem Want.not_compl {B : Set W} (hC : (P a w).Consistent B) (h : Want P a φ w) :
+    ¬ Want P a φᶜ w := fun hn ↦
+  (hC.inter_inter_nonempty_of_mem_maxElts h hn).ne_empty <| by
+    rw [Set.inter_compl_self, Set.inter_empty]
+
+theorem WantSufficient.anti {ψ : Set W} (hφψ : φ ⊆ ψ) (h : WantSufficient P a ψ w) :
+    WantSufficient P a φ w :=
+  let ⟨p, hp, hψp⟩ := h; ⟨p, hp, hφψ.trans hψp⟩
+
+theorem WantNecessary.mono {ψ : Set W} (hφψ : φ ⊆ ψ) (h : WantNecessary P a φ w) :
+    WantNecessary P a ψ w :=
+  let ⟨p, hp, hpφ⟩ := h; ⟨p, hp, hpφ.trans hφψ⟩
+
+end Desire.Preferential

@@ -872,14 +872,9 @@ import Linglib.Semantics.Aspect.Instantiation
 import Linglib.Semantics.Aspect.SubintervalProperty
 import Linglib.Semantics.Attitudes.Acquaintance
 import Linglib.Semantics.Attitudes.Anchor
-import Linglib.Semantics.Attitudes.Desire.BestWorlds
-import Linglib.Semantics.Attitudes.Desire.Conditional
-import Linglib.Semantics.Attitudes.Desire.ExpectedValue
-import Linglib.Semantics.Attitudes.Desire.Preferential
 import Linglib.Semantics.Attitudes.Distributivity
 import Linglib.Semantics.Attitudes.Doxastic
 import Linglib.Semantics.Attitudes.Factivity
-import Linglib.Semantics.Attitudes.Preference
 import Linglib.Semantics.Causation.Morphological
 import Linglib.Semantics.Composition.Assignment
 import Linglib.Semantics.Composition.Cont
