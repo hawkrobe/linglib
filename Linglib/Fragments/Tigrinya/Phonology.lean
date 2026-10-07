@@ -5,20 +5,33 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Mathlib.Tactic.DeriveFintype
+public import Linglib.Data.PHOIBLE.Inventories.Tigrinya
+public import Linglib.Phonology.Segmental.PHOIBLE
 public import Linglib.Morphology.Root.Consonantal
 
 /-!
-# Tigrinya vowels, gutturals, and verbal roots
+# Tigrinya phonology
 
-The Tigrinya vowel inventory — six full qualities [a, ʌ, i, u, e, o] and the weak vowel [ɨ]
-([leslau-1941], [berhane-1991], [denais-1990]) — its four gutturals, the glottals [ʔ, h] and
-the pharyngeals [ʕ, ħ], and the verbal roots of [faust-lampitelli-2026]'s paradigms. Roots are
-`Morphology.ConsonantalRoot String` with IPA-symbol segments, ejective and pharyngealized
-consonants carrying their modifier letter as one segment.
+This file defines the 32 consonants and seven vowels of Tigrinya, as in PHOIBLE's inventory
+1350, as segments named by their IPA symbols, with feature values from the PHOIBLE chart, and
+the verbal roots of [faust-lampitelli-2026]'s paradigms as roots of those segments. The
+inventory also lists the geminates, which are not further phonemes here. The vowels are six
+full qualities and the weak [ɨ], which occurs only where its absence would leave an impossible
+cluster.
+
+## Main definitions
+
+* `b`, `cʼ`, …, `ʕ`: the consonants, and `consonants`, the set of them.
+* `a`, `e`, …, `ʌ`: the vowels, and `vowels`, the set of them.
+
+## Main results
+
+* `tir_phonemes_map`: the consonants and vowels are the segments of inventory 1350's phonemes
+  other than the geminates.
 
 ## References
 
+* [moran-mccloy-2019]
 * [leslau-1941]
 * [berhane-1991]
 * [denais-1990]
@@ -28,133 +41,186 @@ consonants carrying their modifier letter as one segment.
 
 @[expose] public section
 
+open Morphology Phonology Data.PHOIBLE
+
 namespace Tigrinya.Phonology
 
-open Morphology
+/-- The voiced bilabial stop /b/. -/
+def b : Segment := .ofChart .«b»
 
-/-- The vowels: six full qualities and the weak [ɨ], which occurs only where its absence would
-leave an impossible cluster ([buckley-1994], [denais-1990], [berhane-1991]). -/
-inductive Vowel where
-  /-- [a]. -/
-  | a
-  /-- [ʌ]. -/
-  | aBare
-  /-- [i]. -/
-  | i
-  /-- [u]. -/
-  | u
-  /-- [e]. -/
-  | e
-  /-- [o]. -/
-  | o
-  /-- [ɨ], the weak vowel. -/
-  | weak
-  deriving DecidableEq, Repr, Fintype
+/-- The palatal ejective /cʼ/. -/
+def «cʼ» : Segment := .ofChart .«cʼ»
 
-namespace Vowel
+/-- The voiced alveolar stop /d/. -/
+def d : Segment := .ofChart .«d»
 
-/-- The IPA symbol. -/
-def toIPA : Vowel → String
-  | .a => "a"
-  | .aBare => "ʌ"
-  | .i => "i"
-  | .u => "u"
-  | .e => "e"
-  | .o => "o"
-  | .weak => "ɨ"
+/-- The voiced postalveolar affricate /d̠ʒ/. -/
+def «d̠ʒ» : Segment := .ofChart .«d̠ʒ»
 
-/-- `v.IsLow`: [a] or [ʌ]. -/
-def IsLow : Vowel → Prop
-  | .a | .aBare => True
-  | _ => False
+/-- The voiceless labiodental fricative /f/. -/
+def f : Segment := .ofChart .«f»
 
-instance : DecidablePred IsLow := λ v => by cases v <;> unfold IsLow <;> infer_instance
+/-- The voiceless glottal fricative /h/. -/
+def h : Segment := .ofChart .«h»
 
-end Vowel
+/-- The palatal glide /j/. -/
+def j : Segment := .ofChart .«j»
 
-/-- The four gutturals: two glottals and two pharyngeals. -/
-inductive Guttural where
-  /-- [ʔ]. -/
-  | glottalStop
-  /-- [h]. -/
-  | h
-  /-- [ʕ]. -/
-  | pharyngealVoiced
-  /-- [ħ]. -/
-  | pharyngealVoiceless
-  deriving DecidableEq, Repr, Fintype
+/-- The voiceless velar stop /k/. -/
+def k : Segment := .ofChart .«k»
 
-namespace Guttural
+/-- The alveolar lateral /l/. -/
+def l : Segment := .ofChart .«l»
 
-/-- The IPA symbol. -/
-def toIPA : Guttural → String
-  | .glottalStop => "ʔ"
-  | .h => "h"
-  | .pharyngealVoiced => "ʕ"
-  | .pharyngealVoiceless => "ħ"
+/-- The bilabial nasal /m/. -/
+def m : Segment := .ofChart .«m»
 
-/-- The guttural written by an IPA symbol, if any. -/
-def ofIPA? : String → Option Guttural
-  | "ʔ" => some .glottalStop
-  | "h" => some .h
-  | "ʕ" => some .pharyngealVoiced
-  | "ħ" => some .pharyngealVoiceless
-  | _ => none
+/-- The alveolar nasal /n/. -/
+def n : Segment := .ofChart .«n»
 
-/-- `g.IsPharyngeal`: [ʕ] or [ħ]. -/
-def IsPharyngeal : Guttural → Prop
-  | .pharyngealVoiced | .pharyngealVoiceless => True
-  | _ => False
+/-- The voiceless bilabial stop /p/. -/
+def p : Segment := .ofChart .«p»
 
-instance : DecidablePred IsPharyngeal :=
-  λ g => by cases g <;> unfold IsPharyngeal <;> infer_instance
+/-- The bilabial ejective /pʼ/. -/
+def «pʼ» : Segment := .ofChart .«pʼ»
 
-theorem ofIPA_toIPA (g : Guttural) : ofIPA? g.toIPA = some g := by cases g <;> rfl
+/-- The voiceless uvular stop /q/. -/
+def q : Segment := .ofChart .«q»
 
-end Guttural
+/-- The uvular ejective /qʼ/. -/
+def «qʼ» : Segment := .ofChart .«qʼ»
+
+/-- The voiceless alveolar fricative /s/. -/
+def s : Segment := .ofChart .«s»
+
+/-- The alveolar ejective fricative /sʼ/. -/
+def «sʼ» : Segment := .ofChart .«sʼ»
+
+/-- The voiceless alveolar stop /t/. -/
+def t : Segment := .ofChart .«t»
+
+/-- The alveolar ejective /tʼ/. -/
+def «tʼ» : Segment := .ofChart .«tʼ»
+
+/-- The voiceless postalveolar affricate /t̠ʃ/. -/
+def «t̠ʃ» : Segment := .ofChart .«t̠ʃ»
+
+/-- The voiced labiodental fricative /v/. -/
+def v : Segment := .ofChart .«v»
+
+/-- The labial-velar glide /w/. -/
+def w : Segment := .ofChart .«w»
+
+/-- The voiceless velar fricative /x/. -/
+def x : Segment := .ofChart .«x»
+
+/-- The voiced alveolar fricative /z/. -/
+def z : Segment := .ofChart .«z»
+
+/-- The voiceless pharyngeal fricative /ħ/. -/
+def ħ : Segment := .ofChart .«ħ»
+
+/-- The voiced velar stop /ɡ/. -/
+def «ɡ» : Segment := .ofChart .«ɡ»
+
+/-- The palatal nasal /ɲ/. -/
+def «ɲ» : Segment := .ofChart .«ɲ»
+
+/-- The alveolar tap /ɾ/. -/
+def «ɾ» : Segment := .ofChart .«ɾ»
+
+/-- The voiceless postalveolar fricative /ʃ/. -/
+def «ʃ» : Segment := .ofChart .«ʃ»
+
+/-- The voiced postalveolar fricative /ʒ/. -/
+def «ʒ» : Segment := .ofChart .«ʒ»
+
+/-- The glottal stop /ʔ/. -/
+def «ʔ» : Segment := .ofChart .«ʔ»
+
+/-- The voiced pharyngeal fricative /ʕ/. -/
+def «ʕ» : Segment := .ofChart .«ʕ»
+
+/-- The consonants of Tigrinya. -/
+def consonants : Finset Segment :=
+  ⟨↑[b, «cʼ», d, «d̠ʒ», f, h, j, k, l, m, n, p, «pʼ», q, «qʼ», s, «sʼ», t, «tʼ», «t̠ʃ», v, w, x,
+    z, ħ, «ɡ», «ɲ», «ɾ», «ʃ», «ʒ», «ʔ», «ʕ»], by decide +kernel⟩
+
+/-- The open front vowel /a/. -/
+def a : Segment := .ofChart .«a»
+
+/-- The close-mid front vowel /e/. -/
+def e : Segment := .ofChart .«e»
+
+/-- The close front vowel /i/. -/
+def i : Segment := .ofChart .«i»
+
+/-- The close-mid back vowel /o/. -/
+def o : Segment := .ofChart .«o»
+
+/-- The close back vowel /u/. -/
+def u : Segment := .ofChart .«u»
+
+/-- The close central vowel, the weak vowel /ɨ/. -/
+def «ɨ» : Segment := .ofChart .«ɨ»
+
+/-- The open-mid back unrounded vowel /ʌ/. -/
+def «ʌ» : Segment := .ofChart .«ʌ»
+
+/-- The vowels of Tigrinya. -/
+def vowels : Finset Segment := ⟨↑[a, e, i, o, u, «ɨ», «ʌ»], by decide +kernel⟩
+
+/-- The consonants and vowels, in the order of PHOIBLE's inventory 1350, are the segments of its
+phonemes other than the geminates, which are [+long]. -/
+theorem tir_phonemes_map :
+    (Inventories.Tigrinya.tir.phonemes.filter (·.features .long ≠ some true)).map
+        (Segment.ofChart ·.features) =
+      [b, «cʼ», d, «d̠ʒ», f, h, j, k, l, m, n, p, «pʼ», q, «qʼ», s, «sʼ», t, «tʼ», «t̠ʃ», v, w,
+        x, z, ħ, «ɡ», «ɲ», «ɾ», «ʃ», «ʒ», «ʔ», «ʕ», a, e, i, o, u, «ɨ», «ʌ»] :=
+  rfl
 
 /-! ### Verbal roots -/
 
-/-- √grf `whip`: [gʌrʌf-] DEP.PRF, [gʌrif-] PRF, [-gʌrrɨf] IMPRF. -/
-def whip : ConsonantalRoot String := ⟨["g", "r", "f"]⟩
+/-- √grf 'whip' gives [gʌrʌf-] DEP.PRF, [gʌrif-] PRF, [-gʌrrɨf] IMPRF. -/
+def whip : ConsonantalRoot Segment := ⟨[«ɡ», «ɾ», f]⟩
 
-/-- √smʕ `hear`: [sʌmaʕ-] DEP.PRF, [sʌmiʕ-] PRF, [-sʌmmɨʕ] IMPRF, [sɨmaʕ] IMP.M. -/
-def hear : ConsonantalRoot String := ⟨["s", "m", "ʕ"]⟩
+/-- √smʕ 'hear' gives [sʌmaʕ-] DEP.PRF, [sʌmiʕ-] PRF, [-sʌmmɨʕ] IMPRF, [sɨmaʕ] IMP.M. -/
+def hear : ConsonantalRoot Segment := ⟨[s, m, «ʕ»]⟩
 
-/-- √ʔsr `arrest`: [ʔasʌr-] DEP.PRF, [ʔasir-] PRF, [-ʔassɨr] IMPRF. -/
-def arrest : ConsonantalRoot String := ⟨["ʔ", "s", "r"]⟩
+/-- √ʔsr 'arrest' gives [ʔasʌr-] DEP.PRF, [ʔasir-] PRF, [-ʔassɨr] IMPRF. -/
+def arrest : ConsonantalRoot Segment := ⟨[«ʔ», s, «ɾ»]⟩
 
-/-- √sħb `pull`: [saħab-] DEP.PRF, [siħib-] PRF, [-sɨħɨb] IMPRF. -/
-def pull : ConsonantalRoot String := ⟨["s", "ħ", "b"]⟩
+/-- √sħb 'pull' gives [saħab-] DEP.PRF, [siħib-] PRF, [-sɨħɨb] IMPRF. -/
+def pull : ConsonantalRoot Segment := ⟨[s, ħ, b]⟩
 
-/-- √mhr `teach`: [mahar] IMP. -/
-def teach : ConsonantalRoot String := ⟨["m", "h", "r"]⟩
+/-- √mhr 'teach' gives [mahar] IMP. -/
+def teach : ConsonantalRoot Segment := ⟨[m, h, «ɾ»]⟩
 
-/-- √ħrd `slaughter`: [ta-ħarrɨd] 2-IMPRF. -/
-def slaughter : ConsonantalRoot String := ⟨["ħ", "r", "d"]⟩
+/-- √ħrd 'slaughter' gives [ta-ħarrɨd] 2-IMPRF. -/
+def slaughter : ConsonantalRoot Segment := ⟨[ħ, «ɾ», d]⟩
 
-/-- √ħdm `escape`: [ta-ħadɨm] 2-IMPRF. -/
-def escape : ConsonantalRoot String := ⟨["ħ", "d", "m"]⟩
+/-- √ħdm 'escape' gives [ta-ħadɨm] 2-IMPRF. -/
+def escape : ConsonantalRoot Segment := ⟨[ħ, d, m]⟩
 
-/-- √sʔl `ask`: [saʔal] IMP. -/
-def ask : ConsonantalRoot String := ⟨["s", "ʔ", "l"]⟩
+/-- √sʔl 'ask' gives [saʔal] IMP. -/
+def ask : ConsonantalRoot Segment := ⟨[s, «ʔ», l]⟩
 
-/-- √glh `uncover`: [gɨlah] IMP.M, [gɨlh-i] IMP-F, [mɨ-glah] GER. -/
-def uncover : ConsonantalRoot String := ⟨["g", "l", "h"]⟩
+/-- √glh 'uncover' gives [gɨlah] IMP.M, [gɨlh-i] IMP-F, [mɨ-glah] GER. -/
+def uncover : ConsonantalRoot Segment := ⟨[«ɡ», l, h]⟩
 
-/-- √nbħ `bark`: [nɨβaħ] IMP.M, [nɨbħ-i] IMP-F, [mɨ-nbaħ] GER. -/
-def bark : ConsonantalRoot String := ⟨["n", "b", "ħ"]⟩
+/-- √nbħ 'bark' gives [nɨβaħ] IMP.M, [nɨbħ-i] IMP-F, [mɨ-nbaħ] GER. -/
+def bark : ConsonantalRoot Segment := ⟨[n, b, ħ]⟩
 
-/-- √bdl `hurt`, a type B verb with medial gemination throughout: [bʌddʌl-ʌ] DEP.PRF-3MSG,
-[mɨ-bɨddal] GER. -/
-def hurt : ConsonantalRoot String := ⟨["b", "d", "l"]⟩
+/-- √bdl 'hurt', a type B verb with medial gemination throughout, gives [bʌddʌl-ʌ] DEP.PRF-3MSG
+and [mɨ-bɨddal] GER. -/
+def hurt : ConsonantalRoot Segment := ⟨[b, d, l]⟩
 
-/-- √brk `bless`, a type C verb with [a] after the first radical throughout: [barʌk-ʌ]
-DEP.PRF-3MSG, [mɨ-bɨrak] GER. -/
-def bless : ConsonantalRoot String := ⟨["b", "r", "k"]⟩
+/-- √brk 'bless', a type C verb with [a] after the first radical throughout, gives [barʌk-ʌ]
+DEP.PRF-3MSG and [mɨ-bɨrak] GER. -/
+def bless : ConsonantalRoot Segment := ⟨[b, «ɾ», k]⟩
 
-/-- √ʕrf, unglossed in [faust-lampitelli-2026]: [ʕarifu] PRF-3MSG, [ʕɨrʌf] IMP, [ʕarʌf-]
-DEP.PRF. -/
-def arf : ConsonantalRoot String := ⟨["ʕ", "r", "f"]⟩
+/-- √ʕrf, unglossed in [faust-lampitelli-2026], gives [ʕarifu] PRF-3MSG, [ʕɨrʌf] IMP and
+[ʕarʌf-] DEP.PRF. -/
+def arf : ConsonantalRoot Segment := ⟨[«ʕ», «ɾ», f]⟩
 
 end Tigrinya.Phonology
