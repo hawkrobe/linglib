@@ -13,8 +13,8 @@ public import Linglib.Core.Order.Bundle
 # Segmental representation: definitions
 
 The distinctive feature and the segment built over it. A **feature** is one of the
-26 binary distinctive features of [hayes-2009]'s chart, or the tongue-root feature
-[ATR] he lists among the vowel features without charting; a **segment** is a partial
+26 binary distinctive features of [hayes-2009]'s chart, or one of the tongue-root features
+[ATR] and [RTR] ([halle-vaux-wolfe-2000]); a **segment** is a partial
 specification of those features — each `+`, `−`, or unspecified — ordered by
 specificity (the unification-grammar subsumption order, inherited as a feature
 bundle), with the unspecified archisegment least and natural-class generalization
@@ -51,7 +51,8 @@ namespace Phonology
     tongue-root feature of the sub-Saharan harmony systems, is the one feature
     [hayes-2009] names among the vowel features but leaves off his chart, noting
     that whether it is the same feature as [tense] is unsettled; it is kept
-    distinct here. -/
+    distinct here. [RTR], the other tongue-root feature of [halle-vaux-wolfe-2000],
+    distinguishes the pharyngealized consonants, which the PHOIBLE chart codes by it. -/
 inductive Feature where
   -- Manner / root
   | syllabic         -- [+syll] = vowels
@@ -85,6 +86,7 @@ inductive Feature where
   | back             -- tongue body backed
   | tense            -- tense vowel quality
   | atr              -- [+ATR] = advanced tongue root
+  | rtr              -- [+RTR] = retracted tongue root
   deriving DecidableEq, Repr
 
 namespace Feature
@@ -98,7 +100,7 @@ def allFeatures : List Feature :=
    .voice, .spreadGlottis, .constrGlottis,
    .labial, .round, .labiodental,
    .coronal, .anterior, .distributed,
-   .dorsal, .high, .low, .front, .back, .tense, .atr]
+   .dorsal, .high, .low, .front, .back, .tense, .atr, .rtr]
 
 /-- `allFeatures` is the canonical enumeration: completeness is the `Fintype` law,
 not a theorem re-proved beside it. -/

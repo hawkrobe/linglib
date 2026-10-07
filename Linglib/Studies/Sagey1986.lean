@@ -131,7 +131,7 @@ def node : Feature → Option Node
   | .coronal | .anterior | .distributed => some .coronal
   | .dorsal | .high | .low | .back => some .dorsal
   | .syllabic | .sonorant | .approximant | .delayedRelease | .strident | .tap | .trill
-  | .labiodental | .front | .tense | .atr => none
+  | .labiodental | .front | .tense | .atr | .rtr => none
 
 /-! ### Natural classes -/
 

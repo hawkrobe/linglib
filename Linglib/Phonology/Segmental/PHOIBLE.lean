@@ -8,10 +8,10 @@ public import Linglib.Phonology.Segmental.Basic
 
 This file turns a PHOIBLE feature matrix into a `Segment`, so that a fragment can take the
 feature values of its phonemes from the PHOIBLE chart instead of listing them. PHOIBLE's
-features extend those of Hayes, which `Phonology.Feature` follows, with length, tone, stress
-and further laryngeal and tongue-root features. Each of Hayes's features is a PHOIBLE column,
-under another name for [voice], [constricted glottis] and [ATR], and the segment of a matrix
-reads the matrix along that correspondence, dropping the columns Hayes lacks.
+features extend those of Hayes, which `Phonology.Feature` follows, with length, tone, stress,
+clicks and further laryngeal features. Each feature of `Phonology.Feature` is a PHOIBLE column,
+under another name for [voice], [constricted glottis], [ATR] and [RTR], and the segment of a
+matrix reads the matrix along that correspondence, dropping the columns it lacks.
 
 The two systems differ in one convention. PHOIBLE specifies [round] only on labial segments
 and marks it not applicable elsewhere, where Hayes's charts give every other segment
@@ -84,6 +84,7 @@ def toPHOIBLE : Feature → Data.PHOIBLE.Feature
   | .back => .back
   | .tense => .tense
   | .atr => .advancedTongueRoot
+  | .rtr => .retractedTongueRoot
 
 theorem toPHOIBLE_injective : Function.Injective toPHOIBLE := by decide
 
