@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Syntax.Minimalist.Features
-public import Linglib.Syntax.Minimalist.Geometry
 
 /-!
 # Coordination resolution over a dual-feature system
@@ -14,9 +13,9 @@ to the coordination and converts them by intersection, so that the coordination 
 the features every conjunct has. Uninterpretable sets are not intersected but realized set by
 set, and their realization converges only when every set receives the same exponent; at
 Transfer the redundancy rule sends a nominal's interpretable features to PF when it has no
-uninterpretable ones. The features a nominal contributes are the entailments of a node of a
-feature geometry (`Minimalist.Geometry`), and a geometry satisfying mismatch resolution needs no
-default.
+uninterpretable ones. The features a nominal contributes are a node of a feature geometry with
+the nodes above it, so in a rooted geometry every two conjuncts share the root and resolution
+needs no default.
 
 ## Main definitions
 

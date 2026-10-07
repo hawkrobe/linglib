@@ -169,6 +169,24 @@ theorem exists_lt_card_of_iterate_eq [Fintype α] {a b : α} {n : ℕ} (h : T.pa
   · refine ⟨N, by omega, ?_⟩
     rw [← h, hN, ← Nat.sub_add_cancel hn.le, Function.iterate_add_apply, hN, T.iterate_root]
 
+section Finite
+
+variable [Fintype α] [DecidableEq α]
+
+/-- The elements at or below `a` in the ancestorship order are `a` and its iterated parents. -/
+def Iic (a : α) : Finset α := (List.iterate T.parent a (Fintype.card α)).toFinset
+
+theorem mem_Iic {a b : α} : b ∈ T.Iic a ↔ ∃ n, T.parent^[n] a = b := by
+  rw [Iic, List.mem_toFinset, List.mem_iterate]
+  exact ⟨fun ⟨m, _, h⟩ ↦ ⟨m, h.symm⟩, fun ⟨_, h⟩ ↦
+    let ⟨m, hm, h'⟩ := T.exists_lt_card_of_iterate_eq h; ⟨m, hm, h'.symm⟩⟩
+
+theorem self_mem_Iic (a : α) : a ∈ T.Iic a := T.mem_Iic.2 ⟨0, rfl⟩
+
+theorem root_mem_Iic (a : α) : T.root ∈ T.Iic a := T.mem_Iic.2 (T.exists_iterate_eq_root a)
+
+end Finite
+
 /-- On a finite type `a ≤ b` is decided by walking up from `b`. -/
 abbrev decidableLE [Fintype α] [DecidableEq α] : @DecidableLE α T.partialOrder.toLE :=
   fun a b ↦ decidable_of_iff (a ∈ List.iterate T.parent b (Fintype.card α)) <| by
