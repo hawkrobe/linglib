@@ -24,7 +24,7 @@ the polarity behaviour of *zero* argues it should (Bylinina and Nouwen 2018).
 
 * `MANY d`: the pluralities with `d` atoms, the fibre of the cardinality map at `d`.
 * `CARD P`: the degrees `d` with `Finset.card '' P = {d}`, the graph of `ιd. ∀x[P(x) → #x = d]`.
-* `MAX D`: `Degree.maxIn (⋂₀ D)`, the properties whose maximum lies in every member of `D`.
+* `MAX D`: `Degree.MaxIn (⋂₀ D)`, the properties whose maximum lies in every member of `D`.
 
 ## Main results
 
@@ -40,7 +40,7 @@ the polarity behaviour of *zero* argues it should (Bylinina and Nouwen 2018).
 ## Implementation notes
 
 Degrees are natural numbers, a degree property is a `Set ℕ` and a degree quantifier a predicate
-on them, so Kennedy's numeral is the substrate's `Degree.maxIn {n}` and a property without a
+on them, so Kennedy's numeral is the substrate's `Degree.MaxIn {n}` and a property without a
 maximum falsifies it rather than leaving it undefined. Pluralities are the finite sets of atoms of
 any type and `#` is `Finset.card`; the identity `CARD (MANY n) = {n}` needs a plurality of `n`
 atoms to exist, which the survey's unbounded domain supplies and a finite one does not.
@@ -97,23 +97,23 @@ theorem MANY_injective_iff : Function.Injective (MANY (α := α)) ↔ Infinite �
 /-! ### The degree-quantifier views
 
 A numeral may instead denote a quantifier over degree properties: Kennedy's, holding of the
-properties whose greatest element it is, `maxIn {n}`, or the lower-bound one holding of the
+properties whose greatest element it is, `MaxIn {n}`, or the lower-bound one holding of the
 properties containing it, `individual n`. -/
 
 /-- `BE` lowers the exactly-reading quantifier to the number ((49)), since the properties whose
 greatest element is `n` share the single degree `n`. -/
-theorem BE_maxIn_singleton (n : ℕ) : BE (maxIn {n}) = ident n := by
+theorem BE_maxIn_singleton (n : ℕ) : BE (MaxIn {n}) = ident n := by
   funext x
   exact propext ⟨fun h => ((maxIn_singleton.1 h).1 : n = x).symm, fun h => by
     subst h; exact maxIn_singleton.2 isGreatest_singleton⟩
 
 /-- Lowering with `BE` and then `iota` recovers the number ((50)). -/
-theorem iota_BE_maxIn_singleton (n : ℕ) : iota (BE (maxIn {n})) = some n := by
+theorem iota_BE_maxIn_singleton (n : ℕ) : iota (BE (MaxIn {n})) = some n := by
   rw [BE_maxIn_singleton]; exact iota_ident n
 
 /-- The exactly-reading quantifier determines the numeral, since `BE` recovers it. -/
-theorem maxIn_singleton_injective : Function.Injective fun n : ℕ => maxIn {n} :=
-  fun a b (h : maxIn {a} = maxIn {b}) =>
+theorem maxIn_singleton_injective : Function.Injective fun n : ℕ => MaxIn {n} :=
+  fun a b (h : MaxIn {a} = MaxIn {b}) =>
     ident_injective (by rw [← BE_maxIn_singleton, ← BE_maxIn_singleton, h])
 
 /-! ### The survey's proposal
@@ -125,17 +125,17 @@ polarity behaviour of *zero* requires ([bylinina-nouwen-2018]). -/
 
 /-- `MAX D` holds of the degree properties whose maximum lies in every member of `D`, as in
 `λD λP. max(P) ∈ ∩D`. -/
-def MAX (D : Set (Set ℕ)) : Set ℕ → Prop := maxIn (⋂₀ D)
+def MAX (D : Set (Set ℕ)) : Set ℕ → Prop := MaxIn (⋂₀ D)
 
 /-- `MAX` takes the lower-bound quantifier to the exactly-reading one ((54)), since the properties
 containing `n` intersect to `{n}`. -/
-theorem MAX_individual (n : ℕ) : MAX (individual n) = maxIn {n} := by
+theorem MAX_individual (n : ℕ) : MAX (individual n) = MaxIn {n} := by
   rw [MAX, sInter_individual]
 
 /-- The exactly-reading quantifier is strictly stronger than the lower-bound one, so `MAX` does
 real work. A property with greatest element `n` contains `n`, and `{n, n + 1}` contains `n`
 without `n` being its greatest element. -/
-theorem maxIn_singleton_lt_individual (n : ℕ) : maxIn {n} < (individual n : Set ℕ → Prop) :=
+theorem maxIn_singleton_lt_individual (n : ℕ) : MaxIn {n} < (individual n : Set ℕ → Prop) :=
   lt_of_le_not_ge (fun _ h => (maxIn_singleton.1 h).1) fun h =>
     absurd ((maxIn_singleton.1 (h {n, n + 1} (Or.inl rfl))).2 (Or.inr rfl)) (by omega)
 

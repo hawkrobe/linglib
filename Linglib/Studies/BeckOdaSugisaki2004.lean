@@ -23,7 +23,7 @@ no degree-based negative islands — and its scope argument.
 
 * `er`: the comparative morpheme on degree sets, `max D₂ > max D₁`.
 * `pos`: the positive form at a standard `c`; the contextual comparative is
-  `Degree.maxIn (Set.Ioi c)`.
+  `Degree.MaxIn (Set.Ioi c)`.
 * `theC`: the Fregean definite over a contextual domain, the denotation of a *yori*-clause.
 * `erJ`: the comparative that combines directly with the adjective meaning.
 
@@ -94,17 +94,17 @@ theorem pos_iff_mem_over (μ : Entity → D) (c : D) (x : Entity) :
     pos μ c x ↔ x ∈ μ ⁻¹' Set.Ioi c := by
   simp only [pos_iff_lt, Set.mem_preimage, Set.mem_Ioi]
 
-/-- The contextual comparative `maxIn (Set.Ioi c)`, `max S > c` (23), holds of an `S` with a
+/-- The contextual comparative `MaxIn (Set.Ioi c)`, `max S > c` (23), holds of an `S` with a
 greatest element iff some `d ∈ S` exceeds `c` (footnote 7). -/
 theorem maxIn_Ioi_iff_of_isGreatest {S : Set D} {m : D} (h : IsGreatest S m) (c : D) :
-    maxIn (Set.Ioi c) S ↔ ∃ d ∈ S, c < d :=
+    MaxIn (Set.Ioi c) S ↔ ∃ d ∈ S, c < d :=
   ⟨fun ⟨_, hc, h'⟩ => ⟨_, h'.1, hc⟩,
     fun ⟨_, hd, hc⟩ => ⟨m, hc.trans_le (h.2 hd), h⟩⟩
 
 /-- On an adjective's own degree set the contextual comparative and the positive form
 coincide ((24d), (21b)). -/
 theorem maxIn_Ioi_Iic_iff (μ : Entity → D) (c : D) (x : Entity) :
-    maxIn (Set.Ioi c) (Set.Iic (μ x)) ↔ pos μ c x :=
+    MaxIn (Set.Ioi c) (Set.Iic (μ x)) ↔ pos μ c x :=
   maxIn_Iic.trans (pos_iff_lt μ c x).symm
 
 /-- A context setter supplying `y` sets `c := μ y`, and the positive form becomes the
@@ -186,7 +186,7 @@ theorem er_everyone_without_shared_book :
 /-- The comparative on adjective meanings, where `erJ c P x` holds iff the greatest degree to
 which `x` is `P` exceeds `c` (133). -/
 def erJ (c : D) (P : D → Entity → Prop) (x : Entity) : Prop :=
-  maxIn (Set.Ioi c) {d | P d x}
+  MaxIn (Set.Ioi c) {d | P d x}
 
 /-- For a monotone adjective, `erJ` and the positive form have the same truth conditions
 (footnote 15). -/
@@ -197,12 +197,12 @@ theorem erJ_iff_pos (μ : Entity → D) (c : D) (x : Entity) :
 /-- The wide-scope reading of *need to be exactly s long*, the comparative over `need`, says
 that the greatest degree reached in every acceptable world is the target `s` (136b). -/
 def wideScope {W : Type*} (acc : Set W) (μ : W → D) (s : D) : Prop :=
-  highScope (maxIn {s}) (every (· ∈ acc)) μ
+  HighScope (MaxIn {s}) (every (· ∈ acc)) μ
 
 /-- The in-situ reading, which `erJ` with a differential yields, says that in every acceptable
 world the greatest degree is the target `s`. -/
 def inSitu {W : Type*} (acc : Set W) (μ : W → D) (s : D) : Prop :=
-  lowScope (maxIn {s}) (every (· ∈ acc)) μ
+  LowScope (MaxIn {s}) (every (· ∈ acc)) μ
 
 theorem inSitu_iff {W : Type*} (acc : Set W) (μ : W → D) (s : D) :
     inSitu acc μ s ↔ ∀ w ∈ acc, μ w = s :=

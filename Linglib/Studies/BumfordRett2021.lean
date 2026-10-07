@@ -173,8 +173,8 @@ on `p`'s side of the class centre shifted by `σ`. The negative antonym's relati
 duals. -/
 def Holds (c : Option Comparison) : Utterance → Finset.Icc (-4 : ℤ) 4 → World → Prop
   | .silence, _, _ => True
-  | .say p, σ, w => (∀ r ∈ c, (p • r).rel w.height keishaHeight) ∧
-      (p • Comparison.ge).rel (measured c w) (w.centre + σ)
+  | .say p, σ, w => (∀ r ∈ c, (p • r).Rel w.height keishaHeight) ∧
+      (p • Comparison.ge).Rel (measured c w) (w.centre + σ)
 
 instance (c : Option Comparison) (u : Utterance) (σ : Finset.Icc (-4 : ℤ) 4) (w : World) :
     Decidable (Holds c u σ w) := by

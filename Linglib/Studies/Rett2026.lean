@@ -221,7 +221,7 @@ variable {T : Type*}
 of a punctual clause differs from *after* its complement. -/
 theorem after_not_ambidirectional [LinearOrder T] (hab : ∃ a b : T, a < b) :
     ¬ ∀ (A : Set (NonemptyInterval T)) (B : Set T),
-      isAmbidirectional (fun X ↦ ∃ t ∈ timeTrace A, ∃ m ∈ maxOnScale .gt X, m < t) B := by
+      IsAmbidirectional (fun X ↦ ∃ t ∈ timeTrace A, ∃ m ∈ maxOnScale .gt X, m < t) B := by
   obtain ⟨a, b, hab⟩ := hab
   intro h
   have h_amb := h {NonemptyInterval.pure b} {a}
@@ -245,10 +245,10 @@ theorem after_not_ambidirectional [LinearOrder T] (hab : ∃ a b : T, a < b) :
 /-- *While* demands total overlap, which the complement of the embedded interval cannot supply, so
 it is not ambidirectional and Hungarian *amíg* with negation reads only as *until* (74). -/
 theorem while_not_ambidirectional [Inhabited T] :
-    ¬ ∀ (A B : Set T), isAmbidirectional (fun X ↦ ∀ t ∈ A, t ∈ X) B := by
+    ¬ ∀ (A B : Set T), IsAmbidirectional (fun X ↦ ∀ t ∈ A, t ∈ X) B := by
   intro h
   have := h {default} {default}
-  simp only [isAmbidirectional] at this
+  simp only [IsAmbidirectional] at this
   have lhs : ∀ t ∈ ({default} : Set T), t ∈ ({default} : Set T) := fun _ h ↦ h
   have rhs := this.mp lhs (default : T) rfl
   exact absurd rfl rhs

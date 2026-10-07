@@ -10,7 +10,7 @@ public import Linglib.Semantics.Presupposition.Defs
 it measures above every other member. Von Fintel gives the superlative morpheme this entry, with
 the class a predicate like *girl in her class*, so that the presupposition rather than the
 assertion fails when the class shrinks below `x`; at a world it is Heim's absolute superlative
-`Degree.absoluteSuperlative`. The assertion is the set-standard comparative of `x` over the other
+`Degree.AbsoluteSuperlative`. The assertion is the set-standard comparative of `x` over the other
 members' degrees, so its anti-additivity in the class comes from Hoeksema's anti-additivity of
 the set comparative.
 
@@ -85,7 +85,7 @@ end Preorder
 /-- At a world the superlative holds exactly when `x` is the absolute superlative of the class
 there ([heim-1999]). -/
 theorem holds_superlative_iff [LinearOrder D] {μ : α → D} {C : W → Set α} {x : α} {w : W} :
-    (superlative μ C x).holds w ↔ absoluteSuperlative μ (C w) x :=
+    (superlative μ C x).holds w ↔ AbsoluteSuperlative μ (C w) x :=
   Iff.rfl
 
 end Degree
