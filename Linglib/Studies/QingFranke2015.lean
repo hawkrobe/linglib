@@ -129,11 +129,11 @@ noncomputable abbrev salience : Measure Object := priorOf salienceCount
 
 /-- The literal listener at a prior (1): the prior conditioned on the word's extension. -/
 noncomputable def L0 (μ : Measure Object) : Kernel Word Object :=
-  literalListener μ λ u => u.extension.indicator 1
+  literalListener μ fun u ↦ u.extension
 
 theorem L0_real_of_mem (w : Object → ℕ) {u : Word} {t : Object} (h : t ∈ u.extension) :
     (L0 (priorOf w) u).real {t} = (w t : ℝ) / (priorOf w u.extension).toReal := by
-  rw [L0, measureReal_def, literalListener_indicator_apply_singleton _ _ h, ENNReal.toReal_mul,
+  rw [L0, measureReal_def, literalListener_apply_singleton _ _ h, ENNReal.toReal_mul,
     ENNReal.toReal_inv, priorOf_singleton, ENNReal.toReal_natCast, div_eq_inv_mul]
 
 /-- The literal listener at the uniform prior: the reciprocal of the extension's size. -/

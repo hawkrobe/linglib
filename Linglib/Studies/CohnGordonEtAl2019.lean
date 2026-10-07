@@ -124,17 +124,17 @@ variable [Fintype U] [MeasurableSpace U] [DiscreteMeasurableSpace U]
 /-- The incremental literal listener at context `ctx` (eq. 4) reweights the uniform prior by
 `⟦ctx ++ [u]⟧`. -/
 noncomputable def l0 (ctx : List U) : Kernel U W :=
-  literalListener (uniformOn Set.univ) fun u => g.incSem (ctx ++ [u])
+  gradedListener (uniformOn Set.univ) fun u => g.incSem (ctx ++ [u])
 
 instance (ctx : List U) : IsFiniteKernel (g.l0 ctx) :=
-  inferInstanceAs (IsFiniteKernel (literalListener _ _))
+  inferInstanceAs (IsFiniteKernel (gradedListener _ _))
 
 /-- The uniform prior and the viable-extension denominator cancel in the listener, so each
 cell is the referent's share of the true-extension counts. -/
 theorem l0_apply (hw : ∀ r : W, r ∈ g.worlds) (ctx : List U) (u : U) (r : W) :
     g.l0 ctx u {r}
       = (g.trueExts (ctx ++ [u]) r : ℝ≥0∞) / (∑ r', (g.trueExts (ctx ++ [u]) r' : ℕ) : ℕ) := by
-  rw [l0, literalListener_uniformOn_apply_singleton]
+  rw [l0, gradedListener_uniformOn_apply_singleton]
   push_cast
   rcases Nat.eq_zero_or_pos (g.viableExts (ctx ++ [u])) with hv | hv
   · have ht : ∀ r' : W, g.trueExts (ctx ++ [u]) r' = 0 := fun r' =>
@@ -223,9 +223,9 @@ instance : DecidableEq g.Complete := Subtype.instDecidableEq
 /-- The global literal listener (eq. 1) conditions the uniform prior on the utterance's
 truth. -/
 noncomputable def globalL0 : Kernel g.Complete W :=
-  literalListener (uniformOn Set.univ) fun u r => if g.sem u.val r then 1 else 0
+  gradedListener (uniformOn Set.univ) fun u r => if g.sem u.val r then 1 else 0
 
-instance : IsFiniteKernel g.globalL0 := inferInstanceAs (IsFiniteKernel (literalListener _ _))
+instance : IsFiniteKernel g.globalL0 := inferInstanceAs (IsFiniteKernel (gradedListener _ _))
 
 /-- The global pragmatic speaker (eq. 2). -/
 noncomputable def globalS1 (cost : g.Complete → ℝ) : Kernel W g.Complete :=
@@ -239,7 +239,7 @@ theorem globalL0_apply (u : g.Complete) (r : W) :
     g.globalL0 u {r}
       = (if g.sem u.val r then 1 else 0)
         / ((Finset.univ.filter fun r' => g.sem u.val r').card : ℝ≥0∞) := by
-  rw [globalL0, literalListener_uniformOn_apply_singleton]
+  rw [globalL0, gradedListener_uniformOn_apply_singleton]
   congr 1
   rw [Finset.sum_boole]
 

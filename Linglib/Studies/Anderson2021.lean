@@ -181,7 +181,7 @@ abbrev semSet (u : Utterance) : Set World := ↑(sem u)
 
 /-- The literal listener conditions the common ground on the utterance. -/
 noncomputable abbrev L0 (cg : Measure World) : Kernel Utterance World :=
-  literalListener cg fun u => (semSet u).indicator 1
+  literalListener cg semSet
 
 /-- The pragmatic speaker, without softmax terms or costs (footnote 3). -/
 noncomputable abbrev S1 (cg : Measure World) : Kernel World Utterance := speaker 1 0 (L0 cg)
@@ -204,7 +204,7 @@ variable {cg}
 
 theorem L0_apply_singleton_ne_zero {u : Utterance} {w : World} (hw : w ∈ sem u)
     (hcg : cg {w} ≠ 0) : L0 cg u {w} ≠ 0 := by
-  rw [literalListener_indicator_apply_singleton cg semSet (Finset.mem_coe.mpr hw)]
+  rw [literalListener_apply_singleton cg semSet (Finset.mem_coe.mpr hw)]
   exact mul_ne_zero (ENNReal.inv_ne_zero.mpr (measure_ne_top _ _)) hcg
 
 theorem S1_apply_singleton_ne_zero {u : Utterance} {w : World} (hw : w ∈ sem u)
@@ -220,7 +220,7 @@ theorem L1_apply_singleton_eq_zero {u : Utterance} {w : World} (hw : w ∉ sem u
     (hx : (S1 cg ∘ₘ cg) {u} ≠ 0) : L1 cg u {w} = 0 := by
   show ((S1 cg)†cg) u {w} = 0
   rw [posterior_apply_singleton _ _ hx, speaker_apply_singleton_eq_zero one_pos
-    (literalListener_indicator_apply_singleton_of_notMem cg semSet (Finset.mem_coe.not.mpr hw))]
+    (literalListener_apply_singleton_of_notMem cg semSet (Finset.mem_coe.not.mpr hw))]
   simp
 
 /-- A world the utterance allows, with positive prior mass, keeps positive listener mass. -/
@@ -240,7 +240,7 @@ theorem S1_real_singleton (w : World) (u : Utterance) :
 
 theorem L0_toReal {u : Utterance} {w : World} (hw : w ∈ sem u) :
     (L0 cg u {w}).toReal = cg.real {w} / ∑ x ∈ sem u, cg.real {x} := by
-  rw [literalListener_indicator_apply_singleton cg semSet (Finset.mem_coe.mpr hw),
+  rw [literalListener_apply_singleton cg semSet (Finset.mem_coe.mpr hw),
     ENNReal.toReal_mul,
     ENNReal.toReal_inv, sum_measureReal_singleton, measureReal_def, measureReal_def,
     inv_mul_eq_div]
@@ -248,7 +248,7 @@ theorem L0_toReal {u : Utterance} {w : World} (hw : w ∈ sem u) :
 omit [IsFiniteMeasure cg] in
 theorem L0_toReal_of_notMem {u : Utterance} {w : World} (hw : w ∉ sem u) :
     (L0 cg u {w}).toReal = 0 := by
-  rw [literalListener_indicator_apply_singleton_of_notMem cg semSet (Finset.mem_coe.not.mpr hw),
+  rw [literalListener_apply_singleton_of_notMem cg semSet (Finset.mem_coe.not.mpr hw),
     ENNReal.toReal_zero]
 
 end Agents
@@ -364,8 +364,8 @@ theorem s1_prefers_new :
         (by decide) hn⟩]
     simp only [ENNReal.rpow_one, Pi.zero_apply, mul_zero, neg_zero, Real.exp_zero,
       ENNReal.ofReal_one, mul_one]
-    rw [literalListener_indicator_apply_singleton μ semSet (u := .studyHumanity) (by decide),
-      literalListener_indicator_apply_singleton μ semSet (u := .likeOutdoors) (by decide),
+    rw [literalListener_apply_singleton μ semSet (u := .studyHumanity) (by decide),
+      literalListener_apply_singleton μ semSet (u := .likeOutdoors) (by decide),
       ENNReal.mul_lt_mul_iff_left hn (measure_ne_top _ _), ENNReal.inv_lt_inv,
       ← sum_measure_singleton, ← sum_measure_singleton,
       show sem .likeOutdoors = {.katie, .nancy} by decide,
@@ -377,8 +377,8 @@ theorem s1_prefers_new :
         (by decide) hi⟩]
     simp only [ENNReal.rpow_one, Pi.zero_apply, mul_zero, neg_zero, Real.exp_zero,
       ENNReal.ofReal_one, mul_one]
-    rw [literalListener_indicator_apply_singleton μ semSet (u := .likeIndoors) (by decide),
-      literalListener_indicator_apply_singleton μ semSet (u := .studyScience) (by decide),
+    rw [literalListener_apply_singleton μ semSet (u := .likeIndoors) (by decide),
+      literalListener_apply_singleton μ semSet (u := .studyScience) (by decide),
       ENNReal.mul_lt_mul_iff_left hi (measure_ne_top _ _), ENNReal.inv_lt_inv,
       ← sum_measure_singleton, ← sum_measure_singleton,
       show sem .studyScience = {.ina, .katie} by decide,

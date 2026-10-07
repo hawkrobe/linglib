@@ -207,15 +207,15 @@ section Listener
 variable (θ : Thresholds) (P : Measure State)
 
 /-- The literal listener of (15): the prior conditioned on the expression's extension. -/
-noncomputable def L0 : Kernel SimpleExpr State := literalListener P λ m => (θ.ext m).indicator 1
+noncomputable def L0 : Kernel SimpleExpr State := literalListener P θ.ext
 
 theorem L0_apply_singleton_of_notMem {m : SimpleExpr} {s : State} (h : s ∉ θ.ext m) :
     L0 θ P m {s} = 0 :=
-  literalListener_indicator_apply_singleton_of_notMem P θ.ext h
+  literalListener_apply_singleton_of_notMem P θ.ext h
 
 theorem L0_apply_singleton_of_mem {m : SimpleExpr} {s : State} (h : s ∈ θ.ext m) :
     L0 θ P m {s} = (P (θ.ext m))⁻¹ * P {s} :=
-  literalListener_indicator_apply_singleton P θ.ext h
+  literalListener_apply_singleton P θ.ext h
 
 theorem L0_real_of_notMem {m : SimpleExpr} {s : State} (h : s ∉ θ.ext m) :
     (L0 θ P m).real {s} = 0 := by
@@ -485,7 +485,7 @@ theorem mem_complex_full {s : State} (hP : P {s} ≠ 0) {Y : Outer} (h0 : 0 ≤ 
 marginal of the joint prior, conditioned on the expression's extension. -/
 noncomputable def complexL0 (A : Measure Access) [IsFiniteMeasure A] :
     Kernel (Outer × Inner) (Obs × Access) :=
-  literalListener (joint P A).snd λ m : Outer × Inner => (θ.complex P m.1 m.2).indicator 1
+  literalListener (joint P A).snd λ m : Outer × Inner => θ.complex P m.1 m.2
 
 end ComplexThresholds
 

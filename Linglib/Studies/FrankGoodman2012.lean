@@ -81,7 +81,7 @@ def Feature.extension (w : Feature) : Finset Object := Finset.univ.filter w.Appl
 
 /-- On hearing a word, the literal listener is uniform over its extension. -/
 noncomputable def literal : Kernel Feature Object :=
-  RSA.literalListener Measure.count fun w ↦ (↑w.extension : Set Object).indicator 1
+  RSA.literalListener Measure.count fun w ↦ (↑w.extension : Set Object)
 
 instance : IsFiniteKernel literal := inferInstanceAs (IsFiniteKernel (RSA.literalListener _ _))
 
@@ -97,10 +97,10 @@ theorem mem_extension {w : Feature} {r : Object} :
 theorem literal_apply_singleton (w : Feature) (r : Object) :
     literal w {r} = if w.AppliesTo r then (w.extension.card : ℝ≥0∞)⁻¹ else 0 := by
   split_ifs with h
-  · rw [literal, RSA.literalListener_indicator_apply_singleton Measure.count
+  · rw [literal, RSA.literalListener_apply_singleton Measure.count
       (fun w : Feature ↦ (↑w.extension : Set Object)) (mem_extension.2 h),
       Measure.count_apply_finset, Measure.count_singleton, mul_one]
-  · exact RSA.literalListener_indicator_apply_singleton_of_notMem Measure.count
+  · exact RSA.literalListener_apply_singleton_of_notMem Measure.count
       (fun w : Feature ↦ (↑w.extension : Set Object)) (mt mem_extension.1 h)
 
 /-! ### Predictions -/
@@ -110,7 +110,7 @@ the smaller extension. -/
 theorem size_principle {α : ℝ} (hα : 0 < α) {r : Object} {w₁ w₂ : Feature} (h₁ : w₁.AppliesTo r)
     (h₂ : w₂.AppliesTo r) :
     (speaker α r).real {w₁} < (speaker α r).real {w₂} ↔ w₂.extension.card < w₁.extension.card := by
-  refine (RSA.speaker_literalListener_indicator_real_singleton_lt_iff hα 0 Measure.count
+  refine (RSA.speaker_literalListener_real_singleton_lt_iff hα 0 Measure.count
     (fun w : Feature ↦ (↑w.extension : Set Object)) (by simp) (mem_extension.2 h₁)
     (mem_extension.2 h₂)).trans ?_
   rw [Measure.count_apply_finset, Measure.count_apply_finset, Nat.cast_lt]

@@ -70,10 +70,10 @@ section Framework
 /-- The strategy-indexed literal listener (eq. 4) reweights the prior by the rhetorical
 function of the strategy. -/
 noncomputable def L0 (μ : Measure M) (f : R → U → M → ℝ≥0∞) (r : R) : Kernel U M :=
-  literalListener μ (f r)
+  gradedListener μ (f r)
 
 instance (μ : Measure M) (f : R → U → M → ℝ≥0∞) (r : R) : IsFiniteKernel (L0 μ f r) :=
-  inferInstanceAs (IsFiniteKernel (literalListener _ _))
+  inferInstanceAs (IsFiniteKernel (gradedListener _ _))
 
 /-- The strategy-indexed speaker (eq. 5) is the best response to the strategy's literal
 listener, less the utterance cost. -/
@@ -100,7 +100,7 @@ variable (μ : Measure M) (f : R → U → M → ℝ≥0∞) (α : ℝ) (κ : U 
 
 theorem L0_apply_singleton (r : R) (u : U) (m : M) :
     L0 μ f r u {m} = f r u m * μ {m} / ∑ m', f r u m' * μ {m'} :=
-  literalListener_apply_singleton μ (f r) u m
+  gradedListener_apply_singleton μ (f r) u m
 
 /-- The Frank–Goodman speaker is the speaker with an utterance prior (Appendix A.1). At
 rationality `α ≠ 0` and the cost `−log π / α`, its weights are the literal listener's mass to
@@ -163,8 +163,8 @@ theorem L1_indicator_apply_singleton_of_notMem (hα : 0 < α) (sem : U → Set M
     (hr : f r = λ u => (sem u).indicator 1)
     {u : U} {m : M} (hm : m ∉ sem u) {m' : M} (hm' : m' ∈ sem u) (hμ : μ {m'} ≠ 0) :
     L1 μ f α κ r u {m} = 0 := by
-  rw [L1, L0, hr]
-  exact pragmaticListener_literalListener_indicator_apply_singleton_of_notMem α κ μ hα
+  rw [L1, L0, hr, gradedListener_indicator]
+  exact pragmaticListener_literalListener_apply_singleton_of_notMem α κ μ hα
     sem hm hm' hμ
 
 variable [Fintype R] [MeasurableSpace R] [DiscreteMeasurableSpace R]
@@ -217,8 +217,8 @@ theorem L0_rhetoricalOfQUD (hμ : ∀ m, μ {m} ≠ 0) (project : G → M → X)
     funext u m
     rw [rhetoricalOfQUD, ENNReal.div_eq_inv_mul, ENNReal.mul_inv (Or.inl hk0) (Or.inl hk),
       mul_assoc, ← ENNReal.div_eq_inv_mul (a := projListener project L g u {m})]
-  rw [L0, h, literalListener_const_mul μ _ (ENNReal.inv_ne_zero.mpr hk)
-    (ENNReal.inv_ne_top.mpr hk0), literalListener_div μ hμ (projListener project L g)]
+  rw [L0, h, gradedListener_const_mul μ _ (ENNReal.inv_ne_zero.mpr hk)
+    (ENNReal.inv_ne_top.mpr hk0), gradedListener_div μ hμ (projListener project L g)]
 
 /-- The affect-aware model of [kao-goodman-2015] is an instance, since its projected literal
 listener under each question, normalized over meanings, is an (RSA)² literal listener. -/
@@ -271,7 +271,7 @@ theorem exists_not_mem_qudListeners [Nontrivial M] (hμ : ∀ m, μ {m} ≠ 0) (
     (Set.Ioo_infinite zero_lt_one).image hinj
   obtain ⟨_, ⟨t, -, rfl⟩, hnot⟩ := (hinf.sdiff (qudListeners_finite L)).nonempty
   refine ⟨λ _ _ m => ν t {m} / μ {m}, λ r u => ?_⟩
-  rwa [L0, literalListener_div μ hμ (λ _ => ν t)]
+  rwa [L0, gradedListener_div μ hμ (λ _ => ν t)]
 
 end QUD
 

@@ -124,13 +124,12 @@ literal truth, putting no mass at a world where the utterance is false. -/
 noncomputable def L0 (P : W → ℕ) (cell : Q → W → Finset W) (sem : U → Set W)
     (C : Finset W) (q : Q) : Kernel U W :=
   Kernel.ofFunOfCountable λ u =>
-    (projListener cell (literalListener ((priorOfWeights P).restrict ↑C) λ u =>
-      (sem u).indicator 1) q u).restrict (sem u)
+    (projListener cell (literalListener ((priorOfWeights P).restrict ↑C) sem) q u).restrict (sem u)
 
 instance (P : W → ℕ) (cell : Q → W → Finset W) (sem : U → Set W) (C : Finset W) (q : Q) :
     IsFiniteKernel (L0 P cell sem C q) :=
   ⟨⟨_, Kernel.bound_lt_top (projListener cell (literalListener ((priorOfWeights P).restrict ↑C)
-      λ u => (sem u).indicator 1) q), λ u => by
+      sem) q), λ u => by
     rw [L0, Kernel.ofFunOfCountable_apply]
     exact (Measure.restrict_apply_le _ _).trans (Kernel.measure_le_bound _ _ _)⟩⟩
 

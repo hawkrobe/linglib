@@ -15,7 +15,7 @@ which holds of the referent and of no distractor, and the Russellian uniqueness 
 `Reference.iota` over the domain the contrast set restricts. Under a graded semantics it
 says the referent is the literal listener's best guess, since a strictly monotone rescaling of
 compatibility such as the listener's normalization does not change it
-(`RSA.distinguishes_literalListener_uniformOn_iff`). A graded description
+(`RSA.distinguishes_gradedListener_uniformOn_iff`). A graded description
 distinguishes exactly when some level set of its compatibility does, so the truth-valued notion
 is the general one at a threshold.
 

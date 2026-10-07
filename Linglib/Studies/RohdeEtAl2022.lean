@@ -122,10 +122,10 @@ variable (μ : Measure Value)
 
 /-- To the literal listener a report conveys its value and silence conveys the prior. -/
 noncomputable def L0 : Kernel Utterance Value :=
-  literalListener μ λ u => (extension u).indicator 1
+  literalListener μ extension
 
 theorem L0_some_of_ne {v w : Value} (h : v ≠ w) : L0 μ (some v) {w} = 0 :=
-  literalListener_indicator_apply_singleton_of_notMem μ extension
+  literalListener_apply_singleton_of_notMem μ extension
     (by simp [extension, Ne.symm h])
 
 instance : IsFiniteKernel (L0 μ) := inferInstanceAs (IsFiniteKernel (literalListener _ _))
@@ -140,7 +140,7 @@ instance : IsFiniteKernel (S μ α cs cn) := inferInstanceAs (IsFiniteKernel (sp
 
 /-- When asked, the speaker has no silence option and chooses among the reports. -/
 noncomputable def askedS : Kernel Value Value :=
-  speaker α (λ _ => cs) (literalListener μ λ v => ({v} : Set Value).indicator 1)
+  speaker α (λ _ => cs) (literalListener μ fun v ↦ ({v} : Set Value))
 
 instance : IsFiniteKernel (askedS μ α cs) := inferInstanceAs (IsFiniteKernel (speaker _ _ _))
 
@@ -171,10 +171,10 @@ theorem spoke_apply_true (hα : 0 < α) (v : Value) :
 variable [IsProbabilityMeasure μ]
 
 theorem L0_some_self {v : Value} (hv : μ {v} ≠ 0) : L0 μ (some v) {v} = 1 :=
-  literalListener_indicator_apply_singleton_of_eq_singleton μ extension rfl hv
+  literalListener_apply_singleton_of_eq_singleton μ extension rfl hv
 
 theorem L0_none (v : Value) : L0 μ none {v} = μ {v} :=
-  literalListener_indicator_apply_singleton_of_eq_univ μ extension rfl v
+  literalListener_apply_singleton_of_eq_univ μ extension rfl v
 
 /-! ### Newsworthiness -/
 
@@ -238,7 +238,7 @@ theorem posterior_eq_prior_of_asked (hα : 0 < α) (ht : μ {.typical} ≠ 0)
     ((((askedS μ α cs).map λ _ => true)†μ) true).real {.atypical} = μ.real {.atypical} := by
   have h1 : ∀ v, μ {v} ≠ 0 → ((askedS μ α cs).map (λ _ => true) v).real {true} = 1 := λ v hv => by
     have hv1 : askedS μ α cs v {v} = 1 :=
-      speaker_literalListener_indicator_eq_one hα _ μ _ hv rfl λ _ h hv' => h hv'.symm
+      speaker_literalListener_eq_one hα _ μ _ hv rfl λ _ h hv' => h hv'.symm
     rw [measureReal_def, Kernel.map_apply' _ measurable_const _ (MeasurableSet.singleton true),
       askedS,
       Set.preimage_const_of_mem (Set.mem_singleton true),

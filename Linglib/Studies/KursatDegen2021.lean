@@ -98,10 +98,10 @@ theorem meaning_nonneg (hs0 : 0 ≤ xs) (hs1 : xs ≤ 1) (hr0 : 0 ≤ xr) (hr1 :
 
 /-- The literal listener normalizes the meaning over the display at a uniform prior. -/
 noncomputable def L0 (xs xr : ℝ) : Kernel Utterance World :=
-  literalListener (uniformOn Set.univ) λ u w => ENNReal.ofReal (meaning xs xr u w)
+  gradedListener (uniformOn Set.univ) λ u w => ENNReal.ofReal (meaning xs xr u w)
 
 instance (xs xr : ℝ) : IsFiniteKernel (L0 xs xr) :=
-  inferInstanceAs (IsFiniteKernel (literalListener _ _))
+  inferInstanceAs (IsFiniteKernel (gradedListener _ _))
 
 /-- The speaker with unit informativeness weight and no cost. -/
 noncomputable def S1 (xs xr : ℝ) : Kernel World Utterance := speaker 1 0 (L0 xs xr)
@@ -132,9 +132,9 @@ theorem redundant_preferred_iff (hs0 : 0 < xs) (hs1 : xs < 1) (hr0 : 0 < xr) (hr
   have hnn := meaning_nonneg hs0.le hs1.le hr0.le hr1
   have hsuf : 0 < 3 - 2 * xs := by linarith
   have hred : 0 < xr + 2 * (1 - xs) * (1 - xr) := by nlinarith
-  have h1 := literalListener_uniformOn_ofReal_apply_singleton (meaning xs xr) .sufficient
+  have h1 := gradedListener_uniformOn_ofReal_apply_singleton (meaning xs xr) .sufficient
     World.target (hnn _) (by rw [row_sufficient]; exact hsuf)
-  have h2 := literalListener_uniformOn_ofReal_apply_singleton (meaning xs xr) .redundant
+  have h2 := gradedListener_uniformOn_ofReal_apply_singleton (meaning xs xr) .redundant
     World.target (hnn _) (by rw [row_redundant]; exact hred)
   have hm1 : meaning xs xr .sufficient .target = xs := by
     simp [meaning, channel, World.hasSufficient]

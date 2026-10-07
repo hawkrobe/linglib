@@ -10,7 +10,7 @@ This file formalizes Tessler and Goodman's model of how a listener infers the co
 bare gradable adjective. Lassiter and Goodman's literal listener interprets *tall* and *short* as
 thresholds on the degree, the threshold drawn from a uniform prior over the support of the degree
 prior, and conditions the prior of the comparison class on the utterance with the threshold
-integrated out (4)–(5), `thresholdMeaning`, `meaning`, `L0`, the substrate's `RSA.literalListener`
+integrated out (4)–(5), `thresholdMeaning`, `meaning`, `L0`, the substrate's `RSA.gradedListener`
 at the threshold prior of Tessler and Goodman's generics model. The speaker knows the comparison
 class and chooses among *tall*, *short* and silence to convey the degree (3), `S`, the substrate's
 `RSA.speaker`. The pragmatic listener knows the referent's kind but not the class the speaker
@@ -131,10 +131,10 @@ variable [Fintype X] [MeasurableSpace X] [DiscreteMeasurableSpace X]
 marginalized meaning. -/
 noncomputable def L0 (classPrior : ComparisonClass → Measure X) (c : ComparisonClass) :
     Kernel Utterance X :=
-  literalListener (classPrior c) (meaning deg)
+  gradedListener (classPrior c) (meaning deg)
 
 instance (classPrior : ComparisonClass → Measure X) (c : ComparisonClass) :
-    IsFiniteKernel (L0 deg classPrior c) := inferInstanceAs (IsFiniteKernel (literalListener _ _))
+    IsFiniteKernel (L0 deg classPrior c) := inferInstanceAs (IsFiniteKernel (gradedListener _ _))
 
 /-- The speaker (3) has rationality `α`, equal costs, and knows the comparison class. -/
 noncomputable def S (α : ℝ) (classPrior : ComparisonClass → Measure X) (c : ComparisonClass) :
@@ -234,14 +234,14 @@ theorem sum_meaning_tall (hdeg : ∀ x, 0 < deg x ∧ deg x < 1) (c : Comparison
 
 theorem L0_silent_apply (c : ComparisonClass) (x : X) :
     L0 deg classPrior c .silent {x} = classPrior c {x} := by
-  rw [L0, literalListener_apply_singleton]
+  rw [L0, gradedListener_apply_singleton]
   simp only [meaning_silent, one_mul]
   rw [sum_measure_singleton, Finset.coe_univ, measure_univ, div_one]
 
 theorem L0_tall_real (hdeg : ∀ x, 0 < deg x ∧ deg x < 1) (c : ComparisonClass) (x : X) :
     (L0 deg classPrior c .tall).real {x} =
       deg x * (classPrior c).real {x} / mean deg classPrior c := by
-  rw [L0, measureReal_def, literalListener_apply_singleton, sum_meaning_tall deg classPrior hdeg,
+  rw [L0, measureReal_def, gradedListener_apply_singleton, sum_meaning_tall deg classPrior hdeg,
     meaning_tall deg (hdeg x).2.le, ENNReal.toReal_div, ENNReal.toReal_mul,
     ENNReal.toReal_ofReal (hdeg x).1.le, ENNReal.toReal_ofReal (mean_pos deg classPrior hdeg c).le,
     measureReal_def]
@@ -249,7 +249,7 @@ theorem L0_tall_real (hdeg : ∀ x, 0 < deg x ∧ deg x < 1) (c : ComparisonClas
 theorem L0_short_real (hdeg : ∀ x, 0 < deg x ∧ deg x < 1) (c : ComparisonClass) (x : X) :
     (L0 deg classPrior c .short).real {x} =
       (1 - deg x) * (classPrior c).real {x} / (1 - mean deg classPrior c) := by
-  rw [L0, measureReal_def, literalListener_apply_singleton, sum_meaning_short deg classPrior hdeg,
+  rw [L0, measureReal_def, gradedListener_apply_singleton, sum_meaning_short deg classPrior hdeg,
     meaning_short deg (hdeg x).1.le, ENNReal.toReal_div, ENNReal.toReal_mul,
     ENNReal.toReal_ofReal (by linarith [(hdeg x).2]),
     ENNReal.toReal_ofReal (by linarith [mean_lt_one deg classPrior hdeg c]), measureReal_def]
@@ -332,7 +332,7 @@ theorem share_lt_share (hα : 0 < α) {a m₁ m₂ : ℝ} (ha : 0 < a) (ha1 : a 
 /-- At a full-support class prior every utterance has positive literal-listener mass. -/
 theorem L0_apply_ne_zero (hdeg : ∀ x, 0 < deg x ∧ deg x < 1) (hsupp : ∀ c x, classPrior c {x} ≠ 0)
     (c : ComparisonClass) (u : Utterance) (x : X) : L0 deg classPrior c u {x} ≠ 0 := by
-  rw [L0, literalListener_apply_singleton, ENNReal.div_ne_zero]
+  rw [L0, gradedListener_apply_singleton, ENNReal.div_ne_zero]
   refine ⟨mul_ne_zero ?_ (hsupp c x), ENNReal.sum_ne_top.2 λ _ _ =>
     ENNReal.mul_ne_top (measure_ne_top uniformThreshold _) (measure_ne_top _ _)⟩
   cases u with

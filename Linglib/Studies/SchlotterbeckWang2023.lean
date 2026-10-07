@@ -127,14 +127,14 @@ the noun-adjacent word last. That word is interpreted first, against the prior's
 each earlier word against the support of the distribution the later words left. -/
 noncomputable def l0 (μ : Measure R) (sem : U → Finset R → R → ℝ≥0∞) : List U → Measure R
   | [] => μ
-  | u :: us => literalListener (l0 μ sem us) (λ u' => sem u' (supp (l0 μ sem us))) u
+  | u :: us => gradedListener (l0 μ sem us) (λ u' => sem u' (supp (l0 μ sem us))) u
 
 theorem l0_apply_le_one {μ : Measure R} {sem : U → Finset R → R → ℝ≥0∞} [IsProbabilityMeasure μ]
     (us : List U) (s : Set R) :
     l0 μ sem us s ≤ 1 := by
   cases us with
   | nil => exact prob_le_one (μ := μ)
-  | cons u us => exact literalListener_apply_le_one _ _ _ _
+  | cons u us => rw [l0, gradedListener_apply]; exact prob_le_one
 
 /-! ### Utilities and sequence weights (rows 4–5 and 7) -/
 
@@ -223,7 +223,7 @@ theorem l0_contextFree [IsProbabilityMeasure μ] (m : U → R → ℝ≥0∞) (h
       calc ∫⁻ r, prodMeaning m us r ∂μ
           ≤ ∫⁻ _, 1 ∂μ := lintegral_mono λ r => prodMeaning_le_one hm us r
         _ = 1 := by simp
-    simp only [l0, literalListener_apply]
+    simp only [l0, gradedListener_apply]
     rw [ih, cond_univ_withDensity_mul _ (measurable_of_countable _) (measurable_of_countable _)
       hfin, show prodMeaning m us * m u = prodMeaning m (u :: us) from
         funext λ r => by simp [prodMeaning_cons, mul_comm]]
@@ -247,10 +247,10 @@ theorem l0_indicator [DecidableEq R] (ext : U → Finset R → Finset R) (us : L
   induction us with
   | nil => simp [l0, extSeq]
   | cons u us ih =>
-    have h := literalListener_indicator (uniformOn (extSeq ext us : Set R))
+    have h := gradedListener_indicator (uniformOn (extSeq ext us : Set R))
       λ u' => ((ext u' (extSeq ext us) : Set R))
     simp only [l0, sharp]
-    rw [ih, supp_uniformOn, h, Kernel.ofFunOfCountable_apply, extSeq, Finset.coe_inter, uniformOn,
+    rw [ih, supp_uniformOn, h, literalListener_apply, extSeq, Finset.coe_inter, uniformOn,
       uniformOn, cond_cond_eq_cond_inter' .of_discrete .of_discrete
         (by rw [Measure.count_apply_finite _ (Finset.finite_toSet _)]
             exact ENNReal.natCast_ne_top _)]

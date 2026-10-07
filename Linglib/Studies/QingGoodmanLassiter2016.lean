@@ -165,7 +165,7 @@ def change : Finset World := {.TF, .FT}
 /-- The literal listener within a context set under a question conditions counting measure on
 the context set on the utterance and projects it onto the question's cells. -/
 noncomputable def L0 (C : Finset World) (q : QUD) : Kernel Utterance World :=
-  projListener QUD.cell (literalListener (Measure.count.restrict ↑C) λ u => u.sem.indicator 1) q
+  projListener QUD.cell (literalListener (Measure.count.restrict ↑C) fun u ↦ u.sem) q
 
 instance (C : Finset World) (q : QUD) : IsFiniteKernel (L0 C q) :=
   inferInstanceAs (IsFiniteKernel (projListener _ _ _))
@@ -180,8 +180,8 @@ theorem L0_apply (C : Finset World) (q : QUD) (u : Utterance) (w : World) :
   have e1 : u.sem ∩ ↑C = ↑(C.filter (· ∈ u.sem)) := by ext; simp [and_comm]
   have e2 : u.sem ∩ ↑(q.cell w) ∩ ↑C = ↑((C.filter (· ∈ u.sem)).filter (· ∈ q.cell w)) := by
     ext; simp; tauto
-  rw [L0, projListener_apply_singleton, QUD.cell_preimage, literalListener_indicator,
-    Kernel.ofFunOfCountable_apply, cond_apply MeasurableSet.of_discrete,
+  rw [L0, projListener_apply_singleton, QUD.cell_preimage, literalListener_apply,
+    cond_apply MeasurableSet.of_discrete,
     Measure.restrict_apply MeasurableSet.of_discrete,
     Measure.restrict_apply MeasurableSet.of_discrete, e1, e2, Measure.count_apply_finset,
     Measure.count_apply_finset, l0, ENNReal.div_eq_inv_mul]

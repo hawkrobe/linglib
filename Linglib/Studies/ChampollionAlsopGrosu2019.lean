@@ -259,7 +259,7 @@ theorem mem_semSet {i : Interp} {u : Utterance} {w : FCState} :
 
 /-- The literal listeners at the biased prior (8a). -/
 noncomputable def famB (i : Interp) : Kernel Utterance FCState :=
-  literalListener priorB fun u => (semSet i u).indicator 1
+  literalListener priorB fun u ↦ semSet i u
 
 /-- The pragmatic listener at the biased prior. -/
 noncomputable def listenerB (α : ℝ) : Kernel Utterance (FCState × Interp) :=
@@ -278,7 +278,7 @@ theorem anyNumber_of_prior {α : ℝ} (hα : 0 < α) {w : FCState} (hw : w ≠ .
   have hother : ∀ u' ≠ Utterance.or_, FCState.anyNumber ∉ semSet .exhaustified u' := by
     simp only [ne_eq, mem_semSet]; decide
   have hμ : priorB {.anyNumber} ≠ 0 := by rw [priorB_singleton]; simp [biasedWeight]
-  have hone := speaker_literalListener_indicator_eq_one (u := Utterance.or_)
+  have hone := speaker_literalListener_eq_one (u := Utterance.or_)
     (w := FCState.anyNumber) hα 0 priorB (semSet .exhaustified) hμ
     ((mem_semSet (i := .exhaustified) (u := .or_) (w := .anyNumber)).mpr trivial) hother
   have hlt : (∑ p ∈ ({w} ×ˢ Finset.univ : Finset (FCState × Interp)), jointPriorB.real {p})

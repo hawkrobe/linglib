@@ -14,7 +14,7 @@ probability that an instance of the category has the property (2), `genericMeani
 threshold underspecified and drawn from a prior. The interpretation model (1) conditions a prior
 over prevalence on the utterance with the threshold integrated out, so the marginalized meaning of
 the generalization at a prevalence is the threshold prior's mass below it, and silence is true
-everywhere, `meaning`, `listener`, the substrate's `RSA.literalListener`. The endorsement model (3)
+everywhere, `meaning`, `listener`, the substrate's `RSA.gradedListener`. The endorsement model (3)
 is the speaker who chooses between the generalization and silence by how well each conveys the
 referent prevalence, `endorser`, the substrate's `RSA.speaker`. Since silence returns the prior,
 `listener_silent_apply`, the speaker endorses the generalization exactly when the marginalized
@@ -100,10 +100,10 @@ theorem expectedMeaning_ne_top (μ : Measure W) [IsFiniteMeasure μ] (ν : Measu
 meaning. -/
 noncomputable def listener (μ : Measure W) (ν : Measure ℝ) (prev : W → ℝ) :
     Kernel Utterance W :=
-  literalListener μ (meaning ν prev)
+  gradedListener μ (meaning ν prev)
 
 instance (μ : Measure W) (ν : Measure ℝ) (prev : W → ℝ) : IsFiniteKernel (listener μ ν prev) :=
-  inferInstanceAs (IsFiniteKernel (literalListener _ _))
+  inferInstanceAs (IsFiniteKernel (gradedListener _ _))
 
 variable [DiscreteMeasurableSpace W]
 
@@ -123,13 +123,13 @@ variable (μ : Measure W) (ν : Measure ℝ) (prev : W → ℝ)
 theorem listener_generic_apply (w : W) :
     listener μ ν prev .generic {w} =
       meaning ν prev .generic w * μ {w} / expectedMeaning μ ν prev := by
-  rw [listener, literalListener_apply_singleton]; rfl
+  rw [listener, gradedListener_apply_singleton]; rfl
 
 variable [IsProbabilityMeasure μ] {lam : ℝ} {w : W}
 
 /-- Silence returns the prior. -/
 theorem listener_silent_apply (w : W) : listener μ ν prev .silent {w} = μ {w} := by
-  rw [listener, literalListener_apply_singleton]
+  rw [listener, gradedListener_apply_singleton]
   simp only [meaning, one_mul]
   rw [sum_measure_singleton, Finset.coe_univ, measure_univ, div_one]
 

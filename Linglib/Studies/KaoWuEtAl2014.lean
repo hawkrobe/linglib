@@ -127,10 +127,10 @@ theorem mem_sem {u : Price} {m : Meaning} : m ∈ sem u ↔ m.1 = u := Iff.rfl
 
 /-- The literal listener conditions the prior on the price named, eq. 9. -/
 noncomputable def L0 (μ : Measure Meaning) : Kernel Price Meaning :=
-  literalListener μ fun u ↦ (sem u).indicator 1
+  literalListener μ sem
 
 theorem L0_apply (μ : Measure Meaning) (u : Price) : L0 μ u = μ[|sem u] := by
-  rw [L0, literalListener_indicator, Kernel.ofFunOfCountable_apply]
+  rw [L0, literalListener_apply]
 
 instance (μ : Measure Meaning) : IsFiniteKernel (L0 μ) :=
   inferInstanceAs (IsFiniteKernel (literalListener _ _))
@@ -140,10 +140,10 @@ the prior gives it mass. -/
 theorem L0_apply_singleton_ne_zero_iff (μ : Measure Meaning) [IsFiniteMeasure μ] (u : Price)
     (m : Meaning) : L0 μ u {m} ≠ 0 ↔ m.1 = u ∧ μ {m} ≠ 0 := by
   by_cases h : m ∈ sem u
-  · rw [L0, literalListener_indicator_apply_singleton μ sem h]
+  · rw [L0, literalListener_apply_singleton μ sem h]
     exact ⟨fun h' ↦ ⟨h, (mul_ne_zero_iff.mp h').2⟩,
       fun h' ↦ mul_ne_zero (ENNReal.inv_ne_zero.mpr (measure_ne_top _ _)) h'.2⟩
-  · rw [L0, literalListener_indicator_apply_singleton_of_notMem μ sem h]
+  · rw [L0, literalListener_apply_singleton_of_notMem μ sem h]
     exact iff_of_false (fun h' ↦ h' rfl) (fun h' ↦ h h'.1)
 
 /-- The cost `C(u)` of eq. 7 is one at a round price and the fitted parameter `c` at a sharp

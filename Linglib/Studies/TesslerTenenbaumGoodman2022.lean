@@ -269,11 +269,13 @@ variable (φ : ℝ≥0∞) (μ : Measure VennState)
 /-- The reasoner as listener (2), the prior conditioned on the noisy meanings of both premises,
 each disregarded independently. -/
 noncomputable def reasoner : Kernel Syllogism VennState :=
-  literalListener μ λ syl s => noisy φ (premise1 syl s) * noisy φ (premise2 syl s)
+  gradedListener μ λ syl s => noisy φ (premise1 syl s) * noisy φ (premise2 syl s)
+
+instance : IsFiniteKernel (reasoner φ μ) := inferInstanceAs (IsFiniteKernel (gradedListener _ _))
 
 /-- The naive listener (1), who hears the conclusion alone. -/
 noncomputable def naive : Kernel Conclusion VennState :=
-  literalListener μ λ c s => noisy φ (concMeaning c s)
+  gradedListener μ λ c s => noisy φ (concMeaning c s)
 
 /-- Without noise the reasoner's posterior under the flat prior is uniform on the states
 satisfying the premises. -/
@@ -284,7 +286,7 @@ theorem reasoner_zero (syl : Syllogism) :
     funext syl s
     cases h1 : premise1 syl s <;> cases h2 : premise2 syl s <;>
       simp [coe_states, premises, noisy, h1, h2]
-  rw [reasoner, h, literalListener_indicator, Kernel.ofFunOfCountable_apply, uniformOn_univ_cond]
+  rw [reasoner, h, gradedListener_indicator, literalListener_apply, uniformOn_univ_cond]
 
 /-- Without noise the naive listener's posterior under the flat prior is uniform on the states
 satisfying the conclusion. -/
@@ -294,12 +296,12 @@ theorem naive_zero (c : Conclusion) :
       λ c => (states (concMeaning c) : Set VennState).indicator 1 := by
     funext c s
     cases h : concMeaning c s <;> simp [coe_states, noisy, h]
-  rw [naive, h, literalListener_indicator, Kernel.ofFunOfCountable_apply, uniformOn_univ_cond]
+  rw [naive, h, gradedListener_indicator, literalListener_apply, uniformOn_univ_cond]
 
 /-- With noise and a full-support prior the reasoner's posterior is a probability measure. -/
 theorem isProbabilityMeasure_reasoner [IsFiniteMeasure μ] (hφ : φ ≠ 0) (hφ' : φ ≠ ∞)
     (hμ : ∀ s, μ {s} ≠ 0) (syl : Syllogism) : IsProbabilityMeasure (reasoner φ μ syl) := by
-  refine isProbabilityMeasure_literalListener μ _ syl ?_ ?_ <;> rw [lintegral_fintype]
+  refine isProbabilityMeasure_gradedListener μ _ syl ?_ ?_ <;> rw [lintegral_fintype]
   · intro h
     have := Finset.sum_eq_zero_iff.mp h default (Finset.mem_univ _)
     exact mul_ne_zero (mul_ne_zero (noisy_ne_zero hφ _) (noisy_ne_zero hφ _)) (hμ default) this
@@ -310,7 +312,7 @@ theorem isProbabilityMeasure_reasoner [IsFiniteMeasure μ] (hφ : φ ≠ 0) (hφ
 measure. -/
 theorem isProbabilityMeasure_naive [IsFiniteMeasure μ] (hφ : φ ≠ 0) (hφ' : φ ≠ ∞)
     (hμ : ∀ s, μ {s} ≠ 0) (c : Conclusion) : IsProbabilityMeasure (naive φ μ c) := by
-  refine isProbabilityMeasure_literalListener μ _ c ?_ ?_ <;> rw [lintegral_fintype]
+  refine isProbabilityMeasure_gradedListener μ _ c ?_ ?_ <;> rw [lintegral_fintype]
   · intro h
     have := Finset.sum_eq_zero_iff.mp h default (Finset.mem_univ _)
     exact mul_ne_zero (noisy_ne_zero hφ _) (hμ default) this
@@ -319,7 +321,7 @@ theorem isProbabilityMeasure_naive [IsFiniteMeasure μ] (hφ : φ ≠ 0) (hφ' :
 /-- With noise and a full-support prior the naive listener gives every state positive mass. -/
 theorem naive_apply_ne_zero [IsFiniteMeasure μ] (hφ : φ ≠ 0) (hφ' : φ ≠ ∞)
     (hμ : ∀ s, μ {s} ≠ 0) (c : Conclusion) (s : VennState) : naive φ μ c {s} ≠ 0 := by
-  rw [naive, literalListener_apply_singleton, ENNReal.div_ne_zero]
+  rw [naive, gradedListener_apply_singleton, ENNReal.div_ne_zero]
   exact ⟨mul_ne_zero (noisy_ne_zero hφ _) (hμ s), ENNReal.sum_ne_top.2 λ s _ =>
     ENNReal.mul_ne_top (noisy_ne_top hφ' _) (measure_ne_top _ _)⟩
 
@@ -442,7 +444,7 @@ theorem literalSpeaker_le_nvc (hα : 0 ≤ α) (syl : Syllogism) (c : Conclusion
   rw [huniv] at h
   exact absurd h (not_lt.2 (add_le_add_right (mul_le_mul_of_nonneg_left
     (measureReal_mono (Set.subset_univ _)
-      (ne_top_of_le_ne_top ENNReal.one_ne_top (literalListener_apply_le_one μ _ syl _))) hα) _))
+      (measure_ne_top _ _)) hα) _))
 
 end Model
 

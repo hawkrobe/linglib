@@ -95,15 +95,14 @@ theorem projListener_literalListener_restrict_apply_singleton [DiscreteMeasurabl
     [DecidableEq X] (P : W → ℕ) (C : Finset W) (sem : U → Set W)
     [∀ u, DecidablePred (· ∈ sem u)] :
     projListener project
-        (literalListener ((priorOfWeights P).restrict ↑C) λ u => (sem u).indicator 1) g u {w}
+        (literalListener ((priorOfWeights P).restrict ↑C) sem) g u {w}
       = (∑ v ∈ (C.filter (· ∈ sem u)).filter (λ v => project g v = project g w), (P v : ℝ≥0∞))
           / ∑ v ∈ C.filter (· ∈ sem u), (P v : ℝ≥0∞) := by
   have e1 : sem u ∩ ↑C = ↑(C.filter (· ∈ sem u)) := by ext; simp [and_comm]
   have e2 : sem u ∩ project g ⁻¹' {project g w} ∩ ↑C
       = ↑((C.filter (· ∈ sem u)).filter λ v => project g v = project g w) := by
     ext; simp; tauto
-  rw [projListener_apply_singleton, literalListener_indicator, Kernel.ofFunOfCountable_apply,
-    cond_apply .of_discrete, Measure.restrict_apply .of_discrete,
+  rw [projListener_apply_singleton, literalListener_apply, cond_apply .of_discrete, Measure.restrict_apply .of_discrete,
     Measure.restrict_apply .of_discrete, e1, e2, priorOfWeights_apply_finset,
     priorOfWeights_apply_finset, ENNReal.div_eq_inv_mul]
 

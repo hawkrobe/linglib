@@ -156,7 +156,7 @@ noncomputable abbrev lit' : Meaning → Meaning → ℝ≥0∞ := fun m => (lit 
 
 /-- The literal listener (eq. 6). -/
 noncomputable abbrev L0 (δ : ℝ) : Kernel Utterance Meaning :=
-  literalListener μ (noisyMeaning (N δ) uttPrior lit')
+  gradedListener μ (noisyMeaning (N δ) uttPrior lit')
 
 /-- The speaker (eq. 7), choosing among the full sentences. -/
 noncomputable abbrev S1 (δ : ℝ) : Kernel Meaning Meaning := noisySpeaker (N δ) 1 0 (L0 δ)
@@ -191,16 +191,16 @@ private theorem L0_of_noisyMeaning {c : ℝ} (hc : 0 < c) {u : Utterance}
     (h : ∀ w, noisyMeaning (N δ) uttPrior lit' u w =
       ENNReal.ofReal c * ({m} : Set Meaning).indicator 1 w) :
     L0 δ u = Measure.dirac m := by
-  rw [L0, literalListener_apply_eq_of_eq_mul μ (m := fun _ => ({m} : Set Meaning).indicator 1)
-    (ENNReal.ofReal_pos.mpr hc).ne' ENNReal.ofReal_ne_top h]
+  rw [L0, gradedListener_apply_eq_of_eq_mul μ (m := fun _ => ({m} : Set Meaning).indicator 1)
+    (ENNReal.ofReal_pos.mpr hc).ne' ENNReal.ofReal_ne_top h, gradedListener_indicator]
   refine Measure.ext_of_singleton fun w => ?_
   simp only [Measure.dirac_apply' _ (.singleton w), Set.indicator_apply, Set.mem_singleton_iff,
     Pi.one_apply]
   by_cases hw : m = w
   · subst hw
-    rw [literalListener_indicator_apply_singleton_of_eq_singleton μ (fun _ => {m}) rfl (by simp)]
+    rw [literalListener_apply_singleton_of_eq_singleton μ (fun _ => {m}) rfl (by simp)]
     simp
-  · rw [literalListener_indicator_apply_singleton_of_notMem μ (fun _ => {m})
+  · rw [literalListener_apply_singleton_of_notMem μ (fun _ => {m})
       (by simpa using Ne.symm hw)]
     simp [hw]
 
@@ -335,7 +335,7 @@ noncomputable abbrev lit' : Utterance → Meaning → ℝ≥0∞ := fun u => (li
 
 /-- The literal listener (eq. 6). -/
 noncomputable abbrev L0 (ε : ℝ) : Kernel Utterance Meaning :=
-  literalListener μ (noisyMeaning (N ε) uttPrior lit')
+  gradedListener μ (noisyMeaning (N ε) uttPrior lit')
 
 /-- The knowledgeable speaker (eq. 7), over all five forms. -/
 noncomputable abbrev S1 (ε : ℝ) : Kernel Meaning Utterance :=
@@ -371,7 +371,7 @@ private theorem L0_onlyBob (hε₀ : 0 ≤ ε) (hε₁ : ε ≤ 1) :
   have h1' := (add_comm _ _).trans h1
   have h2' := (add_comm _ _).trans h2
   refine ⟨?_, ?_, ?_, ?_⟩ <;>
-    · rw [L0, literalListener_apply_singleton]
+    · rw [L0, gradedListener_apply_singleton]
       simp only [noisyMeaning_apply, sum_univ_utt, sum_univ_mean, slipChannel_apply_singleton,
         rate, slip, lit', lit, priorOfWeights_singleton, Pi.one_apply, Nat.cast_one,
         Set.indicator_apply, Set.mem_insert_iff, Set.mem_singleton_iff]

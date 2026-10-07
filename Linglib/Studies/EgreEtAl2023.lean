@@ -119,11 +119,11 @@ theorem bir_apply_singleton (x : X) :
 
 /-- Eq. (BIR): the information state after "around" is the literal listener at the graded meaning,
 `P(x = k | around n) ∝ P(x = k) · P(y ≥ |n − k|)`. -/
-theorem bir_eq_literalListener {U : Type*} [MeasurableSpace U] [Countable U]
+theorem bir_eq_gradedListener {U : Type*} [MeasurableSpace U] [Countable U]
     [MeasurableSingletonClass U] {m : U → X → ℝ≥0∞} {u : U} (hm : m u = aroundWeight ν d) :
-    bir μ ν d = RSA.literalListener μ m u :=
+    bir μ ν d = RSA.gradedListener μ m u :=
   Measure.ext_of_singleton λ x => by
-    rw [bir_apply_singleton, RSA.literalListener_apply_singleton', hm, mul_comm]
+    rw [bir_apply_singleton, RSA.gradedListener_apply_singleton', hm, mul_comm]
 
 end Around
 
@@ -207,16 +207,22 @@ theorem bir_unif_antitone {n k k' : ℕ} (h : Nat.dist n k ≤ Nat.dist n k') :
 /-- "Between a and b", the crisp interval meaning (§3.1), as a message indexed by its endpoints. -/
 noncomputable def betweenMeaning (p : ℕ × ℕ) : ℕ → ℝ≥0∞ := (Set.Icc p.1 p.2).indicator 1
 
+/-- "Between" is crisp, so its graded literal listener conditions on the interval. -/
+theorem gradedListener_betweenMeaning (μ : Measure ℕ) :
+    RSA.gradedListener μ betweenMeaning = RSA.literalListener μ (λ p : ℕ × ℕ => Set.Icc p.1 p.2) :=
+  RSA.gradedListener_indicator μ _
+
 /-- Under a uniform prior "between" gives the step function uniform on its interval and zero
 outside it (§3.2.2 (ii)). -/
 theorem literalListener_unif_betweenMeaning {N a b : ℕ} (hb : b ≤ N) (k : ℕ) :
-    RSA.literalListener (unif N) betweenMeaning (a, b) {k} =
+    RSA.gradedListener (unif N) betweenMeaning (a, b) {k} =
       if k ∈ Set.Icc a b then ((b + 1 - a : ℕ) : ℝ≥0∞)⁻¹ else 0 := by
+  rw [gradedListener_betweenMeaning]
   split_ifs with h
-  · refine (RSA.literalListener_indicator_apply_singleton (unif N)
+  · refine (RSA.literalListener_apply_singleton (unif N)
       (λ p : ℕ × ℕ => Set.Icc p.1 p.2) h).trans ?_
     rw [unif_apply_Icc hb, unif_apply_singleton, ite_eq_left (h.2.trans hb), mul_one]
-  · exact RSA.literalListener_indicator_apply_singleton_of_notMem _
+  · exact RSA.literalListener_apply_singleton_of_notMem _
       (λ p : ℕ × ℕ => Set.Icc p.1 p.2) h
 
 /-! ### The ratio inequality (§4) -/
@@ -262,15 +268,14 @@ theorem ratio_inequality {k₁ k₂ : ℕ} (h : k₁ < k₂) (hk : k₂ ≤ n) (
 the ratio of priors (§4). -/
 theorem between_ratio {a b k₁ k₂ : ℕ} (hk₁ : k₁ ∈ Set.Icc a b) (hk₂ : k₂ ∈ Set.Icc a b)
     (hab : μ (Set.Icc a b) ≠ 0) :
-    (RSA.literalListener μ betweenMeaning (a, b)).real {k₁} /
-        (RSA.literalListener μ betweenMeaning (a, b)).real {k₂} =
+    (RSA.gradedListener μ betweenMeaning (a, b)).real {k₁} /
+        (RSA.gradedListener μ betweenMeaning (a, b)).real {k₂} =
       μ.real {k₁} / μ.real {k₂} := by
-  have h₁ := RSA.literalListener_indicator_apply_singleton μ (λ p : ℕ × ℕ => Set.Icc p.1 p.2)
+  have h₁ := RSA.literalListener_apply_singleton μ (λ p : ℕ × ℕ => Set.Icc p.1 p.2)
     (u := (a, b)) hk₁
-  have h₂ := RSA.literalListener_indicator_apply_singleton μ (λ p : ℕ × ℕ => Set.Icc p.1 p.2)
+  have h₂ := RSA.literalListener_apply_singleton μ (λ p : ℕ × ℕ => Set.Icc p.1 p.2)
     (u := (a, b)) hk₂
-  rw [measureReal_def, measureReal_def, show RSA.literalListener μ betweenMeaning (a, b) {k₁} = _
-    from h₁, show RSA.literalListener μ betweenMeaning (a, b) {k₂} = _ from h₂, ENNReal.toReal_mul,
+  rw [gradedListener_betweenMeaning, measureReal_def, measureReal_def, h₁, h₂, ENNReal.toReal_mul,
     ENNReal.toReal_mul, mul_div_mul_left _ _ (ENNReal.toReal_ne_zero.mpr
       ⟨ENNReal.inv_ne_zero.mpr (measure_ne_top _ _), ENNReal.inv_ne_top.mpr hab⟩)]
   rfl
@@ -354,11 +359,11 @@ noncomputable def radiusPrior : Measure ℕ := unif 4
 
 /-- The literal listener of §5.2: uniform prior on the nine values. -/
 noncomputable def L0 : Kernel Msg (Fin 9) :=
-  RSA.literalListener Measure.count (Msg.meaning radiusPrior)
+  RSA.gradedListener Measure.count (Msg.meaning radiusPrior)
 
 /-- The "around 4" column is the Bayesian interpretation rule. -/
 theorem L0_around4 : L0 .around4 = bir Measure.count radiusPrior (λ x : Fin 9 => Nat.dist 4 x) :=
-  (bir_eq_literalListener _ _ _ rfl).symm
+  (bir_eq_gradedListener _ _ _ rfl).symm
 
 theorem meaning_around4 (y : Fin 9) :
     Msg.meaning radiusPrior .around4 y = ((5 - Nat.dist 4 y : ℕ) : ℝ≥0∞) :=
@@ -369,33 +374,33 @@ theorem L0_around4_apply_singleton (x : Fin 9) :
   have hsum : ∑ y : Fin 9, ((5 - Nat.dist 4 y : ℕ) : ℝ≥0∞) = 25 := by
     rw [← Nat.cast_sum, show ∑ y : Fin 9, (5 - Nat.dist 4 y) = 25 by decide]
     rfl
-  rw [L0, RSA.literalListener_apply_singleton]
+  rw [L0, RSA.gradedListener_apply_singleton]
   simp only [meaning_around4, Measure.count_singleton, mul_one, hsum]
 
 theorem L0_between1_7_apply_singleton (x : Fin 9) :
     L0 .between1_7 {x} = if x ∈ Set.Icc 1 7 then 7⁻¹ else 0 := by
   have h : L0 .between1_7 =
-      RSA.literalListener Measure.count (λ _ : Msg => (Set.Icc (1 : Fin 9) 7).indicator 1)
-        .between1_7 := rfl
+      RSA.literalListener Measure.count (λ _ : Msg => Set.Icc (1 : Fin 9) 7) .between1_7 := by
+    rw [← RSA.gradedListener_indicator]; rfl
   rw [h]
   split_ifs with hx
-  · rw [RSA.literalListener_indicator_apply_singleton Measure.count
+  · rw [RSA.literalListener_apply_singleton Measure.count
       (λ _ : Msg => Set.Icc (1 : Fin 9) 7) hx, Measure.count_singleton, mul_one, ← Finset.coe_Icc,
       Measure.count_apply_finset, show (Finset.Icc (1 : Fin 9) 7).card = 7 by decide]
     rfl
-  · exact RSA.literalListener_indicator_apply_singleton_of_notMem Measure.count
+  · exact RSA.literalListener_apply_singleton_of_notMem Measure.count
       (λ _ : Msg => Set.Icc (1 : Fin 9) 7) hx
 
 theorem L0_exactly4_apply_singleton (x : Fin 9) : L0 .exactly4 {x} = if x = 4 then 1 else 0 := by
   have h : L0 .exactly4 =
-      RSA.literalListener Measure.count (λ _ : Msg => ({4} : Set (Fin 9)).indicator 1) .exactly4 :=
-    rfl
+      RSA.literalListener Measure.count (λ _ : Msg => ({4} : Set (Fin 9))) .exactly4 := by
+    rw [← RSA.gradedListener_indicator]; rfl
   rw [h]
   split_ifs with hx
-  · rw [RSA.literalListener_indicator_apply_singleton Measure.count
+  · rw [RSA.literalListener_apply_singleton Measure.count
       (λ _ : Msg => ({4} : Set (Fin 9))) (Set.mem_singleton_iff.mpr hx), Measure.count_singleton,
       Measure.count_singleton, inv_one, mul_one]
-  · exact RSA.literalListener_indicator_apply_singleton_of_notMem Measure.count
+  · exact RSA.literalListener_apply_singleton_of_notMem Measure.count
       (λ _ : Msg => ({4} : Set (Fin 9))) (λ h => hx (Set.mem_singleton_iff.mp h))
 
 /-- Table 1: the weights of the speaker's belief, peaked at 4 with support `[1, 7]`. -/
@@ -434,12 +439,12 @@ theorem lintegral_count_meaning_between1_7 :
   rfl
 
 instance : IsProbabilityMeasure (L0 .around4) :=
-  RSA.isProbabilityMeasure_literalListener _ _ _
+  RSA.isProbabilityMeasure_gradedListener _ _ _
     (by rw [lintegral_count_meaning_around4]; norm_num)
     (by rw [lintegral_count_meaning_around4]; norm_num)
 
 instance : IsProbabilityMeasure (L0 .between1_7) :=
-  RSA.isProbabilityMeasure_literalListener _ _ _
+  RSA.isProbabilityMeasure_gradedListener _ _ _
     (by rw [lintegral_count_meaning_between1_7]; norm_num)
     (by rw [lintegral_count_meaning_between1_7]; norm_num)
 
@@ -530,13 +535,13 @@ variable [Fintype X] [MeasurableSingletonClass X] [Fintype M] [MeasurableSinglet
 
 /-- The literal listener over value and observation (12): the joint prior reweighted by the
 meaning, which constrains the value alone. -/
-noncomputable def jointL0 : Kernel M (X × O) := RSA.literalListener P λ m p => meaning m p.1
+noncomputable def jointL0 : Kernel M (X × O) := RSA.gradedListener P λ m p => meaning m p.1
 
 /-- Footnote 23: the value-marginal of the joint literal listener is the literal listener on the
 value-marginal prior, so eq. (BIR) is recovered inside the full model. -/
 theorem jointL0_map_fst (m : M) :
-    (jointL0 P meaning m).map Prod.fst = RSA.literalListener (P.map Prod.fst) meaning m :=
-  RSA.literalListener_map_fst P meaning (λ _ => measurable_of_countable _) m
+    (jointL0 P meaning m).map Prod.fst = RSA.gradedListener (P.map Prod.fst) meaning m :=
+  RSA.gradedListener_map_fst P meaning (λ _ => measurable_of_countable _) m
 
 variable [Fintype O] [MeasurableSingletonClass O] [IsFiniteMeasure P] (lam : ℝ)
 
@@ -696,7 +701,7 @@ variable (PI : Measure I) (lam : ℝ)
 /-- The interpretation-relativized literal listener (A.1, eq. 1): the joint prior conditioned on
 the message's extension under the interpretation. -/
 noncomputable def luL0 : Kernel (M × I) (W × O) :=
-  RSA.literalListener P λ mi => (sem mi.2 mi.1 ×ˢ Set.univ).indicator 1
+  RSA.literalListener P fun mi ↦ sem mi.2 mi.1 ×ˢ Set.univ
 
 /-- The level-1 speaker (eq. 3), relativized to an interpretation. -/
 noncomputable def luS1 : Kernel (O × I) M :=
@@ -731,7 +736,7 @@ theorem jointUtility_luL0_eq_bot {o : O} (ho : P (Prod.snd ⁻¹' {o}) ≠ 0) {i
   simp only [Quality, not_forall, exists_prop] at h
   obtain ⟨w, hw, hw'⟩ := h
   rw [jointUtility, ← Finset.add_sum_erase _ _ (Finset.mem_univ w), Kernel.comap_apply,
-    luL0, RSA.literalListener_indicator_apply_singleton_of_notMem P
+    luL0, RSA.literalListener_apply_singleton_of_notMem P
       (λ mi : M × I => sem mi.2 mi.1 ×ˢ Set.univ) (λ h => hw' (Set.mem_prod.mp h).1),
     ENNReal.log_zero, EReal.coe_mul_bot_of_pos (belief_real_singleton_pos P ho hw), EReal.bot_add,
     EReal.bot_sub]
@@ -747,7 +752,7 @@ theorem luS1_eq_of_sameSupport (hlam : 0 < lam) {o₁ o₂ : O} (hs : SameSuppor
   · have key : ∀ o, Quality P sem o i m → ∀ w, P {(w, o)} ≠ 0 →
         ENNReal.log ((luL0 P sem).comap (·, i) (measurable_of_countable _) m {(w, o)}) =
           ENNReal.log (P {(w, o)}) + ENNReal.log (P (sem i m ×ˢ Set.univ))⁻¹ := λ o hq w hw => by
-      rw [Kernel.comap_apply, luL0, RSA.literalListener_indicator_apply_singleton P
+      rw [Kernel.comap_apply, luL0, RSA.literalListener_apply_singleton P
         (λ mi : M × I => sem mi.2 mi.1 ×ˢ Set.univ) (Set.mk_mem_prod (hq w hw) (Set.mem_univ _)),
         ENNReal.log_mul_add, add_comm]
     rw [jointUtility_eq_add P cost ho₁ ho₂ (key o₁ hq)

@@ -136,7 +136,7 @@ noncomputable abbrev listener (α : ℝ) : Kernel Utterance (State × Parse) :=
 pragmatic listener (40) alike — the setting of Tables 5–9. -/
 noncomputable def listenerWith (μ : Measure State) [IsFiniteMeasure μ] (α : ℝ) :
     Kernel Utterance (State × Parse) :=
-  jointListener α 0 (literalListener μ fun p => (↑(sem p) : Set State).indicator 1) μ Parse.utt
+  jointListener α 0 (literalListener μ fun p ↦ (↑(sem p) : Set State)) μ Parse.utt
 
 /-- At the uniform prior, `listenerWith` is `listener`. -/
 theorem listenerWith_uniformOn (α : ℝ) : listenerWith (uniformOn Set.univ) α = listener α := rfl

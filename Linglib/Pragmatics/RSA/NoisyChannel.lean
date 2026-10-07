@@ -25,8 +25,8 @@ each operator is its noiseless counterpart.
 
 ## Main results
 
-* `RSA.literalListener_noisyMeaning_id`, `RSA.noisySpeaker_id`,
-  `RSA.noisyPragmaticListener_id` — the identity channel recovers `literalListener`,
+* `RSA.gradedListener_noisyMeaning_id`, `RSA.noisySpeaker_id`,
+  `RSA.noisyPragmaticListener_id` — the identity channel recovers `gradedListener`,
   `speaker`, and `pragmaticListener`.
 * `RSA.noisySpeaker_real_singleton_lt_iff`, `RSA.noisyPragmaticListener_real_lt_iff` —
   preference reduces to the channel-mixed listener, and to the channelled speaker.
@@ -105,10 +105,10 @@ variable [MeasurableSingletonClass U]
 
 /-- Without noise the literal listener is the noiseless one at every utterance of positive
 finite prior mass. -/
-theorem literalListener_noisyMeaning_id (μ : Measure W) (π : Measure U) (m : U → W → ℝ≥0∞)
+theorem gradedListener_noisyMeaning_id (μ : Measure W) (π : Measure U) (m : U → W → ℝ≥0∞)
     {u : U} (h0 : π {u} ≠ 0) (htop : π {u} ≠ ∞) :
-    literalListener μ (noisyMeaning Kernel.id π m) u = literalListener μ m u :=
-  literalListener_apply_eq_of_eq_mul μ h0 htop (noisyMeaning_id π m u)
+    gradedListener μ (noisyMeaning Kernel.id π m) u = gradedListener μ m u :=
+  gradedListener_apply_eq_of_eq_mul μ h0 htop (noisyMeaning_id π m u)
 
 theorem channelMix_id (L : Kernel U W) (u : U) (w : W) : channelMix Kernel.id L u w = L u {w} := by
   rw [channelMix_eq_prod _ _ (s := {u}) fun v hv => by

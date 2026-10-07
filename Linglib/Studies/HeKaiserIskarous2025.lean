@@ -247,14 +247,14 @@ variable (P : Measure State) (m : Meaning)
 
 /-- The literal listener of (1) reweights the prior by the meaning. -/
 noncomputable def L0 : Kernel Utterance State :=
-  literalListener P λ u st => ENNReal.ofReal (m u st)
+  gradedListener P λ u st => ENNReal.ofReal (m u st)
 
-instance : IsFiniteKernel (L0 P m) := inferInstanceAs (IsFiniteKernel (literalListener _ _))
+instance : IsFiniteKernel (L0 P m) := inferInstanceAs (IsFiniteKernel (gradedListener _ _))
 
 theorem L0_ne_top (u : Utterance) (st : State) : L0 P m u {st} ≠ ∞ := measure_ne_top _ _
 
 theorem L0_eq_zero {u : Utterance} {st : State} (h : m u st = 0) : L0 P m u {st} = 0 := by
-  rw [L0, literalListener_apply_singleton, h, ENNReal.ofReal_zero, zero_mul, ENNReal.zero_div]
+  rw [L0, gradedListener_apply_singleton, h, ENNReal.ofReal_zero, zero_mul, ENNReal.zero_div]
 
 variable [IsFiniteMeasure P] (hm : ∀ u st, 0 ≤ m u st)
 include hm
@@ -263,7 +263,7 @@ include hm
 over the row. -/
 theorem L0_real (u : Utterance) (st : State) :
     (L0 P m u {st}).toReal = m u st * P.real {st} / ∑ st', m u st' * P.real {st'} := by
-  rw [L0, literalListener_apply_singleton, ENNReal.toReal_div, ENNReal.toReal_mul,
+  rw [L0, gradedListener_apply_singleton, ENNReal.toReal_div, ENNReal.toReal_mul,
     ENNReal.toReal_ofReal (hm u st), ENNReal.toReal_sum λ st' _ =>
       ENNReal.mul_ne_top ENNReal.ofReal_ne_top (measure_ne_top _ _), measureReal_def]
   congr 1
@@ -273,7 +273,7 @@ theorem L0_real (u : Utterance) (st : State) :
 omit hm in
 theorem L0_ne_zero {u : Utterance} {st : State} (h : 0 < m u st) (hst : P {st} ≠ 0) :
     L0 P m u {st} ≠ 0 := by
-  rw [L0, literalListener_apply_singleton]
+  rw [L0, gradedListener_apply_singleton]
   exact (ENNReal.div_pos_iff.2 ⟨mul_ne_zero (ENNReal.ofReal_pos.2 h).ne' hst,
     ENNReal.sum_ne_top.2 λ st' _ =>
       ENNReal.mul_ne_top ENNReal.ofReal_ne_top (measure_ne_top _ _)⟩).ne'
