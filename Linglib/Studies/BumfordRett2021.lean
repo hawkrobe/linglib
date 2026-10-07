@@ -49,12 +49,13 @@ is, and so whether the model recovers Rett's categorical classification, is a nu
 
 ## TODO
 
-* `rett_classification` is numerical. Every quantity in it is a rational function of
-  `Real.exp (-1/8)`, since the Gaussian weights are its powers `exp (-d ^ 2 / 8)` and the cost
-  factors `exp (-4 * C)` are its powers too, so it needs certified interval evaluation.
-* Raising the cost of the antonym of polarity `p` should raise `p • expectedDeviation`, pushing the
-  listener further onto that antonym's side. With `expectedDeviation_antonym` this would make the
-  marked antonym the more evaluative one structurally.
+* `rett_classification` is numerical: at the paper's costs it holds from rationality about 3
+  upward and fails at 1 and 2. Every quantity in it is a rational function of `Real.exp (-1/8)`,
+  since the Gaussian weights are its powers `exp (-d ^ 2 / 8)` and the cost factors `exp (-4 * C)`
+  are its powers too, so it needs certified interval evaluation.
+* Raising the cost of the antonym of polarity `p` raises `p • expectedDeviation` over most of the
+  parameter range but not all of it: for the exact equative at rationality 8 with a free marked
+  antonym it falls slightly, so a structural version needs a hypothesis on the costs.
 * The stable iterate of the listener.
 
 ## References
