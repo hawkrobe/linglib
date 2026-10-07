@@ -19,6 +19,7 @@ from its slot structure rather than stipulated.
 ## Main definitions
 
 * `SlotFiller`, `Slot`, `TypedForm`: the typed form side
+* `RepresentationLevel`, `SlotFiller.level`: the level of a slot's content
 * `derivedSpecificity`, `HasConstraint`, `refGroupCount`: measures derived
   from forms
 * `Construction`, `Construction.specificity`, `Construction.map`: typed
@@ -94,14 +95,36 @@ instance {Lex : Type*} : DecidablePred (SlotFiller.IsOpen (Lex := Lex))
   | .fixed _ | .headed _ _ => isFalse id
   | .open_ _ | .semantic _ | .phrasal => isTrue trivial
 
+/-- A representation level is one of [dunn-2025]'s three ontologies of slot-constraints. -/
+inductive RepresentationLevel where
+  /-- A lexical constraint, LEX, fixes a lexeme. -/
+  | lex
+  /-- A syntactic constraint, SYN, admits the words of a category. -/
+  | syn
+  /-- A semantic constraint, SEM, admits the expressions that meet it. -/
+  | sem
+  deriving DecidableEq, Repr, Fintype
+
+/-- `f.level` is lexical for fixed lexemes and headed phrases, syntactic for categories and
+phrases, and semantic for semantic constraints. -/
+def SlotFiller.level {Lex : Type*} : SlotFiller Lex → RepresentationLevel
+  | .fixed _ | .headed _ _ => .lex
+  | .open_ _ | .phrasal => .syn
+  | .semantic _ => .sem
+
+/-- A filler is open exactly when it is not lexical. -/
+theorem SlotFiller.isOpen_iff_level_ne_lex {Lex : Type*} (f : SlotFiller Lex) :
+    f.IsOpen ↔ f.level ≠ .lex := by
+  cases f <;> simp [SlotFiller.IsOpen, SlotFiller.level]
+
 /-- The grammatical function of a valence member ([kay-fillmore-1999], Figure 12) is distinct
 from its semantic role, since a subject can be an agent, a theme, or an experiencer. -/
 inductive GrammaticalFunction where
-  /-- Subject. -/
+  /-- `subj` is the subject. -/
   | subj
-  /-- Clausal or verbal complement. -/
+  /-- `comp` is a clausal or verbal complement. -/
   | comp
-  /-- Direct object. -/
+  /-- `obj` is the direct object. -/
   | obj
   deriving DecidableEq, Repr
 
@@ -136,9 +159,9 @@ structure Slot (Lex : Type*) where
   lex : Option Bool := none
   /-- `gf` is the slot's grammatical function ([kay-fillmore-1999]). -/
   gf : Option GrammaticalFunction := none
-  /-- The index of the slot's semantics. -/
+  /-- `refIdx` is the index of the slot's semantics. -/
   refIdx : Option RefIndex := none
-  /-- The index of the slot's unrealized subject requirement. -/
+  /-- `subjIdx` is the index of the slot's unrealized subject requirement. -/
   subjIdx : Option RefIndex := none
   /-- `constraints` lists the slot's syntactic constraints. -/
   constraints : List SlotConstraint := []
