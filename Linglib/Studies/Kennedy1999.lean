@@ -26,7 +26,8 @@ alongside incommensurability (section 3.1.7).
 
 Extents are the rays `Set.Iic (μ a)` and `Set.Ici (μ a)`, closed at the measure as in (30) and
 (31). The embedding of measure functions into Klein's degree-free semantics is
-`Degree.delineation_strictly_more_general` in `Semantics/Degree/Hom.lean`.
+`Degree.Delineation.measureDelineation`, whose ordering is degree comparison
+(`Degree.Delineation.ordering_iff_degree`).
 
 ## References
 
@@ -79,7 +80,7 @@ def crossPolarRows : List Datum :=
   , Examples.incomm_tall_clever, Examples.incomm_tragic_heavy ]
 
 /-- A subdeletion comparative is acceptable exactly when the compared extents are of the same
-sort on a shared scale: cross-polar anomaly and incommensurability under one condition. -/
+sort on a shared scale, which covers cross-polar anomaly and incommensurability at once. -/
 theorem comparison_defined_iff :
     ∀ e ∈ crossPolarRows, e.judgment = .acceptable ↔ (samePolarity e ∧ sharedScale e) := by
   decide

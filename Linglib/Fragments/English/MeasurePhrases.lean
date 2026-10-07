@@ -2,6 +2,7 @@ module
 
 public import Linglib.Semantics.Degree.Measure.Quantity
 public import Mathlib.Basic.Real.Basic
+public import Mathlib.Data.Rat.Cast.Order
 
 /-!
 # English measure phrases
@@ -37,8 +38,8 @@ structure MeasureTerm where
   /-- The unit's symbol in the quantity calculus (`g`, `mL`, `km`). -/
   symbol : String
   dimension : Dimension
-  /-- The size of the unit in the dimension's reference unit (gram, milliliter, meter, second):
-  a kilogram is `1000` grams, a mile `1609.344` meters. -/
+  /-- The size of the unit in the dimension's reference unit (gram, milliliter, meter, second);
+  a kilogram is `1000` grams and a mile `1609.344` meters. -/
   magnitude : ℚ := 1
   magnitude_pos : 0 < magnitude := by decide +kernel
   deriving Repr

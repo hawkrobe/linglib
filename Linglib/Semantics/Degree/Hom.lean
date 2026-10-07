@@ -28,9 +28,10 @@ Scontras / Bale & Schwarz (typed measurement)
 
 Kennedy embeds in Klein directly by `Delineation.measureDelineation`, whose ordering is degree
 comparison (`Delineation.ordering_iff_degree`). Delineation expresses nonlinear adjectives
-("clever") that no degree function induces (`delineation_strictly_more_general`,
-`nonlinear_delineation_exists`), and a non-total background has thresholds that no degree
-threshold induces (`exists_isUpperSet_forall_ne_preimage`).
+("clever") that no degree function induces, since a measure induces a monotone delineation and a
+monotone delineation is never nonlinear
+(`Delineation.IsMonotoneDelineation.not_isNonlinearDelineation`), and a non-total background has
+thresholds that no degree threshold induces (`exists_isUpperSet_forall_ne_preimage`).
 
 ## What each framework adds
 
@@ -43,8 +44,6 @@ threshold induces (`exists_isUpperSet_forall_ne_preimage`).
 
 ## Main results
 
-* `delineation_strictly_more_general`, `monotone_excludes_nonlinear`: degree functions induce
-  monotone delineations, and monotone delineations are never nonlinear.
 * `isMonotoneDelineation_upperSets_iff`: the thresholds of a background form a monotone
   delineation iff the background is total.
 * `maxComparative_iff_exists_isUpperSet`: on a total background the comparative is Klein's.
@@ -90,99 +89,6 @@ is exactly degree comparison) and lands in the monotone, linear
 fragment (`measureDelineation_monotone`, `measureDelineation_is_linear`).
 -/
 
-/-! ### Strict Separation: Delineation > Degree -/
-
-/-! Klein's delineation framework is STRICTLY more general than degree
-    semantics. The key witness: **nonlinear adjectives** like "clever"
-    produce cyclic orderings (both a > b and b > a for different
-    comparison classes). This is impossible for any degree-induced
-    delineation, since degree orderings are asymmetric.
-
-    See `Studies/Klein1980.lean` for the empirical
-    motivation and the concrete "clever" witness. Here we prove the
-    theoretical separation at the framework level. -/
-
-/-- Monotone delineations cannot be nonlinear: monotonicity forces
-    asymmetry, which excludes cycles. This is the core constraint
-    that degree semantics imposes — and that Klein's framework relaxes. -/
-theorem monotone_excludes_nonlinear {Entity : Type*}
-    (delineation : ComparisonClass Entity → Entity → Prop)
-    (hmono : IsMonotoneDelineation delineation Set.univ)
-    (hnn : IsNonlinearDelineation delineation) : False := by
-  obtain ⟨_, u, u', ⟨X₁, _, hu₁, hnu'₁⟩, ⟨X₂, _, hu'₂, hnu₂⟩⟩ := hnn
-  exact hnu₂ (hmono X₁ X₂ (Set.mem_univ _) (Set.mem_univ _) u u' hu₁ hnu'₁ hu'₂)
-
-/-- This nonlinear delineation orders two entities differently depending on which other entities are
-in the comparison class, as multi-criteria adjectives like *clever* do when different subsets apply
-different ranking criteria: `j` is clever in `C` when `m` is absent, where the mathematical
-criterion dominates, and `m` is clever when `j` is absent, where the social one does; in `{j, m}`
-the criteria conflict. -/
-inductive NL2 | j | m
-
-def nlDel : ComparisonClass NL2 → NL2 → Prop
-  | C, .j => NL2.m ∉ C
-  | C, .m => NL2.j ∉ C
-
-theorem nonlinear_delineation_exists :
-    IsNonlinearDelineation nlDel := by
-  refine ⟨{NL2.j, NL2.m}, NL2.j, NL2.m, ?_, ?_⟩
-  · -- j > m via X = {j}: j clever (m absent), m not clever (j present)
-    refine ⟨{NL2.j}, Set.singleton_subset_iff.mpr (Set.mem_insert _ _), ?_, ?_⟩
-    · show NL2.m ∉ ({NL2.j} : Set NL2)
-      simp [Set.mem_singleton_iff]
-    · show ¬(NL2.j ∉ ({NL2.j} : Set NL2))
-      simp
-  · -- m > j via X = {m}: m clever (j absent), j not clever (m present)
-    refine ⟨{NL2.m}, Set.singleton_subset_iff.mpr (Set.mem_insert_of_mem _ rfl), ?_, ?_⟩
-    · show NL2.j ∉ ({NL2.m} : Set NL2)
-      simp [Set.mem_singleton_iff]
-    · show ¬(NL2.m ∉ ({NL2.m} : Set NL2))
-      simp
-
-/-- Klein's delineation framework is strictly more general than degree-based frameworks. Every
-degree function induces a monotone delineation (`measureDelineation_monotone`), but some nonlinear
-delineations are induced by no degree function, since degree-induced delineations are monotone and
-monotonicity excludes nonlinearity. This is the formal content of Klein's critique of degree
-semantics: multi-criteria adjectives like *clever* need the richer delineation framework. -/
-theorem delineation_strictly_more_general :
-    -- (i) Degree → Delineation: every degree function induces a monotone delineation
-    (∀ (E D : Type*) [LinearOrder D] (μ : E → D),
-      IsMonotoneDelineation (measureDelineation μ) Set.univ) ∧
-    -- (ii) Delineation ⊋ Degree: there exist delineations no degree function can induce
-    (∃ (E : Type) (del : ComparisonClass E → E → Prop),
-      IsNonlinearDelineation del) :=
-  ⟨fun _ _ _ μ => measureDelineation_monotone μ,
-   ⟨NL2, nlDel, nonlinear_delineation_exists⟩⟩
-
-/-! ### Degree = Monotone Delineation (Characterization) -/
-
-/-! The degree-based frameworks correspond EXACTLY to the monotone
-    fragment of Klein's delineation theory. This is not a coincidence:
-    monotonicity is what ensures a delineation induces a well-behaved
-    ordering (strict weak order), which is exactly what a degree scale
-    provides.
-
-    - Forward: degree → monotone delineation (`measureDelineation_monotone`)
-    - Backward: monotone delineation → degree-recoverable ([klein-1980] §4.2,
-      proved in `Klein1980.lean` as `kleinDegree_measureDelineation`)
-
-    Together: `degree semantics = monotone delineation semantics`.
-    Klein's full framework adds the non-monotone fragment for
-    multi-criteria adjectives. -/
-
-/-- Degree functions always yield monotone delineations AND the
-    ordering is faithful. This characterizes exactly what degree
-    semantics buys you within the delineation framework. -/
-theorem degree_characterization {E D : Type*} [LinearOrder D]
-    (μ : E → D) :
-    IsMonotoneDelineation (measureDelineation μ) Set.univ ∧
-    IsLinearDelineation (measureDelineation μ) ∧
-    (∀ cc a b, a ∈ cc → b ∈ cc →
-      (ordering (measureDelineation μ) cc a b ↔ μ b < μ a)) :=
-  ⟨measureDelineation_monotone μ,
-   measureDelineation_is_linear μ,
-   fun cc a b ha hb => ordering_iff_degree μ cc a b ha hb⟩
-
 /-! ### Background orderings ([cariani-santorio-wellwood-2023])
 
 The states-based framework of `Semantics/Degree/Background.lean` has a background preorder of
@@ -211,8 +117,8 @@ theorem isMonotoneDelineation_upperSets_iff :
     exact hts (h (Ici s) (Ici t) (isUpperSet_Ici s) (isUpperSet_Ici t) s t le_rfl hst le_rfl)
   · exact (htot a b).elim (fun hab ↦ absurd (h₁ hab ha) hb) fun hba ↦ h₂ hba hb₂
 
-/-- With a monotone measure the comparative yields a separating threshold: if `a` has more than
-`b`, some threshold property holds of `a` and not of `b`. -/
+/-- With a monotone measure, if `a` has more than `b` then some threshold property holds of `a`
+and not of `b`. -/
 theorem exists_isUpperSet_of_maxComparative (hm : Monotone μ) {a b : X}
     (h : maxComparative (ρ · = a) (ρ · = b) μ) :
     ∃ T, IsUpperSet T ∧ a ∈ ρ '' T ∧ b ∉ ρ '' T := by
@@ -221,19 +127,19 @@ theorem exists_isUpperSet_of_maxComparative (hm : Monotone μ) {a b : X}
   rintro ⟨t, hst, htb⟩
   exact ((hδ.2 ⟨t, htb, le_rfl⟩).trans_lt hlt).not_ge (hm hst)
 
-/-- Admissibility alone does not yield a separating threshold: with two tied states every
+/-- Admissibility alone does not yield a separating threshold. With two tied states every
 measure is admissible and every threshold holding of one holds of the other. The preorder is
 passed explicitly, since `Bool`'s own order would otherwise be found. -/
 example :
     let tied : Preorder Bool := Preorder.lift fun _ ↦ ()
-    @admissibleMeasure _ _ tied _ Bool.toNat ∧ maxComparative (· = true) (· = false) Bool.toNat ∧
+    @StrictMono _ _ tied _ Bool.toNat ∧ maxComparative (· = true) (· = false) Bool.toNat ∧
       ∀ T : Set Bool, @IsUpperSet _ tied.toLE T → true ∈ T → false ∈ T :=
   ⟨fun _ _ h ↦ absurd h (lt_irrefl ()), (maxComparative_eq_iff _ _ _).2 Nat.zero_lt_one,
     fun _ hT ht ↦ hT trivial ht⟩
 
 /-- On a total background with an admissible measure a separating threshold yields the
 comparative, when the degrees of `b`'s states have a greatest element. -/
-theorem maxComparative_of_exists_isUpperSet [@Std.Total S (· ≤ ·)] (hμ : admissibleMeasure μ)
+theorem maxComparative_of_exists_isUpperSet [@Std.Total S (· ≤ ·)] (hμ : StrictMono μ)
     {a b : X} (hb : ∃ δ, IsGreatest (thanDegrees (ρ · = b) μ) δ)
     (h : ∃ T, IsUpperSet T ∧ a ∈ ρ '' T ∧ b ∉ ρ '' T) :
     maxComparative (ρ · = a) (ρ · = b) μ := by
@@ -244,9 +150,9 @@ theorem maxComparative_of_exists_isUpperSet [@Std.Total S (· ≤ ·)] (hμ : ad
   exact ⟨δ, hδ, s, hsa, hδt.trans_lt (hμ (lt_of_le_not_ge
     ((total_of (· ≤ ·) t s).resolve_right hst) hst))⟩
 
-/-- On a total background with a monotone admissible measure the comparative is Klein's: `a`
-has more than `b` iff some threshold property holds of `a` and not of `b`. -/
-theorem maxComparative_iff_exists_isUpperSet [@Std.Total S (· ≤ ·)] (hμ : admissibleMeasure μ)
+/-- On a total background with a monotone admissible measure, `a` has more than `b` iff some
+threshold property holds of `a` and not of `b`, as in Klein's comparative. -/
+theorem maxComparative_iff_exists_isUpperSet [@Std.Total S (· ≤ ·)] (hμ : StrictMono μ)
     (hm : Monotone μ) {a b : X} (hb : ∃ δ, IsGreatest (thanDegrees (ρ · = b) μ) δ) :
     maxComparative (ρ · = a) (ρ · = b) μ ↔ ∃ T, IsUpperSet T ∧ a ∈ ρ '' T ∧ b ∉ ρ '' T :=
   ⟨exists_isUpperSet_of_maxComparative hm, maxComparative_of_exists_isUpperSet hμ hb⟩
@@ -336,8 +242,8 @@ instance {E : Type*} {φ : E → E → Prop} : LT (CresswellDegree φ) :=
     (⟦a⟧ : CresswellDegree φ) < ⟦b⟧ ↔ φ b a :=
   Iff.rfl
 
-/-- On a preorder, φ-indistinguishability under `≤` is mathlib's
-    `AntisymmRel`: the Cresswell quotient IS `Antisymmetrization`. -/
+/-- On a preorder, φ-indistinguishability under `≤` is `AntisymmRel`, so the Cresswell quotient
+is `Antisymmetrization`. -/
 theorem cresswellSetoid_le_iff {E : Type*} [Preorder E] (a b : E) :
     (cresswellSetoid (· ≤ ·)).r a b ↔ AntisymmRel (· ≤ ·) a b := by
   constructor
@@ -347,8 +253,8 @@ theorem cresswellSetoid_le_iff {E : Type*} [Preorder E] (a b : E) :
     exact ⟨fun c => ⟨hba.trans, hab.trans⟩,
            fun c => ⟨(le_trans · hab), (le_trans · hba)⟩⟩
 
-/-- On an equivalence relation, φ-indistinguishability is the relation itself: the construction
-returns the cells of a partition as well as degrees, [mendia-2020]'s (17)–(18). -/
+/-- On an equivalence relation, φ-indistinguishability is the relation itself, so the
+construction returns the cells of a partition as well as degrees. -/
 theorem cresswellSetoid_setoid {E : Type*} (s : Setoid E) : cresswellSetoid s = s :=
   Setoid.ext fun _ b ↦ ⟨fun h ↦ (h.1 b).2 (s.refl' b), fun h ↦
     ⟨fun _ ↦ ⟨s.trans' (s.symm' h), s.trans' h⟩,
@@ -370,9 +276,9 @@ section TransportMax
 
 variable {Entity D D' : Type*} [LinearOrder D] [LinearOrder D'] {μ : Entity → D}
 
-/-- The max-quantified comparative is invariant under an order embedding of the scale. Not
-immediate: `thanDegrees` is a downset and images of downsets need not be downsets, but the
-greatest element rides along. -/
+/-- The max-quantified comparative is invariant under an order embedding of the scale. The image
+of the downset `thanDegrees` need not be a downset, but its greatest element maps to the greatest
+element of the image. -/
 theorem maxComparative_comp (f : D ↪o D') (Pmatrix Pthan : Entity → Prop) :
     maxComparative Pmatrix Pthan (f ∘ μ) ↔ maxComparative Pmatrix Pthan μ := by
   constructor
@@ -386,8 +292,8 @@ theorem maxComparative_comp (f : D ↪o D') (Pmatrix Pthan : Entity → Prop) :
     rintro d ⟨y, hQy, hdy⟩
     exact hdy.trans (f.monotone (hub ⟨y, hQy, le_rfl⟩))
 
-/-- With a fixed threshold the positive form is not natural: some order embedding of the scale
-changes the verdict. -/
+/-- With a fixed threshold the positive form is not natural, since some order embedding of the
+scale changes the verdict. -/
 theorem positive_not_natural :
     ∃ f : ℚ ↪o ℚ, ∃ (μ : ℚ → ℚ) (θ x : ℚ),
       x ∈ Comparison.ge.over μ θ ∧ x ∉ Comparison.ge.over (f ∘ μ) θ :=

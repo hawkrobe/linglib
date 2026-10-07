@@ -51,8 +51,8 @@ def unit [One K] (d : Dimension) : Quantity K := (1, .of d)
 
 variable [CommGroupWithZero K]
 
-/-- Scaling both quantities by the same nonzero pure number leaves their quotient
-unchanged: `0.1 kg / L = 0.1 g / mL`. -/
+/-- Scaling both quantities by the same nonzero pure number leaves their quotient unchanged, so
+that `0.1 kg / L = 0.1 g / mL`. -/
 theorem pure_mul_div_pure_mul {k : K} (hk : k ≠ 0) (q r : Quantity K) :
     pure k * q / (pure k * r) = q / r := by
   ext <;> simp [mul_div_mul_left _ _ hk]
@@ -86,9 +86,9 @@ def DimensionedMeasure.quantity (μ : DimensionedMeasure E K) (x : E) : Quantity
     (μ.quantity x).2 = .of μ.dimension := rfl
 
 /-- Measuring `n` units is having the quantity `n` times the unit. -/
-theorem DimensionedMeasure.quantity_eq_pure_mul_unit_iff [MulOneClass K] [Preorder K]
+theorem DimensionedMeasure.quantity_eq_pure_mul_unit_iff [MulOneClass K]
     (μ : DimensionedMeasure E K) (n : K) (x : E) :
-    μ.quantity x = .pure n * .unit μ.dimension ↔ μ.applyNumeral n x := by
+    μ.quantity x = .pure n * .unit μ.dimension ↔ μ.apply x = n := by
   simp [Prod.ext_iff]
 
 end Degree

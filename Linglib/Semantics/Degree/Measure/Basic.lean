@@ -1,24 +1,26 @@
 module
 
 public import Mathlib.Basic.Real.Basic
+public import Linglib.Core.Order.Monotone.Basic
 public import Mathlib.Tactic.Linarith
 
 /-!
 # Admissible measures and dimensional restriction
 
-A measure function is admissible for a background ordering if it is strictly monotone, and a
-domain is dimensionally restricted if any two admissible measures order its elements alike.
-Linear orders are dimensionally restricted, and multi-dimensional orders such as weight × volume
-are not.
+A measure function is admissible for a background ordering when it is strictly monotone, mathlib's
+`StrictMono`. The condition recurs under several names: Schwarzschild's Monotonicity Constraint on
+the measures of pseudopartitives, Wellwood's admissibility for the measure of *much*, the
+confidence orderings of Cariani, Santorio and Wellwood, and Pasternak's monotonicity of intensity
+on mental states; Krifka's extensive measures have it over parts with remainders. A domain is
+dimensionally restricted if any two admissible measures order its elements alike. Linear orders
+are dimensionally restricted, and multi-dimensional orders such as weight × volume are not.
 
 ## Main definitions
 
-* `admissibleMeasure`: strict monotonicity of a measure function.
 * `DimensionallyRestricted`: any two admissible measures agree on the comparative ordering.
 
-## Main results
+## Main statements
 
-* `admissibleMeasure.reflect_le`: on a total preorder an admissible measure reflects the order.
 * `linearOrder_dimensionallyRestricted`, `prod_not_dimensionallyRestricted`: linear orders are
   dimensionally restricted, and a product order is not.
 
@@ -31,25 +33,6 @@ are not.
 @[expose] public section
 
 namespace Degree
-
-/-- A measure function `μ` is admissible for a background ordering if `s₁ < s₂` entails
-`μ s₁ < μ s₂`, that is, if it is strictly monotone. The condition recurs under several names, as
-the Monotonicity Constraint of [schwarzschild-2002] and [schwarzschild-2006] on measures in
-pseudopartitives, admissibility of the measure of *much* in [wellwood-2015], the confidence
-orderings of [cariani-santorio-wellwood-2024] (eq. 21), and the monotonicity of `μ_int` on mental
-states in [pasternak-2019] (def 4). The extensive measures of [krifka-1989] have it over parts
-with remainders (`Mereology.IsExtensiveMeasure.strictMono`). -/
-abbrev admissibleMeasure {S D : Type*} [Preorder S] [Preorder D]
-    (μ : S → D) : Prop :=
-  StrictMono μ
-
-/-- On a total preorder an admissible measure reflects the ordering, so a state measuring at
-most another lies below it. The converse fails for tied states, which admissibility leaves free to
-be measured apart. -/
-theorem admissibleMeasure.reflect_le {S D : Type*} [Preorder S] [@Std.Total S (· ≤ ·)]
-    [Preorder D] {μ : S → D} (hμ : admissibleMeasure μ) {a b : S} (h : μ a ≤ μ b) : a ≤ b :=
-  (total_of (· ≤ ·) a b).elim id fun hba ↦
-    by_contra fun hab ↦ (hμ (lt_of_le_not_ge hba hab)).not_ge h
 
 /-! ### Dimensional restriction -/
 

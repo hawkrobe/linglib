@@ -18,7 +18,7 @@ countable units ((77), `atomizingReading`). The readings differ in what they ref
 a container reading refers to containers, the quantizing noun's own denotation, while measure
 and atomizing readings refer to the substance (`containerReading_subset`,
 `measureReading_subset`, `atomizingReading_subset`); the measure reading is moreover
-quantity-uniform under the term's measure (`measureReading_isQuantityUniform`). Each of the
+quantity-uniform under the term's measure (`measureReading_quantity_uniform`). Each of the
 first two classes has uses as the other, the container noun by a shift on the model of the
 measure suffix *-ful* ((47), `shiftCM`) and the measure term by lexical reinterpretation as the
 class of containers of a unit quantity ((52), `shiftMC`); atomizers, being neither predicates of
@@ -41,8 +41,8 @@ each of them measures one relative atom under the relative-atom measure of (68)
   continuous measure cannot be built from a predicate, is respected by taking (47), which counts
   filled containers, as the shift; the measure-term-to-container shift is stated as (52) with
   the remark that world knowledge narrows its output.
-* The number-marking system of the second chapter, the substrate's `applyNumeral` and
-  `IsQuantityUniform`, is consumed rather than restated.
+* Quantity uniformity, the condition the number marking of the second chapter checks, is that
+  the measure takes one value on the predicate, `Set.Subsingleton` of its image.
 * Of the axioms bridging connection and parthood, integrity (73a) and unity (73b) follow from
   reflexivity, symmetry and monotonicity (73c) (`IsConnection.of_le`,
   `IsConnection.of_overlap`). Overlap (71) carries the library's non-null clause, with which it
@@ -80,9 +80,8 @@ def containerReading (P : E → Prop) (filledWith : E → E → Prop) (k : E →
 
 /-- The measure reading ((41), (42)) of a measure term with measure `μ`, numeral `n` and
 substance `k` holds of the instances of the substance that measure `n`. -/
-def measureReading [Preorder D] (μ : DimensionedMeasure E D) (k : E → Prop) (n : D) (x : E) :
-    Prop :=
-  k x ∧ μ.applyNumeral n x
+def measureReading (μ : DimensionedMeasure E D) (k : E → Prop) (n : D) (x : E) : Prop :=
+  k x ∧ μ.apply x = n
 
 /-- The atomizing reading (77) of an atomizer with partitioning function `π` and substance `k`
 holds of what `π` returns for `k`. -/
@@ -99,14 +98,15 @@ theorem containerReading_subset (P : E → Prop) (filledWith : E → E → Prop)
     ∀ x, containerReading P filledWith k x → P x := fun _ h ↦ h.1
 
 /-- A measure reading refers to instances of the substance (Table 3.1). -/
-theorem measureReading_subset [Preorder D] (μ : DimensionedMeasure E D) (k : E → Prop) (n : D) :
+theorem measureReading_subset (μ : DimensionedMeasure E D) (k : E → Prop) (n : D) :
     ∀ x, measureReading μ k n x → k x := fun _ h ↦ h.1
 
-/-- The measure reading with numeral `n` is quantity-uniform under the term's measure, the
-condition (44) that number marking checks. -/
-theorem measureReading_isQuantityUniform [Preorder D] (μ : DimensionedMeasure E D) (k : E → Prop)
-    (n : D) : IsQuantityUniform (measureReading μ k n) μ :=
-  fun _ _ hx hy ↦ hx.2.trans hy.2.symm
+/-- The measure reading with numeral `n` is quantity-uniform under the term's measure, since the
+measure takes the single value `n` on it. -/
+theorem measureReading_quantity_uniform (μ : DimensionedMeasure E D) (k : E → Prop) (n : D) :
+    (μ.apply '' {x | measureReading μ k n x}).Subsingleton := by
+  rintro _ ⟨_, hx, rfl⟩ _ ⟨_, hy, rfl⟩
+  exact hx.2.trans hy.2.symm
 
 /-! ### Derived uses (§3.2.3) -/
 

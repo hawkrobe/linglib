@@ -9,28 +9,24 @@ public import Mathlib.Data.Finset.Basic
 /-!
 # Ronderos et al. (2024): Factors affecting contrastive inferences
 
-This file formalizes [ronderos-etal-2024]'s cross-linguistic eye-tracking study of contrastive
-inference with colour, scalar, and material adjectives in the paradigm of [sedivy-etal-1999]: a
-listener who interprets *the short pencil* contrastively, as distinguishing the pencil from a
+A listener who interprets *the short pencil* contrastively, as distinguishing the pencil from a
 longer one, identifies the referent before the noun when the display holds such a contrasting
-object. The paper separates three factors by the predictions they make across adjective types.
-The pragmatic account of [sedivy-2003] and [sedivy-2004] lets the interpretation be contrastive
-only for adjectives rarely used descriptively, so colour, often descriptive, should show no
-contrast effect and material should; the perceptual account requires the contrast to be
-perceived during preview, and material contrasts are less salient than colour ones
-([kursat-degen-2021], [jara-ettinger-rubio-fernandez-2022]), so colour should show the effect
-and material should not. The semantic account of [aparicio-xiang-kennedy-2015] concerns the
-no-contrast baseline: a relative gradable adjective ([kennedy-2007]) is interpreted against a
-comparison class the listener must find in the display, so looks to the two property-matching
-objects are lower for scalar adjectives than for the non-gradable colour and material ones.
+object. Ronderos and colleagues track this contrastive inference by eye-tracking with colour,
+scalar and material adjectives, in Sedivy's paradigm, and separate three accounts by their
+predictions across adjective types. On Sedivy's pragmatic account the interpretation is
+contrastive only for adjectives rarely used descriptively, so colour should show no contrast
+effect and material should. On the perceptual account the contrast must be perceived during
+preview, and material contrasts are less salient, so colour should show the effect and material
+should not. On the semantic account of Aparicio, Xiang and Kennedy a relative gradable adjective
+needs a comparison class from the display, which lowers the no-contrast baseline for scalar
+adjectives.
 
-`Display.contrastive` is the contrastive interpretation over a display of the paper's four
-objects. The noun is anticipated when the definite description already has the target as its
-referent under the interpretation (`Anticipates`), and `Account.PredictsEffect` derives an
-account's contrast effect from anticipation in each condition. `perceptual_matches` and
-`pragmatic_fails` compare the two accounts with the effects found, for colour and scalar but not
-material adjectives, and `baseline_higher_iff_not_relative` checks the baseline against the
-adjective classes, where salience cannot explain material adjectives exceeding scalar ones.
+## Main statements
+
+* `perceptual_matches`: the perceptual account predicts the effects found.
+* `pragmatic_fails`: the pragmatic account does not.
+* `baseline_higher_iff_not_relative`: the baseline is higher exactly for the non-gradable
+  adjective types.
 
 ## Implementation notes
 
@@ -64,7 +60,7 @@ open Data.Experiments
 
 /-! ### The paradigm (Figure 1) -/
 
-/-- The four objects of a display: the target, the object that in the contrast condition is of
+/-- The four objects of a display are the target, the object that in the contrast condition is of
 the target's kind and lacks the property, the competitor of another kind sharing it, and a
 distractor. -/
 inductive Object where
@@ -74,8 +70,8 @@ inductive Object where
   | distractor
   deriving DecidableEq, Repr, Fintype
 
-/-- A display as the listener takes it in: the kind of each object, named by a representative,
-and the objects showing the adjective's property. -/
+/-- A display, as the listener takes it in, records the kind of each object, named by a
+representative, and the objects showing the adjective's property. -/
 structure Display where
   kind : Object → Object
   has : Finset Object
@@ -84,18 +80,18 @@ namespace Display
 
 variable (d : Display)
 
-/-- The descriptive interpretation of the adjective: the objects with the property. -/
+/-- The descriptive interpretation of the adjective picks out the objects with the property. -/
 def descriptive : Finset Object := d.has
 
-/-- The contrastive interpretation: the objects with the property that an object of their kind
-lacks. -/
+/-- The contrastive interpretation picks out the objects with the property that an object of
+their kind lacks. -/
 def contrastive : Finset Object :=
   d.has.filter fun o ↦ ∃ o', d.kind o' = d.kind o ∧ o' ∉ d.has
 
 theorem contrastive_subset_descriptive : d.contrastive ⊆ d.descriptive := Finset.filter_subset _ _
 
-/-- The display with the property attributed to a whole kind as soon as one of its members shows
-it: how a property whose contrast is not perceived is taken in. -/
+/-- A property whose contrast is not perceived is taken in by attributing it to a whole kind as
+soon as one of its members shows it. -/
 def blur : Display where
   kind := d.kind
   has := Finset.univ.filter fun o ↦ ∃ o', d.kind o' = d.kind o ∧ o' ∈ d.has
@@ -120,16 +116,16 @@ theorem anticipates_iff {S : Finset Object} : Anticipates S ↔ S = {.target} :=
 
 instance (S : Finset Object) : Decidable (Anticipates S) := decidable_of_iff _ anticipates_iff.symm
 
-/-- The display of the contrast condition: the contrasting object is of the target's kind and
-lacks the property, the competitor has it. -/
+/-- In the display of the contrast condition the contrasting object is of the target's kind and
+lacks the property, and the competitor has it. -/
 def contrastDisplay : Display where
   kind
     | .contrastingObject => .target
     | o => o
   has := {.target, .competitor}
 
-/-- The display of the no-contrast condition: the contrasting object is replaced by a distractor
-of its own kind. -/
+/-- In the display of the no-contrast condition the contrasting object is replaced by a
+distractor of its own kind. -/
 def noContrastDisplay : Display where
   kind o := o
   has := {.target, .competitor}
@@ -140,7 +136,7 @@ def display : Condition → Display
   | .noContrast => noContrastDisplay
 
 /-- The contrastive interpretation of the contrast display singles out the target before the
-noun: the competitor has the property but no object of its kind lacks it. -/
+noun, since the competitor has the property but no object of its kind lacks it. -/
 theorem contrastive_contrast : contrastDisplay.contrastive = {.target} := by decide
 
 /-- The descriptive interpretation leaves the target and the competitor. -/
@@ -154,9 +150,9 @@ theorem descriptive_noContrast : noContrastDisplay.descriptive = {.target, .comp
 
 /-! ### The three factors -/
 
-/-- Whether the contrast in the property is visually salient during preview: material contrasts
-are not ([kursat-degen-2021], [jara-ettinger-rubio-fernandez-2022]), colour and size contrasts
-are. -/
+/-- An adjective type is salient when a contrast in its property is visually salient during
+preview. Material contrasts are not ([kursat-degen-2021], [jara-ettinger-rubio-fernandez-2022]),
+and colour and size contrasts are. -/
 def Salient : AdjType → Prop
   | .material => False
   | .color | .scalar => True
@@ -165,9 +161,9 @@ instance : DecidablePred Salient
   | .material => isFalse id
   | .color | .scalar => isTrue trivial
 
-/-- Whether the adjective type is expected to be informative, being rarely used descriptively:
-colour adjectives are produced descriptively about half the time ([sedivy-2004]), material and
-scalar ones rarely. -/
+/-- An adjective type is informative when it is rarely used descriptively, so that its use is
+expected to be informative. Colour adjectives are produced descriptively about half the time
+([sedivy-2004]), material and scalar ones rarely. -/
 def Informative : AdjType → Prop
   | .color => False
   | .scalar | .material => True
@@ -176,8 +172,8 @@ instance : DecidablePred Informative
   | .color => isFalse id
   | .scalar | .material => isTrue trivial
 
-/-- The adjective classes ([kennedy-2007]): scalar adjectives are relative gradable, colour and
-material adjectives non-gradable. -/
+/-- Scalar adjectives are relative gradable, and colour and material adjectives are non-gradable
+([kennedy-2007]). -/
 def AdjType.adjectiveClass : AdjType → Degree.AdjectiveClass
   | .scalar => .relative
   | .color | .material => .nonGradable
@@ -190,19 +186,19 @@ structure Account where
   perceive : AdjType → Display → Display
   interpret : AdjType → Display → Finset Object
 
-/-- The pragmatic account ([sedivy-2003], [sedivy-2004]): perception is veridical, and the
+/-- On the pragmatic account ([sedivy-2003], [sedivy-2004]) perception is veridical, and the
 adjective is interpreted contrastively only when it is expected to be informative. -/
 def pragmatic : Account where
   perceive _ d := d
   interpret t := if Informative t then Display.contrastive else Display.descriptive
 
-/-- The perceptual account: the adjective is always interpreted contrastively, but a contrast
+/-- On the perceptual account the adjective is always interpreted contrastively, but a contrast
 that is not salient is not perceived. -/
 def perceptual : Account where
   perceive t d := if Salient t then d else d.blur
   interpret _ := Display.contrastive
 
-/-- The contrast effect an account predicts for an adjective type: the noun is anticipated in
+/-- An account predicts a contrast effect for an adjective type when the noun is anticipated in
 the contrast condition and not in the no-contrast one. -/
 def Account.PredictsEffect (a : Account) (t : AdjType) : Prop :=
   Anticipates (a.interpret t (a.perceive t contrastDisplay)) ∧
@@ -223,7 +219,8 @@ theorem perceptual_predictsEffect_iff (t : AdjType) :
 
 /-! ### The findings -/
 
-/-- A printed p-value is below 0.05: an upper bound at most 0.05, or a value under it. -/
+/-- A printed p-value is below 0.05 when it is an upper bound at most 0.05 or a value under
+it. -/
 def Bound.Significant : Bound → Decimal → Prop
   | .below, p => p.toRat ≤ 5 / 100
   | .exact, p => p.toRat < 5 / 100
@@ -232,8 +229,8 @@ instance : ∀ b p, Decidable (Bound.Significant b p)
   | .below, _ => inferInstanceAs (Decidable (_ ≤ _))
   | .exact, _ => inferInstanceAs (Decidable (_ < _))
 
-/-- Whether the paper found a contrast effect for an adjective type: a significant cluster of
-condition effects on target looks in the noun window, and a significant effect of condition on
+/-- The paper found a contrast effect for an adjective type when it reports a significant cluster
+of condition effects on target looks in the noun window and a significant effect of condition on
 the target-advantage score. -/
 def Effect (t : AdjType) : Prop :=
   (∃ p ∈ (clusters t).p, Bound.below.Significant p) ∧
@@ -249,23 +246,23 @@ def BaselineHigherThanScalar (t : AdjType) : Prop :=
 instance : DecidablePred BaselineHigherThanScalar := fun _ ↦
   inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
-/-- The perceptual account predicts the effects found: for colour and scalar adjectives, not for
-material ones. -/
+/-- The perceptual account predicts the effects found, for colour and scalar adjectives and not
+for material ones. -/
 theorem perceptual_matches : ∀ t, perceptual.PredictsEffect t ↔ Effect t := by decide +kernel
 
 /-- The pragmatic account predicts an effect for material and none for colour, the reverse of
 what was found. -/
 theorem pragmatic_fails : ¬ ∀ t, pragmatic.PredictsEffect t ↔ Effect t := by decide +kernel
 
-/-- The baseline follows the adjective classes: looks to the property-matching objects exceed
+/-- The baseline follows the adjective classes. Looks to the property-matching objects exceed
 those for scalar adjectives exactly for the non-gradable types, which need no comparison class
 ([aparicio-xiang-kennedy-2015]). -/
 theorem baseline_higher_iff_not_relative :
-    ∀ t, BaselineHigherThanScalar t ↔ ¬ t.adjectiveClass.IsRelative := by
+    ∀ t, BaselineHigherThanScalar t ↔ t.adjectiveClass ≠ .relative := by
   decide +kernel
 
-/-- Salience does not explain the baseline: material adjectives, whose contrast is not salient,
-still draw more looks than scalar ones. -/
+/-- Salience does not explain the baseline, since material adjectives, whose contrast is not
+salient, still draw more looks than scalar ones. -/
 theorem salience_not_baseline : ¬ ∀ t, BaselineHigherThanScalar t → Salient t := by
   decide +kernel
 

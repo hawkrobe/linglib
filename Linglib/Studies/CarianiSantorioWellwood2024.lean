@@ -5,77 +5,36 @@ public import Linglib.Fragments.English.Adjectives
 public import Mathlib.MeasureTheory.Measure.MeasureSpaceDef
 
 /-!
-# Cariani, Santorio and Wellwood 2024: confidence reports
+# Cariani, Santorio and Wellwood (2024): Confidence Reports
 
-[cariani-santorio-wellwood-2024] give adjectival *confident* and nominal *confidence* one
-denotation, a property of confidence states (38). A holder's confidence states each carry a
-proposition as their theme, and a background ordering, one per holder, ranks them across themes
-(§4.1). *σ is confident that p* says that some state of σ's with theme `p` lies at or above a
-contrast state (40), so the positive form needs no covert *pos*; *certain* is the same ordering
-with a higher contrast state, at the top (§5.2). The comparative (47) discards the contrast
-state and compares degrees, assigned by [wellwood-2015]'s *more* through a measure that must
-preserve the strict ordering (21). This is the two-component analysis of
-[cariani-santorio-wellwood-2023], `Semantics/Degree/Background.lean`, with themes for holders
-and the region above a contrast state for the threshold property.
+Cariani, Santorio and Wellwood give adjectival *confident* and nominal *confidence* one
+denotation, a property of confidence states. Each state carries a proposition as its theme, and
+a background ordering ranks a holder's states. *σ is confident that p* says that some state of
+σ's with theme `p` lies at or above a contrast state, and *certain* is the same ordering with
+the contrast state at the top. The comparative instead compares degrees, assigned by a measure
+that preserves the strict ordering. This is the two-component analysis of
+`Semantics/Degree/Background.lean`, and the file sorts the paper's inferences by whether they use
+the ordering or the degree scale.
 
-The positive form lives on the background ordering and the comparative on the degree scale, and
-this file sorts the paper's logic (§4.6, §5.2) by which of the two each inference uses.
-Transitivity (54), antisymmetry (55) and connectedness (56) are facts about the degree scale:
-they hold of the max-quantified comparative and equative whatever the background ordering and
-whatever the measure (`Degree.maxComparative_trans`, `Degree.maxEquative_antisymm`,
-`Degree.maxEquative_total`). Upward monotonicity (53) is the one inference that crosses from a
-comparative back to a positive form, the earlier paper's (19). It needs both the admissibility
-of the measure and the totality of the ordering (`Degree.mem_image_of_maxComparative`), and on
-a non-total ordering any incomparable pair that an admissible measure separates refutes it
-(`Degree.not_mem_image_Ici_of_not_le`). Making the ordering partial, the paper's way of dropping
-Connectedness (§4.6), therefore costs (53) but not (56): on a linear degree scale the three
-alternatives of (58) still exhaust the cases (`Degree.maxComparative_trichotomy`). The
-comparative does not entail the positive form (§3.2, §4.3;
-`Degree.maxComparative_and_not_mem_image`).
+## Main statements
 
-The conjunction fallacy (52) is consistent with the semantics, since the ordering ranks states
-and not their contents (`exists_conjunctionFallacy`), while a threshold on a probability
-measure, the off-the-shelf alternative of §2 on the scalar semantics of [lassiter-2017],
-validates conjunction elimination, so no such threshold reproduces the confidence of a holder who
-commits the fallacy (`image_Ici_ne_ge_over`). *Certain* entails *confident* because its contrast
-state is maximal (`image_Ici_subset_image_Ici_of_isMax`), and the entailment is asymmetric
-whenever *confident*'s contrast state is not (`not_image_Ici_subset_image_Ici`). Conversely
-*confident* entails *certain* once its own contrast state is maximal
-(`image_Ici_subset_image_Ici_iff_isMax`), so (65a) keeps *confident* off the top of an ordering
-that has one, as the English fragment's contextual standard for *confident* records.
-
-## Main results
-
-* `maxComparative_theme_iff`: with one state per theme the comparative (47) compares measures.
-* `exists_conjunctionFallacy`, `image_Ici_ne_ge_over`: (52a) and (52b) are true together on
-  some total ordering, and on no threshold of a probability measure.
-* `image_Ici_subset_image_Ici_of_isMax`, `not_image_Ici_subset_image_Ici`: *certain* entails
-  *confident* asymmetrically (65), (66).
+* `exists_conjunctionFallacy`, `image_Ici_ne_ge_over`: confidence in a conjunction without
+  confidence in its conjunct is consistent with the semantics, and with no threshold on a
+  probability measure.
 * `image_Ici_subset_image_Ici_iff_isMax`: *confident* entails *certain* exactly when its contrast
-  state is maximal, so (65a) needs a non-maximal one.
-* `Ici_eq_setOf_isMax`: the region above a maximal contrast state (71) is the set of maximal
-  states of Figure 3.
-* `not_maxComparative_of_isMax`, `maxComparative_of_isMax`: nothing is more confident than a
-  certainty (68) when the measure also respects ties, and under admissibility alone something
-  can be.
+  state is maximal.
+* `not_maxComparative_of_isMax`: nothing is more confident than a certainty, when the measure
+  also respects ties.
 
 ## Implementation notes
 
-A holder's confidence states form a type `S` with its background preorder, and `θ : S → Set W`
-assigns themes; thematic relations are functions of the state (fn. 12). Fixing `S` fixes the
-holder, so `ho(s) = a` in (40) and (47) is membership in `S`. The states of all holders at once
-are the disjoint sum `Σ a, S a` under mathlib's `Sigma.LE`, where only states of one holder are
-comparable, as the per-holder orderings of §4.1 require; no inference of §4.6 compares holders.
-The positive form (40), (71) is `p ∈ θ '' Set.Ici c` for a contrast state `c`, and *certain*
-is `p ∈ θ '' {s | IsMax s}` (Figure 3). The comparative (47) is
-`Degree.maxComparative (θ · = p) (θ · = q) μ` and the equative of (55) `Degree.maxEquative`,
-with *equally confident* the coincidence of the two degree sets; an admissible measure is
-`StrictMono μ`. Totality of the ordering (§4.1, "(at least) a total pre-order") is a hypothesis
-of the theorems that use it. Condition (21) constrains only strictly ordered states, so tied
-states, like the stacked states of Figures 2 and 3, may be measured differently; (68) needs the
-measure to be monotone as well.
-
-The paper states no semantics for *doubt*, so (63c) is not formalized.
+* A holder's confidence states form a type `S` with its background preorder, and `θ : S → Set W`
+  assigns themes; the states of all holders are the disjoint sum `Σ a, S a`.
+* The positive form is `p ∈ θ '' Set.Ici c` for a contrast state `c`, *certain* is
+  `p ∈ θ '' {s | IsMax s}`, and the comparative is `Degree.maxComparative (θ · = p) (θ · = q) μ`
+  for `StrictMono μ`.
+* Totality of the ordering is a hypothesis of the theorems that use it.
+* The paper states no semantics for *doubt*, so (63c) is not formalized.
 
 ## TODO
 
@@ -107,23 +66,23 @@ variable {S W D : Type*} [Preorder S] [Preorder D] {θ : S → Set W} {μ : S �
 /-! ### The comparative and the positive form -/
 
 omit [Preorder S] in
-/-- With one state per theme, the comparative (47) compares the two states' measures: σ's
+/-- With one state per theme, the comparative (47) compares the two states' measures, so σ's
 confidence that `p` exceeds the than-clause degree (37). -/
 theorem maxComparative_theme_iff (hθ : θ.Injective) (s t : S) :
     maxComparative (θ · = θ s) (θ · = θ t) μ ↔ μ t < μ s := by
   simp only [hθ.eq_iff]
   exact maxComparative_eq_iff μ s t
 
-/-- Upward monotonicity (53) is the framework's, over the region above a contrast state: if σ is
-confident that `p` and more confident of `q` than of `p`, then σ is confident that `q`. -/
-example [@Std.Total S (· ≤ ·)] (hμ : admissibleMeasure μ) {c : S} {p q : Set W}
+/-- Upward monotonicity (53) holds over the region above a contrast state. If σ is confident
+that `p` and more confident of `q` than of `p`, then σ is confident that `q`. -/
+example [@Std.Total S (· ≤ ·)] (hμ : StrictMono μ) {c : S} {p q : Set W}
     (hp : p ∈ θ '' Ici c) (h : maxComparative (θ · = q) (θ · = p) μ) : q ∈ θ '' Ici c :=
   mem_image_of_maxComparative (isUpperSet_Ici c) hμ hp h
 
 /-! ### The conjunction fallacy (52) -/
 
 /-- (52a) *John is not confident that Linda is a bankteller* and (52b) *John is confident that
-Linda is a feminist bankteller* are true together: whenever `φ ∩ ψ` differs from `φ`, a two-state
+Linda is a feminist bankteller* are true together. Whenever `φ ∩ ψ` differs from `φ`, a two-state
 total ordering with the `φ ∩ ψ`-state above the `φ`-state and the contrast state at the top
 makes the holder confident of the conjunction but not of the conjunct. -/
 theorem exists_conjunctionFallacy {φ ψ : Set W} (h : ¬ φ ⊆ ψ) :
@@ -134,7 +93,7 @@ theorem exists_conjunctionFallacy {φ ψ : Set W} (h : ¬ φ ⊆ ψ) :
   exact h (by simpa using hbφ.symm ▸ inter_subset_right (s := φ) (t := ψ))
 
 /-- A holder confident of a conjunction but not of its conjunct is confident of no set of
-propositions that the threshold account of §2 (7) delivers: whatever the threshold, the
+propositions that the threshold account of §2 (7) delivers. Whatever the threshold, the
 propositions whose probability meets it are closed under conjunction elimination, since a
 measure is monotone. -/
 theorem image_Ici_ne_ge_over [MeasurableSpace W] (P : Measure W) (t : ℝ≥0∞) {c : S}
@@ -152,14 +111,14 @@ theorem image_Ici_subset_image_Ici_of_isMax [@Std.Total S (· ≤ ·)] {m : S} (
     (c : S) : θ '' Ici m ⊆ θ '' Ici c :=
   image_mono (Ici_subset_Ici.2 ((total_of (· ≤ ·) c m).elim id fun h ↦ hm h))
 
-/-- The entailment is asymmetric (65a), (66a): when *confident*'s contrast state `c` is not
+/-- The entailment is asymmetric (65a), (66a). When *confident*'s contrast state `c` is not
 above *certain*'s `m`, the holder is confident but not certain of `c`'s theme. -/
 theorem not_image_Ici_subset_image_Ici (hθ : θ.Injective) {c m : S} (hmc : ¬ m ≤ c) :
     ¬ θ '' Ici c ⊆ θ '' Ici m :=
   fun h ↦ hmc (Ici_subset_Ici.1 ((image_subset_image_iff hθ).1 h))
 
 /-- *Confident* entails *certain* exactly when its contrast state is itself maximal, so (65a) is
-consistent only on a contrast state below the top: *confident* measures on an ordering with
+consistent only on a contrast state below the top. *Confident* measures on an ordering with
 maximal elements (69) without taking them as its standard. -/
 theorem image_Ici_subset_image_Ici_iff_isMax [@Std.Total S (· ≤ ·)] (hθ : θ.Injective) {m : S}
     (hm : IsMax m) {c : S} : θ '' Ici c ⊆ θ '' Ici m ↔ IsMax c := by
@@ -167,7 +126,7 @@ theorem image_Ici_subset_image_Ici_iff_isMax [@Std.Total S (· ≤ ·)] (hθ : �
   exact ⟨hm.mono, fun hc ↦ (total_of (· ≤ ·) m c).elim id fun h ↦ hc h⟩
 
 open English.Adjectives in
-/-- The English fragment agrees with Figure 3: *confident* and *certain* measure on one
+/-- The English fragment agrees with Figure 3, in which *confident* and *certain* measure on one
 upper-closed scale, *certain* at its maximum and *confident* at a contextual standard. -/
 example : confident.dimension = certain.dimension ∧ confident.scaleType = .upperClosed ∧
     certain.standard = .maxEndpoint ∧ confident.standard = .contextual := by
@@ -181,7 +140,7 @@ theorem Ici_eq_setOf_isMax [@Std.Total S (· ≤ ·)] {m : S} (hm : IsMax m) :
   exact ⟨fun hs t hst ↦ (hm (hs.trans hst)).trans hs,
     fun hs ↦ (total_of (· ≤ ·) m s).elim id fun h ↦ hs h⟩
 
-/-- Nothing is more confident than a certainty (68): if σ is certain that `p`, σ is not more
+/-- Nothing is more confident than a certainty (68). If σ is certain that `p`, σ is not more
 confident of any `q` than of `p`. Admissibility (21) is not enough, since it leaves tied maximal
 states free to be measured apart; the measure must also be monotone. -/
 theorem not_maxComparative_of_isMax [@Std.Total S (· ≤ ·)] (hμ : Monotone μ) {s : S}
@@ -190,18 +149,18 @@ theorem not_maxComparative_of_isMax [@Std.Total S (· ≤ ·)] (hμ : Monotone �
     let ⟨y, _, hlt⟩ := h.exists_lt hsp
     (hμ ((total_of (· ≤ ·) y s).elim id fun h ↦ hs h)).not_gt hlt
 
-/-- Under admissibility alone (68) fails: a maximal state measured below another state makes σ
-certain of its theme and more confident of the other's. -/
+/-- Under admissibility alone (68) fails, since a maximal state measured below another state
+makes σ certain of its theme and more confident of the other's. -/
 theorem maxComparative_of_isMax (hθ : θ.Injective) {s t : S} (hs : IsMax s) (hlt : μ s < μ t) :
     θ s ∈ θ '' {s | IsMax s} ∧ maxComparative (θ · = θ t) (θ · = θ s) μ :=
   ⟨⟨s, hs, rfl⟩, (maxComparative_theme_iff hθ t s).2 hlt⟩
 
 /-- Two tied maximal states, as at the top of Figure 3, can be measured apart by an admissible
-measure: with every state tied, every measure is admissible. The preorder is passed explicitly,
+measure, since with every state tied every measure is admissible. The preorder is passed explicitly,
 since `Bool`'s own order would otherwise be found. -/
 example :
     let tied : Preorder Bool := Preorder.lift fun _ ↦ ()
-    @admissibleMeasure _ _ tied _ Bool.toNat ∧ @IsMax _ tied.toLE false ∧
+    @StrictMono _ _ tied _ Bool.toNat ∧ @IsMax _ tied.toLE false ∧
       Bool.toNat false < Bool.toNat true :=
   ⟨fun _ _ h ↦ absurd h (lt_irrefl ()), fun _ _ ↦ trivial, Nat.zero_lt_one⟩
 

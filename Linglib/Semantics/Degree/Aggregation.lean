@@ -14,14 +14,11 @@ public import Mathlib.Order.Defs.Unbundled
 /-!
 # Dimensional aggregation
 
-This file defines aggregation rules and scores over the dimensions of a multidimensional
-predicate. A multidimensional predicate applies to an object, or ranks two objects, according to
-how the objects stand on several underlying dimensions. Two aggregation vocabularies share this
-file.
-
-*Rules* follow the value-function framework of Sen, as D'Ambrosio and Hedden transpose it to
-dimensions: a profile assigns each object its vector of dimensional values, and a rule sends
-profiles to an overall relation on the objects, read `x ⪰ y`. Sen's informational requirements are
+This file defines aggregation rules over the dimensions of a multidimensional predicate, which
+ranks two objects according to how they stand on several underlying dimensions. The rules follow
+the value-function framework of Sen, as D'Ambrosio and Hedden transpose it to dimensions. A
+profile assigns each object its vector of dimensional values, and a rule sends profiles to an
+overall relation on the objects, read `x ⪰ y`. Sen's informational requirements are
 invariance under a class of transformation vectors (strictly increasing maps, common-unit positive
 affine maps, similarities, and the comparability classes that apply one map to every
 dimension). Arrow's conditions and the strong Pareto, Pareto-indifference and
@@ -35,21 +32,13 @@ comparability. The Pareto rule is the unanimous verdict of the
 utilitarian rules with positive weights (`paretoRule_iff_forall_utilitarian`), so a trade-off is
 exactly a pair that two positive weightings rank oppositely.
 
-*Scores* serve the positive form: the weighted sum of dimensional measures of Waldon and
-colleagues, its normalization by the spatial extent of the host after Tham and Solt, and the
-multiplicative composition that Sassoon and Fadlon argue for natural kind nouns.
-
 ## Implementation notes
 
 * A rule is total on profiles, so Arrow's unrestricted-domain condition is built in; a domain
   restriction, such as the non-negative profiles the Cobb–Douglas rule needs, is a hypothesis of
-  the statement. * Outputs are bare relations, because majority rule is not transitive. `AsymmRel`
-  is the strict part of a relation and mathlib's `AntisymmRel` its indifference part.
-
-## TODO
-
-* The scores index dimensions by lists. Restating them over `ι → K`, so that the utilitarian
-  rule compares `weightedScore`s, awaits the cleanse of their consumers.
+  the statement.
+* Outputs are bare relations, because majority rule is not transitive. `AsymmRel` is the strict
+  part of a relation and mathlib's `AntisymmRel` its indifference part.
 
 ## References
 
@@ -57,18 +46,9 @@ multiplicative composition that Sassoon and Fadlon argue for natural kind nouns.
 * [J. D'Ambrosio and B. Hedden, *Multidimensional Adjectives* (2024)][dambrosio-hedden-2024]
 * [K. O. May, *A Set of Independent Necessary and Sufficient Conditions for Simple Majority
   Decision* (1952)][may-1952]
-* [G. W. Sassoon and J. Fadlon, *The Role of Dimensions in Classification under Predicates
-  Predicts their Status in Degree Constructions* (2017)][sassoon-fadlon-2017]
 * [A. K. Sen, *Collective Choice and Social Welfare* (1970)][sen-1970]
-* [S. Solt, *Multidimensionality, Subjectivity and Scales: Experimental Evidence*
-  (2018)][solt-2018a]
-* [S. Solt, *Proportional Comparatives and Relative Scales* (2018)][solt-2018b]
-* [S. W. Tham, *Multidimensionality and the Scalar Components of Physical Disturbance Predicates*
-  (2025)][tham-2025]
 * [K. Tsui and J. A. Weymark, *Social Welfare Orderings for Ratio-Scale Measurable Utilities*
   (1997)][tsui-weymark-1997]
-* [B. Waldon, C. Condoravdi, B. Levin and J. Degen, *On the Context Dependence of Artifact Noun
-  Interpretation* (2023)][waldon-etal-2023]
 * [J. A. Weymark, *Arrow's Theorem with Social Quasi-Orderings* (1984)][weymark-1984]
 -/
 
@@ -491,8 +471,8 @@ variable [Fintype ι] [Nonempty ι] [LinearOrder K]
 def maximin : Rule ι α K := fun v x y ↦
   univ.inf' univ_nonempty (v y) ≤ univ.inf' univ_nonempty (v x)
 
-/-- The maximin rule needs only ordinal level comparability: a common strictly increasing map
-moves every lowest value alike. -/
+/-- The maximin rule needs only ordinal level comparability, since a common strictly increasing
+map moves every lowest value alike. -/
 theorem maximin_ordinalLevelInvariant : Invariant ordinalLevel (maximin : Rule ι α K) := by
   rintro f ⟨u, hu, hf⟩ v
   have key : ∀ z, univ.inf' univ_nonempty ((v.transform f) z) = u (univ.inf' univ_nonempty (v z)) :=
@@ -803,119 +783,5 @@ theorem arrow (h₃ : 3 ≤ Fintype.card α) (a : Rule ι α K) :
   fun ⟨hO, hW, hP, hI, hD⟩ ↦ let ⟨i, hi⟩ := exists_isDictator hO hW hP hI h₃; hD i hi
 
 end Arrow
-
-/-! ### Scores for the positive form -/
-
-section Scores
-
-variable [Field K]
-
-/-- Lift Bool dimension predicates to `K`-valued measure functions.
-    Each `d : α → Bool` becomes `fun x ↦ if d x then 1 else 0`. -/
-def boolMeasures (dims : List (α → Bool)) : List (α → K) :=
-  dims.map (fun d x ↦ if d x then 1 else 0)
-
-/-- The weighted score is Σᵢ wᵢ · fᵢ(x), where each fᵢ : α → K is a measure function along one
-dimension. -/
-def weightedScore (weights : List K) (measures : List (α → K)) (x : α) : K :=
-  (weights.zip measures).foldl (fun acc (w, f) ↦ acc + w * f x) 0
-
-/-- The multiplicative, or Cobb–Douglas, score is Πᵢ fᵢ(x). Under it failure on any single dimension
-kills membership, in contrast with the additive `weightedScore`. -/
-def multiplicativeScore (measures : List (α → K)) (x : α) : K :=
-  measures.foldl (fun acc f ↦ acc * f x) 1
-
-/-- The weighted score is the sum of the weighted measurements. -/
-theorem weightedScore_eq_sum (weights : List K) (measures : List (α → K)) (x : α) :
-    weightedScore weights measures x = ((weights.zip measures).map fun p ↦ p.1 * p.2 x).sum := by
-  rw [weightedScore, List.sum_eq_foldl, ← List.foldl_map]
-
-/-- The multiplicative score is the product of the measurements. -/
-theorem multiplicativeScore_eq_prod (measures : List (α → K)) (x : α) :
-    multiplicativeScore measures x = (measures.map (· x)).prod := by
-  rw [multiplicativeScore, List.prod_eq_foldl, ← List.foldl_map]
-
-/-- A natural kind fails on any single dimension, since one zero measurement zeroes the product. -/
-theorem multiplicativeScore_eq_zero {measures : List (α → K)} {x : α} {f : α → K}
-    (hf : f ∈ measures) (h : f x = 0) : multiplicativeScore measures x = 0 := by
-  rw [multiplicativeScore_eq_prod]
-  exact List.prod_eq_zero (List.mem_map.2 ⟨f, hf, h⟩)
-
-variable [LinearOrder K] [IsStrictOrderedRing K]
-
-/-- The spatially normalized weighted score is (Σᵢ wᵢ·fᵢ(x)) / s(x). The `measures` track the extent
-of disturbance along each dimension, such as total crack length or depth-weighted area, and the
-`spatial` measure tracks the spatial extent of the host entity. A small disturbance on a small host
-can score the same as a large disturbance on a large host, so the boundedness of the scale comes
-from the denominator and not from any single dimension. The score is `0` when `spatial x = 0`, and
-callers should ensure `spatial x ≠ 0` for meaningful results. -/
-def spatialNormalizedScore (weights : List K) (measures : List (α → K))
-    (spatial : α → K) (x : α) : K :=
-  if spatial x = 0 then 0 else weightedScore weights measures x / spatial x
-
-/-- Under spatially normalized weighted binding over Bool dimensions, `x` is `F` iff its spatially
-normalized weighted score over the Bool-lifted measures exceeds the threshold `θ`. -/
-def spatialNormalizedBinding (weights : List K) (θ : K)
-    (dims : List (α → Bool)) (spatial : α → K) (x : α) : Bool :=
-  decide (spatialNormalizedScore weights (boolMeasures dims) spatial x ≥ θ)
-
-/-- The spatial-normalization reduces to plain weighted score when
-    `spatial x = 1` (constant unit host extent). -/
-@[simp]
-theorem spatialNormalizedScore_unit (weights : List K) (measures : List (α → K))
-    (x : α) :
-    spatialNormalizedScore weights measures (fun _ ↦ 1) x =
-      weightedScore weights measures x := by
-  unfold spatialNormalizedScore
-  split_ifs with h
-  · exact absurd h one_ne_zero
-  · exact div_one _
-
-omit [IsStrictOrderedRing K] in
-/-- Spatial normalisation at a zero-extent host returns 0: a host with no spatial extent
-exhibits no disturbance. -/
-@[simp]
-theorem spatialNormalizedScore_zero (weights : List K) (measures : List (α → K))
-    (spatial : α → K) (x : α) (h : spatial x = 0) :
-    spatialNormalizedScore weights measures spatial x = 0 := by
-  simp [spatialNormalizedScore, h]
-
-/-- A weighted score bounded by the spatial extent of the host normalizes to at most 1. -/
-theorem spatialNormalizedScore_le_one
-    (weights : List K) (measures : List (α → K))
-    (spatial : α → K) (x : α)
-    (hsum : weightedScore weights measures x ≤ spatial x)
-    (hpos : 0 < spatial x) :
-    spatialNormalizedScore weights measures spatial x ≤ 1 := by
-  unfold spatialNormalizedScore
-  rw [ite_eq_right hpos.ne']
-  exact div_le_one_of_le₀ hsum hpos.le
-
-/-- A nonnegative weighted score over a nonnegative extent normalizes to a nonnegative score. With
-`spatialNormalizedScore_le_one` it lies in `[0, 1]`, a fraction of the totality. -/
-theorem spatialNormalizedScore_nonneg
-    (weights : List K) (measures : List (α → K))
-    (spatial : α → K) (x : α)
-    (hnum : 0 ≤ weightedScore weights measures x)
-    (hspatial : 0 ≤ spatial x) :
-    0 ≤ spatialNormalizedScore weights measures spatial x := by
-  unfold spatialNormalizedScore
-  by_cases h : spatial x = 0
-  · rw [ite_eq_left h]
-  · rw [ite_eq_right h]; exact div_nonneg hnum hspatial
-
-/-- An artifact compensates, since with positive weights and nonnegative measurements one positive
-measurement makes the weighted score positive. -/
-theorem weightedScore_pos {weights : List K} {measures : List (α → K)} {x : α}
-    (hw : ∀ w ∈ weights, 0 < w) (hm : ∀ f ∈ measures, 0 ≤ f x)
-    (h : ∃ p ∈ weights.zip measures, 0 < p.2 x) : 0 < weightedScore weights measures x := by
-  rw [weightedScore_eq_sum]
-  obtain ⟨p, hp, hpx⟩ := h
-  refine (mul_pos (hw _ (List.of_mem_zip hp).1) hpx).trans_le
-    (List.single_le_sum (fun y hy ↦ ?_) _ (List.mem_map.2 ⟨p, hp, rfl⟩))
-  obtain ⟨q, hq, rfl⟩ := List.mem_map.1 hy
-  exact mul_nonneg (hw _ (List.of_mem_zip hq).1).le (hm _ (List.of_mem_zip hq).2)
-
-end Scores
 
 end Degree.Aggregation

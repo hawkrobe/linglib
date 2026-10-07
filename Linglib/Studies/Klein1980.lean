@@ -6,24 +6,22 @@ public import Linglib.Studies.Kamp1975
 /-!
 # Klein (1980): A Semantics for Positive and Comparative Adjectives
 
-This file formalizes [klein-1980]'s degree-free semantics of gradable adjectives: an adjective
-is a predicate whose extension is fixed relative to a comparison class, the comparative is
-derived from the positive by quantifying over comparison classes, and degrees, where they are
-wanted, are recovered as equivalence classes rather than posited. The substrate's delineation
-vocabulary (`Degree.Delineation`) supplies comparison classes, the induced ordering,
-monotonicity and the modifiers *very* and *fairly*; this file adds the paper's claims about
-that apparatus. A delineation that switches criterion with the comparison class, the paper's
-nonlinear adjective *clever*, orders two entities each above the other, which monotonicity
-forbids (`clever_nonlinear`, `monotone_not_nonlinear`). *Very* narrows the comparison class to
-the positive extension, entailing the base adjective for measure-induced delineations while the
-converse fails (`measureDelineation_very_entails_base`, `very_strictly_stronger`). Degrees are
-the classes of nondistinct entities and agree with measure equality (`kleinDegree`,
-`kleinDegree_measureDelineation`), a non-trivial delineation discriminates in every comparison
-class with two members (`IsNontrivialDelineation`), and under monotonicity the ordering is a
-strict weak order, asymmetric and negatively transitive, from which transitivity and almost
-connectedness follow (`klein_strict_weak_order`, `klein_transitivity_derived`,
-`klein_almost_connected`). Klein's *as … as* is [kamp-1975]'s *at least as* over all
-completions (`kleinPreorder_eq_kampPreorder`).
+Klein gives gradable adjectives a semantics without degrees. An adjective is a predicate whose
+extension is fixed relative to a comparison class, the comparative is derived from the positive
+by quantifying over comparison classes, and degrees, where they are wanted, are recovered as
+classes of entities no comparison class tells apart. The delineation vocabulary of
+`Degree.Delineation` supplies comparison classes, the induced ordering, monotonicity and the
+modifiers *very* and *fairly*; this file states the paper's claims about them. A nonlinear
+adjective such as *clever* switches criterion with the comparison class, so its ordering ranks
+two entities each above the other, which monotonicity forbids. Klein's *as … as* is Kamp's
+*at least as* over all completions.
+
+## Main statements
+
+* `clever_not_monotone`: the delineation for *clever* is not monotone, so no measure induces it.
+* `klein_strict_weak_order`: under monotonicity the ordering is a strict weak order.
+* `kleinDegree_measureDelineation`: Klein's degrees agree with equality of measure.
+* `kleinPreorder_eq_kampPreorder`: the equative is Kamp's *at least as* over all completions.
 
 ## Implementation notes
 
@@ -54,27 +52,22 @@ inductive Clever2
   | j
   | m
 
-/-- A non-monotone delineation for *clever* with two conflicting criteria: Jude is clever when
-Mona is absent from the comparison class, Mona when Jude is, and neither when both are present.
--/
+/-- This delineation for *clever* applies two conflicting criteria. Jude is clever when Mona is
+absent from the comparison class, Mona when Jude is, and neither when both are present. -/
 def cleverDel : ComparisonClass Clever2 → Clever2 → Prop
   | C, .j => Clever2.m ∉ C
   | C, .m => Clever2.j ∉ C
 
-/-- The clever delineation is nonlinear: in the class of both, each is ordered above the other.
--/
+/-- The clever delineation is nonlinear, since in the class of both each is ordered above the
+other. -/
 theorem clever_nonlinear : IsNonlinearDelineation cleverDel :=
   ⟨{Clever2.j, Clever2.m}, Clever2.j, Clever2.m,
     ⟨{Clever2.j}, by simp, by simp [cleverDel], by simp [cleverDel]⟩,
     ⟨{Clever2.m}, by simp, by simp [cleverDel], by simp [cleverDel]⟩⟩
 
-/-- Monotone delineations cannot be nonlinear: monotonicity is what forces a total ordering. -/
-theorem monotone_not_nonlinear {Entity : Type*}
-    (delineation : ComparisonClass Entity → Entity → Prop)
-    (hmono : IsMonotoneDelineation delineation Set.univ)
-    (hnn : IsNonlinearDelineation delineation) : False := by
-  obtain ⟨_, u, u', ⟨X₁, _, hu₁, hnu'₁⟩, ⟨X₂, _, hu'₂, hnu₂⟩⟩ := hnn
-  exact hnu₂ (hmono X₁ X₂ (Set.mem_univ _) (Set.mem_univ _) u u' hu₁ hnu'₁ hu'₂)
+/-- The clever delineation is not monotone, so no measure function induces it. -/
+theorem clever_not_monotone : ¬ IsMonotoneDelineation cleverDel Set.univ :=
+  fun h ↦ h.not_isNonlinearDelineation clever_nonlinear
 
 /-! ### *Very* narrows the comparison class (eq. 42)
 
@@ -83,8 +76,7 @@ theorem monotone_not_nonlinear {Entity : Type*}
 of its class; measure-induced delineations lack it, yet `very A → A` holds for them by
 transitivity of the measure order, while being tall does not make one very tall. -/
 
-/-- `very A → A` for measure-induced delineations: the witness chain `z ∈ C`, `μ z < μ y`,
-`μ y < μ x` gives `μ z < μ x`. -/
+/-- Under a measure-induced delineation *very A* entails *A*. -/
 theorem measureDelineation_very_entails_base {E D : Type*} [LinearOrder D]
     (μ : E → D) (C : ComparisonClass E) (x : E)
     (hv : veryDelineation (measureDelineation μ) C x) :
@@ -93,12 +85,12 @@ theorem measureDelineation_very_entails_base {E D : Type*} [LinearOrder D]
   obtain ⟨z, hz, hlt'⟩ := hy
   exact ⟨z, hz, lt_trans hlt' hlt⟩
 
-/-- The converse fails: an entity tall relative to everyone need not be tall relative to the
-tall, the zone of *fairly tall*. -/
+/-- An entity tall relative to everyone need not be tall relative to the tall; such an entity is
+*fairly tall*. -/
 theorem very_strictly_stronger :
     ∃ (E : Type) (del : ComparisonClass E → E → Prop) (C : ComparisonClass E) (x : E),
       del C x ∧ ¬ veryDelineation del C x := by
-  refine ⟨Fin 3, λ C x => ∃ y ∈ C, (y : Fin 3) < x, Set.univ, (1 : Fin 3),
+  refine ⟨Fin 3, fun C x ↦ ∃ y ∈ C, (y : Fin 3) < x, Set.univ, (1 : Fin 3),
     ⟨0, Set.mem_univ _, by omega⟩, ?_⟩
   intro ⟨y, hy, hlt⟩
   simp only [Set.mem_ofPred_eq] at hy
@@ -111,7 +103,7 @@ Degrees are dispensable but recoverable: the degree of `u` in a comparison class
 of entities nondistinct from `u`, so degrees emerge from comparison classes rather than being
 primitive. -/
 
-/-- Klein's degree of `u` at a comparison class: the entities nondistinct from `u`. -/
+/-- Klein's degree of `u` at a comparison class is the set of entities nondistinct from `u`. -/
 def kleinDegree {E : Type*} (delineation : ComparisonClass E → E → Prop)
     (cc : ComparisonClass E) (u : E) : Set E :=
   {u' | nondistinct delineation cc u u'}
@@ -144,8 +136,8 @@ theorem kleinDegree_measureDelineation {E D : Type*} [LinearOrder D]
 
 /-! ### Non-triviality (§5) -/
 
-/-- A delineation is non-trivial when it discriminates in every comparison class with at least
-two members: some member is positive and some is not. -/
+/-- A delineation is non-trivial when every comparison class with at least two members contains
+a member in the extension and a member outside it. -/
 def IsNontrivialDelineation {Entity : Type*}
     (delineation : ComparisonClass Entity → Entity → Prop) : Prop :=
   ∀ C : ComparisonClass Entity, (∃ a b : Entity, a ∈ C ∧ b ∈ C ∧ a ≠ b) →
@@ -157,14 +149,14 @@ Under monotonicity the context-relative ordering is asymmetric and negatively tr
 same ordering structure a degree scale would give without degrees in the ontology; transitivity
 and almost connectedness follow. -/
 
-/-- Klein's main theorem: under monotonicity the ordering is a strict weak order. -/
+/-- Under monotonicity the ordering is a strict weak order. -/
 theorem klein_strict_weak_order {Entity : Type*}
     (delineation : ComparisonClass Entity → Entity → Prop)
     (hmono : IsMonotoneDelineation delineation Set.univ) (cc : ComparisonClass Entity) :
     (∀ u v, ordering delineation cc u v → ¬ ordering delineation cc v u) ∧
       (∀ u v w, ordering delineation cc u w →
         ordering delineation cc u v ∨ ordering delineation cc v w) :=
-  ⟨λ _ _ => ordering_asymm delineation hmono, λ _ _ _ => ordering_neg_trans delineation⟩
+  ⟨fun _ _ ↦ ordering_asymm delineation hmono, fun _ _ _ ↦ ordering_neg_trans delineation⟩
 
 /-- Transitivity from asymmetry and negative transitivity. -/
 theorem klein_transitivity_derived {Entity : Type*}
@@ -176,7 +168,7 @@ theorem klein_transitivity_derived {Entity : Type*}
   · exact absurd h (ordering_asymm delineation hmono huv)
   · exact h
 
-/-- Almost connected: two entities are ordered one way or the other or nondistinct. -/
+/-- Any two entities are ordered one way or the other or are nondistinct. -/
 theorem klein_almost_connected {Entity : Type*}
     (delineation : ComparisonClass Entity → Entity → Prop) (cc : ComparisonClass Entity)
     (u v : Entity) :
@@ -197,6 +189,6 @@ comparison classes for Klein, so over all completions the two preorders coincide
 theorem kleinPreorder_eq_kampPreorder {E : Type*}
     (delineation : ComparisonClass E → E → Prop) (u u' : E) :
     (kleinPreorder delineation).le u u' ↔ (Kamp1975.kampPreorder delineation Set.univ).le u u' :=
-  ⟨λ h c _ => h c, λ h c => h c (Set.mem_univ _)⟩
+  ⟨fun h c _ ↦ h c, fun h c ↦ h c (Set.mem_univ _)⟩
 
 end Klein1980

@@ -6,9 +6,9 @@ public import Linglib.Semantics.Degree.Measure.Basic
 /-!
 # Background orderings and threshold properties
 
-In the states-based analysis of gradable predicates of [cariani-santorio-wellwood-2023], which
-builds on the comparative of [wellwood-2015] and which [cariani-santorio-wellwood-2024] apply
-to confidence reports, a gradable predicate contributes two things: a background ordering of
+In the states-based analysis of gradable predicates of Cariani, Santorio and Wellwood, which
+builds on Wellwood's comparative and which the same authors apply to confidence reports, a
+gradable predicate contributes two things: a background ordering of
 states, the states of having some heat for *hot*, and in each context a threshold property, the
 states that count as hot. The positive form says that the subject holds a state with the
 threshold property. The comparative bypasses the threshold: an admissible measure of one of
@@ -50,18 +50,18 @@ variable {S X D : Type*} [Preorder S] [Preorder D] {ρ : S → X} {μ : S → D}
 
 /-! ### Upward monotonicity -/
 
-/-- Upward monotonicity: if `b` has the property and `a` has more of it than `b`, then `a` has
-the property. The comparative supplies a state of `a`'s measuring above a state of `b`'s with the
-property, an admissible measure on a total background places it above that state, and the
-threshold is upward closed. -/
+/-- If `b` has the property and `a` has more of it than `b`, then `a` has the property. The
+comparative supplies a state of `a`'s measuring above a state of `b`'s with the property, an
+admissible measure on a total background places it above that state, and the threshold is upward
+closed. -/
 theorem mem_image_of_maxComparative [@Std.Total S (· ≤ ·)] (hT : IsUpperSet T)
-    (hμ : admissibleMeasure μ) {a b : X} (hb : b ∈ ρ '' T)
+    (hμ : StrictMono μ) {a b : X} (hb : b ∈ ρ '' T)
     (h : maxComparative (ρ · = a) (ρ · = b) μ) : a ∈ ρ '' T :=
   let ⟨_, hs, hsb⟩ := hb
   let ⟨y, hya, hlt⟩ := h.exists_lt hsb
   ⟨y, hT (hμ.reflect_le hlt.le) hs, hya⟩
 
-/-- Without admissibility upward monotonicity fails even on a total background: on `Bool` with
+/-- Without admissibility upward monotonicity fails even on a total background. On `Bool` with
 the measure reversed, `true` has the property `Ici true` and `false` measures above it. -/
 example :
     (true : Bool) ∈ id '' Ici true ∧ maxComparative (· = false) (· = true) (fun b : Bool ↦ !b) ∧
@@ -70,7 +70,7 @@ example :
   rintro ⟨u, hu, rfl⟩
   exact absurd (mem_Ici.1 hu) (by decide)
 
-/-- Without totality upward monotonicity fails: when `s` and `t` are the only states of their
+/-- Without totality upward monotonicity fails. When `s` and `t` are the only states of their
 holders, `s` is not below `t` but measures below it, and the property is the one of lying above
 `s`, the holder of `s` has the property and the holder of `t` has more of it without having it. -/
 theorem not_mem_image_Ici_of_not_le {s t : S} (hst : ¬ s ≤ t) (hlt : μ s < μ t)
@@ -80,10 +80,10 @@ theorem not_mem_image_Ici_of_not_le {s t : S} (hst : ¬ s ≤ t) (hlt : μ s < �
     (maxComparative_unique (Pmatrix := (ρ · = ρ t)) (Pthan := (ρ · = ρ s)) rfl ht rfl hs).2 hlt,
     fun ⟨u, hu, hut⟩ ↦ hst (ht u hut ▸ hu)⟩
 
-/-- The failure is realized by an admissible measure: on the componentwise order of `ℕ × ℕ`,
+/-- The failure is realized by an admissible measure. On the componentwise order of `ℕ × ℕ`,
 the sum of the coordinates is admissible and puts `(1, 0)` below the incomparable `(0, 2)`. -/
 example :
-    admissibleMeasure (fun x : ℕ × ℕ ↦ x.1 + x.2) ∧ ¬ ((1, 0) : ℕ × ℕ) ≤ (0, 2) ∧
+    StrictMono (fun x : ℕ × ℕ ↦ x.1 + x.2) ∧ ¬ ((1, 0) : ℕ × ℕ) ≤ (0, 2) ∧
       (1, 0).1 + (1, 0).2 < (0, 2).1 + (0, 2).2 := by
   refine ⟨fun x y hxy ↦ ?_, by decide, by decide⟩
   rcases Prod.lt_iff.1 hxy with ⟨h₁, h₂⟩ | ⟨h₁, h₂⟩ <;> dsimp only <;> omega
@@ -91,7 +91,7 @@ example :
 /-! ### The comparative and the positive form -/
 
 omit [Preorder S] in
-/-- The comparative does not entail the positive form: when `s` and `t` are the only states of
+/-- The comparative does not entail the positive form. When `s` and `t` are the only states of
 their holders and `s` measures above `t` without the property, the holder of `s` has more of it
 than the holder of `t` without having it. -/
 theorem maxComparative_and_not_mem_image {s t : S} (hlt : μ t < μ s) (hsT : s ∉ T)

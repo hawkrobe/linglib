@@ -21,8 +21,8 @@ of their own here. The meanings of the modified forms are common ground. Account
 bare numeral, which has the two-sided meaning `Comparison.eq.interval m` for Kennedy and the
 lower-bounded meaning `Comparison.ge.interval m` in the tradition of Horn, each account
 deriving the other reading. Exhaustifying the lower-bounded meaning against the scale of
-higher numerals gives the two-sided one, and Kennedy's type lowering takes the two-sided
-meaning to the lower-bounded one (`Degree.typeLower_eqOver_iff`).
+higher numerals gives the two-sided one, and Kennedy's type lowering, existential closure over
+the two-sided meaning at the degrees above, takes it to the lower-bounded one.
 
 ## Main definitions
 
@@ -62,8 +62,8 @@ the modifier conveys that the speaker does not know the amount.
 
 [kennedy-2015] reduces the split to the ordering the modifier expresses, exclusive for Class A
 and inclusive for Class B (`Degree.Comparison.boundary_mem`), and derives the ignorance as an
-implicature. The categorical pattern is contested: [schwarz-buccola-hamilton-2012] show
-*at most* and *up to* dissociate, [cremers-coppock-dotlacil-roelofsen-2022] find the ignorance
+implicature. The categorical pattern is contested, since [schwarz-buccola-hamilton-2012] show
+that *at most* and *up to* dissociate, [cremers-coppock-dotlacil-roelofsen-2022] find the ignorance
 contrast graded and dependent on the question under discussion, and [enguehard-2018] derives
 the inferences of comparative numerals from granularity. -/
 inductive ModifierClass where
@@ -74,21 +74,21 @@ inductive ModifierClass where
 /-- The kinds of numeral modifier in [nouwen-2010]'s survey, by the construction the modifier is
 built on. -/
 inductive ModifierKind where
-  /-- A comparative: *more than*, *fewer than*. -/
+  /-- A comparative, such as *more than* or *fewer than*. -/
   | comparative
-  /-- A superlative: *at least*, *at most*. -/
+  /-- A superlative, such as *at least* or *at most*. -/
   | superlative
-  /-- A locative preposition: *over*, *under*. -/
+  /-- A locative preposition, such as *over* or *under*. -/
   | locative
-  /-- A directional preposition: *up to*, *from*. -/
+  /-- A directional preposition, such as *up to* or *from*. -/
   | directional
-  /-- An adverb of minimality or maximality: *minimally*, *maximally*. -/
+  /-- An adverb of minimality or maximality, such as *minimally* or *maximally*. -/
   | adverbial
   deriving Repr, DecidableEq
 
 /-- The class of each kind. The comparatives are [nouwen-2010]'s model of Class A and the
 superlatives and the adverbs of Class B, and the prepositional modifiers follow their spatial
-use: a locative preposition gives a Class A modifier and a directional one a Class B
+use, a locative preposition giving a Class A modifier and a directional one a Class B
 modifier. -/
 def ModifierKind.modifierClass : ModifierKind → ModifierClass
   | .comparative | .locative => .classA
