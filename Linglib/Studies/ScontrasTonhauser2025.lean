@@ -270,7 +270,7 @@ instance [IsFiniteMeasure μ] [IsFiniteMeasure ν] : IsFiniteMeasure (pairPrior 
 utterance under a known question. -/
 noncomputable def L1 [IsFiniteMeasure μ] [IsFiniteMeasure ν] (q : Question) :
     Kernel Utt (World × Finset World) :=
-  familyListener (λ A => L0 A q) α (cost k) (pairPrior μ ν)
+  pragmaticListener (familySpeaker (λ A => L0 A q) α (cost k)) (pairPrior μ ν)
 
 theorem pairPrior_real [IsFiniteMeasure μ] [IsFiniteMeasure ν] (w : World) (A : Finset World) :
     (pairPrior μ ν).real {(w, A)} = if w ∈ A then μ.real {w} * ν.real {A} else 0 := by
@@ -344,7 +344,7 @@ theorem L1_c_real (hu : (familySpeaker (λ A => L0 A q) α (cost k) ∘ₘ pairP
           + γ.real {false} * cWeight α k ν β q u false) := by
   have hE : ({p : World × Finset World | p.1.complement = true} : Set _)
       = ↑(Finset.univ.filter λ p : World × Finset World => p.1.complement = true) := by ext; simp
-  rw [measureReal_def, L1, familyListener, hE, posterior_apply_finset _ _ hu, ENNReal.toReal_div,
+  rw [measureReal_def, L1, pragmaticListener, hE, posterior_apply_finset _ _ hu, ENNReal.toReal_div,
     ENNReal.toReal_sum (λ _ _ => ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)),
     ← measureReal_def, comp_real]
   simp only [ENNReal.toReal_mul, ← measureReal_def]

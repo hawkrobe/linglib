@@ -15,11 +15,10 @@ at the threshold prior of Tessler and Goodman's generics model. The speaker know
 class and chooses among *tall*, *short* and silence to convey the degree (3), `S`, the substrate's
 `RSA.speaker`. The pragmatic listener knows the referent's kind but not the class the speaker
 assumed, and infers the degree and the class jointly at the kind's degree prior and a flat class
-prior (1), `L1`, the substrate's `RSA.familyListener`.
-
-The speaker's share of *tall* at a degree depends on the comparison class only through the
-class's mean degree, and falls as that mean rises, `S_tall_real`, `share_lt_share`: *tall*
-is the more informative the lower the class's expectations. Averaged over the kind's plausible
+prior (1), `L1`, the substrate's `RSA.pragmaticListener` of `RSA.familySpeaker`. The speaker's
+share of *tall* at a degree depends on the comparison class only through the class's mean
+degree, and falls as that mean rises, `S_tall_real`, `share_lt_share`: *tall* is the more
+informative the lower the class's expectations. Averaged over the kind's plausible
 degrees, the listener who hears *tall* therefore infers the class with the smaller mean and the
 listener who hears *short* the class with the larger mean, `tall_infers_smaller_mean`,
 `short_infers_larger_mean`, whatever the rationality. This is the polarity by expectations
@@ -145,7 +144,7 @@ noncomputable def S (α : ℝ) (classPrior : ComparisonClass → Measure X) (c :
 at the kind's degree prior and a flat class prior. -/
 noncomputable def L1 [Nonempty X] (α : ℝ) (classPrior : ComparisonClass → Measure X)
     (κ : Measure X) [IsFiniteMeasure κ] : Kernel Utterance (X × ComparisonClass) :=
-  familyListener (L0 deg classPrior) α 0 (κ.prod (uniformOn Set.univ))
+  pragmaticListener (familySpeaker (L0 deg classPrior) α 0) (κ.prod (uniformOn Set.univ))
 
 /-- The mean degree under a comparison class. -/
 noncomputable def mean (classPrior : ComparisonClass → Measure X) (c : ComparisonClass) : ℝ :=
@@ -173,7 +172,7 @@ theorem L1_snd_real_lt_iff [Nonempty X] (κ : Measure X) [IsFiniteMeasure κ] {u
       ∑ x, κ.real {x} * (S deg α classPrior c₁ x).real {u} <
         ∑ x, κ.real {x} * (S deg α classPrior c₂ x).real {u} := by
   rw [Measure.snd_real_singleton, Measure.snd_real_singleton, L1,
-    familyListener_real_lt_iff _ _ _ hu, Finset.sum_product, Finset.sum_product]
+    pragmaticListener_real_finset_lt_iff hu, Finset.sum_product, Finset.sum_product]
   simp only [Finset.sum_singleton, Measure.prod_real_singleton, S]
   have hc : ∀ c : ComparisonClass,
       (uniformOn (Set.univ : Set ComparisonClass)).real {c} = 1 / 2 := by

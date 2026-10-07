@@ -197,18 +197,17 @@ instance (l : Lex) : IsFiniteKernel (S1 α c l) := inferInstanceAs (IsFiniteKern
 /-- The fixed-lexicon pragmatic listener (12) is the speaker's Bayesian inverse at a flat
 prior. -/
 noncomputable def l1 (l : Lex) : Kernel Msg World :=
-  pragmaticListener α (cost c · / α) (L0 l) (uniformOn Set.univ)
+  pragmaticListener (S1 α c l) (uniformOn Set.univ)
 
 instance (l : Lex) : IsMarkovKernel (l1 α c l) :=
-  inferInstanceAs (IsMarkovKernel (pragmaticListener _ _ _ _))
+  inferInstanceAs (IsMarkovKernel (pragmaticListener _ _))
 
 /-- The lexical-uncertainty listener (14) at k = 1 is the joint posterior over states and lexica
 against a flat prior, the substrate's family listener. -/
 noncomputable def L1 : Kernel Msg (World × Lex) :=
-  familyListener L0 α (cost c · / α) (uniformOn Set.univ)
+  pragmaticListener (familySpeaker L0 α (cost c · / α)) (uniformOn Set.univ)
 
-instance : IsMarkovKernel (L1 α c) :=
-  inferInstanceAs (IsMarkovKernel ((familySpeaker L0 α (cost c · / α))†(uniformOn Set.univ)))
+instance : IsMarkovKernel (L1 α c) := inferInstanceAs (IsMarkovKernel (pragmaticListener _ _))
 
 /-- The expertise speaker (15) at k = 2 weighs the fixed-lexicon listener's mass at the state
 to the rationality, the lexicon posterior to the lexicon weight, and the cost. -/
@@ -242,10 +241,8 @@ theorem S1_ne_zero_iff (l : Lex) (w : World) (m : Msg) : S1 α c l w {m} ≠ 0 �
 there. -/
 theorem l1_ne_zero_iff (l : Lex) (m : Msg) (w : World) : l1 α c l m {w} ≠ 0 ↔ w ∈ sem l m := by
   obtain ⟨w₀, h₀⟩ := sem_nonempty l m
-  rw [show l1 α c l = (S1 α c l)†(uniformOn Set.univ) from rfl,
-    posterior_apply_singleton_ne_zero_iff _ _
-      (comp_apply_singleton_ne_zero _ _ (uniformOn_univ_singleton_ne_zero w₀)
-        ((S1_ne_zero_iff hα l w₀ m).2 h₀)),
+  rw [l1, pragmaticListener_apply_singleton_ne_zero_iff (comp_apply_singleton_ne_zero _ _
+      (uniformOn_univ_singleton_ne_zero w₀) ((S1_ne_zero_iff hα l w₀ m).2 h₀)),
     and_iff_right (uniformOn_univ_singleton_ne_zero w)]
   exact S1_ne_zero_iff hα l w m
 
@@ -253,7 +250,7 @@ theorem l1_ne_zero_iff (l : Lex) (m : Msg) (w : World) : l1 α c l m {w} ≠ 0 �
 at the state under the lexicon. -/
 theorem L1_ne_zero_iff (m : Msg) (p : World × Lex) : L1 α c m {p} ≠ 0 ↔ p.1 ∈ sem p.2 m := by
   obtain ⟨w₀, h₀⟩ := sem_nonempty p.2 m
-  rw [L1, familyListener, posterior_apply_singleton_ne_zero_iff _ _
+  rw [L1, pragmaticListener_apply_singleton_ne_zero_iff
     (comp_familySpeaker_ne_zero (uniformOn_univ_singleton_ne_zero (w₀, p.2))
       ((S1_ne_zero_iff hα p.2 w₀ m).2 h₀)),
     and_iff_right (uniformOn_univ_singleton_ne_zero p), familySpeaker_apply]
@@ -271,25 +268,27 @@ theorem l1_real_lt_iff (l : Lex) (m : Msg) (v v' : World) :
     (l1 α c l m).real {v} < (l1 α c l m).real {v'} ↔
       (S1 α c l v).real {m} < (S1 α c l v').real {m} :=
   let ⟨w₀, h₀⟩ := sem_nonempty l m
-  pragmaticListener_real_lt_iff α (cost c · / α) (L0 l) (uniformOn Set.univ)
+  pragmaticListener_real_lt_iff
     uniformOn_univ_singleton_eq uniformOn_univ_singleton_ne_zero
     ((S1_ne_zero_iff hα l w₀ m).2 h₀)
 
 /-- State preference of the joint listener is the pooled speaker preference. -/
 theorem L1_fst_real_lt_iff (m : Msg) (v v' : World) :
     (L1 α c m).fst.real {v} < (L1 α c m).fst.real {v'} ↔
-      ∑ l, (S1 α c l v).real {m} < ∑ l, (S1 α c l v').real {m} :=
-  let ⟨w₀, h₀⟩ := sem_nonempty .base m
-  familyListener_fst_real_lt_iff L0 uniformOn_univ_singleton_eq uniformOn_univ_singleton_ne_zero
-    ((S1_ne_zero_iff hα .base w₀ m).2 h₀)
+      ∑ l, (S1 α c l v).real {m} < ∑ l, (S1 α c l v').real {m} := by
+  obtain ⟨w₀, h₀⟩ := sem_nonempty .base m
+  rw [L1, pragmaticListener_fst_real_lt_iff (p₀ := (w₀, .base)) uniformOn_univ_singleton_eq
+    uniformOn_univ_singleton_ne_zero ((S1_ne_zero_iff (c := c) hα .base w₀ m).2 h₀)]
+  rfl
 
 /-- Lexicon preference of the joint listener is the speaker preference pooled over states. -/
 theorem L1_snd_real_lt_iff (m : Msg) (l₁ l₂ : Lex) :
     (L1 α c m).snd.real {l₁} < (L1 α c m).snd.real {l₂} ↔
-      ∑ w, (S1 α c l₁ w).real {m} < ∑ w, (S1 α c l₂ w).real {m} :=
-  let ⟨w₀, h₀⟩ := sem_nonempty .base m
-  familyListener_snd_real_lt_iff L0 uniformOn_univ_singleton_eq uniformOn_univ_singleton_ne_zero
-    ((S1_ne_zero_iff hα .base w₀ m).2 h₀)
+      ∑ w, (S1 α c l₁ w).real {m} < ∑ w, (S1 α c l₂ w).real {m} := by
+  obtain ⟨w₀, h₀⟩ := sem_nonempty .base m
+  rw [L1, pragmaticListener_snd_real_lt_iff (p₀ := (w₀, .base)) uniformOn_univ_singleton_eq
+    uniformOn_univ_singleton_ne_zero ((S1_ne_zero_iff (c := c) hα .base w₀ m).2 h₀)]
+  rfl
 
 /-- On reals, the fixed-lexicon listener's mass is the speaker's share of the message at the
 state over its shares at every state. -/
@@ -313,7 +312,7 @@ theorem L1_snd_real (m : Msg) (l : Lex) :
       (familySpeaker L0 α (cost c · / α) ∘ₘ uniformOn (Set.univ : Set (World × Lex))) {m} ≠ 0 :=
     comp_familySpeaker_ne_zero (uniformOn_univ_singleton_ne_zero (w₀, l))
       ((S1_ne_zero_iff hα l w₀ m).2 h₀)
-  rw [L1, familyListener, posterior_snd_real_singleton _ _ hx l, Measure.comp_real_singleton]
+  rw [L1, pragmaticListener, posterior_snd_real_singleton _ _ hx l, Measure.comp_real_singleton]
   simp only [uniformOn_univ_real_singleton, familySpeaker_apply]
   rw [← Finset.mul_sum, ← Finset.mul_sum, mul_div_mul_left _ _ (by positivity)]
   rfl

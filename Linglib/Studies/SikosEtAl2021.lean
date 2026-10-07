@@ -169,7 +169,7 @@ theorem posterior_apply_singleton_eq_one [StandardBorelSpace W] [Nonempty W] {κ
 variable [StandardBorelSpace W] [Nonempty W] (μ : Measure W) [IsFiniteMeasure μ]
 
 /-- RSA's listener (1) inverts the informative speaker against the salience prior. -/
-noncomputable def rsaListener : Kernel U W := pragmaticListener 1 0 (L0 sem) μ
+noncomputable def rsaListener : Kernel U W := pragmaticListener (speaker 1 0 (L0 sem)) μ
 
 /-- The baseline literal listener model (4) inverts the baseline speaker against the salience
 prior. -/

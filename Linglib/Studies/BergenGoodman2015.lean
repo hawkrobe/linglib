@@ -163,7 +163,7 @@ noncomputable abbrev S1 (δ : ℝ) : Kernel Meaning Meaning := noisySpeaker (N �
 
 /-- The pragmatic listener (eq. 8). -/
 noncomputable abbrev L1 (δ : ℝ) : Kernel Utterance Meaning :=
-  noisyPragmaticListener (N δ) 1 0 (L0 δ) μ
+  pragmaticListener (N δ ∘ₖ noisySpeaker (N δ) 1 0 (L0 δ)) μ
 
 variable {δ : ℝ} (m : Meaning)
 

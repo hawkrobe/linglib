@@ -96,11 +96,14 @@ question at rationality `α`, with no utterance cost. -/
 noncomputable def S1 (μ : Measure Meaning) (α : ℝ) : Kernel (Meaning × QUD) Weather :=
   familySpeaker (projListener project (L0 μ)) α 0
 
+instance (μ : Measure Meaning) (α : ℝ) : IsFiniteKernel (S1 μ α) :=
+  inferInstanceAs (IsFiniteKernel (familySpeaker _ _ _))
+
 /-- The pragmatic listener over meaning and question is the family listener over the product of
 the meaning prior and the question prior; its first marginal is the meaning listener. -/
 noncomputable def L1 (μ : Measure Meaning) [IsProbabilityMeasure μ] (ν : Measure QUD)
     [IsProbabilityMeasure ν] (α : ℝ) : Kernel Weather (Meaning × QUD) :=
-  familyListener (projListener project (L0 μ)) α 0 (μ.prod ν)
+  pragmaticListener (S1 μ α) (μ.prod ν)
 
 variable (μ : Measure Meaning) [IsProbabilityMeasure μ] (ν : Measure QUD)
   [IsProbabilityMeasure ν] (α : ℝ)
@@ -142,7 +145,7 @@ theorem listener_ne_zero_iff (hα : 0 < α) {u : Weather} (hu : (S1 μ α ∘ₘ
     (m : Meaning) :
     (L1 μ ν α u).fst {m} ≠ 0 ↔ μ {m} ≠ 0 ∧
       ∃ q, ν {q} ≠ 0 ∧ ∃ m', project q m' = project q m ∧ m'.1 = u ∧ μ {m'} ≠ 0 := by
-  rw [L1, familyListener_fst_apply_singleton_ne_zero_iff _ _ _ hu]
+  rw [L1, pragmaticListener_fst_apply_singleton_ne_zero_iff hu]
   simp only [← S1_apply_singleton_ne_zero_iff μ α hα, S1, ← Set.singleton_prod_singleton,
     Measure.prod_prod, mul_ne_zero_iff]
   exact ⟨λ ⟨q, ⟨hm, hq⟩, hs⟩ => ⟨hm, q, hq, hs⟩, λ ⟨hm, q, hq, hs⟩ => ⟨q, ⟨hm, hq⟩, hs⟩⟩

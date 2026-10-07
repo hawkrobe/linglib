@@ -548,7 +548,7 @@ theorem comp_speaker_literal_ne_zero (u : Message) : (s.speaker literal ∘ₘ s
 
 /-- The pragmatic listener (eq. 4). -/
 noncomputable def listener : Kernel Message World :=
-  RSA.pragmaticListener s.lam s.cost (s.L0 literal) s.prior
+  RSA.pragmaticListener (s.speaker literal) s.prior
 
 /-- The listener is anti-exhaustive, the posterior of both A and B exceeding the prior,
 exactly when the speaker uses *A* more in the world of both than in the world of A alone

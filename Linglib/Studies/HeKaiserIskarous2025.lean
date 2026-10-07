@@ -622,7 +622,7 @@ theorem wonkyJoint_real_singleton {ω : ℝ} (hω0 : 0 ≤ ω) (hω1 : ω ≤ 1)
 /-- The wonky listener of (16) is the Bayesian inverse of the wonky speaker over states and
 worlds against the prior of (16). -/
 noncomputable def wonkyListener (m : World → Meaning) (ω : ℝ) : Kernel Utterance (State × World) :=
-  familyListener (λ w => L0 (s.worldPrior w) (m w)) s.α s.cost (s.wonkyJoint ω)
+  pragmaticListener (familySpeaker (λ w => L0 (s.worldPrior w) (m w)) s.α s.cost) (s.wonkyJoint ω)
 
 theorem wonkyListener_eq (m : World → Meaning) (ω : ℝ) :
     s.wonkyListener m ω = (s.wonkySpeaker m)†(s.wonkyJoint ω) := rfl
