@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Degree.Aggregation
+public import Linglib.Core.SocialChoice.Rules
 public import Mathlib.Algebra.Order.Archimedean.Basic
 public import Mathlib.LinearAlgebra.Matrix.DotProduct
 public import Mathlib.Order.Comparable
@@ -67,7 +67,7 @@ matters of opinion, and the rest mixed.
 
 namespace Solt2018a
 
-open Degree.Aggregation Matrix
+open SocialChoice Matrix
 
 variable {C E K : Type*}
 

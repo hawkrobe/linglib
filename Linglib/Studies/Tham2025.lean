@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Degree.Aggregation
+public import Linglib.Core.SocialChoice.Rules
 public import Linglib.Data.Examples.Tham2025
 
 /-!
@@ -39,7 +39,7 @@ cracked without its having cracked badly, `Event.pos_not_verb`.
 ## Implementation notes
 
 The measure sums over an index type of dimensions, each with a nonnegative extent measure on
-hosts, in the profile vocabulary of `Semantics.Degree.Aggregation`; the paper's comparative at a
+hosts, in the profile vocabulary of `SocialChoice`; the paper's comparative at a
 weighting is the utilitarian rule on the extent profile when the hosts have the same spatial
 extent, `more_iff_utilitarian`. A respect phrase is the weighting `Pi.single i 1`, so respect
 phrases and quantification over respects are the paper's grammatical access to dimensions for
@@ -65,7 +65,7 @@ that the difference degree is the reason, are not formalized. The examples are t
 
 namespace Tham2025
 
-open Degree.Aggregation Finset Matrix
+open SocialChoice Finset Matrix
 
 /-! ### The adjective (section 5.2, (46)–(47)) -/
 
@@ -73,17 +73,17 @@ section Adjective
 
 variable {ι α K : Type*} [Fintype ι] [Field K]
 
-/-- The degree of disturbance of a host (47b): the extent of its disturbances along each
+/-- The degree of disturbance of a host (47b) is the extent of its disturbances along each
 dimension, weighted by the context, relative to its spatial extent. -/
 def degree (k : ι → K) (v : Profile ι α K) (spatial : α → K) (x : α) : K :=
   k ⬝ᵥ v x / spatial x
 
-/-- The weighting of a respect phrase: the single dimension it names. -/
+/-- A respect phrase weights the single dimension it names. -/
 def respect [DecidableEq ι] (i : ι) : ι → K := Pi.single i 1
 
 variable {k : ι → K} {v : Profile ι α K} {spatial : α → K} {x y : α}
 
-/-- *Completely* (20), (33): the disturbance exhausts the host's extent. -/
+/-- *Completely* (20), (33) says that the disturbance exhausts the host's extent. -/
 theorem degree_eq_one_iff (hs : spatial x ≠ 0) : degree k v spatial x = 1 ↔ k ⬝ᵥ v x = spatial x :=
   div_eq_one_iff_eq hs
 
@@ -94,38 +94,38 @@ theorem degree_respect [DecidableEq ι] {i : ι} :
 
 variable [LinearOrder K] [IsStrictOrderedRing K]
 
-/-- The positive form (46): the host is disturbed to degree `d` or beyond. -/
+/-- The positive form (46) holds when the host is disturbed to degree `d` or beyond. -/
 def Pos (k : ι → K) (v : Profile ι α K) (spatial : α → K) (d : K) (x : α) : Prop :=
   d ≤ degree k v spatial x
 
-/-- The comparative: `x` is more disturbed than `y`. -/
+/-- The comparative holds when `x` is more disturbed than `y`. -/
 def More (k : ι → K) (v : Profile ι α K) (spatial : α → K) (x y : α) : Prop :=
   degree k v spatial y < degree k v spatial x
 
 theorem degree_nonneg (hk : ∀ i, 0 ≤ k i) (hv : ∀ i, 0 ≤ v x i) (hs : 0 ≤ spatial x) :
     0 ≤ degree k v spatial x :=
-  div_nonneg (sum_nonneg λ i _ => mul_nonneg (hk i) (hv i)) hs
+  div_nonneg (sum_nonneg fun i _ ↦ mul_nonneg (hk i) (hv i)) hs
 
-/-- The lower bound is the existence of a disturbance (section 3.4): under a weighting positive
+/-- The lower bound is the existence of a disturbance (section 3.4). Under a weighting positive
 on every dimension, the host has a positive degree exactly when some disturbance has positive
 extent. -/
 theorem degree_pos_iff (hk : ∀ i, 0 < k i) (hv : ∀ i, 0 ≤ v x i) (hs : 0 < spatial x) :
     0 < degree k v spatial x ↔ ∃ i, 0 < v x i := by
   rw [degree, div_pos_iff_of_pos_right hs, dotProduct,
-    (sum_nonneg λ i _ => mul_nonneg (hk i).le (hv i)).lt_iff_ne, ne_comm, ne_eq,
-    sum_eq_zero_iff_of_nonneg λ i _ => mul_nonneg (hk i).le (hv i)]
+    (sum_nonneg fun i _ ↦ mul_nonneg (hk i).le (hv i)).lt_iff_ne, ne_comm, ne_eq,
+    sum_eq_zero_iff_of_nonneg fun i _ ↦ mul_nonneg (hk i).le (hv i)]
   push Not
-  exact exists_congr λ i => by
+  exact exists_congr fun i ↦ by
     simp only [mem_univ, true_and, mul_ne_zero_iff_left (hk i).ne', (hv i).lt_iff_ne']
 
-/-- Unmodified predication is objective (section 3.2.1): whether the host is disturbed at all
-does not depend on the weighting of the dimensions. -/
+/-- Unmodified predication is objective (section 3.2.1), since whether the host is disturbed at
+all does not depend on the weighting of the dimensions. -/
 theorem degree_pos_iff_degree_pos {k' : ι → K} (hk : ∀ i, 0 < k i) (hk' : ∀ i, 0 < k' i)
     (hv : ∀ i, 0 ≤ v x i) (hs : 0 < spatial x) :
     0 < degree k v spatial x ↔ 0 < degree k' v spatial x := by
   rw [degree_pos_iff hk hv hs, degree_pos_iff hk' hv hs]
 
-/-- The upper bound is the spatial extent of the host (section 3.4): a disturbance within the
+/-- The upper bound is the spatial extent of the host (section 3.4), so a disturbance within the
 host's extent has degree at most one. -/
 theorem degree_le_one (h : k ⬝ᵥ v x ≤ spatial x) (hs : 0 < spatial x) :
     degree k v spatial x ≤ 1 :=
@@ -147,14 +147,14 @@ theorem more_iff_utilitarian (hs : spatial x = spatial y) (hs0 : 0 < spatial x) 
 
 variable [DecidableEq ι] {i j : ι}
 
-/-- *More dented with respect to dent size* (28a), (42a): the comparative under a respect
+/-- In *more dented with respect to dent size* (28a), (42a), the comparative under a respect
 phrase compares the named dimension alone. -/
 theorem more_respect_iff (hs : spatial x = spatial y) (hs0 : 0 < spatial x) :
     More (respect i) v spatial x y ↔ v y i < v x i := by
   rw [More, degree_respect, degree_respect, ← hs, div_lt_div_iff_of_pos_right hs0]
 
-/-- Faultless disagreement in degree-modified predication (27), (28a): two hosts each more
-disturbed than the other with respect to some dimension. -/
+/-- Degree-modified predication allows faultless disagreement (27), (28a), since two hosts can each
+be more disturbed than the other with respect to some dimension. -/
 theorem more_respect_and_more_respect (hs : spatial x = spatial y) (hs0 : 0 < spatial x)
     (hi : v y i < v x i) (hj : v x j < v y j) :
     More (respect i) v spatial x y ∧ More (respect j) v spatial y x :=
@@ -168,9 +168,9 @@ section Verb
 
 variable {σ K : Type*} [Field K] [LinearOrder K]
 
-/-- A physical disturbance event (48): a change between states whose final degree of
+/-- A physical disturbance event (48) is a change between states whose final degree of
 disturbance meets the root's standard and exceeds the initial degree. The initial degree may
-already meet the standard: the host may bear an earlier disturbance. -/
+already meet the standard, when the host bears an earlier disturbance. -/
 structure Event (μ : σ → K) (std : K) where
   /-- The state at the start of the event. -/
   init : σ
@@ -181,17 +181,17 @@ structure Event (μ : σ → K) (std : K) where
 
 variable {μ : σ → K} {std : K}
 
-/-- The difference degree of an event: the degree of change it describes. -/
+/-- The difference degree of an event is the degree of change it describes. -/
 def Event.diff (e : Event μ std) : K := μ e.final - μ e.init
 
 /-- The verb at a difference degree, its degree argument in (48). -/
 def Verb (d : K) (e : Event μ std) : Prop := d ≤ e.diff
 
-/-- *Cracked completely/slightly ⊨ is cracked* (17a): every event entails the adjectival state
-at the root's standard, whatever its difference degree. -/
+/-- *Cracked completely/slightly* entails *is cracked* (17a), since every event entails the
+adjectival state at the root's standard, whatever its difference degree. -/
 theorem Verb.pos_final {d : K} {e : Event μ std} (_ : Verb d e) : std ≤ μ e.final := e.std_le
 
-/-- *Badly cracked* without *cracked badly* (section 5.2): a windshield with a pre-existing
+/-- *Badly cracked* holds without *cracked badly* (section 5.2). A windshield with a pre-existing
 crack that grows a little is badly cracked at the end, yet did not crack badly, since the
 difference degree is small. -/
 theorem Event.pos_not_verb {d : K} (e : Event μ std) (hd : d ≤ μ e.final) (h : e.diff < d) :
@@ -202,7 +202,8 @@ variable [IsStrictOrderedRing K]
 
 theorem Event.diff_pos (e : Event μ std) : 0 < e.diff := sub_pos.2 e.lt
 
-/-- *Cracked badly ⊨ badly cracked*: the difference degree is at most the final degree. -/
+/-- *Cracked badly* entails *badly cracked*, since the difference degree is at most the final
+degree. -/
 theorem Verb.pos {d : K} {e : Event μ std} (h : Verb d e) (h0 : 0 ≤ μ e.init) :
     d ≤ μ e.final :=
   h.trans (sub_le_self _ h0)
