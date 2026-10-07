@@ -89,10 +89,10 @@ def pos (μ : Entity → D) (c : D) (x : Entity) : Prop :=
 theorem pos_iff_lt (μ : Entity → D) (c : D) (x : Entity) : pos μ c x ↔ c < μ x :=
   ⟨fun ⟨_, hd, hc⟩ => hc.trans_le hd, fun h => ⟨_, le_rfl, h⟩⟩
 
-/-- The positive form is the point-standard predication `Comparison.gt.over`. -/
+/-- The positive form is the preimage of the open ray above the standard. -/
 theorem pos_iff_mem_over (μ : Entity → D) (c : D) (x : Entity) :
-    pos μ c x ↔ x ∈ Comparison.gt.over μ c := by
-  simp only [pos_iff_lt, Comparison.mem_over, Comparison.rel, gt_iff_lt]
+    pos μ c x ↔ x ∈ μ ⁻¹' Set.Ioi c := by
+  simp only [pos_iff_lt, Set.mem_preimage, Set.mem_Ioi]
 
 /-- The contextual comparative `maxIn (Set.Ioi c)`, `max S > c` (23), holds of an `S` with a
 greatest element iff some `d ∈ S` exceeds `c` (footnote 7). -/

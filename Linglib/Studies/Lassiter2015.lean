@@ -46,7 +46,7 @@ three probabilistic replacements for the auxiliaries.
 * Probabilities are mathlib probability measures on a discrete space, compared on their real
   values; the models of §2.1 and §3 are finite sums of Dirac measures.
 * The strong and weak auxiliaries are the positive forms of the probability scale,
-  `Degree.Comparison.ge.over` for *must* and `Degree.Comparison.gt.over` for *might*, with
+  the preimages of `Set.Ici` for *must* and of `Set.Ioi` for *might*, with
   thresholds `1` and `θ < 1`.
 * The ratio-modifier argument of §2.2 and the open problems of §4 are recorded as examples
   only.
@@ -387,10 +387,10 @@ def quantMust (A : Set W) : Prop := A = Set.univ
 
 /-- The probabilistic *must* with threshold `θ` holds when `Pr(A) ≥ θ`; it is strong at
 `θ = 1` and weak below. -/
-def probMust (θ : ℝ) (A : Set W) : Prop := A ∈ Degree.Comparison.ge.over P.real θ
+def probMust (θ : ℝ) (A : Set W) : Prop := A ∈ P.real ⁻¹' Set.Ici θ
 
 /-- The dual *might* holds when `Pr(A) > 1 - θ`. -/
-def probMight (θ : ℝ) (A : Set W) : Prop := A ∈ Degree.Comparison.gt.over P.real (1 - θ)
+def probMight (θ : ℝ) (A : Set W) : Prop := A ∈ P.real ⁻¹' Set.Ioi (1 - θ)
 
 variable [IsProbabilityMeasure P]
 
@@ -430,7 +430,7 @@ theorem weak_refutes_moreLikely_might :
   · exact measure_mono (Set.singleton_subset_iff.2 (by simp))
   · rw [Measure.inducedGe, uniformOn_univ_le_iff, hpair, Set.ncard_singleton]
     omega
-  · simp only [probMight, Degree.Comparison.mem_over, Degree.Comparison.rel,
+  · simp only [probMight, Set.mem_preimage, Set.mem_Ioi,
       uniformOn_univ_real_apply, hpair, Fintype.card_fin, not_lt]
     norm_num
 

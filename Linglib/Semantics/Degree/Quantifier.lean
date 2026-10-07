@@ -69,7 +69,7 @@ def maxIn (U P : Set D) : Prop := ∃ m ∈ U, IsGreatest P m
 theorem maxIn_singleton {P : Set D} {a : D} : maxIn {a} P ↔ IsGreatest P a := exists_eq_left
 
 /-- The degrees at which `Q` holds of the entities reaching them, the degree predicate abstracted
-over the scope of `Q`. Membership at `d` is `Q (Comparison.ge.over μ d)`. -/
+over the scope of `Q`. Membership at `d` is `Q (μ ⁻¹' Set.Ici d)`. -/
 def scopeDegrees (Q : NP α) (μ : α → D) : Set D := {d | Q fun x ↦ d ≤ μ x}
 
 theorem mem_scopeDegrees : d ∈ scopeDegrees Q μ ↔ Q fun x ↦ d ≤ μ x := Iff.rfl
@@ -135,7 +135,7 @@ theorem maxIn_compl : maxIn Uᶜ P ↔ (∃ m, IsGreatest P m) ∧ ¬ maxIn U P 
     fun ⟨⟨m, h⟩, hn⟩ ↦ ⟨m, fun hm ↦ hn ⟨m, hm, h⟩, h⟩⟩
 
 /-- The low scope of an interval degree quantifier is `Q` of the entities measuring into the
-interval, `Comparison.over` at that interval. -/
+interval, the preimage of that interval. -/
 theorem lowScope_maxIn : lowScope (maxIn U) Q μ ↔ Q fun x ↦ μ x ∈ U := by
   simp only [lowScope, maxIn_Iic]
 
@@ -354,9 +354,9 @@ end MaxComparativeLinearOrder
 /-! ### Set-of-degrees comparative
 
 The S-comparative of [hoeksema-1983] generalizes the point-standard comparative from a single
-standard to a degree-set standard. It is `Comparison.gt.overSet μ`, the strict set-standard
-predication of `Degree.Comparison`, and the binary comparator is its singleton case
-(`Comparison.overSet_singleton`). -/
+standard to a degree-set standard. Its extension is `μ ⁻¹' strictUpperBounds Δ`, the entities
+measuring above every standard degree, and the binary comparator is its singleton case
+(`Comparison.bounds_singleton`). -/
 
 section SetOfDegrees
 variable [Preorder D] (μ : α → D) {Δ : Set D}
@@ -364,18 +364,18 @@ variable [Preorder D] (μ : α → D) {Δ : Set D}
 /-- The set-of-degrees comparative as a strict-interval inclusion, the strict mirror of
 `mem_upperBounds_iff_subset_Iic`. An entity `y` clears the than-clause iff every standard
 degree lies strictly below `μ y`. -/
-theorem mem_gtOverSet_iff_subset_Iio (y : α) : y ∈ Comparison.gt.overSet μ Δ ↔ Δ ⊆ Iio (μ y) :=
+theorem mem_gtOverSet_iff_subset_Iio (y : α) : y ∈ μ ⁻¹' strictUpperBounds Δ ↔ Δ ⊆ Iio (μ y) :=
   Iff.rfl
 
 /-- The S-comparative is anti-additive in its degree-set argument ([hoeksema-1983]), the
 algebraic source of NPI licensing in clausal than-comparatives. -/
-theorem gtOverSet_isAntiAdditive : IsAntiAdditive (Comparison.gt.overSet μ) :=
+theorem gtOverSet_isAntiAdditive : IsAntiAdditive (μ ⁻¹' strictUpperBounds ·) :=
   isAntiAdditive_forall_mem fun d y ↦ d < μ y
 
 /-- The S-comparative is determined by the greatest element of its degree-set argument
 ([bhatt-pancheva-2004]). -/
 theorem gtOverSet_eq_singleton_of_isGreatest {m : D} (hm : IsGreatest Δ m) :
-    Comparison.gt.overSet μ Δ = Comparison.gt.overSet μ {m} := by
+    μ ⁻¹' strictUpperBounds Δ = μ ⁻¹' strictUpperBounds {m} := by
   ext y
   simp only [mem_gtOverSet_iff_subset_Iio, singleton_subset_iff, mem_Iio]
   exact ⟨(· hm.1), fun h _ hd ↦ (hm.2 hd).trans_lt h⟩
@@ -385,7 +385,7 @@ clears them all. -/
 theorem maxComparative_gt_iff_gtOverSet (P Q : α → Prop) :
     MaxComparative .gt P Q μ ↔
       (∃ δ, IsGreatest (μ '' {x | Q x}) δ) ∧
-        ∃ x, P x ∧ x ∈ Comparison.gt.overSet μ (μ '' {x | Q x}) :=
+        ∃ x, P x ∧ x ∈ μ ⁻¹' strictUpperBounds (μ '' {x | Q x}) :=
   ⟨fun ⟨δ, hδ, x, hx, hlt⟩ ↦ ⟨⟨δ, hδ⟩, x, hx, fun _ hd ↦ (hδ.2 hd).trans_lt hlt⟩,
     fun ⟨⟨δ, hδ⟩, x, hx, hclear⟩ ↦ ⟨δ, hδ, x, hx, hclear hδ.1⟩⟩
 

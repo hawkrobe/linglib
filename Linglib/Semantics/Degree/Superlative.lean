@@ -64,7 +64,7 @@ variable {μ : α → D} {C : W → Set α} {x : α} {w : W}
 /-- The assertion is the set-standard comparative of `x` against the degrees of the other
 members of the class. -/
 theorem superlative_assertion :
-    (superlative μ C x).assertion w ↔ x ∈ Comparison.gt.overSet μ (μ '' (C w \ {x})) := by
+    (superlative μ C x).assertion w ↔ x ∈ μ ⁻¹' strictUpperBounds (μ '' (C w \ {x})) := by
   simp only [superlative, mem_gtOverSet_iff_subset_Iio, subset_def, mem_Iio, forall_mem_image,
     mem_sdiff, mem_singleton_iff, and_imp]
 
@@ -75,7 +75,9 @@ theorem isAntiAdditive_superlative_assertion (μ : α → D) (x : α) :
   fun C C' ↦ funext fun w ↦ propext <| by
     simp only [Pi.inf_apply, inf_Prop_eq, superlative_assertion, Pi.sup_apply, sup_eq_union,
       union_sdiff_distrib, image_union]
-    rw [show μ '' (C w \ {x}) ∪ μ '' (C' w \ {x}) = _ ⊔ _ from rfl, gtOverSet_isAntiAdditive μ]
+    have h := gtOverSet_isAntiAdditive μ (μ '' (C w \ {x})) (μ '' (C' w \ {x}))
+    beta_reduce at h
+    rw [show μ '' (C w \ {x}) ∪ μ '' (C' w \ {x}) = _ ⊔ _ from rfl, h]
     exact Iff.rfl
 
 end Preorder

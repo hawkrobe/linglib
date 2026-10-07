@@ -37,7 +37,7 @@ not taller for a man than he is wide for a man.
   quasi-order as Klein's comparison classes do.
 * The comparative is Kennedy's, as in the paper: MORE applied to the greatest degree the
   than-clause reaches is `Degree.MaxComparative .gt` over the two measures (`more_iff`), stated as
-  the point comparison `Comparison.gt.over`.
+  the point comparison `μ ⁻¹' Set.Ioi n`.
 * Universal degrees are rationals: the paper's universal scale is the rationals from zero to one.
 * Measurements are individuals `.inr n` of `n` inches, bounded by the comparison class; heights
   and widths are in inches as printed, and the committee's rankings count from the bottom.
@@ -61,7 +61,7 @@ open Finset Degree
 y is ADJ₂*, holds of `x` exactly when the degree of `x` exceeds that of `y`. -/
 theorem more_iff {E F : Type*} (μ₁ : E → ℚ) (μ₂ : F → ℚ) (x : E) (y : F) :
     MaxComparative .gt (· = .inl x) (· = .inr y) (Sum.elim μ₁ μ₂) ↔
-      x ∈ Comparison.gt.over μ₁ (μ₂ y) :=
+      x ∈ μ₁ ⁻¹' Set.Ioi (μ₂ y) :=
   maxComparative_eq_iff _ _ _
 
 /-- A member lowest on one scale is not more ADJ₁ than a member highest on another is ADJ₂, since
@@ -70,8 +70,8 @@ theorem not_more_of_least_of_greatest {D D' E F : Type*} [LinearOrder D] [Decida
     [LinearOrder D'] [DecidableEq D'] {μ : E → D} {ν : F → D'} {C : Finset E} {C' : Finset F}
     {x : E} {y : F} (hx : x ∈ C) (hy : y ∈ C') (hmin : ∀ z ∈ C, μ x ≤ μ z)
     (hmax : ∀ z ∈ C', ν z ≤ ν y) :
-    x ∉ Comparison.gt.over (universalDegree μ C) (universalDegree ν C' y) := by
-  simp only [Comparison.over, Comparison.interval_gt, Set.mem_preimage, Set.mem_Ioi, not_lt,
+    x ∉ (universalDegree μ C) ⁻¹' Set.Ioi (universalDegree ν C' y) := by
+  simp only [Set.mem_preimage, Set.mem_Ioi, not_lt,
     universalDegree_of_forall_le hy hmax, universalDegree_of_forall_ge hx hmin]
   exact div_le_one_of_le₀ (by exact_mod_cast card_pos.2 ⟨μ x, mem_image_of_mem μ hx⟩)
     (Nat.cast_nonneg _)
@@ -105,13 +105,13 @@ def intelligence : Member → ℕ
 most intelligent, is intelligent; Betty, third least intelligent, is not more intelligent than
 Evelin, fifth most beautiful, is beautiful. -/
 theorem indirect_comparison :
-    .b ∈ Comparison.gt.over (universalDegree beauty original)
+    .b ∈ (universalDegree beauty original) ⁻¹' Set.Ioi
       (universalDegree intelligence original .h) ∧
-    .b ∉ Comparison.gt.over (universalDegree intelligence original)
+    .b ∉ (universalDegree intelligence original) ⁻¹' Set.Ioi
       (universalDegree beauty original .e) := by
   have hb : original.image beauty = Icc 1 10 := by decide
   have hi : original.image intelligence = Icc 1 10 := by decide
-  simp only [Comparison.over, Comparison.interval_gt, Set.mem_preimage, Set.mem_Ioi,
+  simp only [Set.mem_preimage, Set.mem_Ioi,
     universalDegree_of_image_eq_Icc hb (by decide : Member.b ∈ original),
     universalDegree_of_image_eq_Icc hb (by decide : Member.e ∈ original),
     universalDegree_of_image_eq_Icc hi (by decide : Member.b ∈ original),
@@ -155,7 +155,7 @@ comparing measurements, as in a direct comparison. -/
 theorem direct_comparison (hμ : ∀ n, μ (.inr n) = n) (hν : ∀ n, ν (.inr n) = n)
     (hPμ : ∀ x ∈ P, μ (.inl x) ∈ Icc 1 N) (hPν : ∀ x ∈ P, ν (.inl x) ∈ Icc 1 N)
     {z w : E ⊕ ℕ} (hz : z ∈ withMeasurements P N) (hw : w ∈ withMeasurements P N) :
-    z ∈ Comparison.gt.over (universalDegree μ (withMeasurements P N))
+    z ∈ (universalDegree μ (withMeasurements P N)) ⁻¹' Set.Ioi
       (universalDegree ν (withMeasurements P N) w) ↔ ν w < μ z :=
   universalDegree_lt_iff_of_image_eq
     ((image_withMeasurements hν hPν).trans (image_withMeasurements hμ hPμ).symm) hw hz
@@ -188,9 +188,9 @@ wide and not wider than he is tall. -/
 theorem taller_than_wide :
     universalDegree height measured (.inl .s) = 62 / 80 ∧
     universalDegree width measured (.inl .s) = 36 / 80 ∧
-    .inl .s ∈ Comparison.gt.over (universalDegree height measured)
+    .inl .s ∈ (universalDegree height measured) ⁻¹' Set.Ioi
       (universalDegree width measured (.inl .s)) ∧
-    .inl .s ∉ Comparison.gt.over (universalDegree width measured)
+    .inl .s ∉ (universalDegree width measured) ⁻¹' Set.Ioi
       (universalDegree height measured (.inl .s)) := by
   have hs : (.inl .s : Person ⊕ ℕ) ∈ measured := by simp [measured, withMeasurements]
   have hh : ∀ x ∈ (univ : Finset Person), height (.inl x) ∈ Icc 1 80 := by decide
@@ -231,10 +231,10 @@ theorem for_a_man {τ ω : Man ⊕ ℕ → ℕ}
     (hτn : ∀ n, τ (.inr n) = n) (hωn : ∀ n, ω (.inr n) = n)
     (hs : τ (.inl .s) = 60 ∧ ω (.inl .s) = 36)
     (hb : ∀ x, τ (.inl x) ∈ Icc 1 80 ∧ ω (.inl x) ∈ Icc 1 80) :
-    .inl .s ∈ Comparison.gt.over (universalDegree τ (withMeasurements univ 80))
+    .inl .s ∈ (universalDegree τ (withMeasurements univ 80)) ⁻¹' Set.Ioi
       (universalDegree ω (withMeasurements univ 80) (.inl .s)) ∧
     universalDegree τ men (.inl .s) = 1 / 8 ∧ universalDegree ω men (.inl .s) = 1 ∧
-    .inl .s ∉ Comparison.gt.over (universalDegree τ men) (universalDegree ω men (.inl .s)) := by
+    .inl .s ∉ (universalDegree τ men) ⁻¹' Set.Ioi (universalDegree ω men (.inl .s)) := by
   have hs' : (.inl .s : Man ⊕ ℕ) ∈ men := by simp [men]
   have hτC : universalDegree τ men (.inl .s) = 1 / 8 := by
     rw [universalDegree_congr (ν := Sum.elim heightClass fun _ ↦ 0) ?_ hs']
@@ -250,7 +250,7 @@ theorem for_a_man {τ ω : Man ⊕ ℕ → ℕ}
       exact hω x y
   refine ⟨(direct_comparison hτn hωn (fun x _ ↦ (hb x).1) (fun x _ ↦ (hb x).2)
     (by simp [withMeasurements]) (by simp [withMeasurements])).2 (by omega), hτC, hωC, ?_⟩
-  simp only [Comparison.over, Comparison.interval_gt, Set.mem_preimage, Set.mem_Ioi, hτC, hωC]
+  simp only [Set.mem_preimage, Set.mem_Ioi, hτC, hωC]
   norm_num
 
 /-- The hypotheses of `for_a_man` are consistent, since some heights and widths in inches induce

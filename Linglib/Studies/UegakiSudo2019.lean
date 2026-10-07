@@ -76,7 +76,7 @@ theorem exists_significance_not_hope_declarative :
         ¬ degreeComparison μ θ C () {A} true := by
   classical
   refine ⟨fun _ _ p ↦ if true ∈ p then 1 else -1, fun _ ↦ 0, {{true}, {false}}, {false},
-    by simp, ⟨{true}, by simp, by norm_num [Degree.Comparison.over]⟩, ?_⟩
+    by simp, ⟨{true}, by simp, by norm_num⟩, ?_⟩
   rw [degreeComparison_singleton, mem_preferred]
   norm_num
 
@@ -111,11 +111,11 @@ theorem veridicality_breaks_triviality :
         ¬ veridical μ θ believes Q () Q false := by
   classical
   refine ⟨fun _ _ p ↦ if true ∈ p then 1 else -1, fun _ ↦ 0, fun _ _ _ ↦ True,
-    {{true}, {false}}, ⟨{true}, by simp, by norm_num [Degree.Comparison.over]⟩,
-    ⟨{true}, by simp, by simp, by norm_num [Degree.Comparison.over]⟩, ?_⟩
+    {{true}, {false}}, ⟨{true}, by simp, by norm_num⟩,
+    ⟨{true}, by simp, by simp, by norm_num⟩, ?_⟩
   rintro ⟨p, ⟨hp, hw, -⟩, -, hd⟩
   rcases hp with rfl | rfl
   · simp at hw
-  · norm_num [Degree.Comparison.over] at hd
+  · norm_num at hd
 
 end UegakiSudo2019

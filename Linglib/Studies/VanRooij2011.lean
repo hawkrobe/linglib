@@ -66,9 +66,10 @@ theorem pairs_transform (f : Ad → K → K) (v : Profile Ad X K) (p : X × Ad) 
 
 /-! ### Comparisons across adjectives -/
 
-/-- *x is P-er than y is Q*: the pair of `x` and P measures more than the pair of `y` and Q. -/
+/-- *x is P-er than y is Q* holds when the pair of `x` and P measures more than the pair of `y`
+and Q. -/
 def comparative (x : X) (P : Ad) (y : X) (Q : Ad) (v : Profile Ad X ℝ) : Prop :=
-  (x, P) ∈ Comparison.gt.over (pairs v) (pairs v (y, Q))
+  (x, P) ∈ (pairs v) ⁻¹' Set.Ioi (pairs v (y, Q))
 
 /-- *x is d-much P-er than y is Q*. -/
 def differential (x : X) (P : Ad) (y : X) (Q : Ad) (d : ℝ) (v : Profile Ad X ℝ) : Prop :=
@@ -92,8 +93,7 @@ theorem comparative_ordinalLevel : Invariant ordinalLevel (comparative x P y Q) 
   have : pairs (v.transform f) = u ∘ pairs v := funext fun p ↦ by
     rw [pairs_transform, hf]; rfl
   simp only [comparative, this]
-  exact congrArg ((x, P) ∈ ·)
-    (Comparison.over_comp (pairs v) (OrderEmbedding.ofStrictMono u hu) .gt (pairs v (y, Q)))
+  exact propext hu.lt_iff_lt
 
 /-- With a separate strictly increasing map for each adjective, comparing across two adjectives
 is not meaningful. -/
@@ -105,10 +105,9 @@ theorem not_comparative_ordinal [DecidableEq Ad] (hPQ : P ≠ Q) :
   have hf : f ∈ (ordinal : Set (Ad → ℝ → ℝ)) := fun i a b hab ↦ by
     by_cases hi : i = Q <;> simp [f, hi, hab]
   have h₁ : comparative x P y Q v := by
-    simp [comparative, Comparison.mem_over, Comparison.rel, pairs, v, hPQ.symm]
+    simp [comparative, pairs, v, hPQ.symm]
   have h₂ : ¬ comparative x P y Q (v.transform f) := by
-    simp [comparative, Comparison.mem_over, Comparison.rel, pairs, Profile.transform, v, f, hPQ,
-      hPQ.symm]
+    simp [comparative, pairs, Profile.transform, v, f, hPQ, hPQ.symm]
   exact h₂ (h f hf v ▸ h₁)
 
 /-- A differential across adjectives holds up to a common change of unit and origin, once its
@@ -171,7 +170,7 @@ theorem universal_transform {f : Ad → ℝ → ℝ} (hf : f ∈ (ordinal : Set 
     (v · P) C) x
 
 /-- Read through universal degrees, *x is n times as P as y is Q* survives a separate strictly
-increasing map per adjective: a ratio across adjectives becomes meaningful although each
+increasing map per adjective, so a ratio across adjectives becomes meaningful although each
 adjective's measure is only ordinal. -/
 theorem factor_universal_ordinal (C : Finset X) (x y : X) (P Q : Ad) (n : ℚ) :
     Invariant ordinal fun v : Profile Ad X ℝ ↦
@@ -179,7 +178,7 @@ theorem factor_universal_ordinal (C : Finset X) (x y : X) (P Q : Ad) (n : ℚ) :
   intro f hf v
   simp only [universal_transform hf]
 
-/-- Universal degrees are not in general an affine function of a measure on a ratio scale:
+/-- Universal degrees are not in general an affine function of a measure on a ratio scale, since
 heights of one, two and four give universal degrees of one third, two thirds and one. -/
 theorem universal_not_affine :
     ¬ ∃ a b : ℚ, ∀ i, universalDegree ![(1 : ℕ), 2, 4] univ i = a * ![(1 : ℚ), 2, 4] i + b := by
@@ -205,8 +204,8 @@ theorem shorter_iff_taller {E : Type*} (height : E → ℝ) (m : ℝ) (x y : E) 
   simp only [differentialComparative]
   constructor <;> intro h <;> linarith
 
-/-- Ratios of shortness are not meaningful: shortnesses of six and two make one three times as
-short, and moving the origin by one makes the ratio five. -/
+/-- Ratios of shortness are not meaningful, since shortnesses of six and two make one three times
+as short, and moving the origin by one makes the ratio five. -/
 theorem three_times_as_short_not_meaningful :
     factorEquative ![(-6 : ℝ), -2] 0 1 3 ∧ ¬ factorEquative (fun i ↦ ![(-6 : ℝ), -2] i + 1) 0 1 3 :=
   ⟨by norm_num [factorEquative], by norm_num [factorEquative]⟩

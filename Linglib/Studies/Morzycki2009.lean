@@ -53,7 +53,7 @@ variable [Preorder D]
 
 /-- The positive form of a gradable predicate with measure function `g` holds of the
 individuals whose degree reaches the standard `s`. -/
-abbrev pos (g : E → D) (s : D) : Set E := Comparison.ge.over g s
+abbrev pos (g : E → D) (s : D) : Set E := g ⁻¹' Set.Ici s
 
 /-- The head that combines a gradable predicate with a measure phrase `m`, a property of
 degrees, requires the individual's degree to reach the least degree that `m` is true of, as in

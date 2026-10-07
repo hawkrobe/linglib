@@ -16,13 +16,13 @@ This file collects what is specific to numerals over the degree comparisons of
 *fewer than*, *at least* and *at most*, are the five comparisons of `Degree.Comparison`: in
 Kennedy's de-Fregean semantics the form with relation `REL` and number `m` is true of a degree
 property whose greatest degree stands in `REL` to `m`. On counts the form denotes the interval
-`c.interval m`, and on worlds measured by `μ` the set `c.over μ m`, so the forms have no names
-of their own here. The meanings of the modified forms are common ground. Accounts differ on the
-bare numeral, which has the two-sided meaning `Comparison.eq.interval m` for Kennedy and the
-lower-bounded meaning `Comparison.ge.interval m` in the tradition of Horn, each account
-deriving the other reading. Exhaustifying the lower-bounded meaning against the scale of
-higher numerals gives the two-sided one, and Kennedy's type lowering, existential closure over
-the two-sided meaning at the degrees above, takes it to the lower-bounded one.
+`c.interval m`, and on worlds measured by `μ` the set `μ ⁻¹' c.interval m`, so the forms have no
+names of their own here. The meanings of the modified forms are common ground. Accounts differ on
+the bare numeral, which has the two-sided meaning `Comparison.eq.interval m` for Kennedy and the
+lower-bounded meaning `Comparison.ge.interval m` in the tradition of Horn, each account deriving the
+other reading. Exhaustifying the lower-bounded meaning against the scale of higher numerals gives
+the two-sided one, and Kennedy's type lowering, existential closure over the two-sided meaning at
+the degrees above, takes it to the lower-bounded one.
 
 ## Main definitions
 

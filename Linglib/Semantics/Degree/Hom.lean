@@ -186,7 +186,7 @@ theorem exists_isUpperSet_forall_ne_preimage {D : Type*} [LinearOrder D] (μ : S
 /-- When the measure reflects the background and respects ties, the threshold above a contrast
 state `c` is the degree-threshold positive form at the degree of `c`. -/
 theorem Comparison.ge_over_eq_Ici (h : ∀ a b, μ a ≤ μ b → a ≤ b) (hm : Monotone μ) (c : S) :
-    Comparison.ge.over μ (μ c) = Ici c :=
+    μ ⁻¹' Set.Ici (μ c) = Ici c :=
   Set.ext fun s ↦ ⟨h c s, fun hs ↦ hm hs⟩
 
 end Background
@@ -261,14 +261,14 @@ theorem cresswellSetoid_setoid {E : Type*} (s : Setoid E) : cresswellSetoid s = 
 
 /-! ### Transport: which operators are natural in the scale
 
-How degree operators fare under a change of scale, an order embedding `f : D ↪o D'` applied to
-the measure. Comparatives, equatives and the max-quantified comparative are invariant
-(`Comparison.over_comp`, `maxComparative_comp`). The positive form is invariant only when its
-threshold moves with the measure, or under the automorphisms that fix the threshold
-(`Comparison.over_comp_of_isFixedPt`); with a fixed threshold some rescaling changes the verdict
-(`positive_not_natural`), the formal face of the positive form's need for a contextual standard.
-A comparison between measures on two scales survives rescaling both together but not rescaling
-one alone (`cross_scale_not_natural`); universal degrees survive independent rescalings
+How degree operators fare under a change of scale, an order embedding `f : D ↪o D'` applied to the
+measure. Comparatives, equatives and the max-quantified comparative are invariant
+(`Comparison.preimage_interval`, `maxComparative_comp`). The positive form is invariant only when
+its threshold moves with the measure, or under the automorphisms that fix the threshold
+(`Comparison.preimage_interval_of_isFixedPt`); with a fixed threshold some rescaling changes the
+verdict (`positive_not_natural`), the formal face of the positive form's need for a contextual
+standard. A comparison between measures on two scales survives rescaling both together but not
+rescaling one alone (`cross_scale_not_natural`); universal degrees survive independent rescalings
 (`Degree/UniversalScale`). -/
 
 section TransportMax
@@ -291,17 +291,17 @@ theorem maxComparative_comp (f : D ↪o D') (c : Comparison) (P Q : Entity → P
 scale changes the verdict. -/
 theorem positive_not_natural :
     ∃ f : ℚ ↪o ℚ, ∃ (μ : ℚ → ℚ) (θ x : ℚ),
-      x ∈ Comparison.ge.over μ θ ∧ x ∉ Comparison.ge.over (f ∘ μ) θ :=
+      x ∈ μ ⁻¹' Set.Ici θ ∧ x ∉ (f ∘ μ) ⁻¹' Set.Ici θ :=
   ⟨OrderEmbedding.ofStrictMono (· - 1) fun _ _ h ↦ by simpa, id, 0, 0, by simp,
-    by simp [Comparison.mem_over, Comparison.rel]⟩
+    by simp⟩
 
 /-- Comparing two measures across scales is not invariant under an order embedding of one of
-them, unlike comparing two measures on one scale rescaled together (`Comparison.over_comp`). -/
+them, unlike comparing two measures on one scale rescaled together. -/
 theorem cross_scale_not_natural :
     ∃ f : ℚ ↪o ℚ, ∃ (μ ν : ℚ → ℚ) (x y : ℚ),
-      x ∈ Comparison.gt.over μ (ν y) ∧ x ∉ Comparison.gt.over (f ∘ μ) (ν y) :=
+      x ∈ μ ⁻¹' Set.Ioi (ν y) ∧ x ∉ (f ∘ μ) ⁻¹' Set.Ioi (ν y) :=
   ⟨OrderEmbedding.ofStrictMono (· - 1) fun _ _ h ↦ by simpa, id, id, 1, 0, by simp,
-    by simp [Comparison.mem_over, Comparison.rel]⟩
+    by simp⟩
 
 end TransportMax
 

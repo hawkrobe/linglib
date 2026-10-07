@@ -9,10 +9,10 @@ public import Linglib.Core.Order.StrictBounds
 
 A `Comparison` is one of the five ways a measured value can relate to a threshold, `=`, `≥`, `>`,
 `≤` and `<`, kept as data so that numeral modifiers, measure phrases and comparatives can share
-it, as in the joint treatment of Kennedy and Rett. A comparison selects an order interval, and
-`Comparison.over μ n` is the set of entities whose measure lies in it; `Comparison.overSet μ Δ`
+it, as in the joint treatment of Kennedy and Rett. A comparison selects an order interval, and the
+entities a measure `μ` sends into it form the preimage `μ ⁻¹' c.interval n`; `Comparison.bounds`
 generalizes the threshold to a set of degrees, the clausal standard of Hoeksema's comparative.
-The point-standard comparative *a is taller than b* is `a ∈ Comparison.gt.over μ (μ b)`, that is
+The point-standard comparative *a is taller than b* is `a ∈ μ ⁻¹' Set.Ioi (μ b)`, that is
 `μ b < μ a`, and the equative is `Comparison.ge`.
 
 The antonym of a comparison is its order dual, `Comparison.dual`: *a is shorter than b* is the
@@ -22,8 +22,8 @@ strictly monotone change of scale.
 
 ## Main definitions
 
-* `Degree.Comparison`, with `Comparison.rel`, `Comparison.interval` and `Comparison.over`.
-* `Degree.Comparison.overSet`: the set-standard predication.
+* `Degree.Comparison`, with `Comparison.rel` and `Comparison.interval`.
+* `Degree.Comparison.bounds`: the set-standard interval.
 * `Degree.Comparison.dual`: the antonymous comparison.
 * `Degree.maxOnScale`: Rett's order-sensitive maximality.
 * `Degree.ThresholdSignificant`: some member of the comparison class clears the threshold, the
@@ -31,10 +31,10 @@ strictly monotone change of scale.
 
 ## Main results
 
-* `Degree.Comparison.overSet_singleton`: a singleton standard is a point standard.
-* `Degree.Comparison.rel_dual`, `Degree.Comparison.over_dual`: antonymy as argument exchange and
-  as scale reversal.
-* `Degree.Comparison.over_comp`: invariance under an order embedding of the scale.
+* `Degree.Comparison.bounds_singleton`: a singleton standard is a point standard.
+* `Degree.Comparison.rel_dual`, `Degree.Comparison.interval_dual`: antonymy as argument exchange
+  and as scale reversal.
+* `Degree.Comparison.preimage_interval`: invariance under an order embedding of the scale.
 * `Degree.Comparison.boundary_mem`: the Class A/B distinction as endpoint membership.
 
 ## References
@@ -91,13 +91,6 @@ def Comparison.interval {α : Type*} [Preorder α] : Comparison → α → Set �
   | .le => Set.Iic
   | .lt => Set.Iio
 
-/-- The predication of a comparison is the set of entities whose measure lies in its interval; the
-measure is `id` for bare cardinals, a dimensioned measure for measure phrases, and an atom count for
-classifiers. -/
-def Comparison.over {E α : Type*} [Preorder α]
-    (c : Comparison) (μ : E → α) (n : α) : Set E :=
-  μ ⁻¹' c.interval n
-
 section
 
 variable {α : Type*} [Preorder α] (a n : α)
@@ -126,15 +119,6 @@ instance Comparison.ordConnected_interval {α : Type*} [PartialOrder α] (c : Co
   cases c <;> simp only [interval_eq, interval_ge, interval_gt, interval_le, interval_lt] <;>
     infer_instance
 
-/-- Over the identity measure a comparison selects its interval. -/
-@[simp] theorem Comparison.over_id {α : Type*} [Preorder α] (c : Comparison) (n : α) :
-    c.over id n = c.interval n := rfl
-
-@[simp] theorem Comparison.mem_over {E α : Type*} [Preorder α]
-    (c : Comparison) (μ : E → α) (n : α) (x : E) :
-    x ∈ c.over μ n ↔ c.rel (μ x) n := by
-  simp [Comparison.over]
-
 instance Comparison.relDecidable {α : Type*} [Preorder α] [DecidableEq α] [DecidableLE α]
     [DecidableLT α] (c : Comparison) (a n : α) : Decidable (c.rel a n) := by
   cases c <;> simp only [Comparison.rel, ge_iff_le, gt_iff_lt] <;> infer_instance
@@ -142,10 +126,6 @@ instance Comparison.relDecidable {α : Type*} [Preorder α] [DecidableEq α] [De
 instance Comparison.intervalDecidable {α : Type*} [Preorder α] [DecidableEq α] [DecidableLE α]
     [DecidableLT α] (c : Comparison) (a n : α) : Decidable (a ∈ c.interval n) :=
   decidable_of_iff _ (Comparison.mem_interval c a n).symm
-
-instance Comparison.overDecidable {E α : Type*} [Preorder α] [DecidableEq α] [DecidableLE α]
-    [DecidableLT α] (c : Comparison) (μ : E → α) (n : α) (x : E) : Decidable (x ∈ c.over μ n) :=
-  decidable_of_iff _ (Comparison.mem_over c μ n x).symm
 
 /-- A comparison keeps its threshold exactly when it is not strict, so the Class A/B distinction
 ([geurts-nouwen-2007], [nouwen-2010]) is membership of the interval's endpoint. -/
@@ -163,7 +143,7 @@ in the class. -/
 measures above `θ C`. -/
 def ThresholdSignificant {E α : Type*} [Preorder α] (μ : E → α) (θ : Set E → α)
     (C : Set E) : Prop :=
-  (C ∩ Comparison.gt.over μ (θ C)).Nonempty
+  (C ∩ μ ⁻¹' Set.Ioi (θ C)).Nonempty
 
 theorem thresholdSignificant_iff {E α : Type*} [Preorder α] {μ : E → α} {θ : Set E → α}
     {C : Set E} : ThresholdSignificant μ θ C ↔ ∃ y ∈ C, θ C < μ y :=
@@ -173,9 +153,10 @@ theorem thresholdSignificant_iff {E α : Type*} [Preorder α] {μ : E → α} {�
 
 The than-clause of a comparative supplies not a point but a *set* of degrees.
 `Comparison.bounds` lifts `Comparison.interval` from a point `n` to a standard set
-`Δ` — the (strict) upper/lower bounds matching the comparison's relation — and
-`Comparison.overSet` is the corresponding measure-pullback predication. The point
-predication `over` is exactly the singleton case (`overSet_singleton`). -/
+`Δ`, the upper or lower bounds, strict or not, matching the comparison's relation. The entities
+whose measure bounds `Δ` are the preimage `μ ⁻¹' c.bounds Δ`, the order-theoretic core of
+Hoeksema's clausal comparative, and a singleton standard is a point standard
+(`bounds_singleton`). -/
 
 /-- The bounds a comparison imposes on a standard set `Δ` are its upper, strict upper, lower or
 strict lower bounds, generalizing `Comparison.interval` from a point to a set. -/
@@ -186,13 +167,8 @@ def Comparison.bounds {α : Type*} [Preorder α] : Comparison → Set α → Set
   | .le => lowerBounds
   | .lt => strictLowerBounds
 
-/-- The set-standard predication is the set of entities whose measure bounds the whole standard set
-`Δ`, the order-theoretic core of [hoeksema-1983]'s clausal comparative. -/
-def Comparison.overSet {E α : Type*} [Preorder α]
-    (c : Comparison) (μ : E → α) (Δ : Set α) : Set E :=
-  μ ⁻¹' c.bounds Δ
-
-/-- `bounds` at a singleton standard collapses to the point `interval`. -/
+/-- At a singleton standard the bounds of a comparison are its interval, so Hoeksema's phrasal and
+clausal comparatives coincide there. -/
 theorem Comparison.bounds_singleton {α : Type*} [Preorder α] (c : Comparison) (n : α) :
     c.bounds {n} = c.interval n := by
   cases c
@@ -203,16 +179,6 @@ theorem Comparison.bounds_singleton {α : Type*} [Preorder α] (c : Comparison) 
   case gt => simp only [Comparison.bounds, Comparison.interval, strictUpperBounds_singleton]
   case le => simp only [Comparison.bounds, Comparison.interval]; exact lowerBounds_singleton
   case lt => simp only [Comparison.bounds, Comparison.interval, strictLowerBounds_singleton]
-
-@[simp] theorem Comparison.mem_overSet {E α : Type*} [Preorder α]
-    (c : Comparison) (μ : E → α) (Δ : Set α) (x : E) :
-    x ∈ c.overSet μ Δ ↔ μ x ∈ c.bounds Δ := Iff.rfl
-
-/-- At a singleton standard the set-standard predication is the point predication, so
-[hoeksema-1983]'s phrasal and clausal comparatives coincide there. -/
-@[simp] theorem Comparison.overSet_singleton {E α : Type*} [Preorder α]
-    (c : Comparison) (μ : E → α) (n : α) : c.overSet μ {n} = c.over μ n := by
-  simp only [Comparison.overSet, Comparison.over, Comparison.bounds_singleton]
 
 /-! ### The antonymous comparison -/
 
@@ -243,7 +209,7 @@ theorem Comparison.dual_involutive : Function.Involutive Comparison.dual := fun 
 
 section Dual
 
-variable {E α : Type*} [Preorder α] (c : Comparison)
+variable {α : Type*} [Preorder α] (c : Comparison)
 
 /-- The dual comparison exchanges its arguments, so *a is shorter than b* exactly when *b is
 taller than a*. -/
@@ -255,9 +221,9 @@ theorem Comparison.rel_dual_toDual (a b : α) :
     c.dual.rel a b ↔ c.rel (OrderDual.toDual a) (OrderDual.toDual b) := by
   cases c <;> exact Iff.rfl
 
-/-- The dual predication is the predication on the dual scale. -/
-theorem Comparison.over_dual (μ : E → α) (n : α) :
-    c.dual.over μ n = c.over (OrderDual.toDual ∘ μ) (OrderDual.toDual n) := by
+/-- The interval of the dual comparison is the interval of the comparison on the dual scale. -/
+theorem Comparison.interval_dual (n : α) :
+    c.dual.interval n = OrderDual.toDual ⁻¹' c.interval (OrderDual.toDual n) := by
   cases c <;> rfl
 
 /-- The bounds of a standard set for the dual comparison are the bounds of the dual set for the
@@ -267,131 +233,31 @@ theorem Comparison.bounds_dual (Δ : Set α) :
   cases c <;> ext x <;>
     simp [Comparison.bounds, upperBounds, lowerBounds, strictUpperBounds, strictLowerBounds]
 
-/-- The dual set-standard predication is the set-standard predication on the dual scale. -/
-theorem Comparison.overSet_dual (μ : E → α) (Δ : Set α) :
-    c.dual.overSet μ Δ = c.overSet (OrderDual.toDual ∘ μ) (OrderDual.toDual '' Δ) := by
-  ext x
-  simp only [Comparison.mem_overSet, Comparison.bounds_dual, Set.mem_preimage, Function.comp]
-
 end Dual
-
-/-! ### Threshold and measure monotonicity
-
-The shared content of every threshold-semantics face (Kennedy positive
-form, CSW positive region, credence thresholds): raising a non-strict
-lower threshold shrinks the extension, raising the measure preserves
-membership, and on a linear order the positive/negative poles are
-complementary and comparison reduces to a separating threshold (Klein). -/
-
-section ThresholdMonotone
-
-variable {E α : Type*} [Preorder α] (μ : E → α)
-
-/-- Raising an `at least` threshold shrinks the extension. -/
-theorem Comparison.antitone_ge_over : Antitone (Comparison.ge.over μ) :=
-  fun _ _ h _ hx => le_trans h hx
-
-/-- Raising a `more than` threshold shrinks the extension. -/
-theorem Comparison.antitone_gt_over : Antitone (Comparison.gt.over μ) :=
-  fun _ _ h _ hx => lt_of_le_of_lt h hx
-
-/-- Raising an `at most` threshold grows the extension. -/
-theorem Comparison.monotone_le_over : Monotone (Comparison.le.over μ) :=
-  fun _ _ h _ hx => le_trans hx h
-
-/-- Raising a `less than` threshold grows the extension. -/
-theorem Comparison.monotone_lt_over : Monotone (Comparison.lt.over μ) :=
-  fun _ _ h _ hx => lt_of_lt_of_le hx h
-
-/-- Membership in an `at least` extension transports up the measure. -/
-theorem Comparison.mem_ge_over_of_le {θ : α} {x y : E}
-    (hx : x ∈ Comparison.ge.over μ θ) (hxy : μ x ≤ μ y) :
-    y ∈ Comparison.ge.over μ θ :=
-  le_trans hx hxy
-
-end ThresholdMonotone
-
-section ThresholdLinear
-
-variable {E α : Type*} [LinearOrder α] (μ : E → α)
-
-/-- Clearing the threshold is exactly not falling below it. -/
-theorem Comparison.mem_ge_over_iff_not_mem_lt_over {θ : α} {x : E} :
-    x ∈ Comparison.ge.over μ θ ↔ x ∉ Comparison.lt.over μ θ := by
-  simp [Comparison.mem_over, Comparison.rel, not_lt]
-
-/-- When every degree is realized, raising an `at least` threshold strictly shrinks the
-    extension. -/
-theorem Comparison.strictAnti_ge_over (hμ : Function.Surjective μ) :
-    StrictAnti (Comparison.ge.over μ) := by
-  intro a b hab
-  refine ⟨Comparison.antitone_ge_over μ hab.le, fun h => ?_⟩
-  obtain ⟨w, rfl⟩ := hμ a
-  exact not_le.2 hab (h (le_refl (μ w)))
-
-/-- When every degree is realized, raising a `more than` threshold strictly shrinks the
-    extension. -/
-theorem Comparison.strictAnti_gt_over (hμ : Function.Surjective μ) :
-    StrictAnti (Comparison.gt.over μ) := by
-  intro a b hab
-  refine ⟨Comparison.antitone_gt_over μ hab.le, fun h => ?_⟩
-  obtain ⟨w, rfl⟩ := hμ b
-  exact lt_irrefl _ (h hab)
-
-/-- When every degree is realized, raising an `at most` threshold strictly grows the
-    extension. -/
-theorem Comparison.strictMono_le_over (hμ : Function.Surjective μ) :
-    StrictMono (Comparison.le.over μ) := by
-  intro a b hab
-  refine ⟨Comparison.monotone_le_over μ hab.le, fun h => ?_⟩
-  obtain ⟨w, rfl⟩ := hμ b
-  exact not_le.2 hab (h (le_refl (μ w)))
-
-/-- When every degree is realized, raising a `less than` threshold strictly grows the
-    extension. -/
-theorem Comparison.strictMono_lt_over (hμ : Function.Surjective μ) :
-    StrictMono (Comparison.lt.over μ) := by
-  intro a b hab
-  refine ⟨Comparison.monotone_lt_over μ hab.le, fun h => ?_⟩
-  obtain ⟨w, rfl⟩ := hμ a
-  exact lt_irrefl _ (h hab)
-
-/-- Strict comparison holds exactly when some threshold separates the two measures, Klein's
-reduction of the comparative. -/
-theorem Comparison.lt_iff_separating_threshold {x y : E} :
-    μ y < μ x ↔ ∃ θ, x ∈ Comparison.ge.over μ θ ∧ y ∉ Comparison.ge.over μ θ := by
-  constructor
-  · exact fun h => ⟨μ x, le_refl _, not_le.mpr h⟩
-  · rintro ⟨θ, hx, hy⟩
-    exact lt_of_lt_of_le (not_le.mp hy) hx
-
-end ThresholdLinear
 
 /-! ### Change of scale -/
 
 section Comp
 
-variable {E α β : Type*} [Preorder α] [Preorder β] (μ : E → α)
+variable {α β : Type*} [Preorder α] [Preorder β]
 
 /-- An order embedding of the scale preserves and reflects every comparison. -/
 theorem Comparison.rel_map_iff (f : α ↪o β) (c : Comparison) {a n : α} :
     c.rel (f a) (f n) ↔ c.rel a n := by
   cases c <;> simp [Comparison.rel, f.lt_iff_lt, f.le_iff_le, f.injective.eq_iff]
 
-/-- A comparison is invariant under an order embedding of the scale that moves the threshold
-along with the measure. -/
-theorem Comparison.over_comp (f : α ↪o β) (c : Comparison) (n : α) :
-    c.over (f ∘ μ) (f n) = c.over μ n := by
-  ext x
-  cases c <;> simp [Comparison.over, Comparison.interval, f.lt_iff_lt, f.le_iff_le,
-    f.injective.eq_iff]
+/-- An order embedding of the scale pulls the interval at `f n` back to the interval at `n`, so a
+comparison is invariant when its threshold moves along with the measure. -/
+theorem Comparison.preimage_interval (f : α ↪o β) (c : Comparison) (n : α) :
+    f ⁻¹' c.interval (f n) = c.interval n := by
+  ext a
+  simp only [Set.mem_preimage, Comparison.mem_interval, Comparison.rel_map_iff]
 
-/-- A comparison with a fixed threshold is invariant under the automorphisms of the scale that
-fix the threshold. -/
-theorem Comparison.over_comp_of_isFixedPt (g : α ≃o α) (c : Comparison) {n : α}
-    (hn : Function.IsFixedPt g n) : c.over (g ∘ μ) n = c.over μ n := by
+/-- An automorphism of the scale that fixes the threshold fixes the interval. -/
+theorem Comparison.preimage_interval_of_isFixedPt (g : α ≃o α) (c : Comparison) {n : α}
+    (hn : Function.IsFixedPt g n) : g ⁻¹' c.interval n = c.interval n := by
   conv_lhs => rw [← hn.eq]
-  exact Comparison.over_comp μ g.toOrderEmbedding c n
+  exact Comparison.preimage_interval g.toOrderEmbedding c n
 
 end Comp
 

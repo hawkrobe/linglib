@@ -26,7 +26,7 @@ and degree questions in which its unmarked antonym has the same truth conditions
 
 Antonym polarity is the adjective's `Adjective.polarity`, which acts on the comparison of its
 equative and comparative through the order dual, `Polarity.negative • c = c.dual`; negative antonyms
-are the marked members of their pairs ([bierwisch-1989], [kennedy-2007]). The positive
+are the marked members of their pairs (Bierwisch, Kennedy). The positive
 construction and the measure phrase have no polarity-parametrized semantics in the substrate,
 so their rows of `IsPolarInvariant` are the book's classification.
 
@@ -135,28 +135,30 @@ variable {Entity D : Type*} [LinearOrder D] (μ : Entity → D) (a b : Entity) (
 /-- The strengthened equative of an adjective of either polarity, *as tall as and not taller
 than* or *as short as and not shorter than*, holds exactly when the two measures are equal. -/
 theorem exact_equative_iff_eq :
-    (a ∈ (p • Comparison.ge).over μ (μ b) ∧ a ∉ (p • Comparison.gt).over μ (μ b)) ↔ μ a = μ b := by
+    (a ∈ μ ⁻¹' (p • Comparison.ge).interval (μ b) ∧
+      a ∉ μ ⁻¹' (p • Comparison.gt).interval (μ b)) ↔ μ a = μ b := by
   cases p <;> simp [eq_iff_le_not_lt, and_comm]
 
 /-- The strengthened equatives of two antonyms, *exactly as tall as* and *exactly as short as*,
 are mutually entailing. -/
 theorem exact_equative_antonym_invariant :
-    (a ∈ (p • Comparison.ge).over μ (μ b) ∧ a ∉ (p • Comparison.gt).over μ (μ b)) ↔
-      (a ∈ ((Polarity.negative * p) • Comparison.ge).over μ (μ b) ∧
-        a ∉ ((Polarity.negative * p) • Comparison.gt).over μ (μ b)) := by
+    (a ∈ μ ⁻¹' (p • Comparison.ge).interval (μ b) ∧
+        a ∉ μ ⁻¹' (p • Comparison.gt).interval (μ b)) ↔
+      (a ∈ μ ⁻¹' ((Polarity.negative * p) • Comparison.ge).interval (μ b) ∧
+        a ∉ μ ⁻¹' ((Polarity.negative * p) • Comparison.gt).interval (μ b)) := by
   rw [exact_equative_iff_eq, exact_equative_iff_eq]
 
-/-- The antonym comparatives exclude each other: *A is taller than B* and *A is shorter than B*
-cannot both hold. -/
-theorem comparative_antonyms_exclusive (h : a ∈ (p • Comparison.gt).over μ (μ b)) :
-    a ∉ ((Polarity.negative * p) • Comparison.gt).over μ (μ b) := by
+/-- The antonym comparatives exclude each other, so *A is taller than B* and *A is shorter than
+B* cannot both hold. -/
+theorem comparative_antonyms_exclusive (h : a ∈ μ ⁻¹' (p • Comparison.gt).interval (μ b)) :
+    a ∉ μ ⁻¹' ((Polarity.negative * p) • Comparison.gt).interval (μ b) := by
   cases p <;> simpa using lt_asymm h
 
 /-- Wherever the antonyms could differ, `μ a ≠ μ b`, their comparatives are complementary, so no
 truth-conditionally equivalent unmarked alternative exists. -/
 theorem comparative_antonym_variant (h : μ a ≠ μ b) :
-    a ∈ (p • Comparison.gt).over μ (μ b) ↔
-      a ∉ ((Polarity.negative * p) • Comparison.gt).over μ (μ b) := by
+    a ∈ μ ⁻¹' (p • Comparison.gt).interval (μ b) ↔
+      a ∉ μ ⁻¹' ((Polarity.negative * p) • Comparison.gt).interval (μ b) := by
   cases p <;> simp [lt_iff_le_and_ne, h.symm, h]
 
 end PolarVarianceGrounding

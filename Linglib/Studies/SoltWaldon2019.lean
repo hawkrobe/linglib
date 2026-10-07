@@ -8,17 +8,17 @@ public import Mathlib.Order.Interval.Set.OrdConnected
 /-!
 # Solt & Waldon (2019): Numerals under Negation
 
-This file formalizes the felicity constraint on numerical assertions of [solt-waldon-2019].
+This file formalizes the felicity constraint on numerical assertions of Solt and Waldon.
 A bare numeral in the scope of negation, *she doesn't have 40 sheep*, is infelicitous as an
 answer to *how many sheep does Lisa have?* yet acceptable once the value is under
 discussion, as the denial after *does Lisa have 40 sheep?*; negated *more than 40* is
 acceptable in both contexts, negated *between 40 and 50* in neither. The paper's account
-takes the question under discussion to be a partition ([groenendijk-stokhof-1984],
-[roberts-1996]). A how-many question partitions the worlds by a count, so the number line
+takes the question under discussion to be a partition (Groenendijk and Stokhof,
+Roberts). A how-many question partitions the worlds by a count, so the number line
 orders its cells, and the constraint requires the content of an assertion containing a
 numerical expression to be the union of a convex set of cells, convexity in the sense of
-[gardenfors-2004] carried from lexical meanings to discourse. On the exact reading of the
-numeral ([kennedy-2015]), *not 40* is the union of every cell but one, a disjoint region;
+Gärdenfors carried from lexical meanings to discourse. On the exact reading of the
+numeral (Kennedy), *not 40* is the union of every cell but one, a disjoint region;
 *40*, *between 40 and 50*, *more than 40* and *not more than 40* are convex. A polar
 question has two cells, whose every subset is convex, so the denial is felicitous. At the
 top of a bounded scale the negated endpoint is convex, which is why *not 100% certain* is
@@ -70,22 +70,23 @@ variable {W ι : Type*} [Preorder ι]
 /-! ### The felicity constraint -/
 
 /-- The felicity constraint on numerical assertions, relative to the question that sorts
-the worlds by the ordered value `f`: the content is the union of a convex set of cells. -/
+the worlds by the ordered value `f`, requires the content to be the union of a convex set of
+cells. -/
 def Felicitous (f : W → ι) (φ : Set W) : Prop :=
   ∃ I : Set ι, I.OrdConnected ∧ φ = f ⁻¹' I
 
-/-- A felicitous assertion is a union of cells: the question decides it. -/
+/-- A felicitous assertion is a union of cells, so the question decides it. -/
 theorem Felicitous.decides {f : W → ι} {φ : Set W} (h : Felicitous f φ) :
     (Setoid.ker f).Decides φ := by
   obtain ⟨I, -, rfl⟩ := h
-  exact Setoid.decides_iff.2 λ w v hwv => by simp [Setoid.ker_def.1 hwv]
+  exact Setoid.decides_iff.2 fun w v hwv ↦ by simp [Setoid.ker_def.1 hwv]
 
 /-- Every subset of a two-cell question is convex. -/
 theorem ordConnected_prop (I : Set Prop) : I.OrdConnected := by
-  refine ⟨λ x hx y hy z ⟨hxz, hzy⟩ => ?_⟩
+  refine ⟨fun x hx y hy z ⟨hxz, hzy⟩ ↦ ?_⟩
   by_cases hz : z
-  · exact (propext ⟨λ _ => hzy hz, λ _ => hz⟩ : z = y) ▸ hy
-  · exact (propext ⟨λ h => absurd h hz, λ h => absurd (hxz h) hz⟩ : z = x) ▸ hx
+  · exact (propext ⟨fun _ ↦ hzy hz, fun _ ↦ hz⟩ : z = y) ▸ hy
+  · exact (propext ⟨fun h ↦ absurd h hz, fun h ↦ absurd (hxz h) hz⟩ : z = x) ▸ hx
 
 /-- Under a polar question every decided proposition is felicitous, the denial *no, she
 doesn't have 40 sheep* among them. -/
@@ -94,7 +95,7 @@ theorem felicitous_of_polar {p φ : Set W} (h : (Setoid.polar p).Decides φ) :
   refine ⟨(· ∈ p) '' φ, ordConnected_prop _, ?_⟩
   ext w
   constructor
-  · exact λ hw => ⟨w, hw, rfl⟩
+  · exact fun hw ↦ ⟨w, hw, rfl⟩
   · rintro ⟨v, hv, hvw⟩
     exact (Setoid.decides_iff.1 h v w (Setoid.polar_iff.2 (eq_iff_iff.1 hvw))).1 hv
 
@@ -102,7 +103,7 @@ theorem felicitous_of_polar {p φ : Set W} (h : (Setoid.polar p).Decides φ) :
 
 The assertion that the value satisfies a numerical meaning `I` is `f ⁻¹' I`, the union of the
 question's cells over the values in `I`, and a numeral form with comparison `c` and number `m`
-asserts `c.over f m`. -/
+asserts `f ⁻¹' c.interval m`. -/
 
 /-- A numerical meaning that is a convex set of values makes a felicitous assertion. -/
 theorem felicitous_preimage (f : W → ι) (I : Set ι) [hI : I.OrdConnected] :
@@ -112,7 +113,7 @@ theorem felicitous_preimage (f : W → ι) (I : Set ι) [hI : I.OrdConnected] :
 /-- Every numeral form is felicitous. *She has 40 sheep* on the two-sided reading is a single
 cell, and *she has more than 40 sheep* a final segment of the cells. -/
 theorem felicitous_over {ι : Type*} [PartialOrder ι] (f : W → ι) (c : Comparison) (m : ι) :
-    Felicitous f (c.over f m) :=
+    Felicitous f (f ⁻¹' c.interval m) :=
   felicitous_preimage f (c.interval m)
 
 variable (count : W → ℕ)
@@ -126,7 +127,7 @@ sheep* answers the how-many question, and the negation of the lower-bounded read
 the paper takes that reading to be unavailable where the numeral answers a how-many
 question. -/
 theorem felicitous_compl_over {ι : Type*} [LinearOrder ι] (f : W → ι) {c : Comparison}
-    (hc : c ≠ .eq) (m : ι) : Felicitous f (c.over f m)ᶜ := by
+    (hc : c ≠ .eq) (m : ι) : Felicitous f (f ⁻¹' c.interval m)ᶜ := by
   have h : ((c.interval m)ᶜ).OrdConnected := by
     cases c
     · exact absurd rfl hc
@@ -136,7 +137,7 @@ theorem felicitous_compl_over {ι : Type*} [LinearOrder ι] (f : W → ι) {c : 
       infer_instance
   exact ⟨_, h, rfl⟩
 
-/-- Negating a bounded range leaves a disjoint region: with worlds whose counts lie below,
+/-- Negating a bounded range leaves a disjoint region. With worlds whose counts lie below,
 inside, and above the range, the negated assertion is not the union of a convex set of
 cells. -/
 theorem not_felicitous_compl {I : Set ℕ} {a b c : W} (ha : count a ∉ I) (hb : count b ∈ I)
@@ -148,32 +149,32 @@ theorem not_felicitous_compl {I : Set ℕ} {a b c : W} (ha : count a ∉ I) (hb 
   exact (mem b).2 (hJ.out ((mem a).1 ha) ((mem c).1 hc) ⟨hab, hbc⟩) hb
 
 /-- *She doesn't have 40 sheep* on the two-sided reading, as an answer to the how-many
-question: infelicitous whenever the count can fall below, at, and above 40. -/
+question, is infelicitous whenever the count can fall below, at, and above 40. -/
 theorem not_felicitous_not_bare {m : ℕ} {a b c : W} (ha : count a < m) (hb : count b = m)
-    (hc : m < count c) : ¬ Felicitous count (Comparison.eq.over count m)ᶜ :=
+    (hc : m < count c) : ¬ Felicitous count (count ⁻¹' {m})ᶜ :=
   not_felicitous_compl count (I := Comparison.eq.interval m) (a := a) (b := b) (c := c)
     (by simp; omega) (by simp [hb]) (by simp; omega) (by omega) (by omega)
 
-/-- *She doesn't have between 40 and 50 sheep*: infelicitous for the same reason. -/
+/-- *She doesn't have between 40 and 50 sheep* is infelicitous for the same reason. -/
 theorem not_felicitous_not_between {m k : ℕ} {a b c : W} (ha : count a < m)
     (hb : count b ∈ Icc m k) (hc : k < count c) : ¬ Felicitous count (count ⁻¹' Icc m k)ᶜ :=
   not_felicitous_compl count (a := a) (b := b) (c := c) (by simp; omega) hb (by simp; omega)
     (by rw [mem_Icc] at hb; omega) (by rw [mem_Icc] at hb; omega)
 
-/-- At the top of a bounded scale the negated endpoint is convex, the region below it:
+/-- At the top of a bounded scale the negated endpoint is convex, the region below it, so
 *it's not 100% certain* answers *how likely is it?* where *it's not 95% certain* does not. -/
 theorem felicitous_not_bare_of_max {m : ℕ} (hmax : ∀ w, count w ≤ m) :
-    Felicitous count (Comparison.eq.over count m)ᶜ := by
+    Felicitous count (count ⁻¹' {m})ᶜ := by
   refine ⟨Iio m, inferInstance, ?_⟩
   ext w
   have := hmax w
-  simp only [mem_compl_iff, Comparison.mem_over, Comparison.rel_eq, mem_preimage, mem_Iio]
+  simp only [mem_compl_iff, mem_preimage, mem_singleton_iff, mem_Iio]
   omega
 
-/-- The rescue by context: once the question is whether Lisa has exactly 40 sheep, the
+/-- Context rescues the denial. Once the question is whether Lisa has exactly 40 sheep, the
 negative answer is a cell of the question and so felicitous. -/
 theorem felicitous_denial (m : ℕ) :
-    Felicitous (· ∈ Comparison.eq.over count m) (Comparison.eq.over count m)ᶜ :=
+    Felicitous (· ∈ count ⁻¹' {m}) (count ⁻¹' {m})ᶜ :=
   felicitous_of_polar Setoid.polar_decides.compl
 
 end SoltWaldon2019
