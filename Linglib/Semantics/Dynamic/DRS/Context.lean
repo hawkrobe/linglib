@@ -1,11 +1,13 @@
 module
 
-public import Linglib.Semantics.Dynamic.DRS.Basic
 public import Mathlib.CategoryTheory.Category.Basic
+public import Mathlib.CategoryTheory.Types.Basic
+public import Mathlib.Algebra.Group.Defs
 public import Mathlib.Data.Fintype.Pi
 public import Mathlib.Data.Fintype.Sigma
 public import Mathlib.Data.Fintype.Sets
 public import Mathlib.Data.Fintype.Prod
+public import Mathlib.ModelTheory.Basic
 
 /-!
 # Contexts, renamings, and literals
@@ -14,8 +16,7 @@ This file defines the category of *contexts* of discourse representation theory 
 sheaf-theoretic reading: a context is a finite vocabulary of relation symbols together with a
 finite set of discourse referents, and a morphism is an inclusion of vocabularies with a map of
 referents — a relabelling, an inclusion, or an identification of referents. Literals over a
-context are signed atoms; they rename covariantly along context morphisms, and each one is a
-DRS-condition.
+context are signed atoms; they rename covariantly along context morphisms.
 
 This is the substitution category on contexts, complementary to the extension category `DRT.Ctx`
 whose morphisms are DRSs composed by merge: `Ctx` grows a context by introducing referents,
@@ -24,14 +25,10 @@ whose morphisms are DRSs composed by merge: `Ctx` grows a context by introducing
 ## Main definitions
 
 * `DRT.Context`, `DRT.Context.Hom`: contexts `(L, X)` and their morphisms, a `Category`.
-* `DRT.Literal`: literals `±A(x̄)` over a context, with `Literal.map` (renaming), `Literal.neg`,
-  decidable equality and finiteness.
-* `DRT.Literal.toCondition`: a literal as a DRS-condition — an atom, or a negated one-atom box.
-
-## Main statements
-
-* `DRT.Literal.toCondition_map`: renaming a literal along a context morphism is `Condition.map`
-  along any extension of the morphism to the referent type.
+* `DRT.Literal`: literals `±A(x̄)` over a context, with `Literal.map` (renaming), the
+  complementary literal `-l`, decidable equality and finiteness.
+* `DRT.Literal.functor`: literals as a functor to types.
+* `DRT.Literal.Consistent`: sets of literals containing no complementary pair.
 
 ## References
 
@@ -47,7 +44,8 @@ namespace DRT
 
 universe u v w
 
-/-- A context `(L, X)`: a finite vocabulary of relation symbols and a finite set of referents. -/
+/-- A context `(L, X)` pairs a finite vocabulary of relation symbols with a finite set of
+referents. -/
 structure Context (L : Language.{u, v}) (V : Type w) where
   /-- The vocabulary. -/
   vocab : Finset (Σ n, L.Relations n)
@@ -56,7 +54,7 @@ structure Context (L : Language.{u, v}) (V : Type w) where
 
 variable {L : Language.{u, v}} {V : Type w}
 
-/-- A context morphism: an inclusion of vocabularies together with a map of referents. -/
+/-- A context morphism includes the vocabulary and maps the referents. -/
 structure Context.Hom (c c' : Context L V) where
   /-- The vocabulary inclusion. -/
   incl : c.vocab ⊆ c'.vocab
@@ -68,7 +66,28 @@ instance : Category (Context L V) where
   id c := ⟨subset_rfl, id⟩
   comp f g := ⟨f.incl.trans g.incl, g.map ∘ f.map⟩
 
-/-- A literal over a context: a signed atomic formula `±A(x̄)`. -/
+namespace Context
+
+variable {c c' c'' : Context L V}
+
+@[ext] theorem hom_ext {f g : c ⟶ c'} (h : f.map = g.map) : f = g := by
+  cases f; cases g; cases h; rfl
+
+@[simp] theorem id_map (c : Context L V) : Hom.map (𝟙 c) = id := rfl
+
+@[simp] theorem comp_map (f : c ⟶ c') (g : c' ⟶ c'') : Hom.map (f ≫ g) = g.map ∘ f.map := rfl
+
+/-- `f.extend` acts as `f` on the source referents and as the identity elsewhere. -/
+def Hom.extend [DecidableEq V] (f : c ⟶ c') (t : V) : V :=
+  if h : t ∈ c.vars then f.map ⟨t, h⟩ else t
+
+@[simp] theorem Hom.extend_coe [DecidableEq V] (f : c ⟶ c') (t : c.vars) :
+    f.extend t = (f.map t : V) := by
+  simp [Hom.extend]
+
+end Context
+
+/-- A literal over a context is a signed atomic formula `±A(x̄)`. -/
 structure Literal (c : Context L V) where
   /-- The relation symbol. -/
   rel : c.vocab
@@ -81,14 +100,14 @@ namespace Literal
 
 variable {c c' c'' : Context L V}
 
-/-- Literals as dependent triples. -/
+/-- A literal is a dependent triple of a relation symbol, its arguments and a sign. -/
 def equivSigma (c : Context L V) : Literal c ≃ Σ r : c.vocab, (Fin r.1.1 → c.vars) × Bool where
   toFun l := ⟨l.rel, l.args, l.pos⟩
   invFun l := ⟨l.1, l.2.1, l.2.2⟩
   left_inv _ := rfl
   right_inv _ := rfl
 
-/-- Renaming along a context morphism. -/
+/-- `l.map f` renames the arguments of `l` along `f`. -/
 def map (f : c ⟶ c') (l : Literal c) : Literal c' :=
   ⟨⟨l.rel.1, f.incl l.rel.2⟩, f.map ∘ l.args, l.pos⟩
 
@@ -105,25 +124,33 @@ theorem map_injective {f : c ⟶ c'} (hf : Function.Injective f.map) :
   cases funext fun i => hf (congrFun (eq_of_heq h₂) i)
   rfl
 
-/-- The complementary literal. -/
-def neg (l : Literal c) : Literal c := ⟨l.rel, l.args, !l.pos⟩
+/-- The complement `-l` flips the sign of `l`. -/
+instance : InvolutiveNeg (Literal c) where
+  neg l := ⟨l.rel, l.args, !l.pos⟩
+  neg_neg l := by cases l; simp
 
-@[simp] theorem neg_neg (l : Literal c) : l.neg.neg = l := by cases l; simp [neg]
+@[simp] theorem pos_neg (l : Literal c) : (-l).pos = !l.pos := rfl
 
-@[simp] theorem neg_map (f : c ⟶ c') (l : Literal c) : (l.map f).neg = l.neg.map f := rfl
+theorem neg_ne_self (l : Literal c) : -l ≠ l := fun h => by
+  simpa using congrArg Literal.pos h
 
-/-- The literal as a DRS-condition: an atom, or for a negative literal the negation of the
-one-atom box with no referents. -/
-def toCondition (l : Literal c) : Condition L V :=
-  if l.pos then .rel l.rel.1.2 fun i => (l.args i : V)
-  else .neg ⟨∅, [.rel l.rel.1.2 fun i => (l.args i : V)]⟩
+@[simp] theorem neg_map (f : c ⟶ c') (l : Literal c) : -(l.map f) = (-l).map f := rfl
 
-/-- Renaming a literal along `f` is `Condition.map` along any extension of `f` to the
-referent type. -/
-theorem toCondition_map [DecidableEq V] (f : c ⟶ c') (g : V → V)
-    (hg : ∀ t : c.vars, g t = (f.map t : V)) (l : Literal c) :
-    (l.map f).toCondition = l.toCondition.map g := by
-  cases hp : l.pos <;> simp [toCondition, map, Condition.map, Box.map, hg, hp, Function.comp_def]
+variable (L V) in
+/-- Renaming makes literals a functor to types. -/
+def functor : Context L V ⥤ Type (max v w) where
+  obj := Literal
+  map f := TypeCat.ofHom (map f)
+
+@[simp] theorem functor_map (f : c ⟶ c') (l : Literal c) : (functor L V).map f l = l.map f :=
+  rfl
+
+/-- A set of literals is consistent when it contains no literal together with its complement. -/
+def Consistent (s : Finset (Literal c)) : Prop := ∀ l ∈ s, -l ∉ s
+
+theorem Consistent.mono {s t : Finset (Literal c)} (h : s ⊆ t) (ht : Consistent t) :
+    Consistent s :=
+  fun l hl hn => ht l (h hl) (h hn)
 
 end Literal
 
@@ -143,5 +170,8 @@ instance (c : Context L V) : DecidableEq (Literal c) := fun l l' =>
     · rintro rfl; exact ⟨rfl, rfl, rfl⟩)
 
 instance (c : Context L V) : Fintype (Literal c) := Fintype.ofEquiv _ (Literal.equivSigma c).symm
+
+instance {c : Context L V} (s : Finset (Literal c)) : Decidable (Literal.Consistent s) :=
+  inferInstanceAs (Decidable (∀ l ∈ s, -l ∉ s))
 
 end DRT

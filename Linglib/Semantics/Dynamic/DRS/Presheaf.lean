@@ -1,7 +1,7 @@
 module
 
+public import Linglib.Semantics.Dynamic.DRS.Basic
 public import Linglib.Semantics.Dynamic.DRS.Context
-public import Mathlib.CategoryTheory.Types.Basic
 public import Mathlib.CategoryTheory.Opposites
 public import Mathlib.Data.Finset.Sort
 
@@ -18,12 +18,19 @@ context, and restriction along a context morphism `f` is substitution-preimage,
 
 * `DRT.Theory`: consistent finite sets of literals over a context, with `Theory.restrict`.
 * `DRT.presheaf`: the presheaf `(Context L V)ᵒᵖ ⥤ Type`.
-* `DRT.Condition.IsLiteral`, `DRT.DRS.IsBasic`: literal conditions and basic DRSs.
-* `DRT.Theory.toDRS`: the basic DRS of a section.
+* `DRT.Literal.toCondition`, `DRT.Theory.toDRS`: literals as DRS-conditions, sections as basic
+  DRSs.
 
 ## Main statements
 
+* `DRT.Literal.toCondition_map`: renaming a literal is `Condition.map` along the extended
+  referent map.
 * `DRT.Theory.isBasic_toDRS`: sections realise as basic DRSs.
+
+## Implementation notes
+
+[abramsky-sadrzadeh-2014] take the deductive closures of consistent finite sets of literals; in a
+relational language the closure adds no literal, so a section is the consistent set itself.
 
 ## References
 
@@ -41,33 +48,46 @@ universe u v w
 
 variable {L : Language.{u, v}} {V : Type w}
 
-/-- A consistent finite set of literals over a context — a basic DRS's conditions, whose
-deductive closure adds no literals. -/
+/-- A theory over a context is a consistent finite set of literals, the conditions of a basic
+DRS. -/
 @[ext] structure Theory (c : Context L V) where
   /-- The literals held true. -/
   lits : Finset (Literal c)
   /-- No literal occurs with both signs. -/
-  consistent : ∀ l ∈ lits, l.neg ∉ lits
+  consistent : Literal.Consistent lits
 
-/-- A literal condition: an atom, or the negation of a one-atom box with no referents. -/
+/-- A condition is a literal when it is an atom or the negation of a one-atom box with no
+referents. -/
 def Condition.IsLiteral : Condition L V → Prop
   | .rel _ _ => True
   | .neg K => K.referents = ∅ ∧ ∃ (n : ℕ) (R : L.Relations n) (args : Fin n → V),
       K.conditions = [.rel R args]
   | _ => False
 
-/-- A basic DRS: every condition is a literal. -/
+/-- A DRS is basic when every condition is a literal. -/
 def DRS.IsBasic (K : DRS L V) : Prop := ∀ d ∈ K.conditions, d.IsLiteral
+
+/-- `l.toCondition` is the atom of `l`, or for a negative literal the negation of the one-atom
+box with no referents. -/
+def Literal.toCondition {c : Context L V} (l : Literal c) : Condition L V :=
+  if l.pos then .rel l.rel.1.2 fun i => (l.args i : V)
+  else .neg ⟨∅, [.rel l.rel.1.2 fun i => (l.args i : V)]⟩
+
+/-- Renaming a literal is `Condition.map` along the extended referent map. -/
+theorem Literal.toCondition_map [DecidableEq V] {c c' : Context L V} (f : c ⟶ c')
+    (l : Literal c) : (l.map f).toCondition = l.toCondition.map f.extend := by
+  cases hp : l.pos <;>
+    simp [toCondition, map, Condition.map, Box.map, hp, Function.comp_def]
 
 namespace Theory
 
 variable {c c' : Context L V}
 
-instance : Bot (Theory c) := ⟨⟨∅, by simp⟩⟩
+instance : Bot (Theory c) := ⟨⟨∅, by simp [Literal.Consistent]⟩⟩
 
 @[simp] theorem lits_bot : (⊥ : Theory c).lits = ∅ := rfl
 
-/-- The basic DRS `(X, s)` of a section: the context's referents with the literals as
+/-- `s.toDRS` is the basic DRS `(X, s)`, with the context's referents and the literals as
 conditions. -/
 noncomputable def toDRS (s : Theory c) : DRS L V := ⟨c.vars, s.lits.toList.map Literal.toCondition⟩
 
@@ -89,7 +109,7 @@ variable [DecidableEq V] [∀ n, DecidableEq (L.Relations n)]
 
 instance : DecidableEq (Theory c) := fun _ _ => decidable_of_iff _ Theory.ext_iff.symm
 
-/-- Restriction along a context morphism: `F(f)(s) ⊢ ±A(x̄) ⟺ s ⊢ ±A(f(x̄))`. -/
+/-- `s.restrict f` holds `±A(x̄)` iff `s` holds `±A(f(x̄))`. -/
 def restrict (f : c ⟶ c') (s : Theory c') : Theory c where
   lits := Finset.univ.filter fun l => l.map f ∈ s.lits
   consistent _ hl hn := s.consistent _ (Finset.mem_filter.1 hl).2 (Finset.mem_filter.1 hn).2
@@ -97,11 +117,14 @@ def restrict (f : c ⟶ c') (s : Theory c') : Theory c where
 @[simp] theorem mem_restrict {f : c ⟶ c'} {s : Theory c'} {l : Literal c} :
     l ∈ (s.restrict f).lits ↔ l.map f ∈ s.lits := by simp [restrict]
 
+@[simp] theorem restrict_bot (f : c ⟶ c') : (⊥ : Theory c').restrict f = ⊥ := by
+  ext; simp
+
 end Theory
 
 variable (L V) [DecidableEq V] [∀ n, DecidableEq (L.Relations n)]
 
-/-- The presheaf of basic DRSs: theories at each context, restriction along context morphisms. -/
+/-- Basic DRSs form a presheaf on contexts, restricting along context morphisms. -/
 def presheaf : (Context L V)ᵒᵖ ⥤ Type (max v w) where
   obj c := Theory c.unop
   map f := TypeCat.ofHom fun s => s.restrict f.unop
