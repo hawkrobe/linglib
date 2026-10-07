@@ -14,8 +14,8 @@ the number of classes below it, over the number of classes, a rational between z
 Universal degrees record positions and nothing else. They are unchanged by any order embedding of
 the scale, and on a comparison class two measures give the same universal degrees exactly when
 they induce the same quasi-order. Comparing two measures directly is not invariant under
-rescaling one of them, but comparing their universal degrees is, which is what makes a
-comparison between different adjectives meaningful.
+rescaling one of them (`Degree.cross_scale_not_natural`), but comparing their universal degrees
+is, which is what makes a comparison between different adjectives meaningful.
 
 ## Main definitions
 
@@ -31,8 +31,6 @@ comparison between different adjectives meaningful.
   of the quasi-order the measure induces.
 * `Degree.universalDegree_eq_iff`: two members share a universal degree exactly when they are
   equivalent in Cresswell's sense.
-* `Degree.cross_scale_not_natural`: comparing measures across scales is not invariant under
-  rescaling one of them.
 
 ## Implementation notes
 
@@ -199,13 +197,5 @@ theorem universalDegree_of_image_eq_Icc {μ : E → ℕ} {N : ℕ} (h : C.image 
   rw [universalDegree, h, relativeRank_Icc (h ▸ mem_image_of_mem μ hx)]
 
 end Universal
-
-/-- Comparing two measures across scales is not invariant under an order embedding of one of
-them, unlike comparing their universal degrees (`universalDegree_comp`). -/
-theorem cross_scale_not_natural :
-    ∃ f : ℚ ↪o ℚ, ∃ (μ ν : ℚ → ℚ) (x y : ℚ),
-      x ∈ Comparison.gt.over μ (ν y) ∧ x ∉ Comparison.gt.over (f ∘ μ) (ν y) :=
-  ⟨OrderEmbedding.ofStrictMono (· - 1) fun _ _ h ↦ by simpa, id, id, 1, 0, by simp,
-    by simp [Comparison.mem_over, Comparison.rel]⟩
 
 end Degree
