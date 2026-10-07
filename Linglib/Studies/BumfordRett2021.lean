@@ -27,9 +27,9 @@ is, and so whether the model recovers Rett's categorical classification, is a nu
   side of the class centre.
 * `expectedDeviation_antonym`: the negative antonym's expected deviation is minus the positive
   antonym's with the two costs exchanged.
-* `rett_classification`: at the paper's hyperparameters, every construction and antonym that Rett
-  classifies as evaluative has an expected deviation of larger magnitude than every one Rett
-  classifies as non-evaluative.
+* `antonymsExclusive_iff_not_isPolarInvariant`, `expectedDeviation_congr_of_antonymsExclusive`:
+  the antonyms exclude each other exactly in the constructions Rett classifies as polar-variant,
+  and there each antonym's listener ignores the other antonym's cost.
 
 ## Implementation notes
 
@@ -40,8 +40,10 @@ is, and so whether the model recovers Rett's categorical classification, is a nu
 * The text puts the centre in `[5, 14]`, but the nine centres `5..13` are the figures' columns,
   and a direct simulation of the model with them reproduces all eight first-listener values of
   Table 1 to two decimals.
-* Rationality and costs are parameters. The paper's rationality 4 and costs 0, 1 and 2 for
-  silence and the unmarked and marked antonyms (`paperCost`) enter only `rett_classification`.
+* Rationality and costs are parameters, and the theorems hold at every rationality and positive
+  cost. The paper's rationality 4 and costs 0, 1 and 2 enter only the prose. At those costs Rett's
+  classification holds as a gap in magnitude, every evaluative cell above every non-evaluative one,
+  only for rationality between about 3 and 20, so it is not stated.
 * Only the first pragmatic listener is modelled, not the stable iterate the paper also reports.
   The paper ranks the marked antonyms of the positive, the exact equative and the minimum
   equative by strength, but Table 1 bears this out only at the stable iterate: at the first
@@ -49,13 +51,14 @@ is, and so whether the model recovers Rett's categorical classification, is a nu
 
 ## TODO
 
-* `rett_classification` is numerical: at the paper's costs it holds from rationality about 3
-  upward and fails at 1 and 2. Every quantity in it is a rational function of `Real.exp (-1/8)`,
-  since the Gaussian weights are its powers `exp (-d ^ 2 / 8)` and the cost factors `exp (-4 * C)`
-  are its powers too, so it needs certified interval evaluation.
-* Raising the cost of the antonym of polarity `p` raises `p • expectedDeviation` over most of the
-  parameter range but not all of it: for the exact equative at rationality 8 with a free marked
-  antonym it falls slightly, so a structural version needs a hypothesis on the costs.
+* `costlier_antonym_more_evaluative` holds in every model checked numerically, including random
+  priors and thresholds. Both constructions reduce to the deviation `X` alone, with posterior
+  weight `g X * ℓ X`, `g` the symmetric prior and `ℓ X` a sum of speaker shares over the offsets.
+  When silence never competes, the two antonyms' `ℓ` differ by a function symmetric about `0`,
+  which pulls the cheaper antonym's expectation towards `0`. With silence competing, raising either
+  antonym's cost alone is not monotone, so the proof must compare the antonyms directly.
+* For the minimum equative the costlier antonym is not always the more evaluative one: it fails
+  at high rationality when the two costs are close.
 * The stable iterate of the listener.
 
 ## References
@@ -260,12 +263,6 @@ antonym of polarity `p`, is the statistic of evaluativity that the paper's Table
 noncomputable def expectedDeviation (c : Option Comparison) (α : ℝ) (cost : Utterance → ℝ≥0∞)
     (p : Polarity) : ℝ :=
   ∫ w, ((measured c w - w.centre : ℤ) : ℝ) ∂(listener c α cost (.say p)).fst
-
-/-- At rationality `α` the paper's costs leave silence free and charge the unmarked antonym 1 and
-the marked one 2, each cost `C` discounting the speaker's preference by `exp (-α * C)`. -/
-noncomputable def paperCost (α : ℝ) : Utterance → ℝ≥0∞
-  | .silence => 1
-  | .say p => ENNReal.ofReal (Real.exp (-α * if Rett2015.IsMarked p then 2 else 1))
 
 section Pipeline
 
@@ -569,7 +566,13 @@ theorem positive_centre_uniform (hα : 0 < α) (hc0 : ∀ u, cost u ≠ 0) (hcto
 
 end Centre
 
-/-! ### Rett's classification -/
+/-! ### Competition between the antonyms and Rett's classification
+
+Rett derives the evaluativity of the marked antonym from its competition with an unmarked antonym
+of the same truth conditions, which only the polar-invariant constructions provide. In the graded
+model the antonyms compete wherever both are true; where they never are, as in the comparative,
+each antonym's listener ignores the other antonym's cost, and markedness acts only through the
+antonym's own cost. -/
 
 /-- A simulated construction instantiates the positive construction, the equative for the
 comparisons `=` and `≥`, or the comparative for `>`, in Rett's classification. -/
@@ -578,20 +581,90 @@ def construction : Option Comparison → Construction
   | some .gt | some .lt => .comparative
   | some _ => .equative
 
-/-- The simulated constructions are the positive, the exact and the minimum-standard equatives, and
-the comparative. -/
-def simulated : Finset (Option Comparison) := {none, some .eq, some .ge, some .gt}
+/-- The antonyms of a construction exclude each other when no world verifies both under any
+offset. -/
+def AntonymsExclusive (c : Option Comparison) : Prop :=
+  ∀ σ w, ¬ (Holds c (.say .positive) σ w ∧ Holds c (.say .negative) σ w)
 
-/-- At the paper's hyperparameters the graded account recovers the categorical one as a gap in
-strength. Every construction and antonym that Rett classifies as evaluative has an expected
-deviation of larger magnitude than every one Rett classifies as non-evaluative; the first
-listener's values are 2.08 and −3.18 for the positive and −1.06 and −1.52 for the marked
-equatives, against 0.84 and 0.11 for the unmarked equatives and −0.74 and −0.44 for the
-comparative. -/
-theorem rett_classification {c c' : Option Comparison} (hc : c ∈ simulated)
-    (hc' : c' ∈ simulated) {p p' : Polarity} (h : Rett2015.Evaluative (construction c) p)
-    (h' : ¬ Rett2015.Evaluative (construction c') p') :
-    |expectedDeviation c' 4 (paperCost 4) p'| < |expectedDeviation c 4 (paperCost 4) p| := by
+theorem antonymsExclusive_comparative : AntonymsExclusive (some .gt) := fun σ w h ↦ by
+  simp [Holds] at h; omega
+
+/-- Among the constructions relating the subject to Keisha, the antonyms exclude each other exactly
+where Rett's classification makes the construction polar-variant. -/
+theorem antonymsExclusive_iff_not_isPolarInvariant {r : Comparison}
+    (hr : r = .eq ∨ r = .ge ∨ r = .gt) :
+    AntonymsExclusive (some r) ↔ ¬ Rett2015.IsPolarInvariant (construction (some r)) := by
+  have hboth : ∀ r, r = .eq ∨ r = .ge → ¬ AntonymsExclusive (some r) := by
+    rintro r (rfl | rfl) h <;>
+      exact h ⟨0, by decide⟩ ⟨⟨0, by decide⟩, ⟨9, by decide⟩⟩ (by decide)
+  rcases hr with rfl | rfl | rfl
+  · exact iff_of_false (hboth _ (.inl rfl)) (by decide)
+  · exact iff_of_false (hboth _ (.inr rfl)) (by decide)
+  · exact iff_of_true antonymsExclusive_comparative (by decide)
+
+section Competition
+
+variable {α : ℝ} {cost cost' : Utterance → ℝ≥0∞}
+
+private theorem speaker_congr_of_antonymsExclusive (hα : 0 < α) {c : Option Comparison}
+    (hex : AntonymsExclusive c) {p : Polarity} (hp : cost (.say p) = cost' (.say p))
+    (hs : cost .silence = cost' .silence) (σ : Finset.Icc (-4 : ℤ) 4) (w : World) :
+    RSA.speaker α cost (literal c σ) w {.say p} =
+      RSA.speaker α cost' (literal c σ) w {.say p} := by
+  by_cases h : Holds c (.say p) σ w
+  · have hw : ∀ u, literal c σ u {w} ^ α * cost u = literal c σ u {w} ^ α * cost' u := by
+      rintro (q | _)
+      · by_cases hq : q = p
+        · rw [hq, hp]
+        · have hq' : ¬ Holds c (.say q) σ w := fun h' ↦ by
+            cases p <;> cases q
+            all_goals first | exact hq rfl | exact hex σ w ⟨h, h'⟩ | exact hex σ w ⟨h', h⟩
+          rw [literal_eq_zero hq', ENNReal.zero_rpow_of_pos hα, zero_mul, zero_mul]
+      · rw [hs]
+    simp only [RSA.speaker_apply_singleton, hw]
+  · rw [RSA.speaker_apply_singleton_eq_zero hα (literal_eq_zero h),
+      RSA.speaker_apply_singleton_eq_zero hα (literal_eq_zero h)]
+
+/-- Where the antonyms exclude each other, an antonym's expected deviation depends on the costs only
+through its own cost and silence's, since the other antonym never competes with it. -/
+theorem expectedDeviation_congr_of_antonymsExclusive (hα : 0 < α) (hc0 : ∀ u, cost u ≠ 0)
+    (hctop : ∀ u, cost u ≠ ∞) (hc0' : ∀ u, cost' u ≠ 0) (hctop' : ∀ u, cost' u ≠ ∞)
+    {c : Option Comparison} (hex : AntonymsExclusive c) {p : Polarity}
+    (hp : cost (.say p) = cost' (.say p)) (hs : cost .silence = cost' .silence) :
+    expectedDeviation c α cost p = expectedDeviation c α cost' p := by
+  have hS := speaker_congr_of_antonymsExclusive hα hex hp hs
+  have hM : (RSA.familySpeaker (literal c) α cost ∘ₘ prior.prod Measure.count) {.say p} =
+      (RSA.familySpeaker (literal c) α cost' ∘ₘ prior.prod Measure.count) {.say p} := by
+    simp only [Measure.comp_apply_singleton, RSA.familySpeaker_apply, hS]
+  rw [expectedDeviation, expectedDeviation, integral_fintype .of_finite,
+    integral_fintype .of_finite]
+  refine Finset.sum_congr rfl fun w _ ↦ ?_
+  rw [listener_fst_real_singleton hα.le hc0 hctop, listener_fst_real_singleton hα.le hc0' hctop']
+  simp only [measureReal_def, hS, hM]
+
+/-- The marked comparative is the unmarked comparative reflected, at the marked antonym's cost:
+markedness acts on the comparative only through the antonym's own cost. -/
+theorem comparative_negative_eq_neg (hα : 0 < α) (hc0 : ∀ u, cost u ≠ 0)
+    (hctop : ∀ u, cost u ≠ ∞) (hc0' : ∀ u, cost' u ≠ 0) (hctop' : ∀ u, cost' u ≠ ∞)
+    (hp : cost' (.say .positive) = cost (.say .negative)) (hs : cost' .silence = cost .silence) :
+    expectedDeviation (some .gt) α cost .negative =
+      -expectedDeviation (some .gt) α cost' .positive := by
+  rw [show Polarity.negative = Polarity.negative * .positive from rfl,
+    expectedDeviation_antonym hα.le hc0 hctop,
+    expectedDeviation_congr_of_antonymsExclusive (cost := cost ∘ Utterance.antonym) (cost' := cost')
+      (p := .positive) hα (fun _ ↦ hc0 _) (fun _ ↦ hctop _) hc0' hctop'
+      antonymsExclusive_comparative hp.symm hs.symm]
+
+/-- In the positive construction and the exact equative, whose antonyms between them cover the
+scale under every offset, the costlier antonym is the more evaluative one, at every rationality and
+every cost of silence. With the paper's costs the first listener's values are 2.08 against −3.18
+for the positive and 0.84 against −1.06 for the exact equative. -/
+theorem costlier_antonym_more_evaluative (hα : 0 < α) (hc0 : ∀ u, cost u ≠ 0)
+    (hctop : ∀ u, cost u ≠ ∞) {c : Option Comparison} (hc : c = none ∨ c = some .eq)
+    (hcost : cost (.say .negative) < cost (.say .positive)) :
+    expectedDeviation c α cost .positive < -expectedDeviation c α cost .negative := by
   sorry
+
+end Competition
 
 end BumfordRett2021
