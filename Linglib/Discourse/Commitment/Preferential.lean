@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Discourse.Commitment.Basic
-public import Linglib.Semantics.Attitudes.Desire.Preferential
+public import Linglib.Semantics.Attitudes.Preference.Structure
 
 /-!
 # Preferential commitments and effective preferences

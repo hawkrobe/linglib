@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Attitudes.Preferential
+public import Linglib.Semantics.Attitudes.Preference.Degree
 public import Linglib.Data.Examples.UegakiSudo2019
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.Tactic.NormNum

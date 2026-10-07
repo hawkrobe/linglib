@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Attitudes.Desire.Preferential
+public import Linglib.Semantics.Attitudes.Preference.Structure
 public import Linglib.Semantics.Conditionals.Restrictor
 public import Linglib.Data.Examples.CondoravdiLauer2016
 public import Mathlib.Tactic.FinCases

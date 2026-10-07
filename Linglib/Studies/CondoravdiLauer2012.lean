@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Attitudes.Desire.Preferential
+public import Linglib.Semantics.Attitudes.Preference.Structure
 public import Linglib.Semantics.Modality.Kratzer.Operators
 public import Linglib.Discourse.Commitment.Preferential
 public import Linglib.Data.Examples.CondoravdiLauer2012

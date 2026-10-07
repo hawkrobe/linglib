@@ -2,18 +2,33 @@ module
 
 public import Mathlib.MeasureTheory.Integral.Bochner.Set
 public import Mathlib.Probability.ConditionalProbability
+public import Linglib.Semantics.Degree.Comparison
 
 /-!
 # Expected-value desire semantics
 
-`a wants p` iff the conditional expected value of `p` given `a`'s beliefs exceeds a
-contextual threshold — [lassiter-2017]'s scalar semantics for evaluative predicates,
-applied to *want* ([lassiter-2011]). `expectedValue` is the expectation of the value function
-under the prior conditioned on the worlds of `p` compatible with the beliefs. It is an interval
-scale (`expectedValue_affine`) and intermediate on disjoint propositions
-(`expectedValue_intermediate`), from which the threshold reading derives Weakening
-(`Want.union`) and, given exclusivity, the Smith Principle (`Want.inter_of_union_eq_univ`).
-The bare threshold admits simultaneous `want p` and `want ¬p` (`exists_want_and_want_compl`).
+On Lassiter's scalar semantics *want* is a gradable predicate: *a wants p* holds when the expected
+value of `p` given `a`'s beliefs lies above a contextual threshold, the positive form on the
+expected-value scale. The expected value is the expectation of a value function under the prior
+conditioned on the worlds of `p` compatible with the beliefs. It is an interval scale and lies
+between the values of disjoint propositions, from which the threshold reading derives Weakening
+and, when *want* is exclusive on the complement, the Smith Principle. The bare threshold admits
+wanting `p` and wanting `¬p` at once.
+
+## Main definitions
+
+* `Desire.ExpectedValue.expectedValue`: the expected value of a proposition given a belief state.
+* `Desire.ExpectedValue.Want`: the positive form of *want* on the expected-value scale.
+
+## Main statements
+
+* `Desire.ExpectedValue.expectedValue_affine`: the expected value is an interval scale.
+* `Desire.ExpectedValue.expectedValue_intermediate`: the expected value of a disjoint union lies
+  between those of its parts.
+* `Desire.ExpectedValue.Want.union`, `Desire.ExpectedValue.Want.inter_of_union_eq_univ`: Weakening
+  and the Smith Principle.
+* `Desire.ExpectedValue.exists_want_and_want_compl`: a proposition and its negation can both be
+  wanted.
 
 ## References
 
@@ -36,8 +51,12 @@ noncomputable def expectedValue : ℝ := ∫ w, V w ∂μ[|bel ∩ p]
 /-- `p` has positive prior mass inside the belief state when its compatible worlds do. -/
 def HasPositiveBeliefMass : Prop := μ (bel ∩ p) ≠ 0
 
-/-- `a wants p` when the expected value of `p` exceeds the threshold. -/
-def Want : Prop := θ < expectedValue μ V bel p
+/-- `a wants p` when `p` lies above the threshold on the expected-value scale, the positive form of
+a gradable predicate. -/
+def Want : Prop := p ∈ Degree.Comparison.gt.over (expectedValue μ V bel) θ
+
+variable {μ V θ bel p} in
+theorem want_iff : Want μ V θ bel p ↔ θ < expectedValue μ V bel p := Iff.rfl
 
 variable {μ V θ bel p q} [IsFiniteMeasure μ]
 
@@ -78,8 +97,8 @@ theorem expectedValue_eq_sum [Fintype W] [DecidablePred (· ∈ bel ∩ p)] :
   · simp [expectedValue, cond_eq_zero_of_meas_eq_zero h]
   · rw [mul_div_cancel_left₀ _ (measureReal_pos h).ne']
 
-/-- Expected value is an interval scale: a positive affine transformation of the value
-function transforms expected value by the same coefficients. -/
+/-- Expected value is an interval scale, commuting with affine transformations of the value
+function. -/
 theorem expectedValue_affine (h : HasPositiveBeliefMass μ bel p) (a b : ℝ) :
     expectedValue μ (fun w ↦ a * V w + b) bel p = a * expectedValue μ V bel p + b := by
   have := cond_isProbabilityMeasure (μ := μ) h
@@ -128,8 +147,8 @@ theorem Want.resolve_left (hp' : HasPositiveBeliefMass μ bel p)
     (hp : ¬ Want μ V θ bel p) : Want μ V θ bel q :=
   (lt_max_iff.1 (lt_of_lt_of_le h (expectedValue_intermediate hp' hq' hd).2)).resolve_left hp
 
-/-- The Smith Principle holds: for exhaustive `p` and `q` both above threshold, so is `p ∩ q`,
-provided `want` is exclusive on `q`. -/
+/-- By the Smith Principle, when `p` and `q` exhaust the worlds, wanting `p` without wanting `¬q`
+is wanting `p ∩ q`. -/
 theorem Want.inter_of_union_eq_univ (hpq : HasPositiveBeliefMass μ bel (p ∩ q))
     (hq' : HasPositiveBeliefMass μ bel qᶜ) (huniv : p ∪ q = Set.univ) (hp : Want μ V θ bel p)
     (hex : ¬ Want μ V θ bel qᶜ) : Want μ V θ bel (p ∩ q) := by

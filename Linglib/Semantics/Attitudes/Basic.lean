@@ -14,7 +14,7 @@ whose question use is the existential over answers, or a relation to the questio
 anxious uncertainty for *worry* ([anand-hacquard-2013]) or anticipation of resolution for
 Mandarin *qidai* and relevance for *care* ([elliott-etal-2017]), which holds of no particular
 answer. `Attitude` composes the two dimensions, and its projections are what verb entries and
-the doxastic and preferential semantics of `Doxastic.lean` and `Preference.lean` read.
+the semantics of `Doxastic.lean` and the `Preference/` files read.
 
 ## Implementation notes
 

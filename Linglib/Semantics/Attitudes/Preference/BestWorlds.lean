@@ -2,7 +2,7 @@ module
 
 public import Linglib.Semantics.Modality.Kratzer.Ordering
 public import Linglib.Semantics.Presupposition.Defs
-public import Linglib.Semantics.Attitudes.Desire.Conditional
+public import Linglib.Semantics.Attitudes.Preference.Conditional
 
 /-!
 # Best-worlds desire semantics
