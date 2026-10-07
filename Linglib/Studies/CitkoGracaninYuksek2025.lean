@@ -228,6 +228,13 @@ def projection : RoseTree Vertex → Option (List (RoseTree Vertex) × LIToken)
   | .node (.inl none) [l, r] => (projection r).map fun x ↦ (l :: x.1, x.2)
   | _ => none
 
+/-- The token heading a constituent is its raising head, and for a deleted copy the token whose
+phrase it copies. -/
+def headToken? (s : RoseTree Vertex) : Option LIToken :=
+  match s.value with
+  | .inr (some tok) => some tok
+  | _ => treeRaisingHead s
+
 /-- A constituent is a wh-specifier when its head is a wh-token or its trace. -/
 def IsWhSpecifier (s : RoseTree Vertex) : Prop :=
   ∃ tok ∈ (headToken? s).toList, tok.item.outerWh = true

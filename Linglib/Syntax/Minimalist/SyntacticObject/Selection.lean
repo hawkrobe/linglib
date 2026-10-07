@@ -162,6 +162,15 @@ theorem SelectionState.head_mul {r : LIToken}
   cases b
   exacts [Or.inr (selCombine_eq_some hproj), Or.inl (selCombine_eq_some hproj)]
 
+/-- A saturated state never projects, so the head of its product is the other factor's head. -/
+theorem SelectionState.head_of_mul_of {a r : LIToken} {y : SelectionState}
+    (h : (SelectionState.of a [] * y).head = some r) : y.head = some r := by
+  rcases y with ⟨_ | ⟨hb, _ | ⟨c, rest⟩⟩⟩
+  · cases h
+  · cases h
+  · simp only [SelectionState.mul_def, SelectionState.of, selCombine] at h
+    split_ifs at h <;> simp_all [SelectionState.head]
+
 /-! ### Selection check on the carriers -/
 
 /-- The selection state of a trace is a saturated copy of the phrase its token heads, and for the

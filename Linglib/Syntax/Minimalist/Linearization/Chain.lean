@@ -5,7 +5,8 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Syntax.Minimalist.Linearization.Replay
+public import Linglib.Syntax.Minimalist.SyntacticObject.Build
+public import Linglib.Syntax.Minimalist.SyntacticObject.Position
 public import Linglib.Syntax.Projection
 public import Linglib.Core.Data.RoseTree.Get
 public import Linglib.Syntax.Minimalist.SyntacticObject.Phase
@@ -37,8 +38,8 @@ Sato and Ngui find.
 
 * `Minimalist.tokenList`, `Minimalist.traceList`: the pronounced and the deleted copies.
 * `occurrences`, `traces`, `chain`, `Moves`, `IsShared`: the copies of a token.
-* `headIndex?`, `projectionAt`: the head daughter of a constituent, and the phrase a copy stands
-  for, its maximal projection along head daughters (`PhraseStructure.maximalProjectionAt`).
+* `projectionAt`: the phrase a copy stands for, its maximal projection along head daughters
+  (`headIndex?`, `PhraseStructure.maximalProjectionAt`).
 * `HasAntecedent`, `orphanTraces`: whether a pronounced copy c-commands a deleted one, and the
   deleted copies without antecedents, seen from their own conjunct copies.
 * `IsLink`, `links`, `chainTop`: the links of a chain and its scope position.
@@ -46,8 +47,6 @@ Sato and Ngui find.
 
 ## Main statements
 
-* `PlanarSyntacticObject.cCommandsIn_termAt_iff`: c-command by a term occurring once is
-  c-command from its position.
 * `withinComplement_iff_exists_mem_interior`: the positions in `interior` carry the terms within
   the complement of a phase head occurring once.
 
@@ -57,12 +56,9 @@ Sato and Ngui find.
   so the phase interior of the unordered object (`SyntacticObject.phaseInterior`, the terms
   within the head's complement) cannot tell the links of a successive-cyclic chain apart.
   `interior` is the head's c-command domain on positions.
-* The head of a constituent is found down its right spine (`headPos?`), a left leaf that selects
-  nothing being a specifier. Where two saturated phrases are sisters, a specifier and its sister,
-  the selection head `SyntacticObject.selHead` is undefined, as Marcolli, Chomsky and Berwick's
-  head functions are, and the raising head (`SyntacticObject.raisingHead`) heads the object only
-  where one of them has raised out of the other; `headPos?` takes the right sister, so that a
-  phrase with a specifier has a maximal projection to locate a copy in.
+* The head daughters follow the raising head, and the drawing convention only where it is
+  undefined (`headIndex?`, `SyntacticObject/Position.lean`), so that a phrase with a specifier
+  merged in place still has a maximal projection to locate a copy in.
 * A chain here is the copies an object contains; the replay of a derivation
   (`Derivation.externalize?`) builds overt chains with bound traces, while covert movement,
   sharing and copies without antecedents are available to the representation only.
@@ -136,25 +132,6 @@ instance : Decidable (IsShared t tok) := inferInstanceAs (Decidable (_ ≤ _))
 
 /-! ### The phrase a copy stands for -/
 
-/-- The position of the head of a constituent, relative to its root. A token or trace leaf is its
-own head; at a binary node a left leaf with nothing to select is a specifier and the head lies in
-the right daughter, a left leaf that selects is the head, and otherwise the head lies in the right
-daughter. -/
-def headPos? : RoseTree Vertex → Option (List ℕ)
-  | .node (.inl (some _)) _ | .node (.inr (some _)) _ => some []
-  | .node (.inl none) [.node (.inl (some tok)) [], r] =>
-      if tok.item.outerSel = [] then (headPos? r).map (1 :: ·) else some [0]
-  | .node (.inl none) [_, r] => (headPos? r).map (1 :: ·)
-  | .node (.inl none) _ => none
-  | .node (.inr none) _ => none
-
-/-- The head of a constituent is the token its head position carries. -/
-def headToken? (s : RoseTree Vertex) : Option LIToken :=
-  (headPos? s).bind fun q ↦ (subtreeAt s q).bind (Sum.elim id id ·.value)
-
-/-- The index of a constituent's head daughter, the first step of its head path. -/
-def headIndex? (s : RoseTree Vertex) : Option ℕ := (headPos? s).bind List.head?
-
 /-- The maximal projection of the copy at `p` is the highest position reached from `p` by
 climbing while the position is the head daughter of its mother. -/
 def projectionAt (p : TreePath) : TreePath :=
@@ -210,67 +187,6 @@ theorem links_eq_nil_of_length_le_one (h : (chain t tok).length ≤ 1) : links t
     · simp [hc] at h
   exact not_isLink_self t tok p
 
-/-! ### Terms and positions -/
-
-namespace PlanarSyntacticObject
-
-variable {t : PlanarSyntacticObject} {a : t.val.Positions} {x : SyntacticObject}
-
-/-- In a syntactic object the parent of a position other than the root branches. -/
-theorem isBranchingAt_parent (ha : a ≠ ⊥) : IsBranchingAt t.val a.val.parent := by
-  have hc : a.subtree ∈ (Order.pred a).subtree.children :=
-    Positions.mem_children_subtree.2
-      ⟨a, Order.pred_covBy_of_not_isMin (by simpa [isMin_iff_eq_bot] using ha), rfl⟩
-  have hso := isSyntacticObject_subtree (Order.pred a)
-  refine mem_positionsWhere.2 ⟨_, (Order.pred a).subtreeAt_eq, ?_⟩
-  generalize (Order.pred a).subtree = s at hc hso
-  obtain ⟨v, cs⟩ := s
-  rcases length_eq_zero_or_two hso with h0 | h2 <;>
-    grind [arity, List.length_eq_zero_iff, children_node]
-
-/-- C-command by a term occurring only at `a` is c-command from `a`. -/
-theorem cCommandsIn_termAt_iff (hu : ∀ q, t.termAt q = t.termAt a → q = a) :
-    (t : SyntacticObject).cCommandsIn (t.termAt a) x ↔
-      ∃ q : t.val.Positions, CCommands t.val a q ∧ t.termAt q = x := by
-  constructor
-  · rintro ⟨z, -, ⟨w, hw, haw, hwz, hne⟩, hzx⟩
-    obtain ⟨m, rfl⟩ := mem_terms_iff.1 hw
-    obtain ⟨c, hmc, hca⟩ := immediatelyContains_termAt.1 haw
-    obtain ⟨d, hmd, rfl⟩ := immediatelyContains_termAt.1 hwz
-    obtain ⟨q, hdq, rfl⟩ := containsOrEq_termAt.1 hzx
-    obtain rfl := hu c hca
-    have ha : c ≠ ⊥ := ne_bot_of_gt hmc.lt
-    have hm : m.val = c.val.parent := by rw [← Positions.pred_val, Order.pred_eq_of_covBy hmc]
-    refine ⟨q, (cCommands_iff_parent_lt (fun h ↦ ha (Subtype.ext h)) (isBranchingAt_parent ha)).2
-      ⟨hm ▸ Subtype.coe_lt_coe.2 (hmd.lt.trans_le hdq), fun hcq ↦ hne ?_⟩, rfl⟩
-    have hcd : c = d := by
-      rcases IsLeftLinear.comparable_of_le_common hcq (Subtype.coe_le_coe.2 hdq) with h | h
-      · exact (hmd.eq_or_eq hmc.le (Subtype.coe_le_coe.1 h)).resolve_left hmc.ne'
-      · exact ((hmc.eq_or_eq hmd.le (Subtype.coe_le_coe.1 h)).resolve_left hmd.ne').symm
-    rw [hcd]
-  · rintro ⟨q, hq, rfl⟩
-    have ha : a ≠ ⊥ := fun h ↦ hq.2.1 (h ▸ bot_le)
-    obtain ⟨hpq, haq⟩ :=
-      (cCommands_iff_parent_lt (fun h ↦ ha (Subtype.ext h)) (isBranchingAt_parent ha)).1 hq
-    obtain ⟨d, hpd, hdq⟩ := exists_covBy_le_of_lt (show Order.pred a < q from hpq)
-    refine ⟨t.termAt d, mem_terms_iff.2 ⟨d, rfl⟩, ⟨_, mem_terms_iff.2 ⟨Order.pred a, rfl⟩,
-      immediatelyContains_termAt.2
-        ⟨a, Order.pred_covBy_of_not_isMin (by simpa [isMin_iff_eq_bot] using ha), rfl⟩,
-      immediatelyContains_termAt.2 ⟨d, hpd, rfl⟩, fun h ↦ ?_⟩, containsOrEq_termAt.2 ⟨q, hdq, rfl⟩⟩
-    obtain rfl := hu d h.symm
-    exact haq hdq
-
-/-- A term immediately containing the term at `a`, which occurs only there, is the term at its
-parent. -/
-theorem eq_termAt_pred_of_immediatelyContains (hu : ∀ q, t.termAt q = t.termAt a → q = a)
-    {m : SyntacticObject} (hm : m ∈ (t : SyntacticObject).terms)
-    (h : immediatelyContains m (t.termAt a)) : m = t.termAt (Order.pred a) := by
-  obtain ⟨m, rfl⟩ := mem_terms_iff.1 hm
-  obtain ⟨c, hmc, hca⟩ := immediatelyContains_termAt.1 h
-  obtain rfl := hu c hca
-  rw [Order.pred_eq_of_covBy hmc]
-
-end PlanarSyntacticObject
 
 /-! ### Locality -/
 

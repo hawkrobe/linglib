@@ -6,7 +6,6 @@ Authors: Robert Hawkins
 module
 
 public import Mathlib.Logic.Relation
-public import Linglib.Core.Data.RoseTree.Positions
 public import Linglib.Core.Data.UnorderedTree.Count
 public import Linglib.Core.Data.UnorderedTree.Subtree
 public import Linglib.Syntax.Minimalist.SyntacticObject.Basic
@@ -34,7 +33,6 @@ a well-founded strict order and decides it.
 * `SyntacticObject.cCommandsIn`: `x` c-commands `y` in `root` when a sister of `x`
   reflexively contains `y` ([reinhart-1976]).
 * `SyntacticObject.asymCCommandsIn`: c-command in one direction only.
-* `PlanarSyntacticObject.termAt`: the term at a position of a planar object.
 * `SyntacticObject.domainIn`: the c-command domain of `x` in `root`, the terms it
   c-commands.
 
@@ -45,9 +43,6 @@ a well-founded strict order and decides it.
 * `SyntacticObject.wellFounded_flip_contains`: the proper term relation is
   well-founded.
 * `SyntacticObject.card_accessibleTerms`: one accessible term per edge.
-* `PlanarSyntacticObject.immediatelyContains_termAt`, `PlanarSyntacticObject.containsOrEq_termAt`:
-  the terms at the positions of a planar object contain one another as the positions dominate one
-  another.
 
 ## Implementation notes
 
@@ -340,54 +335,5 @@ theorem not_asymCCommandsIn_of_areSistersIn (h : areSistersIn root x y) :
 
 end SyntacticObject
 
-/-! ### Terms at positions -/
-
-namespace PlanarSyntacticObject
-
-open RoseTree SyntacticObject
-
-variable {t : PlanarSyntacticObject} {p : t.val.Positions} {y : SyntacticObject}
-
-theorem isSyntacticObject_subtree (p : t.val.Positions) :
-    IsSyntacticObject (UnorderedTree.mk p.subtree) :=
-  isSyntacticObject_of_mem_subtrees t.toSyntacticObject _
-    (mem_unorderedSubtrees.2 ⟨_, _, p.subtreeAt_eq, rfl⟩)
-
-variable (t) in
-/-- The term of `t` at a position. -/
-def termAt (p : t.val.Positions) : SyntacticObject := ⟨_, isSyntacticObject_subtree p⟩
-
-@[simp] theorem termAt_bot : t.termAt ⊥ = t.toSyntacticObject := rfl
-
-/-- The term at a position immediately contains the terms at its covers. -/
-theorem immediatelyContains_termAt :
-    immediatelyContains (t.termAt p) y ↔ ∃ q, p ⋖ q ∧ t.termAt q = y := by
-  show y.val ∈ (UnorderedTree.mk p.subtree).children ↔ _
-  rw [UnorderedTree.children_mk, Multiset.mem_coe, List.mem_map]
-  constructor
-  · rintro ⟨c, hc, hcy⟩
-    obtain ⟨q, hpq, rfl⟩ := Positions.mem_children_subtree.1 hc
-    exact ⟨q, hpq, Subtype.ext hcy⟩
-  · rintro ⟨q, hpq, rfl⟩
-    exact ⟨q.subtree, Positions.mem_children_subtree.2 ⟨q, hpq, rfl⟩, rfl⟩
-
-/-- The term at a position contains or equals the terms at the positions below it. -/
-theorem containsOrEq_termAt : containsOrEq (t.termAt p) y ↔ ∃ q, p ≤ q ∧ t.termAt q = y := by
-  rw [← mem_terms, ← Multiset.mem_map_of_injective Subtype.val_injective, map_val_terms]
-  show y.val ∈ unorderedSubtrees p.subtree ↔ _
-  simp only [unorderedSubtrees_eq_map, Multiset.mem_coe, List.mem_map, mem_subtrees,
-    Positions.isSubtree_subtree]
-  constructor
-  · rintro ⟨s, ⟨q, hpq, rfl⟩, hsy⟩
-    exact ⟨q, hpq, Subtype.ext hsy⟩
-  · rintro ⟨q, hpq, rfl⟩
-    exact ⟨q.subtree, ⟨q, hpq, rfl⟩, rfl⟩
-
-/-- The terms of a planar object are the terms at its positions. -/
-theorem mem_terms_iff : y ∈ t.toSyntacticObject.terms ↔ ∃ q, t.termAt q = y := by
-  rw [mem_terms, ← termAt_bot, containsOrEq_termAt]
-  simp
-
-end PlanarSyntacticObject
 
 end Minimalist
