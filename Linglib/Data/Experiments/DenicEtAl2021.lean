@@ -18,8 +18,8 @@ reported sign.
 
 ## Raw data
 
-* <https://semanticsarchive.net/Archive/WY4OTMzO>: The material, data, analysis script and model
-  output, as linked in §2.
+* <https://github.com/milicaden/polarity-items-monotonicity-inferences>: The material, data,
+  analysis script and model output, as linked in §2.
 
 ## References
 

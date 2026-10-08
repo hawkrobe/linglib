@@ -4,7 +4,7 @@
   "description": "Four inference-rating experiments on Amazon Mechanical Turk. A premise and a conclusion differ in a superset and a subset verb phrase (see birds, see doves) inside one of ten environments, and participants rated on a continuous bar how far the conclusion follows. The premise carried a negative polarity item, the positive polarity item some, or none. A directional rating keeps a subset to superset rating and reverses a superset to subset one (100 minus the rating). Effects are Bayesian mixed-model coefficients with 95% credible intervals and the posterior probability of the reported sign.",
   "rawData": [
    {
-    "url": "https://semanticsarchive.net/Archive/WY4OTMzO",
+    "url": "https://github.com/milicaden/polarity-items-monotonicity-inferences",
     "doc": "The material, data, analysis script and model output, as linked in §2."
    }
   ]
