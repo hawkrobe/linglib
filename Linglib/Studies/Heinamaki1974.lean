@@ -69,7 +69,7 @@ theorem since_veridical_complement : since A B → ∃ t, t ∈ timeTrace B :=
 theorem by_veridical_main : by_ A B → ∃ t, t ∈ timeTrace A := fun ⟨t, ht, _⟩ ↦ ⟨t, ht⟩
 
 /-- *Before ever* is strict *by*. -/
-theorem before_by : Anscombe.beforeEver A B → by_ A B :=
+theorem before_by : Tense.beforeEver A B → by_ A B :=
   fun ⟨t, ht, h⟩ ↦ ⟨t, ht, fun t' ht' ↦ (h t' ht').le⟩
 
 /-- *A before B* by the reference point holds when some time of `A` precedes `B`'s first time `lb`.
@@ -82,7 +82,7 @@ def after (A : Set (NonemptyInterval T)) (lb : T) : Prop := ∃ t ∈ timeTrace 
 /-- When `B` has a first time, the reference-point *before* is [anscombe-1964]'s
 quantificational one. -/
 theorem before_iff_anscombe {lb : T} (hlb : IsLeast (timeTrace B) lb) :
-    before A lb ↔ Anscombe.beforeEver A B := (beforeEver_iff_lt_least hlb).symm
+    before A lb ↔ Tense.beforeEver A B := (beforeEver_iff_lt_least hlb).symm
 
 /-- When `B` has a first time, the reference-point *after* is [anscombe-1964]'s. -/
 theorem after_iff_anscombe {lb : T} (hlb : IsLeast (timeTrace B) lb) :
@@ -108,7 +108,7 @@ theorem while_not_symm :
 
 /-- *By* allows coincidence where *before* does not, as an arrival exactly at the deadline shows. -/
 theorem by_not_before :
-    ¬∀ A B : Set (NonemptyInterval ℤ), by_ A B → Anscombe.beforeEver A B := by
+    ¬∀ A B : Set (NonemptyInterval ℤ), by_ A B → Tense.beforeEver A B := by
   intro h
   have h5 : (pure 5 : NonemptyInterval ℤ).fst = 5 ∧ (pure 5 : NonemptyInterval ℤ).snd = 5 :=
     ⟨rfl, rfl⟩
