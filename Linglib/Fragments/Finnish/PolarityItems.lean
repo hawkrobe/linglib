@@ -69,6 +69,7 @@ def items : List PolarityItem := [kukaan, kukaTahansa, vasta]
 
 /-- Every context of every entry licenses it. -/
 theorem finnish_licensing_sound :
-    ∀ e ∈ items, ∀ c ∈ e.licensingContexts, c.Admits e := by decide
+    ∀ e ∈ items, ∀ c ∈ e.licensingContexts, c.Admits e := by
+  simp +decide [kukaan, kukaTahansa, vasta, items, LicensingContext.Admits]
 
 end Finnish.PolarityItems

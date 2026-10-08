@@ -135,7 +135,7 @@ theorem anscombe_after_of_eventAfter {P Q : E → Prop} (h : eventAfter P Q) :
 
 /-- The event-level *before* projects to [anscombe-1964]'s quantificational one. -/
 theorem anscombe_before_of_eventBefore {P Q : E → Prop} (h : eventBefore P Q) :
-    Anscombe.beforeEver (τ '' {e | P e}) (τ '' {e | Q e}) := by
+    Tense.beforeEver (τ '' {e | P e}) (τ '' {e | Q e}) := by
   obtain ⟨e₁, hp, hall⟩ := h
   refine ⟨(τ e₁).snd, ?_, λ t' ht' => ?_⟩
   · rw [timeTrace_image]; exact ⟨e₁, hp, (τ e₁).fst_le_snd, le_rfl⟩
@@ -147,11 +147,11 @@ theorem anscombe_before_of_eventBefore {P Q : E → Prop} (h : eventBefore P Q) 
 to reach into the complement's, which whole-run-time precedence forbids. -/
 theorem not_eventBefore_of_anscombe :
     ¬ ∀ (P Q : NonemptyInterval ℤ → Prop),
-      Anscombe.beforeEver (τ '' {e | P e}) (τ '' {e | Q e}) → eventBefore P Q := by
+      Tense.beforeEver (τ '' {e | P e}) (τ '' {e | Q e}) → eventBefore P Q := by
   intro h
   let eP : NonemptyInterval ℤ := ⟨⟨1, 5⟩, by decide⟩
   let eQ : NonemptyInterval ℤ := ⟨⟨3, 8⟩, by decide⟩
-  have hansc : Anscombe.beforeEver (τ '' {e | e = eP}) (τ '' {e | e = eQ}) := by
+  have hansc : Tense.beforeEver (τ '' {e | e = eP}) (τ '' {e | e = eQ}) := by
     refine ⟨1, ?_, ?_⟩
     · rw [timeTrace_image]
       exact ⟨eP, rfl, by simp [eP], by simp [eP]⟩
@@ -182,7 +182,7 @@ example : Anscombe.after (τ '' {e | e = (.pure 1 : NonemptyInterval ℤ)})
   anscombe_after_of_eventAfter ⟨_, _, rfl, rfl, by simp [NonemptyInterval.precedes]⟩
 
 /-- The punctual *before* scenario projects to [anscombe-1964]'s *before* on run times. -/
-example : Anscombe.beforeEver (τ '' {e | e = (.pure 1 : NonemptyInterval ℤ)})
+example : Tense.beforeEver (τ '' {e | e = (.pure 1 : NonemptyInterval ℤ)})
     (τ '' {e | e = (.pure 3 : NonemptyInterval ℤ)}) :=
   anscombe_before_of_eventBefore ⟨_, rfl, fun _ h ↦ by subst h; simp [NonemptyInterval.precedes]⟩
 

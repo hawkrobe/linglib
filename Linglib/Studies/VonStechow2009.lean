@@ -441,7 +441,7 @@ theorem not_exists_earliest_will [DenselyOrdered T] :
 /-- When the clause has an earliest time, *before* the earliest time is the *before ever* of
 [anscombe-1964], the universal *before* that von Stechow attributes to her. -/
 theorem before_earliest_iff_beforeEver {A B : Set T} {m : T} (hm : IsLeast B m) :
-    (∃ t ∈ A, t < m) ↔ Anscombe1964.Anscombe.beforeEver (NonemptyInterval.pure '' A)
+    (∃ t ∈ A, t < m) ↔ Tense.beforeEver (NonemptyInterval.pure '' A)
       (NonemptyInterval.pure '' B) := by
   rw [Anscombe1964.beforeEver_iff_lt_least (lb := m)]
   · simp [Tense.timeTrace_image]

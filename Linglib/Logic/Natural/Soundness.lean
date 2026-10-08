@@ -498,6 +498,22 @@ theorem Signature.HoldsFor.of_le {σ τ : Signature} {f : α → β}
     (h : σ.HoldsFor f) (hστ : σ ≤ τ) : τ.HoldsFor f :=
   λ p hp => h p (Signature.le_iff.mp hστ hp)
 
+theorem Signature.holdsFor_anti_iff {f : α → β} : Signature.HoldsFor .anti f ↔ Antitone f := by
+  simp [Signature.HoldsFor, Signature.properties, Signature.Property.HoldsFor]
+
+theorem Signature.holdsFor_antiAdd_iff {f : α → β} :
+    Signature.HoldsFor .antiAdd f ↔ IsAntiAdditive f ∧ f ⊤ = ⊥ := by
+  simp only [Signature.HoldsFor, Signature.properties, Finset.mem_insert, Finset.mem_singleton,
+    forall_eq_or_imp, forall_eq, Signature.Property.HoldsFor]
+  exact ⟨fun h ↦ h.2, fun h ↦ ⟨h.1.antitone, h⟩⟩
+
+theorem Signature.holdsFor_antiAddMult_iff {f : α → β} :
+    Signature.HoldsFor .antiAddMult f ↔
+      (IsAntiAdditive f ∧ f ⊤ = ⊥) ∧ IsAntiMultiplicative f ∧ f ⊥ = ⊤ := by
+  simp only [Signature.HoldsFor, Signature.properties, Finset.mem_insert, Finset.mem_singleton,
+    forall_eq_or_imp, forall_eq, Signature.Property.HoldsFor]
+  exact ⟨fun h ↦ h.2, fun h ↦ ⟨h.1.1.antitone, h⟩⟩
+
 /-- A map with adjoints on both sides is in the morphism class ⊕⊞ — the
 Lawvere reading of the signature: bi-adjoints preserve everything. -/
 theorem Signature.holdsFor_addMult_of_galoisConnection {f u l : α → α}

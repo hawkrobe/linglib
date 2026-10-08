@@ -48,14 +48,15 @@ def nwukwuNa : PolarityItem :=
   , freeChoice := true
   , licensingContexts := [.modalPossibility, .modalNecessity, .imperative, .generic] }
 
-/-- *Nwukwu-to* needs clausemate negation, the only anti-morphic context, so clausal negation
-alone licenses it. -/
+/-- *Nwukwu-to* needs clausemate negation, so it is licensed exactly by the contexts carrying
+anti-morphic strength, which among the named contexts is clausal negation alone. -/
 theorem nwukwuTo_licensing_characterized (c : LicensingContext) :
-    c.Licenses nwukwuTo ↔ c = .negation :=
-  LicensingContext.licenses_iff_eq_negation rfl (by decide) c
+    c.Licenses nwukwuTo ↔ c.licenser.Carries .antiMorphic :=
+  LicensingContext.licenses_iff_carries rfl (by decide) (by decide)
 
 /-- Every attested environment of every item admits it. -/
 theorem korean_licensing_sound :
-    ∀ e ∈ [nwukwu, nwukwuTo, nwukwuNa], ∀ c ∈ e.licensingContexts, c.Admits e := by decide
+    ∀ e ∈ [nwukwu, nwukwuTo, nwukwuNa], ∀ c ∈ e.licensingContexts, c.Admits e := by
+  simp +decide [nwukwu, nwukwuTo, nwukwuNa, LicensingContext.Admits]
 
 end Korean.PolarityItems

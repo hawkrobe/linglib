@@ -3,7 +3,6 @@ module
 public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Finite
 public import Mathlib.Combinatorics.SimpleGraph.Maps
 public import Mathlib.Tactic.DeriveFintype
-public import Linglib.Semantics.Polarity.LicensingContext
 
 /-!
 # The implicational map of indefinite series
@@ -28,7 +27,6 @@ existential construction); the carrier bundling these with a form is `Indefinite
   functions, with their embedding `toFunction` in the map and the ones a region covers,
   `specificityFunctions`.
 * `Indefinite.npiRegion`: the functions of the map in which negative polarity items occur.
-* `PolarityItem.LicensingContext.haspelmathFunction`: the function a licensing environment realizes.
 * `Indefinite.OntologicalCategory`, `Indefinite.MorphologicalBasis`: the two further dimensions
   of a series.
 
@@ -163,26 +161,6 @@ theorem mem_specificityFunctions {s : Finset HaspelmathFunction} {u : Specificit
 the two negations. -/
 def npiRegion : Finset HaspelmathFunction :=
   {.question, .conditional, .indirectNeg, .directNeg}
-
-/-- The function a licensing environment realizes, for the polarity-relevant reading of an
-indefinite in it, and `none` for an environment outside the map's inventory: the rows of the
-Ladusaw tradition (*few*, *at most*, superlatives, focus *only*, *too … to*, the restrictor of a
-universal, temporal *since*), and *nobody*, *before*-clauses and adversatives, whose placement
-between direct and indirect negation the book does not settle. The modal, imperative, generic
-and free-relative rows realize free choice, their polarity-relevant use, although the same
-environments host plain irrealis uses of other indefinites; both comparatives realize the
-standard of comparison, although the phrasal comparative licenses no polarity item
-([hoeksema-1983]). -/
-def _root_.PolarityItem.LicensingContext.haspelmathFunction :
-    PolarityItem.LicensingContext → Option HaspelmathFunction
-  | .negation => some .directNeg
-  | .withoutClause | .doubtVerb | .denyVerb => some .indirectNeg
-  | .question => some .question
-  | .conditionalAntecedent => some .conditional
-  | .clausalComparative | .phrasalComparative => some .comparative
-  | .modalPossibility | .modalNecessity | .imperative | .generic
-  | .freeRelative => some .freeChoice
-  | _ => none
 
 /-! ### Ontological category and morphological basis -/
 

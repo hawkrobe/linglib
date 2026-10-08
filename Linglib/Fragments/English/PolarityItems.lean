@@ -309,6 +309,11 @@ is excluded from. -/
 theorem english_licensing_sound :
     ∀ e ∈ allPolarityItems, (∀ c ∈ e.licensingContexts, c.Admits e) ∧
       ∀ c ∈ e.excludedContexts, ¬ c.Admits e := by
-  decide
+  simp +decide [allPolarityItems, weakNPIs, strongNPIs, invertedNPIs,
+    allPPIs, canonicalPPIs, invertedPPIs, any, ever, yet, anymore, atAll, inTheLeast, aSingle,
+    whatsoever, liftAFinger, budgeAnInch, inYears, until_, either, whatever, whoever, whichever,
+    someone, already, too, somewhat, rather, tonsOf, utterly, wildHorses, allTheTeaInChina,
+    aTenFootPole, inAMillionYears, atTheDropOfAHat, inAJiffy, forAPittance, forASong,
+    LicensingContext.Admits]
 
 end English.PolarityItems

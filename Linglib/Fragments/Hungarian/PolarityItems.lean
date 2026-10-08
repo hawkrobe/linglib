@@ -67,19 +67,21 @@ def bárki : PolarityItem :=
   , licensingContexts := [.modalPossibility, .clausalComparative, .conditionalAntecedent]
   , excludedContexts := [.negation, .question] }
 
-/-- *Senki* needs clausemate negation, the only anti-morphic context, so clausal negation alone
-licenses it. -/
+/-- *Senki* needs clausemate negation, so it is licensed exactly by the contexts carrying
+anti-morphic strength, which among the named contexts is clausal negation alone. -/
 theorem senki_licensing_characterized (c : LicensingContext) :
-    c.Licenses senki ↔ c = .negation :=
-  LicensingContext.licenses_iff_eq_negation rfl (by decide) c
+    c.Licenses senki ↔ c.licenser.Carries .antiMorphic :=
+  LicensingContext.licenses_iff_carries rfl (by decide) (by decide)
 
 /-- The free-choice items are admitted in every context they are attested in. -/
 theorem freeChoice_licensing_sound :
-    ∀ e ∈ [akárki, bárki], ∀ c ∈ e.licensingContexts, c.Admits e := by decide
+    ∀ e ∈ [akárki, bárki], ∀ c ∈ e.licensingContexts, c.Admits e := by
+  simp +decide [akárki, bárki, LicensingContext.Admits]
 
 /-- The licensing theory admits both free-choice series under clausal negation and in questions,
 where [haspelmath-1997] stars them: a weak negative polarity item is licensed in both. -/
 theorem freeChoice_excluded_admitted :
-    ∀ e ∈ [akárki, bárki], ∀ c ∈ e.excludedContexts, c.Admits e := by decide
+    ∀ e ∈ [akárki, bárki], ∀ c ∈ e.excludedContexts, c.Admits e := by
+  simp +decide [akárki, bárki, LicensingContext.Admits]
 
 end Hungarian.PolarityItems

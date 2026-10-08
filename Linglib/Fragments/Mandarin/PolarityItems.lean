@@ -96,19 +96,24 @@ def renhe : PolarityItem :=
 
 /-- Every attested context of every entry admits it. -/
 theorem mandarin_licensing_sound :
-    ∀ e ∈ [shei, shenme, sheiDou, renhe], ∀ c ∈ e.licensingContexts, c.Admits e := by decide
+    ∀ e ∈ [shei, shenme, sheiDou, renhe], ∀ c ∈ e.licensingContexts, c.Admits e := by
+  simp +decide [shei, shenme, sheiDou, renhe, LicensingContext.Admits]
 
-/-- The emphatic series needs clausemate negation, the only anti-morphic context, so clausal
-negation alone licenses it, matching its direct-negation-only distribution. -/
+/-- The emphatic series needs clausemate negation, so it is licensed exactly by the contexts
+carrying anti-morphic strength, clausal negation alone among the named contexts. -/
 theorem sheiDou_licensing_characterized (c : LicensingContext) :
-    c.Licenses sheiDou ↔ c = .negation :=
-  LicensingContext.licenses_iff_eq_negation rfl (by decide) c
+    c.Licenses sheiDou ↔ c.licenser.Carries .antiMorphic :=
+  LicensingContext.licenses_iff_carries rfl (by decide) (by decide)
 
 /-- Direct negation is attested with *shénme* but not with bare *shéi*,
     whose direct-negation slot the emphatic series fills instead. -/
 theorem direct_negation_asymmetry :
     .negation ∈ shenme.licensingContexts ∧
       .negation ∉ shei.licensingContexts ∧
-      .negation ∈ sheiDou.licensingContexts := by decide
+      .negation ∈ sheiDou.licensingContexts := by
+  refine ⟨by simp [shenme], fun h ↦ ?_, by simp [sheiDou]⟩
+  simp only [shei, List.mem_cons, List.not_mem_nil, or_false] at h
+  rcases h with h | h | h | h | h | h | h <;>
+    exact absurd (congrArg LicensingContext.haspelmath h) (by decide)
 
 end Mandarin.PolarityItems

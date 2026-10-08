@@ -5,63 +5,36 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Logic.Natural.Basic
 public import Linglib.Semantics.Polarity.Item
-public import Linglib.Semantics.Quantification.Indefinite
 
 /-!
 # Polarity licensing
 
-The licensing theory of `PolarityItem`. Each `LicensingContext` imposes an entailment signature
-on the position of a polarity item, read modulo presuppositions (`LicensingContext.signature`),
-and so carries a strength of negation (`LicensingContext.strength`, `⊥` where the context is not
-downward entailing). Five contexts carry their strength only modulo their presupposition, von
-Fintel's focus *only*, temporal *since*, adversatives, conditional antecedents and superlatives;
-they are `LicensingContext.IsStrawsonOnly`.
-
-Following Ladusaw and von Fintel, a context licenses a weak negative polarity item when it is
-downward entailing modulo presuppositions. Following Zwarts and Gajewski, a stronger item needs
-its strength of negation outright, which the Strawson-only contexts lack although all five are
-Strawson anti-additive. A context blocks a positive polarity item when its strength outright
-reaches the item's anti-licensor, as van der Wouden and Szabolcsi describe. The generic contexts
-license free choice items, after Kadmon and Landman and Dayal, and questions license the weak
-negative polarity items, after van Rooy. `LicensingContext.Admits` puts the routes together into
-the distribution the theory predicts, which each fragment checks against the contexts its entries
-are attested and excluded in.
+A context licenses a polarity item when its licenser carries the strength of negation the item
+needs, after Ladusaw, Zwarts and Gajewski; when it is a modal licenser licensing free choice and the
+item is a free choice item, after Kadmon and Landman and Chierchia; or when it is a question and the
+item a weak negative polarity item, after van Rooy. It anti-licenses an item when its licenser holds
+outright the strength that blocks it, after van der Wouden and Szabolcsi. What each context carries
+is a theorem about the operators it denotes (`Semantics/Polarity/LicensingContext.lean`), so what it
+licenses follows from what it means, and each fragment checks the theory against the contexts its
+entries are attested and excluded in.
 
 ## Main declarations
 
-* `PolarityItem.LicensingContext.signature`, `LicensingContext.strength`,
-  `LicensingContext.IsStrawsonOnly`, `LicensingContext.mechanism`: the theory of each context.
-* `LicensingContext.Licenses`, `LicensingContext.AntiLicenses`, `LicensingContext.Admits`.
+* `PolarityItem.LicensingContext.Licenses`, `AntiLicenses`, `Admits`.
+* `PolarityItem.LicensingContext.licenses_nobody`, …: what each named context licenses, the simp
+  set fragments check their entries with.
 
 ## Main results
 
-* `LicensingContext.strength_eq_antiMorphic_iff`: clausal negation is the only anti-morphic
-  context, so an item needing anti-morphic strength is licensed by it alone
-  (`LicensingContext.licenses_iff_eq_negation`).
-* `LicensingContext.not_licenses_of_isStrawsonOnly`: a Strawson-only context licenses no item
-  stronger than weak ([gajewski-2011]).
+* `LicensingContext.licenses_iff_carries`: an item needing a strength above weak, and not a free
+  choice item, is licensed exactly by the contexts carrying that strength, so an item needing
+  anti-morphic strength is licensed by clausal negation and by no other named context.
 * `LicensingContext.antiLicenses_negation`: clausal negation blocks every positive polarity item,
   [vanderwouden-1997]'s (169).
-* `LicensingContext.antiLicenses_iff_licenses`: a context blocks the positive polarity items of a
-  class exactly where it licenses the negative polarity items of that class, the mirror image of
-  [vanderwouden-1997]'s (181).
-* `LicensingContext.Licenses.of_licensor_le`: a context licensing an item licenses every item with
-  a weaker licensor.
-
-## Implementation notes
-
-The signature of each context is the canonical one of the Ladusaw–Zwarts tradition, one row per
-context whatever the item; [israel-2001]'s scalar model rejects this framing (see
-`Studies/Israel2001.lean`). `Semantics/Polarity/Witnesses.lean` realizes the rows by model
-operators. The phrasal comparative is monotone and licenses nothing ([hoeksema-1983]); a surface
-*than NP* hosting a polarity item reduces to a clausal source and is listed under the clausal
-comparative ([bhatt-pancheva-2004], [heim-2006]). The anti-additive signature of the restrictor of
-a universal is standard, but its attribution is unsettled. Gajewski's condition on strong items
-concerns the meaning enriched with presupposition and implicature; the licensing relation reads
-the presupposition half, as the Strawson-only contexts, and the *few* and *at most* rows fall short
-of anti-additivity outright.
+* `LicensingContext.antiLicenses_iff_licenses`: a classical context blocks the positive polarity
+  items of a class exactly where it licenses the negative polarity items of that class, the mirror
+  image of [vanderwouden-1997]'s (181).
 
 ## References
 
@@ -73,104 +46,33 @@ of anti-additivity outright.
 * [gajewski-2011]
 * [szabolcsi-2004]
 * [van-rooy-2003-npi]
-* [dayal-1996]
-* [hoeksema-1983]
-* [bhatt-pancheva-2004]
-* [heim-2006]
-* [israel-2001]
-* [haspelmath-1997]
+* [chierchia-2006]
 -/
 
 @[expose] public section
 
-namespace PolarityItem
+namespace PolarityItem.LicensingContext
 
-open NaturalLogic
+open NaturalLogic Licenser
 
-/-- A context licenses polarity items by strengthening, the downward-entailing route of
-[kadmon-landman-1993], as a generic context, which licenses free choice items
-([kadmon-landman-1993], [dayal-1996]), or by the entropy of a question ([van-rooy-2003-npi]). -/
-inductive LicensingMechanism where
-  | strengthening
-  | genericIndefinite
-  | entropy
-  deriving DecidableEq, Repr
+variable (c : LicensingContext) (e : PolarityItem)
 
-namespace LicensingContext
+/-- A context **licenses** an item when its licenser carries the item's licensor, licenses free
+choice and the item is a free choice item, or licenses by relevance and the item is a weak negative
+polarity item. -/
+def Licenses : Prop :=
+  (∃ r ∈ e.licensor, c.licenser.Carries r) ∨ (c.licenser.LicensesFreeChoice ∧ e.IsFCI) ∨
+    (c.licenser.LicensesByRelevance ∧ e.licensor = some .weak)
 
-/-- The entailment signature a context imposes on the position of a polarity item, read modulo
-presuppositions ([von-fintel-1999]). Clausal negation is anti-morphic; the negative quantifiers,
-*without*, *deny*, the restrictor of a universal and the clausal comparative are anti-additive
-([ladusaw-1979], [zwarts-1998]), and so, modulo presuppositions, are focus *only*, adversatives,
-conditional antecedents, superlatives and temporal *since*, all of von Fintel's Strawson downward
-entailing operators being Strawson anti-additive ([gajewski-2011],
-`VonFintel1999.isStrawsonAntiAdditive_since`); *few*, *at most*, *before*, *too … to* and *doubt*
-are antitone; the phrasal comparative, questions and the generic contexts are monotone. -/
-def signature : LicensingContext → Signature
-  | .negation => .antiAddMult
-  | .nobody | .withoutClause | .denyVerb | .universalRestrictor | .clausalComparative
-  | .onlyFocus | .adversative | .conditionalAntecedent | .superlative | .sinceTemporal => .antiAdd
-  | .few | .atMost | .beforeClause | .tooTo | .doubtVerb => .anti
-  | .phrasalComparative | .question | .modalPossibility | .modalNecessity | .imperative
-  | .generic | .freeRelative => .mono
+/-- A context **anti-licenses** an item when its licenser holds outright the strength that blocks
+the item. -/
+def AntiLicenses : Prop := ∃ r ∈ e.antiLicensor, c.licenser.Holds r.toSignature
 
-/-- The strength of negation of a context modulo presuppositions, `⊥` when it is not downward
-entailing. -/
-def strength (c : LicensingContext) : WithBot DEStrength := c.signature.toDEStrength
+/-- A context **admits** an item when it licenses the item, if the item needs licensing, and does
+not anti-license it. -/
+def Admits : Prop := (e.IsNPI ∨ e.IsFCI → c.Licenses e) ∧ ¬ c.AntiLicenses e
 
-/-- A context is **Strawson-only** when its strength holds only modulo its presupposition, as for
-focus *only*, temporal *since*, adversatives, conditional antecedents and superlatives
-([von-fintel-1999]). -/
-def IsStrawsonOnly : LicensingContext → Prop
-  | .onlyFocus | .sinceTemporal | .adversative | .conditionalAntecedent | .superlative => True
-  | .negation | .nobody | .few | .atMost | .beforeClause | .withoutClause | .question
-  | .phrasalComparative | .clausalComparative | .tooTo | .modalPossibility | .modalNecessity
-  | .imperative | .generic | .freeRelative | .universalRestrictor | .doubtVerb | .denyVerb => False
-
-instance : DecidablePred IsStrawsonOnly
-  | .onlyFocus | .sinceTemporal | .adversative | .conditionalAntecedent | .superlative =>
-      isTrue trivial
-  | .negation | .nobody | .few | .atMost | .beforeClause | .withoutClause | .question
-  | .phrasalComparative | .clausalComparative | .tooTo | .modalPossibility | .modalNecessity
-  | .imperative | .generic | .freeRelative | .universalRestrictor | .doubtVerb | .denyVerb =>
-      isFalse id
-
-/-- The route by which a context licenses polarity items. -/
-def mechanism : LicensingContext → LicensingMechanism
-  | .modalPossibility | .modalNecessity | .imperative | .generic | .freeRelative =>
-      .genericIndefinite
-  | .question => .entropy
-  | _ => .strengthening
-
-/-- A context **licenses** an item by strengthening when its strength reaches the item's licensor
-and, for an item stronger than weak, holds outright; as a generic context when the item is a free
-choice item; or as a question when the item is a weak negative polarity item. -/
-def Licenses (c : LicensingContext) (e : PolarityItem) : Prop :=
-  (c.mechanism = .strengthening ∧
-      ∃ r ∈ e.licensor, (r : WithBot DEStrength) ≤ c.strength ∧ (r = .weak ∨ ¬ c.IsStrawsonOnly)) ∨
-    (c.mechanism = .genericIndefinite ∧ e.IsFCI) ∨
-    (c.mechanism = .entropy ∧ e.licensor = some .weak)
-
-instance (c : LicensingContext) (e : PolarityItem) : Decidable (c.Licenses e) :=
-  inferInstanceAs (Decidable (_ ∨ _ ∨ _))
-
-/-- A context **anti-licenses** an item when its strength holds outright and reaches the item's
-anti-licensor. -/
-def AntiLicenses (c : LicensingContext) (e : PolarityItem) : Prop :=
-  ∃ r ∈ e.antiLicensor, (r : WithBot DEStrength) ≤ c.strength ∧ ¬ c.IsStrawsonOnly
-
-instance (c : LicensingContext) (e : PolarityItem) : Decidable (c.AntiLicenses e) :=
-  inferInstanceAs (Decidable (∃ r ∈ e.antiLicensor, _))
-
-/-- A context **admits** an item when it licenses the item, if the item needs licensing, and
-does not anti-license it. -/
-def Admits (c : LicensingContext) (e : PolarityItem) : Prop :=
-  (e.IsNPI ∨ e.IsFCI → c.Licenses e) ∧ ¬ c.AntiLicenses e
-
-instance (c : LicensingContext) (e : PolarityItem) : Decidable (c.Admits e) :=
-  inferInstanceAs (Decidable (_ ∧ _))
-
-variable {c : LicensingContext} {e e' : PolarityItem}
+variable {c e}
 
 theorem admits_iff_licenses (h : e.antiLicensor = none) (he : e.IsNPI ∨ e.IsFCI) :
     c.Admits e ↔ c.Licenses e := by
@@ -180,76 +82,255 @@ theorem admits_iff_not_antiLicenses (hn : ¬ e.IsNPI) (hf : ¬ e.IsFCI) :
     c.Admits e ↔ ¬ c.AntiLicenses e := by
   simp [Admits, hn, hf]
 
-/-- Clausal negation is the only anti-morphic context. -/
-theorem strength_eq_antiMorphic_iff (c : LicensingContext) :
-    c.strength = DEStrength.antiMorphic ↔ c = .negation := by
-  cases c <;> decide
+/-! ### The profiles of the licensers -/
 
-/-- An item that needs anti-morphic strength and is not a free choice item is licensed by clausal
-negation alone. -/
-theorem licenses_iff_eq_negation (h : e.licensor = some .antiMorphic) (hf : ¬ e.IsFCI)
-    (c : LicensingContext) : c.Licenses e ↔ c = .negation := by
-  cases c <;> simp [Licenses, mechanism, h, hf] <;> decide
+private theorem licenses_classical {F : OperatorFamily} {s₀ : DEStrength}
+    (hc : c.licenser = .classical F) (h : ∀ s, c.licenser.Holds s.toSignature ↔ s ≤ s₀) :
+    c.Licenses e ↔ ∃ r ∈ e.licensor, r ≤ s₀ := by
+  unfold Licenses
+  rw [hc] at h ⊢
+  simp only [carries_classical_iff, h, LicensesFreeChoice, LicensesByRelevance, false_and,
+    or_false]
 
-/-- A Strawson-only context licenses no item stronger than weak that is not a free choice item.
-*Only*, adversatives and conditional antecedents are Strawson anti-additive, yet license no strong
-negative polarity item ([gajewski-2011]). -/
-theorem not_licenses_of_isStrawsonOnly (hc : c.IsStrawsonOnly) (h : ∀ r ∈ e.licensor, r ≠ .weak) :
-    ¬ c.Licenses e := by
-  rintro (⟨-, r, hr, -, hw | hs⟩ | ⟨hm, -⟩ | ⟨hm, -⟩)
-  · exact h r hr hw
-  · exact hs hc
-  all_goals cases c <;> first | exact absurd hc id | exact absurd hm (by decide)
+private theorem licenses_strawson {F : PresupposingFamily} (hc : c.licenser = .strawson F)
+    (hde : c.licenser.IsStrawsonDE) (hn : ¬ c.licenser.Holds .anti) :
+    c.Licenses e ↔ e.licensor = some .weak := by
+  unfold Licenses
+  rw [hc] at hde hn ⊢
+  simp only [carries_iff_eq_weak hde hn, LicensesFreeChoice, LicensesByRelevance, false_and,
+    or_false]
+  simp
 
-/-- Clausal negation blocks every positive polarity item, since its strength is the top of the
+private theorem antiLicenses_classical {s₀ : DEStrength}
+    (h : ∀ s, c.licenser.Holds s.toSignature ↔ s ≤ s₀) :
+    c.AntiLicenses e ↔ ∃ r ∈ e.antiLicensor, r ≤ s₀ := by
+  simp only [AntiLicenses, h]
+
+private theorem not_antiLicenses (h : ¬ c.licenser.Holds .anti) : ¬ c.AntiLicenses e :=
+  fun ⟨_, _, hr⟩ ↦ not_holds_toSignature h hr
+
+private theorem le_antiMorphic (s : DEStrength) : s ≤ .antiMorphic := by cases s <;> decide
+
+@[simp] theorem licenses_negation : negation.Licenses e ↔ e.IsNPI := by
+  rw [licenses_classical (s₀ := .antiMorphic) rfl fun s ↦
+    iff_of_true (holds_negation s) (le_antiMorphic s)]
+  exact ⟨fun ⟨r, hr, _⟩ ↦ Option.isSome_iff_exists.2 ⟨r, hr⟩,
+    fun h ↦ let ⟨r, hr⟩ := Option.isSome_iff_exists.1 h; ⟨r, hr, le_antiMorphic r⟩⟩
+
+@[simp] theorem antiLicenses_negation_iff : negation.AntiLicenses e ↔ e.IsPPI := by
+  rw [antiLicenses_classical (s₀ := .antiMorphic) fun s ↦
+    iff_of_true (holds_negation s) (le_antiMorphic s)]
+  exact ⟨fun ⟨r, hr, _⟩ ↦ Option.isSome_iff_exists.2 ⟨r, hr⟩,
+    fun h ↦ let ⟨r, hr⟩ := Option.isSome_iff_exists.1 h; ⟨r, hr, le_antiMorphic r⟩⟩
+
+@[simp] theorem licenses_nobody : nobody.Licenses e ↔ ∃ r ∈ e.licensor, r ≤ .antiAdditive :=
+  licenses_classical rfl fun _ ↦ holds_nobody_iff
+
+@[simp] theorem antiLicenses_nobody :
+    nobody.AntiLicenses e ↔ ∃ r ∈ e.antiLicensor, r ≤ .antiAdditive :=
+  antiLicenses_classical fun _ ↦ holds_nobody_iff
+
+@[simp] theorem licenses_few : few.Licenses e ↔ ∃ r ∈ e.licensor, r ≤ .weak :=
+  licenses_classical rfl fun _ ↦ holds_few_iff
+
+@[simp] theorem antiLicenses_few : few.AntiLicenses e ↔ ∃ r ∈ e.antiLicensor, r ≤ .weak :=
+  antiLicenses_classical fun _ ↦ holds_few_iff
+
+@[simp] theorem licenses_atMost : atMost.Licenses e ↔ ∃ r ∈ e.licensor, r ≤ .weak :=
+  licenses_classical rfl fun _ ↦ holds_atMost_iff
+
+@[simp] theorem antiLicenses_atMost : atMost.AntiLicenses e ↔ ∃ r ∈ e.antiLicensor, r ≤ .weak :=
+  antiLicenses_classical fun _ ↦ holds_atMost_iff
+
+@[simp] theorem licenses_universalRestrictor :
+    universalRestrictor.Licenses e ↔ ∃ r ∈ e.licensor, r ≤ .antiAdditive :=
+  licenses_classical rfl fun _ ↦ holds_universalRestrictor_iff
+
+@[simp] theorem antiLicenses_universalRestrictor :
+    universalRestrictor.AntiLicenses e ↔ ∃ r ∈ e.antiLicensor, r ≤ .antiAdditive :=
+  antiLicenses_classical fun _ ↦ holds_universalRestrictor_iff
+
+@[simp] theorem licenses_withoutClause :
+    withoutClause.Licenses e ↔ ∃ r ∈ e.licensor, r ≤ .antiAdditive :=
+  licenses_classical rfl fun _ ↦ holds_withoutClause_iff
+
+@[simp] theorem antiLicenses_withoutClause :
+    withoutClause.AntiLicenses e ↔ ∃ r ∈ e.antiLicensor, r ≤ .antiAdditive :=
+  antiLicenses_classical fun _ ↦ holds_withoutClause_iff
+
+@[simp] theorem licenses_beforeClause :
+    beforeClause.Licenses e ↔ ∃ r ∈ e.licensor, r ≤ .antiAdditive :=
+  licenses_classical rfl fun _ ↦ holds_beforeClause_iff
+
+@[simp] theorem antiLicenses_beforeClause :
+    beforeClause.AntiLicenses e ↔ ∃ r ∈ e.antiLicensor, r ≤ .antiAdditive :=
+  antiLicenses_classical fun _ ↦ holds_beforeClause_iff
+
+@[simp] theorem licenses_clausalComparative :
+    clausalComparative.Licenses e ↔ ∃ r ∈ e.licensor, r ≤ .antiAdditive :=
+  licenses_classical rfl fun _ ↦ holds_clausalComparative_iff
+
+@[simp] theorem antiLicenses_clausalComparative :
+    clausalComparative.AntiLicenses e ↔ ∃ r ∈ e.antiLicensor, r ≤ .antiAdditive :=
+  antiLicenses_classical fun _ ↦ holds_clausalComparative_iff
+
+@[simp] theorem licenses_tooTo : tooTo.Licenses e ↔ ∃ r ∈ e.licensor, r ≤ .antiAdditive :=
+  licenses_classical rfl fun _ ↦ holds_tooTo_iff
+
+@[simp] theorem antiLicenses_tooTo :
+    tooTo.AntiLicenses e ↔ ∃ r ∈ e.antiLicensor, r ≤ .antiAdditive :=
+  antiLicenses_classical fun _ ↦ holds_tooTo_iff
+
+@[simp] theorem licenses_doubtVerb : doubtVerb.Licenses e ↔ ∃ r ∈ e.licensor, r ≤ .weak :=
+  licenses_classical rfl fun _ ↦ holds_doubtVerb_iff
+
+@[simp] theorem antiLicenses_doubtVerb :
+    doubtVerb.AntiLicenses e ↔ ∃ r ∈ e.antiLicensor, r ≤ .weak :=
+  antiLicenses_classical fun _ ↦ holds_doubtVerb_iff
+
+@[simp] theorem licenses_denyVerb : denyVerb.Licenses e ↔ ∃ r ∈ e.licensor, r ≤ .antiAdditive :=
+  licenses_classical rfl fun _ ↦ holds_denyVerb_iff
+
+@[simp] theorem antiLicenses_denyVerb :
+    denyVerb.AntiLicenses e ↔ ∃ r ∈ e.antiLicensor, r ≤ .antiAdditive :=
+  antiLicenses_classical fun _ ↦ holds_denyVerb_iff
+
+@[simp] theorem licenses_onlyFocus : onlyFocus.Licenses e ↔ e.licensor = some .weak :=
+  licenses_strawson rfl isStrawsonDE_onlyFocus not_holds_onlyFocus
+
+@[simp] theorem not_antiLicenses_onlyFocus : ¬ onlyFocus.AntiLicenses e :=
+  not_antiLicenses not_holds_onlyFocus
+
+@[simp] theorem licenses_adversative : adversative.Licenses e ↔ e.licensor = some .weak :=
+  licenses_strawson rfl isStrawsonDE_adversative not_holds_adversative
+
+@[simp] theorem not_antiLicenses_adversative : ¬ adversative.AntiLicenses e :=
+  not_antiLicenses not_holds_adversative
+
+@[simp] theorem licenses_superlative : superlative.Licenses e ↔ e.licensor = some .weak :=
+  licenses_strawson rfl isStrawsonDE_superlative not_holds_superlative
+
+@[simp] theorem not_antiLicenses_superlative : ¬ superlative.AntiLicenses e :=
+  not_antiLicenses not_holds_superlative
+
+@[simp] theorem licenses_conditionalAntecedent :
+    conditionalAntecedent.Licenses e ↔ e.licensor = some .weak :=
+  licenses_strawson rfl isStrawsonDE_conditionalAntecedent not_holds_conditionalAntecedent
+
+@[simp] theorem not_antiLicenses_conditionalAntecedent : ¬ conditionalAntecedent.AntiLicenses e :=
+  not_antiLicenses not_holds_conditionalAntecedent
+
+@[simp] theorem licenses_sinceTemporal : sinceTemporal.Licenses e ↔ e.licensor = some .weak :=
+  licenses_strawson rfl isStrawsonDE_sinceTemporal not_holds_sinceTemporal
+
+@[simp] theorem not_antiLicenses_sinceTemporal : ¬ sinceTemporal.AntiLicenses e :=
+  not_antiLicenses not_holds_sinceTemporal
+
+@[simp] theorem licenses_question : question.Licenses e ↔ e.licensor = some .weak := by
+  refine ⟨fun h ↦ ?_, fun h ↦ .inr (.inr ⟨Licenser.licensesByRelevance_question, h⟩)⟩
+  rcases h with ⟨r, _, hr⟩ | ⟨h, _⟩ | ⟨_, h⟩
+  · cases r <;> exact False.elim hr
+  · exact False.elim h
+  · exact h
+
+@[simp] theorem not_antiLicenses_question : ¬ question.AntiLicenses e :=
+  not_antiLicenses id
+
+private theorem licenses_modal {F : ModalFamily} (hc : c.licenser = .modal F)
+    (h : c.licenser.LicensesFreeChoice) : c.Licenses e ↔ e.IsFCI := by
+  refine ⟨fun hl ↦ ?_, fun hf ↦ .inr (.inl ⟨h, hf⟩)⟩
+  rcases hl with ⟨r, _, hr⟩ | ⟨_, hf⟩ | ⟨hq, _⟩
+  · rw [hc] at hr
+    cases r <;> exact False.elim hr
+  · exact hf
+  · rw [hc] at hq
+    exact False.elim hq
+
+@[simp] theorem licenses_modalPossibility : modalPossibility.Licenses e ↔ e.IsFCI :=
+  licenses_modal rfl licensesFreeChoice_modalPossibility
+
+@[simp] theorem licenses_modalNecessity : modalNecessity.Licenses e ↔ e.IsFCI :=
+  licenses_modal rfl licensesFreeChoice_necessityFamily
+
+@[simp] theorem licenses_imperative : imperative.Licenses e ↔ e.IsFCI :=
+  licenses_modal rfl licensesFreeChoice_necessityFamily
+
+@[simp] theorem licenses_generic : generic.Licenses e ↔ e.IsFCI :=
+  licenses_modal rfl licensesFreeChoice_necessityFamily
+
+@[simp] theorem licenses_freeRelative : freeRelative.Licenses e ↔ e.IsFCI :=
+  licenses_modal rfl licensesFreeChoice_necessityFamily
+
+@[simp] theorem not_antiLicenses_modal {F : ModalFamily} (hc : c.licenser = .modal F) :
+    ¬ c.AntiLicenses e :=
+  not_antiLicenses (by rw [hc]; exact id)
+
+@[simp] theorem not_antiLicenses_modalPossibility : ¬ modalPossibility.AntiLicenses e :=
+  not_antiLicenses_modal rfl
+
+@[simp] theorem not_antiLicenses_modalNecessity : ¬ modalNecessity.AntiLicenses e :=
+  not_antiLicenses_modal rfl
+
+@[simp] theorem not_antiLicenses_imperative : ¬ imperative.AntiLicenses e :=
+  not_antiLicenses_modal rfl
+
+@[simp] theorem not_antiLicenses_generic : ¬ generic.AntiLicenses e :=
+  not_antiLicenses_modal rfl
+
+@[simp] theorem not_antiLicenses_freeRelative : ¬ freeRelative.AntiLicenses e :=
+  not_antiLicenses_modal rfl
+
+/-! ### The theory -/
+
+/-- An item needing a strength above weak, and not a free choice item, is licensed exactly by the
+contexts whose licenser carries that strength. -/
+theorem licenses_iff_carries {r : DEStrength} (he : e.licensor = some r) (hr : r ≠ .weak)
+    (hf : ¬ e.IsFCI) : c.Licenses e ↔ c.licenser.Carries r := by
+  refine ⟨?_, fun h ↦ .inl ⟨r, he, h⟩⟩
+  rintro (⟨s, hs, hc⟩ | ⟨_, hfc⟩ | ⟨_, hw⟩)
+  · rw [he, Option.mem_def, Option.some_inj] at hs
+    exact hs ▸ hc
+  · exact absurd hfc hf
+  · rw [he, Option.some_inj] at hw
+    exact absurd hw hr
+
+/-- Clausal negation blocks every positive polarity item, since its licenser holds the top of the
 chain ([vanderwouden-1997]'s (169)). -/
-theorem antiLicenses_negation (h : e.IsPPI) : LicensingContext.negation.AntiLicenses e := by
-  obtain ⟨r, hr⟩ := Option.isSome_iff_exists.mp h
-  exact ⟨r, hr, WithBot.coe_le_coe.mpr (by cases r <;> decide), id⟩
+theorem antiLicenses_negation (h : e.IsPPI) : negation.AntiLicenses e :=
+  antiLicenses_negation_iff.mpr h
 
-/-- A context that licenses by strengthening outright blocks the positive polarity items of a
-class exactly where it licenses the negative polarity items of that class ([vanderwouden-1997]'s
-(181)). -/
-theorem antiLicenses_iff_licenses (h : e.antiLicensor = e'.licensor)
-    (hc : c.mechanism = .strengthening) (hs : ¬ c.IsStrawsonOnly) :
+/-- A classical context blocks the positive polarity items of a class exactly where it licenses
+the negative polarity items of that class (the mirror image of [vanderwouden-1997]'s (181)). -/
+theorem antiLicenses_iff_licenses {e' : PolarityItem} {F : OperatorFamily}
+    (hc : c.licenser = .classical F) (h : e.antiLicensor = e'.licensor) :
     c.AntiLicenses e ↔ c.Licenses e' := by
-  simp [AntiLicenses, Licenses, hc, hs, h]
+  unfold AntiLicenses Licenses
+  rw [hc, h]
+  simp only [carries_classical_iff, LicensesFreeChoice, LicensesByRelevance, false_and, or_false]
 
 /-- A context licensing an item licenses every item with a weaker licensor that is a free choice
 item if the first is. -/
-theorem Licenses.of_licensor_le {r r' : DEStrength} (he : e.licensor = some r)
+theorem Licenses.of_licensor_le {e' : PolarityItem} {r r' : DEStrength} (he : e.licensor = some r)
     (he' : e'.licensor = some r') (hr : r' ≤ r) (hf : e.IsFCI → e'.IsFCI) (hl : c.Licenses e) :
     c.Licenses e' := by
-  have hweak : ∀ s : DEStrength, s ≤ .weak → s = .weak := by decide
-  rcases hl with ⟨hc, s, hs, hle, hsw⟩ | ⟨hc, hfc⟩ | ⟨hc, hw⟩
-  · rw [he, Option.mem_some_iff] at hs
+  rcases hl with ⟨s, hs, hc⟩ | ⟨hc, hfc⟩ | ⟨hc, hw⟩
+  · rw [he, Option.mem_def, Option.some_inj] at hs
     subst hs
-    refine .inl ⟨hc, r', he', (WithBot.coe_le_coe.mpr hr).trans hle, hsw.imp (fun h ↦ ?_) id⟩
-    subst h
-    exact hweak r' hr
+    refine .inl ⟨r', he', ?_⟩
+    cases r' with
+    | weak =>
+      cases r with
+      | weak => exact hc
+      | antiAdditive | antiMorphic =>
+        exact isStrawsonDE_of_holds_anti (Holds.toSignature_of_le (s := .weak) hc (by decide))
+    | antiAdditive | antiMorphic =>
+      cases r with
+      | weak => exact absurd hr (by decide)
+      | antiAdditive | antiMorphic => exact Holds.toSignature_of_le hc hr
   · exact .inr (.inl ⟨hc, hf hfc⟩)
   · rw [he, Option.some_inj] at hw
     subst hw
-    exact .inr (.inr ⟨hc, by rw [he', hweak r' hr]⟩)
+    exact .inr (.inr ⟨hc, by
+      rw [he']; congr; cases r' <;> first | rfl | exact absurd hr (by decide)⟩)
 
-end LicensingContext
-
-/-! ### The implicational map meets the licensing table
-
-`LicensingContext.haspelmathFunction` (`Semantics/Quantification/Indefinite.lean`) classifies
-each context by the function of [haspelmath-1997]'s map it realizes. -/
-
-/-- The free-choice function of the map is exactly the generic mechanism. -/
-theorem haspelmathFunction_eq_freeChoice_iff (c : LicensingContext) :
-    c.haspelmathFunction = some .freeChoice ↔ c.mechanism = .genericIndefinite := by
-  cases c <;> decide
-
-/-- Every context realizing a function of the map's negative-polarity region, question through
-direct negation, is downward entailing or a question, so the region is licensable by weak
-negative polarity items, though not uniformly downward entailing ([van-rooy-2003-npi]). -/
-theorem haspelmathFunction_npi_region (c : LicensingContext) {f : Indefinite.HaspelmathFunction}
-    (hf : c.haspelmathFunction = some f) (hr : f ∈ Indefinite.npiRegion) :
-    c.strength ≠ ⊥ ∨ c.mechanism = .entropy := by
-  revert hf hr; cases c <;> cases f <;> decide
-
-end PolarityItem
+end PolarityItem.LicensingContext

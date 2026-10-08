@@ -51,6 +51,6 @@ which licenses it as a negative polarity item and blocks it as a positive one. -
 theorem ooit_admits :
     (∀ c ∈ ooit.licensingContexts, c.Admits ooit) ∧
       LicensingContext.negation.Licenses ooit ∧ ¬ LicensingContext.negation.Admits ooit := by
-  decide
+  simp +decide [ooit, LicensingContext.Admits]
 
 end Dutch.PolarityItems

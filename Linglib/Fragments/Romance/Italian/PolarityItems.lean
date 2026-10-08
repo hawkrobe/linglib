@@ -146,6 +146,8 @@ def items : List PolarityItem :=
 
 /-- Every attested context of every entry admits it. -/
 theorem italian_licensing_sound :
-    ∀ e ∈ items, ∀ c ∈ e.licensingContexts, c.Admits e := by decide
+    ∀ e ∈ items, ∀ c ∈ e.licensingContexts, c.Admits e := by
+  simp +decide [nessuno, niente, neanche, mai, alcuno, pur, affatto, qualsiasi, unoQualsiasi, items,
+    LicensingContext.Admits]
 
 end Italian.PolarityItems
