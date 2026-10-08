@@ -150,6 +150,9 @@ theorem scopeMonotone_some : ScopeMonotone (GQ.some : GQ α) := by
 theorem scopeAntitone_no : ScopeAntitone (no : GQ α) := by
   intro R S S' hSS' h x hR hS; exact h x hR (hSS' x hS)
 
+theorem scopeMonotone_the : ScopeMonotone (the : GQ α) := by
+  intro R S S' hSS' ⟨x, hR, hS⟩; exact ⟨x, hR, hSS' x hS⟩
+
 /-- On a nonempty domain `some` is not scope antitone, since `some ⊤ ⊤` holds and `some ⊤ ⊥`
 fails. -/
 theorem not_scopeAntitone_some [Nonempty α] : ¬ ScopeAntitone (GQ.some : GQ α) := fun h ↦
