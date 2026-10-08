@@ -14,14 +14,14 @@ directional prepositions *up to* and *from*, beside the adverbs *minimally* and 
 *Exactly* and *precisely* fix the amount, *about*, *around*, *approximately* and *roughly*
 place it near the numeral, and *almost* and *nearly* place it near the numeral and short of it.
 
-Each modifier is a `Numerals.Modifier`, denoting the set of readings the literature makes available
-for it, each a modifier of sets of amounts. A bound-setting modifier and an exactifier have the one
-reading of the comparison they express, `Degree.Comparison.modifier`, so a modifier of one class and
-its counterpart of the other differ in whether the interval keeps the number. An approximator has a
-reading for each value of a tolerance the context supplies: Égré, Spector, Mortier and Verheyen give
-*around n* the amounts within the tolerance of `n` on either side, and on Penka's analysis *almost
-n* is false of `n` and true of an amount close below it. Nouwen's two classes of modifier are
-derived from the kind of construction, not stored.
+Each modifier is a `Numerals.NumeralModifier`, denoting the set of readings the literature makes
+available for it, each a modifier of sets of amounts. A bound-setting modifier and an exactifier
+have the one reading of the comparison they express, `Degree.Comparison.modifier`, so a modifier of
+one class and its counterpart of the other differ in whether the interval keeps the number. An
+approximator has a reading for each value of a tolerance the context supplies: Égré, Spector,
+Mortier and Verheyen give *around n* the amounts within the tolerance of `n` on either side, and on
+Penka's analysis *almost n* is false of `n` and true of an amount close below it. Nouwen's two
+classes of modifier are derived from the kind of construction, not stored.
 
 ## Main definitions
 
@@ -70,68 +70,68 @@ open Degree Numerals Semantics
 /-! ### Bounds and exactifiers -/
 
 /-- *more than*, a comparative, excludes the number from below. -/
-def moreThan : Modifier := .ofComparison "more than" (some .comparative) .gt
+def moreThan : NumeralModifier := .ofComparison "more than" (some .comparative) .gt
 /-- *fewer than*, a comparative, excludes the number from above. -/
-def fewerThan : Modifier := .ofComparison "fewer than" (some .comparative) .lt
+def fewerThan : NumeralModifier := .ofComparison "fewer than" (some .comparative) .lt
 /-- *over*, a locative preposition, excludes the number from below. -/
-def over : Modifier := .ofComparison "over" (some .locative) .gt
+def over : NumeralModifier := .ofComparison "over" (some .locative) .gt
 /-- *under*, a locative preposition, excludes the number from above. -/
-def under : Modifier := .ofComparison "under" (some .locative) .lt
+def under : NumeralModifier := .ofComparison "under" (some .locative) .lt
 /-- *at least*, a superlative, bounds the amount from below. -/
-def atLeast : Modifier := .ofComparison "at least" (some .superlative) .ge
+def atLeast : NumeralModifier := .ofComparison "at least" (some .superlative) .ge
 /-- *at most*, a superlative, bounds the amount from above. -/
-def atMost : Modifier := .ofComparison "at most" (some .superlative) .le
+def atMost : NumeralModifier := .ofComparison "at most" (some .superlative) .le
 /-- *minimally*, an adverb, bounds the amount from below. -/
-def minimally : Modifier := .ofComparison "minimally" (some .adverbial) .ge
+def minimally : NumeralModifier := .ofComparison "minimally" (some .adverbial) .ge
 /-- *maximally*, an adverb, bounds the amount from above. -/
-def maximally : Modifier := .ofComparison "maximally" (some .adverbial) .le
+def maximally : NumeralModifier := .ofComparison "maximally" (some .adverbial) .le
 /-- *up to*, a directional preposition, bounds the amount from above. -/
-def upTo : Modifier := .ofComparison "up to" (some .directional) .le
+def upTo : NumeralModifier := .ofComparison "up to" (some .directional) .le
 /-- *from*, a directional preposition, bounds the amount from below. -/
-def from_ : Modifier := .ofComparison "from" (some .directional) .ge
+def from_ : NumeralModifier := .ofComparison "from" (some .directional) .ge
 /-- *exactly* fixes the amount. -/
-def exactly : Modifier := .ofComparison "exactly" none .eq
+def exactly : NumeralModifier := .ofComparison "exactly" none .eq
 /-- *precisely* fixes the amount. -/
-def precisely : Modifier := .ofComparison "precisely" none .eq
+def precisely : NumeralModifier := .ofComparison "precisely" none .eq
 
 /-! ### Approximators -/
 
 /-- An approximator places the amount within a tolerance of the number on either side, one
 reading for each tolerance `y` ([egre-etal-2023]). -/
-def approximator (form : String) : Modifier :=
+def approximator (form : String) : NumeralModifier :=
   ⟨form, none, Set.range fun y ↦ .pointwise fun n ↦ Set.Icc (n - y) (n + y)⟩
 
 /-- A modifier like *almost* places the amount within a tolerance below the number and short of
 it, one reading for each tolerance `y` ([penka-2006]). -/
-def shortOf (form : String) : Modifier :=
+def shortOf (form : String) : NumeralModifier :=
   ⟨form, none, Set.range fun y ↦ .pointwise fun n ↦ Set.Ico (n - y) n⟩
 
 /-- *about*, an approximator. -/
-def about : Modifier := approximator "about"
+def about : NumeralModifier := approximator "about"
 /-- *around*, an approximator. -/
-def around : Modifier := approximator "around"
+def around : NumeralModifier := approximator "around"
 /-- *approximately*, an approximator. -/
-def approximately : Modifier := approximator "approximately"
+def approximately : NumeralModifier := approximator "approximately"
 /-- *roughly*, an approximator. -/
-def roughly : Modifier := approximator "roughly"
+def roughly : NumeralModifier := approximator "roughly"
 /-- *almost* stops short of the number. -/
-def almost : Modifier := shortOf "almost"
+def almost : NumeralModifier := shortOf "almost"
 /-- *nearly* stops short of the number. -/
-def nearly : Modifier := shortOf "nearly"
+def nearly : NumeralModifier := shortOf "nearly"
 
 /-- The English numeral modifiers. -/
-def inventory : List Modifier :=
+def inventory : List NumeralModifier :=
   [moreThan, fewerThan, over, under, atLeast, atMost, minimally, maximally, upTo, from_,
     exactly, precisely, about, around, approximately, roughly, almost, nearly]
 
-variable {form : String} {m : _root_.Modifier (Set ℕ)}
+variable {form : String} {m : Modifier (Set ℕ)}
 
 /-- Every reading of an approximator is extensive, so the exact numeral entails the approximated
 one. -/
 theorem isExtensive_of_mem_approximator (hm : m ∈ ⟦approximator form⟧) :
-    _root_.Modifier.IsExtensive m := by
+    Modifier.IsExtensive m := by
   obtain ⟨y, rfl⟩ := hm
-  exact _root_.Modifier.isExtensive_pointwise_iff.2 fun n ↦ ⟨Nat.sub_le n y, Nat.le_add_right n y⟩
+  exact Modifier.isExtensive_pointwise_iff.2 fun n ↦ ⟨Nat.sub_le n y, Nat.le_add_right n y⟩
 
 /-- No reading of *almost* or *nearly* is true of the number itself. -/
 theorem disjoint_singleton_of_mem_shortOf (hm : m ∈ ⟦shortOf form⟧) (n : ℕ) :

@@ -29,8 +29,8 @@ the degrees above, takes it to the lower-bounded one.
 
 * `Numerals.ModifierClass`, `Numerals.ModifierKind`: Nouwen's two classes of numeral modifier
   and the constructions modifiers are built on, with `ModifierKind.modifierClass`.
-* `Numerals.Modifier`: a numeral modifier as a lexical item, its form, kind and readings, each
-  reading a `Modifier (Set ℕ)` of sets of amounts.
+* `Numerals.NumeralModifier`: a numeral modifier as a lexical item, its form, kind and
+  readings, each reading a `Modifier (Set ℕ)` of sets of amounts.
 * `Numerals.exhNumeral`: the lower-bounded meaning exhaustified against the next numeral.
 
 ## Main results
@@ -99,7 +99,7 @@ def ModifierKind.modifierClass : ModifierKind → ModifierClass
 
 /-- A numeral modifier, an expression that combines with a numeral to bound, fix or approximate
 the amount it names. -/
-structure Modifier where
+structure NumeralModifier where
   /-- The surface form. -/
   form : String
   /-- The construction the modifier is built on, `none` for the exactifiers and approximators,
@@ -107,22 +107,22 @@ structure Modifier where
   kind : Option ModifierKind
   /-- The readings the literature makes available, each a modifier of sets of amounts that sends
   the bare numeral's two-sided meaning `{n}` to the amounts verifying the modified numeral. -/
-  readings : Set (_root_.Modifier (Set ℕ))
+  readings : Set (Modifier (Set ℕ))
 
-namespace Modifier
+namespace NumeralModifier
 
 /-- A numeral modifier denotes its readings. -/
-instance : Semantics.Denotes Modifier (Set (_root_.Modifier (Set ℕ))) := ⟨readings⟩
+instance : Semantics.Denotes NumeralModifier (Set (Modifier (Set ℕ))) := ⟨readings⟩
 
 open Semantics in
-@[simp] theorem denote_eq_readings (w : Modifier) : ⟦w⟧ = w.readings := rfl
+@[simp] theorem denote_eq_readings (w : NumeralModifier) : ⟦w⟧ = w.readings := rfl
 
 /-- The class of a bound-setting modifier, read off its kind. -/
-def modifierClass (w : Modifier) : Option ModifierClass := w.kind.map (·.modifierClass)
+def modifierClass (w : NumeralModifier) : Option ModifierClass := w.kind.map (·.modifierClass)
 
 /-- The numeral modifier with the one reading of a comparison, as a bound-setting modifier or an
 exactifier has. -/
-def ofComparison (form : String) (kind : Option ModifierKind) (c : Comparison) : Modifier :=
+def ofComparison (form : String) (kind : Option ModifierKind) (c : Comparison) : NumeralModifier :=
   ⟨form, kind, {c.modifier}⟩
 
 variable {form : String} {kind : Option ModifierKind} {c : Comparison}
@@ -131,7 +131,7 @@ variable {form : String} {kind : Option ModifierKind} {c : Comparison}
 
 @[simp] theorem readings_ofComparison : (ofComparison form kind c).readings = {c.modifier} := rfl
 
-end Modifier
+end NumeralModifier
 
 /-! ### Exhaustification
 

@@ -174,7 +174,7 @@ theorem framingEffect_hoechstens (s : Scenario) : framingEffect (s.upper .hoechs
 /-! ### Readings alone -/
 
 /-- The Fragment entry of a modifier. -/
-def Modifier.entry : Modifier → Numerals.Modifier
+def Modifier.entry : Modifier → Numerals.NumeralModifier
   | .bisZu => German.NumeralModifiers.bisZu
   | .hoechstens => German.NumeralModifiers.hoechstens
 
@@ -232,7 +232,7 @@ noncomputable def salienceEffect (raise : ℕ → Set (Set ℕ)) (number : Frame
 
 /-- The possibilities a modifier raises with the number `n`, one for each of its readings in the
 Fragment. -/
-def raised (w : Numerals.Modifier) (n : ℕ) : Set (Set ℕ) := (· {n}) '' ⟦w⟧
+def raised (w : Numerals.NumeralModifier) (n : ℕ) : Set (Set ℕ) := (· {n}) '' ⟦w⟧
 
 /-- The possibilities *bis zu* and *höchstens* raise, by [blok-2015]. -/
 def Modifier.raise : Modifier → ℕ → Set (Set ℕ)

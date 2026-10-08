@@ -81,13 +81,13 @@ attribute [local simp] moreThan fewerThan over under atLeast atMost minimally ma
 from the two-sided meaning of the number it modifies, privative there in Kamp's sense. -/
 theorem classA_exclusive : ∀ w ∈ inventory, w.modifierClass = some .classA →
     ∀ m ∈ ⟦w⟧, ∀ n, Disjoint (m {n}) {n} := by
-  simp [inventory, Modifier.modifierClass, ModifierKind.modifierClass]
+  simp [inventory, NumeralModifier.modifierClass, ModifierKind.modifierClass]
 
 /-- A Class B modifier (4b) expresses an inclusive ordering, so each of its readings is extensive:
 the number satisfies the modified numeral. -/
 theorem classB_inclusive : ∀ w ∈ inventory, w.modifierClass = some .classB →
-    ∀ m ∈ ⟦w⟧, _root_.Modifier.IsExtensive m := by
-  simp [inventory, Modifier.modifierClass, ModifierKind.modifierClass,
+    ∀ m ∈ ⟦w⟧, Modifier.IsExtensive m := by
+  simp [inventory, NumeralModifier.modifierClass, ModifierKind.modifierClass,
     Comparison.isExtensive_modifier_iff, Comparison.IsStrict]
 
 end Classes
