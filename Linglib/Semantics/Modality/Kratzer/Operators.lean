@@ -260,6 +260,13 @@ theorem isRealistic_iff_simpleNecessity_le_id {f : ModalBase W} :
     f.IsRealistic ↔ simpleNecessity f ≤ id :=
   isRealistic_iff_refl.trans box_T_iff.symm
 
+/-- A modal base is realistic exactly when what is actual is possible over it: read
+epistemically, an asserted fact can be a *might*; read deontically, everything actual is
+permitted. -/
+theorem isRealistic_iff_id_le_simplePossibility {f : ModalBase W} :
+    f.IsRealistic ↔ id ≤ simplePossibility f :=
+  isRealistic_iff_refl.trans diamond_T_iff.symm
+
 /-- Under the empty modal base, every world is accessible. -/
 theorem accessible_emptyBackground (w w' : W) :
     w ~[ModalBase.accessible (emptyBackground (W := W))] w' :=
