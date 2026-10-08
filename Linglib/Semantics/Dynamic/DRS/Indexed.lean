@@ -501,10 +501,10 @@ diverge (Muskens's fn. 4; witness in `Studies/Muskens1996.lean`). -/
 so a flat output is an indexed one. -/
 private theorem DRS.toRelAt_of_toRel' {X U : Finset V} {conds : List (Condition L V)}
     (hXU : Disjoint X U)
-    (hIH : ∀ k : V → M, (∀ c ∈ conds, Embedding.VerifiesCondition k c) ↔
+    (hIH : ∀ k : V → M, (∀ c ∈ conds, VerifiesCondition k c) ↔
       Condition.holdsAllAt (X ∪ U) conds k)
     {g g' : V → M}
-    (h : Box.Extends (⟨U, conds⟩ : DRS L V) g g' ∧ Embedding.Verifies g' (⟨U, conds⟩ : DRS L V)) :
+    (h : Box.Extends (⟨U, conds⟩ : DRS L V) g g' ∧ Verifies g' (⟨U, conds⟩ : DRS L V)) :
     DRS.toRelAt X (.mk U conds) g g' := by
   obtain ⟨hag, hh⟩ := h
   exact ⟨fun x hx => hag x (Finset.disjoint_left.mp hXU (Finset.mem_coe.mp hx)),
@@ -514,11 +514,11 @@ private theorem DRS.toRelAt_of_toRel' {X U : Finset V} {conds : List (Condition 
 flat output. -/
 private theorem DRS.toRel_of_toRelAt' {X U : Finset V} {conds : List (Condition L V)}
     (hfvc : Condition.freeVarFinsetL conds ⊆ X ∪ U)
-    (hIH : ∀ k : V → M, (∀ c ∈ conds, Embedding.VerifiesCondition k c) ↔
+    (hIH : ∀ k : V → M, (∀ c ∈ conds, VerifiesCondition k c) ↔
       Condition.holdsAllAt (X ∪ U) conds k)
     {g g' : V → M} (h : DRS.toRelAt X (.mk U conds) g g') :
     (Box.Extends (⟨U, conds⟩ : DRS L V) g (fun x => if x ∈ U then g' x else g x) ∧
-      Embedding.Verifies (fun x => if x ∈ U then g' x else g x) (⟨U, conds⟩ : DRS L V)) ∧
+      Verifies (fun x => if x ∈ U then g' x else g x) (⟨U, conds⟩ : DRS L V)) ∧
       Set.EqOn (fun x => if x ∈ U then g' x else g x) g' ↑(X ∪ U) := by
   obtain ⟨hag, hh⟩ := h
   have heq : Set.EqOn (fun x => if x ∈ U then g' x else g x) g' ↑(X ∪ U) := by
@@ -539,19 +539,19 @@ mutual
 denotation and the indexed one coincide. -/
 theorem Condition.verifies_iff_holdsAt {X : Finset V} (c : Condition L V)
     (hrf : Condition.ReuseFreeAt X c) (hfv : c.freeVarFinset ⊆ X) (g : V → M) :
-    Embedding.VerifiesCondition g c ↔ Condition.holdsAt X c g := by
+    VerifiesCondition g c ↔ Condition.holdsAt X c g := by
   match c with
-  | .rel R args => simp only [Embedding.verifies_rel, Condition.holdsAt_rel]
-  | .eq u v => simp only [Embedding.verifies_eq, Condition.holdsAt_eq]
+  | .rel R args => simp only [verifies_rel, Condition.holdsAt_rel]
+  | .eq u v => simp only [verifies_eq, Condition.holdsAt_eq]
   | .neg K =>
     obtain ⟨U, conds⟩ := K
     simp only [Condition.reuseFreeAt_neg, DRS.reuseFreeAt_mk] at hrf
     rw [Condition.freeVarFinset_neg] at hfv
     have hfvc := DRS.freeVarFinset_subset_iff.mp hfv
-    have hIH : ∀ k : V → M, (∀ c ∈ conds, Embedding.VerifiesCondition k c) ↔
+    have hIH : ∀ k : V → M, (∀ c ∈ conds, VerifiesCondition k c) ↔
         Condition.holdsAllAt (X ∪ U) conds k :=
       fun k => Condition.verifiesAll_iff_holdsAllAt conds hrf.2 hfvc k
-    simp only [Embedding.verifies_neg, Condition.holdsAt_neg]
+    simp only [verifies_neg, Condition.holdsAt_neg]
     exact not_congr ⟨fun ⟨k, hk⟩ => ⟨k, DRS.toRelAt_of_toRel' hrf.1 hIH hk⟩,
       fun ⟨k, hk⟩ => ⟨_, (DRS.toRel_of_toRelAt' hfvc hIH hk).1⟩⟩
   | .imp a c' =>
@@ -571,13 +571,13 @@ theorem Condition.verifies_iff_holdsAt {X : Finset V} (c : Condition L V)
         · refine Finset.mem_union_left _ (Finset.mem_union_left _ (hfvc' ?_))
           rw [DRS.freeVarFinset_mk, DRS.referents_mk, Finset.mem_sdiff, Finset.mem_sdiff]
           exact ⟨⟨hx, hxUc⟩, hxUa⟩
-    have hIHa : ∀ k : V → M, (∀ c ∈ ca, Embedding.VerifiesCondition k c) ↔
+    have hIHa : ∀ k : V → M, (∀ c ∈ ca, VerifiesCondition k c) ↔
         Condition.holdsAllAt (X ∪ Ua) ca k :=
       fun k => Condition.verifiesAll_iff_holdsAllAt ca hrfa hfvca k
-    have hIHc : ∀ k : V → M, (∀ c ∈ cc, Embedding.VerifiesCondition k c) ↔
+    have hIHc : ∀ k : V → M, (∀ c ∈ cc, VerifiesCondition k c) ↔
         Condition.holdsAllAt ((X ∪ Ua) ∪ Uc) cc k :=
       fun k => Condition.verifiesAll_iff_holdsAllAt cc hrfc hfvcc k
-    simp only [Embedding.verifies_imp, Condition.holdsAt_imp]
+    simp only [verifies_imp, Condition.holdsAt_imp]
     constructor
     · intro hL g₁ hg₁
       obtain ⟨hflat, heq⟩ := DRS.toRel_of_toRelAt' hfvca hIHa hg₁
@@ -595,13 +595,13 @@ theorem Condition.verifies_iff_holdsAt {X : Finset V} (c : Condition L V)
     rw [Condition.freeVarFinset_dis, Finset.union_subset_iff] at hfv
     have hfvcl : Condition.freeVarFinsetL cl ⊆ X ∪ Ul := DRS.freeVarFinset_subset_iff.mp hfv.1
     have hfvcr : Condition.freeVarFinsetL cr ⊆ X ∪ Ur := DRS.freeVarFinset_subset_iff.mp hfv.2
-    have hIHl : ∀ k : V → M, (∀ c ∈ cl, Embedding.VerifiesCondition k c) ↔
+    have hIHl : ∀ k : V → M, (∀ c ∈ cl, VerifiesCondition k c) ↔
         Condition.holdsAllAt (X ∪ Ul) cl k :=
       fun k => Condition.verifiesAll_iff_holdsAllAt cl hrfl hfvcl k
-    have hIHr : ∀ k : V → M, (∀ c ∈ cr, Embedding.VerifiesCondition k c) ↔
+    have hIHr : ∀ k : V → M, (∀ c ∈ cr, VerifiesCondition k c) ↔
         Condition.holdsAllAt (X ∪ Ur) cr k :=
       fun k => Condition.verifiesAll_iff_holdsAllAt cr hrfr hfvcr k
-    simp only [Embedding.verifies_dis, Condition.holdsAt_dis]
+    simp only [verifies_dis, Condition.holdsAt_dis]
     constructor
     · rintro (⟨k, hk⟩ | ⟨k, hk⟩)
       · exact ⟨k, Or.inl (DRS.toRelAt_of_toRel' hXUl hIHl hk)⟩
@@ -612,7 +612,7 @@ theorem Condition.verifies_iff_holdsAt {X : Finset V} (c : Condition L V)
 /-- The list analogue of `Condition.verifies_iff_holdsAt`. -/
 theorem Condition.verifiesAll_iff_holdsAllAt {X : Finset V} (cs : List (Condition L V))
     (hrf : Condition.ReuseFreeAllAt X cs) (hfv : Condition.freeVarFinsetL cs ⊆ X) (g : V → M) :
-    (∀ c ∈ cs, Embedding.VerifiesCondition g c) ↔ Condition.holdsAllAt X cs g := by
+    (∀ c ∈ cs, VerifiesCondition g c) ↔ Condition.holdsAllAt X cs g := by
   match cs with
   | [] => simp
   | c :: cs =>

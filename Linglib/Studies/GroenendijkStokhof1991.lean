@@ -819,7 +819,7 @@ variable [DecidableEq V] (M : Type x) [L.Structure M]
 /-- A box whose conditions translate to the tests of their verification denotes its box
 relation. -/
 private theorem eval_toDPL_of_conditions (K : DRS L V)
-    (h : ∀ c ∈ K.conditions, c.toDPL.eval M = test {f : V → M | Embedding.VerifiesCondition f c}) :
+    (h : ∀ c ∈ K.conditions, c.toDPL.eval M = test {f : V → M | VerifiesCondition f c}) :
     K.toDPL.eval M = K.toRel := by
   ext ⟨g, k⟩
   rw [DRS.toDPL, mem_eval_exs, eval_conjs_map M _ _ _ h]
@@ -828,7 +828,7 @@ private theorem eval_toDPL_of_conditions (K : DRS L V)
 
 /-- The translation of a condition is the test of its verification (Fact 25 for conditions). -/
 theorem _root_.DRT.Condition.eval_toDPL (c : Condition L V) :
-    c.toDPL.eval M = test {f : V → M | Embedding.VerifiesCondition f c} := by
+    c.toDPL.eval M = test {f : V → M | VerifiesCondition f c} := by
   induction c with
   | rel R args =>
     rw [Condition.toDPL_rel, eval_rel]
@@ -838,15 +838,15 @@ theorem _root_.DRT.Condition.eval_toDPL (c : Condition L V) :
     exact congrArg test (Set.ext fun f ↦ by simp)
   | neg K ih =>
     rw [Condition.toDPL_neg, eval_neg, eval_toDPL_of_conditions M K ih]
-    exact congrArg test (Set.ext fun f ↦ (Embedding.verifies_neg_toRel K f).symm)
+    exact congrArg test (Set.ext fun f ↦ (verifies_neg_toRel K f).symm)
   | imp a c iha ihc =>
     rw [Condition.toDPL_imp, eval_imp, eval_toDPL_of_conditions M a iha,
       eval_toDPL_of_conditions M c ihc]
-    exact congrArg test (Set.ext fun f ↦ (Embedding.verifies_imp_toRel a c f).symm)
+    exact congrArg test (Set.ext fun f ↦ (verifies_imp_toRel a c f).symm)
   | dis l r ihl ihr =>
     rw [Condition.toDPL_dis, eval_disj, eval_toDPL_of_conditions M l ihl,
       eval_toDPL_of_conditions M r ihr]
-    exact congrArg test (Set.ext fun f ↦ (Embedding.verifies_dis_toRel l r f).symm)
+    exact congrArg test (Set.ext fun f ↦ (verifies_dis_toRel l r f).symm)
 
 /-- The translation of a discourse representation structure denotes its box relation (Fact 25
 for boxes). -/

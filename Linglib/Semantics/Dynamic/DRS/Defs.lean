@@ -11,9 +11,9 @@ This file defines discourse representation structures (DRSs) over a mathlib
 `FirstOrder.Language`, following [kamp-reyle-1993]. A DRS is a pair of a finite
 set of *discourse referents* (the textbook's universe `U`) and a list of
 *conditions* (Def. 1.4.1); a condition is atomic (`rel`, `eq`) or complex
-(`neg`, with `imp`/`dis` from the Chapter 2 extension), and sub-DRSs occur only
-inside complex conditions. In the literature a DRS is also drawn as a *box*,
-[muskens-1996]'s `[u₁ … uₙ | γ₁ … γₘ]`.
+(`neg`, with `imp`/`dis` from Chapter 2; the book's disjunction is `n`-ary, binary
+here), and sub-DRSs occur only inside complex conditions. In the literature a DRS is
+also drawn as a *box*, [muskens-1996]'s `[u₁ … uₙ | γ₁ … γₘ]`.
 
 Verification and truth are model-theoretic and live in `DRS/Verification.lean`;
 the structural theory is in `DRS/Basic.lean`.
@@ -27,8 +27,8 @@ the structural theory is in `DRS/Basic.lean`.
   ([muskens-1996]).
 * `DirectlySubordinate`, `Subordinate`, `WeakSubordinate`: immediate
   subordination and its transitive and reflexive-transitive closures
-  (Def. 1.4.10, Def. 2.1.2). Accessibility is host-relative and lives in
-  `DRS/Basic.lean` (`AccessibleTo`, `accessibleFrom`).
+  (Def. 1.4.10, Def. 2.1.2). Accessibility is read off occurrences and lives in
+  `DRS/Accessibility.lean`.
 
 ## Main statements
 
@@ -43,7 +43,7 @@ the structural theory is in `DRS/Basic.lean`.
   without a mutual block, keeping the structure API.
 * `conditions` is a `List`, since an inductive cannot nest through
   `Finset`/`Multiset`; set semantics is recovered by the interpretation
-  (`Embedding.verifies_perm`, `DRS/Verification.lean`).
+  (`verifies_perm`, `DRS/Verification.lean`).
 * `DRT` is the owning namespace, on the `FirstOrder.Language` pattern.
 -/
 
@@ -128,13 +128,14 @@ of its sub-boxes. -/
 /-! ### Subordination -/
 
 /-- `DirectlySubordinate K' K` says `K'` is a sub-box of one of `K`'s conditions —
-the `neg` case per Def. 1.4.10(i), the `⇒`/`∨` cases per its Chapter 2 extension
-(Def. 2.1.2, which subordinates *both* components of a conditional to the
-containing DRS). A relation on DRS values, where the textbook's is on box
-occurrences. Every clause pins the containing box in its conclusion: an unpinned
-clause (such as consequent-below-antecedent) would hold of every pair of DRSs via
-a manufactured container, collapsing the relation. The `⇒` visibility asymmetry
-is not subordination but accessibility (`AccessibleTo`, `DRS/Basic.lean`). -/
+the `neg` case per Def. 1.4.10(i), the `⇒` cases per Def. 2.1.2 (which subordinates
+*both* components of a conditional to the containing DRS), and the `∨` cases per
+Def. 2.4.3(i)(c), where no disjunct is subordinate to another. A relation on DRS
+values, where the textbook's is on box occurrences. Every clause pins the containing
+box in its conclusion: an unpinned clause (such as consequent-below-antecedent) would
+hold of every pair of DRSs via a manufactured container, collapsing the relation. The
+`⇒` visibility asymmetry is not subordination but accessibility
+(`DRS/Accessibility.lean`). -/
 inductive DirectlySubordinate : DRS L V → DRS L V → Prop where
   /-- The body of a `¬` is directly subordinate to the containing DRS. -/
   | neg {D K : DRS L V} : Condition.neg K ∈ D.conditions → DirectlySubordinate K D
@@ -147,11 +148,12 @@ inductive DirectlySubordinate : DRS L V → DRS L V → Prop where
   /-- The right disjunct of a `∨` is directly subordinate to the containing DRS. -/
   | disR {D l r : DRS L V} : Condition.dis l r ∈ D.conditions → DirectlySubordinate r D
 
-/-- The `<` of Def. 1.4.10(ii): the transitive closure of `DirectlySubordinate`. -/
+/-- `Subordinate` is the `<` of Def. 1.4.10(ii), the transitive closure of
+`DirectlySubordinate`. -/
 abbrev Subordinate : DRS L V → DRS L V → Prop :=
   Relation.TransGen DirectlySubordinate
 
-/-- The `≤` of Def. 1.4.10(ii): the reflexive-transitive closure of
+/-- `WeakSubordinate` is the `≤` of Def. 1.4.10(ii), the reflexive-transitive closure of
 `DirectlySubordinate`. -/
 abbrev WeakSubordinate : DRS L V → DRS L V → Prop :=
   Relation.ReflTransGen DirectlySubordinate

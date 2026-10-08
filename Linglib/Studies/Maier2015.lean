@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Dynamic.DRS.Basic
+public import Linglib.Semantics.Dynamic.DRS.Accessibility
 public import Linglib.Data.Examples.Maier2015
 public import Mathlib.Data.Fin.VecNotation
 
@@ -51,8 +51,8 @@ namespace Maier2015
 
 /-! ### The DRS language of the Karttunen example (§5.3) -/
 
-/-- Relations of the example: `sue` and `jane`, `husband(h, j)`, the event `cheat(e, j, h)`,
-and `stop(j, e')`. -/
+/-- The example's relations are `sue` and `jane`, `husband(h, j)`, the event
+`cheat(e, j, h)`, and `stop(j, e')`. -/
 inductive MaierRel : ℕ → Type
   | sue : MaierRel 1
   | jane : MaierRel 1
@@ -98,72 +98,51 @@ structure MentalState where
 /-- A compartment as a subordinate box. -/
 def Compartment.box (c : Compartment) : MCond := .neg (.mk c.drefs.toFinset c.conds)
 
-/-- The description as one DRS: the belief box, with each compartment a subordinate box, so
-that the core's accessibility runs from a compartment up to the belief layer and not back. -/
+/-- A description flattens to the belief box with each compartment a subordinate box, so
+that accessibility runs from a compartment up to the belief layer and not back. -/
 def MentalState.flatten (K : MentalState) : DRS maierLang ℕ :=
   .mk K.beliefDrefs.toFinset (K.beliefConds ++ K.compartments.map Compartment.box)
 
 /-! ### Parasitism as accessibility -/
 
-private theorem accScopeL_cons (s : Finset ℕ) (c : MCond) (cs : List MCond) (x : ℕ) :
-    Condition.accScopeL s (c :: cs) x =
-      (Condition.accScope s c x).orElse λ _ => Condition.accScopeL s cs x :=
-  rfl
+/-- No step of the walk leaves a box whose conditions introduce no box. -/
+private theorem not_scopeStep_of_atomic {bs : List (DRS maierLang ℕ)} {D : DRS maierLang ℕ}
+    {q : List (DRS maierLang ℕ) × DRS maierLang ℕ} (h : ∀ c ∈ D.conditions, MCond.IsAtomic c) :
+    ¬ ScopeStep (bs, D) q := by
+  rintro (⟨hc⟩ | ⟨hc⟩ | ⟨hc⟩ | ⟨hc⟩ | ⟨hc⟩) <;> exact h _ hc
 
-private theorem accScope_atomic {s : Finset ℕ} {c : MCond} (h : c.IsAtomic) (x : ℕ) :
-    Condition.accScope s c x = none := by
-  cases c <;> simp [MCond.IsAtomic] at h <;> simp [Condition.accScope]
-
-private theorem accScopeL_atomic_append {s : Finset ℕ} {bs : List MCond}
-    (hb : ∀ c ∈ bs, c.IsAtomic) (ms : List MCond) (x : ℕ) :
-    Condition.accScopeL s (bs ++ ms) x = Condition.accScopeL s ms x := by
-  induction bs with
-  | nil => rfl
-  | cons c cs ih =>
-    rw [List.cons_append, accScopeL_cons, accScope_atomic (hb c (List.mem_cons_self ..)),
-      ih λ d hd => hb d (List.mem_cons_of_mem _ hd)]
-    rfl
-
-private theorem accScopeL_compartments (s : Finset ℕ) {cs : List Compartment}
-    (hcs : ∀ c ∈ cs, ∀ cd ∈ c.conds, cd.IsAtomic) {y : ℕ} (hyc : ∃ c ∈ cs, y ∈ c.drefs) :
-    ∃ acc, Condition.accScopeL s (cs.map Compartment.box) y = some acc ∧ s ⊆ acc := by
-  induction cs with
-  | nil => simp at hyc
-  | cons c cs ih =>
-    rw [List.map_cons, accScopeL_cons]
-    by_cases h : y ∈ c.drefs
-    · refine ⟨s ∪ c.drefs.toFinset, ?_, Finset.subset_union_left⟩
-      simp [Compartment.box, Condition.accScope_neg, DRS.accScope, h]
-    · have hnone : Condition.accScope s c.box y = none := by
-        rw [Compartment.box, Condition.accScope_neg, DRS.accScope, ite_eq_right (by simpa using h),
-          ← List.append_nil c.conds]
-        exact accScopeL_atomic_append (hcs c (List.mem_cons_self ..)) [] y
-      rw [hnone]
-      obtain ⟨c', hc', hy'⟩ := hyc
-      rcases List.mem_cons.1 hc' with rfl | hc'
-      · exact absurd hy' h
-      · exact ih (λ d hd => hcs d (List.mem_cons_of_mem _ hd)) ⟨c', hc', hy'⟩
-
-/-- The belief layer does not see a compartment: a belief referent has only the belief
-referents accessible. -/
-theorem not_accessible_of_belief (K : MentalState) {x y : ℕ} (hx : x ∈ K.beliefDrefs)
-    (hy : y ∉ K.beliefDrefs) : ¬ DRS.Accessible K.flatten x y := by
-  simp [DRS.Accessible, DRS.accessibleFrom, DRS.accScope, MentalState.flatten, hx, hy]
-
-/-- A compartment sees the belief layer: a referent introduced in a compartment has every
-belief referent accessible, parasitism in the paper's sense (§3.1). -/
-theorem accessible_belief_of_compartment (K : MentalState)
-    (hb : ∀ c ∈ K.beliefConds, c.IsAtomic)
+/-- The belief layer does not see a compartment: where a belief referent is declared, only
+belief referents are accessible, if no compartment declares it again. -/
+theorem not_accessible_of_belief (K : MentalState) (hb : ∀ c ∈ K.beliefConds, c.IsAtomic)
     (hcs : ∀ c ∈ K.compartments, ∀ cd ∈ c.conds, cd.IsAtomic) {x y : ℕ}
-    (hx : x ∈ K.beliefDrefs) (hy : y ∉ K.beliefDrefs) (hyc : ∃ c ∈ K.compartments, y ∈ c.drefs) :
-    DRS.Accessible K.flatten y x := by
-  obtain ⟨acc, hacc, hsub⟩ :=
-    accScopeL_compartments (∅ ∪ K.beliefDrefs.toFinset) hcs hyc
-  have h : DRS.accScope ∅ K.flatten y = some acc := by
-    rw [DRS.accScope, MentalState.flatten, ite_eq_right (by simpa using hy)]
-    exact (accScopeL_atomic_append hb _ y).trans hacc
-  simp only [DRS.Accessible, DRS.accessibleFrom, h, Option.getD_some]
-  exact hsub (by simp [hx])
+    (hxc : ∀ c ∈ K.compartments, x ∉ c.drefs) (hy : y ∉ K.beliefDrefs) :
+    ¬ DRS.Accessible K.flatten x y := by
+  rintro ⟨p, hp, hx, hyp⟩
+  rcases hp.cases_head with rfl | ⟨q, hq, hqp⟩
+  · simp [MentalState.flatten, hy] at hyp
+  · cases hq with
+    | neg hc =>
+      rcases List.mem_append.1 hc with hc | hc
+      · exact absurd (hb _ hc) id
+      · obtain ⟨c, hcK, hbox⟩ := List.mem_map.1 hc
+        simp only [Compartment.box, Condition.neg.injEq] at hbox
+        subst hbox
+        rcases hqp.cases_head with rfl | ⟨r, hr, -⟩
+        · exact hxc c hcK (by simpa using hx)
+        · exact not_scopeStep_of_atomic (hcs c hcK) hr
+    | impAnte hc | impCons hc | disL hc | disR hc =>
+      rcases List.mem_append.1 hc with hc | hc
+      · exact absurd (hb _ hc) id
+      · obtain ⟨c, -, hbox⟩ := List.mem_map.1 hc
+        simp [Compartment.box] at hbox
+
+/-- A compartment sees the belief layer: where a compartment declares a referent, every belief
+referent is accessible, parasitism in the paper's sense (§3.1). -/
+theorem accessible_belief_of_compartment (K : MentalState) {x y : ℕ} (hx : x ∈ K.beliefDrefs)
+    (hyc : ∃ c ∈ K.compartments, y ∈ c.drefs) : DRS.Accessible K.flatten y x := by
+  obtain ⟨c, hc, hy⟩ := hyc
+  exact ⟨_, .single (.neg (D := K.flatten) (List.mem_append_right _ (List.mem_map_of_mem hc))),
+    by simpa using hy, by simp [MentalState.flatten, hx]⟩
 
 /-! ### Attitude merge (58) and presupposition binding -/
 
@@ -178,8 +157,8 @@ def mergeCompartments (cs cs' : List Compartment) : List Compartment :=
       cur.map (λ c => if c.mode == c'.mode then c.append c' else c)
     else cur ++ [c']) cs
 
-/-- Attitude merge (58): two partial descriptions of one agent's state become one, the belief
-layers merged and like-mode compartments combined. -/
+/-- Attitude merge (58) makes two partial descriptions of one agent's state one, merging the
+belief layers and combining like-mode compartments. -/
 def MentalState.merge (K K' : MentalState) : MentalState :=
   { beliefDrefs := K.beliefDrefs ++ K'.beliefDrefs
     beliefConds := K.beliefConds ++ K'.beliefConds
@@ -201,14 +180,14 @@ def MentalState.bind (presup antecedent : ℕ) (K : MentalState) : MentalState :
 cheating on him.* Referents: Sue 10, Jane 11, the husband 12, the believed cheating event 20,
 and the cheating event 21 presupposed by *stop*. -/
 
-/-- After the first sentence: Sue believes there is a cheating event (59). -/
+/-- After the first sentence Sue believes there is a cheating event (59). -/
 def sueBelief : MentalState :=
   { beliefDrefs := [10, 11, 12, 20]
     beliefConds := [.rel .sue ![10], .rel .jane ![11], .rel .husband ![12, 11],
                     .rel .cheat ![20, 11, 12]]
     compartments := [] }
 
-/-- The second sentence on its own: a desire compartment with *stop* and the presupposed
+/-- The second sentence on its own gives a desire compartment with *stop* and the presupposed
 event, with no antecedent in its belief layer. -/
 def sueHope : MentalState :=
   { beliefDrefs := []
@@ -230,12 +209,11 @@ theorem believed_event_absent_before_merge : 20 ∉ DRS.varFinset sueHope.flatte
 /-- After the merge the believed event is accessible from the presupposed one, so binding is
 licensed: the filtering. -/
 theorem presup_binds_after_merge : DRS.Accessible sueMerged.flatten 21 20 :=
-  accessible_belief_of_compartment sueMerged (by decide) (by decide) (by decide) (by decide)
-    (by decide)
+  accessible_belief_of_compartment sueMerged (by decide) (by decide)
 
 /-- The dependence is asymmetric: the believed event does not see the desire's referent. -/
 theorem parasitic_asymmetry : ¬ DRS.Accessible sueMerged.flatten 20 21 :=
-  not_accessible_of_belief sueMerged (by decide) (by decide)
+  not_accessible_of_belief sueMerged (by decide) (by decide) (by decide) (by decide)
 
 /-- After binding, the presupposed referent is gone and the believed event remains: resolved
 by binding, neither accommodated nor projected (60). -/

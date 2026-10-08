@@ -371,14 +371,14 @@ theorem fn4_trueRel (g : ℕ → Fin 2) : DRS.trueRel fn4 g := by
   intro c hc
   simp only [fn4, DRS.conditions_mk, List.mem_singleton] at hc
   subst hc
-  rw [Embedding.verifies_imp]
+  rw [verifies_imp]
   intro g₁ _ _
   refine ⟨Function.update g₁ 0 1,
     fun x hx ↦ by rw [Function.update_apply, ite_eq_right (by simpa [fn4Cons] using hx)], ?_⟩
   intro c hc
   simp only [fn4Cons, DRS.conditions_mk, List.mem_singleton] at hc
   subst hc
-  rw [Embedding.verifies_rel]
+  rw [verifies_rel]
   show Function.update g₁ 0 1 0 = 1
   simp
 
