@@ -7,7 +7,8 @@ public import Mathlib.MeasureTheory.Measure.Real
 # The uniform measure on a finite type
 
 Evaluation of `ProbabilityTheory.uniformOn` on a finset or on `Set.univ` at singletons, finite
-sets and predicates, in `ℝ≥0∞` and on reals.
+sets and predicates, in `ℝ≥0∞` and on reals, and the almost-everywhere filter of the uniform
+measure on a finite type.
 -/
 
 @[expose] public section
@@ -34,6 +35,12 @@ theorem uniformOn_univ_apply_singleton (w : W) :
 theorem uniformOn_univ_singleton_ne_zero (w : W) : uniformOn (Set.univ : Set W) {w} ≠ 0 := by
   rw [uniformOn_univ_apply_singleton]
   exact ENNReal.inv_ne_zero.mpr (ENNReal.natCast_ne_top _)
+
+/-- Under the uniform measure on a finite type, almost everywhere is everywhere. -/
+theorem uniformOn_univ_ae_iff {p : W → Prop} :
+    (∀ᵐ w ∂uniformOn (Set.univ : Set W), p w) ↔ ∀ w, p w := by
+  rw [ae_iff_of_countable]
+  exact ⟨fun h w ↦ h w (uniformOn_univ_singleton_ne_zero w), fun h w _ ↦ h w⟩
 
 theorem uniformOn_univ_singleton_eq (w w' : W) :
     uniformOn (Set.univ : Set W) {w} = uniformOn Set.univ {w'} := by

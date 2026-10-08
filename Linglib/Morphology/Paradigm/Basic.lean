@@ -1,7 +1,6 @@
 module
 
 public import Mathlib.Data.Finset.Image
-public import Mathlib.Data.Rat.Defs
 public import Linglib.Core.Data.Setoid.Basic
 
 /-!
@@ -15,33 +14,31 @@ sharing a form, decidable over finitely many cells by the instances of
 research lines that consume it — realization-pattern typology (*ABA and
 contiguity, `Morphology/Paradigm/Contiguity.lean`) and paradigm-cell
 information theory (implicative structure and complexity,
-`Morphology/Paradigm/Complexity.lean`). [ackerman-malouf-2013]'s
-inflection classes are paradigms with frequency weights
-(`ParadigmSystem`); [bobaljik-2012]-style realization patterns are
-paradigms over graded cells.
+`Morphology/Paradigm/Complexity.lean`). A **paradigm system** is a finite
+family of paradigms indexed by its inflection classes, an inflection-class
+table read as a matrix whose rows are the classes
+([ackerman-malouf-2013]; [bobaljik-2012]-style realization patterns are
+single paradigms over graded cells). Class probabilities — uniform in
+[ackerman-malouf-2013]'s computations, type frequencies in its general
+definitions — are a `MeasureTheory.Measure` on the classes, a parameter of
+the entropy statements in `Complexity.lean`, never a field of the data.
 
 ## Main declarations
 
 * `Paradigm n F` — assignment of a form to each of the `n` cells
 * `formsAt` — the form assignment of an inventory: the forms its items offer for each cell
-* `ParadigmSystem n Form` — paradigms with frequency weights, organized
-  by inflection class
-* `cellDistribution`, `jointCellDistribution` — empirical form
-  distributions at cells
-* `eComplexity` — count of inflection classes (Ackerman-Malouf
-  E-complexity)
+* `ParadigmSystem D n Form` — a family of paradigms indexed by the inflection classes `D`
 -/
 
 @[expose] public section
 
 namespace Morphology
 
-/-- A **paradigm** over `n` linearly ordered cells: the form occupying
+/-- A **paradigm** over `n` linearly ordered cells assigns the form occupying
 each cell. The single carrier for realization patterns
 ([bobaljik-2012]'s AAA/ABB/ABC shapes; see
 `Morphology/Paradigm/Contiguity.lean`) and for inflection-class rows
-([ackerman-malouf-2013]; a weighted system of paradigms is a
-`ParadigmSystem`). -/
+([ackerman-malouf-2013]; a family of them is a `ParadigmSystem`). -/
 abbrev Paradigm (n : ℕ) (F : Type*) := Fin n → F
 
 /-! ### The paradigm of an inventory -/
@@ -72,36 +69,10 @@ theorem formsAt_union [DecidableEq ι] (I J : Finset ι) (c : Cell) :
 
 end FormsAt
 
-/-- A paradigm system: paradigms (inflection classes) paired with
-frequency weights. -/
-structure ParadigmSystem (numCells : ℕ) (Form : Type*) where
-  entries : List (Paradigm numCells Form × ℚ)
-
-/-- Group a tagged list by key, summing associated ℚ values. -/
-def groupBySum {α : Type*} [DecidableEq α] (tagged : List (α × ℚ)) : List (α × ℚ) :=
-  tagged.foldl (λ acc (key, f) =>
-    match acc.find? (λ (k, _) => k = key) with
-    | some _ => acc.map (λ (k, p) => if k = key then (k, p + f) else (k, p))
-    | none => acc ++ [(key, f)]
-  ) []
-
-/-- Empirical distribution of forms at cell `c`: pairs each surface form with
-    the total frequency of inflection classes realizing it at `c`. -/
-def ParadigmSystem.cellDistribution {n : ℕ} {Form : Type*} [DecidableEq Form]
-    (ps : ParadigmSystem n Form) (c : Fin n) :
-    List (Form × ℚ) :=
-  groupBySum (ps.entries.map λ (ic, f) => (ic c, f))
-
-/-- Joint empirical distribution of forms at cell pair `(ci, cj)`. -/
-def ParadigmSystem.jointCellDistribution {n : ℕ} {Form : Type*} [DecidableEq Form]
-    (ps : ParadigmSystem n Form) (ci cj : Fin n) :
-    List ((Form × Form) × ℚ) :=
-  groupBySum (ps.entries.map λ (ic, f) => ((ic ci, ic cj), f))
-
-/-- E-complexity ([ackerman-malouf-2013]): the number of inflection
-    classes in the paradigm system. -/
-def ParadigmSystem.eComplexity {n : ℕ} {Form : Type*}
-    (ps : ParadigmSystem n Form) : Nat :=
-  ps.entries.length
+/-- A **paradigm system** is a family of paradigms indexed by its inflection classes `D`, an
+inflection-class table read as a matrix whose rows are the classes, such as
+[ackerman-malouf-2013]'s Table 1. The number of classes (the enumerative class count of that
+paper's Table 3) is `Fintype.card D`. -/
+abbrev ParadigmSystem (D : Type*) (n : ℕ) (Form : Type*) := D → Paradigm n Form
 
 end Morphology

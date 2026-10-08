@@ -7,31 +7,46 @@ public import Linglib.Fragments.Mazatec.Verbs
 public import Linglib.Data.Examples.AckermanMalouf2013
 
 /-!
-# The low conditional entropy conjecture
+# Ackerman and Malouf (2013): Morphological Organization: The Low Conditional Entropy Conjecture
 
 Ackerman and Malouf separate the enumerative complexity of an inflectional system — how many
 cells, realizations, and inflection classes it has — from its integrative complexity, the
-average conditional entropy of one paradigm cell given another (`iComplexity`, over
-`Morphology.ParadigmSystem.conditionalCellEntropy`), and conjecture that the latter stays low
-however large the former grows. Their Modern Greek fragment
-(`Greek.StandardModern.Declension.nominal`) carries the argument against enumerative principles:
-its eight declensions exceed the five rival realizations of its most varied cell, violating
-paradigm economy (`greek_not_paradigmEconomy`), while implicative structure keeps the speaker's
-task small — the genitive plural has a single realization (`greek_cellEntropy_genPl`),
-accusative and vocative singular predict each other and the accusative plural predicts the
-nominative plural (`greek_predicts`), an accusative plural in *-i* fixes the genitive singular
-(`greek_accPl_i_genSg`) although the accusative plural alone does not predict it
-(`greek_not_predicts`), and three cells form a principal-part set where two do not
-(`greek_principalParts`).
+average conditional entropy of one paradigm cell given another
+(`Morphology.ParadigmSystem.avgCondEntropy`), and conjecture that the latter stays low however
+large the former grows. Their Modern Greek nominal fragment carries the argument: its eight
+declensions violate paradigm economy and fill a tiny corner of the space its per-cell
+realizations allow, while implicative structure keeps the speaker's task small, and the paper's
+two worked conditional entropies come out as exact closed forms. Burmeso's vocabularly clear
+object agreement sits at the zero of the measure, and Chiquihuitlán Mazatec's final-vowel and
+tone classes sit far from it, the prose claim that only third-person vowels are diagnostic
+sharpened to what its Table 6 supports.
 
-Synonymy avoidance — each realization of a cell identifying its class — is the zero of the
-measure: a vocabularly clear system is transparent and has integrative complexity zero
-(`Morphology.ParadigmSystem.isTransparent_of_isVocabularClear`, `transparent_iComplexity_zero`),
-as Burmeso's two object-agreement classes are (`burmeso_iComplexity`). Chiquihuitlán Mazatec
-departs from it in both dimensions the paper distinguishes: its final-vowel classes are not
-vocabularly clear (`mazatec_vowels_not_clear`) and two of their cells are constant
-(`mazatec_vowels_constant`), and no cell of its neutral-aspect tone patterns is diagnostic of
-class membership (`mazatec_tones_no_diagnostic_cell`).
+## Main statements
+
+* `greek_not_paradigmEconomy`, `greek_principalParts`: Greek violates the enumerative
+  principles while keeping a small principal-part set.
+* `greek_genSg_given_accPl_a`, `greek_genSg_given_accPl`: the paper's worked conditional
+  entropies (13) and (14) as exact closed forms, `log 3 − (2/3) log 2` and `(3/8) log 3` nats.
+* `burmeso_avgCondEntropy`: vocabular clarity makes Burmeso's average conditional entropy zero.
+* `mazatec_vowels_diagnosticity`, `mazatec_tones_no_diagnostic_cell`: how far the Mazatec
+  final vowels and tones are from clarity.
+
+## Implementation notes
+
+* Class probabilities are `uniformOn Set.univ`, the paper's (5), under which every printed
+  number is computed; entropies are in nats, the paper's bits are these divided by `log 2`.
+* `avgCondEntropy` averages over ordered pairs of distinct cells, which reproduces Table 2's
+  expected values and its grand average; the running text prints a different rounding of the
+  latter.
+* Table 1 yields five rival genitive singulars and a realization-space of 25600 class
+  candidates where pp. 445–446 count six and 46,080 on richer data than Table 1.
+
+## TODO
+
+* `greek_avgCondEntropy`: the closed form of Table 2's grand average, provable from
+  `condEntropy_uniformOn_univ` with a per-pair count table.
+* Table 5's average entropies and the tone system's realization count are computed on the
+  appendix's full Table A6 data and do not follow from Tables 6–7, so they are not stated.
 
 ## References
 
@@ -44,46 +59,58 @@ class membership (`mazatec_tones_no_diagnostic_cell`).
 
 namespace AckermanMalouf2013
 
-open Morphology Greek.StandardModern.Declension Burmeso.ObjectAgreement Mazatec.Verbs
+open Morphology Morphology.ParadigmSystem MeasureTheory ProbabilityTheory InformationTheory Real
+open Greek.StandardModern.Declension Burmeso.ObjectAgreement Mazatec.Verbs
 
-variable {n : ℕ} {Form : Type*} [DecidableEq Form]
+/-! ### Instances for the fragments' form types -/
 
-/-- Integrative complexity: the average conditional entropy over ordered pairs of distinct
-cells. -/
-noncomputable def iComplexity (ps : ParadigmSystem n Form) : ℝ :=
-  (∑ ci, ∑ cj ∈ Finset.univ.erase ci, ps.conditionalCellEntropy ci cj) / (n * (n - 1))
+instance : Fintype Ending :=
+  ⟨{.os, .u, .on, .e, .i, .us, .s, .zero, .es, .is, .o, .a}, fun x ↦ by cases x <;> decide⟩
 
-/-- A transparent system has integrative complexity zero. -/
-theorem transparent_iComplexity_zero {ps : ParadigmSystem n Form} (h : ps.IsTransparent) :
-    iComplexity ps = 0 := by
-  rw [iComplexity, Finset.sum_eq_zero, zero_div]
-  exact fun ci _ => Finset.sum_eq_zero fun cj hcj => h ci cj (Finset.ne_of_mem_erase hcj).symm
+instance : Nonempty Ending := ⟨.on⟩
+instance : MeasurableSpace Ending := ⊤
+instance : MeasurableSingletonClass Ending := ⟨fun _ ↦ trivial⟩
 
-/-! ### Modern Greek -/
+instance : Fintype AgreementPrefix :=
+  ⟨{.j, .s, .g, .b, .t, .n}, fun x ↦ by cases x <;> decide⟩
 
-theorem greek_eComplexity : nominal.eComplexity = 8 := rfl
+instance : Nonempty AgreementPrefix := ⟨.j⟩
+instance : MeasurableSpace AgreementPrefix := ⊤
+instance : MeasurableSingletonClass AgreementPrefix := ⟨fun _ ↦ trivial⟩
+
+instance : MeasurableSpace Vowel := ⊤
+instance : MeasurableSingletonClass Vowel := ⟨fun _ ↦ trivial⟩
+
+/-! ### Modern Greek: enumerative complexity -/
 
 theorem greek_maxRealizations : nominal.maxRealizations = 5 := by decide
 
-/-- Eight declensions exceed the five rival realizations of the genitive singular. -/
+/-- Eight declensions exceed the five rival realizations of the most varied cell. -/
 theorem greek_not_paradigmEconomy : ¬ nominal.ParadigmEconomy := by decide
 
-/-- The genitive plural has a single realization. -/
-theorem greek_cellEntropy_genPl : nominal.cellEntropy genPl = 0 :=
-  nominal.cellEntropy_eq_zero_of_card_le_one (by decide)
+/-- Table 3's Greek row counts twelve realizations over the eight cells. -/
+theorem greek_realization_count : (Finset.univ.biUnion nominal.realizations).card = 12 := by
+  decide
+
+/-- Eight classes against the 25600 the per-cell realizations of Table 1 would allow ("it has
+fewer inflection classes than it could"). -/
+theorem greek_classes_vs_product :
+    (Finset.univ.image nominal).card = 8 ∧ ∏ c, (nominal.realizations c).card = 25600 := by
+  decide
+
+/-! ### Modern Greek: implicative structure -/
 
 theorem greek_predicts :
     nominal.Predicts {vocSg} accSg ∧ nominal.Predicts {accSg} vocSg ∧
       nominal.Predicts {accPl} nomPl := by
   decide
 
-/-- The accusative plural does not predict the genitive singular: after *-a* two genitives
+/-- The accusative plural does not predict the genitive singular; after *-a* two genitives
 remain. -/
 theorem greek_not_predicts : ¬ nominal.Predicts {accPl} genSg := by decide
 
 /-- An accusative plural in *-i* fixes the genitive singular in *-us*. -/
-theorem greek_accPl_i_genSg : ∀ e ∈ nominal.entries, e.1 accPl = .i → e.1 genSg = .us := by
-  decide
+theorem greek_accPl_i_genSg : ∀ d, nominal d accPl = .i → nominal d genSg = .us := by decide
 
 /-- Nominative singular, genitive singular, and accusative plural are principal parts; the
 last two alone are not. -/
@@ -94,13 +121,94 @@ theorem greek_principalParts :
 
 theorem greek_not_clear : ¬ nominal.IsVocabularClear := by decide
 
+/-! ### Modern Greek: entropy -/
+
+/-- The declension entropy of the eight classes is `log 8` nats, the paper's 3 bits. -/
+theorem greek_declensionEntropy : Hm[(uniformOn Set.univ : Measure (Fin 8))] = log 8 := by
+  simpa using measureEntropy_uniformOn (A := (Finset.univ : Finset (Fin 8)))
+    Finset.univ_nonempty
+
+/-- The genitive plural has a single realization and no entropy. -/
+theorem greek_cellEntropy_genPl : H[(nominal · genPl) ; uniformOn Set.univ] = 0 :=
+  entropy_eq_zero_of_card_realizations_le_one _ (by decide)
+
+/-- Because the accusative plural predicts the nominative plural, the latter's conditional
+entropy given it vanishes. -/
+theorem greek_condEntropy_nomPl_accPl :
+    H[(nominal · nomPl) | (nominal · accPl) ; uniformOn Set.univ] = 0 :=
+  condEntropy_eq_zero_of_predicts _ (by decide)
+
+/-- In the paper's (13), an accusative plural in *-a* leaves the genitive singular split two
+to one, carrying `log 3 − (2/3) log 2` nats = 0.918 bits. -/
+theorem greek_genSg_given_accPl_a :
+    H[(nominal · genSg) ; uniformOn ((nominal · accPl) ⁻¹' {Ending.a})] =
+      log 3 - 2 / 3 * log 2 := by
+  have hA : (nominal · accPl) ⁻¹' {Ending.a} = ↑({4, 5, 7} : Finset (Fin 8)) := by
+    ext d
+    simp only [Set.mem_preimage, Set.mem_singleton_iff, Finset.coe_insert, Finset.coe_singleton,
+      Set.mem_insert_iff]
+    revert d; decide
+  rw [hA]
+  have := isProbabilityMeasure_uniformOn
+    (Set.toFinite (↑({4, 5, 7} : Finset (Fin 8)) : Set (Fin 8))) ⟨4, by simp⟩
+  rw [entropy_eq_sum (measurable_of_finite _)]
+  have key : ∀ r : Ending,
+      ((↑({4, 5, 7} : Finset (Fin 8)) ∩ (nominal · genSg) ⁻¹' {r}).ncard : ℝ)
+        = (({4, 5, 7} : Finset (Fin 8)).filter (nominal · genSg = r)).card := fun r ↦ by
+    rw [← Set.ncard_coe_finset, Finset.coe_filter]
+    congr 2
+  have cards : ∀ r : Ending, (({4, 5, 7} : Finset (Fin 8)).filter (nominal · genSg = r)).card
+      = if r = .u then 2 else if r = .os then 1 else 0 := by decide
+  simp only [uniformOn_real_apply, key, cards, Set.ncard_coe_finset, Nat.cast_ite,
+    Nat.cast_ofNat, Nat.cast_one, Nat.cast_zero]
+  rw [show (Finset.univ : Finset Ending)
+      = {.os, .u, .on, .e, .i, .us, .s, .zero, .es, .is, .o, .a} from rfl]
+  simp (disch := decide) only [Finset.sum_insert, Finset.sum_singleton]
+  simp only [reduceCtorEq, ite_true, ite_false]
+  norm_num [negMulLog, log_div]
+  ring
+
+/-- In the paper's (14), the genitive singular given the accusative plural carries
+`(3/8) log 3` nats = 0.594 bits. -/
+theorem greek_genSg_given_accPl :
+    H[(nominal · genSg) | (nominal · accPl) ; uniformOn Set.univ] = 3 / 8 * log 3 := by
+  rw [condEntropy_uniformOn_univ]
+  have cards1 : ∀ y : Ending, (Finset.univ.filter fun d => nominal d accPl = y).card
+      = if y = .us ∨ y = .is ∨ y = .i then 1 else if y = .es then 2 else
+        if y = .a then 3 else 0 := by decide
+  have cards2 : ∀ y x : Ending,
+      (Finset.univ.filter fun d => nominal d accPl = y ∧ nominal d genSg = x).card
+      = if (y = .us ∧ x = .u) ∨ (y = .es ∧ (x = .zero ∨ x = .s)) ∨ (y = .is ∧ x = .s)
+          ∨ (y = .a ∧ x = .os) ∨ (y = .i ∧ x = .us) then 1 else
+        if y = .a ∧ x = .u then 2 else 0 := by decide
+  simp only [cards1, cards2, Fintype.card_fin]
+  rw [show (Finset.univ : Finset Ending)
+      = {.os, .u, .on, .e, .i, .us, .s, .zero, .es, .is, .o, .a} from rfl]
+  simp (disch := decide) only [Finset.sum_insert, Finset.sum_singleton]
+  norm_num [negMulLog, log_div]
+  ring
+
+/-- Table 2's grand average, the average conditional entropy of the Greek paradigms, equals
+this closed form, 0.664 bits. -/
+theorem greek_avgCondEntropy :
+    nominal.avgCondEntropy (uniformOn Set.univ) =
+      69 / 224 * log 2 + 3 / 32 * log 3 + 5 / 56 * log 5 := by
+  sorry
+
 /-! ### Burmeso -/
 
 /-- Every cell identifies the class. -/
 theorem burmeso_clear : objectAgreement.IsVocabularClear := by decide
 
-theorem burmeso_iComplexity : iComplexity objectAgreement = 0 :=
-  transparent_iComplexity_zero (objectAgreement.isTransparent_of_isVocabularClear burmeso_clear)
+/-- Table 3's Burmeso row counts six realizations, at most two per cell. -/
+theorem burmeso_realizations :
+    (Finset.univ.biUnion objectAgreement.realizations).card = 6 ∧
+      objectAgreement.maxRealizations = 2 := by
+  decide
+
+/-- Being vocabularly clear, Burmeso has average conditional entropy zero. -/
+theorem burmeso_avgCondEntropy : objectAgreement.avgCondEntropy (uniformOn Set.univ) = 0 :=
+  avgCondEntropy_eq_zero_of_isVocabularClear _ burmeso_clear
 
 /-! ### Chiquihuitlán Mazatec -/
 
@@ -108,9 +216,18 @@ theorem mazatec_vowels_not_clear : ¬ finalVowels.IsVocabularClear := by decide
 
 /-- The first and second person plural vowels are constant across classes. -/
 theorem mazatec_vowels_constant :
-    finalVowels.cellEntropy firstPl = 0 ∧ finalVowels.cellEntropy secondPl = 0 :=
-  ⟨finalVowels.cellEntropy_eq_zero_of_card_le_one (by decide),
-    finalVowels.cellEntropy_eq_zero_of_card_le_one (by decide)⟩
+    H[(finalVowels · firstPl) ; uniformOn Set.univ] = 0 ∧
+      H[(finalVowels · secondPl) ; uniformOn Set.univ] = 0 :=
+  ⟨entropy_eq_zero_of_card_realizations_le_one _ (by decide),
+    entropy_eq_zero_of_card_realizations_le_one _ (by decide)⟩
+
+/-- Over Table 6, "only the third-person forms are in any way diagnostic" comes to this much.
+The third person predicts the second singular yet is no principal part, while the first
+singular predicts the first inclusive. -/
+theorem mazatec_vowels_diagnosticity :
+    finalVowels.Predicts {third} secondSg ∧ ¬ finalVowels.IsPrincipalPartSet {third} ∧
+      finalVowels.Predicts {firstSg} firstIncl := by
+  decide
 
 /-- No cell of the tone patterns is diagnostic of class membership. -/
 theorem mazatec_tones_no_diagnostic_cell : ∀ c, ¬ tones.IsPrincipalPartSet {c} := by decide

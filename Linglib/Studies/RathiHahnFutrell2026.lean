@@ -73,24 +73,25 @@ section Learner
 
 open Morphology
 
-variable {n : ℕ} {Form : Type*}
+variable {D : Type*} {n : ℕ} {Form : Type*}
 
 /-! ### Informational fusion -/
 
 /-- `holdOut L S` is the language `L` with every form for the feature sets in `S` removed, the
 data set from which a learner guesses those forms. -/
-def holdOut (L : ParadigmSystem n Form) (S : Finset (Fin n)) : ParadigmSystem n (Option Form) :=
-  ⟨L.entries.map fun e ↦ (fun c ↦ if c ∈ S then none else some (e.1 c), e.2)⟩
+def holdOut (L : ParadigmSystem D n Form) (S : Finset (Fin n)) :
+    ParadigmSystem D n (Option Form) :=
+  fun d c ↦ if c ∈ S then none else some (L d c)
 
 /-- A learner model assigns a probability to a form at a feature set for a lexeme whose other
 forms it is shown, after training on a data set. -/
-structure LearnerModel (n : ℕ) (Form : Type*) where
-  predict : ParadigmSystem n (Option Form) → Paradigm n (Option Form) → Fin n → Form → ℝ
+structure LearnerModel (D : Type*) (n : ℕ) (Form : Type*) where
+  predict : ParadigmSystem D n (Option Form) → Paradigm n (Option Form) → Fin n → Form → ℝ
 
 /-- The probability the learner assigns to the form for `σ` in the paradigm `p` of the language
 `L`, trained on `L` with the feature sets in `S` held out. -/
-def LearnerModel.prob (M : LearnerModel n Form) (L : ParadigmSystem n Form) (p : Paradigm n Form)
-    (S : Finset (Fin n)) (σ : Fin n) : ℝ :=
+def LearnerModel.prob (M : LearnerModel D n Form) (L : ParadigmSystem D n Form)
+    (p : Paradigm n Form) (S : Finset (Fin n)) (σ : Fin n) : ℝ :=
   M.predict (holdOut L S) (fun c ↦ if c ∈ S then none else some (p c)) σ (p σ)
 
 /-- The informational fusion of the form for `σ` is its surprisal under a learner that has seen
@@ -98,12 +99,12 @@ no form for the feature sets in `S`, among them `σ`. Holding out `σ` alone is 
 informational fusion, which holds out a feature set where [wu-cotterell-2019]'s irregularity
 holds out a lemma; holding out every feature set containing a pair of features is its pairwise
 fusion. -/
-noncomputable def LearnerModel.fusion (M : LearnerModel n Form) (L : ParadigmSystem n Form)
+noncomputable def LearnerModel.fusion (M : LearnerModel D n Form) (L : ParadigmSystem D n Form)
     (p : Paradigm n Form) (S : Finset (Fin n)) (σ : Fin n) : ℝ :=
   -log (M.prob L p S σ)
 
 /-- A form's informational fusion under a learner assigning it a probability is nonnegative. -/
-theorem LearnerModel.fusion_nonneg {M : LearnerModel n Form} {L : ParadigmSystem n Form}
+theorem LearnerModel.fusion_nonneg {M : LearnerModel D n Form} {L : ParadigmSystem D n Form}
     {p : Paradigm n Form} {S : Finset (Fin n)} {σ : Fin n} (h₀ : 0 ≤ M.prob L p S σ)
     (h₁ : M.prob L p S σ ≤ 1) : 0 ≤ M.fusion L p S σ :=
   neg_nonneg.2 (log_nonpos h₀ h₁)

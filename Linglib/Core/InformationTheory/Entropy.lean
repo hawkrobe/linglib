@@ -48,6 +48,11 @@ Entropies are invariant under injective recodings and depend only on laws.
   `measureMutualInfo_map_swap`, `measureMutualInfo_parallelComp_id_comp_le` (data processing).
 * `measureEntropy_map_of_injective`, `entropy_comp_of_injective`, `entropy_comm`,
   `IdentDistrib.entropy_eq`, `IdentDistrib.condEntropy_eq`.
+* `measureEntropy_eq_zero_iff`, `entropy_const`, `entropy_eq_zero_iff`,
+  `condEntropy_eq_zero_iff`: zero entropy means a Dirac law, an almost surely constant
+  variable, or an almost sure function of the conditioning variable.
+* `entropy_comp_le`, `entropy_le_measureEntropy`: a function of a random variable has at most
+  its entropy, which is at most the entropy of the sample-space measure.
 * `chain_rule`, `mutualInfo_eq_entropy_sub_condEntropy`, `condEntropy_le_entropy`,
   `condEntropy_eq_sum_negLog`, `condEntropy_fst_snd`, `measureMutualInfo_le_measureEntropy_snd`.
 * `mutualInfo_comp_le` (data processing), `condEntropy_le_condEntropy_comp`,
@@ -183,6 +188,37 @@ theorem measureEntropy_uniformOn [Fintype S] [DecidableEq S] {A : Finset S} (hA 
     negMulLog, log_inv]
   field_simp
 
+/-- A probability measure on a finite type has zero entropy iff it is a Dirac mass. -/
+theorem measureEntropy_eq_zero_iff [Fintype S] (μ : Measure S) [IsProbabilityMeasure μ] :
+    Hm[μ] = 0 ↔ ∃ x, μ = Measure.dirac x := by
+  refine ⟨fun h => ?_, fun ⟨x, hx⟩ => hx ▸ measureEntropy_dirac x⟩
+  rw [measureEntropy_eq_sum] at h
+  have hzero := (Finset.sum_eq_zero_iff_of_nonneg fun s _ =>
+    negMulLog_nonneg measureReal_nonneg measureReal_le_one).1 h
+  have hmass : ∀ s : S, μ.real {s} = 0 ∨ μ.real {s} = 1 := by
+    intro s
+    have hs := hzero s (Finset.mem_univ s)
+    rw [negMulLog, neg_mul, neg_eq_zero, mul_eq_zero] at hs
+    rcases hs with h0 | h0
+    · exact .inl h0
+    · rcases log_eq_zero.1 h0 with h1 | h1 | h1
+      · exact .inl h1
+      · exact .inr h1
+      · exact absurd (h1 ▸ measureReal_nonneg) (by norm_num)
+  obtain ⟨x, hx⟩ : ∃ x : S, μ.real {x} = 1 := by
+    by_contra hno
+    refine zero_ne_one (α := ℝ) ?_
+    rw [← sum_measureReal_singleton_eq_one μ]
+    exact (Finset.sum_eq_zero fun s _ =>
+      (hmass s).resolve_right fun h1 => hno ⟨s, h1⟩).symm
+  have hμx : μ {x} = 1 := by rwa [measureReal_def, ENNReal.toReal_eq_one_iff] at hx
+  refine ⟨x, Measure.ext_iff_singleton.2 fun a => ?_⟩
+  rcases eq_or_ne a x with rfl | ha
+  · rw [hμx, Measure.dirac_apply_of_mem (Set.mem_singleton a)]
+  · rw [Measure.dirac_apply, Set.indicator_of_notMem (by simpa using ha.symm)]
+    exact measure_mono_null (Set.singleton_subset_iff.2 (by simpa using ha))
+      ((prob_compl_eq_zero_iff (.singleton x)).2 hμx)
+
 end measureEntropy
 
 section measureMutualInfo
@@ -295,6 +331,27 @@ theorem entropy_of_subsingleton [Fintype S] [MeasurableSingletonClass S] [Subsin
     (X : Ω → S) (μ : Measure Ω) : H[X ; μ] = 0 :=
   le_antisymm ((entropy_le_log_card X μ).trans <| log_nonpos (Nat.cast_nonneg _) <|
     Nat.cast_le_one.mpr (Fintype.card_le_one_iff_subsingleton.mpr ‹_›)) (entropy_nonneg X μ)
+
+/-- A constant random variable has no entropy. -/
+theorem entropy_const [MeasurableSingletonClass S] (μ : Measure Ω) [IsProbabilityMeasure μ]
+    (x : S) : H[fun _ ↦ x ; μ] = 0 := by
+  rw [entropy_def, Measure.map_const, measure_univ, one_smul, measureEntropy_dirac]
+
+/-- A random variable has zero entropy iff it is almost surely constant. -/
+theorem entropy_eq_zero_iff [Fintype S] [MeasurableSingletonClass S] (hX : Measurable X)
+    (μ : Measure Ω) [IsProbabilityMeasure μ] : H[X ; μ] = 0 ↔ ∃ x, ∀ᵐ ω ∂μ, X ω = x := by
+  have : IsProbabilityMeasure (μ.map X) :=
+    (Measure.isProbabilityMeasure_map_iff hX.aemeasurable).2 ‹_›
+  rw [entropy_def, measureEntropy_eq_zero_iff]
+  refine exists_congr fun x => ⟨fun h => ?_, fun h => ?_⟩
+  · have h1 : μ (X ⁻¹' {x}) = 1 := by
+      have := congrArg (· {x}) h
+      simpa [Measure.map_apply hX (.singleton x), Measure.dirac_apply_of_mem] using this
+    rw [ae_iff, show {ω | ¬ X ω = x} = (X ⁻¹' {x})ᶜ from rfl,
+      prob_compl_eq_zero_iff (hX (.singleton x))]
+    exact h1
+  · rw [Measure.map_congr (h.mono fun ω hω => hω : X =ᵐ[μ] fun _ => x), Measure.map_const,
+      measure_univ, one_smul]
 
 /-- Entropy is invariant under an injective recoding of the values. -/
 theorem entropy_comp_of_injective [MeasurableSingletonClass S] [MeasurableSingletonClass T]
@@ -485,6 +542,22 @@ theorem condEntropy_comp_self (hY : Measurable Y) (f : T → U) : H[f ∘ Y | Y 
     entropy_comp_of_injective μ hY (measurable_of_finite _) fun _ _ h ↦ (Prod.mk.inj h).2] at h
   linarith
 
+/-- A function of a random variable has at most its entropy. -/
+theorem entropy_comp_le (hX : Measurable X) (f : S → U) : H[f ∘ X ; μ] ≤ H[X ; μ] := by
+  have hf : Measurable (f ∘ X) := (measurable_of_finite f).comp hX
+  have h₁ := chain_rule μ hf hX
+  have h₂ := chain_rule μ hX hf
+  have h₃ := condEntropy_comp_self μ hX f
+  have h₄ := entropy_comm μ hf hX
+  have h₅ := condEntropy_nonneg X (f ∘ X) μ
+  linarith
+
+/-- A random variable has at most the entropy of its sample-space measure. -/
+theorem entropy_le_measureEntropy [Fintype Ω] [MeasurableSingletonClass Ω] (X : Ω → S) :
+    H[X ; μ] ≤ Hm[μ] := by
+  have h := entropy_comp_le (X := id) μ measurable_id X
+  rwa [Function.comp_id, entropy_def id μ, Measure.map_id] at h
+
 end comp
 
 variable {μ} in
@@ -521,6 +594,45 @@ theorem condEntropy_eq_sum_negLog (hX : Measurable X) (hY : Measurable Y) :
   rw [Finset.sum_comm]
   simp_rw [← Finset.mul_sum, entropy_eq_sum hX]
 
+/-- On finite types, conditional entropy vanishes exactly when `X` is almost surely a function
+of `Y`. -/
+theorem condEntropy_eq_zero_iff [Nonempty S] (hX : Measurable X) (hY : Measurable Y) :
+    H[X | Y ; μ] = 0 ↔ ∃ f : T → S, ∀ᵐ ω ∂μ, X ω = f (Y ω) := by
+  classical
+  refine ⟨fun h => ?_, fun ⟨f, hf⟩ => ?_⟩
+  · rw [condEntropy_eq_sum X hY μ] at h
+    have hzero := (Finset.sum_eq_zero_iff_of_nonneg fun y _ =>
+      mul_nonneg measureReal_nonneg (entropy_nonneg _ _)).1 h
+    have key : ∀ y : T, μ (Y ⁻¹' {y}) ≠ 0 → ∃ x : S, ∀ᵐ ω ∂μ[|Y ⁻¹' {y}], X ω = x := by
+      intro y hy
+      have : IsProbabilityMeasure (μ[|Y ⁻¹' {y}]) := cond_isProbabilityMeasure hy
+      refine (entropy_eq_zero_iff hX _).1 ?_
+      rcases mul_eq_zero.1 (hzero y (Finset.mem_univ y)) with h0 | h0
+      · exact absurd ((measureReal_eq_zero_iff (measure_ne_top _ _)).1 h0) hy
+      · exact h0
+    choose g hg using key
+    refine ⟨fun y => if hy : μ (Y ⁻¹' {y}) ≠ 0 then g y hy else Classical.arbitrary S, ?_⟩
+    rw [ae_iff]
+    refine measure_mono_null (fun ω hω => ?_)
+      (measure_iUnion_null fun y : T => ?_ :
+        μ (⋃ y : T, Y ⁻¹' {y} ∩ {ω | X ω ≠
+          if hy : μ (Y ⁻¹' {y}) ≠ 0 then g y hy else Classical.arbitrary S}) = 0)
+    · exact Set.mem_iUnion.2 ⟨Y ω, rfl, hω⟩
+    · rcases eq_or_ne (μ (Y ⁻¹' {y})) 0 with hy | hy
+      · exact measure_mono_null Set.inter_subset_left hy
+      · have hae := hg y hy
+        rw [ae_iff, cond_apply (hY (.singleton y))] at hae
+        rcases mul_eq_zero.1 hae with h0 | h0
+        · exact absurd (ENNReal.inv_eq_zero.1 h0) (measure_ne_top _ _)
+        · simpa [dite_eq_left hy] using h0
+  · have hfY : Measurable fun ω => f (Y ω) := (measurable_of_finite f).comp hY
+    have hpair : (fun ω => (X ω, Y ω)) =ᵐ[μ] fun ω => (f (Y ω), Y ω) :=
+      hf.mono fun ω hω => by simp [hω]
+    have hid : IdentDistrib (fun ω => (X ω, Y ω)) (fun ω => (f (Y ω), Y ω)) μ μ :=
+      ⟨(hX.prodMk hY).aemeasurable, (hfY.prodMk hY).aemeasurable, Measure.map_congr hpair⟩
+    rw [hid.condEntropy_eq hX hY hfY hY]
+    exact condEntropy_comp_self μ hY f
+
 /-- On a joint law, the conditional entropy of the first coordinate given the second is the
 entropy of the first marginal less the mutual information. -/
 theorem condEntropy_fst_snd (ρ : Measure (S × T)) [IsProbabilityMeasure ρ] :
@@ -556,6 +668,19 @@ theorem uniformOn_univ_cond [Finite Ω] (A : Set Ω) :
     (uniformOn (Set.univ : Set Ω))[|A] = uniformOn A := by
   rw [uniformOn, uniformOn, cond_cond_eq_cond_inter' .univ (Set.toFinite A).measurableSet
     (Measure.count_apply_lt_top.2 Set.finite_univ).ne, Set.univ_inter]
+
+/-- The entropy of an attribute of a finite population under the uniform measure on a part of
+it: the entropy of the attribute's empirical distribution, as counts. -/
+theorem entropy_uniformOn [Fintype Ω] {S : Type*} [MeasurableSpace S]
+    [MeasurableSingletonClass S] [Fintype S] [DecidableEq S] (A : Finset Ω) (hA : A.Nonempty)
+    (X : Ω → S) :
+    H[X ; uniformOn (↑A : Set Ω)]
+      = ∑ s, negMulLog (((A.filter (X · = s)).card : ℝ) / A.card) := by
+  have := isProbabilityMeasure_uniformOn A.finite_toSet (by simpa using hA)
+  rw [entropy_eq_sum (measurable_of_finite _)]
+  refine Finset.sum_congr rfl fun s _ ↦ ?_
+  have h : (↑A ∩ X ⁻¹' {s} : Set Ω) = ↑(A.filter (X · = s)) := by ext ω; simp
+  rw [uniformOn_real_apply, h, Set.ncard_coe_finset, Set.ncard_coe_finset]
 
 /-- The conditional entropy of one attribute of a finite population given another, under the
 uniform measure: each fibre of `Y` weighted by its share of the population, with the entropy of
