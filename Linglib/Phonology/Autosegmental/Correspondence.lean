@@ -27,6 +27,10 @@ tier and no links.
   relation presented by a finite one.
 * `Rep.ofWords`: the correspondence graph of an input word, an output word and a
   correspondence relation on their positions.
+
+## References
+
+* [jardine-2016b]
 -/
 
 @[expose] public section

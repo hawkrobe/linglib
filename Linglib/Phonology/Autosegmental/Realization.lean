@@ -33,6 +33,11 @@ arcs and is too coarse to preserve tier words.
   offsets (`AR.tierOffset`).
 * `AR.noCrossing_realize`: realization preserves the NCC of its primitives ([jardine-2016b]
   Theorem 4).
+
+## References
+
+* [jardine-2019]
+* [jardine-2016b]
 -/
 
 @[expose] public section

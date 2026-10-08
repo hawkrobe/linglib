@@ -10,38 +10,35 @@ public import Linglib.Phonology.Autosegmental.NormalForm
 /-!
 # The association hull
 
-`Graph.hull` closes each upper node's association set to its interval hull on the lower
-tier: `(k, j)` is a hull link iff `j` lies between two of `k`'s links. This is the
-representational content of tonal spreading-to-a-span: [hyman-katamba-2010]'s plateauing
-rule, applied after OCP-fusion, is exactly the hull of the fused H's associations
-(`Phonology/Tone/Plateauing`).
-
-Hull-closure of a multi-node melody can violate the no-crossing constraint (two
-interleaved hulls cross); the phonological operation applies to the fused
-representation, where the melody is a single node and the hull is planar.
+`AR.hull m` closes each node of melody tier `m` to the interval hull of its links on every
+other tier: a melody node links to a position iff that position lies between two of its
+links. Applied after OCP fusion, the hull of the fused H's links is the plateau of
+[hyman-katamba-2010]'s plateauing rule (`Phonology/Tone/Plateauing`). The hull of a melody
+with several nodes can violate the No-Crossing Constraint, since two interleaved hulls cross;
+the rule applies to the fused representation, whose melody is a single node.
 
 ## Main results
 
-* `mem_links_hull` — hull membership as flanking (`Graph` form with explicit bounds;
-  side-condition-free `AR.mem_links_hull` for well-formed representations).
-* `links_subset_hull` — the hull extends the link set.
-* `hull_convex` — per-node convexity: the defining property of the hull.
-* `AR.hull` — the operation on well-formed representations.
+* `AR.link_hull_left`: a melody node links to the positions between two of its links.
+* `AR.link_subset_hull`: the hull extends the link relation.
+* `AR.link_hull_convex`: each melody node's links form an interval.
+
+## References
+
+* [hyman-katamba-2010]
 -/
 
 @[expose] public section
 
 namespace Autosegmental
 
-variable {α β : Type*}
-
 section CoordinateHull
 
 variable {ι : Type*} [Finite ι] {τ : ι → Type*}
 variable (m : ι) (X : TieredAR ι τ) [Finite X.obj.V]
 
-/-- Close each tier-`m` node's association set to its interval hull on each
-    other tier. -/
+/-- The hull closes each tier-`m` node's association set to its interval hull on each
+other tier. -/
 noncomputable def AR.hull :
     TieredAR ι τ :=
   AR.ofData (fun i => X.tierWord i)
@@ -59,7 +56,7 @@ instance : Finite (X.hull m).obj.V :=
 @[simp] theorem AR.tierLength_hull (i : ι) : (X.hull m).tierLength i = X.tierLength i := by
   rw [← AR.length_tierWord, AR.tierWord_hull, AR.length_tierWord]
 
-/-- Hull membership at the melody tier: `q` lies between two of `p`'s links. -/
+/-- In the hull, melody node `p` links to `q` iff `q` lies between two of `p`'s links. -/
 theorem AR.link_hull_left {j : ι} (hj : m ≠ j) {p q : ℕ}
     (hq : q < X.tierLength j) :
     (X.hull m).link m j p q ↔
@@ -109,7 +106,7 @@ theorem AR.link_subset_hull {i j : ι} {p q : ℕ} (h : X.link i j p q) :
         ⟨p, p, X.link_symm h, X.link_symm h, le_rfl, le_rfl⟩)
     · exact (X.link_hull_of_ne m (Ne.symm hi) (Ne.symm hj) p q).mpr h
 
-/-- Per-node convexity at the melody tier: the defining property of the hull. -/
+/-- Each melody node's hull links form an interval. -/
 theorem AR.link_hull_convex {j : ι} (hj : m ≠ j) {p q₁ q q₂ : ℕ}
     (hq : q < X.tierLength j)
     (h₁ : (X.hull m).link m j p q₁) (h₂ : (X.hull m).link m j p q₂)

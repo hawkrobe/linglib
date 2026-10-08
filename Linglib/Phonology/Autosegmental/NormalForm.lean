@@ -35,8 +35,8 @@ definitional: `normalize` pulls the graph back along the enumeration equivalence
 
 * `AR.normalizeIso`: `X.normalize ≅ X`.
 * `AR.arcs_normalize`, `AR.edges_normalize`: on normal forms the arcs are the
-  ascending position order and the edges are `linkRel` — [jardine-heinz-2015]'s
-  tiered presentation recovered as a theorem.
+  ascending position order and the edges are `linkRel`, so the tiered presentation is
+  recovered as a theorem.
 * `AR.tierWord_tensor`, `AR.link_tensor`: concatenation appends tier words and
   shifts links blockwise.
 * `AR.isoOfReaderEq`: `(tierWord, link)` is a complete isomorphism invariant.
@@ -441,8 +441,7 @@ end LinkReader
 /-! ### Classification: the readers determine the representation
 
 Two finite representations with the same tier words and the same links are
-isomorphic — `(tierWord, link)` is a complete invariant, [jardine-heinz-2015]'s
-tiered tuples as the classification of finite representations. -/
+isomorphic, so `(tierWord, link)` is a complete invariant of finite representations. -/
 
 section Classification
 open scoped MonoidalCategory

@@ -37,6 +37,12 @@ realization followed by the collapse.
 * `AR.isCleanAt_iff_isOCPClean`: tier-word cleanliness is Axiom 6 on the normal form.
 * `AR.free_realizeMerged_ofWords_iff`: the merged realization of a string of presentations
   reads as one presentation.
+
+## References
+
+* [jardine-2019]
+* [jardine-heinz-2015]
+* [jardine-2016b]
 -/
 
 @[expose] public section
@@ -298,7 +304,7 @@ theorem AR.link_collapse_tensor (i j : ι) (r s : ℕ) :
       · rw [← X.collapseIdx_right m j hY₀.2.1, hcb, Nat.add_sub_cancel' hqj', hs]
 
 /-- Collapsing a concatenation is isomorphic to collapsing the concatenation of the
-collapses, the melody-merge law of [jardine-heinz-2015]. -/
+collapses. -/
 noncomputable def AR.collapseTensorFullIso :
     Graph.Iso ((X ⊗ Y).collapse m).obj
       ((X.collapse m ⊗ Y.collapse m).collapse m).obj :=
