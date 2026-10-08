@@ -17,6 +17,7 @@ public import Linglib.Fragments.Lango.Coordination
 public import Linglib.Fragments.Latin.Coordination
 public import Linglib.Fragments.Tibetic.Classical.Case
 public import Linglib.Fragments.Tibetic.Classical.Coordination
+public import Linglib.Fragments.Turkish.Adpositions
 public import Linglib.Fragments.Turkish.Coordination
 public import Linglib.Fragments.Yoruba.Coordination
 
@@ -48,18 +49,20 @@ coordinator inline. A binary pattern is the pair of its coordinands' markings, s
 number of marked coordinands, and `marking_agrees_with_side` checks the patterns against the
 attachment side the Fragments record for each coordinator. Whether a construction is emphatic is
 recorded only where the chapter says so, and a diachronic source only where the chapter states one,
-so Classical Tibetan *-daŋ*, which the chapter says "comes from a former case-marker" without naming
-the case, has none; the Fragment records, after [beyer-1992], the chapter's source for it, that it
-is still the accompaniment role particle (`dang_isAlsoComitative`). The word-order half of the
-comitative derivation, adposition order following modifier order, is taken as the
-`CoordinatorPosition` argument of `DiachronicSource.pattern`. The comitative-sourced attestations
-include Tauya *-sou*, doubled on both conjuncts, the extension §5.1 notes, so `comitative_patterns`
-admits the postpositive bisyndetic pattern beside the two source patterns.
+so Classical Tibetan *-daŋ* and Turkish *-le*, which the chapter says "come from a former
+case-marker" without naming the case, have none; the Fragments record, after [beyer-1992] and
+[goksel-kerslake-2005], that both are still comitative markers
+(`former_case_marker_isAlsoComitative`). The word-order half of the comitative derivation,
+adposition order following modifier order, is taken as the `CoordinatorPosition` argument of
+`DiachronicSource.pattern`. The comitative-sourced attestations include Tauya *-sou*, doubled on
+both conjuncts, the extension §5.1 notes, so `comitative_patterns` admits the postpositive
+bisyndetic pattern beside the two source patterns.
 
 ## References
 
 * [haspelmath-2007]
 * [beyer-1992]
+* [goksel-kerslake-2005]
 * [stassen-2000]
 -/
 
@@ -266,12 +269,14 @@ theorem comitative_source_isAlsoComitative :
         Lango.Adpositions.kede.functions := by
   decide
 
-/-- Classical Tibetan *-daŋ*, which comes from a former case-marker, (41), is still the
-accompaniment role particle. -/
-theorem dang_isAlsoComitative :
+/-- Classical Tibetan *-daŋ* and Turkish *-le*, which come from a former case-marker, (41), are
+still comitative markers: the accompaniment role particle and the comitative postposition. -/
+theorem former_case_marker_isAlsoComitative :
     ClassicalTibetan.Coordination.dang.IsAlsoComitative
-      (ClassicalTibetan.Case.exponents .accompaniment)
-      (ClassicalTibetan.Case.functions .accompaniment) := by
+        (ClassicalTibetan.Case.exponents .accompaniment)
+        (ClassicalTibetan.Case.functions .accompaniment) ∧
+      Turkish.Coordination.ile.IsAlsoComitative Turkish.Adpositions.ile.morphs
+        Turkish.Adpositions.ile.functions := by
   decide
 
 /-! ### Emphatic correlatives, (45) -/
