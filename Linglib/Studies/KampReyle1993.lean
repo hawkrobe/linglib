@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Semantics.Dynamic.DRS.Dynamics
+public import Linglib.Semantics.Dynamic.DRS.Accessibility
 public import Linglib.Core.Data.Fin.VecNotation
 
 /-!
@@ -78,8 +79,8 @@ theorem ulysses_tc (a : ℕ → M) :
       ∃ x y : M, rm .jones ![x] ∧ rm .ulysses ![y] ∧ rm .owns ![x, y] ∧
         rm .fascinates ![y, x] := by
   simp only [DRS.trueRel_iff, ulyssesDiscourse, DRS.toRel_iff, Box.Extends,
-    Embedding.verifies_mk, List.forall_mem_cons, List.not_mem_nil, false_implies,
-    implies_true, Embedding.verifies_rel, Embedding.verifies_eq, Matrix.comp_vecCons,
+    verifies_mk, List.forall_mem_cons, List.not_mem_nil, false_implies,
+    implies_true, verifies_rel, verifies_eq, Matrix.comp_vecCons,
     Matrix.comp_vecEmpty, and_true]
   constructor
   · rintro ⟨a', -, hj, hu, ho, h32, h41, hf⟩
@@ -96,11 +97,11 @@ theorem ulysses_proper : ulyssesDiscourse.IsProper := by
 
 /-! ### Negation blocks anaphora: "Jones does not own a Porsche." (1.56) -/
 
-/-- The box under `¬` in (1.57): `[u₂ | Porsche u₂, u₁ owns u₂]`. -/
+/-- The box under `¬` in (1.57) is `[u₂ | Porsche u₂, u₁ owns u₂]`. -/
 def porscheNeg : DRS krLang ℕ := .mk {2} [.rel .porsche (![2]), .rel .owns (![1, 2])]
 
-/-- The DRS (1.57) of (1.56) — `[u₁ | Jones u₁, ¬[u₂ | Porsche u₂, u₁ owns u₂]]`: the
-indefinite's referent is introduced *inside* the negation. -/
+/-- The DRS (1.57) of (1.56), `[u₁ | Jones u₁, ¬[u₂ | Porsche u₂, u₁ owns u₂]]`, introduces
+the indefinite's referent *inside* the negation. -/
 def porscheDiscourse : DRS krLang ℕ := .mk {1} [.rel .jones (![1]), .neg porscheNeg]
 
 /-- Truth of (1.57): there is *no* Porsche that Jones owns — the negated box is
@@ -109,8 +110,8 @@ theorem porsche_tc (a : ℕ → M) :
     DRS.trueRel porscheDiscourse a ↔
       ∃ x : M, rm .jones ![x] ∧ ¬ ∃ y : M, rm .porsche ![y] ∧ rm .owns ![x, y] := by
   simp only [DRS.trueRel_iff, porscheDiscourse, porscheNeg, DRS.toRel_iff, Box.Extends,
-    Embedding.verifies_mk, List.forall_mem_cons, List.not_mem_nil, false_implies,
-    implies_true, Embedding.verifies_neg, Embedding.verifies_rel, Matrix.comp_vecCons,
+    verifies_mk, List.forall_mem_cons, List.not_mem_nil, false_implies,
+    implies_true, verifies_neg, verifies_rel, Matrix.comp_vecCons,
     Matrix.comp_vecEmpty, and_true]
   constructor
   · rintro ⟨a', -, hj, hneg⟩
@@ -126,13 +127,12 @@ theorem porsche_tc (a : ℕ → M) :
 /-- From the top-level position, the referent trapped under `¬` is not accessible
 (Def. 2.1.3) — the reason a continuation "*It fascinates him." cannot resolve *it*. -/
 theorem porsche_referent_inaccessible : ¬ DRS.Accessible porscheDiscourse 1 2 := by
-  simp [DRS.Accessible, DRS.accessibleFrom, DRS.accScope, porscheDiscourse]
+  decide
 
 /-- Accessibility looks "left and up": from inside the negation, the outer referent
 *is* accessible — the asymmetry of Def. 2.1.3. -/
 theorem outer_referent_accessible : DRS.Accessible porscheDiscourse 2 1 := by
-  simp [DRS.Accessible, DRS.accessibleFrom, DRS.accScope, porscheDiscourse, porscheNeg,
-    Condition.accScopeL, Condition.accScope, Option.orElse]
+  decide
 
 /-- A continuation resolved to the trapped referent anyway is improper
 (Def. 1.4.2–1.4.3): merging "It fascinates him." with *it* forced to `u₂` leaves `u₂`
@@ -159,8 +159,8 @@ theorem donkey_universal_reading (a : ℕ → M) :
     ∀ e₁ e₂ : M, (rm .farmer ![e₁] ∧ rm .donkey ![e₂] ∧ rm .owns ![e₁, e₂]) →
       rm .beats ![e₁, e₂] := by
   simp only [DRS.trueRel_iff, donkey, donkeyAnte, donkeyCons, DRS.toRel_iff, Box.Extends,
-    Embedding.verifies_mk, List.forall_mem_cons, List.not_mem_nil,
-    false_implies, implies_true, Embedding.verifies_imp, Embedding.verifies_rel,
+    verifies_mk, List.forall_mem_cons, List.not_mem_nil,
+    false_implies, implies_true, verifies_imp, verifies_rel,
     Matrix.comp_vecCons, Matrix.comp_vecEmpty, and_true]
   constructor
   · rintro ⟨a', -, himp⟩ e₁ e₂ ⟨hf, hd, ho⟩
@@ -189,9 +189,9 @@ theorem donkeyPronoun_tc (a : ℕ → M) :
     ∀ e₁ e₂ : M, (rm .farmer ![e₁] ∧ rm .donkey ![e₂] ∧ rm .owns ![e₁, e₂]) →
       rm .beats ![e₁, e₂] := by
   simp only [DRS.trueRel_iff, donkeyPronoun, donkeyAnte, donkeyPronounCons, DRS.toRel_iff,
-    Box.Extends, Embedding.verifies_mk, List.forall_mem_cons, List.not_mem_nil,
-    false_implies, implies_true, Embedding.verifies_imp, Embedding.verifies_rel,
-    Embedding.verifies_eq, Matrix.comp_vecCons, Matrix.comp_vecEmpty, and_true]
+    Box.Extends, verifies_mk, List.forall_mem_cons, List.not_mem_nil,
+    false_implies, implies_true, verifies_imp, verifies_rel,
+    verifies_eq, Matrix.comp_vecCons, Matrix.comp_vecEmpty, and_true]
   constructor
   · rintro ⟨a', -, himp⟩ e₁ e₂ ⟨hf, hd, ho⟩
     obtain ⟨v'', hag, h32, hb⟩ := himp (λ n => match n with | 1 => e₁ | 2 => e₂ | n => a' n)
@@ -223,41 +223,22 @@ theorem donkey_consequent_subordinate : DirectlySubordinate donkeyCons donkey :=
 /-- The antecedent is accessible to the consequent ([geurts-beaver-maier-2024]
 §4.2) — the geometry that licenses the donkey anaphora. -/
 theorem donkey_antecedent_accessible : AccessibleTo donkey donkeyAnte donkeyCons :=
-  .single (.impCons .refl (by simp [donkey]))
+  ⟨[donkeyCons, donkeyAnte, donkey], .single (.impCons (by simp [donkey])), by simp⟩
 
-private theorem weakSubordinate_donkey {K : DRS krLang ℕ} (h : WeakSubordinate K donkey) :
-    K = donkey ∨ K = donkeyAnte ∨ K = donkeyCons := by
-  induction h using Relation.ReflTransGen.head_induction_on with
-  | refl => exact .inl rfl
-  | head hstep hrest ih =>
-    rcases ih with rfl | rfl | rfl
-    · cases hstep with
-      | neg hc => simp [donkey] at hc
-      | impAnte hc => simp [donkey] at hc; exact .inr (.inl hc.1)
-      | impCons hc => simp [donkey] at hc; exact .inr (.inr hc.2)
-      | disL hc => simp [donkey] at hc
-      | disR hc => simp [donkey] at hc
-    · cases hstep with
-      | neg hc | impAnte hc | impCons hc | disL hc | disR hc => simp [donkeyAnte] at hc
-    · cases hstep with
-      | neg hc | impAnte hc | impCons hc | disL hc | disR hc => simp [donkeyCons] at hc
-
-/-- Not conversely: the consequent has no outgoing accessibility edge, so its
-(empty) universe contributes nothing to the antecedent — the `⇒` asymmetry. -/
+/-- The consequent is not among the boxes accessible at the antecedent, the `⇒` asymmetry. -/
 theorem donkey_not_consequent_accessible : ¬ AccessibleTo donkey donkeyCons donkeyAnte := by
-  intro h
-  rcases h.cases_head with heq | ⟨X, hedge, -⟩
-  · exact absurd (congrArg Box.referents heq) (by decide)
-  · cases hedge with
-    | neg hK hc => simp [donkeyCons] at hc
-    | impAnte hK hc => simp [donkeyCons] at hc
-    | disLeft hK hc => simp [donkeyCons] at hc
-    | disRight hK hc => simp [donkeyCons] at hc
-    | impCons hK hc =>
-      rcases weakSubordinate_donkey hK with rfl | rfl | rfl
-      · simp [donkey, donkeyAnte, donkeyCons] at hc
-      · simp [donkeyAnte] at hc
-      · simp [donkeyCons] at hc
+  rintro ⟨bs, h, hmem⟩
+  rw [Occurrence, ← DRS.mem_occurrences_iff] at h
+  simp only [DRS.occurrences, donkey, Condition.occurrencesList, Condition.occurrences_imp,
+    List.append_nil, List.mem_cons, List.mem_append, Prod.mk.injEq] at h
+  rcases h with ⟨-, h⟩ | (⟨rfl, -⟩ | h) | ⟨-, h⟩ | h
+  · simpa [donkeyAnte] using congrArg Box.referents h
+  · rcases List.mem_cons.1 hmem with h | h
+    · exact absurd (congrArg Box.referents h) (by decide)
+    · simpa [donkeyCons] using congrArg Box.conditions (List.mem_singleton.1 h)
+  · simp [donkeyAnte, Condition.occurrencesList, Condition.occurrences] at h
+  · simpa [donkeyAnte, donkeyCons] using congrArg Box.referents h
+  · simp [donkeyCons, Condition.occurrencesList, Condition.occurrences] at h
 
 /-! ### Model evaluation: the donkey conditional in concrete models
 

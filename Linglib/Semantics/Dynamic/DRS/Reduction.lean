@@ -7,19 +7,26 @@ public import Mathlib.ModelTheory.Semantics
 # From DRT to predicate logic
 
 This file translates each DRS into a mathlib `FirstOrder.Language.Formula` and
-proves that the translation's `Realize` coincides with `Embedding.Verifies` —
+proves that the translation's `Realize` coincides with verification —
 [kamp-reyle-1993]'s §1.5 reduction of the DRS language to first-order logic
 (cf. [muskens-1996]). The universe of a sub-DRS is existentially closed
 (`closeExists`, via `Formula.iExs`); the antecedent of a `⇒` is universally
-closed (`closeForall`, via `Formula.iAlls`).
+closed (`closeForall`, via `Formula.iAlls`). The translation of a proper DRS
+realizes the same way under every assignment, as truth in the model (p. 138).
 
 ## Main declarations
 
 * `DRS.toFormula`, `Condition.toFormula`: the translation into `L.Formula V`.
 * `DRS.realize_toFormula`: truth of a DRS matches its first-order
   translation's `Realize`.
-* `realize_closeExists`, `realize_closeForall`: the universe-closure operators
-  realize as `∃`/`∀` over embeddings extending `v` on the closed referents.
+* `DRS.realize_toFormula_of_isProper`: the translation of a proper DRS is realized
+  iff some embedding verifies the DRS.
+
+## TODO
+
+The translation of a proper DRS is closed (p. 138), so it is an `L.Sentence` and
+Def. 1.4.6's logical consequence is mathlib's `⊨ᵇ`; this needs `freeVarFinset`
+lemmas for `relabel`, `iExs` and `iAlls`, which mathlib lacks.
 -/
 
 @[expose] public section
@@ -66,11 +73,6 @@ noncomputable def Condition.toFormula [DecidableEq V] : Condition L V → L.Form
 noncomputable def Condition.toFormulaAll [DecidableEq V] (cs : List (Condition L V)) :
     L.Formula V := (cs.map Condition.toFormula).foldr (· ⊓ ·) ⊤
 
-/-- The conjunction of a DRS's conditions, *without* closing its universe (the
-antecedent body of a `⇒`). -/
-noncomputable def DRS.bodyFormula [DecidableEq V] (K : DRS L V) : L.Formula V :=
-  Condition.toFormulaAll K.conditions
-
 /-- Translate a DRS to a first-order formula: existentially close the universe
 over the conjunction of the (translated) conditions (§1.5). -/
 noncomputable def DRS.toFormula [DecidableEq V] (K : DRS L V) : L.Formula V :=
@@ -89,7 +91,7 @@ theorem Condition.toFormula_neg [DecidableEq V] (K : DRS L V) :
 
 theorem Condition.toFormula_imp [DecidableEq V] (a c : DRS L V) :
     Condition.toFormula (.imp a c) =
-      closeForall a.referents ((DRS.bodyFormula a).imp (DRS.toFormula c)) := by
+      closeForall a.referents ((Condition.toFormulaAll a.conditions).imp (DRS.toFormula c)) := by
   simp only [Condition.toFormula]; rfl
 
 theorem Condition.toFormula_dis [DecidableEq V] (l r : DRS L V) :
@@ -164,33 +166,27 @@ theorem realize_closeForall [DecidableEq V] (U : Finset V) (φ : L.Formula V) (v
   exact forall_extend_iff U v (Formula.Realize φ)
 
 private theorem Condition.realize_toFormulaAll_of_forall [DecidableEq V]
-    {cs : List (Condition L V)} {v : Embedding V M}
-    (ih : ∀ c ∈ cs, (Condition.toFormula c).Realize v ↔ v.VerifiesCondition c) :
-    (Condition.toFormulaAll cs).Realize v ↔ ∀ c ∈ cs, v.VerifiesCondition c := by
+    {cs : List (Condition L V)} {v : V → M}
+    (ih : ∀ c ∈ cs, (Condition.toFormula c).Realize v ↔ VerifiesCondition v c) :
+    (Condition.toFormulaAll cs).Realize v ↔ ∀ c ∈ cs, VerifiesCondition v c := by
   induction cs with
   | nil => simp [Condition.toFormulaAll_nil, Formula.realize_top]
   | cons c cs ihl =>
     rw [Condition.toFormulaAll_cons, Formula.realize_inf, List.forall_mem_cons]
     exact and_congr (ih c (by simp)) (ihl fun d hd => ih d (List.mem_cons_of_mem c hd))
 
-private theorem DRS.realize_bodyFormula_of_forall [DecidableEq V] {K : DRS L V}
-    {v : Embedding V M}
-    (ih : ∀ c ∈ K.conditions, (Condition.toFormula c).Realize v ↔ v.VerifiesCondition c) :
-    (DRS.bodyFormula K).Realize v ↔ v.Verifies K :=
-  Condition.realize_toFormulaAll_of_forall ih
-
 private theorem DRS.realize_toFormula_of_forall [DecidableEq V] {K : DRS L V}
-    {v : Embedding V M}
-    (ih : ∀ c ∈ K.conditions, ∀ w : Embedding V M,
-      (Condition.toFormula c).Realize w ↔ w.VerifiesCondition c) :
-    (DRS.toFormula K).Realize v ↔ ∃ v', K.Extends v v' ∧ v'.Verifies K := by
-  simp only [DRS.toFormula, realize_closeExists, Box.Extends, Embedding.Verifies]
+    {v : V → M}
+    (ih : ∀ c ∈ K.conditions, ∀ w : V → M,
+      (Condition.toFormula c).Realize w ↔ VerifiesCondition w c) :
+    (DRS.toFormula K).Realize v ↔ ∃ v', K.Extends v v' ∧ Verifies v' K := by
+  simp only [DRS.toFormula, realize_closeExists, Box.Extends, Verifies]
   exact exists_congr fun v' => and_congr_right fun _ =>
     Condition.realize_toFormulaAll_of_forall fun c hc => ih c hc v'
 
 /-- A single condition's translation realizes as `VerifiesCondition`. -/
-theorem Condition.realize_toFormula [DecidableEq V] (c : Condition L V) (v : Embedding V M) :
-    (Condition.toFormula c).Realize v ↔ v.VerifiesCondition c := by
+theorem Condition.realize_toFormula [DecidableEq V] (c : Condition L V) (v : V → M) :
+    (Condition.toFormula c).Realize v ↔ VerifiesCondition v c := by
   induction c generalizing v with
   | rel R args =>
     simp [Condition.toFormula, Relations.formula, Formula.Realize,
@@ -198,35 +194,35 @@ theorem Condition.realize_toFormula [DecidableEq V] (c : Condition L V) (v : Emb
   | eq a b => simp [Condition.toFormula, Formula.realize_equal]
   | neg K ih =>
     rw [Condition.toFormula_neg, Formula.realize_not, DRS.realize_toFormula_of_forall ih,
-      Embedding.verifies_neg]
+      verifies_neg]
   | imp a c iha ihc =>
-    rw [Condition.toFormula_imp, Embedding.verifies_imp, realize_closeForall]
+    rw [Condition.toFormula_imp, verifies_imp, realize_closeForall]
     refine forall_congr' fun v' => imp_congr_right fun _ => ?_
-    rw [Formula.realize_imp, DRS.realize_bodyFormula_of_forall fun d hd => iha d hd v',
+    rw [Formula.realize_imp, Condition.realize_toFormulaAll_of_forall fun d hd => iha d hd v',
       DRS.realize_toFormula_of_forall ihc]
+    rfl
   | dis l r ihl ihr =>
-    rw [Condition.toFormula_dis, Formula.realize_sup, Embedding.verifies_dis,
+    rw [Condition.toFormula_dis, Formula.realize_sup, verifies_dis,
       DRS.realize_toFormula_of_forall ihl, DRS.realize_toFormula_of_forall ihr]
 
 /-- A list of conditions' conjoined translation realizes as the conjunction of
 their realizations. -/
 theorem Condition.realize_toFormulaAll [DecidableEq V] (cs : List (Condition L V))
-    (v : Embedding V M) :
-    (Condition.toFormulaAll cs).Realize v ↔ ∀ c ∈ cs, v.VerifiesCondition c :=
+    (v : V → M) :
+    (Condition.toFormulaAll cs).Realize v ↔ ∀ c ∈ cs, VerifiesCondition v c :=
   Condition.realize_toFormulaAll_of_forall fun c _ => Condition.realize_toFormula c v
 
-/-- The open body of a DRS (its conditions, no universe closure) realizes as
-`Verifies` of the DRS (used for the antecedent of `⇒`). -/
-theorem DRS.realize_bodyFormula [DecidableEq V] (K : DRS L V) (v : Embedding V M) :
-    (DRS.bodyFormula K).Realize v ↔ v.Verifies K :=
-  DRS.realize_bodyFormula_of_forall fun c _ => Condition.realize_toFormula c v
-
-/-- **DRT ⊆ FOL** (§1.5): the
-translated formula's `Realize` coincides with the bespoke `Embedding.Verifies`. As
-`toFormula` existentially closes the universe, the correspondence is with an
-embedding `v'` extending `v` over `K.referents`. -/
-theorem DRS.realize_toFormula [DecidableEq V] (K : DRS L V) (v : Embedding V M) :
-    (K.toFormula).Realize v ↔ ∃ v', K.Extends v v' ∧ v'.Verifies K :=
+/-- The translation's `Realize` coincides with verification (§1.5). As `toFormula`
+existentially closes the universe, the correspondence is with an embedding `v'`
+extending `v` over `K.referents`. -/
+theorem DRS.realize_toFormula [DecidableEq V] (K : DRS L V) (v : V → M) :
+    (K.toFormula).Realize v ↔ ∃ v', K.Extends v v' ∧ Verifies v' K :=
   DRS.realize_toFormula_of_forall fun c _ w => Condition.realize_toFormula c w
+
+/-- The translation of a proper DRS is realized under any assignment iff some embedding
+verifies the DRS (p. 138, Def. 1.4.5). -/
+theorem DRS.realize_toFormula_of_isProper [DecidableEq V] {K : DRS L V} (hK : K.IsProper)
+    (v : V → M) : K.toFormula.Realize v ↔ ∃ f : V → M, Verifies f K := by
+  rw [DRS.realize_toFormula, exists_extends_verifies_iff_of_isProper hK]
 
 end DRT

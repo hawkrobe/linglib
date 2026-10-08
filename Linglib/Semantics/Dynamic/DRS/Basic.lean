@@ -7,9 +7,8 @@ public import Linglib.Semantics.Dynamic.DRS.Defs
 
 This file develops the structural theory of the `DRS` type of `DRS/Defs.lean`:
 renaming of discourse referents, the merge algebra, transport of the extension
-relation along renaming, occurrence and freeness predicates, and accessibility.
-Renaming along a bijection is [kamp-reyle-1993]'s *alphabetic variant* (the
-prose preceding Def. 1.4.8).
+relation along renaming, and occurring and free referents. Renaming along a bijection
+is [kamp-reyle-1993]'s *alphabetic variant* (the prose preceding Def. 1.4.8).
 
 ## Main declarations
 
@@ -17,15 +16,11 @@ prose preceding Def. 1.4.8).
 * `DRS.varFinset`, `DRS.freeVarFinset`: occurring and free referents.
 * `DRS.IsProper`: no free referent (Def. 1.4.2–1.4.3); decidable.
 * `DRS.ReuseFreeAt`: no referent declared twice along a nesting path.
-* `DRS.accessibleFrom`, `DRS.Accessible`: accessible referents, computed by
-  [vaneijck-2006]'s left-and-up walk; decidable.
-* `AccessibleTo`, `accessibleDomain`: [geurts-beaver-maier-2024]'s accessibility
-  preorder over the sub-DRSs of a host, and its accessible domain `A_K`.
 
 ## Main statements
 
-* `DRS.Accessible.exists_mem_accessibleDomain`: every computed accessibility
-  verdict is realized by genuine accessibility edges.
+* `DRS.isProper_merge`: merging a proper DRS with an increment whose free referents
+  it declares is proper.
 -/
 
 @[expose] public section
@@ -144,6 +139,16 @@ def freeVarFinsetL (cs : List (Condition L V)) : Finset V :=
   | nil => simp
   | cons c cs ih => simp [ih, Finset.union_assoc]
 
+/-- A condition's free referents are among its list's. -/
+theorem freeVarFinset_subset_freeVarFinsetL {c : Condition L V} {cs : List (Condition L V)}
+    (hc : c ∈ cs) : c.freeVarFinset ⊆ freeVarFinsetL cs := by
+  induction cs with
+  | nil => cases hc
+  | cons d ds ih =>
+    rcases List.mem_cons.mp hc with h | h
+    · exact h ▸ Finset.subset_union_left
+    · exact (ih h).trans Finset.subset_union_right
+
 private theorem freeVarFinsetL_subset_varFinsetL_of_forall {cs : List (Condition L V)}
     (h : ∀ c ∈ cs, c.freeVarFinset ⊆ c.varFinset) : freeVarFinsetL cs ⊆ varFinsetL cs := by
   induction cs with
@@ -203,46 +208,6 @@ def ReuseFreeAllAt (X : Finset V) (cs : List (Condition L V)) : Prop :=
     ReuseFreeAllAt X (c :: cs) ↔ ReuseFreeAt X c ∧ ReuseFreeAllAt X cs := by
   simp only [ReuseFreeAllAt, List.forall_mem_cons]
 
-/-! ### Accessibility threading
-
-Accessibility (Def. 1.4.11) is relative to a host DRS: "`u` accessible at box
-`B`" means `u` lies in the universe of `B` or of a box on the path from the host
-down to `B`. A host-free `∃ D, WeakSubordinate K D ∧ u ∈ D.referents` is
-vacuous, since a superordinate `D` introducing any referent can be manufactured.
-`accScope` computes accessibility top-down, by [vaneijck-2006]'s walk in the
-directions *left* (from the consequent of a `⇒` to its antecedent) and *up*,
-threading the in-scope referents along the first path to the box declaring the
-target; the declarative counterpart is the host-anchored preorder `AccessibleTo`
-at the end of this file. -/
-
-/-- Accessibility threading through a condition. -/
-def accScope (s : Finset V) : Condition L V → V → Option (Finset V)
-  | .rel _ _, _ => none
-  | .eq _ _, _ => none
-  | .neg K, x =>
-      if x ∈ K.referents then some (s ∪ K.referents)
-      else (K.conditions.map fun c => accScope (s ∪ K.referents) c x).foldr
-        (fun r acc => r.orElse fun _ => acc) none
-  | .imp a c, x =>
-      (if x ∈ a.referents then some (s ∪ a.referents)
-       else (a.conditions.map fun d => accScope (s ∪ a.referents) d x).foldr
-         (fun r acc => r.orElse fun _ => acc) none).orElse fun _ =>
-      if x ∈ c.referents then some (s ∪ a.referents ∪ c.referents)
-      else (c.conditions.map fun d =>
-          accScope (s ∪ a.referents ∪ c.referents) d x).foldr
-        (fun r acc => r.orElse fun _ => acc) none
-  | .dis l r, x =>
-      (if x ∈ l.referents then some (s ∪ l.referents)
-       else (l.conditions.map fun d => accScope (s ∪ l.referents) d x).foldr
-         (fun r acc => r.orElse fun _ => acc) none).orElse fun _ =>
-      if x ∈ r.referents then some (s ∪ r.referents)
-      else (r.conditions.map fun d => accScope (s ∪ r.referents) d x).foldr
-        (fun r acc => r.orElse fun _ => acc) none
-
-/-- Accessibility threading through a list of conditions: the first hit wins. -/
-def accScopeL (s : Finset V) (cs : List (Condition L V)) (x : V) : Option (Finset V) :=
-  (cs.map fun c => accScope s c x).foldr (fun r acc => r.orElse fun _ => acc) none
-
 end Condition
 
 /-! ## DRSs -/
@@ -262,8 +227,8 @@ def map [DecidableEq W] (f : V → W) : DRS L V → DRS L W :=
     (K.map f).conditions = K.conditions.map (Condition.map f) := rfl
 
 /-- Renaming a DRS along the identity is the identity. -/
-@[simp] theorem map_id [DecidableEq V] (K : DRS L V) : map id K = K := by
-  simp [map]
+@[simp] theorem map_id [DecidableEq V] (K : DRS L V) : map id K = K :=
+  Box.map_eq_self fun c _ => Condition.map_id c
 
 /-- Renaming a DRS along a composite is the composite of the renamings. -/
 theorem map_map [DecidableEq W] [DecidableEq X] (g : W → X) (f : V → W) (K : DRS L V) :
@@ -271,7 +236,7 @@ theorem map_map [DecidableEq W] [DecidableEq X] (g : W → X) (f : V → W) (K :
   simp [map, Box.map_map, Condition.map_map g f]
 
 /-- Extension along a renamed DRS is extension of the precompositions. -/
-theorem extends_map [DecidableEq W] (e : V ≃ W) (K : DRS L V) (f g : Embedding W M) :
+theorem extends_map [DecidableEq W] (e : V ≃ W) (K : DRS L V) (f g : W → M) :
     (K.map e).Extends f g ↔ K.Extends (f ∘ e) (g ∘ e) := by
   simp only [Box.Extends, referents_map, Function.comp_apply]
   refine ⟨fun h x hx => h (e x) (by simpa using hx), fun h y hy => ?_⟩
@@ -281,8 +246,8 @@ theorem extends_map [DecidableEq W] (e : V ≃ W) (K : DRS L V) (f g : Embedding
 
 /-- The extensions of `f` at `K.map e` are the extensions of `f ∘ e` at `K`,
 via precomposition. -/
-theorem exists_extends_map [DecidableEq W] (e : V ≃ W) (K : DRS L V) (f : Embedding W M)
-    (P : Embedding V M → Prop) :
+theorem exists_extends_map [DecidableEq W] (e : V ≃ W) (K : DRS L V) (f : W → M)
+    (P : (V → M) → Prop) :
     (∃ g, (K.map e).Extends f g ∧ P (g ∘ e)) ↔ ∃ g, K.Extends (f ∘ e) g ∧ P g := by
   simp only [extends_map]
   refine ⟨fun ⟨g, hg, hp⟩ => ⟨g ∘ e, hg, hp⟩, fun ⟨g, hg, hp⟩ => ⟨g ∘ e.symm, ?_⟩⟩
@@ -290,8 +255,8 @@ theorem exists_extends_map [DecidableEq W] (e : V ≃ W) (K : DRS L V) (f : Embe
   exact key.symm ▸ ⟨hg, hp⟩
 
 /-- The `∀` analogue of `DRS.exists_extends_map`. -/
-theorem forall_extends_map [DecidableEq W] (e : V ≃ W) (K : DRS L V) (f : Embedding W M)
-    (P : Embedding V M → Prop) :
+theorem forall_extends_map [DecidableEq W] (e : V ≃ W) (K : DRS L V) (f : W → M)
+    (P : (V → M) → Prop) :
     (∀ g, (K.map e).Extends f g → P (g ∘ e)) ↔ ∀ g, K.Extends (f ∘ e) g → P g := by
   simp only [extends_map]
   refine ⟨fun H g hg => ?_, fun H g hg => H (g ∘ e) hg⟩
@@ -329,19 +294,22 @@ theorem varFinsetL_subset_varFinset (K : DRS L V) :
     Condition.varFinsetL K.conditions ⊆ K.varFinset :=
   Finset.subset_union_right
 
-/-- The free discourse referents of a DRS: referents occurring in its
-conditions and not bound by its universe or by an ancestor reachable "left
-and up" (the antecedent of a `⇒` threads its referents into the consequent).
-`K.freeVarFinset ⊆ b` says every referent of `K` is bound in context `b`. -/
+/-- The free discourse referents of a DRS occur in its conditions and are bound neither by its
+universe nor by an ancestor reachable "left and up" (the antecedent of a `⇒` threads its
+referents into the consequent). `K.freeVarFinset ⊆ b` says every referent of `K` is bound in
+context `b`. -/
 def freeVarFinset (K : DRS L V) : Finset V :=
   Condition.freeVarFinsetL K.conditions \ K.referents
 
 @[simp] theorem freeVarFinset_mk (U : Finset V) (conds : List (Condition L V)) :
     freeVarFinset ⟨U, conds⟩ = Condition.freeVarFinsetL conds \ U := rfl
 
-/-- The characteristic form of the referential presupposition: a box's free
-referents are supplied by `X` iff its conditions' are supplied by the grown
-base. -/
+theorem coe_freeVarFinset (K : DRS L V) :
+    (↑K.freeVarFinset : Set V) = ↑(Condition.freeVarFinsetL K.conditions) \ ↑K.referents :=
+  Finset.coe_sdiff _ _
+
+/-- A box's free referents are supplied by `X` iff its conditions' are supplied by the
+grown base, the characteristic form of the referential presupposition. -/
 theorem freeVarFinset_subset_iff {U X : Finset V} {conds : List (Condition L V)} :
     freeVarFinset ⟨U, conds⟩ ⊆ X ↔ Condition.freeVarFinsetL conds ⊆ X ∪ U := by
   rw [freeVarFinset_mk, sdiff_le_iff, sup_comm, Finset.sup_eq_union]
@@ -352,8 +320,8 @@ private theorem freeVarFinset_subset_varFinset_of_forall {K : DRS L V}
   Finset.sdiff_subset.trans
     ((Condition.freeVarFinsetL_subset_varFinsetL_of_forall h).trans Finset.subset_union_right)
 
-/-- Merging preserves boundedness: the merge's free referents are supplied by
-`X` when the context's are and the increment's are supplied by the grown base. -/
+/-- A merge's free referents are supplied by `X` when the context's are and the increment's
+are supplied by the grown base. -/
 theorem freeVarFinset_merge_subset {X : Finset V} {K₁ K₂ : DRS L V}
     (h₁ : K₁.freeVarFinset ⊆ X) (h₂ : K₂.freeVarFinset ⊆ X ∪ K₁.referents) :
     (K₁.merge K₂).freeVarFinset ⊆ X := by
@@ -389,27 +357,6 @@ def ReuseFreeAt (X : Finset V) (K : DRS L V) : Prop :=
 @[simp] theorem reuseFreeAt_mk (X U : Finset V) (conds : List (Condition L V)) :
     ReuseFreeAt X (.mk U conds) ↔
       Disjoint X U ∧ Condition.ReuseFreeAllAt (X ∪ U) conds := Iff.rfl
-
-/-! ### Accessibility -/
-
-/-- Descend `K`, accumulating in-scope referents `s` ([vaneijck-2006]'s "left and
-up" walk); on reaching the box introducing `x`, return that box's in-scope set
-`s ∪ U`. The `⇒`-consequent additionally sees the antecedent's universe. -/
-def accScope (s : Finset V) (K : DRS L V) (x : V) : Option (Finset V) :=
-  if x ∈ K.referents then some (s ∪ K.referents)
-  else Condition.accScopeL (s ∪ K.referents) K.conditions x
-
-/-- The referents accessible from `u`'s introduction in `T`, as a decidable
-`Finset`; `∅` if `u` is not introduced in `T`. (Def. 1.4.11 defines
-accessibility of a referent from a *condition*; this is the derived
-referent-to-referent relation of the surrounding prose.) -/
-def accessibleFrom (T : DRS L V) (u : V) : Finset V := (accScope ∅ T u).getD ∅
-
-/-- `v` is accessible from `u`'s position in `T`. Decidable (Finset membership). -/
-def Accessible (T : DRS L V) (u v : V) : Prop := v ∈ accessibleFrom T u
-
-instance (T : DRS L V) (u v : V) : Decidable (Accessible T u v) :=
-  inferInstanceAs (Decidable (v ∈ _))
 
 end DRS
 
@@ -482,197 +429,5 @@ theorem Condition.freeVarFinsetL_subset_varFinsetL (cs : List (Condition L V)) :
     Condition.ReuseFreeAt X (.dis l r) ↔
       DRS.ReuseFreeAt X l ∧ DRS.ReuseFreeAt X r := by
   simp only [Condition.ReuseFreeAt]; rfl
-
-theorem Condition.accScope_neg (s : Finset V) (K : DRS L V) (x : V) :
-    Condition.accScope s (.neg K) x = DRS.accScope s K x := by
-  simp only [Condition.accScope]; rfl
-
-theorem Condition.accScope_imp (s : Finset V) (a c : DRS L V) (x : V) :
-    Condition.accScope s (.imp a c) x =
-      (DRS.accScope s a x).orElse fun _ => DRS.accScope (s ∪ a.referents) c x := by
-  simp only [Condition.accScope]; rfl
-
-theorem Condition.accScope_dis (s : Finset V) (l r : DRS L V) (x : V) :
-    Condition.accScope s (.dis l r) x =
-      (DRS.accScope s l x).orElse fun _ => DRS.accScope s r x := by
-  simp only [Condition.accScope]; rfl
-
-/-! ## Accessibility as the smallest preorder
-
-Following [geurts-beaver-maier-2024] §4.2, accessibility is the smallest
-preorder on the sub-DRSs of a host such that a box is accessible to the
-sub-boxes of its complex conditions and a conditional's antecedent is accessible
-to its consequent. Each generating edge anchors its containing box below the
-host, which keeps the relation non-vacuous.
-`DRS.Accessible.exists_mem_accessibleDomain` shows every verdict of the computed
-`accScope` is realized by genuine edges. -/
-
-/-- A generating edge of the accessibility preorder over the sub-DRSs of `host`
-(§4.2): a box is accessible to the sub-boxes of its complex conditions, and the
-antecedent of a conditional is accessible to its consequent. -/
-inductive AccessibleEdge (host : DRS L V) : DRS L V → DRS L V → Prop where
-  /-- A box is accessible to the body of its `¬`-conditions. -/
-  | neg {K K' : DRS L V} : WeakSubordinate K host → Condition.neg K' ∈ K.conditions →
-      AccessibleEdge host K K'
-  /-- A box is accessible to the antecedents of its `⇒`-conditions. -/
-  | impAnte {K K' K'' : DRS L V} : WeakSubordinate K host →
-      Condition.imp K' K'' ∈ K.conditions → AccessibleEdge host K K'
-  /-- The antecedent of a `⇒`-condition is accessible to its consequent. -/
-  | impCons {K K' K'' : DRS L V} : WeakSubordinate K host →
-      Condition.imp K' K'' ∈ K.conditions → AccessibleEdge host K' K''
-  /-- A box is accessible to the left disjunct of its `∨`-conditions. -/
-  | disLeft {K K' K'' : DRS L V} : WeakSubordinate K host →
-      Condition.dis K' K'' ∈ K.conditions → AccessibleEdge host K K'
-  /-- A box is accessible to the right disjunct of its `∨`-conditions. -/
-  | disRight {K K' K'' : DRS L V} : WeakSubordinate K host →
-      Condition.dis K' K'' ∈ K.conditions → AccessibleEdge host K K''
-
-/-- `AccessibleTo host K K'` says `K` is accessible to `K'` among the sub-DRSs
-of `host` — the smallest preorder containing the generating edges (§4.2). -/
-abbrev AccessibleTo (host : DRS L V) : DRS L V → DRS L V → Prop :=
-  Relation.ReflTransGen (AccessibleEdge host)
-
-omit [DecidableEq V] in
-/-- The target of an accessibility edge is a sub-DRS of the host. -/
-theorem AccessibleEdge.weakSubordinate_right {host K K' : DRS L V}
-    (h : AccessibleEdge host K K') : WeakSubordinate K' host := by
-  cases h with
-  | neg hK hc => exact .head (.neg hc) hK
-  | impAnte hK hc => exact .head (.impAnte hc) hK
-  | impCons hK hc => exact .head (.impCons hc) hK
-  | disLeft hK hc => exact .head (.disL hc) hK
-  | disRight hK hc => exact .head (.disR hc) hK
-
-/-- The accessible domain `A_K` of `K` in `host` — the set of referents declared
-in some box accessible to `K` (§4.2). -/
-def accessibleDomain (host K : DRS L V) : Set V :=
-  {x | ∃ K', AccessibleTo host K' K ∧ x ∈ K'.referents}
-
-omit [DecidableEq V] in
-theorem referents_subset_accessibleDomain (host K : DRS L V) :
-    ↑K.referents ⊆ accessibleDomain host K := fun _ hx => ⟨K, .refl, hx⟩
-
-omit [DecidableEq V] in
-theorem accessibleDomain_mono {host K K' : DRS L V} (h : AccessibleTo host K K') :
-    accessibleDomain host K ⊆ accessibleDomain host K' :=
-  fun _ ⟨K₀, hK₀, hx⟩ => ⟨K₀, hK₀.trans h, hx⟩
-
-/-! ### Soundness of the computed accessibility -/
-
-/-- The soundness invariant for `Condition.accScope`: a hit inside `c` — reached from
-a containing box `D` below `host` whose base `s` is already accessible — names a
-sub-DRS of `host` declaring the target, accessible from `D`, whose accessible domain
-covers the returned scope. -/
-private abbrev AccScopeSound (host : DRS L V) (c : Condition L V) : Prop :=
-  ∀ {s : Finset V} {x : V} {acc : Finset V} {D : DRS L V},
-    Condition.accScope s c x = some acc → WeakSubordinate D host → c ∈ D.conditions →
-    (∀ w ∈ s, w ∈ accessibleDomain host D) →
-    ∃ K, WeakSubordinate K host ∧ x ∈ K.referents ∧ AccessibleTo host D K ∧
-      ∀ w ∈ acc, w ∈ accessibleDomain host K
-
-private theorem accScopeL_eq_some {s : Finset V} {cs : List (Condition L V)} {x : V}
-    {acc : Finset V} (h : Condition.accScopeL s cs x = some acc) :
-    ∃ c ∈ cs, Condition.accScope s c x = some acc := by
-  induction cs with
-  | nil => simp [Condition.accScopeL] at h
-  | cons c cs ih =>
-    have hcons : Condition.accScopeL s (c :: cs) x =
-        (Condition.accScope s c x).orElse fun _ => Condition.accScopeL s cs x := rfl
-    rw [hcons] at h
-    cases hc : Condition.accScope s c x with
-    | some v =>
-      rw [hc] at h
-      obtain rfl : v = acc := by simpa [Option.orElse] using h
-      exact ⟨c, by simp, hc⟩
-    | none =>
-      rw [hc] at h
-      obtain ⟨d, hd, hds⟩ := ih (by simpa [Option.orElse] using h)
-      exact ⟨d, by simp [hd], hds⟩
-
-/-- Any `DRS.accScope` hit on a box `B` below `host`, given the sub-condition
-invariants and an accessible base. -/
-private theorem accScope_sound_box {host B : DRS L V} {s : Finset V} {x : V}
-    {acc : Finset V} (ih : ∀ d ∈ B.conditions, AccScopeSound host d)
-    (h : DRS.accScope s B x = some acc) (hB : WeakSubordinate B host)
-    (hs : ∀ w ∈ s, w ∈ accessibleDomain host B) :
-    ∃ K, WeakSubordinate K host ∧ x ∈ K.referents ∧ AccessibleTo host B K ∧
-      ∀ w ∈ acc, w ∈ accessibleDomain host K := by
-  have hs' : ∀ w ∈ s ∪ B.referents, w ∈ accessibleDomain host B := fun w hw =>
-    (Finset.mem_union.mp hw).elim (hs w)
-      (fun hw => referents_subset_accessibleDomain host B hw)
-  rw [DRS.accScope] at h
-  split at h
-  · next hx => exact ⟨B, hB, hx, .refl, Option.some.inj h ▸ hs'⟩
-  · obtain ⟨d, hd, hds⟩ := accScopeL_eq_some h
-    exact ih d hd hds hB hd hs'
-
-private theorem accScopeSound (host : DRS L V) (c : Condition L V) : AccScopeSound host c := by
-  induction c with
-  | rel R args => intro s x acc D h hD hc hs; simp [Condition.accScope] at h
-  | eq u v => intro s x acc D h hD hc hs; simp [Condition.accScope] at h
-  | neg K' ihK =>
-    intro s x acc D h hD hc hs
-    rw [Condition.accScope_neg] at h
-    have e : AccessibleEdge host D K' := .neg hD hc
-    obtain ⟨K, h1, h2, h3, h4⟩ := accScope_sound_box ihK h e.weakSubordinate_right
-      (fun w hw => accessibleDomain_mono (.single e) (hs w hw))
-    exact ⟨K, h1, h2, (Relation.ReflTransGen.single e).trans h3, h4⟩
-  | imp a c iha ihc =>
-    intro s x acc D h hD hc hs
-    rw [Condition.accScope_imp] at h
-    have eA : AccessibleEdge host D a := .impAnte hD hc
-    have eC : AccessibleEdge host a c := .impCons hD hc
-    cases ha : DRS.accScope s a x with
-    | some v =>
-      rw [ha] at h
-      obtain rfl : v = acc := by simpa [Option.orElse] using h
-      obtain ⟨K, h1, h2, h3, h4⟩ := accScope_sound_box iha ha eA.weakSubordinate_right
-        (fun w hw => accessibleDomain_mono (.single eA) (hs w hw))
-      exact ⟨K, h1, h2, (Relation.ReflTransGen.single eA).trans h3, h4⟩
-    | none =>
-      rw [ha] at h
-      have h' : DRS.accScope (s ∪ a.referents) c x = some acc := by
-        simpa [Option.orElse] using h
-      have path : AccessibleTo host D c := .head eA (.single eC)
-      obtain ⟨K, h1, h2, h3, h4⟩ := accScope_sound_box ihc h' eC.weakSubordinate_right
-        (fun w hw => (Finset.mem_union.mp hw).elim
-          (fun hw => accessibleDomain_mono path (hs w hw))
-          (fun hw => accessibleDomain_mono (.single eC)
-            (referents_subset_accessibleDomain host a hw)))
-      exact ⟨K, h1, h2, path.trans h3, h4⟩
-  | dis l r ihl ihr =>
-    intro s x acc D h hD hc hs
-    rw [Condition.accScope_dis] at h
-    have eL : AccessibleEdge host D l := .disLeft hD hc
-    have eR : AccessibleEdge host D r := .disRight hD hc
-    cases hl : DRS.accScope s l x with
-    | some v =>
-      rw [hl] at h
-      obtain rfl : v = acc := by simpa [Option.orElse] using h
-      obtain ⟨K, h1, h2, h3, h4⟩ := accScope_sound_box ihl hl eL.weakSubordinate_right
-        (fun w hw => accessibleDomain_mono (.single eL) (hs w hw))
-      exact ⟨K, h1, h2, (Relation.ReflTransGen.single eL).trans h3, h4⟩
-    | none =>
-      rw [hl] at h
-      have h' : DRS.accScope s r x = some acc := by simpa [Option.orElse] using h
-      obtain ⟨K, h1, h2, h3, h4⟩ := accScope_sound_box ihr h' eR.weakSubordinate_right
-        (fun w hw => accessibleDomain_mono (.single eR) (hs w hw))
-      exact ⟨K, h1, h2, (Relation.ReflTransGen.single eR).trans h3, h4⟩
-
-/-- Every computed accessibility verdict is realized by genuine §4.2 edges: if
-`v ∈ accessibleFrom T u`, then `u` is declared in a sub-DRS `K` of `T` and `v`
-lies in `K`'s accessible domain. The converse choice among multiple declaration
-sites of `u` is algorithmic (first hit); its characterization is future work. -/
-theorem DRS.Accessible.exists_mem_accessibleDomain {T : DRS L V} {u v : V}
-    (h : DRS.Accessible T u v) :
-    ∃ K, WeakSubordinate K T ∧ u ∈ K.referents ∧ v ∈ accessibleDomain T K := by
-  unfold DRS.Accessible DRS.accessibleFrom at h
-  cases hacc : DRS.accScope ∅ T u with
-  | none => rw [hacc] at h; simp at h
-  | some acc =>
-    rw [hacc] at h
-    obtain ⟨K, h1, h2, _, h4⟩ := accScope_sound_box (fun d _ => accScopeSound T d) hacc
-      .refl (by simp)
-    exact ⟨K, h1, h2, h4 v (by simpa using h)⟩
 
 end DRT
