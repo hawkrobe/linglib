@@ -23,8 +23,8 @@ semantics, [van-den-berg-1996], [brasoveanu-2008],
   `PartialAssign.domain` the variables an assignment values and `PartialAssign.single x d` the
   assignment valuing `x` alone.
 * `PluralAssign Var D`: sets of partial assignments, with `PluralAssign.value` the values a
-  variable takes across them, and the [spector-2025] operators `restrict`, `SingularAt` and
-  `Singular` defined from it.
+  variable takes across them, and the operators of [Spector][spector-2025],
+  `PluralAssign.restrict`, `PluralAssign.SingularAt` and `PluralAssign.Singular`, defined from it.
 
 ## Main results
 
@@ -32,9 +32,14 @@ semantics, [van-den-berg-1996], [brasoveanu-2008],
   the other's domain.
 * `PartialAssign.covBy_iff_exists_update`: one assignment covers another when it values exactly
   one more variable, the counterpart of `Set.covBy_iff_exists_insert`.
-* `PluralAssign.singularAt_iff`: [spector-2025]'s own formulation of `SingularAt`.
+* `PluralAssign.singularAt_iff`: `PluralAssign.SingularAt` as [Spector][spector-2025] states it.
 * `PluralAssign.singular_iff`: a variable is singular when its value set is a nonempty
   subsingleton.
+
+## Notation
+
+* `g[n ↦ x]`: `Function.update g n x`, the assignment modification of
+  [Heim and Kratzer][heim-kratzer-1998], scoped to `Assignment` (`open scoped Assignment`).
 
 ## Implementation notes
 
@@ -47,8 +52,7 @@ semantics, [van-den-berg-1996], [brasoveanu-2008],
   `g x = ↑d` that it has the value `d`; there is no wrapper predicate.
 * Update is mathlib's `Function.update`; `PartialAssign.update` only
   fuses the coercion (cf. `Finsupp.update`), and its lemmas are one-step
-  consequences of the `Function.update_*` laws. The Heim–Kratzer notation
-  `g[n ↦ x]` for total update is `Assignment`-scoped, declared below.
+  consequences of the `Function.update_*` laws.
 * Random assignment `[x]`, relating assignments that agree off `x`, is
   `DynamicSemantics.Update.randomAssign` at the function-type register structure; it is not
   redefined here.
@@ -78,33 +82,31 @@ semantics, [van-den-berg-1996], [brasoveanu-2008],
 
 /-! ### Total assignments -/
 
-/-- Total variable assignment on the ℕ-register: instantiated at the
-entity type for entity pronouns, at indices for situation pronouns, at
-`Time` for temporal variables. Update is `Function.update` directly —
-no parallel API. -/
+/-- `Assignment E` is the type of total variable assignments, sending each index in `ℕ` to a value
+in `E`: an entity for entity pronouns, a situation index for situation pronouns, a time for
+temporal variables. -/
 abbrev Assignment (E : Type*) := Nat → E
 
 namespace Assignment
 
-/-- [heim-kratzer-1998]'s assignment modification `g[n ↦ x]`, i.e. `Function.update g n x`;
-the `Function.update_*` lemmas are its laws. -/
+/-- `g[n ↦ x]` is the assignment sending `n` to `x` and agreeing with `g` elsewhere, the
+assignment modification of [Heim and Kratzer][heim-kratzer-1998]. It is notation for
+`Function.update g n x`. -/
 scoped notation:max g "[" n " ↦ " x "]" => Function.update g n x
 
 end Assignment
 
 /-! ### Partial assignments -/
 
-/-- Partial assignment: `g x = ⊥` means `x` is unvalued, and the pointwise
-order of `Flat` is extension. Trivalent systems read the gap as the
-third value; state-based systems (`QBSML.Index`) carry one per
-world–assignment index. -/
+/-- `PartialAssign Var D` is the type of partial assignments of values in `D` to variables in
+`Var`: `g x = ⊥` when `g` leaves `x` unvalued, and `g ≤ h` when `h` extends `g`. -/
 abbrev PartialAssign (Var D : Type*) := Var → Flat D
 
 namespace PartialAssign
 
 variable {Var D : Type*} {g h : PartialAssign Var D} {x y : Var}
 
-/-- The variables `g` values, as `Finsupp.support`. -/
+/-- `g.domain` is the set of variables that `g` values. -/
 def domain (g : PartialAssign Var D) : Set Var := {x | g x ≠ ⊥}
 
 @[simp] theorem mem_domain : x ∈ g.domain ↔ g x ≠ ⊥ := Iff.rfl
@@ -112,7 +114,7 @@ def domain (g : PartialAssign Var D) : Set Var := {x | g x ≠ ⊥}
 @[simp] theorem domain_bot : (⊥ : PartialAssign Var D).domain = ∅ :=
   Set.eq_empty_of_forall_notMem fun _ h ↦ h rfl
 
-/-- `h` extends `g` when it keeps every value `g` has. -/
+/-- `h` extends `g` exactly when the two agree on the domain of `g`. -/
 theorem le_iff_eqOn_domain : g ≤ h ↔ Set.EqOn g h g.domain := by
   refine Pi.le_def.trans (forall_congr' fun x ↦ ⟨fun hx hne ↦ Flat.eq_of_le hx fun _ ↦ hne,
     fun hx ↦ ?_⟩)
@@ -123,14 +125,14 @@ theorem le_iff_eqOn_domain : g ≤ h ↔ Set.EqOn g h g.domain := by
 theorem domain_mono (hgh : g ≤ h) : g.domain ⊆ h.domain :=
   fun x hx ↦ Flat.ne_bot_of_le (hgh x) hx
 
-/-- One assignment covers another when it values exactly one more variable and agrees
-elsewhere: `Pi.covBy_iff` at the flat order of height one. -/
+/-- `h` covers `g` exactly when `h` values one variable that `g` leaves unvalued and agrees with
+`g` on all others. -/
 theorem covBy_iff : g ⋖ h ↔ ∃ x, g x = ⊥ ∧ h x ≠ ⊥ ∧ ∀ y ≠ x, g y = h y := by
   simp only [Pi.covBy_iff, Flat.covBy_iff, and_assoc]
 
 variable [DecidableEq Var]
 
-/-- Update at `x`: `Function.update` with the value coerced into `Flat`. -/
+/-- `g.update x d` sends `x` to `d` and agrees with `g` elsewhere. -/
 def update (g : PartialAssign Var D) (x : Var) (d : D) :
     PartialAssign Var D :=
   Function.update g x ↑d
@@ -143,8 +145,7 @@ def update (g : PartialAssign Var D) (x : Var) (d : D) :
     g.update x d y = g y :=
   Function.update_of_ne h ..
 
-/-- Updating at `x` to its existing value is a no-op, the partial-assignment
-face of `Function.update_eq_self`. -/
+/-- Updating `x` to the value it already has leaves `g` unchanged. -/
 theorem update_eq_self {x : Var} {a : D} (h : g x = ↑a) : g.update x a = g := by
   rw [update, ← h]; exact Function.update_eq_self x g
 
@@ -165,7 +166,7 @@ theorem update_comm (h : x ≠ y) (a b : D) (g : PartialAssign Var D) :
 theorem covBy_update {x : Var} (hx : g x = ⊥) (d : D) : g ⋖ g.update x d :=
   covBy_iff.2 ⟨x, hx, by simp, fun _ hy ↦ (update_of_ne hy d g).symm⟩
 
-/-- Covering is valuing one unvalued variable, as `Set.covBy_iff_exists_insert`. -/
+/-- `h` covers `g` exactly when `h` updates `g` at a variable `g` leaves unvalued. -/
 theorem covBy_iff_exists_update : g ⋖ h ↔ ∃ x d, g x = ⊥ ∧ g.update x d = h := by
   refine ⟨fun hc ↦ ?_, fun ⟨x, d, hx, he⟩ ↦ he ▸ covBy_update hx d⟩
   obtain ⟨x, hx, hhx, hagree⟩ := covBy_iff.1 hc
@@ -175,7 +176,7 @@ theorem covBy_iff_exists_update : g ⋖ h ↔ ∃ x d, g x = ⊥ ∧ g.update x 
   · simp [hd]
   · rw [update_of_ne hy, hagree y hy]
 
-/-- The assignment valuing `x` alone, at `d`, as `Finsupp.single`. -/
+/-- `single x d` sends `x` to `d` and leaves every other variable unvalued. -/
 def single (x : Var) (d : D) : PartialAssign Var D :=
   update ⊥ x d
 
@@ -195,11 +196,9 @@ end PartialAssign
 
 /-! ### Plural assignments -/
 
-/-- Plural assignment: a set of partial assignments, the plural
-information state of [van-den-berg-1996]-style dynamic semantics
-(Plural CDRT, PPCDRT) and of [spector-2025]'s static reuse. The full
-`Set` API applies: `∅`, `Set.univ`, `{g}`, `∪`, `⊆`,
-`Set.Nonempty`, … -/
+/-- `PluralAssign Var D` is the type of plural assignments, sets of partial assignments: the
+plural information states of [van den Berg][van-den-berg-1996] and the assignment sets of
+[Spector][spector-2025]. -/
 abbrev PluralAssign (Var D : Type*) := Set (PartialAssign Var D)
 
 namespace PluralAssign
@@ -209,8 +208,8 @@ variable {Var D : Type*} {G H : PluralAssign Var D} {g : PartialAssign Var D} {x
 
 /-! #### Values -/
 
-/-- The values `x` takes in `G`; an assignment leaving `x` unvalued contributes none. This is
-`PCDRT.value` at the function-type register structure. -/
+/-- `G.value x` is the set of values `x` takes in `G`; assignments leaving `x` unvalued
+contribute none. -/
 def value (G : PluralAssign Var D) (x : Var) : Set D :=
   {d | ∃ g ∈ G, g x = ↑d}
 
@@ -233,7 +232,8 @@ theorem value_mono (h : G ⊆ H) : G.value x ⊆ H.value x :=
 
 /-! #### Restriction -/
 
-/-- The assignments in `G` mapping `x` to `a` ([spector-2025] §6.2: `G_{x=a}`). -/
+/-- `G.restrict x a` is the set of assignments in `G` sending `x` to `a`, the $G_{x=a}$ of
+[Spector][spector-2025] (§6.2). -/
 def restrict (G : PluralAssign Var D) (x : Var) (a : D) : PluralAssign Var D :=
   {g ∈ G | g x = ↑a}
 
@@ -243,6 +243,7 @@ def restrict (G : PluralAssign Var D) (x : Var) (a : D) : PluralAssign Var D :=
 theorem value_restrict_subset : (G.restrict x a).value x ⊆ {a} :=
   fun _ ⟨_, hg, hd⟩ ↦ Flat.coe_inj.1 (hd.symm.trans hg.2)
 
+/-- In a nonempty restriction of `G` to `x = a`, the only value of `x` is `a`. -/
 theorem value_restrict (h : (G.restrict x a).Nonempty) : (G.restrict x a).value x = {a} :=
   let ⟨g, hg⟩ := h
   (Set.Nonempty.subset_singleton_iff (s := (G.restrict x a).value x) ⟨a, g, hg, hg.2⟩).1
@@ -250,18 +251,19 @@ theorem value_restrict (h : (G.restrict x a).Nonempty) : (G.restrict x a).value 
 
 /-! #### Singularity -/
 
-/-- `G` assigns `x` uniquely to `d`: `d` is the only value of `x` in `G` ([spector-2025] §6.2).
-Assignments leaving `x` unvalued may coexist — only the valued rows must agree, which is the
-reading Spector's static reuse needs. `singularAt_iff` is Spector's formulation. -/
+/-- `G.SingularAt x d` says that `d` is the only value `x` takes in `G`; assignments leaving `x`
+unvalued are allowed. This is singularity in the sense of [Spector][spector-2025] (§6.2), and
+`PluralAssign.singularAt_iff` states it in Spector's form. -/
 def SingularAt (G : PluralAssign Var D) (x : Var) (d : D) : Prop :=
   G.value x = {d}
 
-/-- `G` assigns `x` uniquely to some value — [spector-2025]'s `atomic(x)`. -/
+/-- `G.Singular x` says that `x` takes exactly one value in `G`, the $\mathit{atomic}(x)$ of
+[Spector][spector-2025]. -/
 def Singular (G : PluralAssign Var D) (x : Var) : Prop :=
   ∃ d, G.SingularAt x d
 
-/-- [spector-2025]'s formulation: some assignment maps `x` to `d`, and every assignment valuing
-`x` agrees. -/
+/-- `G.SingularAt x d` holds exactly when some assignment in `G` sends `x` to `d` and every
+assignment in `G` that values `x` sends it to `d`, as [Spector][spector-2025] states it. -/
 theorem singularAt_iff :
     G.SingularAt x d ↔ (∃ g ∈ G, g x = ↑d) ∧ ∀ g ∈ G, g x ≠ ⊥ → g x = ↑d := by
   refine Set.eq_singleton_iff_unique_mem.trans ⟨fun ⟨hex, hall⟩ ↦ ⟨hex, fun g hg hne ↦ ?_⟩,
@@ -270,10 +272,11 @@ theorem singularAt_iff :
     rw [ha, hall a ⟨g, hg, ha⟩]
   · exact Flat.coe_inj.1 (ha.symm.trans (hall g hg (ha ▸ Flat.coe_ne_bot)))
 
-/-- `x` is singular in `G` when it has exactly one value there. -/
+/-- `x` is singular in `G` exactly when it takes at least one value there and at most one. -/
 theorem singular_iff : G.Singular x ↔ (G.value x).Nonempty ∧ (G.value x).Subsingleton :=
   Set.exists_eq_singleton_iff_nonempty_subsingleton
 
+/-- `x` is singular in `G` at no more than one value. -/
 theorem SingularAt.unique (h : G.SingularAt x d) (h' : G.SingularAt x d') : d = d' :=
   Set.singleton_injective (h.symm.trans h')
 
@@ -292,6 +295,8 @@ theorem SingularAt.eq_of_mem_restrict (h : G.SingularAt x d) (hg : g ∈ G.restr
 theorem singularAt_restrict (h : (G.restrict x a).Nonempty) : (G.restrict x a).SingularAt x a :=
   value_restrict h
 
+/-- The restriction of `G` to `x = a` assigns `x` uniquely to `d` exactly when it is nonempty
+and `d = a`. -/
 theorem singularAt_restrict_iff :
     (G.restrict x a).SingularAt x d ↔ (G.restrict x a).Nonempty ∧ d = a := by
   refine ⟨fun h ↦ ?_, fun ⟨hne, hd⟩ ↦ hd.symm ▸ singularAt_restrict hne⟩
