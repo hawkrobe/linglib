@@ -30,10 +30,9 @@ inductive AgreementPrefix
   | n
   deriving DecidableEq, Repr
 
-/-- The two classes over the cells I.sg, I.pl, …, VI.sg, VI.pl, each with unit weight. -/
-def objectAgreement : ParadigmSystem 12 AgreementPrefix where
-  entries :=
-    [(![.j, .s, .g, .s, .g, .j, .j, .j, .j, .g, .g, .g], 1),
-      (![.b, .t, .n, .t, .n, .b, .b, .b, .b, .n, .n, .n], 1)]
+/-- The two classes over the cells I.sg, I.pl, …, VI.sg, VI.pl. -/
+def objectAgreement : ParadigmSystem (Fin 2) 12 AgreementPrefix :=
+  ![![.j, .s, .g, .s, .g, .j, .j, .j, .j, .g, .g, .g],
+    ![.b, .t, .n, .t, .n, .b, .b, .b, .b, .n, .n, .n]]
 
 end Burmeso.ObjectAgreement
