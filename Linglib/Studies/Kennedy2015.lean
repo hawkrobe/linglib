@@ -73,19 +73,20 @@ section Classes
 
 open English.NumeralModifiers Semantics
 
-variable {w : NumeralModifier} {r : ℕ → Set ℕ}
+attribute [local simp] moreThan fewerThan over under atLeast atMost minimally maximally upTo from_
+  exactly precisely about around approximately roughly almost nearly approximator shortOf
 
 /-- A Class A modifier (4a) expresses an exclusive ordering, so none of its readings is true of
 the number itself. -/
-theorem classA_exclusive (hw : w.modifierClass = some .classA) (hr : r ∈ ⟦w⟧) (m : ℕ) :
-    m ∉ r m := by
-  cases w <;> cases hw <;> (obtain rfl : r = _ := hr; exact lt_irrefl m)
+theorem classA_exclusive :
+    ∀ w ∈ inventory, w.modifierClass = some .classA → ∀ r ∈ ⟦w⟧, ∀ m, m ∉ r m := by
+  simp [inventory, Modifier.modifierClass, ModifierKind.modifierClass]
 
 /-- A Class B modifier (4b) expresses an inclusive ordering, so each of its readings is true of
 the number itself. -/
-theorem classB_inclusive (hw : w.modifierClass = some .classB) (hr : r ∈ ⟦w⟧) (m : ℕ) :
-    m ∈ r m := by
-  cases w <;> cases hw <;> (obtain rfl : r = _ := hr; exact le_refl m)
+theorem classB_inclusive :
+    ∀ w ∈ inventory, w.modifierClass = some .classB → ∀ r ∈ ⟦w⟧, ∀ m, m ∈ r m := by
+  simp [inventory, Modifier.modifierClass, ModifierKind.modifierClass]
 
 end Classes
 

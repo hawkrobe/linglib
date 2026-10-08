@@ -2,6 +2,7 @@ module
 
 public import Linglib.Data.Experiments.ClausWalch2024
 public import Linglib.Fragments.English.NumeralModifiers
+public import Linglib.Fragments.German.NumeralModifiers
 public import Linglib.Studies.Blok2015
 public import Mathlib.Algebra.Order.Ring.Rat
 public import Mathlib.Basic.Sign.Defs
@@ -31,12 +32,13 @@ complement set salient, following Blok.
 
 ## Implementation notes
 
-* The German modifiers get the denotations of the English ones they gloss, in the Fragment and
-  in Blok's study; the paper calls them equivalents and reports Blok's contrast for German.
+* The German modifiers are the German Fragment's entries, and for salience *bis zu* and
+  *höchstens* raise what Blok gives *up to* and *at most*; the paper calls them equivalents and
+  reports Blok's contrast for German.
 * A description makes the complement set salient when what it asserts is compatible with no
   instance of the predicate, which is Blok's *if any* diagnostic. Blok's *up to* asserts only a
-  lower bound, on her scale of the whole numbers; with the upper bound of its Fragment reading it
-  would pattern with *at most* (`salience_raised_upTo`).
+  lower bound, on her scale of the whole numbers; with the upper bound of its Fragment reading
+  *bis zu* would pattern with *höchstens* (`salience_raised_bisZu`).
 * The complement of a partial outcome has the opposite valence, as lives lost are to lives saved.
 * A framing effect is the sign of the difference of the printed percentages; the significance
   tests are stored in the data module and not re-checked here.
@@ -53,7 +55,7 @@ complement set salient, following Blok.
 
 namespace ClausWalch2024
 
-open Data.Experiments Degree Semantics English.NumeralModifiers Set
+open Data.Experiments Degree Semantics English.NumeralModifiers German.NumeralModifiers Set
 
 variable {N p q n : ℕ}
 
@@ -170,17 +172,17 @@ theorem framingEffect_hoechstens (s : Scenario) : framingEffect (s.upper .hoechs
 
 /-! ### Readings alone -/
 
-/-- The English modifier a German one glosses. -/
-def Modifier.gloss : Modifier → NumeralModifier
-  | .bisZu => .upTo
-  | .hoechstens => .atMost
+/-- The Fragment entry of a modifier. -/
+def Modifier.entry : Modifier → Numerals.Modifier
+  | .bisZu => German.NumeralModifiers.bisZu
+  | .hoechstens => German.NumeralModifiers.hoechstens
 
 /-- *Bis zu* and *höchstens* have the same readings and opposite framing effects in either
 scenario (the significant interactions, p. 4148), so no account that sees a modifier only
 through its readings predicts both. -/
 theorem no_reading_only_account (P : Set (ℕ → Set ℕ) → SignType) (s : Scenario) :
-    ¬ (P ⟦Modifier.bisZu.gloss⟧ = framingEffect (s.upper .bisZu) ∧
-      P ⟦Modifier.hoechstens.gloss⟧ = framingEffect (s.upper .hoechstens)) := by
+    ¬ (P ⟦Modifier.bisZu.entry⟧ = framingEffect (s.upper .bisZu) ∧
+      P ⟦Modifier.hoechstens.entry⟧ = framingEffect (s.upper .hoechstens)) := by
   rintro ⟨h₁, h₂⟩
   have := h₁.symm.trans h₂
   rw [framingEffect_bisZu, framingEffect_hoechstens] at this
@@ -190,11 +192,11 @@ theorem no_reading_only_account (P : Set (ℕ → Set ℕ) → SignType) (s : Sc
 significant effects of Experiment 1 (p. 4147), and a reversed one under both upper bounds, right
 for *höchstens* and wrong for *bis zu*. -/
 theorem rangeEffect_fragment (s : Scenario) :
-    (∀ r ∈ ⟦NumeralModifier.exactly⟧,
+    (∀ r ∈ ⟦genau⟧,
       rangeEffect r s.total (s.number .positive) (s.number .negative) ≠ framingEffect s.genau) ∧
-    (∀ r ∈ ⟦Modifier.bisZu.gloss⟧, rangeEffect r s.total (s.number .positive)
+    (∀ r ∈ ⟦Modifier.bisZu.entry⟧, rangeEffect r s.total (s.number .positive)
       (s.number .negative) ≠ framingEffect (s.upper .bisZu)) ∧
-    ∀ r ∈ ⟦Modifier.hoechstens.gloss⟧, rangeEffect r s.total (s.number .positive)
+    ∀ r ∈ ⟦Modifier.hoechstens.entry⟧, rangeEffect r s.total (s.number .positive)
       (s.number .negative) = framingEffect (s.upper .hoechstens) := by
   have hq : 0 < s.number .negative := by cases s <;> decide
   refine ⟨?_, ?_, ?_⟩ <;> rintro r (rfl : r = _) <;>
@@ -229,15 +231,15 @@ noncomputable def salienceEffect (raise : ℕ → Set (Set ℕ)) (number : Frame
 
 /-- The possibilities a modifier raises with the number `n`, one for each of its readings in the
 Fragment. -/
-def raised (w : NumeralModifier) (n : ℕ) : Set (Set ℕ) := (· n) '' ⟦w⟧
+def raised (w : Numerals.Modifier) (n : ℕ) : Set (Set ℕ) := (· n) '' ⟦w⟧
 
 /-- The possibilities *bis zu* and *höchstens* raise, by [blok-2015]. -/
 def Modifier.raise : Modifier → ℕ → Set (Set ℕ)
   | .bisZu => Blok2015.upTo 1
   | .hoechstens => Blok2015.atMost
 
-theorem salience_raised_exactly (hn : 0 < n) : salience (raised .exactly n) = 1 := by
-  simp [salience, raised, Denotes.denote]; omega
+theorem salience_raised_genau (hn : 0 < n) : salience (raised genau n) = 1 := by
+  simp [salience, raised, genau]; omega
 
 theorem salience_bisZu (hn : 1 ≤ n) : salience (Modifier.bisZu.raise n) = 1 := by
   simp [salience, Modifier.raise, Blok2015.sUnion_upTo hn]
@@ -248,12 +250,12 @@ theorem salience_hoechstens : salience (Modifier.hoechstens.raise n) = -1 := by
 /-- The salience and valence account predicts every framing effect, standard under *genau* and
 *bis zu* and reversed under *höchstens*, in both scenarios. -/
 theorem salienceEffect_eq_framingEffect (s : Scenario) :
-    salienceEffect (raised .exactly) s.number = framingEffect s.genau ∧
+    salienceEffect (raised genau) s.number = framingEffect s.genau ∧
       ∀ m, salienceEffect m.raise s.number = framingEffect (s.upper m) := by
   have hp : 1 ≤ s.number .positive := by cases s <;> decide
   have hq : 1 ≤ s.number .negative := by cases s <;> decide
   refine ⟨?_, fun m ↦ ?_⟩
-  · simp [salienceEffect, appraisal, salience_raised_exactly hp, salience_raised_exactly hq,
+  · simp [salienceEffect, appraisal, salience_raised_genau hp, salience_raised_genau hq,
       framingEffect_genau, Frame.valence]
   · cases m <;> simp [salienceEffect, appraisal, salience_bisZu hp, salience_bisZu hq,
       salience_hoechstens, framingEffect_bisZu, framingEffect_hoechstens, Frame.valence]
@@ -262,14 +264,15 @@ theorem salienceEffect_eq_framingEffect (s : Scenario) :
 *more than*, *at least* and *exactly* making the instances salient and *fewer than* and *at most*
 the complement set. -/
 theorem salience_raised (hn : 0 < n) :
-    (∀ w ∈ [NumeralModifier.moreThan, .atLeast, .exactly], salience (raised w n) = 1) ∧
-    ∀ w ∈ [NumeralModifier.fewerThan, .atMost], salience (raised w n) = -1 := by
+    (∀ w ∈ [moreThan, atLeast, exactly], salience (raised w n) = 1) ∧
+    ∀ w ∈ [fewerThan, atMost], salience (raised w n) = -1 := by
   constructor <;> intro w hw <;> simp only [List.mem_cons, List.not_mem_nil, or_false] at hw <;>
-    rcases hw with rfl | rfl | rfl <;> simp [salience, raised, Denotes.denote] <;> omega
+    rcases hw with rfl | rfl | rfl <;>
+      simp [salience, raised, moreThan, atLeast, exactly, fewerThan, atMost] <;> omega
 
-/-- The Fragment's reading of *up to* carries the upper bound Blok takes to be implicated, and
+/-- The Fragment's reading of *bis zu* carries the upper bound Blok takes to be implicated, and
 would make the complement set salient, against the paper's list and `salience_bisZu`. -/
-theorem salience_raised_upTo : salience (raised .upTo n) = -1 := by
-  simp [salience, raised, Denotes.denote]
+theorem salience_raised_bisZu : salience (raised bisZu n) = -1 := by
+  simp [salience, raised, German.NumeralModifiers.bisZu]
 
 end ClausWalch2024

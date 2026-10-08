@@ -6,6 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Semantics.Degree.Comparison
+public import Linglib.Semantics.Denotation
 public import Linglib.Semantics.Exhaustification.Chain
 
 /-!
@@ -28,6 +29,7 @@ the degrees above, takes it to the lower-bounded one.
 
 * `Numerals.ModifierClass`, `Numerals.ModifierKind`: Nouwen's two classes of numeral modifier
   and the constructions modifiers are built on, with `ModifierKind.modifierClass`.
+* `Numerals.Modifier`: a numeral modifier as a lexical item, its form, kind and readings.
 * `Numerals.exhNumeral`: the lower-bounded meaning exhaustified against the next numeral.
 
 ## Main results
@@ -93,6 +95,42 @@ modifier. -/
 def ModifierKind.modifierClass : ModifierKind → ModifierClass
   | .comparative | .locative => .classA
   | .superlative | .directional | .adverbial => .classB
+
+/-- A numeral modifier, an expression that combines with a numeral to bound, fix or approximate
+the amount it names. -/
+structure Modifier where
+  /-- The surface form. -/
+  form : String
+  /-- The construction the modifier is built on, `none` for the exactifiers and approximators,
+  which [nouwen-2010]'s survey does not cover. -/
+  kind : Option ModifierKind
+  /-- The readings the literature makes available, each a map from the number to the amounts
+  that verify the modified numeral. -/
+  readings : Set (ℕ → Set ℕ)
+
+namespace Modifier
+
+/-- A modifier denotes its readings. -/
+instance : Semantics.Denotes Modifier (Set (ℕ → Set ℕ)) := ⟨readings⟩
+
+open Semantics in
+@[simp] theorem denote_eq_readings (w : Modifier) : ⟦w⟧ = w.readings := rfl
+
+/-- The class of a bound-setting modifier, read off its kind. -/
+def modifierClass (w : Modifier) : Option ModifierClass := w.kind.map (·.modifierClass)
+
+/-- The modifier with the one reading of a comparison, as a bound-setting modifier or an
+exactifier has. -/
+def ofComparison (form : String) (kind : Option ModifierKind) (c : Comparison) : Modifier :=
+  ⟨form, kind, {c.interval}⟩
+
+variable {form : String} {kind : Option ModifierKind} {c : Comparison}
+
+@[simp] theorem kind_ofComparison : (ofComparison form kind c).kind = kind := rfl
+
+@[simp] theorem readings_ofComparison : (ofComparison form kind c).readings = {c.interval} := rfl
+
+end Modifier
 
 /-! ### Exhaustification
 
