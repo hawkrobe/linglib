@@ -1,219 +1,216 @@
 module
 
-public import Mathlib.Data.Fintype.Basic
-public import Mathlib.Data.Fintype.Sigma
-public import Mathlib.Tactic.DeriveFintype
-public import Mathlib.Order.Basic
+public import Linglib.Syntax.WordOrder
+public import Mathlib.Data.Finset.Grade
 
 /-!
 # Stassen (2000): AND-languages and WITH-languages
 
 This file formalizes [stassen-2000]'s typology of noun phrase conjunction, the encoding of a
 single event predicated simultaneously of two participants conceived of as separate
-individuals, over a sample of 260 languages. The domain is encoded by a coordinate strategy
-or a comitative strategy, which contrast in four features: whether the two NPs have the same
+individuals, over a sample of 260 languages. The domain is encoded by a coordinate strategy or
+a comitative strategy, which contrast in four features: whether the two NPs have the same
 structural rank, form a constituent, govern dual or plural agreement, and are linked by an
-item distinct from the comitative marker (`Encoding`, `coordinate`, `comitative`). The
-features order the encodings from the comitative to the coordinate focal position
-(`comitative_le`, `le_coordinate`), with the in-between cases the paper allows for. Nearly
-every language has the comitative strategy; a WITH-language has it as its only encoding and
-an AND-language has a coordinate strategy as well (`Language.IsWith`, `Language.IsAnd`,
-`isAnd_iff_not_isWith`).
+item distinct from the comitative marker (`Feature`). An encoding is the set of coordinate
+features it has, so the encodings form the Boolean lattice `Finset Feature`: the comitative
+strategy is `⊥`, the coordinate strategy `⊤`, and the in-between cases the paper allows for lie
+between the two focal positions.
 
-AND-languages are diachronically stable and pure WITH-languages rare: WITH-languages drift
-towards AND-status by grammaticalizing the comitative encoding, changing its features
-towards the coordinate values while the linker stays lexically identical to the comitative
-marker (`Grammaticalizes`). The result is a hybrid, which the paper rates as WITH because of
-the shared linker (`Hybrid`, `isWith_of_hybrids`), and which becomes coordinate exactly when
-the linker differentiates (`hybrid_withMarker`); the lexical identity of the markers is the
-criterion the survey of [wals-2013] records. The starting point of the drift is the
-language's pattern scheme with the comitative phrase in adverbial position (`scheme`): in a
-verb-medial language the subject and the comitative phrase are separated by the verb, so the
-constituent that grammaticalization creates presupposes a shift of the comitative phrase to
-the subject's side (`svo_not_contiguous`, `shift_contiguous`), whereas verb-final and
-verb-initial schemes are contiguous already (`sov_contiguous`, `vso_contiguous`) and can
-mark the new constituent only by agreement, where the language has it, or by doubling the
-comitative marker on both NPs (`doubled`).
+Nearly every language has the comitative strategy. An AND-language also has an encoding with
+every coordinate feature relevant to it, and a WITH-language is one that is not an AND-language
+(`Language.IsAnd`). Plural agreement is relevant only where verbs agree with their subject
+(`Language.relevant`), since the paper's AND-languages include languages without verb agreement
+and its pattern schemes distinguish languages with and without it; where verbs agree, an
+AND-language is one with the coordinate strategy itself (`Language.isAnd_iff_top_mem`).
+
+AND-languages are diachronically stable and pure WITH-languages rare: WITH-languages
+grammaticalize the comitative strategy, moving up the lattice while the linker stays lexically
+identical to the comitative marker. The resulting hybrids leave the language a WITH-language
+however far they go (`Language.not_isAnd_of_forall_notMem`). The most advanced hybrid has every
+relevant feature but the linker and is covered by the coordinate strategy
+(`Language.erase_distinctMarker_covBy`); it is the one hybrid that differentiating the linker
+turns into a coordinate strategy (`Language.relevant_le_insert_iff`), the mixed WITH-language the
+paper would call an AND-language but for the lexical identity of the markers.
+
+The starting point of the drift is the language's pattern scheme, its basic word order with the
+comitative phrase in adverbial position (`scheme`). The subject and the comitative phrase are
+contiguous exactly when the verb is not medial (`adjacent_scheme_iff`). The constituent that
+grammaticalization creates therefore presupposes, in an SVO language, a shift of the comitative
+phrase across the verb (`shift`, `adjacent_shift`), which yields the SOV scheme
+(`shift_scheme_svo`), whereas verb-final and verb-initial schemes are contiguous already.
 
 ## Implementation notes
+
+The paper's schemes (107), (123) and (124) put the comitative phrase where the object stands in
+SVO, SOV and VSO order, so `scheme` places it there for every basic order and contiguity is
+derived from the order. As in the paper, schemes have intransitive predicates.
 
 The correlational tendencies, that cased and tensed languages tend to AND-status and
 WITH-languages to be non-cased and non-tensed, with the AND-cased and WITH-non-cased
 combinations the frequent ones, are stated by the paper qualitatively, without a
-cross-tabulation, and the areal distribution is descriptive; neither is formalized. The
-sample is summarized only as containing roughly twice as many AND-languages as
-WITH-languages.
+cross-tabulation, and the areal distribution is descriptive; neither is formalized. The sample
+is summarized only as containing roughly twice as many AND-languages as WITH-languages.
+
+## TODO
+
+The paper argues that verb-final and verb-initial WITH-languages without agreement, (123a) and
+(124a), can mark the new constituent neither by position nor by agreement, so that they tend to
+stay pure WITH-languages, and that some verb-final ones double the comitative marker instead,
+(125). Stating this needs the formal means by which each feature is marked.
 
 ## References
 
 * [stassen-2000]
-* [wals-2013]
 -/
 
 @[expose] public section
 
 namespace Stassen2000
 
-/-! ### The two strategies -/
+open WordOrder
 
-/-- The features contrasting the coordinate and comitative strategies, the paper's (83): the
-two NPs have the same structural rank, form a constituent, govern dual or plural agreement,
-and are linked by an item distinct from the comitative marker. -/
-structure Encoding where
-  equalRank : Bool
-  constituent : Bool
-  pluralAgreement : Bool
-  distinctMarker : Bool
+/-! ### Encodings -/
+
+/-- The features of the coordinate strategy, the paper's (83), each opposed to a feature of the
+comitative strategy: the two NPs have the same structural rank, form a constituent, govern dual
+or plural agreement, and are linked by an item distinct from the comitative marker. An encoding
+is the `Finset` of the features it has. -/
+inductive Feature
+  | equalRank
+  | constituent
+  | pluralAgreement
+  | distinctMarker
   deriving DecidableEq, Repr, Fintype
-
-namespace Encoding
-
-/-- The coordinate strategy, the focal position with every feature. -/
-def coordinate : Encoding := ⟨true, true, true, true⟩
-
-/-- The comitative strategy, the opposite focal position. -/
-def comitative : Encoding := ⟨false, false, false, false⟩
-
-/-- Encodings are ordered feature-wise, from the comitative to the coordinate strategy. -/
-protected def LE (e f : Encoding) : Prop :=
-  (e.equalRank = true → f.equalRank = true) ∧ (e.constituent = true → f.constituent = true) ∧
-    (e.pluralAgreement = true → f.pluralAgreement = true) ∧
-    (e.distinctMarker = true → f.distinctMarker = true)
-
-instance : LE Encoding := ⟨Encoding.LE⟩
-
-instance (e f : Encoding) : Decidable (e ≤ f) := by
-  change Decidable (Encoding.LE e f); unfold Encoding.LE; infer_instance
-
-instance : PartialOrder Encoding where
-  le_refl := by decide
-  le_trans := by decide
-  le_antisymm := by decide
-
-instance : DecidableLT Encoding := decidableLTOfDecidableLE
-
-theorem comitative_le : ∀ e : Encoding, comitative ≤ e := by decide
-
-theorem le_coordinate : ∀ e : Encoding, e ≤ coordinate := by decide
-
-/-- An encoding is coordinate when it has every feature. -/
-def Coordinate (e : Encoding) : Prop := e = coordinate
-
-instance : DecidablePred Coordinate := λ _ => inferInstanceAs (Decidable (_ = _))
-
-/-- A hybrid encoding: above the comitative strategy in some feature, with the linker still
-identical to the comitative marker. -/
-def Hybrid (e : Encoding) : Prop := comitative < e ∧ e.distinctMarker = false
-
-instance : DecidablePred Hybrid := λ _ => inferInstanceAs (Decidable (_ ∧ _))
-
-/-- A hybrid is not coordinate: its linker is shared with the comitative. -/
-theorem not_coordinate_of_hybrid : ∀ e : Encoding, e.Hybrid → ¬ e.Coordinate := by decide
-
-/-- The encoding with its marker feature set. -/
-def withMarker (e : Encoding) (b : Bool) : Encoding := { e with distinctMarker := b }
-
-/-- A hybrid becomes coordinate when its linker differentiates from the comitative marker
-exactly when it has every other feature: the mixed WITH-languages the paper would call
-AND-languages but for the lexical identity. -/
-theorem hybrid_withMarker : ∀ e : Encoding, e.Hybrid →
-    ((e.withMarker true).Coordinate ↔
-      e.equalRank = true ∧ e.constituent = true ∧ e.pluralAgreement = true) := by
-  decide
-
-end Encoding
-
-/-- Grammaticalization of the comitative encoding: a step towards the coordinate values in
-which the linker stays identical to the comitative marker. -/
-def Grammaticalizes (e f : Encoding) : Prop :=
-  e ≤ f ∧ e.distinctMarker = false ∧ f.distinctMarker = false
-
-instance (e f : Encoding) : Decidable (Grammaticalizes e f) :=
-  inferInstanceAs (Decidable (_ ∧ _ ∧ _))
-
-/-- A step from the comitative strategy that changes some feature yields a hybrid. -/
-theorem hybrid_of_grammaticalizes : ∀ f : Encoding,
-    Grammaticalizes Encoding.comitative f → f ≠ Encoding.comitative → f.Hybrid := by
-  decide
 
 /-! ### AND-languages and WITH-languages -/
 
-/-- A language's strategies for noun phrase conjunction. -/
+/-- A language: whether its verbs agree with their subject, and its encodings of the domain. -/
 structure Language where
-  encodings : List Encoding
+  /-- The verbs agree with their subject in person, number and gender. -/
+  Agrees : Prop
+  [decidableAgrees : Decidable Agrees]
+  /-- The encodings of noun phrase conjunction. -/
+  encodings : Finset (Finset Feature)
 
-/-- An AND-language has a coordinate strategy. -/
-def Language.IsAnd (l : Language) : Prop := ∃ e ∈ l.encodings, e.Coordinate
+attribute [instance] Language.decidableAgrees
 
-/-- A WITH-language has only comitative and hybrid strategies. -/
-def Language.IsWith (l : Language) : Prop := ∀ e ∈ l.encodings, ¬ e.Coordinate
+namespace Language
 
-instance (l : Language) : Decidable l.IsAnd := inferInstanceAs (Decidable (∃ e ∈ _, _))
+variable (l : Language)
 
-instance (l : Language) : Decidable l.IsWith := inferInstanceAs (Decidable (∀ e ∈ _, _))
+/-- The coordinate features relevant to the language: plural agreement only where its verbs
+agree. -/
+def relevant : Finset Feature := if l.Agrees then ⊤ else {.pluralAgreement}ᶜ
 
-/-- The parameter is binary. -/
-theorem isAnd_iff_not_isWith (l : Language) : l.IsAnd ↔ ¬ l.IsWith := by
-  simp [Language.IsAnd, Language.IsWith]
+/-- An AND-language has an encoding with every relevant coordinate feature. -/
+def IsAnd : Prop := ∃ e ∈ l.encodings, l.relevant ≤ e
 
-/-- The paper's guideline for rating: a language whose every encoding shares the comitative
+instance : Decidable l.IsAnd := inferInstanceAs (Decidable (∃ e ∈ _, _))
+
+variable {l}
+
+theorem relevant_of_agrees (h : l.Agrees) : l.relevant = ⊤ := by simp [relevant, h]
+
+/-- Where verbs agree, an AND-language is one with the coordinate strategy itself. -/
+theorem isAnd_iff_top_mem (h : l.Agrees) : l.IsAnd ↔ ⊤ ∈ l.encodings := by
+  simp [IsAnd, relevant_of_agrees h]
+
+theorem distinctMarker_mem_relevant : .distinctMarker ∈ l.relevant := by
+  unfold relevant; split_ifs <;> simp
+
+/-- The paper's guideline for rating: a language whose every encoding links with the comitative
 marker is a WITH-language, however far its hybrids have grammaticalized. -/
-theorem isWith_of_hybrids (l : Language)
-    (h : ∀ e ∈ l.encodings, e = Encoding.comitative ∨ e.Hybrid) : l.IsWith := by
-  intro e he
-  rcases h e he with rfl | hh
-  · decide
-  · exact Encoding.not_coordinate_of_hybrid e hh
+theorem not_isAnd_of_forall_notMem (h : ∀ e ∈ l.encodings, .distinctMarker ∉ e) : ¬ l.IsAnd :=
+  fun ⟨e, he, hle⟩ ↦ h e he (hle distinctMarker_mem_relevant)
+
+variable (l) in
+/-- The most advanced hybrid, with every relevant feature but the linker, is one feature short of
+the coordinate strategy. -/
+theorem erase_distinctMarker_covBy : l.relevant.erase .distinctMarker ⋖ l.relevant :=
+  Finset.erase_covBy distinctMarker_mem_relevant
+
+/-- Differentiating the linker of a hybrid yields every relevant feature exactly when the hybrid
+is the most advanced one. -/
+theorem relevant_le_insert_iff {e : Finset Feature} (he : e ≤ l.relevant)
+    (hm : .distinctMarker ∉ e) :
+    l.relevant ≤ insert .distinctMarker e ↔ e = l.relevant.erase .distinctMarker := by
+  rw [Finset.subset_insert_iff]
+  exact ⟨fun h ↦ (Finset.subset_erase.2 ⟨he, hm⟩).antisymm h, fun h ↦ h.ge⟩
+
+/-- Without verb agreement, an encoding lacking only plural agreement makes an AND-language, as
+the paper's AND-languages without agreement are; where verbs agree, the same encodings make a
+WITH-language. -/
+example : ({ Agrees := False, encodings := {⊥, {.pluralAgreement}ᶜ} } : Language).IsAnd ∧
+    ¬ ({ Agrees := True, encodings := {⊥, {.pluralAgreement}ᶜ} } : Language).IsAnd := by
+  decide
+
+end Language
 
 /-! ### Pattern schemes -/
 
-/-- The elements of a pattern scheme with an intransitive predicate: the subject, the verb,
-and the comitative phrase; with the marker doubled, the subject also carries it. -/
+/-- `x` and `y` are adjacent in the arrangement `a`. -/
+def Adjacent {α : Type*} {n : ℕ} (a : Arrangement α n) (x y : α) : Prop :=
+  (a x : ℕ) + 1 = a y ∨ (a y : ℕ) + 1 = a x
+
+instance {α : Type*} {n : ℕ} (a : Arrangement α n) (x y : α) : Decidable (Adjacent a x y) :=
+  inferInstanceAs (Decidable (_ ∨ _))
+
+/-- Of three elements arranged over three ranks, two are adjacent exactly when the third is not
+medial. -/
+theorem adjacent_iff {α : Type*} {a : Arrangement α 3} {x y z : α} (hxy : x ≠ y) (hxz : x ≠ z)
+    (hyz : y ≠ z) : Adjacent a x y ↔ a z ≠ 1 := by
+  have := a.injective.ne hxy; have := a.injective.ne hxz; have := a.injective.ne hyz
+  have := (a x).isLt; have := (a y).isLt; have := (a z).isLt
+  simp only [Adjacent, ne_eq, Fin.ext_iff, Fin.val_one] at *
+  omega
+
+/-- The elements of a pattern scheme with an intransitive predicate: the subject, the verb, and
+the comitative phrase. -/
 inductive Slot
-  | np1
+  | subject
   | verb
-  | withNp2
-  | withNp1
-  deriving DecidableEq, Repr
+  | comitative
+  deriving DecidableEq, Repr, Fintype
 
-/-- Basic word orders of the WITH-languages the paper schematizes. -/
-inductive WordOrder
-  | SVO
-  | SOV
-  | VSO
-  deriving DecidableEq, Repr
+/-- The slots of a scheme as the constituents of a clause, the comitative phrase in the object's
+position. -/
+def Slot.equivConstituent : Slot ≃ Constituent where
+  toFun | .subject => .subject | .verb => .verb | .comitative => .object
+  invFun | .subject => .subject | .verb => .verb | .object => .comitative
+  left_inv := by decide
+  right_inv := by decide
 
-/-- The pattern scheme, the paper's (107), (123) and (124): the comitative phrase sits in the
-canonical position of adverbial phrases, on the side of the predicate where subjects are. -/
-def scheme : WordOrder → List Slot
-  | .SVO => [.np1, .verb, .withNp2]
-  | .SOV => [.np1, .withNp2, .verb]
-  | .VSO => [.verb, .np1, .withNp2]
+/-- The pattern scheme of a basic word order, the paper's (107), (123) and (124): the comitative
+phrase stands in the canonical position of adverbial phrases, which in these schemes is the
+object's. -/
+def scheme (a : Arrangement Constituent 3) : Arrangement Slot 3 := Slot.equivConstituent.trans a
 
-/-- The two NPs of a scheme are contiguous. -/
-def Contiguous (l : List Slot) : Prop :=
-  (.np1, .withNp2) ∈ l.zip l.tail ∨ (.withNp2, .np1) ∈ l.zip l.tail
+/-- The subject and the comitative phrase of a scheme are contiguous exactly when the verb is not
+medial. -/
+theorem adjacent_scheme_iff (a : Arrangement Constituent 3) :
+    Adjacent (scheme a) .subject .comitative ↔ a .verb ≠ 1 :=
+  adjacent_iff (z := Slot.verb) (by decide) (by decide) (by decide)
 
-instance : DecidablePred Contiguous := λ _ => inferInstanceAs (Decidable (_ ∨ _))
+/-- In an SVO language the verb separates the two NPs, (107). -/
+theorem not_adjacent_scheme_svo : ¬ Adjacent (scheme .svo) .subject .comitative := by decide
 
-/-- In a verb-medial scheme the predicate separates the two NPs. -/
-theorem svo_not_contiguous : ¬ Contiguous (scheme .SVO) := by decide
+/-- SOV and VSO schemes are contiguous already, (123) and (124). -/
+theorem adjacent_scheme_sov : Adjacent (scheme .sov) .subject .comitative := by decide
 
-theorem sov_contiguous : Contiguous (scheme .SOV) := by decide
+theorem adjacent_scheme_vso : Adjacent (scheme .vso) .subject .comitative := by decide
 
-theorem vso_contiguous : Contiguous (scheme .VSO) := by decide
+/-- The shift of the comitative phrase, the paper's (108): the transposition of the verb and the
+comitative phrase, which moves the comitative phrase across a medial verb. -/
+def shift (s : Arrangement Slot 3) : Arrangement Slot 3 := (Equiv.swap .verb .comitative).trans s
 
-/-- The shift of the comitative phrase to preverbal position, the paper's (108): the
-comitative phrase is fronted before the verb. -/
-def shift (l : List Slot) : List Slot :=
-  (l.filter (· ≠ .verb)) ++ l.filter (· = .verb)
+/-- Where the verb is medial, the shift makes the subject and the comitative phrase contiguous,
+so that the string can be reanalyzed as a constituent. -/
+theorem adjacent_shift {s : Arrangement Slot 3} (h : s .verb = 1) :
+    Adjacent (shift s) .subject .comitative :=
+  (adjacent_iff (z := Slot.verb) (by decide) (by decide) (by decide)).2 <| by
+    simpa [shift, h] using s.injective.ne (show Slot.comitative ≠ .verb by decide)
 
-/-- After the shift the verb-medial scheme is contiguous, so the string can be reanalyzed as a
-constituent. -/
-theorem shift_contiguous : Contiguous (shift (scheme .SVO)) := by decide
-
-/-- The doubled scheme, the paper's (125): the comitative marker on both NPs signals their
-equal rank in a verb-final language. -/
-def doubled : List Slot := [.withNp1, .withNp2, .verb]
+/-- The shifted SVO scheme is the SOV scheme: (108) has the order of (123). -/
+theorem shift_scheme_svo : shift (scheme .svo) = scheme .sov := Equiv.ext (by decide)
 
 end Stassen2000
