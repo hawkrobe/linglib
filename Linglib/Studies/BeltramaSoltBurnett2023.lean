@@ -1,388 +1,328 @@
 module
 
-public import Linglib.Semantics.Quantification.Numerals.Roundness
-public import Linglib.Pragmatics.SocialMeaning.IndexicalField
-public import Linglib.Semantics.Quantification.Numerals.Roundness
-public import Linglib.Pragmatics.SocialMeaning.Dimension
+public import Linglib.Data.Experiments.BeltramaSoltBurnett2023
 public import Linglib.Pragmatics.SocialMeaning.Persona
 public import Linglib.Fragments.English.NumeralModifiers
-public import Mathlib.Basic.Sign.Defs
+public import Linglib.Semantics.Quantification.Numerals.Roundness
+public import Mathlib.Algebra.Order.Ring.Rat
+public import Mathlib.Order.Filter.Extr
 public import Mathlib.Tactic.NormNum
 
 /-!
-# Context, precision, and social perception
+# Beltrama, Solt and Burnett (2023): Context, Precision, and Social Perception: A Sociopragmatic Study
 
-Beltrama, Solt and Burnett run two social-perception experiments comparing three precision
-variants, precise *forty-nine minutes*, underspecified *fifty minutes* and approximate *about fifty
-minutes*, across four communicative scenarios. Ratings reduce by PCA to Status, Solidarity and
-anti-Solidarity: precise variants are rated above approximate on Status and anti-Solidarity and
-below on Solidarity, and the underspecified variant shows that precision and approximation are
-separate indexical loci. Scenario modulates the contrasts, the Status edge of precision being
-amplified where accuracy matters and the Solidarity contrast where precision is idle.
+Two experiments crossed three variants of a duration, approximate *about fifty minutes*,
+underspecified *fifty minutes* and precise *forty-nine minutes*, with four scenarios ranked by
+their need for precision, and had the speaker rated on scales that reduce to Status, Solidarity
+and anti-Solidarity. Precise speakers are rated above approximate ones on Status and
+anti-Solidarity and below them on Solidarity, and the underspecified variant patterns with the
+precise one on Status and with the approximate one on anti-Solidarity. The paper reads this in
+two ways (pp. 828–829): the underspecified variant is a neutral zero point, so that precision and
+approximation are separate indexical loci, or round numbers partake of both ends of a single
+opposition.
 
-## Main definitions
+## Main statements
 
-* `Variant`, `classifyVariant` — the three-way contrast, derived from the substrate roundness
-  score plus the presence of a tolerance modifier.
-* `exp1Mean`, `exp2Mean` — the per-dimension cell means (Experiment 1: 216 recruited, 61
-  excluded, within-subjects; Experiment 2: 960 recruited, 150 excluded, one-trial
-  between-subjects).
-* `signField`, `bsbField` — the association field of signs of each variant's contrast with the
-  underspecified variant, the neutral-diagnostic reading of the general discussion, derived from
-  the Experiment 1 means; `bsbGroundedField` — its [burnett-2019] Eckert–Montague lift.
+* `borneOut_contrastField`, `borneOut_neutral`: both readings are borne out by the means of both
+  experiments (p. 828), though on the opposition reading the precise and approximate variants are
+  antipodal and each fits a single persona, while on the neutral reading they are separate loci
+  (`separateLoci_neutral`) and each fits two personae.
+* `not_needHypothesis`: no table of cell means that agrees with the cells Experiment 2 reports
+  satisfies the hypothesis that raising the need for precision favors the more precise variant;
+  the other reported interactions run as it predicts (`favors_exp1`, `favors_exp2`).
+* `loadsMostOn_exp1`, `loadsMostOn_exp2_iff`: by maximal loading, the principal components
+  recover the planned grouping of the scales in Experiment 1, and in Experiment 2 for every scale
+  but *friendly*, which loads most on Status.
 
-## Main results
+## Implementation notes
 
-* `sign_alignment`, `opposite_directions`, `signField_exp2Mean` — the core sign structure:
-  Status and anti-Solidarity favor precise, Solidarity reverses, precise and approximate are
-  antipodal, and Experiment 2 replicates the signs.
-* `underspec_near_precise_on_competence`, `underspec_near_approx_on_antiSol`,
-  `underspec_intermediate_on_warmth`, `diagnostic_crossover` — the underspecified diagnostic
-  (pp. 827–828).
-* `competence_enhanced_in_high_demand`, `warmth_enhanced_in_low_demand`, `context_crossover` —
-  scenario modulation of the Status and Solidarity contrasts.
-* `non_round_collapses`, `round_supports_contrast` — roundness gates the three-way contrast.
-* `underspecified_indexes_nothing` — under the EM lift the underspecified variant is
-  compatible with every persona.
+* Status, Solidarity and anti-Solidarity are read as the competence, warmth and anti-solidarity
+  of `SocialMeaning.Dimension`.
+* The neutral reading takes the paper's verdict on each comparison with the underspecified
+  variant, counting the trend of Experiment 1 on Status as a difference, as the paper does
+  (p. 818); no p-value is thresholded.
+* The underspecified variant is ranked between the others in precision, being compatible with a
+  precise and an imprecise interpretation (p. 809).
+* The context hypothesis is stated over full tables of cell means, which the paper only plots
+  (Figures 2–4, 9–11); the theorems hold of every table agreeing with the printed cells.
 
 ## References
 
 * [beltrama-solt-burnett-2023]
 * [beltrama-2018]
-* [eckert-2008]
-* [fiske-cuddy-glick-2007]
-* [burnett-2019]
-* [krifka-2007]
 * [campbell-kibler-2011]
+* [eckert-2008]
+* [burnett-2019]
+* [fiske-cuddy-glick-2007]
+* [krifka-2007]
 -/
 
 @[expose] public section
 
 namespace BeltramaSoltBurnett2023
 
-open SocialMeaning
+open SocialMeaning Data.Experiments
 
-/-! ### Stimuli and the three-way contrast -/
+/-! ### The variants -/
 
-/-- The three precision variants of the Precision manipulation are a sharp number, a bare round
-number, and a round number under an approximator. -/
-inductive Variant where
-  /-- The precise variant uses a sharp number, *forty-nine minutes*. -/
-  | precise
-  /-- The underspecified variant uses a bare round number, *fifty minutes*. -/
-  | underspecified
-  /-- The approximate variant puts a round number under an approximator, *about fifty minutes*. -/
-  | approximate
-  deriving DecidableEq, Repr
+section Variants
 
-/-- The precise stimulus numeral (sharp, non-round). -/
-def stimPrecise : Nat := 49
+open Numerals.Roundness
 
-/-- The round stimulus numeral (used bare or with "about"). -/
-def stimRound : Nat := 50
+/-- A number `m` is a round number closest to `n` when it has a roundness property and no number
+with one is closer to `n`. -/
+def IsNearestRound (n m : ℕ) : Prop :=
+  0 < roundnessScore m ∧ IsMinOn (fun k : ℕ ↦ |(k : ℤ) - n|) {k | 0 < roundnessScore k} m
 
-/-- 49 has zero roundness — no imprecise reading is possible. -/
-theorem stim_precise_not_round :
-    Numerals.Roundness.roundnessScore stimPrecise = 0 := by decide
+/-- The underspecified durations round the precise ones off to the closest round number
+(p. 807). -/
+theorem isNearestRound_stimuli (e : Experiment) :
+    IsNearestRound (stimuli e .precise).before (stimuli e .underspecified).before ∧
+      IsNearestRound (stimuli e .precise).after (stimuli e .underspecified).after := by
+  have key {n m : ℕ} (hn : roundnessScore n = 0) (hm : 0 < roundnessScore m)
+      (h : |(m : ℤ) - n| = 1) : IsNearestRound n m := by
+    refine ⟨hm, isMinOn_iff.2 fun k (hk : 0 < roundnessScore k) ↦ ?_⟩
+    have hkn : k ≠ n := by rintro rfl; omega
+    exact h ▸ Int.one_le_abs (sub_ne_zero.2 (Nat.cast_injective.ne hkn))
+  cases e <;> exact ⟨key (by decide) (by decide) (by norm_num [stimuli]),
+    key (by decide) (by decide) (by norm_num [stimuli])⟩
 
-/-- 50 is highly round (score 5) — imprecise readings are available. -/
-theorem stim_round_is_round :
-    Numerals.Roundness.roundnessScore stimRound = 5 := by decide
+end Variants
 
-open English.NumeralModifiers Semantics in
-/-- The modifier of the approximate variant, *about*, is an approximator of the Fragment: on
-    every reading *about fifty* is true of fifty itself, so the variant is compatible with the
-    precise amount without asserting it. -/
-theorem about_true_of_number {r : ℕ → Set ℕ} (hr : r ∈ ⟦NumeralModifier.about⟧) (n : ℕ) :
-    n ∈ r n :=
-  NumeralModifier.self_mem_of_isApproximator (.inl rfl) hr n
+/-- The numeral modifier an approximator is. -/
+def Approximator.modifier : Approximator → English.NumeralModifiers.NumeralModifier
+  | .about => .about
+  | .around => .around
 
-/-- Classify a numeral into a variant from the substrate roundness score and the presence of a
-    tolerance modifier: non-round is `.precise` regardless of modifier; round is
-    `.underspecified` bare and `.approximate` under a modifier. -/
-def classifyVariant (n : Nat) (hasToleranceModifier : Bool) : Variant :=
-  if Numerals.Roundness.roundnessScore n < 2 then .precise
-  else if hasToleranceModifier then .approximate
-  else .underspecified
+section Truth
 
-/-- "forty-nine minutes" is the precise variant. -/
-theorem classify_49 :
-    classifyVariant stimPrecise false = .precise := by decide
+open Degree
 
-/-- Bare "fifty minutes" is the underspecified variant. -/
-theorem classify_50_bare :
-    classifyVariant stimRound false = .underspecified := by decide
+/-- Of a trip that takes the precise duration, the underspecified description is false read
+literally, on the two-sided and on the lower-bounded meaning of the bare numeral (p. 807). -/
+theorem precise_not_mem_underspecified (e : Experiment) :
+    (stimuli e .precise).after ∉ Comparison.eq.interval (stimuli e .underspecified).after ∪
+      Comparison.ge.interval (stimuli e .underspecified).after := by
+  cases e <;> simp [stimuli, Comparison.interval_eq, Comparison.interval_ge]
 
-/-- "about fifty minutes" is the approximate variant. -/
-theorem classify_50_about :
-    classifyVariant stimRound true = .approximate := by decide
+open Semantics in
+/-- The approximate description of the trip is true on every reading of its approximator that is
+not exact. -/
+theorem precise_mem_approximate (e : Experiment) {a : Approximator}
+    (ha : (stimuli e .approximate).afterApproximator = some a) {r : ℕ → Set ℕ}
+    (hr : r ∈ ⟦a.modifier⟧)
+    (hne : r (stimuli e .approximate).after ≠ {(stimuli e .approximate).after}) :
+    (stimuli e .precise).after ∈ r (stimuli e .approximate).after := by
+  cases e <;> cases a <;> simp only [stimuli, reduceCtorEq, Option.some.injEq] at ha ⊢ <;>
+    obtain ⟨y, rfl⟩ := hr <;> simp only [Set.mem_Icc] <;> refine ⟨?_, by omega⟩ <;>
+    by_contra h <;> exact hne (by
+      obtain rfl : y = 0 := by omega
+      simp)
 
-/-- Non-round numerals collapse the three-way contrast to `.precise`: nothing is left for
-    social perception to modulate. -/
-theorem non_round_collapses (n : Nat)
-    (h : Numerals.Roundness.roundnessScore n < 2) :
-    classifyVariant n true = .precise ∧ classifyVariant n false = .precise := by
-  constructor <;> simp [classifyVariant] <;> omega
+end Truth
 
-/-- Round numerals support the full three-way contrast: bare is underspecified, modified is
-    approximate. -/
-theorem round_supports_contrast (n : Nat)
-    (h : Numerals.Roundness.roundnessScore n ≥ 2) :
-    classifyVariant n false = .underspecified ∧
-    classifyVariant n true = .approximate := by
-  constructor <;> simp [classifyVariant] <;> omega
+/-! ### Two readings of the underspecified variant -/
 
-/-! ### Cell means -/
+/-- The dimension of social evaluation a composite score measures. -/
+def Factor.dimension : Factor ≃ Dimension where
+  toFun
+    | .status => .competence
+    | .solidarity => .warmth
+    | .antiSolidarity => .antiSolidarity
+  invFun
+    | .competence => .status
+    | .warmth => .solidarity
+    | .antiSolidarity => .antiSolidarity
+  left_inv f := by cases f <;> rfl
+  right_inv d := by cases d <;> rfl
 
-/-- These are the cell means of Experiment 1 (216 recruited, 61 excluded; within subjects; 7-point
-scales), with the PCA factors mapped onto `Dimension`, Status to `.competence`, Solidarity to
-`.warmth` and anti-Solidarity to `.antiSolidarity`. -/
-def exp1Mean : Variant → Dimension → ℚ
-  | .precise,       .competence      => 501/100  -- M = 5.01, SD = 0.95
-  | .precise,       .warmth          => 437/100  -- M = 4.37, SD = 1.08
-  | .precise,       .antiSolidarity  => 437/100  -- M = 4.37, SD = 1.22
-  | .underspecified, .competence     => 496/100  -- M = 4.96, SD = 0.99
-  | .underspecified, .warmth         => 449/100  -- M = 4.49, SD = 1.00
-  | .underspecified, .antiSolidarity => 419/100  -- M = 4.19, SD = 1.24
-  | .approximate,   .competence      => 484/100  -- M = 4.84, SD = 0.99
-  | .approximate,   .warmth          => 458/100  -- M = 4.58, SD = 0.99
-  | .approximate,   .antiSolidarity  => 410/100  -- M = 4.10, SD = 1.24
+/-- The mean composite scores of an experiment. -/
+def means (e : Experiment) : AssociationField Variant Dimension ℚ :=
+  .of fun v d ↦ (ratings e v (Factor.dimension.symm d)).mean.toRat
 
-/-- Experiment 2 cell means (960 recruited, 150 excluded; one-trial between-subjects). -/
-def exp2Mean : Variant → Dimension → ℚ
-  | .precise,       .competence      => 516/100  -- M = 5.16, SD = 0.82
-  | .precise,       .warmth          => 415/100  -- M = 4.15, SD = 0.97
-  | .precise,       .antiSolidarity  => 385/100  -- M = 3.85, SD = 1.05
-  | .underspecified, .competence     => 506/100  -- M = 5.06, SD = 0.73
-  | .underspecified, .warmth         => 460/100  -- M = 4.60, SD = 0.90
-  | .underspecified, .antiSolidarity => 359/100  -- M = 3.59, SD = 1.14
-  | .approximate,   .competence      => 490/100  -- M = 4.90, SD = 0.85
-  | .approximate,   .warmth          => 484/100  -- M = 4.84, SD = 0.85
-  | .approximate,   .antiSolidarity  => 349/100  -- M = 3.49, SD = 1.13
+/-- A sign field is borne out by an experiment when the means order every two variants that the
+field orders. -/
+def BorneOut (F : AssociationField Variant Dimension SignType) (e : Experiment) : Prop :=
+  ∀ d v w, F v d < F w d → means e v d < means e w d
 
-/-! ### The core indexical orderings (replicated across both experiments) -/
+instance (F : AssociationField Variant Dimension SignType) (e : Experiment) :
+    Decidable (BorneOut F e) :=
+  inferInstanceAs (Decidable (∀ _ _ _, _))
 
-/-- On Status precise is above approximate in both experiments (5.01 > 4.84; 5.16 > 4.90). -/
-theorem competence_precise_gt_approx :
-    exp1Mean .precise .competence > exp1Mean .approximate .competence ∧
-    exp2Mean .precise .competence > exp2Mean .approximate .competence := by
-  norm_num [exp1Mean, exp2Mean]
+/-- The precise and approximate variants are separate indexical loci when each indexes a
+dimension the other does not. -/
+def SeparateLoci (F : AssociationField Variant Dimension SignType) : Prop :=
+  (∃ d, F .precise d ≠ 0 ∧ F .approximate d = 0) ∧ ∃ d, F .approximate d ≠ 0 ∧ F .precise d = 0
 
-/-- On Solidarity approximate is above precise in both experiments (4.58 > 4.37; 4.84 > 4.15). -/
-theorem warmth_approx_gt_precise :
-    exp1Mean .approximate .warmth > exp1Mean .precise .warmth ∧
-    exp2Mean .approximate .warmth > exp2Mean .precise .warmth := by
-  norm_num [exp1Mean, exp2Mean]
+theorem SeparateLoci.not_antipodal {F : AssociationField Variant Dimension SignType}
+    (h : SeparateLoci F) : ¬ F.Antipodal .precise .approximate := fun ha ↦ by
+  obtain ⟨⟨d, hp, ha0⟩, -⟩ := h
+  exact hp (by rw [ha, Pi.neg_apply, ha0, neg_zero])
 
-/-- On anti-Solidarity precise is above approximate in both experiments (4.37 > 4.10; 3.85 > 3.49).
--/
-theorem antiSol_precise_gt_approx :
-    exp1Mean .precise .antiSolidarity > exp1Mean .approximate .antiSolidarity ∧
-    exp2Mean .precise .antiSolidarity > exp2Mean .approximate .antiSolidarity := by
-  norm_num [exp1Mean, exp2Mean]
+/-- The underspecified variant is rated strictly between the precise and the approximate ones on
+every dimension in both experiments (p. 827). -/
+theorem underspecified_mem_uIoo (e : Experiment) (d : Dimension) :
+    means e .underspecified d ∈ Set.uIoo (means e .precise d) (means e .approximate d) := by
+  cases e <;> cases d <;>
+    simp [means, ratings, Factor.dimension, Decimal.toRat, Set.uIoo] <;> norm_num
 
-/-- Status and anti-Solidarity share a direction, both favouring precise, while Solidarity reverses,
-the core sign structure of the precision indexical field. -/
-theorem sign_alignment :
-    (exp1Mean .precise .competence > exp1Mean .approximate .competence ∧
-     exp1Mean .precise .antiSolidarity > exp1Mean .approximate .antiSolidarity ∧
-     exp1Mean .approximate .warmth > exp1Mean .precise .warmth) ∧
-    (exp2Mean .precise .competence > exp2Mean .approximate .competence ∧
-     exp2Mean .precise .antiSolidarity > exp2Mean .approximate .antiSolidarity ∧
-     exp2Mean .approximate .warmth > exp2Mean .precise .warmth) := by
-  norm_num [exp1Mean, exp2Mean]
+/-- On the opposition reading the variants are measured against the underspecified one, every
+difference of means counting. -/
+def contrastField (e : Experiment) : AssociationField Variant Dimension SignType :=
+  ((means e).contrast .underspecified).signs
 
-/-! ### The three-way indexical field -/
+/-- The precise and approximate variants are the two ends of a single opposition, since the
+underspecified variant lies between them. -/
+theorem antipodal_contrastField (e : Experiment) :
+    (contrastField e).Antipodal .precise .approximate :=
+  AssociationField.antipodal_signs_contrast_iff.2 fun d ↦ .inl (underspecified_mem_uIoo e d)
 
-/-- A table of cell means determines the association field of signs, the sign of each variant's
-contrast with the underspecified variant on each dimension. The underspecified variant is the zero
-point, the neutral-diagnostic reading of the general discussion (p. 828), on which it reveals which
-endpoint drives each contrast; the paper's alternative, round numbers carrying their own chameleonic
-indexicality, is not modeled. -/
-def signField (mean : Variant → Dimension → ℚ) :
-    AssociationField Variant Dimension SignType :=
-  .of fun v d ↦ SignType.sign (mean v d - mean .underspecified d)
+/-- Experiment 2 replicates the opposition of Experiment 1 (p. 825). -/
+theorem contrastField_exp2 : contrastField .exp2 = contrastField .exp1 := by
+  ext v d; revert v d; decide +kernel
 
-/-- The three-way field, the signs of the Experiment 1 contrasts. -/
-def bsbField : AssociationField Variant Dimension SignType := signField exp1Mean
+theorem ground_contrastField_precise (e : Experiment) :
+    (contrastField e).ground.indexes .precise = {.competent, .cold, .antiSolidary} := by
+  cases e <;> decide +kernel
 
-/-- Precise and approximate are antipodal, their contrasts with the underspecified variant
-    running opposite ways on every dimension. -/
-theorem opposite_directions : bsbField.Antipodal .precise .approximate := by
-  show bsbField .precise = -bsbField .approximate
-  funext d; cases d <;> decide +kernel
+theorem ground_contrastField_approximate (e : Experiment) :
+    (contrastField e).ground.indexes .approximate = {.incompetent, .warm, .solidary} := by
+  rw [(antipodal_contrastField e).ground_indexes, ground_contrastField_precise]; decide
 
-/-- Experiment 2 replicates the sign structure of Experiment 1. -/
-theorem signField_exp2Mean : signField exp2Mean = bsbField := by
-  ext v d; cases v <;> cases d <;> decide +kernel
+theorem lift_contrastField_precise (e : Experiment) :
+    (contrastField e).ground.lift .precise = {{.competent, .cold, .antiSolidary}} := by
+  rw [GroundedField.lift_eq_singleton _ _ ?_, ground_contrastField_precise]
+  rw [AssociationField.ground_indexes_mem_maximalIndepSets_iff]
+  cases e <;> decide +kernel
 
-/-- The underspecified variant, the zero point, indexes nothing. -/
-@[simp] theorem bsbField_underspecified : bsbField .underspecified = 0 := by
-  funext d; simp [bsbField, signField]
+theorem borneOut_contrastField (e e' : Experiment) : BorneOut (contrastField e) e' := by
+  have h : contrastField e = contrastField e' := by
+    cases e <;> cases e' <;> simp [contrastField_exp2]
+  exact h ▸ fun _ _ _ ↦ AssociationField.lt_of_signs_contrast_lt
 
-/-! ### The underspecified diagnostic (pp. 827–828)
+/-- The direction of a verdict; a trend counts. -/
+def Verdict.sign : Verdict → SignType
+  | .higher | .trendHigher => 1
+  | .lower => -1
+  | .noDifference => 0
 
-The underspecified variant does not sit uniformly between the endpoints: it clusters with
-precise on Status (an approximation-driven downgrade), with approximate on anti-Solidarity
-(a precision-driven increase), and strictly between the two on Solidarity (both forces pull).
-The paper's clustering criterion is significance patterning; the mean-gap comparisons below
-align with it in every cell. -/
+/-- On the neutral reading the underspecified variant is the zero point, and a variant indexes a
+dimension in the direction of its reported difference from it (p. 828). -/
+def neutral (e : Experiment) : AssociationField Variant Dimension SignType :=
+  .of fun v d ↦ match v with
+    | .precise => (verdicts e (Factor.dimension.symm d) .preciseUnderspecified).verdict.sign
+    | .underspecified => 0
+    | .approximate =>
+      -(verdicts e (Factor.dimension.symm d) .underspecifiedApproximate).verdict.sign
 
-/-- On Status the underspecified variant is closer to precise than to approximate: the
-    contrast is approximation-driven (0.05 vs. 0.12 in Experiment 1; 0.10 vs. 0.16 in
-    Experiment 2). -/
-theorem underspec_near_precise_on_competence :
-    (exp1Mean .precise .competence - exp1Mean .underspecified .competence <
-     exp1Mean .underspecified .competence - exp1Mean .approximate .competence) ∧
-    (exp2Mean .precise .competence - exp2Mean .underspecified .competence <
-     exp2Mean .underspecified .competence - exp2Mean .approximate .competence) := by
-  norm_num [exp1Mean, exp2Mean]
+/-- Where the paper reports a difference, it runs in the direction of the means. -/
+theorem neutral_eq_zero_or_eq_contrastField (e : Experiment) (v : Variant) (d : Dimension) :
+    neutral e v d = 0 ∨ neutral e v d = contrastField e v d := by
+  revert v d; cases e <;> decide +kernel
 
-/-- On anti-Solidarity the underspecified variant is closer to approximate than to precise:
-    the contrast is precision-driven (0.09 vs. 0.18; 0.10 vs. 0.26). -/
-theorem underspec_near_approx_on_antiSol :
-    (exp1Mean .underspecified .antiSolidarity - exp1Mean .approximate .antiSolidarity <
-     exp1Mean .precise .antiSolidarity - exp1Mean .underspecified .antiSolidarity) ∧
-    (exp2Mean .underspecified .antiSolidarity - exp2Mean .approximate .antiSolidarity <
-     exp2Mean .precise .antiSolidarity - exp2Mean .underspecified .antiSolidarity) := by
-  norm_num [exp1Mean, exp2Mean]
+/-- In both experiments the Status contrast is driven by approximation alone and the
+anti-Solidarity contrast by precision alone (p. 828). -/
+theorem separateLoci_neutral (e : Experiment) : SeparateLoci (neutral e) := by
+  cases e <;> exact ⟨⟨.antiSolidarity, by decide +kernel⟩, ⟨.competence, by decide +kernel⟩⟩
 
-/-- On Solidarity the underspecified variant falls strictly between precise and approximate —
-    significantly in both directions in Experiment 2, as a trend in Experiment 1 (p. 826):
-    precision and approximation pull it in opposite directions. -/
-theorem underspec_intermediate_on_warmth :
-    (exp1Mean .precise .warmth < exp1Mean .underspecified .warmth ∧
-     exp1Mean .underspecified .warmth < exp1Mean .approximate .warmth) ∧
-    (exp2Mean .precise .warmth < exp2Mean .underspecified .warmth ∧
-     exp2Mean .underspecified .warmth < exp2Mean .approximate .warmth) := by
-  norm_num [exp1Mean, exp2Mean]
+theorem not_separateLoci_contrastField (e : Experiment) : ¬ SeparateLoci (contrastField e) :=
+  fun h ↦ h.not_antipodal (antipodal_contrastField e)
 
-/-- The crossover that makes the underspecified variant diagnostic: the small gap sits on the
-    precise side for Status but on the approximate side for anti-Solidarity. -/
-theorem diagnostic_crossover :
-    (exp1Mean .precise .competence - exp1Mean .underspecified .competence <
-     exp1Mean .underspecified .competence - exp1Mean .approximate .competence) ∧
-    (exp1Mean .underspecified .antiSolidarity - exp1Mean .approximate .antiSolidarity <
-     exp1Mean .precise .antiSolidarity - exp1Mean .underspecified .antiSolidarity) := by
-  norm_num [exp1Mean]
+theorem ground_neutral_precise :
+    (neutral .exp2).ground.indexes .precise = {.cold, .antiSolidary} := by decide +kernel
+
+theorem ground_neutral_approximate :
+    (neutral .exp2).ground.indexes .approximate = {.incompetent, .warm} := by decide +kernel
+
+theorem card_lift_neutral_precise : ((neutral .exp2).ground.lift .precise).card = 2 := by
+  decide +kernel
+
+theorem borneOut_neutral (e e' : Experiment) : BorneOut (neutral e) e' := by
+  cases e <;> cases e' <;> decide +kernel
 
 /-! ### Scenario modulation -/
 
-/-- Communicative scenario ("The Scenario manipulation"). -/
-inductive Scenario where
-  /-- Testifying for the official record. -/
-  | forTheRecord
-  /-- Persuading an interlocutor to act. -/
-  | persuasion
-  /-- Small talk with a stranger. -/
-  | stranger
-  /-- Getting to know new colleagues. -/
-  | bonding
-  deriving DecidableEq, Repr
+/-- The favorable direction of a composite score; the anti-Solidarity scales measure low
+solidarity (p. 812). -/
+def Factor.valence : Factor → ℚ
+  | .status | .solidarity => 1
+  | .antiSolidarity => -1
 
-/-- Binary precision demand, the split the results discussion works with. -/
-inductive PrecisionDemand where
-  | high
-  | low
-  deriving DecidableEq, Repr
-
-/-- The paper orders precision need in four points, highest For-the-record, then Persuasion, then
-Stranger, and lowest Bonding. -/
-def Scenario.precisionNeed : Scenario → ℕ
+/-- The need for precision of a scenario, highest for the record and lowest in Bonding (p. 811). -/
+def Scenario.need : Scenario → ℕ
   | .forTheRecord => 3
-  | .persuasion   => 2
-  | .stranger     => 1
-  | .bonding      => 0
+  | .persuasive => 2
+  | .stranger => 1
+  | .bonding => 0
 
-/-- Binary demand, derived from the four-point ordering rather than stipulated per cell. -/
-def Scenario.precisionDemand (s : Scenario) : PrecisionDemand :=
-  if 2 ≤ s.precisionNeed then .high else .low
+/-- The precision of a variant. -/
+def Variant.precision : Variant → ℕ
+  | .approximate => 0
+  | .underspecified => 1
+  | .precise => 2
 
-example :
-    Scenario.forTheRecord.precisionDemand = .high ∧
-      Scenario.persuasion.precisionDemand = .high ∧
-        Scenario.stranger.precisionDemand = .low ∧
-          Scenario.bonding.precisionDemand = .low := by decide
+/-- A table of cell means agrees with the cells an experiment reports. -/
+def Agrees (e : Experiment) (T : Scenario → Variant → Factor → ℚ) : Prop :=
+  ∀ r ∈ scenarioRatings, r.experiment = e → T r.scenario r.variant r.factor = r.mean.toRat
 
-/-- Experiment 1 Status means for the For-the-record/Bonding × precise/approximate
-    interaction cells (p. 816). Non-tabulated cells default to `0` and are cited by no
-    theorem. -/
-def exp1CompetenceByScenario : Scenario → Variant → ℚ
-  | .forTheRecord, .precise     => 513/100  -- M = 5.13, SD = 1.02
-  | .forTheRecord, .approximate => 474/100  -- M = 4.74, SD = 0.97
-  | .bonding,      .precise     => 493/100  -- M = 4.93, SD = 0.96
-  | .bonding,      .approximate => 495/100  -- M = 4.95, SD = 0.96
-  | _, _                        => 0
+/-- Scenario `s` favors variant `v` over variant `w` on a composite score more than scenario `s'`
+does. -/
+def Favors (T : Scenario → Variant → Factor → ℚ) (f : Factor) (s s' : Scenario) (v w : Variant) :
+    Prop :=
+  f.valence * (T s' v f - T s' w f) < f.valence * (T s v f - T s w f)
 
-/-- The Status contrast is amplified under high demand: 0.39 points in For-the-record,
-    vanishing (−0.02) in Bonding (pp. 816, 829–830). -/
-theorem competence_enhanced_in_high_demand :
-    exp1CompetenceByScenario .forTheRecord .precise -
-    exp1CompetenceByScenario .forTheRecord .approximate >
-    exp1CompetenceByScenario .bonding .precise -
-    exp1CompetenceByScenario .bonding .approximate := by
-  norm_num [exp1CompetenceByScenario]
+/-- The hypothesis of p. 810 is that a scenario that needs precision more favors a more precise
+variant more. -/
+def NeedHypothesis (T : Scenario → Variant → Factor → ℚ) : Prop :=
+  ∀ f s s' v w, s'.need < s.need → w.precision < v.precision → Favors T f s s' v w
 
-/-- In Bonding the Status contrast is neutralized: approximate is not below precise. -/
-theorem competence_neutralized_in_bonding :
-    exp1CompetenceByScenario .bonding .approximate ≥
-    exp1CompetenceByScenario .bonding .precise := by
-  norm_num [exp1CompetenceByScenario]
+theorem favors_exp1 {T : Scenario → Variant → Factor → ℚ} (hT : Agrees .exp1 T) :
+    Favors T .status .forTheRecord .bonding .precise .approximate ∧
+      Favors T .antiSolidarity .forTheRecord .bonding .underspecified .approximate := by
+  simp only [Agrees, scenarioRatings, List.forall_mem_cons, List.not_mem_nil, reduceCtorEq,
+    forall_const, imp_true_iff, and_true, IsEmpty.forall_iff] at hT
+  obtain ⟨h1, h2, h3, h4, h5, h6, h7, h8⟩ := hT
+  simp only [Favors, Factor.valence, h1, h2, h3, h4, h5, h6, h7, h8]
+  norm_num [Decimal.toRat]
 
-/-- Experiment 2 Solidarity means for the Stranger/For-the-record × precise/underspecified
-    interaction cells — the re-leveled interaction reported in the text (p. 823).
-    Non-tabulated cells default to `0` and are cited by no theorem. -/
-def exp2WarmthByScenario : Scenario → Variant → ℚ
-  | .stranger,     .precise        => 434/100  -- M = 4.34, SD = 1.01
-  | .stranger,     .underspecified => 478/100  -- M = 4.78, SD = 0.77
-  | .forTheRecord, .precise        => 388/100  -- M = 3.88, SD = 0.95
-  | .forTheRecord, .underspecified => 389/100  -- M = 3.89, SD = 0.71
-  | _, _                           => 0
+/-- In Experiment 2 the For-the-record scenario favors the precise variant over the
+underspecified one on Solidarity more than the Stranger scenario does, as the hypothesis
+predicts, but the Persuasive scenario favors it on Status more than For-the-record does
+(p. 823), against the hypothesis; the paper leaves this unexplained (p. 830). -/
+theorem favors_exp2 {T : Scenario → Variant → Factor → ℚ} (hT : Agrees .exp2 T) :
+    Favors T .solidarity .forTheRecord .stranger .precise .underspecified ∧
+      Favors T .status .persuasive .forTheRecord .precise .underspecified := by
+  simp only [Agrees, scenarioRatings, List.forall_mem_cons, List.not_mem_nil, reduceCtorEq,
+    forall_const, imp_true_iff, and_true, true_and, IsEmpty.forall_iff] at hT
+  obtain ⟨h1, h2, h3, h4, h5, h6, h7, h8⟩ := hT
+  simp only [Favors, Factor.valence, h1, h2, h3, h4, h5, h6, h7, h8]
+  norm_num [Decimal.toRat]
 
-/-- The Solidarity contrast is amplified under low demand: 0.44 points in Stranger,
-    vanishing (0.01) in For-the-record (pp. 823, 826). -/
-theorem warmth_enhanced_in_low_demand :
-    exp2WarmthByScenario .stranger .underspecified -
-    exp2WarmthByScenario .stranger .precise >
-    exp2WarmthByScenario .forTheRecord .underspecified -
-    exp2WarmthByScenario .forTheRecord .precise := by
-  norm_num [exp2WarmthByScenario]
+theorem not_needHypothesis {T : Scenario → Variant → Factor → ℚ} (hT : Agrees .exp2 T) :
+    ¬ NeedHypothesis T := fun h ↦
+  (favors_exp2 hT).2.asymm (h .status .forTheRecord .persuasive .precise .underspecified
+    (by decide) (by decide))
 
-/-- Modulation is bidirectional: high demand amplifies the Status contrast and low demand the
-Solidarity contrast, so which region of the field is activated depends on the communicative
-situation. -/
-theorem context_crossover :
-    (exp1CompetenceByScenario .forTheRecord .precise -
-     exp1CompetenceByScenario .forTheRecord .approximate >
-     exp1CompetenceByScenario .bonding .precise -
-     exp1CompetenceByScenario .bonding .approximate) ∧
-    (exp2WarmthByScenario .stranger .underspecified -
-     exp2WarmthByScenario .stranger .precise >
-     exp2WarmthByScenario .forTheRecord .underspecified -
-     exp2WarmthByScenario .forTheRecord .precise) := by
-  norm_num [exp1CompetenceByScenario, exp2WarmthByScenario]
+/-! ### The grouping of the scales -/
 
-/-! ### The Eckert–Montague lift -/
+/-- A scale loads most on a principal component, the criterion by which the paper assigns a scale
+that loads on two (note 2). -/
+def LoadsMostOn (e : Experiment) (s : Scale) (f : Factor) : Prop :=
+  ∀ g ≠ f, (loadings e s g).loading.toRat < (loadings e s f).loading.toRat
 
-/-- The field as a [burnett-2019] grounded field over the SCM property space. -/
-def bsbGroundedField : GroundedField Variant Pole.incompatible := bsbField.ground
+instance (e : Experiment) (s : Scale) (f : Factor) : Decidable (LoadsMostOn e s f) :=
+  inferInstanceAs (Decidable (∀ _, _))
 
-/-- Precise speech indexes {competent, cold, antiSolidary}. -/
-theorem precise_scmProperties :
-    bsbGroundedField.indexes .precise =
-      {.competent, .cold, .antiSolidary} := by
-  decide +kernel
+/-- In Experiment 1 every scale loads most on the dimension it was included to measure. -/
+theorem loadsMostOn_exp1 (s : Scale) : LoadsMostOn .exp1 s (scales s).dimension := by
+  revert s; decide +kernel
 
-/-- Approximate speech indexes the complement, {incompetent, warm, solidary}. -/
-theorem approximate_scmProperties :
-    bsbGroundedField.indexes .approximate =
-      {.incompetent, .warm, .solidary} := by
-  decide +kernel
+/-- In Experiment 2 every scale but *friendly* loads most on the dimension it was included to
+measure; *friendly* loads most on Status (Table 3). -/
+theorem loadsMostOn_exp2_iff (s : Scale) :
+    LoadsMostOn .exp2 s (scales s).dimension ↔ s ≠ .friendly := by
+  revert s; decide +kernel
 
-/-- The underspecified variant indexes nothing, so under the EM lift it is compatible with
-    every persona — the neutral-diagnostic reading made structural. -/
-theorem underspecified_indexes_nothing :
-    bsbGroundedField.indexes .underspecified = ∅ := by
-  decide +kernel
+theorem loadsMostOn_friendly_exp2 : LoadsMostOn .exp2 .friendly .status := by decide +kernel
 
 end BeltramaSoltBurnett2023
