@@ -109,12 +109,13 @@ open Semantics in
 /-- The approximate description of the trip is true on every reading of its approximator that is
 not exact. -/
 theorem precise_mem_approximate (e : Experiment) {a : Approximator}
-    (ha : (stimuli e .approximate).afterApproximator = some a) {r : ℕ → Set ℕ}
-    (hr : r ∈ ⟦a.modifier⟧)
-    (hne : r (stimuli e .approximate).after ≠ {(stimuli e .approximate).after}) :
-    (stimuli e .precise).after ∈ r (stimuli e .approximate).after := by
+    (ha : (stimuli e .approximate).afterApproximator = some a) {m : Modifier (Set ℕ)}
+    (hr : m ∈ ⟦a.modifier⟧)
+    (hne : m {(stimuli e .approximate).after} ≠ {(stimuli e .approximate).after}) :
+    (stimuli e .precise).after ∈ m {(stimuli e .approximate).after} := by
   cases e <;> cases a <;> simp only [stimuli, reduceCtorEq, Option.some.injEq] at ha ⊢ <;>
-    obtain ⟨y, rfl⟩ := hr <;> simp only [Set.mem_Icc] <;> refine ⟨?_, by omega⟩ <;>
+    obtain ⟨y, rfl⟩ := hr <;> simp only [Modifier.pointwise_singleton, Set.mem_Icc] at hne ⊢ <;>
+    refine ⟨?_, by omega⟩ <;>
     by_contra h <;> exact hne (by
       obtain rfl : y = 0 := by omega
       simp)

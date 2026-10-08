@@ -3,6 +3,8 @@ module
 public import Mathlib.Order.Interval.Set.Basic
 public import Mathlib.Order.Interval.Set.OrdConnected
 public import Linglib.Core.Order.StrictBounds
+public import Linglib.Semantics.Modification.Basic
+public import Mathlib.Order.UpperLower.Closure
 
 /-!
 # Reified degree comparison
@@ -18,13 +20,16 @@ The point-standard comparative *a is taller than b* is `a ∈ μ ⁻¹' Set.Ioi 
 The antonym of a comparison is its order dual, `Comparison.dual`: *a is shorter than b* is the
 dual comparison, which holds exactly when *b is taller than a* does and is the same comparison
 read on the reversed scale, Kennedy's account of antonymy. Comparisons are invariant under a
-strictly monotone change of scale.
+strictly monotone change of scale. As a modifier of degree sets acting pointwise, a comparison
+sends the bare numeral's meaning to the modified numeral's, and its Kamp class is the Class A/B
+split.
 
 ## Main definitions
 
 * `Degree.Comparison`, with `Comparison.Rel` and `Comparison.interval`.
 * `Degree.Comparison.bounds`: the set-standard interval.
 * `Degree.Comparison.dual`: the antonymous comparison.
+* `Degree.Comparison.modifier`: the comparison as a modifier of degree sets.
 * `Degree.maxOnScale`: Rett's order-sensitive maximality.
 * `Degree.ThresholdSignificant`: some member of the comparison class clears the threshold, the
   presupposition Uegaki and Sudo attribute to degree constructions.
@@ -36,6 +41,9 @@ strictly monotone change of scale.
   and as scale reversal.
 * `Degree.Comparison.preimage_interval`: invariance under an order embedding of the scale.
 * `Degree.Comparison.boundary_mem`: the Class A/B distinction as endpoint membership.
+* `Degree.Comparison.modifier_ge`, `Degree.Comparison.isExtensive_modifier_iff`: *at least* is
+  upward closure, and a comparison's modifier is extensive exactly when the comparison is not
+  strict.
 
 ## References
 
@@ -132,6 +140,48 @@ instance Comparison.intervalDecidable {α : Type*} [Preorder α] [DecidableEq α
 @[simp] theorem Comparison.boundary_mem {α : Type*} [Preorder α]
     (c : Comparison) (n : α) : n ∈ c.interval n ↔ ¬ c.IsStrict := by
   cases c <;> simp [Comparison.interval, Comparison.IsStrict]
+
+/-! ### Comparisons as modifiers
+
+A comparison is a modifier of degree sets acting pointwise through its interval, so the modified
+numeral is the modifier applied to the bare numeral's two-sided meaning: *at least* is the upward
+closure, *at most* the downward closure and *exactly* the identity. Its Kamp class is the
+Class A/B split, extensive when the comparison is inclusive and disjoint from each singleton when
+it is strict. -/
+
+section Modifier
+
+variable {α : Type*} [Preorder α]
+
+/-- The modifier of degree sets that a comparison is, pointwise through its interval. -/
+def Comparison.modifier (c : Comparison) : Modifier (Set α) := Modifier.pointwise c.interval
+
+@[simp] theorem Comparison.modifier_singleton (c : Comparison) (n : α) :
+    c.modifier {n} = c.interval n :=
+  Modifier.pointwise_singleton _ n
+
+theorem Comparison.modifier_ge (s : Set α) : Comparison.ge.modifier s = upperClosure s :=
+  (coe_upperClosure s).symm
+
+theorem Comparison.modifier_le (s : Set α) : Comparison.le.modifier s = lowerClosure s :=
+  (coe_lowerClosure s).symm
+
+theorem Comparison.modifier_eq : (Comparison.eq.modifier : Modifier (Set α)) = id :=
+  Modifier.pointwise_singleton_eq_id
+
+theorem Comparison.isExtensive_modifier_iff [Nonempty α] (c : Comparison) :
+    Modifier.IsExtensive (c.modifier : Modifier (Set α)) ↔ ¬ c.IsStrict := by
+  rw [Comparison.modifier, Modifier.isExtensive_pointwise_iff]
+  exact ⟨fun h ↦ (c.boundary_mem (Classical.arbitrary α)).1 (h _),
+    fun h n ↦ (c.boundary_mem n).2 h⟩
+
+theorem Comparison.disjoint_modifier_singleton_iff [Nonempty α] (c : Comparison) :
+    (∀ n : α, Disjoint (c.modifier {n}) {n}) ↔ c.IsStrict := by
+  rw [Comparison.modifier, Modifier.disjoint_pointwise_singleton_iff]
+  exact ⟨fun h ↦ by_contra fun hs ↦ h (Classical.arbitrary α) ((c.boundary_mem _).2 hs),
+    fun h n hn ↦ (c.boundary_mem n).1 hn h⟩
+
+end Modifier
 
 /-! ### Threshold significance
 

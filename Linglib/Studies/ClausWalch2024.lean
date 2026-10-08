@@ -98,23 +98,24 @@ end Scenario
 
 /-! ### The outcomes a frame leaves open -/
 
-/-- The goal-consistent counts out of `N` that the sure option leaves open under a reading `r`:
-the positive frame says `r p` of them, the negative frame `r q` of the rest. -/
-def outcomes (r : ℕ → Set ℕ) (N p q : ℕ) : Frame → Set ℕ
-  | .positive => {k | k ≤ N ∧ k ∈ r p}
-  | .negative => {k | k ≤ N ∧ N - k ∈ r q}
+/-- The goal-consistent counts out of `N` that the sure option leaves open under a reading `m`, a
+modifier of sets of amounts: the positive frame says `m {p}` of them, the negative frame `m {q}`
+of the rest. -/
+def outcomes (m : _root_.Modifier (Set ℕ)) (N p q : ℕ) : Frame → Set ℕ
+  | .positive => {k | k ≤ N ∧ k ∈ m {p}}
+  | .negative => {k | k ≤ N ∧ N - k ∈ m {q}}
 
 /-- A comparison of the rest is the dual comparison of the goal-consistent count: *at least 400
 will die* leaves open what *at most 200 will be saved* does. -/
 theorem outcomes_negative (c : Comparison) (h : p + q = N) :
-    outcomes c.interval N p q .negative = outcomes c.dual.interval N p q .positive := by
+    outcomes c.modifier N p q .negative = outcomes c.dual.modifier N p q .positive := by
   ext k
   cases c <;> simp [outcomes] <;> omega
 
 /-- The arithmetic argument for the equivalence of the frames presupposes a precise reading
 (p. 4145): the frames leave open the same outcomes just in case the numeral is read precisely. -/
 theorem outcomes_positive_eq_negative_iff (c : Comparison) (h : p + q = N) (hp : 0 < p) :
-    outcomes c.interval N p q .positive = outcomes c.interval N p q .negative ↔ c = .eq := by
+    outcomes c.modifier N p q .positive = outcomes c.modifier N p q .negative ↔ c = .eq := by
   rw [outcomes_negative c h]
   refine ⟨fun he ↦ ?_, fun hc ↦ hc ▸ rfl⟩
   have h0 := congrArg (0 ∈ ·) he
@@ -129,29 +130,29 @@ reading, which should reverse the effect (p. 4147). -/
 /-- On the range account the frame whose outcomes reach higher draws more choices, so its
 framing effect is the sign of the most goal-consistent outcomes the positive frame leaves open
 less the most the negative frame does. -/
-noncomputable def rangeEffect (r : ℕ → Set ℕ) (N p q : ℕ) : SignType :=
+noncomputable def rangeEffect (m : _root_.Modifier (Set ℕ)) (N p q : ℕ) : SignType :=
   SignType.sign
-    ((sSup (outcomes r N p q .positive) : ℕ) - (sSup (outcomes r N p q .negative) : ℕ) : ℤ)
+    ((sSup (outcomes m N p q .positive) : ℕ) - (sSup (outcomes m N p q .negative) : ℕ) : ℤ)
 
-theorem rangeEffect_eq (h : p + q = N) : rangeEffect Comparison.eq.interval N p q = 0 := by
+theorem rangeEffect_eq (h : p + q = N) : rangeEffect Comparison.eq.modifier N p q = 0 := by
   rw [rangeEffect, outcomes_negative _ h, Comparison.dual_eq, sub_self, sign_zero]
 
 theorem rangeEffect_ge (h : p + q = N) (hq : 0 < q) :
-    rangeEffect Comparison.ge.interval N p q = 1 := by
-  have hpos : outcomes Comparison.ge.interval N p q .positive = Icc p N := by
+    rangeEffect Comparison.ge.modifier N p q = 1 := by
+  have hpos : outcomes Comparison.ge.modifier N p q .positive = Icc p N := by
     ext k; simp [outcomes, and_comm]
-  have hneg : outcomes Comparison.ge.interval N p q .negative = Iic p := by
+  have hneg : outcomes Comparison.ge.modifier N p q .negative = Iic p := by
     ext k; simp [outcomes]; omega
   rw [rangeEffect, hpos, hneg, (isGreatest_Icc (by omega)).csSup_eq, isGreatest_Iic.csSup_eq]
   exact sign_pos (by omega)
 
 theorem rangeEffect_dual (c : Comparison) (h : p + q = N) :
-    rangeEffect c.dual.interval N p q = -rangeEffect c.interval N p q := by
+    rangeEffect c.dual.modifier N p q = -rangeEffect c.modifier N p q := by
   rw [rangeEffect, rangeEffect, outcomes_negative c.dual h, Comparison.dual_dual,
     ← outcomes_negative c h, ← Left.sign_neg, neg_sub]
 
 theorem rangeEffect_le (h : p + q = N) (hq : 0 < q) :
-    rangeEffect Comparison.le.interval N p q = -1 := by
+    rangeEffect Comparison.le.modifier N p q = -1 := by
   rw [← Comparison.dual_ge, rangeEffect_dual _ h, rangeEffect_ge h hq]
 
 /-! ### The observed framing effects -/
@@ -180,7 +181,7 @@ def Modifier.entry : Modifier → Numerals.Modifier
 /-- *Bis zu* and *höchstens* have the same readings and opposite framing effects in either
 scenario (the significant interactions, p. 4148), so no account that sees a modifier only
 through its readings predicts both. -/
-theorem no_reading_only_account (P : Set (ℕ → Set ℕ) → SignType) (s : Scenario) :
+theorem no_reading_only_account (P : Set (_root_.Modifier (Set ℕ)) → SignType) (s : Scenario) :
     ¬ (P ⟦Modifier.bisZu.entry⟧ = framingEffect (s.upper .bisZu) ∧
       P ⟦Modifier.hoechstens.entry⟧ = framingEffect (s.upper .hoechstens)) := by
   rintro ⟨h₁, h₂⟩
@@ -192,14 +193,14 @@ theorem no_reading_only_account (P : Set (ℕ → Set ℕ) → SignType) (s : Sc
 significant effects of Experiment 1 (p. 4147), and a reversed one under both upper bounds, right
 for *höchstens* and wrong for *bis zu*. -/
 theorem rangeEffect_fragment (s : Scenario) :
-    (∀ r ∈ ⟦genau⟧,
-      rangeEffect r s.total (s.number .positive) (s.number .negative) ≠ framingEffect s.genau) ∧
-    (∀ r ∈ ⟦Modifier.bisZu.entry⟧, rangeEffect r s.total (s.number .positive)
+    (∀ m ∈ ⟦genau⟧,
+      rangeEffect m s.total (s.number .positive) (s.number .negative) ≠ framingEffect s.genau) ∧
+    (∀ m ∈ ⟦Modifier.bisZu.entry⟧, rangeEffect m s.total (s.number .positive)
       (s.number .negative) ≠ framingEffect (s.upper .bisZu)) ∧
-    ∀ r ∈ ⟦Modifier.hoechstens.entry⟧, rangeEffect r s.total (s.number .positive)
+    ∀ m ∈ ⟦Modifier.hoechstens.entry⟧, rangeEffect m s.total (s.number .positive)
       (s.number .negative) = framingEffect (s.upper .hoechstens) := by
   have hq : 0 < s.number .negative := by cases s <;> decide
-  refine ⟨?_, ?_, ?_⟩ <;> rintro r (rfl : r = _) <;>
+  refine ⟨?_, ?_, ?_⟩ <;> rintro m (rfl : m = _) <;>
     simp [rangeEffect_eq s.number_add, rangeEffect_le s.number_add hq, framingEffect_genau,
       framingEffect_bisZu, framingEffect_hoechstens]
 
@@ -231,7 +232,7 @@ noncomputable def salienceEffect (raise : ℕ → Set (Set ℕ)) (number : Frame
 
 /-- The possibilities a modifier raises with the number `n`, one for each of its readings in the
 Fragment. -/
-def raised (w : Numerals.Modifier) (n : ℕ) : Set (Set ℕ) := (· n) '' ⟦w⟧
+def raised (w : Numerals.Modifier) (n : ℕ) : Set (Set ℕ) := (· {n}) '' ⟦w⟧
 
 /-- The possibilities *bis zu* and *höchstens* raise, by [blok-2015]. -/
 def Modifier.raise : Modifier → ℕ → Set (Set ℕ)

@@ -36,7 +36,7 @@ The classes are the paper's labels for the meaning postulates, ordered by the tr
 that its footnote 1 says the postulates do not give, and a natural class is read as an interval
 of that scale. Each Polish adjective's class is the paper's, recorded in the rows'
 `paperFeatures`; for most adjectives of its lists the paper gives only the English. The shift is
-`Modification.ShiftsHead`, and *real* is the identity modifier.
+`Semantics.Property.ShiftsHead`, and *real* is the identity modifier.
 
 ## References
 
@@ -50,7 +50,8 @@ of that scale. Each Polish adjective's class is the paper's, recorded in the row
 
 namespace Partee2010
 
-open Modification Modifier Examples
+open Semantics (Property)
+open Semantics.Property Modifier Examples
 
 variable {W E : Type*}
 
