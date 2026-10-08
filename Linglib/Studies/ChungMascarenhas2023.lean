@@ -491,13 +491,6 @@ theorem kratzer_miners_unsatisfiable {V : Type*} (f : ModalBase V) (g : Ordering
 
 end Miners
 
-/-- Kratzer's `must` is closed under conjunction elimination, the Table 2 row that makes a
-classical account of the modal conjunction fallacy hard (§8). -/
-theorem _root_.Modality.necessity_and_left {V : Type*} (f : Modality.ModalBase V)
-    (g : Modality.OrderingSource V) (p q : V → Prop) (w : V)
-    (h : Modality.necessity f g (fun v ↦ p v ∧ q v) w) : Modality.necessity f g p w :=
-  fun v hv ↦ (h v hv).1
-
 /-! ### Modal Linda (§3.2) -/
 
 namespace ModalLinda
