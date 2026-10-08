@@ -5,15 +5,18 @@ public import Mathlib.Data.Set.Basic
 
 /-!
 # Anti-additivity
-[zwarts-1998] [icard-2012]
 
-The Zwarts function classes the polarity literature quantifies over: `IsAntiAdditive`
-(`f (p ⊔ q) = f p ⊓ f q`), `IsAntiMultiplicative` (meets to joins), and `IsAntiMorphic`
-(both), the equations of the anti- signature rows (`Signature.Property.HoldsFor` in
-`Soundness.lean`), which with their unit conditions are the strengths of negation. Each
-implies antitonicity, and complementation realizes the full anti-morphism. The dual UE-side
-properties (preserving joins or meets) have no named classes — consumers state the equations
-directly, with `monotone_of_map_sup` and `monotone_of_map_inf` supplying monotonicity.
+The equations of Zwarts's function classes: `IsAntiAdditive` (`f (p ⊔ q) = f p ⊓ f q`) and
+`IsAntiMultiplicative` (meets to joins). With the unit conditions of
+`Signature.Property.HoldsFor` they are the anti-additive and anti-morphic strengths of negation;
+each implies antitonicity, and complementation satisfies both. The upward-entailing equations
+have no named classes: consumers state them directly, with `monotone_of_map_sup` and
+`monotone_of_map_inf` supplying monotonicity.
+
+## References
+
+* [zwarts-1998]
+* [icard-2012]
 -/
 
 @[expose] public section
@@ -34,10 +37,6 @@ def IsAntiAdditive [SemilatticeSup α] [SemilatticeInf β] (f : α → β) : Pro
 /-- Anti-multiplicative: `f (p ⊓ q) = f p ⊔ f q`. -/
 def IsAntiMultiplicative [SemilatticeInf α] [SemilatticeSup β] (f : α → β) : Prop :=
   ∀ p q, f (p ⊓ q) = f p ⊔ f q
-
-/-- Anti-morphic: anti-additive and anti-multiplicative. -/
-def IsAntiMorphic [Lattice α] [Lattice β] (f : α → β) : Prop :=
-  IsAntiAdditive f ∧ IsAntiMultiplicative f
 
 /-- A join-preserving function is monotone. -/
 theorem monotone_of_map_sup [SemilatticeSup α] [SemilatticeSup β]
@@ -71,19 +70,6 @@ theorem IsAntiMultiplicative.antitone [SemilatticeInf α] [SemilatticeSup β]
     _ = f (p ⊓ q) := (h p q).symm
     _ = f p := by rw [inf_eq_left.mpr hpq]
 
-/-- Anti-morphic implies anti-additive. -/
-theorem IsAntiMorphic.antiAdditive [Lattice α] [Lattice β]
-    {f : α → β} (h : IsAntiMorphic f) : IsAntiAdditive f := h.1
-
-/-- Anti-morphic implies anti-multiplicative. -/
-theorem IsAntiMorphic.antiMultiplicative [Lattice α] [Lattice β]
-    {f : α → β} (h : IsAntiMorphic f) : IsAntiMultiplicative f := h.2
-
-/-- Anti-morphic implies antitone. -/
-theorem IsAntiMorphic.antitone [Lattice α] [Lattice β]
-    {f : α → β} (h : IsAntiMorphic f) : Antitone f :=
-  h.1.antitone
-
 end PropertyFamily
 
 /-! ### Complementation -/
@@ -97,9 +83,6 @@ theorem isAntiAdditive_compl : IsAntiAdditive (compl : α → α) :=
 
 theorem isAntiMultiplicative_compl : IsAntiMultiplicative (compl : α → α) :=
   fun _ _ => compl_inf
-
-theorem isAntiMorphic_compl : IsAntiMorphic (compl : α → α) :=
-  ⟨isAntiAdditive_compl, isAntiMultiplicative_compl⟩
 
 theorem antitone_compl : Antitone (compl : α → α) :=
   isAntiAdditive_compl.antitone
