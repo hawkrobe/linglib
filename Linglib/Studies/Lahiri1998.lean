@@ -199,8 +199,8 @@ def item? (r : Datum) : Option (PolarityItem × Alternatives) :=
     ("zaraa bhii", (zaraaBhii, .cardinality)), ("kabhii bhii", (kabhiiBhii, .property))]
 
 /-- A row of the survey. -/
-def Row.ofDatum (r : Datum) : Option Row := do
-  let env ← r.parse? "environment" [("positive (UE)", Environment.positive),
+def Row.ofDatum (r : Datum) : Option Row :=
+  match r.parse? "environment" [("positive (UE)", Environment.positive),
     ("negation", .negation), ("negation (subject NPI)", .negation),
     ("conditional protasis", .protasis), ("conditional apodosis", .apodosis),
     ("universal restrictor", .universalRestrictor),
@@ -212,9 +212,9 @@ def Row.ofDatum (r : Datum) : Option Row := do
     ("possibility modal", .possibilityModal), ("episodic possibility modal", .episodicModal),
     ("generic future", .genericFuture), ("episodic future", .episodicFuture),
     ("necessity modal", .necessityModal), ("imperative", .imperative),
-    ("generic, with numeral", .numeralGeneric)]
-  let (item, alternatives) ← item? r
-  pure ⟨env, item, alternatives, r.judgment⟩
+    ("generic, with numeral", .numeralGeneric)], item? r with
+  | some env, some (item, alternatives) => some ⟨env, item, alternatives, r.judgment⟩
+  | _, _ => none
 
 /-- The survey. -/
 def data : List Row := Examples.all.filterMap Row.ofDatum
