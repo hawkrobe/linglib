@@ -25,9 +25,9 @@ house and a car', and often before the first as well, *dà Bellò dà Mūsā* 'b
 
 namespace Hausa
 
-/-- *dà* 'and', also the comitative 'with'. -/
+/-- *dà* 'and', also the comitative preposition 'with', `Hausa.Adpositions.da`. -/
 def da : Coordinator :=
-  { form := "dà", gloss := "and; with", role := .conjunctive, kind := .free }
+  { morph := .free "dà", gloss := "and", role := .conjunctive }
 
 /-- The coordinators. -/
 def allEntries : List Coordinator := [da]

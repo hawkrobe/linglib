@@ -30,28 +30,28 @@ namespace German.Coordination
 
 /-- *und* 'and'. -/
 def und : Coordinator :=
-  { form := "und", gloss := "and", role := .conjunctive, kind := .free }
+  { morph := .free "und", gloss := "and", role := .conjunctive }
 
 /-- *oder* 'or'. -/
 def oder : Coordinator :=
-  { form := "oder", gloss := "or", role := .disjunctive, kind := .free }
+  { morph := .free "oder", gloss := "or", role := .disjunctive }
 
 /-- *aber* 'but'. -/
 def aber : Coordinator :=
-  { form := "aber", gloss := "but", role := .adversative, kind := .free }
+  { morph := .free "aber", gloss := "but", role := .adversative }
 
 /-- *sondern* 'but rather', after a negated first coordinand. -/
 def sondern : Coordinator :=
-  { form := "sondern", gloss := "but rather", role := .adversative, kind := .free }
+  { morph := .free "sondern", gloss := "but rather", role := .adversative }
 
 /-- The coordinators. -/
 def allEntries : List Coordinator := [und, oder, aber, sondern]
 
 /-- *sowohl … als auch* 'both … and'. -/
-def sowohlAlsAuch : Coordinator.Correlative := ⟨"sowohl", "als auch", und⟩
+def sowohlAlsAuch : Coordinator.Correlative := ⟨[.free "sowohl"], [.free "als", .free "auch"], und⟩
 
 /-- *entweder … oder* 'either … or'. -/
-def entwederOder : Coordinator.Correlative := ⟨"entweder", oder.form, oder⟩
+def entwederOder : Coordinator.Correlative := ⟨[.free "entweder"], [oder.morph], oder⟩
 
 /-- The emphatic constructions. -/
 def correlatives : List Coordinator.Correlative := [sowohlAlsAuch, entwederOder]

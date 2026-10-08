@@ -29,20 +29,19 @@ namespace Georgian.Coordination
 
 /-- *da* 'and'. -/
 def da : Coordinator :=
-  { form := "da", gloss := "and", role := .conjunctive, kind := .free }
+  { morph := .free "da", gloss := "and", role := .conjunctive }
 
 /-- *-c* 'also, too', enclitic on each coordinand 'both … and'. -/
 def c_ : Coordinator :=
-  { form := "-c", gloss := "also, too; and", role := .conjunctive, kind := .bound .after .clitic,
-    alsoAdditive := true }
+  { morph := .encl "c", gloss := "also, too; and", role := .conjunctive, alsoAdditive := true }
 
 /-- *an* 'or'. -/
 def an : Coordinator :=
-  { form := "an", gloss := "or", role := .disjunctive, kind := .free }
+  { morph := .free "an", gloss := "or", role := .disjunctive }
 
 /-- *magram* 'but'. -/
 def magram : Coordinator :=
-  { form := "magram", gloss := "but", role := .adversative, kind := .free }
+  { morph := .free "magram", gloss := "but", role := .adversative }
 
 /-- The coordinators. -/
 def allEntries : List Coordinator := [da, c_, an, magram]

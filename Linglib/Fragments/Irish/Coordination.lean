@@ -33,25 +33,25 @@ namespace Irish.Coordination
 
 /-- *agus* 'and'. -/
 def agus : Coordinator :=
-  { form := "agus", gloss := "and", role := .conjunctive, kind := .free }
+  { morph := .free "agus", gloss := "and", role := .conjunctive }
 
 /-- *nó* 'or'. -/
 def no_ : Coordinator :=
-  { form := "nó", gloss := "or", role := .disjunctive, kind := .free }
+  { morph := .free "nó", gloss := "or", role := .disjunctive }
 
 /-- *ná* 'nor', also the comparative particle 'than'. -/
 def na_ : Coordinator :=
-  { form := "ná", gloss := "nor; than", role := .negative, kind := .free }
+  { morph := .free "ná", gloss := "nor; than", role := .negative }
 
 /-- *ach* 'but'. -/
 def ach : Coordinator :=
-  { form := "ach", gloss := "but", role := .adversative, kind := .free }
+  { morph := .free "ach", gloss := "but", role := .adversative }
 
 /-- The coordinators. -/
 def allEntries : List Coordinator := [agus, no_, na_, ach]
 
 /-- *idir … agus* 'both … and'. -/
-def idirAgus : Coordinator.Correlative := ⟨"idir", agus.form, agus⟩
+def idirAgus : Coordinator.Correlative := ⟨[.free "idir"], [agus.morph], agus⟩
 
 /-- The emphatic constructions. -/
 def correlatives : List Coordinator.Correlative := [idirAgus]

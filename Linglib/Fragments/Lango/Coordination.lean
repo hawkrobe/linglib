@@ -24,9 +24,9 @@ comitative-derived coordinator.
 
 namespace Lango.Coordination
 
-/-- *kèdè* 'and', also the comitative 'with'. -/
+/-- *kèdè* 'and', also the comitative preposition 'with', `Lango.Adpositions.kede`. -/
 def kede : Coordinator :=
-  { form := "kèdè", gloss := "and; with", role := .conjunctive, kind := .free }
+  { morph := .free "kèdè", gloss := "and", role := .conjunctive }
 
 /-- The coordinators. -/
 def allEntries : List Coordinator := [kede]

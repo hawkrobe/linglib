@@ -28,31 +28,31 @@ namespace English.Coordination
 
 /-- *and*. -/
 def and_ : Coordinator :=
-  { form := "and", gloss := "and", role := .conjunctive, kind := .free }
+  { morph := .free "and", gloss := "and", role := .conjunctive }
 
 /-- *or*. -/
 def or_ : Coordinator :=
-  { form := "or", gloss := "or", role := .disjunctive, kind := .free }
+  { morph := .free "or", gloss := "or", role := .disjunctive }
 
 /-- *but*. -/
 def but_ : Coordinator :=
-  { form := "but", gloss := "but", role := .adversative, kind := .free }
+  { morph := .free "but", gloss := "but", role := .adversative }
 
 /-- *nor*. -/
 def nor_ : Coordinator :=
-  { form := "nor", gloss := "nor", role := .negative, kind := .free }
+  { morph := .free "nor", gloss := "nor", role := .negative }
 
 /-- The coordinators. -/
 def allEntries : List Coordinator := [and_, or_, but_, nor_]
 
 /-- *both … and*. -/
-def bothAnd : Coordinator.Correlative := ⟨"both", and_.form, and_⟩
+def bothAnd : Coordinator.Correlative := ⟨[.free "both"], [and_.morph], and_⟩
 
 /-- *either … or*. -/
-def eitherOr : Coordinator.Correlative := ⟨"either", or_.form, or_⟩
+def eitherOr : Coordinator.Correlative := ⟨[.free "either"], [or_.morph], or_⟩
 
 /-- *neither … nor*. -/
-def neitherNor : Coordinator.Correlative := ⟨"neither", nor_.form, nor_⟩
+def neitherNor : Coordinator.Correlative := ⟨[.free "neither"], [nor_.morph], nor_⟩
 
 /-- The emphatic constructions. -/
 def correlatives : List Coordinator.Correlative := [bothAnd, eitherOr, neitherNor]

@@ -6,7 +6,9 @@ public import Linglib.Syntax.Category.Coordinator
 # Classical Tibetan coordinators
 
 Classical Tibetan conjoins noun phrases with *-daŋ*, attached to the first coordinand, in the
-example Haspelmath cites from Beyer; the form is a former case-marker meaning 'with'.
+example Haspelmath cites from Beyer. The conjunction is the same form as the accompaniment role
+particle *-daŋ* 'with', so that 'lama-*daŋ* king go' reads as 'the lama and the king go' or as
+'the king goes with the lama' ([beyer-1992], p. 241, n. 47).
 
 ## Main definitions
 
@@ -22,9 +24,9 @@ example Haspelmath cites from Beyer; the form is a former case-marker meaning 'w
 
 namespace ClassicalTibetan.Coordination
 
-/-- *-daŋ* 'and', on the first coordinand, also 'with'. -/
+/-- *-daŋ* 'and', on the first coordinand, also the accompaniment role particle 'with'. -/
 def dang : Coordinator :=
-  { form := "-daŋ", gloss := "and; with", role := .conjunctive, kind := .bound .after .clitic }
+  { morph := .encl "daŋ", gloss := "and", role := .conjunctive }
 
 /-- The coordinators. -/
 def allEntries : List Coordinator := [dang]

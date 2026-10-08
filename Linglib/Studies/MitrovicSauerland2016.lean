@@ -186,15 +186,15 @@ def latin : ConjunctionSystem :=
   { language := "Latin", j := some Latin.Coordination.et, mu := some Latin.Coordination.que,
     strategies := [.jOnly, .muOnly] }
 
-/-- Korean *-(i)rang* is J and *-to* is μ, following [mitrovic-2021]. -/
+/-- Korean *-(i)rang* is J and *-do* is μ, following [mitrovic-2021]. -/
 def korean : ConjunctionSystem :=
   { language := "Korean", j := some Korean.Coordination.irang,
-    mu := some Korean.Coordination.to_, strategies := [.jOnly, .muOnly] }
+    mu := some Korean.Coordination.do_, strategies := [.jOnly, .muOnly] }
 
 /-- Slovenian *in* is J. -/
 def slovenian : ConjunctionSystem :=
   { language := "Slovenian",
-    j := some { form := "in", gloss := "and", role := .conjunctive, kind := .free },
+    j := some { morph := .free "in", gloss := "and", role := .conjunctive },
     mu := none, strategies := [.jOnly] }
 
 /-- The seven-language sample. -/

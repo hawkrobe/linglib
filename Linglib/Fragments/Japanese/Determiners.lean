@@ -68,8 +68,9 @@ variable (q : Indefinite)
 /-- The form joins the indeterminate, its classifier and the particle by hyphens, and puts the
 particle of the determiner *dono* after the noun the determiner takes. -/
 def form : String :=
-  if q.indeterminate.ontology = .determiner then q.indeterminate.form ++ " … " ++ q.particle.form
-  else q.indeterminate.form ++ (q.classifier.elim "" ("-" ++ ·.form)) ++ "-" ++ q.particle.form
+  let p := q.particle.morph.form
+  if q.indeterminate.ontology = .determiner then q.indeterminate.form ++ " … " ++ p
+  else q.indeterminate.form ++ (q.classifier.elim "" ("-" ++ ·.form)) ++ "-" ++ p
 
 /-- An indeterminate quantifier's determiner entry records its form. -/
 def toQuantifier : Quantifier := { form := q.form }

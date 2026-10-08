@@ -27,16 +27,15 @@ namespace Dargwa.Coordination
 
 /-- *=ra* 'and', enclitic on each coordinand, also the additive 'also, too'. -/
 def ra : Coordinator :=
-  { form := "=ra", gloss := "and; also, too", role := .conjunctive, kind := .bound .after .clitic,
-    alsoAdditive := true }
+  { morph := .encl "ra", gloss := "and; also, too", role := .conjunctive, alsoAdditive := true }
 
 /-- *ja* 'or', repeated before each alternative. -/
 def ja : Coordinator :=
-  { form := "ja", gloss := "or", role := .disjunctive, kind := .free }
+  { morph := .free "ja", gloss := "or", role := .disjunctive }
 
 /-- *=nu* 'but; because', enclitic. -/
 def nu : Coordinator :=
-  { form := "=nu", gloss := "but; because", role := .adversative, kind := .bound .after .clitic }
+  { morph := .encl "nu", gloss := "but; because", role := .adversative }
 
 /-- The coordinators. -/
 def allEntries : List Coordinator := [ra, ja, nu]

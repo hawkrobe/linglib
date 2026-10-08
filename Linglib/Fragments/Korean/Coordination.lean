@@ -13,10 +13,10 @@ conjunct, as Sohn describes them. Mitrović and Sauerland take *-(i)rang* for th
 
 ## Main definitions
 
-* `Korean.Coordination.irang`, `Korean.Coordination.to_` — the comitative *-(i)rang* 'and'
-  and the additive *-to* 'also', Mitrović and Sauerland's J and μ particles
-* `Korean.Coordination.hako`, `Korean.Coordination.toTo` — the comitative *-hako* and the
-  emphatic *-to … -to* that Haspelmath sets against it
+* `Korean.Coordination.irang`, `Korean.Coordination.do_` — the comitative *-(i)rang* 'and'
+  and the additive *-do* 'also', Mitrović and Sauerland's J and μ particles
+* `Korean.Coordination.hago`, `Korean.Coordination.doDo` — the comitative *-hago* and the
+  emphatic *-do … -do* that Haspelmath sets against it
 
 ## References
 
@@ -30,26 +30,27 @@ conjunct, as Sohn describes them. Mitrović and Sauerland take *-(i)rang* for th
 
 namespace Korean.Coordination
 
-/-- *-(i)rang* 'and, with', enclitic on the first conjunct, casual. -/
+/-- *-(i)rang* 'and', enclitic on the first conjunct, casual; also the casual comitative of
+`Korean.Case.wa`. -/
 def irang : Coordinator :=
-  { form := "-(i)rang", gloss := "and", role := .conjunctive, kind := .bound .after .clitic }
+  { morph := .encl "(i)rang", gloss := "and", role := .conjunctive }
 
-/-- *-to* 'and', enclitic on each conjunct, also the additive 'too'. -/
-def to_ : Coordinator :=
-  { form := "-to", gloss := "also, too; and", role := .conjunctive, kind := .bound .after .clitic,
-    alsoAdditive := true }
+/-- *-do* 'and', Sohn's *-to*, enclitic on each conjunct, also the additive 'too'. -/
+def do_ : Coordinator :=
+  { morph := .encl "do", gloss := "also, too; and", role := .conjunctive, alsoAdditive := true }
 
-/-- *-hako* 'and, with', enclitic on the first conjunct, in Sohn's spelling. -/
-def hako : Coordinator :=
-  { form := "-hako", gloss := "and; with", role := .conjunctive, kind := .bound .after .clitic }
+/-- *-hago* 'and', Sohn's *-hako*, enclitic on the first conjunct; also the comitative of
+`Korean.Case.wa`. -/
+def hago : Coordinator :=
+  { morph := .encl "hago", gloss := "and", role := .conjunctive }
 
 /-- The coordinators. -/
-def allEntries : List Coordinator := [irang, hako, to_]
+def allEntries : List Coordinator := [irang, hago, do_]
 
-/-- *-to … -to* 'both … and', which Haspelmath sets against the single coordinator *-hako*. -/
-def toTo : Coordinator.Correlative := ⟨to_.form, to_.form, hako⟩
+/-- *-do … -do* 'both … and', which Haspelmath sets against the single coordinator *-hago*. -/
+def doDo : Coordinator.Correlative := ⟨[do_.morph], [do_.morph], hago⟩
 
 /-- The emphatic constructions. -/
-def correlatives : List Coordinator.Correlative := [toTo]
+def correlatives : List Coordinator.Correlative := [doDo]
 
 end Korean.Coordination

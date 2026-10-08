@@ -6,11 +6,13 @@ public import Linglib.Syntax.Category.Coordinator
 public import Linglib.Fragments.English.Coordination
 public import Linglib.Fragments.Finnish.Coordination
 public import Linglib.Fragments.German.Coordination
+public import Linglib.Fragments.Hausa.Adpositions
 public import Linglib.Fragments.Hausa.Coordination
 public import Linglib.Fragments.Hungarian.Coordination
 public import Linglib.Fragments.Irish.Coordination
 public import Linglib.Fragments.Kannada.Coordination
 public import Linglib.Fragments.Korean.Coordination
+public import Linglib.Fragments.Lango.Adpositions
 public import Linglib.Fragments.Lango.Coordination
 public import Linglib.Fragments.Latin.Coordination
 public import Linglib.Fragments.Tibetic.Classical.Coordination
@@ -46,7 +48,9 @@ A binary pattern is the pair of its coordinands' markings, so syndesis is the nu
 coordinands, and `marking_agrees_with_side` checks the patterns against the attachment side the
 Fragments record for each coordinator. Whether a construction is emphatic is recorded only
 where the chapter says so, and a diachronic source only where the chapter states one, so
-Classical Tibetan *-daŋ*, "a former case-marker", has none. The word-order half of the comitative
+Classical Tibetan *-daŋ*, "a former case-marker", has none, although [beyer-1992], the
+chapter's source for it, treats it as the same form as the accompaniment role particle. The
+word-order half of the comitative
 derivation, adposition order following modifier order, is taken as the `CoordinatorPosition`
 argument of `DiachronicSource.pattern`. The comitative-sourced attestations include Tauya
 *-sou*, doubled on both conjuncts, the extension §5.1 notes, so `comitative_patterns` admits
@@ -55,6 +59,7 @@ the postpositive bisyndetic pattern beside the two source patterns.
 ## References
 
 * [haspelmath-2007]
+* [beyer-1992]
 * [stassen-2000]
 -/
 
@@ -164,8 +169,7 @@ structure Attestation where
   deriving Repr
 
 /-- A conjunctive coordinator with no Fragment entry. -/
-def co (form : String) (kind : Morphology.Morph.Kind) : Coordinator :=
-  { form, gloss := "and", role := .conjunctive, kind }
+def co (morph : Morphology.Morph) : Coordinator := { morph, gloss := "and", role := .conjunctive }
 
 /-- The constructions of (5), (6), (12), (20)–(37), (59), (77)–(79) and (85). -/
 def attestations : List Attestation :=
@@ -173,7 +177,7 @@ def attestations : List Attestation :=
       emphatic := some false },
     { language := "English", coordinator := English.Coordination.and_, pattern := (.bare, .pre),
       emphatic := some false },
-    { language := "English", coordinator := co "both" .free,
+    { language := "English", coordinator := co (.free "both"),
       second := some English.Coordination.and_, pattern := (.pre, .pre), emphatic := some true },
     { language := "Hausa", coordinator := Hausa.da, pattern := (.bare, .pre),
       emphatic := some false, source := some .comitative },
@@ -184,37 +188,37 @@ def attestations : List Attestation :=
     { language := "Latin", coordinator := Latin.Coordination.que, pattern := (.bare, .post),
       emphatic := some false },
     { language := "Turkish", coordinator := Turkish.Coordination.de, pattern := (.bare, .post) },
-    { language := "Kanuri", coordinator := co "-a" (.bound .after .affix),
+    { language := "Kanuri", coordinator := co (.suff "a"),
       pattern := (.post, .post), emphatic := some false },
     { language := "Yoruba", coordinator := Yoruba.Coordination.ati, pattern := (.pre, .pre),
       emphatic := some true },
     { language := "Yoruba", coordinator := Yoruba.Coordination.ati, pattern := (.bare, .pre),
       emphatic := some false },
-    { language := "Martuthunira", coordinator := co "-thurti" (.bound .after .affix),
+    { language := "Martuthunira", coordinator := co (.suff "thurti"),
       pattern := (.post, .post), emphatic := some false },
-    { language := "Homeric Greek", coordinator := co "te" (.bound .after .clitic),
-      second := some (co "kaì" .free), pattern := (.post, .pre) },
+    { language := "Homeric Greek", coordinator := co (.encl "te"),
+      second := some (co (.free "kaì")), pattern := (.post, .pre) },
     { language := "Latin", coordinator := Latin.Coordination.et,
       second := some Latin.Coordination.que, pattern := (.pre, .post), emphatic := some true },
-    { language := "Nivkh", coordinator := co "-γo" (.bound .after .affix),
+    { language := "Nivkh", coordinator := co (.suff "γo"),
       pattern := (.post, .post), emphatic := some false },
-    { language := "Polish", coordinator := co "i" .free, pattern := (.bare, .pre),
+    { language := "Polish", coordinator := co (.free "i"), pattern := (.bare, .pre),
       emphatic := some false },
-    { language := "Lezgian", coordinator := co "-ni" (.bound .after .affix),
+    { language := "Lezgian", coordinator := co (.suff "ni"),
       pattern := (.post, .bare), emphatic := some false },
-    { language := "West Greenlandic", coordinator := co "=lu" (.bound .after .clitic),
+    { language := "West Greenlandic", coordinator := co (.encl "lu"),
       pattern := (.bare, .post), emphatic := some false },
-    { language := "Amharic", coordinator := co "-nna" (.bound .after .affix),
+    { language := "Amharic", coordinator := co (.suff "nna"),
       pattern := (.post, .bare), emphatic := some false },
-    { language := "Ponapean", coordinator := co "oh" .free, pattern := (.bare, .pre),
+    { language := "Ponapean", coordinator := co (.free "oh"), pattern := (.bare, .pre),
       emphatic := some false },
-    { language := "Samoan", coordinator := co "ma" .free, pattern := (.bare, .pre),
+    { language := "Samoan", coordinator := co (.free "ma"), pattern := (.bare, .pre),
       source := some .comitative },
-    { language := "Retuarã", coordinator := co "-ka" (.bound .after .affix),
+    { language := "Retuarã", coordinator := co (.suff "ka"),
       pattern := (.post, .bare), source := some .comitative },
-    { language := "Russian", coordinator := co "s" .free, pattern := (.bare, .pre),
+    { language := "Russian", coordinator := co (.free "s"), pattern := (.bare, .pre),
       source := some .comitative },
-    { language := "Tauya", coordinator := co "-sou" (.bound .after .affix),
+    { language := "Tauya", coordinator := co (.suff "sou"),
       pattern := (.post, .post), emphatic := some false, source := some .comitative } ]
 
 /-- The marked coordinands of a construction, each with its coordinator: the first coordinator
@@ -227,8 +231,8 @@ def Attestation.marking (a : Attestation) : List (Slot × Coordinator) :=
 after its host is postpositive in every construction, and one that attaches before it
 prepositive. -/
 theorem marking_agrees_with_side : ∀ a ∈ attestations, ∀ m ∈ a.marking,
-    (m.2.kind.side? = some .after → m.1 = .post) ∧
-      (m.2.kind.side? = some .before → m.1 = .pre) := by
+    (m.2.morph.kind.side? = some .after → m.1 = .post) ∧
+      (m.2.morph.kind.side? = some .before → m.1 = .pre) := by
   decide
 
 /-- The pattern co-A B is absent from the chapter's attestations, as from Stassen's sample. -/
@@ -254,6 +258,13 @@ theorem comitative_patterns :
       a.pattern = (.bare, .pre) ∨ a.pattern = (.post, .bare) ∨ a.pattern = (.post, .post) := by
   decide
 
+/-- The comitative-sourced coordinators with Fragment entries, Hausa *dà* and Lango *kèdè*, are
+still the comitative prepositions of their languages. -/
+theorem comitative_source_isAlsoComitative :
+    Hausa.da.IsAlsoComitative Hausa.Adpositions.da ∧
+      Lango.Coordination.kede.IsAlsoComitative Lango.Adpositions.kede := by
+  decide
+
 /-! ### Emphatic correlatives, (45) -/
 
 /-- The shape of a pair of correlative coordinators against the single coordinator, (45):
@@ -268,37 +279,38 @@ inductive CorrelativeShape where
 
 /-- The shape of a correlative pair, read off the forms. -/
 def CorrelativeShape.classify (c : Coordinator.Correlative) : CorrelativeShape :=
-  if c.first = c.single.form ∧ c.second = c.single.form then .bothSingle
-  else if c.second = c.single.form then .secondSingle
+  if c.first = [c.single.morph] ∧ c.second = [c.single.morph] then .bothSingle
+  else if c.second = [c.single.morph] then .secondSingle
   else if c.first = c.second then .sameNotSingle
   else .allDifferent
 
 /-- A disjunctive coordinator with no Fragment entry. -/
 def dis (form : String) : Coordinator :=
-  { form, gloss := "or", role := .disjunctive, kind := .free }
+  { morph := .free form, gloss := "or", role := .disjunctive }
 
-/-- The rows of (45), each with its language and the letter the chapter files it under. -/
+/-- The rows of (45), each with its language and the letter the chapter files it under; Polish
+*tak (i)* is recorded without its optional *i*. -/
 def correlatives : List (String × Coordinator.Correlative × CorrelativeShape) :=
-  [ ("Russian", ⟨"i", "i", co "i" .free⟩, .bothSingle),
-    ("Italian", ⟨"e", "e", co "e" .free⟩, .bothSingle),
-    ("Modern Greek", ⟨"ke", "ke", co "ke" .free⟩, .bothSingle),
-    ("Albanian", ⟨"edhe", "edhe", co "edhe" .free⟩, .bothSingle),
-    ("Polish", ⟨"albo", "albo", dis "albo"⟩, .bothSingle),
-    ("Dutch", ⟨"of", "of", dis "of"⟩, .bothSingle),
-    ("Basque", ⟨"ala", "ala", dis "ala"⟩, .bothSingle),
-    ("Somali", ⟨"ama", "ama", dis "ama"⟩, .bothSingle),
+  [ ("Russian", ⟨[.free "i"], [.free "i"], co (.free "i")⟩, .bothSingle),
+    ("Italian", ⟨[.free "e"], [.free "e"], co (.free "e")⟩, .bothSingle),
+    ("Modern Greek", ⟨[.free "ke"], [.free "ke"], co (.free "ke")⟩, .bothSingle),
+    ("Albanian", ⟨[.free "edhe"], [.free "edhe"], co (.free "edhe")⟩, .bothSingle),
+    ("Polish", ⟨[.free "albo"], [.free "albo"], dis "albo"⟩, .bothSingle),
+    ("Dutch", ⟨[.free "of"], [.free "of"], dis "of"⟩, .bothSingle),
+    ("Basque", ⟨[.free "ala"], [.free "ala"], dis "ala"⟩, .bothSingle),
+    ("Somali", ⟨[.free "ama"], [.free "ama"], dis "ama"⟩, .bothSingle),
     ("English", English.Coordination.bothAnd, .secondSingle),
     ("Irish", Irish.Coordination.idirAgus, .secondSingle),
     ("English", English.Coordination.eitherOr, .secondSingle),
     ("German", German.Coordination.entwederOder, .secondSingle),
     ("Finnish", Finnish.Coordination.jokoTai, .secondSingle),
     ("Hungarian", Hungarian.Coordination.mindMind, .sameNotSingle),
-    ("Korean", Korean.Coordination.toTo, .sameNotSingle),
-    ("Lezgian", ⟨"ja", "ja", dis "waja"⟩, .sameNotSingle),
+    ("Korean", Korean.Coordination.doDo, .sameNotSingle),
+    ("Lezgian", ⟨[.free "ja"], [.free "ja"], dis "waja"⟩, .sameNotSingle),
     ("German", German.Coordination.sowohlAlsAuch, .allDifferent),
-    ("Polish", ⟨"jak", "tak (i)", co "i" .free⟩, .allDifferent),
+    ("Polish", ⟨[.free "jak"], [.free "tak"], co (.free "i")⟩, .allDifferent),
     ("Finnish", Finnish.Coordination.sekaEtta, .allDifferent),
-    ("Indonesian", ⟨"baik", "maupun", co "dan" .free⟩, .allDifferent) ]
+    ("Indonesian", ⟨[.free "baik"], [.free "maupun"], co (.free "dan")⟩, .allDifferent) ]
 
 /-- The letters of (45) are the shapes the forms give. -/
 theorem correlatives_classified :
