@@ -1,0 +1,97 @@
+[
+  {
+    "id": "vanderwouden1997_184a",
+    "source": {"bibkey": "vanderwouden-1997", "paperLabel": "(184a)"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Een van de kinderen gaat ooit bij oma op bezoek.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Een", "one"], ["van", "of"], ["de", "the"], ["kinderen", "children"],
+      ["gaat", "goes"], ["ooit", "ever"], ["bij", "with"], ["oma", "granny"],
+      ["op", "on"], ["bezoek", "visit"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["item", "ooit"],
+      ["context", "notMonotoneDecreasing"]
+    ],
+    "comment": "Printed with a final comma.",
+    "verified": "page-image"
+  },
+  {
+    "id": "vanderwouden1997_184b",
+    "source": {"bibkey": "vanderwouden-1997", "paperLabel": "(184b)"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Weinig kinderen gaan ooit bij oma op bezoek.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Weinig", "few"], ["kinderen", "children"], ["gaan", "go"], ["ooit", "ever"],
+      ["bij", "with"], ["oma", "granny"], ["op", "on"], ["bezoek", "visit"]
+    ],
+    "translation": "Few children ever visit granny.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["item", "ooit"],
+      ["context", "monotoneDecreasing"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "vanderwouden1997_184c",
+    "source": {"bibkey": "vanderwouden-1997", "paperLabel": "(184c)"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Geen van de kinderen gaat ooit bij oma op bezoek.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Geen", "none"], ["van", "of"], ["de", "the"], ["kinderen", "children"],
+      ["gaat", "goes"], ["ooit", "ever"], ["bij", "with"], ["oma", "granny"],
+      ["op", "on"], ["bezoek", "visit"]
+    ],
+    "translation": "None of the children ever visits granny.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["item", "ooit"],
+      ["context", "antiAdditive"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "vanderwouden1997_184d",
+    "source": {"bibkey": "vanderwouden-1997", "paperLabel": "(184d)"},
+    "reportedIn": null,
+    "language": "dutc1256",
+    "primaryText": "Een van de kinderen gaat niet ooit bij oma op bezoek.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Een", "one"], ["van", "of"], ["de", "the"], ["kinderen", "children"],
+      ["gaat", "goes"], ["niet", "not"], ["ooit", "ever"], ["bij", "with"],
+      ["oma", "granny"], ["op", "on"], ["bezoek", "visit"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["item", "ooit"],
+      ["context", "antimorphic"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  }
+]
