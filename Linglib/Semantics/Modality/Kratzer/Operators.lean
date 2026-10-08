@@ -88,6 +88,28 @@ def necessity (f : ModalBase W) (g : OrderingSource W) (p : W → Prop) (w : W) 
 def possibility (f : ModalBase W) (g : OrderingSource W) (p : W → Prop) (w : W) : Prop :=
   ◇[bestAccessible f g] p w
 
+/-- Necessity is monotone in the prejacent: Kratzer's *must* is closed under entailment,
+`box_mono` over the best accessible worlds. -/
+theorem necessity_mono {f : ModalBase W} {g : OrderingSource W} {p q : W → Prop} {w : W}
+    (hpq : p ≤ q) (h : necessity f g p w) : necessity f g q w :=
+  box_mono (bestAccessible f g) hpq w h
+
+/-- Possibility is monotone in the prejacent. -/
+theorem possibility_mono {f : ModalBase W} {g : OrderingSource W} {p q : W → Prop} {w : W}
+    (hpq : p ≤ q) (h : possibility f g p w) : possibility f g q w :=
+  diamond_mono (bestAccessible f g) hpq w h
+
+/-- Necessity of a conjunction is the conjunction of necessities, `box_inf` over the best
+accessible worlds. -/
+theorem necessity_and {f : ModalBase W} {g : OrderingSource W} {p q : W → Prop} {w : W} :
+    necessity f g (fun v ↦ p v ∧ q v) w ↔ necessity f g p w ∧ necessity f g q w :=
+  iff_of_eq (congrFun (box_inf (bestAccessible f g)) w)
+
+/-- Kratzer's *must* eliminates conjunction. -/
+theorem necessity_and_left {f : ModalBase W} {g : OrderingSource W} {p q : W → Prop} {w : W}
+    (h : necessity f g (fun v ↦ p v ∧ q v) w) : necessity f g p w :=
+  (necessity_and.mp h).1
+
 /-! ### Human necessity
 
 [kratzer-1981]'s official definition needs no Limit Assumption, asking each accessible world to
