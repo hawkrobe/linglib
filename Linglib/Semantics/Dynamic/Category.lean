@@ -22,8 +22,7 @@ it the definition (`State.presheaf`). Restriction is `Set.image` along
 weakening, the ∃-leg of mathlib's
 `Set.image_preimage`/`Set.preimage_kernImage` triple ([lawvere-1969]'s
 quantifiers as adjoints to weakening, as retold by [jacobs-1999]).
-Syntax categories interpret into `Ctx` (`DRS/Category.lean`); the fiber
-at `∅` is [veltman-1996]'s update semantics.
+The fiber at `∅` is [veltman-1996]'s update semantics.
 
 ## Main definitions
 
@@ -55,7 +54,7 @@ namespace DynamicSemantics
 
 open CategoryTheory
 
-/-- A context: a base of live discourse referents, bundled as an object of
+/-- A context is a base of live discourse referents, bundled as an object of
 the category whose morphisms are `Transition W M X Y`. -/
 @[ext] structure Ctx (W M : Type*) (V : Type*) where
   /-- The live discourse referents. -/
@@ -65,7 +64,7 @@ namespace Ctx
 
 variable {W M V : Type*}
 
-/-- Morphisms of contexts: transitions between the bases. -/
+/-- A morphism of contexts is a transition between the bases. -/
 @[ext] structure Hom (X Y : Ctx W M V) where
   /-- The underlying transition. -/
   t : Transition W M X.base Y.base
@@ -89,7 +88,7 @@ end Ctx
 
 universe u v w
 
-/-- The presheaf of possibilities: over `X`, world–assignment pairs at
+/-- The presheaf of possibilities has over `X` the world–assignment pairs at
 granularity `X`; restriction precomposes with the inclusion. A model read
 over the category of contexts — a set-valued *indexed category* in
 [jacobs-1999]'s sense, whose maps are the semantic face of *weakening*
@@ -101,7 +100,7 @@ def possibilities (W : Type u) (M : Type v) (V : Type w) :
   map {X Y} f := TypeCat.ofHom fun p =>
     ⟨p.1, fun v => p.2 ⟨v.1, leOfHom f.unop v.2⟩⟩
 
-/-- The state fibers as a presheaf on the poset of bases: the powerset
+/-- The state fibers form a presheaf on the poset of bases, the powerset
 functor applied fiberwise to the possibilities — by definition, in this
 formulation. The fiber over `X` is `Set (W × (↑X → M))`; restriction is
 direct image along weakening. -/
@@ -135,7 +134,7 @@ variable {W M V : Type*} {X Y : Set V}
 
 variable [∀ v, Decidable (v ∈ X)]
 
-/-- Possibilities glue: a pair of possibilities over `X` and `Y` whose
+/-- Possibilities glue, since a pair of possibilities over `X` and `Y` whose
 weakenings to `X ⊓ Y` agree is jointly the weakening of a unique
 possibility over `X ⊔ Y` — `possibilities` sends the lattice square to a
 pullback of types. The piecewise witness is `Possibility.union` in the charts of
@@ -193,7 +192,7 @@ open Opposite
 
 variable {W M V : Type*}
 
-/-- Classify each element of the possibilities family as a point: on
+/-- Each element of the possibilities family classifies as a point; on
 objects this is `Possibility.domainEquiv`; arrows become descents, by
 `Possibility.le_iff_eq_restrict`. -/
 def elementsToPoints :

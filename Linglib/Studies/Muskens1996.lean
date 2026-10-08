@@ -303,11 +303,9 @@ def proper : DRS girlLang ℕ := .mk ∅ [.neg girlWalks]
 /-- The box (47) is `[ | not[u₁ | girl u₁, walk u₁], [ | talk u₁] ⇒ [ | talk u₁]]`. -/
 def improper : DRS girlLang ℕ := .mk ∅ [.neg girlWalks, .imp talks talks]
 
-theorem isProper_proper : proper.IsProper := by
-  simp [DRS.IsProper, proper, girlWalks]
+theorem isProper_proper : proper.IsProper := by decide
 
-theorem not_isProper_improper : ¬ improper.IsProper := by
-  simp [DRS.IsProper, improper, girlWalks, talks]
+theorem not_isProper_improper : ¬ improper.IsProper := by decide
 
 /-- (45) and (47) denote the same relation in every model. -/
 theorem toRel_improper_eq {M : Type*} [girlLang.Structure M] :
@@ -357,17 +355,16 @@ instance : fn4Lang.Structure (Fin 2) where
     | 1, .man => fun args ↦ args 0 = 0
     | 1, .mortal => fun args ↦ args 0 = 1
 
-theorem fn4_isProper : fn4.IsProper := by
-  simp [DRS.IsProper, fn4, fn4Ante, fn4Cons]
+theorem fn4_isProper : fn4.IsProper := by decide
 
 /-- The consequent re-declares `0`. -/
-theorem fn4_not_reuseFreeAt : ¬ DRS.ReuseFreeAt ∅ fn4 := by
-  simp [fn4, fn4Ante, fn4Cons]
+theorem fn4_not_reuseFreeAt : ¬ DRS.ReuseFreeAt ∅ fn4 := by decide
 
 /-- In Muskens's semantics every input verifies the witness, since the re-declared referent may
 take a new value and some mortal suffices. -/
 theorem fn4_trueRel (g : ℕ → Fin 2) : DRS.trueRel fn4 g := by
   refine (DRS.trueRel_iff_exists_extends _ _).2 ⟨g, fun _ _ ↦ rfl, ?_⟩
+  rw [verifies_iff]
   intro c hc
   simp only [fn4, DRS.conditions_mk, List.mem_singleton] at hc
   subst hc
@@ -375,6 +372,7 @@ theorem fn4_trueRel (g : ℕ → Fin 2) : DRS.trueRel fn4 g := by
   intro g₁ _ _
   refine ⟨Function.update g₁ 0 1,
     fun x hx ↦ by rw [Function.update_apply, ite_eq_right (by simpa [fn4Cons] using hx)], ?_⟩
+  rw [verifies_iff]
   intro c hc
   simp only [fn4Cons, DRS.conditions_mk, List.mem_singleton] at hc
   subst hc

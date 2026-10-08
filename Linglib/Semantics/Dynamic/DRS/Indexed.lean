@@ -508,7 +508,7 @@ private theorem DRS.toRelAt_of_toRel' {X U : Finset V} {conds : List (Condition 
     DRS.toRelAt X (.mk U conds) g g' := by
   obtain ⟨hag, hh⟩ := h
   exact ⟨fun x hx => hag x (Finset.disjoint_left.mp hXU (Finset.mem_coe.mp hx)),
-    (hIH g').mp hh⟩
+    (hIH g').mp (verifies_mk U conds |>.mp hh)⟩
 
 /-- On a bounded box, an indexed output repaired off the grown base with the input's values is a
 flat output. -/
@@ -531,8 +531,8 @@ private theorem DRS.toRel_of_toRelAt' {X U : Finset V} {conds : List (Condition 
         · exact absurd h hxU
       simp only [ite_eq_right hxU]
       exact (hag (Finset.mem_coe.mpr hxX)).symm
-  exact ⟨⟨fun x hxU => ite_eq_right hxU,
-    (hIH _).mpr ((Condition.holdsAllAt_congr conds hfvc heq).mpr hh)⟩, heq⟩
+  exact ⟨⟨fun x hxU => ite_eq_right hxU, (verifies_mk U conds).mpr
+    ((hIH _).mpr ((Condition.holdsAllAt_congr conds hfvc heq).mpr hh))⟩, heq⟩
 
 mutual
 /-- On a reuse-free condition with free referents in the base, the flat set

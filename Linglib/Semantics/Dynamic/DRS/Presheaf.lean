@@ -77,7 +77,7 @@ def Literal.toCondition {c : Context L V} (l : Literal c) : Condition L V :=
 theorem Literal.toCondition_map [DecidableEq V] {c c' : Context L V} (f : c ⟶ c')
     (l : Literal c) : (l.map f).toCondition = l.toCondition.map f.extend := by
   cases hp : l.pos <;>
-    simp [toCondition, map, Condition.map, Box.map, hp, Function.comp_def]
+    simp [toCondition, map, Condition.map, DRS.map, hp, Function.comp_def]
 
 namespace Theory
 

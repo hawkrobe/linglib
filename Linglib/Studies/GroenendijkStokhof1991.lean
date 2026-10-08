@@ -779,40 +779,48 @@ universe u v w x
 
 variable {L : Language.{u, v}} {V : Type w}
 
+mutual
+/-- The translation of a discourse representation structure, Definition 28. The order in which
+the referents are closed is immaterial to the interpretation. -/
+noncomputable def _root_.DRT.DRS.toDPL : DRS L V → Formula L V
+  | ⟨U, cs⟩ => exs U.toList (conjs (DRT.Condition.toDPLList cs))
 /-- The translation of a condition, Definition 28. -/
 noncomputable def _root_.DRT.Condition.toDPL : Condition L V → Formula L V
   | .rel R args => rel R (Language.Term.var ∘ args)
   | .eq a b => .var a ≐ .var b
-  | .neg K => ¬ᵈ(exs K.referents.toList (conjs (K.conditions.map DRT.Condition.toDPL)))
-  | .imp a c => exs a.referents.toList (conjs (a.conditions.map DRT.Condition.toDPL)) ⟿
-      exs c.referents.toList (conjs (c.conditions.map DRT.Condition.toDPL))
-  | .dis l r => exs l.referents.toList (conjs (l.conditions.map DRT.Condition.toDPL)) ⋎
-      exs r.referents.toList (conjs (r.conditions.map DRT.Condition.toDPL))
+  | .neg K => ¬ᵈ(DRT.DRS.toDPL K)
+  | .imp a c => DRT.DRS.toDPL a ⟿ DRT.DRS.toDPL c
+  | .dis l r => DRT.DRS.toDPL l ⋎ DRT.DRS.toDPL r
+/-- The translations of a list of conditions. -/
+noncomputable def _root_.DRT.Condition.toDPLList : List (Condition L V) → List (Formula L V)
+  | [] => []
+  | c :: cs => DRT.Condition.toDPL c :: DRT.Condition.toDPLList cs
+end
 
-/-- The translation of a discourse representation structure, Definition 28. The order in which
-the referents are closed is immaterial to the interpretation. -/
-noncomputable def _root_.DRT.DRS.toDPL (K : DRS L V) : Formula L V :=
-  exs K.referents.toList (conjs (K.conditions.map DRT.Condition.toDPL))
+@[simp] theorem _root_.DRT.Condition.toDPLList_eq_map (cs : List (Condition L V)) :
+    DRT.Condition.toDPLList cs = cs.map DRT.Condition.toDPL := by
+  induction cs with
+  | nil => rfl
+  | cons c cs ih => simp [DRT.Condition.toDPLList, ih]
+
+theorem _root_.DRT.DRS.toDPL_eq (K : DRS L V) :
+    K.toDPL = exs K.referents.toList (conjs (K.conditions.map DRT.Condition.toDPL)) := by
+  cases K; simp [DRT.DRS.toDPL]
 
 theorem _root_.DRT.Condition.toDPL_rel {n : ℕ} (R : L.Relations n) (args : Fin n → V) :
-    (Condition.rel R args).toDPL = rel R (Language.Term.var ∘ args) := by
-  simp only [DRT.Condition.toDPL]
+    (Condition.rel R args).toDPL = rel R (Language.Term.var ∘ args) := rfl
 
 theorem _root_.DRT.Condition.toDPL_eq (a b : V) :
-    (Condition.eq a b : Condition L V).toDPL = .var a ≐ .var b := by
-  simp only [DRT.Condition.toDPL]
+    (Condition.eq a b : Condition L V).toDPL = .var a ≐ .var b := rfl
 
 theorem _root_.DRT.Condition.toDPL_neg (K : DRS L V) :
-    (Condition.neg K).toDPL = ¬ᵈK.toDPL := by
-  simp only [DRT.Condition.toDPL]; rfl
+    (Condition.neg K).toDPL = ¬ᵈK.toDPL := rfl
 
 theorem _root_.DRT.Condition.toDPL_imp (a c : DRS L V) :
-    (Condition.imp a c).toDPL = a.toDPL ⟿ c.toDPL := by
-  simp only [DRT.Condition.toDPL]; rfl
+    (Condition.imp a c).toDPL = a.toDPL ⟿ c.toDPL := rfl
 
 theorem _root_.DRT.Condition.toDPL_dis (l r : DRS L V) :
-    (Condition.dis l r).toDPL = l.toDPL ⋎ r.toDPL := by
-  simp only [DRT.Condition.toDPL]; rfl
+    (Condition.dis l r).toDPL = l.toDPL ⋎ r.toDPL := rfl
 
 variable [DecidableEq V] (M : Type x) [L.Structure M]
 
@@ -822,8 +830,8 @@ private theorem eval_toDPL_of_conditions (K : DRS L V)
     (h : ∀ c ∈ K.conditions, c.toDPL.eval M = test {f : V → M | VerifiesCondition f c}) :
     K.toDPL.eval M = K.toRel := by
   ext ⟨g, k⟩
-  rw [DRS.toDPL, mem_eval_exs, eval_conjs_map M _ _ _ h]
-  simp only [mem_test, Finset.mem_toList, DRS.toRel_iff]
+  rw [DRS.toDPL_eq, mem_eval_exs, eval_conjs_map M _ _ _ h]
+  simp only [mem_test, Finset.mem_toList, DRS.toRel_iff, verifies_iff, Set.mem_setOf_eq]
   exact ⟨fun ⟨_, hk, rfl, hv⟩ ↦ ⟨hk, hv⟩, fun ⟨hk, hv⟩ ↦ ⟨k, hk, rfl, hv⟩⟩
 
 /-- The translation of a condition is the test of its verification (Fact 25 for conditions). -/

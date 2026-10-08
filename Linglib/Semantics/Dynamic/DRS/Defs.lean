@@ -116,14 +116,11 @@ of its sub-boxes. -/
     (imp : ∀ a c, (∀ d ∈ a.conditions, motive d) → (∀ d ∈ c.conditions, motive d) →
       motive (.imp a c))
     (dis : ∀ l r, (∀ d ∈ l.conditions, motive d) → (∀ d ∈ r.conditions, motive d) →
-      motive (.dis l r)) : ∀ c, motive c
-  | .rel R args => rel R args
-  | .eq u v => eq u v
-  | .neg K => neg K fun c _ => Condition.induction rel eq neg imp dis c
-  | .imp a c => imp a c (fun d _ => Condition.induction rel eq neg imp dis d)
-      (fun d _ => Condition.induction rel eq neg imp dis d)
-  | .dis l r => dis l r (fun d _ => Condition.induction rel eq neg imp dis d)
-      (fun d _ => Condition.induction rel eq neg imp dis d)
+      motive (.dis l r)) (c : Condition L V) : motive c :=
+  Condition.rec (motive_2 := fun K => ∀ c ∈ K.conditions, motive c)
+    (motive_3 := fun cs => ∀ c ∈ cs, motive c) rel eq neg imp dis (fun _ _ h => h)
+    (fun _ h => absurd h List.not_mem_nil)
+    (fun _ _ hd hds _ he => (List.mem_cons.1 he).elim (· ▸ hd) (hds _)) c
 
 /-! ### Subordination -/
 
