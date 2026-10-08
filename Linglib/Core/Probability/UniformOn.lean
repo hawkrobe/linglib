@@ -146,6 +146,14 @@ theorem uniformOn_le_iff (hs : s.Finite) (hne : s.Nonempty) {θ : ℝ≥0∞} :
     (by simp)]
 
 omit [Fintype W] in
+/-- Conditioning the uniform measure on `s` by `t` is the uniform measure on `s ∩ t`: chained
+conditioning collapses, as `cond_cond_eq_cond_inter` does for `cond`. -/
+theorem uniformOn_cond (hs : s.Finite) (ht : MeasurableSet t) :
+    (uniformOn s)[|t] = uniformOn (s ∩ t) := by
+  rw [uniformOn, uniformOn,
+    cond_cond_eq_cond_inter' hs.measurableSet ht (Measure.count_apply_lt_top.2 hs).ne]
+
+omit [Fintype W] in
 /-- The uniform measure on a nonempty finite set gives `t` the measure `1` exactly when `t`
 contains it. -/
 theorem uniformOn_eq_one_iff (hs : s.Finite) (hne : s.Nonempty) : uniformOn s t = 1 ↔ s ⊆ t :=
