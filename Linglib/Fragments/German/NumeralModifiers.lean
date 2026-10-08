@@ -9,7 +9,7 @@ This file records German expressions that combine with a numeral to bound or fix
 names, as Claus and Walch use them in their framing experiments. *Genau* 'exactly' fixes the
 amount. *Höchstens* 'at most' and *mindestens* 'at least' are superlatives, *bis zu* 'up to' is a
 directional preposition and *maximal* 'maximally' an adverb, in the kinds of Nouwen's survey. Each
-is a `Numerals.Modifier` with the one reading of the comparison it expresses.
+is a `Numerals.NumeralModifier` with the one reading of the comparison it expresses.
 
 ## TODO
 
@@ -32,17 +32,17 @@ namespace German.NumeralModifiers
 open Degree Numerals
 
 /-- *genau* 'exactly' fixes the amount. -/
-def genau : Modifier := .ofComparison "genau" none .eq
+def genau : NumeralModifier := .ofComparison "genau" none .eq
 /-- *bis zu* 'up to', a directional preposition, bounds the amount from above. -/
-def bisZu : Modifier := .ofComparison "bis zu" (some .directional) .le
+def bisZu : NumeralModifier := .ofComparison "bis zu" (some .directional) .le
 /-- *höchstens* 'at most', a superlative, bounds the amount from above. -/
-def hoechstens : Modifier := .ofComparison "höchstens" (some .superlative) .le
+def hoechstens : NumeralModifier := .ofComparison "höchstens" (some .superlative) .le
 /-- *mindestens* 'at least', a superlative, bounds the amount from below. -/
-def mindestens : Modifier := .ofComparison "mindestens" (some .superlative) .ge
+def mindestens : NumeralModifier := .ofComparison "mindestens" (some .superlative) .ge
 /-- *maximal* 'maximally', an adverb, bounds the amount from above. -/
-def maximal : Modifier := .ofComparison "maximal" (some .adverbial) .le
+def maximal : NumeralModifier := .ofComparison "maximal" (some .adverbial) .le
 
 /-- The German numeral modifiers recorded here. -/
-def inventory : List Modifier := [genau, bisZu, hoechstens, mindestens, maximal]
+def inventory : List NumeralModifier := [genau, bisZu, hoechstens, mindestens, maximal]
 
 end German.NumeralModifiers

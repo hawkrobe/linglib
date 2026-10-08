@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Fragments.Dutch.Adjectives
+public import Linglib.Semantics.Modification.Basic
 
 /-!
 # McNally and de Swart (2011): Inflection and Derivation
@@ -59,11 +60,15 @@ def uninflectedNominal (a : Dutch.Adjectives.Adjective) : Set Shade := {s | s.ro
     s ∈ uninflectedNominal a ↔ s.root = a :=
   Iff.rfl
 
-/-- A prepositional modifier (20) restricts the kind by a contextual relation to the
-complement's entity. -/
-def ppModifier {Entity : Type*} (R : Shade → Entity → Prop) (s : Entity) (P : Set Shade) :
-    Set Shade :=
-  {x | x ∈ P ∧ R x s}
+/-- A prepositional modifier (20) meets the kind with the shades a contextual relation links to
+the complement's entity. -/
+def ppModifier {Entity : Type*} (R : Shade → Entity → Prop) (s : Entity) : Modifier (Set Shade) :=
+  Modifier.intersective {x | R x s}
+
+/-- A prepositional modifier restricts a kind to a subkind. -/
+theorem isSubsective_ppModifier {Entity : Type*} (R : Shade → Entity → Prop) (s : Entity) :
+    (ppModifier R s).IsSubsective :=
+  (Modifier.intersective_isIntersective _).isSubsective
 
 /-- The derived noun *roodheid* (24), the noun in *-heid* of the root, denotes the kind of the
 root. -/
