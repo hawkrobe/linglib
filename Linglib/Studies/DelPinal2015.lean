@@ -62,7 +62,8 @@ since the E-structure of *fake plastic gun* denies the compound *plastic gun*.
 
 namespace DelPinal2015
 
-open Modification Modifier
+open Semantics (Property)
+open Semantics.Property Modifier
 open Pustejovsky1995 (QualeRole)
 
 variable {W E : Type*}

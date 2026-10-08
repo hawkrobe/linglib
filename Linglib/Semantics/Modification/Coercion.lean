@@ -14,18 +14,19 @@ that the compound becomes non-vacuous.
 
 ## Main definitions
 
-* `IsNonVacuous P w d`: `P` has a positive and a negative extension within `d` at `w`.
-* `ShiftsHead adj N w`: `adj N` is vacuous within `N` and non-vacuous within `N` widened by the
-  adjective's value, so Partee's rule shifts the head.
+* `Semantics.Property.IsNonVacuous P w d`: `P` has a positive and a negative extension within `d` at
+  `w`.
+* `Semantics.Property.ShiftsHead adj N w`: `adj N` is vacuous within `N` and non-vacuous within `N`
+  widened by the adjective's value, so Partee's rule shifts the head.
 
 ## Main statements
 
-* `not_isNonVacuous_of_isPrivative`, `not_isNonVacuous_self`: privative and tautologous
-  modifiers are vacuous within their head.
-* `shiftsHead_iff_of_isPrivative`: a privative adjective shifts its head exactly when there are
-  both things in its value and things in the noun.
-* `not_shiftsHead_of_isNonVacuous`: a compound already non-vacuous within its head is not
-  shifted.
+* `Semantics.Property.not_isNonVacuous_of_isPrivative`, `not_isNonVacuous_self`: privative and
+  tautologous modifiers are vacuous within their head.
+* `Semantics.Property.shiftsHead_iff_of_isPrivative`: a privative adjective shifts its head exactly
+  when there are both things in its value and things in the noun.
+* `Semantics.Property.not_shiftsHead_of_isNonVacuous`: a compound already non-vacuous within its
+  head is not shifted.
 
 ## Implementation notes
 
@@ -43,7 +44,9 @@ coercion (`Studies/Pustejovsky1995.lean`) and the type shifts of noun phrases
 
 @[expose] public section
 
-namespace Modification
+namespace Semantics.Property
+
+open Modifier
 
 variable {W E : Type*}
 
@@ -103,4 +106,4 @@ theorem shiftsHead_iff_of_isPrivative (hp : Modifier.IsPrivative adj) :
   exact and_congr_right fun _ ↦ exists_congr fun x ↦
     ⟨And.left, fun h ↦ ⟨h, fun h' ↦ isPrivative_iff.1 hp N w x h' h⟩⟩
 
-end Modification
+end Semantics.Property

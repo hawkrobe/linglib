@@ -54,7 +54,8 @@ two agree. Before this, Kamp argues that no many-valued logic handles borderline
 
 namespace Kamp1975
 
-open Modification Modifier
+open Semantics (Property)
+open Semantics.Property Modifier
 
 /-! ### Bridge to single-world predicates
 

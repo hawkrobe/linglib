@@ -18,14 +18,14 @@ classification descends from Parsons and Kamp through Kamp and Partee; the label
 
 ## Main definitions
 
-* `Modification.Property W E`: intensional properties, `W → E → Prop`.
+* `Semantics.Property W E`: intensional properties, `W → E → Prop`.
 
 ## Main results
 
-* `isIntersective_iff`, `isPrivative_iff`: the classes stated pointwise.
-* `isExtensional_of_isIntersective`: intersective modifiers are extensional.
-* `not_isSubsective_of_isPrivative`: a privative modifier that holds of something is not
-  subsective.
+* `Semantics.Property.isIntersective_iff`, `isPrivative_iff`: the classes stated pointwise.
+* `Semantics.Property.isExtensional_of_isIntersective`: intersective modifiers are extensional.
+* `Semantics.Property.not_isSubsective_of_isPrivative`: a privative modifier that holds of something
+  is not subsective.
 
 ## Implementation notes
 
@@ -42,10 +42,12 @@ Whether adjectives uniformly denote `Modifier (Property W E)` is a theoretical c
 
 @[expose] public section
 
-namespace Modification
+namespace Semantics
 
 /-- An intensional property is a function from worlds to predicates over entities. -/
 abbrev Property (W E : Type*) := W → E → Prop
+
+namespace Property
 
 open Modifier
 
@@ -85,4 +87,6 @@ theorem not_isSubsective_of_isPrivative (hp : IsPrivative adj)
   obtain ⟨N, w, x, hadj⟩ := hne
   exact isPrivative_iff.mp hp N w x hadj (hs N w x hadj)
 
-end Modification
+end Property
+
+end Semantics

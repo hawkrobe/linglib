@@ -65,7 +65,8 @@ type.
 
 namespace Elbourne2026
 
-open Modification Elbourne2026.Examples
+open Semantics (Property)
+open Semantics.Property Elbourne2026.Examples
 
 section Theory
 

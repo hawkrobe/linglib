@@ -22,8 +22,9 @@ least count the modal requires and over a possibility modal the greatest it allo
 
 The two classes of Nouwen differ in the ordering they express ((4)), exclusive for
 Class A and inclusive for Class B. Over the English modifiers, whose class the Fragment reads
-off the construction, this is a fact about every reading: a Class A reading is false of the
-number itself and a Class B reading true of it (`classA_exclusive`, `classB_inclusive`).
+off the construction, this is a fact about every reading, stated in Kamp's classes of modifiers:
+a Class A reading is disjoint from the number's two-sided meaning and a Class B reading is
+extensive (`classA_exclusive`, `classB_inclusive`).
 
 The ignorance inferences of the Class B modifiers are Sauerland's primary implicatures ((43))
 over Kennedy's single alternative set, the five forms of one numeral ((46)): *at least m* is
@@ -76,17 +77,18 @@ open English.NumeralModifiers Semantics
 attribute [local simp] moreThan fewerThan over under atLeast atMost minimally maximally upTo from_
   exactly precisely about around approximately roughly almost nearly approximator shortOf
 
-/-- A Class A modifier (4a) expresses an exclusive ordering, so none of its readings is true of
-the number itself. -/
-theorem classA_exclusive :
-    ∀ w ∈ inventory, w.modifierClass = some .classA → ∀ r ∈ ⟦w⟧, ∀ m, m ∉ r m := by
+/-- A Class A modifier (4a) expresses an exclusive ordering, so each of its readings is disjoint
+from the two-sided meaning of the number it modifies, privative there in Kamp's sense. -/
+theorem classA_exclusive : ∀ w ∈ inventory, w.modifierClass = some .classA →
+    ∀ m ∈ ⟦w⟧, ∀ n, Disjoint (m {n}) {n} := by
   simp [inventory, Modifier.modifierClass, ModifierKind.modifierClass]
 
-/-- A Class B modifier (4b) expresses an inclusive ordering, so each of its readings is true of
-the number itself. -/
-theorem classB_inclusive :
-    ∀ w ∈ inventory, w.modifierClass = some .classB → ∀ r ∈ ⟦w⟧, ∀ m, m ∈ r m := by
-  simp [inventory, Modifier.modifierClass, ModifierKind.modifierClass]
+/-- A Class B modifier (4b) expresses an inclusive ordering, so each of its readings is extensive:
+the number satisfies the modified numeral. -/
+theorem classB_inclusive : ∀ w ∈ inventory, w.modifierClass = some .classB →
+    ∀ m ∈ ⟦w⟧, _root_.Modifier.IsExtensive m := by
+  simp [inventory, Modifier.modifierClass, ModifierKind.modifierClass,
+    Comparison.isExtensive_modifier_iff, Comparison.IsStrict]
 
 end Classes
 
