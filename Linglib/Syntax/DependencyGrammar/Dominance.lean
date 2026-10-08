@@ -71,21 +71,20 @@ variable {n : ℕ}
 abbrev Dominates (g : Graph n) : Fin n → Fin n → Prop :=
   ReflTransGen g.Adj
 
-/-- The positions `v` dominates, `v` itself included — the *yield* of `v` in
-    the source terminology. -/
-def Graph.dominated (g : Graph n) (v : Fin n) : Set (Fin n) :=
+/-- The yield of `v` is the set of positions `v` dominates, `v` itself included. -/
+def Graph.yield (g : Graph n) (v : Fin n) : Set (Fin n) :=
   {x | Dominates g v x}
 
-@[simp] theorem Graph.mem_dominated {g : Graph n} {v x : Fin n} :
-    x ∈ g.dominated v ↔ Dominates g v x := Iff.rfl
+@[simp] theorem Graph.mem_yield {g : Graph n} {v x : Fin n} :
+    x ∈ g.yield v ↔ Dominates g v x := Iff.rfl
 
-instance (g : Graph n) (v : Fin n) : DecidablePred (· ∈ g.dominated v) :=
-  λ _ => inferInstanceAs (Decidable (Dominates g v _))
+instance (g : Graph n) (v : Fin n) : DecidablePred (· ∈ g.yield v) :=
+  fun _ ↦ inferInstanceAs (Decidable (Dominates g v _))
 
 /-- The yield of `v` in ascending position order, the projection π(v) of
     [kuhlmann-nivre-2006] §2. -/
 def Graph.projection (g : Graph n) (v : Fin n) : List (Fin n) :=
-  (List.finRange n).filter (λ x => decide (x ∈ g.dominated v))
+  (List.finRange n).filter (fun x ↦ decide (x ∈ g.yield v))
 
 @[simp] theorem Graph.mem_projection {g : Graph n} {v x : Fin n} :
     x ∈ g.projection v ↔ Dominates g v x := by
@@ -93,7 +92,7 @@ def Graph.projection (g : Graph n) (v : Fin n) : List (Fin n) :=
 
 /-! ### Well-formedness -/
 
-/-- The graph is a dependency tree: nothing points at the root, every other
+/-- The graph is a dependency tree when nothing points at the root, every other
     position has exactly one head, and no position dominates itself. On
     `Fin n` these imply rootedness and connectivity — every non-root
     position's head chain terminates at the unique headless position. -/
@@ -106,7 +105,7 @@ theorem Graph.isTree_iff (g : Graph n) :
     g.IsTree ↔ (∀ v, ¬ g.Adj v g.root) ∧
       (∀ w, w ≠ g.root → ∃! v, g.Adj v w) ∧
       (∀ v, ¬ TransGen g.Adj v v) :=
-  ⟨λ h => ⟨h.1, h.2, h.3⟩, λ h => ⟨h.1, h.2.1, h.2.2⟩⟩
+  ⟨fun h ↦ ⟨h.1, h.2, h.3⟩, fun h ↦ ⟨h.1, h.2.1, h.2.2⟩⟩
 
 instance (g : Graph n) : Decidable g.IsTree :=
   decidable_of_iff _ (g.isTree_iff).symm
@@ -119,7 +118,7 @@ variable {g : Graph n} {v w : Fin n}
 theorem Graph.IsTree.leftUnique_adj (hT : g.IsTree) :
     Relator.LeftUnique g.Adj := by
   intro u u' y hu hu'
-  have hy : y ≠ g.root := λ he => hT.not_adj_root u (he ▸ hu)
+  have hy : y ≠ g.root := fun he ↦ hT.not_adj_root u (he ▸ hu)
   obtain ⟨z, _, hz⟩ := hT.existsUnique_adj y hy
   exact (hz u hu).trans (hz u' hu').symm
 
@@ -127,7 +126,7 @@ theorem Graph.IsTree.leftUnique_adj (hT : g.IsTree) :
 raising structure, whose embedded verb gains the matrix subject, is not a tree. -/
 theorem Graph.not_isTree_enhance {x : Fin n} (hv : g.Adj v w) (hx : x ≠ v) (r : UD.DepRel)
     (extra : List (Fin n × Fin n × UD.DepRel)) (hmem : (x, w, r) ∈ extra) :
-    ¬ (g.enhance extra).IsTree := λ hT' =>
+    ¬ (g.enhance extra).IsTree := fun hT' ↦
   hx (hT'.leftUnique_adj (Graph.enhance_adj.mpr (Or.inr ⟨r, hmem⟩))
     (Graph.enhance_adj.mpr (Or.inl hv)))
 
@@ -156,24 +155,42 @@ theorem Dominates.comparable {x : Fin n} (hT : g.IsTree)
     Dominates g v w ∨ Dominates g w v :=
   ReflTransGen.total_of_left_unique hT.leftUnique_adj hv hw
 
-/-- The root dominates every position: head chains ascend, without
-    repetition, to the unique headless position. -/
+/-- The root dominates every position, since head chains ascend without
+    repetition to the unique headless position. -/
 theorem Graph.IsTree.root_dominates (hT : g.IsTree) (v : Fin n) :
     Dominates g g.root v :=
   ReflTransGen.of_forall_exists hT.acyclic
-    (λ w hw => (hT.existsUnique_adj w hw).exists) v
+    (fun w hw ↦ (hT.existsUnique_adj w hw).exists) v
 
 /-- The root's projection is the whole sentence. -/
 theorem Graph.IsTree.projection_root (hT : g.IsTree) :
     g.projection g.root = List.finRange n :=
-  List.filter_eq_self.mpr λ x _ => decide_eq_true (hT.root_dominates x)
+  List.filter_eq_self.mpr fun x _ ↦ decide_eq_true (hT.root_dominates x)
 
 /-! ### Paths across a boundary -/
 
 /-- Incomparable positions of a tree dominate disjoint sets. -/
-theorem disjoint_dominated (hT : g.IsTree) (hvw : ¬ Dominates g v w)
-    (hwv : ¬ Dominates g w v) : Disjoint (g.dominated v) (g.dominated w) :=
-  Set.disjoint_left.mpr λ _ hv hw => (Dominates.comparable hT hv hw).elim hvw hwv
+theorem disjoint_yield (hT : g.IsTree) (hvw : ¬ Dominates g v w)
+    (hwv : ¬ Dominates g w v) : Disjoint (g.yield v) (g.yield w) :=
+  Set.disjoint_left.mpr fun _ hv hw ↦ (Dominates.comparable hT hv hw).elim hvw hwv
+
+/-- A position other than `v` in the yield of `v` is in the yield of one of its dependents. -/
+theorem Graph.exists_adj_mem_yield {x : Fin n} (hx : x ∈ g.yield v) (hne : x ≠ v) :
+    ∃ u, g.Adj v u ∧ x ∈ g.yield u := by
+  rcases ReflTransGen.cases_head hx with rfl | ⟨u, hvu, hux⟩
+  · exact absurd rfl hne
+  · exact ⟨u, hvu, hux⟩
+
+/-- In a tree a head is outside the yield of its dependent. -/
+theorem Graph.IsTree.notMem_yield_of_adj (hT : g.IsTree) (h : g.Adj v w) : v ∉ g.yield w :=
+  fun hd ↦ not_adj_dominates hT.acyclic h hd
+
+/-- In a tree two dependents of one head have disjoint yields. -/
+theorem Graph.IsTree.disjoint_yield_of_adj (hT : g.IsTree) {u : Fin n} (hw : g.Adj v w)
+    (hu : g.Adj v u) (hne : w ≠ u) : Disjoint (g.yield w) (g.yield u) :=
+  disjoint_yield hT
+    (fun hd ↦ not_adj_dominates hT.acyclic hw (Dominates.to_head hT hd hne hu))
+    (fun hd ↦ not_adj_dominates hT.acyclic hu (Dominates.to_head hT hd hne.symm hw))
 
 /-- If `v` dominates a position inside `S` and one outside it, some link below
     `v` crosses the boundary of `S`. -/
@@ -199,17 +216,17 @@ theorem Graph.IsTree.adj_headOf (hT : g.IsTree) {v : Fin n} (hv : v ≠ g.root) 
     g.Adj (g.headOf v) v := by
   obtain ⟨u, hu, huniq⟩ := hT.existsUnique_adj v hv
   have hp : g.parents v = {u} := Finset.eq_singleton_iff_unique_mem.mpr
-    ⟨Graph.mem_parents.mpr hu, λ w hw => huniq w (Graph.mem_parents.mp hw)⟩
+    ⟨Graph.mem_parents.mpr hu, fun w hw ↦ huniq w (Graph.mem_parents.mp hw)⟩
   simpa [Graph.headOf, hp] using hu
 
 theorem Graph.IsTree.headOf_eq (hT : g.IsTree) {u v : Fin n} (h : g.Adj u v) :
     g.headOf v = u :=
   hT.leftUnique_adj
-    (hT.adj_headOf (λ he => hT.not_adj_root u (he ▸ h))) h
+    (hT.adj_headOf (fun he ↦ hT.not_adj_root u (he ▸ h))) h
 
 theorem Graph.IsTree.headOf_root (hT : g.IsTree) : g.headOf g.root = g.root := by
   have hp : g.parents g.root = ∅ := Finset.eq_empty_of_forall_notMem
-    (λ u hu => hT.not_adj_root u (Graph.mem_parents.mp hu))
+    (fun u hu ↦ hT.not_adj_root u (Graph.mem_parents.mp hu))
   simp [Graph.headOf, hp]
 
 /-! ### The dominance order -/
@@ -249,11 +266,11 @@ instance [Fact g.IsTree] : PredOrder (DominanceOrder g) where
   min_of_le_pred {v} h := by
     by_cases hv : v = g.root
     · subst hv
-      exact λ w _ => (Fact.out : g.IsTree).root_dominates w
-    · exact absurd h (λ hdom => not_adj_dominates (Fact.out : g.IsTree).acyclic
+      exact fun w _ ↦ (Fact.out : g.IsTree).root_dominates w
+    · exact absurd h (fun hdom ↦ not_adj_dominates (Fact.out : g.IsTree).acyclic
         ((Fact.out : g.IsTree).adj_headOf hv) hdom)
   le_pred_of_lt {v w} h := by
-    have hw : w ≠ g.root := λ he => h.ne (Dominates.antisymm
+    have hw : w ≠ g.root := fun he ↦ h.ne (Dominates.antisymm
       (Fact.out : g.IsTree).acyclic h.le
       (he ▸ (Fact.out : g.IsTree).root_dominates v))
     exact ((Fact.out : g.IsTree).headOf_eq
@@ -263,7 +280,7 @@ instance [Fact g.IsTree] : PredOrder (DominanceOrder g) where
 
 instance [Fact g.IsTree] :
     DecidableRel ((· ≤ ·) : DominanceOrder g → DominanceOrder g → Prop) :=
-  λ v w => inferInstanceAs (Decidable (Dominates g v w))
+  fun v w ↦ inferInstanceAs (Decidable (Dominates g v w))
 
 instance [Fact g.IsTree] : IsPredArchimedean (DominanceOrder g) where
   exists_pred_iterate_of_le {a b} h := by
@@ -277,7 +294,7 @@ instance [Fact g.IsTree] : IsPredArchimedean (DominanceOrder g) where
       rw [Function.iterate_succ_apply]
       exact (show Order.pred d = c from (Fact.out : g.IsTree).headOf_eq hcd) ▸ hk
 
-/-- Lowest common governor as the meet: the first head-iterate of one
+/-- The meet is the lowest common governor, the first head-iterate of one
     argument that dominates the other. -/
 instance [Fact g.IsTree] : SemilatticeInf (DominanceOrder g) :=
   IsPredArchimedean.semilatticeInf
@@ -292,7 +309,7 @@ def Graph.toRootedTree (g : Graph n) [Fact g.IsTree] : RootedTree :=
 
 /-! ### Bundled trees -/
 
-/-- A dependency tree: a graph bundled with its tree-hood, so that the
+/-- A dependency tree is a graph bundled with its tree-hood, so that the
     dominance-order structure holds with no side conditions. Parent
     projections give direct access to the graph API (`t.root`,
     `t.label`, `t.gapDegree`, …). -/

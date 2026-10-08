@@ -95,7 +95,7 @@ def ex1b : Tree 9 :=
 
 /-- §3.1: the two orders of (1) have identical dependency representations: (1b) is (1a)
 relabelled along the rotation of the positions by five. -/
-theorem ex1b_eq_relabel : ex1b.toGraph = ex1a.toGraph.relabel (Equiv.addRight 5) := by
+theorem ex1b_eq_map : ex1b.toGraph = ex1a.toGraph.map (Equiv.addRight 5) := by
   rw [Graph.ext_iff]; decide
 
 /-! ### Dependency length, §3.2 -/

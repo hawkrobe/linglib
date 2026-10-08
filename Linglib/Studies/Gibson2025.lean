@@ -19,7 +19,7 @@ book's (122) and (123): every regime is one dependency structure read in a diffe
 (`Graph.linearize`), the harmonic orders are the shortest, and each mismatch of verb-complement
 direction with the direction of infinitival, subordinator, adposition, or relative-clause
 dependencies costs the lengths the book computes (`totalLength_122`, `totalLength_123`). The
-mechanism is an arc to the far end of its own phrase (`Graph.ncard_dominated_le_dist`), which
+mechanism is an arc to the far end of its own phrase (`Graph.ncard_yield_le_dist`), which
 is why the one-word dependents of Table 5.4 need not align (`single_word_free`).
 
 ## Implementation notes
@@ -231,8 +231,8 @@ theorem totalLength_mirror_123 : en123.mirror.totalLength = 13 :=
 /-- A subordinator at the far end of its clause, where the arc from *said* to *that* is at least as
 long as the nine-word clause *that* heads. -/
 theorem subordinator_final_stretches :
-    (voSubFinal123.dominated 10).ncard ≤ Nat.dist (1 : Fin 11) 10 :=
-  voSubFinal123.ncard_dominated_le_dist (by decide)
+    (voSubFinal123.yield 10).ncard ≤ Nat.dist (1 : Fin 11) 10 :=
+  voSubFinal123.ncard_yield_le_dist (by decide)
     (λ x hx => Set.mem_uIcc.mpr (by revert x hx; decide))
 
 /-! ### Section 5.3.5: one-word dependents, Table 5.4 -/

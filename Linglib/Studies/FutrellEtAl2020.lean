@@ -32,7 +32,7 @@ dependency lengths of Table 2 are the rows of `Data.UD.DependencyLength.FutrellE
 
 * English words come from the Fragment lexicon, and the trees follow the paper's drawing
   convention, on which a preposition heads its noun, so arc lengths match the printed diagrams.
-* Mirror-image and reordering claims go through `Graph.mirror` and `Graph.relabel`, so they
+* Mirror-image and reordering claims go through `Graph.mirror` and `Graph.map`, so they
   hold by the general invariance theorems rather than by inspection of hand-typed twins.
 
 ## References
@@ -201,7 +201,7 @@ theorem dlm_penalty_grows_with_weight :
 /-! ### Example (13): the random-order baseline
 
 The attested sentence against reorderings of the same structure — stated
-through `Graph.relabel`, so "same structure" is by construction, which is
+through `Graph.map`, so "same structure" is by construction, which is
 what the paper's random-baseline methodology asserts. -/
 
 /-- (13a) "this story comes from the AP", the attested order, total 6. -/
@@ -215,13 +215,13 @@ def σB : Equiv.Perm (Fin 6) :=
   ⟨![3, 4, 5, 0, 2, 1], ![3, 5, 4, 0, 1, 2], by decide, by decide⟩
 
 /-- (13b) the reordering, as a relabeling of the attested structure. -/
-def reorderingB : Graph 6 := attestedOrder.relabel σB
+def reorderingB : Graph 6 := attestedOrder.map σB
 
 example : attestedOrder.totalLength = 6 := by decide
 example : reorderingB.totalLength = 9 := by decide
 
 /-- The attested order beats the reordering — and since `reorderingB` is a
-    `relabel` of `attestedOrder`, that they share a structure is not an
+    `Graph.map` of `attestedOrder`, that they share a structure is not an
     assertion but a definition. -/
 theorem attested_below_reordering :
     attestedOrder.totalLength < reorderingB.totalLength := by decide

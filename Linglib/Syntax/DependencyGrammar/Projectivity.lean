@@ -25,7 +25,7 @@ papers' own figures, and live in their study files.
 
 ## Main definitions
 
-* `Graph.IsProjective` is projectivity: every `Graph.dominated` set is an
+* `Graph.IsProjective` is projectivity: every `Graph.yield` set is an
   interval (Definition 3). `Graph.IsArcProjective` is its arc form, every
   arc spanning only positions its head dominates, and
   `Graph.isProjective_iff_isArcProjective` identifies the two.
@@ -68,7 +68,7 @@ variable {n : ℕ} (g : Graph n)
 
 /-- A dependency graph is projective if the positions dominated by any one
     position are order-convex. -/
-def Graph.IsProjective : Prop := ∀ v, (g.dominated v).OrdConnected
+def Graph.IsProjective : Prop := ∀ v, (g.yield v).OrdConnected
 
 /-- Positions `a b c d` alternate if `a < c < b < d`, so that the pairs
     `{a, b}` and `{c, d}` strictly interleave. -/
@@ -82,7 +82,7 @@ def Graph.IsPlanar : Prop :=
 /-- The subtrees at `v` and `w` interleave if each contributes two positions
     and the two pairs alternate. -/
 def Graph.Interleave (v w : Fin n) : Prop :=
-  ∃ a ∈ g.dominated v, ∃ b ∈ g.dominated v, ∃ c ∈ g.dominated w, ∃ d ∈ g.dominated w,
+  ∃ a ∈ g.yield v, ∃ b ∈ g.yield v, ∃ c ∈ g.yield w, ∃ d ∈ g.yield w,
     Alternate a b c d
 
 /-- A dependency graph is well-nested if interleaved subtrees are never
@@ -121,7 +121,7 @@ theorem Graph.IsArcProjective.dominates_of_mem_uIcc {g : Graph n} (hA : g.IsArcP
 theorem Graph.isProjective_iff_isArcProjective : g.IsProjective ↔ g.IsArcProjective := by
   constructor
   · intro hP h d hd w hw
-    exact (hP h).uIcc_subset (Graph.mem_dominated.2 .refl) (Graph.mem_dominated.2 (.single hd)) hw
+    exact (hP h).uIcc_subset (Graph.mem_yield.2 .refl) (Graph.mem_yield.2 (.single hd)) hw
   · intro hA v
     refine ⟨λ x hx y hy z hz => ?_⟩
     rcases Set.uIcc_subset_uIcc_union_uIcc (b := v) (Set.Icc_subset_uIcc hz) with h₁ | h₂
@@ -223,7 +223,7 @@ private theorem mem_projection_map {v : Fin n} {k : ℕ} :
 /-- A position has gap degree zero exactly when what it dominates is
     order-convex. -/
 theorem Graph.gapDegreeAt_eq_zero_iff {v : Fin n} :
-    g.gapDegreeAt v = 0 ↔ (g.dominated v).OrdConnected := by
+    g.gapDegreeAt v = 0 ↔ (g.yield v).OrdConnected := by
   have hmap : g.gapDegreeAt v =
       (((g.projection v).map (·.val)).zip ((g.projection v).map (·.val)).tail).countP
         (λ p => decide (1 < p.2 - p.1)) := by
@@ -236,7 +236,7 @@ theorem Graph.gapDegreeAt_eq_zero_iff {v : Fin n} :
   simp only [decide_eq_true_eq, Nat.not_lt] at *
   rw [hgf, Set.ordConnected_iff, Set.ordConnected_iff]
   simp only [Set.subset_def, Set.mem_Icc, Set.mem_ofPred_eq, mem_projection_map,
-    Graph.mem_dominated, and_imp]
+    Graph.mem_yield, and_imp]
   constructor
   · rintro h x hx y hy hxy z hxz hzy
     obtain ⟨w, hw, hwv⟩ := h x.val ⟨x, hx, rfl⟩ y.val ⟨y, hy, rfl⟩ hxy z.val hxz hzy
@@ -316,7 +316,7 @@ theorem Graph.IsPlanar.isWellNested (hT : g.IsTree) (hPl : g.IsPlanar) :
   push Not at hcon
   obtain ⟨hvw, hwv⟩ := hcon
   have hdis : ∀ {x}, Dominates g v x → Dominates g w x → False :=
-    λ h1 h2 => Set.disjoint_left.mp (disjoint_dominated hT hvw hwv) h1 h2
+    λ h1 h2 => Set.disjoint_left.mp (disjoint_yield hT hvw hwv) h1 h2
   have hab : a < b := hac.trans hcb
   -- A link below `w` crosses the boundary of the span of `a` and `b`.
   have hcS : c ∈ Set.uIcc a b := by simp [Set.mem_uIcc]; omega
