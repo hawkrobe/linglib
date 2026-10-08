@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Data.Examples.Blok2015
+public import Linglib.Studies.CoppockBrochhagen2013
 public import Mathlib.Order.Interval.Set.Basic
 public import Mathlib.Order.UpperLower.Basic
 public import Mathlib.Data.Set.Lattice.Image
@@ -33,9 +34,9 @@ are checked against these predictions (`judgment_rows`).
 Worlds are counts, as in the paper's simplified model with one world for each number. A
 proposition is a `Set (Set ℕ)` and not the library's `Question`, which is downward closed and
 identifies a proposition with its maximal possibilities, while the possibilities of *up to*
-are nested. The denotation of *at most* is the set of possibilities the paper computes from
-Coppock and Brochhagen's entry, not that entry, whose choice functions and ordered states are
-not modelled. The bottom of the scale is `1` in the rows, the whole numbers.
+are nested. *At most* is Coppock and Brochhagen's entry on the question of how many with
+one-sided answers (`atMost_eq`), and exhaustification is theirs too. The bottom of the scale is
+`1` in the rows, the whole numbers.
 
 ## References
 
@@ -60,9 +61,15 @@ variable {s n m : ℕ}
 hold, for each `m` from `s` to `n`. -/
 def upTo (s n : ℕ) : Set (Set ℕ) := Ici '' Icc s n
 
-/-- (43c): *at most `n`* raises the possibilities that between `m` and `n` hold, for each `m`
-up to `n`. -/
-def atMost (n : ℕ) : Set (Set ℕ) := (Icc · n) '' Iic n
+open CoppockBrochhagen2013 (atMostInq ranking oneSided) in
+/-- *At most `n`* (43c) is [coppock-brochhagen-2013]'s entry on the question of how many, with
+an answer `Ici m` for each lower bound `m`. -/
+def atMost (n : ℕ) : Set (Set ℕ) :=
+  atMostInq (ranking (oneSided id)) (range (oneSided id)) (oneSided id n)
+
+/-- *At most `n`* raises the possibilities that between `m` and `n` hold, for each `m` up to `n`. -/
+theorem atMost_eq (n : ℕ) : atMost n = (Icc · n) '' Iic n :=
+  CoppockBrochhagen2013.atMostInq_oneSided_id n
 
 /-- The informational content of *up to `n`* is its lower bound. At least the bottom of the
 scale hold, and nothing bounds the count from above. -/
@@ -74,14 +81,10 @@ theorem sUnion_upTo (h : s ≤ n) : ⋃₀ upTo s n = Ici s := by
 /-- The informational content of *at most `n`* is its upper bound. -/
 theorem sUnion_atMost : ⋃₀ atMost n = Iic n := by
   ext k
-  simp only [atMost, sUnion_image, mem_iUnion, mem_Iic, mem_Icc, exists_prop]
+  simp only [atMost_eq, sUnion_image, mem_iUnion, mem_Iic, mem_Icc, exists_prop]
   exact ⟨fun ⟨m, _, hk⟩ ↦ hk.2, fun hk ↦ ⟨0, Nat.zero_le n, Nat.zero_le k, hk⟩⟩
 
 /-! ### The implicated upper bound -/
-
-/-- (50): exhaustification removes from each possibility the worlds of the possibilities of the
-question under discussion that it does not entail. -/
-def exh (Q P : Set (Set ℕ)) : Set (Set ℕ) := (fun p ↦ p \ ⋃₀ {q ∈ Q | ¬ p ⊆ q}) '' P
 
 /-- (51): the question of how many, with a possibility for each lower bound. -/
 def howMany : Set (Set ℕ) := range Ici
@@ -98,15 +101,16 @@ theorem Ici_diff_sUnion_howMany : Ici m \ ⋃₀ {q ∈ howMany | ¬ Ici m ⊆ q
     rintro ⟨_, ⟨⟨j, rfl⟩, hj⟩, hkj⟩
     exact hj (Ici_subset_Ici.2 hkj)
 
-/-- (51): exhaustification turns the possibilities of *up to `n`* into those of exactly `m`, for
-`m` from the bottom of the scale to `n`. -/
-theorem exh_howMany_upTo : exh howMany (upTo s n) = (fun m ↦ {m}) '' Icc s n := by
-  simp only [exh, upTo, image_image, Ici_diff_sUnion_howMany]
+/-- Exhaustification turns the possibilities of *up to `n`* into those of exactly `m`, for `m`
+from the bottom of the scale to `n` (50), (51). -/
+theorem exh_upTo_howMany :
+    Inquisitive.Unrestricted.exh (upTo s n) howMany = (fun m ↦ {m}) '' Icc s n := by
+  simp only [Inquisitive.Unrestricted.exh, upTo, image_image, Ici_diff_sUnion_howMany]
 
 /-- The upper bound of *up to `n`* is an implicature. The exhaustified content is bounded by
 `n`, where the asserted content `sUnion_upTo` is not. -/
-theorem sUnion_exh_upTo : ⋃₀ exh howMany (upTo s n) = Icc s n := by
-  rw [exh_howMany_upTo, sUnion_image, biUnion_of_singleton]
+theorem sUnion_exh_upTo : ⋃₀ Inquisitive.Unrestricted.exh (upTo s n) howMany = Icc s n := by
+  rw [exh_upTo_howMany, sUnion_image, biUnion_of_singleton]
 
 /-! ### The range requirement -/
 
@@ -117,6 +121,7 @@ theorem nontrivial_upTo : (upTo s n).Nontrivial ↔ s < n := by
 
 /-- *At most `n`* raises more than one possibility just in case `n` is not zero. -/
 theorem nontrivial_atMost : (atMost n).Nontrivial ↔ 0 < n := by
+  rw [atMost_eq]
   have hinj : InjOn (Icc · n) (Iic n) := fun a ha b hb (h : Icc a n = Icc b n) ↦
     le_antisymm (h ▸ (⟨le_rfl, hb⟩ : b ∈ Icc b n) : b ∈ Icc a n).1
       (h ▸ (⟨le_rfl, ha⟩ : a ∈ Icc a n) : a ∈ Icc b n).1
