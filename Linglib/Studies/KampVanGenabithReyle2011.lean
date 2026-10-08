@@ -38,11 +38,11 @@ equivalent but make different antecedents available for the following *it*. Two 
 and a coin (`1`) are each missing, and the two states differ only in which one the referent
 carries. -/
 
-/-- (42)(i): the referent carries the missing marble `0`, in world `true`. -/
+/-- In (42)(i) the referent carries the missing marble `0`, in world `true`. -/
 def marbleState : State Bool Unit (Fin 2) :=
   {p | p.world = true ∧ p.assignment () = Part.some 0}
 
-/-- (42)(ii): the referent carries the missing coin `1`, in world `true`. -/
+/-- In (42)(ii) the referent carries the missing coin `1`, in world `true`. -/
 def coinState : State Bool Unit (Fin 2) :=
   {p | p.world = true ∧ p.assignment () = Part.some 1}
 
@@ -57,7 +57,7 @@ theorem marble_worlds_eq_coin :
   · rintro ⟨p, ⟨hw, -⟩, rfl⟩
     exact ⟨⟨p.world, λ _ => Part.some 0⟩, ⟨hw, rfl⟩, rfl⟩
 
-/-- But the states differ: the marble witness is not a coin witness. With
+/-- But the states differ, since the marble witness is not a coin witness. With
 `marble_worlds_eq_coin`, this is Partee's argument that context change operates on information
 states, not on propositions. -/
 theorem marble_ne_coin : marbleState ≠ coinState := by
@@ -80,28 +80,28 @@ inductive DRel : ℕ → Type
 /-- The first-order language of the discourse (no function symbols). -/
 def dLang : Language := ⟨λ _ => Empty, DRel⟩
 
-/-- The context DRS of (43), "John owns a donkey.": `[x y | John x, donkey y, x owns y]`. -/
+/-- The context DRS of (43), "John owns a donkey.", is `[x y | John x, donkey y, x owns y]`. -/
 def context : DRS dLang ℕ :=
   .mk {0, 1} [.rel .john (![0]), .rel .donkey (![1]), .rel .own (![0, 1])]
 
-/-- The update DRS of (43), "It loves him.": `[z u | u loves z, z = x, u = y]`, the pronouns
-resolved by equations to the context's referents. -/
+/-- The update DRS of (43), "It loves him.", is `[z u | u loves z, z = x, u = y]`, the
+pronouns resolved by equations to the context's referents. -/
 def update : DRS dLang ℕ := .mk {2, 3} [.rel .love (![3, 2]), .eq 2 0, .eq 3 1]
 
 /-- The context DRS is proper. -/
-theorem context_proper : context.IsProper := by simp [DRS.IsProper, context]; decide
+theorem context_proper : context.IsProper := by decide
 
-/-- The update DRS is not: `x` and `y` occur free in it. -/
-theorem update_improper : ¬ update.IsProper := by simp [DRS.IsProper, update]; decide
+/-- The update DRS is not, since `x` and `y` occur free in it. -/
+theorem update_improper : ¬ update.IsProper := by decide
 
 /-- Its free referents are supplied by the context's universe, the condition under which the
 context change potential of Definition 24 is defined on the context's state. -/
 theorem update_bound : update.freeVarFinset ⊆ context.referents := by
   simp [update, context]; decide
 
-/-- No capture: the update introduces no referent occurring in the context. -/
+/-- The update introduces no referent occurring in the context, so nothing is captured. -/
 theorem update_fresh : Disjoint update.referents (Condition.varFinsetL context.conditions) := by
-  simp [update, context]
+  decide
 
 /-- The chapter's remark after Definition 24: applying the context change potential of the
 second sentence to the information state expressed by the first yields the information state

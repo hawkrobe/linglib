@@ -37,11 +37,9 @@ not depend on the input: it is truth in the model (Def. 1.4.5).
   on DRSs that declare each referent once — the construction algorithm never
   re-declares — but diverge on re-declaration: `[ | [x | man x] ⇒ [x | mortal x]]`
   says "every man is mortal" there, "if there is a man there is a mortal" here.
-* `Verifies` quantifies over the condition list (`∀ c ∈ K.conditions`, the
-  `Theory.Model` idiom), avoiding mutual recursion. `VerifiesCondition`
-  descends into sub-DRSs by well-founded recursion on `sizeOf`, so its clause
-  characterizations (`verifies_neg`, …) are equation-lemma rewrites rather
-  than `Iff.rfl`.
+* `Verifies`, `VerifiesCondition` and `VerifiesAll` are defined by structural recursion
+  through the nested conditions, so the clause characterizations (`verifies_neg`, …) hold by
+  `Iff.rfl`; `verifies_iff` recovers the `∀ c ∈ K.conditions` form.
 -/
 
 @[expose] public section
@@ -54,34 +52,42 @@ universe u v w x
 
 variable {L : Language.{u, v}} {V : Type w} {M : Type x} [L.Structure M]
 
-/-- `VerifiesCondition f c` says the embedding `f` *verifies* the DRS-condition
-`c` (Def. 1.4.4(ii)); a sub-DRS is entered by existentially (re)assigning along
-its extension relation and verifying each of its conditions. -/
+mutual
+/-- `Verifies f K` says the embedding `f` *verifies* the DRS `K`, that is, every condition
+of `K` (Def. 1.4.4). -/
+def Verifies : (V → M) → DRS L V → Prop
+  | f, ⟨_, cs⟩ => VerifiesAll f cs
+/-- `VerifiesCondition f c` says the embedding `f` *verifies* the DRS-condition `c`
+(Def. 1.4.4(ii)); a sub-DRS is entered by existentially (re)assigning along its extension
+relation. -/
 def VerifiesCondition : (V → M) → Condition L V → Prop
   | f, .rel R args => Structure.RelMap R (f ∘ args)
   | f, .eq a b => f a = f b
-  | f, .neg K => ¬ ∃ g, K.Extends f g ∧ ∀ c ∈ K.conditions, VerifiesCondition g c
-  | f, .imp a c =>
-      ∀ g, a.Extends f g → (∀ d ∈ a.conditions, VerifiesCondition g d) →
-        ∃ h, c.Extends g h ∧ ∀ d ∈ c.conditions, VerifiesCondition h d
-  | f, .dis l r =>
-      (∃ g, l.Extends f g ∧ ∀ c ∈ l.conditions, VerifiesCondition g c) ∨
-      (∃ g, r.Extends f g ∧ ∀ c ∈ r.conditions, VerifiesCondition g c)
-
-/-- `Verifies f K` says the embedding `f` *verifies* the DRS `K`, that is, every condition
-of `K` (Def. 1.4.4). -/
-def Verifies (f : V → M) (K : DRS L V) : Prop :=
-  ∀ c ∈ K.conditions, VerifiesCondition f c
+  | f, .neg K => ¬ ∃ g, K.Extends f g ∧ Verifies g K
+  | f, .imp a c => ∀ g, a.Extends f g → Verifies g a → ∃ h, c.Extends g h ∧ Verifies h c
+  | f, .dis l r => (∃ g, l.Extends f g ∧ Verifies g l) ∨ (∃ g, r.Extends f g ∧ Verifies g r)
+/-- `VerifiesAll f cs` says `f` verifies every condition of `cs`. -/
+def VerifiesAll : (V → M) → List (Condition L V) → Prop
+  | _, [] => True
+  | f, c :: cs => VerifiesCondition f c ∧ VerifiesAll f cs
+end
 
 /-! ### Structural simp API -/
 
 variable {f : V → M}
 
+theorem verifiesAll_iff {cs : List (Condition L V)} :
+    VerifiesAll f cs ↔ ∀ c ∈ cs, VerifiesCondition f c := by
+  induction cs with
+  | nil => simp [VerifiesAll]
+  | cons c cs ih => simp [VerifiesAll, ih]
+
 @[simp] theorem verifies_mk (U : Finset V) (conds : List (Condition L V)) :
-    Verifies f (.mk U conds) ↔ ∀ c ∈ conds, VerifiesCondition f c := Iff.rfl
+    Verifies f (.mk U conds) ↔ ∀ c ∈ conds, VerifiesCondition f c := verifiesAll_iff
 
 theorem verifies_iff {K : DRS L V} :
-    Verifies f K ↔ ∀ c ∈ K.conditions, VerifiesCondition f c := Iff.rfl
+    Verifies f K ↔ ∀ c ∈ K.conditions, VerifiesCondition f c := by
+  cases K; exact verifiesAll_iff
 
 @[simp] theorem verifies_empty : Verifies f (.empty : DRS L V) := by
   simp [DRS.empty]
@@ -91,26 +97,21 @@ theorem verifies_iff {K : DRS L V} :
   simp only [verifies_iff, DRS.conditions_merge, List.forall_mem_append]
 
 @[simp] theorem verifies_rel {n : ℕ} (R : L.Relations n) (args : Fin n → V) :
-    VerifiesCondition f (.rel R args) ↔ Structure.RelMap R (f ∘ args) := by
-  simp only [VerifiesCondition]
+    VerifiesCondition f (.rel R args) ↔ Structure.RelMap R (f ∘ args) := Iff.rfl
 
 @[simp] theorem verifies_eq (a b : V) :
-    VerifiesCondition f (.eq a b : Condition L V) ↔ f a = f b := by
-  simp only [VerifiesCondition]
+    VerifiesCondition f (.eq a b : Condition L V) ↔ f a = f b := Iff.rfl
 
 @[simp] theorem verifies_neg (K : DRS L V) :
-    VerifiesCondition f (.neg K) ↔ ¬ ∃ g, K.Extends f g ∧ Verifies g K := by
-  simp only [VerifiesCondition, Verifies]
+    VerifiesCondition f (.neg K) ↔ ¬ ∃ g, K.Extends f g ∧ Verifies g K := Iff.rfl
 
 @[simp] theorem verifies_imp (a c : DRS L V) :
     VerifiesCondition f (.imp a c) ↔
-      ∀ g, a.Extends f g → Verifies g a → ∃ h, c.Extends g h ∧ Verifies h c := by
-  simp only [VerifiesCondition, Verifies]
+      ∀ g, a.Extends f g → Verifies g a → ∃ h, c.Extends g h ∧ Verifies h c := Iff.rfl
 
 @[simp] theorem verifies_dis (l r : DRS L V) :
     VerifiesCondition f (.dis l r) ↔
-      (∃ g, l.Extends f g ∧ Verifies g l) ∨ (∃ g, r.Extends f g ∧ Verifies g r) := by
-  simp only [VerifiesCondition, Verifies]
+      (∃ g, l.Extends f g ∧ Verifies g l) ∨ (∃ g, r.Extends f g ∧ Verifies g r) := Iff.rfl
 
 /-- Verification is invariant under permutation of the conditions — the set
 semantics the `List`-valued `conditions` field promises (`DRS/Defs.lean`). -/
@@ -130,7 +131,7 @@ private theorem verifies_map_all (e : V ≃ W) (K : DRS L V) (g : W → M)
     (ih : ∀ c ∈ K.conditions, ∀ u : W → M,
       VerifiesCondition u (c.map e) ↔ VerifiesCondition (u ∘ e) c) :
     Verifies g (K.map e) ↔ Verifies (g ∘ e) K := by
-  simp only [Verifies, DRS.conditions_map, List.forall_mem_map]
+  simp only [verifies_iff, DRS.conditions_map, List.forall_mem_map]
   exact forall_congr' fun c => imp_congr_right fun hc => ih c hc g
 
 /-- "Some extension of `f` verifies `K`" transported along renaming, given the
@@ -191,9 +192,9 @@ private theorem verifies_of_eqOn {K : DRS L V}
     (ih : ∀ c ∈ K.conditions, ∀ {g₁ g₂ : V → M}, Set.EqOn g₁ g₂ ↑c.freeVarFinset →
       (VerifiesCondition g₁ c ↔ VerifiesCondition g₂ c))
     (g g' : V → M) (hgg' : Set.EqOn g g' ↑(Condition.freeVarFinsetL K.conditions)) :
-    Verifies g K → Verifies g' K := fun hv c hc =>
+    Verifies g K → Verifies g' K := fun hv => verifies_iff.2 fun c hc =>
   (ih c hc (hgg'.mono (Finset.coe_subset.mpr
-    (Condition.freeVarFinset_subset_freeVarFinsetL hc)))).mp (hv c hc)
+    (Condition.freeVarFinset_subset_freeVarFinsetL hc)))).mp (verifies_iff.1 hv c hc)
 
 /-- Verification of a condition reads the embedding only at its free referents
 (Def. 1.4.2). -/

@@ -204,7 +204,7 @@ def sueBound : MentalState := sueMerged.bind 21 20
 /-- Before the merge the believed event does not occur in the hope description, so the
 presupposition of *stop* has no antecedent and could only be accommodated. -/
 theorem believed_event_absent_before_merge : 20 ∉ DRS.varFinset sueHope.flatten := by
-  simp [sueHope, MentalState.flatten, Compartment.box]; decide
+  decide
 
 /-- After the merge the believed event is accessible from the presupposed one, so binding is
 licensed: the filtering. -/
@@ -219,8 +219,6 @@ theorem parasitic_asymmetry : ¬ DRS.Accessible sueMerged.flatten 20 21 :=
 by binding, neither accommodated nor projected (60). -/
 theorem presup_resolved_after_binding :
     21 ∉ DRS.varFinset sueBound.flatten ∧ 20 ∈ DRS.varFinset sueBound.flatten := by
-  simp [sueBound, sueMerged, sueBelief, sueHope, MentalState.merge, mergeCompartments,
-    MentalState.bind, MentalState.flatten, Compartment.box, Condition.map]
   decide
 
 /-! ### The data -/

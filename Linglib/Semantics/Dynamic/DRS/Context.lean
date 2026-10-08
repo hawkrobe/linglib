@@ -18,10 +18,6 @@ finite set of discourse referents, and a morphism is an inclusion of vocabularie
 referents — a relabelling, an inclusion, or an identification of referents. Literals over a
 context are signed atoms; they rename covariantly along context morphisms.
 
-This is the substitution category on contexts, complementary to the extension category `DRT.Ctx`
-whose morphisms are DRSs composed by merge: `Ctx` grows a context by introducing referents,
-`Context` maps referents between contexts.
-
 ## Main definitions
 
 * `DRT.Context`, `DRT.Context.Hom`: contexts `(L, X)` and their morphisms, a `Category`.

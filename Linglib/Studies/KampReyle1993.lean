@@ -92,8 +92,7 @@ theorem ulysses_tc (a : ℕ → M) :
 
 /-- The completed (1.1) DRS is proper (Def. 1.4.2–1.4.3): every referent the conditions
 use is introduced by the discourse itself. -/
-theorem ulysses_proper : ulyssesDiscourse.IsProper := by
-  simp [DRS.IsProper, ulyssesDiscourse]; decide
+theorem ulysses_proper : ulyssesDiscourse.IsProper := by decide
 
 /-! ### Negation blocks anaphora: "Jones does not own a Porsche." (1.56) -/
 
@@ -139,7 +138,7 @@ theorem outer_referent_accessible : DRS.Accessible porscheDiscourse 2 1 := by
 free. -/
 theorem continuation_improper :
     ¬ (porscheDiscourse.merge (.mk ∅ [.rel .fascinates (![2, 1])])).IsProper := by
-  simp [DRS.IsProper, DRS.merge, porscheDiscourse, porscheNeg]; decide
+  decide
 
 /-! ### Donkey anaphora: "If a farmer owns a donkey he beats it." (2.47) -/
 
@@ -173,8 +172,7 @@ theorem donkey_universal_reading (a : ℕ → M) :
 
 /-- The donkey DRS is proper: the consequent's referents are supplied by the
 antecedent — the `⇒`-accessibility in the free-variable computation. -/
-theorem donkey_proper : donkey.IsProper := by
-  simp [DRS.IsProper, donkey, donkeyAnte, donkeyCons]; decide
+theorem donkey_proper : donkey.IsProper := by decide
 
 /-- The (2.45)-style consequent `[u₃ | u₃ = u₂, beats u₁ u₃]`: the pronoun *it*
 introduces its own referent, resolved to the donkey by an equation. -/
