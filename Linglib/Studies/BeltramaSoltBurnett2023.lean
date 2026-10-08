@@ -90,9 +90,9 @@ theorem isNearestRound_stimuli (e : Experiment) :
 end Variants
 
 /-- The numeral modifier an approximator is. -/
-def Approximator.modifier : Approximator → English.NumeralModifiers.NumeralModifier
-  | .about => .about
-  | .around => .around
+def Approximator.modifier : Approximator → Numerals.Modifier
+  | .about => English.NumeralModifiers.about
+  | .around => English.NumeralModifiers.around
 
 section Truth
 
