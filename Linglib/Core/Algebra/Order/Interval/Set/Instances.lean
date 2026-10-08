@@ -30,14 +30,14 @@ instance [NeZero (1 : β)] : NeZero (1 : Icc (0 : β) 1) :=
 def symm (t : Icc (0 : β) 1) : Icc (0 : β) 1 :=
   ⟨1 - t, mem_iff_one_sub_mem.mp t.prop⟩
 
-@[simp] theorem coe_symm_eq (t : Icc (0 : β) 1) : (symm t : β) = 1 - t := rfl
+@[simp, grind =] theorem coe_symm_eq (t : Icc (0 : β) 1) : (symm t : β) = 1 - t := rfl
 
-@[simp] theorem symm_symm (t : Icc (0 : β) 1) : symm (symm t) = t :=
+@[simp, grind =] theorem symm_symm (t : Icc (0 : β) 1) : symm (symm t) = t :=
   Subtype.ext (by simp)
 
-theorem symm_zero : symm (0 : Icc (0 : β) 1) = 1 := Subtype.ext (by simp)
+@[simp, grind =] theorem symm_zero : symm (0 : Icc (0 : β) 1) = 1 := Subtype.ext (by simp)
 
-theorem symm_one : symm (1 : Icc (0 : β) 1) = 0 := Subtype.ext (by simp)
+@[simp, grind =] theorem symm_one : symm (1 : Icc (0 : β) 1) = 0 := Subtype.ext (by simp)
 
 theorem symm_involutive : Function.Involutive (symm : Icc (0 : β) 1 → Icc (0 : β) 1) :=
   symm_symm
@@ -54,7 +54,28 @@ theorem symm_eq_one {t : Icc (0 : β) 1} : symm t = 1 ↔ t = 0 := by
 theorem symm_eq_zero {t : Icc (0 : β) 1} : symm t = 0 ↔ t = 1 := by
   rw [← symm_one, symm_inj]
 
-theorem symm_antitone : Antitone (symm : Icc (0 : β) 1 → Icc (0 : β) 1) := fun _ _ h =>
-  Subtype.mk_le_mk.mpr (sub_le_sub_left (Subtype.coe_le_coe.mpr h) 1)
+theorem symm_le_symm {s t : Icc (0 : β) 1} : symm s ≤ symm t ↔ t ≤ s := by
+  simp only [symm, Subtype.mk_le_mk, sub_le_sub_iff_left, Subtype.coe_le_coe]
+
+theorem le_symm_comm {s t : Icc (0 : β) 1} : s ≤ symm t ↔ t ≤ symm s := by
+  rw [← symm_le_symm, symm_symm]
+
+theorem symm_le_comm {s t : Icc (0 : β) 1} : symm s ≤ t ↔ symm t ≤ s := by
+  rw [← symm_le_symm, symm_symm]
+
+theorem symm_lt_symm {s t : Icc (0 : β) 1} : symm s < symm t ↔ t < s := by
+  simp only [symm, Subtype.mk_lt_mk, sub_lt_sub_iff_left, Subtype.coe_lt_coe]
+
+theorem lt_symm_comm {s t : Icc (0 : β) 1} : s < symm t ↔ t < symm s := by
+  rw [← symm_lt_symm, symm_symm]
+
+theorem symm_lt_comm {s t : Icc (0 : β) 1} : symm s < t ↔ symm t < s := by
+  rw [← symm_lt_symm, symm_symm]
+
+theorem strictAnti_symm : StrictAnti (symm : Icc (0 : β) 1 → Icc (0 : β) 1) :=
+  fun _ _ h => symm_lt_symm.2 h
+
+theorem antitone_symm : Antitone (symm : Icc (0 : β) 1 → Icc (0 : β) 1) :=
+  strictAnti_symm.antitone
 
 end Set.Icc

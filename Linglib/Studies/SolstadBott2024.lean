@@ -3,6 +3,7 @@ module
 public import Linglib.Semantics.Presupposition.Context
 public import Linglib.Studies.SolstadBott2022
 public import Linglib.Fragments.German.Verbs
+public import Linglib.Data.Experiments.SolstadBott2024
 
 /-!
 # Solstad & Bott (2024): Cataphoric Resolution of Projective Content
@@ -36,13 +37,18 @@ Occasion verbs are the agent-evocator class of [solstad-bott-2022]: their empty 
 occasion, presupposed rather than asserted, so the slot argument is the object and an
 explanation continuation is a cataphoric resolution. The psych verbs of Experiment 2 share the
 object bias and the explanation continuations but not the projectivity, so the two classes'
-underspecification has different sources.
+underspecification has different sources. Against the printed Block 2 means of
+`Data.Experiments.SolstadBott2024`, occasion verbs show a greater degree of projectivity and
+not-at-issueness than both psych verb classes, `occasion_set_apart_from_psych`, the
+trigger-level negative correlation of [tonhauser-beaver-degen-2018] replicates in both
+experiments, `negative_correlation_replicates`, and the shared coreference bias fails to read
+off projectivity on the means themselves, `shared_bias_distinct_projectivity`.
 
 ## Implementation notes
 
-The experimental results are reported in prose; the library's format for experimental data
-is pending, and the Block 2 means remain as rows in `Data/Examples/SolstadBott2024.json` for
-the pooled projectivity data. Experiments 1 and 2 (Block 1) find occasion verbs, personal
+The printed Block 2 means, ranges and correlations are `Data.Experiments.SolstadBott2024`;
+the means of the established German triggers appear only in figures, so no theorem compares
+occasion verbs to them numerically. Experiments 1 and 2 (Block 1) find occasion verbs, personal
 pronouns, demonstratives and *auch* degraded in neutral contexts, and only occasion verbs
 restored by a following segment; factives, *aufhören*, possessives and non-restrictive relatives
 are unconstrained. Block 2 replicates the negative correlation between projectivity and
@@ -213,6 +219,26 @@ theorem exp3_predictions {c : Set W} {t : PartialProp W} {s : W → Prop}
   have := hs hw
   rwa [andFilter_triggerFirst_presup] at this
 
+/-! ### Projectivity and at-issueness (Block 2) -/
+
+open Data.Experiments in
+/-- The summary of Experiment 2: a greater degree of projectivity and not-at-issueness for
+occasion verbs than for the other two major Implicit Causality verb classes, on the printed
+means. -/
+theorem occasion_set_apart_from_psych :
+    ∀ o ∈ blockTwo, ∀ r ∈ blockTwo, o.experiment = .exp2 → r.experiment = .exp2 →
+      o.trigger = .occasion → r.trigger ≠ .occasion →
+        r.projectivity.toRat < o.projectivity.toRat ∧
+          o.atIssueness.toRat < r.atIssueness.toRat := by
+  decide +kernel
+
+open Data.Experiments in
+/-- The negative correlation between projectivity and at-issueness across trigger types of
+[tonhauser-beaver-degen-2018] replicates in both experiments. -/
+theorem negative_correlation_replicates :
+    ∀ r ∈ correlations, r.level = .triggerTypes → r.r.toRat < 0 := by
+  decide +kernel
+
 /-! ### Occasion verbs as agent-evocator verbs -/
 
 open German.Verbs in
@@ -229,5 +255,15 @@ open SolstadBott2022 in
 projective: the coreference bias does not read off projectivity. -/
 theorem icausBias_shared_with_expStim :
     VerbClass.agentEvocator.icausBias = VerbClass.expStim.icausBias := by decide
+
+open SolstadBott2022 Data.Experiments in
+/-- The same point on the means: the two classes share the coreference bias, yet
+experiencer-stimulus verbs sit below occasion verbs in projectivity in Experiment 2. -/
+theorem shared_bias_distinct_projectivity :
+    VerbClass.agentEvocator.icausBias = VerbClass.expStim.icausBias ∧
+      ∀ o ∈ blockTwo, ∀ e ∈ blockTwo, o.experiment = .exp2 → e.experiment = .exp2 →
+        o.trigger = .occasion → e.trigger = .experiencerStimulus →
+          e.projectivity.toRat < o.projectivity.toRat :=
+  ⟨icausBias_shared_with_expStim, by decide +kernel⟩
 
 end SolstadBott2024
