@@ -30,10 +30,10 @@ needed; the identity holds for any link structure.
 
 ## Main results
 
-* `Graph.crossings_relabel`: the crossings of a relabelled graph are the
+* `Graph.crossings_map`: the crossings of a relabelled graph are the
   crossings under the permutation.
-* `Graph.three_mul_sum_crossings_relabel`: the expected-crossings identity
-  `3 * ∑ σ, (g.relabel σ).crossings = n ! * g.disjointLinkPairs`.
+* `Graph.three_mul_sum_crossings_map`: the expected-crossings identity
+  `3 * ∑ σ, (g.map σ).crossings = n ! * g.disjointLinkPairs`.
 
 ## References
 
@@ -77,8 +77,8 @@ variable {g}
 @[simp] theorem Graph.crossingsUnder_one : g.crossingsUnder 1 = g.crossings := rfl
 
 /-- Relabelling moves the crossings to the relabelled positions. -/
-theorem Graph.crossings_relabel (σ : Perm (Fin n)) :
-    (g.relabel σ).crossings = g.crossingsUnder σ := by
+theorem Graph.crossings_map (σ : Perm (Fin n)) :
+    (g.map σ).crossings = g.crossingsUnder σ := by
   refine Finset.card_equiv
     (σ.symm.prodCongr (σ.symm.prodCongr (σ.symm.prodCongr σ.symm))) ?_
   rintro ⟨a, b, c, d⟩
@@ -266,17 +266,17 @@ private theorem card_linked_distinct :
     count is `n !` times the number of disjoint link pairs. So a uniformly
     random ordering expects a third of a crossing per pair of links sharing no
     endpoint, whatever the sentence's own order was. -/
-theorem Graph.three_mul_sum_crossings_relabel :
-    3 * ∑ σ : Perm (Fin n), (g.relabel σ).crossings =
+theorem Graph.three_mul_sum_crossings_map :
+    3 * ∑ σ : Perm (Fin n), (g.map σ).crossings =
       n ! * g.disjointLinkPairs := by
   have key : 24 * ∑ σ : Perm (Fin n), g.crossingsUnder σ =
       n ! * (8 * g.disjointLinkPairs) := by
     rw [mul_sum_crossingsUnder, card_linked_distinct]
-  have hsum : ∑ σ : Perm (Fin n), (g.relabel σ).crossings =
+  have hsum : ∑ σ : Perm (Fin n), (g.map σ).crossings =
       ∑ σ : Perm (Fin n), g.crossingsUnder σ :=
-    Finset.sum_congr rfl (λ σ _ => Graph.crossings_relabel σ)
+    Finset.sum_congr rfl (λ σ _ => Graph.crossings_map σ)
   refine Nat.eq_of_mul_eq_mul_left (show 0 < 8 by omega) ?_
-  calc 8 * (3 * ∑ σ : Perm (Fin n), (g.relabel σ).crossings)
+  calc 8 * (3 * ∑ σ : Perm (Fin n), (g.map σ).crossings)
       = 24 * ∑ σ : Perm (Fin n), g.crossingsUnder σ := by
         rw [hsum, ← Nat.mul_assoc]
     _ = n ! * (8 * g.disjointLinkPairs) := key
