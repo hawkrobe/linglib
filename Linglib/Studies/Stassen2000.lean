@@ -6,6 +6,8 @@ public import Linglib.Fragments.Hausa.Adpositions
 public import Linglib.Fragments.Hausa.Coordination
 public import Linglib.Fragments.Japanese.Adpositions
 public import Linglib.Fragments.Japanese.Coordination
+public import Linglib.Fragments.Yakut.Case
+public import Linglib.Fragments.Yakut.Coordination
 public import Linglib.Syntax.WordOrder
 public import Mathlib.Data.Finset.Grade
 
@@ -39,9 +41,10 @@ turns into a coordinate strategy (`Language.relevant_le_insert_iff`), the mixed 
 paper would call an AND-language but for the lexical identity of the markers.
 
 The lexical identity is checked on the Fragments, where a coordinator is also comitative when its
-form is a comitative adposition of its language (`Coordinator.IsAlsoComitative`): English *and*
-is not *with*, while Hausa *dà* and Japanese *to* are both 'and' and 'with'
-(`hausa_da_isAlsoComitative`, `japanese_to_isAlsoComitative`).
+form is a form of a comitative marker of its language, an adposition or a case
+(`Coordinator.IsAlsoComitative`): English *and* is not *with*, while Hausa *dà*, Japanese *to* and
+the Yakut comitative suffix are both 'and' and 'with' (`hausa_da_isAlsoComitative`,
+`japanese_to_isAlsoComitative`, `yakut_lin_isAlsoComitative`).
 
 The starting point of the drift is the language's pattern scheme, its basic word order with the
 comitative phrase in adverbial position (`scheme`). The subject and the comitative phrase are
@@ -162,17 +165,27 @@ end Language
 /-- English, the paper's example of an AND-language, links its coordinate strategy by *and*,
 distinct from its comitative *with*. -/
 theorem english_and_not_isAlsoComitative :
-    ¬ English.Coordination.and_.IsAlsoComitative English.Adpositions.with_ := by
+    ¬ English.Coordination.and_.IsAlsoComitative English.Adpositions.with_.morphs
+      English.Adpositions.with_.functions := by
   decide
 
 /-- Hausa *dà* 'and' is the comitative preposition *dà* 'with', (109). -/
-theorem hausa_da_isAlsoComitative : Hausa.da.IsAlsoComitative Hausa.Adpositions.da := by
+theorem hausa_da_isAlsoComitative :
+    Hausa.da.IsAlsoComitative Hausa.Adpositions.da.morphs Hausa.Adpositions.da.functions := by
   decide
 
 /-- Japanese, one of the verb-final WITH-languages of the paper, links its noun phrases by the
 comitative postposition *to*. -/
 theorem japanese_to_isAlsoComitative :
-    Japanese.Coordination.to_.IsAlsoComitative Japanese.Adpositions.«to» := by
+    Japanese.Coordination.to_.IsAlsoComitative Japanese.Adpositions.«to».morphs
+      Japanese.Adpositions.«to».functions := by
+  decide
+
+/-- Yakut, another verb-final WITH-language of the paper, links its noun phrases by the comitative
+suffix *-LĪn*. -/
+theorem yakut_lin_isAlsoComitative :
+    Yakut.Coordination.lin.IsAlsoComitative (Yakut.Case.exponents .com)
+      {Yakut.Case.label .com} := by
   decide
 
 /-! ### Pattern schemes -/

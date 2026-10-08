@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Morphology.Morph
 public import Linglib.Syntax.Case.Basic
 
 /-!
@@ -17,7 +18,8 @@ Krishnamurti and Gwynn's grammar; the oblique stem is the matter of `Studies/Ait
 
 ## Main definitions
 
-* `Telugu.Case`, `Telugu.Case.suffix`: the four cases, and the suffixes of the two that have one.
+* `Telugu.Case`, `Telugu.Case.exponents`: the four cases, and the suffixes of the two that have
+  one.
 
 ## References
 
@@ -56,10 +58,10 @@ def label : Case → _root_.Case
 /-- The suffix of a case, inside the noun's prosodic word, is *-ni* for the accusative, also
 *-nu* except after an *i*, and *-ki* for the dative, also *-ku* except after an *i*. The nominative
 and the genitive have none. -/
-def suffix : Case → Option String
-  | nom | gen => none
-  | acc => some "-ni/-nu"
-  | dat => some "-ki/-ku"
+def exponents : Case → List Morphology.Morph
+  | nom | gen => []
+  | acc => [.suff "ni", .suff "nu"]
+  | dat => [.suff "ki", .suff "ku"]
 
 end Case
 

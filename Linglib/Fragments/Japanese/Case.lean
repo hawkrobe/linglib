@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Morphology.Morph
 public import Linglib.Syntax.Case.Basic
 
 /-!
@@ -20,7 +21,8 @@ single *ni* entry, the matter of `Studies/SadakaneKoizumi1995.lean`.
 
 ## Main definitions
 
-* `Japanese.Case`, `Japanese.Case.form`: the four cases of the case particles, and the particles.
+* `Japanese.Case`, `Japanese.Case.exponents`: the four cases of the case particles, and the
+  particles.
 * `Japanese.Case.label`, `Japanese.Case.functions`: the comparative value each case is named for,
   and the values it expresses.
 * `Japanese.Case.droppable`: the cases whose particles casual speech drops.
@@ -53,12 +55,12 @@ inductive Case where
 
 namespace Case
 
-/-- `c.form` is the case particle of `c`, *ga* が, *o* を, *no* の or *ni* に. -/
-def form : Case → String
-  | nom => "ga"
-  | acc => "o"
-  | gen => "no"
-  | dat => "ni"
+/-- `c.exponents` is the case particle of `c`, enclitic *ga* が, *o* を, *no* の or *ni* に. -/
+def exponents : Case → List Morphology.Morph
+  | nom => [.encl "ga"]
+  | acc => [.encl "o"]
+  | gen => [.encl "no"]
+  | dat => [.encl "ni"]
 
 /-- The comparative value a case is named for. -/
 def label : Case → _root_.Case

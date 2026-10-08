@@ -257,7 +257,7 @@ theorem oblique_across_quantifier :
 nominative and genitive, a light suffix inside the prosodic word, or a heavy postposition
 outside it. -/
 def caseSuffix : ParadigmCell → Option Following
-  | .case c => c.suffix.map fun _ ↦ ⟨true, .light⟩
+  | .case c => c.exponents.head?.map fun _ ↦ ⟨true, .light⟩
   | .postposition _ => some ⟨false, .heavy⟩
 
 /-- The weak paradigm (8) violates *ABA on the containment hierarchy, since the nominative
