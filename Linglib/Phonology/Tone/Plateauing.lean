@@ -10,7 +10,7 @@ public import Mathlib.Order.Interval.Finset.Nat
 public import Linglib.Core.Data.List.TakeDrop
 public import Linglib.Phonology.Subregular.Dependence
 public import Linglib.Phonology.Autosegmental.OCP
-public import Linglib.Phonology.Autosegmental.Junction
+public import Linglib.Phonology.Autosegmental.TwoTier
 public import Linglib.Phonology.Autosegmental.Hull
 public import Linglib.Phonology.Tone.Basic
 public import Linglib.Phonology.Tone.Surfacing
@@ -105,29 +105,25 @@ theorem sum_length_melody (w : List TBU) :
   | nil => rfl
   | cons a w ih => cases a <;> simp [ih, Nat.add_comm]
 
-/-- A TBU translates, in coordinates, into one timing slot carrying the TBU's melody (Jardine's
-reading of the string as a representation). -/
-def toAR (a : TBU) : TieredAR Bool (TwoTier TRN Unit) := AR.junction (melody a) [()]
-
-theorem toAR_H : toAR .H = AR.single TRN.H () := rfl
-
-theorem toAR_O : toAR .O = AR.bare () := rfl
+/-- A TBU translates into the primitive with one timing slot carrying the TBU's melody
+(Jardine's reading of the string as a representation). -/
+def toAR (a : TBU) : TieredAR Bool (TwoTier TRN Unit) := AR.primitive (melody a) ()
 
 instance (a : TBU) : Finite (toAR a).obj.V :=
-  inferInstanceAs (Finite (AR.junction (melody a) [()]).obj.V)
+  inferInstanceAs (Finite (AR.primitive (melody a) ()).obj.V)
 
 @[simp] theorem tierWord_toAR_true (a : TBU) : (toAR a).tierWord true = melody a :=
-  AR.tierWord_junction_true _ _
+  AR.tierWord_ofWords_true
 
 @[simp] theorem tierWord_toAR_false (a : TBU) : (toAR a).tierWord false = [()] :=
-  AR.tierWord_junction_false _ _
+  AR.tierWord_ofWords_false
 
 @[simp] theorem tierLength_toAR_true (a : TBU) :
     (toAR a).tierLength true = (melody a).length :=
-  AR.tierLength_junction_true _ _
+  AR.tierLength_ofWords_true
 
 @[simp] theorem tierLength_toAR_false (a : TBU) : (toAR a).tierLength false = 1 :=
-  AR.tierLength_junction_false _ _
+  AR.tierLength_ofWords_false
 
 @[simp] theorem link_toAR (a : TBU) (p q : ℕ) :
     (toAR a).link true false p q ↔ p < (melody a).length ∧ q = 0 := by
@@ -208,8 +204,8 @@ theorem link_plateauAR (w : List TBU) (k j : ℕ) :
 
 /-- Slot `j` surfaces with H in the output representation iff the string window holds. -/
 theorem surfacesWith_plateauAR (w : List TBU) (j : ℕ) :
-    (plateauAR w).surfacesWith TRN.H j ↔ .H ∈ w.take (j + 1) ∧ .H ∈ w.drop j := by
-  simp only [AR.surfacesWith, link_plateauAR, and_assoc, exists_eq_left]
+    (plateauAR w).SurfacesWith TRN.H j ↔ .H ∈ w.take (j + 1) ∧ .H ∈ w.drop j := by
+  simp only [AR.SurfacesWith, link_plateauAR, and_assoc, exists_eq_left]
   refine and_congr_right fun hA => and_iff_left_of_imp fun _ => ?_
   obtain ⟨n, hn⟩ := Nat.exists_eq_succ_of_ne_zero
     (List.count_pos_iff.mpr (List.take_subset _ _ hA)).ne'
@@ -240,7 +236,7 @@ theorem utp.surfaces_def : utp.Surfaces w i ↔ .H ∈ w.take (i + 1) ∧ .H ∈
 /-- What surfaces is the representation. `utp.Surfaces w i` is the H-linkedness of timing slot
 `i` in the output representation `plateauAR w`, the OCP-merged, hull-closed realization. -/
 theorem utp.surfaces_iff_surfacesWith_plateauAR :
-    utp.Surfaces w i ↔ (plateauAR w).surfacesWith TRN.H i :=
+    utp.Surfaces w i ↔ (plateauAR w).SurfacesWith TRN.H i :=
   (surfacesWith_plateauAR w i).symm
 
 /-- Position `i` surfaces iff there is an H at some `j ≤ i` and an H at some `j ≥ i`. -/

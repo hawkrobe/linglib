@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Phonology.Autosegmental.Junction
+public import Linglib.Phonology.Autosegmental.TwoTier
 
 /-!
 # Tangale tone processes and the elision cascade
@@ -38,9 +38,8 @@ inductive Tone where
 
 open Autosegmental
 
-/-- High Tone Spread ([kidda-1985] (31)) on the link presentation: the toneme
-    at `i` — an H linked to TBU `j` at a morpheme or word boundary — spreads
-    onto the following TBU. -/
+/-- High Tone Spread ([kidda-1985] (31)) spreads the toneme at `i`, an H linked to TBU `j`
+at a morpheme or word boundary, onto the following TBU. -/
 def hts (L : Bool → Bool → ℕ → ℕ → Prop) (i j : ℕ) (b b' : Bool) (p q : ℕ) : Prop :=
   L b b' p q ∨ b = true ∧ b' = false ∧ p = i ∧ q = j + 1
 
@@ -55,7 +54,7 @@ variable {ws : ∀ b, List (TwoTier Tone Unit b)} {L : Bool → Bool → ℕ →
     on top of whatever it already bore. -/
 theorem hts_surfacesWith_H {i j : ℕ} (hH : (ws true)[i]? = some Tone.H)
     (hj : j + 1 < (ws false).length) :
-    (AR.ofData ws (hts L i j)).surfacesWith Tone.H (j + 1) := by
+    (AR.ofData ws (hts L i j)).SurfacesWith Tone.H (j + 1) := by
   rcases List.getElem?_eq_some_iff.mp hH with ⟨hi, -⟩
   refine ⟨i, (AR.link_ofData true false i (j + 1)).mpr
     ⟨by decide, hi, hj, Or.inl (Or.inr ⟨rfl, rfl, rfl, rfl⟩)⟩, ?_⟩
@@ -68,7 +67,7 @@ theorem hts_surfacesWith_H {i j : ℕ} (hH : (ws true)[i]? = some Tone.H)
 theorem lld_hts_shift {i j : ℕ} (hH : (ws true)[i]? = some Tone.H)
     (hj : j + 1 < (ws false).length) (hne : j + 1 ≠ j)
     (hor : ∀ p q, ¬ L false true p q) :
-    (AR.ofData ws (lld (hts L i j) i j)).surfacesWith Tone.H (j + 1) ∧
+    (AR.ofData ws (lld (hts L i j) i j)).SurfacesWith Tone.H (j + 1) ∧
       ¬ (AR.ofData ws (lld (hts L i j) i j)).link true false i j := by
   rcases List.getElem?_eq_some_iff.mp hH with ⟨hi, -⟩
   constructor
@@ -126,13 +125,12 @@ def ponE : List Slot := [.C, .V, .C, .V]
 /-- The perfective suffix *gó*. -/
 def go : List Slot := [.C, .V]
 
-/-- The boundary form: word-internal elision only; the suffix
-surfaces faithful (*pon-go*; before a focused constituent,
-*wai-gó lánda* of [hartmann-zimmermann-2004] (25)). -/
+/-- The boundary form has word-internal elision only, so the suffix surfaces faithful
+(*pon-go*; before a focused constituent, *wai-gó lánda* of [hartmann-zimmermann-2004] (25)). -/
 def blockedForm : List Slot := ve ponE ++ go
 
-/-- The phrase-medial form: phrasal elision hits the suffix vowel and
-epenthesis repairs the final cluster (*pon-ug ŋâi* 'knew Ngai'). -/
+/-- In the phrase-medial form, phrasal elision hits the suffix vowel and epenthesis repairs
+the final cluster (*pon-ug ŋâi* 'knew Ngai'). -/
 def elidedForm : List Slot := epenthesize (ve (ve ponE ++ go))
 
 /-- The cascade is audible: both outputs are phonotactically licit

@@ -151,7 +151,8 @@ manipulated apart from the whole node, the paper's partial activity, which the b
 
 open Autosegmental
 
-/-- The four Laal tone tiers: `[±upper]` register, `[±raised]`, the TRN, the mora. -/
+/-- The four Laal tone tiers are the `[±upper]` register, `[±raised]`, the TRN, and the
+mora. -/
 abbrev laalTier : Fin 4 → Type := ![Option Bool, Option Bool, Unit, Unit]
 
 /-- The tier words of a one-node M-toned form. -/
@@ -179,10 +180,9 @@ instance (v w : mForm.obj.V) : Decidable (mForm.obj.edges.Adj v w) :=
 instance (v w : mForm.obj.V) : Decidable (mForm.obj.arcs.Adj v w) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
-/-- The form is planar — each spoke's single association is non-crossing, in
-    the foundational path form of the NCC. -/
-theorem mForm_planar : IsPlanar mForm.obj.edges mForm.obj.arcs := by
-  unfold IsPlanar
+/-- The form obeys the NCC, each spoke being a single association. -/
+theorem mForm_noCrossing : NoCrossing mForm.obj.edges mForm.obj.arcs := by
+  unfold NoCrossing
   decide
 
 /-- **Partial activity** (§5): delinking a feature acts on one tier-pair layer
