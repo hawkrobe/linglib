@@ -91,6 +91,8 @@ theorem niSeries_licensing_characterized :
 /-- Every attested context of every entry admits it. -/
 theorem russian_licensing_sound :
     ∀ e ∈ items, ∀ c ∈ e.licensingContexts, c.Admits e := by
-  simp +decide [ktoLibo, nikto, nichego, nikogda, ktoUgodno, items, LicensingContext.Admits]
+  simp only [ktoLibo, nikto, nichego, nikogda, ktoUgodno, items, List.forall_mem_cons,
+    List.not_mem_nil, IsEmpty.forall_iff, implies_true, and_true]
+  and_intros <;> decide
 
 end Russian.PolarityItems

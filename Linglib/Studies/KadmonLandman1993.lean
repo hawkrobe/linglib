@@ -532,17 +532,37 @@ theorem almost_rows :
 
 /-! ### The licensing data -/
 
-/-- A licensing row records the context at the narrowest operator over *any*, a substrate
-`LicensingContext` or a local entailment signature, the settle-for-less and
-metalinguistic-denial readings, and the judgment. -/
+/-- The licensing contexts the paper's rows name. -/
+inductive Context where
+  | negation
+  | generic
+  | universalRestrictor
+  | adversative
+  | conditionalAntecedent
+  deriving DecidableEq, Repr
+
+/-- The library's licensing context a row's context is. -/
+def Context.toLicensingContext : Context → LicensingContext
+  | .negation => .negation
+  | .generic => .generic
+  | .universalRestrictor => .universalRestrictor
+  | .adversative => .adversative
+  | .conditionalAntecedent => .conditionalAntecedent
+
+instance (c : Context) : DecidablePred c.toLicensingContext.Licenses := by
+  cases c <;> dsimp only [Context.toLicensingContext] <;> infer_instance
+
+/-- A licensing row records the context at the narrowest operator over *any*, a licensing context
+or a local entailment signature, the settle-for-less and metalinguistic-denial readings, and the
+judgment. -/
 structure Row where
-  context : Option LicensingContext
+  context : Option Context
   localSignature : Signature
   settleForLess : Bool
   metalinguistic : Bool
   grammatical : Bool
 
-def contextOf : String → Option LicensingContext
+def contextOf : String → Option Context
   | "negation" => some .negation
   | "generic" => some .generic
   | "universalRestrictor" => some .universalRestrictor
@@ -575,16 +595,8 @@ strengthens, or it is read as settling for less under *glad*, or as a metalingui
 negated *because*. -/
 theorem rows_agree :
     ∀ r ∈ rows, r.grammatical = true ↔
-      (∃ c ∈ r.context, c.Licenses English.PolarityItems.any) ∨
+      (∃ c ∈ r.context, c.toLicensingContext.Licenses English.PolarityItems.any) ∨
         r.localSignature.toDEStrength ≠ ⊥ ∨ r.settleForLess = true ∨ r.metalinguistic = true := by
-  simp +decide [rows, Examples.all, Row.ofDatum, contextOf, signatureOf,
-    Datum.feature?, List.lookup, English.PolarityItems.any,
-    Examples.kl1993_1, Examples.kl1993_2, Examples.kl1993_10, Examples.kl1993_27b,
-    Examples.kl1993_55, Examples.kl1993_56, Examples.kl1993_72, Examples.kl1993_73,
-    Examples.kl1993_76B, Examples.kl1993_82, Examples.kl1993_88, Examples.kl1993_95,
-    Examples.kl1993_105, Examples.kl1993_106, Examples.kl1993_109, Examples.kl1993_122,
-    Examples.kl1993_123, Examples.kl1993_125, Examples.kl1993_132, Examples.kl1993_143,
-    Examples.kl1993_almost_every, Examples.kl1993_almost_no, Examples.kl1993_almost_some,
-    Examples.kl1993_almost_an, Examples.kl1993_almost_any]
+  decide +kernel
 
 end KadmonLandman1993

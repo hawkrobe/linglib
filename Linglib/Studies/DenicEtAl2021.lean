@@ -208,7 +208,7 @@ operator in the doubly negative ones (§1, §5), and under *only 12*. -/
 theorem licenses_of_mem_licensingContext {e : Environment} {c : LicensingContext}
     (h : c ∈ e.licensingContext) : c.Licenses any ∧ c.Licenses ever ∧ c.Licenses atAll := by
   cases e <;> simp only [licensingContext, Option.mem_def, Option.some.injEq, reduceCtorEq] at h <;>
-    subst h <;> simp +decide [any, ever, atAll]
+    subst h <;> decide
 
 end Environment
 

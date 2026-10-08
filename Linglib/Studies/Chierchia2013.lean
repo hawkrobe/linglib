@@ -23,9 +23,9 @@ exhaustification is vacuous, while at the existential itself no witness is entai
 exhaustification is a contradiction. *Any* alone extends to the free-choice positions, a
 possibility modal or an imperative, the divide between it and *ever* and between Italian
 *qualsiasi* and *alcuno*. The positions are the paper's easy and hard columns, the hard column
-being the licensing contexts whose signatures fix their polarity, and the readings and
-judgments are rows: the theorems derive each reading from Maximize Strength and each judgment
-from the licensing relation applied to the Fragment entries.
+being the licensing contexts whose licensers fix their polarity, and the readings and judgments
+are rows: the theorems derive each reading from Maximize Strength and each judgment from the
+licensing relation applied to the Fragment entries, and every row must name its position.
 
 ## References
 
@@ -92,8 +92,8 @@ def maximizeStrength : SignType → Option DisjunctionReading
   | .neg => some .inclusive
   | .zero => none
 
-/-- The selection is sound: for an embedding with a signature of the position's polarity, the
-selected reading is the strongest. -/
+/-- Under an embedding with a signature of the position's polarity, the reading Maximize Strength
+selects is the strongest. -/
 theorem isStrongest_maximizeStrength {φ : Signature} {C : Set W → Set W} (hφ : φ.SoundFor C) :
     ∀ r ∈ maximizeStrength φ.sign, IsStrongest p q C r := by
   intro r hr
@@ -129,9 +129,9 @@ end Exhaustification
 
 /-! ### The positions -/
 
-/-- The positions fall into the paper's two columns, the easy column, where *or* is exclusive and
-*any* is out, and the hard column, the downward-entailing licensing contexts of [ladusaw-1979],
-where *or* is inclusive and *any* is in. -/
+/-- The paper's positions. In the easy column *or* is exclusive and *any* is out, in the hard
+column of [ladusaw-1979]'s licensing contexts *or* is inclusive and *any* is in, and in the
+free-choice positions *any* alone survives. -/
 inductive Position where
   /-- A positive sentence. -/
   | matrix
@@ -141,63 +141,27 @@ inductive Position where
   | everyScope
   /-- The scope of a positive quantifier such as *somebody*. -/
   | positiveQuantifierScope
-  /-- A licensing context, such as the antecedent of a conditional, the first argument of
-  *every*, negation, *nobody*, *doubt*, a possibility modal or an imperative. -/
-  | licensing (c : LicensingContext)
+  | conditionalAntecedent
+  /-- The first argument of *every*. -/
+  | universalRestrictor
+  | negation
+  | nobody
+  /-- The complement of *doubt*. -/
+  | doubtVerb
+  | modalPossibility
+  | imperative
+  deriving DecidableEq, Repr
 
-open Classical in
-/-- A position in the easy column is upward entailing, and a licensing context is downward
-entailing when its licenser carries weak strength. -/
-noncomputable def Position.polarity : Position → SignType
-  | .licensing c => if c.licenser.Carries .weak then -1 else 1
-  | _ => 1
-
-theorem polarity_licensing_of_carries {c : LicensingContext} (h : c.licenser.Carries .weak) :
-    (Position.licensing c).polarity = -1 := by
-  simp [Position.polarity, h]
-
-theorem polarity_licensing_of_not_carries {c : LicensingContext} (h : ¬ c.licenser.Carries .weak) :
-    (Position.licensing c).polarity = 1 := by
-  simp [Position.polarity, h]
-
-/-- A position licenses an item when it is a licensing context that licenses it. -/
-def Position.Licenses : Position → PolarityItem → Prop
-  | .licensing c, e => c.Licenses e
-  | _, _ => False
-
-@[simp] theorem Position.licenses_licensing {c : LicensingContext} {e : PolarityItem} :
-    (Position.licensing c).Licenses e ↔ c.Licenses e := Iff.rfl
-
-/-- Every downward-entailing position licenses *ever*: the hard column of the readings of *or*
-is the column where the pure negative-polarity item is grammatical. -/
-theorem licenses_ever_of_downward :
-    ∀ pos : Position, pos.polarity = -1 → pos.Licenses English.PolarityItems.ever := by
-  rintro (_ | _ | _ | _ | c) h <;> try exact absurd h (by decide)
-  by_cases hc : c.licenser.Carries .weak
-  · exact .inl ⟨.weak, rfl, hc⟩
-  · exact absurd ((polarity_licensing_of_not_carries hc).symm.trans h) (by decide)
-
-/-- *Any* parts ways with *ever* exactly where the context licenses free choice: a possibility
-modal, an imperative, a generic. -/
-theorem licenses_any_not_ever_iff (c : LicensingContext) :
-    c.Licenses English.PolarityItems.any ∧ ¬ c.Licenses English.PolarityItems.ever ↔
-      c.licenser.LicensesFreeChoice := by
-  have hfc : c.licenser.LicensesFreeChoice →
-      ¬ c.licenser.Carries .weak ∧ ¬ c.licenser.LicensesByRelevance := by
-    generalize c.licenser = L
-    cases L <;> simp [Licenser.LicensesFreeChoice, Licenser.Carries, Licenser.IsStrawsonDE,
-      Licenser.LicensesByRelevance]
-  have ha : c.Licenses English.PolarityItems.any ↔ c.licenser.Carries .weak ∨
-      c.licenser.LicensesFreeChoice ∨ c.licenser.LicensesByRelevance := by
-    simp [LicensingContext.Licenses, English.PolarityItems.any, PolarityItem.IsFCI]
-  have he : c.Licenses English.PolarityItems.ever ↔ c.licenser.Carries .weak ∨
-      c.licenser.LicensesByRelevance := by
-    simp [LicensingContext.Licenses, English.PolarityItems.ever, PolarityItem.IsFCI]
-  rw [ha, he]
-  refine ⟨fun ⟨h, hn⟩ ↦ h.elim (fun h' ↦ absurd (.inl h') hn) fun h' ↦
-    h'.resolve_right fun h'' ↦ hn (.inr h''), fun h ↦ ⟨.inr (.inl h), ?_⟩⟩
-  rintro (h' | h')
-  exacts [(hfc h).1 h', (hfc h).2 h']
+/-- The licensing context a position is, if it is one. -/
+def Position.context : Position → Option LicensingContext
+  | .conditionalAntecedent => some .conditionalAntecedent
+  | .universalRestrictor => some .universalRestrictor
+  | .negation => some .negation
+  | .nobody => some .nobody
+  | .doubtVerb => some .doubtVerb
+  | .modalPossibility => some .modalPossibility
+  | .imperative => some .imperative
+  | .matrix | .conditionalConsequent | .everyScope | .positiveQuantifierScope => none
 
 /-- The licensers of the downward-entailing positions carry weak strength, those of the modal
 positions do not. -/
@@ -224,6 +188,70 @@ theorem not_carries_weak_modalPossibility :
 
 theorem not_carries_weak_imperative : ¬ LicensingContext.imperative.licenser.Carries .weak := id
 
+/-- A position is downward entailing when it is a licensing context whose licenser carries weak
+strength. -/
+def Position.Downward (p : Position) : Prop := ∃ c ∈ p.context, c.licenser.Carries .weak
+
+instance : DecidablePred Position.Downward
+  | .conditionalAntecedent => isTrue ⟨_, rfl, carries_weak_conditionalAntecedent⟩
+  | .universalRestrictor => isTrue ⟨_, rfl, carries_weak_universalRestrictor⟩
+  | .negation => isTrue ⟨_, rfl, carries_weak_negation⟩
+  | .nobody => isTrue ⟨_, rfl, carries_weak_nobody⟩
+  | .doubtVerb => isTrue ⟨_, rfl, carries_weak_doubtVerb⟩
+  | .modalPossibility => isFalse fun ⟨_, h, hc⟩ ↦
+      not_carries_weak_modalPossibility (Option.some_inj.1 h ▸ hc)
+  | .imperative => isFalse fun ⟨_, h, hc⟩ ↦ not_carries_weak_imperative (Option.some_inj.1 h ▸ hc)
+  | .matrix | .conditionalConsequent | .everyScope | .positiveQuantifierScope =>
+    isFalse fun ⟨_, h, _⟩ ↦ nomatch h
+
+/-- A downward-entailing position is antitone, any other upward entailing. -/
+def Position.polarity (p : Position) : SignType := if p.Downward then -1 else 1
+
+/-- A position licenses an item when it is a licensing context that licenses it. -/
+def Position.Licenses (p : Position) (e : PolarityItem) : Prop := ∃ c ∈ p.context, c.Licenses e
+
+theorem Position.licenses_iff {p : Position} {c : LicensingContext} (h : p.context = some c)
+    {e : PolarityItem} : p.Licenses e ↔ c.Licenses e := by
+  simp [Position.Licenses, h]
+
+instance : ∀ p : Position, DecidablePred p.Licenses
+  | .conditionalAntecedent | .universalRestrictor | .negation | .nobody | .doubtVerb
+  | .modalPossibility | .imperative => fun _ ↦ decidable_of_iff' _ (Position.licenses_iff rfl)
+  | .matrix | .conditionalConsequent | .everyScope | .positiveQuantifierScope =>
+    fun _ ↦ isFalse fun ⟨_, h, _⟩ ↦ nomatch h
+
+/-- Every downward-entailing position licenses *ever*: the hard column of the readings of *or*
+is the column where the pure negative-polarity item is grammatical. -/
+theorem licenses_ever_of_downward (pos : Position) (h : pos.polarity = -1) :
+    pos.Licenses English.PolarityItems.ever := by
+  by_cases hd : pos.Downward
+  · obtain ⟨c, hc, hw⟩ := hd
+    exact ⟨c, hc, .inl ⟨.weak, rfl, hw⟩⟩
+  · simp [Position.polarity, hd] at h
+
+/-- *Any* parts ways with *ever* exactly where the context licenses free choice, as a possibility
+modal, an imperative or a generic does. -/
+theorem licenses_any_not_ever_iff (c : LicensingContext) :
+    c.Licenses English.PolarityItems.any ∧ ¬ c.Licenses English.PolarityItems.ever ↔
+      c.licenser.LicensesFreeChoice := by
+  have hfc : c.licenser.LicensesFreeChoice →
+      ¬ c.licenser.Carries .weak ∧ ¬ c.licenser.LicensesByRelevance := by
+    generalize c.licenser = L
+    cases L with
+    | modal => exact fun _ ↦ ⟨id, id⟩
+    | classical | strawson | question => exact fun h ↦ (h : False).elim
+  have ha : c.Licenses English.PolarityItems.any ↔ c.licenser.Carries .weak ∨
+      c.licenser.LicensesFreeChoice ∨ c.licenser.LicensesByRelevance := by
+    simp [LicensingContext.Licenses, English.PolarityItems.any, PolarityItem.IsFCI]
+  have he : c.Licenses English.PolarityItems.ever ↔ c.licenser.Carries .weak ∨
+      c.licenser.LicensesByRelevance := by
+    simp [LicensingContext.Licenses, English.PolarityItems.ever, PolarityItem.IsFCI]
+  rw [ha, he]
+  refine ⟨fun ⟨h, hn⟩ ↦ h.elim (fun h' ↦ absurd (.inl h') hn) fun h' ↦
+    h'.resolve_right fun h'' ↦ hn (.inr h''), fun h ↦ ⟨.inr (.inl h), ?_⟩⟩
+  rintro (h' | h')
+  exacts [(hfc h).1 h', (hfc h).2 h']
+
 /-! ### The rows -/
 
 /-- The position a row names. -/
@@ -232,13 +260,13 @@ def Position.ofKey : String → Option Position
   | "conditionalConsequent" => some .conditionalConsequent
   | "everyScope" => some .everyScope
   | "positiveQuantifierScope" => some .positiveQuantifierScope
-  | "conditionalAntecedent" => some (.licensing .conditionalAntecedent)
-  | "universalRestrictor" => some (.licensing .universalRestrictor)
-  | "negation" => some (.licensing .negation)
-  | "nobody" => some (.licensing .nobody)
-  | "doubtVerb" => some (.licensing .doubtVerb)
-  | "modalPossibility" => some (.licensing .modalPossibility)
-  | "imperative" => some (.licensing .imperative)
+  | "conditionalAntecedent" => some .conditionalAntecedent
+  | "universalRestrictor" => some .universalRestrictor
+  | "negation" => some .negation
+  | "nobody" => some .nobody
+  | "doubtVerb" => some .doubtVerb
+  | "modalPossibility" => some .modalPossibility
+  | "imperative" => some .imperative
   | _ => none
 
 /-- The Fragment entry a row names. -/
@@ -249,23 +277,13 @@ def item : String → Option PolarityItem
   | "qualsiasi" => some Italian.PolarityItems.qualsiasi
   | _ => none
 
-/-- In every unforced row the reading of *or* is the one Maximize Strength selects from the
-polarity of its position. -/
+/-- Every unforced row on *or* names a position, and its reading is the one Maximize Strength
+selects from the polarity of that position. -/
 theorem or_rows :
     ∀ e ∈ Examples.all, e.feature? "item" = some "or" → e.feature? "forced" = none →
-      ∀ pos ∈ (e.feature? "position").bind Position.ofKey,
+      ∃ pos ∈ (e.feature? "position").bind Position.ofKey,
         e.feature? "reading" = (maximizeStrength pos.polarity).map DisjunctionReading.key := by
-  simp +decide [Examples.all, Position.ofKey, Datum.feature?, List.lookup,
-    Position.polarity, maximizeStrength, carries_weak_conditionalAntecedent,
-    carries_weak_universalRestrictor, carries_weak_negation, carries_weak_nobody,
-    carries_weak_doubtVerb, not_carries_weak_modalPossibility, not_carries_weak_imperative,
-    Examples.ex1a, Examples.ex1b, Examples.ex5a, Examples.ex5b, Examples.ex12a,
-    Examples.ex12b, Examples.ex12c, Examples.ex12d, Examples.ex13, Examples.ex19a,
-    Examples.ex15ia, Examples.ex15ib, Examples.ex15iia, Examples.ex15iib, Examples.ex15iiia,
-    Examples.ex15iiib, Examples.ex16ia, Examples.ex16ib, Examples.ex16iia, Examples.ex16iib,
-    Examples.ex16iiia, Examples.ex16iiib, Examples.ex21a, Examples.ex21b, Examples.ex21c,
-    Examples.ex21d, Examples.ex70ai, Examples.ex70aii, Examples.ex70ci, Examples.ex70cii,
-    Examples.ex70di, Examples.ex70dii, Examples.ex70ei, Examples.ex70eii]
+  decide +kernel
 
 /-- The exclusive reading is available under *nobody*, but only forced by the context. -/
 theorem exclusive_under_nobody_forced :
@@ -273,21 +291,12 @@ theorem exclusive_under_nobody_forced :
       e.feature? "position" = some "nobody" ∧ e.feature? "reading" = some "exclusive" := by
   decide
 
-/-- Every judgment on *any*, *ever*, *alcuno* and *qualsiasi* is the licensing theory's: acceptable
-exactly in a licensing context that licenses the Fragment entry. -/
+/-- Every row on another item names a Fragment entry and a position, and is judged acceptable
+exactly when the position licenses the entry. -/
 theorem polarity_rows :
-    ∀ e ∈ Examples.all, ∀ i ∈ (e.feature? "item").bind item,
-      ∀ pos ∈ (e.feature? "position").bind Position.ofKey,
+    ∀ e ∈ Examples.all, e.feature? "item" ≠ some "or" →
+      ∃ i ∈ (e.feature? "item").bind item, ∃ pos ∈ (e.feature? "position").bind Position.ofKey,
         (e.judgment = .acceptable ↔ pos.Licenses i) := by
-  simp +decide [Examples.all, Position.ofKey, item, Datum.feature?,
-    List.lookup, Position.Licenses, English.PolarityItems.any, English.PolarityItems.ever,
-    Italian.PolarityItems.alcuno, Italian.PolarityItems.qualsiasi,
-    Examples.ex1a, Examples.ex1b, Examples.ex5a, Examples.ex5b, Examples.ex12a,
-    Examples.ex12b, Examples.ex12c, Examples.ex12d, Examples.ex13, Examples.ex19a,
-    Examples.ex15ia, Examples.ex15ib, Examples.ex15iia, Examples.ex15iib, Examples.ex15iiia,
-    Examples.ex15iiib, Examples.ex16ia, Examples.ex16ib, Examples.ex16iia, Examples.ex16iib,
-    Examples.ex16iiia, Examples.ex16iiib, Examples.ex21a, Examples.ex21b, Examples.ex21c,
-    Examples.ex21d, Examples.ex70ai, Examples.ex70aii, Examples.ex70ci, Examples.ex70cii,
-    Examples.ex70di, Examples.ex70dii, Examples.ex70ei, Examples.ex70eii]
+  decide +kernel
 
 end Chierchia2013

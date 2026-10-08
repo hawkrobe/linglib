@@ -22,8 +22,9 @@ entries are attested and excluded in.
 ## Main declarations
 
 * `PolarityItem.LicensingContext.Licenses`, `AntiLicenses`, `Admits`.
-* `PolarityItem.LicensingContext.licenses_nobody`, …: what each named context licenses, the simp
-  set fragments check their entries with.
+* `PolarityItem.LicensingContext.licenses_nobody`, …: what each named context licenses, as a
+  condition on the item, and the `Decidable` instances built from these lemmas, so that `decide`
+  checks an item against a named context.
 
 ## Main results
 
@@ -279,6 +280,77 @@ private theorem licenses_modal {F : ModalFamily} (hc : c.licenser = .modal F)
 
 @[simp] theorem not_antiLicenses_freeRelative : ¬ freeRelative.AntiLicenses e :=
   not_antiLicenses_modal rfl
+
+/-! ### Deciding licensing at the named contexts
+
+What a named context licenses and anti-licenses is decided by the item, through the lemmas
+above. -/
+
+instance : DecidablePred negation.Licenses := fun _ ↦ decidable_of_iff' _ licenses_negation
+instance : DecidablePred nobody.Licenses := fun _ ↦ decidable_of_iff' _ licenses_nobody
+instance : DecidablePred few.Licenses := fun _ ↦ decidable_of_iff' _ licenses_few
+instance : DecidablePred atMost.Licenses := fun _ ↦ decidable_of_iff' _ licenses_atMost
+instance : DecidablePred universalRestrictor.Licenses :=
+  fun _ ↦ decidable_of_iff' _ licenses_universalRestrictor
+instance : DecidablePred withoutClause.Licenses :=
+  fun _ ↦ decidable_of_iff' _ licenses_withoutClause
+instance : DecidablePred beforeClause.Licenses := fun _ ↦ decidable_of_iff' _ licenses_beforeClause
+instance : DecidablePred clausalComparative.Licenses :=
+  fun _ ↦ decidable_of_iff' _ licenses_clausalComparative
+instance : DecidablePred tooTo.Licenses := fun _ ↦ decidable_of_iff' _ licenses_tooTo
+instance : DecidablePred doubtVerb.Licenses := fun _ ↦ decidable_of_iff' _ licenses_doubtVerb
+instance : DecidablePred denyVerb.Licenses := fun _ ↦ decidable_of_iff' _ licenses_denyVerb
+instance : DecidablePred onlyFocus.Licenses := fun _ ↦ decidable_of_iff' _ licenses_onlyFocus
+instance : DecidablePred adversative.Licenses := fun _ ↦ decidable_of_iff' _ licenses_adversative
+instance : DecidablePred superlative.Licenses := fun _ ↦ decidable_of_iff' _ licenses_superlative
+instance : DecidablePred conditionalAntecedent.Licenses :=
+  fun _ ↦ decidable_of_iff' _ licenses_conditionalAntecedent
+instance : DecidablePred sinceTemporal.Licenses :=
+  fun _ ↦ decidable_of_iff' _ licenses_sinceTemporal
+instance : DecidablePred question.Licenses := fun _ ↦ decidable_of_iff' _ licenses_question
+instance : DecidablePred modalPossibility.Licenses :=
+  fun _ ↦ decidable_of_iff' _ licenses_modalPossibility
+instance : DecidablePred modalNecessity.Licenses :=
+  fun _ ↦ decidable_of_iff' _ licenses_modalNecessity
+instance : DecidablePred imperative.Licenses := fun _ ↦ decidable_of_iff' _ licenses_imperative
+instance : DecidablePred generic.Licenses := fun _ ↦ decidable_of_iff' _ licenses_generic
+instance : DecidablePred freeRelative.Licenses := fun _ ↦ decidable_of_iff' _ licenses_freeRelative
+
+instance : DecidablePred negation.AntiLicenses :=
+  fun _ ↦ decidable_of_iff' _ antiLicenses_negation_iff
+instance : DecidablePred nobody.AntiLicenses := fun _ ↦ decidable_of_iff' _ antiLicenses_nobody
+instance : DecidablePred few.AntiLicenses := fun _ ↦ decidable_of_iff' _ antiLicenses_few
+instance : DecidablePred atMost.AntiLicenses := fun _ ↦ decidable_of_iff' _ antiLicenses_atMost
+instance : DecidablePred universalRestrictor.AntiLicenses :=
+  fun _ ↦ decidable_of_iff' _ antiLicenses_universalRestrictor
+instance : DecidablePred withoutClause.AntiLicenses :=
+  fun _ ↦ decidable_of_iff' _ antiLicenses_withoutClause
+instance : DecidablePred beforeClause.AntiLicenses :=
+  fun _ ↦ decidable_of_iff' _ antiLicenses_beforeClause
+instance : DecidablePred clausalComparative.AntiLicenses :=
+  fun _ ↦ decidable_of_iff' _ antiLicenses_clausalComparative
+instance : DecidablePred tooTo.AntiLicenses := fun _ ↦ decidable_of_iff' _ antiLicenses_tooTo
+instance : DecidablePred doubtVerb.AntiLicenses :=
+  fun _ ↦ decidable_of_iff' _ antiLicenses_doubtVerb
+instance : DecidablePred denyVerb.AntiLicenses := fun _ ↦ decidable_of_iff' _ antiLicenses_denyVerb
+instance : DecidablePred onlyFocus.AntiLicenses := fun _ ↦ isFalse not_antiLicenses_onlyFocus
+instance : DecidablePred adversative.AntiLicenses := fun _ ↦ isFalse not_antiLicenses_adversative
+instance : DecidablePred superlative.AntiLicenses := fun _ ↦ isFalse not_antiLicenses_superlative
+instance : DecidablePred conditionalAntecedent.AntiLicenses :=
+  fun _ ↦ isFalse not_antiLicenses_conditionalAntecedent
+instance : DecidablePred sinceTemporal.AntiLicenses :=
+  fun _ ↦ isFalse not_antiLicenses_sinceTemporal
+instance : DecidablePred question.AntiLicenses := fun _ ↦ isFalse not_antiLicenses_question
+instance : DecidablePred modalPossibility.AntiLicenses :=
+  fun _ ↦ isFalse not_antiLicenses_modalPossibility
+instance : DecidablePred modalNecessity.AntiLicenses :=
+  fun _ ↦ isFalse not_antiLicenses_modalNecessity
+instance : DecidablePred imperative.AntiLicenses := fun _ ↦ isFalse not_antiLicenses_imperative
+instance : DecidablePred generic.AntiLicenses := fun _ ↦ isFalse not_antiLicenses_generic
+instance : DecidablePred freeRelative.AntiLicenses := fun _ ↦ isFalse not_antiLicenses_freeRelative
+
+instance [DecidablePred c.Licenses] [DecidablePred c.AntiLicenses] : DecidablePred c.Admits :=
+  fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
 
 /-! ### The theory -/
 

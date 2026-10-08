@@ -76,12 +76,16 @@ theorem senki_licensing_characterized (c : LicensingContext) :
 /-- The free-choice items are admitted in every context they are attested in. -/
 theorem freeChoice_licensing_sound :
     ∀ e ∈ [akárki, bárki], ∀ c ∈ e.licensingContexts, c.Admits e := by
-  simp +decide [akárki, bárki, LicensingContext.Admits]
+  simp only [akárki, bárki, List.forall_mem_cons, List.not_mem_nil, IsEmpty.forall_iff,
+    implies_true, and_true]
+  and_intros <;> decide
 
 /-- The licensing theory admits both free-choice series under clausal negation and in questions,
 where [haspelmath-1997] stars them: a weak negative polarity item is licensed in both. -/
 theorem freeChoice_excluded_admitted :
     ∀ e ∈ [akárki, bárki], ∀ c ∈ e.excludedContexts, c.Admits e := by
-  simp +decide [akárki, bárki, LicensingContext.Admits]
+  simp only [akárki, bárki, List.forall_mem_cons, List.not_mem_nil, IsEmpty.forall_iff,
+    implies_true, and_true]
+  and_intros <;> decide
 
 end Hungarian.PolarityItems

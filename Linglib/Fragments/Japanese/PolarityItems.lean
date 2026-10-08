@@ -66,7 +66,9 @@ theorem dareMo_licensing_characterized (c : LicensingContext) :
 /-- Every attested *dare-demo* context admits it: all four are generic contexts. -/
 theorem dareDemo_licensing_sound :
     ∀ c ∈ dareDemo.licensingContexts, c.Admits dareDemo := by
-  simp +decide [dareDemo, LicensingContext.Admits]
+  simp only [dareDemo, List.forall_mem_cons, List.not_mem_nil, IsEmpty.forall_iff, implies_true,
+    and_true]
+  and_intros <;> decide
 
 /-- The n-word and the free choice item are attested in disjoint contexts, clausemate negation
 against the modal, imperative and generic ones. -/
