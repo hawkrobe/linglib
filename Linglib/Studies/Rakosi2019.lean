@@ -117,12 +117,12 @@ theorem reciprocity_implies_multiple_individuals {E : Type*} {uAnaph uAnt : ℕ}
 reflexive binding imposes no plurality on the denotation. -/
 theorem binding_compatible_with_singleton {E : Type*} (e : E) (uAnaph uAnt : ℕ) :
     bindingCond uAnaph uAnt
-      {PartialAssign.update (PartialAssign.update ⊥ uAnaph e) uAnt e} ∅ := by
+      {(PartialAssign.single uAnaph e).update uAnt e} ∅ := by
   intro g hg
   obtain rfl : g = _ := hg
   by_cases h : uAnaph = uAnt
   · subst h; rfl
-  · simp [PartialAssign.update_at, h]
+  · simp [PartialAssign.update_self, h]
 
 /-! ### The forms -/
 
