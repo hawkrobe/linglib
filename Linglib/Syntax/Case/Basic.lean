@@ -8,16 +8,18 @@ public import Mathlib.Tactic.DeriveFintype
 /-!
 # Case
 
-The comparative case values, the concepts under which the case systems of different languages
-are compared. The cases of a language are its own categories and are not these values
+The comparative case values, the concepts under which the case systems of different languages are
+compared. The cases of a language are its own categories and are not these values
 ([haspelmath-2010]): a fragment defines them as an inductive type `L.Case` and matches them to the
-comparative values by two functions, `L.Case.label`, the value its traditional name corresponds
-to, and, where the grammar lists more than the name, `L.Case.functions`, the values it expresses
-([blake-2001] ch. 2). A language has a case when some word distinguishes it by form, and the other
-words may realize it with the form of another case ([corbett-2008]), so a fragment with paradigms
-proves that they separate its cases. The hierarchies and orders the literature places on the
-comparative values are each stated where they are used: the containment orders in
-`Syntax/Case/Order.lean` and Blake's hierarchy of case systems in `Studies/Blake1994.lean`.
+comparative values by two functions, `L.Case.label`, the value its traditional name corresponds to,
+and, where the grammar lists more than the name, `L.Case.functions`, the values it expresses
+([blake-2001] ch. 2). Where the grammar gives its forms, `L.Case.exponents` lists the morphs that
+mark it, allomorphs and register variants among them. A language has a case when some word
+distinguishes it by form, and the other words may realize it with the form of another case
+([corbett-2008]), so a fragment with paradigms proves that they separate its cases. The hierarchies
+and orders the literature places on the comparative values are each stated where they are used: the
+containment orders in `Syntax/Case/Order.lean` and Blake's hierarchy of case systems in
+`Studies/Blake1994.lean`.
 
 The Universal Dependencies case tags are the corpus vocabulary, reached through
 `Morphology/Word/UD.lean` ([de-marneffe-zeman-2021]). Every value realizes as a tag and every tag

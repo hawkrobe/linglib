@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Morphology.Morph
 public import Linglib.Syntax.Case.Basic
 
 /-!
@@ -8,11 +9,21 @@ public import Linglib.Syntax.Case.Basic
 Sakha has eight cases: nominative, accusative, genitive, dative, ablative, instrumental,
 comitative and partitive. The genitive is homophonous with the nominative except after a
 third-person possessive suffix. [baker-vinokurova-2010]'s account of how the structural cases
-are assigned is in `Studies/BakerVinokurova2010.lean`.
+are assigned is in `Studies/BakerVinokurova2010.lean`. The suffixes are [stachowski-menz-1998]'s
+(p. 421), who count no genitive and add a comparative in *-TĀγAr*; the comitative is *-LĪn*, after
+kinship terms *-nĀn*.
+
+## Implementation notes
+
+* Suffixes are written in Stachowski and Menz's notation, a capital for a consonant or vowel that
+  assimilates to the stem.
+* The genitive is recorded with the nominative's empty exponent; its form after a possessive
+  suffix is not recorded.
 
 ## References
 
 * [baker-vinokurova-2010]
+* [stachowski-menz-1998]
 -/
 
 @[expose] public section
@@ -49,5 +60,15 @@ def Case.label : Case → _root_.Case
   | inst => .inst
   | com => .com
   | part => .part
+
+/-- The suffixes of a case. -/
+def Case.exponents : Case → List Morphology.Morph
+  | nom | gen => []
+  | acc => [.suff "(n)I"]
+  | dat => [.suff "GA"]
+  | abl => [.suff "(t)tAn"]
+  | inst => [.suff "(I)nAn"]
+  | com => [.suff "LĪn", .suff "nĀn"]
+  | part => [.suff "TA"]
 
 end Yakut

@@ -15,6 +15,7 @@ public import Linglib.Fragments.Korean.Coordination
 public import Linglib.Fragments.Lango.Adpositions
 public import Linglib.Fragments.Lango.Coordination
 public import Linglib.Fragments.Latin.Coordination
+public import Linglib.Fragments.Tibetic.Classical.Case
 public import Linglib.Fragments.Tibetic.Classical.Coordination
 public import Linglib.Fragments.Turkish.Coordination
 public import Linglib.Fragments.Yoruba.Coordination
@@ -41,20 +42,19 @@ The chapter's examples are the rows of `Data/Examples/Haspelmath2007.json`.
 
 ## Implementation notes
 
-The chapter's exemplar languages with Fragment coordination entries use them, in the
-attestations and in the correlative pairs of (45), conjunctive and disjunctive; the others
-carry their coordinator inline.
-A binary pattern is the pair of its coordinands' markings, so syndesis is the number of marked
-coordinands, and `marking_agrees_with_side` checks the patterns against the attachment side the
-Fragments record for each coordinator. Whether a construction is emphatic is recorded only
-where the chapter says so, and a diachronic source only where the chapter states one, so
-Classical Tibetan *-daŋ*, "a former case-marker", has none, although [beyer-1992], the
-chapter's source for it, treats it as the same form as the accompaniment role particle. The
-word-order half of the comitative
-derivation, adposition order following modifier order, is taken as the `CoordinatorPosition`
-argument of `DiachronicSource.pattern`. The comitative-sourced attestations include Tauya
-*-sou*, doubled on both conjuncts, the extension §5.1 notes, so `comitative_patterns` admits
-the postpositive bisyndetic pattern beside the two source patterns.
+The chapter's exemplar languages with Fragment coordination entries use them, in the attestations
+and in the correlative pairs of (45), conjunctive and disjunctive; the others carry their
+coordinator inline. A binary pattern is the pair of its coordinands' markings, so syndesis is the
+number of marked coordinands, and `marking_agrees_with_side` checks the patterns against the
+attachment side the Fragments record for each coordinator. Whether a construction is emphatic is
+recorded only where the chapter says so, and a diachronic source only where the chapter states one,
+so Classical Tibetan *-daŋ*, which the chapter says "comes from a former case-marker" without naming
+the case, has none; the Fragment records, after [beyer-1992], the chapter's source for it, that it
+is still the accompaniment role particle (`dang_isAlsoComitative`). The word-order half of the
+comitative derivation, adposition order following modifier order, is taken as the
+`CoordinatorPosition` argument of `DiachronicSource.pattern`. The comitative-sourced attestations
+include Tauya *-sou*, doubled on both conjuncts, the extension §5.1 notes, so `comitative_patterns`
+admits the postpositive bisyndetic pattern beside the two source patterns.
 
 ## References
 
@@ -261,8 +261,17 @@ theorem comitative_patterns :
 /-- The comitative-sourced coordinators with Fragment entries, Hausa *dà* and Lango *kèdè*, are
 still the comitative prepositions of their languages. -/
 theorem comitative_source_isAlsoComitative :
-    Hausa.da.IsAlsoComitative Hausa.Adpositions.da ∧
-      Lango.Coordination.kede.IsAlsoComitative Lango.Adpositions.kede := by
+    Hausa.da.IsAlsoComitative Hausa.Adpositions.da.morphs Hausa.Adpositions.da.functions ∧
+      Lango.Coordination.kede.IsAlsoComitative Lango.Adpositions.kede.morphs
+        Lango.Adpositions.kede.functions := by
+  decide
+
+/-- Classical Tibetan *-daŋ*, which comes from a former case-marker, (41), is still the
+accompaniment role particle. -/
+theorem dang_isAlsoComitative :
+    ClassicalTibetan.Coordination.dang.IsAlsoComitative
+      (ClassicalTibetan.Case.exponents .accompaniment)
+      (ClassicalTibetan.Case.functions .accompaniment) := by
   decide
 
 /-! ### Emphatic correlatives, (45) -/

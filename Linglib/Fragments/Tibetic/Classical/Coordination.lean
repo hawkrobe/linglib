@@ -24,7 +24,8 @@ particle *-daŋ* 'with', so that 'lama-*daŋ* king go' reads as 'the lama and th
 
 namespace ClassicalTibetan.Coordination
 
-/-- *-daŋ* 'and', on the first coordinand, also the accompaniment role particle 'with'. -/
+/-- *-daŋ* 'and', on the first coordinand, also the accompaniment role particle 'with',
+`ClassicalTibetan.Case.accompaniment`. -/
 def dang : Coordinator :=
   { morph := .encl "daŋ", gloss := "and", role := .conjunctive }
 

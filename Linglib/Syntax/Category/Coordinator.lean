@@ -1,6 +1,8 @@
 module
 
-public import Linglib.Syntax.Category.Adposition.Basic
+public import Linglib.Morphology.Morph
+public import Linglib.Morphology.Word.Basic
+public import Linglib.Syntax.Case.Basic
 
 /-!
 # Coordinators
@@ -19,15 +21,14 @@ coordinands that its semantic type fixes, is `Coordinator.denote` in
   same form has.
 * `Coordinator.Correlative`: a pair of correlative coordinators with the single coordinator
   of the plain construction.
-* `Coordinator.IsAlsoComitative`: the coordinator's form is a comitative adposition, 'and' is
-  'with'.
+* `Coordinator.IsAlsoComitative`: the coordinator's form is a form of a comitative marker, 'and'
+  is 'with'.
 
 ## Implementation notes
 
-* A comitative use is a relation to an `Adposition` entry, not a field. Comitative case markers,
-  as in Korean and Classical Tibetan, have no entries to relate to and are noted in the
-  coordinator's docstring. The additive and quantifier uses are flags until the library has
-  entries for additive particles and for the quantifiers a particle builds.
+* A comitative use is a relation to a comitative marker of the language, an adposition or a case
+  with its exponents, not a field. The additive and quantifier uses are flags until the library
+  has entries for additive particles and for the quantifiers a particle builds.
 * Analyses that divide the conjunctive coordinators further, such as the two conjunction heads
   of [mitrovic-sauerland-2016], classify the entries in their own studies.
 
@@ -86,16 +87,21 @@ structure Coordinator.Correlative where
 
 namespace Coordinator
 
-variable (c : Coordinator) (p : Adposition)
+variable (c : Coordinator)
 
 /-- `c.toWord` is the coordinator as a word, of UD category `CCONJ`, its form in boundary
 notation. -/
 def toWord : Morphology.Word := { form := toString c.morph, cat := .CCONJ }
 
-/-- `c.IsAlsoComitative p`: the coordinator's form is the comitative adposition `p`, so that 'and'
-is 'with', [stassen-2000]'s lexical identity of the coordinator with the comitative marker. -/
-def IsAlsoComitative : Prop := p.morphs = [c.morph] ∧ .com ∈ p.functions
+/-- `c.IsAlsoComitative ms fs`: the coordinator's morph is one of the forms `ms` of a marker whose
+case values `fs` include the comitative, so that 'and' is 'with', [stassen-2000]'s lexical
+identity of the coordinator with the comitative marker. The marker is an adposition, with its
+morphs and functions, or a case of the language, with its exponents and functions. -/
+def IsAlsoComitative (ms : List Morphology.Morph) (fs : Finset Case) : Prop :=
+  c.morph ∈ ms ∧ .com ∈ fs
 
-instance : Decidable (c.IsAlsoComitative p) := inferInstanceAs (Decidable (_ ∧ _))
+instance (ms : List Morphology.Morph) (fs : Finset Case) :
+    Decidable (c.IsAlsoComitative ms fs) :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
 end Coordinator
