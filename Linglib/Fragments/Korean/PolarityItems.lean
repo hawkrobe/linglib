@@ -57,6 +57,8 @@ theorem nwukwuTo_licensing_characterized (c : LicensingContext) :
 /-- Every attested environment of every item admits it. -/
 theorem korean_licensing_sound :
     ∀ e ∈ [nwukwu, nwukwuTo, nwukwuNa], ∀ c ∈ e.licensingContexts, c.Admits e := by
-  simp +decide [nwukwu, nwukwuTo, nwukwuNa, LicensingContext.Admits]
+  simp only [nwukwu, nwukwuTo, nwukwuNa, List.forall_mem_cons, List.not_mem_nil, IsEmpty.forall_iff,
+    implies_true, and_true]
+  and_intros <;> decide
 
 end Korean.PolarityItems

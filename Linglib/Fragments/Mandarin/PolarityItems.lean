@@ -97,7 +97,9 @@ def renhe : PolarityItem :=
 /-- Every attested context of every entry admits it. -/
 theorem mandarin_licensing_sound :
     ∀ e ∈ [shei, shenme, sheiDou, renhe], ∀ c ∈ e.licensingContexts, c.Admits e := by
-  simp +decide [shei, shenme, sheiDou, renhe, LicensingContext.Admits]
+  simp only [shei, shenme, sheiDou, renhe, List.forall_mem_cons, List.not_mem_nil,
+    IsEmpty.forall_iff, implies_true, and_true]
+  and_intros <;> decide
 
 /-- The emphatic series needs clausemate negation, so it is licensed exactly by the contexts
 carrying anti-morphic strength, clausal negation alone among the named contexts. -/

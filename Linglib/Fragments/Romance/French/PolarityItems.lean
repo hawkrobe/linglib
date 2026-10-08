@@ -64,6 +64,8 @@ def items : List PolarityItem :=
 /-- Every attested context of every entry licenses it. -/
 theorem french_licensing_sound :
     ∀ e ∈ items, ∀ c ∈ e.licensingContexts, c.Admits e := by
-  simp +decide [personne, rien, jamais, plus, items, LicensingContext.Admits]
+  simp only [personne, rien, jamais, plus, items, List.forall_mem_cons, List.not_mem_nil,
+    IsEmpty.forall_iff, implies_true, and_true]
+  and_intros <;> decide
 
 end French.PolarityItems

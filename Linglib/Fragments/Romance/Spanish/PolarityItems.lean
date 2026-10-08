@@ -82,11 +82,13 @@ def items : List PolarityItem := [nadie, nada, ninguno, nunca, jamás]
 /-- Every attested context of every entry licenses it. -/
 theorem spanish_licensing_sound :
     ∀ e ∈ items, ∀ c ∈ e.licensingContexts, c.Admits e := by
-  simp +decide [nadie, nada, ninguno, nunca, jamás, items, LicensingContext.Admits]
+  simp only [nadie, nada, ninguno, nunca, jamás, items, List.forall_mem_cons, List.not_mem_nil,
+    IsEmpty.forall_iff, implies_true, and_true]
+  and_intros <;> decide
 
 /-- The licensing theory admits *jamás* after a comparative, where [butt-benjamin-2019] exclude
 it: a weak negative polarity item is licensed by every anti-additive context. -/
 theorem clausalComparative_admits_jamás : LicensingContext.clausalComparative.Admits jamás := by
-  simp +decide [jamás, LicensingContext.Admits]
+  decide
 
 end Spanish.PolarityItems

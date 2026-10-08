@@ -96,6 +96,6 @@ theorem niSeries_strict_concord :
 
 /-- Clausemate negation blocks the *ně-* items. -/
 theorem neSeries_antiLicensed : ∀ e ∈ neSeries, LicensingContext.negation.AntiLicenses e := by
-  simp +decide [neSeries, nejaky, nekdo]
+  decide
 
 end Czech.PolarityItems

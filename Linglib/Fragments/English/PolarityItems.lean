@@ -309,11 +309,12 @@ is excluded from. -/
 theorem english_licensing_sound :
     ∀ e ∈ allPolarityItems, (∀ c ∈ e.licensingContexts, c.Admits e) ∧
       ∀ c ∈ e.excludedContexts, ¬ c.Admits e := by
-  simp +decide [allPolarityItems, weakNPIs, strongNPIs, invertedNPIs,
-    allPPIs, canonicalPPIs, invertedPPIs, any, ever, yet, anymore, atAll, inTheLeast, aSingle,
-    whatsoever, liftAFinger, budgeAnInch, inYears, until_, either, whatever, whoever, whichever,
-    someone, already, too, somewhat, rather, tonsOf, utterly, wildHorses, allTheTeaInChina,
-    aTenFootPole, inAMillionYears, atTheDropOfAHat, inAJiffy, forAPittance, forASong,
-    LicensingContext.Admits]
+  simp only [allPolarityItems, weakNPIs, strongNPIs, invertedNPIs, allPPIs, canonicalPPIs,
+    invertedPPIs, any, ever, yet, anymore, atAll, inTheLeast, aSingle, whatsoever, liftAFinger,
+    budgeAnInch, inYears, until_, either, whatever, whoever, whichever, someone, already, too,
+    somewhat, rather, tonsOf, utterly, wildHorses, allTheTeaInChina, aTenFootPole, inAMillionYears,
+    atTheDropOfAHat, inAJiffy, forAPittance, forASong, List.cons_append, List.nil_append,
+    List.forall_mem_cons, List.not_mem_nil, IsEmpty.forall_iff, implies_true, and_true]
+  and_intros <;> decide
 
 end English.PolarityItems

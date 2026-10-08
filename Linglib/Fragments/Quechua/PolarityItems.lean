@@ -35,6 +35,8 @@ def piPis : PolarityItem :=
 /-- Every attested context admits the item. -/
 theorem piPis_licensing_sound :
     ∀ c ∈ piPis.licensingContexts, c.Admits piPis := by
-  simp +decide [piPis, LicensingContext.Admits]
+  simp only [piPis, List.forall_mem_cons, List.not_mem_nil, IsEmpty.forall_iff, implies_true,
+    and_true]
+  and_intros <;> decide
 
 end Quechua.PolarityItems

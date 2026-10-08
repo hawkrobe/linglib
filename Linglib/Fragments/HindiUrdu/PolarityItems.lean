@@ -80,7 +80,8 @@ def bhiiItems : List PolarityItem := [koiiBhii, ekBhii, kuchBhii, zaraaBhii, kab
 /-- Every attested context of every entry admits it. -/
 theorem hindi_licensing_sound :
     ∀ e ∈ bhiiItems, ∀ c ∈ e.licensingContexts, c.Admits e := by
-  simp +decide [koiiBhii, ekBhii, kuchBhii, zaraaBhii, kabhiiBhii, bhiiItems,
-    LicensingContext.Admits]
+  simp only [koiiBhii, ekBhii, kuchBhii, zaraaBhii, kabhiiBhii, bhiiItems, List.forall_mem_cons,
+    List.not_mem_nil, IsEmpty.forall_iff, implies_true, and_true]
+  and_intros <;> decide
 
 end HindiUrdu.PolarityItems
