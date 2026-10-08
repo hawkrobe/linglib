@@ -18,11 +18,13 @@ of one dimension, and a persona, a maximal set of compatible poles in the sense 
 
 * `Dimension`: competence, warmth and anti-solidarity.
 * `Pole`: the six ends of the dimensions, with `Pole.dimension` and `Pole.polarity`.
+* `Pole.opposite`: the other end of a pole's dimension.
 * `Pole.incompatible`: the graph joining the two poles of each dimension.
 
 ## Main results
 
 * `Pole.eq_iff`: a pole is determined by its dimension and polarity.
+* `Pole.incompatible_adj_iff`: two poles are incompatible when one is opposite the other.
 * `Pole.mem_maximalIndepSets_iff`: the personae are the sets with exactly one pole of each
   dimension.
 
@@ -47,7 +49,7 @@ inductive Dimension where
   deriving DecidableEq
 
 instance : Fintype Dimension :=
-  ⟨{.competence, .warmth, .antiSolidarity}, λ d => by cases d <;> simp⟩
+  ⟨{.competence, .warmth, .antiSolidarity}, fun d ↦ by cases d <;> simp⟩
 
 /-- A pole is one end of a dimension of social evaluation. -/
 inductive Pole where
@@ -60,7 +62,7 @@ inductive Pole where
   deriving DecidableEq
 
 instance : Fintype Pole :=
-  ⟨{.competent, .incompetent, .warm, .cold, .solidary, .antiSolidary}, λ p => by cases p <;> simp⟩
+  ⟨{.competent, .incompetent, .warm, .cold, .solidary, .antiSolidary}, fun p ↦ by cases p <;> simp⟩
 
 /-- The dimension a pole is an end of. -/
 def Pole.dimension : Pole → Dimension
@@ -79,17 +81,44 @@ theorem Pole.eq_iff {p q : Pole} :
     p = q ↔ p.dimension = q.dimension ∧ p.polarity = q.polarity := by
   revert p q; decide
 
+/-- The other end of a pole's dimension. -/
+def Pole.opposite : Pole → Pole
+  | .competent => .incompetent
+  | .incompetent => .competent
+  | .warm => .cold
+  | .cold => .warm
+  | .solidary => .antiSolidary
+  | .antiSolidary => .solidary
+
+@[simp] theorem Pole.opposite_opposite (p : Pole) : p.opposite.opposite = p := by cases p <;> rfl
+
+@[simp] theorem Pole.dimension_opposite (p : Pole) : p.opposite.dimension = p.dimension := by
+  cases p <;> rfl
+
+@[simp] theorem Pole.polarity_opposite (p : Pole) : p.opposite.polarity = -p.polarity := by
+  cases p <;> rfl
+
+/-- `Pole.opposite` as an involutive permutation. -/
+def Pole.oppositeEquiv : Equiv.Perm Pole := Function.Involutive.toPerm _ Pole.opposite_opposite
+
+@[simp] theorem Pole.oppositeEquiv_apply (p : Pole) : Pole.oppositeEquiv p = p.opposite := rfl
+
+@[simp] theorem Pole.oppositeEquiv_symm : Pole.oppositeEquiv.symm = Pole.oppositeEquiv := rfl
+
 /-- Two poles are incompatible when they are the two ends of one dimension. -/
 def Pole.incompatible : SimpleGraph Pole where
   Adj p q := p ≠ q ∧ p.dimension = q.dimension
-  symm := ⟨λ _ _ h => ⟨h.1.symm, h.2.symm⟩⟩
-  loopless := ⟨λ _ h => h.1 rfl⟩
+  symm := ⟨fun _ _ h ↦ ⟨h.1.symm, h.2.symm⟩⟩
+  loopless := ⟨fun _ h ↦ h.1 rfl⟩
 
 instance : DecidableRel Pole.incompatible.Adj :=
-  λ p q => inferInstanceAs (Decidable (p ≠ q ∧ _))
+  fun p q ↦ inferInstanceAs (Decidable (p ≠ q ∧ _))
 
 theorem Pole.incompatible_adj (p q : Pole) :
     Pole.incompatible.Adj p q ↔ p.dimension = q.dimension ∧ p.polarity ≠ q.polarity := by
+  revert p q; decide
+
+theorem Pole.incompatible_adj_iff {p q : Pole} : Pole.incompatible.Adj p q ↔ q = p.opposite := by
   revert p q; decide
 
 /-- The personae are the sets with exactly one pole of each dimension. -/

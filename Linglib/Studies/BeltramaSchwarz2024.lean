@@ -24,7 +24,7 @@ would also predict globally more charitable judgments, which are not observed.
 
 ## Main definitions
 
-* `precisionField`: Beltrama, Solt and Burnett's measured indexical field over their precision
+* `precisionField`: Beltrama, Solt and Burnett's measured opposition over their precision
   variants, of which the precise and approximate ones are at issue here.
 * `personaShift`, `level`: the strictness shift a persona induces, read off the field, and the
   precision level it sets.
@@ -98,10 +98,10 @@ def Persona.descriptors : Persona → List String
 
 /-! ### The precision field, inherited from the measured one -/
 
-/-- The indexical field for numeral precision is [beltrama-solt-burnett-2023]'s measured field,
-inherited rather than restipulated. -/
+/-- The indexical field for numeral precision is the opposition [beltrama-solt-burnett-2023]
+measured, inherited rather than restipulated. -/
 def precisionField : AssociationField BeltramaSoltBurnett2023.Variant Dimension SignType :=
-  BeltramaSoltBurnett2023.bsbField
+  BeltramaSoltBurnett2023.contrastField .exp1
 
 /-- The precision variant a persona favors (§2). -/
 def Persona.precision : Persona → BeltramaSoltBurnett2023.Variant
@@ -113,8 +113,8 @@ def Persona.dimension : Persona → Dimension
   | .nerdy => .competence
   | .chill => .warmth
 
-/-- Production and comprehension cohere: the mode a persona favors positively indexes the dimension
-it foregrounds. -/
+/-- Production and comprehension cohere, the mode a persona favors positively indexing the
+dimension it foregrounds. -/
 theorem bidirectionality (p : Persona) :
     precisionField.Indexes p.precision p.dimension := by
   cases p <;> decide +kernel
@@ -126,14 +126,14 @@ def precisionGroundedField : GroundedField BeltramaSoltBurnett2023.Variant Pole.
 /-- Precise speech indexes {competent, cold, antiSolidary}. -/
 theorem exact_scmProperties :
     precisionGroundedField.indexes .precise =
-      {.competent, .cold, .antiSolidary} := by
-  decide +kernel
+      {.competent, .cold, .antiSolidary} :=
+  BeltramaSoltBurnett2023.ground_contrastField_precise .exp1
 
 /-- Approximate speech indexes {incompetent, warm, solidary}. -/
 theorem approx_scmProperties :
     precisionGroundedField.indexes .approximate =
-      {.incompetent, .warm, .solidary} := by
-  decide +kernel
+      {.incompetent, .warm, .solidary} :=
+  BeltramaSoltBurnett2023.ground_contrastField_approximate .exp1
 
 /-! ### Roundness gating -/
 
@@ -180,7 +180,7 @@ theorem personaShift_chill : personaShift (some .chill) = -1 := by decide +kerne
 field. -/
 theorem personaShift_nerdy_eq_neg_chill :
     personaShift (some .nerdy) = -personaShift (some .chill) :=
-  congrFun BeltramaSoltBurnett2023.opposite_directions .competence
+  congrFun (BeltramaSoltBurnett2023.antipodal_contrastField .exp1) .competence
 
 /-- The Competence and the Warmth clusters predict the same shift, so the sign field cannot tell
 apart the two sources of the effect that §3 distinguishes. -/
@@ -280,8 +280,8 @@ theorem nerdy_effect_is_task_dependent :
       predictedShift (some .nerdy) .truthValueJudgment := by
   decide +kernel
 
-/-- Blocking is structural: a shift is suppressed to neutral exactly when the condition is already
-neutral or points toward rejection in a prejudicial task. -/
+/-- A shift is suppressed to neutral exactly when the condition is already neutral or points toward
+rejection in a prejudicial task. -/
 theorem shift_blocked_iff (c : PersonaCondition) (t : TaskType) :
     predictedShift c t = 0 ↔
       personaShift c = 0 ∨
