@@ -25,12 +25,11 @@ namespace HindiUrdu.Coordination
 
 /-- *aur* 'and'. -/
 def aur : Coordinator :=
-  { form := "aur", gloss := "and", role := .conjunctive, kind := .free }
+  { morph := .free "aur", gloss := "and", role := .conjunctive }
 
 /-- *bhii* 'also, too', after each coordinand 'both … and'. -/
 def bhii : Coordinator :=
-  { form := "bhii", gloss := "also, too; and", role := .conjunctive, kind := .free,
-    alsoAdditive := true }
+  { morph := .free "bhii", gloss := "also, too; and", role := .conjunctive, alsoAdditive := true }
 
 /-- The coordinators. -/
 def allEntries : List Coordinator := [aur, bhii]

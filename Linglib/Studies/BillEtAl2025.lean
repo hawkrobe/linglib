@@ -179,8 +179,8 @@ theorem bareJ_covert_not_desiderata : ¬ Desiderata Account.bareJ.covert := by d
 morphological route is that Georgian *-c* is a bound clitic where Hungarian *is* is free
 ([clark-2017]). -/
 theorem mu_kind_differs :
-    (georgian.exponent (.mu 0)).map (·.kind) = some (.bound .after .clitic) ∧
-      (hungarian.exponent (.mu 0)).map (·.kind) = some .free := by
+    (georgian.exponent (.mu 0)).map (·.morph.kind) = some (.bound .after .clitic) ∧
+      (hungarian.exponent (.mu 0)).map (·.morph.kind) = some .free := by
   decide
 
 /-! ### The act-out task -/

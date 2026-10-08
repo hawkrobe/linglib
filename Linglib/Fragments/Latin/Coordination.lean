@@ -33,32 +33,31 @@ namespace Latin.Coordination
 
 /-- *et* 'and'. -/
 def et : Coordinator :=
-  { form := "et", gloss := "and", role := .conjunctive, kind := .free }
+  { morph := .free "et", gloss := "and", role := .conjunctive }
 
 /-- *-que* 'and', enclitic in the second coordinand, also in *quisque* 'each'. -/
 def que : Coordinator :=
-  { form := "-que", gloss := "and", role := .conjunctive, kind := .bound .after .clitic,
-    alsoQuantifier := true }
+  { morph := .encl "que", gloss := "and", role := .conjunctive, alsoQuantifier := true }
 
 /-- *atque*, before consonants *ac*, 'and also'. -/
 def atque : Coordinator :=
-  { form := "atque", gloss := "and also", role := .conjunctive, kind := .free }
+  { morph := .free "atque", gloss := "and also", role := .conjunctive }
 
 /-- *neque*, *nec* 'and not', repeated for 'neither … nor'. -/
 def neque : Coordinator :=
-  { form := "neque", gloss := "and not, nor", role := .negative, kind := .free }
+  { morph := .free "neque", gloss := "and not, nor", role := .negative }
 
 /-- *aut* 'or'. -/
 def aut : Coordinator :=
-  { form := "aut", gloss := "or", role := .disjunctive, kind := .free }
+  { morph := .free "aut", gloss := "or", role := .disjunctive }
 
 /-- *vel* 'or'. -/
 def vel : Coordinator :=
-  { form := "vel", gloss := "or", role := .disjunctive, kind := .free }
+  { morph := .free "vel", gloss := "or", role := .disjunctive }
 
 /-- *sed* 'but'. -/
 def sed : Coordinator :=
-  { form := "sed", gloss := "but", role := .adversative, kind := .free }
+  { morph := .free "sed", gloss := "but", role := .adversative }
 
 /-- The coordinators. -/
 def allEntries : List Coordinator := [et, que, atque, neque, aut, vel, sed]

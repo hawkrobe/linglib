@@ -1,5 +1,11 @@
 module
 
+public import Linglib.Fragments.English.Adpositions
+public import Linglib.Fragments.English.Coordination
+public import Linglib.Fragments.Hausa.Adpositions
+public import Linglib.Fragments.Hausa.Coordination
+public import Linglib.Fragments.Japanese.Adpositions
+public import Linglib.Fragments.Japanese.Coordination
 public import Linglib.Syntax.WordOrder
 public import Mathlib.Data.Finset.Grade
 
@@ -31,6 +37,11 @@ relevant feature but the linker and is covered by the coordinate strategy
 (`Language.erase_distinctMarker_covBy`); it is the one hybrid that differentiating the linker
 turns into a coordinate strategy (`Language.relevant_le_insert_iff`), the mixed WITH-language the
 paper would call an AND-language but for the lexical identity of the markers.
+
+The lexical identity is checked on the Fragments, where a coordinator is also comitative when its
+form is a comitative adposition of its language (`Coordinator.IsAlsoComitative`): English *and*
+is not *with*, while Hausa *dà* and Japanese *to* are both 'and' and 'with'
+(`hausa_da_isAlsoComitative`, `japanese_to_isAlsoComitative`).
 
 The starting point of the drift is the language's pattern scheme, its basic word order with the
 comitative phrase in adverbial position (`scheme`). The subject and the comitative phrase are
@@ -145,6 +156,24 @@ example : ({ Agrees := False, encodings := {⊥, {.pluralAgreement}ᶜ} } : Lang
   decide
 
 end Language
+
+/-! ### The linker in the Fragments -/
+
+/-- English, the paper's example of an AND-language, links its coordinate strategy by *and*,
+distinct from its comitative *with*. -/
+theorem english_and_not_isAlsoComitative :
+    ¬ English.Coordination.and_.IsAlsoComitative English.Adpositions.with_ := by
+  decide
+
+/-- Hausa *dà* 'and' is the comitative preposition *dà* 'with', (109). -/
+theorem hausa_da_isAlsoComitative : Hausa.da.IsAlsoComitative Hausa.Adpositions.da := by
+  decide
+
+/-- Japanese, one of the verb-final WITH-languages of the paper, links its noun phrases by the
+comitative postposition *to*. -/
+theorem japanese_to_isAlsoComitative :
+    Japanese.Coordination.to_.IsAlsoComitative Japanese.Adpositions.«to» := by
+  decide
 
 /-! ### Pattern schemes -/
 

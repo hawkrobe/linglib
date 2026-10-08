@@ -31,26 +31,25 @@ namespace Hungarian.Coordination
 
 /-- *és* 'and'. -/
 def es : Coordinator :=
-  { form := "és", gloss := "and", role := .conjunctive, kind := .free }
+  { morph := .free "és", gloss := "and", role := .conjunctive }
 
 /-- *is* 'also, too', after each coordinand 'both … and'. -/
 def is_ : Coordinator :=
-  { form := "is", gloss := "also, too; and", role := .conjunctive, kind := .free,
-    alsoAdditive := true }
+  { morph := .free "is", gloss := "also, too; and", role := .conjunctive, alsoAdditive := true }
 
 /-- *vagy* 'or'. -/
 def vagy : Coordinator :=
-  { form := "vagy", gloss := "or", role := .disjunctive, kind := .free }
+  { morph := .free "vagy", gloss := "or", role := .disjunctive }
 
 /-- *de* 'but'. -/
 def de : Coordinator :=
-  { form := "de", gloss := "but", role := .adversative, kind := .free }
+  { morph := .free "de", gloss := "but", role := .adversative }
 
 /-- The coordinators. -/
 def allEntries : List Coordinator := [es, is_, vagy, de]
 
 /-- *mind … mind* 'both … and'. -/
-def mindMind : Coordinator.Correlative := ⟨"mind", "mind", es⟩
+def mindMind : Coordinator.Correlative := ⟨[.free "mind"], [.free "mind"], es⟩
 
 /-- The emphatic constructions. -/
 def correlatives : List Coordinator.Correlative := [mindMind]

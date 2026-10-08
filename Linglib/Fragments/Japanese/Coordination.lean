@@ -30,21 +30,22 @@ their decomposition of conjunction; the indeterminate quantifiers built on *mo* 
 
 namespace Japanese.Coordination
 
-/-- *to* 'and', enclitic on the first conjunct, also the comitative 'with'. -/
+/-- *to* 'and', enclitic on the first conjunct, also the comitative postposition 'with',
+`Japanese.Adpositions.«to»`. -/
 def to_ : Coordinator :=
-  { form := "to", gloss := "and; with", role := .conjunctive, kind := .bound .after .clitic }
+  { morph := .encl "to", gloss := "and", role := .conjunctive }
 
 /-- *mo* 'and', enclitic on each conjunct, also the additive 'too' and the universal particle
 of the indeterminates. -/
 def mo : Coordinator :=
-  { form := "mo", gloss := "also, too; and; every", role := .conjunctive,
-    kind := .bound .after .clitic, alsoAdditive := true, alsoQuantifier := true }
+  { morph := .encl "mo", gloss := "also, too; and; every", role := .conjunctive,
+    alsoAdditive := true, alsoQuantifier := true }
 
 /-- *ka* 'or', enclitic, also the question particle and the existential particle of the
 indeterminates. -/
 def ka : Coordinator :=
-  { form := "ka", gloss := "or; question; some", role := .disjunctive,
-    kind := .bound .after .clitic, alsoQuantifier := true }
+  { morph := .encl "ka", gloss := "or; question; some", role := .disjunctive,
+    alsoQuantifier := true }
 
 /-- The coordinators. -/
 def allEntries : List Coordinator := [to_, mo, ka]

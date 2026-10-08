@@ -25,12 +25,11 @@ namespace Farsi.Coordination
 
 /-- *va* 'and', colloquially the enclitic *o*. -/
 def va : Coordinator :=
-  { form := "va", gloss := "and", role := .conjunctive, kind := .free }
+  { morph := .free "va", gloss := "and", role := .conjunctive }
 
 /-- *ham* 'also, too', with each coordinand 'both … and'. -/
 def ham : Coordinator :=
-  { form := "ham", gloss := "also, too; and", role := .conjunctive, kind := .free,
-    alsoAdditive := true }
+  { morph := .free "ham", gloss := "also, too; and", role := .conjunctive, alsoAdditive := true }
 
 /-- The coordinators. -/
 def allEntries : List Coordinator := [va, ham]

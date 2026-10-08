@@ -25,8 +25,7 @@ namespace Kannada.Coordination
 
 /-- *-u* 'and', enclitic on each coordinand, also the additive 'also'. -/
 def u : Coordinator :=
-  { form := "-u", gloss := "and; also", role := .conjunctive, kind := .bound .after .clitic,
-    alsoAdditive := true }
+  { morph := .encl "u", gloss := "and; also", role := .conjunctive, alsoAdditive := true }
 
 /-- The coordinators. -/
 def allEntries : List Coordinator := [u]

@@ -27,12 +27,11 @@ namespace Turkish.Coordination
 
 /-- *ve* 'and'. -/
 def ve : Coordinator :=
-  { form := "ve", gloss := "and", role := .conjunctive, kind := .free }
+  { morph := .free "ve", gloss := "and", role := .conjunctive }
 
 /-- *de* 'and', enclitic in the second coordinand, also the additive 'also, too'. -/
 def de : Coordinator :=
-  { form := "de", gloss := "and; also", role := .conjunctive, kind := .bound .after .clitic,
-    alsoAdditive := true }
+  { morph := .encl "de", gloss := "and; also", role := .conjunctive, alsoAdditive := true }
 
 /-- The coordinators. -/
 def allEntries : List Coordinator := [ve, de]
