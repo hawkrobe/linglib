@@ -39,7 +39,9 @@ Oaksford's probabilistic semantics of quantified sentences.
   proportional readings, and every result holds for both. *Few* is the fragment's proportional
   reading.
 * *Only 12* is its presupposition and assertion together, at least and at most twelve, which is
-  *exactly 12* (`Environment.denotation_only12`); its Strawson reading is not the paper's class.
+  *exactly 12* (`Environment.denotation_only12`); the licensing context is still focus *only*,
+  downward entailing modulo the presupposition. Under *exactly 12* the substrate licenses no
+  polarity item, although the paper finds them acceptable there to a degree (§3).
 * *No alien spent a year without seeing birds* is *no* over the aliens and the year-spenders who
   did not see birds.
 
@@ -190,17 +192,19 @@ theorem classifies_iff (e : Environment) (k : Monotonicity) :
 
 /-! ### Licensing -/
 
-/-- The licensing context of the narrowest downward-entailing operator over the item is negation,
-*no*, *few* or *without*; the upward-entailing and non-monotone environments have none. -/
+/-- The licensing context of the narrowest operator over the item that the substrate counts as
+downward entailing is negation, *no*, *few*, *without*, or focus *only*, downward entailing modulo
+its presupposition; the upward-entailing environments and *exactly 12* have none. -/
 def licensingContext : Environment → Option LicensingContext
   | .negative | .everyNot => some .negation
   | .no => some .nobody
   | .few => some .few
   | .noWithout => some .withoutClause
-  | .positive | .every | .many | .exactly12 | .only12 => none
+  | .only12 => some .onlyFocus
+  | .positive | .every | .many | .exactly12 => none
 
-/-- *Any*, *ever* and *at all* are licensed in the downward-entailing environments and, by the
-inner operator, in the doubly negative ones (§1, §5). -/
+/-- *Any*, *ever* and *at all* are licensed in the downward-entailing environments, by the inner
+operator in the doubly negative ones (§1, §5), and under *only 12*. -/
 theorem licenses_of_mem_licensingContext {e : Environment} {c : LicensingContext}
     (h : c ∈ e.licensingContext) : c.Licenses any ∧ c.Licenses ever ∧ c.Licenses atAll := by
   revert c; cases e <;> decide
