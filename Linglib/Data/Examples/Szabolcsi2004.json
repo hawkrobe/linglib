@@ -1,0 +1,90 @@
+[
+  {
+    "id": "szabolcsi2004_10",
+    "source": {"bibkey": "szabolcsi-2004", "paperLabel": "(10)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John didn't call someone.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "not > some", "judgment": "ungrammatical"}
+    ],
+    "paperFeatures": [
+      ["item", "someone"],
+      ["operator", "not"]
+    ],
+    "comment": "Printed with a space before the t of didn't.",
+    "verified": "page-image"
+  },
+  {
+    "id": "szabolcsi2004_11",
+    "source": {"bibkey": "szabolcsi-2004", "paperLabel": "(11)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "No one called someone.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "no one > some", "judgment": "ungrammatical"}
+    ],
+    "paperFeatures": [
+      ["item", "someone"],
+      ["operator", "no one"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "szabolcsi2004_12",
+    "source": {"bibkey": "szabolcsi-2004", "paperLabel": "(12)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John came to the party without someone.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "without > some", "judgment": "ungrammatical"}
+    ],
+    "paperFeatures": [
+      ["item", "someone"],
+      ["operator", "without"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "szabolcsi2004_13",
+    "source": {"bibkey": "szabolcsi-2004", "paperLabel": "(13)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "At most five boys called someone.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "at most 5 > some", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["item", "someone"],
+      ["operator", "at most five"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  }
+]

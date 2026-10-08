@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Polarity.Licensing
+public import Linglib.Semantics.Polarity.Item
 
 /-!
 # English polarity items
@@ -17,7 +17,10 @@ positive counterpart of *either*), *somewhat*, *rather*, *tons of* and *utterly*
 clausal negation. The idioms *wild horses*, *all the tea in China*, *a ten-foot pole* and *in a
 million years* are Israel's maximizer negative polarity items and *at the drop of a hat*, *in a
 jiffy*, *for a pittance* and *for a song* his minimizer positive ones; his classification of the
-items by force, quantity and propositional role is the matter of `Studies/Israel2001.lean`.
+items by force, quantity and propositional role is the matter of `Studies/Israel2001.lean`. The
+entries are tested against cited judgments in the studies of the papers that report them: *any*
+and *ever* in `Studies/Chierchia2013.lean` and `Studies/KadmonLandman1993.lean`, and *someone* in
+`Studies/Szabolcsi2004.lean`.
 
 ## Main definitions
 
@@ -25,11 +28,6 @@ items by force, quantity and propositional role is the matter of `Studies/Israel
   `English.PolarityItems.invertedNPIs`, `English.PolarityItems.allFCIs`,
   `English.PolarityItems.canonicalPPIs`, `English.PolarityItems.invertedPPIs`: the classes.
 * `English.PolarityItems.allPolarityItems`: the lexicon.
-
-## Main results
-
-* `English.PolarityItems.english_licensing_sound`: the licensing theory admits every entry in the
-  contexts it is attested in and not in those it is excluded from.
 
 ## Implementation notes
 
@@ -59,111 +57,87 @@ open PolarityItem
 def any : PolarityItem :=
   { form := "any"
   , licensor := some .weak
-  , freeChoice := true
-  , licensingContexts :=
-      [ .negation, .nobody, .conditionalAntecedent, .question
-      , .modalPossibility, .modalNecessity, .imperative, .generic
-      , .onlyFocus, .adversative ] }
+  , freeChoice := true }
 
 /-- *ever*, a temporal negative polarity item. -/
 def ever : PolarityItem :=
   { form := "ever"
-  , licensor := some .weak
-  , licensingContexts :=
-      [ .negation, .nobody, .conditionalAntecedent, .question
-      , .superlative, .clausalComparative, .onlyFocus, .adversative ] }
+  , licensor := some .weak }
 
 /-- *yet*, a temporal negative polarity item. -/
 def yet : PolarityItem :=
   { form := "yet"
-  , licensor := some .weak
-  , licensingContexts := [.negation, .question] }
+  , licensor := some .weak }
 
 /-- *anymore*, a temporal negative polarity item. -/
 def anymore : PolarityItem :=
   { form := "anymore"
-  , licensor := some .weak
-  , licensingContexts := [.negation] }
+  , licensor := some .weak }
 
 /-- *at all*, a degree negative polarity item. -/
 def atAll : PolarityItem :=
   { form := "at all"
-  , licensor := some .weak
-  , licensingContexts := [.negation, .nobody, .conditionalAntecedent, .question] }
+  , licensor := some .weak }
 
 /-- *in the least*, a degree negative polarity item. -/
 def inTheLeast : PolarityItem :=
   { form := "in the least"
-  , licensor := some .weak
-  , licensingContexts := [.negation, .question] }
+  , licensor := some .weak }
 
 /-- *a single*, an emphatic existential negative polarity item. -/
 def aSingle : PolarityItem :=
   { form := "a single"
-  , licensor := some .weak
-  , licensingContexts := [.negation, .nobody, .withoutClause] }
+  , licensor := some .weak }
 
 /-- *whatsoever*, an emphatic post-nominal negative polarity item. -/
 def whatsoever : PolarityItem :=
   { form := "whatsoever"
-  , licensor := some .weak
-  , licensingContexts := [.negation, .nobody] }
+  , licensor := some .weak }
 
 /-! ### Strong NPIs -/
 
 /-- *lift a finger*, an idiomatic minimizer needing an anti-additive licenser. -/
 def liftAFinger : PolarityItem :=
   { form := "lift a finger"
-  , licensor := some .antiAdditive
-  , licensingContexts := [.negation, .nobody, .withoutClause] }
+  , licensor := some .antiAdditive }
 
 /-- *budge an inch*, an idiomatic minimizer needing an anti-additive licenser. -/
 def budgeAnInch : PolarityItem :=
   { form := "budge an inch"
-  , licensor := some .antiAdditive
-  , licensingContexts := [.negation, .nobody, .withoutClause] }
+  , licensor := some .antiAdditive }
 
 /-- *in years*, a temporal strong negative polarity item. -/
 def inYears : PolarityItem :=
   { form := "in years"
-  , licensor := some .antiAdditive
-  , licensingContexts := [.negation, .nobody] }
+  , licensor := some .antiAdditive }
 
 /-- *until*, a temporal strong negative polarity item in its punctual use. -/
 def until_ : PolarityItem :=
   { form := "until"
-  , licensor := some .antiAdditive
-  , licensingContexts := [.negation] }
+  , licensor := some .antiAdditive }
 
 /-- Additive *either* ([rullmann-2003], [gajewski-2011]), out under the Strawson anti-additive
 *only*: *\*Only John likes pancakes, either* ([gajewski-2011] p. 120). -/
 def either : PolarityItem :=
   { form := "either"
-  , licensor := some .antiAdditive
-  , licensingContexts := [.negation, .nobody] }
+  , licensor := some .antiAdditive }
 
 /-! ### Free choice items -/
 
 /-- *whatever*, a free-relative free choice item. -/
 def whatever : PolarityItem :=
   { form := "whatever"
-  , freeChoice := true
-  , licensingContexts :=
-      [.modalPossibility, .modalNecessity, .imperative, .generic, .freeRelative] }
+  , freeChoice := true }
 
 /-- *whoever*, a free-relative free choice item. -/
 def whoever : PolarityItem :=
   { form := "whoever"
-  , freeChoice := true
-  , licensingContexts :=
-      [.modalPossibility, .modalNecessity, .imperative, .generic, .freeRelative] }
+  , freeChoice := true }
 
 /-- *whichever*, a free-relative free choice item. -/
 def whichever : PolarityItem :=
   { form := "whichever"
-  , freeChoice := true
-  , licensingContexts :=
-      [.modalPossibility, .modalNecessity, .imperative, .generic, .freeRelative] }
+  , freeChoice := true }
 
 /-! ### Positive polarity items -/
 
@@ -173,9 +147,7 @@ without someone*, and fine below *at most five*, *At most five boys called someo
 ([szabolcsi-2004] (10)–(13); [vanderwouden-1997]). -/
 def someone : PolarityItem :=
   { form := "someone"
-  , antiLicensor := some .antiAdditive
-  , licensingContexts := [.atMost]
-  , excludedContexts := [.negation, .nobody, .withoutClause] }
+  , antiLicensor := some .antiAdditive }
 
 /-- *already*, a temporal positive polarity item. -/
 def already : PolarityItem :=
@@ -214,29 +186,25 @@ def utterly : PolarityItem :=
 keep me away.* -/
 def wildHorses : PolarityItem :=
   { form := "wild horses"
-  , licensor := some .weak
-  , licensingContexts := [.negation] }
+  , licensor := some .weak }
 
 /-- *all the tea in China*, an idiomatic maximizer negative polarity item, as in *I wouldn't do
 it for all the tea in China.* -/
 def allTheTeaInChina : PolarityItem :=
   { form := "all the tea in China"
-  , licensor := some .weak
-  , licensingContexts := [.negation] }
+  , licensor := some .weak }
 
 /-- *a ten-foot pole*, an idiomatic maximizer negative polarity item, as in *I wouldn't touch it
 with a ten-foot pole.* -/
 def aTenFootPole : PolarityItem :=
   { form := "a ten-foot pole"
-  , licensor := some .weak
-  , licensingContexts := [.negation] }
+  , licensor := some .weak }
 
 /-- *in a million years*, an idiomatic maximizer negative polarity item, as in *I wouldn't marry
 that woman in a million years.* -/
 def inAMillionYears : PolarityItem :=
   { form := "in a million years"
-  , licensor := some .weak
-  , licensingContexts := [.negation] }
+  , licensor := some .weak }
 
 /-! ### Minimizer PPIs -/
 
@@ -301,20 +269,5 @@ def allPPIs : List PolarityItem :=
 def allPolarityItems : List PolarityItem :=
   weakNPIs ++ strongNPIs ++ invertedNPIs ++
   [whatever, whoever, whichever] ++ allPPIs
-
-/-! ### Verification -/
-
-/-- The licensing theory admits every entry in the contexts it is attested in and not in those it
-is excluded from. -/
-theorem english_licensing_sound :
-    ∀ e ∈ allPolarityItems, (∀ c ∈ e.licensingContexts, c.Admits e) ∧
-      ∀ c ∈ e.excludedContexts, ¬ c.Admits e := by
-  simp only [allPolarityItems, weakNPIs, strongNPIs, invertedNPIs, allPPIs, canonicalPPIs,
-    invertedPPIs, any, ever, yet, anymore, atAll, inTheLeast, aSingle, whatsoever, liftAFinger,
-    budgeAnInch, inYears, until_, either, whatever, whoever, whichever, someone, already, too,
-    somewhat, rather, tonsOf, utterly, wildHorses, allTheTeaInChina, aTenFootPole, inAMillionYears,
-    atTheDropOfAHat, inAJiffy, forAPittance, forASong, List.cons_append, List.nil_append,
-    List.forall_mem_cons, List.not_mem_nil, IsEmpty.forall_iff, implies_true, and_true]
-  and_intros <;> decide
 
 end English.PolarityItems
