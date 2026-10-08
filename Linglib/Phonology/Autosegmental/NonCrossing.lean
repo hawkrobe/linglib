@@ -42,6 +42,13 @@ filter on autosegmental GEN.
 * `isNonCrossing_insert_iff_mem_window`: a candidate may be added iff its index lies in its
   node's window; `IsNonCrossing.union_of_leftBound` / `union_of_rightBound`: spreading to the
   nearest index on one side never crosses.
+
+## References
+
+* [yli-jyra-2015]
+* [goldsmith-1976]
+* [sagey-1986]
+* [sagey-1988]
 -/
 
 @[expose] public section
@@ -85,8 +92,8 @@ theorem isNonCrossing_insert_iff [DecidableEq ι] [DecidableEq κ] (p : ι × κ
       IsNonCrossing links ∧ ∀ q ∈ links, IsNonCrossing {p, q} := by
   simp [IsNonCrossing, monovaryOn_insert]
 
-/-- Non-crossing on a union: each part is, and no link of one crosses a link of the other.
-    The `Set.pairwise_union` shape, via `monovaryOn_union`. -/
+/-- A union is non-crossing iff each part is and no link of one crosses a link of the
+other, the `Set.pairwise_union` shape. -/
 theorem isNonCrossing_union_iff [DecidableEq ι] [DecidableEq κ] {s t : Finset (ι × κ)} :
     IsNonCrossing (s ∪ t) ↔
       IsNonCrossing s ∧ IsNonCrossing t ∧ ∀ a ∈ s, ∀ b ∈ t, IsNonCrossing {a, b} := by
@@ -120,8 +127,7 @@ variable [LinearOrder ι] [Preorder ι'] [Preorder κ] [DecidableEq ι'] [Decida
 /-- Pushing a non-crossing link set forward along a **monotone** map on the upper
     (first) coordinate keeps it non-crossing: the autosegmental analogue of
     `SimpleGraph.map` along a monotone vertex map. The upper index needs a
-    `LinearOrder` (the run-collapse domain is `ℕ`) so that `ρ` reflects `<`. Used to
-    lift planarity through the OCP run-collapse `ρ` (`Autosegmental/Collapse.lean`). -/
+    `LinearOrder` (the run-collapse domain is `ℕ`) so that `ρ` reflects `<`. -/
 theorem IsNonCrossing.image_monotone (hρ : Monotone ρ) (h : IsNonCrossing links) :
     IsNonCrossing (links.image (Prod.map ρ id)) := by
   rw [isNonCrossing_image]; grind [IsNonCrossing, MonovaryOn, Monotone.reflect_lt]
@@ -131,7 +137,7 @@ end ImageMonotone
 /-! ### Relational composition through a shared tier
 
 Association relations compose through a shared middle tier — the `Finset`
-companion of `SetRel.comp`. Planarity is **not** closed under composition:
+companion of `SetRel.comp`. Non-crossing is not closed under composition:
 fan-in followed by fan-out at a single middle position (an autosegment
 multiply-linked from above whose position multiply-links onward) composes to a
 crossing — see the counterexample below. It is closed when the middle tier does
@@ -196,9 +202,9 @@ theorem IsNonCrossing.relComp_of_injOn_snd (hR : IsNonCrossing R) (hS : IsNonCro
     injection hii with hi _
     exact absurd (hi ▸ hlt) (lt_irrefl _)
 
-/-- Planarity is **not** closed under bare relational composition: fan-in (upper
-    `0` and `1` both linked to middle `0`) followed by fan-out (middle `0` linked
-    onward to `0` and `1`) composes to the complete, crossing relation. -/
+/-- Non-crossing is not closed under relational composition: fan-in (upper `0` and `1`
+both linked to middle `0`) followed by fan-out (middle `0` linked onward to `0` and `1`)
+composes to the complete, crossing relation. -/
 example : IsNonCrossing ({(0, 0), (1, 0)} : Finset (ℕ × ℕ)) ∧
     IsNonCrossing ({(0, 0), (0, 1)} : Finset (ℕ × ℕ)) ∧
     ¬ IsNonCrossing (relComp ({(0, 0), (1, 0)} : Finset (ℕ × ℕ)) {(0, 0), (0, 1)}) := by
@@ -251,8 +257,7 @@ section CandidateLinear
 variable [Preorder ι] [LinearOrder κ] [DecidableEq ι] [DecidableEq κ]
   {links : Finset (ι × κ)} {a b p : ι × κ}
 
-/-- `Crosses` in elementary order form: one link's endpoints straddle the other's
-    in opposite order. -/
+/-- Two links cross iff one link's endpoints straddle the other's in opposite order. -/
 theorem crosses_iff :
     Crosses a b ↔ (a.1 < b.1 ∧ b.2 < a.2) ∨ (b.1 < a.1 ∧ a.2 < b.2) := by
   rw [Crosses, isNonCrossing_pair]; grind
@@ -362,8 +367,8 @@ theorem leftBound_mono : Monotone (leftBound links) := fun _ _ hm ↦
 theorem rightBound_mono : Monotone (rightBound links) := fun _ _ hm ↦
   Finset.min_mono (rightIndices_anti hm)
 
-/-- Local spreading to the left: lines from any nodes to the nearest index linked left of
-    each cross neither one another nor the links of a non-crossing set. -/
+/-- Lines from any nodes to the nearest index linked left of each cross neither one
+another nor the links of a non-crossing set, so local spreading to the left is safe. -/
 theorem IsNonCrossing.union_of_leftBound [DecidableEq ι] (h : IsNonCrossing links)
     {s : Finset (ι × κ)}
     (hs : ∀ p ∈ s, leftBound links p.1 = p.2) : IsNonCrossing (links ∪ s) := by
@@ -375,8 +380,8 @@ theorem IsNonCrossing.union_of_leftBound [DecidableEq ι] (h : IsNonCrossing lin
     exact (isNonCrossing_pair a b).2 ⟨fun hab ↦ hl _ (mem_leftIndices.2 ⟨a.1, hab, ha⟩),
       fun hba ↦ hr _ (mem_rightIndices.2 ⟨a.1, hba, ha⟩)⟩
 
-/-- Local spreading to the right: lines from any nodes to the nearest index linked right of
-    each cross neither one another nor the links of a non-crossing set. -/
+/-- Lines from any nodes to the nearest index linked right of each cross neither one
+another nor the links of a non-crossing set, so local spreading to the right is safe. -/
 theorem IsNonCrossing.union_of_rightBound [DecidableEq ι] (h : IsNonCrossing links)
     {s : Finset (ι × κ)}
     (hs : ∀ p ∈ s, rightBound links p.1 = p.2) : IsNonCrossing (links ∪ s) := by
@@ -389,29 +394,5 @@ theorem IsNonCrossing.union_of_rightBound [DecidableEq ι] (h : IsNonCrossing li
       fun hba ↦ hr _ (mem_rightIndices.2 ⟨a.1, hba, ha⟩)⟩
 
 end Window
-
-/-! ### Link shift (the concatenation offset)
-
-The coordinate offset that places a morpheme's links past the preceding tiers under
-concatenation ([jardine-heinz-2015]). Shared by the bipartite `Graph` and the n-tier
-`MultiGraph`, which apply it to their one / each tier-pair respectively. -/
-
-/-- Shift a link's two endpoints by `(δ₁, δ₂)`. -/
-def shiftLink (δ₁ δ₂ : ℕ) (p : ℕ × ℕ) : ℕ × ℕ := (p.1 + δ₁, p.2 + δ₂)
-
-@[simp] theorem shiftLink_apply (δ₁ δ₂ : ℕ) (p : ℕ × ℕ) :
-    shiftLink δ₁ δ₂ p = (p.1 + δ₁, p.2 + δ₂) := rfl
-
-@[simp] theorem shiftLink_zero : shiftLink 0 0 = (id : ℕ × ℕ → ℕ × ℕ) := by funext p; simp
-
-theorem shiftLink_comp (a₁ a₂ b₁ b₂ : ℕ) :
-    shiftLink a₁ a₂ ∘ shiftLink b₁ b₂ = shiftLink (a₁ + b₁) (a₂ + b₂) := by
-  funext p; simp only [Function.comp_apply, shiftLink_apply, Prod.mk.injEq]; omega
-
-/-- Shifting a link set preserves non-crossing: `shiftLink` is a coordinatewise
-    order-embedding, so via `isNonCrossing_image` it preserves monovariance. -/
-theorem isNonCrossing_image_shiftLink (s : Finset (ℕ × ℕ)) (δ₁ δ₂ : ℕ) :
-    IsNonCrossing (s.image (shiftLink δ₁ δ₂)) ↔ IsNonCrossing s := by
-  grind [isNonCrossing_image, IsNonCrossing, MonovaryOn, shiftLink]
 
 end Autosegmental

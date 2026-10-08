@@ -28,8 +28,8 @@ subcategory of `Graph S` they carve out, monoidal under `Graph.concat`.
 ## Main results
 
 * `isTierOrdered_concat`, `noInternalAssoc_concat`, `noCrossing_concat`: concatenation
-  preserves the axioms ([jardine-2016b] Theorems 3 and 4, proved in full in
-  [jardine-heinz-2015]).
+  preserves the axioms ([jardine-2016b] Theorems 3 and 4; [jardine-heinz-2015] Theorems 2
+  and 4).
 * `not_isTierOrdered_sum`: the bridge-free coproduct leaves the axiom class; Axiom 2
   forces the bridges in `concat`.
 * `AR.tierColoring`: the tier map properly colors the association graph
@@ -41,16 +41,29 @@ The axiom numbering follows the dissertation; [jardine-heinz-2015] numbers the N
 OCP as 4 and 5 and has no saturation axiom. Saturation ([goldsmith-1976]'s original
 well-formedness condition) is stated but never imposed. The arcs are transitively
 closed ([jardine-2019]'s reading that `A` represents the order), so the OCP reads
-adjacency as the covering relation of the arcs. Axiom 5 is the No-Crossing Constraint
-in [jardine-2016b]'s formulation, which [jardine-2019] fn. 11 distinguishes from the
-weaker reading of the NCC as graph planarity; its coordinate form is `AR.noCrossing_iff`
-(`NormalForm.lean`). Axiom 6's word-level form is `AR.IsCleanAt` (`OCP.lean`, through the
+adjacency as the covering relation of the arcs. Axiom 5 is [coleman-local-1991]'s
+definition of crossing lines (p. 304) as [jardine-2016b] adopts it, with strict
+precedence. [jardine-heinz-2015] state their Axiom 4 with the reflexive order, which read
+literally forbids a node from linking to two others, so the strict form is the one
+followed. [coleman-local-1991] also argue (pp. 297–298) that the NCC amounts to graph
+planarity and so restricts nothing in multiplanar representations, the weaker reading that
+[jardine-2019] fn. 11 sets aside. The coordinate form of Axiom 5 is `AR.noCrossing_iff`
+(`NormalForm.lean`); Axiom 6's word-level form is `AR.IsCleanAt` (`OCP.lean`, through the
 hub `OCP.IsClean`).
 
 ## TODO
 
 * Package `AR.ofData` + `AR.isoOfReaderEq` (`NormalForm.lean`) as an equivalence with
   the strict tuple category.
+
+## References
+
+* [jardine-2016b]
+* [jardine-heinz-2015]
+* [goldsmith-1976]
+* [jardine-2019]
+* [coleman-local-1991]
+* [chandlee-jardine-2019]
 -/
 
 @[expose] public section

@@ -27,6 +27,12 @@ are lists of forbidden factors.
 * `AR.factorEmbeds_iff_bounded`: embedding is a bounded search over offsets.
 * `AR.factorEmbeds_iff_infix_of_link_free`: for link-free factors, embedding is
   independent per-tier infix occurrence — [jardine-2019]'s link-free fragment.
+
+## References
+
+* [jardine-2017]
+* [jardine-2016b]
+* [jardine-2019]
 -/
 
 @[expose] public section

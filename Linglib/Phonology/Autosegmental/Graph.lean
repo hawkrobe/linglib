@@ -48,13 +48,19 @@ representatives: [jardine-2019]'s operative concatenation bridges one partial
 diagram ↔ transitive closure on the finite per-tier strict orders. The complete
 bridge is total and functorial where `first`/`last` are partial and not
 hom-preserved, and its monoid laws are unconditional where the successor form's
-associativity requires string-graph tier classes ([jardine-heinz-2015]'s Lemma 1
-remark). The choice is not free elsewhere: subgraph-based notions such as
-`ASL.lean`'s forbidden factors are signature-sensitive ([jardine-2017-complexity]).
+associativity requires string-graph tier classes (the remark before [jardine-heinz-2015]'s
+Lemma 1). The choice is not free elsewhere: subgraph-based notions such as the forbidden
+factors of `Factors.lean` are signature-sensitive ([jardine-2017-complexity]).
 
 Morphisms deliberately do not preserve precedence — reassociation analyses move
 material across the order — so `Hom` is the broad class where the coproduct and the
 OCP repair live; `precPreserving` marks the wide class of full-structure maps.
+
+## References
+
+* [jardine-2019]
+* [jardine-heinz-2015]
+* [jardine-2017-complexity]
 -/
 
 @[expose] public section
