@@ -705,7 +705,7 @@ theorem restrict_pairing {x y : ℕ} (hxy : x ≠ y) (f : D → D) (a : D) :
       simpa [PartialAssign.update_of_ne hxy] using h
     · rintro rfl
       exact ⟨⟨a', rfl⟩, by simp [PartialAssign.update_of_ne hxy]⟩
-  refine ⟨⟨_, (hmem a).2 rfl⟩, ⟨_, (hmem a).2 rfl, by simp⟩, ?_⟩
+  refine ⟨⟨_, (hmem a).2 rfl⟩, PluralAssign.singularAt_iff.2 ⟨⟨_, (hmem a).2 rfl, by simp⟩, ?_⟩⟩
   rintro g ⟨⟨a', rfl⟩, hga⟩ -
   rw [(hmem a').1 ⟨⟨a', rfl⟩, hga⟩]
   simp
@@ -737,8 +737,8 @@ theorem trueAtP_notExNotEx_iff [Nonempty D] (S : R) {x y : ℕ} (hxy : x ≠ y) 
       have hg₀ : (PartialAssign.single x a₀).update y (f a₀) ∈
           (pairing x y f).restrict y (f a₀) :=
         ⟨⟨a₀, rfl⟩, by simp⟩
-      have hx := ha'.2 _ hg₀ (by simp [PartialAssign.update_of_ne hxy])
-      rw [PartialAssign.update_of_ne hxy, PartialAssign.single_eq_same, Flat.coe_inj] at hx
+      have hx : a₀ = a' :=
+        ha'.eq_of_mem_restrict ⟨hg₀, by simp [PartialAssign.update_of_ne hxy]⟩
       rw [← hx, (PluralAssign.singularAt_restrict_iff.1 hb').2] at hn
       exact hn (hf a₀)
     · obtain ⟨hne, hsing⟩ := restrict_pairing hxy f a
@@ -825,7 +825,7 @@ theorem evalP_strong_valued [Nonempty D] (x : ℕ) (w : W) (G : PluralAssign ℕ
   have ht : evalP M (.valued x) w {PartialAssign.single x d} = .true :=
     evalP_valued_eq_true_iff.2 ⟨d, PluralAssign.singularAt_singleton.2 (by simp)⟩
   have hf : evalP M (.valued x) w ∅ = .false :=
-    evalP_valued_eq_false_iff.2 (by simp [PluralAssign.Singular, PluralAssign.SingularAt])
+    evalP_valued_eq_false_iff.2 (by simp [PluralAssign.singular_iff])
   cases h : evalP M (.strong (.valued x)) w G with
   | indet => rfl
   | «true» => exact absurd hf ((evalP_strong_eq_true_iff.1 h).2 _)

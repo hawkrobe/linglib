@@ -18,8 +18,9 @@ having a successor among the output rows and each output row a predecessor among
 This is how dref introduction `[u]` lifts to plural states, and the lift is a functor. Atomic
 conditions hold distributively of the rows where their drefs have values. Structured inclusion
 selects a subset of a dref's values by discarding rows, so the subset keeps exactly the
-superset's dependencies. On plural partial assignments a dref's cells are the operator
-`restrict` of `PluralAssign`.
+superset's dependencies. On plural partial assignments a dref's values are `PluralAssign.value`,
+its cells the operator `restrict`, and singular number is `PluralAssign.Singular`, [spector-2025]'s
+`atomic(x)`.
 
 ## Main definitions
 
@@ -118,6 +119,11 @@ theorem cell_eq_restrict {Var D : Type*} [DecidableEq Var] (G : PluralAssign Var
     (a : D) : cell x a G = G.restrict x a :=
   rfl
 
+/-- On plural partial assignments, a dref's values are `PluralAssign.value`. -/
+theorem value_eq_pluralAssign_value {Var D : Type*} [DecidableEq Var] (G : PluralAssign Var D)
+    (x : Var) : value x G = G.value x :=
+  rfl
+
 /-! ### Dref introduction and conditions -/
 
 /-- Dref introduction `[u]` ([brasoveanu-2010] (18)): the cumulative lift of CDRT's random
@@ -156,6 +162,11 @@ def atom₂ (P : E → E → Prop) (u v : R) : Condition (Set S) :=
 
 /-- Singular number `sing(u)` ((39)): `u` has exactly one value. -/
 def sing (u : R) : Condition (Set S) := {I | ∃ x, value u I = {x}}
+
+/-- On plural partial assignments, singular number is [spector-2025]'s `atomic(x)`. -/
+theorem mem_sing_iff_singular {Var D : Type*} [DecidableEq Var] {G : PluralAssign Var D}
+    {x : Var} : G ∈ sing x ↔ G.Singular x :=
+  Iff.rfl
 
 /-! ### Structured inclusion -/
 
