@@ -1,0 +1,415 @@
+[
+  {
+    "id": "bpcm2022_1_disjunction",
+    "source": {
+      "bibkey": "bade-picat-chung-mascarenhas-2022",
+      "paperLabel": "(1)"
+    },
+    "language": "stan1293",
+    "primaryText": "Mary speaks French.",
+    "discourseSegments": [
+      "John speaks English and Mary speaks French, or else Bill speaks German.",
+      "John speaks English."
+    ],
+    "glossedTokens": [],
+    "context": "Reasoning task: does the conclusion follow from the two premises? Simplified from Walsh & Johnson-Laird's original items.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "mark",
+        "fallacious"
+      ],
+      [
+        "generator",
+        "disjunction"
+      ],
+      [
+        "structure",
+        "canonical"
+      ],
+      [
+        "acceptance",
+        "80-85%"
+      ]
+    ]
+  },
+  {
+    "id": "bpcm2022_3_indefinite",
+    "source": {
+      "bibkey": "bade-picat-chung-mascarenhas-2022",
+      "paperLabel": "(3)"
+    },
+    "language": "stan1293",
+    "primaryText": "John writes poems.",
+    "discourseSegments": [
+      "Some pilot writes poems.",
+      "John is a pilot."
+    ],
+    "glossedTokens": [],
+    "context": "Reasoning task: does the conclusion follow from the two premises?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "mark",
+        "fallacious"
+      ],
+      [
+        "generator",
+        "indefinite"
+      ],
+      [
+        "structure",
+        "canonical"
+      ],
+      [
+        "acceptance",
+        "35% (Mascarenhas & Koralus 2017)"
+      ]
+    ]
+  },
+  {
+    "id": "bpcm2022_6_might_london",
+    "source": {
+      "bibkey": "bade-picat-chung-mascarenhas-2022",
+      "paperLabel": "(6)"
+    },
+    "language": "stan1293",
+    "primaryText": "John might be in London.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "form",
+        "John is in London ∨ ⊤ (7a)"
+      ],
+      [
+        "alternatives",
+        "{John is in London, ⊤} (7b)"
+      ],
+      [
+        "analysis",
+        "attentive content, Ciardelli, Groenendijk & Roelofsen 2009"
+      ]
+    ]
+  },
+  {
+    "id": "bpcm2022_10_miranda",
+    "source": {
+      "bibkey": "mascarenhas-picat-2019",
+      "paperLabel": "target items"
+    },
+    "reportedIn": {
+      "bibkey": "bade-picat-chung-mascarenhas-2022",
+      "paperLabel": "(10)"
+    },
+    "language": "stan1293",
+    "primaryText": "Miranda is afraid of spiders.",
+    "discourseSegments": [
+      "Miranda might play the piano and be afraid of spiders.",
+      "Miranda plays the piano."
+    ],
+    "glossedTokens": [],
+    "context": "Reasoning task: does the conclusion follow from the two premises?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "mark",
+        "fallacious"
+      ],
+      [
+        "generator",
+        "might"
+      ],
+      [
+        "structure",
+        "canonical"
+      ]
+    ]
+  },
+  {
+    "id": "bpcm2022_13a_epistemic",
+    "source": {
+      "bibkey": "bade-picat-chung-mascarenhas-2022",
+      "paperLabel": "(13a)"
+    },
+    "language": "stan1293",
+    "primaryText": "John gave to the poor.",
+    "discourseSegments": [
+      "John might have stolen from the rich and given to the poor.",
+      "John stole from the rich."
+    ],
+    "glossedTokens": [],
+    "context": "Reasoning task: does the conclusion follow from the two premises?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "mark",
+        "fallacious"
+      ],
+      [
+        "generator",
+        "might"
+      ],
+      [
+        "structure",
+        "canonical"
+      ],
+      [
+        "modal",
+        "epistemic"
+      ]
+    ]
+  },
+  {
+    "id": "bpcm2022_13a_deontic",
+    "source": {
+      "bibkey": "bade-picat-chung-mascarenhas-2022",
+      "paperLabel": "(13a)"
+    },
+    "language": "stan1293",
+    "primaryText": "John gave to the poor.",
+    "discourseSegments": [
+      "John was allowed to steal from the rich and give to the poor.",
+      "John stole from the rich."
+    ],
+    "glossedTokens": [],
+    "context": "Reasoning task: does the conclusion follow from the two premises?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "mark",
+        "fallacious"
+      ],
+      [
+        "generator",
+        "allowed to"
+      ],
+      [
+        "structure",
+        "canonical"
+      ],
+      [
+        "modal",
+        "deontic"
+      ]
+    ]
+  },
+  {
+    "id": "bpcm2022_13b_epistemic",
+    "source": {
+      "bibkey": "bade-picat-chung-mascarenhas-2022",
+      "paperLabel": "(13b)"
+    },
+    "language": "stan1293",
+    "primaryText": "John gave to the poor.",
+    "discourseSegments": [
+      "John stole from the rich, and he might have stolen from the rich and given to the poor."
+    ],
+    "glossedTokens": [],
+    "context": "Reasoning task, flat structure: both premises combined into one sentence.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "mark",
+        "fallacious"
+      ],
+      [
+        "generator",
+        "might"
+      ],
+      [
+        "structure",
+        "flat"
+      ],
+      [
+        "modal",
+        "epistemic"
+      ]
+    ]
+  },
+  {
+    "id": "bpcm2022_13b_deontic",
+    "source": {
+      "bibkey": "bade-picat-chung-mascarenhas-2022",
+      "paperLabel": "(13b)"
+    },
+    "language": "stan1293",
+    "primaryText": "John gave to the poor.",
+    "discourseSegments": [
+      "John stole from the rich, and he was allowed to steal from the rich and give to the poor."
+    ],
+    "glossedTokens": [],
+    "context": "Reasoning task, flat structure: both premises combined into one sentence.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "mark",
+        "fallacious"
+      ],
+      [
+        "generator",
+        "allowed to"
+      ],
+      [
+        "structure",
+        "flat"
+      ],
+      [
+        "modal",
+        "deontic"
+      ]
+    ]
+  },
+  {
+    "id": "bpcm2022_13c_epistemic",
+    "source": {
+      "bibkey": "bade-picat-chung-mascarenhas-2022",
+      "paperLabel": "(13c)"
+    },
+    "language": "stan1293",
+    "primaryText": "John gave to the poor.",
+    "discourseSegments": [
+      "John stole from the rich.",
+      "John might have stolen from the rich and given to the poor."
+    ],
+    "glossedTokens": [],
+    "context": "Reasoning task, reversed structure: the hint precedes the alternative-raising premise.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "mark",
+        "fallacious"
+      ],
+      [
+        "generator",
+        "might"
+      ],
+      [
+        "structure",
+        "reversed"
+      ],
+      [
+        "modal",
+        "epistemic"
+      ]
+    ]
+  },
+  {
+    "id": "bpcm2022_13c_deontic",
+    "source": {
+      "bibkey": "bade-picat-chung-mascarenhas-2022",
+      "paperLabel": "(13c)"
+    },
+    "language": "stan1293",
+    "primaryText": "John gave to the poor.",
+    "discourseSegments": [
+      "John stole from the rich.",
+      "John was allowed to steal from the rich and give to the poor."
+    ],
+    "glossedTokens": [],
+    "context": "Reasoning task, reversed structure: the hint precedes the alternative-raising premise.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "mark",
+        "fallacious"
+      ],
+      [
+        "generator",
+        "allowed to"
+      ],
+      [
+        "structure",
+        "reversed"
+      ],
+      [
+        "modal",
+        "deontic"
+      ]
+    ]
+  },
+  {
+    "id": "bpcm2022_16_package_deal",
+    "source": {
+      "bibkey": "bade-picat-chung-mascarenhas-2022",
+      "paperLabel": "(16)"
+    },
+    "language": "stan1293",
+    "primaryText": "John is allowed to steal from the rich and give to the poor.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "context": "Package deal (Merin 1992, van Rooy 2000): permission for both actions or neither.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "John is allowed to steal from the rich (16a)",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "inference",
+        "package deal"
+      ],
+      [
+        "reading",
+        "biconditional permission (van Rooy 2000)"
+      ]
+    ]
+  },
+  {
+    "id": "bpcm2022_app_daniel_deontic",
+    "source": {
+      "bibkey": "bade-picat-chung-mascarenhas-2022",
+      "paperLabel": "Appendix, Targets"
+    },
+    "language": "stan1293",
+    "primaryText": "Daniel went to a march in Washington.",
+    "discourseSegments": [
+      "Daniel was allowed to skip a day of work and go to a march in Washington.",
+      "Daniel skipped a day of work."
+    ],
+    "glossedTokens": [],
+    "context": "Reasoning task: does the conclusion follow from the two premises?",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "itemType",
+        "target"
+      ],
+      [
+        "generator",
+        "allowed to"
+      ],
+      [
+        "modal",
+        "deontic"
+      ]
+    ]
+  }
+]

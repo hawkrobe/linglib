@@ -178,6 +178,11 @@ theorem box_T_iff : Box R ≤ id ↔ R.IsRefl where
   mp h := ⟨fun w ↦ h (w ~[R] ·) w fun _ hv ↦ hv⟩
   mpr _ _ _ := box_T
 
+/-- **T** for the diamond defines reflexivity: what holds is possible. -/
+theorem diamond_T_iff : id ≤ Diamond R ↔ R.IsRefl where
+  mp h := ⟨fun w ↦ match h (· = w) w rfl with | ⟨_, hv, rfl⟩ => hv⟩
+  mpr hR _ w hp := ⟨w, hR.refl w, hp⟩
+
 /-- **D** defines seriality. -/
 theorem box_D_iff : Box R ≤ Diamond R ↔ IsSerial R where
   mp h := ⟨fun w ↦ let ⟨v, hv, _⟩ := h (fun _ ↦ True) w fun _ _ ↦ trivial; ⟨v, hv⟩⟩
