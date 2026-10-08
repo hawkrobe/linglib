@@ -122,7 +122,7 @@ theorem binding_compatible_with_singleton {E : Type*} (e : E) (uAnaph uAnt : ℕ
   obtain rfl : g = _ := hg
   by_cases h : uAnaph = uAnt
   · subst h; rfl
-  · simp [PartialAssign.update_at, h]
+  · simp [PartialAssign.update_self, h]
 
 /-! ### The forms -/
 

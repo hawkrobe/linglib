@@ -234,7 +234,7 @@ theorem satt_iota :
 theorem realize_indef_of_ne_bot (hx : g x ≠ ⊥) (hp : p.Realize I g w) (hq : q.Realize I g w) :
     (indef x p q).Realize I g w := by
   obtain ⟨a, ha⟩ := Flat.ne_bot_iff_exists.1 hx
-  exact ⟨a, by rwa [PartialAssign.update_self ha], by rwa [PartialAssign.update_self ha]⟩
+  exact ⟨a, by rwa [PartialAssign.update_eq_self ha], by rwa [PartialAssign.update_eq_self ha]⟩
 
 /-- The witness bound at work: a true indefinite whose bounds hold has a true body. -/
 theorem realize_conj_of_satt_indef (hs : (indef x p q).Satt I c g w)
