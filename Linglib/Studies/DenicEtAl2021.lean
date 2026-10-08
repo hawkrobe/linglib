@@ -1,331 +1,292 @@
 module
 
+public import Linglib.Data.Experiments.DenicEtAl2021
 public import Linglib.Semantics.Polarity.Licensing
+public import Linglib.Semantics.Quantification.Counting
 public import Linglib.Fragments.English.PolarityItems
-public import Mathlib.Probability.ConditionalProbability
+public import Linglib.Studies.KadmonLandman1993
+public import Linglib.Core.Probability.ConditionalProbability
 
 /-!
 # Denić et al. (2021): The influence of polarity items on inferential judgments
 
-This file formalizes the four experiments of [denic-homer-rothschild-chemla-2021] on whether
-polarity items change the monotonicity inferences people draw. Negative polarity items are
-licensed in downward-entailing environments and not in upward-entailing ones,
-[fauconnier-1975] and [ladusaw-1979], and positive polarity items take no narrow scope in the
-former, so a polarity item is at least a probabilistic signal of monotonicity, and the
-experiments ask whether its presence in a premise moves the ratings of the subset-to-superset
-and superset-to-subset inferences that [szabolcsi-bott-mcelree-2008] had found unaffected. The
-environments are three upward-entailing, three downward-entailing, two non-monotone and two
-doubly negative ones, (14) to (24); their monotonicity is read off the natural-logic signatures
-of the licensing substrate, so that the doubly negative environments, a downward-entailing
-operator inside another, come out upward entailing globally and downward entailing at the
-position of the item, where it is licensed, §5, and the valid inference direction of each
-environment follows. The ratings of the two directions are combined into a directional rating,
-the upward rating and the complement of the downward one, which averages out any yes-bias a
-polarity item might introduce, §3.2. In non-monotone environments a negative polarity item
-lowers the directional rating in every experiment and in the meta-analysis, and in doubly
-negative environments a positive polarity item raises it, in Experiment 3 and the meta-analysis,
-§8.1, while the plain environments show smaller or no effects, §8.3: the environments in which
-negative polarity items are licensed are all perceived as not upward entailing, even the doubly
-negative ones, §9, as [chemla-homer-rothschild-2011] had found subjective monotonicity to
-predict acceptability. Of the three routes from polarity items to inferences, §10, the meaning
-route rests on the domain widening of the scalar theories, (30), under which the sentence with
-the item is stronger and the widened predicate no less probable given any evidence, (34).
+Participants rated how far a conclusion follows from a premise that differs from it in a superset
+and a subset verb phrase (*saw birds*, *saw doves*), inside ten environments the paper classes as
+upward entailing, downward entailing, non-monotone (*exactly 12*, *only 12*) or doubly negative, a
+downward-entailing operator inside another. A negative polarity item in the premise lowered the
+directional rating of the non-monotone environments in all four experiments and the
+meta-analysis, and the positive polarity item *some* raised that of the doubly negative ones in
+Experiment 3 and the meta-analysis (§8.1); the printed results are in
+`Data/Experiments/DenicEtAl2021.json`. Here each environment denotes a function of its verb phrase
+built from the substrate's quantifiers, from which the paper's classes and valid inferences follow.
+The meaning route of §10.2 combines Kadmon and Landman's domain widening for *any* with Chater and
+Oaksford's probabilistic semantics of quantified sentences.
+
+## Main statements
+
+* `Environment.classifies_iff`: the class the paper gives each environment is the one its
+  denotation has, the doubly negative ones being upward entailing with the item in a
+  downward-entailing constituent (§3.1.2, §5).
+* `monotone_wideSome`: on its wide-scope reading *some* sits in an upward-entailing position
+  whatever the environment, the confound of (9) and (27).
+* `cond_eq_one_of_widen`, `exists_cond_lt_one_of_widen`: widening the domain of the object, (30),
+  weakens the bridge premise of the probabilistic downward inference (33), and strictly so for
+  some believer, (34).
 
 ## Implementation notes
 
-The signatures of the downward-entailing and doubly negative environments are the Strawson
-signatures of the licensing contexts of `LicensingContext.signature`; the upward-entailing
-ones carry the monotone signature and the non-monotone ones the signature of arbitrary
-functions, the coarsest consistent with the paper's classification. The results are the
-directional means and the posterior probabilities of the effects as the paper reports them, with
-its criterion that a posterior above 0.975 corresponds to a two-sided test at the 0.05 level and
-above 0.95 to a one-sided one, §3.3; standard deviations and credible intervals are not carried,
-and the analyses by inferential dimension of Table 1 and the interactions of §8.3 are recorded in
-the data only. Locators follow the penultimate draft, lingbuzz 005977, whose section structure
-is the published article's.
+* The English fragment gives *many* no reading; a model fixes one of Partee's cardinal and
+  proportional readings, and every result holds for both. *Few* is the fragment's proportional
+  reading.
+* *Only 12* is its presupposition and assertion together, at least and at most twelve, which is
+  *exactly 12* (`Environment.denotation_only12`); its Strawson reading is not the paper's class.
+* *No alien spent a year without seeing birds* is *no* over the aliens and the year-spenders who
+  did not see birds.
 
 ## References
 
 * [denic-homer-rothschild-chemla-2021]
-* [fauconnier-1975]
-* [ladusaw-1979]
-* [szabolcsi-bott-mcelree-2008]
-* [chemla-homer-rothschild-2011]
+* [partee-1989]
+* [kadmon-landman-1993]
+* [chater-oaksford-1999]
 -/
 
 @[expose] public section
 
 namespace DenicEtAl2021
 
-open NaturalLogic PolarityItem English.PolarityItems
+open Quantifier GQ PolarityItem English.PolarityItems
 
-/-! ### Environments and their monotonicity, §3.1.2 and §5 -/
+/-! ### The environments -/
 
-/-- The paper's four classes of environment. -/
-inductive Kind
-  | UE
-  | DE
-  | NM
-  | DN
-  deriving DecidableEq, Repr
+/-- The readings of *many* put at least a contextual number, or at least a contextual proportion,
+of the restrictor in the scope. -/
+def manyReadings {ι : Type*} : Set (GQ ι) :=
+  Set.range atLeast ∪ Set.range fun p : ℕ × ℕ ↦ (NumberTree.threshold p.1 p.2).toGQ
 
-/-- The ten environments of Experiments 1 to 4, (14) to (24). -/
-inductive Environment
-  | positive
-  | every
-  | many
-  | negative
-  | no
-  | few
-  | exactly12
-  | only12
-  | everyNot
-  | noWithout
-  deriving DecidableEq, Fintype, Repr
+theorem scopeMonotone_of_mem_manyReadings {ι : Type*} [Finite ι] {q : GQ ι}
+    (h : q ∈ manyReadings) : ScopeMonotone q := by
+  rcases h with ⟨n, rfl⟩ | ⟨⟨n, d⟩, rfl⟩
+  exacts [scopeMonotone_atLeast n, (NumberTree.scopeMonotone_threshold n d).toGQ]
 
-/-- The class the paper assigns each environment. -/
-def Environment.kind : Environment → Kind
-  | .positive | .every | .many => .UE
-  | .negative | .no | .few => .DE
-  | .exactly12 | .only12 => .NM
-  | .everyNot | .noWithout => .DN
+/-- A model fixes what the stimuli's nouns and adjectives are true of and the reading of *many*. -/
+structure Model (ι : Type*) where
+  /-- The aliens. -/
+  alien : ι → Prop
+  /-- The purple alien, the restrictor of *the purple alien*. -/
+  purpleAlien : ι → Prop
+  /-- The hairy individuals. -/
+  hairy : ι → Prop
+  /-- The individuals who spent a year on Earth. -/
+  spentYear : ι → Prop
+  /-- The reading of *many*. -/
+  many : GQ ι
+  /-- The reading of *many* is one the context leaves open. -/
+  many_mem : many ∈ manyReadings
 
-/-- The signature of the position of the polarity item in each environment: the licensing
-substrate's rows for the downward-entailing ones, the product of two such rows for the doubly
-negative ones, and the monotone and the arbitrary signature for the upward-entailing and
-non-monotone ones. -/
-def Environment.signature : Environment → Signature
-  | .positive | .every | .many => .mono
-  | .negative => LicensingContext.negation.signature
-  | .no => LicensingContext.nobody.signature
-  | .few => LicensingContext.few.signature
-  | .exactly12 | .only12 => .all
-  | .everyNot => Signature.contextProjectivity
-      [LicensingContext.universalRestrictor.signature,
-        LicensingContext.negation.signature]
-  | .noWithout => Signature.contextProjectivity
-      [LicensingContext.nobody.signature,
-        LicensingContext.withoutClause.signature]
+namespace Environment
 
-/-- The polarity of a class: the doubly negative environments are upward entailing, §5. -/
-def Kind.polarity : Kind → SignType
-  | .UE | .DN => 1
-  | .DE => -1
-  | .NM => 0
+variable {ι : Type*}
 
-/-- The paper's classification is the polarity of the signatures. -/
-theorem polarity_eq (e : Environment) : e.signature.sign = e.kind.polarity := by
-  cases e <;> decide
+/-- The constituent hosting the item, as a function of its verb phrase, is the negated verb phrase
+in the negative and doubly negative environments and the verb phrase itself elsewhere. -/
+def host : Environment → (ι → Prop) → (ι → Prop)
+  | .negative | .everyNot | .noWithout => compl
+  | _ => id
 
-/-- §5: a doubly negative environment is upward entailing globally, the composition of two
-downward-entailing operators, while the position of the item inside the inner operator is
-downward entailing. -/
-theorem dn_global_upward_local_downward :
-    Environment.everyNot.signature.sign = 1 ∧
-      LicensingContext.universalRestrictor.signature.sign =
-        -1 ∧
-      LicensingContext.negation.signature.sign = -1 ∧
-      Environment.noWithout.signature.sign = 1 ∧
-      LicensingContext.withoutClause.signature.sign =
-        -1 := by
-  decide
+/-- The rest of the sentence, as a function of the host constituent. -/
+def outer (m : Model ι) : Environment → (ι → Prop) → Prop
+  | .positive | .negative => the m.purpleAlien
+  | .every => GQ.every m.alien
+  | .many => m.many m.alien
+  | .no => GQ.no m.alien
+  | .few => GQ.few m.alien
+  | .exactly12 => exactly 12 m.alien
+  | .only12 => (atLeast 12 ⊓ atMost 12 : GQ ι) m.alien
+  | .everyNot => fun V ↦ GQ.every (m.alien ⊓ V) m.hairy
+  | .noWithout => fun V ↦ GQ.no m.alien (m.spentYear ⊓ V)
 
-/-- The two orders of a superset–subset pair of verb phrases. -/
-inductive Direction
-  | subsetToSuperset
-  | supersetToSubset
-  deriving DecidableEq, Repr
+/-- The truth of an environment's sentence as a function of its verb phrase. -/
+def denotation (e : Environment) (m : Model ι) : (ι → Prop) → Prop := e.outer m ∘ e.host
 
-/-- An inference is valid in an environment when its signature projects forward entailment
-accordingly: preserved for the subset-to-superset direction, reversed for the other. -/
+theorem denotation_only12 (m : Model ι) : only12.denotation m = exactly12.denotation m := by
+  simp [denotation, outer, host, exactly_eq_atLeast_inf_atMost]
+
+/-- An inference is valid in an environment when it holds in every finite model, so the
+subset-to-superset inference is valid when the denotation is always monotone and the converse when
+it is always antitone. -/
 def Valid (e : Environment) : Direction → Prop
-  | .subsetToSuperset => Signature.project .forward e.signature = .forward
-  | .supersetToSubset => Signature.project .forward e.signature = .reverse
+  | .subsetToSuperset => ∀ (ι : Type) [Fintype ι] (m : Model ι), Monotone (e.denotation m)
+  | .supersetToSubset => ∀ (ι : Type) [Fintype ι] (m : Model ι), Antitone (e.denotation m)
 
-instance (e : Environment) : DecidablePred (Valid e) := λ d => by
-  cases d <;> unfold Valid <;> infer_instance
+/-- An environment's denotation classes it as upward entailing when the subset-to-superset
+inference is valid and the item's host is monotone, as doubly negative when that inference is
+valid and the host is antitone, as downward entailing when the converse is valid, and as
+non-monotone when neither is. -/
+def Classifies (e : Environment) : Monotonicity → Prop
+  | .ue => e.Valid .subsetToSuperset ∧ ∀ ι : Type, Monotone (e.host (ι := ι))
+  | .dn => e.Valid .subsetToSuperset ∧ ∀ ι : Type, Antitone (e.host (ι := ι))
+  | .de => e.Valid .supersetToSubset
+  | .nm => ¬ e.Valid .subsetToSuperset ∧ ¬ e.Valid .supersetToSubset
 
-/-- §3.1.2 and §6.1.2: only the superset-to-subset inference is valid in a downward-entailing
-environment, only the subset-to-superset one in an upward-entailing or doubly negative one,
-and neither in a non-monotone one. -/
-theorem valid_iff (e : Environment) (d : Direction) :
-    Valid e d ↔ (e.kind.polarity = 1 ∧ d = .subsetToSuperset) ∨
-      (e.kind.polarity = -1 ∧ d = .supersetToSubset) := by
-  cases e <;> cases d <;> decide
+theorem valid_subsetToSuperset {e : Environment}
+    (he : (environments e).monotonicity = .ue ∨ (environments e).monotonicity = .dn) :
+    e.Valid .subsetToSuperset := fun ι _ m ↦ by
+  have hc : Antitone (compl : (ι → Prop) → (ι → Prop)) := fun _ _ ↦ compl_le_compl
+  cases e <;> simp [environments] at he
+  · exact scopeMonotone_the m.purpleAlien
+  · exact scopeMonotone_every m.alien
+  · exact scopeMonotone_of_mem_manyReadings m.many_mem m.alien
+  · exact ((restrictorAntitone_every m.hairy).comp_monotone fun _ _ ↦ inf_le_inf_left _).comp hc
+  · exact ((scopeAntitone_no m.alien).comp_monotone fun _ _ ↦ inf_le_inf_left _).comp hc
 
-/-- The tested negative polarity items, *any*, *ever* and *at all*, are licensed by the
-substrate in the three downward-entailing environments and in the inner operators of the two
-doubly negative ones, where the local monotonicity is downward, §5. -/
-theorem npis_licensed :
-    ∀ c ∈ [LicensingContext.negation, .nobody, .few, .universalRestrictor, .withoutClause],
-      c.Licenses any ∧ c.Licenses ever ∧ c.Licenses atAll := by
-  decide
+theorem valid_supersetToSubset {e : Environment} (he : (environments e).monotonicity = .de) :
+    e.Valid .supersetToSubset := fun _ _ m ↦ by
+  cases e <;> simp [environments] at he
+  · exact (scopeMonotone_the m.purpleAlien).comp_antitone fun _ _ ↦ compl_le_compl
+  · exact scopeAntitone_no m.alien
+  · exact scopeAntitone_few m.alien
 
-/-! ### Directional ratings, §3.2 -/
+/-- The countermodel has thirteen aliens, none hairy, all on Earth for a year, the first one
+purple, and reads *many* as *at least one*. -/
+def thirteen : Model (Fin 13) := ⟨fun _ ↦ True, (· = 0), fun _ ↦ False, fun _ ↦ True, atLeast 1,
+  .inl ⟨1, rfl⟩⟩
 
-/-- The directional rating of an inference: the rating of a subset-to-superset inference as
-given, that of a superset-to-subset inference reversed, so that both measure how far upward
-inferences follow and downward ones do not. -/
-def directional : Direction → ℚ → ℚ
+theorem not_valid_subsetToSuperset {e : Environment}
+    (he : (environments e).monotonicity = .de ∨ (environments e).monotonicity = .nm) :
+    ¬ e.Valid .subsetToSuperset := fun h ↦ by
+  have h := h _ thirteen
+  cases e <;> simp [environments] at he
+  case exactly12 => exact not_monotone_exactly (by simp) h
+  case only12 => exact not_monotone_exactly (by simp) (denotation_only12 thirteen ▸ h)
+  all_goals refine absurd (h (bot_le (a := ⊤)) ?_) ?_ <;>
+    simp [denotation, outer, host, thirteen, the_iff, GQ.no, few_apply]
+
+theorem not_valid_supersetToSubset {e : Environment} (he : (environments e).monotonicity ≠ .de) :
+    ¬ e.Valid .supersetToSubset := fun h ↦ by
+  have h := h _ thirteen
+  cases e <;> simp [environments] at he
+  case exactly12 => exact not_antitone_exactly (by simp) (by simp) h
+  case only12 => exact not_antitone_exactly (by simp) (by simp) (denotation_only12 thirteen ▸ h)
+  all_goals refine absurd (h (bot_le (a := ⊤)) ?_) ?_ <;>
+    simp [denotation, outer, host, thirteen, the_iff, GQ.every, GQ.no, atLeast_apply]
+
+/-- The paper's classification of the ten environments, §3.1.2 and §5, is the one their
+denotations give: only the subset-to-superset inference is valid in the upward-entailing and
+doubly negative ones, only the converse in the downward-entailing ones, neither in the
+non-monotone ones, and a doubly negative environment hosts the item in an antitone constituent. -/
+theorem classifies_iff (e : Environment) (k : Monotonicity) :
+    e.Classifies k ↔ (environments e).monotonicity = k := by
+  have hid : ¬ ∀ ι : Type, Antitone (id : (ι → Prop) → (ι → Prop)) := fun h ↦
+    (h Unit (bot_le (a := ⊤)) ()) trivial
+  have hc : ¬ ∀ ι : Type, Monotone (compl : (ι → Prop) → (ι → Prop)) := fun h ↦
+    (h Unit (bot_le (a := ⊤)) () (fun h ↦ h)) trivial
+  have hc' : ∀ ι : Type, Antitone (compl : (ι → Prop) → (ι → Prop)) := fun _ _ _ ↦ compl_le_compl
+  have := @valid_subsetToSuperset e
+  have := @valid_supersetToSubset e
+  have := @not_valid_subsetToSuperset e
+  have := @not_valid_supersetToSubset e
+  cases e <;> cases k <;> simp_all [Classifies, host, environments, monotone_id]
+
+/-! ### Licensing -/
+
+/-- The licensing context of the narrowest downward-entailing operator over the item is negation,
+*no*, *few* or *without*; the upward-entailing and non-monotone environments have none. -/
+def licensingContext : Environment → Option LicensingContext
+  | .negative | .everyNot => some .negation
+  | .no => some .nobody
+  | .few => some .few
+  | .noWithout => some .withoutClause
+  | .positive | .every | .many | .exactly12 | .only12 => none
+
+/-- *Any*, *ever* and *at all* are licensed in the downward-entailing environments and, by the
+inner operator, in the doubly negative ones (§1, §5). -/
+theorem licenses_of_mem_licensingContext {e : Environment} {c : LicensingContext}
+    (h : c ∈ e.licensingContext) : c.Licenses any ∧ c.Licenses ever ∧ c.Licenses atAll := by
+  revert c; cases e <;> decide
+
+end Environment
+
+/-! ### Wide scope of *some* -/
+
+section WideScope
+
+variable {ι ε : Type*}
+
+/-- On the wide-scope reading of *some N* in an environment `f`, (9b) and (27), some member of `N`
+is such that `f` holds of seeing it. -/
+def wideSome (f : (ι → Prop) → Prop) (saw : ε → ι → Prop) (N : Set ε) : Prop :=
+  ∃ y ∈ N, f (saw y)
+
+/-- On its wide-scope reading *some* sits in an upward-entailing position, whatever the
+environment, (9). -/
+theorem monotone_wideSome (f : (ι → Prop) → Prop) (saw : ε → ι → Prop) :
+    Monotone (wideSome f saw) := fun _ _ hN ⟨y, hy, h⟩ ↦ ⟨y, hN hy, h⟩
+
+/-- In an upward-entailing environment the wide-scope reading of *some doves* entails the
+narrow-scope sentence about birds, so the inference from (26a) to (26b) goes through on reading
+(27). -/
+theorem narrow_of_wideSome {f : (ι → Prop) → Prop} (hf : Monotone f) {saw : ε → ι → Prop}
+    {N N' : Set ε} (hN : N ⊆ N') (h : wideSome f saw N) :
+    f (KadmonLandman1993.existsInDomain N' saw) :=
+  let ⟨y, hy, hf'⟩ := h; hf (fun _ hx ↦ ⟨y, hN hy, hx⟩) hf'
+
+end WideScope
+
+/-! ### Directional ratings -/
+
+/-- The sign with which a direction enters the directional rating. -/
+def Direction.sign : Direction → SignType
+  | .subsetToSuperset => 1
+  | .supersetToSubset => -1
+
+/-- The directional rating keeps a subset-to-superset rating and reverses a superset-to-subset
+one, in percent. -/
+def directional : Direction → ℝ → ℝ
   | .subsetToSuperset, r => r
   | .supersetToSubset, r => 100 - r
 
-/-- A yes-bias raising the ratings of both directions by the same amount leaves the mean
-directional rating unchanged, the motivation for the measure. -/
-theorem directional_bias_cancels (u d b : ℚ) :
-    (directional .subsetToSuperset (u + b) + directional .supersetToSubset (d + b)) / 2 =
-      (directional .subsetToSuperset u + directional .supersetToSubset d) / 2 := by
-  simp only [directional]; ring
+/-- A response bias enters the directional rating with the sign of the direction, so a yes-bias
+common to both directions cancels in their sum (§3.2). -/
+theorem directional_add (d : Direction) (r b : ℝ) :
+    directional d (r + b) = directional d r + d.sign * b := by
+  cases d <;> simp [directional, Direction.sign]; ring
 
-/-! ### Results, §3.2, §4.2, §6.2, §7.2 and §8.1 -/
+/-! ### The meaning route
 
-/-- The polarity item condition of a premise. -/
-inductive PI
-  | npi
-  | ppi
-  | noPI
-  deriving DecidableEq, Repr
+On the probabilistic semantics, *No aliens saw birds* says that a random alien saw birds with
+probability zero, (33), and the downward inference needs seeing doves to make seeing birds
+certain. -/
 
-/-- The experiments testing the non-monotone environments. -/
-inductive Test
-  | exp1
-  | exp2
-  | exp3
-  | exp4
-  deriving DecidableEq, Repr
+section MeaningRoute
 
-/-- The experiments testing the doubly negative environments. -/
-inductive DNTest
-  | exp3
-  | exp4
-  deriving DecidableEq, Repr
+open MeasureTheory ProbabilityTheory KadmonLandman1993
 
-/-- Mean directional ratings, in percent, of the non-monotone environments by polarity item
-condition. -/
-def nmMean : Test → PI → ℚ
-  | .exp1, .npi => 55.3
-  | .exp1, .ppi => 59.7
-  | .exp1, .noPI => 60
-  | .exp2, .npi => 54.7
-  | .exp2, .ppi => 60.1
-  | .exp2, .noPI => 59.2
-  | .exp3, .npi => 55.9
-  | .exp3, .ppi => 57.9
-  | .exp3, .noPI => 57.1
-  | .exp4, .npi => 56.3
-  | .exp4, .ppi => 56.4
-  | .exp4, .noPI => 59.3
+variable {Ω ε : Type*} [MeasurableSpace Ω] [DiscreteMeasurableSpace Ω]
 
-/-- Mean directional ratings, in percent, of the doubly negative environments by polarity
-item condition. -/
-def dnMean : DNTest → PI → ℚ
-  | .exp3, .npi => 53.7
-  | .exp3, .ppi => 61.8
-  | .exp3, .noPI => 56.9
-  | .exp4, .npi => 52.6
-  | .exp4, .ppi => 61.6
-  | .exp4, .noPI => 56.3
+/-- Since *any* widens the domain of the object, (30), seeing doves makes seeing any birds certain
+whenever it makes seeing birds certain, (34). So the bridge premise of the probabilistic downward
+inference (33) from *No aliens saw birds* (`ProbabilityTheory.cond_eq_zero_of_cond_eq_one`) gives
+that of the inference from *No aliens saw any birds*. -/
+theorem cond_eq_one_of_widen {μ : Measure Ω} [IsFiniteMeasure μ] {saw : ε → Set Ω}
+    {birds anyBirds : Set ε} {D : Set Ω} (h : birds ⊆ anyBirds)
+    (hD : μ[existsInDomain birds saw | D] = 1) : μ[existsInDomain anyBirds saw | D] = 1 :=
+  le_antisymm (cond_apply_le_one μ .of_discrete _) (hD ▸ measure_mono (existsInDomain_mono saw h))
 
-/-- A negative polarity item lowers the mean directional rating of the non-monotone
-environments in every experiment. -/
-theorem npi_lowers_nm (t : Test) : nmMean t .npi < nmMean t .noPI := by
-  cases t <;> norm_num [nmMean]
+/-- A believer may take an individual to have seen a dove outside the plain domain of birds, so
+that seeing doves makes seeing any birds certain but not seeing birds, the room (34) leaves for
+*any* to help. -/
+theorem exists_cond_lt_one_of_widen : ∃ (saw : Fin 2 → Set (Fin 2)) (doves birds anyBirds :
+    Set (Fin 2)), birds ⊆ anyBirds ∧
+      Measure.count[existsInDomain birds saw | existsInDomain doves saw] < 1 ∧
+      Measure.count[existsInDomain anyBirds saw | existsInDomain doves saw] = 1 := by
+  have h₀ : existsInDomain {0} (fun y : Fin 2 ↦ {y}) = {0} :=
+    Set.ext fun _ ↦ ⟨fun ⟨_, hy, hw⟩ ↦ hw.trans hy, fun hw ↦ ⟨0, rfl, hw⟩⟩
+  have h₁ : existsInDomain .univ (fun y : Fin 2 ↦ {y}) = .univ :=
+    Set.eq_univ_of_forall fun w ↦ ⟨w, trivial, rfl⟩
+  exact ⟨fun y ↦ {y}, .univ, {0}, .univ, Set.subset_univ _, by simp [h₀, h₁, cond_apply .univ],
+    by simp [h₁]⟩
 
-/-- A positive polarity item raises the mean directional rating of the doubly negative
-environments in both experiments testing them. -/
-theorem ppi_raises_dn (t : DNTest) : dnMean t .noPI < dnMean t .ppi := by
-  cases t <;> norm_num [dnMean]
-
-/-- The analyses of the non-monotone environments: the four experiments and their
-meta-analysis. -/
-inductive Analysis
-  | exp1
-  | exp2
-  | exp3
-  | exp4
-  | pooled
-  deriving DecidableEq, Repr
-
-/-- The analyses of the doubly negative environments. -/
-inductive DNAnalysis
-  | exp3
-  | exp4
-  | pooled
-  deriving DecidableEq, Repr
-
-/-- The posterior probability that a negative polarity item decreases, and that a positive one
-increases, the directional rating in the non-monotone environments. -/
-def nmPosterior : Analysis → Bool → ℚ
-  | .exp1, true => 0.999
-  | .exp1, false => 0.552
-  | .exp2, true => 0.999
-  | .exp2, false => 0.84
-  | .exp3, true => 0.965
-  | .exp3, false => 0.88
-  | .exp4, true => 0.984
-  | .exp4, false => 0.104
-  | .pooled, true => 0.999
-  | .pooled, false => 0.817
-
-/-- The same posteriors for the doubly negative environments. -/
-def dnPosterior : DNAnalysis → Bool → ℚ
-  | .exp3, true => 0.887
-  | .exp3, false => 0.998
-  | .exp4, true => 0.924
-  | .exp4, false => 0.838
-  | .pooled, true => 0.96
-  | .pooled, false => 0.999
-
-/-- §3.3: a posterior above 0.975 corresponds to a two-sided test at the 0.05 level. -/
-def TwoSided (p : ℚ) : Prop := 0.975 < p
-
-/-- §3.3: a posterior above 0.95 corresponds to a one-sided test at the 0.05 level. -/
-def OneSided (p : ℚ) : Prop := 0.95 < p
-
-/-- Negative polarity items in non-monotone environments: strong evidence in every
-experiment, at the two-sided level in Experiments 1, 2 and 4 and in the meta-analysis. -/
-theorem npi_nm_evidence :
-    (∀ a, OneSided (nmPosterior a true)) ∧ TwoSided (nmPosterior .exp1 true) ∧
-      TwoSided (nmPosterior .exp2 true) ∧ TwoSided (nmPosterior .exp4 true) ∧
-      TwoSided (nmPosterior .pooled true) :=
-  ⟨λ a => by cases a <;> norm_num [nmPosterior, OneSided], by norm_num [nmPosterior, TwoSided],
-    by norm_num [nmPosterior, TwoSided], by norm_num [nmPosterior, TwoSided],
-    by norm_num [nmPosterior, TwoSided]⟩
-
-/-- Positive polarity items in non-monotone environments: no evidence at either level in any
-analysis. -/
-theorem ppi_nm_no_evidence (a : Analysis) : ¬ OneSided (nmPosterior a false) := by
-  cases a <;> norm_num [nmPosterior, OneSided]
-
-/-- Positive polarity items in doubly negative environments: strong evidence in Experiment 3
-and in the meta-analysis, none in Experiment 4. -/
-theorem ppi_dn_evidence :
-    TwoSided (dnPosterior .exp3 false) ∧ TwoSided (dnPosterior .pooled false) ∧
-      ¬ OneSided (dnPosterior .exp4 false) := by
-  norm_num [dnPosterior, TwoSided, OneSided]
-
-/-- Negative polarity items in doubly negative environments: evidence only from the
-meta-analysis, and only at the one-sided level, §8.1. -/
-theorem npi_dn_evidence :
-    OneSided (dnPosterior .pooled true) ∧ ¬ TwoSided (dnPosterior .pooled true) ∧
-      ¬ OneSided (dnPosterior .exp3 true) ∧ ¬ OneSided (dnPosterior .exp4 true) := by
-  norm_num [dnPosterior, TwoSided, OneSided]
-
-/-! ### The meaning route, §10.2 -/
-
-/-- Under the scalar theories, §1, an item widens the domain of its predicate, (30), so in an
-antitone position the sentence with the item is the stronger one: the licensing condition of
-those theories. -/
-theorem npi_strengthens {α β : Type*} [Preorder α] [Preorder β] {f : α → β}
-    (hf : Antitone f) {birds anyBirds : α} (h : birds ≤ anyBirds) : f anyBirds ≤ f birds :=
-  hf h
-
-open MeasureTheory ProbabilityTheory in
-/-- (34): the widened predicate is at least as probable as the plain one given any evidence,
-the premise of the probabilistic version of the meaning route. -/
-theorem widening_condProb {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
-    (doves birds anyBirds : Set Ω) (h : birds ⊆ anyBirds) :
-    μ[birds | doves] ≤ μ[anyBirds | doves] :=
-  measure_mono h
+end MeaningRoute
 
 end DenicEtAl2021

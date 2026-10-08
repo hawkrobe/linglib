@@ -17,9 +17,7 @@
     "readings": [],
     "paperFeatures": [
       ["environment", "positive"],
-      ["kind", "UE"],
-      ["direction", "subsetToSuperset"],
-      ["valid", "yes"]
+      ["direction", "subsetToSuperset"]
     ],
     "comment": "An upward-entailing environment supports the subset-to-superset inference."
   },
@@ -41,9 +39,7 @@
     "readings": [],
     "paperFeatures": [
       ["environment", "negative"],
-      ["kind", "DE"],
-      ["direction", "supersetToSubset"],
-      ["valid", "yes"]
+      ["direction", "supersetToSubset"]
     ],
     "comment": "A downward-entailing environment supports the superset-to-subset inference."
   },
@@ -62,7 +58,6 @@
     "readings": [],
     "paperFeatures": [
       ["environment", "negative"],
-      ["kind", "DE"],
       ["pi", "npi"]
     ],
     "comment": ""
@@ -82,7 +77,6 @@
     "readings": [],
     "paperFeatures": [
       ["environment", "positive"],
-      ["kind", "UE"],
       ["pi", "npi"]
     ],
     "comment": ""
@@ -102,7 +96,6 @@
     "readings": [],
     "paperFeatures": [
       ["environment", "positive"],
-      ["kind", "UE"],
       ["pi", "ppi"]
     ],
     "comment": ""
@@ -125,7 +118,6 @@
     ],
     "paperFeatures": [
       ["environment", "negative"],
-      ["kind", "DE"],
       ["pi", "ppi"]
     ],
     "comment": "The positive polarity item has no reading equivalent to I didn't drink any coffee."
@@ -147,9 +139,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["environment", "exactly12"],
-      ["kind", "NM"],
-      ["valid", "no"]
+      ["environment", "exactly12"]
     ],
     "comment": "Neither sentence entails the other: a non-monotone environment."
   },
@@ -171,7 +161,6 @@
     "readings": [],
     "paperFeatures": [
       ["environment", "exactly12"],
-      ["kind", "NM"],
       ["pi", "both"]
     ],
     "comment": "Both polarity items are acceptable to some extent in non-monotone environments, with individual variation for the negative one."
@@ -193,7 +182,6 @@
     ],
     "paperFeatures": [
       ["environment", "exactly12"],
-      ["kind", "NM"],
       ["pi", "ppi"]
     ],
     "comment": "The positive polarity item can take exceptional wide scope, under which it sits in an upward-entailing environment."
@@ -218,7 +206,7 @@
       ["item", "training"],
       ["expected", "follows"]
     ],
-    "comment": "Training item rated 93% in Experiment 1."
+    "comment": ""
   },
   {
     "id": "denicetal2021_12",
@@ -240,7 +228,7 @@
       ["item", "training"],
       ["expected", "doesNotFollow"]
     ],
-    "comment": "Training item rated 9% in Experiment 1."
+    "comment": ""
   },
   {
     "id": "denicetal2021_13",
@@ -262,7 +250,7 @@
       ["item", "training"],
       ["expected", "intermediate"]
     ],
-    "comment": "Training item rated 68% in Experiment 1."
+    "comment": ""
   },
   {
     "id": "denicetal2021_14",
@@ -282,10 +270,8 @@
     "readings": [],
     "paperFeatures": [
       ["environment", "positive"],
-      ["kind", "UE"],
       ["direction", "supersetToSubset"],
-      ["pi", "ppi"],
-      ["valid", "no"]
+      ["pi", "ppi"]
     ],
     "comment": ""
   },
@@ -307,10 +293,8 @@
     "readings": [],
     "paperFeatures": [
       ["environment", "every"],
-      ["kind", "UE"],
       ["direction", "supersetToSubset"],
-      ["pi", "ppi"],
-      ["valid", "no"]
+      ["pi", "ppi"]
     ],
     "comment": ""
   },
@@ -332,10 +316,8 @@
     "readings": [],
     "paperFeatures": [
       ["environment", "many"],
-      ["kind", "UE"],
       ["direction", "supersetToSubset"],
-      ["pi", "ppi"],
-      ["valid", "no"]
+      ["pi", "ppi"]
     ],
     "comment": ""
   },
@@ -357,10 +339,8 @@
     "readings": [],
     "paperFeatures": [
       ["environment", "negative"],
-      ["kind", "DE"],
       ["direction", "supersetToSubset"],
-      ["pi", "npi"],
-      ["valid", "yes"]
+      ["pi", "npi"]
     ],
     "comment": ""
   },
@@ -382,10 +362,8 @@
     "readings": [],
     "paperFeatures": [
       ["environment", "no"],
-      ["kind", "DE"],
       ["direction", "supersetToSubset"],
-      ["pi", "npi"],
-      ["valid", "yes"]
+      ["pi", "npi"]
     ],
     "comment": ""
   },
@@ -407,10 +385,8 @@
     "readings": [],
     "paperFeatures": [
       ["environment", "few"],
-      ["kind", "DE"],
       ["direction", "supersetToSubset"],
-      ["pi", "npi"],
-      ["valid", "yes"]
+      ["pi", "npi"]
     ],
     "comment": ""
   },
@@ -432,10 +408,8 @@
     "readings": [],
     "paperFeatures": [
       ["environment", "exactly12"],
-      ["kind", "NM"],
       ["direction", "supersetToSubset"],
-      ["pi", "both"],
-      ["valid", "no"]
+      ["pi", "both"]
     ],
     "comment": ""
   },
@@ -457,10 +431,8 @@
     "readings": [],
     "paperFeatures": [
       ["environment", "only12"],
-      ["kind", "NM"],
       ["direction", "supersetToSubset"],
-      ["pi", "both"],
-      ["valid", "no"]
+      ["pi", "both"]
     ],
     "comment": ""
   },
@@ -482,7 +454,6 @@
     "readings": [],
     "paperFeatures": [
       ["environment", "everyNot"],
-      ["kind", "DN"],
       ["pi", "both"]
     ],
     "comment": "Both items are licit in a doubly negative environment; the positive one can take narrow scope under both operators, and the negative one sits in a globally upward-entailing environment, licensed by the local one."
@@ -505,10 +476,8 @@
     "readings": [],
     "paperFeatures": [
       ["environment", "everyNot"],
-      ["kind", "DN"],
       ["direction", "subsetToSuperset"],
-      ["pi", "both"],
-      ["valid", "yes"]
+      ["pi", "both"]
     ],
     "comment": ""
   },
@@ -530,10 +499,8 @@
     "readings": [],
     "paperFeatures": [
       ["environment", "noWithout"],
-      ["kind", "DN"],
       ["direction", "subsetToSuperset"],
-      ["pi", "both"],
-      ["valid", "yes"]
+      ["pi", "both"]
     ],
     "comment": ""
   },
@@ -555,10 +522,8 @@
     "readings": [],
     "paperFeatures": [
       ["environment", "exactly12"],
-      ["kind", "NM"],
       ["direction", "subsetToSuperset"],
-      ["pi", "ppi"],
-      ["valid", "no"]
+      ["pi", "ppi"]
     ],
     "comment": "Experiment 2's item with the positive polarity item in both premise and conclusion; the null result suggests the item does not take wide scope in non-monotone environments, §9."
   },
@@ -582,10 +547,8 @@
     ],
     "paperFeatures": [
       ["environment", "everyNot"],
-      ["kind", "DN"],
       ["direction", "subsetToSuperset"],
-      ["pi", "ppi"],
-      ["valid", "yes"]
+      ["pi", "ppi"]
     ],
     "comment": "Under the wide-scope reading (27) the inference still follows, a confound for the positive polarity item's effect in doubly negative environments."
   },
@@ -607,10 +570,8 @@
     "readings": [],
     "paperFeatures": [
       ["environment", "no"],
-      ["kind", "DE"],
       ["direction", "supersetToSubset"],
-      ["pi", "noPI"],
-      ["valid", "yes"]
+      ["pi", "noPI"]
     ],
     "comment": "The working example of §10.2, with (29) its version with any and (31) the conclusion."
   },
@@ -632,10 +593,8 @@
     "readings": [],
     "paperFeatures": [
       ["environment", "no"],
-      ["kind", "DE"],
       ["direction", "supersetToSubset"],
-      ["pi", "npi"],
-      ["valid", "yes"]
+      ["pi", "npi"]
     ],
     "comment": "Under domain widening, (30), the premise with any is stronger, so downward inferences from it follow a fortiori."
   }

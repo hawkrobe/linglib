@@ -129,6 +129,9 @@ theorem scopeMonotone_atLeast (n : ℕ) : (NumberTree.atLeast n).ScopeMonotone :
 theorem scopeAntitone_atMost (n : ℕ) : (NumberTree.atMost n).ScopeAntitone := fun _ _ h ↦ by
   grind [NumberTree.atMost]
 
+theorem scopeMonotone_threshold (n d : ℕ) : (threshold n d).ScopeMonotone := fun _ _ h ↦ by
+  simp only [threshold, ofSizes] at *; nlinarith
+
 /-! ### Proportionality -/
 
 /-- A tree is proportional when on nonempty rows it depends only on the ratio of `b` to `a`. -/
@@ -389,6 +392,23 @@ theorem not_scopeAntitone_half : ¬ ScopeAntitone (half : GQ (Fin 3)) := fun h �
 theorem not_monotone_half :
     ¬ ScopeMonotone (half : GQ (Fin 3)) ∧ ¬ ScopeAntitone (half : GQ (Fin 3)) :=
   ⟨not_scopeMonotone_half, not_scopeAntitone_half⟩
+
+/-- Over a domain of more than `n` individuals, *exactly `n`* is not monotone in its scope. -/
+theorem not_monotone_exactly [Fintype α] {n : ℕ} (h : n < Fintype.card α) :
+    ¬ Monotone (exactly n fun _ : α ↦ True) := fun hq ↦ by
+  obtain ⟨t, -, rfl⟩ := Finset.exists_subset_card_eq (s := .univ) (n := n) (by simpa using h.le)
+  have := hq (a := (· ∈ t)) le_top (by simp [exactly_apply, ← Set.ncard_coe_finset])
+  simp [exactly_apply, Set.ncard_univ, Nat.card_eq_fintype_card] at this
+  omega
+
+/-- Over a domain of at least `n` individuals, `n` positive, *exactly `n`* is not antitone in its
+scope. -/
+theorem not_antitone_exactly [Fintype α] {n : ℕ} (hn : n ≠ 0) (h : n ≤ Fintype.card α) :
+    ¬ Antitone (exactly n fun _ : α ↦ True) := fun hq ↦ by
+  obtain ⟨t, -, rfl⟩ := Finset.exists_subset_card_eq (s := .univ) (n := n) (by simpa using h)
+  have := hq (a := ⊥) (b := (· ∈ t)) bot_le (by simp [exactly_apply, ← Set.ncard_coe_finset])
+  simp [exactly_apply] at this
+  omega
 
 /-- *Both* holds of a restrictor of two and fails of one of three. -/
 theorem both_fin2 : both (α := Fin 2) (fun _ ↦ True) fun _ ↦ True := by decide

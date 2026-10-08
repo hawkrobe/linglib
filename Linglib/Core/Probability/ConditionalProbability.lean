@@ -93,6 +93,24 @@ theorem cond_eq_one_of_subset [IsFiniteMeasure μ] {e : Set Ω}
   rw [cond_apply hs, Set.inter_eq_left.mpr hsub,
     ENNReal.inv_mul_cancel hne (measure_ne_top μ s)]
 
+/-- An event of conditional probability zero meets the conditioning event in a null set. -/
+theorem measure_inter_eq_zero_of_cond_eq_zero [IsFiniteMeasure μ] {e : Set Ω}
+    (hs : MeasurableSet s) (h : μ[e | s] = 0) : μ (s ∩ e) = 0 :=
+  by_contra fun hne ↦ (cond_pos_of_inter_ne_zero hs hne).ne' h
+
+/-- If `e` has probability zero given `s` and probability one given `u`, then `u` has
+probability zero given `s`. -/
+theorem cond_eq_zero_of_cond_eq_one [IsFiniteMeasure μ] {e u : Set Ω} (hs : MeasurableSet s)
+    (he : MeasurableSet e) (hu : MeasurableSet u) (h₁ : μ[e | s] = 0) (h₂ : μ[e | u] = 1) :
+    μ[u | s] = 0 := by
+  have hu₀ : μ u ≠ 0 := fun h ↦ by simp [cond_eq_zero_of_meas_eq_zero h] at h₂
+  have := cond_isProbabilityMeasure (μ := μ) hu₀
+  have hc := measure_inter_eq_zero_of_cond_eq_zero μ hu ((prob_compl_eq_zero_iff he).2 h₂)
+  have : μ (s ∩ u) = 0 := measure_mono_null
+    (fun x ⟨hx, hxu⟩ ↦ (em (x ∈ e)).imp (fun hxe ↦ ⟨hx, hxe⟩) fun hxe ↦ ⟨hxu, hxe⟩)
+    (measure_union_null (measure_inter_eq_zero_of_cond_eq_zero μ hs h₁) hc)
+  rw [cond_apply hs, this, mul_zero]
+
 /-- Conditioning on a subset that sheds only worlds outside `s` can only raise the conditional
 probability of `s`. -/
 theorem cond_le_cond_of_subset {u₁ u₂ e : Set Ω} (hu₁ : MeasurableSet u₁)

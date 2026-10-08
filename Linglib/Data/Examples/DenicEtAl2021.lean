@@ -26,7 +26,7 @@ def ex_1 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("environment", "positive"), ("kind", "UE"), ("direction", "subsetToSuperset"), ("valid", "yes")] }
+    paperFeatures := [("environment", "positive"), ("direction", "subsetToSuperset")] }
 
 def ex_2 : Datum :=
   { id := "denicetal2021_2"
@@ -39,7 +39,7 @@ def ex_2 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("environment", "negative"), ("kind", "DE"), ("direction", "supersetToSubset"), ("valid", "yes")] }
+    paperFeatures := [("environment", "negative"), ("direction", "supersetToSubset")] }
 
 def ex_3 : Datum :=
   { id := "denicetal2021_3"
@@ -52,7 +52,7 @@ def ex_3 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("environment", "negative"), ("kind", "DE"), ("pi", "npi")] }
+    paperFeatures := [("environment", "negative"), ("pi", "npi")] }
 
 def ex_4 : Datum :=
   { id := "denicetal2021_4"
@@ -65,7 +65,7 @@ def ex_4 : Datum :=
     judgment := .ungrammatical
     alternatives := []
     readings := []
-    paperFeatures := [("environment", "positive"), ("kind", "UE"), ("pi", "npi")] }
+    paperFeatures := [("environment", "positive"), ("pi", "npi")] }
 
 def ex_5 : Datum :=
   { id := "denicetal2021_5"
@@ -78,7 +78,7 @@ def ex_5 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("environment", "positive"), ("kind", "UE"), ("pi", "ppi")] }
+    paperFeatures := [("environment", "positive"), ("pi", "ppi")] }
 
 def ex_6 : Datum :=
   { id := "denicetal2021_6"
@@ -91,7 +91,7 @@ def ex_6 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := [("some narrow scope under negation", .unacceptable), ("some wide scope over negation", .acceptable)]
-    paperFeatures := [("environment", "negative"), ("kind", "DE"), ("pi", "ppi")] }
+    paperFeatures := [("environment", "negative"), ("pi", "ppi")] }
 
 def ex_7 : Datum :=
   { id := "denicetal2021_7"
@@ -104,7 +104,7 @@ def ex_7 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("environment", "exactly12"), ("kind", "NM"), ("valid", "no")] }
+    paperFeatures := [("environment", "exactly12")] }
 
 def ex_8 : Datum :=
   { id := "denicetal2021_8"
@@ -117,7 +117,7 @@ def ex_8 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("environment", "exactly12"), ("kind", "NM"), ("pi", "both")] }
+    paperFeatures := [("environment", "exactly12"), ("pi", "both")] }
 
 def ex_9 : Datum :=
   { id := "denicetal2021_9"
@@ -130,7 +130,7 @@ def ex_9 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := [("some doves are such that exactly 12 aliens saw them", .acceptable)]
-    paperFeatures := [("environment", "exactly12"), ("kind", "NM"), ("pi", "ppi")] }
+    paperFeatures := [("environment", "exactly12"), ("pi", "ppi")] }
 
 def ex_11 : Datum :=
   { id := "denicetal2021_11"
@@ -182,7 +182,7 @@ def ex_14 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("environment", "positive"), ("kind", "UE"), ("direction", "supersetToSubset"), ("pi", "ppi"), ("valid", "no")] }
+    paperFeatures := [("environment", "positive"), ("direction", "supersetToSubset"), ("pi", "ppi")] }
 
 def ex_15 : Datum :=
   { id := "denicetal2021_15"
@@ -195,7 +195,7 @@ def ex_15 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("environment", "every"), ("kind", "UE"), ("direction", "supersetToSubset"), ("pi", "ppi"), ("valid", "no")] }
+    paperFeatures := [("environment", "every"), ("direction", "supersetToSubset"), ("pi", "ppi")] }
 
 def ex_16 : Datum :=
   { id := "denicetal2021_16"
@@ -208,7 +208,7 @@ def ex_16 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("environment", "many"), ("kind", "UE"), ("direction", "supersetToSubset"), ("pi", "ppi"), ("valid", "no")] }
+    paperFeatures := [("environment", "many"), ("direction", "supersetToSubset"), ("pi", "ppi")] }
 
 def ex_17 : Datum :=
   { id := "denicetal2021_17"
@@ -221,7 +221,7 @@ def ex_17 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("environment", "negative"), ("kind", "DE"), ("direction", "supersetToSubset"), ("pi", "npi"), ("valid", "yes")] }
+    paperFeatures := [("environment", "negative"), ("direction", "supersetToSubset"), ("pi", "npi")] }
 
 def ex_18 : Datum :=
   { id := "denicetal2021_18"
@@ -234,7 +234,7 @@ def ex_18 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("environment", "no"), ("kind", "DE"), ("direction", "supersetToSubset"), ("pi", "npi"), ("valid", "yes")] }
+    paperFeatures := [("environment", "no"), ("direction", "supersetToSubset"), ("pi", "npi")] }
 
 def ex_19 : Datum :=
   { id := "denicetal2021_19"
@@ -247,7 +247,7 @@ def ex_19 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("environment", "few"), ("kind", "DE"), ("direction", "supersetToSubset"), ("pi", "npi"), ("valid", "yes")] }
+    paperFeatures := [("environment", "few"), ("direction", "supersetToSubset"), ("pi", "npi")] }
 
 def ex_20 : Datum :=
   { id := "denicetal2021_20"
@@ -260,7 +260,7 @@ def ex_20 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("environment", "exactly12"), ("kind", "NM"), ("direction", "supersetToSubset"), ("pi", "both"), ("valid", "no")] }
+    paperFeatures := [("environment", "exactly12"), ("direction", "supersetToSubset"), ("pi", "both")] }
 
 def ex_21 : Datum :=
   { id := "denicetal2021_21"
@@ -273,7 +273,7 @@ def ex_21 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("environment", "only12"), ("kind", "NM"), ("direction", "supersetToSubset"), ("pi", "both"), ("valid", "no")] }
+    paperFeatures := [("environment", "only12"), ("direction", "supersetToSubset"), ("pi", "both")] }
 
 def ex_22 : Datum :=
   { id := "denicetal2021_22"
@@ -286,7 +286,7 @@ def ex_22 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("environment", "everyNot"), ("kind", "DN"), ("pi", "both")] }
+    paperFeatures := [("environment", "everyNot"), ("pi", "both")] }
 
 def ex_23 : Datum :=
   { id := "denicetal2021_23"
@@ -299,7 +299,7 @@ def ex_23 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("environment", "everyNot"), ("kind", "DN"), ("direction", "subsetToSuperset"), ("pi", "both"), ("valid", "yes")] }
+    paperFeatures := [("environment", "everyNot"), ("direction", "subsetToSuperset"), ("pi", "both")] }
 
 def ex_24 : Datum :=
   { id := "denicetal2021_24"
@@ -312,7 +312,7 @@ def ex_24 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("environment", "noWithout"), ("kind", "DN"), ("direction", "subsetToSuperset"), ("pi", "both"), ("valid", "yes")] }
+    paperFeatures := [("environment", "noWithout"), ("direction", "subsetToSuperset"), ("pi", "both")] }
 
 def ex_25 : Datum :=
   { id := "denicetal2021_25"
@@ -325,7 +325,7 @@ def ex_25 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("environment", "exactly12"), ("kind", "NM"), ("direction", "subsetToSuperset"), ("pi", "ppi"), ("valid", "no")] }
+    paperFeatures := [("environment", "exactly12"), ("direction", "subsetToSuperset"), ("pi", "ppi")] }
 
 def ex_26 : Datum :=
   { id := "denicetal2021_26"
@@ -338,7 +338,7 @@ def ex_26 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := [("some doves are such that every alien who didn't see them is hairy", .acceptable)]
-    paperFeatures := [("environment", "everyNot"), ("kind", "DN"), ("direction", "subsetToSuperset"), ("pi", "ppi"), ("valid", "yes")] }
+    paperFeatures := [("environment", "everyNot"), ("direction", "subsetToSuperset"), ("pi", "ppi")] }
 
 def ex_28 : Datum :=
   { id := "denicetal2021_28"
@@ -351,7 +351,7 @@ def ex_28 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("environment", "no"), ("kind", "DE"), ("direction", "supersetToSubset"), ("pi", "noPI"), ("valid", "yes")] }
+    paperFeatures := [("environment", "no"), ("direction", "supersetToSubset"), ("pi", "noPI")] }
 
 def ex_29 : Datum :=
   { id := "denicetal2021_29"
@@ -364,7 +364,7 @@ def ex_29 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [("environment", "no"), ("kind", "DE"), ("direction", "supersetToSubset"), ("pi", "npi"), ("valid", "yes")] }
+    paperFeatures := [("environment", "no"), ("direction", "supersetToSubset"), ("pi", "npi")] }
 
 def all : List Datum := [ex_1, ex_2, ex_3, ex_4, ex_5, ex_6, ex_7, ex_8, ex_9, ex_11, ex_12, ex_13, ex_14, ex_15, ex_16, ex_17, ex_18, ex_19, ex_20, ex_21, ex_22, ex_23, ex_24, ex_25, ex_26, ex_28, ex_29]
 
