@@ -307,7 +307,6 @@ import Linglib.Data.Examples.Rubinstein2014
 import Linglib.Data.Examples.Saab2026
 import Linglib.Data.Examples.Schema
 import Linglib.Data.Examples.Sharvit2003
-import Linglib.Data.Examples.SolstadBott2024
 import Linglib.Data.Examples.Stankova2026
 import Linglib.Data.Examples.Steedman2000
 import Linglib.Data.Examples.Storment2026
@@ -325,7 +324,6 @@ import Linglib.Data.Examples.VonFintelIatridou2005
 import Linglib.Data.Examples.Wellwood2015
 import Linglib.Data.Examples.Westergaard2009
 import Linglib.Data.Examples.Wurmbrand2014
-import Linglib.Data.Generalizations.Projectivity
 import Linglib.Data.PHOIBLE.Inventories.Arabic
 import Linglib.Data.PHOIBLE.Inventories.English
 import Linglib.Data.PHOIBLE.Inventories.Finnish
