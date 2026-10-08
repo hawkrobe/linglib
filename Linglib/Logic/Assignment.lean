@@ -131,17 +131,17 @@ def update (g : PartialAssign Var D) (x : Var) (d : D) :
     PartialAssign Var D :=
   Function.update g x ↑d
 
-@[simp] theorem update_at (g : PartialAssign Var D) (x : Var) (d : D) :
+@[simp] theorem update_self (x : Var) (d : D) (g : PartialAssign Var D) :
     g.update x d x = ↑d :=
   Function.update_self ..
 
-@[simp] theorem update_ne (g : PartialAssign Var D) {x y : Var} (d : D)
-    (h : y ≠ x) : g.update x d y = g y :=
+@[simp] theorem update_of_ne (h : y ≠ x) (d : D) (g : PartialAssign Var D) :
+    g.update x d y = g y :=
   Function.update_of_ne h ..
 
 /-- Updating at `x` to its existing value is a no-op, the partial-assignment
 face of `Function.update_eq_self`. -/
-theorem update_self {x : Var} {a : D} (h : g x = ↑a) : g.update x a = g := by
+theorem update_eq_self {x : Var} {a : D} (h : g x = ↑a) : g.update x a = g := by
   rw [update, ← h]; exact Function.update_eq_self x g
 
 theorem update_comm (h : x ≠ y) (a b : D) (g : PartialAssign Var D) :
@@ -159,7 +159,7 @@ theorem update_comm (h : x ≠ y) (a b : D) (g : PartialAssign Var D) :
 
 /-- Valuing an unvalued variable is a covering step of the extension order. -/
 theorem covBy_update {x : Var} (hx : g x = ⊥) (d : D) : g ⋖ g.update x d :=
-  covBy_iff.2 ⟨x, hx, by simp, fun _ hy ↦ (update_ne g d hy).symm⟩
+  covBy_iff.2 ⟨x, hx, by simp, fun _ hy ↦ (update_of_ne hy d g).symm⟩
 
 /-- Covering is valuing one unvalued variable, as `Set.covBy_iff_exists_insert`. -/
 theorem covBy_iff_exists_update : g ⋖ h ↔ ∃ x d, g x = ⊥ ∧ g.update x d = h := by
@@ -169,7 +169,7 @@ theorem covBy_iff_exists_update : g ⋖ h ↔ ∃ x d, g x = ⊥ ∧ g.update x 
   refine ⟨x, d, hx, funext fun y ↦ ?_⟩
   obtain rfl | hy := eq_or_ne y x
   · simp [hd]
-  · rw [update_ne _ _ hy, hagree y hy]
+  · rw [update_of_ne hy, hagree y hy]
 
 /-- The assignment valuing `x` alone, at `d`, as `Finsupp.single`. -/
 def single (x : Var) (d : D) : PartialAssign Var D :=
@@ -178,11 +178,11 @@ def single (x : Var) (d : D) : PartialAssign Var D :=
 theorem bot_update (x : Var) (d : D) : (⊥ : PartialAssign Var D).update x d = single x d :=
   rfl
 
-@[simp] theorem single_eq_same (x : Var) (d : D) : single x d x = ↑d :=
-  update_at ..
+@[simp] theorem single_eq_same {d : D} : single x d x = ↑d :=
+  update_self ..
 
-@[simp] theorem single_eq_of_ne {x y : Var} (d : D) (h : y ≠ x) : single x d y = ⊥ :=
-  update_ne _ _ h
+@[simp] theorem single_eq_of_ne {d : D} (h : y ≠ x) : single x d y = ⊥ :=
+  update_of_ne h ..
 
 @[simp] theorem domain_single (x : Var) (d : D) : (single x d).domain = {x} := by
   simp [single]

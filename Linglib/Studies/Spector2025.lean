@@ -254,7 +254,7 @@ theorem trueAt_bathroom_iff (B F : P) (x : ℕ) (w : W) :
       intro d hd
       obtain ⟨-, hall⟩ := eval_ex_eq_false_iff.1 hE
       obtain ⟨d', hd', hnot⟩ := eval_pred_eq_false_iff.1 (hall d)
-      rw [PartialAssign.update_at] at hd'
+      rw [PartialAssign.update_self] at hd'
       exact hnot (Flat.coe_inj.1 hd' ▸ hd)
     | «true» =>
       right
@@ -268,7 +268,7 @@ theorem trueAt_bathroom_iff (B F : P) (x : ℕ) (w : W) :
       rw [eval_or, eval_not, eval_ex_eq_false_iff.2 ⟨?_, λ a => ?_⟩]
       · rfl
       · rw [eval_pred_of_eq_bot rfl]; decide
-      · exact eval_pred_eq_false_iff.2 ⟨a, PartialAssign.update_at _ _ _, hnone a⟩
+      · exact eval_pred_eq_false_iff.2 ⟨a, PartialAssign.update_self _ _ _, hnone a⟩
     · refine ⟨PartialAssign.single x d, ?_⟩
       rw [eval_or, eval_not, eval_ex_eq_true_iff.2 (eval_pred_eq_true_iff.2 ⟨d, by simp, hB⟩),
         Trivalent.neg_true, Trivalent.joinMiddle_false_left]
@@ -362,7 +362,7 @@ theorem not_transparent_reverse_bathroom (B : P) (x : ℕ) (hw : ∃ w d, d ∈ 
     | «false» =>
       obtain ⟨-, hall⟩ := eval_ex_eq_false_iff.1 hE
       obtain ⟨d', hd', hnot⟩ := eval_pred_eq_false_iff.1 (hall d)
-      rw [PartialAssign.update_at] at hd'
+      rw [PartialAssign.update_self] at hd'
       exact (hnot (Flat.coe_inj.1 hd' ▸ hd)).elim
   simp only [eval_or, eval_and, eval_not, hE, eval_valued_bot,
     Trivalent.meetMiddle_false_left] at this
@@ -406,8 +406,8 @@ theorem trueAt_notExNotEx_iff [Nonempty D] (S : R) {x y : ℕ} (hxy : x ≠ y) (
     intro g a
     rw [eval_not, Trivalent.neg_eq_false_iff, eval_ex_eq_true_iff]
     cases hy : g y with
-    | bot => simp [eval, hy, PartialAssign.update_ne _ _ hxy.symm]
-    | coe b => simp [eval, hy, PartialAssign.update_ne _ _ hxy.symm]
+    | bot => simp [eval, hy, PartialAssign.update_of_ne hxy.symm]
+    | coe b => simp [eval, hy, PartialAssign.update_of_ne hxy.symm]
   constructor
   · rintro ⟨g, hg⟩
     rw [eval_not, Trivalent.neg_eq_true_iff, eval_ex_eq_false_iff] at hg
@@ -425,7 +425,7 @@ theorem trueAt_notExNotEx_iff [Nonempty D] (S : R) {x y : ℕ} (hxy : x ≠ y) (
     rw [eval_not, Trivalent.neg_eq_true_iff, eval_ex_eq_false_iff] at hne
     obtain ⟨a₀⟩ := ‹Nonempty D›
     have := hne.2 a₀
-    simp [eval, PartialAssign.update_ne _ _ hxy, PartialAssign.single_eq_of_ne _ hxy] at this
+    simp [eval, PartialAssign.update_of_ne hxy, PartialAssign.single_eq_of_ne hxy] at this
 
 /-! ### The full system: plural assignments -/
 
@@ -702,9 +702,9 @@ theorem restrict_pairing {x y : ℕ} (hxy : x ≠ y) (f : D → D) (a : D) :
     intro a'
     constructor
     · rintro ⟨-, h⟩
-      simpa [PartialAssign.update_ne _ _ hxy] using h
+      simpa [PartialAssign.update_of_ne hxy] using h
     · rintro rfl
-      exact ⟨⟨a', rfl⟩, by simp [PartialAssign.update_ne _ _ hxy]⟩
+      exact ⟨⟨a', rfl⟩, by simp [PartialAssign.update_of_ne hxy]⟩
   refine ⟨⟨_, (hmem a).2 rfl⟩, ⟨_, (hmem a).2 rfl, by simp⟩, ?_⟩
   rintro g ⟨⟨a', rfl⟩, hga⟩ -
   rw [(hmem a').1 ⟨⟨a', rfl⟩, hga⟩]
@@ -737,8 +737,8 @@ theorem trueAtP_notExNotEx_iff [Nonempty D] (S : R) {x y : ℕ} (hxy : x ≠ y) 
       have hg₀ : (PartialAssign.single x a₀).update y (f a₀) ∈
           (pairing x y f).restrict y (f a₀) :=
         ⟨⟨a₀, rfl⟩, by simp⟩
-      have hx := ha'.2 _ hg₀ (by simp [PartialAssign.update_ne _ _ hxy])
-      rw [PartialAssign.update_ne _ _ hxy, PartialAssign.single_eq_same, Flat.coe_inj] at hx
+      have hx := ha'.2 _ hg₀ (by simp [PartialAssign.update_of_ne hxy])
+      rw [PartialAssign.update_of_ne hxy, PartialAssign.single_eq_same, Flat.coe_inj] at hx
       rw [← hx, (PluralAssign.singularAt_restrict_iff.1 hb').2] at hn
       exact hn (hf a₀)
     · obtain ⟨hne, hsing⟩ := restrict_pairing hxy f a
