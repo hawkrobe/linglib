@@ -7,19 +7,19 @@
 [![Mathlib](https://img.shields.io/badge/mathlib-v4.34.0-blueviolet)](https://github.com/leanprover-community/mathlib4)
 [![License](https://img.shields.io/badge/license-Apache%202.0-green)](LICENSE)
 
-A Lean 4 library for formal linguistics — semantics, syntax, pragmatics, morphology, phonology, and processing.
+A Lean 4 library for formal linguistics across semantics, syntax, pragmatics, morphology, phonology, and processing.
 
-> ⚠️ Among other things, this repository is an experiment in "AI for Linguistics" using recent advances in proof assistants. If you find any inaccuracies or errors, please [open an issue](https://github.com/hawkrobe/linglib/issues)! 
+> ⚠️ Among other things, this repository is an experiment in "AI for Linguistics" using recent advances in proof assistants and autoformalization. If you find any inaccuracies or errors, please [open an issue](https://github.com/hawkrobe/linglib/issues)! 
 
 ## Overview
 
-Decades of progress in linguistics live in prose scattered across hundreds of papers. Here are a few benefits of using Lean to formalize in a shared library:
+Linglib aims to provide for linguistic theory what mathlib provides for mathematics: a machine-verified library where theories can be formalized against shared definitions and tested against a shared body of data. 
 
-- **Detect breakage.** If you tweak semantics for (say) attitude verbs, Lean can tell you exactly which downstream theorems about conditionals, questions, or pragmatic inference no longer follow. 
+- - **Make theories fully explicit.** In practice, theoretical proposals involve some amount of hand-waving, leaving gaps between what is claimed and what actually follows from the definitions. Lean checks predictions as theorems and if the consequences don't follow, the code doesn't compile. 
 
-- **Check predictions.** Theories are often stated in notation ambiguous enough to hide gaps between what is claimed and what actually follows from the definitions. 
+- **Detect breakage.** Because every study imports a shared library, tweaking your semantics for (say) attitude verbs tells you exactly which downstream results about conditionals, questions, or implicature still go through, and which were silently sensitive to this choices. This is like a "regression test" for theory. 
 
-- **Compare theories.** When two theories both claim to handle the same data, we can formally characterize where they agree and where they diverge rather than arguing past each other with different formalisms.
+- **Compare theories.** We can formally characterize where theories agree and where they diverge (and the divergence points highlight predictions where further data could be collected.)
 
 ## Building
 
