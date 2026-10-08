@@ -31,6 +31,8 @@ arcs and is too coarse to preserve tier words.
 * `AR.tierWord_realize`, `AR.link_realize`: tier content and links of a realization are
   compositional — each link lives inside one symbol's primitive at that symbol's tier
   offsets (`AR.tierOffset`).
+* `AR.noCrossing_realize`: realization preserves the NCC of its primitives ([jardine-2016b]
+  Theorem 4).
 -/
 
 @[expose] public section
@@ -75,8 +77,8 @@ theorem cls_normalize {X : TieredAR ι τ} [Finite X.obj.V] :
 
 /-! ### Realization of strings -/
 
-/-- Realize a string as a representation: the iterated tensor of its symbols'
-    primitives ([jardine-2019]'s `g`). -/
+/-- The realization of a string is the iterated tensor of its symbols' primitives
+([jardine-2019]'s `g`). -/
 noncomputable def realize (w : List S) : TieredAR ι τ :=
   (w.map g₀).foldr (· ⊗ ·) (𝟙_ _)
 
@@ -84,6 +86,14 @@ noncomputable def realize (w : List S) : TieredAR ι τ :=
 
 @[simp] theorem realize_cons (a : S) (w : List S) :
     realize g₀ (a :: w) = g₀ a ⊗ realize g₀ w := rfl
+
+/-- A string of primitives obeying the NCC realizes a representation obeying it
+([jardine-2016b] Theorem 4). -/
+theorem noCrossing_realize (hg : ∀ s, NoCrossing (g₀ s).obj.edges (g₀ s).obj.arcs)
+    (w : List S) : NoCrossing (realize g₀ w).obj.edges (realize g₀ w).obj.arcs := by
+  induction w with
+  | nil => exact fun v => v.elim
+  | cons a w ih => exact Graph.noCrossing_concat _ (hg a) ih
 
 /-! ### Tier content of realizations -/
 
@@ -109,8 +119,8 @@ theorem tierWord_realize [∀ s, Finite (g₀ s).obj.V] (i : ι) (w : List S) :
 
 variable [∀ s, Finite (g₀ s).obj.V]
 
-/-- The tier-`i` offset of the `k`-th symbol of `w` in its realization: the tier-`i` content
-of the prefix before it. -/
+/-- The tier-`i` offset of the `k`-th symbol of `w` is the tier-`i` content of the prefix
+before it. -/
 noncomputable def tierOffset (i : ι) (w : List S) (k : ℕ) : ℕ :=
   (realize g₀ (w.take k)).tierLength i
 
@@ -121,8 +131,8 @@ noncomputable def tierOffset (i : ι) (w : List S) (k : ℕ) : ℕ :=
     tierOffset g₀ i (a :: w) (k + 1) = (g₀ a).tierLength i + tierOffset g₀ i w k := by
   simp [tierOffset, List.take_succ_cons]
 
-/-- Links of a realization are blockwise: a link lives inside one symbol's primitive, at
-that symbol's tier offsets — the link half of `tierWord_realize`. -/
+/-- A link of a realization lives inside one symbol's primitive, at that symbol's tier
+offsets. -/
 theorem link_realize (i j : ι) (w : List S) (p q : ℕ) :
     (realize g₀ w).link i j p q ↔
       ∃ k, ∃ hk : k < w.length, tierOffset g₀ i w k ≤ p ∧ tierOffset g₀ j w k ≤ q ∧
@@ -171,7 +181,7 @@ noncomputable def tierProj (i : ι) : FreeMonoid S →* FreeMonoid (τ i) :=
 @[simp] theorem tierProj_of (i : ι) (a : S) :
     tierProj g₀ i (FreeMonoid.of a) = FreeMonoid.ofList ((g₀ a).tierWord i) := rfl
 
-/-- `tierProj` packages `tierWord`: on a word it is the realized tier word. -/
+/-- On a word, `tierProj` is the realized tier word. -/
 theorem tierProj_ofList (i : ι) (w : List S) :
     tierProj g₀ i (FreeMonoid.ofList w) = FreeMonoid.ofList ((realize g₀ w).tierWord i) := by
   induction w with

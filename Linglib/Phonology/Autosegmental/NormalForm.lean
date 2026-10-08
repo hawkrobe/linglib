@@ -10,6 +10,7 @@ public import Mathlib.Basic.Finite.Sum
 public import Mathlib.Data.Fintype.Sort
 public import Mathlib.Data.Fintype.Sum
 public import Mathlib.Logic.Equiv.Fin.Basic
+public import Mathlib.Order.Monotone.Monovary
 public import Linglib.Phonology.Autosegmental.AR
 
 /-!
@@ -39,6 +40,8 @@ definitional: `normalize` pulls the graph back along the enumeration equivalence
 * `AR.tierWord_tensor`, `AR.link_tensor`: concatenation appends tier words and
   shifts links blockwise.
 * `AR.isoOfReaderEq`: `(tierWord, link)` is a complete isomorphism invariant.
+* `AR.noCrossing_iff`: the NCC is the monovariance of each tier pair's link set, the
+  coordinate No-Crossing Constraint of `IsNonCrossing`.
 -/
 
 @[expose] public section
@@ -49,8 +52,8 @@ open CategoryTheory
 
 variable {ι : Type*} {τ : ι → Type*}
 
-/-- Representations over the sigma alphabet `(i : ι) × τ i` with its native tier
-    projection `Sigma.fst` — the coordinate carrier of the normal-form theory. -/
+/-- Representations over the sigma alphabet `(i : ι) × τ i` with its tier projection
+`Sigma.fst`, the coordinate carrier of the normal-form theory. -/
 abbrev TieredAR (ι : Type*) (τ : ι → Type*) := AR (Sigma.fst : ((i : ι) × τ i) → ι)
 
 namespace AR
@@ -108,16 +111,15 @@ noncomputable def fiberEnum [Finite X.obj.V] (i : ι) :
   letI := Fintype.ofFinite (X.fiber i)
   monoEquivOfFin (X.fiber i) rfl
 
-/-- The canonical enumeration of a finite representation's vertex type: tier
-    fibers in ascending precedence order, assembled over the tier index. -/
+/-- The canonical enumeration of a finite representation's vertex type lists the tier
+fibers in ascending precedence order, assembled over the tier index. -/
 noncomputable def vertexEquiv [Finite X.obj.V] :
     ((i : ι) × Fin (X.tierLength i)) ≃ X.obj.V :=
   letI : ∀ i : ι, Fintype (X.fiber i) := fun _ => Fintype.ofFinite _
   (Equiv.sigmaCongrRight (fun i : ι => (X.fiberEnum i).toEquiv)).trans
     (Equiv.sigmaFiberEquiv (fun v : X.obj.V => (X.obj.label v).1))
 
-/-- The tier-`i` label word: the fiber's labels read off in ascending precedence
-    order — the tier content the normal form canonicalizes. -/
+/-- The tier-`i` label word reads off the fiber's labels in ascending precedence order. -/
 noncomputable def tierWord [Finite X.obj.V] (i : ι) : List (τ i) :=
   letI := Fintype.ofFinite (X.fiber i)
   List.ofFn fun p : Fin (X.tierLength i) => X.fiberLabel (X.fiberEnum i p)
@@ -126,9 +128,8 @@ noncomputable def tierWord [Finite X.obj.V] (i : ι) : List (τ i) :=
     (X.tierWord i).length = X.tierLength i := by
   simp [tierWord]
 
-/-- The link relation in position coordinates: tier-`i` position `p` associates
-    to tier-`j` position `q`. With `tierWord`, the complete tuple reading of a
-    finite representation. -/
+/-- Tier-`i` position `p` associates to tier-`j` position `q`; with `tierWord`, this is the
+complete tuple reading of a finite representation. -/
 noncomputable def linkRel [Finite X.obj.V] (i j : ι)
     (p : Fin (X.tierLength i)) (q : Fin (X.tierLength j)) : Prop :=
   X.obj.edges.Adj (X.vertexEquiv ⟨i, p⟩) (X.vertexEquiv ⟨j, q⟩)
@@ -138,9 +139,8 @@ theorem linkRel_def [Finite X.obj.V] {i j : ι} {p : Fin (X.tierLength i)}
     X.linkRel i j p q ↔
       X.obj.edges.Adj (X.vertexEquiv ⟨i, p⟩) (X.vertexEquiv ⟨j, q⟩) := Iff.rfl
 
-/-- The normal form: `X` reindexed onto the canonical vertex type by pulling
-    edges, arcs, and labels back along `vertexEquiv`. A `AR` — the
-    normal form is not a separate kind of object. -/
+/-- The normal form reindexes `X` onto the canonical vertex type, pulling edges, arcs and
+labels back along `vertexEquiv`. -/
 noncomputable def normalize
     (X : TieredAR ι τ) [Finite X.obj.V] :
     TieredAR ι τ where
@@ -222,8 +222,8 @@ attribute [local instance] Fintype.ofFinite
   rw [Fintype.card_congr (fiberTensorEquiv i), Fintype.card_sum]
 
 open AR in
-/-- The blockwise enumeration of a tensor's fiber: left factor first, then
-    right — monotone because the bridge arc orders the blocks. -/
+/-- The blockwise enumeration of a tensor's fiber lists the left factor first, then the
+right; it is monotone because the bridge arc orders the blocks. -/
 noncomputable def tensorEnum (i : ι) :
     Fin (X.tierLength i + Y.tierLength i) ≃o (X ⊗ Y).fiber i := by
   letI := Fintype.ofFinite (X.fiber i)
@@ -394,8 +394,8 @@ theorem forall_link_iff_bounded
   exact h i j p hp q hq hl
 
 open scoped MonoidalCategory in
-/-- Tensor links are blockwise: within the left factor, or within the right
-    factor shifted by the left factor's tier lengths — no cross-factor links. -/
+/-- A tensor link lies within the left factor, or within the right factor shifted by the
+left factor's tier lengths. -/
 theorem link_tensor {X Y : TieredAR ι τ}
     [Finite X.obj.V] [Finite Y.obj.V] (i j : ι) (p q : ℕ) :
     (X ⊗ Y).link i j p q ↔
@@ -545,6 +545,39 @@ noncomputable def isoOfReaderEq
   mkIso (fullIsoOfReaderEq hw hl)
 
 end Classification
+
+/-! ### The No-Crossing Constraint in coordinates -/
+
+section NoCrossing
+
+variable {ι : Type*} {τ : ι → Type*} (X : TieredAR ι τ) [Finite X.obj.V]
+
+/-- On a normal form the arcs are the position order within a tier. -/
+theorem arcs_normalize_iff {i j : ι} (p : Fin (X.tierLength i)) (q : Fin (X.tierLength j)) :
+    (X.normalize).obj.arcs.Adj ⟨i, p⟩ ⟨j, q⟩ ↔ i = j ∧ (p : ℕ) < q := by
+  rcases eq_or_ne i j with rfl | h
+  · exact (arcs_normalize (X := X) i p q).trans ⟨fun h => ⟨rfl, h⟩, fun h => h.2⟩
+  · exact iff_of_false (arcs_normalize_ne h p q) fun h' => h h'.1
+
+/-- A finite representation obeys the NCC iff the link set of each tier pair monovaries, that
+is, its links respect the position order on both tiers. -/
+theorem noCrossing_iff :
+    NoCrossing X.obj.edges X.obj.arcs ↔
+      ∀ i j, MonovaryOn Prod.snd Prod.fst {x : ℕ × ℕ | X.link i j x.1 x.2} := by
+  rw [← X.normalizeFullIso.noCrossing_iff]
+  constructor
+  · rintro h i j ⟨p, q⟩ ⟨hp, hq, hl⟩ ⟨p', q'⟩ ⟨hp', hq', hl'⟩ hpp'
+    by_contra! hqq'
+    exact h (v := ⟨i, ⟨p, hp⟩⟩) (v' := ⟨j, ⟨q, hq⟩⟩) (w := ⟨i, ⟨p', hp'⟩⟩)
+      (w' := ⟨j, ⟨q', hq'⟩⟩) hl hl' ((arcs_normalize_iff X _ _).mpr ⟨rfl, hpp'⟩)
+      ((arcs_normalize_iff X _ _).mpr ⟨rfl, hqq'⟩)
+  · rintro h ⟨i, p⟩ ⟨j, q⟩ ⟨i', p'⟩ ⟨j', q'⟩ hvv' hww' hvw hw'v'
+    obtain ⟨rfl, hpp'⟩ := (arcs_normalize_iff X _ _).mp hvw
+    obtain ⟨rfl, hqq'⟩ := (arcs_normalize_iff X _ _).mp hw'v'
+    exact (h i j' (show ((p : ℕ), (q : ℕ)) ∈ _ from linkRel_iff_link.mp hvv')
+      (show ((p' : ℕ), (q' : ℕ)) ∈ _ from linkRel_iff_link.mp hww') hpp').not_gt hqq'
+
+end NoCrossing
 
 /-! ### Building representations from tuple data
 

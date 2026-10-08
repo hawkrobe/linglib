@@ -20,15 +20,16 @@ subcategory of `Graph S` they carve out, monoidal under `Graph.concat`.
 
 ## Main definitions
 
-* `IsTierOrdered`, `NoInternalAssoc`, `IsSaturated`, `IsPlanar`, `IsOCPClean`: the six
+* `IsTierOrdered`, `NoInternalAssoc`, `IsSaturated`, `NoCrossing`, `IsOCPClean`: the six
   well-formedness axioms of [jardine-2016b] §4.2.
 * `AR t`: the category of autosegmental representations — the full subcategory on
   Axioms 1–3, monoidal under `concat`.
 
 ## Main results
 
-* `isTierOrdered_concat`, `noInternalAssoc_concat`, `isPlanar_concat`: concatenation
-  preserves the axioms ([jardine-heinz-2015] Theorem 4's structural half).
+* `isTierOrdered_concat`, `noInternalAssoc_concat`, `noCrossing_concat`: concatenation
+  preserves the axioms ([jardine-2016b] Theorems 3 and 4, proved in full in
+  [jardine-heinz-2015]).
 * `not_isTierOrdered_sum`: the bridge-free coproduct leaves the axiom class; Axiom 2
   forces the bridges in `concat`.
 * `AR.tierColoring`: the tier map properly colors the association graph
@@ -40,15 +41,16 @@ The axiom numbering follows the dissertation; [jardine-heinz-2015] numbers the N
 OCP as 4 and 5 and has no saturation axiom. Saturation ([goldsmith-1976]'s original
 well-formedness condition) is stated but never imposed. The arcs are transitively
 closed ([jardine-2019]'s reading that `A` represents the order), so the OCP reads
-adjacency as the covering relation of the arcs. Axiom 6's word-level form is
-`AR.IsCleanAt` (`OCP.lean`, through the hub `OCP.IsClean`); relating Axiom 5 to the
-coordinate `IsNonCrossing` is the TODO.
+adjacency as the covering relation of the arcs. Axiom 5 is the No-Crossing Constraint
+in [jardine-2016b]'s formulation, which [jardine-2019] fn. 11 distinguishes from the
+weaker reading of the NCC as graph planarity; its coordinate form is `AR.noCrossing_iff`
+(`NormalForm.lean`). Axiom 6's word-level form is `AR.IsCleanAt` (`OCP.lean`, through the
+hub `OCP.IsClean`).
 
 ## TODO
 
 * Package `AR.ofData` + `AR.isoOfReaderEq` (`NormalForm.lean`) as an equivalence with
-  the strict tuple category; reduce `IsPlanar` on normal forms to the per-pair
-  `IsNonCrossing` of the link relation.
+  the strict tuple category.
 -/
 
 @[expose] public section
@@ -73,8 +75,9 @@ def NoInternalAssoc : Prop := ∀ ⦃v w⦄, E.Adj v w → ¬ A.Adj v w
 /-- Every vertex meets an association edge (Axiom 4, full specification). -/
 def IsSaturated : Prop := ∀ v, ∃ w, E.Adj v w
 
-/-- No two association edges straddle in opposite precedence order (Axiom 5, the NCC). -/
-def IsPlanar : Prop :=
+/-- No two association edges straddle in opposite precedence order (Axiom 5, the
+No-Crossing Constraint). -/
+def NoCrossing : Prop :=
   ∀ ⦃v v' w w'⦄, E.Adj v v' → E.Adj w w' → A.Adj v w → ¬ A.Adj w' v'
 
 /-- Precedence-adjacent vertices on melody tier `m` bear distinct labels (Axiom 6, the OCP). -/
@@ -117,9 +120,9 @@ theorem noInternalAssoc_concat (h₁ : NoInternalAssoc X.edges X.arcs)
   rintro (v | v) (w | w) hadj harc
   exacts [h₁ hadj harc, Bool.noConfusion hadj, Bool.noConfusion hadj, h₂ hadj harc]
 
-/-- The concatenation of planar graphs is planar; this is the headline result of [jardine-2019]. -/
-theorem isPlanar_concat (h₁ : IsPlanar X.edges X.arcs) (h₂ : IsPlanar Y.edges Y.arcs) :
-    IsPlanar (concat t X Y).edges (concat t X Y).arcs := by
+/-- Concatenation preserves the NCC, the inductive step of [jardine-2016b] Theorem 4. -/
+theorem noCrossing_concat (h₁ : NoCrossing X.edges X.arcs) (h₂ : NoCrossing Y.edges Y.arcs) :
+    NoCrossing (concat t X Y).edges (concat t X Y).arcs := by
   rintro (v | v) (v' | v') (w | w) (w' | w') hvv' hww' hvw hw'v' <;>
     first
       | exact h₁ hvv' hww' hvw hw'v'
@@ -127,6 +130,16 @@ theorem isPlanar_concat (h₁ : IsPlanar X.edges X.arcs) (h₂ : IsPlanar Y.edge
       | exact (hvw : False).elim
       | exact (hw'v' : False).elim
       | simp_all
+
+/-- The NCC is invariant under full isomorphism. -/
+theorem Iso.noCrossing_iff (e : Iso X Y) :
+    NoCrossing X.edges X.arcs ↔ NoCrossing Y.edges Y.arcs :=
+  ⟨fun h _ _ _ _ hvv' hww' hvw hw'v' =>
+    h ((e.symm.edges_iff _ _).mpr hvv') ((e.symm.edges_iff _ _).mpr hww')
+      ((e.symm.arcs_iff _ _).mpr hvw) ((e.symm.arcs_iff _ _).mpr hw'v'),
+   fun h _ _ _ _ hvv' hww' hvw hw'v' =>
+    h ((e.edges_iff _ _).mpr hvv') ((e.edges_iff _ _).mpr hww') ((e.arcs_iff _ _).mpr hvw)
+      ((e.arcs_iff _ _).mpr hw'v')⟩
 
 /-- The bridge-free sum of graphs sharing a tier is never tier-ordered, so Axiom 2
     forces the bridges in `concat`. -/
@@ -219,8 +232,8 @@ instance : MonoidalCategory (AR t) :=
       repeat' rcases (v : _ ⊕ _) with v | v
       all_goals first | rfl | exact v.elim)
 
-/-- Precedence preservation on representations: the classical morphisms of the
-    theory, as a monoidally-stable wide subcategory of the broad category. -/
+/-- The precedence-preserving morphisms are the classical morphisms of the theory, a
+monoidally stable wide subcategory of the broad category. -/
 def precPreserving : MorphismProperty (AR t) := fun _ _ f => Graph.precPreserving f.hom
 
 instance : (precPreserving (t := t)).IsMonoidalStable where

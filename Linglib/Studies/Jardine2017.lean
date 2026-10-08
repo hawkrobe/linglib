@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Phonology.Autosegmental.Junction
+public import Linglib.Phonology.Autosegmental.TwoTier
 public import Linglib.Phonology.Tone.Basic
 
 /-!

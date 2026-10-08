@@ -8,55 +8,35 @@ module
 public import Linglib.Core.Algebra.FreeMonoid.Destutter
 public import Linglib.Phonology.OCP
 public import Linglib.Phonology.Autosegmental.Realization
-public import Linglib.Phonology.Autosegmental.Junction
+public import Linglib.Phonology.Autosegmental.TwoTier
 
 /-!
 # OCP-merging collapse of autosegmental representations
 
-A merging tone realization ([jardine-2019]; the melody-merging naming function of
-[jardine-heinz-2015], Mende example) is **OCP-merging**: a tonal melody `Hⁿ` realizes as a
-*single* H node multiply associated to the `n` morae, not `n` separate H nodes. The
-project's `Autosegmental.AR.realize` (`Realization.lean`) instead uses the bridge-only
-`concat` (the categorical coproduct), which keeps the `n` H nodes apart. This file
-supplies the missing merge as a post-processing retraction on the upper tier:
+A merging realization ([jardine-2019]; the melody merge of [jardine-heinz-2015]) fuses adjacent
+identical melody nodes, so that a melody `Hⁿ` realizes as one `H` linked to `n` timing slots.
+`AR.collapse m` performs the merge on melody tier `m`: the tier word is destuttered
+(`OCP.collapse`), each link is repointed through the run index `runIdx`, and the other tiers are
+untouched, so a merged node keeps every slot its run was linked to. `realizeMerged` is the
+realization followed by the collapse.
 
-* `collapseGraph` / `collapseAR` — fuse each maximal run of identical adjacent
-  *upper*-tier labels into one node, **carrying the association lines along**: a link
-  `(k, j)` is repointed to `(ρ k, j)`, where `ρ` (`runIdx`) sends an upper position to
-  the index of its run in the collapsed tier. The lower tier is untouched, so a merged
-  node keeps *all* the morae its run was associated with (multiple association).
-* `AR.realizeMerged := collapseAR ∘ AR.realize` — the OCP-merging realization.
+## Main definitions
 
-The upper-tier collapse is exactly `OCP.collapse` (= `List.destutter (· ≠ ·)`); the
-link pushforward is the `SimpleGraph.map`/`Quiver.Push` idiom
-(`Finset.image (Prod.map ρ id)`); planarity survives because `ρ` is monotone
-(`IsNonCrossing.image_monotone`, `NonCrossing.lean`).
-
-## The AR-level OCP quotient monoid
-
-`collapseAR` is the AR-level lift of `FreeMonoid.destutterHom`: a retraction onto the OCP-clean
-ARs that descends to a quotient of the concat monoid `AR α β`. The key congruence is
-`collapseAR_concat` — the AR shadow of `OCP.collapse_append`, whose links half reduces to
-`runIdx` commuting with the collapse-collapse seam (`runIdx_append_collapse_left/right`,
-in turn the boundary-length lemma `List.IsChain.length_destutter_ne_append`). It bundles as
-`collapseARHom : AR α β →* {A // IsCleanAR A}`, whose mathlib quotient
-(`ocpARQuotientEquiv`) is the concrete OCP-clean model.
+* `AR.collapse`: the OCP merge of melody tier `m`.
+* `realizeMerged`: the merging realization of a string.
+* `AR.IsCleanAt`: no adjacent repeats on melody tier `m`.
+* `MergedLinks`: the lines of the merged realization of a string of two-tier presentations.
 
 ## Main results
 
-* `collapseGraph_concat` / `collapseAR_concat` — the collapse congruence (in-bounds free
-  at AR level), the AR lift of `OCP.collapse_append`.
-* `collapseAR_id_on_clean` — `collapseAR` retracts onto its OCP-clean fixed points.
-* `instMonoidCleanAR` / `collapseARHom` / `ocpARQuotientEquiv` — the AR-level OCP quotient
-  monoid, its bundled hom, and the first-isomorphism equivalence.
-* `upperHom` / `upperHomClean_comp_collapseARHom` — the upper-tier projection and the
-  decategorification square: the AR-level OCP quotient maps onto the tier-level one.
-* `autosegment_mul_self` / `ocpPresentation` — the tier-level OCP-clean monoid is presented
-  by idempotent autosegments `⟨α | a · a = a⟩`; the OCP is a monoidal **quotient**, the
-  counterpart to the No-Crossing Constraint's monoidal **subcategory** (`ncc_isMonoidal`).
-* `collapse_not_reflective` — that quotient does *not* categorify: `collapse` is not a
-  reflector (a morphism can split a geminate), so the OCP quotient lives on the object monoid,
-  not the category — the precise sense in which OCP and NCC differ.
+* `AR.link_collapse`: the links of a collapse are the repointed links.
+* `AR.cls_collapse_tensor`: collapsing a concatenation equals collapsing the concatenation of
+  the collapses, up to isomorphism.
+* `AR.isCleanAt_collapse`, `AR.noCrossing_collapse`: the collapse is OCP-clean and preserves
+  the NCC.
+* `AR.isCleanAt_iff_isOCPClean`: tier-word cleanliness is Axiom 6 on the normal form.
+* `AR.free_realizeMerged_ofWords_iff`: the merged realization of a string of presentations
+  reads as one presentation.
 -/
 
 @[expose] public section
@@ -83,8 +63,8 @@ variable {ι : Type*} [DecidableEq ι] {τ : ι → Type*}
 variable (X : TieredAR ι τ)
 variable (m : ι) [DecidableEq (τ m)]
 
-/-- Tier words after collapsing melody tier `m`: destuttered at `m`, untouched
-    elsewhere. -/
+/-- The tier words after collapsing melody tier `m` are destuttered at `m` and untouched
+elsewhere. -/
 noncomputable def AR.collapsedWord [Finite X.obj.V] : ∀ i, List (τ i) :=
   Function.update (fun i => X.tierWord i) m (OCP.collapse (X.tierWord m))
 
@@ -102,7 +82,7 @@ theorem AR.collapsedWord_length_le [Finite X.obj.V] (i : ι) :
   · simpa using OCP.collapse_length_le (X.tierWord i)
   · simp [h]
 
-/-- Position repointing: `runIdx` on the melody tier, identity elsewhere. -/
+/-- Positions are repointed by `runIdx` on the melody tier and fixed elsewhere. -/
 noncomputable def AR.collapseIdx [Finite X.obj.V] (i : ι) (p : ℕ) : ℕ :=
   if i = m then runIdx (X.tierWord m) p else p
 
@@ -114,8 +94,8 @@ noncomputable def AR.collapseIdx [Finite X.obj.V] (i : ι) (p : ℕ) : ℕ :=
     X.collapseIdx m i p = p :=
   ite_eq_right h
 
-/-- **The OCP-merging collapse**: melody tier `m` destuttered, links repointed
-    through `runIdx`, other tiers untouched. -/
+/-- The OCP-merging collapse destutters melody tier `m`, repoints links through `runIdx`, and
+leaves the other tiers untouched. -/
 noncomputable def AR.collapse [Finite X.obj.V] :
     TieredAR ι τ where
   obj :=
@@ -172,16 +152,14 @@ noncomputable def AR.collapseFiberEnum [Finite X.obj.V] (i : ι) :
   obtain rfl : j = i := hp
   exact ⟨q, rfl⟩
 
-/-- **The collapse does what it says**: its tier words are the collapsed
-    words — destuttered at `m` (`Function.update_self`), untouched elsewhere. -/
+/-- The tier words of the collapse are the collapsed words. -/
 @[simp] theorem AR.tierWord_collapse [Finite X.obj.V] (i : ι) :
     (X.collapse m).tierWord i = X.collapsedWord m i := by
   rw [AR.tierWord_eq_ofFn (X.collapseFiberEnum m i)]
   exact List.ofFn_getElem
 
-/-- The word half of the OCP congruence: collapsing a tensor computes the same
-    tier words as collapsing the tensor of the collapsed factors —
-    `OCP.collapse_append` lifted through the readers. -/
+/-- Collapsing a tensor computes the same tier words as collapsing the tensor of the
+collapsed factors, the word half of the OCP congruence. -/
 theorem AR.collapsedWord_tensor
     {Y : TieredAR ι τ}
     [Finite X.obj.V] [Finite Y.obj.V] (i : ι) :
@@ -319,20 +297,17 @@ theorem AR.link_collapse_tensor (i j : ι) (r s : ℕ) :
       · rw [← X.collapseIdx_right m i hY₀.1, hca, Nat.add_sub_cancel' hpi', hr]
       · rw [← X.collapseIdx_right m j hY₀.2.1, hcb, Nat.add_sub_cancel' hqj', hs]
 
-/-- **The OCP congruence**: collapsing a concatenation is isomorphic to
-    collapsing the concatenation of the collapses — [jardine-heinz-2015]'s
-    melody-merge law, by the classification theorem. -/
+/-- Collapsing a concatenation is isomorphic to collapsing the concatenation of the
+collapses, the melody-merge law of [jardine-heinz-2015]. -/
 noncomputable def AR.collapseTensorFullIso :
     Graph.Iso ((X ⊗ Y).collapse m).obj
       ((X.collapse m ⊗ Y.collapse m).collapse m).obj :=
   AR.fullIsoOfReaderEq
-    (fun i => by
-      rw [AR.tierWord_collapse, AR.tierWord_collapse,
-        AR.collapsedWord_tensor])
+    (fun i => ((X ⊗ Y).tierWord_collapse m i).trans ((X.collapsedWord_tensor m i).trans
+      ((X.collapse m ⊗ Y.collapse m).tierWord_collapse m i).symm))
     (fun i j r s => AR.link_collapse_tensor X m i j r s)
 
-/-- The OCP congruence as an equality of isomorphism classes: `collapse`
-    descends to the class monoid. -/
+/-- The OCP congruence holds in the class monoid, so `collapse` descends to it. -/
 theorem AR.cls_collapse_tensor :
     AR.cls ((X ⊗ Y).collapse m)
       = AR.cls ((X.collapse m ⊗ Y.collapse m).collapse m) :=
@@ -350,6 +325,21 @@ theorem AR.isCleanAt_collapse [Finite X.obj.V] :
   unfold AR.IsCleanAt
   rw [AR.tierWord_collapse]
   simpa [AR.collapsedWord] using collapse_clean (X.tierWord m)
+
+/-- The collapse preserves the NCC, since it repoints links monotonically. -/
+theorem AR.noCrossing_collapse [Finite X.obj.V] (h : NoCrossing X.obj.edges X.obj.arcs) :
+    NoCrossing (X.collapse m).obj.edges (X.collapse m).obj.arcs := by
+  have hmono (i : ι) : Monotone (X.collapseIdx m i) := fun p q hpq => by
+    rcases eq_or_ne i m with rfl | hi
+    · rw [AR.collapseIdx_self, AR.collapseIdx_self]
+      exact runIdx_monotone _ hpq
+    · rwa [AR.collapseIdx_of_ne X m hi, AR.collapseIdx_of_ne X m hi]
+  rw [AR.noCrossing_iff] at h ⊢
+  intro i j ⟨r, s⟩ hl ⟨r', s'⟩ hl' hrr'
+  obtain ⟨p, q, hpq, rfl, rfl⟩ := (AR.link_collapse X m i j r s).mp hl
+  obtain ⟨p', q', hpq', rfl, rfl⟩ := (AR.link_collapse X m i j r' s').mp hl'
+  exact hmono j (h i j (show (p, q) ∈ _ from hpq) (show (p', q') ∈ _ from hpq')
+    ((hmono i).reflect_lt hrr'))
 
 section RealizeMerged
 variable {S : Type*}
@@ -369,23 +359,23 @@ end RealizeMerged
 
 /-! ### The merged realization of word primitives
 
-Two-tier case, melody over `true`: the merged realization of a string of word primitives
-has the readers of one representation of words — the melody destuttered, the lines
-repointed through the run index. -/
+In the two-tier case, with the melody over `true`, the merged realization of a string of
+presentations reads as one presentation whose melody is destuttered and whose lines are
+repointed through the run index of the melody. -/
 
 section MergedOfWords
 
 universe u
 variable {α β : Type u} [DecidableEq α] {S : Type*}
 
-/-- The lines of an OCP-merged realization: a line of the realization with its melody
-position repointed through the run index of the melody. -/
-def mergedLinks (melody : List α) (Lk : ℕ → ℕ → Prop) (r s : ℕ) : Prop :=
+/-- A line of an OCP-merged realization is a line of the realization with its melody position
+repointed through the run index of the melody. -/
+def MergedLinks (melody : List α) (Lk : ℕ → ℕ → Prop) (r s : ℕ) : Prop :=
   ∃ p < melody.length, Lk p s ∧ runIdx melody p = r
 
 instance (melody : List α) (Lk : ℕ → ℕ → Prop) [DecidableRel Lk] :
-    DecidableRel (mergedLinks melody Lk) :=
-  fun _ _ => by unfold mergedLinks; infer_instance
+    DecidableRel (MergedLinks melody Lk) :=
+  fun _ _ => by unfold MergedLinks; infer_instance
 
 /-- Melody-to-timing lines of a two-tier collapse at the melody tier. -/
 theorem AR.link_collapse_true_false (X : TieredAR Bool (TwoTier α β)) [Finite X.obj.V]
@@ -402,67 +392,54 @@ theorem AR.link_collapse_true_false (X : TieredAR Bool (TwoTier α β)) [Finite 
     exact ⟨p, s, hl, rfl, rfl⟩
 
 variable (as : S → List α) (bs : S → List β) (L : S → ℕ → ℕ → Prop)
-  (g₀ : S → TieredAR Bool (TwoTier α β)) [∀ s, Finite (g₀ s).obj.V]
-  (hg : ∀ s, g₀ s = AR.ofWords (as s) (bs s) (L s))
-include hg
 
-theorem AR.tierWord_realizeMerged_true_of_eq_ofWords (w : List S) :
-    (realizeMerged true g₀ w).tierWord true = OCP.collapse (w.map as).flatten := by
-  simp [realizeMerged, AR.tierWord_realize_true_of_eq_ofWords as bs L g₀ hg]
+theorem AR.tierWord_realizeMerged_ofWords_true (w : List S) :
+    (realizeMerged true (fun s => AR.ofWords (as s) (bs s) (L s)) w).tierWord true =
+      OCP.collapse (w.map as).flatten := by
+  simp [realizeMerged, AR.tierWord_realize_ofWords_true]
 
-theorem AR.tierWord_realizeMerged_false_of_eq_ofWords (w : List S) :
-    (realizeMerged true g₀ w).tierWord false = (w.map bs).flatten := by
-  simp [realizeMerged, AR.tierWord_realize_false_of_eq_ofWords as bs L g₀ hg]
+theorem AR.tierWord_realizeMerged_ofWords_false (w : List S) :
+    (realizeMerged true (fun s => AR.ofWords (as s) (bs s) (L s)) w).tierWord false =
+      (w.map bs).flatten := by
+  simp [realizeMerged, AR.tierWord_realize_ofWords_false]
 
-theorem AR.link_realizeMerged_of_eq_ofWords (w : List S) (r s : ℕ) :
-    (realizeMerged true g₀ w).link true false r s ↔
-      mergedLinks (w.map as).flatten (blockLinks as bs L w) r s := by
-  show ((AR.realize g₀ w).collapse true).link true false r s ↔ _
+theorem AR.link_realizeMerged_ofWords (w : List S) (r s : ℕ) :
+    (realizeMerged true (fun s => AR.ofWords (as s) (bs s) (L s)) w).link true false r s ↔
+      MergedLinks (w.map as).flatten (BlockLinks as bs L w) r s := by
+  show ((AR.realize _ w).collapse true).link true false r s ↔ _
   rw [AR.link_collapse_true_false]
-  simp only [AR.link_realize_of_eq_ofWords as bs L g₀ hg,
-    AR.tierWord_realize_true_of_eq_ofWords as bs L g₀ hg, mergedLinks, AR.tierLength_realize,
-    hg, AR.tierLength_ofWords_true, List.length_flatten, List.map_map, Function.comp_def]
+  simp only [AR.link_realize_ofWords, AR.tierWord_realize_ofWords_true, MergedLinks,
+    AR.tierLength_realize, AR.tierLength_ofWords_true, List.length_flatten, List.map_map,
+    Function.comp_def]
 
-/-- The tier words of the merged realization are those of its representation of words. -/
+/-- The tier words of the merged realization are those of its presentation. -/
 theorem AR.tierWord_realizeMerged_eq_tierWord_ofWords (w : List S) (i : Bool) :
-    (realizeMerged true g₀ w).tierWord i =
+    (realizeMerged true (fun s => AR.ofWords (as s) (bs s) (L s)) w).tierWord i =
       (AR.ofWords (OCP.collapse (w.map as).flatten) (w.map bs).flatten
-        (mergedLinks (w.map as).flatten (blockLinks as bs L w))).tierWord i := by
+        (MergedLinks (w.map as).flatten (BlockLinks as bs L w))).tierWord i := by
   cases i
-  · exact (AR.tierWord_realizeMerged_false_of_eq_ofWords as bs L g₀ hg w).trans
-      (AR.tierWord_ofWords_false _ _ _).symm
-  · exact (AR.tierWord_realizeMerged_true_of_eq_ofWords as bs L g₀ hg w).trans
-      (AR.tierWord_ofWords_true _ _ _).symm
+  · exact (AR.tierWord_realizeMerged_ofWords_false as bs L w).trans AR.tierWord_ofWords_false.symm
+  · exact (AR.tierWord_realizeMerged_ofWords_true as bs L w).trans AR.tierWord_ofWords_true.symm
 
-/-- The lines of the merged realization are those of its representation of words. -/
+/-- The lines of the merged realization are those of its presentation. -/
 theorem AR.link_realizeMerged_iff_link_ofWords (w : List S) (i j : Bool) (p q : ℕ) :
-    (realizeMerged true g₀ w).link i j p q ↔
+    (realizeMerged true (fun s => AR.ofWords (as s) (bs s) (L s)) w).link i j p q ↔
       (AR.ofWords (OCP.collapse (w.map as).flatten) (w.map bs).flatten
-        (mergedLinks (w.map as).flatten (blockLinks as bs L w))).link i j p q :=
+        (MergedLinks (w.map as).flatten (BlockLinks as bs L w))).link i j p q :=
   AR.link_iff_of_true_false (fun r s => by
-    rw [AR.link_realizeMerged_of_eq_ofWords as bs L g₀ hg, AR.link_ofWords]
+    rw [AR.link_realizeMerged_ofWords, AR.link_ofWords]
     constructor
     · rintro ⟨p, hp, hl, rfl⟩
-      exact ⟨runIdx_lt_collapse_length _ hp, (blockLinks_lt as bs L hl).2, p, hp, hl, rfl⟩
+      exact ⟨runIdx_lt_collapse_length _ hp, (hl.lt as bs L).2, p, hp, hl, rfl⟩
     · exact fun h => h.2.2) i j p q
 
-/-- Embedding into the merged realization of word primitives computes on the words. -/
-theorem AR.factorEmbeds_realizeMerged_iff_of_eq_ofWords
-    (F : TieredAR Bool (TwoTier α β)) [Finite F.obj.V] (w : List S) :
-    F.FactorEmbeds (realizeMerged true g₀ w) ↔
-      F.FactorEmbeds (AR.ofWords (OCP.collapse (w.map as).flatten) (w.map bs).flatten
-        (mergedLinks (w.map as).flatten (blockLinks as bs L w))) :=
-  AR.factorEmbeds_congr (fun _ => rfl) (fun _ _ _ _ => Iff.rfl)
-    (AR.tierWord_realizeMerged_eq_tierWord_ofWords as bs L g₀ hg w)
-    (AR.link_realizeMerged_iff_link_ofWords as bs L g₀ hg w)
-
-theorem AR.free_realizeMerged_iff_of_eq_ofWords
+theorem AR.free_realizeMerged_ofWords_iff
     (B : List {F : TieredAR Bool (TwoTier α β) // Finite F.obj.V}) (w : List S) :
-    (realizeMerged true g₀ w).Free B ↔
+    (realizeMerged true (fun s => AR.ofWords (as s) (bs s) (L s)) w).Free B ↔
       (AR.ofWords (OCP.collapse (w.map as).flatten) (w.map bs).flatten
-        (mergedLinks (w.map as).flatten (blockLinks as bs L w))).Free B :=
-  AR.free_congr (AR.tierWord_realizeMerged_eq_tierWord_ofWords as bs L g₀ hg w)
-    (AR.link_realizeMerged_iff_link_ofWords as bs L g₀ hg w) B
+        (MergedLinks (w.map as).flatten (BlockLinks as bs L w))).Free B :=
+  AR.free_congr (AR.tierWord_realizeMerged_eq_tierWord_ofWords as bs L w)
+    (AR.link_realizeMerged_iff_link_ofWords as bs L w) B
 
 end MergedOfWords
 
@@ -511,8 +488,7 @@ private theorem AR.label_normalize_succ [Finite X.obj.V]
     ← AR.tierWord_getElem (p := ⟨p + 1, hp1⟩)]
   exact ⟨fun h => eq_of_heq (Sigma.mk.inj_iff.mp h).2, fun h => congrArg (Sigma.mk m) h⟩
 
-/-- **The OCP bridge**: tier-word cleanliness is Axiom 6 on the normal form —
-    the coordinate OCP and [jardine-2016b]'s §4.2 axiom agree. -/
+/-- Tier-word cleanliness is Axiom 6 of [jardine-2016b] on the normal form. -/
 theorem AR.isCleanAt_iff_isOCPClean [Finite X.obj.V] :
     X.IsCleanAt m ↔
       IsOCPClean (X.normalize).obj.arcs (X.normalize).obj.label Sigma.fst m := by
