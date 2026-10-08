@@ -14,16 +14,19 @@ After Krifka, a clause denotes its run times, the set of intervals at which it h
 clause holding throughout `i` denotes `i` with all its subintervals, the principal lower set
 `Set.Iic i`, an accomplishment over `i` the singleton `{i}`, and an event predicate the image of
 its events under the temporal trace (`Event.TemporalTrace`). This file defines the time trace of
-a set of intervals, the time points it covers. The analyses of temporal connectives built on run
-times live in their studies.
+a set of intervals, the time points it covers, and Anscombe's universal *before*, a time of one
+clause before every time of the other, the reading he gives *before ever*. The other analyses of
+temporal connectives built on run times live in their studies.
 
 ## Main definitions
 
 * `Tense.timeTrace`: the time points that a set of intervals covers.
+* `Tense.beforeEver`: Anscombe's universal *before*.
 
 ## References
 
 * [krifka-1989]
+* [anscombe-1964]
 -/
 
 @[expose] public section
@@ -66,5 +69,10 @@ theorem mem_timeTrace_pure {a t : T} :
 theorem mem_timeTrace_Iic {i : NonemptyInterval T} {t : T} :
     t ∈ timeTrace (Set.Iic i) ↔ t ∈ i := by
   rw [timeTrace_Iic]; rfl
+
+/-- *p before ever q* holds when a time of `p` precedes every time of `q`, Anscombe's universal
+rendering of *before* ([anscombe-1964] §IV–V). -/
+def beforeEver (A B : Set (NonemptyInterval T)) : Prop :=
+  ∃ t ∈ timeTrace A, ∀ t' ∈ timeTrace B, t < t'
 
 end Tense

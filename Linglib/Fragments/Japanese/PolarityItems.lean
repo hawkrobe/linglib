@@ -57,19 +57,22 @@ def dareDemo : PolarityItem :=
 
 /-! ### Licensing -/
 
-/-- *Dare-mo* needs clausemate negation, the only anti-morphic context, so clausal negation alone
-licenses it. -/
+/-- *Dare-mo* needs clausemate negation, so it is licensed exactly by the contexts carrying
+anti-morphic strength, which among the named contexts is clausal negation alone. -/
 theorem dareMo_licensing_characterized (c : LicensingContext) :
-    c.Licenses dareMo ↔ c = .negation :=
-  LicensingContext.licenses_iff_eq_negation rfl (by decide) c
+    c.Licenses dareMo ↔ c.licenser.Carries .antiMorphic :=
+  LicensingContext.licenses_iff_carries rfl (by decide) (by decide)
 
 /-- Every attested *dare-demo* context admits it: all four are generic contexts. -/
 theorem dareDemo_licensing_sound :
-    ∀ c ∈ dareDemo.licensingContexts, c.Admits dareDemo := by decide
+    ∀ c ∈ dareDemo.licensingContexts, c.Admits dareDemo := by
+  simp +decide [dareDemo, LicensingContext.Admits]
 
 /-- The n-word and the free choice item are attested in disjoint contexts, clausemate negation
 against the modal, imperative and generic ones. -/
 theorem dareMo_dareDemo_licensing_disjoint :
-    ∀ c ∈ dareMo.licensingContexts, c ∉ dareDemo.licensingContexts := by decide
+    ∀ c ∈ dareMo.licensingContexts, c ∉ dareDemo.licensingContexts := by
+  simp only [dareMo, dareDemo, List.mem_cons, List.not_mem_nil, or_false, forall_eq]
+  rintro (h | h | h | h) <;> exact LicensingContext.ne_of_haspelmath_ne (by decide) h
 
 end Japanese.PolarityItems

@@ -339,7 +339,13 @@ lists, (12), (13), (16)–(18), (21) and (22). -/
 theorem rows_irgendein :
     ∀ r ∈ Examples.all, ∀ c ∈ contextOf? r,
       (r.judgment = .acceptable ↔ c ∈ German.PolarityItems.irgendein.licensingContexts) := by
-  decide
+  simp +decide [Examples.all, contextOf?, Datum.parse?, Datum.feature?,
+    List.lookup, German.PolarityItems.irgendein, Examples.ex23a, Examples.ex23b, Examples.ex23c,
+    Examples.ex23d, Examples.ex23e, Examples.ex23f, Examples.ex23g, Examples.ex24a, Examples.ex24b,
+    Examples.ex24c, Examples.ex24d, Examples.ex24e, Examples.ex12, Examples.ex13, Examples.ex16,
+    Examples.ex17, Examples.ex18, Examples.ex21, Examples.ex22]
+  refine ⟨?_, ?_, ?_, ?_, ?_⟩ <;>
+    exact fun h ↦ absurd (congrArg LicensingContext.haspelmath h) (by decide)
 
 /-- Under a negative operator *irgendein* is acceptable exactly when the operator closes its scope
 with [∃] and not with [Neg], so under *niemand* and *auf keinen Fall* and not under *nicht*, (12),
@@ -349,22 +355,22 @@ theorem rows_irgendein_selective :
       (r.judgment = .acceptable ↔ f = "exists") := by
   decide
 
-/-- The licensing table licenses *irgendein* under inflectional negation, which is downward
+/-- The licensing theory licenses *irgendein* under inflectional negation, which is downward
 entailing, and (21) is ungrammatical, so strength does not exclude the item there and selectivity
 does. -/
 theorem negation_licenses_irgendein :
     LicensingContext.negation.Licenses German.PolarityItems.irgendein ∧
-      Examples.ex21.judgment = .ungrammatical := by
-  decide
+      Examples.ex21.judgment = .ungrammatical :=
+  ⟨by simp [German.PolarityItems.irgendein, PolarityItem.IsNPI], rfl⟩
 
 /-- Haspelmath's map agrees with the paper. Every environment the entry lists realizes a function
 of the *irgend-* series, and inflectional negation realizes direct negation, which the series
 lacks. -/
 theorem irgendein_haspelmath :
     ∀ s ∈ Haspelmath1997.german, s.pronoun = German.Indefinites.irgendEntry →
-      (∀ c ∈ German.PolarityItems.irgendein.licensingContexts, ∀ f ∈ c.haspelmathFunction,
+      (∀ c ∈ German.PolarityItems.irgendein.licensingContexts, ∀ f ∈ c.haspelmath,
         f ∈ s.functions) ∧
-        ∀ f ∈ LicensingContext.negation.haspelmathFunction, f ∉ s.functions := by
+        ∀ f ∈ LicensingContext.negation.haspelmath, f ∉ s.functions := by
   decide
 
 end KratzerShimoyama2002

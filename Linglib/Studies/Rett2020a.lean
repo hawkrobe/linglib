@@ -322,7 +322,7 @@ theorem not_before_completive_antitone (h₃ : ∃ a b c : T, a < b ∧ b < c) :
 /-- Anscombe's *before*, a time of the main clause before every time of the embedded clause,
 is the default reading whenever the embedded clause has a first time. -/
 theorem before_iff_beforeEver (h : IsLeast (timeTrace B) m) :
-    before A B ↔ Anscombe.beforeEver A B :=
+    before A B ↔ Tense.beforeEver A B :=
   (before_iff_of_isLeast h).trans (beforeEver_iff_lt_least h).symm
 
 /-- *After* entails Anscombe's existential *after*, a time of the main clause after some time

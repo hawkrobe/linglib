@@ -11,8 +11,9 @@ Von Fintel defends the Fauconnier–Ladusaw theory of negative polarity licensin
 licensers that are not downward entailing, focus *only*, the adversative attitudes, superlatives
 and conditional antecedents: each is downward entailing once the inference is checked only where
 the presuppositions hold. The notion is in `Logic/Natural/Strawson.lean` and the operators live
-with their owners; this file carries the paper's arguments around them, together with Iatridou's
-temporal *since*, and its licensing judgments are the rows of `Data/Examples/VonFintel1999.json`.
+with their owners, Iatridou's temporal *since* among them; this file carries the paper's
+arguments around them, and its licensing judgments are the rows of
+`Data/Examples/VonFintel1999.json`.
 
 *Want* and *glad* are upward entailing in the Strawson sense, on the best-worlds semantics and on
 the set comparison alike. On the best-worlds semantics wanting and believing `p` makes one glad
@@ -35,8 +36,6 @@ entailing.
   inference within one set of alternatives.
 * `not_antitone_conditionalNecessity`, `not_isStrawsonDE_theSuperlativeExceeds`: the conditional
   under an ordering source and the superlative description fail downward inference.
-* `isStrawsonAntiAdditive_since`, `not_antitone_truthSet_since`: temporal *since* is Strawson
-  anti-additive and not classically downward entailing.
 
 ## TODO
 
@@ -202,37 +201,5 @@ theorem not_isStrawsonDE_theSuperlativeExceeds :
     decide
 
 end Description
-
-/-! ### Temporal *since* -/
-
-section Since
-
-variable {T : Type*} [LinearOrder T] (ago : T → T)
-
-/-- *It has been five years since p* presupposes that `p` held at the time `ago t` five years
-before the evaluation time `t` and asserts that it has not held since (p. 107, after (22); the
-construction is Iatridou's). -/
-def since (p : Set T) : PartialProp T where
-  presup t := ago t ∈ p
-  assertion t := Disjoint (Set.Ioc (ago t) t) p
-
-/-- *Since* is Strawson anti-additive in its clause, as [gajewski-2011] finds von Fintel's
-Strawson downward entailing operators to be. -/
-theorem isStrawsonAntiAdditive_since : IsStrawsonAntiAdditive (since ago) :=
-  .of_isAntiAdditive fun _ _ ↦ funext fun _ ↦ propext Set.disjoint_union_right
-
-/-- *Since* is Strawson downward entailing, the inference (22). -/
-theorem isStrawsonDE_since : IsStrawsonDE (since ago) :=
-  (isStrawsonAntiAdditive_since ago).isStrawsonDE
-
-/-- *It's been five years since I saw a bird of prey* does not classically entail *it's been five
-years since I saw an eagle*, whose presupposition may fail (20). -/
-theorem not_antitone_truthSet_since :
-    ¬ Antitone fun p : Set ℤ ↦ (since (· - 5) p).truthSet :=
-  not_antitone_truthSet (p := ∅) (q := {-5}) (w := 0) (Set.empty_subset _)
-    ⟨show (0 : ℤ) - 5 ∈ ({-5} : Set ℤ) from Set.mem_singleton_iff.2 (by decide),
-      show Disjoint (Set.Ioc ((0 : ℤ) - 5) 0) {-5} by simp⟩ fun h ↦ h
-
-end Since
 
 end VonFintel1999

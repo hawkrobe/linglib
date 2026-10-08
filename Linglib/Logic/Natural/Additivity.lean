@@ -9,8 +9,8 @@ public import Mathlib.Data.Set.Basic
 
 The Zwarts function classes the polarity literature quantifies over: `IsAntiAdditive`
 (`f (p ⊔ q) = f p ⊓ f q`), `IsAntiMultiplicative` (meets to joins), and `IsAntiMorphic`
-(both) — the semantic content of the DE strength hierarchy (`PolarityItem.DEStrength.HoldsFor`)
-and of the anti- signature rows (`Signature.Property.HoldsFor` in `Soundness.lean`). Each
+(both), the equations of the anti- signature rows (`Signature.Property.HoldsFor` in
+`Soundness.lean`), which with their unit conditions are the strengths of negation. Each
 implies antitonicity, and complementation realizes the full anti-morphism. The dual UE-side
 properties (preserving joins or meets) have no named classes — consumers state the equations
 directly, with `monotone_of_map_sup` and `monotone_of_map_inf` supplying monotonicity.

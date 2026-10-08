@@ -7,6 +7,7 @@ public import Linglib.Semantics.Supervaluation
 public import Linglib.Semantics.Genericity.Normality
 public import Linglib.Studies.Ladusaw1979
 public import Linglib.Data.Examples.KadmonLandman1993
+public import Linglib.Fragments.English.PolarityItems
 public import Mathlib.Data.Set.Basic
 
 /-!
@@ -102,8 +103,8 @@ theorem ue_widening_weakens {World Entity : Type*} {C : Set World → Set World}
 
 /-! ### Compatibility with Ladusaw 1979
 
-Each context's licensing mechanism is the substrate's `PolarityItem.LicensingContext.mechanism`,
-so this file's classification cannot drift from the substrate's. K&L's classification refines
+Each context's licensing mechanism is read off its licenser (`PolarityItem.Licenser.mechanism`),
+so this file's classification cannot drift from the semantics. K&L's classification refines
 [ladusaw-1979]'s: every Ladusaw-DE context is a strengthening context, but K&L additionally
 explain adversative predicates (DE on a constant perspective) and conditionals with implicit
 restrictions. -/
@@ -111,8 +112,9 @@ restrictions. -/
 /-- Ladusaw-DE contexts are K&L strengthening contexts; Ladusaw describes *where* NPIs occur, and
 K&L explain *why*. -/
 theorem ladusaw_de_is_kl_strengthening (ctx : LicensingContext)
-    (hDE : IsDownwardEntailing ctx) : ctx.mechanism = .strengthening := by
-  revert hDE; cases ctx <;> decide
+    (hDE : IsDownwardEntailing ctx) : ctx.licenser.mechanism = .strengthening := by
+  unfold IsDownwardEntailing at hDE
+  cases h : ctx.licenser <;> rw [h] at hDE <;> first | rfl | exact hDE.elim
 
 /-! ### Adversative predicates: *sorry* vs *glad*
 
@@ -222,13 +224,13 @@ inductive AnyInterpretation where
 mechanism, and is generic exactly when the substrate classifies the context as licensed by the
 generic indefinite. -/
 def interpretationOf (c : LicensingContext) : AnyInterpretation :=
-  match c.mechanism with
+  match c.licenser.mechanism with
   | .genericIndefinite => .generic
   | _ => .episodic
 
 theorem interpretationOf_eq_generic_iff (c : LicensingContext) :
-    interpretationOf c = .generic ↔ c.mechanism = .genericIndefinite := by
-  cases h : c.mechanism <;> simp only [interpretationOf, h] <;> decide
+    interpretationOf c = .generic ↔ c.licenser.mechanism = .genericIndefinite := by
+  cases h : c.licenser.mechanism <;> simp only [interpretationOf, h] <;> decide
 
 /-! ### Vague restrictions and precisifications
 
@@ -540,13 +542,6 @@ structure Row where
   metalinguistic : Bool
   grammatical : Bool
 
-/-- The signature at the narrowest operator is the context's Strawson signature where a context
-exists, else the local one. -/
-def Row.signature (r : Row) : Signature :=
-  match r.context with
-  | some c => c.signature
-  | none => r.localSignature
-
 def contextOf : String → Option LicensingContext
   | "negation" => some .negation
   | "generic" => some .generic
@@ -574,13 +569,22 @@ def Row.ofDatum (e : Datum) : Option Row :=
 /-- The licensing data of Sections 1 to 3. -/
 def rows : List Row := Examples.all.filterMap Row.ofDatum
 
-/-- On the paper's own data, *any* is grammatical exactly when the local context is downward
-entailing, so widening strengthens, or generic, or read as settling for less under *glad*, or read
-as a metalinguistic denial under a negated *because*. -/
+/-- On the paper's own data, *any* is grammatical exactly when its context licenses it, as a
+downward-entailing or a generic context, or the local signature is downward entailing, so widening
+strengthens, or it is read as settling for less under *glad*, or as a metalinguistic denial under a
+negated *because*. -/
 theorem rows_agree :
     ∀ r ∈ rows, r.grammatical = true ↔
-      r.signature.toDEStrength ≠ ⊥ ∨ r.context = some .generic ∨
-        r.settleForLess = true ∨ r.metalinguistic = true := by
-  decide
+      (∃ c ∈ r.context, c.Licenses English.PolarityItems.any) ∨
+        r.localSignature.toDEStrength ≠ ⊥ ∨ r.settleForLess = true ∨ r.metalinguistic = true := by
+  simp +decide [rows, Examples.all, Row.ofDatum, contextOf, signatureOf,
+    Datum.feature?, List.lookup, English.PolarityItems.any,
+    Examples.kl1993_1, Examples.kl1993_2, Examples.kl1993_10, Examples.kl1993_27b,
+    Examples.kl1993_55, Examples.kl1993_56, Examples.kl1993_72, Examples.kl1993_73,
+    Examples.kl1993_76B, Examples.kl1993_82, Examples.kl1993_88, Examples.kl1993_95,
+    Examples.kl1993_105, Examples.kl1993_106, Examples.kl1993_109, Examples.kl1993_122,
+    Examples.kl1993_123, Examples.kl1993_125, Examples.kl1993_132, Examples.kl1993_143,
+    Examples.kl1993_almost_every, Examples.kl1993_almost_no, Examples.kl1993_almost_some,
+    Examples.kl1993_almost_an, Examples.kl1993_almost_any]
 
 end KadmonLandman1993

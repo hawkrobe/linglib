@@ -13,8 +13,8 @@ negative polarity item, questions, conditionals, comparatives and indirect negat
 series occupies direct negation as negative concord items, which co-occur with clausemate verbal
 negation *ne* ([zeijlstra-2004], [giannakidou-1998]); and *kto ugodno* is a free-choice item.
 
-The concord items carry `licensor := some .antiMorphic`, and clausemate *ne* being the only
-anti-morphic environment, their licensing is characterized by it
+The concord items carry `licensor := some .antiMorphic`, so a context licenses them exactly when
+its licenser is anti-morphic, which among the named contexts is clausemate *ne* alone
 (`niSeries_licensing_characterized`).
 
 ## References
@@ -78,13 +78,19 @@ def items : List PolarityItem :=
 
 /-! ### Verification -/
 
-/-- The negative concord items are licensed by clausemate negation alone. -/
+/-- The negative concord items are licensed exactly by the contexts carrying anti-morphic strength,
+clausal negation alone among the named contexts. -/
 theorem niSeries_licensing_characterized :
-    ∀ e ∈ [nikto, nichego, nikogda], ∀ c : LicensingContext, c.Licenses e ↔ c = .negation := by
-  decide
+    ∀ e ∈ [nikto, nichego, nikogda], ∀ c : LicensingContext,
+      c.Licenses e ↔ c.licenser.Carries .antiMorphic := by
+  intro e he c
+  simp only [List.mem_cons, List.not_mem_nil, or_false] at he
+  rcases he with rfl | rfl | rfl <;>
+    exact LicensingContext.licenses_iff_carries rfl (by decide) (by decide)
 
 /-- Every attested context of every entry admits it. -/
 theorem russian_licensing_sound :
-    ∀ e ∈ items, ∀ c ∈ e.licensingContexts, c.Admits e := by decide
+    ∀ e ∈ items, ∀ c ∈ e.licensingContexts, c.Admits e := by
+  simp +decide [ktoLibo, nikto, nichego, nikogda, ktoUgodno, items, LicensingContext.Admits]
 
 end Russian.PolarityItems

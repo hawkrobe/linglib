@@ -44,20 +44,20 @@ variable {T : Type*} [LinearOrder T] (A B : Set (NonemptyInterval T))
 def until_ : Prop := ∃ t, t ∈ timeTrace A ∧ t ∈ timeTrace B
 
 /-- Punctual *A not until B*, (33), is *A not before B*. -/
-def notUntil : Prop := ¬ Anscombe.beforeEver A B
+def notUntil : Prop := ¬ Tense.beforeEver A B
 
 /-- The presupposition of lateness, (34), is *A before B or A when B*. -/
-def presupposition : Prop := Anscombe.beforeEver A B ∨ when_ A B
+def presupposition : Prop := Tense.beforeEver A B ∨ when_ A B
 
 theorem until_veridical_complement : until_ A B → ∃ t, t ∈ timeTrace B :=
   fun ⟨t, _, ht⟩ ↦ ⟨t, ht⟩
 
 /-- Every occurrence of `A` has a time of `B` at or before it. -/
 theorem notUntil_iff : notUntil A B ↔ ∀ t ∈ timeTrace A, ∃ t' ∈ timeTrace B, t' ≤ t := by
-  simp only [notUntil, Anscombe.beforeEver, not_exists, not_and, not_forall, not_lt, exists_prop]
+  simp only [notUntil, Tense.beforeEver, not_exists, not_and, not_forall, not_lt, exists_prop]
 
 /-- Denying *A not until B* is asserting *A before B*, (30)–(31). -/
-theorem not_notUntil_iff : ¬ notUntil A B ↔ Anscombe.beforeEver A B := not_not
+theorem not_notUntil_iff : ¬ notUntil A B ↔ Tense.beforeEver A B := not_not
 
 /-- The logical form holds of a clause that never happens. -/
 theorem notUntil_empty : notUntil (∅ : Set (NonemptyInterval T)) B :=
@@ -73,7 +73,7 @@ theorem notUntil_iff_when_of_presupposition (a b : T)
     (hp : presupposition {NonemptyInterval.pure a} {NonemptyInterval.pure b}) :
     notUntil {NonemptyInterval.pure a} {NonemptyInterval.pure b} ↔
       when_ {NonemptyInterval.pure a} {NonemptyInterval.pure b} := by
-  simp only [notUntil, Anscombe.beforeEver, when_, presupposition, mem_timeTrace_pure,
+  simp only [notUntil, Tense.beforeEver, when_, presupposition, mem_timeTrace_pure,
     exists_eq_left, forall_eq] at hp ⊢
   exact ⟨hp.resolve_left, fun h ↦ by subst h; exact lt_irrefl _⟩
 

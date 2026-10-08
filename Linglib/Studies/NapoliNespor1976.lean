@@ -233,16 +233,16 @@ def AffattoAdmissible (m : Move) : Prop :=
 
 /-- *Neanche*-conjunction is admissible in the chess dialogue. -/
 theorem neanche_admissible : NegationAdmissible chessContext.move neanche :=
-  ⟨by decide, by decide⟩
+  ⟨by decide, by simp [neanche]⟩
 
 /-- *Pur* is admissible wherever *non₂* is licensed. -/
 theorem pur_admissible {m : Move} (h : m.Licensed) : NegationAdmissible m pur :=
-  ⟨h, by decide⟩
+  ⟨h, by simp [pur]⟩
 
 /-- *Affatto* meets the negation requirement wherever *non₂* is licensed, like *pur*. -/
 theorem negationAdmissible_affatto {m : Move} (h : m.Licensed) :
     NegationAdmissible m affatto :=
-  ⟨h, by decide⟩
+  ⟨h, by simp [affatto]⟩
 
 /-- *Affatto* is inadmissible in every *non₂*-comparative: *non₂* requires inferred and imprecise
 knowledge of the listener's belief, *affatto* precise knowledge. -/

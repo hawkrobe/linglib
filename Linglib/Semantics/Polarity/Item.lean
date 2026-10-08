@@ -57,7 +57,7 @@ structure PolarityItem where
   licensingContexts : List PolarityItem.LicensingContext := []
   /-- The contexts in which the item is attested to be out. -/
   excludedContexts : List PolarityItem.LicensingContext := []
-  deriving Repr
+
 
 namespace PolarityItem
 

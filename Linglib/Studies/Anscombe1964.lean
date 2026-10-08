@@ -42,11 +42,6 @@ def Anscombe.before (A B : Set (NonemptyInterval T)) : Prop :=
 def Anscombe.after (A B : Set (NonemptyInterval T)) : Prop :=
   ∃ t ∈ timeTrace A, ∃ t' ∈ timeTrace B, t' < t
 
-/-- The §IV rendering of *p before q*, a time of *p* before every time of *q*, which §V
-finds right for *p before ever q*. -/
-def Anscombe.beforeEver (A B : Set (NonemptyInterval T)) : Prop :=
-  ∃ t ∈ timeTrace A, ∀ t' ∈ timeTrace B, t < t'
-
 /-- A clause repeats when *p, and then not p, and then p* (§II). -/
 def Repetition (A : Set (NonemptyInterval T)) : Prop :=
   ∃ t₁ ∈ timeTrace A, ∃ t₂ ∉ timeTrace A, ∃ t₃ ∈ timeTrace A, t₁ < t₂ ∧ t₂ < t₃
@@ -121,13 +116,13 @@ theorem after_not_trans :
 
 /-- *Before ever* is *before*, provided *q* held at all. -/
 theorem before_of_beforeEver (hB : (timeTrace B).Nonempty) :
-    Anscombe.beforeEver A B → Anscombe.before A B :=
+    Tense.beforeEver A B → Anscombe.before A B :=
   fun ⟨a, ha, h⟩ => let ⟨b, hb⟩ := hB
     ⟨a, ⟨ha, fun haB => lt_irrefl a (h a haB)⟩, b, hb, h b hb⟩
 
 /-- For a non-repeating *q*, *before* is *before ever* (§V). -/
 theorem before_iff_beforeEver (hB : (timeTrace B).OrdConnected) :
-    Anscombe.before A B ↔ Anscombe.beforeEver A B ∧ (timeTrace B).Nonempty :=
+    Anscombe.before A B ↔ Tense.beforeEver A B ∧ (timeTrace B).Nonempty :=
   ⟨fun ⟨a, ⟨ha, haB⟩, b, hb, hab⟩ =>
     ⟨⟨a, ha, fun _ hb' => lt_of_not_ge fun h => haB (hB.out hb' hb ⟨h, hab.le⟩)⟩, b, hb⟩,
     fun ⟨h, hne⟩ => before_of_beforeEver hne h⟩
@@ -135,13 +130,13 @@ theorem before_iff_beforeEver (hB : (timeTrace B).OrdConnected) :
 /-- *He studied his appearance in the glass before he used the telephone* does not say he did so
 before he ever used it, so *before* does not entail *before ever*. -/
 theorem before_not_beforeEver :
-    ∃ A B : Set (NonemptyInterval ℤ), Anscombe.before A B ∧ ¬ Anscombe.beforeEver A B :=
+    ∃ A B : Set (NonemptyInterval ℤ), Anscombe.before A B ∧ ¬ Tense.beforeEver A B :=
   ⟨{pure 5}, {pure 1, pure 9}, ⟨5, by simp, 9, by simp, by decide⟩,
     fun ⟨t, ht, h⟩ => absurd (h 1 (by simp)) (by simp at ht; subst ht; decide)⟩
 
 /-- When *q* has a first time, *p before ever q* holds iff a time of *p* precedes it. -/
 theorem beforeEver_iff_lt_least {lb : T} (hlb : IsLeast (timeTrace B) lb) :
-    Anscombe.beforeEver A B ↔ ∃ t ∈ timeTrace A, t < lb :=
+    Tense.beforeEver A B ↔ ∃ t ∈ timeTrace A, t < lb :=
   ⟨fun ⟨a, ha, h⟩ => ⟨a, ha, h lb hlb.1⟩,
     fun ⟨a, ha, h⟩ => ⟨a, ha, fun _ ht' => h.trans_le (hlb.2 ht')⟩⟩
 

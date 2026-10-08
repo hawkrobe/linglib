@@ -69,8 +69,8 @@ presupposition that defeats the classical property.
   presupposition that the domain contains non-`p` worlds can fail at a larger argument, so
   `Desire.BestWorlds.isStrawsonUE_glad` is the Strawson form he states for *want*.
 * The other operators live with their owners, the superlative in `Degree.superlative` and the
-  conditional in `Conditional.horizonCounterfactual`, and their Strawson facts are proved here;
-  temporal *since*, which no other paper's analysis consumes, is in `Studies/VonFintel1999.lean`.
+  conditional in `Conditional.horizonCounterfactual`, and their Strawson facts are proved here,
+  as are those of Iatridou's temporal *since*, defined here.
 
 ## References
 
@@ -257,6 +257,38 @@ theorem only_ne_only_range :
   exact h0 false Bool.false_ne_true (Set.mem_univ ())
 
 end Only
+
+/-! ### Temporal *since* -/
+
+section Since
+
+variable {T : Type*} [LinearOrder T] (ago : T → T)
+
+/-- *It has been five years since p* presupposes that `p` held at the time `ago t` five years
+before the evaluation time `t` and asserts that it has not held since ([von-fintel-1999], after
+Iatridou). -/
+def since (p : Set T) : PartialProp T where
+  presup t := ago t ∈ p
+  assertion t := Disjoint (Set.Ioc (ago t) t) p
+
+/-- *Since* is Strawson anti-additive in its clause, as [gajewski-2011] finds von Fintel's
+Strawson downward entailing operators to be. -/
+theorem isStrawsonAntiAdditive_since : IsStrawsonAntiAdditive (since ago) :=
+  .of_isAntiAdditive fun _ _ ↦ funext fun _ ↦ propext Set.disjoint_union_right
+
+/-- *Since* is Strawson downward entailing. -/
+theorem isStrawsonDE_since : IsStrawsonDE (since ago) :=
+  (isStrawsonAntiAdditive_since ago).isStrawsonDE
+
+/-- *It's been five years since I saw a bird of prey* does not classically entail *it's been five
+years since I saw an eagle*, whose presupposition may fail. -/
+theorem not_antitone_truthSet_since :
+    ¬ Antitone fun p : Set ℤ ↦ (since (· - 5) p).truthSet :=
+  not_antitone_truthSet (p := ∅) (q := {-5}) (w := 0) (Set.empty_subset _)
+    ⟨show (0 : ℤ) - 5 ∈ ({-5} : Set ℤ) from Set.mem_singleton_iff.2 (by decide),
+      show Disjoint (Set.Ioc ((0 : ℤ) - 5) 0) {-5} by simp⟩ fun h ↦ h
+
+end Since
 
 end NaturalLogic
 

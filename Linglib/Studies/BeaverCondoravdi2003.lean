@@ -181,7 +181,7 @@ variable {T : Type*} [LinearOrder T] (A B B' : Set (NonemptyInterval T))
 /-- The complement of [anscombe-1964]'s quantificational *before* is downward entailing, the
 NPI-licensing environment, since the universal over `B` reverses inclusion. -/
 theorem anscombe_before_complement_DE (h : timeTrace B' ⊆ timeTrace B) :
-    Anscombe.beforeEver A B → Anscombe.beforeEver A B' :=
+    Tense.beforeEver A B → Tense.beforeEver A B' :=
   fun ⟨t, ht, hall⟩ => ⟨t, ht, fun t' ht' => hall t' (h ht')⟩
 
 /-- The complement of [anscombe-1964]'s *after* is upward entailing. -/
@@ -193,7 +193,7 @@ theorem anscombe_after_complement_UE (h : timeTrace B ⊆ timeTrace B') :
 overgeneration of (32)–(33), so *David ate ketchup before he won all the gold medals* comes out true
 if he never won. -/
 theorem anscombe_before_of_empty (hB : timeTrace B = ∅) (hA : (timeTrace A).Nonempty) :
-    Anscombe.beforeEver A B :=
+    Tense.beforeEver A B :=
   let ⟨t, ht⟩ := hA
   ⟨t, ht, fun t' ht' => absurd (hB ▸ ht') (Set.notMem_empty t')⟩
 

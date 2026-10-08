@@ -65,7 +65,7 @@ open Tense Anscombe1964 Karttunen1974 in
 /-- *q before p* says that *p* holds at some time and fails at the time of *q*, which precedes
 every time of *p*, (13b). -/
 theorem before_dual {T : Type*} [LinearOrder T] {A B : Set (NonemptyInterval T)}
-    (h : Anscombe.beforeEver A B) (hB : (timeTrace B).Nonempty) :
+    (h : Tense.beforeEver A B) (hB : (timeTrace B).Nonempty) :
     DualInference (· ∈ timeTrace B) :=
   ⟨hB, let ⟨t, _, ht⟩ := h; ⟨t, fun hmem ↦ lt_irrefl t (ht t hmem)⟩⟩
 

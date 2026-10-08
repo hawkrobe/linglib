@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Order.Partition.Finpartition
-public import Linglib.Core.Probability.Decision.ValueOfInformation
+public import Linglib.Semantics.Questions.Value
 public import Linglib.Data.Examples.VanRooy2003
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Data.Setoid.Partition
@@ -12,33 +12,21 @@ public import Mathlib.Data.Setoid.Partition
 Van Rooy grounds the meaning of questions in the questioner's decision problem, a prior over
 worlds and a utility for each action in each world. Information resolves the problem when some
 action is optimal in every world it leaves open. A question, a partition of the worlds, is worth
-the average gain in decision value from learning its answer. This value is the value of
-information of the experiment that reveals the answer, equals the expected value of sample
-information, and is never negative, and one question refines another exactly when it is at least
-as useful in every decision problem. A wh-question denotes the propositions that
-some value is among the optimal true values of its predicate, those with no more relevant true
-value, and this one rule yields both mention-all and mention-some readings.
+the average gain in decision value from learning its answer; that theory of question value,
+consumed beyond this paper, is `Semantics/Questions/Value.lean`. A wh-question denotes the
+propositions that some value is among the optimal true values of its predicate, those with no
+more relevant true value, and this one rule yields both mention-all and mention-some readings.
 
 ## Main statements
 
 * `isResolved_iff_exists_subset_optimalityRegion`: information resolves the problem exactly
   when it lies within the worlds where one action is optimal.
-* `questionUtility_eq_valueOfInformation`, `questionUtility_eq_sum_valueSampleInfo`: a
-  question's expected utility value is the value of information of revealing its answer, and its
-  expected value of sample information.
-* `le_iff_forall_questionUtility_le`: one question refines another exactly when it is at least
-  as useful in every decision problem, the case of Blackwell's theorem of section 4.1.
 * `newspaper_station_resolves`, `newspaper_betterAnswer`: in the Italian newspaper example the
   partial answer *at least at the station* resolves the problem and is a better answer than the
   complete one.
-* `betterQuestion_whQuestion`: of two equally useful wh-domains the smaller gives the better
-  question.
-* `questionR_entailment`: when relevance is informativity the rule gives the partition by the
-  predicate's extension, the mention-all reading.
-* `bestPlace_questionR`, `bestPlace_overlapCells`, `bestPlace_hamblin`: the newspaper question has
-  a mention-some meaning, which the rule of footnote 28 and Hamblin's rule both miss.
-* `optimalValues_le`, `optimalValues_gt_eq_empty`: ranking numbers by size gives the maximum for
-  *How many meters can you jump?* and nothing for *How many meters can't you jump?*.
+* `questionR_entailment`, `bestPlace_questionR`: when relevance is informativity the rule gives the
+  mention-all partition, and the newspaper question has a mention-some meaning that Hamblin's rule
+  misses.
 * `killer_byName`, `killer_byMask`, `beatles_questionR`: which concepts resolve the questioner's
   problem decides the partition of *Who killed spiderman?*, and an autograph hierarchy gives
   *Which Beatles' autograph do you have?* three answers.
@@ -116,26 +104,9 @@ theorem pairwise_disjoint_optimalityRegion (U : W → A → ℝ)
     exact (hw' a).not_gt (hbest a' (Ne.symm hne))
   · exact (hw c).not_gt (hbest a hac)
 
-/-! ### The value of answers -/
-
 section Value
 
 variable [MeasurableSpace W]
-
-/-- The utility value of learning `C` is the decision value of the prior conditioned on `C`, less
-the decision value of the prior. -/
-noncomputable def utilityValue (U : W → A → ℝ) (μ : Measure W) (C : Set W) : ℝ :=
-  decisionValue U μ[|C] - decisionValue U μ
-
-/-- An answer is better than another when it has a higher utility value, or the same value and
-is strictly less informative. -/
-def BetterAnswer (U : W → A → ℝ) (μ : Measure W) (C D : Set W) : Prop :=
-  toLex (utilityValue U μ D, D) < toLex (utilityValue U μ C, C)
-
-theorem betterAnswer_iff {U : W → A → ℝ} {μ : Measure W} {C D : Set W} :
-    BetterAnswer U μ C D ↔ utilityValue U μ D < utilityValue U μ C ∨
-      utilityValue U μ C = utilityValue U μ D ∧ D ⊂ C := by
-  simp [BetterAnswer, Prod.Lex.toLex_lt_toLex, eq_comm]
 
 /-! ### The Italian newspaper -/
 
@@ -196,7 +167,7 @@ private theorem newspaper_value : decisionValue newspaper newsPrior = 2 / 3 := b
 
 /-- Any answer that leaves the palace out resolves the problem and is worth `1 / 3`. -/
 private theorem newspaper_utilityValue {C : Set NewsW} (hC : C.Nonempty) (hs : .palace ∉ C) :
-    utilityValue newspaper newsPrior C = 1 / 3 := by
+    Question.utilityValue newspaper newsPrior C = 1 / 3 := by
   obtain ⟨w₀, hw₀⟩ := hC
   have hpos : newsPrior C ≠ 0 := fun h ↦ uniformOn_univ_singleton_ne_zero w₀
     (measure_mono_null (Set.singleton_subset_iff.2 hw₀) h)
@@ -210,160 +181,19 @@ private theorem newspaper_utilityValue {C : Set NewsW} (hC : C.Nonempty) (hs : .
     le_antisymm (ciSup_le fun a ↦ (integral_mono .of_finite (integrable_const 1) fun w ↦ by
       cases w <;> cases a <;> simp [newspaper]).trans (by simp))
       (hstation ▸ integral_le_decisionValue _ Walk.station)
-  rw [utilityValue, hval, newspaper_value]
+  rw [Question.utilityValue, hval, newspaper_value]
   norm_num
 
 /-- Taking effort into account, the mention-some answer *at least at the station* is a better
 answer than the complete answer *only at the station*, since both resolve the problem and the
 first says less. -/
 theorem newspaper_betterAnswer :
-    BetterAnswer newspaper newsPrior {.station, .both} {.station} := by
-  refine betterAnswer_iff.2 (.inr ⟨?_, ?_⟩)
+    Question.BetterAnswer newspaper newsPrior {.station, .both} {.station} := by
+  refine Question.betterAnswer_iff.2 (.inr ⟨?_, ?_⟩)
   · rw [newspaper_utilityValue (by simp) (by simp), newspaper_utilityValue (by simp) (by simp)]
   · refine Set.ssubset_iff_subset_ne.2 ⟨by simp, fun h ↦ ?_⟩
     have hb : NewsW.both ∈ ({NewsW.station} : Set NewsW) := by rw [h]; simp
     simp at hb
-
-/-! ### The utility of questions -/
-
-section Utility
-
-variable [Fintype W] [DecidableEq W]
-
-/-- The expected utility value of a question weights the utility value of each answer by its
-probability. -/
-noncomputable def questionUtility (U : W → A → ℝ) (μ : Measure W)
-    (Q : Finpartition (Finset.univ : Finset W)) : ℝ :=
-  ∑ c ∈ Q.parts, μ.real c * utilityValue U μ c
-
-variable [DiscreteMeasurableSpace W] (U : W → A → ℝ) (μ : Measure W) [IsProbabilityMeasure μ]
-
-private theorem questionUtility_eq (Q : Finpartition (Finset.univ : Finset W)) :
-    questionUtility U μ Q =
-      ∑ c, μ.real (Q.part ⁻¹' {c}) * decisionValue U μ[|Q.part ⁻¹' {c}] - decisionValue U μ := by
-  have hmass : ∑ c ∈ Q.parts, μ.real c = 1 := by
-    rw [Q.sum_parts_eq_sum_preimage_part (F := μ.real) measureReal_empty,
-      sum_measureReal_preimage_singleton _ fun _ _ ↦ .of_discrete]
-    simp
-  simp only [questionUtility, utilityValue, mul_sub, Finset.sum_sub_distrib, ← Finset.sum_mul,
-    hmass, one_mul]
-  rw [Q.sum_parts_eq_sum_preimage_part (F := fun c ↦ μ.real c * decisionValue U μ[|c]) (by simp)]
-
-/-- The expected utility value of a question is the value of information of the experiment that
-reveals its answer. -/
-theorem questionUtility_eq_valueOfInformation [Nonempty W] [MeasurableSpace (Finset W)]
-    [MeasurableSingletonClass (Finset W)] (Q : Finpartition (Finset.univ : Finset W)) :
-    questionUtility U μ Q =
-      valueOfInformation (decisionValue U) (Kernel.deterministic Q.part .of_discrete) μ := by
-  rw [questionUtility_eq, valueOfInformation_deterministic]
-
-/-- A question is never worth less than nothing. -/
-theorem questionUtility_nonneg [Finite A] [Nonempty W] (Q : Finpartition (Finset.univ : Finset W)) :
-    0 ≤ questionUtility U μ Q := by
-  let _ : MeasurableSpace (Finset W) := ⊤
-  have : MeasurableSingletonClass (Finset W) := ⟨fun _ ↦ trivial⟩
-  rw [questionUtility_eq_valueOfInformation]
-  exact valueOfInformation_decisionValue_nonneg U _ μ
-
-/-- A finer question is worth at least as much as a coarser one, since revealing the coarser
-answer garbles the finer. -/
-theorem questionUtility_anti [Finite A] [Nonempty W] {P Q : Finpartition (Finset.univ : Finset W)}
-    (h : P ≤ Q) : questionUtility U μ Q ≤ questionUtility U μ P := by
-  let _ : MeasurableSpace (Finset W) := ⊤
-  have : MeasurableSingletonClass (Finset W) := ⟨fun _ ↦ trivial⟩
-  rw [questionUtility_eq_valueOfInformation, questionUtility_eq_valueOfInformation]
-  exact valueOfInformation_decisionValue_le_of_factorsThrough U _ _
-    (Finpartition.le_iff_factorsThrough_part.1 h) μ
-
-/-- No question is worth more than the finest one, what the world is like, whose value is the
-expected value of perfect information of [raiffa-schlaifer-1961]. -/
-theorem questionUtility_le_bot [Finite A] [Nonempty W]
-    (Q : Finpartition (Finset.univ : Finset W)) :
-    questionUtility U μ Q ≤ questionUtility U μ ⊥ :=
-  questionUtility_anti U μ bot_le
-
-/-- The value of sample information of learning `C` compares the best action after learning `C`
-with the action `a` taken now. -/
-noncomputable def valueSampleInfo (a : A) (C : Set W) : ℝ :=
-  decisionValue U μ[|C] - ∫ w, U w a ∂μ[|C]
-
-/-- When `a` is the best action now, the expected utility value of a question is its expected
-value of sample information. -/
-theorem questionUtility_eq_sum_valueSampleInfo [Nonempty W]
-    (Q : Finpartition (Finset.univ : Finset W)) {a : A}
-    (ha : ∫ w, U w a ∂μ = decisionValue U μ) :
-    questionUtility U μ Q = ∑ c ∈ Q.parts, μ.real c * valueSampleInfo U μ a c := by
-  simp only [valueSampleInfo, mul_sub, Finset.sum_sub_distrib]
-  rw [questionUtility_eq,
-    Q.sum_parts_eq_sum_preimage_part (F := fun c ↦ μ.real c * decisionValue U μ[|c]) (by simp),
-    Q.sum_parts_eq_sum_preimage_part (F := fun c ↦ μ.real c * ∫ w, U w a ∂μ[|c]) (by simp),
-    sum_measureReal_mul_integral_cond, ha]
-
-variable {U μ}
-
-/-- One question refines another exactly when it is at least as useful in every decision problem
-with a probability prior, the special case of [blackwell-1953] stated in section 4.1. -/
-theorem le_iff_forall_questionUtility_le [Nonempty W]
-    (P Q : Finpartition (Finset.univ : Finset W)) :
-    P ≤ Q ↔ ∀ {B : Type u} [Fintype B] (U : W → B → ℝ) (μ : Measure W) [IsProbabilityMeasure μ],
-      questionUtility U μ Q ≤ questionUtility U μ P := by
-  refine ⟨fun h _ _ U μ _ ↦ questionUtility_anti U μ h, fun h ↦ ?_⟩
-  let _ : MeasurableSpace (Finset W) := ⊤
-  have : MeasurableSingletonClass (Finset W) := ⟨fun _ ↦ trivial⟩
-  obtain ⟨ψ, hψ⟩ := exists_eq_comp_of_forall_valueOfInformation_le P.part Q.part fun U ↦ by
-    simpa only [questionUtility_eq_valueOfInformation] using h U (uniformOn Set.univ)
-  exact Finpartition.le_iff_factorsThrough_part.2 fun a b hab ↦ by simp [hψ, hab]
-
-/-- Relative to a decision problem, a question is better than another when it is more useful, or
-as useful and strictly coarser, since one should not ask for irrelevant information. -/
-def BetterQuestion (U : W → A → ℝ) (μ : Measure W) (Q Q' : Finpartition (Finset.univ : Finset W)) :
-    Prop :=
-  toLex (questionUtility U μ Q', Q') < toLex (questionUtility U μ Q, Q)
-
-omit [DiscreteMeasurableSpace W] [IsProbabilityMeasure μ] in
-theorem betterQuestion_iff {Q Q' : Finpartition (Finset.univ : Finset W)} :
-    BetterQuestion U μ Q Q' ↔
-      questionUtility U μ Q' < questionUtility U μ Q ∨
-        questionUtility U μ Q = questionUtility U μ Q' ∧ Q' < Q := by
-  simp [BetterQuestion, Prod.Lex.toLex_lt_toLex, eq_comm]
-
-/-! ### The domain of a wh-phrase -/
-
-variable {D : Type*} [DecidableEq D]
-
-/-- The partition a wh-question induces over a domain puts two worlds together when the
-predicate's extension agrees on the domain. -/
-def whQuestion (P : W → Finset D) (dom : Finset D) : Finpartition (Finset.univ : Finset W) :=
-  Finpartition.ofFun fun w ↦ dom ∩ P w
-
-omit [MeasurableSpace W] [DiscreteMeasurableSpace W] in
-/-- Enlarging the domain refines the question, since more individuals give more specific
-answers. -/
-theorem whQuestion_anti (P : W → Finset D) {dom dom' : Finset D} (h : dom ⊆ dom') :
-    whQuestion P dom' ≤ whQuestion P dom :=
-  Finpartition.ofFun_le_ofFun_iff.2 fun w v hwv ↦ by
-    rw [← Finset.inter_eq_left.2 h, Finset.inter_assoc, Finset.inter_assoc, hwv]
-
-variable (U μ)
-
-/-- Enlarging the domain cannot lower the value of the question, so the domain should contain
-every individual that could matter. -/
-theorem questionUtility_whQuestion_mono [Finite A] [Nonempty W] (P : W → Finset D)
-    {dom dom' : Finset D} (h : dom ⊆ dom') :
-    questionUtility U μ (whQuestion P dom) ≤ questionUtility U μ (whQuestion P dom') :=
-  questionUtility_anti U μ (whQuestion_anti P h)
-
-omit [DiscreteMeasurableSpace W] [IsProbabilityMeasure μ] in
-/-- Of two domains yielding equally useful but different questions, the smaller gives the better
-question, so the domain relevance selects contains only individuals that could affect the
-decision. -/
-theorem betterQuestion_whQuestion (P : W → Finset D) {dom dom' : Finset D} (h : dom ⊆ dom')
-    (heq : questionUtility U μ (whQuestion P dom) = questionUtility U μ (whQuestion P dom'))
-    (hne : whQuestion P dom' ≠ whQuestion P dom) :
-    BetterQuestion U μ (whQuestion P dom) (whQuestion P dom') :=
-  betterQuestion_iff.2 (.inr ⟨heq, (whQuestion_anti P h).lt_of_ne hne⟩)
-
-end Utility
 
 end Value
 
