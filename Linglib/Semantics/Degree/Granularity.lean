@@ -41,6 +41,8 @@ nested.
   representative.
 * `Degree.IsGranularity.not_subset`: a cell of a wider granularity function never
   fits inside a cell of a narrower one.
+* `Degree.isGranularity_zero_iff`: the granularity function of width zero is the exact reading,
+  every cell a single degree.
 * `Degree.cell_grain_subset_cell_grain`: around a common multiple, a finer cell lies inside a
   coarser one.
 * `Degree.grain_le_grain_iff_odd`: the grain of width `ε` refines the grain of width
@@ -105,6 +107,15 @@ theorem IsGranularity.not_subset [DenselyOrdered D] (h₁ : IsGranularity γ₁ 
     ((ha.trans hsub).trans hb)
   exact not_le.2 hlt ((add_le_add_iff_left b).1 ((add_le_add_left hab w₂).trans hba))
 
+omit [IsOrderedAddMonoid D] in
+/-- The granularity function of width zero is the exact reading, every cell a single degree. -/
+theorem isGranularity_zero_iff : IsGranularity γ 0 ↔ γ = fun s ↦ {s} := by
+  refine ⟨fun h ↦ funext fun s ↦ ?_, by rintro rfl; exact ⟨fun s ↦ rfl, fun s ↦ ⟨s, by simp⟩⟩⟩
+  obtain ⟨a, -, h₂⟩ := h.exists_Ioo_subset_subset_Icc s
+  rw [add_zero, Icc_self] at h₂
+  obtain rfl := mem_singleton_iff.1 (h₂ (h.mem_self s))
+  exact h₂.antisymm (singleton_subset_iff.2 (h.mem_self _))
+
 end IsGranularity
 
 section Grain
@@ -168,7 +179,8 @@ theorem isGranularity_cell (hε : 0 < ε) : IsGranularity (grain ε).cell ε whe
 /-- Around a common multiple of two widths, the cell of the finer grain lies inside the cell of
 the coarser one. -/
 theorem cell_grain_subset_cell_grain (hε₁ : 0 < ε₁) (h : ε₁ ≤ ε₂)
-    (h₁ : d ∈ AddSubgroup.zmultiples ε₁) (h₂ : d ∈ AddSubgroup.zmultiples ε₂) : (grain ε₁).cell d ⊆ (grain ε₂).cell d := by
+    (h₁ : d ∈ AddSubgroup.zmultiples ε₁) (h₂ : d ∈ AddSubgroup.zmultiples ε₂) :
+    (grain ε₁).cell d ⊆ (grain ε₂).cell d := by
   have hε₂ := hε₁.trans_le h
   rw [cell_grain hε₁, cell_grain hε₂, representative_eq_self_of_mem_zmultiples hε₁.ne' h₁,
     representative_eq_self_of_mem_zmultiples hε₂.ne' h₂]
