@@ -9,6 +9,7 @@ public import Linglib.Core.Probability.Kernel.IonescuTulcea.PartialTraj
 public import Mathlib.Algebra.BigOperators.Fin
 public import Mathlib.Data.Fin.Tuple.Take
 public import Mathlib.Probability.Kernel.Composition.MeasureComp
+public import Mathlib.Probability.Kernel.Composition.IntegralCompProd
 public import Mathlib.Probability.Kernel.Composition.MeasureCompProd
 
 /-!
@@ -35,6 +36,7 @@ form of the Ionescu–Tulcea partial trajectory: after the first draw, the law o
   laws.
 * `ProbabilityTheory.seqLaw_succ_singleton_snoc`, `ProbabilityTheory.seqLaw_singleton`: the chain
   rule on a countable space.
+* `ProbabilityTheory.integral_seqLaw_succ`: the chain rule for expectations.
 * `ProbabilityTheory.seqLaw_succ_eq_map_partialTraj`: the law as a partial trajectory.
 
 ## References
@@ -90,6 +92,17 @@ theorem isProbabilityMeasure_seqLaw [∀ n, IsMarkovKernel (κ n)] :
 
 instance [∀ n, IsMarkovKernel (κ n)] (n : ℕ) : IsProbabilityMeasure (seqLaw κ n) :=
   isProbabilityMeasure_seqLaw n
+
+/-- The chain rule for expectations: integrating over the first `n + 1` draws integrates the next
+draw against the prediction rule, then the first `n`. -/
+theorem integral_seqLaw_succ [∀ n, IsSFiniteKernel (κ n)] {n : ℕ} {E : Type*}
+    [NormedAddCommGroup E] [NormedSpace ℝ E] {f : (Fin (n + 1) → α) → E}
+    (hf : Integrable f (seqLaw κ (n + 1))) :
+    ∫ s, f s ∂seqLaw κ (n + 1) = ∫ s, ∫ x, f (Fin.snoc s x) ∂κ n s ∂seqLaw κ n := by
+  rw [seqLaw_succ] at hf ⊢
+  rw [integral_map measurable_snoc_prod.aemeasurable hf.aestronglyMeasurable]
+  exact Measure.integral_compProd
+    ((integrable_map_measure hf.aestronglyMeasurable measurable_snoc_prod.aemeasurable).1 hf)
 
 section Singleton
 
