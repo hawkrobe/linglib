@@ -29,7 +29,9 @@ raises its value, the forward direction of Blackwell's comparison of experiments
 experiment that observes a classifier `f`, the value of information is the probability-weighted
 value of the prior conditioned on each fibre of `f`; a fixed statistic gains nothing, which is the
 law of total expectation over the fibres, and the converse of Blackwell's theorem says that a
-classifier never worth more than `f` factors through `f`.
+classifier never worth more than `f` factors through `f`. Observing the parameter itself leaves a
+point-mass belief, so its value is the expected value of perfect information, and no experiment
+is worth more.
 
 ## Main definitions
 
@@ -50,6 +52,8 @@ classifier never worth more than `f` factors through `f`.
   a classifier sums over its fibres, and the law of total expectation over them.
 * `exists_eq_comp_of_forall_valueOfInformation_le`: a classifier never worth more than `f`
   factors through `f`.
+* `valueOfInformation_id`, `valueOfInformation_decisionValue_le_id`: observing the parameter is
+  worth the expected value of its point-mass beliefs, and no experiment is worth more.
 
 ## Implementation notes
 
@@ -62,6 +66,7 @@ bound `C` stays inside the proofs of the inequalities.
 * [degroot-1962]
 * [lindley-1956]
 * [blackwell-1953]
+* [raiffa-schlaifer-1961]
 -/
 
 @[expose] public section
@@ -121,6 +126,14 @@ theorem valueOfInformation_const (V : Measure Θ → ℝ) (ν : Measure 𝓧) [I
     integral_congr_ae ((posterior_const ν π).mono fun x hx ↦ congrArg V hx)]
   simp
 
+/-- Observing the parameter itself leaves a point-mass belief at each value. -/
+theorem valueOfInformation_id (V : Measure Θ → ℝ) :
+    valueOfInformation V Kernel.id π = ∫ θ, V (Measure.dirac θ) ∂π - V π := by
+  rw [valueOfInformation, Measure.id_comp]
+  congr 1
+  exact integral_congr_ae
+    ((posterior_id π).mono fun θ hθ ↦ congrArg V (hθ.trans (Kernel.id_apply θ)))
+
 /-- A fixed statistic gains nothing from an experiment, since the posteriors average back to the
 prior. -/
 theorem valueOfInformation_integral [Finite Θ] [MeasurableSingletonClass Θ] [Finite 𝓧]
@@ -139,6 +152,11 @@ theorem decisionValue_smul {c : ℝ} (hc : 0 ≤ c) (μ : Measure Θ) :
     decisionValue (c • U) μ = c * decisionValue U μ := by
   simp only [decisionValue, Pi.smul_apply, smul_eq_mul, integral_const_mul,
     Real.mul_iSup_of_nonneg hc]
+
+@[simp]
+theorem decisionValue_dirac [MeasurableSingletonClass Θ] (θ : Θ) :
+    decisionValue U (Measure.dirac θ) = ⨆ a, U θ a := by
+  simp [decisionValue]
 
 variable [Finite 𝓨]
 
@@ -243,6 +261,13 @@ theorem valueOfInformation_decisionValue_comp_le {𝓧' : Type*} {m𝓧' : Measu
   have h := riskIncrease_comp_le (fun θ a ↦ ENNReal.ofReal (C - U θ a)) κ π η
   rwa [riskIncrease_ofReal_sub hC, riskIncrease_ofReal_sub hC,
     ENNReal.ofReal_le_ofReal_iff (valueOfInformation_decisionValue_nonneg U κ π)] at h
+
+/-- No experiment is worth more than observing the parameter itself, the expected value of
+perfect information. -/
+theorem valueOfInformation_decisionValue_le_id :
+    valueOfInformation (decisionValue U) κ π ≤
+      valueOfInformation (decisionValue U) Kernel.id π := by
+  simpa only [Kernel.comp_id] using valueOfInformation_decisionValue_comp_le U Kernel.id π κ
 
 end Inequalities
 
