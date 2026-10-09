@@ -45,8 +45,8 @@ rule add exactly 2½-ness.
 * Quantities are rational, since halving and quartering leave the integers (`½ × 10⁰`,
   `¼ × 10¹`); pairs and single numbers are natural, so only the natural ratios `10ⁿ`, `2 × 10ⁿ`,
   `5 × 10ⁿ` and `25 × 10ⁿ` bear on them (`isRatio_natCast_iff`).
-* `k`-ness is `Numerals.Roundness.HasKness`, with the paper's zeroth power, and 2½-ness of `n` is
-  5-ness of `2n`.
+* The kinds of `k`-ness are `Numerals.Roundness.Kness` at the paper's zeroth power, 2½-ness of
+  `n` being 5-ness of `2n`.
 * The rules are the paper's generalizations over corpus pairs, which they fit in 90.8 to 98.2
   percent of cases (p. 197); the theorems test them on the paper's examples.
 
@@ -300,39 +300,42 @@ theorem halfAgain_of_hasKness (h : HasKness 5 (2 * n)) :
 /-- A number is among the first nine members of a sequence of the revised rule exactly when it has
 10-ness, 2-ness or 5-ness (pp. 197–198). -/
 theorem firstNine_revised_iff :
-    FirstNine .revised n ↔ HasKness 1 n ∨ HasKness 2 n ∨ HasKness 5 n := by
+    FirstNine .revised n ↔ ∃ κ ≠ Kness.twoAndAHalf, κ.Holds 0 n := by
   rw [firstNine_iff]
   constructor
   · rintro ⟨op, hop, h⟩
     cases op
-    · exact .inl (exists_id_iff.1 h)
-    · exact .inr (.inl (exists_double_iff.1 h))
+    · exact ⟨.ten, by decide, by simpa [Kness.Holds] using exists_id_iff.1 h⟩
+    · exact ⟨.two, by decide, by simpa [Kness.Holds] using exists_double_iff.1 h⟩
     · rcases hasKness_of_half h with h | h
-      · exact .inr (.inr h)
-      · exact .inl h
+      · exact ⟨.five, by decide, by simpa [Kness.Holds] using h⟩
+      · exact ⟨.ten, by decide, by simpa [Kness.Holds] using h⟩
     · exact absurd rfl hop
-  · rintro (h | h | h)
+  · rintro ⟨κ, hκ, h⟩
+    cases κ <;> simp only [Kness.Holds, pow_zero, mul_one] at h
     · exact ⟨.id, by simp [Rule.Allows], exists_id_iff.2 h⟩
     · exact ⟨.double, by simp [Rule.Allows], exists_double_iff.2 h⟩
     · exact ⟨.half, by simp [Rule.Allows], half_of_hasKness h⟩
+    · exact absurd rfl hκ
 
-/-- With the original rule's quarter sequences, 2½-ness joins them (pp. 197, 199–200). -/
-theorem firstNine_original_iff :
-    FirstNine .original n ↔ HasKness 1 n ∨ HasKness 2 n ∨ HasKness 5 n ∨ HasKness 5 (2 * n) := by
+/-- With the original rule's quarter sequences, 2½-ness joins them, so the first nine members are
+the numbers with some kind of `k`-ness (pp. 197, 199–200). -/
+theorem firstNine_original_iff : FirstNine .original n ↔ ∃ κ : Kness, κ.Holds 0 n := by
   rw [firstNine_iff]
   constructor
   · rintro ⟨op, -, h⟩
     cases op
-    · exact .inl (exists_id_iff.1 h)
-    · exact .inr (.inl (exists_double_iff.1 h))
+    · exact ⟨.ten, by simpa [Kness.Holds] using exists_id_iff.1 h⟩
+    · exact ⟨.two, by simpa [Kness.Holds] using exists_double_iff.1 h⟩
     · rcases hasKness_of_half h with h | h
-      · exact .inr (.inr (.inl h))
-      · exact .inl h
+      · exact ⟨.five, by simpa [Kness.Holds] using h⟩
+      · exact ⟨.ten, by simpa [Kness.Holds] using h⟩
     · rcases hasKness_of_halfAgain h with h | h | h
-      · exact .inr (.inr (.inr h))
-      · exact .inr (.inr (.inl h))
-      · exact .inl h
-  · rintro (h | h | h | h)
+      · exact ⟨.twoAndAHalf, by simpa [Kness.Holds] using h⟩
+      · exact ⟨.five, by simpa [Kness.Holds] using h⟩
+      · exact ⟨.ten, by simpa [Kness.Holds] using h⟩
+  · rintro ⟨κ, h⟩
+    cases κ <;> simp only [Kness.Holds, pow_zero, mul_one] at h
     · exact ⟨.id, trivial, exists_id_iff.2 h⟩
     · exact ⟨.double, trivial, exists_double_iff.2 h⟩
     · exact ⟨.half, trivial, half_of_hasKness h⟩

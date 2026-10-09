@@ -9,13 +9,14 @@ public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 
 Woodin et al. model the frequency of numbers in the British National Corpus: the log frequency
 of a number is a linear function of its log magnitude and of which roundness properties it has.
-The properties nest, since 10-ness, 2-ness and 5-ness make a number a multiple of ten and every
-property makes it a multiple of five, and their unweighted count is the roundness score of
-`Numerals.Roundness`.
+The six properties are being a multiple of five or of ten and Jansen and Pollmann's four kinds of
+`k`-ness over positive powers of ten. They nest, since 10-ness, 2-ness and 5-ness make a number a
+multiple of ten and every property makes it a multiple of five, and with non-negative weights the
+predicted frequency is monotone in the roundness ordering of `Numerals.Roundness`.
 
 ## Main results
 
-* `multipleOf5_mem_of_mem`: every roundness property entails being a multiple of five.
+* `dvd_five_of_holds`: every roundness property entails being a multiple of five.
 * `predicted_le_iff`: a rounder number of comparable magnitude is predicted more frequent
   exactly when the weights of its extra properties outweigh the magnitude penalty.
 * `predicted_99_le_100_iff`: the study's illustration with 99 and 100.
@@ -42,26 +43,45 @@ open Numerals.Roundness Finset
 
 /-! ### The roundness properties -/
 
-/-- 10-ness, 2-ness and 5-ness make a number a multiple of ten. -/
-theorem dvd_ten_of_holds {p : Property} {n : ℕ}
-    (hp : p = .tenness ∨ p = .twoness ∨ p = .fiveness) (h : p.Holds n) : 10 ∣ n := by
-  rcases hp with rfl | rfl | rfl
-  · exact h.dvd
-  · exact Nat.dvd_trans (by norm_num) h.dvd
-  · exact Nat.dvd_trans (by norm_num) h.dvd
+/-- A roundness property is being a multiple of five or of ten, or one of the four kinds of
+`k`-ness. -/
+inductive Property where
+  | multipleOf5
+  | multipleOf10
+  | kness (κ : Kness)
+  deriving DecidableEq, Repr, Fintype
 
-/-- Every roundness property makes a number a multiple of five: a number with any property
-is a multiple of five. -/
-theorem multipleOf5_mem_of_mem {p : Property} {n : ℕ} (h : p ∈ properties n) :
-    Property.multipleOf5 ∈ properties n := by
-  rw [mem_properties] at h ⊢
+/-- A number has a roundness property; the `k`-ness properties take a positive power of ten
+(footnote 3). -/
+def Property.Holds (n : ℕ) : Property → Prop
+  | .multipleOf5 => 5 ∣ n
+  | .multipleOf10 => 10 ∣ n
+  | .kness κ => κ.Holds 1 n
+
+instance (n : ℕ) : DecidablePred (Property.Holds n) := fun p ↦ by
+  cases p <;> unfold Property.Holds <;> infer_instance
+
+/-- 10-ness, 2-ness and 5-ness make a number a multiple of ten. -/
+theorem dvd_ten_of_holds {κ : Kness} {n : ℕ} (hκ : κ ≠ .twoAndAHalf) (h : κ.Holds 1 n) :
+    10 ∣ n := by
+  cases κ with
+  | ten => exact h.dvd
+  | two => exact Nat.dvd_trans (by norm_num) h.dvd
+  | five => exact Nat.dvd_trans (by norm_num) h.dvd
+  | twoAndAHalf => exact absurd rfl hκ
+
+/-- Every roundness property makes a number a multiple of five. -/
+theorem dvd_five_of_holds {p : Property} {n : ℕ} (h : p.Holds n) : 5 ∣ n := by
   cases p with
   | multipleOf5 => exact h
   | multipleOf10 => exact Nat.dvd_trans (by norm_num) h
-  | twoAndAHalfness => exact Nat.dvd_trans (by norm_num) h.dvd
-  | tenness => exact Nat.dvd_trans (by norm_num) (dvd_ten_of_holds (.inl rfl) h)
-  | twoness => exact Nat.dvd_trans (by norm_num) (dvd_ten_of_holds (.inr (.inl rfl)) h)
-  | fiveness => exact Nat.dvd_trans (by norm_num) (dvd_ten_of_holds (.inr (.inr rfl)) h)
+  | kness κ =>
+    have h : κ.Holds 1 n := h
+    cases κ with
+    | twoAndAHalf =>
+      have : 50 ∣ 2 * n := h.dvd
+      omega
+    | _ => exact Nat.dvd_trans (by norm_num) (dvd_ten_of_holds (by decide) h)
 
 /-! ### The frequency model -/
 
@@ -77,18 +97,18 @@ variable (M : Model)
 
 /-- The predicted log frequency of a number. -/
 noncomputable def predicted (n : ℕ) : ℝ :=
-  M.magnitude * Real.logb 10 n + ∑ p ∈ properties n, M.weight p
+  M.magnitude * Real.logb 10 n + ∑ p ∈ profile Property.Holds n, M.weight p
 
-/-- With non-negative weights, the roundness term is monotone in the property set. -/
-theorem sum_weight_le_of_subset (hw : ∀ p, 0 ≤ M.weight p) {n m : ℕ}
-    (h : properties n ⊆ properties m) :
-    ∑ p ∈ properties n, M.weight p ≤ ∑ p ∈ properties m, M.weight p :=
-  sum_le_sum_of_subset_of_nonneg h fun p _ _ ↦ hw p
+/-- With non-negative weights, the roundness term is monotone in the roundness ordering. -/
+theorem sum_weight_le_of_atLeastAsRound (hw : ∀ p, 0 ≤ M.weight p) {n m : ℕ}
+    (h : AtLeastAsRound Property.Holds n m) :
+    ∑ p ∈ profile Property.Holds n, M.weight p ≤ ∑ p ∈ profile Property.Holds m, M.weight p :=
+  sum_le_sum_of_subset_of_nonneg (profile_subset_profile.2 h) fun p _ _ ↦ hw p
 
 /-- At equal roundness, a negative magnitude coefficient predicts the smaller number more
 frequent. -/
 theorem predicted_anti (hM : M.magnitude ≤ 0) {n m : ℕ} (hn : 0 < n) (hnm : n ≤ m)
-    (h : properties n = properties m) : M.predicted m ≤ M.predicted n := by
+    (h : profile Property.Holds n = profile Property.Holds m) : M.predicted m ≤ M.predicted n := by
   unfold predicted
   rw [h]
   have := mul_le_mul_of_nonpos_left
@@ -98,12 +118,12 @@ theorem predicted_anti (hM : M.magnitude ≤ 0) {n m : ℕ} (hn : 0 < n) (hnm : 
 
 /-- A rounder number is predicted at least as frequent as a less round one exactly when the
 weights of its extra properties make up the magnitude difference. -/
-theorem predicted_le_iff {n m : ℕ} (h : properties n ⊆ properties m) :
+theorem predicted_le_iff {n m : ℕ} (h : AtLeastAsRound Property.Holds n m) :
     M.predicted n ≤ M.predicted m ↔
       -M.magnitude * (Real.logb 10 m - Real.logb 10 n) ≤
-        ∑ p ∈ properties m \ properties n, M.weight p := by
+        ∑ p ∈ profile Property.Holds m \ profile Property.Holds n, M.weight p := by
   unfold predicted
-  rw [← sum_sdiff h]
+  rw [← sum_sdiff (profile_subset_profile.2 h)]
   constructor <;> intro h' <;> linarith
 
 /-- In the study's illustration 100 has every property and 99 none, so 100 is predicted more
@@ -111,9 +131,10 @@ frequent exactly when the summed weights make up the magnitude penalty of one pa
 theorem predicted_99_le_100_iff :
     M.predicted 99 ≤ M.predicted 100 ↔
       -M.magnitude * Real.logb 10 (100 / 99) ≤ ∑ p, M.weight p := by
-  have h99 : properties 99 = ∅ := by decide
-  have h100 : properties 100 = univ := by decide
-  rw [predicted_le_iff M (by rw [h99]; exact empty_subset _), h99, h100, sdiff_empty,
+  have h99 : profile Property.Holds 99 = ∅ := by decide
+  have h100 : profile Property.Holds 100 = univ := by decide
+  rw [predicted_le_iff M (profile_subset_profile.1 (by rw [h99]; exact empty_subset _)), h99, h100,
+    sdiff_empty,
     Real.logb_div (by norm_num) (by norm_num)]
   push_cast
   exact Iff.rfl

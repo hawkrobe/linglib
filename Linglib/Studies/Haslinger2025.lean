@@ -24,9 +24,11 @@ or incompatibility, that its precise construal licenses about an alternative.
 
 * `lt_complexity_of_lt_potential`: an unblocked expression more imprecise than a competitor is
   strictly simpler, the form–meaning correlation behind *the doors* and *all the doors*.
-* `ninetyNine_blocked`, `hundred_preserved`: with the numerals at least as round as
-  alternatives, (79a), *99* is blocked at any deviation while *100* survives deviations under
-  fifty.
+* `forall_not_violates_iff`: a bare numeral survives Inference Preservation exactly when its
+  deviation is under half the lcm of the widths of the scales it lies on, so *99* must be exact
+  while *100* tolerates deviations under twenty-five (`ninetyNine_hundred`).
+* `roundness_depends_on_scales`: *180* is rounder than *200* among angles and *200* than *180*
+  among cardinals, (80b,c).
 * `conjunction_violates`: a conjunction read non-maximally loses the entailment of its conjuncts.
 
 ## Implementation notes
@@ -35,9 +37,10 @@ The Manner orderings are read off two natural-number measures on an abstract sen
 potential p-equivalence a relation parameter, since the dissertation's (68) quantifies over
 contexts that differ only in the issue parameter. Degree expressions are construals over `ℚ`, the
 precise interpretation the exact value and the imprecise one the halo of a contextual deviation
-`m`, (69)–(70); the roundness score of `Numerals.Roundness` stands in for the
-conventionalized scales, and `score_ge_six_lt_two_hundred` is the finite computation behind the
-asymmetry. The dissertation's examples are the rows of `Data/Examples/Haslinger2025.json`; its
+`m`, (69)–(70). The conventionalized scales of §6.2.1 are sets of expressions; here a scale is the
+multiples of its width over the numerals' values, given by the widths salient in a context, so
+roundness, (22), is `Numerals.Roundness.AtLeastAsRound` over `Numerals.Roundness.OnScale`.
+The dissertation's examples are the rows of `Data/Examples/Haslinger2025.json`; its
 Ch. 5 extensions to presupposition and redundancy and the collective exceptions of Ch. 7 are not
 modelled.
 
@@ -46,7 +49,6 @@ modelled.
 * [haslinger-2025-diss]
 * [haslinger-2024]
 * [kriz-spector-2021]
-* [woodin-etal-2024]
 -/
 
 @[expose] public section
@@ -141,26 +143,18 @@ def Violates {D : Type*} (φ ψ : Construal D) : Prop :=
 
 /-! #### Degree expressions (Ch. 6) -/
 
-open Numerals.Roundness
-
 /-- A bare numeral is read with deviation at most `m`, (69a) and (70a). -/
-def numeral (n : ℕ) (m : ℚ) : Construal ℚ := ⟨fun d ↦ d = n, fun d ↦ |d - n| ≤ m⟩
+def numeral (n : ℤ) (m : ℚ) : Construal ℚ := ⟨fun d ↦ d = n, fun d ↦ |d - n| ≤ m⟩
 
 /-- *More than n* is read with deviation at most `m`, (69b) and (70b). -/
-def moreThan (n : ℕ) (m : ℚ) : Construal ℚ := ⟨fun d ↦ n < d, fun d ↦ (n : ℚ) - m < d⟩
+def moreThan (n : ℤ) (m : ℚ) : Construal ℚ := ⟨fun d ↦ n < d, fun d ↦ (n : ℚ) - m < d⟩
 
-/-- The scalar alternatives of a numeral for Inference Preservation, (79a), are the other numerals
-at least as round. -/
-def IsAlternative (n n' : ℕ) : Prop := n' ≠ n ∧ roundnessScore n ≤ roundnessScore n'
-
-instance (n n' : ℕ) : Decidable (IsAlternative n n') := inferInstanceAs (Decidable (_ ∧ _))
-
-/-- Two distinct bare numerals whose halos meet violate Inference Preservation: incompatible
-precisely, compatible imprecisely. -/
-theorem numeral_violates_of_le {n n' : ℕ} (h : n ≠ n') {m : ℚ}
+/-- Two distinct bare numerals whose halos meet violate Inference Preservation, being incompatible
+precisely and compatible imprecisely. -/
+theorem numeral_violates_of_le {n n' : ℤ} (h : n ≠ n') {m : ℚ}
     (hd : |(n : ℚ) - n'| ≤ 2 * m) : Violates (numeral n m) (numeral n' m) := by
   refine ⟨false, fun d hd' hn' ↦ ?_, fun hall ↦ ?_, fun hall ↦ ?_⟩
-  · exact h (Nat.cast_injective (hd'.symm.trans hn'))
+  · exact h (Int.cast_injective (hd'.symm.trans hn'))
   · exact (hall (n' : ℚ) (by simp only [numeral]; exact_mod_cast h.symm)) rfl
   · refine hall (((n : ℚ) + n') / 2) ?_ ?_
     · simp only [numeral]
@@ -173,7 +167,7 @@ theorem numeral_violates_of_le {n n' : ℕ} (h : n ≠ n') {m : ℚ}
       linarith
 
 /-- Distinct bare numerals whose halos are apart preserve every inference. -/
-theorem not_numeral_violates_of_lt {n n' : ℕ} (h : n ≠ n') {m : ℚ}
+theorem not_numeral_violates_of_lt {n n' : ℤ} (h : n ≠ n') {m : ℚ}
     (hd : 2 * m < |(n : ℚ) - n'|) : ¬ Violates (numeral n m) (numeral n' m) := by
   rintro ⟨p, ha, -, hc⟩
   cases p with
@@ -189,44 +183,85 @@ theorem not_numeral_violates_of_lt {n n' : ℕ} (h : n ≠ n') {m : ℚ}
     rw [abs_sub_comm (n : ℚ) d] at this
     linarith
 
-/-- *100* is an alternative of *99*, which has no roundness. -/
-theorem isAlternative_ninetyNine_hundred : IsAlternative 99 100 := by decide
+/-! #### Roundness and alternatives (§6.2) -/
 
-/-- *99* is blocked by its alternative *100* as soon as it admits half a unit of deviation:
-non-round numerals must be exact. -/
-theorem ninetyNine_blocked {m : ℚ} (hm : 1 / 2 ≤ m) : Violates (numeral 99 m) (numeral 100 m) :=
-  numeral_violates_of_le (by decide) (by norm_num; linarith)
+section Roundness
 
-/-- Below two hundred, only *100* itself carries the full roundness score. -/
-theorem score_ge_six_lt_two_hundred : ∀ n < 200, 6 ≤ roundnessScore n → n = 100 := by
-  intro n hn h6
-  rw [roundnessScore_eq] at h6
-  split_ifs at h6 with h5 h10 hk10 h20 h25 h50 <;> try omega
-  have h50d := h50.dvd
-  have h20d := h20.dvd
-  have hpos : 0 < n := by
-    obtain ⟨b, m, hm1, -, rfl⟩ := h50
-    exact Nat.mul_pos (Nat.mul_pos hm1 (by norm_num)) (Nat.pow_pos (by norm_num))
-  omega
+open Numerals.Roundness
 
-/-- *100* keeps every alternative at bay under deviations below fifty: its nearest alternative at
-least as round, *200*, lies a hundred away. -/
-theorem hundred_preserved {m : ℚ} (hm : m < 50) {n' : ℕ} (h : IsAlternative 100 n') :
-    ¬ Violates (numeral 100 m) (numeral n' m) := by
-  refine not_numeral_violates_of_lt (Ne.symm h.1) ?_
-  by_contra hle
-  have hlt : n' < 200 := by
-    by_contra hge
-    have : (200 : ℚ) ≤ n' := by exact_mod_cast not_lt.mp hge
-    rw [not_lt, abs_le] at hle
-    simp only [Nat.cast_ofNat] at hle
-    linarith [hle.1]
-  exact h.1 (score_ge_six_lt_two_hundred n' hlt (le_trans (by decide) h.2))
+variable {W : Finset ℤ} {n : ℤ}
 
-/-- *more than n* is blocked by its alternative bare *n* at any positive deviation, their
-(69)–(70): the imprecise comparative overlaps the exact value it is precisely incompatible
-with. -/
-theorem moreThan_blocked (n : ℕ) {m : ℚ} (hm : 0 < m) :
+/-- The cardinal scales of (15) have widths fifty, twenty-five, ten, five and one. -/
+def decimal : Finset ℤ := {50, 25, 10, 5, 1}
+
+/-- The clock-time scales of (16), over minutes after midnight, count quarter hours, five minutes
+and minutes. -/
+def clock : Finset ℤ := {15, 5, 1}
+
+/-- The angle scales of (17) have widths ninety, ten, five and one degrees. -/
+def angle : Finset ℤ := {90, 10, 5, 1}
+
+/-- *10:45* is rounder than *10:46* on the clock-time scales, and *150* than *152* on the cardinal
+ones, (24). -/
+theorem rounder_examples :
+    (AtLeastAsRound (OnScale clock) 646 645 ∧ ¬ AtLeastAsRound (OnScale clock) 645 646) ∧
+      AtLeastAsRound (OnScale decimal) 152 150 ∧ ¬ AtLeastAsRound (OnScale decimal) 150 152 := by
+  decide
+
+/-- Which of *180* and *200* is rounder depends on the salient scales, *180* among angles and
+*200* among cardinals, (80b,c). -/
+theorem roundness_depends_on_scales :
+    (AtLeastAsRound (OnScale angle) 200 180 ∧ ¬ AtLeastAsRound (OnScale angle) 180 200) ∧
+      AtLeastAsRound (OnScale decimal) 180 200 ∧ ¬ AtLeastAsRound (OnScale decimal) 200 180 := by
+  decide
+
+/-- Roundness is not total, as *25* and *10* lie on different cardinal scales. -/
+theorem twentyFive_ten_incomparable :
+    ¬ AtLeastAsRound (OnScale decimal) 25 10 ∧ ¬ AtLeastAsRound (OnScale decimal) 10 25 := by
+  decide
+
+/-- A bare numeral read with deviation `m` survives Inference Preservation against every
+alternative at least as round, (79a), exactly when `m` is under half the lcm of the widths of its
+scales. -/
+theorem forall_not_violates_iff (hW : 0 ∉ W) {m : ℚ} :
+    (∀ n' ≠ n, AtLeastAsRound (OnScale W) n n' → ¬ Violates (numeral n m) (numeral n' m)) ↔
+      2 * m < scaleLcm W n := by
+  have hL := scaleLcm_pos hW n
+  constructor
+  · intro h
+    by_contra hle
+    refine h (n + scaleLcm W n) (by omega) ?_ (numeral_violates_of_le (by omega) ?_)
+    · exact atLeastAsRound_onScale_iff_scaleLcm_dvd.2
+        (dvd_add (scaleLcm_dvd W n) dvd_rfl)
+    · push_cast
+      rw [sub_add_cancel_left, abs_neg, abs_of_pos (by exact_mod_cast hL)]
+      linarith
+  · intro hm n' hne h
+    refine not_numeral_violates_of_lt hne.symm (lt_of_lt_of_le hm ?_)
+    obtain ⟨k, hk⟩ := (dvd_sub (atLeastAsRound_onScale_iff_scaleLcm_dvd.1 h)
+      (scaleLcm_dvd W n))
+    have hk0 : k ≠ 0 := by rintro rfl; exact hne (by simpa [sub_eq_zero] using hk)
+    rw [abs_sub_comm, ← Int.cast_sub, hk, ← Int.cast_abs, Int.cast_le, abs_mul, abs_of_pos hL]
+    exact le_mul_of_one_le_right hL.le (Int.one_le_abs hk0)
+
+/-- *99* lies only on the scale of units, so its imprecise reading is blocked from half a unit of
+deviation; *100* lies on every cardinal scale, so its alternatives are the multiples of fifty and
+it survives deviations under twenty-five. -/
+theorem ninetyNine_hundred {m : ℚ} :
+    ((∀ n' ≠ 99, AtLeastAsRound (OnScale decimal) 99 n' →
+        ¬ Violates (numeral 99 m) (numeral n' m)) ↔ m < 1 / 2) ∧
+      ((∀ n' ≠ 100, AtLeastAsRound (OnScale decimal) 100 n' →
+        ¬ Violates (numeral 100 m) (numeral n' m)) ↔ m < 25) := by
+  have h99 : scaleLcm decimal 99 = 1 := by decide
+  have h100 : scaleLcm decimal 100 = 50 := by decide
+  rw [forall_not_violates_iff (by decide), forall_not_violates_iff (by decide), h99, h100]
+  constructor <;> constructor <;> intro h <;> push_cast at h ⊢ <;> linarith
+
+end Roundness
+
+/-- *more than n* is blocked by its alternative bare *n* at any positive deviation, (69)–(70),
+since the imprecise comparative overlaps the exact value it is precisely incompatible with. -/
+theorem moreThan_blocked (n : ℤ) {m : ℚ} (hm : 0 < m) :
     Violates (moreThan n m) (numeral n m) := by
   refine ⟨false, fun d hd ↦ ?_, fun hall ↦ ?_, fun hall ↦ ?_⟩
   · simp only [moreThan, numeral, valued] at hd ⊢
