@@ -139,11 +139,11 @@ theorem neg_involutive : Function.Involutive (neg : Trivalent → Trivalent) := 
 theorem neg_antitone : Antitone neg := fun a b h => by
   revert h; cases a <;> cases b <;> decide
 
-/-- Negation swaps meet and join: De Morgan, from antitonicity alone. -/
+/-- Negation sends a meet to the join of the negations, by antitonicity alone. -/
 @[simp] theorem neg_inf (a b : Trivalent) : neg (a ⊓ b) = neg a ⊔ neg b :=
   neg_antitone.map_min
 
-/-- Negation swaps join and meet: the other De Morgan law. -/
+/-- Negation sends a join to the meet of the negations. -/
 @[simp] theorem neg_sup (a b : Trivalent) : neg (a ⊔ b) = neg a ⊓ neg b :=
   neg_antitone.map_max
 
@@ -176,6 +176,18 @@ constructor literals (`⊤ = .true`, `⊥ = .false`) that goals actually mention
 @[simp] theorem true_sup (a : Trivalent) : Trivalent.true ⊔ a = .true := top_sup_eq a
 @[simp] theorem inf_false (a : Trivalent) : a ⊓ .false = .false := inf_bot_eq a
 @[simp] theorem false_inf (a : Trivalent) : Trivalent.false ⊓ a = .false := bot_inf_eq a
+
+theorem inf_eq_true_iff {a b : Trivalent} : a ⊓ b = .true ↔ a = .true ∧ b = .true :=
+  inf_eq_top_iff
+
+theorem sup_eq_false_iff {a b : Trivalent} : a ⊔ b = .false ↔ a = .false ∧ b = .false :=
+  sup_eq_bot_iff
+
+theorem sup_eq_true_iff {a b : Trivalent} : a ⊔ b = .true ↔ a = .true ∨ b = .true := by
+  cases a <;> cases b <;> decide
+
+theorem inf_eq_false_iff {a b : Trivalent} : a ⊓ b = .false ↔ a = .false ∨ b = .false := by
+  cases a <;> cases b <;> decide
 
 /-- `indet` propagates through `⊓` unless dominated by `false`. -/
 theorem indet_inf (a : Trivalent) (h : a ≠ .false) : .indet ⊓ a = .indet := by
@@ -236,15 +248,15 @@ theorem designated_neg_iff (d : Designation) (v : Trivalent) :
     designated d.dual (neg v) ↔ ¬ designated d v := by
   cases d <;> cases v <;> decide
 
-/-- Designation distributes over `⊓`: the designated set is a filter (`le_inf_iff`). -/
+/-- Designation distributes over `⊓`, since the designated set is a filter (`le_inf_iff`). -/
 theorem designated_inf (d : Designation) (v w : Trivalent) :
     designated d (v ⊓ w) ↔ designated d v ∧ designated d w := le_inf_iff
 
-/-- Designation distributes over `⊔`: thresholds are prime on a chain (`le_sup_iff`). -/
+/-- Designation distributes over `⊔`, since thresholds are prime on a chain (`le_sup_iff`). -/
 theorem designated_sup (d : Designation) (v w : Trivalent) :
     designated d (v ⊔ w) ↔ designated d v ∨ designated d w := le_sup_iff
 
-/-- K3 is the stronger standard: its threshold dominates LP's. -/
+/-- K3 is the stronger standard, since its threshold dominates LP's. -/
 theorem designated_lp_of_k3 {v : Trivalent} (h : designated .k3 v) : designated .lp v :=
   le_trans (by decide) h
 
@@ -362,9 +374,8 @@ theorem xor_indet_iff (a b : Trivalent) :
 Mathlib's carrier for a three-element chain with an involutive order-reversing
 negation fixing the midpoint is `SignType` (`-1 < 0 < 1`). -/
 
-/-- The truth order's mathlib carrier is `SignType`: `false ↔ -1`, `indet ↔ 0`,
-`true ↔ 1`, with Kleene negation corresponding to `SignType` negation
-(`orderIsoSignType_neg`). The
+/-- The truth order is order isomorphic to `SignType`, sending `false`, `indet` and `true` to
+`-1`, `0` and `1`, and Kleene negation to `SignType` negation (`orderIsoSignType_neg`). The
 knowledge-order counterpart is `equivFlatBool`. -/
 def orderIsoSignType : Trivalent ≃o SignType where
   toFun := fun | .false => .neg | .indet => .zero | .true => .pos
@@ -390,7 +401,7 @@ original; English translation by Bergmann 1981) and are discussed by [kleene-195
 paradox-prone statements. `metaAssert` and `presuppose` are the 𝒜 and ∂ operators
 of [beaver-krahmer-2001] §2. -/
 
-/-- In Weak Kleene disjunction `indet` is absorbing: both operands must be defined. -/
+/-- In Weak Kleene disjunction `indet` is absorbing, so both operands must be defined. -/
 def joinWeak : Trivalent → Trivalent → Trivalent
   | .true, .true => .true
   | .true, .false => .true
@@ -520,7 +531,7 @@ theorem neg_meetWeak_of_ne_false {a : Trivalent} (h : a ≠ .false) (b : Trivale
     neg (meetWeak a b) = meetWeak a (neg b) := by
   revert h; cases a <;> cases b <;> decide
 
-/-- A presupposed conjunct passes through negation: negation projection. -/
+/-- Negation projects a presupposed conjunct. -/
 theorem neg_meetWeak_presuppose (a b : Trivalent) :
     neg (meetWeak (presuppose a) b) = meetWeak (presuppose a) (neg b) :=
   neg_meetWeak_of_ne_false (presuppose_ne_false a) b
@@ -740,8 +751,8 @@ theorem supervaluation_const (hs : s.Nonempty) (q : Prop) [Decidable q] :
   all_goals rw [decide_eq_false h]; rfl
 
 variable {s} in
-/-- Over a nonempty family, negating the predicate negates the supervaluation: truth and falsity
-swap and the gap is fixed. -/
+/-- Over a nonempty family, negating the predicate negates the supervaluation, swapping truth
+and falsity and fixing the gap. -/
 theorem supervaluation_not (hs : s.Nonempty) :
     supervaluation s (¬ P ·) = (supervaluation s P).neg := by
   cases h : supervaluation s P
