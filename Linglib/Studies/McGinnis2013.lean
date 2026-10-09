@@ -65,7 +65,7 @@ inductive Feature where
   | aorist
   | optative
   | ftam
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
 namespace Feature
 
@@ -147,12 +147,6 @@ def impoverishment : ImpoverishmentRule (List Feature) Feature :=
 /-- `impoverish b` is the pronoun `b` after Impoverishment. -/
 def impoverish (b : List Feature) : List Feature := impoverishment.apply List.erase (.ofBundle b)
 
-private theorem impoverish_sublist (b : List Feature) : (impoverish b).Sublist b := by
-  unfold impoverish ImpoverishmentRule.apply
-  split
-  · exact List.erase_sublist
-  · exact List.Sublist.refl _
-
 /-! ### Agree -/
 
 /-- v's person probe is specified for [Participant]. -/
@@ -184,7 +178,7 @@ def numberContent (subj obj : Argument) : List Feature :=
 inductive Screeve where
   | aorist
   | optative
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
 /-- A screeve bears its interpretable features. -/
 def Screeve.features : Screeve → List Feature
@@ -278,61 +272,40 @@ theorem rows_realized :
 
 /-! ### One exponent per feature -/
 
-theorem features_nodup (a : Argument) : a.features.Nodup := by
-  rcases a with ⟨p, n⟩
-  unfold Argument.features
-  cases p <;> by_cases h : n = .plural <;> simp [h]
-
-private theorem exists_eq_node_of_mem_features {a : Argument} {f : Feature} (h : f ∈ a.features) :
-    ∃ n, f = .node n := by
-  obtain ⟨n, -, rfl⟩ := List.mem_map.mp h
-  exact ⟨n, rfl⟩
-
-private theorem nodup_features_append (a : Argument) (m : Marking) :
+/-- An argument's bundle bears each feature once. -/
+theorem nodup_features_append (a : Argument) (m : Marking) :
     (a.features ++ caseFeatures m).Nodup := by
-  refine List.nodup_append.mpr ⟨features_nodup a, by unfold caseFeatures; split <;> simp, ?_⟩
-  grind [caseFeatures, exists_eq_node_of_mem_features]
-
-private theorem not_isUnder_individuation {f : Feature} (h : f.IsUnder .participant) :
-    ¬ f.IsUnder .individuation := by
-  cases f <;> simp_all [Feature.IsUnder, Feature.toNode?]
-  revert h
-  decide +revert
-
-private theorem not_isUnder_of_mem_features {s : Screeve} {f : Feature} (h : f ∈ s.features)
-    (a : Node) : ¬ f.IsUnder a := by
-  cases s <;> simp only [Screeve.features, List.mem_cons, List.not_mem_nil, or_false] at h <;>
-    rcases h with rfl | rfl <;> simp [Feature.IsUnder, Feature.toNode?]
-
-private theorem numberContent_spec (subj obj : Argument) :
-    (numberContent subj obj).Nodup ∧ ∀ f ∈ numberContent subj obj, f.IsUnder .individuation := by
-  unfold numberContent
-  cases h : numberProbe.search (numberGoals subj obj) with
-  | none => simp [Feature.IsUnder, Feature.toNode?]
-  | some b =>
-    obtain ⟨x, hx, rfl⟩ := List.mem_map.mp (Minimalist.Probe.mem_of_search_eq_some h)
-    have hx : x.Nodup := by
-      simp only [List.mem_cons] at hx
-      split at hx <;> simp only [List.not_mem_nil, List.mem_singleton, or_false] at hx <;>
-        rcases hx with rfl | rfl <;> exact nodup_features_append _ _
-    exact ⟨(hx.sublist (impoverish_sublist x)).filter _,
-      fun f hf ↦ of_decide_eq_true (List.mem_filter.mp hf).2⟩
+  rcases a with ⟨p, n⟩
+  unfold Argument.features caseFeatures
+  cases p <;> by_cases h : n = .plural <;> by_cases hm : m.affixes = some .B <;> simp [h, hm]
 
 /-- T's fused node bears each feature once, since the screeve's features, the subject's person
 features, and the number content of T's goal are disjoint. -/
 theorem tamNode_nodup (s : Screeve) (subj obj : Argument) : (tamNode s subj obj).Nodup := by
-  obtain ⟨hn, hu⟩ := numberContent_spec subj obj
+  have hpn : ∀ f : Feature, f.IsUnder .participant → ¬ f.IsUnder .individuation := by decide
+  have hs : ∀ s : Screeve, ∀ f ∈ s.features, ∀ a, ¬ f.IsUnder a := by decide
+  have ⟨hn, hu⟩ : (numberContent subj obj).Nodup ∧
+      ∀ f ∈ numberContent subj obj, f.IsUnder .individuation := by
+    unfold numberContent
+    cases h : numberProbe.search (numberGoals subj obj) with
+    | none => decide
+    | some b =>
+      obtain ⟨x, hx, rfl⟩ := List.mem_map.mp (Minimalist.Probe.mem_of_search_eq_some h)
+      have hx : x.Nodup := by
+        simp only [List.mem_cons] at hx
+        split at hx <;> simp only [List.not_mem_nil, List.mem_singleton, or_false] at hx <;>
+          rcases hx with rfl | rfl <;> exact nodup_features_append _ _
+      exact ⟨(hx.sublist (ImpoverishmentRule.apply_erase_sublist _ _)).filter _,
+        fun f hf ↦ of_decide_eq_true (List.mem_filter.mp hf).2⟩
   unfold tamNode
   refine List.nodup_append.mpr ⟨List.nodup_append.mpr ⟨by cases s <;> decide,
     (nodup_features_append _ _).filter _, ?_⟩, hn, ?_⟩
-  · intro x hx y hy h
-    subst h
-    exact not_isUnder_of_mem_features hx _ (of_decide_eq_true (List.mem_filter.mp hy).2)
-  · intro x hx y hy h
-    subst h
+  · rintro x hx _ hy rfl
+    exact hs s x hx _ (of_decide_eq_true (List.mem_filter.mp hy).2)
+  · rintro x hx _ hy rfl
     rcases List.mem_append.mp hx with hx | hx
-    · exact not_isUnder_of_mem_features hx _ (hu x hy)
-    · exact not_isUnder_individuation (of_decide_eq_true (List.mem_filter.mp hx).2) (hu x hy)
+    · exact hs s x hx _ (hu x hy)
+    · exact hpn x (of_decide_eq_true (List.mem_filter.mp hx).2) (hu x hy)
 
 /-- **No double plural marking** (§3.3.1). T bears each feature once, so the suffixes realize
 disjoint parts of its node. At most one realizes [Group], whence *-es* and *-n* exclude *-t*, and
