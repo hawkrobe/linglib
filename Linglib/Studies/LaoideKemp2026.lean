@@ -149,11 +149,11 @@ def historicExponent : Form CVKind Segment Morph := .melody mHist [.dPrime] [] �
 /-- The past-tense impersonal exponent (§6.2, Figure 5): an empty CV unit, no melody. -/
 def impersonalExponent : Form CVKind Segment Morph := .melody mImpers [] [.C, .V] ∅
 
-/-- The historic-tense form of a stem: `(d)` becomes melody element 0. -/
+/-- In the historic-tense form of a stem, `(d)` becomes melody element 0. -/
 def withHist (stem : Form CVKind Segment Morph) : Form CVKind Segment Morph :=
   historicExponent.concat stem
 
-/-- The past-tense impersonal of a stem: an empty CV unit at the left edge. -/
+/-- The past-tense impersonal of a stem adds an empty CV unit at the left edge. -/
 def withImpers (stem : Form CVKind Segment Morph) : Form CVKind Segment Morph :=
   impersonalExponent.concat stem
 
@@ -168,14 +168,14 @@ behind an empty CV unit (Figure 5) the stem's *f* is out of reach. -/
 /-- The melody index of the consonant linked to the leftmost skeletal slot, the target of
 `{L}`. -/
 def initialConsonantIdx {u : Form CVKind Segment Morph} (c : Candidate u) :
-    Option (Fin u.upper.len) :=
-  (List.finRange u.upper.len).find? fun k ↦ decide (∃ l ∈ c.links, l.1 = k ∧ l.2.val = 0)
+    Option (Fin u.upper.length) :=
+  (List.finRange u.upper.length).find? fun k ↦ decide (∃ l ∈ c.links, l.1 = k ∧ l.2.val = 0)
 
-/-- Lenition: if the consonant on the leftmost skeletal slot is *f*, delete its melodic
-content on the surface, leaving the slot empty. -/
+/-- Lenition deletes the melodic content of an *f* on the leftmost skeletal slot on the
+surface, leaving the slot empty. -/
 def lenite {u : Form CVKind Segment Morph} (c : Candidate u) : Candidate u :=
   match initialConsonantIdx c with
-  | some k => if (u.upper.label k).value = .f then c.deleteTierElem k else c
+  | some k => if u.upper[k].value = .f then c.deleteTierElem k else c
   | none   => c
 
 /-! ### Docking
@@ -186,9 +186,9 @@ followed by a filled V-slot (§4.1). -/
 /-- The configuration that licenses the docking of `(d)` on the surface has slot 0 an empty
 C-slot and slot 1 a filled V-slot (§4.1). -/
 def dDockable {u : Form CVKind Segment Morph} (c : Candidate u) : Prop :=
-  ∃ i₀ i₁ : Fin u.lower.len, i₀.val = 0 ∧ i₁.val = 1 ∧
-    (u.lower.label i₀).value = .C ∧ ¬ c.IsLinkedLower i₀ ∧
-    (u.lower.label i₁).value = .V ∧ c.IsLinkedLower i₁
+  ∃ i₀ i₁ : Fin u.lower.length, i₀.val = 0 ∧ i₁.val = 1 ∧
+    u.lower[i₀].value = .C ∧ ¬ c.IsLinkedLower i₀ ∧
+    u.lower[i₁].value = .V ∧ c.IsLinkedLower i₁
 
 instance {u : Form CVKind Segment Morph} (c : Candidate u) : Decidable (dDockable c) :=
   inferInstanceAs (Decidable (∃ _ _, _))
@@ -208,15 +208,15 @@ In every historic-tense form `(d)` is melody element 0 and floating before docki
 theorem dPrime_floating_bog : (Candidate.input (withHist bog)).IsFloating ⟨0, by decide⟩ := by
   decide
 
-/-- Figure 1a, *bog* → *bhog*: the first C-slot is occupied, and lenition leaves a segment
+/-- In Figure 1a, *bog* → *bhog*, the first C-slot is occupied and lenition leaves a segment
 in it, so `(d)` cannot dock ((11c)). -/
 theorem bog_no_dPrime : ¬ dPrimeSurfaces (.input (withHist bog)) := by decide
 
-/-- Figure 1b, *ól* → *d' ól*: the first C-slot is empty underlyingly, `{L}` has nothing to
+/-- In Figure 1b, *ól* → *d' ól*, the first C-slot is empty underlyingly, `{L}` has nothing to
 dock onto, and `(d)` links ((11a)). -/
 theorem ól_yes_dPrime : dPrimeSurfaces (.input (withHist ól)) := by decide
 
-/-- Figure 1c, *fág* → *d' fhág*: lenition deletes the *f*, leaving the first C-slot empty
+/-- In Figure 1c, *fág* → *d' fhág*, lenition deletes the *f*, leaving the first C-slot empty
 on the surface, and `(d)` links ((11b)). -/
 theorem fág_yes_dPrime : dPrimeSurfaces (.input (withHist fág)) := by decide
 
@@ -226,20 +226,19 @@ A past-tense impersonal carries an empty CV unit at its left edge (§6.2), which
 duty: `{L}` finds no consonant to dock onto, and the empty C-slot is followed by an empty
 V-slot, so `(d)` cannot link either ((27)). -/
 
-/-- Figure 5a, *bogadh*: no `(d)`. -/
+/-- Figure 5a, *bogadh*, has no `(d)`. -/
 theorem bogadh_no_dPrime : ¬ dPrimeSurfaces (.input (withHist (withImpers bog))) := by decide
 
-/-- Figure 5b, *óladh*: the empty V-slot of the prefix blocks docking although the verb is
+/-- In Figure 5b, *óladh*, the empty V-slot of the prefix blocks docking although the verb is
 vowel-initial. -/
 theorem óladh_no_dPrime : ¬ dPrimeSurfaces (.input (withHist (withImpers ól))) := by decide
 
-/-- Figure 5c, *fágadh*: the empty C-slot keeps `{L}` from the stem's *f*, and the empty
+/-- In Figure 5c, *fágadh*, the empty C-slot keeps `{L}` from the stem's *f*, and the empty
 V-slot blocks `(d)`. -/
 theorem fágadh_no_dPrime : ¬ dPrimeSurfaces (.input (withHist (withImpers fág))) := by decide
 
-/-- The empirical core: in the historic tense `(d)` surfaces before a vowel-initial or
-*f*-initial verb and not before a consonant-initial one, and never before a past-tense
-impersonal (Figures 1 and 5). -/
+/-- In the historic tense `(d)` surfaces before a vowel-initial or *f*-initial verb and not
+before a consonant-initial one, and never before a past-tense impersonal (Figures 1 and 5). -/
 theorem laoideKemp_fig1_fig5 :
     (¬ dPrimeSurfaces (.input (withHist bog)) ∧ dPrimeSurfaces (.input (withHist ól)) ∧
       dPrimeSurfaces (.input (withHist fág))) ∧
@@ -249,8 +248,8 @@ theorem laoideKemp_fig1_fig5 :
   ⟨⟨bog_no_dPrime, ól_yes_dPrime, fág_yes_dPrime⟩,
    ⟨bogadh_no_dPrime, óladh_no_dPrime, fágadh_no_dPrime⟩⟩
 
-/-- Figure 5 from the other side: the empty CV unit leaves `{L}` no consonant to dock onto, so
-an impersonal resists lenition even after a lenition-triggering particle ((26b)). -/
+/-- Seen from the other side of Figure 5, the empty CV unit leaves `{L}` no consonant to dock
+onto, so an impersonal resists lenition even after a lenition-triggering particle ((26b)). -/
 theorem impersonal_blocks_lenition : initialConsonantIdx (.input (withImpers fág)) = none := by
   decide
 

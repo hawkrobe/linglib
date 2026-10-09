@@ -64,9 +64,9 @@ def baseMorph : Morph := .root "base"
 /-- MAX-Tone ((23)): one violation per deleted input tone. -/
 def maxTone {u : Form} : Constraint (Candidate u) := fun c ↦ c.deleted.card
 
-/-- The surface melody: the tones linked to each TBU, left to right. -/
+/-- The surface melody lists the tones linked to each TBU, left to right. -/
 def surfaceMelody {u : Form} (c : Candidate u) : List TRN :=
-  (List.finRange u.lower.len).flatMap c.tierValues
+  (List.finRange u.lower.length).flatMap c.tierValues
 
 /-! ### (24): the M verbaliser and an unreduplicated ideophone -/
 
@@ -76,8 +76,8 @@ namespace Tableau24
 def input : Form :=
   Form.melody rootMorph [.L] [⟨"wù"⟩, ⟨"làʃ"⟩] {(0, 0), (0, 1)} * Form.melody vbzMorph [.M] [] ∅
 
-instance : NeZero input.upper.len := ⟨by decide⟩
-instance : NeZero input.lower.len := ⟨by decide⟩
+instance : NeZero input.upper.length := ⟨by decide⟩
+instance : NeZero input.lower.length := ⟨by decide⟩
 
 /-- The faithful candidate of the input. -/
 def cand : Candidate input := .input _
@@ -118,8 +118,8 @@ def input : Form :=
   Form.melody rootMorph [.H] [⟨"háŋ"⟩, ⟨"lá"⟩, ⟨"ɣáp"⟩] {(0, 0), (0, 1), (0, 2)} *
     Form.melody vbzMorph [.M, .H] [] ∅
 
-instance : NeZero input.upper.len := ⟨by decide⟩
-instance : NeZero input.lower.len := ⟨by decide⟩
+instance : NeZero input.upper.length := ⟨by decide⟩
+instance : NeZero input.lower.length := ⟨by decide⟩
 
 /-- The faithful candidate of the input. -/
 def cand : Candidate input := .input _
@@ -154,8 +154,8 @@ theorem profiles :
         [0, 0, 2, 1, 1], [0, 0, 2, 2, 0]] := by
   decide
 
-/-- M on the nonfinal TBUs and H on the final one wins: the same surface tones as (25b),
-distinguished by which H — the verbaliser's — the anchors count. -/
+/-- M on the nonfinal TBUs and H on the final one wins, with the same surface tones as (25b),
+distinguished by which H (the verbaliser's) the anchors count. -/
 theorem optimal : (Tableau.ofRanking candidates ranking).optimal = {candE} := by decide
 
 end Tableau25
@@ -170,8 +170,8 @@ def input : Form :=
     Form.melody baseMorph [.L] [⟨"jàl"⟩, ⟨"pàt"⟩] {(0, 0), (0, 1)} *
     Form.melody vbzMorph [.M, .H] [] ∅
 
-instance : NeZero input.upper.len := ⟨by decide⟩
-instance : NeZero input.lower.len := ⟨by decide⟩
+instance : NeZero input.upper.length := ⟨by decide⟩
+instance : NeZero input.lower.length := ⟨by decide⟩
 
 /-- The faithful candidate of the input. -/
 def cand : Candidate input := .input _
@@ -216,7 +216,7 @@ theorem optimal : (Tableau.ofRanking candidates ranking).optimal = {candD} := by
 
 end Tableau26
 
-/-- The three winners surface with exactly the fragment's overwrites: `deriveVerb` for the
+/-- The three winners surface with exactly the fragment's overwrites, `deriveVerb` for the
 singular verbs and `derivePluractional` for the pluractional. -/
 theorem winners_agree_with_overwrite :
     surfaceMelody Tableau24.candE = (deriveVerb wulash).getD [] ∧

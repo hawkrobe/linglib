@@ -57,15 +57,15 @@ variable {S T M : Type*} (m : M) (tones : List T) (tbus : List S) (links : Finse
     `tones` over the slots `tbus` and the pre-links `links` in melody-local coordinates,
     given as pairs of positions. -/
 def melody : Form S T M where
-  upper := .ofList (tones.map (⟨·, m⟩))
-  lower := .ofList (tbus.map (⟨·, m⟩))
+  upper := tones.map (⟨·, m⟩)
+  lower := tbus.map (⟨·, m⟩)
   links := Finset.univ.filter fun p ↦ (p.1.val, p.2.val) ∈ links
 
 @[simp] theorem melody_upper :
-    (melody m tones tbus links).upper = .ofList (tones.map (⟨·, m⟩)) := rfl
+    (melody m tones tbus links).upper = tones.map (⟨·, m⟩) := rfl
 
 @[simp] theorem melody_lower :
-    (melody m tones tbus links).lower = .ofList (tbus.map (⟨·, m⟩)) := rfl
+    (melody m tones tbus links).lower = tbus.map (⟨·, m⟩) := rfl
 
 variable {m tones tbus links} in
 @[simp] theorem mem_links_melody {p} :
@@ -73,14 +73,18 @@ variable {m tones tbus links} in
   simp [melody]
 
 /-- Every autosegment of a melody is sponsored by its morpheme. -/
-@[simp] theorem melody_upper_morpheme (k : Fin (melody m tones tbus links).upper.len) :
-    ((melody m tones tbus links).upper.label k).morpheme = m := by
-  simp [melody, LabeledTuple.ofList]
+@[simp] theorem melody_upper_morpheme (k : Fin (melody m tones tbus links).upper.length) :
+    (melody m tones tbus links).upper[k].morpheme = m := by
+  obtain ⟨x, -, hx⟩ := List.mem_map.1 (List.getElem_mem (l := (melody m tones tbus links).upper)
+    k.isLt)
+  rw [Fin.getElem_fin, ← hx]
 
 /-- Every slot of a melody is sponsored by its morpheme. -/
-@[simp] theorem melody_lower_morpheme (i : Fin (melody m tones tbus links).lower.len) :
-    ((melody m tones tbus links).lower.label i).morpheme = m := by
-  simp [melody, LabeledTuple.ofList]
+@[simp] theorem melody_lower_morpheme (i : Fin (melody m tones tbus links).lower.length) :
+    (melody m tones tbus links).lower[i].morpheme = m := by
+  obtain ⟨x, -, hx⟩ := List.mem_map.1 (List.getElem_mem (l := (melody m tones tbus links).lower)
+    i.isLt)
+  rw [Fin.getElem_fin, ← hx]
 
 end Form
 
