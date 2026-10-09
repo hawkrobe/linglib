@@ -224,6 +224,17 @@ theorem le_peak {h : ℕ} (hh : h ∈ g) : h ≤ peak g := List.le_max_of_le' 0 
 /-- The peak is bounded by any common bound on the columns. -/
 theorem peak_le {n : ℕ} (h : ∀ x ∈ g, x ≤ n) : peak g ≤ n := List.max_le_of_forall_le _ n h
 
+@[simp] theorem peak_reverse : peak g.reverse = peak g :=
+  le_antisymm (peak_le fun _ hx ↦ le_peak (List.mem_reverse.1 hx))
+    (peak_le fun _ hx ↦ le_peak (List.mem_reverse.2 hx))
+
+/-- Every column height, read with default `0`, is at most the peak. -/
+theorem getD_le_peak (i : ℕ) : g.getD i 0 ≤ peak g := by
+  rw [List.getD_eq_getElem?_getD]
+  rcases lt_or_ge i g.length with h | h
+  · rw [List.getElem?_eq_getElem h]; exact le_peak (List.getElem_mem h)
+  · simp [List.getElem?_eq_none h]
+
 /-- A grid is culminative ([liberman-prince-1977]; [hayes-1995]) when exactly one column is
     tallest. This is strictly stronger than having a unique head terminal (`IsHeaded`), since two
     columns can tie. -/
