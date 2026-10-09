@@ -157,15 +157,15 @@ theorem eval_pexPossOr :
 /-- `pex^{IE+II}[◇(a ∨ b)]` is undefined exactly where one of `◇a` and `◇b` holds without the
 other, the presupposition failure fn. 2 predicts. -/
 theorem homogeneity_gap :
-    (pexPossOr R a b).eval.gapExt = symmDiff (R.preimage a) (R.preimage b) := by
+    Trivalent.gapExt (pexPossOr R a b).eval = symmDiff (R.preimage a) (R.preimage b) := by
   ext w
-  simp only [Trivalent.Prop3.mem_gapExt, eval_eq_indet_iff, pexPossOr_presup hF,
+  simp only [Trivalent.mem_gapExt, eval_eq_indet_iff, pexPossOr_presup hF,
     Set.mem_symmDiff]
   tauto
 
 /-- The negation `¬pex^{IE+II}[◇(a ∨ b)]` is undefined at the same worlds, fn. 2. -/
 theorem homogeneity_gap_neg :
-    (pexPossOr R a b).neg.eval.gapExt = symmDiff (R.preimage a) (R.preimage b) := by
+    Trivalent.gapExt (pexPossOr R a b).neg.eval = symmDiff (R.preimage a) (R.preimage b) := by
   rw [← homogeneity_gap hF]
   ext w
   simp

@@ -1,7 +1,7 @@
 module
 
-public import Linglib.Core.Order.Bilattice.Four
-public import Linglib.Core.Data.Trivalent
+public import Linglib.Logic.Trivalent.Four
+public import Linglib.Logic.Trivalent.Basic
 public import Linglib.Logic.Consequence
 
 /-!

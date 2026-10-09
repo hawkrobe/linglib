@@ -35,7 +35,7 @@ truth-named constructors is this library's ergonomic choice; the name follows th
 
 - `Trivalent` — three-valued truth (`.true`, `.false`, `.indet`), a `LinearOrder` and
   `BoundedOrder`. Trivalent propositions `W → Trivalent` live in
-  `Logic/Trivalent/Prop3.lean`.
+  `Logic/Trivalent/Pointwise.lean`.
 - `Trivalent.neg` — Strong Kleene negation: involutive (`neg_neg`), antitone
   (`neg_antitone`), De Morgan (`neg_inf`/`neg_sup`), satisfying the Kleene law
   (`inf_neg_le_sup_neg`) — so `Trivalent` is a Kleene algebra (`IsKleene`), the canonical
@@ -47,14 +47,14 @@ truth-named constructors is this library's ergonomic choice; the name follows th
 - `Trivalent.ofBool`, `Trivalent.ofBoolHom` — `Bool` embeds as a bounded lattice homomorphism.
 - `Trivalent.supervaluation` — the value of a predicate over a finite family of classical
   valuations ([van-fraassen-1966]), characterized as a knowledge meet in
-  `Core/Data/Trivalent/Flat.lean`.
+  `Logic/Trivalent/Flat.lean`.
 
 ## Main results
 
 - `Trivalent.orderIsoSignType` — the truth order's mathlib carrier is `SignType`
   (`-1 < 0 < 1`), the iso commuting with negation. The knowledge order lives in
-  `Core/Data/Trivalent/Flat.lean`, and `Trivalent.orderIsoConsistent`
-  (`Core/Order/Bilattice/Four.lean`) identifies `Trivalent` with the consistent part of
+  `Logic/Trivalent/Flat.lean`, and `Trivalent.orderIsoConsistent`
+  (`Logic/Trivalent/Four.lean`) identifies `Trivalent` with the consistent part of
   Belnap's `FOUR`.
 
 ## References
@@ -434,7 +434,7 @@ theorem meetWeak_comm (a b : Trivalent) : meetWeak a b = meetWeak b a := by
   cases a <;> cases b <;> rfl
 
 /-- Meta-assertion closes a trivalent value to bivalent by treating undefinedness as
-falsity: Bochvar's assertion operator ([bochvar-1937]), the 𝒜 of [beaver-krahmer-2001] §2. -/
+falsity; it is Bochvar's assertion operator ([bochvar-1937]), the 𝒜 of [beaver-krahmer-2001] §2. -/
 def metaAssert : Trivalent → Trivalent
   | .true => .true
   | .false => .false
@@ -541,7 +541,7 @@ theorem eq_of_indet_iff_of_true_iff {a b : Trivalent} (h₁ : a = .indet ↔ b =
     (h₂ : a = .true ↔ b = .true) : a = b := by
   revert h₁ h₂; cases a <;> cases b <;> decide
 
-/-- Meta-asserting a presupposed value falsifies undefinedness: `𝒜 ∘ ∂` sends
+/-- Meta-asserting a presupposed value falsifies undefinedness — `𝒜 ∘ ∂` sends
 exactly `.true` to `.true`. -/
 theorem metaAssert_presuppose (v : Trivalent) :
     metaAssert (presuppose v) = if v = .true then .true else .false := by

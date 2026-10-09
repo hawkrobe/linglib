@@ -164,7 +164,7 @@ theorem Reading.construals_nonempty (r : Reading) : r.construals.Nonempty := by
 /-- The value of the definite sentence at a polarity under a reading is the supervaluation over
 the reading's construals. -/
 def Reading.value [DecidableEq Atom] (r : Reading) (p : Polarity) :
-    Trivalent.Prop3 (Finset Atom) :=
+    (Finset Atom → Trivalent) :=
   fun w ↦ Trivalent.supervaluation r.construals (·.Holds x p w)
 
 /-- The values of the positive and the negative sentence in a GAP context under each reading,

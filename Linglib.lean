@@ -155,9 +155,7 @@ import Linglib.Logic.Team.Definability
 import Linglib.Logic.Temporal.Basic
 import Linglib.Logic.Temporal.Defs
 import Linglib.Logic.Temporal.Soundness
-import Linglib.Core.Data.Trivalent
 import Linglib.Core.Data.UnorderedTree.Basic
-import Linglib.Logic.Trivalent.Prop3
 import Linglib.Logic.Trivalent.Propositional
 import Linglib.Core.Order.AllenRelation
 import Linglib.Core.Order.Antichain
@@ -976,7 +974,6 @@ import Linglib.Semantics.Possession.Defs
 import Linglib.Semantics.Possession.Quantifier
 import Linglib.Semantics.Possession.Relationalizer
 import Linglib.Semantics.Presupposition.Basic
-import Linglib.Semantics.Presupposition.ContentLayer
 import Linglib.Semantics.Presupposition.Context
 import Linglib.Semantics.Presupposition.Defs
 import Linglib.Semantics.Presupposition.PhiFeatures

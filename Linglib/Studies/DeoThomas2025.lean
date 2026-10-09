@@ -192,15 +192,15 @@ def just (c : Context W) (cq : Question W) (p : Set W) : PartialProp W where
 
 variable {c : Context W} {cq cq' : Question W} {p p' : Set W} {w w' : W}
 
-theorem just_defined_iff : PartialProp.defined w (just c cq p) ↔ c.IsOptimal cq := Iff.rfl
+theorem just_defined_iff : (just c cq p).presup w ↔ c.IsOptimal cq := Iff.rfl
 
-theorem just_holds_iff : PartialProp.holds w (just c cq p) ↔ c.IsOptimal cq ∧ w ∈ p :=
+theorem just_holds_iff : (just c cq p).holds w ↔ c.IsOptimal cq ∧ w ∈ p :=
   Iff.rfl
 
 /-- Two defined uses of *just* in one context address the same current question, since the
 presupposition fixes the construal. -/
-theorem eq_of_just_defined (h : PartialProp.defined w (just c cq p))
-    (h' : PartialProp.defined w' (just c cq' p')) : cq = cq' :=
+theorem eq_of_just_defined (h : (just c cq p).presup w)
+    (h' : (just c cq' p').presup w') : cq = cq' :=
   h.unique h'
 
 /-! ### Partitions: refinement is width, §4.2 and §4.7 -/

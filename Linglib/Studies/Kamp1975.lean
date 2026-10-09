@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Modification.Classification
-public import Linglib.Core.Data.Trivalent
+public import Linglib.Logic.Trivalent.Basic
 public import Mathlib.Data.Set.Basic
 public import Mathlib.Algebra.Order.Ring.Rat
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset

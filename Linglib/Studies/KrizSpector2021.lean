@@ -76,8 +76,6 @@ gloss of (25). The reading-list example (26)–(28) is stated for any thresholds
 namespace KrizSpector2021
 
 open Homogeneity Plurality
-open Trivalent (Prop3)
-
 variable {Atom W : Type*} [DecidableEq Atom]
 
 /-! ### Candidate denotations (§3.1) -/
@@ -88,7 +86,8 @@ abbrev parts (x : Finset Atom) : Finset (Finset Atom) := Finset.Ioc ⊥ x
 theorem mem_parts {x z : Finset Atom} : z ∈ parts x ↔ z.Nonempty ∧ z ⊆ x := by
   simp [parts, Finset.mem_Ioc, Finset.empty_ssubset]
 
-/-- The convex closure of a set of pluralities: everything in between two of its members,
+/-- The convex closure of a set of pluralities collects everything in between two of its
+members,
 the paper's (21). -/
 def conv (A : Finset (Finset Atom)) : Finset (Finset Atom) :=
   A.biUnion λ a => A.biUnion λ b => Finset.Icc a b
@@ -109,7 +108,8 @@ theorem mem_conv_insert {x : Finset Atom} {S : Finset (Finset Atom)} (hS : S ⊆
   · rintro ⟨hzx, s, hs, hsz⟩
     exact ⟨s, hs, x, Finset.mem_insert_self x S, hsz, hzx⟩
 
-/-- The candidate denotations of `x`, the paper's (21): the existential quantifiers over the
+/-- The candidate denotations of `x`, the paper's (21), are the existential quantifiers over
+the
 convex closure of a set of parts of `x` together with `x`, presented by their domains. -/
 def Cand (x : Finset Atom) : Finset (Finset (Finset Atom)) :=
   (parts x).powerset.image λ S => conv (insert x S)
@@ -197,12 +197,12 @@ instance (x : Finset Atom) (φ : Finset (Finset Atom) → W → Prop) [∀ D w, 
     (w : W) : Decidable (FalseOnAll x φ w) :=
   inferInstanceAs (Decidable (∀ D ∈ Cand x, ¬ φ D w))
 
-/-- The trivalent value of the sentence: true, false, or undefined on its candidates. -/
+/-- The trivalent value of the sentence is true, false, or undefined on its candidates. -/
 def value (x : Finset Atom) (φ : Finset (Finset Atom) → W → Prop) [∀ D w, Decidable (φ D w)]
     (w : W) : Trivalent :=
   if TrueOnAll x φ w then .true else if FalseOnAll x φ w then .false else .indet
 
-/-- Negating the sentence negates its candidates: falsity on all readings of `φ` is truth on
+/-- Negating the sentence negates its candidates — falsity on all readings of `φ` is truth on
 all readings of `¬ φ`, the paper's (61)–(62). -/
 theorem falseOnAll_iff_trueOnAll_not (x : Finset Atom) (φ : Finset (Finset Atom) → W → Prop)
     (w : W) : FalseOnAll x φ w ↔ TrueOnAll x (λ D w => ¬ φ D w) w :=
@@ -292,7 +292,7 @@ inductive Book where
 /-- The books. -/
 def books : Finset Book := {.a, .b, .c, .d}
 
-/-- The scenario: which books each student read. -/
+/-- The scenario records which books each student read. -/
 def read₀ : Student → Finset Book
   | .mary => {.a, .b, .c, .d}
   | .sue => {.c, .d}
@@ -393,7 +393,7 @@ variable {Book : Type*} [Fintype Book] [DecidableEq Book]
 /-- Mary read the plurality `z` at `w` when every book in `z` is among those she read. -/
 abbrev readP : Finset Book → Finset Book → Prop := λ z w => z ⊆ w
 
-/-- The issue (26): whether Mary read at least `lo` of the books, and whether at least
+/-- The issue (26) asks whether Mary read at least `lo` of the books, and whether at least
 `hi`. -/
 abbrev issue (lo hi : ℕ) : Setoid (Finset Book) :=
   Setoid.ker λ w => (decide (lo ≤ w.card), decide (hi ≤ w.card))
@@ -486,8 +486,9 @@ end ReadingList
 
 /-- Križ's Addressing condition, the paper's (34a), has strong relevance as its special case
 on bivalent propositions. -/
-theorem addressesIssue_iff_stronglyRelevant {S : Prop3 W} (hbiv : S.isBivalent) (q : Setoid W) :
-    addressesIssue q S ↔ isStronglyRelevantProp q (· ∈ S.posExt) := by
+theorem addressesIssue_iff_stronglyRelevant {S : W → Trivalent}
+    (hbiv : Trivalent.IsBivalent S) (q : Setoid W) :
+    addressesIssue q S ↔ isStronglyRelevantProp q (· ∈ Trivalent.posExt S) := by
   constructor
   · intro h
     refine Setoid.decides_iff.2 λ w₁ w₂ hr => ?_
@@ -510,23 +511,24 @@ section Exam
 
 variable {Math : Type*} [Fintype Math] [DecidableEq Math]
 
-/-- A world: the math problems Mary solved, and whether she solved a physics problem. -/
+/-- A world records the math problems Mary solved, and whether she solved a physics
+problem. -/
 abbrev ExamWorld (Math : Type*) := Finset Math × Bool
 
-/-- Passing: all of the math problems, or some of them and a physics problem. -/
+/-- Passing requires all of the math problems, or some of them and a physics problem. -/
 def Pass (w : ExamWorld Math) : Prop := w.1 = Finset.univ ∨ (w.1.Nonempty ∧ w.2 = true)
 
 instance (w : ExamWorld Math) : Decidable (Pass w) :=
   inferInstanceAs (Decidable (_ ∨ _))
 
-/-- The issue: whether Mary passed. -/
+/-- The issue asks whether Mary passed. -/
 abbrev passFail : Setoid (ExamWorld Math) := Setoid.ker λ w => decide (Pass w)
 
 theorem passFail_r (w v : ExamWorld Math) : passFail w v ↔ (Pass w ↔ Pass v) := by
   simp
 
 /-- *Mary solved the math problems* as Križ's trivalent sentence. -/
-def solvedMath : Prop3 (ExamWorld Math) := barePlural (λ m w => m ∈ w.1) Finset.univ
+def solvedMath : (ExamWorld Math → Trivalent) := barePlural (λ m w => m ∈ w.1) Finset.univ
 
 theorem solvedMath_eq_true_iff (w : ExamWorld Math) :
     solvedMath w = .true ↔ w.1 = Finset.univ := by
@@ -606,7 +608,7 @@ end Exam
 
 /-! ### Homogeneity parameters and *all* (§5.3) -/
 
-/-- A homogeneity parameter: a candidate domain for every argument index and plurality
+/-- A homogeneity parameter assigns a candidate domain to every argument index and plurality
 (§5.3.1). -/
 abbrev HParam (Atom : Type*) := ℕ → Finset Atom → Finset (Finset Atom)
 
@@ -657,13 +659,14 @@ def pred₂ (H : HParam Atom) (i j : ℕ) (R : Finset Atom → Finset Atom → W
 def dist (H : HParam Atom) (i : ℕ) (Q : Atom → W → Prop) (x : Finset Atom) (w : W) : Prop :=
   pred H i (star Q) x w
 
-/-- *all* with indices `I`, the paper's (71): true relative to every admissible parameter
+/-- *all* with indices `I`, the paper's (71), is true relative to every admissible parameter
 that agrees with the current one outside `I`. -/
 def all (I : Finset ℕ) (φ : HParam Atom → Finset Atom → W → Prop) (H : HParam Atom)
     (x : Finset Atom) (w : W) : Prop :=
   ∀ H' : HParam Atom, H'.Admissible → H.EquivExcept I H' → φ H' x w
 
-/-- The candidate interpretations of a sentence: one proposition per admissible parameter. -/
+/-- The candidate interpretations of a sentence collect one proposition per admissible
+parameter. -/
 def interpretations (φ : HParam Atom → W → Prop) : Set (W → Prop) :=
   {p | ∃ H : HParam Atom, H.Admissible ∧ p = φ H}
 
@@ -680,7 +683,8 @@ theorem all_pred (P : Finset Atom → W → Prop) (x : Finset Atom) (w : W) :
     exact (Finset.mem_singleton.1 (by simpa [HParam.univAt] using hz)) ▸ hP
   · exact λ h H' hH' _ => ⟨x, self_mem_of_mem_Cand (hH' i x), h⟩
 
-/-- *all* above negation, the paper's (78): *the girls all didn't dance* holds iff no part
+/-- With *all* above negation, the paper's (78), *the girls all didn't dance* holds iff no
+part
 of the girls danced. -/
 theorem all_not_pred {x : Finset Atom} (hx : x.Nonempty) (P : Finset Atom → W → Prop) (w : W) :
     all I (λ H' x w => ¬ pred H' i P x w) H x w ↔ ∀ z ∈ parts x, ¬ P z w := by
@@ -838,7 +842,8 @@ variable [Fintype Atom]
 /-- The pluralities containing `x`. -/
 abbrev sups (x : Finset Atom) : Finset (Finset Atom) := Finset.Icc x ⊤
 
-/-- The candidate domains of the appendix, (113): convex closures of some parts of `x` and
+/-- The candidate domains of the appendix, (113), are convex closures of some parts of `x`
+and
 some pluralities containing `x`, restricted to those containing `x` itself. -/
 def CandUp (x : Finset Atom) : Finset (Finset (Finset Atom)) :=
   (((parts x).powerset ×ˢ (sups x).powerset).image λ p => conv (p.1 ∪ p.2)).filter (x ∈ ·)
@@ -870,7 +875,7 @@ theorem overlaps_of_mem_CandUp {x : Finset Atom} (hx : x.Nonempty) {D : Finset (
   · obtain ⟨b, hb⟩ := hx
     exact ⟨b, hb, haz ((Finset.mem_Icc.1 (hB ha)).1 hb)⟩
 
-/-- The weakest appendix candidate: every plurality overlapping `x`. -/
+/-- The weakest appendix candidate admits every plurality overlapping `x`. -/
 theorem filter_overlaps_mem_CandUp {x : Finset Atom} (hx : x.Nonempty) :
     Finset.univ.filter (overlaps x) ∈ CandUp x := by
   refine mem_CandUp.2 ⟨⟨parts x, Finset.Subset.refl _, sups x, Finset.Subset.refl _, ?_⟩, ?_⟩

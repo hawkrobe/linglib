@@ -44,9 +44,9 @@ open Quantifier Quantifier.GQ Quantifier.NP
 /-! ### Belnap's functors in the `PartialProp` substrate ((3), (6)–(10))
 
 The four concepts of p. 3 are `PartialProp`'s fields: `presup` is
-assertiveness, `assertion` the asserted content. (3) is
-`PartialProp.condAssert` — assertive where the antecedent is true,
-asserting the consequent there; (6)'s categorical atoms are
+assertiveness, `assertion` the asserted content. (3) is the
+`PartialProp` constructor itself — assertive where the antecedent is
+true, asserting the consequent there; (6)'s categorical atoms are
 `PartialProp.ofProp`, assertive everywhere; (7) is `PartialProp.neg`,
 which preserves assertiveness (`PartialProp.neg_presup`); the
 skip-undefined conjunction (8) and disjunction (9) are

@@ -5,7 +5,7 @@ public import Mathlib.Tactic.DeriveFintype
 public import Mathlib.Order.BooleanSubalgebra
 public import Mathlib.Order.Hom.CompleteLattice
 public import Linglib.Logic.Modal.Defs
-public import Linglib.Logic.Trivalent.Prop3
+public import Linglib.Logic.Trivalent.Pointwise
 public import Linglib.Data.Examples.Coppock2018
 
 /-!
@@ -41,7 +41,7 @@ conditions on the three verbs are checked.
   `Logic/Modal/Defs.lean`, and rejection the box of falsity, stronger than the paper's
   gloss "holds in none" on a trivalent proposition but the reading its analysis of (38)
   uses. *Think* and *tycka* are trivalent propositions built with the Weak Kleene
-  conjunction and ∂ of `Core/Data/Trivalent.lean`, so that presupposition projection
+  conjunction and ∂ of `Logic/Trivalent/Basic.lean`, so that presupposition projection
   through negation is the logic's rather than a stipulation.
 * The formal fragment's syntax and translations (§5.1, §5.3), the context-of-utterance
   parameter, and the §4 pragmatics of assertion as a proposal are not modelled.
@@ -95,7 +95,7 @@ namespace Coppock2018
 open Trivalent ModalLogic
 open SetRel
 
-variable {W Ω : Type*} (ρ : Ω → W) (R : SetRel Ω Ω) (p : Prop3 Ω) (C : Set Ω)
+variable {W Ω : Type*} (ρ : Ω → W) (R : SetRel Ω Ω) (p : (Ω → Trivalent)) (C : Set Ω)
 
 /-! ### Refinement and objective propositions (§3.1)
 
@@ -129,7 +129,7 @@ theorem objective_iff_preimage_image (O : Set Ω) :
   rintro o ⟨o', ho', heq⟩
   exact ((objective_iff_forall_mem_iff ρ O).mp h o' o heq).mp ho'
 
-/-- The objective propositions form a Boolean subalgebra of the powerset of the outlooks:
+/-- The objective propositions form a Boolean subalgebra of the powerset of the outlooks —
 the image of the powerset of the worlds under preimage, so closure under `⊔`, `⊓` and `ᶜ` is
 inherited wholesale. -/
 def objectiveSubalgebra : BooleanSubalgebra (Set Ω) :=
@@ -159,15 +159,18 @@ case of the universal state. -/
 /-- `p` is objectively false at `w`: false at every refinement of `w`. -/
 def ObjectivelyFalseAt (w : W) : Prop := ∀ o, ρ o = w → p o = .false
 
-/-- Objective relative to `C`: no refinement class restricted to `C` assigns `p` both true
+/-- `p` is objective relative to `C` when no refinement class restricted to `C` assigns it
+both true
 and false. -/
 def ObjectiveOn : Prop := ∀ o ∈ C, ∀ o' ∈ C, ρ o = ρ o' → p o = .true → p o' ≠ .false
 
-/-- Discretionary relative to `C`: some refinement class restricted to `C` assigns `p` both
+/-- `p` is discretionary relative to `C` when some refinement class restricted to `C` assigns
+it both
 true and false. -/
 def DiscretionaryOn : Prop := ∃ o ∈ C, ∃ o' ∈ C, ρ o = ρ o' ∧ p o = .true ∧ p o' = .false
 
-/-- Strongly discretionary relative to `C`: every refinement class the state leaves nonempty
+/-- `p` is strongly discretionary relative to `C` when every refinement class the state
+leaves nonempty
 assigns `p` both true and false, a cut within every world the state leaves open. -/
 def StronglyDiscretionaryOn : Prop :=
   ∀ w, (∃ o ∈ C, ρ o = w) → ∃ o ∈ C, ∃ o' ∈ C, ρ o = w ∧ ρ o' = w ∧ p o = .true ∧ p o' = .false
@@ -197,8 +200,8 @@ theorem stronglyDiscretionaryOn_univ_iff (hρ : Function.Surjective ρ) :
 
 /-- For a bivalent proposition the revised classification agrees with the set-based one of
 §3.1 on its positive extension. -/
-theorem objectiveOn_univ_iff_objective_posExt (h : p.isBivalent) :
-    ObjectiveOn ρ p Set.univ ↔ Objective ρ p.posExt := by
+theorem objectiveOn_univ_iff_objective_posExt (h : IsBivalent p) :
+    ObjectiveOn ρ p Set.univ ↔ Objective ρ (posExt p) := by
   rw [objective_iff_forall_mem_iff]
   constructor
   · intro hobj o o' hoo'
@@ -236,7 +239,8 @@ faultless disagreement; contradiction is supplied by the propositions being comp
 `p` at such a world is faultless, the paper's footnote 12. -/
 def SplitsAt (w : W) : Prop := (∃ o, ρ o = w ∧ p o = .true) ∧ ∃ o, ρ o = w ∧ p o = .false
 
-/-- The norm of accuracy: at a world the proposition splits, no asserter of it is at fault. -/
+/-- The norm of accuracy holds that at a world the proposition splits, no asserter of it is
+at fault. -/
 theorem SplitsAt.not_objectivelyFalseAt {w : W} (h : SplitsAt ρ p w) :
     ¬ ObjectivelyFalseAt ρ p w := λ hf =>
   let ⟨⟨o, hwo, ht⟩, _⟩ := h
@@ -262,11 +266,11 @@ vary from outlook to outlook: whether an agent holds a belief is itself settled 
 To accept a proposition is for it to hold throughout one's accessible outlooks, the Kripke
 box over outlooks with the proposition's truth as valuation. -/
 
-/-- An agent with accessibility `R` accepts `p` at `o`: `p` is true at every accessible
+/-- An agent with accessibility `R` accepts `p` at `o` when `p` is true at every accessible
 outlook. -/
 def Accepts : Ω → Prop := □[R] (p · = .true)
 
-/-- An agent with accessibility `R` rejects `p` at `o`: `p` is false at every accessible
+/-- An agent with accessibility `R` rejects `p` at `o` when `p` is false at every accessible
 outlook, which is stronger than not accepting it. -/
 def Rejects : Ω → Prop := □[R] (p · = .false)
 
@@ -314,14 +318,15 @@ which an undefined conjunct makes the conjunction undefined. -/
 
 variable [DecidablePred (Accepts R p)]
 
-/-- *think* (31): bare doxastic acceptance. -/
-def think : Prop3 Ω := λ o => ofProp (Accepts R p o)
+/-- *think* (31) denotes bare doxastic acceptance. -/
+def think : (Ω → Trivalent) := λ o => ofProp (Accepts R p o)
 
 variable [Decidable (StronglyDiscretionaryOn ρ p C)]
 
-/-- *tycka* (32): the presupposition that the complement is strongly discretionary relative
+/-- *tycka* (32) carries the presupposition that the complement is strongly discretionary
+relative
 to `C`, conjoined by Weak Kleene conjunction with acceptance. -/
-def tycka : Prop3 Ω := λ o =>
+def tycka : (Ω → Trivalent) := λ o =>
   meetWeak (presuppose (ofProp (StronglyDiscretionaryOn ρ p C))) (ofProp (Accepts R p o))
 
 variable (o : Ω)
@@ -380,21 +385,22 @@ abbrev Outlook := Bool × Bool
 def world : Outlook → Bool := Prod.snd
 
 /-- `p`, *the chili is tasty*. -/
-def tasty : Prop3 Outlook := λ o => ofBool o.1
+def tasty : (Outlook → Trivalent) := λ o => ofBool o.1
 
 /-- `q`, *I am an opera singer*. -/
-def opera : Prop3 Outlook := λ o => ofBool o.2
+def opera : (Outlook → Trivalent) := λ o => ofBool o.2
 
 /-- *John is a sexy linguist* (10), the objective coordinate read as linguisthood. -/
-def sexyLinguist : Prop3 Outlook := λ o => ofBool (o.1 && o.2)
+def sexyLinguist : (Outlook → Trivalent) := λ o => ofBool (o.1 && o.2)
 
-/-- *It's terrible that he dumped her* (33): defined only where he did, the objective
+/-- *It's terrible that he dumped her* (33) is defined only where he did, the objective
 coordinate, and then settled by the discretionary one. -/
-def terribleDumped : Prop3 Outlook := λ o => if o.2 then ofBool o.1 else .indet
+def terribleDumped : (Outlook → Trivalent) := λ o => if o.2 then ofBool o.1 else .indet
 
-/-- *She doesn't care that he is an idiot* (34): defined only where he is, the discretionary
+/-- *She doesn't care that he is an idiot* (34) is defined only where he is, the
+discretionary
 coordinate, and then settled by the objective one. -/
-def caresNotIdiot : Prop3 Outlook := λ o => if o.1 then ofBool o.2 else .indet
+def caresNotIdiot : (Outlook → Trivalent) := λ o => if o.1 then ofBool o.2 else .indet
 
 /-- Agent `a` reaches the tasty outlook of the current world. -/
 def accessA : SetRel Outlook Outlook := {p | p.2 = (.true, p.1.2)}
@@ -453,13 +459,13 @@ theorem stronglyDiscretionaryOn_sexyLinguist_objectiveGiven :
     StronglyDiscretionaryOn world sexyLinguist CommonGround.objectiveGiven.toSet := by
   decide
 
-/-- Presupposition placement, (33): a discretionary assertion with an objective
+/-- Presupposition placement in (33) — a discretionary assertion with an objective
 presupposition is strongly discretionary once the presupposition is given. -/
 theorem stronglyDiscretionaryOn_terribleDumped_objectiveGiven :
     StronglyDiscretionaryOn world terribleDumped CommonGround.objectiveGiven.toSet := by
   decide
 
-/-- Presupposition placement, (34): an objective assertion with a discretionary
+/-- Presupposition placement in (34) — an objective assertion with a discretionary
 presupposition is strongly discretionary on no information state. -/
 theorem not_stronglyDiscretionaryOn_caresNotIdiot (cg : CommonGround) :
     ¬ StronglyDiscretionaryOn world caresNotIdiot cg.toSet := by
@@ -505,7 +511,8 @@ theorem not_objectivelyFalseAt_tasty (w : Bool) : ¬ ObjectivelyFalseAt world ta
   not_objectivelyFalseAt_of_stronglyDiscretionaryOn world tasty Set.univ
     stronglyDiscretionaryOn_tasty ⟨(.true, w), trivial, rfl⟩
 
-/-- The doctor dialogue (6) contrast: asserting *I am an opera singer* in the non-singer
+/-- The doctor dialogue (6) contrasts in that asserting *I am an opera singer* in the
+non-singer
 world violates the norm of accuracy. -/
 theorem objectivelyFalseAt_opera : ObjectivelyFalseAt world opera .false := by decide
 
@@ -536,7 +543,7 @@ presupposition placement ((33) against (34)) and the split of *find* from *consi
 hybrid (37). -/
 
 /-- The model proposition a row's complement denotes. -/
-def complements : List (String × Prop3 Chili.Outlook) :=
+def complements : List (String × (Chili.Outlook → Trivalent)) :=
   [("discretionary", Chili.tasty), ("objective", Chili.opera), ("hybrid", Chili.sexyLinguist),
     ("presupObjective", Chili.terribleDumped), ("presupDiscretionary", Chili.caresNotIdiot)]
 
@@ -545,18 +552,18 @@ def commonGrounds : List (String × Chili.CommonGround) :=
   [("open", .open), ("objectiveGiven", .objectiveGiven),
     ("discretionaryGiven", .discretionaryGiven)]
 
-/-- The condition a subjective attitude verb places on its complement: strong
+/-- The condition a subjective attitude verb places on its complement is strong
 discretionariness, or mere discretionariness. -/
 inductive VerbCondition
   | strong | mere
   deriving DecidableEq
 
 /-- The condition as a predicate on a proposition of the chili model relative to a state. -/
-def VerbCondition.Holds : VerbCondition → Prop3 Chili.Outlook → Set Chili.Outlook → Prop
+def VerbCondition.Holds : VerbCondition → (Chili.Outlook → Trivalent) → Set Chili.Outlook → Prop
   | .strong, p, C => StronglyDiscretionaryOn Chili.world p C
   | .mere, p, C => DiscretionaryOn Chili.world p C
 
-instance (vc : VerbCondition) (p : Prop3 Chili.Outlook) (cg : Chili.CommonGround) :
+instance (vc : VerbCondition) (p : (Chili.Outlook → Trivalent)) (cg : Chili.CommonGround) :
     Decidable (vc.Holds p cg.toSet) := by
   cases vc <;> simp only [VerbCondition.Holds] <;> infer_instance
 
@@ -566,7 +573,7 @@ leaving the difference between the verbs open. -/
 def verbConditions : List (String × VerbCondition) :=
   [("tycka", .strong), ("find", .strong), ("consider", .mere)]
 
-/-- Row consistency: a subjective attitude report is acceptable exactly when its complement
+/-- Row consistency — a subjective attitude report is acceptable exactly when its complement
 meets the verb's condition relative to the common ground, open unless the row names one. A
 complement the model does not read fails the check outright. -/
 theorem verb_rows : ∀ row ∈ Examples.all, ∀ vc ∈ row.parse? "verb" verbConditions,

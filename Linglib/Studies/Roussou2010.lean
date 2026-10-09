@@ -55,7 +55,7 @@ open HeimKratzer.Tree
 
 /-! ### The lexical specification -/
 
-/-- An outside-merging complementizer contributes a quantification over propositions: an
+/-- An outside-merging complementizer contributes a quantification over propositions — an
 indefinite ranging over a set of propositions, a polar indefinite requiring a binder, or a
 definite binding a single proposition. -/
 inductive Quantification
@@ -81,7 +81,7 @@ def profile (c : Complementizer) : Option Spec :=
   else if c = na then some .inside
   else none
 
-/-- The fragment's lexical factivity is definiteness: the one definite complementizer is the
+/-- The fragment's lexical factivity is definiteness — the one definite complementizer is the
 one factive one, the factive reading of an *oti*-clause being the verb's. -/
 theorem factive_iff_definite :
     ∀ c ∈ complementizers,
@@ -102,16 +102,16 @@ def puClause (p : Set W) : PartialProp W := { presup := (· ∈ p), assertion :=
 /-- The *an*-clause is the polar set of the proposition and its negation. -/
 def anClause (p : Set W) : Question W := Question.polar p
 
-/-- Factivity is the definite's presupposition: the *pu*-clause is defined at a world exactly
+/-- Factivity is the definite's presupposition — the *pu*-clause is defined at a world exactly
 when its content holds there. -/
-theorem puClause_factive (p : Set W) (w : W) : (puClause p).defined w ↔ w ∈ p := Iff.rfl
+theorem puClause_factive (p : Set W) (w : W) : (puClause p).presup w ↔ w ∈ p := Iff.rfl
 
 /-- The presupposition of the *pu*-clause projects through negation, so denying it still
 commits to its content, while the *oti*-clause is defined everywhere and its denial carries no
 factive residue. -/
 theorem pu_projects_through_negation (p : Set W) (w : W) :
-    ((PartialProp.neg (puClause p)).defined w ↔ w ∈ p) ∧
-      (PartialProp.neg (otiClause p)).defined w :=
+    ((PartialProp.neg (puClause p)).presup w ↔ w ∈ p) ∧
+      (PartialProp.neg (otiClause p)).presup w :=
   ⟨Iff.rfl, trivial⟩
 
 /-- The *pu*-clause strongly entails the *oti*-clause, strong presupposition against weak. -/
@@ -123,13 +123,13 @@ theorem anClause_not_informative (p : Set W) : ¬ (anClause p).IsInformative :=
   Question.not_isInformative_polar p
 
 /-- An outside merger takes a proposition, and a *na*-clause, its subject position reopened,
-is a property: application is undefined whatever the merger returns. -/
+is a property, so application is undefined whatever the merger returns. -/
 theorem comp_over_na_type_clash (b : Montague.Ty) :
     Montague.Ty.apply? (.fn .t b) (.fn .e .t) = none := rfl
 
 /-! ### Selection -/
 
-/-- The paper distinguishes these classes of selecting predicate: interrogatives, which bind the
+/-- The paper distinguishes these classes of selecting predicate — interrogatives, which bind the
 polar complementizer themselves; verbs of knowing, which take any complement; epistemic verbs,
 which take *na* only in the present tense, some of them only under an operator; volitionals,
 which take *na* alone; emotive factives, which take *pu* alone; emotives that take *pu* on a
@@ -184,7 +184,7 @@ instance : DecidablePred Class.TakesProposition
   | .knowing | .epistemic _ | .emotive | .factive | .saying | .recollection => isTrue trivial
   | .interrogative | .volitional | .emotiveFactive => isFalse id
 
-/-- The class takes a set of propositions under an operator: the proposition-taking classes
+/-- The class takes a set of propositions under an operator — the proposition-taking classes
 other than the epistemic ones. -/
 def Class.TakesSet : Class → Prop
   | .knowing | .factive | .saying => True
@@ -195,7 +195,7 @@ instance : DecidablePred Class.TakesSet
   | .interrogative | .epistemic _ | .volitional | .emotiveFactive | .emotive | .recollection =>
     isFalse id
 
-/-- The complementizer is licensed in the configuration: *oti* by a proposition-taking
+/-- The complementizer is licensed in the configuration — *oti* by a proposition-taking
 predicate; *an* by an interrogative predicate, or by a matrix negation or question over a
 predicate taking a set of propositions; *pu* by an emotive factive, an emotive, a recollection
 reading, or a focused predicate; *na* by a volitional, by a verb of knowing with a present-tense
@@ -210,7 +210,7 @@ def Licensed (k : Config) : Prop :=
 
 instance (k : Config) : Decidable (Licensed k) := by unfold Licensed; infer_instance
 
-/-- The polar complementizer needs a binder: an interrogative predicate, or a matrix negation
+/-- The polar complementizer needs a binder — an interrogative predicate, or a matrix negation
 or question. -/
 theorem polar_needs_binder (k : Config) (hc : k.comp = an) (h : Licensed k) :
     k.cls = .interrogative ∨ k.negated ∨ k.question := by

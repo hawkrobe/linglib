@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Core.Data.Trivalent.Flat
+public import Linglib.Logic.Trivalent.Flat
 
 /-!
 # Supervaluation over specification spaces

@@ -79,7 +79,7 @@ propositions. The hypothetical reading is `cond p q`, and the premise reading as
 `p` presupposed. -/
 def denote : Reading → PartialProp W
   | .hypothetical => .ofProp (· ∈ cond p q)
-  | .premise => .condAssert (· ∈ p) (· ∈ q)
+  | .premise => ⟨(· ∈ p), (· ∈ q)⟩
 
 variable {cond p q} {w : W}
 
@@ -156,7 +156,7 @@ theorem soundFor_clauseSignature (hD : ∀ w, Monotone (D w)) (p q : Set W) (ct 
   · exact soundFor_mono_iff.2 (monotone_truthSet_premise _ q)
   · exact soundFor_mono_iff.2 (monotone_truthSet_consequent .premise p)
 
-/-- Over the closest antecedent-worlds the hypothetical antecedent is not antitone: with three
+/-- Over the closest antecedent-worlds the hypothetical antecedent is not antitone — with three
 worlds ranked `0 < 1 < 2` from `0`, *if 1 or 2, then 1* holds at `0` while *if 2, then 1* does
 not. -/
 theorem exists_not_antitone_hypothetical_closestImp :

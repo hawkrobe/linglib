@@ -1,0 +1,192 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
+module
+
+public import Linglib.Logic.Trivalent.Basic
+public import Mathlib.Data.Set.Basic
+
+/-!
+# Trivalent propositions
+
+A trivalent proposition is a plain function `W → Trivalent`: at each world it is true, false,
+or undefined. Its worlds split into the positive extension, the negative extension, and the
+extension gap, and the Beaver–Krahmer 𝒜 operator applied pointwise (`Trivalent.metaAssert ∘ p`)
+collapses the gap into the negative extension. As a `Pi` type, `W → Trivalent` inherits its
+lattice structure pointwise (`⊓`/`⊔` via `Pi.instLattice`), so Strong Kleene conjunction and
+disjunction of propositions need no definitions of their own; this file adds what the `Pi`
+instances do not provide — the extensions, bivalence, and Haug's trivalent quantifiers, which
+project a quantified presupposition existentially.
+
+## Main declarations
+
+* `Trivalent.posExt`, `Trivalent.negExt`, `Trivalent.gapExt`: the three extensions.
+* `Trivalent.IsBivalent`: the proposition takes no `.indet` value.
+* `Trivalent.forall'`, `Trivalent.exists'`: Haug's trivalent quantifiers, with
+  `exists'_meetWeak_presuppose` as Quantifier Projection.
+
+## References
+
+* [beaver-krahmer-2001]
+* [kriz-2016]
+* [haug-2014]
+* [coppock-beaver-2015]
+-/
+
+@[expose] public section
+
+
+namespace Trivalent
+
+variable {W : Type*}
+
+/-! ### Extensions -/
+
+/-- The positive extension collects the worlds where the proposition is true. -/
+def posExt (p : W → Trivalent) : Set W := {w | p w = .true}
+
+/-- The negative extension collects the worlds where the proposition is false. -/
+def negExt (p : W → Trivalent) : Set W := {w | p w = .false}
+
+/-- The extension gap collects the worlds where the proposition is neither true nor false. -/
+def gapExt (p : W → Trivalent) : Set W := {w | p w = .indet}
+
+@[simp] theorem mem_posExt {p : W → Trivalent} {w : W} :
+    w ∈ posExt p ↔ p w = .true := Iff.rfl
+
+@[simp] theorem mem_negExt {p : W → Trivalent} {w : W} :
+    w ∈ negExt p ↔ p w = .false := Iff.rfl
+
+@[simp] theorem mem_gapExt {p : W → Trivalent} {w : W} :
+    w ∈ gapExt p ↔ p w = .indet := Iff.rfl
+
+instance (p : W → Trivalent) : DecidablePred (· ∈ posExt p) :=
+  fun w ↦ inferInstanceAs (Decidable (p w = .true))
+
+instance (p : W → Trivalent) : DecidablePred (· ∈ negExt p) :=
+  fun w ↦ inferInstanceAs (Decidable (p w = .false))
+
+instance (p : W → Trivalent) : DecidablePred (· ∈ gapExt p) :=
+  fun w ↦ inferInstanceAs (Decidable (p w = .indet))
+
+/-- The three extensions cover the world space. -/
+theorem posExt_union_negExt_union_gapExt (p : W → Trivalent) :
+    posExt p ∪ negExt p ∪ gapExt p = Set.univ := by
+  ext w
+  simp only [Set.mem_union, mem_posExt, mem_negExt, mem_gapExt, Set.mem_univ,
+    iff_true]
+  cases p w <;> simp
+
+/-- The positive and negative extensions are disjoint. -/
+theorem disjoint_posExt_negExt (p : W → Trivalent) :
+    Disjoint (posExt p) (negExt p) := by
+  rw [Set.disjoint_left]
+  intro w hw hw'
+  rw [mem_posExt] at hw
+  rw [mem_negExt, hw] at hw'
+  cases hw'
+
+/-- A proposition is bivalent if it takes no `.indet` value. -/
+def IsBivalent (p : W → Trivalent) : Prop :=
+  ∀ w, p w = .true ∨ p w = .false
+
+theorem isBivalent_iff_gapExt_eq_empty (p : W → Trivalent) :
+    IsBivalent p ↔ gapExt p = ∅ := by
+  simp only [IsBivalent, Set.eq_empty_iff_forall_notMem, mem_gapExt]
+  exact forall_congr' fun w => by cases p w <;> simp
+
+theorem isBivalent_iff_forall_ne_indet (p : W → Trivalent) :
+    IsBivalent p ↔ ∀ w, p w ≠ .indet :=
+  forall_congr' fun w => by cases p w <;> simp
+
+theorem IsBivalent.ne_indet {p : W → Trivalent} (h : IsBivalent p) (w : W) : p w ≠ .indet :=
+  (isBivalent_iff_forall_ne_indet p).1 h w
+
+/-! ### Extensions under meta-assertion
+
+Meta-assertion of a proposition is the pointwise composite `metaAssert ∘ p`; no dedicated
+pointwise operator is needed. -/
+
+@[simp] theorem posExt_comp_metaAssert (p : W → Trivalent) :
+    posExt (metaAssert ∘ p) = posExt p := by
+  ext w; simp only [mem_posExt, Function.comp_apply]
+  cases p w <;> simp
+
+@[simp] theorem negExt_comp_metaAssert (p : W → Trivalent) :
+    negExt (metaAssert ∘ p) = negExt p ∪ gapExt p := by
+  ext w
+  simp only [mem_negExt, Set.mem_union, mem_gapExt, Function.comp_apply]
+  cases p w <;> simp
+
+@[simp] theorem gapExt_comp_metaAssert (p : W → Trivalent) :
+    gapExt (metaAssert ∘ p) = ∅ := by
+  ext w
+  simp only [mem_gapExt, Function.comp_apply, Set.mem_empty_iff_false, iff_false]
+  cases p w <;> simp
+
+/-- Meta-assertion produces a bivalent proposition. -/
+theorem isBivalent_comp_metaAssert (p : W → Trivalent) : IsBivalent (metaAssert ∘ p) := by
+  intro w; simp only [Function.comp_apply]; cases p w <;> simp
+
+/-! ### Quantifiers
+
+The universal quantifier of [haug-2014], adopted by [coppock-beaver-2015] and
+[cooper-2023]: undefined only when every instance is, false when some instance is, and
+true otherwise, so that a quantified presupposition projects existentially. The
+existential is its dual. -/
+
+open Classical in
+/-- Haug's universal quantifier evaluates a trivalent predicate: undefined only when every
+instance is, false when some instance is, and true otherwise. -/
+noncomputable def forall' (p : W → Trivalent) : Trivalent :=
+  if ∀ w, p w = .indet then .indet else if ∃ w, p w = .false then .false else .true
+
+/-- The existential quantifier is the dual of `forall'`. -/
+noncomputable def exists' (p : W → Trivalent) : Trivalent := neg (forall' (fun w => neg (p w)))
+
+@[simp] theorem forall'_eq_indet_iff (p : W → Trivalent) :
+    forall' p = .indet ↔ ∀ w, p w = .indet := by
+  unfold forall'; split_ifs <;> simp_all
+
+@[simp] theorem forall'_eq_false_iff (p : W → Trivalent) :
+    forall' p = .false ↔ ∃ w, p w = .false := by
+  unfold forall'; split_ifs <;> simp_all
+
+@[simp] theorem forall'_eq_true_iff (p : W → Trivalent) :
+    forall' p = .true ↔ (∃ w, p w ≠ .indet) ∧ ∀ w, p w ≠ .false := by
+  unfold forall'; split_ifs <;> simp_all
+
+@[simp] theorem exists'_eq_indet_iff (p : W → Trivalent) :
+    exists' p = .indet ↔ ∀ w, p w = .indet := by
+  simp only [exists', neg_eq_indet_iff, forall'_eq_indet_iff]
+
+@[simp] theorem exists'_eq_true_iff (p : W → Trivalent) :
+    exists' p = .true ↔ ∃ w, p w = .true := by
+  simp only [exists', neg_eq_true_iff, forall'_eq_false_iff, neg_eq_false_iff]
+
+@[simp] theorem exists'_eq_false_iff (p : W → Trivalent) :
+    exists' p = .false ↔ (∃ w, p w ≠ .indet) ∧ ∀ w, p w ≠ .true := by
+  simp only [exists', neg_eq_false_iff, forall'_eq_true_iff, ne_eq, neg_eq_indet_iff]
+
+/-- An existentially quantified presupposition is true or undefined, never false. -/
+theorem exists'_presuppose_ne_false (p : W → Trivalent) :
+    exists' (fun w => presuppose (p w)) ≠ .false := by
+  simp
+
+/-- Quantifier Projection ([coppock-beaver-2015]'s appendix) lets a presupposition under the
+existential project as an existentially quantified presupposition, over bivalent `φ` and
+`ψ`. -/
+theorem exists'_meetWeak_presuppose {φ ψ : W → Trivalent} (hφ : IsBivalent φ)
+    (hψ : IsBivalent ψ) :
+    exists' (fun w => meetWeak (presuppose (φ w)) (ψ w)) =
+      meetWeak (exists' (fun w => presuppose (φ w))) (exists' (fun w => meetWeak (φ w) (ψ w))) := by
+  refine eq_of_indet_iff_of_true_iff ?_ ?_
+  · simp only [exists'_eq_indet_iff, meetWeak_eq_indet_iff, presuppose_eq_indet_iff, hφ.ne_indet,
+      hψ.ne_indet, or_false]
+    exact ⟨Or.inl, fun h => h.elim id fun h w => (h w).elim⟩
+  · simp only [exists'_eq_true_iff, meetWeak_eq_true_iff, presuppose_eq_true_iff]
+    exact ⟨fun ⟨w, h⟩ => ⟨⟨w, h.1⟩, w, h⟩, fun h => h.2⟩
+
+end Trivalent
