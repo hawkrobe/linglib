@@ -2,6 +2,7 @@ module
 
 public import Mathlib.Data.List.Permutation
 public import Linglib.Morphology.DistributedMorphology.Spellout
+public import Linglib.Syntax.Minimalist.Features
 public import Linglib.Fragments.Taos.Agreement
 
 /-!
@@ -337,11 +338,11 @@ namespace Rule
 
 /-- A rule conditioned by its own slot's argument. -/
 def paradigmatic (s : Slot) (check : Arg → Bool) (c : Change) : Rule :=
-  ⟨s, .paradigmatic check c⟩
+  ⟨s, .ofFocus (check ·) c⟩
 
 /-- A rule conditioned by the prefix. -/
 def syntagmatic (s : Slot) (cond : Prefix → Bool) (c : Change) : Rule :=
-  ⟨s, .syntagmatic (fun n ↦ cond (Prefix.ofAround s n)) c⟩
+  ⟨s, ⟨fun n ↦ cond (Prefix.ofAround s n), c⟩⟩
 
 /-- Apply the rule to the prefix. -/
 def apply (r : Rule) (p : Prefix) : Prefix :=
@@ -355,7 +356,7 @@ def Syntagmatic (r : Rule) : Prop := r.rule.Syntagmatic
 
 theorem paradigmatic_isParadigmatic (s : Slot) (check : Arg → Bool) (c : Change) :
     (paradigmatic s check c).Paradigmatic :=
-  ImpoverishmentRule.paradigmatic_isParadigmatic check c
+  ImpoverishmentRule.paradigmatic_ofFocus (fun a ↦ check a = true) c
 
 end Rule
 
@@ -871,20 +872,20 @@ def linearize (p : Prefix) : List Tok :=
 /-- By rule (18), the goal's `[−author]` swaps with its following inverse feature, when an agent is
 present. -/
 def m18 (p : Prefix) : TerminalMetathesisRule Tok :=
-  .ofBool fun n ↦ p.agent.present && n.focus == (.goal, .author false) &&
-    n.rightCtx.head? == some (.goal, .inverse)
+  ⟨fun n ↦ p.agent.present && n.focus == (.goal, .author false) &&
+    n.rightCtx.head? == some (.goal, .inverse)⟩
 
 /-- By rule (23), the paper's (26), a `[−atomic]` agent's `[+minimal]` swaps with the second
 argument's following `[−author]`. -/
 def m23 (p : Prefix) : TerminalMetathesisRule Tok :=
-  .ofBool fun n ↦ p.agent.has (.atomic false) && n.focus == (.agent, .minimal true) &&
-    n.rightCtx.head? == some (p.secondArg, .author false)
+  ⟨fun n ↦ p.agent.has (.atomic false) && n.focus == (.agent, .minimal true) &&
+    n.rightCtx.head? == some (p.secondArg, .author false)⟩
 
 /-- By rule (22), the paper's (24), the goal's `[−author]` swaps with its following `[−atomic]`
 before `[+minimal]`, when an agent is present. -/
 def m22 (p : Prefix) : TerminalMetathesisRule Tok :=
-  .ofBool fun n ↦ p.agent.present && n.focus == (.goal, .author false) &&
-    n.rightCtx.take 2 == [(.goal, .atomic false), (.goal, .minimal true)]
+  ⟨fun n ↦ p.agent.present && n.focus == (.goal, .author false) &&
+    n.rightCtx.take 2 == [(.goal, .atomic false), (.goal, .minimal true)]⟩
 
 /-- The appendix's two sets of rules of metathesis in order. -/
 def metathesis (p : Prefix) : List Tok → List Tok :=
@@ -1182,7 +1183,7 @@ def Terminal.bears (fs a : Terminal) : Bool := fs.all a.contains
 clitic of the word bears `trigger`; Arregi and Nevins's `[+motion]` restriction and their First
 Singular Clitic Impoverishment, which keep first singular clitics out of it, are not modelled. -/
 def participantDissimilation (trigger : Terminal) : ObliterationRule Terminal :=
-  .ofBool fun n ↦ firstφ.bears n.focus && (n.leftCtx ++ n.rightCtx).any (trigger.bears ·)
+  ⟨fun n ↦ firstφ.bears n.focus && (n.leftCtx ++ n.rightCtx).any (trigger.bears ·)⟩
 
 /-- In Ondarru, the paper's (16), the trigger is an ergative participant clitic. -/
 def ondarru : ObliterationRule Terminal :=

@@ -192,7 +192,7 @@ def possessorPhi (p : Possessor) : List Phi :=
 
 /-- Gender impoverishment: [masc] is deleted next to [pl] and next to [participant]. -/
 def impoverishment : List (ImpoverishmentRule (List Phi) Phi) :=
-  [.paradigmatic (·.contains .pl) .masc, .paradigmatic (·.contains .participant) .masc]
+  [.ofFocus (.pl ∈ ·) .masc, .ofFocus (.participant ∈ ·) .masc]
 
 /-- The φ-bundle after impoverishment. -/
 def impoverish (φ : List Phi) : List Phi :=

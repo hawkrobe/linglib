@@ -142,7 +142,7 @@ def Argument.asObject (a : Argument) : List Feature :=
 /-- Impoverishment deletes the [Group] of a dative first-person pronoun at the spell-out of vP,
 after case and before T's number probe ((8)). -/
 def impoverishment : ImpoverishmentRule (List Feature) Feature :=
-  .paradigmatic (fun b ↦ b.contains .dat && b.contains (.node .speaker)) (.node .group)
+  .ofFocus (fun b ↦ .dat ∈ b ∧ .node .speaker ∈ b) (.node .group)
 
 /-- `impoverish b` is the pronoun `b` after Impoverishment. -/
 def impoverish (b : List Feature) : List Feature := impoverishment.apply List.erase (.ofBundle b)

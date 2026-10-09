@@ -66,7 +66,6 @@ def agr (sg3 : Bool) : List Feature :=
 bundles. -/
 def tnsAgrFusion : FusionRule Feature where
   condition p _ := .participle false ∈ p
-  decCond _ _ := inferInstanceAs (Decidable (_ ∈ _))
 
 /-- The fused node of a finite form. -/
 def tnsAgr (v : Verb) (past sg3 : Bool) : List Feature := tns v past false ++ agr sg3
