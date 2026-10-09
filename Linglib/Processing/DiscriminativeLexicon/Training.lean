@@ -160,6 +160,11 @@ theorem weightedLoss_smul (c : ℝ≥0) :
     weightedLoss data (c • q) G = c * weightedLoss data q G := by
   simp [weightedLoss, Finset.mul_sum, mul_assoc]
 
+/-- A mapping matrix that solves `SG = C` exactly is trained under any weights. -/
+theorem isTrained_of_mul_eq (h : data.S * G = data.C) : IsTrained data q G :=
+  isMinOn_univ_iff.2 fun G' => by
+    simpa [weightedLoss, h, dotProduct] using weightedLoss_nonneg data q G'
+
 /-- Only relative frequencies matter. -/
 theorem isTrained_smul_iff {c : ℝ≥0} (hc : 0 < c) :
     IsTrained data (c • q) G ↔ IsTrained data q G := by
