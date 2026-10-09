@@ -615,7 +615,7 @@ theorem elim_iota_ne_indet_iff (P : (E → Trivalent)) (f : E → Trivalent) (hf
 noncomputable def ex (P Q : (E → Trivalent)) : Trivalent := existsHaug (fun x ↦ meetWeak (P x) (Q x))
 
 theorem ex_indet_left (Q : (E → Trivalent)) : ex (fun _ ↦ .indet) Q = .indet :=
-  (existsHaug_eq_indet_iff _).2 fun _ ↦ meetWeak_indet_left _
+  existsHaug_eq_indet_iff.2 fun _ ↦ meetWeak_indet_left _
 
 /-- The type shift of footnote 26 scopes an argument quantifier inside the modified
 description — the further existential within the nominal that intervenes between the
@@ -774,7 +774,7 @@ noncomputable def sentence (α : (Book → Trivalent) → (Book → Trivalent)) 
   fun w ↦ ex (α (wrote w)) (reading w)
 
 private theorem sentence_an_eq_true (w : World) : sentence an w = .true :=
-  (existsHaug_eq_true_iff _).2 ⟨.one, by cases w <;> decide⟩
+  existsHaug_eq_true_iff.2 ⟨.one, by cases w <;> decide⟩
 
 /-- Once the context settles that Frida wrote exactly one book, *the* blocks *a*, (73b). -/
 theorem blocks_of_one : Blocks {World.oneBook} sentence the an :=
@@ -808,10 +808,10 @@ noncomputable def onlySurvivor : (Ind → Trivalent) :=
   scopeInside survived (fun M ↦ existsHaug fun z ↦ meetWeak (crash z) (M z)) only
 
 private theorem onlySurvivor_scott : onlySurvivor .scott = .true :=
-  (existsHaug_eq_true_iff _).2 ⟨.crash₁, by decide⟩
+  existsHaug_eq_true_iff.2 ⟨.crash₁, by decide⟩
 
 private theorem onlySurvivor_sam : onlySurvivor .sam = .true :=
-  (existsHaug_eq_true_iff _).2 ⟨.crash₂, by decide⟩
+  existsHaug_eq_true_iff.2 ⟨.crash₂, by decide⟩
 
 /-- The description holds of as many people as there are crashes with a single survivor. -/
 theorem not_weakUnique_onlySurvivor : ¬ WeakUnique onlySurvivor := fun h ↦

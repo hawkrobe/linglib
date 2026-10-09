@@ -148,90 +148,39 @@ variable {α : Type*} (S : α → Prop) (φ : α → PartialProp W) (w : W)
 theorem eval_forallPartial :
     (forallPartial S φ).eval w =
       Trivalent.forallWeak fun x : {x // S x} => (φ x.1).eval w := by
-  refine Trivalent.eq_of_indet_iff_of_true_iff ?_ ?_
-  · rw [eval_eq_indet_iff, Trivalent.forallWeak_eq_indet_iff]
-    constructor
-    · intro h
-      replace h : ¬ ∀ x, S x → (φ x).presup w := h
-      push Not at h
-      obtain ⟨x, hx, hp⟩ := h
-      exact ⟨⟨x, hx⟩, (eval_eq_indet_iff _ _).2 hp⟩
-    · rintro ⟨⟨x, hx⟩, hind⟩ hall
-      exact (eval_eq_indet_iff _ _).1 hind (hall x hx)
-  · rw [eval_eq_true_iff, Trivalent.forallWeak_eq_true_iff]
-    constructor
-    · rintro ⟨hp, ha⟩ ⟨x, hx⟩
-      exact (eval_eq_true_iff _ _).2 ⟨hp x hx, ha x hx⟩
-    · intro h
-      exact ⟨fun x hx => ((eval_eq_true_iff _ _).1 (h ⟨x, hx⟩)).1,
-        fun x hx => ((eval_eq_true_iff _ _).1 (h ⟨x, hx⟩)).2⟩
+  refine Trivalent.eq_of_indet_iff_of_true_iff ?_ ?_ <;>
+    simp [forallPartial, Subtype.forall, Subtype.exists, not_forall, Classical.not_imp,
+      forall_and]
 
 /-- The existential with universal projection is the Weak Kleene existential. -/
 theorem eval_existsPartialUniv :
     (existsPartialUniv S φ).eval w =
       Trivalent.existsWeak fun x : {x // S x} => (φ x.1).eval w := by
   refine Trivalent.eq_of_indet_iff_of_true_iff ?_ ?_
-  · rw [eval_eq_indet_iff, Trivalent.existsWeak_eq_indet_iff]
-    constructor
-    · intro h
-      replace h : ¬ ∀ x, S x → (φ x).presup w := h
-      push Not at h
-      obtain ⟨x, hx, hp⟩ := h
-      exact ⟨⟨x, hx⟩, (eval_eq_indet_iff _ _).2 hp⟩
-    · rintro ⟨⟨x, hx⟩, hind⟩ hall
-      exact (eval_eq_indet_iff _ _).1 hind (hall x hx)
-  · rw [eval_eq_true_iff, Trivalent.existsWeak_eq_true_iff]
-    constructor
-    · rintro ⟨hp, x, hx, ha⟩
-      exact ⟨fun ⟨y, hy⟩ hind => (eval_eq_indet_iff _ _).1 hind (hp y hy),
-        ⟨x, hx⟩, (eval_eq_true_iff _ _).2 ⟨hp x hx, ha⟩⟩
-    · rintro ⟨hnd, ⟨x, hx⟩, ht⟩
-      refine ⟨fun y hy => ?_, x, hx, ((eval_eq_true_iff _ _).1 ht).2⟩
-      by_contra hp
-      exact hnd ⟨y, hy⟩ ((eval_eq_indet_iff _ _).2 hp)
+  · simp [existsPartialUniv, Subtype.exists, not_forall, Classical.not_imp]
+  · simp only [eval_eq_true_iff, Trivalent.existsWeak_eq_true_iff, ne_eq, eval_eq_indet_iff,
+      not_not, Subtype.forall, Subtype.exists, exists_prop, existsPartialUniv]
+    exact and_congr_right fun hp => exists_congr fun x =>
+      and_congr_right fun hx => (and_iff_right (hp x hx)).symm
 
 /-- The negated existential with universal projection is the negated Weak Kleene
 existential. -/
 theorem eval_negExistsPartial :
     (negExistsPartial S φ).eval w =
       Trivalent.neg (Trivalent.existsWeak fun x : {x // S x} => (φ x.1).eval w) := by
-  refine Trivalent.eq_of_indet_iff_of_true_iff ?_ ?_
-  · rw [eval_eq_indet_iff, Trivalent.neg_eq_indet_iff, Trivalent.existsWeak_eq_indet_iff]
-    constructor
-    · intro h
-      replace h : ¬ ∀ x, S x → (φ x).presup w := h
-      push Not at h
-      obtain ⟨x, hx, hp⟩ := h
-      exact ⟨⟨x, hx⟩, (eval_eq_indet_iff _ _).2 hp⟩
-    · rintro ⟨⟨x, hx⟩, hind⟩ hall
-      exact (eval_eq_indet_iff _ _).1 hind (hall x hx)
-  · rw [eval_eq_true_iff, Trivalent.neg_eq_true_iff, Trivalent.existsWeak_eq_false_iff]
-    constructor
-    · rintro ⟨hp, ha⟩ ⟨x, hx⟩
-      exact (eval_eq_false_iff _ _).2 ⟨hp x hx, fun h => ha ⟨x, hx, h⟩⟩
-    · intro h
-      refine ⟨fun x hx => ((eval_eq_false_iff _ _).1 (h ⟨x, hx⟩)).1, ?_⟩
-      rintro ⟨x, hx, ha⟩
-      exact ((eval_eq_false_iff _ _).1 (h ⟨x, hx⟩)).2 ha
+  refine Trivalent.eq_of_indet_iff_of_true_iff ?_ ?_ <;>
+    simp [negExistsPartial, Subtype.forall, Subtype.exists, not_forall, Classical.not_imp,
+      not_exists, not_and, forall_and]
 
 /-- Existential projection is Haug's existential quantifier. -/
 theorem eval_existsPartialExist :
     (existsPartialExist S φ).eval w =
       Trivalent.existsHaug fun x : {x // S x} => (φ x.1).eval w := by
   refine Trivalent.eq_of_indet_iff_of_true_iff ?_ ?_
-  · rw [eval_eq_indet_iff, Trivalent.existsHaug_eq_indet_iff]
-    constructor
-    · intro h
-      exact fun ⟨x, hx⟩ => (eval_eq_indet_iff _ _).2 fun hp => h ⟨x, hx, hp⟩
-    · rintro hall ⟨x, hx, hp⟩
-      exact (eval_eq_indet_iff _ _).1 (hall ⟨x, hx⟩) hp
-  · rw [eval_eq_true_iff, Trivalent.existsHaug_eq_true_iff]
-    constructor
-    · rintro ⟨-, x, hx, hh⟩
-      exact ⟨⟨x, hx⟩, (eval_eq_true_iff _ _).2 hh⟩
-    · rintro ⟨⟨x, hx⟩, ht⟩
-      have hh := (eval_eq_true_iff _ _).1 ht
-      exact ⟨⟨x, hx, hh.1⟩, x, hx, hh⟩
+  · simp [existsPartialExist, Subtype.forall, not_exists, not_and]
+  · simp only [eval_eq_true_iff, Trivalent.existsHaug_eq_true_iff, Subtype.exists,
+      exists_prop, existsPartialExist, holds]
+    exact ⟨fun ⟨_, h⟩ => h, fun ⟨x, hx, hp, ha⟩ => ⟨⟨x, hx, hp⟩, x, hx, hp, ha⟩⟩
 
 /-- The strong existential is the Strong Kleene existential quantifier. -/
 theorem eval_existsPartialStrong :
@@ -249,17 +198,12 @@ theorem eval_existsPartialStrong :
       refine h2 fun x hx => ?_
       have hp : (φ x).presup w := not_not.1 ((eval_eq_indet_iff _ _).2.mt (hc ⟨x, hx⟩))
       exact ⟨hp, fun ha => h1 ⟨x, hx, hp, ha⟩⟩
-    · rintro ⟨hnt, ⟨x, hx⟩, hind⟩
-      rintro (⟨y, hy, hh⟩ | hall)
+    · rintro ⟨hnt, ⟨x, hx⟩, hind⟩ (⟨y, hy, hh⟩ | hall)
       · exact hnt ⟨y, hy⟩ ((eval_eq_true_iff _ _).2 hh)
       · exact (eval_eq_indet_iff _ _).1 hind (hall x hx).1
-  · rw [eval_eq_true_iff, Trivalent.existsStrong_eq_true_iff]
-    constructor
-    · rintro ⟨-, x, hx, hh⟩
-      exact ⟨⟨x, hx⟩, (eval_eq_true_iff _ _).2 hh⟩
-    · rintro ⟨⟨x, hx⟩, ht⟩
-      have hh := (eval_eq_true_iff _ _).1 ht
-      exact ⟨.inl ⟨x, hx, hh⟩, x, hx, hh⟩
+  · simp only [eval_eq_true_iff, Trivalent.existsStrong_eq_true_iff, Subtype.exists,
+      exists_prop, existsPartialStrong, holds]
+    exact ⟨fun ⟨_, h⟩ => h, fun ⟨x, hx, hh⟩ => ⟨.inl ⟨x, hx, hh⟩, x, hx, hh⟩⟩
 
 end Bridges
 
