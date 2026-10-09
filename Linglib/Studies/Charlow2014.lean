@@ -2,6 +2,7 @@ module
 
 public import Mathlib.Data.Set.Functor
 public import Mathlib.Data.Set.Card
+public import Linglib.Core.Data.Set.Monad
 public import Linglib.Semantics.Alternatives.Basic
 public import Linglib.Semantics.Composition.Cont
 public import Linglib.Semantics.Reference.ChoiceFunction
@@ -157,35 +158,9 @@ theorem combine_pure_right (f : α → β → γ) (m : M α) (b : β) :
 
 end Monadic
 
-/-! ### Membership in `StateT σ Set` and `ReaderT σ Set` computations -/
+/-! ### Truth values as propositions -/
 
-section Membership
-
-variable {σ α β : Type}
-
-@[simp] theorem mem_bind (m : StateT σ Set α) (f : α → StateT σ Set β) (s : σ) (r : β × σ) :
-    r ∈ (m >>= f) s ↔ ∃ q ∈ m s, r ∈ f q.1 q.2 := by
-  show r ∈ StateT.bind m f s ↔ _
-  simp [StateT.bind, Set.bind_def]
-
-@[simp] theorem mem_map (f : α → β) (m : StateT σ Set α) (s : σ) (r : β × σ) :
-    r ∈ (f <$> m) s ↔ ∃ q ∈ m s, r = (f q.1, q.2) := by
-  simp only [← bind_pure_comp, mem_bind]; rfl
-
-@[simp] theorem mem_pure (a : α) (s : σ) (r : α × σ) :
-    r ∈ (pure a : StateT σ Set α) s ↔ r = (a, s) := Iff.rfl
-
-@[simp] theorem mem_bind_reader (m : ReaderT σ Set α) (f : α → ReaderT σ Set β) (s : σ)
-    (r : β) : r ∈ (m >>= f) s ↔ ∃ x ∈ m s, r ∈ f x s := by
-  show r ∈ ReaderT.bind m f s ↔ _
-  simp [ReaderT.bind, Set.bind_def]
-
-@[simp] theorem mem_map_reader (f : α → β) (m : ReaderT σ Set α) (s : σ) (r : β) :
-    r ∈ (f <$> m) s ↔ ∃ x ∈ m s, r = f x := by
-  simp only [← bind_pure_comp, mem_bind_reader]; rfl
-
-@[simp] theorem mem_pure_reader (a : α) (s : σ) (r : α) :
-    r ∈ (pure a : ReaderT σ Set α) s ↔ r = a := Iff.rfl
+section TruthValues
 
 /-- Truth values are `Prop`s, so a value pinned by a biconditional substitutes
 away like one pinned by an equation. -/
@@ -195,7 +170,7 @@ theorem forall_iff_imp {q : Prop} {P : Prop → Prop} : (∀ p, (p ↔ q) → P 
 theorem exists_iff_and {q : Prop} {P : Prop → Prop} : (∃ p, (p ↔ q) ∧ P p) ↔ P q :=
   ⟨fun ⟨_, hp, h⟩ ↦ propext hp ▸ h, fun h ↦ ⟨q, Iff.rfl, h⟩⟩
 
-end Membership
+end TruthValues
 
 attribute [local simp] forall_iff_imp exists_iff_and
 
@@ -304,12 +279,12 @@ def no (c : E → StateSet E Prop) (k : E → StateSet E Prop) : StateSet E Prop
 
 @[simp] theorem holds_bind (m : StateSet E α) (k : α → StateSet E Prop) (s : Stack E) :
     holds (m >>= k) s ↔ ∃ q ∈ m s, holds (k q.1) q.2 := by
-  simp only [holds, mem_bind]
+  simp only [holds, Set.mem_stateT_bind]
   exact ⟨fun ⟨r, ⟨q, hq, hr⟩, h⟩ ↦ ⟨q, hq, r, hr, h⟩, fun ⟨q, hq, r, hr, h⟩ ↦ ⟨r, ⟨q, hq, hr⟩, h⟩⟩
 
 @[simp] theorem holds_map (f : α → Prop) (m : StateSet E α) (s : Stack E) :
     holds (f <$> m) s ↔ ∃ q ∈ m s, f q.1 := by
-  simp only [holds, mem_map]
+  simp only [holds, Set.mem_stateT_map]
   exact ⟨fun ⟨_, ⟨q, hq, rfl⟩, h⟩ ↦ ⟨q, hq, h⟩, fun ⟨q, hq, h⟩ ↦ ⟨_, ⟨q, hq, rfl⟩, h⟩⟩
 
 @[simp] theorem holds_neg (m : StateSet E Prop) (s : Stack E) : holds (neg m) s ↔ ¬ holds m s := by
@@ -317,7 +292,8 @@ def no (c : E → StateSet E Prop) (k : E → StateSet E Prop) : StateSet E Prop
 
 @[simp] theorem det_pure (P : E → Prop) : det (fun x ↦ pure (P x)) = indef P := by
   funext s; ext ⟨x, s'⟩
-  exact ⟨fun ⟨_, hp, h⟩ ↦ by cases hp; exact ⟨h, rfl⟩, fun ⟨h, hs⟩ ↦ ⟨_, by rw [mem_pure, hs], h⟩⟩
+  exact ⟨fun ⟨_, hp, h⟩ ↦ by cases hp; exact ⟨h, rfl⟩,
+    fun ⟨h, hs⟩ ↦ ⟨_, by rw [Set.mem_stateT_pure, hs], h⟩⟩
 
 /-- Dref introduction simplifies away, since what follows sees the stack extended with the
 value (Fact 2.12). -/
@@ -677,7 +653,7 @@ theorem cf_exceptional_cond (rel dies : E → Prop) (rich : Prop) (hrel : ∃ x,
     (∃ f : ChoiceFunction E, dies (f rel) → rich) ↔
       holds (indef rel >>= fun x ↦ pure (dies x → rich)) s := by
   refine (ChoiceFunction.exists_apply_iff_some hrel fun x ↦ dies x → rich).trans ?_
-  simp only [holds, indef, GQ.some, mem_bind, mem_pure, Set.mem_ofPred_eq]
+  simp only [holds, indef, GQ.some, Set.mem_stateT_bind, Set.mem_stateT_pure, Set.mem_ofPred_eq]
   constructor
   · rintro ⟨x, hx, h⟩
     exact ⟨_, ⟨(x, s), ⟨hx, rfl⟩, rfl⟩, h⟩
@@ -1132,12 +1108,12 @@ def bindShift (m : ContT β (ReaderSet E) E) : ContT β (ReaderSet E) E :=
 
 @[simp] theorem holds_bind (m : ReaderSet E α) (k : α → ReaderSet E Prop) (s : Stack E) :
     holds (m >>= k) s ↔ ∃ x ∈ m s, holds (k x) s := by
-  simp only [holds, mem_bind_reader]
+  simp only [holds, Set.mem_readerT_bind]
   exact ⟨fun ⟨p, ⟨x, hx, hp⟩, h⟩ ↦ ⟨x, hx, p, hp, h⟩, fun ⟨x, hx, p, hp, h⟩ ↦ ⟨p, ⟨x, hx, hp⟩, h⟩⟩
 
 @[simp] theorem holds_map (f : α → Prop) (m : ReaderSet E α) (s : Stack E) :
     holds (f <$> m) s ↔ ∃ x ∈ m s, f x := by
-  simp only [holds, mem_map_reader]
+  simp only [holds, Set.mem_readerT_map]
   exact ⟨fun ⟨_, ⟨x, hx, rfl⟩, h⟩ ↦ ⟨x, hx, h⟩, fun ⟨x, hx, h⟩ ↦ ⟨_, ⟨x, hx, rfl⟩, h⟩⟩
 
 @[simp] theorem holds_neg (m : ReaderSet E Prop) (s : Stack E) : holds (neg m) s ↔ ¬ holds m s := by

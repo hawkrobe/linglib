@@ -1,0 +1,893 @@
+[
+  {
+    "id": "elliott2020_1",
+    "source": {"bibkey": "elliott-2020", "paperLabel": "(1)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "I invited a philosopher; I'm relieved that she came.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "1"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "elliott2020_2",
+    "source": {"bibkey": "elliott-2020", "paperLabel": "(2)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Everyone who invited a philosopher was relieved that she came.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "1"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "elliott2020_3a",
+    "source": {"bibkey": "elliott-2020", "paperLabel": "(3a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Everyone who read any of these books and subsequently criticized it is a charlatan.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "1.1"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "elliott2020_3b",
+    "source": {"bibkey": "elliott-2020", "paperLabel": "(3b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Everyone who read any of these books recommended it to their friends.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "1.1"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "elliott2020_4",
+    "source": {"bibkey": "elliott-2020", "paperLabel": "(4)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "It's not true that any philosopher attended this talk. She was unwell.",
+    "discourseSegments": [
+      "It's not true that any philosopher attended this talk.",
+      "She was unwell."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "1.1"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "elliott2020_5",
+    "source": {"bibkey": "elliott-2020", "paperLabel": "(5)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "No philosopher attended this talk. She was unwell.",
+    "discourseSegments": [
+      "No philosopher attended this talk.",
+      "She was unwell."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "1.1"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "elliott2020_6",
+    "source": {"bibkey": "elliott-2020", "paperLabel": "(6)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "It's not true that no philosopher is attending this talk; She's sitting in the back!",
+    "discourseSegments": [
+      "It's not true that no philosopher is attending this talk;",
+      "She's sitting in the back!"
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "1.1"]
+    ],
+    "comment": "The paper prints NO in small caps, the emphasis of fn. 4.",
+    "verified": "text-layer"
+  },
+  {
+    "id": "elliott2020_7",
+    "source": {"bibkey": "elliott-2020", "paperLabel": "(7)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "A philosopher is attending this talk; She's sitting in the back.",
+    "discourseSegments": [
+      "A philosopher is attending this talk;",
+      "She's sitting in the back."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "1.1"]
+    ],
+    "comment": "Printed in fn. 5.",
+    "verified": "text-layer"
+  },
+  {
+    "id": "elliott2020_8a",
+    "source": {"bibkey": "elliott-2020", "paperLabel": "(8a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Either there is no bathroom, or the bathroom is upstairs.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "1.1"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "elliott2020_8b",
+    "source": {"bibkey": "elliott-2020", "paperLabel": "(8b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Either there is no bathroom, or it's upstairs.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "1.1"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "elliott2020_9",
+    "source": {"bibkey": "elliott-2020", "paperLabel": "(9)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Either there is no bathroom, or there isn't no bathroom and it's upstairs.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "1.1"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "elliott2020_10a",
+    "source": {"bibkey": "elliott-2020", "paperLabel": "(10a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "A philosopher is attending this talk and she's sitting in the back.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "1.2"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "elliott2020_10b",
+    "source": {"bibkey": "elliott-2020", "paperLabel": "(10b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "She's sitting in the back and a philosopher is attending this talk.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "1.2"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "elliott2020_21",
+    "source": {"bibkey": "elliott-2020", "paperLabel": "(21)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "It's not the case that anyone walked in.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "2.4.4"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "elliott2020_31",
+    "source": {"bibkey": "elliott-2020", "paperLabel": "(31)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Either nobody walked in or they didn't sit down.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "2.7"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "elliott2020_37",
+    "source": {"bibkey": "elliott-2020", "paperLabel": "(37)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "If anyone is outside, then they are happy.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "universal: everyone outside is happy", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["section", "2.9"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "elliott2020_44",
+    "source": {"bibkey": "elliott-2020", "paperLabel": "(44)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Either this house hasn't been renovated, or there's a bathroom.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.1"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "elliott2020_45",
+    "source": {"bibkey": "elliott-2020", "paperLabel": "(45)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Either this house hasn't been renovated, or there's a bathroom. It's upstairs.",
+    "discourseSegments": [
+      "Either this house hasn't been renovated, or there's a bathroom.",
+      "It's upstairs."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.1"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "elliott2020_46",
+    "source": {"bibkey": "elliott-2020", "paperLabel": "(46)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "If this house has been renovated, then there's a bathroom. It's upstairs.",
+    "discourseSegments": [
+      "If this house has been renovated, then there's a bathroom.",
+      "It's upstairs."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.1"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "elliott2020_47",
+    "source": {"bibkey": "elliott-2020", "paperLabel": "(47)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Either a philosopher is in the audience or a linguist is. Either way, I hope she enjoys it.",
+    "discourseSegments": [
+      "Either a philosopher is in the audience or a linguist is.",
+      "Either way, I hope she enjoys it."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.2"]
+    ],
+    "comment": "A Stone disjunction (Stone 1992); the paper prints '(Either way)' as optional.",
+    "verified": "text-layer"
+  },
+  {
+    "id": "elliott2020_48",
+    "source": {"bibkey": "elliott-2020", "paperLabel": "(48)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Either it's a weekday, or a critic is watching our play. It's Saturday. They'd better give us a good review.",
+    "discourseSegments": [
+      "Either it's a weekday, or a critic is watching our play.",
+      "It's Saturday.",
+      "They'd better give us a good review."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "A director who has lost track of the day is certain that different critics attend on Saturday and Sunday; the assistant knows the day.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.3"]
+    ],
+    "comment": "Rothschild's observation (Rothschild 2017); speakers A, B, A.",
+    "verified": "text-layer"
+  },
+  {
+    "id": "elliott2020_49",
+    "source": {"bibkey": "elliott-2020", "paperLabel": "(49)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "If it's the weekend, then a critic is watching our play. It's Saturday. They'd better give us a good review.",
+    "discourseSegments": [
+      "If it's the weekend, then a critic is watching our play.",
+      "It's Saturday.",
+      "They'd better give us a good review."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.3"]
+    ],
+    "comment": "Speakers A, B, A.",
+    "verified": "text-layer"
+  },
+  {
+    "id": "elliott2020_51",
+    "source": {"bibkey": "elliott-2020", "paperLabel": "(51)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Either someone was in the audience or the event was a disaster.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "It is common ground that someone was in the audience.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.6"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "elliott2020_52a",
+    "source": {"bibkey": "elliott-2020", "paperLabel": "(52a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Either someone was in the audience, or the event was a disaster.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.6"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "elliott2020_55",
+    "source": {"bibkey": "elliott-2020", "paperLabel": "(55)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Either someone was in the audience, or the event was a disaster. She enjoyed it.",
+    "discourseSegments": [
+      "Either someone was in the audience, or the event was a disaster.",
+      "She enjoyed it."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "total ignorance",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.6"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "elliott2020_56",
+    "source": {"bibkey": "elliott-2020", "paperLabel": "(56)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Either someone was in the audience, or the event was a disaster. Actually, the event wasn't a disaster. So, I hope she enjoyed it.",
+    "discourseSegments": [
+      "Either someone was in the audience, or the event was a disaster.",
+      "Actually, the event wasn't a disaster.",
+      "So, I hope she enjoyed it."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "total ignorance",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.6"]
+    ],
+    "comment": "The paper prints '(Actually)' as optional.",
+    "verified": "text-layer"
+  },
+  {
+    "id": "elliott2020_58",
+    "source": {"bibkey": "elliott-2020", "paperLabel": "(58)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Either a linguist is here, or a philosopher is.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.7"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "elliott2020_61",
+    "source": {"bibkey": "elliott-2020", "paperLabel": "(61)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "A linguist is here and a philosopher is here.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.7"]
+    ],
+    "comment": "Footnote 26; with co-indexed indefinites.",
+    "verified": "text-layer"
+  },
+  {
+    "id": "elliott2020_65",
+    "source": {"bibkey": "elliott-2020", "paperLabel": "(65)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Either someone is in the audience, or they're sitting down.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.8"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "elliott2020_67",
+    "source": {"bibkey": "elliott-2020", "paperLabel": "(67)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Either someone is in the audience, or the person in the audience is sitting down.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.8"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "elliott2020_68",
+    "source": {"bibkey": "elliott-2020", "paperLabel": "(68)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Either someone is in the audience, or someone in the audience is sitting down.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.8"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "elliott2020_71a",
+    "source": {"bibkey": "elliott-2020", "paperLabel": "(71a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "It's not the case that nobody is in the audience and they're sitting down.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.9"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "elliott2020_78",
+    "source": {"bibkey": "elliott-2020", "paperLabel": "(78)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "It's not true that someone is in the audience and someone in the audience is sitting down.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.9"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "elliott2020_79",
+    "source": {"bibkey": "elliott-2020", "paperLabel": "(79)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "It's not the case that someone walked in and they sat down.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.9"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "elliott2020_80",
+    "source": {"bibkey": "elliott-2020", "paperLabel": "(80)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "It's not the case that both someone is in the audience and they have a question. Well, the auditorium isn't empty. I hope they enjoyed the lecture.",
+    "discourseSegments": [
+      "It's not the case that both someone is in the audience and they have a question.",
+      "Well, the auditorium isn't empty.",
+      "I hope they enjoyed the lecture."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.9"]
+    ],
+    "comment": "Speakers A, B; the paper prints '(both)' as optional.",
+    "verified": "text-layer"
+  },
+  {
+    "id": "elliott2020_81",
+    "source": {"bibkey": "elliott-2020", "paperLabel": "(81)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Everyone who either has no credit card or paid with it has left the restaurant.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "existential: anyone with a credit card they paid with has left", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["section", "4.1"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "elliott2020_82",
+    "source": {"bibkey": "elliott-2020", "paperLabel": "(82)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Logan doesn't have no credit card. They're on the table.",
+    "discourseSegments": [
+      "Logan doesn't have no credit card.",
+      "They're on the table."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "4.1"]
+    ],
+    "comment": "Credited to Simon Charlow (p.c.): maximal plural anaphora under double negation.",
+    "verified": "text-layer"
+  },
+  {
+    "id": "elliott2020_92",
+    "source": {"bibkey": "elliott-2020", "paperLabel": "(92)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "If anyone is here, then they are unhappy.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "universal: everyone here is unhappy", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["section", "B"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "elliott2020_93",
+    "source": {"bibkey": "elliott-2020", "paperLabel": "(93)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Either nobody is here, or they are unhappy.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "B"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "elliott2020_94a",
+    "source": {"bibkey": "elliott-2020", "paperLabel": "(94a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The boys played chess.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "universal: every boy played chess", "judgment": "acceptable"},
+      {"name": "existential: some boy played chess", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["section", "B"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "elliott2020_94b",
+    "source": {"bibkey": "elliott-2020", "paperLabel": "(94b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "The boys didn't play chess.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "negated universal: not every boy played chess", "judgment": "unacceptable"},
+      {"name": "negated existential: no boy played chess", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["section", "B"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "elliott2020_98",
+    "source": {"bibkey": "elliott-2020", "paperLabel": "(98)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "If everyone is here, then they're happy.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "B"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "elliott2020_100",
+    "source": {"bibkey": "elliott-2020", "paperLabel": "(100)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Someone who is here is unhappy.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "B"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "elliott2020_101",
+    "source": {"bibkey": "elliott-2020", "paperLabel": "(101)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Everyone who is here is unhappy.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "B"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  }
+]
