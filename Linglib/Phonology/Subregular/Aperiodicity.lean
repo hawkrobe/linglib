@@ -24,7 +24,7 @@ Over a finite alphabet, both of the local classes `SL_k` and `SP_k` are star-fre
 
 These are the **"subregular hierarchy ⊆ star-free"** results: each class is recognised by a
 finite scanner whose transition monoid (`DFA.transitionMonoid`) is *aperiodic*, hence star-free
-by Schützenberger's theorem ([schutzenberger-1965] [mcnaughton-papert-1971]). They are gathered
+by Schützenberger's theorem. They are gathered
 here — rather than in per-class `…StarFree.lean` files (which read like construction objects, à
 la mathlib's `TMToPartrec`), and rather than folded into the foundational `StrictlyLocal` /
 `StrictlyPiecewise` definition files (which would drag the heavy
@@ -37,12 +37,11 @@ topic-noun file isolates the heavy imports.
   symbols (a reversed window) plus an absorbing dead state `none`. The scanner is *definite*
   (its alive state depends only on the last `k - 1` symbols), so its transition monoid is
   aperiodic (`x ^ k = x ^ (k-1)`). Boundary markers `noneᵏ⁻¹` fold into the start window and
-  acceptance set. ([mcnaughton-papert-1971] [heinz-rawal-tanner-2011])
+  acceptance set.
 * **SP.** The recognizer is the **subsequence scanner** remembering the *profile* of
   length-`≤ k-1` subsequences seen so far, plus an absorbing dead state. Subsequences are blind
   to position, so no boundary augmentation is needed; any length-`≤ k` subsequence selects
-  `≤ k` symbols, so its transition monoid is aperiodic. ([heinz-rogers-2010]
-  [mcnaughton-papert-1971])
+  `≤ k` symbols, so its transition monoid is aperiodic.
 
 `[Finite α]` is essential throughout: these classes over an infinite alphabet need not even be
 regular.
@@ -54,6 +53,13 @@ The SL and SP scanners share scaffolding *names* (`scanDFA`, `scanHom`, `evalFro
 walled off in its own namespace — `StrictlyLocalGrammar` and `StrictlyPiecewiseGrammar` — so the
 colliding names
 become distinct full names.
+
+## References
+
+* [schutzenberger-1965]
+* [mcnaughton-papert-1971]
+* [heinz-rawal-tanner-2011]
+* [heinz-rogers-2010]
 -/
 
 @[expose] public section
@@ -64,7 +70,7 @@ namespace StrictlyLocalGrammar
 
 variable {α : Type*}
 
-/-- Reversed scanner window: up to `n` augmented symbols, head = most recent. -/
+/-- The reversed scanner window holds up to `n` augmented symbols, most recent first. -/
 abbrev Win (α : Type*) (n : ℕ) := { w : List (Option α) // w.length ≤ n }
 
 instance [Finite α] (n : ℕ) : Finite (Win α n) :=
@@ -83,7 +89,8 @@ private noncomputable def step : Option (Win α n) → Option α → Option (Win
     else some ⟨(a :: w.val).take n, (List.length_take_le _ _).trans (by simp)⟩
 
 open Classical in
-/-- The scanner DFA (start/accept irrelevant: only its transition monoid is used). -/
+/-- This is the scanner DFA, whose start and accept states go unused since only its
+transition monoid matters. -/
 private noncomputable def scanDFA : DFA (Option α) (Option (Win α n)) where
   step := step G n
   start := none
@@ -99,8 +106,8 @@ private noncomputable def scanDFA : DFA (Option α) (Option (Win α n)) where
   | nil => rfl
   | cons a xs ih => rw [DFA.evalFrom_cons]; simpa [step] using ih
 
-/-- Window after an alive run of `xs`: the reversed window is the last `n` symbols of
-`xs.reverse ++ w` (most recent first). -/
+/-- After an alive run of `xs`, the reversed window is the last `n` symbols of
+`xs.reverse ++ w`, most recent first. -/
 private lemma evalFrom_alive_window (w : Win α n) (xs : List (Option α)) :
     ∀ w', (scanDFA G n).evalFrom (some w) xs = some w' → w'.val = (xs.reverse ++ w.val).take n := by
   induction xs generalizing w with
@@ -115,13 +122,13 @@ private lemma evalFrom_alive_window (w : Win α n) (xs : List (Option α)) :
     · rw [ih _ w' h, reverse_cons, append_assoc]
       simpa using take_append_take n xs.reverse (a :: w.val)
 
-/-- A forbidden completed window: some `(n+1)`-factor of `S` is not permitted. -/
+/-- `S` completes a forbidden window when some `(n+1)`-factor of it is not permitted. -/
 private def IsForbiddenWindow (S : List (Option α)) : Prop :=
   ∃ f, f <:+: S ∧ f.length = n + 1 ∧ f ∉ G
 
 variable {β : Type*}
 
-/-- Window-not-full step: the post-step scanned string is unchanged. -/
+/-- While the window is not full, a step leaves the scanned string unchanged. -/
 private lemma scanned_step_lt (w : List β) (a : β) (xs : List β) (h : w.length < n) :
     (take n (a :: w)).reverse ++ xs = w.reverse ++ a :: xs := by
   rw [List.take_of_length_le (by simp; omega)]; simp
@@ -134,7 +141,7 @@ private lemma take_prefix_full (w : List β) (a : β) (xs : List β) (h : w.leng
   · rw [List.take_of_length_le (by simp; omega)]
   · simp [h]
 
-/-- Window-full step: the post-step scanned string is the tail of the pre-step one. -/
+/-- Once the window is full, a step leaves the tail of the previously scanned string. -/
 private lemma scanned_step_eq (w : List β) (a : β) (xs : List β) (h : w.length = n) :
     (take n (a :: w)).reverse ++ xs = (w.reverse ++ a :: xs).tail := by
   rcases Nat.eq_zero_or_pos n with hn | hn
@@ -144,8 +151,8 @@ private lemma scanned_step_eq (w : List β) (a : β) (xs : List β) (h : w.lengt
         show n - 1 = w.length - 1 by omega, ← List.dropLast_eq_take, ← List.tail_reverse]
     rfl
 
-/-- Dead-status: scanning `xs` from window `w` dies iff some forbidden `(n+1)`-window is
-completed — exactly the forbidden `(n+1)`-factors of `w.reverse ++ xs`. -/
+/-- Scanning `xs` from window `w` dies iff some forbidden `(n+1)`-window is completed, that is,
+iff `w.reverse ++ xs` has a forbidden `(n+1)`-factor. -/
 private lemma evalFrom_eq_none_iff (w : Win α n) (xs : List (Option α)) :
     (scanDFA G n).evalFrom (some w) xs = none ↔ IsForbiddenWindow G n (w.val.reverse ++ xs) := by
   induction xs generalizing w with
@@ -203,8 +210,8 @@ private lemma rep_succ (vt : List (Option α)) (m : ℕ) : rep vt (m + 1) = rep 
 private lemma length_rep (vt : List (Option α)) (m : ℕ) : (rep vt m).length = m * vt.length := by
   simp [rep, List.length_flatten]
 
-/-- Window stabilisation: after `≥ n` copies of `vt`, one more copy leaves the window
-unchanged (the last `n` symbols are already `vt`-periodic). -/
+/-- After at least `n` copies of `vt`, one more copy leaves the window unchanged, its last `n`
+symbols being already `vt`-periodic. -/
 private lemma take_rep_reverse_stable (vt sw : List (Option α)) {m : ℕ} (hm : n ≤ m * vt.length) :
     ((rep vt (m + 1)).reverse ++ sw).take n = ((rep vt m).reverse ++ sw).take n := by
   have hrev : ∀ j, (rep vt j).reverse = rep vt.reverse j := fun j => by
@@ -268,7 +275,7 @@ private theorem isAperiodic_transitionMonoid :
 
 /-! ### Recognition and the main theorem -/
 
-/-- The internal-letter transition action `FreeMonoid α →* transitionMonoid`: read each
+/-- The internal-letter transition action `FreeMonoid α →* transitionMonoid` reads each
 letter `a` as the augmented symbol `some a`. -/
 private noncomputable def scanHom : FreeMonoid α →* (scanDFA G n).transitionMonoid :=
   ((scanDFA G n).transitionHom.comp (FreeMonoid.map Option.some)).codRestrict _
@@ -317,13 +324,13 @@ namespace StrictlyPiecewiseGrammar
 
 variable {α : Type*}
 
-/-- A bounded subsequence: a list of length `≤ n`, the unit a scanner profile is built from. -/
+/-- A bounded subsequence is a list of length `≤ n`, the unit a scanner profile is built from. -/
 abbrev Sub (α : Type*) (n : ℕ) := { s : List α // s.length ≤ n }
 
 instance [Finite α] (n : ℕ) : Finite (Sub α n) :=
   (List.finite_length_le α n).to_subtype
 
-/-- A **subsequence profile**: the set of bounded subsequences seen so far. -/
+/-- A **subsequence profile** is the set of bounded subsequences seen so far. -/
 abbrev Profile (α : Type*) (n : ℕ) := Set (Sub α n)
 
 variable (G : StrictlyPiecewiseGrammar α) (n : ℕ)
@@ -340,7 +347,8 @@ private noncomputable def step : Option (Profile α n) → α → Option (Profil
     else some (P ∪ {t | ∃ s ∈ P, t.val = s.val ++ [a]})
 
 open Classical in
-/-- The scanner DFA (start/accept irrelevant: only its transition monoid is used). -/
+/-- This is the scanner DFA, whose start and accept states go unused since only its
+transition monoid matters. -/
 private noncomputable def scanDFA : DFA α (Option (Profile α n)) where
   step := step G n
   start := none
@@ -356,11 +364,11 @@ private noncomputable def scanDFA : DFA α (Option (Profile α n)) where
   | nil => rfl
   | cons a xs ih => rw [DFA.evalFrom_cons]; simpa [step] using ih
 
-/-- The canonical profile of a scanned word: all its bounded subsequences. -/
+/-- The canonical profile of a scanned word is the set of its bounded subsequences. -/
 private def profOf (xs : List α) : Profile α n := {s | s.val <+ xs}
 
-/-- One step of `profOf`: the bounded subsequences of `xs ++ [a]` are those of `xs` plus the
-ones obtained by appending `a` to a (necessarily short enough) subsequence of `xs`. -/
+/-- The bounded subsequences of `xs ++ [a]` are those of `xs` and those obtained by appending
+`a` to a short enough subsequence of `xs`. -/
 private lemma profOf_step (xs : List α) (a : α) :
     profOf n (xs ++ [a]) = profOf n xs ∪ {t | ∃ s ∈ profOf n xs, t.val = s.val ++ [a]} := by
   ext t
@@ -375,8 +383,8 @@ private lemma profOf_step (xs : List α) (a : α) :
     · exact h.trans (List.sublist_append_left _ _)
     · exact ht ▸ hs.append (List.Sublist.refl _)
 
-/-- The **generalised profile** reached from a base profile `P` after reading `ys`: every base
-subsequence extended by a subsequence of `ys`. With `P = profOf []` this is `profOf ys`; the
+/-- The **generalised profile** reached from a base profile `P` after reading `ys` extends every
+base subsequence by a subsequence of `ys`. With `P = profOf []` this is `profOf ys`; the
 extra generality is what the transition monoid acts on. -/
 private def genProf (P : Profile α n) (ys : List α) : Profile α n :=
   {t | ∃ p ∈ P, ∃ q, q <+ ys ∧ t.val = p.val ++ q}
@@ -430,7 +438,7 @@ private lemma evalFrom_alive_genProf (P : Profile α n) (ys : List α) :
     · rw [← genProf_singleton] at h
       rw [ih _ _ h, genProf_append, List.singleton_append]
 
-/-- A forbidden subsequence of `S`: some subsequence of length `≤ n+1` is not in `G`. -/
+/-- `S` has a forbidden subsequence when some subsequence of length `≤ n+1` is not in `G`. -/
 private def Bad (S : List α) : Prop := ∃ f, f <+ S ∧ f.length ≤ n + 1 ∧ f ∉ G
 
 /-- A forbidden subsequence of `xs ++ [a]` not already in `xs` must end in `a`: it splits as
@@ -445,9 +453,9 @@ private lemma bad_snoc (xs : List α) (a : α) {f : List α} (hsub : f <+ xs ++ 
     refine ⟨⟨l₁, ?_⟩, h₁, rfl⟩
     simp only [List.length_append, List.length_cons, List.length_nil] at hlen; omega
 
-/-- Dead-status (`xs` already clean): scanning `ys` from `profOf xs` dies iff some forbidden
-subsequence of `xs ++ ys` completes during `ys` — i.e. iff one exists at all, since
-`¬ Bad xs` rules out the prefix-only case. -/
+/-- When `xs` is clean, scanning `ys` from `profOf xs` dies iff some forbidden subsequence of
+`xs ++ ys` completes during `ys`, that is, iff one exists at all, since `¬ Bad xs` rules out the
+prefix-only case. -/
 private lemma evalFrom_eq_none_iff (xs ys : List α) (hxs : ¬ Bad G n xs) :
     (scanDFA G n).evalFrom (some (profOf n xs)) ys = none ↔ Bad G n (xs ++ ys) := by
   induction ys generalizing xs with
@@ -488,9 +496,8 @@ private lemma toList_pow (v : FreeMonoid α) (m : ℕ) : (v ^ m).toList = rep v.
   | zero => simp [rep]
   | succ k ih => rw [pow_succ, FreeMonoid.toList_mul, ih, rep_succ]
 
-/-- **Block-pigeonhole keystone.** A subsequence of `rep v (m+1)` no longer than `m` is already
-a subsequence of `rep v m`: spread over `m+1` identical copies it cannot touch them all, so one
-copy can be dropped. Induction on `m`, peeling a leading copy. -/
+/-- A subsequence of `rep v (m+1)` no longer than `m` is already a subsequence of `rep v m`,
+since spread over `m+1` identical copies it cannot touch them all. -/
 private lemma sublist_rep_of_length_le (v : List α) :
     ∀ (m : ℕ) (f : List α), f.length ≤ m → f <+ rep v (m + 1) → f <+ rep v m := by
   intro m
@@ -508,9 +515,8 @@ private lemma sublist_rep_of_length_le (v : List α) :
       rw [rep_succ_left]
       exact hg₁.append (ih g₂ this hg₂)
 
-/-- **Profile stabilisation.** Once `n ≤ m`, the generalised profile after `rep v (m+1)` equals
-that after `rep v m`: each profile element selects `≤ n ≤ m` of the available copies, so one
-copy is redundant. -/
+/-- Once `n ≤ m`, the generalised profile after `rep v (m+1)` equals that after `rep v m`, since
+each profile element selects at most `n ≤ m` of the available copies. -/
 private lemma genProf_rep_stable (P : Profile α n) (v : List α) {m : ℕ} (hm : n ≤ m) :
     genProf n P (rep v (m + 1)) = genProf n P (rep v m) := by
   ext t
@@ -520,8 +526,7 @@ private lemma genProf_rep_stable (P : Profile α n) (v : List α) {m : ℕ} (hm 
   exact sublist_rep_of_length_le v m q (by have := t.2; simp_all; omega) hq
 
 /-- Reading `v` from `evalFrom s (rep v (n+1))` is a fixed point: the profile is already
-`v`-saturated (stabilisation at exponent `n`) and the dead flag is monotone. Mirrors the SL
-window-fixed-point argument. -/
+`v`-saturated (stabilisation at exponent `n`) and the dead flag is monotone. -/
 private lemma evalFrom_rep_fixed (s : Option (Profile α n)) (v : List α) :
     (scanDFA G n).evalFrom ((scanDFA G n).evalFrom s (rep v (n + 1))) v
       = (scanDFA G n).evalFrom s (rep v (n + 1)) := by
@@ -579,7 +584,7 @@ private lemma not_bad_nil (h0 : ([] : List α) ∈ G) : ¬ Bad G n [] := by
 
 /-- The scanner run over `w` from the start profile is alive iff `w` lies in the language
 generated by `G` at width `n+1` — every length-`≤ (n+1)` subsequence of `w` is permitted.
-Needs `ε ∈ G`: the empty subsequence is not recorded by any step. -/
+It needs `ε ∈ G`, since the empty subsequence is not recorded by any step. -/
 private lemma alive_iff_mem_language (h0 : ([] : List α) ∈ G) (w : List α) :
     (scanDFA G n).evalFrom (some (profOf n [])) w ≠ none ↔ w ∈ G.language (n + 1) := by
   rw [Ne, evalFrom_eq_none_iff G n [] w (not_bad_nil G n h0), List.nil_append,
@@ -611,8 +616,8 @@ variable {α : Type*} [Finite α]
 
 /-- **Strictly local languages are star-free** ([mcnaughton-papert-1971]). Over a finite
 alphabet, the local scanner remembering the last `k - 1` symbols is a finite aperiodic
-recognizer, so `SL_k ⊆ SF`. (`[Finite α]` is essential: SL over an infinite alphabet need
-not even be regular.) -/
+recognizer, so `SL_k ⊆ SF`. (`[Finite α]` is essential, since SL over an infinite alphabet
+need not even be regular.) -/
 theorem IsStrictlyLocal.isStarFree {L : Language α} {k : ℕ} (h : L.IsStrictlyLocal k) :
     L.IsStarFree := by
   classical
@@ -633,7 +638,7 @@ theorem IsStrictlyLocal.isStarFree {L : Language α} {k : ℕ} (h : L.IsStrictly
 /-- **Strictly piecewise languages are star-free** ([heinz-rogers-2010]
 [mcnaughton-papert-1971]). Over a finite alphabet, the subsequence scanner remembering the
 length-`≤ k-1` subsequences seen so far is a finite aperiodic recognizer, so `SP_k ⊆ SF`.
-(`[Finite α]` is essential: SP over an infinite alphabet need not even be regular.) -/
+(`[Finite α]` is essential, since SP over an infinite alphabet need not even be regular.) -/
 theorem IsStrictlyPiecewise.isStarFree {L : Language α} {k : ℕ} (h : L.IsStrictlyPiecewise k) :
     L.IsStarFree := by
   classical

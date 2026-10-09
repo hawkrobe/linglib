@@ -35,21 +35,25 @@ permitted `k`-factors, and `w ∈ L` iff every `k`-factor of `boundary k w` lies
   `k`-locality is exactly closure under suffix substitution: the crossover's factors
   split into the two members' shared parts, and conversely the canonical grammar of
   licensed factors regenerates the language by stitching a member window-by-window.
+
+## References
+
+* [rogers-pullum-2011]
 -/
 
 @[expose] public section
 
 variable {α : Type*}
 
-/-- A **strictly-local grammar** over `α`: a set of *permitted* factors over the
-boundary-augmented alphabet `Option α` (`none` the boundary). The locality width
-`k` is supplied to `language`, not baked into the carrier. -/
+/-- A **strictly-local grammar** over `α` is a set of *permitted* factors over the
+boundary-augmented alphabet `Option α`, with `none` the boundary. The locality width `k` is an
+argument of `language`. -/
 abbrev StrictlyLocalGrammar (α : Type*) := Set (Augmented α)
 
 namespace StrictlyLocalGrammar
 
-/-- The language generated at width `k`: strings whose boundary-augmented form has
-every `k`-factor permitted. -/
+/-- The language generated at width `k` consists of the strings whose boundary-augmented form
+has every `k`-factor permitted. -/
 def language (k : ℕ) (G : StrictlyLocalGrammar α) : Language α :=
   {w | ∀ f ∈ List.kFactors k (boundary k w), f ∈ G}
 
@@ -67,8 +71,7 @@ def ofForbidden (forbidden : Set (Augmented α)) : StrictlyLocalGrammar α := fo
       ↔ ∀ f ∈ List.kFactors k (boundary k w), f ∉ forbidden :=
   Iff.rfl
 
-/-- Membership in an SL language, position-indexed: every window over
-`[1 - k, w.length)` is permitted. -/
+/-- A string is in an SL language iff every window over `[1 - k, w.length)` is permitted. -/
 theorem mem_language_iff_window {k : ℕ} {G : StrictlyLocalGrammar α} {w : List α} (hk : 1 ≤ k) :
     w ∈ G.language k ↔ ∀ i : ℤ, 1 - k ≤ i → i < w.length → window k w i ∈ G := by
   rw [mem_language]
@@ -380,9 +383,8 @@ theorem SuffixSubstitutionClosed.isStrictlyLocal {L : Language α} {k : ℕ} (hk
       (by rw [List.append_nil]; exact hyfin ▸ hy)
     rwa [List.take_append_drop, List.append_nil] at hnew
 
-/-- **The suffix-substitution characterization of strict locality**: for widths
-`k ≥ 2`, a language is strictly `k`-local if and only if it is closed under suffix
-substitution at `k`. -/
+/-- For widths `k ≥ 2`, a language is strictly `k`-local if and only if it is closed under
+suffix substitution at `k`. -/
 theorem isStrictlyLocal_iff_suffixSubstitutionClosed {L : Language α} {k : ℕ}
     (hk : 2 ≤ k) : L.IsStrictlyLocal k ↔ L.SuffixSubstitutionClosed k :=
   ⟨IsStrictlyLocal.suffixSubstitutionClosed, fun hL => hL.isStrictlyLocal hk⟩

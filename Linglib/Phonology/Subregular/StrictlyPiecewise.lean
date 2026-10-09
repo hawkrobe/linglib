@@ -13,7 +13,7 @@ public import Linglib.Core.Computability.PiecewiseTestable
 
 A language `L` is **strictly `k`-piecewise** when membership is determined by which
 *subsequences* (scattered, non-contiguous selections) of length at most `k` the input
-contains [rogers-heinz-et-al-2010]. Where SL_k constrains adjacent material via contiguous
+contains. Where SL_k constrains adjacent material via contiguous
 factors, SP_k constrains long-distance co-occurrence — the subregular class of
 unbounded-distance phonotactics. The class is the program's vocabulary for the sublist-closed
 languages of `Linglib.Core.Computability.ShuffleIdeal`: a language is SP at *some* width iff
@@ -37,7 +37,7 @@ it is sublist-closed.
 * `Language.IsStrictlyPiecewise.toIsPiecewiseTestable`: `SP_k ⊆ PT_k`.
 * `Language.isStrictlyPiecewise_avoid`: shuffle-ideal complements are SP.
 * `Language.exists_isStrictlyPiecewise_iff_isSublistClosed`: SP at some width is exactly
-  sublist-closure [rogers-heinz-et-al-2010].
+  sublist-closure.
 
 ## Implementation notes
 
@@ -45,24 +45,27 @@ it is sublist-closed.
 primitive. Unlike SL no boundary augmentation is needed, since subsequences are blind to
 position; the "≤ k" (rather than "exactly k") bound is instead what keeps words shorter than
 `k` distinguishable, matching `subseqSet`.
+
+## References
+
+* [rogers-heinz-et-al-2010]
 -/
 
 @[expose] public section
 
 open List
 
-/-- A **strictly-piecewise grammar** over `α`: a set of *permitted* subsequences
-[rogers-heinz-et-al-2010]. Unlike SL grammars no boundary alphabet is used — subsequences
-are insensitive to position. The width `k` is supplied to `language`, not baked into the
-carrier. -/
+/-- A **strictly-piecewise grammar** over `α` is a set of *permitted* subsequences. Unlike SL
+grammars it uses no boundary alphabet, since subsequences are insensitive to position. The width
+`k` is an argument of `language`. -/
 abbrev StrictlyPiecewiseGrammar (α : Type*) := Set (List α)
 
 namespace StrictlyPiecewiseGrammar
 
 variable {α : Type*}
 
-/-- The language generated at width `k`: strings whose every subsequence of length at
-most `k` is permitted. -/
+/-- The language generated at width `k` consists of the strings whose every subsequence of
+length at most `k` is permitted. -/
 def language (k : ℕ) (G : StrictlyPiecewiseGrammar α) : Language α :=
   {w | ∀ s, s.length ≤ k → s <+ w → s ∈ G}
 
@@ -131,22 +134,22 @@ theorem IsStrictlyPiecewise.nil_mem (h : L.IsStrictlyPiecewise k) {w : List α}
     (hw : w ∈ L) : [] ∈ L :=
   h.mem_of_sublist (List.nil_sublist w) hw
 
-/-- **Avoiding one pattern**: the complement of a shuffle ideal is strictly `k`-piecewise
-as soon as the forbidden pattern fits in the window. -/
+/-- The complement of a shuffle ideal is strictly `k`-piecewise as soon as the forbidden pattern
+fits in the window. -/
 theorem isStrictlyPiecewise_avoid {p : List α} (hp : p.length ≤ k) :
     (shuffleIdeal p)ᶜ.IsStrictlyPiecewise k :=
   le_antisymm (fun _ hw hpw => hw p hp hpw (Sublist.refl p))
     fun _ hw _ _ hs hps => hw (hps.trans hs)
 
-/-- **`SP_k ⊆ SP_(k+1)`**: widening the window loses nothing. -/
+/-- Widening the window loses nothing, `SP_k ⊆ SP_(k+1)`. -/
 theorem IsStrictlyPiecewise.succ (h : L.IsStrictlyPiecewise k) :
     L.IsStrictlyPiecewise (k + 1) := by
   refine le_antisymm (fun w hw => ?_) fun w hw s _ hs => h.mem_of_sublist hs hw
   rw [← h]
   exact fun s hlen hs => hw s (hlen.trans (Nat.le_succ k)) hs
 
-/-- **`SP_k ⊆ PT_k`**: the strictly-piecewise test ("every subsequence of length at most `k`
-is permitted") depends only on `subseqSet k`. -/
+/-- The strictly-piecewise test, that every subsequence of length at most `k` is permitted,
+depends only on `subseqSet k`, so `SP_k ⊆ PT_k`. -/
 theorem IsStrictlyPiecewise.toIsPiecewiseTestable (h : L.IsStrictlyPiecewise k) :
     L.IsPiecewiseTestable k := by
   obtain ⟨G, rfl⟩ := isStrictlyPiecewise_iff.mp h

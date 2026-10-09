@@ -25,12 +25,17 @@ faithful enough to detect occurrences of `c`: `c <:+: x ↔ (c.map enc) <:+: (x.
 (`containsFactor_iff_map`), because at a matched window the diagonal forces `x[j] = c[i]`. The
 finite-alphabet result then transfers back by inverse homomorphism (`Language.IsStarFree.comap`).
 
-Star-free = `FO[<]`-definable = counter-free ([schutzenberger-1965] [mcnaughton-papert-1971]).
+Star-free = `FO[<]`-definable = counter-free.
 
 ## Main results
 
 * `Language.isStarFree_containsFactor`: `{x | c <:+: x}` is star-free, `α` arbitrary.
 * `Language.isStarFree_avoidsFactor`: `{x | ¬ c <:+: x}` is star-free, `α` arbitrary.
+
+## References
+
+* [schutzenberger-1965]
+* [mcnaughton-papert-1971]
 -/
 
 @[expose] public section
@@ -42,7 +47,7 @@ namespace Language.ContainsFactor
 
 variable {α β : Type*}
 
-/-- Window decomposition: a list splits at offsets `a` and `a + b` into prefix, window, suffix. -/
+/-- A list splits at offsets `a` and `a + b` into prefix, window, and suffix. -/
 private theorem window_decomp (a b : ℕ) (t : List α) :
     t = t.take a ++ (t.drop a).take b ++ t.drop (a + b) := by
   rw [List.append_assoc, ← List.drop_drop, List.take_append_drop, List.take_append_drop]
@@ -68,7 +73,7 @@ private theorem infix_map_iff {f : α → β} (hf : Function.Injective f) (s t :
   have : mid = s := List.map_injective_iff.mpr hf (List.append_inj_right h2 hul).symm
   rw [hdecomp, this]; exact ⟨p, q, rfl⟩
 
-/-- Stripping `some`: an infix relation is reflected by `List.map some`. -/
+/-- `List.map some` reflects the infix relation. -/
 private theorem mapSome_infix_iff (s t : List α) :
     s.map some <:+: t.map some ↔ s <:+: t :=
   infix_map_iff (Option.some_injective α) s t
@@ -78,7 +83,7 @@ private theorem filter_isSome_boundary (m : ℕ) (y : List α) :
     (boundary m y).filter (fun b => b.isSome) = y.map some := by
   simp [boundary, List.filter_append, List.filter_map, Function.comp_def]
 
-/-- Boundary stripping: an all-`some` factor of the boundary-augmented form sits in the core. -/
+/-- An all-`some` factor of the boundary-augmented form sits in the core. -/
 private theorem mapSome_infix_boundary_iff (m : ℕ) (y d : List α) :
     d.map some <:+: boundary m y ↔ d <:+: y := by
   rw [← mapSome_infix_iff d y]
@@ -119,11 +124,11 @@ private theorem isStarFree_containsFactor_finite (d : List γ) :
 
 variable [DecidableEq α] (c : List α)
 
-/-- The **diagonal encoding** `enc c a i = (a = c[i])`: faithful enough to detect `c`. -/
+/-- The **diagonal encoding** `enc c a i = (a = c[i])` records whether `a` matches `c` at `i`. -/
 private def enc : α → (Fin c.length → Bool) := fun a i => decide (a = c.get i)
 
-/-- Diagonal injectivity: same-length lists with equal `enc`-images are equal — at each position
-`enc` records whether the symbol matches `c` there, which pins it down on the diagonal. -/
+/-- Same-length lists with equal `enc`-images are equal, since at each position `enc` records
+whether the symbol matches `c` there, which pins it down on the diagonal. -/
 private theorem map_enc_eq_iff (m : List α) (hlen : m.length = c.length) :
     m.map (enc c) = c.map (enc c) ↔ m = c := by
   refine ⟨fun h => List.ext_getElem hlen fun i h1 h2 => ?_, fun h => h ▸ rfl⟩
@@ -132,8 +137,8 @@ private theorem map_enc_eq_iff (m : List α) (hlen : m.length = c.length) :
   have := congrFun hi ⟨i, h2⟩
   simpa [enc, List.get_eq_getElem] using this
 
-/-- **K1**: containment over `α` transfers to and from containment of the diagonal-encoded factor
-over the finite alphabet `Fin |c| → Bool`. -/
+/-- Containment over `α` transfers to and from containment of the diagonal-encoded factor over
+the finite alphabet `Fin |c| → Bool`. -/
 private theorem containsFactor_iff_map (x : List α) :
     c <:+: x ↔ c.map (enc c) <:+: x.map (enc c) := by
   refine ⟨fun h => h.map (enc c), fun h => ?_⟩

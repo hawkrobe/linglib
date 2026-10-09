@@ -15,8 +15,8 @@ public import Linglib.Core.Data.List.Factors
 
 Boundary augmentation of strings and a boundary-vacuity predicate relating the
 chain-membership of a padded string to that of its unpadded core. The strictly-local,
-locally-testable, and tier-relativized classes are built on this infrastructure
-[lambert-2022] [heinz-rogers-2010] [rogers-pullum-2011]. The contiguous `k`-factors
+locally-testable, and tier-relativized classes are built on this infrastructure. The
+contiguous `k`-factors
 the hierarchy quantifies over are a generic list combinator and live in
 `Core/Data/List/Factors.lean` (`List.kFactors`).
 
@@ -41,6 +41,12 @@ The standard subregular convention extends the alphabet with two edge markers
 one-fresh-symbol extension `Option α` (`none` = boundary, `some a` = original
 symbol): a single marker suffices because boundary symbols only ever occur at
 fixed positions, so the two edges are never confused.
+
+## References
+
+* [rogers-pullum-2011]
+* [heinz-rogers-2010]
+* [lambert-2022]
 -/
 
 @[expose] public section
@@ -49,8 +55,8 @@ variable {α : Type*}
 
 /-! ### Boundary augmentation -/
 
-/-- Boundary-augmented strings: original symbols (`some a`) plus the
-boundary marker `none`. -/
+/-- A boundary-augmented string has the original symbols (`some a`) and the boundary marker
+`none`. -/
 abbrev Augmented (α : Type*) := List (Option α)
 
 section Boundary
@@ -77,7 +83,7 @@ word are exactly its windows (`window`). -/
 
 section Pinning
 
-/-- The width-`k` window of `w` at `i`: its integer-indexed entries on `[i, i + k)`. -/
+/-- The width-`k` window of `w` at `i` lists its integer-indexed entries on `[i, i + k)`. -/
 def window (k : ℕ) (w : List α) (i : ℤ) : List (Option α) :=
   List.ofFn fun j : Fin k ↦ w[i + (j : ℕ)]?
 
@@ -94,7 +100,7 @@ lemma window_eq_window_iff {k : ℕ} {w y : List α} {i q : ℤ} :
 
 variable {k : ℕ} {w y l : List α}
 
-/-- The augmented string's entries by region: left pad, letters, right pad. -/
+/-- The augmented string's entries split by region into left pad, letters, and right pad. -/
 lemma getElem?_boundary (j : ℕ) :
     (boundary k w)[j]? =
       if j < k - 1 then some none

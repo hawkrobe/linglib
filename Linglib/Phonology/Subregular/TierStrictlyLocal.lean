@@ -14,11 +14,10 @@ public import Linglib.Core.Data.List.Factors
 /-!
 # Tier-based strictly local languages (TSL_k)
 
-A language is **tier-based strictly `k`-local** ([heinz-rawal-tanner-2011]) when its membership
-is determined by `SL_k` membership of its projection onto a *tier*, a decidable subalphabet `T`.
-The projection is erasure, `w.filter (T ·)`: off-tier symbols are deleted before the `SL_k` test,
-so the constraint applies to tier-adjacent factors while arbitrary off-tier material may
-intervene.
+A language is **tier-based strictly `k`-local** when its membership is determined by `SL_k`
+membership of its projection onto a *tier*, a decidable subalphabet `T`. The projection is
+erasure, `w.filter (T ·)`: off-tier symbols are deleted before the `SL_k` test, so the
+constraint applies to tier-adjacent factors while arbitrary off-tier material may intervene.
 
 ## Main definitions
 
@@ -30,6 +29,8 @@ intervene.
 
 * `Language.IsStrictlyLocal.toIsTierStrictlyLocal`: `SL_k ⊆ TSL_k`, via the universal tier.
 * `Language.IsTierStrictlyLocal.isStarFree`: `TSL_k ⊆ SF` over a finite alphabet.
+* `Language.IsTierStrictlyLocal.isStrictlyLocal`: a `TSL_k` language in which every symbol is
+  visible is `SL_k`.
 
 ## Implementation notes
 
@@ -42,9 +43,9 @@ projection `g : α → Option β` is `List.filterMap g`, the letterwise homomorp
 
 ## References
 
-* [J. Heinz, C. Rawal and H. G. Tanner, *Tier-based Strictly Local Constraints for Phonology*
-  (2011)][heinz-rawal-tanner-2011]
-* [R. McNaughton and S. Papert, *Counter-free Automata* (1971)][mcnaughton-papert-1971]
+* [heinz-rawal-tanner-2011]
+* [mcnaughton-papert-1971]
+* [jardine-2019]
 -/
 
 @[expose] public section
@@ -81,6 +82,14 @@ def language (G : TierStrictlyLocalGrammar k α) : Language α :=
     w ∈ G.language ↔
       ∀ f ∈ List.kFactors k (boundary k (w.filter (G.tier ·))), f ∈ G.permitted := Iff.rfl
 
+/-- Symbols off the tier are invisible to the grammar. -/
+theorem mem_language_append_cons_of_not_tier (G : TierStrictlyLocalGrammar k α) {a : α}
+    (ha : ¬ G.tier a) (u v : List α) :
+    u ++ a :: v ∈ G.language ↔ u ++ v ∈ G.language := by
+  change (u ++ a :: v).filter (G.tier ·) ∈ G.permitted.language k ↔
+    (u ++ v).filter (G.tier ·) ∈ G.permitted.language k
+  simp [List.filter_append, ha]
+
 end TierStrictlyLocalGrammar
 
 end Subregular
@@ -106,6 +115,20 @@ theorem IsStrictlyLocal.toIsTierStrictlyLocal {k : ℕ} {L : Language α}
     (h : L.IsStrictlyLocal k) : IsTierStrictlyLocal k L := by
   obtain ⟨G, rfl⟩ := h
   exact ⟨{ tier := fun _ => True, permitted := G }, by ext w; simp⟩
+
+/-- A tier-based strictly local language in which every symbol is visible somewhere, deleting it
+from some string changing membership, is strictly local, since its tier is the whole alphabet. -/
+theorem IsTierStrictlyLocal.isStrictlyLocal {k : ℕ} {L : Language α}
+    (h : IsTierStrictlyLocal k L) (hvis : ∀ a, ∃ u v, ¬ (u ++ a :: v ∈ L ↔ u ++ v ∈ L)) :
+    L.IsStrictlyLocal k := by
+  obtain ⟨G, rfl⟩ := h
+  have htier (a : α) : G.tier a := by
+    by_contra ha
+    obtain ⟨u, v, huv⟩ := hvis a
+    exact huv (G.mem_language_append_cons_of_not_tier ha u v)
+  refine ⟨G.permitted, Set.ext fun w => ?_⟩
+  change _ ↔ w.filter (G.tier ·) ∈ G.permitted.language k
+  rw [List.filter_eq_self.2 fun a _ => decide_eq_true (htier a)]
 
 variable [Finite α]
 

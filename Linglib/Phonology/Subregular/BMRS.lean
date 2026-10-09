@@ -12,12 +12,12 @@ public import Mathlib.Data.Finset.Basic
 /-!
 # Boolean Monadic Recursive Schemes
 
-A **Boolean monadic recursive scheme** ([bhaskar-jardine-chandlee-oakden-2020]) is a program of
+A **Boolean monadic recursive scheme** is a program of
 mutually recursive Boolean-valued unary predicates over words, built from `if…then…else`, the
 edge tests `initial`/`final` (`min`/`max`), input class tests, and recursive calls. Its
-one-sided fragments characterize the left- and right-subsequential functions;
-[bhaskar-chandlee-jardine-2023] extends the characterization and [chandlee-jardine-2021] applies
-it to phonological modelling. The walks are `Subregular.Walk`.
+one-sided fragments characterize the left- and right-subsequential functions, a
+characterization later extended to the rational functions and applied to phonological analysis.
+The walks are `Subregular.Walk`.
 
 Two symbol types dissolve the usual signature bookkeeping: input labels `α` get the
 lookup rule, rule heads `F` get the unfolding rule, and a `Program` is a total map
@@ -42,6 +42,12 @@ by `eval_iff_evalFuel`.
 * `Eval.congr_eqOn_Iic` / `Eval.congr_eqOn_Ici`: **one-sided locality**: a backward
   program evaluated at `i` reads only positions `≤ i`, so equal-length words agreeing
   there evaluate identically (dually for forward).
+
+## References
+
+* [bhaskar-jardine-chandlee-oakden-2020]
+* [bhaskar-chandlee-jardine-2023]
+* [chandlee-jardine-2021]
 -/
 
 @[expose] public section
@@ -54,11 +60,10 @@ variable {α F : Type*}
 
 /-! ### Syntax -/
 
-/-- BMRS expressions: edge tests `initial`/`final` (the literature's `min(T)`/`max(T)`),
-input **class tests** `label` (the lookup rule; a `Finset` of symbols, so featural
-predicates like V or N over a segment alphabet are single atoms — a symbol test is the
-singleton case), rule-head calls `call` (the unfolding rule), and `if…then…else`.
-The walks are `Subregular.Walk`. -/
+/-- A BMRS expression is an edge test `initial` or `final` (the literature's `min(T)`,
+`max(T)`), an input **class test** `label` (the lookup rule, over a `Finset` of symbols, so that
+featural predicates like V or N are single atoms), a rule-head call `call` (the unfolding rule),
+or an `if…then…else`. The walks are `Subregular.Walk`. -/
 inductive Expr (α F : Type*) where
   | tru
   | fls
@@ -69,7 +74,7 @@ inductive Expr (α F : Type*) where
   | ite (c e₁ e₂ : Expr α F)
   deriving DecidableEq
 
-/-- A BMRS program: one defining expression per rule head. -/
+/-- A BMRS program assigns one defining expression to each rule head. -/
 abbrev Program (α F : Type*) := F → Expr α F
 
 /-- Conjunction as `if…then…else`. -/
@@ -81,8 +86,8 @@ def Expr.or (e₁ e₂ : Expr α F) : Expr α F := .ite e₁ .tru e₂
 /-- Negation as `if…then…else`. -/
 def Expr.not (e : Expr α F) : Expr α F := .ite e .fls .tru
 
-/-- Substitute a term for the variable throughout an expression: `e.subst u` is
-`e[u/x]`, the operation the μ-calculus translation writes `tr(φ)[s(x)]`. -/
+/-- `e.subst u` substitutes the term `u` for the variable throughout `e`, the `e[u/x]` that the
+μ-calculus translation writes `tr(φ)[s(x)]`. -/
 def Expr.subst : Expr α F → Walk → Expr α F
   | .tru, _ => .tru
   | .fls, _ => .fls
@@ -92,7 +97,7 @@ def Expr.subst : Expr α F → Walk → Expr α F
   | .call f t, u => .call f (t.comp u)
   | .ite c e₁ e₂, u => .ite (c.subst u) (e₁.subst u) (e₂.subst u)
 
-/-- Backward expressions: every term is backward. -/
+/-- An expression is backward when every term in it is. -/
 def Expr.Backward : Expr α F → Prop
   | .tru | .fls => True
   | .initial t | .final t => t.Backward
@@ -124,16 +129,16 @@ instance Expr.instDecidableForward : ∀ e : Expr α F, Decidable e.Forward
       @instDecidableAnd _ _ (Expr.instDecidableForward c)
         (@instDecidableAnd _ _ (Expr.instDecidableForward e₁) (Expr.instDecidableForward e₂))
 
-/-- `BMRSᵖ`: every rule body is backward (hereditarily, through calls). -/
+/-- A program is backward, `BMRSᵖ`, when every rule body is, hereditarily through calls. -/
 def Program.Backward (P : Program α F) : Prop := ∀ f, (P f).Backward
 
-/-- `BMRSˢ`: every rule body is forward. -/
+/-- A program is forward, `BMRSˢ`, when every rule body is. -/
 def Program.Forward (P : Program α F) : Prop := ∀ f, (P f).Forward
 
 /-! ### The derivation system -/
 
-/-- The derivation system for BMRS expressions: `Eval P w i e b` is `w, i ⊢_P e → b`.
-Partial by design: a non-halting program derives nothing. -/
+/-- `Eval P w i e b` is the derivation `w, i ⊢_P e → b` of a BMRS expression. It is partial by
+design, a non-halting program deriving nothing. -/
 inductive Eval (P : Program α F) (w : List α) : ℕ → Expr α F → Bool → Prop
   | tru {i} : Eval P w i .tru true
   | fls {i} : Eval P w i .fls false
@@ -157,7 +162,7 @@ inductive Eval (P : Program α F) (w : List α) : ℕ → Expr α F → Bool →
 variable {P : Program α F} {w w' : List α} {i v n m : ℕ} {t u : Walk}
   {e : Expr α F} {b b' : Bool}
 
-/-- Boolean-form introduction for the edge test: the value is the comparison. -/
+/-- The initial-edge test evaluates to whether its walk reads position `0`. -/
 theorem Eval.initial (h : t.eval w i = some v) : Eval P w i (.initial t) (v == 0) := by
   rcases Nat.eq_zero_or_pos v with rfl | hv
   · exact .initial_true h
@@ -200,7 +205,7 @@ def Program.TotalOn (P : Program α F) (w : List α) : Prop :=
 
 /-! ### The fuel evaluator -/
 
-/-- Fuel-bounded evaluator: the computable face of `Eval`. -/
+/-- The fuel-bounded evaluator is the computable face of `Eval`. -/
 def evalFuel [DecidableEq α] (P : Program α F) (w : List α) :
     ℕ → ℕ → Expr α F → Option Bool
   | 0, _, _ => none
@@ -268,7 +273,7 @@ private theorem evalFuel_ite_of [DecidableEq α] {c e₁ e₂ : Expr α F} {bc :
   exact ⟨bc, evalFuel_mono (le_max_left _ _) hc, by
     cases bc <;> simpa using evalFuel_mono (le_max_right _ _) hb⟩
 
-/-- Completeness: every derivation is reached at some fuel. -/
+/-- Every derivation is reached at some fuel. -/
 theorem evalFuel_complete [DecidableEq α] (h : Eval P w i e b) :
     ∃ n, evalFuel P w n i e = some b := by
   induction h with
@@ -292,7 +297,7 @@ theorem evalFuel_complete [DecidableEq α] (h : Eval P w i e b) :
     obtain ⟨n₂, hn₂⟩ := ih₂
     exact ⟨_, evalFuel_ite_of hn₁ hn₂⟩
 
-/-- **Adequacy**: the derivation system and the fuel evaluator define the same values. -/
+/-- The derivation system and the fuel evaluator define the same values. -/
 theorem eval_iff_evalFuel [DecidableEq α] :
     Eval P w i e b ↔ ∃ n, evalFuel P w n i e = some b :=
   ⟨evalFuel_complete, fun ⟨_, hn⟩ => evalFuel_sound hn⟩
@@ -306,8 +311,7 @@ private theorem eval_comp_of {z : ℕ} (hu : u.eval w i = some v)
   rw [Walk.eval_comp, hu]
   exact h
 
-/-- Transport a derivation through substitution: evaluating `e[u/x]` at `i` is
-evaluating `e` at the position `u` reads. -/
+/-- Evaluating `e[u/x]` at `i` is evaluating `e` at the position `u` reads. -/
 theorem Eval.subst (hu : u.eval w i = some v) (h : Eval P w v e b) :
     Eval P w i (e.subst u) b := by
   induction h with
@@ -330,7 +334,7 @@ right-subsequentially. The locality lemmas below are what those inclusions rest 
 the flags of a one-sided program cannot see past their index. Equal length is
 load-bearing — `min`/`max` atoms read `w.length`. -/
 
-/-- **One-sided locality (left)**: a successor-free program evaluated at `i` reads only
+/-- A successor-free program evaluated at `i` reads only
 positions `≤ i`, so equal-length words agreeing up to `i` evaluate identically. -/
 theorem Eval.congr_eqOn_Iic (hP : P.Backward) (hlen : w.length = w'.length)
     (h : Eval P w i e b) :
@@ -360,7 +364,7 @@ theorem Eval.congr_eqOn_Iic (hP : P.Backward) (hlen : w.length = w'.length)
   | ite_false hc h₂ ihc ih₂ =>
     exact fun he hag => Eval.ite_false (ihc he.1 hag) (ih₂ he.2.2 hag)
 
-/-- **One-sided locality (right)**: a predecessor-free program evaluated at `i` reads
+/-- A predecessor-free program evaluated at `i` reads
 only positions `≥ i`, so equal-length words agreeing from `i` on evaluate identically. -/
 theorem Eval.congr_eqOn_Ici (hP : P.Forward) (hlen : w.length = w'.length)
     (h : Eval P w i e b) :

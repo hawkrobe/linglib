@@ -18,19 +18,23 @@ membership predicate the subregular harmony grammars project on.
 Substrate only: a study of a particular system supplies its own forbidden-pair relation
 over this alphabet — symmetric (`TierStrictlyLocalGrammar.agree`) or asymmetric
 (`TierStrictlyLocalGrammar.ofForbiddenPairs`) — and keeps its language-specific data and citations.
+
+## References
+
+* [hansson-2010]
 -/
 
 @[expose] public section
 
 namespace Subregular
 
-/-- The three sibilant-harmony classes: `anterior` (`s`-class), `posterior` (`ʃ`-class),
+/-- The three sibilant-harmony classes are `anterior` (`s`-class), `posterior` (`ʃ`-class),
 and `neutral` (off the harmony tier). -/
 inductive Sibilant
   | anterior | posterior | neutral
   deriving DecidableEq, Repr, Fintype
 
-/-- The harmony-tier predicate: sibilants project, neutral material is transparent. -/
+/-- Sibilants project onto the harmony tier, and neutral material is transparent. -/
 @[reducible] def Sibilant.onTier : Sibilant → Prop
   | .anterior | .posterior => True
   | .neutral => False

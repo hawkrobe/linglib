@@ -6,11 +6,12 @@ public import Linglib.Phonology.Subregular.Multitier
 public import Linglib.Phonology.Subregular.ForbiddenPairs
 public import Linglib.Phonology.Subregular.Sibilant
 public import Linglib.Phonology.Subregular.Agree
+public import Linglib.Phonology.Tone.Plateauing
 
 /-!
 # Lambert (2026): Multitier phonotactics with logic and algebra
 
-This file formalizes the classifications of [lambert-2026]: attested constraints on stress,
+This file formalizes the paper's classifications: attested constraints on stress,
 harmony, and tone are placed in the multitier extensions of the definite, reverse definite,
 generalized definite, and co/finite classes, the Boolean closures of the tier-projected classes,
 by writing each constraint as a propositional formula over tier affixes, and are refuted from a
@@ -23,7 +24,8 @@ definite as their defaults demand, Uyghur backness harmony is multitier definite
 (`karangaShona_isBTLI`). The refutations follow the paper's parameterized witnesses:
 culminativity alone is not generalized definite, culminative stress-final is not definite, and
 Tsuut'ina sibilant harmony, Luganda plateauing, and Prinmi are not multitier generalized
-definite (`tsuutina_not_isBTLI`, `luganda_not_isBTLI`).
+definite (`tsuutina_not_isBTLI`, `luganda_not_isBTLI`). Luganda's plateauing conjunct holds of
+exactly the outputs of Hyman and Katamba's plateauing map (`plateauing_iff_mem_range_utp`).
 
 ## Implementation notes
 
@@ -66,7 +68,7 @@ section Sandwich
 
 variable {α : Type*}
 
-/-- A bookended word: `kL` copies of `aL`, then `mid`, then `kR` copies of `aR`. -/
+/-- A bookended word is `kL` copies of `aL`, then `mid`, then `kR` copies of `aR`. -/
 private abbrev sandwich (kL : ℕ) (aL : α) (mid : List α) (kR : ℕ) (aR : α) : List α :=
   replicate kL aL ++ mid ++ replicate kR aR
 
@@ -113,24 +115,24 @@ def Syl.isStressed : Syl → Bool
   | .stressed => true
   | .unstressed => false
 
-/-- Iban stress-final ((2), [omar-1969]): `σ́⋉`. -/
+/-- Iban stresses the final syllable ((2), [omar-1969]), `σ́⋉`. -/
 def iban : Language Syl := ofSuffix [.stressed]
 
 theorem iban_isDefinite : iban.IsDefinite 1 := isDefinite_ofSuffix _
 
-/-- Amara stress-penult ((5), [thurston-1966]): `σ́Σ⋉ ∨ ⋊σ́⋉`. -/
+/-- Amara stresses the penult ((5), [thurston-1966]), `σ́Σ⋉ ∨ ⋊σ́⋉`. -/
 def amara : Language Syl :=
   {w | Edge.right.takeAt 2 w ∈
     ({[.stressed], [.stressed, .unstressed], [.stressed, .stressed]} : Set (List Syl))}
 
 theorem amara_isDefinite : amara.IsDefinite 2 := isDefinite_setOf_right 2 _
 
-/-- Finnish stress-initial ((6), [suomi-toivanen-ylitalo-2008]): `⋊σ́`. -/
+/-- Finnish stresses the initial syllable ((6), [suomi-toivanen-ylitalo-2008]), `⋊σ́`. -/
 def finnish : Language Syl := ofPrefix [.stressed]
 
 theorem finnish_isReverseDefinite : finnish.IsReverseDefinite 1 := isReverseDefinite_ofPrefix _
 
-/-- Culminativity (§2.3): at most one stressed syllable, `[⋊⋉ ∨ ⋊σ́⋉]_{σ́}`. -/
+/-- Culminativity (§2.3) allows at most one stressed syllable, `[⋊⋉ ∨ ⋊σ́⋉]_{σ́}`. -/
 def culminativity : Language Syl :=
   {w | w.filter Syl.isStressed = [] ∨ w.filter Syl.isStressed = [.stressed]}
 
@@ -153,19 +155,19 @@ theorem culminativity_not_isGeneralizedDefinite (k : ℕ) :
   · show ¬ (filter Syl.isStressed _ = [] ∨ filter Syl.isStressed _ = [Syl.stressed])
     simp [Syl.isStressed]
 
-/-- Culminative stress-final ((13a)): `σ́⋉ ∧ [⋊σ́⋉]_{σ́}`. -/
+/-- Culminative stress-final ((13a)) is `σ́⋉ ∧ [⋊σ́⋉]_{σ́}`. -/
 def stressFinalCulminative : Language Syl := iban ⊓ tierWord Syl.isStressed [.stressed]
 
 theorem stressFinalCulminative_isBTD : IsBTD 2 stressFinalCulminative :=
   IsBTC.inter (isBTD_ofSuffix _ (by decide)) (isBTD_tierWord _ _ (by decide))
 
-/-- Culminative stress-penult ((13b)): `(σ́σ⋉ ∨ ⋊σ́⋉) ∧ [⋊σ́⋉]_{σ́}`. -/
+/-- Culminative stress-penult ((13b)) is `(σ́σ⋉ ∨ ⋊σ́⋉) ∧ [⋊σ́⋉]_{σ́}`. -/
 def stressPenultCulminative : Language Syl := amara ⊓ tierWord Syl.isStressed [.stressed]
 
 theorem stressPenultCulminative_isBTD : IsBTD 2 stressPenultCulminative :=
   IsBTC.inter (IsBTC.of_class amara_isDefinite) (isBTD_tierWord _ _ (by decide))
 
-/-- Culminative stress-initial ((13c)): `⋊σ́ ∧ [⋊σ́⋉]_{σ́}`. -/
+/-- Culminative stress-initial ((13c)) is `⋊σ́ ∧ [⋊σ́⋉]_{σ́}`. -/
 def stressInitialCulminative : Language Syl := finnish ⊓ tierWord Syl.isStressed [.stressed]
 
 theorem stressInitialCulminative_isBTK : IsBTK 2 stressInitialCulminative :=
@@ -217,7 +219,7 @@ def QSyl.isHeavy : QSyl → Bool
   | .heavy | .heavyStressed => true
   | _ => false
 
-/-- Exactly one primary stress: `[⋊σ́⋉]_{σ́}`. -/
+/-- A word has exactly one primary stress, `[⋊σ́⋉]_{σ́}`. -/
 def oneStress : Language QSyl :=
   tierWord QSyl.isStressed [.lightStressed] ⊔ tierWord QSyl.isStressed [.heavyStressed]
 
@@ -227,7 +229,7 @@ theorem oneStress_isBTD : IsBTD 2 oneStress :=
 theorem oneStress_isBTK : IsBTK 2 oneStress :=
   IsBTC.union (isBTK_tierWord _ _ (by decide)) (isBTK_tierWord _ _ (by decide))
 
-/-- Amele ((20), [roberts-1987]): stress the leftmost heavy syllable, else the leftmost. -/
+/-- Amele ((20), [roberts-1987]) stresses the leftmost heavy syllable, else the leftmost. -/
 def amele : Language QSyl :=
   oneStress ⊓ (tierPrefix QSyl.isHeavy [.heavyStressed] ⊔
     (tierWord QSyl.isHeavy [] ⊓ ofPrefix [.lightStressed]))
@@ -236,7 +238,7 @@ theorem amele_isBTK : IsBTK 2 amele :=
   IsBTC.inter oneStress_isBTK (IsBTC.union (isBTK_tierPrefix _ _ (by decide))
     (IsBTC.inter (isBTK_tierWord _ _ (by decide)) (isBTK_ofPrefix _ (by decide))))
 
-/-- Golin ((23), [bunn-bunn-1970]): stress the rightmost heavy syllable, else the rightmost. -/
+/-- Golin ((23), [bunn-bunn-1970]) stresses the rightmost heavy syllable, else the rightmost. -/
 def golin : Language QSyl :=
   oneStress ⊓ (tierSuffix QSyl.isHeavy [.heavyStressed] ⊔
     (tierWord QSyl.isHeavy [] ⊓ ofSuffix [.lightStressed]))
@@ -245,7 +247,7 @@ theorem golin_isBTD : IsBTD 2 golin :=
   IsBTC.inter oneStress_isBTD (IsBTC.union (isBTD_tierSuffix _ _ (by decide))
     (IsBTC.inter (isBTD_tierWord _ _ (by decide)) (isBTD_ofSuffix _ (by decide))))
 
-/-- Kwak'wala ((26), [grubb-1969]): stress the leftmost heavy syllable, else the rightmost. -/
+/-- Kwak'wala ((26), [grubb-1969]) stresses the leftmost heavy syllable, else the rightmost. -/
 def kwakwala : Language QSyl :=
   oneStress ⊓ (tierPrefix QSyl.isHeavy [.heavyStressed] ⊔
     (tierWord QSyl.isHeavy [] ⊓ ofSuffix [.lightStressed]))
@@ -256,7 +258,7 @@ theorem kwakwala_isBTLI : IsBTLI 2 kwakwala :=
       (IsBTC.inter (IsBTD.toIsBTLI (isBTD_tierWord _ _ (by decide)))
         (IsBTD.toIsBTLI (isBTD_ofSuffix _ (by decide)))))
 
-/-- Chuvash ((29), [krueger-1961]): stress the rightmost heavy syllable, else the leftmost. -/
+/-- Chuvash ((29), [krueger-1961]) stresses the rightmost heavy syllable, else the leftmost. -/
 def chuvash : Language QSyl :=
   oneStress ⊓ (tierSuffix QSyl.isHeavy [.heavyStressed] ⊔
     (tierWord QSyl.isHeavy [] ⊓ ofPrefix [.lightStressed]))
@@ -286,7 +288,7 @@ def Sibilant.isPosterior : Sibilant → Bool
   | .posterior => true
   | _ => false
 
-/-- Navajo ((30)): the sibilants agree, `[⋊⋉]_s ∨ [⋊⋉]_ʃ`. -/
+/-- In Navajo ((30)) the sibilants agree, `[⋊⋉]_s ∨ [⋊⋉]_ʃ`. -/
 def navajo : Language Sibilant :=
   tierWord Sibilant.isAnterior [] ⊔ tierWord Sibilant.isPosterior []
 
@@ -334,8 +336,8 @@ instance : DecidableRel antPostForbidden
   | .posterior, _ => isFalse not_false
   | .neutral, _ => isFalse not_false
 
-/-- Tsuut'ina asymmetric harmony ([cook-1978]): `¬[sʃ]_{s,ʃ}`, an anterior sibilant is not
-followed on the tier by a posterior one. -/
+/-- In Tsuut'ina asymmetric harmony ([cook-1978]) an anterior sibilant is not followed on the
+tier by a posterior one, `¬[sʃ]_{s,ʃ}`. -/
 def tsuutinaGrammar : TierStrictlyLocalGrammar 2 Sibilant :=
   TierStrictlyLocalGrammar.ofForbiddenPairs antPostForbidden Sibilant.onTier
 
@@ -407,7 +409,7 @@ theorem tsuutina_not_isBTLI (k : ℕ) : ¬ IsBTLI k tsuutina :=
   not_isBTC_of_indist (IsBTC.indist_isGenDef_of_tierAffixes (tsuutina_tierAffixes k))
     (tsuutinaIn_mem k) (tsuutinaOut_notMem k)
 
-/-- The segment classes of Uyghur backness harmony ((34)): harmonizing vowels and dorsal
+/-- The segment classes of Uyghur backness harmony ((34)) are the harmonizing vowels and dorsal
 consonants, front or back, the same marked as suffix material, and the rest. -/
 inductive UyghurSeg
   | frontVowel
@@ -441,7 +443,7 @@ def UyghurSeg.isSuffixBack : UyghurSeg → Bool
   | .suffixBackVowel | .suffixBackDorsal => true
   | _ => false
 
-/-- Uyghur backness harmony ((35)): the suffix agrees with the rightmost harmonizing vowel, or
+/-- In Uyghur backness harmony ((35)) the suffix agrees with the rightmost harmonizing vowel, or
 failing that with the rightmost dorsal, each implication `φ → ψ` written `φᶜ ⊔ ψ`. -/
 def uyghur : Language UyghurSeg :=
   ((tierSuffix UyghurSeg.isHarmonizingVowel [.frontVowel])ᶜ ⊔
@@ -482,7 +484,7 @@ def Tone.isHigh : Tone → Bool
   | .high => true
   | .low => false
 
-/-- Luganda high-tone plateauing ((37), [hyman-katamba-2010]): `¬h..ℓ..h ∧ (h → h..ℓ)`. -/
+/-- Luganda high-tone plateauing ((37), [hyman-katamba-2010]) is `¬h..ℓ..h ∧ (h → h..ℓ)`. -/
 def luganda : Language Tone :=
   (shuffleIdeal [.high, .low, .high])ᶜ ⊓ ((shuffleIdeal [.high])ᶜ ⊔ shuffleIdeal [.high, .low])
 
@@ -490,6 +492,23 @@ theorem luganda_isPiecewiseTestable : luganda.IsPiecewiseTestable 3 :=
   (isPiecewiseTestable_compl_shuffleIdeal (by decide)).inter
     ((isPiecewiseTestable_compl_shuffleIdeal (by decide)).union
       (isPiecewiseTestable_shuffleIdeal (by decide)))
+
+/-- A tone as a timing unit's association state, low read as unspecified (§5.1). -/
+def Tone.toTBU : Tone → _root_.Tone.TBU
+  | .high => .H
+  | .low => .O
+
+/-- The plateauing conjunct `¬h..ℓ..h` holds of exactly the outputs of Hyman and Katamba's
+plateauing map. -/
+theorem plateauing_iff_mem_range_utp (w : List Tone) :
+    w ∉ shuffleIdeal [.high, .low, .high] ↔
+      w.map Tone.toTBU ∈ Set.range _root_.Tone.utp.map := by
+  have hinj : Function.Injective Tone.toTBU := fun a b h => by
+    cases a <;> cases b <;> first | rfl | cases h
+  rw [_root_.Tone.utp.mem_range_map_iff, not_iff_not]
+  refine ⟨fun h => h.map Tone.toTBU, fun h => ?_⟩
+  obtain ⟨l, hl, he⟩ := sublist_map_iff.mp h
+  rwa [show l = [.high, .low, .high] from (map_injective_iff.mpr hinj) he.symm] at hl
 
 /-- The accepted witness `ℓᵏℓhhℓℓᵏ`. -/
 private abbrev toneIn (k : ℕ) : List Tone := sandwich k .low [.low, .high, .high, .low] k .low
@@ -517,7 +536,7 @@ theorem luganda_not_isBTLI (k : ℕ) : ¬ IsBTLI k luganda :=
       Or.inr (sublist_append_of_sublist_left (sublist_append_of_sublist_right (by decide)))⟩
     fun h ↦ h.1 (sublist_append_of_sublist_left (sublist_append_of_sublist_right (by decide)))
 
-/-- Prinmi ((39), [ding-2006]): one high span of at most two syllables,
+/-- Prinmi ((39), [ding-2006]) has one high span of at most two syllables,
 `h ∧ ¬h..ℓ..h ∧ ¬h..h..h`. -/
 def prinmi : Language Tone :=
   shuffleIdeal [.high] ⊓ (shuffleIdeal [.high, .low, .high])ᶜ ⊓
@@ -536,7 +555,7 @@ theorem prinmi_not_isBTLI (k : ℕ) : ¬ IsBTLI k prinmi :=
       (sublist_sandwich_iff (by decide) (by decide)).not.mpr (by decide)⟩
     fun h ↦ h.1.2 (sublist_append_of_sublist_left (sublist_append_of_sublist_right (by decide)))
 
-/-- Arigibi ((40), [donohue-1997]): at most one high mora, `¬h..h`. -/
+/-- Arigibi ((40), [donohue-1997]) has at most one high mora, `¬h..h`. -/
 def arigibi : Language Tone := (shuffleIdeal [.high, .high])ᶜ
 
 theorem arigibi_isPiecewiseTestable : arigibi.IsPiecewiseTestable 2 :=
@@ -571,7 +590,7 @@ theorem arigibi_isTierBased : IsTierBased IsFiniteOrCofinite arigibi := by
   · simp
   · simp [replicate_succ]
 
-/-- Kagoshima Japanese ((42), [ding-2006]): one high tone, on the final or the penultimate
+/-- Kagoshima Japanese ((42), [ding-2006]) has one high tone, on the final or the penultimate
 mora, `h ∧ ¬h..h ∧ ¬h..ℓ..ℓ`. -/
 def kagoshima : Language Tone :=
   shuffleIdeal [.high] ⊓ (shuffleIdeal [.high, .high])ᶜ ⊓ (shuffleIdeal [.high, .low, .low])ᶜ
@@ -581,7 +600,7 @@ theorem kagoshima_isPiecewiseTestable : kagoshima.IsPiecewiseTestable 3 :=
     (isPiecewiseTestable_compl_shuffleIdeal (by decide))).inter
     (isPiecewiseTestable_compl_shuffleIdeal (by decide))
 
-/-- Kagoshima Japanese by tiers ((43)): `[⋊h⋉]_{h} ∧ (hℓ⋉ ∨ h⋉)`. -/
+/-- By tiers ((43)), Kagoshima Japanese is `[⋊h⋉]_{h} ∧ (hℓ⋉ ∨ h⋉)`. -/
 def kagoshimaTier : Language Tone :=
   tierWord Tone.isHigh [.high] ⊓ (ofSuffix [.high, .low] ⊔ ofSuffix [.high])
 
@@ -589,7 +608,7 @@ theorem kagoshimaTier_isBTD : IsBTD 2 kagoshimaTier :=
   IsBTC.inter (isBTD_tierWord _ _ (by decide))
     (IsBTC.union (isBTD_ofSuffix _ (by decide)) (isBTD_ofSuffix _ (by decide)))
 
-/-- Chuave ((44), [donohue-1997]): obligatoriness, at least one high mora, `h`. -/
+/-- Chuave ((44), [donohue-1997]) requires at least one high mora, `h`. -/
 def chuave : Language Tone := shuffleIdeal [.high]
 
 theorem chuave_isPiecewiseTestable : chuave.IsPiecewiseTestable 1 :=
@@ -616,7 +635,7 @@ def karangaShort : Language Tone :=
   {w | w ∈ [[.low], [.low, .high], [.low, .high, .low], [.high], [.high, .low],
     [.high, .low, .high], [.high, .high, .low, .high]]}
 
-/-- The Karanga Shona verb stem ((48), (49)): a short stem, a low-toned root `⋊ℓhhℓ ∧ [⋊hh⋉]_{h}`,
+/-- The Karanga Shona verb stem ((48), (49)) is a short stem, a low-toned root `⋊ℓhhℓ ∧ [⋊hh⋉]_{h}`,
 or a high-toned root `⋊hhhℓ ∧ ℓh⋉ ∧ [⋊hhhh⋉]_{h}`. -/
 def karangaShona : Language Tone :=
   karangaShort ⊔

@@ -20,7 +20,7 @@ single margin caps the influence of side `s` at every output coordinate,
 and `RequiresBothSides` demands both sides at once. `flankWord` is the witness family
 instantiating the negative side: a target buried in a filler run between two
 independently editable flanks. The **non-interacting** bimachines — the weak-determinism
-class of [meinhardt-mai-bakovic-mccollum-2024], whose cell output is an order-independent
+class, whose cell output is an order-independent
 union of one-sided change-rules over the identity — live here with their exclusion and
 separation theorems.
 
@@ -69,6 +69,10 @@ negated dependence yields word-pair witnesses. The forms are margin-indexed rath
 fixed-index because a fixed target has only finitely many positions to its left. The
 predicates place no in-range guard on target coordinates, since for length-preserving maps
 an out-of-range coordinate is `none` on both sides of any perturbation.
+
+## References
+
+* [meinhardt-mai-bakovic-mccollum-2024]
 -/
 
 @[expose] public section

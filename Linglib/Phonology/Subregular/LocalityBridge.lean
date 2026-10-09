@@ -14,13 +14,20 @@ The mathematical crux is upstream (`Transduction.emitAt_eq_of_agree`, resting on
 `Walk.eval_backward`): a left-local transduction emits the same block at positions whose bounded
 left contexts agree. This file threads that fact through the ISL window: the window maintained by
 `ISLRule.applyAux` stays exactly the bounded left context, so the induced rule reproduces the
-transduction's output.
+transduction's output. This is the direction of the correspondence between quantifier-free
+transductions and input strictly local functions by which a definition reading only predecessors
+is input strictly local.
 
 ## Main results
 
 * `Transduction.toISLRule`: the ISL rule induced by a left-local transduction.
 * `Transduction.leftLocal_isLeftISL`: a `LeftLocal r` transduction is
   `(r+1)`-Left-Input-Strictly-Local.
+
+## References
+
+* [chandlee-2014]
+* [chandlee-jardine-2019]
 -/
 
 @[expose] public section
@@ -29,14 +36,15 @@ namespace Subregular
 
 variable {α β : Type*}
 
-/-- The Left-ISL rule induced by a left-local transduction of radius `r`: read the output block at
-each position from the last `r` input symbols (`window`) and the current symbol `x`, by running the
-transduction's `emitAt` on `window ++ [x]` at its final position. -/
-def Transduction.toISLRule [DecidableEq α] (T : Transduction α β) (r : ℕ) : ISLRule (r + 1) α β where
+/-- The Left-ISL rule induced by a left-local transduction of radius `r` reads the output block
+at each position from the last `r` input symbols (`window`) and the current symbol `x`, by
+running the transduction's `emitAt` on `window ++ [x]` at its final position. -/
+def Transduction.toISLRule [DecidableEq α] (T : Transduction α β) (r : ℕ) :
+    ISLRule (r + 1) α β where
   windowOutput window x := T.emitAt (window ++ [x]) window.length
 
 /-- The block a left-local transduction emits at position `p` depends only on the `r + 1` input
-symbols ending at `p`: it equals the block emitted at the last position of that window. -/
+symbols ending at `p`, and equals the block emitted at the last position of that window. -/
 private theorem Transduction.emitAt_local [DecidableEq α] {r : ℕ} {T : Transduction α β}
     (hT : T.LeftLocal r) {input : List α} {p : ℕ} (hp : p < input.length) :
     T.emitAt input p = T.emitAt ((input.take (p + 1)).rtake (r + 1)) (min r p) := by
@@ -49,7 +57,8 @@ private theorem Transduction.emitAt_local [DecidableEq α] {r : ℕ} {T : Transd
     omega
   · intro j hj; omega
 
-/-- `toISLRule`'s window output is, by definition, `emitAt` on the window plus the current symbol. -/
+/-- `toISLRule`'s window output is, by definition, `emitAt` on the window and the current
+symbol. -/
 private theorem Transduction.windowOutput_toISLRule [DecidableEq α] {r : ℕ} (T : Transduction α β)
     (window : List α) (x : α) :
     (T.toISLRule r).windowOutput window x = T.emitAt (window ++ [x]) window.length := rfl
@@ -92,9 +101,8 @@ private theorem Transduction.applyAux_toISLRule_eq [DecidableEq α] {r : ℕ} {T
     congr 1
     rw [Transduction.emitAt_local hT hp, hw2]
 
-/-- **Locality bridge** (left half): a transduction whose guards look only backward with
-predecessor depth `≤ r` is `(r+1)`-Left-Input-Strictly-Local — its output depends on a bounded
-left window, the defining property of strict locality. -/
+/-- A transduction whose guards look only backward with predecessor depth `≤ r` is
+`(r+1)`-Left-Input-Strictly-Local, its output depending on a bounded left window. -/
 theorem Transduction.leftLocal_isLeftISL [DecidableEq α] {r : ℕ} {T : Transduction α β}
     (hT : T.LeftLocal r) : IsLeftInputStrictlyLocal (r + 1) T.apply := by
   refine ⟨T.toISLRule r, ?_⟩
@@ -113,8 +121,8 @@ private inductive Sym | a | b | c
 
 private def xv : Walk := .var
 
-/-- Relabel `b → c` immediately after an `a`: the guard looks only left (a predecessor `a`), so it
-is backward with radius 1. -/
+/-- This transduction relabels `b` as `c` immediately after an `a`. Its guard looks only left, at
+a predecessor `a`, so it is backward with radius 1. -/
 private def afterA : Transduction Sym Sym where
   copies := 1
   clause _ := [(WindowFormula.conj (.label .a xv.pred) (.label .b xv), .c),

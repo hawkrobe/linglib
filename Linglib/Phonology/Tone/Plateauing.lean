@@ -8,6 +8,7 @@ module
 public import Mathlib.Data.Finset.Max
 public import Mathlib.Order.Interval.Finset.Nat
 public import Linglib.Core.Data.List.TakeDrop
+public import Linglib.Core.Computability.ShuffleIdeal
 public import Linglib.Phonology.Subregular.Dependence
 public import Linglib.Phonology.Autosegmental.OCP
 public import Linglib.Phonology.Autosegmental.TwoTier
@@ -57,6 +58,8 @@ deterministic in Heinz and Lai's sense.
   and lone Hs are unchanged; everything between the outermost Hs surfaces H.
 * `utp.map_getElem?_H_of_getElem?_H`, `utp.map_mono`, `utp.map_map` — plateauing is a closure
   operator in the pointwise H-order: extensive, monotone, idempotent.
+* `utp.mem_range_map_iff` — the outputs of plateauing are the words without an `H O H`
+  subsequence.
 * `utp.requiresBothSides` — deleting either flanking H reverts the plateau target, at
   every distance.
 
@@ -383,6 +386,75 @@ theorem utp.surfaces_map : utp.Surfaces (utp.map w) i ↔ utp.Surfaces w i := by
 @[simp] theorem utp.map_map : utp.map (utp.map w) = utp.map w := by
   rw [utp.map_eq_plateau_indicator (w := utp.map w), plateau_map, Surfacing.map_length,
     ← utp.map_eq_plateau_indicator]
+
+/-! ### The outputs of plateauing
+
+A word is an output of plateauing exactly when plateauing fixes it, and it is fixed exactly
+when no `O` lies between two `H`s: the outputs are the words without an `H O H` subsequence. -/
+
+/-- Plateauing fixes a word iff every surfacing position already carries `H`. -/
+theorem utp.map_eq_self_iff : utp.map w = w ↔ ∀ i, utp.Surfaces w i → w[i]? = some .H := by
+  refine ⟨fun h i hi => h ▸ utp.map_getElem?_H_iff.mpr hi, fun h => List.ext_getElem? fun i => ?_⟩
+  by_cases hi : i < w.length
+  · by_cases hs : utp.Surfaces w i
+    · rw [utp.map_getElem?_H_iff.mpr hs, h i hs]
+    · rw [utp.map_getElem?_O_iff.mpr ⟨hi, hs⟩]
+      obtain ⟨a, ha⟩ : ∃ a, w[i]? = some a := ⟨w[i], List.getElem?_eq_getElem hi⟩
+      cases a with
+      | H => exact absurd (utp.surfaces_of_hi ha) hs
+      | O => exact ha.symm
+  · rw [List.getElem?_eq_none (by simpa using hi), List.getElem?_eq_none (by omega)]
+
+/-- Plateauing is idempotent, so its outputs are its fixed points. -/
+theorem utp.range_map : Set.range utp.map = Function.fixedPoints utp.map :=
+  Set.ext fun w => ⟨fun ⟨_, hv⟩ => hv ▸ utp.map_map, fun h => ⟨w, h⟩⟩
+
+/-- An `H O H` subsequence is an `O` at a surfacing position. -/
+theorem HOH_sublist_iff : [TBU.H, .O, .H].Sublist w ↔ ∃ i, utp.Surfaces w i ∧ w[i]? = some .O := by
+  simp only [List.cons_sublist_iff, List.nil_sublist, and_true, utp.surfaces_iff]
+  constructor
+  · rintro ⟨r₁, r₂, rfl, h₁, s₁, s₂, rfl, h₂, t₁, t₂, rfl, h₃⟩
+    obtain ⟨a, ha⟩ := List.mem_iff_getElem?.mp h₁
+    obtain ⟨j, hj⟩ := List.mem_iff_getElem?.mp h₂
+    obtain ⟨b, hb⟩ := List.mem_iff_getElem?.mp h₃
+    have ha' := (List.getElem?_eq_some_iff.mp ha).1
+    have hj' := (List.getElem?_eq_some_iff.mp hj).1
+    refine ⟨r₁.length + j, ⟨⟨a, by omega, ?_⟩, r₁.length + s₁.length + b, by omega, ?_⟩, ?_⟩
+    · rwa [List.getElem?_append_left ha']
+    · rw [List.getElem?_append_right (by omega),
+        show r₁.length + s₁.length + b - r₁.length = s₁.length + b by omega,
+        List.getElem?_append_right (by omega), Nat.add_sub_cancel_left,
+        List.getElem?_append_left (List.getElem?_eq_some_iff.mp hb).1]
+      exact hb
+    · rw [List.getElem?_append_right (by omega), Nat.add_sub_cancel_left,
+        List.getElem?_append_left hj']
+      exact hj
+  · rintro ⟨i, ⟨⟨a, hai, ha⟩, c, hic, hc⟩, hi⟩
+    have hai' : a < i := lt_of_le_of_ne hai fun h => by subst h; simp_all
+    have hic' : i < c := lt_of_le_of_ne hic fun h => by subst h; simp_all
+    refine ⟨w.take (a + 1), w.drop (a + 1), (List.take_append_drop _ _).symm,
+      List.mem_take_iff_getElem?.mpr ⟨a, by omega, ha⟩,
+      (w.drop (a + 1)).take (i - a), w.drop (i + 1), ?_,
+      List.mem_take_iff_getElem?.mpr ⟨i - (a + 1), by omega, ?_⟩,
+      w.drop (i + 1), [], (List.append_nil _).symm,
+      List.mem_drop_iff_getElem?.mpr ⟨c, by omega, hc⟩⟩
+    · conv_lhs => rw [← List.take_append_drop (i - a) (w.drop (a + 1))]
+      rw [List.drop_drop]
+      congr 2
+      omega
+    · rw [List.getElem?_drop, show a + 1 + (i - (a + 1)) = i by omega]
+      exact hi
+
+/-- The outputs of plateauing are the words without an `H O H` subsequence. -/
+theorem utp.mem_range_map_iff : w ∈ Set.range utp.map ↔ w ∉ Language.shuffleIdeal [.H, .O, .H] := by
+  rw [utp.range_map, Function.mem_fixedPoints, Function.IsFixedPt, utp.map_eq_self_iff,
+    Language.shuffleIdeal, Set.mem_ofPred_eq, HOH_sublist_iff]
+  push Not
+  refine forall_congr' fun i => ⟨fun h hs => by simp [h hs], fun h hs => ?_⟩
+  have := utp.lt_length hs
+  cases ha : w[i]? with
+  | none => simp_all
+  | some a => cases a <;> simp_all
 
 /-! ### The plateauing rule
 
