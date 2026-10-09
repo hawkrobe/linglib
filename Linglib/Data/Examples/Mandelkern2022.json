@@ -1,0 +1,1069 @@
+[
+  {
+    "id": "mandelkern2022_1a",
+    "source": {
+      "bibkey": "mandelkern-2022",
+      "paperLabel": "(1a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Everyone who has a child loves them.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "them covaries with a child",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "mandelkern2022_1b",
+    "source": {
+      "bibkey": "mandelkern-2022",
+      "paperLabel": "(1b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Everyone who is a parent loves them.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "them covaries with the parents' children",
+        "judgment": "marginal"
+      },
+      {
+        "name": "them is some salient person",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "1"
+      ]
+    ],
+    "comment": "The paper: (1-b) can only be naturally interpreted as saying that some salient person is loved by every parent.",
+    "verified": "text-layer"
+  },
+  {
+    "id": "mandelkern2022_2a",
+    "source": {
+      "bibkey": "mandelkern-2022",
+      "paperLabel": "(2a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Sue has a child. She is at boarding school.",
+    "discourseSegments": [
+      "Sue has a child.",
+      "She is at boarding school."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "she is Sue's child",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "mandelkern2022_2b",
+    "source": {
+      "bibkey": "mandelkern-2022",
+      "paperLabel": "(2b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Sue is a parent. She is at boarding school.",
+    "discourseSegments": [
+      "Sue is a parent.",
+      "She is at boarding school."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "she is Sue's child",
+        "judgment": "marginal"
+      },
+      {
+        "name": "she is Sue",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ]
+    ],
+    "comment": "The paper: (2-b) is much more naturally interpreted as saying that Sue herself is at boarding school, though the other interpretation is not impossible.",
+    "verified": "text-layer"
+  },
+  {
+    "id": "mandelkern2022_3a",
+    "source": {
+      "bibkey": "mandelkern-2022",
+      "paperLabel": "(3a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Sue has a twin. She lives in Dubuque.",
+    "discourseSegments": [
+      "Sue has a twin.",
+      "She lives in Dubuque."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "she is Sue's twin",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "mandelkern2022_3b",
+    "source": {
+      "bibkey": "mandelkern-2022",
+      "paperLabel": "(3b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Sue is a twin. She lives in Dubuque.",
+    "discourseSegments": [
+      "Sue is a twin.",
+      "She lives in Dubuque."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "she is Sue",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "mandelkern2022_4a",
+    "source": {
+      "bibkey": "mandelkern-2022",
+      "paperLabel": "(4a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Everyone who has a child loves them.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "Everyone who has a child loves the child.",
+        "judgment": "acceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "mandelkern2022_4b",
+    "source": {
+      "bibkey": "mandelkern-2022",
+      "paperLabel": "(4b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Everyone who is a parent loves them.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "Everyone who is a parent loves the child.",
+        "judgment": "acceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "mandelkern2022_5a",
+    "source": {
+      "bibkey": "mandelkern-2022",
+      "paperLabel": "(5a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Everyone who has a twin loves them.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "Everyone who has a twin loves the twin.",
+        "judgment": "acceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "mandelkern2022_5b",
+    "source": {
+      "bibkey": "mandelkern-2022",
+      "paperLabel": "(5b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Everyone who is a twin loves them.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "Everyone who is a twin loves the twin.",
+        "judgment": "acceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "mandelkern2022_7",
+    "source": {
+      "bibkey": "mandelkern-2022",
+      "paperLabel": "(7)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Everyone who has a child loves the child.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ]
+    ],
+    "comment": "The paper: (7) does not lead to the inference that every parent has exactly one child.",
+    "verified": "page-image"
+  },
+  {
+    "id": "mandelkern2022_8",
+    "source": {
+      "bibkey": "mandelkern-2022",
+      "paperLabel": "(8)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Everyone who bought a sage plant bought seven others along with the sage plant.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "2"
+      ]
+    ],
+    "comment": "The paper: (8) does not license the inference that everyone who bought a sage plant bought exactly one.",
+    "verified": "text-layer"
+  },
+  {
+    "id": "mandelkern2022_9a",
+    "source": {
+      "bibkey": "mandelkern-2022",
+      "paperLabel": "(9a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Sue has a child and she is at boarding school.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "mandelkern2022_9b",
+    "source": {
+      "bibkey": "mandelkern-2022",
+      "paperLabel": "(9b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Sue is a parent and she is at boarding school.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "3"
+      ]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "mandelkern2022_12a",
+    "source": {
+      "bibkey": "mandelkern-2022",
+      "paperLabel": "(12a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "It's not the case that Sue doesn't have a child. She's at boarding school.",
+    "discourseSegments": [
+      "It's not the case that Sue doesn't have a child.",
+      "She's at boarding school."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "she is Sue's child",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "mandelkern2022_12b",
+    "source": {
+      "bibkey": "mandelkern-2022",
+      "paperLabel": "(12b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "It's not the case that Sue isn't a parent. She's at boarding school.",
+    "discourseSegments": [
+      "It's not the case that Sue isn't a parent.",
+      "She's at boarding school."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "she is Sue's child",
+        "judgment": "marginal"
+      },
+      {
+        "name": "she is Sue",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ]
+    ],
+    "comment": "The paper: the doubly negated sentence in (12-b) only seems to naturally license subsequent anaphora to Sue.",
+    "verified": "text-layer"
+  },
+  {
+    "id": "mandelkern2022_13a",
+    "source": {
+      "bibkey": "mandelkern-2022",
+      "paperLabel": "(13a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Sue doesn't have a child. That's not true! She's at boarding school.",
+    "discourseSegments": [
+      "Sue doesn't have a child.",
+      "That's not true!",
+      "She's at boarding school."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "she is Sue's child",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ]
+    ],
+    "comment": "An exchange: the first segment is one speaker's, the others a second speaker's; it brings out the contrast of (12).",
+    "verified": "text-layer"
+  },
+  {
+    "id": "mandelkern2022_13b",
+    "source": {
+      "bibkey": "mandelkern-2022",
+      "paperLabel": "(13b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Sue isn't a parent. That's not true! She's at boarding school.",
+    "discourseSegments": [
+      "Sue isn't a parent.",
+      "That's not true!",
+      "She's at boarding school."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "she is Sue's child",
+        "judgment": "marginal"
+      },
+      {
+        "name": "she is Sue",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ]
+    ],
+    "comment": "An exchange: the first segment is one speaker's, the others a second speaker's; it brings out the contrast of (12).",
+    "verified": "text-layer"
+  },
+  {
+    "id": "mandelkern2022_14a",
+    "source": {
+      "bibkey": "mandelkern-2022",
+      "paperLabel": "(14a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Either Sue doesn't have a child, or she's at boarding school.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "she is Sue's child",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "mandelkern2022_14b",
+    "source": {
+      "bibkey": "mandelkern-2022",
+      "paperLabel": "(14b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Either Sue isn't a parent, or she's at boarding school.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "she is Sue's child",
+        "judgment": "marginal"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "4"
+      ]
+    ],
+    "comment": "The paper: only in (14-a) can 'she' be naturally interpreted as referring to Sue's child.",
+    "verified": "text-layer"
+  },
+  {
+    "id": "mandelkern2022_15a",
+    "source": {
+      "bibkey": "mandelkern-2022",
+      "paperLabel": "(15a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "A man came in and he sat down.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "he is the man",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "5.5"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "mandelkern2022_15b",
+    "source": {
+      "bibkey": "mandelkern-2022",
+      "paperLabel": "(15b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "He sat down and a man came in.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "he is the man",
+        "judgment": "questionable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "5.5"
+      ]
+    ],
+    "comment": "The paper: it is very difficult to interpret 'he' as anaphoric on 'a man' in (15-b).",
+    "verified": "page-image"
+  },
+  {
+    "id": "mandelkern2022_16a",
+    "source": {
+      "bibkey": "mandelkern-2022",
+      "paperLabel": "(16a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Either there isn't a bathroom, or it is upstairs.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "Either there isn't a bathroom, or the bathroom is upstairs.",
+        "judgment": "acceptable"
+      }
+    ],
+    "readings": [
+      {
+        "name": "it is the bathroom",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "5.5"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "mandelkern2022_16b",
+    "source": {
+      "bibkey": "mandelkern-2022",
+      "paperLabel": "(16b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Either it is upstairs, or there isn't a bathroom.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "Either the bathroom is upstairs, or there isn't a bathroom.",
+        "judgment": "acceptable"
+      }
+    ],
+    "readings": [
+      {
+        "name": "it is the bathroom",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "5.5"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "mandelkern2022_17a",
+    "source": {
+      "bibkey": "mandelkern-2022",
+      "paperLabel": "(17a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Either she is at boarding school, or Susie doesn't have a child.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "Either the child is at boarding school, or Susie doesn't have a child.",
+        "judgment": "acceptable"
+      }
+    ],
+    "readings": [
+      {
+        "name": "she is Susie's child",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "5.5"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "mandelkern2022_17b",
+    "source": {
+      "bibkey": "mandelkern-2022",
+      "paperLabel": "(17b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Either she is at boarding school, or Susie isn't a parent.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "Either the child is at boarding school, or Susie isn't a parent.",
+        "judgment": "acceptable"
+      }
+    ],
+    "readings": [
+      {
+        "name": "she is Susie's child",
+        "judgment": "marginal"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "5.5"
+      ]
+    ],
+    "comment": "The paper: the anaphoric reading is much less available in (17-b).",
+    "verified": "page-image"
+  },
+  {
+    "id": "mandelkern2022_18a",
+    "source": {
+      "bibkey": "mandelkern-2022",
+      "paperLabel": "(18a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "It took him a long time, but a student of mine wrote a really good paper.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "him is the student",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "5.5"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "mandelkern2022_18b",
+    "source": {
+      "bibkey": "mandelkern-2022",
+      "paperLabel": "(18b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "He complained all the way to the fair, and then one of my kids just disappeared.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {
+        "name": "he is the kid",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "5.5"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "mandelkern2022_19",
+    "source": {
+      "bibkey": "mandelkern-2022",
+      "paperLabel": "(19)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "We don't have a cat. She is a tabby.",
+    "discourseSegments": [
+      "We don't have a cat.",
+      "She is a tabby."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.5"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "mandelkern2022_21a",
+    "source": {
+      "bibkey": "mandelkern-2022",
+      "paperLabel": "(21a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Everyone who has a child loves them.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "Everyone who has a child loves the child.",
+        "judgment": "acceptable"
+      }
+    ],
+    "readings": [
+      {
+        "name": "them covaries with a child",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "5.8"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "mandelkern2022_21b",
+    "source": {
+      "bibkey": "mandelkern-2022",
+      "paperLabel": "(21b)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every parent loves them.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "Every parent loves the child.",
+        "judgment": "acceptable"
+      }
+    ],
+    "readings": [
+      {
+        "name": "them covaries with the parents' children",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "section",
+        "5.8"
+      ]
+    ],
+    "comment": "The paper: covariation is unavailable in (21-b), which can only say that every parent loves some particular person.",
+    "verified": "page-image"
+  },
+  {
+    "id": "mandelkern2022_22a",
+    "source": {
+      "bibkey": "mandelkern-2022",
+      "paperLabel": "(22a)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Everyone who has a child loves them.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "5.8"
+      ]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "mandelkern2022_23",
+    "source": {
+      "bibkey": "mandelkern-2022",
+      "paperLabel": "(23)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Sue doesn't have a child. You would know them by now.",
+    "discourseSegments": [
+      "Sue doesn't have a child.",
+      "You would know them by now."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ]
+    ],
+    "comment": "Modal subordination; the paper sketches a cross-world witness bound for it.",
+    "verified": "text-layer"
+  },
+  {
+    "id": "mandelkern2022_24",
+    "source": {
+      "bibkey": "mandelkern-2022",
+      "paperLabel": "(24)"
+    },
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "John doesn't have a car so he doesn't wash it.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [
+      {
+        "form": "John doesn't have a car so he doesn't wash the car.",
+        "judgment": "acceptable"
+      }
+    ],
+    "readings": [],
+    "paperFeatures": [
+      [
+        "section",
+        "6"
+      ],
+      [
+        "footnote",
+        "26"
+      ]
+    ],
+    "comment": "Negative subordination; the paper says it is not straightforwardly accounted for.",
+    "verified": "text-layer"
+  }
+]
