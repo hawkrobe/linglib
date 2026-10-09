@@ -185,6 +185,10 @@ theorem Graph.exists_adj_mem_yield {x : Fin n} (hx : x ∈ g.yield v) (hne : x �
 theorem Graph.IsTree.notMem_yield_of_adj (hT : g.IsTree) (h : g.Adj v w) : v ∉ g.yield w :=
   fun hd ↦ not_adj_dominates hT.acyclic h hd
 
+/-- In a tree no position is its own dependent. -/
+theorem Graph.IsTree.not_adj_self (hT : g.IsTree) : ¬ g.Adj v v :=
+  fun h ↦ hT.acyclic v (TransGen.single h)
+
 /-- In a tree two dependents of one head have disjoint yields. -/
 theorem Graph.IsTree.disjoint_yield_of_adj (hT : g.IsTree) {u : Fin n} (hw : g.Adj v w)
     (hu : g.Adj v u) (hne : w ≠ u) : Disjoint (g.yield w) (g.yield u) :=

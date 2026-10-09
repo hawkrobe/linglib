@@ -12,6 +12,8 @@ public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Set.Card
 public import Mathlib.Order.Interval.Finset.Fin
 public import Mathlib.Order.Interval.Set.Card
+public import Mathlib.Algebra.Order.Rearrangement
+public import Mathlib.Algebra.Order.Ring.Nat
 
 /-!
 # Dependency length
@@ -21,7 +23,11 @@ the total dependency length of a graph, transports a graph along a permutation o
 and defines the distance from a head to the nearest word of a dependent's yield, dependency length
 measured to the boundary of the dependent's phrase. On a projective tree that distance is one
 more than the sizes of the yields of the sibling dependents between head and dependent: it is the
-block measure `WordOrder.Arrangement.boundaryDist` with yields as blocks.
+block measure `WordOrder.Arrangement.boundaryDist` with yields as blocks. Summed over the elements
+after a head, the block measure weighs each element's length by the number of elements farther
+out, so by the rearrangement inequality an order whose lengths grow outward is shortest: this is
+Behaghel's law of growing constituents, and its mirror image orders long before short before a
+final head.
 
 ## Main definitions
 
@@ -31,15 +37,21 @@ block measure `WordOrder.Arrangement.boundaryDist` with yields as blocks.
 * `Graph.yieldDist`: the distance from a position to the nearest word of a yield.
 * `WordOrder.Arrangement.boundaryDist`: the distance in words between two constituents of given
   lengths in an arrangement.
+* `Graph.siblingArrangement`: a head and its dependents in the order of their positions.
 
 ## Main results
 
 * `Graph.totalLength_map`: transport along an isometry preserves total dependency length.
 * `Graph.yieldDist_eq_one_add_sum`: on a projective tree, the yield distance from a head to a
   dependent is one more than the yield sizes of the dependents between them.
+* `WordOrder.Arrangement.sum_boundaryDist_after_le`: Behaghel's law, no rearrangement of the
+  elements after a head is shorter than the order whose lengths grow outward.
+* `Graph.sum_yieldDist_eq_sum_boundaryDist`: on a projective tree a head's yield distances are
+  the boundary distances of its sibling arrangement with phrase lengths.
 
 ## References
 
+* [behaghel-1909]
 * [futrell-levy-gibson-2020]
 * [fedzechkina-chu-jaeger-2018]
 -/
@@ -66,6 +78,215 @@ theorem boundaryDist_comm : a.boundaryDist ℓ x y = a.boundaryDist ℓ y x := b
 /-- Mirroring preserves every distance. -/
 @[simp] theorem boundaryDist_mirror : a.mirror.boundaryDist ℓ x y = a.boundaryDist ℓ x y := by
   simp only [boundaryDist, precedes_mirror, and_comm, or_comm]
+
+
+section Behaghel
+
+open Finset
+
+/-- The elements after `x`. -/
+def after : Finset α := {c | a.Precedes x c}
+
+/-- The elements before `x`. -/
+def before : Finset α := {c | a.Precedes c x}
+
+variable {a x}
+
+omit [DecidableEq α] in
+@[simp] theorem mem_after {c : α} : c ∈ a.after x ↔ a.Precedes x c := by simp [after]
+
+omit [DecidableEq α] in
+@[simp] theorem mem_before {c : α} : c ∈ a.before x ↔ a.Precedes c x := by simp [before]
+
+omit [DecidableEq α] in
+theorem notMem_after_self : x ∉ a.after x := by simp [Precedes]
+
+omit [DecidableEq α] in
+theorem before_eq_after_mirror : a.before x = a.mirror.after x := by
+  ext c; simp [precedes_mirror]
+
+omit [Fintype α] [DecidableEq α] in
+theorem Precedes.trans {y z : α} (h₁ : a.Precedes x y) (h₂ : a.Precedes y z) : a.Precedes x z :=
+  lt_trans h₁ h₂
+
+omit [Fintype α] [DecidableEq α] in
+theorem Precedes.asymm {y : α} (h₁ : a.Precedes x y) : ¬ a.Precedes y x := lt_asymm h₁
+
+omit [DecidableEq α] in
+/-- The number of elements after `d` is its rank from the end. -/
+theorem card_after (d : α) : #(a.after d) = n - 1 - a d := by
+  rw [← Fin.card_Ioi, ← card_map a.toEmbedding]
+  congr 1; ext j
+  simp only [mem_map, mem_after, Precedes, Equiv.coe_toEmbedding, mem_Ioi]
+  exact ⟨fun ⟨c, hc, hj⟩ ↦ hj ▸ hc, fun h ↦ ⟨a.symm j, by simpa using h, by simp⟩⟩
+
+omit [Fintype α] [DecidableEq α] in
+/-- Mirroring an arrangement swaps monovariation and antivariation of a weight with rank. -/
+theorem monovaryOn_mirror_iff {s : Set α} : MonovaryOn ℓ a.mirror s ↔ AntivaryOn ℓ a s := by
+  simp only [MonovaryOn, AntivaryOn, mirror, Equiv.trans_apply, Fin.revPerm_apply, Fin.rev_lt_rev]
+  exact ⟨fun h i hi j hj hij ↦ h hj hi hij, fun h i hi j hj hij ↦ h hj hi hij⟩
+
+omit [Fintype α] [DecidableEq α] in
+private theorem antivaryOn_rank_iff_monovaryOn {s : Set α} :
+    AntivaryOn ℓ (fun d ↦ n - 1 - a d) s ↔ MonovaryOn ℓ a s := by
+  constructor <;> intro h i hi j hj hij <;> refine h hj hi ?_ <;>
+    · have := (a j).isLt
+      have := (a i).isLt
+      simp only [Fin.lt_def] at hij ⊢
+      omega
+
+/-- Summed over the elements after `x`, the distances from `x` weigh each element's length by the
+number of elements farther out, which cross its words. -/
+theorem sum_boundaryDist_after :
+    ∑ c ∈ a.after x, a.boundaryDist ℓ x c =
+      #(a.after x) + ∑ d ∈ a.after x, ℓ d * (n - 1 - a d) := by
+  have hx : ∀ c ∈ a.after x, a.boundaryDist ℓ x c =
+      1 + ∑ c' with a.Precedes x c' ∧ a.Precedes c' c ∨ a.Precedes c c' ∧ a.Precedes c' x,
+        ℓ c' := by
+    intro c hc
+    rw [boundaryDist, ite_eq_right]
+    rintro rfl
+    exact notMem_after_self hc
+  rw [sum_congr rfl hx]
+  simp only [sum_add_distrib, sum_const, smul_eq_mul, mul_one, add_right_inj]
+  calc ∑ c ∈ a.after x, ∑ d with a.Precedes x d ∧ a.Precedes d c ∨ a.Precedes c d ∧
+          a.Precedes d x, ℓ d
+      = ∑ c ∈ a.after x, ∑ d ∈ a.after x with a.Precedes d c, ℓ d := by
+        refine sum_congr rfl fun c hc ↦ ?_
+        rw [mem_after] at hc
+        rw [after, filter_filter]
+        refine sum_congr (filter_congr fun d _ ↦ ?_) fun _ _ ↦ rfl
+        constructor
+        · rintro (h | ⟨h₁, h₂⟩)
+          · exact h
+          · exact absurd (hc.trans h₁) h₂.asymm
+        · exact Or.inl
+    _ = ∑ d ∈ a.after x, ∑ c ∈ a.after x with a.Precedes d c, ℓ d := by
+        simp only [sum_filter]
+        rw [Finset.sum_comm]
+    _ = ∑ d ∈ a.after x, ℓ d * (n - 1 - a d) := by
+        refine sum_congr rfl fun d hd ↦ ?_
+        rw [sum_const, smul_eq_mul, mul_comm, ← card_after]
+        congr 2
+        ext c
+        simp only [mem_filter, mem_after]
+        exact ⟨fun h ↦ h.2, fun h ↦ ⟨(mem_after.1 hd).trans h, h⟩⟩
+
+section perm
+
+variable {σ : Equiv.Perm α} (hσ : {c | σ c ≠ c} ⊆ ↑(a.after x))
+include hσ
+
+omit [DecidableEq α] in
+theorem apply_eq_self_of_notMem_after {c : α} (hc : c ∉ a.after x) : σ c = c := by
+  by_contra h
+  exact hc (hσ h)
+
+omit [DecidableEq α] in
+theorem mem_after_apply_of_mem {c : α} (hc : c ∈ a.after x) : σ c ∈ a.after x := by
+  by_cases h : σ c = c
+  · rwa [h]
+  · exact hσ fun h' ↦ h (σ.injective h')
+
+omit [DecidableEq α] in
+/-- Rearranging the elements after `x` keeps precedence relative to anything not after `x`. -/
+theorem precedes_trans_iff_of_notMem_after {c d : α} (hc : c ∉ a.after x) :
+    (Precedes (σ.trans a) c d ↔ a.Precedes c d) ∧ (Precedes (σ.trans a) d c ↔ a.Precedes d c) := by
+  simp only [Precedes, Equiv.trans_apply, apply_eq_self_of_notMem_after hσ hc]
+  by_cases hd : d ∈ a.after x
+  · have h₁ := mem_after.1 (mem_after_apply_of_mem hσ hd)
+    have h₂ := mem_after.1 hd
+    simp only [mem_after, Precedes, Fin.lt_def, not_lt] at h₁ h₂ hc
+    simp only [Fin.lt_def]
+    constructor <;> constructor <;> intro <;> omega
+  · rw [apply_eq_self_of_notMem_after hσ hd]; exact ⟨Iff.rfl, Iff.rfl⟩
+
+/-- Rearranging the elements after `x` leaves the distance from `x` to anything not after it. -/
+theorem boundaryDist_trans_of_notMem_after {c : α} (hc : c ∉ a.after x) :
+    boundaryDist (σ.trans a) ℓ x c = a.boundaryDist ℓ x c := by
+  have hx := notMem_after_self (a := a) (x := x)
+  simp only [boundaryDist, (precedes_trans_iff_of_notMem_after hσ hx).1,
+    (precedes_trans_iff_of_notMem_after hσ hx).2, (precedes_trans_iff_of_notMem_after hσ hc).1,
+    (precedes_trans_iff_of_notMem_after hσ hc).2]
+
+omit [DecidableEq α] in
+/-- Rearranging the elements after `x` leaves the set of them unchanged. -/
+theorem after_trans : after (σ.trans a) x = a.after x := by
+  ext c
+  simp only [mem_after]
+  exact (precedes_trans_iff_of_notMem_after hσ notMem_after_self).1
+
+/-- Behaghel's law of growing constituents ([behaghel-1909]). When the lengths of the elements
+after `x` grow outward (`ℓ` monovaries with rank, short before long), no rearrangement of them
+shortens the distance from `x` to them. -/
+theorem sum_boundaryDist_after_le (h : MonovaryOn ℓ a (a.after x)) :
+    ∑ c ∈ a.after x, a.boundaryDist ℓ x c ≤
+      ∑ c ∈ after (σ.trans a) x, boundaryDist (σ.trans a) ℓ x c := by
+  rw [sum_boundaryDist_after, sum_boundaryDist_after, after_trans hσ]
+  refine Nat.add_le_add_left ?_ _
+  simpa [Equiv.trans_apply] using
+    ((antivaryOn_rank_iff_monovaryOn ℓ).2 h).sum_mul_le_sum_mul_comp_perm hσ
+
+/-- The rearrangement is strictly longer exactly when it is not itself short before long. -/
+theorem sum_boundaryDist_after_lt_iff (h : MonovaryOn ℓ a (a.after x)) :
+    ∑ c ∈ a.after x, a.boundaryDist ℓ x c <
+      ∑ c ∈ after (σ.trans a) x, boundaryDist (σ.trans a) ℓ x c ↔
+      ¬ MonovaryOn ℓ (σ.trans a) (after (σ.trans a) x) := by
+  rw [sum_boundaryDist_after, sum_boundaryDist_after, after_trans hσ, add_lt_add_iff_left,
+    ← antivaryOn_rank_iff_monovaryOn]
+  simpa [Equiv.trans_apply, Function.comp_def] using
+    ((antivaryOn_rank_iff_monovaryOn ℓ).2 h).sum_mul_lt_sum_mul_comp_perm_iff hσ
+
+/-- Over the whole head, rearranging the elements after `x` cannot shorten the head's measure
+when their lengths grow outward. -/
+theorem sum_boundaryDist_le (h : MonovaryOn ℓ a (a.after x)) :
+    ∑ c, a.boundaryDist ℓ x c ≤ ∑ c, boundaryDist (σ.trans a) ℓ x c := by
+  rw [← sum_filter_add_sum_filter_not univ (a.Precedes x ·),
+    ← sum_filter_add_sum_filter_not univ (a.Precedes x ·)]
+  refine Nat.add_le_add ?_ (le_of_eq ?_)
+  · have := sum_boundaryDist_after_le (ℓ := ℓ) hσ h
+    rwa [after_trans hσ] at this
+  · refine sum_congr rfl fun c hc ↦ (boundaryDist_trans_of_notMem_after ℓ hσ ?_).symm
+    simpa using (mem_filter.1 hc).2
+
+/-- Over the whole head, the rearrangement is strictly longer exactly when it is not itself short
+before long. -/
+theorem sum_boundaryDist_lt_iff (h : MonovaryOn ℓ a (a.after x)) :
+    ∑ c, a.boundaryDist ℓ x c < ∑ c, boundaryDist (σ.trans a) ℓ x c ↔
+      ¬ MonovaryOn ℓ (σ.trans a) (after (σ.trans a) x) := by
+  have e : ∑ c with ¬ a.Precedes x c, boundaryDist (σ.trans a) ℓ x c =
+      ∑ c with ¬ a.Precedes x c, a.boundaryDist ℓ x c :=
+    sum_congr rfl fun c hc ↦
+      boundaryDist_trans_of_notMem_after ℓ hσ (by simpa using (mem_filter.1 hc).2)
+  rw [← sum_filter_add_sum_filter_not univ (a.Precedes x ·),
+    ← sum_filter_add_sum_filter_not univ (a.Precedes x ·), e, add_lt_add_iff_right,
+    ← sum_boundaryDist_after_lt_iff ℓ hσ h, after_trans hσ]
+  exact Iff.rfl
+
+end perm
+
+section before
+
+variable {σ : Equiv.Perm α} (hσ : {c | σ c ≠ c} ⊆ ↑(a.before x))
+include hσ
+
+/-- In the mirror image, when the lengths of the elements before `x` grow outward (long before
+short), no rearrangement of them shortens the distance from `x` to them. -/
+theorem sum_boundaryDist_before_le (h : AntivaryOn ℓ a (a.before x)) :
+    ∑ c ∈ a.before x, a.boundaryDist ℓ x c ≤
+      ∑ c ∈ before (σ.trans a) x, boundaryDist (σ.trans a) ℓ x c := by
+  have h' : {c | σ c ≠ c} ⊆ ↑(a.mirror.after x) := by rwa [← before_eq_after_mirror]
+  have e : ∀ b : Arrangement α n, ∑ c ∈ b.before x, b.boundaryDist ℓ x c =
+      ∑ c ∈ b.mirror.after x, b.mirror.boundaryDist ℓ x c := fun b ↦ by
+    rw [before_eq_after_mirror]
+    exact sum_congr rfl fun c _ ↦ (boundaryDist_mirror ..).symm
+  rw [e, e]
+  exact sum_boundaryDist_after_le (a := a.mirror) ℓ h'
+    ((monovaryOn_mirror_iff ℓ).2 ((before_eq_after_mirror (a := a) (x := x)) ▸ h))
+
+end before
+
+end Behaghel
 
 end WordOrder.Arrangement
 
@@ -175,7 +396,8 @@ variable {g : Graph n} {v w : Fin n}
 
 /-- An order-connected set through a point strictly between `a` and `b` and avoiding both lies
 strictly between them. -/
-private theorem _root_.Set.OrdConnected.between {S : Set (Fin n)} (hS : S.OrdConnected) {a b x y : Fin n}
+private theorem _root_.Set.OrdConnected.between {S : Set (Fin n)} (hS : S.OrdConnected)
+    {a b x y : Fin n}
     (hx : x ∈ S) (hy : y ∈ S) (hxab : a < x ∧ x < b ∨ b < x ∧ x < a) (ha : a ∉ S)
     (hb : b ∉ S) : a < y ∧ y < b ∨ b < y ∧ y < a := by
   have key : ∀ z, (x ≤ z ∧ z ≤ y ∨ y ≤ z ∧ z ≤ x) → z ∈ S := fun z hz ↦
@@ -291,5 +513,84 @@ theorem Graph.yieldDist_eq_one_add_sum (hT : g.IsTree) (hP : g.IsProjective) (h 
   rw [Set.ncard_eq_toFinset_card']
   congr 1
   ext; simp
+
+/-! ### A head's dependents as an arrangement -/
+
+section Siblings
+
+open Finset WordOrder
+
+variable (g : Graph n) (v : Fin n)
+
+/-- A head together with its dependents. -/
+def Graph.siblings : Finset (Fin n) := insert v (g.children v)
+
+/-- The rank of a sibling counts the siblings before it. -/
+def Graph.siblingRank (c : g.siblings v) : Fin #(g.siblings v) :=
+  ⟨#{d ∈ g.siblings v | d < (c : Fin n)}, card_lt_card (filter_ssubset.2 ⟨c, c.2, lt_irrefl _⟩)⟩
+
+theorem Graph.siblingRank_strictMono : StrictMono (g.siblingRank v) := fun c d hcd ↦ by
+  have hcd' : (c : Fin n) < d := Subtype.coe_lt_coe.2 hcd
+  simp only [Graph.siblingRank, Fin.mk_lt_mk]
+  refine card_lt_card ((ssubset_iff_of_subset
+    (monotone_filter_right _ fun _ _ he ↦ lt_trans he hcd')).2
+    ⟨c, mem_filter.2 ⟨c.2, hcd'⟩, by simp⟩)
+
+/-- A head and its dependents arranged by position. The inverse is classical, but `Precedes`
+reads only the rank, which the kernel reduces. -/
+noncomputable def Graph.siblingArrangement : Arrangement (g.siblings v) #(g.siblings v) :=
+  Equiv.ofBijective (g.siblingRank v)
+    ((Fintype.bijective_iff_injective_and_card _).2
+      ⟨(g.siblingRank_strictMono v).injective, by simp⟩)
+
+/-- The phrase length of a position is the number of words of its yield. -/
+def Graph.phraseLength (c : Fin n) : ℕ := #(g.yield c).toFinset
+
+theorem Graph.phraseLength_eq_ncard (c : Fin n) : g.phraseLength c = (g.yield c).ncard :=
+  (Set.ncard_eq_toFinset_card' _).symm
+
+@[simp] theorem Graph.self_mem_siblings : v ∈ g.siblings v := mem_insert_self _ _
+
+variable {g v}
+
+theorem Graph.mem_siblings_of_adj {w : Fin n} (h : g.Adj v w) : w ∈ g.siblings v :=
+  mem_insert_of_mem (by simpa using h)
+
+@[simp] theorem Graph.siblingArrangement_precedes {c d : g.siblings v} :
+    (g.siblingArrangement v).Precedes c d ↔ (c : Fin n) < d :=
+  (g.siblingRank_strictMono v).lt_iff_lt.trans Subtype.coe_lt_coe.symm
+
+/-- On a projective tree the yield distance from a head to a dependent is the boundary distance
+of the sibling arrangement with phrase lengths. -/
+theorem Graph.yieldDist_eq_boundaryDist (hT : g.IsTree) (hP : g.IsProjective) {w : Fin n}
+    (h : g.Adj v w) :
+    g.yieldDist v w = (g.siblingArrangement v).boundaryDist (fun c ↦ g.phraseLength c)
+      ⟨v, g.self_mem_siblings v⟩ ⟨w, Graph.mem_siblings_of_adj h⟩ := by
+  have hvw : v ≠ w := fun e ↦ hT.notMem_yield_of_adj h (e ▸ ReflTransGen.refl)
+  rw [Graph.yieldDist_eq_one_add_sum hT hP h, Arrangement.boundaryDist, ite_eq_right (by simpa)]
+  congr 1
+  simp only [Graph.siblingArrangement_precedes, Graph.phraseLength_eq_ncard, sum_filter]
+  refine Eq.trans ?_ (sum_coe_sort (g.siblings v)
+    fun c ↦ if v < c ∧ c < w ∨ w < c ∧ c < v then (g.yield c).ncard else 0).symm
+  rw [Graph.siblings, sum_insert (by simpa using hT.not_adj_self), ite_eq_right (by simp),
+    zero_add]
+
+/-- The sum of a head's yield distances is the head's measure in the sibling arrangement. -/
+theorem Graph.sum_yieldDist_eq_sum_boundaryDist (hT : g.IsTree) (hP : g.IsProjective) :
+    ∑ w ∈ g.children v, g.yieldDist v w =
+      ∑ c, (g.siblingArrangement v).boundaryDist (fun c ↦ g.phraseLength c)
+        ⟨v, g.self_mem_siblings v⟩ c := by
+  rw [← sum_erase univ (Arrangement.boundaryDist_self ..)]
+  refine sum_bij' (fun w hw ↦ ⟨w, Graph.mem_siblings_of_adj (by simpa using hw)⟩)
+    (fun c _ ↦ c.1) (fun w hw ↦ ?_) (fun c hc ↦ ?_) (fun _ _ ↦ rfl) (fun _ _ ↦ rfl)
+    fun w hw ↦ Graph.yieldDist_eq_boundaryDist hT hP (by simpa using hw)
+  · simp only [mem_erase, mem_univ, and_true, ne_eq, Subtype.mk.injEq]
+    rintro rfl
+    exact hT.not_adj_self (by simpa using hw)
+  · obtain ⟨c, hc'⟩ := c
+    simp only [mem_erase, mem_univ, and_true, ne_eq, Subtype.mk.injEq] at hc
+    simpa [Graph.siblings, hc] using hc'
+
+end Siblings
 
 end DependencyGrammar

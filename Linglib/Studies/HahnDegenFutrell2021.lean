@@ -80,6 +80,8 @@ paper's morpheme templates against Bybee's relevance hierarchy.
   Efficient Trade-Off of Memory and Surprisal* (2021)][hahn-degen-futrell-2021]
 * [J. Bybee, *Morphology: A Study of the Relation between Meaning and Form* (1985)][bybee-1985]
 * [K. Demuth, *Acquisition of Sesotho* (1992)][demuth-1992]
+* [O. Behaghel, *Beziehungen zwischen Umfang und Reihenfolge von Satzgliedern*
+  (1909)][behaghel-1909]
 -/
 
 @[expose] public section
@@ -113,8 +115,31 @@ def shifted : Graph 11 :=
       (9, 8, .advmod), (10, 9, .amod), (4, 2, .case_), (4, 3, .det), (1, 4, .obl)]
 
 /-- Heavy NP shift cuts the verb's distance to the prepositional phrase from nine to three and
-raises its distance to the object from six to nine, so the total dependency length falls. -/
-theorem heavyNPShift_shorter : shifted.totalLength < longObjectFirst.totalLength := by decide
+raises its distance to the object from six to nine, so the total dependency length falls. It is
+Behaghel's law at the verb: after it the prepositional phrase of three words precedes the object
+of six in the shifted order, and the unshifted order swaps them, which leaves the subject, the
+inner arcs and the phrase heads' places in their phrases (21 in all) as they were. -/
+theorem heavyNPShift_shorter : shifted.totalLength < longObjectFirst.totalLength := by
+  have hσ : {c | Equiv.swap (⟨4, by decide⟩ : shifted.siblings 1) ⟨10, by decide⟩ c ≠ c} ⊆
+      ↑((shifted.siblingArrangement 1).after ⟨1, by decide⟩) := by
+    intro c hc
+    simp only [Set.mem_ofPred_eq, Finset.mem_coe, WordOrder.Arrangement.mem_after,
+      Graph.siblingArrangement_precedes] at hc ⊢
+    revert c; decide +kernel
+  have hmono : MonovaryOn (fun c : shifted.siblings 1 ↦ shifted.phraseLength c)
+      (shifted.siblingArrangement 1) ((shifted.siblingArrangement 1).after ⟨1, by decide⟩) := by
+    unfold MonovaryOn; decide +kernel
+  have hlt := (WordOrder.Arrangement.sum_boundaryDist_lt_iff _ hσ hmono).2 (by
+    unfold MonovaryOn; decide +kernel)
+  have h₁ : shifted.totalLength = ∑ c, (shifted.siblingArrangement 1).boundaryDist
+      (fun c : shifted.siblings 1 ↦ shifted.phraseLength c) ⟨1, by decide⟩ c + 21 := by
+    decide +kernel
+  have h₂ : longObjectFirst.totalLength = ∑ c, WordOrder.Arrangement.boundaryDist
+      ((Equiv.swap (⟨4, by decide⟩ : shifted.siblings 1) ⟨10, by decide⟩).trans
+        (shifted.siblingArrangement 1))
+      (fun c : shifted.siblings 1 ↦ shifted.phraseLength c) ⟨1, by decide⟩ c + 21 := by
+    decide +kernel
+  omega
 
 /-! ### The information locality bound -/
 

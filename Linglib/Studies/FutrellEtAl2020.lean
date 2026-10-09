@@ -39,6 +39,7 @@ dependency lengths of Table 2 are the rows of `Data.UD.DependencyLength.FutrellE
 
 * [futrell-levy-gibson-2020]
 * [gildea-temperley-2010]
+* [behaghel-1909]
 -/
 
 @[expose] public section
@@ -108,9 +109,34 @@ def longBeforeShort : Graph 7 :=
   .ofArcs [tok "A", tok "B", tok "C", tok "D", tok "E", tok "F", tok "G"]
     0 [(0, 1, .dep), (1, 2, .dep), (1, 3, .dep), (0, 4, .dep), (4, 5, .dep), (0, 6, .dep)]
 
-/-- (7): short-before-long wins in head-initial contexts. -/
+/-- (7): short-before-long wins in head-initial contexts. It is Behaghel's law at the head *A*:
+the phrases of one, two and three words grow outward in (7a), and (7b) swaps the first and last,
+which leaves the inner arcs (length 4) as they were. -/
 theorem short_before_long_head_initial :
-    shortBeforeLong.totalLength < longBeforeShort.totalLength := by decide
+    shortBeforeLong.totalLength < longBeforeShort.totalLength := by
+  have hσ : {c | Equiv.swap (⟨1, by decide⟩ : shortBeforeLong.siblings 0) ⟨4, by decide⟩ c ≠ c} ⊆
+      ↑((shortBeforeLong.siblingArrangement 0).after ⟨0, by decide⟩) := by
+    intro c hc
+    simp only [Set.mem_ofPred_eq, Finset.mem_coe, WordOrder.Arrangement.mem_after,
+      Graph.siblingArrangement_precedes] at hc ⊢
+    revert c; decide +kernel
+  have hmono : MonovaryOn (fun c : shortBeforeLong.siblings 0 ↦ shortBeforeLong.phraseLength c)
+      (shortBeforeLong.siblingArrangement 0)
+      ((shortBeforeLong.siblingArrangement 0).after ⟨0, by decide⟩) := by
+    unfold MonovaryOn; decide +kernel
+  have hlt := (WordOrder.Arrangement.sum_boundaryDist_lt_iff _ hσ hmono).2 (by
+    unfold MonovaryOn; decide +kernel)
+  have h₁ : shortBeforeLong.totalLength = ∑ c, (shortBeforeLong.siblingArrangement 0).boundaryDist
+      (fun c : shortBeforeLong.siblings 0 ↦ shortBeforeLong.phraseLength c) ⟨0, by decide⟩ c +
+        4 := by
+    decide +kernel
+  have h₂ : longBeforeShort.totalLength = ∑ c, WordOrder.Arrangement.boundaryDist
+      ((Equiv.swap (⟨1, by decide⟩ : shortBeforeLong.siblings 0) ⟨4, by decide⟩).trans
+        (shortBeforeLong.siblingArrangement 0))
+      (fun c : shortBeforeLong.siblings 0 ↦ shortBeforeLong.phraseLength c) ⟨0, by decide⟩ c +
+        4 := by
+    decide +kernel
+  omega
 
 /-- (8): the head-final regime is the mirror image, so long-before-short
     wins there at exactly the head-initial costs — by the general mirror
