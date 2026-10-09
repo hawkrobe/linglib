@@ -307,14 +307,14 @@ def flagged (t : List Feat) : Bool := t.any fun f ↦ match f with | .flag _ => 
 
 /-- The impoverishment rule (84) deletes number from a first-person pronoun a probe has flagged. -/
 def rule84 : ImpoverishmentRule (List Feat) Dim :=
-  .paradigmatic (fun t ↦ (Feat.author true ∈ t) && flagged t) .singular
+  .ofFocus (fun t ↦ Feat.author true ∈ t ∧ flagged t) .singular
 
 /-- The optional rule (93) deletes number from a second-person pronoun flagged by Voice or Poss. -/
 def rule93 : ImpoverishmentRule (List Feat) Dim :=
-  .paradigmatic (fun t ↦ (Feat.participant true ∈ t) && (Feat.flag .vn ∈ t)) .singular
+  .ofFocus (fun t ↦ Feat.participant true ∈ t ∧ Feat.flag .vn ∈ t) .singular
 
 theorem rule84_paradigmatic : rule84.Paradigmatic :=
-  ImpoverishmentRule.paradigmatic_isParadigmatic _ _
+  ImpoverishmentRule.paradigmatic_ofFocus _ _
 
 /-- A pronoun terminal in a cell, flagged by the probe that copied its features, if any. -/
 def pronounTerminal (l : Option Locus) (c : PronCell) : List Feat :=

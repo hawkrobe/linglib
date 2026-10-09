@@ -29,20 +29,22 @@ Consumers: `Studies/Middleton2026.lean` (Basque whole-terminal rules and
 the Ondarru ordering witness), `Studies/HalleMarantz1993.lean` (Tns+Agr
 fusion feeding one insertion).
 
-## Main declarations
+## Main definitions
 
-* `SpelloutDomain`, `rewriteFirst` — the domain, and rewriting it at its
-  first neighborhood satisfying a condition; the count laws
-  `length_rewriteFirst_le` and `length_rewriteFirst` hold because each
-  neighborhood reassembles to the domain (`Neighborhood.toList_of_mem_along`)
-* `ObliterationRule`, `TerminalMetathesisRule` — whole-terminal deletion
-  (Obliteration) and adjacent-terminal swap, with first-match applicators
-  and count laws
-* `FusionRule.applyFirstAdjacent` — the domain lift of Fusion
-* `Spellout` — the module sequence plus insertion in context; `run`, `pf`,
-  `runModules_append`
+* `SpelloutDomain`, `rewriteFirst`: the domain, and rewriting it at its first neighborhood
+  satisfying a condition.
+* `ObliterationRule`, `TerminalMetathesisRule`: whole-terminal deletion and adjacent-terminal
+  swap, each a decidable condition on a neighborhood.
+* `FusionRule.applyFirstAdjacent`: the domain lift of Fusion.
+* `Spellout`, `Spellout.run`, `Spellout.pf`: the module sequence, then insertion in context.
 
-## Todo
+## Main results
+
+* `length_rewriteFirst_le`, `length_rewriteFirst`: the count laws, which hold because each
+  neighborhood reassembles to the domain (`Neighborhood.toList_of_mem_along`).
+* `Spellout.length_pf`: insertion positions equal terminals after the modules.
+
+## TODO
 
 * The LF branch: an `Interpreted` extension whose interpretation reads
   the input domain (the Y-model separation by type), seeded by the
@@ -62,8 +64,8 @@ fusion feeding one insertion).
 
 namespace DistributedMorphology
 
-/-- A spell-out domain: the linear sequence of terminals handed over by
-the syntax at spell-out. -/
+/-- A spell-out domain is the linear sequence of terminals the syntax hands over at
+spell-out. -/
 abbrev SpelloutDomain (Bundle : Type*) := List Bundle
 
 variable {Bundle : Type*}
@@ -72,10 +74,9 @@ open Neighborhood (along toList_of_mem_along)
 
 /-! ### Rewriting at the first neighborhood -/
 
-/-- Rewrite a domain at its first neighborhood satisfying `p`, scanning left to
-right: `f n` for the first such `n`, the domain unchanged if there is none.
-Obliteration, terminal metathesis, and the domain lift of Fusion are its
-instances. -/
+/-- `rewriteFirst p f d` replaces the domain `d` by `f n` for its first neighborhood `n`
+satisfying `p`, scanning left to right, and leaves it unchanged if there is none. Obliteration,
+terminal metathesis, and the domain lift of Fusion are its instances. -/
 def rewriteFirst (p : Neighborhood Bundle → Prop) [DecidablePred p]
     (f : Neighborhood Bundle → SpelloutDomain Bundle) (d : SpelloutDomain Bundle) :
     SpelloutDomain Bundle :=
@@ -111,23 +112,16 @@ the terminal whose neighborhood satisfies `condition` is removed
 outright. The focus-level `ImpoverishmentRule` deletes a feature inside a
 terminal; this rule deletes the terminal. -/
 structure ObliterationRule (Bundle : Type*) where
-  /-- Does the rule fire at this neighborhood? -/
+  /-- The neighborhoods whose focus is removed. -/
   condition : Neighborhood Bundle → Prop
-  /-- Decidability witness for `condition`. -/
-  decCond : DecidablePred condition
+  [decCond : DecidablePred condition]
 
 namespace ObliterationRule
 
-instance (rule : ObliterationRule Bundle) (n : Neighborhood Bundle) :
-    Decidable (rule.condition n) := rule.decCond n
+instance (rule : ObliterationRule Bundle) : DecidablePred rule.condition := rule.decCond
 
-/-- Build an obliteration rule from a Boolean condition. -/
-def ofBool (cond : Neighborhood Bundle → Bool) : ObliterationRule Bundle where
-  condition n := cond n = true
-  decCond n := inferInstanceAs (Decidable (cond n = true))
-
-/-- Apply the rule: the first terminal whose neighborhood fires is dropped;
-otherwise the domain is unchanged. -/
+/-- Applying the rule drops the first terminal whose neighborhood satisfies its condition, and
+otherwise leaves the domain unchanged. -/
 def apply (rule : ObliterationRule Bundle) : SpelloutDomain Bundle → SpelloutDomain Bundle :=
   rewriteFirst rule.condition fun n ↦ n.leftCtx.reverse ++ n.rightCtx
 
@@ -145,23 +139,17 @@ neighborhood, its focus swaps with the terminal to its right. Ergative
 Metathesis, which fronts a clitic across intervening terminals, is a
 `rewriteFirst` of its own there. -/
 structure TerminalMetathesisRule (Bundle : Type*) where
-  /-- Does the focus swap with the terminal to its right? -/
+  /-- The neighborhoods whose focus swaps with the terminal to its right. -/
   condition : Neighborhood Bundle → Prop
-  /-- Decidability witness for `condition`. -/
-  decCond : DecidablePred condition
+  [decCond : DecidablePred condition]
 
 namespace TerminalMetathesisRule
 
-instance (rule : TerminalMetathesisRule Bundle) (n : Neighborhood Bundle) :
-    Decidable (rule.condition n) := rule.decCond n
+instance (rule : TerminalMetathesisRule Bundle) : DecidablePred rule.condition := rule.decCond
 
-/-- Build a terminal-metathesis rule from a Boolean condition. -/
-def ofBool (cond : Neighborhood Bundle → Bool) : TerminalMetathesisRule Bundle where
-  condition n := cond n = true
-  decCond n := inferInstanceAs (Decidable (cond n = true))
-
-/-- Apply the rule: the first focus that has a terminal to its right and whose
-neighborhood fires swaps with that terminal; otherwise the domain is unchanged. -/
+/-- Applying the rule swaps the first focus that has a terminal to its right and whose
+neighborhood satisfies its condition with that terminal, and otherwise leaves the domain
+unchanged. -/
 def apply (rule : TerminalMetathesisRule Bundle) :
     SpelloutDomain Bundle → SpelloutDomain Bundle :=
   rewriteFirst (fun n ↦ n.rightCtx ≠ [] ∧ rule.condition n) fun
@@ -180,8 +168,8 @@ namespace FusionRule
 
 variable {F : Type*}
 
-/-- The domain lift of Fusion: the first terminal that fuses with the terminal
-to its right does so; otherwise the domain is unchanged. -/
+/-- The domain lift of Fusion fuses the first terminal that fuses with the terminal to its right,
+and otherwise leaves the domain unchanged. -/
 def applyFirstAdjacent (rule : FusionRule F) : SpelloutDomain (List F) → SpelloutDomain (List F) :=
   rewriteFirst (fun n ↦ ∃ q ∈ n.rightCtx.head?, rule.condition n.focus q) fun
     | ⟨p, l, q :: r⟩ => l.reverse ++ (p ++ q) :: r
@@ -214,9 +202,8 @@ theorem runModules_append
     runModules ([] : List (SpelloutDomain Bundle → SpelloutDomain Bundle)) d
       = d := rfl
 
-/-- A PF-branch pipeline over a spell-out domain: the ordered
-postsyntactic modules, then Vocabulary Insertion at each surviving
-position, in its neighborhood. -/
+/-- A PF-branch pipeline runs the ordered postsyntactic modules over a spell-out domain, then
+Vocabulary Insertion at each surviving position in its neighborhood. -/
 structure Spellout (Bundle F : Type*) where
   /-- The ordered postsyntactic module sequence. -/
   modules : List (SpelloutDomain Bundle → SpelloutDomain Bundle)
@@ -233,13 +220,13 @@ def run (s : Spellout Bundle F) (d : SpelloutDomain Bundle) :
     SpelloutDomain Bundle :=
   runModules s.modules d
 
-/-- The PF output: one insertion slot per surviving position. -/
+/-- The PF output has one insertion slot per surviving position. -/
 def pf (s : Spellout Bundle F) (d : SpelloutDomain Bundle) :
     List (List F) :=
   (along (s.run d)).map s.insert
 
-/-- Exponent slots equal terminals after the modules: the exponent count
-diverges from the syntactic terminal count only through the modules. -/
+/-- Exponent slots equal terminals after the modules, so the exponent count diverges from the
+syntactic terminal count only through the modules. -/
 @[simp] theorem length_pf (s : Spellout Bundle F) (d : SpelloutDomain Bundle) :
     (s.pf d).length = (s.run d).length := by
   simp [pf]
