@@ -42,6 +42,9 @@ truth-named constructors is this library's ergonomic choice; the name follows th
   non-Boolean instance (`inf_compl_indet_ne_bot`).
 - `Trivalent.meetWeak`/`joinWeak`, `meetMiddle`/`joinMiddle`, `meetBelnap`/`joinBelnap`,
   `xor` — the rival connective families.
+- `Trivalent.meetWith`/`joinWith` — the gap-policy core: the conjunction families share one
+  truth rule and differ only in their definedness condition, Middle Kleene's asymmetry
+  included (`meetWeak_eq_meetWith` and companions).
 - `Trivalent.presuppose`, `Trivalent.metaAssert` — the ∂ and 𝒜 operators of
   [beaver-krahmer-2001].
 - `Trivalent.ofBool`, `Trivalent.ofBoolHom` — `Bool` embeds as a bounded lattice homomorphism.
@@ -393,6 +396,76 @@ theorem orderIsoSignType_xor (a b : Trivalent) :
     orderIsoSignType (xor a b) = -(orderIsoSignType a * orderIsoSignType b) := by
   cases a <;> cases b <;> rfl
 
+/-! ### The gap-policy core
+
+Like the trivalent quantifiers (`Logic/Trivalent/Pointwise.lean`), the binary conjunction
+families share one truth rule — false when either operand is, true otherwise — and differ
+only in where undefinedness projects, their *gap policy*: Strong Kleene is defined whenever
+the operands settle the value, Weak Kleene demands both defined, Belnap demands one, and
+Middle Kleene's asymmetry is an asymmetric policy, defined when the left operand is and
+either settles the value or the right operand is defined too. `meetWith` makes the family a
+function of its policy; each family's pattern-matched definition below stays primary for
+kernel reduction, with a `_eq_meetWith` characterization. Exclusive disjunction has a
+different truth rule and stands outside the scheme. -/
+
+/-- `meetWith D a b` is the conjunction of the family whose definedness condition is `D`:
+undefined unless `D` holds, and otherwise false exactly when an operand is. -/
+def meetWith (D : Prop) [Decidable D] (a b : Trivalent) : Trivalent :=
+  if D then if a = .false ∨ b = .false then .false else .true else .indet
+
+/-- `joinWith D a b` is the disjunction of the family whose definedness condition is `D`,
+the dual of `meetWith`. -/
+def joinWith (D : Prop) [Decidable D] (a b : Trivalent) : Trivalent :=
+  neg (meetWith D (neg a) (neg b))
+
+section GapPolicy
+
+variable {D D' : Prop} [Decidable D] [Decidable D'] {a b : Trivalent}
+
+theorem meetWith_eq_indet_iff : meetWith D a b = .indet ↔ ¬D := by
+  by_cases hD : D <;> by_cases h : a = .false ∨ b = .false <;> simp [meetWith, hD, h]
+
+theorem meetWith_eq_false_iff : meetWith D a b = .false ↔ D ∧ (a = .false ∨ b = .false) := by
+  by_cases hD : D <;> by_cases h : a = .false ∨ b = .false <;> simp [meetWith, hD, h]
+
+theorem meetWith_eq_true_iff : meetWith D a b = .true ↔ D ∧ a ≠ .false ∧ b ≠ .false := by
+  rw [show (a ≠ .false ∧ b ≠ .false) ↔ ¬(a = .false ∨ b = .false) from not_or.symm]
+  by_cases hD : D <;> by_cases h : a = .false ∨ b = .false <;> simp [meetWith, hD, h]
+
+theorem joinWith_eq_indet_iff : joinWith D a b = .indet ↔ ¬D := by
+  simp [joinWith, meetWith_eq_indet_iff]
+
+theorem joinWith_eq_true_iff : joinWith D a b = .true ↔ D ∧ (a = .true ∨ b = .true) := by
+  simp [joinWith, meetWith_eq_false_iff]
+
+theorem joinWith_eq_false_iff : joinWith D a b = .false ↔ D ∧ a ≠ .true ∧ b ≠ .true := by
+  simp [joinWith, meetWith_eq_true_iff]
+
+/-- The families share one truth rule: any two agree wherever both are defined. -/
+theorem meetWith_eq_meetWith_of_defined (hD : D) (hD' : D') :
+    meetWith D a b = meetWith D' a b := by
+  unfold meetWith
+  rw [ite_eq_left hD, ite_eq_left hD']
+
+/-- Dually, any two disjunction families agree wherever both are defined. -/
+theorem joinWith_eq_joinWith_of_defined (hD : D) (hD' : D') :
+    joinWith D a b = joinWith D' a b := by
+  unfold joinWith
+  rw [meetWith_eq_meetWith_of_defined hD hD']
+
+/-- Strong Kleene conjunction is the gap-policy family defined whenever the operands settle
+the value. -/
+theorem inf_eq_meetWith (a b : Trivalent) :
+    a ⊓ b = meetWith ((a = .false ∨ b = .false) ∨ (a = .true ∧ b = .true)) a b := by
+  cases a <;> cases b <;> rfl
+
+/-- Strong Kleene disjunction, dually. -/
+theorem sup_eq_joinWith (a b : Trivalent) :
+    a ⊔ b = joinWith ((a = .true ∨ b = .true) ∨ (a = .false ∧ b = .false)) a b := by
+  cases a <;> cases b <;> rfl
+
+end GapPolicy
+
 /-! ### Weak Kleene and the Beaver-Krahmer operators
 
 The Weak Kleene "internal" connectives originate with [bochvar-1937] (Russian
@@ -416,6 +489,16 @@ def meetWeak : Trivalent → Trivalent → Trivalent
   | .false, .true => .false
   | .false, .false => .false
   | _, _ => .indet
+
+/-- Weak Kleene conjunction is the gap-policy family demanding both operands defined. -/
+theorem meetWeak_eq_meetWith (a b : Trivalent) :
+    meetWeak a b = meetWith (a ≠ .indet ∧ b ≠ .indet) a b := by
+  cases a <;> cases b <;> rfl
+
+/-- Weak Kleene disjunction, dually. -/
+theorem joinWeak_eq_joinWith (a b : Trivalent) :
+    joinWeak a b = joinWith (a ≠ .indet ∧ b ≠ .indet) a b := by
+  cases a <;> cases b <;> rfl
 
 theorem joinWeak_comm (a b : Trivalent) : joinWeak a b = joinWeak b a := by
   cases a <;> cases b <;> rfl
@@ -567,6 +650,17 @@ def joinMiddle : Trivalent → Trivalent → Trivalent
   | .indet, _ => .indet
   | a, b => a ⊔ b
 
+/-- Middle Kleene conjunction is the gap-policy family with the asymmetric policy: the left
+operand is defined, and either settles the value or the right operand is defined too. -/
+theorem meetMiddle_eq_meetWith (a b : Trivalent) :
+    meetMiddle a b = meetWith (a ≠ .indet ∧ (a = .false ∨ b ≠ .indet)) a b := by
+  cases a <;> cases b <;> rfl
+
+/-- Middle Kleene disjunction, dually. -/
+theorem joinMiddle_eq_joinWith (a b : Trivalent) :
+    joinMiddle a b = joinWith (a ≠ .indet ∧ (a = .true ∨ b ≠ .indet)) a b := by
+  cases a <;> cases b <;> rfl
+
 /-- Middle Kleene conjunction is not commutative. -/
 theorem meetMiddle_not_comm : ¬ ∀ a b : Trivalent, meetMiddle a b = meetMiddle b a :=
   fun h => absurd (h .false .indet) (by decide)
@@ -658,6 +752,16 @@ def joinBelnap : Trivalent → Trivalent → Trivalent
   | .indet, b => b
   | a, .indet => a
   | a, b => a ⊔ b
+
+/-- Belnap conjunction is the gap-policy family demanding one operand defined. -/
+theorem meetBelnap_eq_meetWith (a b : Trivalent) :
+    meetBelnap a b = meetWith (a ≠ .indet ∨ b ≠ .indet) a b := by
+  cases a <;> cases b <;> rfl
+
+/-- Belnap disjunction, dually. -/
+theorem joinBelnap_eq_joinWith (a b : Trivalent) :
+    joinBelnap a b = joinWith (a ≠ .indet ∨ b ≠ .indet) a b := by
+  cases a <;> cases b <;> rfl
 
 /-- `indet` is a left identity for Belnap conjunction. -/
 theorem meetBelnap_indet_left (a : Trivalent) : meetBelnap .indet a = a := rfl

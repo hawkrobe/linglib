@@ -197,6 +197,14 @@ theorem forallWith_eq_forallWith_of_defined (hD : D) (hD' : D') :
   unfold forallWith
   rw [ite_eq_left hD, ite_eq_left hD']
 
+theorem forallWith_congr (h : D ↔ D') : forallWith D p = forallWith D' p :=
+  eq_of_indet_iff_of_true_iff
+    (by rw [forallWith_eq_indet_iff, forallWith_eq_indet_iff, h])
+    (by rw [forallWith_eq_true_iff, forallWith_eq_true_iff, h])
+
+theorem existsWith_congr (h : D ↔ D') : existsWith D p = existsWith D' p :=
+  congrArg neg (forallWith_congr h)
+
 end WithFamilies
 
 /-- The Weak Kleene universal quantifier is undefined when any instance is, and otherwise
@@ -302,7 +310,7 @@ variable {ι : Sort*} {p : ι → Trivalent}
 
 end StrongQuantifiers
 
-/-- Haug's universal quantifier skips undefined instances: undefined only when every
+/-- Haug's universal quantifier skips undefined instances — undefined only when every
 instance is, false when some instance is, and true otherwise. -/
 noncomputable def forallHaug (p : W → Trivalent) : Trivalent :=
   forallWith (∃ w, p w ≠ .indet) p
@@ -343,48 +351,62 @@ variable {p : W → Trivalent}
 
 end HaugQuantifiers
 
-/-! ### Each family restricted to a pair is its binary connective -/
+/-! ### Each family restricted to a pair is its binary connective
+
+One lemma carries the correspondence: the gap-policy quantifier at a pair of instances is
+the gap-policy connective at the matching policy (`forallWith_pair`), and each family's
+pair lemma instantiates it. -/
 
 section Pairs
 
 variable (a b : Trivalent)
 
-theorem forallWeak_pair : forallWeak (fun i : Bool => bif i then a else b) = meetWeak a b := by
-  cases a <;> cases b <;>
-    refine eq_of_indet_iff_of_true_iff ?_ ?_ <;>
-    simp [Bool.exists_bool, Bool.forall_bool]
+theorem forallWith_pair {D : Prop} [Decidable D] :
+    forallWith D (fun i : Bool => bif i then a else b) = meetWith D a b := by
+  refine eq_of_indet_iff_of_true_iff ?_ ?_
+  · rw [forallWith_eq_indet_iff, meetWith_eq_indet_iff]
+  · rw [forallWith_eq_true_iff, meetWith_eq_true_iff, Bool.forall_bool]
+    exact and_congr_right fun _ => and_comm
 
-theorem existsWeak_pair : existsWeak (fun i : Bool => bif i then a else b) = joinWeak a b := by
-  cases a <;> cases b <;>
-    refine eq_of_indet_iff_of_true_iff ?_ ?_ <;>
-    simp [Bool.exists_bool, Bool.forall_bool, joinWeak]
+theorem existsWith_pair {D : Prop} [Decidable D] :
+    existsWith D (fun i : Bool => bif i then a else b) = joinWith D a b := by
+  refine eq_of_indet_iff_of_true_iff ?_ ?_
+  · rw [existsWith_eq_indet_iff, joinWith_eq_indet_iff]
+  · rw [existsWith_eq_true_iff, joinWith_eq_true_iff, Bool.exists_bool]
+    exact and_congr_right fun _ => or_comm
+
+theorem forallWeak_pair : forallWeak (fun i : Bool => bif i then a else b) = meetWeak a b :=
+  (forallWith_congr (Bool.forall_bool.trans and_comm)).trans
+    ((forallWith_pair a b).trans (meetWeak_eq_meetWith a b).symm)
+
+theorem existsWeak_pair : existsWeak (fun i : Bool => bif i then a else b) = joinWeak a b :=
+  (existsWith_congr (Bool.forall_bool.trans and_comm)).trans
+    ((existsWith_pair a b).trans (joinWeak_eq_joinWith a b).symm)
 
 theorem forallStrong_pair :
-    forallStrong (fun i : Bool => bif i then a else b) = a ⊓ b := by
-  cases a <;> cases b <;>
-    refine eq_of_indet_iff_of_true_iff ?_ ?_ <;>
-    simp [Bool.exists_bool, Bool.forall_bool] <;> decide
+    forallStrong (fun i : Bool => bif i then a else b) = a ⊓ b :=
+  (forallWith_congr
+      (or_congr (Bool.exists_bool.trans or_comm) (Bool.forall_bool.trans and_comm))).trans
+    ((forallWith_pair a b).trans (inf_eq_meetWith a b).symm)
 
 theorem existsStrong_pair :
-    existsStrong (fun i : Bool => bif i then a else b) = a ⊔ b := by
-  cases a <;> cases b <;>
-    refine eq_of_indet_iff_of_true_iff ?_ ?_ <;>
-    simp [Bool.exists_bool, Bool.forall_bool] <;> decide
+    existsStrong (fun i : Bool => bif i then a else b) = a ⊔ b :=
+  (existsWith_congr
+      (or_congr (Bool.exists_bool.trans or_comm) (Bool.forall_bool.trans and_comm))).trans
+    ((existsWith_pair a b).trans (sup_eq_joinWith a b).symm)
 
 /-- **Haug's quantifier is Belnap's conditional assertion, quantified**: restricted to a
 pair of instances it is the skip-undefined conjunction of [belnap-1970]. -/
 theorem forallHaug_pair :
-    forallHaug (fun i : Bool => bif i then a else b) = meetBelnap a b := by
-  cases a <;> cases b <;>
-    refine eq_of_indet_iff_of_true_iff ?_ ?_ <;>
-    simp [Bool.exists_bool, Bool.forall_bool, meetBelnap]
+    forallHaug (fun i : Bool => bif i then a else b) = meetBelnap a b :=
+  (forallWith_congr (Bool.exists_bool.trans or_comm)).trans
+    ((forallWith_pair a b).trans (meetBelnap_eq_meetWith a b).symm)
 
-/-- The dual: Haug's existential restricted to a pair is Belnap disjunction. -/
+/-- Dually, Haug's existential restricted to a pair is Belnap disjunction. -/
 theorem existsHaug_pair :
-    existsHaug (fun i : Bool => bif i then a else b) = joinBelnap a b := by
-  cases a <;> cases b <;>
-    refine eq_of_indet_iff_of_true_iff ?_ ?_ <;>
-    simp [Bool.exists_bool, Bool.forall_bool, joinBelnap]
+    existsHaug (fun i : Bool => bif i then a else b) = joinBelnap a b :=
+  (existsWith_congr (Bool.exists_bool.trans or_comm)).trans
+    ((existsWith_pair a b).trans (joinBelnap_eq_joinWith a b).symm)
 
 end Pairs
 
