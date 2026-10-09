@@ -115,7 +115,7 @@ theorem some_realize (c : Context) :
     Morphology.Exponence.selectBy, happ, List.argmax_concat]
   cases (Morphology.Exponence.applicable v.items ↑[c]).argmax VocabularyItem.specificity with
   | none => rfl
-  | some i => simp [VocabularyItem.specificity]
+  | some i => simp
 
 /-- A context that no item applies to gets the elsewhere form. -/
 theorem realize_eq_elsewhere (h : ∀ i ∈ v.items, ¬ i.site ⊆ ↑[c]) :

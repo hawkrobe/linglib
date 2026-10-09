@@ -328,21 +328,22 @@ theorem fission_alone_allows_double_plural :
 
 /-! ### The ranking -/
 
-/-- An item ranks by the number of interpretable features it discharges, then of its intrinsic
-features, then of its contextual ones, so that intrinsic features lead. -/
+/-- An item ranks by the number of interpretable features it discharges, then by its Subset
+Principle specificity, its intrinsic features leading and its contextual ones breaking ties. -/
 def rank (i : VocabularyItem Feature String) : ℕ ×ₗ ℕ ×ₗ ℕ :=
-  toLex (i.site.focus.countP (·.IsInterpretable),
-    toLex (i.site.focus.length, i.site.leftCtx.flatten.length))
+  toLex (i.site.focus.countP (·.IsInterpretable), i.specificity)
 
 /-- Each screeve's Vocabulary descends in rank, since interpretable features are discharged as
 soon as possible ((10c), (13a)) and *-t* ranks above *-s* ((20)). -/
 theorem vocabulary_ranked (s : Screeve) : s.vocabulary.Pairwise fun i j ↦ rank j < rank i := by
   cases s <;> decide
 
-/-- The ranking is not the Subset Principle's specificity, since the null participant suffix
-mentions more features than *-t* yet ranks below it. -/
-theorem rank_not_specificity :
-    plural.specificity < participantNumber.specificity ∧ rank participantNumber < rank plural := by
+/-- Intrinsic features lead the ranking, so *-t* (13c) ranks above the null participant suffix
+(13d) though it mentions fewer features, and contextual ones break ties, so (13d) ranks above
+*-s* (13e). -/
+theorem specificity_number :
+    participantNumber.specificity < plural.specificity ∧
+      defaultNumber.specificity < participantNumber.specificity := by
   decide
 
 /-- The geometry ranks the prefixes (9a) above (9b) above (9c) and (9d) above (9e) above (9f),
