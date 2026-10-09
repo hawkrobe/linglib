@@ -167,7 +167,7 @@ structure Attitude where
   /-- The domain. -/
   base : W → Set W
   /-- The ordering source. -/
-  g : W → List (W → Prop)
+  g : W → Set (W → Prop)
 
 /-- A measure of the members of a comparison class, and the individual described. -/
 structure Superlative where
@@ -442,7 +442,7 @@ theorem isStrawsonDE_adversative : adversative.licenser.IsStrawsonDE := fun p �
 
 theorem not_holds_adversative : ¬ adversative.licenser.Holds .anti := fun h ↦
   Desire.BestWorlds.not_antitone_truthSet_regret (Signature.holdsFor_anti_iff.mp
-    (h ⟨Bool, fun _ ↦ {true}, fun _ ↦ .univ, fun _ ↦ [(· = false)]⟩))
+    (h ⟨Bool, fun _ ↦ {true}, fun _ ↦ .univ, fun _ ↦ {(· = false)}⟩))
 
 theorem isStrawsonDE_superlative : superlative.licenser.IsStrawsonDE := fun p ↦
   Degree.isStrawsonDE_superlative p.μ p.x
