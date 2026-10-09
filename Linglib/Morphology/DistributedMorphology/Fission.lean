@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
+public import Mathlib.Data.List.Count
 
 /-!
 # Fission
@@ -25,14 +26,15 @@ arguments' shared features are discharged one at a time.
 
 * `discharge`: remove an item's features from the first matrix containing
   its site.
-* `scansion`: the exponents a node's matrices receive under strict
-  scansion with local Fission.
+* `insertions`, `scansion`: the items a node's matrices receive under strict
+  scansion with local Fission, and their exponents.
 
 ## Main results
 
-* `scansion_sublist`: the exponents are a subsequence of the Vocabulary's
-  — each item at most once, in list order.
-* `scansion_nil`: a node with no matrix receives nothing.
+* `insertions_sublist`: the items are a subsequence of the Vocabulary — each
+  at most once, in list order.
+* `countP_insertions_le`: a feature is discharged at most as often as the
+  node bears it, so Fission never expones one feature twice.
 * `head?_scansion_singleton`: on a Vocabulary ordered by specificity, the
   first insertion at a single matrix is the Subset Principle's winner.
 
@@ -64,49 +66,91 @@ def discharge (i : VocabularyItem F E) (env : Neighborhood (List F)) :
       some (m.diff i.site.focus :: ms)
     else (discharge i env ms).map (m :: ·)
 
-/-- Strict scansion with local Fission: the exponents received by a node
-bearing the matrices `ms` in the environment `env`. -/
-def scansion (items : List (VocabularyItem F E)) (env : Neighborhood (List F)) :
-    List (List F) → List E
-  | ms => go items ms
-where
-  /-- Scan the remaining items against the remaining matrices. -/
-  go : List (VocabularyItem F E) → List (List F) → List E
-    | [], _ => []
-    | i :: rest, ms =>
-      match discharge i env ms with
-      | some ms' => i.exponent :: go rest ms'
-      | none => go rest ms
+/-- Strict scansion with local Fission inserts these items, in Vocabulary order,
+at a node bearing the matrices `ms` in the environment `env`. -/
+def insertions : List (VocabularyItem F E) → Neighborhood (List F) → List (List F) →
+    List (VocabularyItem F E)
+  | [], _, _ => []
+  | i :: rest, env, ms =>
+    match discharge i env ms with
+    | some ms' => i :: insertions rest env ms'
+    | none => insertions rest env ms
+
+/-- A node bearing the matrices `ms` in the environment `env` receives these
+exponents. -/
+def scansion (items : List (VocabularyItem F E)) (env : Neighborhood (List F))
+    (ms : List (List F)) : List E :=
+  (insertions items env ms).map (·.exponent)
 
 variable {items : List (VocabularyItem F E)} {env : Neighborhood (List F)}
 
 @[simp] theorem discharge_nil (i : VocabularyItem F E) : discharge i env [] = none := rfl
 
-theorem scansion_go_nil : ∀ items : List (VocabularyItem F E), scansion.go env items [] = []
-  | [] => rfl
-  | _ :: rest => by simp [scansion.go, scansion_go_nil rest]
-
 /-- A node with no matrix receives nothing. -/
-@[simp] theorem scansion_nil : scansion items env [] = [] := scansion_go_nil items
+@[simp] theorem insertions_nil_right :
+    ∀ items : List (VocabularyItem F E), insertions items env [] = []
+  | [] => rfl
+  | _ :: rest => by simp [insertions, insertions_nil_right rest]
+
+@[simp] theorem scansion_nil : scansion items env [] = [] := by simp [scansion]
 
 /-- Each item is inserted at most once, in Vocabulary order. -/
-theorem scansion_go_sublist :
+theorem insertions_sublist :
     ∀ (items : List (VocabularyItem F E)) (ms : List (List F)),
-      (scansion.go env items ms).Sublist (items.map (·.exponent))
-  | [], _ => List.Sublist.refl _
+      (insertions items env ms).Sublist items
+  | [], _ => .slnil
   | i :: rest, ms => by
-    simp only [scansion.go, List.map_cons]
+    simp only [insertions]
     split
-    · exact (scansion_go_sublist rest _).cons_cons _
-    · exact (scansion_go_sublist rest ms).cons _
+    · exact (insertions_sublist rest _).cons_cons _
+    · exact (insertions_sublist rest ms).cons _
 
 theorem scansion_sublist (ms : List (List F)) :
     (scansion items env ms).Sublist (items.map (·.exponent)) :=
-  scansion_go_sublist items ms
+  (insertions_sublist items ms).map _
 
 theorem length_scansion_le (ms : List (List F)) :
     (scansion items env ms).length ≤ items.length := by
   simpa using (scansion_sublist (items := items) (env := env) ms).length_le
+
+/-- Discharge removes one occurrence of each feature of the item's focus from
+the matrix it draws on. -/
+theorem sum_count_discharge_add_le {i : VocabularyItem F E} (f : F) :
+    ∀ {ms ms' : List (List F)}, discharge i env ms = some ms' →
+      (ms'.map (·.count f)).sum + (if f ∈ i.site.focus then 1 else 0) ≤
+        (ms.map (·.count f)).sum
+  | [], _, h => by simp at h
+  | m :: ms, ms', h => by
+    unfold discharge at h
+    split_ifs at h with hs
+    · cases h
+      have hm : i.site.focus ⊆ m := Neighborhood.focus_subset_focus hs
+      simp only [List.map_cons, List.sum_cons, List.count_diff]
+      split_ifs with hf
+      · have := List.count_pos_iff.mpr (hm hf)
+        have := List.count_pos_iff.mpr hf
+        omega
+      · omega
+    · obtain ⟨ms'', h'', rfl⟩ := Option.map_eq_some_iff.mp h
+      have := sum_count_discharge_add_le f h''
+      simp only [List.map_cons, List.sum_cons]
+      omega
+
+/-- **No multiple exponence.** The inserted items realizing a feature number at
+most the node's occurrences of it, since each discharges one. -/
+theorem countP_insertions_le (f : F) :
+    ∀ (items : List (VocabularyItem F E)) (ms : List (List F)),
+      (insertions items env ms).countP (f ∈ ·.site.focus) ≤ (ms.map (·.count f)).sum
+  | [], _ => by simp [insertions]
+  | i :: rest, ms => by
+    simp only [insertions]
+    split
+    · next ms' h =>
+      have := sum_count_discharge_add_le f h
+      have := countP_insertions_le f rest ms'
+      rw [List.countP_cons]
+      split_ifs at * <;> simp_all <;> omega
+    · exact countP_insertions_le f rest ms
 
 /-- At a single matrix, an item discharges iff it applies there. -/
 theorem discharge_singleton (i : VocabularyItem F E) (m : List F) :
@@ -123,13 +167,13 @@ theorem head?_scansion_singleton (m : List F)
     (scansion items env [m]).head? =
       (winner? items ({ env with focus := m } : Neighborhood (List F))).map (·.exponent) := by
   induction items with
-  | nil => simp [scansion, scansion.go, winner?, selectBy, applicable]
+  | nil => simp [scansion, insertions, winner?, selectBy, applicable]
   | cons i rest ih =>
     rw [List.pairwise_cons] at hsorted
-    simp only [scansion, scansion.go, discharge_singleton]
+    simp only [scansion, insertions, discharge_singleton]
     by_cases h : i.site ⊆ ({ env with focus := m } : Neighborhood (List F))
     · rw [ite_eq_left h]
-      simp only [List.head?_cons, winner?, selectBy, applicable, List.filter_cons,
+      simp only [winner?, selectBy, applicable, List.filter_cons,
         decide_eq_true (show Applies i _ from h), ite_true]
       rw [List.argmax_cons]
       rcases hc : List.argmax VocabularyItem.specificity

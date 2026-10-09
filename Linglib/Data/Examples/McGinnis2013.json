@@ -53,6 +53,32 @@
     "comment": ""
   },
   {
+    "id": "mcginnis2013_3a_pl",
+    "source": {"bibkey": "mcginnis-2013", "paperLabel": "(3a), (5a), (11a), (17b)"},
+    "language": "nucl1302",
+    "primaryText": "g-nax-es",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["g-nax-es", "2.dat-see-aor.3pl"]
+    ],
+    "translation": "They saw you (pl).",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["subjPerson", "3"],
+      ["subjNumber", "pl"],
+      ["objPerson", "2"],
+      ["objNumber", "pl"],
+      ["objCase", "dat"],
+      ["screeve", "aorist"],
+      ["prefix", "g"],
+      ["suffix1", "es"]
+    ],
+    "comment": ""
+  },
+  {
     "id": "mcginnis2013_3b",
     "source": {"bibkey": "mcginnis-2013", "paperLabel": "(3b), (17b)"},
     "language": "nucl1302",
@@ -63,7 +89,7 @@
     ],
     "translation": "They saw you (pl).",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -116,7 +142,7 @@
     ],
     "translation": "I saw them.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -169,7 +195,7 @@
     ],
     "translation": "I saw them.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -276,7 +302,7 @@
     ],
     "translation": "... that he/she see you (pl)",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -304,7 +330,7 @@
     ],
     "translation": "... that he/she see you (pl)",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -411,7 +437,7 @@
     ],
     "translation": "He/she saw us.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
