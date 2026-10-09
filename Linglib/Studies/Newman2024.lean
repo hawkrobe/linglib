@@ -6,6 +6,7 @@ public import Linglib.Syntax.Minimalist.Defs
 public import Linglib.Syntax.Tree.Projection
 public import Linglib.Syntax.Binding.Basic
 public import Linglib.Syntax.Case.Dependent
+public import Linglib.Phonology.RuleInteraction
 
 /-!
 # Newman (2024): *When Arguments Merge*
@@ -611,12 +612,14 @@ def Possible (s : Finset Feature) (done : List ι) (a : ι) : Prop :=
 instance (s : Finset Feature) (done : List ι) (a : ι) : Decidable (S.Possible s done a) :=
   inferInstanceAs (Decidable (_ ∧ _ ∧ _))
 
-/-- Doing `a` bleeds `b` when `b` is possible now but not once `a` has applied. -/
+/-- Doing `a` bleeds `b` when `b` is possible now but not once `a` has applied, Kiparsky's bleeding
+over the unchecked features and the operations done. -/
 def Bleeds (s : Finset Feature) (done : List ι) (a b : ι) : Prop :=
-  S.Possible s done b ∧ ¬ S.Possible (s \ S.checks a) (done ++ [a]) b
+  RuleInteraction.Bleeds (fun a st ↦ (st.1 \ S.checks a, st.2 ++ [a]))
+    (fun b st ↦ S.Possible st.1 st.2 b) a b (s, done)
 
 instance (s : Finset Feature) (done : List ι) (a b : ι) : Decidable (S.Bleeds s done a b) :=
-  inferInstanceAs (Decidable (_ ∧ _))
+  inferInstanceAs (Decidable (RuleInteraction.Bleeds _ _ a b (s, done)))
 
 /-- Weak Economy does not compare two operations when either would bleed the other. -/
 def Exempt (s : Finset Feature) (done : List ι) (a b : ι) : Prop :=
