@@ -287,6 +287,14 @@ theorem IsCulminative.eq_of_eq_peak (hc : IsCulminative g) {i j : ℕ} (hi : i <
     `r`. -/
 def rows (g : Grid) : Marks := (List.range (peak g)).map (fun r => g.map (r < ·))
 
+@[simp] theorem length_rows : (rows g).length = peak g := by simp [rows]
+
+@[simp] theorem length_getElem_rows {r : ℕ} (hr : r < (rows g).length) :
+    (rows g)[r].length = g.length := by simp [rows]
+
+@[simp] theorem getElem_rows {r i : ℕ} (hr : r < (rows g).length) (hi : i < (rows g)[r].length) :
+    (rows g)[r][i] = decide (r < g[i]'(by simpa using hi)) := by simp [rows]
+
 /-- **The Continuous Column Constraint is free.** Every rendered grid satisfies it, because a column
     is a solid stack of marks by construction — continuity is the shape of a histogram, not a
     theorem about trees ([hayes-1995] §3.4.2). -/

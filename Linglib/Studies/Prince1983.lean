@@ -19,7 +19,7 @@ Garawa, Hawaiian and Winnebago and the quantity-sensitive systems of (98).
 
 ## Main statements
 
-* `SWTree.uniformWS_rppr_iff`: under uniform labelling the RPPR is the End Rule.
+* `SWTree.uniform_rppr_iff`: under uniform labelling at either edge the RPPR is the End Rule.
 * `moveXL_getD_peak`, `Marks.not_isContinuous_move`: Move x never moves the peak, since the move
   would leave a hole in a column.
 * `postpeninitial_iff`, `antepenultimate_iff`: stress three syllables from an edge comes only from
@@ -60,11 +60,26 @@ open Prosody Prosody.Grid
 
 /-! ### Trees, the Relative Prominence Projection Rule, and the End Rule (§1.3, §2.1) -/
 
-/-- An s/w-labelled binary metrical tree whose terminals carry their grid column heights. -/
+/-- `place e a b` sets `a` beside `b`, with `a` at edge `e`. -/
+def place : Edge → List ℕ → List ℕ → List ℕ
+  | .left, a, b => a ++ b
+  | .right, a, b => b ++ a
+
+@[simp] theorem mem_place {e : Edge} {a b : List ℕ} {x : ℕ} :
+    x ∈ place e a b ↔ x ∈ a ∨ x ∈ b := by
+  cases e <;> simp [place, or_comm]
+
+theorem perm_place (e : Edge) (a b : List ℕ) : (place e a b).Perm (a ++ b) := by
+  cases e
+  · exact .refl _
+  · exact List.perm_append_comm
+
+/-- An s/w-labelled binary metrical tree whose terminals carry their grid column heights. A node
+holds its strong daughter `s`, its weak daughter `w`, and the edge `e` at which `s` stands, so
+the labelling is independent of linear order. -/
 inductive SWTree
   | leaf (h : ℕ)
-  | ws (w s : SWTree)
-  | sw (s w : SWTree)
+  | node (s w : SWTree) (e : Edge)
   deriving DecidableEq, Repr
 
 namespace SWTree
@@ -72,54 +87,50 @@ namespace SWTree
 /-- The grid over a tree lists the column heights of its terminals, left to right. -/
 def heights : SWTree → Grid
   | leaf h => [h]
-  | ws w s => heights w ++ heights s
-  | sw s w => heights s ++ heights w
+  | node s w e => place e (heights s) (heights w)
 
 /-- `H(N)` is the height of the head terminal, reached from the root through strong daughters. -/
 def headHeight : SWTree → ℕ
   | leaf h => h
-  | ws _ s => headHeight s
-  | sw s _ => headHeight s
+  | node s _ _ => headHeight s
 
-/-- The heights of the terminals other than the head. -/
+/-- `weakHeights t` lists the heights of the terminals other than the head. -/
 def weakHeights : SWTree → List ℕ
   | leaf _ => []
-  | ws w s => heights w ++ weakHeights s
-  | sw s w => weakHeights s ++ heights w
+  | node s w e => place e (weakHeights s) (heights w)
 
 theorem mem_heights {t : SWTree} {h : ℕ} :
     h ∈ heights t ↔ h = headHeight t ∨ h ∈ weakHeights t := by
   induction t with
   | leaf x => simp [heights, headHeight, weakHeights]
-  | ws w s _ ihs => simp [heights, headHeight, weakHeights, ihs, or_left_comm]
-  | sw s w ihs _ => simp [heights, headHeight, weakHeights, ihs, or_assoc]
+  | node s w e ihs _ => simp [heights, headHeight, weakHeights, ihs, or_assoc]
 
-theorem headHeight_mem (t : SWTree) : headHeight t ∈ heights t := mem_heights.2 (Or.inl rfl)
+theorem headHeight_mem (t : SWTree) : headHeight t ∈ heights t := mem_heights.2 (.inl rfl)
 
 /-- The terminals are the head and the others. -/
 theorem heights_perm (t : SWTree) : (heights t).Perm (headHeight t :: weakHeights t) := by
   induction t with
-  | leaf _ => exact List.Perm.refl _
-  | ws w s _ ihs =>
-    simp only [heights, headHeight, weakHeights]
-    exact (ihs.append_left _).trans List.perm_middle
-  | sw s w ihs _ =>
-    simpa only [heights, headHeight, weakHeights, List.cons_append] using ihs.append_right _
+  | leaf _ => exact .refl _
+  | node s w e ihs _ =>
+    exact (perm_place e _ _).trans ((ihs.append_right _).trans (.cons _ (perm_place e _ _).symm))
+
+/-- `Everywhere P t` says that `P` holds of every constituent of `t`. -/
+def Everywhere (P : SWTree → Prop) : SWTree → Prop
+  | leaf h => P (leaf h)
+  | node s w e => Everywhere P s ∧ Everywhere P w ∧ P (node s w e)
+
+theorem Everywhere.self {P : SWTree → Prop} {t : SWTree} (h : Everywhere P t) : P t := by
+  cases t with
+  | leaf _ => exact h
+  | node _ _ _ => exact h.2.2
 
 /-- The Relative Prominence Projection Rule (7) requires `H(s) > H(w)` of every pair of sisters. -/
 def Rppr : SWTree → Prop
   | leaf _ => True
-  | ws w s => Rppr w ∧ Rppr s ∧ headHeight w < headHeight s
-  | sw s w => Rppr s ∧ Rppr w ∧ headHeight w < headHeight s
+  | node s w _ => Rppr s ∧ Rppr w ∧ headHeight w < headHeight s
 
 /-- The head of a constituent is stronger than each of its other terminals. -/
 def HeadStrong (t : SWTree) : Prop := ∀ h ∈ weakHeights t, h < headHeight t
-
-/-- The head is strongest in every constituent. -/
-def HeadStrongest : SWTree → Prop
-  | leaf _ => True
-  | ws w s => HeadStrongest w ∧ HeadStrongest s ∧ HeadStrong (ws w s)
-  | sw s w => HeadStrongest s ∧ HeadStrongest w ∧ HeadStrong (sw s w)
 
 theorem HeadStrong.le {t : SWTree} (ht : HeadStrong t) {h : ℕ} (hh : h ∈ heights t) :
     h ≤ headHeight t := by
@@ -127,120 +138,72 @@ theorem HeadStrong.le {t : SWTree} (ht : HeadStrong t) {h : ℕ} (hh : h ∈ hei
   · exact le_rfl
   · exact (ht h hw).le
 
-theorem HeadStrongest.headStrong {t : SWTree} (h : HeadStrongest t) : HeadStrong t := by
-  cases t with
-  | leaf _ => simp [HeadStrong, weakHeights]
-  | ws _ _ => exact h.2.2
-  | sw _ _ => exact h.2.2
+/-- Over head-strong daughters, a node is head-strong exactly when its sisters meet the RPPR. -/
+theorem headStrong_node_iff {s w : SWTree} {e : Edge} (hs : HeadStrong s) (hw : HeadStrong w) :
+    HeadStrong (node s w e) ↔ headHeight w < headHeight s := by
+  simp only [HeadStrong, weakHeights, headHeight, mem_place]
+  exact ⟨fun h ↦ h _ (.inr (headHeight_mem w)),
+    fun hlt h ↦ (·.elim (hs h) fun hh ↦ (hw.le hh).trans_lt hlt)⟩
 
 /-- The RPPR, a condition on sisters, says that the head is strongest in every constituent. -/
-theorem rppr_iff_headStrongest (t : SWTree) : Rppr t ↔ HeadStrongest t := by
+theorem rppr_iff (t : SWTree) : Rppr t ↔ Everywhere HeadStrong t := by
   induction t with
-  | leaf _ => exact Iff.rfl
-  | ws w s ihw ihs =>
-    simp only [Rppr, HeadStrongest, ihw, ihs, HeadStrong, weakHeights, headHeight,
-      List.mem_append]
-    exact and_congr_right fun hw ↦ and_congr_right fun hs ↦
-      ⟨fun hlt h ↦ (·.elim (fun hh ↦ (hw.headStrong.le hh).trans_lt hlt) (hs.headStrong h)),
-        fun h ↦ h _ (.inl (headHeight_mem w))⟩
-  | sw s w ihs ihw =>
-    simp only [Rppr, HeadStrongest, ihw, ihs, HeadStrong, weakHeights, headHeight,
-      List.mem_append]
+  | leaf _ => simp [Rppr, Everywhere, HeadStrong, weakHeights]
+  | node s w e ihs ihw =>
+    rw [Rppr, Everywhere, ihs, ihw]
     exact and_congr_right fun hs ↦ and_congr_right fun hw ↦
-      ⟨fun hlt h ↦ (·.elim (hs.headStrong h) fun hh ↦ (hw.headStrong.le hh).trans_lt hlt),
-        fun h ↦ h _ (.inr (headHeight_mem w))⟩
+      (headStrong_node_iff hs.self hw.self).symm
 
 /-- Under the RPPR the grid is culminative: the head terminal is its unique peak. -/
 theorem isCulminative_of_rppr {t : SWTree} (h : Rppr t) : IsCulminative (heights t) := by
-  have hs := ((rppr_iff_headStrongest t).1 h).headStrong
+  have hs := ((rppr_iff t).1 h).self
   have hpeak : peak (heights t) = headHeight t :=
     le_antisymm (peak_le fun x hx ↦ hs.le hx) (le_peak (headHeight_mem t))
   rw [IsCulminative, hpeak, (heights_perm t).countP_eq, List.countP_cons_of_pos (by simp),
     List.countP_eq_zero.2 fun x hx ↦ by simpa using (hs x hx).ne]
 
-/-- The height of the rightmost terminal. -/
-def lastHeight : SWTree → ℕ
+/-- `edgeHeight e t` is the height of the terminal at edge `e`. -/
+def edgeHeight (e : Edge) : SWTree → ℕ
   | leaf h => h
-  | ws _ s => lastHeight s
-  | sw _ w => lastHeight w
+  | node s w e' => if e' = e then edgeHeight e s else edgeHeight e w
 
-/-- The heights of all terminals but the rightmost. -/
-def initHeights : SWTree → List ℕ
+/-- `otherHeights e t` lists the heights of the terminals other than the one at edge `e`. -/
+def otherHeights (e : Edge) : SWTree → List ℕ
   | leaf _ => []
-  | ws w s => heights w ++ initHeights s
-  | sw s w => heights s ++ initHeights w
+  | node s w e' =>
+    if e' = e then place e' (otherHeights e s) (heights w)
+    else place e' (heights s) (otherHeights e w)
 
-theorem heights_eq (t : SWTree) : heights t = initHeights t ++ [lastHeight t] := by
-  induction t with
-  | leaf _ => rfl
-  | ws w s _ ihs => simp [heights, initHeights, lastHeight, ihs]
-  | sw s w _ ihw => simp [heights, initHeights, lastHeight, ihw]
+/-- The End Rule (13) at edge `e` makes the terminal there stronger than every other terminal. -/
+def EdgeStrong (e : Edge) (t : SWTree) : Prop := ∀ h ∈ otherHeights e t, h < edgeHeight e t
 
-/-- The right-hand End Rule (13) makes the rightmost terminal of every constituent stronger than
-every other terminal. -/
-def EndRuleRight : SWTree → Prop
+/-- A tree is uniformly labelled at edge `e` when every constituent is strong there. -/
+def Uniform (e : Edge) : SWTree → Prop
   | leaf _ => True
-  | ws w s => EndRuleRight w ∧ EndRuleRight s ∧
-      ∀ h ∈ initHeights (ws w s), h < lastHeight (ws w s)
-  | sw s w => EndRuleRight s ∧ EndRuleRight w ∧
-      ∀ h ∈ initHeights (sw s w), h < lastHeight (sw s w)
+  | node s w e' => e' = e ∧ Uniform e s ∧ Uniform e w
 
-/-- A tree is uniformly `[w s]` labelled when every constituent is strong on the right. -/
-def UniformWS : SWTree → Prop
-  | leaf _ => True
-  | ws w s => UniformWS w ∧ UniformWS s
-  | sw _ _ => False
-
-theorem UniformWS.headHeight_eq {t : SWTree} (h : UniformWS t) :
-    headHeight t = lastHeight t := by
+theorem Uniform.headHeight_eq {e : Edge} {t : SWTree} (h : Uniform e t) :
+    headHeight t = edgeHeight e t := by
   induction t with
   | leaf _ => rfl
-  | ws w s _ ihs => exact ihs h.2
-  | sw _ _ _ _ => exact h.elim
+  | node s w e' ihs _ => simp [headHeight, edgeHeight, h.1, ihs h.2.1]
 
-theorem UniformWS.weakHeights_eq {t : SWTree} (h : UniformWS t) :
-    weakHeights t = initHeights t := by
+theorem Uniform.weakHeights_eq {e : Edge} {t : SWTree} (h : Uniform e t) :
+    weakHeights t = otherHeights e t := by
   induction t with
   | leaf _ => rfl
-  | ws w s _ ihs => simp [weakHeights, initHeights, ihs h.2]
-  | sw _ _ _ _ => exact h.elim
+  | node s w e' ihs _ => simp [weakHeights, otherHeights, h.1, ihs h.2.1]
 
-/-- Under uniform `[w s]` labelling the RPPR says exactly what the End Rule says, so the
+/-- Under uniform labelling at either edge the RPPR says exactly what the End Rule says, so the
 labelling of nonterminals does no work. -/
-theorem uniformWS_rppr_iff {t : SWTree} (h : UniformWS t) : Rppr t ↔ EndRuleRight t := by
-  rw [rppr_iff_headStrongest]
+theorem uniform_rppr_iff {e : Edge} {t : SWTree} (h : Uniform e t) :
+    Rppr t ↔ Everywhere (EdgeStrong e) t := by
+  rw [rppr_iff]
   induction t with
-  | leaf _ => exact Iff.rfl
-  | ws w s ihw ihs =>
-    simp only [HeadStrongest, EndRuleRight, ihw h.1, ihs h.2, HeadStrong, weakHeights,
-      initHeights, headHeight, lastHeight, h.2.weakHeights_eq, h.2.headHeight_eq]
-  | sw _ _ _ _ => exact h.elim
-
-/-- The mirror image of a tree. -/
-def reverse : SWTree → SWTree
-  | leaf h => leaf h
-  | ws w s => sw s.reverse w.reverse
-  | sw s w => ws w.reverse s.reverse
-
-@[simp] theorem heights_reverse (t : SWTree) : heights t.reverse = (heights t).reverse := by
-  induction t <;> simp [reverse, heights, *]
-
-@[simp] theorem headHeight_reverse (t : SWTree) : headHeight t.reverse = headHeight t := by
-  induction t <;> simp [reverse, headHeight, *]
-
-theorem rppr_reverse (t : SWTree) : Rppr t.reverse ↔ Rppr t := by
-  induction t <;> simp [reverse, Rppr, *, and_left_comm]
-
-/-- A tree is uniformly `[s w]` labelled when every constituent is strong on the left. -/
-def UniformSW (t : SWTree) : Prop := UniformWS t.reverse
-
-/-- The left-hand End Rule (13), the mirror image of the right-hand one, makes the leftmost
-terminal of every constituent the strongest. -/
-def EndRuleLeft (t : SWTree) : Prop := EndRuleRight t.reverse
-
-/-- Uniform `[s w]` labelling under the RPPR is the left-hand End Rule. -/
-theorem uniformSW_rppr_iff {t : SWTree} (h : UniformSW t) : Rppr t ↔ EndRuleLeft t :=
-  (rppr_reverse t).symm.trans (uniformWS_rppr_iff h)
+  | leaf _ => simp [Everywhere, HeadStrong, EdgeStrong, weakHeights, otherHeights]
+  | node s w e' ihs ihw =>
+    simp only [Everywhere, ihs h.2.1, ihw h.2.2, HeadStrong, EdgeStrong, h.headHeight_eq,
+      h.weakHeights_eq]
 
 end SWTree
 
@@ -316,14 +279,10 @@ so no such move is available on well-formed grids. -/
 theorem Marks.not_isContinuous_move {g : Grid} {n i k : ℕ} (hi : i < g.length) (hn : n < g[i])
     (hn1 : 1 ≤ n) (hk : k ≠ i) : ¬ Marks.IsContinuous (Marks.move (n - 1) i k (rows g)) := by
   intro h
-  have hlen : n < peak g := lt_of_lt_of_le hn (le_peak (List.getElem_mem hi))
-  have h1 : n - 1 + 1 = n := by omega
-  have hm := Marks.isContinuous_iff.1 h (n - 1)
-  simp only [Marks.move, List.length_modify, rows, List.length_map, List.length_range, h1,
-    List.getElem_modify_ne _ _ (show n - 1 ≠ n by omega), List.getElem_modify_eq,
-    List.getElem_map, List.getElem_range, List.length_set] at hm
-  have := hm hlen i (by simpa using hi) (by simpa using hi)
-  simp [List.getElem_set_ne hk, hn] at this
+  have hlen : n < peak g := hn.trans_le (le_peak (List.getElem_mem hi))
+  have := Marks.isContinuous_iff.1 h (n - 1) (by simp [Marks.move]; omega) i
+    (by simp [Marks.move, hi]) (by simp [Marks.move, hi])
+  simp [Marks.move, show n - 1 + 1 = n by omega, show n - 1 ≠ n by omega, hn, hk] at this
 
 theorem moveXL_eq_or (n : ℕ) (g : Grid) :
     moveXL n g = g ∨ ∃ i j k, i < g.length ∧ j < g.length ∧ Clash g n i j ∧ g.getD i 0 = n ∧
@@ -343,22 +302,36 @@ theorem moveXL_eq_or (n : ℕ) (g : Grid) :
           by simpa using List.find?_some hk, rfl⟩
     · exact .inl rfl
 
-/-- The absolute peak never moves (31): a clash at the peak's level would need a second peak. -/
+theorem moveXL_eq_self_of_not_clash {n : ℕ} {g : Grid}
+    (h : ∀ i < g.length, ∀ j < g.length, ¬ Clash g n i j) : moveXL n g = g :=
+  (moveXL_eq_or n g).resolve_right fun ⟨i, j, _, hi, hj, hc, _⟩ ↦ h i hi j hj hc
+
+/-- Move x at level `n` never touches a column taller than `n`: no entry is slid out from under a
+taller column (32). -/
+theorem moveXL_getD_of_lt {n c : ℕ} {g : Grid} (hc : n < g.getD c 0) :
+    (moveXL n g).getD c 0 = g.getD c 0 := by
+  rcases moveXL_eq_or n g with h | ⟨i, -, k, -, -, -, hi, hk, h⟩
+  · rw [h]
+  · rw [h, getD_set_of_ne (by rintro rfl; omega), getD_set_of_ne (by rintro rfl; omega)]
+
+/-- A culminative grid has no clash at or above its peak, since both columns would be peaks. -/
+theorem not_clash_of_peak_le {g : Grid} (hc : IsCulminative g) {n i j : ℕ} (hn : peak g ≤ n)
+    (hi : i < g.length) (hj : j < g.length) : ¬ Clash g n i j := by
+  rintro ⟨hij, hni, hnj, -⟩
+  rw [List.getD_eq_getElem _ _ hi] at hni
+  rw [List.getD_eq_getElem _ _ hj] at hnj
+  have := le_peak (List.getElem_mem hi)
+  have := le_peak (List.getElem_mem hj)
+  exact hij.ne (hc.eq_of_eq_peak hi hj (by omega) (by omega))
+
+/-- The absolute peak never moves (31): below the peak Move x leaves taller columns alone, and at
+or above it a culminative grid has no clash. -/
 theorem moveXL_getD_peak {g : Grid} (hc : IsCulminative g) {i n : ℕ} (hi : i < g.length)
     (hp : g[i] = peak g) : (moveXL n g).getD i 0 = g[i] := by
-  rcases moveXL_eq_or n g with h | ⟨i', j, k, hi', hj, ⟨hij, -, hnj, -⟩, hn, hk, h⟩
-  · rw [h, List.getD_eq_getElem _ _ hi]
-  rw [List.getD_eq_getElem _ _ hi'] at hn
-  rw [List.getD_eq_getElem _ _ hj] at hnj
-  have hle := le_peak (List.getElem_mem hj)
-  have hii' : i ≠ i' := by
-    rintro rfl
-    exact absurd (hc.eq_of_eq_peak hi hj hp (by omega)) (by omega)
-  have hik : i ≠ k := by
-    rintro rfl
-    rw [List.getD_eq_getElem _ _ hi] at hk
-    exact hii' (hc.eq_of_eq_peak hi hi' hp (le_antisymm (le_peak (List.getElem_mem hi')) (by omega)))
-  rw [h, getD_set_of_ne hik.symm, getD_set_of_ne hii'.symm, List.getD_eq_getElem _ _ hi]
+  rw [← List.getD_eq_getElem g 0 hi]
+  rcases lt_or_ge n (peak g) with h | h
+  · exact moveXL_getD_of_lt (by rwa [List.getD_eq_getElem _ _ hi, hp])
+  · rw [moveXL_eq_self_of_not_clash fun _ hi' _ hj ↦ not_clash_of_peak_le hc h hi' hj]
 
 /-! ### The End Rule, extrametricality, and Perfect Grid Construction (§3.2, §3.3) -/
 
@@ -710,7 +683,8 @@ theorem endRule_left_two {y : ℕ} (hy : 1 ≤ y) (t : Grid) (fco : Bool) :
       · rintro ⟨hji, -⟩
         omega
   have hidx : (1 :: y :: t).findIdx? (1 ≤ ·) = some 0 := by simp [List.findIdx?_cons]
-  simp only [endRule, fromEdge, min_one_peak (List.mem_cons_self ..) le_rfl, hidx, List.set_cons_zero,
+  simp only [endRule, fromEdge, min_one_peak (List.mem_cons_self ..) le_rfl, hidx,
+    List.set_cons_zero,
     List.getD_cons_zero, Nat.max_eq_right (Nat.le_succ 1), key]
 
 theorem endRule_right_singleton {x : ℕ} (hx : 1 ≤ x) (fco : Bool) :
@@ -758,7 +732,8 @@ theorem mainStressAt_append_cons {t u : Grid} {y : ℕ} (ht : ∀ x ∈ t, x < y
   · rw [List.getD_append _ _ _ _ h, List.getD_eq_getElem _ _ h]; exact ht _ (List.getElem_mem h)
   · obtain ⟨k, rfl⟩ : ∃ k, j = t.length + 1 + k := ⟨j - t.length - 1, by omega⟩
     simp only [List.length_append, List.length_cons] at hj
-    rw [List.getD_append_right _ _ _ _ (by omega), show t.length + 1 + k - t.length = k + 1 by omega,
+    rw [List.getD_append_right _ _ _ _ (by omega),
+      show t.length + 1 + k - t.length = k + 1 by omega,
       List.getD_cons_succ, List.getD_eq_getElem _ _ (by omega)]
     exact hu _ (List.getElem_mem _)
 
@@ -798,7 +773,8 @@ theorem garawa_eq {n : ℕ} (hn : 2 ≤ n) :
     simp [pg, List.revConj, List.reverse_replicate, sweep_replicate_append]
   have hle : ∀ x ∈ 2 :: 1 :: (alt .trough m).reverse, x ≤ 2 := by
     simpa using fun x hx ↦ (mem_alt hx).2
-  rw [garawa, h1, h2, endRule_three_of_edgeIdx? hle (i := 0) (by simp [edgeIdx?, List.findIdx?_cons])]
+  rw [garawa, h1, h2,
+    endRule_three_of_edgeIdx? hle (i := 0) (by simp [edgeIdx?, List.findIdx?_cons])]
   rfl
 
 theorem garawa_initial {n : ℕ} (hn : 2 ≤ n) : (garawa n).getD 0 0 = 3 := by
@@ -835,7 +811,8 @@ theorem winnebago_eq {n : ℕ} (hn : 3 ≤ n) :
     rfl
   have hle : ∀ x ∈ 1 :: 1 :: 2 :: alt .trough m, x ≤ 2 := by
     simpa using fun x hx ↦ (mem_alt hx).2
-  rw [winnebago, h1, endRule_three_of_edgeIdx? hle (i := 2) (by simp [edgeIdx?, List.findIdx?_cons])]
+  rw [winnebago, h1,
+    endRule_three_of_edgeIdx? hle (i := 2) (by simp [edgeIdx?, List.findIdx?_cons])]
   rfl
 
 /-! ### Stress three syllables from an edge (§3.2, §3.3) -/
