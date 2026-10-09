@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Presupposition.ContentLayer
+public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Data.Examples.VanDerSandtMaier2003
 public import Mathlib.Data.Set.Lattice.Bounded
 public import Mathlib.Order.Disjoint
@@ -56,11 +56,18 @@ the rows of `Data.Examples.VanDerSandtMaier2003`.
 
 namespace VanDerSandtMaier2003
 
-open Presupposition
-
 /-! ### Layered DRT -/
 
-/-- A layer label, (6): the background, or a content layer of the `i`-th sentence. -/
+/-- The layer of a semantic contribution carrying a condition: a backgrounded
+precondition, the proffered content, or an enrichment beyond the truth conditions —
+the paper's `pr`, `fr` and `imp` layers. -/
+inductive ContentLayer where
+  | presupposition
+  | atIssue
+  | implicature
+  deriving DecidableEq, Repr
+
+/-- A layer label, (6), names the background or a content layer of the `i`-th sentence. -/
 inductive Label where
   | background
   | of (layer : ContentLayer) (i : ℕ)
@@ -77,16 +84,18 @@ abbrev imp (i : ℕ) : Label := .of .implicature i
 
 variable {W : Type*}
 
-/-- A labelled condition, (8): its labels and the proposition it expresses once its reference
+/-- A labelled condition, (8), pairs its labels with the proposition it expresses once its
+reference
 markers are anchored in the context. -/
 structure Condition (W : Type*) where
   labels : Finset Label
   content : Set W
 
-/-- A layered DRS: its labelled conditions. -/
+/-- A layered DRS lists its labelled conditions. -/
 abbrev LDRS (W : Type*) := List (Condition W)
 
-/-- (11b), (13): the `L`-content of a representation, the conditions bearing a label in `L`,
+/-- By (11b) and (13), the `L`-content of a representation, the conditions bearing a label in
+`L`,
 every other condition being ignored. -/
 def content (ϕ : LDRS W) (L : Finset Label) : Set W :=
   ⋂ c ∈ ϕ.filter (λ c => (c.labels ∩ L).Nonempty), c.content
@@ -111,7 +120,8 @@ theorem content_append_subset (ϕ ψ : LDRS W) (L : Finset Label) :
 
 /-! ### Directed reverse anaphora -/
 
-/-- (18): `L` is offensive against the correction layers `K`, a smallest set of layers whose
+/-- In (18), `L` is offensive against the correction layers `K`, a smallest set of layers
+whose
 content is inconsistent with the content of `K`. -/
 def IsOff (ϕ : LDRS W) (K L : Finset Label) : Prop :=
   Disjoint (content ϕ L) (content ϕ K) ∧ ∀ L' ⊂ L, ¬ Disjoint (content ϕ L') (content ϕ K)
@@ -120,7 +130,8 @@ def IsOff (ϕ : LDRS W) (K L : Finset Label) : Prop :=
 def surviving (ϕ : LDRS W) (off : Finset Label) : LDRS W :=
   ϕ.filter (λ c => c.labels ∩ off = ∅)
 
-/-- (19): directed reverse anaphora for the denial `σ i`: the conditions bearing an offensive
+/-- Directed reverse anaphora for the denial `σ i`, (19), moves the conditions bearing an
+offensive
 label move under a negation in the denial's Frege layer, the others stay. -/
 def directedRA (ϕ : LDRS W) (off : Finset Label) (i : ℕ) : LDRS W :=
   surviving ϕ off ++ [⟨{fr i}, (content ϕ off)ᶜ⟩]
@@ -152,13 +163,15 @@ theorem content_directedRA_subset {ϕ : LDRS W} {off : Finset Label} {i : ℕ} {
 
 /-! ### The possibly right Pope, (20) -/
 
-/-- The worlds of (20): the Pope is possibly but not necessarily right, or necessarily right. -/
+/-- The worlds of (20) make the Pope possibly but not necessarily right, or necessarily
+right. -/
 inductive PopeW where
   | possNotNec
   | nec
   deriving DecidableEq, Repr, Fintype
 
-/-- `ψ` of (20) before reverse anaphora: the background Pope, σ₁'s Frege content that he is
+/-- `ψ` of (20) before reverse anaphora holds the background Pope, σ₁'s Frege content that he
+is
 possibly right and implicature that he is not necessarily right, and σ₃'s correction that he is
 necessarily right. -/
 def popeRecord : LDRS PopeW :=
@@ -172,7 +185,7 @@ private theorem content_popeRecord_fr3 : content popeRecord {fr 3} = {.nec} := b
   ext w
   simp [mem_content_iff, popeRecord]
 
-/-- Off(ψ, fr₃) = {imp₁}: the correction clashes with the implicature layer alone. -/
+/-- Off(ψ, fr₃) = {imp₁} — the correction clashes with the implicature layer alone. -/
 theorem popeOff : IsOff popeRecord {fr 3} {imp 1} := by
   refine ⟨?_, λ L' hL' => ?_⟩
   · rw [content_popeRecord_imp, content_popeRecord_fr3]
@@ -196,7 +209,8 @@ theorem pope_content_directedRA :
 
 /-! ### The lady who is a wife, (21) -/
 
-/-- The worlds of (21): the woman pointed at is a nice stranger, a nice wife, or a wife who is
+/-- In the worlds of (21), the woman pointed at is a nice stranger, a nice wife, or a wife
+who is
 not nice. -/
 inductive LadyW where
   | niceStranger
@@ -204,7 +218,8 @@ inductive LadyW where
   | plainWife
   deriving DecidableEq, Repr, Fintype
 
-/-- `ψ` of (21): the background pointing, σ₁'s Frege content that she is a lady and nice, the
+/-- `ψ` of (21) holds the background pointing, σ₁'s Frege content that she is a lady and
+nice, the
 latter acknowledged by σ₂, its implicature that she is a stranger, and σ₄'s correction that she
 is my wife. -/
 def ladyRecord : LDRS LadyW :=
@@ -219,7 +234,7 @@ private theorem content_ladyRecord_fr4 : content ladyRecord {fr 4} = {.niceWife,
   ext w
   simp [mem_content_iff, ladyRecord]
 
-/-- Off(ψ, fr₄) = {imp₁}: being my wife clashes with the stranger implicature alone. -/
+/-- Off(ψ, fr₄) = {imp₁} — being my wife clashes with the stranger implicature alone. -/
 theorem ladyOff : IsOff ladyRecord {fr 4} {imp 1} := by
   refine ⟨?_, λ L' hL' => ?_⟩
   · rw [content_ladyRecord_imp, content_ladyRecord_fr4]
@@ -245,10 +260,11 @@ theorem lady_nice_survives :
 
 /-! ### Two presuppositions, (4) -/
 
-/-- The worlds of (4): whether France has a king and whether I quit smoking. -/
+/-- The worlds of (4) record whether France has a king and whether I quit smoking. -/
 abbrev KingQuitW := Bool × Bool
 
-/-- `ψ` of (4): σ₁'s two presuppositions, that France has a king and that I quit smoking, its
+/-- `ψ` of (4) holds σ₁'s two presuppositions, that France has a king and that I quit
+smoking, its
 Frege content that the king knows it, and σ₂'s correction that France has no king. -/
 def kingQuitRecord : LDRS KingQuitW :=
   [⟨{pr 1}, {w | w.1 = true}⟩, ⟨{pr 1}, {w | w.2 = true}⟩, ⟨{fr 1}, {w | w.1 = true ∧ w.2 = true}⟩,
