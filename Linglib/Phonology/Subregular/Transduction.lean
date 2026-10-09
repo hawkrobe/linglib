@@ -10,11 +10,10 @@ public import Linglib.Phonology.Subregular.Docking
 /-!
 # Quantifier-free logical transductions
 
-String-to-string **logical transductions** in the quantifier-free fragment ([chandlee-2014],
-[chandlee-jardine-2019]): a map defined by a **copy set** and, per copy, an ordered list of
-guarded output clauses, where each guard is a `Subregular.WindowFormula` at the input position. A
-copy set of size `k` lets the output be larger than the input (insertion); guards that match
-nothing delete; relabelling copies rewrite a symbol in place.
+A quantifier-free **logical transduction** maps strings to strings by a **copy set** and, per
+copy, an ordered list of guarded output clauses, where each guard is a `Subregular.WindowFormula`
+at the input position. A copy set of size `k` lets the output be larger than the input
+(insertion); guards that match nothing delete; relabelling copies rewrite a symbol in place.
 
 We formalize the **order-preserving** fragment: the output is read off in the order
 `(input position, copy index)`, so the output successor is induced rather than given by an
@@ -47,6 +46,11 @@ transduction, though the composite is not in general itself quantifier-free.
 A clause is a quantifier-free guard paired with an output symbol; per copy, the first clause
 whose guard holds at the input position fires, and a copy with no firing clause is absent.
 `apply` is a `flatMap` over input positions then copies, so it reduces under `decide`.
+
+## References
+
+* [chandlee-2014]
+* [chandlee-jardine-2019]
 -/
 
 @[expose] public section
@@ -55,12 +59,12 @@ namespace Subregular
 
 variable {α β γ : Type*}
 
-/-- A per-copy output clause: a quantifier-free guard at the input position and the output symbol
-emitted when it is the first matching clause. -/
+/-- A per-copy output clause pairs a quantifier-free guard at the input position with the output
+symbol emitted when it is the first matching clause. -/
 abbrev Clause (α β : Type*) := WindowFormula α × β
 
-/-- A quantifier-free order-preserving logical transduction: `copies` output copies of each input
-position, and for each copy an ordered list of guarded output clauses. -/
+/-- A quantifier-free order-preserving logical transduction has `copies` output copies of each
+input position, and for each copy an ordered list of guarded output clauses. -/
 structure Transduction (α β : Type*) where
   copies : ℕ
   clause : Fin copies → List (Clause α β)
@@ -74,7 +78,7 @@ def emitAt (T : Transduction α β) (w : List α) (n : ℕ) : List β :=
   (List.finRange T.copies).filterMap fun c =>
     (T.clause c).findSome? fun cl => if cl.1.Realize w n then some cl.2 else none
 
-/-- Run the transduction: emit, left to right, the licensed copies of every input position. -/
+/-- Running the transduction emits, left to right, the licensed copies of every input position. -/
 def apply (T : Transduction α β) (w : List α) : List β :=
   (List.range w.length).flatMap (T.emitAt w)
 
@@ -93,7 +97,7 @@ def applyComp (T₂ : Transduction β γ) (T₁ : Transduction α β) [Decidable
 def LeftLocal (r : ℕ) (T : Transduction α β) : Prop :=
   ∀ c, ∀ cl ∈ T.clause c, cl.1.BackBounded r
 
-/-- Pointwise congruence for `List.findSome?`: agreeing on the list's members suffices. -/
+/-- `List.findSome?` agrees on two functions that agree on the list's members. -/
 private theorem findSome?_congr {γ δ : Type*} {f g : γ → Option δ} :
     ∀ {l : List γ}, (∀ x ∈ l, f x = g x) → l.findSome? f = l.findSome? g := by
   intro l
@@ -142,7 +146,7 @@ namespace Transduction
 variable [DecidableEq α]
 
 /-- The one-copy relabelling transduction of a quantifier-free docking process over the
-symbols `alphabet`: for each symbol, a clause docking it under the guard, then a faithful
+symbols `alphabet` has, for each symbol, a clause docking it under the guard and then a faithful
 clause. -/
 def relabel (φ : WindowFormula α) (dock : α → α) (alphabet : List α) :
     Transduction α α where
@@ -217,7 +221,7 @@ private def nonA (t : Walk) : WindowFormula Sym := .disj (.label .b t) (.label .
 /-- The position is flanked by `a`s. -/
 private def flankedA : WindowFormula Sym := .conj (isA x.pred) (isA x.succ)
 
-/-- **Relabelling** — rewrite `b → c` between `a`s: the `b → c` clause precedes the faithful
+/-- This relabelling rewrites `b` as `c` between `a`s. The `b → c` clause precedes the faithful
 `b → b` clause, so it wins in that context. -/
 private def relabelBC : Transduction Sym Sym where
   copies := 1
@@ -226,8 +230,8 @@ private def relabelBC : Transduction Sym Sym where
 
 example : relabelBC.apply [Sym.a, .b, .a] = [Sym.a, .c, .a] := by decide
 
-/-- **Deletion** — delete `b` between `a`s: `b` is emitted only when *not* flanked, so a flanked
-`b` matches no clause and is dropped. -/
+/-- This deletion drops `b` between `a`s. A `b` is emitted only when *not* flanked, so a flanked
+`b` matches no clause. -/
 private def deleteFlanked : Transduction Sym Sym where
   copies := 1
   clause _ := [(.label .a x, .a), (.label .c x, .c),
@@ -235,8 +239,8 @@ private def deleteFlanked : Transduction Sym Sym where
 
 example : deleteFlanked.apply [Sym.a, .b, .a] = [Sym.a, .a] := by decide
 
-/-- **Insertion** — insert `a` after a final non-`a` symbol: copy 0 is faithful, copy 1 emits `a`
-only after a final non-`a` (a copy with no firing clause is absent). -/
+/-- This insertion adds `a` after a final non-`a` symbol. Copy 0 is faithful and copy 1 emits `a`
+only after a final non-`a`, a copy with no firing clause being absent. -/
 private def insertA : Transduction Sym Sym where
   copies := 2
   clause k :=
@@ -247,8 +251,8 @@ private def insertA : Transduction Sym Sym where
 
 example : insertA.apply [Sym.a, .b] = [Sym.a, .b, .a] := by decide
 
-/-- **Composition** — relabelling then insertion. On `abab`: the first `b` (between `a`s) becomes
-`c`, the final `b` does not, then the final non-`a` triggers insertion. -/
+/-- This composite relabels and then inserts. On `abab` the first `b`, between `a`s, becomes `c`,
+the final `b` does not, and then the final non-`a` triggers insertion. -/
 example : insertA.applyComp relabelBC [Sym.a, .b, .a, .b] = [Sym.a, .c, .a, .b, .a] := by
   decide
 

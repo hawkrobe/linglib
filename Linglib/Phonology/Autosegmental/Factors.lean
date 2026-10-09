@@ -11,22 +11,33 @@ public import Linglib.Phonology.Autosegmental.NormalForm
 /-!
 # Factors and banned-subgraph grammars
 
-[jardine-2017]'s connected-subgraph embedding in position coordinates: a factor
-occurs at per-tier offsets when its tier words are windows of the host's and its
-links transport shifted. Banned-subgraph grammars ([jardine-2016b] Ch. 5)
-are lists of forbidden factors.
+A factor occurs in a representation at per-tier offsets when its tier words are windows of the
+host's and its links transport shifted, Jardine's subgraph embedding in position coordinates.
+Embedding is a preorder, the analogue of mathlib's `SimpleGraph.IsContained` with contiguous
+tier windows. A banned-subgraph grammar is a list of forbidden factors, and a string is a
+one-tier representation without lines.
 
 ## Main definitions
 
-* `AR.IsFactorAt`, `AR.FactorEmbeds`: factor occurrence at given offsets, and
-  its existential closure.
+* `AR.IsFactorAt`, `AR.FactorEmbeds` (`⊑`): factor occurrence at given offsets, and its
+  existential closure.
 * `AR.Free`: avoidance of every factor of a banned-subgraph grammar.
+* `AR.ofList`: a string as a one-tier representation.
 
 ## Main results
 
+* `AR.FactorEmbeds.refl`, `AR.FactorEmbeds.trans`: embedding is a preorder.
 * `AR.factorEmbeds_iff_bounded`: embedding is a bounded search over offsets.
 * `AR.factorEmbeds_iff_infix_of_link_free`: for link-free factors, embedding is
-  independent per-tier infix occurrence — [jardine-2019]'s link-free fragment.
+  independent per-tier infix occurrence.
+* `AR.factorEmbeds_ofList_iff`: one string embeds in another iff it is an infix.
+
+## Implementation notes
+
+Jardine's grammars ban only connected subgraphs. `IsFactorAt` places the
+windows of a factor's tiers independently, so a factor with two nonempty tiers and no line
+embeds whenever its tier words occur anywhere; `Free` admits such factors, and its languages
+contain Jardine's.
 
 ## References
 
@@ -117,6 +128,19 @@ theorem FactorEmbeds.trans {Y : TieredAR ι τ} [Finite Y.obj.V]
   have ⟨_, h'⟩ := h'
   ⟨_, h.trans h'⟩
 
+/-- A representation occurs in itself at offset zero. -/
+theorem IsFactorAt.refl (X : TieredAR ι τ) [Finite X.obj.V] : X.IsFactorAt X 0 where
+  window _ _ _ := by simp
+  link_map _ _ _ _ h := by simpa using h
+
+@[refl] theorem FactorEmbeds.refl (X : TieredAR ι τ) [Finite X.obj.V] : X.FactorEmbeds X :=
+  ⟨0, IsFactorAt.refl X⟩
+
+attribute [trans] FactorEmbeds.trans
+
+/-- `F ⊑ X` says that `F` embeds in `X`, in the notation of mathlib's `SimpleGraph.IsContained`. -/
+scoped infixl:50 " ⊑ " => FactorEmbeds
+
 /-- On a tier where the factor is nonempty, the window equations force the offset
     in bounds. -/
 theorem IsFactorAt.offset_le (h : F.IsFactorAt X o) {i : ι} (hi : F.tierLength i ≠ 0) :
@@ -168,6 +192,37 @@ theorem factorEmbeds_iff_infix_of_link_free (hF : ∀ i j p q, ¬ F.link i j p q
     exact ⟨o, fun i p hp ↦ ((ho i).2 p (by simpa using hp)).trans
         (List.getElem?_eq_getElem (by simpa using hp)).symm,
       fun i j p q hl ↦ absurd hl (hF i j p q)⟩
+
+/-! ### Strings as one-tier representations -/
+
+section OfList
+
+variable {α : Type*}
+
+/-- A string is a representation with one tier and no association lines. -/
+def ofList (w : List α) : TieredAR Unit fun _ => α :=
+  ofData (fun _ => w) fun _ _ _ _ => False
+
+instance (w : List α) : Finite (ofList w).obj.V :=
+  inferInstanceAs (Finite ((_ : Unit) × Fin _))
+
+@[simp] theorem tierWord_ofList (w : List α) (i : Unit) : (ofList w).tierWord i = w :=
+  tierWord_ofData i
+
+@[simp] theorem tierLength_ofList (w : List α) (i : Unit) : (ofList w).tierLength i = w.length :=
+  tierLength_ofData i
+
+@[simp] theorem not_link_ofList (w : List α) (i j : Unit) (p q : ℕ) :
+    ¬ (ofList w).link i j p q := by
+  simp [ofList, link_ofData]
+
+/-- One string embeds in another as a factor iff it is an infix. -/
+@[simp] theorem factorEmbeds_ofList_iff (f w : List α) :
+    (ofList f).FactorEmbeds (ofList w) ↔ f <:+: w := by
+  rw [factorEmbeds_iff_infix_of_link_free (not_link_ofList f)]
+  simp
+
+end OfList
 
 end AR
 

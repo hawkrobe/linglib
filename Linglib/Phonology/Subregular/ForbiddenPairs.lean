@@ -12,12 +12,12 @@ public import Linglib.Core.Data.List.Chain
 /-!
 # Forbidden-pair TSL_2 grammars
 
-A tier-based strictly 2-local schema [heinz-rawal-tanner-2011]: for a
+A tier-based strictly 2-local schema: for a
 *forbidden-pair* relation `R : α → α → Prop` and tier predicate `p`,
 `TierStrictlyLocalGrammar.ofForbiddenPairs R p` bans any string whose tier projection has an
 adjacent pair `(a, b)` with `R a b`. The canonical instance is the OCP
-[mccarthy-1986] (`R := (· = ·)`); OCP-Feature and single-tier harmony (with `p`
-carrying blocking/transparency [mcmullin-2016]) are other choices of `R`.
+(`R := (· = ·)`); OCP-Feature and single-tier harmony (with `p` carrying
+blocking/transparency) are other choices of `R`.
 
 ## Main definitions
 
@@ -33,8 +33,15 @@ carrying blocking/transparency [mcmullin-2016]) are other choices of `R`.
 
 Out of scope (they need a richer-than-segmental alphabet): \*Lapse/\*Clash (SL_2
 over a syllable alphabet) and \*Coda (SL_1).
-Similarity-graded [hansson-2010] and interval-conditioned (ITSL) harmony, and
+Similarity-graded and interval-conditioned (ITSL) harmony, and
 cross-tier dependencies (MTSL), also fall outside this single-tier constructor.
+
+## References
+
+* [heinz-rawal-tanner-2011]
+* [mccarthy-1986]
+* [mcmullin-2016]
+* [hansson-2010]
 -/
 
 @[expose] public section
@@ -43,13 +50,12 @@ namespace Subregular
 
 variable {α : Type*} (R : α → α → Prop)
 
-/-- The forbidden 2-factors induced by `R`: the pairs `[some a, some b]` with
-`R a b`. -/
+/-- The forbidden 2-factors induced by `R` are the pairs `[some a, some b]` with `R a b`. -/
 def forbiddenPairs : Set (Augmented α) :=
   { f | ∃ a b, R a b ∧ f = [some a, some b] }
 
-/-- The adjacency relation for `R`: a pair is clean unless both symbols are
-`some` and `R`-related (`none` is vacuously clean — `CleanPair.isBoundaryVacuous`). -/
+/-- A pair is clean for `R` unless both symbols are `some` and `R`-related, so `none` is
+vacuously clean (`CleanPair.isBoundaryVacuous`). -/
 def CleanPair : Option α → Option α → Prop
   | some a, some b => ¬ R a b
   | _, _ => True
@@ -84,8 +90,8 @@ lemma forbiddenPairFree_iff_isChain (xs : Augmented α) :
       rw [List.kFactors_two_cons_cons, List.forall_mem_cons, List.isChain_cons_cons, ih]
       exact and_congr_left' (by cases a <;> cases b <;> simp [forbiddenPairs, CleanPair])
 
-/-- The TSL_2 grammar banning tier-adjacent pairs satisfying `R`: tier `p`,
-permitting everything but `forbiddenPairs R`. -/
+/-- The TSL_2 grammar banning tier-adjacent pairs satisfying `R` has tier `p` and permits
+everything but `forbiddenPairs R`. -/
 def TierStrictlyLocalGrammar.ofForbiddenPairs (p : α → Prop) [DecidablePred p] :
     TierStrictlyLocalGrammar 2 α where
   tier := p
@@ -180,7 +186,7 @@ lemma language_antitone_R {R R' : α → α → Prop} (h : ∀ a b, R a b → R'
   exact List.isChain_nil
 
 /-- With no tier filtering (`p = ⊤`) the language is the SL_2 case: no two
-adjacent symbols of the raw string are `R`-related. (Not `@[simp]`: the RHS is
+adjacent symbols of the raw string are `R`-related. (Not `@[simp]`, as the RHS is
 no simpler than the LHS.) -/
 lemma lang_p_top :
     (TierStrictlyLocalGrammar.ofForbiddenPairs R (fun _ : α => True)).language =
@@ -199,7 +205,7 @@ lemma mem_language_R_sup_iff (R₁ R₂ : α → α → Prop) (p : α → Prop) 
         w ∈ (TierStrictlyLocalGrammar.ofForbiddenPairs R₂ p).language := by
   simp only [mem_ofForbiddenPairs_language_iff_filter_isChain, not_or, List.isChain_and_iff]
 
-/-- Lattice form of `mem_language_R_sup_iff`: `language (R₁ ∨ R₂) = lang R₁ ⊓ lang R₂`. -/
+/-- In lattice form, `language (R₁ ∨ R₂) = lang R₁ ⊓ lang R₂` (`mem_language_R_sup_iff`). -/
 lemma lang_R_sup_eq_inf (R₁ R₂ : α → α → Prop) (p : α → Prop) [DecidablePred p] :
     (TierStrictlyLocalGrammar.ofForbiddenPairs (fun a b => R₁ a b ∨ R₂ a b) p).language =
       (TierStrictlyLocalGrammar.ofForbiddenPairs R₁ p).language ⊓

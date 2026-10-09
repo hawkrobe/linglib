@@ -7,46 +7,56 @@ module
 
 public import Mathlib.Computability.Language
 public import Linglib.Phonology.Autosegmental.OCP
-public import Linglib.Phonology.Subregular.ContainsFactor
+public import Linglib.Phonology.Subregular.AutosegmentalStrictlyLocal
+public import Linglib.Phonology.Subregular.TierStrictlyLocal
 public import Linglib.Phonology.Tone.Basic
 public import Linglib.Data.Examples.Jardine2019
 
 /-!
-# Jardine (2019): the expressivity of autosegmental grammars
+# Jardine (2019): The expressivity of autosegmental grammars
 
-This file formalizes [jardine-2019], the class of autosegmentally strictly local stringsets. A
-map `g` from symbols to autosegmental graph primitives, Definition 1, extends to strings by
-merging concatenation, Definition 2, and a finite set `B` of forbidden connected subgraphs
-describes the strings whose graph contains none of them, `L(B^g)`, Section 5.3; `ASL^g` is the
-class of such sets. The tone class uses `gT` of (23): `H` and `L` are a tone over a mora and `F` a
-falling `H L` contour over one, and merging fuses a run of `H`s into a single `H` over its morae,
-Figure 10, which is what lets a local grammar state a non-local dependency. Every graph in
-`gT(Σ*)` obeys the OCP and the No-Crossing Constraint, both preserved from the primitives
-(`isCleanAt_and_noCrossing_realizeMerged`). On strings `gT` is
-`realizeMerged`, whose tier words and lines compute from the words, so membership in `L(B^{gT})`
-decides: the grammar (26) admits exactly the strings of (27) and excludes `HH` and `HF`, and the
-grammar `B_UTP`, (33), admits the strings of `L_UTP`, (32) (`rows_agree`), and excludes the
-unbounded plateau `HHLLHH`, which the unmerged realization leaves free
-(`HHLLHH_free_realize`). Theorem 3's observation, that `gT(HL)` is a subgraph of `gT(HF)`, so
-that no forbidden-subgraph grammar excludes `HL` without excluding `HF`, is
-`not_mem_ASL_HF_of_not_mem_ASL_HL`; and the link-free fragment of the unmerged class is
-star-free, each forbidden factor the inverse image of a contains-factor language along a tier
-projection ([schutzenberger-1965], [mcnaughton-papert-1971],
-`isStarFree_free_realize_of_link_free`).
+The map `gT` sends each tone symbol to a primitive autosegmental graph, `H` and `L` a tone over
+a mora and `F` the falling contour `H L` over one, and extends to strings by merging
+concatenation, which fuses a run of `H`s into one `H` over its morae. A banned-subgraph grammar
+over this realization describes the strings whose graph avoids it, an instance of the
+autosegmental strictly local class (`Language.bannedSubgraph`). Every graph in `gT(Σ*)` obeys
+the OCP and the No-Crossing Constraint. Membership decides on strings: the spreading grammar
+admits exactly its example strings, and the grammar of unbounded tonal plateauing admits
+`L_UTP` and excludes the plateau `HHLLHH` at any width, which the unmerged realization leaves
+free.
+
+Theorem 3 compares the class with the string classes. `gT(HL)` is a subgraph of `gT(HF)`, so no
+grammar excludes `HL` without excluding `HF`. And `L_UTP` is neither strictly local nor
+tier-based strictly local at any width: with `x = L^(k-1)`, `H L x` and `x H` are in it and
+`H L x H` is not, and every symbol is visible, so a tier-based grammar would be strictly local.
+
+## Main results
+
+* `isCleanAt_and_noCrossing_realizeMerged`: graphs in `gT(Σ*)` obey the OCP and the NCC.
+* `rows_agree`: the grammars decide the paper's example strings.
+* `not_mem_ASL_HF_of_not_mem_ASL_HL`: a grammar excluding `HL` excludes `HF`.
+* `not_isStrictlyLocal_ASL_utp`, `not_isTierStrictlyLocal_ASL_utp`: `L_UTP` is neither strictly
+  local nor tier-based strictly local.
 
 ## Implementation notes
 
-* The unmerged `AR.realize` is kept for the contrast merging makes; Theorem 2 for the merged
-  class, by first-order definability, and the incomparability halves of Theorems 3 and 4 that
-  rest on it are not formalized.
-* The stringsets (27) and (32) are rows; `HLH`, `LHHLH` and `HHLLHH` are the file's witnesses of
-  the melody constraint at increasing widths.
+* The paper evaluates a grammar on `g(⋊w⋉)`, with border primitives for `⋊` and `⋉`, which this
+  file omits. The grammars here mention no border.
+* Banned subgraphs need not be connected (`Autosegmental/Factors.lean`), so the class here
+  contains the paper's.
+* The unmerged `AR.realize` is kept for the contrast merging makes.
+
+## TODO
+
+Add the border primitives, and with them Theorem 3's other half, that the strictly 2-local
+`HL`-free language is not in the class. Theorem 2, that the class is properly contained in the
+star-free languages, is formalized only for the link-free unmerged fragment
+(`isStarFree_free_realize_hlh`); Theorem 4, incomparability with the strictly piecewise
+languages, needs connected factors.
 
 ## References
 
 * [jardine-2019]
-* [schutzenberger-1965]
-* [mcnaughton-papert-1971]
 -/
 
 @[expose] public section
@@ -55,7 +65,7 @@ namespace Jardine2019
 
 open Autosegmental Tone Tone.TRN
 
-/-- The string alphabet Σ_T = {H, L, F} (§5.2.2): a high, low or falling-toned mora. -/
+/-- A symbol of the string alphabet `Σ_T` (§5.2.2) is a high, low or falling-toned mora. -/
 inductive Sym | H | L | F
   deriving DecidableEq, Repr
 
@@ -84,10 +94,10 @@ abbrev unmerged (w : List Sym) :=
   AR.ofWords (w.map Sym.melody).flatten (w.map fun _ => [μ]).flatten
     (BlockLinks Sym.melody (fun _ => [μ]) (fun _ _ _ => True) w)
 
-/-- `L(B^{gT})` (§5.3): the strings whose merged realization is free of the grammar. -/
+/-- `L(B^{gT})` (§5.3) is the set of strings whose merged realization avoids the grammar. -/
 def ASL (B : List {F : TieredAR Bool (TwoTier TRN TBUKind) // Finite F.obj.V}) :
     Language Sym :=
-  {w | (realizeMerged true gT w).Free B}
+  Language.bannedSubgraph (realizeMerged true gT) B
 
 theorem mem_ASL_iff {B : List {F : TieredAR Bool (TwoTier TRN TBUKind) // Finite F.obj.V}}
     {w : List Sym} : w ∈ ASL B ↔ (merged w).Free B :=
@@ -107,7 +117,7 @@ theorem isCleanAt_and_noCrossing_realizeMerged (w : List Sym) :
 
 /-! ### The grammars of (26) and (33) -/
 
-/-- (26): a tone over two morae. -/
+/-- The factor of (26) is a tone over two morae. -/
 abbrev spread := AR.ofWords [H] [μ, μ] fun _ _ => True
 
 /-- (3), the melody `H L H`. -/
@@ -116,11 +126,11 @@ abbrev hlh := AR.ofWords [H, L, H] ([] : List TBUKind) fun _ _ => False
 /-- The falling contour is `H L` over one mora. -/
 abbrev fall := AR.primitive [H, L] μ
 
-/-- The grammar of (26): no tone over two morae. -/
+/-- The grammar of (26) bans a tone over two morae. -/
 def spreadGrammar : List {F : TieredAR Bool (TwoTier TRN TBUKind) // Finite F.obj.V} :=
   [⟨spread, inferInstance⟩]
 
-/-- `B_UTP` (33): no `H L H` melody, no contour. -/
+/-- The grammar `B_UTP` (33) bans the melody `H L H` and the contour. -/
 def utpGrammar : List {F : TieredAR Bool (TwoTier TRN TBUKind) // Finite F.obj.V} :=
   [⟨hlh, inferInstance⟩, ⟨fall, inferInstance⟩]
 
@@ -184,18 +194,18 @@ instance (g : Grammar) (w : List Sym) : Decidable (w ∈ g.set) := by
 spans two morae, and `B_UTP` admits the strings of `L_UTP`, (32). -/
 theorem rows_agree : ∀ r ∈ rows, r.string ∈ r.grammar.set ↔ r.member = true := by decide +kernel
 
-/-- `HLH` is out: its melody is `H L H`. -/
+/-- `HLH` is excluded, its melody being `H L H`. -/
 theorem HLH_not_mem_ASL_utp : [.H, .L, .H] ∉ ASL utpGrammar := by decide
 
-/-- `LHHLH` is out: the `HH` plateau fuses and the melody reads `L H L H`. -/
+/-- `LHHLH` is excluded, since the `HH` plateau fuses and the melody reads `L H L H`. -/
 theorem LHHLH_not_mem_ASL_utp : [.L, .H, .H, .L, .H] ∉ ASL utpGrammar := by decide
 
-/-- The unbounded plateau `HHLLHH` is out: both plateaus fuse and the melody reads `H L H`,
-at any widths. -/
+/-- The unbounded plateau `HHLLHH` is excluded, since both plateaus fuse and the melody reads
+`H L H` at any widths. -/
 theorem HHLLHH_not_mem_ASL_utp : [.H, .H, .L, .L, .H, .H] ∉ ASL utpGrammar := by decide
 
-/-- The same string is free of `B_UTP` under the unmerged realization: its melody reads
-`H H L L H H`, and no three adjacent nodes spell `H L H` — the reach merging buys. -/
+/-- The same string is free of `B_UTP` under the unmerged realization, whose melody
+`H H L L H H` has no three adjacent nodes spelling `H L H`. -/
 theorem HHLLHH_free_realize : (AR.realize gT [.H, .H, .L, .L, .H, .H]).Free utpGrammar := by
   rw [free_realize_iff]
   simp only [utpGrammar, AR.free_cons, AR.free_nil, and_true]
@@ -203,7 +213,7 @@ theorem HHLLHH_free_realize : (AR.realize gT [.H, .H, .L, .L, .H, .H]).Free utpG
 
 /-! ### Theorem 3: contours contain their pure counterparts -/
 
-/-- `gT(HL)` is a subgraph of `gT(HF)`: the falling contour on the second mora contains
+/-- `gT(HL)` is a subgraph of `gT(HF)`, since the falling contour on the second mora contains
 the `L` on it. -/
 theorem realizeMerged_HL_embeds_HF :
     (realizeMerged true gT [.H, .L]).FactorEmbeds (realizeMerged true gT [.H, .F]) :=
@@ -213,65 +223,130 @@ theorem realizeMerged_HL_embeds_HF :
     (AR.tierWord_realizeMerged_eq_tierWord_ofWords _ _ _ _)
     (AR.link_realizeMerged_iff_link_ofWords _ _ _ _)).mpr (by decide)
 
-/-- Hence no forbidden-subgraph grammar excludes `HL` without excluding `HF` (Theorem 3):
-a subgraph of `gT(HL)` is a subgraph of `gT(HF)`. -/
+/-- No forbidden-subgraph grammar excludes `HL` without excluding `HF` (Theorem 3), since a
+subgraph of `gT(HL)` is a subgraph of `gT(HF)`. -/
 theorem not_mem_ASL_HF_of_not_mem_ASL_HL
     (B : List {F : TieredAR Bool (TwoTier TRN TBUKind) // Finite F.obj.V})
     (h : [.H, .L] ∉ ASL B) : [.H, .F] ∉ ASL B :=
-  fun hHF => h fun F hF hemb => hHF F hF (hemb.trans realizeMerged_HL_embeds_HF)
+  fun hHF => h (Language.mem_bannedSubgraph_of_factorEmbeds realizeMerged_HL_embeds_HF hHF)
 
 /-! ### The link-free fragment of the unmerged class is star-free -/
-
-section StarFree
-
-variable {S : Type*} {ι : Type*} [Finite ι] {τ : ι → Type*}
-  (g₀ : S → TieredAR ι τ) [∀ s, Finite (g₀ s).obj.V]
-
-/-- For a link-free forbidden factor, the strings whose unmerged realization contains it
-form a star-free language: the intersection of per-tier factor constraints, each the
-inverse image of a star-free contains-factor language along a tier projection. -/
-theorem isStarFree_factorEmbeds_realize_of_link_free (F : TieredAR ι τ) [Finite F.obj.V]
-    (hF : ∀ i j p q, ¬ F.link i j p q) :
-    Language.IsStarFree {w : List S | F.FactorEmbeds (AR.realize g₀ w)} := by
-  have hset : {w : List S | F.FactorEmbeds (AR.realize g₀ w)}
-      = ⋂ i, {w : List S | F.tierWord i <:+: AR.tierProj g₀ i (FreeMonoid.ofList w)} := by
-    ext w
-    simp only [Set.mem_ofPred_eq, Set.mem_iInter, AR.factorEmbeds_iff_infix_of_link_free hF,
-      AR.tierProj_ofList]
-    exact Iff.rfl
-  rw [hset]
-  exact Language.IsStarFree.iInter fun i =>
-    (Language.isStarFree_containsFactor (F.tierWord i)).comap (AR.tierProj g₀ i)
-
-/-- A grammar without association lines specifies a star-free set of strings under the
-unmerged realization. -/
-theorem isStarFree_free_realize_of_link_free
-    (B : List {F : TieredAR ι τ // Finite F.obj.V})
-    (hB : ∀ F ∈ B, ∀ i j p q, ¬ F.val.link i j p q) :
-    Language.IsStarFree {w : List S | (AR.realize g₀ w).Free B} := by
-  induction B with
-  | nil =>
-    simpa [AR.free_nil] using Language.isStarFree_univ (α := S)
-  | cons F B ih =>
-    have hset : {w : List S | (AR.realize g₀ w).Free (F :: B)} =
-        {w : List S | F.val.FactorEmbeds (AR.realize g₀ w)}ᶜ ∩
-          {w : List S | (AR.realize g₀ w).Free B} := by
-      ext w
-      simp [AR.free_cons]
-    rw [hset]
-    exact (isStarFree_factorEmbeds_realize_of_link_free g₀ F.val
-      (hB F (List.mem_cons_self ..))).compl.inter
-      (ih fun F' hF' => hB F' (List.mem_cons_of_mem _ hF'))
-
-end StarFree
 
 /-- The melody constraint of `B_UTP` is link-free, so under the unmerged realization it
 specifies a star-free set. -/
 theorem isStarFree_free_realize_hlh :
-    Language.IsStarFree {w : List Sym | (AR.realize gT w).Free [⟨hlh, inferInstance⟩]} :=
-  isStarFree_free_realize_of_link_free gT _ fun F hF => by
+    (Language.bannedSubgraph (AR.realize gT) [⟨hlh, inferInstance⟩]).IsStarFree :=
+  Language.isStarFree_bannedSubgraph_realize gT _ fun F hF => by
     rw [List.mem_singleton] at hF
     subst hF
     exact AR.not_link_ofWords_false
+
+/-! ### Theorem 3: `L_UTP` is neither strictly local nor tier-based strictly local
+
+In a string without `F` every mora carries its own symbol's single tone, so no contour occurs
+and membership in `L_UTP` depends only on the merged melody. With `x = L^{k−1}`, `H L·x` and
+`x·H` are in `L_UTP` and `H L·x·H` is not, which breaks suffix substitution at every width; and
+every symbol is visible, so a tier-based grammar would have to be strictly local. -/
+
+/-- In an `F`-free string each mora carries its own symbol's tone. -/
+private theorem eq_of_blockLinks {w : List Sym} (hw : ∀ s ∈ w, s ≠ .F) {p q : ℕ}
+    (h : BlockLinks Sym.melody (fun _ => [μ]) (fun _ _ _ => True) w p q) : p = q := by
+  induction w generalizing p q with
+  | nil => exact h.elim
+  | cons s w ih =>
+    have hs : (Sym.melody s).length = 1 := by
+      cases s <;> simp_all [Sym.melody]
+    rcases h with ⟨hp, hq, -⟩ | ⟨hp, hq, h⟩
+    · simp only [hs, List.length_singleton] at hp hq; omega
+    · have := ih (fun t ht => hw t (List.mem_cons_of_mem _ ht)) h
+      simp only [hs, List.length_singleton] at hp hq this; omega
+
+/-- An `F`-free string has no contour. -/
+theorem not_fall_factorEmbeds_merged {w : List Sym} (hw : ∀ s ∈ w, s ≠ .F) :
+    ¬ fall.FactorEmbeds (merged w) := by
+  rw [AR.factorEmbeds_ofWords_iff]
+  rintro ⟨ot, -, of, -, -, -, hl⟩
+  obtain ⟨p₁, -, hb₁, hr₁⟩ := hl 0 (by simp) 0 (by simp) trivial
+  obtain ⟨p₂, -, hb₂, hr₂⟩ := hl 1 (by simp) 0 (by simp) trivial
+  have e₁ := eq_of_blockLinks hw hb₁
+  have e₂ := eq_of_blockLinks hw hb₂
+  subst e₁; subst e₂
+  omega
+
+/-- The melody `H L H` occurs iff it is an infix of the merged melody. -/
+theorem hlh_factorEmbeds_merged_iff (w : List Sym) :
+    hlh.FactorEmbeds (merged w) ↔ [H, L, H] <:+: OCP.collapse (w.map Sym.melody).flatten := by
+  rw [AR.factorEmbeds_iff_infix_of_link_free AR.not_link_ofWords_false]
+  refine ⟨fun h => by simpa using h true, fun h i => ?_⟩
+  cases i
+  · simp
+  · simpa using h
+
+private theorem melody_replicate_L (m : ℕ) :
+    ((List.replicate m Sym.L).map Sym.melody).flatten = List.replicate m L := by
+  induction m with
+  | zero => rfl
+  | succ m ih => simp [List.replicate_succ, Sym.melody]
+
+private theorem collapse_HL_replicate (m : ℕ) :
+    OCP.collapse ([H, L] ++ List.replicate m L) = [H, L] := by
+  induction m with
+  | zero => decide
+  | succ m ih =>
+    rw [List.replicate_succ', ← List.append_assoc, OCP.collapse_append, ih]
+    decide
+
+private theorem not_infix_HLH_of_length {xs : List TRN} (h : xs.length ≤ 2) :
+    ¬ [H, L, H] <:+: xs :=
+  fun hi => absurd (hi.length_le.trans h) (by decide)
+
+theorem mem_ASL_utp_HL_replicate (m : ℕ) :
+    [Sym.H, Sym.L] ++ List.replicate m Sym.L ∈ ASL utpGrammar := by
+  rw [mem_ASL_utpGrammar_iff, hlh_factorEmbeds_merged_iff]
+  refine ⟨?_, not_fall_factorEmbeds_merged ?_⟩
+  · have hHL : ([Sym.H, Sym.L].map Sym.melody).flatten = [H, L] := rfl
+    simp only [List.map_append, List.flatten_append, melody_replicate_L, hHL,
+      collapse_HL_replicate]
+    exact not_infix_HLH_of_length (by simp)
+  · grind
+
+theorem mem_ASL_utp_replicate_H (m : ℕ) :
+    List.replicate m Sym.L ++ [Sym.H] ∈ ASL utpGrammar := by
+  rw [mem_ASL_utpGrammar_iff, hlh_factorEmbeds_merged_iff]
+  refine ⟨?_, not_fall_factorEmbeds_merged ?_⟩
+  · have hH : ([Sym.H].map Sym.melody).flatten = [H] := rfl
+    simp only [List.map_append, List.flatten_append, melody_replicate_L, hH]
+    rcases m with _ | m
+    · decide
+    · rw [OCP.collapse_append, OCP.collapse_replicate]
+      exact not_infix_HLH_of_length (by simp [OCP.collapse]; decide)
+  · grind
+
+theorem not_mem_ASL_utp_HL_replicate_H (m : ℕ) :
+    [Sym.H, Sym.L] ++ List.replicate m Sym.L ++ [Sym.H] ∉ ASL utpGrammar := by
+  rw [mem_ASL_utpGrammar_iff, hlh_factorEmbeds_merged_iff, not_and_or, not_not]
+  left
+  have hHL : ([Sym.H, Sym.L].map Sym.melody).flatten = [H, L] := rfl
+  have hH : ([Sym.H].map Sym.melody).flatten = [H] := rfl
+  simp only [List.map_append, List.flatten_append, melody_replicate_L, hHL, hH]
+  rw [OCP.collapse_append, collapse_HL_replicate]
+  decide
+
+/-- `L_UTP` is not strictly local at any width (Theorem 3). -/
+theorem not_isStrictlyLocal_ASL_utp (k : ℕ) : ¬ (ASL utpGrammar).IsStrictlyLocal k := fun h =>
+  not_mem_ASL_utp_HL_replicate_H (k - 1) (h.suffixSubstitutionClosed [.H, .L] [] [] [.H]
+    (List.replicate (k - 1) .L) (by simp) (by simpa using mem_ASL_utp_HL_replicate (k - 1))
+    (by simpa using mem_ASL_utp_replicate_H (k - 1)))
+
+/-- Every symbol is visible in `L_UTP`, deleting it from some string changing membership. -/
+theorem ASL_utp_visible :
+    ∀ a : Sym, ∃ u v, ¬ (u ++ a :: v ∈ ASL utpGrammar ↔ u ++ v ∈ ASL utpGrammar)
+  | .H => ⟨[.H, .L], [], by decide⟩
+  | .L => ⟨[.H], [.H], by decide⟩
+  | .F => ⟨[], [], by decide⟩
+
+/-- `L_UTP` is not tier-based strictly local at any width (Theorem 3). -/
+theorem not_isTierStrictlyLocal_ASL_utp (k : ℕ) : ¬ (ASL utpGrammar).IsTierStrictlyLocal k :=
+  fun h => not_isStrictlyLocal_ASL_utp k (h.isStrictlyLocal ASL_utp_visible)
 
 end Jardine2019

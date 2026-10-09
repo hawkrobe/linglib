@@ -10,11 +10,10 @@ public import Mathlib.Data.List.Basic
 /-!
 # Quantifier-free position tests
 
-The quantifier-free apparatus of the subregular program ([chandlee-2014],
-[chandlee-jardine-2019]): a `Subregular.Walk` walks successor/predecessor steps from a position,
-and a `Subregular.WindowFormula` is a boolean combination of label and definedness tests on
-such walks. Because successor and predecessor are *functions*, a term reaches a bounded neighbourhood
-of its position with no quantifiers — the syntactic source of strict locality. Satisfaction is
+A `Subregular.Walk` walks successor and predecessor steps from a position, and a
+`Subregular.WindowFormula` is a boolean combination of label and definedness tests on such walks.
+Because successor and predecessor are *functions*, a term reaches a bounded neighbourhood of its
+position with no quantifiers, the syntactic source of strict locality. Satisfaction is
 decidable, and a formula whose walks are backward with depth `≤ r` reads only the `r + 1`
 symbols ending at its position (`BackBounded.realize_congr`). These formulas are the guards of
 logical transductions (`Transduction.lean`) and the term language of boolean monadic recursive
@@ -50,6 +49,11 @@ quantifier-free formulas cannot leave their variables, so bounded-window reach r
 successor and predecessor as *function* symbols — but a mathlib `Structure` interprets function
 symbols totally, whereas falling off an edge is the semantics here (`defined`, `initial`,
 `final`).
+
+## References
+
+* [chandlee-2014]
+* [chandlee-jardine-2019]
 -/
 
 @[expose] public section
@@ -60,11 +64,11 @@ variable {α : Type*}
 
 /-! ### Positions -/
 
-/-- Successor as a partial function: the position after `n`, defined iff it is in range. -/
+/-- The successor of `n` is the position after it, defined iff it is in range. -/
 def succ? (w : List α) (n : ℕ) : Option ℕ :=
   if n + 1 < w.length then some (n + 1) else none
 
-/-- Predecessor as a partial function: the position before `n`, defined iff `n > 0`. -/
+/-- The predecessor of `n` is the position before it, defined iff `n > 0`. -/
 def pred? (w : List α) : ℕ → Option ℕ
   | 0 => none
   | n + 1 => if n < w.length then some n else none
@@ -102,8 +106,8 @@ theorem pred?_congr {w w' : List α} (h : w.length = w'.length) : pred? w = pred
 
 /-! ### Walks -/
 
-/-- A **term**: a walk of successor/predecessor steps from the position variable. Chains of
-`succ`/`pred` give bounded-window reach with no quantifier apparatus. -/
+/-- A **term** is a walk of successor and predecessor steps from the position variable. Chains of
+`succ` and `pred` reach a bounded window with no quantifier. -/
 inductive Walk where
   | var : Walk
   | succ : Walk → Walk
@@ -156,8 +160,8 @@ theorem eval_lt : ∀ {t : Walk} {v : ℕ}, t.eval w n = some v → v < w.length
     have := (succ?_eq_some_iff.mp hm).2
     omega
 
-/-- A one-step predecessor walk reads the predecessor position (in-domain: off the right edge
-`pred?` is still defined at `w.length` but the variable is not). -/
+/-- A one-step predecessor walk reads the predecessor position (in-domain, since off the right
+edge `pred?` is still defined at `w.length` but the variable is not). -/
 theorem eval_pred_var (h : n < w.length) : Walk.var.pred.eval w n = pred? w n := by
   rw [eval_pred, eval_var h, Option.bind_some]
 
@@ -167,7 +171,7 @@ theorem eval_congr (hlen : w.length = w'.length) : ∀ t : Walk, t.eval w n = t.
   | .succ t => by rw [eval_succ, eval_succ, eval_congr hlen t, succ?_congr hlen]
   | .pred t => by rw [eval_pred, eval_pred, eval_congr hlen t, pred?_congr hlen]
 
-/-- Substitution: `t.comp u` walks `u` first, then `t`. -/
+/-- The substitution `t.comp u` walks `u` first, then `t`. -/
 def comp : Walk → Walk → Walk
   | .var, u => u
   | .succ t, u => .succ (t.comp u)
@@ -198,13 +202,13 @@ def Forward : Walk → Prop
   | .pred _ => False
   | .succ t => t.Forward
 
-/-- The predecessor depth of a term: how far back it reaches. -/
+/-- The predecessor depth of a term is how far back it reaches. -/
 def pdepth : Walk → ℕ
   | .var => 0
   | .pred t => t.pdepth + 1
   | .succ t => t.pdepth
 
-/-- The successor depth of a term: how far forward it reaches. -/
+/-- The successor depth of a term is how far forward it reaches. -/
 def sdepth : Walk → ℕ
   | .var => 0
   | .pred t => t.sdepth
@@ -360,8 +364,8 @@ end Walk
 
 /-! ### Quantifier-free formulas -/
 
-/-- A **quantifier-free formula**: a boolean combination of label and definedness tests on term
-walks from a single position. -/
+/-- A **quantifier-free formula** is a boolean combination of label and definedness tests on
+term walks from a single position. -/
 inductive WindowFormula (α : Type*) where
   | label : α → Walk → WindowFormula α
   | defined : Walk → WindowFormula α
@@ -393,10 +397,10 @@ instance instDecidableRealize [DecidableEq α] (w : List α) (n : ℕ) :
   | .conj φ ψ => @instDecidableAnd _ _ (instDecidableRealize w n φ) (instDecidableRealize w n ψ)
   | .disj φ ψ => @instDecidableOr _ _ (instDecidableRealize w n φ) (instDecidableRealize w n ψ)
 
-/-- `t` reads an initial position: in-domain with no predecessor. -/
+/-- `t` reads an initial position, one in the domain with no predecessor. -/
 def initial (t : Walk) : WindowFormula α := .conj (.defined t) (.neg (.defined t.pred))
 
-/-- `t` reads a final position: in-domain with no successor. -/
+/-- `t` reads a final position, one in the domain with no successor. -/
 def final (t : Walk) : WindowFormula α := .conj (.defined t) (.neg (.defined t.succ))
 
 /-! ### Bounded formulas read only a window -/
@@ -423,7 +427,7 @@ instance instDecidableBounded (l r : ℕ) : ∀ φ : WindowFormula α, Decidable
   | .disj φ ψ => @instDecidableAnd _ _ (instDecidableBounded l r φ) (instDecidableBounded l r ψ)
 
 /-- A formula is backward-bounded by `r` if it reads only the `r + 1` positions ending at its
-own: bounded by `r` back and nothing forward. -/
+own, bounded by `r` back and nothing forward. -/
 abbrev BackBounded (r : ℕ) (φ : WindowFormula α) : Prop := φ.Bounded r 0
 
 /-- A bounded formula reads only its window: it has the same truth value at `(w, n)` and
