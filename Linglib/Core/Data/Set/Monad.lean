@@ -5,6 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
+public import Mathlib.Basic.Rel
 public import Mathlib.Data.Set.Functor
 
 /-!
@@ -23,6 +24,10 @@ about the local instance `Set.monad`, so they apply wherever a file enables it.
   `f <$> m <*> n` running `m` and then `n` from its output state.
 * `Set.mem_readerT_bind`, `Set.mem_readerT_map`, `Set.mem_readerT_pure`: results of
   `ReaderT σ Set` computations.
+* `StateT.relEquiv`: a `StateT σ Set α` computation is the family of relations on `σ` it induces
+  at each value, and `StateT.rel_bind`, `StateT.rel_map_seq` compose these relations.
+* `StateT.rel_bind_subset`, `StateT.rel_map_seq_subset`: a reflexive and transitive relation
+  containing every step of the parts contains every step of the whole.
 -/
 
 @[expose] public section
@@ -93,3 +98,79 @@ variable {σ α β : Type u}
 end ReaderT
 
 end Set
+
+/-! ### Graded relations -/
+
+namespace StateT
+
+open scoped SetRel
+
+variable {σ α β γ : Type u}
+
+/-- The relation `m` induces at the value `a`, from each state to the states `m` reaches from it
+with the value `a`. -/
+def rel (m : StateT σ Set α) (a : α) : SetRel σ σ := {p | (a, p.2) ∈ m p.1}
+
+@[simp] theorem mem_rel {m : StateT σ Set α} {a : α} {s s' : σ} :
+    s ~[m.rel a] s' ↔ (a, s') ∈ m s := Iff.rfl
+
+/-- A `StateT σ Set α` computation is the family of relations it induces at its values. -/
+def relEquiv : StateT σ Set α ≃ (α → SetRel σ σ) where
+  toFun := rel
+  invFun R s := {q | s ~[R q.1] q.2}
+  left_inv _ := rfl
+  right_inv _ := rfl
+
+theorem rel_pure_self (a : α) : (pure a : StateT σ Set α).rel a = SetRel.id := by
+  ext ⟨s, s'⟩
+  simp [eq_comm]
+
+theorem rel_pure_of_ne {a b : α} (h : a ≠ b) : (pure a : StateT σ Set α).rel b = ∅ := by
+  ext ⟨s, s'⟩
+  simp [Ne.symm h]
+
+theorem rel_bind (m : StateT σ Set α) (f : α → StateT σ Set β) (b : β) :
+    (m >>= f).rel b = ⋃ a, m.rel a ○ (f a).rel b := by
+  ext ⟨s, s'⟩
+  simp only [mem_rel, Set.mem_stateT_bind, Set.mem_iUnion, SetRel.mem_comp]
+  exact ⟨fun ⟨⟨a, t⟩, hm, hf⟩ ↦ ⟨a, t, hm, hf⟩, fun ⟨a, t, hm, hf⟩ ↦ ⟨(a, t), hm, hf⟩⟩
+
+theorem rel_map (f : α → β) (m : StateT σ Set α) (b : β) :
+    (f <$> m).rel b = ⋃ (a) (_ : f a = b), m.rel a := by
+  ext ⟨s, s'⟩
+  simp only [mem_rel, Set.mk_mem_stateT_map, Set.mem_iUnion, exists_prop]
+  exact ⟨fun ⟨a, hm, hb⟩ ↦ ⟨a, hb.symm, hm⟩, fun ⟨a, hb, hm⟩ ↦ ⟨a, hm, hb.symm⟩⟩
+
+theorem rel_map_seq (f : α → β → γ) (m : StateT σ Set α) (n : StateT σ Set β) (c : γ) :
+    (f <$> m <*> n).rel c = ⋃ (a) (b) (_ : f a b = c), m.rel a ○ n.rel b := by
+  ext ⟨s, s'⟩
+  simp only [mem_rel, Set.mk_mem_stateT_map_seq, Set.mem_iUnion, SetRel.mem_comp, exists_prop]
+  exact ⟨fun ⟨a, t, hm, b, hn, hc⟩ ↦ ⟨a, b, hc.symm, t, hm, hn⟩,
+    fun ⟨a, b, hc, t, hm, hn⟩ ↦ ⟨a, t, hm, b, hn, hc.symm⟩⟩
+
+variable {R : SetRel σ σ}
+
+theorem rel_pure_subset [R.IsRefl] (a b : α) : (pure a : StateT σ Set α).rel b ⊆ R := by
+  obtain rfl | h := eq_or_ne a b
+  · rw [rel_pure_self]; exact SetRel.id_subset
+  · rw [rel_pure_of_ne h]; exact Set.empty_subset _
+
+theorem rel_bind_subset [R.IsTrans] {m : StateT σ Set α} {f : α → StateT σ Set β}
+    (hm : ∀ a, m.rel a ⊆ R) (hf : ∀ a b, (f a).rel b ⊆ R) (b : β) : (m >>= f).rel b ⊆ R := by
+  rw [rel_bind]
+  exact Set.iUnion_subset fun a ↦ (SetRel.comp_subset_comp (hm a) (hf a b)).trans
+    SetRel.comp_subset_self
+
+theorem rel_map_subset {m : StateT σ Set α} (hm : ∀ a, m.rel a ⊆ R) (f : α → β) (b : β) :
+    (f <$> m).rel b ⊆ R := by
+  rw [rel_map]
+  exact Set.iUnion₂_subset fun a _ ↦ hm a
+
+theorem rel_map_seq_subset [R.IsTrans] {m : StateT σ Set α} {n : StateT σ Set β}
+    (hm : ∀ a, m.rel a ⊆ R) (hn : ∀ b, n.rel b ⊆ R) (f : α → β → γ) (c : γ) :
+    (f <$> m <*> n).rel c ⊆ R := by
+  rw [rel_map_seq]
+  exact Set.iUnion_subset fun a ↦ Set.iUnion_subset fun b ↦ Set.iUnion_subset fun _ ↦
+    (SetRel.comp_subset_comp (hm a) (hn b)).trans SetRel.comp_subset_self
+
+end StateT
