@@ -38,7 +38,6 @@ import Linglib.Core.Algebra.Group.IdempotentPower
 import Linglib.Core.Analysis.LeastSquares
 import Linglib.Core.Analysis.SpecialFunctions.Sigmoid
 import Linglib.Core.Analysis.SpecialFunctions.Softmax
-import Linglib.Core.CategoryTheory.Monoidal.LabeledTuple
 import Linglib.Core.Combinatorics.Antimatroid
 import Linglib.Core.Combinatorics.Enumerative.PermutationPattern
 import Linglib.Core.Combinatorics.RootedTree.Aut

@@ -18,8 +18,8 @@ Delinking, and CL as the filling of a stranded mora by a language-particular con
 under the ban on crossing association lines. The typological argument of the paper's §5 is
 derived from the representations: `cl_delete_of_isOnset` is the onset-deletion asymmetry (an
 onset projects no mora, so its loss strands nothing, and Moraic Conservation holds by
-construction), `IsPlanar.cl` says that filling from the nearest linked segment never crosses a
-line, and `not_isPlanar_link_of_onset` is the vowel-loss asymmetry (the vowel to the right of
+construction), `NoCrossing.cl` says that filling from the nearest linked segment never crosses a
+line, and `not_noCrossing_link_of_onset` is the vowel-loss asymmetry (the vowel to the right of
 a stranded mora lies outside the mora's `Autosegmental.window`, past that syllable's onset
 line). The seven CL types of the typology, the weight prerequisite of §6, and the two-mora
 limit and trimoraic syllables of §7 are run as derivations on the paper's forms.
@@ -64,8 +64,8 @@ inductive Tier
   | mora
   deriving DecidableEq, Repr
 
-/-- A prosodic node: its tier and the timeline slot of the segment that projected it, the
-    nucleus for a syllable node and the mora-bearing segment for a mora; `idx` tells apart
+/-- A prosodic node records its tier and the timeline slot of the segment that projected it,
+    the nucleus for a syllable node and the mora-bearing segment for a mora; `idx` tells apart
     the two morae of one long vowel ((3a)). -/
 structure Node where
   tier : Tier
@@ -93,7 +93,7 @@ open Node
 
 /-! ### Forms -/
 
-/-- A moraic representation over a melody: segment `i` occupies timeline slot `i`. -/
+/-- A moraic representation over a melody, in which segment `i` occupies timeline slot `i`. -/
 structure Form (α : Type*) where
   /-- The segmental tier. -/
   melody : List α
@@ -102,8 +102,8 @@ structure Form (α : Type*) where
   nodes : Finset Node
   /-- Domination of morae by syllable nodes. -/
   dom : Finset (Node × Node)
-  /-- Association lines to the melody: a syllable node to its onset consonants, a mora to the
-      segments it dominates. -/
+  /-- Association lines run to the melody, from a syllable node to its onset consonants and
+      from a mora to the segments it dominates. -/
   links : Finset (Node × ℕ)
 
 namespace Form
@@ -111,9 +111,9 @@ namespace Form
 variable {α : Type*} (f : Form α)
 
 /-- The ban on crossing association lines, on both layers. -/
-def IsPlanar : Prop := IsNonCrossing f.links ∧ IsNonCrossing f.dom
+def NoCrossing : Prop := IsNonCrossing f.links ∧ IsNonCrossing f.dom
 
-instance : Decidable f.IsPlanar := by unfold IsPlanar; infer_instance
+instance : Decidable f.NoCrossing := by unfold Form.NoCrossing; infer_instance
 
 /-- The slots node `n` is associated to. -/
 def span (n : Node) : Finset ℕ := (f.links.filter (·.1 = n)).image (·.2)
@@ -121,7 +121,7 @@ def span (n : Node) : Finset ℕ := (f.links.filter (·.1 = n)).image (·.2)
 /-- The morae of syllable node `s`. -/
 def morae (s : Node) : Finset Node := (f.dom.filter (·.1 = s)).image (·.2)
 
-/-- Syllable weight: the number of morae. -/
+/-- Syllable weight is the number of morae. -/
 def weight (s : Node) : ℕ := (f.morae s).card
 
 /-- The nuclear segments of syllable node `s`: the slots its morae dominate. -/
@@ -131,7 +131,7 @@ def nuclear (s : Node) : Finset ℕ := (f.morae s).biUnion f.span
     ((3a)) or a geminate ((9a)). -/
 def length (i : ℕ) : ℕ := (f.links.filter (·.2 = i)).card
 
-/-- Morae stranded by a deletion on the segmental tier: they dominate nothing. -/
+/-- The morae stranded by a deletion on the segmental tier are those dominating nothing. -/
 def stranded : Finset Node := f.nodes.filter fun n ↦ n.tier = .mora ∧ f.span n = ∅
 
 /-- Morae no syllable node dominates. -/
@@ -140,7 +140,7 @@ def free : Finset Node := f.nodes.filter fun n ↦ n.tier = .mora ∧ n ∉ f.do
 /-- The mora count of the form. -/
 def moraCount : ℕ := (f.nodes.filter (·.tier = .mora)).card
 
-/-- The surface string after Stray Erasure: each linked segment with its number of lines. -/
+/-- The surface string after Stray Erasure pairs each linked segment with its number of lines. -/
 def surface : List (α × ℕ) :=
   f.melody.zipIdx.filterMap fun p ↦ if 0 < f.length p.2 then some (p.1, f.length p.2) else none
 
@@ -150,11 +150,12 @@ def surface : List (α × ℕ) :=
     a mora that dominated it alone is stranded. -/
 def delete (i : ℕ) : Form α := { f with links := f.links.filter (·.2 ≠ i) }
 
-/-- Erase one association line: Glide Formation (37) disassociates a vowel from its mora. -/
+/-- `delink` erases one association line, as Glide Formation (37) disassociates a vowel from its
+    mora. -/
 def delink (n : Node) (i : ℕ) : Form α := { f with links := f.links.erase (n, i) }
 
-/-- Draw one association line: spreading onto a stranded mora, or adjunction of a stray
-    segment. -/
+/-- `link` draws one association line, for spreading onto a stranded mora or adjunction of a
+    stray segment. -/
 def link (n : Node) (i : ℕ) : Form α := { f with links := insert (n, i) f.links }
 
 /-- Parasitic Delinking (23): a syllable node with no nuclear segment is deleted with its
@@ -178,15 +179,15 @@ inductive Convention
   | fromRight
   deriving DecidableEq, Repr
 
-/-- The lines CL draws: from each stranded mora to the nearest segment linked on the
-    convention's side, the endpoint of the mora's window. -/
+/-- `fills` is the set of lines CL draws, from each stranded mora to the nearest segment linked
+    on the convention's side, the endpoint of the mora's window. -/
 def fills : Convention → Finset (Node × ℕ)
   | .fromLeft => f.stranded.biUnion fun m ↦ (leftBound f.links m).recBotCoe ∅ fun j ↦ {(m, j)}
   | .fromRight =>
     f.stranded.biUnion fun m ↦ (rightBound f.links m).recTopCoe ∅ fun j ↦ {(m, j)}
 
-/-- Compensatory lengthening: every stranded mora is filled by the convention's segment; a
-    mora with none stays stranded, for Stray Erasure. -/
+/-- Compensatory lengthening fills every stranded mora with the convention's segment; a mora
+    with none stays stranded, for Stray Erasure. -/
 def cl (c : Convention) : Form α := { f with links := f.links ∪ f.fills c }
 
 /-! #### Moraic Conservation (64)
@@ -259,19 +260,19 @@ theorem cl_delete_of_isOnset {i : ℕ} (h : f.IsOnset i) (h₀ : f.stranded = �
 
 /-! #### Crossing
 
-Removing lines keeps a form planar, and so does CL: each stranded mora is linked to the
-endpoint of its window, the nearest segment linked on the convention's side. Only `link` can
-cross, and `isPlanar_link_iff` says exactly when. -/
+Removing lines keeps a form free of crossing lines, and so does CL, which links each stranded
+mora to the endpoint of its window, the nearest segment linked on the convention's side. Only
+`link` can cross, and `noCrossing_link_iff` says exactly when. -/
 
 variable {f}
 
-theorem IsPlanar.delete (h : f.IsPlanar) (i : ℕ) : (f.delete i).IsPlanar :=
+theorem NoCrossing.delete (h : f.NoCrossing) (i : ℕ) : (f.delete i).NoCrossing :=
   ⟨h.1.subset (Finset.filter_subset _ _), h.2⟩
 
-theorem IsPlanar.delink (h : f.IsPlanar) (n : Node) (i : ℕ) : (f.delink n i).IsPlanar :=
+theorem NoCrossing.delink (h : f.NoCrossing) (n : Node) (i : ℕ) : (f.delink n i).NoCrossing :=
   ⟨h.1.subset (Finset.erase_subset _ _), h.2⟩
 
-theorem IsPlanar.parasitic (h : f.IsPlanar) : f.parasitic.IsPlanar :=
+theorem NoCrossing.parasitic (h : f.NoCrossing) : f.parasitic.NoCrossing :=
   ⟨h.1.subset (Finset.filter_subset _ _), h.2.subset (Finset.filter_subset _ _)⟩
 
 variable {m : Node} {i : ℕ}
@@ -290,33 +291,32 @@ theorem mem_fills_fromRight {p : Node × ℕ} :
   rintro ⟨m, hm, hp⟩
   cases hb : rightBound f.links m <;> simp_all
 
-/-- **CL is planar**: the lines from stranded morae to the nearest segment on one side cross
-    neither one another nor the lines of a planar form. -/
-theorem IsPlanar.cl (h : f.IsPlanar) (c : Convention) : (f.cl c).IsPlanar := by
+/-- The lines CL draws from stranded morae to the nearest segment on one side cross neither one
+    another nor the lines of a form without crossings. -/
+theorem NoCrossing.cl (h : f.NoCrossing) (c : Convention) : (f.cl c).NoCrossing := by
   refine ⟨?_, h.2⟩
   cases c
   · exact h.1.union_of_leftBound fun p hp ↦ (mem_fills_fromLeft.1 hp).2
   · exact h.1.union_of_rightBound fun p hp ↦ (mem_fills_fromRight.1 hp).2
 
-/-- Drawing a line keeps a form planar iff its slot lies in the node's window. -/
-theorem isPlanar_link_iff : (f.link m i).IsPlanar ↔ f.IsPlanar ∧ i ∈ window f.links m := by
-  simp only [IsPlanar, link, isNonCrossing_insert_iff_mem_window, and_right_comm]
+/-- Drawing a line keeps a form free of crossings iff its slot lies in the node's window. -/
+theorem noCrossing_link_iff : (f.link m i).NoCrossing ↔ f.NoCrossing ∧ i ∈ window f.links m := by
+  simp only [Form.NoCrossing, link, isNonCrossing_insert_iff_mem_window, and_right_comm]
 
-/-- **The vowel-loss asymmetry** (§5.3.2, (61) and (66)): a stranded mora to the left of a
-    syllable cannot lengthen its nucleus `v`, which lies past its window: the onset consonant
-    `c` is linked from the syllable node to its right. Rightward CL through vowel loss is
-    unattested. -/
-theorem not_isPlanar_link_of_onset {v c : ℕ} (hc : (σ v, c) ∈ f.links) (hm : m.slot < v)
-    (hcv : c < v) : ¬ (f.link m v).IsPlanar := fun hp ↦
+/-- A stranded mora to the left of a syllable cannot lengthen its nucleus `v`, which lies past
+    its window because the onset consonant `c` is linked from the syllable node to its right
+    (§5.3.2, (61) and (66)). Rightward CL through vowel loss is unattested. -/
+theorem not_noCrossing_link_of_onset {v c : ℕ} (hc : (σ v, c) ∈ f.links) (hm : m.slot < v)
+    (hcv : c < v) : ¬ (f.link m v).NoCrossing := fun hp ↦
   notMem_window_of_mem_rightIndices (mem_rightIndices.2 ⟨σ v, hm, hc⟩) hcv
-    (isPlanar_link_iff.1 hp).2
+    (noCrossing_link_iff.1 hp).2
 
 /-- (68): a moraic coda `c` between the nucleus `v` and a stranded mora to its right puts `v`
     before the mora's window, so vowel-loss CL favours open syllables. -/
-theorem not_isPlanar_link_of_coda {v c : ℕ} (hc : (μ c, c) ∈ f.links) (hv : v < c)
-    (hm : c < m.slot) : ¬ (f.link m v).IsPlanar := fun hp ↦
+theorem not_noCrossing_link_of_coda {v c : ℕ} (hc : (μ c, c) ∈ f.links) (hv : v < c)
+    (hm : c < m.slot) : ¬ (f.link m v).NoCrossing := fun hp ↦
   notMem_window_of_mem_leftIndices (mem_leftIndices.2 ⟨μ c, hm, hc⟩) hv
-    (isPlanar_link_iff.1 hp).2
+    (noCrossing_link_iff.1 hp).2
 
 end Form
 
@@ -328,7 +328,7 @@ adjoins as onset to the following nucleus when prevocalic and otherwise as coda 
 preceding one; Weight by Position (10) gives a coda its own mora while the syllable is below
 the language's mora limit, and a later coda rides the syllable's last mora (§7, (73)). -/
 
-/-- An underlying form: segments with their mora counts. -/
+/-- An underlying form lists segments with their mora counts. -/
 abbrev Underlying (α : Type*) := List (α × ℕ)
 
 namespace Underlying
@@ -341,8 +341,8 @@ def morae (i : ℕ) : ℕ := (u[i]?.map Prod.snd).getD 0
 /-- The nucleus slots. -/
 def nuclei : List ℕ := (List.range u.length).filter fun i ↦ 0 < u.morae i
 
-/-- The nucleus whose syllable slot `i` belongs to: its own if moraic; the following one if
-    the slot is the consonant right before it; else the preceding one. -/
+/-- `host i` is the nucleus of the syllable slot `i` belongs to: its own if moraic, the following
+    one if the slot is the consonant right before it, and the preceding one otherwise. -/
 def host (i : ℕ) : Option ℕ :=
   if 0 < u.morae i then some i else
   match (u.nuclei.filter (· < i)).max?, (u.nuclei.filter (i < ·)).min? with
@@ -384,9 +384,9 @@ def onsets : List (Node × ℕ) :=
 def codas : List (ℕ × ℕ) :=
   (List.range u.length).filterMap fun c ↦ (u.codaHost c).map fun v ↦ (v, c)
 
-/-- Syllabify: nuclei project syllable nodes over their morae, onsets adjoin to the syllable
-    node, codas to a mora, with Weight by Position for a language that has it (`wbp`) up to its
-    mora limit (two, by default: §7). -/
+/-- Syllabification projects syllable nodes from nuclei over their morae, adjoins onsets to the
+    syllable node and codas to a mora, with Weight by Position for a language that has it
+    (`wbp`) up to its mora limit (two by default, §7). -/
 def syllabify (wbp : Bool) (limit : ℕ := 2) : Form α :=
   let vMorae := u.nuclei.flatMap fun v ↦ (List.range (u.morae v)).map fun k ↦ (σ v, μ v k)
   let cMorae := u.codas.filterMap fun p ↦
@@ -430,7 +430,7 @@ theorem kasnus_stranded : (kasnus.delete 2).stranded = {μ 2} := by decide
 /-- (17c): the stranded mora is filled by spreading from the left. -/
 def kaanus : Form Seg := (kasnus.delete 2).cl fromLeft
 
-theorem kaanus_planar : kaanus.IsPlanar := ((by decide : kasnus.IsPlanar).delete 2).cl _
+theorem kaanus_noCrossing : kaanus.NoCrossing := ((by decide : kasnus.NoCrossing).delete 2).cl _
 
 theorem kaanus_surface : kaanus.surface = [(k, 1), (a, 2), (n, 1), (u, 1), (s, 1)] := by decide
 
@@ -442,7 +442,7 @@ theorem kaanus_moraCount : kaanus.moraCount = kasnus.moraCount := by simp [kaanu
 /-- Latin *smereō* 'deserve' ((14)): word-initial *s* is an onset. -/
 def smereo : Form Seg := Underlying.syllabify [C s, C m, V e, C r, V e, VV o] true
 
-/-- As in (18) for *snurus*: deleting the onset *s* strands nothing, so the convention has
+/-- As in (18) for *snurus*, deleting the onset *s* strands nothing, so the convention has
     nothing to fill. -/
 theorem mereo_no_cl : (smereo.delete 0).cl fromLeft = smereo.delete 0 :=
   smereo.cl_delete_of_isOnset (by decide) (by decide) _
@@ -474,11 +474,12 @@ theorem odwos_delete_stranded : (odwos.delete 2).stranded = ∅ :=
 
 theorem odwos_flop_stranded : odwos_flop.stranded = {μ 1} := by decide
 
-/-- Nonlocal CL: the vowel that lengthens is not adjacent to the consonant that deleted. -/
+/-- In nonlocal CL the vowel that lengthens is not adjacent to the consonant that deleted. -/
 theorem oodos_surface :
     (odwos_flop.cl fromLeft).surface = [(o, 2), (d, 1), (o, 1), (s, 1)] := by decide
 
-theorem oodos_planar : (odwos_flop.cl fromLeft).IsPlanar := (by decide : odwos_flop.IsPlanar).cl _
+theorem oodos_noCrossing : (odwos_flop.cl fromLeft).NoCrossing :=
+  (by decide : odwos_flop.NoCrossing).cl _
 
 /-! #### Vowel loss: Middle English (24)–(26) and the asymmetry (61), (66), (68) -/
 
@@ -494,7 +495,7 @@ theorem tal_free_nodes : tal_free.nodes = {σ 1, μ 1, μ 3} := by decide
     first syllable adopts. -/
 def taal : Form Seg := ((tal_free.cl fromLeft).link (μ 3) 2).adjoin
 
-theorem taal_planar : taal.IsPlanar := by decide
+theorem taal_noCrossing : taal.NoCrossing := by decide
 
 theorem taal_surface : taal.surface = [(t, 1), (a, 2), (l, 1)] := by decide
 
@@ -512,15 +513,15 @@ def la_free : Form Seg := (ala.delete 0).parasitic
 theorem la_free_stranded : la_free.stranded = {μ 0} := by decide
 
 /-- Rightward vowel lengthening crosses the onset line: *#laː* cannot arise. -/
-theorem no_rightward_vowel_loss : ¬ (la_free.link (μ 0) 2).IsPlanar :=
-  Form.not_isPlanar_link_of_onset (c := 1) (by decide) (by decide) (by decide)
+theorem no_rightward_vowel_loss : ¬ (la_free.link (μ 0) 2).NoCrossing :=
+  Form.not_noCrossing_link_of_onset (c := 1) (by decide) (by decide) (by decide)
 
-/-- The remaining planar option is (56): the *l* geminates, the first half in its own
+/-- The remaining option without crossings is (56): the *l* geminates, the first half in its own
     syllable. -/
 theorem lla_surface : ((la_free.cl fromRight).surface) = [(l, 2), (a, 1)] := by decide
 
-theorem lla_planar : (la_free.cl fromRight).IsPlanar :=
-  ((by decide : ala.IsPlanar).delete 0).parasitic.cl _
+theorem lla_noCrossing : (la_free.cl fromRight).NoCrossing :=
+  ((by decide : ala.NoCrossing).delete 0).parasitic.cl _
 
 /-- (68): *talpa* with the final vowel deleted; the first syllable is closed by a moraic
     *l*. -/
@@ -529,12 +530,12 @@ def talpa : Form Seg := Underlying.syllabify [C t, V a, C l, C p, V a] true
 def talp_free : Form Seg := (talpa.delete 4).parasitic
 
 /-- The vowel cannot lengthen across its coda's line. -/
-theorem talp_no_vowel_lengthening : ¬ (talp_free.link (μ 4) 1).IsPlanar :=
-  Form.not_isPlanar_link_of_coda (c := 2) (by decide) (by decide) (by decide)
+theorem talp_no_vowel_lengthening : ¬ (talp_free.link (μ 4) 1).NoCrossing :=
+  Form.not_noCrossing_link_of_coda (c := 2) (by decide) (by decide) (by decide)
 
 /-- The *l* could, at the price of a consonant linked to two morae of one syllable ((7)), the
     configuration Estonian permits. -/
-theorem talp_consonant_lengthening : (talp_free.link (μ 4) 2).IsPlanar := by decide
+theorem talp_consonant_lengthening : (talp_free.link (μ 4) 2).NoCrossing := by decide
 
 theorem talp_consonant_length : (talp_free.link (μ 4) 2).length 2 = 2 := by decide
 
@@ -549,10 +550,10 @@ def bagien_gf : Form Seg := ((bagien.delink (μ 3) 3).parasitic.link (σ 4) 2).l
 
 theorem bagien_gf_stranded : bagien_gf.stranded = {μ 3} := by decide
 
-theorem bagien_gf_planar : bagien_gf.IsPlanar := by decide
+theorem bagien_gf_noCrossing : bagien_gf.NoCrossing := by decide
 
 /-- Ilokano fills from the right ((40a)): the *g*, now an onset of the following syllable,
-    spreads onto the mora, which the first syllable adopts: *bag.gyen*. -/
+    spreads onto the mora, which the first syllable adopts, giving *bag.gyen*. -/
 def baggyen : Form Seg := (bagien_gf.cl fromRight).adjoin
 
 theorem baggyen_rightBound : rightBound bagien_gf.links (μ 3) = ((2 : ℕ) : WithTop ℕ) := by
@@ -561,7 +562,7 @@ theorem baggyen_rightBound : rightBound bagien_gf.links (μ 3) = ((2 : ℕ) : Wi
 theorem baggyen_surface :
     baggyen.surface = [(b, 1), (a, 1), (g, 2), (i, 1), (e, 1), (n, 1)] := by decide
 
-theorem baggyen_planar : baggyen.IsPlanar := by decide
+theorem baggyen_noCrossing : baggyen.NoCrossing := by decide
 
 theorem baggyen_weight : baggyen.weight (σ 1) = 2 := by decide
 
@@ -575,7 +576,7 @@ theorem baagyen_leftBound : leftBound bagien_gf.links (μ 3) = ((1 : ℕ) : With
 theorem baagyen_surface :
     baagyen.surface = [(b, 1), (a, 2), (g, 1), (i, 1), (e, 1), (n, 1)] := by decide
 
-theorem baagyen_planar : baagyen.IsPlanar := by decide
+theorem baagyen_noCrossing : baagyen.NoCrossing := by decide
 
 /-! #### Total assimilation (49b) and prenasalization (52) -/
 
@@ -586,8 +587,8 @@ def asta : Form Seg := Underlying.syllabify [V a, C s, C t, V a] true
 theorem atta_surface : ((asta.delete 1).cl fromRight).surface = [(a, 1), (t, 2), (a, 1)] := by
   decide
 
-theorem atta_planar : ((asta.delete 1).cl fromRight).IsPlanar :=
-  ((by decide : asta.IsPlanar).delete 1).cl _
+theorem atta_noCrossing : ((asta.delete 1).cl fromRight).NoCrossing :=
+  ((by decide : asta.NoCrossing).delete 1).cl _
 
 /-- Bantu prenasalization, *amba* → *aːmba*, which the paper lists without a derivation: here
     the nasal leaves its mora for the onset of the following syllable, and the vowel fills it. -/
@@ -597,22 +598,22 @@ def aamba : Form Seg := ((amba.delink (μ 1) 1).link (σ 3) 1).cl fromLeft
 
 theorem aamba_surface : aamba.surface = [(a, 2), (m, 1), (b, 1), (a, 1)] := by decide
 
-theorem aamba_planar : aamba.IsPlanar := Form.IsPlanar.cl (by decide) _
+theorem aamba_noCrossing : aamba.NoCrossing := Form.NoCrossing.cl (by decide) _
 
 /-! #### Inverse CL: Luganda (55a) -/
 
-/-- Luganda *aika* → *akka*: the vowel deletes and the following consonant geminates. -/
+/-- In Luganda *aika* → *akka*, the vowel deletes and the following consonant geminates. -/
 def aika : Form Seg := Underlying.syllabify [V a, V i, C k, V a] true
 
 def akka : Form Seg := ((aika.delete 1).parasitic.cl fromRight).adjoin
 
 theorem akka_surface : akka.surface = [(a, 1), (k, 2), (a, 1)] := by decide
 
-theorem akka_planar : akka.IsPlanar := by decide
+theorem akka_noCrossing : akka.NoCrossing := by decide
 
 /-! #### The weight prerequisite (§6, (71)) -/
 
-/-- *pas* in a language without Weight by Position: the coda rides the nucleus mora. -/
+/-- In *pas*, in a language without Weight by Position, the coda rides the nucleus mora. -/
 def pas_light : Form Seg := Underlying.syllabify [C p, V a, C s] false
 
 /-- *pas* in a language with Weight by Position. -/
@@ -633,7 +634,7 @@ theorem pas_heavy_weight : pas_heavy.weight (σ 1) = 2 := by decide
     the *t* shares the *l*'s mora. -/
 def sultni : Form Seg := Underlying.syllabify [C s, V u, C l, C t, C n, V i] true
 
-/-- Deleting the *l* strands nothing: [sutni], no CL. -/
+/-- Deleting the *l* strands nothing, giving [sutni] with no CL. -/
 theorem sutni_no_cl : (sultni.delete 2).stranded = ∅ := by decide
 
 /-- Komi *sul.ta.li* 'I stood up': the *l* alone closes its syllable and bears a mora. -/
@@ -669,6 +670,6 @@ theorem spreeek_surface : spreeek.surface = [(s, 1), (p, 1), (r, 1), (e, 3), (k,
 
 theorem spreeek_weight : spreeek.weight (σ 3) = 3 := by decide
 
-theorem spreeek_planar : spreeek.IsPlanar := by decide
+theorem spreeek_noCrossing : spreeek.NoCrossing := by decide
 
 end Hayes1989
