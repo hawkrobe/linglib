@@ -58,6 +58,7 @@ namespace Sharvit2003
 open Semantics
 
 open Tense
+open HeimKratzer
 
 variable {T : Type*}
 
@@ -164,9 +165,9 @@ def embeddedPresent (n e : ℕ) (mode : ReferentialMode) : TensePronoun :=
 
 /-- A bindable present bound by the attitude verb resolves to the attitude's now, so its present
 constraint holds relative to the embedded perspective: the nonpast reading of (5) and (12a). -/
-theorem boundPresent_nonpast [LinearOrder T] (n e : ℕ) (g : TemporalAssignment T) (now : T) :
+theorem boundPresent_nonpast [LinearOrder T] (n e : ℕ) (g : Assignment T) (now : T) :
     (embeddedPresent n e .bound).presupposition
-      ((embeddedPresent n e .bound).resolve (updateTemporal g n now)) now := by
+      ((embeddedPresent n e .bound).resolve (Function.update g n now)) now := by
   simp [TensePronoun.presupposition, TensePronoun.resolve, embeddedPresent, Tense.denote_present]
 
 /-- A matrix-indexical present under a past attitude verb refers to the utterance time, which
@@ -200,25 +201,25 @@ def will [LT T] (p : T → Prop) (t : T) : Prop := ∃ t', t < t' ∧ p t'
 utterance time, slot `0` of the assignment, and each complement is a λ0-abstract that rebinds
 the zero tense read by the deleted past on *will*, the base-generated zero tense on *tell* and
 the deleted past on *miss*. -/
-def lf7 [LT T] (decides tells : T → Set T) (miss : T → Prop) (g : TemporalAssignment T) :
+def lf7 [LT T] (decides tells : T → Set T) (miss : T → Prop) (g : Assignment T) :
     Prop :=
-  ∃ t, t < interpTense 0 g ∧
+  ∃ t, t < interpPronoun 0 g ∧
     attitude decides
-      (temporalLambdaAbs 0 (λ g₁ =>
+      (lambdaAbsG 0 (λ g₁ =>
         will
-          (temporalLambdaAbs 0 (λ g₂ =>
-            attitude tells (temporalLambdaAbs 0 (λ g₃ => miss (interpTense 0 g₃)) g₂)
-              (interpTense 0 g₂)) g₁)
-          (interpTense 0 g₁)) g) t
+          (lambdaAbsG 0 (λ g₂ =>
+            attitude tells (lambdaAbsG 0 (λ g₃ => miss (interpPronoun 0 g₃)) g₂)
+              (interpPronoun 0 g₂)) g₁)
+          (interpPronoun 0 g₁)) g) t
 
 /-- The interpretation (10): for every time compatible with what John decides at some time
 before the utterance time there is a later time at which he tells his mother, and he misses
 her at every time compatible with that telling. -/
 theorem lf7_iff [LT T] (decides tells : T → Set T) (miss : T → Prop)
-    (g : TemporalAssignment T) :
+    (g : Assignment T) :
     lf7 decides tells miss g ↔
       ∃ t, t < g 0 ∧ ∀ t' ∈ decides t, ∃ t'', t' < t'' ∧ ∀ t''' ∈ tells t'', miss t''' := by
-  simp only [lf7, attitude, will, temporalLambdaAbs, interpTense, Function.update_self]
+  simp only [lf7, attitude, will, lambdaAbsG, interpPronoun, Function.update_self]
 
 /-! ### The paper's examples -/
 

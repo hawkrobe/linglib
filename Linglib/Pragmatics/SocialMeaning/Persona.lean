@@ -50,7 +50,7 @@ namespace SocialMeaning
 on properties. -/
 structure GroundedField (Variant : Type*) {P : Type*} (G : SimpleGraph P) where
   /-- The properties each variant indexes. -/
-  indexes : IndexicalField Variant P
+  indexes : Variant → Finset P
   isIndepSet : ∀ v, G.IsIndepSet (indexes v : Set P)
 
 namespace GroundedField

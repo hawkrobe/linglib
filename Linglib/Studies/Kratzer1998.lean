@@ -62,6 +62,7 @@ open Event (τ)
 open Semantics
 
 open Tense
+open HeimKratzer
 open Aspect (ofRel ofRel_mono UNBOUNDED PRFV ViewpointType)
 
 /-! ### The tenses (§4–§5) -/
@@ -86,7 +87,7 @@ variable {T : Type*}
 
 /-- An out-of-the-blue context has no salient time but the utterance time, so every temporal
 variable resolves to it. -/
-def outOfTheBlue (t₀ : T) : TemporalAssignment T := Function.const ℕ t₀
+def outOfTheBlue (t₀ : T) : Assignment T := Function.const ℕ t₀
 
 /-- Out of the blue a tense is defined iff its cell admits coincidence with the utterance time,
 as the present does and the past does not. -/
@@ -95,22 +96,22 @@ theorem tense_outOfTheBlue_iff [LinearOrder T] (C : Finset Ordering) (n : ℕ) (
   TensePronoun.fullPresupposition_const _ t₀
 
 /-- The zero tense has no presupposition. -/
-theorem zeroTense_fullPresupposition [LinearOrder T] (n : ℕ) (g : TemporalAssignment T) :
+theorem zeroTense_fullPresupposition [LinearOrder T] (n : ℕ) (g : Assignment T) :
     (zeroTense n).fullPresupposition g := Finset.mem_univ _
 
 /-- A zero tense with a binder index makes its clause a property of times, (31). Whatever the
 assignment, the abstract applied to `t` evaluates the clause at `t`. -/
-theorem zeroTense_abstract (n : ℕ) (P : T → Prop) (g : TemporalAssignment T) (t : T) :
-    temporalLambdaAbs n (fun g ↦ P ((zeroTense n).resolve g)) g t ↔ P t := by
-  simp [temporalLambdaAbs, TensePronoun.resolve, interpTense, zeroTense]
+theorem zeroTense_abstract (n : ℕ) (P : T → Prop) (g : Assignment T) (t : T) :
+    lambdaAbsG n (fun g ↦ P ((zeroTense n).resolve g)) g t ↔ P t := by
+  simp [lambdaAbsG, TensePronoun.resolve, interpPronoun, zeroTense]
 
 /-- An indexical tense cannot be abstracted over by another index. The binder leaves the clause
 a proposition about the tense's own reference, which is why an attitude verb forces a zero
 tense. -/
 theorem tense_not_abstracted (C : Finset Ordering) {m n : ℕ} (hn : n ≠ m) (P : T → Prop)
-    (g : TemporalAssignment T) (t : T) :
-    temporalLambdaAbs m (fun g ↦ P ((tense C n).resolve g)) g t ↔ P (g n) := by
-  simp [temporalLambdaAbs, TensePronoun.resolve, interpTense, tense, Function.update_of_ne hn]
+    (g : Assignment T) (t : T) :
+    lambdaAbsG m (fun g ↦ P ((tense C n).resolve g)) g t ↔ P (g n) := by
+  simp [lambdaAbsG, TensePronoun.resolve, interpPronoun, tense, Function.update_of_ne hn]
 
 end Tenses
 
@@ -190,7 +191,7 @@ theorem AspectHead.IsAnterior.precedes {a : AspectHead} (ha : a.IsAnterior T)
 /-- Tense `C` on the variable `n` with aspect `a` is true of an event property when the tense is
 defined and the aspect holds of the property at the tense's reference. -/
 def denote (C : Finset Ordering) (a : AspectHead) (n : ℕ) (P : W → E → Prop)
-    (g : TemporalAssignment T) (w : W) : Prop :=
+    (g : Assignment T) (w : W) : Prop :=
   (tense C n).fullPresupposition g ∧ .pure ((tense C n).resolve g) ∈ a.denote P w
 
 /-- Out of the blue a tense with an aspect is true iff the tense admits coincidence with the

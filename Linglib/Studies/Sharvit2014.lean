@@ -146,13 +146,13 @@ theorem pronominalLookup_eq_none_iff {T : Type*} [LT T]
 referential index `k` and evaluation index `j` satisfies its presupposition and resolves to
 `t`, for any binding mode. -/
 theorem pronominalLookup_eq_some_iff_tensePronoun {T : Type*} [LinearOrder T]
-    (g : Tense.TemporalAssignment T) (j k : ℕ) (t : T)
+    (g : Assignment T) (j k : ℕ) (t : T)
     (mode : Tense.ReferentialMode) :
     pronominalLookup g j k = some t ↔
       (Tense.TensePronoun.mk k ⟦Tense.past⟧ mode j).fullPresupposition g ∧
       (Tense.TensePronoun.mk k ⟦Tense.past⟧ mode j).resolve g = t := by
   simp only [Tense.TensePronoun.fullPresupposition, Tense.TensePronoun.resolve,
-    Tense.TensePronoun.evalTime, Tense.interpTense, Tense.compare_mem_past]
+    Tense.TensePronoun.evalTime, HeimKratzer.interpPronoun, Tense.compare_mem_past]
   exact pronominalLookup_eq_some_iff g j k t
 
 /-! ### The parameter space ((98)) -/

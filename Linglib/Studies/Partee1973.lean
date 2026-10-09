@@ -29,6 +29,7 @@ Montague substrate.
 @[expose] public section
 
 open Tense
+open HeimKratzer
 
 namespace Partee1973
 
@@ -36,9 +37,9 @@ open Reference
 
 /-- *I didn't turn off the stove*: negation over a past tense that refers to the salient time
 the assignment supplies for variable `n`. -/
-def parteeStoveExample {T : Type*} (turnedOff : T → Prop) (g : TemporalAssignment T) (n : ℕ) :
+def parteeStoveExample {T : Type*} (turnedOff : T → Prop) (g : Assignment T) (n : ℕ) :
     Prop :=
-  ¬ turnedOff (interpTense n g)
+  ¬ turnedOff (interpPronoun n g)
 
 /-- The argument against [prior-1967] as a countermodel: with the stove turned off at the
 salient time, the referential reading is false, while the Priorean existential reading stays
@@ -50,7 +51,7 @@ theorem stove_refutes_prior :
 
 /-- *He turned the corner. He saw a house.*: both past tenses refer to the same narrative time,
 as anaphoric pronouns corefer with an established individual. -/
-def narrativeAnaphora {T : Type*} (P Q : T → Prop) (g : TemporalAssignment T) (n : ℕ) : Prop :=
-  P (interpTense n g) ∧ Q (interpTense n g)
+def narrativeAnaphora {T : Type*} (P Q : T → Prop) (g : Assignment T) (n : ℕ) : Prop :=
+  P (interpPronoun n g) ∧ Q (interpPronoun n g)
 
 end Partee1973
