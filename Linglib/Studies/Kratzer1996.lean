@@ -49,26 +49,26 @@ variable {Entity E : Type*}
 
 /-- In the denotation of *Mittie fed the dog*, Voice, denoting the agent relation, combines
 with the verb phrase by Event Identification, so the agent enters above the verb. -/
-def mittieFedTheDog (agent feed : ThematicRel Entity E) (mittie dog : Entity) :
+def mittieFedTheDog (agent feed : Entity → E → Prop) (mittie dog : Entity) :
     E → Prop :=
   eventIdentification agent (feed dog) mittie
 
 /-- The sentence holds of an event iff Mittie is its agent and it is a feeding of the dog;
 the verb contributes no agent. -/
-theorem mittieFedTheDog_iff (agent feed : ThematicRel Entity E) (mittie dog : Entity)
+theorem mittieFedTheDog_iff (agent feed : Entity → E → Prop) (mittie dog : Entity)
     (e : E) : mittieFedTheDog agent feed mittie dog e ↔ agent mittie e ∧ feed dog e :=
   Iff.rfl
 
 /-- Two verb phrases with the same events are indistinguishable once Voice adds the external
 argument, whatever the agent relation: the agent is severed from the verb. -/
-theorem mittieFedTheDog_congr (agent feed feed' : ThematicRel Entity E) (mittie dog : Entity)
+theorem mittieFedTheDog_congr (agent feed feed' : Entity → E → Prop) (mittie dog : Entity)
     (h : ∀ e, feed dog e ↔ feed' dog e) (e : E) :
     mittieFedTheDog agent feed mittie dog e ↔ mittieFedTheDog agent feed' mittie dog e :=
   and_congr_right fun _ ↦ h e
 
 /-- An agent head, whose events are not states, and a stative verb phrase such as *own the dog*
 (25), whose events are states, combine by Event Identification to the empty relation. -/
-theorem agent_stative_eq_bot (IsState : E → Prop) {agent : ThematicRel Entity E} {P : E → Prop}
+theorem agent_stative_eq_bot (IsState : E → Prop) {agent : Entity → E → Prop} {P : E → Prop}
     (hagent : ∀ x e, agent x e → ¬ IsState e) (hP : ∀ e, P e → IsState e) :
     eventIdentification agent P = ⊥ :=
   eventIdentification_eq_bot_iff.2 fun x ↦ Pi.disjoint_iff.2 fun e ↦

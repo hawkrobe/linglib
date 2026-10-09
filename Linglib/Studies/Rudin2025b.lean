@@ -36,7 +36,7 @@ evidence that rising declaratives denote questions.
 
 ## Implementation notes
 
-Reenactment is an `EventRel`, and the model is left free: a
+Reenactment is a relation from events to performances, and the model is left free: a
 quotative report is consistent when some reenactment relation makes it true. A performance is
 its linguistic material, none for karate gestures, inarticulate for a howl or a random string,
 or the utterance of a sentence with its clause type, radical and tune, together with its
@@ -71,39 +71,39 @@ variable {E P δ W : Type*}
 
 /-- A verb of speech under the paper's template holds of an event exactly when every performance
 reenacting it has the verb's characteristic property. -/
-def speechVerb (reenact : EventRel E P) (prop : P → Prop) (e : E) : Prop :=
+def speechVerb (reenact : E → P → Prop) (prop : P → Prop) (e : E) : Prop :=
   ∀ u, reenact e u → prop u
 
 /-- The quotative complementizer holds of the events that the performance reenacts. -/
-def quote (reenact : EventRel E P) (u : P) (e : E) : Prop := reenact e u
+def quote (reenact : E → P → Prop) (u : P) (e : E) : Prop := reenact e u
 
 /-- An ordinary clausal complement holds of the events whose content is the clause's denotation. -/
-def thatClause (content : EventRel E δ) (d : δ) (e : E) : Prop := content e d
+def thatClause (content : E → δ → Prop) (d : δ) (e : E) : Prop := content e d
 
 /-- A quotative speech report holds, by predicate modification, of the verb's events that the
 performance reenacts. -/
-def quoteReport (reenact : EventRel E P) (prop : P → Prop) (u : P) (e : E) : Prop :=
+def quoteReport (reenact : E → P → Prop) (prop : P → Prop) (u : P) (e : E) : Prop :=
   speechVerb reenact prop e ∧ quote reenact u e
 
 /-- Quoting a performance that lacks the verb's property is contradictory. -/
-theorem not_quoteReport {reenact : EventRel E P} {prop : P → Prop} {u : P} (h : ¬ prop u)
+theorem not_quoteReport {reenact : E → P → Prop} {prop : P → Prop} {u : P} (h : ¬ prop u)
     (e : E) : ¬ quoteReport reenact prop u e :=
   λ ⟨hv, hr⟩ => h (hv u hr)
 
 /-- With the reenactment relation free, a quotative report of an event is satisfiable exactly
 when the performance has the verb's property. -/
 theorem exists_reenact_iff (prop : P → Prop) (u : P) (e : E) :
-    (∃ reenact : EventRel E P, quoteReport reenact prop u e) ↔ prop u :=
+    (∃ reenact : E → P → Prop, quoteReport reenact prop u e) ↔ prop u :=
   ⟨λ ⟨_, hv, hr⟩ => hv u hr, λ h => ⟨λ _ v => v = u, λ _ hv => hv ▸ h, rfl⟩⟩
 
 /-- A sortal restriction on content requires the content of every event of the verb to have the
 sort. -/
-def ContentSort (V : E → Prop) (content : EventRel E δ) (sort : δ → Prop) : Prop :=
+def ContentSort (V : E → Prop) (content : E → δ → Prop) (sort : δ → Prop) : Prop :=
   ∀ e d, V e → content e d → sort d
 
 /-- An ordinary complement of the wrong sort, such as a proposition under *ask*, is contradictory.
 -/
-theorem not_thatClause {V : E → Prop} {content : EventRel E δ} {sort : δ → Prop}
+theorem not_thatClause {V : E → Prop} {content : E → δ → Prop} {sort : δ → Prop}
     (hV : ContentSort V content sort) {d : δ} (hd : ¬ sort d) (e : E) :
     ¬ (V e ∧ thatClause content d e) :=
   λ ⟨hv, hc⟩ => hd (hV e d hv hc)
@@ -282,7 +282,7 @@ def Verb.property : Verb → Performance W → Prop
 instance (v : Verb) (u : Performance W) : Decidable (v.property u) := by
   cases v <;> simp only [Verb.property] <;> infer_instance
 
-variable {reenact : EventRel E (Performance W)} {v : Volume} (p : Set W) (e : E)
+variable {reenact : E → Performance W → Prop} {v : Volume} (p : Set W) (e : E)
 
 /-- Karate gestures under *say* are contradictory, since a saying is reenacted only by linguistic
 material. -/
@@ -302,7 +302,7 @@ theorem assert_risingDeclarative :
 /-- A rising declarative under *ask* is satisfiable, whatever proposition it denotes, since its
 utterance is an asking. -/
 theorem ask_risingDeclarative :
-    ∃ reenact : EventRel E (Performance W),
+    ∃ reenact : E → Performance W → Prop,
       quoteReport reenact Verb.ask.property ⟨.utterance ⟨.declarative, p, true⟩, v⟩ e :=
   (exists_reenact_iff _ _ e).2 ((Performance.asking_iff _).2 (Or.inl ⟨rfl, rfl⟩))
 
@@ -348,7 +348,7 @@ def e₀ : Unit := ()
 /-- Each of the paper's quotative reports is judged acceptable exactly when it is satisfiable
 under the verb's meaning postulate. -/
 theorem judgments : ∀ d ∈ data, d.1.judgment = .acceptable ↔
-    ∃ reenact : EventRel Unit (Performance Bool), quoteReport reenact d.2.1.property d.2.2 e₀ := by
+    ∃ reenact : Unit → Performance Bool → Prop, quoteReport reenact d.2.1.property d.2.2 e₀ := by
   simp only [exists_reenact_iff]
   decide +kernel
 

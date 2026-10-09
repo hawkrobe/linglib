@@ -129,14 +129,14 @@ variable {Entity E : Type*}
 
 /-- The by-phrase (10b) is the agentive instantiation applied to its argument, a predicate of
 events at type `⟨s, t⟩`. -/
-def byPhrase (init : ThematicRel Entity E) (x : Entity) : E → Prop := init x
+def byPhrase (init : Entity → E → Prop) (x : Entity) : E → Prop := init x
 
 /-- Passive Voice (9b) is the existential closure of the external argument. -/
-def voicePass (p : ThematicRel Entity E) : E → Prop := fun e ↦ ∃ x, p x e
+def voicePass (p : Entity → E → Prop) : E → Prop := fun e ↦ ∃ x, p x e
 
 /-- In (10) the by-phrase combines with the verb's denotation by Event Identification and the
 closure passive Voice performs is redundant, since the by-phrase supplies the initiator. -/
-theorem voicePass_eventIdentification (init : ThematicRel Entity E) (body : E → Prop)
+theorem voicePass_eventIdentification (init : Entity → E → Prop) (body : E → Prop)
     (j : Entity) (e : E) :
     voicePass (eventIdentification (fun x e ↦ init x e ∧ body e) (byPhrase init j)) e ↔
       init j e ∧ body e :=
@@ -144,18 +144,18 @@ theorem voicePass_eventIdentification (init : ThematicRel Entity E) (body : E �
 
 /-- *par* in a passive (35a) is the initiator relation, presupposing high proto-agentivity of
 the agent in the event. The evaluation point of the partial proposition is the event. -/
-def parAgentive (init : ThematicRel Entity E) (High : Entity → E → Prop) (x : Entity) :
+def parAgentive (init : Entity → E → Prop) (High : Entity → E → Prop) (x : Entity) :
     PartialProp (E) where
   presup := High x
   assertion := init x
 
 /-- *de* in a passive (35b) is the initiator relation, presupposing low proto-agentivity. -/
-def deAgentive (init : ThematicRel Entity E) (High : Entity → E → Prop) (x : Entity) :
+def deAgentive (init : Entity → E → Prop) (High : Entity → E → Prop) (x : Entity) :
     PartialProp (E) where
   presup e := ¬ High x e
   assertion := init x
 
-variable (init : ThematicRel Entity E) (High : Entity → E → Prop) (x : Entity)
+variable (init : Entity → E → Prop) (High : Entity → E → Prop) (x : Entity)
 
 /-- The two prepositions share their at-issue content. -/
 theorem parAgentive_assertion :

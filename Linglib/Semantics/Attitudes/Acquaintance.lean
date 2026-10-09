@@ -17,7 +17,6 @@ the simultaneous reading of a past tense embedded under a past attitude a de re 
 
 ## Main definitions
 
-* `Acquaintance.Rel`: acquaintance relations to a res of any type.
 * `Acquaintance.deRe`: the centered proposition ascribed by a de re construal.
 * `Acquaintance.BaseCondition`: the base-world condition on the res.
 * `Acquaintance.ofConcept`: the acquaintance relation of a concept.
@@ -43,22 +42,20 @@ namespace Acquaintance
 
 variable {α E T W : Type*}
 
-/-- An acquaintance relation `R` holds of `y x t w` when the self `x` at `t` in `w` is acquainted
-with the res `y`. -/
-abbrev Rel (α E T W : Type*) := α → E → T → W → Prop
-
 /-- The centered proposition that the res the self is uniquely acquainted with at the now has
-the property `P` there. -/
-def deRe (R : Rel α E T W) (P : α → T → W → Prop) : E → T → W → Prop :=
+the property `P` there, where the acquaintance relation `R y x t w` says that the self `x` at `t`
+in `w` is acquainted with the res `y`. -/
+def deRe (R : α → E → T → W → Prop) (P : α → T → W → Prop) : E → T → W → Prop :=
   fun x t w ↦ ∃ y, (∀ y', R y' x t w ↔ y' = y) ∧ P y t w
 
 /-- The base-world condition of a de re construal holds when the holder actually bears the
 acquaintance relation to the res. -/
-def BaseCondition (R : Rel α E T W) (res : α) (x : E) (t : T) (w : W) : Prop := R res x t w
+def BaseCondition (R : α → E → T → W → Prop) (res : α) (x : E) (t : T) (w : W) : Prop :=
+  R res x t w
 
 /-- The acquaintance relation of a concept `c` relates each center only to the res `c` picks out
 there. -/
-def ofConcept (c : E → T → W → α) : Rel α E T W := fun y x t w ↦ y = c x t w
+def ofConcept (c : E → T → W → α) : α → E → T → W → Prop := fun y x t w ↦ y = c x t w
 
 /-- Through a concept, de re construal evaluates the property at the res the concept picks out. -/
 theorem deRe_ofConcept (c : E → T → W → α) (P : α → T → W → Prop) :
@@ -69,7 +66,7 @@ theorem deRe_ofConcept (c : E → T → W → α) (P : α → T → W → Prop) 
   exact hP
 
 /-- Acquaintance with a time by identity with the now. -/
-def identity : Rel T E T W := ofConcept fun _ t _ ↦ t
+def identity : T → E → T → W → Prop := ofConcept fun _ t _ ↦ t
 
 theorem deRe_identity (P : T → T → W → Prop) :
     deRe (identity (E := E)) P = fun _ t w ↦ P t t w :=
