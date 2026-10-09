@@ -8,6 +8,7 @@ module
 public import Linglib.Core.Data.Set.Monad
 public import Linglib.Core.Data.Trivalent
 public import Linglib.Logic.Assignment
+public import Linglib.Semantics.Dynamic.State
 public import Linglib.Semantics.Dynamic.Update
 public import Linglib.Data.Examples.Elliott2020
 
@@ -853,28 +854,23 @@ theorem hurfordOdd_someone_or_someone_sitting [Nonempty D] (e : Existential) :
   · exact absurd (Prod.mk.inj hx).1 (by decide)
 
 
-/-! ### Information states and update -/
+/-! ### Information states and update
 
-/-- An information state is a set of world–assignment pairs (Def. 3.1). -/
-abbrev InfoState (W D : Type) := Set (W × PartialAssign ℕ D)
+Information states are the substrate's `State W ℕ D`, sets of world–assignment points
+(Def. 3.1); the initial state `⊤` pairs every world with the empty assignment. -/
 
 variable {W : Type}
 
-/-- The initial state pairs every world with the empty assignment (Def. 3.1). -/
-def InfoState.initial (W D : Type) : InfoState W D := {p | p.2 = ⊥}
-
 /-- Stalnaker's bridge requires a sentence to be true or false at every point of the state
 (Def. 3.2). -/
-def Defined (c : InfoState W D) (φ : W → StateSet D Trivalent) : Prop :=
-  ∀ p ∈ c, IsTrue (φ p.1) p.2 ∨ IsFalse (φ p.1) p.2
+def Defined (c : State W ℕ D) (φ : W → StateSet D Trivalent) : Prop :=
+  ∀ p ∈ c, IsTrue (φ p.world) p.assignment ∨ IsFalse (φ p.world) p.assignment
 
 /-- Update gathers the positive outputs at every point when the bridge holds, and is absurd
 otherwise (Def. 3.2). -/
-def update (c : InfoState W D) (φ : W → StateSet D Trivalent) : InfoState W D :=
-  {p | Defined c φ ∧ ∃ q ∈ c, q.1 = p.1 ∧ p.2 ∈ extension .true (φ q.1) q.2}
-
-/-- A variable is familiar in a state when every assignment of the state values it (§3.5). -/
-def Familiar (c : InfoState W D) (n : ℕ) : Prop := ∀ p ∈ c, p.2 n ≠ ⊥
+def update (c : State W ℕ D) (φ : W → StateSet D Trivalent) : State W ℕ D :=
+  {p | Defined c φ ∧ ∃ q ∈ c, q.world = p.world ∧
+    p.assignment ∈ extension .true (φ q.world) q.assignment}
 
 theorem Existential.fresh_of_eq_bot {e : Existential} {g : PartialAssign ℕ D} {n : ℕ}
     (h : g n = ⊥) : e.Fresh g n := by
@@ -884,19 +880,27 @@ theorem Existential.fresh_of_eq_bot {e : Existential} {g : PartialAssign ℕ D} 
 
 /-- After an existential its variable is familiar, so the familiarity presupposition of a later
 pronoun is satisfied (§3.5). -/
-theorem familiar_update_exists (e : Existential) (n : ℕ) (c : InfoState W D)
+theorem familiar_update_exists (e : Existential) (n : ℕ) (c : State W ℕ D)
     (φ : W → StateSet D Trivalent) (hφ : ∀ w, Expanding (φ w)) :
-    Familiar (update c fun w ↦ exists_ e n (φ w)) n := by
+    State.Familiar (update c fun w ↦ exists_ e n (φ w)) n := by
   rintro ⟨w, h⟩ ⟨-, ⟨w', g⟩, -, rfl, hh⟩
   exact ne_bot_of_mem_extension_true_exists (hφ _) hh
+
+/-- Familiarity persists through the update with any sentence whose outputs value what their
+inputs value (§3.5). -/
+theorem familiar_update {c : State W ℕ D} {n : ℕ} (h : State.Familiar c n)
+    {φ : W → StateSet D Trivalent} (hφ : ∀ w, Expanding (φ w)) :
+    State.Familiar (update c φ) n := by
+  rintro ⟨w, i⟩ ⟨-, ⟨w', g⟩, hq, rfl, hi⟩
+  exact (hφ w').domain_subset hi (h _ hq)
 
 /-- A pronoun out of the blue is neither true nor false, so the initial state does not admit it
 ((11a)). -/
 theorem not_defined_initial_atom [Nonempty W] (P : W → Set D) :
-    ¬ Defined (InfoState.initial W D) fun w ↦ atom (P w) 1 := by
+    ¬ Defined (⊤ : State W ℕ D) fun w ↦ atom (P w) 1 := by
   obtain ⟨w⟩ := ‹Nonempty W›
   intro h
-  rcases h (w, ⊥) rfl with ⟨i, hi⟩ | ⟨-, i, hi⟩ <;>
+  rcases h ⟨w, ⊥⟩ (State.mem_top.2 fun _ ↦ rfl) with ⟨i, hi⟩ | ⟨-, i, hi⟩ <;>
     · rw [mem_extension, mem_atom, valueAt_of_eq_bot _ rfl] at hi
       simp at hi
 
@@ -955,10 +959,10 @@ theorem isTrue_or_isFalse_neg_exists_atom [Nonempty D] (W : Set D) {n : ℕ} (hf
 /-- After *nobody is here*, in a state with a world where nobody is here, 1 is not familiar, so a
 pronoun cannot follow a negated indefinite ((4), (5)). -/
 theorem not_familiar_update_neg_exists [Nonempty D] (P : W → Set D) {w : W} (hw : P w = ∅) :
-    ¬ Familiar (update (InfoState.initial W D) fun w ↦ neg (exists_ e 1 (atom (P w) 1))) 1 := by
+    ¬ State.Familiar (update (⊤ : State W ℕ D) fun w ↦ neg (exists_ e 1 (atom (P w) 1))) 1 := by
   intro hfam
-  refine hfam (w, ⊥) ⟨fun p hp ↦ ?_, (w, ⊥), rfl, rfl, ?_⟩ rfl
-  · exact isTrue_or_isFalse_neg_exists_atom _ (Existential.fresh_of_eq_bot (by rw [hp]; rfl))
+  refine hfam ⟨w, ⊥⟩ ⟨fun p hp ↦ ?_, ⟨w, ⊥⟩, State.mem_top.2 fun _ ↦ rfl, rfl, ?_⟩ rfl
+  · exact isTrue_or_isFalse_neg_exists_atom _ (Existential.fresh_of_eq_bot (State.mem_top.1 hp 1))
   · show ⊥ ∈ extension .true (neg (exists_ e 1 (atom (P w) 1))) ⊥
     rw [extension_true_neg_exists_atom _ (Existential.fresh_of_eq_bot rfl)]; exact ⟨rfl, hw⟩
 
@@ -994,12 +998,12 @@ world where nobody was there and the event was a disaster, 1 is not familiar, so
 looks externally static ((54), (55)). -/
 theorem not_familiar_update_disj [Nonempty D] (A Dis : W → Set D) (ev : D) {w : W}
     (hA : A w = ∅) (hDis : ev ∈ Dis w) :
-    ¬ Familiar (update (InfoState.initial W D)
+    ¬ State.Familiar (update (⊤ : State W ℕ D)
       fun w ↦ disj (exists_ e 1 (atom (A w) 1)) (atomConst (Dis w) ev)) 1 := by
   intro hfam
-  refine hfam (w, ⊥) ⟨fun p hp ↦ ?_, (w, ⊥), rfl, rfl, ?_⟩ rfl
+  refine hfam ⟨w, ⊥⟩ ⟨fun p hp ↦ ?_, ⟨w, ⊥⟩, State.mem_top.2 fun _ ↦ rfl, rfl, ?_⟩ rfl
   · exact isTrue_or_isFalse_disj_exists_atomConst _ _ _
-      (Existential.fresh_of_eq_bot (by rw [hp]; rfl))
+      (Existential.fresh_of_eq_bot (State.mem_top.1 hp 1))
   · refine mem_extension_true_disj.2 (.inr ⟨.false, ⊥, ?_, ?_⟩)
     · show ⊥ ∈ extension .false (exists_ e 1 (atom (A w) 1)) ⊥
       rw [extension_false_exists_atom _ (Existential.fresh_of_eq_bot rfl)]; exact ⟨rfl, hA⟩
@@ -1008,7 +1012,7 @@ theorem not_familiar_update_disj [Nonempty D] (A Dis : W → Set D) (ev : D) {w 
 /-- Once *the event wasn't a disaster* follows the disjunction, 1 is familiar and a pronoun can
 pick up the indefinite, which is Rothschild's observation ((48), (56)). -/
 theorem familiar_update_update_disj (A Dis : W → Set D) (ev : D) :
-    Familiar (update (update (InfoState.initial W D)
+    State.Familiar (update (update (⊤ : State W ℕ D)
       fun w ↦ disj (exists_ e 1 (atom (A w) 1)) (atomConst (Dis w) ev))
       fun w ↦ neg (atomConst (Dis w) ev)) 1 := by
   rintro ⟨w, i⟩ ⟨-, ⟨w', h⟩, ⟨-, ⟨w'', g⟩, -, hw, hh⟩, rfl, hi⟩
@@ -1026,20 +1030,22 @@ theorem familiar_update_update_disj (A Dis : W → Set D) (ev : D) :
 survives both updates of Rothschild's discourse, so its final state is not empty. -/
 theorem mem_update_update_disj [Nonempty D] (A Dis : W → Set D) (ev : D) {w : W} {x : D}
     (hx : x ∈ A w) (hev : ev ∉ Dis w) :
-    (w, (⊥ : PartialAssign ℕ D).update 1 x) ∈ update (update (InfoState.initial W D)
+    (⟨w, (⊥ : PartialAssign ℕ D).update 1 x⟩ : Possibility W ℕ (Flat D)) ∈
+      update (update (⊤ : State W ℕ D)
       fun w ↦ disj (exists_ e 1 (atom (A w) 1)) (atomConst (Dis w) ev))
       fun w ↦ neg (atomConst (Dis w) ev) := by
-  have hdef : Defined (InfoState.initial W D)
+  have hdef : Defined (⊤ : State W ℕ D)
       fun w ↦ disj (exists_ e 1 (atom (A w) 1)) (atomConst (Dis w) ev) := fun p hp ↦
-    isTrue_or_isFalse_disj_exists_atomConst _ _ _ (Existential.fresh_of_eq_bot (by rw [hp]; rfl))
-  refine ⟨fun p _ ↦ ?_, (w, (⊥ : PartialAssign ℕ D).update 1 x), ⟨hdef, (w, ⊥), rfl, rfl, ?_⟩,
-    rfl, ?_⟩
-  · by_cases hc : ev ∈ Dis p.1
+    isTrue_or_isFalse_disj_exists_atomConst _ _ _
+      (Existential.fresh_of_eq_bot (State.mem_top.1 hp 1))
+  refine ⟨fun p _ ↦ ?_, ⟨w, (⊥ : PartialAssign ℕ D).update 1 x⟩,
+    ⟨hdef, ⟨w, ⊥⟩, State.mem_top.2 fun _ ↦ rfl, rfl, ?_⟩, rfl, ?_⟩
+  · by_cases hc : ev ∈ Dis p.world
     · exact .inr ⟨Set.eq_empty_iff_forall_notMem.2 fun i hi ↦ by
         rw [extension_neg, Trivalent.neg_true, mem_extension, mem_atomConst_iff] at hi
-        simp [hc] at hi, p.2, by
+        simp [hc] at hi, p.assignment, by
         rw [extension_neg, Trivalent.neg_false, mem_extension, mem_atomConst_iff]; simp [hc]⟩
-    · exact .inl ⟨p.2, by
+    · exact .inl ⟨p.assignment, by
         rw [extension_neg, Trivalent.neg_true, mem_extension, mem_atomConst_iff]; simp [hc]⟩
   · refine mem_extension_true_disj.2 (.inl ⟨_, ?_, _, mem_atomConst_iff.2 ⟨rfl, rfl⟩⟩)
     rw [extension_true_exists_atom _ (Existential.fresh_of_eq_bot rfl)]; exact ⟨x, hx, rfl⟩
@@ -1049,7 +1055,7 @@ theorem mem_update_update_disj [Nonempty D] (A Dis : W → Set D) (ev : D) {w : 
 here, or a philosopher is* with one index, 1 is familiar, for either existential
 ((58)–(64)). -/
 theorem familiar_update_stone (L P H : W → Set D) :
-    Familiar (update (InfoState.initial W D) fun w ↦
+    State.Familiar (update (⊤ : State W ℕ D) fun w ↦
       disj (exists_ e 1 (conj (atom (L w) 1) (atom (H w) 1)))
         (exists_ e 1 (conj (atom (P w) 1) (atom (H w) 1)))) 1 := by
   rintro ⟨w, i⟩ ⟨-, ⟨w', g⟩, -, rfl, hi⟩
@@ -1106,13 +1112,13 @@ theorem isTrue_or_isFalse_disj_exists_atom [Nonempty D] (A B : Set D) (hg : g 1 
 not empty. -/
 theorem exists_mem_update_stone [Nonempty D] (L P H : W → Set D) {w : W} {x : D}
     (hx : x ∈ L w ∩ H w) :
-    ∃ i, (w, i) ∈ update (InfoState.initial W D) fun w ↦
+    ∃ i, (⟨w, i⟩ : Possibility W ℕ (Flat D)) ∈ update (⊤ : State W ℕ D) fun w ↦
       disj (exists_ e 1 (conj (atom (L w) 1) (atom (H w) 1)))
         (exists_ e 1 (conj (atom (P w) 1) (atom (H w) 1))) := by
   simp only [conj_atom_atom]
   obtain ⟨⟨u, i⟩, hu⟩ := nonempty_exists_atom e (P w ∩ H w) 1 ((⊥ : PartialAssign ℕ D).update 1 x)
-  refine ⟨i, fun p hp ↦ isTrue_or_isFalse_disj_exists_atom _ _ (by rw [hp]; rfl), (w, ⊥), rfl,
-    rfl, mem_extension_true_disj.2 (.inl ⟨_, ?_, u, hu⟩)⟩
+  refine ⟨i, fun p hp ↦ isTrue_or_isFalse_disj_exists_atom _ _ (State.mem_top.1 hp 1), ⟨w, ⊥⟩,
+    State.mem_top.2 fun _ ↦ rfl, rfl, mem_extension_true_disj.2 (.inl ⟨_, ?_, u, hu⟩)⟩
   rw [extension_true_exists_atom _ (Existential.fresh_of_eq_bot rfl)]; exact ⟨x, hx, rfl⟩
 
 end Bridge
