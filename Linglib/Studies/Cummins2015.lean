@@ -2,12 +2,13 @@ module
 
 public import Linglib.Phonology.OptimalityTheory.Tableau
 public import Linglib.Semantics.Quantification.Numerals.Roundness
+public import Mathlib.Tactic.FinCases
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Data.Fintype.Perm
 public import Mathlib.Data.Nat.Dist
 
 /-!
-# Constraints on numerical expressions
+# Cummins (2015): Constraints on numerical expressions
 
 Cummins models the choice of a numerically quantified expression as classical Optimality
 Theory. Six violable constraints, informativeness, granularity, quantifier simplicity,
@@ -153,6 +154,36 @@ example : nsal (bare 17) = 4 := by decide
 /-- The decimal granularity level of a numeral counts its trailing zeros, up to thousands. -/
 def granularityLevel (n : ℕ) : ℕ :=
   if n = 0 then 0 else if 1000 ∣ n then 3 else if 100 ∣ n then 2 else if 10 ∣ n then 1 else 0
+
+/-- The granularity level of a nonzero numeral indexes the coarsest decimal scale through it,
+up to thousands, the scale [krifka-2009b]'s hearer reads it at. -/
+theorem pow_granularityLevel_eq_scaleLcm {n : ℕ} (hn : n ≠ 0) :
+    (10 : ℤ) ^ granularityLevel n = scaleLcm {1000, 100, 10, 1} (n : ℤ) := by
+  symm
+  unfold granularityLevel
+  split_ifs with h0 h3 h2 h1
+  · exact absurd h0 hn
+  · refine scaleLcm_eq_of_aligned (by decide) (by decide) (m := 10 ^ 3) (by decide)
+      (by exact_mod_cast h3) fun w hw hwn ↦ ?_
+    fin_cases hw <;> norm_num
+  · refine scaleLcm_eq_of_aligned (by decide) (by decide) (m := 10 ^ 2) (by decide)
+      (by exact_mod_cast h2) fun w hw hwn ↦ ?_
+    fin_cases hw
+    · exact absurd (by exact_mod_cast hwn) h3
+    all_goals norm_num
+  · refine scaleLcm_eq_of_aligned (by decide) (by decide) (m := 10 ^ 1) (by decide)
+      (by exact_mod_cast h1) fun w hw hwn ↦ ?_
+    fin_cases hw
+    · exact absurd (by exact_mod_cast hwn) h3
+    · exact absurd (by exact_mod_cast hwn) h2
+    all_goals norm_num
+  · refine scaleLcm_eq_of_aligned (by decide) (by decide) (m := 10 ^ 0) (by norm_num)
+      (by norm_num) fun w hw hwn ↦ ?_
+    fin_cases hw
+    · exact absurd (by exact_mod_cast hwn) h3
+    · exact absurd (by exact_mod_cast hwn) h2
+    · exact absurd (by exact_mod_cast hwn) h1
+    · norm_num
 
 /-- Granularity assigns one violation per level of mismatch with the level the context sets, an
 unset level being met by every numeral (constraint 2). -/

@@ -8,6 +8,7 @@ public import Mathlib.Data.Fintype.Basic
 public import Mathlib.Tactic.Linarith
 public import Mathlib.Tactic.Ring
 public import Linglib.Semantics.Quantification.Numerals.Roundness
+public import Linglib.Studies.Krifka2007
 public import Linglib.Data.Examples.Haslinger2025
 
 /-!
@@ -26,7 +27,8 @@ or incompatibility, that its precise construal licenses about an alternative.
   strictly simpler, the form–meaning correlation behind *the doors* and *all the doors*.
 * `forall_not_violates_iff`: a bare numeral survives Inference Preservation exactly when its
   deviation is under half the lcm of the widths of the scales it lies on, so *99* must be exact
-  while *100* tolerates deviations under twenty-five (`ninetyNine_hundred`).
+  while *100* tolerates deviations under twenty-five (`ninetyNine_hundred`); that lcm is the
+  width of the scale Krifka's hearer infers (`tolerated_deviation_is_inferred_cell`).
 * `roundness_depends_on_scales`: *180* is rounder than *200* among angles and *200* than *180*
   among cardinals, (80b,c).
 * `conjunction_violates`: a conjunction read non-maximally loses the entailment of its conjuncts.
@@ -48,6 +50,7 @@ modelled.
 
 * [haslinger-2025-diss]
 * [haslinger-2024]
+* [krifka-2007]
 * [kriz-spector-2021]
 -/
 
@@ -256,6 +259,28 @@ theorem ninetyNine_hundred {m : ℚ} :
   have h100 : scaleLcm decimal 100 = 50 := by decide
   rw [forall_not_violates_iff (by decide), forall_not_violates_iff (by decide), h99, h100]
   constructor <;> constructor <;> intro h <;> push_cast at h ⊢ <;> linarith
+
+open MeasureTheory in
+open scoped ENNReal in
+/-- Under Krifka's hearer model on aligned salient scales, the deviation a bare numeral
+tolerates under Inference Preservation is half the width of the most probable scale for its
+report: the dissertation's alternative-based bound is the cell of the scale the hearer
+infers. -/
+theorem tolerated_deviation_is_inferred_cell
+    {μs : Measure W} {ν : Measure ℝ} [SFinite ν] {r : ℝ≥0∞} {I : Set ℝ} {m : ℚ}
+    (hν : ∀ ⦃s⦄, MeasurableSet s → s ⊆ I → ν s = r * volume s)
+    (hr : r ≠ 0) (hr' : r ≠ ⊤) (hpos : ∀ w ∈ W, 0 < w)
+    (hWd : ∀ a ∈ W, ∀ b ∈ W, a ∣ b ∨ b ∣ a)
+    (hs : ∀ v w : W, μs {v} = μs {w}) (hs0 : ∀ w : W, μs {w} ≠ 0) (hs' : ∀ w : W, μs {w} ≠ ⊤)
+    (hI : ∀ w : W, Set.Ico ((n : ℝ) - (w : ℤ) / 2) ((n : ℝ) + (w : ℤ) / 2) ⊆ I)
+    (hne : (W.filter (· ∣ n)).Nonempty) {w : W}
+    (hw : ∀ v, (μs.prod ν) (Krifka2007.reportedOn v n) ≤
+      (μs.prod ν) (Krifka2007.reportedOn w n)) :
+    (∀ n' ≠ n, AtLeastAsRound (OnScale W) n n' → ¬ Violates (numeral n m) (numeral n' m)) ↔
+      2 * m < ((w : ℤ) : ℚ) := by
+  have hwL := (Krifka2007.coarsest_scale_most_probable μs ν hν hr hr' hpos hWd hs hs0 hs'
+    hI hne).1 hw
+  rw [forall_not_violates_iff fun h0 ↦ absurd (hpos 0 h0) (lt_irrefl 0), hwL]
 
 end Roundness
 
