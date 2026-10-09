@@ -10,7 +10,7 @@ public import Linglib.Core.Order.Flat
 A *variable assignment* maps variables to values. Three registers share
 this file: total assignments (Tarski-style, [heim-kratzer-1998],
 [henkin-monk-tarski-1971]), partial assignments (variables may be
-unvalued, [spector-2025], [beaver-krahmer-2001]), and plural assignments
+unvalued, [spector-2026], [beaver-krahmer-2001]), and plural assignments
 (sets of partial assignments — the information states of plural dynamic
 semantics, [van-den-berg-1996], [brasoveanu-2008],
 [haug-dalrymple-2020]).
@@ -23,7 +23,7 @@ semantics, [van-den-berg-1996], [brasoveanu-2008],
   `PartialAssign.domain` the variables an assignment values and `PartialAssign.single x d` the
   assignment valuing `x` alone.
 * `PluralAssign Var D`: sets of partial assignments, with `PluralAssign.value` the values a
-  variable takes across them, and the operators of [Spector][spector-2025],
+  variable takes across them, and the operators of [Spector][spector-2026],
   `PluralAssign.restrict`, `PluralAssign.SingularAt` and `PluralAssign.Singular`, defined from it.
 
 ## Main results
@@ -32,7 +32,7 @@ semantics, [van-den-berg-1996], [brasoveanu-2008],
   the other's domain.
 * `PartialAssign.covBy_iff_exists_update`: one assignment covers another when it values exactly
   one more variable, the counterpart of `Set.covBy_iff_exists_insert`.
-* `PluralAssign.singularAt_iff`: `PluralAssign.SingularAt` as [Spector][spector-2025] states it.
+* `PluralAssign.singularAt_iff`: `PluralAssign.SingularAt` as [Spector][spector-2026] states it.
 * `PluralAssign.singular_iff`: a variable is singular when its value set is a nonempty
   subsingleton.
 
@@ -67,7 +67,7 @@ semantics, [van-den-berg-1996], [brasoveanu-2008],
 * [L. Henkin, J. D. Monk and A. Tarski, *Cylindric algebras, part I*
   (1971)][henkin-monk-tarski-1971]
 * [B. Spector, *Trivalence and transparency: A non-dynamic approach to anaphora*
-  (2025)][spector-2025]
+  (2026)][spector-2026]
 * [D. Beaver, E. Krahmer, *A Partial Account of Presupposition Projection*
   (2001)][beaver-krahmer-2001]
 * [M. H. van den Berg, *Some aspects of the internal structure of discourse: the dynamics of
@@ -198,7 +198,7 @@ end PartialAssign
 
 /-- `PluralAssign Var D` is the type of plural assignments, sets of partial assignments: the
 plural information states of [van den Berg][van-den-berg-1996] and the assignment sets of
-[Spector][spector-2025]. -/
+[Spector][spector-2026]. -/
 abbrev PluralAssign (Var D : Type*) := Set (PartialAssign Var D)
 
 namespace PluralAssign
@@ -233,7 +233,7 @@ theorem value_mono (h : G ⊆ H) : G.value x ⊆ H.value x :=
 /-! #### Restriction -/
 
 /-- `G.restrict x a` is the set of assignments in `G` sending `x` to `a`, the $G_{x=a}$ of
-[Spector][spector-2025] (§6.2). -/
+[Spector][spector-2026] (§6.2). -/
 def restrict (G : PluralAssign Var D) (x : Var) (a : D) : PluralAssign Var D :=
   {g ∈ G | g x = ↑a}
 
@@ -252,18 +252,18 @@ theorem value_restrict (h : (G.restrict x a).Nonempty) : (G.restrict x a).value 
 /-! #### Singularity -/
 
 /-- `G.SingularAt x d` says that `d` is the only value `x` takes in `G`; assignments leaving `x`
-unvalued are allowed. This is singularity in the sense of [Spector][spector-2025] (§6.2), and
+unvalued are allowed. This is singularity in the sense of [Spector][spector-2026] (§6.2), and
 `PluralAssign.singularAt_iff` states it in Spector's form. -/
 def SingularAt (G : PluralAssign Var D) (x : Var) (d : D) : Prop :=
   G.value x = {d}
 
 /-- `G.Singular x` says that `x` takes exactly one value in `G`, the $\mathit{atomic}(x)$ of
-[Spector][spector-2025]. -/
+[Spector][spector-2026]. -/
 def Singular (G : PluralAssign Var D) (x : Var) : Prop :=
   ∃ d, G.SingularAt x d
 
 /-- `G.SingularAt x d` holds exactly when some assignment in `G` sends `x` to `d` and every
-assignment in `G` that values `x` sends it to `d`, as [Spector][spector-2025] states it. -/
+assignment in `G` that values `x` sends it to `d`, as [Spector][spector-2026] states it. -/
 theorem singularAt_iff :
     G.SingularAt x d ↔ (∃ g ∈ G, g x = ↑d) ∧ ∀ g ∈ G, g x ≠ ⊥ → g x = ↑d := by
   refine Set.eq_singleton_iff_unique_mem.trans ⟨fun ⟨hex, hall⟩ ↦ ⟨hex, fun g hg hne ↦ ?_⟩,

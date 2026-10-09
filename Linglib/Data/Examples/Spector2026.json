@@ -1,0 +1,749 @@
+[
+  {
+    "id": "spector2026_1a",
+    "source": {"bibkey": "spector-2026", "paperLabel": "(1a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "A woman is in the room and she is smiling.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "1"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "spector2026_3a",
+    "source": {"bibkey": "spector-2026", "paperLabel": "(3a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Mary owns a violin, and it is expensive.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "1.1"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "spector2026_3b",
+    "source": {"bibkey": "spector-2026", "paperLabel": "(3b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Mary owns a violin, and Peter knows that Mary owns a musical instrument.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "1.1"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "spector2026_4",
+    "source": {"bibkey": "spector-2026", "paperLabel": "(4)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "A woman was in the room. She smiled.",
+    "discourseSegments": [
+      "A woman was in the room.",
+      "She smiled."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "1.2"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "spector2026_5",
+    "source": {"bibkey": "spector-2026", "paperLabel": "(5)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "A woman was in the room. She smiled. Another woman was in the room.",
+    "discourseSegments": [
+      "A woman was in the room.",
+      "She smiled.",
+      "Another woman was in the room."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "1.2"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "spector2026_s2_2_singing",
+    "source": {"bibkey": "spector-2026", "paperLabel": "§2.2 singing"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Someone is singing and someone is standing.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "one person singing and standing", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["section", "2.2"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "spector2026_s3_1_purple",
+    "source": {"bibkey": "spector-2026", "paperLabel": "§3.1 purple"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "It is purple.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "out of the blue",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.1"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "spector2026_s3_1_table",
+    "source": {"bibkey": "spector-2026", "paperLabel": "§3.1 table"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "A table is in the room. It is purple.",
+    "discourseSegments": [
+      "A table is in the room.",
+      "It is purple."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.1"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "spector2026_s3_3_bathroom",
+    "source": {"bibkey": "spector-2026", "paperLabel": "§3.3 bathroom"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "There is no bathroom in this house, or it is hidden.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.3"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "spector2026_13",
+    "source": {"bibkey": "spector-2026", "paperLabel": "(13)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Either Matt does not live in Japan, or he has a female yoga teacher. True! He lives in Tokyo, and she is an excellent instructor.",
+    "discourseSegments": [
+      "Either Matt does not live in Japan, or he has a female yoga teacher.",
+      "True! He lives in Tokyo, and she is an excellent instructor."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "3.4"]
+    ],
+    "comment": "A dialogue; the paper credits the kind of example to Rothschild (2017).",
+    "verified": "text-layer"
+  },
+  {
+    "id": "spector2026_fn15_i",
+    "source": {"bibkey": "spector-2026", "paperLabel": "fn. 15 (i)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Matt bought a train ticket or an airplane ticket. It was expensive.",
+    "discourseSegments": [
+      "Matt bought a train ticket or an airplane ticket.",
+      "It was expensive."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "4"]
+    ],
+    "comment": "A Stone disjunction (Stone 1992), which the paper does not account for.",
+    "verified": "text-layer"
+  },
+  {
+    "id": "spector2026_s4_smokes",
+    "source": {"bibkey": "spector-2026", "paperLabel": "§4 smokes"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Someone smokes. Someone drinks.",
+    "discourseSegments": [
+      "Someone smokes.",
+      "Someone drinks."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "one person smokes and drinks", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["section", "4"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "spector2026_16a",
+    "source": {"bibkey": "spector-2026", "paperLabel": "(16a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Either the room is locked, or a female guitarist is playing. A woman is singing.",
+    "discourseSegments": [
+      "Either the room is locked, or a female guitarist is playing.",
+      "A woman is singing."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "a woman is singing, and the room is locked or one of the singing women is a guitarist playing", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["section", "4"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "spector2026_17a",
+    "source": {"bibkey": "spector-2026", "paperLabel": "(17a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "There isn't anyone who didn't speak to someone.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "everyone spoke to someone (narrow scope)", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["section", "5"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "spector2026_17b",
+    "source": {"bibkey": "spector-2026", "paperLabel": "(17b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Not a single person failed to speak to someone.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "everyone spoke to someone (narrow scope)", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["section", "5"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "spector2026_fn19_he",
+    "source": {"bibkey": "spector-2026", "paperLabel": "fn. 19 he"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Not every male student came. He stayed home.",
+    "discourseSegments": [
+      "Not every male student came.",
+      "He stayed home."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "he = a male student who did not come", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["section", "6.2"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "spector2026_fn19_they",
+    "source": {"bibkey": "spector-2026", "paperLabel": "fn. 19 they"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Not every student came. They all stayed home.",
+    "discourseSegments": [
+      "Not every student came.",
+      "They all stayed home."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "they = all the students", "judgment": "acceptable"},
+      {"name": "they = the students who did not come", "judgment": "unacceptable"}
+    ],
+    "paperFeatures": [
+      ["section", "6.3"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "spector2026_35",
+    "source": {"bibkey": "spector-2026", "paperLabel": "(35)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every student read a book. A student liked it.",
+    "discourseSegments": [
+      "Every student read a book.",
+      "A student liked it."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "6.6"]
+    ],
+    "comment": "The intended reading is beyond the main system; the appendix treats it.",
+    "verified": "text-layer"
+  },
+  {
+    "id": "spector2026_39",
+    "source": {"bibkey": "spector-2026", "paperLabel": "(39)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "It is not true that Sue has a donkey and that she beats it.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "Sue has no donkey or a donkey she does not beat (weak)", "judgment": "unacceptable"},
+      {"name": "Sue beats no donkey she has", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["section", "7"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "spector2026_41",
+    "source": {"bibkey": "spector-2026", "paperLabel": "(41)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "It is not true that Sue has an umbrella and that she left it home.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Sue has two umbrellas; she took one with her and left the other at home.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "7"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "spector2026_43",
+    "source": {"bibkey": "spector-2026", "paperLabel": "(43)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "No farmer who owns a donkey beats it.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "no farmer who owns a donkey beats any donkey they own", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["section", "7"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "spector2026_45",
+    "source": {"bibkey": "spector-2026", "paperLabel": "(45)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "No student who has an umbrella left it home.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "no student who has an umbrella left every umbrella they have home", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["section", "7"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "spector2026_47a",
+    "source": {"bibkey": "spector-2026", "paperLabel": "(47a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "There is a bathroom and it is upstairs.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "7"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "spector2026_47b",
+    "source": {"bibkey": "spector-2026", "paperLabel": "(47b)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Either there isn't a bathroom, or it is upstairs.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "7"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "spector2026_47c",
+    "source": {"bibkey": "spector-2026", "paperLabel": "(47c)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "It is not true that there is a bathroom and that it is upstairs.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "7"]
+    ],
+    "comment": "The paper prints 'that is it is upstairs'.",
+    "verified": "text-layer"
+  },
+  {
+    "id": "spector2026_47d",
+    "source": {"bibkey": "spector-2026", "paperLabel": "(47d)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every farmer who owns a donkey beats it.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "7"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "spector2026_47e",
+    "source": {"bibkey": "spector-2026", "paperLabel": "(47e)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Some farmer who owns a donkey beats it.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "7"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "spector2026_48",
+    "source": {"bibkey": "spector-2026", "paperLabel": "(48)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Sue has an umbrella but she left it home.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "It is raining.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "Sue left every umbrella she has home", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["section", "7"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "spector2026_49",
+    "source": {"bibkey": "spector-2026", "paperLabel": "(49)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Some students who have an umbrella left it home.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "It is raining.",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "some students left all their umbrellas home", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["section", "7"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "spector2026_50",
+    "source": {"bibkey": "spector-2026", "paperLabel": "(50)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Sue has at least one umbrella, but she left it home.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "7"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "spector2026_51",
+    "source": {"bibkey": "spector-2026", "paperLabel": "(51)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Some students who have at least one umbrella left it home.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "7"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "spector2026_52",
+    "source": {"bibkey": "spector-2026", "paperLabel": "(52)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Gloria has a credit card but did not pay with it.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "every credit card she has is one she did not pay with (strong)", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["section", "7"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "spector2026_53",
+    "source": {"bibkey": "spector-2026", "paperLabel": "(53)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Gloria has a credit card (and probably more than one), but she did not pay with it.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "7"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "spector2026_54",
+    "source": {"bibkey": "spector-2026", "paperLabel": "(54)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Either it's not the case that Sue has a credit card and bought a cake with it, or she also used it to buy a book.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "either Sue has no card she bought a cake with, or she has one she bought a cake and a book with", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["section", "7"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "spector2026_58a",
+    "source": {"bibkey": "spector-2026", "paperLabel": "(58a)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Sue has an umbrella and she left it home.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["section", "7"]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  },
+  {
+    "id": "spector2026_61",
+    "source": {"bibkey": "spector-2026", "paperLabel": "(61)"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Every student read a book, and a student liked it.",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "one student liked the book they read", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["section", "App."]
+    ],
+    "comment": "",
+    "verified": "text-layer"
+  }
+]

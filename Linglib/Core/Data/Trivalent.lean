@@ -550,7 +550,7 @@ theorem metaAssert_presuppose (v : Trivalent) :
 /-! ### Middle Kleene
 
 The asymmetric left-to-right connectives of [peters-1979], the trivalent face of
-Karttunen filtering ([beaver-krahmer-2001], [spector-2025]): an undefined first
+Karttunen filtering ([beaver-krahmer-2001], [spector-2026]): an undefined first
 operand absorbs; a defined one proceeds by Strong Kleene. -/
 
 /-- In Middle Kleene conjunction a left undefined operand absorbs and a defined one
