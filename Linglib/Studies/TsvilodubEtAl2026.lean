@@ -1,138 +1,89 @@
 module
 
-public import Linglib.Pragmatics.RSA.Basic
-public import Linglib.Core.Probability.Decision.ValueOfInformation
-public import Linglib.Core.MeasureTheory.Measure.Dirac
+public import Linglib.Core.Probability.GibbsVariational
+public import Linglib.Studies.DongEtAl2026
+public import Mathlib.Probability.Distributions.Bernoulli
+public import Mathlib.Analysis.SpecialFunctions.Sigmoid
 
 /-!
 # Tsvilodub, Mulligan, Snider, Hawkins and Franke (2026): Act or Clarify? Modeling Sensitivity to Uncertainty and Cost in Communication
 
-This file formalizes the computational model of [tsvilodub-etal-2026], a layered account of
-when an agent asks a clarification question rather than acting under uncertainty. The decision
-problem is the tuple ⟨G, P, R, U⟩ of two questioner goals, a prior placing probability ε on the
-dispreferred goal, three direct answers, two mention-some answers and the exhaustive answer,
-and utilities that make the matching mention-some answer worth 1 and the exhaustive answer
-worth 1 − δ, `prior` and `utility`. The agent first decides whether to clarify, with a
-probability that is a logistic function of the expected regret of the best action, `cqGate` and
-`cqProb`; otherwise it acts by a softmax policy over goal-marginal expected utility, `policy`.
-The mixture is `reaction`. The expected regret of a best action is the expected value of
-perfect information of [raiffa-schlaifer-1961], `evpi_eq_expectedRegret`, and for the paper's
-decision problem it is `min ε δ`, `evpi_eq_min`: uncertainty raises regret only while it stays below the cost of the
-safe action, which is the interaction the paper tests. The exploratory predictions of
-Experiment 1 then follow for every slope and threshold of the gate from the orderings of the
-condition parameters alone: TL;JustAsk, `tl_justAsk`, NoNeedToAsk, `noNeedToAsk`, WorthAsking,
-`worthAsking`, and their conjunction, `uncertainty_matters_most_when_costly`.
+The computational model of Experiment 1 explains when an agent asks a clarification question
+rather than answering under uncertainty. The questioner has one of two goals, with probability `ε`
+on the dispreferred one; a mention-some answer is worth 1 for its goal and 0 for the other, and the
+exhaustive answer is worth `1 − δ` for either. The agent clarifies with a probability that is a
+logistic function of the expected regret of its best action, which is the value of learning the
+goal, `min ε δ`, and otherwise answers by a softmax policy over expected utility. Uncertainty
+therefore matters only while it stays below the cost of the exhaustive answer. With `c` read as
+the cost of asking, as the paper suggests, the gate softens the clarify-or-commit rule of Dong et
+al.
+
+## Main statements
+
+* `valueOfInformation_id_eq_expectedRegret`: the expected regret of a best action is the value of
+  perfect information.
+* `uncertainty_matters_most_when_costly`: uncertainty raises clarification when the exhaustive
+  answer is costly and leaves it unchanged when it is cheap.
+* `justListThemAll`: with a cheap exhaustive answer, higher uncertainty means more exhaustive
+  answers.
+* `half_lt_clarifyProb_iff`: the gate favours clarifying exactly when Dong et al.'s agent would.
 
 ## Implementation notes
 
-Regret, expected regret and the expected value of perfect information are defined for a utility
-and a prior measure. The expected value of perfect information is the value of information of
-observing the world, `evpi_eq_valueOfInformation`, so no clarification question is worth more
-than it, `valueOfInformation_le_evpi`. The conditions are indexed by rational `ε` and `δ`, and
-the prediction theorems assume `ε` is a probability. The policy is `RSA.speakerOfScore`, the
-score speaker of the RSA kernel pipeline, applied to the goal-marginal expected utility; the model
-has no listener. The
-utilities follow [hawkins-etal-2025]. The fitted posterior means of Experiment 1, ε of 0.17 and
-0.49 for low and high uncertainty, δ of 0.11 and 0.32 for small and large option spaces, a slope
-τ of 3.60 and a threshold c of 0.18, enter only through the orderings δ_S < ε_L < δ_L < ε_H ≤ 1/2
-that the prediction theorems assume. JustListThemAll and TooManyToList, the predictions about
-exhaustive answers, concern the policy's mass on the exhaustive answer across conditions and
-are stated within a condition only, `policy_prefers_exh_of_uncertain` and
-`policy_prefers_ms1_of_confident`. Experiment 2, on reactions to directives, is not modelled in
-the paper: it found a binarized effect of uncertainty on clarification questions, a gradient
-effect on direct action, and more clarification when errors are costly, and the paper leaves a
-common utility scale for linguistic and non-linguistic actions to future work. The comparison
-with the ablated models, without cost, without uncertainty, or with an expectation of regret
-over all responses, is a model-fitting result and is not formalized.
+* The gate reads the expected regret of the best action in its value form, the value of
+  information of observing the goal, which needs no choice of a maximizer. The paper prints
+  `arg max` in the regret where the maximum is meant.
+* `ε` is a point of the unit interval and the prior is a Bernoulli measure; the paper's clamp
+  `ε ≤ 1/2` is a hypothesis. The softmax policy is the counting measure tilted by `α · EU`; the
+  model has no listener.
+* The fitted posterior means of Experiment 1 (ε of 0.17 and 0.49, δ of 0.11 and 0.32, τ of 3.60,
+  c of 0.18) enter only through the orderings δ_S < ε_L < δ_L < ε_H ≤ 1/2. TooManyToList is not
+  entailed: with a costly exhaustive answer, higher uncertainty raises both the gate and the
+  policy's mass on the exhaustive answer, which pull the reaction's mass on it in opposite
+  directions.
+* Experiment 2, which the paper does not model, and the fit and model comparison are not
+  formalized.
 
 ## References
 
 * [tsvilodub-etal-2026]
 * [raiffa-schlaifer-1961]
-* [van-rooy-2003]
-* [hawkins-etal-2025]
+* [dong-etal-2026]
 -/
 
 @[expose] public section
 
 namespace TsvilodubEtAl2026
 
-open MeasureTheory ProbabilityTheory
-open scoped ENNReal
+open MeasureTheory ProbabilityTheory Real
+open scoped unitInterval
 
-/-! ### Regret and the expected value of perfect information -/
+/-! ### Regret -/
 
 section Regret
 
 variable {W A : Type*} [MeasurableSpace W] (U : W → A → ℝ) (μ : Measure W)
 
-/-- The best utility available at world `w`. -/
-noncomputable def bestUtilityAt (w : W) : ℝ := ⨆ a, U w a
-
 /-- The regret of action `a` at world `w` is what the best action at `w` earns over `a`. -/
-noncomputable def regret (w : W) (a : A) : ℝ := bestUtilityAt U w - U w a
+noncomputable def regret (w : W) (a : A) : ℝ := (⨆ b, U w b) - U w a
 
 /-- The expected regret of action `a` averages its regret over the belief. -/
 noncomputable def expectedRegret (a : A) : ℝ := ∫ w, regret U w a ∂μ
 
-/-- The oracle value is the expected utility under perfect information. -/
-noncomputable def oracleValue : ℝ := ∫ w, bestUtilityAt U w ∂μ
+variable {U μ} [Finite W] [MeasurableSingletonClass W] [StandardBorelSpace W] [Nonempty W]
+  [IsFiniteMeasure μ]
 
-/-- The expected value of perfect information is the oracle value less the value of acting
-now. -/
-noncomputable def evpi : ℝ := oracleValue U μ - decisionValue U μ
-
-variable {U μ} [Fintype W] [MeasurableSingletonClass W]
-
-theorem expectedRegret_eq [IsFiniteMeasure μ] (a : A) :
-    expectedRegret U μ a = oracleValue U μ - ∫ w, U w a ∂μ := by
-  rw [expectedRegret, oracleValue, ← integral_sub .of_finite .of_finite]
-  rfl
-
-/-- The expected value of perfect information is the expected regret of a best action. -/
-theorem evpi_eq_expectedRegret [IsFiniteMeasure μ] {a : A}
-    (ha : ∫ w, U w a ∂μ = decisionValue U μ) : evpi U μ = expectedRegret U μ a := by
-  rw [expectedRegret_eq, ha, evpi]
-
-variable [StandardBorelSpace W] [Nonempty W] [IsProbabilityMeasure μ]
-
-/-- The expected value of perfect information is the value of information of observing the
-world. -/
-theorem evpi_eq_valueOfInformation :
-    evpi U μ = valueOfInformation (decisionValue U) Kernel.id μ := by
-  show _ = valueOfInformation _ (Kernel.deterministic id measurable_id) μ
-  rw [valueOfInformation_deterministic, evpi, oracleValue, integral_fintype .of_finite]
-  congr 1
-  refine Finset.sum_congr rfl fun w _ ↦ ?_
-  rw [Set.preimage_id, smul_eq_mul]
-  rcases eq_or_ne (μ {w}) 0 with h | h
-  · simp [measureReal_def, h]
-  · have hδ : μ[|{w}] = Measure.dirac w := Measure.ext fun s hs ↦ by
-      rw [cond_apply (measurableSet_singleton w), Measure.dirac_apply' _ hs]
-      by_cases hw : w ∈ s
-      · rw [Set.singleton_inter_of_mem hw, ENNReal.inv_mul_cancel h (measure_ne_top _ _),
-          Set.indicator_of_mem hw, Pi.one_apply]
-      · rw [Set.singleton_inter_eq_empty.2 hw, measure_empty, mul_zero,
-          Set.indicator_of_notMem hw]
-    simp [hδ, decisionValue, bestUtilityAt]
-
-variable [Finite A]
-
-theorem evpi_nonneg : 0 ≤ evpi U μ := by
-  rw [evpi_eq_valueOfInformation]
-  exact valueOfInformation_decisionValue_nonneg U _ μ
-
-/-- No clarification question, and no experiment at all, is worth more than perfect
-information. -/
-theorem valueOfInformation_le_evpi {Y : Type*} [MeasurableSpace Y] [Finite Y]
-    [MeasurableSingletonClass Y] (κ : Kernel W Y) [IsMarkovKernel κ] :
-    valueOfInformation (decisionValue U) κ μ ≤ evpi U μ := by
-  rw [evpi_eq_valueOfInformation]
-  simpa only [Kernel.comp_id] using valueOfInformation_decisionValue_comp_le U Kernel.id μ κ
+/-- The expected regret of a best action is the value of observing the world, the expected value
+of perfect information. -/
+theorem valueOfInformation_id_eq_expectedRegret {a : A}
+    (ha : ∫ w, U w a ∂μ = decisionValue U μ) :
+    valueOfInformation (decisionValue U) Kernel.id μ = expectedRegret U μ a := by
+  rw [valueOfInformation_id, expectedRegret, ← ha, ← integral_sub .of_finite .of_finite]
+  simp only [decisionValue_dirac, regret]
 
 end Regret
 
-/-! ### The decision problem ⟨G, P, R, U⟩ -/
+/-! ### The decision problem -/
 
 /-- The questioner's goal. -/
 inductive Goal where
@@ -141,7 +92,6 @@ inductive Goal where
   deriving DecidableEq, Repr, Fintype, Nonempty
 
 instance : MeasurableSpace Goal := ⊤
-
 instance : DiscreteMeasurableSpace Goal := ⟨fun _ ↦ trivial⟩
 
 /-- A direct answer is one of the two mention-some answers or the exhaustive answer. -/
@@ -149,259 +99,203 @@ inductive Response where
   | ms1
   | ms2
   | exh
-  deriving DecidableEq, Repr, Fintype
+  deriving DecidableEq, Repr, Fintype, Nonempty
 
-instance : Nonempty Response := ⟨.exh⟩
 instance : MeasurableSpace Response := ⊤
+instance : DiscreteMeasurableSpace Response := ⟨fun _ ↦ trivial⟩
 
-/-- The utilities of a condition with exhaustive-answer cost `δ`: a matching mention-some answer
-is worth 1, a mismatching one 0, and the exhaustive answer `1 − δ` whatever the goal. -/
-def utility (δ : ℚ) : Goal → Response → ℝ
+/-- The utilities at exhaustive-answer cost `δ`. -/
+def utility (δ : ℝ) : Goal → Response → ℝ
   | .g₁, .ms1 => 1
   | .g₁, .ms2 => 0
   | .g₂, .ms1 => 0
   | .g₂, .ms2 => 1
   | _, .exh => 1 - δ
 
-/-- The prior probability of each goal in a condition with uncertainty `ε`. -/
-def goalWeight (ε : ℚ) : Goal → ℝ
-  | .g₁ => 1 - ε
-  | .g₂ => ε
+/-- The prior at uncertainty `ε` puts probability `ε` on the dispreferred goal. -/
+noncomputable def prior (ε : I) : Measure Goal := bernoulliMeasure .g₂ .g₁ ε
 
-/-- The prior of a condition with uncertainty `ε` puts probability `ε` on the dispreferred
-goal. -/
-noncomputable def prior (ε : ℚ) : Measure Goal :=
-  ∑ g, ENNReal.ofReal (goalWeight ε g) • Measure.dirac g
+instance (ε : I) : IsProbabilityMeasure (prior ε) :=
+  inferInstanceAs (IsProbabilityMeasure (bernoulliMeasure _ _ _))
 
 /-- The expected utility of an answer in the condition `(ε, δ)`. -/
-noncomputable def expectedUtility (ε δ : ℚ) (r : Response) : ℝ :=
+noncomputable def expectedUtility (ε : I) (δ : ℝ) (r : Response) : ℝ :=
   ∫ g, utility δ g r ∂prior ε
 
-private theorem sum_goal {β : Type*} [AddCommMonoid β] (f : Goal → β) :
-    (∑ g : Goal, f g) = f .g₁ + f .g₂ := by
-  rw [show ∑ g, f g = f .g₁ + (f .g₂ + 0) from rfl, add_zero]
+variable {ε εL εH : I} {δ δS δL : ℝ}
 
-section Condition
+@[simp] theorem expectedUtility_ms1 : expectedUtility ε δ .ms1 = 1 - ε := by
+  simp [expectedUtility, prior, integral_bernoulliMeasure, utility]
 
-variable {ε : ℚ} (hε₀ : 0 ≤ ε) (hε₁ : ε ≤ 1)
-include hε₀ hε₁
+@[simp] theorem expectedUtility_ms2 : expectedUtility ε δ .ms2 = ε := by
+  simp [expectedUtility, prior, integral_bernoulliMeasure, utility]
 
-private theorem goalWeight_nonneg (g : Goal) : 0 ≤ goalWeight ε g := by
-  have : (0 : ℝ) ≤ ε := by exact_mod_cast hε₀
-  have : (ε : ℝ) ≤ 1 := by exact_mod_cast hε₁
-  cases g <;> simp [goalWeight] <;> linarith
+@[simp] theorem expectedUtility_exh : expectedUtility ε δ .exh = 1 - δ := by
+  simp [expectedUtility, prior, utility]
 
-theorem isProbabilityMeasure_prior : IsProbabilityMeasure (prior ε) :=
-  Measure.isProbabilityMeasure_sum_ofReal_smul_dirac (goalWeight_nonneg hε₀ hε₁)
-    (by simp [sum_goal, goalWeight])
+private theorem sum_response {β : Type*} [AddCommMonoid β] (f : Response → β) :
+    ∑ r, f r = f .ms1 + f .ms2 + f .exh := by
+  rw [show ∑ r, f r = f .ms1 + (f .ms2 + (f .exh + 0)) from rfl, add_zero, add_assoc]
 
-private theorem integral_prior (f : Goal → ℝ) :
-    ∫ g, f g ∂prior ε = (1 - ε) * f .g₁ + ε * f .g₂ := by
-  have := isProbabilityMeasure_prior hε₀ hε₁
-  rw [integral_fintype .of_finite, sum_goal]
-  simp only [prior, Measure.sum_ofReal_smul_dirac_real_apply (goalWeight_nonneg hε₀ hε₁),
-    smul_eq_mul]
-  simp [goalWeight]
+theorem decisionValue_utility (hε : (ε : ℝ) ≤ 1 / 2) :
+    decisionValue (utility δ) (prior ε) = 1 - min (ε : ℝ) δ := by
+  have hb : BddAbove (Set.range (expectedUtility ε δ)) := (Set.finite_range _).bddAbove
+  refine le_antisymm (ciSup_le fun r ↦ ?_) ?_
+  · change expectedUtility ε δ r ≤ _
+    cases r <;> simp <;> linarith [min_le_left (ε : ℝ) δ, min_le_right (ε : ℝ) δ]
+  · rcases min_cases (ε : ℝ) δ with ⟨h, _⟩ | ⟨h, _⟩
+    · exact le_ciSup_of_le hb .ms1 (by change _ ≤ expectedUtility ε δ _; simp [h])
+    · exact le_ciSup_of_le hb .exh (by change _ ≤ expectedUtility ε δ _; simp [h])
 
-theorem expectedUtility_ms1 (δ : ℚ) : expectedUtility ε δ .ms1 = 1 - ε := by
-  rw [expectedUtility, integral_prior hε₀ hε₁]
-  simp [utility]
-
-theorem expectedUtility_ms2 (δ : ℚ) : expectedUtility ε δ .ms2 = ε := by
-  rw [expectedUtility, integral_prior hε₀ hε₁]
-  simp [utility]
-
-theorem expectedUtility_exh (δ : ℚ) : expectedUtility ε δ .exh = 1 - δ := by
-  rw [expectedUtility, integral_prior hε₀ hε₁]
-  simp [utility]
-  ring
-
-end Condition
-
-/-! ### The behavioral policy π = SoftMax(α · EU) -/
-
-/-- The policy's score at the condition `(ε, δ)` is `α · EU(r)`. -/
-noncomputable def policyScore (α : ℝ) (p : ℚ × ℚ) (r : Response) : EReal :=
-  ((α * expectedUtility p.1 p.2 r : ℝ) : EReal)
-
-/-- The behavioral policy, the softmax of `α · EU`, as a kernel from conditions to answers. -/
-noncomputable def policy (α : ℝ) : Kernel (ℚ × ℚ) Response := RSA.speakerOfScore (policyScore α)
-
-/-- Policy preference at a condition is comparison of expected utility. -/
-theorem policy_real_singleton_lt_iff (α : ℝ) (p : ℚ × ℚ) (r r' : Response) :
-    (policy α p).real {r} < (policy α p).real {r'} ↔ policyScore α p r < policyScore α p r' :=
-  have htop : ∀ u, policyScore α p u ≠ ⊤ := fun _ ↦ EReal.coe_ne_top _
-  have h0 : ∃ u, policyScore α p u ≠ ⊥ := ⟨.exh, EReal.coe_ne_bot _⟩
-  RSA.speakerOfScore_real_singleton_lt_iff htop h0
-
-private theorem policy_lt_policy {α : ℝ} (hα : 0 < α) {ε δ : ℚ} {r₁ r₂ : Response}
-    (h : expectedUtility ε δ r₁ < expectedUtility ε δ r₂) :
-    (policy α (ε, δ)).real {r₁} < (policy α (ε, δ)).real {r₂} := by
-  rw [policy_real_singleton_lt_iff]
-  exact EReal.coe_lt_coe (mul_lt_mul_of_pos_left h hα)
-
-/-- Once uncertainty exceeds the cost of the exhaustive answer, the exhaustive answer beats
-both mention-some answers. -/
-theorem policy_prefers_exh_of_uncertain {α : ℝ} (hα : 0 < α) {ε δ : ℚ} (hδ : 0 ≤ δ)
-    (h₁ : δ < ε) (h₂ : ε ≤ 1/2) :
-    (policy α (ε, δ)).real {.ms1} < (policy α (ε, δ)).real {.exh} ∧
-      (policy α (ε, δ)).real {.ms2} < (policy α (ε, δ)).real {.exh} := by
-  have hε₀ : 0 ≤ ε := hδ.trans h₁.le
-  have hε₁ : ε ≤ 1 := h₂.trans (by norm_num)
-  have h₁' : (δ : ℝ) < ε := by exact_mod_cast h₁
-  have h₂' : (ε : ℝ) ≤ 1/2 := by
-    rw [show (1/2 : ℝ) = ((1/2 : ℚ) : ℝ) by norm_num]; exact_mod_cast h₂
-  exact ⟨policy_lt_policy hα (by
-      rw [expectedUtility_ms1 hε₀ hε₁, expectedUtility_exh hε₀ hε₁]; linarith),
-    policy_lt_policy hα (by
-      rw [expectedUtility_ms2 hε₀ hε₁, expectedUtility_exh hε₀ hε₁]; linarith)⟩
-
-/-- Under uncertainty below the cost of the exhaustive answer, the matching mention-some
-answer wins. -/
-theorem policy_prefers_ms1_of_confident {α : ℝ} (hα : 0 < α) {ε δ : ℚ} (hε₀ : 0 ≤ ε)
-    (h₁ : ε < δ) (h₂ : ε < 1/2) :
-    (policy α (ε, δ)).real {.exh} < (policy α (ε, δ)).real {.ms1} ∧
-      (policy α (ε, δ)).real {.ms2} < (policy α (ε, δ)).real {.ms1} := by
-  have hε₁ : ε ≤ 1 := h₂.le.trans (by norm_num)
-  have h₁' : (ε : ℝ) < δ := by exact_mod_cast h₁
-  have h₂' : (ε : ℝ) < 1/2 := by
-    rw [show (1/2 : ℝ) = ((1/2 : ℚ) : ℝ) by norm_num]; exact_mod_cast h₂
-  exact ⟨policy_lt_policy hα (by
-      rw [expectedUtility_exh hε₀ hε₁, expectedUtility_ms1 hε₀ hε₁]; linarith),
-    policy_lt_policy hα (by
-      rw [expectedUtility_ms2 hε₀ hε₁, expectedUtility_ms1 hε₀ hε₁]; linarith)⟩
-
-/-! ### Expected regret of the best action -/
-
-/-- The expected regret of the best action is `min ε δ`: regret is bounded by the uncertainty
-and by the cost of the safe action, so uncertainty raises regret only while it stays below the
-cost. -/
-theorem evpi_eq_min {ε δ : ℚ} (hε₀ : 0 ≤ ε) (hε : ε ≤ 1/2) (hδ : 0 ≤ δ) :
-    evpi (utility δ) (prior ε) = min ε δ := by
-  have hε₁ : ε ≤ 1 := hε.trans (by norm_num)
-  have := isProbabilityMeasure_prior hε₀ hε₁
-  have hδ' : (0 : ℝ) ≤ δ := by exact_mod_cast hδ
-  have hε' : (ε : ℝ) ≤ 1/2 := by
-    rw [show (1/2 : ℝ) = ((1/2 : ℚ) : ℝ) by norm_num]; exact_mod_cast hε
-  have hb : BddAbove (Set.range fun r ↦ expectedUtility ε δ r) := (Set.finite_range _).bddAbove
-  have hbest (g : Goal) : bestUtilityAt (utility δ) g = 1 := by
+theorem valueOfInformation_id_utility (hε : (ε : ℝ) ≤ 1 / 2) (hδ : 0 ≤ δ) :
+    valueOfInformation (decisionValue (utility δ)) Kernel.id (prior ε) = min (ε : ℝ) δ := by
+  have hbest (g : Goal) : ⨆ r, utility δ g r = 1 := by
     refine le_antisymm (ciSup_le fun r ↦ ?_) ?_
     · cases g <;> cases r <;> simp [utility] <;> linarith
     · cases g
-      · exact le_ciSup_of_le (Set.finite_range _).bddAbove Response.ms1 (by simp [utility])
-      · exact le_ciSup_of_le (Set.finite_range _).bddAbove Response.ms2 (by simp [utility])
-  have hvalue : decisionValue (utility δ) (prior ε) = 1 - min ε δ := by
-    refine le_antisymm (ciSup_le fun r ↦ ?_) ?_
-    · change expectedUtility ε δ r ≤ _
-      have h₁ := min_le_left (ε : ℝ) δ
-      have h₂ := min_le_right (ε : ℝ) δ
-      cases r
-      · rw [expectedUtility_ms1 hε₀ hε₁]; push_cast; linarith
-      · rw [expectedUtility_ms2 hε₀ hε₁]; push_cast; linarith
-      · rw [expectedUtility_exh hε₀ hε₁]; push_cast; linarith
-    · rcases min_cases ε δ with ⟨hmin, _⟩ | ⟨hmin, _⟩
-      · exact le_ciSup_of_le hb Response.ms1 (by
-          change _ ≤ expectedUtility ε δ _; rw [expectedUtility_ms1 hε₀ hε₁, hmin])
-      · exact le_ciSup_of_le hb Response.exh (by
-          change _ ≤ expectedUtility ε δ _; rw [expectedUtility_exh hε₀ hε₁, hmin])
-  rw [evpi, oracleValue, hvalue]
+      · exact le_ciSup_of_le (Set.finite_range _).bddAbove .ms1 (by simp [utility])
+      · exact le_ciSup_of_le (Set.finite_range _).bddAbove .ms2 (by simp [utility])
+  rw [valueOfInformation_id, decisionValue_utility hε]
   simp [hbest]
 
 /-! ### The clarification gate -/
 
-/-- The logistic gate with slope `τ` and threshold `c` on the regret signal `x`. -/
-noncomputable def cqGate (τ c x : ℝ) : ℝ := (1 + Real.exp (-(τ * (x - c))))⁻¹
+/-- The probability of clarifying is the logistic function, with slope `τ` and threshold `c`, of
+the value of learning the goal. -/
+noncomputable def clarifyProb (τ c : ℝ) (ε : I) (δ : ℝ) : I :=
+  unitInterval.sigmoid
+    (τ * (valueOfInformation (decisionValue (utility δ)) Kernel.id (prior ε) - c))
 
-theorem cqGate_pos (τ c x : ℝ) : 0 < cqGate τ c x := by
-  rw [cqGate]
-  positivity
+theorem coe_clarifyProb (τ c : ℝ) (hε : (ε : ℝ) ≤ 1 / 2) (hδ : 0 ≤ δ) :
+    (clarifyProb τ c ε δ : ℝ) = sigmoid (τ * (min (ε : ℝ) δ - c)) := by
+  rw [clarifyProb, unitInterval.sigmoid, Subtype.coind_coe, valueOfInformation_id_utility hε hδ]
 
-theorem cqGate_le_one (τ c x : ℝ) : cqGate τ c x ≤ 1 := by
-  rw [cqGate, inv_le_one_iff₀]
-  exact .inr (by linarith [Real.exp_pos (-(τ * (x - c)))])
+/-- With a costly exhaustive answer, higher uncertainty means more clarification, the paper's
+TL;JustAsk. -/
+theorem tl_justAsk {τ : ℝ} (hτ : 0 < τ) (c : ℝ) (hδ : 0 ≤ δ) (hε : εL < εH)
+    (hH : (εH : ℝ) ≤ 1 / 2) (hL : (εL : ℝ) < δ) : clarifyProb τ c εL δ < clarifyProb τ c εH δ := by
+  have hLH : (εL : ℝ) < εH := hε
+  change (clarifyProb τ c εL δ : ℝ) < clarifyProb τ c εH δ
+  rw [coe_clarifyProb τ c (hLH.le.trans hH) hδ, coe_clarifyProb τ c hH hδ, min_eq_left hL.le]
+  exact sigmoid_lt (mul_lt_mul_of_pos_left (by linarith [lt_min hLH hL]) hτ)
 
-/-- The gate is strictly increasing in expected regret: the more there is to lose by acting,
-the more clarification. -/
-theorem cqGate_strictMono {τ : ℝ} (hτ : 0 < τ) (c : ℝ) : StrictMono (cqGate τ c) := by
-  intro x y hxy
-  rw [cqGate, cqGate]
-  have hexp : Real.exp (-(τ * (y - c))) < Real.exp (-(τ * (x - c))) :=
-    Real.exp_lt_exp.2 (by nlinarith)
-  exact (inv_lt_inv₀ (by positivity) (by positivity)).2 (by linarith)
+/-- With an exhaustive answer cheaper than either uncertainty, uncertainty makes no difference to
+clarification, the paper's NoNeedToAsk. -/
+theorem noNeedToAsk (τ c : ℝ) (hδ : 0 ≤ δ) (hL : δ ≤ εL) (hH : δ ≤ εH)
+    (hεL : (εL : ℝ) ≤ 1 / 2) (hεH : (εH : ℝ) ≤ 1 / 2) :
+    clarifyProb τ c εL δ = clarifyProb τ c εH δ :=
+  Subtype.ext <| by
+    rw [coe_clarifyProb τ c hεL hδ, coe_clarifyProb τ c hεH hδ, min_eq_right hL, min_eq_right hH]
 
-/-- The probability of clarifying at the condition `(ε, δ)` is the gate applied to the expected
-regret of the best action. -/
-noncomputable def cqProb (τ c : ℝ) (ε δ : ℚ) : ℝ :=
-  cqGate τ c (evpi (utility δ) (prior ε))
-
-/-! ### The predictions for Experiment 1 -/
-
-/-- In TL;JustAsk, when the exhaustive answer costs more than the low uncertainty, as in a large
-option space, higher uncertainty means more clarification. -/
-theorem tl_justAsk {τ : ℝ} (hτ : 0 < τ) (c : ℝ) {εL εH δ : ℚ} (hδ : 0 ≤ δ) (hL₀ : 0 ≤ εL)
-    (hε : εL < εH) (hH : εH ≤ 1/2) (hL : εL < δ) : cqProb τ c εL δ < cqProb τ c εH δ := by
-  rw [cqProb, cqProb, evpi_eq_min hL₀ (hε.le.trans hH) hδ, evpi_eq_min (hL₀.trans hε.le) hH hδ,
-    min_eq_left hL.le]
-  exact cqGate_strictMono hτ c (by exact_mod_cast lt_min hε hL)
-
-/-- In NoNeedToAsk, when the exhaustive answer costs less than either uncertainty, as in a small
-option space, uncertainty makes no difference to clarification, the regret signal being capped
-at the cost in both conditions. -/
-theorem noNeedToAsk (τ c : ℝ) {εL εH δ : ℚ} (hδ : 0 ≤ δ) (hL : δ ≤ εL) (hH : δ ≤ εH)
-    (hεL : εL ≤ 1/2) (hεH : εH ≤ 1/2) : cqProb τ c εL δ = cqProb τ c εH δ := by
-  rw [cqProb, cqProb, evpi_eq_min (hδ.trans hL) hεL hδ, evpi_eq_min (hδ.trans hH) hεH hδ,
-    min_eq_right hL, min_eq_right hH]
-
-/-- In WorthAsking, at an uncertainty above the smaller cost, a costlier exhaustive answer means
-more clarification. -/
-theorem worthAsking {τ : ℝ} (hτ : 0 < τ) (c : ℝ) {ε δS δL : ℚ} (hε : ε ≤ 1/2) (hS : 0 ≤ δS)
-    (hεS : δS < ε) (hδ : δS < δL) : cqProb τ c ε δS < cqProb τ c ε δL := by
-  rw [cqProb, cqProb, evpi_eq_min (hS.trans hεS.le) hε hS,
-    evpi_eq_min (hS.trans hεS.le) hε (hS.trans hδ.le), min_eq_right hεS.le]
-  exact cqGate_strictMono hτ c (by exact_mod_cast lt_min hεS hδ)
+/-- Once uncertainty exceeds the smaller cost, a costlier exhaustive answer means more
+clarification, the main effect of option-space size on clarification in Experiment 1. -/
+theorem clarification_rises_with_cost {τ : ℝ} (hτ : 0 < τ) (c : ℝ) (hε : (ε : ℝ) ≤ 1 / 2)
+    (hS : 0 ≤ δS) (hεS : δS < ε) (hδ : δS < δL) :
+    clarifyProb τ c ε δS < clarifyProb τ c ε δL := by
+  change (clarifyProb τ c ε δS : ℝ) < clarifyProb τ c ε δL
+  rw [coe_clarifyProb τ c hε hS, coe_clarifyProb τ c hε (hS.trans hδ.le), min_eq_right hεS.le]
+  exact sigmoid_lt (mul_lt_mul_of_pos_left (by linarith [lt_min hεS hδ]) hτ)
 
 /-- Uncertainty raises clarification when the exhaustive answer is costly and leaves it unchanged
 when it is cheap, the interaction the paper tests. -/
-theorem uncertainty_matters_most_when_costly {τ : ℝ} (hτ : 0 < τ) (c : ℝ) {εL εH δS δL : ℚ}
-    (hS : 0 ≤ δS) (hSL : δS ≤ εL) (hε : εL < εH) (hH : εH ≤ 1/2) (hL : εL < δL) :
-    cqProb τ c εL δS = cqProb τ c εH δS ∧ cqProb τ c εL δL < cqProb τ c εH δL :=
-  ⟨noNeedToAsk τ c hS hSL (hSL.trans hε.le) (hε.le.trans hH) hH,
-   tl_justAsk hτ c (hS.trans (hSL.trans hL.le)) (hS.trans hSL) hε hH hL⟩
+theorem uncertainty_matters_most_when_costly {τ : ℝ} (hτ : 0 < τ) (c : ℝ) (hS : 0 ≤ δS)
+    (hSL : δS ≤ εL) (hε : εL < εH) (hH : (εH : ℝ) ≤ 1 / 2) (hL : (εL : ℝ) < δL) :
+    clarifyProb τ c εL δS = clarifyProb τ c εH δS ∧
+      clarifyProb τ c εL δL < clarifyProb τ c εH δL := by
+  have hLH : (εL : ℝ) < εH := hε
+  exact ⟨noNeedToAsk τ c hS hSL (hSL.trans hLH.le) (hLH.le.trans hH) hH,
+    tl_justAsk hτ c (hS.trans (hSL.trans hL.le)) hε hH hL⟩
+
+/-- Without cost or without uncertainty, the ablated models of the model comparison, the gate is
+the same in every condition. -/
+theorem clarifyProb_of_ablated (τ c : ℝ) (hε : (ε : ℝ) ≤ 1 / 2) (hδ : 0 ≤ δ)
+    (h : (ε : ℝ) = 0 ∨ δ = 0) : (clarifyProb τ c ε δ : ℝ) = sigmoid (τ * (0 - c)) := by
+  rw [coe_clarifyProb τ c hε hδ]
+  rcases h with h | h <;> simp [h, ε.2.1, hδ]
+
+/-! ### The behavioral policy -/
+
+/-- The behavioral policy at the condition `(ε, δ)` is the softmax of `α · EU`. -/
+noncomputable def policy (α : ℝ) (ε : I) (δ : ℝ) : Measure Response :=
+  Measure.count.tilted fun r ↦ α * expectedUtility ε δ r
+
+instance (α : ℝ) (ε : I) (δ : ℝ) : IsProbabilityMeasure (policy α ε δ) :=
+  isProbabilityMeasure_tilted .of_finite
+
+theorem policy_real_singleton (α : ℝ) (ε : I) (δ : ℝ) (r : Response) :
+    (policy α ε δ).real {r} =
+      exp (α * expectedUtility ε δ r) / ∑ r', exp (α * expectedUtility ε δ r') := by
+  rw [policy, tilted_real_singleton]
+  simp [measureReal_def]
+
+theorem policy_real_lt_iff {α : ℝ} (hα : 0 < α) {r r' : Response} :
+    (policy α ε δ).real {r} < (policy α ε δ).real {r'} ↔
+      expectedUtility ε δ r < expectedUtility ε δ r' := by
+  rw [policy_real_singleton, policy_real_singleton,
+    div_lt_div_iff_of_pos_right (Finset.sum_pos (fun _ _ ↦ exp_pos _) Finset.univ_nonempty),
+    exp_lt_exp, mul_lt_mul_iff_of_pos_left hα]
+
+theorem policy_real_exh_lt {α : ℝ} (hα : 0 < α) (hε : εL < εH) (hH : (εH : ℝ) ≤ 1 / 2) :
+    (policy α εL δ).real {.exh} < (policy α εH δ).real {.exh} := by
+  have hLH : (εL : ℝ) < εH := hε
+  have h₁ : exp (α * εL) < exp (α * (1 - εH)) := exp_lt_exp.2 (by nlinarith)
+  have h₂ : 1 < exp (α * (εH - εL)) := one_lt_exp_iff.2 (by nlinarith)
+  have e₁ : exp (α * εH) = exp (α * εL) * exp (α * (εH - εL)) := by rw [← exp_add]; ring_nf
+  have e₂ : exp (α * (1 - εL)) = exp (α * (1 - εH)) * exp (α * (εH - εL)) := by
+    rw [← exp_add]; ring_nf
+  simp only [policy_real_singleton, sum_response, expectedUtility_ms1, expectedUtility_ms2,
+    expectedUtility_exh]
+  refine div_lt_div_of_pos_left (exp_pos _) (by positivity) ?_
+  rw [e₁, e₂]
+  nlinarith [mul_pos (sub_pos.2 h₁) (sub_pos.2 h₂)]
 
 /-! ### The layered reaction -/
 
 /-- A reaction either clarifies or commits to a direct answer. -/
 inductive Reaction where
-  | cq
+  | clarify
   | act (r : Response)
   deriving DecidableEq, Repr
 
 instance : MeasurableSpace Reaction := ⊤
+instance : DiscreteMeasurableSpace Reaction := ⟨fun _ ↦ trivial⟩
 
-/-- The layered mixture clarifies with probability `q` and otherwise acts by the policy `pol`. -/
-noncomputable def layered (q : ℝ≥0∞) (pol : Measure Response) : Measure Reaction :=
-  (1 - q) • pol.map Reaction.act + q • Measure.dirac .cq
+/-- The reaction clarifies with the gate's probability and otherwise acts by the policy. -/
+noncomputable def reaction (τ c α : ℝ) (ε : I) (δ : ℝ) : Measure Reaction :=
+  unitInterval.toNNReal (clarifyProb τ c ε δ) • Measure.dirac .clarify +
+    unitInterval.toNNReal (σ (clarifyProb τ c ε δ)) • (policy α ε δ).map .act
 
-theorem layered_apply_cq (q : ℝ≥0∞) (pol : Measure Response) : layered q pol {.cq} = q := by
-  rw [layered, Measure.add_apply, Measure.smul_apply, Measure.smul_apply, smul_eq_mul,
-    smul_eq_mul, Measure.map_apply .of_discrete (.singleton _),
-    show Reaction.act ⁻¹' {Reaction.cq} = ∅ from by ext r; simp, measure_empty, mul_zero,
-    Measure.dirac_apply_of_mem (Set.mem_singleton _), mul_one, zero_add]
+theorem reaction_real_clarify (τ c α : ℝ) (ε : I) (δ : ℝ) :
+    (reaction τ c α ε δ).real {.clarify} = clarifyProb τ c ε δ := by
+  have : Reaction.act ⁻¹' {.clarify} = ∅ := by ext; simp
+  simp [reaction, measureReal_def, Measure.map_apply .of_discrete (.singleton _), this]
 
-theorem layered_apply_act (q : ℝ≥0∞) (pol : Measure Response) (r : Response) :
-    layered q pol {.act r} = (1 - q) * pol {r} := by
-  rw [layered, Measure.add_apply, Measure.smul_apply, Measure.smul_apply, smul_eq_mul,
-    smul_eq_mul, Measure.map_apply .of_discrete (.singleton _),
-    show Reaction.act ⁻¹' {Reaction.act r} = {r} from by ext r'; simp,
-    Measure.dirac_apply' _ (.singleton _), Set.indicator_of_notMem (by simp), mul_zero, add_zero]
+theorem reaction_real_act (τ c α : ℝ) (ε : I) (δ : ℝ) (r : Response) :
+    (reaction τ c α ε δ).real {.act r} = (1 - clarifyProb τ c ε δ) * (policy α ε δ).real {r} := by
+  have : Reaction.act ⁻¹' {.act r} = {r} := by ext; simp
+  simp [reaction, measureReal_def, Measure.map_apply .of_discrete (.singleton _), this]
 
-/-- The reaction at the condition `(ε, δ)` gates by the logistic of the expected regret, then
-acts by the softmax policy. -/
-noncomputable def reaction (τ c α : ℝ) (ε δ : ℚ) : Measure Reaction :=
-  layered (ENNReal.ofReal (cqProb τ c ε δ)) (policy α (ε, δ))
+/-- With an exhaustive answer cheaper than either uncertainty, higher uncertainty means more
+exhaustive answers, the paper's JustListThemAll. -/
+theorem justListThemAll (τ c : ℝ) {α : ℝ} (hα : 0 < α) (hS : 0 ≤ δS) (hSL : δS ≤ εL)
+    (hε : εL < εH) (hH : (εH : ℝ) ≤ 1 / 2) :
+    (reaction τ c α εL δS).real {.act .exh} < (reaction τ c α εH δS).real {.act .exh} := by
+  have hLH : (εL : ℝ) < εH := hε
+  rw [reaction_real_act, reaction_real_act,
+    noNeedToAsk τ c hS hSL (hSL.trans hLH.le) (hLH.le.trans hH) hH]
+  exact mul_lt_mul_of_pos_left (policy_real_exh_lt hα hε hH)
+    (sub_pos.2 (unitInterval.sigmoid_lt_one _))
 
-theorem reaction_apply_cq (τ c α : ℝ) (ε δ : ℚ) :
-    reaction τ c α ε δ {.cq} = ENNReal.ofReal (cqProb τ c ε δ) :=
-  layered_apply_cq _ _
+/-! ### The gate as a softened clarify-or-commit rule -/
+
+/-- The clarification question reveals the goal, so as a question of [dong-etal-2026] it is the
+identity kernel, and the gate exceeds one half exactly when their agent, with asking cost `c`,
+clarifies. -/
+theorem half_lt_clarifyProb_iff {τ : ℝ} (hτ : 0 < τ) (c : ℝ) (ε : I) (δ : ℝ) :
+    1 / 2 < (clarifyProb τ c ε δ : ℝ) ↔
+      DongEtAl2026.Clarifies (utility δ) (prior ε) (fun _ : Unit ↦ Kernel.id) c {()} := by
+  rw [clarifyProb, unitInterval.sigmoid, Subtype.coind_coe, one_div, ← sigmoid_zero,
+    sigmoid_lt_iff, mul_pos_iff_of_pos_left hτ]
+  exact ⟨fun h ↦ ⟨(), Finset.mem_singleton_self _, h⟩, fun ⟨_, _, h⟩ ↦ h⟩
 
 end TsvilodubEtAl2026
