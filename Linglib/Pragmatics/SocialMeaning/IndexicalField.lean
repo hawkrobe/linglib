@@ -8,16 +8,14 @@ public import Mathlib.LinearAlgebra.Matrix.Defs
 /-!
 # Indexical fields
 
-This file defines indexical fields, the social meanings of the variants of a linguistic
-variable in the sense of [eckert-2008]. An indexical field assigns each variant the set of
-meanings, stances, qualities or persona traits, that a use of the variant may activate. An
-association field grades the assignment, giving each variant a signed strength toward each
-trait, positive when the variant indexes the trait and negative when it indexes away from it,
-and the traits a variant indexes toward form its indexical field.
+An indexical field, in Eckert's sense, assigns each variant of a linguistic variable the meanings
+a use of it may activate, stances, qualities or persona traits, as a function
+`Variant → Finset Meaning`. An association field grades the assignment, giving each variant a
+signed strength toward each trait, positive when the variant indexes the trait and negative when
+it indexes away from it, and the traits a variant indexes toward form its indexical field.
 
 ## Main definitions
 
-* `IndexicalField`: the meanings each variant of a variable indexes.
 * `AssociationField`: the signed strength with which each variant indexes each trait, a matrix
   over an ordered ring.
 * `AssociationField.Indexes`: a variant indexes a trait, the strength being positive.
@@ -35,12 +33,11 @@ and the traits a variant indexes toward form its indexical field.
 
 ## Implementation notes
 
-An association field is a `Matrix`, so composing associations through a mediating domain, the
-indirect indexicality of [ochs-1992], is matrix multiplication, and inheriting a field along a
-map of variant spaces is `Matrix.submatrix`. The carrier is any type with a zero and an order,
-`SignType` for the sign-valued fields of [beltrama-solt-burnett-2023], an ordered semiring for
-strengths that compose; the grounded fields of [burnett-2019] are indexical fields over the
-Stereotype Content Model properties.
+An association field is a `Matrix`, so composing associations through a mediating domain, Ochs's
+indirect indexicality, is matrix multiplication, and inheriting a field along a map of variant
+spaces is `Matrix.submatrix`. The carrier is any type with a zero and an order, `SignType` for the
+sign-valued fields of Beltrama, Solt and Burnett, an ordered semiring for strengths that compose;
+Burnett's grounded fields are indexical fields over the Stereotype Content Model properties.
 
 ## References
 
@@ -53,9 +50,6 @@ Stereotype Content Model properties.
 @[expose] public section
 
 namespace SocialMeaning
-
-/-- An indexical field assigns each variant of a variable the meanings it indexes. -/
-abbrev IndexicalField (Variant Meaning : Type*) := Variant → Finset Meaning
 
 /-- An association field assigns each variant of a variable a signed strength toward each
 trait, positive when the variant indexes the trait and negative when it indexes away. -/

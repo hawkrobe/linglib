@@ -45,6 +45,7 @@ carry both the morphological tense and the divergent event location.
 namespace Ogihara1996
 
 open Tense Semantics
+open HeimKratzer
 
 /-- The frame of a clause embedded under an attitude verb takes the matrix event time as its
 perspective time, so the embedded tense locates its reference time against the attitude holder's
@@ -55,14 +56,14 @@ now. -/
 
 /-- The simultaneous reading is the zero-tense reading: a zero tense bound by the attitude
 receives its now, so it coincides with it. -/
-theorem zeroTense_simultaneous {T : Type*} [LinearOrder T] (g : TemporalAssignment T) (n : ℕ)
-    (now : T) : compare (interpTense n (updateTemporal g n now)) now = .eq := by
+theorem zeroTense_simultaneous {T : Type*} [LinearOrder T] (g : Assignment T) (n : ℕ)
+    (now : T) : compare (interpPronoun n (Function.update g n now)) now = .eq := by
   rw [zeroTense_receives_binder_time, compare_eq_iff_eq]
 
 /-- The shifted reading is the genuine-past reading: a pronoun under the past cell whose
 presupposition holds precedes its evaluation time. -/
 theorem genuinePast_shifted {T : Type*} [LinearOrder T] (tp : TensePronoun)
-    (hc : tp.constraint = ⟦past⟧) (g : TemporalAssignment T) (h : tp.fullPresupposition g) :
+    (hc : tp.constraint = ⟦past⟧) (g : Assignment T) (h : tp.fullPresupposition g) :
     compare (tp.resolve g) (tp.evalTime g) = .lt := by
   simpa [TensePronoun.fullPresupposition, hc, compare_lt_iff_lt] using h
 

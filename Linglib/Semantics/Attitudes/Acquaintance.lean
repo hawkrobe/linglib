@@ -17,8 +17,7 @@ the simultaneous reading of a past tense embedded under a past attitude a de re 
 
 ## Main definitions
 
-* `Acquaintance.CenteredProp`, `Acquaintance.Rel`: centered propositions and acquaintance
-  relations to a res of any type.
+* `Acquaintance.Rel`: acquaintance relations to a res of any type.
 * `Acquaintance.deRe`: the centered proposition ascribed by a de re construal.
 * `Acquaintance.BaseCondition`: the base-world condition on the res.
 * `Acquaintance.ofConcept`: the acquaintance relation of a concept.
@@ -44,16 +43,13 @@ namespace Acquaintance
 
 variable {α E T W : Type*}
 
-/-- A centered proposition is a property of the holder's self, now, and world. -/
-abbrev CenteredProp (E T W : Type*) := E → T → W → Prop
-
 /-- An acquaintance relation `R` holds of `y x t w` when the self `x` at `t` in `w` is acquainted
 with the res `y`. -/
 abbrev Rel (α E T W : Type*) := α → E → T → W → Prop
 
 /-- The centered proposition that the res the self is uniquely acquainted with at the now has
 the property `P` there. -/
-def deRe (R : Rel α E T W) (P : α → T → W → Prop) : CenteredProp E T W :=
+def deRe (R : Rel α E T W) (P : α → T → W → Prop) : E → T → W → Prop :=
   fun x t w ↦ ∃ y, (∀ y', R y' x t w ↔ y' = y) ∧ P y t w
 
 /-- The base-world condition of a de re construal holds when the holder actually bears the

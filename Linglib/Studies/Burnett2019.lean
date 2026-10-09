@@ -100,7 +100,7 @@ instance : Nonempty Persona := ⟨coolGuy⟩
 
 /-- The indexical fields of example (10) have *-ing* index competence and aloofness and *-in'*
 incompetence and friendliness. -/
-def ingEckertField : IndexicalField INGVariant PersonaTrait
+def ingEckertField : INGVariant → Finset PersonaTrait
   | .velar => {.competent, .aloof}
   | .apical => {.incompetent, .friendly}
 

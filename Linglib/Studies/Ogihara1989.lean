@@ -24,6 +24,7 @@ of the predicate at it (`referential_past_decomposition`).
 @[expose] public section
 
 open Tense
+open HeimKratzer
 
 namespace Ogihara1989
 
@@ -35,9 +36,9 @@ open Reference
     referential time: the referential analysis picks the time, the
     operator imposes the constraint. -/
 theorem referential_past_decomposition {W T : Type*} [LinearOrder T]
-    (P : (Index W T → Prop)) (g : TemporalAssignment T) (n : ℕ)
+    (P : (Index W T → Prop)) (g : Assignment T) (n : ℕ)
     (w : W) (speechTime : T) :
-    PAST P ⟨w, interpTense n g⟩ ⟨w, speechTime⟩ ↔
+    PAST P ⟨w, interpPronoun n g⟩ ⟨w, speechTime⟩ ↔
     (g n < speechTime ∧ P ⟨w, g n⟩) := by
   simp
 

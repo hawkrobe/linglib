@@ -203,7 +203,7 @@ inductive INGMeaning
   deriving DecidableEq, Fintype
 
 /-- The (ING) field of Figure 3, black for the velar variant and gray for the apical. -/
-def ingField : IndexicalField INGVariant INGMeaning
+def ingField : INGVariant → Finset INGMeaning
   | .velar => {.educated, .formal, .effortful, .articulate, .pretentious}
   | .apical => {.uneducated, .relaxed, .easygoing, .lazy, .inarticulate, .unpretentious}
 
