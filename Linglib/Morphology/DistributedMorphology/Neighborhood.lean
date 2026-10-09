@@ -64,8 +64,8 @@ namespace DistributedMorphology
 
 variable {Bundle F : Type*}
 
-/-- The local context a postsyntactic rule may inspect: the `focus` terminal
-and the terminals to either side, nearest first. A condition that only
+/-- A neighborhood is the local context a postsyntactic rule may inspect, the
+`focus` terminal and the terminals to either side, nearest first. A condition that only
 inspects `focus` is paradigmatic; one that reads `leftCtx` or `rightCtx` is
 syntagmatic. -/
 @[use_set_notation_for_order]
@@ -97,9 +97,9 @@ instance [EmptyCollection Bundle] : EmptyCollection (Neighborhood Bundle) := ⟨
 
 /-! ### Offsets -/
 
-/-- The terminal at offset `i` from the focus: `0` is the focus, `-(k + 1)` the
-`k`-th terminal to the left, `k + 1` the `k`-th to the right, and `default` past
-either end. -/
+/-- `n.nth i` is the terminal at offset `i` from the focus, where `0` is the
+focus, `-(k + 1)` the `k`-th terminal to the left, `k + 1` the `k`-th to the
+right, and `default` lies past either end. -/
 def nth [Inhabited Bundle] (n : Neighborhood Bundle) : ℤ → Bundle
   | 0 => n.focus
   | (k + 1 : ℕ) => n.rightCtx.getD k default
@@ -126,8 +126,9 @@ variable (d : List Bundle) (i : ℕ) (b : Bundle)
 /-- The terminals of a neighborhood, in linear order. -/
 def toList (n : Neighborhood Bundle) : List Bundle := n.leftCtx.reverse ++ n.focus :: n.rightCtx
 
-/-- The neighborhood of position `i` of the string `d`, with `b` in focus: the
-earlier terminals to its left and the later ones to its right, nearest first. -/
+/-- `around d i b` is the neighborhood of position `i` of the string `d` with `b`
+in focus, the earlier terminals to its left and the later ones to its right,
+nearest first. -/
 def around : Neighborhood Bundle := ⟨b, (d.take i).reverse, d.drop (i + 1)⟩
 
 /-- Each terminal of the string `d` in its neighborhood, in order. -/
@@ -175,7 +176,7 @@ end String
 
 variable {s n : Neighborhood (List F)} {x : ℤ × F}
 
-/-- `(i, f) ∈ n`: the terminal at offset `i` from the focus bears the feature `f`. -/
+/-- `(i, f) ∈ n` holds when the terminal at offset `i` from the focus bears the feature `f`. -/
 instance : Membership (ℤ × F) (Neighborhood (List F)) := ⟨fun n x ↦ x.2 ∈ n.nth x.1⟩
 
 theorem mem_def : x ∈ n ↔ x.2 ∈ n.nth x.1 := Iff.rfl
@@ -183,8 +184,9 @@ theorem mem_def : x ∈ n ↔ x.2 ∈ n.nth x.1 := Iff.rfl
 instance [DecidableEq F] (x : ℤ × F) (n : Neighborhood (List F)) : Decidable (x ∈ n) :=
   inferInstanceAs (Decidable (x.2 ∈ n.nth x.1))
 
-/-- The positioned features of a neighborhood of feature lists, listed: the
-focus's at offset `0`, then the left context's, then the right context's. -/
+/-- `n.positioned` lists the positioned features of a neighborhood of feature
+lists, the focus's at offset `0`, then the left context's, then the right
+context's. -/
 def positioned (n : Neighborhood (List F)) : List (ℤ × F) :=
   n.focus.map (0, ·) ++
     n.leftCtx.zipIdx.flatMap (fun p ↦ p.1.map (-(p.2 + 1 : ℤ), ·)) ++
@@ -239,6 +241,8 @@ theorem mem_of_subset (h : s ⊆ n) (hx : x ∈ s) : x ∈ n := h hx
 /-- Inclusion compares terminal by terminal. -/
 theorem subset_iff_nth : s ⊆ n ↔ ∀ i, s.nth i ⊆ n.nth i :=
   ⟨fun h i _ hf ↦ h (x := (i, _)) hf, fun h x hx ↦ h x.1 hx⟩
+
+theorem focus_subset_focus (h : s ⊆ n) : s.focus ⊆ n.focus := subset_iff_nth.mp h 0
 
 theorem subset_iff_positioned : s ⊆ n ↔ s.positioned ⊆ n.positioned := by
   simp [subset_iff, List.subset_def]
