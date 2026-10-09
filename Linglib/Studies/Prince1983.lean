@@ -279,14 +279,10 @@ so no such move is available on well-formed grids. -/
 theorem Marks.not_isContinuous_move {g : Grid} {n i k : ℕ} (hi : i < g.length) (hn : n < g[i])
     (hn1 : 1 ≤ n) (hk : k ≠ i) : ¬ Marks.IsContinuous (Marks.move (n - 1) i k (rows g)) := by
   intro h
-  have hlen : n < peak g := lt_of_lt_of_le hn (le_peak (List.getElem_mem hi))
-  have h1 : n - 1 + 1 = n := by omega
-  have hm := Marks.isContinuous_iff.1 h (n - 1)
-  simp only [Marks.move, List.length_modify, rows, List.length_map, List.length_range, h1,
-    List.getElem_modify_ne _ _ (show n - 1 ≠ n by omega), List.getElem_modify_eq,
-    List.getElem_map, List.getElem_range, List.length_set] at hm
-  have := hm hlen i (by simpa using hi) (by simpa using hi)
-  simp [List.getElem_set_ne hk, hn] at this
+  have hlen : n < peak g := hn.trans_le (le_peak (List.getElem_mem hi))
+  have := Marks.isContinuous_iff.1 h (n - 1) (by simp [Marks.move]; omega) i
+    (by simp [Marks.move, hi]) (by simp [Marks.move, hi])
+  simp [Marks.move, show n - 1 + 1 = n by omega, show n - 1 ≠ n by omega, hn, hk] at this
 
 theorem moveXL_eq_or (n : ℕ) (g : Grid) :
     moveXL n g = g ∨ ∃ i j k, i < g.length ∧ j < g.length ∧ Clash g n i j ∧ g.getD i 0 = n ∧
@@ -306,23 +302,36 @@ theorem moveXL_eq_or (n : ℕ) (g : Grid) :
           by simpa using List.find?_some hk, rfl⟩
     · exact .inl rfl
 
-/-- The absolute peak never moves (31): a clash at the peak's level would need a second peak. -/
+theorem moveXL_eq_self_of_not_clash {n : ℕ} {g : Grid}
+    (h : ∀ i < g.length, ∀ j < g.length, ¬ Clash g n i j) : moveXL n g = g :=
+  (moveXL_eq_or n g).resolve_right fun ⟨i, j, _, hi, hj, hc, _⟩ ↦ h i hi j hj hc
+
+/-- Move x at level `n` never touches a column taller than `n`: no entry is slid out from under a
+taller column (32). -/
+theorem moveXL_getD_of_lt {n c : ℕ} {g : Grid} (hc : n < g.getD c 0) :
+    (moveXL n g).getD c 0 = g.getD c 0 := by
+  rcases moveXL_eq_or n g with h | ⟨i, -, k, -, -, -, hi, hk, h⟩
+  · rw [h]
+  · rw [h, getD_set_of_ne (by rintro rfl; omega), getD_set_of_ne (by rintro rfl; omega)]
+
+/-- A culminative grid has no clash at or above its peak, since both columns would be peaks. -/
+theorem not_clash_of_peak_le {g : Grid} (hc : IsCulminative g) {n i j : ℕ} (hn : peak g ≤ n)
+    (hi : i < g.length) (hj : j < g.length) : ¬ Clash g n i j := by
+  rintro ⟨hij, hni, hnj, -⟩
+  rw [List.getD_eq_getElem _ _ hi] at hni
+  rw [List.getD_eq_getElem _ _ hj] at hnj
+  have := le_peak (List.getElem_mem hi)
+  have := le_peak (List.getElem_mem hj)
+  exact hij.ne (hc.eq_of_eq_peak hi hj (by omega) (by omega))
+
+/-- The absolute peak never moves (31): below the peak Move x leaves taller columns alone, and at
+or above it a culminative grid has no clash. -/
 theorem moveXL_getD_peak {g : Grid} (hc : IsCulminative g) {i n : ℕ} (hi : i < g.length)
     (hp : g[i] = peak g) : (moveXL n g).getD i 0 = g[i] := by
-  rcases moveXL_eq_or n g with h | ⟨i', j, k, hi', hj, ⟨hij, -, hnj, -⟩, hn, hk, h⟩
-  · rw [h, List.getD_eq_getElem _ _ hi]
-  rw [List.getD_eq_getElem _ _ hi'] at hn
-  rw [List.getD_eq_getElem _ _ hj] at hnj
-  have hle := le_peak (List.getElem_mem hj)
-  have hii' : i ≠ i' := by
-    rintro rfl
-    exact absurd (hc.eq_of_eq_peak hi hj hp (by omega)) (by omega)
-  have hik : i ≠ k := by
-    rintro rfl
-    rw [List.getD_eq_getElem _ _ hi] at hk
-    exact hii' (hc.eq_of_eq_peak hi hi' hp
-      (le_antisymm (le_peak (List.getElem_mem hi')) (by omega)))
-  rw [h, getD_set_of_ne hik.symm, getD_set_of_ne hii'.symm, List.getD_eq_getElem _ _ hi]
+  rw [← List.getD_eq_getElem g 0 hi]
+  rcases lt_or_ge n (peak g) with h | h
+  · exact moveXL_getD_of_lt (by rwa [List.getD_eq_getElem _ _ hi, hp])
+  · rw [moveXL_eq_self_of_not_clash fun _ hi' _ hj ↦ not_clash_of_peak_le hc h hi' hj]
 
 /-! ### The End Rule, extrametricality, and Perfect Grid Construction (§3.2, §3.3) -/
 
