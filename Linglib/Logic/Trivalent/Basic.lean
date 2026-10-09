@@ -47,14 +47,14 @@ truth-named constructors is this library's ergonomic choice; the name follows th
 - `Trivalent.ofBool`, `Trivalent.ofBoolHom` — `Bool` embeds as a bounded lattice homomorphism.
 - `Trivalent.supervaluation` — the value of a predicate over a finite family of classical
   valuations ([van-fraassen-1966]), characterized as a knowledge meet in
-  `Core/Data/Trivalent/Flat.lean`.
+  `Logic/Trivalent/Flat.lean`.
 
 ## Main results
 
 - `Trivalent.orderIsoSignType` — the truth order's mathlib carrier is `SignType`
   (`-1 < 0 < 1`), the iso commuting with negation. The knowledge order lives in
-  `Core/Data/Trivalent/Flat.lean`, and `Trivalent.orderIsoConsistent`
-  (`Core/Order/Bilattice/Four.lean`) identifies `Trivalent` with the consistent part of
+  `Logic/Trivalent/Flat.lean`, and `Trivalent.orderIsoConsistent`
+  (`Logic/Trivalent/Four.lean`) identifies `Trivalent` with the consistent part of
   Belnap's `FOUR`.
 
 ## References

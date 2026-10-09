@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Conditionals.SelectionFunction
-public import Linglib.Core.Data.Trivalent
+public import Linglib.Logic.Trivalent.Basic
 public import Linglib.Semantics.Presupposition.Defs
 
 /-!

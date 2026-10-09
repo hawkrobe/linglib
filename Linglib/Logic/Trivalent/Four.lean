@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.Order.Bilattice.Product
-public import Linglib.Core.Data.Trivalent.Flat
+public import Linglib.Logic.Trivalent.Flat
 
 /-!
 # Belnap's four values

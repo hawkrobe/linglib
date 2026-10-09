@@ -41,7 +41,7 @@ conditions on the three verbs are checked.
   `Logic/Modal/Defs.lean`, and rejection the box of falsity, stronger than the paper's
   gloss "holds in none" on a trivalent proposition but the reading its analysis of (38)
   uses. *Think* and *tycka* are trivalent propositions built with the Weak Kleene
-  conjunction and ∂ of `Core/Data/Trivalent.lean`, so that presupposition projection
+  conjunction and ∂ of `Logic/Trivalent/Basic.lean`, so that presupposition projection
   through negation is the logic's rather than a stipulation.
 * The formal fragment's syntax and translations (§5.1, §5.3), the context-of-utterance
   parameter, and the §4 pragmatics of assertion as a proposal are not modelled.

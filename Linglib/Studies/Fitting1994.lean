@@ -1,7 +1,7 @@
 module
 
 public import Mathlib.Order.Lattice
-public import Linglib.Core.Order.Bilattice.Four
+public import Linglib.Logic.Trivalent.Four
 public import Linglib.Logic.Bilattice.Guard
 public import Linglib.Core.Order.InvolutiveCompl
 

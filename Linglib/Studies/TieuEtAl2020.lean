@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Exhaustification.InnocentExclusion
-public import Linglib.Core.Data.Trivalent
+public import Linglib.Logic.Trivalent.Basic
 public import Linglib.Data.Examples.TieuEtAl2020
 
 /-!

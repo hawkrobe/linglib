@@ -6,7 +6,7 @@ Authors: Robert Hawkins
 module
 
 public import Linglib.Core.Data.Set.Monad
-public import Linglib.Core.Data.Trivalent
+public import Linglib.Logic.Trivalent.Basic
 public import Linglib.Logic.Assignment
 public import Linglib.Semantics.Dynamic.State
 public import Linglib.Semantics.Dynamic.Update

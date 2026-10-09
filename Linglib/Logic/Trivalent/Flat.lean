@@ -5,7 +5,7 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Data.Trivalent
+public import Linglib.Logic.Trivalent.Basic
 public import Linglib.Core.Order.Flat
 public import Mathlib.Data.Finset.Lattice.Fold
 

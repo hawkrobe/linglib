@@ -5,7 +5,7 @@ public import Mathlib.Order.Interval.Finset.Nat
 public import Mathlib.Data.Fintype.Basic
 public import Linglib.Semantics.Supervaluation
 public import Linglib.Logic.Trivalent.Propositional
-public import Linglib.Core.Data.Trivalent.Flat
+public import Linglib.Logic.Trivalent.Flat
 
 /-!
 # Fine (1975): Vagueness, truth and logic
