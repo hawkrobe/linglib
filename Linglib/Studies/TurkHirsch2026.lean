@@ -5,7 +5,7 @@ public import Linglib.Semantics.Alternatives.Basic
 public import Linglib.Semantics.Alternatives.Structural
 public import Linglib.Semantics.Questions.Exhaustivity
 public import Linglib.Semantics.Questions.Hamblin
-public import Linglib.Semantics.Modality.Kratzer.Operators
+public import Linglib.Semantics.Modality.Necessity
 public import Linglib.Semantics.Polarity.Basic
 public import Linglib.Fragments.Turkish.QuestionParticles
 public import Linglib.Data.Examples.TurkHirsch2026
@@ -89,7 +89,7 @@ inductive Word where
   | deontic
   deriving DecidableEq, Repr
 
-variable {W : Type} (f : ModalBase W) (g : OrderingSource W)
+variable {W : Type} (f g : ConvBackground W)
 
 /-- The operator a word denotes. A polarity head acts on propositions, so that Σ is the identity
 and NEG complementation, and the deontic modal is necessity over the modal base and ordering

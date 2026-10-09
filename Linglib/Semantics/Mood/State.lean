@@ -9,7 +9,7 @@ public import Mathlib.Data.Setoid.Basic
 public import Linglib.Discourse.QUD.Issue
 public import Linglib.Semantics.Mood.Defs
 public import Linglib.Semantics.Dynamic.Expectation
-public import Linglib.Semantics.Modality.Kratzer.Operators
+public import Linglib.Semantics.Modality.Necessity
 public import Linglib.Semantics.Questions.Partition.Inquisitive
 
 /-!
@@ -358,47 +358,47 @@ open Modality
 
 /-- The expectation state that a modal base and ordering source induce at a world has the accessible
 worlds as information and the ordering-source ranking as pattern. -/
-def stateAt (f : ModalBase W) (g : OrderingSource W) (w : W) :
+def stateAt (f g : ConvBackground W) (w : W) :
     ExpState W :=
   ⟨f.accessibleWorlds w, premisePreorder (g w)⟩
 
-@[simp] theorem stateAt_info (f : ModalBase W) (g : OrderingSource W) (w : W) :
+@[simp] theorem stateAt_info (f g : ConvBackground W) (w : W) :
     (stateAt f g w).info = f.accessibleWorlds w := rfl
 
-@[simp] theorem stateAt_order (f : ModalBase W) (g : OrderingSource W) (w : W) :
+@[simp] theorem stateAt_order (f g : ConvBackground W) (w : W) :
     (stateAt f g w).order = premisePreorder (g w) := rfl
 
 /-- Kratzer's best worlds are the induced state's optimal worlds. -/
-theorem bestWorlds_eq_optimal (f : ModalBase W) (g : OrderingSource W)
+theorem bestWorlds_eq_optimal (f g : ConvBackground W)
     (w : W) :
     bestWorlds f g w = (stateAt f g w).optimal := rfl
 
 /-- Simple necessity is informational necessity over the induced state, where the ordering source is
 irrelevant. -/
-theorem simpleNecessity_iff_boxCs (f : ModalBase W) (g : OrderingSource W)
+theorem simpleNecessity_iff_boxCs (f g : ConvBackground W)
     (p : W → Prop) (w : W) :
     simpleNecessity f p w ↔ (stateAt f g w).boxCs p :=
   Iff.rfl
 
 /-- Kratzer necessity is preferential necessity over the induced state, so human necessity is `□_≤`.
 -/
-theorem necessity_iff_boxLe (f : ModalBase W) (g : OrderingSource W)
+theorem necessity_iff_boxLe (f g : ConvBackground W)
     (p : W → Prop) (w : W) :
     necessity f g p w ↔ (stateAt f g w).boxLe p :=
   Iff.rfl
 
 /-- The state induced by a Kratzer frame supports asserting `p` iff `p` is a simple necessity. -/
-theorem le_assert_iff_simpleNecessity (f : ModalBase W)
-    (g : OrderingSource W) (p : W → Prop) (w : W) :
+theorem le_assert_iff_simpleNecessity (f : ConvBackground W)
+    (g : ConvBackground W) (p : W → Prop) (w : W) :
     stateAt f g w ≤ (stateAt f g w).assert p ↔ simpleNecessity f p w :=
   ((stateAt f g w).le_assert_iff p).trans
     (simpleNecessity_iff_boxCs f g p w).symm
 
 /-- Kratzer realism is fiber-reflexivity, so a modal base is realistic iff every world belongs to
 its own induced information state. -/
-theorem isRealistic_iff_mem_stateAt_info (f : ModalBase W)
-    (g : OrderingSource W) :
+theorem isRealistic_iff_mem_stateAt_info (f : ConvBackground W)
+    (g : ConvBackground W) :
     f.IsRealistic ↔ ∀ w, w ∈ (stateAt f g w).info :=
-  isRealistic_iff_mem_accessible f
+  Iff.rfl
 
 end Mood

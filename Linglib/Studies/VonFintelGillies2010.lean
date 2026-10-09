@@ -72,25 +72,25 @@ abbrev red : World → Prop := (· = .w0)
 abbrev notBlue : World → Prop := (· ≠ .w1)
 
 /-- The §7.1 kernel `{P ∪ Q, W \ P}` in Mastermind colors. -/
-def mastermindK : Kernel World := ⟨[redOrBlue, notRed]⟩
+def mastermindK : Kernel World := ⟨{redOrBlue, notRed}⟩
 
 /-- A one-proposition kernel whose base properly contains ⟦blue⟧. -/
-def indirectK : Kernel World := ⟨[redOrBlue]⟩
+def indirectK : Kernel World := ⟨{redOrBlue}⟩
 
 theorem mastermind_base : mastermindK.base = ({.w1} : Set World) := by
   ext w
-  cases w <;> simp [Kernel.base, mastermindK, propIntersection, redOrBlue, notRed]
+  cases w <;> simp [mastermindK, redOrBlue, notRed]
 
 theorem mastermind_blue_unsettled :
     ¬ mastermindK.directlySettles blue := by
   rintro ⟨x, hx, hxor⟩
-  rcases List.mem_cons.mp hx with rfl | hx'
+  rcases hx with rfl | hx'
   · rcases hxor with h_sub | h_disj
     · exact (show ¬ blue .w0 from by decide)
         (h_sub (show redOrBlue .w0 from by decide))
     · exact Set.disjoint_left.mp h_disj (show redOrBlue .w1 from by decide)
         (show blue .w1 from by decide)
-  · rcases List.mem_singleton.mp hx' with rfl
+  · obtain rfl : x = notRed := hx'
     rcases hxor with h_sub | h_disj
     · exact (show ¬ blue .w2 from by decide)
         (h_sub (show notRed .w2 from by decide))
@@ -142,7 +142,7 @@ theorem indirectness_neq_weakness :
   refine ⟨⟨mastermind_must_blue_defined, mastermind_must_blue_true⟩,
     λ h => h mastermind_red_settled, ?_, ?_⟩
   · rintro ⟨x, hx, hxor⟩
-    rcases List.mem_singleton.mp hx with rfl
+    obtain rfl : x = redOrBlue := hx
     rcases hxor with h_sub | h_disj
     · exact (show ¬ blue .w0 from by decide)
         (h_sub (show redOrBlue .w0 from by decide))
@@ -150,9 +150,9 @@ theorem indirectness_neq_weakness :
         (show blue .w1 from by decide)
   · intro h
     have hw0 : World.w0 ∈ indirectK.base :=
-      mem_propIntersection.mpr λ p hp => by
-        rcases List.mem_singleton.mp hp with rfl; decide
-    exact (by decide : ¬ blue World.w0) (h hw0)
+      Kernel.mem_base.mpr λ p hp => by
+        obtain rfl : p = redOrBlue := hp; decide
+    exact (by decide : ¬ blue World.w0) (h _ hw0)
 
 variable {W : Type*} (k : Kernel W)
 
@@ -172,7 +172,7 @@ theorem must_perhaps_contradiction (φ : W → Prop) (w : W)
     ¬(kernelMight k (λ w' => ¬ φ w')).assertion w := by
   intro hc
   obtain ⟨w', hw', hφneg⟩ := (Kernel.compatibleWith_iff _ _).mp hc
-  exact hφneg (hMust hw')
+  exact hφneg (hMust w' hw')
 
 /-! ### Implementation 2: settling by partitions (Definition 7, §7.2)
 
@@ -201,7 +201,7 @@ def settlesByPartition (φ : W → Prop) : Prop :=
 /-- `B_K` lies in a single cell of the subject matter. -/
 theorem subjectMatter_rel_base {v w : W} (hv : v ∈ k.base) (hw : w ∈ k.base) :
     (subjectMatter k).r v w := λ p hp =>
-  iff_of_true (mem_propIntersection.mp hv p hp) (mem_propIntersection.mp hw p hp)
+  iff_of_true (Kernel.mem_base.mp hv p hp) (Kernel.mem_base.mp hw p hp)
 
 /-- If `K` settles `φ` by partition then `B_K ⊆ ⟦φ⟧` or `B_K ⊆ ⟦¬φ⟧`; as
     with `explicit_implies_entailment`, the converse fails. -/
@@ -226,10 +226,10 @@ determined jointly by K-propositions that no single proposition settles
 /-- `S_K` for `K = {red}` does not make `redOrBlue` an issue: `w1` and `w2`
     agree on `red` but disagree on `redOrBlue`. -/
 private theorem not_settles_redOrBlue :
-    ¬ settlesByPartition ⟨[red]⟩ redOrBlue := by
+    ¬ settlesByPartition ⟨{red}⟩ redOrBlue := by
   intro h
   have h12 := Setoid.decides_iff.1 h .w1 .w2 (λ p hp => by
-    rcases List.mem_singleton.mp hp with rfl; decide)
+    obtain rfl : p = red := hp; decide)
   exact absurd (h12.mp (by decide)) (by decide)
 
 /-- Explicit settling does not imply partition settling: `K = {red}` settles
@@ -237,7 +237,7 @@ private theorem not_settles_redOrBlue :
 theorem explicit_not_implies_partition :
     ∃ (k : Kernel World) (φ : World → Prop),
       k.directlySettles φ ∧ ¬ settlesByPartition k φ :=
-  ⟨⟨[red]⟩, redOrBlue,
+  ⟨⟨{red}⟩, redOrBlue,
     ⟨red, by simp, Or.inl λ _ hw => Or.inl hw⟩, not_settles_redOrBlue⟩
 
 /-- Partition settling does not imply explicit settling: `mastermindK`
@@ -259,8 +259,8 @@ theorem partition_not_implies_explicit :
 theorem entailment_not_implies_partition :
     ∃ (k : Kernel World) (φ : World → Prop),
       k.FollowsFrom φ ∧ ¬ settlesByPartition k φ :=
-  ⟨⟨[red]⟩, redOrBlue,
-    λ w hw => Or.inl (mem_propIntersection.mp hw red (by simp)),
+  ⟨⟨{red}⟩, redOrBlue,
+    λ w hw => Or.inl (by simpa using hw),
     not_settles_redOrBlue⟩
 
 end VonFintelGillies2010

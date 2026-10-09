@@ -4,7 +4,7 @@ public import Linglib.Logic.Natural.Additivity
 public import Linglib.Semantics.Presupposition.Basic
 public import Linglib.Semantics.Conditionals.Horizon
 public import Linglib.Semantics.Degree.Superlative
-public import Linglib.Semantics.Modality.Kratzer.Ordering
+public import Linglib.Semantics.Modality.ConvBackground
 public import Linglib.Semantics.Focus.Particles
 public import Linglib.Semantics.Attitudes.Preference.BestWorlds
 
@@ -351,7 +351,7 @@ namespace Desire.BestWorlds
 
 open Modality NaturalLogic
 
-variable {W : Type*} (dox base : W → Set W) (g : W → List (W → Prop))
+variable {W : Type*} (dox base : W → Set W) (g : W → Set (W → Prop))
 
 /-- *Want* is Strawson upward entailing in its complement ([von-fintel-1999], §3.2). -/
 theorem isStrawsonUE_want : IsStrawsonUE (want base g) :=
@@ -364,8 +364,8 @@ theorem isStrawsonUE_glad : IsStrawsonUE (glad dox base g) :=
 ([von-fintel-1999], §3.3). The subject believes world `0` and prefers world `1`, so is glad that
 `0` or `1` holds but not that `0` does. -/
 theorem not_isStrawsonDE_glad :
-    ¬ IsStrawsonDE (glad (fun _ : Fin 3 ↦ {0}) (fun _ ↦ .univ) (fun _ ↦ [(· = 1)])) := by
-  have hb : bestAmong (Set.univ : Set (Fin 3)) [(· = 1)] = {1} := by
+    ¬ IsStrawsonDE (glad (fun _ : Fin 3 ↦ {0}) (fun _ ↦ .univ) (fun _ ↦ {(· = 1)})) := by
+  have hb : bestAmong (Set.univ : Set (Fin 3)) {(· = 1)} = {1} := by
     rw [bestAmong_eq_of_exists ⟨1, Set.mem_univ _, by simp⟩]
     ext
     simp
@@ -393,11 +393,11 @@ Civic*, whose factive presupposition may fail ([von-fintel-1999]'s (30)). The su
 world `true` and prefers world `false`. -/
 theorem not_antitone_truthSet_regret :
     ¬ Antitone fun p : Set Bool ↦
-      (regret (fun _ ↦ {true}) (fun _ ↦ .univ) (fun _ ↦ [(· = false)]) p).truthSet := by
+      (regret (fun _ ↦ {true}) (fun _ ↦ .univ) (fun _ ↦ {(· = false)}) p).truthSet := by
   refine not_antitone_truthSet (p := ∅) (q := {true}) (w := true) (Set.empty_subset _)
     ⟨⟨subset_rfl, Set.subset_univ _, ⟨true, trivial, rfl⟩, ⟨false, trivial, by simp⟩⟩, ?_⟩
     fun h ↦ h.1 rfl
-  show bestAmong .univ [(· = false)] ⊆ {true}ᶜ
+  show bestAmong .univ {(· = false)} ⊆ {true}ᶜ
   rw [bestAmong_eq_of_exists ⟨false, Set.mem_univ _, by simp⟩]
   intro x hx
   simp_all

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Modality.Kratzer.Ordering
+public import Linglib.Semantics.Modality.ConvBackground
 
 /-!
 # Rudin (2025): Asserting epistemic modals
@@ -194,7 +194,7 @@ theorem dissociation {p a r : Set W} (ha : (a ∩ p).Nonempty) (hr : r ∩ p = �
 /-- An epistemic state of the ordering version consists of a modal base and an ordering source. -/
 structure OrdState (W : Type*) where
   base : Set W
-  ordering : List (W → Prop)
+  ordering : Set (W → Prop)
 
 /-- The best worlds of a state are the worlds of the base that no other world of the base betters
 under the ordering source. -/
@@ -233,10 +233,10 @@ open scoped Classical in
 /-- The update of *might* adds the prejacent to the ordering source when the base has a prejacent
 world, and otherwise empties the base. -/
 noncomputable def mightOrdUpdate (p : Set W) (c : OrdState W) : OrdState W :=
-  if (c.base ∩ p).Nonempty then ⟨c.base, (· ∈ p) :: c.ordering⟩ else ⟨∅, c.ordering⟩
+  if (c.base ∩ p).Nonempty then ⟨c.base, insert (· ∈ p) c.ordering⟩ else ⟨∅, c.ordering⟩
 
 theorem mightOrdUpdate_of_compatible {p : Set W} {c : OrdState W} (h : (c.base ∩ p).Nonempty) :
-    mightOrdUpdate p c = ⟨c.base, (· ∈ p) :: c.ordering⟩ := by
+    mightOrdUpdate p c = ⟨c.base, insert (· ∈ p) c.ordering⟩ := by
   rw [mightOrdUpdate, ite_eq_left h]
 
 /-- Adding the prejacent to the ordering source is commensurate. With the prejacent among the
@@ -246,15 +246,15 @@ theorem mightOrdUpdate_commensurate [Finite W] {p : Set W} {c : OrdState W}
     (h : (c.base ∩ p).Nonempty) : mightOrdUpdate p c ∈ MIOrd (mightOrd p) := by
   rw [mightOrdUpdate_of_compatible h]
   intro _ _
-  obtain ⟨m, hm⟩ := exists_mem_bestAmong (worlds := c.base ∩ p) (A := (· ∈ p) :: c.ordering) h
+  obtain ⟨m, hm⟩ := exists_mem_bestAmong (worlds := c.base ∩ p) (A := insert (· ∈ p) c.ordering) h
   refine ⟨m, ?_, (bestAmong_subset _ _ hm).2⟩
   rw [mem_bestAmong] at hm
-  show m ∈ bestAmong c.base ((· ∈ p) :: c.ordering)
+  show m ∈ bestAmong c.base (insert (· ∈ p) c.ordering)
   rw [mem_bestAmong]
   refine ⟨hm.1.1, fun v hv hvm ↦ ?_⟩
   by_cases hvp : v ∈ p
   · exact hm.2 v ⟨hv, hvp⟩ hvm
-  · exact absurd (hvm (· ∈ p) (List.mem_cons.2 (Or.inl rfl)) hm.1.2) hvp
+  · exact absurd (hvm (· ∈ p) (Set.mem_insert _ _) hm.1.2) hvp
 
 /-- Compatibility with *might* under the ordering semantics is again having a prejacent world in the
 base, since the refinement whose ordering source is the prejacent alone makes the prejacent worlds
@@ -266,8 +266,8 @@ theorem compatibleOrd_might {p : Set W} {c : OrdState W} :
     obtain ⟨m, hmb, hmp⟩ := hMI v hv
     exact ⟨m, hc'c (bestAmong_subset _ _ hmb), hmp⟩
   · rintro ⟨w, hwb, hwp⟩
-    refine ⟨⟨c.base, [(· ∈ p)]⟩, subset_rfl, ⟨w, hwb⟩, fun _ _ ↦ ⟨w, ?_, hwp⟩⟩
-    show w ∈ bestAmong c.base [(· ∈ p)]
+    refine ⟨⟨c.base, {(· ∈ p)}⟩, subset_rfl, ⟨w, hwb⟩, fun _ _ ↦ ⟨w, ?_, hwp⟩⟩
+    show w ∈ bestAmong c.base {(· ∈ p)}
     rw [bestAmong_eq_of_exists ⟨w, hwb, by simpa using hwp⟩]
     exact ⟨hwb, by simpa using hwp⟩
 
@@ -284,16 +284,16 @@ open scoped Classical in
 disjoint from it, when the base has a prejacent world. -/
 noncomputable def mustOrdUpdate (p : Set W) (c : OrdState W) : OrdState W :=
   if (c.base ∩ p).Nonempty then
-    ⟨c.base, (· ∈ p) :: c.ordering.filter fun q ↦ ∃ w ∈ p, q w⟩
+    ⟨c.base, insert (· ∈ p) {q ∈ c.ordering | ∃ w ∈ p, q w}⟩
   else ⟨∅, c.ordering⟩
 
 /-- With the prejacent as the whole ordering source, the best worlds are the prejacent worlds
 of the base. -/
 theorem mustOrd_singleton {p : Set W} {c : OrdState W} (h : (c.base ∩ p).Nonempty) :
-    (⟨c.base, [(· ∈ p)]⟩ : OrdState W) ∈ MIOrd (mustOrd p) := by
+    (⟨c.base, {(· ∈ p)}⟩ : OrdState W) ∈ MIOrd (mustOrd p) := by
   obtain ⟨w, hwb, hwp⟩ := h
   intro _ _ v hv
-  change v ∈ bestAmong c.base [(· ∈ p)] at hv
+  change v ∈ bestAmong c.base {(· ∈ p)} at hv
   rw [bestAmong_eq_of_exists ⟨w, hwb, by simpa using hwp⟩] at hv
   simpa using hv.2
 
@@ -306,48 +306,54 @@ theorem compatibleOrd_must [Finite W] {p : Set W} {c : OrdState W} :
     obtain ⟨m, hm⟩ := exists_mem_bestAmong (worlds := c'.base) (A := c'.ordering) ⟨v, hv⟩
     exact ⟨m, hc'c (bestAmong_subset _ _ hm), hMI v hv hm⟩
   · intro h
-    exact ⟨⟨c.base, [(· ∈ p)]⟩, subset_rfl, h.mono Set.inter_subset_left, mustOrd_singleton h⟩
+    exact ⟨⟨c.base, {(· ∈ p)}⟩, subset_rfl, h.mono Set.inter_subset_left, mustOrd_singleton h⟩
 
 /-- Decide a claim about a three-world state by unfolding the operators. -/
 scoped macro "decide_states" : tactic =>
   `(tactic| (simp only [MIOrd, mustOrd, OrdState.best, bestAmong, Preorder.mem_minimals_iff,
       premisePreorder, Preorder.ofCriteria_le_iff,
       Set.mem_ofPred_eq, Set.mem_univ, Set.mem_insert_iff, Set.mem_singleton_iff, Set.subset_def,
-      Set.mem_inter_iff, Set.Nonempty, List.forall_mem_cons, List.mem_nil_iff, false_implies,
+      Set.mem_inter_iff, Set.Nonempty, forall_eq_or_imp, forall_eq, Set.mem_empty_iff_false,
+      false_implies,
       implies_true, true_and, and_true, forall_const]; decide))
 
 /-- In the paper's first scenario the ordering source is empty and every world of the base is best,
 so a context with a prejacent world is compatible with *must* yet not in its meta-intensionalization
 until the prejacent is added. -/
 theorem must_needs_prejacent :
-    (⟨Set.univ, []⟩ : OrdState (Fin 3)) ∉ MIOrd (mustOrd {0, 1}) ∧
-      (⟨Set.univ, [(· ∈ ({0, 1} : Set (Fin 3)))]⟩ : OrdState (Fin 3)) ∈ MIOrd (mustOrd {0, 1}) := by
+    (⟨Set.univ, ∅⟩ : OrdState (Fin 3)) ∉ MIOrd (mustOrd {0, 1}) ∧
+      (⟨Set.univ, {(· ∈ ({0, 1} : Set (Fin 3)))}⟩ : OrdState (Fin 3)) ∈ MIOrd (mustOrd {0, 1}) := by
   decide_states
 
 /-- In the paper's second scenario a proposition disjoint from the prejacent keeps a non-prejacent
 world best even after the prejacent is added, so it has to be removed. -/
 theorem must_needs_removal :
-    (⟨Set.univ, [(· ∈ ({0, 1} : Set (Fin 3))), (· ∈ ({2} : Set (Fin 3)))]⟩ : OrdState (Fin 3)) ∉
+    (⟨Set.univ, {(· ∈ ({0, 1} : Set (Fin 3))), (· ∈ ({2} : Set (Fin 3)))}⟩ : OrdState (Fin 3)) ∉
       MIOrd (mustOrd {0, 1}) := by
   decide_states
 
 /-- On the second scenario the *must* update removes the disjoint proposition and lands in
 the meta-intensionalization. -/
 theorem mustOrdUpdate_removal :
-    mustOrdUpdate ({0, 1} : Set (Fin 3)) ⟨Set.univ, [(· ∈ ({2} : Set (Fin 3)))]⟩ ∈
+    mustOrdUpdate ({0, 1} : Set (Fin 3)) ⟨Set.univ, {(· ∈ ({2} : Set (Fin 3)))}⟩ ∈
       MIOrd (mustOrd {0, 1}) := by
-  rw [mustOrdUpdate, ite_eq_left ⟨0, Set.mem_univ _, by simp⟩, List.filter_cons_of_neg,
-    List.filter_nil]
-  · exact must_needs_prejacent.2
-  · simp only [decide_eq_true_eq, Set.mem_insert_iff, Set.mem_singleton_iff]
-    decide
+  have h : {q ∈ ({(· ∈ ({2} : Set (Fin 3)))} : Set (Fin 3 → Prop)) |
+      ∃ w ∈ ({0, 1} : Set (Fin 3)), q w} = ∅ := by
+    ext q
+    simp only [Set.mem_ofPred_eq, Set.mem_singleton_iff, Set.mem_empty_iff_false, iff_false,
+      not_and]
+    rintro rfl
+    simp
+  rw [mustOrdUpdate, ite_eq_left ⟨0, Set.mem_univ _, by simp⟩, h, insert_empty_eq]
+  exact must_needs_prejacent.2
 
 /-- Removing the disjoint propositions does not suffice, since two propositions that each overlap
 the prejacent can jointly keep a non-prejacent world best. -/
 theorem overlapping_not_sufficient :
-    ∃ o : List (Fin 3 → Prop), (∀ q ∈ o, ∃ w ∈ ({0, 1} : Set (Fin 3)), q w) ∧
-      (⟨Set.univ, (· ∈ ({0, 1} : Set (Fin 3))) :: o⟩ : OrdState (Fin 3)) ∉ MIOrd (mustOrd {0, 1}) :=
-  ⟨[(· ∈ ({1, 2} : Set (Fin 3))), (· ∈ ({0, 2} : Set (Fin 3)))], by decide_states, by decide_states⟩
+    ∃ o : Set (Fin 3 → Prop), (∀ q ∈ o, ∃ w ∈ ({0, 1} : Set (Fin 3)), q w) ∧
+      (⟨Set.univ, insert (· ∈ ({0, 1} : Set (Fin 3))) o⟩ : OrdState (Fin 3)) ∉ MIOrd (mustOrd {0,
+      1}) :=
+  ⟨{(· ∈ ({1, 2} : Set (Fin 3))), (· ∈ ({0, 2} : Set (Fin 3)))}, by decide_states, by decide_states⟩
 
 /-! ### The relational semantics -/
 
@@ -372,7 +378,7 @@ theorem relational_must {f : W → Set W} {p i : Set W} (hf : Closed f i) :
 
 /-- Under closure of the accessibility and ordering functions, the relational ordering
 *might* is known exactly when the domain version is. -/
-theorem relational_ordering {f : W → Set W} {g : W → List (W → Prop)} {p : Set W}
+theorem relational_ordering {f : W → Set W} {g : W → Set (W → Prop)} {p : Set W}
     {i : OrdState W} (hf : Closed f i.base) (hg : ∀ w ∈ i.base, g w = i.ordering)
     (hi : i.base.Nonempty) :
     (∀ w ∈ i.base, (bestAmong (f w) (g w) ∩ p).Nonempty) ↔ i ∈ MIOrd (mightOrd p) := by

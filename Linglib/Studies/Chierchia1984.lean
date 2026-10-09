@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Syntax.Voice.Basic
-public import Linglib.Semantics.Modality.Kratzer.Operators
+public import Linglib.Semantics.Modality.Necessity
 public import Linglib.Semantics.Composition.Ty
 public import Linglib.Fragments.English.Verbs.Inventory
 public import Mathlib.Tactic.FinCases
@@ -63,7 +63,7 @@ abbrev ObjectControlVerb (E W : Type*) := ControlVerb E W (E × E)
 
 /-- A control verb from a modal base and an ordering source, [kratzer-1991]'s form of the
 background: the controller has the property throughout the best accessible worlds. -/
-def ControlVerb.ofKratzer (base : ModalBase W) (ordering : OrderingSource W)
+def ControlVerb.ofKratzer (base ordering : ConvBackground W)
     (controller : Args → E) : ControlVerb E W Args where
   sem P args w := necessity base ordering (P (controller args)) w
   controller := controller

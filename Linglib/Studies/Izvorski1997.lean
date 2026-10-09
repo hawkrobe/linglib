@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Modality.Kratzer.Operators
+public import Linglib.Semantics.Modality.Necessity
 public import Linglib.Semantics.Presupposition.Basic
 
 /-!
@@ -49,23 +49,23 @@ variable {W : Type*}
 
 /-- The speaker knows `p` relative to the background `f` when `p` holds throughout the worlds
 compatible with it. -/
-def Known (f : ModalBase W) (w : W) (p : W → Prop) : Prop := ∀ u ∈ f.accessibleWorlds w, p u
+def Known (f : ConvBackground W) (w : W) (p : W → Prop) : Prop := ∀ u ∈ f.accessibleWorlds w, p u
 
 /-- The indirect evidential of (8) and (17) to (19). The background `f` assigns each world the
 propositions the speaker counts as indirect evidence, and `g` assigns the speaker's beliefs about
 that evidence. The presupposition is that there is such evidence and that it does not establish `p`,
 and the assertion is that `p` holds in every accessible world closest to the beliefs. -/
-def Ev (f : ModalBase W) (g : OrderingSource W) (p : W → Prop) : PartialProp W where
-  presup w := f w ≠ [] ∧ ¬ Known f w p
+def Ev (f g : ConvBackground W) (p : W → Prop) : PartialProp W where
+  presup w := (f w).Nonempty ∧ ¬ Known f w p
   assertion w := necessity f g p w
 
 /-- Epistemic *must* is the same necessity over what is known, with no presupposition about the kind
 of evidence. -/
-def must (f : ModalBase W) (g : OrderingSource W) (p : W → Prop) : PartialProp W where
+def must (f g : ConvBackground W) (p : W → Prop) : PartialProp W where
   presup _ := True
   assertion w := necessity f g p w
 
-variable {f f' : ModalBase W} {g : OrderingSource W} {p : W → Prop} {w : W}
+variable {f f' g : ConvBackground W} {p : W → Prop} {w : W}
 
 /-- The evidential and *must* assert the same universal claim (8a). -/
 theorem ev_assertion_eq_must : (Ev f g p).assertion = (must f g p).assertion := rfl
@@ -73,11 +73,11 @@ theorem ev_assertion_eq_must : (Ev f g p).assertion = (must f g p).assertion := 
 /-- *must* quantifies over what is known, a background at least as rich as the indirect
 evidence, so its accessible worlds are among the evidential's, (10) and (11). -/
 theorem accessible_must_subset (h : f w ⊆ f' w) : f'.accessibleWorlds w ⊆ f.accessibleWorlds w :=
-  accessibleWorlds_anti h
+  ConvBackground.accessibleWorlds_anti h
 
 /-- With no evidence the evidential is undefined where *must* is not, as in (12) and (13). -/
-theorem not_presup_of_no_evidence (h : f w = []) : ¬ (Ev f g p).presup w :=
-  fun hp ↦ hp.1 h
+theorem not_presup_of_no_evidence (h : f w = ∅) : ¬ (Ev f g p).presup w :=
+  fun hp ↦ hp.1.ne_empty h
 
 /-- Evidence establishing `p`, as witnessing it does, is not indirect (14). -/
 theorem not_presup_of_known (h : Known f w p) : ¬ (Ev f g p).presup w :=
@@ -109,20 +109,20 @@ holding at speech time is a proposition the speaker knows, the indirect evidence
 holding at speech time is `p` not being known. -/
 theorem presup_of_perfect {p' : W → Prop} (hp' : p' ∈ f w) (hnot : ¬ Known f w p) :
     (Ev f g p).presup w :=
-  ⟨List.ne_nil_of_mem hp', hnot⟩
+  ⟨⟨_, hp'⟩, hnot⟩
 
 /-- Like *must*, the evidential does not entail its prejacent (9). In a two-world model the evidence
 excludes nothing, the speaker's beliefs single out the world where `p` holds, and the evidential is
 defined and true at the other world. -/
 theorem ev_not_entails :
-    ∃ (f : ModalBase (Fin 2)) (g : OrderingSource (Fin 2)) (p : Fin 2 → Prop) (w : Fin 2),
+    ∃ (f : ConvBackground (Fin 2)) (g : ConvBackground (Fin 2)) (p : Fin 2 → Prop) (w : Fin 2),
       (Ev f g p).presup w ∧ (Ev f g p).assertion w ∧ ¬ p w := by
-  refine ⟨fun _ ↦ [fun _ ↦ True], fun _ ↦ [fun u ↦ u = 1], (· = 1), 0, ⟨by simp, ?_⟩, ?_, by decide⟩
+  refine ⟨fun _ ↦ {fun _ ↦ True}, fun _ ↦ {fun u ↦ u = 1}, (· = 1), 0, ⟨by simp, ?_⟩, ?_, by decide⟩
   · intro h
-    exact absurd (h 0 (fun q hq ↦ by simp at hq; exact hq ▸ trivial)) (by decide)
-  · refine necessity_of_beliefs ⟨1, fun q hq ↦ by simp at hq; exact hq ▸ trivial, ?_⟩ ?_
+    exact absurd (h 0 (by simp)) (by decide)
+  · refine necessity_of_beliefs ⟨1, by simp, ?_⟩ ?_
     · simp
     · intro u _ hu
-      exact hu _ (List.mem_singleton_self _)
+      exact hu _ (Set.mem_singleton _)
 
 end Izvorski1997

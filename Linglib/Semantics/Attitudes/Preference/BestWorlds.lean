@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Modality.Kratzer.Ordering
+public import Linglib.Semantics.Modality.ConvBackground
 public import Linglib.Semantics.Presupposition.Defs
 public import Linglib.Semantics.Attitudes.Preference.Conditional
 
@@ -65,9 +65,9 @@ section Want
 
 /-- `Want A dom p` holds when every best world of `dom` under the ordering source `A` is a
 `p`-world. -/
-def Want (A : List (W → Prop)) (dom p : Set W) : Prop := bestAmong dom A ⊆ p
+def Want (A : Set (W → Prop)) (dom p : Set W) : Prop := bestAmong dom A ⊆ p
 
-variable {A : List (W → Prop)} {dom p q : Set W}
+variable {A : Set (W → Prop)} {dom p q : Set W}
 
 theorem want_iff_forall : Want A dom p ↔ ∀ w ∈ bestAmong dom A, w ∈ p := Iff.rfl
 
@@ -104,7 +104,7 @@ end Want
 
 section Entries
 
-variable (dox base : W → Set W) (g : W → List (W → Prop)) (p : Set W)
+variable (dox base : W → Set W) (g : W → Set (W → Prop)) (p : Set W)
 
 /-- *a wants p* presupposes that the domain `base` contains both `p`-worlds and non-`p`-worlds
 and asserts that its best worlds under the ordering source `g` are `p`-worlds

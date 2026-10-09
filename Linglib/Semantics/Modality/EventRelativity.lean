@@ -35,7 +35,7 @@ predicate is anchored to a contentful event and again has a reading over its con
 
 The content of an event is a function `con : E → Option (Set W)`, the worlds compatible with
 the event's content where it has one. Ordering sources play no role in content licensing and
-are left to `Semantics/Modality/Kratzer`, whose operators apply to a base `f e` projected from
+are left to `Semantics/Modality/Necessity`, whose operators apply to a base `f e` projected from
 an event as they do to any other.
 
 ## References

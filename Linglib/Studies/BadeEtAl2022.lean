@@ -3,7 +3,7 @@ module
 public import Linglib.Studies.Fox2007
 public import Linglib.Processing.Reasoning.Erotetic
 public import Linglib.Semantics.Exhaustification.ConjunctiveDisjunct
-public import Linglib.Semantics.Modality.Kratzer.Operators
+public import Linglib.Semantics.Modality.Necessity
 public import Linglib.Logic.Team.Inquisitive
 public import Linglib.Data.Examples.BadeEtAl2022
 public import Linglib.Data.Experiments.BadeEtAl2022
@@ -132,20 +132,19 @@ section Relational
 
 /-- With an ordering source, actuality entails best-worlds possibility when the actual world
 also verifies the ordering source at itself. -/
-theorem possibility_of_isRealistic {f : ModalBase W} {g : OrderingSource W} {p : W → Prop}
+theorem possibility_of_isRealistic {f g : ConvBackground W} {p : W → Prop}
     {w : W} (hf : f.IsRealistic) (hw : ∀ q ∈ g w, q w) (hp : p w) : possibility f g p w :=
-  ⟨w, ⟨hf.mem_accessibleWorlds w, fun _ _ _ q hq _ ↦ hw q hq⟩, hp⟩
+  ⟨w, ⟨hf w, fun _ _ _ q hq _ ↦ hw q hq⟩, hp⟩
 
 /-- Realism of the base alone does not make best-worlds possibility veridical, so (14) needs
 more than (14b): the actual world must be among the best-ranked. -/
 theorem exists_not_possibility :
-    ∃ (f : ModalBase Bool) (g : OrderingSource Bool) (p : Bool → Prop) (w : Bool),
+    ∃ (f g : ConvBackground Bool) (p : Bool → Prop) (w : Bool),
       f.IsRealistic ∧ p w ∧ ¬ possibility f g p w :=
-  ⟨emptyBackground, fun _ ↦ [(· = true)], (· = false), false,
-    fun _ _ h ↦ (List.not_mem_nil h).elim, rfl,
+  ⟨⊥, fun _ ↦ {(· = true)}, (· = false), false, fun _ ↦ by simp, rfl,
     fun ⟨v, hvb, hv⟩ ↦ by
       obtain ⟨_, hbest⟩ := mem_bestWorlds.1 (mem_bestAccessible.1 hvb)
-      have h := hbest true (accessible_emptyBackground _ _)
+      have h := hbest true (accessible_bot _ _)
       simp_all [atLeastAsGoodAs_iff]⟩
 
 end Relational
@@ -172,7 +171,7 @@ end InqB
 /-- The design crosses modal, structure and conjunct order into twelve conditions (§2.3.1). -/
 theorem conditions_card : Fintype.card (Modal × Structure × Order) = 12 := rfl
 
-/-- Criteria A–C of §3.2, read off the paper's verdicts on its own contrasts: more fallacies
+/-- Criteria A–C of §3.2 are read off the paper's verdicts on its own contrasts: more fallacies
 than baseline, an order-of-premises effect, and no fallacy once the question–answer dynamic is
 flattened. The marginal epistemic order contrast counts as a difference, as the paper's
 classification of *might* requires; criterion D and the paper's full classification are the

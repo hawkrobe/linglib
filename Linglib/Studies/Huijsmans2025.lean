@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Modality.Kratzer.Operators
+public import Linglib.Semantics.Modality.Necessity
 public import Linglib.Semantics.Tense.Evidential
 
 /-!
@@ -98,23 +98,23 @@ theorem not_inferentialPresup_empty (p : T → W → Prop) (w : W) :
 /-! ### The at-issue content -/
 
 /-- The modal base at a reference time, as the world-propositions of the untensed ones. -/
-def modalBaseAt (mb : List (T → W → Prop)) (t : T) : ModalBase W :=
-  λ _ => mb.map λ q w => q t w
+def modalBaseAt (mb : Set (T → W → Prop)) (t : T) : ConvBackground W :=
+  λ _ => (λ q w => q t w) '' mb
 
 /-- (62): the at-issue content of *səm* and *will*, that the prejacent holds at or after the
 reference time in every best world. -/
-def futureClaim (mb : List (T → W → Prop)) (h : OrderingSource W) (p : T → W → Prop)
+def futureClaim (mb : Set (T → W → Prop)) (h : ConvBackground W) (p : T → W → Prop)
     (t : T) (w : W) : Prop :=
   necessity (modalBaseAt mb t) h (λ w' => ∃ t', t ≤ t' ∧ p t' w') w
 
 /-- (87) and (96): the at-issue content of *č̓ɛ* and *must*, that the prejacent holds at the
 reference time in every best world. -/
-def necessityClaim (mb : List (T → W → Prop)) (h : OrderingSource W) (p : T → W → Prop)
+def necessityClaim (mb : Set (T → W → Prop)) (h : ConvBackground W) (p : T → W → Prop)
     (t : T) (w : W) : Prop :=
   necessity (modalBaseAt mb t) h (λ w' => p t w') w
 
 /-- Present orientation is a case of the future morphemes' non-past orientation. -/
-theorem futureClaim_of_necessityClaim {mb : List (T → W → Prop)} {h : OrderingSource W}
+theorem futureClaim_of_necessityClaim {mb : Set (T → W → Prop)} {h : ConvBackground W}
     {p : T → W → Prop} {t : T} {w : W} (hc : necessityClaim mb h p t w) :
     futureClaim mb h p t w :=
   λ w' hw' => ⟨t, le_rfl, hc w' hw'⟩

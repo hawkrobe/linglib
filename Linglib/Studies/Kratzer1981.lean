@@ -9,13 +9,13 @@ public import Mathlib.Data.Fintype.Option
 public import Mathlib.Data.Fintype.Prod
 public import Mathlib.Tactic.DeriveFintype
 public import Linglib.Semantics.Conditionals.Restrictor
-public import Linglib.Semantics.Modality.Kratzer.Operators
+public import Linglib.Semantics.Modality.Necessity
 
 /-!
 # Kratzer (1981): The Notional Category of Modality
 
 This file formalizes the paper's practical-inference example, on the modal base and ordering
-source semantics of `Modality.Operators`. Someone wants two things, to become mayor
+source semantics of `Modality.Necessity`. Someone wants two things, to become mayor
 and to avoid the pub, while the circumstances are such that they become mayor only if they go
 to the pub. The circumstances supply the modal base and the desires the ordering source, and
 the two ideals pull apart, since a world where the speaker goes to the pub and becomes mayor and
@@ -77,17 +77,17 @@ abbrev World := Bool × Bool
 def w₀ : World := (false, false)
 
 /-- The relevant circumstances are that the speaker becomes mayor only by going to the pub. -/
-def circumstances : ModalBase World := Function.const World [fun w ↦ w.1 = true → w.2 = true]
+def circumstances : ConvBackground World := Function.const World {fun w ↦ w.1 = true → w.2 = true}
 
 /-- The speaker wants to become mayor and to avoid the pub. -/
-def desires : OrderingSource World :=
-  Function.const World [fun w ↦ w.1 = true, fun w ↦ w.2 = false]
+def desires : ConvBackground World :=
+  Function.const World {fun w ↦ w.1 = true, fun w ↦ w.2 = false}
 
 /-- Decide a claim about the backgrounds and the ordering over the four worlds. -/
 scoped macro "decide_worlds" : tactic =>
-  `(tactic| (simp only [ModalBase.accessibleWorlds, propIntersection, atLeastAsGoodAs_iff,
-      circumstances, desires, Function.const_apply, Set.mem_ofPred_eq, List.forall_mem_cons,
-      List.mem_nil_iff, false_implies, implies_true, and_true]; decide))
+  `(tactic| (simp only [ConvBackground.mem_accessibleWorlds, atLeastAsGoodAs_iff,
+      circumstances, desires, Function.const_apply, Set.mem_insert_iff, Set.mem_singleton_iff,
+      forall_eq_or_imp, forall_eq, false_implies, implies_true, and_true]; decide))
 
 /-- By the paper's clause (c), the world of going to the pub and becoming mayor and the world of
 staying home are incomparable, so the ordering is not connected. -/
@@ -161,21 +161,21 @@ differ in the settings of the two backgrounds. -/
 open Conditional.Restrictor
 
 /-- A totally realistic modal base and an empty ordering source give material implication. -/
-theorem material_implication {W : Type*} {f : ModalBase W} (hf : f.IsTotallyRealistic)
+theorem material_implication {W : Type*} {f : ConvBackground W} (hf : f.IsTotallyRealistic)
     (α β : W → Prop) (w : W) :
-    conditionalNecessity f emptyBackground α β w ↔ (α w → β w) :=
+    conditionalNecessity f ⊥ α β w ↔ (α w → β w) :=
   material_from_restrictor f α β w (hf w)
 
 /-- An empty modal base and an empty ordering source give strict implication, the conditional
 holding iff the antecedent logically implies the consequent. -/
 theorem strict_implication {W : Type*} (α β : W → Prop) (w : W) :
-    conditionalNecessity emptyBackground emptyBackground α β w ↔ ∀ v, α v → β v := by
-  rw [restrictor_eq_strict, Conditional.mem_strictImp_forall, accessibleWorlds_emptyBackground]
+    conditionalNecessity ⊥ ⊥ α β w ↔ ∀ v, α v → β v := by
+  rw [restrictor_eq_strict, Conditional.mem_strictImp_forall, ConvBackground.accessibleWorlds_bot]
   simp
 
 /-- Under an analysis of conditionals as modalized material implications, a necessity that
 the antecedent fail makes every conditional with that antecedent vacuously true. -/
-theorem traditional_vacuous {W : Type*} (f : ModalBase W) (α β : W → Prop) (w : W)
+theorem traditional_vacuous {W : Type*} (f : ConvBackground W) (α β : W → Prop) (w : W)
     (h : simpleNecessity f (fun v ↦ ¬ α v) w) : simpleNecessity f (fun v ↦ α v → β v) w :=
   fun v hv hα ↦ absurd hα (h v hv)
 
@@ -207,22 +207,25 @@ instance : DecidablePred rewarded := fun s ↦ inferInstanceAs (Decidable (s = s
 /-- What is morally good is that there be no injustice and that any injustice be amended for. A
 situation with amended injustice is not good, but it is closer to the good than one where the
 injustice is rewarded or unredressed. -/
-def morallyGood : OrderingSource Situation :=
-  Function.const Situation [fun s ↦ ¬ injustice s, fun s ↦ injustice s → amended s]
+def morallyGood : ConvBackground Situation :=
+  Function.const Situation {fun s ↦ ¬ injustice s, fun s ↦ injustice s → amended s}
 
 /-- The morally accessible situations of the traditional analysis are those without injustice. -/
-def morallyAccessible : ModalBase Situation := Function.const Situation [fun s ↦ ¬ injustice s]
+def morallyAccessible : ConvBackground Situation := Function.const Situation {fun s ↦ ¬ injustice s}
 
 /-- Decide a claim about the backgrounds and the ordering over the four situations. -/
 scoped macro "decide_situations" : tactic =>
-  `(tactic| (simp only [ModalBase.accessibleWorlds, propIntersection, ModalBase.restrict,
-      emptyBackground, atLeastAsGoodAs_iff, morallyGood, morallyAccessible, Function.const_apply,
-      Set.mem_ofPred_eq, List.forall_mem_cons, List.mem_nil_iff, false_implies, implies_true,
-      and_true, injustice, amended, rewarded]; decide))
+  `(tactic| (simp only [ConvBackground.mem_accessibleWorlds,
+      ConvBackground.mem_accessibleWorlds_restrict, ConvBackground.accessibleWorlds_bot,
+      Set.mem_univ, true_and, atLeastAsGoodAs_iff, morallyGood, morallyAccessible,
+      Function.const_apply, Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp,
+      forall_eq, false_implies, implies_true, and_true, injustice, amended, rewarded,
+      ConvBackground.restrict, Pi.bot_apply, Set.bot_eq_empty, Set.mem_empty_iff_false,
+      or_false]; decide))
 
 /-- With an empty base, the situation closest to the good is the one without injustice. -/
 theorem mem_bestWorlds_good_iff (s : Situation) :
-    s ∈ bestWorlds emptyBackground morallyGood none ↔ s = none := by
+    s ∈ bestWorlds ⊥ morallyGood none ↔ s = none := by
   revert s
   simp only [mem_bestWorlds]
   decide_situations
@@ -230,7 +233,7 @@ theorem mem_bestWorlds_good_iff (s : Situation) :
 /-- Among the situations with injustice, the one closest to the good is the one where it is
 amended for. -/
 theorem mem_bestWorlds_injustice_iff (s : Situation) :
-    s ∈ bestWorlds (ModalBase.restrict emptyBackground injustice) morallyGood none ↔
+    s ∈ bestWorlds (ConvBackground.restrict ⊥ injustice) morallyGood none ↔
       s = some .amended := by
   revert s
   simp only [mem_bestWorlds]
@@ -239,26 +242,26 @@ theorem mem_bestWorlds_injustice_iff (s : Situation) :
 /-- The restricted base satisfies the Limit Assumption, so the verdicts below are those of the
 paper's human necessity as well. -/
 theorem limitAssumption_injustice :
-    LimitAssumption (ModalBase.restrict emptyBackground injustice) morallyGood none :=
+    LimitAssumption (ConvBackground.restrict ⊥ injustice) morallyGood none :=
   .of_finite _ _ _
 
 /-- Justice must be done (59), there being no injustice in the situations closest to the
 good. -/
 theorem justice_must_be_done :
-    necessity emptyBackground morallyGood (fun s ↦ ¬ injustice s) none := by
+    necessity ⊥ morallyGood (fun s ↦ ¬ injustice s) none := by
   simp only [necessity, ModalLogic.Box, mem_bestAccessible, mem_bestWorlds_good_iff, forall_eq]
   decide
 
 /-- If someone was treated unjustly, the injustice must be amended for (60). -/
 theorem injustice_must_be_amended :
-    conditionalNecessity emptyBackground morallyGood injustice amended none := by
+    conditionalNecessity ⊥ morallyGood injustice amended none := by
   simp only [conditionalNecessity, necessity, ModalLogic.Box, mem_bestAccessible,
     mem_bestWorlds_injustice_iff, forall_eq]
   decide
 
 /-- (61) is false, since the injustice need not be rewarded. -/
 theorem not_injustice_must_be_rewarded :
-    ¬ conditionalNecessity emptyBackground morallyGood injustice rewarded none := by
+    ¬ conditionalNecessity ⊥ morallyGood injustice rewarded none := by
   simp only [conditionalNecessity, necessity, ModalLogic.Box, mem_bestAccessible,
     mem_bestWorlds_injustice_iff, forall_eq]
   decide
