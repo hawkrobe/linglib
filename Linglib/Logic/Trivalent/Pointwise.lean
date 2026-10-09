@@ -24,8 +24,21 @@ project a quantified presupposition existentially.
 
 * `Trivalent.posExt`, `Trivalent.negExt`, `Trivalent.gapExt`: the three extensions.
 * `Trivalent.IsBivalent`: the proposition takes no `.indet` value.
-* `Trivalent.forall'`, `Trivalent.exists'`: Haug's trivalent quantifiers, with
-  `exists'_meetWeak_presuppose` as Quantifier Projection.
+* `Trivalent.forallWeak`, `Trivalent.existsWeak`: the Weak Kleene quantifiers, undefined as
+  soon as any instance is.
+* `Trivalent.forallStrong`, `Trivalent.existsStrong`: the Strong Kleene quantifiers, the
+  indexed `⊓` and `⊔`.
+* `Trivalent.forallHaug`, `Trivalent.existsHaug`: Haug's quantifiers, undefined only when
+  every instance is, with `existsHaug_meetWeak_presuppose` as Quantifier Projection.
+
+Each family is the trivalent face of a presupposition-projection theory under
+`PartialProp.eval` (`Presupposition.Quantified`).
+
+## Implementation notes
+
+The Strong Kleene quantifiers are explicit definitions rather than `⨅`/`⨆`: a
+`CompleteLinearOrder` instance on `Trivalent` carries a second `LinearOrder` parent that
+instance search prefers, making every later `⊓` noncomputable.
 
 ## References
 
@@ -132,61 +145,289 @@ theorem isBivalent_comp_metaAssert (p : W → Trivalent) : IsBivalent (metaAsser
 
 /-! ### Quantifiers
 
-The universal quantifier of [haug-2014], adopted by [coppock-beaver-2015] and
-[cooper-2023]: undefined only when every instance is, false when some instance is, and
-true otherwise, so that a quantified presupposition projects existentially. The
-existential is its dual. -/
+Like the binary connectives, the trivalent quantifiers come in rival families that share one
+truth rule and differ only in where undefinedness projects, which `forallWith` and
+`existsWith` make definitional: a family is fixed by its definedness condition. The Weak
+Kleene quantifiers are undefined as soon as any instance is; the Strong Kleene quantifiers
+are defined whenever the instances settle the value, the indexed `⊓` and `⊔`; and the
+quantifiers of [haug-2014], adopted by [coppock-beaver-2015] and [cooper-2023], are undefined
+only when every instance is, so that a quantified presupposition projects existentially.
+Restricted to a pair of instances the families are the binary connectives — Weak Kleene
+`meetWeak`, Strong Kleene `⊓`, and, for Haug's quantifier, Belnap's skip-undefined
+`meetBelnap` (`forallHaug_pair`). Middle Kleene reads its operands left to right, so it has
+no order-free quantifier. -/
 
 open Classical in
-/-- Haug's universal quantifier evaluates a trivalent predicate: undefined only when every
+/-- `forallWith D p` is the universal quantifier of the family whose definedness condition
+is `D`: undefined unless `D` holds, and otherwise false exactly when some instance is. All
+the families share this truth rule (`forallWith_eq_forallWith_of_defined`). -/
+noncomputable def forallWith {ι : Sort*} (D : Prop) (p : ι → Trivalent) : Trivalent :=
+  if D then if ∃ i, p i = .false then .false else .true else .indet
+
+/-- `existsWith D p` is the existential quantifier of the family whose definedness condition
+is `D`, the dual of `forallWith`. -/
+noncomputable def existsWith {ι : Sort*} (D : Prop) (p : ι → Trivalent) : Trivalent :=
+  neg (forallWith D fun i => neg (p i))
+
+section WithFamilies
+
+variable {ι : Sort*} {D D' : Prop} {p : ι → Trivalent}
+
+theorem forallWith_eq_indet_iff : forallWith D p = .indet ↔ ¬D := by
+  unfold forallWith; split_ifs <;> simp_all
+
+theorem forallWith_eq_false_iff : forallWith D p = .false ↔ D ∧ ∃ i, p i = .false := by
+  unfold forallWith; split_ifs <;> simp_all
+
+theorem forallWith_eq_true_iff : forallWith D p = .true ↔ D ∧ ∀ i, p i ≠ .false := by
+  unfold forallWith; split_ifs <;> simp_all
+
+theorem existsWith_eq_indet_iff : existsWith D p = .indet ↔ ¬D := by
+  simp [existsWith, forallWith_eq_indet_iff]
+
+theorem existsWith_eq_true_iff : existsWith D p = .true ↔ D ∧ ∃ i, p i = .true := by
+  simp [existsWith, forallWith_eq_false_iff]
+
+theorem existsWith_eq_false_iff : existsWith D p = .false ↔ D ∧ ∀ i, p i ≠ .true := by
+  simp [existsWith, forallWith_eq_true_iff]
+
+/-- The families share one truth rule: any two agree wherever both are defined. -/
+theorem forallWith_eq_forallWith_of_defined (hD : D) (hD' : D') :
+    forallWith D p = forallWith D' p := by
+  unfold forallWith
+  rw [ite_eq_left hD, ite_eq_left hD']
+
+theorem forallWith_congr (h : D ↔ D') : forallWith D p = forallWith D' p :=
+  eq_of_indet_iff_of_true_iff
+    (by rw [forallWith_eq_indet_iff, forallWith_eq_indet_iff, h])
+    (by rw [forallWith_eq_true_iff, forallWith_eq_true_iff, h])
+
+theorem existsWith_congr (h : D ↔ D') : existsWith D p = existsWith D' p :=
+  congrArg neg (forallWith_congr h)
+
+end WithFamilies
+
+/-- The Weak Kleene universal quantifier is undefined when any instance is, and otherwise
+classical. -/
+noncomputable def forallWeak {ι : Sort*} (p : ι → Trivalent) : Trivalent :=
+  forallWith (∀ i, p i ≠ .indet) p
+
+/-- The Weak Kleene existential quantifier is the dual of `forallWeak`. -/
+noncomputable def existsWeak {ι : Sort*} (p : ι → Trivalent) : Trivalent :=
+  existsWith (∀ i, p i ≠ .indet) p
+
+section WeakQuantifiers
+
+variable {ι : Sort*} {p : ι → Trivalent}
+
+@[simp] theorem forallWeak_eq_indet_iff : forallWeak p = .indet ↔ ∃ i, p i = .indet := by
+  rw [forallWeak, forallWith_eq_indet_iff, not_forall]
+  simp
+
+@[simp] theorem forallWeak_eq_true_iff : forallWeak p = .true ↔ ∀ i, p i = .true := by
+  rw [forallWeak, forallWith_eq_true_iff]
+  constructor
+  · rintro ⟨hd, hf⟩ i
+    cases h : p i
+    · rfl
+    · exact absurd h (hf i)
+    · exact absurd h (hd i)
+  · exact fun h => ⟨fun i => h i ▸ by decide, fun i => h i ▸ by decide⟩
+
+@[simp] theorem forallWeak_eq_false_iff :
+    forallWeak p = .false ↔ (∀ i, p i ≠ .indet) ∧ ∃ i, p i = .false := by
+  rw [forallWeak, forallWith_eq_false_iff]
+
+@[simp] theorem existsWeak_eq_indet_iff : existsWeak p = .indet ↔ ∃ i, p i = .indet := by
+  rw [existsWeak, existsWith_eq_indet_iff, not_forall]
+  simp
+
+@[simp] theorem existsWeak_eq_true_iff :
+    existsWeak p = .true ↔ (∀ i, p i ≠ .indet) ∧ ∃ i, p i = .true := by
+  rw [existsWeak, existsWith_eq_true_iff]
+
+@[simp] theorem existsWeak_eq_false_iff : existsWeak p = .false ↔ ∀ i, p i = .false := by
+  rw [existsWeak, existsWith_eq_false_iff]
+  constructor
+  · rintro ⟨hd, hf⟩ i
+    cases h : p i
+    · exact absurd h (hf i)
+    · rfl
+    · exact absurd h (hd i)
+  · exact fun h => ⟨fun i => h i ▸ by decide, fun i => h i ▸ by decide⟩
+
+end WeakQuantifiers
+
+/-- The Strong Kleene universal quantifier is the indexed `⊓`: false when any instance is,
+true when all are, and undefined otherwise. -/
+noncomputable def forallStrong {ι : Sort*} (p : ι → Trivalent) : Trivalent :=
+  forallWith ((∃ i, p i = .false) ∨ ∀ i, p i = .true) p
+
+/-- The Strong Kleene existential quantifier is the dual of `forallStrong`, the indexed
+`⊔`. -/
+noncomputable def existsStrong {ι : Sort*} (p : ι → Trivalent) : Trivalent :=
+  existsWith ((∃ i, p i = .true) ∨ ∀ i, p i = .false) p
+
+section StrongQuantifiers
+
+variable {ι : Sort*} {p : ι → Trivalent}
+
+@[simp] theorem forallStrong_eq_false_iff : forallStrong p = .false ↔ ∃ i, p i = .false := by
+  rw [forallStrong, forallWith_eq_false_iff, and_iff_right_iff_imp]
+  exact fun h => .inl h
+
+@[simp] theorem forallStrong_eq_true_iff : forallStrong p = .true ↔ ∀ i, p i = .true := by
+  rw [forallStrong, forallWith_eq_true_iff]
+  constructor
+  · rintro ⟨⟨i, hi⟩ | h, hf⟩
+    · exact absurd hi (hf i)
+    · exact h
+  · exact fun h => ⟨.inr h, fun i => h i ▸ by decide⟩
+
+@[simp] theorem forallStrong_eq_indet_iff :
+    forallStrong p = .indet ↔ (∀ i, p i ≠ .false) ∧ ∃ i, p i = .indet := by
+  rw [forallStrong, forallWith_eq_indet_iff, not_or, not_exists, not_forall]
+  refine and_congr_right fun hne => exists_congr fun i => ?_
+  cases h : p i <;> simp_all
+
+@[simp] theorem existsStrong_eq_true_iff : existsStrong p = .true ↔ ∃ i, p i = .true := by
+  rw [existsStrong, existsWith_eq_true_iff, and_iff_right_iff_imp]
+  exact fun h => .inl h
+
+@[simp] theorem existsStrong_eq_false_iff : existsStrong p = .false ↔ ∀ i, p i = .false := by
+  rw [existsStrong, existsWith_eq_false_iff]
+  constructor
+  · rintro ⟨⟨i, hi⟩ | h, hf⟩
+    · exact absurd hi (hf i)
+    · exact h
+  · exact fun h => ⟨.inr h, fun i => h i ▸ by decide⟩
+
+@[simp] theorem existsStrong_eq_indet_iff :
+    existsStrong p = .indet ↔ (∀ i, p i ≠ .true) ∧ ∃ i, p i = .indet := by
+  rw [existsStrong, existsWith_eq_indet_iff, not_or, not_exists, not_forall]
+  refine and_congr_right fun hne => exists_congr fun i => ?_
+  cases h : p i <;> simp_all
+
+end StrongQuantifiers
+
+/-- Haug's universal quantifier skips undefined instances — undefined only when every
 instance is, false when some instance is, and true otherwise. -/
-noncomputable def forall' (p : W → Trivalent) : Trivalent :=
-  if ∀ w, p w = .indet then .indet else if ∃ w, p w = .false then .false else .true
+noncomputable def forallHaug (p : W → Trivalent) : Trivalent :=
+  forallWith (∃ w, p w ≠ .indet) p
 
-/-- The existential quantifier is the dual of `forall'`. -/
-noncomputable def exists' (p : W → Trivalent) : Trivalent := neg (forall' (fun w => neg (p w)))
+/-- The dual of `forallHaug`. -/
+noncomputable def existsHaug (p : W → Trivalent) : Trivalent :=
+  existsWith (∃ w, p w ≠ .indet) p
 
-@[simp] theorem forall'_eq_indet_iff (p : W → Trivalent) :
-    forall' p = .indet ↔ ∀ w, p w = .indet := by
-  unfold forall'; split_ifs <;> simp_all
+section HaugQuantifiers
 
-@[simp] theorem forall'_eq_false_iff (p : W → Trivalent) :
-    forall' p = .false ↔ ∃ w, p w = .false := by
-  unfold forall'; split_ifs <;> simp_all
+variable {p : W → Trivalent}
 
-@[simp] theorem forall'_eq_true_iff (p : W → Trivalent) :
-    forall' p = .true ↔ (∃ w, p w ≠ .indet) ∧ ∀ w, p w ≠ .false := by
-  unfold forall'; split_ifs <;> simp_all
+@[simp] theorem forallHaug_eq_indet_iff : forallHaug p = .indet ↔ ∀ w, p w = .indet := by
+  rw [forallHaug, forallWith_eq_indet_iff, not_exists]
+  simp
 
-@[simp] theorem exists'_eq_indet_iff (p : W → Trivalent) :
-    exists' p = .indet ↔ ∀ w, p w = .indet := by
-  simp only [exists', neg_eq_indet_iff, forall'_eq_indet_iff]
+@[simp] theorem forallHaug_eq_false_iff : forallHaug p = .false ↔ ∃ w, p w = .false := by
+  rw [forallHaug, forallWith_eq_false_iff, and_iff_right_iff_imp]
+  rintro ⟨w, hw⟩
+  exact ⟨w, hw ▸ by decide⟩
 
-@[simp] theorem exists'_eq_true_iff (p : W → Trivalent) :
-    exists' p = .true ↔ ∃ w, p w = .true := by
-  simp only [exists', neg_eq_true_iff, forall'_eq_false_iff, neg_eq_false_iff]
+@[simp] theorem forallHaug_eq_true_iff :
+    forallHaug p = .true ↔ (∃ w, p w ≠ .indet) ∧ ∀ w, p w ≠ .false := by
+  rw [forallHaug, forallWith_eq_true_iff]
 
-@[simp] theorem exists'_eq_false_iff (p : W → Trivalent) :
-    exists' p = .false ↔ (∃ w, p w ≠ .indet) ∧ ∀ w, p w ≠ .true := by
-  simp only [exists', neg_eq_false_iff, forall'_eq_true_iff, ne_eq, neg_eq_indet_iff]
+@[simp] theorem existsHaug_eq_indet_iff : existsHaug p = .indet ↔ ∀ w, p w = .indet := by
+  rw [existsHaug, existsWith_eq_indet_iff, not_exists]
+  simp
+
+@[simp] theorem existsHaug_eq_true_iff : existsHaug p = .true ↔ ∃ w, p w = .true := by
+  rw [existsHaug, existsWith_eq_true_iff, and_iff_right_iff_imp]
+  rintro ⟨w, hw⟩
+  exact ⟨w, hw ▸ by decide⟩
+
+@[simp] theorem existsHaug_eq_false_iff :
+    existsHaug p = .false ↔ (∃ w, p w ≠ .indet) ∧ ∀ w, p w ≠ .true := by
+  rw [existsHaug, existsWith_eq_false_iff]
+
+end HaugQuantifiers
+
+/-! ### Each family restricted to a pair is its binary connective
+
+One lemma carries the correspondence: the gap-policy quantifier at a pair of instances is
+the gap-policy connective at the matching policy (`forallWith_pair`), and each family's
+pair lemma instantiates it. -/
+
+section Pairs
+
+variable (a b : Trivalent)
+
+theorem forallWith_pair {D : Prop} [Decidable D] :
+    forallWith D (fun i : Bool => bif i then a else b) = meetWith D a b := by
+  refine eq_of_indet_iff_of_true_iff ?_ ?_
+  · rw [forallWith_eq_indet_iff, meetWith_eq_indet_iff]
+  · rw [forallWith_eq_true_iff, meetWith_eq_true_iff, Bool.forall_bool]
+    exact and_congr_right fun _ => and_comm
+
+theorem existsWith_pair {D : Prop} [Decidable D] :
+    existsWith D (fun i : Bool => bif i then a else b) = joinWith D a b := by
+  refine eq_of_indet_iff_of_true_iff ?_ ?_
+  · rw [existsWith_eq_indet_iff, joinWith_eq_indet_iff]
+  · rw [existsWith_eq_true_iff, joinWith_eq_true_iff, Bool.exists_bool]
+    exact and_congr_right fun _ => or_comm
+
+theorem forallWeak_pair : forallWeak (fun i : Bool => bif i then a else b) = meetWeak a b :=
+  (forallWith_congr (Bool.forall_bool.trans and_comm)).trans
+    ((forallWith_pair a b).trans (meetWeak_eq_meetWith a b).symm)
+
+theorem existsWeak_pair : existsWeak (fun i : Bool => bif i then a else b) = joinWeak a b :=
+  (existsWith_congr (Bool.forall_bool.trans and_comm)).trans
+    ((existsWith_pair a b).trans (joinWeak_eq_joinWith a b).symm)
+
+theorem forallStrong_pair :
+    forallStrong (fun i : Bool => bif i then a else b) = a ⊓ b :=
+  (forallWith_congr
+      (or_congr (Bool.exists_bool.trans or_comm) (Bool.forall_bool.trans and_comm))).trans
+    ((forallWith_pair a b).trans (inf_eq_meetWith a b).symm)
+
+theorem existsStrong_pair :
+    existsStrong (fun i : Bool => bif i then a else b) = a ⊔ b :=
+  (existsWith_congr
+      (or_congr (Bool.exists_bool.trans or_comm) (Bool.forall_bool.trans and_comm))).trans
+    ((existsWith_pair a b).trans (sup_eq_joinWith a b).symm)
+
+/-- **Haug's quantifier is Belnap's conditional assertion, quantified**: restricted to a
+pair of instances it is the skip-undefined conjunction of [belnap-1970]. -/
+theorem forallHaug_pair :
+    forallHaug (fun i : Bool => bif i then a else b) = meetBelnap a b :=
+  (forallWith_congr (Bool.exists_bool.trans or_comm)).trans
+    ((forallWith_pair a b).trans (meetBelnap_eq_meetWith a b).symm)
+
+/-- Dually, Haug's existential restricted to a pair is Belnap disjunction. -/
+theorem existsHaug_pair :
+    existsHaug (fun i : Bool => bif i then a else b) = joinBelnap a b :=
+  (existsWith_congr (Bool.exists_bool.trans or_comm)).trans
+    ((existsWith_pair a b).trans (joinBelnap_eq_joinWith a b).symm)
+
+end Pairs
 
 /-- An existentially quantified presupposition is true or undefined, never false. -/
-theorem exists'_presuppose_ne_false (p : W → Trivalent) :
-    exists' (fun w => presuppose (p w)) ≠ .false := by
+theorem existsHaug_presuppose_ne_false (p : W → Trivalent) :
+    existsHaug (fun w => presuppose (p w)) ≠ .false := by
   simp
 
 /-- Quantifier Projection ([coppock-beaver-2015]'s appendix) lets a presupposition under the
 existential project as an existentially quantified presupposition, over bivalent `φ` and
 `ψ`. -/
-theorem exists'_meetWeak_presuppose {φ ψ : W → Trivalent} (hφ : IsBivalent φ)
+theorem existsHaug_meetWeak_presuppose {φ ψ : W → Trivalent} (hφ : IsBivalent φ)
     (hψ : IsBivalent ψ) :
-    exists' (fun w => meetWeak (presuppose (φ w)) (ψ w)) =
-      meetWeak (exists' (fun w => presuppose (φ w))) (exists' (fun w => meetWeak (φ w) (ψ w))) := by
+    existsHaug (fun w => meetWeak (presuppose (φ w)) (ψ w)) =
+      meetWeak (existsHaug fun w => presuppose (φ w))
+        (existsHaug fun w => meetWeak (φ w) (ψ w)) := by
   refine eq_of_indet_iff_of_true_iff ?_ ?_
-  · simp only [exists'_eq_indet_iff, meetWeak_eq_indet_iff, presuppose_eq_indet_iff, hφ.ne_indet,
+  · simp only [existsHaug_eq_indet_iff, meetWeak_eq_indet_iff, presuppose_eq_indet_iff, hφ.ne_indet,
       hψ.ne_indet, or_false]
     exact ⟨Or.inl, fun h => h.elim id fun h w => (h w).elim⟩
-  · simp only [exists'_eq_true_iff, meetWeak_eq_true_iff, presuppose_eq_true_iff]
+  · simp only [existsHaug_eq_true_iff, meetWeak_eq_true_iff, presuppose_eq_true_iff]
     exact ⟨fun ⟨w, h⟩ => ⟨⟨w, h.1⟩, w, h⟩, fun h => h.2⟩
 
 end Trivalent

@@ -12,6 +12,13 @@ quantifier here fixes its projection, so a consumer commits to a theory by its c
 operator. The strong Kleene existential of Kleene and Fox is instead defined exactly where some
 instance is true or every instance is false.
 
+The quantifiers descend along `eval` to trivalent quantifiers over the domain's subtype,
+continuing the connective bridges of `Presupposition.Basic`: universal projection is the Weak
+Kleene family (`eval_forallPartial`, `eval_existsPartialUniv`, `eval_negExistsPartial`),
+existential projection is Haug's family (`eval_existsPartialExist`), and the strong Kleene
+existential is the Strong Kleene family (`eval_existsPartialStrong`). Only
+`existsUniquePartial`, whose counting assertion is no lattice quantifier, carries no bridge.
+
 ## Main declarations
 
 * `forallPartial`: universal quantification with universal projection.
@@ -53,11 +60,14 @@ def existsPartialUniv {α : Type*} (S : α → Prop) (φ : α → PartialProp W)
   presup := fun w => ∀ x, S x → (φ x).presup w
   assertion := fun w => ∃ x, S x ∧ (φ x).assertion w
 
-/-- `existsPartialExist S φ` asserts that some `x` with `S x` satisfies the assertion of `φ x` and
-presupposes that some such `x` satisfies its presupposition. -/
+/-- `existsPartialExist S φ` asserts that some `x` with `S x` satisfies `φ x` outright and
+presupposes that some such `x` is defined. The witness must satisfy presupposition and
+assertion together — reading bare assertion values at undefined witnesses would make the
+quantifier sensitive to content that `eval` forgets — so the operator descends to Haug's
+existential (`eval_existsPartialExist`). -/
 def existsPartialExist {α : Type*} (S : α → Prop) (φ : α → PartialProp W) : PartialProp W where
   presup := fun w => ∃ x, S x ∧ (φ x).presup w
-  assertion := fun w => ∃ x, S x ∧ (φ x).assertion w
+  assertion := fun w => ∃ x, S x ∧ (φ x).holds w
 
 /-- `negExistsPartial S φ` asserts that no `x` with `S x` satisfies the assertion of `φ x` and
 presupposes that every such `x` satisfies its presupposition. -/
@@ -122,6 +132,80 @@ theorem forallPartial_holds {α : Type*} (S : α → Prop) (φ : α → PartialP
     (forallPartial S φ).holds w ↔
       (∀ x, S x → (φ x).presup w) ∧ (∀ x, S x → (φ x).assertion w) :=
   Iff.rfl
+
+/-! ### Evaluation bridges
+
+Each quantifier evaluates to a trivalent quantifier over the domain's subtype — the
+quantified counterparts of the connective bridges in `Presupposition.Basic`.
+`existsUniquePartial` shares the Weak Kleene projection of `forallPartial`, but its counting
+assertion is no lattice quantifier, so it carries no bridge. -/
+
+section Bridges
+
+variable {α : Type*} (S : α → Prop) (φ : α → PartialProp W) (w : W)
+
+/-- Universal projection is the Weak Kleene universal quantifier. -/
+theorem eval_forallPartial :
+    (forallPartial S φ).eval w =
+      Trivalent.forallWeak fun x : {x // S x} => (φ x.1).eval w := by
+  refine Trivalent.eq_of_indet_iff_of_true_iff ?_ ?_ <;>
+    simp [forallPartial, Subtype.forall, Subtype.exists, not_forall, Classical.not_imp,
+      forall_and]
+
+/-- The existential with universal projection is the Weak Kleene existential. -/
+theorem eval_existsPartialUniv :
+    (existsPartialUniv S φ).eval w =
+      Trivalent.existsWeak fun x : {x // S x} => (φ x.1).eval w := by
+  refine Trivalent.eq_of_indet_iff_of_true_iff ?_ ?_
+  · simp [existsPartialUniv, Subtype.exists, not_forall, Classical.not_imp]
+  · simp only [eval_eq_true_iff, Trivalent.existsWeak_eq_true_iff, ne_eq, eval_eq_indet_iff,
+      not_not, Subtype.forall, Subtype.exists, exists_prop, existsPartialUniv]
+    exact and_congr_right fun hp => exists_congr fun x =>
+      and_congr_right fun hx => (and_iff_right (hp x hx)).symm
+
+/-- The negated existential with universal projection is the negated Weak Kleene
+existential. -/
+theorem eval_negExistsPartial :
+    (negExistsPartial S φ).eval w =
+      Trivalent.neg (Trivalent.existsWeak fun x : {x // S x} => (φ x.1).eval w) := by
+  refine Trivalent.eq_of_indet_iff_of_true_iff ?_ ?_ <;>
+    simp [negExistsPartial, Subtype.forall, Subtype.exists, not_forall, Classical.not_imp,
+      not_exists, not_and, forall_and]
+
+/-- Existential projection is Haug's existential quantifier. -/
+theorem eval_existsPartialExist :
+    (existsPartialExist S φ).eval w =
+      Trivalent.existsHaug fun x : {x // S x} => (φ x.1).eval w := by
+  refine Trivalent.eq_of_indet_iff_of_true_iff ?_ ?_
+  · simp [existsPartialExist, Subtype.forall, not_exists, not_and]
+  · simp only [eval_eq_true_iff, Trivalent.existsHaug_eq_true_iff, Subtype.exists,
+      exists_prop, existsPartialExist, holds]
+    exact ⟨fun ⟨_, h⟩ => h, fun ⟨x, hx, hp, ha⟩ => ⟨⟨x, hx, hp⟩, x, hx, hp, ha⟩⟩
+
+/-- The strong existential is the Strong Kleene existential quantifier. -/
+theorem eval_existsPartialStrong :
+    (existsPartialStrong S φ).eval w =
+      Trivalent.existsStrong fun x : {x // S x} => (φ x.1).eval w := by
+  refine Trivalent.eq_of_indet_iff_of_true_iff ?_ ?_
+  · rw [eval_eq_indet_iff, Trivalent.existsStrong_eq_indet_iff]
+    constructor
+    · intro hnp
+      have h1 : ¬ ∃ x, S x ∧ (φ x).holds w := fun h => hnp (.inl h)
+      have h2 : ¬ ∀ x, S x → (φ x).presup w ∧ ¬(φ x).assertion w := fun h => hnp (.inr h)
+      refine ⟨fun ⟨x, hx⟩ ht => h1 ⟨x, hx, (eval_eq_true_iff _ _).1 ht⟩, ?_⟩
+      by_contra hc
+      push Not at hc
+      refine h2 fun x hx => ?_
+      have hp : (φ x).presup w := not_not.1 ((eval_eq_indet_iff _ _).2.mt (hc ⟨x, hx⟩))
+      exact ⟨hp, fun ha => h1 ⟨x, hx, hp, ha⟩⟩
+    · rintro ⟨hnt, ⟨x, hx⟩, hind⟩ (⟨y, hy, hh⟩ | hall)
+      · exact hnt ⟨y, hy⟩ ((eval_eq_true_iff _ _).2 hh)
+      · exact (eval_eq_indet_iff _ _).1 hind (hall x hx).1
+  · simp only [eval_eq_true_iff, Trivalent.existsStrong_eq_true_iff, Subtype.exists,
+      exists_prop, existsPartialStrong, holds]
+    exact ⟨fun ⟨_, h⟩ => h, fun ⟨x, hx, hh⟩ => ⟨.inl ⟨x, hx, hh⟩, x, hx, hh⟩⟩
+
+end Bridges
 
 end PartialProp
 
