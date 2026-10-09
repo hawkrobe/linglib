@@ -19,7 +19,7 @@ This is how dref introduction `[u]` lifts to plural states, and the lift is a fu
 conditions hold distributively of the rows where their drefs have values. Structured inclusion
 selects a subset of a dref's values by discarding rows, so the subset keeps exactly the
 superset's dependencies. On plural partial assignments a dref's values are `PluralAssign.value`,
-its cells the operator `restrict`, and singular number is `PluralAssign.Singular`, [spector-2025]'s
+its cells the operator `restrict`, and singular number is `PluralAssign.Singular`, [spector-2026]'s
 `atomic(x)`.
 
 ## Main definitions
@@ -49,7 +49,7 @@ its cells the operator `restrict`, and singular number is `PluralAssign.Singular
 * [D. T. T. Haug and M. Dalrymple, *Reciprocity: Anaphora, scope, and quantification*
   (2020)][haug-dalrymple-2020]
 * [B. Spector, *Trivalence and transparency: A non-dynamic approach to anaphora*
-  (2025)][spector-2025]
+  (2026)][spector-2026]
 -/
 
 @[expose] public section
@@ -114,7 +114,7 @@ theorem cod_dep (h : ∀ i ∈ I, RegisterStructure.val v i ≠ ⊥ → Register
   obtain ⟨x, hx⟩ := Flat.ne_bot_iff_exists.1 (h i hi (hy ▸ Flat.coe_ne_bot))
   exact ⟨x, i, hi, hx, hy⟩
 
-/-- On plural partial assignments, a cell is [spector-2025]'s restriction `G_{x=a}`. -/
+/-- On plural partial assignments, a cell is [spector-2026]'s restriction `G_{x=a}`. -/
 theorem cell_eq_restrict {Var D : Type*} [DecidableEq Var] (G : PluralAssign Var D) (x : Var)
     (a : D) : cell x a G = G.restrict x a :=
   rfl
@@ -163,7 +163,7 @@ def atom₂ (P : E → E → Prop) (u v : R) : Condition (Set S) :=
 /-- Singular number `sing(u)` ((39)): `u` has exactly one value. -/
 def sing (u : R) : Condition (Set S) := {I | ∃ x, value u I = {x}}
 
-/-- On plural partial assignments, singular number is [spector-2025]'s `atomic(x)`. -/
+/-- On plural partial assignments, singular number is [spector-2026]'s `atomic(x)`. -/
 theorem mem_sing_iff_singular {Var D : Type*} [DecidableEq Var] {G : PluralAssign Var D}
     {x : Var} : G ∈ sing x ↔ G.Singular x :=
   Iff.rfl
