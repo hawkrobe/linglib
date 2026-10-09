@@ -103,7 +103,6 @@ import Linglib.Core.InformationTheory.KullbackLeibler.Finite
 import Linglib.Core.Learning.RescorlaWagner
 import Linglib.Core.Learning.WidrowHoff
 import Linglib.Core.LinearAlgebra.AffineSpace.Centroid
-import Linglib.Core.LinearAlgebra.Matrix.Symmetric
 import Linglib.Core.LinearAlgebra.SymmetricAlgebra.Derivation
 import Linglib.Logic.Aristotelian.Morphism
 import Linglib.Logic.Aristotelian.Square
