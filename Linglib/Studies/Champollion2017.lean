@@ -115,7 +115,7 @@ def DistributiveReferenceUniv {α β : Type*} [SemilatticeSup α] [PartialOrder 
 
 Champollion's `DistributiveReference` takes a *functional* thematic role
 `θ : α → Entity` (the unique role-filler). linglib's neo-Davidsonian roles
-are *relational* — `ArgumentStructure.ThematicRel = Entity → Event → Prop`,
+are *relational*, `Entity → Event → Prop`,
 `Agent(a, e)` — with thematic uniqueness available as
 `Mereology.UP`. `RelationalDistributiveReference` is the relational
 form, so the distributivity property composes directly with a

@@ -78,8 +78,8 @@ variable {Entity E : Type*}
 /-- The low applicative (15) relates the direct object `x` to the indirect object `y` by the
 transfer relation `poss`, to-the-possession for a recipient applicative and from-the-possession
 for a source applicative, and asserts that `x` is the theme of the verb `f`. -/
-def lowAppl (theme : ThematicRel Entity E) (poss : Entity → Entity → Prop) (x y : Entity)
-    (f : ThematicRel Entity E) : E → Prop :=
+def lowAppl (theme : Entity → E → Prop) (poss : Entity → Entity → Prop) (x y : Entity)
+    (f : Entity → E → Prop) : E → Prop :=
   fun e ↦ f x e ∧ theme x e ∧ poss x y
 
 /-- `lowApplTy` is the type of the low applicative head (15), `⟨e,⟨e,⟨⟨e,⟨s,t⟩⟩,⟨s,t⟩⟩⟩⟩`. -/
@@ -116,7 +116,7 @@ theorem lowApplP_composes_transitive : tyBinary (Ty.eet ⇒ Ty.et) Ty.eet = some
 /-- In the derivation (16) of *Mary bought John the book*, the low ApplP takes the verb, whose
 denotation relates its theme to a buying event, and Voice adds the agent by Event
 Identification. -/
-theorem voiceP_lowAppl (agent theme : ThematicRel Entity E) (poss : Entity → Entity → Prop)
+theorem voiceP_lowAppl (agent theme : Entity → E → Prop) (poss : Entity → Entity → Prop)
     (buying : E → Prop) (mary john book : Entity) (e : E) :
     eventIdentification agent
         (lowAppl theme poss book john (eventIdentification theme buying)) mary e ↔
@@ -127,7 +127,7 @@ theorem voiceP_lowAppl (agent theme : ThematicRel Entity E) (poss : Entity → E
 /-- Over an unergative the constituent of type `⟨e,⟨s,t⟩⟩` is the Voice' whose open argument is
 the agent, and the low ApplP composed with it holds of no event when no participant is both
 agent and theme, the contradiction of (103b). -/
-theorem lowAppl_agent_eq_bot {agent theme : ThematicRel Entity E} (h : Disjoint agent theme)
+theorem lowAppl_agent_eq_bot {agent theme : Entity → E → Prop} (h : Disjoint agent theme)
     (poss : Entity → Entity → Prop) (run : E → Prop) (x y : Entity) :
     lowAppl theme poss x y (eventIdentification agent run) = ⊥ := by
   ext e
@@ -209,7 +209,7 @@ def cause (CAUSE : E → E → Prop) (f : E → Prop) : E → Prop :=
 /-- On the bieventive analysis (14) of *John melted the ice*, Voice relates John to an event
 that causes a melting, the reading (13b); on the θ-role analysis (16), a causer head relates
 John to the melting itself, the reading (15b). -/
-theorem melted_readings (CAUSE : E → E → Prop) (agent causer : ThematicRel Entity E)
+theorem melted_readings (CAUSE : E → E → Prop) (agent causer : Entity → E → Prop)
     (melt : E → Prop) (john : Entity) (e : E) :
     (eventIdentification agent (cause CAUSE melt) john e ↔
         agent john e ∧ ∃ e', melt e' ∧ CAUSE e e') ∧

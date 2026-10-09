@@ -148,7 +148,7 @@ set of states at the right boundary and the contextual threshold set of states a
 ((56), (60)). -/
 structure VerbOutcomes (E Entity State : Type*) where
   /-- The base predicate `P(e)(x)`. -/
-  verb : EventRel E Entity
+  verb : E → Entity → Prop
   /-- The outcome set `O`. -/
   outcomes : Set State
   /-- The threshold set `T`. -/
@@ -232,7 +232,7 @@ private theorem ev₁_precedes_ev₂ : (τ ev₁).precedes (τ ev₂) := by
   show (5 : ℤ) < 10; omega
 
 /-- The base predicate of every worked root holds of the scenario's two events. -/
-def acts : EventRel (NonemptyInterval ℤ) Unit := fun e _ ↦ e = ev₁ ∨ e = ev₂
+def acts : NonemptyInterval ℤ → Unit → Prop := fun e _ ↦ e = ev₁ ∨ e = ev₂
 
 private theorem acts_ev₁ : acts ev₁ () := Or.inl rfl
 private theorem acts_ev₂ : acts ev₂ () := Or.inr rfl
