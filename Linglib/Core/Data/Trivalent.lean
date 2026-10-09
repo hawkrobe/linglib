@@ -608,6 +608,22 @@ theorem joinMiddle_true_left (a : Trivalent) : joinMiddle .true a = .true := by 
 /-- `true` is a right identity for Middle Kleene conjunction. -/
 theorem meetMiddle_true_right (a : Trivalent) : meetMiddle a .true = a := by cases a <;> rfl
 
+/-- Middle Kleene conjunction reads its right argument only when its left one is true. -/
+theorem meetMiddle_congr_right {a b b' : Trivalent} (h : a = .true → b = b') :
+    meetMiddle a b = meetMiddle a b' := by
+  rcases a with _ | _ | _
+  · rw [h rfl]
+  · simp [meetMiddle_false_left]
+  · rfl
+
+/-- Middle Kleene disjunction reads its right argument only when its left one is false. -/
+theorem joinMiddle_congr_right {a b b' : Trivalent} (h : a = .false → b = b') :
+    joinMiddle a b = joinMiddle a b' := by
+  rcases a with _ | _ | _
+  · simp [joinMiddle_true_left]
+  · rw [h rfl]
+  · rfl
+
 theorem meetMiddle_eq_true_iff {a b : Trivalent} :
     meetMiddle a b = .true ↔ a = .true ∧ b = .true := by
   cases a <;> cases b <;> decide

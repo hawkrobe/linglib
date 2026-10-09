@@ -94,36 +94,16 @@ variable {W D P R : Type*} (M : Model W D P R)
 
 /-- Whenever the first conjunct's truth guarantees the presupposition, the presupposition can be
 dropped from the second conjunct, the parametric core of Transparency for conjunction. -/
-theorem conj_transparency_parametric : ∀ (E presup φ : Trivalent),
-    (E = .true → presup = .true) → meetMiddle E (meetMiddle presup φ) = meetMiddle E φ
-  | .true, _, φ, hw => by
-    rw [hw rfl, Trivalent.meetMiddle_true_left, Trivalent.meetMiddle_true_left]
-  | .false, _, _, _ => by simp [meetMiddle]
-  | .indet, _, _, _ => rfl
+theorem conj_transparency_parametric (E presup φ : Trivalent) (hw : E = .true → presup = .true) :
+    meetMiddle E (meetMiddle presup φ) = meetMiddle E φ :=
+  Trivalent.meetMiddle_congr_right fun h ↦ by rw [hw h, Trivalent.meetMiddle_true_left]
 
 /-- Whenever the first disjunct's falsity guarantees the presupposition, the presupposition can be
 dropped from the second disjunct, the parametric core of Transparency for disjunction. -/
-theorem disj_transparency_parametric : ∀ (negE presup φ : Trivalent),
-    (negE = .false → presup = .true) → joinMiddle negE (meetMiddle presup φ) = joinMiddle negE φ
-  | .true, _, _, _ => by simp [joinMiddle]
-  | .indet, _, _, _ => rfl
-  | .false, _, φ, hw => by rw [hw rfl, Trivalent.meetMiddle_true_left]
-
-/-- Middle Kleene conjunction reads its right argument only when its left one is true. -/
-theorem meetMiddle_congr_right {E a b : Trivalent} (h : E = .true → a = b) :
-    meetMiddle E a = meetMiddle E b := by
-  rcases E with _ | _ | _
-  · rw [h rfl]
-  · simp [Trivalent.meetMiddle_false_left]
-  · rfl
-
-/-- Middle Kleene disjunction reads its right argument only when its left one is false. -/
-theorem joinMiddle_congr_right {E a b : Trivalent} (h : E = .false → a = b) :
-    joinMiddle E a = joinMiddle E b := by
-  rcases E with _ | _ | _
-  · simp [Trivalent.joinMiddle_true_left]
-  · rw [h rfl]
-  · rfl
+theorem disj_transparency_parametric (negE presup φ : Trivalent)
+    (hw : negE = .false → presup = .true) :
+    joinMiddle negE (meetMiddle presup φ) = joinMiddle negE φ :=
+  Trivalent.joinMiddle_congr_right fun h ↦ by rw [hw h, Trivalent.meetMiddle_true_left]
 
 open Classical in
 /-- Evaluation at a world and a partial assignment. A predicate of an unvalued variable is
@@ -1062,7 +1042,7 @@ theorem felicitousP_qs (C : CtxP W D) (Rd L : R) (hxy : x ≠ y) :
   subst ho
   intro φ p _
   simp only [Function.comp, evalP_and]
-  refine meetMiddle_congr_right fun h ↦ evalP_all_congr fun a ↦ ?_
+  refine Trivalent.meetMiddle_congr_right fun h ↦ evalP_all_congr fun a ↦ ?_
   obtain ⟨-, h1⟩ := evalP_all_eq_true_iff.1 h a
   obtain ⟨-, b, -, hb, -⟩ := evalP_rel_eq_true_iff.1 (evalP_ex_eq_true_iff.1 h1)
   rw [evalP_and, evalP_valued_eq_true_iff.2 hb.singular, Trivalent.meetMiddle_true_left]
@@ -1208,7 +1188,7 @@ theorem felicitousP_qs_restricted (C : CtxP W D) (S B : P) (Rd L : R) (hxy : x �
   subst ho
   intro φ p _
   simp only [Function.comp, evalP_and]
-  refine meetMiddle_congr_right fun h ↦ evalP_all_congr fun a ↦ ?_
+  refine Trivalent.meetMiddle_congr_right fun h ↦ evalP_all_congr fun a ↦ ?_
   rw [evalP_or, evalP_or, evalP_and]
   refine disj_transparency_parametric _ _ _ fun hS ↦ ?_
   obtain ⟨-, h1⟩ := evalP_all_eq_true_iff.1 h a
