@@ -19,6 +19,8 @@ about the local instance `Set.monad`, so they apply wherever a file enables it.
 
 * `Set.mem_stateT_bind`, `Set.mem_stateT_map`, `Set.mem_stateT_pure`, `Set.mem_stateT_seq`:
   results of `StateT σ Set` computations.
+* `Set.mk_mem_stateT_map`, `Set.mk_mem_stateT_map_seq`: the same for a value–state pair, with
+  `f <$> m <*> n` running `m` and then `n` from its output state.
 * `Set.mem_readerT_bind`, `Set.mem_readerT_map`, `Set.mem_readerT_pure`: results of
   `ReaderT σ Set` computations.
 -/
@@ -35,7 +37,7 @@ namespace Set
 
 section StateT
 
-variable {σ α β : Type u}
+variable {σ α β γ : Type u}
 
 @[simp] theorem mem_stateT_bind (m : StateT σ Set α) (f : α → StateT σ Set β) (s : σ)
     (r : β × σ) : r ∈ (m >>= f) s ↔ ∃ q ∈ m s, r ∈ f q.1 q.2 := by
@@ -52,6 +54,21 @@ variable {σ α β : Type u}
 @[simp] theorem mem_stateT_seq (m : StateT σ Set (α → β)) (n : StateT σ Set α) (s : σ)
     (r : β × σ) : r ∈ (m <*> n) s ↔ ∃ q ∈ m s, ∃ q' ∈ n q.2, r = (q.1 q'.1, q'.2) := by
   simp only [seq_eq_bind_map, mem_stateT_bind, mem_stateT_map]
+
+theorem mk_mem_stateT_map {f : α → β} {m : StateT σ Set α} {s s' : σ} {b : β} :
+    (b, s') ∈ (f <$> m) s ↔ ∃ a, (a, s') ∈ m s ∧ b = f a := by
+  simp only [mem_stateT_map, Prod.mk.injEq]
+  exact ⟨fun ⟨⟨a, t⟩, hm, hb, ht⟩ ↦ ⟨a, ht ▸ hm, hb⟩, fun ⟨a, hm, hb⟩ ↦ ⟨(a, s'), hm, hb, rfl⟩⟩
+
+theorem mk_mem_stateT_map_seq {f : α → β → γ} {m : StateT σ Set α} {n : StateT σ Set β}
+    {s s'' : σ} {c : γ} :
+    (c, s'') ∈ (f <$> m <*> n) s ↔ ∃ a s', (a, s') ∈ m s ∧ ∃ b, (b, s'') ∈ n s' ∧ c = f a b := by
+  simp only [mem_stateT_seq, mem_stateT_map]
+  constructor
+  · rintro ⟨_, ⟨⟨a, s'⟩, hm, rfl⟩, ⟨b, _⟩, hn, ⟨⟩⟩
+    exact ⟨a, s', hm, b, hn, rfl⟩
+  · rintro ⟨a, s', hm, b, hn, rfl⟩
+    exact ⟨(f a, s'), ⟨(a, s'), hm, rfl⟩, (b, s''), hn, rfl⟩
 
 end StateT
 
