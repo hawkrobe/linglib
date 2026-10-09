@@ -2,6 +2,7 @@ module
 
 public import Linglib.Core.Data.Trivalent
 public import Linglib.Logic.Assignment
+public import Linglib.Semantics.Dynamic.Update
 public import Linglib.Data.Examples.Spector2026
 
 /-!
@@ -258,62 +259,76 @@ theorem trueAt_bathroom_iff (B F : P) (x : ℕ) (w : W) :
         Trivalent.neg_true, Trivalent.joinMiddle_false_left]
       exact eval_pred_eq_true_iff.2 ⟨d, by simp, hF⟩
 
-/-! ### Contexts and Transparency -/
+/-! ### Contexts and Transparency
 
-/-- A context is a set of world–assignment pairs. -/
-abbrev Ctx (W D : Type*) := Set (W × PartialAssign ℕ D)
+Contexts are sets of pairs of a world and an assignment, singular in the simplified system and
+plural in the full one; update, Transparency and felicity are defined once over the evaluation
+`ev` of either system. -/
+
+section Contexts
+
+variable {A : Type*} (ev : Formula P R → W → A → Trivalent)
 
 /-- The null context, all world–assignment pairs. -/
-def nullCtx : Ctx W D := Set.univ
+def nullCtx : Set (W × A) := Set.univ
 
-variable (M) in
 /-- Stalnakerian update keeps the pairs of the context at which the accepted sentence is true. -/
-def update (C : Ctx W D) (φ : Formula P R) : Ctx W D := {p ∈ C | eval M φ p.1 p.2 = .true}
+def update (C : Set (W × A)) (φ : Formula P R) : Set (W × A) := {p ∈ C | ev φ p.1 p.2 = .true}
+
+/-- Update intersects the context with the sentence's truth set, so it eliminates points and does
+so point by point. -/
+theorem isClassical_update (φ : Formula P R) :
+    DynamicSemantics.CCP.IsClassical (update ev · φ) :=
+  DynamicSemantics.CCP.isClassical_up {p : W × A | ev φ p.1 p.2 = .true}
 
 /-- A frame is a sentence with the occurrence under test as a hole. -/
 abbrev Frame (P R : Type*) := Formula P R → Formula P R
 
-variable (M) in
 /-- The occurrence at the hole of `F` is transparent in `C` for the presupposition `π` when
 filling the hole with *π ∧ φ* and with *φ* gives the same value throughout `C`, for every `φ`
-(§2.2.2). -/
-def Transparent (C : Ctx W D) (F : Frame P R) (π : Formula P R) : Prop :=
-  ∀ φ : Formula P R, ∀ p ∈ C, eval M (F (.and π φ)) p.1 p.2 = eval M (F φ) p.1 p.2
+(§2.2.2; in the full system §6.3, where `π` reads as *atomic(x)*). -/
+def Transparent (C : Set (W × A)) (F : Frame P R) (π : Formula P R) : Prop :=
+  ∀ φ : Formula P R, ∀ p ∈ C, ev (F (.and π φ)) p.1 p.2 = ev (F φ) p.1 p.2
+
+end Contexts
 
 /-- A bare pronoun is not transparent in the null context, since where the variable is unvalued
 *valued(x) ∧ φ* is false while *φ* may be true. -/
-theorem not_transparent_id_null [Nonempty W] (x : ℕ) : ¬ Transparent M nullCtx id (.valued x) := by
+theorem not_transparent_id_null [Nonempty W] (x : ℕ) :
+    ¬ Transparent (eval M) nullCtx id (.valued x) := by
   intro h
   have := h (.not (.valued x)) (Classical.arbitrary W, (⊥ : PartialAssign ℕ D)) trivial
   simp only [id, eval_and, eval_not, eval_valued_bot] at this
   exact absurd this (by decide)
 
 /-- A bare pronoun is transparent wherever the context values its variable. -/
-theorem transparent_id_of_valued {C : Ctx W D} {x : ℕ} (hC : ∀ p ∈ C, p.2 x ≠ ⊥) :
-    Transparent M C id (.valued x) := fun _ p hp ↦ by
+theorem transparent_id_of_valued {C : Set (W × PartialAssign ℕ D)} {x : ℕ}
+    (hC : ∀ p ∈ C, p.2 x ≠ ⊥) :
+    Transparent (eval M) C id (.valued x) := fun _ p hp ↦ by
   simp only [id, eval_and, eval_valued_of_ne_bot (hC p hp), Trivalent.meetMiddle_true_left]
 
 /-- Accepting *∃xT(x)* leaves `x` valued throughout the updated context. -/
-theorem ne_bot_of_mem_update_ex {C : Ctx W D} {T : P} {x : ℕ} {p : W × PartialAssign ℕ D}
-    (hp : p ∈ update M C (.ex x (.pred T x))) : p.2 x ≠ ⊥ :=
+theorem ne_bot_of_mem_update_ex {C : Set (W × PartialAssign ℕ D)} {T : P} {x : ℕ}
+    {p : W × PartialAssign ℕ D}
+    (hp : p ∈ update (eval M) C (.ex x (.pred T x))) : p.2 x ≠ ⊥ :=
   ne_bot_of_eval_ex_pred hp.2
 
 /-- In *A table is in the room. It is purple.* the pronoun is transparent after the accepted
 existential. -/
-theorem transparent_id_of_update_ex (C : Ctx W D) (T : P) (x : ℕ) :
-    Transparent M (update M C (.ex x (.pred T x))) id (.valued x) :=
+theorem transparent_id_of_update_ex (C : Set (W × PartialAssign ℕ D)) (T : P) (x : ℕ) :
+    Transparent (eval M) (update (eval M) C (.ex x (.pred T x))) id (.valued x) :=
   transparent_id_of_valued fun _ hp ↦ ne_bot_of_mem_update_ex hp
 
 /-- *∃xT(x) ∧ P(x)* is transparent in every context, because a true first conjunct values `x`. -/
-theorem transparent_forward_conj (C : Ctx W D) (T : P) (x : ℕ) :
-    Transparent M C (fun ψ ↦ .and (.ex x (.pred T x)) ψ) (.valued x) := fun φ p _ ↦ by
+theorem transparent_forward_conj (C : Set (W × PartialAssign ℕ D)) (T : P) (x : ℕ) :
+    Transparent (eval M) C (fun ψ ↦ .and (.ex x (.pred T x)) ψ) (.valued x) := fun φ p _ ↦ by
   simp only [eval_and]
   exact conj_transparency_parametric _ _ _ fun h ↦ eval_valued_of_ne_bot (ne_bot_of_eval_ex_pred h)
 
 /-- *P(x) ∧ ∃xT(x)* is not transparent in the null context, because with *φ = P(x)* at an unvalued
 variable the plain sentence is undefined and the presuppositional one false. -/
 theorem not_transparent_reverse_conj [Nonempty W] (T : P) (x : ℕ) :
-    ¬ Transparent M nullCtx (fun ψ ↦ .and ψ (.ex x (.pred T x))) (.valued x) := by
+    ¬ Transparent (eval M) nullCtx (fun ψ ↦ .and ψ (.ex x (.pred T x))) (.valued x) := by
   intro h
   have := h (.pred T x) (Classical.arbitrary W, (⊥ : PartialAssign ℕ D)) trivial
   simp only [eval_and, eval_valued_bot, eval_pred_of_eq_bot (g := (⊥ : PartialAssign ℕ D)) rfl,
@@ -322,8 +337,8 @@ theorem not_transparent_reverse_conj [Nonempty W] (T : P) (x : ℕ) :
 
 /-- The bathroom sentence *¬∃xB(x) ∨ H(x)* is transparent in every context, because a false first
 disjunct is a true existential, which values `x`. -/
-theorem transparent_bathroom (C : Ctx W D) (B : P) (x : ℕ) :
-    Transparent M C (fun ψ ↦ .or (.not (.ex x (.pred B x))) ψ) (.valued x) := fun φ p _ ↦ by
+theorem transparent_bathroom (C : Set (W × PartialAssign ℕ D)) (B : P) (x : ℕ) :
+    Transparent (eval M) C (fun ψ ↦ .or (.not (.ex x (.pred B x))) ψ) (.valued x) := fun φ p _ ↦ by
   simp only [eval_or, eval_not]
   exact disj_transparency_parametric _ _ _ fun h ↦
     eval_valued_of_ne_bot (ne_bot_of_eval_ex_pred (Trivalent.neg_eq_false_iff.1 h))
@@ -332,7 +347,7 @@ theorem transparent_bathroom (C : Ctx W D) (B : P) (x : ℕ) :
 with a tautological *φ* and an unvalued variable, at a world with a bathroom the plain
 sentence is true and the presuppositional one undefined. -/
 theorem not_transparent_reverse_bathroom (B : P) (x : ℕ) (hw : ∃ w d, d ∈ M.pred B w) :
-    ¬ Transparent M nullCtx (fun ψ ↦ .or ψ (.not (.ex x (.pred B x)))) (.valued x) := by
+    ¬ Transparent (eval M) nullCtx (fun ψ ↦ .or ψ (.not (.ex x (.pred B x)))) (.valued x) := by
   intro h
   obtain ⟨w, d, hd⟩ := hw
   have := h (.or (.valued x) (.not (.valued x))) (w, (⊥ : PartialAssign ℕ D)) trivial
@@ -375,35 +390,39 @@ def Formula.occurrences {P R : Type*} : List ℕ → Formula P R → List (Frame
   | B, .all x φ => (φ.occurrences (x :: B)).map (Prod.map ((Formula.all x) ∘ ·) id)
   | B, .strong φ => (φ.occurrences B).map (Prod.map ((Formula.strong) ∘ ·) id)
 
-variable (M) in
-/-- A sentence is felicitous in `C` when Transparency holds in `C` at every occurrence of every
-free variable (§2.2.2, item 4). -/
-def Felicitous (C : Ctx W D) (S : Formula P R) : Prop :=
-  ∀ o ∈ S.occurrences [], Transparent M C o.1 o.2
+section Felicity
 
-variable (M) in
+variable {A : Type*} (ev : Formula P R → W → A → Trivalent)
+
+/-- A sentence is felicitous in `C` when Transparency holds in `C` at every occurrence of every
+free variable (§2.2.2, item 4; §6.3). -/
+def Felicitous (C : Set (W × A)) (S : Formula P R) : Prop :=
+  ∀ o ∈ S.occurrences [], Transparent ev C o.1 o.2
+
 /-- A discourse is felicitous in `C` when each sentence is felicitous in the context updated with
-the sentences before it (§2.2.1). -/
-def FelicitousDiscourse (C : Ctx W D) : List (Formula P R) → Prop
+the sentences before it (§2.2.1, fn. 21). -/
+def FelicitousDiscourse (C : Set (W × A)) : List (Formula P R) → Prop
   | [] => True
-  | S :: Ss => Felicitous M C S ∧ FelicitousDiscourse (update M C S) Ss
+  | S :: Ss => Felicitous ev C S ∧ FelicitousDiscourse (update ev C S) Ss
+
+end Felicity
 
 /-- *It is purple* out of the blue is infelicitous (§3.1). -/
 theorem not_felicitous_pred_null [Nonempty W] (Q : P) (x : ℕ) :
-    ¬ Felicitous M nullCtx (.pred Q x) := fun h ↦
+    ¬ Felicitous (eval M) nullCtx (.pred Q x) := fun h ↦
   not_transparent_id_null x (h (id, .valued x) (by simp [Formula.occurrences]))
 
 /-- *A table is in the room. It is purple.* is felicitous in every context (§3.1). -/
-theorem felicitousDiscourse_ex_pred (C : Ctx W D) (T Q : P) (x : ℕ) :
-    FelicitousDiscourse M C [.ex x (.pred T x), .pred Q x] := by
+theorem felicitousDiscourse_ex_pred (C : Set (W × PartialAssign ℕ D)) (T Q : P) (x : ℕ) :
+    FelicitousDiscourse (eval M) C [.ex x (.pred T x), .pred Q x] := by
   refine ⟨fun o ho ↦ by simp [Formula.occurrences] at ho, fun o ho ↦ ?_, trivial⟩
   simp only [Formula.occurrences, List.not_mem_nil, ite_false, List.mem_singleton] at ho
   subst ho
   exact transparent_id_of_update_ex C T x
 
 /-- *A table is in the room and it is purple* is felicitous in every context ((9)). -/
-theorem felicitous_forward_conj (C : Ctx W D) (T Q : P) (x : ℕ) :
-    Felicitous M C (.and (.ex x (.pred T x)) (.pred Q x)) := by
+theorem felicitous_forward_conj (C : Set (W × PartialAssign ℕ D)) (T Q : P) (x : ℕ) :
+    Felicitous (eval M) C (.and (.ex x (.pred T x)) (.pred Q x)) := by
   intro o ho
   simp [Formula.occurrences] at ho
   subst ho
@@ -411,7 +430,7 @@ theorem felicitous_forward_conj (C : Ctx W D) (T Q : P) (x : ℕ) :
 
 /-- *It is purple and a table is in the room* is infelicitous in the null context ((10)). -/
 theorem not_felicitous_reverse_conj [Nonempty W] (T Q : P) (x : ℕ) :
-    ¬ Felicitous M nullCtx (.and (.pred Q x) (.ex x (.pred T x))) := by
+    ¬ Felicitous (eval M) nullCtx (.and (.pred Q x) (.ex x (.pred T x))) := by
   intro h
   refine not_transparent_reverse_conj (M := M) T x ?_
   intro φ p hp
@@ -419,8 +438,8 @@ theorem not_felicitous_reverse_conj [Nonempty W] (T Q : P) (x : ℕ) :
   exact this φ p hp
 
 /-- The bathroom sentence is felicitous in every context ((11)). -/
-theorem felicitous_bathroom (C : Ctx W D) (B H : P) (x : ℕ) :
-    Felicitous M C (.or (.not (.ex x (.pred B x))) (.pred H x)) := by
+theorem felicitous_bathroom (C : Set (W × PartialAssign ℕ D)) (B H : P) (x : ℕ) :
+    Felicitous (eval M) C (.or (.not (.ex x (.pred B x))) (.pred H x)) := by
   intro o ho
   simp [Formula.occurrences] at ho
   subst ho
@@ -429,7 +448,7 @@ theorem felicitous_bathroom (C : Ctx W D) (B H : P) (x : ℕ) :
 /-- The reversed bathroom sentence is infelicitous in the null context, where there could be a
 bathroom ((12)). -/
 theorem not_felicitous_reverse_bathroom (B H : P) (x : ℕ) (hw : ∃ w d, d ∈ M.pred B w) :
-    ¬ Felicitous M nullCtx (.or (.pred H x) (.not (.ex x (.pred B x)))) := fun h ↦
+    ¬ Felicitous (eval M) nullCtx (.or (.pred H x) (.not (.ex x (.pred B x)))) := fun h ↦
   not_transparent_reverse_bathroom B x hw
     (h (fun χ ↦ .or χ (.not (.ex x (.pred B x))), .valued x) (by simp [Formula.occurrences]))
 
@@ -672,26 +691,16 @@ end Lemmas
 
 /-! ### Transparency in the full system -/
 
-/-- A context of world–plural-assignment pairs. -/
-abbrev CtxP (W D : Type*) := Set (W × PluralAssign ℕ D)
-
-variable (M) in
-/-- In the full system the occurrence at the hole of `F` is transparent in `C` for `π` when filling
-the hole with *π ∧ φ* and with *φ* gives the same value throughout `C`, for every `φ`; for a free
-variable `π` is *atomic(x)* (§6.3). -/
-def TransparentP (C : CtxP W D) (F : Frame P R) (π : Formula P R) : Prop :=
-  ∀ φ : Formula P R, ∀ p ∈ C, evalP M (F (.and π φ)) p.1 p.2 = evalP M (F φ) p.1 p.2
-
 /-- *∃xT(x) ∧ P(x)* is transparent in every context of the full system. -/
-theorem transparentP_forward_conj (C : CtxP W D) (T : P) (x : ℕ) :
-    TransparentP M C (fun ψ ↦ .and (.ex x (.pred T x)) ψ) (.valued x) := fun φ p _ ↦ by
+theorem transparentP_forward_conj (C : Set (W × PluralAssign ℕ D)) (T : P) (x : ℕ) :
+    Transparent (evalP M) C (fun ψ ↦ .and (.ex x (.pred T x)) ψ) (.valued x) := fun φ p _ ↦ by
   simp only [evalP_and]
   exact conj_transparency_parametric _ _ _ fun h ↦
     evalP_valued_eq_true_iff.2 (singular_of_evalP_ex_pred h)
 
 /-- The bathroom sentence is transparent in every context of the full system. -/
-theorem transparentP_bathroom (C : CtxP W D) (B : P) (x : ℕ) :
-    TransparentP M C (fun ψ ↦ .or (.not (.ex x (.pred B x))) ψ) (.valued x) := fun φ p _ ↦ by
+theorem transparentP_bathroom (C : Set (W × PluralAssign ℕ D)) (B : P) (x : ℕ) :
+    Transparent (evalP M) C (fun ψ ↦ .or (.not (.ex x (.pred B x))) ψ) (.valued x) := fun φ p _ ↦ by
   simp only [evalP_or, evalP_not]
   exact disj_transparency_parametric _ _ _ fun h ↦
     evalP_valued_eq_true_iff.2 (singular_of_evalP_ex_pred (Trivalent.neg_eq_false_iff.1 h))
@@ -709,10 +718,11 @@ theorem not_singular_of_covers {G : PluralAssign ℕ D} {x : ℕ} {a b : D} (hab
 pair at which *∀xP(x)* is true, over a domain with two individuals, the occurrence *Q(x)* is not
 transparent, because *∀xP(x) ∧ (atomic(x) ∧ φ)* is never true there while *∀xP(x) ∧ φ* is for a
 tautological *φ*. -/
-theorem not_transparentP_forall_conj {a b : D} (hab : a ≠ b) {C : CtxP W D} {P₀ : P} {x : ℕ}
+theorem not_transparentP_forall_conj {a b : D} (hab : a ≠ b)
+    {C : Set (W × PluralAssign ℕ D)} {P₀ : P} {x : ℕ}
     {w : W} {G : PluralAssign ℕ D} (hC : (w, G) ∈ C)
     (hall : evalP M (.all x (.pred P₀ x)) w G = .true) :
-    ¬ TransparentP M C (fun ψ ↦ .and (.all x (.pred P₀ x)) ψ) (.valued x) := by
+    ¬ Transparent (evalP M) C (fun ψ ↦ .and (.all x (.pred P₀ x)) ψ) (.valued x) := by
   intro h
   have hx : evalP M (.valued x) w G = .false :=
     evalP_valued_eq_false_iff.2
@@ -732,7 +742,7 @@ theorem restrict_covering_nonempty (x : ℕ) (a : D) : ((covering D x).restrict 
 /-- The null context contains such a pair whenever some world makes the universal true. -/
 theorem not_transparentP_forall_conj_univ {a b : D} (hab : a ≠ b) {P₀ : P} (x : ℕ)
     (hw : ∃ w, ∀ d, d ∈ M.pred P₀ w) :
-    ¬ TransparentP M Set.univ (fun ψ ↦ .and (.all x (.pred P₀ x)) ψ) (.valued x) := by
+    ¬ Transparent (evalP M) Set.univ (fun ψ ↦ .and (.all x (.pred P₀ x)) ψ) (.valued x) := by
   obtain ⟨w, hw⟩ := hw
   refine not_transparentP_forall_conj hab (w := w) (G := covering D x) (Set.mem_univ _)
     (evalP_all_eq_true_iff.2 fun a ↦ ⟨restrict_covering_nonempty x a, ?_⟩)
@@ -955,9 +965,9 @@ theorem trueAtP_ex_and_strong_iff (S H : P) (x : ℕ) (w : W) :
 
 /-- *∃xS(x) ∧ O(H(x))* violates Transparency, since at a pair where *∃xS(x)* is true a tautological
 *φ* makes *∃xS(x) ∧ O(φ)* true but *∃xS(x) ∧ O(atomic(x) ∧ φ)* undefined. -/
-theorem not_transparentP_ex_and_strong {C : CtxP W D} {S : P} {x : ℕ} {w : W}
+theorem not_transparentP_ex_and_strong {C : Set (W × PluralAssign ℕ D)} {S : P} {x : ℕ} {w : W}
     {G : PluralAssign ℕ D} (hC : (w, G) ∈ C) (hS : evalP M (.ex x (.pred S x)) w G = .true) :
-    ¬ TransparentP M C (fun ψ ↦ .and (.ex x (.pred S x)) (.strong ψ)) (.valued x) := by
+    ¬ Transparent (evalP M) C (fun ψ ↦ .and (.ex x (.pred S x)) (.strong ψ)) (.valued x) := by
   intro h
   obtain ⟨d, -⟩ := singular_of_evalP_ex_pred hS
   have : Nonempty D := ⟨d⟩
@@ -989,23 +999,6 @@ theorem evalP_all_congr {φ ψ : Formula P R} {G : PluralAssign ℕ D}
     evalP M (.all x φ) w G = evalP M (.all x ψ) w G := by
   simp only [evalP, h]
 
-variable (M) in
-/-- A sentence is felicitous in a context of the full system when Transparency holds at every
-occurrence of every free variable (§6.3). -/
-def FelicitousP (C : CtxP W D) (S : Formula P R) : Prop :=
-  ∀ o ∈ S.occurrences [], TransparentP M C o.1 o.2
-
-variable (M) in
-/-- Stalnakerian update in the full system. -/
-def updateP (C : CtxP W D) (φ : Formula P R) : CtxP W D := {p ∈ C | evalP M φ p.1 p.2 = .true}
-
-variable (M) in
-/-- A discourse is felicitous in `C` when each sentence is felicitous in the context updated with
-the sentences before it (fn. 21). -/
-def FelicitousDiscourseP (C : CtxP W D) : List (Formula P R) → Prop
-  | [] => True
-  | S :: Ss => FelicitousP M C S ∧ FelicitousDiscourseP (updateP M C S) Ss
-
 /-- *Everyone read something and everyone liked it* is true at a world exactly when everyone read
 something they liked ((27)). -/
 theorem trueAtP_qs_iff (Rd L : R) (hxy : x ≠ y) :
@@ -1035,8 +1028,8 @@ theorem trueAtP_qs_iff (Rd L : R) (hxy : x ≠ y) :
 
 /-- The pronoun of quantificational subordination satisfies Transparency in every context
 ((28)). -/
-theorem felicitousP_qs (C : CtxP W D) (Rd L : R) (hxy : x ≠ y) :
-    FelicitousP M C (.and (.all x (.ex y (.rel Rd x y))) (.all x (.rel L x y))) := by
+theorem felicitousP_qs (C : Set (W × PluralAssign ℕ D)) (Rd L : R) (hxy : x ≠ y) :
+    Felicitous (evalP M) C (.and (.all x (.ex y (.rel Rd x y))) (.all x (.rel L x y))) := by
   intro o ho
   simp [Formula.occurrences, hxy, hxy.symm] at ho
   subst ho
@@ -1051,7 +1044,7 @@ theorem felicitousP_qs (C : CtxP W D) (Rd L : R) (hxy : x ≠ y) :
 context, because a universal does not license a singular pronoun ((21)–(22)). -/
 theorem not_felicitousP_forall_conj {a b : D} (hab : a ≠ b) {P₀ Q : P}
     (hw : ∃ w, ∀ d, d ∈ M.pred P₀ w) :
-    ¬ FelicitousP M Set.univ (.and (.all x (.pred P₀ x)) (.pred Q x)) := fun h ↦
+    ¬ Felicitous (evalP M) Set.univ (.and (.all x (.pred P₀ x)) (.pred Q x)) := fun h ↦
   not_transparentP_forall_conj_univ hab x hw
     (h (fun χ ↦ .and (.all x (.pred P₀ x)) χ, .valued x) (by simp [Formula.occurrences]))
 
@@ -1094,9 +1087,9 @@ theorem evalP_all_false_and_not_ex_not_indet {a b : D} (hab : a ≠ b) (P₀ : P
 makes `x` cover the domain, so the pronoun's atomicity fails (fn. 19). -/
 theorem not_felicitousDiscourseP_not_all {a b : D} (hab : a ≠ b) (P₀ Q : P)
     (hd : ∃ d, d ∉ M.pred P₀ w) :
-    ¬ FelicitousDiscourseP M Set.univ [.not (.all x (.pred P₀ x)), .pred Q x] := by
+    ¬ FelicitousDiscourse (evalP M) Set.univ [.not (.all x (.pred P₀ x)), .pred Q x] := by
   rintro ⟨-, h, -⟩
-  have hmem : (w, covering D x) ∈ updateP M Set.univ (.not (.all x (.pred P₀ x))) := by
+  have hmem : (w, covering D x) ∈ update (evalP M) Set.univ (.not (.all x (.pred P₀ x))) := by
     refine ⟨trivial, ?_⟩
     rw [evalP_not, (evalP_all_false_and_not_ex_not_indet hab P₀ hd).1]; rfl
   have := h (id, .valued x) (by simp [Formula.occurrences]) (.or (.valued x) (.not (.valued x)))
@@ -1179,8 +1172,9 @@ theorem trueAtP_qs_restricted_iff [Nonempty D] (S B : P) (Rd L : R) (hxy : x ≠
 
 /-- The pronoun of *every student read a book and every student liked it* satisfies
 Transparency in every context ((32)). -/
-theorem felicitousP_qs_restricted (C : CtxP W D) (S B : P) (Rd L : R) (hxy : x ≠ y) :
-    FelicitousP M C
+theorem felicitousP_qs_restricted (C : Set (W × PluralAssign ℕ D)) (S B : P) (Rd L : R)
+    (hxy : x ≠ y) :
+    Felicitous (evalP M) C
       (.and (.all x (.or (.not (.pred S x)) (.ex y (.and (.pred B y) (.rel Rd x y)))))
         (.all x (.or (.not (.pred S x)) (.rel L x y)))) := by
   intro o ho
@@ -1203,7 +1197,7 @@ leave the non-student's book unsettled ((33)–(34)). -/
 theorem not_felicitousP_qs_everyone {c d : D} (hcd : c ≠ d) (S B : P) (Rd L : R) (hxy : x ≠ y)
     {e₀ : D} (he₀ : e₀ ∉ M.pred S w)
     (hS : ∀ s ∈ M.pred S w, ∃ b ∈ M.pred B w, (s, b) ∈ M.rel Rd w) :
-    ¬ FelicitousP M Set.univ
+    ¬ Felicitous (evalP M) Set.univ
       (.and (.all x (.or (.not (.pred S x)) (.ex y (.and (.pred B y) (.rel Rd x y)))))
         (.all x (.rel L x y))) := by
   classical
@@ -1386,8 +1380,9 @@ theorem trueAtP_donkey_iff [Nonempty D] (F Dn : P) (O Bt : R) (hxy : x ≠ y) :
 
 /-- The pronoun of the donkey sentence satisfies Transparency in every context ((37)–(38),
 §6.7.2). -/
-theorem felicitousP_donkey (C : CtxP W D) (F Dn : P) (O Bt : R) (hxy : x ≠ y) :
-    FelicitousP M C (.all x (.or (.not (.and (.pred F x) (.ex y (.and (.pred Dn y) (.rel O x y)))))
+theorem felicitousP_donkey (C : Set (W × PluralAssign ℕ D)) (F Dn : P) (O Bt : R) (hxy : x ≠ y) :
+    Felicitous (evalP M) C (.all x (.or (.not (.and (.pred F x)
+        (.ex y (.and (.pred Dn y) (.rel O x y)))))
       (.rel Bt x y))) := by
   intro o ho
   simp [Formula.occurrences, hxy, hxy.symm] at ho
