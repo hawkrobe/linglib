@@ -84,6 +84,16 @@ def ImpoverishmentRule.apply (delete : Bundle → Target → Bundle)
     (rule : ImpoverishmentRule Bundle Target) (n : Neighborhood Bundle) : Bundle :=
   if rule.condition n then delete n.focus rule.target else n.focus
 
+/-- Impoverishment only deletes. On a list bundle, erasing the target leaves a sublist of the
+focus. -/
+theorem ImpoverishmentRule.apply_erase_sublist {α : Type*} [BEq α]
+    (rule : ImpoverishmentRule (List α) α) (n : Neighborhood (List α)) :
+    (rule.apply List.erase n).Sublist n.focus := by
+  unfold apply
+  split
+  · exact List.erase_sublist
+  · exact .refl _
+
 /-! ### Paradigmatic and syntagmatic rules
 
 The structural counterpart of [arregi-nevins-2012]'s distinction
@@ -97,9 +107,8 @@ def ImpoverishmentRule.Paradigmatic (r : ImpoverishmentRule Bundle Target) : Pro
   ∀ n₁ n₂ : Neighborhood Bundle,
     n₁.focus = n₂.focus → (r.condition n₁ ↔ r.condition n₂)
 
-/-- A rule is **syntagmatic** iff it is not paradigmatic: some
-neighborhoods agree on focus but disagree on the condition, so the
-condition genuinely depends on context. -/
+/-- A rule is **syntagmatic** iff it is not paradigmatic, so that some neighborhoods agree on the
+focus but disagree on the condition, which genuinely depends on context. -/
 def ImpoverishmentRule.Syntagmatic (r : ImpoverishmentRule Bundle Target) : Prop :=
   ¬ r.Paradigmatic
 
@@ -135,8 +144,7 @@ def runChain {R : Type*} (apply : R → Neighborhood Bundle → Bundle)
   rules.foldl (init := n.focus)
     (λ focusAcc rule => apply rule { n with focus := focusAcc })
 
-/-- Concatenated chains run sequentially: the second chain starts where
-the first left off. -/
+/-- Concatenated chains run sequentially, the second chain starting where the first left off. -/
 theorem runChain_append {R : Type*} (apply : R → Neighborhood Bundle → Bundle)
     (rs₁ rs₂ : List R) (n : Neighborhood Bundle) :
     runChain apply (rs₁ ++ rs₂) n =
