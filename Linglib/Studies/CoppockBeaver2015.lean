@@ -230,24 +230,24 @@ pointwise. -/
 open Classical in
 /-- `|P| ≤ 1` as a formula is `∀x[P(x) → ∀y[P(y) → x = y]]`. -/
 noncomputable def atMostOneFormula (P : (E → Trivalent)) : Trivalent :=
-  forall' (fun x ↦ joinWeak (neg (P x)) (forall' (fun y ↦ joinWeak (neg (P y)) (ofProp (x = y)))))
+  forallHaug (fun x ↦ joinWeak (neg (P x)) (forallHaug (fun y ↦ joinWeak (neg (P y)) (ofProp (x = y)))))
 
 open Classical in
 /-- The exclusive component of *only* as a formula is `∀y[x ≠ y → ¬P(y)]`. -/
 noncomputable def exclusiveFormula (P : (E → Trivalent)) (x : E) : Trivalent :=
-  forall' (fun y ↦ joinWeak (neg (ofProp (x ≠ y))) (neg (P y)))
+  forallHaug (fun y ↦ joinWeak (neg (ofProp (x ≠ y))) (neg (P y)))
 
 theorem atMostOne_eq_ofProp {P : E → Trivalent} [Decidable (WeakUnique P)]
     (h : ∃ x, P x ≠ .indet) :
     atMostOneFormula P = ofProp (WeakUnique P) := by
   obtain ⟨x₀, hx₀⟩ := h
   refine eq_of_indet_iff_of_true_iff ?_ ?_
-  · simp only [atMostOneFormula, forall'_eq_indet_iff, joinWeak_eq_indet_iff, neg_eq_indet_iff,
+  · simp only [atMostOneFormula, forallHaug_eq_indet_iff, joinWeak_eq_indet_iff, neg_eq_indet_iff,
       ofProp_ne_indet, or_false, iff_false]
     exact fun hall ↦ (hall x₀).elim hx₀ fun hy ↦ hx₀ (hy x₀)
-  · simp only [atMostOneFormula, forall'_eq_true_iff, joinWeak_eq_indet_iff,
-      joinWeak_eq_false_iff, neg_eq_indet_iff, neg_eq_false_iff, forall'_eq_indet_iff,
-      forall'_eq_false_iff, ofProp_ne_indet, ofProp_eq_true_iff, ofProp_eq_false_iff, or_false,
+  · simp only [atMostOneFormula, forallHaug_eq_true_iff, joinWeak_eq_indet_iff,
+      joinWeak_eq_false_iff, neg_eq_indet_iff, neg_eq_false_iff, forallHaug_eq_indet_iff,
+      forallHaug_eq_false_iff, ofProp_ne_indet, ofProp_eq_true_iff, ofProp_eq_false_iff, or_false,
       ne_eq]
     constructor
     · rintro ⟨-, hu⟩ x hx y hy
@@ -270,10 +270,10 @@ theorem exclusiveFormula_eq_ofProp {P : (E → Trivalent)} {x : E} [Decidable (E
     (h : P x = .true) :
     exclusiveFormula P x = ofProp (Exclusive P x) := by
   refine eq_of_indet_iff_of_true_iff ?_ ?_
-  · simp only [exclusiveFormula, forall'_eq_indet_iff, joinWeak_eq_indet_iff, neg_eq_indet_iff,
+  · simp only [exclusiveFormula, forallHaug_eq_indet_iff, joinWeak_eq_indet_iff, neg_eq_indet_iff,
       ofProp_ne_indet, false_or, iff_false]
     exact fun hall ↦ by simpa [h] using hall x
-  · simp only [exclusiveFormula, forall'_eq_true_iff, joinWeak_eq_indet_iff,
+  · simp only [exclusiveFormula, forallHaug_eq_true_iff, joinWeak_eq_indet_iff,
       joinWeak_eq_false_iff, neg_eq_indet_iff, neg_eq_false_iff, ofProp_ne_indet,
       ofProp_eq_true_iff, false_or, ne_eq]
     constructor
@@ -612,10 +612,10 @@ theorem elim_iota_ne_indet_iff (P : (E → Trivalent)) (f : E → Trivalent) (hf
   cases iota P <;> simp [hf]
 
 /-- The existential shift (85) asserts a common satisfier of restrictor and scope. -/
-noncomputable def ex (P Q : (E → Trivalent)) : Trivalent := exists' (fun x ↦ meetWeak (P x) (Q x))
+noncomputable def ex (P Q : (E → Trivalent)) : Trivalent := existsHaug (fun x ↦ meetWeak (P x) (Q x))
 
 theorem ex_indet_left (Q : (E → Trivalent)) : ex (fun _ ↦ .indet) Q = .indet :=
-  (exists'_eq_indet_iff _).2 fun _ ↦ meetWeak_indet_left _
+  (existsHaug_eq_indet_iff _).2 fun _ ↦ meetWeak_indet_left _
 
 /-- The type shift of footnote 26 scopes an argument quantifier inside the modified
 description — the further existential within the nominal that intervenes between the
@@ -646,10 +646,10 @@ theorem readings_agree_of_existsUnique {C : Set W} {π Q : W → (E → Trivalen
   have hi : iota (π w) = some x := (Reference.iota_eq_some_iff _).2 ⟨hx, hu⟩
   rw [hi, Option.elim_some, ex]
   refine (eq_of_indet_iff_of_true_iff ?_ ?_).symm
-  · simp only [exists'_eq_indet_iff, meetWeak_eq_indet_iff, (hπ w hw).ne_indet,
+  · simp only [existsHaug_eq_indet_iff, meetWeak_eq_indet_iff, (hπ w hw).ne_indet,
       (hQ w hw).ne_indet, or_self]
     exact iff_of_false (fun h' ↦ h' x) id
-  · simp only [exists'_eq_true_iff, meetWeak_eq_true_iff]
+  · simp only [existsHaug_eq_true_iff, meetWeak_eq_true_iff]
     exact ⟨fun ⟨y, hy, hq⟩ ↦ hu y hy ▸ hq, fun hq ↦ ⟨x, hx, hq⟩⟩
 
 /-- An indefinite the definite fails to block has, at some world of the context, a
@@ -674,13 +674,13 @@ denies that any sole `P` bears `Q`, by Quantifier Projection (A.4.2): the anti-u
 reading (89)–(94). -/
 theorem neg_ex_the_only (hP : IsBivalent P) (hQ : IsBivalent Q) :
     neg (ex (the (only P)) Q) =
-      meetWeak (exists' (fun x ↦ presuppose (P x)))
-        (neg (exists' (fun x ↦ meetWeak (P x) (meetWeak (ofProp (Exclusive P x)) (Q x))))) := by
+      meetWeak (existsHaug (fun x ↦ presuppose (P x)))
+        (neg (existsHaug (fun x ↦ meetWeak (P x) (meetWeak (ofProp (Exclusive P x)) (Q x))))) := by
   have hψ : IsBivalent (fun x : E ↦ meetWeak (ofProp (Exclusive P x)) (Q x)) :=
     (isBivalent_iff_forall_ne_indet _).2 fun x ↦ by simp [hQ.ne_indet x]
   rw [ex, the_only]
   simp only [only, meetWeak_assoc]
-  rw [exists'_meetWeak_presuppose hP hψ, neg_meetWeak_of_ne_false (exists'_presuppose_ne_false _)]
+  rw [existsHaug_meetWeak_presuppose hP hψ, neg_meetWeak_of_ne_false (existsHaug_presuppose_ne_false _)]
 
 /-- The argumental reading presupposes a `P`, not an only `P` (§3.2): it is undefined
 exactly when there is no `P`. -/
@@ -774,7 +774,7 @@ noncomputable def sentence (α : (Book → Trivalent) → (Book → Trivalent)) 
   fun w ↦ ex (α (wrote w)) (reading w)
 
 private theorem sentence_an_eq_true (w : World) : sentence an w = .true :=
-  (exists'_eq_true_iff _).2 ⟨.one, by cases w <;> decide⟩
+  (existsHaug_eq_true_iff _).2 ⟨.one, by cases w <;> decide⟩
 
 /-- Once the context settles that Frida wrote exactly one book, *the* blocks *a*, (73b). -/
 theorem blocks_of_one : Blocks {World.oneBook} sentence the an :=
@@ -805,13 +805,13 @@ def survived (z : Ind) : (Ind → Trivalent) :=
 /-- In *only survivor of a plane crash* (69), the type shift of footnote 26 scopes the crash
 inside the description. -/
 noncomputable def onlySurvivor : (Ind → Trivalent) :=
-  scopeInside survived (fun M ↦ exists' fun z ↦ meetWeak (crash z) (M z)) only
+  scopeInside survived (fun M ↦ existsHaug fun z ↦ meetWeak (crash z) (M z)) only
 
 private theorem onlySurvivor_scott : onlySurvivor .scott = .true :=
-  (exists'_eq_true_iff _).2 ⟨.crash₁, by decide⟩
+  (existsHaug_eq_true_iff _).2 ⟨.crash₁, by decide⟩
 
 private theorem onlySurvivor_sam : onlySurvivor .sam = .true :=
-  (exists'_eq_true_iff _).2 ⟨.crash₂, by decide⟩
+  (existsHaug_eq_true_iff _).2 ⟨.crash₂, by decide⟩
 
 /-- The description holds of as many people as there are crashes with a single survivor. -/
 theorem not_weakUnique_onlySurvivor : ¬ WeakUnique onlySurvivor := fun h ↦
@@ -827,7 +827,7 @@ theorem an_only_survivor_not_blocked :
 
 /-- The high-scope derivation places the crash above the article. -/
 noncomputable def high (α : (Ind → Trivalent) → (Ind → Trivalent)) (_ : Unit) : Trivalent :=
-  exists' fun z ↦ meetWeak (crash z) (α (only (survived z)) .scott)
+  existsHaug fun z ↦ meetWeak (crash z) (α (only (survived z)) .scott)
 
 /-- On the high-scope derivation the definite contributes nothing: each crash has a single
 survivor. -/
