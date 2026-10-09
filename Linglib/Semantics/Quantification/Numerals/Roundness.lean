@@ -10,11 +10,13 @@ public import Mathlib.Tactic.DeriveFintype
 # Numeral roundness
 
 A number has `k`-ness when it is a digit times `k` times a power of ten, Jansen and Pollmann's
-`k × (1–9 × 10ⁿ)`. Sigurd, Jansen and Pollmann, and Woodin et al. take a number's roundness to be
-carried by six properties: being a multiple of five or of ten, and 10-ness, 2-ness, 2½-ness and
-5-ness. Following Woodin et al. the `k`-ness properties require a positive power of ten, which is
-`10 k`-ness, so every round number is a multiple of five. The roundness score of a number is the
-number of these properties it has.
+`k × (1–9 × 10ⁿ)`. Sigurd counts the powers of ten from ten up, their halves and their quarters
+as rounder than other numbers; Jansen and Pollmann tie roundness instead to 10-ness, 2-ness,
+5-ness and 2½-ness, and 2½-ness of `n` is 5-ness of `2n`. Woodin et al. predict a number's
+frequency from six properties: being a multiple of five or of ten, and the four `k`-ness
+properties over positive powers of ten only, since at the zeroth power every digit has 10-ness.
+A positive power makes `k`-ness `10 k`-ness, so every number with one of the six properties is a
+multiple of five. The roundness score of a number is the number of these properties it has.
 
 ## Main definitions
 
@@ -24,10 +26,7 @@ number of these properties it has.
 
 ## Implementation notes
 
-Woodin et al.'s regression weights the properties unequally as predictors of frequency, 10-ness
-strongest (β = 4.46), then 2½-ness (3.84), 5-ness (3.39), 2-ness (2.74), multiple of ten (2.45)
-and multiple of five (0.06); the score counts them equally. Jansen and Pollmann's own definition
-allows the zeroth power, see `Studies/JansenPollmann2001.lean`.
+Woodin et al.'s regression weights the six properties unequally; the score counts them equally.
 
 ## References
 

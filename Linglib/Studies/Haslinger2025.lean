@@ -36,7 +36,7 @@ potential p-equivalence a relation parameter, since the dissertation's (68) quan
 contexts that differ only in the issue parameter. Degree expressions are construals over `ℚ`, the
 precise interpretation the exact value and the imprecise one the halo of a contextual deviation
 `m`, (69)–(70); the roundness score of `Numerals.Roundness` stands in for the
-conventionalized scales, and `score_ge_six_lt_thousand` is the finite computation behind the
+conventionalized scales, and `score_ge_six_lt_two_hundred` is the finite computation behind the
 asymmetry. The dissertation's examples are the rows of `Data/Examples/Haslinger2025.json`; its
 Ch. 5 extensions to presupposition and redundancy and the collective exceptions of Ch. 7 are not
 modelled.
