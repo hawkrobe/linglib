@@ -1,18 +1,19 @@
 module
 
-public import Linglib.Logic.Trivalent.Prop3
+public import Linglib.Logic.Trivalent.Pointwise
 public import Mathlib.Order.SetNotation
 
 /-!
 # Homogeneity
 
-A trivalent proposition (`Trivalent.Prop3`) is homogeneous, in Križ's sense, when its extension
+A trivalent proposition `W → Trivalent` is homogeneous, in Križ's sense, when its extension
 gap is nonempty: true when the predicate holds throughout its specification points, false when it
 fails throughout, and undefined in between. Instantiations differ in the specification points:
 atoms of a plurality (`Homogeneity.Plural`), closest antecedent worlds
 (`Conditional.selectionalCounterfactual`), overlapping pluralities (`Homogeneity.Collective`),
 best modal worlds (`Studies/AghaJeretic2022`). Homogeneity removers such as *all*, *necessarily*
-and *completely* denote the Beaver–Krahmer assertion operator `Prop3.metaAssert`, which collapses
+and *completely* denote the Beaver–Krahmer assertion operator `Trivalent.metaAssert`, applied
+pointwise, which collapses
 the gap into the negative extension. A family of propositions is `Homogeneous` at a world when
 its members are all true there or all false there, which is where the supervaluation over them is
 defined; presuppositional exhaustification presupposes this of its includable alternatives.
@@ -34,30 +35,28 @@ defined; presuppositional exhaustification presupposes this of its includable al
 
 namespace Homogeneity
 
-open Trivalent (Prop3)
-
 variable {W : Type*}
 
 /-- A proposition is homogeneous if its extension gap is nonempty. The gap
     is what enables non-maximal readings. -/
-def isHomogeneous (p : Prop3 W) : Prop := p.gapExt.Nonempty
+def isHomogeneous (p : W → Trivalent) : Prop := (Trivalent.gapExt p).Nonempty
 
 /-- A single gap-world witnesses homogeneity. -/
-theorem isHomogeneous_of_gap (p : Prop3 W) (w : W) (h : p w = .indet) :
+theorem isHomogeneous_of_gap (p : (W → Trivalent)) (w : W) (h : p w = .indet) :
     isHomogeneous p :=
   ⟨w, h⟩
 
 /-- Bivalence and homogeneity are complementary. -/
-theorem isBivalent_iff_not_isHomogeneous (p : Prop3 W) :
-    p.isBivalent ↔ ¬isHomogeneous p := by
-  rw [Prop3.isBivalent_iff_gapExt_eq_empty, isHomogeneous,
+theorem isBivalent_iff_not_isHomogeneous (p : W → Trivalent) :
+    Trivalent.IsBivalent p ↔ ¬isHomogeneous p := by
+  rw [Trivalent.isBivalent_iff_gapExt_eq_empty, isHomogeneous,
     Set.not_nonempty_iff_eq_empty]
 
 /-- A meta-asserted proposition is never homogeneous: gap removers yield
     bivalence. -/
-theorem not_isHomogeneous_metaAssert (p : Prop3 W) :
-    ¬isHomogeneous p.metaAssert := by
-  simp [isHomogeneous, Prop3.gapExt_metaAssert]
+theorem not_isHomogeneous_comp_metaAssert (p : W → Trivalent) :
+    ¬isHomogeneous (Trivalent.metaAssert ∘ p) := by
+  simp [isHomogeneous, Trivalent.gapExt_comp_metaAssert]
 
 /-- The propositions of `S` are homogeneous at `w` when they are all true there or all false
 there. -/

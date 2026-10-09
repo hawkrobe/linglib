@@ -15,8 +15,8 @@ Originates with [kriz-2016]; consumed by `Studies/Kriz2016.lean`,
 
 ## Main definitions
 
-* `barePlural`: the bare plural sentence as a `Prop3`.
-* `allPlural`: the *all*-sentence, `Prop3.metaAssert` of `barePlural`.
+* `barePlural`: the bare plural sentence as a trivalent proposition.
+* `allPlural`: the *all*-sentence, pointwise meta-assertion of `barePlural`.
 
 ## Main results
 
@@ -35,41 +35,40 @@ Originates with [kriz-2016]; consumed by `Studies/Kriz2016.lean`,
 
 namespace Homogeneity
 
-open Trivalent (Prop3)
-
 variable {Atom W : Type*} (P : Atom → W → Prop) [∀ a w, Decidable (P a w)]
   (x : Finset Atom)
 
 /-- The bare plural sentence "the Xs are P" as a trivalent sentence. -/
-def barePlural : Prop3 W :=
+def barePlural : (W → Trivalent) :=
   fun w ↦ Trivalent.supervaluation x (P · w)
 
 /-- The *all*-sentence "all the Xs are P". Per [kriz-2016] §3.1, *all*'s
     semantic contribution is gap removal, so the semantics is derived from
-    the bare plural via `Prop3.metaAssert` rather than stipulated. -/
-def allPlural : Prop3 W :=
-  (barePlural P x).metaAssert
+    the bare plural via pointwise `Trivalent.metaAssert` rather than stipulated. -/
+def allPlural : W → Trivalent :=
+  Trivalent.metaAssert ∘ barePlural P x
 
 /-- *all* eliminates the extension gap. -/
-theorem gapExt_allPlural : (allPlural P x).gapExt = ∅ :=
-  Trivalent.Prop3.gapExt_metaAssert _
+theorem gapExt_allPlural : Trivalent.gapExt (allPlural P x) = ∅ :=
+  Trivalent.gapExt_comp_metaAssert _
 
 /-- An *all*-sentence is never homogeneous. -/
 theorem not_isHomogeneous_allPlural : ¬isHomogeneous (allPlural P x) :=
-  not_isHomogeneous_metaAssert _
+  not_isHomogeneous_comp_metaAssert _
 
 /-- The bare plural and the *all*-sentence are true in the same worlds. -/
-theorem posExt_allPlural : (allPlural P x).posExt = (barePlural P x).posExt :=
-  Trivalent.Prop3.posExt_metaAssert _
+theorem posExt_allPlural : Trivalent.posExt (allPlural P x) = Trivalent.posExt (barePlural P x) :=
+  Trivalent.posExt_comp_metaAssert _
 
 /-- *all* absorbs the gap into the negative extension. -/
 theorem negExt_allPlural :
-    (allPlural P x).negExt = (barePlural P x).negExt ∪ (barePlural P x).gapExt :=
-  Trivalent.Prop3.negExt_metaAssert _
+    Trivalent.negExt (allPlural P x) =
+      Trivalent.negExt (barePlural P x) ∪ Trivalent.gapExt (barePlural P x) :=
+  Trivalent.negExt_comp_metaAssert _
 
 /-- *all*-sentences are bivalent. -/
-theorem isBivalent_allPlural : (allPlural P x).isBivalent :=
-  Trivalent.Prop3.isBivalent_metaAssert _
+theorem isBivalent_allPlural : Trivalent.IsBivalent (allPlural P x) :=
+  Trivalent.isBivalent_comp_metaAssert _
 
 /-- An *all*-sentence is true iff all atoms satisfy `P`. -/
 theorem allPlural_eq_true_iff (w : W) :
@@ -110,7 +109,7 @@ theorem allPlural_blocked_by_wide_issue (q : Setoid W)
     | inr h => exact h
   exact hAddr ⟨w₁, w₂, hEq, (allPlural_eq_true_iff P x w₁).mpr h1, h2'⟩
 
-/-- A usable *all*-sentence leaves no exceptions to mention: "#Although all
+/-- A usable *all*-sentence leaves no exceptions to mention — "#Although all
     the professors smiled, Smith didn't" is contradictory. The bare-plural
     unmentionability result proper ([kriz-2016] §4.1) is
     `exception_unaddressable`. -/

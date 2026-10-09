@@ -96,7 +96,7 @@ semantics into a dynamic account of accommodation.
 
 namespace BeaverKrahmer2001
 
-open Trivalent (metaAssert presuppose meetMiddle joinMiddle meetWeak joinWeak ofBool Prop3)
+open Trivalent (metaAssert presuppose meetMiddle joinMiddle meetWeak joinWeak ofBool)
 
 /-! ### Transplication, assertion, denial
 
@@ -681,7 +681,7 @@ theorem regret_conditional_presupposes_nothing : ∀ V, eval V (presup preferred
 
 end SadRegret
 
-/-- The paper's printed degrees under the assertion-opaque reading: the king-of-France
+/-- The paper's printed degrees under the assertion-opaque reading — the king-of-France
 denial's preferred translation is incoherent to degree two, and half-asserting the
 stopped-or-started disjunction leaves degree one. -/
 example : incoherence KingOfFrance.preferred = 2 := by decide
@@ -699,7 +699,7 @@ theorem prefers_not_total :
 /-! ### Update and accommodation
 
 The paper's `update` relation is the substrate's Heimian partial update of a trivalent
-proposition (`CCP.Partial.ofProp3`), its domain condition the presupposition operator and
+proposition (`CCP.Partial.ofTrivalent`), its domain condition the presupposition operator and
 its output the meta-asserted content; the hearer-side `update⋆` over candidate common
 grounds is its `PFun.image`, and a monologue composes by sequencing. Accommodation, after
 [lewis-1979] and [stalnaker-1974], is the filtering this image performs. -/
@@ -713,11 +713,11 @@ variable {W : Type*}
 /-- The paper's `update ξ σ τ` says, in its own vocabulary, that `σ` supports the
 presupposition `P ∘ ξ` throughout and that `τ` is `σ` intersected with the asserted
 content `A ∘ ξ`. -/
-theorem update_iff (ξ : Prop3 W) (σ τ : Set W) :
-    (σ, τ) ∈ (CCP.Partial.ofProp3 ξ).graph' ↔
+theorem update_iff (ξ : (W → Trivalent)) (σ τ : Set W) :
+    (σ, τ) ∈ (CCP.Partial.ofTrivalent ξ).graph' ↔
       σ ⊆ {i | presupVal (ξ i) = .true} ∧ τ = σ ∩ {i | metaAssert (ξ i) = .true} := by
-  show τ ∈ CCP.Partial.ofProp3 ξ σ ↔ _
-  rw [CCP.Partial.mem_ofProp3]
+  show τ ∈ CCP.Partial.ofTrivalent ξ σ ↔ _
+  rw [CCP.Partial.mem_ofTrivalent]
   refine and_congr (forall₂_congr fun i _ ↦ ?_) ?_
   · rw [Set.mem_ofPred_eq, presupVal_eq_true_iff]
   · have e : {w ∈ σ | ξ w = .true} = σ ∩ {i | metaAssert (ξ i) = .true} :=
@@ -726,30 +726,30 @@ theorem update_iff (ξ : Prop3 W) (σ τ : Set W) :
 
 /-- `update⋆` is the image: a candidate output common ground is the update of some
 candidate input. -/
-theorem hearer_update (ξ : Prop3 W) (cgs : Set (Set W)) (τ : Set W) :
-    τ ∈ (CCP.Partial.ofProp3 ξ).image cgs ↔
-      ∃ σ ∈ cgs, (σ, τ) ∈ (CCP.Partial.ofProp3 ξ).graph' :=
+theorem hearer_update (ξ : (W → Trivalent)) (cgs : Set (Set W)) (τ : Set W) :
+    τ ∈ (CCP.Partial.ofTrivalent ξ).image cgs ↔
+      ∃ σ ∈ cgs, (σ, τ) ∈ (CCP.Partial.ofTrivalent ξ).graph' :=
   PFun.mem_image _ _ _
 
 /-- The two-stage procedure filters out the candidate common grounds incompatible with
 the presuppositions, then updates each remaining one with the assertion. -/
-theorem hearer_update_filters_then_asserts (ξ : Prop3 W) (cgs : Set (Set W)) :
-    (CCP.Partial.ofProp3 ξ).image cgs =
-      (fun σ ↦ σ ∩ ξ.posExt) '' {σ ∈ cgs | (CCP.Partial.ofProp3 ξ).Admits σ} := by
+theorem hearer_update_filters_then_asserts (ξ : (W → Trivalent)) (cgs : Set (Set W)) :
+    (CCP.Partial.ofTrivalent ξ).image cgs =
+      (fun σ ↦ σ ∩ Trivalent.posExt ξ) '' {σ ∈ cgs | (CCP.Partial.ofTrivalent ξ).Admits σ} := by
   ext τ
   rw [PFun.mem_image]
   constructor
   · rintro ⟨σ, hσ, h⟩
-    rw [CCP.Partial.mem_ofProp3] at h
+    rw [CCP.Partial.mem_ofTrivalent] at h
     exact ⟨σ, ⟨hσ, h.1⟩, h.2.symm⟩
   · rintro ⟨σ, ⟨hσ, hd⟩, rfl⟩
-    exact ⟨σ, hσ, (CCP.Partial.mem_ofProp3 ..).2 ⟨hd, rfl⟩⟩
+    exact ⟨σ, hσ, (CCP.Partial.mem_ofTrivalent ..).2 ⟨hd, rfl⟩⟩
 
 /-- A hearer making no assumptions updates from the full powerset; two sentences compose
 by sequencing the updates. -/
-theorem monologue (ξ₁ ξ₂ : Prop3 W) :
-    (CCP.Partial.ofProp3 ξ₂).image ((CCP.Partial.ofProp3 ξ₁).image Set.univ) =
-      (PartialUpdate.seq (CCP.Partial.ofProp3 ξ₁) (CCP.Partial.ofProp3 ξ₂)).image
+theorem monologue (ξ₁ ξ₂ : (W → Trivalent)) :
+    (CCP.Partial.ofTrivalent ξ₂).image ((CCP.Partial.ofTrivalent ξ₁).image Set.univ) =
+      (PartialUpdate.seq (CCP.Partial.ofTrivalent ξ₁) (CCP.Partial.ofTrivalent ξ₂)).image
         Set.univ :=
   (PartialUpdate.image_seq _ _ _).symm
 

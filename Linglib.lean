@@ -157,7 +157,6 @@ import Linglib.Logic.Temporal.Defs
 import Linglib.Logic.Temporal.Soundness
 import Linglib.Core.Data.Trivalent
 import Linglib.Core.Data.UnorderedTree.Basic
-import Linglib.Logic.Trivalent.Prop3
 import Linglib.Logic.Trivalent.Propositional
 import Linglib.Core.Order.AllenRelation
 import Linglib.Core.Order.Antichain

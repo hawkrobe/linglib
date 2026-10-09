@@ -105,12 +105,12 @@ theorem cleft_neg_of_alt {q : Set W} {w : W} (hq : q ∈ alts) (hw : w ∈ q) (h
 
 /-- The cleft presupposes that some alternative holds, so a focused negative quantifier clashes
 with it ((60) and (61)). -/
-theorem cleft_existence {w : W} (h : (cleft alts p).defined w) : w ∈ ⋃₀ alts := h.2
+theorem cleft_existence {w : W} (h : (cleft alts p).presup w) : w ∈ ⋃₀ alts := h.2
 
 /-- The Ngamo construction is defined at a world where no alternative holds, so it carries no
 existence presupposition (59). -/
 theorem marked_of_not_exists {salient : Set W → Prop} (hs : salient (⋃₀ alts)) {w : W}
-    (_ : w ∉ ⋃₀ alts) : (marked alts p salient).defined w :=
+    (_ : w ∉ ⋃₀ alts) : (marked alts p salient).presup w :=
   hs
 
 end GrubicRenansDuah2019

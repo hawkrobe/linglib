@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Exhaustification.Finite
-public import Linglib.Logic.Trivalent.Prop3
+public import Linglib.Logic.Trivalent.Pointwise
 
 /-!
 # Trivalent exhaustification
@@ -34,7 +34,7 @@ open Exhaustification
 
 variable {W : Type} [Fintype W] [DecidableEq W]
 
-/-- The classical truth conditions of a trivalent proposition: `true` to `true`, `false` and
+/-- The classical truth conditions of a trivalent proposition send `true` to `true`, `false` and
 `indet` to `false`. -/
 def classicalPart (p : W → _root_.Trivalent) : W → Bool :=
   _root_.Trivalent.toBoolOrFalse ∘ p
@@ -44,7 +44,7 @@ def excluded (alts : List (W → _root_.Trivalent)) (p : W → _root_.Trivalent)
     Finset (Finset W) :=
   innocent.excluded (altsFromPreds (alts.map classicalPart)) (predToFinset (classicalPart p))
 
-/-- Weak-negation exhaustification: true where the prejacent is true and no excludable
+/-- Weak-negation exhaustification is true where the prejacent is true and no excludable
 alternative is true, false where the prejacent is false or some excludable alternative is true,
 undefined where the prejacent is. -/
 def exh1 (alts : List (W → _root_.Trivalent)) (p : W → _root_.Trivalent) :
@@ -58,7 +58,7 @@ def exh1 (alts : List (W → _root_.Trivalent)) (p : W → _root_.Trivalent) :
       then .true
       else .false
 
-/-- Strong-negation exhaustification: undefined where the prejacent or some excludable
+/-- Strong-negation exhaustification is undefined where the prejacent or some excludable
 alternative is, true where the prejacent is true and every excludable alternative false, and
 false otherwise. -/
 def exh2 (alts : List (W → _root_.Trivalent)) (p : W → _root_.Trivalent) :

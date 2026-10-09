@@ -3,7 +3,7 @@ module
 public import Mathlib.Tactic.FinCases
 public import Mathlib.Data.Fintype.Basic
 public import Linglib.Semantics.Presupposition.Trivalent
-public import Linglib.Logic.Trivalent.Prop3
+public import Linglib.Logic.Trivalent.Pointwise
 public import Linglib.Data.Examples.Yagi2025
 
 /-!
@@ -39,7 +39,7 @@ filters the presupposition away (`exists_disjS_some_flexS_top_none`).
 
 The designated undefined state of the update semantics is `none` on `Option (Set W)`, with
 union and subtraction absorbing it. The meta-assertion operator is stated on partial
-propositions and agrees with the trivalent `Prop3.metaAssert` (`eval_assertMeta`). The
+propositions and agrees with the pointwise trivalent meta-assertion (`eval_assertMeta`). The
 licensing constraint on the operator is not modelled.
 
 ## References
@@ -138,15 +138,15 @@ def unionU : Option (Set W) → Option (Set W) → Option (Set W)
 @[simp] theorem unionU_none_right (a : Option (Set W)) : unionU a none = none := by
   cases a <;> rfl
 
-/-- Update by a partial proposition: undefined unless the presupposition holds throughout. -/
+/-- Update by a partial proposition is undefined unless the presupposition holds throughout. -/
 noncomputable def updateS (φ : PartialProp W) (s : Set W) : Option (Set W) :=
   if ∀ w ∈ s, φ.presup w then some {w ∈ s | φ.assertion w} else none
 
-/-- Negation of an update: the input minus the result. -/
+/-- Negation of an update returns the input minus the result. -/
 def negOf (upd : Set W → Option (Set W)) (s : Set W) : Option (Set W) :=
   (upd s).map (s \ ·)
 
-/-- Disjunction: the first update, joined with the second in the negation of the first. -/
+/-- Disjunction is the first update, joined with the second in the negation of the first. -/
 noncomputable def disjS (φ ψ : PartialProp W) (s : Set W) : Option (Set W) :=
   unionU (updateS φ s) ((negOf (updateS φ) s).bind (updateS ψ))
 
@@ -225,14 +225,14 @@ theorem local_contexts_force_truth (h : Conflict φ ψ) (s : Set W)
 
 /-! ### The meta-assertion operator -/
 
-/-- The meta-assertion operator: always defined, true where the proposition is defined and
+/-- The meta-assertion operator is always defined, true where the proposition is defined and
 true. -/
 def assertMeta (φ : PartialProp W) : PartialProp W where
   presup _ := True
   assertion w := φ.presup w ∧ φ.assertion w
 
 /-- It agrees with the trivalent operator. -/
-theorem eval_assertMeta (w : W) : (assertMeta φ).eval w = Prop3.metaAssert φ.eval w := by
+theorem eval_assertMeta (w : W) : (assertMeta φ).eval w = Trivalent.metaAssert (φ.eval w) := by
   by_cases hp : φ.presup w <;> by_cases ha : φ.assertion w <;>
     simp [PartialProp.eval, assertMeta, hp, ha, Trivalent.metaAssert]
 
@@ -374,8 +374,8 @@ theorem negOf_flexS_split (h : Conflict φ ψ) {s : Set W}
   simp only [Set.mem_sdiff, Set.mem_ofPred_eq, not_and, not_or]
   tauto
 
-/-- Genuineness: each disjunct is defined and true at some world of the input that survives
-the update. -/
+/-- Genuineness demands that each disjunct is defined and true at some world of the input
+that survives the update. -/
 def Genuine (upd : Set W → Option (Set W)) (φ ψ : PartialProp W) (s : Set W) : Prop :=
   (∃ w ∈ s, φ.presup w ∧ φ.assertion w ∧ ∃ t, upd s = some t ∧ w ∈ t) ∧
     (∃ w ∈ s, ψ.presup w ∧ ψ.assertion w ∧ ∃ t, upd s = some t ∧ w ∈ t)
@@ -404,7 +404,7 @@ theorem exists_disjS_some_flexS_top_none (hφ : ∀ w, φ.presup w) {w : W}
 
 /-! ### The ideal input -/
 
-/-- The four worlds of the ideal input: king opening, king not opening, president conducting,
+/-- The four worlds of the ideal input are king opening, king not opening, president conducting,
 president not conducting. -/
 abbrev IW := Fin 4
 

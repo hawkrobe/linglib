@@ -56,7 +56,7 @@ dynamic conjunction, conditional, and disjunction
 - `CCP.Partial`, `ofPartialProp`, `neg`, `cond`, `disj` — Heim's partial CCPs
   ([heim-1983] gives CCPs for *not/and/if*; the disjunction clause with
   ¬φ local context follows [beaver-2001])
-- `CCP.Partial.ofProp3` — the Heimian update of a trivalent proposition, the `update`
+- `CCP.Partial.ofTrivalent` — the Heimian update of a trivalent proposition, the `update`
   of [beaver-krahmer-2001] §5.3 and the context update of [coppock-beaver-2015];
   `PartialUpdate.image_seq` composes hearer-side images along sequencing
 - `admits_ofPartialProp` — admittance is `PartialProp.Admits`
@@ -128,7 +128,7 @@ theorem IsEliminative.seq [Preorder α] (hφ : φ.IsEliminative) (hψ : ψ.IsEli
 
 /-! ### Support and entailment -/
 
-/-- `s` supports `φ`: the update changes nothing ([heim-1992]'s `c + φ = c`,
+/-- `s` supports `φ` when the update changes nothing ([heim-1992]'s `c + φ = c`,
 [veltman-1996]'s acceptance). -/
 def supports (s : α) (φ : PartialUpdate α) : Prop := s ∈ φ s
 
@@ -217,7 +217,7 @@ open PartialUpdate
 
 variable {P W : Type*} {φ ψ χ : CCP.Partial P} {s : Set P}
 
-/-- The Heimian update of a static partial proposition: defined iff the
+/-- The Heimian update of a static partial proposition is defined iff the
     context globally satisfies the presupposition
     (`PartialProp.Admits`), updating by intersecting with the
     assertion.
@@ -242,40 +242,38 @@ theorem mem_ofPartialProp_self (p : PartialProp W) (s : Set W) :
 
 /-! ### Trivalent propositions -/
 
-open Trivalent (Prop3)
-
 /-- The Heimian update of a trivalent proposition is `ofPartialProp` of its
 total-representative reading: defined iff the proposition is classical throughout the
 context, keeping the worlds where it is true. This is the `update` relation of
-[beaver-krahmer-2001] §5.3 read as a partial function (`mem_ofProp3`), and the context
+[beaver-krahmer-2001] §5.3 read as a partial function (`mem_ofTrivalent`), and the context
 update of [coppock-beaver-2015]. -/
-def ofProp3 (p : Prop3 W) : CCP.Partial W := ofPartialProp (PartialProp.ofProp3 p)
+def ofTrivalent (p : (W → Trivalent)) : CCP.Partial W := ofPartialProp (PartialProp.ofTrivalent p)
 
-theorem admits_ofProp3 (p : Prop3 W) (s : Set W) :
-    (ofProp3 p).Admits s ↔ ∀ w ∈ s, p w ≠ .indet := Iff.rfl
+theorem admits_ofTrivalent (p : (W → Trivalent)) (s : Set W) :
+    (ofTrivalent p).Admits s ↔ ∀ w ∈ s, p w ≠ .indet := Iff.rfl
 
 /-- Admittance of a trivalent proposition is disjointness from its extension gap. -/
-theorem admits_ofProp3_iff_disjoint_gapExt (p : Prop3 W) (s : Set W) :
-    (ofProp3 p).Admits s ↔ Disjoint s p.gapExt := by
-  rw [admits_ofProp3, Set.disjoint_left]
+theorem admits_ofTrivalent_iff_disjoint_gapExt (p : (W → Trivalent)) (s : Set W) :
+    (ofTrivalent p).Admits s ↔ Disjoint s (Trivalent.gapExt p) := by
+  rw [admits_ofTrivalent, Set.disjoint_left]
   constructor
   · intro h a ha
     exact h a ha
   · intro h w hw
     exact h hw
 
-@[simp] theorem ofProp3_get (p : Prop3 W) (s : Set W) (h : (ofProp3 p s).Dom) :
-    (ofProp3 p s).get h = {w ∈ s | p w = .true} := rfl
+@[simp] theorem ofTrivalent_get (p : (W → Trivalent)) (s : Set W) (h : (ofTrivalent p s).Dom) :
+    (ofTrivalent p s).get h = {w ∈ s | p w = .true} := rfl
 
 /-- `t` is the update of `s` exactly when `s` lies in the proposition's domain and `t` is
 its positive extension within `s`. -/
-theorem mem_ofProp3 (p : Prop3 W) (s t : Set W) :
-    t ∈ ofProp3 p s ↔ (∀ w ∈ s, p w ≠ .indet) ∧ t = {w ∈ s | p w = .true} :=
+theorem mem_ofTrivalent (p : (W → Trivalent)) (s t : Set W) :
+    t ∈ ofTrivalent p s ↔ (∀ w ∈ s, p w ≠ .indet) ∧ t = {w ∈ s | p w = .true} :=
   ⟨fun ⟨h, e⟩ => ⟨h, e.symm⟩, fun ⟨h, e⟩ => ⟨h, e.symm⟩⟩
 
 /-- Propositions that agree on the context update it alike. -/
-theorem ofProp3_congr {p q : Prop3 W} {s : Set W} (h : ∀ w ∈ s, p w = q w) :
-    ofProp3 p s = ofProp3 q s :=
+theorem ofTrivalent_congr {p q : (W → Trivalent)} {s : Set W} (h : ∀ w ∈ s, p w = q w) :
+    ofTrivalent p s = ofTrivalent q s :=
   Part.ext' (forall₂_congr fun w hw => show p w ≠ .indet ↔ q w ≠ .indet by rw [h w hw])
     fun _ _ => Set.ext fun w => and_congr_right fun hw =>
       show p w = .true ↔ q w = .true by rw [h w hw]

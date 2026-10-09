@@ -64,14 +64,15 @@ theorem coordination_plural (ha : Atom a) (hb : Atom b) (hne : a ≠ b) :
     a ⊔ b ∉ Number.dom (E := E) (some .singular) :=
   (Number.mem_dom_singular _).not.2 (not_atom_sup_of_ne ha hb hne)
 
-/-- The Feature-Subset Principle for number: the domain of `[Sg]` is a proper subset of the
-domain of `[Pl]`. -/
+/-- The Feature-Subset Principle for number makes the domain of `[Sg]` a proper subset of
+the domain of `[Pl]`. -/
 theorem sg_domain_ssubset_pl (ha : Atom a) (hb : Atom b) (hne : a ≠ b) :
     Number.dom (E := E) (some .singular) ⊂ Number.dom (some .plural) := by
   rw [Number.dom_plural]
   exact ⟨Set.subset_univ _, fun h ↦ coordination_plural ha hb hne (h (Set.mem_univ _))⟩
 
-/-- `DER` is well defined on a cumulative restrictor: `*R` has at most one maximal element. -/
+/-- `DER` is well defined on a cumulative restrictor, since `*R` has at most one maximal
+element. -/
 theorem der_unique {R : E → Prop} {m₁ m₂ : E} (h₁ : Maximal (AlgClosure R) m₁)
     (h₂ : Maximal (AlgClosure R) m₂) : m₁ = m₂ :=
   cum_maximal_unique algClosure_cum h₁ h₂
@@ -201,8 +202,9 @@ section Every
 
 variable [PartialOrder E]
 
-/-- `JE`, the quantificational part of *every*: over the atomic parts of a group individual
-`X`, presupposing the scope predicate is defined at each and asserting it holds at each. -/
+/-- `JE`, the quantificational part of *every*, ranges over the atomic parts of a group
+individual `X`, presupposing the scope predicate is defined at each and asserting it holds
+at each. -/
 def JE (X : E) (P : E → Prop) (domP : E → Prop := fun _ ↦ True) : PartialProp E where
   presup _ := ∀ a, Atom a → a ≤ X → domP a
   assertion _ := ∀ a, Atom a → a ≤ X → P a
@@ -218,7 +220,7 @@ a restrictor atom `a₂ ≤ boys` outside the scope's domain and some `R`-indivi
 *a boy invited his sister* is defined and *every boy invited his sister* is not. -/
 theorem projection_asymmetry {boys a₁ a₂ : E} {R domP : E → Prop} (ha₂ : Atom a₂)
     (h₂ : a₂ ≤ boys) (hR₁ : R a₁) (hdom₁ : domP a₁) (hdom₂ : ¬ domP a₂) :
-    (aSem R (fun _ ↦ True) domP).defined boys ∧ ¬ (JE boys (fun _ ↦ True) domP).defined boys :=
+    (aSem R (fun _ ↦ True) domP).presup boys ∧ ¬ (JE boys (fun _ ↦ True) domP).presup boys :=
   ⟨⟨a₁, hR₁, hdom₁⟩, fun h ↦ hdom₂ (h a₂ ha₂ h₂)⟩
 
 /-- Under the weak plural *Lina didn't harvest tomatoes* entails *Lina didn't harvest a tomato*,

@@ -53,7 +53,7 @@ and the conditionals, generics and habituals of the closing section, are not for
 
 namespace AghaJeretic2022
 
-open Trivalent (Prop3 supervaluation supervaluation_eq_true_iff supervaluation_eq_false_iff
+open Trivalent (supervaluation supervaluation_eq_true_iff supervaluation_eq_false_iff
   supervaluation_eq_indet_iff supervaluation_not metaAssert_supervaluation)
 open Homogeneity
 
@@ -62,10 +62,10 @@ variable {W : Type*} (D : W → Finset W) (p : W → Prop) [DecidablePred p]
 /-! ### Weak necessity as plural predication over worlds -/
 
 /-- Weak necessity `should D p` predicates the prejacent of the plurality of best worlds `D w`. -/
-def should : Prop3 W := fun w ↦ supervaluation (D w) p
+def should : (W → Trivalent) := fun w ↦ supervaluation (D w) p
 
 /-- Strong necessity `must D p` holds when the prejacent holds in every best world. -/
-def must : Prop3 W := fun w => Trivalent.ofBool (decide (∀ w' ∈ D w, p w'))
+def must : (W → Trivalent) := fun w => Trivalent.ofBool (decide (∀ w' ∈ D w, p w'))
 
 theorem should_eq_true_iff (w : W) : should D p w = .true ↔ ∀ w' ∈ D w, p w' :=
   supervaluation_eq_true_iff ..
@@ -102,20 +102,19 @@ theorem must_false_of_indet (w : W) (h : should D p w = .indet) :
 
 /-- *Must* is *should* with its gap removed, the universal quantifier being the meta-assertion
 of the plural predication, as *all* is of *the*. -/
-theorem must_eq_metaAssert_should : must D p = (should D p).metaAssert :=
+theorem must_eq_metaAssert_should : must D p = Trivalent.metaAssert ∘ should D p :=
   funext fun w ↦ (metaAssert_supervaluation (D w) p).symm
 
-theorem isBivalent_must : (must D p).isBivalent :=
-  must_eq_metaAssert_should D p ▸ Prop3.isBivalent_metaAssert _
+theorem isBivalent_must : Trivalent.IsBivalent (must D p) :=
+  must_eq_metaAssert_should D p ▸ Trivalent.isBivalent_comp_metaAssert _
 
 /-- In a mixed domain the negated bare *should* is not true, while the negated *necessarily
 should* is true and compatible with the existential continuation. -/
 theorem necessarily_removes_gap (w : W) (h : should D p w = .indet) :
-    should D (fun w' => ¬ p w') w ≠ .true ∧ ((should D p).metaAssert w).neg = .true ∧
+    should D (fun w' => ¬ p w') w ≠ .true ∧ (Trivalent.metaAssert (should D p w)).neg = .true ∧
       ∃ w' ∈ D w, p w' := by
   obtain ⟨⟨a, ha, hp⟩, -⟩ := (should_eq_indet_iff D p w).1 h
   refine ⟨fun h' => not_exists_of_should_not D p w h' ⟨a, ha, hp⟩, ?_, a, ha, hp⟩
-  simp only [Prop3.metaAssert]
   rw [h]; rfl
 
 /-! ### Borderline cases and exception tolerance -/

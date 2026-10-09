@@ -81,7 +81,7 @@ theorem not_filters_xor : ¬ Filters Trivalent.xor := by
 /-- The valuations of two atoms. -/
 abbrev Val := Bool × Bool
 
-/-- The alternatives of `p ∨ q`: `p`, `q` and `p ∧ q` (3a). -/
+/-- The alternatives of `p ∨ q` are `p`, `q` and `p ∧ q` (3a). -/
 def orAlts : Finset (Finset Val) :=
   altsFromPreds [λ v => v.1 || v.2, Prod.fst, Prod.snd, λ v => v.1 && v.2]
 
@@ -105,7 +105,7 @@ def values : Trivalent → Finset Bool
   | .false => {false}
   | .indet => Finset.univ
 
-/-- [george-2008]'s algorithm for the trivalent table of a classical connective, as
+/-- [george-2008]'s algorithm computes the trivalent table of a classical connective, as
 [kalomoiros-schwarz-2024] render it: if the left argument settles the value, that is the value;
 otherwise, if some value of the right argument could make the sentence true, the two arguments
 settle the value or the sentence is undefined; otherwise it is undefined. -/
@@ -215,24 +215,24 @@ theorem sup_inf_ne_indet_iff (a b : Trivalent) :
     (a ⊔ b ≠ .indet ∧ a ⊓ b ≠ .indet) ↔ a ≠ .indet ∧ b ≠ .indet := by
   revert a b; decide
 
-/-- A bathroom disjunction on the valuations of two atoms: `bathLeft` is always defined and
+/-- A bathroom disjunction on the valuations of two atoms — `bathLeft` is always defined and
 `bathRight` presupposes its negation. -/
-def bathLeft : Trivalent.Prop3 Val := λ v => .ofBool v.1
+def bathLeft : (Val → Trivalent) := λ v => .ofBool v.1
 
-def bathRight : Trivalent.Prop3 Val := λ v => if v.1 then .indet else .ofBool v.2
+def bathRight : (Val → Trivalent) := λ v => if v.1 then .indet else .ofBool v.2
 
 /-- The alternatives of the bathroom disjunction. -/
-def bathAlts : List (Trivalent.Prop3 Val) :=
+def bathAlts : List ((Val → Trivalent)) :=
   [bathLeft, bathRight, λ v => bathLeft v ⊓ bathRight v]
 
 /-- The inclusive bathroom disjunction. -/
-def bathOr : Trivalent.Prop3 Val := λ v => bathLeft v ⊔ bathRight v
+def bathOr : (Val → Trivalent) := λ v => bathLeft v ⊔ bathRight v
 
-/-- EXH¹ keeps the filtering: where the left disjunct is true and the right undefined, the
+/-- EXH¹ keeps the filtering — where the left disjunct is true and the right undefined, the
 exhaustified disjunction is true. -/
 theorem exh1_bathOr : exh1 bathAlts bathOr (true, false) = Trivalent.true := by decide
 
-/-- EXH² undoes it: the undefined conjunction alternative makes the exhaustified disjunction
+/-- EXH² undoes it — the undefined conjunction alternative makes the exhaustified disjunction
 undefined there. -/
 theorem exh2_bathOr : exh2 bathAlts bathOr (true, false) = Trivalent.indet := by decide
 

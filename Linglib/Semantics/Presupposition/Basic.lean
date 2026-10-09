@@ -6,38 +6,36 @@ public import Mathlib.Order.Antisymmetrization
 /-!
 # Canonical operations on partial propositions
 
-The canonical connectives, entailment relations, and combinators on
-`PartialProp`. References: [heim-1983], [schlenker-2009], [von-fintel-1999],
-[karttunen-1973], [peters-1979], [bochvar-1937].
+The canonical connectives, entailment relations, and combinators on `PartialProp`. Every
+connective evaluates pointwise to an operation on `Trivalent`, stated as an unconditional
+`eval_*` bridge: the classical connectives are Weak Kleene (an undefined operand absorbs),
+Karttunen's filtering connectives are Peters' Middle Kleene (the left operand filters), and
+Bochvar's truth operator is the meta-assertion operator. The rival families — Strong Kleene,
+Belnap, and the symmetric two-dimensional disjunction, which evaluates to no trivalent
+operation at all — live in `Presupposition.Trivalent`; quantified projection lives in
+`Presupposition.Quantified`.
 
 ## Main declarations
 
-* Negations: internal `neg` (a hole), Bochvar's truth operator `truthOp`
-  and external negation `negExt = neg ∘ truthOp` (plugs).
-* Classical connectives `and`, `or`, `imp`, `xor` (simultaneously Weak
-  Kleene: indet is absorbing).
-* Filtering / Karttunen connectives `andFilter`, `impFilter`, `orFilter` —
-  Peters' middle Kleene ([peters-1979], `eval_andFilter`/`eval_orFilter`) —
-  with the scoped notation `/\'`, `->'`, `\/'`.
-* `strawsonEntails`, `strongEntails` — entailment relations: the
-  canonical [von-fintel-1999] form (presup-as-premise; not transitive,
-  `strawsonEntails_not_trans`) and the stronger variant that additionally
-  requires `q`'s presupposition to project from `p`'s satisfaction.
-* The embedding combinator `negFactive`.
-* `presupOfReferent` — definite-description combinator (single source of
-  truth for singular definite denotations).
+* `neg`, `truthOp`, `negExt`: internal negation (a hole), Bochvar's truth operator and
+  external negation `neg ∘ truthOp` (plugs).
+* `and`, `or`, `imp`, `xor`: the classical connectives, Weak Kleene under `eval`.
+* `andFilter`, `impFilter`, `orFilter`: the filtering connectives, Middle Kleene under
+  `eval`, with the scoped notation `/\'`, `->'`, `\/'`.
+* `strawsonEntails`, `strongEntails`: von Fintel's entailment with the conclusion's
+  presupposition as a premise (not transitive, `strawsonEntails_not_trans`), and the stronger
+  variant that also projects the conclusion's presupposition.
+* `negFactive`, `presupOfReferent`: the negative-factive embedding combinator and the
+  definite-description combinator shared by the singular definite denotations.
 
-The rival trivalent connective families (Strong Kleene, Belnap / flexible
-accommodation, symmetric K&P, positive-antecedent) live in
-`Presupposition.Trivalent`; quantified projection lives in
-`Presupposition.Quantified`.
+## References
 
-## Implementation notes
-
-The choice of connective system (how gaps behave under ∧/∨) is orthogonal
-to the representation type — see `Trivalent.GapPolicy`. Connectives are
-paired with `eval_*` bridge theorems mapping each to the corresponding
-`Trivalent` operator on the evaluation.
+* [heim-1983]
+* [schlenker-2009]
+* [von-fintel-1999]
+* [karttunen-1973]
+* [peters-1979]
+* [bochvar-1937]
 -/
 
 @[expose] public section
@@ -52,75 +50,69 @@ variable {W : Type*}
 
 /-! ### Classical connectives -/
 
-/-- Classical (internal / choice) negation: a hole.
-    Lets the presupposition through unchanged. -/
+/-- Classical (internal, choice) negation is a hole, letting the presupposition through
+    unchanged. -/
 def neg (p : PartialProp W) : PartialProp W where
   presup := p.presup
   assertion := fun w => ¬p.assertion w
 
-/-- Bochvar's truth operator `t`: a plug-as-affirmation ([bochvar-1937]).
-    Always defined; maps presupposition failure to `False`.
-    [karttunen-1973] §10 fn 18: `t(A)` has truth-table
-    `T → T`, `F → F`, `# → F`. Composing classical negation with `t`
-    yields external negation: `negExt p = neg (truthOp p)`. -/
+/-- Bochvar's truth operator `t` is always defined and maps presupposition failure to
+    `False` — the plug-as-affirmation of [bochvar-1937], with the truth table of
+    [karttunen-1973] §10 fn 18. Classical negation composed with it is external negation
+    (`negExt`). -/
 def truthOp (p : PartialProp W) : PartialProp W where
   presup := fun _ => True
   assertion := fun w => p.presup w ∧ p.assertion w
 
-/-- Bochvar external (exclusion) negation: a plug.
-    Always defined; true when `p` is false or undefined, false only when
-    `p` is true. Equals `neg (truthOp p)` per [karttunen-1973] §10
-    fn 18: `⌜¬A⌝ ≡ ⌜~t(A)⌝`. -/
+/-- Bochvar's external (exclusion) negation is a plug — always defined, true when `p` is
+    false or undefined, false only when `p` is true. It is `neg (truthOp p)`, as in
+    [karttunen-1973] §10 fn 18. -/
 def negExt (p : PartialProp W) : PartialProp W := neg (truthOp p)
 
-/-- Classical conjunction: both presuppositions must hold. This is also
-    Weak Kleene conjunction ([kleene-1952]: indet is absorbing). -/
+/-- Classical conjunction requires both presuppositions to hold; under `eval` it is Weak
+    Kleene conjunction ([kleene-1952]), with an absorbing `indet`. -/
 def and (p q : PartialProp W) : PartialProp W where
   presup := fun w => p.presup w ∧ q.presup w
   assertion := fun w => p.assertion w ∧ q.assertion w
 
-/-- Classical disjunction: both presuppositions must hold. This is also
-    Weak Kleene disjunction ([kleene-1952]: indet is absorbing) — see
-    `eval_or`. -/
+/-- Classical disjunction requires both presuppositions to hold; under `eval` it is Weak
+    Kleene disjunction ([kleene-1952]) — see `eval_or`. -/
 def or (p q : PartialProp W) : PartialProp W where
   presup := fun w => p.presup w ∧ q.presup w
   assertion := fun w => p.assertion w ∨ q.assertion w
 
-/-- Classical implication: both presuppositions must hold. -/
+/-- Classical implication requires both presuppositions to hold; under `eval` it is the Weak
+    Kleene material conditional (`eval_imp`). -/
 def imp (p q : PartialProp W) : PartialProp W where
   presup := fun w => p.presup w ∧ q.presup w
   assertion := fun w => p.assertion w → q.assertion w
 
-/-- Exclusive disjunction: both presuppositions must hold (no filtering).
-
-    Under Strong Kleene, `Trivalent.xor` propagates undefinedness
-    unconditionally (`xor_indet_iff`), so exclusive disjunction never
-    filters presupposition failure from either disjunct.
-    [wang-davidson-2026] -/
+/-- Exclusive disjunction requires both presuppositions to hold, and never filters —
+    `Trivalent.xor` propagates undefinedness unconditionally (`xor_indet_iff`), so
+    presupposition failure in either disjunct projects ([wang-davidson-2026]). -/
 def xor (p q : PartialProp W) : PartialProp W where
   presup := fun w => p.presup w ∧ q.presup w
   assertion := fun w => (p.assertion w ∧ ¬q.assertion w) ∨ (¬p.assertion w ∧ q.assertion w)
 
 /-! ### Filtering connectives (Karttunen) -/
 
-/-- Filtering conjunction ([karttunen-1973], [peters-1979]): the first
-    conjunct can satisfy the second's presupposition. -/
+/-- The filtering conjunction of [karttunen-1973] lets the first conjunct satisfy the
+    second's presupposition ([peters-1979]). -/
 def andFilter (p q : PartialProp W) : PartialProp W where
   presup := fun w => p.presup w ∧ (p.assertion w → q.presup w)
   assertion := fun w => p.assertion w ∧ q.assertion w
 
-/-- Filtering implication ([karttunen-1973], [peters-1979]): the
-    antecedent can satisfy the consequent's presupposition. -/
+/-- The filtering implication of [karttunen-1973] lets the antecedent satisfy the
+    consequent's presupposition ([peters-1979]). -/
 def impFilter (p q : PartialProp W) : PartialProp W where
   presup := fun w => p.presup w ∧ (p.assertion w → q.presup w)
   assertion := fun w => p.assertion w → q.assertion w
 
-/-- Filtering disjunction (asymmetric, [karttunen-1973]): the *negation*
-    of the first disjunct can satisfy the second's presupposition —
-    *Either there is no bathroom or the bathroom is upstairs* is defined
-    because the second disjunct's bathroom presupposition is required
-    only at worlds where the first disjunct is false. The symmetric K&P variant is
-    `PartialProp.orKPSymmetric` (`Presupposition.Trivalent`). -/
+/-- The asymmetric filtering disjunction of [karttunen-1973] lets the *negation* of the
+    first disjunct satisfy the second's presupposition — *Either there is no bathroom or
+    the bathroom is upstairs* is defined because the second disjunct's bathroom
+    presupposition is required only at worlds where the first disjunct is false. The
+    symmetric K&P variant is `PartialProp.orKPSymmetric` (`Presupposition.Trivalent`). -/
 def orFilter (p q : PartialProp W) : PartialProp W where
   presup := fun w => p.presup w ∧ (¬p.assertion w → q.presup w)
   assertion := fun w => p.assertion w ∨ q.assertion w
@@ -132,10 +124,9 @@ scoped infixl:60 " \\/' " => orFilter
 
 /-! ### Entailment relations -/
 
-/-- Strawson entailment ([von-fintel-1999]): `p` entails `q` at every
-    world where both presuppositions hold. The conclusion `q`'s
-    presupposition is a *premise* added to the entailment, not something
-    the entailment delivers. -/
+/-- Strawson entailment ([von-fintel-1999]) requires `p`'s assertion to entail `q`'s at
+    every world where both presuppositions hold; the conclusion's presupposition is a
+    *premise* added to the entailment, not something the entailment delivers. -/
 def strawsonEntails (p q : PartialProp W) : Prop :=
   ∀ w, p.presup w → q.presup w → p.assertion w → q.assertion w
 
@@ -149,17 +140,15 @@ theorem strawsonEntails_not_trans :
     (h top undefined bot (λ _ _ hq _ => hq.elim) (λ _ hq _ _ => hq.elim))
       () trivial trivial trivial
 
-/-- Strong (Strawson-projecting) entailment: at every world where `p` is
-    defined and true, `q` is *both* defined and true. Stronger than
-    `strawsonEntails`: this variant also requires that `q`'s
-    presupposition projects from `p`'s satisfaction (so it embeds a
-    presupposition-projection burden the canonical von Fintel form
-    exempts). -/
+/-- Strong (Strawson-projecting) entailment requires that at every world where `p` is
+    defined and true, `q` is *both* defined and true. It strengthens `strawsonEntails` by
+    making `q`'s presupposition project from `p`'s satisfaction, a projection burden the
+    canonical von Fintel form exempts. -/
 def strongEntails (p q : PartialProp W) : Prop :=
   ∀ w, p.presup w → p.assertion w → q.presup w ∧ q.assertion w
 
-/-- Strawson equivalence: mutual Strawson entailment
-    (`AntisymmRel` of `strawsonEntails`). -/
+/-- Strawson equivalence is mutual Strawson entailment, the `AntisymmRel` of
+    `strawsonEntails`. -/
 def strawsonEquiv (p q : PartialProp W) : Prop :=
   AntisymmRel strawsonEntails p q
 
@@ -168,17 +157,11 @@ def strawsonEquiv (p q : PartialProp W) : Prop :=
 /-- Negation preserves presupposition. -/
 @[simp] theorem neg_presup (p : PartialProp W) : (neg p).presup = p.presup := rfl
 
-/-- Double negation restores assertion (classical). -/
-theorem neg_neg_assertion (p : PartialProp W) (w : W) :
-    (neg (neg p)).assertion w ↔ p.assertion w := Classical.not_not
-
 /-- Double negation identity. -/
 @[simp] theorem neg_neg (p : PartialProp W) : neg (neg p) = p :=
   PartialProp.ext rfl (funext fun _ => propext Classical.not_not)
 
 @[simp] theorem top_presup (w : W) : (top : PartialProp W).presup w := trivial
-
-@[simp] theorem top_defined (w : W) : (top : PartialProp W).defined w := trivial
 
 @[simp] theorem top_assertion (w : W) : (top : PartialProp W).assertion w := trivial
 
@@ -204,14 +187,13 @@ theorem neg_assertion_iff_negExt_assertion_when_defined (p : PartialProp W) (w :
     (neg p).assertion w ↔ (negExt p).assertion w := by
   simp only [neg, negExt, truthOp, h, true_and]
 
-/-- External negation has the dual assertion to the truth operator at every
-    world: `negExt = ¬truthOp` extensionally, by definition (negExt = neg ∘ truthOp
-    and neg is `¬` on assertion). -/
+/-- External negation asserts the dual of the truth operator at every world, by definition,
+    since `negExt` negates `truthOp`'s assertion. -/
 theorem negExt_assertion (p : PartialProp W) (w : W) :
     (negExt p).assertion w ↔ ¬(truthOp p).assertion w := Iff.rfl
 
-/-- Karttunen §10 fn 18 truth table for external negation, presup-failure case:
-    when `p`'s presupposition fails, `negExt p` is true (the plug behavior). -/
+/-- When `p`'s presupposition fails, `negExt p` is true — the plug row of the
+    [karttunen-1973] §10 fn 18 truth table. -/
 theorem negExt_assertion_of_presup_failure (p : PartialProp W) (w : W)
     (h : ¬p.presup w) :
     (negExt p).assertion w := by
@@ -226,104 +208,95 @@ theorem impFilter_eliminates_presup (p q : PartialProp W)
   funext w; simp only [impFilter]
   exact propext ⟨fun ⟨hp, _⟩ => hp, fun hp => ⟨hp, h w⟩⟩
 
-/-- When A(p) = P(q), filtering implication has trivial presupposition. -/
-theorem impFilter_trivializes_presup (p q : PartialProp W)
-    (h : p.assertion = q.presup) :
-    (impFilter p q).presup = p.presup :=
-  impFilter_eliminates_presup p q (fun _ ha => h ▸ ha)
-
-/-- The filtering presupposition of `impFilter` and `andFilter` are identical.
-    This is the formal content of [karttunen-1973] §8: the filtering
-    rules for *if A then B* and *A and B* coincide because both reduce to
-    `p.presup ∧ (p.assertion → q.presup)`. -/
+/-- The filtering presuppositions of `impFilter` and `andFilter` are identical — the formal
+    content of [karttunen-1973] §8, where the filtering rules for *if A then B* and
+    *A and B* coincide because both reduce to `p.presup ∧ (p.assertion → q.presup)`. -/
 theorem impFilter_presup_eq_andFilter_presup (p q : PartialProp W) :
     (impFilter p q).presup = (andFilter p q).presup := rfl
 
-/-! ### Evaluation theorems -/
+/-! ### Evaluation bridges
 
-/-- Negation evaluation. -/
+Each connective descends along `eval` to its trivalent face, unconditionally: the classical
+connectives to Weak Kleene, the filtering connectives to Middle Kleene, the plugs to
+meta-assertion. The symmetric two-dimensional disjunction admits no such bridge
+(`orKPSymmetric_not_trivalent` in `Presupposition.Trivalent`). -/
+
+/-- Internal negation evaluates to Strong Kleene negation pointwise. -/
 theorem eval_neg (p : PartialProp W) (w : W) :
     (neg p).eval w = Trivalent.neg (p.eval w) := by
-  simp only [eval, neg]
-  by_cases hp : p.presup w
-  · simp only [ite_eq_left hp]
-    by_cases ha : p.assertion w
-    · simp [ite_eq_left ha, ite_eq_right (not_not.mpr ha), Trivalent.neg]
-    · simp [ite_eq_right ha, ite_eq_left ha, Trivalent.neg]
-  · simp [ite_eq_right hp, Trivalent.neg]
+  by_cases hp : p.presup w <;> by_cases ha : p.assertion w <;>
+    simp [eval, neg, Trivalent.neg, hp, ha]
 
-/-- Classical conjunction evaluation (both defined). -/
-theorem eval_and (p q : PartialProp W) (w : W)
-    (hp : p.presup w) (hq : q.presup w) :
-    (and p q).eval w = p.eval w ⊓ q.eval w := by
-  have hpq : p.presup w ∧ q.presup w := ⟨hp, hq⟩
-  simp only [eval, and, ite_eq_left hp, ite_eq_left hq, ite_eq_left hpq]
-  by_cases ha : p.assertion w <;> by_cases hb : q.assertion w <;>
-    simp [ha, hb]
+/-- Bochvar's truth operator evaluates to meta-assertion pointwise — the plug is the 𝒜
+    operator. -/
+theorem eval_truthOp (p : PartialProp W) (w : W) :
+    (truthOp p).eval w = Trivalent.metaAssert (p.eval w) := by
+  by_cases hp : p.presup w <;> by_cases ha : p.assertion w <;>
+    simp [eval, truthOp, hp, ha]
 
-/-- `or` evaluates to `Trivalent.joinWeak` pointwise (classical disjunction
-    is Weak Kleene). -/
+/-- External negation evaluates to negated meta-assertion pointwise. -/
+theorem eval_negExt (p : PartialProp W) (w : W) :
+    (negExt p).eval w = Trivalent.neg (Trivalent.metaAssert (p.eval w)) := by
+  rw [negExt, eval_neg, eval_truthOp]
+
+/-- Classical conjunction evaluates to Weak Kleene conjunction pointwise. -/
+theorem eval_and (p q : PartialProp W) (w : W) :
+    (and p q).eval w = Trivalent.meetWeak (p.eval w) (q.eval w) := by
+  by_cases hp : p.presup w <;> by_cases hq : q.presup w <;>
+    by_cases ha : p.assertion w <;> by_cases hb : q.assertion w <;>
+    simp [eval, and, Trivalent.meetWeak, hp, hq, ha, hb]
+
+/-- Classical disjunction evaluates to Weak Kleene disjunction pointwise. -/
 theorem eval_or (p q : PartialProp W) (w : W) :
     (or p q).eval w = Trivalent.joinWeak (p.eval w) (q.eval w) := by
-  simp only [eval, or, Trivalent.joinWeak]
-  by_cases hp : p.presup w <;> by_cases hq : q.presup w <;> simp [hp, hq];
+  by_cases hp : p.presup w <;> by_cases hq : q.presup w <;>
     by_cases ha : p.assertion w <;> by_cases hb : q.assertion w <;>
-    simp [ha, hb]
+    simp [eval, or, Trivalent.joinWeak, hp, hq, ha, hb]
 
-/-- Filtering implication when antecedent false: result is true. -/
-theorem eval_impFilter_antecedent_false (p q : PartialProp W) (w : W)
-    (hp : p.presup w) (ha : ¬p.assertion w) :
-    (impFilter p q).eval w = .true := by
-  have hpresup : (impFilter p q).presup w := ⟨hp, fun h => absurd h ha⟩
-  have hassert : (impFilter p q).assertion w := fun h => absurd h ha
-  simp only [eval, ite_eq_left hpresup, ite_eq_left hassert]
+/-- Classical implication evaluates to the Weak Kleene material conditional pointwise. -/
+theorem eval_imp (p q : PartialProp W) (w : W) :
+    (imp p q).eval w = Trivalent.joinWeak (Trivalent.neg (p.eval w)) (q.eval w) := by
+  by_cases hp : p.presup w <;> by_cases hq : q.presup w <;>
+    by_cases ha : p.assertion w <;> by_cases hb : q.assertion w <;>
+    simp [eval, imp, Trivalent.joinWeak, Trivalent.neg, hp, hq, ha, hb]
 
-/-- Filtering implication when antecedent true: depends on consequent. -/
-theorem eval_impFilter_antecedent_true (p q : PartialProp W) (w : W)
-    (hp : p.presup w) (ha : p.assertion w) (hq : q.presup w) :
-    (impFilter p q).eval w =
-      if q.assertion w then .true else .false := by
-  have hpresup : (impFilter p q).presup w := ⟨hp, fun _ => hq⟩
-  by_cases hqa : q.assertion w
-  · have hass : (impFilter p q).assertion w := fun _ => hqa
-    simp only [eval, ite_eq_left hpresup, ite_eq_left hass, ite_eq_left hqa]
-  · have hass : ¬(impFilter p q).assertion w := fun h => hqa (h ha)
-    simp only [eval, ite_eq_left hpresup, ite_eq_right hass, ite_eq_right hqa]
-
-/-- **Karttunen filtering conjunction is Peters' middle Kleene**
-    ([peters-1979]): `andFilter` evaluates to the asymmetric
-    `Trivalent.meetMiddle` on both dimensions, unconditionally. -/
+/-- **Karttunen filtering conjunction is Peters' middle Kleene.** `andFilter` evaluates to
+    the asymmetric `Trivalent.meetMiddle` on both dimensions, unconditionally. -/
 theorem eval_andFilter (p q : PartialProp W) (w : W) :
     (andFilter p q).eval w = Trivalent.meetMiddle (p.eval w) (q.eval w) := by
   by_cases hp : p.presup w <;> by_cases hq : q.presup w <;>
     by_cases ha : p.assertion w <;> by_cases hb : q.assertion w <;>
     simp [eval, andFilter, Trivalent.meetMiddle, hp, hq, ha, hb] <;> decide
 
-/-- **Karttunen filtering disjunction is Peters' middle Kleene**
-    ([peters-1979]): `orFilter` evaluates to the asymmetric
-    `Trivalent.joinMiddle` on both dimensions, unconditionally. -/
+/-- **Karttunen filtering disjunction is Peters' middle Kleene.** `orFilter` evaluates to
+    the asymmetric `Trivalent.joinMiddle` on both dimensions, unconditionally. -/
 theorem eval_orFilter (p q : PartialProp W) (w : W) :
     (orFilter p q).eval w = Trivalent.joinMiddle (p.eval w) (q.eval w) := by
   by_cases hp : p.presup w <;> by_cases hq : q.presup w <;>
     by_cases ha : p.assertion w <;> by_cases hb : q.assertion w <;>
     simp [eval, orFilter, Trivalent.joinMiddle, hp, hq, ha, hb] <;> decide
 
-/-- Exclusive disjunction evaluation matches `Trivalent.xor` when both defined. -/
-theorem eval_xor (p q : PartialProp W) (w : W)
-    (hp : p.presup w) (hq : q.presup w) :
-    (xor p q).eval w = Trivalent.xor (p.eval w) (q.eval w) := by
-  have hpq : p.presup w ∧ q.presup w := ⟨hp, hq⟩
-  simp only [eval, xor, ite_eq_left hp, ite_eq_left hq, ite_eq_left hpq]
-  by_cases ha : p.assertion w <;> by_cases hb : q.assertion w <;>
-    simp [ha, hb, Trivalent.xor]
+/-- **Karttunen filtering implication is Peters' middle Kleene.** `impFilter` evaluates to
+    the Middle Kleene material conditional, unconditionally — the antecedent filters from
+    the left exactly as in `andFilter` and `orFilter`. -/
+theorem eval_impFilter (p q : PartialProp W) (w : W) :
+    (impFilter p q).eval w = Trivalent.joinMiddle (Trivalent.neg (p.eval w)) (q.eval w) := by
+  by_cases hp : p.presup w <;> by_cases hq : q.presup w <;>
+    by_cases ha : p.assertion w <;> by_cases hb : q.assertion w <;>
+    simp [eval, impFilter, Trivalent.joinMiddle, Trivalent.neg, hp, hq, ha, hb] <;> decide
 
-/-- Exclusive disjunction never filters: when either presupposition fails,
-    the result is undefined. [wang-davidson-2026] -/
-theorem eval_xor_no_filter (p q : PartialProp W) (w : W)
-    (hq : ¬q.presup w) :
+/-- Exclusive disjunction evaluates to Strong Kleene exclusive disjunction pointwise. -/
+theorem eval_xor (p q : PartialProp W) (w : W) :
+    (xor p q).eval w = Trivalent.xor (p.eval w) (q.eval w) := by
+  by_cases hp : p.presup w <;> by_cases hq : q.presup w <;>
+    by_cases ha : p.assertion w <;> by_cases hb : q.assertion w <;>
+    simp [eval, xor, Trivalent.xor, hp, hq, ha, hb]
+
+/-- Exclusive disjunction never filters — when either presupposition fails, the result is
+    undefined ([wang-davidson-2026]). -/
+theorem eval_xor_no_filter (p q : PartialProp W) (w : W) (hq : ¬q.presup w) :
     (xor p q).eval w = .indet := by
-  have : ¬(xor p q).presup w := fun ⟨_, hq'⟩ => hq hq'
-  simp [eval, ite_eq_right this]
+  rw [eval_xor, (eval_eq_indet_iff q w).2 hq, Trivalent.xor_indet_right]
 
 /-! ### Embedding combinators ([heim-1992], [delpinal-bassi-sauerland-2024]) -/
 

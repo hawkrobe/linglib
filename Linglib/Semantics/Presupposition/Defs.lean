@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Logic.Trivalent.Prop3
+public import Linglib.Logic.Trivalent.Pointwise
 
 /-!
 # Partial propositions
@@ -13,9 +13,9 @@ presupposition.
 ## Main declarations
 
 * `PartialProp W`: partial propositions, with `presup, assertion : W → Prop`.
-* `PartialProp.eval`: evaluation into `Prop3 W`, with `eval_eq_true_iff`, `eval_eq_false_iff` and
-  `eval_eq_indet_iff`; `eval_surjective` and `eval_eq_eval_iff` show that `PartialProp` presents
-  `Prop3` by total representatives.
+* `PartialProp.eval`: evaluation into `W → Trivalent`, with `eval_eq_true_iff`,
+  `eval_eq_false_iff` and `eval_eq_indet_iff`; `eval_surjective` and `eval_eq_eval_iff` show
+  that `PartialProp` presents the trivalent propositions by total representatives.
 
 The connectives on `PartialProp` live in `Presupposition.Basic` (classical, filtering,
 entailment) and `Presupposition.Trivalent` (rival trivalent families).
@@ -25,7 +25,8 @@ entailment) and `Presupposition.Trivalent` (rival trivalent families).
 `PartialProp W` is parametric over the evaluation point: `PartialProp World` for possible worlds,
 `PartialProp (Possibility W ℕ E)` for dynamic world-assignment pairs. `open Classical` is in scope
 in the namespace because most theorems case-split on the `Prop`-valued fields, as in mathlib's
-`Order/Filter/Basic.lean`.
+`Order/Filter/Basic.lean`. Belnap's conditional assertion `(A/B)`, which asserts `B` on the
+condition `A`, is the constructor itself: `{ presup := A, assertion := B }`.
 
 ## References
 
@@ -36,8 +37,6 @@ in the namespace because most theorems case-split on the `Prop`-valued fields, a
 @[expose] public section
 
 namespace Presupposition
-
-open Trivalent (Prop3)
 
 /-! ### `PartialProp`: Prop-based partial propositions -/
 
@@ -58,34 +57,34 @@ variable {W : Type*}
 
 /-! ### Constructors -/
 
-/-- Create a presuppositionless proposition from a `W → Prop`. -/
+/-- A plain proposition is the partial proposition that presupposes nothing. -/
 def ofProp (p : W → Prop) : PartialProp W where
   presup := fun _ => True
   assertion := p
 
-/-- Convert a three-valued proposition to a PartialProp.
-    Inverse of `PartialProp.eval`: defined iff value ≠ indet,
-    assertion iff value = true. -/
-def ofProp3 (p : Prop3 W) : PartialProp W where
+@[simp] theorem ofProp_presup (p : W → Prop) (w : W) : (ofProp p).presup w := trivial
+
+@[simp] theorem ofProp_assertion (p : W → Prop) (w : W) : (ofProp p).assertion w ↔ p w := Iff.rfl
+
+/-- The canonical total representative of a trivalent proposition is defined exactly where
+`p` is and asserts that `p` is true there. It is a section of `PartialProp.eval`. -/
+def ofTrivalent (p : W → Trivalent) : PartialProp W where
   presup := fun w => p w ≠ .indet
   assertion := fun w => p w = .true
 
-/-- Belnap's conditional assertion `(A/B)` asserts `B` on condition `A`.
+@[simp] theorem ofTrivalent_presup (p : W → Trivalent) (w : W) :
+    (ofTrivalent p).presup w ↔ p w ≠ .indet := Iff.rfl
 
-    Assertive_w iff A is true at w; what is asserted = B.
-    [belnap-1970], (3): "(A/B) is assertive_w just in case
-    A is true_w. (A/B)_w = B_w." -/
-def condAssert (A B : W → Prop) : PartialProp W where
-  presup := A
-  assertion := B
+@[simp] theorem ofTrivalent_assertion (p : W → Trivalent) (w : W) :
+    (ofTrivalent p).assertion w ↔ p w = .true := Iff.rfl
 
 /-! ### Satisfaction relations -/
 
 /-- `p` holds at `w` when both its presupposition and its assertion do. -/
-def holds (w : W) (p : PartialProp W) : Prop := p.presup w ∧ p.assertion w
+def holds (p : PartialProp W) (w : W) : Prop := p.presup w ∧ p.assertion w
 
-/-- `p` is defined at `w` when its presupposition holds there. -/
-def defined (w : W) (p : PartialProp W) : Prop := p.presup w
+@[simp] theorem holds_ofProp (p : W → Prop) (w : W) : (ofProp p).holds w ↔ p w :=
+  ⟨And.right, fun h => ⟨trivial, h⟩⟩
 
 /-- The worlds where `p` is defined and true. -/
 def truthSet (p : PartialProp W) : Set W := {w | p.holds w}
@@ -94,17 +93,17 @@ def truthSet (p : PartialProp W) : Set W := {w | p.holds w}
 
 /-! ### Constants -/
 
-/-- Create a tautological presupposition. -/
+/-- The presuppositionless tautology holds everywhere. -/
 def top : PartialProp W where
   presup := fun _ => True
   assertion := fun _ => True
 
-/-- Create a contradictory presupposition. -/
+/-- The presuppositionless contradiction is defined everywhere and holds nowhere. -/
 def bot : PartialProp W where
   presup := fun _ => True
   assertion := fun _ => False
 
-/-- Create a presupposition failure (never defined). -/
+/-- The nowhere-defined proposition fails its presupposition at every point. -/
 def undefined : PartialProp W where
   presup := fun _ => False
   assertion := fun _ => False
@@ -114,7 +113,7 @@ def undefined : PartialProp W where
 /-- Evaluate a presuppositional proposition to three-valued truth.
     Noncomputable because it decides Prop-valued presupposition and
     assertion via classical logic. -/
-noncomputable def eval (p : PartialProp W) : Prop3 W := fun w =>
+noncomputable def eval (p : PartialProp W) : W → Trivalent := fun w =>
   if p.presup w then
     if p.assertion w then .true else .false
   else .indet
@@ -134,35 +133,28 @@ characterizations rather than the classical `if`-nest. -/
     p.eval w = .indet ↔ ¬p.presup w := by
   by_cases hp : p.presup w <;> by_cases ha : p.assertion w <;> simp [eval, hp, ha]
 
-/-- Evaluation is defined iff presupposition holds. -/
-@[simp] theorem eval_isDefined (p : PartialProp W) (w : W) :
+/-- Evaluation is defined iff the presupposition holds. -/
+@[simp] theorem isDefined_eval (p : PartialProp W) (w : W) :
     (p.eval w).isDefined ↔ p.presup w := by
   by_cases hp : p.presup w <;> by_cases ha : p.assertion w <;>
     simp [eval, hp, ha, Trivalent.isDefined]
 
-/-! ### Round-trip: `Prop3` ↔ `PartialProp` -/
+/-! ### Round-trip: trivalent propositions ↔ `PartialProp` -/
 
-/-- `Prop3 → PartialProp → Prop3` round-trip is the identity. -/
-theorem eval_ofProp3 (p : Prop3 W) : (ofProp3 p).eval = p := by
-  funext w; simp only [eval, ofProp3]
-  by_cases h1 : p w ≠ .indet
-  · rw [ite_eq_left h1]
-    by_cases h2 : p w = .true
-    · rw [ite_eq_left h2, h2]
-    · rw [ite_eq_right h2]; symm
-      exact match p w, h1, h2 with | .false, _, _ => rfl
-  · rw [ite_eq_right h1]; symm; exact not_not.mp h1
+/-- The `(W → Trivalent) → PartialProp → (W → Trivalent)` round-trip is the identity. -/
+theorem eval_ofTrivalent (p : W → Trivalent) : (ofTrivalent p).eval = p := by
+  funext w; cases h : p w <;> simp [eval, ofTrivalent, h]
 
-/-- `eval` is surjective — every three-valued proposition has a total representative,
-    `ofProp3` being a section. -/
-theorem eval_surjective : Function.Surjective (eval : PartialProp W → Prop3 W) :=
-  fun p ↦ ⟨ofProp3 p, eval_ofProp3 p⟩
+/-- `eval` is surjective — every trivalent proposition has a total representative,
+    `ofTrivalent` being a section. -/
+theorem eval_surjective : Function.Surjective (eval : PartialProp W → W → Trivalent) :=
+  fun p ↦ ⟨ofTrivalent p, eval_ofTrivalent p⟩
 
-/-- `eval` identifies exactly agreement on definedness and, where defined, on assertion:
-    `PartialProp` is the *total-representative* presentation of `Prop3 W`, carrying
+/-- `eval` identifies exactly agreement on definedness and, where defined, on assertion.
+    `PartialProp` is the *total-representative* presentation of `W → Trivalent`, carrying
     (linguistically inert) assertion values outside the presupposition that `eval`
-    forgets — so `ofProp3 ∘ eval` is not the identity, only `eval ∘ ofProp3` is
-    (`eval_ofProp3`). -/
+    forgets — so `ofTrivalent ∘ eval` is not the identity, only `eval ∘ ofTrivalent` is
+    (`eval_ofTrivalent`). -/
 theorem eval_eq_eval_iff (p q : PartialProp W) :
     p.eval = q.eval ↔
       ∀ w, (p.presup w ↔ q.presup w) ∧ (p.presup w → (p.assertion w ↔ q.assertion w)) := by
@@ -170,7 +162,7 @@ theorem eval_eq_eval_iff (p q : PartialProp W) :
   · intro h w
     have hw : p.eval w = q.eval w := congrFun h w
     have hpq : p.presup w ↔ q.presup w := by
-      rw [← eval_isDefined p w, ← eval_isDefined q w, hw]
+      rw [← isDefined_eval p w, ← isDefined_eval q w, hw]
     refine ⟨hpq, fun hp ↦ ⟨fun ha ↦ ?_, fun ha ↦ ?_⟩⟩
     · exact ((eval_eq_true_iff q w).mp
         (hw.symm.trans ((eval_eq_true_iff p w).mpr ⟨hp, ha⟩))).2

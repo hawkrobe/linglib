@@ -102,7 +102,7 @@ instance smiled.instDecidable : ∀ p w, Decidable (smiled p w) := by
 /-- All three professors. -/
 def profs : Finset Prof := Finset.univ
 
-/-- Reception grades for the coarse QUD: Smith's anger pulls reception down
+/-- Reception grades for the coarse QUD — Smith's anger pulls reception down
     to `mixed`, his neutrality leaves it `positive` (§4.2). -/
 inductive Reception where | positive | mixed | negative
   deriving DecidableEq
@@ -114,10 +114,10 @@ def receptionGrade : ProfWorld → Reception
   | .onlyLeeSmiled => .mixed
   | .noneSmiled => .negative
 
-/-- Coarse QUD: "Was Sue's talk well-received?" -/
+/-- The coarse QUD asks "Was Sue's talk well-received?". -/
 abbrev coarseQ : Setoid ProfWorld := Setoid.ker receptionGrade
 
-/-- Fine QUD: "Did every professor smile?" -/
+/-- The fine QUD asks "Did every professor smile?". -/
 abbrev fineQ : Setoid ProfWorld := ⊥
 
 /-! #### Trivalent values at each world -/
@@ -183,7 +183,7 @@ non-maximal use requires a cell containing both a true-world and the
 gap-world, and the exception-mentioning continuation straddles it. -/
 
 /-- "Smith didn't smile", the exception-mentioning continuation. -/
-def smithDidntSmile : Trivalent.Prop3 ProfWorld :=
+def smithDidntSmile : (ProfWorld → Trivalent) :=
   λ w => if smiled .smith w then .false else .true
 
 /-- Under the coarse issue licensing the non-maximal use at `smithNeutral`,
