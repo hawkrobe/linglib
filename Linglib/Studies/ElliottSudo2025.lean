@@ -75,7 +75,7 @@ open DynamicSemantics BilateralDen ElliottSudo2025.Examples
 abbrev BUSDen (W E : Type*) := BilateralDen W ℕ E
 
 /-- A Heimian information state (Def. 3.1). -/
-abbrev BUSState (W E : Type*) := Set (Possibility W ℕ (Part E))
+abbrev BUSState (W E : Type*) := Set (Possibility W ℕ (Flat E))
 
 variable {W E : Type*} {s : BUSState W E} {x : ℕ}
 
@@ -87,10 +87,10 @@ variable (Q : E → W → Prop)
 
 /-- Where the referent is novel, an atomic predication of it survives in neither dimension. -/
 theorem pred1_positive_of_novel (hx : State.Novel s x) : (pred1 Q x).positive s = ∅ :=
-  Set.eq_empty_of_forall_notMem λ p ⟨hp, e, he, _⟩ => hx p hp (Part.dom_iff_mem.mpr ⟨e, he⟩)
+  Set.eq_empty_of_forall_notMem fun p ⟨hp, _, he, _⟩ ↦ Flat.coe_ne_bot (he.symm.trans (hx p hp))
 
 theorem pred1_negative_of_novel (hx : State.Novel s x) : (pred1 Q x).negative s = ∅ :=
-  Set.eq_empty_of_forall_notMem λ p ⟨hp, e, he, _⟩ => hx p hp (Part.dom_iff_mem.mpr ⟨e, he⟩)
+  Set.eq_empty_of_forall_notMem fun p ⟨hp, _, he, _⟩ ↦ Flat.coe_ne_bot (he.symm.trans (hx p hp))
 
 /-- Where the referent is novel, every possibility is unknown for the predication. -/
 theorem pred1_unknownUpdate_of_novel (hx : State.Novel s x) :
@@ -113,18 +113,18 @@ theorem novel_exists_negative (hx : State.Novel s x) (φ : BUSDen W E) :
 
 /-- A novel possibility subsists in the random-assignment update of a predication exactly when its
 world has a witness, (76). -/
-theorem mem_lowerClosure_exists_positive_iff {p : Possibility W ℕ (Part E)} (hp : p ∈ s)
+theorem mem_lowerClosure_exists_positive_iff {p : Possibility W ℕ (Flat E)} (hp : p ∈ s)
     (hx : State.Novel s x) :
     p ∈ lowerClosure ((exists_ x (pred1 Q x)).positive s) ↔ ∃ e, Q e p.world := by
   constructor
   · rintro ⟨q, ⟨-, e, -, hQ⟩, hpq⟩
     exact ⟨e, (Possibility.le_def.mp hpq).1 ▸ hQ⟩
   · rintro ⟨e, hQ⟩
-    refine ⟨p.update x (Part.some e), ⟨⟨p, hp, e, rfl⟩, e, by simp, hQ⟩, ?_⟩
+    refine ⟨p.update x ↑e, ⟨⟨p, hp, e, rfl⟩, e, by simp, hQ⟩, ?_⟩
     refine Possibility.le_def.mpr ⟨rfl, λ v => ?_⟩
     by_cases hv : v = x
     · subst hv
-      rw [Part.eq_none_iff'.mpr (hx p hp)]
+      rw [hx p hp]
       exact bot_le
     · simp [Possibility.update, Function.update_of_ne hv]
 
@@ -143,7 +143,7 @@ theorem exists_unknownUpdate_of_novel [Nonempty E] (hx : State.Novel s x) :
     · rintro ⟨q, ⟨-, e, -, hQ⟩, hqw⟩
       exact hw e (hqw ▸ hQ)
     · obtain ⟨e⟩ := ‹Nonempty E›
-      exact ⟨p.update x (Part.some e), ⟨⟨p, hp, e, rfl⟩, e, by simp, hw e⟩, rfl⟩
+      exact ⟨p.update x ↑e, ⟨⟨p, hp, e, rfl⟩, e, by simp, hw e⟩, rfl⟩
 
 theorem exists_assertable [Nonempty E] (hx : State.Novel s x) :
     (exists_ x (pred1 Q x)).assertable s :=
@@ -369,15 +369,14 @@ theorem negative_egli_fails :
       (exists_ x (pred1 P x ⊙ pred1 Q x)).negative s ≠
         (exists_ x (pred1 P x) ⊙ pred1 Q x).negative s := by
   refine ⟨Unit, Unit, 0, λ _ _ => True, λ _ _ => False, {⟨(), λ _ => ⊥⟩}, λ h => ?_⟩
-  have hmem : (⟨(), λ _ => ⊥⟩ : Possibility Unit ℕ (Part Unit)).update 0 (Part.some ()) ∈
+  have hmem : (⟨(), λ _ => ⊥⟩ : Possibility Unit ℕ (Flat Unit)).update 0 ↑() ∈
       (exists_ 0 (pred1 (λ _ _ => True) 0) ⊙ pred1 (λ _ _ => False) 0).negative
         {⟨(), λ _ => ⊥⟩} :=
     Or.inl (Or.inr ⟨⟨⟨_, rfl, (), rfl⟩, (), by simp, trivial⟩, (), by simp, not_false⟩)
   rw [← h] at hmem
-  have := congrArg (λ p : Possibility Unit ℕ (Part Unit) => (p.assignment 0).Dom)
+  have := congrArg (fun p : Possibility Unit ℕ (Flat Unit) ↦ p.assignment 0)
     (Set.mem_singleton_iff.mp (exists_negative_subset _ hmem))
-  simp at this
-  exact Part.not_none_dom this
+  simp [Possibility.update] at this
 
 /-! ### Partial familiarity (§3.3, (56)–(57)) -/
 
@@ -401,10 +400,10 @@ def pHolds : PEntity → PWorld → Prop
   | _, _ => False
 
 /-- The assignment `[x → e]`: register 0 defined, all else `∗`. -/
-def xTo (e : PEntity) : ℕ → Part PEntity := λ n => if n = 0 then Part.some e else ⊥
+def xTo (e : PEntity) : ℕ → Flat PEntity := fun n ↦ if n = 0 then ↑e else ⊥
 
 /-- The initial assignment `[]`. -/
-def blank : ℕ → Part PEntity := λ _ => ⊥
+def blank : ℕ → Flat PEntity := fun _ ↦ ⊥
 
 open PWorld in
 /-- The state of (56), where `x` is defined at the `P`-worlds only. -/
@@ -413,18 +412,18 @@ def s56 : BUSState PWorld PEntity :=
 
 /-- (56a): `(wa, [x → a])` survives assertion. -/
 theorem mem_positive_s56 :
-    (⟨.wa, xTo .a⟩ : Possibility PWorld ℕ (Part PEntity)) ∈ (pred1 pHolds 0).positive s56 :=
-  ⟨by simp [s56], .a, Part.mem_some _, trivial⟩
+    (⟨.wa, xTo .a⟩ : Possibility PWorld ℕ (Flat PEntity)) ∈ (pred1 pHolds 0).positive s56 :=
+  ⟨by simp [s56], .a, by simp [xTo], trivial⟩
 
 /-- (56c): `(w0, [])` subsists in neither dimension, so it is unknown. -/
 theorem gap_mem_unknownUpdate_s56 :
-    (⟨.w0, blank⟩ : Possibility PWorld ℕ (Part PEntity)) ∈ (pred1 pHolds 0).unknownUpdate s56 := by
+    (⟨.w0, blank⟩ : Possibility PWorld ℕ (Flat PEntity)) ∈ (pred1 pHolds 0).unknownUpdate s56 := by
   refine ⟨by simp [s56], ?_, ?_⟩ <;>
   · rintro ⟨q, ⟨hq, e, he, -⟩, hw, -⟩
     rcases (by simpa [s56] using hq : q = _ ∨ q = _ ∨ q = _ ∨ q = _ ∨ q = _)
       with rfl | rfl | rfl | rfl | rfl <;>
       first
-        | exact absurd he (Part.notMem_none e)
+        | exact absurd he Flat.bot_ne_coe
         | simp_all
 
 /-- (56): `P(x)` is not assertable at a partially familiar state, and `x` is not familiar. -/
@@ -432,7 +431,7 @@ theorem not_assertable_s56 : ¬ (pred1 pHolds 0).assertable s56 := λ h =>
   Set.notMem_empty _ (h ▸ gap_mem_unknownUpdate_s56)
 
 theorem not_familiar_s56 : ¬ State.Familiar s56 0 := λ h =>
-  h ⟨.w0, blank⟩ (show ⟨PWorld.w0, blank⟩ ∈ s56 by simp [s56])
+  h ⟨.w0, blank⟩ (show ⟨PWorld.w0, blank⟩ ∈ s56 by simp [s56]) rfl
 
 open PWorld in
 /-- The state of (57): `x` is undefined at some possibility of each world but defined at another
@@ -443,15 +442,15 @@ def s57 : BUSState PWorld PEntity := {⟨wa, xTo .a⟩, ⟨wa, blank⟩, ⟨wb, 
 every possibility subsisting in the positive update, although `x` is not familiar there. -/
 theorem assertable_s57_not_familiar :
     (pred1 pHolds 0).assertable s57 ∧ ¬ State.Familiar s57 0 := by
-  refine ⟨?_, λ h => h ⟨.wa, blank⟩ (show ⟨PWorld.wa, blank⟩ ∈ s57 by simp [s57])⟩
+  refine ⟨?_, fun h ↦ h ⟨.wa, blank⟩ (show ⟨PWorld.wa, blank⟩ ∈ s57 by simp [s57]) rfl⟩
   apply Set.eq_empty_of_forall_notMem
   rintro p ⟨hp, hpos, -⟩
   apply hpos
-  have ha : (⟨.wa, xTo .a⟩ : Possibility PWorld ℕ (Part PEntity)) ∈ (pred1 pHolds 0).positive s57 :=
+  have ha : (⟨.wa, xTo .a⟩ : Possibility PWorld ℕ (Flat PEntity)) ∈ (pred1 pHolds 0).positive s57 :=
     ⟨by simp [s57], .a, by simp [xTo], trivial⟩
-  have hb : (⟨.wb, xTo .b⟩ : Possibility PWorld ℕ (Part PEntity)) ∈ (pred1 pHolds 0).positive s57 :=
+  have hb : (⟨.wb, xTo .b⟩ : Possibility PWorld ℕ (Flat PEntity)) ∈ (pred1 pHolds 0).positive s57 :=
     ⟨by simp [s57], .b, by simp [xTo], trivial⟩
-  have hle : ∀ w e, (⟨w, blank⟩ : Possibility PWorld ℕ (Part PEntity)) ≤ ⟨w, xTo e⟩ :=
+  have hle : ∀ w e, (⟨w, blank⟩ : Possibility PWorld ℕ (Flat PEntity)) ≤ ⟨w, xTo e⟩ :=
     λ w e => Possibility.le_def.mpr ⟨rfl, λ _ => bot_le⟩
   rcases (by simpa [s57] using hp : p = _ ∨ p = _ ∨ p = _ ∨ p = _) with rfl | rfl | rfl | rfl
   · exact subset_lowerClosure ha

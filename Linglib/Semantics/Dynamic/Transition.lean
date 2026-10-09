@@ -122,8 +122,8 @@ def applyState (u : Transition W M X Y) (I : State W V M) :
   {q | q.domain = Y ∧ ∃ p ∈ I, p.domain = X ∧
     p.world = q.world ∧
     ∃ (e : X → M) (e' : Y → M),
-      (∀ v : X, e v ∈ p.assignment v.1) ∧
-      (∀ v : Y, e' v ∈ q.assignment v.1) ∧
+      (∀ v : X, p.assignment v.1 = ↑(e v)) ∧
+      (∀ v : Y, q.assignment v.1 = ↑(e' v)) ∧
       u.rel q.world e e'}
 
 /-- Application lands in the target stratum. -/
@@ -131,12 +131,15 @@ theorem uniformAt_applyState (u : Transition W M X Y) (I : State W V M) :
     State.UniformAt Y (u.applyState I) := fun _ hq => hq.1
 
 /-- The point of the `Y`-stratum carrying a given world and assignment. -/
-private def ptOf (Y : Set V) (w : W) (e : Y → M) :
-    Possibility W V (Part M) :=
-  ⟨w, fun v => ⟨v ∈ Y, fun hv => e ⟨v, hv⟩⟩⟩
+private noncomputable def ptOf (Y : Set V) (w : W) (e : Y → M) : Possibility W V (Flat M) :=
+  ((Possibility.domainEquiv Y).symm (w, e)).1
 
-private theorem domain_ptOf (Y : Set V) (w : W) (e : Y → M) :
-    (ptOf Y w e).domain = Y := rfl
+private theorem domain_ptOf (Y : Set V) (w : W) (e : Y → M) : (ptOf Y w e).domain = Y :=
+  ((Possibility.domainEquiv Y).symm (w, e)).2
+
+private theorem ptOf_assignment (Y : Set V) (w : W) (e : Y → M) (v : Y) :
+    (ptOf Y w e).assignment v.1 = ↑(e v) := by
+  simp [ptOf, Possibility.domainEquiv, v.2]
 
 /-- Root application is functorial. -/
 theorem applyState_comp (u : Transition W M X Y) (v : Transition W M Y Z)
@@ -146,11 +149,11 @@ theorem applyState_comp (u : Transition W M X Y) (v : Transition W M Y Z)
   constructor
   · rintro ⟨hq, p, hpI, hp, hw, e, e'', he, he'', k, huk, hkv⟩
     exact ⟨hq, ptOf Y q.world k, ⟨domain_ptOf .., p, hpI, hp, hw, e, k, he,
-      fun x => ⟨x.2, rfl⟩, huk⟩, domain_ptOf .., rfl, k, e'',
-      fun x => ⟨x.2, rfl⟩, he'', hkv⟩
+      ptOf_assignment Y q.world k, huk⟩, domain_ptOf .., rfl, k, e'',
+      ptOf_assignment Y q.world k, he'', hkv⟩
   · rintro ⟨hq, m, ⟨hm, p, hpI, hp, hw, e, k, he, hk, huk⟩, -, hmw, k', e'',
       hk', he'', hvk⟩
-    have hkk' : k = k' := funext fun x => Part.mem_unique (hk x) (hk' x)
+    have hkk' : k = k' := funext fun x => Flat.coe_injective ((hk x).symm.trans (hk' x))
     refine ⟨hq, p, hpI, hp, hw.trans hmw, e, e'', he, he'', k, ?_, ?_⟩
     · rw [← hmw]
       exact huk
@@ -170,23 +173,22 @@ theorem uniformEquiv_applyState (u : Transition W M X Y)
   · intro hf
     obtain ⟨-, p, hp, hpX, hw, e, f', hpe, hqf, hrel⟩ :
         ptOf Y f.1 f.2 ∈ u.applyState I := State.mem_uniformEquiv.mp hf
-    have hf' : f' = f.2 := funext fun v => by
-      obtain ⟨hv, hval⟩ := hqf v
-      exact hval.symm
+    have hf' : f' = f.2 := funext fun v =>
+      Flat.coe_injective ((hqf v).symm.trans (ptOf_assignment Y f.1 f.2 v))
     subst hf'
     refine ⟨e, State.mem_uniformEquiv.mpr ?_, by exact hrel⟩
     show ptOf X f.1 e ∈ I
-    have hpeq : ptOf X f.1 e = p :=
-      Possibility.ext hw.symm <| funext fun v =>
-        Part.ext' ⟨fun hv => hpX.superset hv, fun hd => hpX.subset hd⟩
-          fun hv hd => Part.mem_unique (hpe ⟨v, hv⟩) (Part.get_mem hd)
+    have hpeq : ptOf X f.1 e = p := by
+      have h : Possibility.domainEquiv X ⟨p, hpX⟩ = (f.1, e) :=
+        Prod.ext hw (funext fun v ↦ Flat.coe_injective (by simp [Possibility.domainEquiv, hpe v]))
+      rw [ptOf, ← h, Equiv.symm_apply_apply]
     rw [hpeq]; exact hp
   · rintro ⟨e, hmem, hrel⟩
     have hpI : ptOf X f.1 e ∈ I := State.mem_uniformEquiv.mp hmem
     refine State.mem_uniformEquiv.mpr ?_
     show ptOf Y f.1 f.2 ∈ u.applyState I
     exact ⟨domain_ptOf .., ptOf X f.1 e, hpI, domain_ptOf .., rfl, e,
-      f.2, fun v => ⟨v.2, rfl⟩, fun v => ⟨v.2, rfl⟩, by exact hrel⟩
+      f.2, ptOf_assignment X f.1 e, ptOf_assignment Y f.1 f.2, by exact hrel⟩
 
 end ApplyState
 
