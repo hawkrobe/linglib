@@ -1,5 +1,6 @@
 module
 
+public import Linglib.Data.Experiments.Krifka2007
 public import Linglib.Pragmatics.Bidirectional
 public import Linglib.Phonology.OptimalityTheory.Tableau
 public import Linglib.Semantics.Degree.Granularity
@@ -46,12 +47,8 @@ coarser scale distorts most.
 * Each scale is credited with its full cell: the quarter-hour cell around 45 holds fifteen
   minutes where the paper prints `10r`, and the approximate mass of *forty* on the uniform prior
   is `9/100` where the paper prints 0.08; neither difference affects a comparison.
-* Expression costs are a parameter, with the paper's cost comparisons as hypotheses.
-
-## TODO
-
-* The alignment of expression simplicity with representation simplicity and the Danish–Norwegian
-  frequency comparison rest on corpus counts, which belong in `Data/Experiments`.
+* Expression costs are a parameter, with the paper's cost comparisons as hypotheses; the
+  paper's own syllable and occurrence counts are the rows of `Data/Experiments/Krifka2007.json`.
 
 ## References
 
@@ -312,6 +309,37 @@ def minuteScales : Finset ℤ := {60, 30, 15, 5, 1}
 coarsest scales each lies on. -/
 theorem fortyFive_quarterHours_forty_fiveMinutes :
     scaleLcm minuteScales 45 = 15 ∧ scaleLcm minuteScales 40 = 5 := by decide
+
+/-! ### Simplicity of expression and of representation -/
+
+/-- The average syllables per number word on a scale. -/
+def averageSyllables (s : SyllableScale) : ℚ :=
+  (syllableCounts s).syllables / (syllableCounts s).words
+
+/-- Among the decimal scales the coarser the scale, the simpler its number words on average,
+while the scale of threes, which no refinement of decimal granularity yields, is costlier than
+all of them. -/
+theorem ser_decimal_scales :
+    averageSyllables .tens < averageSyllables .fives ∧
+      averageSyllables .fives < averageSyllables .ones ∧
+        averageSyllables .ones < averageSyllables .threes := by
+  norm_num [averageSyllables, syllableCounts]
+
+/-- The scales for children's ages in months break the alignment, the coarser scale having the
+costlier words. -/
+theorem months_violate_ser :
+    averageSyllables .monthsByOne < averageSyllables .monthsCoarse := by
+  norm_num [averageSyllables, syllableCounts]
+
+/-- In decimal Norwegian the word for fifty is used more than those for forty and sixty; in
+vigesimal Danish, where fifty is the complex half-score form, less. Approximate use follows the
+simple forms of the language itself. -/
+theorem fifty_follows_the_language :
+    ((counts .foerti).count < (counts .femti).count ∧
+      (counts .seksti).count < (counts .femti).count) ∧
+      (counts .halvtreds).count < (counts .fyrre).count ∧
+        (counts .halvtreds).count < (counts .tres).count := by
+  decide
 
 /-! ### Refining by half -/
 
