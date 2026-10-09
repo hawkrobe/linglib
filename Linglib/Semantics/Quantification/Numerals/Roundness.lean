@@ -4,6 +4,7 @@ public import Mathlib.Data.Nat.Log
 public import Mathlib.Data.Fintype.Card
 public import Mathlib.Order.Concept
 public import Mathlib.Algebra.Group.Subgroup.ZPowers.Lemmas
+public import Mathlib.Data.Finset.Max
 public import Mathlib.Tactic.Ring
 public import Mathlib.Tactic.DeriveFintype
 
@@ -151,6 +152,31 @@ theorem scaleLcm_pos (hW : 0 ∉ W) (d : ℤ) : 0 < scaleLcm W d := by
   refine lt_of_le_of_ne (Int.nonneg_of_normalize_eq_self Finset.normalize_lcm) fun h ↦ hW ?_
   obtain ⟨w, hw, hw0⟩ := Finset.lcm_eq_zero_iff.1 h.symm
   exact hw0 ▸ (Finset.mem_filter.1 hw).1
+
+/-- On positive aligned widths, each pair comparable by divisibility, the lcm of the widths
+through `d` is the widest width dividing `d` ([krifka-2007]'s aligned granularity levels). -/
+theorem scaleLcm_eq_of_aligned (hpos : ∀ w ∈ W, 0 < w)
+    (hW : ∀ a ∈ W, ∀ b ∈ W, a ∣ b ∨ b ∣ a) {m : ℤ} (hm : m ∈ W) (hmd : m ∣ d)
+    (hmax : ∀ w ∈ W, w ∣ d → w ≤ m) : scaleLcm W d = m := by
+  have hm' : m ∈ W.filter (· ∣ d) := Finset.mem_filter.2 ⟨hm, hmd⟩
+  refine Int.dvd_antisymm (Int.nonneg_of_normalize_eq_self Finset.normalize_lcm)
+    (hpos m hm).le (Finset.lcm_dvd fun w hw ↦ ?_) (Finset.dvd_lcm hm')
+  obtain ⟨hwW, hwd⟩ := Finset.mem_filter.1 hw
+  rcases hW w hwW m hm with h | h
+  · exact h
+  · obtain rfl := le_antisymm (hmax w hwW hwd) (Int.le_of_dvd (hpos w hwW) h)
+    exact dvd_rfl
+
+/-- On positive aligned widths, a number on some scale has a widest scale, the lcm of the
+widths through it. -/
+theorem scaleLcm_mem_of_aligned (hpos : ∀ w ∈ W, 0 < w)
+    (hW : ∀ a ∈ W, ∀ b ∈ W, a ∣ b ∨ b ∣ a) (hne : (W.filter (· ∣ d)).Nonempty) :
+    scaleLcm W d ∈ W ∧ scaleLcm W d ∣ d ∧ ∀ w ∈ W, w ∣ d → w ≤ scaleLcm W d := by
+  obtain ⟨m, hm, hmax⟩ := (W.filter (· ∣ d)).exists_max_image id hne
+  obtain ⟨hmW, hmd⟩ := Finset.mem_filter.1 hm
+  rw [scaleLcm_eq_of_aligned hpos hW hmW hmd
+    fun w hw hwd ↦ hmax w (Finset.mem_filter.2 ⟨hw, hwd⟩)]
+  exact ⟨hmW, hmd, fun w hw hwd ↦ hmax w (Finset.mem_filter.2 ⟨hw, hwd⟩)⟩
 
 end Scale
 

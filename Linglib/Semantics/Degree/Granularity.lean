@@ -71,7 +71,7 @@ open Set
 
 section IsGranularity
 
-variable {D : Type*} [AddCommGroup D] [LinearOrder D] [IsOrderedAddMonoid D]
+variable {D : Type*} [AddCommGroup D] [LinearOrder D]
   {γ γ₁ γ₂ : D → Set D} {w w₁ w₂ : D}
 
 /-- A granularity function of width `w` maps each degree to a set that contains it and lies
@@ -82,7 +82,6 @@ structure IsGranularity (γ : D → Set D) (w : D) : Prop where
   /-- Every cell is an interval of width `w`, whichever of its endpoints it contains. -/
   exists_Ioo_subset_subset_Icc (s : D) : ∃ a, Ioo a (a + w) ⊆ γ s ∧ γ s ⊆ Icc a (a + w)
 
-omit [IsOrderedAddMonoid D] in
 /-- The cells of a granularity function are convex. -/
 theorem IsGranularity.ordConnected (h : IsGranularity γ w) (s : D) : (γ s).OrdConnected := by
   obtain ⟨a, h₁, h₂⟩ := h.exists_Ioo_subset_subset_Icc s
@@ -92,6 +91,16 @@ theorem IsGranularity.ordConnected (h : IsGranularity γ w) (s : D) : (γ s).Ord
   rcases (hzy.trans (h₂ hy).2).eq_or_lt with rfl | hlt'
   · exact le_antisymm (h₂ hy).2 hzy ▸ hy
   exact h₁ ⟨hlt, hlt'⟩
+
+/-- The granularity function of width zero is the exact reading, every cell a single degree. -/
+theorem isGranularity_zero_iff : IsGranularity γ 0 ↔ γ = fun s ↦ {s} := by
+  refine ⟨fun h ↦ funext fun s ↦ ?_, by rintro rfl; exact ⟨fun s ↦ rfl, fun s ↦ ⟨s, by simp⟩⟩⟩
+  obtain ⟨a, -, h₂⟩ := h.exists_Ioo_subset_subset_Icc s
+  rw [add_zero, Icc_self] at h₂
+  obtain rfl := mem_singleton_iff.1 (h₂ (h.mem_self s))
+  exact h₂.antisymm (singleton_subset_iff.2 (h.mem_self _))
+
+variable [IsOrderedAddMonoid D]
 
 theorem IsGranularity.nonneg (h : IsGranularity γ w) : 0 ≤ w := by
   obtain ⟨a, -, h₂⟩ := h.exists_Ioo_subset_subset_Icc 0
@@ -106,15 +115,6 @@ theorem IsGranularity.not_subset [DenselyOrdered D] (h₁ : IsGranularity γ₁ 
   obtain ⟨hab, hba⟩ := (Ioo_subset_Icc_iff (lt_add_of_pos_right a (h₁.nonneg.trans_lt hlt))).1
     ((ha.trans hsub).trans hb)
   exact not_le.2 hlt ((add_le_add_iff_left b).1 ((add_le_add_left hab w₂).trans hba))
-
-omit [IsOrderedAddMonoid D] in
-/-- The granularity function of width zero is the exact reading, every cell a single degree. -/
-theorem isGranularity_zero_iff : IsGranularity γ 0 ↔ γ = fun s ↦ {s} := by
-  refine ⟨fun h ↦ funext fun s ↦ ?_, by rintro rfl; exact ⟨fun s ↦ rfl, fun s ↦ ⟨s, by simp⟩⟩⟩
-  obtain ⟨a, -, h₂⟩ := h.exists_Ioo_subset_subset_Icc s
-  rw [add_zero, Icc_self] at h₂
-  obtain rfl := mem_singleton_iff.1 (h₂ (h.mem_self s))
-  exact h₂.antisymm (singleton_subset_iff.2 (h.mem_self _))
 
 end IsGranularity
 
@@ -133,6 +133,11 @@ theorem grain_iff : grain ε d d' ↔ round (d / ε) = round (d' / ε) := Iff.rf
 
 theorem representative_mem_zmultiples (ε d : α) : representative ε d ∈ AddSubgroup.zmultiples ε :=
   AddSubgroup.mem_zmultiples_iff.2 ⟨_, rfl⟩
+
+/-- Only scale points are reported. -/
+theorem preimage_representative_of_notMem {d : α} (hd : d ∉ AddSubgroup.zmultiples ε) :
+    representative ε ⁻¹' {d} = ∅ :=
+  eq_empty_of_forall_notMem fun v hv ↦ hd (hv ▸ representative_mem_zmultiples ε v)
 
 variable [IsStrictOrderedRing α]
 
@@ -161,6 +166,45 @@ theorem cell_grain (hε : 0 < ε) (d : α) :
   ext x
   rw [Setoid.mem_cell, grain_iff, round_eq_iff, mem_Ico, mem_Ico, le_div_iff₀ hε,
     div_lt_iff₀ hε, representative, zsmul_eq_mul, sub_mul, add_mul, one_div_mul_eq_div]
+
+/-- The grain moves a degree by exactly half its width at the points that halving the width adds
+to the scale. -/
+theorem abs_sub_representative_eq_half_iff (hε : 0 < ε) {d : α} :
+    |d - representative ε d| = ε / 2 ↔
+      d ∈ AddSubgroup.zmultiples (ε / 2) ∧ d ∉ AddSubgroup.zmultiples ε := by
+  have key : |d - representative ε d| = ε * |d / ε - round (d / ε)| := by
+    rw [representative, zsmul_eq_mul, ← abs_of_pos hε, ← abs_mul, abs_of_pos hε]
+    congr 1
+    field_simp
+  rw [key, show ε / 2 = ε * (1 / 2) by ring, mul_right_inj' hε.ne', abs_sub_round_eq_half_iff,
+    AddSubgroup.mem_zmultiples_iff, AddSubgroup.mem_zmultiples_iff]
+  simp only [zsmul_eq_mul]
+  constructor
+  · rintro ⟨k, hk⟩
+    rw [div_eq_iff hε.ne'] at hk
+    refine ⟨⟨2 * k + 1, by rw [hk]; push_cast; ring⟩, ?_⟩
+    rintro ⟨j, hj⟩
+    have h2 : (j : α) = k + 1 / 2 :=
+      mul_right_cancel₀ hε.ne' (hj.trans hk)
+    have : ((2 * (j - k) : ℤ) : α) = 1 := by push_cast; linarith
+    have := Int.cast_eq_one.1 this
+    omega
+  · rintro ⟨⟨m, hm⟩, hn⟩
+    obtain ⟨k, rfl | rfl⟩ := Int.even_or_odd' m
+    · exact absurd ⟨k, by rw [← hm]; push_cast; ring⟩ hn
+    · refine ⟨k, ?_⟩
+      rw [div_eq_iff hε.ne', ← hm]
+      push_cast
+      ring
+
+/-- The degrees reported as a scale point are its cell, the half-open interval of the grain's
+width centred on it. -/
+theorem preimage_representative (hε : 0 < ε) {d : α} (hd : d ∈ AddSubgroup.zmultiples ε) :
+    representative ε ⁻¹' {d} = Ico (d - ε / 2) (d + ε / 2) := by
+  have hrep := representative_eq_self_of_mem_zmultiples hε.ne' hd
+  rw [← hrep, ← cell_grain hε, hrep]
+  ext v
+  rw [mem_preimage, mem_singleton_iff, Setoid.mem_cell, grain_iff_representative hε.ne', hrep]
 
 /-- Two degrees the grain of width `ε` identifies are less than `ε` apart. -/
 theorem abs_sub_lt_of_grain (hε : 0 < ε) (h : grain ε d d') : |d - d'| < ε := by
