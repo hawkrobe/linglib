@@ -8,6 +8,7 @@ module
 public import Mathlib.Order.Monotone.Monovary
 public import Mathlib.Data.Set.Insert
 public import Mathlib.Data.Set.Image
+public import Mathlib.Data.Finset.Defs
 
 /-!
 # `MonovaryOn` on `singleton`, `union`, `insert`, and `image`
@@ -29,6 +30,8 @@ beside `MonovaryOn.empty` and `MonovaryOn.comp_right`.
   `Set.pairwise_*` analogues (and `antivaryOn_*` twins).
 * `monovaryOn_image` — `MonovaryOn f g (k '' u) ↔ MonovaryOn (f ∘ k) (g ∘ k) u`,
   the image companion of `MonovaryOn.comp_right` (and `antivaryOn_image` twin).
+* `MonovaryOn` and `AntivaryOn` on a finset are decidable, so `decide` checks them on finite
+  data.
 -/
 
 @[expose] public section
@@ -83,3 +86,11 @@ theorem antivaryOn_insert {a : ι} :
 theorem antivaryOn_image (k : ι' → ι) (u : Set ι') :
     AntivaryOn f g (k '' u) ↔ AntivaryOn (f ∘ k) (g ∘ k) u := by
   grind [AntivaryOn]
+
+/-! ### Decidability -/
+
+instance [DecidableLT β] [DecidableLE α] {t : Finset ι} : Decidable (MonovaryOn f g t) :=
+  inferInstanceAs (Decidable (∀ i ∈ t, ∀ j ∈ t, g i < g j → f i ≤ f j))
+
+instance [DecidableLT β] [DecidableLE α] {t : Finset ι} : Decidable (AntivaryOn f g t) :=
+  inferInstanceAs (Decidable (∀ i ∈ t, ∀ j ∈ t, g i < g j → f j ≤ f i))

@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.InformationTheory.Entropy
-public import Linglib.Syntax.DependencyGrammar.Length
+public import Linglib.Syntax.DependencyGrammar.Reordering
 public import Linglib.Fragments.Japanese.Morph
 public import Linglib.Fragments.Sesotho.Morph
 public import Linglib.Studies.Bybee1985
@@ -114,32 +114,22 @@ def shifted : Graph 11 :=
     1 [(1, 0, .nsubj), (1, 10, .obj), (10, 5, .det), (7, 6, .advmod), (10, 7, .amod),
       (9, 8, .advmod), (10, 9, .amod), (4, 2, .case_), (4, 3, .det), (1, 4, .obl)]
 
+set_option maxRecDepth 4000 in
+/-- The unshifted order is the shifted one with the prepositional phrase and the object swapped,
+each moving as a block. -/
+theorem longObjectFirst_eq_reorderDependents :
+    longObjectFirst = shifted.reorderDependents 1 (.swap ⟨4, by decide⟩ ⟨10, by decide⟩) :=
+  Graph.ext (funext (by decide +kernel : ∀ x, _)) (funext₂ (by decide +kernel : ∀ x y, _))
+    (by decide +kernel)
+
 /-- Heavy NP shift cuts the verb's distance to the prepositional phrase from nine to three and
-raises its distance to the object from six to nine, so the total dependency length falls. It is
-Behaghel's law at the verb: after it the prepositional phrase of three words precedes the object
-of six in the shifted order, and the unshifted order swaps them, which leaves the subject, the
-inner arcs and the phrase heads' places in their phrases (21 in all) as they were. -/
+raises its distance to the object from six to nine, so the total dependency length falls: by
+Behaghel's law at the verb, the phrases after it grow outward in the shifted order and not in the
+unshifted one. -/
 theorem heavyNPShift_shorter : shifted.totalLength < longObjectFirst.totalLength := by
-  have hσ : {c | Equiv.swap (⟨4, by decide⟩ : shifted.siblings 1) ⟨10, by decide⟩ c ≠ c} ⊆
-      ↑((shifted.siblingArrangement 1).after ⟨1, by decide⟩) := by
-    intro c hc
-    simp only [Set.mem_ofPred_eq, Finset.mem_coe, WordOrder.Arrangement.mem_after,
-      Graph.siblingArrangement_precedes] at hc ⊢
-    revert c; decide +kernel
-  have hmono : MonovaryOn (fun c : shifted.siblings 1 ↦ shifted.phraseLength c)
-      (shifted.siblingArrangement 1) ((shifted.siblingArrangement 1).after ⟨1, by decide⟩) := by
-    unfold MonovaryOn; decide +kernel
-  have hlt := (WordOrder.Arrangement.sum_boundaryDist_lt_iff _ hσ hmono).2 (by
-    unfold MonovaryOn; decide +kernel)
-  have h₁ : shifted.totalLength = ∑ c, (shifted.siblingArrangement 1).boundaryDist
-      (fun c : shifted.siblings 1 ↦ shifted.phraseLength c) ⟨1, by decide⟩ c + 21 := by
-    decide +kernel
-  have h₂ : longObjectFirst.totalLength = ∑ c, WordOrder.Arrangement.boundaryDist
-      ((Equiv.swap (⟨4, by decide⟩ : shifted.siblings 1) ⟨10, by decide⟩).trans
-        (shifted.siblingArrangement 1))
-      (fun c : shifted.siblings 1 ↦ shifted.phraseLength c) ⟨1, by decide⟩ c + 21 := by
-    decide +kernel
-  omega
+  rw [longObjectFirst_eq_reorderDependents]
+  exact (Graph.totalLength_lt_reorderDependents_iff (by decide +kernel) (by decide +kernel)
+    (by decide +kernel) (by decide +kernel)).2 (by decide +kernel)
 
 /-! ### The information locality bound -/
 
