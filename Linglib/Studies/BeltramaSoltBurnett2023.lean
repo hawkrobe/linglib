@@ -3,9 +3,9 @@ module
 public import Linglib.Data.Experiments.BeltramaSoltBurnett2023
 public import Linglib.Pragmatics.SocialMeaning.Persona
 public import Linglib.Fragments.English.NumeralModifiers
-public import Linglib.Semantics.Quantification.Numerals.Roundness
+public import Linglib.Semantics.Degree.Granularity
 public import Mathlib.Algebra.Order.Ring.Rat
-public import Mathlib.Order.Filter.Extr
+public import Mathlib.Data.Rat.Floor
 public import Mathlib.Tactic.NormNum
 
 /-!
@@ -65,29 +65,15 @@ open SocialMeaning Data.Experiments
 
 /-! ### The variants -/
 
-section Variants
-
-open Numerals.Roundness
-
-/-- A number `m` is a round number closest to `n` when it has a roundness property and no number
-with one is closer to `n`. -/
-def IsNearestRound (n m : ℕ) : Prop :=
-  0 < roundnessScore m ∧ IsMinOn (fun k : ℕ ↦ |(k : ℤ) - n|) {k | 0 < roundnessScore k} m
-
-/-- The underspecified durations round the precise ones off to the closest round number
-(p. 807). -/
-theorem isNearestRound_stimuli (e : Experiment) :
-    IsNearestRound (stimuli e .precise).before (stimuli e .underspecified).before ∧
-      IsNearestRound (stimuli e .precise).after (stimuli e .underspecified).after := by
-  have key {n m : ℕ} (hn : roundnessScore n = 0) (hm : 0 < roundnessScore m)
-      (h : |(m : ℤ) - n| = 1) : IsNearestRound n m := by
-    refine ⟨hm, isMinOn_iff.2 fun k (hk : 0 < roundnessScore k) ↦ ?_⟩
-    have hkn : k ≠ n := by rintro rfl; omega
-    exact h ▸ Int.one_le_abs (sub_ne_zero.2 (Nat.cast_injective.ne hkn))
-  cases e <;> exact ⟨key (by decide) (by decide) (by norm_num [stimuli]),
-    key (by decide) (by decide) (by norm_num [stimuli])⟩
-
-end Variants
+open Degree in
+/-- The underspecified durations report the precise ones at the grain of ten minutes, each the
+multiple of ten closest to it (p. 807). -/
+theorem underspecified_eq_representative (e : Experiment) :
+    ((stimuli e .underspecified).before : ℚ) =
+        representative 10 ((stimuli e .precise).before : ℚ) ∧
+      ((stimuli e .underspecified).after : ℚ) =
+        representative 10 ((stimuli e .precise).after : ℚ) := by
+  cases e <;> norm_num [stimuli, representative, round_eq, Int.floor_eq_iff]
 
 /-- The numeral modifier an approximator is. -/
 def Approximator.modifier : Approximator → Numerals.NumeralModifier
