@@ -76,7 +76,7 @@ def pred₂ (R : M → M → Prop) (i j : ℕ) : LF M := atom (fun m ↦ R (m 0)
 /-- The proposition state of an atomic formula: the points with exactly the
 atom's cards, whose values stand in `ζ`. -/
 def atomState (ζ : (Fin n → M) → Prop) (args : Fin n → ℕ) : File W M :=
-  {q | q.domain = Set.range args ∧ ∃ m : Fin n → M, (∀ k, m k ∈ q.assignment (args k)) ∧ ζ m}
+  {q | q.domain = Set.range args ∧ ∃ m : Fin n → M, (∀ k, q.assignment (args k) = ↑(m k)) ∧ ζ m}
 
 /-- The file change of a one-place atom. -/
 def unary (N : M → Prop) (i : ℕ) : FCP W ℕ M :=
@@ -136,7 +136,7 @@ theorem supports_unary_true (F : File W M) {i : ℕ} (h : State.Familiar F i) :
     (unary (fun _ ↦ True) i).supports F := by
   rw [PartialUpdate.supports_iff_eq_some, unary_eq_atomVar, FCP.atomVar_eq_of_familiar _ h]
   exact congrArg Part.some (Set.sep_eq_self_iff_mem_true.mpr fun p hp ↦
-    let ⟨m, hm⟩ := Part.dom_iff_mem.mp (h p hp); ⟨m, hm, trivial⟩)
+    let ⟨m, hm⟩ := Flat.ne_bot_iff_exists.1 (h p hp); ⟨m, hm, trivial⟩)
 
 /-- A pronoun at a familiar card changes nothing. -/
 theorem fcp_pro (F : File W M) {i : ℕ} (h : State.Familiar F i) : (pro i).fcp F = Part.some F :=
@@ -149,14 +149,14 @@ theorem admits_pro (F : File W M) (i : ℕ) : (pro i).fcp.Admits F ↔ State.Fam
 /-- The file change of an indefinite at a novel card: random assignment then
 filtering. -/
 theorem fcp_indef {F : File W M} {i : ℕ} (N : M → Prop) (h : State.Novel F i) :
-    (indef i N).fcp F = Part.some {p ∈ F.randomAssign i | ∃ m ∈ p.assignment i, N m} := by
+    (indef i N).fcp F = Part.some {p ∈ F.randomAssign i | ∃ m : M, p.assignment i = ↑m ∧ N m} := by
   show FCP.indef i (unary N i) F = _
   rw [FCP.indef_apply _ h, unary_eq_atomVar,
     FCP.atomVar_eq_of_familiar _ (State.familiar_randomAssign F i)]
 
 theorem mem_fcp_indef {F F' : File W M} {i : ℕ} {N : M → Prop} :
     F' ∈ (indef i N).fcp F ↔
-      State.Novel F i ∧ F' = {p ∈ F.randomAssign i | ∃ m ∈ p.assignment i, N m} :=
+      State.Novel F i ∧ F' = {p ∈ F.randomAssign i | ∃ m : M, p.assignment i = ↑m ∧ N m} :=
   ⟨fun h ↦ have hn : State.Novel F i := (Part.mem_assert_iff.mp h).1
     ⟨hn, Part.mem_some_iff.mp (fcp_indef N hn ▸ h)⟩,
    fun ⟨hn, hF⟩ ↦ hF ▸ fcp_indef N hn ▸ Part.mem_some _⟩
@@ -246,7 +246,7 @@ theorem familiar_of_mem_indef {F F' : File W M} {i : ℕ} {N : M → Prop}
 /-- A card not among an atom's is novel at its proposition state. -/
 theorem novel_atomState {ζ : (Fin n → M) → Prop} {args : Fin n → ℕ} {j : ℕ}
     (hj : j ∉ Set.range args) : State.Novel (atomState (W := W) ζ args) j :=
-  fun _ ⟨hq, _⟩ hd ↦ hj (hq ▸ Possibility.mem_domain.mpr hd)
+  fun _ ⟨hq, _⟩ ↦ by_contra fun hd ↦ hj (hq ▸ Possibility.mem_domain.mpr hd)
 
 /-- A card a logical form does not introduce stays novel. -/
 theorem novel_of_mem : ∀ {φ : LF M} {F F' : File W M} {j : ℕ}, j ∉ φ.cards →
@@ -280,15 +280,15 @@ theorem trueIn_indef {F : File W M} {i : ℕ} (N : M → Prop) (h : State.Novel 
   constructor
   · rintro ⟨p, hp, m', hm', hN⟩
     obtain ⟨q, hq, m, rfl⟩ := hp
-    obtain rfl : m' = m := by simpa [Possibility.update] using hm'
+    obtain rfl : m = m' := by simpa [Possibility.update] using hm'
     exact ⟨⟨q, hq⟩, _, hN⟩
   · rintro ⟨⟨q, hq⟩, m, hN⟩
-    exact ⟨q.update i (Part.some m), ⟨q, hq, m, rfl⟩, m, by simp [Possibility.update], hN⟩
+    exact ⟨q.update i ↑m, ⟨q, hq, m, rfl⟩, m, by simp [Possibility.update], hN⟩
 
 /-- A definite has the force of its card: "She₁ is a woman" is true w.r.t. a
 file iff some point's value at card 1 is a woman. -/
 theorem trueIn_pro_pred {F : File W M} {i : ℕ} (N : M → Prop) (h : State.Familiar F i) :
-    FCP.trueIn F ((pro i).seq (pred₁ N i)).fcp ↔ ∃ p ∈ F, ∃ m ∈ p.assignment i, N m := by
+    FCP.trueIn F ((pro i).seq (pred₁ N i)).fcp ↔ ∃ p ∈ F, ∃ m : M, p.assignment i = ↑m ∧ N m := by
   have : ((pro i).seq (pred₁ N i)).fcp F = FCP.atomVar N i F := by
     show ((pro i).fcp F).bind _ = _
     rw [fcp_pro F h, Part.bind_some]
@@ -356,7 +356,7 @@ theorem not_admits_everyDog {F : File W M} (h : State.Novel F 1)
   obtain rfl := Part.get_eq_of_mem hF' hd
   obtain ⟨hpro, -⟩ := hrest
   have hf : State.Familiar _ 1 := hpro.1.1
-  exact h p (subset_of_mem_fcp_every hF' hp) (hf p hp)
+  exact hf p hp (h p (subset_of_mem_fcp_every hF' hp))
 
 /-- (17) is infelicitous whenever card 1 is novel and the negated sentence is
 true, for the same reason. -/
@@ -368,7 +368,7 @@ theorem not_admits_noDog {F : File W M} (h : State.Novel F 1)
   obtain rfl := Part.get_eq_of_mem hF' hd
   obtain ⟨hpro, -⟩ := hrest
   have hf : State.Familiar _ 1 := hpro.1.1
-  exact h p (FCP.subset_of_mem_neg hF' hp) (hf p hp)
+  exact hf p hp (h p (FCP.subset_of_mem_neg hF' hp))
 
 /-- §2.4 (5) is felicitous whenever cards 1 and 2 are novel in the initial
 file: the definites of its second sentence find their cards in the file the
@@ -407,7 +407,7 @@ theorem novel_of_mem_kingLocal {F F' : File W M} {m i : ℕ} (h : State.Novel F 
 file, which thereby entails that there is a king. -/
 theorem familiar_of_mem_kingGlobal {F F' : File W M} {m i : ℕ}
     (hF' : F' ∈ (kingGlobal king lunch m i).fcp F) :
-    State.Familiar F' i ∧ ∀ p ∈ F', ∃ x ∈ p.assignment i, king x := by
+    State.Familiar F' i ∧ ∀ p ∈ F', ∃ x : M, p.assignment i = ↑x ∧ king x := by
   obtain ⟨F₁, h₁, h₂⟩ := mem_fcp_seq.mp hF'
   have hsub := FCP.subset_of_mem_neg h₂
   refine ⟨(familiar_of_mem_indef h₁).mono hsub, fun p hp ↦ ?_⟩

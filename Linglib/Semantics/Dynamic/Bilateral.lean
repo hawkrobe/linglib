@@ -14,7 +14,7 @@ validating Double Negation Elimination (negation swaps the dimensions)
 and cross-disjunct anaphora.
 
 States are Heimian (the paper's Def. 3.1): sets of world-assignment
-pairs whose assignments are `Part E`-valued, the carrier of `State.lean`'s
+pairs whose assignments are partial (`Flat E`-valued), the carrier of `State.lean`'s
 information states. `⊥` is the paper's `∗`, so definedness is
 per-possibility and need not be uniform, which the paper's separation of
 assertability (54) from Heimian familiarity needs. Subsistence (Def. 3.3,
@@ -69,14 +69,14 @@ Standard dynamic semantics has only the former; the latter is what makes
 DNE and cross-disjunct anaphora work. -/
 @[ext] structure BilateralDen (W V E : Type*) where
   /-- Positive update: the result of asserting the sentence. -/
-  positive : Set (Possibility W V (Part E)) → Set (Possibility W V (Part E))
+  positive : Set (Possibility W V (Flat E)) → Set (Possibility W V (Flat E))
   /-- Negative update: the result of denying the sentence. -/
-  negative : Set (Possibility W V (Part E)) → Set (Possibility W V (Part E))
+  negative : Set (Possibility W V (Flat E)) → Set (Possibility W V (Flat E))
 
 namespace BilateralDen
 
-variable {φ ψ : BilateralDen W V E} {s : Set (Possibility W V (Part E))}
-  {p : Possibility W V (Part E)}
+variable {φ ψ : BilateralDen W V E} {s : Set (Possibility W V (Flat E))}
+  {p : Possibility W V (Flat E)}
 
 /-- Worldly atom: keep the possibilities where the proposition holds
 (positively) or fails (negatively). -/
@@ -88,15 +88,15 @@ def atom (pred : W → Prop) : BilateralDen W V E where
 where `t` is undefined survives in neither dimension
 ([elliott-sudo-2025]'s definedness clause for atomic sentences). -/
 def pred1 (P : E → W → Prop) (t : V) : BilateralDen W V E where
-  positive s := {p ∈ s | ∃ e ∈ p.assignment t, P e p.world}
-  negative s := {p ∈ s | ∃ e ∈ p.assignment t, ¬ P e p.world}
+  positive s := {p ∈ s | ∃ e : E, p.assignment t = ↑e ∧ P e p.world}
+  negative s := {p ∈ s | ∃ e : E, p.assignment t = ↑e ∧ ¬ P e p.world}
 
 /-- Binary atomic predication at `t₁`, `t₂`; partial like `pred1`. -/
 def pred2 (P : E → E → W → Prop) (t₁ t₂ : V) : BilateralDen W V E where
-  positive s := {p ∈ s | ∃ e₁ ∈ p.assignment t₁,
-    ∃ e₂ ∈ p.assignment t₂, P e₁ e₂ p.world}
-  negative s := {p ∈ s | ∃ e₁ ∈ p.assignment t₁,
-    ∃ e₂ ∈ p.assignment t₂, ¬ P e₁ e₂ p.world}
+  positive s := {p ∈ s | ∃ e₁ : E, p.assignment t₁ = ↑e₁ ∧
+    ∃ e₂ : E, p.assignment t₂ = ↑e₂ ∧ P e₁ e₂ p.world}
+  negative s := {p ∈ s | ∃ e₁ : E, p.assignment t₁ = ↑e₁ ∧
+    ∃ e₂ : E, p.assignment t₂ = ↑e₂ ∧ ¬ P e₁ e₂ p.world}
 
 /-- Negation swaps the dimensions: `s[¬φ]⁺ = s[φ]⁻` and `s[¬φ]⁻ = s[φ]⁺`.
 Negation does not "push in" — this is the key insight of bilateralism. -/
@@ -119,14 +119,14 @@ instance : InvolutiveNeg (BilateralDen W V E) where
 possibilities of `s` that subsist in neither dimension — the dynamic
 analogue of the third Strong Kleene truth value. -/
 def unknownUpdate (φ : BilateralDen W V E)
-    (s : Set (Possibility W V (Part E))) : Set (Possibility W V (Part E)) :=
+    (s : Set (Possibility W V (Flat E))) : Set (Possibility W V (Flat E)) :=
   {p ∈ s | p ∉ lowerClosure (φ.positive s) ∧ p ∉ lowerClosure (φ.negative s)}
 
 /-- Assertability ([elliott-sudo-2025], (54)): the unknown update is
 empty — every possibility is accounted for by one of the dimensions.
 Strictly weaker than Heimian familiarity. -/
 def assertable (φ : BilateralDen W V E)
-    (c : Set (Possibility W V (Part E))) : Prop :=
+    (c : Set (Possibility W V (Flat E))) : Prop :=
   φ.unknownUpdate c = ∅
 
 /-- The unknown update is invariant under negation. -/
@@ -250,21 +250,21 @@ end Quantifiers
 
 /-- Bilateral support: the positive update is consistent and the state
 subsists in it. -/
-def supports (s : Set (Possibility W V (Part E)))
+def supports (s : Set (Possibility W V (Flat E)))
     (φ : BilateralDen W V E) : Prop :=
   (φ.positive s).Nonempty ∧ lowerClosure s ≤ lowerClosure (φ.positive s)
 
 /-- Bilateral entailment: every consistent positive update of `φ`
 supports `ψ`. -/
 def entails (φ ψ : BilateralDen W V E) : Prop :=
-  ∀ s : Set (Possibility W V (Part E)),
+  ∀ s : Set (Possibility W V (Flat E)),
     (φ.positive s).Nonempty → supports (φ.positive s) ψ
 
 @[inherit_doc] scoped notation:50 φ " ⊨ᵇ " ψ => entails φ ψ
 
 /-! ### Structural lemmas -/
 
-theorem atom_complementary (pred : W → Prop) (s : Set (Possibility W V (Part E))) :
+theorem atom_complementary (pred : W → Prop) (s : Set (Possibility W V (Flat E))) :
     (atom pred (E := E)).positive s ∪ (atom pred).negative s = s := by
   ext p
   simp only [atom, Set.mem_union, Set.mem_ofPred_eq]
@@ -275,7 +275,7 @@ theorem atom_complementary (pred : W → Prop) (s : Set (Possibility W V (Part E
     · exact Or.inl ⟨h, hp⟩
     · exact Or.inr ⟨h, hp⟩
 
-theorem atom_disjoint (pred : W → Prop) (s : Set (Possibility W V (Part E))) :
+theorem atom_disjoint (pred : W → Prop) (s : Set (Possibility W V (Flat E))) :
     (atom pred (E := E)).positive s ∩ (atom pred).negative s = ∅ := by
   ext p
   exact ⟨fun ⟨⟨_, hp⟩, ⟨_, hnp⟩⟩ => absurd hp hnp, False.elim⟩

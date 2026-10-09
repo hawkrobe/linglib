@@ -40,11 +40,11 @@ carries. -/
 
 /-- In (42)(i) the referent carries the missing marble `0`, in world `true`. -/
 def marbleState : State Bool Unit (Fin 2) :=
-  {p | p.world = true ∧ p.assignment () = Part.some 0}
+  {p | p.world = true ∧ p.assignment () = ((0 : Fin 2) : Flat (Fin 2))}
 
 /-- In (42)(ii) the referent carries the missing coin `1`, in world `true`. -/
 def coinState : State Bool Unit (Fin 2) :=
-  {p | p.world = true ∧ p.assignment () = Part.some 1}
+  {p | p.world = true ∧ p.assignment () = ((1 : Fin 2) : Flat (Fin 2))}
 
 /-- The two states determine the same proposition, Definition 23(v). -/
 theorem marble_worlds_eq_coin :
@@ -53,20 +53,20 @@ theorem marble_worlds_eq_coin :
   simp only [Set.mem_image]
   constructor
   · rintro ⟨p, ⟨hw, -⟩, rfl⟩
-    exact ⟨⟨p.world, λ _ => Part.some 1⟩, ⟨hw, rfl⟩, rfl⟩
+    exact ⟨⟨p.world, fun _ ↦ ((1 : Fin 2) : Flat (Fin 2))⟩, ⟨hw, rfl⟩, rfl⟩
   · rintro ⟨p, ⟨hw, -⟩, rfl⟩
-    exact ⟨⟨p.world, λ _ => Part.some 0⟩, ⟨hw, rfl⟩, rfl⟩
+    exact ⟨⟨p.world, fun _ ↦ ((0 : Fin 2) : Flat (Fin 2))⟩, ⟨hw, rfl⟩, rfl⟩
 
 /-- But the states differ, since the marble witness is not a coin witness. With
 `marble_worlds_eq_coin`, this is Partee's argument that context change operates on information
 states, not on propositions. -/
 theorem marble_ne_coin : marbleState ≠ coinState := by
   intro h
-  have hmem : (⟨true, λ _ => Part.some 0⟩ : Possibility Bool Unit (Part (Fin 2))) ∈
-      coinState := by
+  have hmem : (⟨true, fun _ ↦ ((0 : Fin 2) : Flat (Fin 2))⟩ : Possibility Bool Unit (Flat (Fin 2)))
+      ∈ coinState := by
     rw [← h]
     exact ⟨rfl, rfl⟩
-  exact absurd (Part.some_inj.mp hmem.2) (by simp)
+  exact absurd (Flat.coe_injective hmem.2) (by decide : (0 : Fin 2) ≠ 1)
 
 /-! ### The action of a context change potential ((43), Definition 24) -/
 

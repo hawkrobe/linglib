@@ -146,6 +146,13 @@ def unbotD (d : α) (x : Flat α) : α :=
 
 @[simp] theorem unbotD_coe (d b : α) : unbotD d (b : Flat α) = b := rfl
 
+/-- The value of a committed slot. -/
+def get (x : Flat α) (h : x ≠ ⊥) : α := Option.get x (Option.isSome_iff_ne_none.2 h)
+
+@[simp] theorem coe_get (x : Flat α) (h : x ≠ ⊥) : (↑(x.get h) : Flat α) = x := Option.some_get _
+
+@[simp] theorem get_coe (a : α) (h : (a : Flat α) ≠ ⊥) : (a : Flat α).get h = a := rfl
+
 /-! ### The flat order -/
 
 /-- Auxiliary definition for the order on `Flat`. -/
@@ -275,6 +282,8 @@ theorem or_le (hx : x ≤ z) (hy : y ≤ z) : x.or y ≤ z := by
   cases x with
   | bot => exact hy
   | coe a => exact hx
+
+@[simp] theorem or_self (x : Flat α) : x.or x = x := by cases x <;> rfl
 
 /-! ### Meets -/
 
@@ -494,6 +503,17 @@ theorem compat_iff : Compat x y ↔ ∀ a : α, x = ↑a → ∀ b : α, y = ↑
     obtain ⟨b, rfl⟩ := ne_bot_iff_exists.1 hy
     obtain rfl := h a rfl b rfl
     exact compat_self _
+
+/-- On compatible slots the right slot also lies below the left-biased merge. -/
+theorem le_or_right (h : Compat x y) : y ≤ x.or y := by
+  cases x with
+  | bot => exact le_rfl
+  | coe a =>
+    rcases eq_or_ne y ⊥ with rfl | hy
+    · exact bot_le
+    obtain ⟨b, rfl⟩ := ne_bot_iff_exists.1 hy
+    obtain rfl := compat_iff.1 h a rfl b rfl
+    exact le_rfl
 
 /-- On compatible slots, unification is the priority union: agreeing
 commitments collapse and `⊥` defers, so the biased and unbiased merges

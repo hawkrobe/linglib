@@ -195,8 +195,8 @@ variable {W M V : Type*}
 /-- Each element of the possibilities family classifies as a point; on
 objects this is `Possibility.domainEquiv`; arrows become descents, by
 `Possibility.le_iff_eq_restrict`. -/
-def elementsToPoints :
-    (possibilities W M V).Elements ⥤ (Possibility W V (Part M))ᵒᵖ where
+noncomputable def elementsToPoints :
+    (possibilities W M V).Elements ⥤ (Possibility W V (Flat M))ᵒᵖ where
   obj x := op ((Possibility.domainEquiv x.obj.unop).symm x.val).1
   map {x y} f := (homOfLE (show
       ((Possibility.domainEquiv y.obj.unop).symm y.val).1 ≤
@@ -242,7 +242,7 @@ instance : (elementsToPoints (W := W) (M := M) (V := V)).IsEquivalence := {}
 type**: the category of elements is equivalent to the opposite of the
 descent preorder on points — every point lies over its own domain. -/
 noncomputable def elementsEquivPoints :
-    (possibilities W M V).Elements ≌ (Possibility W V (Part M))ᵒᵖ :=
+    (possibilities W M V).Elements ≌ (Possibility W V (Flat M))ᵒᵖ :=
   elementsToPoints.asEquivalence
 
 end Total
