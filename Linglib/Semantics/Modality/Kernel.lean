@@ -1,40 +1,34 @@
 module
 
-public import Linglib.Semantics.Modality.Kratzer.Operators
+public import Linglib.Semantics.Modality.Necessity
 public import Linglib.Semantics.Presupposition.Basic
 
 /-!
-# Kernel Semantics for Epistemic Modals
+# Kernel semantics for epistemic modals
 
-[von-fintel-gillies-2010]'s kernel semantics: epistemic modals carry an
-evidential presupposition that the prejacent is not *directly settled* by the
-kernel `K` — the privileged direct-information part of the modal base
-(Def 4: `B_K = ⋂K`). The presupposition makes *must φ* strong (it asserts
-`B_K ⊆ ⟦φ⟧`, Def 5) while still signalling indirectness: `B_K` can entail
-`φ` without `K` directly settling it.
+Von Fintel and Gillies give epistemic modals an evidential presupposition: the prejacent is not
+*directly settled* by the kernel `K`, the direct-information part of the modal base, whose
+intersection is the base `B_K`. The presupposition makes *must φ* strong, asserting that `B_K`
+entails `φ`, while still signalling indirectness, since `B_K` can entail `φ` without `K`
+directly settling it. The partition-based implementation and the worked examples are in
+`Studies/VonFintelGillies2010.lean`, the *can't* dilemma in `Studies/VonFintelGillies2021.lean`.
 
-This file provides the reusable kernel apparatus: the `Kernel` structure, the
-explicit-representation implementation of directly-settles (Implementation 1,
-§7.1), the presuppositional operators `kernelMust`/`kernelMight`/`kernelCant`,
-and bridges to Kratzer necessity. The paper's second, partition-based
-implementation (Def 7, §7.2), the non-equivalence of the two implementations,
-and the worked examples live in `Studies/VonFintelGillies2010.lean`; the
-*can't* dilemma of [von-fintel-gillies-2021] lives in
-`Studies/VonFintelGillies2021.lean`; the nandao-Q felicity conditions built on
-this apparatus live in `Studies/Zheng2025.lean`.
+## Main definitions
 
-## Main declarations
+* `Kernel`: a set of direct-information propositions, with its base `Kernel.base`.
+* `Kernel.directlySettles`: some member of the kernel entails or excludes the prejacent.
+* `kernelMust`, `kernelMight`, `kernelCant`: the presuppositional operators.
 
-- `Kernel`: direct-information propositions with their modal base `B_K = ⋂K`,
-  entailment (`Kernel.FollowsFrom`), and compatibility (`Kernel.compatibleWith`)
-- `Kernel.directlySettles`: Implementation 1 — some `X ∈ K` entails or
-  excludes the prejacent
-- `explicit_implies_entailment`: settling implies entailment; the converse
-  fails, which is what makes the presupposition non-trivial
-- `kernelMust`, `kernelMight`, `kernelCant`: the presuppositional operators
-  (Defs 5–6), as `PartialProp`s
-- `kernelMust_iff_simpleNecessity`, `kernelMust_iff_necessity`: the assertion
-  of `kernelMust` is Kratzer necessity over the induced modal base
+## Main statements
+
+* `explicit_implies_entailment`: direct settling implies entailment, but not conversely.
+* `kernelMust_iff_simpleNecessity`: the assertion of `kernelMust` is Kratzer's simple
+  necessity over the kernel.
+
+## References
+
+* [von-fintel-gillies-2010]
+* [von-fintel-gillies-2021]
 -/
 
 @[expose] public section
@@ -52,36 +46,33 @@ variable {W : Type*}
     modal base `B_K = ⋂K` ([von-fintel-gillies-2010] Def 4). -/
 structure Kernel (W : Type*) where
   /-- The direct-information propositions K. -/
-  props : List (W → Prop)
+  props : Set (W → Prop)
 
 variable (k : Kernel W) (φ : W → Prop) (w : W)
 
 namespace Kernel
 
 /-- The modal base `B_K = ⋂K` determined by the kernel. -/
-def base : Set W :=
-  propIntersection k.props
+def base : Set W := {w | sInf k.props w}
+
+@[simp] theorem mem_base {k : Kernel W} {w : W} : w ∈ k.base ↔ ∀ p ∈ k.props, p w := by
+  simp [base]
 
 /-- The kernel as a context-independent modal base. -/
-def toModalBase : ModalBase W :=
-  fun _ ↦ k.props
+def toConvBackground : ConvBackground W := fun _ ↦ k.props
 
 /-- `K` is consistent iff `B_K ≠ ∅`. -/
-def IsConsistent : Prop :=
-  Modality.IsConsistent k.props
+def IsConsistent : Prop := k.base.Nonempty
 
 /-- `φ` follows from `K` iff `B_K ⊆ ⟦φ⟧`. -/
-def FollowsFrom : Prop :=
-  Modality.FollowsFrom φ k.props
+def FollowsFrom : Prop := sInf k.props ≤ φ
 
 /-- `φ` is compatible with `K` iff `B_K ∩ ⟦φ⟧ ≠ ∅`. -/
-def compatibleWith : Prop :=
-  IsCompatibleWith φ k.props
+def compatibleWith : Prop := ∃ w ∈ k.base, φ w
 
 theorem followsFrom_iff : k.FollowsFrom φ ↔ ∀ w ∈ k.base, φ w := Iff.rfl
 
-theorem compatibleWith_iff : k.compatibleWith φ ↔ ∃ w ∈ k.base, φ w :=
-  isCompatibleWith_iff_exists
+theorem compatibleWith_iff : k.compatibleWith φ ↔ ∃ w ∈ k.base, φ w := Iff.rfl
 
 end Kernel
 
@@ -97,9 +88,8 @@ def Kernel.directlySettles : Prop :=
 theorem explicit_implies_entailment (h : k.directlySettles φ) :
     k.FollowsFrom φ ∨ k.FollowsFrom (fun w' ↦ ¬ φ w') := by
   obtain ⟨x, hx_mem, h_sub | h_disj⟩ := h
-  · exact Or.inl ((propIntersection_subset hx_mem).trans h_sub)
-  · exact Or.inr ((propIntersection_subset hx_mem).trans
-      h_disj.subset_compl_right)
+  · exact Or.inl fun w hw ↦ h_sub (sInf_le hx_mem w hw)
+  · exact Or.inr fun w hw ↦ h_disj.subset_compl_right (sInf_le hx_mem w hw)
 
 theorem Kernel.directlySettles_mono {k' : Kernel W} (hk : k.props ⊆ k'.props)
     (h : k.directlySettles φ) :
@@ -108,12 +98,12 @@ theorem Kernel.directlySettles_mono {k' : Kernel W} (hk : k.props ⊆ k'.props)
 
 @[simp]
 theorem Kernel.base_singleton (p : W → Prop) :
-    (⟨[p]⟩ : Kernel W).base = {w | p w} :=
-  propIntersection_singleton p
+    (⟨{p}⟩ : Kernel W).base = {w | p w} := by
+  ext; simp
 
 @[simp]
 theorem Kernel.directlySettles_singleton (p : W → Prop) :
-    (⟨[p]⟩ : Kernel W).directlySettles φ ↔
+    (⟨{p}⟩ : Kernel W).directlySettles φ ↔
       {w | p w} ⊆ {w | φ w} ∨ Disjoint {w | p w} {w | φ w} := by
   simp [Kernel.directlySettles]
 
@@ -141,30 +131,30 @@ def kernelCant : PartialProp W :=
 theorem must_entails_prejacent (hReal : w ∈ k.base)
     (hTrue : (kernelMust k φ).assertion w) :
     φ w :=
-  hTrue hReal
+  hTrue w hReal
 
 /-- Might `φ` and `¬must ¬φ` have the same assertion content. -/
 theorem kernel_duality :
-    (kernelMight k φ).assertion w ↔ ¬(kernelMust k (fun w' ↦ ¬ φ w')).assertion w :=
-  isCompatibleWith_iff_not_followsFrom_not
+    (kernelMight k φ).assertion w ↔ ¬(kernelMust k (fun w' ↦ ¬ φ w')).assertion w := by
+  simp [kernelMight, kernelMust, Kernel.compatibleWith, Kernel.FollowsFrom, Pi.le_def]
 
 /-- The empty kernel settles nothing, so must is always defined. -/
-theorem empty_kernel_always_defined : (kernelMust ⟨[]⟩ φ).presup w :=
-  fun ⟨_, hx, _⟩ ↦ List.not_mem_nil hx
+theorem empty_kernel_always_defined : (kernelMust ⟨∅⟩ φ).presup w :=
+  fun ⟨_, hx, _⟩ ↦ hx
 
 /-! ### Bridge to Kratzer necessity -/
 
 /-- The assertion of kernel must is Kratzer simple necessity over the induced
     modal base. -/
 theorem kernelMust_iff_simpleNecessity :
-    (kernelMust k φ).assertion w ↔ simpleNecessity k.toModalBase φ w :=
+    (kernelMust k φ).assertion w ↔ simpleNecessity k.toConvBackground φ w :=
   Iff.rfl
 
 /-- The assertion of kernel must is Kratzer necessity with the empty ordering
     source. -/
 theorem kernelMust_iff_necessity :
-    (kernelMust k φ).assertion w ↔ necessity k.toModalBase emptyBackground φ w :=
+    (kernelMust k φ).assertion w ↔ necessity k.toConvBackground ⊥ φ w :=
   (kernelMust_iff_simpleNecessity k φ w).trans
-    (necessity_empty_iff_simple k.toModalBase φ w).symm
+    (necessity_bot_iff k.toConvBackground φ w).symm
 
 end Modality

@@ -5,7 +5,7 @@ public import Linglib.Logic.ComparativeProbability.WorldOrdering
 public import Linglib.Logic.ComparativeProbability.Content
 public import Linglib.Core.Probability.UniformOn
 public import Linglib.Semantics.Degree.Comparison
-public import Linglib.Semantics.Modality.Kratzer.Operators
+public import Linglib.Semantics.Modality.Necessity
 public import Linglib.Data.Examples.Yalcin2010
 public import Mathlib.Data.NNRat.Defs
 public import Mathlib.Data.Fin.VecNotation
@@ -67,7 +67,7 @@ The ordering source `O` induces the preorder `v ≤[O] u`, `v` at least as high 
 
 section Kratzer
 
-variable {W : Type*} (O : List (W → Prop))
+variable {W : Type*} (O : Set (W → Prop))
 
 instance : IsPreorder W (atLeastAsGoodAs O) where
   refl := atLeastAsGoodAs_refl O
@@ -79,26 +79,26 @@ abbrev likelihood : Set W → Set W → Prop := LewisLift (atLeastAsGoodAs O)
 
 /-- Epistemic *must* at `w` is Kratzer's human necessity over the whole space. -/
 def must (A : Set W) (w : W) : Prop :=
-  humanNecessity emptyBackground (fun _ ↦ O) (· ∈ A) w
+  humanNecessity ⊥ (fun _ ↦ O) (· ∈ A) w
 
 /-- Epistemic *might* at `w` is human possibility, the dual of `must`. -/
 def might (A : Set W) (w : W) : Prop :=
-  humanPossibility emptyBackground (fun _ ↦ O) (· ∈ A) w
+  humanPossibility ⊥ (fun _ ↦ O) (· ∈ A) w
 
 /-- The indicative *if A, B*, with its tacit *must*, is human necessity over the base
 restricted by the antecedent, as in Kratzer's restrictor analysis. -/
 def ifThen (A B : Set W) (w : W) : Prop :=
-  humanNecessity (ModalBase.restrict emptyBackground (· ∈ A)) (fun _ ↦ O) (· ∈ B) w
+  humanNecessity (ConvBackground.restrict ⊥ (· ∈ A)) (fun _ ↦ O) (· ∈ B) w
 
 theorem must_iff (A : Set W) (w : W) :
     must O A w ↔ ∀ u, ∃ v, (v ≤[O] u) ∧ ∀ z, (z ≤[O] v) → z ∈ A := by
-  simp [must, humanNecessity, accessibleWorlds_emptyBackground]
+  simp [must, humanNecessity, ConvBackground.accessibleWorlds_bot]
 
 theorem ifThen_iff (A B : Set W) (w : W) :
     ifThen O A B w ↔
       ∀ u ∈ A, ∃ v ∈ A, (v ≤[O] u) ∧ ∀ z ∈ A, (z ≤[O] v) → z ∈ B := by
-  simp only [ifThen, humanNecessity, mem_accessibleWorlds_restrict,
-    accessibleWorlds_emptyBackground, Set.mem_univ, true_and]
+  simp only [ifThen, humanNecessity, ConvBackground.mem_accessibleWorlds_restrict,
+    ConvBackground.accessibleWorlds_bot, Set.mem_univ, true_and]
 
 theorem kratzer_V1 : ProbablyToNotProbablyNot (likelihood O) := probablyToNotProbablyNot
 theorem kratzer_V2 : ProbablyDistribInf (likelihood O) := probablyDistribInf
@@ -179,23 +179,23 @@ end Kratzer
 /-- Footnote 8's limit-assumption variant refutes V11. With two tied maximal worlds, the empty
 ordering source, `p` the whole space and `q` one world, `p` is probable and `q` as likely as
 `p`, but `q` is not probable, since its complement is as high as it. -/
-theorem kratzer_refutes_V11 : ¬PositiveFormTransfer (likelihood ([] : List (Fin 2 → Prop))) := by
+theorem kratzer_refutes_V11 : ¬PositiveFormTransfer (likelihood (∅ : Set (Fin 2 → Prop))) := by
   intro h
-  exact (h Set.univ {0} (fun _ _ ↦ ⟨0, rfl, atLeastAsGoodAs_nil _ _⟩) probably_top).2
-    fun _ _ ↦ ⟨1, by simp, atLeastAsGoodAs_nil _ _⟩
+  exact (h Set.univ {0} (fun _ _ ↦ ⟨0, rfl, atLeastAsGoodAs_empty _ _⟩) probably_top).2
+    fun _ _ ↦ ⟨1, by simp, atLeastAsGoodAs_empty _ _⟩
 
 /-- Two incomparable tied pairs of worlds refute Conjunctivitis for Kratzer's account, as the
 paper says. `{0, 2, 3}` and `{1, 2, 3}` are each probable, since the one world each lacks is
 tied with a world it has, but their conjunction `{2, 3}` is not, since it dominates neither `0`
 nor `1`. -/
 theorem kratzer_refutes_E1 :
-    ¬Conjunctivitis (likelihood [(· ∈ ({0, 1} : Set (Fin 4))), (· ∈ ({2, 3} : Set (Fin 4)))]) := by
+    ¬Conjunctivitis (likelihood {(· ∈ ({0, 1} : Set (Fin 4))), (· ∈ ({2, 3} : Set (Fin 4)))}) := by
   intro h
-  have hle : ∀ v u : Fin 4, (v ≤[[(· ∈ ({0, 1} : Set (Fin 4))), (· ∈ ({2, 3} : Set (Fin 4)))]] u)
+  have hle : ∀ v u : Fin 4, (v ≤[{(· ∈ ({0, 1} : Set (Fin 4))), (· ∈ ({2, 3} : Set (Fin 4)))}] u)
       ↔ (u ∈ ({0, 1} : Set (Fin 4)) → v ∈ ({0, 1} : Set (Fin 4))) ∧
         (u ∈ ({2, 3} : Set (Fin 4)) → v ∈ ({2, 3} : Set (Fin 4))) := fun v u ↦ by
     simp [atLeastAsGoodAs_iff]
-  have hφ : Probably (likelihood [(· ∈ ({0, 1} : Set (Fin 4))), (· ∈ ({2, 3} : Set (Fin 4)))])
+  have hφ : Probably (likelihood {(· ∈ ({0, 1} : Set (Fin 4))), (· ∈ ({2, 3} : Set (Fin 4)))})
       {0, 2, 3} := by
     refine ⟨fun u hu ↦ ⟨0, by simp, ?_⟩, fun hc ↦ ?_⟩
     · simp only [Set.mem_ofPred_eq]
@@ -210,7 +210,7 @@ theorem kratzer_refutes_E1 :
       simp only [Set.mem_compl_iff, Set.mem_insert_iff, Set.mem_singleton_iff, not_or] at hu
       have : u = 1 := by omega
       subst this; simp at hu2
-  have hψ : Probably (likelihood [(· ∈ ({0, 1} : Set (Fin 4))), (· ∈ ({2, 3} : Set (Fin 4)))])
+  have hψ : Probably (likelihood {(· ∈ ({0, 1} : Set (Fin 4))), (· ∈ ({2, 3} : Set (Fin 4)))})
       {1, 2, 3} := by
     refine ⟨fun u hu ↦ ⟨1, by simp, ?_⟩, fun hc ↦ ?_⟩
     · simp only [Set.mem_ofPred_eq]
@@ -288,9 +288,9 @@ theorem measure_univ : m.measure Set.univ = 1 :=
   (m.measure_eq_one_iff _).2 (let ⟨w, hw⟩ := m.exists_eq_one; ⟨w, Set.mem_univ w, hw⟩)
 
 theorem measure_singleton (w : W) : m.measure {w} = m.poss w := by
-  classical
-  rw [measure, show Finset.univ.filter (· ∈ ({w} : Set W)) = {w} by ext; simp,
-    Finset.sup_singleton]
+  rw [measure]
+  convert Finset.sup_singleton (f := m.poss) (b := w)
+  ext; simp
 
 /-- The measure of a union is the greater measure. -/
 theorem measure_union (A B : Set W) : m.measure (A ∪ B) = m.measure A ⊔ m.measure B := by

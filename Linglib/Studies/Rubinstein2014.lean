@@ -78,11 +78,11 @@ variable {W : Type*}
 /-- Modal backgrounds with the ordering source split by negotiability. -/
 structure Backgrounds (W : Type*) where
   /-- The circumstances, the modal base proper. -/
-  circumstances : ModalBase W
+  circumstances : ConvBackground W
   /-- The non-negotiable priorities, promoted to the modal base. -/
-  nonNegotiable : ModalBase W
+  nonNegotiable : ConvBackground W
   /-- The negotiable priorities, which remain an ordering source. -/
-  negotiable : OrderingSource W
+  negotiable : ConvBackground W
 
 /-- A set of priorities is consistent with the circumstances at `w` when some accessible world
 verifies all of them. -/
@@ -174,9 +174,9 @@ theorem weak_not_entails_strong :
     strongNecessity_iff.1 (h W ⟨f, g, g'⟩ p w (weakNecessity_iff.2 hw))
 
 /-- Without negotiable priorities the two necessities coincide. -/
-theorem weakNecessity_iff_strongNecessity (hg : b.negotiable w = []) :
+theorem weakNecessity_iff_strongNecessity (hg : b.negotiable w = ∅) :
     weakNecessity b p w ↔ strongNecessity b p w := by
-  rw [weakNecessity, strongNecessity, hg, bestAmong_nil]
+  rw [weakNecessity, strongNecessity, hg, bestAmong_empty]
 
 /-! ### Negotiability ((48)–(50)) -/
 
@@ -192,17 +192,17 @@ instance {ι κ : Type*} [Fintype ι] [DecidableEq κ] (commitment : ι → Fins
 
 /-- A choice of ideal is a choice of weak necessities (§3.4.2): with `γ` the negotiable ideal
 and `γ` live among the favored worlds, *should γ* holds and *should ¬γ* fails. -/
-theorem weakNecessity_ideal {γ : W → Prop} (hγ : b.negotiable w = [γ])
+theorem weakNecessity_ideal {γ : W → Prop} (hγ : b.negotiable w = {γ})
     (hlive : ∃ v ∈ favoredWorlds b w, γ v) :
     weakNecessity b γ w ∧ ¬ weakNecessity b (fun v ↦ ¬ γ v) w := by
   obtain ⟨v, hv, hγv⟩ := hlive
   rw [weakNecessity, weakNecessity, hγ, bestAmong_eq_of_exists ⟨v, hv, by simpa⟩]
-  exact ⟨fun _ h ↦ h.2 γ (List.mem_singleton_self _), fun h ↦ h v ⟨hv, by simpa⟩ hγv⟩
+  exact ⟨fun _ h ↦ h.2 γ (Set.mem_singleton _), fun h ↦ h v ⟨hv, by simpa⟩ hγv⟩
 
 /-- The neg-raising inference for the ideal: when the negotiable ideal is `γ` or its negation and
 both are live, *not should γ* yields *should ¬γ*. -/
 theorem weakNecessity_neg_of_not {γ : W → Prop}
-    (hchoice : b.negotiable w = [γ] ∨ b.negotiable w = [fun v ↦ ¬ γ v])
+    (hchoice : b.negotiable w = {γ} ∨ b.negotiable w = {fun v ↦ ¬ γ v})
     (hγ : ∃ v ∈ favoredWorlds b w, γ v) (hnγ : ∃ v ∈ favoredWorlds b w, ¬ γ v)
     (h : ¬ weakNecessity b γ w) : weakNecessity b (fun v ↦ ¬ γ v) w := by
   rcases hchoice with hc | hc
@@ -238,7 +238,7 @@ inductive Participant
 /-- Backgrounds with no circumstances, the promoted clauses `h` and the negotiable clauses
 `g`. -/
 def ofIdeals (h g : List Ideal) : Backgrounds Revenue :=
-  ⟨emptyBackground, fun _ ↦ h.map Ideal.holds, fun _ ↦ g.map Ideal.holds⟩
+  ⟨⊥, fun _ ↦ Ideal.holds '' {i | i ∈ h}, fun _ ↦ Ideal.holds '' {i | i ∈ g}⟩
 
 /-- (51a): before the endorsement the manager is committed to the domestic clause only. -/
 def commitmentBefore : Participant → Finset Ideal
@@ -254,14 +254,13 @@ def reportAll (v : Revenue) : Prop := v.1 = true ∧ v.2 = true
 private theorem favoredWorlds_ofIdeals (h g : List Ideal) (w : Revenue) :
     favoredWorlds (ofIdeals h g) w = {v | ∀ i ∈ h, i.holds v} := by
   have hall : (true, true) ∈ (ofIdeals h g).circumstances.accessibleWorlds w := by
-    show (true, true) ∈ ModalBase.accessibleWorlds emptyBackground w
-    rw [accessibleWorlds_emptyBackground]; exact Set.mem_univ _
+    show (true, true) ∈ ConvBackground.accessibleWorlds ⊥ w
+    rw [ConvBackground.accessibleWorlds_bot]; exact Set.mem_univ _
   rw [favoredWorlds_eq_bestWorlds, bestWorlds, bestAmong_eq_of_exists ⟨(true, true), hall, ?_⟩]
   · ext v
-    simp only [ofIdeals, accessibleWorlds_emptyBackground, Set.mem_univ, true_and,
-      List.forall_mem_map, Set.mem_ofPred_eq]
-  · intro q hq
-    obtain ⟨i, -, rfl⟩ := List.mem_map.1 hq
+    simp only [ofIdeals, ConvBackground.accessibleWorlds_bot, Set.mem_univ, true_and,
+      Set.forall_mem_image, Set.mem_ofPred_eq]
+  · rintro q ⟨i, -, rfl⟩
     cases i <;> rfl
 
 /-- (46), (51): before the endorsement the international clause is negotiable, *we should report
@@ -277,11 +276,11 @@ theorem tax_shift (w : Revenue) :
   · rw [weakNecessity, favoredWorlds_ofIdeals, bestAmong_eq_of_exists ⟨(true, true),
       by simp [Ideal.holds], by simp [ofIdeals, Ideal.holds]⟩]
     rintro v ⟨hd, hi⟩
-    exact ⟨hd _ (List.mem_singleton_self _), hi _ (List.mem_singleton_self _)⟩
+    exact ⟨hd .domestic (by simp), hi _ ⟨.international, by simp, rfl⟩⟩
   · rw [strongNecessity, favoredWorlds_ofIdeals] at h
     exact Bool.false_ne_true (h (true, false) (by simp [Ideal.holds])).2
   · rw [favoredWorlds_ofIdeals] at hv
-    exact ⟨hv _ List.mem_cons_self, hv _ (List.mem_cons_of_mem _ (List.mem_singleton_self _))⟩
+    exact ⟨hv .domestic (by simp), hv .international (by simp)⟩
 
 /-! ### The comparative class in the data (§2) -/
 

@@ -154,8 +154,9 @@ theorem toPartialProp_strawsonEntails (hpq : p ⊆ q) :
   fun _ _ _ h ↦ h.mono hpq
 
 /-- On the finest question, question-based *want* is best-worlds *want* (§3.4). -/
-theorem want_bot_iff : Want G ⊥ bel p ↔ BestWorlds.Want (G.map fun s w ↦ w ∈ s) bel p := by
-  simp only [Want, BestWorlds.want_iff, Modality.atLeastAsGoodAs_iff, List.forall_mem_map,
+theorem want_bot_iff :
+    Want G ⊥ bel p ↔ BestWorlds.Want ((fun s w ↦ w ∈ s) '' {s | s ∈ G}) bel p := by
+  simp only [Want, BestWorlds.want_iff, Modality.atLeastAsGoodAs_iff, Set.forall_mem_image,
     MaximalFor, Live,
     entailed, Preorder.satisfied, Setoid.cell_bot, Set.mem_singleton_iff, exists_eq_left,
     Set.singleton_subset_iff, Set.ofPred_subset_ofPred, Finset.mem_coe, and_imp]
@@ -197,7 +198,7 @@ def desires : List (Finset World) := [benefit, costᶜ]
 
 /-- Von Fintel's semantics cannot make *Nap* and *Not-nap* both true, whatever the desires,
 since some belief-world is best and it settles the act one way. -/
-theorem vonFintel_no_conflict (A : List (World → Prop)) :
+theorem vonFintel_no_conflict (A : Set (World → Prop)) :
     ¬ (BestWorlds.Want A bel ↑act ∧ BestWorlds.Want A bel (↑act : Set World)ᶜ) :=
   fun ⟨h, h'⟩ ↦ h.not_compl ⟨⟨true, true, true⟩, by decide⟩ h'
 
@@ -210,14 +211,14 @@ theorem heim_no_conflict (F : Conditional.Frame World) (w : World) [Std.Antisymm
 /-- On a belief-based semantics, the cost being believed to come exactly with the act, wanting
 the act is wanting the cost, *Nap* entailing *Fail*, the closure under doxastic equivalence of
 §4.1. -/
-theorem closure_under_doxastic_equivalence (A : List (World → Prop))
+theorem closure_under_doxastic_equivalence (A : Set (World → Prop))
     (h : BestWorlds.Want A bel ↑act) : BestWorlds.Want A bel ↑cost :=
   h.mono_on (by decide +kernel)
 
 /-- A context-sensitive preference relation overgenerates (§2.2), since the value of feeling
 rested makes *Nap* true, and with it *Fail*. -/
 theorem cpr_overgenerates :
-    BestWorlds.Want [(· ∈ benefit)] bel ↑act ∧ BestWorlds.Want [(· ∈ benefit)] bel ↑cost :=
+    BestWorlds.Want {(· ∈ benefit)} bel ↑act ∧ BestWorlds.Want {(· ∈ benefit)} bel ↑cost :=
   ⟨by decide, closure_under_doxastic_equivalence _ (by decide +kernel)⟩
 
 /-! ### Some-things-considered desire (§3) -/

@@ -76,7 +76,7 @@ instance (p φ : W → Prop) [Fintype W] [DecidablePred p] [DecidablePred φ] :
 
 section
 
-variable (k : Kernel W) (u : List (W → Prop)) (φ : W → Prop)
+variable (k : Kernel W) (u : Set (W → Prop)) (φ : W → Prop)
 
 /-- Some proposition in `K` raises the probability of `φ`, (11i). -/
 def evidenceSupports : Prop :=
@@ -84,7 +84,7 @@ def evidenceSupports : Prop :=
 
 /-- The evidence in `K` is unexpected given the prior information state `U`, (11ii). -/
 def unexpected : Prop :=
-  Disjoint k.base (propIntersection u)
+  Disjoint k.base {w | sInf u w}
 
 /-- *Nandao φ?* is felicitous iff some evidence in `K` raises the probability of `φ`, the
 evidence is unexpected given the prior state `U`, and `φ` is not directly settled in `K`,
@@ -99,19 +99,19 @@ end
 /-- *Nandao Q?* is felicitous iff some evidence in `K` raises the probability of every
 instantiation of the question's highlighted property, the evidence is unexpected, and no
 instantiation is directly settled in `K`. -/
-def nandaoQFelicitous (k : Kernel W) (u : List (W → Prop)) (f : Set (W → Prop)) : Prop :=
+def nandaoQFelicitous (k : Kernel W) (u : Set (W → Prop)) (f : Set (W → Prop)) : Prop :=
   (∃ p ∈ k.props, ∀ φ ∈ f, evidenceRaises p φ) ∧ unexpected k u ∧
     ∀ φ ∈ f, ¬ k.directlySettles φ
 
 /-- For a polar question, whose highlighted property has the prejacent as its one
 instantiation, (13) is (11). -/
-theorem nandaoQFelicitous_singleton (k : Kernel W) (u : List (W → Prop)) (φ : W → Prop) :
+theorem nandaoQFelicitous_singleton (k : Kernel W) (u : Set (W → Prop)) (φ : W → Prop) :
     nandaoQFelicitous k u {φ} ↔ nandaoFelicitous k u φ := by
   simp [nandaoQFelicitous, nandaoFelicitous, evidenceSupports]
 
 /-- A question one of whose instantiations no evidence in the kernel supports, such as *what
 is the weather outside?* with its sunny instantiation, is infelicitous with *nandao*. -/
-theorem not_nandaoQFelicitous_of_unsupported {k : Kernel W} {u : List (W → Prop)}
+theorem not_nandaoQFelicitous_of_unsupported {k : Kernel W} {u : Set (W → Prop)}
     {f : Set (W → Prop)} {φ : W → Prop} (hφ : φ ∈ f)
     (h : ∀ p ∈ k.props, ¬ evidenceRaises p φ) : ¬ nandaoQFelicitous k u f := by
   rintro ⟨⟨p, hp, hall⟩, -, -⟩
@@ -151,11 +151,11 @@ abbrev expectNoRaincoat : World → Prop := λ w => ¬ wearingRaincoat w
 abbrev isRaining : World → Prop := (· = .rain)
 
 /-- The kernel carrying the direct evidence of the wet coat. -/
-def raincoatK : Kernel World := ⟨[wearingRaincoat]⟩
+def raincoatK : Kernel World := ⟨{wearingRaincoat}⟩
 
 private theorem raincoat_unexpected_of {u : World → Prop} (h : ∀ w, wearingRaincoat w → ¬ u w) :
-    unexpected raincoatK [u] := by
-  simp only [unexpected, raincoatK, Kernel.base_singleton, propIntersection_singleton,
+    unexpected raincoatK {u} := by
+  simp only [unexpected, raincoatK, Kernel.base_singleton, sInf_singleton,
     Set.disjoint_left]
   exact λ w hw => h w hw
 
@@ -165,34 +165,34 @@ private theorem raincoat_not_settled : ¬ raincoatK.directlySettles isRaining :=
   decide
 
 /-- *Nandao waimian xiayu-le ma?* is felicitous when A believes it is not raining, (2). -/
-theorem raincoat_nandao_felicitous : nandaoFelicitous raincoatK [expectDry] isRaining :=
-  ⟨⟨wearingRaincoat, List.mem_singleton_self _, by decide⟩,
+theorem raincoat_nandao_felicitous : nandaoFelicitous raincoatK {expectDry} isRaining :=
+  ⟨⟨wearingRaincoat, Set.mem_singleton _, by decide⟩,
     raincoat_unexpected_of (by decide), raincoat_not_settled⟩
 
 /-- The question is equally felicitous when A has no belief about the weather and only the
 default expectation that people do not wear raincoats, (3) and context 1 of (5): epistemic
 bias is not necessary. -/
 theorem raincoat_default_felicitous :
-    nandaoFelicitous raincoatK [expectNoRaincoat] isRaining :=
-  ⟨⟨wearingRaincoat, List.mem_singleton_self _, by decide⟩,
+    nandaoFelicitous raincoatK {expectNoRaincoat} isRaining :=
+  ⟨⟨wearingRaincoat, Set.mem_singleton _, by decide⟩,
     raincoat_unexpected_of (by decide), raincoat_not_settled⟩
 
 /-- Without the evidence the question is infelicitous, whatever A believes, contexts 2 and 3
 of (5): epistemic bias is not sufficient. -/
-theorem no_evidence_infelicitous (u : List (World → Prop)) :
-    ¬ nandaoFelicitous ⟨[]⟩ u isRaining := by
+theorem no_evidence_infelicitous (u : Set (World → Prop)) :
+    ¬ nandaoFelicitous ⟨∅⟩ u isRaining := by
   rintro ⟨⟨p, hp, -⟩, -, -⟩
-  exact List.not_mem_nil hp
+  exact hp
 
 /-- When the evidence is expected, the prior state already allowing wet coats, the question is
 infelicitous, as in context 2 of (6). -/
 theorem expected_evidence_infelicitous :
-    ¬ nandaoFelicitous raincoatK [wearingRaincoat] isRaining := by
+    ¬ nandaoFelicitous raincoatK {wearingRaincoat} isRaining := by
   rintro ⟨-, hInc, -⟩
   have h1 : World.rain ∈ raincoatK.base :=
-    mem_propIntersection.mpr (by simp [raincoatK, wearingRaincoat])
-  have h2 : World.rain ∈ propIntersection [wearingRaincoat] :=
-    mem_propIntersection.mpr (by simp [wearingRaincoat])
+    Kernel.mem_base.mpr (by simp [raincoatK, wearingRaincoat])
+  have h2 : World.rain ∈ {w | sInf ({wearingRaincoat} : Set (World → Prop)) w} := by
+    simp [wearingRaincoat]
   exact Set.disjoint_left.mp hInc h1 h2
 
 /-! ### Closed questions and rhetorical use, §5 -/

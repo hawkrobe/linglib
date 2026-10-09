@@ -385,7 +385,7 @@ def Env.AntiAdditive : Env → Prop
   | .only => ∀ (W ι : Type) (x : ι),
       IsAntiAdditive fun P : ι → Set W ↦ (NaturalLogic.only x P).truthSet
   | .adversative =>
-      ∀ (W : Type) (dox base : W → Set W) (g : W → List (W → Prop)),
+      ∀ (W : Type) (dox base : W → Set W) (g : W → Set (W → Prop)),
         IsAntiAdditive fun p ↦ (regret dox base g p).truthSet
   | .conditional => ∀ (W : Type) (horizon : W → Set W) (q : Set W),
       IsAntiAdditive fun p ↦ (Conditional.horizonCounterfactual horizon p q).truthSet
@@ -433,7 +433,7 @@ instance : DecidablePred Env.AntiAdditive := fun e ↦ decidable_of_iff _ e.anti
 anti-additive, and none is anti-additive ((122)–(131)). -/
 theorem strawsonAntiAdditive_not_sufficient :
     (∀ (W ι : Type) (x : ι), IsStrawsonAntiAdditive (NaturalLogic.only (W := W) x)) ∧
-      (∀ (W : Type) (dox base : W → Set W) (g : W → List (W → Prop)),
+      (∀ (W : Type) (dox base : W → Set W) (g : W → Set (W → Prop)),
         IsStrawsonAntiAdditive (regret dox base g)) ∧
       (∀ (W : Type) (horizon : W → Set W) (q : Set W),
         IsStrawsonAntiAdditive (Conditional.horizonCounterfactual horizon · q)) ∧

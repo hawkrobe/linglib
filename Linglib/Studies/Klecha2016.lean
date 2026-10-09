@@ -15,8 +15,8 @@ the Upper Limit Constraint of [abusch-1997] forbids; under *think* they are abse
 account writes the constraint into the modal base pronouns of (35): `dox` returns actual
 histories, which end at the evaluation time, and `cir` future histories, which begin after
 it, so a modal base admits a set of orientations for the reference time of its prejacent
-(`ModalBase.orientations`), a projection of the substrate's actual and future history bases
-(`ModalBase.compare_mem_orientations`). Tense is relative and the present is a non-past,
+(`ConvBackground.orientations`), a projection of the substrate's actual and future history bases
+(`ConvBackground.compare_mem_orientations`). Tense is relative and the present is a non-past,
 (43), and sequence of tense is morphological agreement, so a past-under-past clause has an
 underlying past or non-past whose readings are the orientations that its attitude's modal
 bases and its tense both admit (`readings`). *Think* combines with `dox` alone and *hope* with
@@ -50,29 +50,29 @@ variable {W T : Type*}
 
 /-- The modal base pronouns of (35): `dox` returns the actual histories 𝒜_t, ending at the
 evaluation time, `cir` the future histories ℱ_t, beginning after it. -/
-inductive ModalBase
+inductive ConvBackground
   | dox
   | cir
   deriving DecidableEq, Repr
 
-namespace ModalBase
+namespace ConvBackground
 
 /-- The situations a modal base makes accessible from `s`, (35): the substrate's actual and
 future history bases. -/
 def base [LinearOrder T] :
-    ModalBase → HistoricalAlternatives W T → Index W T → Set (Index W T)
+    ConvBackground → HistoricalAlternatives W T → Index W T → Set (Index W T)
   | .dox => actualHistoryBase
   | .cir => futureHistoryBase
 
 /-- The orientations a modal base admits for the reference time of its prejacent relative to
 the evaluation time, Table 1: past and present under `dox`, future under `cir`. -/
-def orientations : ModalBase → Finset Ordering
+def orientations : ConvBackground → Finset Ordering
   | .dox => ⟦past⟧ ∪ ⟦present⟧
   | .cir => ⟦future⟧
 
 /-- (53)–(55): the time of a situation accessible from `s` bears an admitted orientation to
 the evaluation time, since τ(k|t) is defined only for `t` within the history `k`. -/
-theorem compare_mem_orientations [LinearOrder T] (m : ModalBase)
+theorem compare_mem_orientations [LinearOrder T] (m : ConvBackground)
     (history : HistoricalAlternatives W T) {s s' : Index W T} (h : s' ∈ m.base history s) :
     compare s'.time s.time ∈ m.orientations := by
   cases m
@@ -100,13 +100,13 @@ theorem cells :
       cir.orientations ∩ nonpast = ⟦future⟧ ∧ cir.orientations ∩ ⟦past⟧ = ∅ := by
   decide
 
-end ModalBase
+end ConvBackground
 
 /-! ### Attitude verbs, §3.1 -/
 
 /-- The modal bases an attitude verb combines with, (34): a doxastic verb `dox` alone, a
 preferential verb either. -/
-def modalBases : Attitude → Finset ModalBase
+def modalBases : Attitude → Finset ConvBackground
   | .doxastic _ => {.dox}
   | .preferential _ _ => {.dox, .cir}
 
@@ -148,7 +148,7 @@ theorem hope_readings : ∀ a ∈ hope.attitude.toList,
 
 /-- (45a) \**It rains tomorrow*: the covert epistemic necessity of a matrix clause is a `dox`
 modal, so a matrix non-past has present reference only, §3.2. -/
-theorem matrix_nonpast_present : ModalBase.dox.orientations ∩ nonpast = ⟦present⟧ := by decide
+theorem matrix_nonpast_present : ConvBackground.dox.orientations ∩ nonpast = ⟦present⟧ := by decide
 
 /-! ### The data, (1)–(3) -/
 

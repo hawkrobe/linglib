@@ -3,7 +3,7 @@ module
 public import Linglib.Semantics.Genericity.Normality
 public import Linglib.Semantics.Aspect.Viewpoint
 public import Linglib.Semantics.Mereology
-public import Linglib.Semantics.Modality.Kratzer.Operators
+public import Linglib.Semantics.Modality.Necessity
 
 /-!
 # Boneh and Doron 2013: Hab and Gen in the expression of habituality
@@ -45,7 +45,7 @@ namespace BonehDoron2013
 open Event (τ)
 
 open Aspect (Perfectivity IMPF)
-open Modality (ModalBase)
+open Modality (ConvBackground)
 
 /-! ### Hab against Gen ((4)–(8), (13)–(15))
 
@@ -71,7 +71,7 @@ theorem same_object_infelicity {E C : Type*} [SemilatticeSup E]
 /-- Gen holds at the interval `i` and world `w` when every `Q`-individual temporally included in
 `i` is a `P`-individual throughout the gnomic modal base of `i` at `w`, (21). It is GEN with
 every case normal and its modality in the matrix. -/
-def gen {W Z T : Type*} (P Q : Z → W → Prop) (τ : Z → Set T) (mb : Set T → ModalBase W)
+def gen {W Z T : Type*} (P Q : Z → W → Prop) (τ : Z → Set T) (mb : Set T → ConvBackground W)
     (i : Set T) (w : W) : Prop :=
   (i, w) ∈ (⊤ : Genericity.Normality (Set T × W) Z).gen {z | τ z ⊆ i ∧ Q z w}
     {z | Modality.simpleNecessity (mb i) (P z) w}
@@ -81,27 +81,27 @@ satisfiable with a fresh cigarette per event, (4a), (5a). -/
 theorem gen_admits_fresh_objects :
     ∃ smoke : Bool → Bool → Prop, (∀ c e₁ e₂, smoke e₁ c → smoke e₂ c → e₁ = e₂) ∧
       gen (W := Unit) (fun e _ ↦ ∃ c, smoke e c) (fun _ _ ↦ True) (fun _ ↦ (∅ : Set Unit))
-        (fun _ ↦ Modality.emptyBackground) Set.univ () :=
+        (fun _ ↦ ⊥) Set.univ () :=
   ⟨(· = ·), fun _ _ _ h₁ h₂ ↦ h₁.trans h₂.symm, fun e _ _ _ ↦ ⟨e, rfl⟩⟩
 
 /-- Hab holds when an initiating event that indicates a disposition occurs in the actual world
 and an iteration occurs in every accessible world of the gnomic modal base, (13), (15). The paper
 leaves "indicating a disposition" unanalyzed, so it is a parameter, and the temporal anchoring
 `τ(s) ⊆ τ(e)` is dropped with the event times. -/
-def hab {W E : Type*} [SemilatticeSup E] (P : E → W → Prop) (mb : ModalBase W)
+def hab {W E : Type*} [SemilatticeSup E] (P : E → W → Prop) (mb : ConvBackground W)
     (indicatesDisposition : W → Prop) (w : W) : Prop :=
   indicatesDisposition w ∧ ∀ w' ∈ mb.accessibleWorlds w, ∃ e, Mereology.IsPlural (P · w') e
 
 /-- Hab is dispositional, holding on a single actual initiating event with the iteration only in
 the accessible worlds, (16)–(17), (42a–b). -/
 theorem hab_without_actual_iteration :
-    ∃ (P : Finset ℕ → Bool → Prop) (mb : ModalBase Bool),
+    ∃ (P : Finset ℕ → Bool → Prop) (mb : ConvBackground Bool),
       hab P mb (· = false) false ∧ ¬ ∃ e, Mereology.IsPlural (P · false) e := by
   refine ⟨fun e w' => match w' with | true => e.Nonempty ∧ e ⊆ {0, 1} | false => e = {0},
-    fun _ => [(· = true)], ⟨rfl, ?_⟩, ?_⟩
+    fun _ => {(· = true)}, ⟨rfl, ?_⟩, ?_⟩
   · intro w' hw'
     have hw : w' = true := by
-      simpa [ModalBase.accessibleWorlds, Modality.propIntersection] using hw'
+      simpa using hw'
     subst hw
     exact ⟨{0} ⊔ {1}, .sum (.base (by decide)) (.base (by decide)),
       {0}, by decide, {1}, by decide, by decide, by decide, by decide⟩

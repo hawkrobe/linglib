@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Modality.Kratzer.Operators
+public import Linglib.Semantics.Modality.Necessity
 public import Linglib.Fragments.Greek.StandardModern.Negation
 public import Linglib.Data.Examples.Tsiakmakis2025
 
@@ -56,7 +56,7 @@ namespace Tsiakmakis2025
 
 open Modality
 
-variable {W : Type*} (f : ModalBase W) (g : OrderingSource W)
+variable {W : Type*} (f g : ConvBackground W)
 
 /-! ### The two negators (section 2) -/
 

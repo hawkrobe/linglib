@@ -64,11 +64,11 @@ variable {W ι : Type*}
 
 section Attitudes
 
-variable (dox rel : W → Set W) (g : W → List (W → Prop)) (p : Set W)
+variable (dox rel : W → Set W) (g : W → Set (W → Prop)) (p : Set W)
 
 /-- `X` is better than `Y` when every `X`-world is strictly better than every `Y`-world under the
 ordering source `A`. -/
-def Better (A : List (W → Prop)) (X Y : Set W) : Prop := ∀ x ∈ X, ∀ y ∈ Y, x <[A] y
+def Better (A : Set (W → Prop)) (X Y : Set W) : Prop := ∀ x ∈ X, ∀ y ∈ Y, x <[A] y
 
 /-- The set-comparison *glad* (52) has the presupposition of the best-worlds one and asserts that
 the belief worlds are strictly better than every relevant non-`p` world. -/
@@ -91,15 +91,15 @@ the actual one, where the Civic bought is a lemon, `1` is where a good Civic is 
 where none is; the subject believes `0`, wants the good Civic, and is not glad that a Civic was
 bought, since `0` is no better than `2`. -/
 theorem not_gladBetter_of_want :
-    ∃ (dox rel : Fin 3 → Set (Fin 3)) (g : Fin 3 → List (Fin 3 → Prop)) (p : Set (Fin 3))
+    ∃ (dox rel : Fin 3 → Set (Fin 3)) (g : Fin 3 → Set (Fin 3 → Prop)) (p : Set (Fin 3))
       (w : Fin 3), dox w ⊆ p ∧ (want rel g p).assertion w ∧
         ¬ (gladBetter dox rel g p).assertion w :=
-  ⟨fun _ ↦ {0}, fun _ ↦ Set.univ, fun _ ↦ [(· = 1)], {0, 1}, 0, by simp, by
+  ⟨fun _ ↦ {0}, fun _ ↦ Set.univ, fun _ ↦ {(· = 1)}, {0, 1}, 0, by simp, by
     simp only [want, Want, Set.subset_def, mem_bestAmong, atLeastAsGoodAs_iff,
-      List.forall_mem_singleton, Set.mem_univ, Set.mem_insert_iff, Set.mem_singleton_iff]
+      Set.mem_singleton_iff, forall_eq, Set.mem_univ, Set.mem_insert_iff]
     decide, by
     simp only [gladBetter, Better, strictlyBetter_iff, atLeastAsGoodAs_iff,
-      List.forall_mem_singleton, Set.mem_singleton_iff, Set.mem_sdiff, Set.mem_univ,
+      Set.mem_singleton_iff, forall_eq, Set.mem_sdiff, Set.mem_univ,
       Set.mem_insert_iff]
     decide⟩
 
@@ -117,14 +117,14 @@ theorem isStrawsonUE_regretBetter : IsStrawsonUE (regretBetter dox rel g) :=
 paper keeps the best-worlds `regret`. World `2` is the preferred one; the subject believes `0`
 and is sorry about `{0, 1}` but not about `{0}`, since `1` is no better than `0`. -/
 theorem not_isStrawsonDE_regretBetter :
-    ¬ IsStrawsonDE (regretBetter (fun _ : Fin 3 ↦ {0}) (fun _ ↦ Set.univ) (fun _ ↦ [(· = 2)])) :=
+    ¬ IsStrawsonDE (regretBetter (fun _ : Fin 3 ↦ {0}) (fun _ ↦ Set.univ) (fun _ ↦ {(· = 2)})) :=
   fun h ↦ by
     have := h (p := {0}) (q := {0, 1}) (by simp) 0
       ⟨by simp, Set.subset_univ _, ⟨0, by simp⟩, ⟨2, by simp⟩⟩
       ⟨subset_rfl, Set.subset_univ _, ⟨0, by simp⟩, ⟨1, by simp⟩⟩
     simp only [regretBetter, Better, strictlyBetter_iff, atLeastAsGoodAs_iff,
-      List.forall_mem_singleton, Set.mem_sdiff, Set.mem_univ, Set.mem_insert_iff,
-      Set.mem_singleton_iff, true_and] at this
+      Set.mem_singleton_iff, forall_eq, Set.mem_sdiff, Set.mem_univ, Set.mem_insert_iff,
+      true_and] at this
     revert this
     decide
 
@@ -165,12 +165,13 @@ not downward entailing (73). The best *strike*-worlds are dry and the match ligh
 *dip and strike*-worlds do not light; world `0` strikes a dry match, world `1` dips it first. -/
 theorem not_antitone_conditionalNecessity :
     ¬ Antitone fun α : Fin 2 → Prop ↦
-      {w | Restrictor.conditionalNecessity (fun _ ↦ []) (fun _ ↦ [(· = 0)]) α (· = 0) w} :=
+      {w | Restrictor.conditionalNecessity (fun _ ↦ ∅) (fun _ ↦ {(· = 0)}) α (· = 0) w} :=
   fun h ↦ by
     have := @h (· = 1) (fun _ ↦ True) (fun _ _ ↦ trivial) 0
     simp only [Restrictor.conditionalNecessity, necessity_iff, bestWorlds, mem_bestAmong,
-      ModalBase.accessibleWorlds, ModalBase.restrict, propIntersection, atLeastAsGoodAs_iff,
-      List.forall_mem_cons, List.mem_nil_iff, false_imp_iff, implies_true, and_true,
+      ConvBackground.mem_accessibleWorlds, ConvBackground.restrict, atLeastAsGoodAs_iff,
+      Set.mem_insert_iff, Set.mem_singleton_iff, forall_eq_or_imp, forall_eq,
+      Set.mem_empty_iff_false, false_imp_iff, implies_true, and_true,
       Set.mem_ofPred_eq] at this
     revert this
     decide

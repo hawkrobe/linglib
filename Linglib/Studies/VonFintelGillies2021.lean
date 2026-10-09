@@ -49,14 +49,14 @@ theorem cant_might_exclusion (hCant : (kernelCant k φ).assertion w) :
     ¬(kernelMight k φ).assertion w := by
   intro hc
   obtain ⟨w', hw', hφ⟩ := (Kernel.compatibleWith_iff _ _).mp hc
-  exact hCant hw' hφ
+  exact hCant w' hw' hφ
 
 /-- When `B_K` is realistic and can't `φ` holds, `¬φ` holds
 (S2). -/
 theorem cant_entails_negation (hReal : w ∈ k.base)
     (hTrue : (kernelCant k φ).assertion w) :
     ¬ φ w :=
-  hTrue hReal
+  hTrue w hReal
 
 /-- A single kernel simultaneously exhibits evidentiality, strength, and
 might-exclusion: over `mastermindK`, can't *notBlue* is defined, true, and
@@ -69,12 +69,12 @@ theorem cant_dilemma_resolved :
     ¬ notBlue .w1 := by
   refine ⟨by rw [mastermind_base]; rfl, ?_, ?_, ?_, by decide⟩
   · rintro ⟨x, hx, hxor⟩
-    rcases List.mem_cons.mp hx with rfl | hx'
+    rcases hx with rfl | hx'
     · rcases hxor with h_sub | h_disj
       · exact h_sub (show redOrBlue .w0 from by decide) (by decide)
       · exact Set.disjoint_left.mp h_disj (show redOrBlue .w1 from by decide)
           (show ¬ notBlue .w1 from by decide)
-    · rcases List.mem_singleton.mp hx' with rfl
+    · obtain rfl : x = notRed := hx'
       rcases hxor with h_sub | h_disj
       · exact h_sub (show notRed .w2 from by decide) (by decide)
       · exact Set.disjoint_left.mp h_disj (show notRed .w1 from by decide)

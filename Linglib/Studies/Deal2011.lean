@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Modality.Kratzer.Operators
+public import Linglib.Semantics.Modality.Necessity
 public import Linglib.Semantics.Polarity.Basic
 public import Linglib.Fragments.NezPerce.Modals
 public import Linglib.Data.Examples.Deal2011
@@ -54,7 +54,7 @@ open Modality
 
 section Claims
 
-variable {W : Type*} (f : ModalBase W) (p : W → Prop)
+variable {W : Type*} (f : ConvBackground W) (p : W → Prop)
 
 /-- The claim a modal of force `fo` makes about `p` over the base `f`: simple possibility, or
 simple necessity for the universal forces. -/
@@ -75,10 +75,10 @@ instance : ∀ π g fo, Decidable (StrongerIn π g fo)
 variable {f p}
 
 /-- Over a consistent base, a stronger claim entails a weaker one. -/
-theorem smul_claim_subset (hf : ∀ w, IsConsistent (f w)) {π : Polarity} {g fo : ModalForce}
+theorem smul_claim_subset (hf : ModalLogic.IsSerial f.accessible) {π : Polarity} {g fo : ModalForce}
     (h : StrongerIn π g fo) : π • claim f p g ⊆ π • claim f p fo := by
   have hnec : claim f p .necessity ⊆ claim f p .possibility := fun w hw ↦
-    let ⟨v, hv⟩ := hf w
+    let ⟨v, hv⟩ := hf.serial w
     ⟨v, hv, hw v hv⟩
   cases π <;> cases g <;> cases fo <;>
     first
@@ -102,7 +102,7 @@ end Claims
 the force `g` when, in every consistent model, it is appropriate wherever a modal of force `g`
 with a scale, as in English, is. -/
 def ServesFor (π : Polarity) (fo : ModalForce) (s : Prop) (g : ModalForce) : Prop :=
-  ∀ (W : Type) (f : ModalBase W), (∀ w, IsConsistent (f w)) → ∀ p : W → Prop,
+  ∀ (W : Type) (f : ConvBackground W), ModalLogic.IsSerial f.accessible → ∀ p : W → Prop,
     Appropriate f p π g True ⊆ Appropriate f p π fo s
 
 /-- A modal serves for its own force, and without a scalemate for any force whose claim is
@@ -114,33 +114,29 @@ instance (π : Polarity) (fo : ModalForce) (s : Prop) [Decidable s] (g : ModalFo
     Decidable (Usable π fo s g) :=
   inferInstanceAs (Decidable (_ ∨ _))
 
-variable {W : Type*} {f : ModalBase W} {p : W → Prop}
+variable {W : Type*} {f : ConvBackground W} {p : W → Prop}
 
 theorem appropriate_classical (π : Polarity) (fo : ModalForce) (s : Prop) :
     Appropriate f p π fo.classical s = Appropriate f p π fo s := by
   cases fo <;> cases π <;> rfl
 
 /-- The two-world model in which both worlds are accessible from each. -/
-private def bothAccessible : ModalBase Bool := fun _ ↦ []
+private def bothAccessible : ConvBackground Bool := ⊥
 
-private theorem bothAccessible_consistent : ∀ w, IsConsistent (bothAccessible w) :=
-  fun _ ↦ ⟨true, fun _ h ↦ absurd h List.not_mem_nil⟩
-
-private theorem mem_accessibleWorlds_bothAccessible (w v : Bool) :
-    v ∈ bothAccessible.accessibleWorlds w :=
-  fun _ h ↦ absurd h List.not_mem_nil
+private theorem isSerial_bothAccessible : ModalLogic.IsSerial bothAccessible.accessible :=
+  ⟨fun _ ↦ ⟨true, by simp [bothAccessible]⟩⟩
 
 variable {π : Polarity} {fo g : ModalForce} {s : Prop}
 
 /-- Decides membership in the two-world model. -/
 local macro "twoWorlds" : tactic =>
-  `(tactic| (simp_all [Appropriate, claim, StrongerIn, mem_accessibleWorlds_bothAccessible,
+  `(tactic| (simp_all [Appropriate, claim, StrongerIn, bothAccessible,
     ModalForce.classical, ModalForce.dual, ModalForce.rank]; done))
 
 private theorem not_servesFor_of (p : Bool → Prop)
     (hin : true ∈ Appropriate bothAccessible p π g True)
     (hout : true ∉ Appropriate bothAccessible p π fo s) : ¬ ServesFor π fo s g :=
-  fun h ↦ hout (h Bool bothAccessible bothAccessible_consistent p hin)
+  fun h ↦ hout (h Bool bothAccessible isSerial_bothAccessible p hin)
 
 /-- The forces a modal serves for are its own and, if it has no scalemate, those whose claim is
 stronger than its own. -/

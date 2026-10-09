@@ -133,7 +133,7 @@ theorem crosslinguistic_tests :
 nested best-world domain has at most one world, the dichotomous limit [horn-2001] excludes from
 neg-raising: a library observation, where the chapter's §2.5 only remarks that a
 non-quantificational semantics may fare better on the neg-raising facts. -/
-theorem vfiWeak_negRaises_iff (f : ModalBase W) (g g' : OrderingSource W) (w : W) :
+theorem vfiWeak_negRaises_iff (f g g' : ConvBackground W) (w : W) :
     (∀ p : W → Prop, ¬ weakNecessity f g g' p w → weakNecessity f g g' (fun w' ↦ ¬ p w') w) ↔
       (bestAmong (bestWorlds f g w) (g' w)).Subsingleton :=
   ModalLogic.box_not_of_not_box_at_iff

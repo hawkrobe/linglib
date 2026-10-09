@@ -3,7 +3,7 @@ module
 public import Linglib.Data.Examples.JinKoenig2021
 public import Linglib.Semantics.Polarity.ExpletiveNegation
 public import Linglib.Studies.Karttunen1974
-public import Linglib.Semantics.Modality.Kratzer.Operators
+public import Linglib.Semantics.Modality.Necessity
 public import Linglib.Semantics.Conditionals.Basic
 public import Linglib.Fragments.English.Verbs.Inventory
 public import Linglib.Semantics.Attitudes.Verb
@@ -74,7 +74,7 @@ theorem before_dual {T : Type*} [LinearOrder T] {A B : Set (NonemptyInterval T)}
 open Modality in
 /-- *impossible p* is the necessity of `¬p`, so `p` fails at the best worlds and, if it holds
 anywhere, the meaning activates both, (13c). -/
-theorem impossible_dual {W : Type*} (f : ModalBase W) (g : OrderingSource W) (p : W → Prop)
+theorem impossible_dual {W : Type*} (f g : ConvBackground W) (p : W → Prop)
     (w : W) (h : necessity f g (fun w' ↦ ¬ p w') w) (hb : (bestWorlds f g w).Nonempty)
     (hp : ∃ x, p x) : DualInference p :=
   let ⟨w', hw'⟩ := hb
@@ -82,7 +82,7 @@ theorem impossible_dual {W : Type*} (f : ModalBase W) (g : OrderingSource W) (p 
 
 open Modality in
 /-- The negation of *impossible p* is the possibility of `p`. -/
-theorem possibility_of_not_impossible {W : Type*} (f : ModalBase W) (g : OrderingSource W)
+theorem possibility_of_not_impossible {W : Type*} (f g : ConvBackground W)
     (p : W → Prop) (w : W) (h : ¬ necessity f g (fun w' ↦ ¬ p w') w) : possibility f g p w := by
   rw [necessity_iff] at h
   rw [possibility_iff]

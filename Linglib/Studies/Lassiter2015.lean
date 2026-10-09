@@ -5,7 +5,7 @@ public import Linglib.Logic.ComparativeProbability.WorldOrdering
 public import Linglib.Logic.ComparativeProbability.Content
 public import Linglib.Core.MeasureTheory.Measure.Dirac
 public import Linglib.Core.Probability.UniformOn
-public import Linglib.Semantics.Modality.Kratzer.Operators
+public import Linglib.Semantics.Modality.Necessity
 public import Linglib.Semantics.Degree.Comparison
 public import Linglib.Studies.HollidayIcard2013
 public import Linglib.Studies.Yalcin2010
@@ -151,7 +151,7 @@ theorem best_not_probably_of_ncard_lt [Finite W] (r : W → W → Prop) {A : Set
   fun hp ↦ absurd hp.1.ncard_le (not_le.2 h)
 
 /-- The ordering source of §1.5 and §3 makes the first of three worlds the sole best one. -/
-def bestFirst : List (Fin 3 → Prop) := [(· = 0)]
+def bestFirst : Set (Fin 3 → Prop) := {(· = 0)}
 
 theorem bestFirst_le (v u : Fin 3) : (v ≤[bestFirst] u) ↔ (u = 0 → v = 0) := by
   simp [bestFirst, atLeastAsGoodAs_iff]
@@ -351,7 +351,7 @@ theorem thin_real (A : Set (Fin 2)) :
   Measure.sum_ofReal_smul_dirac_real_apply thin_nonneg A
 
 /-- `bestFirst₂` makes the first of two worlds the best. -/
-def bestFirst₂ : List (Fin 2 → Prop) := [(· = 0)]
+def bestFirst₂ : Set (Fin 2 → Prop) := {(· = 0)}
 
 /-- In `thin` BR1 holds and the sole best world is necessary, yet it is only barely likelier
 than its negation, so BR1 cannot deliver *much more likely*. -/

@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Modality.Kratzer.Operators
+public import Linglib.Semantics.Modality.Necessity
 public import Linglib.Semantics.Conditionals.Basic
 
 /-!
@@ -39,7 +39,7 @@ namespace Conditional.Restrictor
 
 open Modality
 
-variable {W : Type*} (f : ModalBase W) (g : OrderingSource W) (α β : W → Prop) (w : W)
+variable {W : Type*} (f g : ConvBackground W) (α β : W → Prop) (w : W)
 
 /-- *If α, must β* on the restrictor analysis is necessity over the modal base restricted by
 α. -/
@@ -55,7 +55,7 @@ theorem conditionalNecessity_iff_mem_orderingImp :
     conditionalNecessity f g α β w ↔
       w ∈ orderingImp (f.accessibleWorlds) (fun w ↦ premisePreorder (g w)) {v | α v} {v | β v} := by
   rw [conditionalNecessity, necessity_iff, mem_orderingImp, bestWorlds, bestAmong,
-    accessibleWorlds_restrict]
+    ConvBackground.accessibleWorlds_restrict]
   rfl
 
 /-- *If α, might β* is the *might* of the conditional over the best accessible α-worlds. -/
@@ -73,10 +73,10 @@ theorem conditionalPossibility_iff_mem_might :
 /-- With an empty ordering source, *if α, must β* is the strict conditional over the accessible
 worlds. -/
 theorem restrictor_eq_strict :
-    conditionalNecessity f emptyBackground α β w ↔
+    conditionalNecessity f ⊥ α β w ↔
       w ∈ strictImp (f.accessibleWorlds) {v | α v} {v | β v} := by
   rw [conditionalNecessity_iff_mem_orderingImp, strictImp_eq_orderingImp]
-  simp [emptyBackground]
+  simp
 
 /-- *If α, must β* holds vacuously when no accessible world satisfies α. -/
 theorem vacuous_conditional (h : ∀ w', w' ∈ f.accessibleWorlds w → ¬ α w') :
@@ -86,7 +86,7 @@ theorem vacuous_conditional (h : ∀ w', w' ∈ f.accessibleWorlds w → ¬ α w
 /-- With the evaluation world as its only accessible world and an empty ordering source, *if α,
 must β* is the material conditional. -/
 theorem material_from_restrictor (hTotal : f.accessibleWorlds w = {w}) :
-    conditionalNecessity f emptyBackground α β w ↔ (α w → β w) := by
+    conditionalNecessity f ⊥ α β w ↔ (α w → β w) := by
   rw [restrictor_eq_strict, mem_strictImp_forall, hTotal]
   simp
 

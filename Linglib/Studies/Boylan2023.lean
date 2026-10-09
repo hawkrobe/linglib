@@ -4,7 +4,7 @@ public import Mathlib.Order.Partition.Finpartition
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import Mathlib.Data.Fintype.Prod
 public import Mathlib.Tactic.DeriveFintype
-public import Linglib.Semantics.Modality.Kratzer.Operators
+public import Linglib.Semantics.Modality.Necessity
 
 /-!
 # Boylan (2023): Putting oughts together
@@ -286,7 +286,7 @@ omit [DecidableEq W] in
 open Modality ModalLogic in
 /-- The classic entry (59), Kratzer necessity over the best worlds, agglomerates
 unconditionally, so it cannot fit The Office for any modal base and ordering source. -/
-theorem classic_agglomerates {f : ModalBase W} {g : OrderingSource W} {φ ψ : W → Prop} {w : W}
+theorem classic_agglomerates {f g : ConvBackground W} {φ ψ : W → Prop} {w : W}
     (hφ : necessity f g φ w) (hψ : necessity f g ψ w) : necessity f g (φ ⊓ ψ) w := by
   rw [necessity, box_inf]; exact ⟨hφ, hψ⟩
 

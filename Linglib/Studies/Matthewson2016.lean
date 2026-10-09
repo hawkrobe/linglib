@@ -103,17 +103,17 @@ inductive ProjectionMode where
   | content
   deriving DecidableEq, Repr, Fintype
 
-variable {W : Type*} {f : ModalBase W} {μ : ProjectionMode}
+variable {W : Type*} {f : ConvBackground W} {μ : ProjectionMode}
 
 /-- The modal bases a mode projects. The actual world holds the situation or evidence whose
 counterparts a factual base projects, so a factual base is realistic; the content of a source
 may be false, so a content base need not be. -/
-def ProjectionMode.Admits : ProjectionMode → ModalBase W → Prop
+def ProjectionMode.Admits : ProjectionMode → ConvBackground W → Prop
   | .factual, f => f.IsRealistic
   | .content, _ => True
 
 /-- A modal base allows *must p, but not p* when at some world `p` is necessary and false. -/
-def Deniable (f : ModalBase W) : Prop := ∃ p w, simpleNecessity f p w ∧ ¬ p w
+def Deniable (f : ConvBackground W) : Prop := ∃ p w, simpleNecessity f p w ∧ ¬ p w
 
 /-- A base allows the denial of a necessity claim exactly when it is not realistic. -/
 theorem deniable_iff_not_isRealistic : Deniable f ↔ ¬ f.IsRealistic := by
@@ -122,15 +122,16 @@ theorem deniable_iff_not_isRealistic : Deniable f ↔ ¬ f.IsRealistic := by
 /-- A mode is veridical over a space of worlds when no base it projects there allows the denial
 of a necessity claim. -/
 def ProjectionMode.Veridical (μ : ProjectionMode) (W : Type*) : Prop :=
-  ∀ f : ModalBase W, μ.Admits f → ¬ Deniable f
+  ∀ f : ConvBackground W, μ.Admits f → ¬ Deniable f
 
 /-- Deniability diagnoses the content mode: over any worlds, a mode is veridical exactly when it
 is factual, a content base being free to hold what holds nowhere. -/
 theorem ProjectionMode.veridical_iff [Nonempty W] : μ.Veridical W ↔ μ = .factual := by
   cases μ
   · exact iff_of_true (fun _ hf h ↦ deniable_iff_not_isRealistic.1 h hf) rfl
-  · refine iff_of_false (fun h ↦ h (fun _ ↦ [fun _ ↦ False]) trivial ?_) nofun
-    exact deniable_iff_not_isRealistic.2 fun hr ↦ hr ‹Nonempty W›.some _ (List.mem_singleton_self _)
+  · refine iff_of_false (fun h ↦ h (fun _ ↦ {fun _ ↦ False}) trivial ?_) nofun
+    exact deniable_iff_not_isRealistic.2 fun hr ↦
+      ConvBackground.mem_accessibleWorlds.1 (hr ‹Nonempty W›.some) _ (Set.mem_singleton _)
 
 instance [Nonempty W] : Decidable (μ.Veridical W) :=
   decidable_of_iff _ ProjectionMode.veridical_iff.symm

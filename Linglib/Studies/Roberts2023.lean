@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Semantics.Modality.HistoricalAlternatives
-public import Linglib.Semantics.Modality.Kratzer.Operators
+public import Linglib.Semantics.Modality.Necessity
 public import Linglib.Semantics.Quantification.Basic
 public import Linglib.Discourse.CommonGround
 public import Linglib.Discourse.SpeechAct
@@ -34,9 +34,10 @@ each addressee not to move, `realizes_nobody_move`.
 
 ## Implementation notes
 
-A goal-based ordering source is a Kratzer `OrderingSource` over circumstances, and possible
-futures are the substrate's `futureHistoryBase`; a goal held at a circumstance remains in force
-at a later one when it is among the goals held there. The goal profile of a circumstance is the
+A goal-based ordering source assigns each circumstance its goals in priority order, whose set
+is a Kratzer ordering source over circumstances (`ConvBackground`), and possible futures are
+the substrate's `futureHistoryBase`; a goal held at a circumstance remains in force at a later
+one when it is among the goals held there. The goal profile of a circumstance is the
 list of its goals' truth values in priority order, so goal-relative preference is `<` on
 `List Prop`, the lexicographic order with `False < True`, and "at least as good" in the
 applicability condition is its negation `≤`, which agrees with the paper's `≥` because the
@@ -93,14 +94,14 @@ def profile (G : List (Index W T → Prop)) (c : Index W T) : List Prop := G.map
 /-- Goal-relative preference refines Kratzer's ordering: a circumstance realizing every goal
 another realizes has at least as good a profile. -/
 theorem profile_le_of_atLeastAsGoodAs {G : List (Index W T → Prop)} {c c' : Index W T}
-    (h : c ≤[G] c') : profile G c' ≤ profile G c :=
+    (h : c ≤[{p | p ∈ G}] c') : profile G c' ≤ profile G c :=
   List.Forall₂.le <| List.forall₂_map_left_iff.2 <| List.forall₂_map_right_iff.2 <|
     List.forall₂_same.2 h
 
 /-- Goal-relative preference refines Kratzer's strict ordering: a circumstance realizing
 strictly more goals than another has a strictly better profile. -/
 theorem profile_lt_of_strictlyBetter {G : List (Index W T → Prop)} {c c' : Index W T}
-    (h : strictlyBetter G c c') : profile G c' < profile G c :=
+    (h : strictlyBetter {p | p ∈ G} c c') : profile G c' < profile G c :=
   List.Forall₂.lt_of_ne
     (List.forall₂_map_left_iff.2 <| List.forall₂_map_right_iff.2 <| List.forall₂_same.2 h.1)
     fun heq ↦ h.2 fun p hp ↦ (List.map_inj_left.1 heq p hp).mpr
@@ -109,7 +110,8 @@ theorem profile_lt_of_strictlyBetter {G : List (Index W T → Prop)} {c c' : Ind
 
 section Semantics
 
-variable [Preorder T] (history : HistoricalAlternatives W T) (g : OrderingSource (Index W T))
+variable [Preorder T] (history : HistoricalAlternatives W T)
+  (g : Index W T → List (Index W T → Prop))
 
 /-- The timely future circumstances of a circumstance (50): its possible futures at which the
 goals held at it remain in force. -/
@@ -120,7 +122,7 @@ theorem timelyFut_subset (c : Index W T) :
     timelyFut history g c ⊆ futureHistoryBase history c :=
   fun _ h ↦ h.1
 
-variable (f : ModalBase (Index W T)) (P : Index W T → E → Prop) (a : E)
+variable (f : ConvBackground (Index W T)) (P : Index W T → E → Prop) (a : E)
 
 /-- A futurate circumstantial modal base (51) for the realization of `P` by `a`: every
 circumstance compatible with the base at a circumstance lies in its world, later than it, and
@@ -171,19 +173,19 @@ futures some non-realizer is strictly better than a realizer by the goals held t
 applicable. -/
 theorem not_mem_applic_of_strictlyBetter {c c' c₁ c₂ : Index W T}
     (h₁ : c₁ ∈ timelyFut history g c') (h₂ : c₂ ∈ timelyFut history g c') (hP : P c₁ a)
-    (hnP : ¬ P c₂ a) (hlt : strictlyBetter (g c') c₂ c₁) : c' ∉ applic history g f P a c :=
+    (hnP : ¬ P c₂ a) (hlt : strictlyBetter {p | p ∈ g c'} c₂ c₁) : c' ∉ applic history g f P a c :=
   not_mem_applic h₁ h₂ hP hnP (profile_lt_of_strictlyBetter hlt)
 
 /-- An if-clause adds its proposition to the modal base, which shrinks the applicable
 circumstances. -/
 theorem applic_restrict_subset (q : Index W T → Prop) (c : Index W T) :
     applic history g (f.restrict q) P a c ⊆ applic history g f P a c :=
-  fun _ h ↦ ⟨accessibleWorlds_anti (List.subset_cons_self _ _) h.1, h.2⟩
+  fun _ h ↦ ⟨ConvBackground.accessibleWorlds_anti (Set.subset_insert _ _) h.1, h.2⟩
 
 /-- A futurate modal base stays futurate under an if-clause. -/
 theorem IsFuturate.restrict (hf : IsFuturate history g f P a) (q : Index W T → Prop) :
     IsFuturate history g (f.restrict q) P a :=
-  fun c c' h ↦ hf c c' (accessibleWorlds_anti (List.subset_cons_self _ _) h)
+  fun c c' h ↦ hf c c' (ConvBackground.accessibleWorlds_anti (Set.subset_insert _ _) h)
 
 /-- Imperatives are conditional: a direction entails its restriction by an if-clause, which
 only makes explicit some of the conditions on applicability. -/
@@ -297,7 +299,8 @@ theorem nobody_livesOn (addr : E → Prop) : NP.LivesOn (nobody addr) addr :=
 applicable circumstance there is a timely later time at which none of them moves, so each of
 them is directed not to move in the applicable circumstances. -/
 theorem realizes_nobody_move [Preorder T] {history : HistoricalAlternatives W T}
-    {g : OrderingSource (Index W T)} {f : ModalBase (Index W T)} {addr : E → Prop}
+    {g : Index W T → List (Index W T → Prop)} {f : ConvBackground (Index W T)}
+    {addr : E → Prop}
     {move : Index W T → E → Prop} {c c' : Index W T} {x y : E}
     (h : realizes history g f (fun c _ ↦ nobody addr (move c)) x c)
     (hc' : c' ∈ applic history g f (fun c _ ↦ nobody addr (move c)) x c) (hy : addr y) :

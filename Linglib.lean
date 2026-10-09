@@ -953,9 +953,6 @@ import Linglib.Semantics.Modality.EventRelativity
 import Linglib.Semantics.Modality.Exclusion
 import Linglib.Semantics.Modality.HistoricalAlternatives
 import Linglib.Semantics.Modality.Kernel
-import Linglib.Semantics.Modality.Kratzer.Operators
-import Linglib.Semantics.Modality.Kratzer.Ordering
-import Linglib.Semantics.Modality.Kratzer.Premise
 import Linglib.Semantics.Modification.Basic
 import Linglib.Semantics.Modification.Classification
 import Linglib.Semantics.Modification.Coercion
