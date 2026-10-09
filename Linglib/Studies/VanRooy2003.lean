@@ -27,9 +27,9 @@ more relevant true value, and this one rule yields both mention-all and mention-
 * `questionR_entailment`, `bestPlace_questionR`: when relevance is informativity the rule gives the
   mention-all partition, and the newspaper question has a mention-some meaning that Hamblin's rule
   misses.
-* `killer_byName`, `killer_byMask`, `beatles_questionR`: which concepts resolve the questioner's
-  problem decides the partition of *Who killed spiderman?*, and an autograph hierarchy gives
-  *Which Beatles' autograph do you have?* three answers.
+* `killer_byName`, `killer_byMask`, `liveIn_visit`, `beatles_questionR`: the decision problem
+  decides the partition, by name or by mask for *Who killed spiderman?*, by city or by address for
+  *Where do you live?*, and by an autograph hierarchy for *Which Beatles' autograph do you have?*.
 
 ## Implementation notes
 
@@ -38,14 +38,16 @@ actions forming a type, and questions over a finite set of worlds are `Finpartit
 The relevance of a value in a world is a utility into a preorder; the paper's relation `>` orders
 answers, which for the newspaper example of section 5.2 is world-relative, the best place
 differing between worlds. Section 5.3 assumes the questioner most wants to resolve her problem, so
-for *Who killed spiderman?* a concept is more relevant when it resolves the problem. The examples
-are rows of `Data.Examples.VanRooy2003`.
+for *Who killed spiderman?* a concept is more relevant when it resolves the problem, and for
+*Where do you live?* an answer is more relevant when it resolves the problem and, among answers
+alike in that, when it is less informative, the ordering of answers of section 3.1 with effort
+taken into account. The examples are rows of `Data.Examples.VanRooy2003`.
 
 ## TODO
 
-* The group-valued domain example of section 5.3, the questions (21), (23) and (25), the
-  relevance condition on wh-domains of section 4.2, the answer ordering of section 3.1, and the
-  argumentative value of section 5.4.
+* The group-valued domain example of section 5.3, the questions (23) and (25), the individual-wise
+  relevance condition on wh-domains of section 4.2 (`Question.better_wh_of_factorsThrough` covers
+  utilities that depend only on the domain), and the argumentative value of section 5.4.
 
 ## References
 
@@ -207,6 +209,34 @@ def optimalValues [Preorder R] (P : W → Set G) (u : W → G → R) (w : W) : S
 theorem mem_optimalValues [LinearOrder R] {P : W → Set G} {u : W → G → R} {w : W} {g : G} :
     g ∈ optimalValues P u w ↔ g ∈ P w ∧ ∀ g' ∈ P w, u w g' ≤ u w g := by
   simp only [optimalValues, Set.mem_ofPred_eq, not_lt]
+
+section Pair
+
+variable [Preorder R] {P : W → Set G} {u : W → G → R} {w : W} {x y : G}
+
+/-- Of two true values, a strictly more relevant one is the only optimal one. -/
+theorem optimalValues_eq_singleton (hP : P w = {x, y}) (h : u w x < u w y) :
+    optimalValues P u w = {y} := by
+  ext g
+  simp only [optimalValues, hP, Set.mem_ofPred_eq, Set.mem_insert_iff, Set.mem_singleton_iff,
+    forall_eq_or_imp, forall_eq]
+  constructor
+  · rintro ⟨rfl | rfl, -, h₂⟩
+    exacts [absurd h h₂, rfl]
+  · rintro rfl
+    exact ⟨.inr rfl, h.not_gt, lt_irrefl _⟩
+
+/-- Two true values neither of which is more relevant are both optimal. -/
+theorem optimalValues_eq_pair (hP : P w = {x, y}) (hxy : ¬ u w x < u w y)
+    (hyx : ¬ u w y < u w x) : optimalValues P u w = {x, y} := by
+  ext g
+  simp only [optimalValues, hP, Set.mem_ofPred_eq, Set.mem_insert_iff, Set.mem_singleton_iff,
+    forall_eq_or_imp, forall_eq]
+  refine ⟨fun h ↦ h.1, fun h ↦ ⟨h, ?_⟩⟩
+  rcases h with rfl | rfl
+  exacts [⟨lt_irrefl _, hxy⟩, ⟨hyx, lt_irrefl _⟩]
+
+end Pair
 
 /-- Hamblin's rule makes the answers the propositions that a value satisfies the predicate, one
 for each value satisfying it somewhere. -/
@@ -376,6 +406,157 @@ theorem optimalValues_gt_toDual (jump : W → ℕ) (w : W) :
   exact ⟨fun ⟨hn, h⟩ ↦ le_antisymm (h _ (Nat.lt_succ_self _)) hn,
     fun h ↦ ⟨h ▸ Nat.lt_succ_self _, fun m hm ↦ h ▸ hm⟩⟩
 
+/-! #### Granularity -/
+
+private theorem prop_lt_iff {p q : Prop} : p < q ↔ ¬ p ∧ q := by
+  simp only [lt_iff_le_not_ge, le_Prop_eq]
+  tauto
+
+/-- Taking effort into account, an answer is more relevant when it resolves the decision problem,
+and among answers alike in that, when it is less informative. -/
+def relevanceWithEffort (U : W → A → ℝ) (P : W → Set G) (_ : W) (g : G) : Lex (Prop × Set W) :=
+  toLex (IsResolved U {v | g ∈ P v}, {v | g ∈ P v})
+
+/-- The worlds of *Where do you live?* are four addresses, two in Amsterdam and two in Utrecht as
+in section 3.2 (`Examples.ex_21`). -/
+inductive Address where
+  | amsterdam₁
+  | amsterdam₂
+  | utrecht₁
+  | utrecht₂
+  deriving DecidableEq, Fintype, Nonempty
+
+/-- A city is Amsterdam or Utrecht. -/
+inductive City where
+  | amsterdam
+  | utrecht
+  deriving DecidableEq, Fintype
+
+/-- The city of an address. -/
+def Address.city : Address → City
+  | .amsterdam₁ | .amsterdam₂ => .amsterdam
+  | .utrecht₁ | .utrecht₂ => .utrecht
+
+/-- An answer to *Where do you live?* names an address or a city. -/
+inductive Location where
+  | address (a : Address)
+  | city (c : City)
+
+/-- In each world you live at its address and in its city. -/
+def livesAt (w : Address) : Set Location := {.address w, .city w.city}
+
+/-- To send a letter one has to choose the address. -/
+def letter (w a : Address) : ℝ := if a = w then 1 else 0
+
+/-- To decide on a visit one has to choose the city. -/
+def visit (w : Address) (c : City) : ℝ := if c = w.city then 1 else 0
+
+private theorem setOf_address (a : Address) : {v | Location.address a ∈ livesAt v} = {a} := by
+  ext v; cases a <;> cases v <;> simp [livesAt]
+
+private theorem setOf_city (c : City) : {v | Location.city c ∈ livesAt v} = {v | v.city = c} := by
+  ext v; cases c <;> cases v <;> simp [livesAt, Address.city]
+
+private theorem visit_isResolved (c : City) {s : Set Address} (hs : ∀ v ∈ s, v.city = c) :
+    IsResolved visit s :=
+  ⟨c, fun b v hv ↦ by simp only [visit, hs v hv]; split_ifs <;> simp_all⟩
+
+private theorem letter_isResolved (a : Address) : IsResolved letter {a} :=
+  ⟨a, fun b v hv ↦ by
+    rw [Set.mem_singleton_iff.1 hv]; simp only [letter]; split_ifs <;> simp_all⟩
+
+private theorem letter_not_isResolved (c : City) : ¬ IsResolved letter {v | v.city = c} := by
+  rintro ⟨a, h⟩
+  cases c
+  · have h₁ := h .amsterdam₁ .amsterdam₁ rfl
+    have h₂ := h .amsterdam₂ .amsterdam₂ rfl
+    revert h₁ h₂
+    cases a <;> norm_num [letter]
+  · have h₁ := h .utrecht₁ .utrecht₁ rfl
+    have h₂ := h .utrecht₂ .utrecht₂ rfl
+    revert h₁ h₂
+    cases a <;> norm_num [letter]
+
+private theorem singleton_ssubset_city (w : Address) :
+    ({w} : Set Address) ⊂ {v | v.city = w.city} := by
+  refine (Set.ssubset_iff_of_subset (by simp)).2 ?_
+  cases w
+  exacts [⟨.amsterdam₂, rfl, by simp⟩, ⟨.amsterdam₁, rfl, by simp⟩, ⟨.utrecht₂, rfl, by simp⟩,
+    ⟨.utrecht₁, rfl, by simp⟩]
+
+private theorem livesAt_eq (w : Address) : livesAt w = {.address w, .city w.city} := rfl
+
+/-- For a visit, taking effort into account, *Where do you live?* denotes the partition by
+city. -/
+theorem liveIn_visit :
+    questionR livesAt (relevanceWithEffort visit livesAt) = (Setoid.ker Address.city).classes := by
+  have h (w : Address) : optimalValues livesAt (relevanceWithEffort visit livesAt) w =
+      {.city w.city} := by
+    refine optimalValues_eq_singleton (livesAt_eq w) ?_
+    rw [relevanceWithEffort, relevanceWithEffort, Prod.Lex.toLex_lt_toLex, setOf_address,
+      setOf_city]
+    exact .inr ⟨propext (iff_of_true (visit_isResolved w.city (by simp))
+      (visit_isResolved w.city (by simp))), singleton_ssubset_city w⟩
+  rw [questionR, funext h, whAnswers_singleton]
+  congr 1
+  ext v w
+  simp [Setoid.ker_def]
+
+/-- For a letter, *Where do you live?* denotes the partition by address. -/
+theorem liveIn_letter :
+    questionR livesAt (relevanceWithEffort letter livesAt) = (Setoid.ker id).classes := by
+  have h (w : Address) : optimalValues livesAt (relevanceWithEffort letter livesAt) w =
+      {.address w} := by
+    refine optimalValues_eq_singleton (by rw [livesAt_eq, Set.pair_comm]) ?_
+    rw [relevanceWithEffort, relevanceWithEffort, Prod.Lex.toLex_lt_toLex, setOf_address,
+      setOf_city]
+    exact .inl (prop_lt_iff.2 ⟨letter_not_isResolved _, letter_isResolved _⟩)
+  rw [questionR, funext h, whAnswers_singleton]
+  congr 1
+  ext v w
+  simp [Setoid.ker_def]
+
+/-- Without effort, for a visit both the address and the city are optimal, so *Where do you live?*
+has overlapping answers and is no partition. -/
+theorem liveIn_visit_not_pairwiseDisjoint :
+    ¬ (questionR livesAt fun _ g ↦ IsResolved visit {v | g ∈ livesAt v}).PairwiseDisjoint id := by
+  have hop (w : Address) :
+      optimalValues livesAt (fun _ g ↦ IsResolved visit {v | g ∈ livesAt v}) w = livesAt w := by
+    have := visit_isResolved w.city (s := {w}) (by simp)
+    have := visit_isResolved w.city (s := {v | v.city = w.city}) (by simp)
+    refine optimalValues_eq_pair (livesAt_eq w) ?_ ?_ <;>
+      simp only [setOf_address, setOf_city, prop_lt_iff, not_and] <;> exact fun h ↦ (h ‹_›).elim
+  rw [questionR, funext hop]
+  intro h
+  have h₁ : ({.amsterdam₁} : Set Address) ∈ whAnswers livesAt :=
+    ⟨.amsterdam₁, .address .amsterdam₁, by simp [livesAt], (setOf_address _).symm⟩
+  have h₂ : {v : Address | v.city = .amsterdam} ∈ whAnswers livesAt :=
+    ⟨.amsterdam₁, .city .amsterdam, by simp [livesAt, Address.city], (setOf_city _).symm⟩
+  have hne : ({.amsterdam₁} : Set Address) ≠ {v | v.city = .amsterdam} := fun he ↦ by
+    have : Address.amsterdam₂ ∈ ({.amsterdam₁} : Set Address) := he ▸ rfl
+    simp at this
+  exact Set.disjoint_left.1 (h h₁ h₂ hne) (Set.mem_singleton _) rfl
+
+instance : MeasurableSpace Address := ⊤
+
+instance : DiscreteMeasurableSpace Address := ⟨fun _ ↦ trivial⟩
+
+/-- For a visit, whatever the prior, asking for the city is a better question than asking for the
+address: it is worth as much, since the city settles the decision, and it asks for less. -/
+theorem liveIn_visit_better (μ : Measure Address) [IsProbabilityMeasure μ] :
+    Question.Better visit μ (Finpartition.ofFun Address.city) ⊥ := by
+  have hU : visit.FactorsThrough (Finpartition.ofFun Address.city).part := fun w v h ↦ by
+    rw [Finpartition.part_ofFun_eq_part_ofFun_iff] at h
+    ext c
+    simp [visit, h]
+  refine Question.better_iff.2 (.inr ⟨by rw [Question.utility_eq_valueOfInformation_id visit μ _ hU,
+    Question.utility_bot], bot_lt_iff_ne_bot.2 fun h ↦ ?_⟩)
+  have := Finpartition.part_ofFun_eq_part_ofFun_iff.2
+    (show Address.amsterdam₁.city = Address.amsterdam₂.city from rfl)
+  rw [h, Finpartition.part_bot (Finset.mem_univ _), Finpartition.part_bot (Finset.mem_univ _),
+    Finset.singleton_inj] at this
+  exact absurd this (by decide)
+
 /-! #### Conceptual covers -/
 
 /-- In the worlds of *Who killed spiderman?* John or Bill did it, wearing a blue or a green
@@ -411,10 +592,6 @@ def byName : SpiderW → Concept → ℝ
 def byMask : SpiderW → Concept → ℝ
   | .johnBlue, .blue | .johnGreen, .green | .billBlue, .blue | .billGreen, .green => 1
   | _, _ => 0
-
-private theorem prop_lt_iff {p q : Prop} : p < q ↔ ¬ p ∧ q := by
-  simp only [lt_iff_le_not_ge, le_Prop_eq]
-  tauto
 
 private theorem forall_concept {p : Concept → Prop} :
     (∀ c, p c) ↔ p .john ∧ p .bill ∧ p .blue ∧ p .green :=

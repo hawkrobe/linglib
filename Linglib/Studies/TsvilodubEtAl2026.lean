@@ -1,6 +1,7 @@
 module
 
 public import Linglib.Core.Probability.GibbsVariational
+public import Linglib.Semantics.Questions.Value
 public import Linglib.Studies.DongEtAl2026
 public import Mathlib.Probability.Distributions.Bernoulli
 public import Mathlib.Analysis.SpecialFunctions.Sigmoid
@@ -13,10 +14,10 @@ rather than answering under uncertainty. The questioner has one of two goals, wi
 on the dispreferred one; a mention-some answer is worth 1 for its goal and 0 for the other, and the
 exhaustive answer is worth `1 − δ` for either. The agent clarifies with a probability that is a
 logistic function of the expected regret of its best action, which is the value of learning the
-goal, `min ε δ`, and otherwise answers by a softmax policy over expected utility. Uncertainty
-therefore matters only while it stays below the cost of the exhaustive answer. With `c` read as
-the cost of asking, as the paper suggests, the gate softens the clarify-or-commit rule of Dong et
-al.
+goal and van Rooy's value of the clarification question, `min ε δ`, and otherwise answers by a
+softmax policy over expected utility. Uncertainty therefore matters only while it stays below the
+cost of the exhaustive answer. With `c` read as the cost of asking, as the paper suggests, the gate
+softens the clarify-or-commit rule of Dong et al.
 
 ## Main statements
 
@@ -49,6 +50,7 @@ al.
 * [tsvilodub-etal-2026]
 * [raiffa-schlaifer-1961]
 * [dong-etal-2026]
+* [van-rooy-2003]
 -/
 
 @[expose] public section
@@ -157,6 +159,12 @@ theorem valueOfInformation_id_utility (hε : (ε : ℝ) ≤ 1 / 2) (hδ : 0 ≤ 
       · exact le_ciSup_of_le (Set.finite_range _).bddAbove .ms2 (by simp [utility])
   rw [valueOfInformation_id, decisionValue_utility hε]
   simp [hbest]
+
+/-- The clarification question asks which goal the questioner has, the finest question about the
+goal, so its value as a question in the sense of [van-rooy-2003] is `min ε δ`. -/
+theorem questionUtility_bot (hε : (ε : ℝ) ≤ 1 / 2) (hδ : 0 ≤ δ) :
+    Question.utility (utility δ) (prior ε) ⊥ = min (ε : ℝ) δ := by
+  rw [Question.utility_bot, valueOfInformation_id_utility hε hδ]
 
 /-! ### The clarification gate -/
 
