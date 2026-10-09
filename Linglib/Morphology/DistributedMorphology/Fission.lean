@@ -1,8 +1,8 @@
 module
 
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
-public import Mathlib.Data.List.Dedup
-public import Mathlib.Data.List.Perm.Subperm
+public import Mathlib.Data.Finset.Dedup
+public import Mathlib.Data.Multiset.AddSub
 
 /-!
 # Fission
@@ -16,9 +16,11 @@ at the bottom of the list, so no item is inserted twice.
 
 An item's site is a set of features, as applicability and specificity already treat it, while a
 matrix is a multiset, so that a feature borne twice is two repetitions in Marcolli, Chomsky and
-Berwick's sense and two items may discharge it one at a time. Scansion is then a greedy decomposition in the free
-commutative monoid on the features. A node may bear several matrices, one per argument it agrees
-with, as the Yucatec Agr3 agrees with both subject and object, and an item draws on one of them.
+Berwick's sense and two items may discharge it one at a time. Lists represent both for
+computation, and the theorems are stated in the free commutative monoid `Multiset F`, where
+discharge is truncated subtraction and scansion a greedy decomposition of the node. A node may
+bear several matrices, one per argument it agrees with, as the Yucatec Agr3 agrees with both
+subject and object, and an item draws on one of them.
 
 ## Main definitions
 
@@ -29,7 +31,8 @@ with, as the Yucatec Agr3 agrees with both subject and object, and an item draws
 
 ## Main results
 
-* `perm_insertions_residue`: the inserted items' features and the residue make up the node.
+* `sum_insertions_add_residue`: in the free commutative monoid on the features, the inserted
+  items' sites and the residue sum to the node.
 * `countP_insertions_le`, `pairwise_disjoint_insertions`: a feature is exponed at most as often as
   the node bears it, and on a node without repetitions the inserted items' sites are disjoint.
 * `head?_scansion_singleton`: on a Vocabulary ordered by specificity, the first insertion at a
@@ -51,7 +54,6 @@ with, as the Yucatec Agr3 agrees with both subject and object, and an item draws
 namespace DistributedMorphology
 
 open Morphology.Exponence
-open scoped List
 
 variable {F E : Type*} [DecidableEq F]
 
@@ -108,37 +110,41 @@ theorem scan_cons_of_discharge_eq_none (h : discharge i env ms = none) :
     scan (i :: rest) env ms = scan rest env ms := by
   simp [scan, h]
 
-/-- Discharge draws one occurrence of each feature of the item's site from the node. -/
-theorem perm_discharge : ∀ {ms ms' : List (List F)}, discharge i env ms = some ms' →
-    i.site.focus.dedup ++ ms'.flatten ~ ms.flatten
+/-- Discharge subtracts the item's site, a set of features, from the node's multiset. -/
+theorem val_add_discharge : ∀ {ms ms' : List (List F)}, discharge i env ms = some ms' →
+    i.site.focus.toFinset.val + ms'.flatten = (ms.flatten : Multiset F)
   | [], _, h => by simp at h
   | m :: ms, ms', h => by
     unfold discharge at h
     split_ifs at h with hs
     · cases h
-      have hm : i.site.focus.dedup <+~ m := (List.nodup_dedup _).subperm fun _ hf ↦
-        Neighborhood.focus_subset_focus hs (List.mem_dedup.mp hf)
-      rw [List.flatten_cons, List.flatten_cons, ← List.append_assoc]
-      exact (List.subperm_append_diff_self_of_count_le fun x _ ↦ hm.count_le x).append_right _
+      have hle : i.site.focus.toFinset.val ≤ (m : Multiset F) :=
+        (Multiset.le_iff_subset i.site.focus.toFinset.nodup).mpr fun f hf ↦
+          Multiset.mem_coe.mpr (Neighborhood.focus_subset_focus hs (List.mem_toFinset.mp hf))
+      rw [List.flatten_cons, List.flatten_cons, ← Multiset.coe_add, ← Multiset.coe_add,
+        ← Multiset.coe_sub, ← List.toFinset_val, ← Multiset.add_assoc,
+        Multiset.add_comm i.site.focus.toFinset.val, Multiset.sub_add_cancel hle]
     · obtain ⟨ms'', h'', rfl⟩ := Option.map_eq_some_iff.mp h
-      rw [List.flatten_cons, List.flatten_cons]
-      exact (List.perm_append_comm_assoc _ _ _).trans ((perm_discharge h'').append_left m)
+      rw [List.flatten_cons, List.flatten_cons, ← Multiset.coe_add, ← Multiset.coe_add,
+        ← Multiset.add_assoc, Multiset.add_comm i.site.focus.toFinset.val, Multiset.add_assoc,
+        val_add_discharge h'']
 
-/-- **Conservation.** The inserted items' features, one occurrence of each feature of a site, and
-the residue are a permutation of the node's features. -/
-theorem perm_insertions_residue : ∀ (items : List (VocabularyItem F E)) (ms : List (List F)),
-    (insertions items env ms).flatMap (·.site.focus.dedup) ++ (residue items env ms).flatten ~
-      ms.flatten
-  | [], _ => .rfl
+/-- **Conservation.** In the free commutative monoid on the features, the inserted items' sites
+and the residue sum to the node. -/
+theorem sum_insertions_add_residue : ∀ (items : List (VocabularyItem F E)) (ms : List (List F)),
+    ((insertions items env ms).map (·.site.focus.toFinset.val)).sum + (residue items env ms).flatten
+      = (ms.flatten : Multiset F)
+  | [], _ => by simp [insertions, residue]
   | i :: rest, ms => by
     cases h : discharge i env ms with
     | none =>
       simpa [insertions, residue, scan_cons_of_discharge_eq_none h] using
-        perm_insertions_residue rest ms
+        sum_insertions_add_residue rest ms
     | some ms' =>
-      simp only [insertions, residue, scan_cons_of_discharge_eq_some h, List.flatMap_cons,
-        List.append_assoc]
-      exact ((perm_insertions_residue rest ms').append_left _).trans (perm_discharge h)
+      rw [insertions, residue, scan_cons_of_discharge_eq_some h]
+      dsimp only
+      rw [List.map_cons, List.sum_cons, Multiset.add_assoc, sum_insertions_add_residue rest ms',
+        val_add_discharge h]
 
 /-- A node with no matrix receives nothing. -/
 @[simp] theorem insertions_nil_right :
@@ -171,26 +177,41 @@ theorem length_scansion_le (ms : List (List F)) :
     (scansion items env ms).length ≤ items.length := by
   simpa using (scansion_sublist (items := items) (env := env) ms).length_le
 
-private theorem count_flatMap_dedup (f : F) (l : List (VocabularyItem F E)) :
-    (l.flatMap (·.site.focus.dedup)).count f = l.countP (f ∈ ·.site.focus) := by
+private theorem count_sum_val (f : F) (l : List (VocabularyItem F E)) :
+    ((l.map fun i : VocabularyItem F E ↦ i.site.focus.toFinset.val).sum).count f =
+      l.countP (f ∈ ·.site.focus) := by
   induction l with
-  | nil => rfl
-  | cons i l ih => simp only [List.flatMap_cons, List.count_append, List.count_dedup, ih,
-      List.countP_cons, decide_eq_true_eq, Nat.add_comm]
+  | nil => simp
+  | cons i l ih =>
+    rw [List.map_cons, List.sum_cons, Multiset.count_add, ih,
+      Multiset.count_eq_of_nodup i.site.focus.toFinset.nodup, List.countP_cons]
+    simp [Nat.add_comm]
 
 /-- **No multiple exponence.** The inserted items realizing a feature number at most the node's
 occurrences of it. -/
 theorem countP_insertions_le (f : F) (items : List (VocabularyItem F E)) (ms : List (List F)) :
     (insertions items env ms).countP (f ∈ ·.site.focus) ≤ ms.flatten.count f := by
-  rw [← count_flatMap_dedup, ← ((perm_insertions_residue items ms).count_eq f), List.count_append]
-  exact Nat.le_add_right _ _
+  rw [← count_sum_val, ← Multiset.coe_count, ← sum_insertions_add_residue items ms]
+  exact Multiset.count_le_of_le f (Multiset.le_add_right _ _)
+
+private theorem pairwise_disjoint_of_countP_le_one : ∀ {l : List (VocabularyItem F E)},
+    (∀ f, l.countP (f ∈ ·.site.focus) ≤ 1) →
+      l.Pairwise fun i j ↦ i.site.focus.Disjoint j.site.focus
+  | [], _ => .nil
+  | i :: l, h => by
+    refine .cons (fun j hj f hi hj' ↦ ?_)
+      (pairwise_disjoint_of_countP_le_one fun f ↦ (List.countP_cons ▸ h f).trans' (by simp))
+    have : 0 < l.countP (f ∈ ·.site.focus) := List.countP_pos_iff.mpr ⟨j, hj, by simpa using hj'⟩
+    have := h f
+    simp only [List.countP_cons, hi, decide_true, ite_true] at this
+    omega
 
 /-- On a node without repetitions the inserted items' sites are disjoint, so the items partition
 the features they discharge. -/
 theorem pairwise_disjoint_insertions (h : ms.flatten.Nodup) :
     (insertions items env ms).Pairwise fun i j ↦ i.site.focus.Disjoint j.site.focus :=
-  (List.nodup_flatMap.mp ((perm_insertions_residue (env := env) items ms).nodup_iff.mpr
-    h).of_append_left).2.imp fun hd _ ha hb ↦ hd (List.mem_dedup.mpr ha) (List.mem_dedup.mpr hb)
+  pairwise_disjoint_of_countP_le_one fun f ↦
+    (countP_insertions_le f items ms).trans (List.nodup_iff_count_le_one.mp h f)
 
 /-- At a single matrix, an item discharges iff it applies there. -/
 theorem discharge_singleton (i : VocabularyItem F E) (m : List F) :
