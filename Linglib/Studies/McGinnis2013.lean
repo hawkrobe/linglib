@@ -23,8 +23,9 @@ leaves no [#] for the default *-s*.
 
 * `rows_realized`: a form of the pool is grammatical iff its prefix and suffixes are those the
   analysis inserts.
-* `one_exponent_per_feature`: in every clause at most one suffix realizes [Group] and at most one
-  realizes [#], so there is no double plural marking.
+* `one_exponent_per_feature`: in every clause the suffixes realize disjoint parts of T's node, so
+  there is no double plural marking, which Fission alone would not exclude
+  (`fission_alone_allows_double_plural`).
 * `setB_realize`, `setA_realize`: the analysis yields the agreement affixes of the Fragment's two
   sets, *gv-* without *-t* included.
 
@@ -333,13 +334,24 @@ theorem tamNode_nodup (s : Screeve) (subj obj : Argument) : (tamNode s subj obj)
     · exact not_isUnder_of_mem_features hx _ (hu x hy)
     · exact not_isUnder_individuation (of_decide_eq_true (List.mem_filter.mp hx).2) (hu x hy)
 
-/-- **No double plural marking** (§3.3.1). T bears each feature once and Fission discharges a
-feature at most once, so at most one suffix realizes [Group], whence *-es* and *-n* exclude
-*-t*, and at most one realizes [#], whence *-t* excludes *-s*. -/
-theorem one_exponent_per_feature (s : Screeve) (subj obj : Argument) (f : Feature) :
-    (suffixItems s subj obj).countP (f ∈ ·.site.focus) ≤ 1 :=
-  (countP_insertions_le f _ _).trans
-    (by simpa using List.nodup_iff_count_le_one.mp (tamNode_nodup s subj obj) f)
+/-- **No double plural marking** (§3.3.1). T bears each feature once, so the suffixes realize
+disjoint parts of its node. At most one realizes [Group], whence *-es* and *-n* exclude *-t*, and
+at most one realizes [#], whence *-t* excludes *-s*. -/
+theorem one_exponent_per_feature (s : Screeve) (subj obj : Argument) :
+    (suffixItems s subj obj).Pairwise fun i j ↦ i.site.focus.Disjoint j.site.focus :=
+  pairwise_disjoint_insertions (by simpa using tamNode_nodup s subj obj)
+
+/-- Fission alone does not exclude double plural marking (§3.3.1). Were T to agree in number with
+both a plural third-person subject and a plural second-person object, its node would bear two
+[Group]s, and scansion would insert both *-es* and *-t*, the starred (3b); T's single [#] probe
+is what excludes it. -/
+theorem fission_alone_allows_double_plural :
+    let node := Screeve.aorist.features ++
+      (⟨.third, .plural⟩ : Argument).features.filter (·.IsUnder .individuation) ++
+        (⟨.second, .plural⟩ : Argument).features.filter (·.IsUnder .individuation)
+    ((insertions Screeve.aorist.vocabulary ⟨[], [node], []⟩ [node]).map (·.exponent)).filter
+      (· ≠ "") = ["es", "t"] := by
+  decide
 
 /-! ### The ranking -/
 
