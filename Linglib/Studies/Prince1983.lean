@@ -1,50 +1,50 @@
 module
 
+public import Linglib.Core.Computability.Definite
+public import Linglib.Core.Computability.ScanDirection
 public import Linglib.Phonology.Prosody.Grid
+public import Mathlib.Data.List.GetD
 
 /-!
 # Prince (1983): Relating to the Grid
 
-This file formalizes [prince-1983]'s case that the metrical grid alone, without the labelled
-tree, carries the theory of stress. The Relative Prominence Projection Rule of
-[liberman-prince-1977] reads a grid off an s/w-labelled tree, and for a uniformly labelled tree
-it says exactly what the End Rule says, that the rightmost (leftmost) terminal of every
-constituent is the strongest, so the labelling does no work (`SWTree.uniformWS_rppr_iff`). On the
-grid two entries clash when they are adjacent at a level with no entry one level down between
-them, and the Rhythm Rule is Move x, the sliding of a clashing entry within its level to the
-nearest landing site; that the peak of a phrase never moves follows from the continuity of
-columns, since sliding an entry out from under a taller column leaves a hole
-(`Marks.not_isContinuous_move`, `moveXL_getD_peak`). The universal theory of word stress is
-built from the End Rule at an edge and a level, extrametricality, Perfect Grid Construction
-sweeping in a direction from a peak or a trough, and the bipositional representation of heavy
-syllables. The four alternating patterns of (62) are the clash-free sweeps over an unstressed
-word (`pg_replicate_getD`, `noClash_pg_replicate`); Garawa's stress never falls directly after
-the initial main stress because the sweep is blocked by clash (`garawa_second`); Winnebago's
-stress on the third syllable is the extrametricality variant of a trough-first sweep, and no
-other setting of the parameters gives it (`third_syllable_iff`); heavy syllables never clash
-(`noClash_qs`); and the three kinds of quantity-sensitive system without alternation of (97),
-at both edges, give the main-stress theorems for the seven systems of (98) and §3.7, from
-Khalkha (`khalkha_heavy`) to Malayalam, whose second-syllable stress is the End Rule blocked by
-clash (`malayalam_second`).
+Prince argues that the metrical grid alone, without the labelled tree, carries the theory of
+stress. For a uniformly labelled tree, Liberman and Prince's Relative Prominence Projection Rule
+says what the End Rule says, so the labelling does no work. Two grid entries clash when they are
+adjacent at a level with no entry one level down between them, and the Rhythm Rule is Move x,
+which slides a clashing entry within its level and can never move the peak of a phrase. Word
+stress is built from the End Rule at an edge, extrametricality, Perfect Grid Construction sweeping
+from an edge, and bipositional heavy syllables; together they derive the alternating systems of
+Garawa, Hawaiian and Winnebago and the quantity-sensitive systems of (98).
+
+## Main statements
+
+* `SWTree.uniformWS_rppr_iff`: under uniform labelling the RPPR is the End Rule.
+* `moveXL_getD_peak`, `Marks.not_isContinuous_move`: Move x never moves the peak, since the move
+  would leave a hole in a column.
+* `postpeninitial_iff`, `antepenultimate_iff`: stress three syllables from an edge comes only from
+  extrametricality and a trough-first sweep from that edge.
+* `hawaiian_eq`, `hawaiian_ne_alternating`: Hawaiian's initial dactyl needs the End Rule at both
+  edges before the sweep, and no perfect grid gives it.
 
 ## Implementation notes
 
-A grid is the substrate's `Prosody.Grid`, a list of column heights, so the Continuous Column
-Constraint holds by construction; the rendered rows of marks enter only in the argument that Move
-x cannot move a peak. The End Rule is indexed by the level it maps into and applies to the highest
-level present below it, the reading the paper settles on in §3.7; without Forward Clash Override
-it withholds a promotion that would clash. Perfect Grid Construction is a greedy sweep that
-raises a column when neither neighbour is stressed, the paper's maximal organization up to
-clash, a trough start being a sweep that behaves as if a stress preceded the edge. Right-to-left
-sweeps, the final edge of extrametricality, and rightward Move x are the mirror images of the
-left-to-right versions. Syllable weights are the substrate's mora counts, and a syllable of two
-or more moras is bipositional.
+* A grid is the substrate's `Prosody.Grid`, a list of column heights, so the Continuous Column
+  Constraint holds by construction.
+* The End Rule applies to the highest level present below the level it maps into, the reading of
+  §3.7; without Forward Clash Override it withholds a promotion that would clash.
+* Perfect Grid Construction is a greedy sweep that raises a column when neither neighbour is
+  stressed, a trough start behaving as if a stress preceded the edge.
+* The edges and directions of (119) are `Edge` and `ScanDirection`, and each right-to-left rule is
+  the `List.revConj` mirror image of its left-to-right version. A syllable of two or more moras is
+  bipositional.
 
 ## TODO
 
-The Hawaiian derivation (64), Mora Sluicing, the Forward Clash Override option of Perfect Grid
-Construction, the bounding of Move x in §2.2, the feet of §4, and the pitch-accent systems of §5
-are not formalized.
+The End Rule (Final) inside the stress level that makes Garawa's penultimate stress secondary
+rather than tertiary, Mora Sluicing, the Forward Clash Override option of Perfect Grid
+Construction, the bounding of Move x in §2.2, the extrametrical systems of (99), the feet of §4,
+and the pitch-accent systems of §5 are not formalized.
 
 ## References
 
@@ -69,13 +69,13 @@ inductive SWTree
 
 namespace SWTree
 
-/-- The column heights of the terminals, left to right: the grid over the tree. -/
+/-- The grid over a tree lists the column heights of its terminals, left to right. -/
 def heights : SWTree → Grid
   | leaf h => [h]
   | ws w s => heights w ++ heights s
   | sw s w => heights s ++ heights w
 
-/-- `H(N)`: the height of the head terminal, reached from the root through strong daughters. -/
+/-- `H(N)` is the height of the head terminal, reached from the root through strong daughters. -/
 def headHeight : SWTree → ℕ
   | leaf h => h
   | ws _ s => headHeight s
@@ -106,7 +106,7 @@ theorem heights_perm (t : SWTree) : (heights t).Perm (headHeight t :: weakHeight
   | sw s w ihs _ =>
     simpa only [heights, headHeight, weakHeights, List.cons_append] using ihs.append_right _
 
-/-- The Relative Prominence Projection Rule (7): in every pair of sisters, `H(s) > H(w)`. -/
+/-- The Relative Prominence Projection Rule (7) requires `H(s) > H(w)` of every pair of sisters. -/
 def Rppr : SWTree → Prop
   | leaf _ => True
   | ws w s => Rppr w ∧ Rppr s ∧ headHeight w < headHeight s
@@ -140,7 +140,7 @@ theorem rppr_iff_headStrongest (t : SWTree) : Rppr t ↔ HeadStrongest t := by
   | ws w s ihw ihs =>
     simp only [Rppr, HeadStrongest, ihw, ihs, HeadStrong, weakHeights, headHeight,
       List.mem_append]
-    refine and_congr_right λ hw => and_congr_right λ hs => ⟨λ hlt h hh => ?_, λ h => ?_⟩
+    refine and_congr_right fun hw ↦ and_congr_right fun hs ↦ ⟨fun hlt h hh ↦ ?_, fun h ↦ ?_⟩
     · rcases hh with hh | hh
       · exact (hw.headStrong.le hh).trans_lt hlt
       · exact hs.headStrong h hh
@@ -148,7 +148,7 @@ theorem rppr_iff_headStrongest (t : SWTree) : Rppr t ↔ HeadStrongest t := by
   | sw s w ihs ihw =>
     simp only [Rppr, HeadStrongest, ihw, ihs, HeadStrong, weakHeights, headHeight,
       List.mem_append]
-    refine and_congr_right λ hs => and_congr_right λ hw => ⟨λ hlt h hh => ?_, λ h => ?_⟩
+    refine and_congr_right fun hs ↦ and_congr_right fun hw ↦ ⟨fun hlt h hh ↦ ?_, fun h ↦ ?_⟩
     · rcases hh with hh | hh
       · exact hs.headStrong h hh
       · exact (hw.headStrong.le hh).trans_lt hlt
@@ -158,9 +158,9 @@ theorem rppr_iff_headStrongest (t : SWTree) : Rppr t ↔ HeadStrongest t := by
 theorem isCulminative_of_rppr {t : SWTree} (h : Rppr t) : IsCulminative (heights t) := by
   have hs := ((rppr_iff_headStrongest t).1 h).headStrong
   have hpeak : peak (heights t) = headHeight t :=
-    le_antisymm (peak_le λ x hx => hs.le hx) (le_peak (headHeight_mem t))
+    le_antisymm (peak_le fun x hx ↦ hs.le hx) (le_peak (headHeight_mem t))
   rw [IsCulminative, hpeak, (heights_perm t).countP_eq, List.countP_cons_of_pos (by simp),
-    List.countP_eq_zero.2 λ x hx => by simpa using (hs x hx).ne]
+    List.countP_eq_zero.2 fun x hx ↦ by simpa using (hs x hx).ne]
 
 /-- The height of the rightmost terminal. -/
 def lastHeight : SWTree → ℕ
@@ -180,8 +180,8 @@ theorem heights_eq (t : SWTree) : heights t = initHeights t ++ [lastHeight t] :=
   | ws w s _ ihs => simp [heights, initHeights, lastHeight, ihs]
   | sw s w _ ihw => simp [heights, initHeights, lastHeight, ihw]
 
-/-- The End Rule (13), right-hand version: in every constituent the rightmost terminal is
-stronger than every other terminal. -/
+/-- The right-hand End Rule (13) makes the rightmost terminal of every constituent stronger than
+every other terminal. -/
 def EndRuleRight : SWTree → Prop
   | leaf _ => True
   | ws w s => EndRuleRight w ∧ EndRuleRight s ∧
@@ -189,7 +189,7 @@ def EndRuleRight : SWTree → Prop
   | sw s w => EndRuleRight s ∧ EndRuleRight w ∧
       ∀ h ∈ initHeights (sw s w), h < lastHeight (sw s w)
 
-/-- Uniform `[w s]` labelling: every constituent is strong on the right. -/
+/-- A tree is uniformly `[w s]` labelled when every constituent is strong on the right. -/
 def UniformWS : SWTree → Prop
   | leaf _ => True
   | ws w s => UniformWS w ∧ UniformWS s
@@ -235,11 +235,11 @@ def reverse : SWTree → SWTree
 theorem rppr_reverse (t : SWTree) : Rppr t.reverse ↔ Rppr t := by
   induction t <;> simp [reverse, Rppr, *, and_left_comm]
 
-/-- Uniform `[s w]` labelling: every constituent is strong on the left. -/
+/-- A tree is uniformly `[s w]` labelled when every constituent is strong on the left. -/
 def UniformSW (t : SWTree) : Prop := UniformWS t.reverse
 
-/-- The End Rule (13), left-hand version: the leftmost terminal is strongest in every
-constituent, the mirror image of the right-hand version. -/
+/-- The left-hand End Rule (13), the mirror image of the right-hand one, makes the leftmost
+terminal of every constituent the strongest. -/
 def EndRuleLeft (t : SWTree) : Prop := EndRuleRight t.reverse
 
 /-- Uniform `[s w]` labelling under the RPPR is the left-hand End Rule. -/
@@ -250,14 +250,14 @@ end SWTree
 
 /-! ### Clash and Move x (§2.2) -/
 
-/-- Columns `i < j` clash at level `n` (27): both reach level `n` and no column between them
+/-- Columns `i < j` clash at level `n` (27) when both reach level `n` and no column between them
 reaches level `n - 1`. -/
 def Clash (g : Grid) (n i j : ℕ) : Prop :=
   i < j ∧ n ≤ g.getD i 0 ∧ n ≤ g.getD j 0 ∧ ∀ k < j, i < k → g.getD k 0 + 1 < n
 
 instance (g : Grid) (n i j : ℕ) : Decidable (Clash g n i j) := by unfold Clash; infer_instance
 
-/-- A eurhythmic grid: no clash at any level from `2` up to the peak. -/
+/-- A grid is eurhythmic when no two columns clash at any level from `2` up to the peak. -/
 def NoClash (g : Grid) : Prop :=
   ∀ n ≤ peak g, 2 ≤ n → ∀ i < g.length, ∀ j < g.length, ¬ Clash g n i j
 
@@ -267,7 +267,7 @@ instance (g : Grid) : Decidable (NoClash g) := by unfold NoClash; infer_instance
 theorem noClash_of_alternating {g : Grid} (h : ∀ x ∈ g, 1 ≤ x ∧ x ≤ 2)
     (hadj : ∀ i, i + 1 < g.length → g.getD i 0 < 2 ∨ g.getD (i + 1) 0 < 2) : NoClash g := by
   rintro n hn h2 i hi j hj ⟨hij, hni, hnj, hk⟩
-  have hp : peak g ≤ 2 := peak_le λ x hx => (h x hx).2
+  have hp : peak g ≤ 2 := peak_le fun x hx ↦ (h x hx).2
   obtain rfl : n = 2 := by omega
   rcases Nat.lt_or_ge (i + 1) j with hlt | hge
   · have h1 := hk (i + 1) hlt (Nat.lt_succ_self i)
@@ -279,22 +279,16 @@ theorem noClash_of_alternating {g : Grid} (h : ∀ x ∈ g, 1 ≤ x ∧ x ≤ 2)
   · obtain rfl : j = i + 1 := by omega
     rcases hadj i hj with h' | h' <;> omega
 
-/-- A direction of sweep or movement, `D = {LR, RL}` of (119). -/
-inductive Dir
-  | lr
-  | rl
-  deriving DecidableEq, Repr
-
-/-- The landing site of a leftward move at level `n` from column `i`: the nearest column to the
+/-- The landing site of a leftward move at level `n` from column `i` is the nearest column to the
 left with an entry at level `n - 1` and none at level `n`. -/
 def landing? (g : Grid) (n i : ℕ) : Option ℕ :=
-  (List.range i).reverse.find? λ k => g.getD k 0 == n - 1
+  (List.range i).reverse.find? fun k ↦ g.getD k 0 == n - 1
 
 /-- The leftmost column that clashes at level `n` with a column to its right. -/
 def clashing? (g : Grid) (n : ℕ) : Option ℕ :=
-  (List.range g.length).find? λ i => (List.range g.length).any λ j => decide (Clash g n i j)
+  (List.range g.length).find? fun i ↦ (List.range g.length).any fun j ↦ decide (Clash g n i j)
 
-/-- Leftward Move x at level `n`: the left member of the first clash slides within its level to
+/-- Leftward Move x at level `n` slides the left member of the first clash within its level to
 the landing site, provided its column has no entry above level `n`. -/
 def moveXL (n : ℕ) (g : Grid) : Grid :=
   match clashing? g n with
@@ -306,17 +300,18 @@ def moveXL (n : ℕ) (g : Grid) : Grid :=
       | some k => (g.set i (n - 1)).set k n
     else g
 
-/-- Move x(D;L) ((119f)): the rightward rule is the mirror image of the leftward one. -/
-def moveX : Dir → ℕ → Grid → Grid
-  | .rl, n, g => moveXL n g
-  | .lr, n, g => (moveXL n g.reverse).reverse
+/-- Move x(D;L) of (119f) moves entries leftward when it runs right to left, and the rightward
+rule is its mirror image. -/
+def moveX : ScanDirection → ℕ → Grid → Grid
+  | .right, n => moveXL n
+  | .left, n => List.revConj (moveXL n)
 
-/-- Sliding one mark within row `r` from column `i` to column `k`. -/
+/-- `Marks.move r i k` slides one mark within row `r` from column `i` to column `k`. -/
 def Marks.move (r i k : ℕ) (m : Marks) : Marks :=
-  m.modify r λ row => (row.set i false).set k true
+  m.modify r fun row ↦ (row.set i false).set k true
 
-/-- (32): sliding the level-`n` entry out of a column that reaches above level `n` leaves a
-hole, so no such move is available on well-formed grids. -/
+/-- Sliding the level-`n` entry out of a column that reaches above level `n` leaves a hole (32),
+so no such move is available on well-formed grids. -/
 theorem Marks.not_isContinuous_move {g : Grid} {n i k : ℕ} (hi : i < g.length) (hn : n < g[i])
     (hn1 : 1 ≤ n) (hk : k ≠ i) : ¬ Marks.IsContinuous (Marks.move (n - 1) i k (rows g)) := by
   intro h
@@ -367,12 +362,6 @@ theorem moveXL_getD_peak {g : Grid} (hc : IsCulminative g) {i n : ℕ} (hi : i <
     · exact hgi
 
 /-! ### The End Rule, extrametricality, and Perfect Grid Construction (§3.2, §3.3) -/
-
-/-- The edge a rule refers to, `E = {Initial, Final}` of (119). -/
-inductive Edge
-  | initial
-  | final
-  deriving DecidableEq, Repr
 
 /-! #### The last index -/
 
@@ -428,12 +417,12 @@ theorem lastIdx?_eq_none {p : ℕ → Bool} {l : List ℕ} :
 
 /-- The edge-most column reaching level `n`. -/
 def edgeIdx? : Edge → ℕ → Grid → Option ℕ
-  | .initial, n, g => g.findIdx? (n ≤ ·)
-  | .final, n, g => lastIdx? (n ≤ ·) g
+  | .left, n, g => g.findIdx? (n ≤ ·)
+  | .right, n, g => lastIdx? (n ≤ ·) g
 
-/-- The End Rule ER(E;L;FCO) ((16), (97), (119a)): the edge-most entry at the highest level
-present below `L` is promoted one level, so that the edge-most stress of a constituent becomes
-its main stress and, absent stresses, its edge syllable is stressed. Without Forward Clash
+/-- The End Rule ER(E;L;FCO) of (16), (97) and (119a) promotes the edge-most entry at the
+highest level present below `L` by one level, so that the edge-most stress of a constituent
+becomes its main stress and, absent stresses, its edge syllable is stressed. Without Forward Clash
 Override the promotion is withheld when it would clash. -/
 def endRule (e : Edge) (L : ℕ) (fco : Bool) (g : Grid) : Grid :=
   let n := min (L - 1) (peak g)
@@ -443,20 +432,23 @@ def endRule (e : Edge) (L : ℕ) (fco : Bool) (g : Grid) : Grid :=
     let g' := g.set i (max (g.getD i 0) (n + 1))
     if fco ∨ ∀ j < g.length, ¬ Clash g' (n + 1) i j ∧ ¬ Clash g' (n + 1) j i then g' else g
 
-/-- Extrametricality elm(E) ((119c)): the edge column is invisible to the rule applied inside. -/
+/-- Extrametricality elm(E) of (119c) hides the edge column from the rule applied inside. -/
 def elm : Edge → (Grid → Grid) → Grid → Grid
-  | .initial, f, [] => f []
-  | .initial, f, x :: t => x :: f t
-  | .final, f, g => f g.dropLast ++ g.drop (g.length - 1)
+  | .left, f, [] => f []
+  | .left, f, x :: t => x :: f t
+  | .right, f, g => f g.dropLast ++ g.drop (g.length - 1)
 
-/-- One sweep of Perfect Grid Construction: a column rises to the stress level when neither
-neighbour reaches it, `prev` being the height of the column just passed. A trough start is a
-sweep that behaves as if a stress preceded the edge. -/
+/-- One sweep of Perfect Grid Construction raises a column to the stress level when neither
+neighbour reaches it, `prev` being the height of the column just passed. -/
 def sweep : ℕ → Grid → Grid
   | _, [] => []
   | prev, x :: t =>
     let x' := if x < 2 ∧ prev < 2 ∧ t.headD 0 < 2 then 2 else x
     x' :: sweep x' t
+
+theorem sweep_cons_of_two_le {x : ℕ} (hx : 2 ≤ x) (p : ℕ) (t : Grid) :
+    sweep p (x :: t) = x :: sweep x t := by
+  simp [sweep, show ¬ x < 2 by omega]
 
 /-- Whether a sweep starts at a peak or a trough, `A` of (119b). -/
 inductive Altitude
@@ -464,93 +456,102 @@ inductive Altitude
   | trough
   deriving DecidableEq, Repr
 
-/-- The height a sweep pretends to have passed before its first column. -/
-def Altitude.start : Altitude → ℕ
-  | .peak => 0
-  | .trough => 2
+namespace Altitude
 
-/-- Perfect Grid Construction PG(D;A) ((61), (62), (119b)): a clash-free, maximally alternating
-stress level laid down by a sweep in direction `D` starting from a peak or a trough. -/
-def pg (d : Dir) (a : Altitude) (g : Grid) : Grid :=
+/-- The other altitude. -/
+def flip : Altitude → Altitude
+  | peak => trough
+  | trough => peak
+
+/-- The height of a column at a peak, stressed, or at a trough, unstressed. -/
+def height : Altitude → ℕ
+  | peak => 2
+  | trough => 1
+
+/-- A sweep behaves as if it had passed a column of this height before its first column, an
+unstressed one before a peak and a stress before a trough. -/
+def start (a : Altitude) : ℕ := a.flip.height
+
+end Altitude
+
+/-- Perfect Grid Construction PG(D;A) of (61), (62) and (119b) lays down a clash-free, maximally
+alternating stress level by a sweep in direction `D` starting from a peak or a trough. -/
+def pg (d : ScanDirection) (a : Altitude) : Grid → Grid :=
   match d with
-  | .lr => sweep a.start g
-  | .rl => (sweep a.start g.reverse).reverse
+  | .left => sweep a.start
+  | .right => List.revConj (sweep a.start)
 
-/-- The alternating stress level: `2, 1, 2, …` from a peak or `1, 2, 1, …` from a trough. -/
-def alt : Bool → ℕ → Grid
+/-- The alternating stress level is `2, 1, 2, …` from a peak and `1, 2, 1, …` from a trough. -/
+def alt : Altitude → ℕ → Grid
   | _, 0 => []
-  | b, n + 1 => (if b then 2 else 1) :: alt (!b) n
+  | a, n + 1 => a.height :: alt a.flip n
 
-@[simp] theorem alt_length (b : Bool) (n : ℕ) : (alt b n).length = n := by
-  induction n generalizing b <;> simp [alt, *]
+@[simp] theorem alt_length (a : Altitude) (n : ℕ) : (alt a n).length = n := by
+  induction n generalizing a <;> simp [alt, *]
 
-theorem alt_getD (b : Bool) (n i : ℕ) :
-    (alt b n).getD i 0 = if i < n then (if (i % 2 = 0 ↔ b = true) then 2 else 1) else 0 := by
-  induction n generalizing b i with
+theorem alt_getD (a : Altitude) (n i : ℕ) :
+    (alt a n).getD i 0 = if i < n then (if (i % 2 = 0 ↔ a = .peak) then 2 else 1) else 0 := by
+  induction n generalizing a i with
   | zero => simp [alt]
   | succ n ih =>
     cases i with
-    | zero => cases b <;> simp [alt]
+    | zero => cases a <;> simp [alt, Altitude.height]
     | succ i =>
       rw [alt, List.getD_cons_succ, ih]
-      rcases Nat.mod_two_eq_zero_or_one i with h | h <;> cases b <;>
-        simp [h, Nat.succ_mod_two_eq_zero_iff]
+      rcases Nat.mod_two_eq_zero_or_one i with h | h <;> cases a <;>
+        simp [h, Nat.succ_mod_two_eq_zero_iff, Altitude.flip]
 
-theorem sweep_replicate (p n : ℕ) : sweep p (List.replicate n 1) = alt (p < 2) n := by
-  induction n generalizing p with
+theorem mem_alt {a : Altitude} {n x : ℕ} (hx : x ∈ alt a n) : 1 ≤ x ∧ x ≤ 2 := by
+  induction n generalizing a with
+  | zero => simp [alt] at hx
+  | succ n ih =>
+    rcases List.mem_cons.1 hx with rfl | hx
+    · cases a <;> simp [Altitude.height]
+    · exact ih hx
+
+theorem sweep_replicate (a : Altitude) (n : ℕ) :
+    sweep a.start (List.replicate n 1) = alt a n := by
+  induction n generalizing a with
   | zero => simp [sweep, alt]
   | succ n ih =>
-    have hd : (List.replicate n 1).headD 0 < 2 := by cases n <;> simp [List.replicate_succ]
-    rw [List.replicate_succ, sweep, alt]
-    simp only [hd, and_true, Nat.one_lt_ofNat, true_and, ih]
-    by_cases hp : p < 2 <;> simp [hp]
+    have hd : (List.replicate n 1).head?.getD 0 ≤ 1 := by cases n <;> simp [List.replicate_succ]
+    rw [List.replicate_succ, sweep, alt, ← ih a.flip]
+    cases a <;> simp [hd, Altitude.start, Altitude.flip, Altitude.height]
 
-theorem sweep_replicate_append (p m : ℕ) :
-    sweep p (List.replicate (m + 1) 1 ++ [2]) = alt (p < 2) m ++ [1, 2] := by
-  induction m generalizing p with
-  | zero => simp [sweep, alt]
+theorem sweep_replicate_append (a : Altitude) (m : ℕ) :
+    sweep a.start (List.replicate (m + 1) 1 ++ [2]) = alt a m ++ [1, 2] := by
+  induction m generalizing a with
+  | zero => cases a <;> simp [sweep, alt, Altitude.start, Altitude.flip, Altitude.height]
   | succ m ih =>
-    have h2 := ih 2
-    have h1 := ih 1
-    rw [List.replicate_succ, List.cons_append] at h1 h2
-    rw [List.replicate_succ, List.cons_append, sweep, alt]
-    simp only [List.replicate_succ, List.cons_append, List.headD_cons, Nat.one_lt_ofNat,
-      true_and, and_true]
-    by_cases hp : p < 2
-    · simp [hp, h2]
-    · simp [hp, h1]
+    have := ih a.flip
+    rw [List.replicate_succ, List.cons_append] at this ⊢
+    rw [sweep, alt]
+    cases a <;> simp_all [List.replicate_succ, Altitude.start, Altitude.flip, Altitude.height]
 
-/-- The distance of column `i` from the edge a sweep starts at. -/
-def Dir.dist : Dir → ℕ → ℕ → ℕ
-  | .lr, _, i => i
-  | .rl, n, i => n - 1 - i
+/-- The distance of column `i` of `n` from the edge a sweep in direction `d` starts at. -/
+def startDist : ScanDirection → ℕ → ℕ → ℕ
+  | .left, _, i => i
+  | .right, n, i => n - 1 - i
 
-private theorem getD_reverse (l : List ℕ) {i : ℕ} (hi : i < l.length) :
-    l.reverse.getD i 0 = l.getD (l.length - 1 - i) 0 := by
-  simp [List.getD_eq_getElem?_getD, hi, List.getElem_reverse,
-    List.getElem?_eq_getElem (show l.length - 1 - i < l.length by omega)]
-
-/-- (62): a sweep over an unstressed word stresses the columns whose distance from the starting
-edge has the parity of the start, a peak stressing the even distances. Weri is (62d), sweeping
-right to left from a peak; Warao, (62c); Maranungku, (62b); Southern Paiute, (62a). -/
-theorem pg_replicate_getD (d : Dir) (a : Altitude) {n i : ℕ} (hi : i < n) :
+/-- A sweep over an unstressed word stresses the columns whose distance from the starting edge has
+the parity of the start, a peak stressing the even distances (62). Weri is (62d), sweeping right
+to left from a peak; Warao, (62c); Maranungku, (62b); Southern Paiute, (62a). -/
+theorem pg_replicate_getD (d : ScanDirection) (a : Altitude) {n i : ℕ} (hi : i < n) :
     (pg d a (List.replicate n 1)).getD i 0 =
-      if (d.dist n i % 2 = 0 ↔ a = .peak) then 2 else 1 := by
+      if (startDist d n i % 2 = 0 ↔ a = .peak) then 2 else 1 := by
   cases d with
-  | lr =>
-    cases a <;> simp only [pg, Altitude.start, sweep_replicate] <;> rw [alt_getD] <;>
-      simp [hi, Dir.dist]
-  | rl =>
-    cases a <;> simp only [pg, Altitude.start, List.reverse_replicate, sweep_replicate] <;>
-      rw [getD_reverse _ (by simpa using hi), alt_getD] <;>
-      simp [Dir.dist, show n - 1 - i < n by omega]
+  | left => cases a <;> simp only [pg, sweep_replicate] <;> rw [alt_getD] <;> simp [hi, startDist]
+  | right =>
+    cases a <;> simp only [pg, List.revConj, List.reverse_replicate, sweep_replicate] <;>
+      rw [List.getD_reverse _ (by simpa using hi), alt_getD] <;>
+      simp [startDist, show n - 1 - i < n by omega]
 
 /-- Perfect Grid Construction is clash-free. -/
-theorem noClash_pg_replicate (d : Dir) (a : Altitude) (n : ℕ) :
+theorem noClash_pg_replicate (d : ScanDirection) (a : Altitude) (n : ℕ) :
     NoClash (pg d a (List.replicate n 1)) := by
   have hlen : (pg d a (List.replicate n 1)).length = n := by
-    cases d <;> simp [pg, sweep_replicate]
-  refine noClash_of_alternating (λ x hx => ?_) λ i hi => ?_
+    cases d <;> simp [pg, List.revConj, sweep_replicate]
+  refine noClash_of_alternating (fun x hx ↦ ?_) fun i hi ↦ ?_
   · obtain ⟨i, hi, rfl⟩ := List.mem_iff_getElem.1 hx
     have := pg_replicate_getD d a (hlen ▸ hi)
     simp only [List.getD_eq_getElem?_getD, List.getElem?_eq_getElem hi, Option.getD_some] at this
@@ -558,20 +559,20 @@ theorem noClash_pg_replicate (d : Dir) (a : Altitude) (n : ℕ) :
     split_ifs <;> omega
   · have hi' : i + 1 < n := hlen ▸ hi
     rw [pg_replicate_getD d a (by omega), pg_replicate_getD d a hi']
-    cases d <;> cases a <;> simp [Dir.dist] <;> (try split_ifs) <;> omega
+    cases d <;> cases a <;> simp [startDist] <;> (try split_ifs) <;> omega
 
 private theorem edgeIdx?_getD {e : Edge} {n : ℕ} {g : Grid} {i : ℕ} (h : edgeIdx? e n g = some i) :
     i < g.length ∧ n ≤ g.getD i 0 := by
   cases e with
-  | initial =>
+  | left =>
     obtain ⟨hi, hp, -⟩ := List.findIdx?_eq_some_iff_getElem.1 h
     exact ⟨hi, by simpa [List.getD_eq_getElem?_getD, hi] using hp⟩
-  | final =>
+  | right =>
     obtain ⟨hi, hp⟩ := lastIdx?_eq_some h
     exact ⟨hi, by simpa [List.getD_eq_getElem?_getD, hi] using hp⟩
 
-/-- The End Rule at the level just above the peak: the edge-most peak column is promoted, and no
-clash can arise. -/
+/-- At the level just above the peak the End Rule promotes the edge-most peak column, and no clash
+can arise. -/
 theorem endRule_of_peak {e : Edge} {L : ℕ} {fco : Bool} {g : Grid} (hL : peak g ≤ L - 1)
     {i : ℕ} (hi : edgeIdx? e (peak g) g = some i) :
     endRule e L fco g = g.set i (peak g + 1) := by
@@ -582,7 +583,7 @@ theorem endRule_of_peak {e : Edge} {L : ℕ} {fco : Bool} {g : Grid} (hL : peak 
       hpi
   simp only [endRule, hn, hi, hgi, Nat.max_eq_right (Nat.le_succ _)]
   rw [ite_eq_left]
-  refine Or.inr λ j _ => ⟨λ hc => ?_, λ hc => ?_⟩
+  refine Or.inr fun j _ ↦ ⟨fun hc ↦ ?_, fun hc ↦ ?_⟩
   · obtain ⟨hij, -, hj, -⟩ := hc
     have hle : g[j]?.getD 0 ≤ peak g := by
       rcases lt_or_ge j g.length with hjl | hjl
@@ -599,12 +600,12 @@ theorem endRule_of_peak {e : Edge} {L : ℕ} {fco : Bool} {g : Grid} (hL : peak 
     omega
 
 theorem peak_replicate_one {n : ℕ} (hn : 0 < n) : peak (List.replicate n 1) = 1 :=
-  le_antisymm (peak_le λ x hx => by simp [List.eq_of_mem_replicate hx])
+  le_antisymm (peak_le fun x hx ↦ by simp [List.eq_of_mem_replicate hx])
     (le_peak (List.mem_replicate.2 ⟨hn.ne', rfl⟩))
 
 /-- Stressing the first syllable of an unstressed word. -/
-theorem endRule_initial_replicate {n : ℕ} (hn : 0 < n) (fco : Bool) :
-    endRule .initial 2 fco (List.replicate n 1) = 2 :: List.replicate (n - 1) 1 := by
+theorem endRule_left_replicate {n : ℕ} (hn : 0 < n) (fco : Bool) :
+    endRule .left 2 fco (List.replicate n 1) = 2 :: List.replicate (n - 1) 1 := by
   rw [endRule_of_peak (by rw [peak_replicate_one hn]) (i := 0), peak_replicate_one hn]
   · obtain ⟨n, rfl⟩ := Nat.exists_eq_add_one_of_ne_zero hn.ne'
     simp [List.replicate_succ]
@@ -612,106 +613,377 @@ theorem endRule_initial_replicate {n : ℕ} (hn : 0 < n) (fco : Bool) :
     obtain ⟨n, rfl⟩ := Nat.exists_eq_add_one_of_ne_zero hn.ne'
     simp [edgeIdx?, List.replicate_succ, List.findIdx?_cons]
 
+/-! #### The End Rule at the stress level -/
+
+private theorem min_one_peak {g : Grid} {x : ℕ} (hx : x ∈ g) (h1 : 1 ≤ x) :
+    min (2 - 1) (peak g) = 1 :=
+  Nat.min_eq_left (h1.trans (le_peak hx))
+
+/-- The End Rule at the stress level never raises a column above it. -/
+theorem endRule_le_two {e : Edge} {fco : Bool} {g : Grid} (h2 : ∀ x ∈ g, x ≤ 2) :
+    ∀ x ∈ endRule e 2 fco g, x ≤ 2 := by
+  intro x hx
+  simp only [endRule] at hx
+  split at hx
+  · exact h2 x hx
+  · rename_i i hi
+    split_ifs at hx
+    · rcases List.mem_or_eq_of_mem_set hx with hx | rfl
+      · exact h2 x hx
+      · have := (edgeIdx?_getD hi).1
+        have hgi : g.getD i 0 ≤ 2 := by
+          simpa [List.getD_eq_getElem?_getD, this] using h2 _ (List.getElem_mem this)
+        omega
+    · exact h2 x hx
+
+/-- An already stressed initial syllable is left alone. -/
+theorem endRule_left_of_two_le {x : ℕ} (hx : 2 ≤ x) (t : Grid) (fco : Bool) :
+    endRule .left 2 fco (x :: t) = x :: t := by
+  simp only [endRule, min_one_peak (List.mem_cons_self ..) (by omega : 1 ≤ x), edgeIdx?,
+    List.findIdx?_cons, decide_eq_true (by omega : 1 ≤ x), ↓reduceIte, List.set_cons_zero,
+    List.getD_cons_zero, Nat.max_eq_left hx, ite_self]
+
+theorem endRule_left_singleton {x : ℕ} (hx : 1 ≤ x) (fco : Bool) :
+    endRule .left 2 fco [x] = [max x 2] := by
+  simp only [endRule, min_one_peak (List.mem_cons_self ..) hx, edgeIdx?, List.findIdx?_cons,
+    decide_eq_true hx, ↓reduceIte, List.set_cons_zero, List.getD_cons_zero]
+  rw [ite_eq_left (Or.inr fun j hj ↦ ?_)]
+  simp only [List.length_singleton] at hj
+  obtain rfl : j = 0 := by omega
+  simp [Clash]
+
+/-- Stressing a light initial syllable, withheld before a stressed second position unless
+Forward Clash Override is on. -/
+theorem endRule_left_two {y : ℕ} (hy : 1 ≤ y) (t : Grid) (fco : Bool) :
+    endRule .left 2 fco (1 :: y :: t) = if fco ∨ y < 2 then 2 :: y :: t else 1 :: y :: t := by
+  have key : (∀ j < (1 :: y :: t).length,
+      ¬ Clash (2 :: y :: t) (1 + 1) 0 j ∧ ¬ Clash (2 :: y :: t) (1 + 1) j 0) ↔ y < 2 := by
+    constructor
+    · intro h
+      have := (h 1 (by simp)).1
+      simp [Clash] at this
+      omega
+    · intro hy2 j _
+      constructor
+      · rintro ⟨hij, -, h2, hk⟩
+        rcases j with _ | _ | j
+        · omega
+        · simp at h2; omega
+        · have := hk 1 (by omega) (by omega)
+          simp at this
+          omega
+      · rintro ⟨hji, -⟩
+        omega
+  have hidx : edgeIdx? .left 1 (1 :: y :: t) = some 0 := by simp [edgeIdx?, List.findIdx?_cons]
+  simp only [endRule, min_one_peak (List.mem_cons_self ..) le_rfl, hidx, List.set_cons_zero,
+    List.getD_cons_zero, Nat.max_eq_right (Nat.le_succ 1), key]
+
+theorem endRule_right_singleton {x : ℕ} (hx : 1 ≤ x) (fco : Bool) :
+    endRule .right 2 fco [x] = [max x 2] := by
+  have hidx : edgeIdx? .right 1 [x] = some 0 := by simp [edgeIdx?, lastIdx?_cons, hx]
+  simp only [endRule, min_one_peak (List.mem_cons_self ..) hx, hidx, List.set_cons_zero,
+    List.getD_cons_zero]
+  rw [ite_eq_left (Or.inr fun j hj ↦ ?_)]
+  simp only [List.length_singleton] at hj
+  obtain rfl : j = 0 := by omega
+  simp [Clash]
+
+/-- Stressing a light final syllable, withheld after a stressed penultimate position unless
+Forward Clash Override is on. -/
+theorem endRule_right_two {y : ℕ} (hy : 1 ≤ y) (t : Grid) (fco : Bool) :
+    endRule .right 2 fco (t ++ [y, 1]) = if fco ∨ y < 2 then t ++ [y, 2] else t ++ [y, 1] := by
+  have hidx : edgeIdx? .right 1 (t ++ [y, 1]) = some (t.length + 1) := by
+    simp [edgeIdx?, lastIdx?_append, lastIdx?_cons, Nat.add_comm]
+  have hset : (t ++ [y, 1]).set (t.length + 1) (max 1 (1 + 1)) = t ++ [y, 2] := by
+    rw [List.set_append_right _ _ (Nat.le_succ _)]
+    simp
+  have hgy : (t ++ [y, 2]).getD t.length 0 = y := by simp [List.getD_eq_getElem?_getD]
+  have hg2 : (t ++ [y, 2]).getD (t.length + 1) 0 = 2 := by simp [List.getD_eq_getElem?_getD]
+  have hg1 : (t ++ [y, 1]).getD (t.length + 1) 0 = 1 := by simp [List.getD_eq_getElem?_getD]
+  have key : (∀ j < (t ++ [y, 1]).length,
+      ¬ Clash (t ++ [y, 2]) (1 + 1) (t.length + 1) j ∧
+        ¬ Clash (t ++ [y, 2]) (1 + 1) j (t.length + 1)) ↔ y < 2 := by
+    constructor
+    · intro h
+      by_contra hy2
+      refine (h t.length (by simp)).2
+        ⟨Nat.lt_succ_self _, ?_, ?_, fun k hk hk' ↦ absurd hk (by omega)⟩
+      · rw [hgy]; omega
+      · rw [hg2]
+    · intro hy2 j hj
+      simp only [List.length_append, List.length_cons, List.length_nil] at hj
+      constructor
+      · rintro ⟨hij, -⟩
+        omega
+      · rintro ⟨hji, h2, -, hk⟩
+        rcases Nat.lt_or_ge j t.length with hjt | hjt
+        · have := hk t.length (by omega) hjt
+          rw [hgy] at this
+          omega
+        · have : j = t.length := by omega
+          subst this
+          rw [hgy] at h2
+          omega
+  have hmin : min (2 - 1) (peak (t ++ [y, 1])) = 1 :=
+    min_one_peak (List.mem_append_right _ (by simp)) le_rfl
+  simp only [endRule]
+  rw [hmin, hidx]
+  dsimp only
+  rw [hg1, hset]
+  simp only [key]
+
+/-! #### Main stress -/
+
+/-- Column `i` carries the main stress: it is strictly taller than every other column. -/
+def MainStressAt (g : Grid) (i : ℕ) : Prop :=
+  i < g.length ∧ ∀ j < g.length, j ≠ i → g.getD j 0 < g.getD i 0
+
+instance (g : Grid) (i : ℕ) : Decidable (MainStressAt g i) := by
+  unfold MainStressAt; infer_instance
+
+theorem MainStressAt.isCulminative {g : Grid} {i : ℕ} (h : MainStressAt g i) :
+    IsCulminative g :=
+  isCulminative_of_forall_lt h.1 fun j hj hne ↦ by
+    simpa [List.getD_eq_getElem?_getD, hj, h.1] using h.2 j hj hne
+
+theorem mainStressAt_set {g : Grid} {m i : ℕ} (h2 : ∀ x ∈ g, x ≤ m) (hi : i < g.length) :
+    MainStressAt (g.set i (m + 1)) i := by
+  refine ⟨by simpa using hi, fun j hj hne ↦ ?_⟩
+  simp only [List.length_set] at hj
+  rw [List.getD_eq_getElem?_getD, List.getD_eq_getElem?_getD, List.getElem?_set_ne hne.symm,
+    List.getElem?_set_self hi, List.getElem?_eq_getElem hj]
+  simpa using Nat.lt_succ_of_le (h2 _ (List.getElem_mem hj))
+
+theorem mainStressAt_append_cons {t u : Grid} {y : ℕ} (ht : ∀ x ∈ t, x < y)
+    (hu : ∀ x ∈ u, x < y) : MainStressAt (t ++ y :: u) t.length := by
+  refine ⟨by simp, fun j hj hne ↦ ?_⟩
+  rw [List.getD_eq_getElem?_getD, List.getD_eq_getElem?_getD, List.getElem?_append_right le_rfl,
+    Nat.sub_self, List.getElem?_cons_zero, Option.getD_some,
+    List.getElem?_eq_getElem hj, Option.getD_some]
+  rcases lt_or_gt_of_ne hne with h | h
+  · rw [List.getElem_append_left h]; exact ht _ (List.getElem_mem h)
+  · simp only [List.length_append, List.length_cons] at hj
+    rw [List.getElem_append_right (by omega)]
+    obtain ⟨k, hk⟩ : ∃ k, j - t.length = k + 1 := ⟨j - t.length - 1, by omega⟩
+    simp only [hk, List.getElem_cons_succ]
+    exact hu _ (List.getElem_mem _)
+
+/-- The End Rule at the level above the peak puts the main stress on the edge-most peak. -/
+theorem mainStressAt_endRule {e : Edge} {L : ℕ} {fco : Bool} {g : Grid} (hL : peak g ≤ L - 1)
+    {i : ℕ} (hi : edgeIdx? e (peak g) g = some i) : MainStressAt (endRule e L fco g) i := by
+  rw [endRule_of_peak hL hi]
+  exact mainStressAt_set (fun x hx ↦ le_peak hx) (edgeIdx?_getD hi).1
+
+theorem peak_eq_two {g : Grid} (h2 : ∀ x ∈ g, x ≤ 2) (hx : 2 ∈ g) : peak g = 2 :=
+  le_antisymm (peak_le h2) (le_peak hx)
+
+theorem two_mem_of_findIdx? {g : Grid} (h2 : ∀ x ∈ g, x ≤ 2) {i : ℕ}
+    (hi : g.findIdx? (2 ≤ ·) = some i) : 2 ∈ g := by
+  obtain ⟨hi, hp, -⟩ := List.findIdx?_eq_some_iff_getElem.1 hi
+  have := h2 _ (List.getElem_mem hi)
+  simp only [decide_eq_true_eq] at hp
+  exact (by omega : g[i] = 2) ▸ List.getElem_mem hi
+
+theorem two_mem_of_lastIdx? {g : Grid} (h2 : ∀ x ∈ g, x ≤ 2) {i : ℕ}
+    (hi : lastIdx? (2 ≤ ·) g = some i) : 2 ∈ g := by
+  obtain ⟨hi, hp⟩ := lastIdx?_eq_some hi
+  have := h2 _ (List.getElem_mem hi)
+  simp only [decide_eq_true_eq] at hp
+  exact (by omega : g[i] = 2) ▸ List.getElem_mem hi
+
+/-- Main stress on the first stress of a grid of stresses and unstressed columns. -/
+theorem mainStressAt_of_edgeIdx? {e : Edge} {g : Grid} (h2 : ∀ x ∈ g, x ≤ 2) {i : ℕ}
+    (hi : edgeIdx? e 2 g = some i) : MainStressAt (endRule e 3 false g) i := by
+  have hp : peak g = 2 := by
+    cases e with
+    | left => exact peak_eq_two h2 (two_mem_of_findIdx? h2 hi)
+    | right => exact peak_eq_two h2 (two_mem_of_lastIdx? h2 hi)
+  exact mainStressAt_endRule (by rw [hp]) (by rw [hp]; exact hi)
+
 /-! ### Garawa and Winnebago (63), (65) -/
 
-/-- Garawa (63): the End Rule stresses the initial syllable, Perfect Grid Construction sweeps
+/-- In Garawa (63) the End Rule stresses the initial syllable, Perfect Grid Construction sweeps
 right to left from a trough, and the End Rule at word level makes the initial stress the main
 stress. -/
 def garawa (n : ℕ) : Grid :=
-  endRule .initial 3 false (pg .rl .trough (endRule .initial 2 false (List.replicate n 1)))
+  endRule .left 3 false (pg .right .trough (endRule .left 2 false (List.replicate n 1)))
 
 theorem garawa_eq {n : ℕ} (hn : 2 ≤ n) :
-    garawa n = 3 :: 1 :: (alt false (n - 2)).reverse := by
+    garawa n = 3 :: 1 :: (alt .trough (n - 2)).reverse := by
   obtain ⟨m, rfl⟩ : ∃ m, n = m + 2 := ⟨n - 2, by omega⟩
-  have h1 : endRule .initial 2 false (List.replicate (m + 2) 1) = 2 :: List.replicate (m + 1) 1 :=
-    endRule_initial_replicate (by omega) false
-  have h2 : pg .rl .trough (2 :: List.replicate (m + 1) 1) = 2 :: 1 :: (alt false m).reverse := by
-    simp [pg, Altitude.start, List.reverse_cons, List.reverse_replicate, sweep_replicate_append]
-  have hpeak : peak (2 :: 1 :: (alt false m).reverse) = 2 := by
-    refine le_antisymm (peak_le λ x hx => ?_) (le_peak (by simp))
-    simp only [List.mem_cons, List.mem_reverse] at hx
-    rcases hx with rfl | rfl | hx
-    · exact le_rfl
-    · exact one_le_two
-    · obtain ⟨j, hj, rfl⟩ := List.mem_iff_getElem.1 hx
-      have := alt_getD false m j
-      simp only [List.getD_eq_getElem?_getD, List.getElem?_eq_getElem hj, Option.getD_some] at this
-      rw [this]; split_ifs <;> omega
+  have h1 : endRule .left 2 false (List.replicate (m + 2) 1) = 2 :: List.replicate (m + 1) 1 :=
+    endRule_left_replicate (by omega) false
+  have h2 : pg .right .trough (2 :: List.replicate (m + 1) 1) =
+      2 :: 1 :: (alt .trough m).reverse := by
+    simp [pg, List.revConj, List.reverse_replicate, sweep_replicate_append]
+  have hle : ∀ x ∈ 2 :: 1 :: (alt .trough m).reverse, x ≤ 2 := by
+    simp only [List.mem_cons, List.mem_reverse]
+    rintro x (rfl | rfl | hx) <;> first | omega | exact (mem_alt hx).2
+  have hpeak := peak_eq_two hle (by simp)
   rw [garawa, h1, h2, endRule_of_peak (by rw [hpeak]) (i := 0)]
   · simp [hpeak]
   · simp [hpeak, edgeIdx?, List.findIdx?_cons]
 
-/-- Garawa's main stress is initial. -/
 theorem garawa_initial {n : ℕ} (hn : 2 ≤ n) : (garawa n).getD 0 0 = 3 := by
   rw [garawa_eq hn]; rfl
 
-/-- "Nonprimary stress may never occur on syllables directly following the main stress": the
-sweep is blocked next to the initial stress by clash. -/
+/-- Clash blocks the sweep next to the initial stress, so "nonprimary stress may never occur on
+syllables directly following the main stress". -/
 theorem garawa_second {n : ℕ} (hn : 2 ≤ n) : (garawa n).getD 1 0 = 1 := by
   rw [garawa_eq hn]; rfl
 
-/-- Secondary stress on the penult, and alternating back from it. -/
+/-- Nonprimary stress on the penult, and alternating back from it. -/
 theorem garawa_getD {n i : ℕ} (hi : 2 ≤ i) (hin : i < n) :
     (garawa n).getD i 0 = if (n - 1 - i) % 2 = 1 then 2 else 1 := by
   obtain ⟨i, rfl⟩ : ∃ j, i = j + 2 := ⟨i - 2, by omega⟩
   rw [garawa_eq (by omega), List.getD_cons_succ, List.getD_cons_succ,
-    getD_reverse _ (by simp; omega), alt_getD, alt_length]
+    List.getD_reverse _ (by simp; omega), alt_getD, alt_length]
   have h1 : n - 2 - 1 - i < n - 2 := by omega
   have h2 : n - 2 - 1 - i = n - 1 - (i + 2) := by omega
   rw [ite_eq_left h1, h2]
   rcases Nat.mod_two_eq_zero_or_one (n - 1 - (i + 2)) with h | h <;> simp [h]
 
-/-- Winnebago (65): with the initial syllable extrametrical, a trough-first sweep from the left
+/-- In Winnebago (65), with the initial syllable extrametrical, a trough-first sweep from the left
 and the End Rule at word level put main stress on the third syllable. -/
 def winnebago (n : ℕ) : Grid :=
-  endRule .initial 3 false (elm .initial (pg .lr .trough) (List.replicate n 1))
+  endRule .left 3 false (elm .left (pg .left .trough) (List.replicate n 1))
 
 theorem winnebago_eq {n : ℕ} (hn : 3 ≤ n) :
-    winnebago n = 1 :: 1 :: 3 :: alt false (n - 3) := by
+    winnebago n = 1 :: 1 :: 3 :: alt .trough (n - 3) := by
   obtain ⟨m, rfl⟩ : ∃ m, n = m + 3 := ⟨n - 3, by omega⟩
-  have h1 : elm .initial (pg .lr .trough) (List.replicate (m + 3) 1)
-      = 1 :: 1 :: 2 :: alt false m := by
+  have h1 : elm .left (pg .left .trough) (List.replicate (m + 3) 1) =
+      1 :: 1 :: 2 :: alt .trough m := by
     rw [List.replicate_succ]
-    simp only [elm, pg, Altitude.start, sweep_replicate]
-    simp [alt]
-  have hpeak : peak (1 :: 1 :: 2 :: alt false m) = 2 := by
-    refine le_antisymm (peak_le λ x hx => ?_) (le_peak (by simp))
-    simp only [List.mem_cons] at hx
-    rcases hx with rfl | rfl | rfl | hx
-    · exact one_le_two
-    · exact one_le_two
-    · exact le_rfl
-    · obtain ⟨j, hj, rfl⟩ := List.mem_iff_getElem.1 hx
-      have := alt_getD false m j
-      simp only [List.getD_eq_getElem?_getD, List.getElem?_eq_getElem hj, Option.getD_some] at this
-      rw [this]; split_ifs <;> omega
+    simp only [elm, pg, sweep_replicate]
+    rfl
+  have hle : ∀ x ∈ 1 :: 1 :: 2 :: alt .trough m, x ≤ 2 := by
+    simp only [List.mem_cons]
+    rintro x (rfl | rfl | rfl | hx) <;> first | omega | exact (mem_alt hx).2
+  have hpeak := peak_eq_two hle (by simp)
   rw [winnebago, h1, endRule_of_peak (by rw [hpeak]) (i := 2)]
   · simp [hpeak]
   · simp [hpeak, edgeIdx?, List.findIdx?_cons]
 
-/-- The stress systems of an unstressed word from Perfect Grid Construction, with or without an
-extrametrical initial syllable: the parameter space of §3.2. -/
-def alternating (d : Dir) (a : Altitude) (x : Bool) (n : ℕ) : Grid :=
-  (if x then elm .initial (pg d a) else pg d a) (List.replicate n 1)
+/-! ### Stress three syllables from an edge (§3.2, §3.3) -/
+
+/-- Perfect Grid Construction stresses an unstressed word, with or without an extrametrical
+syllable at an edge, in the parameter space of §3.2. -/
+def alternating (d : ScanDirection) (a : Altitude) (x : Option Edge) (n : ℕ) : Grid :=
+  x.elim (pg d a) (elm · (pg d a)) (List.replicate n 1)
 
 /-- Stress three syllables in, in every word long enough, is the extrametricality variant of a
-trough-first sweep from the left and arises from no other setting of the parameters: grid theory
-derives postpeninitial stress only as Winnebago has it. -/
-theorem third_syllable_iff (d : Dir) (a : Altitude) (x : Bool) :
+trough-first sweep from the left and arises from no other setting of the parameters, so grid
+theory derives postpeninitial stress only as Winnebago has it. -/
+theorem postpeninitial_iff (d : ScanDirection) (a : Altitude) (x : Option Edge) :
     (∀ n, 4 ≤ n → (alternating d a x n).findIdx? (2 ≤ ·) = some 2) ↔
-      d = .lr ∧ a = .trough ∧ x = true := by
+      d = .left ∧ a = .trough ∧ x = some .left := by
   constructor
   · intro h
     have h4 := h 4 (by decide)
     have h5 := h 5 (by decide)
     revert h4 h5
-    cases d <;> cases a <;> cases x <;> decide
+    rcases x with _ | _ | _ <;> cases d <;> cases a <;> decide
   · rintro ⟨rfl, rfl, rfl⟩ n hn
     obtain ⟨m, rfl⟩ : ∃ m, n = m + 4 := ⟨n - 4, by omega⟩
-    simp only [alternating, ite_true]
-    rw [List.replicate_succ]
-    simp only [elm, pg, Altitude.start, sweep_replicate]
-    simp [alt, List.findIdx?_cons]
+    rw [alternating, Option.elim_some, List.replicate_succ]
+    simp only [elm, pg, sweep_replicate]
+    simp [alt, Altitude.height, Altitude.flip, List.findIdx?_cons]
+
+/-- Antepenultimate stress, the mirror image, is the extrametricality variant of a trough-first
+sweep from the right and arises from no other setting of the parameters. -/
+theorem antepenultimate_iff (d : ScanDirection) (a : Altitude) (x : Option Edge) :
+    (∀ n, 4 ≤ n → lastIdx? (2 ≤ ·) (alternating d a x n) = some (n - 3)) ↔
+      d = .right ∧ a = .trough ∧ x = some .right := by
+  constructor
+  · intro h
+    have h4 := h 4 (by decide)
+    have h5 := h 5 (by decide)
+    revert h4 h5
+    rcases x with _ | _ | _ <;> cases d <;> cases a <;> decide
+  · rintro ⟨rfl, rfl, rfl⟩ n hn
+    obtain ⟨m, rfl⟩ : ∃ m, n = m + 4 := ⟨n - 4, by omega⟩
+    have h : alternating .right .trough (some .right) (m + 4) =
+        (alt .trough (m + 1)).reverse ++ [2, 1, 1] := by
+      simp only [alternating, Option.elim_some, elm, pg, List.revConj, List.dropLast_replicate,
+        List.drop_replicate, List.length_replicate, List.reverse_replicate, sweep_replicate]
+      simp [alt, Altitude.height, Altitude.flip]
+    rw [h, lastIdx?_append]
+    simp [lastIdx?_cons]
+
+/-! ### Hawaiian (64) -/
+
+/-- In simplified Hawaiian (64), long vowels aside, the final syllable is extrametrical, the End
+Rule applies finally and then initially at the stress level, Perfect Grid Construction sweeps
+right to left from the final stress, and the End Rule applies finally at word level. -/
+def hawaiian (n : ℕ) : Grid :=
+  elm .right (endRule .right 3 false ∘ pg .right .peak ∘ endRule .left 2 false ∘
+    endRule .right 2 false) (List.replicate n 1)
+
+/-- In a three-syllable word (64a) the End Rule (Initial) is blocked by the clash it would create
+with the penultimate stress. -/
+theorem hawaiian_three : hawaiian 3 = [1, 3, 1] := by decide
+
+/-- After the End Rule stresses both edges, the sweep back from the penult leaves an initial dactyl
+when the alternation would stress the second syllable ((64b), (64c)). -/
+theorem hawaiian_eq {n : ℕ} (hn : 4 ≤ n) :
+    hawaiian n = 2 :: 1 :: (alt .trough (n - 4)).reverse ++ [3, 1] := by
+  obtain ⟨m, rfl⟩ : ∃ m, n = m + 4 := ⟨n - 4, by omega⟩
+  have h1 : endRule .right 2 false (List.replicate (m + 3) 1) =
+      1 :: 1 :: (List.replicate m 1 ++ [2]) := by
+    have := endRule_right_two le_rfl (List.replicate (m + 1) 1) false
+    simp only [Bool.false_eq_true, Nat.one_lt_ofNat, or_true, ite_true] at this
+    rw [show List.replicate (m + 3) 1 = List.replicate (m + 1) 1 ++ [1, 1] by
+      simp [List.replicate_succ'], this, show [1, 2] = [1] ++ [2] from rfl, ← List.append_assoc,
+      ← List.replicate_succ', List.replicate_succ, List.replicate_succ, List.cons_append,
+      List.cons_append]
+  have h2 : endRule .left 2 false (1 :: 1 :: (List.replicate m 1 ++ [2])) =
+      2 :: 1 :: (List.replicate m 1 ++ [2]) := by
+    rw [endRule_left_two le_rfl]; rfl
+  have h3 : pg .right .peak (2 :: 1 :: (List.replicate m 1 ++ [2])) =
+      2 :: 1 :: ((alt .trough m).reverse ++ [2]) := by
+    have : (2 :: 1 :: (List.replicate m 1 ++ [2])).reverse =
+        2 :: (List.replicate (m + 1) 1 ++ [2]) := by
+      simp [List.replicate_succ', List.reverse_replicate]
+    have key := sweep_replicate_append .trough m
+    simp only [Altitude.start, Altitude.flip, Altitude.height] at key
+    simp [pg, List.revConj, this, sweep_cons_of_two_le le_rfl, key]
+  have hle : ∀ x ∈ 2 :: 1 :: ((alt .trough m).reverse ++ [2]), x ≤ 2 := by
+    simp only [List.mem_cons, List.mem_append, List.mem_reverse, List.not_mem_nil, or_false]
+    rintro x (rfl | rfl | hx | rfl) <;> first | omega | exact (mem_alt hx).2
+  have hpeak := peak_eq_two hle (by simp)
+  have h4 : endRule .right 3 false (2 :: 1 :: ((alt .trough m).reverse ++ [2])) =
+      2 :: 1 :: ((alt .trough m).reverse ++ [3]) := by
+    rw [endRule_of_peak (by rw [hpeak]) (i := m + 2)]
+    · simp [hpeak]
+    · rw [hpeak, edgeIdx?, show 2 :: 1 :: ((alt .trough m).reverse ++ [2]) =
+        (2 :: 1 :: (alt .trough m).reverse) ++ [2] by simp, lastIdx?_append]
+      simp [lastIdx?_cons]
+  simp only [hawaiian, elm, Function.comp_apply, List.dropLast_replicate, List.drop_replicate,
+    List.length_replicate]
+  rw [show m + 4 - 1 = m + 3 from rfl, h1, h2, h3, h4]
+  simp
+
+/-- "All long words (greater than three syllables) begin with a stress." -/
+theorem hawaiian_initial {n : ℕ} (hn : 4 ≤ n) : (hawaiian n).getD 0 0 = 2 := by
+  rw [hawaiian_eq hn]; rfl
+
+/-- Main stress falls on the penult. -/
+theorem hawaiian_mainStressAt {n : ℕ} (hn : 2 ≤ n) : MainStressAt (hawaiian n) (n - 2) := by
+  rcases (by omega : n = 2 ∨ n = 3 ∨ 4 ≤ n) with rfl | rfl | hn
+  · decide
+  · decide
+  · have ht : ∀ x ∈ 2 :: 1 :: (alt .trough (n - 4)).reverse, x < 3 := by
+      simp only [List.mem_cons, List.mem_reverse]
+      rintro x (rfl | rfl | hx) <;> first | omega | exact Nat.lt_succ_of_le (mem_alt hx).2
+    have h := mainStressAt_append_cons (u := [1]) ht (by simp)
+    rw [hawaiian_eq hn]
+    simpa [show n - 4 + 2 = n - 2 by omega] using h
+
+/-- No perfect grid gives Hawaiian's initial dactyl, whatever its direction, starting altitude and
+extrametricality, so the End Rule must stress both edges before the sweep. -/
+theorem hawaiian_ne_alternating (d : ScanDirection) (a : Altitude) (x : Option Edge) :
+    endRule .right 3 false (alternating d a x 5) ≠ hawaiian 5 := by
+  rcases x with _ | _ | _ <;> cases d <;> cases a <;> decide
 
 /-! ### The End Rule at the phrase and Move x (28) to (31) -/
 
@@ -725,23 +997,23 @@ def antique : Grid := [2, 3]
 def dealer : Grid := [3, 1]
 def chair : Grid := [3]
 
-/-- (29a), (30a): phrasal stress on *lens* creates a word-level clash with *-ma-*, which Move x
-resolves by sliding the entry to the initial syllable. -/
+/-- Phrasal stress on *lens* creates a word-level clash with *-ma-* (29a), which Move x resolves
+by sliding the entry to the initial syllable (30a). -/
 theorem achromatic_lens :
-    moveX .rl 3 (endRule .final 4 false (achromatic ++ lens)) = [3, 1, 2, 1, 4] := by decide
+    moveX .right 3 (endRule .right 4 false (achromatic ++ lens)) = [3, 1, 2, 1, 4] := by decide
 
-/-- (29b), (30b): *Dundee marmalade*. -/
+/-- Move x resolves the clash in *Dundee marmalade* the same way ((29b), (30b)). -/
 theorem dundee_marmalade :
-    moveX .rl 3 (endRule .final 4 false (dundee ++ marmalade)) = [3, 2, 4, 1, 2] := by decide
+    moveX .right 3 (endRule .right 4 false (dundee ++ marmalade)) = [3, 2, 4, 1, 2] := by decide
 
-/-- (31a): in the compound *antique dealer* the clashing entry sits under the phrasal peak, so
+/-- In the compound *antique dealer* (31a) the clashing entry sits under the phrasal peak, so
 Move x cannot touch it. -/
 theorem antique_dealer :
-    moveX .rl 3 (endRule .initial 4 false (antique ++ dealer)) = [2, 4, 3, 1] := by decide
+    moveX .right 3 (endRule .left 4 false (antique ++ dealer)) = [2, 4, 3, 1] := by decide
 
-/-- (31b): in the phrase *antique chair* the same clash is resolved. -/
+/-- In the phrase *antique chair* (31b) the same clash is resolved. -/
 theorem antique_chair :
-    moveX .rl 3 (endRule .final 4 false (antique ++ chair)) = [3, 2, 4] := by decide
+    moveX .right 3 (endRule .right 4 false (antique ++ chair)) = [3, 2, 4] := by decide
 
 /-! ### Quantity: bipositional heavy syllables (§3.5, §3.7) -/
 
@@ -749,7 +1021,7 @@ theorem antique_chair :
 the second, so it is intrinsically stressed (74); a light syllable occupies one. -/
 def mora (m : Syllable.Weight) : Grid := if 2 ≤ m then [2, 1] else [1]
 
-/-- Quantity Sensitivity QS ((119d)): the grid of a syllable string. -/
+/-- Quantity Sensitivity QS of (119d) maps a syllable string to its grid. -/
 def qs (w : List Syllable.Weight) : Grid := w.flatMap mora
 
 /-- The grid position of the nucleus of syllable `k`. -/
@@ -774,12 +1046,12 @@ theorem mem_qs {w : List Syllable.Weight} {x : ℕ} (hx : x ∈ qs w) : 1 ≤ x 
   obtain ⟨m, -, hm⟩ := List.mem_flatMap.1 hx
   exact mem_mora hm
 
-theorem qs_le_two (w : List Syllable.Weight) : ∀ x ∈ qs w, x ≤ 2 := λ _ hx => (mem_qs hx).2
+theorem qs_le_two (w : List Syllable.Weight) : ∀ x ∈ qs w, x ≤ 2 := fun _ hx ↦ (mem_qs hx).2
 
 theorem qs_singleton (m : Syllable.Weight) : qs [m] = mora m := by simp [qs]
 
 /-- Heavy syllables never clash: their nuclei are separated by their second positions (74). -/
-theorem qs_isChain (w : List Syllable.Weight) : (qs w).IsChain (λ a b => a < 2 ∨ b < 2) := by
+theorem qs_isChain (w : List Syllable.Weight) : (qs w).IsChain (fun a b ↦ a < 2 ∨ b < 2) := by
   induction w with
   | nil => simp [qs]
   | cons m w ih =>
@@ -787,7 +1059,7 @@ theorem qs_isChain (w : List Syllable.Weight) : (qs w).IsChain (λ a b => a < 2 
     refine ⟨?_, ih, ?_⟩ <;> unfold mora <;> split_ifs <;> simp
 
 theorem noClash_qs (w : List Syllable.Weight) : NoClash (qs w) :=
-  noClash_of_alternating (λ x hx => mem_qs hx) λ i hi => by
+  noClash_of_alternating (fun x hx ↦ mem_qs hx) fun i hi ↦ by
     have := List.isChain_iff_getElem.1 (qs_isChain w) i hi
     simpa [List.getD_eq_getElem?_getD, show i < (qs w).length by omega, hi] using this
 
@@ -852,16 +1124,16 @@ theorem qs_eq_replicate {w : List Syllable.Weight} (h : ∀ m ∈ w, m < 2) :
   | nil => rfl
   | cons m w ih =>
     rw [qs_cons, mora_of_lt (h m (List.mem_cons_self ..)),
-      ih λ x hx => h x (List.mem_cons_of_mem _ hx), List.length_cons, List.replicate_succ]
+      ih fun x hx ↦ h x (List.mem_cons_of_mem _ hx), List.length_cons, List.replicate_succ]
     rfl
 
 theorem nucleus_of_light {w : List Syllable.Weight} (h : ∀ m ∈ w, m < 2) (k : ℕ) :
     nucleus w k = min k w.length := by
-  rw [nucleus, qs_eq_replicate λ x hx => h x (List.mem_of_mem_take hx), List.length_replicate,
+  rw [nucleus, qs_eq_replicate fun x hx ↦ h x (List.mem_of_mem_take hx), List.length_replicate,
     List.length_take]
 
 theorem lastIdx?_replicate_one (n : ℕ) : lastIdx? (2 ≤ ·) (List.replicate n 1) = none :=
-  lastIdx?_eq_none.2 λ x hx => by simp [List.eq_of_mem_replicate hx]
+  lastIdx?_eq_none.2 fun x hx ↦ by simp [List.eq_of_mem_replicate hx]
 
 theorem lastIdx?_replicate_one_pos (n : ℕ) :
     lastIdx? (1 ≤ ·) (List.replicate (n + 1) 1) = some n := by
@@ -869,209 +1141,38 @@ theorem lastIdx?_replicate_one_pos (n : ℕ) :
   | zero => rfl
   | succ n ih => rw [List.replicate_succ, lastIdx?_cons_of_some ih]
 
-/-! #### The End Rule at the stress level -/
-
-private theorem min_one_peak {g : Grid} {x : ℕ} (hx : x ∈ g) (h1 : 1 ≤ x) :
-    min (2 - 1) (peak g) = 1 :=
-  Nat.min_eq_left (h1.trans (le_peak hx))
-
-/-- The End Rule at the stress level never raises a column above it. -/
-theorem endRule_le_two {e : Edge} {fco : Bool} {g : Grid} (h2 : ∀ x ∈ g, x ≤ 2) :
-    ∀ x ∈ endRule e 2 fco g, x ≤ 2 := by
-  intro x hx
-  simp only [endRule] at hx
-  split at hx
-  · exact h2 x hx
-  · rename_i i hi
-    split_ifs at hx
-    · rcases List.mem_or_eq_of_mem_set hx with hx | rfl
-      · exact h2 x hx
-      · have := (edgeIdx?_getD hi).1
-        have hgi : g.getD i 0 ≤ 2 := by
-          simpa [List.getD_eq_getElem?_getD, this] using h2 _ (List.getElem_mem this)
-        omega
-    · exact h2 x hx
-
-/-- An already stressed initial syllable is left alone. -/
-theorem endRule_initial_of_two_le {x : ℕ} (hx : 2 ≤ x) (t : Grid) (fco : Bool) :
-    endRule .initial 2 fco (x :: t) = x :: t := by
-  simp only [endRule, min_one_peak (List.mem_cons_self ..) (by omega : 1 ≤ x), edgeIdx?,
-    List.findIdx?_cons, decide_eq_true (by omega : 1 ≤ x), ↓reduceIte, List.set_cons_zero,
-    List.getD_cons_zero, Nat.max_eq_left hx, ite_self]
-
-theorem endRule_initial_singleton {x : ℕ} (hx : 1 ≤ x) (fco : Bool) :
-    endRule .initial 2 fco [x] = [max x 2] := by
-  simp only [endRule, min_one_peak (List.mem_cons_self ..) hx, edgeIdx?, List.findIdx?_cons,
-    decide_eq_true hx, ↓reduceIte, List.set_cons_zero, List.getD_cons_zero]
-  rw [ite_eq_left (Or.inr λ j hj => ?_)]
-  simp only [List.length_singleton] at hj
-  obtain rfl : j = 0 := by omega
-  simp [Clash]
-
-/-- Stressing a light initial syllable, withheld before a stressed second position unless
-Forward Clash Override is on. -/
-theorem endRule_initial_two {y : ℕ} (hy : 1 ≤ y) (t : Grid) (fco : Bool) :
-    endRule .initial 2 fco (1 :: y :: t) = if fco ∨ y < 2 then 2 :: y :: t else 1 :: y :: t := by
-  have key : (∀ j < (1 :: y :: t).length,
-      ¬ Clash (2 :: y :: t) (1 + 1) 0 j ∧ ¬ Clash (2 :: y :: t) (1 + 1) j 0) ↔ y < 2 := by
-    constructor
-    · intro h
-      have := (h 1 (by simp)).1
-      simp [Clash] at this
-      omega
-    · intro hy2 j _
-      constructor
-      · rintro ⟨hij, -, h2, hk⟩
-        rcases j with _ | _ | j
-        · omega
-        · simp at h2; omega
-        · have := hk 1 (by omega) (by omega)
-          simp at this
-          omega
-      · rintro ⟨hji, -⟩
-        omega
-  have hidx : edgeIdx? .initial 1 (1 :: y :: t) = some 0 := by simp [edgeIdx?, List.findIdx?_cons]
-  simp only [endRule, min_one_peak (List.mem_cons_self ..) le_rfl, hidx, List.set_cons_zero,
-    List.getD_cons_zero, Nat.max_eq_right (Nat.le_succ 1), key]
-
-theorem endRule_final_singleton {x : ℕ} (hx : 1 ≤ x) (fco : Bool) :
-    endRule .final 2 fco [x] = [max x 2] := by
-  have hidx : edgeIdx? .final 1 [x] = some 0 := by simp [edgeIdx?, lastIdx?_cons, hx]
-  simp only [endRule, min_one_peak (List.mem_cons_self ..) hx, hidx, List.set_cons_zero,
-    List.getD_cons_zero]
-  rw [ite_eq_left (Or.inr λ j hj => ?_)]
-  simp only [List.length_singleton] at hj
-  obtain rfl : j = 0 := by omega
-  simp [Clash]
-
-/-- Stressing a light final syllable, withheld after a stressed penultimate position unless
-Forward Clash Override is on. -/
-theorem endRule_final_two {y : ℕ} (hy : 1 ≤ y) (t : Grid) (fco : Bool) :
-    endRule .final 2 fco (t ++ [y, 1]) = if fco ∨ y < 2 then t ++ [y, 2] else t ++ [y, 1] := by
-  have hidx : edgeIdx? .final 1 (t ++ [y, 1]) = some (t.length + 1) := by
-    simp [edgeIdx?, lastIdx?_append, lastIdx?_cons, Nat.add_comm]
-  have hset : (t ++ [y, 1]).set (t.length + 1) (max 1 (1 + 1)) = t ++ [y, 2] := by
-    rw [List.set_append_right _ _ (Nat.le_succ _)]
-    simp
-  have hgy : (t ++ [y, 2]).getD t.length 0 = y := by simp [List.getD_eq_getElem?_getD]
-  have hg2 : (t ++ [y, 2]).getD (t.length + 1) 0 = 2 := by simp [List.getD_eq_getElem?_getD]
-  have hg1 : (t ++ [y, 1]).getD (t.length + 1) 0 = 1 := by simp [List.getD_eq_getElem?_getD]
-  have key : (∀ j < (t ++ [y, 1]).length,
-      ¬ Clash (t ++ [y, 2]) (1 + 1) (t.length + 1) j ∧
-        ¬ Clash (t ++ [y, 2]) (1 + 1) j (t.length + 1)) ↔ y < 2 := by
-    constructor
-    · intro h
-      by_contra hy2
-      refine (h t.length (by simp)).2
-        ⟨Nat.lt_succ_self _, ?_, ?_, λ k hk hk' => absurd hk (by omega)⟩
-      · rw [hgy]; omega
-      · rw [hg2]
-    · intro hy2 j hj
-      simp only [List.length_append, List.length_cons, List.length_nil] at hj
-      constructor
-      · rintro ⟨hij, -⟩
-        omega
-      · rintro ⟨hji, h2, -, hk⟩
-        rcases Nat.lt_or_ge j t.length with hjt | hjt
-        · have := hk t.length (by omega) hjt
-          rw [hgy] at this
-          omega
-        · have : j = t.length := by omega
-          subst this
-          rw [hgy] at h2
-          omega
-  have hmin : min (2 - 1) (peak (t ++ [y, 1])) = 1 :=
-    min_one_peak (List.mem_append_right _ (by simp)) le_rfl
-  simp only [endRule]
-  rw [hmin, hidx]
-  dsimp only
-  rw [hg1, hset]
-  simp only [key]
-
-/-! #### Main stress -/
-
-/-- Column `i` carries the main stress: it is strictly taller than every other column. -/
-def MainStressAt (g : Grid) (i : ℕ) : Prop :=
-  i < g.length ∧ ∀ j < g.length, j ≠ i → g.getD j 0 < g.getD i 0
-
-instance (g : Grid) (i : ℕ) : Decidable (MainStressAt g i) := by
-  unfold MainStressAt; infer_instance
-
-theorem MainStressAt.isCulminative {g : Grid} {i : ℕ} (h : MainStressAt g i) :
-    IsCulminative g :=
-  isCulminative_of_forall_lt h.1 λ j hj hne => by
-    simpa [List.getD_eq_getElem?_getD, hj, h.1] using h.2 j hj hne
-
-theorem mainStressAt_set {g : Grid} {m i : ℕ} (h2 : ∀ x ∈ g, x ≤ m) (hi : i < g.length) :
-    MainStressAt (g.set i (m + 1)) i := by
-  refine ⟨by simpa using hi, λ j hj hne => ?_⟩
-  simp only [List.length_set] at hj
-  rw [List.getD_eq_getElem?_getD, List.getD_eq_getElem?_getD, List.getElem?_set_ne hne.symm,
-    List.getElem?_set_self hi, List.getElem?_eq_getElem hj]
-  simpa using Nat.lt_succ_of_le (h2 _ (List.getElem_mem hj))
-
-/-- The End Rule at the level above the peak puts the main stress on the edge-most peak. -/
-theorem mainStressAt_endRule {e : Edge} {L : ℕ} {fco : Bool} {g : Grid} (hL : peak g ≤ L - 1)
-    {i : ℕ} (hi : edgeIdx? e (peak g) g = some i) : MainStressAt (endRule e L fco g) i := by
-  rw [endRule_of_peak hL hi]
-  exact mainStressAt_set (λ x hx => le_peak hx) (edgeIdx?_getD hi).1
-
-theorem peak_eq_two {g : Grid} (h2 : ∀ x ∈ g, x ≤ 2) (hx : 2 ∈ g) : peak g = 2 :=
-  le_antisymm (peak_le h2) (le_peak hx)
-
-theorem two_mem_of_findIdx? {g : Grid} (h2 : ∀ x ∈ g, x ≤ 2) {i : ℕ}
-    (hi : g.findIdx? (2 ≤ ·) = some i) : 2 ∈ g := by
-  obtain ⟨hi, hp, -⟩ := List.findIdx?_eq_some_iff_getElem.1 hi
-  have := h2 _ (List.getElem_mem hi)
-  simp only [decide_eq_true_eq] at hp
-  exact (by omega : g[i] = 2) ▸ List.getElem_mem hi
-
-theorem two_mem_of_lastIdx? {g : Grid} (h2 : ∀ x ∈ g, x ≤ 2) {i : ℕ}
-    (hi : lastIdx? (2 ≤ ·) g = some i) : 2 ∈ g := by
-  obtain ⟨hi, hp⟩ := lastIdx?_eq_some hi
-  have := h2 _ (List.getElem_mem hi)
-  simp only [decide_eq_true_eq] at hp
-  exact (by omega : g[i] = 2) ▸ List.getElem_mem hi
-
-/-- Main stress on the first stress of a grid of stresses and unstressed columns. -/
-theorem mainStressAt_of_edgeIdx? {e : Edge} {g : Grid} (h2 : ∀ x ∈ g, x ≤ 2) {i : ℕ}
-    (hi : edgeIdx? e 2 g = some i) : MainStressAt (endRule e 3 false g) i := by
-  have hp : peak g = 2 := by
-    cases e with
-    | initial => exact peak_eq_two h2 (two_mem_of_findIdx? h2 hi)
-    | final => exact peak_eq_two h2 (two_mem_of_lastIdx? h2 hi)
-  exact mainStressAt_endRule (by rw [hp]) (by rw [hp]; exact hi)
-
 /-! #### The three kinds of quantity-sensitive system without alternation (97), (98) -/
 
 /-- The opposite edge, `Ē` of (97). -/
-def Edge.flip : Edge → Edge
-  | .initial => .final
-  | .final => .initial
+def opposite : Edge → Edge
+  | .left => .right
+  | .right => .left
 
-/-- (97) I, fixed stress: QS, ER(E;Σ), ER(E;Wd). The edge syllable is stressed, every heavy
-syllable is stressed, and the edge-most stress is the main stress. -/
+/-- Fixed stress, (97) I, applies QS, ER(E;Σ) and ER(E;Wd), so the edge syllable and every heavy
+syllable are stressed and the edge-most stress is the main stress. -/
 def fixedStress (e : Edge) (fco : Bool) (w : List Syllable.Weight) : Grid :=
   endRule e 3 fco (endRule e 2 fco (qs w))
 
-/-- (97) II, `E` defaulting to `Ē`: QS, ER(Ē;Σ), ER(E;Wd). Main stress on the `E`-most heavy
-syllable or, lacking heavies, on the `Ē` syllable. -/
+/-- The system of (97) II, `E` defaulting to `Ē`, applies QS, ER(Ē;Σ) and ER(E;Wd), putting main
+stress on the `E`-most heavy syllable or, lacking heavies, on the `Ē` syllable. -/
 def defaultOpposite (e : Edge) (w : List Syllable.Weight) : Grid :=
-  endRule e 3 false (endRule e.flip 2 false (qs w))
+  endRule e 3 false (endRule (opposite e) 2 false (qs w))
 
-/-- (97) III, `E` defaulting to `E`: QS, ER(E;Wd), which applies to the highest level present.
-Main stress on the `E`-most heavy syllable or, lacking heavies, on the `E` syllable. -/
+/-- The system of (97) III, `E` defaulting to `E`, applies QS and then ER(E;Wd) to the highest
+level present, putting main stress on the `E`-most heavy syllable or, lacking heavies, on the `E`
+syllable. -/
 def defaultSame (e : Edge) (w : List Syllable.Weight) : Grid :=
   endRule e 3 false (qs w)
 
-/-- (98) III.i, Khalkha Mongolian, Fore, Yana: main stress on the first heavy syllable. -/
+/-- In Khalkha Mongolian, Fore and Yana, (98) III.i, main stress falls on the first heavy
+syllable. -/
 theorem khalkha_heavy {w : List Syllable.Weight} {k : ℕ} (hk : w.findIdx? (2 ≤ ·) = some k) :
-    MainStressAt (defaultSame .initial w) (nucleus w k) :=
-  mainStressAt_of_edgeIdx? (qs_le_two w) (e := .initial) (by rw [edgeIdx?, findIdx?_qs, hk]; rfl)
+    MainStressAt (defaultSame .left w) (nucleus w k) :=
+  mainStressAt_of_edgeIdx? (qs_le_two w) (e := .left) (by rw [edgeIdx?, findIdx?_qs, hk]; rfl)
 
-/-- (98) III.i: lacking heavy syllables, main stress on the first syllable. -/
+/-- Lacking heavy syllables, main stress falls on the first syllable ((98) III.i). -/
 theorem khalkha_light {w : List Syllable.Weight} (hw : w ≠ []) (hl : ∀ m ∈ w, m < 2) :
-    MainStressAt (defaultSame .initial w) 0 := by
+    MainStressAt (defaultSame .left w) 0 := by
   obtain ⟨n, hn⟩ := Nat.exists_eq_add_one_of_ne_zero (List.length_pos_of_ne_nil hw).ne'
   have hq : qs w = List.replicate (n + 1) 1 := by rw [qs_eq_replicate hl, hn]
   have hp : peak (qs w) = 1 := by rw [hq]; exact peak_replicate_one (Nat.succ_pos n)
@@ -1079,14 +1180,14 @@ theorem khalkha_light {w : List Syllable.Weight} (hw : w ≠ []) (hl : ∀ m ∈
   rw [hp, hq, edgeIdx?, List.replicate_succ]
   simp [List.findIdx?_cons]
 
-/-- (98) III.ii, Aguacatec, Golin: main stress on the last heavy syllable. -/
+/-- In Aguacatec and Golin, (98) III.ii, main stress falls on the last heavy syllable. -/
 theorem aguacatec_heavy {w : List Syllable.Weight} {k : ℕ} (hk : lastIdx? (2 ≤ ·) w = some k) :
-    MainStressAt (defaultSame .final w) (nucleus w k) :=
-  mainStressAt_of_edgeIdx? (qs_le_two w) (e := .final) (by rw [edgeIdx?, lastIdx?_qs, hk]; rfl)
+    MainStressAt (defaultSame .right w) (nucleus w k) :=
+  mainStressAt_of_edgeIdx? (qs_le_two w) (e := .right) (by rw [edgeIdx?, lastIdx?_qs, hk]; rfl)
 
-/-- (98) III.ii: lacking heavy syllables, main stress on the last syllable. -/
+/-- Lacking heavy syllables, main stress falls on the last syllable ((98) III.ii). -/
 theorem aguacatec_light {w : List Syllable.Weight} (hw : w ≠ []) (hl : ∀ m ∈ w, m < 2) :
-    MainStressAt (defaultSame .final w) (nucleus w (w.length - 1)) := by
+    MainStressAt (defaultSame .right w) (nucleus w (w.length - 1)) := by
   obtain ⟨n, hn⟩ := Nat.exists_eq_add_one_of_ne_zero (List.length_pos_of_ne_nil hw).ne'
   have hq : qs w = List.replicate (n + 1) 1 := by rw [qs_eq_replicate hl, hn]
   have hp : peak (qs w) = 1 := by rw [hq]; exact peak_replicate_one (Nat.succ_pos n)
@@ -1096,34 +1197,34 @@ theorem aguacatec_light {w : List Syllable.Weight} (hw : w ≠ []) (hl : ∀ m �
 
 /-- After the End Rule stresses the initial syllable, the last stress is the last stress of the
 rest of the word, or the initial syllable itself. -/
-theorem lastIdx?_endRule_initial {g : Grid} (hg : ∀ x ∈ g, 1 ≤ x ∧ x ≤ 2) (hne : g ≠ []) :
-    lastIdx? (2 ≤ ·) (endRule .initial 2 false g) =
+theorem lastIdx?_endRule_left {g : Grid} (hg : ∀ x ∈ g, 1 ≤ x ∧ x ≤ 2) (hne : g ≠ []) :
+    lastIdx? (2 ≤ ·) (endRule .left 2 false g) =
       ((lastIdx? (2 ≤ ·) g.tail).map (· + 1)).or (some 0) := by
   obtain ⟨x, t, rfl⟩ := List.exists_cons_of_ne_nil hne
   obtain ⟨hx1, hx2⟩ := hg x (List.mem_cons_self ..)
   rcases Nat.lt_or_ge x 2 with hx | hx
   · obtain rfl : x = 1 := by omega
     cases t with
-    | nil => simp [endRule_initial_singleton le_rfl, lastIdx?_cons]
+    | nil => simp [endRule_left_singleton le_rfl, lastIdx?_cons]
     | cons y t =>
       obtain ⟨hy1, -⟩ := hg y (by simp)
-      rw [endRule_initial_two hy1]
+      rw [endRule_left_two hy1]
       by_cases hy2 : y < 2
       · rw [ite_eq_left (Or.inr hy2)]
         simp [lastIdx?_cons]
       · rw [ite_eq_right (by simpa using hy2)]
         simp [lastIdx?_cons, Nat.not_lt.1 hy2]
-  · rw [endRule_initial_of_two_le hx]
+  · rw [endRule_left_of_two_le hx]
     simp [lastIdx?_cons, hx]
 
-/-- (98) II.i, Classical Arabic, Eastern Cheremis, Chuvash, Hindi, Huasteco, Dongolese Nubian:
-main stress on the last heavy syllable. -/
+/-- In Classical Arabic, Eastern Cheremis, Chuvash, Hindi, Huasteco and Dongolese Nubian,
+(98) II.i, main stress falls on the last heavy syllable. -/
 theorem cheremis_heavy {w : List Syllable.Weight} {k : ℕ} (hk : lastIdx? (2 ≤ ·) w = some k) :
-    MainStressAt (defaultOpposite .final w) (nucleus w k) := by
+    MainStressAt (defaultOpposite .right w) (nucleus w k) := by
   have h1 : lastIdx? (2 ≤ ·) (qs w) = some (nucleus w k) := by rw [lastIdx?_qs, hk]; rfl
   have hne : qs w ≠ [] := by rintro h; simp [h] at h1
   refine mainStressAt_of_edgeIdx? (endRule_le_two (qs_le_two w)) ?_
-  rw [edgeIdx?, Edge.flip, lastIdx?_endRule_initial (λ x hx => mem_qs hx) hne]
+  rw [edgeIdx?, opposite, lastIdx?_endRule_left (fun x hx ↦ mem_qs hx) hne]
   obtain ⟨x, t, hxt⟩ := List.exists_cons_of_ne_nil hne
   rw [hxt] at h1 ⊢
   rw [lastIdx?_cons] at h1
@@ -1139,15 +1240,15 @@ theorem cheremis_heavy {w : List Syllable.Weight} {k : ℕ} (hk : lastIdx? (2 �
     simp only [List.tail_cons, ht]
     simpa using h1
 
-/-- (98) II.i: lacking heavy syllables, main stress on the first syllable. -/
+/-- Lacking heavy syllables, main stress falls on the first syllable ((98) II.i). -/
 theorem cheremis_light {w : List Syllable.Weight} (hw : w ≠ []) (hl : ∀ m ∈ w, m < 2) :
-    MainStressAt (defaultOpposite .final w) 0 := by
+    MainStressAt (defaultOpposite .right w) 0 := by
   obtain ⟨n, hn⟩ := Nat.exists_eq_add_one_of_ne_zero (List.length_pos_of_ne_nil hw).ne'
   have hq : qs w = List.replicate (n + 1) 1 := by rw [qs_eq_replicate hl, hn]
-  have h1 : endRule .initial 2 false (qs w) = 2 :: List.replicate n 1 := by
-    rw [hq, endRule_initial_replicate (Nat.succ_pos n), Nat.succ_sub_one]
-  rw [defaultOpposite, Edge.flip, h1]
-  refine mainStressAt_of_edgeIdx? (λ x hx => ?_) (e := .final) ?_
+  have h1 : endRule .left 2 false (qs w) = 2 :: List.replicate n 1 := by
+    rw [hq, endRule_left_replicate (Nat.succ_pos n), Nat.succ_sub_one]
+  rw [defaultOpposite, opposite, h1]
+  refine mainStressAt_of_edgeIdx? (fun x hx ↦ ?_) (e := .right) ?_
   · rcases List.mem_cons.1 hx with rfl | hx
     · exact le_rfl
     · simp [List.eq_of_mem_replicate hx]
@@ -1155,49 +1256,49 @@ theorem cheremis_light {w : List Syllable.Weight} (hw : w ≠ []) (hl : ∀ m �
     rfl
 
 /-- The End Rule leaves a heavy final syllable alone and stresses a light one. -/
-theorem endRule_final_qs (v : List Syllable.Weight) (m : Syllable.Weight) :
-    endRule .final 2 false (qs (v ++ [m])) = if 2 ≤ m then qs (v ++ [m]) else qs v ++ [2] := by
+theorem endRule_right_qs (v : List Syllable.Weight) (m : Syllable.Weight) :
+    endRule .right 2 false (qs (v ++ [m])) = if 2 ≤ m then qs (v ++ [m]) else qs v ++ [2] := by
   rw [qs_append, qs_singleton]
   split_ifs with hm
-  · rw [mora_of_two_le hm, endRule_final_two (Nat.le_succ 1)]
+  · rw [mora_of_two_le hm, endRule_right_two (Nat.le_succ 1)]
     simp
   · rw [mora_of_lt (Nat.not_le.1 hm)]
     rcases eq_or_ne v [] with rfl | hv
-    · simp [qs, endRule_final_singleton]
+    · simp [qs, endRule_right_singleton]
     · obtain ⟨t, ht⟩ := exists_qs_eq_append_one hv
-      rw [ht, List.append_assoc, List.singleton_append, endRule_final_two le_rfl]
+      rw [ht, List.append_assoc, List.singleton_append, endRule_right_two le_rfl]
       simp
 
-/-- (98) II.ii, Komi: main stress on the first heavy syllable. -/
+/-- In Komi, (98) II.ii, main stress falls on the first heavy syllable. -/
 theorem komi_heavy {w : List Syllable.Weight} {k : ℕ} (hk : w.findIdx? (2 ≤ ·) = some k) :
-    MainStressAt (defaultOpposite .initial w) (nucleus w k) := by
+    MainStressAt (defaultOpposite .left w) (nucleus w k) := by
   have h1 : (qs w).findIdx? (2 ≤ ·) = some (nucleus w k) := by rw [findIdx?_qs, hk]; rfl
   have hne : w ≠ [] := by rintro rfl; simp at hk
   obtain ⟨v, m, rfl⟩ := exists_append_singleton hne
-  refine mainStressAt_of_edgeIdx? (endRule_le_two (qs_le_two _)) (e := .initial) ?_
-  rw [edgeIdx?, Edge.flip, endRule_final_qs]
+  refine mainStressAt_of_edgeIdx? (endRule_le_two (qs_le_two _)) (e := .left) ?_
+  rw [edgeIdx?, opposite, endRule_right_qs]
   split_ifs with hm
   · exact h1
   · rw [qs_append, qs_singleton, mora_of_lt (Nat.not_le.1 hm), List.findIdx?_append] at h1
     rw [List.findIdx?_append]
     cases hv : (qs v).findIdx? (2 ≤ ·) <;> rw [hv] at h1 <;> simp_all [List.findIdx?_cons]
 
-/-- (98) II.ii: lacking heavy syllables, main stress on the last syllable. -/
+/-- Lacking heavy syllables, main stress falls on the last syllable ((98) II.ii). -/
 theorem komi_light {v : List Syllable.Weight} {m : Syllable.Weight}
     (hl : ∀ x ∈ v ++ [m], x < 2) :
-    MainStressAt (defaultOpposite .initial (v ++ [m])) (nucleus (v ++ [m]) v.length) := by
+    MainStressAt (defaultOpposite .left (v ++ [m])) (nucleus (v ++ [m]) v.length) := by
   have hm : m < 2 := hl m (by simp)
-  refine mainStressAt_of_edgeIdx? (endRule_le_two (qs_le_two _)) (e := .initial) ?_
-  rw [edgeIdx?, Edge.flip, endRule_final_qs, ite_eq_right (Nat.not_le.2 hm), nucleus_append_length,
-    qs_eq_replicate λ x hx => hl x (List.mem_append_left _ hx), List.findIdx?_append]
+  refine mainStressAt_of_edgeIdx? (endRule_le_two (qs_le_two _)) (e := .left) ?_
+  rw [edgeIdx?, opposite, endRule_right_qs, ite_eq_right (Nat.not_le.2 hm), nucleus_append_length,
+    qs_eq_replicate fun x hx ↦ hl x (List.mem_append_left _ hx), List.findIdx?_append]
   simp [List.findIdx?_cons, List.findIdx?_replicate]
 
-/-- (98) I.ii, West Greenlandic Eskimo: the last syllable is stressed and carries the main
+/-- In West Greenlandic Eskimo, (98) I.ii, the last syllable is stressed and carries the main
 stress, whether heavy or light. -/
 theorem westGreenlandic (v : List Syllable.Weight) (m : Syllable.Weight) :
-    MainStressAt (fixedStress .final false (v ++ [m])) (nucleus (v ++ [m]) v.length) := by
-  refine mainStressAt_of_edgeIdx? (endRule_le_two (qs_le_two _)) (e := .final) ?_
-  rw [edgeIdx?, endRule_final_qs, nucleus_append_length]
+    MainStressAt (fixedStress .right false (v ++ [m])) (nucleus (v ++ [m]) v.length) := by
+  refine mainStressAt_of_edgeIdx? (endRule_le_two (qs_le_two _)) (e := .right) ?_
+  rw [edgeIdx?, endRule_right_qs, nucleus_append_length]
   split_ifs with hm
   · rw [qs_append, qs_singleton, mora_of_two_le hm, lastIdx?_append]
     simp [lastIdx?_cons]
@@ -1205,57 +1306,57 @@ theorem westGreenlandic (v : List Syllable.Weight) (m : Syllable.Weight) :
     simp [lastIdx?_cons]
 
 /-- The initial syllable is stressed under Forward Clash Override. -/
-theorem findIdx?_endRule_initial_fco {g : Grid} (hg : ∀ x ∈ g, 1 ≤ x ∧ x ≤ 2) (hne : g ≠ []) :
-    (endRule .initial 2 true g).findIdx? (2 ≤ ·) = some 0 := by
+theorem findIdx?_endRule_left_fco {g : Grid} (hg : ∀ x ∈ g, 1 ≤ x ∧ x ≤ 2) (hne : g ≠ []) :
+    (endRule .left 2 true g).findIdx? (2 ≤ ·) = some 0 := by
   obtain ⟨x, t, rfl⟩ := List.exists_cons_of_ne_nil hne
   obtain ⟨hx1, hx2⟩ := hg x (List.mem_cons_self ..)
   rcases Nat.lt_or_ge x 2 with hx | hx
   · obtain rfl : x = 1 := by omega
     cases t with
-    | nil => simp [endRule_initial_singleton le_rfl, List.findIdx?_cons]
+    | nil => simp [endRule_left_singleton le_rfl, List.findIdx?_cons]
     | cons y t =>
-      rw [endRule_initial_two (hg y (by simp)).1, ite_eq_left (Or.inl rfl)]
+      rw [endRule_left_two (hg y (by simp)).1, ite_eq_left (Or.inl rfl)]
       simp [List.findIdx?_cons]
-  · rw [endRule_initial_of_two_le hx]
+  · rw [endRule_left_of_two_le hx]
     simp [List.findIdx?_cons, hx]
 
-/-- (98) I.i, Koya: the first syllable is stressed, with Forward Clash Override, and carries the
-main stress. -/
+/-- In Koya, (98) I.i, the first syllable is stressed, with Forward Clash Override, and carries
+the main stress. -/
 theorem koya {w : List Syllable.Weight} (hw : w ≠ []) :
-    MainStressAt (fixedStress .initial true w) 0 := by
+    MainStressAt (fixedStress .left true w) 0 := by
   have hq : qs w ≠ [] := by rwa [Ne, qs_eq_nil_iff]
-  have h2 := endRule_le_two (e := .initial) (fco := true) (qs_le_two w)
-  have hp : peak (endRule .initial 2 true (qs w)) = 2 :=
-    peak_eq_two h2 (two_mem_of_findIdx? h2 (findIdx?_endRule_initial_fco (λ x hx => mem_qs hx) hq))
+  have h2 := endRule_le_two (e := .left) (fco := true) (qs_le_two w)
+  have hp : peak (endRule .left 2 true (qs w)) = 2 :=
+    peak_eq_two h2 (two_mem_of_findIdx? h2 (findIdx?_endRule_left_fco (fun x hx ↦ mem_qs hx) hq))
   exact mainStressAt_endRule (by rw [hp])
-    (by rw [hp]; exact findIdx?_endRule_initial_fco (λ x hx => mem_qs hx) hq)
+    (by rw [hp]; exact findIdx?_endRule_left_fco (fun x hx ↦ mem_qs hx) hq)
 
-/-- Malayalam (§3.7): the first syllable carries the main stress unless it is light and the
+/-- In Malayalam (§3.7) the first syllable carries the main stress unless it is light and the
 second heavy, the End Rule being blocked by clash there. -/
 theorem malayalam_first {m : Syllable.Weight} {w : List Syllable.Weight}
     (h : ¬ (m < 2 ∧ ∃ m₁ ∈ w.head?, 2 ≤ m₁)) :
-    MainStressAt (fixedStress .initial false (m :: w)) 0 := by
-  refine mainStressAt_of_edgeIdx? (endRule_le_two (qs_le_two _)) (e := .initial) ?_
+    MainStressAt (fixedStress .left false (m :: w)) 0 := by
+  refine mainStressAt_of_edgeIdx? (endRule_le_two (qs_le_two _)) (e := .left) ?_
   rw [edgeIdx?, qs_cons]
   by_cases hm : 2 ≤ m
-  · rw [mora_of_two_le hm, List.cons_append, endRule_initial_of_two_le le_rfl]
+  · rw [mora_of_two_le hm, List.cons_append, endRule_left_of_two_le le_rfl]
     simp [List.findIdx?_cons]
   · have hm' : m < 2 := Nat.not_le.1 hm
     rw [mora_of_lt hm', List.singleton_append]
     cases w with
-    | nil => simp [qs, endRule_initial_singleton le_rfl, List.findIdx?_cons]
+    | nil => simp [qs, endRule_left_singleton le_rfl, List.findIdx?_cons]
     | cons m₁ w =>
-      have hm₁ : m₁ < 2 := Nat.not_le.1 λ h₁ => h ⟨hm', m₁, rfl, h₁⟩
-      rw [qs_cons, mora_of_lt hm₁, List.singleton_append, endRule_initial_two le_rfl,
+      have hm₁ : m₁ < 2 := Nat.not_le.1 fun h₁ ↦ h ⟨hm', m₁, rfl, h₁⟩
+      rw [qs_cons, mora_of_lt hm₁, List.singleton_append, endRule_left_two le_rfl,
         ite_eq_left (Or.inr Nat.one_lt_two)]
       simp [List.findIdx?_cons]
 
-/-- Malayalam (§3.7): a heavy second syllable after a light first one carries the main stress. -/
+/-- In Malayalam a heavy second syllable after a light first one carries the main stress. -/
 theorem malayalam_second {m₀ m₁ : Syllable.Weight} {w : List Syllable.Weight} (h₀ : m₀ < 2)
-    (h₁ : 2 ≤ m₁) : MainStressAt (fixedStress .initial false (m₀ :: m₁ :: w)) 1 := by
-  refine mainStressAt_of_edgeIdx? (endRule_le_two (qs_le_two _)) (e := .initial) ?_
+    (h₁ : 2 ≤ m₁) : MainStressAt (fixedStress .left false (m₀ :: m₁ :: w)) 1 := by
+  refine mainStressAt_of_edgeIdx? (endRule_le_two (qs_le_two _)) (e := .left) ?_
   rw [edgeIdx?, qs_cons, qs_cons, mora_of_lt h₀, mora_of_two_le h₁, List.singleton_append,
-    List.cons_append, List.cons_append, List.nil_append, endRule_initial_two (Nat.le_succ 1),
+    List.cons_append, List.cons_append, List.nil_append, endRule_left_two (Nat.le_succ 1),
     ite_eq_right (by simp)]
   simp [List.findIdx?_cons]
 
