@@ -3,6 +3,7 @@ module
 public import Mathlib.Algebra.Group.Int.Defs
 public import Mathlib.Data.Finset.Card
 public import Mathlib.Order.RelClasses
+public import Mathlib.Data.Prod.Lex
 
 /-!
 # Neighborhoods
@@ -32,8 +33,9 @@ Principle's inclusion of sites, `⊆`.
 * `Neighborhood.subset_iff_nth`: inclusion compares terminal by terminal.
 * `Neighborhood.ofBundle_subset_iff`: a context-free site is included where its
   features are on the focus.
-* `Neighborhood.card_toFinset_strictMono`: a strictly larger site has strictly
-  more positioned features, the ground of the Subset Principle's specificity.
+* `Neighborhood.weight_strictMono`: a strictly larger site has more features on the
+  focus, or as many there and more elsewhere, the ground of the Subset Principle's
+  specificity.
 * `Neighborhood.toList_of_mem_along`, `Neighborhood.nth_around`: each
   neighborhood of a string reassembles to it, and terminal `k` stands at offset
   `k - i` from position `i`.
@@ -282,6 +284,30 @@ def toFinset (n : Neighborhood (List F)) : Finset (ℤ × F) := n.positioned.toF
 theorem card_toFinset_strictMono :
     StrictMono fun n : Neighborhood (List F) ↦ n.toFinset.card :=
   fun _ _ h ↦ Finset.card_lt_card (toFinset_ssubset_toFinset.mpr h)
+
+/-- The weight of a neighborhood counts its distinct features on the focus, then those
+elsewhere. -/
+def weight (n : Neighborhood (List F)) : ℕ ×ₗ ℕ :=
+  toLex ((n.toFinset.filter (·.1 = 0)).card, (n.toFinset.filter (·.1 ≠ 0)).card)
+
+/-- No neighborhood weighs less than the empty one. -/
+theorem not_weight_lt_empty (n : Neighborhood (List F)) :
+    ¬ n.weight < (∅ : Neighborhood (List F)).weight := by
+  simp [weight, Prod.Lex.toLex_lt_toLex]
+
+/-- A strictly larger site has more features on the focus, or as many there and more
+elsewhere. -/
+theorem weight_strictMono : StrictMono (weight : Neighborhood (List F) → ℕ ×ₗ ℕ) := by
+  intro s n h
+  have hs := toFinset_ssubset_toFinset.mpr h
+  have h₀ := Finset.filter_subset_filter (·.1 = 0) hs.subset
+  have h₁ := Finset.filter_subset_filter (·.1 ≠ 0) hs.subset
+  refine Prod.Lex.toLex_lt_toLex.mpr ((Finset.card_le_card h₀).lt_or_eq.imp id fun heq ↦
+    ⟨heq, Finset.card_lt_card (h₁.ssubset_of_ne fun h₂ ↦ hs.ne ?_)⟩)
+  rw [← Finset.filter_union_filter_not_eq (·.1 = 0) s.toFinset,
+    ← Finset.filter_union_filter_not_eq (·.1 = 0) n.toFinset,
+    Finset.eq_of_subset_of_card_le h₀ heq.ge]
+  exact congrArg (_ ∪ ·) h₂
 
 end toFinset
 
