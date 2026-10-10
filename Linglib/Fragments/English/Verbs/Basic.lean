@@ -136,7 +136,6 @@ def run : Verb where
   valency := .of
     [(ArgumentFrame.intransitive, [0]),
      (ArgumentFrame.np, [1, 0]),
-     (ArgumentFrame.intransitive, [0]),
      (ArgumentFrame.spatialPP, [0, 2])]
     [some activitySubjectProfile, none, none]
   passivizable := false

@@ -30,9 +30,11 @@ attest the alternations (`quadruple_mem_sensitivity_of_participates`,
 `quadruple_prediction_matches`). Every
 categorical alternation judgment among the book's examples in `Data/Examples/Levin1993.json`
 agrees with the profile of the verb's class (`participation_matches_profile`). The
-alternations that pair two argument frames are frame-pair schemas (`schema?`), and every
-English fragment verb Levin lists has a class whose page its frames realize
-(`frames_realize_class`).
+alternations that pair two argument frames are frame-pair schemas (`schema?`), which relate two
+diatheses of a verb when the verb's participants move as the schema says; the causative/inchoative
+and induced action alternations, which relate the same diatheses, are told apart by the causee's
+volition (`Shows`, `run_shatter`), and every English fragment verb Levin lists has a class whose
+page it realizes (`shows_class_alternations`).
 
 ## Implementation notes
 
@@ -48,6 +50,11 @@ interval of sets of components, and an alternation for which the Introduction st
 condition has the whole lattice. A pure change of state may carry a cause, as *break* does "when
 transitive" (p. 9), so the causative/inchoative's interval runs from the change of state to the
 change of state with its cause.
+
+A causee's entailments are the entry's own or else those its classes' templates agree on
+(`Verb.participantProfile?`). Where neither is recorded the causee meets no condition, so a verb
+shows the causative/inchoative or the induced action alternation only where Levin's condition is
+verified.
 
 ## References
 
@@ -218,8 +225,8 @@ def schema? : DiathesisAlternation → Option Voice
       { source := .np, target := .np_pp (some on),
         correspondence := [(external, external), (complement 0, complement 1)] }
   | .swarm => some
-      { source := .pp none, target := .np_pp (some with_),
-        correspondence := [(external, complement 1), (complement 0, external)] }
+      { source := .spatialPP, target := .pp (some with_),
+        correspondence := [(external, complement 0), (complement 0, external)] }
   | .materialProduct => some
       { source := .np_pp (some outOf), target := .np_pp (some into),
         correspondence := [(external, external), (complement 0, complement 1),
@@ -246,14 +253,73 @@ where
       correspondence := [(external, external), (complement 0, complement 1),
         (complement 1, complement 0)] }
 
-/-- Every fragment verb Levin lists has a listed class whose page its frames realize: frames
-refining both frames of each schema the page attests for the whole class, and none for a
-schema it stars. -/
-theorem frames_realize_class :
+/-! ### The causee
+
+On the links the causative/inchoative and induced action alternations relate the same pairs of
+diatheses, a transitive whose object is the subject of an intransitive. Levin tells them apart by
+that participant, the causee: the induced action alternation "differs from the
+causative/inchoative alternation in that the causee is typically an animate volitional entity"
+(p. 31), and the verbs of the causative/inchoative alternation are "verbs of change of state or
+change of position" (p. 30). -/
+
+/-- A causee of two diatheses is a participant that is the object of one and the subject without
+an object of the other. -/
+def IsCausee {n : ℕ} (c d : Diathesis n) (i : Fin n) : Prop :=
+  c.participantRole i = some .P ∧ d.participantRole i = some .S ∨
+    c.participantRole i = some .S ∧ d.participantRole i = some .P
+
+instance {n : ℕ} (c d : Diathesis n) (i : Fin n) : Decidable (IsCausee c d i) :=
+  inferInstanceAs (Decidable (_ ∨ _))
+
+/-- Levin's condition on the causee's entailments asks for a volitional causee in the induced action
+alternation, and in the causative/inchoative alternation for one that is not volitional and changes
+state or position. -/
+def CauseeCondition : DiathesisAlternation → EntailmentProfile → Prop
+  | .causativeInchoative, θ => θ.volition = false ∧ (θ.changeOfState = true ∨ θ.movement = true)
+  | .inducedAction, θ => θ.volition = true
+  | _, _ => True
+
+instance (a : DiathesisAlternation) (θ : EntailmentProfile) : Decidable (CauseeCondition a θ) := by
+  cases a <;> unfold CauseeCondition <;> infer_instance
+
+/-- A verb shows an alternation when the alternation's schema relates two of its diatheses and the
+profile of each causee, the entry's or its classes', meets the alternation's condition. -/
+def Shows (v : Verb) (a : DiathesisAlternation) : Prop :=
+  ∃ σ ∈ schema? a, ∃ c ∈ v.valency.diatheses, ∃ d ∈ v.valency.diatheses, σ.Relates c d ∧
+    ∀ i, IsCausee c d i → ∃ θ ∈ v.participantProfile? i, CauseeCondition a θ
+
+instance (v : Verb) (a : DiathesisAlternation) : Decidable (Shows v a) :=
+  inferInstanceAs (Decidable (∃ _ ∈ _, ∃ _ ∈ _, ∃ _ ∈ _, _ ∧ ∀ _, _ → _))
+
+/-- The alternations with a frame-pair schema. -/
+def schematized : List DiathesisAlternation :=
+  [.causativeInchoative, .inducedAction, .conative, .substanceSource, .unspecifiedObject,
+    .understoodBodyPartObject, .understoodReflexiveObject, .understoodReciprocalObject, .dative,
+    .benefactive, .locative, .bodyPartPossessorAscension, .swarm, .materialProduct,
+    .totalTransformation, .instrumentSubject]
+
+theorem isSome_schema?_iff (a : DiathesisAlternation) : (schema? a).isSome ↔ a ∈ schematized := by
+  cases a <;> decide
+
+/-- Every fragment verb Levin lists has a listed class whose page it realizes, showing each
+alternation with a schema that the page attests for the whole class and none that the page stars.
+-/
+theorem shows_class_alternations :
     ∀ v ∈ English.Verbs.verbs, v.levinClasses.Nonempty → ∃ c ∈ v.levinClasses,
-      ∀ p ∈ c.properties, ∀ a ∈ p.alternation?, ∀ σ ∈ schema? a,
-        (p.diacritic = .none → p.scope = .all → v.toVerb.Alternates σ) ∧
-          (p.diacritic = .star → ¬ v.toVerb.Alternates σ) := by
+      ∀ a ∈ schematized, ∀ p ∈ c.properties, p.heading = .alternation a.number →
+        (p.diacritic = .none → p.scope = .all → Shows v.toVerb a) ∧
+          (p.diacritic = .star → ¬ Shows v.toVerb a) := by
   decide +kernel
+
+open English.Verbs in
+/-- The causee tells the two causative alternations apart. On the links the diatheses of *run* and
+of *shatter* each fit both schemas, but *run* shows the induced action alternation alone, its
+causee volitional, and *shatter* the causative/inchoative alternation alone. -/
+theorem run_shatter :
+    (run.Alternates Voice.anticausative ∧ Shows run.toVerb .inducedAction ∧
+      ¬ Shows run.toVerb .causativeInchoative) ∧
+    shatter.Alternates Voice.causative ∧ Shows shatter.toVerb .causativeInchoative ∧
+      ¬ Shows shatter.toVerb .inducedAction := by
+  decide
 
 end Levin1993

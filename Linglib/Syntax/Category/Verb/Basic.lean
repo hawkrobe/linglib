@@ -38,6 +38,16 @@ on. -/
 def objectProfile? (v : Verb) : Option EntailmentProfile :=
   v.objectEntailments <|> LevinClass.commonProfile LevinClass.objectProfile v.levinClasses
 
+/-- The entailment profile of a participant, the entry's own or else the one its Levin classes
+agree on for the participant's position in the basic diathesis, subject or object. -/
+def participantProfile? (v : Verb) (i : Fin v.valency.arity) : Option EntailmentProfile :=
+  v.valency.profiles.get i <|> v.valency.basic?.bind fun d ↦
+    if d.links.get i = some .external then
+      LevinClass.commonProfile LevinClass.subjectProfile v.levinClasses
+    else if (d.links.get i).isSome ∧ d.links.get i = d.objectSlot? then
+      LevinClass.commonProfile LevinClass.objectProfile v.levinClasses
+    else none
+
 /-- The verb's within-class root content ([spalek-mcnally-2026]). -/
 def rootContent (v : Verb) : Semantics.Root.Content := v.root.content
 

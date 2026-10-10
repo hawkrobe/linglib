@@ -112,6 +112,11 @@ there is no object. -/
 def selfMotion : RoleList where
   subjectProfile := activitySubjectProfile
 
+/-- In nonagentive motion the subject moves without volition, as the ball does in *the ball
+rolled*, a change of position in the causative/inchoative alternation ([levin-1993] §1.1.2.1). -/
+def nonagentiveMotion : RoleList where
+  subjectProfile := { movement := true, independentExistence := true }
+
 /-- In perception the subject is a sentient, independently existing experiencer, neither volitional
 nor causal. -/
 def perception : RoleList where

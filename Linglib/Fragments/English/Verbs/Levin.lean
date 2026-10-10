@@ -271,7 +271,8 @@ def chop : Verb where
   formPresPart := "chopping"
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 2])]
+     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 2]),
+     (ArgumentFrame.np, [2, 1])]
   vendlerClass := some .accomplishment
   incrementality := some .strict
   levinClasses := {LevinClass.carve}
@@ -527,9 +528,8 @@ def flash : Verb := .mkRegular {
   valency := .of
     [(ArgumentFrame.intransitive, [0]),
      (ArgumentFrame.np, [1, 0]),
-     (ArgumentFrame.intransitive, [0]),
-     (ArgumentFrame.pp none, [0, 2]),
-     (ArgumentFrame.np_pp (some Adpositions.with_), [1, 2, 0])]
+     (ArgumentFrame.spatialPP, [0, 2]),
+     (ArgumentFrame.pp (some Adpositions.with_), [2, 0])]
   passivizable := false
   vendlerClass := some .semelfactive
   levinClasses := {LevinClass.crane, .lightEmission} }
@@ -569,8 +569,8 @@ def glow : Verb := .mkRegular {
   valency := .of
     [(ArgumentFrame.intransitive, [0]),
      (ArgumentFrame.np, [1, 0]),
-     (ArgumentFrame.pp none, [0, 2]),
-     (ArgumentFrame.np_pp (some Adpositions.with_), [2, 3, 0])]
+     (ArgumentFrame.spatialPP, [0, 2]),
+     (ArgumentFrame.pp (some Adpositions.with_), [2, 0])]
   passivizable := false
   vendlerClass := some .state
   levinClasses := {LevinClass.lightEmission} }
@@ -581,8 +581,8 @@ def buzz : Verb := .mkRegular {
   valency := .of
     [(ArgumentFrame.intransitive, [0]),
      (ArgumentFrame.np, [1, 0]),
-     (⟨some .nominal, [.nominal, .adpositional (some .spatial)]⟩, [2, 3, 4]),
-     (ArgumentFrame.np_pp (some Adpositions.with_), [2, 4, 3])]
+     (ArgumentFrame.spatialPP, [0, 2]),
+     (ArgumentFrame.pp (some Adpositions.with_), [2, 0])]
   passivizable := false
   vendlerClass := some .activity
   levinClasses := {LevinClass.animalSound, .soundEmission} }
@@ -593,8 +593,8 @@ def rumble : Verb := .mkRegular {
   valency := .of
     [(ArgumentFrame.intransitive, [0]),
      (ArgumentFrame.np, [1, 0]),
-     (⟨some .nominal, [.nominal, .adpositional (some .spatial)]⟩, [2, 3, 4]),
-     (ArgumentFrame.np_pp (some Adpositions.with_), [2, 4, 3])]
+     (ArgumentFrame.spatialPP, [0, 2]),
+     (ArgumentFrame.pp (some Adpositions.with_), [2, 0])]
   passivizable := false
   vendlerClass := some .activity
   levinClasses := {LevinClass.mannerOfSpeaking, .soundEmission} }
@@ -609,9 +609,7 @@ def bleed : Verb where
   valency := .of
     [(ArgumentFrame.intransitive, [0]),
      (ArgumentFrame.np, [1, 0]),
-     (ArgumentFrame.pp (some Adpositions.from_), [0, 1]),
-     (⟨some .nominal, [.nominal, .adpositional (some .spatial)]⟩, [2, 3, 4]),
-     (ArgumentFrame.np_pp (some Adpositions.with_), [2, 4, 3])]
+     (ArgumentFrame.pp (some Adpositions.from_), [0, 1])]
   passivizable := false
   vendlerClass := some .activity
   levinClasses := {LevinClass.breathe, .cheat, .marvel, .substanceEmission}
@@ -691,8 +689,8 @@ def walk : Verb := .mkRegular {
   valency := .of
     [(ArgumentFrame.intransitive, [0]),
      (ArgumentFrame.np, [1, 0]),
-     (ArgumentFrame.intransitive, [0]),
      (ArgumentFrame.spatialPP, [0, 2])]
+    [some activitySubjectProfile, none, none]
   passivizable := false
   vendlerClass := some .activity
   direction := some .place
@@ -708,8 +706,8 @@ def swim : Verb where
   valency := .of
     [(ArgumentFrame.intransitive, [0]),
      (ArgumentFrame.np, [1, 0]),
-     (ArgumentFrame.intransitive, [0]),
      (ArgumentFrame.spatialPP, [0, 2])]
+    [some activitySubjectProfile, none, none]
   passivizable := false
   vendlerClass := some .activity
   direction := some .place
@@ -733,7 +731,6 @@ def roll : Verb := .mkRegular {
   valency := .of
     [(ArgumentFrame.intransitive, [0]),
      (ArgumentFrame.np, [1, 0]),
-     (ArgumentFrame.intransitive, [0]),
      (ArgumentFrame.spatialPP, [0, 2])]
   passivizable := false
   vendlerClass := some .activity
@@ -746,8 +743,7 @@ def float : Verb := .mkRegular {
   form := "float"
   valency := .of
     [(ArgumentFrame.intransitive, [0]),
-     (ArgumentFrame.np, [1, 0]),
-     (ArgumentFrame.intransitive, [0])]
+     (ArgumentFrame.np, [1, 0])]
   passivizable := false
   vendlerClass := some .activity
   levinClasses := {LevinClass.modeOfBeingInvolvingMotion, .roll, .run, .slide} }
@@ -774,8 +770,7 @@ def rush : Verb := .mkRegular {
   form := "rush"
   valency := .of
     [(ArgumentFrame.intransitive, [0]),
-     (ArgumentFrame.np, [1, 0]),
-     (ArgumentFrame.intransitive, [0])]
+     (ArgumentFrame.np, [1, 0])]
   passivizable := false
   vendlerClass := some .activity
   levinClasses := {LevinClass.run, .rush} }

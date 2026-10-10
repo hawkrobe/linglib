@@ -50,7 +50,8 @@ def dent : Verb := .mkRegular {
   form := "dent"
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 2])]
+     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 2]),
+     (ArgumentFrame.np, [2, 1])]
   vendlerClass := some .achievement
   scaleDimension := some .denting
   levinClasses := {LevinClass.carve} }
@@ -78,7 +79,8 @@ def shatter : Verb := .mkRegular {
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
-     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 2])]
+     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 2]),
+     (ArgumentFrame.np, [2, 1])]
   vendlerClass := some .achievement
   levinClasses := {LevinClass.break_} }
 
@@ -106,7 +108,8 @@ def destroy : Verb := .mkRegular {
   form := "destroy"
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 2])]
+     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 2]),
+     (ArgumentFrame.np, [2, 1])]
   vendlerClass := some .accomplishment
   root := { content := {
     resultGeometry := {.totalDestruction}
@@ -242,7 +245,8 @@ def shut : Verb where
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
-     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 2])]
+     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 2]),
+     (ArgumentFrame.np, [2, 1])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.otherChangeOfState}
 
@@ -368,7 +372,8 @@ def heat : Verb := .mkRegular {
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
-     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 2])]
+     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 2]),
+     (ArgumentFrame.np, [2, 1])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.cooking, .otherChangeOfState} }
 
@@ -395,7 +400,8 @@ def boil : Verb := .mkRegular {
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
-     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 2])]
+     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 2]),
+     (ArgumentFrame.np, [2, 1])]
   vendlerClass := some .accomplishment
   scaleDimension := some .boiling
   levinClasses := {LevinClass.cooking, .prepare} }
@@ -428,7 +434,8 @@ def straighten : Verb := .mkRegular {
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
-     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 2])]
+     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 2]),
+     (ArgumentFrame.np, [2, 1])]
   vendlerClass := some .accomplishment
   scaleDimension := some .straightness
   levinClasses := {LevinClass.otherChangeOfState} }
@@ -440,7 +447,8 @@ def flatten : Verb := .mkRegular {
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
-     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 2])]
+     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 2]),
+     (ArgumentFrame.np, [2, 1])]
   vendlerClass := some .accomplishment
   scaleDimension := some .flatness
   levinClasses := {LevinClass.otherChangeOfState} }
@@ -464,7 +472,8 @@ def lengthen : Verb := .mkRegular {
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
-     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 2])]
+     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 2]),
+     (ArgumentFrame.np, [2, 1])]
   vendlerClass := some .activity
   scaleDimension := some .length
   levinClasses := {LevinClass.otherChangeOfState} }
@@ -476,7 +485,8 @@ def widen : Verb := .mkRegular {
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
-     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 2])]
+     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 2]),
+     (ArgumentFrame.np, [2, 1])]
   vendlerClass := some .activity
   scaleDimension := some .width
   levinClasses := {LevinClass.otherChangeOfState} }
@@ -488,7 +498,8 @@ def cool : Verb := .mkRegular {
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
-     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 2])]
+     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 2]),
+     (ArgumentFrame.np, [2, 1])]
   vendlerClass := some .activity
   scaleDimension := some .temperature
   levinClasses := {LevinClass.otherChangeOfState} }
@@ -500,7 +511,8 @@ def warm : Verb := .mkRegular {
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.intransitive, [1]),
-     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 2])]
+     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 2]),
+     (ArgumentFrame.np, [2, 1])]
   vendlerClass := some .activity
   scaleDimension := some .temperature
   levinClasses := {LevinClass.otherChangeOfState} }
