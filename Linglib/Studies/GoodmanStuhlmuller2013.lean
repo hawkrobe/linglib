@@ -114,7 +114,7 @@ instance : IsFiniteKernel (speaker sem α n) :=
 
 /-- The listener (equation 1) is the speaker's Bayesian inverse under a uniform prior. -/
 noncomputable def listener : Kernel U (Fin (N + 1)) :=
-  RSA.pragmaticListener (speaker sem α n) (uniformOn Set.univ)
+  ((speaker sem α n)†(uniformOn Set.univ))
 
 variable {sem α n} {u : U}
 
@@ -184,7 +184,7 @@ one at which fewer alternatives are true, since the speaker's choice is spread o
 theorem listener_full_lt (hα : 0 < α) {s s' : Fin (N + 1)} (hu : s ∈ sem u)
     (h : RSA.trueChoices sem s ⊂ RSA.trueChoices sem s') :
     (listener sem α N u).real {s'} < (listener sem α N u).real {s} := by
-  rw [listener, RSA.pragmaticListener_uniformOn_real_lt_iff (t₀ := s)
+  rw [listener, posterior_uniformOn_real_lt_iff (w₀ := s)
     (by rw [speaker_full]; exact RSA.uniformSpeaker_apply_singleton_ne_zero sem hα.le hu),
     speaker_full]
   exact RSA.uniformSpeaker_real_singleton_lt_of_trueChoices_ssubset sem hα hu h
@@ -272,7 +272,7 @@ theorem some_partial {n : ℕ} (hn : n = 1 ∨ n = 2) :
       exact RSA.uniformSpeaker_apply_singleton_eq_one _ hα (by decide) (by decide)
     · rw [speaker_last hα (by norm_num) (s := 2) (by decide)]
       exact RSA.uniformSpeaker_apply_singleton_eq_one _ hα (by decide) (by decide)
-  rw [listener, RSA.pragmaticListener_uniformOn_real_le_iff (t₀ := 3) (h3 ▸ one_ne_zero),
+  rw [listener, posterior_uniformOn_real_le_iff (w₀ := 3) (h3 ▸ one_ne_zero),
     measureReal_def (speaker QUtt.extension α n 3), h3, ENNReal.toReal_one]
   exact speaker_real_singleton_le_one _ _
 
@@ -335,7 +335,7 @@ theorem one_minimal {s s' : Fin 4} (h : s ≤ s') :
   have key (s : Fin 4) : (speaker NumUtt.extension α 1 s).real {.one} = ((s : ℕ) : ℝ) / 3 := by
     simp [numeral_speaker_real hα, Fin.sum_univ_four, hypergeometric_real_singleton,
       hypergeometricCount, informed_zero hα, informed_one_one hα]
-  rw [listener, RSA.pragmaticListener_uniformOn_real_le_iff
+  rw [listener, posterior_uniformOn_real_le_iff
     (numeral_speaker_three_ne_zero hα (by norm_num) (by decide)), key, key]
   gcongr
   exact_mod_cast h
@@ -346,7 +346,7 @@ looks at have the property. -/
 theorem two_partial :
     (listener NumUtt.extension α 2 .two).real {2} ≤
       (listener NumUtt.extension α 2 .two).real {3} := by
-  rw [listener, RSA.pragmaticListener_uniformOn_real_le_iff
+  rw [listener, posterior_uniformOn_real_le_iff
     (numeral_speaker_three_ne_zero hα (by norm_num) (by decide))]
   simp [numeral_speaker_real hα, Fin.sum_univ_four, hypergeometric_real_singleton,
     hypergeometricCount, informed_zero hα, informed_one_two hα]
@@ -358,7 +358,7 @@ would rather have said *two*. -/
 theorem one_partial_three :
     (listener NumUtt.extension α 2 .one).real {3} <
       (listener NumUtt.extension α 2 .one).real {1} := by
-  rw [listener, RSA.pragmaticListener_uniformOn_real_lt_iff
+  rw [listener, posterior_uniformOn_real_lt_iff
     (numeral_speaker_three_ne_zero hα (by norm_num) (by decide))]
   simp [numeral_speaker_real hα, Fin.sum_univ_four, hypergeometric_real_singleton,
     hypergeometricCount, informed_zero hα, informed_one_one hα]
@@ -370,7 +370,7 @@ property. -/
 theorem one_partial_two :
     (listener NumUtt.extension α 2 .one).real {1} ≤
       (listener NumUtt.extension α 2 .one).real {2} := by
-  rw [listener, RSA.pragmaticListener_uniformOn_real_le_iff
+  rw [listener, posterior_uniformOn_real_le_iff
     (numeral_speaker_three_ne_zero hα (by norm_num) (by decide))]
   simp [numeral_speaker_real hα, Fin.sum_univ_four, hypergeometric_real_singleton,
     hypergeometricCount, informed_zero hα, informed_one_one hα]

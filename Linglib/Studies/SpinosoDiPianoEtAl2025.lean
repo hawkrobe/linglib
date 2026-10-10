@@ -88,7 +88,7 @@ instance (μ : Measure M) (f : R → U → M → ℝ≥0∞) (α : ℝ) (κ : U 
 /-- The strategy-indexed pragmatic listener (eq. 6). -/
 noncomputable def L1 [Nonempty M] (μ : Measure M) [IsFiniteMeasure μ] (f : R → U → M → ℝ≥0∞)
     (α : ℝ) (κ : U → ℝ) (r : R) : Kernel U M :=
-  pragmaticListener (S1 μ f α κ r) μ
+  ((S1 μ f α κ r)†μ)
 
 /-- The pragmatic listener (eq. 7) averages the strategy-indexed listeners under the strategy
 posterior given the utterance. -/
@@ -164,7 +164,7 @@ theorem L1_indicator_apply_singleton_of_notMem (hα : 0 < α) (sem : U → Set M
     {u : U} {m : M} (hm : m ∉ sem u) {m' : M} (hm' : m' ∈ sem u) (hμ : μ {m'} ≠ 0) :
     L1 μ f α κ r u {m} = 0 := by
   simp only [L1, S1, L0, hr, ← literalListener_eq_ofDensity]
-  exact pragmaticListener_literalListener_apply_singleton_of_notMem α κ μ hα sem hm hm' hμ
+  exact posterior_speaker_literalListener_apply_singleton_of_notMem α κ μ hα sem hm hm' hμ
 
 variable [Fintype R] [MeasurableSpace R] [DiscreteMeasurableSpace R]
 

@@ -347,7 +347,7 @@ variable (μ : Measure (World n)) [IsFiniteMeasure μ] (ν : Measure (Scope × Q
 interpretations and questions, against the product of the world prior and a prior on
 interpretations and questions (the paper's `P(i) P(q)`). -/
 noncomputable def L1 : Kernel Utt (World n × (Scope × QUD)) :=
-  pragmaticListener (S1 D n α) (μ.prod ν)
+  ((S1 D n α)†(μ.prod ν))
 
 /-- The endorsing speaker of §3.1 is, at the observed world, the best response at unit rationality
 to the world marginal of the pragmatic listener. -/
@@ -509,7 +509,7 @@ theorem production_nonneg (w : World n) : 0 ≤ production D n α ν w :=
 
 variable [IsProbabilityMeasure μ] [IsProbabilityMeasure ν]
 
-instance : IsMarkovKernel (L1 D n α μ ν) := inferInstanceAs (IsMarkovKernel (pragmaticListener _ _))
+instance : IsMarkovKernel (L1 D n α μ ν) := inferInstanceAs (IsMarkovKernel ((_†_)))
 
 theorem expectedProduction_eq_sum :
     expectedProduction D n α μ ν = ∑ w, μ.real {w} * production D n α ν w := by
@@ -625,11 +625,11 @@ theorem S2_real_amb (hα : 0 < α) {w : World n} (hμ : μ {w} ≠ 0)
       sum_measureReal_singleton_eq_one ν]
     rfl
   have hFamb : (Kernel.fst (L1 D n α μ ν) .amb).real {w} = a * m / z :=
-    pragmaticListener_fst_real_singleton μ ν hZamb w
+    posterior_prod_fst_real_singleton _ μ ν hZamb w
   have hFnull : (Kernel.fst (L1 D n α μ ν) .null).real {w}
       = a * (∑ l, ν.real {l} * (S1 D n α (w, l)).real {.null})
         / (S1 D n α ∘ₘ μ.prod ν).real {.null} :=
-    pragmaticListener_fst_real_singleton μ ν hZnull w
+    posterior_prod_fst_real_singleton _ μ ν hZnull w
   rw [hnull, hZ] at hFnull
   rw [S2, speaker_dirac_zero_real_singleton zero_le_one]
   simp only [ENNReal.rpow_one, ← measureReal_def]

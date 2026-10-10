@@ -63,7 +63,7 @@ the world's answer against those that make it true, and a false utterance counts
 def l0 (P : W → ℕ) (cell : Q → W → Finset W) (sem : U → Set W)
     [∀ u, DecidablePred (· ∈ sem u)] (C : Finset W) (q : Q) (u : U) (w : W) : ℕ × ℕ :=
   if w ∈ sem u then
-    (∑ v ∈ (C.filter (· ∈ sem u)).filter (λ v => cell q v = cell q w), P v,
+    (∑ v ∈ (C.filter (· ∈ sem u)).filter (fun v => cell q v = cell q w), P v,
       ∑ v ∈ C.filter (· ∈ sem u), P v)
   else (0, 1)
 
@@ -75,7 +75,7 @@ variable [MeasurableSpace W] [MeasurableSingletonClass W] [MeasurableSpace (Fins
 /-- In the prior over pairs of a world and a context set (3d), a world's weight within a
 context set is its prior share of the set, and context sets are equally likely. -/
 noncomputable def pairPrior (P : W → ℕ) : Measure (W × Finset W) :=
-  Measure.count.withDensity λ p =>
+  Measure.count.withDensity fun p =>
     if p.1 ∈ p.2 then (P p.1 : ℝ≥0∞) / ∑ v ∈ p.2, (P v : ℝ≥0∞) else 0
 
 theorem pairPrior_singleton (P : W → ℕ) (w : W) (C : Finset W) :
@@ -90,7 +90,7 @@ theorem pairPrior_singleton_le_one (P : W → ℕ) (w : W) (C : Finset W) :
   split_ifs with h
   · exact ENNReal.div_le_of_le_mul (by
       rw [one_mul]
-      exact Finset.single_le_sum (f := λ v => (P v : ℝ≥0∞)) (λ _ _ => zero_le) h)
+      exact Finset.single_le_sum (f := fun v => (P v : ℝ≥0∞)) (fun _ _ => zero_le) h)
   · exact zero_le_one
 
 theorem pairPrior_real (P : W → ℕ) (w : W) (C : Finset W) :
@@ -99,7 +99,7 @@ theorem pairPrior_real (P : W → ℕ) (w : W) (C : Finset W) :
   rw [measureReal_def, pairPrior_singleton]
   split_ifs
   · rw [ENNReal.toReal_div, ENNReal.toReal_natCast,
-      ENNReal.toReal_sum λ _ _ => ENNReal.natCast_ne_top _]
+      ENNReal.toReal_sum fun _ _ => ENNReal.natCast_ne_top _]
     simp only [ENNReal.toReal_natCast]
   · exact ENNReal.toReal_zero
 
@@ -109,7 +109,7 @@ instance (P : W → ℕ) : IsFiniteMeasure (pairPrior P) :=
   ⟨by
     rw [pairPrior, withDensity_apply _ MeasurableSet.univ, Measure.restrict_univ, lintegral_count,
       tsum_fintype]
-    exact ENNReal.sum_lt_top.mpr λ p _ =>
+    exact ENNReal.sum_lt_top.mpr fun p _ =>
       lt_of_le_of_lt (by rw [← pairPrior_singleton]; exact pairPrior_singleton_le_one P p.1 p.2)
         ENNReal.one_lt_top⟩
 
@@ -123,14 +123,14 @@ prior, conditions on the utterance and projects onto the cells of the question. 
 literal truth, putting no mass at a world where the utterance is false. -/
 noncomputable def L0 (P : W → ℕ) (cell : Q → W → Finset W) (sem : U → Set W)
     (C : Finset W) (q : Q) : Kernel U W :=
-  Kernel.ofFunOfCountable λ u =>
+  Kernel.ofFunOfCountable fun u =>
     (projListener cell (literalListener ((Measure.ofWeights (P ·)).restrict ↑C) sem) q u).restrict
       (sem u)
 
 instance (P : W → ℕ) (cell : Q → W → Finset W) (sem : U → Set W) (C : Finset W) (q : Q) :
     IsFiniteKernel (L0 P cell sem C q) :=
   ⟨⟨_, Kernel.bound_lt_top (projListener cell
-      (literalListener ((Measure.ofWeights (P ·)).restrict ↑C) sem) q), λ u => by
+      (literalListener ((Measure.ofWeights (P ·)).restrict ↑C) sem) q), fun u => by
     rw [L0, Kernel.ofFunOfCountable_apply]
     exact (Measure.restrict_apply_le _ _).trans (Kernel.measure_le_bound _ _ _)⟩⟩
 
@@ -162,7 +162,7 @@ theorem speaker_apply_singleton_ne_zero [DiscreteMeasurableSpace W] {α : ℝ} (
       rw [L0_apply, ne_eq, ENNReal.div_eq_zero_iff, not_or]
       refine ⟨?_, ENNReal.natCast_ne_top _⟩
       simp only [l0, ite_eq_left h, Nat.cast_eq_zero]
-      exact Finset.sum_eq_zero_iff.not.mpr λ hz =>
+      exact Finset.sum_eq_zero_iff.not.mpr fun hz =>
         hP (hz w (Finset.mem_filter.mpr ⟨Finset.mem_filter.mpr ⟨hC, h⟩, rfl⟩)))
 
 variable [MeasurableSpace (Finset W)] [MeasurableSingletonClass (Finset W)]
@@ -172,25 +172,25 @@ variable [MeasurableSpace (Finset W)] [MeasurableSingletonClass (Finset W)]
 context sets, given the question. -/
 noncomputable def listener (P : W → ℕ) (cell : Q → W → Finset W) (sem : U → Set W) (q : Q)
     (α : ℝ) : Kernel U (W × Finset W) :=
-  pragmaticListener (familySpeaker (λ C => L0 P cell sem C q) α 0) (pairPrior P)
+  ((familySpeaker (fun C => L0 P cell sem C q) α 0)†(pairPrior P))
 
 /-- The pairs whose world is `w`. -/
-def worldEvent (w : W) : Finset (W × Finset W) := Finset.univ.image λ C => (w, C)
+def worldEvent (w : W) : Finset (W × Finset W) := Finset.univ.image fun C => (w, C)
 
 /-- The listener's preference between two worlds, marginalizing the context set, is the
 comparison of prior-weighted speaker shares summed over context sets. -/
 theorem listener_worldEvent_lt_iff (P : W → ℕ) (cell : Q → W → Finset W) (sem : U → Set W)
     [∀ u, DecidablePred (· ∈ sem u)] (q : Q) {α : ℝ} {u : U}
-    (hu : (familySpeaker (λ C => L0 P cell sem C q) α 0 ∘ₘ pairPrior P) {u} ≠ 0)
+    (hu : (familySpeaker (fun C => L0 P cell sem C q) α 0 ∘ₘ pairPrior P) {u} ≠ 0)
     (w₁ w₂ : W) :
     (listener P cell sem q α u).real ↑(worldEvent w₁)
         < (listener P cell sem q α u).real ↑(worldEvent w₂)
       ↔ (∑ C, (pairPrior P).real {(w₁, C)} * share P cell sem C q u w₁ α)
         < ∑ C, (pairPrior P).real {(w₂, C)} * share P cell sem C q u w₂ α := by
   unfold listener worldEvent
-  rw [pragmaticListener_real_finset_lt_iff hu,
-    Finset.sum_image λ _ _ _ _ h => (Prod.mk.inj h).2,
-    Finset.sum_image λ _ _ _ _ h => (Prod.mk.inj h).2]
+  rw [posterior_real_finset_lt_iff _ _ hu,
+    Finset.sum_image fun _ _ _ _ h => (Prod.mk.inj h).2,
+    Finset.sum_image fun _ _ _ _ h => (Prod.mk.inj h).2]
   rfl
 
 end Model
@@ -207,10 +207,10 @@ inductive World
   deriving DecidableEq, Fintype, Repr, Inhabited
 
 instance : MeasurableSpace World := ⊤
-instance : DiscreteMeasurableSpace World := ⟨λ _ => trivial⟩
+instance : DiscreteMeasurableSpace World := ⟨fun _ => trivial⟩
 instance : MeasurableSingletonClass World := DiscreteMeasurableSpace.toMeasurableSingletonClass
 instance : MeasurableSpace (Finset World) := ⊤
-instance : DiscreteMeasurableSpace (Finset World) := ⟨λ _ => trivial⟩
+instance : DiscreteMeasurableSpace (Finset World) := ⟨fun _ => trivial⟩
 instance : MeasurableSingletonClass (Finset World) :=
   DiscreteMeasurableSpace.toMeasurableSingletonClass
 
@@ -220,7 +220,7 @@ inductive Utterance
   deriving DecidableEq, Fintype, Repr, Inhabited
 
 instance : MeasurableSpace Utterance := ⊤
-instance : DiscreteMeasurableSpace Utterance := ⟨λ _ => trivial⟩
+instance : DiscreteMeasurableSpace Utterance := ⟨fun _ => trivial⟩
 instance : MeasurableSingletonClass Utterance :=
   DiscreteMeasurableSpace.toMeasurableSingletonClass
 
@@ -260,7 +260,7 @@ def usSets : List (Finset World) :=
   [{.usCitizen}, {.usCitizen, .gcHolder}, {.usCitizen, .nonUS}, {.usCitizen, .gcHolder, .nonUS}]
 
 /-- The uniform world prior. -/
-def uniform : World → ℕ := λ _ => 1
+def uniform : World → ℕ := fun _ => 1
 
 /-- *Not green card* is an exhaustive answer to the free-drink question in every context set,
 since its literal-listener weight at a world where it is true is the whole weight. -/
@@ -532,7 +532,7 @@ private theorem card_three : ({.usCitizen, .gcHolder, .nonUS} : Finset World).ca
   decide
 
 private theorem comp_ne_zero (q : QUD) {α : ℝ} (hα : 0 < α) :
-    (familySpeaker (λ C => L0 uniform QUD.cell Utterance.sem C q) α 0
+    (familySpeaker (fun C => L0 uniform QUD.cell Utterance.sem C q) α 0
       ∘ₘ pairPrior uniform) {.notGC} ≠ 0 :=
   comp_familySpeaker_ne_zero (w := .nonUS) (l := {.nonUS})
     (by rw [pairPrior_singleton, ite_eq_left (by decide)]; simp [uniform])
@@ -597,7 +597,7 @@ inductive Hobby
   deriving DecidableEq, Fintype, Repr, Inhabited
 
 instance : MeasurableSpace Hobby := ⊤
-instance : DiscreteMeasurableSpace Hobby := ⟨λ _ => trivial⟩
+instance : DiscreteMeasurableSpace Hobby := ⟨fun _ => trivial⟩
 instance : MeasurableSingletonClass Hobby := DiscreteMeasurableSpace.toMeasurableSingletonClass
 
 /-- The three predicates, affirmed or negated, and silence. -/
@@ -606,7 +606,7 @@ inductive HobbyUtterance
   deriving DecidableEq, Fintype, Repr, Inhabited
 
 instance : MeasurableSpace HobbyUtterance := ⊤
-instance : DiscreteMeasurableSpace HobbyUtterance := ⟨λ _ => trivial⟩
+instance : DiscreteMeasurableSpace HobbyUtterance := ⟨fun _ => trivial⟩
 instance : MeasurableSingletonClass HobbyUtterance :=
   DiscreteMeasurableSpace.toMeasurableSingletonClass
 

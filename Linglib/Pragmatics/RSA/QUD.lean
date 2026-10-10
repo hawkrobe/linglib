@@ -10,8 +10,7 @@ with that goal is informative about the listener's mass on the cell of the inten
 rather than on the meaning itself. Kao and colleagues use this projected literal listener for
 metaphor, hyperbole and irony. `RSA.projListener` is that listener as a kernel, so that with
 the goal as a state-side latent the goal-indexed speaker is `RSA.familySpeaker` of the projected
-listeners and the listener who marginalizes the goal is the state marginal of its
-`RSA.pragmaticListener`.
+listeners and the listener who marginalizes the goal is the state marginal of its posterior.
 
 A literally false utterance projects positive mass onto a meaning exactly when the meaning's
 cell contains a literally true one (`RSA.projListener_apply_singleton_ne_zero_iff`), the
@@ -39,14 +38,14 @@ variable {W U G X : Type*} [MeasurableSpace W] [MeasurableSpace U] [Countable U]
 under the goal's projection. It is not normalized, since the speaker's best response reads only
 its weights. -/
 noncomputable def projListener (project : G → W → X) (L : Kernel U W) (g : G) : Kernel U W :=
-  Kernel.ofFunOfCountable λ u => ∑ w, L u (project g ⁻¹' {project g w}) • Measure.dirac w
+  Kernel.ofFunOfCountable fun u => ∑ w, L u (project g ⁻¹' {project g w}) • Measure.dirac w
 
 variable (project : G → W → X) (L : Kernel U W) (g : G) (u : U) (w : W)
 
 @[simp] theorem projListener_apply_singleton :
     projListener project L g u {w} = L u (project g ⁻¹' {project g w}) := by
   rw [projListener, Kernel.ofFunOfCountable_apply]
-  exact Measure.sum_smul_dirac_apply_singleton (λ w' => L u (project g ⁻¹' {project g w'})) w
+  exact Measure.sum_smul_dirac_apply_singleton (fun w' => L u (project g ⁻¹' {project g w'})) w
 
 /-- The projected listener of a finite kernel is finite, since each row puts at most the
 listener's bound on each of the finitely many meanings. -/
@@ -60,7 +59,7 @@ instance [IsFiniteKernel L] : IsFiniteKernel (projListener project L g) :=
 /-- The cell's mass is the sum of the listener's masses over the cell. -/
 theorem projListener_apply_singleton_eq_sum [DecidableEq X] :
     projListener project L g u {w}
-      = ∑ w' ∈ Finset.univ.filter (λ w' => project g w' = project g w), L u {w'} := by
+      = ∑ w' ∈ Finset.univ.filter (fun w' => project g w' = project g w), L u {w'} := by
   rw [projListener_apply_singleton, sum_measure_singleton]
   congr 1
   ext w'
@@ -86,11 +85,11 @@ theorem projListener_literalListener_restrict_apply_singleton [DiscreteMeasurabl
     [∀ u, DecidablePred (· ∈ sem u)] :
     projListener project
         (literalListener ((Measure.ofWeights (P ·)).restrict ↑C) sem) g u {w}
-      = (∑ v ∈ (C.filter (· ∈ sem u)).filter (λ v => project g v = project g w), (P v : ℝ≥0∞))
+      = (∑ v ∈ (C.filter (· ∈ sem u)).filter (fun v => project g v = project g w), (P v : ℝ≥0∞))
           / ∑ v ∈ C.filter (· ∈ sem u), (P v : ℝ≥0∞) := by
   have e1 : sem u ∩ ↑C = ↑(C.filter (· ∈ sem u)) := by ext; simp [and_comm]
   have e2 : sem u ∩ project g ⁻¹' {project g w} ∩ ↑C
-      = ↑((C.filter (· ∈ sem u)).filter λ v => project g v = project g w) := by
+      = ↑((C.filter (· ∈ sem u)).filter fun v => project g v = project g w) := by
     ext; simp; tauto
   rw [projListener_apply_singleton, literalListener_apply, cond_apply .of_discrete,
     Measure.restrict_apply .of_discrete, Measure.restrict_apply .of_discrete, e1, e2,

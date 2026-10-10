@@ -16,7 +16,7 @@ recursion.
 
 ## Main statements
 
-* `freeEnergy_le_freeEnergy_speaker`, `freeEnergy_le_freeEnergy_pragmaticListener`: against a fixed
+* `freeEnergy_le_freeEnergy_speaker`, `freeEnergy_le_freeEnergy_posterior`: against a fixed
   listener the RSA speaker maximizes the tradeoff, and against a fixed speaker the Bayesian
   listener does.
 * `freeEnergy_le_freeEnergy_listener_succ`, `freeEnergy_le_freeEnergy_speaker_succ`,
@@ -83,19 +83,19 @@ variable [Nonempty M] [IsProbabilityMeasure P] (S : Kernel M U) [IsMarkovKernel 
 include hL
 
 /-- Against a fixed speaker the Bayesian listener maximizes the expected utility (12). -/
-theorem expectedUtility_le_pragmaticListener :
+theorem expectedUtility_le_posterior :
     RSA.expectedUtility P Kernel.id C S L ≤
-      RSA.expectedUtility P Kernel.id C S (RSA.pragmaticListener S P) := by
-  have h := RSA.expectedUtility_le_pragmaticListener P Kernel.id C S L
+      RSA.expectedUtility P Kernel.id C S ((S†P)) := by
+  have h := RSA.expectedUtility_le_posterior P Kernel.id C S L
     (by simpa only [Kernel.comp_id] using hL)
   simp only [Kernel.comp_id] at h
   exact h
 
 /-- Against a fixed speaker the Bayesian listener maximizes the tradeoff (8). -/
-theorem freeEnergy_le_freeEnergy_pragmaticListener (hα : 0 ≤ α) :
+theorem freeEnergy_le_freeEnergy_posterior (hα : 0 ≤ α) :
     RSA.freeEnergy P Kernel.id C α S L ≤
-      RSA.freeEnergy P Kernel.id C α S (RSA.pragmaticListener S P) := by
-  have h := RSA.freeEnergy_le_freeEnergy_pragmaticListener P Kernel.id C α S L
+      RSA.freeEnergy P Kernel.id C α S ((S†P)) := by
+  have h := RSA.freeEnergy_le_freeEnergy_posterior P Kernel.id C α S L
     (by simpa only [Kernel.comp_id] using hL) hα
   simp only [Kernel.comp_id] at h
   exact h
@@ -113,11 +113,11 @@ variable [Nonempty M] [IsProbabilityMeasure P] (l : U → M → ℝ≥0∞)
 answers the one before. -/
 noncomputable def listener : ℕ → Kernel U M
   | 0 => Kernel.ofDensity P l
-  | t + 1 => RSA.pragmaticListener (RSA.speaker α C (listener t) Measure.dirac) P
+  | t + 1 => ((RSA.speaker α C (listener t) Measure.dirac)†P)
 
 instance : ∀ t, IsFiniteKernel (listener P C α l t)
   | 0 => inferInstanceAs (IsFiniteKernel (Kernel.ofDensity P l))
-  | _ + 1 => inferInstanceAs (IsFiniteKernel (RSA.pragmaticListener _ P))
+  | _ + 1 => inferInstanceAs (IsFiniteKernel ((_†P)))
 
 variable {P C α l} (hP : ∀ m, P {m} ≠ 0) (hl : ∀ u m, l u m ≠ ∞) {u : U} {m : M}
 include hP hl
@@ -134,7 +134,7 @@ theorem isMarkovKernel_listener (hu : ∀ u, ∃ m, l u m ≠ 0) :
       (by
         rw [lintegral_fintype]
         exact ENNReal.sum_ne_top.2 fun m _ ↦ ENNReal.mul_ne_top (hl u m) (measure_ne_top _ _))⟩
-  | _ + 1 => inferInstanceAs (IsMarkovKernel (RSA.pragmaticListener _ P))
+  | _ + 1 => inferInstanceAs (IsMarkovKernel ((_†P)))
 
 /-- No listener of the recursion rules out a meaning the utterance applies to. -/
 theorem listener_apply_singleton_ne_zero (hα : 0 ≤ α) (h : l u m ≠ 0) :
@@ -146,7 +146,7 @@ theorem listener_apply_singleton_ne_zero (hα : 0 ≤ α) (h : l u m ≠ 0) :
   | t + 1 => by
     have hS : RSA.speaker α C (listener P C α l t) Measure.dirac m {u} ≠ 0 :=
       RSA.speaker_dirac_apply_singleton_ne_zero hα (listener_apply_singleton_ne_zero hα h t)
-    exact (RSA.pragmaticListener_apply_singleton_ne_zero_iff
+    exact (posterior_apply_singleton_ne_zero_iff _ _
       (comp_apply_singleton_ne_zero _ _ (hP m) hS) m).2 ⟨hP m, hS⟩
 
 /-- The listeners of the recursion respect the lexicon. An utterance never leads the listener to
@@ -156,7 +156,7 @@ theorem listener_apply_singleton_eq_zero (hα : 0 < α) (hu : ∀ u, ∃ m, l u 
   | 0 => by rw [listener, Kernel.ofDensity_apply_singleton, h, zero_mul, ENNReal.zero_div]
   | t + 1 => by
     obtain ⟨m', hm'⟩ := hu u
-    exact RSA.pragmaticListener_apply_singleton_eq_zero
+    exact posterior_apply_singleton_eq_zero _ _
       (comp_apply_singleton_ne_zero _ _ (hP m') (RSA.speaker_dirac_apply_singleton_ne_zero hα.le
         (listener_apply_singleton_ne_zero hP hl hα.le hm' t)))
       (RSA.speaker_dirac_apply_singleton_eq_zero hα (listener_apply_singleton_eq_zero hα hu h t))
@@ -183,7 +183,7 @@ theorem freeEnergy_le_freeEnergy_speaker_succ (t : ℕ) :
       RSA.freeEnergy P Kernel.id C α (RSA.speaker α C (listener P C α l (t + 1)) Measure.dirac)
         (listener P C α l (t + 1)) := by
   have := isMarkovKernel_speaker_listener (C := C) hP hl hα hm t
-  have h := RSA.freeEnergy_pragmaticListener_le_freeEnergy_speaker (C := C)
+  have h := RSA.freeEnergy_posterior_le_freeEnergy_speaker (C := C)
     (RSA.id_comp_real_mul_dirac_real P) hα (RSA.speaker α C (listener P C α l t) Measure.dirac)
   simp only [Kernel.comp_id] at h
   exact h
@@ -199,7 +199,7 @@ theorem freeEnergy_le_freeEnergy_listener_succ (t : ℕ) :
         (listener P C α l (t + 1)) := by
   have := isMarkovKernel_speaker_listener (C := C) hP hl hα hm t
   have := isMarkovKernel_listener (C := C) (α := α) hP hl hu t
-  have h := RSA.freeEnergy_speaker_le_freeEnergy_pragmaticListener (C := C)
+  have h := RSA.freeEnergy_speaker_le_freeEnergy_posterior (C := C)
     (RSA.id_comp_real_mul_dirac_real P) hα (listener P C α l t)
   simp only [Kernel.comp_id] at h
   exact h

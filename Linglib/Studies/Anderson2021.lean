@@ -189,7 +189,7 @@ noncomputable abbrev S1 (cg : Measure World) : Kernel World Utterance :=
 
 /-- The pragmatic listener inverts the speaker against the common ground. -/
 noncomputable abbrev L1 (cg : Measure World) [IsFiniteMeasure cg] : Kernel Utterance World :=
-  pragmaticListener (speaker 1 0 (L0 cg) Measure.dirac) cg
+  ((speaker 1 0 (L0 cg) Measure.dirac)†cg)
 
 /-- In one Figure-2 turn the listener's posterior is mixed into the common ground unless the
 speaker passed (§7.1.1). -/

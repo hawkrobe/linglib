@@ -48,7 +48,7 @@ inductive Weather
   deriving DecidableEq, Repr, Fintype
 
 instance : MeasurableSpace Weather := ⊤
-instance : DiscreteMeasurableSpace Weather := ⟨λ _ => trivial⟩
+instance : DiscreteMeasurableSpace Weather := ⟨fun _ => trivial⟩
 instance : Nonempty Weather := ⟨.neutral⟩
 
 /-- The speaker's affect records positive valence and high arousal. -/
@@ -63,7 +63,7 @@ inductive QUD
   deriving DecidableEq, Repr, Fintype
 
 instance : MeasurableSpace QUD := ⊤
-instance : DiscreteMeasurableSpace QUD := ⟨λ _ => trivial⟩
+instance : DiscreteMeasurableSpace QUD := ⟨fun _ => trivial⟩
 instance : Nonempty QUD := ⟨.state⟩
 
 /-- The projection of a question (eq. 1) reads off the state, the valence, or the arousal. -/
@@ -86,10 +86,10 @@ theorem L0_apply_singleton_ne_zero_iff (μ : Measure Meaning) [IsFiniteMeasure �
     (m : Meaning) : L0 μ u {m} ≠ 0 ↔ m.1 = u ∧ μ {m} ≠ 0 := by
   by_cases h : m ∈ sem u
   · rw [L0, literalListener_apply_singleton μ sem h]
-    exact ⟨λ h' => ⟨h, (mul_ne_zero_iff.mp h').2⟩,
-      λ h' => mul_ne_zero (ENNReal.inv_ne_zero.mpr (measure_ne_top _ _)) h'.2⟩
+    exact ⟨fun h' => ⟨h, (mul_ne_zero_iff.mp h').2⟩,
+      fun h' => mul_ne_zero (ENNReal.inv_ne_zero.mpr (measure_ne_top _ _)) h'.2⟩
   · rw [L0, literalListener_apply_singleton_of_notMem μ sem h]
-    exact iff_of_false (λ h' => h' rfl) (λ h' => h h'.1)
+    exact iff_of_false (fun h' => h' rfl) (fun h' => h h'.1)
 
 /-- The question-indexed speaker is the best response to the projected literal listener of the
 question at rationality `α`, with no utterance cost. -/
@@ -103,7 +103,7 @@ instance (μ : Measure Meaning) (α : ℝ) : IsFiniteKernel (S1 μ α) :=
 the meaning prior and the question prior; its first marginal is the meaning listener. -/
 noncomputable def L1 (μ : Measure Meaning) [IsProbabilityMeasure μ] (ν : Measure QUD)
     [IsProbabilityMeasure ν] (α : ℝ) : Kernel Weather (Meaning × QUD) :=
-  pragmaticListener (S1 μ α) (μ.prod ν)
+  ((S1 μ α)†(μ.prod ν))
 
 variable (μ : Measure Meaning) [IsProbabilityMeasure μ] (ν : Measure QUD)
   [IsProbabilityMeasure ν] (α : ℝ)
@@ -115,7 +115,7 @@ theorem S1_apply_singleton_ne_zero_iff (hα : 0 < α) (q : QUD) (m : Meaning) (u
   rw [S1, familySpeaker_apply]
   constructor
   · intro h
-    have hL : projListener project (L0 μ) q u {m} ≠ 0 := λ h' =>
+    have hL : projListener project (L0 μ) q u {m} ≠ 0 := fun h' =>
       h (speaker_dirac_apply_singleton_eq_zero hα h')
     rw [projListener_apply_singleton_ne_zero_iff] at hL
     obtain ⟨m', hm', h0⟩ := hL
@@ -145,10 +145,10 @@ theorem listener_ne_zero_iff (hα : 0 < α) {u : Weather} (hu : (S1 μ α ∘ₘ
     (m : Meaning) :
     (L1 μ ν α u).fst {m} ≠ 0 ↔ μ {m} ≠ 0 ∧
       ∃ q, ν {q} ≠ 0 ∧ ∃ m', project q m' = project q m ∧ m'.1 = u ∧ μ {m'} ≠ 0 := by
-  rw [L1, pragmaticListener_fst_apply_singleton_ne_zero_iff hu]
+  rw [L1, posterior_fst_apply_singleton_ne_zero_iff _ _ hu]
   simp only [← S1_apply_singleton_ne_zero_iff μ α hα, S1, ← Set.singleton_prod_singleton,
     Measure.prod_prod, mul_ne_zero_iff]
-  exact ⟨λ ⟨q, ⟨hm, hq⟩, hs⟩ => ⟨hm, q, hq, hs⟩, λ ⟨hm, q, hq, hs⟩ => ⟨q, ⟨hm, hq⟩, hs⟩⟩
+  exact ⟨fun ⟨q, ⟨hm, hq⟩, hs⟩ => ⟨hm, q, hq, hs⟩, fun ⟨hm, q, hq, hs⟩ => ⟨q, ⟨hm, hq⟩, hs⟩⟩
 
 /-- Under the valence question, "terrible" can hyperbolically mean bad weather with negative
 valence, through the negative valence of terrible weather. -/

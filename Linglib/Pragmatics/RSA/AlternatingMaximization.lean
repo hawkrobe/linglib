@@ -24,10 +24,10 @@ Bayesian listener does, so a round of the recursion never lowers it.
 * `RSA.freeEnergy_add_sum_klDiv`, `RSA.freeEnergy_le_freeEnergy_speaker`: against a fixed
   listener the free energy of a speaker falls short of the RSA speaker's by her expected
   divergence from it.
-* `RSA.freeEnergy_le_freeEnergy_pragmaticListener`: against a fixed speaker the Bayesian listener
+* `RSA.freeEnergy_le_freeEnergy_posterior`: against a fixed speaker the Bayesian listener
   maximizes the free energy.
-* `RSA.freeEnergy_speaker_le_freeEnergy_pragmaticListener`,
-  `RSA.freeEnergy_pragmaticListener_le_freeEnergy_speaker`: in a round of the recursion the
+* `RSA.freeEnergy_speaker_le_freeEnergy_posterior`,
+  `RSA.freeEnergy_posterior_le_freeEnergy_speaker`: in a round of the recursion the
   listener's update and the speaker's update each raise the free energy, with no condition on
   the supports.
 
@@ -279,8 +279,8 @@ variable [Fintype W] [Fintype U] [MeasurableSingletonClass W] [MeasurableSinglet
 include hL
 
 /-- Against a fixed speaker the Bayesian listener maximizes the expected utility. -/
-theorem expectedUtility_le_pragmaticListener :
-    expectedUtility μ κ C S L ≤ expectedUtility μ κ C S (pragmaticListener (S ∘ₖ κ) μ) := by
+theorem expectedUtility_le_posterior :
+    expectedUtility μ κ C S L ≤ expectedUtility μ κ C S (((S ∘ₖ κ)†μ)) := by
   have h := sum_mul_integral_log_le (S ∘ₖ κ) μ L hL
   simp_rw [expectedUtility, integral_sub (.of_finite) (.of_finite), mul_sub,
     Finset.sum_sub_distrib]
@@ -289,10 +289,10 @@ theorem expectedUtility_le_pragmaticListener :
 variable [Fintype O]
 
 /-- Against a fixed speaker the Bayesian listener maximizes the free energy. -/
-theorem freeEnergy_le_freeEnergy_pragmaticListener (hα : 0 ≤ α) :
-    freeEnergy μ κ C α S L ≤ freeEnergy μ κ C α S (pragmaticListener (S ∘ₖ κ) μ) :=
+theorem freeEnergy_le_freeEnergy_posterior (hα : 0 ≤ α) :
+    freeEnergy μ κ C α S L ≤ freeEnergy μ κ C α S (((S ∘ₖ κ)†μ)) :=
   add_le_add_right
-    (mul_le_mul_of_nonneg_left (expectedUtility_le_pragmaticListener μ κ C S L hL) hα) _
+    (mul_le_mul_of_nonneg_left (expectedUtility_le_posterior μ κ C S L hL) hα) _
 
 end Listener
 
@@ -336,42 +336,42 @@ include hb hα
 
 /-- An utterance a speaker might say at an observation that can occur is one the best response
 to her Bayesian listener might say there too. -/
-theorem speaker_pragmaticListener_apply_singleton_ne_zero {S : Kernel O U} [IsFiniteKernel S]
+theorem speaker_posterior_apply_singleton_ne_zero {S : Kernel O U} [IsFiniteKernel S]
     {o : O} {u : U} (ho : (κ ∘ₘ μ) {o} ≠ 0) (hS : S o {u} ≠ 0) :
-    speaker α C (pragmaticListener (S ∘ₖ κ) μ) b o {u} ≠ 0 := by
+    speaker α C (((S ∘ₖ κ)†μ)) b o {u} ≠ 0 := by
   refine speaker_apply_singleton_ne_zero hα fun w hbw ↦ ?_
   obtain ⟨hμw, hκ⟩ := ne_zero_of_belief_apply_singleton_ne_zero hb ho hbw
   have hSκ : (S ∘ₖ κ) w {u} ≠ 0 := by
     rw [Kernel.comp_apply_singleton]
     exact fun h ↦ mul_ne_zero hκ hS (Finset.sum_eq_zero_iff.1 h o (Finset.mem_univ o))
-  exact (pragmaticListener_apply_singleton_ne_zero_iff
+  exact (posterior_apply_singleton_ne_zero_iff _ _
     (comp_apply_singleton_ne_zero _ _ hμw hSκ) w).2 ⟨hμw, hSκ⟩
 
 /-- When every observation can occur, the best response to the Bayesian listener of a speaker is
 again a probability kernel. -/
-theorem isMarkovKernel_speaker_pragmaticListener (hκ : ∀ o, (κ ∘ₘ μ) {o} ≠ 0) (S : Kernel O U)
-    [IsMarkovKernel S] : IsMarkovKernel (speaker α C (pragmaticListener (S ∘ₖ κ) μ) b) :=
+theorem isMarkovKernel_speaker_posterior (hκ : ∀ o, (κ ∘ₘ μ) {o} ≠ 0) (S : Kernel O U)
+    [IsMarkovKernel S] : IsMarkovKernel (speaker α C (((S ∘ₖ κ)†μ)) b) :=
   ⟨fun o ↦ isProbabilityMeasure_speaker_of_absolutelyContinuous hα (q := S o)
     (Measure.absolutelyContinuous_of_forall_singleton fun _ hu ↦ of_not_not fun hS ↦
-      speaker_pragmaticListener_apply_singleton_ne_zero hb hα (hκ o) hS hu)⟩
+      speaker_posterior_apply_singleton_ne_zero hb hα (hκ o) hS hu)⟩
 
 /-- The speaker's best response to the Bayesian listener of any speaker raises the free energy. -/
-theorem freeEnergy_pragmaticListener_le_freeEnergy_speaker (S : Kernel O U) [IsMarkovKernel S] :
-    freeEnergy μ κ C α S (pragmaticListener (S ∘ₖ κ) μ) ≤
-      freeEnergy μ κ C α (speaker α C (pragmaticListener (S ∘ₖ κ) μ) b)
-        (pragmaticListener (S ∘ₖ κ) μ) :=
+theorem freeEnergy_posterior_le_freeEnergy_speaker (S : Kernel O U) [IsMarkovKernel S] :
+    freeEnergy μ κ C α S (((S ∘ₖ κ)†μ)) ≤
+      freeEnergy μ κ C α (speaker α C (((S ∘ₖ κ)†μ)) b)
+        (((S ∘ₖ κ)†μ)) :=
   freeEnergy_le_freeEnergy_speaker hb hα _ S fun _ ho ↦
     Measure.absolutelyContinuous_of_forall_singleton fun _ hu ↦ of_not_not fun hS ↦
-      speaker_pragmaticListener_apply_singleton_ne_zero hb hα ho hS hu
+      speaker_posterior_apply_singleton_ne_zero hb hα ho hS hu
 
 /-- The listener's Bayesian update to the speaker who answers her raises the free energy. -/
-theorem freeEnergy_speaker_le_freeEnergy_pragmaticListener (L : Kernel U W) [IsMarkovKernel L]
+theorem freeEnergy_speaker_le_freeEnergy_posterior (L : Kernel U W) [IsMarkovKernel L]
     [IsMarkovKernel (speaker α C L b)] :
     freeEnergy μ κ C α (speaker α C L b) L ≤
-      freeEnergy μ κ C α (speaker α C L b) (pragmaticListener (speaker α C L b ∘ₖ κ) μ) := by
+      freeEnergy μ κ C α (speaker α C L b) (((speaker α C L b ∘ₖ κ)†μ)) := by
   rcases hα.eq_or_lt with rfl | hα'
   · simp [freeEnergy]
-  refine freeEnergy_le_freeEnergy_pragmaticListener μ κ C α _ L (fun u hu ↦
+  refine freeEnergy_le_freeEnergy_posterior μ κ C α _ L (fun u hu ↦
     Measure.absolutelyContinuous_of_forall_singleton fun w hL ↦ of_not_not fun hpost ↦ ?_) hα
   obtain ⟨hμw, hSw⟩ := (posterior_apply_singleton_ne_zero_iff _ _ hu w).1 hpost
   rw [Kernel.comp_apply_singleton] at hSw

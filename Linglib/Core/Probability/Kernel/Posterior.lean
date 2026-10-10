@@ -61,7 +61,99 @@ namespace ProbabilityTheory
 
 variable {Ω 𝓧 : Type*} [MeasurableSpace Ω] [MeasurableSpace 𝓧]
   [MeasurableSingletonClass Ω] [MeasurableSingletonClass 𝓧]
-  [StandardBorelSpace Ω] [Nonempty Ω]
+
+/-! ### Observation marginals at atoms -/
+
+section Marginal
+
+/-- A single state of positive prior mass and positive emission witnesses a
+positive observation marginal. -/
+theorem comp_apply_singleton_ne_zero {Ω' 𝓧' : Type*} [MeasurableSpace Ω']
+    [MeasurableSpace 𝓧'] [MeasurableSingletonClass 𝓧'] (κ : Kernel Ω' 𝓧')
+    (μ : Measure Ω') {w : Ω'} {x : 𝓧'} (hμ : μ {w} ≠ 0) (hκ : κ w {x} ≠ 0) :
+    (κ ∘ₘ μ) {x} ≠ 0 := by
+  rw [Measure.bind_apply (.singleton x) (Kernel.aemeasurable _),
+    ← pos_iff_ne_zero, lintegral_pos_iff_support (Kernel.measurable_coe _ (.singleton x))]
+  exact lt_of_lt_of_le (pos_iff_ne_zero.mpr hμ)
+    (measure_mono (Set.singleton_subset_iff.mpr hκ))
+
+variable (κ : Kernel Ω 𝓧) (μ : Measure Ω)
+
+/-- The observation marginal at an atom is the prior mass times the emission mass, summed over
+states. -/
+theorem _root_.MeasureTheory.Measure.comp_apply_singleton [Fintype Ω] (x : 𝓧) :
+    (κ ∘ₘ μ) {x} = ∑ ω, μ {ω} * κ ω {x} := by
+  rw [Measure.bind_apply (.singleton x) (Kernel.aemeasurable _), lintegral_fintype]
+  exact Finset.sum_congr rfl fun ω _ => mul_comm _ _
+
+/-- A relabelling of the states that carries one prior and likelihood to another carries the
+observation marginal along. -/
+theorem _root_.MeasureTheory.Measure.comp_apply_singleton_of_equiv {Ω' 𝓧' : Type*}
+    [MeasurableSpace Ω'] [MeasurableSpace 𝓧'] [MeasurableSingletonClass Ω']
+    [MeasurableSingletonClass 𝓧'] {κ' : Kernel Ω' 𝓧'} {μ' : Measure Ω'} {x : 𝓧} {x' : 𝓧'}
+    [Fintype Ω] [Fintype Ω'] (e : Ω ≃ Ω') (hμ : ∀ ω, μ' {e ω} = μ {ω})
+    (hκ : ∀ ω, κ' (e ω) {x'} = κ ω {x}) :
+    (κ' ∘ₘ μ') {x'} = (κ ∘ₘ μ) {x} := by
+  rw [Measure.comp_apply_singleton, Measure.comp_apply_singleton, ← e.sum_comp]
+  simp only [hμ, hκ]
+
+section Real
+
+variable [IsFiniteMeasure μ] [IsFiniteKernel κ]
+
+theorem _root_.MeasureTheory.Measure.comp_real_singleton [Fintype Ω] (x : 𝓧) :
+    (κ ∘ₘ μ).real {x} = ∑ ω, μ.real {ω} * (κ ω).real {x} := by
+  rw [measureReal_def, Measure.comp_apply_singleton,
+    ENNReal.toReal_sum fun ω _ => ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)]
+  simp_rw [ENNReal.toReal_mul, measureReal_def]
+
+/-- The observation marginal at an atom is the prior expectation of the emission mass. -/
+theorem _root_.MeasureTheory.Measure.comp_real_singleton_eq_integral [Fintype Ω] (x : 𝓧) :
+    (κ ∘ₘ μ).real {x} = ∫ ω, (κ ω).real {x} ∂μ := by
+  rw [Measure.comp_real_singleton, integral_fintype .of_finite]; rfl
+
+end Real
+
+section Pair
+
+variable [Fintype Ω] {ω ω' : Ω} (hne : ω ≠ ω') (hsupp : ∀ ω'', μ {ω''} ≠ 0 → ω'' = ω ∨ ω'' = ω')
+include hne hsupp
+
+/-- Under a prior carried by two atoms, the observation's marginal is the prior-weighted sum
+of the two likelihoods. -/
+theorem _root_.MeasureTheory.Measure.comp_real_singleton_of_pair [IsFiniteMeasure μ]
+    [IsFiniteKernel κ] (x : 𝓧) :
+    (κ ∘ₘ μ).real {x} = μ.real {ω} * (κ ω).real {x} + μ.real {ω'} * (κ ω').real {x} := by
+  rw [Measure.comp_real_singleton]
+  exact Fintype.sum_eq_add ω ω' hne fun c hc ↦ by
+    rw [measureReal_def, of_not_not (mt (hsupp c) (not_or.mpr hc)), ENNReal.toReal_zero, zero_mul]
+
+/-- A probability measure carried by two atoms puts mass one on them together. -/
+theorem _root_.MeasureTheory.measureReal_singleton_add_singleton_of_pair
+    [IsProbabilityMeasure μ] : μ.real {ω} + μ.real {ω'} = 1 := by
+  have h := measure_univ (μ := μ)
+  rw [← Finset.coe_univ, ← sum_measure_singleton,
+    Fintype.sum_eq_add ω ω' hne (fun c hc ↦ of_not_not (mt (hsupp c) (not_or.mpr hc)))] at h
+  rw [measureReal_def, measureReal_def,
+    ← ENNReal.toReal_add (measure_ne_top _ _) (measure_ne_top _ _), h, ENNReal.toReal_one]
+
+/-- Under a probability prior carried by two atoms, an observation that both atoms emit with
+positive likelihood has positive marginal. -/
+theorem _root_.MeasureTheory.Measure.comp_apply_singleton_ne_zero_of_pair
+    [IsProbabilityMeasure μ] {x : 𝓧} (hκω : κ ω {x} ≠ 0) (hκω' : κ ω' {x} ≠ 0) :
+    (κ ∘ₘ μ) {x} ≠ 0 := by
+  obtain hω | hω := eq_or_ne (μ {ω}) 0
+  · refine comp_apply_singleton_ne_zero κ μ (fun hω' ↦ ?_) hκω'
+    have h1 := measureReal_singleton_add_singleton_of_pair μ hne hsupp
+    rw [measureReal_def, measureReal_def, hω, hω'] at h1
+    simp at h1
+  · exact comp_apply_singleton_ne_zero κ μ hω hκω
+
+end Pair
+
+end Marginal
+
+variable [StandardBorelSpace Ω] [Nonempty Ω]
   (κ : Kernel Ω 𝓧) (μ : Measure Ω) [IsFiniteMeasure μ] [IsFiniteKernel κ]
 
 /-- At an observation of positive mass, the posterior mass of a state is given exactly by Bayes'
@@ -86,6 +178,11 @@ theorem posterior_apply_singleton_ne_zero_iff {x : 𝓧} (hx : (κ ∘ₘ μ) {x
   rw [posterior_apply_singleton κ μ hx, ne_eq, ENNReal.div_eq_zero_iff, mul_eq_zero, not_or,
     not_or]
   exact ⟨fun h ↦ h.1, fun h ↦ ⟨h, measure_ne_top _ _⟩⟩
+
+/-- A state at which the observation has no likelihood has no posterior mass. -/
+theorem posterior_apply_singleton_eq_zero {x : 𝓧} (hx : (κ ∘ₘ μ) {x} ≠ 0) {ω : Ω}
+    (h : κ ω {x} = 0) : (κ†μ) x {ω} = 0 := by
+  rw [posterior_apply_singleton κ μ hx, h, mul_zero, ENNReal.zero_div]
 
 /-- Two states with the same likelihood of the observation and the same prior mass have the
 same posterior mass. -/
@@ -145,40 +242,10 @@ theorem posterior_deterministic_eq_cond [Countable Ω] {f : Ω → 𝓧} (hf : M
   · rw [Set.indicator_of_notMem (by simpa using h), mul_zero, ENNReal.zero_div,
       Set.inter_singleton_eq_empty.mpr (by simpa using h), measure_empty, mul_zero]
 
-omit [StandardBorelSpace Ω] [Nonempty Ω] [IsFiniteMeasure μ] [IsFiniteKernel κ] in
-/-- The observation marginal at an atom is the prior mass times the emission mass, summed over
-states. -/
-theorem _root_.MeasureTheory.Measure.comp_apply_singleton [Fintype Ω] (x : 𝓧) :
-    (κ ∘ₘ μ) {x} = ∑ ω, μ {ω} * κ ω {x} := by
-  rw [Measure.bind_apply (.singleton x) (Kernel.aemeasurable _), lintegral_fintype]
-  exact Finset.sum_congr rfl fun ω _ => mul_comm _ _
-
-omit [StandardBorelSpace Ω] [Nonempty Ω] in
-theorem _root_.MeasureTheory.Measure.comp_real_singleton [Fintype Ω] (x : 𝓧) :
-    (κ ∘ₘ μ).real {x} = ∑ ω, μ.real {ω} * (κ ω).real {x} := by
-  rw [measureReal_def, Measure.comp_apply_singleton,
-    ENNReal.toReal_sum fun ω _ => ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)]
-  simp_rw [ENNReal.toReal_mul, measureReal_def]
-
-omit [StandardBorelSpace Ω] [Nonempty Ω] in
-/-- The observation marginal at an atom is the prior expectation of the emission mass. -/
-theorem _root_.MeasureTheory.Measure.comp_real_singleton_eq_integral [Fintype Ω] (x : 𝓧) :
-    (κ ∘ₘ μ).real {x} = ∫ ω, (κ ω).real {x} ∂μ := by
-  rw [Measure.comp_real_singleton, integral_fintype .of_finite]; rfl
-
 section Equiv
 
 variable {Ω' 𝓧' : Type*} [MeasurableSpace Ω'] [MeasurableSpace 𝓧'] [MeasurableSingletonClass Ω']
   [MeasurableSingletonClass 𝓧'] {κ' : Kernel Ω' 𝓧'} {μ' : Measure Ω'} {x : 𝓧} {x' : 𝓧'}
-
-omit [StandardBorelSpace Ω] [Nonempty Ω] [IsFiniteMeasure μ] [IsFiniteKernel κ] in
-/-- A relabelling of the states that carries one prior and likelihood to another carries the
-observation marginal along. -/
-theorem _root_.MeasureTheory.Measure.comp_apply_singleton_of_equiv [Fintype Ω] [Fintype Ω']
-    (e : Ω ≃ Ω') (hμ : ∀ ω, μ' {e ω} = μ {ω}) (hκ : ∀ ω, κ' (e ω) {x'} = κ ω {x}) :
-    (κ' ∘ₘ μ') {x'} = (κ ∘ₘ μ) {x} := by
-  rw [Measure.comp_apply_singleton, Measure.comp_apply_singleton, ← e.sum_comp]
-  simp only [hμ, hκ]
 
 /-- A relabelling of the states that carries one prior and likelihood to another carries the
 posterior along, so the posterior is equivariant. -/
@@ -280,16 +347,32 @@ theorem integral_posterior_le_integral (hf : Antivary f fun ω ↦ (κ ω).real 
 
 end Expectation
 
-/-- A single state of positive prior mass and positive emission witnesses a
-positive observation marginal. -/
-theorem comp_apply_singleton_ne_zero {Ω' 𝓧' : Type*} [MeasurableSpace Ω']
-    [MeasurableSpace 𝓧'] [MeasurableSingletonClass 𝓧'] (κ : Kernel Ω' 𝓧')
-    (μ : Measure Ω') {w : Ω'} {x : 𝓧'} (hμ : μ {w} ≠ 0) (hκ : κ w {x} ≠ 0) :
-    (κ ∘ₘ μ) {x} ≠ 0 := by
-  rw [Measure.bind_apply (.singleton x) (Kernel.aemeasurable _),
-    ← pos_iff_ne_zero, lintegral_pos_iff_support (Kernel.measurable_coe _ (.singleton x))]
-  exact lt_of_lt_of_le (pos_iff_ne_zero.mpr hμ)
-    (measure_mono (Set.singleton_subset_iff.mpr hκ))
+/-- At a prior giving every state the same positive mass, the posterior ranks two states as
+their likelihoods of the observation, since the prior and the marginal cancel. -/
+theorem posterior_real_singleton_lt_iff_of_forall_eq (hμeq : ∀ ω ω', μ {ω} = μ {ω'})
+    (hμ0 : ∀ ω, μ {ω} ≠ 0) {x : 𝓧} {ω₀ : Ω} (hs : κ ω₀ {x} ≠ 0) {ω₁ ω₂ : Ω} :
+    ((κ†μ) x).real {ω₁} < ((κ†μ) x).real {ω₂} ↔ (κ ω₁).real {x} < (κ ω₂).real {x} :=
+  posterior_real_singleton_lt_iff_of_eq _ _ (comp_apply_singleton_ne_zero _ _ (hμ0 ω₀) hs)
+    (hμeq ω₁ ω₂) (hμ0 ω₁)
+
+/-- A state emitting the observation with certainty outweighs any event of smaller total prior
+mass, when no state emits it with probability above one. -/
+theorem posterior_real_lt_of_certain {x : 𝓧} {E₁ E₂ : Finset Ω} {ω₀ : Ω} (hω₀ : ω₀ ∈ E₂)
+    (hle : ∀ ω, (κ ω).real {x} ≤ 1) (hs : κ ω₀ {x} = 1)
+    (hlt : (∑ ω ∈ E₁, μ.real {ω}) < μ.real {ω₀}) :
+    ((κ†μ) x).real ↑E₁ < ((κ†μ) x).real ↑E₂ := by
+  have hpos : 0 < μ.real {ω₀} := (Finset.sum_nonneg fun _ _ ↦ measureReal_nonneg).trans_lt hlt
+  rw [posterior_real_finset_lt_iff κ μ (comp_apply_singleton_ne_zero _ _
+    (ENNReal.toReal_pos_iff.mp hpos).1.ne' (hs ▸ one_ne_zero))]
+  calc ∑ ω ∈ E₁, μ.real {ω} * (κ ω).real {x}
+      ≤ ∑ ω ∈ E₁, μ.real {ω} :=
+        Finset.sum_le_sum fun ω _ ↦ mul_le_of_le_one_right measureReal_nonneg (hle ω)
+    _ < μ.real {ω₀} := hlt
+    _ = μ.real {ω₀} * (κ ω₀).real {x} := by
+        rw [measureReal_def (μ := κ ω₀), hs, ENNReal.toReal_one, mul_one]
+    _ ≤ ∑ ω ∈ E₂, μ.real {ω} * (κ ω).real {x} :=
+        Finset.single_le_sum (f := fun ω ↦ μ.real {ω} * (κ ω).real {x})
+          (fun ω _ ↦ mul_nonneg measureReal_nonneg measureReal_nonneg) hω₀
 
 /-! ### Priors carried by two atoms
 
@@ -302,40 +385,8 @@ section Pair
 variable [Fintype Ω] {ω ω' : Ω} (hne : ω ≠ ω') (hsupp : ∀ ω'', μ {ω''} ≠ 0 → ω'' = ω ∨ ω'' = ω')
 include hne hsupp
 
-omit [StandardBorelSpace Ω] [Nonempty Ω] in
-/-- Under a prior carried by two atoms, the observation's marginal is the prior-weighted sum
-of the two likelihoods. -/
-theorem _root_.MeasureTheory.Measure.comp_real_singleton_of_pair (x : 𝓧) :
-    (κ ∘ₘ μ).real {x} = μ.real {ω} * (κ ω).real {x} + μ.real {ω'} * (κ ω').real {x} := by
-  rw [Measure.comp_real_singleton]
-  exact Fintype.sum_eq_add ω ω' hne fun c hc ↦ by
-    rw [measureReal_def, of_not_not (mt (hsupp c) (not_or.mpr hc)), ENNReal.toReal_zero, zero_mul]
-
-omit [StandardBorelSpace Ω] [Nonempty Ω] [IsFiniteKernel κ] in
-/-- A probability measure carried by two atoms puts mass one on them together. -/
-theorem _root_.MeasureTheory.measureReal_singleton_add_singleton_of_pair
-    [IsProbabilityMeasure μ] : μ.real {ω} + μ.real {ω'} = 1 := by
-  have h := measure_univ (μ := μ)
-  rw [← Finset.coe_univ, ← sum_measure_singleton,
-    Fintype.sum_eq_add ω ω' hne (fun c hc ↦ of_not_not (mt (hsupp c) (not_or.mpr hc)))] at h
-  rw [measureReal_def, measureReal_def,
-    ← ENNReal.toReal_add (measure_ne_top _ _) (measure_ne_top _ _), h, ENNReal.toReal_one]
-
-omit [StandardBorelSpace Ω] [Nonempty Ω] [IsFiniteKernel κ] in
-/-- Under a probability prior carried by two atoms, an observation that both atoms emit with
-positive likelihood has positive marginal. -/
-theorem _root_.MeasureTheory.Measure.comp_apply_singleton_ne_zero_of_pair
-    [IsProbabilityMeasure μ] {x : 𝓧} (hκω : κ ω {x} ≠ 0) (hκω' : κ ω' {x} ≠ 0) :
-    (κ ∘ₘ μ) {x} ≠ 0 := by
-  obtain hω | hω := eq_or_ne (μ {ω}) 0
-  · refine comp_apply_singleton_ne_zero κ μ (fun hω' ↦ ?_) hκω'
-    have h1 := measureReal_singleton_add_singleton_of_pair μ hne hsupp
-    rw [measureReal_def, measureReal_def, hω, hω'] at h1
-    simp at h1
-  · exact comp_apply_singleton_ne_zero κ μ hω hκω
-
 /-- Under two priors carried by the same two atoms, at an observation both atoms emit with
-positive likelihood, the posterior mass of an atom is strictly increasing in its prior mass:
+positive likelihood, the posterior mass of an atom is strictly increasing in its prior mass, so
 Bayes' rule is prior-sensitive. -/
 theorem posterior_real_singleton_lt_posterior_of_pair {ν : Measure Ω} [IsProbabilityMeasure μ]
     [IsProbabilityMeasure ν] (hν : ∀ ω'', ν {ω''} ≠ 0 → ω'' = ω ∨ ω'' = ω') {x : 𝓧}
@@ -476,19 +527,77 @@ theorem posterior_snd_real_lt_iff [Fintype A] (b₁ b₂ : B) :
   simp_rw [ENNReal.toReal_mul]
   exact Iff.rfl
 
+/-- The state marginal of the posterior over a latent is positive at a state exactly when some
+latent pairs a positive prior with a positive likelihood. -/
+theorem posterior_fst_apply_singleton_ne_zero_iff [Fintype B] (a : A) :
+    ((κ†μ) x).fst {a} ≠ 0 ↔ ∃ b, μ {(a, b)} ≠ 0 ∧ κ (a, b) {x} ≠ 0 := by
+  rw [Measure.fst_apply_singleton, ne_eq, Finset.sum_eq_zero_iff]
+  simp only [Finset.mem_univ, true_implies, not_forall,
+    posterior_apply_singleton_ne_zero_iff κ μ hx]
+
 end Prod
+
+section ProdEq
+
+variable {A B : Type*} [MeasurableSpace A] [MeasurableSpace B] [MeasurableSingletonClass A]
+  [MeasurableSingletonClass B] [StandardBorelSpace A] [Nonempty A] [StandardBorelSpace B]
+  [Nonempty B] (κ : Kernel (A × B) 𝓧) [IsFiniteKernel κ]
+
+/-- On reals the state marginal of the posterior over a product prior is the prior at the state
+times the latent-averaged likelihood, over the observation marginal. -/
+theorem posterior_prod_fst_real_singleton [Fintype B] (μA : Measure A) [IsFiniteMeasure μA]
+    (ν : Measure B) [IsFiniteMeasure ν] {x : 𝓧} (hx : (κ ∘ₘ μA.prod ν) {x} ≠ 0) (a : A) :
+    ((κ†(μA.prod ν)) x).fst.real {a}
+      = μA.real {a} * (∑ b, ν.real {b} * (κ (a, b)).real {x}) / (κ ∘ₘ μA.prod ν).real {x} := by
+  rw [posterior_fst_real_singleton _ _ hx, Finset.mul_sum]
+  simp_rw [Measure.prod_real_singleton, mul_assoc]
+
+variable (μ : Measure (A × B)) [IsFiniteMeasure μ] (hμeq : ∀ p q : A × B, μ {p} = μ {q})
+  (hμ0 : ∀ p : A × B, μ {p} ≠ 0) {x : 𝓧} {p₀ : A × B} (hs : κ p₀ {x} ≠ 0)
+include hμeq hμ0 hs
+
+/-- At equal priors the state marginal of the posterior prefers the state with the greater
+likelihood summed over the latent. -/
+theorem posterior_fst_real_lt_iff_of_forall_eq [Fintype B] {a₁ a₂ : A} :
+    ((κ†μ) x).fst.real {a₁} < ((κ†μ) x).fst.real {a₂}
+      ↔ (∑ b, (κ (a₁, b)).real {x}) < ∑ b, (κ (a₂, b)).real {x} := by
+  have key : ∀ a : A, (∑ b, μ.real {(a, b)} * (κ (a, b)).real {x})
+      = μ.real {p₀} * ∑ b, (κ (a, b)).real {x} := fun a ↦ by
+    rw [Finset.mul_sum]
+    exact Finset.sum_congr rfl fun b _ ↦ by
+      rw [show μ.real {(a, b)} = μ.real {p₀} by rw [measureReal_def, measureReal_def, hμeq]]
+  rw [posterior_fst_real_lt_iff _ _ (comp_apply_singleton_ne_zero _ _ (hμ0 p₀) hs), key, key,
+    mul_lt_mul_iff_right₀
+      (show (0 : ℝ) < μ.real {p₀} from ENNReal.toReal_pos (hμ0 p₀) (measure_ne_top _ _))]
+
+/-- At equal priors the latent marginal of the posterior prefers the latent with the greater
+likelihood summed over the states. -/
+theorem posterior_snd_real_lt_iff_of_forall_eq [Fintype A] {b₁ b₂ : B} :
+    ((κ†μ) x).snd.real {b₁} < ((κ†μ) x).snd.real {b₂}
+      ↔ (∑ a, (κ (a, b₁)).real {x}) < ∑ a, (κ (a, b₂)).real {x} := by
+  have key : ∀ b : B, (∑ a, μ.real {(a, b)} * (κ (a, b)).real {x})
+      = μ.real {p₀} * ∑ a, (κ (a, b)).real {x} := fun b ↦ by
+    rw [Finset.mul_sum]
+    exact Finset.sum_congr rfl fun a _ ↦ by
+      rw [show μ.real {(a, b)} = μ.real {p₀} by rw [measureReal_def, measureReal_def, hμeq]]
+  rw [posterior_snd_real_lt_iff _ _ (comp_apply_singleton_ne_zero _ _ (hμ0 p₀) hs), key, key,
+    mul_lt_mul_iff_right₀
+      (show (0 : ℝ) < μ.real {p₀} from ENNReal.toReal_pos (hμ0 p₀) (measure_ne_top _ _))]
+
+end ProdEq
 
 section UniformPrior
 
-variable {W : Type*} [MeasurableSpace W] [MeasurableSingletonClass W] [StandardBorelSpace W]
-  [Fintype W] [Nonempty W] (κ : Kernel W 𝓧) [IsFiniteKernel κ]
+variable {W : Type*} [MeasurableSpace W] [MeasurableSingletonClass W] [Fintype W]
+  (κ : Kernel W 𝓧)
 
-omit [StandardBorelSpace W] [Nonempty W] [IsFiniteKernel κ] in
 /-- Against the uniform prior, the observation marginal of a kernel is the mean likelihood. -/
 theorem comp_uniformOn_univ_apply_singleton (x : 𝓧) :
     (κ ∘ₘ uniformOn (Set.univ : Set W)) {x} = (Fintype.card W : ℝ≥0∞)⁻¹ * ∑ w, κ w {x} := by
   rw [Measure.comp_apply_singleton, Finset.mul_sum]
   exact Finset.sum_congr rfl fun w _ ↦ by rw [uniformOn_univ_apply_singleton]
+
+variable [StandardBorelSpace W] [Nonempty W] [IsFiniteKernel κ]
 
 /-- Against the uniform prior, the posterior at a state is its likelihood of the observation
 normalized over the states. -/
@@ -518,6 +627,21 @@ theorem posterior_uniformOn_univ_real_finset {x : 𝓧} (hx : ∑ w, κ w {x} �
   rw [measureReal_def, posterior_uniformOn_univ_apply_finset κ hx, ENNReal.toReal_div,
     ENNReal.toReal_sum fun w _ ↦ measure_ne_top _ _,
     ENNReal.toReal_sum fun w _ ↦ measure_ne_top _ _]
+
+variable {κ} {x : 𝓧} {w₀ w₁ w₂ : W}
+
+/-- Against the uniform prior the posterior ranks two states as their likelihoods of the
+observation. -/
+theorem posterior_uniformOn_real_lt_iff (hs : κ w₀ {x} ≠ 0) :
+    ((κ†(uniformOn Set.univ)) x).real {w₁} < ((κ†(uniformOn Set.univ)) x).real {w₂} ↔
+      (κ w₁).real {x} < (κ w₂).real {x} :=
+  posterior_real_singleton_lt_iff_of_forall_eq _ _ uniformOn_univ_singleton_eq
+    uniformOn_univ_singleton_ne_zero hs
+
+theorem posterior_uniformOn_real_le_iff (hs : κ w₀ {x} ≠ 0) :
+    ((κ†(uniformOn Set.univ)) x).real {w₁} ≤ ((κ†(uniformOn Set.univ)) x).real {w₂} ↔
+      (κ w₁).real {x} ≤ (κ w₂).real {x} :=
+  not_lt.symm.trans ((not_congr (posterior_uniformOn_real_lt_iff hs)).trans not_lt)
 
 end UniformPrior
 
