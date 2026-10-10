@@ -302,7 +302,7 @@ def addedRole (va : Voice) : Option TermRole := va.newParticipant
 
 /-- The base's S receives the role of the derived slot its participant occupies. -/
 def originalRole (va : Voice) : Option TermRole :=
-  (va.image .external).bind va.targetRole
+  (va.image .external).bind fun t ↦ (va.target.status t).role
 
 /-- Under transitivization the participant of an internally-caused base occupies the causing
 process (26), and that of an externally-caused base the caused event (27). -/

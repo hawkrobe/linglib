@@ -9,7 +9,7 @@ A derivation applies voices one after another to a clause's participants. A `Sta
 where each participant sits in the current frame, the referential dependencies established and
 the agreements registered so far; applying a voice moves each participant to the slot its own
 corresponds to (`Voice.image`), suppresses those without one, lets a fresh participant into the
-slot the voice introduces (`Voice.introduced`) and links a subject the voice cumulates
+slot the voice adds (`Voice.newSlots`) and links a subject the voice cumulates
 (`Voice.fate`) to each participant cumulated with it. Agreement registers the participants in
 the subject slot, the pivot of the frame.
 
@@ -40,8 +40,9 @@ namespace Voice
 
 open ArgumentFrame (Slot)
 
-/-- A derivational stage over participants `α`: the current frame, the slot each participant
-occupies, the referential dependencies established and the agreements registered so far. -/
+/-- A derivational stage over participants `α` records the current frame, the slot each
+participant occupies, the referential dependencies established and the agreements registered so
+far. -/
 structure Stage (α : Type*) where
   /-- The current frame. -/
   frame : ArgumentFrame
@@ -61,12 +62,12 @@ variable {α : Type*} (s : Stage α)
 def subjects : List α :=
   (s.slots.filter fun p ↦ some p.2 = s.frame.coreSlots.head?).map (·.1)
 
-/-- The stage a voice derives: each participant moves to the slot its own corresponds to,
-suppressed if none, a fresh participant enters the slot the voice introduces, and a subject
+/-- In the stage a voice derives, each participant moves to the slot its own corresponds to or
+is suppressed if none, a fresh participant enters the first slot the voice adds, and a subject
 the voice cumulates is linked to each participant cumulated with it. -/
 def apply (v : Voice) (fresh : Option α) : Stage α where
   frame := v.target
-  slots := (fresh.bind fun a ↦ v.introduced.head?.map (a, ·)).toList ++
+  slots := (fresh.bind fun a ↦ v.newSlots.head?.map (a, ·)).toList ++
     s.slots.filterMap fun p ↦ (v.image p.2).map (p.1, ·)
   links := s.links ++ s.slots.flatMap fun p ↦
     if some p.2 = s.frame.coreSlots.head? ∧ v.fate p.2 = .cumulated then
