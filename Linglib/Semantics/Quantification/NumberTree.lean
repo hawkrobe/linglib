@@ -30,6 +30,7 @@ proof that the corners are the only quantifiers satisfying them, from *all* to t
 * `Quantifier.NumberTree.all`, `Quantifier.NumberTree.some`, `Quantifier.NumberTree.no`,
   `Quantifier.NumberTree.notAll`: the corners of the square of opposition.
 * `Quantifier.NumberTree.cardinal`: the quantifiers that depend on `|A ∩ B|` alone.
+* `Quantifier.NumberTree.row`: the points of a row at which a quantifier holds.
 * `Quantifier.NumberTree.ScopeMonotone`, `Quantifier.NumberTree.ScopeAntitone`: monotonicity in
   the scope, a step along a row of the tree.
 * `Quantifier.NumberTree.Asymmetric`, `Quantifier.NumberTree.StronglyConnected`,
@@ -147,6 +148,19 @@ def ofSizes (c : ℕ → ℕ → Prop) : NumberTree := fun a b ↦ c b (a + b)
 
 instance {c : ℕ → ℕ → Prop} [DecidableRel c] : DecidableRel (ofSizes c) :=
   fun a b ↦ inferInstanceAs (Decidable (c b (a + b)))
+
+/-! ### Rows
+
+Row `n` of the tree lists the ways of splitting `n` members of `A` between `B` and its complement.
+A point of the row is given by the number of members inside `B`. -/
+
+/-- The points of row `n` at which a quantifier holds, each given by `|A ∩ B|`. -/
+def row (q : NumberTree) [DecidableRel q] (n : ℕ) : Finset (Fin (n + 1)) :=
+  Finset.univ.filter fun b ↦ q (n - b) b
+
+@[simp] theorem mem_row [DecidableRel q] {n : ℕ} {b : Fin (n + 1)} :
+    b ∈ q.row n ↔ q (n - b) b := by
+  simp [row]
 
 /-! ### Scope monotonicity
 
@@ -538,7 +552,7 @@ theorem quantity_toGQ (q : NumberTree) : (q.toGQ : GQ α).Quantity :=
 theorem quantityInvariant_toGQ (q : NumberTree) : QuantityInvariant (q.toGQ : GQ α) :=
   (quantity_toGQ q).quantityInvariant
 
-/-- The quantifier of a scope-monotone tree is scope monotone: enlarging `B` within `A` moves
+/-- The quantifier of a scope-monotone tree is scope monotone, since enlarging `B` within `A` moves
 `|A \ B ∩ B'|` individuals from `A \ B` to `A ∩ B`. -/
 theorem ScopeMonotone.toGQ [Finite α] {q : NumberTree} (h : q.ScopeMonotone) :
     GQ.ScopeMonotone (q.toGQ : GQ α) := by
