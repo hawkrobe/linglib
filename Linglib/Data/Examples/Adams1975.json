@@ -1,0 +1,91 @@
+[
+  {
+    "id": "adams1975_p15",
+    "source": {"bibkey": "adams-1975", "paperLabel": "p. 15"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "If it rains tomorrow there will not be a terrific cloudburst. If there is a terrific cloudburst tomorrow it will not rain.",
+    "discourseSegments": [
+      "If it rains tomorrow there will not be a terrific cloudburst.",
+      "If there is a terrific cloudburst tomorrow it will not rain."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "contraposition"]
+    ],
+    "comment": "One might accept and affirm the first but not infer the second. Quoted in running text, here capitalized and punctuated as utterances.",
+    "verified": "page-image"
+  },
+  {
+    "id": "adams1975_p16a",
+    "source": {"bibkey": "adams-1975", "paperLabel": "p. 16"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "Either it will rain or it will snow in Berkeley next year. If it doesn't rain then it will snow in Berkeley next year.",
+    "discourseSegments": [
+      "Either it will rain or it will snow in Berkeley next year.",
+      "If it doesn't rain then it will snow in Berkeley next year."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "disjunction"]
+    ],
+    "comment": "Paradoxical to infer the second from the first. Quoted in running text, here capitalized and punctuated as utterances.",
+    "verified": "page-image"
+  },
+  {
+    "id": "adams1975_p16b",
+    "source": {"bibkey": "adams-1975", "paperLabel": "p. 16"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "If Smith dies before the election Jones will win. If Jones wins then Smith will retire. If Smith dies before the election he will retire.",
+    "discourseSegments": [
+      "If Smith dies before the election Jones will win.",
+      "If Jones wins then Smith will retire.",
+      "If Smith dies before the election he will retire."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Smith and Jones are the only candidates for a public office of which Smith is the incumbent, and Smith has announced his intention of retiring to private life in the event of his defeat.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "hypotheticalSyllogism"]
+    ],
+    "comment": "Proper to affirm the first two, obviously irrational to infer the third. Quoted in running text, here capitalized and punctuated as utterances.",
+    "verified": "page-image"
+  },
+  {
+    "id": "adams1975_p17",
+    "source": {"bibkey": "adams-1975", "paperLabel": "p. 17"},
+    "reportedIn": null,
+    "language": "stan1293",
+    "primaryText": "If Jones wins the election then Smith will retire. If Smith dies before the election and Jones wins then Smith will retire.",
+    "discourseSegments": [
+      "If Jones wins the election then Smith will retire.",
+      "If Smith dies before the election and Jones wins then Smith will retire."
+    ],
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Smith and Jones are the only candidates for a public office of which Smith is the incumbent, and Smith has announced his intention of retiring to private life in the event of his defeat.",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["pattern", "antecedentRestriction"]
+    ],
+    "comment": "One might affirm the first, but it would be absurd to infer the second. Quoted in running text, here capitalized and punctuated as utterances.",
+    "verified": "page-image"
+  }
+]
