@@ -180,7 +180,7 @@ noncomputable def groupUtility (audience : ListenerType → ℕ) (m : Message) :
 
 /-- The speaker chooses a message by the softmax of its utility toward the audience. -/
 noncomputable def speaker (α : ℝ) (audience : ListenerType → ℕ) : Measure Message :=
-  speakerOfScore (fun _ : Unit => fun m => ((α * groupUtility audience m : ℝ) : EReal)) ()
+  Kernel.softmax (fun _ : Unit => fun m => ((α * groupUtility audience m : ℝ) : EReal)) ()
 
 /-- The dogwhistle is optimal for an audience exactly when the listeners who reward it, counted
 with their numbers, outweigh those who punish it, the book's condition (2). -/

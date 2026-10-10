@@ -18,7 +18,7 @@ prior conditioned on what she knows.
 
 ## Main results
 
-* `RSA.speaker_eq_speakerOfScore_sum_log`, `RSA.speaker_eq_speakerOfScore_klDiv`: the speaker is
+* `RSA.speaker_eq_softmax_sum_log`, `RSA.speaker_eq_softmax_klDiv`: the speaker is
   the softmax of the expected log-probability the listener gives the state under her belief, and
   of the negative divergence of the listener from her belief.
 * `RSA.speaker_cond_ofDensity_apply_eq`: a speaker who knows an event on which every graded
@@ -55,8 +55,8 @@ variable [MeasurableSpace U] [Fintype U] [MeasurableSpace O] [Countable O]
 
 /-- When every listener dominates every belief, the speaker is the softmax of the expected
 log-probability the listener gives the state under the belief, less the cost. -/
-theorem speaker_eq_speakerOfScore_sum_log [∀ u, IsFiniteMeasure (L u)] (h : ∀ o u, b o ≪ L u) :
-    speaker α C L b = speakerOfScore fun o u ↦
+theorem speaker_eq_softmax_sum_log [∀ u, IsFiniteMeasure (L u)] (h : ∀ o u, b o ≪ L u) :
+    speaker α C L b = Kernel.softmax fun o u ↦
       ((α * (∑ w, (b o).real {w} * Real.log ((L u).real {w}) - C u) : ℝ) : EReal) := by
   refine congrArg Kernel.ofWeights (funext fun o ↦ funext fun u ↦ ?_)
   rw [geomMean_eq_ofReal_exp (h o u), ENNReal.ofReal_rpow_of_pos (Real.exp_pos _),
@@ -99,9 +99,9 @@ private theorem geomMean_rpow_eq_exp_klDiv {β ν : Measure W} [IsProbabilityMea
 /-- For probability beliefs the speaker is the softmax of the negative Kullback–Leibler divergence
 of the listener from the belief, less the cost, since the divergence and the expected
 log-probability differ by the entropy of the belief, which no utterance changes. -/
-theorem speaker_eq_speakerOfScore_klDiv [∀ o, IsProbabilityMeasure (b o)]
+theorem speaker_eq_softmax_klDiv [∀ o, IsProbabilityMeasure (b o)]
     [∀ u, IsZeroOrProbabilityMeasure (L u)] (hα : 0 < α) :
-    speaker α C L b = speakerOfScore fun o u ↦
+    speaker α C L b = Kernel.softmax fun o u ↦
       -((ENNReal.ofReal α * klDiv (b o) (L u) : ℝ≥0∞) : EReal) - ((α * C u : ℝ) : EReal) := by
   refine Kernel.ofWeights_eq_of_mul (c := fun o ↦ ENNReal.ofReal (Real.exp (-(α * Hm[b o]))))
     (fun o ↦ (ENNReal.ofReal_pos.2 (Real.exp_pos _)).ne') (fun _ ↦ ENNReal.ofReal_ne_top)

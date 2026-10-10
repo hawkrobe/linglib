@@ -13,7 +13,7 @@ The literal listener hears a word as the uniform distribution over the objects i
 literal listener's probability of the object, the reciprocal of the number of objects the word
 applies to (the paper's second equation, `speaker`). The speaker is the substrate's `RSA.speaker`, a
 score speaker at the informativity utility, and so inherits its characterization as the rational
-optimizer (`RSA.isGreatest_freeEnergy_speakerOfScore`). At the stimulus the speaker prefers the word
+optimizer (`Kernel.isGreatest_freeEnergy_softmax`). At the stimulus the speaker prefers the word
 with the smaller extension wherever both apply (`size_principle`), so it prefers the uniquely
 identifying *circle* to the ambiguous *blue* for the blue circle, with all its mass in the limit of
 full rationality (`prefers_informative`, `fully_rational_picks_circle`); it uses an ambiguous word

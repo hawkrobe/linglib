@@ -50,7 +50,7 @@ section ActionUtility
 
 variable {W U A : Type*} [MeasurableSpace U] [Fintype A] [MeasurableSpace A]
 
-/-- The decision-theoretic utility of an utterance at a state: the true reward of the action
+/-- The decision-theoretic utility of an utterance at a state is the true reward of the action
 the listener's policy chooses, in expectation. -/
 noncomputable def actionUtility (π : Kernel U A) (R : A → W → ℝ) (u : U) (w : W) : ℝ :=
   ∑ a, (π u).real {a} * R a w
@@ -61,8 +61,8 @@ variable [DiscreteMeasurableSpace A] (R : A → W → ℝ) (π : Kernel U A) {u 
 by the rest. -/
 theorem actionUtility_of_pair [IsMarkovKernel π] (haa' : a ≠ a') (hall : ∀ c, c = a ∨ c = a') :
     actionUtility π R u w = (π u).real {a} * R a w + (1 - (π u).real {a}) * R a' w := by
-  rw [actionUtility, Fintype.sum_eq_add a a' haa' (λ c hc => absurd (hall c) (not_or.mpr hc)),
-    ← measureReal_singleton_add_singleton_of_pair (π u) haa' (λ c _ => hall c)]
+  rw [actionUtility, Fintype.sum_eq_add a a' haa' (fun c hc => absurd (hall c) (not_or.mpr hc)),
+    ← measureReal_singleton_add_singleton_of_pair (π u) haa' (fun c _ => hall c)]
   ring
 
 end ActionUtility
@@ -71,7 +71,7 @@ section Policy
 
 variable {W U A : Type*} [Fintype W] [MeasurableSpace W] [MeasurableSpace U]
 
-/-- The listener's expected reward of an action after an utterance: the reward averaged over
+/-- The listener's expected reward of an action after an utterance is the reward averaged over
 the belief. -/
 noncomputable def expectedReward (L : Kernel U W) (R : A → W → ℝ) (u : U) (a : A) : ℝ :=
   ∑ w, (L u).real {w} * R a w
@@ -79,22 +79,22 @@ noncomputable def expectedReward (L : Kernel U W) (R : A → W → ℝ) (u : U) 
 variable [Fintype U] [DiscreteMeasurableSpace U] [Fintype A] [MeasurableSpace A]
   [DiscreteMeasurableSpace A]
 
-/-- The score of an action for the listener: rationality times expected reward. -/
+/-- The score of an action for the listener is rationality times expected reward. -/
 noncomputable def policyScore (β : ℝ) (L : Kernel U W) (R : A → W → ℝ) (u : U) (a : A) :
     EReal :=
   ((β * expectedReward L R u a : ℝ) : EReal)
 
-/-- The listener's policy: the softmax of expected reward at rationality `β`. -/
+/-- The listener's policy is the softmax of expected reward at rationality `β`. -/
 noncomputable def policy (β : ℝ) (L : Kernel U W) (R : A → W → ℝ) : Kernel U A :=
-  speakerOfScore (policyScore β L R)
+  Kernel.softmax (policyScore β L R)
 
 variable (β : ℝ) (L : Kernel U W) (R : A → W → ℝ)
 
-instance : IsFiniteKernel (policy β L R) := inferInstanceAs (IsFiniteKernel (speakerOfScore _))
+instance : IsFiniteKernel (policy β L R) := inferInstanceAs (IsFiniteKernel (Kernel.softmax _))
 
 instance [Nonempty A] : IsMarkovKernel (policy β L R) :=
-  isMarkovKernel_speakerOfScore (λ _ => ⟨Classical.arbitrary A, EReal.coe_ne_bot _⟩)
-    (λ _ _ => EReal.coe_ne_top _)
+  Kernel.isMarkovKernel_softmax (fun _ => ⟨Classical.arbitrary A, EReal.coe_ne_bot _⟩)
+    (fun _ _ => EReal.coe_ne_top _)
 
 variable {β} {u : U} {a a' : A} {w : W}
 
@@ -102,17 +102,17 @@ variable {β} {u : U} {a a' : A} {w : W}
 theorem policy_real_lt_iff (hβ : 0 < β) :
     (policy β L R u).real {a} < (policy β L R u).real {a'} ↔
       expectedReward L R u a < expectedReward L R u a' := by
-  rw [policy, speakerOfScore_real_singleton_lt_iff (score := policyScore β L R) (w := u)
-    (λ _ => EReal.coe_ne_top _) ⟨a, EReal.coe_ne_bot _⟩, policyScore, policyScore,
+  rw [policy, Kernel.softmax_real_singleton_lt_iff (score := policyScore β L R) (w := u)
+    (fun _ => EReal.coe_ne_top _) ⟨a, EReal.coe_ne_bot _⟩, policyScore, policyScore,
     EReal.coe_lt_coe_iff]
   exact mul_lt_mul_iff_right₀ hβ
 
 /-- The policy's share of an action is the real softmax of the scaled expected rewards. -/
 theorem policy_real_singleton :
-    (policy β L R u).real {a} = Real.softmax (λ a => β * expectedReward L R u a) a := by
-  rw [policy, speakerOfScore,
-    Kernel.ofWeights_real_singleton (λ u a => EReal.exp (policyScore β L R u a)) u
-      (λ b => by rw [ne_eq, EReal.exp_eq_top_iff, policyScore]; exact EReal.coe_ne_top _),
+    (policy β L R u).real {a} = Real.softmax (fun a => β * expectedReward L R u a) a := by
+  rw [policy, Kernel.softmax,
+    Kernel.ofWeights_real_singleton (fun u a => EReal.exp (policyScore β L R u a)) u
+      (fun b => by rw [ne_eq, EReal.exp_eq_top_iff, policyScore]; exact EReal.coe_ne_top _),
     Real.softmax_def]
   simp only [policyScore, EReal.exp_coe, ENNReal.toReal_ofReal (Real.exp_pos _).le]
 
@@ -121,8 +121,8 @@ difference in expected reward. -/
 theorem policy_real_of_pair (haa' : a ≠ a') (hall : ∀ c, c = a ∨ c = a') :
     (policy β L R u).real {a} =
       Real.sigmoid (β * (expectedReward L R u a - expectedReward L R u a')) := by
-  rw [policy, speakerOfScore_real_singleton_of_pair (score := policyScore β L R) (w := u) haa'
-    (EReal.coe_ne_bot _) (EReal.coe_ne_bot _) (λ _ => EReal.coe_ne_top _) (λ c _ => hall c),
+  rw [policy, Kernel.softmax_real_singleton_of_pair (score := policyScore β L R) (w := u) haa'
+    (EReal.coe_ne_bot _) (EReal.coe_ne_bot _) (fun _ => EReal.coe_ne_top _) (fun c _ => hall c),
     policyScore, policyScore, EReal.toReal_coe, EReal.toReal_coe]
   ring_nf
 

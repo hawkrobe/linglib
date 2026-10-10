@@ -8,6 +8,7 @@ public import Linglib.Core.Probability.GibbsVariational
 public import Linglib.Core.Probability.Kernel.OfDensity
 public import Linglib.Core.Probability.Kernel.OfWeights
 public import Linglib.Core.Probability.Kernel.Posterior
+public import Linglib.Core.Probability.Kernel.Softmax
 public import Mathlib.Analysis.SpecialFunctions.Log.ENNRealLogExp
 
 /-!
@@ -15,22 +16,23 @@ public import Mathlib.Analysis.SpecialFunctions.Log.ENNRealLogExp
 
 This file defines the Rational Speech Act model in mathlib's probability vocabulary, following
 Frank and Goodman's model as presented in Degen's review (eqs. 1–4) and in Franke and Bergen's
-comparison of latent-variable variants (eqs. 5–22). The literal listener conditions the prior on
-the extension of the utterance, and at a graded meaning it is the density kernel
-`Kernel.ofDensity`, which reweights the prior by the meaning; the speaker
-believes a measure on states and is the softmax of the expected log of the listener's mass under
-that belief less a real cost, scaled by the rationality, so that Frank and Goodman's speaker, who
-knows the state, believes the point mass there; and the pragmatic listeners are mathlib's
-posterior kernels `κ†μ`, of the speaker, or of the deterministic observation kernel over the joint
-of prior and speaker when the listener hears only the form of the speaker's choice. Rationality,
-cost, meaning, and prior are arguments, so findings quantify over them. The uniform-prior Boolean
-specialization with its decision procedure is `Linglib.Pragmatics.RSA.Uniform`.
+comparison of latent-variable variants (eqs. 5–22). The speaker believes a measure on states and
+is the softmax of the expected log of the listener's mass under that belief less a real cost,
+scaled by the rationality, so that Frank and Goodman's speaker, who knows the state, believes the
+point mass there. The listeners are operations of the probability library. The literal listener
+conditions the prior on the extension of the utterance, the listener of a graded meaning is the
+density kernel `Kernel.ofDensity`, which reweights the prior by the meaning, and the pragmatic
+listener is mathlib's posterior kernel `S†μ` of the speaker, or of the deterministic observation
+kernel over the joint of prior and speaker when the listener hears only the form of the speaker's
+choice. A speaker whose utility is not an expected log-probability, such as a question- or
+politeness-weighted one, is the softmax kernel `Kernel.softmax` of her score, with `⊥` marking
+the utterances she cannot use. Rationality, cost, meaning, and prior are arguments, so findings
+quantify over them. The uniform-prior Boolean specialization with its decision procedure is
+`Linglib.Pragmatics.RSA.Uniform`.
 
 ## Main definitions
 
 * `RSA.literalListener` — eq. 1: the prior conditioned on the extension of the utterance.
-* `RSA.speakerOfScore` — the softmax of an extended-real utility, `⊥` marking the
-  inapplicable utterances.
 * `RSA.speaker` — the softmax of the expected log of the listener's mass under the speaker's
   belief, less a cost. Its weights are the geometric mean of the listener's mass over the belief
   to the power `α`, times `exp (-(α * C))`; at the point-mass belief it is the speaker of
@@ -47,10 +49,6 @@ specialization with its decision procedure is `Linglib.Pragmatics.RSA.Uniform`.
 * `RSA.speaker_ofDensity_apply_singleton` — against the listener of a graded meaning the prior
   cancels from the speaker's choice, and she weighs an utterance by the geometric mean of its
   meaning over her belief and the inverse of the meaning's prior mass.
-* `RSA.speakerOfScore_eq_tilted`, `RSA.isGreatest_freeEnergy_speakerOfScore` — a score-speaker
-  row is the Gibbs measure of its score over the applicable utterances, and so the rational
-  optimizer: it maximizes the expected score less the divergence from the uniform measure on
-  them (the Gibbs variational principle).
 * `RSA.tendsto_speaker_dirac_real_singleton_atTop` — as rationality grows the speaker puts all
   its mass on the utterance the listener most favors.
 
@@ -323,98 +321,6 @@ theorem speaker_ofDensity_apply_congr (hα : 0 ≤ α) {o₁ o₂ : O}
 
 end Graded
 
-/-! #### Score speakers
-
-The softmax of an extended-real utility: row `w` is proportional to `exp (score w u)`, so an
-utterance of score `⊥`, one literally false at `w` or excluded by a quality gate, is never
-produced, and the rationality lives inside the score. Speakers whose utility is not an expected
-log-probability, such as question- or politeness-weighted ones, are score speakers. -/
-
-section ScoreSpeaker
-
-variable [Countable W] [MeasurableSingletonClass W] [Fintype U] {score : W → U → EReal}
-
-/-- The score speaker has row `w` proportional to the exponential of the score. -/
-noncomputable def speakerOfScore (score : W → U → EReal) : Kernel W U :=
-  Kernel.ofWeights fun w u ↦ EReal.exp (score w u)
-
-instance (score : W → U → EReal) : IsFiniteKernel (speakerOfScore score) :=
-  inferInstanceAs (IsFiniteKernel (Kernel.ofWeights _))
-
-/-- The score speaker is a probability kernel whenever every state has an applicable
-utterance and no score is `⊤`. -/
-theorem isMarkovKernel_speakerOfScore (h0 : ∀ w, ∃ u, score w u ≠ ⊥)
-    (htop : ∀ w u, score w u ≠ ⊤) : IsMarkovKernel (speakerOfScore score) :=
-  Kernel.isMarkovKernel_ofWeights (fun w ↦ (h0 w).imp fun _ hu ↦ mt EReal.exp_eq_zero_iff.mp hu)
-    fun w u ↦ mt EReal.exp_eq_top_iff.mp (htop w u)
-
-variable [MeasurableSingletonClass U]
-
-@[simp] theorem speakerOfScore_apply_singleton (score : W → U → EReal) (w : W) (u : U) :
-    speakerOfScore score w {u} = EReal.exp (score w u) / ∑ u', EReal.exp (score w u') :=
-  Kernel.ofWeights_apply_singleton _ w u
-
-/-- An utterance of score `⊥` is never produced. -/
-theorem speakerOfScore_apply_singleton_eq_zero {w : W} {u : U} (h : score w u = ⊥) :
-    speakerOfScore score w {u} = 0 :=
-  Kernel.ofWeights_apply_singleton_eq_zero (by rw [h, EReal.exp_bot])
-
-/-- An applicable utterance is produced with positive mass when no score is `⊤`. -/
-theorem speakerOfScore_apply_singleton_ne_zero {w : W} {u : U} (h : score w u ≠ ⊥)
-    (htop : ∀ u', score w u' ≠ ⊤) : speakerOfScore score w {u} ≠ 0 :=
-  Kernel.ofWeights_apply_singleton_ne_zero (mt EReal.exp_eq_zero_iff.mp h)
-    fun u' ↦ mt EReal.exp_eq_top_iff.mp (htop u')
-
-/-- Two states whose scores differ by a real constant across utterances have the same speaker row.
--/
-theorem speakerOfScore_apply_eq_of_add {w₁ w₂ : W} {k : ℝ} (h : ∀ u, score w₂ u = score w₁ u + k) :
-    speakerOfScore score w₂ = speakerOfScore score w₁ :=
-  Kernel.ofWeights_apply_eq_of_mul (mt EReal.exp_eq_zero_iff.mp (EReal.coe_ne_bot k))
-    (mt EReal.exp_eq_top_iff.mp (EReal.coe_ne_top k)) fun u ↦ by rw [h, EReal.exp_add]
-
-/-- Two scores differing by a real constant per state give the same speaker, since a term of the
-utility that does not depend on the utterance cancels in the softmax. -/
-theorem speakerOfScore_eq_of_add {score' : W → U → EReal} {k : W → ℝ}
-    (h : ∀ w u, score' w u = score w u + k w) : speakerOfScore score' = speakerOfScore score :=
-  Kernel.ofWeights_eq_of_mul (fun w ↦ mt EReal.exp_eq_zero_iff.mp (EReal.coe_ne_bot (k w)))
-    (fun w ↦ mt EReal.exp_eq_top_iff.mp (EReal.coe_ne_top (k w))) fun w u ↦ by
-      rw [h, EReal.exp_add]
-
-/-- Row preference of the score speaker is score comparison; the normalization cancels. -/
-theorem speakerOfScore_real_singleton_lt_iff {w : W} (htop : ∀ u, score w u ≠ ⊤)
-    (h0 : ∃ u, score w u ≠ ⊥) {u u' : U} :
-    (speakerOfScore score w).real {u} < (speakerOfScore score w).real {u'} ↔
-      score w u < score w u' := by
-  rw [speakerOfScore, Kernel.ofWeights_real_singleton_lt_iff w
-      (fun h ↦ let ⟨u₀, hu₀⟩ := h0
-        hu₀ (EReal.exp_eq_zero_iff.mp (Finset.sum_eq_zero_iff.mp h u₀ (Finset.mem_univ _))))
-      (ENNReal.sum_ne_top.mpr fun u _ ↦ mt EReal.exp_eq_top_iff.mp (htop u)),
-    EReal.exp_lt_exp_iff]
-
-/-- A real-valued score excludes no utterance, so row preference is comparison of reals. -/
-theorem speakerOfScore_coe_real_singleton_lt_iff (f : W → U → ℝ) (w : W) {u u' : U} :
-    (speakerOfScore (fun w u ↦ (f w u : EReal)) w).real {u} <
-        (speakerOfScore (fun w u ↦ (f w u : EReal)) w).real {u'} ↔ f w u < f w u' := by
-  rw [speakerOfScore_real_singleton_lt_iff (score := fun w u ↦ (f w u : EReal))
-    (fun _ ↦ EReal.coe_ne_top _) ⟨u, EReal.coe_ne_bot _⟩, EReal.coe_lt_coe_iff]
-
-/-- When exactly two utterances are applicable at a state, the share of one is the logistic
-function of the score difference. -/
-theorem speakerOfScore_real_singleton_of_pair {w : W} {u u' : U} (huu' : u ≠ u')
-    (hu : score w u ≠ ⊥) (hu' : score w u' ≠ ⊥) (htop : ∀ v, score w v ≠ ⊤)
-    (hsupp : ∀ v, score w v ≠ ⊥ → v = u ∨ v = u') :
-    (speakerOfScore score w).real {u} =
-      Real.sigmoid ((score w u).toReal - (score w u').toReal) := by
-  rw [speakerOfScore, Kernel.ofWeights_real_singleton_of_pair w huu'
-      (fun v ↦ mt EReal.exp_eq_top_iff.mp (htop v))
-      (fun v hv ↦ hsupp v (mt EReal.exp_eq_zero_iff.mpr hv)),
-    ← EReal.coe_toReal (htop u) hu, ← EReal.coe_toReal (htop u') hu', EReal.exp_coe,
-    EReal.exp_coe, ENNReal.toReal_ofReal (Real.exp_pos _).le,
-    ENNReal.toReal_ofReal (Real.exp_pos _).le, Real.exp_div_add_exp_eq_sigmoid, EReal.toReal_coe,
-    EReal.toReal_coe]
-
-end ScoreSpeaker
-
 /-! #### The speaker who knows the state
 
 The speaker of eqs. 2/6–7 knows the state, so she believes the point mass there, and her weight
@@ -663,83 +569,6 @@ theorem speaker_literalListener_dirac_real_singleton_lt_iff [DiscreteMeasurableS
     ENNReal.inv_lt_inv]
 
 end Dirac
-
-/-! #### The speaker as a Gibbs measure
-
-A score-speaker row is the Gibbs measure of its score over the applicable utterances, the
-uniform measure on them tilted by the score. The Gibbs variational principle then makes the
-speaker the rational optimizer: its row maximizes the expected score less the divergence from the
-uniform measure on the applicable utterances, with the log partition function as the maximum. -/
-
-section Gibbs
-
-open InformationTheory
-
-variable [Countable W] [MeasurableSingletonClass W] [Fintype U] [MeasurableSingletonClass U]
-  {score : W → U → EReal} {w : W}
-
-/-- A score-speaker row is the uniform measure on the applicable utterances tilted by the
-score. -/
-theorem speakerOfScore_eq_tilted (htop : ∀ u, score w u ≠ ⊤) (h0 : ∃ u, score w u ≠ ⊥) :
-    speakerOfScore score w =
-      (uniformOn {u | score w u ≠ ⊥}).tilted fun u ↦ (score w u).toReal := by
-  classical
-  set S : Set U := {u | score w u ≠ ⊥}
-  have := isProbabilityMeasure_uniformOn S.toFinite h0
-  set c : ℝ := ((Measure.count S)⁻¹).toReal
-  have hc : c ≠ 0 := ENNReal.toReal_ne_zero.2
-    ⟨ENNReal.inv_ne_zero.2 (Measure.count_apply_lt_top.2 S.toFinite).ne,
-      ENNReal.inv_ne_top.2 (Measure.count_ne_zero_iff.2 h0)⟩
-  have hν (b : U) : (uniformOn S).real {b} = S.indicator (fun _ ↦ c) b := by
-    rw [measureReal_def, uniformOn, cond_apply S.toFinite.measurableSet]
-    by_cases hb : b ∈ S
-    · rw [Set.inter_eq_right.2 (Set.singleton_subset_iff.2 hb), Measure.count_singleton, mul_one,
-        Set.indicator_of_mem hb]
-    · rw [Set.inter_singleton_eq_empty.2 hb, measure_empty, mul_zero, ENNReal.toReal_zero,
-        Set.indicator_of_notMem hb]
-  have he (b : U) : (EReal.exp (score w b)).toReal =
-      S.indicator (fun b ↦ Real.exp (score w b).toReal) b := by
-    by_cases hb : score w b = ⊥
-    · rw [hb, EReal.exp_bot, ENNReal.toReal_zero, Set.indicator_of_notMem (by simpa [S] using hb)]
-    · rw [Set.indicator_of_mem hb, ← EReal.coe_toReal (htop b) hb, EReal.exp_coe,
-        ENNReal.toReal_ofReal (Real.exp_pos _).le, EReal.toReal_coe]
-  have key (b : U) : S.indicator (fun _ ↦ c) b * Real.exp (score w b).toReal =
-      c * S.indicator (fun b ↦ Real.exp (score w b).toReal) b := by
-    by_cases hb : b ∈ S <;> simp [hb]
-  refine Measure.ext_iff_singleton.2 fun a ↦ ?_
-  rw [← ENNReal.toReal_eq_toReal_iff' (measure_ne_top _ _) (measure_ne_top _ _), ← measureReal_def,
-    ← measureReal_def, speakerOfScore,
-    Kernel.ofWeights_real_singleton (fun w u ↦ EReal.exp (score w u)) w
-      (fun u ↦ mt EReal.exp_eq_top_iff.mp (htop u)),
-    tilted_real_singleton]
-  simp_rw [he, hν, key, ← Finset.mul_sum, mul_div_mul_left _ _ hc]
-
-/-- The score speaker attains the log partition function as its free energy relative to the
-uniform measure on the applicable utterances. -/
-theorem freeEnergy_speakerOfScore (htop : ∀ u, score w u ≠ ⊤) (h0 : ∃ u, score w u ≠ ⊥) :
-    (uniformOn {u | score w u ≠ ⊥}).freeEnergy (fun u ↦ (score w u).toReal)
-        (speakerOfScore score w) =
-      cgf (fun u ↦ (score w u).toReal) (uniformOn {u | score w u ≠ ⊥}) 1 := by
-  have := isProbabilityMeasure_uniformOn (Set.toFinite {u | score w u ≠ ⊥}) h0
-  rw [speakerOfScore_eq_tilted htop h0]
-  exact freeEnergy_tilted _ .of_finite .of_finite .of_finite
-
-/-- The score speaker is the rational optimizer. Among the distributions absolutely continuous
-with respect to the uniform measure on the applicable utterances, its row has the greatest
-expected score less divergence from that uniform measure. -/
-theorem isGreatest_freeEnergy_speakerOfScore (htop : ∀ u, score w u ≠ ⊤)
-    (h0 : ∃ u, score w u ≠ ⊥) :
-    IsGreatest ((uniformOn {u | score w u ≠ ⊥}).freeEnergy (fun u ↦ (score w u).toReal) ''
-        {q | IsProbabilityMeasure q ∧ q ≪ uniformOn {u | score w u ≠ ⊥} ∧
-          Integrable (llr q (uniformOn {u | score w u ≠ ⊥})) q ∧
-          Integrable (fun u ↦ (score w u).toReal) q})
-      ((uniformOn {u | score w u ≠ ⊥}).freeEnergy (fun u ↦ (score w u).toReal)
-        (speakerOfScore score w)) := by
-  have := isProbabilityMeasure_uniformOn (Set.toFinite {u | score w u ≠ ⊥}) h0
-  rw [freeEnergy_speakerOfScore htop h0]
-  exact isGreatest_cgf _ .of_finite .of_finite .of_finite
-
-end Gibbs
 
 /-! #### The heard form
 

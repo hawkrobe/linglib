@@ -265,12 +265,12 @@ noncomputable abbrev naive (c : Conclusion) : Measure State := listener φ μ c.
 
 /-- The literal speaker scores a conclusion by the reasoner's probability that it is true. -/
 noncomputable def literalSpeaker : Kernel Syllogism Conclusion :=
-  speakerOfScore fun syl c ↦ ((α * (reasoner φ μ syl).real (extension c.said) : ℝ) : EReal)
+  Kernel.softmax fun syl c ↦ ((α * (reasoner φ μ syl).real (extension c.said) : ℝ) : EReal)
 
 /-- The state-communication speaker scores a conclusion by the expected log-probability the
 naive listener gives the reasoner's state. -/
 noncomputable def stateCommunication : Kernel Syllogism Conclusion :=
-  speakerOfScore fun syl c ↦
+  Kernel.softmax fun syl c ↦
     ((α * ∑ s, (reasoner φ μ syl).real {s} * Real.log ((naive φ μ c).real {s}) : ℝ) : EReal)
 
 /-- The belief-alignment speaker believes what the reasoner believes and addresses the naive
@@ -285,18 +285,18 @@ variable {φ μ α}
 
 /-- The belief-alignment speaker scores a conclusion by the negative divergence of the naive
 listener's beliefs from the reasoner's. -/
-theorem beliefAlignment_eq_speakerOfScore_klDiv [IsProbabilityMeasure μ] (hα : 0 < α) (hφ : φ ≠ 0)
+theorem beliefAlignment_eq_softmax_klDiv [IsProbabilityMeasure μ] (hα : 0 < α) (hφ : φ ≠ 0)
     (hφ' : φ ≠ ∞) :
-    beliefAlignment φ μ α = speakerOfScore fun syl c ↦
+    beliefAlignment φ μ α = Kernel.softmax fun syl c ↦
       -((ENNReal.ofReal α * klDiv (reasoner φ μ syl) (naive φ μ c) : ℝ≥0∞) : EReal) := by
   have (us : List Sentence) := isProbabilityMeasure_listener (μ := μ) hφ hφ' us
-  rw [beliefAlignment, speaker_eq_speakerOfScore_klDiv hα]
+  rw [beliefAlignment, speaker_eq_softmax_klDiv hα]
   simp
 
 /-- As printed, the state-communication and belief-alignment speakers are one speaker. -/
 theorem stateCommunication_eq_beliefAlignment [IsFiniteMeasure μ] (hφ : φ ≠ 0) (hφ' : φ ≠ ∞) :
     stateCommunication φ μ α = beliefAlignment φ μ α := by
-  rw [beliefAlignment, speaker_eq_speakerOfScore_sum_log fun _ _ ↦
+  rw [beliefAlignment, speaker_eq_softmax_sum_log fun _ _ ↦
     listener_absolutelyContinuous hφ hφ' _ _]
   simp [stateCommunication]
 
@@ -305,7 +305,7 @@ true at every state. -/
 theorem literalSpeaker_le_nothing_follows (hα : 0 ≤ α) (syl : Syllogism) (c : Conclusion) :
     (literalSpeaker φ μ α syl).real {c} ≤ (literalSpeaker φ μ α syl).real {none} := by
   refine not_lt.1 fun h ↦ ?_
-  rw [literalSpeaker, speakerOfScore_coe_real_singleton_lt_iff] at h
+  rw [literalSpeaker, Kernel.softmax_coe_real_singleton_lt_iff] at h
   exact h.not_ge (mul_le_mul_of_nonneg_left
     (measureReal_mono (extension_said_none ▸ Set.subset_univ _) (measure_ne_top _ _)) hα)
 

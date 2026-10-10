@@ -31,7 +31,7 @@ descriptions weakens the asymmetric speaker's relative preference.
 ## Implementation notes
 
 * The literal listener `Game.L0` is the uniform prior on a finite context reweighted by the
-  meaning of Eq. 1, and the speakers are `RSA.speakerOfScore` over the single state of the
+  meaning of Eq. 1, and the speakers are `Kernel.softmax` over the single state of the
   fixed target.
 * Appendix A's proof treats a hidden object that satisfies both descriptions as leaving
   the listener unchanged, which holds only when the two descriptions have the same mass
@@ -106,7 +106,7 @@ theorem meaning_le_one (hε1 : g.ε ≤ 1) (u : U) (o : O) : g.meaning u o ≤ 1
   unfold meaning; split_ifs <;> linarith
 
 theorem mass_pos (hε : 0 < g.ε) {S : Finset O} (hS : S.Nonempty) (u : U) : 0 < g.mass S u :=
-  sum_pos (λ o _ => g.meaning_pos hε u o) hS
+  sum_pos (fun o _ => g.meaning_pos hε u o) hS
 
 /-- A more specific utterance has pointwise smaller meaning. -/
 theorem meaning_le_of_specific (hε1 : g.ε ≤ 1) {u₀ u₁ : U}
@@ -120,7 +120,7 @@ theorem meaning_le_of_specific (hε1 : g.ε ≤ 1) {u₀ u₁ : U}
 /-- Two utterances true of the same objects of a context have the same mass there. -/
 theorem mass_congr {S : Finset O} {u₀ u₁ : U}
     (h : ∀ o ∈ S, g.applies u₀ o ↔ g.applies u₁ o) : g.mass S u₀ = g.mass S u₁ :=
-  sum_congr rfl λ o ho => by simp [meaning, h o ho]
+  sum_congr rfl fun o ho => by simp [meaning, h o ho]
 
 section Listener
 
@@ -146,7 +146,7 @@ theorem L0_insert_le (hε : 0 < g.ε) (u : U) (o h : O) (hh : h ∉ g.context)
 
 /-- Listener accuracy is monotone in the listener's perspective-taking weight. -/
 theorem mixListener_target_mono (hε : 0 < g.ε) (u : U) (h : O) (hh : h ∉ g.context)
-    (hc : g.context.Nonempty) : Monotone λ wL => g.mixListener h wL u g.target := by
+    (hc : g.context.Nonempty) : Monotone fun wL => g.mixListener h wL u g.target := by
   intro a b hab
   simp only [mixListener]
   nlinarith [g.L0_insert_le hε u g.target h hh hc]
@@ -180,9 +180,9 @@ theorem gain_eq (hε : 0 < g.ε) (hc : g.context.Nonempty) (hsum : ∑ h, g.hidd
       ∑ h, g.hidden h *
         (Real.log (1 + g.meaning u₁ h / g.mass g.context u₁) -
           Real.log (1 + g.meaning u₀ h / g.mass g.context u₀)) := by
-  have hm : ∀ u o, g.meaning u o ≠ 0 := λ u o => (g.meaning_pos hε u o).ne'
-  have hS : ∀ u, g.mass g.context u ≠ 0 := λ u => (g.mass_pos hε hc u).ne'
-  have hd : ∀ u h, g.meaning u h + g.mass g.context u ≠ 0 := λ u h =>
+  have hm : ∀ u o, g.meaning u o ≠ 0 := fun u o => (g.meaning_pos hε u o).ne'
+  have hS : ∀ u, g.mass g.context u ≠ 0 := fun u => (g.mass_pos hε hc u).ne'
+  have hd : ∀ u h, g.meaning u h + g.mass g.context u ≠ 0 := fun u h =>
     (add_pos (g.meaning_pos hε u h) (g.mass_pos hε hc u)).ne'
   have key : ∀ u h, Real.log (g.meaning u g.target / (g.meaning u h + g.mass g.context u)) =
       Real.log (g.L0 g.context u g.target) -
@@ -216,14 +216,14 @@ theorem gain_pos_of_tie (hε : 0 < g.ε) (hε1 : g.ε < 1) (hc : g.context.Nonem
   rw [← sub_pos, gain_eq g hε hc hsum, htie]
   obtain ⟨h₀, h₁, h₂, hpos⟩ := hstar
   have hS := g.mass_pos hε hc u₁
-  have hpos' : ∀ u h, 0 < 1 + g.meaning u h / g.mass g.context u₁ := λ u h =>
+  have hpos' : ∀ u h, 0 < 1 + g.meaning u h / g.mass g.context u₁ := fun u h =>
     add_pos one_pos (div_pos (g.meaning_pos hε u h) hS)
   have hterm : ∀ h, 0 ≤ g.hidden h *
       (Real.log (1 + g.meaning u₁ h / g.mass g.context u₁) -
-        Real.log (1 + g.meaning u₀ h / g.mass g.context u₁)) := λ h =>
+        Real.log (1 + g.meaning u₀ h / g.mass g.context u₁)) := fun h =>
     mul_nonneg (hp h) (sub_nonneg.2 (Real.log_le_log (hpos' u₀ h)
       (by gcongr; exact g.meaning_le_of_specific hε1.le hspec h)))
-  refine lt_of_lt_of_le ?_ (single_le_sum (λ h _ => hterm h) (mem_univ h₀))
+  refine lt_of_lt_of_le ?_ (single_le_sum (fun h _ => hterm h) (mem_univ h₀))
   refine mul_pos hpos (sub_pos.2 (Real.log_lt_log (hpos' u₀ h₀) ?_))
   have : g.meaning u₀ h₀ < g.meaning u₁ h₀ := by simp [meaning, h₁, h₂, hε1]
   gcongr
@@ -256,7 +256,7 @@ theorem gain_neg_of_shared_hidden (hε : 0 < g.ε) (hc : g.context.Nonempty)
   obtain ⟨h₀, hpos⟩ : ∃ h, 0 < g.hidden h := by
     by_contra hnone
     have : ∑ h, g.hidden h = 0 :=
-      sum_eq_zero λ h _ => le_antisymm (not_lt.1 λ hlt => hnone ⟨h, hlt⟩) (hp h)
+      sum_eq_zero fun h _ => le_antisymm (not_lt.1 fun hlt => hnone ⟨h, hlt⟩) (hp h)
     linarith
   obtain ⟨hh₀, hh₁⟩ := hshared h₀ hpos
   have hneg : g.hidden h₀ *
@@ -268,7 +268,7 @@ theorem gain_neg_of_shared_hidden (hε : 0 < g.ε) (hc : g.context.Nonempty)
     refine mul_neg_of_pos_of_neg hpos (sub_neg.2 (Real.log_lt_log
       (add_pos one_pos (div_pos one_pos hS₁)) ?_))
     gcongr
-  exact (sum_lt_sum (λ h _ => hterm h) ⟨h₀, mem_univ _, hneg⟩).trans_eq sum_const_zero
+  exact (sum_lt_sum (fun h _ => hterm h) ⟨h₀, mem_univ _, hneg⟩).trans_eq sum_const_zero
 
 /-! ### The resource-rational speaker (§2.4) -/
 
@@ -287,7 +287,7 @@ theorem accuracy_eq (u : U) (wL : ℝ) :
       (1 - wL) * ∑ h, g.hidden h * g.L0 (insert h g.context) u g.target := by
   simp only [accuracy, mixListener, mul_sum]
   rw [← sum_add_distrib]
-  exact sum_congr rfl λ h _ => by ring
+  exact sum_congr rfl fun h _ => by ring
 
 variable [Fintype U] [Nonempty U]
 
@@ -323,15 +323,15 @@ variable [Fintype U] [MeasurableSpace U] [MeasurableSingletonClass U]
 /-- (1), (5): the mixture speaker with rationality `α` and perspective-taking weight `wS`,
 a score speaker over the single state of the fixed target. -/
 noncomputable def mixSpeaker (α wS : ℝ) : Kernel Unit U :=
-  RSA.speakerOfScore λ _ u => ((α * g.mixUtility wS u : ℝ) : EReal)
+  Kernel.softmax fun _ u => ((α * g.mixUtility wS u : ℝ) : EReal)
 
 theorem mixSpeaker_lt_iff {α : ℝ} (hα : 0 < α) (wS : ℝ) {u u' : U} :
     (g.mixSpeaker α wS ()).real {u} < (g.mixSpeaker α wS ()).real {u'} ↔
       g.mixUtility wS u < g.mixUtility wS u' := by
-  rw [mixSpeaker, RSA.speakerOfScore_real_singleton_lt_iff
-    (score := λ _ u => ((α * g.mixUtility wS u : ℝ) : EReal)) (λ _ => EReal.coe_ne_top _)
+  rw [mixSpeaker, Kernel.softmax_real_singleton_lt_iff
+    (score := fun _ u => ((α * g.mixUtility wS u : ℝ) : EReal)) (fun _ => EReal.coe_ne_top _)
     ⟨u, EReal.coe_ne_bot _⟩, EReal.coe_lt_coe_iff]
-  exact ⟨λ h => lt_of_mul_lt_mul_left h hα.le, λ h => mul_lt_mul_of_pos_left h hα⟩
+  exact ⟨fun h => lt_of_mul_lt_mul_left h hα.le, fun h => mul_lt_mul_of_pos_left h hα⟩
 
 /-- Appendix A's corollary: whenever the egocentric speaker does not disprefer the more
 specific description, every mixture speaker with `wS > 0` prefers it, under the tie of
@@ -366,16 +366,16 @@ abbrev Obj := Feature → Bool
 abbrev Utt := Finset Feature
 
 instance : MeasurableSpace Utt := ⊤
-instance : MeasurableSingletonClass Utt := ⟨λ _ => trivial⟩
+instance : MeasurableSingletonClass Utt := ⟨fun _ => trivial⟩
 
 /-- The target matches itself on every feature. -/
-def target : Obj := λ _ => true
+def target : Obj := fun _ => true
 
 /-- The distractor sharing the target's color and texture. -/
-def d1 : Obj := λ f => decide (f ≠ .shape)
+def d1 : Obj := fun f => decide (f ≠ .shape)
 
 /-- The distractor matching the target on nothing. -/
-def d2 : Obj := λ _ => false
+def d2 : Obj := fun _ => false
 
 /-- The prior over the hidden object's profile when each of the four values of a feature is
 equally likely: a match on each feature with probability `1/4`, independently. -/
@@ -392,20 +392,20 @@ noncomputable def stimulus (c : ℝ) : Game Obj Utt where
   cost u := c * u.card
   ε := 1 / 100
 
-instance (c : ℝ) : ∀ u, DecidablePred ((stimulus c).applies u) := λ u o =>
+instance (c : ℝ) : ∀ u, DecidablePred ((stimulus c).applies u) := fun u o =>
   inferInstanceAs (Decidable (∀ f ∈ u, o f = true))
 
 theorem stimulus_hidden (c : ℝ) : (stimulus c).hidden = hiddenPrior := rfl
 
 theorem hiddenPrior_pos (o : Obj) : 0 < hiddenPrior o :=
-  prod_pos λ f _ => by split_ifs <;> norm_num
+  prod_pos fun f _ => by split_ifs <;> norm_num
 
 theorem hiddenPrior_nonneg (o : Obj) : 0 ≤ hiddenPrior o := (hiddenPrior_pos o).le
 
 theorem sum_hiddenPrior : ∑ o : Obj, hiddenPrior o = 1 := by
   unfold hiddenPrior
   rw [← Fintype.prod_sum
-    (f := λ (_ : Feature) (b : Bool) => if b = true then (1 / 4 : ℝ) else 3 / 4)]
+    (f := fun (_ : Feature) (b : Bool) => if b = true then (1 / 4 : ℝ) else 3 / 4)]
   simp
   norm_num
 
@@ -414,7 +414,7 @@ the bare shape have the same mass there. -/
 theorem stimulus_tie (c : ℝ) :
     (stimulus c).mass (stimulus c).context {.shape, .color, .texture} =
       (stimulus c).mass (stimulus c).context {.shape} :=
-  (stimulus c).mass_congr λ o ho => by
+  (stimulus c).mass_congr fun o ho => by
     simp only [stimulus, mem_insert, mem_singleton] at ho
     rcases ho with rfl | rfl | rfl
     · show (∀ f ∈ ({.shape, .color, .texture} : Finset Feature), target f = true) ↔
@@ -438,8 +438,8 @@ theorem stimulus_prefers_full {c α wS : ℝ} (hα : 0 < α) (hw : 0 < wS)
       ((stimulus c).mixSpeaker α wS ()).real {({.shape, .color, .texture} : Utt)} := by
   refine (stimulus c).mixSpeaker_prefers (by norm_num [stimulus]) (by norm_num [stimulus])
     ⟨target, by simp [stimulus]⟩ hiddenPrior_nonneg sum_hiddenPrior
-    (λ o h f hf => h f (by simp only [mem_singleton] at hf; simp [hf])) (stimulus_tie c)
-    ⟨λ f => decide (f = .shape), ?_, ?_, ?_⟩ hego hα hw
+    (fun o h f hf => h f (by simp only [mem_singleton] at hf; simp [hf])) (stimulus_tie c)
+    ⟨fun f => decide (f = .shape), ?_, ?_, ?_⟩ hego hα hw
   · intro f hf; simp at hf; simp [hf]
   · intro h; have := h .color (by simp); simp at this
   · rw [stimulus_hidden]; exact hiddenPrior_pos _
