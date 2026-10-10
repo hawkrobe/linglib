@@ -8,33 +8,37 @@ public import Mathlib.Probability.Kernel.Composition.Comp
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 /-!
-# Goodman and Stuhlmüller (2013): Knowledge and Implicature
+# Goodman and Stuhlmüller (2013): Knowledge and Implicature: Modeling Language Understanding as Social Cognition
 
-This file formalizes [goodman-stuhlmuller-2013]'s rational speech-act model of scalar
-implicature under a speaker with incomplete knowledge. The listener infers the state, how many
-of three objects have a property, from the utterance and the speaker's access, the number of
-objects she looked at, by inverting a speaker who softmax-optimizes the expected informativity
-of her utterance under her belief, her posterior over states given what she observed. The
-observation is hypergeometric (`obs`), the speaker's utility is the log-probability of the
-literal listener (`obsSpeaker`), the listener marginalizes the observation she cannot see
-(`speaker`) and applies Bayes' rule (`listener`). With complete access, *some* implicates
-*not all* and a numeral its exact reading, for every rationality (`some_full`,
-`numerals_full`); with access to one or two objects, the *some* implicature is canceled
-(`some_partial`), *one* after one object and *two* after two carry no implicature
-(`one_minimal`, `two_partial`), while *one* after two objects keeps the partial implicature
-against three but not against two (`one_partial`), the fine-grained interaction the
-experiments test.
+Goodman and Stuhlmüller model scalar implicature under a speaker with incomplete knowledge. The
+listener infers the state, how many of three objects have a property, from the utterance and the
+speaker's access, the number of objects she looked at. The speaker observes how many of the
+objects she looked at have the property, a hypergeometric draw (`obs`), believes her posterior
+over states (`belief`), and softmax-optimizes the expected log-probability the literal listener
+gives the state under that belief (`obsSpeaker`). The listener marginalizes the observation she
+cannot see (`speaker`) and applies Bayes' rule (`listener`).
+
+## Main statements
+
+* `obsSpeaker_real_singleton`: the speaker says only what holds at every state her observation
+  leaves possible, and weights such an utterance by the inverse size of its extension to the
+  power of the rationality.
+* `some_full`, `numerals_full`: with complete access *some* implicates *not all* and a numeral
+  its exact reading, at every rationality.
+* `some_partial`, `one_minimal`, `two_partial`: with access to one or two objects the *some*
+  implicature is canceled, and *one* after one object and *two* after two carry none.
+* `one_partial`: *one* after two objects keeps the implicature against three but not against
+  two.
 
 ## Implementation notes
 
-The literal listener is uniform on an utterance's extension, so the expected log-probability
-under the speaker's belief is `-log |⟦u⟧|` when the utterance holds at every state the
-observation leaves possible, Quality, and `-∞` otherwise; `obsSpeaker` is the softmax of that
-closed form, with weight `|⟦u⟧|^{-α}` or `0`. The alternatives are the paper's, *none*, *some*,
-*all* and *one*, *two*, *three*, without a silent option: an observation compatible with no
-utterance gives the zero row, which the marginal speaker simply loses. The prior is uniform, the
-regime of the paper's expository predictions; its fitted binomial prior and its rationality
-`3.4` only reshape the plotted magnitudes. Experiment results and the quantitative fit are prose.
+* The speaker is `RSA.speaker` at her posterior belief and no cost. The literal listener is
+  uniform on an utterance's extension, so only the support of the belief matters.
+* The alternatives are the paper's, *none*, *some*, *all* and *one*, *two*, *three*, without a
+  silent option.
+* The prior is uniform, the regime of the paper's expository predictions; its fitted binomial
+  prior and its rationality only reshape the plotted magnitudes. Experiment results and the
+  quantitative fit are not formalized.
 
 ## References
 
@@ -50,13 +54,13 @@ namespace GoodmanStuhlmuller2013
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal
 
-/-- A world state: how many of the three objects have the property. -/
+/-- A world state is the number of the three objects that have the property. -/
 abbrev WorldState := Fin 4
 
-/-- The speaker's access: how many of the three objects she looks at. -/
+/-- The speaker's access is the number of the three objects she looks at. -/
 abbrev Access := Fin 4
 
-/-- An observation: how many of the objects she looks at have the property. -/
+/-- An observation is the number of the objects she looks at that have the property. -/
 abbrev Obs := Fin 4
 
 /-! ### The observation kernel -/
@@ -69,7 +73,7 @@ def hyper (a : Access) (s : WorldState) (k : Obs) : ℕ :=
 
 /-- The observation kernel `P(o | a, s)` of section 1. -/
 noncomputable def obs (a : Access) : Kernel WorldState Obs :=
-  Kernel.ofWeights λ s k => (hyper a s k : ℝ≥0∞)
+  Kernel.ofWeights fun s k ↦ (hyper a s k : ℝ≥0∞)
 
 /-- A state is compatible with an observation when the observation is possible there. -/
 def obsCompatible (a : Access) (k : Obs) (s : WorldState) : Prop := hyper a s k ≠ 0
@@ -88,13 +92,27 @@ theorem obs_apply_singleton (a : Access) (s : WorldState) (k : Obs) :
 theorem obs_apply_singleton_ne_zero_iff (a : Access) (s : WorldState) (k : Obs) :
     obs a s {k} ≠ 0 ↔ obsCompatible a k s := by
   rw [obs_apply_singleton, ne_eq, ENNReal.div_eq_zero_iff, not_or, Nat.cast_eq_zero]
-  exact ⟨And.left, λ h => ⟨h, ENNReal.sum_ne_top.mpr λ _ _ => ENNReal.natCast_ne_top _⟩⟩
+  exact ⟨And.left, fun h ↦ ⟨h, ENNReal.sum_ne_top.mpr fun _ _ ↦ ENNReal.natCast_ne_top _⟩⟩
 
 theorem obs_real_singleton (a : Access) (s : WorldState) (k : Obs) :
     (obs a s).real {k} = (hyper a s k : ℝ) / ∑ k', (hyper a s k' : ℝ) := by
-  rw [obs, Kernel.ofWeights_real_singleton (w := λ s k => (hyper a s k : ℝ≥0∞)) _
-    (λ _ => ENNReal.natCast_ne_top _)]
+  rw [obs, Kernel.ofWeights_real_singleton (w := fun s k ↦ (hyper a s k : ℝ≥0∞)) _
+    (fun _ ↦ ENNReal.natCast_ne_top _)]
   simp only [ENNReal.toReal_natCast]
+
+/-- The speaker's belief after an observation is her posterior over states under the uniform
+prior. -/
+noncomputable def belief (a : Access) : Kernel Obs WorldState := (obs a)†(uniformOn Set.univ)
+
+instance (a : Access) : IsMarkovKernel (belief a) :=
+  inferInstanceAs (IsMarkovKernel ((obs a)†(uniformOn Set.univ)))
+
+/-- After a possible observation the speaker entertains exactly the states compatible with it. -/
+theorem belief_apply_singleton_ne_zero_iff {a : Access} {k : Obs}
+    (hk : (obs a ∘ₘ uniformOn Set.univ) {k} ≠ 0) (s : WorldState) :
+    belief a k {s} ≠ 0 ↔ obsCompatible a k s := by
+  rw [belief, posterior_apply_singleton_ne_zero_iff _ _ hk, obs_apply_singleton_ne_zero_iff]
+  exact and_iff_right (uniformOn_univ_singleton_ne_zero s)
 
 /-! ### The speaker and the listener -/
 
@@ -103,8 +121,8 @@ section Model
 variable {U : Type*} [MeasurableSpace U] [Fintype U] [MeasurableSingletonClass U]
   (m : U → WorldState → Prop) [∀ u, DecidablePred (m u)]
 
-/-- Quality: the utterance holds at every state the observation leaves possible, so its
-expected log-probability under the speaker's belief is finite. -/
+/-- An utterance satisfies Quality when it holds at every state the observation leaves
+possible. -/
 def Quality (a : Access) (k : Obs) (u : U) : Prop := ∀ s, obsCompatible a k s → m u s
 
 instance (a : Access) (k : Obs) (u : U) : Decidable (Quality m a k u) :=
@@ -113,62 +131,60 @@ instance (a : Access) (k : Obs) (u : U) : Decidable (Quality m a k u) :=
 /-- The extension of an utterance. -/
 def ext (u : U) : Finset WorldState := Finset.univ.filter (m u)
 
-/-- The literal listener `Plex` of section 1: uniform on the utterance's extension. -/
+/-- The literal listener `Plex` of section 1 is uniform on the utterance's extension. -/
 noncomputable abbrev L0 : Kernel U WorldState := RSA.uniformListener (ext m)
 
-/-- The speaker of equations (2) and (3) after observing `k` of `a` objects: the softmax at
-rationality `α` of the expected log-probability of the literal listener under her belief,
-which is `-log |⟦u⟧|` under Quality and `-∞` otherwise. -/
+/-- The speaker of equations (2) and (3) believes her posterior over states and addresses the
+literal listener. -/
 noncomputable def obsSpeaker (α : ℝ) (a : Access) : Kernel Obs U :=
-  Kernel.ofWeights λ k u =>
-    if Quality m a k u then ENNReal.ofReal (((ext m u).card : ℝ)⁻¹ ^ α) else 0
+  RSA.speaker α 0 (L0 m) (belief a)
 
 instance (α : ℝ) (a : Access) : IsFiniteKernel (obsSpeaker m α a) :=
-  inferInstanceAs (IsFiniteKernel (Kernel.ofWeights _))
+  inferInstanceAs (IsFiniteKernel (RSA.speaker _ _ _ _))
 
-/-- Equation (4): the speaker the listener models, the observation she cannot see marginalized
-over the observation kernel. -/
+/-- The speaker the listener models (equation 4) marginalizes the observation the listener cannot
+see over the observation kernel. -/
 noncomputable def speaker (α : ℝ) (a : Access) : Kernel WorldState U :=
   obsSpeaker m α a ∘ₖ obs a
 
 instance (α : ℝ) (a : Access) : IsFiniteKernel (speaker m α a) :=
   inferInstanceAs (IsFiniteKernel (obsSpeaker m α a ∘ₖ obs a))
 
-/-- Equation (1): the listener, the speaker's Bayesian inverse under a uniform prior. -/
+/-- The listener (equation 1) is the speaker's Bayesian inverse under a uniform prior. -/
 noncomputable def listener (α : ℝ) (a : Access) : Kernel U WorldState :=
   (speaker m α a)†(uniformOn Set.univ)
 
 variable {m}
 
-/-- Under Quality the literal listener's probability of a possible state is the inverse of
-the extension's size, the quantity the speaker's weight raises to the rationality. -/
-theorem L0_apply_singleton_of_quality {a : Access} {k : Obs} {u : U} (hq : Quality m a k u)
-    {s : WorldState} (hs : obsCompatible a k s) : L0 m u {s} = ((ext m u).card : ℝ≥0∞)⁻¹ := by
-  rw [L0, RSA.uniformListener_apply_singleton, ite_eq_left]
-  exact Finset.mem_filter.mpr ⟨Finset.mem_univ _, hq s hs⟩
+/-- After a possible observation the speaker says only what holds at every state it leaves
+possible, and weights such an utterance by the inverse size of its extension to the power `α`. -/
+theorem obsSpeaker_real_singleton {α : ℝ} (hα : 0 < α) {a : Access} {k : Obs}
+    (hk : (obs a ∘ₘ uniformOn Set.univ) {k} ≠ 0) (u : U) :
+    (obsSpeaker m α a k).real {u} =
+      (if Quality m a k u then ((ext m u).card : ℝ)⁻¹ ^ α else 0) /
+        ∑ u', if Quality m a k u' then ((ext m u').card : ℝ)⁻¹ ^ α else 0 :=
+  RSA.speaker_uniformListener_real_singleton (ext m) hα (fun _ ↦ forall_congr' fun s ↦
+    imp_congr (belief_apply_singleton_ne_zero_iff hk s).symm (by simp [ext])) u
 
 theorem speaker_apply_singleton (α : ℝ) (a : Access) (s : WorldState) (u : U) :
     speaker m α a s {u} = ∑ k, obs a s {k} * obsSpeaker m α a k {u} := by
   rw [speaker, Kernel.comp_apply' _ _ _ (measurableSet_singleton u), lintegral_fintype]
-  exact Finset.sum_congr rfl λ k _ => mul_comm _ _
+  exact Finset.sum_congr rfl fun k _ ↦ mul_comm _ _
 
-theorem speaker_real_singleton (α : ℝ) (a : Access) (s : WorldState) (u : U) :
-    (speaker m α a s).real {u} = ∑ k, (obs a s).real {k} * (obsSpeaker m α a k).real {u} := by
+/-- The speaker the listener models has a closed form, since only possible observations
+contribute. -/
+theorem speaker_real_singleton {α : ℝ} (hα : 0 < α) (a : Access) (s : WorldState) (u : U) :
+    (speaker m α a s).real {u} = ∑ k, (obs a s).real {k} *
+      ((if Quality m a k u then ((ext m u).card : ℝ)⁻¹ ^ α else 0) /
+        ∑ u', if Quality m a k u' then ((ext m u').card : ℝ)⁻¹ ^ α else 0) := by
   rw [measureReal_def, speaker_apply_singleton,
-    ENNReal.toReal_sum λ k _ => ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)]
-  simp only [ENNReal.toReal_mul, measureReal_def]
-
-theorem obsSpeaker_real_singleton (α : ℝ) (a : Access) (k : Obs) (u : U) :
-    (obsSpeaker m α a k).real {u} =
-      (if Quality m a k u then ((ext m u).card : ℝ)⁻¹ ^ α else 0) /
-        ∑ u', if Quality m a k u' then ((ext m u').card : ℝ)⁻¹ ^ α else 0 := by
-  rw [obsSpeaker, Kernel.ofWeights_real_singleton
-    (w := λ k u => if Quality m a k u then ENNReal.ofReal (((ext m u).card : ℝ)⁻¹ ^ α) else 0) _
-    (λ u' => by split_ifs <;> simp)]
-  have h : ∀ u', (ENNReal.ofReal (((ext m u').card : ℝ)⁻¹ ^ α)).toReal =
-      ((ext m u').card : ℝ)⁻¹ ^ α :=
-    λ u' => ENNReal.toReal_ofReal (Real.rpow_nonneg (inv_nonneg.mpr (Nat.cast_nonneg _)) α)
-  simp only [apply_ite ENNReal.toReal, h, ENNReal.toReal_zero]
+    ENNReal.toReal_sum fun k _ ↦ ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)]
+  refine Finset.sum_congr rfl fun k _ ↦ ?_
+  rw [ENNReal.toReal_mul, ← measureReal_def, ← measureReal_def]
+  rcases eq_or_ne (obs a s {k}) 0 with h0 | h0
+  · rw [measureReal_def, h0, ENNReal.toReal_zero, zero_mul, zero_mul]
+  · rw [obsSpeaker_real_singleton hα
+      (comp_apply_singleton_ne_zero _ _ (uniformOn_univ_singleton_ne_zero s) h0)]
 
 /-- Comparing the listener's posterior at two states is comparing the speaker's probability of
 the utterance at them, the uniform prior canceling. -/
@@ -202,10 +218,10 @@ inductive QUtt where
   deriving DecidableEq, Fintype
 
 instance : MeasurableSpace QUtt := ⊤
-instance : DiscreteMeasurableSpace QUtt := ⟨λ _ => MeasurableSpace.measurableSet_top⟩
+instance : DiscreteMeasurableSpace QUtt := ⟨fun _ ↦ MeasurableSpace.measurableSet_top⟩
 instance : MeasurableSingletonClass QUtt := DiscreteMeasurableSpace.toMeasurableSingletonClass
 
-/-- The standard meanings: *none* at zero, *some* at one or more, *all* at three. -/
+/-- The standard meanings put *none* at zero, *some* at one or more and *all* at three. -/
 def qMeaning : QUtt → WorldState → Prop
   | .none_, s => s = 0
   | .some_, s => 1 ≤ s
@@ -224,7 +240,7 @@ inductive NumUtt where
   deriving DecidableEq, Fintype
 
 instance : MeasurableSpace NumUtt := ⊤
-instance : DiscreteMeasurableSpace NumUtt := ⟨λ _ => MeasurableSpace.measurableSet_top⟩
+instance : DiscreteMeasurableSpace NumUtt := ⟨fun _ ↦ MeasurableSpace.measurableSet_top⟩
 instance : MeasurableSingletonClass NumUtt := DiscreteMeasurableSpace.toMeasurableSingletonClass
 
 /-- [horn-1972]'s lower-bound meanings: a numeral holds at its number or more. -/
@@ -254,13 +270,13 @@ def NumUtt.equivFin : NumUtt ≃ Fin 3 where
 
 theorem QUtt.sum_univ {M : Type*} [AddCommMonoid M] (f : QUtt → M) :
     ∑ u, f u = f .none_ + f .some_ + f .all := by
-  rw [Fintype.sum_equiv QUtt.equivFin f (f ∘ QUtt.equivFin.symm) λ u => by simp,
+  rw [Fintype.sum_equiv QUtt.equivFin f (f ∘ QUtt.equivFin.symm) fun u ↦ by simp,
     Fin.sum_univ_three]
   rfl
 
 theorem NumUtt.sum_univ {M : Type*} [AddCommMonoid M] (f : NumUtt → M) :
     ∑ u, f u = f .one + f .two + f .three := by
-  rw [Fintype.sum_equiv NumUtt.equivFin f (f ∘ NumUtt.equivFin.symm) λ u => by simp,
+  rw [Fintype.sum_equiv NumUtt.equivFin f (f ∘ NumUtt.equivFin.symm) fun u ↦ by simp,
     Fin.sum_univ_three]
   rfl
 
@@ -279,19 +295,19 @@ private theorem qCells :
 
 /-- The speaker's real probability of an utterance at a state, expanded over the observations
 and the alternatives. -/
-private theorem speaker_real_q (a : Access) (s : WorldState) (u : QUtt) :
+private theorem speaker_real_q (hα : 0 < α) (a : Access) (s : WorldState) (u : QUtt) :
     (speaker qMeaning α a s).real {u} =
       ∑ k, ((hyper a s k : ℝ) / ∑ k', (hyper a s k' : ℝ)) *
         ((if Quality qMeaning a k u then ((ext qMeaning u).card : ℝ)⁻¹ ^ α else 0) /
           ∑ u', if Quality qMeaning a k u' then ((ext qMeaning u').card : ℝ)⁻¹ ^ α else 0) := by
-  simp only [speaker_real_singleton, obs_real_singleton, obsSpeaker_real_singleton]
+  simp only [speaker_real_singleton hα, obs_real_singleton]
 
-private theorem speaker_real_lb (a : Access) (s : WorldState) (u : NumUtt) :
+private theorem speaker_real_lb (hα : 0 < α) (a : Access) (s : WorldState) (u : NumUtt) :
     (speaker lbMeaning α a s).real {u} =
       ∑ k, ((hyper a s k : ℝ) / ∑ k', (hyper a s k' : ℝ)) *
         ((if Quality lbMeaning a k u then ((ext lbMeaning u).card : ℝ)⁻¹ ^ α else 0) /
           ∑ u', if Quality lbMeaning a k u' then ((ext lbMeaning u').card : ℝ)⁻¹ ^ α else 0) := by
-  simp only [speaker_real_singleton, obs_real_singleton, obsSpeaker_real_singleton]
+  simp only [speaker_real_singleton hα, obs_real_singleton]
 
 /-- The weights `|⟦u⟧|^{-α}` of an extension of three states and of two, `x = 3^{-α}` and
 `y = 2^{-α}`, with `0 < x < y < 1`. -/
@@ -302,25 +318,25 @@ private theorem xy (hα : 0 < α) :
   ⟨hx.ne', hx, Real.rpow_lt_rpow (by norm_num) (by norm_num) hα,
     Real.rpow_lt_one (by norm_num) (by norm_num) hα⟩
 
-/-- With complete access, *some* is read as *some but not all*: the state with two objects is
+/-- With complete access, *some* is read as *some but not all*; the state with two objects is
 more probable than the state with three, since at three the speaker would rather say *all*. -/
 theorem some_full (hα : 0 < α) :
     (listener qMeaning α 3 .some_).real {3} < (listener qMeaning α 3 .some_).real {2} := by
   obtain ⟨hx0, hx, hxy, hy1⟩ := xy hα
   obtain ⟨h1, h2, h3, -, -, -⟩ := qCells
   have e2 : (speaker qMeaning α 3 2).real {.some_} = 1 := by
-    rw [speaker_real_q]
+    rw [speaker_real_q hα]
     simp +decide only [Fin.sum_univ_four, QUtt.sum_univ, hyper, h1, h2, h3]
     norm_num [hx0]
   have e3 : (speaker qMeaning α 3 3).real {.some_} = (1 / 3 : ℝ) ^ α / ((1 / 3 : ℝ) ^ α + 1) := by
-    rw [speaker_real_q]
+    rw [speaker_real_q hα]
     simp +decide only [Fin.sum_univ_four, QUtt.sum_univ, hyper, h1, h2, h3]
     norm_num [hx0]
   rw [listener_real_lt_iff (comp_ne_zero_of_real_pos (s := 2) (by rw [e2]; norm_num)), e2, e3,
     div_lt_one (by positivity)]
   linarith
 
-/-- With access to one or two objects the implicature is canceled: the state with two objects
+/-- With access to one or two objects the implicature is canceled; the state with two objects
 is not more probable than the state with three, since a speaker who has seen one or two
 objects with the property can say nothing stronger than *some* whatever the state. -/
 theorem some_partial (hα : 0 < α) :
@@ -329,19 +345,19 @@ theorem some_partial (hα : 0 < α) :
   obtain ⟨hx0, hx, hxy, hy1⟩ := xy hα
   obtain ⟨h1, h2, h3, -, -, -⟩ := qCells
   have a12 : (speaker qMeaning α 1 2).real {.some_} = 2 / 3 := by
-    rw [speaker_real_q]
+    rw [speaker_real_q hα]
     simp +decide only [Fin.sum_univ_four, QUtt.sum_univ, hyper, h1, h2, h3]
     norm_num [hx0]
   have a13 : (speaker qMeaning α 1 3).real {.some_} = 1 := by
-    rw [speaker_real_q]
+    rw [speaker_real_q hα]
     simp +decide only [Fin.sum_univ_four, QUtt.sum_univ, hyper, h1, h2, h3]
     norm_num [hx0]
   have a22 : (speaker qMeaning α 2 2).real {.some_} = 1 := by
-    rw [speaker_real_q]
+    rw [speaker_real_q hα]
     simp +decide only [Fin.sum_univ_four, QUtt.sum_univ, hyper, h1, h2, h3]
     norm_num [hx0]
   have a23 : (speaker qMeaning α 2 3).real {.some_} = 1 := by
-    rw [speaker_real_q]
+    rw [speaker_real_q hα]
     simp +decide only [Fin.sum_univ_four, QUtt.sum_univ, hyper, h1, h2, h3]
     norm_num [hx0]
   constructor
@@ -352,7 +368,7 @@ theorem some_partial (hα : 0 < α) :
       a23]
     exact lt_irrefl _
 
-/-- With complete access the numerals get their exact readings: after *two* the state with two
+/-- With complete access the numerals get their exact readings; after *two* the state with two
 objects beats the state with three, and after *one* the state with one beats both others. -/
 theorem numerals_full (hα : 0 < α) :
     (listener lbMeaning α 3 .two).real {3} < (listener lbMeaning α 3 .two).real {2} ∧
@@ -363,26 +379,26 @@ theorem numerals_full (hα : 0 < α) :
   have hy0 : (1 / 2 : ℝ) ^ α ≠ 0 := (hx.trans hxy).ne'
   have t2 : (speaker lbMeaning α 3 2).real {.two} =
       (1 / 2 : ℝ) ^ α / ((1 / 3 : ℝ) ^ α + (1 / 2 : ℝ) ^ α) := by
-    rw [speaker_real_lb]
+    rw [speaker_real_lb hα]
     simp +decide only [Fin.sum_univ_four, NumUtt.sum_univ, hyper, h4, h5, h6]
     norm_num [hx0, hy0]
   have t3 : (speaker lbMeaning α 3 3).real {.two} =
       (1 / 2 : ℝ) ^ α / ((1 / 3 : ℝ) ^ α + (1 / 2 : ℝ) ^ α + 1) := by
-    rw [speaker_real_lb]
+    rw [speaker_real_lb hα]
     simp +decide only [Fin.sum_univ_four, NumUtt.sum_univ, hyper, h4, h5, h6]
     norm_num [hx0, hy0]
   have o1 : (speaker lbMeaning α 3 1).real {.one} = 1 := by
-    rw [speaker_real_lb]
+    rw [speaker_real_lb hα]
     simp +decide only [Fin.sum_univ_four, NumUtt.sum_univ, hyper, h4, h5, h6]
     norm_num [hx0, hy0]
   have o2 : (speaker lbMeaning α 3 2).real {.one} =
       (1 / 3 : ℝ) ^ α / ((1 / 3 : ℝ) ^ α + (1 / 2 : ℝ) ^ α) := by
-    rw [speaker_real_lb]
+    rw [speaker_real_lb hα]
     simp +decide only [Fin.sum_univ_four, NumUtt.sum_univ, hyper, h4, h5, h6]
     norm_num [hx0, hy0]
   have o3 : (speaker lbMeaning α 3 3).real {.one} =
       (1 / 3 : ℝ) ^ α / ((1 / 3 : ℝ) ^ α + (1 / 2 : ℝ) ^ α + 1) := by
-    rw [speaker_real_lb]
+    rw [speaker_real_lb hα]
     simp +decide only [Fin.sum_univ_four, NumUtt.sum_univ, hyper, h4, h5, h6]
     norm_num [hx0, hy0]
   refine ⟨?_, ?_, ?_⟩
@@ -396,7 +412,7 @@ theorem numerals_full (hα : 0 < α) :
       o3, div_lt_one (by positivity)]
     linarith
 
-/-- After seeing one object, *one* carries no implicature: the state with one object beats
+/-- After seeing one object, *one* carries no implicature; the state with one object beats
 neither the state with two nor the state with three. -/
 theorem one_minimal (hα : 0 < α) :
     ¬ (listener lbMeaning α 1 .one).real {2} < (listener lbMeaning α 1 .one).real {1} ∧
@@ -405,15 +421,15 @@ theorem one_minimal (hα : 0 < α) :
   obtain ⟨-, -, -, h4, h5, h6⟩ := qCells
   have hy0 : (1 / 2 : ℝ) ^ α ≠ 0 := (hx.trans hxy).ne'
   have v1 : (speaker lbMeaning α 1 1).real {.one} = 1 / 3 := by
-    rw [speaker_real_lb]
+    rw [speaker_real_lb hα]
     simp +decide only [Fin.sum_univ_four, NumUtt.sum_univ, hyper, h4, h5, h6]
     norm_num [hx0, hy0]
   have v2 : (speaker lbMeaning α 1 2).real {.one} = 2 / 3 := by
-    rw [speaker_real_lb]
+    rw [speaker_real_lb hα]
     simp +decide only [Fin.sum_univ_four, NumUtt.sum_univ, hyper, h4, h5, h6]
     norm_num [hx0, hy0]
   have v3 : (speaker lbMeaning α 1 3).real {.one} = 1 := by
-    rw [speaker_real_lb]
+    rw [speaker_real_lb hα]
     simp +decide only [Fin.sum_univ_four, NumUtt.sum_univ, hyper, h4, h5, h6]
     norm_num [hx0, hy0]
   constructor
@@ -422,7 +438,7 @@ theorem one_minimal (hα : 0 < α) :
   · rw [listener_real_lt_iff (comp_ne_zero_of_real_pos (s := 3) (by rw [v3]; norm_num)), v1, v3]
     norm_num
 
-/-- After seeing two objects, *two* carries no implicature: the state with two objects does not
+/-- After seeing two objects, *two* carries no implicature; the state with two objects does not
 beat the state with three, since the speaker could only have seen both objects with the
 property in either. -/
 theorem two_partial (hα : 0 < α) :
@@ -432,12 +448,12 @@ theorem two_partial (hα : 0 < α) :
   have hy0 : (1 / 2 : ℝ) ^ α ≠ 0 := (hx.trans hxy).ne'
   have v2 : (speaker lbMeaning α 2 2).real {.two} =
       1 / 3 * ((1 / 2 : ℝ) ^ α / ((1 / 3 : ℝ) ^ α + (1 / 2 : ℝ) ^ α)) := by
-    rw [speaker_real_lb]
+    rw [speaker_real_lb hα]
     simp +decide only [Fin.sum_univ_four, NumUtt.sum_univ, hyper, h4, h5, h6]
     norm_num [hx0, hy0]
   have v3 : (speaker lbMeaning α 2 3).real {.two} =
       (1 / 2 : ℝ) ^ α / ((1 / 3 : ℝ) ^ α + (1 / 2 : ℝ) ^ α) := by
-    rw [speaker_real_lb]
+    rw [speaker_real_lb hα]
     simp +decide only [Fin.sum_univ_four, NumUtt.sum_univ, hyper, h4, h5, h6]
     norm_num [hx0, hy0]
   rw [listener_real_lt_iff (comp_ne_zero_of_real_pos (s := 3) (by rw [v3]; positivity)), v2, v3,
@@ -445,7 +461,7 @@ theorem two_partial (hα : 0 < α) :
   have : 0 ≤ (1 / 2 : ℝ) ^ α / ((1 / 3 : ℝ) ^ α + (1 / 2 : ℝ) ^ α) := by positivity
   linarith
 
-/-- After seeing two objects, *one* keeps a partial implicature: the state with one object beats
+/-- After seeing two objects, *one* keeps a partial implicature; the state with one object beats
 the state with three, where the speaker who saw both would have preferred *two*, but not the
 state with two, where she may have seen only one. -/
 theorem one_partial (hα : 0 < α) :
@@ -455,17 +471,17 @@ theorem one_partial (hα : 0 < α) :
   obtain ⟨-, -, -, h4, h5, h6⟩ := qCells
   have hy0 : (1 / 2 : ℝ) ^ α ≠ 0 := (hx.trans hxy).ne'
   have v1 : (speaker lbMeaning α 2 1).real {.one} = 2 / 3 := by
-    rw [speaker_real_lb]
+    rw [speaker_real_lb hα]
     simp +decide only [Fin.sum_univ_four, NumUtt.sum_univ, hyper, h4, h5, h6]
     norm_num [hx0, hy0]
   have v2 : (speaker lbMeaning α 2 2).real {.one} =
       2 / 3 + 1 / 3 * ((1 / 3 : ℝ) ^ α / ((1 / 3 : ℝ) ^ α + (1 / 2 : ℝ) ^ α)) := by
-    rw [speaker_real_lb]
+    rw [speaker_real_lb hα]
     simp +decide only [Fin.sum_univ_four, NumUtt.sum_univ, hyper, h4, h5, h6]
     norm_num [hx0, hy0]
   have v3 : (speaker lbMeaning α 2 3).real {.one} =
       (1 / 3 : ℝ) ^ α / ((1 / 3 : ℝ) ^ α + (1 / 2 : ℝ) ^ α) := by
-    rw [speaker_real_lb]
+    rw [speaker_real_lb hα]
     simp +decide only [Fin.sum_univ_four, NumUtt.sum_univ, hyper, h4, h5, h6]
     norm_num [hx0, hy0]
   have hp : (1 / 3 : ℝ) ^ α / ((1 / 3 : ℝ) ^ α + (1 / 2 : ℝ) ^ α) < 1 / 2 := by

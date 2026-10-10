@@ -295,6 +295,62 @@ theorem speaker_uniformListener_dirac_apply_singleton_ne_zero_iff {α : ℝ} (h�
   · simpa using h
   · simpa using h
 
+private theorem prod_rpow_eq_rpow_sum {ι : Type*} (s : Finset ι) (x : ℝ≥0∞) {e : ι → ℝ}
+    (he : ∀ i ∈ s, 0 ≤ e i) : ∏ i ∈ s, x ^ e i = x ^ ∑ i ∈ s, e i := by
+  classical
+  induction s using Finset.induction_on with
+  | empty => simp
+  | insert i s hi ih =>
+    rw [Finset.prod_insert hi, Finset.sum_insert hi,
+      ih fun j hj ↦ he j (Finset.mem_insert_of_mem hj),
+      ENNReal.rpow_add_of_nonneg _ _ (he i (Finset.mem_insert_self i s))
+        (Finset.sum_nonneg fun j hj ↦ he j (Finset.mem_insert_of_mem hj))]
+
+/-- A speaker with a probability belief, facing the uniform literal listener at no cost, says
+only the choices true at every state she entertains, and weights each by the inverse size of its
+extension to the power `α`. -/
+theorem speaker_uniformListener_real_singleton {X : Type*} [MeasurableSpace X] [Countable X]
+    [MeasurableSingletonClass X] {α : ℝ} (hα : 0 < α) {b : X → Measure T} {x : X}
+    [IsProbabilityMeasure (b x)] {Q : C → Prop} [DecidablePred Q]
+    (hQ : ∀ c, Q c ↔ ∀ t, b x {t} ≠ 0 → t ∈ sem c) (c : C) :
+    (speaker α 0 (uniformListener sem) b x).real {c} =
+      (if Q c then ((sem c).card : ℝ)⁻¹ ^ α else 0) /
+        ∑ c', if Q c' then ((sem c').card : ℝ)⁻¹ ^ α else 0 := by
+  have hw (c : C) : (∏ t, uniformListener sem c {t} ^ (α * (b x).real {t})) *
+      ENNReal.ofReal (Real.exp (-(α * (0 : C → ℝ) c))) =
+      if Q c then ((sem c).card : ℝ≥0∞)⁻¹ ^ α else 0 := by
+    rw [Pi.zero_apply, mul_zero, neg_zero, Real.exp_zero, ENNReal.ofReal_one, mul_one]
+    split_ifs with h
+    · calc ∏ t, uniformListener sem c {t} ^ (α * (b x).real {t})
+          = ∏ t, ((sem c).card : ℝ≥0∞)⁻¹ ^ (α * (b x).real {t}) :=
+            Finset.prod_congr rfl fun t _ ↦ by
+              by_cases ht : b x {t} = 0
+              · rw [measureReal_def, ht, ENNReal.toReal_zero, mul_zero, ENNReal.rpow_zero,
+                  ENNReal.rpow_zero]
+              · rw [uniformListener_apply_singleton, ite_eq_left ((hQ c).1 h t ht)]
+        _ = ((sem c).card : ℝ≥0∞)⁻¹ ^ ∑ t, α * (b x).real {t} :=
+            prod_rpow_eq_rpow_sum _ _ fun t _ ↦ mul_nonneg hα.le measureReal_nonneg
+        _ = ((sem c).card : ℝ≥0∞)⁻¹ ^ α := by
+            rw [← Finset.mul_sum, sum_measureReal_singleton, Finset.coe_univ, probReal_univ,
+              mul_one]
+    · obtain ⟨t, ht, htc⟩ : ∃ t, b x {t} ≠ 0 ∧ t ∉ sem c := by
+        simpa [hQ] using h
+      exact Finset.prod_eq_zero (Finset.mem_univ t) (by
+        rw [uniformListener_apply_singleton, ite_eq_right htc, measureReal_def,
+          ENNReal.zero_rpow_of_pos (mul_pos hα (ENNReal.toReal_pos ht (measure_ne_top _ _)))])
+  obtain ⟨t₀, ht₀⟩ : ∃ t, b x {t} ≠ 0 := by
+    by_contra h
+    refine one_ne_zero (α := ℝ≥0∞) ?_
+    rw [← measure_univ (μ := b x), ← Finset.coe_univ, ← sum_measure_singleton]
+    exact Finset.sum_eq_zero fun t _ ↦ not_not.1 fun ht ↦ h ⟨t, ht⟩
+  rw [speaker, Kernel.ofWeights_real_singleton _ _ (fun c ↦ by
+    rw [hw]
+    split_ifs with h
+    exacts [ENNReal.rpow_ne_top_of_nonneg hα.le (ENNReal.inv_ne_top.2 (Nat.cast_ne_zero.2
+      (Finset.card_ne_zero.2 ⟨t₀, (hQ c).1 h t₀ ht₀⟩))), ENNReal.zero_ne_top]) c]
+  simp only [hw, apply_ite ENNReal.toReal, ENNReal.toReal_zero, ← ENNReal.toReal_rpow,
+    ENNReal.toReal_inv, ENNReal.toReal_natCast]
+
 variable [DecidableEq O] (obs : C → O)
 
 theorem sum_rpow_uniformListener {α : ℝ} (hα : 0 < α) (t : T) :
