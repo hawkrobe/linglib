@@ -3,6 +3,7 @@ module
 public import Linglib.Core.InformationTheory.Entropy
 public import Linglib.Core.InformationTheory.KullbackLeibler.Cond
 public import Linglib.Core.MeasureTheory.Measure.AbsolutelyContinuous
+public import Linglib.Core.MeasureTheory.Measure.Real
 public import Linglib.Pragmatics.RSA.Basic
 
 /-!
@@ -13,19 +14,23 @@ utterance by the expected log-probability its listener gives the state under tha
 Goodman and Stuhlmüller do. This file relates that score to the Kullback–Leibler divergence of the
 listener's posterior from the belief: the two differ by the entropy of the belief, which no
 utterance changes, so they define the same speaker. An utterance whose listener rules out a state
-the speaker entertains is never produced.
+the speaker entertains is never produced, and against a listener who reweights a prior the prior
+cancels from her choice.
 
 ## Main results
 
 * `RSA.speaker_apply_singleton_eq_zero_iff`: the speaker produces exactly the utterances whose
   listener rules out no state she entertains.
-* `RSA.speaker_eq_speakerOfScore_sum_log`: the speaker is the softmax of the expected
-  log-probability the listener gives the state under her belief.
-* `RSA.speaker_eq_speakerOfScore_klDiv`: the speaker is the softmax of the negative divergence of
-  the listener from her belief.
-* `RSA.speaker_zero_cond_literalListener_real_singleton_lt_iff`: a speaker whose belief is the
-  prior conditioned on what she knows prefers, among the utterances her knowledge entails, the
-  one of smaller prior mass.
+* `RSA.speaker_eq_speakerOfScore_sum_log`, `RSA.speaker_eq_speakerOfScore_klDiv`: the speaker is
+  the softmax of the expected log-probability the listener gives the state under her belief, and
+  of the negative divergence of the listener from her belief.
+* `RSA.speaker_gradedListener_apply_singleton`: against a graded listener she weighs an
+  utterance by the geometric mean of its meaning over her belief and the inverse of the meaning's
+  prior mass.
+* `RSA.speaker_cond_literalListener_apply_eq`,
+  `RSA.speaker_zero_cond_literalListener_real_singleton_lt_iff`: a speaker whose belief is the
+  prior conditioned on what she knows depends on it, against a literal listener, only through
+  the utterances it entails, and among those prefers the one of smaller prior mass.
 
 ## References
 
@@ -124,8 +129,8 @@ private theorem prod_rpow_eq_exp_klDiv {β ν : Measure W} [IsProbabilityMeasure
       ENNReal.zero_rpow_of_pos (mul_pos hα (ENNReal.toReal_pos hβ (measure_ne_top _ _)))]
 
 /-- For probability beliefs the speaker is the softmax of the negative Kullback–Leibler divergence
-of the listener from the belief, less the cost: the divergence and the expected log-probability
-differ by the entropy of the belief, which no utterance changes. -/
+of the listener from the belief, less the cost, since the divergence and the expected
+log-probability differ by the entropy of the belief, which no utterance changes. -/
 theorem speaker_eq_speakerOfScore_klDiv [∀ o, IsProbabilityMeasure (b o)]
     [∀ u, IsZeroOrProbabilityMeasure (L u)] (hα : 0 < α) :
     speaker α C L b = speakerOfScore fun o u ↦
@@ -165,6 +170,68 @@ theorem speaker_zero_real_singleton_lt_iff_klDiv [IsProbabilityMeasure (b o)]
     EReal.neg_lt_neg_iff, EReal.coe_ennreal_lt_coe_ennreal_iff,
     ENNReal.mul_lt_mul_iff_right (ENNReal.ofReal_pos.mpr hα).ne' ENNReal.ofReal_ne_top]
 
+/-! ### Belief against a graded listener
+
+A graded listener reweights the prior by the meaning of the utterance. The prior, which no
+utterance changes, cancels from the speaker's choice, and she weighs an utterance by the geometric
+mean of its meaning over her belief against the meaning's prior mass. -/
+
+section Graded
+
+variable {μ : Measure W} {m : U → W → ℝ≥0∞}
+
+private theorem prod_gradedListener_rpow {β : Measure W} [IsProbabilityMeasure β] (hα : 0 ≤ α)
+    (u : U) :
+    ∏ w, gradedListener μ m u {w} ^ (α * β.real {w}) =
+      (∏ w, μ {w} ^ (α * β.real {w})) *
+        ((∏ w, m u w ^ (α * β.real {w})) * (∑ w, m u w * μ {w})⁻¹ ^ α) := by
+  have he (w : W) : 0 ≤ α * β.real {w} := mul_nonneg hα measureReal_nonneg
+  calc ∏ w, gradedListener μ m u {w} ^ (α * β.real {w})
+    _ = ∏ w, μ {w} ^ (α * β.real {w}) *
+          (m u w ^ (α * β.real {w}) * (∑ w', m u w' * μ {w'})⁻¹ ^ (α * β.real {w})) :=
+        Finset.prod_congr rfl fun w _ ↦ by
+          rw [gradedListener_apply_singleton, div_eq_mul_inv,
+            ENNReal.mul_rpow_of_nonneg _ _ (he w), ENNReal.mul_rpow_of_nonneg _ _ (he w)]
+          ring
+    _ = _ := by
+        rw [Finset.prod_mul_distrib, Finset.prod_mul_distrib,
+          ← ENNReal.rpow_sum_of_nonneg _ fun w _ ↦ he w, ← Finset.mul_sum,
+          sum_measureReal_singleton_eq_one, mul_one]
+
+variable [IsFiniteMeasure μ]
+
+/-- Against a graded listener the speaker weighs an utterance by the geometric mean of its
+meaning over her belief and by the inverse of the meaning's prior mass. -/
+theorem speaker_gradedListener_apply_singleton (hα : 0 ≤ α) [IsProbabilityMeasure (b o)]
+    (hb : b o ≪ μ) (u : U) :
+    speaker α C (gradedListener μ m) b o {u} =
+      (∏ w, m u w ^ (α * (b o).real {w})) * ((∑ w, m u w * μ {w})⁻¹ ^ α *
+          ENNReal.ofReal (Real.exp (-(α * C u)))) /
+        ∑ u', (∏ w, m u' w ^ (α * (b o).real {w})) * ((∑ w, m u' w * μ {w})⁻¹ ^ α *
+          ENNReal.ofReal (Real.exp (-(α * C u')))) := by
+  have he (w : W) : 0 ≤ α * (b o).real {w} := mul_nonneg hα measureReal_nonneg
+  have h0 : ∏ w, μ {w} ^ (α * (b o).real {w}) ≠ 0 := Finset.prod_ne_zero_iff.2 fun w _ h ↦ by
+    rcases ENNReal.rpow_eq_zero_iff.1 h with ⟨hμ, hpos⟩ | ⟨hμ, -⟩
+    · rw [measureReal_def, hb hμ, ENNReal.toReal_zero, mul_zero] at hpos
+      exact lt_irrefl _ hpos
+    · exact measure_ne_top μ _ hμ
+  have htop : ∏ w, μ {w} ^ (α * (b o).real {w}) ≠ ∞ :=
+    ENNReal.prod_ne_top fun w _ ↦ ENNReal.rpow_ne_top_of_nonneg (he w) (measure_ne_top μ _)
+  simp only [speaker_apply_singleton, prod_gradedListener_rpow hα, mul_assoc]
+  rw [← Finset.mul_sum, ENNReal.mul_div_mul_left _ _ h0 htop]
+
+/-- Against a graded listener, two observations at which every meaning has the same geometric
+mean over the speaker's belief yield the same speaker. -/
+theorem speaker_gradedListener_apply_congr (hα : 0 ≤ α) {o₁ o₂ : O}
+    [IsProbabilityMeasure (b o₁)] [IsProbabilityMeasure (b o₂)] (h₁ : b o₁ ≪ μ) (h₂ : b o₂ ≪ μ)
+    (h : ∀ u, ∏ w, m u w ^ (α * (b o₂).real {w}) = ∏ w, m u w ^ (α * (b o₁).real {w})) :
+    speaker α C (gradedListener μ m) b o₂ = speaker α C (gradedListener μ m) b o₁ :=
+  Measure.ext_of_singleton fun u ↦ by
+    simp only [speaker_gradedListener_apply_singleton hα h₂,
+      speaker_gradedListener_apply_singleton hα h₁, h]
+
+end Graded
+
 /-! ### Knowledge against a literal listener
 
 A speaker who knows only that the state lies in an event believes the prior conditioned on it.
@@ -193,6 +260,59 @@ theorem speaker_zero_cond_literalListener_real_singleton_lt_iff (hα : 0 < α) (
       (klDiv_cond_cond_eq_top_iff .of_discrete .of_discrete).1 (not_not.2 hu)⟩,
     literalListener_apply, literalListener_apply,
     klDiv_cond_cond_lt_iff .of_discrete .of_discrete .of_discrete hA hu' hu]
+
+private theorem cond_apply_singleton_ne_zero_iff {s : Set W} {w : W} :
+    μ[|s] {w} ≠ 0 ↔ w ∈ s ∧ μ {w} ≠ 0 := by
+  by_cases hw : w ∈ s <;>
+    simp [cond_apply (μ := μ) (MeasurableSet.of_discrete (s := s)), hw, measure_ne_top]
+
+/-- A speaker who knows an event on which every graded meaning is constant sees the listener only
+through those constants, so two such events with the same constants yield the same speaker. -/
+theorem speaker_cond_gradedListener_apply_eq {m : U → W → ℝ≥0∞} (hα : 0 ≤ α) {o₁ o₂ : O}
+    (h₁ : μ (A o₁) ≠ 0) (h₂ : μ (A o₂) ≠ 0) {g : U → ℝ≥0∞}
+    (hg₁ : ∀ u, ∀ w ∈ A o₁, μ {w} ≠ 0 → m u w = g u)
+    (hg₂ : ∀ u, ∀ w ∈ A o₂, μ {w} ≠ 0 → m u w = g u) :
+    speaker α C (gradedListener μ m) (fun o ↦ μ[|A o]) o₂ =
+      speaker α C (gradedListener μ m) (fun o ↦ μ[|A o]) o₁ := by
+  have : IsProbabilityMeasure ((fun o ↦ μ[|A o]) o₁) := cond_isProbabilityMeasure h₁
+  have : IsProbabilityMeasure ((fun o ↦ μ[|A o]) o₂) := cond_isProbabilityMeasure h₂
+  refine speaker_gradedListener_apply_congr hα cond_absolutelyContinuous
+    cond_absolutelyContinuous fun u ↦ ?_
+  rw [prod_rpow_measureReal_of_forall_eq _ hα fun w hw ↦
+      hg₂ u w (cond_apply_singleton_ne_zero_iff.1 hw).1 (cond_apply_singleton_ne_zero_iff.1 hw).2,
+    prod_rpow_measureReal_of_forall_eq _ hα fun w hw ↦
+      hg₁ u w (cond_apply_singleton_ne_zero_iff.1 hw).1 (cond_apply_singleton_ne_zero_iff.1 hw).2]
+
+private theorem prod_indicator_rpow_cond (hα : 0 < α) {s t : Set W} (hs : μ s ≠ 0)
+    [Decidable (s ≤ᵐ[μ] t)] :
+    ∏ w, t.indicator (1 : W → ℝ≥0∞) w ^ (α * μ[|s].real {w}) = if s ≤ᵐ[μ] t then 1 else 0 := by
+  have := cond_isProbabilityMeasure (μ := μ) hs
+  split_ifs with h
+  · rw [prod_rpow_measureReal_of_forall_eq _ hα.le (c := 1) fun w hw ↦ Set.indicator_of_mem
+      (ae_iff_of_countable.1 h w (cond_apply_singleton_ne_zero_iff.1 hw).2
+        (cond_apply_singleton_ne_zero_iff.1 hw).1) 1, ENNReal.one_rpow]
+  · obtain ⟨w, hμ, hws, hwt⟩ : ∃ w, μ {w} ≠ 0 ∧ w ∈ s ∧ w ∉ t := by
+      by_contra hne
+      exact h (ae_iff_of_countable.2 fun w hμ hws ↦ by_contra fun hwt ↦ hne ⟨w, hμ, hws, hwt⟩)
+    exact Finset.prod_eq_zero (Finset.mem_univ w) (by
+      rw [Set.indicator_of_notMem hwt, measureReal_def, ENNReal.zero_rpow_of_pos (mul_pos hα
+        (ENNReal.toReal_pos
+          (cond_apply_singleton_ne_zero_iff.2 ⟨hws, hμ⟩) (measure_ne_top _ _)))])
+
+/-- Against a literal listener the speaker depends on what she knows only through the utterances
+it entails. -/
+theorem speaker_cond_literalListener_apply_eq (hα : 0 < α) {o₁ o₂ : O} (h₁ : μ (A o₁) ≠ 0)
+    (h₂ : μ (A o₂) ≠ 0) (h : ∀ u, A o₂ ≤ᵐ[μ] sem u ↔ A o₁ ≤ᵐ[μ] sem u) :
+    speaker α C (literalListener μ sem) (fun o ↦ μ[|A o]) o₂ =
+      speaker α C (literalListener μ sem) (fun o ↦ μ[|A o]) o₁ := by
+  classical
+  have : IsProbabilityMeasure ((fun o ↦ μ[|A o]) o₁) := cond_isProbabilityMeasure h₁
+  have : IsProbabilityMeasure ((fun o ↦ μ[|A o]) o₂) := cond_isProbabilityMeasure h₂
+  rw [← gradedListener_indicator]
+  refine speaker_gradedListener_apply_congr hα.le cond_absolutelyContinuous
+    cond_absolutelyContinuous fun u ↦ ?_
+  rw [prod_indicator_rpow_cond hα h₂, prod_indicator_rpow_cond hα h₁]
+  exact if_congr (h u) rfl rfl
 
 end Cond
 

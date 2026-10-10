@@ -2,6 +2,7 @@ module
 
 public import Linglib.Pragmatics.RSA.Basic
 public import Linglib.Core.Data.Multiset.Dominates
+public import Linglib.Core.MeasureTheory.Measure.Real
 public import Linglib.Core.Probability.UniformOn
 public import Linglib.Semantics.Reference.Distinguishing
 
@@ -359,17 +360,6 @@ theorem speaker_uniformListener_dirac_apply_singleton_ne_zero_iff {α : ℝ} (h�
   · simpa using h
   · simpa using h
 
-private theorem prod_rpow_eq_rpow_sum {ι : Type*} (s : Finset ι) (x : ℝ≥0∞) {e : ι → ℝ}
-    (he : ∀ i ∈ s, 0 ≤ e i) : ∏ i ∈ s, x ^ e i = x ^ ∑ i ∈ s, e i := by
-  classical
-  induction s using Finset.induction_on with
-  | empty => simp
-  | insert i s hi ih =>
-    rw [Finset.prod_insert hi, Finset.sum_insert hi,
-      ih fun j hj ↦ he j (Finset.mem_insert_of_mem hj),
-      ENNReal.rpow_add_of_nonneg _ _ (he i (Finset.mem_insert_self i s))
-        (Finset.sum_nonneg fun j hj ↦ he j (Finset.mem_insert_of_mem hj))]
-
 /-! ### A speaker who entertains several states
 
 A speaker with a probability belief, facing the uniform literal listener at no cost, weights a
@@ -388,18 +378,8 @@ private theorem weight_eq (hα : 0 < α) (hS : ∀ t, b x {t} ≠ 0 ↔ t ∈ S)
       if S ⊆ sem c then ((sem c).card : ℝ≥0∞)⁻¹ ^ α else 0 := by
   rw [Pi.zero_apply, mul_zero, neg_zero, Real.exp_zero, ENNReal.ofReal_one, mul_one]
   split_ifs with h
-  · calc ∏ t, uniformListener sem c {t} ^ (α * (b x).real {t})
-        = ∏ t, ((sem c).card : ℝ≥0∞)⁻¹ ^ (α * (b x).real {t}) :=
-          Finset.prod_congr rfl fun t _ ↦ by
-            by_cases ht : b x {t} = 0
-            · rw [measureReal_def, ht, ENNReal.toReal_zero, mul_zero, ENNReal.rpow_zero,
-                ENNReal.rpow_zero]
-            · rw [uniformListener_apply_singleton, ite_eq_left (h ((hS t).1 ht))]
-      _ = ((sem c).card : ℝ≥0∞)⁻¹ ^ ∑ t, α * (b x).real {t} :=
-          prod_rpow_eq_rpow_sum _ _ fun t _ ↦ mul_nonneg hα.le measureReal_nonneg
-      _ = ((sem c).card : ℝ≥0∞)⁻¹ ^ α := by
-          rw [← Finset.mul_sum, sum_measureReal_singleton, Finset.coe_univ, probReal_univ,
-            mul_one]
+  · exact prod_rpow_measureReal_of_forall_eq (b x) hα.le fun t ht ↦ by
+      rw [uniformListener_apply_singleton, ite_eq_left (h ((hS t).1 ht))]
   · obtain ⟨t, ht, htc⟩ := Finset.not_subset.1 h
     exact Finset.prod_eq_zero (Finset.mem_univ t) (by
       rw [uniformListener_apply_singleton, ite_eq_right htc, measureReal_def,
