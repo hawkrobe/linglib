@@ -31,7 +31,7 @@ variable {α β γ δ : Type*} [MeasurableSpace α] [MeasurableSpace β] [Measur
   [MeasurableSpace δ]
 
 /-- Pushing a product measure through a parallel composition pushes each factor through its
-kernel: Fubini for the Giry monad. -/
+kernel, which is Fubini's theorem for the Giry monad. -/
 theorem parallelComp_comp_prod (η : Kernel α γ) [IsSFiniteKernel η] (η' : Kernel β δ)
     [IsSFiniteKernel η'] (μ : Measure α) [SFinite μ] (ν : Measure β) [SFinite ν] :
     (η ∥ₖ η') ∘ₘ (μ.prod ν) = (η ∘ₘ μ).prod (η' ∘ₘ ν) := by
@@ -73,7 +73,7 @@ variable [MeasurableSingletonClass α] [MeasurableSingletonClass β]
 theorem compProd_apply_singleton (μ : Measure α) [SFinite μ] (κ : Kernel α β)
     [IsSFiniteKernel κ] (a : α) (b : β) : (μ ⊗ₘ κ) {(a, b)} = μ {a} * κ a {b} := by
   rw [compProd_apply (.singleton _)]
-  have h : (λ a' => κ a' (Prod.mk a' ⁻¹' {(a, b)})) = ({a} : Set α).indicator λ _ => κ a {b} := by
+  have h : (fun a' ↦ κ a' (Prod.mk a' ⁻¹' {(a, b)})) = ({a} : Set α).indicator fun _ ↦ κ a {b} := by
     ext a'
     by_cases ha : a' = a
     · subst ha
@@ -87,7 +87,7 @@ theorem compProd_real_singleton (μ : Measure α) [IsFiniteMeasure μ] (κ : Ker
 
 variable [Fintype α] [Fintype β] [MeasurableSingletonClass γ]
 
-/-- A joint pushed through `Kernel.id ∥ₖ η`, at an atom: the second coordinate is summed out
+/-- At an atom, a joint pushed through `Kernel.id ∥ₖ η` has its second coordinate summed out
 through the kernel. -/
 theorem parallelComp_id_comp_apply_singleton (ρ : Measure (α × β)) (η : Kernel β γ)
     [IsSFiniteKernel η] (a : α) (c : γ) :
@@ -105,7 +105,7 @@ theorem parallelComp_id_comp_real_singleton (ρ : Measure (α × β)) [IsFiniteM
     (((Kernel.id : Kernel α α) ∥ₖ η) ∘ₘ ρ).real {(a, c)}
       = ∑ b, ρ.real {(a, b)} * (η b).real {c} := by
   rw [measureReal_def, parallelComp_id_comp_apply_singleton,
-    ENNReal.toReal_sum λ b _ => ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)]
+    ENNReal.toReal_sum fun b _ ↦ ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)]
   simp only [ENNReal.toReal_mul, measureReal_def]
 
 end Atoms
@@ -122,6 +122,14 @@ theorem comp_apply_singleton [Fintype β] [MeasurableSingletonClass β]
     (η ∘ₖ κ) a {c} = ∑ b, κ a {b} * η b {c} := by
   rw [comp_apply' _ _ _ (.singleton c), lintegral_fintype]
   exact Finset.sum_congr rfl fun b _ => mul_comm _ _
+
+theorem comp_real_singleton [Fintype β] [MeasurableSingletonClass β]
+    [MeasurableSingletonClass γ] (η : Kernel β γ) [IsFiniteKernel η] (κ : Kernel α β)
+    [IsFiniteKernel κ] (a : α) (c : γ) :
+    ((η ∘ₖ κ) a).real {c} = ∑ b, (κ a).real {b} * (η b).real {c} := by
+  rw [measureReal_def, comp_apply_singleton,
+    ENNReal.toReal_sum fun b _ ↦ ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)]
+  simp_rw [ENNReal.toReal_mul, measureReal_def]
 
 /-- A row of a kernel is absolutely continuous with respect to the output marginal of an input
 measure that charges its input. -/

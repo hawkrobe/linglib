@@ -167,7 +167,7 @@ and `w` inside it, and *D horses didn't jump* is true when the interpretation's 
 holds of those two counts. -/
 def ext (D : NumberTree) [DecidableRel D] (n : ℕ) : Scope → Utt → Finset (World n)
   | _, .null => Finset.univ
-  | i, .amb => Finset.univ.filter fun w ↦ i.negation D (n - w) w
+  | i, .amb => (i.negation D).row n
 
 section Ext
 

@@ -1,7 +1,7 @@
 module
 
 public import Linglib.Core.InformationTheory.Hellinger
-public import Linglib.Core.Probability.Kernel.OfWeights
+public import Linglib.Core.Probability.Distributions.Hypergeometric
 public import Linglib.Core.Probability.Kernel.Posterior
 public import Linglib.Data.Examples.HerbstrittFranke2019
 public import Linglib.Pragmatics.RSA.Belief
@@ -73,40 +73,17 @@ noncomputable def proportion (s : State) : ℝ := (s : ℕ) / 10
 
 /-! ### Belief formation, (12) -/
 
-/-- The hypergeometric weight of observing `o` red among `a` balls drawn without replacement
-from ten of which `s` are red, `C(s, o) C(10 − s, a − o)`; the row's normalization is
-`C(10, a)`. -/
-def hyper (a : Access) (s : State) (o : Obs) : ℕ :=
-  if o ≤ a then s.val.choose o.val * (10 - s.val).choose (a.val - o.val) else 0
-
-/-- The observation kernel `Hypergeometric(o | a, s, 10)`. -/
-noncomputable def obs (a : Access) : Kernel State Obs :=
-  Kernel.ofWeights λ s o => (hyper a s o : ℝ≥0∞)
+/-- The observation kernel `Hypergeometric(o | a, s, 10)` gives the number of red balls among
+`a` drawn without replacement from ten of which `s` are red. -/
+noncomputable def obs (a : Access) : Kernel State Obs := hypergeometric 10 a
 
 instance (a : Access) : IsFiniteKernel (obs a) :=
-  inferInstanceAs (IsFiniteKernel (Kernel.ofWeights _))
+  inferInstanceAs (IsFiniteKernel (hypergeometric 10 a))
 
-theorem obs_apply_singleton (a : Access) (s : State) (o : Obs) :
-    obs a s {o} = (hyper a s o : ℝ≥0∞) / ∑ o', (hyper a s o' : ℝ≥0∞) :=
-  Kernel.ofWeights_apply_singleton _ _ _
-
-/-- An observation is possible at a state exactly when its hypergeometric weight is. -/
+/-- An observation is possible at a state exactly when some draw yields it. -/
 theorem obs_apply_singleton_ne_zero_iff (a : Access) (s : State) (o : Obs) :
-    obs a s {o} ≠ 0 ↔ hyper a s o ≠ 0 := by
-  rw [obs_apply_singleton, ne_eq, ENNReal.div_eq_zero_iff, not_or, Nat.cast_eq_zero]
-  exact ⟨And.left, λ h => ⟨h, ENNReal.sum_ne_top.mpr λ _ _ => ENNReal.natCast_ne_top _⟩⟩
-
-/-- Drawing every ball reveals the state. -/
-theorem hyper_full (s : State) (o : Obs) : hyper 10 s o = if s = o then 1 else 0 := by
-  revert s o; decide +kernel
-
-/-- Drawing nothing is possible at every state. -/
-theorem hyper_zero (s : State) : hyper 0 s 0 ≠ 0 := by
-  revert s; decide +kernel
-
-theorem obs_full (s : State) (o : Obs) : obs 10 s {o} = if s = o then 1 else 0 := by
-  simp only [obs_apply_singleton, hyper_full, Nat.cast_ite, Nat.cast_one, Nat.cast_zero,
-    Finset.sum_ite_eq, Finset.mem_univ, ite_true, div_one]
+    obs a s {o} ≠ 0 ↔ hypergeometricCount 10 s a o ≠ 0 :=
+  hypergeometric_apply_singleton_ne_zero_iff s o
 
 section Belief
 
@@ -118,29 +95,15 @@ noncomputable def belief (a : Access) : Kernel Obs State := (obs a)†P
 
 instance (a : Access) : IsMarkovKernel (belief P a) := inferInstanceAs (IsMarkovKernel ((obs a)†P))
 
-theorem belief_apply_singleton {a : Access} {o : Obs} (h : (obs a ∘ₘ P) {o} ≠ 0) (s : State) :
-    belief P a o {s} = P {s} * obs a s {o} / (obs a ∘ₘ P) {o} :=
-  posterior_apply_singleton _ _ h s
-
 /-- A state of positive prior at which the observation is possible keeps positive belief. -/
 theorem belief_apply_singleton_ne_zero {a : Access} {o : Obs} {s : State} (hP : P {s} ≠ 0)
-    (h : hyper a s o ≠ 0) : belief P a o {s} ≠ 0 := by
+    (h : hypergeometricCount 10 s a o ≠ 0) : belief P a o {s} ≠ 0 :=
   have ho := (obs_apply_singleton_ne_zero_iff a s o).2 h
-  rw [belief_apply_singleton P (comp_apply_singleton_ne_zero _ _ hP ho)]
-  exact (ENNReal.div_pos_iff.2 ⟨mul_ne_zero hP ho, measure_ne_top _ _⟩).ne'
+  (posterior_apply_singleton_ne_zero_iff _ _ (comp_apply_singleton_ne_zero _ _ hP ho) s).2 ⟨hP, ho⟩
 
 /-- With complete access the belief is the point mass at the observed state. -/
-theorem belief_full {o : Obs} (hP : P {o} ≠ 0) : belief P 10 o = Measure.dirac o := by
-  have hcomp : (obs 10 ∘ₘ P) {o} = P {o} := by
-    rw [Measure.comp_apply_singleton]
-    simp only [obs_full, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
-  refine Measure.ext_of_singleton λ s => ?_
-  rw [belief_apply_singleton P (by rw [hcomp]; exact hP), hcomp, obs_full, Measure.dirac_apply,
-    Set.indicator_apply, Pi.one_apply]
-  by_cases hs : s = o
-  · subst hs
-    simp [ENNReal.div_self hP (measure_ne_top _ _)]
-  · simp [hs, Ne.symm hs]
+theorem belief_full {o : Obs} (hP : P {o} ≠ 0) : belief P 10 o = Measure.dirac o :=
+  posterior_hypergeometric_self o P hP
 
 end Belief
 
@@ -186,15 +149,15 @@ def ext (m : SimpleExpr) : Set State := {s | θ.meaning m s}
 
 /-- *Certainly* entails *probably* when its threshold is the higher. -/
 theorem ext_certainly_subset (h : θ.probably ≤ θ.certainly) :
-    θ.ext .certainly ⊆ θ.ext .probably := λ _ hs => lt_of_le_of_lt h hs
+    θ.ext .certainly ⊆ θ.ext .probably := fun _ hs ↦ lt_of_le_of_lt h hs
 
 /-- *Probably* entails *possibly* when its threshold is the higher. -/
 theorem ext_probably_subset (h : θ.possibly ≤ θ.probably) :
-    θ.ext .probably ⊆ θ.ext .possibly := λ _ hs => lt_of_le_of_lt h hs
+    θ.ext .probably ⊆ θ.ext .possibly := fun _ hs ↦ lt_of_le_of_lt h hs
 
 /-- *Certainly not* entails *probably not* when the threshold of *certainly* is the higher. -/
 theorem ext_certainlyNot_subset (h : θ.probably ≤ θ.certainly) :
-    θ.ext .certainlyNot ⊆ θ.ext .probablyNot := λ s hs => by
+    θ.ext .certainlyNot ⊆ θ.ext .probablyNot := fun s hs ↦ by
   simp only [ext, meaning, Set.mem_ofPred_eq] at hs ⊢
   linarith
 
@@ -241,17 +204,17 @@ noncomputable def utility (x : Obs × Access) (m : SimpleExpr) : ℝ :=
 
 /-- The speaker of (17) is the softmax of the utility at the rationality `lam`. -/
 noncomputable def speaker : Kernel (Obs × Access) SimpleExpr :=
-  speakerOfScore λ x m => ((lam * utility θ P x m : ℝ) : EReal)
+  speakerOfScore fun x m ↦ ((lam * utility θ P x m : ℝ) : EReal)
 
 /-- The Hellinger utility is finite, so every message is used with positive probability at
 every observation, and pragmatically true-enough messages can be sent. -/
 theorem speaker_apply_singleton_ne_zero (x : Obs × Access) (m : SimpleExpr) :
     speaker lam θ P x {m} ≠ 0 :=
-  speakerOfScore_apply_singleton_ne_zero (EReal.coe_ne_bot _) λ _ => EReal.coe_ne_top _
+  speakerOfScore_apply_singleton_ne_zero (EReal.coe_ne_bot _) fun _ ↦ EReal.coe_ne_top _
 
 instance : IsMarkovKernel (speaker lam θ P) :=
-  isMarkovKernel_speakerOfScore (λ _ => ⟨.possibly, EReal.coe_ne_bot _⟩)
-    λ _ _ => EReal.coe_ne_top _
+  isMarkovKernel_speakerOfScore (fun _ ↦ ⟨.possibly, EReal.coe_ne_bot _⟩)
+    fun _ _ ↦ EReal.coe_ne_top _
 
 /-- The speaker prefers the message whose literal listener lies closer to her belief. -/
 theorem speaker_real_lt_iff (hlam : 0 < lam) (x : Obs × Access) (m m' : SimpleExpr) :
@@ -270,7 +233,7 @@ noncomputable def klSpeaker : Kernel (Obs × Access) SimpleExpr :=
 red balls that keeps positive belief, so the Kullback–Leibler speaker never says it. -/
 theorem klSpeaker_probably_eq_zero (hlam : 0 < lam) (hθ : 3 / 10 ≤ θ.probably)
     (hP : P {3} ≠ 0) : klSpeaker lam θ P (3, 4) {.probably} = 0 := by
-  refine (speaker_apply_singleton_eq_zero_iff_not_ac hlam).2 λ hac => ?_
+  refine (speaker_apply_singleton_eq_zero_iff_not_ac hlam).2 fun hac ↦ ?_
   have h0 : L0 θ P .probably {3} = 0 :=
     L0_apply_singleton_of_notMem θ P (not_lt.2 (by simpa [proportion] using hθ))
   exact belief_apply_singleton_ne_zero P hP (a := 4) (o := 3) (s := 3) (by decide +kernel) (hac h0)
@@ -361,7 +324,7 @@ variable [IsFiniteMeasure P] [IsFiniteMeasure A]
 instance : IsFiniteMeasure (joint P A) :=
   ⟨by
     rw [← Finset.coe_univ, ← sum_measure_singleton]
-    exact ENNReal.sum_lt_top.2 λ x _ => by
+    exact ENNReal.sum_lt_top.2 fun x _ ↦ by
       rw [joint_apply_singleton]
       exact ENNReal.mul_lt_top (ENNReal.mul_lt_top (measure_lt_top _ _) (measure_lt_top _ _))
         (measure_lt_top _ _)⟩
@@ -369,10 +332,10 @@ instance : IsFiniteMeasure (joint P A) :=
 /-- As the listener models the speaker, her choice depends on the observation and the access
 alone. -/
 noncomputable def jointSpeaker : Kernel (State × (Obs × Access)) SimpleExpr :=
-  Kernel.ofFunOfCountable λ x => speaker lam θ P x.2
+  Kernel.ofFunOfCountable fun x ↦ speaker lam θ P x.2
 
 instance : IsMarkovKernel (jointSpeaker lam θ P) :=
-  ⟨λ x => by rw [jointSpeaker, Kernel.ofFunOfCountable_apply]; infer_instance⟩
+  ⟨fun x ↦ by rw [jointSpeaker, Kernel.ofFunOfCountable_apply]; infer_instance⟩
 
 /-- The pragmatic listener of (18) is the Bayesian inverse of the speaker against the joint
 prior; its first marginal is the state listener of (19), its second the observation listener
@@ -387,12 +350,12 @@ theorem listener_fst_apply_singleton_ne_zero {s : State} (hP : P {s} ≠ 0) (hA 
   have hj : joint P A {(s, (0, 0))} ≠ 0 := by
     rw [joint_apply_singleton]
     exact mul_ne_zero (mul_ne_zero hP hA)
-      ((obs_apply_singleton_ne_zero_iff 0 s 0).2 (hyper_zero s))
+      ((obs_apply_singleton_ne_zero_iff 0 s 0).2 (by simp))
   have hs : jointSpeaker lam θ P (s, (0, 0)) {m} ≠ 0 := speaker_apply_singleton_ne_zero lam θ P _ m
   have hu : (jointSpeaker lam θ P ∘ₘ joint P A) {m} ≠ 0 :=
     comp_apply_singleton_ne_zero _ _ hj hs
   rw [Measure.fst_apply_singleton]
-  refine ne_of_gt (lt_of_lt_of_le ?_ (Finset.single_le_sum (λ _ _ => zero_le)
+  refine ne_of_gt (lt_of_lt_of_le ?_ (Finset.single_le_sum (fun _ _ ↦ zero_le)
     (Finset.mem_univ (0, 0))))
   rw [listener, posterior_apply_singleton _ _ hu]
   exact ENNReal.div_pos_iff.2 ⟨mul_ne_zero hj hs, measure_ne_top _ _⟩
@@ -475,7 +438,7 @@ theorem mem_complex_full {s : State} (hP : P {s} ≠ 0) {Y : Outer} (h0 : 0 ≤ 
 (24), the marginal of the joint prior, on the expression's extension. -/
 noncomputable def complexL0 (A : Measure Access) [IsFiniteMeasure A] :
     Kernel (Outer × Inner) (Obs × Access) :=
-  literalListener (joint P A).snd λ m : Outer × Inner => θ.complex P m.1 m.2
+  literalListener (joint P A).snd fun m : Outer × Inner ↦ θ.complex P m.1 m.2
 
 end ComplexThresholds
 
