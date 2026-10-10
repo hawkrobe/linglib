@@ -21,7 +21,7 @@ prior conditioned on what she knows.
 * `RSA.speaker_eq_speakerOfScore_sum_log`, `RSA.speaker_eq_speakerOfScore_klDiv`: the speaker is
   the softmax of the expected log-probability the listener gives the state under her belief, and
   of the negative divergence of the listener from her belief.
-* `RSA.speaker_cond_gradedListener_apply_eq`: a speaker who knows an event on which every graded
+* `RSA.speaker_cond_ofDensity_apply_eq`: a speaker who knows an event on which every graded
   meaning is constant sees the listener only through those constants.
 * `RSA.speaker_cond_literalListener_apply_eq`,
   `RSA.speaker_zero_cond_literalListener_real_singleton_lt_iff`: a speaker whose belief is the
@@ -160,15 +160,15 @@ private theorem cond_apply_singleton_ne_zero_iff {s : Set W} {w : W} :
 
 /-- A speaker who knows an event on which every graded meaning is constant sees the listener only
 through those constants, so two such events with the same constants yield the same speaker. -/
-theorem speaker_cond_gradedListener_apply_eq {m : U → W → ℝ≥0∞} (hα : 0 ≤ α) {o₁ o₂ : O}
+theorem speaker_cond_ofDensity_apply_eq {m : U → W → ℝ≥0∞} (hα : 0 ≤ α) {o₁ o₂ : O}
     (h₁ : μ (A o₁) ≠ 0) (h₂ : μ (A o₂) ≠ 0) {g : U → ℝ≥0∞}
     (hg₁ : ∀ u, ∀ w ∈ A o₁, μ {w} ≠ 0 → m u w = g u)
     (hg₂ : ∀ u, ∀ w ∈ A o₂, μ {w} ≠ 0 → m u w = g u) :
-    speaker α C (gradedListener μ m) (fun o ↦ μ[|A o]) o₂ =
-      speaker α C (gradedListener μ m) (fun o ↦ μ[|A o]) o₁ := by
+    speaker α C (Kernel.ofDensity μ m) (fun o ↦ μ[|A o]) o₂ =
+      speaker α C (Kernel.ofDensity μ m) (fun o ↦ μ[|A o]) o₁ := by
   have : IsProbabilityMeasure ((fun o ↦ μ[|A o]) o₁) := cond_isProbabilityMeasure h₁
   have : IsProbabilityMeasure ((fun o ↦ μ[|A o]) o₂) := cond_isProbabilityMeasure h₂
-  refine speaker_gradedListener_apply_congr hα cond_absolutelyContinuous
+  refine speaker_ofDensity_apply_congr hα cond_absolutelyContinuous
     cond_absolutelyContinuous fun u ↦ ?_
   rw [Measure.geomMean_of_forall_eq fun w hw ↦
       hg₂ u w (cond_apply_singleton_ne_zero_iff.1 hw).1 (cond_apply_singleton_ne_zero_iff.1 hw).2,
@@ -197,8 +197,8 @@ theorem speaker_cond_literalListener_apply_eq (hα : 0 ≤ α) {o₁ o₂ : O} (
   classical
   have : IsProbabilityMeasure ((fun o ↦ μ[|A o]) o₁) := cond_isProbabilityMeasure h₁
   have : IsProbabilityMeasure ((fun o ↦ μ[|A o]) o₂) := cond_isProbabilityMeasure h₂
-  rw [← gradedListener_indicator]
-  refine speaker_gradedListener_apply_congr hα cond_absolutelyContinuous
+  rw [literalListener_eq_ofDensity]
+  refine speaker_ofDensity_apply_congr hα cond_absolutelyContinuous
     cond_absolutelyContinuous fun u ↦ ?_
   rw [geomMean_cond_indicator h₂, geomMean_cond_indicator h₁]
   exact if_congr (h u) rfl rfl

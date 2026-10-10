@@ -10,7 +10,7 @@ This file formalizes Tessler and Goodman's model of how a listener infers the co
 bare gradable adjective. Lassiter and Goodman's literal listener interprets *tall* and *short* as
 thresholds on the degree, the threshold drawn from a uniform prior over the support of the degree
 prior, and conditions the prior of the comparison class on the utterance with the threshold
-integrated out (4)–(5), `thresholdMeaning`, `meaning`, `L0`, the substrate's `RSA.gradedListener`
+integrated out (4)–(5), `thresholdMeaning`, `meaning`, `L0`, the substrate's `Kernel.ofDensity`
 at the threshold prior of Tessler and Goodman's generics model. The speaker knows the comparison
 class and chooses among *tall*, *short* and silence to convey the degree (3), `S`, the substrate's
 `RSA.speaker`. The pragmatic listener knows the referent's kind but not the class the speaker
@@ -66,7 +66,7 @@ inductive Utterance
 
 instance : MeasurableSpace Utterance := ⊤
 
-instance : DiscreteMeasurableSpace Utterance := ⟨λ _ => trivial⟩
+instance : DiscreteMeasurableSpace Utterance := ⟨fun _ => trivial⟩
 
 /-- In the idealized case the comparison class is the referent's own subordinate category or
 a superordinate category. -/
@@ -77,7 +77,7 @@ inductive ComparisonClass
 
 instance : MeasurableSpace ComparisonClass := ⊤
 
-instance : DiscreteMeasurableSpace ComparisonClass := ⟨λ _ => trivial⟩
+instance : DiscreteMeasurableSpace ComparisonClass := ⟨fun _ => trivial⟩
 
 instance : Nonempty ComparisonClass := ⟨.subordinate⟩
 
@@ -130,10 +130,10 @@ variable [Fintype X] [MeasurableSpace X] [DiscreteMeasurableSpace X]
 marginalized meaning. -/
 noncomputable def L0 (classPrior : ComparisonClass → Measure X) (c : ComparisonClass) :
     Kernel Utterance X :=
-  gradedListener (classPrior c) (meaning deg)
+  Kernel.ofDensity (classPrior c) (meaning deg)
 
 instance (classPrior : ComparisonClass → Measure X) (c : ComparisonClass) :
-    IsFiniteKernel (L0 deg classPrior c) := inferInstanceAs (IsFiniteKernel (gradedListener _ _))
+    IsFiniteKernel (L0 deg classPrior c) := inferInstanceAs (IsFiniteKernel (Kernel.ofDensity _ _))
 
 /-- The speaker (3) has rationality `α`, equal costs, and knows the comparison class. -/
 noncomputable def S (α : ℝ) (classPrior : ComparisonClass → Measure X) (c : ComparisonClass) :
@@ -193,7 +193,7 @@ private theorem sum_utterance (f : Utterance → ℝ) : ∑ u, f u = f .tall + f
 private theorem exists_real_pos (μ : Measure X) [IsProbabilityMeasure μ] : ∃ x, 0 < μ.real {x} := by
   by_contra h
   push Not at h
-  have := Finset.sum_nonpos (s := Finset.univ) λ x _ => h x
+  have := Finset.sum_nonpos (s := Finset.univ) fun x _ => h x
   rw [sum_measureReal_singleton_eq_one] at this
   linarith
 
@@ -201,7 +201,7 @@ theorem mean_pos (hdeg : ∀ x, 0 < deg x ∧ deg x < 1) (c : ComparisonClass) :
     0 < mean deg classPrior c := by
   obtain ⟨x, hx⟩ := exists_real_pos (classPrior c)
   rw [mean, expectedPrevalence_eq_sum]
-  exact Finset.sum_pos' (λ y _ => mul_nonneg measureReal_nonneg (hdeg y).1.le)
+  exact Finset.sum_pos' (fun y _ => mul_nonneg measureReal_nonneg (hdeg y).1.le)
     ⟨x, Finset.mem_univ _, mul_pos hx (hdeg x).1⟩
 
 theorem mean_lt_one (hdeg : ∀ x, 0 < deg x ∧ deg x < 1) (c : ComparisonClass) :
@@ -209,7 +209,7 @@ theorem mean_lt_one (hdeg : ∀ x, 0 < deg x ∧ deg x < 1) (c : ComparisonClass
   obtain ⟨x, hx⟩ := exists_real_pos (classPrior c)
   have h1 : ∑ y, (classPrior c).real {y} = 1 := sum_measureReal_singleton_eq_one _
   rw [mean, expectedPrevalence_eq_sum, ← h1]
-  exact Finset.sum_lt_sum (λ y _ => mul_le_of_le_one_right measureReal_nonneg (hdeg y).2.le)
+  exact Finset.sum_lt_sum (fun y _ => mul_le_of_le_one_right measureReal_nonneg (hdeg y).2.le)
     ⟨x, Finset.mem_univ _, mul_lt_of_lt_one_right hx (hdeg x).2⟩
 
 /-- The row sum of the negative adjective's meaning is the complement of the mean. -/
@@ -217,9 +217,9 @@ theorem sum_meaning_short (hdeg : ∀ x, 0 < deg x ∧ deg x < 1) (c : Compariso
     ∑ x, meaning deg .short x * classPrior c {x} = ENNReal.ofReal (1 - mean deg classPrior c) := by
   have h1 : ∑ y, (classPrior c).real {y} = 1 := sum_measureReal_singleton_eq_one _
   rw [mean, expectedPrevalence_eq_sum, ← h1, ← Finset.sum_sub_distrib,
-    ENNReal.ofReal_sum_of_nonneg λ x _ => by
+    ENNReal.ofReal_sum_of_nonneg fun x _ => by
       nlinarith [(hdeg x).2, measureReal_nonneg (μ := classPrior c) (s := {x})]]
-  refine Finset.sum_congr rfl λ x _ => ?_
+  refine Finset.sum_congr rfl fun x _ => ?_
   rw [meaning_short deg (hdeg x).1.le, ← ENNReal.ofReal_toReal (measure_ne_top (classPrior c) {x}),
     ← ENNReal.ofReal_mul (by linarith [(hdeg x).2])]
   congr 1
@@ -229,18 +229,18 @@ theorem sum_meaning_short (hdeg : ∀ x, 0 < deg x ∧ deg x < 1) (c : Compariso
 /-- The row sum of the positive adjective's meaning is the mean. -/
 theorem sum_meaning_tall (hdeg : ∀ x, 0 < deg x ∧ deg x < 1) (c : ComparisonClass) :
     ∑ x, meaning deg .tall x * classPrior c {x} = ENNReal.ofReal (mean deg classPrior c) :=
-  expectedMeaning_uniformThreshold deg (classPrior c) λ x => ⟨(hdeg x).1.le, (hdeg x).2.le⟩
+  expectedMeaning_uniformThreshold deg (classPrior c) fun x => ⟨(hdeg x).1.le, (hdeg x).2.le⟩
 
 theorem L0_silent_apply (c : ComparisonClass) (x : X) :
     L0 deg classPrior c .silent {x} = classPrior c {x} := by
-  rw [L0, gradedListener_apply_singleton]
+  rw [L0, Kernel.ofDensity_apply_singleton]
   simp only [meaning_silent, one_mul]
   rw [sum_measure_singleton, Finset.coe_univ, measure_univ, div_one]
 
 theorem L0_tall_real (hdeg : ∀ x, 0 < deg x ∧ deg x < 1) (c : ComparisonClass) (x : X) :
     (L0 deg classPrior c .tall).real {x} =
       deg x * (classPrior c).real {x} / mean deg classPrior c := by
-  rw [L0, measureReal_def, gradedListener_apply_singleton, sum_meaning_tall deg classPrior hdeg,
+  rw [L0, measureReal_def, Kernel.ofDensity_apply_singleton, sum_meaning_tall deg classPrior hdeg,
     meaning_tall deg (hdeg x).2.le, ENNReal.toReal_div, ENNReal.toReal_mul,
     ENNReal.toReal_ofReal (hdeg x).1.le, ENNReal.toReal_ofReal (mean_pos deg classPrior hdeg c).le,
     measureReal_def]
@@ -248,7 +248,7 @@ theorem L0_tall_real (hdeg : ∀ x, 0 < deg x ∧ deg x < 1) (c : ComparisonClas
 theorem L0_short_real (hdeg : ∀ x, 0 < deg x ∧ deg x < 1) (c : ComparisonClass) (x : X) :
     (L0 deg classPrior c .short).real {x} =
       (1 - deg x) * (classPrior c).real {x} / (1 - mean deg classPrior c) := by
-  rw [L0, measureReal_def, gradedListener_apply_singleton, sum_meaning_short deg classPrior hdeg,
+  rw [L0, measureReal_def, Kernel.ofDensity_apply_singleton, sum_meaning_short deg classPrior hdeg,
     meaning_short deg (hdeg x).1.le, ENNReal.toReal_div, ENNReal.toReal_mul,
     ENNReal.toReal_ofReal (by linarith [(hdeg x).2]),
     ENNReal.toReal_ofReal (by linarith [mean_lt_one deg classPrior hdeg c]), measureReal_def]
@@ -331,8 +331,8 @@ theorem share_lt_share (hα : 0 < α) {a m₁ m₂ : ℝ} (ha : 0 < a) (ha1 : a 
 /-- At a full-support class prior every utterance has positive literal-listener mass. -/
 theorem L0_apply_ne_zero (hdeg : ∀ x, 0 < deg x ∧ deg x < 1) (hsupp : ∀ c x, classPrior c {x} ≠ 0)
     (c : ComparisonClass) (u : Utterance) (x : X) : L0 deg classPrior c u {x} ≠ 0 := by
-  rw [L0, gradedListener_apply_singleton, ENNReal.div_ne_zero]
-  refine ⟨mul_ne_zero ?_ (hsupp c x), ENNReal.sum_ne_top.2 λ _ _ =>
+  rw [L0, Kernel.ofDensity_apply_singleton, ENNReal.div_ne_zero]
+  refine ⟨mul_ne_zero ?_ (hsupp c x), ENNReal.sum_ne_top.2 fun _ _ =>
     ENNReal.mul_ne_top (measure_ne_top uniformThreshold _) (measure_ne_top _ _)⟩
   cases u with
   | tall => rw [meaning_tall deg (hdeg x).2.le]; exact (ENNReal.ofReal_pos.2 (hdeg x).1).ne'
@@ -363,7 +363,7 @@ theorem tall_infers_smaller_mean [Nonempty X] (hα : 0 < α) (hdeg : ∀ x, 0 < 
     (h : mean deg classPrior c₁ < mean deg classPrior c₂) :
     (L1 deg α classPrior κ .tall).snd.real {c₂} < (L1 deg α classPrior κ .tall).snd.real {c₁} := by
   rw [L1_snd_real_lt_iff deg classPrior κ (comp_ne_zero deg classPrior κ hα hdeg hsupp hκ .tall)]
-  refine Finset.sum_lt_sum_of_nonempty Finset.univ_nonempty λ x _ => ?_
+  refine Finset.sum_lt_sum_of_nonempty Finset.univ_nonempty fun x _ => ?_
   rw [S_tall_real deg classPrior hα hdeg c₁ (hsupp c₁ x),
     S_tall_real deg classPrior hα hdeg c₂ (hsupp c₂ x)]
   exact mul_lt_mul_of_pos_left (share_lt_share hα (hdeg x).1 (hdeg x).2
@@ -378,7 +378,7 @@ theorem short_infers_larger_mean [Nonempty X] (hα : 0 < α) (hdeg : ∀ x, 0 < 
     (L1 deg α classPrior κ .short).snd.real {c₁} <
       (L1 deg α classPrior κ .short).snd.real {c₂} := by
   rw [L1_snd_real_lt_iff deg classPrior κ (comp_ne_zero deg classPrior κ hα hdeg hsupp hκ .short)]
-  refine Finset.sum_lt_sum_of_nonempty Finset.univ_nonempty λ x _ => ?_
+  refine Finset.sum_lt_sum_of_nonempty Finset.univ_nonempty fun x _ => ?_
   rw [S_short_real deg classPrior hα hdeg c₁ (hsupp c₁ x),
     S_short_real deg classPrior hα hdeg c₂ (hsupp c₂ x)]
   refine mul_lt_mul_of_pos_left ?_ (ENNReal.toReal_pos (hκ x) (measure_ne_top _ _))
@@ -415,7 +415,7 @@ theorem expected_short [Nonempty X] (hα : 0 < α) (hdeg : ∀ x, 0 < deg x ∧ 
 theorem literalScore_tall (hdeg : ∀ x, 0 < deg x ∧ deg x < 1) (c : ComparisonClass) :
     literalScore deg classPrior .tall c = mean deg classPrior c := by
   rw [literalScore, mean, expectedPrevalence_eq_sum]
-  refine Finset.sum_congr rfl λ x _ => ?_
+  refine Finset.sum_congr rfl fun x _ => ?_
   rw [meaning_tall deg (hdeg x).2.le, ENNReal.toReal_ofReal (hdeg x).1.le]
 
 /-- For *tall* the literal listener (6) prefers the class with the larger mean, the opposite of

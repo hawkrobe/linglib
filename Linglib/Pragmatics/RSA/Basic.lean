@@ -5,6 +5,7 @@ public import Linglib.Core.MeasureTheory.Measure.AbsolutelyContinuous
 public import Linglib.Core.MeasureTheory.Measure.GeomMean
 public import Linglib.Core.MeasureTheory.Measure.WithDensity
 public import Linglib.Core.Probability.GibbsVariational
+public import Linglib.Core.Probability.Kernel.OfDensity
 public import Linglib.Core.Probability.Kernel.OfWeights
 public import Linglib.Core.Probability.Kernel.Posterior
 public import Mathlib.Analysis.SpecialFunctions.Log.ENNRealLogExp
@@ -15,7 +16,8 @@ public import Mathlib.Analysis.SpecialFunctions.Log.ENNRealLogExp
 This file defines the Rational Speech Act model in mathlib's probability vocabulary, following
 Frank and Goodman's model as presented in Degen's review (eqs. 1–4) and in Franke and Bergen's
 comparison of latent-variable variants (eqs. 5–22). The literal listener conditions the prior on
-the extension of the utterance, or, at a graded meaning, reweights the prior by it; the speaker
+the extension of the utterance, and at a graded meaning it is the density kernel
+`Kernel.ofDensity`, which reweights the prior by the meaning; the speaker
 believes a measure on states and is the softmax of the expected log of the listener's mass under
 that belief less a real cost, scaled by the rationality, so that Frank and Goodman's speaker, who
 knows the state, believes the point mass there; and the pragmatic listeners are mathlib's
@@ -27,8 +29,6 @@ specialization with its decision procedure is `Linglib.Pragmatics.RSA.Uniform`.
 ## Main definitions
 
 * `RSA.literalListener` — eq. 1: the prior conditioned on the extension of the utterance.
-* `RSA.gradedListener` — the prior reweighted by a graded meaning; on an indicator meaning it is
-  the literal listener (`RSA.gradedListener_indicator`).
 * `RSA.speakerOfScore` — the softmax of an extended-real utility, `⊥` marking the
   inapplicable utterances.
 * `RSA.speaker` — the softmax of the expected log of the listener's mass under the speaker's
@@ -46,9 +46,9 @@ specialization with its decision procedure is `Linglib.Pragmatics.RSA.Uniform`.
 
 * `RSA.speaker_apply_singleton_eq_zero_iff` — the speaker produces exactly the utterances whose
   listener rules out no state she entertains.
-* `RSA.speaker_gradedListener_apply_singleton` — against a graded listener the prior cancels
-  from the speaker's choice, and she weighs an utterance by the geometric mean of its meaning over
-  her belief and the inverse of the meaning's prior mass.
+* `RSA.speaker_ofDensity_apply_singleton` — against the listener of a graded meaning the prior
+  cancels from the speaker's choice, and she weighs an utterance by the geometric mean of its
+  meaning over her belief and the inverse of the meaning's prior mass.
 * `RSA.speakerOfScore_eq_tilted`, `RSA.isGreatest_freeEnergy_speakerOfScore` — a score-speaker
   row is the Gibbs measure of its score over the applicable utterances, and so the rational
   optimizer: it maximizes the expected score less the divergence from the uniform measure on
@@ -98,103 +98,12 @@ kernel. -/
 instance (μ : Measure W) (sem : U → Set W) : IsFiniteKernel (literalListener μ sem) :=
   ⟨⟨1, ENNReal.one_lt_top, fun _ ↦ prob_le_one⟩⟩
 
-/-- The graded literal listener reweights the prior by a graded meaning of the utterance and
-renormalizes. -/
-noncomputable def gradedListener (μ : Measure W) (m : U → W → ℝ≥0∞) : Kernel U W :=
-  Kernel.ofFunOfCountable fun u ↦ (μ.withDensity (m u))[|Set.univ]
-
-theorem gradedListener_apply (μ : Measure W) (m : U → W → ℝ≥0∞) (u : U) :
-    gradedListener μ m u = (μ.withDensity (m u))[|Set.univ] := rfl
-
-instance (μ : Measure W) (m : U → W → ℝ≥0∞) (u : U) :
-    IsZeroOrProbabilityMeasure (gradedListener μ m u) :=
-  inferInstanceAs (IsZeroOrProbabilityMeasure (μ.withDensity (m u))[|Set.univ])
-
-instance (μ : Measure W) (m : U → W → ℝ≥0∞) : IsFiniteKernel (gradedListener μ m) :=
-  ⟨⟨1, ENNReal.one_lt_top, fun u ↦ by rw [gradedListener_apply]; exact prob_le_one⟩⟩
-
-/-- On a Boolean meaning the graded literal listener is the literal listener. -/
-theorem gradedListener_indicator [DiscreteMeasurableSpace W] (μ : Measure W) (sem : U → Set W) :
-    gradedListener μ (fun u ↦ (sem u).indicator 1) = literalListener μ sem :=
-  Kernel.ext fun u ↦ by
-    rw [gradedListener_apply, literalListener_apply, withDensity_indicator_one .of_discrete]
-    simp only [ProbabilityTheory.cond, Measure.restrict_univ, Measure.restrict_apply_univ]
-
-/-- The graded literal listener at an utterance depends on that utterance's meaning only up to a
-positive finite scalar, which the normalization absorbs. -/
-theorem gradedListener_apply_eq_of_eq_mul (μ : Measure W) {m m' : U → W → ℝ≥0∞} {u : U}
-    {c : ℝ≥0∞} (hc0 : c ≠ 0) (hc : c ≠ ∞) (h : ∀ w, m' u w = c * m u w) :
-    gradedListener μ m' u = gradedListener μ m u := by
-  rw [gradedListener_apply, gradedListener_apply,
-    show μ.withDensity (m' u) = c • μ.withDensity (m u) by
-      rw [show m' u = fun w ↦ c * m u w from funext h]; exact withDensity_smul' c (m u) hc]
-  ext s hs
-  rw [cond_apply MeasurableSet.univ, cond_apply MeasurableSet.univ, Measure.smul_apply,
-    Measure.smul_apply, smul_eq_mul, smul_eq_mul, ENNReal.mul_inv (Or.inl hc0) (Or.inl hc),
-    mul_mul_mul_comm, ENNReal.inv_mul_cancel hc0 hc, one_mul]
-
-/-- The graded literal listener depends on the meaning only up to a positive finite scalar. -/
-theorem gradedListener_const_mul (μ : Measure W) (m : U → W → ℝ≥0∞) {c : ℝ≥0∞} (hc0 : c ≠ 0)
-    (hc : c ≠ ∞) : gradedListener μ (fun u w ↦ c * m u w) = gradedListener μ m :=
-  Kernel.ext fun _ ↦ gradedListener_apply_eq_of_eq_mul μ hc0 hc fun _ ↦ rfl
-
-/-- Every finite measure on a countable discrete space is a graded literal listener at a prior of
-positive mass everywhere, with the measure's density against the prior as the meaning. -/
-theorem gradedListener_div [Countable W] [MeasurableSingletonClass W] (μ : Measure W)
-    [IsFiniteMeasure μ] (hμ : ∀ w, μ {w} ≠ 0) (ν : U → Measure W) (u : U) :
-    gradedListener μ (fun u w ↦ ν u {w} / μ {w}) u = (ν u)[|Set.univ] := by
-  rw [gradedListener_apply]
-  congr 1
-  refine Measure.ext_of_singleton fun w ↦ ?_
-  rw [withDensity_apply _ (.singleton w), lintegral_singleton,
-    ENNReal.div_mul_cancel (hμ w) (measure_ne_top μ _)]
-
-theorem gradedListener_apply_singleton' [MeasurableSingletonClass W] (μ : Measure W)
-    (m : U → W → ℝ≥0∞) (u : U) (w : W) :
-    gradedListener μ m u {w} = m u w * μ {w} / ∫⁻ w', m u w' ∂μ := by
-  rw [gradedListener_apply, cond_apply MeasurableSet.univ, Set.univ_inter,
-    withDensity_apply _ (.singleton w), lintegral_singleton, withDensity_apply _ MeasurableSet.univ,
-    Measure.restrict_univ, ENNReal.div_eq_inv_mul]
-
-theorem gradedListener_apply_singleton [Fintype W] [MeasurableSingletonClass W] (μ : Measure W)
-    (m : U → W → ℝ≥0∞) (u : U) (w : W) :
-    gradedListener μ m u {w} = m u w * μ {w} / ∑ w', m u w' * μ {w'} := by
-  rw [gradedListener_apply_singleton', lintegral_fintype]
-
-/-- A relabelling of the states that carries one prior and meaning to another carries the graded
-literal listener along. -/
-theorem gradedListener_apply_singleton_of_equiv {W' U' : Type*} [MeasurableSpace W']
-    [MeasurableSpace U'] [Countable U'] [MeasurableSingletonClass U'] [Fintype W]
-    [MeasurableSingletonClass W] [Fintype W'] [MeasurableSingletonClass W'] (e : W ≃ W')
-    {μ : Measure W} {μ' : Measure W'} {m : U → W → ℝ≥0∞} {m' : U' → W' → ℝ≥0∞} {u : U} {u' : U'}
-    (hμ : ∀ w, μ' {e w} = μ {w}) (hm : ∀ w, m' u' (e w) = m u w) (w : W) :
-    gradedListener μ' m' u' {e w} = gradedListener μ m u {w} := by
-  rw [gradedListener_apply_singleton, gradedListener_apply_singleton, hm, hμ, ← e.sum_comp]
-  simp only [hm, hμ]
-
-/-- The graded literal listener of an utterance whose meaning has positive finite mass under the
-prior is a probability measure. -/
-theorem isProbabilityMeasure_gradedListener (μ : Measure W) (m : U → W → ℝ≥0∞) (u : U)
-    (h0 : ∫⁻ w, m u w ∂μ ≠ 0) (htop : ∫⁻ w, m u w ∂μ ≠ ∞) :
-    IsProbabilityMeasure (gradedListener μ m u) := by
-  rw [gradedListener_apply]
-  refine cond_isProbabilityMeasure_of_finite ?_ ?_ <;>
-    rwa [withDensity_apply _ MeasurableSet.univ, Measure.restrict_univ]
-
-/-- Marginalizing a joint graded listener whose meaning depends on the first coordinate alone
-gives the graded listener on the marginal prior, since the meaning carries no information about
-the second coordinate. -/
-theorem gradedListener_map_fst {V : Type*} [MeasurableSpace V] (μ : Measure (W × V))
-    (m : U → W → ℝ≥0∞) (hm : ∀ u, Measurable (m u)) (u : U) :
-    (gradedListener μ (fun u p ↦ m u p.1) u).map Prod.fst =
-      gradedListener (μ.map Prod.fst) m u := by
-  have key : (μ.withDensity fun p ↦ m u p.1).map Prod.fst = (μ.map Prod.fst).withDensity (m u) :=
-    Measure.map_withDensity_comp (hm u) measurable_fst
-  have huniv : (μ.withDensity fun p ↦ m u p.1) Set.univ =
-      (μ.map Prod.fst).withDensity (m u) Set.univ := by
-    rw [← key, Measure.map_apply measurable_fst MeasurableSet.univ, Set.preimage_univ]
-  simp only [gradedListener_apply, ProbabilityTheory.cond, Measure.restrict_univ,
-    Measure.map_smul _ measurable_fst.aemeasurable, key, huniv]
+/-- On a discrete state space the literal listener is the density kernel of the indicator meaning
+against the prior. -/
+theorem literalListener_eq_ofDensity [DiscreteMeasurableSpace W] (μ : Measure W)
+    (sem : U → Set W) :
+    literalListener μ sem = Kernel.ofDensity μ fun u ↦ (sem u).indicator 1 :=
+  Kernel.ext fun u ↦ (Kernel.ofDensity_indicator_one_apply μ sem u .of_discrete).symm
 
 /-- The literal listener of an utterance with a positive-mass extension is a probability
 measure. -/
@@ -249,23 +158,13 @@ theorem literalListener_apply_singleton_of_equiv {W' U' : Type*} [MeasurableSpac
     {sem' : U' → Set W'} {u : U} {u' : U'} (hμ : ∀ w, μ' {e w} = μ {w})
     (hsem : ∀ w, e w ∈ sem' u' ↔ w ∈ sem u) (w : W) :
     literalListener μ' sem' u' {e w} = literalListener μ sem u {w} := by
-  rw [← gradedListener_indicator, ← gradedListener_indicator]
-  refine gradedListener_apply_singleton_of_equiv e hμ (fun w ↦ ?_) w
+  rw [literalListener_eq_ofDensity, literalListener_eq_ofDensity]
+  refine Kernel.ofDensity_apply_singleton_of_equiv e hμ (fun w ↦ ?_) w
   by_cases h : w ∈ sem u
   · rw [Set.indicator_of_mem h, Set.indicator_of_mem ((hsem w).2 h), Pi.one_apply, Pi.one_apply]
   · rw [Set.indicator_of_notMem h, Set.indicator_of_notMem (mt (hsem w).1 h)]
 
 end Boolean
-
-/-- On natural-number weights and likelihoods the graded literal listener is the weighted
-likelihood over its total. -/
-theorem gradedListener_natCast_real_singleton [Fintype W] [MeasurableSingletonClass W]
-    (w : W → ℕ) (lik : U → W → ℕ) (u : U) (x : W) :
-    (gradedListener (Measure.ofWeights (w ·)) (fun u x ↦ (lik u x : ℝ≥0∞)) u).real {x}
-      = (lik u x * w x : ℝ) / ∑ x', (lik u x' * w x' : ℝ) := by
-  rw [measureReal_def, gradedListener_apply_singleton, ENNReal.toReal_div,
-    ENNReal.toReal_sum fun _ _ ↦ ENNReal.mul_ne_top (ENNReal.natCast_ne_top _) (measure_ne_top _ _)]
-  simp [ENNReal.toReal_mul]
 
 end LiteralListener
 
@@ -376,11 +275,11 @@ theorem speaker_apply_singleton_eq_zero_iff [IsFiniteMeasure (b o)] (hα : 0 < �
 
 end Speaker
 
-/-! #### The speaker against a graded listener
+/-! #### The speaker against a graded meaning
 
-A graded listener reweights the prior by the meaning of the utterance. The prior, which no
-utterance changes, cancels from the speaker's choice, and she weighs an utterance by the geometric
-mean of its meaning over her belief against the meaning's prior mass. -/
+The listener of a graded meaning reweights the prior by the meaning of the utterance. The prior,
+which no utterance changes, cancels from the speaker's choice, and she weighs an utterance by the
+geometric mean of its meaning over her belief against the meaning's prior mass. -/
 
 section Graded
 
@@ -388,20 +287,20 @@ variable [Fintype W] [MeasurableSingletonClass W] [Fintype U] [MeasurableSinglet
   [Countable O] [MeasurableSingletonClass O] {α : ℝ} {C : U → ℝ} {b : O → Measure W} {o : O}
   {μ : Measure W} {m : U → W → ℝ≥0∞}
 
-private theorem geomMean_gradedListener (β : Measure W) [IsProbabilityMeasure β] (u : U) :
-    β.geomMean (fun w ↦ gradedListener μ m u {w}) =
+private theorem geomMean_ofDensity (β : Measure W) [IsProbabilityMeasure β] (u : U) :
+    β.geomMean (fun w ↦ Kernel.ofDensity μ m u {w}) =
       β.geomMean (fun w ↦ μ {w}) * (β.geomMean (m u) * (∑ w, m u w * μ {w})⁻¹) := by
-  simp only [gradedListener_apply_singleton, div_eq_mul_inv, Measure.geomMean_mul,
+  simp only [Kernel.ofDensity_apply_singleton, div_eq_mul_inv, Measure.geomMean_mul,
     Measure.geomMean_const]
   ring
 
 variable [IsFiniteMeasure μ]
 
-/-- Against a graded listener the speaker weighs an utterance by the geometric mean of its
-meaning over her belief and by the inverse of the meaning's prior mass. -/
-theorem speaker_gradedListener_apply_singleton (hα : 0 ≤ α) [IsProbabilityMeasure (b o)]
+/-- Against the listener of a graded meaning the speaker weighs an utterance by the geometric mean
+of its meaning over her belief and by the inverse of the meaning's prior mass. -/
+theorem speaker_ofDensity_apply_singleton (hα : 0 ≤ α) [IsProbabilityMeasure (b o)]
     (hb : b o ≪ μ) (u : U) :
-    speaker α C (gradedListener μ m) b o {u} =
+    speaker α C (Kernel.ofDensity μ m) b o {u} =
       (b o).geomMean (m u) ^ α * ((∑ w, m u w * μ {w})⁻¹ ^ α *
           ENNReal.ofReal (Real.exp (-(α * C u)))) /
         ∑ u', (b o).geomMean (m u') ^ α * ((∑ w, m u' w * μ {w})⁻¹ ^ α *
@@ -410,19 +309,19 @@ theorem speaker_gradedListener_apply_singleton (hα : 0 ≤ α) [IsProbabilityMe
     rpow_ne_zero_of_ne_zero hα (Measure.geomMean_ne_zero fun _ hw hμ ↦ hw (hb hμ))
   have htop : (b o).geomMean (fun w ↦ μ {w}) ^ α ≠ ∞ := ENNReal.rpow_ne_top_of_nonneg hα
     (Measure.geomMean_ne_top fun _ _ ↦ measure_ne_top _ _)
-  simp only [speaker_apply_singleton, geomMean_gradedListener,
+  simp only [speaker_apply_singleton, geomMean_ofDensity,
     ENNReal.mul_rpow_of_nonneg _ _ hα, mul_assoc]
   rw [← Finset.mul_sum, ENNReal.mul_div_mul_left _ _ h0 htop]
 
-/-- Against a graded listener, two observations at which every meaning has the same geometric
-mean over the speaker's belief yield the same speaker. -/
-theorem speaker_gradedListener_apply_congr (hα : 0 ≤ α) {o₁ o₂ : O}
+/-- Against the listener of a graded meaning, two observations at which every meaning has the same
+geometric mean over the speaker's belief yield the same speaker. -/
+theorem speaker_ofDensity_apply_congr (hα : 0 ≤ α) {o₁ o₂ : O}
     [IsProbabilityMeasure (b o₁)] [IsProbabilityMeasure (b o₂)] (h₁ : b o₁ ≪ μ) (h₂ : b o₂ ≪ μ)
     (h : ∀ u, (b o₂).geomMean (m u) = (b o₁).geomMean (m u)) :
-    speaker α C (gradedListener μ m) b o₂ = speaker α C (gradedListener μ m) b o₁ :=
+    speaker α C (Kernel.ofDensity μ m) b o₂ = speaker α C (Kernel.ofDensity μ m) b o₁ :=
   Measure.ext_of_singleton fun u ↦ by
-    simp only [speaker_gradedListener_apply_singleton hα h₂,
-      speaker_gradedListener_apply_singleton hα h₁, h]
+    simp only [speaker_ofDensity_apply_singleton hα h₂,
+      speaker_ofDensity_apply_singleton hα h₁, h]
 
 end Graded
 
@@ -659,8 +558,8 @@ theorem speaker_literalListener_dirac_congr [DiscreteMeasurableSpace W] (hα : 0
     {w w' : W} (hw : μ {w} ≠ 0) (hw' : μ {w'} ≠ 0) (h : ∀ u, w ∈ sem u ↔ w' ∈ sem u) :
     speaker α C (literalListener μ sem) Measure.dirac w'
       = speaker α C (literalListener μ sem) Measure.dirac w := by
-  rw [← gradedListener_indicator]
-  exact speaker_gradedListener_apply_congr hα.le (dirac_absolutelyContinuous hw)
+  rw [literalListener_eq_ofDensity]
+  exact speaker_ofDensity_apply_congr hα.le (dirac_absolutelyContinuous hw)
     (dirac_absolutelyContinuous hw') fun u ↦ by
       classical simp only [Measure.geomMean_dirac, Set.indicator_apply, Pi.one_apply, h u]
 

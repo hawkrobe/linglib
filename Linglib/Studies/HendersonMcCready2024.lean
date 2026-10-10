@@ -68,7 +68,7 @@ inductive Trait where
   deriving DecidableEq
 
 instance : Fintype Trait :=
-  ⟨{.proVax, .antiVax, .proCorporate, .antiCorporate}, λ t => by cases t <;> simp⟩
+  ⟨{.proVax, .antiVax, .proCorporate, .antiCorporate}, fun t => by cases t <;> simp⟩
 
 /-- The issue a trait is a stance on. -/
 def Trait.issue : Trait → Issue
@@ -78,10 +78,10 @@ def Trait.issue : Trait → Issue
 /-- The two stances on one issue are incompatible. -/
 def incompatible : SimpleGraph Trait where
   Adj p q := p ≠ q ∧ p.issue = q.issue
-  symm := ⟨λ _ _ h => ⟨h.1.symm, h.2.symm⟩⟩
-  loopless := ⟨λ _ h => h.1 rfl⟩
+  symm := ⟨fun _ _ h => ⟨h.1.symm, h.2.symm⟩⟩
+  loopless := ⟨fun _ h => h.1 rfl⟩
 
-instance : DecidableRel incompatible.Adj := λ p q => inferInstanceAs (Decidable (p ≠ q ∧ _))
+instance : DecidableRel incompatible.Adj := fun p q => inferInstanceAs (Decidable (p ≠ q ∧ _))
 
 /-- A persona takes a stance on each issue. -/
 abbrev Persona := SocialMeaning.Persona incompatible
@@ -154,20 +154,20 @@ def approval : ListenerType → Persona → ℤ
     (if .proVax ∈ π.1 then 75 else -100) + (if .proCorporate ∈ π.1 then -25 else 0)
 
 /-- Stein is accommodating and values no persona over another. -/
-def speakerValue : Persona → ℤ := λ _ => 0
+def speakerValue : Persona → ℤ := fun _ => 0
 
 /-! ### The model -/
 
 /-- A listener's literal listener is Bayes' rule over their likelihood, Burnett's literal
 listener when the likelihood is an indexation. -/
 noncomputable def L0 (t : ListenerType) : Kernel Message Persona :=
-  gradedListener (Measure.ofWeights (priorWeight ·)) λ m π => (likelihood t m π : ℝ≥0∞)
+  Kernel.ofDensity (Measure.ofWeights (priorWeight ·)) fun m π => (likelihood t m π : ℝ≥0∞)
 
 /-- The posterior a listener assigns a persona on hearing a message, as a real number. -/
 theorem L0_real_singleton (t : ListenerType) (m : Message) (π : Persona) :
     (L0 t m).real {π}
       = (likelihood t m π * priorWeight π : ℝ) / ∑ π', (likelihood t m π' * priorWeight π' : ℝ) :=
-  gradedListener_natCast_real_singleton priorWeight (likelihood t) m π
+  Kernel.ofDensity_natCast_real_singleton priorWeight (likelihood t) m π
 
 /-- The speaker's social utility of a message toward a listener sums, over the personae, the
 log posterior with the speaker's and the listener's values weighted by the posterior. -/
@@ -180,7 +180,7 @@ noncomputable def groupUtility (audience : ListenerType → ℕ) (m : Message) :
 
 /-- The speaker chooses a message by the softmax of its utility toward the audience. -/
 noncomputable def speaker (α : ℝ) (audience : ListenerType → ℕ) : Measure Message :=
-  speakerOfScore (λ _ : Unit => λ m => ((α * groupUtility audience m : ℝ) : EReal)) ()
+  speakerOfScore (fun _ : Unit => fun m => ((α * groupUtility audience m : ℝ) : EReal)) ()
 
 /-- The dogwhistle is optimal for an audience exactly when the listeners who reward it, counted
 with their numbers, outweigh those who punish it, the book's condition (2). -/
