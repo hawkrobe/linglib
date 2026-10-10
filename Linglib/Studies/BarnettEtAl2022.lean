@@ -16,9 +16,9 @@ public import Mathlib.Order.UpperLower.Basic
 
 In the Stick Contest a judge decides whether five hidden sticks, each one to nine inches long,
 are longer than five inches on average, after a contestant who wants the verdict *longer*
-reveals one of them. A literal listener takes the stick at face value. A persuasive speaker reveals a stick
-with weight `L0(longer | u)^β`, so a pragmatic listener who expects such a speaker takes a weak
-stick as a sign that no stronger one was available.
+reveals one of them. A literal listener takes the stick at face value. A persuasive speaker
+reveals a stick with weight `L0(longer | u)^β`, so a pragmatic listener who expects such a
+speaker takes a weak stick as a sign that no stronger one was available.
 
 The pragmatic listener discounts every stick and still believes more in *longer* the longer the
 stick shown. The sticks that backfire, evidence for *longer* that lowers the belief in it below
@@ -197,9 +197,9 @@ noncomputable def reveal (β : ℝ) : Kernel (Fin (n + 1) → Fin 9) (Fin (n + 1
 
 /-- The revealing speaker is the RSA speaker whose utility is `β` times the log of the literal
 support for *longer*. -/
-theorem reveal_eq_speakerOfScore (β : ℝ) :
-    reveal n β = RSA.speakerOfScore fun w i ↦ ((β * Real.log (literal n (w i)) : ℝ) : EReal) := by
-  unfold reveal RSA.speakerOfScore
+theorem reveal_eq_softmax (β : ℝ) :
+    reveal n β = Kernel.softmax fun w i ↦ ((β * Real.log (literal n (w i)) : ℝ) : EReal) := by
+  unfold reveal Kernel.softmax
   congr 1
   funext w i
   rw [EReal.exp_coe, Real.rpow_def_of_pos (literal_pos _), mul_comm]

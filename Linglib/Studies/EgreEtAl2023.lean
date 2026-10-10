@@ -41,7 +41,7 @@ interpretation rule (`wir`).
   stage renormalizes, so the uniform priors of §3.2.2 are the counting measures `unif` and the
   uniform prior on the nine values is `Measure.count`.
 * Speakers are `RSA.speaker` at a belief, which for probability beliefs is the softmax of
-  `−λ · D(belief ‖ listener)` (`RSA.speaker_eq_speakerOfScore_klDiv`). A message that excludes
+  `−λ · D(belief ‖ listener)` (`RSA.speaker_eq_softmax_klDiv`). A message that excludes
   a value the speaker deems possible has zero probability, footnote 17's Quality. In the full
   model the belief is the joint prior conditioned on the observation and marginalized to the
   value; in the lexical uncertainty model, whose speaker addresses the listener's joint state,

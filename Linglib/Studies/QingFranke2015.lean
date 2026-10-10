@@ -60,7 +60,7 @@ inductive Object
   deriving DecidableEq, Fintype, Repr, Inhabited
 
 instance : MeasurableSpace Object := ⊤
-instance : DiscreteMeasurableSpace Object := ⟨λ _ => trivial⟩
+instance : DiscreteMeasurableSpace Object := ⟨fun _ => trivial⟩
 instance : MeasurableSingletonClass Object := DiscreteMeasurableSpace.toMeasurableSingletonClass
 
 /-- The four words. -/
@@ -69,7 +69,7 @@ inductive Word
   deriving DecidableEq, Fintype, Repr, Inhabited
 
 instance : MeasurableSpace Word := ⊤
-instance : DiscreteMeasurableSpace Word := ⟨λ _ => trivial⟩
+instance : DiscreteMeasurableSpace Word := ⟨fun _ => trivial⟩
 instance : MeasurableSingletonClass Word := DiscreteMeasurableSpace.toMeasurableSingletonClass
 
 /-- The word describes the object (Fig. 1b). -/
@@ -78,13 +78,13 @@ def Word.AppliesTo : Word → Object → Prop
   | .square, .greenSquare | .blue, .blueCircle => True
   | _, _ => False
 
-instance : DecidableRel Word.AppliesTo := λ u t => by
+instance : DecidableRel Word.AppliesTo := fun u t => by
   cases u <;> cases t <;> unfold Word.AppliesTo <;> infer_instance
 
 /-- The extension of a word. -/
 def Word.extension (u : Word) : Set Object := {t | u.AppliesTo t}
 
-instance (u : Word) : DecidablePred (· ∈ u.extension) := λ t =>
+instance (u : Word) : DecidablePred (· ∈ u.extension) := fun t =>
   inferInstanceAs (Decidable (u.AppliesTo t))
 
 /-- The colour adjectives cost `c` and the shape nouns nothing (11). -/
@@ -99,7 +99,7 @@ noncomputable def priorOf (w : Object → ℕ) : Measure Object :=
   ∑ t, (w t : ℝ≥0∞) • Measure.dirac t
 
 @[simp] theorem priorOf_singleton (w : Object → ℕ) (t : Object) : priorOf w {t} = w t :=
-  Measure.sum_smul_dirac_apply_singleton (λ t => (w t : ℝ≥0∞)) t
+  Measure.sum_smul_dirac_apply_singleton (fun t => (w t : ℝ≥0∞)) t
 
 theorem priorOf_apply (w : Object → ℕ) (s : Set Object) [DecidablePred (· ∈ s)] :
     priorOf w s = ∑ t, if t ∈ s then (w t : ℝ≥0∞) else 0 := by
@@ -110,10 +110,10 @@ theorem priorOf_apply (w : Object → ℕ) (s : Set Object) [DecidablePred (· �
 instance (w : Object → ℕ) : IsFiniteMeasure (priorOf w) :=
   ⟨by
     rw [priorOf_apply w Set.univ]
-    exact ENNReal.sum_lt_top.mpr λ t _ => by simp⟩
+    exact ENNReal.sum_lt_top.mpr fun t _ => by simp⟩
 
 /-- The uniform prior `U`. -/
-noncomputable abbrev uniform : Measure Object := priorOf λ _ => 1
+noncomputable abbrev uniform : Measure Object := priorOf fun _ => 1
 
 /-- The salience condition of Table 2, the paper's estimate of the salience prior `S`. -/
 def salienceCount : Object → ℕ
@@ -149,7 +149,7 @@ theorem L0_salience_real_of_mem {u : Word} {t : Object} (h : t ∈ u.extension) 
       (salienceCount t : ℝ) /
         ∑ t' ∈ Finset.univ.filter (· ∈ u.extension), (salienceCount t' : ℝ) := by
   rw [L0_real_of_mem _ h, priorOf_apply, ← Finset.sum_filter,
-    ENNReal.toReal_sum λ _ _ => ENNReal.natCast_ne_top _]
+    ENNReal.toReal_sum fun _ _ => ENNReal.natCast_ne_top _]
   simp only [ENNReal.toReal_natCast]
 
 /-- The speaker's goal is the belief-oriented log probability of the referent (10) or the
@@ -172,10 +172,10 @@ noncomputable def score (g : Goal) (μ : Measure Object) (lam c : ℝ) (t : Obje
 /-- The speaker models `σ_xy` of (9) and (10) are the score speakers at goal `x` and belief
 prior `y`. -/
 noncomputable def speaker (g : Goal) (μ : Measure Object) (lam c : ℝ) : Kernel Object Word :=
-  speakerOfScore (score g μ lam c)
+  Kernel.softmax (score g μ lam c)
 
 instance (g : Goal) (μ : Measure Object) (lam c : ℝ) : IsFiniteKernel (speaker g μ lam c) :=
-  inferInstanceAs (IsFiniteKernel (speakerOfScore _))
+  inferInstanceAs (IsFiniteKernel (Kernel.softmax _))
 
 theorem score_ne_top (g : Goal) (μ : Measure Object) (lam c : ℝ) (t : Object) (u : Word) :
     score g μ lam c t u ≠ ⊤ := by
@@ -212,7 +212,7 @@ theorem exists_score_ne_bot (g : Goal) (μ : Measure Object) (lam c : ℝ) (t : 
 theorem speaker_lt_iff (g : Goal) (μ : Measure Object) (lam c : ℝ) (t : Object) (u u' : Word) :
     (speaker g μ lam c t).real {u} < (speaker g μ lam c t).real {u'} ↔
       score g μ lam c t u < score g μ lam c t u' :=
-  speakerOfScore_real_singleton_lt_iff (score_ne_top g μ lam c t)
+  Kernel.softmax_real_singleton_lt_iff (score_ne_top g μ lam c t)
     (exists_score_ne_bot g μ lam c t)
 
 /-- The share of a word at an object with two true words is the logistic function of the utility
@@ -222,9 +222,9 @@ theorem speaker_real_of_pair (g : Goal) (μ : Measure Object) (lam c : ℝ) {t :
     (hsupp : ∀ v, t ∈ v.extension → v = u ∨ v = u') :
     (speaker g μ lam c t).real {u} =
       sigmoid ((score g μ lam c t u).toReal - (score g μ lam c t u').toReal) :=
-  speakerOfScore_real_singleton_of_pair huu' (score_ne_bot g μ lam c hu)
+  Kernel.softmax_real_singleton_of_pair huu' (score_ne_bot g μ lam c hu)
     (score_ne_bot g μ lam c hu') (score_ne_top g μ lam c t)
-    λ v hv => hsupp v (by
+    fun v hv => hsupp v (by
       by_contra h
       exact hv (score_of_notMem g μ lam c h))
 
@@ -377,16 +377,16 @@ noncomputable def listener (ν : Measure Object) [IsFiniteMeasure ν] (σ : Kern
 
 /-- The action-oriented listener (14) soft-maximizes a posterior. -/
 noncomputable def actionListener (lamL : ℝ) (ρ : Kernel Word Object) : Kernel Word Object :=
-  speakerOfScore λ u t => ((lamL * (ρ u).real {t} : ℝ) : EReal)
+  Kernel.softmax fun u t => ((lamL * (ρ u).real {t} : ℝ) : EReal)
 
 /-- Acting on the posterior preserves its order. -/
 theorem actionListener_lt_iff {lamL : ℝ} (hlamL : 0 < lamL) (ρ : Kernel Word Object) (u : Word)
     (t t' : Object) :
     (actionListener lamL ρ u).real {t} < (actionListener lamL ρ u).real {t'} ↔
       (ρ u).real {t} < (ρ u).real {t'} := by
-  rw [actionListener, speakerOfScore_real_singleton_lt_iff
-    (score := λ u t => ((lamL * (ρ u).real {t} : ℝ) : EReal)) (w := u)
-    (λ _ => EReal.coe_ne_top _) ⟨t, EReal.coe_ne_bot _⟩, EReal.coe_lt_coe_iff]
+  rw [actionListener, Kernel.softmax_real_singleton_lt_iff
+    (score := fun u t => ((lamL * (ρ u).real {t} : ℝ) : EReal)) (w := u)
+    (fun _ => EReal.coe_ne_top _) ⟨t, EReal.coe_ne_bot _⟩, EReal.coe_lt_coe_iff]
   constructor <;> intro h <;> nlinarith
 
 /-- Listener preference between two objects is prior-weighted speaker preference. -/
@@ -428,7 +428,7 @@ theorem circle_at_blueCircle :
 theorem circle_at_greenCircle :
     (speaker .belief uniform lam c .greenCircle).real {.circle} = sigmoid (lam * c) := by
   rw [speaker_real_of_pair _ _ _ _ (u := .circle) (u' := .green) (by decide) (by decide)
-      (by decide) (λ v hv => (supp_greenCircle v hv).symm), score_of_mem _ _ _ _ (by decide),
+      (by decide) (fun v hv => (supp_greenCircle v hv).symm), score_of_mem _ _ _ _ (by decide),
     score_of_mem _ _ _ _ (by decide), EReal.toReal_coe, EReal.toReal_coe,
     l0u_half (by decide) (by decide), l0u_half (by decide) (by decide)]
   simp only [Goal.value, Word.cost]
@@ -460,8 +460,8 @@ positive mass everywhere. -/
 theorem comp_speaker_ne_zero (w : Object → ℕ) (hw : ∀ t, w t ≠ 0) (u : Word) :
     (speaker .belief uniform lam c ∘ₘ priorOf w) {u} ≠ 0 := by
   have key : ∀ t, t ∈ u.extension → (speaker .belief uniform lam c ∘ₘ priorOf w) {u} ≠ 0 :=
-    λ t ht => comp_apply_singleton_ne_zero _ _ (by rw [priorOf_singleton]; exact_mod_cast hw t)
-      (speakerOfScore_apply_singleton_ne_zero (score_ne_bot _ _ _ _ ht) (score_ne_top _ _ _ _ t))
+    fun t ht => comp_apply_singleton_ne_zero _ _ (by rw [priorOf_singleton]; exact_mod_cast hw t)
+      (Kernel.softmax_apply_singleton_ne_zero (score_ne_bot _ _ _ _ ht) (score_ne_top _ _ _ _ t))
   cases u
   · exact key .greenSquare (by decide)
   · exact key .greenCircle (by decide)
@@ -473,7 +473,7 @@ speaker had *blue*. -/
 theorem uniform_listener_circle (hlam : 0 < lam) :
     (listener uniform (speaker .belief uniform lam c) .circle).real {.blueCircle}
       < (listener uniform (speaker .belief uniform lam c) .circle).real {.greenCircle} := by
-  rw [listener_lt_iff _ _ (comp_speaker_ne_zero _ (λ _ => one_ne_zero) _), circle_at_blueCircle,
+  rw [listener_lt_iff _ _ (comp_speaker_ne_zero _ (fun _ => one_ne_zero) _), circle_at_blueCircle,
     circle_at_greenCircle, measureReal_def, measureReal_def, priorOf_singleton, priorOf_singleton]
   simp only [Nat.cast_one, ENNReal.toReal_one, one_mul]
   exact sigmoid_lt (by nlinarith [log_pos (by norm_num : (1 : ℝ) < 2)])
@@ -482,7 +482,7 @@ theorem uniform_listener_circle (hlam : 0 < lam) :
 theorem uniform_listener_green (hlam : 0 < lam) :
     (listener uniform (speaker .belief uniform lam c) .green).real {.greenSquare}
       < (listener uniform (speaker .belief uniform lam c) .green).real {.greenCircle} := by
-  rw [listener_lt_iff _ _ (comp_speaker_ne_zero _ (λ _ => one_ne_zero) _), green_at_greenSquare,
+  rw [listener_lt_iff _ _ (comp_speaker_ne_zero _ (fun _ => one_ne_zero) _), green_at_greenSquare,
     green_at_greenCircle, measureReal_def, measureReal_def, priorOf_singleton, priorOf_singleton]
   simp only [Nat.cast_one, ENNReal.toReal_one, one_mul]
   exact sigmoid_lt (by nlinarith [log_pos (by norm_num : (1 : ℝ) < 2)])

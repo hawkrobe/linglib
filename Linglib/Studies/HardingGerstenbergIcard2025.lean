@@ -79,7 +79,7 @@ noncomputable def speakerScore (β : ℝ) (cost : M → ℝ) (π : Kernel M A) (
 /-- (6): the speaker, the softmax of utility less cost at rationality `β`. -/
 noncomputable def speaker (β : ℝ) (cost : M → ℝ) (π : Kernel M A) (R : A → W → ℝ) :
     Kernel W M :=
-  speakerOfScore (speakerScore β cost π R)
+  Kernel.softmax (speakerScore β cost π R)
 
 /-- (8): the goodness of a message at a world, the listener's expected reward after the
 message less what acting on the prior alone would have earned. -/
@@ -89,11 +89,11 @@ noncomputable def goodness (πL πPrior : Kernel M A) (R : A → W → ℝ) (m :
 variable (β : ℝ) (R : A → W → ℝ) (cost : M → ℝ) (π : Kernel M A)
 
 instance : IsFiniteKernel (speaker β cost π R) :=
-  inferInstanceAs (IsFiniteKernel (speakerOfScore _))
+  inferInstanceAs (IsFiniteKernel (Kernel.softmax _))
 
 instance [Nonempty M] : IsMarkovKernel (speaker β cost π R) :=
-  isMarkovKernel_speakerOfScore (fun _ ↦ ⟨Classical.arbitrary M, EReal.coe_ne_bot _⟩)
-    (λ _ _ => EReal.coe_ne_top _)
+  Kernel.isMarkovKernel_softmax (fun _ ↦ ⟨Classical.arbitrary M, EReal.coe_ne_bot _⟩)
+    (fun _ _ => EReal.coe_ne_top _)
 
 variable {β} {m m' : M} {a a' : A} {w : W}
 
@@ -101,7 +101,7 @@ variable {β} {m m' : M} {a a' : A} {w : W}
 theorem speaker_real_lt_iff :
     (speaker β cost π R w).real {m} < (speaker β cost π R w).real {m'} ↔
       β * actionUtility π R m w - cost m < β * actionUtility π R m' w - cost m' := by
-  rw [speaker, speakerOfScore_real_singleton_lt_iff (score := speakerScore β cost π R) (w := w)
+  rw [speaker, Kernel.softmax_real_singleton_lt_iff (score := speakerScore β cost π R) (w := w)
     (fun _ ↦ EReal.coe_ne_top _) ⟨m, EReal.coe_ne_bot _⟩, speakerScore, speakerScore,
     EReal.coe_lt_coe_iff]
 
@@ -110,8 +110,8 @@ difference in utility less the difference in cost. -/
 theorem speaker_real_of_pair (hmm' : m ≠ m') (hall : ∀ c, c = m ∨ c = m') :
     (speaker β cost π R w).real {m} =
       Real.sigmoid (β * (actionUtility π R m w - actionUtility π R m' w) - (cost m - cost m')) := by
-  rw [speaker, speakerOfScore_real_singleton_of_pair (score := speakerScore β cost π R) (w := w)
-    hmm' (EReal.coe_ne_bot _) (EReal.coe_ne_bot _) (fun _ ↦ EReal.coe_ne_top _) (λ c _ => hall c),
+  rw [speaker, Kernel.softmax_real_singleton_of_pair (score := speakerScore β cost π R) (w := w)
+    hmm' (EReal.coe_ne_bot _) (EReal.coe_ne_bot _) (fun _ ↦ EReal.coe_ne_top _) (fun c _ => hall c),
     speakerScore, speakerScore, EReal.toReal_coe, EReal.toReal_coe]
   ring_nf
 
@@ -218,7 +218,7 @@ abbrev Act := Fin 2
 def sem : Msg → Finset World := ![{0, 1}, {1}]
 
 /-- Table 3: apologizing for what is the cause earns 1, otherwise −1. -/
-def reward : Act → World → ℝ := λ a w => if a = w then 1 else -1
+def reward : Act → World → ℝ := fun a w => if a = w then 1 else -1
 
 /-- The literal listener at the uniform prior (2). -/
 noncomputable abbrev L0 : Kernel Msg World := uniformListener sem
@@ -315,7 +315,7 @@ instance (βL βS c : ℝ) : IsMarkovKernel (S βL βS c) :=
   inferInstanceAs (IsMarkovKernel (speaker _ _ _ _))
 
 theorem S_apply_ne_zero (βL βS c : ℝ) (w : World) (m : Msg) : S βL βS c w {m} ≠ 0 :=
-  speakerOfScore_apply_singleton_ne_zero
+  Kernel.softmax_apply_singleton_ne_zero
     (score := speakerScore βS (fun _ ↦ c) (policy βL L0 reward) reward) (EReal.coe_ne_bot _)
     (fun _ ↦ EReal.coe_ne_top _)
 
@@ -347,7 +347,7 @@ the speaker would have cited the birthday in the conjunctive world. -/
 theorem pragmatic_T (hβL : 0 < βL) (hβS : 0 < βS) (c : ℝ) :
     μ.real {0} < (PL βL βS c 0).real {0} := by
   rw [PL, real_lt_posterior_real_singleton_iff_of_pair (S βL βS c) μ (ω := 0) (ω' := 1)
-    (by decide) (λ w _ => by fin_cases w <;> simp) (comp_S_ne_zero βL βS c) (μ_singleton 0).1
+    (by decide) (fun w _ => by fin_cases w <;> simp) (comp_S_ne_zero βL βS c) (μ_singleton 0).1
     (μ_singleton 1).1]
   exact S_real_lt hβL hβS c
 
@@ -357,7 +357,7 @@ theorem goodness_pos (hβL : 0 < βL) (hβS : 0 < βS) (c : ℝ) :
   have hpost : μ.real {0} < (PL βL βS c 0).real {0} := pragmatic_T hβL hβS c
   have hsum : (PL βL βS c 0).real {0} + (PL βL βS c 0).real {1} = 1 :=
     measureReal_singleton_add_singleton_of_pair (PL βL βS c 0) (ω := 0) (ω' := 1) (by decide)
-      (λ w _ => by fin_cases w <;> simp)
+      (fun w _ => by fin_cases w <;> simp)
   have hE : expectedReward (PL βL βS c) reward 0 0 - expectedReward (PL βL βS c) reward 0 1 =
       2 * ((PL βL βS c 0).real {0} - (PL βL βS c 0).real {1}) := by
     simp [expectedReward, Fin.sum_univ_two, reward]
@@ -401,7 +401,7 @@ def sem : Msg → Finset World := ![{0, 2, 3}, {1, 2, 3}]
 
 /-- Table 1: replacing earns 0 everywhere; not replacing earns 1 in the drought-only world and
 −1 elsewhere. -/
-def reward : Act → World → ℝ := λ a w => if a = 0 then 0 else if w = 1 then 1 else -1
+def reward : Act → World → ℝ := fun a w => if a = 0 then 0 else if w = 1 then 1 else -1
 
 noncomputable abbrev L0 : Kernel Msg World := uniformListener sem
 

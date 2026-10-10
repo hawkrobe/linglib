@@ -204,16 +204,16 @@ noncomputable def utility (x : Obs × Access) (m : SimpleExpr) : ℝ :=
 
 /-- The speaker of (17) is the softmax of the utility at the rationality `lam`. -/
 noncomputable def speaker : Kernel (Obs × Access) SimpleExpr :=
-  speakerOfScore fun x m ↦ ((lam * utility θ P x m : ℝ) : EReal)
+  Kernel.softmax fun x m ↦ ((lam * utility θ P x m : ℝ) : EReal)
 
 /-- The Hellinger utility is finite, so every message is used with positive probability at
 every observation, and pragmatically true-enough messages can be sent. -/
 theorem speaker_apply_singleton_ne_zero (x : Obs × Access) (m : SimpleExpr) :
     speaker lam θ P x {m} ≠ 0 :=
-  speakerOfScore_apply_singleton_ne_zero (EReal.coe_ne_bot _) fun _ ↦ EReal.coe_ne_top _
+  Kernel.softmax_apply_singleton_ne_zero (EReal.coe_ne_bot _) fun _ ↦ EReal.coe_ne_top _
 
 instance : IsMarkovKernel (speaker lam θ P) :=
-  isMarkovKernel_speakerOfScore (fun _ ↦ ⟨.possibly, EReal.coe_ne_bot _⟩)
+  Kernel.isMarkovKernel_softmax (fun _ ↦ ⟨.possibly, EReal.coe_ne_bot _⟩)
     fun _ _ ↦ EReal.coe_ne_top _
 
 /-- The speaker prefers the message whose literal listener lies closer to her belief. -/
@@ -221,7 +221,7 @@ theorem speaker_real_lt_iff (hlam : 0 < lam) (x : Obs × Access) (m m' : SimpleE
     (speaker lam θ P x).real {m} < (speaker lam θ P x).real {m'} ↔
       hellingerDist (belief P x.2 x.1) (L0 θ P m') <
         hellingerDist (belief P x.2 x.1) (L0 θ P m) := by
-  rw [speaker, speakerOfScore_coe_real_singleton_lt_iff, mul_lt_mul_iff_of_pos_left hlam, utility,
+  rw [speaker, Kernel.softmax_coe_real_singleton_lt_iff, mul_lt_mul_iff_of_pos_left hlam, utility,
     utility, neg_lt_neg_iff]
 
 /-- The speaker of [goodman-stuhlmuller-2013], with the Kullback–Leibler divergence in place

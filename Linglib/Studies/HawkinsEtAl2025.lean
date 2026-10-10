@@ -38,7 +38,7 @@ problem from the question and trades informativity against relevance to it.
 ## Implementation notes
 
 * Beliefs are probability measures and the base respondents kernels, so Bayesian update is a
-  posterior; the questioner and the pragmatic respondent are `RSA.speakerOfScore` kernels.
+  posterior; the questioner and the pragmatic respondent are `Kernel.softmax` kernels.
 * The paper defines safety as "not knowing the answer to `q` entails not knowing whether `r`",
   under which its safe example "Yes, we take Visa" to "Do you take Visa or Mastercard?" would be
   unsafe. `Safe` takes the reading "not knowing `r`" that the examples force, and applies to a
@@ -266,18 +266,18 @@ variable [MeasurableSpace Q] [Fintype Q] [MeasurableSingletonClass Q] [Measurabl
 
 /-- The questioner (2.3) soft-maximizes the question score with rationality `αQ`. -/
 noncomputable def Model.questioner : Kernel D Q :=
-  RSA.speakerOfScore fun d q ↦ ((p.αQ * m.questionScore p d q : ℝ) : EReal)
+  Kernel.softmax fun d q ↦ ((p.αQ * m.questionScore p d q : ℝ) : EReal)
 
 instance : IsFiniteKernel (m.questioner p) :=
-  inferInstanceAs (IsFiniteKernel (RSA.speakerOfScore _))
+  inferInstanceAs (IsFiniteKernel (Kernel.softmax _))
 
 instance [Nonempty Q] : IsMarkovKernel (m.questioner p) :=
-  RSA.isMarkovKernel_speakerOfScore (fun _ ↦ ⟨Classical.arbitrary Q, EReal.coe_ne_bot _⟩)
+  Kernel.isMarkovKernel_softmax (fun _ ↦ ⟨Classical.arbitrary Q, EReal.coe_ne_bot _⟩)
     fun _ _ ↦ EReal.coe_ne_top _
 
 /-- The questioner asks every question with positive probability. -/
 theorem Model.questioner_apply_singleton_ne_zero (d : D) (q : Q) : m.questioner p d {q} ≠ 0 :=
-  RSA.speakerOfScore_apply_singleton_ne_zero (EReal.coe_ne_bot _) fun _ ↦ EReal.coe_ne_top _
+  Kernel.softmax_apply_singleton_ne_zero (EReal.coe_ne_bot _) fun _ ↦ EReal.coe_ne_top _
 
 end Questioner
 
@@ -328,7 +328,7 @@ variable [MeasurableSingletonClass Q] [Fintype R] [MeasurableSingletonClass R]
 
 /-- The pragmatic respondent (2.5) soft-maximizes its score with rationality `αR`. -/
 noncomputable def Model.respondent (πW : Measure W) : Kernel Q R :=
-  RSA.speakerOfScore fun q r ↦ (p.αR : EReal) * m.respondentScore p πD πW q r
+  Kernel.softmax fun q r ↦ (p.αR : EReal) * m.respondentScore p πD πW q r
 
 /-- Action relevance alone does not enforce truthfulness (§2c), since at `β = 1` the respondent
 gives every response, false ones included, positive probability. -/
@@ -336,7 +336,7 @@ theorem Model.respondent_apply_singleton_ne_zero_of_beta_eq_one (hβ : p.β = 1)
     (πW : Measure W) (q : Q) (r : R) : m.respondent p πD πW q {r} ≠ 0 := by
   have h (r : R) : ∃ x : ℝ, (p.αR : EReal) * m.respondentScore p πD πW q r = x :=
     ⟨_, by rw [m.respondentScore_of_beta_eq_one p πD hβ, ← EReal.coe_mul]⟩
-  exact RSA.speakerOfScore_apply_singleton_ne_zero
+  exact Kernel.softmax_apply_singleton_ne_zero
     (by obtain ⟨x, hx⟩ := h r; exact hx ▸ EReal.coe_ne_bot x)
     fun r' ↦ by obtain ⟨x, hx⟩ := h r'; exact hx ▸ EReal.coe_ne_top x
 
@@ -358,7 +358,7 @@ theorem Model.respondent_truthful (hβ : p.β < 1) (hα : 0 < p.αR) {πW : Meas
   have hint : ∫⁻ d', klDiv πW ((m.R0'†(m.prior d')) r) ∂(m.goalPosterior p πD q) = ∞ := by
     rw [lintegral_countable']
     exact ENNReal.tsum_eq_top_of_eq_top ⟨d, by rw [hkl, ENNReal.top_mul hgp]⟩
-  refine RSA.speakerOfScore_apply_singleton_eq_zero ?_
+  refine Kernel.softmax_apply_singleton_eq_zero ?_
   simp only [Model.respondentScore, hint, EReal.coe_ennreal_top, EReal.neg_top,
     EReal.coe_mul_bot_of_pos (sub_pos.2 hβ), EReal.bot_add, EReal.coe_mul_bot_of_pos hα]
 

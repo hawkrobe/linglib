@@ -236,21 +236,21 @@ theorem util_exists_ne_bot (α c : ℝ) (p : HeartState × Phi) : ∃ u, util α
 
 /-- The first-order speaker, (5): the score speaker of `util`. -/
 noncomputable def speaker (α c : ℝ) : Kernel (HeartState × Phi) Utterance :=
-  RSA.speakerOfScore (util α c)
+  Kernel.softmax (util α c)
 
 instance (α c : ℝ) : IsFiniteKernel (speaker α c) :=
-  inferInstanceAs (IsFiniteKernel (RSA.speakerOfScore _))
+  inferInstanceAs (IsFiniteKernel (Kernel.softmax _))
 
 /-- Speaker preference at a situation is utility comparison. -/
 theorem speaker_real_singleton_lt_iff (α c : ℝ) (p : HeartState × Phi) (u u' : Utterance) :
     (speaker α c p).real {u} < (speaker α c p).real {u'} ↔ util α c p u < util α c p u' :=
-  RSA.speakerOfScore_real_singleton_lt_iff (util_ne_top α c p) (util_exists_ne_bot α c p)
+  Kernel.softmax_real_singleton_lt_iff (util_ne_top α c p) (util_exists_ne_bot α c p)
 
 /-- An utterance of literal probability zero at the true state is never produced by a speaker
 with some weight on informativity. -/
 theorem speaker_apply_eq_zero_of_meaning_eq_zero (α c : ℝ) {s : HeartState} {φ : Phi}
     {u : Utterance} (h0 : meaning u s = 0) (hφ : φ ≠ .p0) : speaker α c (s, φ) {u} = 0 :=
-  RSA.speakerOfScore_apply_singleton_eq_zero (util_gated h0 hφ)
+  Kernel.softmax_apply_singleton_eq_zero (util_gated h0 hφ)
 
 /-! ### First-order predictions (Figure 2, top right) -/
 
@@ -322,9 +322,9 @@ theorem prior_ne_zero (p : HeartState × Phi) : prior {p} ≠ 0 :=
 /-- Every utterance is accepted by someone at zero hearts, so every utterance is heard with
 positive probability. -/
 theorem comp_speaker_ne_zero (α c : ℝ) (u : Utterance) : (speaker α c ∘ₘ prior) {u} ≠ 0 := by
-  have key : ∀ s : HeartState, meaning u s ≠ 0 → (speaker α c ∘ₘ prior) {u} ≠ 0 := λ s hs =>
+  have key : ∀ s : HeartState, meaning u s ≠ 0 → (speaker α c ∘ₘ prior) {u} ≠ 0 := fun s hs =>
     comp_apply_singleton_ne_zero _ _ (prior_ne_zero (s, .p100))
-      (RSA.speakerOfScore_apply_singleton_ne_zero
+      (Kernel.softmax_apply_singleton_ne_zero
         (by rw [util_ungated (by simp [hs])]; exact EReal.coe_ne_bot _) (util_ne_top α c _))
   obtain ⟨a, b⟩ := u
   cases a <;> cases b <;> exact key .h0 (by norm_num [meaning, acceptance])
@@ -366,7 +366,8 @@ noncomputable def s2Utility (α c : ℝ) (W : S2Weights) (phiHat : Phi) (s : Hea
     - cost c u
 
 /-- The second-order speaker, (1): the score speaker of the total utility scaled by `α`. -/
-noncomputable def s2Speaker (α c : ℝ) (W : S2Weights) (phiHat : Phi) : Kernel HeartState Utterance :=
-  RSA.speakerOfScore λ s u => ((α * s2Utility α c W phiHat s u : ℝ) : EReal)
+noncomputable def s2Speaker (α c : ℝ) (W : S2Weights) (phiHat : Phi) :
+    Kernel HeartState Utterance :=
+  Kernel.softmax fun s u => ((α * s2Utility α c W phiHat s u : ℝ) : EReal)
 
 end YoonEtAl2020
