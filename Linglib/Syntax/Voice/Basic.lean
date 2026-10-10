@@ -39,9 +39,9 @@ marker, `Voice.passive.marked [.suff "x"]`, and the bare constants are unmarked.
 * The participants of a voice are those of the initial slots and those of the derived slots no
   initial slot corresponds to, expletives aside; an initial slot without a correspondent is
   absent from the derived construction.
-* A frame's sole core term counts as S, so a frame cannot code a P without an A as an
-  impersonal construction does; `IsImpersonal` reads impersonality off the pivot, which defaults
-  to the first core slot and is `none` for an impersonal construction.
+* A frame without a subject codes its core objects as such, so an impersonal construction keeps
+  its P; `IsImpersonal` reads impersonality off the pivot, which defaults to the first core slot
+  and is `none` for an impersonal construction.
 * The marker is the segmental material coding the voice, in surface order, and the coding type
   is read off it: synthetic when every morph is bound, analytic when a free morph, an
   auxiliary, is among them, uncoded when it is empty.
@@ -240,7 +240,7 @@ end Construction
 slot, X for an expressed oblique, implicit for an implicit position, and absent for an expletive
 or an unfilled slot. -/
 def _root_.ArgumentFrame.status (fr : ArgumentFrame) (s : ArgumentFrame.Slot) : Status :=
-  match fr.codingRole s, fr.get? s with
+  match fr.argumentRole s, fr.get? s with
   | some r, _ => .term (.ofArgumentRole r)
   | none, some (.implicit _) => .implicit
   | none, some p => if p.IsExpressed then .term .X else .absent
@@ -338,7 +338,7 @@ def fate (s : Slot) : ParticipantFate :=
 /-- The fate of the initial core term with a transitivity-related role. -/
 def fateOfRole (r : TermRole) : ParticipantFate :=
   match v.source.coreSlots.find? fun s ↦
-      (v.source.codingRole s).map TermRole.ofArgumentRole == some r with
+      (v.source.argumentRole s).map TermRole.ofArgumentRole == some r with
   | some s => v.fate s
   | none => .na
 
@@ -483,19 +483,25 @@ def active : Voice := refl .np
 /-- The agent voice of a symmetrical system, with the agent the pivot, is the active. -/
 abbrev agentVoice : Voice := active
 
-/-- The passive of a frame, the transitive one by default, denucleativizes the external
-argument but maintains it in participant structure, implied here and expressed as an oblique in
-a long passive, and makes the first complement the pivot ([creissels-2024] §8.3.2.1). -/
+/-- The passive of a frame with a complement, the transitive one by default, makes the first
+complement the subject, the pivot, and denucleativizes the external argument but maintains it in
+participant structure, implied here and expressed as an oblique in a long passive
+([creissels-2024] §8.3.2.1). -/
 def passive (fr : ArgumentFrame := .np) : Voice :=
+  { source := fr, target := ⟨some .nominal, fr.complements.tail ++ [.implicit]⟩,
+    correspondence := (external, complement (fr.complements.length - 1)) ::
+      (complement 0, external) ::
+        (List.range (fr.complements.length - 1)).map fun i ↦ (complement (i + 1), complement i) }
+
+/-- The impersonal passive denucleativizes the external argument as the passive does and leaves
+the complements in place, with no subject, so the initial P keeps its coding and the derived
+construction has no pivot ([creissels-2024] §8.3.2.2); of an intransitive frame, it
+denucleativizes the S (§8.3.2.4). -/
+def impersonalPassive (fr : ArgumentFrame := .np) : Voice :=
   { source := fr, target := ⟨none, fr.complements ++ [.implicit]⟩,
     correspondence := (external, complement fr.complements.length) ::
-      (List.range fr.complements.length).map fun i ↦ (complement i, complement i) }
-
-/-- The impersonal passive is the passive with no pivot, its derived construction privileging no
-term because the initial P keeps its coding ([creissels-2024] §8.3.2.2), which the frame, its
-sole core term counting as S, does not record; of an intransitive frame, it denucleativizes the
-S (§8.3.2.4). -/
-def impersonalPassive (fr : ArgumentFrame := .np) : Voice := { passive fr with pivot := none }
+      (List.range fr.complements.length).map fun i ↦ (complement i, complement i),
+    pivot := none }
 
 /-- The antipassive denucleativizes the initial P and makes the initial A the S of an
 intransitive construction ([creissels-2024] §8.3.2.3). -/
@@ -507,7 +513,7 @@ def antipassive : Voice :=
 initial P the S of an intransitive construction, [creissels-2024]'s decausativization
 (§8.3.1.2). -/
 def anticausative : Voice :=
-  { source := .np, target := .unaccusative, correspondence := [(complement 0, complement 0)] }
+  { source := .np, target := .intransitive, correspondence := [(complement 0, external)] }
 
 /-- The causative nucleativizes a causer as the A of a transitive construction whose P is the
 initial S ([creissels-2024] §8.3.1.1). -/

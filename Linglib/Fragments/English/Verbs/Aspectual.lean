@@ -33,7 +33,7 @@ def stop : Verb where
   valency := .of
     [(ArgumentFrame.gerund, [0, 1]),
      (ArgumentFrame.np, [0, 1]),
-     (ArgumentFrame.unaccusative, [1])]
+     (ArgumentFrame.intransitive, [1])]
   readings := [{ frame := ArgumentFrame.gerund, control := some .subjectControl }]
   vendlerClass := some .achievement
   passivizable := false
@@ -50,7 +50,7 @@ def quit : Verb where
   valency := .of
     [(ArgumentFrame.gerund, [0, 1]),
      (ArgumentFrame.np, [0, 1]),
-     (ArgumentFrame.unaccusative, [1])]
+     (ArgumentFrame.intransitive, [1])]
   readings := [{ frame := ArgumentFrame.gerund, control := some .subjectControl }]
   vendlerClass := some .achievement
   passivizable := false
@@ -63,7 +63,7 @@ def start : Verb := .mkRegular {
   valency := .of
     [(ArgumentFrame.gerund, [0, 1]),
      (ArgumentFrame.np, [0, 1]),
-     (ArgumentFrame.unaccusative, [1])]
+     (ArgumentFrame.intransitive, [1])]
   readings := [{ frame := ArgumentFrame.gerund, control := some .subjectControl }]
   vendlerClass := some .achievement
   passivizable := false
@@ -80,7 +80,7 @@ def begin_ : Verb where
   valency := .of
     [(ArgumentFrame.gerund, [0, 1]),
      (ArgumentFrame.np, [0, 1]),
-     (ArgumentFrame.unaccusative, [1])]
+     (ArgumentFrame.intransitive, [1])]
   readings := [{ frame := ArgumentFrame.gerund, control := some .subjectControl }]
   vendlerClass := some .achievement
   passivizable := false
@@ -93,7 +93,7 @@ def continue_ : Verb := .mkRegular {
   valency := .of
     [(ArgumentFrame.gerund, [0, 1]),
      (ArgumentFrame.np, [0, 1]),
-     (ArgumentFrame.unaccusative, [1])]
+     (ArgumentFrame.intransitive, [1])]
   readings := [{ frame := ArgumentFrame.gerund, control := some .subjectControl }]
   vendlerClass := some .activity
   passivizable := false
@@ -110,7 +110,7 @@ def keep : Verb where
   valency := .of
     [(ArgumentFrame.gerund, [0, 1]),
      (ArgumentFrame.np, [0, 1]),
-     (ArgumentFrame.unaccusative, [1])]
+     (ArgumentFrame.intransitive, [1])]
   readings := [{ frame := ArgumentFrame.gerund, control := some .subjectControl }]
   vendlerClass := some .activity
   passivizable := false

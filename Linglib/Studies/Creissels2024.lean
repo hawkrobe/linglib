@@ -46,8 +46,6 @@ violate.
 * Chapters 2 to 7, and chapters 9 to 17 beyond their definitions, are not modelled.
 * The potential-participant condition on nucleativization (§8.1.6), the non-compositional
   readings of stacked markers (§8.4.3) and the diachronic scenarios are prose.
-* `Voice.impersonalPassive` is the passive with no pivot: its frames code the initial P as S,
-  so its derived construction is not impersonal and it is missing from `voiceTypes`.
 
 ## References
 
@@ -266,7 +264,8 @@ def portative : Voice :=
 
 /-- Each voice with the type it is named for. -/
 def voiceTypes : List (Voice × Kind) :=
-  [(passive, .passivization), (impersonalPassive .intransitive, .sDenucleativization),
+  [(passive, .passivization), (impersonalPassive, .impersonalPassivization),
+    (impersonalPassive .intransitive, .sDenucleativization),
     (antipassive, .antipassivization), (anticausative, .decausativization),
     (causative, .causativization), (reflexive, .reflexivization),
     (instrumentNucleativization, .aNucleativization), (applicative, .pApplicativization),

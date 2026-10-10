@@ -15,7 +15,7 @@ inchoative, which is always involitive, as *gilannə* 'drown' has *Nimal giluna*
 
 The entries are the roots whose anticausatives Beavers and Zubair analyze. An entry is cited by
 its volitive infinitive, records its involitive infinitive where it has one, and has an
-unaccusative frame when the root has an inchoative.
+intransitive diathesis with the patient as subject when the root has an inchoative.
 
 ## Implementation notes
 
@@ -51,21 +51,21 @@ instance : DecidablePred Verb.HasInvolitive := fun v ↦
 def kadann : Verb where
   form := "kadannə"
   involitive := some "kædennə"
-  valency := .of [(.np, [0, 1]), (.unaccusative, [1])]
+  valency := .of [(.np, [0, 1]), (.intransitive, [1])]
 
 /-- *gilannə* 'drown' has the involitive *gilennə* and an inchoative, as in *Nimal giluna*
 'Nimal drowned'. -/
 def gilann : Verb where
   form := "gilannə"
   involitive := some "gilennə"
-  valency := .of [(.np, [0, 1]), (.unaccusative, [1])]
+  valency := .of [(.np, [0, 1]), (.intransitive, [1])]
 
 /-- *marannə* 'kill' has the involitive *mærennə* 'die', which occurs only intransitively, as in
 *Nimal mæruna* 'Nimal died'. -/
 def marann : Verb where
   form := "marannə"
   involitive := some "mærennə"
-  valency := .of [(.np, [0, 1]), (.unaccusative, [1])]
+  valency := .of [(.np, [0, 1]), (.intransitive, [1])]
 
 /-- *minimarannə* 'murder' requires volition and so has neither an involitive stem nor an
 inchoative. -/
@@ -85,7 +85,7 @@ def kapann : Verb where
 def vinaashKarann : Verb where
   form := "vinaashə-kərannə"
   involitive := some "vinaashə-wennə"
-  valency := .of [(.np, [0, 1]), (.unaccusative, [1])]
+  valency := .of [(.np, [0, 1]), (.intransitive, [1])]
 
 /-- The verbs of this file. -/
 def verbs : List Verb := [kadann, gilann, marann, minimarann, kapann, vinaashKarann]

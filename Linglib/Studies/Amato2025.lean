@@ -40,7 +40,8 @@ namespace Amato2025
 
 open Minimalist
 open Minimalist.FeatureBundle (ofList)
-open ArgumentStructure (PerfectAux TransitivityClass)
+open ArgumentStructure (TransitivityClass)
+open Verb (PerfectAuxiliary)
 
 variable {H : Type*} [DecidableEq H]
 
@@ -271,7 +272,7 @@ theorem t_targets_subject (p : Person) :
   revert p; decide
 
 /-- The Vocabulary Items (14) insert `/AVERE/ ↔ Perf[π:α]`, and `/ESSERE/` elsewhere. -/
-def standardItalianAux (s : State Head) : PerfectAux :=
+def standardItalianAux (s : State Head) : PerfectAuxiliary :=
   if (s .perf .person).isValued then .have else .be
 
 /-- As in (4)–(5), the derivation yields exactly the canonical Romance distribution, HAVE with
@@ -289,7 +290,7 @@ theorem standardItalian_voice (c : TransitivityClass) (f : VoiceHead)
   rcases hf with rfl | rfl <;> (revert c p; decide)
 
 /-- Ariellese (23) inserts `/AVERE/ ↔ Perf[π:-participant]`. -/
-def arielleseAux (s : State Head) : PerfectAux :=
+def arielleseAux (s : State Head) : PerfectAuxiliary :=
   if s .perf .person = .valued .third then .have else .be
 
 /-- Under the ordering (22) the auxiliary follows the subject's person alone (21), BBH whatever the
@@ -299,7 +300,7 @@ theorem ariellese_aux (c : TransitivityClass) (p : Person) :
   revert c p; decide
 
 /-- Tufillese (24) inserts `/AVERE/ ↔ Perf[π:α] / T[ϕ:3sg]`. -/
-def tufilleseAux (s : State Head) : PerfectAux :=
+def tufilleseAux (s : State Head) : PerfectAuxiliary :=
   if (s .perf .person).isValued ∧ s .t .person = .valued .third then .have else .be
 
 /-- The mixed system has BBH where Standard Italian has HAVE and BE where it has BE (§3.5). -/

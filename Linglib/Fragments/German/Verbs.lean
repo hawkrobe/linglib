@@ -17,7 +17,7 @@ infinitive and that of a verb with a prefix from the verb it is formed on, by th
 strong verb gives its own principal parts. A verb whose only object is in the dative, as *danken*
 'thank' and *gratulieren* 'congratulate' are, records the dative in its case array. A verb of
 motion records the direction of its theme's path, from which, with its frame, the auxiliary of its
-perfect follows (`German.perfect`).
+perfect follows (`German.perfectAuxiliary`).
 
 The entries are the verbs the studies use: a few causative and attitude verbs, *bauen* 'build',
 the simple, change-of-state and prefixed verbs of Benz's resultatives and nominalizations, the
@@ -144,6 +144,7 @@ def verkaufen : Verb :=
 subject with no direction. -/
 def rennen : Verb :=
   { Verb.ofStem (strong "rennen" "rennt" "rannte" "gerannt") with
+    perfectAuxiliaries := {.be},
     valency := .of [(ArgumentFrame.intransitive, [0]), (ArgumentFrame.spatialPP, [0, 1])],
       vendlerClass := some .activity,
     direction := some .place }
@@ -163,7 +164,8 @@ and an impersonal verb, *es hat in der Nacht gefroren* 'there was a frost in the
 ([durrell-2011] §12.3.2c). -/
 def frieren : Verb :=
   { Verb.ofStem (strong "frieren" "friert" "fror" "gefroren") with
-    valency := .of [(ArgumentFrame.unaccusative, [0]), (ArgumentFrame.impersonal, [])],
+    voiceType := some .nonThematic, perfectAuxiliaries := {.be, .have},
+    valency := .of [(ArgumentFrame.intransitive, [0]), (ArgumentFrame.impersonal, [])],
     vendlerClass := some .achievement }
 
 /-- *schießen* 'shoot' is a transitive verb. -/
@@ -373,6 +375,7 @@ perfect, with the principal parts of Table 12.12. -/
 direction. -/
 def laufen : Verb :=
   { Verb.ofStem (strong "laufen" "läuft" "lief" "gelaufen") with
+    perfectAuxiliaries := {.be},
     valency := .of [(ArgumentFrame.intransitive, [0]), (ArgumentFrame.spatialPP, [0, 1])],
       vendlerClass := some .activity,
     direction := some .place }
@@ -381,7 +384,8 @@ def laufen : Verb :=
 *Um die Zeit werden wir schon angekommen sein*. -/
 def ankommen : Verb :=
   { Verb.ofStem ((strong "kommen" "kommt" "kam" "gekommen").separable "an") with
-    valency := .ofFrame ArgumentFrame.unaccusative, vendlerClass := some .achievement,
+    perfectAuxiliaries := {.be},
+    valency := .ofFrame ArgumentFrame.intransitive, vendlerClass := some .achievement,
     direction := some .goal }
 
 /-- *tanzen* 'dance' names the activity as such, *Ich habe als junger Mann viel getanzt*, and
@@ -389,6 +393,7 @@ expresses movement from one place to another only with a directional phrase, *Er
 Zimmer getanzt* (§12.3.2c). -/
 def tanzen : Verb :=
   { Verb.ofStem (weak "tanzen") with
+    perfectAuxiliaries := {.be, .have},
     valency := .of
       [(ArgumentFrame.intransitive, [0]),
        (ArgumentFrame.spatialPP, [0, 1])]
@@ -398,12 +403,14 @@ def tanzen : Verb :=
 /-- *arbeiten* 'work' denotes a continuous action, *Ich habe gestern lange gearbeitet*. -/
 def arbeiten : Verb :=
   { Verb.ofStem (weak "arbeiten") with
+    perfectAuxiliaries := {.have},
     valency := .ofFrame ArgumentFrame.intransitive [some activitySubjectProfile],
       vendlerClass := some .activity }
 
 /-- *bleiben* 'stay, remain' denotes the continuation of a state, *Wir sind in Dessau geblieben*. -/
 def bleiben : Verb :=
   { Verb.ofStem (strong "bleiben" "bleibt" "blieb" "geblieben") with
+    perfectAuxiliaries := {.be},
     valency := .ofFrame ArgumentFrame.intransitive, vendlerClass := some .state,
     phasal := some .continuation }
 
@@ -411,6 +418,7 @@ def bleiben : Verb :=
 German commonly has *ich bin gelegen*. -/
 def liegen : Verb :=
   { Verb.ofStem (strong "liegen" "liegt" "lag" "gelegen") with
+    perfectAuxiliaries := {.have},
     valency := .ofFrame ArgumentFrame.intransitive, vendlerClass := some .state }
 
 /-- `allVerbs` lists the entries. -/

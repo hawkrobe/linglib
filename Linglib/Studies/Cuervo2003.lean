@@ -4,6 +4,7 @@ public import Linglib.Data.Examples.Cuervo2003
 public import Linglib.Syntax.Minimalist.Verbal.Applicative
 public import Linglib.Fragments.Romance.Spanish.Verbs
 public import Linglib.Fragments.English.Verbs.Inventory
+public import Linglib.Semantics.ArgumentStructure.Unaccusativity
 
 /-!
 # Cuervo (2003): Datives at Large
@@ -117,11 +118,17 @@ namespace Predicate
 
 variable (p : Predicate)
 
+/-- The root licenses an object when the use has a nominal object, or when it is intransitive and
+the verb unaccusative, its sole argument the theme. -/
+def RootLicensesObject : Prop := p.frame.HasNominal ∨ p.frame.IsIntransitive ∧ p.verb.IsUnaccusative
+
+instance : Decidable p.RootLicensesObject := inferInstanceAs (Decidable (_ ∨ _ ∧ _))
+
 /-- The theme is the complement of the root, where a low applicative can take it: the root
 licenses an object, the structure is simple, since the theme of a complex one is the specifier of
 the lower vP (§3.2.2.3), and the state is not predicational (§1.3.3). -/
 def ThemeIsRootComplement : Prop :=
-  p.frame.HasNominal ∧ ¬ LittleV.BiEventive p.heads ∧ p.predicational = false
+  p.RootLicensesObject ∧ ¬ LittleV.BiEventive p.heads ∧ p.predicational = false
 
 instance : Decidable p.ThemeIsRootComplement := inferInstanceAs (Decidable (_ ∧ _ ∧ _))
 
@@ -145,20 +152,20 @@ def lavar : Predicate := ⟨Spanish.Verbs.lavar, .np, [.vDO], false, .possessor�
 def admirar : Predicate := ⟨Spanish.Verbs.admirar, .np, [.vBE], false, .possessor⟩
 
 /-- *llegar* 'arrive', a simple verb of movement: the low applicative TO, (34). -/
-def llegar : Predicate := ⟨Spanish.Verbs.llegar, .unaccusative, [.vGO], false, .recipient⟩
+def llegar : Predicate := ⟨Spanish.Verbs.llegar, .intransitive, [.vGO], false, .recipient⟩
 
 /-- *salir* 'come out', a simple verb of movement whose dative is the inalienable location of
 the theme, (54a). -/
-def salir : Predicate := ⟨Spanish.Verbs.salir, .unaccusative, [.vGO], false, .possessor⟩
+def salir : Predicate := ⟨Spanish.Verbs.salir, .intransitive, [.vGO], false, .possessor⟩
 
 /-- *suceder* 'happen', a simple verb of happening, (49). -/
-def suceder : Predicate := ⟨Spanish.Verbs.suceder, .unaccusative, [.vGO], false, .possessor⟩
+def suceder : Predicate := ⟨Spanish.Verbs.suceder, .intransitive, [.vGO], false, .possessor⟩
 
 /-- *sobrar* 'be extra', an existential state whose theme is the complement of the root, (38). -/
-def sobrar : Predicate := ⟨Spanish.Verbs.sobrar, .unaccusative, [.vBE], false, .possessor⟩
+def sobrar : Predicate := ⟨Spanish.Verbs.sobrar, .intransitive, [.vBE], false, .possessor⟩
 
 /-- *gustar* 'appeal to', a predicational state whose theme is the specifier of vBE, (37). -/
-def gustar : Predicate := ⟨Spanish.Verbs.gustar, .unaccusative, [.vBE], true, .possessor⟩
+def gustar : Predicate := ⟨Spanish.Verbs.gustar, .intransitive, [.vBE], true, .possessor⟩
 
 /-- *romper* 'break' as a causative, (35). -/
 def romperCausative : Predicate :=
@@ -166,7 +173,7 @@ def romperCausative : Predicate :=
 
 /-- *romperse* 'break' as an inchoative, (36), (60). -/
 def romperInchoative : Predicate :=
-  ⟨Spanish.Verbs.romper.toVerb, .unaccusative, [.vGO, .vBE], false, .possessor⟩
+  ⟨Spanish.Verbs.romper.toVerb, .intransitive, [.vGO, .vBE], false, .possessor⟩
 
 /-- *abrir* 'open' as a causative, (90a). -/
 def abrirCausative : Predicate :=
@@ -174,11 +181,11 @@ def abrirCausative : Predicate :=
 
 /-- *abrirse* 'open' as an inchoative, (90b). -/
 def abrirInchoative : Predicate :=
-  ⟨Spanish.Verbs.abrir.toVerb, .unaccusative, [.vGO, .vBE], false, .possessor⟩
+  ⟨Spanish.Verbs.abrir.toVerb, .intransitive, [.vGO, .vBE], false, .possessor⟩
 
 /-- *quemarse* 'burn' as an inchoative, (55). -/
 def quemarInchoative : Predicate :=
-  ⟨Spanish.Verbs.quemar.toVerb, .unaccusative, [.vGO, .vBE], false, .possessor⟩
+  ⟨Spanish.Verbs.quemar.toVerb, .intransitive, [.vGO, .vBE], false, .possessor⟩
 
 /-- *caminar* 'walk', an unergative, (39a), (78). -/
 def caminar : Predicate := ⟨Spanish.Verbs.caminar, .intransitive, [.vDO], false, .possessor⟩
@@ -201,10 +208,10 @@ def openCausative : Predicate := ⟨English.Verbs.open_.toVerb, .np, [.vDO, .vBE
 
 /-- Inchoative *open*, (89a). -/
 def openInchoative : Predicate :=
-  ⟨English.Verbs.open_.toVerb, .unaccusative, [.vGO, .vBE], false, .recipient⟩
+  ⟨English.Verbs.open_.toVerb, .intransitive, [.vGO, .vBE], false, .recipient⟩
 
 /-- *arrive*, a simple verb of movement, (92b). -/
-def arrive : Predicate := ⟨English.Verbs.arrive.toVerb, .unaccusative, [.vGO], false, .recipient⟩
+def arrive : Predicate := ⟨English.Verbs.arrive.toVerb, .intransitive, [.vGO], false, .recipient⟩
 
 end English
 
@@ -308,7 +315,7 @@ theorem spanish_change_low : spanish.Licenses llegar ⟨⟨[.vGO], []⟩, true, 
 low applicative, without two events no affected one, and the high applicative over an activity
 projects no specifier, (66), (74a), (78). -/
 theorem unergative_clitic_only {p : Predicate} (hp : p.heads = [.vDO])
-    (ho : ¬ p.frame.HasNominal) (d : Dative) :
+    (ho : ¬ p.RootLicensesObject) (d : Dative) :
     spanish.Licenses p d ↔ d = ⟨⟨[], [.vDO]⟩, true, false⟩ := by
   obtain ⟨⟨a, b⟩, an, dp⟩ := d
   simp only [Inventory.Licenses, ApplSite.mem_all_iff, ApplSite.heads, hp, spanish, ApplSite.Low,

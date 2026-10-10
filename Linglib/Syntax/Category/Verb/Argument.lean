@@ -11,11 +11,9 @@ The argument slots of a verb entry, read off its basic frame
 (`ArgumentFrame.Slot`), and the entailment profile the entry records for each
 (`Verb.entailments`). Role labels are derived classifications of the
 slots: `Verb.thetaLabel` gives the Dowty cluster label of a slot's
-profile, and `Verb.codingRole` the comparative S/A/P/R/T classification
-of the basic frame (`ArgumentFrame.codingRole`), a function of the frame's
-shape (A is *defined* as the more agent-like core argument of a two-place
-frame), never a stored feature. `Verb.linkedFrame?` assembles the basic frame
-and the derived labels into the verb's argument structure.
+profile, and the comparative S/A/P/R/T classification is the frame's
+(`ArgumentFrame.argumentRole`), never a stored feature. `Verb.linkedFrame?` assembles the basic
+frame and the derived labels into the verb's argument structure.
 
 ## References
 
@@ -48,12 +46,6 @@ def entailments : ArgumentFrame.Slot → Option EntailmentProfile
     entailment profile (`EntailmentProfile.toRole`). -/
 def thetaLabel (s : ArgumentFrame.Slot) : Option ThetaRole :=
   (v.entailments s).bind EntailmentProfile.toRole
-
-/-- The comparative classification of a core slot of the basic frame
-    ([comrie-1978]); `Clause.Arguments.codingRole` classifies a clause
-    token (a passive clause of the same verb has an S). -/
-def codingRole (s : ArgumentFrame.Slot) : Option ArgumentRole :=
-  v.valency.frames.head?.bind (·.codingRole s)
 
 /-- The lexical argument structure of a verb entry is its basic frame, each slot linked to the
 label read off its entailment profile and required when the frame expresses it. -/

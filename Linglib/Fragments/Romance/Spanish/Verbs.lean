@@ -11,8 +11,8 @@ reflexive clitic, as *quebrar* 'crack' does in *el florero se quebró*; a small 
 as *mejorar* 'improve' does in *los sueldos mejoraron*. A few allow both: *hervir* 'boil' is
 usually bare and marginally takes the clitic, and the unaccusatives *caer* 'fall' and *morir*
 'die' occur with and without it. Each verb records the marking of its intransitive, and whether it
-alternates is read off its frames: an alternating verb has both a transitive and an unaccusative
-frame. The proto-role entailments of the subject are those Koontz-Garboden discusses for the
+alternates is read off its diatheses: an alternating verb has a transitive diathesis and an
+intransitive one with the patient as subject. The proto-role entailments of the subject are those Koontz-Garboden discusses for the
 causer, and the classification by marking follows Muñoz Pérez.
 
 The verbs with a lexical reciprocal entry beside their transitive use are those of Palmieri's
@@ -77,7 +77,7 @@ def abrir : SpanishVerbEntry :=
   { form := "abrir",
     valency := .of
       [(ArgumentFrame.np, [0, 1]),
-       (ArgumentFrame.unaccusative, [1])]
+       (ArgumentFrame.intransitive, [1])]
       [some effectorSubject, none],
     anticausativeMarking := some .marked }
 
@@ -87,7 +87,7 @@ def romper : SpanishVerbEntry :=
   { form := "romper",
     valency := .of
       [(ArgumentFrame.np, [0, 1]),
-       (ArgumentFrame.unaccusative, [1])]
+       (ArgumentFrame.intransitive, [1])]
       [some effectorSubject, none],
     anticausativeMarking := some .marked }
 
@@ -97,60 +97,60 @@ def hundir : SpanishVerbEntry :=
   { form := "hundir",
     valency := .of
       [(ArgumentFrame.np, [0, 1]),
-       (ArgumentFrame.unaccusative, [1])]
+       (ArgumentFrame.intransitive, [1])]
       [some effectorSubject, none],
     anticausativeMarking := some .marked }
 
 /-- *caer* 'fall', an unaccusative that occurs with and without the clitic, *cayó* and *se cayó*
 ([munoz-perez-2026]). -/
 def caer : SpanishVerbEntry :=
-  { form := "caer", valency := .ofFrame ArgumentFrame.unaccusative,
-    anticausativeMarking := some .optional }
+  { form := "caer", valency := .ofFrame ArgumentFrame.intransitive,
+    voiceType := some .nonThematic, anticausativeMarking := some .optional }
 
 /-- *morir* 'die', an unaccusative that occurs with and without the clitic, *murió* and
 *se murió* ([munoz-perez-2026]). -/
 def morir : SpanishVerbEntry :=
-  { form := "morir", valency := .ofFrame ArgumentFrame.unaccusative,
-    anticausativeMarking := some .optional }
+  { form := "morir", valency := .ofFrame ArgumentFrame.intransitive,
+    voiceType := some .nonThematic, anticausativeMarking := some .optional }
 
 /-- *cerrar* 'close', with a marked intransitive *cerrarse*. -/
 def cerrar : SpanishVerbEntry :=
   { form := "cerrar",
-    valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.unaccusative, [1])],
+    valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.intransitive, [1])],
     anticausativeMarking := some .marked }
 
 /-- *quebrar* 'crack', with a marked intransitive, *el florero se quebró* and never
 *el florero quebró* ([munoz-perez-2026]). -/
 def quebrar : SpanishVerbEntry :=
   { form := "quebrar",
-    valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.unaccusative, [1])],
+    valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.intransitive, [1])],
     anticausativeMarking := some .marked }
 
 /-- *hervir* 'boil', whose intransitive is usually bare, *el agua hirvió*, and marginally takes
 the clitic ([munoz-perez-2026]). -/
 def hervir : SpanishVerbEntry :=
   { form := "hervir",
-    valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.unaccusative, [1])],
+    valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.intransitive, [1])],
     anticausativeMarking := some .optional }
 
 /-- *olvidar* 'forget', whose intransitive *olvidarse* takes a dative experiencer,
 *se me olvidó*. -/
 def olvidar : SpanishVerbEntry :=
   { form := "olvidar",
-    valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.unaccusative, [1])],
+    valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.intransitive, [1])],
     anticausativeMarking := some .marked }
 
 /-- *ocurrir* 'occur', whose marked form *ocurrirse* takes a dative experiencer,
 *se me ocurrió una idea*. -/
 def ocurrir : SpanishVerbEntry :=
-  { form := "ocurrir", valency := .ofFrame ArgumentFrame.unaccusative,
+  { form := "ocurrir", valency := .ofFrame ArgumentFrame.intransitive,
     anticausativeMarking := some .marked }
 
 /-- *mejorar* 'improve', with a bare intransitive, *los sueldos mejoraron* and never
 *los sueldos se mejoraron* ([munoz-perez-2026]). -/
 def mejorar : SpanishVerbEntry :=
   { form := "mejorar",
-    valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.unaccusative, [1])],
+    valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.intransitive, [1])],
     anticausativeMarking := some .unmarked }
 
 /-- *rasgar* 'tear', with a marked intransitive. Unlike English *tear* it requires a flimsy or
@@ -158,7 +158,7 @@ insubstantial patient and a unidirectional, gash-like separation, and it is inco
 careful, controlled action ([spalek-mcnally-2026] §3.2). -/
 def rasgar : SpanishVerbEntry :=
   { form := "rasgar",
-    valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.unaccusative, [1])],
+    valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.intransitive, [1])],
     anticausativeMarking := some .marked,
     root := { content := {
       force := {.low, .moderate}
@@ -191,7 +191,7 @@ def ahogar : SpanishVerbEntry :=
   { form := "ahogar",
     valency := .of
       [(ArgumentFrame.np, [0, 1]),
-       (ArgumentFrame.unaccusative, [1])]
+       (ArgumentFrame.intransitive, [1])]
       [some effectorSubject, none],
     anticausativeMarking := some .marked }
 
@@ -199,19 +199,19 @@ def ahogar : SpanishVerbEntry :=
 rejects *por sí solo* 'by itself' ([koontz-garboden-2009] ex. 65a). -/
 def empeorar : SpanishVerbEntry :=
   { form := "empeorar",
-    valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.unaccusative, [1])],
+    valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.intransitive, [1])],
     anticausativeMarking := some .unmarked }
 
 /-- *quemar* 'burn', with a marked intransitive *quemarse*. -/
 def quemar : SpanishVerbEntry :=
   { form := "quemar",
-    valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.unaccusative, [1])],
+    valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.intransitive, [1])],
     anticausativeMarking := some .marked }
 
 /-- *crecer* 'grow', an internally caused change of state, which rejects *por sí solo* 'by
 itself' ([koontz-garboden-2009] ex. 65c). -/
 def crecer : SpanishVerbEntry :=
-  { form := "crecer", valency := .ofFrame ArgumentFrame.unaccusative,
+  { form := "crecer", valency := .ofFrame ArgumentFrame.intransitive,
     anticausativeMarking := some .unmarked }
 
 /-- The verbs of the fragment. -/
@@ -253,27 +253,32 @@ def admirar : Verb where
 /-- *llegar* 'arrive' — unaccusative verb of movement. -/
 def llegar : Verb where
   form := "llegar"
-  valency := .ofFrame ArgumentFrame.unaccusative
+  valency := .ofFrame ArgumentFrame.intransitive
+  voiceType := some .nonThematic
 
 /-- *salir* 'come out' — unaccusative verb of movement. -/
 def salir : Verb where
   form := "salir"
-  valency := .ofFrame ArgumentFrame.unaccusative
+  valency := .ofFrame ArgumentFrame.intransitive
+  voiceType := some .nonThematic
 
 /-- *suceder* 'happen' — unaccusative verb of happening. -/
 def suceder : Verb where
   form := "suceder"
-  valency := .ofFrame ArgumentFrame.unaccusative
+  valency := .ofFrame ArgumentFrame.intransitive
+  voiceType := some .nonThematic
 
 /-- *sobrar* 'be left over, be extra' — unaccusative existential. -/
 def sobrar : Verb where
   form := "sobrar"
-  valency := .ofFrame ArgumentFrame.unaccusative
+  valency := .ofFrame ArgumentFrame.intransitive
+  voiceType := some .nonThematic
 
 /-- *gustar* 'appeal to, be liked by' — unaccusative psych verb whose experiencer is dative. -/
 def gustar : Verb where
   form := "gustar"
-  valency := .ofFrame ArgumentFrame.unaccusative
+  valency := .ofFrame ArgumentFrame.intransitive
+  voiceType := some .nonThematic
 
 /-- *caminar* 'walk' — unergative. -/
 def caminar : Verb where

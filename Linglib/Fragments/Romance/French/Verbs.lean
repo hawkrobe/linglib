@@ -15,10 +15,10 @@ classifications are the papers' and live in their studies, while the entries her
 frames and entailments the classifications are read from. A polysemous verb has one entry per
 sense, told apart by its `SenseTag`.
 
-The monadic entries carry the perfect auxiliary Grevisse and Goosse give them. A closed list of
-intransitive verbs, "for the most part" of motion or change of state, forms its perfect with
-*être* (`etreVerbs`); a longer list takes *avoir* for the action and *être* for the state that
-results (`actionOrStateVerbs`); every other verb takes *avoir*. The list is the norm and meaning
+The monadic entries carry the perfect auxiliaries Grevisse and Goosse give them
+(`Verb.perfectAuxiliaries`). A closed list of intransitive verbs, "for the most part" of motion or
+change of state, forms its perfect with *être*; a longer list takes *avoir* for the action and
+*être* for the state that results; every other verb takes *avoir*. The list is the norm and meaning
 does not decide it: every verb of the first list is telic or continues a state, but telic verbs
 of the second, as *aboutir* 'succeed' and *disparaître* 'disappear', take *avoir* for the action.
 A verb of manner of motion selects no directional phrase, so *Marie a couru jusqu'à la maison*
@@ -31,14 +31,12 @@ A verb of manner of motion selects no directional phrase, so *Marie a couru jusq
 * `independentParticipant`, `companionSubject`, `neglectSubject`: the entailments of the
   arguments the transitive entries do not share with a template.
 * `allVerbs`: the entries.
-* `etreVerbs`, `actionOrStateVerbs`: the monadic entries whose perfect takes *être*, and those
-  whose perfect takes either auxiliary.
 
 ## Implementation notes
 
-The basic diathesis of an anticausative is `ArgumentFrame.unaccusative`, its patient the
-participant in the object slot, carrying the entry's profile; the second diathesis is the
-transitive one, with the patient as object and a causer as subject. The entries record no
+The basic diathesis of an anticausative is intransitive, its patient the subject, carrying the
+entry's profile; the second diathesis is the transitive one, with the patient as object and a
+causer as subject. The entries record no
 inflectional forms.
 
 ## References
@@ -88,11 +86,11 @@ def undergoer : EntailmentProfile :=
 moves. -/
 def movingUndergoer : EntailmentProfile := { undergoer with movement := true }
 
-/-- The entry of an anticausative with an optional *se* has the unaccusative frame as its
-basic frame and the transitive frame of the alternation after it. -/
+/-- The entry of an anticausative with an optional *se* has the intransitive, its patient the
+subject, as its basic diathesis and the transitive of the alternation after it. -/
 def anticausative (form : String) (arg : EntailmentProfile := undergoer) : Verb :=
   { form,
-    valency := .of [(ArgumentFrame.unaccusative, [0]), (ArgumentFrame.np, [1, 0])] [some arg,
+    valency := .of [(ArgumentFrame.intransitive, [0]), (ArgumentFrame.np, [1, 0])] [some arg,
                     none] }
 
 /-- *brunir* 'turn brown(er)' ([martin-schaefer-kastner-2025] (31)). -/
@@ -105,7 +103,7 @@ def noircir : Verb := anticausative "noircir"
 def palir : Verb := anticausative "pâlir"
 
 /-- *rajeunir* 'get young(er)' ([martin-schaefer-kastner-2025] (31)). -/
-def rajeunir : Verb := anticausative "rajeunir"
+def rajeunir : Verb := { anticausative "rajeunir" with perfectAuxiliaries := {.be, .have} }
 
 /-- *rougir* 'redden, blush' ([martin-schaefer-kastner-2025] (31)). -/
 def rougir : Verb := anticausative "rougir"
@@ -231,87 +229,100 @@ examples. -/
 /-- *aller* 'go', a verb of motion to a goal. -/
 def aller : Verb where
   form := "aller"
-  valency := .ofFrame ArgumentFrame.unaccusative
+  valency := .ofFrame ArgumentFrame.intransitive
+  perfectAuxiliaries := {.be}
   vendlerClass := some .achievement
   direction := some .goal
 
 /-- *arriver* 'arrive', a verb of motion to a goal. -/
 def arriver : Verb where
   form := "arriver"
-  valency := .ofFrame ArgumentFrame.unaccusative
+  valency := .ofFrame ArgumentFrame.intransitive
+  perfectAuxiliaries := {.be}
   vendlerClass := some .achievement
   direction := some .goal
 
 /-- *entrer* 'enter', a verb of motion to a goal. -/
 def entrer : Verb where
   form := "entrer"
-  valency := .ofFrame ArgumentFrame.unaccusative
+  valency := .ofFrame ArgumentFrame.intransitive
+  perfectAuxiliaries := {.be}
   vendlerClass := some .achievement
   direction := some .goal
 
 /-- *retourner* 'go back', a verb of motion to a goal. -/
 def retourner : Verb where
   form := "retourner"
-  valency := .ofFrame ArgumentFrame.unaccusative
+  valency := .ofFrame ArgumentFrame.intransitive
+  perfectAuxiliaries := {.be}
   vendlerClass := some .achievement
   direction := some .goal
 
 /-- *tomber* 'fall', a verb of motion in a direction. -/
 def tomber : Verb where
   form := "tomber"
-  valency := .ofFrame ArgumentFrame.unaccusative
+  valency := .ofFrame ArgumentFrame.intransitive
+  perfectAuxiliaries := {.be}
   vendlerClass := some .achievement
   direction := some .goal
 
 /-- *venir* 'come', a verb of motion to a goal. -/
 def venir : Verb where
   form := "venir"
-  valency := .ofFrame ArgumentFrame.unaccusative
+  valency := .ofFrame ArgumentFrame.intransitive
+  perfectAuxiliaries := {.be}
   vendlerClass := some .achievement
   direction := some .goal
 
 /-- *partir* 'leave', a verb of motion from a source. -/
 def partir : Verb where
   form := "partir"
-  valency := .ofFrame ArgumentFrame.unaccusative
+  valency := .ofFrame ArgumentFrame.intransitive
+  perfectAuxiliaries := {.be}
   vendlerClass := some .achievement
   direction := some .source
 
 /-- *sortir* 'go out', a verb of motion from a source. -/
 def sortir : Verb where
   form := "sortir"
-  valency := .ofFrame ArgumentFrame.unaccusative
+  valency := .ofFrame ArgumentFrame.intransitive
+  perfectAuxiliaries := {.be}
   vendlerClass := some .achievement
   direction := some .source
 
 /-- *décéder* 'die', a change of state. -/
 def deceder : Verb where
   form := "décéder"
-  valency := .ofFrame ArgumentFrame.unaccusative
+  valency := .ofFrame ArgumentFrame.intransitive
+  perfectAuxiliaries := {.be}
   vendlerClass := some .achievement
 
 /-- *devenir* 'become', a change of state. -/
 def devenir : Verb where
   form := "devenir"
-  valency := .ofFrame ArgumentFrame.unaccusative
+  valency := .ofFrame ArgumentFrame.intransitive
+  perfectAuxiliaries := {.be}
   vendlerClass := some .achievement
 
 /-- *mourir* 'die', a change of state. -/
 def mourir : Verb where
   form := "mourir"
-  valency := .ofFrame ArgumentFrame.unaccusative
+  valency := .ofFrame ArgumentFrame.intransitive
+  perfectAuxiliaries := {.be}
   vendlerClass := some .achievement
 
 /-- *naître* 'be born', a change of state. -/
 def naitre : Verb where
   form := "naître"
-  valency := .ofFrame ArgumentFrame.unaccusative
+  valency := .ofFrame ArgumentFrame.intransitive
+  perfectAuxiliaries := {.be}
   vendlerClass := some .achievement
 
 /-- *rester* 'stay', the continuation of a state. -/
 def rester : Verb where
   form := "rester"
-  valency := .ofFrame ArgumentFrame.unaccusative
+  valency := .ofFrame ArgumentFrame.intransitive
+  perfectAuxiliaries := {.be}
   vendlerClass := some .state
   phasal := some .continuation
 
@@ -319,31 +330,36 @@ def rester : Verb where
 def aboutir : Verb where
   form := "aboutir"
   valency := .ofFrame ArgumentFrame.intransitive
+  perfectAuxiliaries := {.be, .have}
   vendlerClass := some .achievement
 
 /-- *atterrir* 'land', telic. -/
 def atterrir : Verb where
   form := "atterrir"
   valency := .ofFrame ArgumentFrame.intransitive
+  perfectAuxiliaries := {.be, .have}
   vendlerClass := some .achievement
 
 /-- *disparaître* 'disappear', with *avoir* for the event, *Elle a disparu prématurément*, and, now
 rarely, *être* for the state, *Il est aujourd'hui disparu*. -/
 def disparaitre : Verb where
   form := "disparaître"
-  valency := .ofFrame ArgumentFrame.unaccusative
+  valency := .ofFrame ArgumentFrame.intransitive
+  perfectAuxiliaries := {.be, .have}
   vendlerClass := some .achievement
 
 /-- *paraître* 'appear, come out'. -/
 def paraitre : Verb where
   form := "paraître"
-  valency := .ofFrame ArgumentFrame.unaccusative
+  valency := .ofFrame ArgumentFrame.intransitive
+  perfectAuxiliaries := {.be, .have}
   vendlerClass := some .achievement
 
 /-- *grandir* 'grow', a change along a scale of size. -/
 def grandir : Verb where
   form := "grandir"
-  valency := .ofFrame ArgumentFrame.unaccusative
+  valency := .ofFrame ArgumentFrame.intransitive
+  perfectAuxiliaries := {.be, .have}
   vendlerClass := some .accomplishment
   scaleDimension := some .generalSize
 
@@ -351,24 +367,28 @@ def grandir : Verb where
 def survivre : Verb where
   form := "survivre"
   valency := .ofFrame ArgumentFrame.intransitive
+  perfectAuxiliaries := {.have}
   vendlerClass := some .state
 
 /-- *exister* 'exist', stative. -/
 def exister : Verb where
   form := "exister"
-  valency := .ofFrame ArgumentFrame.unaccusative
+  valency := .ofFrame ArgumentFrame.intransitive
+  perfectAuxiliaries := {.have}
   vendlerClass := some .state
 
 /-- *travailler* 'work', an activity whose subject controls it. -/
 def travailler : Verb where
   form := "travailler"
   valency := .ofFrame ArgumentFrame.intransitive [some activitySubjectProfile]
+  perfectAuxiliaries := {.have}
   vendlerClass := some .activity
 
 /-- *courir* 'run', a verb of manner of motion, which selects no directional phrase. -/
 def courir : Verb where
   form := "courir"
   valency := .ofFrame ArgumentFrame.intransitive
+  perfectAuxiliaries := {.have}
   vendlerClass := some .activity
   direction := some .place
 
@@ -376,35 +396,16 @@ def courir : Verb where
 def nager : Verb where
   form := "nager"
   valency := .ofFrame ArgumentFrame.intransitive
+  perfectAuxiliaries := {.have}
   vendlerClass := some .activity
   direction := some .place
 
-/-! ### The perfect auxiliary -/
+/-! ### The perfect auxiliary
 
-/-- The intransitive entries whose perfect takes *être* ([grevisse-goosse-2008] §812b), verbs
-"exprimant, pour la plupart, un mouvement ou un changement d'état". -/
-def etreVerbs : List Verb :=
-  [aller, arriver, deceder, devenir, entrer, mourir, naitre, partir, rester, retourner, sortir,
-   tomber, venir]
-
-/-- The entries whose perfect takes *avoir* when they express the action and *être* when they
-express the state that results (§813a). -/
-def actionOrStateVerbs : List Verb := [aboutir, atterrir, disparaitre, paraitre, grandir, rajeunir]
-
-/-- The monadic entries whose perfect takes *avoir* alone (§811). -/
-def avoirVerbs : List Verb := [survivre, exister, travailler, courir, nager]
-
-/-- Grevisse's gloss holds of the list: every verb whose perfect takes *être* is telic or
-continues a state. -/
-theorem etreVerbs_telic_or_continuation :
-    ∀ v ∈ etreVerbs, v.vendlerClass.map (·.telicity) = some .telic ∨
-      v.phasal = some .continuation := by
-  decide
-
-/-- Telicity does not bring *être* with it: a telic verb of §813a takes *avoir* for the action. -/
-theorem exists_telic_actionOrState :
-    ∃ v ∈ actionOrStateVerbs, v.vendlerClass.map (·.telicity) = some .telic := by
-  decide
+Each monadic entry records the auxiliaries of its perfect: *être* for the closed list of
+[grevisse-goosse-2008] §812b, verbs "exprimant, pour la plupart, un mouvement ou un changement
+d'état"; both for the verbs of §813a, *avoir* when they express the action and *être* when they
+express the state that results; and *avoir* for the others (§811). -/
 
 /-- *Marie a couru jusqu'à la maison* ([sorace-2000] (42b)): a directional phrase is an adjunct to
 *courir*, which it leaves as it is. -/
@@ -419,5 +420,18 @@ def allVerbs : List Verb :=
    aller, arriver, entrer, retourner, tomber, venir, partir, sortir, deceder, devenir, mourir,
    naitre, rester, aboutir, atterrir, disparaitre, paraitre, grandir, survivre, exister,
    travailler, courir, nager]
+
+/-- Grevisse's gloss holds of the list: every verb whose perfect takes *être* alone is telic or
+continues a state. -/
+theorem telic_or_continuation_of_perfectAuxiliaries_eq_be :
+    ∀ v ∈ allVerbs, v.perfectAuxiliaries = {.be} →
+      v.vendlerClass.map (·.telicity) = some .telic ∨ v.phasal = some .continuation := by
+  decide
+
+/-- Telicity does not bring *être* with it: a telic verb of §813a takes *avoir* for the action. -/
+theorem exists_telic_and_have_mem :
+    ∃ v ∈ allVerbs,
+      .have ∈ v.perfectAuxiliaries ∧ v.vendlerClass.map (·.telicity) = some .telic := by
+  decide
 
 end French.Verbs

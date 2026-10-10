@@ -515,7 +515,7 @@ theorem DetransitivizationType.isSome_template_iff (d : DetransitivizationType)
 /-- The initial role of the participant that a voice's derived construction privileges. -/
 def pivotSourceRole (va : Voice) : Option TermRole :=
   (va.pivot.bind fun p ↦ (va.preimages p).head?).bind fun s ↦
-    (va.source.codingRole s).map TermRole.ofArgumentRole
+    (va.source.argumentRole s).map TermRole.ofArgumentRole
 
 /-- The sole argument of a detransitivized stem is the participant of the subevent it denotes, in
 the role (33) gives that subevent: the S of an antipassive was the A, that of an anticausative

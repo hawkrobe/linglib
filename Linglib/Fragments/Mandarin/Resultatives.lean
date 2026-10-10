@@ -75,17 +75,17 @@ def she : Verb :=
 
 /-- 破 *pò* 'break', intransitive. -/
 def po : Verb :=
-  { form := "pò", hanzi := "破", valency := .ofFrame ArgumentFrame.unaccusative,
+  { form := "pò", hanzi := "破", valency := .ofFrame ArgumentFrame.intransitive,
     vendlerClass := some .achievement }
 
 /-- 死 *sǐ* 'die'. -/
 def si : Verb :=
-  { form := "sǐ", hanzi := "死", valency := .ofFrame ArgumentFrame.unaccusative,
+  { form := "sǐ", hanzi := "死", valency := .ofFrame ArgumentFrame.intransitive,
     vendlerClass := some .achievement }
 
 /-- 开 *kāi* 'open', intransitive. -/
 def kai : Verb :=
-  { form := "kāi", hanzi := "开", valency := .ofFrame ArgumentFrame.unaccusative,
+  { form := "kāi", hanzi := "开", valency := .ofFrame ArgumentFrame.intransitive,
     vendlerClass := some .achievement }
 
 /-- 累 *lèi* 'tired'. -/

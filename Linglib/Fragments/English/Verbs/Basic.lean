@@ -136,7 +136,7 @@ def run : Verb where
   valency := .of
     [(ArgumentFrame.intransitive, [0]),
      (ArgumentFrame.np, [1, 0]),
-     (ArgumentFrame.unaccusative, [0]),
+     (ArgumentFrame.intransitive, [0]),
      (ArgumentFrame.spatialPP, [0, 2])]
     [some activitySubjectProfile, none, none]
   passivizable := false
@@ -159,7 +159,8 @@ def dance : Verb := .mkRegular {
 /-- "arrive" — unaccusative intransitive -/
 def arrive : Verb := .mkRegular {
   form := "arrive"
-  valency := .ofFrame ArgumentFrame.unaccusative [some achievementSubjectProfile]
+  valency := .ofFrame ArgumentFrame.intransitive [some achievementSubjectProfile]
+  voiceType := some .nonThematic
   passivizable := false
   vendlerClass := some .achievement
   direction := some .goal
@@ -172,7 +173,7 @@ def come : Verb where
   formPast := "came"
   formPastPart := "come"
   formPresPart := "coming"
-  valency := .ofFrame ArgumentFrame.unaccusative
+  valency := .ofFrame ArgumentFrame.intransitive
   passivizable := false
   vendlerClass := some .achievement
   direction := some .goal
@@ -185,7 +186,7 @@ def go : Verb where
   formPast := "went"
   formPastPart := "gone"
   formPresPart := "going"
-  valency := .ofFrame ArgumentFrame.unaccusative
+  valency := .ofFrame ArgumentFrame.intransitive
   passivizable := false
   vendlerClass := some .achievement
   levinClasses := {LevinClass.inherentlyDirectedMotion}

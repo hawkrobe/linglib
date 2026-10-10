@@ -34,7 +34,8 @@ and the restructuring one `Restructuring.matrixAux`.
 
 namespace Olivier2026
 
-open ArgumentStructure (PerfectAux TransitivityClass)
+open ArgumentStructure (TransitivityClass)
+open Verb (PerfectAuxiliary)
 
 /-! ### Person values with identity -/
 
@@ -93,14 +94,14 @@ def tPerson (ea ia : Person) : TransitivityClass → IndexedPerson
 
 /-- Vocabulary Items (55): BE when `vAux` and `T` carry the same identity, HAVE elsewhere —
 HAVE is the default auxiliary. -/
-def insert (vAux : Option IndexedPerson) (t : IndexedPerson) : PerfectAux :=
+def insert (vAux : Option IndexedPerson) (t : IndexedPerson) : PerfectAuxiliary :=
   if vAux.map (·.id) = some t.id then .be else .have
 
 /-! ### Simple compound tenses (§6.2.2) -/
 
 /-- The auxiliary of a simple compound tense (58): Voice splits, so vAux carries Voice's
 person/identity, and T carries the subject's. -/
-def compound (ea ia : Person) (cl : Clause) : PerfectAux :=
+def compound (ea ia : Person) (cl : Clause) : PerfectAuxiliary :=
   insert (some (voicePerson ea ia cl)) (tPerson ea ia cl.verb)
 
 /-- (59)–(61): identity matching yields the canonical distribution — BE with unaccusatives
@@ -155,7 +156,7 @@ def Restructuring.vAuxPerson (ea ia : Person) (r : Restructuring) : Option Index
   | .keep => none
 
 /-- The modal's auxiliary. -/
-def Restructuring.matrixAux (ea ia : Person) (r : Restructuring) : PerfectAux :=
+def Restructuring.matrixAux (ea ia : Person) (r : Restructuring) : PerfectAuxiliary :=
   insert (r.vAuxPerson ea ia) (tPerson ea ia r.embedded.verb)
 
 /-- Auxiliary Switch: the modal surfaces with BE. -/
