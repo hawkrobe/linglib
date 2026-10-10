@@ -1,52 +1,50 @@
 module
 
-public import Linglib.Semantics.Quantification.Basic
-public import Linglib.Pragmatics.RSA.Basic
-public import Linglib.Core.InformationTheory.KullbackLeibler.Finite
 public import Linglib.Core.InformationTheory.Entropy
+public import Linglib.Core.MeasureTheory.Constructions.List
+public import Linglib.Core.MeasureTheory.Constructions.Option
+public import Linglib.Pragmatics.RSA.Belief
+public import Linglib.Semantics.Quantification.Basic
 
 /-!
 # Tessler, Tenenbaum and Goodman (2022): Logic, Probability, and Pragmatics in Syllogistic Reasoning
 
-This file formalizes Tessler, Tenenbaum and Goodman's Rational Speech Act models of syllogistic
-reasoning. A reasoner first acts as a literal listener, conditioning a prior over Venn states on the
-truth-conditional meanings of the two premises, (1)–(2), then as a speaker choosing among nine
-conclusions: the eight quantified relations between the end terms and *nothing follows*, formalized
-as the vacuous utterance true in every state. Three speakers are compared. The literal speaker (3)
-scores a conclusion by its posterior probability of truth; the state-communication speaker (4) by
-the expected log-probability that a naive literal listener, who hears the conclusion alone, assigns
-to the reasoner's state; the belief-alignment speaker (6) by the negative Kullback–Leibler
-divergence from the reasoner's posterior to that naive listener's. A figural preference (section
-3.1.1) weights conclusions whose subject term is the unique end term in subject position in the
-premises.
+Tessler, Tenenbaum and Goodman model syllogistic reasoning as language use, in the Rational Speech
+Act framework of Frank and Goodman. A state records which object types exist, the regions of a
+three-circle Venn diagram. The reasoner first acts as a listener, updating a prior over states on
+the two premises, then as a speaker choosing among nine conclusions for a naive listener who hears
+the conclusion alone: the eight quantified sentences relating the end terms, and *nothing follows*,
+which says nothing. Three speakers are compared. The literal speaker scores a conclusion by its
+probability of being true; the state-communication speaker by the expected log-probability the
+naive listener gives the reasoner's state; the belief-alignment speaker by the negative
+Kullback–Leibler divergence of the naive listener's beliefs from the reasoner's. A figural
+preference favors conclusions whose subject is the only end term in subject position in the
+premises. The Bayesian data analysis and the comparison with the Probability Heuristics Model of
+Chater and Oaksford are not formalized.
 
-The speakers are score speakers of `Linglib.Pragmatics.RSA.Basic`, so the paper's
-qualitative claims are theorems over the parameters. The state-communication and
-belief-alignment utilities differ by the entropy of the reasoner's posterior, which does not
-depend on the conclusion, so under the printed equations the two speakers are one kernel,
-`stateCommunication_eq_beliefAlignment`. Without semantic noise the belief-alignment speaker
-must say *nothing follows* to a logically invalid syllogism, since every quantified conclusion
-is false at some state the reasoner entertains and the naive listener's posterior then fails to
-dominate the reasoner's, `beliefAlignment_nvc_of_invalid`; for a valid conclusion its score is
-the log ratio of the conclusion's extension to the premises', so the speaker prefers the
-conclusion true in fewer states, `beliefAlignment_real_lt_iff_of_valid`, which for Barbara is
-*all* over *some* and over *nothing follows*, `barbara_prefers_allAC` (Figure 8). The literal
-speaker can never prefer a quantified conclusion to *nothing follows*, `literalSpeaker_le_nvc`.
+## Main statements
+
+* `stateCommunication_eq_beliefAlignment`: as printed, the state-communication and
+  belief-alignment speakers are one speaker, since their utilities differ by the entropy of the
+  reasoner's beliefs, which no conclusion changes.
+* `nothing_follows_of_invalid`: without semantic noise, and at any prior giving every state
+  positive mass, the belief-alignment speaker answers *nothing follows* to every syllogism that
+  entails no quantified conclusion.
+* `barbara_prefers_all`: to *All A are B, All B are C* that speaker prefers *All A are C* to the
+  weaker *Some A are C* and to *nothing follows*.
+* `literalSpeaker_le_nothing_follows`: the literal speaker never prefers a quantified conclusion
+  to *nothing follows*.
 
 ## Implementation notes
 
-The paper takes existential import on *all* alone (section 2.1): `tesslerAll` conjoins the
-modern `syllAll` with the existence of a populated restrictor region, and the other three
-forms are the modern ones, the generalized quantifiers over the populated regions of a
-three-circle Venn diagram. Semantic noise follows the paper's
-prose and released model code: with probability `φ` the listener disregards an utterance, so
-a false utterance carries weight `φ` and a true one weight `1`, and the two premises are
-disregarded independently. The released code implements the literal and state-communication
-speakers with the rationality applied to the posterior probability rather than inside the
-exponential as printed, so the fitted state-communication model is not the printed (4) and
-does not coincide with belief alignment; the file formalizes the printed equations. The
-Bayesian data analysis over the Ragni et al. data set, the fitted parameter values, and the
-comparison with mReasoner and the Probability Heuristics Model are not formalized.
+* Only *all* carries existential import (section 2.1). Table 1 prints the particular forms with
+  an arrow under the existential quantifier, read here as a conjunction.
+* Noise follows section 3.1.1: the listener disregards each sentence with probability `φ`, so a
+  state pays a factor `φ` for every sentence false at it. The weights `1 - φ` and `φ` of
+  section 2.2 give the same listeners at noise `φ / (1 - φ)`.
+* The speakers are the printed equations without the figural preference, which `withFigure`
+  adds by reweighting their conclusion probabilities. The paper's fitted state-communication
+  model differs from belief alignment, so it is not the printed one.
 
 ## References
 
@@ -61,390 +59,283 @@ comparison with mReasoner and the Probability Heuristics Model are not formalize
 
 namespace TesslerTenenbaumGoodman2022
 
-open MeasureTheory ProbabilityTheory InformationTheory RSA
-open Quantifier.GQ (every some no subalternation_a_i)
-open scoped ENNReal
+open MeasureTheory ProbabilityTheory InformationTheory RSA Quantifier
+open scoped ENNReal NNReal
 
-/-! ### Syllogisms and Venn states -/
+/-! ### Sentences and states -/
 
-/-- The four Aristotelian quantifiers A, I, O and E. -/
-inductive AristQuant where
-  | all
-  | some
-  | someNot
-  | no
-  deriving DecidableEq, Repr, Inhabited, Fintype
+/-- The terms of a syllogism are the end terms `A` and `C` and the middle term `B`. -/
+inductive Term | A | B | C
+  deriving DecidableEq, Fintype
 
-/-- The seven nonempty regions of a three-circle Venn diagram over the terms A, B and C. -/
-inductive Region where
-  | A
-  | B
-  | C
-  | AB
-  | AC
-  | BC
-  | ABC
-  deriving DecidableEq, Repr, Inhabited, Fintype
+/-- A region of the Venn diagram is an object type, the nonempty set of terms true of its
+objects. -/
+abbrev Region := {r : Finset Term // r.Nonempty}
 
-/-- A Venn state records which regions are populated. -/
-abbrev VennState := Region → Bool
+/-- `region ts` is the region of the objects of which exactly the terms `ts` are true. -/
+abbrev region (ts : Finset Term) (h : ts.Nonempty := by decide) : Region := ⟨ts, h⟩
 
-/-- The regions inside the circle A. -/
-def hasA : Region → Bool
-  | .A | .AB | .AC | .ABC => true
-  | _ => false
+/-- A state is the set of object types that exist. -/
+abbrev State := Finset Region
 
-/-- The regions inside the circle B. -/
-def hasB : Region → Bool
-  | .B | .AB | .BC | .ABC => true
-  | _ => false
+/-- The Aristotelian quantifiers are *all*, *some*, *some … not* and *no*. -/
+inductive Quant | all | some | someNot | no
+  deriving DecidableEq, Fintype
 
-/-- The regions inside the circle C. -/
-def hasC : Region → Bool
-  | .C | .AC | .BC | .ABC => true
-  | _ => false
+/-- A categorical sentence relates a subject term to a predicate term by a quantifier. -/
+structure Sentence where
+  (quant : Quant) (subj pred : Term)
+  deriving DecidableEq, Fintype
 
-/-- A syllogism is two quantified premises sharing the middle term B, and the term orders of
-the premises fix the figure. -/
+instance : MeasurableSpace Sentence := ⊤
+
+/-- The quantifiers' meanings (Table 1) are *every* with a nonempty restrictor, *some*, its
+inner negation, and *no*. -/
+def Quant.denote : Quant → GQ Region
+  | .all => fun R S ↦ GQ.every R S ∧ ∃ r, R r
+  | .some => GQ.some
+  | .someNot => GQ.innerNeg GQ.some
+  | .no => GQ.no
+
+/-- A sentence holds at a state when its quantifier relates the existing object types of the
+subject term to the object types of the predicate term. -/
+def Sentence.Holds (p : Sentence) (s : State) : Prop :=
+  p.quant.denote (fun r ↦ r ∈ s ∧ p.subj ∈ r.1) fun r ↦ p.pred ∈ r.1
+
+section Holds
+
+variable {x y : Term} {s : State}
+
+theorem holds_all :
+    Sentence.Holds ⟨.all, x, y⟩ s ↔ (∀ r ∈ s, x ∈ r.1 → y ∈ r.1) ∧ ∃ r ∈ s, x ∈ r.1 := by
+  simp [Sentence.Holds, Quant.denote, GQ.every]
+
+theorem holds_some : Sentence.Holds ⟨.some, x, y⟩ s ↔ ∃ r ∈ s, x ∈ r.1 ∧ y ∈ r.1 := by
+  simp [Sentence.Holds, Quant.denote, GQ.some, and_assoc]
+
+theorem holds_someNot :
+    Sentence.Holds ⟨.someNot, x, y⟩ s ↔ ∃ r ∈ s, x ∈ r.1 ∧ y ∉ r.1 := by
+  simp [Sentence.Holds, Quant.denote, GQ.innerNeg, GQ.some, and_assoc]
+
+theorem holds_no : Sentence.Holds ⟨.no, x, y⟩ s ↔ ∀ r ∈ s, x ∈ r.1 → y ∉ r.1 := by
+  simp [Sentence.Holds, Quant.denote, GQ.no]
+
+/-- With existential import *all* entails *some*. -/
+theorem holds_some_of_holds_all (h : Sentence.Holds ⟨.all, x, y⟩ s) :
+    Sentence.Holds ⟨.some, x, y⟩ s :=
+  GQ.subalternation_a_i _ _ h.2 h.1
+
+end Holds
+
+instance (p : Sentence) (s : State) : Decidable (p.Holds s) :=
+  match p with
+  | ⟨.all, _, _⟩ => decidable_of_iff _ holds_all.symm
+  | ⟨.some, _, _⟩ => decidable_of_iff _ holds_some.symm
+  | ⟨.someNot, _, _⟩ => decidable_of_iff _ holds_someNot.symm
+  | ⟨.no, _, _⟩ => decidable_of_iff _ holds_no.symm
+
+/-- The four sentences of Table 1 hold at its consistent states and fail at its inconsistent
+ones. -/
+theorem holds_table_one :
+    Sentence.Holds ⟨.all, .A, .B⟩ {region {.A, .B}, region {.A, .B, .C}} ∧
+      ¬ Sentence.Holds ⟨.all, .A, .B⟩ {region {.A}, region {.A, .B, .C}} ∧
+      Sentence.Holds ⟨.some, .A, .B⟩ {region {.A}, region {.A, .B}} ∧
+      ¬ Sentence.Holds ⟨.some, .A, .B⟩ {region {.A}, region {.A, .C}} ∧
+      Sentence.Holds ⟨.someNot, .A, .B⟩ {region {.A}, region {.A, .B}} ∧
+      ¬ Sentence.Holds ⟨.someNot, .A, .B⟩ {region {.A, .B}, region {.A, .B, .C}} ∧
+      Sentence.Holds ⟨.no, .A, .B⟩ {region {.A}, region {.A, .C}} ∧
+      ¬ Sentence.Holds ⟨.no, .A, .B⟩ {region {.A}, region {.A, .B}} := by
+  decide
+
+/-- The extension of a list of sentences is the set of states at which all of them hold. -/
+def extension (us : List Sentence) : Set State := {s | ∀ p ∈ us, p.Holds s}
+
+theorem mem_extension {us : List Sentence} {s : State} :
+    s ∈ extension us ↔ ∀ p ∈ us, p.Holds s := Iff.rfl
+
+@[simp] theorem extension_nil : extension [] = Set.univ :=
+  Set.eq_univ_of_forall fun _ _ h ↦ absurd h List.not_mem_nil
+
+theorem mem_extension_singleton {p : Sentence} {s : State} : s ∈ extension [p] ↔ p.Holds s :=
+  List.forall_mem_singleton
+
+theorem mem_extension_pair {p q : Sentence} {s : State} :
+    s ∈ extension [p, q] ↔ p.Holds s ∧ q.Holds s := by
+  simp [mem_extension]
+
+instance (us : List Sentence) (s : State) : Decidable (s ∈ extension us) :=
+  inferInstanceAs (Decidable (∀ p ∈ us, p.Holds s))
+
+/-! ### The listener (section 2.2) -/
+
+/-- The noisy meaning of a list of sentences charges a state a factor `φ` for every sentence
+false at it, since the listener disregards each sentence with probability `φ`. -/
+noncomputable def noisy (φ : ℝ≥0∞) (us : List Sentence) (s : State) : ℝ≥0∞ :=
+  φ ^ us.countP fun p ↦ ¬ p.Holds s
+
+theorem noisy_zero (us : List Sentence) : noisy 0 us = (extension us).indicator 1 := by
+  funext s
+  by_cases h : s ∈ extension us
+  · rw [Set.indicator_of_mem h, Pi.one_apply, noisy,
+      List.countP_eq_zero.2 (by simpa [mem_extension] using h), pow_zero]
+  · rw [Set.indicator_of_notMem h, noisy,
+      zero_pow (mt List.countP_eq_zero.1 (by simpa [mem_extension] using h))]
+
+variable {φ : ℝ≥0∞} {μ : Measure State}
+
+/-- The literal listener reweights the prior by the noisy meaning of the sentences heard. -/
+noncomputable def listener (φ : ℝ≥0∞) (μ : Measure State) : Kernel (List Sentence) State :=
+  gradedListener μ (noisy φ)
+
+instance : IsFiniteKernel (listener φ μ) := inferInstanceAs (IsFiniteKernel (gradedListener _ _))
+
+/-- Without noise the listener conditions the prior on the sentences heard. -/
+theorem listener_zero (μ : Measure State) : listener 0 μ = literalListener μ extension := by
+  rw [listener, ← gradedListener_indicator]
+  exact congrArg _ (funext noisy_zero)
+
+theorem lintegral_noisy_ne_top [IsFiniteMeasure μ] (hφ : φ ≠ ∞) (us : List Sentence) :
+    ∫⁻ s, noisy φ us s ∂μ ≠ ∞ := by
+  rw [lintegral_fintype]
+  exact ENNReal.sum_ne_top.2 fun s _ ↦
+    ENNReal.mul_ne_top (ENNReal.pow_ne_top hφ) (measure_ne_top _ _)
+
+theorem isProbabilityMeasure_listener [IsProbabilityMeasure μ] (hφ : φ ≠ 0) (hφ' : φ ≠ ∞)
+    (us : List Sentence) : IsProbabilityMeasure (listener φ μ us) := by
+  refine isProbabilityMeasure_gradedListener μ _ us (fun h ↦ ?_) (lintegral_noisy_ne_top hφ' us)
+  rw [lintegral_eq_zero_iff (.of_discrete)] at h
+  exact NeZero.ne μ (Measure.measure_univ_eq_zero.1 (measure_mono_null
+    (fun s _ ↦ show noisy φ us s ≠ 0 from pow_ne_zero _ hφ) h))
+
+/-- With noise any two posteriors of the listener have the same null sets. -/
+theorem listener_absolutelyContinuous [IsFiniteMeasure μ] (hφ : φ ≠ 0) (hφ' : φ ≠ ∞)
+    (us us' : List Sentence) : listener φ μ us ≪ listener φ μ us' := by
+  have : IsFiniteMeasure (μ.withDensity (noisy φ us')) :=
+    isFiniteMeasure_withDensity (lintegral_noisy_ne_top hφ' us')
+  have h : μ ≪ μ.withDensity (noisy φ us') :=
+    withDensity_absolutelyContinuous' (.of_discrete) (.of_forall fun s ↦ pow_ne_zero _ hφ)
+  exact (cond_absolutelyContinuous.trans (withDensity_absolutelyContinuous μ _)).trans
+    (h.trans absolutelyContinuous_cond_univ)
+
+/-! ### Syllogisms and conclusions (section 2.3.1) -/
+
+/-- A syllogism is two premises; in the classical ones the first relates `A` and `B` and the
+second `B` and `C`. -/
 structure Syllogism where
-  q1 : AristQuant
-  /-- The first premise is `q1 A B` rather than `q1 B A`. -/
-  order1AB : Bool
-  q2 : AristQuant
-  /-- The second premise is `q2 B C` rather than `q2 C B`. -/
-  order2BC : Bool
-  deriving DecidableEq, Repr, Inhabited, Fintype
-
-/-- The nine conclusions are the eight quantified relations between the end terms and
-*nothing follows*. -/
-inductive Conclusion where
-  | allAC
-  | allCA
-  | someAC
-  | someCA
-  | someNotAC
-  | someNotCA
-  | noAC
-  | noCA
-  | nvc
-  deriving DecidableEq, Repr, Inhabited, Fintype
-
-/-- Whether a conclusion has A as its subject. -/
-def Conclusion.isAC : Conclusion → Bool
-  | .allAC | .someAC | .someNotAC | .noAC => true
-  | _ => false
-
-instance {R S : Region → Prop} [DecidablePred R] [DecidablePred S] :
-    Decidable (every R S) :=
-  inferInstanceAs (Decidable (∀ r, R r → S r))
-
-instance {R S : Region → Prop} [DecidablePred R] [DecidablePred S] :
-    Decidable (Quantifier.GQ.some R S) :=
-  inferInstanceAs (Decidable (∃ r, R r ∧ S r))
-
-instance {R S : Region → Prop} [DecidablePred R] [DecidablePred S] :
-    Decidable (no R S) :=
-  inferInstanceAs (Decidable (∀ r, R r → ¬ S r))
-
-/-- *All Xs are Ys* on the modern reading, *every* over the populated X-regions. -/
-def syllAll (s : VennState) (X Y : Region → Bool) : Bool :=
-  decide (every (fun r ↦ s r ∧ X r) fun r ↦ Y r)
-
-/-- *Some Xs are Ys*, *some* over the populated X-regions. -/
-def syllSome (s : VennState) (X Y : Region → Bool) : Bool :=
-  decide (Quantifier.GQ.some (fun r ↦ s r ∧ X r) fun r ↦ Y r)
-
-/-- *Some Xs are not Ys*, *some* over the populated X-regions with the complement scope. -/
-def syllSomeNot (s : VennState) (X Y : Region → Bool) : Bool :=
-  decide (Quantifier.GQ.some (fun r ↦ s r ∧ X r) fun r ↦ ¬ Y r)
-
-/-- *No Xs are Ys* on the modern reading, *no* over the populated X-regions. -/
-def syllNone (s : VennState) (X Y : Region → Bool) : Bool :=
-  decide (no (fun r ↦ s r ∧ X r) fun r ↦ Y r)
-
-/-- *All Xs are Ys* entails *some Xs are Ys* when some populated region is an X-region. -/
-theorem syllAll_imp_syllSome (s : VennState) (X Y : Region → Bool)
-    (hExists : ∃ r, s r = true ∧ X r = true) (h : syllAll s X Y = true) :
-    syllSome s X Y = true := by
-  simp only [syllAll, syllSome, decide_eq_true_eq] at h ⊢
-  exact subalternation_a_i _ _ hExists h
-
-/-- Barbara, *all A are B* and *all B are C*, the paradigm valid syllogism. -/
-def barbara : Syllogism := ⟨.all, true, .all, true⟩
-
-/-- *All A are B* and *all C are B*, the paradigm invalid syllogism. -/
-def allAB_allCB : Syllogism := ⟨.all, true, .all, false⟩
-
-/-- Barbara is valid, since its premises entail *all A are C*. -/
-theorem barbara_valid (s : VennState) (h1 : syllAll s hasA hasB = true)
-    (h2 : syllAll s hasB hasC = true) : syllAll s hasA hasC = true := by
-  simp only [syllAll, decide_eq_true_eq] at h1 h2 ⊢
-  exact fun r ⟨hs, hA⟩ ↦ h2 r ⟨hs, h1 r ⟨hs, hA⟩⟩
-
-/-- The state populating only the regions AB and BC. -/
-def state_AB_BC : VennState
-  | .AB | .BC => true
-  | _ => false
-
-/-- The state populating only the region ABC. -/
-def state_ABC : VennState
-  | .ABC => true
-  | _ => false
-
-/-- The state populating only the regions A and AC. -/
-def state_A_AC : VennState
-  | .A | .AC => true
-  | _ => false
+  (first second : Sentence)
+  deriving DecidableEq, Fintype
 
 instance : MeasurableSpace Syllogism := ⊤
-instance : DiscreteMeasurableSpace Syllogism := ⟨λ _ => trivial⟩
-instance : MeasurableSpace Conclusion := ⊤
-instance : DiscreteMeasurableSpace Conclusion := ⟨λ _ => trivial⟩
 
-/-! ### Semantics (section 2.1) -/
+/-- The reasoner hears the two premises of a syllogism in order. -/
+def Syllogism.premises (syl : Syllogism) : List Sentence := [syl.first, syl.second]
 
-/-- *All Xs are Ys* with existential import, so that some populated region is an X-region and
-every populated X-region is a Y-region. -/
-def tesslerAll (s : VennState) (X Y : Region → Bool) : Bool :=
-  syllAll s X Y && decide (∃ r, s r = true ∧ X r = true)
+/-- The subjects of a syllogism are the terms in subject position in its premises. -/
+def Syllogism.subjects (syl : Syllogism) : Finset Term := {syl.first.subj, syl.second.subj}
 
-/-- The four quantifiers, *all* with existential import and the others modern (Table 1). -/
-def quantEval : AristQuant → VennState → (Region → Bool) → (Region → Bool) → Bool
-  | .all => tesslerAll
-  | .some => syllSome
-  | .someNot => syllSomeNot
-  | .no => syllNone
+/-- A sentence is a candidate conclusion when it relates the two end terms. -/
+def Sentence.IsConclusion (p : Sentence) : Prop := p.subj ≠ .B ∧ p.pred ≠ .B ∧ p.subj ≠ p.pred
 
-/-- The first premise holds in a state. -/
-def premise1 (syl : Syllogism) (s : VennState) : Bool :=
-  if syl.order1AB then quantEval syl.q1 s hasA hasB else quantEval syl.q1 s hasB hasA
+instance : DecidablePred Sentence.IsConclusion := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _ ∧ _))
 
-/-- The second premise holds in a state. -/
-def premise2 (syl : Syllogism) (s : VennState) : Bool :=
-  if syl.order2BC then quantEval syl.q2 s hasB hasC else quantEval syl.q2 s hasC hasB
+/-- A conclusion is a sentence relating the end terms or, as `none`, *nothing follows*. -/
+abbrev Conclusion := Option {p : Sentence // p.IsConclusion}
 
-/-- Both premises hold in a state. -/
-def premises (syl : Syllogism) (s : VennState) : Bool := premise1 syl s && premise2 syl s
+/-- A conclusion says its sentence, or nothing at all. -/
+def Conclusion.said : Conclusion → List Sentence
+  | none => []
+  | some p => [p.1]
 
-/-- The meaning of a conclusion (section 2.3.1); *nothing follows* is the vacuous utterance. -/
-def concMeaning : Conclusion → VennState → Bool
-  | .allAC, s => tesslerAll s hasA hasC
-  | .allCA, s => tesslerAll s hasC hasA
-  | .someAC, s => syllSome s hasA hasC
-  | .someCA, s => syllSome s hasC hasA
-  | .someNotAC, s => syllSomeNot s hasA hasC
-  | .someNotCA, s => syllSomeNot s hasC hasA
-  | .noAC, s => syllNone s hasA hasC
-  | .noCA, s => syllNone s hasC hasA
-  | .nvc, _ => true
+/-- `ac q` is the conclusion relating `A` to `C` by the quantifier `q`. -/
+abbrev ac (q : Quant) : Conclusion := some ⟨⟨q, .A, .C⟩, by simp [Sentence.IsConclusion]⟩
 
-/-- The states at which a sentence holds. -/
-def states (p : VennState → Bool) : Finset VennState := Finset.univ.filter (p · = true)
-
-theorem coe_states (p : VennState → Bool) : (states p : Set VennState) = {s | p s = true} := by
-  ext s
-  simp [states]
-
-theorem states_nvc : states (concMeaning .nvc) = Finset.univ := by
-  simp [states, concMeaning]
-
-/-- The noisy meaning, under which the listener disregards the utterance with probability `φ`. -/
-def noisy (φ : ℝ≥0∞) (b : Bool) : ℝ≥0∞ := if b then 1 else φ
-
-theorem noisy_zero (b : Bool) : noisy 0 b = ({s : Bool | s = true}).indicator 1 b := by
-  cases b <;> simp [noisy]
-
-theorem noisy_ne_zero {φ : ℝ≥0∞} (hφ : φ ≠ 0) (b : Bool) : noisy φ b ≠ 0 := by
-  cases b <;> simp [noisy, hφ]
-
-theorem noisy_ne_top {φ : ℝ≥0∞} (hφ : φ ≠ ∞) (b : Bool) : noisy φ b ≠ ∞ := by
-  cases b <;> simp [noisy, hφ]
-
-/-! ### The listeners (section 2.2) -/
-
-section Model
-
-variable (φ : ℝ≥0∞) (μ : Measure VennState)
-
-/-- The reasoner as listener (2), the prior conditioned on the noisy meanings of both premises,
-each disregarded independently. -/
-noncomputable def reasoner : Kernel Syllogism VennState :=
-  gradedListener μ λ syl s => noisy φ (premise1 syl s) * noisy φ (premise2 syl s)
-
-instance : IsFiniteKernel (reasoner φ μ) := inferInstanceAs (IsFiniteKernel (gradedListener _ _))
-
-/-- The naive listener (1), who hears the conclusion alone. -/
-noncomputable def naive : Kernel Conclusion VennState :=
-  gradedListener μ λ c s => noisy φ (concMeaning c s)
-
-/-- Without noise the reasoner's posterior under the flat prior is uniform on the states
-satisfying the premises. -/
-theorem reasoner_zero (syl : Syllogism) :
-    reasoner 0 (uniformOn Set.univ) syl = uniformOn (states (premises syl) : Set VennState) := by
-  have h : (λ syl s => noisy 0 (premise1 syl s) * noisy 0 (premise2 syl s)) =
-      λ syl => (states (premises syl) : Set VennState).indicator 1 := by
-    funext syl s
-    cases h1 : premise1 syl s <;> cases h2 : premise2 syl s <;>
-      simp [coe_states, premises, noisy, h1, h2]
-  rw [reasoner, h, gradedListener_indicator, literalListener_apply, uniformOn_univ_cond]
-
-/-- Without noise the naive listener's posterior under the flat prior is uniform on the states
-satisfying the conclusion. -/
-theorem naive_zero (c : Conclusion) :
-    naive 0 (uniformOn Set.univ) c = uniformOn (states (concMeaning c) : Set VennState) := by
-  have h : (λ c s => noisy 0 (concMeaning c s)) =
-      λ c => (states (concMeaning c) : Set VennState).indicator 1 := by
-    funext c s
-    cases h : concMeaning c s <;> simp [coe_states, noisy, h]
-  rw [naive, h, gradedListener_indicator, literalListener_apply, uniformOn_univ_cond]
-
-/-- With noise and a full-support prior the reasoner's posterior is a probability measure. -/
-theorem isProbabilityMeasure_reasoner [IsFiniteMeasure μ] (hφ : φ ≠ 0) (hφ' : φ ≠ ∞)
-    (hμ : ∀ s, μ {s} ≠ 0) (syl : Syllogism) : IsProbabilityMeasure (reasoner φ μ syl) := by
-  refine isProbabilityMeasure_gradedListener μ _ syl ?_ ?_ <;> rw [lintegral_fintype]
-  · intro h
-    have := Finset.sum_eq_zero_iff.mp h default (Finset.mem_univ _)
-    exact mul_ne_zero (mul_ne_zero (noisy_ne_zero hφ _) (noisy_ne_zero hφ _)) (hμ default) this
-  · exact ENNReal.sum_ne_top.2 λ s _ => ENNReal.mul_ne_top
-      (ENNReal.mul_ne_top (noisy_ne_top hφ' _) (noisy_ne_top hφ' _)) (measure_ne_top _ _)
-
-/-- With noise and a full-support prior the naive listener's posterior is a probability
-measure. -/
-theorem isProbabilityMeasure_naive [IsFiniteMeasure μ] (hφ : φ ≠ 0) (hφ' : φ ≠ ∞)
-    (hμ : ∀ s, μ {s} ≠ 0) (c : Conclusion) : IsProbabilityMeasure (naive φ μ c) := by
-  refine isProbabilityMeasure_gradedListener μ _ c ?_ ?_ <;> rw [lintegral_fintype]
-  · intro h
-    have := Finset.sum_eq_zero_iff.mp h default (Finset.mem_univ _)
-    exact mul_ne_zero (noisy_ne_zero hφ _) (hμ default) this
-  · exact ENNReal.sum_ne_top.2 λ s _ => ENNReal.mul_ne_top (noisy_ne_top hφ' _) (measure_ne_top _ _)
-
-/-- With noise and a full-support prior the naive listener gives every state positive mass. -/
-theorem naive_apply_ne_zero [IsFiniteMeasure μ] (hφ : φ ≠ 0) (hφ' : φ ≠ ∞)
-    (hμ : ∀ s, μ {s} ≠ 0) (c : Conclusion) (s : VennState) : naive φ μ c {s} ≠ 0 := by
-  rw [naive, gradedListener_apply_singleton, ENNReal.div_ne_zero]
-  exact ⟨mul_ne_zero (noisy_ne_zero hφ _) (hμ s), ENNReal.sum_ne_top.2 λ s _ =>
-    ENNReal.mul_ne_top (noisy_ne_top hφ' _) (measure_ne_top _ _)⟩
+theorem extension_said_none : extension (Conclusion.said none) = Set.univ := extension_nil
 
 /-! ### The speakers (section 2.3) -/
 
-/-- The figural preference (section 3.1.1), under which, when exactly one end term is the
-subject of a premise, conclusions with that term as subject carry weight `β`, while *nothing
-follows* and every conclusion of the mixed figures carry weight `1`. -/
-def figuralWeight (β : ℝ) (syl : Syllogism) (c : Conclusion) : ℝ :=
-  if c = .nvc then 1
-  else if syl.order1AB && syl.order2BC then if c.isAC then β else 1
-  else if !syl.order1AB && !syl.order2BC then if c.isAC then 1 else β
-  else 1
+section Model
 
-variable (α β : ℝ)
+variable (φ : ℝ≥0∞) (μ : Measure State) (α : ℝ)
 
-/-- The literal speaker's utility (3), the reasoner's posterior probability that the conclusion
-is true. -/
-noncomputable def literalScore (syl : Syllogism) (c : Conclusion) : EReal :=
-  ((Real.log (figuralWeight β syl c) +
-    α * (reasoner φ μ syl).real {s | concMeaning c s = true} : ℝ) : EReal)
+/-- The reasoner's beliefs are the listener's posterior after the premises. -/
+noncomputable abbrev reasoner (syl : Syllogism) : Measure State := listener φ μ syl.premises
 
-/-- The literal speaker (3). -/
+/-- The naive listener's beliefs are the listener's posterior after a conclusion. -/
+noncomputable abbrev naive (c : Conclusion) : Measure State := listener φ μ c.said
+
+/-- The literal speaker scores a conclusion by the reasoner's probability that it is true. -/
 noncomputable def literalSpeaker : Kernel Syllogism Conclusion :=
-  speakerOfScore (literalScore φ μ α β)
+  speakerOfScore fun syl c ↦ ((α * (reasoner φ μ syl).real (extension c.said) : ℝ) : EReal)
 
-/-- The state-communication utility (4) is the expected log-probability the naive listener
-assigns to the reasoner's state. -/
-noncomputable def stateScore (syl : Syllogism) (c : Conclusion) : EReal :=
-  ((Real.log (figuralWeight β syl c) +
-    α * ∑ s, (reasoner φ μ syl).real {s} * Real.log ((naive φ μ c).real {s}) : ℝ) : EReal)
-
-/-- The state-communication speaker (4). -/
+/-- The state-communication speaker scores a conclusion by the expected log-probability the
+naive listener gives the reasoner's state. -/
 noncomputable def stateCommunication : Kernel Syllogism Conclusion :=
-  speakerOfScore (stateScore φ μ α β)
+  speakerOfScore fun syl c ↦
+    ((α * ∑ s, (reasoner φ μ syl).real {s} * Real.log ((naive φ μ c).real {s}) : ℝ) : EReal)
 
-/-- The belief-alignment utility (5)–(6) is the negative divergence from the reasoner's
-posterior to the naive listener's. -/
-noncomputable def alignmentScore (syl : Syllogism) (c : Conclusion) : EReal :=
-  (Real.log (figuralWeight β syl c) : EReal) -
-    (α : EReal) * (klDiv (reasoner φ μ syl) (naive φ μ c) : EReal)
-
-/-- The belief-alignment speaker (6). -/
+/-- The belief-alignment speaker scores a conclusion by the negative divergence of the naive
+listener's beliefs from the reasoner's. -/
 noncomputable def beliefAlignment : Kernel Syllogism Conclusion :=
-  speakerOfScore (alignmentScore φ μ α β)
+  beliefSpeaker α (reasoner φ μ) (naive φ μ)
 
-variable {φ μ α β}
+instance : IsFiniteKernel (beliefAlignment φ μ α) :=
+  inferInstanceAs (IsFiniteKernel (beliefSpeaker _ _ _))
 
-theorem alignmentScore_of_ne_top {syl : Syllogism} {c : Conclusion}
-    (h : klDiv (reasoner φ μ syl) (naive φ μ c) ≠ ∞) :
-    alignmentScore φ μ α β syl c = ((Real.log (figuralWeight β syl c) -
-      α * (klDiv (reasoner φ μ syl) (naive φ μ c)).toReal : ℝ) : EReal) := by
-  rw [alignmentScore, ← EReal.coe_ennreal_toReal h, ← EReal.coe_mul, ← EReal.coe_sub]
+variable {φ μ α}
 
-/-- A conclusion whose naive posterior fails to dominate the reasoner's is never produced. -/
-theorem alignmentScore_of_eq_top (hα : 0 < α) {syl : Syllogism} {c : Conclusion}
-    (h : klDiv (reasoner φ μ syl) (naive φ μ c) = ∞) : alignmentScore φ μ α β syl c = ⊥ := by
-  rw [alignmentScore, h, EReal.coe_ennreal_top, EReal.coe_mul_top_of_pos hα, EReal.sub_top]
+/-- As printed, the state-communication and belief-alignment speakers are one speaker. -/
+theorem stateCommunication_eq_beliefAlignment [IsProbabilityMeasure μ] (hα : 0 ≤ α) (hφ : φ ≠ 0)
+    (hφ' : φ ≠ ∞) : stateCommunication φ μ α = beliefAlignment φ μ α := by
+  have (us : List Sentence) := isProbabilityMeasure_listener (μ := μ) hφ hφ' us
+  exact (beliefSpeaker_eq_speakerOfScore_sum_log hα fun _ _ ↦
+    listener_absolutelyContinuous hφ hφ' _ _).symm
 
-theorem alignmentScore_ne_top (hα : 0 < α) (syl : Syllogism) (c : Conclusion) :
-    alignmentScore φ μ α β syl c ≠ ⊤ := by
-  rcases eq_or_ne (klDiv (reasoner φ μ syl) (naive φ μ c)) ∞ with h | h
-  · rw [alignmentScore_of_eq_top hα h]
-    exact bot_ne_top
-  · rw [alignmentScore_of_ne_top h]
-    exact EReal.coe_ne_top _
+/-- The literal speaker never prefers a quantified conclusion to *nothing follows*, which is
+true at every state. -/
+theorem literalSpeaker_le_nothing_follows (hα : 0 ≤ α) (syl : Syllogism) (c : Conclusion) :
+    (literalSpeaker φ μ α syl).real {c} ≤ (literalSpeaker φ μ α syl).real {none} := by
+  refine not_lt.1 fun h ↦ ?_
+  rw [literalSpeaker, speakerOfScore_coe_real_singleton_lt_iff] at h
+  exact h.not_ge (mul_le_mul_of_nonneg_left
+    (measureReal_mono (extension_said_none ▸ Set.subset_univ _) (measure_ne_top _ _)) hα)
 
-/-- Under the printed equations the state-communication and belief-alignment utilities differ
-by the rationality times the entropy of the reasoner's posterior, a term independent of the
-conclusion. -/
-theorem alignmentScore_eq_stateScore_add [IsFiniteMeasure μ] (hφ : φ ≠ 0) (hφ' : φ ≠ ∞)
-    (hμ : ∀ s, μ {s} ≠ 0) (syl : Syllogism) (c : Conclusion) :
-    alignmentScore φ μ α β syl c =
-      stateScore φ μ α β syl c + ((α * Hm[reasoner φ μ syl] : ℝ) : EReal) := by
-  have := isProbabilityMeasure_reasoner φ μ hφ hφ' hμ syl
-  have := isProbabilityMeasure_naive φ μ hφ hφ' hμ c
-  have hac : reasoner φ μ syl ≪ naive φ μ c :=
-    Measure.absolutelyContinuous_of_forall_singleton λ s h =>
-      absurd h (naive_apply_ne_zero φ μ hφ hφ' hμ c s)
-  set r := (reasoner φ μ syl).real
-  set n := (naive φ μ c).real
-  have hkl : ∑ s, r {s} * Real.log (r {s} / n {s}) =
-      ∑ s, r {s} * Real.log (r {s}) - ∑ s, r {s} * Real.log (n {s}) := by
-    rw [← Finset.sum_sub_distrib]
-    refine Finset.sum_congr rfl λ s _ => ?_
-    rcases eq_or_ne (r {s}) 0 with h0 | h0
-    · simp [h0]
-    · rw [Real.log_div h0 λ h => naive_apply_ne_zero φ μ hφ hφ' hμ c s
-        ((measureReal_eq_zero_iff (measure_ne_top _ _)).1 h)]
-      ring
-  rw [alignmentScore_of_ne_top (klDiv_ne_top hac .of_finite), stateScore, ← EReal.coe_add,
-    toReal_klDiv_eq_sum_log_div hac, measureEntropy_eq_sum, hkl]
-  congr 1
-  simp only [Real.negMulLog, neg_mul, Finset.sum_neg_distrib]
-  ring
+/-! ### The figural preference (section 3.1.1) -/
 
-/-- Under the printed equations the state-communication and belief-alignment speakers are one
-kernel, since the entropy term cancels in the softmax over conclusions. -/
-theorem stateCommunication_eq_beliefAlignment [IsFiniteMeasure μ] (hφ : φ ≠ 0) (hφ' : φ ≠ ∞)
-    (hμ : ∀ s, μ {s} ≠ 0) : stateCommunication φ μ α β = beliefAlignment φ μ α β :=
-  (speakerOfScore_eq_of_add λ syl c => alignmentScore_eq_stateScore_add hφ hφ' hμ syl c).symm
+/-- The figural preference gives weight `β` to a conclusion whose subject, but not its predicate,
+is the subject of a premise, and weight `1` to every other conclusion. -/
+def figuralWeight (β : ℝ≥0) (syl : Syllogism) : Conclusion → ℝ≥0
+  | none => 1
+  | some p => if p.1.subj ∈ syl.subjects ∧ p.1.pred ∉ syl.subjects then β else 1
 
-/-! ### The literal speaker and *nothing follows* -/
+/-- The figural preference reweights a speaker's conclusion probabilities and renormalizes
+them. -/
+noncomputable def withFigure (β : ℝ≥0) (S : Kernel Syllogism Conclusion) :
+    Kernel Syllogism Conclusion :=
+  Kernel.ofWeights fun syl c ↦ figuralWeight β syl c * S syl {c}
 
-theorem figuralWeight_one (syl : Syllogism) (c : Conclusion) : figuralWeight 1 syl c = 1 := by
-  unfold figuralWeight
-  split_ifs <;> rfl
+variable {β : ℝ≥0} {S : Kernel Syllogism Conclusion} [IsFiniteKernel S] {syl : Syllogism}
+  {c c' : Conclusion}
 
-/-- Without the figural preference the literal speaker never prefers a quantified conclusion
-to *nothing follows*, since the posterior probability of a tautology is maximal. -/
-theorem literalSpeaker_le_nvc (hα : 0 ≤ α) (syl : Syllogism) (c : Conclusion) :
-    (literalSpeaker φ μ α 1 syl).real {c} ≤ (literalSpeaker φ μ α 1 syl).real {.nvc} := by
-  refine not_lt.1 λ h => ?_
-  rw [literalSpeaker, speakerOfScore_real_singleton_lt_iff (score := literalScore φ μ α 1)
-    (λ _ => EReal.coe_ne_top _) ⟨.nvc, EReal.coe_ne_bot _⟩, literalScore, literalScore,
-    EReal.coe_lt_coe_iff,
-    figuralWeight_one, figuralWeight_one] at h
-  have huniv : {s : VennState | concMeaning .nvc s = true} = Set.univ :=
-    Set.eq_univ_of_forall λ _ => rfl
-  rw [huniv] at h
-  exact absurd h (not_lt.2 (add_le_add_right (mul_le_mul_of_nonneg_left
-    (measureReal_mono (Set.subset_univ _)
-      (measure_ne_top _ _)) hα) _))
+private theorem weight_ne_top (β : ℝ≥0) (S : Kernel Syllogism Conclusion) [IsFiniteKernel S]
+    (syl : Syllogism) (c : Conclusion) : figuralWeight β syl c * S syl {c} ≠ ∞ :=
+  ENNReal.mul_ne_top ENNReal.coe_ne_top (measure_ne_top _ _)
+
+/-- A speaker certain of *nothing follows* stays certain under the figural preference. -/
+theorem withFigure_apply_none_eq_one (h0 : S syl {none} ≠ 0) (h : ∀ c ≠ none, S syl {c} = 0) :
+    withFigure β S syl {none} = 1 := by
+  rw [withFigure, Kernel.ofWeights_apply_singleton, Finset.sum_eq_single none
+    (fun c _ hc ↦ by rw [h c hc, mul_zero]) fun hn ↦ absurd (Finset.mem_univ _) hn]
+  exact ENNReal.div_self (by simpa [figuralWeight] using h0) (weight_ne_top β S syl none)
+
+theorem withFigure_real_singleton_lt_iff (h0 : S syl {none} ≠ 0) :
+    (withFigure β S syl).real {c} < (withFigure β S syl).real {c'} ↔
+      figuralWeight β syl c * (S syl).real {c} < figuralWeight β syl c' * (S syl).real {c'} := by
+  rw [withFigure, Kernel.ofWeights_real_singleton_lt_iff syl
+    (fun h ↦ h0 (by simpa [figuralWeight] using Finset.sum_eq_zero_iff.1 h none (by simp)))
+    (ENNReal.sum_ne_top.2 fun c _ ↦ weight_ne_top β S syl c),
+    ← ENNReal.toReal_lt_toReal (weight_ne_top β S syl c) (weight_ne_top β S syl c'),
+    ENNReal.toReal_mul, ENNReal.toReal_mul, ENNReal.coe_toReal, ENNReal.coe_toReal,
+    measureReal_def, measureReal_def]
 
 end Model
 
@@ -452,149 +343,124 @@ end Model
 
 section Noiseless
 
-variable {α β : ℝ}
+variable {μ : Measure State} {α : ℝ} {β : ℝ≥0} {syl : Syllogism} {c c' : Conclusion}
 
-/-- For a conclusion false at a state satisfying the premises, the naive listener's posterior
-does not dominate the reasoner's. -/
-theorem klDiv_zero_eq_top {syl : Syllogism} {c : Conclusion} {s₀ : VennState}
-    (hs : premises syl s₀ = true) (hc : concMeaning c s₀ = false) :
-    klDiv (reasoner 0 (uniformOn Set.univ) syl) (naive 0 (uniformOn Set.univ) c) = ∞ := by
-  rw [reasoner_zero, naive_zero]
-  refine klDiv_of_not_ac λ h => ?_
-  have h1 : uniformOn (states (concMeaning c) : Set VennState) {s₀} = 0 := by
-    rw [uniformOn_eq_zero_iff (Finset.finite_toSet _), Set.inter_singleton_eq_empty,
-      Finset.mem_coe, states, Finset.mem_filter]
-    simp [hc]
-  have h2 := h h1
-  rw [uniformOn_eq_zero_iff (Finset.finite_toSet _), Set.inter_singleton_eq_empty,
-    Finset.mem_coe, states, Finset.mem_filter] at h2
-  exact h2 ⟨Finset.mem_univ _, hs⟩
+/-- Without noise the belief-alignment speaker believes the prior conditioned on the premises
+and addresses a literal listener. -/
+theorem beliefAlignment_zero (μ : Measure State) (α : ℝ) :
+    beliefAlignment 0 μ α = beliefSpeaker α (fun syl ↦ μ[|extension syl.premises])
+      (literalListener μ fun c ↦ extension (Conclusion.said c)) := by
+  unfold beliefAlignment reasoner naive
+  rw [listener_zero]
+  rfl
 
-/-- Without noise a conclusion false at some state satisfying the premises is never
-produced. -/
-theorem beliefAlignment_zero_apply_of_false (hα : 0 < α) {syl : Syllogism} {c : Conclusion}
-    {s₀ : VennState} (hs : premises syl s₀ = true) (hc : concMeaning c s₀ = false) :
-    beliefAlignment 0 (uniformOn Set.univ) α β syl {c} = 0 :=
-  speakerOfScore_apply_singleton_eq_zero (alignmentScore_of_eq_top hα (klDiv_zero_eq_top hs hc))
+private theorem ae_le_iff_subset (hμ : ∀ s, μ {s} ≠ 0) {A B : Set State} :
+    A ≤ᵐ[μ] B ↔ A ⊆ B :=
+  ae_iff_of_countable.trans ⟨fun h s hs ↦ h s (hμ s) hs, fun h _ _ hs ↦ h hs⟩
 
-theorem alignmentScore_zero_nvc_ne_bot (syl : Syllogism) :
-    alignmentScore 0 (uniformOn Set.univ) α β syl .nvc ≠ ⊥ := by
-  have hac : reasoner 0 (uniformOn Set.univ) syl ≪ naive 0 (uniformOn Set.univ) .nvc := by
-    rw [naive_zero, states_nvc, Finset.coe_univ]
-    exact Measure.absolutelyContinuous_of_forall_singleton λ s h =>
-      absurd h (uniformOn_univ_singleton_ne_zero s)
-  have : IsFiniteMeasure (reasoner 0 (uniformOn Set.univ) syl) := by
-    rw [reasoner_zero]
-    exact inferInstanceAs
-      (IsFiniteMeasure (Measure.count[|(states (premises syl) : Set VennState)]))
-  rw [alignmentScore_of_ne_top (klDiv_ne_top hac .of_finite)]
-  exact EReal.coe_ne_bot _
+variable [IsFiniteMeasure μ]
 
-/-- Without noise the belief-alignment speaker says *nothing follows* to a logically invalid
-syllogism, one to which no quantified conclusion is true at every state satisfying the
-premises. -/
-theorem beliefAlignment_nvc_of_invalid (hα : 0 < α) {syl : Syllogism}
-    (hinv : ∀ c, c ≠ .nvc → ∃ s, premises syl s = true ∧ concMeaning c s = false) :
-    beliefAlignment 0 (uniformOn Set.univ) α β syl {.nvc} = 1 := by
-  have : IsMarkovKernel (beliefAlignment 0 (uniformOn Set.univ) α β) :=
-    isMarkovKernel_speakerOfScore (λ syl => ⟨.nvc, alignmentScore_zero_nvc_ne_bot syl⟩)
-      (λ syl c => alignmentScore_ne_top hα syl c)
-  calc beliefAlignment 0 (uniformOn Set.univ) α β syl {.nvc}
-      = ∑ c, beliefAlignment 0 (uniformOn Set.univ) α β syl {c} :=
-        (Finset.sum_eq_single _ (λ c _ hc => let ⟨s, hs, hc⟩ := hinv c hc
-          beliefAlignment_zero_apply_of_false hα hs hc) (λ h => absurd (Finset.mem_univ _) h)).symm
-    _ = 1 := by rw [sum_measure_singleton, Finset.coe_univ, measure_univ]
+private theorem measure_lt_of_notMem (hμ : ∀ s, μ {s} ≠ 0) {A B : Set State} (hAB : A ⊆ B)
+    {s : State} (hB : s ∈ B) (hA : s ∉ A) : μ A < μ B :=
+  calc μ A < μ A + μ {s} := ENNReal.lt_add_right (measure_ne_top _ _) (hμ s)
+    _ = μ (A ∪ {s}) := (measure_union (Set.disjoint_singleton_right.2 hA) (.singleton s)).symm
+    _ ≤ μ B := measure_mono (Set.union_subset hAB (Set.singleton_subset_iff.2 hB))
 
-/-- The score of a conclusion entailed by the premises is the log ratio of the premises'
-extension to the conclusion's, with the figural weight. -/
-theorem alignmentScore_zero_of_valid {syl : Syllogism} {c : Conclusion}
-    (hE : (states (premises syl)).Nonempty)
-    (hc : states (premises syl) ⊆ states (concMeaning c)) :
-    alignmentScore 0 (uniformOn Set.univ) α β syl c =
-      ((Real.log (figuralWeight β syl c) -
-        α * Real.log ((states (concMeaning c)).card / (states (premises syl)).card) : ℝ) :
-          EReal) := by
-  rw [alignmentScore, reasoner_zero, naive_zero, klDiv_uniformOn_of_subset hE hc,
-    EReal.coe_ennreal_ofReal, max_eq_left (Real.log_nonneg ((one_le_div
-      (Nat.cast_pos.2 hE.card_pos)).2 (Nat.cast_le.2 (Finset.card_le_card hc)))),
-    ← EReal.coe_mul, ← EReal.coe_sub]
+/-- The speaker produces exactly the conclusions the premises entail. -/
+theorem beliefAlignment_zero_apply_singleton_eq_zero_iff (hμ : ∀ s, μ {s} ≠ 0) (hα : 0 < α) :
+    beliefAlignment 0 μ α syl {c} = 0 ↔
+      ¬ extension syl.premises ⊆ extension (Conclusion.said c) := by
+  rw [beliefAlignment_zero, beliefSpeaker_cond_literalListener_apply_singleton_eq_zero_iff hα,
+    ae_le_iff_subset hμ]
 
-/-- Among conclusions entailed by the premises and equally weighted, the belief-alignment
-speaker prefers the one true in fewer states. -/
-theorem beliefAlignment_real_lt_iff_of_valid (hα : 0 < α) {syl : Syllogism} {c₁ c₂ : Conclusion}
-    (hE : (states (premises syl)).Nonempty)
-    (h₁ : states (premises syl) ⊆ states (concMeaning c₁))
-    (h₂ : states (premises syl) ⊆ states (concMeaning c₂))
-    (hw : figuralWeight β syl c₁ = figuralWeight β syl c₂) :
-    (beliefAlignment 0 (uniformOn Set.univ) α β syl).real {c₂} <
-        (beliefAlignment 0 (uniformOn Set.univ) α β syl).real {c₁} ↔
-      (states (concMeaning c₁)).card < (states (concMeaning c₂)).card := by
-  have hE' := Nat.cast_pos (α := ℝ) |>.2 hE.card_pos
-  rw [beliefAlignment, speakerOfScore_real_singleton_lt_iff (alignmentScore_ne_top hα syl)
-    ⟨.nvc, alignmentScore_zero_nvc_ne_bot syl⟩, alignmentScore_zero_of_valid hE h₁,
-    alignmentScore_zero_of_valid hE h₂, EReal.coe_lt_coe_iff, hw, sub_lt_sub_iff_left,
-    mul_lt_mul_iff_right₀ hα,
-    Real.log_lt_log_iff (div_pos (Nat.cast_pos.2 (hE.mono h₁).card_pos) hE')
-      (div_pos (Nat.cast_pos.2 (hE.mono h₂).card_pos) hE'),
-    div_lt_div_iff_of_pos_right hE', Nat.cast_lt]
+/-- Among the conclusions the premises entail, the speaker prefers the one of smaller prior
+mass. -/
+theorem beliefAlignment_zero_real_singleton_lt_iff (hμ : ∀ s, μ {s} ≠ 0) (hα : 0 < α)
+    (hne : (extension syl.premises).Nonempty)
+    (hc : extension syl.premises ⊆ extension (Conclusion.said c))
+    (hc' : extension syl.premises ⊆ extension (Conclusion.said c')) :
+    (beliefAlignment 0 μ α syl).real {c} < (beliefAlignment 0 μ α syl).real {c'} ↔
+      μ (extension (Conclusion.said c')) < μ (extension (Conclusion.said c)) := by
+  rw [beliefAlignment_zero]
+  exact beliefSpeaker_cond_literalListener_real_singleton_lt_iff hα
+    (fun h ↦ let ⟨s, hs⟩ := hne; hμ s (measure_mono_null (Set.singleton_subset_iff.2 hs) h))
+    ((ae_le_iff_subset hμ).2 hc) ((ae_le_iff_subset hμ).2 hc')
 
-/-! ### Barbara and *All A are B, All C are B* (Figures 3, 4 and 8) -/
+/-- Without noise the belief-alignment speaker answers *nothing follows* to every syllogism that
+entails no quantified conclusion (section 2.3.4). -/
+theorem nothing_follows_of_invalid (hμ : ∀ s, μ {s} ≠ 0) (hα : 0 < α)
+    (h : ∀ c ≠ none, ¬ extension syl.premises ⊆ extension (Conclusion.said c)) :
+    withFigure β (beliefAlignment 0 μ α) syl {none} = 1 :=
+  withFigure_apply_none_eq_one
+    ((beliefAlignment_zero_apply_singleton_eq_zero_iff hμ hα).not_left.2
+      (extension_said_none ▸ Set.subset_univ _))
+    fun c hc ↦ (beliefAlignment_zero_apply_singleton_eq_zero_iff hμ hα).2 (h c hc)
 
-/-- Barbara's premises entail *all A are C*, existential import included. -/
-theorem premises_barbara_subset : states (premises barbara) ⊆ states (concMeaning .allAC) := by
-  intro s hs
-  simp only [states, Finset.mem_filter, Finset.mem_univ, true_and, premises, premise1, premise2,
-    barbara, quantEval, tesslerAll, Bool.and_eq_true, decide_eq_true_eq, concMeaning,
-    ↓reduceIte] at hs ⊢
-  exact ⟨barbara_valid s hs.1.1 hs.2.1, hs.1.2⟩
+/-! ### *All A are B, All B are C* and *All A are B, All C are B* (Figures 3, 4 and 8) -/
 
-/-- *All A are C* entails *some A are C* under existential import. -/
-theorem allAC_subset_someAC : states (concMeaning .allAC) ⊆ states (concMeaning .someAC) := by
-  intro s hs
-  simp only [states, Finset.mem_filter, Finset.mem_univ, true_and, concMeaning, tesslerAll,
-    Bool.and_eq_true, decide_eq_true_eq] at hs ⊢
-  exact syllAll_imp_syllSome s hasA hasC hs.2 hs.1
+/-- Barbara is the syllogism *All A are B, All B are C*. -/
+def barbara : Syllogism := ⟨⟨.all, .A, .B⟩, ⟨.all, .B, .C⟩⟩
 
-/-- Hearing Barbara, the belief-alignment speaker prefers *all A are C*, the entailed conclusion
-true in the fewest states, to *some A are C* and to *nothing follows*. -/
-theorem barbara_prefers_allAC (hα : 0 < α) (hβ : 1 ≤ β) :
-    (beliefAlignment 0 (uniformOn Set.univ) α β barbara).real {.someAC} <
-        (beliefAlignment 0 (uniformOn Set.univ) α β barbara).real {.allAC} ∧
-      (beliefAlignment 0 (uniformOn Set.univ) α β barbara).real {.nvc} <
-        (beliefAlignment 0 (uniformOn Set.univ) α β barbara).real {.allAC} := by
-  have hE : (states (premises barbara)).Nonempty :=
-    ⟨state_ABC, by simp only [states, Finset.mem_filter, Finset.mem_univ, true_and]; decide⟩
-  have hE' := Nat.cast_pos (α := ℝ) |>.2 hE.card_pos
-  have hall : state_A_AC ∉ states (concMeaning .allAC) := by
-    simp only [states, Finset.mem_filter, Finset.mem_univ, true_and]; decide
-  refine ⟨(beliefAlignment_real_lt_iff_of_valid hα hE premises_barbara_subset
-    (premises_barbara_subset.trans allAC_subset_someAC) rfl).2 (Finset.card_lt_card
-      ((Finset.ssubset_iff_of_subset allAC_subset_someAC).2 ⟨state_A_AC,
-        by simp only [states, Finset.mem_filter, Finset.mem_univ, true_and]; decide, hall⟩)), ?_⟩
-  rw [beliefAlignment, speakerOfScore_real_singleton_lt_iff (alignmentScore_ne_top hα _)
-    ⟨.nvc, alignmentScore_zero_nvc_ne_bot _⟩, alignmentScore_zero_of_valid hE
-      premises_barbara_subset, alignmentScore_zero_of_valid hE (states_nvc ▸ Finset.subset_univ _),
-    EReal.coe_lt_coe_iff, states_nvc]
-  have hlt : Real.log ((states (concMeaning .allAC)).card / (states (premises barbara)).card) <
-      Real.log ((Finset.univ : Finset VennState).card / (states (premises barbara)).card) :=
-    Real.log_lt_log (div_pos (Nat.cast_pos.2 (hE.mono premises_barbara_subset).card_pos) hE')
-      ((div_lt_div_iff_of_pos_right hE').2 (Nat.cast_lt.2 (Finset.card_lt_card
-        ((Finset.ssubset_iff_of_subset (Finset.subset_univ _)).2
-          ⟨state_A_AC, Finset.mem_univ _, hall⟩))))
-  have hw : figuralWeight β barbara .allAC = β := rfl
-  have hw' : figuralWeight β barbara .nvc = 1 := rfl
-  rw [hw, hw', Real.log_one]
-  nlinarith [Real.log_nonneg hβ, mul_lt_mul_of_pos_left hlt hα]
+/-- The syllogism *All A are B, All C are B* has both end terms in subject position. -/
+def allAB_allCB : Syllogism := ⟨⟨.all, .A, .B⟩, ⟨.all, .C, .B⟩⟩
 
-/-- *All A are B, All C are B* is invalid, since every quantified conclusion fails at a state
-satisfying the premises, so the noiseless belief-alignment speaker says *nothing follows*. -/
-theorem allAB_allCB_nvc (hα : 0 < α) :
-    beliefAlignment 0 (uniformOn Set.univ) α β allAB_allCB {.nvc} = 1 := by
-  refine beliefAlignment_nvc_of_invalid hα λ c hc => ?_
-  cases c with
-  | allAC | someAC | allCA | someCA => exact ⟨state_AB_BC, by decide⟩
-  | noAC | someNotAC | noCA | someNotCA => exact ⟨state_ABC, by decide⟩
-  | nvc => exact absurd rfl hc
+theorem figuralWeight_barbara (q : Quant) : figuralWeight β barbara (ac q) = β := by
+  simp [figuralWeight, Syllogism.subjects, barbara]
+
+/-- With both end terms in subject position there is no figural preference. -/
+theorem figuralWeight_allAB_allCB (c : Conclusion) : figuralWeight β allAB_allCB c = 1 := by
+  obtain _ | ⟨⟨q, x, y⟩, h⟩ := c
+  · rfl
+  · have hy : y ≠ .B := h.2.1
+    cases y <;> simp_all [figuralWeight, Syllogism.subjects, allAB_allCB]
+
+theorem barbara_entails_all : extension barbara.premises ⊆ extension (ac .all).said :=
+  fun _ hs ↦
+    have ⟨h₁, h₂⟩ := (mem_extension_pair.1 hs).imp holds_all.1 holds_all.1
+    mem_extension_singleton.2 (holds_all.2 ⟨fun r hr hA ↦ h₂.1 r hr (h₁.1 r hr hA), h₁.2⟩)
+
+/-- To *All A are B, All B are C* the noiseless belief-alignment speaker prefers *All A are C* to
+the weaker *Some A are C* and to *nothing follows* (Figure 8). -/
+theorem barbara_prefers_all (hμ : ∀ s, μ {s} ≠ 0) (hα : 0 < α) (hβ : 1 ≤ β) :
+    (withFigure β (beliefAlignment 0 μ α) barbara).real {ac .some} <
+        (withFigure β (beliefAlignment 0 μ α) barbara).real {ac .all} ∧
+      (withFigure β (beliefAlignment 0 μ α) barbara).real {none} <
+        (withFigure β (beliefAlignment 0 μ α) barbara).real {ac .all} := by
+  have hne : (extension barbara.premises).Nonempty := ⟨{region {.A, .B, .C}}, by decide⟩
+  have hsome : extension (ac .all).said ⊆ extension (ac .some).said := fun _ hs ↦
+    mem_extension_singleton.2 (holds_some_of_holds_all (mem_extension_singleton.1 hs))
+  have hlt : ∀ {c : Conclusion}, extension (ac .all).said ⊆ extension (Conclusion.said c) →
+      ({region {.A}, region {.A, .C}} : State) ∈ extension (Conclusion.said c) →
+      (beliefAlignment 0 μ α barbara).real {c} <
+        (beliefAlignment 0 μ α barbara).real {ac .all} := fun hc hs ↦
+    (beliefAlignment_zero_real_singleton_lt_iff hμ hα hne (barbara_entails_all.trans hc)
+      barbara_entails_all).2 (measure_lt_of_notMem hμ hc hs (by decide))
+  have h0 : beliefAlignment 0 μ α barbara {none} ≠ 0 :=
+    (beliefAlignment_zero_apply_singleton_eq_zero_iff hμ hα).not_left.2
+      (extension_said_none ▸ Set.subset_univ _)
+  rw [withFigure_real_singleton_lt_iff h0, withFigure_real_singleton_lt_iff h0,
+    figuralWeight_barbara, figuralWeight_barbara]
+  have hβ' : (1 : ℝ) ≤ β := by exact_mod_cast hβ
+  have h1 := hlt hsome (by decide)
+  have h2 := hlt (c := none) (extension_said_none ▸ Set.subset_univ _)
+    (extension_said_none ▸ Set.mem_univ _)
+  exact ⟨mul_lt_mul_of_pos_left h1 (by linarith), by
+    simpa [figuralWeight] using h2.trans_le (le_mul_of_one_le_left measureReal_nonneg hβ')⟩
+
+/-- *All A are B, All C are B* entails no quantified conclusion, so the noiseless speaker answers
+*nothing follows*. -/
+theorem allAB_allCB_nothing_follows (hμ : ∀ s, μ {s} ≠ 0) (hα : 0 < α) :
+    withFigure β (beliefAlignment 0 μ α) allAB_allCB {none} = 1 := by
+  refine nothing_follows_of_invalid hμ hα fun c hc h ↦ ?_
+  obtain _ | ⟨⟨q, x, y⟩, hx, hy, hxy⟩ := c
+  · exact hc rfl
+  · have h₁ : Sentence.Holds ⟨q, x, y⟩ {region {.A, .B}, region {.B, .C}} :=
+      mem_extension_singleton.1 (h (by decide))
+    have h₂ : Sentence.Holds ⟨q, x, y⟩ {region {.A, .B, .C}} :=
+      mem_extension_singleton.1 (h (by decide))
+    clear h hc
+    revert hx hy hxy h₁ h₂
+    cases q <;> cases x <;> cases y <;> decide
 
 end Noiseless
 

@@ -3,7 +3,7 @@ module
 public import Linglib.Core.InformationTheory.KullbackLeibler.Finite
 public import Linglib.Core.MeasureTheory.Measure.AbsolutelyContinuous
 public import Linglib.Core.MeasureTheory.Measure.Real
-public import Linglib.Pragmatics.RSA.Basic
+public import Linglib.Pragmatics.RSA.Belief
 public import Mathlib.Data.Nat.Dist
 public import Mathlib.Order.Interval.Finset.Nat
 
@@ -33,9 +33,9 @@ rule is shown to be the Bayesian rule with the prior over radii in place of the 
   the nine values of §5–7. Priors are finite measures rather than probability measures: every
   stage renormalizes, so the uniform priors of §3.2.2 are the counting measures `unif` and the
   uniform prior on the nine values is `Measure.count`.
-* Speakers are `RSA.speakerOfScore` at the utility `−λ · D(belief ‖ listener)` with mathlib's
-  `InformationTheory.klDiv`. The utility is `⊥` exactly when the message excludes a value the
-  speaker deems possible, footnote 17's Quality, and the message then has zero probability.
+* Speakers (11), (14) are `RSA.beliefSpeaker`, the softmax of `−λ · D(belief ‖ listener)`. A
+  message that excludes a value the speaker deems possible is at infinite divergence, footnote
+  17's Quality, and has zero probability.
   Pragmatic listeners are `Kernel.ofWeights` at the paper's proportionality equations; a message
   no observation produces gets the zero measure, the `0 / 0` convention of footnote 28 that
   Appendix A's induction relies on, and on messages heard with positive probability the
@@ -281,57 +281,6 @@ theorem between_ratio {a b k₁ k₂ : ℕ} (hk₁ : k₁ ∈ Set.Icc a b) (hk�
 
 end Ratio
 
-/-! ### The speaker: Kullback–Leibler utility and softmax choice (§5) -/
-
-section Speaker
-
-variable {X O M : Type*} [MeasurableSpace X] [MeasurableSpace O] [MeasurableSpace M]
-  [Countable O] [MeasurableSingletonClass O] [Fintype M] [MeasurableSingletonClass M]
-
-/-- The utility (11) at rationality `lam` (14) is the negative Kullback–Leibler divergence of the
-listener's posterior from the speaker's belief after her observation. -/
-noncomputable def utility (lam : ℝ) (belief : O → Measure X) (L : Kernel M X) (o : O) (m : M) :
-    EReal :=
-  -((ENNReal.ofReal lam * klDiv (belief o) (L m) : ℝ≥0∞) : EReal)
-
-/-- The speaker (14) is the softmax of the utility over messages. -/
-noncomputable def speaker (lam : ℝ) (belief : O → Measure X) (L : Kernel M X) : Kernel O M :=
-  RSA.speakerOfScore (utility lam belief L)
-
-variable {lam : ℝ} {belief : O → Measure X} {L : Kernel M X} {o : O}
-
-omit [MeasurableSpace O] [Countable O] [MeasurableSingletonClass O] [Fintype M]
-  [MeasurableSingletonClass M] in
-theorem utility_ne_top (m : M) : utility lam belief L o m ≠ ⊤ :=
-  mt EReal.neg_eq_top_iff.mp (EReal.coe_ennreal_ne_bot _)
-
-omit [MeasurableSpace O] [Countable O] [MeasurableSingletonClass O] [Fintype M]
-  [MeasurableSingletonClass M] in
-/-- On a finite value space the utility is `⊥` exactly when the message excludes a value the
-speaker deems possible (Quality, footnote 17). -/
-theorem utility_eq_bot_iff [Fintype X] [MeasurableSingletonClass X] (hlam : 0 < lam)
-    [IsFiniteMeasure (belief o)] (m : M) : utility lam belief L o m = ⊥ ↔ ¬ belief o ≪ L m := by
-  rw [utility, EReal.neg_eq_bot_iff, EReal.coe_ennreal_eq_top_iff, ENNReal.mul_eq_top,
-    klDiv_eq_top_iff_not_ac]
-  simp [ENNReal.ofReal_eq_zero, hlam.not_ge]
-
-/-- A message violating Quality is never used (footnote 17). -/
-theorem speaker_apply_singleton_eq_zero [Fintype X] [MeasurableSingletonClass X] (hlam : 0 < lam)
-    [IsFiniteMeasure (belief o)] {m : M} (h : ¬ belief o ≪ L m) : speaker lam belief L o {m} = 0 :=
-  RSA.speakerOfScore_apply_singleton_eq_zero ((utility_eq_bot_iff hlam m).mpr h)
-
-/-- Message preference is divergence comparison (§5.2), so the speaker uses `m'` more than `m`
-exactly when the literal posterior of `m'` is closer to her belief. -/
-theorem speaker_real_singleton_lt_iff (hlam : 0 < lam) (h0 : ∃ m, utility lam belief L o m ≠ ⊥)
-    {m m' : M} :
-    (speaker lam belief L o).real {m} < (speaker lam belief L o).real {m'} ↔
-      klDiv (belief o) (L m') < klDiv (belief o) (L m) := by
-  rw [speaker, RSA.speakerOfScore_real_singleton_lt_iff (score := utility lam belief L) (w := o)
-    utility_ne_top h0, utility, utility, EReal.neg_lt_neg_iff, EReal.coe_ennreal_lt_coe_ennreal_iff,
-    ENNReal.mul_lt_mul_iff_right (ENNReal.ofReal_pos.mpr hlam).ne' ENNReal.ofReal_ne_top]
-
-end Speaker
-
 /-! ### A case where the speaker prefers "around" (§5.2) -/
 
 /-- The six messages of §6.1, all centred on 4; "exactly 4" is "between 4 and 4". -/
@@ -475,8 +424,8 @@ theorem table1_ac_between1_7 : table1 ≪ L0 .between1_7 :=
 /-- "Exactly 4" excludes values the belief of Table 1 leaves possible, so the speaker never uses
 it (footnote 17). -/
 theorem table1_speaker_exactly4 {lam : ℝ} (hlam : 0 < lam) :
-    speaker lam (λ _ : Unit => table1) L0 () {.exactly4} = 0 :=
-  speaker_apply_singleton_eq_zero hlam λ h => by
+    RSA.beliefSpeaker lam (λ _ : Unit => table1) L0 () {.exactly4} = 0 :=
+  RSA.beliefSpeaker_apply_singleton_eq_zero hlam <| klDiv_of_not_ac λ h => by
     have h3 := h (show L0 .exactly4 {3} = 0 by
       rw [L0_exactly4_apply_singleton, ite_eq_right (by decide)])
     rw [table1_apply_singleton] at h3
@@ -486,10 +435,10 @@ theorem table1_speaker_exactly4 {lam : ℝ} (hlam : 0 < lam) :
 every rationality she uses it more than "between 1 and 7", the triangular posterior being closer
 to her belief than the flat one. -/
 theorem table1_prefers_around {lam : ℝ} (hlam : 0 < lam) :
-    (speaker lam (λ _ : Unit => table1) L0 ()).real {.between1_7} <
-      (speaker lam (λ _ : Unit => table1) L0 ()).real {.around4} := by
-  rw [speaker_real_singleton_lt_iff hlam
-      ⟨.around4, λ h => (utility_eq_bot_iff hlam _).mp h table1_ac_around4⟩,
+    (RSA.beliefSpeaker lam (λ _ : Unit => table1) L0 ()).real {.between1_7} <
+      (RSA.beliefSpeaker lam (λ _ : Unit => table1) L0 ()).real {.around4} := by
+  rw [RSA.beliefSpeaker_real_singleton_lt_iff hlam
+      ⟨.around4, klDiv_ne_top table1_ac_around4 .of_finite⟩,
     ← ENNReal.toReal_lt_toReal (klDiv_ne_top table1_ac_around4 .of_finite)
       (klDiv_ne_top table1_ac_between1_7 .of_finite),
     toReal_klDiv_eq_sum_log_div table1_ac_around4, toReal_klDiv_eq_sum_log_div table1_ac_between1_7]
@@ -548,7 +497,7 @@ variable [Fintype O] [MeasurableSingletonClass O] [IsFiniteMeasure P] (lam : ℝ
 /-- To the speaker answering a joint listener (13) only the listener's value-marginal
 matters. -/
 noncomputable def jointSpeaker (L : Kernel M (X × O)) : Kernel O M :=
-  speaker lam (belief P) (L.map Prod.fst)
+  RSA.beliefSpeaker lam (belief P) (L.map Prod.fst)
 
 /-- The pragmatic listener answering a speaker, (15) and (17), reweights the joint prior by the
 speaker's probability of the message given the observation. -/

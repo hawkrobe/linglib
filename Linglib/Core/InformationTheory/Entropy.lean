@@ -219,6 +219,20 @@ theorem measureEntropy_eq_zero_iff [Fintype S] (μ : Measure S) [IsProbabilityMe
     exact measure_mono_null (Set.singleton_subset_iff.2 (by simpa using ha))
       ((prob_compl_eq_zero_iff (.singleton x)).2 hμx)
 
+/-- The divergence and the entropy add up to the cross-entropy, the expected surprisal under `μ`
+of the atoms as `ν` weighs them. -/
+theorem toReal_klDiv_add_measureEntropy [Fintype S] {ν : Measure S} [IsProbabilityMeasure μ]
+    [IsProbabilityMeasure ν] (hμν : μ ≪ ν) :
+    (klDiv μ ν).toReal + Hm[μ] = -∑ s, μ.real {s} * log (ν.real {s}) := by
+  rw [toReal_klDiv_eq_sum_log_div hμν, measureEntropy_eq_sum, ← Finset.sum_add_distrib,
+    ← Finset.sum_neg_distrib]
+  refine Finset.sum_congr rfl fun s _ ↦ ?_
+  rcases eq_or_ne (μ.real {s}) 0 with h0 | h0
+  · simp [h0]
+  · rw [log_div h0 fun h ↦ h0 ((measureReal_eq_zero_iff (measure_ne_top _ _)).2
+      (hμν ((measureReal_eq_zero_iff (measure_ne_top _ _)).1 h))), negMulLog]
+    ring
+
 end measureEntropy
 
 section measureMutualInfo
