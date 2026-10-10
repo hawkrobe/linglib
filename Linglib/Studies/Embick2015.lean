@@ -17,13 +17,13 @@ tenses of *laudāre* in (40) from the Vocabulary Items (36), (37) and (42): the 
 agreement endings are inserted only where the deleted T[−past] leaves Agr concatenated with
 Asp[perf], the overt tense of the pluperfect intervening (§7.3.2.1), and the first singular *-m*
 of the imperfect and pluperfect reads T[+past]. Under rewriting, where insertion deletes the
-features an item spells out, both conditionings are lost, and Agr would have to refer to the
-exponents *-rā* and *-bā*, and to each allomorph of Asp[perf], one by one; that is the book's
-argument for non-deletion (§4.6.3). The Hungarian plural of (7) and (8) looks outward at the
-possessive, and the Korean nominative of (10) and (11) looks inward at whether its host ends in a
-consonant or a vowel. The predictions of (C3) in (43) are that outward conditioning sees synsem
-features only, the possessive being bare when the plural is realized, while inward conditioning
-may see the phonological features of a realized exponent.
+synsem features of the morpheme it realizes, both conditionings are lost, and Agr would have to
+refer to the exponents *-rā* and *-bā*, and to each allomorph of Asp[perf], one by one; that is
+the book's argument for non-deletion (§4.6.3). The Hungarian plural of (7) and (8) looks outward
+at the possessive, and the Korean nominative of (10) and (11) looks inward at whether its host
+ends in a consonant or a vowel. The predictions of (C3) in (43) are that outward conditioning
+sees synsem features only, the possessive being bare when the plural is realized, while inward
+conditioning may see the phonological features of a realized exponent.
 
 ## Implementation notes
 
@@ -151,7 +151,7 @@ def rows : List (ComplexHead Feature String × List String) :=
 in the perfect but with the overt T[+past] in the pluperfect (§7.3.2.1). -/
 theorem rows_morphs : ∀ r ∈ rows, morphs .nondeletion r.1 = r.2 := by decide
 
-/-- As §4.6.3 argues, were the features an item spells out deleted at its insertion, Agr could
+/-- As §4.6.3 argues, were a morpheme's synsem features deleted at its insertion, Agr could
 see neither T[+past] nor Asp[perf], and the first singular of the imperfect and of the perfect
 would fall to the default *-ō*. -/
 theorem rewriting_loses_conditioning :
