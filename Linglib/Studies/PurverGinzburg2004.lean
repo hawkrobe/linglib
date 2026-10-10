@@ -1,42 +1,53 @@
 module
 
-public import Linglib.Studies.BarwiseCooper1981
+public import Linglib.Semantics.Quantification.Witness
+public import Linglib.Semantics.Reference.Definiteness
 public import Linglib.Data.Examples.PurverGinzburg2004
+public import Mathlib.Data.Finset.SDiff
+public import Mathlib.Data.Finset.Union
 
 /-!
 # Purver and Ginzburg (2004): Clarifying Noun Phrase Semantics
 
-This file formalizes [purver-ginzburg-2004]'s use of reprise questions as probes of noun phrase
-denotations. Under the Reprise Content Hypothesis a nominal fragment reprise queries a part of
-the standard semantic content of the fragment (weak version) or exactly that content (strong
-version), and in [ginzburg-cooper-2004]'s grammar what a reprise can query is a member of the
-sign's contextual parameters. The paper's semantic representations are therefore signs with a
-content and the parameters abstracted to C-PARAMS or stored for existential closure, built by
-the Definiteness Principle (74) and (75) (`Sign.word`, `Sign.phrase`, `Sign.Definiteness`).
-On the paper's account a quantified noun phrase denotes its witness set, a definite abstracts
-that set and an indefinite stores it, and the readings a reprise makes available are the
-abstracted parameters: the content itself for definites (`strong_np`), never for indefinites
-(`indefinite_no_referent`), and the daughters' parameters for both (`daughters_available`).
-The generalized-quantifier alternative (66) makes the same parameters available
-(`gq_cparams`) but never its content (`not_strong_gq`), so it holds only the weak hypothesis.
-The corpus readings of (25) to (90) are the rows, and every reading the paper judges possible is
-available and every reading it marks impossible is not (`rows_predicted`).
+A reprise question repeats a phrase of the previous utterance to query it, as *Turkey?* does
+after *We'll get the turkey out of the oven*. Purver and Ginzburg read what a noun phrase
+denotes off the readings its reprises have. In the grammar of Ginzburg and Cooper a sign lists
+its contextual parameters, the objects a hearer must identify in context, and a reprise can
+query only these. The Reprise Content Hypothesis says that a reprise queries part of the content
+of the reprised phrase, and in its strong version exactly that content. The paper takes a
+quantified noun phrase to denote a witness set, a subset of the noun's extension that its
+quantifier holds of, and its Definiteness Principle makes that content a contextual parameter
+in a definite use and a member of the store of existentially quantified objects in an
+indefinite one.
 
-The truth conditions follow [barwise-cooper-1981]: a monotone increasing quantifier holds of a
-predicate exactly when a witness set is contained in it, which is (24), and the plain witness
-representation fails for a monotone decreasing quantifier, since the empty set witnesses it
-(`witness_subset_of_empty`); the representation as a pair of a reference set and its
-complement (91) is exact for every quantifier living on its restriction (`pair_apply_iff`).
+## Main statements
+
+* `rows_predicted`: every corpus reading the paper judges possible queries a contextual
+  parameter of the sign for that use of a noun phrase, and no reading it marks impossible does.
+* `strong_np`, `not_strong_gq`: a definite noun phrase that denotes a witness set holds the
+  strong hypothesis, and one that denotes a generalized quantifier never does, although both
+  make the same parameters available.
+* `Sign.strong_word_iff`: a word holds the strong hypothesis exactly when it stores none of its
+  content.
+* `pair_apply_iff`: a quantifier holds of a predicate exactly when some witness set lies inside
+  the predicate and the rest of the noun's extension lies outside it, which is the paper's
+  reading of a monotone decreasing noun phrase as a reference set with its complement.
 
 ## Implementation notes
 
-The semantic objects a sign can contribute are reified as kinds (`Kind`), since the argument
-turns on which kind of object a reprise queries, not on its value; a content is the list of
-its components, so that the pair representation (93) can have both members abstracted. The
-corpus examples carry their noun phrase type as a feature and the paper's paraphrase readings
-with the paper's judgments; marginal readings make no claim. Quantifier scope, anaphora, the
-STORE and QUANTS mechanism of §5.3 and §5.4, and the corpus counts of Tables 2 to 6 are not
-formalized.
+* A sign records which kinds of object it contributes, not their values, since the argument
+  turns on what kind of object a reprise queries. A content is the set of its components, so
+  that both members of a reference set and complement pair can be abstracted.
+* `Sign.phrase` takes the parameters that the Definiteness Principle distributes as an optional
+  argument, by default the content. It is set for attributive definites, where the paper asks
+  for "a slightly different version" of the principle, and for the generalized-quantifier
+  alternative.
+* The rows carry the paper's classification of each use as a feature, and a referential use of
+  an indefinite or a universal counts as definite, as in the paper. Every noun phrase gets the
+  sign of a determiner with a noun, pronouns and bare *wh*-words included. Marginal readings
+  make no claim.
+* Quantifier scope, anaphora, the retrieval of stored objects and the corpus counts are not
+  formalized.
 
 ## References
 
@@ -49,13 +60,14 @@ formalized.
 
 namespace PurverGinzburg2004
 
-open Examples Quantifier Quantifier.GQ Quantifier.NP
+open Examples Quantifier NP
 
-/-! ### Signs and the Definiteness Principle (§2.1, §4.5) -/
+/-! ### Signs and the Definiteness Principle -/
 
-/-- The kinds of semantic object a nominal sign can contribute or abstract: an individual or
-witness set, a property, a determiner relation, a function to witness sets and its situational
-argument, a generalized quantifier, and the complement set of a monotone decreasing phrase. -/
+/-- The kinds of semantic object a nominal sign contributes or abstracts. They are an individual
+or witness set, a property, a determiner relation, a function to witness sets with its
+situational argument, a generalized quantifier, and the complement set of a monotone decreasing
+phrase. -/
 inductive Kind
   | individual
   | property
@@ -66,178 +78,181 @@ inductive Kind
   | complement
   deriving DecidableEq, Repr
 
-/-- A nominal sign: the components of its content, the parameters abstracted to C-PARAMS, and
-the parameters stored for existential closure. -/
+/-- A nominal sign carries the components of its content, the contextual parameters a reprise
+can query, and the parameters stored for existential closure. -/
 structure Sign where
-  content : List Kind
-  cparams : List Kind
-  store : List Kind
-  deriving DecidableEq, Repr
+  content : Finset Kind
+  cparams : Finset Kind
+  store : Finset Kind
+  deriving DecidableEq
 
-/-- The Definiteness Principle for a word (74): the content is abstracted to C-PARAMS unless it
-is stored. -/
-def Sign.word (k : Kind) (definite : Bool) : Sign :=
-  if definite then ⟨[k], [k], []⟩ else ⟨[k], [], [k]⟩
+namespace Sign
 
-/-- The Definiteness Principle for a phrase (75): C-PARAMS is the union of the daughters' with
-the content of the mother unless that is stored, and STORE is the union of the daughters' with
-the stored content. -/
-def Sign.phrase (k : Kind) (definite : Bool) (dtrs : List Sign) : Sign :=
-  ⟨[k], (if definite then [k] else []) ++ dtrs.flatMap (·.cparams),
-    (if definite then [] else [k]) ++ dtrs.flatMap (·.store)⟩
+variable {c s : Finset Kind} {head : Sign} {nonHead : Finset Sign}
 
-/-- The content of a sign is a member of C-PARAMS or of STORE. -/
-def Sign.Definiteness (s : Sign) : Prop := ∀ k ∈ s.content, k ∈ s.cparams ∨ k ∈ s.store
+/-- `Sign.word content store` is the sign of a word, whose contextual parameters are the content
+it does not store (74). -/
+def word (content store : Finset Kind) : Sign := ⟨content, content \ store, store⟩
 
-instance (s : Sign) : Decidable s.Definiteness := by unfold Sign.Definiteness; infer_instance
+/-- `Sign.phrase content store head nonHead` is the sign of a phrase (75). Its contextual
+parameters are those of every daughter (73) with the parameters it does not store, and its store
+adds that of the head daughter. The parameters are the content unless `params` is given. -/
+def phrase (content store : Finset Kind) (head : Sign) (nonHead : Finset Sign)
+    (params : Finset Kind := content) : Sign :=
+  ⟨content, params \ store ∪ (insert head nonHead).biUnion (·.cparams), store ∪ head.store⟩
 
-theorem Sign.word_definiteness (k : Kind) (definite : Bool) :
-    (Sign.word k definite).Definiteness := by
-  cases definite <;> simp [Sign.word, Sign.Definiteness]
+/-- The Definiteness Principle requires each component of the content to be a contextual
+parameter or stored. -/
+def DefinitenessPrinciple (s : Sign) : Prop := s.content ⊆ s.cparams ∪ s.store
+deriving Decidable
 
-theorem Sign.phrase_definiteness (k : Kind) (definite : Bool) (dtrs : List Sign) :
-    (Sign.phrase k definite dtrs).Definiteness := by
-  cases definite <;> simp [Sign.phrase, Sign.Definiteness]
+/-- A sign holds the strong Reprise Content Hypothesis when a reprise can query its whole
+content, every component being a contextual parameter. -/
+def Strong (s : Sign) : Prop := s.content ⊆ s.cparams
+deriving Decidable
 
-/-- The strong Reprise Content Hypothesis for a sign: a reprise, which queries a member of
-C-PARAMS, can query the whole content. -/
-def Sign.Strong (s : Sign) : Prop := ∀ k ∈ s.content, k ∈ s.cparams
+theorem definitenessPrinciple_word : (word c s).DefinitenessPrinciple := le_sdiff_sup
 
-instance (s : Sign) : Decidable s.Strong := by unfold Sign.Strong; infer_instance
+theorem definitenessPrinciple_phrase : (phrase c s head nonHead).DefinitenessPrinciple :=
+  le_sdiff_sup.trans (sup_le_sup le_sup_left le_sup_left)
 
-/-- A common noun (28): its content is a property, abstracted to C-PARAMS. -/
-def cn : Sign := Sign.word .property true
+/-- A word holds the strong hypothesis exactly when it stores none of its content (§4.5). -/
+theorem strong_word_iff : (word c s).Strong ↔ Disjoint c s :=
+  Finset.subset_sdiff.trans (and_iff_right subset_rfl)
 
-/-- A determiner: its content is a relation between sets, abstracted to C-PARAMS. -/
-def det : Sign := Sign.word .relation true
+/-- A phrase that stores none of its content holds the strong hypothesis (§4.5). -/
+theorem strong_phrase (h : Disjoint c s) : (phrase c s head nonHead).Strong :=
+  (Finset.sdiff_eq_self_of_disjoint h).ge.trans Finset.subset_union_left
 
-/-- A quantified noun phrase (72), (75): its content is the witness set the determiner relation
-picks out of the noun's property, abstracted when definite and stored when indefinite. -/
-def np (definite : Bool) : Sign := Sign.phrase .individual definite [det, cn]
+/-- A phrase inherits the contextual parameters of each daughter (73), which gives its reprises
+their sub-constituent readings. -/
+theorem cparams_subset_cparams_phrase {d : Sign} {params : Finset Kind}
+    (hd : d ∈ insert head nonHead) : d.cparams ⊆ (phrase c s head nonHead params).cparams :=
+  (Finset.subset_biUnion_of_mem _ hd).trans Finset.subset_union_right
 
-/-- An attributive definite (48): the content is a function applied to a situation, and the
-function and its argument are the abstracted parameters. -/
-def attributive : Sign :=
-  ⟨[.individual], [.function, .situation] ++ det.cparams ++ cn.cparams, []⟩
+end Sign
 
-/-- The generalized-quantifier alternative (66): the content is a quantifier, and the abstracted
-parameters are its witness set, when definite, and the daughters' contents. -/
-def gq (definite : Bool) : Sign :=
-  ⟨[.quantifier], (if definite then [.individual] else []) ++ det.cparams ++ cn.cparams, []⟩
+/-! ### The signs of nouns and noun phrases -/
 
-/-- A monotone decreasing phrase as a pair of reference and complement set, (92) when
-existentially quantified and (93) when referential. -/
-def pair (referential : Bool) : Sign :=
-  ⟨[.individual, .complement], (if referential then [.individual, .complement] else []) ++
-    det.cparams ++ cn.cparams, if referential then [] else [.individual, .complement]⟩
+/-- A common noun contributes a property, which it abstracts (28). -/
+def cn : Sign := .word {.property} ∅
+
+/-- A determiner contributes a relation between sets, which it abstracts. -/
+def det : Sign := .word {.relation} ∅
+
+/-- A quantified noun phrase contributes the witness set its determiner picks out of the noun's
+property (72). A definite use abstracts it and an indefinite use stores it. -/
+def np : Reference.Definiteness → Sign
+  | .definite => .phrase {.individual} ∅ cn {det}
+  | .indefinite => .phrase {.individual} {.individual} cn {det}
+
+/-- An attributive definite contributes the value of a function at a situation, and abstracts
+the function and the situation in place of that value (48). -/
+def attributive : Sign := .phrase {.individual} ∅ cn {det} (params := {.function, .situation})
+
+/-- On the generalized-quantifier alternative the content is a quantifier, and a definite use
+abstracts a witness set of it (66). -/
+def gq : Reference.Definiteness → Sign
+  | .definite => .phrase {.quantifier} ∅ cn {det} (params := {.individual})
+  | .indefinite => .phrase {.quantifier} ∅ cn {det} (params := ∅)
+
+/-- A monotone decreasing noun phrase contributes a reference set with its complement and
+stores `store`. It stores both when existentially quantified (92) and neither when referential
+(93), and the variant (94) stores the complement set alone. -/
+def pair (store : Finset Kind) : Sign := .phrase {.individual, .complement} store cn {det}
 
 /-- Common nouns hold the strong hypothesis (§3.3). -/
-theorem strong_cn : cn.Strong := by decide
+theorem strong_cn : cn.Strong := Sign.strong_word_iff.2 (Finset.disjoint_empty_right _)
 
 /-- Definite noun phrases hold the strong hypothesis (§4.4.2). -/
-theorem strong_np : (np true).Strong := by decide
+theorem strong_np : (np .definite).Strong := Sign.strong_phrase (Finset.disjoint_empty_right _)
 
-/-- The witness set of an indefinite is stored, not abstracted, so no reprise of an indefinite
-queries a referent (§4.2). -/
-theorem indefinite_no_referent : Kind.individual ∉ (np false).cparams := by decide
+/-- An indefinite stores its witness set, so no reprise of it queries a referent (§4.2). -/
+theorem indefinite_no_referent : Kind.individual ∉ (np .indefinite).cparams := by decide
 
-/-- The parameters of the daughters are inherited (73): the sub-constituent readings. -/
-theorem daughters_available (definite : Bool) :
-    det.cparams ⊆ (np definite).cparams ∧ cn.cparams ⊆ (np definite).cparams := by
-  cases definite <;> decide
+/-- The generalized-quantifier alternative makes the same parameters available as the
+witness-set account (§4.4.1). -/
+theorem cparams_gq (d : Reference.Definiteness) : (gq d).cparams = (np d).cparams := by
+  cases d <;> decide
 
-/-- The generalized-quantifier alternative makes exactly the same parameters available. -/
-theorem gq_cparams (definite : Bool) : (gq definite).cparams = (np definite).cparams := by
-  cases definite <;> decide
+/-- The generalized-quantifier alternative never lets a reprise query its content, so it holds
+only the weak hypothesis (§4.4.1). -/
+theorem not_strong_gq (d : Reference.Definiteness) : ¬ (gq d).Strong := by cases d <;> decide
 
-/-- But it never lets a reprise query its content: it holds only the weak hypothesis. -/
-theorem not_strong_gq (definite : Bool) : ¬ (gq definite).Strong := by
-  cases definite <;> decide
-
-/-- The functional representation of attributive definites holds only the weak hypothesis
-(§4.1.3). -/
+/-- The functional analysis of attributive definites holds only the weak hypothesis (§4.1.3). -/
 theorem not_strong_attributive : ¬ attributive.Strong := by decide
 
-/-- The referential pair (93) holds the strong hypothesis. -/
-theorem strong_pair : (pair true).Strong := by decide
+/-- An attributive definite neither abstracts nor stores its content, only the function and the
+situation (§4.5). -/
+theorem attributive_not_definitenessPrinciple : ¬ attributive.DefinitenessPrinciple := by decide
+
+/-- The referential pair holds the strong hypothesis (93). -/
+theorem strong_pair : (pair ∅).Strong := Sign.strong_phrase (Finset.disjoint_empty_right _)
 
 /-! ### The corpus readings -/
 
-/-- The sign of a row's noun phrase type. -/
-def sign? : String → Option Sign
-  | "cn" | "bareSingular" => some cn
-  | "demonstrative" | "pronoun" | "definite" | "specificIndefinite" | "universal" =>
-    some (np true)
-  | "indefinite" | "negative" | "wh" => some (np false)
-  | "attributiveDefinite" => some attributive
-  | "determiner" => some det
-  | "monotoneDecreasing" => some (pair false)
-  | "monotoneDecreasingReferential" => some (pair true)
-  | _ => none
+/-- The sign of each use of a noun phrase the rows distinguish. Referential uses of indefinites
+and universals have the sign of a definite, since the paper distinguishes definite uses by their
+content being a contextual parameter (§4.2.2, §4.3). -/
+def signOfNP : List (String × Sign) :=
+  [("cn", cn), ("bareSingular", cn),
+    ("demonstrative", np .definite), ("pronoun", np .definite), ("definite", np .definite),
+    ("specificIndefinite", np .definite), ("universal", np .definite),
+    ("indefinite", np .indefinite), ("negative", np .indefinite), ("wh", np .indefinite),
+    ("attributiveDefinite", attributive), ("determiner", det),
+    ("monotoneDecreasing", pair {.individual, .complement}),
+    ("monotoneDecreasingReferential", pair ∅)]
 
-/-- The kind of object a paraphrase reading queries. -/
-def kind? : String → Option Kind
-  | "referent" => some .individual
-  | "predicate" => some .property
-  | "determiner" => some .relation
-  | "functional" => some .function
-  | "domain" => some .situation
-  | "complement" => some .complement
-  | _ => none
+/-- The kind of object each paraphrase reading queries. -/
+def kindOfReading : List (String × Kind) :=
+  [("referent", .individual), ("predicate", .property), ("determiner", .relation),
+    ("functional", .function), ("domain", .situation), ("complement", .complement)]
 
-/-- A paraphrase reading is predicted by a sign: if the paper judges it possible it queries an
-abstracted parameter, and if the paper marks it impossible it does not. -/
-def ReadingPredicted (s : Sign) (p : String × Judgment) : Prop :=
-  match kind? p.1 with
-  | some k => (p.2 = .acceptable → k ∈ s.cparams) ∧ (p.2 = .unacceptable → k ∉ s.cparams)
-  | none => False
+/-- A sign predicts the readings of a row when each reading the paper judges possible queries
+one of its contextual parameters and no reading the paper marks impossible does. -/
+def Sign.Predicts (s : Sign) (r : Datum) : Prop :=
+  ∀ p ∈ r.readings, ∃ k ∈ kindOfReading.lookup p.1,
+    (p.2 = .acceptable → k ∈ s.cparams) ∧ (p.2 = .unacceptable → k ∉ s.cparams)
+deriving Decidable
 
-instance (s : Sign) (p : String × Judgment) : Decidable (ReadingPredicted s p) := by
-  unfold ReadingPredicted; split <;> infer_instance
+/-- The sign of each use of a noun phrase predicts the readings of its reprises, (25) to
+(90). -/
+theorem rows_predicted : ∀ r ∈ Examples.all, ∃ s ∈ r.parse? "np" signOfNP, s.Predicts r := by
+  decide
 
-/-- A row is predicted: every paraphrase reading is predicted by the sign of its noun phrase
-type. -/
-def Predicted (r : Datum) : Prop :=
-  match (r.feature? "np").bind sign? with
-  | some s => ∀ p ∈ r.readings, ReadingPredicted s p
-  | none => False
+/-- The complement-set reading the paper gives its constructed (90) is not predicted when the
+complement set is stored (94), so that reading calls for abstracting both members (93). -/
+theorem not_predicts_ex90 : ¬ (pair {.complement}).Predicts ex90 := by decide
 
-instance (r : Datum) : Decidable (Predicted r) := by
-  unfold Predicted; split <;> infer_instance
+/-! ### Witness sets and truth conditions -/
 
-/-- (25) to (90): the readings the paper finds and the ones it excludes. -/
-theorem rows_predicted : ∀ r ∈ Examples.all, Predicted r := by decide
-
-/-! ### Witness sets and truth conditions (§2.2.3, §4.4, §5.5) -/
+section Witness
 
 variable {α : Type*} {Q : NP α} {A X : α → Prop}
 
-/-- The plain witness representation (85) is vacuous for a quantifier that the empty set
-witnesses, such as *few* or *no*: every predicate contains a witness set. -/
-theorem witness_subset_of_empty (hQ : Q (λ _ => False)) (X : α → Prop) :
+/-- A quantifier that holds of the empty set has a witness set inside every predicate, so the
+plain witness representation (85) says nothing of *few* or *no* (§5.5). -/
+theorem witness_subset_of_empty (hQ : Q fun _ ↦ False) (X : α → Prop) :
     ∃ w, Witness Q A w ∧ ∀ x, w x → X x :=
-  ⟨λ _ => False, ⟨λ _ h => h.elim, hQ⟩, λ _ h => h.elim⟩
+  ⟨fun _ ↦ False, ⟨fun _ ↦ False.elim, hQ⟩, fun _ ↦ False.elim⟩
 
-/-- So the equivalence (24) fails for every such quantifier that fails of some predicate. -/
-theorem not_witness_iff_of_empty (hQ : Q (λ _ => False)) (hX : ¬ Q X) :
-    ¬ ∀ X, Q X ↔ ∃ w, Witness Q A w ∧ ∀ x, w x → X x :=
-  λ h => hX ((h X).2 (witness_subset_of_empty hQ X))
+/-- The equivalence (24) of increasing quantifiers fails of a quantifier that holds of the empty
+set and not of every predicate. -/
+theorem not_witness_iff_of_empty (hQ : Q fun _ ↦ False) (hX : ¬ Q X) :
+    ¬ ∀ Y, Q Y ↔ ∃ w, Witness Q A w ∧ ∀ x, w x → Y x :=
+  fun h ↦ hX ((h X).2 (witness_subset_of_empty hQ X))
 
-/-- The pair representation (91): a quantifier living on `A` holds of `X` exactly when some
-witness set is contained in `X` and its complement in `A` is disjoint from `X`. This is exact
-for every quantifier, monotone or not. -/
+/-- A quantifier living on `A` holds of `X` exactly when some witness set `R` lies inside `X`
+while the rest of `A` lies outside it, the pair representation (91). This needs no
+monotonicity, the two conditions leaving `A ∩ X` as the only candidate. -/
 theorem pair_apply_iff (h : LivesOn Q A) :
-    Q X ↔ ∃ R, Witness Q A R ∧ (∀ x, R x → X x) ∧
-      ∀ x, A x → ¬ R x → ¬ X x := by
-  constructor
-  · intro hX
-    exact ⟨λ x => A x ∧ X x, ⟨λ _ hx => hx.1, (h X).1 hX⟩, λ _ hx => hx.2,
-      λ x hA hR hX' => hR ⟨hA, hX'⟩⟩
-  · rintro ⟨R, ⟨hRA, hQR⟩, hRX, hC⟩
-    refine (h X).2 ?_
-    have : R = λ x => A x ∧ X x := by
-      funext x
-      exact propext ⟨λ hx => ⟨hRA x hx, hRX x hx⟩, λ hx => by_contra λ hR => hC x hx.1 hR hx.2⟩
-    exact this ▸ hQR
+    Q X ↔ ∃ R, Witness Q A R ∧ (∀ x, R x → X x) ∧ ∀ x, A x → ¬ R x → ¬ X x := by
+  refine h.apply_iff_witness.trans
+    ⟨fun hw ↦ ⟨_, hw, fun _ ↦ And.right, fun _ hA hR hX ↦ hR ⟨hA, hX⟩⟩, ?_⟩
+  rintro ⟨R, hR, hRX, hC⟩
+  obtain rfl : R = fun x ↦ A x ∧ X x := by ext x; grind [Witness]
+  exact hR
+
+end Witness
 
 end PurverGinzburg2004
