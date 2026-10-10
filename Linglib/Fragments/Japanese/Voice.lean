@@ -43,14 +43,14 @@ def directPassive : Voice := Voice.passive.marked [.suff "(r)are"]
 the new subject, the initial subject becomes a *ni*-phrase and the complements keep their
 positions after it. -/
 def indirectPassive (fr : ArgumentFrame := .np) : Voice :=
-  { source := fr,
-    target := ⟨some .nominal,
+  (Voice.of fr
+    ⟨some .nominal,
       (fr.external.map fun _ ↦ ArgumentFrame.Position.adpositional (some .grammatical)).toList ++
-        fr.complements⟩,
-    marker := [.suff "(r)are"],
-    correspondence := (fr.external.map fun _ ↦ (external, complement 0)).toList ++
-      (List.range fr.complements.length).map fun i ↦
-        (complement i, complement (i + fr.external.toList.length)) }
+        fr.complements⟩
+    ((fr.external.map fun _ ↦ some (complement 0)).toList ++
+      (List.range fr.complements.length).map (fun i ↦
+        some (complement (i + fr.external.toList.length))) ++ [some external])).marked
+    [.suff "(r)are"]
 
 /-- A verb the direct passive applies to: one whose voice type introduces an external
 argument. -/
@@ -65,7 +65,7 @@ theorem directPassive_isValencyDecreasing : directPassive.IsValencyDecreasing :=
 construction, the S of an intransitive verb's. -/
 theorem newParticipant_indirectPassive :
     (indirectPassive).newParticipant = some .A ∧
-      (indirectPassive .intransitive).newParticipant = some .S :=
-  ⟨rfl, rfl⟩
+      (indirectPassive .intransitive).newParticipant = some .S := by
+  decide
 
 end Japanese

@@ -97,7 +97,7 @@ theorem isSymmetrical_iff (c : Mayan.VerbClass) :
 /-- The passives and the absolutive antipassive derive an intransitive construction, and the
 verb conjugates as a simple intransitive ([mondloch-2017]). -/
 theorem not_isTransitive_iff (c : Mayan.VerbClass) :
-    ∀ v ∈ voices c, ¬ v.target.IsTransitive ↔
+    ∀ v ∈ voices c, ¬ v.derived.IsTransitive ↔
       v = simplePassive c ∨ v = completedPassive c ∨ v = absolutiveAntipassive c := by
   cases c <;> decide
 

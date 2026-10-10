@@ -46,8 +46,7 @@ def transitive : Voice := Voice.active
 
 /-- *-w*: the incorporation antipassive, the object a bare noun. -/
 def incorporationAntipassive : Voice :=
-  { source := .np, target := .objectDrop, marker := [.suff "w"],
-    correspondence := [(.external, .external), (.complement 0, .complement 0)] }
+  (Voice.of .np .objectDrop [some .external, some (.complement 0)]).marked [.suff "w"]
 
 /-- *-waj*: the absolutive antipassive, the patient an oblique. -/
 def absolutiveAntipassive : Voice := Voice.antipassive.marked [.suff "waj"]

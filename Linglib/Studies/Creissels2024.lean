@@ -246,21 +246,18 @@ open ArgumentFrame.Slot in
 /-- In A/S-nucleativization of an oblique (§8.3.4.1) an instrumental oblique takes over the
 role of A and the initial A is left implied, understood as non-specific. -/
 def instrumentNucleativization : Voice :=
-  { source := .np_pp, target := ⟨some .nominal, [.nominal, .implicit]⟩,
-    correspondence :=
-      [(external, complement 1), (complement 0, complement 0), (complement 1, external)] }
+  .of .np_pp ⟨some .nominal, [.nominal, .implicit]⟩
+    [some (complement 1), some (complement 0), some external]
 
 open ArgumentFrame.Slot in
 /-- In X-applicativization (§8.3.5) an applied participant is expressed as an ordinary
 oblique, the initial S unchanged. -/
-def obliqueApplicative : Voice :=
-  { source := .intransitive, target := .pp, correspondence := [(external, external)] }
+def obliqueApplicative : Voice := .of .intransitive .pp [some external, some (complement 0)]
 
 open ArgumentFrame.Slot in
 /-- In portative derivation (§8.3.7) an intransitive motion verb becomes transitive, its S the
 A and a carried entity the P. -/
-def portative : Voice :=
-  { source := .intransitive, target := .np, correspondence := [(external, external)] }
+def portative : Voice := .of .intransitive .np [some external, some (complement 0)]
 
 /-- Each voice with the type it is named for. -/
 def voiceTypes : List (Voice × Kind) :=
@@ -274,7 +271,8 @@ def voiceTypes : List (Voice × Kind) :=
 
 /-- Each voice relates an initial and a derived construction that realize the type it is
 named for. -/
-theorem voices_typed : ∀ e ∈ voiceTypes, ∃ o, e.2.Realize e.1.initial e.1.derived o := by
+theorem voices_typed :
+    ∀ e ∈ voiceTypes, ∃ o, e.2.Realize e.1.initial.construction e.1.derived.construction o := by
   decide +kernel
 
 /-- A/S-nucleativization of an oblique nucleativizes the oblique and denucleativizes the

@@ -13,12 +13,12 @@ public import Linglib.Syntax.DependencyGrammar.Basic
 /-!
 # Osborne (2019): A Dependency Grammar of English
 
-This file formalizes the parts of the dependency grammar of [osborne-2019] that the English
-fragment lexicon supports. A verb's valency frame (sixth chapter) is a lexical property, read
-here off the coding roles of the fragment's basic frame, and the passive participle's frame
-is not listed but related to the active one by a shuffle of indices, the slot correspondence of
-the passive voice, with the demoted subject an optional *by*-phrase (`voiceValency_passive`);
-an ergative verb's intransitive use suppresses the agent instead and has no *by*-phrase
+This file formalizes the parts of the dependency grammar of [osborne-2019] that the English fragment
+lexicon supports. A verb's valency frame (sixth chapter) is a lexical property, read here off the
+argument roles of the fragment's basic frame, and the passive participle's frame is not listed but
+related to the active one by a shuffle of indices, the passive voice moving the active's
+participants, with the demoted subject an optional *by*-phrase (`voiceValency_passive`); an ergative
+verb's intransitive use suppresses the agent instead and has no *by*-phrase
 (`voiceValency_anticausative`). Trees over fragment words satisfy their frames, and a spurious
 or a missing object violates them. The catena (fourth chapter), any set of words connected by
 dominance, is the unit that constituents do not always match: every constituent is a catena,
@@ -112,7 +112,7 @@ example : ¬ transNoObj.SatisfiesFrames (.ofList [(1, citationValency English.Ve
 
 The passive participle's frame is not listed but related to the active frame by a shuffle of
 indices, (8): the active object is the subject and the active subject the optional object of
-*by*. The shuffle is the slot correspondence of the passive voice, and the *by*-phrase
+*by*. The shuffle is the passive voice's links of its participants, and the *by*-phrase
 realizes the participant it denucleativizes. The intransitive use of an ergative verb, *It
 opened*, also makes the object the subject, but it suppresses the agent, and no *by*-phrase
 expresses it. -/
@@ -120,8 +120,8 @@ expresses it. -/
 /-- The valency of the construction a voice derives: its derived frame's valency and an
 optional *by*-phrase for each initial core term the voice denucleativizes. -/
 def voiceValency (v : Voice) : Valency :=
-  Valency.ofFrame v.target ++
-    (v.source.coreSlots.filter (v.fate · = .denucleativized)).map fun _ ↦ ⟨.obl, .right, false⟩
+  Valency.ofFrame v.derived.toArgumentFrame ++
+    (v.initial.coreSlots.filter (v.fate · = .denucleativized)).map fun _ ↦ ⟨.obl, .right, false⟩
 
 /-- (8a): the English passive has the subject and an optional *by*-phrase. -/
 theorem voiceValency_passive : voiceValency English.Verbs.passive = Valency.passiveTransitive := by

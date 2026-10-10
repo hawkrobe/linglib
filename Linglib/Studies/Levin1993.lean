@@ -192,66 +192,53 @@ theorem quadruple_prediction_matches :
 
 /-! ### Frame-pair schemas of the alternations
 
-The alternations of Part One as pairs of English argument frames with a slot correspondence,
-the preposition fixed where the alternation's definition fixes it: *to* for the dative, *for*
-for the benefactive, *at* for the conative, *with* for the *with* variant of the locative and
-swarm alternations and for the instrument, *from* for the substance/source alternation, *out
-of* and *into* for the material/product and total transformation alternations, *on* for
-body-part possessor ascension. The locative variants of the locative and swarm alternations
-fix only that the phrase is spatial. The middle, the passives, the postverbal-subject
-alternations and the constructions of chapter 7 are not pairs of frames and have no schema. -/
+The alternations of Part One as voices, pairs of English argument frames with the slots each
+participant occupies in them, the preposition fixed where the alternation's definition fixes it:
+*to* for the dative, *for* for the benefactive, *at* for the conative, *with* for the *with* variant
+of the locative and swarm alternations and for the instrument, *from* for the substance/source
+alternation, *out of* and *into* for the material/product and total transformation alternations,
+*on* for body-part possessor ascension. The locative variants of the locative and swarm alternations
+fix only that the phrase is spatial. The middle, the passives, the postverbal-subject alternations
+and the constructions of chapter 7 are not pairs of frames and have no schema. -/
 
 open Voice English.Adpositions ArgumentFrame.Slot in
 /-- The frame-pair schema of an alternation, where it has one. -/
 def schema? : DiathesisAlternation → Option Voice
   | .causativeInchoative => some anticausative
   | .inducedAction => some causative
-  | .conative => some { antipassive with target := .pp (some at_) }
-  | .substanceSource => some
-      { source := .pp (some from_), target := .np,
-        correspondence := [(external, complement 0), (complement 0, external)] }
+  | .conative => some (of .np (.pp (some at_)) [some external, some (complement 0)])
+  | .substanceSource => some (of (.pp (some from_)) .np [some (complement 0), some external])
   | .unspecifiedObject => some (objectDrop .indef)
   | .understoodBodyPartObject => some (objectDrop .bodyPart)
   | .understoodReflexiveObject => some (objectDrop .reflexive)
   | .understoodReciprocalObject => some (objectDrop .reciprocal)
   | .dative => some (toDoubleObject to_)
   | .benefactive => some (toDoubleObject for_)
-  | .locative => some
-      { source := ⟨some .nominal, [.nominal, .adpositional (some .spatial)]⟩,
-        target := .np_pp (some with_),
-        correspondence := [(external, external), (complement 0, complement 1),
-          (complement 1, complement 0)] }
-  | .bodyPartPossessorAscension => some
-      { source := .np, target := .np_pp (some on),
-        correspondence := [(external, external), (complement 0, complement 1)] }
-  | .swarm => some
-      { source := .spatialPP, target := .pp (some with_),
-        correspondence := [(external, complement 0), (complement 0, external)] }
-  | .materialProduct => some
-      { source := .np_pp (some outOf), target := .np_pp (some into),
-        correspondence := [(external, external), (complement 0, complement 1),
-          (complement 1, complement 0)] }
-  | .totalTransformation => some
-      { source := .np_pp (some into),
-        target := ⟨some .nominal,
+  | .locative => some <|
+      of ⟨some .nominal, [.nominal, .adpositional (some .spatial)]⟩ (.np_pp (some with_))
+        [some external, some (complement 1), some (complement 0)]
+  | .bodyPartPossessorAscension => some <|
+      of .np (.np_pp (some on)) [some external, some (complement 1), some (complement 0)]
+  | .swarm => some (of .spatialPP (.pp (some with_)) [some (complement 0), some external])
+  | .materialProduct => some <|
+      of (.np_pp (some outOf)) (.np_pp (some into))
+        [some external, some (complement 1), some (complement 0)]
+  | .totalTransformation => some <|
+      of (.np_pp (some into))
+        ⟨some .nominal,
           [.nominal, .adpositional (some .spatial) (some from_),
-            .adpositional (some .spatial) (some into)]⟩,
-        correspondence := [(external, external), (complement 0, complement 0),
-          (complement 1, complement 2)] }
+            .adpositional (some .spatial) (some into)]⟩
+        [some external, some (complement 0), some (complement 2), some (complement 1)]
   | .instrumentSubject => some
-      { source := .np_pp (some with_), target := .np,
-        correspondence := [(complement 0, complement 0), (complement 1, external)] }
+      (of (.np_pp (some with_)) .np [none, some (complement 0), some external])
   | _ => none
 where
   /-- The unexpressed object alternations: the object dropped with interpretation `i`. -/
   objectDrop (i : ImplicitInterp) : Voice :=
-    { source := .np, target := .objectDrop (some i),
-      correspondence := [(external, external), (complement 0, complement 0)] }
+    of .np (.objectDrop (some i)) [some external, some (complement 0)]
   /-- The dative and benefactive alternations: the *p* phrase becomes the first object. -/
   toDoubleObject (p : Adposition) : Voice :=
-    { source := .np_pp (some p), target := .np_np,
-      correspondence := [(external, external), (complement 0, complement 1),
-        (complement 1, complement 0)] }
+    of (.np_pp (some p)) .np_np [some external, some (complement 1), some (complement 0)]
 
 /-! ### The causee
 
