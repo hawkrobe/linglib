@@ -23,6 +23,8 @@ Principle's inclusion of sites, `⊆`.
   every positioned feature of `s` is one of `n`.
 * `Neighborhood.positioned`, `Neighborhood.toFinset`: the positioned features,
   listed and as a finite set.
+* `Neighborhood.project`, `Neighborhood.window`: the neighborhood on a tier, and the focus with
+  the terminals within a radius of it.
 * `Neighborhood.around`, `Neighborhood.along`: the neighborhood of a position of
   a string, and each terminal of a string in its neighborhood.
 
@@ -58,6 +60,8 @@ Elsewhere item `⟨∅, e⟩`.
 * [M. Halle and A. Marantz, *Distributed Morphology and the pieces of
   inflection*][halle-marantz-1993]
 * [M. Halle, *Distributed Morphology: Impoverishment and Fission*][halle-1997]
+* [D. Embick, *Localism versus Globalism in Morphology and Phonology*][embick-2010]
+* [K. Arregi and A. Nevins, *Morphotactics*][arregi-nevins-2012]
 -/
 
 @[expose] public section
@@ -118,6 +122,49 @@ variable [Inhabited Bundle] (n : Neighborhood Bundle) (k : ℕ)
 @[simp] theorem nth_neg_natCast_add_one : n.nth (-(k + 1)) = n.leftCtx.getD k default := rfl
 
 end nth
+
+/-! ### Tiers and windows -/
+
+/-- The projection onto the tier `T` keeps the focus and the terminals on either side that `T`
+keeps, nearest first. Pruning null terminals is the projection onto the overt ones. -/
+def project (T : Bundle → Prop) [DecidablePred T] (n : Neighborhood Bundle) :
+    Neighborhood Bundle :=
+  ⟨n.focus, n.leftCtx.filter T, n.rightCtx.filter T⟩
+
+@[simp] theorem focus_project (T : Bundle → Prop) [DecidablePred T] (n : Neighborhood Bundle) :
+    (n.project T).focus = n.focus := rfl
+
+@[simp] theorem leftCtx_project (T : Bundle → Prop) [DecidablePred T] (n : Neighborhood Bundle) :
+    (n.project T).leftCtx = n.leftCtx.filter T := rfl
+
+@[simp] theorem rightCtx_project (T : Bundle → Prop) [DecidablePred T] (n : Neighborhood Bundle) :
+    (n.project T).rightCtx = n.rightCtx.filter T := rfl
+
+/-- The window of radius `k` keeps the focus and the `k` terminals nearest it on either side. A
+condition is adjacent on the tier `T` when it factors through `window 1 ∘ project T`; the linear
+adjacency of [embick-2010] and [arregi-nevins-2012] is adjacency on the tier of overt
+terminals. -/
+def window (k : ℕ) (n : Neighborhood Bundle) : Neighborhood Bundle :=
+  ⟨n.focus, n.leftCtx.take k, n.rightCtx.take k⟩
+
+@[simp] theorem window_window (k m : ℕ) (n : Neighborhood Bundle) :
+    (n.window m).window k = n.window (min k m) := by
+  simp [window, List.take_take]
+
+/-- The window of radius `k` agrees with the neighborhood up to offset `k`. -/
+theorem nth_window [Inhabited Bundle] (n : Neighborhood Bundle) {k : ℕ} {i : ℤ}
+    (hi : i.natAbs ≤ k) : (n.window k).nth i = n.nth i := by
+  obtain ⟨m, rfl | rfl⟩ := Int.eq_nat_or_neg i
+  · rcases m with _ | m
+    · rfl
+    · rw [show ((m + 1 : ℕ) : ℤ) = (m : ℤ) + 1 by omega]
+      simp only [window, nth_natCast_add_one, List.getD_eq_getElem?_getD,
+        List.getElem?_take_of_lt (show m < k by omega)]
+  · rcases m with _ | m
+    · rfl
+    · rw [show -((m + 1 : ℕ) : ℤ) = -((m : ℤ) + 1) by omega]
+      simp only [window, nth_neg_natCast_add_one, List.getD_eq_getElem?_getD,
+        List.getElem?_take_of_lt (show m < k by omega)]
 
 /-! ### Neighborhoods of a string -/
 

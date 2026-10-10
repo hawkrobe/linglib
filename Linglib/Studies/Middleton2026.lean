@@ -25,8 +25,11 @@ and tone, and derives from it the paradigm of `Fragments/Taos/Agreement.lean`.
   open (`unaccounted`).
 * `must_interleave`: the orders cases 1 and 5 need respect neither block architecture, each
   case resting on one bleeding fact (`r40_bleeds_r34a` to `r26_bleeds_r29`).
-* `r24_feeds_m23`, `ondarru_feeds`, `zamudio_bleeds`: impoverishment feeds metathesis in Taos,
-  and Participant Dissimilation feeds or bleeds Ergative Metathesis in Basque.
+* `mopen_tiers`: the rules of exponence read their leftmost brackets on the tiers of
+  `[±participant]` and of number; read on the present arguments alone, they lose the exponents
+  of *mopén*.
+* `r24_feeds_m23`, `Basque.ondarru_feeds`, `Basque.zamudio_bleeds`: impoverishment feeds
+  metathesis in Taos, and Participant Dissimilation feeds or bleeds Ergative Metathesis in Basque.
 
 ## Implementation notes
 
@@ -39,8 +42,11 @@ and tone, and derives from it the paradigm of `Fragments/Taos/Agreement.lean`.
 * Three orderings are this study's repairs of the appendix's sets, forced by cells its listing
   would not derive: (32) after (7), (44) after (43), and (44)'s context widened (see `r32`,
   `r44`).
-* Exponence, epenthesis and tone are the appendix's rules as functions of the linearized prefix,
-  with the additions its prose uses but never states (see `expone`).
+* Exponence is the appendix's rules as `ExponenceRule`s, each bracket read in the adjacent window
+  of a tier (`onTiers`), the present arguments keeping an agent impoverishment has left only
+  `[+author]`, as the appendix's trace reading has it; a third person object's number is null
+  (`objectNumberNull`). The portmanteaux, epenthesis and tone carry the additions the appendix's
+  prose uses but never states (see `exponence`).
 
 ## TODO
 
@@ -62,6 +68,8 @@ and tone, and derives from it the paradigm of `Fragments/Taos/Agreement.lean`.
 * [K. Arregi and A. Nevins, *Morphotactics*][arregi-nevins-2012]
 * [D. Harbour, *Paucity, abundance, and the theory of number*][harbour-2014]
 * [D. Harbour, *Impossible persons*][harbour-2016]
+* [B. Moskal and P. W. Smith, *Towards a theory without adjacency: hyper-contextual
+  VI-rules*][moskal-smith-2016]
 -/
 
 @[expose] public section
@@ -879,33 +887,33 @@ library's `TerminalMetathesisRule`, (18) and (22) on the goal as their subscript
 the second argument, goal or object. Exponence then reads each terminal in its prefix. -/
 
 /-- A terminal of the linearized prefix is a slot with a feature. -/
-abbrev Tok := Slot × Feat
+abbrev Terminal := Slot × Feat
 
 /-- The linearized prefix. -/
-def linearize (p : Prefix) : List Tok :=
+def linearize (p : Prefix) : List Terminal :=
   [Slot.agent, .goal, .object].flatMap fun s ↦
     ((List.range 6).flatMap fun k ↦ (p.get s).filter (Feat.rank · == k)).map ((s, ·))
 
 /-- By rule (18), the goal's `[−author]` swaps with its following inverse feature, when an agent is
 present. -/
-def m18 (p : Prefix) : TerminalMetathesisRule Tok :=
+def m18 (p : Prefix) : TerminalMetathesisRule Terminal :=
   ⟨fun n ↦ p.agent ≠ [] ∧ n.focus = (.goal, .author false) ∧
     n.rightCtx.head? = some (.goal, .inverse)⟩
 
 /-- By rule (23), the paper's (26), a `[−atomic]` agent's `[+minimal]` swaps with the second
 argument's following `[−author]`. -/
-def m23 (p : Prefix) : TerminalMetathesisRule Tok :=
+def m23 (p : Prefix) : TerminalMetathesisRule Terminal :=
   ⟨fun n ↦ p.agent.Has (.atomic false) ∧ n.focus = (.agent, .minimal true) ∧
     n.rightCtx.head? = some (p.secondArg, .author false)⟩
 
 /-- By rule (22), the paper's (24), the goal's `[−author]` swaps with its following `[−atomic]`
 before `[+minimal]`, when an agent is present. -/
-def m22 (p : Prefix) : TerminalMetathesisRule Tok :=
+def m22 (p : Prefix) : TerminalMetathesisRule Terminal :=
   ⟨fun n ↦ p.agent ≠ [] ∧ n.focus = (.goal, .author false) ∧
     n.rightCtx.take 2 = [(.goal, .atomic false), (.goal, .minimal true)]⟩
 
 /-- The appendix's two sets of rules of metathesis in order. -/
-def metathesis (p : Prefix) : List Tok → List Tok :=
+def metathesis (p : Prefix) : List Terminal → List Terminal :=
   runModules [(m18 p).apply, (m23 p).apply, (m22 p).apply]
 
 /-- The phonological role of an exponent, for the epenthetic vowel. -/
@@ -918,55 +926,212 @@ inductive Role where
 /-- An exponent and its role. -/
 abbrev Morph := String × Role
 
-/-- The exponents of one terminal in its prefix follow the appendix's rules of exponence (8), (10),
-(13), (16), (17), (19), (20), (25), (30), (31), (36), (37) and (39). -/
-def exponeTok (p : Prefix) (t : Tok) : List Morph :=
-  let s := t.1
-  let a := p.get s
-  let leftmostω := decide (p.leftmostNumber = some s)
-  let object3 := decide (s = .object ∧ a.IsThird)
-  let transitiveDual := decide (p.agent.IsDual ∧ p.goal = [])
-  if a.IsThird ∧ a.IsPlural then
-    if t.2 = .participant false ∧ !transitiveDual then [("w", .coda)] else []
-  else match t.2 with
-  | .refl => if transitiveDual then [] else [("mo", .full)]
-  | .dummy => []
-  | .participant true =>
-    if p.leftmostPerson == some s then
-      if a.Has (.author false) then [("m", .onset)]
-      else if a.Has (.author true) ∧ a.Has (.atomic true) then [("t", .onset)]
-      else [("k", .onset)]
+/-! ### Rules of exponence
+
+A rule of exponence realizes one of its target features, the first its bundle bears, and discharges
+the others, as `S ⇔ ǫ` leaves a singular's `[+minimal]` unexponed. Its brackets are conditions on
+the arguments around the target's slot, each read in the adjacent window of one tier: the leftmost
+brackets `[[π` and `[[ω` on the tiers of `[±participant]` and of number, the others on the tier of
+the present arguments. A rule with brackets on several tiers refers to several nodes, as the
+hyper-contextual rules of [moskal-smith-2016] do. -/
+
+/-- The arguments of a prefix around slot `s`, each with its slot, absent ones empty, in the order
+of (1). -/
+def Prefix.slotsAround (p : Prefix) : Slot → Neighborhood (Slot × Arg)
+  | .agent => ⟨(.agent, p.agent), [], [(.goal, p.goal), (.object, p.object)]⟩
+  | .goal => ⟨(.goal, p.goal), [(.agent, p.agent)], [(.object, p.object)]⟩
+  | .object => ⟨(.object, p.object), [(.goal, p.goal), (.agent, p.agent)], []⟩
+
+/-- The tiers on which brackets are read. -/
+inductive Tier where
+  /-- The present arguments: those impoverishment has left a feature, an argument whose features
+  are all deleted dropping out. -/
+  | present
+  /-- The arguments with a `[±participant]` feature, the person bundles that count as leftmost. -/
+  | participant
+  /-- The arguments with number features. -/
+  | number
+  deriving DecidableEq, Repr
+
+/-- The arguments a tier keeps. -/
+def Tier.Keeps : Tier → Slot × Arg → Prop
+  | .present, x => x.2 ≠ []
+  | .participant, x => x.2.HasParticipant
+  | .number, x => x.2.number ≠ []
+
+instance (t : Tier) : DecidablePred t.Keeps := fun x ↦ by
+  cases t <;> unfold Tier.Keeps <;> infer_instance
+
+/-- A bracket of a rule of exponence. -/
+inductive Bracket where
+  /-- The target's own argument and slot satisfy `P`. -/
+  | own (P : Slot × Arg → Prop) [dec : DecidablePred P]
+  /-- The target's argument is the leftmost of the tier, `[[π __` or `[[ω __`. -/
+  | leftmost (t : Tier)
+  /-- The tier's argument before the target's satisfies `P`, as in `[πA …][π __]`. -/
+  | after (t : Tier) (P : Slot × Arg → Prop) [dec : DecidablePred P]
+  /-- The tier's leftmost argument satisfies `P`, as in `[[ω I`: the one before the target's, else
+  the target's, else the one after. -/
+  | leftmostIs (t : Tier) (P : Slot × Arg → Prop) [dec : DecidablePred P]
+
+namespace Bracket
+
+/-- The tier a bracket is read on. -/
+def tier : Bracket → Tier
+  | own _ => .present
+  | leftmost t | after t _ | leftmostIs t _ => t
+
+/-- What a bracket says of a window. -/
+def HoldsAt : Bracket → Neighborhood (Slot × Arg) → Prop
+  | own P, n => P n.focus
+  | leftmost t, n => t.Keeps n.focus ∧ n.leftCtx = []
+  | after _ P, n => ∃ x ∈ n.leftCtx.head?, P x
+  | leftmostIs t P, n => (∃ x ∈ n.leftCtx.head?, P x) ∨ n.leftCtx = [] ∧
+    (t.Keeps n.focus ∧ P n.focus ∨ ¬ t.Keeps n.focus ∧ ∃ x ∈ n.rightCtx.head?, P x)
+
+instance (c : Bracket) (n : Neighborhood (Slot × Arg)) : Decidable (c.HoldsAt n) := by
+  cases c <;> unfold HoldsAt <;> infer_instance
+
+end Bracket
+
+/-- A reading of the brackets assigns each the window it is read in. -/
+abbrev Reading := Bracket → Neighborhood (Slot × Arg) → Neighborhood (Slot × Arg)
+
+/-- Each bracket is read in the adjacent window of the tier `f` assigns its own: with `f = id` on
+its tier, with a tier sent to `.present` on the present arguments, null terminals pruned but that
+tier not projected. -/
+def onTiersVia (f : Tier → Tier) : Reading := fun c n ↦ (n.project (f c.tier).Keeps).window 1
+
+/-- Each bracket is read in the adjacent window of its tier. -/
+abbrev onTiers : Reading := onTiersVia id
+
+/-- A rule of exponence. -/
+structure ExponenceRule where
+  /-- The features it realizes. -/
+  targets : Arg
+  /-- Its brackets. -/
+  brackets : List Bracket
+  /-- Its exponent, empty for a null exponent. -/
+  exponent : List Morph
+
+namespace ExponenceRule
+
+/-- The bundle bears the features `fs`. -/
+def bears (fs : Arg) : Bracket := .own fun x ↦ ∀ f ∈ fs, f ∈ x.2
+
+/-- The target's slot is `s`. -/
+def inSlot (s : Slot) : Bracket := .own (·.1 = s)
+
+/-- The prefix is the dual agent and the target, `[[A D][ __ ]]`. -/
+def afterDualAgent : Bracket := .after .present fun x ↦ x.1 = .agent ∧ x.2.IsDual
+
+/-- The agent precedes the target's argument, `[πA …][π __]`: present, its features possibly
+impoverished, the trace reading of the appendix's discussion after (10). -/
+def afterAgent : Bracket := .after .present (·.1 = .agent)
+
+/-- By rule (39b), `3P ⇔ ∅ / [[A D][ __ ]]`. -/
+def e39b : ExponenceRule :=
+  ⟨third ++ plural, [inSlot .object, .own fun x ↦ x.2.IsThird ∧ x.2.IsPlural, afterDualAgent], []⟩
+
+/-- By rule (36), `3P ⇔ w`. -/
+def e36 : ExponenceRule :=
+  ⟨third ++ plural, [.own fun x ↦ x.2.IsThird ∧ x.2.IsPlural], [("w", .coda)]⟩
+
+/-- By rule (39d), `refl ⇔ ∅ / [[A D][ __ ]]`. -/
+def e39d : ExponenceRule := ⟨[.refl], [afterDualAgent], []⟩
+
+/-- By rule (37), `refl ⇔ mo`. -/
+def e37 : ExponenceRule := ⟨[.refl], [], [("mo", .full)]⟩
+
+/-- By rule (31), `3 ⇔ m / [O __ ]`. -/
+def e31 : ExponenceRule := ⟨third, [inSlot .object, bears third], [("m", .coda)]⟩
+
+/-- A third person object's number has no exponent, this study's addition. The appendix lists
+none, and without it an object that impoverishment leaves the leftmost number would be exponed by
+(25), (16) or (30). -/
+def objectNumberNull : ExponenceRule :=
+  ⟨[.atomic true, .atomic false, .minimal true, .minimal false, .inverse],
+    [inSlot .object, bears third], []⟩
+
+/-- By rule (8), `1 ⇔ t / [[π __ +atomic]`. -/
+def e8 : ExponenceRule := ⟨first, [.leftmost .participant, bears (first ++ [.atomic true])],
+  [("t", .onset)]⟩
+
+/-- By rule (10), `[+participant] ⇔ m / [[±participant __ −author]`. -/
+def e10 : ExponenceRule :=
+  ⟨[.participant true], [.leftmost .participant, bears [.author false]], [("m", .onset)]⟩
+
+/-- By rule (13), `[+participant] ⇔ k / [[π __ ]`. -/
+def e13 : ExponenceRule := ⟨[.participant true], [.leftmost .participant], [("k", .onset)]⟩
+
+/-- By rule (17), `[−author] ⇔ pi / [πA …][π __]` with the leftmost number inverse. -/
+def e17 : ExponenceRule :=
+  ⟨[.author false], [afterAgent, .leftmostIs .number (·.2.IsInverse)], [("pi", .full)]⟩
+
+/-- By rule (19), `[−author] ⇔ pé / [πA …][π __]` with the leftmost number dual. -/
+def e19 : ExponenceRule :=
+  ⟨[.author false], [afterAgent, .leftmostIs .number (·.2.IsDual)], [("pé", .full)]⟩
+
+/-- By rule (16a), `I ⇔ o / [[ω __` with the leftmost person second. -/
+def e16a : ExponenceRule :=
+  ⟨[.inverse], [.leftmost .number, .leftmostIs .participant (·.2.IsSecond)], [("o", .full)]⟩
+
+/-- By rule (16b), `I ⇔ i / [[ω __`. -/
+def e16b : ExponenceRule := ⟨[.inverse], [.leftmost .number], [("i", .full)]⟩
+
+/-- By rule (25), `S ⇔ ǫ / [[ω __`. -/
+def e25 : ExponenceRule :=
+  ⟨singular, [.leftmost .number, .own (·.2.IsSingular)], [("ǫ", .full)]⟩
+
+/-- By rule (20), `[+minimal] ⇔ n / [[ω __`. -/
+def e20 : ExponenceRule := ⟨[.minimal true], [.leftmost .number], [("n", .coda)]⟩
+
+/-- By rule (30), `[±atomic] ⇔ o / [[ω __`. -/
+def e30 : ExponenceRule := ⟨[.atomic true, .atomic false], [.leftmost .number], [("o", .full)]⟩
+
+/-- The rule applies to a terminal of a prefix when it targets the terminal's feature and, read by
+`read`, its brackets hold around the terminal's slot. -/
+def Applies (read : Reading) (r : ExponenceRule) (p : Prefix) (t : Terminal) : Prop :=
+  t.2 ∈ r.targets ∧ ∀ c ∈ r.brackets, c.HoldsAt (read c (p.slotsAround t.1))
+
+instance (read : Reading) (r : ExponenceRule) (p : Prefix) (t : Terminal) :
+    Decidable (r.Applies read p t) := inferInstanceAs (Decidable (_ ∧ ∀ _ ∈ _, _))
+
+end ExponenceRule
+
+open ExponenceRule in
+/-- The Vocabulary of the appendix's rules of exponence, a bundle's category before its single
+features and the contextual rules before the elsewhere ones. -/
+def vocabulary : List ExponenceRule :=
+  [e39b, e36, e39d, e37, e31, objectNumberNull, e8, e10, e13, e17, e19, e16a, e16b, e25, e20, e30]
+
+/-- The exponents of a terminal in its prefix come from the first rule of the Vocabulary that
+applies, realized at the first of its targets the bundle bears and null at the others. -/
+def exponents (p : Prefix) (t : Terminal) (read : Reading := onTiers) : List Morph :=
+  match vocabulary.find? (fun r ↦ decide (r.Applies read p t)) with
+  | none => []
+  | some r =>
+    if ((r.targets.filter (· ∈ p.get t.1)).map Feat.rank).min? = some t.2.rank then r.exponent
     else []
-  | .participant false => if object3 then [("m", .coda)] else []
-  | .author true => []
-  | .author false =>
-    if object3 ∨ s = .agent ∨ p.agent = [] then []
-    else
-      let l := p.leftmostNumberArg
-      if l.IsInverse then [("pi", .full)] else if l.IsDual then [("pé", .full)] else []
-  | .inverse =>
-    if leftmostω && !object3 then [(if p.LeftmostSecond then "o" else "i", .full)] else []
-  | .atomic _ => if leftmostω && !object3 then [(if a.IsSingular then "ǫ" else "o", .full)] else []
-  | .minimal true => if leftmostω ∧ ¬ object3 ∧ ¬ a.IsSingular then [("n", .coda)] else []
-  | .minimal false => []
 
 /-- The exponents of a linearized prefix, the portmanteaux (6), (41) and (49) and *mây*
 first; the flag marks a portmanteau form, which takes no tone rule. Three additions the appendix
 uses without stating them: *mây* for the 2:1 prefixes without an object (its §3.4), (41) and (49)
 matching an argument's remaining bundle exactly, and portmanteaux taking no tone, without which
 (6) *ku* would come out *kú*. -/
-def expone (p : Prefix) (toks : List Tok) : List Morph × Bool :=
+def exponence (p : Prefix) (ts : List Terminal) (read : Reading := onTiers) :
+    List Morph × Bool :=
   if p.agent = second ∧ p.object = [] then
     if p.goal = first ++ dual ∨ p.goal = first ++ inverse then ([("ku", .full)], true)
     else if p.goal = first then ([("mây", .full)], true)
-    else (toks.flatMap (exponeTok p), false)
+    else (ts.flatMap (exponents p · read), false)
   else match p.args with
   | [a] =>
     if a = [.participant true, .author true, .atomic true] then ([("ti", .full)], true)
     else if a = [.author true, .atomic true, .minimal true] then ([("pi", .full)], true)
     else if a = [.author false, .atomic true, .minimal true] then ([("ki", .full)], true)
-    else (toks.flatMap (exponeTok p), false)
-  | _ => (toks.flatMap (exponeTok p), false)
+    else (ts.flatMap (exponents p · read), false)
+  | _ => (ts.flatMap (exponents p · read), false)
 
 /-! ### Epenthesis and tone -/
 
@@ -1087,9 +1252,9 @@ def Prefix.exponed (p : Prefix) : ℕ :=
 
 /-- The surface form of a cell under a rule system results from Spell-Out, impoverishment,
 Linearization, metathesis, exponence, epenthesis and tone. -/
-def deriveWith (rules : List Rule) (c : Taos.Cell) : String :=
+def deriveWith (rules : List Rule) (c : Taos.Cell) (read : Reading := onTiers) : String :=
   let p := run rules (spellOut c)
-  let (morphs, fixed) := expone p (metathesis p (linearize p))
+  let (morphs, fixed) := exponence p (metathesis p (linearize p)) read
   let morphs := if morphs.map (·.1) == ["w"] then [("u", .full)] else morphs
   tone c p.exponed (epenthesis none morphs) fixed
 
@@ -1129,6 +1294,20 @@ theorem derive_eq_form_printed :
         r.2 = deriveWith (impoverishmentPrinted true) r.1 := by
   decide +kernel
 
+/-- **The leftmost brackets are read on tiers.** In *mopén*, 1S:2D:∅, impoverishment leaves the
+agent only `[+author]`: present, so it stands before the goal for (19), but on neither the
+`[±participant]` nor the number tier, so the goal's person and number are leftmost there, the
+elevation of the appendix's discussion after (10). Read on the present arguments, the participant
+bracket loses *m*, the number brackets *o*, *pé* and *n*, and both together everything. -/
+theorem mopen_tiers :
+    let c : Taos.Cell := ⟨some (.first, .singular), some (.second, .dual), none⟩
+    let without (t : Tier) := onTiersVia fun u ↦ if u = t then .present else u
+    derive false c = "mopén" ∧
+      deriveWith (impoverishment false) c (without .participant) = "opén" ∧
+      deriveWith (impoverishment false) c (without .number) = "mó" ∧
+      deriveWith (impoverishment false) c (onTiersVia fun _ ↦ .present) = "" := by
+  decide +kernel
+
 /-! ### Impoverishment precedes metathesis in Taos (§3.2)
 
 *opén*, the 1D:3:no prefix of the paper's (25), needs (24) to remove the goal's
@@ -1158,7 +1337,7 @@ theorem metathesis_without_r24 :
 /-- Applied to the prefix as Spell-Out leaves it, (24) feeds (23): it removes the goal's
 `[−participant]` that separates the agent's `[+minimal]` from the goal's `[−author]`. -/
 theorem r24_feeds_m23 :
-    Feeds Rule.apply (fun (m : Prefix → TerminalMetathesisRule Tok) p ↦
+    Feeds Rule.apply (fun (m : Prefix → TerminalMetathesisRule Terminal) p ↦
         (m p).apply (linearize p) ≠ linearize p) r24 m23
       (spellOut ⟨some (.first, .dual), some (.third, .singular), some .dummy⟩) := by
   decide +kernel
@@ -1176,6 +1355,8 @@ paper's (12), is repaired in the Linear Operations module by Ergative Metathesis
 L-Support, one module as in Arregi and Nevins's §6.2.4. T bears `[+tense]` for their `[+past]`,
 and the dative-clitic conditions of their Ergative Metathesis and the `[+motion]` restriction of
 Participant Dissimilation, which the two auxiliaries do not reach, are left out. -/
+
+namespace Basque
 
 /-- A Basque terminal is a list of Minimalist features. -/
 abbrev Terminal := List FeatureVal
@@ -1304,5 +1485,7 @@ theorem zamudio_bleeds :
     Bleeds ObliterationRule.apply (fun (m : SpelloutDomain Terminal → SpelloutDomain Terminal) d ↦
       m d ≠ d) zamudio ergativeMetathesis auxiliary19 := by
   decide
+
+end Basque
 
 end Middleton2026
