@@ -134,15 +134,16 @@ variable (α cs cn : ℝ)
 
 /-- The speaker is the informativity speaker over reports, each costing `cs`, with silence
 costing `cn`. -/
-noncomputable def S : Kernel Value Utterance := speaker α (Option.elim · cn fun _ ↦ cs) (L0 μ)
+noncomputable def S : Kernel Value Utterance :=
+  speaker α (Option.elim · cn fun _ ↦ cs) (L0 μ) Measure.dirac
 
-instance : IsFiniteKernel (S μ α cs cn) := inferInstanceAs (IsFiniteKernel (speaker _ _ _))
+instance : IsFiniteKernel (S μ α cs cn) := inferInstanceAs (IsFiniteKernel (speaker _ _ _ _))
 
 /-- When asked, the speaker has no silence option and chooses among the reports. -/
 noncomputable def askedS : Kernel Value Value :=
-  speaker α (λ _ => cs) (literalListener μ fun v ↦ ({v} : Set Value))
+  speaker α (λ _ => cs) (literalListener μ fun v ↦ ({v} : Set Value)) Measure.dirac
 
-instance : IsFiniteKernel (askedS μ α cs) := inferInstanceAs (IsFiniteKernel (speaker _ _ _))
+instance : IsFiniteKernel (askedS μ α cs) := inferInstanceAs (IsFiniteKernel (speaker _ _ _ _))
 
 /-! ### The decision to speak as the observation -/
 
@@ -163,9 +164,9 @@ theorem spoke_apply_true (hα : 0 < α) (v : Value) :
     measure_union (by simp) (MeasurableSet.singleton _)]
   simp only [S]
   cases v
-  · rw [speaker_apply_singleton_eq_zero hα
+  · rw [speaker_dirac_apply_singleton_eq_zero hα
       (L0_some_of_ne μ (v := .atypical) (w := .typical) (by decide)), add_zero]
-  · rw [speaker_apply_singleton_eq_zero hα
+  · rw [speaker_dirac_apply_singleton_eq_zero hα
       (L0_some_of_ne μ (v := .typical) (w := .atypical) (by decide)), zero_add]
 
 variable [IsProbabilityMeasure μ]
@@ -184,7 +185,7 @@ theorem S_report (hα : 0 < α) {v : Value} (hv : μ {v} ≠ 0) :
     (S μ α cs cn v).real {some v} =
       Real.exp (-(α * cs)) /
         (Real.exp (-(α * cs)) + Real.exp (-(α * cn)) * (μ {v} ^ α).toReal) := by
-  rw [S, speaker_real_singleton hα.le, Fintype.sum_option,
+  rw [S, speaker_dirac_real_singleton hα.le, Fintype.sum_option,
     Finset.sum_eq_single v
       (λ w _ hw => by
         rw [L0_some_of_ne μ hw, ENNReal.zero_rpow_of_pos hα, ENNReal.toReal_zero, zero_mul])
@@ -238,11 +239,11 @@ theorem posterior_eq_prior_of_asked (hα : 0 < α) (ht : μ {.typical} ≠ 0)
     ((((askedS μ α cs).map λ _ => true)†μ) true).real {.atypical} = μ.real {.atypical} := by
   have h1 : ∀ v, μ {v} ≠ 0 → ((askedS μ α cs).map (λ _ => true) v).real {true} = 1 := λ v hv => by
     have hv1 : askedS μ α cs v {v} = 1 :=
-      speaker_literalListener_eq_one hα _ μ _ hv rfl λ _ h hv' => h hv'.symm
+      speaker_literalListener_dirac_eq_one hα _ μ _ hv rfl λ _ h hv' => h hv'.symm
     rw [measureReal_def, Kernel.map_apply' _ measurable_const _ (MeasurableSet.singleton true),
       askedS,
       Set.preimage_const_of_mem (Set.mem_singleton true),
-      le_antisymm (speaker_apply_univ_le_one α _ _ v) (hv1 ▸ measure_mono (Set.subset_univ _)),
+      le_antisymm (speaker_apply_univ_le_one α _ _ _ v) (hv1 ▸ measure_mono (Set.subset_univ _)),
       ENNReal.toReal_one]
   have hx : (((askedS μ α cs).map λ _ => true) ∘ₘ μ) {true} ≠ 0 :=
     comp_apply_singleton_ne_zero _ _ ht λ h => by simpa [measureReal_def, h] using h1 _ ht

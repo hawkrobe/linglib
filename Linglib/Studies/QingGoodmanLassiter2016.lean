@@ -208,7 +208,7 @@ theorem exp_neg_cost {α : ℝ} (hα : α ≠ 0) (u : Utterance) :
 /-- The speaker within a context set (6) is the informativity speaker over the
 question-projected literal listener, weighted by the utterance prior. -/
 noncomputable def speaker (q : QUD) (C : Finset World) (α : ℝ) : Kernel World Utterance :=
-  RSA.speaker α (cost α) (L0 C q)
+  RSA.speaker α (cost α) (L0 C q) Measure.dirac
 
 /-- The prior over context sets determined by a weighting. -/
 noncomputable def ctxPrior (π : Finset World → ℕ) : Measure (Finset World) :=
@@ -292,7 +292,7 @@ private theorem share_eq (q : QUD) (C : Finset World) (w : World) {α : ℝ} (h�
     share q C w α =
       ((L0 C q notStopped {w} ^ α).toReal * (notStopped.prior).toReal
         / ∑ u, (L0 C q u {w} ^ α).toReal * u.prior.toReal) := by
-  rw [share, speaker, speaker_real_singleton hα.le]
+  rw [share, speaker, speaker_dirac_real_singleton hα.le]
   simp only [exp_neg_cost hα.ne']
 
 /-- The literal listener's cells at `pastT`, `now`, `TT`. -/
@@ -625,8 +625,8 @@ private theorem pairPrior_real (π : Finset World → ℕ) (w : World) (C : Fins
 /-- The speaker at the world in which John still smokes, within the context set that he smoked,
 produces *did not stop smoking*. -/
 private theorem speaker_pastT_ne_zero (q : QUD) {α : ℝ} (hα : 0 < α) :
-    RSA.speaker α (cost α) (L0 pastT q) .TT {notStopped} ≠ 0 :=
-  speaker_apply_singleton_ne_zero hα.le
+    RSA.speaker α (cost α) (L0 pastT q) Measure.dirac .TT {notStopped} ≠ 0 :=
+  speaker_dirac_apply_singleton_ne_zero hα.le
     (by
       cases q
       · rw [L0_apply, l0_F]; dsimp only [tblF]; simp
@@ -657,8 +657,8 @@ private theorem listener_lt_iff (q : QUD) (π : Finset World → ℕ) (hπ : π 
 private theorem listener_eq (q : QUD) (π : Finset World → ℕ) (hπ : π pastT ≠ 0) {α : ℝ}
     (hα : 0 < α) (w₁ w₂ : World) (C₁ C₂ : Finset World)
     (hprior : pairPrior π {(w₁, C₁)} = pairPrior π {(w₂, C₂)})
-    (hshare : RSA.speaker α (cost α) (L0 C₁ q) w₁ {notStopped}
-      = RSA.speaker α (cost α) (L0 C₂ q) w₂ {notStopped}) :
+    (hshare : RSA.speaker α (cost α) (L0 C₁ q) Measure.dirac w₁ {notStopped}
+      = RSA.speaker α (cost α) (L0 C₂ q) Measure.dirac w₂ {notStopped}) :
     listener q π α notStopped {(w₁, C₁)} = listener q π α notStopped {(w₂, C₂)} := by
   rw [listener, pragmaticListener,
     posterior_apply_singleton_congr (κ := familySpeaker (λ C => L0 C q) α (cost α))
@@ -670,11 +670,12 @@ private theorem listener_eq (q : QUD) (π : Finset World → ℕ) (hπ : π past
 /-- The standard listener is the pragmatic listener over the universe with a uniform world
 prior, the first column of Table 2. -/
 noncomputable def standard (α : ℝ) : Kernel Utterance World :=
-  pragmaticListener (RSA.speaker α (cost α) (L0 Finset.univ .max)) (uniformOn Set.univ)
+  pragmaticListener (RSA.speaker α (cost α) (L0 Finset.univ .max) Measure.dirac)
+    (uniformOn Set.univ)
 
 private theorem speaker_univ_ne_zero {α : ℝ} (hα : 0 < α) :
-    RSA.speaker α (cost α) (L0 Finset.univ .max) .TT {notStopped} ≠ 0 :=
-  speaker_apply_singleton_ne_zero hα.le
+    RSA.speaker α (cost α) (L0 Finset.univ .max) Measure.dirac .TT {notStopped} ≠ 0 :=
+  speaker_dirac_apply_singleton_ne_zero hα.le
     (by rw [L0_apply, l0_I]; dsimp only [tblI]; simp)
 
 /-- The standard model puts the three worlds compatible with *did not stop smoking* on a par at

@@ -177,12 +177,12 @@ theorem S1_apply_singleton_ne_zero_iff (g : Goal) (m : Meaning) (u : Price) :
   constructor
   · intro h
     have hL : projListener project (L0 μ) g u {m} ≠ 0 := fun h' ↦
-      h (speaker_apply_singleton_eq_zero one_pos h')
+      h (speaker_dirac_apply_singleton_eq_zero one_pos h')
     rw [projListener_apply_singleton_ne_zero_iff] at hL
     obtain ⟨m', hm', h0⟩ := hL
     exact ⟨m', hm', (L0_apply_singleton_ne_zero_iff μ u m').mp h0⟩
   · rintro ⟨m', hm', hu, hμ⟩
-    exact speaker_apply_singleton_ne_zero zero_le_one
+    exact speaker_dirac_apply_singleton_ne_zero zero_le_one
       ((projListener_apply_singleton_ne_zero_iff _ _ _ _ _).mpr
         ⟨m', hm', (L0_apply_singleton_ne_zero_iff μ u m').mpr ⟨hu, hμ⟩⟩)
 
@@ -265,7 +265,7 @@ theorem approximate_prefers_round {p : Price} (hp : ¬ p.IsRound) (h₁ : μ (se
     (h₂ : μ (sem p.round) ≠ 0) (a : Bool) :
     (S1 μ c ((p, a), (.approximate, .price))).real {p}
         < (S1 μ c ((p, a), (.approximate, .price))).real {p.round} ↔ 1 < c := by
-  rw [S1, familySpeaker_apply, speaker_real_singleton_lt_iff zero_le_one
+  rw [S1, familySpeaker_apply, speaker_dirac_real_singleton_lt_iff zero_le_one
     ⟨p, by rw [projListener_approximate μ h₁ rfl]; simp⟩,
     projListener_approximate μ h₁ rfl, projListener_approximate μ h₂ (Price.round_round p),
     ENNReal.one_rpow, cost, cost, ite_eq_right hp, ite_eq_left (Price.isRound_round p)]

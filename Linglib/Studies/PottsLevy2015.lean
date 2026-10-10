@@ -190,9 +190,9 @@ instance (l : Lex) : IsFiniteKernel (L0 l) := inferInstanceAs (IsFiniteKernel (u
 
 /-- The speaker (11) is the substrate's speaker, with the cost divided by the rationality
 since the paper subtracts it outside. -/
-noncomputable def S1 (l : Lex) : Kernel World Msg := speaker α (cost c · / α) (L0 l)
+noncomputable def S1 (l : Lex) : Kernel World Msg := speaker α (cost c · / α) (L0 l) Measure.dirac
 
-instance (l : Lex) : IsFiniteKernel (S1 α c l) := inferInstanceAs (IsFiniteKernel (speaker _ _ _))
+instance (l : Lex) : IsFiniteKernel (S1 α c l) := inferInstanceAs (IsFiniteKernel (speaker _ _ _ _))
 
 /-- The fixed-lexicon pragmatic listener (12) is the speaker's Bayesian inverse at a flat
 prior. -/
@@ -235,7 +235,7 @@ include hα
 
 /-- The speaker produces a message at a state exactly when it is true there. -/
 theorem S1_ne_zero_iff (l : Lex) (w : World) (m : Msg) : S1 α c l w {m} ≠ 0 ↔ w ∈ sem l m :=
-  speaker_uniformListener_apply_singleton_ne_zero_iff (sem l) hα _ w m
+  speaker_uniformListener_dirac_apply_singleton_ne_zero_iff (sem l) hα _ w m
 
 /-- The fixed-lexicon listener assigns mass to a state exactly when the message is true
 there. -/
@@ -339,7 +339,7 @@ theorem S1_real {α : ℝ} (hα : 0 < α) (c : ℝ) (l : Lex) (w : World) (m : M
     (S1 α c l w).real {m}
       = l0r l m w ^ α * costFactor c m / ∑ m', l0r l m' w ^ α * costFactor c m' := by
   have h : ∀ m, α * (cost c m / α) = cost c m := λ m => mul_div_cancel₀ _ hα.ne'
-  rw [S1, speaker_real_singleton hα.le]
+  rw [S1, speaker_dirac_real_singleton hα.le]
   simp only [L0_rpow_toReal hα, h, costFactor]
 
 section Expertise

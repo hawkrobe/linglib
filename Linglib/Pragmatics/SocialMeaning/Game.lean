@@ -83,18 +83,18 @@ variable [Fintype M] {α c : ℝ}
 mass more often, the more informative message. -/
 theorem GroundedField.speaker_indexation_real_singleton_lt_iff (hα : 0 < α)
     (h0 : prior {π} ≠ 0) {m' : M} (h : π ∈ F.personae m) (h' : π ∈ F.personae m') :
-    (speaker α (λ _ => c) (literalListener prior F.indexation) π).real {m}
-        < (speaker α (λ _ => c) (literalListener prior F.indexation) π).real {m'}
+    (speaker α (λ _ => c) (literalListener prior F.indexation) Measure.dirac π).real {m}
+        < (speaker α (λ _ => c) (literalListener prior F.indexation) Measure.dirac π).real {m'}
       ↔ prior ↑(F.personae m') < prior ↑(F.personae m) :=
-  speaker_literalListener_real_singleton_lt_iff hα c prior F.indexation h0 (Finset.mem_coe.2 h)
-    (Finset.mem_coe.2 h')
+  speaker_literalListener_dirac_real_singleton_lt_iff hα c prior F.indexation h0
+    (Finset.mem_coe.2 h) (Finset.mem_coe.2 h')
 
 /-- A persona only one message meets produces it with certainty. -/
 theorem GroundedField.speaker_indexation_eq_one_of_exclusive (hα : 0 < α)
     (h0 : prior {π} ≠ 0) (h : π ∈ F.personae m)
     (hother : ∀ m' ≠ m, π ∉ F.personae m') :
-    speaker α (λ _ => c) (literalListener prior F.indexation) π {m} = 1 :=
-  speaker_literalListener_eq_one hα _ prior F.indexation h0
+    speaker α (λ _ => c) (literalListener prior F.indexation) Measure.dirac π {m} = 1 :=
+  speaker_literalListener_dirac_eq_one hα _ prior F.indexation h0
     (Finset.mem_coe.2 h) λ m' hm' => Finset.mem_coe.not.2 (hother m' hm')
 
 /-- Hearing a message rules out the personae it does not meet, once some persona it meets has
@@ -102,7 +102,8 @@ prior mass. -/
 theorem GroundedField.pragmaticListener_indexation_apply_singleton_of_not_meets
     [Nonempty (Persona G)] (hα : 0 < α) {π' : Persona G}
     (h : π ∉ F.personae m) (h' : π' ∈ F.personae m) (h0 : prior {π'} ≠ 0) :
-    pragmaticListener (speaker α (λ _ => c) (literalListener prior F.indexation)) prior m {π} = 0 :=
+    pragmaticListener (speaker α (λ _ => c) (literalListener prior F.indexation) Measure.dirac)
+      prior m {π} = 0 :=
   pragmaticListener_literalListener_apply_singleton_of_notMem α (λ _ => c) prior hα F.indexation
     (Finset.mem_coe.not.2 h) (Finset.mem_coe.2 h') h0
 

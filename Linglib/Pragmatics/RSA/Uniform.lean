@@ -261,35 +261,36 @@ theorem distinguishes_gradedListener_uniformOn_iff [Nonempty T] {U : Type*} [Mea
 
 /-- The speaker at a uniform prior (eq. 7) is the best response to `uniformListener` at no
 cost. -/
-noncomputable abbrev uniformSpeaker (α : ℝ) : Kernel T C := speaker α 0 (uniformListener sem)
+noncomputable abbrev uniformSpeaker (α : ℝ) : Kernel T C :=
+  speaker α 0 (uniformListener sem) Measure.dirac
 
 omit [DecidableEq T] in
 theorem uniformSpeaker_apply_singleton (α : ℝ) (t : T) (c : C) :
     uniformSpeaker sem α t {c}
       = uniformListener sem c {t} ^ α / ∑ c', uniformListener sem c' {t} ^ α := by
-  simp only [uniformSpeaker, speaker_apply_singleton, Pi.zero_apply, mul_zero, neg_zero,
+  simp only [uniformSpeaker, speaker_dirac_apply_singleton, Pi.zero_apply, mul_zero, neg_zero,
     Real.exp_zero, ENNReal.ofReal_one, mul_one]
 
 theorem uniformSpeaker_apply_singleton_eq_zero {α : ℝ} (hα : 0 < α) {t : T} {c : C}
     (h : t ∉ sem c) : uniformSpeaker sem α t {c} = 0 :=
-  speaker_apply_singleton_eq_zero hα (by rw [uniformListener_apply_singleton, ite_eq_right h])
+  speaker_dirac_apply_singleton_eq_zero hα (by rw [uniformListener_apply_singleton, ite_eq_right h])
 
 theorem uniformSpeaker_apply_singleton_ne_zero {α : ℝ} (hα : 0 ≤ α) {t : T} {c : C}
     (h : t ∈ sem c) : uniformSpeaker sem α t {c} ≠ 0 :=
-  speaker_apply_singleton_ne_zero hα (uniformListener_apply_singleton_ne_zero sem h)
+  speaker_dirac_apply_singleton_ne_zero hα (uniformListener_apply_singleton_ne_zero sem h)
 
 /-- A state truly described by a single choice produces it with certainty. -/
 theorem uniformSpeaker_apply_singleton_eq_one {α : ℝ} (hα : 0 < α) {t : T} {c : C}
     (hmem : t ∈ sem c) (hother : ∀ c' ≠ c, t ∉ sem c') : uniformSpeaker sem α t {c} = 1 :=
-  speaker_apply_singleton_eq_one (L := uniformListener sem) hα
+  speaker_dirac_apply_singleton_eq_one (L := uniformListener sem) hα
     (uniformListener_apply_singleton_ne_zero sem hmem) fun c' hc' => by
       rw [uniformListener_apply_singleton, ite_eq_right (hother c' hc')]
 
 /-- A speaker over the uniform literal listener produces a choice at a state exactly when the
 choice is true there. -/
-theorem speaker_uniformListener_apply_singleton_ne_zero_iff {α : ℝ} (hα : 0 < α) (C' : C → ℝ)
-    (t : T) (c : C) : speaker α C' (uniformListener sem) t {c} ≠ 0 ↔ t ∈ sem c := by
-  rw [speaker_apply_singleton_ne_zero_iff hα, uniformListener_apply_singleton]
+theorem speaker_uniformListener_dirac_apply_singleton_ne_zero_iff {α : ℝ} (hα : 0 < α) (C' : C → ℝ)
+    (t : T) (c : C) : speaker α C' (uniformListener sem) Measure.dirac t {c} ≠ 0 ↔ t ∈ sem c := by
+  rw [speaker_dirac_apply_singleton_ne_zero_iff hα, uniformListener_apply_singleton]
   split_ifs with h
   · simpa using h
   · simpa using h
@@ -351,7 +352,7 @@ omit [DecidableEq T] in
 theorem sum_uniformSpeaker_real_singleton_le_one (α : ℝ) (t : T) (S : Finset C) :
     ∑ c ∈ S, (uniformSpeaker sem α t).real {c} ≤ 1 := by
   have hle : uniformSpeaker sem α t ↑S ≤ 1 :=
-    le_trans (measure_mono (Set.subset_univ _)) (speaker_apply_univ_le_one _ _ _ t)
+    le_trans (measure_mono (Set.subset_univ _)) (speaker_apply_univ_le_one _ _ _ _ t)
   calc ∑ c ∈ S, (uniformSpeaker sem α t).real {c}
       = (uniformSpeaker sem α t).real ↑S := by
         simp_rw [measureReal_def, ← ENNReal.toReal_sum fun c _ => measure_ne_top _ _,
@@ -376,7 +377,7 @@ higher probability at every positive rationality, the qualitative claim of eq. 7
 theorem uniformSpeaker_real_singleton_lt_of_card_lt {α : ℝ} (hα : 0 < α) {t : T} {c c' : C}
     (hmem : t ∈ sem c) (hmem' : t ∈ sem c') (hcard : (sem c').card < (sem c).card) :
     (uniformSpeaker sem α t).real {c} < (uniformSpeaker sem α t).real {c'} := by
-  rw [uniformSpeaker, speaker_real_singleton_lt_iff hα.le
+  rw [uniformSpeaker, speaker_dirac_real_singleton_lt_iff hα.le
       ⟨c, uniformListener_apply_singleton_ne_zero sem hmem⟩,
     uniformListener_apply_singleton, uniformListener_apply_singleton, ite_eq_left hmem,
     ite_eq_left hmem']
@@ -625,9 +626,10 @@ theorem pragmaticListener_familySpeaker_uniform_fst_apply_singleton_ne_zero_iff 
   rw [pragmaticListener_fst_apply_singleton_ne_zero_iff
     (comp_familySpeaker_ne_zero (L := fun l => uniformListener (sem l))
       (uniformOn_univ_singleton_ne_zero (t₀, l₀))
-      ((speaker_uniformListener_apply_singleton_ne_zero_iff (sem l₀) hα C' t₀ c).2 h₀))]
+      ((speaker_uniformListener_dirac_apply_singleton_ne_zero_iff (sem l₀) hα C' t₀ c).2 h₀))]
   exact exists_congr λ l => by
-    rw [familySpeaker_apply, speaker_uniformListener_apply_singleton_ne_zero_iff (sem l) hα C']
+    rw [familySpeaker_apply,
+      speaker_uniformListener_dirac_apply_singleton_ne_zero_iff (sem l) hα C']
     exact and_iff_right (uniformOn_univ_singleton_ne_zero _)
 
 omit [Nonempty C] in
@@ -658,7 +660,7 @@ theorem pragmaticListener_familySpeaker_uniform_real_lt_of_divPowSum {Λ : Type*
       (uniformSpeaker_apply_singleton_ne_zero (sem p₀.2) hα.le hmem₀)
   have key : ∀ E : Finset (T × Λ),
       (∑ p ∈ E, (uniformOn (Set.univ : Set (T × Λ))).real {p}
-        * (speaker k 0 (uniformListener (sem p.2)) p.1).real {c})
+        * (speaker k 0 (uniformListener (sem p.2)) Measure.dirac p.1).real {c})
       = (Fintype.card (T × Λ) : ℝ)⁻¹ * ∑ p, (if p ∈ E then
           (if p.1 ∈ sem p.2 c then (((D / (sem p.2 c).card) ^ k : ℕ) : ℝ) else 0) else 0)
             / ((profile (sem p.2) p.1).divPowSum D k : ℝ) := by

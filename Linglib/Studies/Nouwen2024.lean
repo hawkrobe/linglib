@@ -115,7 +115,7 @@ variable (P : Measure S) [IsFiniteMeasure P] (ν : Measure Λ) (E : Λ → Set S
 there and the state has positive prior. -/
 theorem S1_apply_singleton_ne_zero_iff (hα : 0 < α) (s : S) (l : Λ) (u : Message) :
     S1 P E α c (s, l) {u} ≠ 0 ↔ s ∈ sem E l u ∧ P {s} ≠ 0 :=
-  speaker_literalListener_apply_singleton_ne_zero_iff hα (cost c) P (sem E l) u s
+  speaker_literalListener_dirac_apply_singleton_ne_zero_iff hα (cost c) P (sem E l) u s
 
 /-- The positive form is assertable when some state of positive prior lies in the extension of
 some latent parameter of positive prior. -/
@@ -132,7 +132,7 @@ variable {P ν E α}
 parameter. -/
 theorem S1_congr (hα : 0 < α) {s t : S} {l : Λ} (hs : P {s} ≠ 0) (ht : P {t} ≠ 0)
     (hsl : s ∈ E l) (htl : t ∈ E l) : S1 P E α c (t, l) = S1 P E α c (s, l) :=
-  speaker_literalListener_congr hα _ P (sem E l) hs ht fun u ↦ by
+  speaker_literalListener_dirac_congr hα _ P (sem E l) hs ht fun u ↦ by
     cases u <;> simp [sem, hsl, htl]
 
 /-- At each latent parameter the speaker is no less likely to produce the positive form at a

@@ -33,9 +33,9 @@ rule is shown to be the Bayesian rule with the prior over radii in place of the 
   the nine values of §5–7. Priors are finite measures rather than probability measures: every
   stage renormalizes, so the uniform priors of §3.2.2 are the counting measures `unif` and the
   uniform prior on the nine values is `Measure.count`.
-* Speakers (11), (14) are `RSA.beliefSpeaker`, the softmax of `−λ · D(belief ‖ listener)`. A
-  message that excludes a value the speaker deems possible is at infinite divergence, footnote
-  17's Quality, and has zero probability.
+* Speakers (11), (14) are `RSA.speaker` at a belief, which for probability beliefs is the softmax
+  of `−λ · D(belief ‖ listener)` (`RSA.speaker_eq_speakerOfScore_klDiv`). A message that excludes
+  a value the speaker deems possible has zero probability, footnote 17's Quality.
   Pragmatic listeners are `Kernel.ofWeights` at the paper's proportionality equations; a message
   no observation produces gets the zero measure, the `0 / 0` convention of footnote 28 that
   Appendix A's induction relies on, and on messages heard with positive probability the
@@ -309,6 +309,9 @@ noncomputable def radiusPrior : Measure ℕ := unif 4
 noncomputable def L0 : Kernel Msg (Fin 9) :=
   RSA.gradedListener Measure.count (Msg.meaning radiusPrior)
 
+instance (m : Msg) : IsZeroOrProbabilityMeasure (L0 m) :=
+  inferInstanceAs (IsZeroOrProbabilityMeasure (RSA.gradedListener _ _ m))
+
 /-- The "around 4" column is the Bayesian interpretation rule. -/
 theorem L0_around4 : L0 .around4 = bir Measure.count radiusPrior (λ x : Fin 9 => Nat.dist 4 x) :=
   (bir_eq_gradedListener _ _ _ rfl).symm
@@ -424,8 +427,8 @@ theorem table1_ac_between1_7 : table1 ≪ L0 .between1_7 :=
 /-- "Exactly 4" excludes values the belief of Table 1 leaves possible, so the speaker never uses
 it (footnote 17). -/
 theorem table1_speaker_exactly4 {lam : ℝ} (hlam : 0 < lam) :
-    RSA.beliefSpeaker lam (λ _ : Unit => table1) L0 () {.exactly4} = 0 :=
-  RSA.beliefSpeaker_apply_singleton_eq_zero hlam <| klDiv_of_not_ac λ h => by
+    RSA.speaker lam 0 L0 (λ _ : Unit => table1) () {.exactly4} = 0 :=
+  (RSA.speaker_apply_singleton_eq_zero_iff_not_ac hlam).2 λ h => by
     have h3 := h (show L0 .exactly4 {3} = 0 by
       rw [L0_exactly4_apply_singleton, ite_eq_right (by decide)])
     rw [table1_apply_singleton] at h3
@@ -435,9 +438,9 @@ theorem table1_speaker_exactly4 {lam : ℝ} (hlam : 0 < lam) :
 every rationality she uses it more than "between 1 and 7", the triangular posterior being closer
 to her belief than the flat one. -/
 theorem table1_prefers_around {lam : ℝ} (hlam : 0 < lam) :
-    (RSA.beliefSpeaker lam (λ _ : Unit => table1) L0 ()).real {.between1_7} <
-      (RSA.beliefSpeaker lam (λ _ : Unit => table1) L0 ()).real {.around4} := by
-  rw [RSA.beliefSpeaker_real_singleton_lt_iff hlam
+    (RSA.speaker lam 0 L0 (λ _ : Unit => table1) ()).real {.between1_7} <
+      (RSA.speaker lam 0 L0 (λ _ : Unit => table1) ()).real {.around4} := by
+  rw [RSA.speaker_zero_real_singleton_lt_iff_klDiv hlam
       ⟨.around4, klDiv_ne_top table1_ac_around4 .of_finite⟩,
     ← ENNReal.toReal_lt_toReal (klDiv_ne_top table1_ac_around4 .of_finite)
       (klDiv_ne_top table1_ac_between1_7 .of_finite),
@@ -497,7 +500,7 @@ variable [Fintype O] [MeasurableSingletonClass O] [IsFiniteMeasure P] (lam : ℝ
 /-- To the speaker answering a joint listener (13) only the listener's value-marginal
 matters. -/
 noncomputable def jointSpeaker (L : Kernel M (X × O)) : Kernel O M :=
-  RSA.beliefSpeaker lam (belief P) (L.map Prod.fst)
+  RSA.speaker lam 0 (L.map Prod.fst) (belief P)
 
 /-- The pragmatic listener answering a speaker, (15) and (17), reweights the joint prior by the
 speaker's probability of the message given the observation. -/

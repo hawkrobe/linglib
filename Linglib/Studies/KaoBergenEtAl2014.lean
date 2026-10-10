@@ -132,7 +132,7 @@ odds of the goal's feature value under the animal against the person. -/
 theorem speaker_odds :
     S1 μ α (m, g) {.animal} * featureProb μ .person g (g.feature m.2) ^ α
       = S1 μ α (m, g) {.person} * featureProb μ .animal g (g.feature m.2) ^ α := by
-  simp only [S1, familySpeaker_apply, speaker_zero_apply_singleton, projListener_eq,
+  simp only [S1, familySpeaker_apply, speaker_dirac_zero_apply_singleton, projListener_eq,
     ENNReal.div_eq_inv_mul]
   ring
 
@@ -149,7 +149,7 @@ theorem names_animal_iff (hα : 0 < α)
     · exact ⟨.person, by rwa [projListener_eq]⟩
   rw [S1, familySpeaker_apply]
   dsimp only
-  rw [speaker_real_singleton_lt_iff hα.le h0', projListener_eq, projListener_eq]
+  rw [speaker_dirac_real_singleton_lt_iff hα.le h0', projListener_eq, projListener_eq]
   simp only [Pi.zero_apply, mul_zero, neg_zero, Real.exp_zero, ENNReal.ofReal_one, mul_one,
     ENNReal.rpow_lt_rpow_iff hα]
 
@@ -168,12 +168,12 @@ theorem S1_apply_singleton_ne_zero_iff (hα : 0 < α) (g : Goal) (m : Meaning) (
   constructor
   · intro h
     have hL : projListener project (L0 μ) g u {m} ≠ 0 := λ h' =>
-      h (speaker_apply_singleton_eq_zero hα h')
+      h (speaker_dirac_apply_singleton_eq_zero hα h')
     rw [projListener_apply_singleton_ne_zero_iff] at hL
     obtain ⟨m', hm', h0⟩ := hL
     exact ⟨m', hm', (L0_apply_singleton_ne_zero_iff μ u m').mp h0⟩
   · rintro ⟨m', hm', hu, hμ⟩
-    exact speaker_apply_singleton_ne_zero hα.le
+    exact speaker_dirac_apply_singleton_ne_zero hα.le
       ((projListener_apply_singleton_ne_zero_iff _ _ _ _ _).mpr
         ⟨m', hm', (L0_apply_singleton_ne_zero_iff μ u m').mpr ⟨hu, hμ⟩⟩)
 
@@ -217,7 +217,7 @@ theorem category_odds {u : Cat} (hu : (S1 μ α ∘ₘ μ.prod ν) {u} ≠ 0) (c
     (f : Features) :
     (L1 μ ν α u).fst {(c, f)} * μ {(c', f)} = (L1 μ ν α u).fst {(c', f)} * μ {(c, f)} := by
   have hS : ∀ c g, S1 μ α ((c, f), g) = S1 μ α ((.person, f), g) := λ c g => by
-    simp only [S1, familySpeaker_apply, speaker_eq_ofWeights]
+    simp only [S1, familySpeaker_apply, speaker_dirac_eq_ofWeights]
     exact Kernel.ofWeights_apply_eq_of_mul one_ne_zero ENNReal.one_ne_top λ u => by
       simp only [projListener_eq, mul_one]
   have key : ∀ c, (L1 μ ν α u).fst {(c, f)}

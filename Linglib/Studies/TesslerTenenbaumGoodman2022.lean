@@ -273,22 +273,32 @@ noncomputable def stateCommunication : Kernel Syllogism Conclusion :=
   speakerOfScore fun syl c ↦
     ((α * ∑ s, (reasoner φ μ syl).real {s} * Real.log ((naive φ μ c).real {s}) : ℝ) : EReal)
 
-/-- The belief-alignment speaker scores a conclusion by the negative divergence of the naive
-listener's beliefs from the reasoner's. -/
+/-- The belief-alignment speaker believes what the reasoner believes and addresses the naive
+listener. -/
 noncomputable def beliefAlignment : Kernel Syllogism Conclusion :=
-  beliefSpeaker α (reasoner φ μ) (naive φ μ)
+  speaker α 0 (naive φ μ) (reasoner φ μ)
 
 instance : IsFiniteKernel (beliefAlignment φ μ α) :=
-  inferInstanceAs (IsFiniteKernel (beliefSpeaker _ _ _))
+  inferInstanceAs (IsFiniteKernel (speaker _ _ _ _))
 
 variable {φ μ α}
 
-/-- As printed, the state-communication and belief-alignment speakers are one speaker. -/
-theorem stateCommunication_eq_beliefAlignment [IsProbabilityMeasure μ] (hα : 0 ≤ α) (hφ : φ ≠ 0)
-    (hφ' : φ ≠ ∞) : stateCommunication φ μ α = beliefAlignment φ μ α := by
+/-- The belief-alignment speaker scores a conclusion by the negative divergence of the naive
+listener's beliefs from the reasoner's. -/
+theorem beliefAlignment_eq_speakerOfScore_klDiv [IsProbabilityMeasure μ] (hα : 0 < α) (hφ : φ ≠ 0)
+    (hφ' : φ ≠ ∞) :
+    beliefAlignment φ μ α = speakerOfScore fun syl c ↦
+      -((ENNReal.ofReal α * klDiv (reasoner φ μ syl) (naive φ μ c) : ℝ≥0∞) : EReal) := by
   have (us : List Sentence) := isProbabilityMeasure_listener (μ := μ) hφ hφ' us
-  exact (beliefSpeaker_eq_speakerOfScore_sum_log hα fun _ _ ↦
-    listener_absolutelyContinuous hφ hφ' _ _).symm
+  rw [beliefAlignment, speaker_eq_speakerOfScore_klDiv hα]
+  simp
+
+/-- As printed, the state-communication and belief-alignment speakers are one speaker. -/
+theorem stateCommunication_eq_beliefAlignment [IsFiniteMeasure μ] (hφ : φ ≠ 0) (hφ' : φ ≠ ∞) :
+    stateCommunication φ μ α = beliefAlignment φ μ α := by
+  rw [beliefAlignment, speaker_eq_speakerOfScore_sum_log fun _ _ ↦
+    listener_absolutelyContinuous hφ hφ' _ _]
+  simp [stateCommunication]
 
 /-- The literal speaker never prefers a quantified conclusion to *nothing follows*, which is
 true at every state. -/
@@ -348,8 +358,8 @@ variable {μ : Measure State} {α : ℝ} {β : ℝ≥0} {syl : Syllogism} {c c' 
 /-- Without noise the belief-alignment speaker believes the prior conditioned on the premises
 and addresses a literal listener. -/
 theorem beliefAlignment_zero (μ : Measure State) (α : ℝ) :
-    beliefAlignment 0 μ α = beliefSpeaker α (fun syl ↦ μ[|extension syl.premises])
-      (literalListener μ fun c ↦ extension (Conclusion.said c)) := by
+    beliefAlignment 0 μ α = speaker α 0 (literalListener μ fun c ↦ extension (Conclusion.said c))
+      fun syl ↦ μ[|extension syl.premises] := by
   unfold beliefAlignment reasoner naive
   rw [listener_zero]
   rfl
@@ -370,7 +380,7 @@ private theorem measure_lt_of_notMem (hμ : ∀ s, μ {s} ≠ 0) {A B : Set Stat
 theorem beliefAlignment_zero_apply_singleton_eq_zero_iff (hμ : ∀ s, μ {s} ≠ 0) (hα : 0 < α) :
     beliefAlignment 0 μ α syl {c} = 0 ↔
       ¬ extension syl.premises ⊆ extension (Conclusion.said c) := by
-  rw [beliefAlignment_zero, beliefSpeaker_cond_literalListener_apply_singleton_eq_zero_iff hα,
+  rw [beliefAlignment_zero, speaker_cond_literalListener_apply_singleton_eq_zero_iff hα,
     ae_le_iff_subset hμ]
 
 /-- Among the conclusions the premises entail, the speaker prefers the one of smaller prior
@@ -382,7 +392,7 @@ theorem beliefAlignment_zero_real_singleton_lt_iff (hμ : ∀ s, μ {s} ≠ 0) (
     (beliefAlignment 0 μ α syl).real {c} < (beliefAlignment 0 μ α syl).real {c'} ↔
       μ (extension (Conclusion.said c')) < μ (extension (Conclusion.said c)) := by
   rw [beliefAlignment_zero]
-  exact beliefSpeaker_cond_literalListener_real_singleton_lt_iff hα
+  exact speaker_zero_cond_literalListener_real_singleton_lt_iff hα
     (fun h ↦ let ⟨s, hs⟩ := hne; hμ s (measure_mono_null (Set.singleton_subset_iff.2 hs) h))
     ((ae_le_iff_subset hμ).2 hc) ((ae_le_iff_subset hμ).2 hc')
 

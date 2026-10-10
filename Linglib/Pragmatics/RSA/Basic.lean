@@ -13,9 +13,11 @@ public import Mathlib.Analysis.SpecialFunctions.Log.ENNRealLogExp
 This file defines the Rational Speech Act model in mathlib's probability vocabulary, following
 Frank and Goodman's model as presented in Degen's review (eqs. 1–4) and in Franke and Bergen's
 comparison of latent-variable variants (eqs. 5–22). The literal listener conditions the prior on
-the extension of the utterance, or, at a graded meaning, reweights the prior by it; the speaker is
-the softmax of Frank and Goodman's utility, the log of the listener's mass less a real cost,
-scaled by the rationality; and the pragmatic listeners are mathlib's posterior kernels `κ†μ`,
+the extension of the utterance, or, at a graded meaning, reweights the prior by it; the speaker
+believes a measure on states and is the softmax of the expected log of the listener's mass under
+that belief less a real cost, scaled by the rationality, so that Frank and Goodman's speaker, who
+knows the state, believes the point mass there; and the pragmatic listeners are mathlib's
+posterior kernels `κ†μ`,
 of the speaker, or of the deterministic observation kernel over the joint of prior and speaker
 when the listener hears only the form of the speaker's choice. Rationality, cost, meaning, and
 prior are arguments, so findings quantify over them. The uniform-prior Boolean specialization
@@ -28,8 +30,9 @@ with its decision procedure is `Linglib.Pragmatics.RSA.Uniform`.
   the literal listener (`RSA.gradedListener_indicator`).
 * `RSA.speakerOfScore` — the softmax of an extended-real utility, `⊥` marking the
   inapplicable utterances.
-* `RSA.speaker` — eqs. 2/6–7: the score speaker at the utility `α * (log L - C)`; its weights
-  are `L ^ α * exp (-(α * C))` (`RSA.speaker_eq_ofWeights`).
+* `RSA.speaker` — the softmax of the expected log of the listener's mass under the speaker's
+  belief, less a cost. At the point-mass belief it is the speaker of eqs. 2/6–7, with weights
+  `L ^ α * exp (-(α * C))` (`RSA.speaker_dirac_eq_ofWeights`).
 * `RSA.pragmaticListener` — eq. 3: the Bayesian inverse `S†μ` of a speaker `S` against the
   prior.
 * `RSA.jointListener` — eqs. 18b/21b: the posterior over (state, choice) given the heard
@@ -39,18 +42,18 @@ with its decision procedure is `Linglib.Pragmatics.RSA.Uniform`.
 
 ## Main results
 
-* `RSA.speaker_literalListener_real_singleton_lt_iff` — with Boolean meanings a
+* `RSA.speaker_literalListener_dirac_real_singleton_lt_iff` — with Boolean meanings a
   state prefers the utterance with the smaller extension.
-* `RSA.speaker_literalListener_congr`,
-  `RSA.speaker_literalListener_le_of_subset` — with Boolean meanings the speaker sees a
+* `RSA.speaker_literalListener_dirac_congr`,
+  `RSA.speaker_literalListener_dirac_le_of_subset` — with Boolean meanings the speaker sees a
   state only through the utterances true at it, and produces each of them less the more there are.
 * `RSA.jointListener_apply_singleton` — exact Bayes for the joint listener.
 * `RSA.speakerOfScore_eq_tilted`, `RSA.isGreatest_freeEnergy_speakerOfScore` — a score-speaker
   row is the Gibbs measure of its score over the applicable utterances, and so the rational
   optimizer: it maximizes the expected score less the divergence from the uniform measure on
   them (the Gibbs variational principle).
-* `RSA.tendsto_speaker_real_singleton_atTop` — as rationality grows the speaker puts all its mass
-  on the utterance the listener most favors.
+* `RSA.tendsto_speaker_dirac_real_singleton_atTop` — as rationality grows the speaker puts all
+  its mass on the utterance the listener most favors.
 * `RSA.jointListener_fst_real_lt_iff`, `RSA.jointListener_snd_real_lt_iff`,
   `RSA.pragmaticListener_fst_real_lt_iff`, `RSA.pragmaticListener_snd_real_lt_iff` — listener
   preference as prior-weighted speaker sums.
@@ -88,10 +91,14 @@ noncomputable def literalListener (μ : Measure W) (sem : U → Set W) : Kernel 
 theorem literalListener_apply (μ : Measure W) (sem : U → Set W) (u : U) :
     literalListener μ sem u = μ[|sem u] := rfl
 
+instance (μ : Measure W) (sem : U → Set W) (u : U) :
+    IsZeroOrProbabilityMeasure (literalListener μ sem u) :=
+  inferInstanceAs (IsZeroOrProbabilityMeasure μ[|sem u])
+
 /-- Each row of the literal listener is a probability measure or zero, so it is a finite
 kernel. -/
 instance (μ : Measure W) (sem : U → Set W) : IsFiniteKernel (literalListener μ sem) :=
-  ⟨⟨1, ENNReal.one_lt_top, fun u ↦ by rw [literalListener_apply]; exact prob_le_one⟩⟩
+  ⟨⟨1, ENNReal.one_lt_top, fun _ ↦ prob_le_one⟩⟩
 
 /-- The graded literal listener reweights the prior by a graded meaning of the utterance and
 renormalizes. -/
@@ -100,6 +107,10 @@ noncomputable def gradedListener (μ : Measure W) (m : U → W → ℝ≥0∞) :
 
 theorem gradedListener_apply (μ : Measure W) (m : U → W → ℝ≥0∞) (u : U) :
     gradedListener μ m u = (μ.withDensity (m u))[|Set.univ] := rfl
+
+instance (μ : Measure W) (m : U → W → ℝ≥0∞) (u : U) :
+    IsZeroOrProbabilityMeasure (gradedListener μ m u) :=
+  inferInstanceAs (IsZeroOrProbabilityMeasure (μ.withDensity (m u))[|Set.univ])
 
 instance (μ : Measure W) (m : U → W → ℝ≥0∞) : IsFiniteKernel (gradedListener μ m) :=
   ⟨⟨1, ENNReal.one_lt_top, fun u ↦ by rw [gradedListener_apply]; exact prob_le_one⟩⟩
@@ -261,15 +272,56 @@ theorem gradedListener_natCast_real_singleton [Fintype W] [MeasurableSingletonCl
 
 end LiteralListener
 
+/-! #### The speaker
+
+A speaker believes a measure on states and addresses a listener. Her weight for an utterance is
+the exponential of the rationality times its utility: the expected log of the listener's mass
+under her belief, less a real cost. Written without logarithms, the weight is the product over
+states of the listener's mass to the power of the rationality times the believed mass, times the
+cost weight `exp (-(α * C u))`. -/
+
+section Speaker
+
+variable [Fintype W] [Fintype U] [Countable O] [MeasurableSingletonClass O]
+
+/-- The speaker at rationality `α` and cost `C` addresses the listener `L` and at `o` believes
+`b o`. Her weight for an utterance is the product over states of its listener's mass to the power
+`α` times the believed mass, times the cost weight. -/
+noncomputable def speaker (α : ℝ) (C : U → ℝ) (L : U → Measure W) (b : O → Measure W) :
+    Kernel O U :=
+  Kernel.ofWeights fun o u ↦
+    (∏ w, L u {w} ^ (α * (b o).real {w})) * ENNReal.ofReal (Real.exp (-(α * C u)))
+
+variable (α : ℝ) (C : U → ℝ) (L : U → Measure W) (b : O → Measure W) (o : O)
+
+instance : IsFiniteKernel (speaker α C L b) := inferInstanceAs (IsFiniteKernel (Kernel.ofWeights _))
+
+/-- A speaker row has total mass at most one. -/
+theorem speaker_apply_univ_le_one : speaker α C L b o Set.univ ≤ 1 :=
+  Kernel.ofWeights_apply_univ_le_one _ o
+
+/-- Speaker shares are at most one. -/
+theorem speaker_real_singleton_le_one (u : U) : (speaker α C L b o).real {u} ≤ 1 := by
+  rw [measureReal_def, ← ENNReal.toReal_one]
+  exact ENNReal.toReal_mono ENNReal.one_ne_top
+    ((measure_mono (Set.subset_univ _)).trans (speaker_apply_univ_le_one α C L b o))
+
+theorem speaker_apply_singleton [MeasurableSingletonClass U] (u : U) :
+    speaker α C L b o {u} =
+      (∏ w, L u {w} ^ (α * (b o).real {w})) * ENNReal.ofReal (Real.exp (-(α * C u))) /
+        ∑ u', (∏ w, L u' {w} ^ (α * (b o).real {w})) * ENNReal.ofReal (Real.exp (-(α * C u'))) :=
+  Kernel.ofWeights_apply_singleton _ o u
+
+end Speaker
+
 variable [Countable W] [MeasurableSingletonClass W] [Fintype U] [MeasurableSingletonClass U]
 
 /-! #### Score speakers
 
 The softmax of an extended-real utility: row `w` is proportional to `exp (score w u)`, so an
 utterance of score `⊥`, one literally false at `w` or excluded by a quality gate, is never
-produced, and the rationality lives inside the score. Speakers whose utility is not the
-informativity utility, such as belief-, question- or politeness-weighted ones, are score
-speakers; the power-weight speaker is the score speaker at the informativity utility. -/
+produced, and the rationality lives inside the score. Speakers whose utility is not an expected
+log-probability, such as question- or politeness-weighted ones, are score speakers. -/
 
 section ScoreSpeaker
 
@@ -356,56 +408,12 @@ theorem speakerOfScore_real_singleton_of_pair {w : W} {u u' : U} (huu' : u ≠ u
 
 end ScoreSpeaker
 
-/-! #### The informativity speaker
+/-! #### The speaker who knows the state
 
-The speaker of eqs. 2/6–7 is the score speaker at Frank and Goodman's utility, the log of the
-literal listener's mass at the state less the cost, scaled by the rationality. A cost is a real
-number, entering the speaker's weight as `exp (-(α * C u))`, so every weight is positive and
-finite and no hypothesis on the cost is needed. -/
+The speaker of eqs. 2/6–7 knows the state, so she believes the point mass there, and her weight
+for an utterance is the listener's mass at the state to the power `α`, times the cost weight. -/
 
-/-- The utility of an utterance at a state is the log of the listener's mass there, less the
-cost. -/
-noncomputable def utility (L : Kernel U W) (C : U → ℝ) (w : W) (u : U) : EReal :=
-  ENNReal.log (L u {w}) - C u
-
-/-- The pragmatic speaker (eqs. 2/6–7) is the softmax of the utility at rationality `α`. -/
-noncomputable def speaker (α : ℝ) (C : U → ℝ) (L : Kernel U W) : Kernel W U :=
-  speakerOfScore fun w u ↦ utility L C w u * α
-
-instance (α : ℝ) (C : U → ℝ) (L : Kernel U W) : IsFiniteKernel (speaker α C L) :=
-  inferInstanceAs (IsFiniteKernel (speakerOfScore _))
-
-theorem ofReal_exp_neg_rpow (c α : ℝ) :
-    ENNReal.ofReal (Real.exp (-c)) ^ α = ENNReal.ofReal (Real.exp (-(α * c))) := by
-  rw [ENNReal.ofReal_rpow_of_pos (Real.exp_pos _), ← Real.exp_mul]
-  congr 2; ring
-
-omit [Countable W] [MeasurableSingletonClass W] [Fintype U] [MeasurableSingletonClass U] in
-theorem exp_utility_mul (L : Kernel U W) [IsFiniteKernel L] (C : U → ℝ) (α : ℝ) (w : W) (u : U) :
-    EReal.exp (utility L C w u * α) = L u {w} ^ α * ENNReal.ofReal (Real.exp (-(α * C u))) := by
-  rw [EReal.exp_mul, utility, sub_eq_add_neg, ← EReal.coe_neg, EReal.exp_add, ENNReal.exp_log,
-    EReal.exp_coe, ENNReal.mul_rpow_of_ne_top (measure_ne_top _ _) ENNReal.ofReal_ne_top,
-    ofReal_exp_neg_rpow]
-
-omit [MeasurableSingletonClass U] in
-/-- The speaker in the power-weight form, `L u {w} ^ α` times the cost weight `exp (-(α * C u))`. -/
-theorem speaker_eq_ofWeights (α : ℝ) (C : U → ℝ) (L : Kernel U W) [IsFiniteKernel L] :
-    speaker α C L =
-      Kernel.ofWeights fun w u ↦ L u {w} ^ α * ENNReal.ofReal (Real.exp (-(α * C u))) := by
-  unfold speaker speakerOfScore
-  simp_rw [exp_utility_mul]
-
-@[simp] theorem speaker_apply_singleton (α : ℝ) (C : U → ℝ) (L : Kernel U W) [IsFiniteKernel L]
-    (w : W) (u : U) :
-    speaker α C L w {u} = L u {w} ^ α * ENNReal.ofReal (Real.exp (-(α * C u)))
-      / ∑ u', L u' {w} ^ α * ENNReal.ofReal (Real.exp (-(α * C u'))) := by
-  rw [speaker_eq_ofWeights, Kernel.ofWeights_apply_singleton]
-
-/-- At zero cost the speaker's weights are the listener's masses to the power `α`. -/
-theorem speaker_zero_apply_singleton (α : ℝ) (L : Kernel U W) [IsFiniteKernel L] (w : W) (u : U) :
-    speaker α 0 L w {u} = L u {w} ^ α / ∑ u', L u' {w} ^ α := by
-  rw [speaker_apply_singleton]
-  simp only [Pi.zero_apply, mul_zero, neg_zero, Real.exp_zero, ENNReal.ofReal_one, mul_one]
+section Dirac
 
 variable {α : ℝ} {C : U → ℝ} {L : Kernel U W} {w : W} {u : U}
 
@@ -426,89 +434,105 @@ private theorem weight_ne_zero (hα : 0 ≤ α) (C : U → ℝ) (h : L u {w} ≠
     L u {w} ^ α * ENNReal.ofReal (Real.exp (-(α * C u))) ≠ 0 :=
   mul_ne_zero (rpow_ne_zero_of_ne_zero hα h) (ofReal_exp_ne_zero _)
 
+variable [Fintype W]
+
+omit [MeasurableSingletonClass U] in
+/-- A speaker who knows the state weights an utterance by its listener's mass there to the power
+`α`, times the cost weight `exp (-(α * C u))`. -/
+theorem speaker_dirac_eq_ofWeights (α : ℝ) (C : U → ℝ) (L : U → Measure W) :
+    speaker α C L Measure.dirac =
+      Kernel.ofWeights fun w u ↦ L u {w} ^ α * ENNReal.ofReal (Real.exp (-(α * C u))) := by
+  classical
+  refine congrArg Kernel.ofWeights (funext fun w ↦ funext fun u ↦ ?_)
+  rw [Finset.prod_eq_single w (fun w' _ hw' ↦ by
+      rw [measureReal_def, Measure.dirac_apply' _ (.singleton w'),
+        Set.indicator_of_notMem (by simpa using hw'.symm), ENNReal.toReal_zero, mul_zero,
+        ENNReal.rpow_zero])
+    (fun h ↦ absurd (Finset.mem_univ w) h),
+    measureReal_def, Measure.dirac_apply_of_mem (Set.mem_singleton w), ENNReal.toReal_one, mul_one]
+
+@[simp] theorem speaker_dirac_apply_singleton (α : ℝ) (C : U → ℝ) (L : U → Measure W)
+    (w : W) (u : U) :
+    speaker α C L Measure.dirac w {u} = L u {w} ^ α * ENNReal.ofReal (Real.exp (-(α * C u)))
+      / ∑ u', L u' {w} ^ α * ENNReal.ofReal (Real.exp (-(α * C u'))) := by
+  rw [speaker_dirac_eq_ofWeights, Kernel.ofWeights_apply_singleton]
+
+/-- At zero cost the speaker's weights are the listener's masses to the power `α`. -/
+theorem speaker_dirac_zero_apply_singleton (α : ℝ) (L : U → Measure W) (w : W) (u : U) :
+    speaker α 0 L Measure.dirac w {u} = L u {w} ^ α / ∑ u', L u' {w} ^ α := by
+  rw [speaker_dirac_apply_singleton]
+  simp only [Pi.zero_apply, mul_zero, neg_zero, Real.exp_zero, ENNReal.ofReal_one, mul_one]
+
 /-- Relabelling the utterances carries the speaker along, with the cost relabelled with them. A
 listener that treats `τ v` at `w'` as the other treats `v` at `w` makes the speaker at `w'` produce
 `τ u` as the other produces `u` at `w`. -/
-theorem speaker_apply_singleton_of_equiv {W' U' : Type*} [MeasurableSpace W'] [MeasurableSpace U']
-    [Countable W'] [MeasurableSingletonClass W'] [Fintype U'] [MeasurableSingletonClass U']
-    (τ : U ≃ U') (α : ℝ) (C : U' → ℝ) {L : Kernel U W} [IsFiniteKernel L] {L' : Kernel U' W'}
-    [IsFiniteKernel L'] {w : W} {w' : W'} (h : ∀ v, L' (τ v) {w'} = L v {w}) (u : U) :
-    speaker α C L' w' {τ u} = speaker α (C ∘ τ) L w {u} := by
-  rw [speaker_apply_singleton, speaker_apply_singleton, h, ← τ.sum_comp]
+theorem speaker_dirac_apply_singleton_of_equiv {W' U' : Type*} [MeasurableSpace W']
+    [MeasurableSpace U'] [Fintype W'] [MeasurableSingletonClass W'] [Fintype U']
+    [MeasurableSingletonClass U'] (τ : U ≃ U') (α : ℝ) (C : U' → ℝ) {L : Kernel U W}
+    {L' : Kernel U' W'} {w : W} {w' : W'} (h : ∀ v, L' (τ v) {w'} = L v {w}) (u : U) :
+    speaker α C L' Measure.dirac w' {τ u} = speaker α (C ∘ τ) L Measure.dirac w {u} := by
+  rw [speaker_dirac_apply_singleton, speaker_dirac_apply_singleton, h, ← τ.sum_comp]
   simp only [h, Function.comp_apply]
 
 omit [MeasurableSingletonClass U] in
 /-- The speaker is a probability kernel whenever every state has a true utterance. -/
-theorem isMarkovKernel_speaker (hα : 0 ≤ α) (C : U → ℝ) (L : Kernel U W) [IsFiniteKernel L]
-    (h0 : ∀ w, ∃ u, L u {w} ≠ 0) : IsMarkovKernel (speaker α C L) := by
-  rw [speaker_eq_ofWeights]
+theorem isMarkovKernel_speaker_dirac (hα : 0 ≤ α) (C : U → ℝ) (L : Kernel U W) [IsFiniteKernel L]
+    (h0 : ∀ w, ∃ u, L u {w} ≠ 0) : IsMarkovKernel (speaker α C L Measure.dirac) := by
+  rw [speaker_dirac_eq_ofWeights]
   exact Kernel.isMarkovKernel_ofWeights (fun w ↦ (h0 w).imp fun u hu ↦ weight_ne_zero hα C hu)
     fun w u ↦ weight_ne_top hα C u w
 
 /-- A literally false utterance is never produced (positive rationality). -/
-theorem speaker_apply_singleton_eq_zero (hα : 0 < α) (h : L u {w} = 0) :
-    speaker α C L w {u} = 0 :=
-  Kernel.ofWeights_apply_singleton_eq_zero (by
-    show EReal.exp (utility L C w u * α) = 0
-    rw [utility, h, ENNReal.log_zero, EReal.bot_sub, EReal.bot_mul_coe_of_pos hα, EReal.exp_bot])
+theorem speaker_dirac_apply_singleton_eq_zero (hα : 0 < α) (h : L u {w} = 0) :
+    speaker α C L Measure.dirac w {u} = 0 := by
+  rw [speaker_dirac_eq_ofWeights]
+  exact Kernel.ofWeights_apply_singleton_eq_zero (by rw [h, ENNReal.zero_rpow_of_pos hα, zero_mul])
 
 /-- A literally true utterance is produced with positive mass. -/
-theorem speaker_apply_singleton_ne_zero [IsFiniteKernel L] (hα : 0 ≤ α) (h : L u {w} ≠ 0) :
-    speaker α C L w {u} ≠ 0 := by
-  rw [speaker_eq_ofWeights]
+theorem speaker_dirac_apply_singleton_ne_zero [IsFiniteKernel L] (hα : 0 ≤ α) (h : L u {w} ≠ 0) :
+    speaker α C L Measure.dirac w {u} ≠ 0 := by
+  rw [speaker_dirac_eq_ofWeights]
   exact Kernel.ofWeights_apply_singleton_ne_zero (weight_ne_zero hα C h)
     fun u' ↦ weight_ne_top hα C u' w
 
-theorem speaker_apply_singleton_ne_zero_iff [IsFiniteKernel L] (hα : 0 < α) :
-    speaker α C L w {u} ≠ 0 ↔ L u {w} ≠ 0 :=
-  ⟨fun h h' ↦ h (speaker_apply_singleton_eq_zero hα h'), speaker_apply_singleton_ne_zero hα.le⟩
+theorem speaker_dirac_apply_singleton_ne_zero_iff [IsFiniteKernel L] (hα : 0 < α) :
+    speaker α C L Measure.dirac w {u} ≠ 0 ↔ L u {w} ≠ 0 :=
+  ⟨fun h h' ↦ h (speaker_dirac_apply_singleton_eq_zero hα h'),
+    speaker_dirac_apply_singleton_ne_zero hα.le⟩
 
 /-- A state with a unique applicable utterance produces it with certainty. -/
-theorem speaker_apply_singleton_eq_one [IsFiniteKernel L] (hα : 0 < α) (h : L u {w} ≠ 0)
-    (hother : ∀ u' ≠ u, L u' {w} = 0) : speaker α C L w {u} = 1 := by
-  rw [speaker_apply_singleton, Finset.sum_eq_single u
+theorem speaker_dirac_apply_singleton_eq_one [IsFiniteKernel L] (hα : 0 < α) (h : L u {w} ≠ 0)
+    (hother : ∀ u' ≠ u, L u' {w} = 0) : speaker α C L Measure.dirac w {u} = 1 := by
+  rw [speaker_dirac_apply_singleton, Finset.sum_eq_single u
     (fun u' _ hu' ↦ by rw [hother u' hu', ENNReal.zero_rpow_of_pos hα, zero_mul])
     (fun hu ↦ absurd (Finset.mem_univ u) hu)]
   exact ENNReal.div_self (weight_ne_zero hα.le C h) (weight_ne_top hα.le C u w)
 
 /-- On reals a speaker share is the weighted listener value over the row's total. -/
-theorem speaker_real_singleton [IsFiniteKernel L] (hα : 0 ≤ α) (u : U) :
-    (speaker α C L w).real {u}
+theorem speaker_dirac_real_singleton [IsFiniteKernel L] (hα : 0 ≤ α) (u : U) :
+    (speaker α C L Measure.dirac w).real {u}
       = (L u {w} ^ α).toReal * Real.exp (-(α * C u))
         / ∑ u', (L u' {w} ^ α).toReal * Real.exp (-(α * C u')) := by
-  rw [measureReal_def, speaker_apply_singleton, ENNReal.toReal_div, ENNReal.toReal_mul,
+  rw [measureReal_def, speaker_dirac_apply_singleton, ENNReal.toReal_div, ENNReal.toReal_mul,
     ENNReal.toReal_sum fun u' _ ↦ weight_ne_top hα C u' w]
   simp_rw [ENNReal.toReal_mul, ENNReal.toReal_ofReal (Real.exp_pos _).le]
 
 /-- At zero cost a speaker share on reals is the listener's mass to the power `α` over the row's
 total. -/
-theorem speaker_zero_real_singleton [IsFiniteKernel L] (hα : 0 ≤ α) (u : U) :
-    (speaker α 0 L w).real {u} = (L u {w} ^ α).toReal / ∑ u', (L u' {w} ^ α).toReal := by
-  rw [speaker_real_singleton hα]
+theorem speaker_dirac_zero_real_singleton [IsFiniteKernel L] (hα : 0 ≤ α) (u : U) :
+    (speaker α 0 L Measure.dirac w).real {u} =
+      (L u {w} ^ α).toReal / ∑ u', (L u' {w} ^ α).toReal := by
+  rw [speaker_dirac_real_singleton hα]
   simp only [Pi.zero_apply, mul_zero, neg_zero, Real.exp_zero, mul_one]
-
-omit [MeasurableSingletonClass U] in
-/-- A speaker row has total mass at most one. -/
-theorem speaker_apply_univ_le_one (α : ℝ) (C : U → ℝ) (L : Kernel U W) (w : W) :
-    speaker α C L w Set.univ ≤ 1 :=
-  Kernel.ofWeights_apply_univ_le_one _ w
-
-omit [MeasurableSingletonClass U] in
-/-- Speaker shares are at most one. -/
-theorem speaker_real_singleton_le_one (α : ℝ) (C : U → ℝ) (L : Kernel U W) (w : W) (u : U) :
-    (speaker α C L w).real {u} ≤ 1 := by
-  rw [measureReal_def, ← ENNReal.toReal_one]
-  exact ENNReal.toReal_mono ENNReal.one_ne_top
-    ((measure_mono (Set.subset_univ _)).trans (Kernel.ofWeights_apply_univ_le_one _ w))
 
 /-- Row-preference of the speaker reduces to comparing the weighted listener values; the
 normalization cancels. -/
-theorem speaker_real_singleton_lt_iff [IsFiniteKernel L] (hα : 0 ≤ α) (h0 : ∃ u, L u {w} ≠ 0)
+theorem speaker_dirac_real_singleton_lt_iff [IsFiniteKernel L] (hα : 0 ≤ α) (h0 : ∃ u, L u {w} ≠ 0)
     {u u' : U} :
-    (speaker α C L w).real {u} < (speaker α C L w).real {u'} ↔
+    (speaker α C L Measure.dirac w).real {u} < (speaker α C L Measure.dirac w).real {u'} ↔
       L u {w} ^ α * ENNReal.ofReal (Real.exp (-(α * C u)))
         < L u' {w} ^ α * ENNReal.ofReal (Real.exp (-(α * C u'))) := by
-  rw [speaker_eq_ofWeights]
+  rw [speaker_dirac_eq_ofWeights]
   exact Kernel.ofWeights_real_singleton_lt_iff w
     (fun h ↦ let ⟨u₀, hu₀⟩ := h0
       weight_ne_zero hα C hu₀ (Finset.sum_eq_zero_iff.mp h u₀ (Finset.mem_univ _)))
@@ -516,11 +540,11 @@ theorem speaker_real_singleton_lt_iff [IsFiniteKernel L] (hα : 0 ≤ α) (h0 : 
 
 /-- With Boolean meanings, a state whose only true utterance is `u` produces `u` with
 certainty at any prior giving the state positive mass. -/
-theorem speaker_literalListener_eq_one [DiscreteMeasurableSpace W] (hα : 0 < α)
+theorem speaker_literalListener_dirac_eq_one [DiscreteMeasurableSpace W] (hα : 0 < α)
     (C : U → ℝ) (μ : Measure W) [IsFiniteMeasure μ] (sem : U → Set W) (hμ : μ {w} ≠ 0)
     (hmem : w ∈ sem u) (hother : ∀ u' ≠ u, w ∉ sem u') :
-    speaker α C (literalListener μ sem) w {u} = 1 :=
-  speaker_apply_singleton_eq_one hα
+    speaker α C (literalListener μ sem) Measure.dirac w {u} = 1 :=
+  speaker_dirac_apply_singleton_eq_one hα
     (by
       rw [literalListener_apply_singleton μ sem hmem]
       exact mul_ne_zero (ENNReal.inv_ne_zero.mpr (measure_ne_top _ _)) hμ)
@@ -528,22 +552,22 @@ theorem speaker_literalListener_eq_one [DiscreteMeasurableSpace W] (hα : 0 < α
 
 /-- With Boolean meanings the speaker produces an utterance at a state exactly when it is true
 there and the state has positive prior. -/
-theorem speaker_literalListener_apply_singleton_ne_zero_iff
+theorem speaker_literalListener_dirac_apply_singleton_ne_zero_iff
     [DiscreteMeasurableSpace W] (hα : 0 < α) (C : U → ℝ) (μ : Measure W) [IsFiniteMeasure μ]
     (sem : U → Set W) (u : U) (w : W) :
-    speaker α C (literalListener μ sem) w {u} ≠ 0
+    speaker α C (literalListener μ sem) Measure.dirac w {u} ≠ 0
       ↔ w ∈ sem u ∧ μ {w} ≠ 0 := by
-  rw [speaker_apply_singleton_ne_zero_iff hα,
+  rw [speaker_dirac_apply_singleton_ne_zero_iff hα,
     literalListener_apply_singleton_ne_zero_iff μ sem u w]
 
 /-- With Boolean meanings the speaker sees a state only through the utterances true at it, so two
 states of positive prior verifying the same utterances have the same production row. -/
-theorem speaker_literalListener_congr [DiscreteMeasurableSpace W] (hα : 0 < α)
+theorem speaker_literalListener_dirac_congr [DiscreteMeasurableSpace W] (hα : 0 < α)
     (C : U → ℝ) (μ : Measure W) [IsFiniteMeasure μ] (sem : U → Set W)
     {w w' : W} (hw : μ {w} ≠ 0) (hw' : μ {w'} ≠ 0) (h : ∀ u, w ∈ sem u ↔ w' ∈ sem u) :
-    speaker α C (literalListener μ sem) w'
-      = speaker α C (literalListener μ sem) w := by
-  rw [speaker_eq_ofWeights]
+    speaker α C (literalListener μ sem) Measure.dirac w'
+      = speaker α C (literalListener μ sem) Measure.dirac w := by
+  rw [speaker_dirac_eq_ofWeights]
   refine Kernel.ofWeights_apply_eq_of_mul (c := (μ {w'} / μ {w}) ^ α)
     (rpow_ne_zero_of_ne_zero hα.le (ENNReal.div_ne_zero.mpr ⟨hw', measure_ne_top _ _⟩))
     (ENNReal.rpow_ne_top_of_nonneg hα.le (ENNReal.div_ne_top (measure_ne_top _ _) hw))
@@ -559,9 +583,9 @@ theorem speaker_literalListener_congr [DiscreteMeasurableSpace W] (hα : 0 < α)
 
 /-- With Boolean meanings the prior cancels from the speaker, which at a state of positive prior
 weights each true utterance by its extension's mass to the power `-α` and by its cost. -/
-theorem speaker_literalListener_apply_singleton [DiscreteMeasurableSpace W] (hα : 0 < α)
+theorem speaker_literalListener_dirac_apply_singleton [DiscreteMeasurableSpace W] (hα : 0 < α)
     (C : U → ℝ) (μ : Measure W) [IsFiniteMeasure μ] (sem : U → Set W) (hw : μ {w} ≠ 0) (u : U) :
-    speaker α C (literalListener μ sem) w {u}
+    speaker α C (literalListener μ sem) Measure.dirac w {u}
       = (sem u).indicator (fun _ ↦ (μ (sem u))⁻¹ ^ α * ENNReal.ofReal (Real.exp (-(α * C u)))) w
         / ∑ u', (sem u').indicator
             (fun _ ↦ (μ (sem u'))⁻¹ ^ α * ENNReal.ofReal (Real.exp (-(α * C u')))) w := by
@@ -575,30 +599,90 @@ theorem speaker_literalListener_apply_singleton [DiscreteMeasurableSpace W] (hα
       ring
     · rw [literalListener_apply_singleton_of_notMem μ sem hv,
         Set.indicator_of_notMem hv, ENNReal.zero_rpow_of_pos hα, zero_mul, mul_zero]
-  rw [speaker_apply_singleton, key, Finset.sum_congr rfl fun v _ ↦ key v, ← Finset.mul_sum,
+  rw [speaker_dirac_apply_singleton, key, Finset.sum_congr rfl fun v _ ↦ key v, ← Finset.mul_sum,
     ENNReal.mul_div_mul_left _ _ (rpow_ne_zero_of_ne_zero hα.le hw)
       (ENNReal.rpow_ne_top_of_nonneg hα.le (measure_ne_top _ _))]
 
 /-- With Boolean meanings a state verifying more utterances produces each of its true utterances
 less, since the prior cancels from the speaker and only the inclusion of the true utterances
 matters. -/
-theorem speaker_literalListener_le_of_subset [DiscreteMeasurableSpace W] (hα : 0 < α)
+theorem speaker_literalListener_dirac_le_of_subset [DiscreteMeasurableSpace W] (hα : 0 < α)
     (C : U → ℝ) (μ : Measure W) [IsFiniteMeasure μ] (sem : U → Set W) {w w' : W}
     (hw : μ {w} ≠ 0) (hsub : ∀ u, w ∈ sem u → w' ∈ sem u) {u : U} (hu : w ∈ sem u) :
-    speaker α C (literalListener μ sem) w' {u}
-      ≤ speaker α C (literalListener μ sem) w {u} := by
+    speaker α C (literalListener μ sem) Measure.dirac w' {u}
+      ≤ speaker α C (literalListener μ sem) Measure.dirac w {u} := by
   rcases eq_or_ne (μ {w'}) 0 with hw' | hw'
-  · rw [speaker_apply_singleton_eq_zero hα (not_not.mp fun h ↦
+  · rw [speaker_dirac_apply_singleton_eq_zero hα (not_not.mp fun h ↦
       ((literalListener_apply_singleton_ne_zero_iff μ sem u w').mp h).2 hw')]
     exact zero_le
-  rw [speaker_literalListener_apply_singleton hα C μ sem hw,
-    speaker_literalListener_apply_singleton hα C μ sem hw',
+  rw [speaker_literalListener_dirac_apply_singleton hα C μ sem hw,
+    speaker_literalListener_dirac_apply_singleton hα C μ sem hw',
     Set.indicator_of_mem hu, Set.indicator_of_mem (hsub u hu)]
   refine ENNReal.div_le_div_left (Finset.sum_le_sum fun v _ ↦ ?_) _
   by_cases hv : w ∈ sem v
   · rw [Set.indicator_of_mem hv, Set.indicator_of_mem (hsub v hv)]
   · rw [Set.indicator_of_notMem hv]; exact zero_le
 
+open Filter Topology in
+/-- As rationality grows, the speaker puts all its mass on the utterance whose listener mass,
+discounted by its cost, is greatest at `w`, so the fully rational speaker maximizes the
+utility. -/
+theorem tendsto_speaker_dirac_real_singleton_atTop [IsFiniteKernel L] (hu : L u {w} ≠ 0)
+    (hmax : ∀ u' ≠ u, (L u' {w}).toReal * Real.exp (-C u') < (L u {w}).toReal * Real.exp (-C u)) :
+    Tendsto (fun α ↦ (speaker α C L Measure.dirac w).real {u}) atTop (𝓝 1) := by
+  classical
+  set m : U → ℝ := fun v ↦ (L v {w}).toReal * Real.exp (-C v)
+  have hm0 (v : U) : 0 ≤ m v := mul_nonneg ENNReal.toReal_nonneg (Real.exp_pos _).le
+  have hmu : 0 < m u := mul_pos (ENNReal.toReal_pos hu (measure_ne_top _ _)) (Real.exp_pos _)
+  have hterm (α : ℝ) (v : U) : (L v {w} ^ α).toReal * Real.exp (-(α * C v)) = m v ^ α := by
+    rw [← ENNReal.toReal_rpow, Real.mul_rpow ENNReal.toReal_nonneg (Real.exp_pos _).le,
+      ← Real.exp_mul]
+    congr 2; ring
+  have hform : ∀ᶠ α in atTop,
+      (∑ v, (m v / m u) ^ α)⁻¹ = (speaker α C L Measure.dirac w).real {u} := by
+    filter_upwards [eventually_ge_atTop 0] with α hα
+    have hsum : ∑ v, (m v / m u) ^ α = (∑ v, m v ^ α) / m u ^ α := by
+      rw [Finset.sum_div]
+      exact Finset.sum_congr rfl fun v _ ↦ Real.div_rpow (hm0 v) hmu.le α
+    rw [speaker_dirac_real_singleton hα, hterm]
+    simp_rw [hterm]
+    rw [hsum, inv_div]
+  have hlim : Tendsto (fun α : ℝ ↦ ∑ v, (m v / m u) ^ α) atTop
+      (𝓝 (∑ v, if v = u then (1 : ℝ) else 0)) := by
+    refine tendsto_finsetSum _ fun v _ ↦ ?_
+    by_cases hv : v = u
+    · subst hv
+      have h1 : HPow.hPow (m v / m v) = fun _ : ℝ ↦ (1 : ℝ) :=
+        funext fun α ↦ by rw [div_self hmu.ne', Real.one_rpow]
+      rw [h1]; simp
+    · have hlt : m v / m u < 1 := (div_lt_one hmu).2 (hmax v hv)
+      simpa only [hv, ite_false] using
+        tendsto_rpow_atTop_of_base_lt_one _ (by linarith [div_nonneg (hm0 v) hmu.le]) hlt
+  rw [Finset.sum_ite_eq' Finset.univ u, ite_eq_left (Finset.mem_univ u)] at hlim
+  simpa using (hlim.inv₀ one_ne_zero).congr' hform
+
+/-- With Boolean meanings and a constant cost, a state two utterances both fit produces the
+utterance with the smaller extension more often, since informativity is the inverse of extension
+mass. -/
+theorem speaker_literalListener_dirac_real_singleton_lt_iff [DiscreteMeasurableSpace W]
+    (hα : 0 < α) (c : ℝ) (μ : Measure W) [IsFiniteMeasure μ] (sem : U → Set W) (hμ : μ {w} ≠ 0)
+    {u u' : U} (hu : w ∈ sem u) (hu' : w ∈ sem u') :
+    (speaker α (fun _ ↦ c) (literalListener μ sem) Measure.dirac w).real {u}
+        < (speaker α (fun _ ↦ c) (literalListener μ sem) Measure.dirac w).real {u'}
+      ↔ μ (sem u') < μ (sem u) := by
+  have hne : literalListener μ sem u {w} ≠ 0 := by
+    rw [literalListener_apply_singleton μ sem hu]
+    exact mul_ne_zero (ENNReal.inv_ne_zero.mpr (measure_ne_top _ _)) hμ
+  have key : ∀ {a b k : ℝ≥0∞}, k ≠ 0 → k ≠ ∞ → (a * k < b * k ↔ a < b) := fun h0 htop ↦
+    ⟨fun h ↦ lt_of_not_ge fun hab ↦ absurd h (not_lt.mpr (mul_le_mul' hab le_rfl)),
+      ENNReal.mul_lt_mul_left h0 htop⟩
+  rw [speaker_dirac_real_singleton_lt_iff hα.le ⟨u, hne⟩,
+    key (ofReal_exp_ne_zero _) ENNReal.ofReal_ne_top, ENNReal.rpow_lt_rpow_iff hα,
+    literalListener_apply_singleton μ sem hu,
+    literalListener_apply_singleton μ sem hu', key hμ (measure_ne_top _ _),
+    ENNReal.inv_lt_inv]
+
+end Dirac
 
 /-! #### The speaker as a Gibbs measure
 
@@ -676,64 +760,6 @@ theorem isGreatest_freeEnergy_speakerOfScore (htop : ∀ u, score w u ≠ ⊤)
 
 end Gibbs
 
-open Filter Topology in
-/-- As rationality grows, the speaker puts all its mass on the utterance whose listener mass,
-discounted by its cost, is greatest at `w`, so the fully rational speaker maximizes the
-utility. -/
-theorem tendsto_speaker_real_singleton_atTop [IsFiniteKernel L] (hu : L u {w} ≠ 0)
-    (hmax : ∀ u' ≠ u, (L u' {w}).toReal * Real.exp (-C u') < (L u {w}).toReal * Real.exp (-C u)) :
-    Tendsto (fun α ↦ (speaker α C L w).real {u}) atTop (𝓝 1) := by
-  classical
-  set m : U → ℝ := fun v ↦ (L v {w}).toReal * Real.exp (-C v)
-  have hm0 (v : U) : 0 ≤ m v := mul_nonneg ENNReal.toReal_nonneg (Real.exp_pos _).le
-  have hmu : 0 < m u := mul_pos (ENNReal.toReal_pos hu (measure_ne_top _ _)) (Real.exp_pos _)
-  have hterm (α : ℝ) (v : U) : (L v {w} ^ α).toReal * Real.exp (-(α * C v)) = m v ^ α := by
-    rw [← ENNReal.toReal_rpow, Real.mul_rpow ENNReal.toReal_nonneg (Real.exp_pos _).le,
-      ← Real.exp_mul]
-    congr 2; ring
-  have hform : ∀ᶠ α in atTop, (∑ v, (m v / m u) ^ α)⁻¹ = (speaker α C L w).real {u} := by
-    filter_upwards [eventually_ge_atTop 0] with α hα
-    have hsum : ∑ v, (m v / m u) ^ α = (∑ v, m v ^ α) / m u ^ α := by
-      rw [Finset.sum_div]
-      exact Finset.sum_congr rfl fun v _ ↦ Real.div_rpow (hm0 v) hmu.le α
-    rw [speaker_real_singleton hα, hterm]
-    simp_rw [hterm]
-    rw [hsum, inv_div]
-  have hlim : Tendsto (fun α : ℝ ↦ ∑ v, (m v / m u) ^ α) atTop
-      (𝓝 (∑ v, if v = u then (1 : ℝ) else 0)) := by
-    refine tendsto_finsetSum _ fun v _ ↦ ?_
-    by_cases hv : v = u
-    · subst hv
-      have h1 : HPow.hPow (m v / m v) = fun _ : ℝ ↦ (1 : ℝ) :=
-        funext fun α ↦ by rw [div_self hmu.ne', Real.one_rpow]
-      rw [h1]; simp
-    · have hlt : m v / m u < 1 := (div_lt_one hmu).2 (hmax v hv)
-      simpa only [hv, ite_false] using
-        tendsto_rpow_atTop_of_base_lt_one _ (by linarith [div_nonneg (hm0 v) hmu.le]) hlt
-  rw [Finset.sum_ite_eq' Finset.univ u, ite_eq_left (Finset.mem_univ u)] at hlim
-  simpa using (hlim.inv₀ one_ne_zero).congr' hform
-
-/-- With Boolean meanings and a constant cost, a state two utterances both fit produces the
-utterance with the smaller extension more often, since informativity is the inverse of extension
-mass. -/
-theorem speaker_literalListener_real_singleton_lt_iff [DiscreteMeasurableSpace W]
-    (hα : 0 < α) (c : ℝ) (μ : Measure W) [IsFiniteMeasure μ] (sem : U → Set W) (hμ : μ {w} ≠ 0)
-    {u u' : U} (hu : w ∈ sem u) (hu' : w ∈ sem u') :
-    (speaker α (fun _ ↦ c) (literalListener μ sem) w).real {u}
-        < (speaker α (fun _ ↦ c) (literalListener μ sem) w).real {u'}
-      ↔ μ (sem u') < μ (sem u) := by
-  have hne : literalListener μ sem u {w} ≠ 0 := by
-    rw [literalListener_apply_singleton μ sem hu]
-    exact mul_ne_zero (ENNReal.inv_ne_zero.mpr (measure_ne_top _ _)) hμ
-  have key : ∀ {a b k : ℝ≥0∞}, k ≠ 0 → k ≠ ∞ → (a * k < b * k ↔ a < b) := fun h0 htop ↦
-    ⟨fun h ↦ lt_of_not_ge fun hab ↦ absurd h (not_lt.mpr (mul_le_mul' hab le_rfl)),
-      ENNReal.mul_lt_mul_left h0 htop⟩
-  rw [speaker_real_singleton_lt_iff hα.le ⟨u, hne⟩,
-    key (ofReal_exp_ne_zero _) ENNReal.ofReal_ne_top, ENNReal.rpow_lt_rpow_iff hα,
-    literalListener_apply_singleton μ sem hu,
-    literalListener_apply_singleton μ sem hu', key hμ (measure_ne_top _ _),
-    ENNReal.inv_lt_inv]
-
 /-! #### Pragmatic listeners -/
 
 section Listener
@@ -806,16 +832,16 @@ end General
 
 /-- With Boolean meanings, hearing an utterance rules out every state it does not fit, once some
 state it fits has prior mass. -/
-theorem pragmaticListener_literalListener_apply_singleton_of_notMem [DiscreteMeasurableSpace W]
-    (α : ℝ) (C : U → ℝ) (μ : Measure W) [IsFiniteMeasure μ] (hα : 0 < α)
+theorem pragmaticListener_literalListener_apply_singleton_of_notMem [Fintype W]
+    [DiscreteMeasurableSpace W] (α : ℝ) (C : U → ℝ) (μ : Measure W) [IsFiniteMeasure μ] (hα : 0 < α)
     (sem : U → Set W) {u : U} {w w' : W} (hw : w ∉ sem u) (hw' : w' ∈ sem u) (hμ : μ {w'} ≠ 0) :
-    pragmaticListener (speaker α C (literalListener μ sem)) μ u {w} = 0 := by
-  have hS : speaker α C (literalListener μ sem) w' {u} ≠ 0 :=
-    speaker_apply_singleton_ne_zero hα.le (by
+    pragmaticListener (speaker α C (literalListener μ sem) Measure.dirac) μ u {w} = 0 := by
+  have hS : speaker α C (literalListener μ sem) Measure.dirac w' {u} ≠ 0 :=
+    speaker_dirac_apply_singleton_ne_zero hα.le (by
       rw [literalListener_apply_singleton μ sem hw']
       exact mul_ne_zero (ENNReal.inv_ne_zero.mpr (measure_ne_top _ _)) hμ)
   exact pragmaticListener_apply_singleton_eq_zero (comp_apply_singleton_ne_zero _ _ hμ hS)
-    (speaker_apply_singleton_eq_zero hα (literalListener_apply_singleton_of_notMem μ sem hw))
+    (speaker_dirac_apply_singleton_eq_zero hα (literalListener_apply_singleton_of_notMem μ sem hw))
 
 section Latent
 
@@ -908,21 +934,23 @@ omit [Countable W] [MeasurableSingletonClass W] [Fintype U] [MeasurableSingleton
 theorem measurable_obs_snd : Measurable fun p : W × U ↦ obs p.2 :=
   Measurable.of_discrete.comp measurable_snd
 
+variable [Fintype W]
+
 /-- The joint pragmatic listener (eqs. 18b/21b) applies when the listener hears only the form `obs
 u` of the speaker's choice. The posterior over (state, choice) is then the Bayesian inverse of the
 deterministic observation kernel against the joint of prior and speaker. Its `fst` is the state
 listener, its `snd` the choice posterior. -/
 noncomputable def jointListener : Kernel O (W × U) :=
   pragmaticListener (Kernel.deterministic (fun p : W × U ↦ obs p.2) (measurable_obs_snd obs))
-    (μ ⊗ₘ speaker α C L)
+    (μ ⊗ₘ speaker α C L Measure.dirac)
 
 omit [MeasurableSingletonClass U] [StandardBorelSpace W] [Nonempty W] [StandardBorelSpace U]
   [Nonempty U] [DecidableEq O] [IsFiniteMeasure μ] in
 /-- The heard form is distributed as the production marginal. -/
 theorem deterministic_comp_compProd_speaker :
     Kernel.deterministic (fun p : W × U ↦ obs p.2) (measurable_obs_snd obs)
-        ∘ₘ (μ ⊗ₘ speaker α C L)
-      = (speaker α C L ∘ₘ μ).map obs := by
+        ∘ₘ (μ ⊗ₘ speaker α C L Measure.dirac)
+      = (speaker α C L Measure.dirac ∘ₘ μ).map obs := by
   rw [Measure.deterministic_comp_eq_map, show (fun p : W × U ↦ obs p.2) = obs ∘ Prod.snd from rfl,
     ← Measure.map_map Measurable.of_discrete measurable_snd, ← Measure.snd, Measure.snd_compProd]
 
@@ -931,8 +959,8 @@ omit [StandardBorelSpace W] [Nonempty W] [StandardBorelSpace U] [Nonempty U] [De
 /-- A positive-prior state with a positively produced `o`-shaped utterance witnesses a
 positive observation marginal. -/
 theorem map_comp_speaker_ne_zero [MeasurableSingletonClass O] {w : W} {u : U} {o : O}
-    (hμ : μ {w} ≠ 0) (hu : obs u = o) (hs : speaker α C L w {u} ≠ 0) :
-    ((speaker α C L ∘ₘ μ).map obs) {o} ≠ 0 := by
+    (hμ : μ {w} ≠ 0) (hu : obs u = o) (hs : speaker α C L Measure.dirac w {u} ≠ 0) :
+    ((speaker α C L Measure.dirac ∘ₘ μ).map obs) {o} ≠ 0 := by
   rw [Measure.map_apply Measurable.of_discrete (.singleton o)]
   intro h
   exact comp_apply_singleton_ne_zero _ _ hμ hs
@@ -941,11 +969,11 @@ theorem map_comp_speaker_ne_zero [MeasurableSingletonClass O] {w : W} {u : U} {o
 variable [MeasurableSingletonClass O]
 
 /-- Exact Bayes for the joint listener at a positive-mass observation. -/
-theorem jointListener_apply_singleton {o : O} (ho : ((speaker α C L ∘ₘ μ).map obs) {o} ≠ 0)
-    (w : W) (u : U) :
+theorem jointListener_apply_singleton {o : O}
+    (ho : ((speaker α C L Measure.dirac ∘ₘ μ).map obs) {o} ≠ 0) (w : W) (u : U) :
     jointListener α C L μ obs o {(w, u)}
-      = (if obs u = o then μ {w} * speaker α C L w {u} else 0)
-        / ((speaker α C L ∘ₘ μ).map obs) {o} := by
+      = (if obs u = o then μ {w} * speaker α C L Measure.dirac w {u} else 0)
+        / ((speaker α C L Measure.dirac ∘ₘ μ).map obs) {o} := by
   rw [jointListener, pragmaticListener_apply_singleton
       (by rwa [deterministic_comp_compProd_speaker]),
     deterministic_comp_compProd_speaker, ← Set.singleton_prod_singleton,
@@ -956,20 +984,22 @@ theorem jointListener_apply_singleton {o : O} (ho : ((speaker α C L ∘ₘ μ).
 
 /-- The joint listener prefers the state with the greater prior-weighted speaker mass pooled
 over the observation's fibre, since the observation's marginal cancels. -/
-theorem jointListener_fst_real_lt_iff [Fintype W] {o : O}
-    (ho : ((speaker α C L ∘ₘ μ).map obs) {o} ≠ 0) (w₁ w₂ : W) :
+theorem jointListener_fst_real_lt_iff {o : O}
+    (ho : ((speaker α C L Measure.dirac ∘ₘ μ).map obs) {o} ≠ 0) (w₁ w₂ : W) :
     (jointListener α C L μ obs o).fst.real {w₁}
         < (jointListener α C L μ obs o).fst.real {w₂}
-      ↔ (∑ u ∈ Finset.univ.filter (obs · = o), μ.real {w₁} * (speaker α C L w₁).real {u})
-        < ∑ u ∈ Finset.univ.filter (obs · = o), μ.real {w₂} * (speaker α C L w₂).real {u} := by
+      ↔ (∑ u ∈ Finset.univ.filter (obs · = o),
+            μ.real {w₁} * (speaker α C L Measure.dirac w₁).real {u})
+        < ∑ u ∈ Finset.univ.filter (obs · = o),
+            μ.real {w₂} * (speaker α C L Measure.dirac w₂).real {u} := by
   have key : ∀ w : W, (jointListener α C L μ obs o).fst {w}
-      = (∑ u ∈ Finset.univ.filter (obs · = o), μ {w} * speaker α C L w {u})
-        / ((speaker α C L ∘ₘ μ).map obs) {o} := fun w ↦ by
+      = (∑ u ∈ Finset.univ.filter (obs · = o), μ {w} * speaker α C L Measure.dirac w {u})
+        / ((speaker α C L Measure.dirac ∘ₘ μ).map obs) {o} := fun w ↦ by
     rw [Measure.fst_apply_singleton]
     simp_rw [jointListener_apply_singleton α C L μ obs ho, div_eq_mul_inv, ← Finset.sum_mul,
       ← Finset.sum_filter]
   have hne : ∀ w : W,
-      (∑ u ∈ Finset.univ.filter (obs · = o), μ {w} * speaker α C L w {u}) ≠ ∞ :=
+      (∑ u ∈ Finset.univ.filter (obs · = o), μ {w} * speaker α C L Measure.dirac w {u}) ≠ ∞ :=
     fun w ↦ ENNReal.sum_ne_top.mpr fun u _ ↦
       ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)
   rw [measureReal_def, measureReal_def, key, key,
@@ -985,20 +1015,21 @@ theorem jointListener_fst_real_lt_iff [Fintype W] {o : O}
 
 /-- Choice-posterior preference among `o`-shaped choices reduces to comparing prior-weighted
 speaker masses across states. -/
-theorem jointListener_snd_real_lt_iff [Fintype W] {o : O}
-    (ho : ((speaker α C L ∘ₘ μ).map obs) {o} ≠ 0) {u₁ u₂ : U}
+theorem jointListener_snd_real_lt_iff {o : O}
+    (ho : ((speaker α C L Measure.dirac ∘ₘ μ).map obs) {o} ≠ 0) {u₁ u₂ : U}
     (h₁ : obs u₁ = o) (h₂ : obs u₂ = o) :
     (jointListener α C L μ obs o).snd.real {u₁}
         < (jointListener α C L μ obs o).snd.real {u₂}
-      ↔ (∑ w, μ.real {w} * (speaker α C L w).real {u₁})
-        < ∑ w, μ.real {w} * (speaker α C L w).real {u₂} := by
+      ↔ (∑ w, μ.real {w} * (speaker α C L Measure.dirac w).real {u₁})
+        < ∑ w, μ.real {w} * (speaker α C L Measure.dirac w).real {u₂} := by
   have key : ∀ u, obs u = o → (jointListener α C L μ obs o).snd {u}
-      = (∑ w, μ {w} * speaker α C L w {u}) / ((speaker α C L ∘ₘ μ).map obs) {o} :=
+      = (∑ w, μ {w} * speaker α C L Measure.dirac w {u})
+        / ((speaker α C L Measure.dirac ∘ₘ μ).map obs) {o} :=
     fun u hu ↦ by
       rw [Measure.snd_apply_singleton]
       simp_rw [jointListener_apply_singleton α C L μ obs ho, ite_eq_left hu, div_eq_mul_inv,
         ← Finset.sum_mul]
-  have hne : ∀ u : U, (∑ w, μ {w} * speaker α C L w {u}) ≠ ∞ := fun u ↦
+  have hne : ∀ u : U, (∑ w, μ {w} * speaker α C L Measure.dirac w {u}) ≠ ∞ := fun u ↦
     ENNReal.sum_ne_top.mpr fun w _ ↦
       ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)
   rw [measureReal_def, measureReal_def, key u₁ h₁, key u₂ h₂,
@@ -1023,26 +1054,26 @@ The weight functions coincide; only the normalization differs. -/
 
 section Family
 
-variable {Λ : Type*} [MeasurableSpace Λ] [Countable Λ] [MeasurableSingletonClass Λ]
+variable {Λ : Type*} [MeasurableSpace Λ] [Countable Λ] [MeasurableSingletonClass Λ] [Fintype W]
 
 /-- The family speaker carries the latent index in the state. -/
 noncomputable def familySpeaker (L : Λ → Kernel U W) (α : ℝ) (C : U → ℝ) :
     Kernel (W × Λ) U :=
-  Kernel.ofFunOfCountable fun p ↦ speaker α C (L p.2) p.1
+  Kernel.ofFunOfCountable fun p ↦ speaker α C (L p.2) Measure.dirac p.1
 
 omit [MeasurableSingletonClass U] in
 @[simp] theorem familySpeaker_apply (L : Λ → Kernel U W) (α : ℝ) (C : U → ℝ)
-    (p : W × Λ) : familySpeaker L α C p = speaker α C (L p.2) p.1 := rfl
+    (p : W × Λ) : familySpeaker L α C p = speaker α C (L p.2) Measure.dirac p.1 := rfl
 
 instance (L : Λ → Kernel U W) (α : ℝ) (C : U → ℝ) :
     IsFiniteKernel (familySpeaker L α C) :=
-  ⟨⟨1, ENNReal.one_lt_top, fun p ↦ speaker_apply_univ_le_one α C (L p.2) p.1⟩⟩
+  ⟨⟨1, ENNReal.one_lt_top, fun p ↦ speaker_apply_univ_le_one α C (L p.2) Measure.dirac p.1⟩⟩
 
 /-- A member's positively produced utterance at a positive-prior state witnesses a positive
 observation marginal for the family speaker. -/
 theorem comp_familySpeaker_ne_zero {L : Λ → Kernel U W} {α : ℝ} {C : U → ℝ}
     {μ : Measure (W × Λ)} {w : W} {l : Λ} {u : U} (hμ : μ {(w, l)} ≠ 0)
-    (hs : speaker α C (L l) w {u} ≠ 0) : (familySpeaker L α C ∘ₘ μ) {u} ≠ 0 :=
+    (hs : speaker α C (L l) Measure.dirac w {u} ≠ 0) : (familySpeaker L α C ∘ₘ μ) {u} ≠ 0 :=
   comp_apply_singleton_ne_zero _ _ hμ (by rwa [familySpeaker_apply])
 
 end Family

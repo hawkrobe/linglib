@@ -207,7 +207,7 @@ def cost (k : ℝ) (u : Utt) : ℝ := if u.Complex then 2 * k else k
 /-- The speaker within an assumption set (6) is the best response at rationality `α` to the
 literal listener projected by the question, less the cost. -/
 noncomputable def S1 (α k : ℝ) (A : Finset World) (q : Question) : Kernel World Utt :=
-  speaker α (cost k) (L0 A q)
+  speaker α (cost k) (L0 A q) Measure.dirac
 
 variable (α k : ℝ)
 
@@ -215,7 +215,7 @@ variable (α k : ℝ)
 under either question, since they are equally informative and equally costly. -/
 theorem S1_knowNeg_eq_thinkNeg {A : Finset World} (hA : A ⊆ sem .cPos) (q : Question) (w : World) :
     S1 α k A q w {.knowNeg} = S1 α k A q w {.thinkNeg} := by
-  rw [S1, speaker_apply_singleton, speaker_apply_singleton, L0_knowNeg_eq_thinkNeg hA]
+  rw [S1, speaker_dirac_apply_singleton, speaker_dirac_apply_singleton, L0_knowNeg_eq_thinkNeg hA]
   rfl
 
 /-- Without assumptions, a speaker addressing the belief question at a world in which Cole does
@@ -226,7 +226,7 @@ theorem S1_univ_bel_knowNeg_lt_thinkNeg (hα : 0 < α) {w : World} (hb : w.belie
       (S1 α k Finset.univ .belief w).real {.thinkNeg} := by
   have hc : cost k .thinkNeg = 2 * k := ite_eq_left (by decide)
   have hc' : cost k .knowNeg = 2 * k := ite_eq_left (by decide)
-  rw [S1, speaker_real_singleton_lt_iff hα.le
+  rw [S1, speaker_dirac_real_singleton_lt_iff hα.le
       ⟨.thinkNeg, by rw [L0_univ_bel_thinkNeg hb]; exact one_ne_zero⟩, hc, hc',
     ENNReal.mul_lt_mul_iff_left (ENNReal.ofReal_pos.2 (Real.exp_pos _)).ne' ENNReal.ofReal_ne_top,
     L0_univ_bel_thinkNeg hb, L0_univ_bel_knowNeg hb, ENNReal.one_rpow, ← ENNReal.one_rpow α]
@@ -239,7 +239,7 @@ belief, as the question's cells do. -/
 theorem S1_bel_congr (A : Finset World) {w w' : World} (h : w.believes = w'.believes) :
     S1 α k A .belief w = S1 α k A .belief w' := by
   have hc : cell .belief w = cell .belief w' := by ext; simp [cell, Question.answer, h]
-  rw [S1, speaker_eq_ofWeights]
+  rw [S1, speaker_dirac_eq_ofWeights]
   exact Measure.ext_of_singleton λ u => by
     simp only [Kernel.ofWeights_apply_singleton, L0_apply, l0, hc]
 
@@ -288,7 +288,7 @@ theorem comp_ne_zero [IsFiniteMeasure μ] [IsFiniteMeasure ν] (hα : 0 ≤ α) 
   refine comp_familySpeaker_ne_zero (w := w) (l := A) ?_ ?_
   · rw [pairPrior_singleton, ite_eq_left hw]
     exact mul_ne_zero hμ hν
-  · refine speaker_apply_singleton_ne_zero hα ?_
+  · refine speaker_dirac_apply_singleton_ne_zero hα ?_
     rw [L0_apply, ne_eq, ENNReal.div_eq_zero_iff, not_or]
     refine ⟨Nat.cast_ne_zero.mpr (Finset.card_pos.mpr ⟨w, Finset.mem_filter.mpr
       ⟨Finset.mem_inter.mpr ⟨hw, hu⟩, ?_⟩⟩).ne', ENNReal.natCast_ne_top _⟩

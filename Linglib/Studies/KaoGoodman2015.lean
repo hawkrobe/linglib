@@ -116,12 +116,12 @@ theorem S1_apply_singleton_ne_zero_iff (hα : 0 < α) (q : QUD) (m : Meaning) (u
   constructor
   · intro h
     have hL : projListener project (L0 μ) q u {m} ≠ 0 := λ h' =>
-      h (speaker_apply_singleton_eq_zero hα h')
+      h (speaker_dirac_apply_singleton_eq_zero hα h')
     rw [projListener_apply_singleton_ne_zero_iff] at hL
     obtain ⟨m', hm', h0⟩ := hL
     exact ⟨m', hm', (L0_apply_singleton_ne_zero_iff μ u m').mp h0⟩
   · rintro ⟨m', hm', hu, hμ⟩
-    exact speaker_apply_singleton_ne_zero hα.le
+    exact speaker_dirac_apply_singleton_ne_zero hα.le
       ((projListener_apply_singleton_ne_zero_iff _ _ _ _ _).mpr
         ⟨m', hm', (L0_apply_singleton_ne_zero_iff μ u m').mpr ⟨hu, hμ⟩⟩)
 

@@ -184,11 +184,12 @@ noncomputable abbrev L0 (cg : Measure World) : Kernel Utterance World :=
   literalListener cg semSet
 
 /-- The pragmatic speaker, without softmax terms or costs (footnote 3). -/
-noncomputable abbrev S1 (cg : Measure World) : Kernel World Utterance := speaker 1 0 (L0 cg)
+noncomputable abbrev S1 (cg : Measure World) : Kernel World Utterance :=
+  speaker 1 0 (L0 cg) Measure.dirac
 
 /-- The pragmatic listener inverts the speaker against the common ground. -/
 noncomputable abbrev L1 (cg : Measure World) [IsFiniteMeasure cg] : Kernel Utterance World :=
-  pragmaticListener (speaker 1 0 (L0 cg)) cg
+  pragmaticListener (speaker 1 0 (L0 cg) Measure.dirac) cg
 
 /-- In one Figure-2 turn the listener's posterior is mixed into the common ground unless the
 speaker passed (§7.1.1). -/
@@ -209,7 +210,7 @@ theorem L0_apply_singleton_ne_zero {u : Utterance} {w : World} (hw : w ∈ sem u
 
 theorem S1_apply_singleton_ne_zero {u : Utterance} {w : World} (hw : w ∈ sem u)
     (hcg : cg {w} ≠ 0) : S1 cg w {u} ≠ 0 :=
-  speaker_apply_singleton_ne_zero zero_le_one (L0_apply_singleton_ne_zero hw hcg)
+  speaker_dirac_apply_singleton_ne_zero zero_le_one (L0_apply_singleton_ne_zero hw hcg)
 
 theorem comp_S1_ne_zero {u : Utterance} {w : World} (hw : w ∈ sem u) (hcg : cg {w} ≠ 0) :
     (S1 cg ∘ₘ cg) {u} ≠ 0 :=
@@ -219,7 +220,7 @@ theorem comp_S1_ne_zero {u : Utterance} {w : World} (hw : w ∈ sem u) (hcg : cg
 theorem L1_apply_singleton_eq_zero {u : Utterance} {w : World} (hw : w ∉ sem u)
     (hx : (S1 cg ∘ₘ cg) {u} ≠ 0) : L1 cg u {w} = 0 := by
   show ((S1 cg)†cg) u {w} = 0
-  rw [posterior_apply_singleton _ _ hx, speaker_apply_singleton_eq_zero one_pos
+  rw [posterior_apply_singleton _ _ hx, speaker_dirac_apply_singleton_eq_zero one_pos
     (literalListener_apply_singleton_of_notMem cg semSet (Finset.mem_coe.not.mpr hw))]
   simp
 
@@ -235,7 +236,7 @@ omit [IsFiniteMeasure cg] in
 /-- The speaker's real share of an utterance, as a ratio of literal-listener values. -/
 theorem S1_real_singleton (w : World) (u : Utterance) :
     (S1 cg w).real {u} = (L0 cg u {w}).toReal / ∑ u', (L0 cg u' {w}).toReal := by
-  rw [S1, speaker_zero_real_singleton zero_le_one]
+  rw [S1, speaker_dirac_zero_real_singleton zero_le_one]
   simp only [ENNReal.rpow_one]
 
 theorem L0_toReal {u : Utterance} {w : World} (hw : w ∈ sem u) :
@@ -359,7 +360,7 @@ theorem s1_prefers_new :
     (S1 μ .ina).real {.likeIndoors} < (S1 μ .ina).real {.studyScience} := by
   have hn : μ {.nancy} ≠ 0 := (zero_le.trans_lt hlt).ne'
   constructor
-  · rw [speaker_real_singleton_lt_iff (L := L0 μ) (w := .nancy) zero_le_one
+  · rw [speaker_dirac_real_singleton_lt_iff (L := L0 μ) (w := .nancy) zero_le_one
       ⟨.studyHumanity, L0_apply_singleton_ne_zero (cg := μ) (u := .studyHumanity) (w := .nancy)
         (by decide) hn⟩]
     simp only [ENNReal.rpow_one, Pi.zero_apply, mul_zero, neg_zero, Real.exp_zero,
@@ -372,7 +373,7 @@ theorem s1_prefers_new :
       show sem .studyHumanity = {.nancy, .sally} by decide, Finset.sum_pair (by decide),
       Finset.sum_pair (by decide), ← hik, ← hns, add_comm]
     exact ENNReal.add_lt_add_left (measure_ne_top μ _) hlt
-  · rw [speaker_real_singleton_lt_iff (L := L0 μ) (w := .ina) zero_le_one
+  · rw [speaker_dirac_real_singleton_lt_iff (L := L0 μ) (w := .ina) zero_le_one
       ⟨.studyScience, L0_apply_singleton_ne_zero (cg := μ) (u := .studyScience) (w := .ina)
         (by decide) hi⟩]
     simp only [ENNReal.rpow_one, Pi.zero_apply, mul_zero, neg_zero, Real.exp_zero,

@@ -286,9 +286,9 @@ variable (P : Measure State) (m : Meaning) (s : Setting)
 
 /-- The speaker of (3) is the softmax of the literal listener's log probability less the cost,
 scaled by the rationality. -/
-noncomputable def speaker : Kernel State Utterance := RSA.speaker s.α s.cost (L0 P m)
+noncomputable def speaker : Kernel State Utterance := RSA.speaker s.α s.cost (L0 P m) Measure.dirac
 
-instance : IsFiniteKernel (speaker P m s) := inferInstanceAs (IsFiniteKernel (RSA.speaker _ _ _))
+instance : IsFiniteKernel (speaker P m s) := inferInstanceAs (IsFiniteKernel (RSA.speaker _ _ _ _))
 
 theorem weight_ne_top (u : Utterance) (st : State) :
     L0 P m u {st} ^ s.α * ENNReal.ofReal (Real.exp (-(s.α * s.cost u))) ≠ ∞ :=
@@ -302,7 +302,7 @@ theorem weight_eq_zero {u : Utterance} {st : State} (h : m u st = 0) :
 /-- An utterance not holding at a state is never used there. -/
 theorem speaker_eq_zero {u : Utterance} {st : State} (h : m u st = 0) :
     speaker P m s st {u} = 0 :=
-  RSA.speaker_apply_singleton_eq_zero s.α_pos (L0_eq_zero P m h)
+  RSA.speaker_dirac_apply_singleton_eq_zero s.α_pos (L0_eq_zero P m h)
 
 theorem speaker_real_eq_zero {u : Utterance} {st : State} (h : m u st = 0) :
     (speaker P m s st).real {u} = 0 := by
@@ -324,7 +324,7 @@ theorem weight_toReal {u : Utterance} {st : State} (h : 0 < m u st) (hst : P {st
 /-- An utterance holding at a state is used there. -/
 theorem speaker_ne_zero {u : Utterance} {st : State} (h : 0 < m u st) (hst : P {st} ≠ 0) :
     speaker P m s st {u} ≠ 0 :=
-  RSA.speaker_apply_singleton_ne_zero s.α_pos.le (L0_ne_zero P m h hst)
+  RSA.speaker_dirac_apply_singleton_ne_zero s.α_pos.le (L0_ne_zero P m h hst)
 
 theorem speaker_real_pos {u : Utterance} {st : State} (h : 0 < m u st) (hst : P {st} ≠ 0) :
     0 < (speaker P m s st).real {u} :=
@@ -336,7 +336,7 @@ theorem speaker_real_lt_iff {u v : Utterance} {st : State} (hu : 0 < m u st) (hv
     (hst : P {st} ≠ 0) :
     (speaker P m s st).real {u} < (speaker P m s st).real {v} ↔
       Real.log (L0 P m u {st}).toReal - s.cost u < Real.log (L0 P m v {st}).toReal - s.cost v := by
-  rw [speaker, RSA.speaker_real_singleton_lt_iff s.α_pos.le ⟨u, L0_ne_zero P m hu hst⟩,
+  rw [speaker, RSA.speaker_dirac_real_singleton_lt_iff s.α_pos.le ⟨u, L0_ne_zero P m hu hst⟩,
     ← ENNReal.toReal_lt_toReal (weight_ne_top P m s u st) (weight_ne_top P m s v st),
     weight_toReal P m s hu hst, weight_toReal P m s hv hst, Real.exp_lt_exp,
     mul_lt_mul_iff_of_pos_left s.α_pos]
@@ -349,7 +349,7 @@ theorem speaker_real_of_pair (hm : ∀ u st, 0 ≤ m u st) {u v : Utterance} {st
     (speaker P m s st).real {u} =
       Real.sigmoid (s.α * ((Real.log (L0 P m u {st}).toReal - s.cost u) -
         (Real.log (L0 P m v {st}).toReal - s.cost v))) := by
-  rw [speaker, RSA.speaker_eq_ofWeights, Kernel.ofWeights_real_singleton_of_pair st huv
+  rw [speaker, RSA.speaker_dirac_eq_ofWeights, Kernel.ofWeights_real_singleton_of_pair st huv
       (λ x => weight_ne_top P m s x st) (λ x hx => hsupp x
         (lt_of_le_of_ne (hm x st) (Ne.symm (mt (weight_eq_zero P m s) hx)))),
     weight_toReal P m s hu hst, weight_toReal P m s hv hst, Real.exp_div_add_exp_eq_sigmoid]

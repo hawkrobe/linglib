@@ -149,7 +149,7 @@ theorem L0_apply [DiscreteMeasurableSpace W] :
     simp [l0, ite_eq_right h]
 
 /-- The speaker within a context set (3b), with no cost. -/
-noncomputable def speaker (α : ℝ) : Kernel W U := RSA.speaker α 0 (L0 P cell sem C q)
+noncomputable def speaker (α : ℝ) : Kernel W U := RSA.speaker α 0 (L0 P cell sem C q) Measure.dirac
 
 /-- The share of an utterance at a world within a context set, on reals. -/
 noncomputable def share (α : ℝ) : ℝ := (speaker P cell sem C q α w).real {u}
@@ -158,7 +158,7 @@ variable {P cell sem C q u w}
 
 theorem speaker_apply_singleton_ne_zero [DiscreteMeasurableSpace W] {α : ℝ} (hα : 0 < α)
     (h : w ∈ sem u) (hC : w ∈ C) (hP : P w ≠ 0) : speaker P cell sem C q α w {u} ≠ 0 :=
-  RSA.speaker_apply_singleton_ne_zero hα.le (by
+  RSA.speaker_dirac_apply_singleton_ne_zero hα.le (by
       rw [L0_apply, ne_eq, ENNReal.div_eq_zero_iff, not_or]
       refine ⟨?_, ENNReal.natCast_ne_top _⟩
       simp only [l0, ite_eq_left h, Nat.cast_eq_zero]
@@ -297,7 +297,7 @@ private theorem share_expand (C : Finset World) (q : QUD) (w : World) {α : ℝ}
         (((tbl .silence).1 / (tbl .silence).2) ^ α + ((tbl .us).1 / (tbl .us).2) ^ α
           + ((tbl .notUS).1 / (tbl .notUS).2) ^ α + ((tbl .gc).1 / (tbl .gc).2) ^ α
           + ((tbl .notGC).1 / (tbl .notGC).2) ^ α) := by
-  rw [share, speaker, speaker_zero_real_singleton hα.le, sum_utterance]
+  rw [share, speaker, speaker_dirac_zero_real_singleton hα.le, sum_utterance]
   simp only [L0_apply, htbl, toReal_frac_rpow]
 
 section Tables
@@ -691,7 +691,7 @@ private theorem share_other {α : ℝ} (hα : 0 < α) (u : HobbyUtterance) :
           + ((tblO .notRunner).1 / (tblO .notRunner).2) ^ α
           + ((tblO .athlete).1 / (tblO .athlete).2) ^ α
           + ((tblO .notAthlete).1 / (tblO .notAthlete).2) ^ α) := by
-  rw [share, speaker, speaker_zero_real_singleton hα.le, sum_hobbyUtterance]
+  rw [share, speaker, speaker_dirac_zero_real_singleton hα.le, sum_hobbyUtterance]
   simp only [L0_apply, l0_O, toReal_frac_rpow]
 
 /-- At the non-athlete world in the universe, *not an Olympic sprinter* is produced more often

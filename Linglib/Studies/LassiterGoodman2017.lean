@@ -106,7 +106,7 @@ variable (μ : Measure D) [IsProbabilityMeasure μ] (ν : Measure (D × D)) (α 
 and the degree has positive prior. -/
 theorem S1_apply_singleton_ne_zero_iff (hα : 0 < α) (d : D) (θ : D × D) (u : Utterance) :
     S1 μ α cost (d, θ) {u} ≠ 0 ↔ d ∈ sem θ u ∧ μ {d} ≠ 0 :=
-  speaker_literalListener_apply_singleton_ne_zero_iff hα cost μ (sem θ) u d
+  speaker_literalListener_dirac_apply_singleton_ne_zero_iff hα cost μ (sem θ) u d
 
 /-- An utterance true at a degree of positive prior under an assignment of positive prior has
 a positive marginal. -/

@@ -144,7 +144,7 @@ instance (xs xc : ℝ) : IsFiniteKernel (L0 xs xc) :=
   inferInstanceAs (IsFiniteKernel (gradedListener _ _))
 
 /-- The speaker, (3) and (4), with unit informativeness weight and no cost. -/
-noncomputable def S1 (xs xc : ℝ) : Kernel World Utterance := speaker 1 0 (L0 xs xc)
+noncomputable def S1 (xs xc : ℝ) : Kernel World Utterance := speaker 1 0 (L0 xs xc) Measure.dirac
 
 private theorem sum_world (f : World → ℝ) : ∑ w, f w = f .bigBlue + f .bigRed + f .smallBlue := by
   rw [show (Finset.univ : Finset World) = {.bigBlue, .bigRed, .smallBlue} from rfl,
@@ -162,7 +162,7 @@ under `u'`; the normalization cancels. -/
 theorem S1_real_lt_iff (w : World) (u u' : Utterance) (h : L0 xs xc u' {w} ≠ 0) :
     (S1 xs xc w).real {u} < (S1 xs xc w).real {u'} ↔ L0 xs xc u {w} < L0 xs xc u' {w} := by
   rw [S1]
-  refine (speaker_real_singleton_lt_iff (L := L0 xs xc) (w := w) zero_le_one ⟨u', h⟩).trans ?_
+  refine (speaker_dirac_real_singleton_lt_iff (L := L0 xs xc) (w := w) zero_le_one ⟨u', h⟩).trans ?_
   simp only [ENNReal.rpow_one, Pi.zero_apply, mul_zero, neg_zero, Real.exp_zero,
     ENNReal.ofReal_one, mul_one]
 
@@ -283,7 +283,7 @@ theorem boolean_no_preference :
   simp only [meaning, channel, Utterance.size, Utterance.color, World.big, World.blue,
     ↓reduceIte] at h1 h2
   norm_num at h1 h2
-  simp only [S1, measureReal_def, speaker_zero_apply_singleton, h1, h2]
+  simp only [S1, measureReal_def, speaker_dirac_zero_apply_singleton, h1, h2]
 
 end Overmodification
 
@@ -320,7 +320,7 @@ noncomputable def nomL0 : Kernel NomUtterance NomWorld :=
 instance : IsFiniteKernel (nomL0 typ) := inferInstanceAs (IsFiniteKernel (gradedListener _ _))
 
 /-- The nominal speaker with unit informativeness weight and no cost. -/
-noncomputable def nomS1 : Kernel NomWorld NomUtterance := speaker 1 0 (nomL0 typ)
+noncomputable def nomS1 : Kernel NomWorld NomUtterance := speaker 1 0 (nomL0 typ) Measure.dirac
 
 /-- The subordinate term is preferred to the basic-level one for the target exactly when it is
 the more informative about it, that is, when its typicality for the target relative to its
@@ -336,7 +336,7 @@ theorem subordinate_preferred_iff (hnn : ∀ u w, 0 ≤ typ u w) (hsub : 0 < typ
   have h2 := gradedListener_uniformOn_ofReal_apply_singleton typ .sub NomWorld.dalmatian
     (hnn .sub) (hsum _ hsub)
   rw [nomS1]
-  refine (speaker_real_singleton_lt_iff (L := nomL0 typ) (w := NomWorld.dalmatian) zero_le_one
+  refine (speaker_dirac_real_singleton_lt_iff (L := nomL0 typ) (w := NomWorld.dalmatian) zero_le_one
     ⟨.sub, ?_⟩).trans ?_
   · rw [nomL0, h2]
     exact (ENNReal.ofReal_pos.mpr (div_pos hsub (hsum _ hsub))).ne'

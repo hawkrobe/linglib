@@ -326,7 +326,7 @@ noncomputable def S1 : Kernel (World n × (Scope × QUD)) Utt :=
   familySpeaker (fun l ↦ projListener (project n) (L0 D n l.1) l.2) α 0
 
 theorem S1_apply (w : World n) (l : Scope × QUD) :
-    S1 D n α (w, l) = speaker α 0 (projListener (project n) (L0 D n l.1) l.2) w := rfl
+    S1 D n α (w, l) = speaker α 0 (projListener (project n) (L0 D n l.1) l.2) Measure.dirac w := rfl
 
 instance : IsFiniteKernel (S1 D n α) := inferInstanceAs (IsFiniteKernel (familySpeaker _ α 0))
 
@@ -334,7 +334,7 @@ theorem isMarkovKernel_S1 (hα : 0 ≤ α) : IsMarkovKernel (S1 D n α) := by
   refine ⟨fun p ↦ ?_⟩
   obtain ⟨w, l⟩ := p
   rw [S1_apply]
-  have := isMarkovKernel_speaker hα 0 (projListener (project n) (L0 D n l.1) l.2)
+  have := isMarkovKernel_speaker_dirac hα 0 (projListener (project n) (L0 D n l.1) l.2)
     (fun w ↦ ⟨.null, by
       rw [projListener_L0_apply, Ne, uniformOn_eq_zero_iff (Finset.finite_toSet _)]
       exact Set.nonempty_iff_ne_empty.mp
@@ -351,7 +351,7 @@ noncomputable def L1 : Kernel Utt (World n × (Scope × QUD)) :=
 
 /-- The endorsing speaker of §3.1 is, at the observed world, the best response at unit rationality
 to the world marginal of the pragmatic listener. -/
-noncomputable def S2 : Kernel (World n) Utt := speaker 1 0 (Kernel.fst (L1 D n α μ ν))
+noncomputable def S2 : Kernel (World n) Utt := speaker 1 0 (Kernel.fst (L1 D n α μ ν)) Measure.dirac
 
 /-- With as many horses as the numeral counts, the numeral model on the exact reading is the
 every-not model (§4.2.1). -/
@@ -401,14 +401,14 @@ private theorem sum_utt (f : Utt → ℝ) : ∑ u, f u = f .amb + f .null :=
 theorem share_eq (hα : 0 ≤ α) (l : Scope × QUD) (w : World n) :
     share D n α l w
       = cellMass D n l .amb w ^ α / (cellMass D n l .amb w ^ α + cellMass D n l .null w ^ α) := by
-  rw [share, S1_apply, speaker_zero_real_singleton hα, sum_utt]
+  rw [share, S1_apply, speaker_dirac_zero_real_singleton hα, sum_utt]
   simp only [cellMass, measureReal_def, ENNReal.toReal_rpow]
 
 theorem share_nonneg (l : Scope × QUD) (w : World n) : 0 ≤ share D n α l w := measureReal_nonneg
 
 theorem share_le_one (l : Scope × QUD) (w : World n) : share D n α l w ≤ 1 := by
   rw [share, S1_apply]
-  exact speaker_real_singleton_le_one _ _ _ _ _
+  exact speaker_real_singleton_le_one _ _ _ _ _ _
 
 theorem share_lt_one (hα : 0 ≤ α) (l : Scope × QUD) (w : World n) : share D n α l w < 1 := by
   rw [share_eq D n α hα]
@@ -631,7 +631,7 @@ theorem S2_real_amb (hα : 0 < α) {w : World n} (hμ : μ {w} ≠ 0)
         / (S1 D n α ∘ₘ μ.prod ν).real {.null} :=
     pragmaticListener_fst_real_singleton μ ν hZnull w
   rw [hnull, hZ] at hFnull
-  rw [S2, speaker_zero_real_singleton zero_le_one]
+  rw [S2, speaker_dirac_zero_real_singleton zero_le_one]
   simp only [ENNReal.rpow_one, ← measureReal_def]
   rw [sum_utt, hFamb, hFnull, endorse]
   have ha0 : 0 < a := ENNReal.toReal_pos hμ (measure_ne_top _ _)
@@ -704,7 +704,7 @@ alike at every world, since the sentence answers the question in the negative on
 (§3.2, §5.1). -/
 theorem S1_all_scope (hn : 0 < n) (w : World n) :
     S1 NumberTree.all n α (w, (.surface, .all)) = S1 NumberTree.all n α (w, (.inverse, .all)) := by
-  rw [S1_apply, S1_apply, speaker_eq_ofWeights, speaker_eq_ofWeights]
+  rw [S1_apply, S1_apply, speaker_dirac_eq_ofWeights, speaker_dirac_eq_ofWeights]
   have key : ∀ u, projListener (project n) (L0 NumberTree.all n .surface) .all u {w}
       = projListener (project n) (L0 NumberTree.all n .inverse) .all u {w} := by
     intro u

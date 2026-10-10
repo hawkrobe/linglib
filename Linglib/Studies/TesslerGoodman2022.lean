@@ -138,7 +138,7 @@ instance (classPrior : ComparisonClass → Measure X) (c : ComparisonClass) :
 /-- The speaker (3) has rationality `α`, equal costs, and knows the comparison class. -/
 noncomputable def S (α : ℝ) (classPrior : ComparisonClass → Measure X) (c : ComparisonClass) :
     Kernel X Utterance :=
-  speaker α 0 (L0 deg classPrior c)
+  speaker α 0 (L0 deg classPrior c) Measure.dirac
 
 /-- The pragmatic listener (1) is the joint posterior over the degree and the comparison class,
 at the kind's degree prior and a flat class prior. -/
@@ -257,7 +257,7 @@ theorem L0_short_real (hdeg : ∀ x, 0 < deg x ∧ deg x < 1) (c : ComparisonCla
 theorem S_tall_real (hα : 0 < α) (hdeg : ∀ x, 0 < deg x ∧ deg x < 1) (c : ComparisonClass)
     {x : X} (hx : classPrior c {x} ≠ 0) :
     (S deg α classPrior c x).real {.tall} = share α (deg x) (mean deg classPrior c) := by
-  rw [S, speaker_zero_real_singleton hα.le, sum_utterance]
+  rw [S, speaker_dirac_zero_real_singleton hα.le, sum_utterance]
   simp only [← ENNReal.toReal_rpow]
   rw [L0_silent_apply, ← measureReal_def, ← measureReal_def, ← measureReal_def,
     L0_tall_real deg classPrior hdeg, L0_short_real deg classPrior hdeg]
@@ -285,7 +285,7 @@ theorem S_short_real (hα : 0 < α) (hdeg : ∀ x, 0 < deg x ∧ deg x < 1) (c :
     {x : X} (hx : classPrior c {x} ≠ 0) :
     (S deg α classPrior c x).real {.short} =
       share α (1 - deg x) (1 - mean deg classPrior c) := by
-  rw [S, speaker_zero_real_singleton hα.le, sum_utterance]
+  rw [S, speaker_dirac_zero_real_singleton hα.le, sum_utterance]
   simp only [← ENNReal.toReal_rpow]
   rw [L0_silent_apply, ← measureReal_def, ← measureReal_def, ← measureReal_def,
     L0_tall_real deg classPrior hdeg, L0_short_real deg classPrior hdeg]
@@ -349,7 +349,7 @@ theorem comp_ne_zero [Nonempty X] (κ : Measure X) (hα : 0 < α)
     (familySpeaker (L0 deg classPrior) α 0 ∘ₘ κ.prod (uniformOn Set.univ)) {u} ≠ 0 := by
   obtain ⟨x⟩ := ‹Nonempty X›
   refine comp_familySpeaker_ne_zero (w := x) (l := .subordinate) ?_
-    (speaker_apply_singleton_ne_zero hα.le (L0_apply_ne_zero deg classPrior hdeg hsupp _ u x))
+    (speaker_dirac_apply_singleton_ne_zero hα.le (L0_apply_ne_zero deg classPrior hdeg hsupp _ u x))
   rw [← Set.singleton_prod_singleton, Measure.prod_prod]
   exact mul_ne_zero (hκ x) (uniformOn_univ_singleton_ne_zero _)
 
