@@ -2,29 +2,36 @@ module
 
 public import Linglib.Core.InformationTheory.KullbackLeibler.Finite
 public import Linglib.Core.MeasureTheory.Measure.AbsolutelyContinuous
-public import Linglib.Core.MeasureTheory.Measure.Real
 public import Linglib.Pragmatics.RSA.Belief
 public import Mathlib.Data.Nat.Dist
 public import Mathlib.Order.Interval.Finset.Nat
 
 /-!
-# Égré, Spector, Mortier and Verheyen (2023): On the Optimality of Vagueness
+# Égré, Spector, Mortier and Verheyen (2023): On the Optimality of Vagueness: "Around", "Between" and the Gricean Maxims
 
-This file formalizes Égré, Spector, Mortier and Verheyen's Bayesian account of the approximator
-"around n" and of why a partially informed speaker may prefer it to a precise "between a and b".
-"Around n" has an open radius: "x is around n" at radius `y` means `|n − x| ≤ y`. The listener's
-information state is a joint distribution over the value and the radius; accepting the sentence
-conditions it on that event and marginalizes the radius. The resulting Bayesian interpretation rule
-is the RSA literal listener at the graded meaning "the prior mass of the radii reaching x", its
-posterior under uniform priors is the triangle `(n − |n − k| + 1) / (n + 1)²`, and whatever the
-priors it raises the posterior odds of a closer value against a farther one above their prior odds,
-whereas "between" leaves the odds unchanged (the ratio inequality). The speaker chooses the message
-whose literal posterior is closest to her belief in Kullback–Leibler divergence, so the belief of
-Table 1, peaked at 4 with support `[1, 7]`, prefers "around 4" to "between 1 and 7"; the full model
-iterates score speakers and joint listeners from the literal listener. Appendix A's limitation of
-the lexical uncertainty model of Bergen, Levy and Goodman, that beliefs with the same support yield
-the same speaker at every level, is proved generically, and Appendix B's weighted interpretation
-rule is shown to be the Bayesian rule with the prior over radii in place of the posterior.
+Égré, Spector, Mortier and Verheyen give a Bayesian account of the approximator "around n" and of
+why a partially informed speaker may prefer it to a precise "between a and b". "Around n" has an
+open radius: "x is around n" at radius `y` means `|n − x| ≤ y`. The listener's information state
+is a joint distribution over the value and the radius, and accepting the sentence conditions it
+on that event and marginalizes the radius (`bir`). The speaker chooses the message whose literal
+posterior is closest to her belief in Kullback–Leibler divergence, and the full model iterates
+speakers and joint listeners from the literal listener (`listener`). Appendix A treats the
+lexical uncertainty model of Bergen, Levy and Goodman (`luSpeaker`), and Appendix B a weighted
+interpretation rule (`wir`).
+
+## Main statements
+
+* `bir_eq_gradedListener`, `bir_unif_apply_singleton`, `ratio_inequality`: the interpretation
+  rule is the literal listener at the graded meaning "the prior mass of the radii reaching x",
+  under uniform priors its posterior is the triangle `(n − |n − k| + 1) / (n + 1)²`, and whatever
+  the priors it raises the odds of a closer value against a farther one, where "between" leaves
+  them unchanged.
+* `table1_prefers_around`: with a belief peaked at 4 with support `[1, 7]` the speaker prefers
+  "around 4" to "between 1 and 7".
+* `luSpeaker_eq_of_sameSupport`: in the lexical uncertainty model, beliefs with the same support
+  yield the same speaker at every level.
+* `bir_eq_bind_radiusPosterior`, `wir_ne_bir`: the Bayesian rule is the weighted rule with the
+  posterior over radii in place of the prior, and the two rules differ.
 
 ## Implementation notes
 
@@ -33,18 +40,21 @@ rule is shown to be the Bayesian rule with the prior over radii in place of the 
   the nine values of §5–7. Priors are finite measures rather than probability measures: every
   stage renormalizes, so the uniform priors of §3.2.2 are the counting measures `unif` and the
   uniform prior on the nine values is `Measure.count`.
-* Speakers (11), (14) are `RSA.speaker` at a belief, which for probability beliefs is the softmax
-  of `−λ · D(belief ‖ listener)` (`RSA.speaker_eq_speakerOfScore_klDiv`). A message that excludes
-  a value the speaker deems possible has zero probability, footnote 17's Quality.
-  Pragmatic listeners are `Kernel.ofWeights` at the paper's proportionality equations; a message
-  no observation produces gets the zero measure, the `0 / 0` convention of footnote 28 that
-  Appendix A's induction relies on, and on messages heard with positive probability the
+* Speakers are `RSA.speaker` at a belief, which for probability beliefs is the softmax of
+  `−λ · D(belief ‖ listener)` (`RSA.speaker_eq_speakerOfScore_klDiv`). A message that excludes
+  a value the speaker deems possible has zero probability, footnote 17's Quality. In the full
+  model the belief is the joint prior conditioned on the observation and marginalized to the
+  value; in the lexical uncertainty model, whose speaker addresses the listener's joint state,
+  it is that conditioned prior itself.
+* Pragmatic listeners are graded listeners at the joint prior whose meaning is the speaker's
+  probability of the message. A message no observation produces gets the zero measure, the
+  `0 / 0` convention of footnote 28, and on messages heard with positive probability the
   listener is the posterior kernel (`jointListener_apply_eq_posterior`).
 * The lexical uncertainty model is stated over arbitrary finite types of worlds, observations,
-  interpretations and messages. Appendix A's core lemma is `jointUtility_eq_of_forall_log_eq`,
-  which splits the utility into a term depending on the observation alone and a term depending
-  on the message alone; translation invariance of the softmax is
-  `RSA.speakerOfScore_apply_eq_of_add`.
+  interpretations and messages. Appendix A's two steps are general:
+  `RSA.speaker_cond_literalListener_apply_eq`, that against a literal listener the speaker
+  depends on what she knows only through the messages it entails, and
+  `RSA.speaker_cond_gradedListener_apply_eq`, that the prior cancels against a reweighted prior.
 
 ## TODO
 
@@ -71,26 +81,26 @@ open scoped ENNReal
 
 section Around
 
-variable {X : Type*} [MeasurableSpace X] [Countable X] [MeasurableSingletonClass X]
+variable {X : Type*}
 
 /-- "x is around n" at radius `y` is `|n − x| ≤ y` (5), as an event over the joint state of value
 and radius; `d` is the distance to the target. -/
 def AroundEvent (d : X → ℕ) : Set (X × ℕ) := {p | d p.1 ≤ p.2}
 
-variable (μ : Measure X) (ν : Measure ℕ) (d : X → ℕ)
+/-- The graded meaning of "around" is the prior mass of the radii reaching the value. -/
+noncomputable def aroundWeight (ν : Measure ℕ) (d : X → ℕ) (x : X) : ℝ≥0∞ := ν (Set.Ici (d x))
+
+/-- The closer a value is to the target, the likelier "around" is true of it (§3.2.1). -/
+theorem aroundWeight_le_of_le (ν : Measure ℕ) (d : X → ℕ) {x x' : X} (h : d x ≤ d x') :
+    aroundWeight ν d x' ≤ aroundWeight ν d x :=
+  measure_mono (Set.Ici_subset_Ici.mpr h)
+
+variable [MeasurableSpace X] [Countable X] [MeasurableSingletonClass X] (μ : Measure X)
+  (ν : Measure ℕ) (d : X → ℕ)
 
 /-- The Bayesian interpretation rule (§3.2.1) conditions the joint prior over value and radius on
 the value being around the target and marginalizes to the value. -/
 noncomputable def bir : Measure X := ((μ.prod ν)[|AroundEvent d]).map Prod.fst
-
-/-- The graded meaning of "around" is the prior mass of the radii reaching the value. -/
-noncomputable def aroundWeight (x : X) : ℝ≥0∞ := ν (Set.Ici (d x))
-
-omit [MeasurableSpace X] [Countable X] [MeasurableSingletonClass X] in
-/-- The closer a value is to the target, the likelier "around" is true of it (§3.2.1). -/
-theorem aroundWeight_le_of_le {x x' : X} (h : d x ≤ d x') :
-    aroundWeight ν d x' ≤ aroundWeight ν d x :=
-  measure_mono (Set.Ici_subset_Ici.mpr h)
 
 variable [SFinite ν]
 
@@ -121,7 +131,7 @@ meaning, `P(x = k | around n) ∝ P(x = k) · P(y ≥ |n − k|)`. -/
 theorem bir_eq_gradedListener {U : Type*} [MeasurableSpace U] [Countable U]
     [MeasurableSingletonClass U] {m : U → X → ℝ≥0∞} {u : U} (hm : m u = aroundWeight ν d) :
     bir μ ν d = RSA.gradedListener μ m u :=
-  Measure.ext_of_singleton λ x => by
+  Measure.ext_of_singleton fun x ↦ by
     rw [bir_apply_singleton, RSA.gradedListener_apply_singleton', hm, mul_comm]
 
 end Around
@@ -139,13 +149,13 @@ theorem unif_apply_singleton (N k : ℕ) : unif N {k} = if k ≤ N then 1 else 0
 theorem unif_apply_Ici (N d : ℕ) : unif N (Set.Ici d) = (N + 1 - d : ℕ) := by
   simp only [unif, Measure.finsetSum_apply, Measure.dirac_apply, Set.indicator_apply, Set.mem_Ici,
     Pi.one_apply, Finset.sum_boole]
-  rw [show (Finset.range (N + 1)).filter (λ i => d ≤ i) = Finset.Ico d (N + 1) from by
+  rw [show (Finset.range (N + 1)).filter (fun i ↦ d ≤ i) = Finset.Ico d (N + 1) from by
     ext i; simp only [Finset.mem_filter, Finset.mem_range, Finset.mem_Ico]; omega, Nat.card_Ico]
 
 theorem unif_apply_Icc {N a b : ℕ} (hb : b ≤ N) : unif N (Set.Icc a b) = (b + 1 - a : ℕ) := by
   simp only [unif, Measure.finsetSum_apply, Measure.dirac_apply, Set.indicator_apply, Set.mem_Icc,
     Pi.one_apply, Finset.sum_boole]
-  rw [show (Finset.range (N + 1)).filter (λ i => a ≤ i ∧ i ≤ b) = Finset.Icc a b from by
+  rw [show (Finset.range (N + 1)).filter (fun i ↦ a ≤ i ∧ i ≤ b) = Finset.Icc a b from by
     ext i; simp only [Finset.mem_filter, Finset.mem_range, Finset.mem_Icc]; omega, Nat.card_Icc]
 
 theorem lintegral_unif (N : ℕ) (f : ℕ → ℝ≥0∞) :
@@ -164,7 +174,7 @@ theorem sum_range_sub_dist (n : ℕ) :
   | succ n ih =>
     have hsum : ∑ k ∈ Finset.range (2 * n + 1), (n + 1 + 1 - Nat.dist (n + 1) (k + 1)) =
         ∑ k ∈ Finset.range (2 * n + 1), (n + 1 - Nat.dist n k) + (2 * n + 1) := by
-      rw [Finset.sum_congr rfl (g := λ k => (n + 1 - Nat.dist n k) + 1) λ k hk => ?_,
+      rw [Finset.sum_congr rfl (g := fun k ↦ (n + 1 - Nat.dist n k) + 1) fun k hk ↦ ?_,
         Finset.sum_add_distrib, Finset.sum_const, Finset.card_range, smul_eq_mul, mul_one]
       rw [Nat.dist_add_add_right]
       have := Finset.mem_range.mp hk
@@ -208,7 +218,7 @@ noncomputable def betweenMeaning (p : ℕ × ℕ) : ℕ → ℝ≥0∞ := (Set.I
 
 /-- "Between" is crisp, so its graded literal listener conditions on the interval. -/
 theorem gradedListener_betweenMeaning (μ : Measure ℕ) :
-    RSA.gradedListener μ betweenMeaning = RSA.literalListener μ (λ p : ℕ × ℕ => Set.Icc p.1 p.2) :=
+    RSA.gradedListener μ betweenMeaning = RSA.literalListener μ (fun p : ℕ × ℕ ↦ Set.Icc p.1 p.2) :=
   RSA.gradedListener_indicator μ _
 
 /-- Under a uniform prior "between" gives the step function uniform on its interval and zero
@@ -219,10 +229,10 @@ theorem literalListener_unif_betweenMeaning {N a b : ℕ} (hb : b ≤ N) (k : �
   rw [gradedListener_betweenMeaning]
   split_ifs with h
   · refine (RSA.literalListener_apply_singleton (unif N)
-      (λ p : ℕ × ℕ => Set.Icc p.1 p.2) h).trans ?_
+      (fun p : ℕ × ℕ ↦ Set.Icc p.1 p.2) h).trans ?_
     rw [unif_apply_Icc hb, unif_apply_singleton, ite_eq_left (h.2.trans hb), mul_one]
   · exact RSA.literalListener_apply_singleton_of_notMem _
-      (λ p : ℕ × ℕ => Set.Icc p.1 p.2) h
+      (fun p : ℕ × ℕ ↦ Set.Icc p.1 p.2) h
 
 /-! ### The ratio inequality (§4) -/
 
@@ -232,7 +242,7 @@ variable {μ : Measure ℕ} [IsFiniteMeasure μ] {ν : Measure ℕ} [IsFiniteMea
 
 theorem lintegral_aroundWeight_ne_top : ∫⁻ x, aroundWeight ν (Nat.dist n) x ∂μ ≠ ∞ :=
   ne_top_of_le_ne_top (ENNReal.mul_ne_top (measure_ne_top ν _) (measure_ne_top μ _))
-    ((lintegral_mono λ _ => measure_mono (Set.subset_univ _)).trans (lintegral_const _).le)
+    ((lintegral_mono fun _ ↦ measure_mono (Set.subset_univ _)).trans (lintegral_const _).le)
 
 /-- For `k₁ < k₂`, hearing "around n" raises the odds of `n − k₁` against `n − k₂` above their
 prior odds, whatever the priors, as soon as the radii between `k₁` and `k₂` have positive prior
@@ -252,7 +262,7 @@ theorem ratio_inequality {k₁ k₂ : ℕ} (h : k₁ < k₂) (hk : k₂ ≤ n) (
     exact ENNReal.mul_pos hν₂ hμ₂
   have hw : (ν (Set.Ici k₂)).toReal < (ν (Set.Ici k₁)).toReal := by
     rw [← Set.Ico_union_Ici_eq_Ici h.le, measure_union (s₁ := Set.Ico k₁ k₂) (s₂ := Set.Ici k₂)
-      (Set.disjoint_left.mpr λ x hx hx' => (Set.mem_Ico.mp hx).2.not_ge (Set.mem_Ici.mp hx'))
+      (Set.disjoint_left.mpr fun x hx hx' ↦ (Set.mem_Ico.mp hx).2.not_ge (Set.mem_Ici.mp hx'))
       .of_discrete, ENNReal.toReal_add (measure_ne_top _ _) (measure_ne_top _ _)]
     exact lt_add_of_pos_left _ (ENNReal.toReal_pos hν (measure_ne_top _ _))
   have h₁ := ENNReal.toReal_pos hμ₁ (measure_ne_top μ _)
@@ -270,9 +280,9 @@ theorem between_ratio {a b k₁ k₂ : ℕ} (hk₁ : k₁ ∈ Set.Icc a b) (hk�
     (RSA.gradedListener μ betweenMeaning (a, b)).real {k₁} /
         (RSA.gradedListener μ betweenMeaning (a, b)).real {k₂} =
       μ.real {k₁} / μ.real {k₂} := by
-  have h₁ := RSA.literalListener_apply_singleton μ (λ p : ℕ × ℕ => Set.Icc p.1 p.2)
+  have h₁ := RSA.literalListener_apply_singleton μ (fun p : ℕ × ℕ ↦ Set.Icc p.1 p.2)
     (u := (a, b)) hk₁
-  have h₂ := RSA.literalListener_apply_singleton μ (λ p : ℕ × ℕ => Set.Icc p.1 p.2)
+  have h₂ := RSA.literalListener_apply_singleton μ (fun p : ℕ × ℕ ↦ Set.Icc p.1 p.2)
     (u := (a, b)) hk₂
   rw [gradedListener_betweenMeaning, measureReal_def, measureReal_def, h₁, h₂, ENNReal.toReal_mul,
     ENNReal.toReal_mul, mul_div_mul_left _ _ (ENNReal.toReal_ne_zero.mpr
@@ -289,8 +299,7 @@ inductive Msg
   deriving DecidableEq, Fintype
 
 instance : MeasurableSpace Msg := ⊤
-instance : DiscreteMeasurableSpace Msg := ⟨λ _ => MeasurableSpace.measurableSet_top⟩
-instance : MeasurableSingletonClass Msg := DiscreteMeasurableSpace.toMeasurableSingletonClass
+instance : DiscreteMeasurableSpace Msg := ⟨fun _ ↦ trivial⟩
 
 /-- The graded meaning (12) gives crisp intervals for "between" and "exactly", and the
 radius-marginal weight of "around 4" at the radius prior `ν`. -/
@@ -300,7 +309,7 @@ noncomputable def Msg.meaning (ν : Measure ℕ) : Msg → Fin 9 → ℝ≥0∞
   | .between2_6 => (Set.Icc 2 6).indicator 1
   | .between3_5 => (Set.Icc 3 5).indicator 1
   | .exactly4 => ({4} : Set (Fin 9)).indicator 1
-  | .around4 => aroundWeight ν λ x => Nat.dist 4 x
+  | .around4 => aroundWeight ν fun x ↦ Nat.dist 4 x
 
 /-- The radius prior of §7.2 is uniform on `[0, 4]`. -/
 noncomputable def radiusPrior : Measure ℕ := unif 4
@@ -313,7 +322,7 @@ instance (m : Msg) : IsZeroOrProbabilityMeasure (L0 m) :=
   inferInstanceAs (IsZeroOrProbabilityMeasure (RSA.gradedListener _ _ m))
 
 /-- The "around 4" column is the Bayesian interpretation rule. -/
-theorem L0_around4 : L0 .around4 = bir Measure.count radiusPrior (λ x : Fin 9 => Nat.dist 4 x) :=
+theorem L0_around4 : L0 .around4 = bir Measure.count radiusPrior (fun x : Fin 9 ↦ Nat.dist 4 x) :=
   (bir_eq_gradedListener _ _ _ rfl).symm
 
 theorem meaning_around4 (y : Fin 9) :
@@ -331,28 +340,28 @@ theorem L0_around4_apply_singleton (x : Fin 9) :
 theorem L0_between1_7_apply_singleton (x : Fin 9) :
     L0 .between1_7 {x} = if x ∈ Set.Icc 1 7 then 7⁻¹ else 0 := by
   have h : L0 .between1_7 =
-      RSA.literalListener Measure.count (λ _ : Msg => Set.Icc (1 : Fin 9) 7) .between1_7 := by
+      RSA.literalListener Measure.count (fun _ : Msg ↦ Set.Icc (1 : Fin 9) 7) .between1_7 := by
     rw [← RSA.gradedListener_indicator]; rfl
   rw [h]
   split_ifs with hx
   · rw [RSA.literalListener_apply_singleton Measure.count
-      (λ _ : Msg => Set.Icc (1 : Fin 9) 7) hx, Measure.count_singleton, mul_one, ← Finset.coe_Icc,
+      (fun _ : Msg ↦ Set.Icc (1 : Fin 9) 7) hx, Measure.count_singleton, mul_one, ← Finset.coe_Icc,
       Measure.count_apply_finset, show (Finset.Icc (1 : Fin 9) 7).card = 7 by decide]
     rfl
   · exact RSA.literalListener_apply_singleton_of_notMem Measure.count
-      (λ _ : Msg => Set.Icc (1 : Fin 9) 7) hx
+      (fun _ : Msg ↦ Set.Icc (1 : Fin 9) 7) hx
 
 theorem L0_exactly4_apply_singleton (x : Fin 9) : L0 .exactly4 {x} = if x = 4 then 1 else 0 := by
   have h : L0 .exactly4 =
-      RSA.literalListener Measure.count (λ _ : Msg => ({4} : Set (Fin 9))) .exactly4 := by
+      RSA.literalListener Measure.count (fun _ : Msg ↦ ({4} : Set (Fin 9))) .exactly4 := by
     rw [← RSA.gradedListener_indicator]; rfl
   rw [h]
   split_ifs with hx
   · rw [RSA.literalListener_apply_singleton Measure.count
-      (λ _ : Msg => ({4} : Set (Fin 9))) (Set.mem_singleton_iff.mpr hx), Measure.count_singleton,
+      (fun _ : Msg ↦ ({4} : Set (Fin 9))) (Set.mem_singleton_iff.mpr hx), Measure.count_singleton,
       Measure.count_singleton, inv_one, mul_one]
   · exact RSA.literalListener_apply_singleton_of_notMem Measure.count
-      (λ _ : Msg => ({4} : Set (Fin 9))) (λ h => hx (Set.mem_singleton_iff.mp h))
+      (fun _ : Msg ↦ ({4} : Set (Fin 9))) (fun h ↦ hx (Set.mem_singleton_iff.mp h))
 
 /-- The speaker's belief of Table 1 has these weights, peaked at 4 with support `[1, 7]`. -/
 def table1Weight : Fin 9 → ℕ := ![0, 1, 1, 16, 64, 16, 1, 1, 0]
@@ -411,7 +420,7 @@ theorem L0_between1_7_real_singleton (x : Fin 9) :
 
 /-- "Around 4" excludes no value, so Quality holds for every belief. -/
 theorem table1_ac_around4 : table1 ≪ L0 .around4 :=
-  Measure.absolutelyContinuous_of_forall_singleton λ x hx => by
+  Measure.absolutelyContinuous_of_forall_singleton fun x hx ↦ by
     rw [L0_around4_apply_singleton] at hx
     rcases ENNReal.div_eq_zero_iff.mp hx with h | h
     · exact absurd (Nat.cast_eq_zero.mp h) (by have := x.isLt; unfold Nat.dist; omega)
@@ -419,7 +428,7 @@ theorem table1_ac_around4 : table1 ≪ L0 .around4 :=
 
 /-- "Between 1 and 7" excludes only values the belief of Table 1 excludes. -/
 theorem table1_ac_between1_7 : table1 ≪ L0 .between1_7 :=
-  Measure.absolutelyContinuous_of_forall_singleton λ x hx => by
+  Measure.absolutelyContinuous_of_forall_singleton fun x hx ↦ by
     rw [L0_between1_7_apply_singleton] at hx
     rw [table1_apply_singleton]
     fin_cases x <;> simp_all +decide [table1Weight]
@@ -427,8 +436,8 @@ theorem table1_ac_between1_7 : table1 ≪ L0 .between1_7 :=
 /-- "Exactly 4" excludes values the belief of Table 1 leaves possible, so the speaker never uses
 it (footnote 17). -/
 theorem table1_speaker_exactly4 {lam : ℝ} (hlam : 0 < lam) :
-    RSA.speaker lam 0 L0 (λ _ : Unit => table1) () {.exactly4} = 0 :=
-  (RSA.speaker_apply_singleton_eq_zero_iff_not_ac hlam).2 λ h => by
+    RSA.speaker lam 0 L0 (fun _ : Unit ↦ table1) () {.exactly4} = 0 :=
+  (RSA.speaker_apply_singleton_eq_zero_iff_not_ac hlam).2 fun h ↦ by
     have h3 := h (show L0 .exactly4 {3} = 0 by
       rw [L0_exactly4_apply_singleton, ite_eq_right (by decide)])
     rw [table1_apply_singleton] at h3
@@ -438,8 +447,8 @@ theorem table1_speaker_exactly4 {lam : ℝ} (hlam : 0 < lam) :
 every rationality she uses it more than "between 1 and 7", the triangular posterior being closer
 to her belief than the flat one. -/
 theorem table1_prefers_around {lam : ℝ} (hlam : 0 < lam) :
-    (RSA.speaker lam 0 L0 (λ _ : Unit => table1) ()).real {.between1_7} <
-      (RSA.speaker lam 0 L0 (λ _ : Unit => table1) ()).real {.around4} := by
+    (RSA.speaker lam 0 L0 (fun _ : Unit ↦ table1) ()).real {.between1_7} <
+      (RSA.speaker lam 0 L0 (fun _ : Unit ↦ table1) ()).real {.around4} := by
   rw [RSA.speaker_zero_real_singleton_lt_iff_klDiv hlam
       ⟨.around4, klDiv_ne_top table1_ac_around4 .of_finite⟩,
     ← ENNReal.toReal_lt_toReal (klDiv_ne_top table1_ac_around4 .of_finite)
@@ -487,13 +496,13 @@ variable [Fintype X] [MeasurableSingletonClass X] [Fintype M] [MeasurableSinglet
 
 /-- The literal listener over value and observation (12) reweights the joint prior by the
 meaning, which constrains the value alone. -/
-noncomputable def jointL0 : Kernel M (X × O) := RSA.gradedListener P λ m p => meaning m p.1
+noncomputable def jointL0 : Kernel M (X × O) := RSA.gradedListener P fun m p ↦ meaning m p.1
 
 /-- The value-marginal of the joint literal listener is the literal listener on the
 value-marginal prior, so eq. (BIR) is recovered inside the full model (footnote 23). -/
 theorem jointL0_map_fst (m : M) :
     (jointL0 P meaning m).map Prod.fst = RSA.gradedListener (P.map Prod.fst) meaning m :=
-  RSA.gradedListener_map_fst P meaning (λ _ => measurable_of_countable _) m
+  RSA.gradedListener_map_fst P meaning (fun _ ↦ measurable_of_countable _) m
 
 variable [Fintype O] [MeasurableSingletonClass O] [IsFiniteMeasure P] (lam : ℝ)
 
@@ -505,7 +514,7 @@ noncomputable def jointSpeaker (L : Kernel M (X × O)) : Kernel O M :=
 /-- The pragmatic listener answering a speaker, (15) and (17), reweights the joint prior by the
 speaker's probability of the message given the observation. -/
 noncomputable def jointListener (S : Kernel O M) : Kernel M (X × O) :=
-  Kernel.ofWeights λ m p => P {p} * S p.2 {m}
+  RSA.gradedListener P fun m p ↦ S p.2 {m}
 
 /-- In the recursion (16)–(17), `listener n` is the paper's `Lⁿ`, and
 `jointSpeaker P lam (listener n)` its `Sⁿ⁺¹`. -/
@@ -520,10 +529,10 @@ theorem jointListener_apply_eq_posterior [StandardBorelSpace (X × O)] [Nonempty
     (hm : ((S.comap Prod.snd (measurable_snd : Measurable (Prod.snd : X × O → O))) ∘ₘ P) {m} ≠ 0) :
     jointListener P S m =
       ((S.comap Prod.snd (measurable_snd : Measurable (Prod.snd : X × O → O)))†P) m :=
-  Measure.ext_of_singleton λ p => by
-    rw [jointListener, Kernel.ofWeights_apply_singleton, posterior_apply_singleton _ _ hm,
+  Measure.ext_of_singleton fun p ↦ by
+    rw [jointListener, RSA.gradedListener_apply_singleton, posterior_apply_singleton _ _ hm,
       Measure.comp_apply_singleton]
-    simp only [Kernel.comap_apply]
+    simp only [Kernel.comap_apply, mul_comm]
 
 end Recursion
 
@@ -545,209 +554,89 @@ def Quality (o : O) (i : I) (m : M) : Prop := ∀ w, P {(w, o)} ≠ 0 → w ∈ 
 /-- Quality is a property of the support (A-1). -/
 theorem quality_iff_of_sameSupport {o₁ o₂ : O} (hs : SameSupport P o₁ o₂) {i : I} {m : M} :
     Quality P sem o₁ i m ↔ Quality P sem o₂ i m :=
-  forall_congr' λ w => imp_congr_left (not_congr (hs w))
+  forall_congr' fun w ↦ imp_congr_left (not_congr (hs w))
 
-variable [Fintype W] [Fintype O] [Fintype I] [Fintype M] [MeasurableSpace I] [MeasurableSpace M]
-  [MeasurableSingletonClass W] [MeasurableSingletonClass O] [MeasurableSingletonClass I]
-  [MeasurableSingletonClass M] [IsFiniteMeasure P] (cost : M → ℝ)
+variable [Fintype W] [Fintype O]
 
-/-- The joint-cell utility of [bergen-levy-goodman-2016] (A.1, eqs. 2 and 5) is the expected log
-of the listener's joint cell under the speaker's belief, less the message cost. -/
-noncomputable def jointUtility (L : Kernel M (W × O)) (o : O) (m : M) : EReal :=
-  ∑ w, ((belief P o).real {w} : EReal) * ENNReal.log (L m {(w, o)}) - cost m
+/-- Quality is almost-sure entailment of the message by the observation. -/
+theorem snd_preimage_ae_le_iff_quality {o : O} {i : I} {m : M} :
+    Prod.snd ⁻¹' {o} ≤ᵐ[P] sem i m ×ˢ Set.univ ↔ Quality P sem o i m := by
+  refine ae_iff_of_countable.trans ⟨fun h w hw ↦ (h (w, o) hw rfl).1, ?_⟩
+  rintro h ⟨w, o'⟩ hp hpo
+  obtain rfl : o' = o := hpo
+  exact ⟨h w hp, Set.mem_univ _⟩
 
-/-- The observation's contribution `∑_w P(w | o) log P(w, o)`, the constant of (A-6). -/
-noncomputable def surprisalTerm (o : O) : ℝ :=
-  ∑ w, (belief P o).real {w} * Real.log (P.real {(w, o)})
+variable [Fintype M] [MeasurableSpace M] [MeasurableSingletonClass W]
+  [MeasurableSingletonClass O] [MeasurableSingletonClass M] [IsFiniteMeasure P] (cost : M → ℝ)
+  (lam : ℝ)
 
-omit [Fintype W] [Fintype O] [MeasurableSingletonClass O] [IsFiniteMeasure P] in
-theorem belief_real_singleton_eq_zero {o : O} {w : W} (h : P {(w, o)} = 0) :
-    (belief P o).real {w} = 0 := by
-  rw [measureReal_def, belief_apply_singleton, h, ENNReal.zero_div, ENNReal.toReal_zero]
+/-- The level-1 speaker (eq. 3), relativized to an interpretation, answers the literal listener
+(A.1, eq. 1), who conditions the joint prior on the message's extension under the interpretation.
+After an observation she believes the joint prior conditioned on it, so her utility (A.1, eqs. 2
+and 5) is the expected log of the listener's joint cell under her belief, less the message
+cost. -/
+noncomputable def luS1 (i : I) : Kernel O M :=
+  RSA.speaker lam cost (RSA.literalListener P fun m ↦ sem i m ×ˢ Set.univ) fun o ↦
+    P[|Prod.snd ⁻¹' {o}]
 
-omit [Fintype W] [Fintype O] [MeasurableSingletonClass O] in
-theorem belief_real_singleton_pos {o : O} (ho : P (Prod.snd ⁻¹' {o}) ≠ 0) {w : W}
-    (h : P {(w, o)} ≠ 0) : 0 < (belief P o).real {w} := by
-  rw [measureReal_def, belief_apply_singleton]
-  exact ENNReal.toReal_pos (ENNReal.div_ne_zero.mpr ⟨h, measure_ne_top _ _⟩)
-    (ENNReal.div_ne_top (measure_ne_top _ _) ho)
-
-private theorem coe_sum {ι : Type*} (s : Finset ι) (f : ι → ℝ) :
-    ((∑ i ∈ s, f i : ℝ) : EReal) = ∑ i ∈ s, (f i : EReal) :=
-  map_sum (⟨⟨((↑) : ℝ → EReal), EReal.coe_zero⟩, EReal.coe_add⟩ : ℝ →+ EReal) f s
-
-private theorem sum_mul_of_nonneg {ι : Type*} (s : Finset ι) (f : ι → EReal)
-    (hf : ∀ i ∈ s, 0 ≤ f i) (t : EReal) : ∑ i ∈ s, f i * t = (∑ i ∈ s, f i) * t := by
-  induction s using Finset.cons_induction with
-  | empty => simp
-  | cons a s ha ih =>
-    rw [Finset.sum_cons, Finset.sum_cons, ih λ i hi => hf i (Finset.mem_cons_of_mem hi),
-      EReal.right_distrib_of_nonneg (hf a (Finset.mem_cons_self _ _))
-        (Finset.sum_nonneg λ i hi => hf i (Finset.mem_cons_of_mem hi))]
-
-omit [Fintype O] [MeasurableSingletonClass O] [Fintype M] [MeasurableSingletonClass M] in
-/-- When, on the belief's support, the log of the listener's cell is the log of the prior cell
-plus a term `t` independent of the world, the utility is the observation's surprisal term plus
-`t` minus the cost, the core lemma of (A-6), (A-9) and (A-10). -/
-theorem jointUtility_eq_of_forall_log_eq {L : Kernel M (W × O)} {o : O}
-    (ho : P (Prod.snd ⁻¹' {o}) ≠ 0) {m : M} {t : EReal}
-    (h : ∀ w, P {(w, o)} ≠ 0 →
-      ENNReal.log (L m {(w, o)}) = ENNReal.log (P {(w, o)}) + t) :
-    jointUtility P cost L o m = surprisalTerm P o + t - cost m := by
-  have hsum : ∑ w, ((belief P o).real {w} : EReal) * ENNReal.log (L m {(w, o)}) =
-      ∑ w, ((belief P o).real {w} : EReal) * ENNReal.log (P {(w, o)}) +
-        ∑ w, ((belief P o).real {w} : EReal) * t := by
-    rw [← Finset.sum_add_distrib]
-    refine Finset.sum_congr rfl λ w _ => ?_
-    by_cases hw : P {(w, o)} = 0
-    · rw [belief_real_singleton_eq_zero P hw, EReal.coe_zero, EReal.zero_mul, EReal.zero_mul,
-        EReal.zero_mul, add_zero]
-    · rw [h w hw, EReal.left_distrib_of_nonneg_of_ne_top (EReal.coe_nonneg.mpr measureReal_nonneg)
-        (EReal.coe_ne_top _)]
-  have hone : ∑ w, ((belief P o).real {w} : EReal) = 1 := by
-    have := isProbabilityMeasure_belief P ho
-    rw [← coe_sum, sum_measureReal_singleton_eq_one, EReal.coe_one]
-  have hE : ∑ w, ((belief P o).real {w} : EReal) * ENNReal.log (P {(w, o)}) =
-      (surprisalTerm P o : EReal) := by
-    rw [surprisalTerm, coe_sum]
-    refine Finset.sum_congr rfl λ w _ => ?_
-    by_cases hw : P {(w, o)} = 0
-    · simp [belief_real_singleton_eq_zero P hw]
-    · rw [ENNReal.log_pos_real hw (measure_ne_top _ _), ← measureReal_def, ← EReal.coe_mul]
-  rw [jointUtility, hsum, sum_mul_of_nonneg _ _ (λ w _ => EReal.coe_nonneg.mpr measureReal_nonneg),
-    hone, one_mul, hE]
-
-omit [Fintype O] [MeasurableSingletonClass O] [Fintype M] [MeasurableSingletonClass M] in
-/-- On two observations whose listener cells carry the same world-independent term, the
-utilities differ by a constant independent of the message ((A-6), (A-9), (A-10)). -/
-theorem jointUtility_eq_add {L : Kernel M (W × O)} {o₁ o₂ : O} (ho₁ : P (Prod.snd ⁻¹' {o₁}) ≠ 0)
-    (ho₂ : P (Prod.snd ⁻¹' {o₂}) ≠ 0) {m : M} {t : EReal}
-    (h₁ : ∀ w, P {(w, o₁)} ≠ 0 → ENNReal.log (L m {(w, o₁)}) = ENNReal.log (P {(w, o₁)}) + t)
-    (h₂ : ∀ w, P {(w, o₂)} ≠ 0 → ENNReal.log (L m {(w, o₂)}) = ENNReal.log (P {(w, o₂)}) + t) :
-    jointUtility P cost L o₂ m =
-      jointUtility P cost L o₁ m + ((surprisalTerm P o₂ - surprisalTerm P o₁ : ℝ) : EReal) := by
-  rw [jointUtility_eq_of_forall_log_eq P cost ho₁ h₁,
-    jointUtility_eq_of_forall_log_eq P cost ho₂ h₂]
-  induction t using EReal.rec with
-  | bot => simp
-  | coe r => norm_cast; ring
-  | top => simp only [EReal.coe_add_top, EReal.top_sub_coe, EReal.top_add_coe]
-
-/-- Observations whose listener cells carry the same world-independent terms have the same
-speaker row, translation invariance (A-5) at the utility. -/
-theorem speakerOfScore_jointUtility_eq {lam : ℝ} (hlam : 0 ≤ lam) {L : Kernel M (W × O)}
-    {o₁ o₂ : O} (ho₁ : P (Prod.snd ⁻¹' {o₁}) ≠ 0) (ho₂ : P (Prod.snd ⁻¹' {o₂}) ≠ 0) (t : M → EReal)
-    (h₁ : ∀ m w, P {(w, o₁)} ≠ 0 →
-      ENNReal.log (L m {(w, o₁)}) = ENNReal.log (P {(w, o₁)}) + t m)
-    (h₂ : ∀ m w, P {(w, o₂)} ≠ 0 →
-      ENNReal.log (L m {(w, o₂)}) = ENNReal.log (P {(w, o₂)}) + t m) :
-    RSA.speakerOfScore (λ o m => (lam : EReal) * jointUtility P cost L o m) o₂ =
-      RSA.speakerOfScore (λ o m => (lam : EReal) * jointUtility P cost L o m) o₁ :=
-  RSA.speakerOfScore_apply_eq_of_add (k := lam * (surprisalTerm P o₂ - surprisalTerm P o₁))
-    λ m => by
-      rw [jointUtility_eq_add P cost ho₁ ho₂ (h₁ m) (h₂ m),
-        EReal.left_distrib_of_nonneg_of_ne_top (EReal.coe_nonneg.mpr hlam) (EReal.coe_ne_top _),
-        EReal.coe_mul]
-
-variable (PI : Measure I) (lam : ℝ)
-
-/-- The interpretation-relativized literal listener (A.1, eq. 1) conditions the joint prior on
-the message's extension under the interpretation. -/
-noncomputable def luL0 : Kernel (M × I) (W × O) :=
-  RSA.literalListener P fun mi ↦ sem mi.2 mi.1 ×ˢ Set.univ
-
-/-- The level-1 speaker (eq. 3), relativized to an interpretation. -/
-noncomputable def luS1 : Kernel (O × I) M :=
-  RSA.speakerOfScore λ oi m => (lam : EReal) *
-    jointUtility P cost ((luL0 P sem).comap (·, oi.2) (measurable_of_countable _)) oi.1 m
-
-/-- The level-1 pragmatic listener (eq. 4) reweights the joint prior by the speaker's use of the
-message, averaged over interpretations. -/
-noncomputable def luL1 : Kernel M (W × O) :=
-  Kernel.ofWeights λ m p => P {p} * ∑ i, PI {i} * luS1 P sem cost lam (p.2, i) {m}
-
-/-- The listeners `Lⁿ⁺¹` (eqs. 5–7), each the joint prior reweighted by the previous speaker. -/
-noncomputable def luListener : ℕ → Kernel M (W × O)
-  | 0 => luL1 P sem cost PI lam
-  | n + 1 => jointListener P
-      (RSA.speakerOfScore λ o m => (lam : EReal) * jointUtility P cost (luListener n) o m)
-
-/-- The speaker `Sⁿ⁺²` (eq. 6), answering `luListener n`. -/
-noncomputable def luSpeaker (n : ℕ) : Kernel O M :=
-  RSA.speakerOfScore λ o m =>
-    (lam : EReal) * jointUtility P cost (luListener P sem cost PI lam n) o m
-
-omit [MeasurableSingletonClass W] [IsFiniteMeasure P] in
-theorem luListener_succ (n : ℕ) :
-    luListener P sem cost PI lam (n + 1) = jointListener P (luSpeaker P sem cost PI lam n) := rfl
-
-/-- A message violating Quality has utility `⊥` (A-2a). -/
-theorem jointUtility_luL0_eq_bot {o : O} (ho : P (Prod.snd ⁻¹' {o}) ≠ 0) {i : I} {m : M}
-    (h : ¬ Quality P sem o i m) :
-    jointUtility P cost ((luL0 P sem).comap (·, i) (measurable_of_countable _)) o m = ⊥ := by
-  classical
-  simp only [Quality, not_forall, exists_prop] at h
-  obtain ⟨w, hw, hw'⟩ := h
-  rw [jointUtility, ← Finset.add_sum_erase _ _ (Finset.mem_univ w), Kernel.comap_apply,
-    luL0, RSA.literalListener_apply_singleton_of_notMem P
-      (λ mi : M × I => sem mi.2 mi.1 ×ˢ Set.univ) (λ h => hw' (Set.mem_prod.mp h).1),
-    ENNReal.log_zero, EReal.coe_mul_bot_of_pos (belief_real_singleton_pos P ho hw), EReal.bot_add,
-    EReal.bot_sub]
+/-- The level-1 speaker uses exactly the messages that satisfy Quality (A-2a). -/
+theorem luS1_apply_singleton_eq_zero_iff (hlam : 0 < lam) {o : O} {i : I} {m : M} :
+    luS1 P sem cost lam i o {m} = 0 ↔ ¬ Quality P sem o i m := by
+  rw [luS1, RSA.speaker_cond_literalListener_apply_singleton_eq_zero_iff hlam,
+    snd_preimage_ae_le_iff_quality]
 
 /-- The interpretation-relativized level-1 speaker treats same-support observations alike
 (A-7). -/
 theorem luS1_eq_of_sameSupport (hlam : 0 < lam) {o₁ o₂ : O} (hs : SameSupport P o₁ o₂)
     (ho₁ : P (Prod.snd ⁻¹' {o₁}) ≠ 0) (ho₂ : P (Prod.snd ⁻¹' {o₂}) ≠ 0) (i : I) :
-    luS1 P sem cost lam (o₂, i) = luS1 P sem cost lam (o₁, i) := by
-  refine RSA.speakerOfScore_apply_eq_of_add
-    (k := lam * (surprisalTerm P o₂ - surprisalTerm P o₁)) λ m => ?_
-  by_cases hq : Quality P sem o₁ i m
-  · have key : ∀ o, Quality P sem o i m → ∀ w, P {(w, o)} ≠ 0 →
-        ENNReal.log ((luL0 P sem).comap (·, i) (measurable_of_countable _) m {(w, o)}) =
-          ENNReal.log (P {(w, o)}) + ENNReal.log (P (sem i m ×ˢ Set.univ))⁻¹ := λ o hq w hw => by
-      rw [Kernel.comap_apply, luL0, RSA.literalListener_apply_singleton P
-        (λ mi : M × I => sem mi.2 mi.1 ×ˢ Set.univ) (Set.mk_mem_prod (hq w hw) (Set.mem_univ _)),
-        ENNReal.log_mul_add, add_comm]
-    rw [jointUtility_eq_add P cost ho₁ ho₂ (key o₁ hq)
-        (key o₂ ((quality_iff_of_sameSupport P sem hs).mp hq)),
-      EReal.left_distrib_of_nonneg_of_ne_top (EReal.coe_nonneg.mpr hlam.le) (EReal.coe_ne_top _),
-      EReal.coe_mul]
-  · rw [jointUtility_luL0_eq_bot P sem cost ho₁ hq, jointUtility_luL0_eq_bot P sem cost ho₂
-        ((quality_iff_of_sameSupport P sem hs).not.mp hq),
-      EReal.coe_mul_bot_of_pos hlam, EReal.bot_add]
+    luS1 P sem cost lam i o₂ = luS1 P sem cost lam i o₁ :=
+  RSA.speaker_cond_literalListener_apply_eq hlam ho₁ ho₂ fun m ↦ by
+    rw [snd_preimage_ae_le_iff_quality, snd_preimage_ae_le_iff_quality,
+      quality_iff_of_sameSupport P sem hs]
 
 /-- The listeners of level `n + 1` and the level-1 listener are the joint prior reweighted by a
-message-and-observation term; the speaker answering such a listener treats two observations alike
-whenever that term does. -/
-theorem speakerOfScore_ofWeights_eq (hlam : 0 ≤ lam) {o₁ o₂ : O} (ho₁ : P (Prod.snd ⁻¹' {o₁}) ≠ 0)
-    (ho₂ : P (Prod.snd ⁻¹' {o₂}) ≠ 0) (G : O → M → ℝ≥0∞) (hG : ∀ m, G o₁ m = G o₂ m) :
-    RSA.speakerOfScore (λ o m => (lam : EReal) *
-        jointUtility P cost (Kernel.ofWeights λ m p => P {p} * G p.2 m) o m) o₂ =
-      RSA.speakerOfScore (λ o m => (lam : EReal) *
-        jointUtility P cost (Kernel.ofWeights λ m p => P {p} * G p.2 m) o m) o₁ := by
-  refine speakerOfScore_jointUtility_eq P cost hlam ho₁ ho₂
-    (λ m => ENNReal.log (G o₁ m) + ENNReal.log (∑ p, P {p} * G p.2 m)⁻¹) ?_ ?_
-  · intro m w _
-    rw [Kernel.ofWeights_apply_singleton, div_eq_mul_inv, ENNReal.log_mul_add, ENNReal.log_mul_add,
-      add_assoc]
-  · intro m w _
-    rw [Kernel.ofWeights_apply_singleton, div_eq_mul_inv, ENNReal.log_mul_add, ENNReal.log_mul_add,
-      add_assoc, hG]
+term in the message and the observation. The speaker answering such a listener treats two
+observations alike whenever that term does, the prior cancelling from her choice ((A-6), (A-9),
+(A-10)). -/
+theorem speaker_gradedListener_snd_eq (hlam : 0 ≤ lam) {o₁ o₂ : O}
+    (ho₁ : P (Prod.snd ⁻¹' {o₁}) ≠ 0) (ho₂ : P (Prod.snd ⁻¹' {o₂}) ≠ 0) (G : O → M → ℝ≥0∞)
+    (hG : ∀ m, G o₂ m = G o₁ m) :
+    RSA.speaker lam cost (RSA.gradedListener P fun m p ↦ G p.2 m)
+        (fun o ↦ P[|Prod.snd ⁻¹' {o}]) o₂ =
+      RSA.speaker lam cost (RSA.gradedListener P fun m p ↦ G p.2 m)
+        (fun o ↦ P[|Prod.snd ⁻¹' {o}]) o₁ :=
+  RSA.speaker_cond_gradedListener_apply_eq hlam ho₁ ho₂ (g := G o₁)
+    (fun m p (hp : p.2 = o₁) _ ↦ congrArg (G · m) hp)
+    fun m p (hp : p.2 = o₂) _ ↦ (congrArg (G · m) hp).trans (hG m)
+
+variable [Fintype I] [MeasurableSpace I] (PI : Measure I)
+
+/-- The listeners `Lⁿ⁺¹`. The level-1 listener (eq. 4) reweights the joint prior by the level-1
+speaker's use of the message, averaged over interpretations, and each later one (eqs. 5–7) by the
+previous speaker's. -/
+noncomputable def luListener : ℕ → Kernel M (W × O)
+  | 0 => RSA.gradedListener P fun m p ↦ ∑ i, PI {i} * luS1 P sem cost lam i p.2 {m}
+  | n + 1 => jointListener P
+      (RSA.speaker lam cost (luListener n) fun o ↦ P[|Prod.snd ⁻¹' {o}])
+
+/-- The speaker `Sⁿ⁺²` (eq. 6), answering `luListener n`. -/
+noncomputable def luSpeaker (n : ℕ) : Kernel O M :=
+  RSA.speaker lam cost (luListener P sem cost lam PI n) fun o ↦ P[|Prod.snd ⁻¹' {o}]
 
 /-- In the lexical uncertainty model, observations with the same support yield the same speaker
 at every level, so the choice of message depends on the support of the speaker's belief and not
 on its shape ((A-8), the limitation (18)). -/
 theorem luSpeaker_eq_of_sameSupport (hlam : 0 < lam) {o₁ o₂ : O} (hs : SameSupport P o₁ o₂)
     (ho₁ : P (Prod.snd ⁻¹' {o₁}) ≠ 0) (ho₂ : P (Prod.snd ⁻¹' {o₂}) ≠ 0) (n : ℕ) :
-    luSpeaker P sem cost PI lam n o₂ = luSpeaker P sem cost PI lam n o₁ := by
+    luSpeaker P sem cost lam PI n o₂ = luSpeaker P sem cost lam PI n o₁ := by
   induction n with
   | zero =>
-    refine speakerOfScore_ofWeights_eq P cost lam hlam.le ho₁ ho₂
-      (λ o m => ∑ i, PI {i} * luS1 P sem cost lam (o, i) {m}) λ m => ?_
-    simp only [luS1_eq_of_sameSupport P sem cost lam hlam hs ho₁ ho₂]
+    exact speaker_gradedListener_snd_eq P cost lam hlam.le ho₁ ho₂
+      (fun o m ↦ ∑ i, PI {i} * luS1 P sem cost lam i o {m}) fun m ↦ by
+        simp only [luS1_eq_of_sameSupport P sem cost lam hlam hs ho₁ ho₂]
   | succ n ih =>
-    exact speakerOfScore_ofWeights_eq P cost lam hlam.le ho₁ ho₂
-      (λ o m => luSpeaker P sem cost PI lam n o {m}) λ m => by rw [ih]
+    exact speaker_gradedListener_snd_eq P cost lam hlam.le ho₁ ho₂
+      (fun o m ↦ luSpeaker P sem cost lam PI n o {m}) fun m ↦ by rw [ih]
 
 end LexicalUncertainty
 
@@ -763,14 +652,13 @@ def within (d : X → ℕ) (y : ℕ) : Set X := {x | d x ≤ y}
 
 /-- The weighted rule (WIR) mixes the prior conditioned on each interval by the prior over
 radii. -/
-noncomputable def wir : Measure X := ν.bind λ y => μ[|within d y]
+noncomputable def wir : Measure X := ν.bind fun y ↦ μ[|within d y]
 
 /-- The posterior over radii after "around". -/
 noncomputable def radiusPosterior : Measure ℕ := ((μ.prod ν)[|AroundEvent d]).map Prod.snd
 
-variable [IsFiniteMeasure μ] [SFinite ν]
+variable [SFinite ν]
 
-omit [IsFiniteMeasure μ] in
 theorem radiusPosterior_apply_singleton (y : ℕ) :
     radiusPosterior μ ν d {y} = μ (within d y) * ν {y} / ∫⁻ x, aroundWeight ν d x ∂μ := by
   rw [radiusPosterior, Measure.map_apply measurable_snd (.singleton y),
@@ -782,16 +670,18 @@ theorem radiusPosterior_apply_singleton (y : ℕ) :
   constructor <;> rintro ⟨h, rfl⟩ <;> exact ⟨h, rfl⟩
 
 theorem within_dist (n y : ℕ) : within (Nat.dist n) y = Set.Icc (n - y) (n + y) :=
-  Set.ext λ x => by simp only [within, Set.mem_ofPred_eq, Set.mem_Icc]; unfold Nat.dist; omega
+  Set.ext fun x ↦ by simp only [within, Set.mem_ofPred_eq, Set.mem_Icc]; unfold Nat.dist; omega
+
+variable [IsFiniteMeasure μ]
 
 /-- The Bayesian rule is the weighted rule with the posterior over radii in place of the prior
 (BIR′), so the two rules differ exactly in which distribution over radii weights the
 intervals. -/
 theorem bir_eq_bind_radiusPosterior :
-    bir μ ν d = (radiusPosterior μ ν d).bind λ y => μ[|within d y] :=
-  Measure.ext_of_singleton λ x => by
+    bir μ ν d = (radiusPosterior μ ν d).bind fun y ↦ μ[|within d y] :=
+  Measure.ext_of_singleton fun x ↦ by
     have hcond : ∀ y, μ[|within d y] {x} * radiusPosterior μ ν d {y} =
-        μ {x} / (∫⁻ x', aroundWeight ν d x' ∂μ) * (Set.Ici (d x)).indicator (λ y => ν {y}) y := by
+        μ {x} / (∫⁻ x', aroundWeight ν d x' ∂μ) * (Set.Ici (d x)).indicator (fun y ↦ ν {y}) y := by
       intro y
       rw [radiusPosterior_apply_singleton, cond_apply' (.singleton x)]
       by_cases hy : d x ≤ y
@@ -806,7 +696,7 @@ theorem bir_eq_bind_radiusPosterior :
               μ {x} * (∫⁻ x', aroundWeight ν d x' ∂μ)⁻¹ * ν {y} *
                 ((μ (within d y))⁻¹ * μ (within d y)) by ring,
             ENNReal.inv_mul_cancel h0 (measure_ne_top _ _), mul_one]
-      · rw [Set.indicator_of_notMem (λ h => hy (Set.mem_Ici.mp h)),
+      · rw [Set.indicator_of_notMem (fun h ↦ hy (Set.mem_Ici.mp h)),
           Set.inter_singleton_eq_empty.mpr (show x ∉ within d y from hy), measure_empty, mul_zero,
           zero_mul, mul_zero]
     rw [bir_apply_singleton, Measure.bind_apply (.singleton x) measurable_from_nat.aemeasurable]
