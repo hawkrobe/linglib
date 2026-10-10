@@ -51,13 +51,11 @@ theorem variance_bernoulliMeasure {f : X → ℝ} (hf : AEMeasurable f Ber(x, y,
   ring
 
 /-- A Bernoulli measure is carried by its two points. -/
-theorem bernoulliMeasure_singleton_ne_zero {z : X} (hz : Ber(x, y, p) {z} ≠ 0) :
+theorem eq_or_eq_of_bernoulliMeasure_singleton_ne_zero {z : X} (hz : Ber(x, y, p) {z} ≠ 0) :
     z = x ∨ z = y := by
-  by_contra h
-  rw [not_or] at h
-  exact hz (bernoulliMeasure_apply_of_notMem_of_notMem p (measurableSet_singleton z)
-    (fun hx ↦ h.1 (Set.mem_singleton_iff.mp hx).symm)
-    (fun hy ↦ h.2 (Set.mem_singleton_iff.mp hy).symm))
+  contrapose! hz
+  exact bernoulliMeasure_apply_of_notMem_of_notMem p (measurableSet_singleton z)
+    (Set.notMem_singleton_iff.mpr hz.1.symm) (Set.notMem_singleton_iff.mpr hz.2.symm)
 
 section Posterior
 
@@ -70,13 +68,10 @@ more likely a posteriori. -/
 theorem strictMono_posterior_bernoulliMeasure (hxy : x ≠ y) (hκx : κ x {u} ≠ 0)
     (hκy : κ y {u} ≠ 0) : StrictMono fun p : I ↦ ((κ†Ber(x, y, p)) u).real {x} := by
   intro p q hpq
-  have hmem : y ∉ ({x} : Set X) := fun h ↦ hxy (Set.mem_singleton_iff.mp h).symm
-  refine posterior_real_singleton_lt_of_pair κ Ber(x, y, p) hxy
-    (fun z ↦ bernoulliMeasure_singleton_ne_zero x y p)
-    (fun z ↦ bernoulliMeasure_singleton_ne_zero x y q) hκx hκy ?_
-  rw [bernoulliMeasure_real_apply_of_mem_of_notMem p (measurableSet_singleton x) rfl hmem,
-    bernoulliMeasure_real_apply_of_mem_of_notMem q (measurableSet_singleton x) rfl hmem]
-  exact_mod_cast hpq
+  refine posterior_real_singleton_lt_posterior_of_pair κ Ber(x, y, p) hxy
+    (fun z ↦ eq_or_eq_of_bernoulliMeasure_singleton_ne_zero x y p)
+    (fun z ↦ eq_or_eq_of_bernoulliMeasure_singleton_ne_zero x y q) hκx hκy ?_
+  simpa [hxy.symm] using hpq
 
 end Posterior
 
