@@ -11,6 +11,7 @@ public import Linglib.Core.MeasureTheory.Measure.Prod
 public import Linglib.Core.MeasureTheory.Measure.Real
 public import Linglib.Core.Probability.ConditionalProbability
 public import Linglib.Core.Probability.Kernel.Composition.Lemmas
+public import Linglib.Core.Probability.Kernel.OfWeights
 public import Linglib.Core.Probability.UniformOn
 public import Mathlib.Analysis.Convex.Jensen
 public import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
@@ -44,6 +45,8 @@ Entropies are invariant under injective recodings and depend only on laws.
 
 * `measureEntropy_le_log_card`: entropy is at most the log of the cardinality;
   `measureEntropy_uniformOn`: the uniform measure attains it.
+* `toReal_klDiv_add_measureEntropy`: divergence plus entropy is cross-entropy;
+  `toReal_klDiv_ofWeights_add_measureEntropy`: Gibbs' variational identity for a weight kernel.
 * `measureMutualInfo_eq_toReal_klDiv`, `measureMutualInfo_nonneg`, `measureMutualInfo_prod`,
   `measureMutualInfo_map_swap`, `measureMutualInfo_parallelComp_id_comp_le` (data processing).
 * `measureEntropy_map_of_injective`, `entropy_comp_of_injective`, `entropy_comm`,
@@ -57,8 +60,8 @@ Entropies are invariant under injective recodings and depend only on laws.
   `condEntropy_eq_sum_negLog`, `condEntropy_fst_snd`, `measureMutualInfo_le_measureEntropy_snd`.
 * `mutualInfo_comp_le` (data processing), `condEntropy_le_condEntropy_comp`,
   `condEntropy_of_injective`, `condEntropy_comp_self`.
-* `mutualInfo_comm`; `mutualInfo_eq_zero_iff`: mutual information vanishes exactly on independent random variables;
-  `IndepFun.entropy_pair_eq_add`, `IndepFun.condEntropy_eq_entropy`.
+* `mutualInfo_comm`; `mutualInfo_eq_zero_iff`: mutual information vanishes exactly on independent
+  random variables; `IndepFun.entropy_pair_eq_add`, `IndepFun.condEntropy_eq_entropy`.
 * `condEntropy_uniformOn_univ`: on a finite population under the uniform measure, conditional
   entropy is a formula in counts.
 
@@ -232,6 +235,33 @@ theorem toReal_klDiv_add_measureEntropy [Fintype S] {ν : Measure S} [IsProbabil
   · rw [log_div h0 fun h ↦ h0 ((measureReal_eq_zero_iff (measure_ne_top _ _)).2
       (hμν ((measureReal_eq_zero_iff (measure_ne_top _ _)).1 h))), negMulLog]
     ring
+
+/-- Gibbs' variational identity for a row of a weight kernel. The divergence from the row and the
+entropy add up to the log of the total weight less the expected log-weight, so the row is the
+distribution with the greatest entropy plus expected log-weight. -/
+theorem toReal_klDiv_ofWeights_add_measureEntropy {ι : Type*} [MeasurableSpace ι] [Countable ι]
+    [MeasurableSingletonClass ι] [Fintype S] [IsProbabilityMeasure μ] {w : ι → S → ℝ≥0∞} {i : ι}
+    (hw : ∀ s, w i s ≠ ∞) (hμ : μ ≪ Kernel.ofWeights w i) :
+    (klDiv μ (Kernel.ofWeights w i)).toReal + Hm[μ] =
+      log (∑ s, (w i s).toReal) - ∑ s, μ.real {s} * log (w i s).toReal := by
+  obtain ⟨s₀, hs₀⟩ : ∃ s, μ {s} ≠ 0 := by
+    by_contra! h
+    exact NeZero.ne μ (Measure.ext_iff_singleton.2 fun s ↦ by simp [h s])
+  have : IsProbabilityMeasure (Kernel.ofWeights w i) :=
+    (Kernel.isMarkovKernel_ofWeights (w := fun _ : ι ↦ w i)
+      (fun _ ↦ ⟨s₀, fun h ↦ hs₀ (hμ (Kernel.ofWeights_apply_singleton_eq_zero h))⟩)
+      fun _ ↦ hw).isProbabilityMeasure i
+  have hterm (s : S) : μ.real {s} * log ((Kernel.ofWeights w i).real {s}) =
+      μ.real {s} * log (w i s).toReal - μ.real {s} * log (∑ s, (w i s).toReal) := by
+    rcases eq_or_ne (μ.real {s}) 0 with h | h
+    · simp [h]
+    · have hp : (Kernel.ofWeights w i).real {s} ≠ 0 := fun h0 ↦
+        h ((measureReal_eq_zero_iff (measure_ne_top _ _)).2
+          (hμ ((measureReal_eq_zero_iff (measure_ne_top _ _)).1 h0)))
+      rw [Kernel.ofWeights_real_singleton w i hw] at hp ⊢
+      rw [log_div (fun h0 ↦ hp (by rw [h0, zero_div])) fun h0 ↦ hp (by rw [h0, div_zero]), mul_sub]
+  rw [toReal_klDiv_add_measureEntropy hμ, Finset.sum_congr rfl fun s _ ↦ hterm s,
+    Finset.sum_sub_distrib, ← Finset.sum_mul, sum_measureReal_singleton_eq_one, one_mul, neg_sub]
 
 end measureEntropy
 
@@ -416,6 +446,12 @@ theorem mutualInfo_eq_measureMutualInfo (hX : Measurable X) (hY : Measurable Y)
   rw [mutualInfo, measureMutualInfo, Measure.fst_map_prodMk hX hY, Measure.snd_map_prodMk hX hY]
   rfl
 
+/-- Mutual information is symmetric. -/
+theorem mutualInfo_comm [MeasurableSingletonClass S] [MeasurableSingletonClass T] (μ : Measure Ω)
+    (hX : Measurable X) (hY : Measurable Y) : I[X : Y ; μ] = I[Y : X ; μ] := by
+  rw [mutualInfo_def, mutualInfo_def, entropy_comm μ hX hY]
+  ring
+
 variable [Fintype S] [Fintype T] [MeasurableSingletonClass S] [MeasurableSingletonClass T]
   (hX : Measurable X) (hY : Measurable Y) (μ : Measure Ω) [IsProbabilityMeasure μ]
 
@@ -476,13 +512,6 @@ theorem mutualInfo_eq_entropy_sub_condEntropy (hX : Measurable X) (hY : Measurab
 theorem condEntropy_le_entropy (hX : Measurable X) (hY : Measurable Y) :
     H[X | Y ; μ] ≤ H[X ; μ] :=
   sub_nonneg.mp (mutualInfo_eq_entropy_sub_condEntropy μ hX hY ▸ mutualInfo_nonneg μ hX hY)
-
-omit [Fintype S] [Fintype T] [IsProbabilityMeasure μ] in
-/-- Mutual information is symmetric. -/
-theorem mutualInfo_comm (hX : Measurable X) (hY : Measurable Y) :
-    I[X : Y ; μ] = I[Y : X ; μ] := by
-  rw [mutualInfo_def, mutualInfo_def, entropy_comm μ hX hY]
-  ring
 
 /-- Mutual information vanishes exactly on independent random variables. -/
 theorem mutualInfo_eq_zero_iff (hX : Measurable X) (hY : Measurable Y) :
@@ -684,7 +713,7 @@ theorem uniformOn_univ_cond [Finite Ω] (A : Set Ω) :
     (Measure.count_apply_lt_top.2 Set.finite_univ).ne, Set.univ_inter]
 
 /-- The entropy of an attribute of a finite population under the uniform measure on a part of
-it: the entropy of the attribute's empirical distribution, as counts. -/
+it is the entropy of the attribute's empirical distribution, as counts. -/
 theorem entropy_uniformOn [Fintype Ω] {S : Type*} [MeasurableSpace S]
     [MeasurableSingletonClass S] [Fintype S] [DecidableEq S] (A : Finset Ω) (hA : A.Nonempty)
     (X : Ω → S) :
@@ -697,7 +726,7 @@ theorem entropy_uniformOn [Fintype Ω] {S : Type*} [MeasurableSpace S]
   rw [uniformOn_real_apply, h, Set.ncard_coe_finset, Set.ncard_coe_finset]
 
 /-- The conditional entropy of one attribute of a finite population given another, under the
-uniform measure: each fibre of `Y` weighted by its share of the population, with the entropy of
+uniform measure, weighs each fibre of `Y` by its share of the population and takes the entropy of
 the distribution of `X` on the fibre, all as counts. -/
 theorem condEntropy_uniformOn_univ [Fintype Ω] {S T : Type*} [MeasurableSpace S]
     [MeasurableSingletonClass S] [Fintype S] [DecidableEq S] [MeasurableSpace T]
