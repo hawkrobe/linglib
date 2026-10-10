@@ -590,7 +590,7 @@ theorem luS1_apply_singleton_eq_zero_iff (hlam : 0 < lam) {o : O} {i : I} {m : M
 theorem luS1_eq_of_sameSupport (hlam : 0 < lam) {o₁ o₂ : O} (hs : SameSupport P o₁ o₂)
     (ho₁ : P (Prod.snd ⁻¹' {o₁}) ≠ 0) (ho₂ : P (Prod.snd ⁻¹' {o₂}) ≠ 0) (i : I) :
     luS1 P sem cost lam i o₂ = luS1 P sem cost lam i o₁ :=
-  RSA.speaker_cond_literalListener_apply_eq hlam ho₁ ho₂ fun m ↦ by
+  RSA.speaker_cond_literalListener_apply_eq hlam.le ho₁ ho₂ fun m ↦ by
     rw [snd_preimage_ae_le_iff_quality, snd_preimage_ae_le_iff_quality,
       quality_iff_of_sameSupport P sem hs]
 

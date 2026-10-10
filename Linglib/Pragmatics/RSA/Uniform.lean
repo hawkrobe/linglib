@@ -2,7 +2,6 @@ module
 
 public import Linglib.Pragmatics.RSA.Basic
 public import Linglib.Core.Data.Multiset.Dominates
-public import Linglib.Core.MeasureTheory.Measure.Real
 public import Linglib.Core.Probability.UniformOn
 public import Linglib.Semantics.Reference.Distinguishing
 
@@ -373,18 +372,16 @@ variable {X : Type*} {α : ℝ} {b : X → Measure T} {x : X} [IsProbabilityMeas
   {S : Finset T} {c c' : C}
 
 private theorem weight_eq (hα : 0 < α) (hS : ∀ t, b x {t} ≠ 0 ↔ t ∈ S) (c : C) :
-    (∏ t, uniformListener sem c {t} ^ (α * (b x).real {t})) *
+    (b x).geomMean (fun t ↦ uniformListener sem c {t}) ^ α *
         ENNReal.ofReal (Real.exp (-(α * (0 : C → ℝ) c))) =
       if S ⊆ sem c then ((sem c).card : ℝ≥0∞)⁻¹ ^ α else 0 := by
   rw [Pi.zero_apply, mul_zero, neg_zero, Real.exp_zero, ENNReal.ofReal_one, mul_one]
   split_ifs with h
-  · exact prod_rpow_measureReal_of_forall_eq (b x) hα.le fun t ht ↦ by
-      rw [uniformListener_apply_singleton, ite_eq_left (h ((hS t).1 ht))]
+  · rw [Measure.geomMean_of_forall_eq fun t ht ↦ by
+      rw [uniformListener_apply_singleton, ite_eq_left (h ((hS t).1 ht))]]
   · obtain ⟨t, ht, htc⟩ := Finset.not_subset.1 h
-    exact Finset.prod_eq_zero (Finset.mem_univ t) (by
-      rw [uniformListener_apply_singleton, ite_eq_right htc, measureReal_def,
-        ENNReal.zero_rpow_of_pos
-          (mul_pos hα (ENNReal.toReal_pos ((hS t).2 ht) (measure_ne_top _ _)))])
+    rw [Measure.geomMean_eq_zero_iff.2 ⟨t, (hS t).2 ht, by
+      rw [uniformListener_apply_singleton, ite_eq_right htc]⟩, ENNReal.zero_rpow_of_pos hα]
 
 variable [MeasurableSpace X] [Countable X] [MeasurableSingletonClass X]
 
