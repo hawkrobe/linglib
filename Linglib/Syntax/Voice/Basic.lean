@@ -6,77 +6,47 @@ public import Linglib.Morphology.Morph
 /-!
 # Voice
 
-A voice relates two argument frames of one predicate, the initial and the
-derived construction, by a correspondence between their slots: which slot
-of the derived frame each participant of the initial frame occupies. It
-records besides the derived slot that is the syntactically privileged term,
-the pivot, and the marker by which the verb codes it. Everything a grammar
-says of a voice is read off the pair: the fate of an initial core term
-(`Voice.fate`), the participant the derived construction introduces
-(`newParticipant`), whether the voice nucleativizes or denucleativizes, and so
-whether it increases or decreases valency, and whether it leaves transitivity
-alone and only selects a pivot (`IsSymmetrical`). The voices a grammar names
-are constants: the
-`active` and, from the transitive construction, the `passive`, the
-`impersonalPassive`, the `antipassive`, the `anticausative`, the `reflexive`
-and the `applicative`, the `causative` from the intransitive one, and the
-`patientVoice` and `obliqueVoice` of the symmetrical systems. A fragment
-states a voice with its marker, `Voice.passive.marked [.suff "x"]`, and two
-voices of one language that share an alternation differ by their markers; the
-bare constant is the unmarked alternation, a flexivalent verb's or a study's.
+A construction of a verb gives each of its participants a status: a nominal term with a
+transitivity-related role, a dative oblique, an implied participant, or none. A voice relates
+two argument frames of one predicate by a correspondence between their slots, and so an initial
+and a derived construction over its participants. What a grammar says of a voice is read off
+that pair: the fate of each initial core term, whether a participant is nucleativized or
+denucleativized and so whether valency increases or decreases, and whether the voice only
+selects a pivot. A voice also records its pivot, the derived slot that is the syntactically
+privileged term, and the marker by which the verb codes it; a fragment states a voice with its
+marker, `Voice.passive.marked [.suff "x"]`, and the bare constants are unmarked.
 
 ## Main definitions
 
-* `Voice.TermRole` — the transitivity-related roles S, A, P and X
-* `Voice.ParticipantFate` — what a voice does to an initial core term
-* `Voice.Coding` — synthetic, analytic or uncoded
-* `Voice` — the initial and derived frames with their slot
-  correspondence, the pivot and the marker
-* `Voice.image`, `fate`, `fateOfRole`, `introduced`, `newParticipant` —
-  the derived participant bookkeeping
-* `Voice.Nucleativizes`, `Denucleativizes`, `IsValencyIncreasing`,
-  `IsValencyDecreasing`, `Cumulates`, `IsSymmetrical`, `IsImpersonal`,
-  `pivotRole`, `SelectsOblique` — the derived classification
-* `Voice.coding`, `IsCoded` — the coding read off the marker
-* `Voice.marked` — the voice with a marker
-* `Voice.refl` — the trivial voice of a frame with itself
-* `Voice.active`, `passive`, `impersonalPassive`, `antipassive`,
-  `anticausative`, `causative`, `reflexive`, `reciprocal`, `applicative`,
-  `agentVoice`, `patientVoice`, `obliqueVoice`, `locativeVoice` — the voices
-* `Verb.Alternates` — a verb has frames refining both frames of a voice
-* `Voice.Alignment` — alignment of S with A or with P
+* `Voice.Status`, `Voice.Construction`: a participant's status, and a construction.
+* `Voice.Construction.Nucleativized`, `Denucleativized`, `fate`: an initial construction
+  compared with a derived one.
+* `Voice`: two frames with their slot correspondence, the pivot and the marker.
+* `Voice.initial`, `Voice.derived`: the constructions a voice relates.
+* `Voice.passive`, `antipassive`, `anticausative`, `causative`, `reflexive`, `applicative`,
+  `patientVoice`, `obliqueVoice`: the voices.
 
-## Main results
+## Main statements
 
-* `Voice.passive_anticausative_fate` — the passive keeps the initial A in
-  participant structure, the anticausative suppresses it
-* `Voice.impersonalPassive_isImpersonal`, `passive_not_isImpersonal` — the
-  impersonal passive privileges no term
-* `Voice.isSymmetrical_refl` — the trivial voice neither nucleativizes nor
-  denucleativizes
-* `Voice.coding_eq_uncoded_iff` — a voice is uncoded exactly when it has no
-  marker
+* `Voice.Construction.valency_eq_of_nucleativized_of_denucleativized`: nucleativization is not
+  valency increase.
+* `Voice.passive_anticausative_fate`: the passive keeps the initial A in participant structure,
+  the anticausative suppresses it.
+* `Voice.isSymmetrical_refl`: the trivial voice neither nucleativizes nor denucleativizes.
 
 ## Implementation notes
 
-A slot of the initial frame with no correspondent is suppressed from
-participant structure; one whose correspondent is an implicit or an
-adpositional position is denucleativized but maintained; two initial core
-terms with one correspondent are cumulated. The derived frame of a passive
-records the demoted agent as implicit, the canonical short passive. The pivot
-defaults to the first core slot of the derived construction, its S or A, and
-`none` for an impersonal construction; only the symmetrical voices set it.
-The marker is the segmental material coding the voice, in surface order, and
-[creissels-2024]'s coding types are read off it: synthetic when every morph is
-bound, analytic when a free morph, an auxiliary, is among them, uncoded when it
-is empty; a zero-marked voice, told from the initial construction by its
-inflection alone, has the empty marker. The marker is a per-language datum with
-no bearing on the classification, so the constants are unmarked and a fragment
-supplies it. [creissels-2024]'s names for
-the alternations are processes, passivization and the rest; the constants here
-are the voices, and his typology keeps its vocabulary in his study. Within
-`Syntax/Voice/` this file owns a voice; `System.lean` owns a language's set
-of voices.
+* The participants of a voice are those of the initial slots and those of the derived slots no
+  initial slot corresponds to, expletives aside; an initial slot without a correspondent is
+  absent from the derived construction.
+* A frame's sole core term counts as S, so a frame cannot code a P without an A as an
+  impersonal construction does; `IsImpersonal` reads impersonality off the pivot, which defaults
+  to the first core slot and is `none` for an impersonal construction.
+* The marker is the segmental material coding the voice, in surface order, and the coding type
+  is read off it: synthetic when every morph is bound, analytic when a free morph, an
+  auxiliary, is among them, uncoded when it is empty.
+* The names of the alternations as processes, passivization and the rest, are predicates on
+  pairs of constructions in `Studies/Creissels2024.lean`; the constants here are the voices.
 
 ## References
 
@@ -138,6 +108,144 @@ def ParticipantFate.RemovesFromCoreStatus : ParticipantFate → Prop
 instance : DecidablePred ParticipantFate.RemovesFromCoreStatus := fun f ↦ by
   cases f <;> unfold ParticipantFate.RemovesFromCoreStatus <;> infer_instance
 
+/-! ### Constructions -/
+
+/-- A construction expresses a potential participant of its verb as a nominal term with a
+transitivity-related role or as a dative oblique, leaves it implied but unexpressed, or has it
+outside participant structure. -/
+inductive Status where
+  | term (r : TermRole)
+  | dative
+  | implicit
+  | absent
+  deriving DecidableEq, Repr
+
+namespace Status
+
+/-- The role of the nominal term, datives counting as obliques. -/
+def role : Status → Option TermRole
+  | term r => some r
+  | dative => some .X
+  | _ => none
+
+/-- A participant is nuclear when it is expressed as a core term. -/
+def Nuclear : Status → Prop
+  | term r => r ≠ .X
+  | _ => False
+
+instance : DecidablePred Nuclear := fun s ↦ by cases s <;> unfold Nuclear <;> infer_instance
+
+end Status
+
+/-- A construction of a verb gives each of its potential participants a status. -/
+abbrev Construction (ι : Type*) := ι → Status
+
+namespace Construction
+
+variable {ι : Type*} (c d : Construction ι)
+
+/-- A transitive construction has an A term and a P term. -/
+def Transitive : Prop := (∃ i, c i = .term .A) ∧ ∃ i, c i = .term .P
+
+/-- An impersonal construction has neither an A term nor an S term. -/
+def Impersonal : Prop := ∀ i, c i ≠ .term .A ∧ c i ≠ .term .S
+
+/-- The valency of a construction is its number of nuclear participants. -/
+def valency [Fintype ι] : ℕ := (Finset.univ.filter fun i ↦ (c i).Nuclear).card
+
+/-! Comparing an initial construction `c` with a derived construction `d` of the same verb. -/
+
+/-- A participant that is not a core term of the initial construction is one of the derived
+construction. -/
+def Nucleativized (i : ι) : Prop := ¬ (c i).Nuclear ∧ (d i).Nuclear
+
+/-- A core term of the initial construction is not one of the derived construction. -/
+def Denucleativized (i : ι) : Prop := (c i).Nuclear ∧ ¬ (d i).Nuclear
+
+/-- A core term of the initial construction is removed from participant structure. -/
+def Suppressed (i : ι) : Prop := (c i).Nuclear ∧ d i = .absent
+
+/-- A participant the initial construction does not express as a core term is expressed, and
+differently, by the derived construction. -/
+def Introduced (i : ι) : Prop := ¬ (c i).Nuclear ∧ c i ≠ d i ∧ (d i).role.isSome
+
+/-- A core term of the initial construction shares its derived A or S term with another; a
+clause has one A and one S, so two participants with either share it. -/
+def Cumulated (i : ι) : Prop :=
+  (c i).Nuclear ∧ (d i = .term .A ∨ d i = .term .S) ∧ ∃ j, j ≠ i ∧ (c j).Nuclear ∧ d j = d i
+
+/-- Some participant is nucleativized. -/
+def Nucleativizes : Prop := ∃ i, c.Nucleativized d i
+
+/-- Some participant is denucleativized. -/
+def Denucleativizes : Prop := ∃ i, c.Denucleativized d i
+
+/-- The alternation is valency-increasing when it nucleativizes without denucleativizing. -/
+def IsValencyIncreasing : Prop := c.Nucleativizes d ∧ ¬ c.Denucleativizes d
+
+/-- The alternation is valency-decreasing when it denucleativizes without nucleativizing. -/
+def IsValencyDecreasing : Prop := c.Denucleativizes d ∧ ¬ c.Nucleativizes d
+
+/-- The alternation is symmetrical when it neither nucleativizes nor denucleativizes, so that
+it does not affect the transitivity of the construction ([creissels-2024] §8.1.7). -/
+def IsSymmetrical : Prop := ¬ c.Nucleativizes d ∧ ¬ c.Denucleativizes d
+
+theorem isSymmetrical_self : c.IsSymmetrical c := ⟨fun ⟨_, h⟩ ↦ h.1 h.2, fun ⟨_, h⟩ ↦ h.2 h.1⟩
+
+section Fintype
+
+variable [Fintype ι] [DecidableEq ι]
+
+instance : Decidable c.Transitive := inferInstanceAs (Decidable (_ ∧ _))
+instance : Decidable c.Impersonal := inferInstanceAs (Decidable (∀ _, _))
+instance (i : ι) : Decidable (c.Nucleativized d i) := inferInstanceAs (Decidable (_ ∧ _))
+instance (i : ι) : Decidable (c.Denucleativized d i) := inferInstanceAs (Decidable (_ ∧ _))
+instance (i : ι) : Decidable (c.Suppressed d i) := inferInstanceAs (Decidable (_ ∧ _))
+instance (i : ι) : Decidable (c.Introduced d i) := inferInstanceAs (Decidable (_ ∧ _))
+instance (i : ι) : Decidable (c.Cumulated d i) := inferInstanceAs (Decidable (_ ∧ _))
+instance : Decidable (c.Nucleativizes d) := inferInstanceAs (Decidable (∃ _, _))
+instance : Decidable (c.Denucleativizes d) := inferInstanceAs (Decidable (∃ _, _))
+instance : Decidable (c.IsValencyIncreasing d) := inferInstanceAs (Decidable (_ ∧ _))
+instance : Decidable (c.IsValencyDecreasing d) := inferInstanceAs (Decidable (_ ∧ _))
+instance : Decidable (c.IsSymmetrical d) := inferInstanceAs (Decidable (_ ∧ _))
+
+/-- An initial core term is suppressed when it leaves participant structure, cumulated when it
+shares its derived core term with another, maintained when it remains a core term, and
+denucleativized otherwise. -/
+def fate (i : ι) : ParticipantFate :=
+  if (c i).Nuclear then
+    if d i = .absent then .suppressed
+    else if (d i).Nuclear then if c.Cumulated d i then .cumulated else .maintained
+    else .denucleativized
+  else .na
+
+/-- Nucleativization is not valency increase: an alternation may nucleativize one participant
+and denucleativize another, keeping the valency ([creissels-2024] §8.1.3). -/
+theorem valency_eq_of_nucleativized_of_denucleativized {c d : Construction ι} {i j : ι}
+    (hi : c.Nucleativized d i) (hj : c.Denucleativized d j)
+    (h : ∀ k, k ≠ i → k ≠ j → ((c k).Nuclear ↔ (d k).Nuclear)) : c.valency = d.valency :=
+  Finset.card_equiv (Equiv.swap i j) fun k ↦ by
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+    by_cases hk : k = i
+    · subst hk; rw [Equiv.swap_apply_left]; exact iff_of_false hi.1 hj.2
+    by_cases hk' : k = j
+    · subst hk'; rw [Equiv.swap_apply_right]; exact iff_of_true hj.1 hi.2
+    rw [Equiv.swap_apply_of_ne_of_ne hk hk']; exact h k hk hk'
+
+end Fintype
+
+end Construction
+
+/-- The status a frame gives the participant of a slot: the transitivity-related role of a core
+slot, X for an expressed oblique, implicit for an implicit position, and absent for an expletive
+or an unfilled slot. -/
+def _root_.ArgumentFrame.status (fr : ArgumentFrame) (s : ArgumentFrame.Slot) : Status :=
+  match fr.codingRole s, fr.get? s with
+  | some r, _ => .term (.ofArgumentRole r)
+  | none, some (.implicit _) => .implicit
+  | none, some p => if p.IsExpressed then .term .X else .absent
+  | none, none => .absent
+
 /-! ### Coding -/
 
 /-- A voice is coded on the verb by verbal morphology, by an analytic construction, or not at
@@ -185,7 +293,7 @@ open ArgumentFrame (Slot)
 
 variable (v : Voice)
 
-/-! ### Participant bookkeeping -/
+/-! ### The constructions of a voice -/
 
 /-- The derived slot an initial slot's participant occupies. -/
 def image (s : Slot) : Option Slot := v.correspondence.lookup s
@@ -194,26 +302,32 @@ def image (s : Slot) : Option Slot := v.correspondence.lookup s
 def preimages (t : Slot) : List Slot :=
   v.source.slots.filter fun s ↦ v.image s == some t
 
-/-- The transitivity-related role of a derived slot is the coding role of a core slot, X for an
-expressed oblique, and none for an implicit or expletive position. -/
-def targetRole (t : Slot) : Option TermRole :=
-  match v.target.codingRole t, v.target.get? t with
-  | some r, _ => some (TermRole.ofArgumentRole r)
-  | none, some p => if p.IsExpressed then some .X else none
-  | none, none => none
+/-- The derived slots of the participants the derived construction adds: those no initial
+slot's participant occupies, expletives aside. -/
+def newSlots : List Slot :=
+  v.target.slots.filter fun t ↦ v.preimages t = [] ∧ v.target.status t ≠ .absent
 
-/-- An initial slot is suppressed when it has no correspondent, cumulated when another initial
-core term shares its derived core slot, maintained in a derived core slot, and denucleativized
-otherwise; a non-core initial slot has no fate. -/
+/-- The participants of a voice are those of the initial slots and those of the new derived
+slots. -/
+def participants : List (Slot ⊕ Slot) :=
+  v.source.slots.map .inl ++ v.newSlots.map .inr
+
+/-- A participant of the voice. -/
+abbrev Participant : Type := {p // p ∈ v.participants}
+
+/-- The initial construction: a participant of an initial slot has its status there, and a
+new participant is absent. -/
+def initial : Construction v.Participant := fun p ↦ p.1.elim v.source.status fun _ ↦ .absent
+
+/-- The derived construction: a participant of an initial slot has the status of the slot it
+occupies, absent if none, and a new participant that of its own slot. -/
+def derived : Construction v.Participant :=
+  fun p ↦ p.1.elim (fun s ↦ (v.image s).elim .absent v.target.status) v.target.status
+
+/-- The fate of the participant of an initial slot. -/
 def fate (s : Slot) : ParticipantFate :=
-  if s ∈ v.source.coreSlots then
-    match v.image s with
-    | none => .suppressed
-    | some t =>
-      if t ∈ v.target.coreSlots then
-        if (v.preimages t).any (fun s' ↦ s' != s && s' ∈ v.source.coreSlots) then .cumulated
-        else .maintained
-      else .denucleativized
+  if h : s ∈ v.source.slots then
+    Construction.fate v.initial v.derived ⟨.inl s, by simp [participants, h]⟩
   else .na
 
 /-- The fate of the initial core term with a transitivity-related role. -/
@@ -223,41 +337,34 @@ def fateOfRole (r : TermRole) : ParticipantFate :=
   | some s => v.fate s
   | none => .na
 
-/-- The derived construction introduces the expressed slots whose participant was not a core
-term of the initial construction, either new to it or nucleativized from a non-core slot. -/
-def introduced : List Slot :=
-  v.target.slots.filter fun t ↦
-    (v.targetRole t).isSome &&
-      (v.preimages t).all fun s ↦ s ∉ v.source.coreSlots && t ∈ v.target.coreSlots
-
-/-- The role of the participant the derived construction introduces, if one. -/
-def newParticipant : Option TermRole := v.introduced.head?.bind v.targetRole
+/-- The role of the first participant the derived construction introduces, if one. -/
+def newParticipant : Option TermRole :=
+  (v.participants.attach.find? fun p ↦ v.initial.Introduced v.derived p).bind
+    fun p ↦ (v.derived p).role
 
 /-- The transitivity-related role of the pivot is S, A or P for a core term and X for an
 oblique. -/
-def pivotRole : Option TermRole := v.pivot.bind v.targetRole
+def pivotRole : Option TermRole := v.pivot.bind fun t ↦ (v.target.status t).role
 
 /-! ### Classification -/
 
 /-- Some participant becomes a core term. -/
-def Nucleativizes : Prop := ∃ t ∈ v.introduced, t ∈ v.target.coreSlots
+def Nucleativizes : Prop := v.initial.Nucleativizes v.derived
 
 /-- Some initial core term ceases to be one. -/
-def Denucleativizes : Prop :=
-  ∃ s ∈ v.source.coreSlots, (v.fate s).RemovesFromCoreStatus
+def Denucleativizes : Prop := v.initial.Denucleativizes v.derived
 
 /-- Two initial core terms are cumulated. -/
-def Cumulates : Prop := ∃ s ∈ v.source.coreSlots, v.fate s = .cumulated
+def Cumulates : Prop := ∃ p, v.initial.Cumulated v.derived p
 
 /-- A voice is valency-increasing when it nucleativizes without denucleativizing. -/
-def IsValencyIncreasing : Prop := v.Nucleativizes ∧ ¬ v.Denucleativizes
+def IsValencyIncreasing : Prop := v.initial.IsValencyIncreasing v.derived
 
 /-- A voice is valency-decreasing when it denucleativizes without nucleativizing. -/
-def IsValencyDecreasing : Prop := v.Denucleativizes ∧ ¬ v.Nucleativizes
+def IsValencyDecreasing : Prop := v.initial.IsValencyDecreasing v.derived
 
-/-- A voice is symmetrical when it neither nucleativizes nor denucleativizes, so that it does
-not affect the transitivity of the construction ([creissels-2024] §8.1.7). -/
-def IsSymmetrical : Prop := ¬ v.Nucleativizes ∧ ¬ v.Denucleativizes
+/-- A voice is symmetrical when it neither nucleativizes nor denucleativizes. -/
+def IsSymmetrical : Prop := v.initial.IsSymmetrical v.derived
 
 /-- The pivot is an oblique, the selection a binary system does not allow
 ([creissels-2024] §8.5.2). -/
@@ -274,12 +381,15 @@ def coding : Coding := .ofMarker v.marker
 ([creissels-2024] §1.1.3). -/
 def IsCoded : Prop := v.marker ≠ []
 
-instance : Decidable v.Nucleativizes := inferInstanceAs (Decidable (∃ _ ∈ _, _))
-instance : Decidable v.Denucleativizes := inferInstanceAs (Decidable (∃ _ ∈ _, _))
-instance : Decidable v.Cumulates := inferInstanceAs (Decidable (∃ _ ∈ _, _))
-instance : Decidable v.IsValencyIncreasing := inferInstanceAs (Decidable (_ ∧ _))
-instance : Decidable v.IsValencyDecreasing := inferInstanceAs (Decidable (_ ∧ _))
-instance : Decidable v.IsSymmetrical := inferInstanceAs (Decidable (_ ∧ _))
+instance : Decidable v.Nucleativizes := inferInstanceAs (Decidable (Construction.Nucleativizes ..))
+instance : Decidable v.Denucleativizes :=
+  inferInstanceAs (Decidable (Construction.Denucleativizes ..))
+instance : Decidable v.Cumulates := inferInstanceAs (Decidable (∃ _, _))
+instance : Decidable v.IsValencyIncreasing :=
+  inferInstanceAs (Decidable (Construction.IsValencyIncreasing ..))
+instance : Decidable v.IsValencyDecreasing :=
+  inferInstanceAs (Decidable (Construction.IsValencyDecreasing ..))
+instance : Decidable v.IsSymmetrical := inferInstanceAs (Decidable (Construction.IsSymmetrical ..))
 instance : Decidable v.SelectsOblique := inferInstanceAs (Decidable (_ = _))
 instance : Decidable v.IsImpersonal := inferInstanceAs (Decidable (_ = _))
 instance : Decidable v.IsCoded := inferInstanceAs (Decidable (_ ≠ _))
@@ -342,20 +452,21 @@ theorem image_refl_eq_some_iff {fr : ArgumentFrame} {s t : Slot} (h : s ∈ fr.s
     (refl fr).image s = some t ↔ s = t := by
   rw [image_refl h, Option.some.injEq]
 
+theorem derived_refl (fr : ArgumentFrame) : (refl fr).derived = (refl fr).initial := by
+  funext ⟨p, hp⟩
+  simp only [participants, newSlots, source_refl, target_refl, List.mem_append, List.mem_map,
+    List.mem_filter, decide_eq_true_eq] at hp
+  rcases hp with ⟨s, hs, rfl⟩ | ⟨t, ⟨ht, hpre⟩, rfl⟩
+  · simp [derived, initial, image_refl hs]
+  · have : t ∈ (refl fr).preimages t := by
+      simp only [preimages, List.mem_filter, image_refl ht, beq_self_eq_true, and_true]
+      exact ht
+    simp [hpre] at this
+
 /-- The trivial voice is symmetrical. -/
 theorem isSymmetrical_refl (fr : ArgumentFrame) : (refl fr).IsSymmetrical := by
-  refine ⟨fun ⟨t, ht, htc⟩ ↦ ?_, fun ⟨s, hs, hf⟩ ↦ ?_⟩
-  · simp only [introduced, List.mem_filter, Bool.and_eq_true, List.all_eq_true,
-      decide_eq_true_eq] at ht
-    have ht₁ : t ∈ fr.slots := ht.1
-    have hp : t ∈ (refl fr).preimages t := by
-      simp only [preimages, List.mem_filter, image_refl ht₁, beq_self_eq_true, and_true]
-      exact ht₁
-    exact (ht.2.2 t hp).1 htc
-  · have hsl : s ∈ fr.slots := List.mem_of_mem_filter hs
-    have hs' : s ∈ fr.coreSlots := hs
-    simp only [fate, source_refl, target_refl, hs', image_refl hsl, ite_true] at hf
-    split at hf <;> simp [ParticipantFate.RemovesFromCoreStatus] at hf
+  rw [IsSymmetrical, derived_refl]
+  exact Construction.isSymmetrical_self _
 
 /-! ### The voices -/
 
@@ -375,9 +486,10 @@ def passive (fr : ArgumentFrame := .np) : Voice :=
     correspondence := (external, complement fr.complements.length) ::
       (List.range fr.complements.length).map fun i ↦ (complement i, complement i) }
 
-/-- The impersonal passive is the passive whose derived construction privileges no term, the
-initial P keeping its coding ([creissels-2024] §8.3.2.2); of an intransitive frame, it
-denucleativizes the S (§8.3.2.4). -/
+/-- The impersonal passive is the passive with no pivot, its derived construction privileging no
+term because the initial P keeps its coding ([creissels-2024] §8.3.2.2), which the frame, its
+sole core term counting as S, does not record; of an intransitive frame, it denucleativizes the
+S (§8.3.2.4). -/
 def impersonalPassive (fr : ArgumentFrame := .np) : Voice := { passive fr with pivot := none }
 
 /-- The antipassive denucleativizes the initial P and makes the initial A the S of an
