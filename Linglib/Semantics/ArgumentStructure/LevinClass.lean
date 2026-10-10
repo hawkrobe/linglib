@@ -709,7 +709,8 @@ def LevinClass.roleList : LevinClass → Option RoleList
   -- § 39: Ingesting
   | .eat | .devour            => some consumption
   -- § 51.3: Manner of Motion
-  | .roll | .run           => some selfMotion
+  | .roll                     => some nonagentiveMotion
+  | .run                      => some selfMotion
   -- § 51.6: Chase
   | .chase                    => some selfMotion
   -- § 51.1: Inherently Directed Motion

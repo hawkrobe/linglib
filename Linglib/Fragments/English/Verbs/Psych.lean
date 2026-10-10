@@ -406,7 +406,7 @@ def punch : Verb := .mkRegular {
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.pp (some Adpositions.at_), [0, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.on), [0, 1, 2])]
+     (ArgumentFrame.np_pp (some Adpositions.on), [0, 2, 1])]
   vendlerClass := some .activity
   levinClasses := {LevinClass.carve, .swat} }
 
@@ -418,7 +418,8 @@ def smack : Verb := .mkRegular {
     [(ArgumentFrame.np, [0, 1]),
      (ArgumentFrame.pp (some Adpositions.at_), [0, 1]),
      (ArgumentFrame.np_pp (some Adpositions.on), [0, 2, 1]),
-     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 3])]
+     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 3]),
+     (ArgumentFrame.np, [3, 1])]
   vendlerClass := some .activity
   levinClasses := {LevinClass.crane, .hit} }
 

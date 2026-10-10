@@ -23,6 +23,8 @@ marker, `Voice.passive.marked [.suff "x"]`, and the bare constants are unmarked.
   compared with a derived one.
 * `Voice`: two frames with their slot correspondence, the pivot and the marker.
 * `Voice.initial`, `Voice.derived`: the constructions a voice relates.
+* `Voice.Relates`, `Verb.Alternates`: two diatheses of a verb related by a voice, and a verb
+  with two such diatheses.
 * `Voice.passive`, `antipassive`, `anticausative`, `causative`, `reflexive`, `applicative`,
   `patientVoice`, `obliqueVoice`: the voices.
 
@@ -582,14 +584,30 @@ theorem obliqueVoice_selectsOblique (r : Case.Kind) :
 
 /-! ### Alternating verbs -/
 
-/-- The verb alternates by `v` when some frame of its refines the initial frame and some the
-derived frame. Necessary for the alternation, not sufficient, since the two frames need not be
-related by it. -/
+section Relates
+
+variable {n : ℕ} (c d : Diathesis n)
+
+/-- A voice relates two diatheses of a verb when their frames refine its initial and derived
+frames and each participant moves as the voice says: a participant of an initial slot to the
+derived slot the voice sends it to, out of the construction where it sends it nowhere, and a
+participant the first diathesis leaves out to a derived slot no initial slot reaches, if any. -/
+def Relates : Prop :=
+  v.source ≤ c.toArgumentFrame ∧ v.target ≤ d.toArgumentFrame ∧
+    ∀ i, (∀ s ∈ c.links.get i, d.links.get i = v.image s) ∧
+      (c.links.get i = none → ∀ t ∈ d.links.get i, v.preimages t = [])
+
+instance : Decidable (v.Relates c d) :=
+  inferInstanceAs (Decidable (_ ∧ _ ∧ ∀ _, _ ∧ _))
+
+end Relates
+
+/-- The verb alternates by `v` when the voice relates two of its diatheses. -/
 def _root_.Verb.Alternates (w : Verb) (v : Voice) : Prop :=
-  (∃ fr ∈ w.valency.frames, v.source ≤ fr) ∧ ∃ fr ∈ w.valency.frames, v.target ≤ fr
+  ∃ c ∈ w.valency.diatheses, ∃ d ∈ w.valency.diatheses, v.Relates c d
 
 instance (w : Verb) (v : Voice) : Decidable (w.Alternates v) :=
-  inferInstanceAs (Decidable (_ ∧ _))
+  inferInstanceAs (Decidable (∃ _ ∈ _, ∃ _ ∈ _, _))
 
 /-! ### Alignment -/
 
