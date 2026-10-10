@@ -23,8 +23,8 @@ prior conditioned on what she knows.
   of the negative divergence of the listener from her belief.
 * `RSA.speaker_cond_ofDensity_apply_eq`: a speaker who knows an event on which every graded
   meaning is constant sees the listener only through those constants.
-* `RSA.speaker_cond_literalListener_apply_eq`,
-  `RSA.speaker_zero_cond_literalListener_real_singleton_lt_iff`: a speaker whose belief is the
+* `RSA.speaker_cond_listener_truthful_apply_eq`,
+  `RSA.speaker_zero_cond_listener_truthful_real_singleton_lt_iff`: a speaker whose belief is the
   prior conditioned on what she knows depends on it, against a literal listener, only through
   the utterances it entails, and among those prefers the one of smaller prior mass.
 
@@ -135,22 +135,23 @@ section Cond
 variable {μ : Measure W} [IsFiniteMeasure μ] {A : O → Set W} {sem : U → Set W}
 
 /-- The speaker produces exactly the utterances her knowledge entails. -/
-theorem speaker_cond_literalListener_apply_singleton_eq_zero_iff (hα : 0 < α) :
-    speaker α C (literalListener μ sem) (fun o ↦ μ[|A o]) o {u} = 0 ↔ ¬ A o ≤ᵐ[μ] sem u := by
-  rw [speaker_apply_singleton_eq_zero_iff_not_ac hα, literalListener_apply,
+theorem speaker_cond_listener_truthful_apply_singleton_eq_zero_iff (hα : 0 < α) :
+    speaker α C (listener μ (truthful sem)) (fun o ↦ μ[|A o]) o {u} = 0 ↔ ¬ A o ≤ᵐ[μ] sem u := by
+  rw [speaker_apply_singleton_eq_zero_iff_not_ac hα, listener_truthful_apply,
     cond_absolutelyContinuous_cond_iff .of_discrete .of_discrete]
 
 /-- Among the utterances her knowledge entails, the speaker prefers the one of smaller prior
 mass. -/
-theorem speaker_zero_cond_literalListener_real_singleton_lt_iff (hα : 0 < α) (hA : μ (A o) ≠ 0)
+theorem speaker_zero_cond_listener_truthful_real_singleton_lt_iff (hα : 0 < α) (hA : μ (A o) ≠ 0)
     (hu : A o ≤ᵐ[μ] sem u) (hu' : A o ≤ᵐ[μ] sem u') :
-    (speaker α 0 (literalListener μ sem) (fun o ↦ μ[|A o]) o).real {u} <
-        (speaker α 0 (literalListener μ sem) (fun o ↦ μ[|A o]) o).real {u'} ↔
+    (speaker α 0 (listener μ (truthful sem)) (fun o ↦ μ[|A o]) o).real {u} <
+        (speaker α 0 (listener μ (truthful sem)) (fun o ↦ μ[|A o]) o).real {u'} ↔
       μ (sem u') < μ (sem u) := by
   have : IsProbabilityMeasure ((fun o ↦ μ[|A o]) o) := cond_isProbabilityMeasure hA
-  rw [speaker_zero_real_singleton_lt_iff_klDiv hα ⟨u, mt
-      (klDiv_cond_cond_eq_top_iff .of_discrete .of_discrete).1 (not_not.2 hu)⟩,
-    literalListener_apply, literalListener_apply,
+  rw [speaker_zero_real_singleton_lt_iff_klDiv hα ⟨u, by
+      rw [listener_truthful_apply]
+      exact mt (klDiv_cond_cond_eq_top_iff .of_discrete .of_discrete).1 (not_not.2 hu)⟩,
+    listener_truthful_apply, listener_truthful_apply,
     klDiv_cond_cond_lt_iff .of_discrete .of_discrete .of_discrete hA hu' hu]
 
 private theorem cond_apply_singleton_ne_zero_iff {s : Set W} {w : W} :
@@ -190,14 +191,14 @@ private theorem geomMean_cond_indicator {s t : Set W} (hs : μ s ≠ 0) [Decidab
 
 /-- Against a literal listener the speaker depends on what she knows only through the utterances
 it entails. -/
-theorem speaker_cond_literalListener_apply_eq (hα : 0 ≤ α) {o₁ o₂ : O} (h₁ : μ (A o₁) ≠ 0)
+theorem speaker_cond_listener_truthful_apply_eq (hα : 0 ≤ α) {o₁ o₂ : O} (h₁ : μ (A o₁) ≠ 0)
     (h₂ : μ (A o₂) ≠ 0) (h : ∀ u, A o₂ ≤ᵐ[μ] sem u ↔ A o₁ ≤ᵐ[μ] sem u) :
-    speaker α C (literalListener μ sem) (fun o ↦ μ[|A o]) o₂ =
-      speaker α C (literalListener μ sem) (fun o ↦ μ[|A o]) o₁ := by
+    speaker α C (listener μ (truthful sem)) (fun o ↦ μ[|A o]) o₂ =
+      speaker α C (listener μ (truthful sem)) (fun o ↦ μ[|A o]) o₁ := by
   classical
   have : IsProbabilityMeasure ((fun o ↦ μ[|A o]) o₁) := cond_isProbabilityMeasure h₁
   have : IsProbabilityMeasure ((fun o ↦ μ[|A o]) o₂) := cond_isProbabilityMeasure h₂
-  rw [literalListener_eq_ofDensity]
+  rw [listener_truthful_eq_ofDensity]
   refine speaker_ofDensity_apply_congr hα cond_absolutelyContinuous
     cond_absolutelyContinuous fun u ↦ ?_
   rw [geomMean_cond_indicator h₂, geomMean_cond_indicator h₁]

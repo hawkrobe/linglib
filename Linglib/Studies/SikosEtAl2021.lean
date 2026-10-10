@@ -14,7 +14,7 @@ speaker is the best response at rationality one to the literal listener with a u
 but replaces the speaker by literal meaning alone, a uniform choice among the applicable words
 (`baselineSpeaker`, `baselineListener`). Since every object of the paper's displays has one color
 and one shape, the baseline is RSA's literal listener with the salience prior
-(`baselineListener_eq_literalListener`), and the two models agree wherever a word applies to a
+(`baselineListener_eq_listener_truthful`), and the two models agree wherever a word applies to a
 single object or fails to apply, the predictions of one hundred and of zero percent that dominate
 the original materials (`rsaListener_apply_singleton_of_eq_singleton`,
 `baselineListener_apply_singleton_of_eq_singleton`, `rsaListener_apply_singleton_of_notMem`,
@@ -62,9 +62,9 @@ instance : IsFiniteMeasure (uniform (W := W)) :=
   inferInstanceAs (IsFiniteMeasure (Measure.count : Measure W))
 
 /-- The literal listener with the uniform prior, RSA's `L0`. -/
-noncomputable def L0 : Kernel U W := literalListener uniform sem
+noncomputable def L0 : Kernel U W := listener uniform (truthful sem)
 
-instance : IsFiniteKernel (L0 sem) := inferInstanceAs (IsFiniteKernel (literalListener _ _))
+instance : IsFiniteKernel (L0 sem) := inferInstanceAs (IsFiniteKernel (listener _ (truthful _)))
 
 /-- The informative speaker (3) is the best response to `L0` at rationality one and constant
 cost, choosing among the applicable words in proportion to their informativity. -/
@@ -82,12 +82,12 @@ instance : IsFiniteKernel (baselineSpeaker sem) :=
 
 theorem L0_apply_singleton {w : W} {u : U} (h : w ∈ sem u) :
     L0 sem u {w} = (uniform (sem u))⁻¹ := by
-  rw [L0, literalListener_apply_singleton uniform sem h, uniform, Measure.count_singleton,
+  rw [L0, listener_truthful_apply_singleton uniform sem h, uniform, Measure.count_singleton,
     mul_one]
 
 omit [Fintype W] in
 theorem L0_apply_singleton_of_notMem {w : W} {u : U} (h : w ∉ sem u) : L0 sem u {w} = 0 :=
-  literalListener_apply_singleton_of_notMem uniform sem h
+  listener_truthful_apply_singleton_of_notMem uniform sem h
 
 theorem L0_ne_zero {w : W} {u : U} (h : w ∈ sem u) : L0 sem u {w} ≠ 0 := by
   rw [L0_apply_singleton sem h]
@@ -211,9 +211,9 @@ theorem baselineListener_apply_singleton_of_notMem {u : U} {w w' : W} (hw : w �
 /-- When every object has the same number of applicable words, one color and one shape in the
 paper's displays, the baseline listener is RSA's literal listener with the salience prior, that
 is, `L0` itself informed by the prior. -/
-theorem baselineListener_eq_literalListener {k : ℕ} (hk : k ≠ 0)
+theorem baselineListener_eq_listener_truthful {k : ℕ} (hk : k ≠ 0)
     (hcard : ∀ w, (applicable sem w).card = k) {u : U} (hμ : μ (sem u) ≠ 0) (w : W) :
-    baselineListener sem μ u {w} = literalListener μ (sem) u {w} := by
+    baselineListener sem μ u {w} = listener μ (truthful (sem)) u {w} := by
   have hrow : ∀ w', baselineSpeaker sem w' {u} = (sem u).indicator (fun _ => (k : ℝ≥0∞)⁻¹) w' := by
     intro w'
     by_cases h : w' ∈ sem u
@@ -231,10 +231,10 @@ theorem baselineListener_eq_literalListener {k : ℕ} (hk : k ≠ 0)
   have hx : (baselineSpeaker sem ∘ₘ μ) {u} ≠ 0 := by rw [hcomp]; exact mul_ne_zero hμ hk'
   by_cases h : w ∈ sem u
   · rw [baselineListener, posterior_apply_singleton _ _ hx, hcomp, hrow w, Set.indicator_of_mem h,
-      literalListener_apply_singleton μ sem h, ENNReal.mul_div_mul_right _ _ hk' hk'',
+      listener_truthful_apply_singleton μ sem h, ENNReal.mul_div_mul_right _ _ hk' hk'',
       div_eq_mul_inv, mul_comm]
   · rw [baselineListener, posterior_apply_singleton _ _ hx, hrow w, Set.indicator_of_notMem h,
-      literalListener_apply_singleton_of_notMem μ sem h]
+      listener_truthful_apply_singleton_of_notMem μ sem h]
     simp
 
 omit [∀ u, DecidablePred (· ∈ sem u)] in

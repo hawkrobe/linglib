@@ -168,17 +168,17 @@ section Listener
 variable (θ : Thresholds) (P : Measure State)
 
 /-- The literal listener of (15) conditions the prior on the expression's extension. -/
-noncomputable def L0 : Kernel SimpleExpr State := literalListener P θ.ext
+noncomputable def L0 : Kernel SimpleExpr State := RSA.listener P (truthful θ.ext)
 
-instance : IsFiniteKernel (L0 θ P) := inferInstanceAs (IsFiniteKernel (literalListener _ _))
+instance : IsFiniteKernel (L0 θ P) := inferInstanceAs (IsFiniteKernel (RSA.listener _ (truthful _)))
 
 theorem L0_apply_singleton_of_notMem {m : SimpleExpr} {s : State} (h : s ∉ θ.ext m) :
     L0 θ P m {s} = 0 :=
-  literalListener_apply_singleton_of_notMem P θ.ext h
+  listener_truthful_apply_singleton_of_notMem P θ.ext h
 
 theorem L0_apply_singleton_of_mem {m : SimpleExpr} {s : State} (h : s ∈ θ.ext m) :
     L0 θ P m {s} = (P (θ.ext m))⁻¹ * P {s} :=
-  literalListener_apply_singleton P θ.ext h
+  listener_truthful_apply_singleton P θ.ext h
 
 theorem L0_real_of_notMem {m : SimpleExpr} {s : State} (h : s ∉ θ.ext m) :
     (L0 θ P m).real {s} = 0 := by
@@ -438,7 +438,7 @@ theorem mem_complex_full {s : State} (hP : P {s} ≠ 0) {Y : Outer} (h0 : 0 ≤ 
 (24), the marginal of the joint prior, on the expression's extension. -/
 noncomputable def complexL0 (A : Measure Access) [IsFiniteMeasure A] :
     Kernel (Outer × Inner) (Obs × Access) :=
-  literalListener (joint P A).snd fun m : Outer × Inner ↦ θ.complex P m.1 m.2
+  RSA.listener (joint P A).snd (truthful fun m : Outer × Inner ↦ θ.complex P m.1 m.2)
 
 end ComplexThresholds
 

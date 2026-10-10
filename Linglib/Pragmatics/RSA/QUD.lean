@@ -80,18 +80,18 @@ theorem projListener_apply_singleton_of_injective (h : Function.Injective (proje
 /-- Within a context set, the projected literal listener of a Boolean meaning on a weight measure
 is the weight of the context-set worlds that make the utterance true and share the meaning's
 cell, over the weight of those that make it true. -/
-theorem projListener_literalListener_restrict_apply_singleton [DiscreteMeasurableSpace W]
+theorem projListener_listener_truthful_restrict_apply_singleton [DiscreteMeasurableSpace W]
     [DecidableEq X] (P : W → ℕ) (C : Finset W) (sem : U → Set W)
     [∀ u, DecidablePred (· ∈ sem u)] :
     projListener project
-        (literalListener ((Measure.ofWeights (P ·)).restrict ↑C) sem) g u {w}
+        (listener ((Measure.ofWeights (P ·)).restrict ↑C) (truthful sem)) g u {w}
       = (∑ v ∈ (C.filter (· ∈ sem u)).filter (fun v => project g v = project g w), (P v : ℝ≥0∞))
           / ∑ v ∈ C.filter (· ∈ sem u), (P v : ℝ≥0∞) := by
   have e1 : sem u ∩ ↑C = ↑(C.filter (· ∈ sem u)) := by ext; simp [and_comm]
   have e2 : sem u ∩ project g ⁻¹' {project g w} ∩ ↑C
       = ↑((C.filter (· ∈ sem u)).filter fun v => project g v = project g w) := by
     ext; simp; tauto
-  rw [projListener_apply_singleton, literalListener_apply, cond_apply .of_discrete,
+  rw [projListener_apply_singleton, listener_truthful_apply, cond_apply .of_discrete,
     Measure.restrict_apply .of_discrete, Measure.restrict_apply .of_discrete, e1, e2,
     Measure.ofWeights_apply_finset, Measure.ofWeights_apply_finset, ENNReal.div_eq_inv_mul]
 

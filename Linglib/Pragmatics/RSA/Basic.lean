@@ -32,7 +32,9 @@ quantify over them. The uniform-prior Boolean specialization with its decision p
 
 ## Main definitions
 
-* `RSA.literalListener` — eq. 1: the prior conditioned on the extension of the utterance.
+* `RSA.listener` — the prior reweighted by the mass each state's measure gives the utterance
+  heard, and normalized. At the channel `RSA.truthful sem` of a speaker who is only truthful it
+  is eq. 1, the prior conditioned on the denotation of the utterance.
 * `RSA.speaker` — the softmax of the expected log of the listener's mass under the speaker's
   belief, less a cost. Its weights are the geometric mean of the listener's mass over the belief
   to the power `α`, times `exp (-(α * C))`; at the point-mass belief it is the speaker of
@@ -70,42 +72,191 @@ open scoped ENNReal
 
 namespace RSA
 
+section Truthful
+
+variable {W U : Type*} [MeasurableSpace U]
+
+/-- The channel of a speaker who is only required to be truthful. The denotation `sem` gives each
+utterance the set of states it is true at, and the channel puts mass one on each utterance true at
+the state. For utterances that denote sets of states, `sem` is `fun u ↦ ⟦u⟧`, and its value at a
+lexicon, a threshold or a context when the denotation depends on one. -/
+noncomputable def truthful (sem : U → Set W) (w : W) : Measure U :=
+  Measure.count.restrict {u | w ∈ sem u}
+
+instance [Finite U] (sem : U → Set W) (w : W) : IsFiniteMeasure (truthful sem w) :=
+  inferInstanceAs (IsFiniteMeasure (Measure.count.restrict _))
+
+theorem truthful_apply_singleton [MeasurableSingletonClass U] (sem : U → Set W) (w : W) (u : U) :
+    truthful sem w {u} = (sem u).indicator 1 w := by
+  rw [truthful, Measure.restrict_apply (.singleton u)]
+  by_cases h : w ∈ sem u
+  · rw [Set.indicator_of_mem h, Set.inter_eq_left.2 (by simpa using h), Measure.count_singleton,
+      Pi.one_apply]
+  · rw [Set.indicator_of_notMem h, Set.singleton_inter_eq_empty.2 (by simpa using h),
+      measure_empty]
+
+end Truthful
+
 section Pipeline
 
 variable {W U O : Type*} [MeasurableSpace W] [MeasurableSpace U] [MeasurableSpace O]
 
-section LiteralListener
+private theorem sum_mul_eq_comp_apply_singleton [Fintype W] [MeasurableSingletonClass W]
+    [MeasurableSingletonClass U] (μ : Measure W) (κ : Kernel W U) (u : U) :
+    ∑ w, κ w {u} * μ {w} = (κ ∘ₘ μ) {u} := by
+  rw [Measure.comp_apply_singleton]
+  exact Finset.sum_congr rfl fun w _ ↦ mul_comm _ _
+
+/-! #### The listener
+
+A listener holds a prior over states and takes the utterance to come from a channel, a measure on
+utterances at each state. She reweights the prior by the mass each state's measure gives the
+utterance she hears and normalizes, which is Bayes' rule with the zero measure at an utterance no
+state she entertains produces. The literal listener (eq. 1) takes the speaker to be truthful and
+no more, and so conditions the prior on the denotation of the utterance. The pragmatic listener
+(eq. 3) takes the channel of a speaker, and is mathlib's posterior wherever the utterance is
+heard. -/
+
+section Listener
 
 variable [Countable U] [MeasurableSingletonClass U]
 
-/-- The literal listener (eq. 1) conditions the prior on the extension of the utterance. -/
-noncomputable def literalListener (μ : Measure W) (sem : U → Set W) : Kernel U W :=
-  Kernel.ofFunOfCountable fun u ↦ μ[|sem u]
+/-- The listener reweights the prior `μ` by the mass each state's measure `S w` gives the
+utterance heard, and normalizes. Her row at an utterance that no state of positive prior produces
+is the zero measure. -/
+noncomputable def listener (μ : Measure W) (S : W → Measure U) : Kernel U W :=
+  Kernel.ofDensity μ fun u w ↦ S w {u}
 
-theorem literalListener_apply (μ : Measure W) (sem : U → Set W) (u : U) :
-    literalListener μ sem u = μ[|sem u] := rfl
+section
 
-instance (μ : Measure W) (sem : U → Set W) (u : U) :
-    IsZeroOrProbabilityMeasure (literalListener μ sem u) :=
-  inferInstanceAs (IsZeroOrProbabilityMeasure μ[|sem u])
+variable (μ : Measure W) (S : W → Measure U)
 
-/-- Each row of the literal listener is a probability measure or zero, so it is a finite
-kernel. -/
-instance (μ : Measure W) (sem : U → Set W) : IsFiniteKernel (literalListener μ sem) :=
-  ⟨⟨1, ENNReal.one_lt_top, fun _ ↦ prob_le_one⟩⟩
+theorem listener_apply (u : U) :
+    listener μ S u = (μ.withDensity fun w ↦ S w {u})[|Set.univ] := rfl
 
-/-- On a discrete state space the literal listener is the density kernel of the indicator meaning
+instance (u : U) : IsZeroOrProbabilityMeasure (listener μ S u) :=
+  inferInstanceAs (IsZeroOrProbabilityMeasure (Kernel.ofDensity μ _ u))
+
+instance : IsFiniteKernel (listener μ S) :=
+  inferInstanceAs (IsFiniteKernel (Kernel.ofDensity μ _))
+
+variable [MeasurableSingletonClass W]
+
+theorem listener_apply_singleton' (u : U) (w : W) :
+    listener μ S u {w} = S w {u} * μ {w} / ∫⁻ w', S w' {u} ∂μ :=
+  Kernel.ofDensity_apply_singleton' μ _ u w
+
+variable [Fintype W]
+
+theorem listener_apply_singleton (u : U) (w : W) :
+    listener μ S u {w} = S w {u} * μ {w} / ∑ w', S w' {u} * μ {w'} :=
+  Kernel.ofDensity_apply_singleton μ _ u w
+
+variable {μ S} {u : U} {w : W}
+
+/-- A state whose measure gives the utterance no mass gets none from the listener. -/
+theorem listener_apply_singleton_eq_zero (h : S w {u} = 0) : listener μ S u {w} = 0 := by
+  rw [listener_apply_singleton, h, zero_mul, ENNReal.zero_div]
+
+/-- A state the listener gives mass has positive prior and produces the utterance. -/
+theorem ne_zero_of_listener_apply_singleton_ne_zero (h : listener μ S u {w} ≠ 0) :
+    μ {w} ≠ 0 ∧ S w {u} ≠ 0 := by
+  rw [listener_apply_singleton, ne_eq, ENNReal.div_eq_zero_iff, not_or] at h
+  exact ⟨right_ne_zero_of_mul h.1, left_ne_zero_of_mul h.1⟩
+
+variable [IsFiniteMeasure μ] [∀ w, IsFiniteMeasure (S w)]
+
+/-- The listener gives mass to a state of positive prior that produces the utterance. -/
+theorem listener_apply_singleton_ne_zero (hμ : μ {w} ≠ 0) (hS : S w {u} ≠ 0) :
+    listener μ S u {w} ≠ 0 := by
+  rw [listener_apply_singleton, ne_eq, ENNReal.div_eq_zero_iff, not_or]
+  exact ⟨mul_ne_zero hS hμ,
+    ENNReal.sum_ne_top.2 fun _ _ ↦ ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)⟩
+
+/-- The listener puts mass on a state exactly when it has positive prior and produces the
+utterance. -/
+theorem listener_apply_singleton_ne_zero_iff :
+    listener μ S u {w} ≠ 0 ↔ μ {w} ≠ 0 ∧ S w {u} ≠ 0 :=
+  ⟨ne_zero_of_listener_apply_singleton_ne_zero, fun h ↦ listener_apply_singleton_ne_zero h.1 h.2⟩
+
+end
+
+/-! ##### The listener of a kernel
+
+When the channel is a kernel, the normalizer is the marginal probability of the utterance, the
+listener is a probability measure exactly at the utterances that are heard, and there she is
+mathlib's posterior. -/
+
+section Kernel
+
+variable [Fintype W] [MeasurableSingletonClass W] (μ : Measure W) (κ : Kernel W U)
+
+/-- Bayes' rule holds at every utterance. The listener's mass on a state is its prior times the mass
+its row gives the utterance, over the utterance's marginal. -/
+theorem listener_apply_singleton_eq_div (u : U) (w : W) :
+    listener μ κ u {w} = μ {w} * κ w {u} / (κ ∘ₘ μ) {u} := by
+  rw [listener_apply_singleton, sum_mul_eq_comp_apply_singleton, mul_comm]
+
+variable [IsFiniteMeasure μ] [IsFiniteKernel κ]
+
+/-- The listener's row at a heard utterance is a probability measure. -/
+theorem isProbabilityMeasure_listener {u : U} (hu : (κ ∘ₘ μ) {u} ≠ 0) :
+    IsProbabilityMeasure (listener μ κ u) := by
+  refine Kernel.isProbabilityMeasure_ofDensity μ _ u ?_ ?_ <;>
+    rw [lintegral_fintype, sum_mul_eq_comp_apply_singleton]
+  exacts [hu, measure_ne_top _ _]
+
+/-- The listener is a probability kernel when every utterance is heard. -/
+theorem isMarkovKernel_listener (h : ∀ u, (κ ∘ₘ μ) {u} ≠ 0) : IsMarkovKernel (listener μ κ) :=
+  ⟨fun u ↦ isProbabilityMeasure_listener μ κ (h u)⟩
+
+/-- At every state and utterance, the utterance's marginal times the listener is the prior times
+the production, Bayes' rule on reals with the denominator cleared. Both sides vanish at an
+utterance that is not heard. -/
+theorem comp_real_mul_listener_real (u : U) (w : W) :
+    (κ ∘ₘ μ).real {u} * (listener μ κ u).real {w} = μ.real {w} * (κ w).real {u} := by
+  rw [measureReal_def, measureReal_def, measureReal_def, measureReal_def,
+    listener_apply_singleton_eq_div]
+  rcases eq_or_ne ((κ ∘ₘ μ) {u}) 0 with h | h
+  · have h0 : μ {w} * κ w {u} = 0 := by
+      rw [Measure.comp_apply_singleton] at h
+      exact Finset.sum_eq_zero_iff.1 h w (Finset.mem_univ w)
+    rw [h, ENNReal.toReal_zero, zero_mul, ← ENNReal.toReal_mul, h0, ENNReal.toReal_zero]
+  · rw [← ENNReal.toReal_mul, ENNReal.mul_div_cancel h (measure_ne_top _ _), ENNReal.toReal_mul]
+
+/-- At a heard utterance the listener is the posterior, by Bayes' rule. -/
+theorem listener_apply_eq_posterior [StandardBorelSpace W] [Nonempty W] {u : U}
+    (hu : (κ ∘ₘ μ) {u} ≠ 0) : listener μ κ u = (κ†μ) u :=
+  Kernel.ofDensity_apply_eq_posterior κ μ hu
+
+end Kernel
+
+/-! ##### The listener of a truthful speaker -/
+
+section Truthful
+
+/-- The listener of a truthful speaker is the density kernel of the indicator of the denotation
 against the prior. -/
-theorem literalListener_eq_ofDensity [DiscreteMeasurableSpace W] (μ : Measure W)
-    (sem : U → Set W) :
-    literalListener μ sem = Kernel.ofDensity μ fun u ↦ (sem u).indicator 1 :=
-  Kernel.ext fun u ↦ (Kernel.ofDensity_indicator_one_apply μ sem u .of_discrete).symm
+theorem listener_truthful_eq_ofDensity (μ : Measure W) (sem : U → Set W) :
+    listener μ (truthful sem) = Kernel.ofDensity μ fun u ↦ (sem u).indicator 1 :=
+  congrArg (Kernel.ofDensity μ) (funext fun u ↦ funext fun w ↦ truthful_apply_singleton sem w u)
 
-/-- The literal listener of an utterance with a positive-mass extension is a probability
-measure. -/
-theorem literalListener_apply_univ (μ : Measure W) (sem : U → Set W) [IsFiniteMeasure μ] {u : U}
-    (h : μ (sem u) ≠ 0) : literalListener μ sem u Set.univ = 1 := by
-  rw [literalListener_apply]
+/-- The listener of a truthful speaker (eq. 1) conditions the prior on the denotation of the
+utterance. -/
+theorem listener_truthful_apply' (μ : Measure W) (sem : U → Set W) (u : U)
+    (hs : MeasurableSet (sem u)) : listener μ (truthful sem) u = μ[|sem u] := by
+  rw [listener_truthful_eq_ofDensity]
+  exact Kernel.ofDensity_indicator_one_apply μ sem u hs
+
+theorem listener_truthful_apply [DiscreteMeasurableSpace W] (μ : Measure W) (sem : U → Set W)
+    (u : U) : listener μ (truthful sem) u = μ[|sem u] :=
+  listener_truthful_apply' μ sem u .of_discrete
+
+/-- The listener of a truthful speaker is a probability measure at an utterance whose denotation
+has positive prior mass. -/
+theorem listener_truthful_apply_univ [DiscreteMeasurableSpace W] (μ : Measure W) (sem : U → Set W)
+    [IsFiniteMeasure μ] {u : U} (h : μ (sem u) ≠ 0) : listener μ (truthful sem) u Set.univ = 1 := by
+  rw [listener_truthful_apply]
   have := cond_isProbabilityMeasure (μ := μ) h
   exact measure_univ
 
@@ -113,48 +264,48 @@ section Boolean
 
 variable [DiscreteMeasurableSpace W] (μ : Measure W) (sem : U → Set W)
 
-theorem literalListener_apply_singleton {u : U} {w : W} (h : w ∈ sem u) :
-    literalListener μ sem u {w} = (μ (sem u))⁻¹ * μ {w} := by
-  rw [literalListener_apply, cond_apply .of_discrete,
+theorem listener_truthful_apply_singleton {u : U} {w : W} (h : w ∈ sem u) :
+    listener μ (truthful sem) u {w} = (μ (sem u))⁻¹ * μ {w} := by
+  rw [listener_truthful_apply, cond_apply .of_discrete,
     Set.inter_eq_self_of_subset_right (Set.singleton_subset_iff.mpr h)]
 
-theorem literalListener_apply_singleton_of_notMem {u : U} {w : W} (h : w ∉ sem u) :
-    literalListener μ sem u {w} = 0 := by
-  rw [literalListener_apply, cond_apply .of_discrete, Set.inter_comm,
+theorem listener_truthful_apply_singleton_of_notMem {u : U} {w : W} (h : w ∉ sem u) :
+    listener μ (truthful sem) u {w} = 0 := by
+  rw [listener_truthful_apply, cond_apply .of_discrete, Set.inter_comm,
     Set.singleton_inter_eq_empty.mpr h, measure_empty, mul_zero]
 
 /-- A tautology leaves a probability prior unchanged. -/
-theorem literalListener_apply_singleton_of_eq_univ [IsProbabilityMeasure μ] {u : U}
-    (h : sem u = Set.univ) (w : W) : literalListener μ sem u {w} = μ {w} := by
-  rw [literalListener_apply_singleton μ sem (by rw [h]; exact Set.mem_univ w), h, measure_univ,
+theorem listener_truthful_apply_singleton_of_eq_univ [IsProbabilityMeasure μ] {u : U}
+    (h : sem u = Set.univ) (w : W) : listener μ (truthful sem) u {w} = μ {w} := by
+  rw [listener_truthful_apply_singleton μ sem (by rw [h]; exact Set.mem_univ w), h, measure_univ,
     inv_one, one_mul]
 
 /-- An utterance true at one state only puts all its mass there. -/
-theorem literalListener_apply_singleton_of_eq_singleton [IsFiniteMeasure μ] {u : U} {w : W}
-    (h : sem u = {w}) (hμ : μ {w} ≠ 0) : literalListener μ sem u {w} = 1 := by
-  rw [literalListener_apply_singleton μ sem (by rw [h]; exact Set.mem_singleton w), h,
+theorem listener_truthful_apply_singleton_of_eq_singleton [IsFiniteMeasure μ] {u : U} {w : W}
+    (h : sem u = {w}) (hμ : μ {w} ≠ 0) : listener μ (truthful sem) u {w} = 1 := by
+  rw [listener_truthful_apply_singleton μ sem (by rw [h]; exact Set.mem_singleton w), h,
     ENNReal.inv_mul_cancel hμ (measure_ne_top _ _)]
 
-/-- The literal listener puts mass on a state exactly when the utterance is true there and the
-state has positive prior. -/
-theorem literalListener_apply_singleton_ne_zero_iff [IsFiniteMeasure μ] (u : U) (w : W) :
-    literalListener μ sem u {w} ≠ 0 ↔ w ∈ sem u ∧ μ {w} ≠ 0 := by
+/-- The listener of a truthful speaker puts mass on a state exactly when the utterance is true
+there and the state has positive prior. -/
+theorem listener_truthful_apply_singleton_ne_zero_iff [IsFiniteMeasure μ] (u : U) (w : W) :
+    listener μ (truthful sem) u {w} ≠ 0 ↔ w ∈ sem u ∧ μ {w} ≠ 0 := by
   by_cases h : w ∈ sem u
-  · rw [literalListener_apply_singleton μ sem h]
+  · rw [listener_truthful_apply_singleton μ sem h]
     exact ⟨fun h' ↦ ⟨h, (mul_ne_zero_iff.mp h').2⟩,
       fun h' ↦ mul_ne_zero (ENNReal.inv_ne_zero.mpr (measure_ne_top _ _)) h'.2⟩
-  · rw [literalListener_apply_singleton_of_notMem μ sem h]
+  · rw [listener_truthful_apply_singleton_of_notMem μ sem h]
     exact iff_of_false (fun h' ↦ h' rfl) fun h' ↦ h h'.1
 
-/-- A relabelling of the states that carries one prior and extension to another carries the
-literal listener along. -/
-theorem literalListener_apply_singleton_of_equiv {W' U' : Type*} [MeasurableSpace W']
+/-- A relabelling of the states that carries one prior and denotation to another carries the
+listener of a truthful speaker along. -/
+theorem listener_truthful_apply_singleton_of_equiv {W' U' : Type*} [MeasurableSpace W']
     [DiscreteMeasurableSpace W'] [MeasurableSpace U'] [Countable U'] [MeasurableSingletonClass U']
     [Fintype W] [Fintype W'] (e : W ≃ W') {μ : Measure W} {μ' : Measure W'} {sem : U → Set W}
     {sem' : U' → Set W'} {u : U} {u' : U'} (hμ : ∀ w, μ' {e w} = μ {w})
     (hsem : ∀ w, e w ∈ sem' u' ↔ w ∈ sem u) (w : W) :
-    literalListener μ' sem' u' {e w} = literalListener μ sem u {w} := by
-  rw [literalListener_eq_ofDensity, literalListener_eq_ofDensity]
+    listener μ' (truthful sem') u' {e w} = listener μ (truthful sem) u {w} := by
+  rw [listener_truthful_eq_ofDensity, listener_truthful_eq_ofDensity]
   refine Kernel.ofDensity_apply_singleton_of_equiv e hμ (fun w ↦ ?_) w
   by_cases h : w ∈ sem u
   · rw [Set.indicator_of_mem h, Set.indicator_of_mem ((hsem w).2 h), Pi.one_apply, Pi.one_apply]
@@ -162,7 +313,9 @@ theorem literalListener_apply_singleton_of_equiv {W' U' : Type*} [MeasurableSpac
 
 end Boolean
 
-end LiteralListener
+end Truthful
+
+end Listener
 
 /-! #### The speaker
 
@@ -435,55 +588,55 @@ theorem speaker_dirac_real_singleton_lt_iff [IsFiniteKernel L] (hα : 0 ≤ α) 
 
 /-- With Boolean meanings, a state whose only true utterance is `u` produces `u` with
 certainty at any prior giving the state positive mass. -/
-theorem speaker_literalListener_dirac_eq_one [DiscreteMeasurableSpace W] (hα : 0 < α)
+theorem speaker_listener_truthful_dirac_eq_one [DiscreteMeasurableSpace W] (hα : 0 < α)
     (C : U → ℝ) (μ : Measure W) [IsFiniteMeasure μ] (sem : U → Set W) (hμ : μ {w} ≠ 0)
     (hmem : w ∈ sem u) (hother : ∀ u' ≠ u, w ∉ sem u') :
-    speaker α C (literalListener μ sem) Measure.dirac w {u} = 1 :=
+    speaker α C (listener μ (truthful sem)) Measure.dirac w {u} = 1 :=
   speaker_dirac_apply_singleton_eq_one hα
     (by
-      rw [literalListener_apply_singleton μ sem hmem]
+      rw [listener_truthful_apply_singleton μ sem hmem]
       exact mul_ne_zero (ENNReal.inv_ne_zero.mpr (measure_ne_top _ _)) hμ)
-    fun u' hu' ↦ literalListener_apply_singleton_of_notMem μ sem (hother u' hu')
+    fun u' hu' ↦ listener_truthful_apply_singleton_of_notMem μ sem (hother u' hu')
 
 /-- With Boolean meanings the speaker produces an utterance at a state exactly when it is true
 there and the state has positive prior. -/
-theorem speaker_literalListener_dirac_apply_singleton_ne_zero_iff
+theorem speaker_listener_truthful_dirac_apply_singleton_ne_zero_iff
     [DiscreteMeasurableSpace W] (hα : 0 < α) (C : U → ℝ) (μ : Measure W) [IsFiniteMeasure μ]
     (sem : U → Set W) (u : U) (w : W) :
-    speaker α C (literalListener μ sem) Measure.dirac w {u} ≠ 0
+    speaker α C (listener μ (truthful sem)) Measure.dirac w {u} ≠ 0
       ↔ w ∈ sem u ∧ μ {w} ≠ 0 := by
   rw [speaker_dirac_apply_singleton_ne_zero_iff hα,
-    literalListener_apply_singleton_ne_zero_iff μ sem u w]
+    listener_truthful_apply_singleton_ne_zero_iff μ sem u w]
 
 /-- With Boolean meanings the speaker sees a state only through the utterances true at it, so two
 states of positive prior verifying the same utterances have the same production row. -/
-theorem speaker_literalListener_dirac_congr [DiscreteMeasurableSpace W] (hα : 0 < α)
+theorem speaker_listener_truthful_dirac_congr [DiscreteMeasurableSpace W] (hα : 0 < α)
     (C : U → ℝ) (μ : Measure W) [IsFiniteMeasure μ] (sem : U → Set W)
     {w w' : W} (hw : μ {w} ≠ 0) (hw' : μ {w'} ≠ 0) (h : ∀ u, w ∈ sem u ↔ w' ∈ sem u) :
-    speaker α C (literalListener μ sem) Measure.dirac w'
-      = speaker α C (literalListener μ sem) Measure.dirac w := by
-  rw [literalListener_eq_ofDensity]
+    speaker α C (listener μ (truthful sem)) Measure.dirac w'
+      = speaker α C (listener μ (truthful sem)) Measure.dirac w := by
+  rw [listener_truthful_eq_ofDensity]
   exact speaker_ofDensity_apply_congr hα.le (dirac_absolutelyContinuous hw)
     (dirac_absolutelyContinuous hw') fun u ↦ by
       classical simp only [Measure.geomMean_dirac, Set.indicator_apply, Pi.one_apply, h u]
 
 /-- With Boolean meanings the prior cancels from the speaker, which at a state of positive prior
 weights each true utterance by its extension's mass to the power `-α` and by its cost. -/
-theorem speaker_literalListener_dirac_apply_singleton [DiscreteMeasurableSpace W] (hα : 0 < α)
+theorem speaker_listener_truthful_dirac_apply_singleton [DiscreteMeasurableSpace W] (hα : 0 < α)
     (C : U → ℝ) (μ : Measure W) [IsFiniteMeasure μ] (sem : U → Set W) (hw : μ {w} ≠ 0) (u : U) :
-    speaker α C (literalListener μ sem) Measure.dirac w {u}
+    speaker α C (listener μ (truthful sem)) Measure.dirac w {u}
       = (sem u).indicator (fun _ ↦ (μ (sem u))⁻¹ ^ α * ENNReal.ofReal (Real.exp (-(α * C u)))) w
         / ∑ u', (sem u').indicator
             (fun _ ↦ (μ (sem u'))⁻¹ ^ α * ENNReal.ofReal (Real.exp (-(α * C u')))) w := by
-  have key : ∀ v, (literalListener μ sem) v {w} ^ α
+  have key : ∀ v, (listener μ (truthful sem)) v {w} ^ α
         * ENNReal.ofReal (Real.exp (-(α * C v)))
       = μ {w} ^ α * (sem v).indicator
           (fun _ ↦ (μ (sem v))⁻¹ ^ α * ENNReal.ofReal (Real.exp (-(α * C v)))) w := fun v ↦ by
     by_cases hv : w ∈ sem v
-    · rw [literalListener_apply_singleton μ sem hv, Set.indicator_of_mem hv,
+    · rw [listener_truthful_apply_singleton μ sem hv, Set.indicator_of_mem hv,
         ENNReal.mul_rpow_of_nonneg _ _ hα.le]
       ring
-    · rw [literalListener_apply_singleton_of_notMem μ sem hv,
+    · rw [listener_truthful_apply_singleton_of_notMem μ sem hv,
         Set.indicator_of_notMem hv, ENNReal.zero_rpow_of_pos hα, zero_mul, mul_zero]
   rw [speaker_dirac_apply_singleton, key, Finset.sum_congr rfl fun v _ ↦ key v, ← Finset.mul_sum,
     ENNReal.mul_div_mul_left _ _ (rpow_ne_zero_of_ne_zero hα.le hw)
@@ -492,17 +645,17 @@ theorem speaker_literalListener_dirac_apply_singleton [DiscreteMeasurableSpace W
 /-- With Boolean meanings a state verifying more utterances produces each of its true utterances
 less, since the prior cancels from the speaker and only the inclusion of the true utterances
 matters. -/
-theorem speaker_literalListener_dirac_le_of_subset [DiscreteMeasurableSpace W] (hα : 0 < α)
+theorem speaker_listener_truthful_dirac_le_of_subset [DiscreteMeasurableSpace W] (hα : 0 < α)
     (C : U → ℝ) (μ : Measure W) [IsFiniteMeasure μ] (sem : U → Set W) {w w' : W}
     (hw : μ {w} ≠ 0) (hsub : ∀ u, w ∈ sem u → w' ∈ sem u) {u : U} (hu : w ∈ sem u) :
-    speaker α C (literalListener μ sem) Measure.dirac w' {u}
-      ≤ speaker α C (literalListener μ sem) Measure.dirac w {u} := by
+    speaker α C (listener μ (truthful sem)) Measure.dirac w' {u}
+      ≤ speaker α C (listener μ (truthful sem)) Measure.dirac w {u} := by
   rcases eq_or_ne (μ {w'}) 0 with hw' | hw'
   · rw [speaker_dirac_apply_singleton_eq_zero hα (not_not.mp fun h ↦
-      ((literalListener_apply_singleton_ne_zero_iff μ sem u w').mp h).2 hw')]
+      ((listener_truthful_apply_singleton_ne_zero_iff μ sem u w').mp h).2 hw')]
     exact zero_le
-  rw [speaker_literalListener_dirac_apply_singleton hα C μ sem hw,
-    speaker_literalListener_dirac_apply_singleton hα C μ sem hw',
+  rw [speaker_listener_truthful_dirac_apply_singleton hα C μ sem hw,
+    speaker_listener_truthful_dirac_apply_singleton hα C μ sem hw',
     Set.indicator_of_mem hu, Set.indicator_of_mem (hsub u hu)]
   refine ENNReal.div_le_div_left (Finset.sum_le_sum fun v _ ↦ ?_) _
   by_cases hv : w ∈ sem v
@@ -550,22 +703,22 @@ theorem tendsto_speaker_dirac_real_singleton_atTop [IsFiniteKernel L] (hu : L u 
 /-- With Boolean meanings and a constant cost, a state two utterances both fit produces the
 utterance with the smaller extension more often, since informativity is the inverse of extension
 mass. -/
-theorem speaker_literalListener_dirac_real_singleton_lt_iff [DiscreteMeasurableSpace W]
+theorem speaker_listener_truthful_dirac_real_singleton_lt_iff [DiscreteMeasurableSpace W]
     (hα : 0 < α) (c : ℝ) (μ : Measure W) [IsFiniteMeasure μ] (sem : U → Set W) (hμ : μ {w} ≠ 0)
     {u u' : U} (hu : w ∈ sem u) (hu' : w ∈ sem u') :
-    (speaker α (fun _ ↦ c) (literalListener μ sem) Measure.dirac w).real {u}
-        < (speaker α (fun _ ↦ c) (literalListener μ sem) Measure.dirac w).real {u'}
+    (speaker α (fun _ ↦ c) (listener μ (truthful sem)) Measure.dirac w).real {u}
+        < (speaker α (fun _ ↦ c) (listener μ (truthful sem)) Measure.dirac w).real {u'}
       ↔ μ (sem u') < μ (sem u) := by
-  have hne : literalListener μ sem u {w} ≠ 0 := by
-    rw [literalListener_apply_singleton μ sem hu]
+  have hne : listener μ (truthful sem) u {w} ≠ 0 := by
+    rw [listener_truthful_apply_singleton μ sem hu]
     exact mul_ne_zero (ENNReal.inv_ne_zero.mpr (measure_ne_top _ _)) hμ
   have key : ∀ {a b k : ℝ≥0∞}, k ≠ 0 → k ≠ ∞ → (a * k < b * k ↔ a < b) := fun h0 htop ↦
     ⟨fun h ↦ lt_of_not_ge fun hab ↦ absurd h (not_lt.mpr (mul_le_mul' hab le_rfl)),
       ENNReal.mul_lt_mul_left h0 htop⟩
   rw [speaker_dirac_real_singleton_lt_iff hα.le ⟨u, hne⟩,
     key (ofReal_exp_ne_zero _) ENNReal.ofReal_ne_top, ENNReal.rpow_lt_rpow_iff hα,
-    literalListener_apply_singleton μ sem hu,
-    literalListener_apply_singleton μ sem hu', key hμ (measure_ne_top _ _),
+    listener_truthful_apply_singleton μ sem hu,
+    listener_truthful_apply_singleton μ sem hu', key hμ (measure_ne_top _ _),
     ENNReal.inv_lt_inv]
 
 end Dirac
@@ -621,16 +774,17 @@ variable [Fintype W] [Fintype U]
 
 /-- With Boolean meanings, hearing an utterance rules out every state it does not fit, once some
 state it fits has prior mass. -/
-theorem posterior_speaker_literalListener_apply_singleton_of_notMem
+theorem posterior_speaker_listener_truthful_apply_singleton_of_notMem
     [DiscreteMeasurableSpace W] (α : ℝ) (C : U → ℝ) (μ : Measure W) [IsFiniteMeasure μ] (hα : 0 < α)
     (sem : U → Set W) {u : U} {w w' : W} (hw : w ∉ sem u) (hw' : w' ∈ sem u) (hμ : μ {w'} ≠ 0) :
-    ((speaker α C (literalListener μ sem) Measure.dirac)†μ) u {w} = 0 := by
-  have hS : speaker α C (literalListener μ sem) Measure.dirac w' {u} ≠ 0 :=
+    ((speaker α C (listener μ (truthful sem)) Measure.dirac)†μ) u {w} = 0 := by
+  have hS : speaker α C (listener μ (truthful sem)) Measure.dirac w' {u} ≠ 0 :=
     speaker_dirac_apply_singleton_ne_zero hα.le (by
-      rw [literalListener_apply_singleton μ sem hw']
+      rw [listener_truthful_apply_singleton μ sem hw']
       exact mul_ne_zero (ENNReal.inv_ne_zero.mpr (measure_ne_top _ _)) hμ)
   exact posterior_apply_singleton_eq_zero _ _ (comp_apply_singleton_ne_zero _ _ hμ hS)
-    (speaker_dirac_apply_singleton_eq_zero hα (literalListener_apply_singleton_of_notMem μ sem hw))
+    (speaker_dirac_apply_singleton_eq_zero hα
+      (listener_truthful_apply_singleton_of_notMem μ sem hw))
 
 variable (α : ℝ) (C : U → ℝ) (L : Kernel U W) (μ : Measure W) [IsFiniteMeasure μ]
   [DiscreteMeasurableSpace U] [StandardBorelSpace U] [Nonempty U] (obs : U → O)

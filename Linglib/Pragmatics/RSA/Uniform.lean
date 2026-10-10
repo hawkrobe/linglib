@@ -19,7 +19,7 @@ a state. Findings then close by `decide`, uniformly in the rationality through
 ## Main definitions
 
 * `RSA.profile`, `RSA.fiberProfile`, `RSA.restProfile` — extension-size multisets.
-* `RSA.uniformListener` — `literalListener` at a uniform prior.
+* `RSA.uniformListener` — the listener of a truthful speaker at a uniform prior.
 * `RSA.uniformSpeaker`, `RSA.uniformJointListener` — the pipeline at those arguments.
 
 ## Main results
@@ -217,13 +217,13 @@ variable {T C O : Type*} [Fintype T] [MeasurableSpace T] [DiscreteMeasurableSpac
 
 /-- The literal listener at a uniform prior (eq. 5) is uniform on each choice's extension. -/
 noncomputable def uniformListener : Kernel C T :=
-  literalListener (uniformOn Set.univ) fun c => ↑(sem c)
+  listener (uniformOn Set.univ) (truthful fun c => ↑(sem c))
 
 instance : IsFiniteKernel (uniformListener sem) :=
-  inferInstanceAs (IsFiniteKernel (literalListener _ _))
+  inferInstanceAs (IsFiniteKernel (listener _ (truthful _)))
 
 theorem uniformListener_apply (c : C) : uniformListener sem c = uniformOn ↑(sem c) := by
-  rw [uniformListener, literalListener_apply, uniformOn, uniformOn,
+  rw [uniformListener, listener_truthful_apply, uniformOn, uniformOn,
     cond_cond_eq_cond_inter' MeasurableSet.univ .of_discrete
       (by rw [Measure.count_apply_finite _ Set.finite_univ]; exact ENNReal.natCast_ne_top _),
     Set.univ_inter]

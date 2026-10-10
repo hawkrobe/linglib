@@ -72,11 +72,11 @@ def sem (θ : D × D) : Utterance → Set D
 /-- The literal listener at an assignment (eq. 27) is the degree prior conditioned on the truth of
 the utterance. -/
 noncomputable def L0 (μ : Measure D) (θ : D × D) : Kernel Utterance D :=
-  literalListener μ fun u ↦ sem θ u
+  listener μ (truthful fun u ↦ sem θ u)
 
 theorem L0_apply_singleton_ne_zero_iff (μ : Measure D) [IsFiniteMeasure μ] (θ : D × D)
     (u : Utterance) (d : D) : L0 μ θ u {d} ≠ 0 ↔ d ∈ sem θ u ∧ μ {d} ≠ 0 :=
-  literalListener_apply_singleton_ne_zero_iff μ (sem θ) u d
+  listener_truthful_apply_singleton_ne_zero_iff μ (sem θ) u d
 
 section Model
 
@@ -106,7 +106,7 @@ variable (μ : Measure D) [IsProbabilityMeasure μ] (ν : Measure (D × D)) (α 
 and the degree has positive prior. -/
 theorem S1_apply_singleton_ne_zero_iff (hα : 0 < α) (d : D) (θ : D × D) (u : Utterance) :
     S1 μ α cost (d, θ) {u} ≠ 0 ↔ d ∈ sem θ u ∧ μ {d} ≠ 0 :=
-  speaker_literalListener_dirac_apply_singleton_ne_zero_iff hα cost μ (sem θ) u d
+  speaker_listener_truthful_dirac_apply_singleton_ne_zero_iff hα cost μ (sem θ) u d
 
 /-- An utterance true at a degree of positive prior under an assignment of positive prior has
 a positive marginal. -/
