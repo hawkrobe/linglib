@@ -3,10 +3,10 @@
     "id": "bobaljik2000_9a",
     "source": {"bibkey": "bobaljik-2000", "paperLabel": "(9a)"},
     "language": "itel1242",
-    "primaryText": "t’-kzu-s-cen",
+    "primaryText": "t’-əŋkzu-s-čeʔn",
     "discourseSegments": [],
     "glossedTokens": [
-      ["t’-kzu-s-cen", "1S:SU-help-PRES-1>3P:OB"]
+      ["t’-əŋkzu-s-čeʔn", "1S:SU-help-PRES-1>3P:OB"]
     ],
     "translation": "I'm helping the mice",
     "context": "",
@@ -14,25 +14,26 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["root", "kzu"],
+      ["root", "əŋkzu"],
       ["rootClass", "I"],
       ["subj", "1sg"],
       ["obj", "3pl"],
       ["m1", "t"],
-      ["m2", "kzu"],
+      ["m2", "əŋkzu"],
       ["m3", "s"],
-      ["m4", "cen"]
+      ["m4", "čeʔn"]
     ],
-    "comment": "Class I: no class marker."
+    "comment": "Class I: no class marker. The prefix is printed t’ before the stem; the m columns list the items in the forms (7) and (16) cite, t- and -s-. The parenthesized object is omitted.",
+    "verified": "page-image"
   },
   {
     "id": "bobaljik2000_9b",
     "source": {"bibkey": "bobaljik-2000", "paperLabel": "(9b)"},
     "language": "itel1242",
-    "primaryText": "t-t-s-ki-cen",
+    "primaryText": "t-tɸ-s-ki-čeʔn",
     "discourseSegments": [],
     "glossedTokens": [
-      ["t-t-s-ki-cen", "1S:SU-bring-PRES-II-1>3P:OB"]
+      ["t-tɸ-s-ki-čeʔn", "1S:SU-bring-PRES-II-1>3P:OB"]
     ],
     "translation": "I'm bringing tasty rotten (mouse) heads",
     "context": "",
@@ -40,26 +41,27 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["root", "t"],
+      ["root", "tɸ"],
       ["rootClass", "II"],
       ["subj", "1sg"],
       ["obj", "3pl"],
       ["m1", "t"],
-      ["m2", "t"],
+      ["m2", "tɸ"],
       ["m3", "s"],
       ["m4", "ki"],
-      ["m5", "cen"]
+      ["m5", "čeʔn"]
     ],
-    "comment": "Class II marker -ki- for a first-person subject acting on a third-person object (11)."
+    "comment": "Class II marker -ki- for a first-person subject acting on a third-person object (11). The root is /tɸɬ/, its final ɬ fused with the present tense into s (note 27). The parenthesized object is omitted.",
+    "verified": "page-image"
   },
   {
     "id": "bobaljik2000_10a",
     "source": {"bibkey": "bobaljik-2000", "paperLabel": "(10a)"},
     "language": "itel1242",
-    "primaryText": "lcqu-z-in",
+    "primaryText": "əlčqu-z-in",
     "discourseSegments": [],
     "glossedTokens": [
-      ["lcqu-z-in", "see-PRES-2S>3S:OB"]
+      ["əlčqu-z-in", "see-PRES-2S>3S:OB"]
     ],
     "translation": "Do you see our house?",
     "context": "",
@@ -67,24 +69,25 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["root", "lcqu"],
+      ["root", "əlčqu"],
       ["rootClass", "I"],
       ["subj", "2sg"],
       ["obj", "3sg"],
-      ["m1", "lcqu"],
+      ["m1", "əlčqu"],
       ["m2", "s"],
       ["m3", "in"]
     ],
-    "comment": "Present /s/ voiced intervocalically (note 4); second-singular realis subject prefix is null (7)."
+    "comment": "The present tense is printed z, the voicing alternation of note 4; m2 lists the -s- of (16). The second-singular realis subject prefix is null (7). The parenthesized object is omitted.",
+    "verified": "page-image"
   },
   {
     "id": "bobaljik2000_10b",
     "source": {"bibkey": "bobaljik-2000", "paperLabel": "(10b)"},
     "language": "itel1242",
-    "primaryText": "t-s-c-in",
+    "primaryText": "tɸ-s-čŋ-in",
     "discourseSegments": [],
     "glossedTokens": [
-      ["t-s-c-in", "bring-PRES-II-2S>3S:OB"]
+      ["tɸ-s-čŋ-in", "bring-PRES-II-2S>3S:OB"]
     ],
     "translation": "What are you bringing?",
     "context": "",
@@ -92,15 +95,283 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["root", "t"],
+      ["root", "tɸ"],
       ["rootClass", "II"],
       ["subj", "2sg"],
       ["obj", "3sg"],
-      ["m1", "t"],
+      ["m1", "tɸ"],
       ["m2", "s"],
-      ["m3", "c"],
+      ["m3", "čŋ"],
       ["m4", "in"]
     ],
-    "comment": "Class II marker -c- for a second-singular realis subject acting on a third-person object (11)."
+    "comment": "Class II marker -čŋ- for a second-singular realis subject acting on a third-person object (11). The parenthesized object is omitted.",
+    "verified": "page-image"
+  },
+  {
+    "id": "bobaljik2000_19b",
+    "source": {"bibkey": "bobaljik-2000", "paperLabel": "(19b)"},
+    "language": "chuk1273",
+    "primaryText": "ənan ɣət ne-ɬʔu-ɣət",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "ɬʔu"],
+      ["subj", "3sg"],
+      ["obj", "2sg"],
+      ["m1", "ne"],
+      ["m2", "ɬʔu"],
+      ["m3", "ɣət"]
+    ],
+    "comment": "Skorik's Past I of ɬʔu- 'see' (Skorik 1977). The paper gives the paradigm without glosses or translations. (19a), a third-singular subject acting on a first-singular object, takes the inverse instead (note 31).",
+    "verified": "page-image"
+  },
+  {
+    "id": "bobaljik2000_19c",
+    "source": {"bibkey": "bobaljik-2000", "paperLabel": "(19c)"},
+    "language": "chuk1273",
+    "primaryText": "ənan ətɬjon ɬʔu-nin",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "ɬʔu"],
+      ["subj", "3sg"],
+      ["obj", "3sg"],
+      ["m1", "ɬʔu"],
+      ["m2", "nin"]
+    ],
+    "comment": "Skorik's Past I of ɬʔu- 'see' (Skorik 1977). The paper gives the paradigm without glosses or translations.",
+    "verified": "page-image"
+  },
+  {
+    "id": "bobaljik2000_19d",
+    "source": {"bibkey": "bobaljik-2000", "paperLabel": "(19d)"},
+    "language": "chuk1273",
+    "primaryText": "ənan muri ne-ɬʔu-mək",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "ɬʔu"],
+      ["subj", "3sg"],
+      ["obj", "1pl"],
+      ["m1", "ne"],
+      ["m2", "ɬʔu"],
+      ["m3", "mək"]
+    ],
+    "comment": "Skorik's Past I of ɬʔu- 'see' (Skorik 1977). The paper gives the paradigm without glosses or translations.",
+    "verified": "page-image"
+  },
+  {
+    "id": "bobaljik2000_19e",
+    "source": {"bibkey": "bobaljik-2000", "paperLabel": "(19e)"},
+    "language": "chuk1273",
+    "primaryText": "ənan turi ne-ɬʔu-tək",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "ɬʔu"],
+      ["subj", "3sg"],
+      ["obj", "2pl"],
+      ["m1", "ne"],
+      ["m2", "ɬʔu"],
+      ["m3", "tək"]
+    ],
+    "comment": "Skorik's Past I of ɬʔu- 'see' (Skorik 1977). The paper gives the paradigm without glosses or translations.",
+    "verified": "page-image"
+  },
+  {
+    "id": "bobaljik2000_19f",
+    "source": {"bibkey": "bobaljik-2000", "paperLabel": "(19f)"},
+    "language": "chuk1273",
+    "primaryText": "ənan ətri ɬʔu-ninet",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "ɬʔu"],
+      ["subj", "3sg"],
+      ["obj", "3pl"],
+      ["m1", "ɬʔu"],
+      ["m2", "ninet"]
+    ],
+    "comment": "Skorik's Past I of ɬʔu- 'see' (Skorik 1977). The paper gives the paradigm without glosses or translations.",
+    "verified": "page-image"
+  },
+  {
+    "id": "bobaljik2000_19g",
+    "source": {"bibkey": "bobaljik-2000", "paperLabel": "(19g)"},
+    "language": "chuk1273",
+    "primaryText": "ərɣənan ɣəm ne-ɬʔu-ɣəm",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "ɬʔu"],
+      ["subj", "3pl"],
+      ["obj", "1sg"],
+      ["m1", "ne"],
+      ["m2", "ɬʔu"],
+      ["m3", "ɣəm"]
+    ],
+    "comment": "Skorik's Past I of ɬʔu- 'see' (Skorik 1977). The paper gives the paradigm without glosses or translations.",
+    "verified": "page-image"
+  },
+  {
+    "id": "bobaljik2000_19h",
+    "source": {"bibkey": "bobaljik-2000", "paperLabel": "(19h)"},
+    "language": "chuk1273",
+    "primaryText": "ərɣənan ɣət ne-ɬʔu-ɣət",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "ɬʔu"],
+      ["subj", "3pl"],
+      ["obj", "2sg"],
+      ["m1", "ne"],
+      ["m2", "ɬʔu"],
+      ["m3", "ɣət"]
+    ],
+    "comment": "Skorik's Past I of ɬʔu- 'see' (Skorik 1977). The paper gives the paradigm without glosses or translations.",
+    "verified": "page-image"
+  },
+  {
+    "id": "bobaljik2000_19i",
+    "source": {"bibkey": "bobaljik-2000", "paperLabel": "(19i)"},
+    "language": "chuk1273",
+    "primaryText": "ərɣənan ətɬjon ne-ɬʔu-ɣʔen",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "ɬʔu"],
+      ["subj", "3pl"],
+      ["obj", "3sg"],
+      ["m1", "ne"],
+      ["m2", "ɬʔu"],
+      ["m3", "ɣʔen"]
+    ],
+    "comment": "Skorik's Past I of ɬʔu- 'see' (Skorik 1977). The paper gives the paradigm without glosses or translations.",
+    "verified": "page-image"
+  },
+  {
+    "id": "bobaljik2000_19j",
+    "source": {"bibkey": "bobaljik-2000", "paperLabel": "(19j)"},
+    "language": "chuk1273",
+    "primaryText": "ərɣənan muri ne-ɬʔu-mək",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "ɬʔu"],
+      ["subj", "3pl"],
+      ["obj", "1pl"],
+      ["m1", "ne"],
+      ["m2", "ɬʔu"],
+      ["m3", "mək"]
+    ],
+    "comment": "Skorik's Past I of ɬʔu- 'see' (Skorik 1977). The paper gives the paradigm without glosses or translations.",
+    "verified": "page-image"
+  },
+  {
+    "id": "bobaljik2000_19k",
+    "source": {"bibkey": "bobaljik-2000", "paperLabel": "(19k)"},
+    "language": "chuk1273",
+    "primaryText": "ərɣənan turi ne-ɬʔu-tək",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "ɬʔu"],
+      ["subj", "3pl"],
+      ["obj", "2pl"],
+      ["m1", "ne"],
+      ["m2", "ɬʔu"],
+      ["m3", "tək"]
+    ],
+    "comment": "Skorik's Past I of ɬʔu- 'see' (Skorik 1977). The paper gives the paradigm without glosses or translations.",
+    "verified": "page-image"
+  },
+  {
+    "id": "bobaljik2000_19l",
+    "source": {"bibkey": "bobaljik-2000", "paperLabel": "(19l)"},
+    "language": "chuk1273",
+    "primaryText": "ərɣənan ətri ne-ɬʔu-net",
+    "discourseSegments": [],
+    "glossedTokens": [],
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "ɬʔu"],
+      ["subj", "3pl"],
+      ["obj", "3pl"],
+      ["m1", "ne"],
+      ["m2", "ɬʔu"],
+      ["m3", "net"]
+    ],
+    "comment": "Skorik's Past I of ɬʔu- 'see' (Skorik 1977). The paper gives the paradigm without glosses or translations.",
+    "verified": "page-image"
+  },
+  {
+    "id": "bobaljik2000_27",
+    "source": {"bibkey": "bobaljik-2000", "paperLabel": "(27)"},
+    "language": "chuk1273",
+    "primaryText": "ənan ɣənəkə ənqen ne-jəl-ɣət",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["ənan", "3SG:ERG"], ["ɣənəkə", "2SG:DAT"], ["ənqen", "sth.(ABS)"],
+      ["ne-jəl-ɣət", "3:SU-give-2S:OB"]
+    ],
+    "translation": "She/he gave you something",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["root", "jəl"],
+      ["subj", "3sg"],
+      ["obj", "3sg"],
+      ["io", "2sg"],
+      ["m1", "ne"],
+      ["m2", "jəl"],
+      ["m3", "ɣət"]
+    ],
+    "comment": "V. P. Nedjalkov (p.c., 3/1999). The verb agrees with the second-person dative over the third-person direct object, the person hierarchy of §3.2.2.",
+    "verified": "page-image"
   }
 ]

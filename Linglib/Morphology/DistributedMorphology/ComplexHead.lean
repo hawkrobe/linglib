@@ -20,7 +20,8 @@ features of their exponents — and the outer ones still bare. Which
 morphemes count as context is a locality regime: the concatenated
 neighbors after null exponents are pruned, or every morpheme by
 hierarchical distance. What insertion does to a morpheme's features is a
-second parameter: they persist, or the item's features are rewritten away.
+second parameter: they persist, or insertion rewrites the morpheme as its
+exponent and they are gone.
 
 ## Main definitions
 
@@ -39,6 +40,8 @@ second parameter: they persist, or the item's features are rewritten away.
   realized morpheme is never realized again.
 * `feats_insertAll_nondeletion`: under non-deletion, features survive
   insertion.
+* `visible_insertUpTo_rewriting`: under rewriting, a realized morpheme keeps no
+  features, so inward-looking conditioning sees exponents only.
 * `exp_insertUpTo_of_le`, `visible_of_exp_none`: inside-out insertion leaves
   the outer morphemes bare, so outward-looking conditioning sees features
   only.
@@ -62,19 +65,19 @@ namespace DistributedMorphology
 
 open Morphology (Morph)
 
-/-- A morpheme at PF: its features, the value of its Q variable — `none`
-before Vocabulary Insertion, the exponent after — and the side on which it
-is linearized. -/
+/-- A morpheme at PF carries its features, the value of its Q variable
+(`none` before Vocabulary Insertion, the exponent after), and the side on
+which it is linearized. -/
 structure Morpheme (F E : Type*) where
   /-- The synsem and diacritic features. -/
   feats : List F
-  /-- The Q variable: `none` until an exponent is substituted for it. -/
+  /-- The Q variable is `none` until an exponent is substituted for it. -/
   exp : Option E := none
   /-- The side of its host the morpheme is linearized on. -/
   side : Morph.Side := .after
   deriving DecidableEq, Repr
 
-/-- The complex head: the root, whose form is present from the start, and
+/-- A complex head is the root, whose form is present from the start, with
 the morphemes adjoined above it, innermost first. -/
 structure ComplexHead (F E : Type*) where
   /-- The root, with its underlying form. -/
@@ -103,9 +106,9 @@ variable {F E : Type*} (w : ComplexHead F E)
 
 /-! ### Linearization -/
 
-/-- The positions of the complex head in linear order, respecting No Tangling:
-prefixal morphemes outermost first, the root (`none`), suffixal morphemes
-innermost first. -/
+/-- The positions of the complex head in linear order respect No Tangling,
+with prefixal morphemes outermost first, then the root (`none`), then
+suffixal morphemes innermost first. -/
 def order : List (Option ℕ) :=
   ((List.range w.heads.length).filter fun i =>
       (w.heads[i]?.map (·.side)) = some .before).reverse.map some ++
@@ -122,8 +125,8 @@ def exponents : List E := w.order.filterMap fun p => (w.at? p).bind (·.exp)
 
 /-! ### Context -/
 
-/-- Which morphemes stand as context to a morpheme undergoing insertion: its
-concatenated neighbors, null exponents pruned; or every morpheme of the
+/-- The context of a morpheme undergoing insertion is either its
+concatenated neighbors, null exponents pruned, or every morpheme of the
 complex head by hierarchical distance, inner and outer. -/
 inductive Locality where
   /-- The concatenated neighbors, with null exponents pruned. -/
@@ -132,22 +135,22 @@ inductive Locality where
   | hierarchical
   deriving DecidableEq, Repr
 
-/-- What insertion does to a morpheme's features: they persist, or the
-inserted item's features are rewritten away. -/
+/-- Insertion either leaves a morpheme's features in place or rewrites the
+morpheme as its exponent, deleting them. -/
 inductive Discharge where
   /-- Features survive insertion. -/
   | nondeletion
-  /-- The item's features are deleted on insertion. -/
+  /-- The morpheme's features are deleted on insertion. -/
   | rewriting
   deriving DecidableEq, Repr
 
-/-- The features a morpheme presents as context: its own, and — once
-realized — the morphophonological features of its exponent. -/
+/-- A morpheme presents as context its own features and, once realized, the
+morphophonological features of its exponent. -/
 def visible (expFeatures : E → List F) (s : Morpheme F E) : List F :=
   s.feats ++ (s.exp.map expFeatures).getD []
 
-/-- A bare morpheme presents its features only: nothing of an exponent is
-visible before insertion. -/
+/-- A bare morpheme presents its features only, since nothing of an exponent
+is visible before insertion. -/
 @[simp] theorem visible_of_exp_none {expFeatures : E → List F} {s : Morpheme F E}
     (h : s.exp = none) : visible expFeatures s = s.feats := by
   simp [visible, h]
@@ -168,8 +171,8 @@ variable (isNull : E → Prop) [DecidablePred isNull]
 def concat : List (Option ℕ) :=
   w.order.filter fun p => ¬ ∃ s ∈ w.at? p, Pruned isNull s
 
-/-- The concatenated neighbors of head `i`: the inner side and the outer side
-of the position, each the nearest unpruned morpheme, if any. -/
+/-- The concatenated neighbors of head `i` are the nearest unpruned
+morphemes on its inner and outer sides, if any. -/
 def neighbors (i : ℕ) : Option (Morpheme F E) × Option (Morpheme F E) :=
   let c := w.concat isNull
   match c.idxOf? (some i) with
@@ -179,10 +182,10 @@ def neighbors (i : ℕ) : Option (Morpheme F E) × Option (Morpheme F E) :=
     let after := (c[k + 1]?).bind w.at?
     if (w.heads[i]?.map (·.side)) = some .before then (after, before) else (before, after)
 
-/-- The context head `i` presents to Vocabulary Insertion: its features in
-focus; inner context on the left, outer on the right, nearest first — under
-concatenation the unpruned neighbors, under hierarchy the neighborhood of head
-`i` in the complex head read from the root outward. -/
+/-- Head `i` presents its features in focus to Vocabulary Insertion, with
+inner context on the left and outer on the right, nearest first. Under
+concatenation the context is the unpruned neighbors, under hierarchy the
+neighborhood of head `i` in the complex head read from the root outward. -/
 def contextAt (loc : Locality) (expFeatures : E → List F) (i : ℕ) : Neighborhood (List F) :=
   match loc with
   | .concatenation =>
@@ -193,8 +196,8 @@ def contextAt (loc : Locality) (expFeatures : E → List F) (i : ℕ) : Neighbor
     .around ((w.root :: w.heads).map (visible expFeatures)) (i + 1)
       ((w.heads[i]?.map (·.feats)).getD [])
 
-/-- Under hierarchy, context is by distance: head `j` stands at offset `j - i`
-from head `i`. -/
+/-- Under hierarchy, context is by distance, head `j` standing at offset
+`j - i` from head `i`. -/
 theorem nth_contextAt_hierarchical {expFeatures : E → List F} {i j : ℕ}
     (hi : i ≤ w.heads.length) (hj : j ≠ i) :
     (w.contextAt isNull .hierarchical expFeatures i).nth (j - i) =
@@ -218,8 +221,9 @@ theorem nth_contextAt_hierarchical_root {expFeatures : E → List F} {i : ℕ}
 variable [DecidableEq F] (vocab : List (VocabularyItem F E)) (loc : Locality)
   (expFeatures : E → List F) (dis : Discharge)
 
-/-- Vocabulary Insertion at head `i`: the Subset Principle's winner is
-substituted for Q, once only; under rewriting its features are deleted. -/
+/-- Vocabulary Insertion at head `i` substitutes the Subset Principle's
+winner for Q, once only; under rewriting it deletes the morpheme's
+features. -/
 def insertAt (i : ℕ) : ComplexHead F E :=
   match w.heads[i]? with
   | none => w
@@ -231,7 +235,7 @@ def insertAt (i : ℕ) : ComplexHead F E :=
       | some item =>
         let feats := match dis with
           | .nondeletion => s.feats
-          | .rewriting => s.feats.diff item.site.focus
+          | .rewriting => []
         let s' : Morpheme F E := { s with exp := some item.exponent, feats := feats }
         { w with heads := w.heads.set i s' }
 
@@ -239,7 +243,7 @@ def insertAt (i : ℕ) : ComplexHead F E :=
 def insertUpTo (n : ℕ) : ComplexHead F E :=
   (List.range n).foldl (fun w i => w.insertAt isNull vocab loc expFeatures dis i) w
 
-/-- Vocabulary Insertion from the inside out: every head in turn. -/
+/-- Vocabulary Insertion from the inside out reaches every head in turn. -/
 def insertAll : ComplexHead F E := w.insertUpTo isNull vocab loc expFeatures dis w.heads.length
 
 /-! ### Uniqueness and terminal insertion -/
@@ -262,7 +266,7 @@ theorem insertUpTo_succ (n : ℕ) :
     (w.insertAt isNull vocab loc expFeatures dis i).heads.length = w.heads.length := by
   unfold insertAt; split <;> (try split) <;> (try split) <;> simp
 
-/-- A realized morpheme is left alone: insertion applies once. -/
+/-- Insertion applies once, leaving a realized morpheme alone. -/
 theorem insertAt_of_isRealized {i : ℕ} {s : Morpheme F E} (hs : w.heads[i]? = some s)
     (h : s.IsRealized) : w.insertAt isNull vocab loc expFeatures dis i = w := by
   unfold insertAt; rw [hs]; simp [h]
@@ -294,7 +298,7 @@ theorem exp_insertUpTo_of_eq_some (n : ℕ) {j : ℕ} {s : Morpheme F E} {e : E}
     obtain ⟨s', hs', he'⟩ := ih hs
     exact exp_insertAt_of_eq_some isNull hs' he'
 
-/-- **Uniqueness**: an exponent, once substituted for Q, is never replaced. -/
+/-- **Uniqueness.** An exponent, once substituted for Q, is never replaced. -/
 theorem exp_insertAll_of_eq_some {j : ℕ} {s : Morpheme F E} {e : E} (hs : w.heads[j]? = some s)
     (he : s.exp = some e) :
     ∃ s', (w.insertAll isNull vocab loc expFeatures dis).heads[j]? = some s' ∧
@@ -310,8 +314,8 @@ theorem exp_insertAt_of_lt {i j : ℕ} (hij : i < j) {s : Morpheme F E} (hs : w.
       s'.exp = none := by
   rw [getElem?_heads_insertAt_of_ne isNull hij.ne]; exact ⟨s, hs, he⟩
 
-/-- Inside-out insertion up to `n` leaves every head from `n` on bare: when
-a head is reached, its outer context carries features only. -/
+/-- Inside-out insertion up to `n` leaves every head from `n` on bare, so
+when a head is reached its outer context carries features only. -/
 theorem exp_insertUpTo_of_le (n : ℕ) {j : ℕ} (hnj : n ≤ j) {s : Morpheme F E}
     (hs : w.heads[j]? = some s) (he : s.exp = none) :
     ∃ s', (w.insertUpTo isNull vocab loc expFeatures dis n).heads[j]? = some s' ∧
@@ -359,6 +363,39 @@ theorem feats_insertAll_nondeletion :
     (w.insertAll isNull vocab loc expFeatures .nondeletion).heads.map (·.feats) =
       w.heads.map (·.feats) :=
   feats_insertUpTo_nondeletion isNull _
+
+/-! ### Rewriting -/
+
+/-- Under rewriting, insertion leaves no features on the morpheme it realizes. -/
+theorem feats_insertAt_rewriting (h : ∀ s ∈ w.heads, s.IsRealized → s.feats = []) (i : ℕ) :
+    ∀ s ∈ (w.insertAt isNull vocab loc expFeatures .rewriting i).heads,
+      s.IsRealized → s.feats = [] := by
+  unfold insertAt
+  split
+  · exact h
+  split_ifs
+  · exact h
+  split
+  · exact h
+  intro s hs
+  rcases List.mem_or_eq_of_mem_set hs with hs | rfl
+  · exact h s hs
+  · exact fun _ ↦ rfl
+
+theorem feats_insertUpTo_rewriting (hw : ∀ s ∈ w.heads, s.exp = none) (n : ℕ) :
+    ∀ s ∈ (w.insertUpTo isNull vocab loc expFeatures .rewriting n).heads,
+      s.IsRealized → s.feats = [] := by
+  induction n with
+  | zero => intro s hs hr; simp [Morpheme.IsRealized, hw s hs] at hr
+  | succ n ih => rw [insertUpTo_succ]; exact feats_insertAt_rewriting isNull ih n
+
+/-- Under rewriting, inside-out insertion from bare morphemes replaces each morpheme it realizes
+by its exponent, so an inner morpheme presents its exponent's features alone. -/
+theorem visible_insertUpTo_rewriting (hw : ∀ s ∈ w.heads, s.exp = none) (n : ℕ) {s : Morpheme F E}
+    (hs : s ∈ (w.insertUpTo isNull vocab loc expFeatures .rewriting n).heads) {e : E}
+    (he : s.exp = some e) : visible expFeatures s = expFeatures e := by
+  simp [visible, he,
+    feats_insertUpTo_rewriting isNull hw n s hs (by simp [Morpheme.IsRealized, he])]
 
 theorem length_heads_insertUpTo (n : ℕ) :
     (w.insertUpTo isNull vocab loc expFeatures dis n).heads.length = w.heads.length := by

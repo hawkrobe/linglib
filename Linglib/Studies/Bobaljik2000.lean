@@ -3,205 +3,229 @@ module
 public import Linglib.Morphology.DistributedMorphology.ComplexHead
 public import Linglib.Data.Examples.Bobaljik2000
 
-/-! # Bobaljik 2000: the ins and outs of contextual allomorphy
+/-!
+# Bobaljik (2000): The ins and outs of contextual allomorphy
 
-[bobaljik-2000] argues from Chukotko-Kamchatkan agreement that Vocabulary
-Insertion is cyclic from the root outward and rewrites a morpheme's features
-as it discharges them, so conditioning is asymmetric: outward sensitivity
-reaches morphosyntactic features not yet realized, inward sensitivity only
-diacritics and the vocabulary items already inserted. In Itelmen the Class II
-marker is conditioned by the root's class diacritic inside it and the person
-of both arguments outside it, object agreement by the subject outside it, and
-the subject prefix — last to be inserted — by nothing inside. In Chukchi the
-third-person prefix ne- is bled exactly when the suffix -nin has been
-inserted; the paper's (23) shows the two structures are feature-identical
-inside the prefix, so the trigger is the vocabulary item itself, a sensitivity
-cyclicity forces to be inwards.
+Bobaljik argues that Vocabulary Insertion proceeds from the root outward and rewrites each
+morpheme as its exponent, so that an allomorph can look outward only at bare morphosyntactic
+features and inward only at diacritics and inserted vocabulary items. In Itelmen the Class II
+marker sees the root's class diacritic inward and both agreement nodes outward, while the subject
+prefix, inserted last, sees nothing of the object. In Chukchi the third-person subject prefix
+*ne-* is absent exactly when the object suffix is *-nin* or *-ninet*; since a third-singular
+object presents the same features whatever its subject, the trigger is the inserted item, an
+inward sensitivity.
 
-## Main results
+## Main statements
 
-* `itelmen_rows`: the four forms (9)–(10) from one Vocabulary, the Class II
-  marker's presence decided by insertion against the root's diacritic.
-* `prefix_sees_no_agreement`: at the subject prefix, the rewritten object
-  agreement is invisible; `nondeletion_exposes` that only rewriting hides it.
-* `outward_features_only`, `inward_diacritic_not_tense`: outward context is
-  bare morphosyntactic features; inward context is diacritics and inserted
-  items, not discharged features.
-* `nin_bleeds_prefix`, `ditransitive_retains_prefix`,
-  `prefix_context_features_identical`: the Chukchi bleeding derived from one
-  Vocabulary, triggered by the item -nin, not by object features.
+* `Itelmen.rows_morphs`, `Chukchi.rows_morphs`: the Itelmen verbs and the Chukchi Past I
+  paradigm derive from one Vocabulary each.
+* `Itelmen.prefix_sees_no_object`: when the subject prefix is inserted, nothing of the object
+  agreement remains for it to be conditioned by; under non-deletion it would remain.
+* `Chukchi.object_features_cannot_bleed`: a deletion of *ne-* keyed to the object's features
+  overapplies under non-deletion and never applies under rewriting.
+* `Chukchi.ditransitive_retains_prefix`: when the verb agrees with a second-person dative, a
+  third-singular subject acting on a third-singular direct object keeps *ne-*.
+
+## Implementation notes
+
+* Context is hierarchical. Mood is omitted, every form being realis or indicative, and the
+  Chukchi Past I has no overt tense, so its T node is omitted.
+* Every Itelmen verb has the class position, which the paper allows to be syntactic or added
+  after syntax; in Class I it is null.
+* Third-person objects carry person and number, as the paper's Chukchi trees and vocabulary
+  write them, not the personless third person of its Itelmen agreement analysis.
+* The rows list the paper's citation forms of the subject prefix *t-* and the present *-s-*,
+  which two Itelmen examples print as *t’* and *z*.
 
 ## References
 
-[bobaljik-2000], [halle-marantz-1993].
+* [J. D. Bobaljik, *The ins and outs of contextual allomorphy*][bobaljik-2000]
+* [M. Halle and A. Marantz, *Distributed Morphology and the pieces of
+  inflection*][halle-marantz-1993]
 -/
 
 @[expose] public section
 
 namespace Bobaljik2000
 
-open DistributedMorphology
+open DistributedMorphology ComplexHead
 
+/-- A terminal carries present tense, the class position, the Class II diacritic, or an agreement
+node with person and number; an inserted vocabulary item is a morphophonological feature. -/
 inductive Feature where
-  | root (s : String) | classII | tense | classMarker
-  | agrO | agrS | item (s : String) | first | second | third | sg | pl
+  | pres | classII | classMarker | agrO | agrS | first | second | third | sg | pl
+  | item (e : String)
   deriving DecidableEq, Repr
 
 open Feature
 
-/-- The morphophonological features an exponent contributes to context: its
-identity. Inward context after rewriting therefore carries diacritics and
-inserted vocabulary items, never discharged morphosyntactic features. -/
+/-- An inserted exponent presents its identity. -/
 def itemFeatures (e : String) : List Feature := [item e]
 
-/-- Insertion from the inside out under hierarchical locality, null exponents
-filtered from the surface string. -/
-def morphs (voc : List (VocabularyItem Feature String)) (w : ComplexHead Feature String) :
-    List String :=
-  (w.insertAll (· = "") voc .hierarchical itemFeatures .rewriting).exponents.filter (· ≠ "")
+/-- The surface exponents after inside-out insertion under hierarchical locality, null exponents
+dropped. -/
+def morphs (dis : Discharge) (voc : List (VocabularyItem Feature String))
+    (w : ComplexHead Feature String) : List String :=
+  (w.insertAll (· = "") voc .hierarchical itemFeatures dis).exponents.filter (· ≠ "")
 
 /-- The context head `i` presents when inside-out insertion reaches it. -/
 def stepContext (voc : List (VocabularyItem Feature String)) (w : ComplexHead Feature String)
-    (dis : ComplexHead.Discharge) (i : ℕ) : Neighborhood (List Feature) :=
+    (dis : Discharge) (i : ℕ) : Neighborhood (List Feature) :=
   (w.insertUpTo (· = "") voc .hierarchical itemFeatures dis i).contextAt
     (· = "") .hierarchical itemFeatures i
 
-/-! ### (9)–(12): Itelmen -/
-
-/-- Present -s; the Class II marker, conditioned inward by the root's class
-diacritic (two morphemes in — the tense suffix intervenes), -ki- under a
-first-person subject acting on a third-person object and -c- under a
-second-singular one; object agreement -cen under a first-person subject and
--in under a second-singular; the subject prefix t- for first singular, null
-for second singular. -/
-def vocab : List (VocabularyItem Feature String) :=
-  [[tense] ⟷ "s",
-   ⟨⟨[classMarker], [[], [classII]], [[agrO, third], [agrS, first]]⟩, "ki"⟩,
-   ⟨⟨[classMarker], [[], [classII]], [[agrO, third], [agrS, second, sg]]⟩, "c"⟩,
-   ⟨⟨[agrO, third], [], [[agrS, first]]⟩, "cen"⟩,
-   ⟨⟨[agrO, third], [], [[agrS, second, sg]]⟩, "in"⟩,
-   [agrS, first, sg] ⟷ "t", [agrS, second, sg] ⟷ ""]
-
-/-- √-T-(II)-AgrO-AgrS. The class position is present throughout — the paper
-leaves open whether the node is syntactic or added post-syntactically — and
-only roots carrying the Class II diacritic license an exponent there. -/
-def word (r : String) (classII? : Bool) (subj obj : List Feature) : ComplexHead Feature String :=
-  ⟨⟨root r :: if classII? then [classII] else [], some r, .after⟩,
-   [⟨[tense], none, .after⟩, ⟨[classMarker], none, .after⟩,
-    ⟨agrO :: obj, none, .after⟩, ⟨agrS :: subj, none, .before⟩]⟩
-
-def parseArg : String → Option (List Feature)
-  | "1sg" => some [first, sg]
-  | "2sg" => some [second, sg]
-  | "3sg" => some [third, sg]
-  | "3pl" => some [third, pl]
+/-- The person and number of an argument, as the rows name them. -/
+def phi : String → Option (List Feature)
+  | "1sg" => some [first, sg] | "2sg" => some [second, sg] | "3sg" => some [third, sg]
+  | "1pl" => some [first, pl] | "2pl" => some [second, pl] | "3pl" => some [third, pl]
   | _ => none
 
-def ofRow (ex : Datum) : Option (ComplexHead Feature String × List String) := do
-  let subj ← parseArg (← ex.feature? "subj")
-  let obj ← parseArg (← ex.feature? "obj")
-  pure (word (← ex.feature? "root") ((← ex.feature? "rootClass") = "II") subj obj,
-    ["m1", "m2", "m3", "m4", "m5"].filterMap ex.feature?)
+/-- A row's exponents, in linear order. -/
+def exponents (ex : Datum) : List String :=
+  ["m1", "m2", "m3", "m4", "m5"].filterMap ex.feature?
 
-def rows : List (ComplexHead Feature String × List String) :=
-  Examples.all.filterMap ofRow
+/-! ### Itelmen -/
 
-/-- The forms (9)–(10): the Class II marker appears in the (b) forms alone,
-because only there does insertion find the diacritic inward. -/
-theorem itelmen_rows : ∀ r ∈ rows, morphs vocab r.1 = r.2 := by decide
+namespace Itelmen
 
-/-- (9b): `t-t-s-ki-cen`. -/
-def bring : ComplexHead Feature String := word "t" true [first, sg] [third, pl]
+/-- Present *-s-*. The Class II marker is conditioned inward by the root's class diacritic, past
+the tense suffix, and outward by both agreement nodes, *-ki-* marking a first-person subject
+acting on a third-person object and *-čŋ-* a second-singular subject; Class I is null. Third-person
+object agreement (8) is *-čen*, plural *-čeʔn*, under a first-person subject and *-in*, plural
+*-iʔn*, under a second-singular one. The subject prefix is *t-* for first singular and null for
+second singular. -/
+def vocab : List (VocabularyItem Feature String) :=
+  [[pres] ⟷ "s",
+   ⟨⟨[classMarker], [[], [classII]], [[agrO, third], [agrS, first]]⟩, "ki"⟩,
+   ⟨⟨[classMarker], [[], [classII]], [[agrO, third], [agrS, second, sg]]⟩, "čŋ"⟩,
+   [classMarker] ⟷ "",
+   ⟨⟨[agrO, third, sg], [], [[agrS, first]]⟩, "čen"⟩,
+   ⟨⟨[agrO, third, pl], [], [[agrS, first]]⟩, "čeʔn"⟩,
+   ⟨⟨[agrO, third, sg], [], [[agrS, second, sg]]⟩, "in"⟩,
+   ⟨⟨[agrO, third, pl], [], [[agrS, second, sg]]⟩, "iʔn"⟩,
+   [agrS, first, sg] ⟷ "t", [agrS, second, sg] ⟷ ""]
 
-/-- When the subject prefix is reached under rewriting, the object agreement
-inside it has discharged its features: nothing of `agrO` remains to condition
-the prefix, the asymmetry of (12). -/
-theorem prefix_sees_no_agreement :
-    agrO ∉ (stepContext vocab bring .rewriting 3).leftCtx.flatten := by
+/-- The verb is the root with its class diacritics, then present tense, the class position, and
+the object and subject agreement nodes, as in (16). -/
+def word (r : String) (cls subj obj : List Feature) : ComplexHead Feature String :=
+  ⟨⟨cls, some r, .after⟩,
+   [⟨[pres], none, .after⟩, ⟨[classMarker], none, .after⟩, ⟨agrO :: obj, none, .after⟩,
+    ⟨agrS :: subj, none, .before⟩]⟩
+
+/-- The class diacritics of a root, as the rows name its class. -/
+def rootClass : String → Option (List Feature)
+  | "I" => some []
+  | "II" => some [classII]
+  | _ => none
+
+/-- The verb of an Itelmen row. -/
+def ofRow (ex : Datum) : Option (ComplexHead Feature String) := do
+  word (← ex.feature? "root") (← rootClass (← ex.feature? "rootClass"))
+    (← phi (← ex.feature? "subj")) (← phi (← ex.feature? "obj"))
+
+/-- In the forms (9) and (10) the Class II marker appears where insertion finds the class
+diacritic inward, in the shape the agreement outward selects. -/
+theorem rows_morphs :
+    ∀ ex ∈ Examples.all, ex.language = "itel1242" →
+      (ofRow ex).map (morphs .rewriting vocab) = some (exponents ex) := by
   decide
 
-/-- Under non-deletion the same context carries `agrO`: symmetric conditioning,
-as in [halle-marantz-1993], would let the prefix see inward. -/
-theorem nondeletion_exposes :
-    agrO ∈ (stepContext vocab bring .nondeletion 3).leftCtx.flatten := by
+/-- The verb of (9b), *t-tɸ-s-ki-čeʔn*, is 'bring' with a first-singular subject and a
+third-plural object. -/
+def bring : ComplexHead Feature String := word "tɸ" [classII] [first, sg] [third, pl]
+
+/-- In (9b) the Class II marker sees the root's diacritic inward, past the tense suffix already
+rewritten as *-s-*, and both agreement nodes outward, bare. -/
+theorem class_marker_context :
+    stepContext vocab bring .rewriting 1 =
+      ⟨[classMarker], [[item "s"], [classII, item "tɸ"]],
+        [[agrO, third, pl], [agrS, first, sg]]⟩ := by
   decide
 
-/-- The Class II marker, second to be inserted, sees both agreement morphemes
-outside it bare: their features, at hierarchical distance one and two. -/
-theorem outward_features_only :
-    (stepContext vocab bring .rewriting 1).rightCtx
-      = [[agrO, third, pl], [agrS, first, sg]] := by
+/-- When the subject prefix of (9b) is reached, every morpheme inside it has been rewritten as its
+exponent, and nothing of the object agreement remains for the prefix to be conditioned by. Under
+the non-deletion of [halle-marantz-1993] the object's features would remain. -/
+theorem prefix_sees_no_object :
+    (stepContext vocab bring .rewriting 3).leftCtx =
+        [[item "čeʔn"], [item "ki"], [item "s"], [classII, item "tɸ"]] ∧
+      (stepContext vocab bring .nondeletion 3).leftCtx.head? =
+        some [agrO, third, pl, item "čeʔn"] := by
   decide
 
-/-- Inward, the same step sees the root's class diacritic but not the
-discharged tense feature: inward sensitivity reaches diacritics and inserted
-items only. -/
-theorem inward_diacritic_not_tense :
-    classII ∈ (stepContext vocab bring .rewriting 1).leftCtx.flatten ∧
-      tense ∉ (stepContext vocab bring .rewriting 1).leftCtx.flatten := by
-  constructor <;> decide
+end Itelmen
 
-/-! ### (19)–(28): Chukchi — sensitivity to the item, not its features
+/-! ### Chukchi -/
 
-Unlike Itelmen, the Chukchi third-person transitive subject prefix ne- is
-absent exactly when the object suffix is -nin, the allomorph conditioned by a
-third-singular subject ((20), (24)). The bleeding cannot be conditioned by
-object features: those are discharged before the prefix is reached, and (23)'s
-two structures are feature-identical inside the prefix. It is conditioned by
-the inserted item -nin itself — visible inward as a morphophonological fact —
-so the ditransitive (26), where dative agreement preempts -nin under the same
-third-singular subject, retains the prefix. Forms follow the paper's
-segmentation in (19), (24) and (26). -/
+namespace Chukchi
 
-/-- Past I transitive verb: √-AgrO-AgrS, no overt tense, no class. -/
-def chukchi (r : String) (subj obj : List Feature) : ComplexHead Feature String :=
-  ⟨⟨[root r], some r, .after⟩,
-   [⟨agrO :: obj, none, .after⟩, ⟨agrS :: subj, none, .before⟩]⟩
+/-- The Past I object suffixes (20) are *-nin* and *-ninet* under a third-singular subject (24),
+otherwise *-ɣʔen* and *-net* for a third-person object, and the first- and second-person
+suffixes. -/
+def objectVocab : List (VocabularyItem Feature String) :=
+  [⟨⟨[agrO, third, sg], [], [[agrS, third, sg]]⟩, "nin"⟩,
+   ⟨⟨[agrO, third, pl], [], [[agrS, third, sg]]⟩, "ninet"⟩,
+   [agrO, third, sg] ⟷ "ɣʔen", [agrO, third, pl] ⟷ "net",
+   [agrO, first, sg] ⟷ "ɣəm", [agrO, first, pl] ⟷ "mək",
+   [agrO, second, sg] ⟷ "ɣət", [agrO, second, pl] ⟷ "tək"]
 
-/-- (24) plus the prefixes: -nin under a third-singular subject, elsewhere
--(e)n; -t for a second-singular object; the third-person subject prefix ne-,
-bled by a zero item conditioned inward on the inserted item -nin. -/
-def chukchiVocab : List (VocabularyItem Feature String) :=
-  [⟨⟨[agrO, third], [], [[agrS, third, sg]]⟩, "nin"⟩,
-   [agrO, third] ⟷ "en",
-   [agrO, second, sg] ⟷ "t",
-   ⟨⟨[agrS, third], [[item "nin"]], []⟩, ""⟩,
-   [agrS, third] ⟷ "ne"]
+/-- The object suffixes, and the third-person subject prefix *ne-*, impoverished to zero inward of
+the item *-nin* or *-ninet*. -/
+def vocab : List (VocabularyItem Feature String) :=
+  objectVocab ++
+    [⟨⟨[agrS, third], [[item "nin"]], []⟩, ""⟩, ⟨⟨[agrS, third], [[item "ninet"]], []⟩, ""⟩,
+     [agrS, third] ⟷ "ne"]
 
-/-- (23), left: a third-singular subject acting on a third-singular object. -/
-def seeBy3sg : ComplexHead Feature String := chukchi "u" [third, sg] [third, sg]
+/-- The Past I verb is the root with the object and subject agreement nodes. -/
+def word (r : String) (subj obj : List Feature) : ComplexHead Feature String :=
+  ⟨⟨[], some r, .after⟩, [⟨agrO :: obj, none, .after⟩, ⟨agrS :: subj, none, .before⟩]⟩
 
-/-- (23), right: a third-plural subject, same object. -/
-def seeBy3pl : ComplexHead Feature String := chukchi "u" [third, pl] [third, sg]
+/-- Object agreement targets a first- or second-person indirect object over a third-person direct
+object, by the person hierarchy of §3.2.2, and otherwise the direct object. -/
+def agreesWith (dObj : List Feature) : Option (List Feature) → List Feature
+  | some io => if third ∈ dObj ∧ third ∉ io then io else dObj
+  | none => dObj
 
-/-- (19c): the -nin allomorph, selected outward by the third-singular subject,
-bleeds the prefix. -/
-theorem nin_bleeds_prefix : morphs chukchiVocab seeBy3sg = ["u", "nin"] := by decide
+/-- The verb of a Chukchi row. -/
+def ofRow (ex : Datum) : Option (ComplexHead Feature String) := do
+  let io ← match ex.feature? "io" with
+    | some s => (phi s).map some
+    | none => some none
+  word (← ex.feature? "root") (← phi (← ex.feature? "subj"))
+    (agreesWith (← phi (← ex.feature? "obj")) io)
 
-/-- (19i): the elsewhere allomorph leaves the prefix in place. -/
-theorem elsewhere_retains_prefix : morphs chukchiVocab seeBy3pl = ["ne", "u", "en"] := by decide
+/-- Across the Past I paradigm (19) and the ditransitive (27), *ne-* is absent exactly where
+*-nin* or *-ninet* is inserted. -/
+theorem rows_morphs :
+    ∀ ex ∈ Examples.all, ex.language = "chuk1273" →
+      (ofRow ex).map (morphs .rewriting vocab) = some (exponents ex) := by
+  decide
 
-/-- (26): dative agreement preempts -nin under the same third-singular
-subject, and the prefix survives — the trigger is the item, not the syntax. -/
+/-- The impossible Pseudo-Chukchi rule (28a), deleting *ne-* in the context of a third-singular
+object rather than of the item *-nin*. -/
+def pseudoVocab : List (VocabularyItem Feature String) :=
+  objectVocab ++ [⟨⟨[agrS, third], [[agrO, third, sg]], []⟩, ""⟩, [agrS, third] ⟷ "ne"]
+
+/-- A third-singular object presents the same features under a third-singular subject, where it
+is spelled out *-nin*, and under a third-plural one, where it is *-ɣʔen* (23). Keyed to those
+features, as in (28a), the deletion of *ne-* overapplies under non-deletion, removing the prefix
+of (19i). Under rewriting the features are gone when the prefix is inserted, so the deletion
+never applies, leaving the prefix of (19c). -/
+theorem object_features_cannot_bleed :
+    morphs .nondeletion pseudoVocab (word "ɬʔu" [third, pl] [third, sg]) = ["ɬʔu", "ɣʔen"] ∧
+      morphs .rewriting pseudoVocab (word "ɬʔu" [third, sg] [third, sg]) =
+        ["ne", "ɬʔu", "nin"] := by
+  decide
+
+/-- In both (19c) and (27) a third-singular subject acts on a third-singular direct object. In
+(27) the verb agrees with the second-person dative instead, *-nin* is not inserted, and *ne-*
+stays, so the prefix tracks the item, not the syntactic configuration. -/
 theorem ditransitive_retains_prefix :
-    morphs chukchiVocab (chukchi "jl" [third, sg] [second, sg]) = ["ne", "jl", "t"] := by
+    morphs .rewriting vocab (word "ɬʔu" [third, sg] (agreesWith [third, sg] none)) =
+        ["ɬʔu", "nin"] ∧
+      morphs .rewriting vocab (word "jəl" [third, sg] (agreesWith [third, sg] (some [second, sg])))
+        = ["ne", "jəl", "ɣət"] := by
   decide
 
-/-- (23): under rewriting the two structures present feature-identical inner
-contexts to the prefix, so no rule conditioned on object features can
-distinguish where ne- is bled — the impossible Pseudo-Chukchi of (28a). -/
-theorem prefix_context_features_identical :
-    ((seeBy3sg.insertUpTo (· = "") chukchiVocab .hierarchical itemFeatures .rewriting 1).contextAt
-        (· = "") .hierarchical (λ _ => []) 1).leftCtx =
-      ((seeBy3pl.insertUpTo (· = "") chukchiVocab .hierarchical itemFeatures .rewriting 1).contextAt
-        (· = "") .hierarchical (λ _ => []) 1).leftCtx := by
-  decide
-
-/-- The inserted items do distinguish the two contexts: the bleeding is
-conditionable inward, but only as sensitivity to the vocabulary item. -/
-theorem prefix_context_item_distinct :
-    (stepContext chukchiVocab seeBy3sg .rewriting 1).leftCtx
-      ≠ (stepContext chukchiVocab seeBy3pl .rewriting 1).leftCtx := by
-  decide
+end Chukchi
 
 end Bobaljik2000
