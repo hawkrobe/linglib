@@ -26,6 +26,8 @@ product parameter space, to comparisons of prior-weighted likelihood sums.
 * `ProbabilityTheory.posterior_real_finset_lt_iff`: event comparison of the posterior, and
   `posterior_real_singleton_lt_iff_of_eq`, state comparison at equal prior as likelihood
   comparison.
+* `ProbabilityTheory.posterior_real_singleton_lt_of_pair`: under priors carried by two atoms,
+  the posterior at an atom is strictly increasing in its prior mass.
 * `ProbabilityTheory.integral_posterior`, `comp_real_mul_integral_posterior`: the posterior
   expectation is the prior expectation of the likelihood-weighted statistic over the
   observation's marginal.
@@ -278,6 +280,17 @@ theorem integral_posterior_le_integral (hf : Antivary f fun ω ↦ (κ ω).real 
 
 end Expectation
 
+/-- A single state of positive prior mass and positive emission witnesses a
+positive observation marginal. -/
+theorem comp_apply_singleton_ne_zero {Ω' 𝓧' : Type*} [MeasurableSpace Ω']
+    [MeasurableSpace 𝓧'] [MeasurableSingletonClass 𝓧'] (κ : Kernel Ω' 𝓧')
+    (μ : Measure Ω') {w : Ω'} {x : 𝓧'} (hμ : μ {w} ≠ 0) (hκ : κ w {x} ≠ 0) :
+    (κ ∘ₘ μ) {x} ≠ 0 := by
+  rw [Measure.bind_apply (.singleton x) (Kernel.aemeasurable _),
+    ← pos_iff_ne_zero, lintegral_pos_iff_support (Kernel.measurable_coe _ (.singleton x))]
+  exact lt_of_lt_of_le (pos_iff_ne_zero.mpr hμ)
+    (measure_mono (Set.singleton_subset_iff.mpr hκ))
+
 /-! ### Priors carried by two atoms
 
 The `_of_pair` lemmas assume the prior's support lies in a pair `{ω, ω'}`, so that the
@@ -308,6 +321,40 @@ theorem _root_.MeasureTheory.measureReal_singleton_add_singleton_of_pair
   rw [measureReal_def, measureReal_def,
     ← ENNReal.toReal_add (measure_ne_top _ _) (measure_ne_top _ _), h, ENNReal.toReal_one]
 
+/-- Under two priors carried by the same two atoms, at an observation both atoms emit with
+positive likelihood, the posterior mass of an atom is strictly increasing in its prior mass:
+Bayes' rule is prior-sensitive. -/
+theorem posterior_real_singleton_lt_of_pair {ν : Measure Ω} [IsProbabilityMeasure μ]
+    [IsProbabilityMeasure ν] (hν : ∀ ω'', ν {ω''} ≠ 0 → ω'' = ω ∨ ω'' = ω') {x : 𝓧}
+    (hκω : κ ω {x} ≠ 0) (hκω' : κ ω' {x} ≠ 0) (hμν : μ.real {ω} < ν.real {ω}) :
+    ((κ†μ) x).real {ω} < ((κ†ν) x).real {ω} := by
+  have marginal : ∀ (ρ : Measure Ω) [IsProbabilityMeasure ρ],
+      (∀ ω'', ρ {ω''} ≠ 0 → ω'' = ω ∨ ω'' = ω') → (κ ∘ₘ ρ) {x} ≠ 0 := fun ρ _ hρ ↦ by
+    obtain hω | hω := eq_or_ne (ρ {ω}) 0
+    · refine comp_apply_singleton_ne_zero κ ρ (fun h ↦ ?_) hκω'
+      have := measureReal_singleton_add_singleton_of_pair ρ hne hρ
+      rw [measureReal_def, measureReal_def, hω, h] at this
+      simp at this
+    · exact comp_apply_singleton_ne_zero κ ρ hω hκω
+  have hμm := marginal μ hsupp
+  have hνm := marginal ν hν
+  have hμ1 := measureReal_singleton_add_singleton_of_pair μ hne hsupp
+  have hν1 := measureReal_singleton_add_singleton_of_pair ν hne hν
+  have ha : 0 < (κ ω).real {x} := ENNReal.toReal_pos hκω (measure_ne_top _ _)
+  have hb : 0 < (κ ω').real {x} := ENNReal.toReal_pos hκω' (measure_ne_top _ _)
+  have hμ0 : 0 ≤ μ.real {ω'} := measureReal_nonneg
+  have hν0 : 0 ≤ ν.real {ω'} := measureReal_nonneg
+  have hμω : 0 ≤ μ.real {ω} := measureReal_nonneg
+  have hμr : 0 < (κ ∘ₘ μ).real {x} := ENNReal.toReal_pos hμm (measure_ne_top _ _)
+  have hνr : 0 < (κ ∘ₘ ν).real {x} := ENNReal.toReal_pos hνm (measure_ne_top _ _)
+  rw [posterior_real_singleton κ μ hμm, posterior_real_singleton κ ν hνm,
+    div_lt_div_iff₀ hμr hνr,
+    Measure.comp_real_singleton_of_pair κ μ hne hsupp,
+    Measure.comp_real_singleton_of_pair κ ν hne hν,
+    show μ.real {ω'} = 1 - μ.real {ω} by linarith,
+    show ν.real {ω'} = 1 - ν.real {ω} by linarith]
+  nlinarith [mul_pos ha hb, mul_pos (mul_pos ha hb) (sub_pos.2 hμν)]
+
 variable [IsProbabilityMeasure μ] {x : 𝓧} (hx : (κ ∘ₘ μ) {x} ≠ 0) (hω : μ {ω} ≠ 0)
   (hω' : μ {ω'} ≠ 0)
 include hx hω hω'
@@ -335,17 +382,6 @@ theorem posterior_real_singleton_lt_iff_of_pair :
   constructor <;> intro h <;> nlinarith
 
 end Pair
-
-/-- A single state of positive prior mass and positive emission witnesses a
-positive observation marginal. -/
-theorem comp_apply_singleton_ne_zero {Ω' 𝓧' : Type*} [MeasurableSpace Ω']
-    [MeasurableSpace 𝓧'] [MeasurableSingletonClass 𝓧'] (κ : Kernel Ω' 𝓧')
-    (μ : Measure Ω') {w : Ω'} {x : 𝓧'} (hμ : μ {w} ≠ 0) (hκ : κ w {x} ≠ 0) :
-    (κ ∘ₘ μ) {x} ≠ 0 := by
-  rw [Measure.bind_apply (.singleton x) (Kernel.aemeasurable _),
-    ← pos_iff_ne_zero, lintegral_pos_iff_support (Kernel.measurable_coe _ (.singleton x))]
-  exact lt_of_lt_of_le (pos_iff_ne_zero.mpr hμ)
-    (measure_mono (Set.singleton_subset_iff.mpr hκ))
 
 end ProbabilityTheory
 
