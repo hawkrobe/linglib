@@ -70,10 +70,10 @@ section Framework
 /-- The strategy-indexed literal listener (eq. 4) reweights the prior by the rhetorical
 function of the strategy. -/
 noncomputable def L0 (μ : Measure M) (f : R → U → M → ℝ≥0∞) (r : R) : Kernel U M :=
-  gradedListener μ (f r)
+  Kernel.ofDensity μ (f r)
 
 instance (μ : Measure M) (f : R → U → M → ℝ≥0∞) (r : R) : IsFiniteKernel (L0 μ f r) :=
-  inferInstanceAs (IsFiniteKernel (gradedListener _ _))
+  inferInstanceAs (IsFiniteKernel (Kernel.ofDensity _ _))
 
 /-- The strategy-indexed speaker (eq. 5) is the best response to the strategy's literal
 listener, less the utterance cost. -/
@@ -94,21 +94,21 @@ noncomputable def L1 [Nonempty M] (μ : Measure M) [IsFiniteMeasure μ] (f : R �
 posterior given the utterance. -/
 noncomputable def listener [Nonempty M] [MeasurableSpace R] (μ : Measure M) [IsFiniteMeasure μ]
     (f : R → U → M → ℝ≥0∞) (α : ℝ) (κ : U → ℝ) (ρ : Kernel U R) : Kernel U M :=
-  Kernel.ofFunOfCountable λ u => (ρ u).bind λ r => L1 μ f α κ r u
+  Kernel.ofFunOfCountable fun u => (ρ u).bind fun r => L1 μ f α κ r u
 
 variable (μ : Measure M) (f : R → U → M → ℝ≥0∞) (α : ℝ) (κ : U → ℝ)
 
 theorem L0_apply_singleton (r : R) (u : U) (m : M) :
     L0 μ f r u {m} = f r u m * μ {m} / ∑ m', f r u m' * μ {m'} :=
-  gradedListener_apply_singleton μ (f r) u m
+  Kernel.ofDensity_apply_singleton μ (f r) u m
 
 /-- The Frank–Goodman speaker is the speaker with an utterance prior (Appendix A.1). At
 rationality `α ≠ 0` and the cost `−log π / α`, its weights are the literal listener's mass to
 the power `α` times the utterance prior `π`. -/
 theorem S1_eq_ofWeights_prior (hα : α ≠ 0) {π : U → ℝ≥0∞} (hπ0 : ∀ u, π u ≠ 0)
     (hπ : ∀ u, π u ≠ ∞) (r : R) :
-    S1 μ f α (λ u => -Real.log (π u).toReal / α) r =
-      Kernel.ofWeights λ m u => L0 μ f r u {m} ^ α * π u := by
+    S1 μ f α (fun u => -Real.log (π u).toReal / α) r =
+      Kernel.ofWeights fun m u => L0 μ f r u {m} ^ α * π u := by
   rw [S1, speaker_dirac_eq_ofWeights]
   congr 1
   funext m u
@@ -122,7 +122,7 @@ strategy's rhetorical function do. -/
 theorem L0_apply_singleton_ne_zero_iff {r : R} {u : U} (hf : ∀ m, f r u m ≠ ∞) (m : M) :
     L0 μ f r u {m} ≠ 0 ↔ f r u m ≠ 0 ∧ μ {m} ≠ 0 := by
   rw [L0_apply_singleton, ne_eq, ENNReal.div_eq_zero_iff, mul_eq_zero, not_or, not_or]
-  exact ⟨λ h => h.1, λ h => ⟨h, ENNReal.sum_ne_top.mpr λ m' _ =>
+  exact ⟨fun h => h.1, fun h => ⟨h, ENNReal.sum_ne_top.mpr fun m' _ =>
     ENNReal.mul_ne_top (hf m') (measure_ne_top _ _)⟩⟩
 
 /-- A strategy's speaker produces an utterance at a meaning exactly when the meaning has
@@ -131,7 +131,7 @@ theorem S1_apply_singleton_ne_zero_iff (hα : 0 < α) {r : R} (hf : ∀ u m, f r
     (u : U) :
     S1 μ f α κ r m {u} ≠ 0 ↔ f r u m ≠ 0 ∧ μ {m} ≠ 0 := by
   rw [← L0_apply_singleton_ne_zero_iff μ f (hf u)]
-  exact ⟨λ h h' => h (speaker_dirac_apply_singleton_eq_zero hα h'),
+  exact ⟨fun h h' => h (speaker_dirac_apply_singleton_eq_zero hα h'),
     speaker_dirac_apply_singleton_ne_zero hα.le⟩
 
 /-- An utterance some meaning of positive prior admits under a strategy has a positive
@@ -154,16 +154,16 @@ theorem L1_apply_singleton_ne_zero_iff (hα : 0 < α) {r : R} (hf : ∀ u m, f r
   have h := posterior_apply_singleton_ne_zero_iff (S1 μ f α κ r) μ
     (comp_S1_ne_zero μ f α κ hα hf hu) m
   rw [S1_apply_singleton_ne_zero_iff μ f α κ hα hf] at h
-  exact h.trans ⟨λ h => h.2, λ h => ⟨h.2, h⟩⟩
+  exact h.trans ⟨fun h => h.2, fun h => ⟨h.2, h⟩⟩
 
 /-- Standard RSA gives no mass to non-literal meanings (Appendix A.2). Under a strategy whose
 rhetorical function is a Boolean meaning, a meaning outside the extension of the utterance has
 no listener mass once some meaning in the extension has prior mass. -/
 theorem L1_indicator_apply_singleton_of_notMem (hα : 0 < α) (sem : U → Set M) {r : R}
-    (hr : f r = λ u => (sem u).indicator 1)
+    (hr : f r = fun u => (sem u).indicator 1)
     {u : U} {m : M} (hm : m ∉ sem u) {m' : M} (hm' : m' ∈ sem u) (hμ : μ {m'} ≠ 0) :
     L1 μ f α κ r u {m} = 0 := by
-  simp only [L1, S1, L0, hr, gradedListener_indicator]
+  simp only [L1, S1, L0, hr, ← literalListener_eq_ofDensity]
   exact pragmaticListener_literalListener_apply_singleton_of_notMem α κ μ hα sem hm hm' hμ
 
 variable [Fintype R] [MeasurableSpace R] [DiscreteMeasurableSpace R]
@@ -179,7 +179,7 @@ theorem listener_apply_singleton_ne_zero_iff (ρ : Kernel U R) (u : U) (m : M) :
     listener μ f α κ ρ u {m} ≠ 0 ↔ ∃ r, ρ u {r} ≠ 0 ∧ L1 μ f α κ r u {m} ≠ 0 := by
   simp only [listener_apply_singleton, ne_eq, Finset.sum_eq_zero_iff, Finset.mem_univ,
     true_implies, mul_eq_zero, not_forall, not_or]
-  exact exists_congr λ r => and_comm
+  exact exists_congr fun r => and_comm
 
 /-- The pragmatic listener interprets an utterance as a meaning of positive prior exactly when
 some strategy of positive posterior weight admits the meaning at the utterance. -/
@@ -189,7 +189,7 @@ theorem listener_apply_singleton_ne_zero_iff' (hα : 0 < α) (hf : ∀ r u m, f 
     listener μ f α κ ρ u {m} ≠ 0 ↔ μ {m} ≠ 0 ∧ ∃ r, ρ u {r} ≠ 0 ∧ f r u m ≠ 0 := by
   rw [listener_apply_singleton_ne_zero_iff]
   simp only [L1_apply_singleton_ne_zero_iff μ f α κ hα (hf _) (hu _)]
-  exact ⟨λ ⟨r, hr, hfr, hm⟩ => ⟨hm, r, hr, hfr⟩, λ ⟨hm, r, hr, hfr⟩ => ⟨r, hr, hfr, hm⟩⟩
+  exact ⟨fun ⟨r, hr, hfr, hm⟩ => ⟨hm, r, hr, hfr⟩, fun ⟨hm, r, hr, hfr⟩ => ⟨r, hr, hfr, hm⟩⟩
 
 end Framework
 
@@ -212,12 +212,12 @@ theorem L0_rhetoricalOfQUD (hμ : ∀ m, μ {m} ≠ 0) (project : G → M → X)
     {k : ℝ≥0∞} (hk0 : k ≠ 0) (hk : k ≠ ∞) (g : G) (u : U) :
     L0 μ (rhetoricalOfQUD μ project L k) g u = (projListener project L g u)[|Set.univ] := by
   have h : rhetoricalOfQUD μ project L k g =
-      λ u m => k⁻¹ * (projListener project L g u {m} / μ {m}) := by
+      fun u m => k⁻¹ * (projListener project L g u {m} / μ {m}) := by
     funext u m
     rw [rhetoricalOfQUD, ENNReal.div_eq_inv_mul, ENNReal.mul_inv (Or.inl hk0) (Or.inl hk),
       mul_assoc, ← ENNReal.div_eq_inv_mul (a := projListener project L g u {m})]
-  rw [L0, h, gradedListener_const_mul μ _ (ENNReal.inv_ne_zero.mpr hk)
-    (ENNReal.inv_ne_top.mpr hk0), gradedListener_div μ hμ (projListener project L g)]
+  rw [L0, h, Kernel.ofDensity_const_mul μ _ (ENNReal.inv_ne_zero.mpr hk)
+    (ENNReal.inv_ne_top.mpr hk0), Kernel.ofDensity_div μ hμ (projListener project L g)]
 
 /-- The affect-aware model of [kao-goodman-2015] is an instance, since its projected literal
 listener under each question, normalized over meanings, is an (RSA)² literal listener. -/
@@ -238,15 +238,15 @@ omit [DiscreteMeasurableSpace M] in
 the QUD-RSA literal listeners of a finite meaning space are finitely many. -/
 theorem qudListeners_finite [MeasurableSingletonClass M] (L : Kernel U M) :
     (qudListeners.{v} L).Finite :=
-  (Set.finite_range λ p : U × (M → Set M) =>
+  (Set.finite_range fun p : U × (M → Set M) =>
       (∑ m, L p.1 (p.2 m) • Measure.dirac m)[|Set.univ]).subset <| by
     rintro ν ⟨X, q, u, rfl⟩
-    exact ⟨(u, λ m => q ⁻¹' {q m}), rfl⟩
+    exact ⟨(u, fun m => q ⁻¹' {q m}), rfl⟩
 
 /-- Every probability vector over meanings is an (RSA)² literal listener at a prior of positive
 mass everywhere, whose rhetorical function is the vector over the prior. -/
 theorem L0_div_apply_singleton (hμ : ∀ m, μ {m} ≠ 0) (p : M → ℝ≥0∞) (hp : ∑ m, p m = 1) (r : R)
-    (u : U) (m : M) : L0 μ (λ _ _ m => p m / μ {m}) r u {m} = p m := by
+    (u : U) (m : M) : L0 μ (fun _ _ m => p m / μ {m}) r u {m} = p m := by
   rw [L0_apply_singleton]
   simp_rw [ENNReal.div_mul_cancel (hμ _) (measure_ne_top μ _)]
   rw [hp, div_one]
@@ -257,20 +257,20 @@ latter are finitely many and the former realize every distribution (Lemma 2). -/
 theorem exists_not_mem_qudListeners [Nontrivial M] (hμ : ∀ m, μ {m} ≠ 0) (L : Kernel U M) :
     ∃ f : R → U → M → ℝ≥0∞, ∀ r u, L0 μ f r u ∉ qudListeners.{v} L := by
   obtain ⟨m₁, m₂, hne⟩ := exists_pair_ne M
-  set ν : ℝ≥0∞ → Measure M := λ t => t • Measure.dirac m₁ + (1 - t) • Measure.dirac m₂ with hν
-  have hval : ∀ t ∈ Set.Ioo (0 : ℝ≥0∞) 1, (ν t)[|Set.univ] {m₁} = t := λ t ht => by
+  set ν : ℝ≥0∞ → Measure M := fun t => t • Measure.dirac m₁ + (1 - t) • Measure.dirac m₂ with hν
+  have hval : ∀ t ∈ Set.Ioo (0 : ℝ≥0∞) 1, (ν t)[|Set.univ] {m₁} = t := fun t ht => by
     have huniv : ν t Set.univ = 1 := by
       simp [hν, add_tsub_cancel_of_le ht.2.le]
     rw [cond_apply MeasurableSet.univ, huniv, inv_one, one_mul, Set.univ_inter]
     simp [hν, Set.indicator, hne.symm]
-  have hinj : Set.InjOn (λ t => (ν t)[|Set.univ]) (Set.Ioo 0 1) := λ a ha b hb h => by
+  have hinj : Set.InjOn (fun t => (ν t)[|Set.univ]) (Set.Ioo 0 1) := fun a ha b hb h => by
     have h' : (ν a)[|Set.univ] = (ν b)[|Set.univ] := h
     rw [← hval a ha, ← hval b hb, h']
-  have hinf : (Set.image (λ t => (ν t)[|Set.univ]) (Set.Ioo 0 1)).Infinite :=
+  have hinf : (Set.image (fun t => (ν t)[|Set.univ]) (Set.Ioo 0 1)).Infinite :=
     (Set.Ioo_infinite zero_lt_one).image hinj
   obtain ⟨_, ⟨t, -, rfl⟩, hnot⟩ := (hinf.sdiff (qudListeners_finite L)).nonempty
-  refine ⟨λ _ _ m => ν t {m} / μ {m}, λ r u => ?_⟩
-  rwa [L0, gradedListener_div μ hμ (λ _ => ν t)]
+  refine ⟨fun _ _ m => ν t {m} / μ {m}, fun r u => ?_⟩
+  rwa [L0, Kernel.ofDensity_div μ hμ (fun _ => ν t)]
 
 end QUD
 
@@ -286,7 +286,7 @@ inductive Strategy
   deriving DecidableEq, Repr, Fintype
 
 instance : MeasurableSpace Strategy := ⊤
-instance : DiscreteMeasurableSpace Strategy := ⟨λ _ => trivial⟩
+instance : DiscreteMeasurableSpace Strategy := ⟨fun _ => trivial⟩
 
 /-- The antonym on the weather scale. -/
 def opposite : Weather → Weather
@@ -311,7 +311,7 @@ variable (μ : Measure Weather) [IsFiniteMeasure μ] (α : ℝ) (κ : Weather �
 mass, the standard RSA prediction. -/
 theorem literal_amazing_terrible (hα : 0 < α) (hμ : μ {.amazing} ≠ 0) :
     L1 μ weatherF α κ .literal .amazing {.terrible} = 0 :=
-  L1_indicator_apply_singleton_of_notMem μ weatherF α κ hα (λ u => {u}) rfl
+  L1_indicator_apply_singleton_of_notMem μ weatherF α κ hα (fun u => {u}) rfl
     (Set.mem_singleton_iff.not.mpr (by decide)) (Set.mem_singleton _) hμ
 
 /-- Under the ironic strategy, *the weather is amazing* gives terrible weather positive mass
@@ -328,7 +328,7 @@ theorem listener_amazing_terrible_iff (hα : 0 < α) (ρ : Kernel Weather Strate
     (hμt : μ {.terrible} ≠ 0) (hμa : μ {.amazing} ≠ 0) :
     listener μ weatherF α κ ρ .amazing {.terrible} ≠ 0 ↔ ρ .amazing {.irony} ≠ 0 := by
   rw [listener_apply_singleton_ne_zero_iff' μ weatherF α κ hα weatherF_ne_top ρ
-    (λ r => by
+    (fun r => by
       cases r
       · exact ⟨.amazing, by simp [weatherF], hμa⟩
       · exact ⟨.terrible, by simp [weatherF, opposite], hμt⟩)]
@@ -336,7 +336,7 @@ theorem listener_amazing_terrible_iff (hα : 0 < α) (ρ : Kernel Weather Strate
   · rintro ⟨-, _ | _, hr, hf⟩
     · exact absurd hf (by simp [weatherF])
     · exact hr
-  · exact λ h => ⟨hμt, .irony, h, by simp [weatherF, opposite]⟩
+  · exact fun h => ⟨hμt, .irony, h, by simp [weatherF, opposite]⟩
 
 end Weather
 

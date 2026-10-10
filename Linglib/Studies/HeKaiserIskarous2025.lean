@@ -247,14 +247,14 @@ variable (P : Measure State) (m : Meaning)
 
 /-- The literal listener of (1) reweights the prior by the meaning. -/
 noncomputable def L0 : Kernel Utterance State :=
-  gradedListener P λ u st => ENNReal.ofReal (m u st)
+  Kernel.ofDensity P fun u st => ENNReal.ofReal (m u st)
 
-instance : IsFiniteKernel (L0 P m) := inferInstanceAs (IsFiniteKernel (gradedListener _ _))
+instance : IsFiniteKernel (L0 P m) := inferInstanceAs (IsFiniteKernel (Kernel.ofDensity _ _))
 
 theorem L0_ne_top (u : Utterance) (st : State) : L0 P m u {st} ≠ ∞ := measure_ne_top _ _
 
 theorem L0_eq_zero {u : Utterance} {st : State} (h : m u st = 0) : L0 P m u {st} = 0 := by
-  rw [L0, gradedListener_apply_singleton, h, ENNReal.ofReal_zero, zero_mul, ENNReal.zero_div]
+  rw [L0, Kernel.ofDensity_apply_singleton, h, ENNReal.ofReal_zero, zero_mul, ENNReal.zero_div]
 
 variable [IsFiniteMeasure P] (hm : ∀ u st, 0 ≤ m u st)
 include hm
@@ -263,19 +263,19 @@ include hm
 over the row. -/
 theorem L0_real (u : Utterance) (st : State) :
     (L0 P m u {st}).toReal = m u st * P.real {st} / ∑ st', m u st' * P.real {st'} := by
-  rw [L0, gradedListener_apply_singleton, ENNReal.toReal_div, ENNReal.toReal_mul,
-    ENNReal.toReal_ofReal (hm u st), ENNReal.toReal_sum λ st' _ =>
+  rw [L0, Kernel.ofDensity_apply_singleton, ENNReal.toReal_div, ENNReal.toReal_mul,
+    ENNReal.toReal_ofReal (hm u st), ENNReal.toReal_sum fun st' _ =>
       ENNReal.mul_ne_top ENNReal.ofReal_ne_top (measure_ne_top _ _), measureReal_def]
   congr 1
-  exact Finset.sum_congr rfl λ st' _ => by
+  exact Finset.sum_congr rfl fun st' _ => by
     rw [ENNReal.toReal_mul, ENNReal.toReal_ofReal (hm u st'), measureReal_def]
 
 omit hm in
 theorem L0_ne_zero {u : Utterance} {st : State} (h : 0 < m u st) (hst : P {st} ≠ 0) :
     L0 P m u {st} ≠ 0 := by
-  rw [L0, gradedListener_apply_singleton]
+  rw [L0, Kernel.ofDensity_apply_singleton]
   exact (ENNReal.div_pos_iff.2 ⟨mul_ne_zero (ENNReal.ofReal_pos.2 h).ne' hst,
-    ENNReal.sum_ne_top.2 λ st' _ =>
+    ENNReal.sum_ne_top.2 fun st' _ =>
       ENNReal.mul_ne_top ENNReal.ofReal_ne_top (measure_ne_top _ _)⟩).ne'
 
 end Listener
@@ -350,7 +350,7 @@ theorem speaker_real_of_pair (hm : ∀ u st, 0 ≤ m u st) {u v : Utterance} {st
       Real.sigmoid (s.α * ((Real.log (L0 P m u {st}).toReal - s.cost u) -
         (Real.log (L0 P m v {st}).toReal - s.cost v))) := by
   rw [speaker, RSA.speaker_dirac_eq_ofWeights, Kernel.ofWeights_real_singleton_of_pair st huv
-      (λ x => weight_ne_top P m s x st) (λ x hx => hsupp x
+      (fun x => weight_ne_top P m s x st) (fun x hx => hsupp x
         (lt_of_le_of_ne (hm x st) (Ne.symm (mt (weight_eq_zero P m s) hx)))),
     weight_toReal P m s hu hst, weight_toReal P m s hv hst, Real.exp_div_add_exp_eq_sigmoid]
   congr 1; ring
@@ -386,8 +386,8 @@ theorem speaker_boolean_real (st : State) :
       Real.sigmoid (s.α * (s.cost .null - s.cost st.utterance - Real.log (P.real {st}))) := by
   rw [speaker_real_of_pair P boolean s boolean_nonneg (v := .null) (by cases st <;> decide)
       (by cases st <;> simp [boolean, State.utterance]) (by simp [boolean])
-      (λ x hx => by cases st <;> cases x <;> simp_all [boolean, State.utterance]) (hP st),
-    L0_boolean_utterance_real P hP st, L0_null_real P boolean boolean_nonneg (λ _ => rfl) st,
+      (fun x hx => by cases st <;> cases x <;> simp_all [boolean, State.utterance]) (hP st),
+    L0_boolean_utterance_real P hP st, L0_null_real P boolean boolean_nonneg (fun _ => rfl) st,
     Real.log_one]
   congr 1; ring
 
@@ -450,7 +450,7 @@ theorem speaker_boolean_pos_lt_null_iff :
   simp only [State.utterance] at h1
   rw [speaker, speaker_real_lt_iff s.prior boolean s (by simp [boolean])
       (by simp [boolean]) (s.prior_ne_zero _), h1,
-    L0_null_real s.prior boolean boolean_nonneg (λ _ => rfl), Real.log_one, prior_real_singleton,
+    L0_null_real s.prior boolean boolean_nonneg (fun _ => rfl), Real.log_one, prior_real_singleton,
     statePrior, ← Real.lt_log_iff_exp_lt s.p_pos]
   constructor <;> intro h <;> linarith
 
@@ -499,10 +499,10 @@ theorem speaker_fuzzy_pos_lt_null {n σ : ℝ} (hn0 : 0 ≤ n) (hn1 : n ≤ 1) (
     (s.speaker (fuzzy n σ) .pos).real {.pos} < (s.speaker (fuzzy n σ) .pos).real {.null} := by
   have hm := fuzzy_nonneg hn0 hn1 hσ0.le (by linarith : σ ≤ 1)
   rw [speaker, speaker_real_lt_iff s.prior (fuzzy n σ) s (u := .pos) (v := .null) (st := .pos)
-      hσ0 (by simp [fuzzy]) (s.prior_ne_zero _), L0_null_real s.prior (fuzzy n σ) hm (λ _ => rfl),
+      hσ0 (by simp [fuzzy]) (s.prior_ne_zero _), L0_null_real s.prior (fuzzy n σ) hm (fun _ => rfl),
     prior_real_singleton]
   have hle : (L0 s.prior (fuzzy n σ) .pos {.pos}).toReal ≤ s.p :=
-    not_lt.1 λ h =>
+    not_lt.1 fun h =>
       absurd ((s.p_lt_L0_fuzzy_pos_iff hn0 hn1 hσ0.le (by linarith)).1 h) (not_lt.2 hσ)
   have hpos : 0 < (L0 s.prior (fuzzy n σ) .pos {.pos}).toReal :=
     ENNReal.toReal_pos (L0_ne_zero s.prior (fuzzy n σ) hσ0 (s.prior_ne_zero _)) (L0_ne_top _ _ _ _)
@@ -558,7 +558,7 @@ theorem wonkinessPrior_apply_singleton (ω : ℝ) (w : World) :
 instance (ω : ℝ) : IsFiniteMeasure (wonkinessPrior ω) :=
   ⟨by
     rw [← Finset.coe_univ, ← sum_measure_singleton]
-    exact ENNReal.sum_lt_top.2 λ w _ => by
+    exact ENNReal.sum_lt_top.2 fun w _ => by
       rw [wonkinessPrior_apply_singleton]; exact ENNReal.ofReal_lt_top⟩
 
 namespace Setting
@@ -591,7 +591,7 @@ theorem worldPrior_real_wonky (st : State) : (s.worldPrior .wonky).real {st} = 1
 /-- In each world, the wonky speaker of (14) and (15) is the speaker under that world's prior
 and meaning, the world riding in the state. -/
 noncomputable def wonkySpeaker (m : World → Meaning) : Kernel (State × World) Utterance :=
-  familySpeaker (λ w => L0 (s.worldPrior w) (m w)) s.α s.cost
+  familySpeaker (fun w => L0 (s.worldPrior w) (m w)) s.α s.cost
 
 theorem wonkySpeaker_apply (m : World → Meaning) (st : State) (w : World) :
     s.wonkySpeaker m (st, w) = HeKaiserIskarous2025.speaker (s.worldPrior w) (m w) s st := rfl
@@ -622,7 +622,7 @@ theorem wonkyJoint_real_singleton {ω : ℝ} (hω0 : 0 ≤ ω) (hω1 : ω ≤ 1)
 /-- The wonky listener of (16) is the Bayesian inverse of the wonky speaker over states and
 worlds against the prior of (16). -/
 noncomputable def wonkyListener (m : World → Meaning) (ω : ℝ) : Kernel Utterance (State × World) :=
-  pragmaticListener (familySpeaker (λ w => L0 (s.worldPrior w) (m w)) s.α s.cost) (s.wonkyJoint ω)
+  pragmaticListener (familySpeaker (fun w => L0 (s.worldPrior w) (m w)) s.α s.cost) (s.wonkyJoint ω)
 
 theorem wonkyListener_eq (m : World → Meaning) (ω : ℝ) :
     s.wonkyListener m ω = (s.wonkySpeaker m)†(s.wonkyJoint ω) := rfl
@@ -645,7 +645,7 @@ theorem expectedTypicality_eq (m : World → Meaning) (ω : ℝ) (st : State) :
       s.statePrior st + s.wonkiness m ω st * (1 / 2 - s.statePrior st) := by
   have h1 : (s.wonkyListener m ω st.utterance).snd.real {.normal} +
       (s.wonkyListener m ω st.utterance).snd.real {.wonky} = 1 := by
-    rw [← sum_world (λ w => (s.wonkyListener m ω st.utterance).snd.real {w}),
+    rw [← sum_world (fun w => (s.wonkyListener m ω st.utterance).snd.real {w}),
       sum_measureReal_singleton_eq_one]
   rw [expectedTypicality, sum_world, worldPrior_real_normal, worldPrior_real_wonky, wonkiness]
   linear_combination s.statePrior st * h1
@@ -654,7 +654,7 @@ theorem expectedTypicality_eq (m : World → Meaning) (ω : ℝ) (st : State) :
 wonkiness-weighted share of the wonky speaker's use of the sentence against the normal
 speaker's. -/
 theorem wonkiness_boolean {ω : ℝ} (hω0 : 0 < ω) (hω1 : ω < 1) (st : State) :
-    s.wonkiness (λ _ => boolean) ω st =
+    s.wonkiness (fun _ => boolean) ω st =
       ω * (HeKaiserIskarous2025.speaker (s.worldPrior .wonky) boolean s st).real {st.utterance} /
         (ω * (HeKaiserIskarous2025.speaker (s.worldPrior .wonky) boolean s st).real {st.utterance} +
           (1 - ω) *
@@ -662,9 +662,9 @@ theorem wonkiness_boolean {ω : ℝ} (hω0 : 0 < ω) (hω1 : ω < 1) (st : State
               {st.utterance}) := by
   have hb : 0 < boolean st.utterance st := by cases st <;> simp [boolean, State.utterance]
   have hpos : ∀ w, 0 < (HeKaiserIskarous2025.speaker (s.worldPrior w) boolean s st).real
-      {st.utterance} := λ w =>
+      {st.utterance} := fun w =>
     speaker_real_pos _ boolean s hb (s.worldPrior_ne_zero w st)
-  have hu : (s.wonkySpeaker (λ _ => boolean) ∘ₘ s.wonkyJoint ω) {st.utterance} ≠ 0 :=
+  have hu : (s.wonkySpeaker (fun _ => boolean) ∘ₘ s.wonkyJoint ω) {st.utterance} ≠ 0 :=
     comp_familySpeaker_ne_zero (w := st) (l := World.wonky)
       (by
         rw [wonkyJoint_apply_singleton]
@@ -696,10 +696,10 @@ theorem wonkiness_boolean {ω : ℝ} (hω0 : 0 < ω) (hω1 : ω < 1) (st : State
     ring
 
 theorem wonkiness_boolean_pos {ω : ℝ} (hω0 : 0 < ω) (hω1 : ω < 1) (st : State) :
-    0 < s.wonkiness (λ _ => boolean) ω st := by
+    0 < s.wonkiness (fun _ => boolean) ω st := by
   have hb : 0 < boolean st.utterance st := by cases st <;> simp [boolean, State.utterance]
   have hpos : ∀ w, 0 < (HeKaiserIskarous2025.speaker (s.worldPrior w) boolean s st).real
-      {st.utterance} := λ w =>
+      {st.utterance} := fun w =>
     speaker_real_pos _ boolean s hb (s.worldPrior_ne_zero w st)
   have h1ω := sub_pos.2 hω1
   rw [wonkiness_boolean s hω0 hω1]
@@ -710,7 +710,7 @@ theorem wonkiness_boolean_pos {ω : ℝ} (hω0 : 0 < ω) (hω1 : ω < 1) (st : S
 /-- The wonky listener's wonkiness rises above its prior after a state's sentence exactly
 when that state's prior exceeds one half, whatever the costs (§5.3, Figure 6). -/
 theorem lt_wonkiness_iff {ω : ℝ} (hω0 : 0 < ω) (hω1 : ω < 1) (st : State) :
-    ω < s.wonkiness (λ _ => boolean) ω st ↔ 1 / 2 < s.statePrior st := by
+    ω < s.wonkiness (fun _ => boolean) ω st ↔ 1 / 2 < s.statePrior st := by
   rw [wonkiness_boolean s hω0 hω1,
     speaker_boolean_real (s.worldPrior .wonky) (s.worldPrior_ne_zero .wonky) s st,
     speaker_boolean_real (s.worldPrior .normal) (s.worldPrior_ne_zero .normal) s st,
@@ -731,7 +731,7 @@ theorem lt_wonkiness_iff {ω : ℝ} (hω0 : 0 < ω) (hω1 : ω < 1) (st : State)
 exceeds its prior exactly when the prior is below one half, giving typicality and atypicality
 inferences in both polarities (§5.3, Figure 5). -/
 theorem statePrior_lt_expectedTypicality_iff {ω : ℝ} (hω0 : 0 < ω) (hω1 : ω < 1) (st : State) :
-    s.statePrior st < s.expectedTypicality (λ _ => boolean) ω st ↔ s.statePrior st < 1 / 2 := by
+    s.statePrior st < s.expectedTypicality (fun _ => boolean) ω st ↔ s.statePrior st < 1 / 2 := by
   rw [expectedTypicality_eq, lt_add_iff_pos_right,
     mul_pos_iff_of_pos_left (s.wonkiness_boolean_pos hω0 hω1 st), sub_pos]
 
@@ -740,7 +740,7 @@ state priors, rationality and costs the two polarities update it alike. -/
 theorem wonkiness_boolean_neg_eq_pos {s' : Setting} {ω : ℝ} (hω0 : 0 < ω) (hω1 : ω < 1)
     (hα : s.α = s'.α) (hc : s.cost = s'.cost) (hp : s'.statePrior .neg = s.statePrior .pos)
     (hcost : s.cost .pos = s.cost .neg) :
-    s'.wonkiness (λ _ => boolean) ω .neg = s.wonkiness (λ _ => boolean) ω .pos := by
+    s'.wonkiness (fun _ => boolean) ω .neg = s.wonkiness (fun _ => boolean) ω .pos := by
   rw [wonkiness_boolean s' hω0 hω1, wonkiness_boolean s hω0 hω1,
     speaker_boolean_real (s'.worldPrior .wonky) (s'.worldPrior_ne_zero .wonky) s',
     speaker_boolean_real (s'.worldPrior .normal) (s'.worldPrior_ne_zero .normal) s',

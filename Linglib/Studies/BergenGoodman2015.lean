@@ -163,10 +163,10 @@ variable [MeasurableSingletonClass U]
 
 /-- Without noise the literal listener is the noiseless one at every utterance of positive
 finite prior mass. -/
-theorem gradedListener_noisyMeaning_id (μ : Measure W) (ρ : Measure U) (m : U → W → ℝ≥0∞)
+theorem ofDensity_noisyMeaning_id (μ : Measure W) (ρ : Measure U) (m : U → W → ℝ≥0∞)
     {u : U} (h0 : ρ {u} ≠ 0) (htop : ρ {u} ≠ ∞) :
-    gradedListener μ (noisyMeaning Kernel.id ρ m) u = gradedListener μ m u :=
-  gradedListener_apply_eq_of_eq_mul μ h0 htop (noisyMeaning_id ρ m u)
+    Kernel.ofDensity μ (noisyMeaning Kernel.id ρ m) u = Kernel.ofDensity μ m u :=
+  Kernel.ofDensity_apply_eq_of_eq_mul μ h0 htop (noisyMeaning_id ρ m u)
 
 theorem channelMix_id (L : Kernel U W) (u : U) (w : W) : channelMix Kernel.id L u w = L u {w} := by
   rw [channelMix_eq_prod _ _ (s := {u}) fun v hv => by
@@ -293,7 +293,7 @@ noncomputable abbrev lit' : Meaning → Meaning → ℝ≥0∞ := fun m => (lit 
 
 /-- The literal listener (eq. 6). -/
 noncomputable abbrev L0 (δ : ℝ) : Kernel Utterance Meaning :=
-  gradedListener μ (noisyMeaning (N δ) uttPrior lit')
+  Kernel.ofDensity μ (noisyMeaning (N δ) uttPrior lit')
 
 /-- The speaker (eq. 7), choosing among the full sentences. -/
 noncomputable abbrev S1 (δ : ℝ) : Kernel Meaning Meaning := noisySpeaker (N δ) 1 0 (L0 δ)
@@ -328,8 +328,8 @@ private theorem L0_of_noisyMeaning {c : ℝ} (hc : 0 < c) {u : Utterance}
     (h : ∀ w, noisyMeaning (N δ) uttPrior lit' u w =
       ENNReal.ofReal c * ({m} : Set Meaning).indicator 1 w) :
     L0 δ u = Measure.dirac m := by
-  rw [L0, gradedListener_apply_eq_of_eq_mul μ (m := fun _ => ({m} : Set Meaning).indicator 1)
-    (ENNReal.ofReal_pos.mpr hc).ne' ENNReal.ofReal_ne_top h, gradedListener_indicator]
+  rw [L0, Kernel.ofDensity_apply_eq_of_eq_mul μ (f := fun _ ↦ ({m} : Set Meaning).indicator 1)
+    (ENNReal.ofReal_pos.mpr hc).ne' ENNReal.ofReal_ne_top h, ← literalListener_eq_ofDensity]
   refine Measure.ext_of_singleton fun w => ?_
   simp only [Measure.dirac_apply' _ (.singleton w), Set.indicator_apply, Set.mem_singleton_iff,
     Pi.one_apply]
@@ -472,7 +472,7 @@ noncomputable abbrev lit' : Utterance → Meaning → ℝ≥0∞ := fun u => (li
 
 /-- The literal listener (eq. 6). -/
 noncomputable abbrev L0 (ε : ℝ) : Kernel Utterance Meaning :=
-  gradedListener μ (noisyMeaning (N ε) uttPrior lit')
+  Kernel.ofDensity μ (noisyMeaning (N ε) uttPrior lit')
 
 /-- The knowledgeable speaker (eq. 7), over all five forms. -/
 noncomputable abbrev S1 (ε : ℝ) : Kernel Meaning Utterance :=
@@ -508,7 +508,7 @@ private theorem L0_onlyBob (hε₀ : 0 ≤ ε) (hε₁ : ε ≤ 1) :
   have h1' := (add_comm _ _).trans h1
   have h2' := (add_comm _ _).trans h2
   refine ⟨?_, ?_, ?_, ?_⟩ <;>
-    · rw [L0, gradedListener_apply_singleton]
+    · rw [L0, Kernel.ofDensity_apply_singleton]
       simp only [noisyMeaning_apply, sum_univ_utt, sum_univ_mean, slipChannel_apply_singleton,
         rate, slip, lit', lit, Measure.count_singleton, Pi.one_apply,
         Set.indicator_apply, Set.mem_insert_iff, Set.mem_singleton_iff]

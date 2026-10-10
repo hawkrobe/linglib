@@ -59,7 +59,7 @@ inductive World where
   deriving DecidableEq, Repr, Inhabited, Fintype
 
 instance : MeasurableSpace World := ⊤
-instance : DiscreteMeasurableSpace World := ⟨λ _ => trivial⟩
+instance : DiscreteMeasurableSpace World := ⟨fun _ => trivial⟩
 
 /-- Whether a pin is big. -/
 def World.big : World → Bool
@@ -84,7 +84,7 @@ inductive Utterance where
   deriving DecidableEq, Repr, Inhabited, Fintype
 
 instance : MeasurableSpace Utterance := ⊤
-instance : DiscreteMeasurableSpace Utterance := ⟨λ _ => trivial⟩
+instance : DiscreteMeasurableSpace Utterance := ⟨fun _ => trivial⟩
 
 /-- The size an expression mentions, `true` for big. -/
 def Utterance.size : Utterance → Option Bool
@@ -138,10 +138,10 @@ theorem meaning_nonneg (hs0 : 0 ≤ xs) (hs1 : xs ≤ 1) (hc0 : 0 ≤ xc) (hc1 :
 
 /-- The literal listener (1) normalizes the meaning over the pins at a uniform prior. -/
 noncomputable def L0 (xs xc : ℝ) : Kernel Utterance World :=
-  gradedListener (uniformOn Set.univ) λ u w => ENNReal.ofReal (meaning xs xc u w)
+  Kernel.ofDensity (uniformOn Set.univ) fun u w => ENNReal.ofReal (meaning xs xc u w)
 
 instance (xs xc : ℝ) : IsFiniteKernel (L0 xs xc) :=
-  inferInstanceAs (IsFiniteKernel (gradedListener _ _))
+  inferInstanceAs (IsFiniteKernel (Kernel.ofDensity _ _))
 
 /-- The speaker, (3) and (4), with unit informativeness weight and no cost. -/
 noncomputable def S1 (xs xc : ℝ) : Kernel World Utterance := speaker 1 0 (L0 xs xc) Measure.dirac
@@ -154,8 +154,8 @@ private theorem sum_world (f : World → ℝ) : ∑ w, f w = f .bigBlue + f .big
 theorem L0_apply (hs0 : 0 ≤ xs) (hs1 : xs ≤ 1) (hc0 : 0 ≤ xc) (hc1 : xc ≤ 1) (u : Utterance)
     (w : World) (hpos : 0 < ∑ w', meaning xs xc u w') :
     L0 xs xc u {w} = ENNReal.ofReal (meaning xs xc u w / ∑ w', meaning xs xc u w') :=
-  gradedListener_uniformOn_ofReal_apply_singleton _ u w
-    (λ w' => meaning_nonneg hs0 hs1 hc0 hc1 u w') hpos
+  Kernel.ofDensity_uniformOn_ofReal_apply_singleton _ u w
+    (fun w' => meaning_nonneg hs0 hs1 hc0 hc1 u w') hpos
 
 /-- The speaker prefers `u'` to `u` for a pin exactly when the listener finds the pin likelier
 under `u'`; the normalization cancels. -/
@@ -241,7 +241,7 @@ theorem distinguishes_iff_L0 (hs0 : 0 ≤ xs) (hs1 : xs ≤ 1) (hc0 : 0 ≤ xc) 
     {u : Utterance} (hpos : 0 < ∑ w, meaning xs xc u w) (C : Finset World) (r : World) :
     Reference.Distinguishes (meaning xs xc) C r u ↔
       Reference.Distinguishes (fun u w => L0 xs xc u {w}) C r u := by
-  rw [L0, distinguishes_gradedListener_uniformOn_iff
+  rw [L0, distinguishes_ofDensity_uniformOn_iff
     (by rw [← ENNReal.ofReal_sum_of_nonneg fun w _ => meaning_nonneg hs0 hs1 hc0 hc1 u w]
         exact (ENNReal.ofReal_pos.2 hpos).ne')
     (ENNReal.sum_ne_top.2 fun _ _ => ENNReal.ofReal_ne_top)]
@@ -297,7 +297,7 @@ inductive NomWorld where
   deriving DecidableEq, Repr, Inhabited, Fintype
 
 instance : MeasurableSpace NomWorld := ⊤
-instance : DiscreteMeasurableSpace NomWorld := ⟨λ _ => trivial⟩
+instance : DiscreteMeasurableSpace NomWorld := ⟨fun _ => trivial⟩
 
 /-- The nouns *dalmatian*, *dog* and *animal* sit at the three taxonomic levels. -/
 inductive NomUtterance where
@@ -307,7 +307,7 @@ inductive NomUtterance where
   deriving DecidableEq, Repr, Inhabited, Fintype
 
 instance : MeasurableSpace NomUtterance := ⊤
-instance : DiscreteMeasurableSpace NomUtterance := ⟨λ _ => trivial⟩
+instance : DiscreteMeasurableSpace NomUtterance := ⟨fun _ => trivial⟩
 
 section Nominal
 
@@ -315,9 +315,9 @@ variable (typ : NomUtterance → NomWorld → ℝ)
 
 /-- The literal listener with the typicality of each object for each noun as its meaning. -/
 noncomputable def nomL0 : Kernel NomUtterance NomWorld :=
-  gradedListener (uniformOn Set.univ) λ u w => ENNReal.ofReal (typ u w)
+  Kernel.ofDensity (uniformOn Set.univ) fun u w => ENNReal.ofReal (typ u w)
 
-instance : IsFiniteKernel (nomL0 typ) := inferInstanceAs (IsFiniteKernel (gradedListener _ _))
+instance : IsFiniteKernel (nomL0 typ) := inferInstanceAs (IsFiniteKernel (Kernel.ofDensity _ _))
 
 /-- The nominal speaker with unit informativeness weight and no cost. -/
 noncomputable def nomS1 : Kernel NomWorld NomUtterance := speaker 1 0 (nomL0 typ) Measure.dirac
@@ -329,11 +329,11 @@ theorem subordinate_preferred_iff (hnn : ∀ u w, 0 ≤ typ u w) (hsub : 0 < typ
     (hbasic : 0 < typ .basic .dalmatian) :
     (nomS1 typ .dalmatian).real {.basic} < (nomS1 typ .dalmatian).real {.sub} ↔
       typ .basic .dalmatian * ∑ w, typ .sub w < typ .sub .dalmatian * ∑ w, typ .basic w := by
-  have hsum : ∀ u, 0 < typ u .dalmatian → 0 < ∑ w, typ u w := λ u h =>
-    h.trans_le (Finset.single_le_sum (λ w _ => hnn u w) (Finset.mem_univ _))
-  have h1 := gradedListener_uniformOn_ofReal_apply_singleton typ .basic NomWorld.dalmatian
+  have hsum : ∀ u, 0 < typ u .dalmatian → 0 < ∑ w, typ u w := fun u h =>
+    h.trans_le (Finset.single_le_sum (fun w _ => hnn u w) (Finset.mem_univ _))
+  have h1 := Kernel.ofDensity_uniformOn_ofReal_apply_singleton typ .basic NomWorld.dalmatian
     (hnn .basic) (hsum _ hbasic)
-  have h2 := gradedListener_uniformOn_ofReal_apply_singleton typ .sub NomWorld.dalmatian
+  have h2 := Kernel.ofDensity_uniformOn_ofReal_apply_singleton typ .sub NomWorld.dalmatian
     (hnn .sub) (hsum _ hsub)
   rw [nomS1]
   refine (speaker_dirac_real_singleton_lt_iff (L := nomL0 typ) (w := NomWorld.dalmatian) zero_le_one

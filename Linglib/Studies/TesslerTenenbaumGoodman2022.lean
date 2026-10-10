@@ -185,13 +185,13 @@ variable {φ : ℝ≥0∞} {μ : Measure State}
 
 /-- The literal listener reweights the prior by the noisy meaning of the sentences heard. -/
 noncomputable def listener (φ : ℝ≥0∞) (μ : Measure State) : Kernel (List Sentence) State :=
-  gradedListener μ (noisy φ)
+  Kernel.ofDensity μ (noisy φ)
 
-instance : IsFiniteKernel (listener φ μ) := inferInstanceAs (IsFiniteKernel (gradedListener _ _))
+instance : IsFiniteKernel (listener φ μ) := inferInstanceAs (IsFiniteKernel (Kernel.ofDensity _ _))
 
 /-- Without noise the listener conditions the prior on the sentences heard. -/
 theorem listener_zero (μ : Measure State) : listener 0 μ = literalListener μ extension := by
-  rw [listener, ← gradedListener_indicator]
+  rw [listener, literalListener_eq_ofDensity]
   exact congrArg _ (funext noisy_zero)
 
 theorem lintegral_noisy_ne_top [IsFiniteMeasure μ] (hφ : φ ≠ ∞) (us : List Sentence) :
@@ -202,7 +202,7 @@ theorem lintegral_noisy_ne_top [IsFiniteMeasure μ] (hφ : φ ≠ ∞) (us : Lis
 
 theorem isProbabilityMeasure_listener [IsProbabilityMeasure μ] (hφ : φ ≠ 0) (hφ' : φ ≠ ∞)
     (us : List Sentence) : IsProbabilityMeasure (listener φ μ us) := by
-  refine isProbabilityMeasure_gradedListener μ _ us (fun h ↦ ?_) (lintegral_noisy_ne_top hφ' us)
+  refine Kernel.isProbabilityMeasure_ofDensity μ _ us (fun h ↦ ?_) (lintegral_noisy_ne_top hφ' us)
   rw [lintegral_eq_zero_iff (.of_discrete)] at h
   exact NeZero.ne μ (Measure.measure_univ_eq_zero.1 (measure_mono_null
     (fun s _ ↦ show noisy φ us s ≠ 0 from pow_ne_zero _ hφ) h))

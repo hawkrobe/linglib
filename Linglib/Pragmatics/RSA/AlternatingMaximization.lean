@@ -4,33 +4,38 @@ public import Linglib.Core.InformationTheory.ChannelCapacity
 public import Linglib.Pragmatics.RSA.Basic
 
 /-!
-# The RSA tradeoff
+# The RSA recursion as alternating maximization
 
 A speaker observes the state through a kernel and addresses a listener, who hears her utterance
-and infers the state. The tradeoff of a speaker and a listener is the conditional entropy of the
-utterance given the observation plus the rationality times the expected utility, the listener's
-log-probability of the state less the cost of the utterance. The two agents of the Rational
-Speech Act recursion are its two partial maximizers. Against a fixed listener the speaker of
-`RSA.speaker` at the Bayesian belief maximizes it, and against a fixed speaker the Bayesian
-listener does, so a round of the recursion never lowers it.
+and infers the state. The free energy of a speaker and a listener is the conditional entropy of
+the utterance given the observation plus the rationality times the expected utility, the
+listener's log-probability of the state less the cost of the utterance. The two agents of the
+Rational Speech Act recursion are its two partial maximizers. Against a fixed listener the
+speaker of `RSA.speaker` at the Bayesian belief maximizes it, and against a fixed speaker the
+Bayesian listener does, so a round of the recursion never lowers it.
 
 ## Main definitions
 
-* `RSA.expectedUtility`, `RSA.tradeoff`: the expected utility and the tradeoff of a speaker and a
-  listener, for a prior over states and an observation kernel.
+* `RSA.expectedUtility`, `RSA.freeEnergy`: the expected utility and the free energy of a speaker
+  and a listener, for a prior over states and an observation kernel.
 
 ## Main statements
 
-* `RSA.tradeoff_add_sum_klDiv`, `RSA.tradeoff_le_tradeoff_speaker`: against a fixed listener the
-  tradeoff of a speaker falls short of the RSA speaker's by her expected divergence from it.
-* `RSA.tradeoff_le_tradeoff_pragmaticListener`: against a fixed speaker the Bayesian listener
-  maximizes the tradeoff.
-* `RSA.tradeoff_speaker_le_tradeoff_pragmaticListener`,
-  `RSA.tradeoff_pragmaticListener_le_tradeoff_speaker`: in a round of the recursion the listener's
-  update and the speaker's update each raise the tradeoff, with no condition on the supports.
+* `RSA.freeEnergy_add_sum_klDiv`, `RSA.freeEnergy_le_freeEnergy_speaker`: against a fixed
+  listener the free energy of a speaker falls short of the RSA speaker's by her expected
+  divergence from it.
+* `RSA.freeEnergy_le_freeEnergy_pragmaticListener`: against a fixed speaker the Bayesian listener
+  maximizes the free energy.
+* `RSA.freeEnergy_speaker_le_freeEnergy_pragmaticListener`,
+  `RSA.freeEnergy_pragmaticListener_le_freeEnergy_speaker`: in a round of the recursion the
+  listener's update and the speaker's update each raise the free energy, with no condition on
+  the supports.
 
 ## Implementation notes
 
+* The free energy is the functional the source calls the RSA tradeoff. Row by row it is the free
+  energy of the Gibbs variational principle, entropy plus expected log-weight, for the weights
+  the speaker normalizes.
 * The speaker's belief is any family `b` that satisfies Bayes' rule with the denominator cleared,
   `(κ ∘ₘ μ) {o} * b o {w} = μ {w} * κ w {o}` on reals. The posterior `κ†μ` is one, and so is the
   point mass for a speaker who observes the state itself (`RSA.id_comp_real_mul_dirac_real`).
@@ -122,7 +127,7 @@ theorem measureEntropy_add_utility_le_speaker (hα : 0 ≤ α) (hq : q ≪ speak
 
 end Row
 
-/-! ### The tradeoff -/
+/-! ### The free energy -/
 
 variable (μ : Measure W) (κ : Kernel W O) (C : U → ℝ) (α : ℝ)
 
@@ -138,17 +143,17 @@ noncomputable def expectedUtility (S : Kernel O U) (L : Kernel U W) : ℝ :=
 
 variable [Fintype O]
 
-/-- The tradeoff of a speaker and a listener is the conditional entropy of the utterance given the
-speaker's observation plus `α` times the expected utility. -/
-noncomputable def tradeoff (S : Kernel O U) (L : Kernel U W) : ℝ :=
+/-- The free energy of a speaker and a listener is the conditional entropy of the utterance given
+the speaker's observation plus `α` times the expected utility. -/
+noncomputable def freeEnergy (S : Kernel O U) (L : Kernel U W) : ℝ :=
   ∑ o, (κ ∘ₘ μ).real {o} * Hm[S o] + α * expectedUtility μ κ C S L
 
-/-- For a speaker who observes the state itself the tradeoff averages over the states alone. -/
-theorem tradeoff_id (S : Kernel W U) (L : Kernel U W) :
-    tradeoff μ Kernel.id C α S L =
+/-- For a speaker who observes the state itself the free energy averages over the states alone. -/
+theorem freeEnergy_id (S : Kernel W U) (L : Kernel U W) :
+    freeEnergy μ Kernel.id C α S L =
       ∑ w, μ.real {w} * Hm[S w] +
         α * ∑ w, μ.real {w} * ∫ u, (log ((L u).real {w}) - C u) ∂(S w) := by
-  simp only [tradeoff, expectedUtility, Measure.id_comp, Kernel.comp_id]
+  simp only [freeEnergy, expectedUtility, Measure.id_comp, Kernel.comp_id]
 
 end Defs
 
@@ -158,11 +163,11 @@ variable [Fintype W] [Fintype O] [Fintype U] [MeasurableSingletonClass W]
   [MeasurableSingletonClass O] [MeasurableSingletonClass U] [IsProbabilityMeasure μ]
   [IsMarkovKernel κ]
 
-/-- The tradeoff is bounded above, by the log of the number of utterances when there is no
+/-- The free energy is bounded above, by the log of the number of utterances when there is no
 cost. -/
-theorem tradeoff_le {α : ℝ} (hα : 0 ≤ α) (S : Kernel O U) [IsMarkovKernel S] (L : Kernel U W)
+theorem freeEnergy_le {α : ℝ} (hα : 0 ≤ α) (S : Kernel O U) [IsMarkovKernel S] (L : Kernel U W)
     [IsMarkovKernel L] :
-    tradeoff μ κ C α S L ≤ log (Fintype.card U) + α * ∑ u, |C u| := by
+    freeEnergy μ κ C α S L ≤ log (Fintype.card U) + α * ∑ u, |C u| := by
   have hV (w : W) : ∫ u, (log ((L u).real {w}) - C u) ∂((S ∘ₖ κ) w) ≤ ∑ u, |C u| :=
     calc ∫ u, (log ((L u).real {w}) - C u) ∂((S ∘ₖ κ) w)
       _ ≤ ∫ _, ∑ u, |C u| ∂((S ∘ₖ κ) w) := integral_mono .of_finite .of_finite fun u ↦ by
@@ -232,14 +237,14 @@ variable (hα : 0 ≤ α) (L : Kernel U W) [IsFiniteKernel L]
   (S : Kernel O U) [IsMarkovKernel S] (hS : ∀ o, (κ ∘ₘ μ) {o} ≠ 0 → S o ≪ speaker α C L b o)
 include hα hS
 
-/-- Against a fixed listener, the tradeoff of a speaker and her expected divergence from the RSA
+/-- Against a fixed listener, the free energy of a speaker and her expected divergence from the RSA
 speaker add up to the expected log partition function. -/
-theorem tradeoff_add_sum_klDiv :
-    tradeoff μ κ C α S L +
+theorem freeEnergy_add_sum_klDiv :
+    freeEnergy μ κ C α S L +
         ∑ o, (κ ∘ₘ μ).real {o} * (klDiv (S o) (speaker α C L b o)).toReal =
       ∑ o, (κ ∘ₘ μ).real {o} *
         log (∑ u, ((b o).geomMean (fun w ↦ L u {w}) ^ α).toReal * exp (-(α * C u))) := by
-  rw [tradeoff, expectedUtility_eq_sum_comp hb S L, Finset.mul_sum, ← Finset.sum_add_distrib,
+  rw [freeEnergy, expectedUtility_eq_sum_comp hb S L, Finset.mul_sum, ← Finset.sum_add_distrib,
     ← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun o _ ↦ ?_
   rcases eq_or_ne ((κ ∘ₘ μ) {o}) 0 with h | h
@@ -247,10 +252,10 @@ theorem tradeoff_add_sum_klDiv :
   · linear_combination
       (κ ∘ₘ μ).real {o} * toReal_klDiv_speaker_add_measureEntropy (C := C) hα (hS o h)
 
-/-- Against a fixed listener the speaker at the Bayesian belief maximizes the tradeoff. -/
-theorem tradeoff_le_tradeoff_speaker :
-    tradeoff μ κ C α S L ≤ tradeoff μ κ C α (speaker α C L b) L := by
-  rw [tradeoff, tradeoff, expectedUtility_eq_sum_comp hb S L,
+/-- Against a fixed listener the speaker at the Bayesian belief maximizes the free energy. -/
+theorem freeEnergy_le_freeEnergy_speaker :
+    freeEnergy μ κ C α S L ≤ freeEnergy μ κ C α (speaker α C L b) L := by
+  rw [freeEnergy, freeEnergy, expectedUtility_eq_sum_comp hb S L,
     expectedUtility_eq_sum_comp hb (speaker α C L b) L, Finset.mul_sum, Finset.mul_sum,
     ← Finset.sum_add_distrib, ← Finset.sum_add_distrib]
   refine Finset.sum_le_sum fun o _ ↦ ?_
@@ -283,9 +288,9 @@ theorem expectedUtility_le_pragmaticListener :
 
 variable [Fintype O]
 
-/-- Against a fixed speaker the Bayesian listener maximizes the tradeoff. -/
-theorem tradeoff_le_tradeoff_pragmaticListener (hα : 0 ≤ α) :
-    tradeoff μ κ C α S L ≤ tradeoff μ κ C α S (pragmaticListener (S ∘ₖ κ) μ) :=
+/-- Against a fixed speaker the Bayesian listener maximizes the free energy. -/
+theorem freeEnergy_le_freeEnergy_pragmaticListener (hα : 0 ≤ α) :
+    freeEnergy μ κ C α S L ≤ freeEnergy μ κ C α S (pragmaticListener (S ∘ₖ κ) μ) :=
   add_le_add_right
     (mul_le_mul_of_nonneg_left (expectedUtility_le_pragmaticListener μ κ C S L hL) hα) _
 
@@ -350,23 +355,23 @@ theorem isMarkovKernel_speaker_pragmaticListener (hκ : ∀ o, (κ ∘ₘ μ) {o
     (Measure.absolutelyContinuous_of_forall_singleton fun _ hu ↦ of_not_not fun hS ↦
       speaker_pragmaticListener_apply_singleton_ne_zero hb hα (hκ o) hS hu)⟩
 
-/-- The speaker's best response to the Bayesian listener of any speaker raises the tradeoff. -/
-theorem tradeoff_pragmaticListener_le_tradeoff_speaker (S : Kernel O U) [IsMarkovKernel S] :
-    tradeoff μ κ C α S (pragmaticListener (S ∘ₖ κ) μ) ≤
-      tradeoff μ κ C α (speaker α C (pragmaticListener (S ∘ₖ κ) μ) b)
+/-- The speaker's best response to the Bayesian listener of any speaker raises the free energy. -/
+theorem freeEnergy_pragmaticListener_le_freeEnergy_speaker (S : Kernel O U) [IsMarkovKernel S] :
+    freeEnergy μ κ C α S (pragmaticListener (S ∘ₖ κ) μ) ≤
+      freeEnergy μ κ C α (speaker α C (pragmaticListener (S ∘ₖ κ) μ) b)
         (pragmaticListener (S ∘ₖ κ) μ) :=
-  tradeoff_le_tradeoff_speaker hb hα _ S fun _ ho ↦
+  freeEnergy_le_freeEnergy_speaker hb hα _ S fun _ ho ↦
     Measure.absolutelyContinuous_of_forall_singleton fun _ hu ↦ of_not_not fun hS ↦
       speaker_pragmaticListener_apply_singleton_ne_zero hb hα ho hS hu
 
-/-- The listener's Bayesian update to the speaker who answers her raises the tradeoff. -/
-theorem tradeoff_speaker_le_tradeoff_pragmaticListener (L : Kernel U W) [IsMarkovKernel L]
+/-- The listener's Bayesian update to the speaker who answers her raises the free energy. -/
+theorem freeEnergy_speaker_le_freeEnergy_pragmaticListener (L : Kernel U W) [IsMarkovKernel L]
     [IsMarkovKernel (speaker α C L b)] :
-    tradeoff μ κ C α (speaker α C L b) L ≤
-      tradeoff μ κ C α (speaker α C L b) (pragmaticListener (speaker α C L b ∘ₖ κ) μ) := by
+    freeEnergy μ κ C α (speaker α C L b) L ≤
+      freeEnergy μ κ C α (speaker α C L b) (pragmaticListener (speaker α C L b ∘ₖ κ) μ) := by
   rcases hα.eq_or_lt with rfl | hα'
-  · simp [tradeoff]
-  refine tradeoff_le_tradeoff_pragmaticListener μ κ C α _ L (fun u hu ↦
+  · simp [freeEnergy]
+  refine freeEnergy_le_freeEnergy_pragmaticListener μ κ C α _ L (fun u hu ↦
     Measure.absolutelyContinuous_of_forall_singleton fun w hL ↦ of_not_not fun hpost ↦ ?_) hα
   obtain ⟨hμw, hSw⟩ := (posterior_apply_singleton_ne_zero_iff _ _ hu w).1 hpost
   rw [Kernel.comp_apply_singleton] at hSw

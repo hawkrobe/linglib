@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Pragmatics.RSA.Tradeoff
+public import Linglib.Pragmatics.RSA.AlternatingMaximization
 
 /-!
 # Zaslavsky, Hu and Levy (2021): A Rate–Distortion View of Human Pragmatic Reasoning?
@@ -16,21 +16,22 @@ recursion.
 
 ## Main statements
 
-* `tradeoff_le_tradeoff_speaker`, `tradeoff_le_tradeoff_pragmaticListener`: against a fixed
+* `freeEnergy_le_freeEnergy_speaker`, `freeEnergy_le_freeEnergy_pragmaticListener`: against a fixed
   listener the RSA speaker maximizes the tradeoff, and against a fixed speaker the Bayesian
   listener does.
-* `tradeoff_le_tradeoff_listener_succ`, `tradeoff_le_tradeoff_speaker_succ`,
-  `exists_tendsto_tradeoff`: along the recursion each listener update and each speaker update
+* `freeEnergy_le_freeEnergy_listener_succ`, `freeEnergy_le_freeEnergy_speaker_succ`,
+  `exists_tendsto_freeEnergy`: along the recursion each listener update and each speaker update
   raises the tradeoff, which therefore converges.
 * `listener_apply_singleton_eq_zero`, `speaker_listener_apply_singleton_eq_zero`: no agent of the
   recursion pairs an utterance with a meaning the lexicon rules out for it.
 
 ## Implementation notes
 
-* The paper's speaker knows the meaning, so its tradeoff is `RSA.tradeoff` at the identity
-  observation kernel, which `RSA.tradeoff_id` writes as the paper does, and its speaker believes
-  the point mass. The two maximality statements are cases of the ones in the tradeoff file, whose
-  notes say how the real-valued utility there relates to the paper's.
+* The paper's speaker knows the meaning, so its tradeoff is `RSA.freeEnergy` at the identity
+  observation kernel, which `RSA.freeEnergy_id` writes as the paper does, and its speaker believes
+  the point mass. The two maximality statements are cases of the ones in the
+  alternating-maximization file, whose notes say how the real-valued utility there relates to the
+  paper's.
 * `listener t` is the paper's listener of depth `t`, and the speaker who answers it is the
   paper's speaker of depth `t + 1`. The recursion assumes a prior that charges every meaning and
   a finite lexicon in which every meaning has an applicable utterance and every utterance applies
@@ -67,12 +68,12 @@ variable {M U : Type*} [MeasurableSpace M] [MeasurableSpace U] [Fintype M] [Fint
 /-! ### The two steps -/
 
 /-- Against a fixed listener the RSA speaker maximizes the tradeoff (7). -/
-theorem tradeoff_le_tradeoff_speaker [IsFiniteMeasure P] {α : ℝ} (hα : 0 ≤ α) (L : Kernel U M)
+theorem freeEnergy_le_freeEnergy_speaker [IsFiniteMeasure P] {α : ℝ} (hα : 0 ≤ α) (L : Kernel U M)
     [IsFiniteKernel L] (S : Kernel M U) [IsMarkovKernel S]
     (hS : ∀ m, P {m} ≠ 0 → S m ≪ RSA.speaker α C L Measure.dirac m) :
-    RSA.tradeoff P Kernel.id C α S L ≤
-      RSA.tradeoff P Kernel.id C α (RSA.speaker α C L Measure.dirac) L :=
-  RSA.tradeoff_le_tradeoff_speaker (RSA.id_comp_real_mul_dirac_real P) hα L S
+    RSA.freeEnergy P Kernel.id C α S L ≤
+      RSA.freeEnergy P Kernel.id C α (RSA.speaker α C L Measure.dirac) L :=
+  RSA.freeEnergy_le_freeEnergy_speaker (RSA.id_comp_real_mul_dirac_real P) hα L S
     (by simpa only [Measure.id_comp] using hS)
 
 section Listener
@@ -91,10 +92,10 @@ theorem expectedUtility_le_pragmaticListener :
   exact h
 
 /-- Against a fixed speaker the Bayesian listener maximizes the tradeoff (8). -/
-theorem tradeoff_le_tradeoff_pragmaticListener (hα : 0 ≤ α) :
-    RSA.tradeoff P Kernel.id C α S L ≤
-      RSA.tradeoff P Kernel.id C α S (RSA.pragmaticListener S P) := by
-  have h := RSA.tradeoff_le_tradeoff_pragmaticListener P Kernel.id C α S L
+theorem freeEnergy_le_freeEnergy_pragmaticListener (hα : 0 ≤ α) :
+    RSA.freeEnergy P Kernel.id C α S L ≤
+      RSA.freeEnergy P Kernel.id C α S (RSA.pragmaticListener S P) := by
+  have h := RSA.freeEnergy_le_freeEnergy_pragmaticListener P Kernel.id C α S L
     (by simpa only [Kernel.comp_id] using hL) hα
   simp only [Kernel.comp_id] at h
   exact h
@@ -111,11 +112,11 @@ variable [Nonempty M] [IsProbabilityMeasure P] (l : U → M → ℝ≥0∞)
 `L₀(m | u) ∝ l(m, u) P(m)`, and each later one is the Bayesian inverse of the speaker (2) who
 answers the one before. -/
 noncomputable def listener : ℕ → Kernel U M
-  | 0 => RSA.gradedListener P l
+  | 0 => Kernel.ofDensity P l
   | t + 1 => RSA.pragmaticListener (RSA.speaker α C (listener t) Measure.dirac) P
 
 instance : ∀ t, IsFiniteKernel (listener P C α l t)
-  | 0 => inferInstanceAs (IsFiniteKernel (RSA.gradedListener P l))
+  | 0 => inferInstanceAs (IsFiniteKernel (Kernel.ofDensity P l))
   | _ + 1 => inferInstanceAs (IsFiniteKernel (RSA.pragmaticListener _ P))
 
 variable {P C α l} (hP : ∀ m, P {m} ≠ 0) (hl : ∀ u m, l u m ≠ ∞) {u : U} {m : M}
@@ -125,7 +126,7 @@ include hP hl
 meaning. -/
 theorem isMarkovKernel_listener (hu : ∀ u, ∃ m, l u m ≠ 0) :
     ∀ t, IsMarkovKernel (listener P C α l t)
-  | 0 => ⟨fun u ↦ RSA.isProbabilityMeasure_gradedListener P l u
+  | 0 => ⟨fun u ↦ Kernel.isProbabilityMeasure_ofDensity P l u
       (by
         obtain ⟨m, hm⟩ := hu u
         rw [lintegral_fintype]
@@ -139,7 +140,7 @@ theorem isMarkovKernel_listener (hu : ∀ u, ∃ m, l u m ≠ 0) :
 theorem listener_apply_singleton_ne_zero (hα : 0 ≤ α) (h : l u m ≠ 0) :
     ∀ t, listener P C α l t u {m} ≠ 0
   | 0 => by
-    rw [listener, RSA.gradedListener_apply_singleton]
+    rw [listener, Kernel.ofDensity_apply_singleton]
     exact ENNReal.div_ne_zero.2 ⟨mul_ne_zero h (hP m), ENNReal.sum_ne_top.2 fun m' _ ↦
       ENNReal.mul_ne_top (hl u m') (measure_ne_top _ _)⟩
   | t + 1 => by
@@ -152,7 +153,7 @@ theorem listener_apply_singleton_ne_zero (hα : 0 ≤ α) (h : l u m ≠ 0) :
 a meaning it does not apply to. -/
 theorem listener_apply_singleton_eq_zero (hα : 0 < α) (hu : ∀ u, ∃ m, l u m ≠ 0)
     (h : l u m = 0) : ∀ t, listener P C α l t u {m} = 0
-  | 0 => by rw [listener, RSA.gradedListener_apply_singleton, h, zero_mul, ENNReal.zero_div]
+  | 0 => by rw [listener, Kernel.ofDensity_apply_singleton, h, zero_mul, ENNReal.zero_div]
   | t + 1 => by
     obtain ⟨m', hm'⟩ := hu u
     exact RSA.pragmaticListener_apply_singleton_eq_zero
@@ -176,13 +177,13 @@ theorem isMarkovKernel_speaker_listener (t : ℕ) :
     (hm m).imp fun _ h ↦ listener_apply_singleton_ne_zero hP hl hα h t
 
 /-- Each speaker update raises the tradeoff, the second inequality of (9). -/
-theorem tradeoff_le_tradeoff_speaker_succ (t : ℕ) :
-    RSA.tradeoff P Kernel.id C α (RSA.speaker α C (listener P C α l t) Measure.dirac)
+theorem freeEnergy_le_freeEnergy_speaker_succ (t : ℕ) :
+    RSA.freeEnergy P Kernel.id C α (RSA.speaker α C (listener P C α l t) Measure.dirac)
         (listener P C α l (t + 1)) ≤
-      RSA.tradeoff P Kernel.id C α (RSA.speaker α C (listener P C α l (t + 1)) Measure.dirac)
+      RSA.freeEnergy P Kernel.id C α (RSA.speaker α C (listener P C α l (t + 1)) Measure.dirac)
         (listener P C α l (t + 1)) := by
   have := isMarkovKernel_speaker_listener (C := C) hP hl hα hm t
-  have h := RSA.tradeoff_pragmaticListener_le_tradeoff_speaker (C := C)
+  have h := RSA.freeEnergy_pragmaticListener_le_freeEnergy_speaker (C := C)
     (RSA.id_comp_real_mul_dirac_real P) hα (RSA.speaker α C (listener P C α l t) Measure.dirac)
   simp only [Kernel.comp_id] at h
   exact h
@@ -191,29 +192,29 @@ variable (hu : ∀ u, ∃ m, l u m ≠ 0)
 include hu
 
 /-- Each listener update raises the tradeoff, the first inequality of (9). -/
-theorem tradeoff_le_tradeoff_listener_succ (t : ℕ) :
-    RSA.tradeoff P Kernel.id C α (RSA.speaker α C (listener P C α l t) Measure.dirac)
+theorem freeEnergy_le_freeEnergy_listener_succ (t : ℕ) :
+    RSA.freeEnergy P Kernel.id C α (RSA.speaker α C (listener P C α l t) Measure.dirac)
         (listener P C α l t) ≤
-      RSA.tradeoff P Kernel.id C α (RSA.speaker α C (listener P C α l t) Measure.dirac)
+      RSA.freeEnergy P Kernel.id C α (RSA.speaker α C (listener P C α l t) Measure.dirac)
         (listener P C α l (t + 1)) := by
   have := isMarkovKernel_speaker_listener (C := C) hP hl hα hm t
   have := isMarkovKernel_listener (C := C) (α := α) hP hl hu t
-  have h := RSA.tradeoff_speaker_le_tradeoff_pragmaticListener (C := C)
+  have h := RSA.freeEnergy_speaker_le_freeEnergy_pragmaticListener (C := C)
     (RSA.id_comp_real_mul_dirac_real P) hα (listener P C α l t)
   simp only [Kernel.comp_id] at h
   exact h
 
 /-- The tradeoff converges along the recursion, being monotone and bounded above. -/
-theorem exists_tendsto_tradeoff : ∃ g, Tendsto (fun t ↦ RSA.tradeoff P Kernel.id C α
+theorem exists_tendsto_freeEnergy : ∃ g, Tendsto (fun t ↦ RSA.freeEnergy P Kernel.id C α
     (RSA.speaker α C (listener P C α l t) Measure.dirac) (listener P C α l t)) atTop (𝓝 g) := by
   refine ⟨_, tendsto_atTop_ciSup (monotone_nat_of_le_succ fun t ↦
-    (tradeoff_le_tradeoff_listener_succ hP hl hα hm hu t).trans
-      (tradeoff_le_tradeoff_speaker_succ hP hl hα hm t))
+    (freeEnergy_le_freeEnergy_listener_succ hP hl hα hm hu t).trans
+      (freeEnergy_le_freeEnergy_speaker_succ hP hl hα hm t))
     ⟨log (Fintype.card U) + α * ∑ u, |C u|, ?_⟩⟩
   rintro _ ⟨t, rfl⟩
   have := isMarkovKernel_speaker_listener (C := C) hP hl hα hm t
   have := isMarkovKernel_listener (C := C) (α := α) hP hl hu t
-  exact RSA.tradeoff_le P Kernel.id C hα _ _
+  exact RSA.freeEnergy_le P Kernel.id C hα _ _
 
 end Recursion
 

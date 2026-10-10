@@ -21,7 +21,7 @@ interpretation rule (`wir`).
 
 ## Main statements
 
-* `bir_eq_gradedListener`, `bir_unif_apply_singleton`, `ratio_inequality`: the interpretation
+* `bir_eq_ofDensity`, `bir_unif_apply_singleton`, `ratio_inequality`: the interpretation
   rule is the literal listener at the graded meaning "the prior mass of the radii reaching x",
   under uniform priors its posterior is the triangle `(n − |n − k| + 1) / (n + 1)²`, and whatever
   the priors it raises the odds of a closer value against a farther one, where "between" leaves
@@ -54,7 +54,7 @@ interpretation rule (`wir`).
   interpretations and messages. Appendix A's two steps are general:
   `RSA.speaker_cond_literalListener_apply_eq`, that against a literal listener the speaker
   depends on what she knows only through the messages it entails, and
-  `RSA.speaker_cond_gradedListener_apply_eq`, that the prior cancels against a reweighted prior.
+  `RSA.speaker_cond_ofDensity_apply_eq`, that the prior cancels against a reweighted prior.
 
 ## TODO
 
@@ -128,11 +128,11 @@ theorem bir_apply_singleton (x : X) :
 
 /-- By eq. (BIR), the information state after "around" is the literal listener at the graded
 meaning, `P(x = k | around n) ∝ P(x = k) · P(y ≥ |n − k|)`. -/
-theorem bir_eq_gradedListener {U : Type*} [MeasurableSpace U] [Countable U]
+theorem bir_eq_ofDensity {U : Type*} [MeasurableSpace U] [Countable U]
     [MeasurableSingletonClass U] {m : U → X → ℝ≥0∞} {u : U} (hm : m u = aroundWeight ν d) :
-    bir μ ν d = RSA.gradedListener μ m u :=
+    bir μ ν d = Kernel.ofDensity μ m u :=
   Measure.ext_of_singleton fun x ↦ by
-    rw [bir_apply_singleton, RSA.gradedListener_apply_singleton', hm, mul_comm]
+    rw [bir_apply_singleton, Kernel.ofDensity_apply_singleton', hm, mul_comm]
 
 end Around
 
@@ -217,16 +217,16 @@ theorem bir_unif_antitone {n k k' : ℕ} (h : Nat.dist n k ≤ Nat.dist n k') :
 noncomputable def betweenMeaning (p : ℕ × ℕ) : ℕ → ℝ≥0∞ := (Set.Icc p.1 p.2).indicator 1
 
 /-- "Between" is crisp, so its graded literal listener conditions on the interval. -/
-theorem gradedListener_betweenMeaning (μ : Measure ℕ) :
-    RSA.gradedListener μ betweenMeaning = RSA.literalListener μ (fun p : ℕ × ℕ ↦ Set.Icc p.1 p.2) :=
-  RSA.gradedListener_indicator μ _
+theorem ofDensity_betweenMeaning (μ : Measure ℕ) :
+    Kernel.ofDensity μ betweenMeaning = RSA.literalListener μ (fun p : ℕ × ℕ ↦ Set.Icc p.1 p.2) :=
+  (RSA.literalListener_eq_ofDensity μ _).symm
 
 /-- Under a uniform prior "between" gives the step function uniform on its interval and zero
 outside it (§3.2.2 (ii)). -/
 theorem literalListener_unif_betweenMeaning {N a b : ℕ} (hb : b ≤ N) (k : ℕ) :
-    RSA.gradedListener (unif N) betweenMeaning (a, b) {k} =
+    Kernel.ofDensity (unif N) betweenMeaning (a, b) {k} =
       if k ∈ Set.Icc a b then ((b + 1 - a : ℕ) : ℝ≥0∞)⁻¹ else 0 := by
-  rw [gradedListener_betweenMeaning]
+  rw [ofDensity_betweenMeaning]
   split_ifs with h
   · refine (RSA.literalListener_apply_singleton (unif N)
       (fun p : ℕ × ℕ ↦ Set.Icc p.1 p.2) h).trans ?_
@@ -277,14 +277,14 @@ theorem ratio_inequality {k₁ k₂ : ℕ} (h : k₁ < k₂) (hk : k₂ ≤ n) (
 posteriors is the ratio of priors (§4). -/
 theorem between_ratio {a b k₁ k₂ : ℕ} (hk₁ : k₁ ∈ Set.Icc a b) (hk₂ : k₂ ∈ Set.Icc a b)
     (hab : μ (Set.Icc a b) ≠ 0) :
-    (RSA.gradedListener μ betweenMeaning (a, b)).real {k₁} /
-        (RSA.gradedListener μ betweenMeaning (a, b)).real {k₂} =
+    (Kernel.ofDensity μ betweenMeaning (a, b)).real {k₁} /
+        (Kernel.ofDensity μ betweenMeaning (a, b)).real {k₂} =
       μ.real {k₁} / μ.real {k₂} := by
   have h₁ := RSA.literalListener_apply_singleton μ (fun p : ℕ × ℕ ↦ Set.Icc p.1 p.2)
     (u := (a, b)) hk₁
   have h₂ := RSA.literalListener_apply_singleton μ (fun p : ℕ × ℕ ↦ Set.Icc p.1 p.2)
     (u := (a, b)) hk₂
-  rw [gradedListener_betweenMeaning, measureReal_def, measureReal_def, h₁, h₂, ENNReal.toReal_mul,
+  rw [ofDensity_betweenMeaning, measureReal_def, measureReal_def, h₁, h₂, ENNReal.toReal_mul,
     ENNReal.toReal_mul, mul_div_mul_left _ _ (ENNReal.toReal_ne_zero.mpr
       ⟨ENNReal.inv_ne_zero.mpr (measure_ne_top _ _), ENNReal.inv_ne_top.mpr hab⟩)]
   rfl
@@ -316,14 +316,14 @@ noncomputable def radiusPrior : Measure ℕ := unif 4
 
 /-- The literal listener of §5.2 has a uniform prior on the nine values. -/
 noncomputable def L0 : Kernel Msg (Fin 9) :=
-  RSA.gradedListener Measure.count (Msg.meaning radiusPrior)
+  Kernel.ofDensity Measure.count (Msg.meaning radiusPrior)
 
 instance (m : Msg) : IsZeroOrProbabilityMeasure (L0 m) :=
-  inferInstanceAs (IsZeroOrProbabilityMeasure (RSA.gradedListener _ _ m))
+  inferInstanceAs (IsZeroOrProbabilityMeasure (Kernel.ofDensity _ _ m))
 
 /-- The "around 4" column is the Bayesian interpretation rule. -/
 theorem L0_around4 : L0 .around4 = bir Measure.count radiusPrior (fun x : Fin 9 ↦ Nat.dist 4 x) :=
-  (bir_eq_gradedListener _ _ _ rfl).symm
+  (bir_eq_ofDensity _ _ _ rfl).symm
 
 theorem meaning_around4 (y : Fin 9) :
     Msg.meaning radiusPrior .around4 y = ((5 - Nat.dist 4 y : ℕ) : ℝ≥0∞) :=
@@ -334,14 +334,14 @@ theorem L0_around4_apply_singleton (x : Fin 9) :
   have hsum : ∑ y : Fin 9, ((5 - Nat.dist 4 y : ℕ) : ℝ≥0∞) = 25 := by
     rw [← Nat.cast_sum, show ∑ y : Fin 9, (5 - Nat.dist 4 y) = 25 by decide]
     rfl
-  rw [L0, RSA.gradedListener_apply_singleton]
+  rw [L0, Kernel.ofDensity_apply_singleton]
   simp only [meaning_around4, Measure.count_singleton, mul_one, hsum]
 
 theorem L0_between1_7_apply_singleton (x : Fin 9) :
     L0 .between1_7 {x} = if x ∈ Set.Icc 1 7 then 7⁻¹ else 0 := by
   have h : L0 .between1_7 =
       RSA.literalListener Measure.count (fun _ : Msg ↦ Set.Icc (1 : Fin 9) 7) .between1_7 := by
-    rw [← RSA.gradedListener_indicator]; rfl
+    rw [RSA.literalListener_eq_ofDensity]; rfl
   rw [h]
   split_ifs with hx
   · rw [RSA.literalListener_apply_singleton Measure.count
@@ -354,7 +354,7 @@ theorem L0_between1_7_apply_singleton (x : Fin 9) :
 theorem L0_exactly4_apply_singleton (x : Fin 9) : L0 .exactly4 {x} = if x = 4 then 1 else 0 := by
   have h : L0 .exactly4 =
       RSA.literalListener Measure.count (fun _ : Msg ↦ ({4} : Set (Fin 9))) .exactly4 := by
-    rw [← RSA.gradedListener_indicator]; rfl
+    rw [RSA.literalListener_eq_ofDensity]; rfl
   rw [h]
   split_ifs with hx
   · rw [RSA.literalListener_apply_singleton Measure.count
@@ -399,12 +399,12 @@ theorem lintegral_count_meaning_between1_7 :
   rfl
 
 instance : IsProbabilityMeasure (L0 .around4) :=
-  RSA.isProbabilityMeasure_gradedListener _ _ _
+  Kernel.isProbabilityMeasure_ofDensity _ _ _
     (by rw [lintegral_count_meaning_around4]; norm_num)
     (by rw [lintegral_count_meaning_around4]; norm_num)
 
 instance : IsProbabilityMeasure (L0 .between1_7) :=
-  RSA.isProbabilityMeasure_gradedListener _ _ _
+  Kernel.isProbabilityMeasure_ofDensity _ _ _
     (by rw [lintegral_count_meaning_between1_7]; norm_num)
     (by rw [lintegral_count_meaning_between1_7]; norm_num)
 
@@ -496,13 +496,13 @@ variable [Fintype X] [MeasurableSingletonClass X] [Fintype M] [MeasurableSinglet
 
 /-- The literal listener over value and observation (12) reweights the joint prior by the
 meaning, which constrains the value alone. -/
-noncomputable def jointL0 : Kernel M (X × O) := RSA.gradedListener P fun m p ↦ meaning m p.1
+noncomputable def jointL0 : Kernel M (X × O) := Kernel.ofDensity P fun m p ↦ meaning m p.1
 
 /-- The value-marginal of the joint literal listener is the literal listener on the
 value-marginal prior, so eq. (BIR) is recovered inside the full model (footnote 23). -/
 theorem jointL0_map_fst (m : M) :
-    (jointL0 P meaning m).map Prod.fst = RSA.gradedListener (P.map Prod.fst) meaning m :=
-  RSA.gradedListener_map_fst P meaning (fun _ ↦ measurable_of_countable _) m
+    (jointL0 P meaning m).map Prod.fst = Kernel.ofDensity (P.map Prod.fst) meaning m :=
+  Kernel.ofDensity_map_fst P meaning (fun _ ↦ measurable_of_countable _) m
 
 variable [Fintype O] [MeasurableSingletonClass O] [IsFiniteMeasure P] (lam : ℝ)
 
@@ -514,7 +514,7 @@ noncomputable def jointSpeaker (L : Kernel M (X × O)) : Kernel O M :=
 /-- The pragmatic listener answering a speaker, (15) and (17), reweights the joint prior by the
 speaker's probability of the message given the observation. -/
 noncomputable def jointListener (S : Kernel O M) : Kernel M (X × O) :=
-  RSA.gradedListener P fun m p ↦ S p.2 {m}
+  Kernel.ofDensity P fun m p ↦ S p.2 {m}
 
 /-- In the recursion (16)–(17), `listener n` is the paper's `Lⁿ`, and
 `jointSpeaker P lam (listener n)` its `Sⁿ⁺¹`. -/
@@ -530,7 +530,7 @@ theorem jointListener_apply_eq_posterior [StandardBorelSpace (X × O)] [Nonempty
     jointListener P S m =
       ((S.comap Prod.snd (measurable_snd : Measurable (Prod.snd : X × O → O)))†P) m :=
   Measure.ext_of_singleton fun p ↦ by
-    rw [jointListener, RSA.gradedListener_apply_singleton, posterior_apply_singleton _ _ hm,
+    rw [jointListener, Kernel.ofDensity_apply_singleton, posterior_apply_singleton _ _ hm,
       Measure.comp_apply_singleton]
     simp only [Kernel.comap_apply, mul_comm]
 
@@ -598,14 +598,14 @@ theorem luS1_eq_of_sameSupport (hlam : 0 < lam) {o₁ o₂ : O} (hs : SameSuppor
 term in the message and the observation. The speaker answering such a listener treats two
 observations alike whenever that term does, the prior cancelling from her choice ((A-6), (A-9),
 (A-10)). -/
-theorem speaker_gradedListener_snd_eq (hlam : 0 ≤ lam) {o₁ o₂ : O}
+theorem speaker_ofDensity_snd_eq (hlam : 0 ≤ lam) {o₁ o₂ : O}
     (ho₁ : P (Prod.snd ⁻¹' {o₁}) ≠ 0) (ho₂ : P (Prod.snd ⁻¹' {o₂}) ≠ 0) (G : O → M → ℝ≥0∞)
     (hG : ∀ m, G o₂ m = G o₁ m) :
-    RSA.speaker lam cost (RSA.gradedListener P fun m p ↦ G p.2 m)
+    RSA.speaker lam cost (Kernel.ofDensity P fun m p ↦ G p.2 m)
         (fun o ↦ P[|Prod.snd ⁻¹' {o}]) o₂ =
-      RSA.speaker lam cost (RSA.gradedListener P fun m p ↦ G p.2 m)
+      RSA.speaker lam cost (Kernel.ofDensity P fun m p ↦ G p.2 m)
         (fun o ↦ P[|Prod.snd ⁻¹' {o}]) o₁ :=
-  RSA.speaker_cond_gradedListener_apply_eq hlam ho₁ ho₂ (g := G o₁)
+  RSA.speaker_cond_ofDensity_apply_eq hlam ho₁ ho₂ (g := G o₁)
     (fun m p (hp : p.2 = o₁) _ ↦ congrArg (G · m) hp)
     fun m p (hp : p.2 = o₂) _ ↦ (congrArg (G · m) hp).trans (hG m)
 
@@ -615,7 +615,7 @@ variable [Fintype I] [MeasurableSpace I] (PI : Measure I)
 speaker's use of the message, averaged over interpretations, and each later one (eqs. 5–7) by the
 previous speaker's. -/
 noncomputable def luListener : ℕ → Kernel M (W × O)
-  | 0 => RSA.gradedListener P fun m p ↦ ∑ i, PI {i} * luS1 P sem cost lam i p.2 {m}
+  | 0 => Kernel.ofDensity P fun m p ↦ ∑ i, PI {i} * luS1 P sem cost lam i p.2 {m}
   | n + 1 => jointListener P
       (RSA.speaker lam cost (luListener n) fun o ↦ P[|Prod.snd ⁻¹' {o}])
 
@@ -631,11 +631,11 @@ theorem luSpeaker_eq_of_sameSupport (hlam : 0 < lam) {o₁ o₂ : O} (hs : SameS
     luSpeaker P sem cost lam PI n o₂ = luSpeaker P sem cost lam PI n o₁ := by
   induction n with
   | zero =>
-    exact speaker_gradedListener_snd_eq P cost lam hlam.le ho₁ ho₂
+    exact speaker_ofDensity_snd_eq P cost lam hlam.le ho₁ ho₂
       (fun o m ↦ ∑ i, PI {i} * luS1 P sem cost lam i o {m}) fun m ↦ by
         simp only [luS1_eq_of_sameSupport P sem cost lam hlam hs ho₁ ho₂]
   | succ n ih =>
-    exact speaker_gradedListener_snd_eq P cost lam hlam.le ho₁ ho₂
+    exact speaker_ofDensity_snd_eq P cost lam hlam.le ho₁ ho₂
       (fun o m ↦ luSpeaker P sem cost lam PI n o {m}) fun m ↦ by rw [ih]
 
 end LexicalUncertainty

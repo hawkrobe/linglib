@@ -14,7 +14,7 @@ probability that an instance of the category has the property (2), `genericMeani
 threshold underspecified and drawn from a prior. The interpretation model (1) conditions a prior
 over prevalence on the utterance with the threshold integrated out, so the marginalized meaning of
 the generalization at a prevalence is the threshold prior's mass below it, and silence is true
-everywhere, `meaning`, `listener`, the substrate's `RSA.gradedListener`. The endorsement model (3)
+everywhere, `meaning`, `listener`, the substrate's `Kernel.ofDensity`. The endorsement model (3)
 is the speaker who chooses between the generalization and silence by how well each conveys the
 referent prevalence, `endorser`, the substrate's `RSA.speaker`. Since silence returns the prior,
 `listener_silent_apply`, the speaker endorses the generalization exactly when the marginalized
@@ -71,7 +71,7 @@ inductive Utterance
 
 instance : MeasurableSpace Utterance := ⊤
 
-instance : DiscreteMeasurableSpace Utterance := ⟨λ _ => trivial⟩
+instance : DiscreteMeasurableSpace Utterance := ⟨fun _ => trivial⟩
 
 /-- Under the threshold semantics (2), a generalization is true when the prevalence exceeds the
 threshold. -/
@@ -94,16 +94,16 @@ noncomputable def expectedMeaning (μ : Measure W) (ν : Measure ℝ) (prev : W 
 
 theorem expectedMeaning_ne_top (μ : Measure W) [IsFiniteMeasure μ] (ν : Measure ℝ)
     [IsFiniteMeasure ν] (prev : W → ℝ) : expectedMeaning μ ν prev ≠ ⊤ :=
-  ENNReal.sum_ne_top.2 λ _ _ => ENNReal.mul_ne_top (measure_ne_top ν _) (measure_ne_top μ _)
+  ENNReal.sum_ne_top.2 fun _ _ => ENNReal.mul_ne_top (measure_ne_top ν _) (measure_ne_top μ _)
 
 /-- The interpretation model (1) conditions the prevalence prior on the marginalized
 meaning. -/
 noncomputable def listener (μ : Measure W) (ν : Measure ℝ) (prev : W → ℝ) :
     Kernel Utterance W :=
-  gradedListener μ (meaning ν prev)
+  Kernel.ofDensity μ (meaning ν prev)
 
 instance (μ : Measure W) (ν : Measure ℝ) (prev : W → ℝ) : IsFiniteKernel (listener μ ν prev) :=
-  inferInstanceAs (IsFiniteKernel (gradedListener _ _))
+  inferInstanceAs (IsFiniteKernel (Kernel.ofDensity _ _))
 
 variable [DiscreteMeasurableSpace W]
 
@@ -123,13 +123,13 @@ variable (μ : Measure W) (ν : Measure ℝ) (prev : W → ℝ)
 theorem listener_generic_apply (w : W) :
     listener μ ν prev .generic {w} =
       meaning ν prev .generic w * μ {w} / expectedMeaning μ ν prev := by
-  rw [listener, gradedListener_apply_singleton]; rfl
+  rw [listener, Kernel.ofDensity_apply_singleton]; rfl
 
 variable [IsProbabilityMeasure μ] {lam : ℝ} {w : W}
 
 /-- Silence returns the prior. -/
 theorem listener_silent_apply (w : W) : listener μ ν prev .silent {w} = μ {w} := by
-  rw [listener, gradedListener_apply_singleton]
+  rw [listener, Kernel.ofDensity_apply_singleton]
   simp only [meaning, one_mul]
   rw [sum_measure_singleton, Finset.coe_univ, measure_univ, div_one]
 
@@ -153,7 +153,7 @@ theorem endorse_mono (hlam : 0 < lam) (hZ : expectedMeaning μ ν prev ≠ 0) {w
     Endorsed lam μ ν prev w' := by
   rw [endorse_iff μ ν prev hlam hw hZ] at h
   rw [endorse_iff μ ν prev hlam hw' hZ]
-  exact h.trans_le (measure_mono λ θ hθ => lt_of_lt_of_le hθ hle)
+  exact h.trans_le (measure_mono fun θ hθ => lt_of_lt_of_le hθ hle)
 
 end Model
 
@@ -213,8 +213,8 @@ theorem expectedPrevalence_eq_sum :
 theorem expectedMeaning_uniformThreshold (hp : ∀ w, 0 ≤ prev w ∧ prev w ≤ 1) :
     expectedMeaning μ uniformThreshold prev = ENNReal.ofReal (expectedPrevalence μ prev) := by
   rw [expectedPrevalence_eq_sum, expectedMeaning,
-    ENNReal.ofReal_sum_of_nonneg λ w _ => mul_nonneg measureReal_nonneg (hp w).1]
-  refine Finset.sum_congr rfl λ w _ => ?_
+    ENNReal.ofReal_sum_of_nonneg fun w _ => mul_nonneg measureReal_nonneg (hp w).1]
+  refine Finset.sum_congr rfl fun w _ => ?_
   rw [meaning_uniformThreshold prev hp, ENNReal.ofReal_mul measureReal_nonneg, measureReal_def,
     ENNReal.ofReal_toReal (measure_ne_top μ _), mul_comm]
 
@@ -240,7 +240,7 @@ theorem endorse_of_expectation_lt (hlam : 0 < lam) (hp : ∀ w, 0 ≤ prev w ∧
 theorem not_endorse_of_le_expectation (hlam : 0 < lam) (hp : ∀ w, 0 ≤ prev w ∧ prev w ≤ 1)
     (hw : μ {w} ≠ 0) (hZ : 0 < expectedPrevalence μ prev)
     (h : prev w ≤ expectedPrevalence μ prev) : ¬ Endorsed lam μ uniformThreshold prev w :=
-  λ he => absurd ((endorse_iff_expectation_lt prev μ hlam hp hw hZ).1 he) (not_lt.2 h)
+  fun he => absurd ((endorse_iff_expectation_lt prev μ hlam hp hw hZ).1 he) (not_lt.2 h)
 
 end Uniform
 
@@ -269,11 +269,11 @@ theorem expectedPrevalence_eq_half_of_symm (μ : Measure W) [IsProbabilityMeasur
   have h1 : ∑ w, μ.real {w} = 1 := sum_measureReal_singleton_eq_one μ
   have key : expectedPrevalence μ prev = ∑ w, μ.real {w} * (1 - prev w) := by
     rw [expectedPrevalence_eq_sum, ← Equiv.sum_comp σ]
-    refine Finset.sum_congr rfl λ w _ => ?_
+    refine Finset.sum_congr rfl fun w _ => ?_
     rw [hσ, measureReal_def, hμ, ← measureReal_def]
   have : ∑ w, μ.real {w} * (1 - prev w) = (∑ w, μ.real {w}) - ∑ w, μ.real {w} * prev w := by
     rw [← Finset.sum_sub_distrib]
-    exact Finset.sum_congr rfl λ w _ => by ring
+    exact Finset.sum_congr rfl fun w _ => by ring
   rw [this, h1, ← expectedPrevalence_eq_sum] at key
   linarith
 

@@ -24,7 +24,7 @@ a state. Findings then close by `decide`, uniformly in the rationality through
 
 ## Main results
 
-* `RSA.distinguishes_gradedListener_uniformOn_iff` — a description distinguishes its referent
+* `RSA.distinguishes_ofDensity_uniformOn_iff` — a description distinguishes its referent
   under the literal listener exactly when it does under the meaning, so the referent is the
   listener's best guess.
 * `RSA.uniformSpeaker_real_singleton_lt_of_card_lt`,
@@ -252,37 +252,16 @@ theorem uniformListener_apply (c : C) : uniformListener sem c = uniformOn ↑(se
       (by rw [Measure.count_apply_finite _ Set.finite_univ]; exact ENNReal.natCast_ne_top _),
     Set.univ_inter]
 
-/-- At a uniform prior a graded meaning normalizes to its share of the row sum, since the
-prior cancels. -/
-theorem gradedListener_uniformOn_apply_singleton [Nonempty T] {U : Type*} [MeasurableSpace U]
-    [Countable U] [MeasurableSingletonClass U] (m : U → T → ℝ≥0∞) (u : U) (t : T) :
-    gradedListener (uniformOn Set.univ) m u {t} = m u t / ∑ t', m u t' := by
-  rw [gradedListener_apply_singleton]
-  have hc : ((Fintype.card T : ℝ≥0∞))⁻¹ ≠ 0 :=
-    ENNReal.inv_ne_zero.mpr (ENNReal.natCast_ne_top _)
-  have hc' : ((Fintype.card T : ℝ≥0∞))⁻¹ ≠ ∞ :=
-    ENNReal.inv_ne_top.mpr (by exact_mod_cast Fintype.card_ne_zero)
-  simp_rw [uniformOn_univ_apply_singleton, ← Finset.sum_mul]
-  exact ENNReal.mul_div_mul_right _ _ hc hc'
-
-/-- With real-valued meanings the share is the real ratio of the row. -/
-theorem gradedListener_uniformOn_ofReal_apply_singleton [Nonempty T] {U : Type*}
-    [MeasurableSpace U] [Countable U] [MeasurableSingletonClass U] (m : U → T → ℝ) (u : U)
-    (t : T) (hm : ∀ t', 0 ≤ m u t') (hpos : 0 < ∑ t', m u t') :
-    gradedListener (uniformOn Set.univ) (fun u t => ENNReal.ofReal (m u t)) u {t} =
-      ENNReal.ofReal (m u t / ∑ t', m u t') := by
-  rw [gradedListener_uniformOn_apply_singleton, ← ENNReal.ofReal_sum_of_nonneg fun t' _ => hm t',
-    ← ENNReal.ofReal_div_of_pos hpos]
-
-/-- At a uniform prior the graded listener's masses on the states are the meaning's values
+/-- At a uniform prior the listener of a graded meaning has masses on the states that are the
+meaning's values
 rescaled by the row sum, so a description distinguishes its referent under the listener exactly
 when it does under the meaning. -/
-theorem distinguishes_gradedListener_uniformOn_iff [Nonempty T] {U : Type*} [MeasurableSpace U]
+theorem distinguishes_ofDensity_uniformOn_iff [Nonempty T] {U : Type*} [MeasurableSpace U]
     [Countable U] [MeasurableSingletonClass U] {m : U → T → ℝ≥0∞} {C : Finset T} {r : T}
     {u : U} (h0 : ∑ t, m u t ≠ 0) (htop : ∑ t, m u t ≠ ∞) :
-    Reference.Distinguishes (fun u t => gradedListener (uniformOn Set.univ) m u {t}) C r u ↔
+    Reference.Distinguishes (fun u t ↦ Kernel.ofDensity (uniformOn Set.univ) m u {t}) C r u ↔
       Reference.Distinguishes m C r u := by
-  simp_rw [gradedListener_uniformOn_apply_singleton]
+  simp_rw [Kernel.ofDensity_uniformOn_apply_singleton]
   exact Reference.distinguishes_comp_iff (φ := fun u x => x / ∑ t', m u t')
     fun _ _ h => ENNReal.div_lt_div_right h0 htop h
 
