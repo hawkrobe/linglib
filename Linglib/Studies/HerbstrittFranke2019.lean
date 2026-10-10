@@ -4,8 +4,7 @@ public import Linglib.Core.InformationTheory.Hellinger
 public import Linglib.Core.Probability.Kernel.OfWeights
 public import Linglib.Core.Probability.Kernel.Posterior
 public import Linglib.Data.Examples.HerbstrittFranke2019
-public import Linglib.Pragmatics.RSA.Basic
-public import Mathlib.InformationTheory.KullbackLeibler.Basic
+public import Linglib.Pragmatics.RSA.Belief
 
 /-!
 # Herbstritt and Franke (2019): Complex probability expressions and higher-order uncertainty
@@ -257,28 +256,19 @@ theorem speaker_real_lt_iff (hlam : 0 < lam) (x : Obs × Access) (m m' : SimpleE
     (speaker lam θ P x).real {m} < (speaker lam θ P x).real {m'} ↔
       hellingerDist (belief P x.2 x.1) (L0 θ P m') <
         hellingerDist (belief P x.2 x.1) (L0 θ P m) := by
-  rw [speaker, speakerOfScore_real_singleton_lt_iff
-    (score := λ x m => ((lam * utility θ P x m : ℝ) : EReal)) (w := x) (λ _ => EReal.coe_ne_top _)
-    ⟨m, EReal.coe_ne_bot _⟩, EReal.coe_lt_coe_iff, mul_lt_mul_iff_of_pos_left hlam, utility,
+  rw [speaker, speakerOfScore_coe_real_singleton_lt_iff, mul_lt_mul_iff_of_pos_left hlam, utility,
     utility, neg_lt_neg_iff]
 
 /-- The speaker of [goodman-stuhlmuller-2013], with the Kullback–Leibler divergence in place
 of the Hellinger distance (the paper's footnote on utilities). -/
 noncomputable def klSpeaker : Kernel (Obs × Access) SimpleExpr :=
-  speakerOfScore λ x m => -((lam : EReal) * (klDiv (belief P x.2 x.1) (L0 θ P m) : EReal))
-
-/-- The Kullback–Leibler speaker never uses a message whose literal listener misses a state of
-positive belief. -/
-theorem klSpeaker_apply_singleton_eq_zero (hlam : 0 < lam) {x : Obs × Access} {m : SimpleExpr}
-    (h : ¬ belief P x.2 x.1 ≪ L0 θ P m) : klSpeaker lam θ P x {m} = 0 :=
-  speakerOfScore_apply_singleton_eq_zero
-    (by rw [klDiv_of_not_ac h, EReal.coe_ennreal_top, EReal.coe_mul_top_of_pos hlam, EReal.neg_top])
+  beliefSpeaker lam (fun x ↦ belief P x.2 x.1) (L0 θ P)
 
 /-- In the paper's example, after three red balls of four, *probably* excludes a state of three
 red balls that keeps positive belief, so the Kullback–Leibler speaker never says it. -/
 theorem klSpeaker_probably_eq_zero (hlam : 0 < lam) (hθ : 3 / 10 ≤ θ.probably)
     (hP : P {3} ≠ 0) : klSpeaker lam θ P (3, 4) {.probably} = 0 := by
-  refine klSpeaker_apply_singleton_eq_zero lam θ P hlam λ hac => ?_
+  refine beliefSpeaker_apply_singleton_eq_zero hlam (klDiv_of_not_ac λ hac => ?_)
   have h0 : L0 θ P .probably {3} = 0 :=
     L0_apply_singleton_of_notMem θ P (not_lt.2 (by simpa [proportion] using hθ))
   exact belief_apply_singleton_ne_zero P hP (a := 4) (o := 3) (s := 3) (by decide +kernel) (hac h0)

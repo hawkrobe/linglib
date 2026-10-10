@@ -190,3 +190,34 @@ theorem cond_univ_withDensity_mul (μ : Measure Ω) {f g : Ω → ℝ≥0∞} (h
       cond_smul (ENNReal.inv_ne_zero.2 hfin) (ENNReal.inv_ne_top.2 h0)]
 
 end ProbabilityTheory
+
+/-! ### Nested events
+
+Conditioning sees an event only up to a null set, so conditioning on an event almost contained in
+another is conditioning the conditional, and the two conditionals are then comparable. -/
+
+namespace ProbabilityTheory
+
+variable {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} {s t : Set Ω}
+
+theorem cond_congr_set (h : s =ᵐ[μ] t) : μ[|s] = μ[|t] := by
+  rw [cond, cond, measure_congr h, Measure.restrict_congr_set h]
+
+variable [IsFiniteMeasure μ]
+
+/-- Conditioning on an event almost contained in another is conditioning the conditional. -/
+theorem cond_cond_of_ae_le (hs : MeasurableSet s) (ht : MeasurableSet t) (hst : s ≤ᵐ[μ] t) :
+    μ[|t][|s] = μ[|s] := by
+  rw [cond_cond_eq_cond_inter ht hs, Set.inter_comm]
+  exact cond_congr_set (Filter.inter_eventuallyEqSet_left.2 hst)
+
+/-- One conditional is absolutely continuous with respect to another exactly when the first
+event is almost contained in the second. -/
+theorem cond_absolutelyContinuous_cond_iff (hs : MeasurableSet s) (ht : MeasurableSet t) :
+    μ[|s] ≪ μ[|t] ↔ s ≤ᵐ[μ] t := by
+  refine ⟨fun h ↦ ?_, fun h ↦ cond_cond_of_ae_le hs ht h ▸ cond_absolutelyContinuous⟩
+  have h0 : μ[|s] tᶜ = 0 := h (by rw [cond_apply ht, Set.inter_compl_self, measure_empty, mul_zero])
+  rw [cond_apply hs, mul_eq_zero, ENNReal.inv_eq_zero] at h0
+  exact ae_le_set.2 (h0.resolve_left (measure_ne_top _ _))
+
+end ProbabilityTheory

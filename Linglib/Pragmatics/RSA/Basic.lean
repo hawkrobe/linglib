@@ -332,6 +332,13 @@ theorem speakerOfScore_real_singleton_lt_iff {w : W} (htop : ∀ u, score w u �
       (ENNReal.sum_ne_top.mpr fun u _ ↦ mt EReal.exp_eq_top_iff.mp (htop u)),
     EReal.exp_lt_exp_iff]
 
+/-- A real-valued score excludes no utterance, so row preference is comparison of reals. -/
+theorem speakerOfScore_coe_real_singleton_lt_iff (f : W → U → ℝ) (w : W) {u u' : U} :
+    (speakerOfScore (fun w u ↦ (f w u : EReal)) w).real {u} <
+        (speakerOfScore (fun w u ↦ (f w u : EReal)) w).real {u'} ↔ f w u < f w u' := by
+  rw [speakerOfScore_real_singleton_lt_iff (score := fun w u ↦ (f w u : EReal))
+    (fun _ ↦ EReal.coe_ne_top _) ⟨u, EReal.coe_ne_bot _⟩, EReal.coe_lt_coe_iff]
+
 /-- When exactly two utterances are applicable at a state, the share of one is the logistic
 function of the score difference. -/
 theorem speakerOfScore_real_singleton_of_pair {w : W} {u u' : U} (huu' : u ≠ u')
