@@ -85,8 +85,8 @@ def deriveSelectionClass (v : Verb) : SelectionClass :=
     else if citationQuestion v then .rogativeCP
     else .uninterrogative
 where
-  /-- The citation frame is an embedded question. -/
+  /-- The basic frame is an embedded question. -/
   citationQuestion (v : Verb) : Bool :=
-    decide (∃ fr ∈ v.citationFrame?, ∃ t, t.IsInterrogative ∧ fr.hasType t)
+    decide (∃ fr ∈ v.valency.frames.head?, ∃ t, t.IsInterrogative ∧ fr.hasType t)
 
 end Minimalist

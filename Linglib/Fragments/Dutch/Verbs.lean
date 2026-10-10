@@ -110,7 +110,7 @@ end Verb
 /-- `simplex inf pp` is the simplex transitive verb with the infinitive `inf` and the past
 participle `pp`, given with its *ge-*. -/
 def simplex (inf pp : String) : Verb :=
-  { form := inf, frames := [ArgumentFrame.np], base := inf,
+  { form := inf, valency := .ofFrame ArgumentFrame.np, base := inf,
     participle := match pp.toList with
       | 'g' :: 'e' :: r => String.ofList r
       | _ => pp }
@@ -192,25 +192,25 @@ verbs, with the frame the grammar's unaccusativity tests assign them (§2.1). -/
 /-- *komen* 'come', *kom - kwam - gekomen*, an unaccusative verb of motion to a goal. -/
 def komen : Verb :=
   { simplex "komen" "gekomen" with
-    frames := [ArgumentFrame.unaccusative], vendlerClass := some .achievement,
+    valency := .ofFrame ArgumentFrame.unaccusative, vendlerClass := some .achievement,
     direction := some .goal }
 
 /-- *sterven* 'die' is an unaccusative verb denoting a transition, as in *De oude man is
 gestorven*. -/
 def sterven : Verb :=
   { simplex "sterven" "gestorven" with
-    frames := [ArgumentFrame.unaccusative], vendlerClass := some .achievement }
+    valency := .ofFrame ArgumentFrame.unaccusative, vendlerClass := some .achievement }
 
 /-- *groeien* 'grow', an unaccusative verb of change along a scale of size. -/
 def groeien : Verb :=
   { simplex "groeien" "gegroeid" with
-    frames := [ArgumentFrame.unaccusative], vendlerClass := some .accomplishment,
+    valency := .ofFrame ArgumentFrame.unaccusative, vendlerClass := some .accomplishment,
     scaleDimension := some .generalSize }
 
 /-- *stijgen* 'rise', an unaccusative verb of change along a scale of height. -/
 def stijgen : Verb :=
   { simplex "stijgen" "gestegen" with
-    frames := [ArgumentFrame.unaccusative], vendlerClass := some .accomplishment,
+    valency := .ofFrame ArgumentFrame.unaccusative, vendlerClass := some .accomplishment,
     scaleDimension := some .height }
 
 /-- *blijven* 'stay' is an unaccusative verb expressing that a state continues to exist (§1.2),
@@ -218,7 +218,7 @@ with the auxiliary *zijn*, as in *Was dan ook wat langer gebleven!* 'You should 
 longer!'. -/
 def blijven : Verb :=
   { simplex "blijven" "gebleven" with
-    frames := [ArgumentFrame.unaccusative], vendlerClass := some .state,
+    valency := .ofFrame ArgumentFrame.unaccusative, vendlerClass := some .state,
     phasal := some .continuation }
 
 /-- *overblijven* 'remain, be left', formed on *blijven* with the particle *over*. -/
@@ -227,13 +227,13 @@ def overblijven : Verb := particleVerb "over" blijven
 /-- *duren* 'last', stative. -/
 def duren : Verb :=
   { simplex "duren" "geduurd" with
-    frames := [ArgumentFrame.intransitive], vendlerClass := some .state }
+    valency := .ofFrame ArgumentFrame.intransitive, vendlerClass := some .state }
 
 /-- *staan* 'stand' is a stative verb of location, an atelic unaccusative verb with *hebben*, as
 in *Jan heeft lang op het perron gestaan*. -/
 def staan : Verb :=
   { simplex "staan" "gestaan" with
-    frames := [ArgumentFrame.unaccusative], vendlerClass := some .state }
+    valency := .ofFrame ArgumentFrame.unaccusative, vendlerClass := some .state }
 
 /-- *bestaan* 'exist', formed on *staan* with the prefix *be-*. -/
 def bestaan : Verb := prefixVerb "be" staan
@@ -241,28 +241,31 @@ def bestaan : Verb := prefixVerb "be" staan
 /-- *blazen* 'blow', an intransitive activity with an agentive subject. -/
 def blazen : Verb :=
   { simplex "blazen" "geblazen" with
-    frames := [ArgumentFrame.intransitive], vendlerClass := some .activity,
-    subjectEntailments := some activitySubjectProfile }
+    valency := .ofFrame ArgumentFrame.intransitive [some activitySubjectProfile],
+      vendlerClass := some .activity }
 
 /-- *lopen* 'walk, run', *loop - liep - gelopen*, an agentive verb of manner of motion, intransitive
 ([levin-hovav-1995] p. 148). -/
 def lopen : Verb :=
   { simplex "lopen" "gelopen" with
-    frames := [ArgumentFrame.intransitive, ArgumentFrame.spatialPP], vendlerClass := some .activity,
+    valency := .of [(ArgumentFrame.intransitive, [0]), (ArgumentFrame.spatialPP, [0, 1])],
+      vendlerClass := some .activity,
     direction := some .place }
 
 /-- *wandelen* 'walk' is an intransitive verb of manner of motion, as in *De jongen heeft
 gewandeld*. -/
 def wandelen : Verb :=
   { simplex "wandelen" "gewandeld" with
-    frames := [ArgumentFrame.intransitive, ArgumentFrame.spatialPP], vendlerClass := some .activity,
+    valency := .of [(ArgumentFrame.intransitive, [0]), (ArgumentFrame.spatialPP, [0, 1])],
+      vendlerClass := some .activity,
     direction := some .place }
 
 /-- *rollen* 'roll', a nonagentive verb of manner of motion, unaccusative ([levin-hovav-1995]
 pp. 147–148) and atelic. -/
 def rollen : Verb :=
   { simplex "rollen" "gerold" with
-    frames := [ArgumentFrame.unaccusative, ArgumentFrame.spatialPP], vendlerClass := some .activity,
+    valency := .of [(ArgumentFrame.unaccusative, [0]), (ArgumentFrame.spatialPP, [0, 1])],
+      vendlerClass := some .activity,
     direction := some .place }
 
 /-! ### The perfect auxiliary -/

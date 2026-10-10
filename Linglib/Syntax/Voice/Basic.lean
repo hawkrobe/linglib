@@ -246,6 +246,11 @@ def _root_.ArgumentFrame.status (fr : ArgumentFrame) (s : ArgumentFrame.Slot) : 
   | none, some p => if p.IsExpressed then .term .X else .absent
   | none, none => .absent
 
+/-- The construction of a diathesis gives each participant the status of its slot, absent where
+the diathesis leaves it out. -/
+def _root_.Diathesis.construction {n : ℕ} (d : Diathesis n) : Construction (Fin n) :=
+  fun i ↦ (d.links.get i).elim .absent d.toArgumentFrame.status
+
 /-! ### Coding -/
 
 /-- A voice is coded on the verb by verbal morphology, by an analytic construction, or not at
@@ -575,7 +580,7 @@ theorem obliqueVoice_selectsOblique (r : Case.Kind) :
 derived frame. Necessary for the alternation, not sufficient, since the two frames need not be
 related by it. -/
 def _root_.Verb.Alternates (w : Verb) (v : Voice) : Prop :=
-  (∃ fr ∈ w.frames, v.source ≤ fr) ∧ ∃ fr ∈ w.frames, v.target ≤ fr
+  (∃ fr ∈ w.valency.frames, v.source ≤ fr) ∧ ∃ fr ∈ w.valency.frames, v.target ≤ fr
 
 instance (w : Verb) (v : Voice) : Decidable (w.Alternates v) :=
   inferInstanceAs (Decidable (_ ∧ _))

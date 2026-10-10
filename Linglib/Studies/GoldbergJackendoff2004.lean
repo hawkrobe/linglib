@@ -239,10 +239,10 @@ theorem rows_coherence :
     ∀ r ∈ rows, r.endBounded = none → (r.judgment = .acceptable ↔ r.Coheres) := by
   decide +kernel
 
-/-- Where the fragment derives a role label for the object from the verb's citation frame, the
+/-- Where the fragment derives a role label for the object from the verb's basic frame, the
 label is among the paper's construals: the object of *wipe* is a patient. The subject's label is
 not comparable, since a noncausative may use the verb's anticausative frame, whose subject is the
-citation frame's object: the melting chocolate of (48b), not the causer the fragment labels. -/
+basic frame's object: the melting chocolate of (48b), not the causer the fragment labels. -/
 theorem rows_thetaLabel :
     ∀ r ∈ rows, ∀ ρs ∈ r.objectRole, ∀ s ∈ r.verb.coreSlots[1]?, ∀ ρ ∈ r.verb.thetaLabel s,
       ρ ∈ ρs := by

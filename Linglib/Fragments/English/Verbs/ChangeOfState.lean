@@ -35,8 +35,10 @@ open English.Inflection
     does not reduce to scale boundedness alone. -/
 def crack : Verb := .mkRegular {
   form := "crack"
-  frames := [ArgumentFrame.np, ArgumentFrame.unaccusative,
-    ArgumentFrame.np_pp (some Adpositions.with_)]
+  valency := .of
+    [(ArgumentFrame.np, [0, 1]),
+     (ArgumentFrame.unaccusative, [1]),
+     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 2])]
   vendlerClass := some .achievement
   scaleDimension := some .cracking
   levinClasses := {LevinClass.break_, .soundEmission} }
@@ -46,7 +48,9 @@ def crack : Verb := .mkRegular {
     dented*, *badly dented*. -/
 def dent : Verb := .mkRegular {
   form := "dent"
-  frames := [ArgumentFrame.np, ArgumentFrame.np_pp (some Adpositions.with_)]
+  valency := .of
+    [(ArgumentFrame.np, [0, 1]),
+     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 2])]
   vendlerClass := some .achievement
   scaleDimension := some .denting
   levinClasses := {LevinClass.carve} }
@@ -57,8 +61,11 @@ def dent : Verb := .mkRegular {
     (§10.4.1) and the swat verbs (§18.2) on its manner readings. -/
 def scratch : Verb := .mkRegular {
   form := "scratch"
-  frames := [ArgumentFrame.np, ArgumentFrame.pp (some Adpositions.at_),
-    ArgumentFrame.np_pp (some Adpositions.on), ArgumentFrame.np_pp (some Adpositions.with_)]
+  valency := .of
+    [(ArgumentFrame.np, [0, 1]),
+     (ArgumentFrame.pp (some Adpositions.at_), [0, 1]),
+     (ArgumentFrame.np_pp (some Adpositions.on), [0, 2, 1]),
+     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 3])]
   vendlerClass := some .achievement
   scaleDimension := some .scratching
   levinClasses := {LevinClass.cut, .hurt, .rummage, .scribble, .swat, .wipeManner} }
@@ -68,8 +75,10 @@ def scratch : Verb := .mkRegular {
     #*shatter for two minutes*, ??*more shattered* ([tham-2025] (12)). -/
 def shatter : Verb := .mkRegular {
   form := "shatter"
-  frames := [ArgumentFrame.np, ArgumentFrame.unaccusative,
-    ArgumentFrame.np_pp (some Adpositions.with_)]
+  valency := .of
+    [(ArgumentFrame.np, [0, 1]),
+     (ArgumentFrame.unaccusative, [1]),
+     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 2])]
   vendlerClass := some .achievement
   levinClasses := {LevinClass.break_} }
 
@@ -77,8 +86,10 @@ def shatter : Verb := .mkRegular {
     verbs. -/
 def burn : Verb := .mkRegular {
   form := "burn"
-  frames := [ArgumentFrame.np, ArgumentFrame.unaccusative,
-    ArgumentFrame.np_pp (some Adpositions.with_)]
+  valency := .of
+    [(ArgumentFrame.np, [0, 1]),
+     (ArgumentFrame.unaccusative, [1]),
+     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 2])]
   vendlerClass := some .accomplishment
   incrementality := some .strict
   root := { content := {
@@ -93,7 +104,9 @@ def burn : Verb := .mkRegular {
 /-- "destroy" — Levin 44 destroy verbs. -/
 def destroy : Verb := .mkRegular {
   form := "destroy"
-  frames := [ArgumentFrame.np, ArgumentFrame.np_pp (some Adpositions.with_)]
+  valency := .of
+    [(ArgumentFrame.np, [0, 1]),
+     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 2])]
   vendlerClass := some .accomplishment
   root := { content := {
     resultGeometry := {.totalDestruction}
@@ -106,8 +119,11 @@ def destroy : Verb := .mkRegular {
     indefinite implicit object ("the ice cream melted" / "we're melting"). -/
 def melt : Verb := .mkRegular {
   form := "melt"
-  frames := [ArgumentFrame.np, ArgumentFrame.objectDrop (some .indef), ArgumentFrame.unaccusative,
-    ArgumentFrame.np_pp (some Adpositions.with_)]
+  valency := .of
+    [(ArgumentFrame.np, [0, 1]),
+     (ArgumentFrame.objectDrop (some .indef), [0, 1]),
+     (ArgumentFrame.unaccusative, [1]),
+     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 2])]
   vendlerClass := some .accomplishment
   incrementality := some .strict
   root := { content := {
@@ -126,38 +142,40 @@ file. -/
 /-- "activate" — sets a device or process in operation; not listed by Levin. -/
 def activate : Verb := .mkRegular {
   form := "activate"
-  frames := [ArgumentFrame.np, ArgumentFrame.unaccusative]
+  valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.unaccusative, [1])]
   vendlerClass := some .accomplishment
  }
 
 /-- "affect" — Levin 31.1 amuse verbs. -/
 def affect : Verb := .mkRegular {
   form := "affect"
-  frames := [ArgumentFrame.np]
+  valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .activity
   levinClasses := {LevinClass.amuse} }
 
 /-- "change" — transformation; Levin 26.6 turn verbs. -/
 def change : Verb := .mkRegular {
   form := "change"
-  frames := [ArgumentFrame.np, ArgumentFrame.unaccusative,
-    ArgumentFrame.np_pp (some Adpositions.into),
-    ⟨some .nominal, [.nominal, .adpositional (some .spatial) (some Adpositions.from_),
-      .adpositional (some .spatial) (some Adpositions.into)]⟩]
+  valency := .of
+    [(ArgumentFrame.np, [0, 1]),
+     (ArgumentFrame.unaccusative, [1]),
+     (ArgumentFrame.np_pp (some Adpositions.into), [0, 1, 2]),
+     (⟨some .nominal, [.nominal, .adpositional (some .spatial) (some Adpositions.from_),
+     .adpositional (some .spatial) (some Adpositions.into)]⟩, [0, 1, 3, 2])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.dress, .exchange, .otherChangeOfState, .turn} }
 
 /-- "damage" — partial destruction; not listed by Levin. -/
 def damage : Verb := .mkRegular {
   form := "damage"
-  frames := [ArgumentFrame.np]
+  valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .accomplishment
  }
 
 /-- "eliminate" — removal; Levin 42.1 murder verbs. -/
 def eliminate : Verb := .mkRegular {
   form := "eliminate"
-  frames := [ArgumentFrame.np]
+  valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.murder, .remove} }
 
@@ -168,48 +186,48 @@ def hurt : Verb where
   formPast := "hurt"
   formPastPart := "hurt"
   formPresPart := "hurting"
-  frames := [ArgumentFrame.np]
+  valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.amuse, .hurt, .marvel, .pain}
 
 /-- "restore" — Levin 13.2 contribute verbs. -/
 def restore : Verb := .mkRegular {
   form := "restore"
-  frames := [ArgumentFrame.np]
+  valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.contribute} }
 
 /-- "trigger" — sets a process off; not listed by Levin. -/
 def trigger : Verb := .mkRegular {
   form := "trigger"
-  frames := [ArgumentFrame.np]
+  valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .achievement }
 
 /-- "bury" — covering with earth. Levin's concealment class (§16) does not list *bury*. -/
 def bury : Verb := .mkRegular {
   form := "bury"
-  frames := [ArgumentFrame.np]
+  valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .accomplishment
  }
 
 /-- "drop" — Levin 45.6 calibratable change-of-state verbs. -/
 def drop : Verb := .mkRegular {
   form := "drop"
-  frames := [ArgumentFrame.np, ArgumentFrame.unaccusative]
+  valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.unaccusative, [1])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.calibratableChangeOfState, .meander, .putDirection, .roll} }
 
 /-- "lift" — Levin 9.4 verbs of putting with a specified direction. -/
 def lift : Verb := .mkRegular {
   form := "lift"
-  frames := [ArgumentFrame.np]
+  valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.putDirection, .steal} }
 
 /-- "lock" — securing with a lock; Levin lists *lock* only among the tape verbs (§22.4). -/
 def lock : Verb := .mkRegular {
   form := "lock"
-  frames := [ArgumentFrame.np, ArgumentFrame.unaccusative]
+  valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.unaccusative, [1])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.tape} }
 
@@ -221,8 +239,10 @@ def shut : Verb where
   formPast := "shut"
   formPastPart := "shut"
   formPresPart := "shutting"
-  frames := [ArgumentFrame.np, ArgumentFrame.unaccusative,
-    ArgumentFrame.np_pp (some Adpositions.with_)]
+  valency := .of
+    [(ArgumentFrame.np, [0, 1]),
+     (ArgumentFrame.unaccusative, [1]),
+     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 2])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.otherChangeOfState}
 
@@ -233,24 +253,29 @@ def spread : Verb where
   formPast := "spread"
   formPastPart := "spread"
   formPresPart := "spreading"
-  frames := [ArgumentFrame.np, ArgumentFrame.unaccusative, ArgumentFrame.pp (some Adpositions.at_),
-    ⟨some .nominal, [.nominal, .adpositional (some .spatial)]⟩,
-    ArgumentFrame.np_pp (some Adpositions.with_)]
+  valency := .of
+    [(ArgumentFrame.np, [0, 1]),
+     (ArgumentFrame.unaccusative, [1]),
+     (ArgumentFrame.pp (some Adpositions.at_), [0, 2]),
+     (⟨some .nominal, [.nominal, .adpositional (some .spatial)]⟩, [0, 1, 2]),
+     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 2, 1])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.appear, .entitySpecificModeOfBeing, .sprayLoad}
 
 /-- "stretch" — Levin 45.4 other change-of-state verbs. -/
 def stretch : Verb := .mkRegular {
   form := "stretch"
-  frames := [ArgumentFrame.np, ArgumentFrame.unaccusative,
-    ArgumentFrame.np_pp (some Adpositions.with_)]
+  valency := .of
+    [(ArgumentFrame.np, [0, 1]),
+     (ArgumentFrame.unaccusative, [1]),
+     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 2])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.crane, .meander, .otherChangeOfState} }
 
 /-- "switch" — Levin's change-of-state lists do not include *switch*. -/
 def switch : Verb := .mkRegular {
   form := "switch"
-  frames := [ArgumentFrame.np, ArgumentFrame.unaccusative]
+  valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.unaccusative, [1])]
   vendlerClass := some .accomplishment
  }
 
@@ -258,14 +283,14 @@ def switch : Verb := .mkRegular {
     40.3.2 crane verbs (*close one's eyes*). -/
 def close : Verb := .mkRegular {
   form := "close"
-  frames := [ArgumentFrame.np, ArgumentFrame.unaccusative]
+  valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.unaccusative, [1])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.crane, .otherChangeOfState} }
 
 /-- "dry" — Levin 45.4 other change-of-state verbs, zero-related to the adjective. -/
 def dry : Verb := .mkRegular {
   form := "dry"
-  frames := [ArgumentFrame.np, ArgumentFrame.unaccusative]
+  valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.unaccusative, [1])]
   vendlerClass := some .accomplishment
   scaleDimension := some .wetness
   scalePolarity := .negative
@@ -274,28 +299,28 @@ def dry : Verb := .mkRegular {
 /-- "enhance" — improvement in quality; not listed by Levin. -/
 def enhance : Verb := .mkRegular {
   form := "enhance"
-  frames := [ArgumentFrame.np]
+  valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .accomplishment }
 
 /-- "extend" — Levin 47.1 exist verbs, 13.2 contribute verbs and 13.3 verbs of future
     having. -/
 def extend : Verb := .mkRegular {
   form := "extend"
-  frames := [ArgumentFrame.np, ArgumentFrame.unaccusative]
+  valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.unaccusative, [1])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.contribute, .exist, .futureHaving} }
 
 /-- "lower" — Levin 9.4 verbs of putting with a specified direction. -/
 def lower : Verb := .mkRegular {
   form := "lower"
-  frames := [ArgumentFrame.np, ArgumentFrame.unaccusative]
+  valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.unaccusative, [1])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.putDirection} }
 
 /-- "slow" — Levin 45.4 other change-of-state verbs, zero-related to the adjective. -/
 def slow : Verb := .mkRegular {
   form := "slow"
-  frames := [ArgumentFrame.np, ArgumentFrame.unaccusative]
+  valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.unaccusative, [1])]
   vendlerClass := some .activity
   scaleDimension := some .speed
   levinClasses := {LevinClass.otherChangeOfState} }
@@ -303,8 +328,10 @@ def slow : Verb := .mkRegular {
 /-- "turn" — Levin 26.6 turn verbs (*turn the prince into a frog*). -/
 def turn : Verb := .mkRegular {
   form := "turn"
-  frames := [ArgumentFrame.np, ArgumentFrame.unaccusative,
-    ArgumentFrame.np_pp (some Adpositions.into)]
+  valency := .of
+    [(ArgumentFrame.np, [0, 1]),
+     (ArgumentFrame.unaccusative, [1]),
+     (ArgumentFrame.np_pp (some Adpositions.into), [0, 1, 2])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.turn}
   levinExcluded := {LevinClass.crane, .hurt, .meander, .roll} }
@@ -316,7 +343,7 @@ def wakeUp : Verb where
   formPast := "woke up"
   formPastPart := "woken up"
   formPresPart := "waking up"
-  frames := [ArgumentFrame.np, ArgumentFrame.unaccusative]
+  valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.unaccusative, [1])]
   vendlerClass := some .achievement
 
 /-! ### Change of State (§ 45) -/
@@ -328,16 +355,20 @@ def freeze : Verb where
   formPast := "froze"
   formPastPart := "frozen"
   formPresPart := "freezing"
-  frames := [ArgumentFrame.np, ArgumentFrame.unaccusative,
-    ArgumentFrame.np_pp (some Adpositions.with_)]
+  valency := .of
+    [(ArgumentFrame.np, [0, 1]),
+     (ArgumentFrame.unaccusative, [1]),
+     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 2])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.knead, .otherChangeOfState, .weather}
 
 /-- "heat" — Levin 45.4 Other Change of State verbs. Causative/inchoative alternation. -/
 def heat : Verb := .mkRegular {
   form := "heat"
-  frames := [ArgumentFrame.np, ArgumentFrame.unaccusative,
-    ArgumentFrame.np_pp (some Adpositions.with_)]
+  valency := .of
+    [(ArgumentFrame.np, [0, 1]),
+     (ArgumentFrame.unaccusative, [1]),
+     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 2])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.cooking, .otherChangeOfState} }
 
@@ -349,8 +380,10 @@ def bend : Verb where
   formPast := "bent"
   formPastPart := "bent"
   formPresPart := "bending"
-  frames := [ArgumentFrame.np, ArgumentFrame.unaccusative,
-    ArgumentFrame.np_pp (some Adpositions.with_)]
+  valency := .of
+    [(ArgumentFrame.np, [0, 1]),
+     (ArgumentFrame.unaccusative, [1]),
+     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 2])]
   vendlerClass := some .accomplishment
   scaleDimension := some .curvature
   levinClasses := {LevinClass.assumePosition, .bend, .knead, .spatialConfiguration}
@@ -359,8 +392,10 @@ def bend : Verb where
     Degree achievement: closed scale (reaches boiling point). -/
 def boil : Verb := .mkRegular {
   form := "boil"
-  frames := [ArgumentFrame.np, ArgumentFrame.unaccusative,
-    ArgumentFrame.np_pp (some Adpositions.with_)]
+  valency := .of
+    [(ArgumentFrame.np, [0, 1]),
+     (ArgumentFrame.unaccusative, [1]),
+     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 2])]
   vendlerClass := some .accomplishment
   scaleDimension := some .boiling
   levinClasses := {LevinClass.cooking, .prepare} }
@@ -369,7 +404,7 @@ def boil : Verb := .mkRegular {
     Degree achievement: open scale (no maximum rustedness). -/
 def rust : Verb := .mkRegular {
   form := "rust"
-  frames := [ArgumentFrame.unaccusative]
+  valency := .ofFrame ArgumentFrame.unaccusative
   passivizable := false
   vendlerClass := some .activity
   scaleDimension := some .corrosion
@@ -379,7 +414,7 @@ def rust : Verb := .mkRegular {
     Degree achievement: open scale (no maximum quantity). -/
 def increase : Verb := .mkRegular {
   form := "increase"
-  frames := [ArgumentFrame.np, ArgumentFrame.unaccusative]
+  valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.unaccusative, [1])]
   vendlerClass := some .activity
   scaleDimension := some .quantity
   levinClasses := {LevinClass.calibratableChangeOfState, .otherChangeOfState} }
@@ -390,8 +425,10 @@ def increase : Verb := .mkRegular {
     Accomplishment: "straightened the wire in 10 seconds." -/
 def straighten : Verb := .mkRegular {
   form := "straighten"
-  frames := [ArgumentFrame.np, ArgumentFrame.unaccusative,
-    ArgumentFrame.np_pp (some Adpositions.with_)]
+  valency := .of
+    [(ArgumentFrame.np, [0, 1]),
+     (ArgumentFrame.unaccusative, [1]),
+     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 2])]
   vendlerClass := some .accomplishment
   scaleDimension := some .straightness
   levinClasses := {LevinClass.otherChangeOfState} }
@@ -400,8 +437,10 @@ def straighten : Verb := .mkRegular {
     Accomplishment: "flattened the dough in 2 minutes." -/
 def flatten : Verb := .mkRegular {
   form := "flatten"
-  frames := [ArgumentFrame.np, ArgumentFrame.unaccusative,
-    ArgumentFrame.np_pp (some Adpositions.with_)]
+  valency := .of
+    [(ArgumentFrame.np, [0, 1]),
+     (ArgumentFrame.unaccusative, [1]),
+     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 2])]
   vendlerClass := some .accomplishment
   scaleDimension := some .flatness
   levinClasses := {LevinClass.otherChangeOfState} }
@@ -410,8 +449,10 @@ def flatten : Verb := .mkRegular {
     Accomplishment: "opened the door in 3 seconds." -/
 def open_ : Verb := .mkRegular {
   form := "open"
-  frames := [ArgumentFrame.np, ArgumentFrame.unaccusative,
-    ArgumentFrame.np_pp (some Adpositions.with_)]
+  valency := .of
+    [(ArgumentFrame.np, [0, 1]),
+     (ArgumentFrame.unaccusative, [1]),
+     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 2])]
   vendlerClass := some .accomplishment
   scaleDimension := some .openness
   levinClasses := {LevinClass.appear, .crane, .otherChangeOfState, .spatialConfiguration} }
@@ -420,8 +461,10 @@ def open_ : Verb := .mkRegular {
     Activity: "lengthened the rope for hours." -/
 def lengthen : Verb := .mkRegular {
   form := "lengthen"
-  frames := [ArgumentFrame.np, ArgumentFrame.unaccusative,
-    ArgumentFrame.np_pp (some Adpositions.with_)]
+  valency := .of
+    [(ArgumentFrame.np, [0, 1]),
+     (ArgumentFrame.unaccusative, [1]),
+     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 2])]
   vendlerClass := some .activity
   scaleDimension := some .length
   levinClasses := {LevinClass.otherChangeOfState} }
@@ -430,8 +473,10 @@ def lengthen : Verb := .mkRegular {
     Activity: "widened the road for months." -/
 def widen : Verb := .mkRegular {
   form := "widen"
-  frames := [ArgumentFrame.np, ArgumentFrame.unaccusative,
-    ArgumentFrame.np_pp (some Adpositions.with_)]
+  valency := .of
+    [(ArgumentFrame.np, [0, 1]),
+     (ArgumentFrame.unaccusative, [1]),
+     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 2])]
   vendlerClass := some .activity
   scaleDimension := some .width
   levinClasses := {LevinClass.otherChangeOfState} }
@@ -440,8 +485,10 @@ def widen : Verb := .mkRegular {
     Activity: "cooled for an hour." -/
 def cool : Verb := .mkRegular {
   form := "cool"
-  frames := [ArgumentFrame.np, ArgumentFrame.unaccusative,
-    ArgumentFrame.np_pp (some Adpositions.with_)]
+  valency := .of
+    [(ArgumentFrame.np, [0, 1]),
+     (ArgumentFrame.unaccusative, [1]),
+     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 2])]
   vendlerClass := some .activity
   scaleDimension := some .temperature
   levinClasses := {LevinClass.otherChangeOfState} }
@@ -450,8 +497,10 @@ def cool : Verb := .mkRegular {
     Activity: "warmed for an hour." -/
 def warm : Verb := .mkRegular {
   form := "warm"
-  frames := [ArgumentFrame.np, ArgumentFrame.unaccusative,
-    ArgumentFrame.np_pp (some Adpositions.with_)]
+  valency := .of
+    [(ArgumentFrame.np, [0, 1]),
+     (ArgumentFrame.unaccusative, [1]),
+     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 2])]
   vendlerClass := some .activity
   scaleDimension := some .temperature
   levinClasses := {LevinClass.otherChangeOfState} }

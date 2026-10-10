@@ -317,7 +317,7 @@ def mailFusion : ArgumentFrame.Slot → Option ArgumentFrame.Slot :=
 /-- The ditransitive "imposes a profiled status" on the mailee: not lexically profiled, it fuses
 with a profiled argument role (p. 53). -/
 theorem isFusion_mail :
-    mailLF.frame ∈ English.Verbs.mail.frames ∧
+    mailLF.frame ∈ English.Verbs.mail.valency.frames ∧
       IsFusionOn mailLF (ditransitive .actual).meaning.link mailFusion ∧
       Corresponds mailLF (ditransitive .actual).meaning.link mailFusion ∧
       complement 1 ∉ mailLF.obligatory ∧

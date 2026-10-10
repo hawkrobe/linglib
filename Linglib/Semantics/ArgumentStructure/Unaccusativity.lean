@@ -27,7 +27,7 @@ otherwise when some frame of its has none, its sole argument being the underlyin
 def Verb.IsUnaccusative (v : Verb) : Prop :=
   match v.voiceType with
   | some vt => ¬ vt.AssignsTheta
-  | none => ∃ fr ∈ v.frames, fr.IsUnaccusative
+  | none => ∃ fr ∈ v.valency.frames, fr.IsUnaccusative
 
 instance : DecidablePred Verb.IsUnaccusative := fun v ↦ by
   unfold Verb.IsUnaccusative; split <;> infer_instance

@@ -66,7 +66,7 @@ structure Verb extends _root_.Verb where
 and takes plain noun-phrase objects ((96), (98), (102)). -/
 def gwepshesa : Verb where
   form := "gʷəpšəsa"
-  frames := [ArgumentFrame.finiteClause, ArgumentFrame.np]
+  valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.np, [0, 1])]
   predicateClass := some .propAttitude
   attitude := some (.doxastic .nonVeridical)
   complementCase := some .abs
@@ -76,7 +76,7 @@ constituent-question complement is a headless relative; it takes plain noun-phra
 ((69), (99), (103)). -/
 def chewepcha : Verb where
   form := "qəč'ewəpč'a"
-  frames := [ArgumentFrame.question, ArgumentFrame.np]
+  valency := .of [(ArgumentFrame.question, [0, 1]), (ArgumentFrame.np, [0, 1])]
   predicateClass := some .utterance
   speechActVerb := true
   complementCase := some .obl
@@ -85,7 +85,7 @@ def chewepcha : Verb where
 declarative and the polar reading ((101)). -/
 def she : Verb where
   form := "ŝe"
-  frames := [ArgumentFrame.finiteClause, ArgumentFrame.question]
+  valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.question, [0, 1])]
   predicateClass := some .knowledge
   attitude := some (.doxastic .veridical)
   factivity := some .semi
@@ -95,7 +95,7 @@ def she : Verb where
 without an overt head noun 'news' or 'verity' ((108)–(110)). -/
 def gwereqwe : Verb where
   form := "gʷərəʔʷe"
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   predicateClass := some .knowledge
   attitude := some (.doxastic .veridical)
   factivity := some .semi
@@ -104,7 +104,7 @@ def gwereqwe : Verb where
 /-- *ʔʷa* 'say'. -/
 def qwa : Verb where
   form := "ʔʷa"
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   predicateClass := some .utterance
   speechActVerb := true
   complementCase := some .abs
@@ -112,7 +112,7 @@ def qwa : Verb where
 /-- *raʔežʼa* 'begin', which takes an infinitive in *-new* ((54)). -/
 def raqezha : Verb where
   form := "raʔežʼa"
-  frames := [ArgumentFrame.infinitival]
+  valency := .ofFrame ArgumentFrame.infinitival
   predicateClass := some .phasal
   complementCase := none
 

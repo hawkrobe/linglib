@@ -19,11 +19,11 @@ namespace Chichewa.Verbs
 /-- *mang-* 'tie'. -/
 def mang : Verb where
   form := "mang"
-  frames := [ArgumentFrame.np]
+  valency := .ofFrame ArgumentFrame.np
 
 /-- *uk-* 'wake up'. -/
 def uk : Verb where
   form := "uk"
-  frames := [ArgumentFrame.intransitive]
+  valency := .ofFrame ArgumentFrame.intransitive
 
 end Chichewa.Verbs

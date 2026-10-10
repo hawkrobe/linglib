@@ -41,26 +41,26 @@ open ArgumentStructure
 control. -/
 def querer : Verb where
   form := "querer"
-  frames := [ArgumentFrame.subjunctiveClause, ArgumentFrame.infinitival]
+  valency := .of [(ArgumentFrame.subjunctiveClause, [0, 1]), (ArgumentFrame.infinitival, [0, 1])]
   readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
 
 /-- *esperar* 'hope' takes a *que*-clause in the subjunctive or in the indicative. -/
 def esperar : Verb where
   form := "esperar"
-  frames := [ArgumentFrame.subjunctiveClause, ArgumentFrame.finiteClause]
+  valency := .of [(ArgumentFrame.subjunctiveClause, [0, 1]), (ArgumentFrame.finiteClause, [0, 1])]
 
 /-- *pretender* 'intend' takes an infinitive under subject control and a *que*-clause in the
 subjunctive. -/
 def pretender : Verb where
   form := "pretender"
-  frames := [ArgumentFrame.infinitival, ArgumentFrame.subjunctiveClause]
+  valency := .of [(ArgumentFrame.infinitival, [0, 1]), (ArgumentFrame.subjunctiveClause, [0, 1])]
   readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
 
 /-- The causative *fazer* 'make' takes an infinitive under object control and, as *fazer com
 que*, a finite clause in the subjunctive. -/
 def fazer : Verb where
   form := "fazer"
-  frames := [ArgumentFrame.infinitival, ArgumentFrame.subjunctiveClause]
+  valency := .of [(ArgumentFrame.infinitival, [0, 1]), (ArgumentFrame.subjunctiveClause, [0, 1])]
   readings := [{ frame := ArgumentFrame.infinitival, control := some .objectControl }]
 
 /-! ### Lexical reciprocals -/
@@ -68,36 +68,36 @@ def fazer : Verb where
 /-- *abraçar* 'hug'. -/
 def abracar : Verb where
   form := "abraçar"
-  frames := [ArgumentFrame.np]
+  valency := .ofFrame ArgumentFrame.np
 
 /-- *beijar* 'kiss'. -/
 def beijar : Verb where
   form := "beijar"
-  frames := [ArgumentFrame.np]
+  valency := .ofFrame ArgumentFrame.np
 
 /-- *casar* 'marry'. -/
 def casar : Verb where
   form := "casar"
-  frames := [ArgumentFrame.np]
+  valency := .ofFrame ArgumentFrame.np
 
 /-- *consultar* 'consult, confer'. -/
 def consultar : Verb where
   form := "consultar"
-  frames := [ArgumentFrame.np]
+  valency := .ofFrame ArgumentFrame.np
 
 /-- *cumprimentar* 'greet'. -/
 def cumprimentar : Verb where
   form := "cumprimentar"
-  frames := [ArgumentFrame.np]
+  valency := .ofFrame ArgumentFrame.np
 
 /-- *encontrar* 'meet'. -/
 def encontrar : Verb where
   form := "encontrar"
-  frames := [ArgumentFrame.np]
+  valency := .ofFrame ArgumentFrame.np
 
 /-- *namorar* 'date, be partners'. -/
 def namorar : Verb where
   form := "namorar"
-  frames := [ArgumentFrame.np]
+  valency := .ofFrame ArgumentFrame.np
 
 end Portuguese.Verbs

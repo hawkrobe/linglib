@@ -44,7 +44,7 @@ structure Verb extends _root_.Verb where
 def tanoshimi : Verb where
   form := "tanoshimi"
   script := "楽しみ"
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential .positive false)
@@ -53,7 +53,7 @@ def tanoshimi : Verb where
 def osore : Verb where
   form := "osore"
   script := "恐れ"
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential .negative true)
@@ -62,7 +62,7 @@ def osore : Verb where
 def kitai : Verb where
   form := "kitai"
   script := "期待"
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential .positive true)
@@ -71,7 +71,7 @@ def kitai : Verb where
 def nozomu : Verb where
   form := "nozomu"
   script := "望む"
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential .positive true)
@@ -80,7 +80,7 @@ def nozomu : Verb where
 def shinpai : Verb where
   form := "shinpai"
   script := "心配"
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential .negative false)
@@ -91,14 +91,14 @@ def shinpai : Verb where
 def ik_ase : Verb where
   form := "ik-ase-ru"
   script := "行かせる"
-  frames := [ArgumentFrame.smallClause]
+  valency := .ofFrame ArgumentFrame.smallClause
   readings := [{ frame := ArgumentFrame.smallClause, control := some .objectControl }]
 
 /-- 食べさせる *tabe-sase-ru* 'make eat', the causative of *taberu* with an accusative causee. -/
 def tabe_sase : Verb where
   form := "tabe-sase-ru"
   script := "食べさせる"
-  frames := [ArgumentFrame.smallClause]
+  valency := .ofFrame ArgumentFrame.smallClause
   readings := [{ frame := ArgumentFrame.smallClause, control := some .objectControl }]
 
 /-! ### Departure verbs -/
@@ -108,7 +108,7 @@ ablative, with no thematic Voice. -/
 def hanareru : Verb where
   form := "hanareru"
   script := "離れる"
-  frames := [ArgumentFrame.np]
+  valency := .ofFrame ArgumentFrame.np
   voiceType := some .nonThematic
   passivizable := false
 
@@ -117,7 +117,7 @@ with no thematic Voice. -/
 def deru : Verb where
   form := "deru"
   script := "出る"
-  frames := [ArgumentFrame.np]
+  valency := .ofFrame ArgumentFrame.np
   voiceType := some .nonThematic
   passivizable := false
 

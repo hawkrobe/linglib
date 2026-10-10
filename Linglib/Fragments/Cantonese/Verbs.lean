@@ -37,47 +37,47 @@ structure Verb extends _root_.Verb where
 /-- *soeng* 想 'want'. -/
 def soeng : Verb :=
   { form := "soeng2", hanzi := "想", predicateClass := .desiderative,
-    frames := [ArgumentFrame.infinitival],
+    valency := .ofFrame ArgumentFrame.infinitival,
     passivizable := false, opaqueContext := true,
     attitude := some (.preferential .positive true) }
 
 /-- *hyun* 勸 'urge'. -/
 def hyun : Verb :=
   { form := "hyun3", hanzi := "勸", predicateClass := .manipulative,
-    frames := [ArgumentFrame.infinitival] }
+    valency := .ofFrame ArgumentFrame.infinitival }
 
 /-- *bik* 逼 'force'. -/
 def bik : Verb :=
   { form := "bik1", hanzi := "逼", predicateClass := .manipulative,
-    frames := [ArgumentFrame.infinitival] }
+    valency := .ofFrame ArgumentFrame.infinitival }
 
 /-- *giu* 叫 'ask, tell'. -/
 def giu : Verb :=
   { form := "giu3", hanzi := "叫", predicateClass := .manipulative,
-    frames := [ArgumentFrame.infinitival] }
+    valency := .ofFrame ArgumentFrame.infinitival }
 
 /-- *daasyun* 打算 'intend, plan'. -/
 def daasyun : Verb :=
   { form := "daa2syun3", hanzi := "打算", predicateClass := .desiderative,
-    frames := [ArgumentFrame.infinitival], passivizable := false, opaqueContext := true,
+    valency := .ofFrame ArgumentFrame.infinitival, passivizable := false, opaqueContext := true,
     attitude := some (.preferential .positive true) }
 
 /-- *seon* 信 'believe'. -/
 def seon : Verb :=
   { form := "seon3", hanzi := "信", predicateClass := .propAttitude,
-    frames := [ArgumentFrame.finiteClause],
+    valency := .ofFrame ArgumentFrame.finiteClause,
     passivizable := false, opaqueContext := true, attitude := some (.doxastic .veridical) }
 
 /-- *gong* 講 'say'. -/
 def gong : Verb :=
   { form := "gong2", hanzi := "講", predicateClass := .utterance,
-    frames := [ArgumentFrame.finiteClause],
+    valency := .ofFrame ArgumentFrame.finiteClause,
     speechActVerb := true }
 
 /-- *geidak* 記得 'remember', a factive. -/
 def geidak : Verb :=
   { form := "gei3dak1", hanzi := "記得", predicateClass := .knowledge,
-    frames := [ArgumentFrame.finiteClause],
+    valency := .ofFrame ArgumentFrame.finiteClause,
     passivizable := false, factivity := some .semi }
 
 /-- The verbs. -/

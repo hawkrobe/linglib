@@ -32,7 +32,7 @@ arguments, and satisfaction of a frame by a position's dependents.
 Frames are a side table (`Frames n`), not part of the graph carrier: the
 frame is framework apparatus (like HPSG's ARG-ST), supplied alongside the
 graph by the consumers that reason about valency and populated from the
-lexical carrier (`Valency.ofFrame` of a verb's citation frame).
+lexical carrier (`Valency.ofFrame` of a verb's basic frame).
 
 ## References
 

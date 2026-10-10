@@ -57,7 +57,7 @@ namespace Verb
 
 /-- The entry for a citation form and its case array. -/
 def ofCases (form : String) (subject : Case) (objects : List Case := []) : Verb :=
-  { form, frames := [], subject, objects }
+  { form, subject, objects }
 
 end Verb
 

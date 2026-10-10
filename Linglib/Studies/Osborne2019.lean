@@ -15,7 +15,7 @@ public import Linglib.Syntax.DependencyGrammar.Basic
 
 This file formalizes the parts of the dependency grammar of [osborne-2019] that the English
 fragment lexicon supports. A verb's valency frame (sixth chapter) is a lexical property, read
-here off the coding roles of the fragment's citation frame, and the passive participle's frame
+here off the coding roles of the fragment's basic frame, and the passive participle's frame
 is not listed but related to the active one by a shuffle of indices, the slot correspondence of
 the passive voice, with the demoted subject an optional *by*-phrase (`voiceValency_passive`);
 an ergative verb's intransitive use suppresses the agent instead and has no *by*-phrase
@@ -77,9 +77,9 @@ abbrev run_ := English.Verbs.run.toWord .base
 
 /-! ### Valency frames from the Fragment (sixth chapter) -/
 
-/-- The valency of the fragment entry's citation frame. -/
+/-- The valency of the fragment entry's basic frame. -/
 private def citationValency (v : English.Verbs.Verb) : Valency :=
-  (v.citationFrame?.map Valency.ofFrame).getD []
+  (v.valency.frames.head?.map Valency.ofFrame).getD []
 
 def intransTree : Graph 2 := .ofArcs [john, sleeps] 1 [(1, 0, .nsubj)]
 
@@ -139,7 +139,7 @@ theorem voiceValency_anticausative : English.Verbs.open_.Alternates Voice.antica
 
 /-- The valency of the fragment entry's passive participle. -/
 private def passiveValency (v : English.Verbs.Verb) : Valency :=
-  (v.citationFrame?.map fun fr ↦ voiceValency (Voice.passive fr)).getD []
+  (v.valency.frames.head?.map fun fr ↦ voiceValency (Voice.passive fr)).getD []
 
 /-- *The ball was kicked (by John)* satisfies the participle's derived valency. -/
 def passiveTree : Graph 4 :=

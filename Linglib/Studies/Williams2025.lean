@@ -184,8 +184,8 @@ factive one alike, but the infinitive frame hosts the plain infinitive, which ne
 and the perfect infinitive, which like the gerund does not, so whether the modal heads a
 complement is not a matter of its frame. -/
 theorem mca_overgenerates {f : E} (h : P w e) (hf : (τ e).precedes (τ f)) :
-    (∀ fr ∈ English.Verbs.forget.frames, White2014.Modalized fr) ∧
-      (∃ fr ∈ English.Verbs.forget_rog.frames, White2014.Modalized fr) ∧
+    (∀ fr ∈ English.Verbs.forget.valency.frames, White2014.Modalized fr) ∧
+      (∃ fr ∈ English.Verbs.forget_rog.valency.frames, White2014.Modalized fr) ∧
       NeedsMod (aspP P) ∧ ¬ NeedsMod (anterior (aspP P)) :=
   ⟨by decide, ⟨.gerund, by decide, by decide⟩, needsMod_aspP P, not_needsMod_anterior_aspP h hf⟩
 

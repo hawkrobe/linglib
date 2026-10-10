@@ -52,7 +52,7 @@ ma na bo* 'I want to see you'), and its embedded 1SG is the irrealis portmanteau
 100). -/
 def tao : Verb where
   form := "tao"
-  frames := [niFrame]
+  valency := .ofFrame niFrame
   readings := [niReading .subjectControl (some .situation)]
 
 /-- *sumɔ* 'like' is a subject-control verb with no complementizer under negation (ex 3a: *Dida
@@ -60,14 +60,14 @@ sumɔ-ɔɔ e-na bo* 'Father is reluctant to see you') and with `ni` in the futur
 embedded pronoun cannot be obviative. -/
 def sumo : Verb where
   form := "sumɔ"
-  frames := [niFrame]
+  valency := .ofFrame niFrame
   readings := [niReading .subjectControl]
 
 /-- *hiɛ-kã-nɔ* 'hope' (lit. 'face-place-upon') is a subject-control verb whose `ni` is obligatory
 (ex 35: *Mi hiɛ-kã-nɔ ni ma ya skul gbi ko* 'I hope to go to school one day'). -/
 def hiekano : Verb where
   form := "hiɛ-kã-nɔ"
-  frames := [niFrame]
+  valency := .ofFrame niFrame
   readings := [niReading .subjectControl]
 
 /-- *hiɛ-kpa-nɔ* 'forget' (lit. 'face-stop-upon') is a subject-control verb whose `ni` is
@@ -76,7 +76,7 @@ is a negative implicative by the textbook classification, *forget to* entailing 
 unrealized, and its `ni`-clause duly carries the irrealis marker (exx 102–103). -/
 def hiekpano : Verb where
   form := "hiɛ-kpa-nɔ"
-  frames := [niFrame]
+  valency := .ofFrame niFrame
   readings := [niReading .subjectControl]
   implicative := ⟨.some .negative, .some .positive⟩
 
@@ -84,7 +84,7 @@ def hiekpano : Verb where
 (exx 36, 60a: 'I tried to close the door'). -/
 def miamihie : Verb where
   form := "mia-mi-hiɛ"
-  frames := [niFrame]
+  valency := .ofFrame niFrame
   readings := [niReading .subjectControl (some .event)]
 
 /-- *kai* 'remember' is a positive implicative with subject control in the `ni`-frame (exx 42–43:
@@ -93,7 +93,7 @@ def miamihie : Verb where
 negation the `ni`-frame keeps it (ex 117a). -/
 def kai : Verb where
   form := "kai"
-  frames := [niFrame, akeFrame]
+  valency := .of [(niFrame, [0, 1]), (akeFrame, [0, 1])]
   readings := [niReading .subjectControl, akeReading]
   implicative := ⟨.some .positive, .some .negative⟩
 
@@ -103,7 +103,7 @@ complement that excludes the irrealis marker (ex 89b), a frame outside the three
 typology. -/
 def nye : Verb where
   form := "nyɛ"
-  frames := [niFrame]
+  valency := .ofFrame niFrame
   readings := [niReading .subjectControl]
   implicative := ⟨.some .positive, .some .negative⟩
 
@@ -112,14 +112,14 @@ def nye : Verb where
 (ex 105: *Osa kplɛnɔ ni/akɛ Taki á-tsɛ́ Momo*). -/
 def kpleno : Verb where
   form := "kplɛnɔ"
-  frames := [niFrame, akeFrame]
+  valency := .of [(niFrame, [0, 1]), (akeFrame, [0, 1])]
   readings := [niReading .subjectControl]
 
 /-- *kpaŋ* 'plan, decide' is a subject-control verb whose complement only `ni` introduces (ex 106),
 with the irrealis marker obligatory (ex 89d). -/
 def kpang : Verb where
   form := "kpaŋ"
-  frames := [niFrame]
+  valency := .ofFrame niFrame
   readings := [niReading .subjectControl (some .situation)]
 
 /-- *kpã-gbɛ* 'expect' is a subject-control verb (ex 53: *Ajele kpã-gbɛ ni e-ye jweremɔ lɛ*
@@ -127,7 +127,7 @@ def kpang : Verb where
 the *de se* diagnostic. -/
 def kpagbe : Verb where
   form := "kpã-gbɛ"
-  frames := [niFrame]
+  valency := .ofFrame niFrame
   readings := [niReading .subjectControl (some .situation)]
 
 /-- *dwɛŋ* 'think' takes a finite complement with a low-tone, freely referring subject
@@ -135,7 +135,7 @@ def kpagbe : Verb where
 `ni`-clause with the high-tone anaphoric subject (ex 112: 'Aku thought to buy a book'). -/
 def dweng : Verb where
   form := "dwɛŋ"
-  frames := [akeFrame, niFrame]
+  valency := .of [(akeFrame, [0, 1]), (niFrame, [0, 1])]
   readings := [akeReading, niReading .subjectControl]
   attitude := some (.doxastic .nonVeridical)
 
@@ -146,20 +146,20 @@ go to school'). Whether *help* is implicative has been contested since [karttune
 left unclassified. -/
 def wa : Verb where
   form := "wa"
-  frames := [niFrame]
+  valency := .ofFrame niFrame
   readings := [niReading .objectControl]
 
 /-- *kenya* 'urge, encourage' is an object-control verb (exx 55, 60b). -/
 def kenya : Verb where
   form := "kenya"
-  frames := [niFrame]
+  valency := .ofFrame niFrame
   readings := [niReading .objectControl]
 
 /-- *dai* 'force' is an object-control verb (ex 56: 'I forced Kofi to go to school'), and affirmed
 it implies its complement, as *force* does ([karttunen-1971]). -/
 def dai : Verb where
   form := "dai"
-  frames := [niFrame]
+  valency := .ofFrame niFrame
   readings := [niReading .objectControl]
   implicative := ⟨.some .positive, ⊥⟩
 
@@ -167,13 +167,13 @@ def dai : Verb where
 verb (exx 57–58). -/
 def laka : Verb where
   form := "laka"
-  frames := [niFrame]
+  valency := .ofFrame niFrame
   readings := [niReading .objectControl]
 
 /-- *bi* 'ask' is an object-control verb (ex 59: 'I asked Ayele to tell me a story'). -/
 def bi : Verb where
   form := "bi"
-  frames := [niFrame]
+  valency := .ofFrame niFrame
   readings := [niReading .objectControl]
 
 /-- *kɛɛ* 'say, tell' is the paper's utterance verb, taking a finite `akɛ`-clause (exx 47–49:
@@ -181,7 +181,7 @@ def bi : Verb where
 to' (ex 117b: *John é-kee-ee Mary ni é he noko-noko* 'John didn't tell Mary to buy anything'). -/
 def kee : Verb where
   form := "kɛɛ"
-  frames := [akeFrame, niFrame]
+  valency := .of [(akeFrame, [0, 1]), (niFrame, [0, 1])]
   readings := [akeReading, niReading .objectControl]
   speechActVerb := true
 
@@ -191,7 +191,7 @@ def kee : Verb where
 they will be coming', 'know whether you or he bought the book'). -/
 def le : Verb where
   form := "le"
-  frames := [kejiFrame]
+  valency := .ofFrame kejiFrame
   attitude := some (.doxastic .veridical)
   factivity := some .semi
 

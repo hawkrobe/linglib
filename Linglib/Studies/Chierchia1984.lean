@@ -205,8 +205,8 @@ def complementTy (fr : ArgumentFrame) : Option Montague.Ty :=
 /-- Control verbs take property-denoting complements; *believe*, no control verb, takes a finite
 clause denoting a proposition. -/
 theorem control_complements_property :
-    (∀ v ∈ [try_.toVerb, want.toVerb], v.citationFrame?.bind complementTy = some .et) ∧
-      believe.toVerb.citationFrame?.bind complementTy = some .t ∧
+    (∀ v ∈ [try_.toVerb, want.toVerb], v.valency.frames.head?.bind complementTy = some .et) ∧
+      believe.toVerb.valency.frames.head?.bind complementTy = some .t ∧
       believe.toVerb.controlType = .none := by
   refine ⟨fun v hv ↦ ?_, by decide, rfl⟩
   fin_cases hv <;> decide

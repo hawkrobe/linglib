@@ -31,7 +31,7 @@ def say : Verb where
   formPastPart := "said"
   formPresPart := "saying"
   speechActVerb := true
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .achievement
   levinClasses := {LevinClass.say}
 
@@ -45,10 +45,12 @@ def tell : Verb where
   formPastPart := "told"
   formPresPart := "telling"
   speechActVerb := true
-  frames := [ArgumentFrame.finiteClause, ArgumentFrame.np_np,
-    ⟨some .nominal, [.implicit (some .def), .adpositional]⟩,
-    ⟨some .nominal, [.nominal, .implicit (some .indef)]⟩,
-    ArgumentFrame.np_pp (some Adpositions.to_)]
+  valency := .of
+    [(ArgumentFrame.finiteClause, [0, 1]),
+     (ArgumentFrame.np_np, [0, 2, 1]),
+     (⟨some .nominal, [.implicit (some .def), .adpositional]⟩, [0, 1, 2]),
+     (⟨some .nominal, [.nominal, .implicit (some .indef)]⟩, [0, 1, 2]),
+     (ArgumentFrame.np_pp (some Adpositions.to_), [0, 1, 2])]
   vendlerClass := some .achievement
   levinClasses := {LevinClass.tell, .transferOfMessage}
 
@@ -56,7 +58,7 @@ def tell : Verb where
 def claim : Verb := .mkRegular {
   form := "claim"
   speechActVerb := true
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .achievement
   levinClasses := {LevinClass.say} }
 
@@ -72,7 +74,7 @@ def claim : Verb := .mkRegular {
 def whisper : Verb := .mkRegular {
   form := "whisper"
   speechActVerb := true
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .activity
   levinClasses := {LevinClass.mannerOfSpeaking} }
 
@@ -80,7 +82,7 @@ def whisper : Verb := .mkRegular {
 def murmur : Verb := .mkRegular {
   form := "murmur"
   speechActVerb := true
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .activity
   levinClasses := {LevinClass.mannerOfSpeaking, .soundEmission} }
 
@@ -88,7 +90,7 @@ def murmur : Verb := .mkRegular {
 def shout : Verb := .mkRegular {
   form := "shout"
   speechActVerb := true
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .activity
   levinClasses := {LevinClass.mannerOfSpeaking} }
 
@@ -96,7 +98,7 @@ def shout : Verb := .mkRegular {
 def cry : Verb := .mkRegular {
   form := "cry"
   speechActVerb := true
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .activity
   levinClasses := {LevinClass.breathe, .mannerOfSpeaking, .marvel, .nonverbalExpression,
     .soundEmission} }
@@ -105,7 +107,7 @@ def cry : Verb := .mkRegular {
 def scream : Verb := .mkRegular {
   form := "scream"
   speechActVerb := true
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .activity
   levinClasses := {LevinClass.animalSound, .mannerOfSpeaking, .soundEmission} }
 
@@ -113,7 +115,7 @@ def scream : Verb := .mkRegular {
 def mumble : Verb := .mkRegular {
   form := "mumble"
   speechActVerb := true
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .activity
   levinClasses := {LevinClass.mannerOfSpeaking} }
 
@@ -121,7 +123,7 @@ def mumble : Verb := .mkRegular {
 def mutter : Verb := .mkRegular {
   form := "mutter"
   speechActVerb := true
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .activity
   levinClasses := {LevinClass.mannerOfSpeaking} }
 
@@ -129,7 +131,7 @@ def mutter : Verb := .mkRegular {
 def shriek : Verb := .mkRegular {
   form := "shriek"
   speechActVerb := true
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .activity
   levinClasses := {LevinClass.mannerOfSpeaking, .soundEmission} }
 
@@ -137,7 +139,7 @@ def shriek : Verb := .mkRegular {
 def yell : Verb := .mkRegular {
   form := "yell"
   speechActVerb := true
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .activity
   levinClasses := {LevinClass.animalSound, .mannerOfSpeaking} }
 
@@ -145,7 +147,7 @@ def yell : Verb := .mkRegular {
 def groan : Verb := .mkRegular {
   form := "groan"
   speechActVerb := true
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .activity
   levinClasses := {LevinClass.mannerOfSpeaking, .nonverbalExpression, .soundEmission} }
 
@@ -153,7 +155,7 @@ def groan : Verb := .mkRegular {
 def grumble : Verb := .mkRegular {
   form := "grumble"
   speechActVerb := true
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .activity
   levinClasses := {LevinClass.complain, .mannerOfSpeaking} }
 
@@ -161,7 +163,7 @@ def grumble : Verb := .mkRegular {
 def hiss : Verb := .mkRegular {
   form := "hiss"
   speechActVerb := true
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .activity
   levinClasses := {LevinClass.animalSound, .mannerOfSpeaking, .soundEmission} }
 
@@ -169,7 +171,7 @@ def hiss : Verb := .mkRegular {
 def sigh : Verb := .mkRegular {
   form := "sigh"
   speechActVerb := true
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .activity
   levinClasses := {LevinClass.nonverbalExpression} }
 
@@ -177,7 +179,7 @@ def sigh : Verb := .mkRegular {
 def whimper : Verb := .mkRegular {
   form := "whimper"
   speechActVerb := true
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .activity
   levinClasses := {LevinClass.animalSound, .mannerOfSpeaking} }
 
@@ -185,7 +187,7 @@ def whimper : Verb := .mkRegular {
 def snap : Verb := .mkRegular {
   form := "snap"
   speechActVerb := true
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .activity
   levinClasses := {LevinClass.animalSound, .break_, .crane, .mannerOfSpeaking, .soundEmission} }
 
@@ -198,7 +200,7 @@ def speak : Verb where
   formPastPart := "spoken"
   formPresPart := "speaking"
   speechActVerb := true
-  frames := [ArgumentFrame.intransitive]
+  valency := .ofFrame ArgumentFrame.intransitive
   vendlerClass := some .activity
   passivizable := false
   levinClasses := {LevinClass.talk}
@@ -208,7 +210,7 @@ def speak : Verb where
 def talk : Verb := .mkRegular {
   form := "talk"
   speechActVerb := true
-  frames := [ArgumentFrame.intransitive]
+  valency := .ofFrame ArgumentFrame.intransitive
   vendlerClass := some .activity
   passivizable := false
   levinClasses := {LevinClass.talk} }

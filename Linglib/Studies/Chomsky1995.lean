@@ -40,11 +40,11 @@ def positionCat : ArgumentFrame.Position → Option Cat
   | .clausal none t _ => some (if t.IsInterrogative then .C else .D)
   | _ => none
 
-/-- The selectional stack of a verb's citation frame, in which each c-selected argument is one
+/-- The selectional stack of a verb's basic frame, in which each c-selected argument is one
     `Cat` feature consumed by complement Merge.
     Folded in from the former `Syntax/Minimalist/FromFragments.lean` (its only consumer). -/
 def verbToSelStack (v : English.Verbs.Verb) : SelStack :=
-  (v.citationFrame?.map fun fr ↦ fr.complements.filterMap positionCat).getD []
+  (v.valency.frames.head?.map fun fr ↦ fr.complements.filterMap positionCat).getD []
 
 /-- A `English.Verbs.Verb` as a `SyntacticObject` leaf (`Cat = .V`, selStack from the citation
 frame). -/

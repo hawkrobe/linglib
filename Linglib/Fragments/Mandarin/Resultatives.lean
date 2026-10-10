@@ -38,68 +38,74 @@ open ArgumentStructure
 
 /-- 打 *dǎ* 'hit'. -/
 def da : Verb :=
-  { form := "dǎ", hanzi := "打", frames := [ArgumentFrame.np], vendlerClass := some .activity }
+  { form := "dǎ", hanzi := "打", valency := .ofFrame ArgumentFrame.np,
+    vendlerClass := some .activity }
 
 /-- 哭 *kū* 'cry'. -/
 def ku : Verb :=
-  { form := "kū", hanzi := "哭", frames := [ArgumentFrame.intransitive],
+  { form := "kū", hanzi := "哭", valency := .ofFrame ArgumentFrame.intransitive,
     vendlerClass := some .activity }
 
 /-- 吃 *chī* 'eat'. -/
 def chi : Verb :=
-  { form := "chī", hanzi := "吃", frames := [ArgumentFrame.np, ArgumentFrame.intransitive],
+  { form := "chī", hanzi := "吃",
+    valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.intransitive, [0])],
     vendlerClass := some .activity }
 
 /-- 喝 *hē* 'drink'. -/
 def he : Verb :=
-  { form := "hē", hanzi := "喝", frames := [ArgumentFrame.np, ArgumentFrame.intransitive],
+  { form := "hē", hanzi := "喝",
+    valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.intransitive, [0])],
     vendlerClass := some .activity }
 
 /-- 推 *tuī* 'push'. -/
 def tui : Verb :=
-  { form := "tuī", hanzi := "推", frames := [ArgumentFrame.np], vendlerClass := some .activity }
+  { form := "tuī", hanzi := "推", valency := .ofFrame ArgumentFrame.np,
+    vendlerClass := some .activity }
 
 /-- 追 *zhuī* 'chase'. -/
 def zhui : Verb :=
-  { form := "zhuī", hanzi := "追", frames := [ArgumentFrame.np], vendlerClass := some .activity }
+  { form := "zhuī", hanzi := "追", valency := .ofFrame ArgumentFrame.np,
+    vendlerClass := some .activity }
 
 /-- 射 *shè* 'shoot'. -/
 def she : Verb :=
-  { form := "shè", hanzi := "射", frames := [ArgumentFrame.np], vendlerClass := some .activity }
+  { form := "shè", hanzi := "射", valency := .ofFrame ArgumentFrame.np,
+    vendlerClass := some .activity }
 
 /-- 破 *pò* 'break', intransitive. -/
 def po : Verb :=
-  { form := "pò", hanzi := "破", frames := [ArgumentFrame.unaccusative],
+  { form := "pò", hanzi := "破", valency := .ofFrame ArgumentFrame.unaccusative,
     vendlerClass := some .achievement }
 
 /-- 死 *sǐ* 'die'. -/
 def si : Verb :=
-  { form := "sǐ", hanzi := "死", frames := [ArgumentFrame.unaccusative],
+  { form := "sǐ", hanzi := "死", valency := .ofFrame ArgumentFrame.unaccusative,
     vendlerClass := some .achievement }
 
 /-- 开 *kāi* 'open', intransitive. -/
 def kai : Verb :=
-  { form := "kāi", hanzi := "开", frames := [ArgumentFrame.unaccusative],
+  { form := "kāi", hanzi := "开", valency := .ofFrame ArgumentFrame.unaccusative,
     vendlerClass := some .achievement }
 
 /-- 累 *lèi* 'tired'. -/
 def lei : Verb :=
-  { form := "lèi", hanzi := "累", frames := [ArgumentFrame.intransitive],
+  { form := "lèi", hanzi := "累", valency := .ofFrame ArgumentFrame.intransitive,
     vendlerClass := some .state }
 
 /-- 饱 *bǎo* 'full'. -/
 def bao : Verb :=
-  { form := "bǎo", hanzi := "饱", frames := [ArgumentFrame.intransitive],
+  { form := "bǎo", hanzi := "饱", valency := .ofFrame ArgumentFrame.intransitive,
     vendlerClass := some .state }
 
 /-- 湿 *shī* 'wet'. -/
 def shi : Verb :=
-  { form := "shī", hanzi := "湿", frames := [ArgumentFrame.intransitive],
+  { form := "shī", hanzi := "湿", valency := .ofFrame ArgumentFrame.intransitive,
     vendlerClass := some .state }
 
 /-- 醉 *zuì* 'drunk'. -/
 def zui : Verb :=
-  { form := "zuì", hanzi := "醉", frames := [ArgumentFrame.intransitive],
+  { form := "zuì", hanzi := "醉", valency := .ofFrame ArgumentFrame.intransitive,
     vendlerClass := some .state }
 
 /-! ### Compounds -/
@@ -150,7 +156,7 @@ def tree (c : Resultative) : Morphology.Word.Tree Verb := .compound (.root c.v1)
 @[simp] theorem toList_tree (c : Resultative) : c.tree.toList = [c.v1, c.v2] := rfl
 
 /-- The result verb of every compound is monovalent. -/
-theorem valency_v2 : ∀ c ∈ resultatives, ∀ fr ∈ c.v2.frames, fr.valency = 1 := by decide
+theorem valency_v2 : ∀ c ∈ resultatives, ∀ fr ∈ c.v2.valency.frames, fr.valency = 1 := by decide
 
 end Resultative
 

@@ -45,57 +45,57 @@ def controlReading : Verb.Reading :=
 /-- *ka'án* 'think' takes a finite complement. -/
 def think : Verb where
   form := "ka'án"
-  frames := [.finiteClause]
+  valency := .ofFrame .finiteClause
 
 /-- *nakanini* 'believe' takes a finite complement. -/
 def believe : Verb where
   form := "nakanini"
-  frames := [.finiteClause]
+  valency := .ofFrame .finiteClause
 
 /-- *kuntàà ini* 'wonder' takes a finite complement. -/
 def wonder : Verb where
   form := "kuntàà ini"
-  frames := [.finiteClause]
+  valency := .ofFrame .finiteClause
 
 /-- *kònì* 'know' takes a finite complement, and as 'know how to', optionally with *xá kasa*,
 an irrealis complement with a coreferent subject ((27c)). -/
 def know : Verb where
   form := "kònì"
-  frames := [.finiteClause, subjunctiveFrame]
+  valency := .of [(.finiteClause, [0, 1]), (subjunctiveFrame, [0, 1])]
   readings := [controlReading]
 
 /-- *kà'àn* 'say' takes a finite complement. -/
 def say : Verb where
   form := "kà'àn"
-  frames := [.finiteClause]
+  valency := .ofFrame .finiteClause
   speechActVerb := true
 
 /-- *ntatǔ'un* 'chat' takes a finite complement. -/
 def chat : Verb where
   form := "ntatǔ'un"
-  frames := [.finiteClause]
+  valency := .ofFrame .finiteClause
 
 /-- *káchi* 'said' takes a finite complement; it is defective, with only a completive form
 (fn. 5). -/
 def said : Verb where
   form := "káchi"
-  frames := [.finiteClause]
+  valency := .ofFrame .finiteClause
   speechActVerb := true
 
 /-- *kusijǐ ini* 'be happy' takes a finite complement. -/
 def beHappy : Verb where
   form := "kusijǐ ini"
-  frames := [.finiteClause]
+  valency := .ofFrame .finiteClause
 
 /-- *ntsi'i ini* 'be sad' takes a finite complement. -/
 def beSad : Verb where
   form := "ntsi'i ini"
-  frames := [.finiteClause]
+  valency := .ofFrame .finiteClause
 
 /-- *ntsiko ini* 'regret' takes a finite complement. -/
 def regret : Verb where
   form := "ntsiko ini"
-  frames := [.finiteClause]
+  valency := .ofFrame .finiteClause
 
 /-! ### Verbs taking an irrealis complement with a free subject ((27b)) -/
 
@@ -103,117 +103,117 @@ def regret : Verb where
 of whose complement a quantifier can front (fn. 8). -/
 def want : Verb where
   form := "kòni"
-  frames := [subjunctiveFrame]
+  valency := .ofFrame subjunctiveFrame
 
 /-- *síso ini* 'hate' (lit. 'boil inside') takes an irrealis complement with a free subject. -/
 def hate : Verb where
   form := "síso ini"
-  frames := [subjunctiveFrame]
+  valency := .ofFrame subjunctiveFrame
 
 /-- *iyǐ'bi* 'fear, be afraid' takes an irrealis complement with a free subject. -/
 def fear : Verb where
   form := "iyǐ'bi"
-  frames := [subjunctiveFrame]
+  valency := .ofFrame subjunctiveFrame
 
 /-- *kuntasí* 'be scared' takes an irrealis complement with a free subject. -/
 def beScared : Verb where
   form := "kuntasí"
-  frames := [subjunctiveFrame]
+  valency := .ofFrame subjunctiveFrame
 
 /-- *nakwatu* 'pray' takes an irrealis complement with a free subject. -/
 def pray : Verb where
   form := "nakwatu"
-  frames := [subjunctiveFrame]
+  valency := .ofFrame subjunctiveFrame
 
 /-- *ntatu* 'hope' takes an irrealis complement with a free subject. -/
 def hope : Verb where
   form := "ntatu"
-  frames := [subjunctiveFrame]
+  valency := .ofFrame subjunctiveFrame
 
 /-- *xiinka* 'agree' takes an irrealis complement with a free subject. -/
 def agree : Verb where
   form := "xiinka"
-  frames := [subjunctiveFrame]
+  valency := .ofFrame subjunctiveFrame
 
 /-- *xǐinka* 'refuse' (lit. 'not agree') takes an irrealis complement with a free subject. -/
 def refuse : Verb where
   form := "xǐinka"
-  frames := [subjunctiveFrame]
+  valency := .ofFrame subjunctiveFrame
 
 /-- *chikàà ini* 'get the idea to' (lit. 'put inside') takes an irrealis complement with a free
 subject. -/
 def getIdea : Verb where
   form := "chikàà ini"
-  frames := [subjunctiveFrame]
+  valency := .ofFrame subjunctiveFrame
 
 /-! ### Verbs taking an irrealis complement with a coreferent subject ((27c)) -/
 
 /-- *ntukú* 'try' (lit. 'look for') takes an irrealis complement with a coreferent subject. -/
 def try_ : Verb where
   form := "ntukú"
-  frames := [subjunctiveFrame]
+  valency := .ofFrame subjunctiveFrame
   readings := [controlReading]
 
 /-- *nakú'ún ini* 'remember' takes an irrealis complement with a coreferent subject. -/
 def remember : Verb where
   form := "nakú'ún ini"
-  frames := [subjunctiveFrame]
+  valency := .ofFrame subjunctiveFrame
   readings := [controlReading]
 
 /-- *nantǒso* 'forget' takes an irrealis complement with a coreferent subject. -/
 def forget : Verb where
   form := "nantǒso"
-  frames := [subjunctiveFrame]
+  valency := .ofFrame subjunctiveFrame
   readings := [controlReading]
 
 /-- *kutô* 'like to' takes an irrealis complement with a coreferent subject. -/
 def likeTo : Verb where
   form := "kutô"
-  frames := [subjunctiveFrame]
+  valency := .ofFrame subjunctiveFrame
   readings := [controlReading]
 
 /-- *kixǎ* 'start, begin' takes an irrealis complement with a coreferent subject. -/
 def start : Verb where
   form := "kixǎ"
-  frames := [subjunctiveFrame]
+  valency := .ofFrame subjunctiveFrame
   readings := [controlReading]
 
 /-- *ntsi'i* 'finish' takes an irrealis complement with a coreferent subject. -/
 def finish : Verb where
   form := "ntsi'i"
-  frames := [subjunctiveFrame]
+  valency := .ofFrame subjunctiveFrame
   readings := [controlReading]
 
 /-- *xikwîn* 'stop' takes an irrealis complement with a coreferent subject. -/
 def stop : Verb where
   form := "xikwîn"
-  frames := [subjunctiveFrame]
+  valency := .ofFrame subjunctiveFrame
   readings := [controlReading]
 
 /-- *kò xikwîn* 'continue' (lit. 'not stop') takes an irrealis complement with a coreferent
 subject. -/
 def continue_ : Verb where
   form := "kò xikwîn"
-  frames := [subjunctiveFrame]
+  valency := .ofFrame subjunctiveFrame
   readings := [controlReading]
 
 /-- *xiniñu'u* 'need' takes an irrealis complement with a coreferent subject. -/
 def need : Verb where
   form := "xiniñu'u"
-  frames := [subjunctiveFrame]
+  valency := .ofFrame subjunctiveFrame
   readings := [controlReading]
 
 /-- *sakwǎ'a* 'learn how to' takes an irrealis complement with a coreferent subject. -/
 def learn : Verb where
   form := "sakwǎ'a"
-  frames := [subjunctiveFrame]
+  valency := .ofFrame subjunctiveFrame
   readings := [controlReading]
 
 /-- *kò ntaa* 'not bother' (lit. 'not climb') takes an irrealis complement with a coreferent
 subject. -/
 def notBother : Verb where
   form := "kò ntaa"
-  frames := [subjunctiveFrame]
+  valency := .ofFrame subjunctiveFrame
   readings := [controlReading]
 
 /-- The complement-taking verbs of the source's lists. -/

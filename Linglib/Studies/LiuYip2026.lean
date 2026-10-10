@@ -353,14 +353,14 @@ def CPred.size : CPred → ComplementSize
   | .seon | .gong | .geidak => .cP
 
 /-- The sizes agree with the fragment's frames, in that a predicate selects a CP iff its
-citation frame is a finite clause. -/
+basic frame is a finite clause. -/
 theorem CPred.size_eq_cP_iff (p : CPred) :
-    p.size = .cP ↔ ∃ fr ∈ p.entry.citationFrame?, fr.HasFinite := by
+    p.size = .cP ↔ ∃ fr ∈ p.entry.valency.frames.head?, fr.HasFinite := by
   cases p <;> decide
 
 /-- Among the Mandarin predicates *xiangxin* alone selects a CP. -/
 theorem Pred.selects_cP_iff (p : Pred) :
-    Complement.cP ∈ p.selects ↔ ∃ fr ∈ p.entry.citationFrame?, fr.HasFinite := by
+    Complement.cP ∈ p.selects ↔ ∃ fr ∈ p.entry.valency.frames.head?, fr.HasFinite := by
   cases p <;> decide
 
 /-- *-Faan* lowers across the complement of *soeng* 'want' and not across that of *seon*

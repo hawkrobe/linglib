@@ -33,34 +33,34 @@ namespace Hungarian.Verbs
 open ArgumentStructure
 
 /-- *lát* 'see', a perception verb. -/
-def lat : Verb := { form := "lát", frames := [ArgumentFrame.finiteClause] }
+def lat : Verb := { form := "lát", valency := .ofFrame ArgumentFrame.finiteClause }
 
 /-- *hall* 'hear', a perception verb that embeds a perceived event or a heard report alike. -/
-def hall : Verb := { form := "hall", frames := [ArgumentFrame.finiteClause] }
+def hall : Verb := { form := "hall", valency := .ofFrame ArgumentFrame.finiteClause }
 
 /-- *álmodik* 'dream'. -/
-def almodik : Verb := { form := "álmodik", frames := [ArgumentFrame.finiteClause] }
+def almodik : Verb := { form := "álmodik", valency := .ofFrame ArgumentFrame.finiteClause }
 
 /-- *gondol* 'think'. -/
-def gondol : Verb := { form := "gondol", frames := [ArgumentFrame.finiteClause] }
+def gondol : Verb := { form := "gondol", valency := .ofFrame ArgumentFrame.finiteClause }
 
 /-- *hisz* 'believe'. -/
-def hisz : Verb := { form := "hisz", frames := [ArgumentFrame.finiteClause] }
+def hisz : Verb := { form := "hisz", valency := .ofFrame ArgumentFrame.finiteClause }
 
 /-- *aggaszt* 'worry', a psychological verb whose clause is its subject. -/
-def aggaszt : Verb := { form := "aggaszt", frames := [ArgumentFrame.finiteClause] }
+def aggaszt : Verb := { form := "aggaszt", valency := .ofFrame ArgumentFrame.finiteClause }
 
 /-- *mond* 'say'. -/
 def mond : Verb :=
-  { form := "mond", frames := [ArgumentFrame.finiteClause], speechActVerb := true }
+  { form := "mond", valency := .ofFrame ArgumentFrame.finiteClause, speechActVerb := true }
 
 /-- *rikolt* 'shout', a manner-of-speaking verb. -/
 def rikolt : Verb :=
-  { form := "rikolt", frames := [ArgumentFrame.finiteClause], speechActVerb := true }
+  { form := "rikolt", valency := .ofFrame ArgumentFrame.finiteClause, speechActVerb := true }
 
 /-- *morog* 'growl', a manner-of-speaking verb that also takes a reason adjunct. -/
 def morog : Verb :=
-  { form := "morog", frames := [ArgumentFrame.finiteClause], speechActVerb := true }
+  { form := "morog", valency := .ofFrame ArgumentFrame.finiteClause, speechActVerb := true }
 
 /-- The entries. -/
 def verbs : List Verb := [lat, hall, almodik, gondol, hisz, aggaszt, mond, rikolt, morog]

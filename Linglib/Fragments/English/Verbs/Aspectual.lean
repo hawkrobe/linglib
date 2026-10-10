@@ -30,7 +30,10 @@ def stop : Verb where
   formPast := "stopped"
   formPastPart := "stopped"
   formPresPart := "stopping"
-  frames := [ArgumentFrame.gerund, ArgumentFrame.np, ArgumentFrame.unaccusative]
+  valency := .of
+    [(ArgumentFrame.gerund, [0, 1]),
+     (ArgumentFrame.np, [0, 1]),
+     (ArgumentFrame.unaccusative, [1])]
   readings := [{ frame := ArgumentFrame.gerund, control := some .subjectControl }]
   vendlerClass := some .achievement
   passivizable := false
@@ -44,7 +47,10 @@ def quit : Verb where
   formPast := "quit"
   formPastPart := "quit"
   formPresPart := "quitting"
-  frames := [ArgumentFrame.gerund, ArgumentFrame.np, ArgumentFrame.unaccusative]
+  valency := .of
+    [(ArgumentFrame.gerund, [0, 1]),
+     (ArgumentFrame.np, [0, 1]),
+     (ArgumentFrame.unaccusative, [1])]
   readings := [{ frame := ArgumentFrame.gerund, control := some .subjectControl }]
   vendlerClass := some .achievement
   passivizable := false
@@ -54,7 +60,10 @@ def quit : Verb where
 /-- "start" — phasal inception, presupposes activity wasn't happening -/
 def start : Verb := .mkRegular {
   form := "start"
-  frames := [ArgumentFrame.gerund, ArgumentFrame.np, ArgumentFrame.unaccusative]
+  valency := .of
+    [(ArgumentFrame.gerund, [0, 1]),
+     (ArgumentFrame.np, [0, 1]),
+     (ArgumentFrame.unaccusative, [1])]
   readings := [{ frame := ArgumentFrame.gerund, control := some .subjectControl }]
   vendlerClass := some .achievement
   passivizable := false
@@ -68,7 +77,10 @@ def begin_ : Verb where
   formPast := "began"
   formPastPart := "begun"
   formPresPart := "beginning"
-  frames := [ArgumentFrame.gerund, ArgumentFrame.np, ArgumentFrame.unaccusative]
+  valency := .of
+    [(ArgumentFrame.gerund, [0, 1]),
+     (ArgumentFrame.np, [0, 1]),
+     (ArgumentFrame.unaccusative, [1])]
   readings := [{ frame := ArgumentFrame.gerund, control := some .subjectControl }]
   vendlerClass := some .achievement
   passivizable := false
@@ -78,7 +90,10 @@ def begin_ : Verb where
 /-- "continue" — phasal continuation, presupposes activity was happening -/
 def continue_ : Verb := .mkRegular {
   form := "continue"
-  frames := [ArgumentFrame.gerund, ArgumentFrame.np, ArgumentFrame.unaccusative]
+  valency := .of
+    [(ArgumentFrame.gerund, [0, 1]),
+     (ArgumentFrame.np, [0, 1]),
+     (ArgumentFrame.unaccusative, [1])]
   readings := [{ frame := ArgumentFrame.gerund, control := some .subjectControl }]
   vendlerClass := some .activity
   passivizable := false
@@ -92,7 +107,10 @@ def keep : Verb where
   formPast := "kept"
   formPastPart := "kept"
   formPresPart := "keeping"
-  frames := [ArgumentFrame.gerund, ArgumentFrame.np, ArgumentFrame.unaccusative]
+  valency := .of
+    [(ArgumentFrame.gerund, [0, 1]),
+     (ArgumentFrame.np, [0, 1]),
+     (ArgumentFrame.unaccusative, [1])]
   readings := [{ frame := ArgumentFrame.gerund, control := some .subjectControl }]
   vendlerClass := some .activity
   passivizable := false

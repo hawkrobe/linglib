@@ -66,7 +66,7 @@ structure Verb extends _root_.Verb where
     Usage:
     ```
     def kick : Verb := .mkRegular {
-      form := "kick", frames := [ArgumentFrame.np] }
+      form := "kick", valency := .ofFrame ArgumentFrame.np }
     ``` -/
 def Verb.mkRegular (core : _root_.Verb) : Verb :=
   { toVerb := core
@@ -114,7 +114,7 @@ def sleep : Verb where
   formPast := "slept"
   formPastPart := "slept"
   formPresPart := "sleeping"
-  frames := [ArgumentFrame.intransitive]
+  valency := .ofFrame ArgumentFrame.intransitive
   passivizable := false
   vendlerClass := some .state
   levinClasses := {LevinClass.fit, .snooze}
@@ -122,7 +122,7 @@ def sleep : Verb where
 /-- "sneeze" — intransitive -/
 def sneeze : Verb := .mkRegular {
   form := "sneeze"
-  frames := [ArgumentFrame.intransitive]
+  valency := .ofFrame ArgumentFrame.intransitive
   passivizable := false
   levinClasses := {LevinClass.hiccup, .nonverbalExpression} }
 
@@ -133,9 +133,12 @@ def run : Verb where
   formPast := "ran"
   formPastPart := "run"
   formPresPart := "running"
-  frames := [ArgumentFrame.intransitive, ArgumentFrame.np, ArgumentFrame.unaccusative,
-    ArgumentFrame.spatialPP]
-  subjectEntailments := some activitySubjectProfile
+  valency := .of
+    [(ArgumentFrame.intransitive, [0]),
+     (ArgumentFrame.np, [1, 0]),
+     (ArgumentFrame.unaccusative, [0]),
+     (ArgumentFrame.spatialPP, [0, 2])]
+    [some activitySubjectProfile, none, none]
   passivizable := false
   vendlerClass := some .activity
   direction := some .place
@@ -148,7 +151,7 @@ def run : Verb where
 /-- "dance" — intransitive activity -/
 def dance : Verb := .mkRegular {
   form := "dance"
-  frames := [ArgumentFrame.intransitive]
+  valency := .ofFrame ArgumentFrame.intransitive
   passivizable := false
   vendlerClass := some .activity
   levinClasses := {LevinClass.modeOfBeingInvolvingMotion, .performance, .waltz} }
@@ -156,8 +159,7 @@ def dance : Verb := .mkRegular {
 /-- "arrive" — unaccusative intransitive -/
 def arrive : Verb := .mkRegular {
   form := "arrive"
-  frames := [ArgumentFrame.unaccusative]
-  subjectEntailments := some achievementSubjectProfile
+  valency := .ofFrame ArgumentFrame.unaccusative [some achievementSubjectProfile]
   passivizable := false
   vendlerClass := some .achievement
   direction := some .goal
@@ -170,7 +172,7 @@ def come : Verb where
   formPast := "came"
   formPastPart := "come"
   formPresPart := "coming"
-  frames := [ArgumentFrame.unaccusative]
+  valency := .ofFrame ArgumentFrame.unaccusative
   passivizable := false
   vendlerClass := some .achievement
   direction := some .goal
@@ -183,7 +185,7 @@ def go : Verb where
   formPast := "went"
   formPastPart := "gone"
   formPresPart := "going"
-  frames := [ArgumentFrame.unaccusative]
+  valency := .ofFrame ArgumentFrame.unaccusative
   passivizable := false
   vendlerClass := some .achievement
   levinClasses := {LevinClass.inherentlyDirectedMotion}
@@ -209,10 +211,11 @@ def eat : Verb where
   formPast := "ate"
   formPastPart := "eaten"
   formPresPart := "eating"
-  frames := [ArgumentFrame.np, ArgumentFrame.objectDrop (some .indef),
-    ArgumentFrame.pp (some Adpositions.at_)]
-  subjectEntailments := some accomplishmentSubjectProfile
-  objectEntailments := some consumptionObject
+  valency := .of
+    [(ArgumentFrame.np, [0, 1]),
+     (ArgumentFrame.objectDrop (some .indef), [0, 1]),
+     (ArgumentFrame.pp (some Adpositions.at_), [0, 1])]
+    [some accomplishmentSubjectProfile, some consumptionObject]
   vendlerClass := some .accomplishment
   incrementality := some .strict
   root := { content := {
@@ -224,10 +227,12 @@ def eat : Verb where
 /-- "kick" — transitive -/
 def kick : Verb := .mkRegular {
   form := "kick"
-  frames := [ArgumentFrame.np, ArgumentFrame.pp (some Adpositions.at_),
-    ArgumentFrame.np_pp (some Adpositions.on), ArgumentFrame.np_pp (some Adpositions.with_)]
-  subjectEntailments := some accomplishmentSubjectProfile
-  objectEntailments := some contactObject
+  valency := .of
+    [(ArgumentFrame.np, [0, 1]),
+     (ArgumentFrame.pp (some Adpositions.at_), [0, 1]),
+     (ArgumentFrame.np_pp (some Adpositions.on), [0, 2, 1]),
+     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 3])]
+    [some accomplishmentSubjectProfile, some contactObject, none, none]
   vendlerClass := some .activity
   root := { content := {
     force := {.moderate, .high}
@@ -239,8 +244,9 @@ def kick : Verb := .mkRegular {
 /-- "aim" — with an *at*-phrase, and transitive with one -/
 def aim : Verb := .mkRegular {
   form := "aim"
-  frames :=
-    [ArgumentFrame.pp (some Adpositions.at_), ArgumentFrame.np_pp (some Adpositions.at_)] }
+  valency := .of
+    [(ArgumentFrame.pp (some Adpositions.at_), [0, 1]),
+     (ArgumentFrame.np_pp (some Adpositions.at_), [0, 2, 1])] }
 
 /-- "give" — ditransitive, alternates DOC/PP.
     Implicit goal is definite ([fillmore-1986]: pragmatically recoverable).
@@ -251,9 +257,12 @@ def give : Verb where
   formPast := "gave"
   formPastPart := "given"
   formPresPart := "giving"
-  frames := [ArgumentFrame.np_np, ArgumentFrame.np_pp,
-    ⟨some .nominal, [.implicit (some .indef), .adpositional]⟩,
-    ⟨some .nominal, [.nominal, .implicit (some .def)]⟩, ArgumentFrame.np_pp (some Adpositions.to_)]
+  valency := .of
+    [(ArgumentFrame.np_np, [0, 1, 2]),
+     (ArgumentFrame.np_pp, [0, 2, 1]),
+     (⟨some .nominal, [.implicit (some .indef), .adpositional]⟩, [0, 2, 1]),
+     (⟨some .nominal, [.nominal, .implicit (some .def)]⟩, [0, 2, 1]),
+     (ArgumentFrame.np_pp (some Adpositions.to_), [0, 2, 1])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.give}
 
@@ -264,21 +273,21 @@ def put : Verb where
   formPast := "put"
   formPastPart := "put"
   formPresPart := "putting"
-  frames := [ArgumentFrame.np_pp]
+  valency := .ofFrame ArgumentFrame.np_pp
   vendlerClass := some .achievement
   levinClasses := {LevinClass.put}
 
 /-- "weigh" — measure predicate selecting for mass/weight. -/
 def weigh : Verb := .mkRegular {
   form := "weigh"
-  frames := [ArgumentFrame.np]
+  valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .state
   levinClasses := {LevinClass.register} }
 
 /-- "cover" — motion/extent predicate selecting for distance. -/
 def cover : Verb := .mkRegular {
   form := "cover"
-  frames := [ArgumentFrame.np]
+  valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .accomplishment
   incrementality := some .strict
   levinClasses := {LevinClass.contiguousLocation, .fill} }
@@ -286,7 +295,7 @@ def cover : Verb := .mkRegular {
 /-- "measure" — general measurement predicate. -/
 def measure : Verb := .mkRegular {
   form := "measure"
-  frames := [ArgumentFrame.np]
+  valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .state
   levinClasses := {LevinClass.register} }
 
@@ -297,8 +306,11 @@ def buy : Verb where
   formPast := "bought"
   formPastPart := "bought"
   formPresPart := "buying"
-  frames := [ArgumentFrame.np, ArgumentFrame.np_pp (some Adpositions.for_), ArgumentFrame.np_np]
-  subjectEntailments := some possessionTransfer.subjectProfile
+  valency := .of
+    [(ArgumentFrame.np, [0, 1]),
+     (ArgumentFrame.np_pp (some Adpositions.for_), [0, 1, 2]),
+     (ArgumentFrame.np_np, [0, 2, 1])]
+    [some possessionTransfer.subjectProfile, none, none]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.get}
 
@@ -309,7 +321,7 @@ def meet : Verb where
   formPast := "met"
   formPastPart := "met"
   formPresPart := "meeting"
-  frames := [ArgumentFrame.np, ArgumentFrame.objectDrop (some .reciprocal)]
+  valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.objectDrop (some .reciprocal), [0, 1])]
   vendlerClass := some .achievement
   levinClasses := {LevinClass.contiguousLocation, .meet}
 
@@ -320,7 +332,7 @@ def set_ : Verb where
   formPast := "set"
   formPastPart := "set"
   formPresPart := "setting"
-  frames := [ArgumentFrame.np]
+  valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .achievement
   levinClasses := {LevinClass.braid, .imageImpression, .prepare, .put}
 
@@ -331,7 +343,7 @@ def clarify : Verb where
   formPast := "clarified"
   formPastPart := "clarified"
   formPresPart := "clarifying"
-  frames := [ArgumentFrame.np]
+  valency := .ofFrame ArgumentFrame.np
 
 /-- "sell" — change of possession, alternates DOC/PP.
     Implicit DO is definite; implicit goal is indefinite. -/
@@ -341,11 +353,14 @@ def sell : Verb where
   formPast := "sold"
   formPastPart := "sold"
   formPresPart := "selling"
-  frames := [ArgumentFrame.np, ArgumentFrame.np_pp,
-    ⟨some .nominal, [.implicit (some .def), .adpositional]⟩,
-    ⟨some .nominal, [.nominal, .implicit (some .indef)]⟩,
-    ArgumentFrame.np_pp (some Adpositions.to_), ArgumentFrame.np_np]
-  subjectEntailments := some possessionTransfer.subjectProfile
+  valency := .of
+    [(ArgumentFrame.np, [0, 1]),
+     (ArgumentFrame.np_pp, [0, 1, 2]),
+     (⟨some .nominal, [.implicit (some .def), .adpositional]⟩, [0, 1, 2]),
+     (⟨some .nominal, [.nominal, .implicit (some .indef)]⟩, [0, 1, 2]),
+     (ArgumentFrame.np_pp (some Adpositions.to_), [0, 1, 2]),
+     (ArgumentFrame.np_np, [0, 2, 1])]
+    [some possessionTransfer.subjectProfile, none, none]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.give}
 
@@ -356,7 +371,7 @@ def leave : Verb where
   formPast := "left"
   formPastPart := "left"
   formPresPart := "leaving"
-  frames := [ArgumentFrame.np]
+  valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .achievement
   levinClasses := {LevinClass.fulfilling, .futureHaving, .get, .inherentlyDirectedMotion, .keep,
     .leave}
@@ -368,8 +383,10 @@ def see : Verb where
   formPast := "saw"
   formPastPart := "seen"
   formPresPart := "seeing"
-  frames := [ArgumentFrame.np, ArgumentFrame.finiteClause]
-  subjectEntailments := some perception.subjectProfile
+  valency := .of
+    [(ArgumentFrame.np, [0, 1]),
+     (ArgumentFrame.finiteClause, [0, 1])]
+    [some perception.subjectProfile, none]
   vendlerClass := some .state
   attitude := some (.doxastic .veridical)
   factivity := some .semi
@@ -380,7 +397,7 @@ def see : Verb where
 /-- "devour" — transitive, no presupposition -/
 def devour : Verb := .mkRegular {
   form := "devour"
-  frames := [ArgumentFrame.np]
+  valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .accomplishment
   incrementality := some .strict
   root := { content := {
@@ -396,8 +413,10 @@ def drink : Verb where
   formPast := "drank"
   formPastPart := "drunk"
   formPresPart := "drinking"
-  frames := [ArgumentFrame.np, ArgumentFrame.objectDrop (some .indef),
-    ArgumentFrame.pp (some Adpositions.at_)]
+  valency := .of
+    [(ArgumentFrame.np, [0, 1]),
+     (ArgumentFrame.objectDrop (some .indef), [0, 1]),
+     (ArgumentFrame.pp (some Adpositions.at_), [0, 1])]
   vendlerClass := some .accomplishment
   incrementality := some .strict
   levinClasses := {LevinClass.eat}
@@ -410,7 +429,7 @@ def read : Verb where
   formPast := "read"
   formPastPart := "read"
   formPresPart := "reading"
-  frames := [ArgumentFrame.np]
+  valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .accomplishment
   incrementality := some .incremental
   levinClasses := {LevinClass.learn, .register, .transferOfMessage}
@@ -423,11 +442,14 @@ def build : Verb where
   formPast := "built"
   formPastPart := "built"
   formPresPart := "building"
-  frames := [ArgumentFrame.np, ArgumentFrame.objectDrop (some .indef),
-    ArgumentFrame.np_pp (some Adpositions.for_), ArgumentFrame.np_np,
-    ArgumentFrame.np_pp (some Adpositions.outOf), ArgumentFrame.np_pp (some Adpositions.into)]
-  subjectEntailments := some accomplishmentSubjectProfile
-  objectEntailments := some creationObject
+  valency := .of
+    [(ArgumentFrame.np, [0, 1]),
+     (ArgumentFrame.objectDrop (some .indef), [0, 1]),
+     (ArgumentFrame.np_pp (some Adpositions.for_), [0, 1, 2]),
+     (ArgumentFrame.np_np, [0, 2, 1]),
+     (ArgumentFrame.np_pp (some Adpositions.outOf), [0, 1, 3]),
+     (ArgumentFrame.np_pp (some Adpositions.into), [0, 3, 1])]
+    [some accomplishmentSubjectProfile, some creationObject, none, none]
   vendlerClass := some .accomplishment
   incrementality := some .strict
   levinClasses := {LevinClass.build}
@@ -442,8 +464,11 @@ def write : Verb where
   formPast := "wrote"
   formPastPart := "written"
   formPresPart := "writing"
-  frames := [ArgumentFrame.np, ArgumentFrame.np_pp,
-    ⟨some .nominal, [.nominal, .implicit (some .indef)]⟩, ArgumentFrame.objectDrop (some .indef)]
+  valency := .of
+    [(ArgumentFrame.np, [0, 1]),
+     (ArgumentFrame.np_pp, [0, 1, 2]),
+     (⟨some .nominal, [.nominal, .implicit (some .indef)]⟩, [0, 2, 1]),
+     (ArgumentFrame.objectDrop (some .indef), [0, 1])]
   vendlerClass := some .accomplishment
   incrementality := some .strict
   levinClasses := {LevinClass.performance, .scribble, .transferOfMessage}
@@ -455,12 +480,14 @@ def sweep : Verb where
   formPast := "swept"
   formPastPart := "swept"
   formPresPart := "sweeping"
-  frames := [ArgumentFrame.np, ArgumentFrame.pp (some Adpositions.at_),
-    ArgumentFrame.objectDrop (some .indef),
-    ⟨some .nominal, [.nominal, .adpositional (some .spatial)]⟩,
-    ArgumentFrame.np_pp (some Adpositions.with_)]
+  valency := .of
+    [(ArgumentFrame.np, [0, 1]),
+     (ArgumentFrame.pp (some Adpositions.at_), [0, 1]),
+     (ArgumentFrame.objectDrop (some .indef), [0, 1]),
+     (⟨some .nominal, [.nominal, .adpositional (some .spatial)]⟩, [0, 2, 1]),
+     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 3])]
+    [some wipeManner.subjectProfile, none, none]
   vendlerClass := some .activity
-  subjectEntailments := some wipeManner.subjectProfile
   passivizable := true
   root := { content := {
     force := {.low, .moderate}
@@ -476,12 +503,14 @@ def sweep_instr : Verb where
   formPast := "swept"
   formPastPart := "swept"
   formPresPart := "sweeping"
-  frames := [ArgumentFrame.np, ArgumentFrame.pp (some Adpositions.at_),
-    ArgumentFrame.objectDrop (some .indef),
-    ⟨some .nominal, [.nominal, .adpositional (some .spatial)]⟩,
-    ArgumentFrame.np_pp (some Adpositions.with_)]
+  valency := .of
+    [(ArgumentFrame.np, [0, 1]),
+     (ArgumentFrame.pp (some Adpositions.at_), [0, 1]),
+     (ArgumentFrame.objectDrop (some .indef), [0, 1]),
+     (⟨some .nominal, [.nominal, .adpositional (some .spatial)]⟩, [0, 2, 1]),
+     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 3])]
+    [some wipeInstrument.subjectProfile, none, none]
   vendlerClass := some .activity
-  subjectEntailments := some wipeInstrument.subjectProfile
   passivizable := true
   senseTag := .instrumental
   root := { content := {

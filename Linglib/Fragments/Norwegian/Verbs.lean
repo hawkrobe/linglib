@@ -127,7 +127,7 @@ theorem participle_of_simplex (h : v.formation = .simplex) (c : ParticipleContex
 
 /-- `transitive s` is the transitive entry with the stem `s`. -/
 def transitive (s : Stem) : Verb :=
-  { form := s.infinitive, frames := [ArgumentFrame.np], stem := s }
+  { form := s.infinitive, valency := .ofFrame ArgumentFrame.np, stem := s }
 
 /-- `v.withParticle p` is the verb phrase formed on `v` with the verbal particle `p`. -/
 def withParticle (v : Verb) (p : String) : Verb :=

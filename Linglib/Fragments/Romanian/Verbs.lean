@@ -51,7 +51,7 @@ def saClause : ArgumentFrame := ⟨some .nominal, [.clausal (coding := some .sub
 /-- *a vrea* 'want' takes a *să* clause. -/
 def a_vrea : Verb where
   form := "a vrea"
-  frames := [saClause]
+  valency := .ofFrame saClause
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential .positive true)
@@ -59,7 +59,7 @@ def a_vrea : Verb where
 /-- *a spera* 'hope' takes a *să* clause or a *că* clause. -/
 def a_spera : Verb where
   form := "a spera"
-  frames := [saClause, ArgumentFrame.finiteClause]
+  valency := .of [(saClause, [0, 1]), (ArgumentFrame.finiteClause, [0, 1])]
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential .positive true)
@@ -67,7 +67,7 @@ def a_spera : Verb where
 /-- *a intenționa* 'intend' takes a *să* clause. -/
 def a_intentiona : Verb where
   form := "a intenționa"
-  frames := [saClause]
+  valency := .ofFrame saClause
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential .positive true)
@@ -75,7 +75,7 @@ def a_intentiona : Verb where
 /-- The causative *a face* 'make' takes an object and a *să* clause. -/
 def a_face : Verb where
   form := "a face"
-  frames := [⟨some .nominal, [.nominal, .clausal (coding := some .subjunctive)]⟩]
+  valency := .ofFrame (⟨some .nominal, [.nominal, .clausal (coding := some .subjunctive)]⟩)
 
 /-- *a spera* takes both particles and *a vrea* only *să*. -/
 theorem a_spera_takes_both :

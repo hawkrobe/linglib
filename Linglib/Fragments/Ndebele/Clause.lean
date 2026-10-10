@@ -50,29 +50,30 @@ structure Verb extends _root_.Verb where
 /-- *cabanga* 'think', with an indicative complement ((4), (12)). -/
 def cabanga : Verb where
   form := "cabanga"
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   predicateClass := .propAttitude
   attitude := some (.doxastic .nonVeridical)
 
 /-- *funa* 'want', with a subjunctive complement and plain class-15 objects ((7)). -/
 def funa : Verb where
   form := "funa"
-  frames :=
-    [{ complements := [.clausal (coding := some .subjunctive) (types := .only .declarative)] },
-      ArgumentFrame.np]
+  valency := .of
+    [({ complements := [.clausal (coding := some .subjunctive) (types := .only .declarative)] },
+     [0, 1]),
+     (ArgumentFrame.np, [0, 1])]
   predicateClass := .desiderative
   attitude := some (.preferential .positive true)
 
 /-- *zwa* 'hear', attested as a hearsay report ((18)). -/
 def zwa : Verb where
   form := "zwa"
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   predicateClass := .perception
 
 /-- *khuluma nga* 'talk about', whose clause is the object of the preposition ((20b)). -/
 def khulumaNga : Verb where
   form := "khuluma nga"
-  frames := [ArgumentFrame.pp]
+  valency := .ofFrame ArgumentFrame.pp
   predicateClass := .utterance
   speechActVerb := true
 
@@ -81,7 +82,7 @@ def verbs : List Verb := [cabanga, funa, zwa, khulumaNga]
 
 /-- Every clausal frame takes *ukuthi*, the one complementizer for both moods. -/
 theorem takes_ukuthi :
-    ∀ v ∈ verbs, ∀ fr ∈ v.frames, fr.HasClausal → ArgumentFrame.Takes fr ukuthi := by
+    ∀ v ∈ verbs, ∀ fr ∈ v.valency.frames, fr.HasClausal → ArgumentFrame.Takes fr ukuthi := by
   decide
 
 end Ndebele
