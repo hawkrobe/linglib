@@ -75,7 +75,7 @@ instance : IsFiniteKernel (rsaSpeaker sem) := inferInstanceAs (IsFiniteKernel (s
 /-- The baseline speaker (4) uses literal meaning alone, choosing uniformly among the words that
 apply to the referent. -/
 noncomputable def baselineSpeaker : Kernel W U :=
-  Kernel.ofWeights λ w u => (sem u).indicator 1 w
+  Kernel.ofWeights fun w u => (sem u).indicator 1 w
 
 instance : IsFiniteKernel (baselineSpeaker sem) :=
   inferInstanceAs (IsFiniteKernel (Kernel.ofWeights _))
@@ -109,7 +109,7 @@ theorem baselineSpeaker_apply_singleton_of_notMem {w : W} {u : U} (h : w ∉ sem
 variable [∀ u, DecidablePred (· ∈ sem u)]
 
 /-- The words applying to an object, the paper's `W(r)`. -/
-def applicable (w : W) : Finset U := Finset.univ.filter λ u => w ∈ sem u
+def applicable (w : W) : Finset U := Finset.univ.filter fun u => w ∈ sem u
 
 /-- The baseline speaker's probability of an applicable word is the reciprocal of the number of
 words applying to the referent. -/
@@ -162,8 +162,8 @@ theorem posterior_apply_singleton_eq_one [StandardBorelSpace W] [Nonempty W] {κ
     (κ†μ) u {w₀} = 1 := by
   have hcomp : (κ ∘ₘ μ) {u} = μ {w₀} * κ w₀ {u} := by
     rw [Measure.comp_apply_singleton]
-    exact Finset.sum_eq_single w₀ (λ w _ hw => by rw [hsupp w hw, mul_zero])
-      (λ h => absurd (Finset.mem_univ _) h)
+    exact Finset.sum_eq_single w₀ (fun w _ hw => by rw [hsupp w hw, mul_zero])
+      (fun h => absurd (Finset.mem_univ _) h)
   rw [posterior_apply_singleton _ _ (by rw [hcomp]; exact mul_ne_zero hμ hκ), hcomp]
   exact ENNReal.div_self (mul_ne_zero hμ hκ)
     (ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _))
@@ -172,7 +172,7 @@ variable [StandardBorelSpace W] [Nonempty W] (μ : Measure W) [IsFiniteMeasure �
 
 /-- RSA's listener (1) inverts the informative speaker against the salience prior. -/
 noncomputable def rsaListener : Kernel U W :=
-  pragmaticListener (speaker 1 0 (L0 sem) Measure.dirac) μ
+  ((speaker 1 0 (L0 sem) Measure.dirac)†μ)
 
 /-- The baseline literal listener model (4) inverts the baseline speaker against the salience
 prior. -/
@@ -184,14 +184,14 @@ certain of it, a prediction of one hundred percent. -/
 theorem rsaListener_apply_singleton_of_eq_singleton {u : U} {w₀ : W} (h : sem u = {w₀})
     (hμ : μ {w₀} ≠ 0) : rsaListener sem μ u {w₀} = 1 :=
   posterior_apply_singleton_eq_one μ
-    (λ w hw => rsaSpeaker_apply_singleton_of_notMem sem (by rw [h]; exact hw))
+    (fun w hw => rsaSpeaker_apply_singleton_of_notMem sem (by rw [h]; exact hw))
     (rsaSpeaker_apply_singleton_ne_zero sem (by rw [h]; exact Set.mem_singleton w₀)) hμ
 
 /-- In a trivial condition the baseline is certain of the same object. -/
 theorem baselineListener_apply_singleton_of_eq_singleton {u : U} {w₀ : W} (h : sem u = {w₀})
     (hμ : μ {w₀} ≠ 0) : baselineListener sem μ u {w₀} = 1 :=
   posterior_apply_singleton_eq_one μ
-    (λ w hw => baselineSpeaker_apply_singleton_of_notMem sem (by rw [h]; exact hw))
+    (fun w hw => baselineSpeaker_apply_singleton_of_notMem sem (by rw [h]; exact hw))
     (baselineSpeaker_apply_singleton_ne_zero sem (by rw [h]; exact Set.mem_singleton w₀)) hμ
 
 omit [∀ u, DecidablePred (· ∈ sem u)] in
@@ -214,7 +214,7 @@ is, `L0` itself informed by the prior. -/
 theorem baselineListener_eq_literalListener {k : ℕ} (hk : k ≠ 0)
     (hcard : ∀ w, (applicable sem w).card = k) {u : U} (hμ : μ (sem u) ≠ 0) (w : W) :
     baselineListener sem μ u {w} = literalListener μ (sem) u {w} := by
-  have hrow : ∀ w', baselineSpeaker sem w' {u} = (sem u).indicator (λ _ => (k : ℝ≥0∞)⁻¹) w' := by
+  have hrow : ∀ w', baselineSpeaker sem w' {u} = (sem u).indicator (fun _ => (k : ℝ≥0∞)⁻¹) w' := by
     intro w'
     by_cases h : w' ∈ sem u
     · rw [baselineSpeaker_apply_singleton sem h, hcard, Set.indicator_of_mem h]
@@ -271,7 +271,7 @@ inductive Word
   deriving DecidableEq, Fintype, Repr
 
 instance : MeasurableSpace Word := ⊤
-instance : DiscreteMeasurableSpace Word := ⟨λ _ => trivial⟩
+instance : DiscreteMeasurableSpace Word := ⟨fun _ => trivial⟩
 
 /-- A display has three positions, each with a color and a shape. -/
 structure Display where

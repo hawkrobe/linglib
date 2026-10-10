@@ -200,12 +200,12 @@ instance (l : Lex) : IsFiniteKernel (S1 α k l) := inferInstanceAs (IsFiniteKern
 /-- The uncertainty listener (13c) is the joint posterior over states and lexica at flat priors,
 whose state marginal is the paper's listener. -/
 noncomputable def L1 : Kernel Msg (World × Lex) :=
-  pragmaticListener (familySpeaker L0 α (cost k)) (uniformOn Set.univ)
+  ((familySpeaker L0 α (cost k))†(uniformOn Set.univ))
 
 /-- The fixed-lexicon pragmatic listener (19b) inverts the base lexicon's speaker at a flat
 prior. -/
 noncomputable def L1fixed : Kernel Msg World :=
-  pragmaticListener (S1 α k .weak) (uniformOn Set.univ)
+  ((S1 α k .weak)†(uniformOn Set.univ))
 
 end Tower
 
@@ -220,7 +220,7 @@ include hα
 message true there. -/
 theorem L1_fst_ne_zero_iff (m : Msg) (w : World) :
     (L1 α k m).fst {w} ≠ 0 ↔ ∃ l, w ∈ sem l m :=
-  pragmaticListener_familySpeaker_uniform_fst_apply_singleton_ne_zero_iff sem hα _
+  posterior_familySpeaker_uniform_fst_apply_singleton_ne_zero_iff sem hα _
     (let ⟨w, h⟩ := sem_weak_nonempty m; ⟨.weak, w, h⟩) w
 
 /-- The fixed-lexicon listener assigns mass to a state exactly when the base lexicon makes the
@@ -229,7 +229,7 @@ theorem L1fixed_ne_zero_iff (m : Msg) (w : World) :
     L1fixed α k m {w} ≠ 0 ↔ w ∈ sem .weak m := by
   obtain ⟨w₀, h₀⟩ := sem_weak_nonempty m
   have hs := speaker_uniformListener_dirac_apply_singleton_ne_zero_iff (sem .weak) hα (cost k)
-  rw [L1fixed, pragmaticListener_apply_singleton_ne_zero_iff (comp_apply_singleton_ne_zero
+  rw [L1fixed, posterior_apply_singleton_ne_zero_iff _ _ (comp_apply_singleton_ne_zero
     (S1 α k .weak) _ (uniformOn_univ_singleton_ne_zero w₀) ((hs w₀ m).2 h₀)),
     and_iff_right (uniformOn_univ_singleton_ne_zero w)]
   exact hs w m
@@ -262,7 +262,7 @@ theorem L1_fst_real_lt_iff (m : Msg) (w₁ w₂ : World) :
     (L1 α k m).fst.real {w₁} < (L1 α k m).fst.real {w₂} ↔
       ∑ l, (S1 α k l w₁).real {m} < ∑ l, (S1 α k l w₂).real {m} := by
   obtain ⟨w₀, h₀⟩ := sem_weak_nonempty m
-  rw [L1, pragmaticListener_fst_real_lt_iff (p₀ := (w₀, .weak)) uniformOn_univ_singleton_eq
+  rw [L1, posterior_fst_real_lt_iff_of_forall_eq _ _ (p₀ := (w₀, .weak)) uniformOn_univ_singleton_eq
     uniformOn_univ_singleton_ne_zero
     ((speaker_uniformListener_dirac_apply_singleton_ne_zero_iff (sem .weak) hα (cost k) w₀ m).2 h₀)]
   rfl
@@ -272,7 +272,7 @@ theorem L1fixed_real_lt_iff (m : Msg) (w₁ w₂ : World) :
     (L1fixed α k m).real {w₁} < (L1fixed α k m).real {w₂} ↔
       (S1 α k .weak w₁).real {m} < (S1 α k .weak w₂).real {m} :=
   let ⟨w₀, h₀⟩ := sem_weak_nonempty m
-  pragmaticListener_real_lt_iff
+  posterior_real_singleton_lt_iff_of_forall_eq _ _
     uniformOn_univ_singleton_eq uniformOn_univ_singleton_ne_zero
     ((speaker_uniformListener_dirac_apply_singleton_ne_zero_iff (sem .weak) hα _ w₀ m).2 h₀)
 

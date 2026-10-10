@@ -121,7 +121,7 @@ theorem extension_eq_univ {u : Message} (h : ∀ w, m.sat u w = true) :
 /-- A message true at one world only has that world as its extension. -/
 theorem extension_eq_singleton {u : Message} {w : World}
     (h : ∀ w', m.sat u w' = true ↔ w' = w) : m.extension u = {w} :=
-  Set.ext λ w' => (h w').trans Set.mem_singleton_iff.symm
+  Set.ext fun w' => (h w').trans Set.mem_singleton_iff.symm
 
 end Meaning
 
@@ -134,7 +134,7 @@ def exhaustified : Meaning := ⟨exh, by decide, by decide⟩
 /-- The anti-exhaustive interpretation of the free lexical-uncertainty model, *A* read as
 *A and B*. -/
 def antiExhaustive : Meaning :=
-  ⟨λ u w => match u with | .a => truth .aAndB w | u => truth u w, by decide, by decide⟩
+  ⟨fun u w => match u with | .a => truth .aAndB w | u => truth u w, by decide, by decide⟩
 
 /-- The two grammatical interpretations, literal and exhaustified. -/
 inductive Interpretation where
@@ -353,7 +353,7 @@ omit [IsFiniteMeasure P] in
 /-- The tautology *A* leaves the prior unchanged. -/
 theorem L0_literal_a [IsProbabilityMeasure P] (w : World) : L0 P literal .a {w} = P {w} :=
   RSA.literalListener_apply_singleton_of_eq_univ P literal.extension
-    (literal.extension_eq_univ λ w => by cases w <;> rfl) w
+    (literal.extension_eq_univ fun w => by cases w <;> rfl) w
 
 variable (s : Setting)
 
@@ -398,7 +398,7 @@ theorem L0_eq_one {u : Message} {w : World} (h : ∀ w', m.sat u w' = true ↔ w
 /-- The literal listener is a probability measure. -/
 theorem L0_apply_univ (u : Message) : L0 P m u Set.univ = 1 :=
   let ⟨w, hw⟩ := m.exists_world u
-  RSA.literalListener_apply_univ P m.extension λ h =>
+  RSA.literalListener_apply_univ P m.extension fun h =>
     hP w (measure_mono_null (Set.singleton_subset_iff.mpr hw) h)
 
 /-- On reals, the weight of a message true at a world is the exponential of the paper's scaled
@@ -435,8 +435,8 @@ theorem speaker_real_singleton_of_pair {u v : Message} {w : World} (huv : u ≠ 
       s.logistic ((Real.log (L0 P m u {w}).toReal - s.cost u) -
         (Real.log (L0 P m v {w}).toReal - s.cost v)) := by
   rw [speaker, RSA.speaker_dirac_eq_ofWeights, Kernel.ofWeights_real_singleton_of_pair w huv
-      (λ x => weight_ne_top P m s x w)
-      (λ x hx => hsupp x (of_not_not (mt (λ h => weight_eq_zero P m s
+      (fun x => weight_ne_top P m s x w)
+      (fun x hx => hsupp x (of_not_not (mt (fun h => weight_eq_zero P m s
         (Bool.eq_false_iff.mpr h)) hx))),
     weight_toReal P hP m s hu, weight_toReal P hP m s hv, Real.exp_div_add_exp_eq_sigmoid,
     Setting.logistic]
@@ -548,7 +548,7 @@ theorem comp_speaker_literal_ne_zero (u : Message) : (s.speaker literal ∘ₘ s
 
 /-- The pragmatic listener (eq. 4). -/
 noncomputable def listener : Kernel Message World :=
-  RSA.pragmaticListener (s.speaker literal) s.prior
+  ((s.speaker literal)†s.prior)
 
 /-- The listener is anti-exhaustive, the posterior of both A and B exceeding the prior,
 exactly when the speaker uses *A* more in the world of both than in the world of A alone
@@ -586,16 +586,16 @@ variable (s : Setting)
 /-- The speaker marginalised over the two equiprobable interpretations (item 4 of the §4.3
 model). -/
 noncomputable def luSpeaker : Kernel World Message :=
-  Kernel.mixture (λ _ : Interpretation => 2⁻¹) λ i => s.speaker i.meaning
+  Kernel.mixture (fun _ : Interpretation => 2⁻¹) fun i => s.speaker i.meaning
 
 instance : IsFiniteKernel (luSpeaker s) :=
-  Kernel.isFiniteKernel_mixture _ _ λ _ => ENNReal.inv_ne_top.mpr two_ne_zero
+  Kernel.isFiniteKernel_mixture _ _ fun _ => ENNReal.inv_ne_top.mpr two_ne_zero
 
 /-- The grammatical lexical-uncertainty speaker on reals. -/
 theorem luSpeaker_real_singleton (w : World) (u : Message) :
     (luSpeaker s w).real {u} =
       2⁻¹ * (s.speaker literal w).real {u} + 2⁻¹ * (s.speaker exhaustified w).real {u} := by
-  rw [luSpeaker, Kernel.mixture_real _ _ (λ _ => ENNReal.inv_ne_top.mpr two_ne_zero),
+  rw [luSpeaker, Kernel.mixture_real _ _ (fun _ => ENNReal.inv_ne_top.mpr two_ne_zero),
     sum_interpretation]
   simp only [Interpretation.meaning, ENNReal.toReal_inv, ENNReal.toReal_ofNat]
 
@@ -628,17 +628,17 @@ theorem luListener_lt_prior (hc : s.cAndB ≤ s.cAndNotB) :
 /-- The speaker of the free lexical-uncertainty model, marginalised over the three
 equiprobable interpretations. -/
 noncomputable def freeSpeaker : Kernel World Message :=
-  Kernel.mixture (λ _ : FreeInterpretation => 3⁻¹) λ i => s.speaker i.meaning
+  Kernel.mixture (fun _ : FreeInterpretation => 3⁻¹) fun i => s.speaker i.meaning
 
 instance : IsFiniteKernel (freeSpeaker s) :=
-  Kernel.isFiniteKernel_mixture _ _ λ _ => ENNReal.inv_ne_top.mpr three_ne_zero
+  Kernel.isFiniteKernel_mixture _ _ fun _ => ENNReal.inv_ne_top.mpr three_ne_zero
 
 /-- The free lexical-uncertainty speaker on reals. -/
 theorem freeSpeaker_real_singleton (w : World) (u : Message) :
     (freeSpeaker s w).real {u} =
       3⁻¹ * (s.speaker literal w).real {u} + 3⁻¹ * (s.speaker exhaustified w).real {u} +
         3⁻¹ * (s.speaker antiExhaustive w).real {u} := by
-  rw [freeSpeaker, Kernel.mixture_real _ _ (λ _ => ENNReal.inv_ne_top.mpr three_ne_zero),
+  rw [freeSpeaker, Kernel.mixture_real _ _ (fun _ => ENNReal.inv_ne_top.mpr three_ne_zero),
     sum_freeInterpretation]
   simp only [FreeInterpretation.meaning, ENNReal.toReal_inv, ENNReal.toReal_ofNat]
 
@@ -694,7 +694,7 @@ theorem liL0_apply (x : Message × Interpretation) : liL0 s x = s.L0 x.2.meaning
 
 /-- The speaker over messages and interpretations (item 3 of the §4.4 model). -/
 noncomputable def liSpeaker : Kernel World (Message × Interpretation) :=
-  RSA.speaker s.lam (λ x => s.cost x.1) (liL0 s) Measure.dirac
+  RSA.speaker s.lam (fun x => s.cost x.1) (liL0 s) Measure.dirac
 
 instance : IsFiniteKernel (liSpeaker s) := inferInstanceAs (IsFiniteKernel (RSA.speaker _ _ _ _))
 
@@ -852,7 +852,7 @@ instance : IsFiniteKernel (svSpeaker s) := inferInstanceAs (IsFiniteKernel (Kern
 depend on the world. -/
 theorem svSpeaker_coarse : svSpeaker s (.wa, .coarse) = svSpeaker s (.wab, .coarse) := by
   have h : svWeight s (.wa, .coarse) = svWeight s (.wab, .coarse) :=
-    funext λ u => by simp only [svWeight, cell_coarse]
+    funext fun u => by simp only [svWeight, cell_coarse]
   simp only [svSpeaker, Kernel.ofWeights, Kernel.ofFunOfCountable_apply, h]
 
 /-- Under the fine question the exhaustified *A* is false in the world of both, so the
@@ -1003,8 +1003,8 @@ theorem bgWeight_ne_top (b : Background) : bgWeight ω b ≠ ∞ := by
 
 /-- Some background has positive weight. -/
 theorem bgWeight_exists_ne_zero : ∃ b, bgWeight ω b ≠ 0 :=
-  (le_or_gt ω 0).elim (λ h => ⟨.measured, by simp [bgWeight]; linarith⟩)
-    (λ h => ⟨.wonky, by simp [bgWeight, h]⟩)
+  (le_or_gt ω 0).elim (fun h => ⟨.measured, by simp [bgWeight]; linarith⟩)
+    (fun h => ⟨.wonky, by simp [bgWeight, h]⟩)
 
 /-- The speaker marginalised over the listener's uncertainty about the speaker's prior (item 5
 of the §4.1 model, the Bayesian version). -/
@@ -1067,7 +1067,7 @@ theorem bgPrior_apply_singleton (b : Background) : bgPrior ω {b} = bgWeight ω 
 instance : IsFiniteMeasure (bgPrior ω) :=
   ⟨by
     rw [bgPrior, Measure.finsetSum_apply]
-    exact ENNReal.sum_lt_top.mpr λ b _ => by
+    exact ENNReal.sum_lt_top.mpr fun b _ => by
       rw [Measure.smul_apply, smul_eq_mul, Measure.dirac_apply_of_mem (Set.mem_univ _), mul_one]
       exact (bgWeight_ne_top ω b).lt_top⟩
 
@@ -1075,7 +1075,7 @@ instance : IsFiniteMeasure (bgPrior ω) :=
 noncomputable def worldKernel : Kernel Background World := Kernel.ofFunOfCountable (worldPrior s)
 
 instance : IsMarkovKernel (worldKernel s) :=
-  ⟨λ b => by rw [worldKernel, Kernel.ofFunOfCountable_apply]; infer_instance⟩
+  ⟨fun b => by rw [worldKernel, Kernel.ofFunOfCountable_apply]; infer_instance⟩
 
 /-- The prior of the non-Bayesian model draws the background, then the world under it (item 4
 of the §4.1 model). -/
@@ -1095,13 +1095,13 @@ theorem wonkyJoint_real_singleton (b : Background) (w : World) :
 
 /-- The speaker of the non-Bayesian model, at a background and a world. -/
 noncomputable def wonkySpeaker : Kernel (Background × World) Message :=
-  Kernel.ofFunOfCountable λ x => bgSpeaker s x.1 x.2
+  Kernel.ofFunOfCountable fun x => bgSpeaker s x.1 x.2
 
 theorem wonkySpeaker_apply (x : Background × World) : wonkySpeaker s x = bgSpeaker s x.1 x.2 :=
   rfl
 
 instance : IsFiniteKernel (wonkySpeaker s) :=
-  ⟨⟨1, ENNReal.one_lt_top, λ x => by
+  ⟨⟨1, ENNReal.one_lt_top, fun x => by
     rw [wonkySpeaker_apply, bgSpeaker, speaker, RSA.speaker]
     exact Kernel.ofWeights_apply_univ_le_one _ _⟩⟩
 

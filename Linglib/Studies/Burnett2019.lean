@@ -62,7 +62,7 @@ inductive PersonaTrait where
   deriving DecidableEq
 
 instance : Fintype PersonaTrait :=
-  ⟨{.competent, .incompetent, .friendly, .aloof}, λ x => by cases x <;> simp⟩
+  ⟨{.competent, .incompetent, .friendly, .aloof}, fun x => by cases x <;> simp⟩
 
 /-- The dimension a trait is a pole of. -/
 def PersonaTrait.dimension : PersonaTrait → Dimension
@@ -72,10 +72,10 @@ def PersonaTrait.dimension : PersonaTrait → Dimension
 /-- The property space of the example makes the two poles of each dimension incompatible. -/
 def incompatible : SimpleGraph PersonaTrait where
   Adj p q := p ≠ q ∧ p.dimension = q.dimension
-  symm := ⟨λ _ _ h => ⟨h.1.symm, h.2.symm⟩⟩
-  loopless := ⟨λ _ h => h.1 rfl⟩
+  symm := ⟨fun _ _ h => ⟨h.1.symm, h.2.symm⟩⟩
+  loopless := ⟨fun _ h => h.1 rfl⟩
 
-instance : DecidableRel incompatible.Adj := λ p q => inferInstanceAs (Decidable (p ≠ q ∧ _))
+instance : DecidableRel incompatible.Adj := fun p q => inferInstanceAs (Decidable (p ≠ q ∧ _))
 
 /-- A persona of the example is a maximal consistent set of its properties. -/
 abbrev Persona := SocialMeaning.Persona incompatible
@@ -126,12 +126,12 @@ noncomputable abbrev L0 (prior : Measure Persona) : Kernel INGVariant Persona :=
 
 /-- The speaker, the softmax of the literal listener at rationality 6 (p. 435), without costs. -/
 noncomputable abbrev S1 (prior : Measure Persona) : Kernel Persona INGVariant :=
-  speaker 6 (λ _ => 0) (L0 prior) Measure.dirac
+  speaker 6 (fun _ => 0) (L0 prior) Measure.dirac
 
 /-- The pragmatic listener inverts the speaker against the prior. -/
 noncomputable abbrev L1 (prior : Measure Persona) [IsFiniteMeasure prior] :
     Kernel INGVariant Persona :=
-  pragmaticListener (speaker 6 (λ _ => 0) (L0 prior) Measure.dirac) prior
+  ((speaker 6 (fun _ => 0) (L0 prior) Measure.dirac)†prior)
 
 /-! ### The extensions differ in one persona each
 
@@ -206,7 +206,7 @@ def casualWeight (π : Persona) : ℕ := if .aloof ∈ π.1 then 3 else 2
 def carefulWeight (π : Persona) : ℕ := if .incompetent ∈ π.1 then 3 else 2
 
 /-- Rice is unfamiliar, so the listener's beliefs are uniform (Table 10). -/
-def riceWeight : Persona → ℕ := λ _ => 1
+def riceWeight : Persona → ℕ := fun _ => 1
 
 /-- Pelosi is taken to be inarticulate (Table 13). -/
 def pelosiWeight (π : Persona) : ℕ := if .incompetent ∈ π.1 then 9 else 1
@@ -315,10 +315,10 @@ beforehand. -/
 theorem L1_eq_zero_of_excluded {w : Persona → ℕ} (hw : ∀ p, w p ≠ 0) (v : INGVariant) :
     L1 (Measure.ofWeights (w ·)) v {excluded v} = 0 := by
   cases v
-  · exact ingField.pragmaticListener_indexation_apply_singleton_of_not_meets _ (by norm_num)
+  · exact ingField.posterior_indexation_apply_singleton_of_not_meets _ (by norm_num)
       (π' := coolGuy) (by decide +kernel) (by decide +kernel)
       (Measure.ofWeights_apply_singleton_ne_zero (Nat.cast_ne_zero.2 (hw _)))
-  · exact ingField.pragmaticListener_indexation_apply_singleton_of_not_meets _ (by norm_num)
+  · exact ingField.posterior_indexation_apply_singleton_of_not_meets _ (by norm_num)
       (π' := coolGuy) (by decide +kernel) (by decide +kernel)
       (Measure.ofWeights_apply_singleton_ne_zero (Nat.cast_ne_zero.2 (hw _)))
 

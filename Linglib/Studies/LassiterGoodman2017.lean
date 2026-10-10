@@ -97,7 +97,7 @@ posterior over assignments (eq. 30). -/
 noncomputable def L1 [Nonempty D] (μ : Measure D) [IsProbabilityMeasure μ]
     (ν : Measure (D × D)) [IsProbabilityMeasure ν] (α : ℝ) (cost : Utterance → ℝ) :
     Kernel Utterance (D × (D × D)) :=
-  pragmaticListener (S1 μ α cost) (μ.prod ν)
+  ((S1 μ α cost)†(μ.prod ν))
 
 variable (μ : Measure D) [IsProbabilityMeasure μ] (ν : Measure (D × D)) (α : ℝ)
   (cost : Utterance → ℝ)
@@ -128,7 +128,7 @@ theorem L1_apply_singleton_ne_zero_iff (hα : 0 < α) {u : Utterance}
     (hu : (S1 μ α cost ∘ₘ μ.prod ν) {u} ≠ 0) (d : D) (θ : D × D) :
     L1 μ ν α cost u {(d, θ)} ≠ 0 ↔ μ {d} ≠ 0 ∧ ν {θ} ≠ 0 ∧ d ∈ sem θ u := by
   have hs := S1_apply_singleton_ne_zero_iff μ α cost hα d θ u
-  rw [L1, pragmaticListener_apply_singleton hu, ← Set.singleton_prod_singleton,
+  rw [L1, posterior_apply_singleton _ _ hu, ← Set.singleton_prod_singleton,
     Measure.prod_prod]
   simp only [ne_eq, ENNReal.div_eq_zero_iff, mul_eq_zero, not_or, measure_ne_top,
     not_false_eq_true, and_true] at hs ⊢

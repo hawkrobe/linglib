@@ -261,7 +261,7 @@ Bayesian inverse of the speakers indexed by the threshold offsets, against the p
 uniform offsets. -/
 noncomputable def listener (c : Option Comparison) (α : ℝ) (cost : Utterance → ℝ) :
     Kernel Utterance (World × Finset.Icc (-4 : ℤ) 4) :=
-  RSA.pragmaticListener (RSA.familySpeaker (literal c) α cost) (prior.prod Measure.count)
+  ((RSA.familySpeaker (literal c) α cost)†(prior.prod Measure.count))
 
 instance (c : Option Comparison) (α : ℝ) (cost : Utterance → ℝ) :
     IsMarkovKernel (listener c α cost) :=
@@ -299,7 +299,7 @@ private theorem listener_fst_real_singleton (hα : 0 ≤ α) (c : Option Compari
     (listener c α cost u).fst.real {w} =
       (prior {w}).toReal * (∑ σ, (RSA.speaker α cost (literal c σ) Measure.dirac w).real {u}) /
         (RSA.familySpeaker (literal c) α cost ∘ₘ prior.prod Measure.count).real {u} := by
-  rw [listener, RSA.pragmaticListener_fst_real_singleton prior Measure.count
+  rw [listener, posterior_prod_fst_real_singleton _ prior Measure.count
     (comp_familySpeaker_ne_zero hα c u) w]
   simp [measureReal_def]
 
@@ -389,7 +389,7 @@ theorem listener_antonym (hα : 0 ≤ α) (c : Option Comparison) (u : Utterance
     (σ : Finset.Icc (-4 : ℤ) 4) :
     listener c α cost u.antonym {(w.reflect, negate σ)} =
       listener c α (cost ∘ Utterance.antonym) u {(w, σ)} :=
-  RSA.pragmaticListener_apply_singleton_of_equiv
+  posterior_apply_singleton_of_equiv _ _
     (World.reflect_involutive.toPerm.prodCongr negate_involutive.toPerm)
     (fun p ↦ by
       rw [Equiv.prodCongr_apply, Prod.map, prior_prod_count_singleton,
@@ -533,8 +533,8 @@ private theorem listener_positive_recentre (hα : 0 < α) (m m' : Finset.Icc (5 
   have hu := comp_familySpeaker_ne_zero (cost := cost) hα.le none u
   rw [Measure.fst_apply_singleton, Measure.fst_apply_singleton]
   refine Finset.sum_congr rfl fun σ _ ↦ ?_
-  rw [listener, RSA.pragmaticListener_apply_singleton hu,
-    RSA.pragmaticListener_apply_singleton hu, prior_prod_count_singleton,
+  rw [listener, posterior_apply_singleton _ _ hu,
+    posterior_apply_singleton _ _ hu, prior_prod_count_singleton,
     prior_prod_count_singleton, prior_singleton_congr (w' := w) (by simp [World.recentre])]
   congr 2
   exact congrFun (congrArg _ (RSA.speaker_literalListener_dirac_congr hα cost prior
@@ -621,7 +621,7 @@ theorem evaluativity_balances (hα : 0 ≤ α) (c : Option Comparison) :
         simp_rw [mul_assoc]
     _ = ∑ q, (prior.prod Measure.count).real {q} * f q := by
         refine Finset.sum_congr rfl fun q _ ↦ ?_
-        rw [listener, RSA.pragmaticListener, ← Measure.comp_real_singleton, posterior_comp_self]
+        rw [listener, ← Measure.comp_real_singleton, posterior_comp_self]
     _ = 0 := hsym
 
 end Balance

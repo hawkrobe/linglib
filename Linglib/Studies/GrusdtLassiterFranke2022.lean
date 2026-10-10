@@ -17,7 +17,7 @@ that rest on its assertability conditions alone. A state is a probability measur
 that fix the truth of `A` and `C`; an utterance is assertable in a state by the conditions of Table
 1, `P(A ∧ C) ≥ θ` for the conjunction, `P(C) ≥ θ` for the literal, `P(C | A) ≥ θ` for the
 conditional, and `P(C) > 1/2` for *likely C* (`Assertable`); and the vanilla Rational Speech Act
-model of section 2.1, the library's `RSA.speaker` and `RSA.pragmaticListener` at `α = 1` without
+model of section 2.1, the library's `RSA.speaker` and its posterior at `α = 1` without
 costs, runs over the three states of Table 2. Its predictions are derived: the extensions of Table
 2(b), the speaker shares of Table 2(d), and the listener posteriors of Table 2(e), on which hearing
 *if A then C* favors the state where the conditional is the most informative assertable utterance
@@ -82,7 +82,7 @@ inductive Utt
   deriving DecidableEq, Fintype
 
 instance : MeasurableSpace Utt := ⊤
-instance : DiscreteMeasurableSpace Utt := ⟨λ _ => trivial⟩
+instance : DiscreteMeasurableSpace Utt := ⟨fun _ => trivial⟩
 instance : Nonempty Utt := ⟨.likelyC⟩
 
 private theorem sum_Utt {M : Type*} [AddCommMonoid M] (f : Utt → M) :
@@ -151,7 +151,7 @@ inductive State
   deriving DecidableEq, Fintype
 
 instance : MeasurableSpace State := ⊤
-instance : DiscreteMeasurableSpace State := ⟨λ _ => trivial⟩
+instance : DiscreteMeasurableSpace State := ⟨fun _ => trivial⟩
 instance : Nonempty State := ⟨.s1⟩
 
 private theorem sum_State {M : Type*} [AddCommMonoid M] (f : State → M) :
@@ -176,16 +176,16 @@ noncomputable def State.cell : State → Bool × Bool → ℝ≥0
 
 /-- A state as a probability measure on worlds. -/
 noncomputable def State.dist (s : State) : Measure (Bool × Bool) :=
-  Measure.sum λ w => (s.cell w : ℝ≥0∞) • Measure.dirac w
+  Measure.sum fun w => (s.cell w : ℝ≥0∞) • Measure.dirac w
 
 theorem State.dist_finset (s : State) (E : Finset (Bool × Bool)) :
     s.dist ↑E = ∑ w ∈ E, (s.cell w : ℝ≥0∞) := by
   rw [← sum_measure_singleton]
-  exact Finset.sum_congr rfl λ w _ => Measure.sum_smul_dirac_singleton
+  exact Finset.sum_congr rfl fun w _ => Measure.sum_smul_dirac_singleton
 
 theorem State.dist_real_finset (s : State) (E : Finset (Bool × Bool)) :
     s.dist.real ↑E = ∑ w ∈ E, (s.cell w : ℝ) := by
-  rw [measureReal_def, State.dist_finset, ENNReal.toReal_sum λ _ _ => ENNReal.coe_ne_top]
+  rw [measureReal_def, State.dist_finset, ENNReal.toReal_sum fun _ _ => ENNReal.coe_ne_top]
   simp only [ENNReal.coe_toReal]
 
 theorem State.sum_cell (s : State) : ∑ w, s.cell w = 1 := by
@@ -234,8 +234,8 @@ theorem ext_conjAC : ext .conjAC = ∅ := by
 
 The vanilla model at `α = 1` without costs, against the uniform prior over the three states:
 the literal listener conditions the prior on the extension, the speaker is `RSA.speaker`, and
-the pragmatic listener is `RSA.pragmaticListener`. *A and C*, assertable in no state, has the
-zero measure as its literal listener and drops out of the competition. -/
+the pragmatic listener is the posterior of the speaker against the prior. *A and C*, assertable
+in no state, has the zero measure as its literal listener and drops out of the competition. -/
 
 /-- The uniform prior over the three states. -/
 noncomputable def prior : Measure State := uniformOn Set.univ
@@ -301,7 +301,7 @@ instance : IsFiniteKernel S1 := inferInstanceAs (IsFiniteKernel (speaker _ _ _ M
 theorem S1_real (s : State) (u : Utt) :
     (S1 s).real {u} = (L0 u).real {s} / ∑ u', (L0 u').real {s} := by
   simp only [S1, measureReal_def, speaker_dirac_zero_apply_singleton, ENNReal.rpow_one]
-  rw [ENNReal.toReal_div, ENNReal.toReal_sum λ u' _ => L0_ne_top u' s]
+  rw [ENNReal.toReal_div, ENNReal.toReal_sum fun u' _ => L0_ne_top u' s]
 
 /-- In `s1` the speaker says `C` with share `6/11`, the conditional `3/11`, and *likely C*
 `2/11` (Table 2(d)). -/
@@ -347,10 +347,10 @@ theorem S1_s3_C : (S1 .s3).real {.C} = 0 := by
 /-! ### The pragmatic listener, Table 2(e) -/
 
 /-- The pragmatic listener of Table 2(e) is the posterior of `S1` against the uniform prior. -/
-noncomputable def L1 : Kernel Utt State := pragmaticListener (speaker 1 0 L0 Measure.dirac) prior
+noncomputable def L1 : Kernel Utt State := ((speaker 1 0 L0 Measure.dirac)†prior)
 
 private theorem S1_ne_zero {s : State} {u : Utt} (h : (S1 s).real {u} ≠ 0) : S1 s {u} ≠ 0 :=
-  λ h0 => h (by rw [measureReal_def, h0, ENNReal.toReal_zero])
+  fun h0 => h (by rw [measureReal_def, h0, ENNReal.toReal_zero])
 
 theorem comp_conditional_ne_zero : (S1 ∘ₘ prior) {Utt.conditional} ≠ 0 :=
   comp_apply_singleton_ne_zero S1 prior (w := .s2) (by rw [prior_singleton]; norm_num)

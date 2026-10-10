@@ -115,7 +115,7 @@ def Msg.IsDisjunction : Msg → Prop
   | .AorB | .AorX | .BorX | .AorBorX => True
   | _ => False
 
-instance : DecidablePred Msg.IsDisjunction := λ m => by
+instance : DecidablePred Msg.IsDisjunction := fun m => by
   cases m <;> unfold Msg.IsDisjunction <;> infer_instance
 
 /-- The lexica (13) are the base lexicon reading *X* as the general term over the first two
@@ -149,7 +149,7 @@ def atomDen (l : Lex) : Msg → Finset Atom
 /-- In the join-closed state space, a message is true of the states all of whose atoms it
 denotes. -/
 def sem (l : Lex) (m : Msg) : Finset World :=
-  Finset.univ.filter λ w => w.atoms ⊆ atomDen l m
+  Finset.univ.filter fun w => w.atoms ⊆ atomDen l m
 
 /-- Under the exclusivized lexicon *A* and *X* are disjoint, the Hurford rescue; under the
 synonym lexicon *A or X* is *A*, the Hurford violation; and under the exclusivized lexicon the
@@ -197,22 +197,22 @@ instance (l : Lex) : IsFiniteKernel (S1 α c l) := inferInstanceAs (IsFiniteKern
 /-- The fixed-lexicon pragmatic listener (12) is the speaker's Bayesian inverse at a flat
 prior. -/
 noncomputable def l1 (l : Lex) : Kernel Msg World :=
-  pragmaticListener (S1 α c l) (uniformOn Set.univ)
+  ((S1 α c l)†(uniformOn Set.univ))
 
 instance (l : Lex) : IsMarkovKernel (l1 α c l) :=
-  inferInstanceAs (IsMarkovKernel (pragmaticListener _ _))
+  inferInstanceAs (IsMarkovKernel ((_†_)))
 
 /-- The lexical-uncertainty listener (14) at k = 1 is the joint posterior over states and lexica
 against a flat prior, the substrate's family listener. -/
 noncomputable def L1 : Kernel Msg (World × Lex) :=
-  pragmaticListener (familySpeaker L0 α (cost c · / α)) (uniformOn Set.univ)
+  ((familySpeaker L0 α (cost c · / α))†(uniformOn Set.univ))
 
-instance : IsMarkovKernel (L1 α c) := inferInstanceAs (IsMarkovKernel (pragmaticListener _ _))
+instance : IsMarkovKernel (L1 α c) := inferInstanceAs (IsMarkovKernel ((_†_)))
 
 /-- The expertise speaker (15) at k = 2 weighs the fixed-lexicon listener's mass at the state
 to the rationality, the lexicon posterior to the lexicon weight, and the cost. -/
 noncomputable def S2 : Kernel (World × Lex) Msg :=
-  Kernel.ofWeights λ p m => l1 α c p.2 m {p.1} ^ α * (L1 α c m).snd {p.2} ^ β *
+  Kernel.ofWeights fun p m => l1 α c p.2 m {p.1} ^ α * (L1 α c m).snd {p.2} ^ β *
     ENNReal.ofReal (Real.exp (-cost c m))
 
 instance : IsFiniteKernel (S2 α β c) := inferInstanceAs (IsFiniteKernel (Kernel.ofWeights _))
@@ -222,7 +222,7 @@ noncomputable def L2 : Kernel Msg (World × Lex) := (S2 α β c)†(uniformOn Se
 
 /-- The marginal expertise speaker (17) at a flat lexicon prior. -/
 noncomputable def S2exp : Kernel World Msg :=
-  Kernel.mixture (λ _ : Lex => 3⁻¹) λ l => (S2 α β c).comap (·, l) (measurable_of_countable _)
+  Kernel.mixture (fun _ : Lex => 3⁻¹) fun l => (S2 α β c).comap (·, l) (measurable_of_countable _)
 
 end Tower
 
@@ -241,7 +241,7 @@ theorem S1_ne_zero_iff (l : Lex) (w : World) (m : Msg) : S1 α c l w {m} ≠ 0 �
 there. -/
 theorem l1_ne_zero_iff (l : Lex) (m : Msg) (w : World) : l1 α c l m {w} ≠ 0 ↔ w ∈ sem l m := by
   obtain ⟨w₀, h₀⟩ := sem_nonempty l m
-  rw [l1, pragmaticListener_apply_singleton_ne_zero_iff (comp_apply_singleton_ne_zero _ _
+  rw [l1, posterior_apply_singleton_ne_zero_iff _ _ (comp_apply_singleton_ne_zero _ _
       (uniformOn_univ_singleton_ne_zero w₀) ((S1_ne_zero_iff hα l w₀ m).2 h₀)),
     and_iff_right (uniformOn_univ_singleton_ne_zero w)]
   exact S1_ne_zero_iff hα l w m
@@ -250,7 +250,7 @@ theorem l1_ne_zero_iff (l : Lex) (m : Msg) (w : World) : l1 α c l m {w} ≠ 0 �
 at the state under the lexicon. -/
 theorem L1_ne_zero_iff (m : Msg) (p : World × Lex) : L1 α c m {p} ≠ 0 ↔ p.1 ∈ sem p.2 m := by
   obtain ⟨w₀, h₀⟩ := sem_nonempty p.2 m
-  rw [L1, pragmaticListener_apply_singleton_ne_zero_iff
+  rw [L1, posterior_apply_singleton_ne_zero_iff _ _
     (comp_familySpeaker_ne_zero (uniformOn_univ_singleton_ne_zero (w₀, p.2))
       ((S1_ne_zero_iff hα p.2 w₀ m).2 h₀)),
     and_iff_right (uniformOn_univ_singleton_ne_zero p), familySpeaker_apply]
@@ -260,7 +260,7 @@ theorem L1_ne_zero_iff (m : Msg) (p : World × Lex) : L1 α c m {p} ≠ 0 ↔ p.
 theorem L1_snd_ne_zero (m : Msg) (l : Lex) : (L1 α c m).snd {l} ≠ 0 := by
   obtain ⟨w₀, h₀⟩ := sem_nonempty l m
   rw [Measure.snd_apply_singleton]
-  exact λ h => (L1_ne_zero_iff hα m (w₀, l)).2 h₀
+  exact fun h => (L1_ne_zero_iff hα m (w₀, l)).2 h₀
     (Finset.sum_eq_zero_iff.1 h w₀ (Finset.mem_univ _))
 
 /-- State preference of the fixed-lexicon listener is the speaker's preference. -/
@@ -268,7 +268,7 @@ theorem l1_real_lt_iff (l : Lex) (m : Msg) (v v' : World) :
     (l1 α c l m).real {v} < (l1 α c l m).real {v'} ↔
       (S1 α c l v).real {m} < (S1 α c l v').real {m} :=
   let ⟨w₀, h₀⟩ := sem_nonempty l m
-  pragmaticListener_real_lt_iff
+  posterior_real_singleton_lt_iff_of_forall_eq _ _
     uniformOn_univ_singleton_eq uniformOn_univ_singleton_ne_zero
     ((S1_ne_zero_iff hα l w₀ m).2 h₀)
 
@@ -277,7 +277,7 @@ theorem L1_fst_real_lt_iff (m : Msg) (v v' : World) :
     (L1 α c m).fst.real {v} < (L1 α c m).fst.real {v'} ↔
       ∑ l, (S1 α c l v).real {m} < ∑ l, (S1 α c l v').real {m} := by
   obtain ⟨w₀, h₀⟩ := sem_nonempty .base m
-  rw [L1, pragmaticListener_fst_real_lt_iff (p₀ := (w₀, .base)) uniformOn_univ_singleton_eq
+  rw [L1, posterior_fst_real_lt_iff_of_forall_eq _ _ (p₀ := (w₀, .base)) uniformOn_univ_singleton_eq
     uniformOn_univ_singleton_ne_zero ((S1_ne_zero_iff (c := c) hα .base w₀ m).2 h₀)]
   rfl
 
@@ -286,7 +286,7 @@ theorem L1_snd_real_lt_iff (m : Msg) (l₁ l₂ : Lex) :
     (L1 α c m).snd.real {l₁} < (L1 α c m).snd.real {l₂} ↔
       ∑ w, (S1 α c l₁ w).real {m} < ∑ w, (S1 α c l₂ w).real {m} := by
   obtain ⟨w₀, h₀⟩ := sem_nonempty .base m
-  rw [L1, pragmaticListener_snd_real_lt_iff (p₀ := (w₀, .base)) uniformOn_univ_singleton_eq
+  rw [L1, posterior_snd_real_lt_iff_of_forall_eq _ _ (p₀ := (w₀, .base)) uniformOn_univ_singleton_eq
     uniformOn_univ_singleton_ne_zero ((S1_ne_zero_iff (c := c) hα .base w₀ m).2 h₀)]
   rfl
 
@@ -295,12 +295,12 @@ state over its shares at every state. -/
 theorem l1_real (l : Lex) (m : Msg) (w : World) :
     (l1 α c l m).real {w} = (S1 α c l w).real {m} / ∑ w', (S1 α c l w').real {m} := by
   obtain ⟨w₀, h₀⟩ := sem_nonempty l m
-  have hx : ∑ w', S1 α c l w' {m} ≠ 0 := λ h =>
+  have hx : ∑ w', S1 α c l w' {m} ≠ 0 := fun h =>
     (S1_ne_zero_iff hα l w₀ m).2 h₀ (Finset.sum_eq_zero_iff.1 h w₀ (Finset.mem_univ _))
   simp only [measureReal_def]
   rw [show l1 α c l = (S1 α c l)†(uniformOn Set.univ) from rfl,
     posterior_uniformOn_univ_apply_singleton _ hx w, ENNReal.toReal_div,
-    ENNReal.toReal_sum λ _ _ => measure_ne_top _ _]
+    ENNReal.toReal_sum fun _ _ => measure_ne_top _ _]
 
 /-- On reals, the lexicon posterior is the lexicon's speakers' shares of the message pooled over
 states, over the shares of every state–lexicon pair. -/
@@ -312,7 +312,7 @@ theorem L1_snd_real (m : Msg) (l : Lex) :
       (familySpeaker L0 α (cost c · / α) ∘ₘ uniformOn (Set.univ : Set (World × Lex))) {m} ≠ 0 :=
     comp_familySpeaker_ne_zero (uniformOn_univ_singleton_ne_zero (w₀, l))
       ((S1_ne_zero_iff hα l w₀ m).2 h₀)
-  rw [L1, pragmaticListener, posterior_snd_real_singleton _ _ hx l, Measure.comp_real_singleton]
+  rw [L1, posterior_snd_real_singleton _ _ hx l, Measure.comp_real_singleton]
   simp only [uniformOn_univ_real_singleton, familySpeaker_apply]
   rw [← Finset.mul_sum, ← Finset.mul_sum, mul_div_mul_left _ _ (by positivity)]
   rfl
@@ -338,7 +338,7 @@ rationality times the cost factor, over the weights of every message. -/
 theorem S1_real {α : ℝ} (hα : 0 < α) (c : ℝ) (l : Lex) (w : World) (m : Msg) :
     (S1 α c l w).real {m}
       = l0r l m w ^ α * costFactor c m / ∑ m', l0r l m' w ^ α * costFactor c m' := by
-  have h : ∀ m, α * (cost c m / α) = cost c m := λ m => mul_div_cancel₀ _ hα.ne'
+  have h : ∀ m, α * (cost c m / α) = cost c m := fun m => mul_div_cancel₀ _ hα.ne'
   rw [S1, speaker_dirac_real_singleton hα.le]
   simp only [L0_rpow_toReal hα, h, costFactor]
 
@@ -370,10 +370,10 @@ theorem S2_real_lt_iff (p : World × Lex) (m₁ m₂ : Msg) :
         < (l1 α c p.2 m₂).real {p.1} ^ α * (L1 α c m₂).snd.real {p.2} ^ β * costFactor c m₂ := by
   have hnull : ∀ p : World × Lex, p.1 ∈ sem p.2 .null := by decide
   have h0 : ∑ m, l1 α c p.2 m {p.1} ^ α * (L1 α c m).snd {p.2} ^ β *
-      ENNReal.ofReal (Real.exp (-cost c m)) ≠ 0 := λ h =>
+      ENNReal.ofReal (Real.exp (-cost c m)) ≠ 0 := fun h =>
     S2_weight_ne_zero hα (hnull p) (Finset.sum_eq_zero_iff.1 h .null (Finset.mem_univ _))
   rw [S2, Kernel.ofWeights_real_singleton_lt_iff _ h0
-    (ENNReal.sum_ne_top.2 λ m _ => S2_weight_ne_top hα hβ p m),
+    (ENNReal.sum_ne_top.2 fun m _ => S2_weight_ne_top hα hβ p m),
     ← ENNReal.toReal_lt_toReal (S2_weight_ne_top hα hβ p m₁) (S2_weight_ne_top hα hβ p m₂)]
   simp only [ENNReal.toReal_mul, ← ENNReal.toReal_rpow, measureReal_def,
     ENNReal.toReal_ofReal (Real.exp_pos _).le, costFactor]
@@ -416,19 +416,19 @@ def Lex.equivFin : Lex ≃ Fin 3 where
 
 theorem World.sum_univ {M : Type*} [AddCommMonoid M] (f : World → M) :
     ∑ w, f w = f .w₁ + f .w₂ + f .w₃ + f .w₁₂ + f .w₁₃ + f .w₂₃ + f .w₁₂₃ := by
-  rw [Fintype.sum_equiv World.equivFin f (f ∘ World.equivFin.symm) λ w => by simp,
+  rw [Fintype.sum_equiv World.equivFin f (f ∘ World.equivFin.symm) fun w => by simp,
     Fin.sum_univ_seven]
   rfl
 
 theorem Msg.sum_univ {M : Type*} [AddCommMonoid M] (f : Msg → M) :
     ∑ m, f m = f .A + f .B + f .X + f .AorB + f .AorX + f .BorX + f .AorBorX + f .null := by
-  rw [Fintype.sum_equiv Msg.equivFin f (f ∘ Msg.equivFin.symm) λ m => by simp,
+  rw [Fintype.sum_equiv Msg.equivFin f (f ∘ Msg.equivFin.symm) fun m => by simp,
     Fin.sum_univ_eight]
   rfl
 
 theorem Lex.sum_univ {M : Type*} [AddCommMonoid M] (f : Lex → M) :
     ∑ l, f l = f .base + f .excl + f .syn := by
-  rw [Fintype.sum_equiv Lex.equivFin f (f ∘ Lex.equivFin.symm) λ l => by simp,
+  rw [Fintype.sum_equiv Lex.equivFin f (f ∘ Lex.equivFin.symm) fun l => by simp,
     Fin.sum_univ_three]
   rfl
 
@@ -560,7 +560,7 @@ the disjunction. -/
 theorem s2exp_uncertain : S2exp 2 1 c .w₁₂ {.A} = 0 ∧ S2exp 2 1 c .w₁₂ {.AorX} ≠ 0 := by
   refine ⟨?_, ?_⟩
   · rw [S2exp, Kernel.mixture_apply']
-    exact Finset.sum_eq_zero λ l _ => by
+    exact Finset.sum_eq_zero fun l _ => by
       rw [Kernel.comap_apply', S2_apply_eq_zero two_pos (by cases l <;> decide), mul_zero]
   · rw [S2exp, Kernel.mixture_apply_ne_zero_iff]
     exact ⟨.excl, by simp, by

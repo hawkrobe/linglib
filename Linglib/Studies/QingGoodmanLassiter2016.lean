@@ -30,7 +30,7 @@ paper discusses, with the common-ground prior of (8) as one instance (`now_cg_mo
 The literal listener is `RSA.projListener` of the literal listener at counting measure on the
 context set, the speaker `RSA.speaker` with the utterance prior entering as the cost
 `-log Pr(u) / α`, since (3) multiplies by the prior outside the rationality, and the joint
-listener `RSA.pragmaticListener` of `RSA.familySpeaker`, with the context set as the state-side
+listener the posterior of `RSA.familySpeaker`, with the context set as the state-side
 latent; the pair prior puts the actual world in the context set, as the paper's figures do.
 Speaker shares are evaluated cell by cell from the tables of the literal listener's counts, which
 `decide` certifies. The common-ground prior carries the paper's observation probability of
@@ -60,7 +60,7 @@ inductive World
   deriving DecidableEq, Fintype, Repr, Inhabited
 
 instance : MeasurableSpace World := ⊤
-instance : DiscreteMeasurableSpace World := ⟨λ _ => trivial⟩
+instance : DiscreteMeasurableSpace World := ⟨fun _ => trivial⟩
 instance : MeasurableSingletonClass World := DiscreteMeasurableSpace.toMeasurableSingletonClass
 
 /-- John smoked in the past. -/
@@ -104,7 +104,7 @@ inductive Utterance
   deriving DecidableEq, Fintype, Repr, Inhabited
 
 instance : MeasurableSpace Utterance := ⊤
-instance : DiscreteMeasurableSpace Utterance := ⟨λ _ => trivial⟩
+instance : DiscreteMeasurableSpace Utterance := ⟨fun _ => trivial⟩
 instance : MeasurableSingletonClass Utterance :=
   DiscreteMeasurableSpace.toMeasurableSingletonClass
 
@@ -147,7 +147,7 @@ theorem QUD.cell_preimage (q : QUD) (w : World) : q.cell ⁻¹' {q.cell w} = ↑
 /-! ### Context sets -/
 
 instance : MeasurableSpace (Finset World) := ⊤
-instance : DiscreteMeasurableSpace (Finset World) := ⟨λ _ => trivial⟩
+instance : DiscreteMeasurableSpace (Finset World) := ⟨fun _ => trivial⟩
 instance : MeasurableSingletonClass (Finset World) :=
   DiscreteMeasurableSpace.toMeasurableSingletonClass
 
@@ -212,7 +212,7 @@ noncomputable def speaker (q : QUD) (C : Finset World) (α : ℝ) : Kernel World
 
 /-- The prior over context sets determined by a weighting. -/
 noncomputable def ctxPrior (π : Finset World → ℕ) : Measure (Finset World) :=
-  Measure.count.withDensity λ C => (π C : ℝ≥0∞)
+  Measure.count.withDensity fun C => (π C : ℝ≥0∞)
 
 theorem ctxPrior_singleton (π : Finset World → ℕ) (C : Finset World) :
     ctxPrior π {C} = π C := by
@@ -223,7 +223,7 @@ instance (π : Finset World → ℕ) : IsFiniteMeasure (ctxPrior π) :=
   ⟨by
     rw [ctxPrior, withDensity_apply _ MeasurableSet.univ, Measure.restrict_univ, lintegral_count,
       tsum_fintype]
-    exact ENNReal.sum_lt_top.mpr λ C _ => ENNReal.natCast_lt_top _⟩
+    exact ENNReal.sum_lt_top.mpr fun C _ => ENNReal.natCast_lt_top _⟩
 
 /-- The pair prior weighs a world with a context set containing it by the context prior; the
 paper's uniform world prior cancels. -/
@@ -247,7 +247,7 @@ instance (π : Finset World → ℕ) : IsFiniteMeasure (pairPrior π) :=
 /-- The joint listener (7) is the family listener over context sets. -/
 noncomputable def listener (q : QUD) (π : Finset World → ℕ) (α : ℝ) :
     Kernel Utterance (World × Finset World) :=
-  pragmaticListener (familySpeaker (λ C => L0 C q) α (cost α)) (pairPrior π)
+  ((familySpeaker (fun C => L0 C q) α (cost α))†(pairPrior π))
 
 /-- The common-ground prior (8) takes the paper's observation probability `0.4` and `5%`
 noise, scaled by `14700`, over the universe, the four single observations, the four pairs, and
@@ -634,10 +634,10 @@ private theorem speaker_pastT_ne_zero (q : QUD) {α : ℝ} (hα : 0 < α) :
 
 private theorem comp_ne_zero (q : QUD) (π : Finset World → ℕ) (hπ : π pastT ≠ 0) {α : ℝ}
     (hα : 0 < α) :
-    (familySpeaker (λ C => L0 C q) α (cost α) ∘ₘ pairPrior π) {notStopped} ≠ 0 := by
+    (familySpeaker (fun C => L0 C q) α (cost α) ∘ₘ pairPrior π) {notStopped} ≠ 0 := by
   have hμ : pairPrior π {(World.TT, pastT)} ≠ 0 := by
     rw [pairPrior_singleton, ite_eq_left (by decide)]; exact_mod_cast hπ
-  have h := comp_familySpeaker_ne_zero (L := λ C => L0 C q) (α := α) (C := cost α)
+  have h := comp_familySpeaker_ne_zero (L := fun C => L0 C q) (α := α) (C := cost α)
     (μ := pairPrior π) (w := .TT) (l := pastT) (u := notStopped) hμ (speaker_pastT_ne_zero q hα)
   exact h
 
@@ -646,7 +646,7 @@ private theorem listener_lt_iff (q : QUD) (π : Finset World → ℕ) (hπ : π 
     (hα : 0 < α) (w₁ w₂ : World) (C₁ C₂ : Finset World) (h₁ : w₁ ∈ C₁) (h₂ : w₂ ∈ C₂) :
     (listener q π α notStopped).real {(w₁, C₁)} < (listener q π α notStopped).real {(w₂, C₂)}
       ↔ (π C₁ : ℝ) * share q C₁ w₁ α < π C₂ * share q C₂ w₂ α := by
-  have h := pragmaticListener_real_finset_lt_iff (S := familySpeaker (λ C => L0 C q) α (cost α))
+  have h := posterior_real_finset_lt_iff (familySpeaker (fun C ↦ L0 C q) α (cost α)) _
     (comp_ne_zero q π hπ hα) {(w₁, C₁)} {(w₂, C₂)}
   simp only [Finset.coe_singleton, Finset.sum_singleton, pairPrior_real π _ _ h₁,
     pairPrior_real π _ _ h₂] at h
@@ -660,8 +660,8 @@ private theorem listener_eq (q : QUD) (π : Finset World → ℕ) (hπ : π past
     (hshare : RSA.speaker α (cost α) (L0 C₁ q) Measure.dirac w₁ {notStopped}
       = RSA.speaker α (cost α) (L0 C₂ q) Measure.dirac w₂ {notStopped}) :
     listener q π α notStopped {(w₁, C₁)} = listener q π α notStopped {(w₂, C₂)} := by
-  rw [listener, pragmaticListener,
-    posterior_apply_singleton_congr (κ := familySpeaker (λ C => L0 C q) α (cost α))
+  rw [listener,
+    posterior_apply_singleton_congr (κ := familySpeaker (fun C => L0 C q) α (cost α))
       (μ := pairPrior π) (comp_ne_zero q π hπ hα) (by simpa using hshare) hprior]
 
 
@@ -670,8 +670,7 @@ private theorem listener_eq (q : QUD) (π : Finset World → ℕ) (hπ : π past
 /-- The standard listener is the pragmatic listener over the universe with a uniform world
 prior, the first column of Table 2. -/
 noncomputable def standard (α : ℝ) : Kernel Utterance World :=
-  pragmaticListener (RSA.speaker α (cost α) (L0 Finset.univ .max) Measure.dirac)
-    (uniformOn Set.univ)
+  ((RSA.speaker α (cost α) (L0 Finset.univ .max) Measure.dirac)†(uniformOn Set.univ))
 
 private theorem speaker_univ_ne_zero {α : ℝ} (hα : 0 < α) :
     RSA.speaker α (cost α) (L0 Finset.univ .max) Measure.dirac .TT {notStopped} ≠ 0 :=
@@ -688,11 +687,11 @@ theorem standard_uniform {α : ℝ} (hα : 0 < α) :
     (speaker_univ_ne_zero hα)
   obtain ⟨h₁, h₂⟩ := share_IJK hα
   refine ⟨?_, ?_⟩
-  · rw [standard, pragmaticListener]
+  · rw [standard]
     exact posterior_apply_singleton_congr _ _ hu
       ((ENNReal.toReal_eq_toReal_iff' (measure_ne_top _ _) (measure_ne_top _ _)).1 h₁)
       (uniformOn_univ_singleton_eq _ _)
-  · rw [standard, pragmaticListener]
+  · rw [standard]
     exact posterior_apply_singleton_congr _ _ hu
       ((ENNReal.toReal_eq_toReal_iff' (measure_ne_top _ _) (measure_ne_top _ _)).1 h₂)
       (uniformOn_univ_singleton_eq _ _)
@@ -703,8 +702,8 @@ theorem standard_uniform {α : ℝ} (hα : 0 < α) :
 context set that he smoked ties with the world in which he never smoked taken with the context
 set that he does not smoke, since *did not stop smoking* identifies the world within either. -/
 theorem uniform_tie {α : ℝ} (hα : 0 < α) :
-    listener .max (λ _ => 1) α notStopped {(.TT, pastT)}
-      = listener .max (λ _ => 1) α notStopped {(.FF, nowF)} :=
+    listener .max (fun _ => 1) α notStopped {(.TT, pastT)}
+      = listener .max (fun _ => 1) α notStopped {(.FF, nowF)} :=
   listener_eq .max _ one_ne_zero hα _ _ _ _
     (by rw [pairPrior_singleton, pairPrior_singleton, ite_eq_left (by decide),
       ite_eq_left (by decide)])
@@ -717,8 +716,8 @@ private theorem half_rpow_lt_one {α : ℝ} (hα : 0 < α) : (1 / 2 : ℝ) ^ α 
 /-- The changed world with the *change* context set trails, since *did not stop smoking*
 identifies it there too, but against more informative competitors. -/
 theorem uniform_change_lt {α : ℝ} (hα : 0 < α) :
-    (listener .max (λ _ => 1) α notStopped).real {(.FT, change)}
-      < (listener .max (λ _ => 1) α notStopped).real {(.TT, pastT)} := by
+    (listener .max (fun _ => 1) α notStopped).real {(.FT, change)}
+      < (listener .max (fun _ => 1) α notStopped).real {(.TT, pastT)} := by
   rw [listener_lt_iff .max _ one_ne_zero hα _ _ _ _ (by decide) (by decide), share_H hα,
     share_F hα]
   have hx := half_rpow_lt_one hα

@@ -64,7 +64,7 @@ domain `TrinhHaida2015.run_smoke_isDomain`. The examples are the rows of `Exampl
 ## TODO
 
 * Section 5.1.2's argument that alternatives of equal cost and equal relative informativity
-  leave the listener undecided is an invariance of `RSA.pragmaticListener` under an involution
+  leave the listener undecided is an invariance of the posterior under an involution
   of worlds and utterances that preserves meaning and cost and fixes the assertion; the paper's
   hypothetical of a *just some* no costlier than *all* and its cases (54)–(58) await that
   theorem.

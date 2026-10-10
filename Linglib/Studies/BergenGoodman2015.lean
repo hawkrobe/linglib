@@ -226,10 +226,10 @@ variable [MeasurableSingletonClass U] [Fintype W] [MeasurableSingletonClass W]
   [StandardBorelSpace W] [Nonempty W]
 
 /-- Without noise the pragmatic listener over the channel is the noiseless one. -/
-theorem pragmaticListener_id_comp_noisySpeaker (α : ℝ) (C : U → ℝ) (L : Kernel U W)
+theorem posterior_id_comp_noisySpeaker (α : ℝ) (C : U → ℝ) (L : Kernel U W)
     [IsFiniteKernel L] (μ : Measure W) [IsFiniteMeasure μ] :
-    pragmaticListener (Kernel.id ∘ₖ noisySpeaker Kernel.id α C L) μ =
-      pragmaticListener (speaker α C L Measure.dirac) μ := by
+    ((Kernel.id ∘ₖ noisySpeaker Kernel.id α C L)†μ) =
+      ((speaker α C L Measure.dirac)†μ) := by
   simp only [noisySpeaker_id, Kernel.id_comp]
 
 end Listener
@@ -300,7 +300,7 @@ noncomputable abbrev S1 (δ : ℝ) : Kernel Meaning Meaning := noisySpeaker (N �
 
 /-- The pragmatic listener (eq. 8). -/
 noncomputable abbrev L1 (δ : ℝ) : Kernel Utterance Meaning :=
-  pragmaticListener (N δ ∘ₖ noisySpeaker (N δ) 1 0 (L0 δ)) μ
+  ((N δ ∘ₖ noisySpeaker (N δ) 1 0 (L0 δ))†μ)
 
 variable {δ : ℝ} (m : Meaning)
 

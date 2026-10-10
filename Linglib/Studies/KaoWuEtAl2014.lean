@@ -162,7 +162,7 @@ instance (μ : Measure Meaning) (c : ℝ) : IsFiniteKernel (S1 μ c) :=
 the meaning prior and the goal prior; its first marginal is the meaning listener. -/
 noncomputable def L1 (μ : Measure Meaning) [IsProbabilityMeasure μ] (ν : Measure Goal)
     [IsProbabilityMeasure ν] (c : ℝ) : Kernel Price (Meaning × Goal) :=
-  pragmaticListener (S1 μ c) (μ.prod ν)
+  ((S1 μ c)†(μ.prod ν))
 
 section Support
 
@@ -205,7 +205,7 @@ which the utterance is literally true. -/
 theorem listener_ne_zero_iff {u : Price} (hu : (S1 μ c ∘ₘ μ.prod ν) {u} ≠ 0) (m : Meaning) :
     (L1 μ ν c u).fst {m} ≠ 0
       ↔ μ {m} ≠ 0 ∧ ∃ g, ν {g} ≠ 0 ∧ ∃ m', project g m' = project g m ∧ m'.1 = u ∧ μ {m'} ≠ 0 := by
-  rw [L1, pragmaticListener_fst_apply_singleton_ne_zero_iff hu]
+  rw [L1, posterior_fst_apply_singleton_ne_zero_iff _ _ hu]
   simp only [← S1_apply_singleton_ne_zero_iff μ c, S1, ← Set.singleton_prod_singleton,
     Measure.prod_prod, mul_ne_zero_iff]
   exact ⟨fun ⟨g, ⟨hm, hg⟩, hs⟩ ↦ ⟨hm, g, hg, hs⟩, fun ⟨hm, g, hg, hs⟩ ↦ ⟨g, ⟨hm, hg⟩, hs⟩⟩

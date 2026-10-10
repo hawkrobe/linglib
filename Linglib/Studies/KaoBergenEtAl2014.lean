@@ -49,7 +49,7 @@ inductive Cat
   deriving DecidableEq, Repr, Fintype
 
 instance : MeasurableSpace Cat := ⊤
-instance : DiscreteMeasurableSpace Cat := ⟨λ _ => trivial⟩
+instance : DiscreteMeasurableSpace Cat := ⟨fun _ => trivial⟩
 instance : Nonempty Cat := ⟨.person⟩
 
 /-- The three features of the paper's example, each present or absent. -/
@@ -64,7 +64,7 @@ inductive Goal
   deriving DecidableEq, Repr, Fintype
 
 instance : MeasurableSpace Goal := ⊤
-instance : DiscreteMeasurableSpace Goal := ⟨λ _ => trivial⟩
+instance : DiscreteMeasurableSpace Goal := ⟨fun _ => trivial⟩
 instance : Nonempty Goal := ⟨.f₁⟩
 
 /-- The value of the goal's feature. -/
@@ -93,10 +93,10 @@ theorem L0_apply_singleton_ne_zero_iff (μ : Measure Meaning) [IsFiniteMeasure �
     (m : Meaning) : L0 μ u {m} ≠ 0 ↔ m.1 = u ∧ μ {m} ≠ 0 := by
   by_cases h : m ∈ sem u
   · rw [L0, literalListener_apply_singleton μ sem h]
-    exact ⟨λ h' => ⟨h, (mul_ne_zero_iff.mp h').2⟩,
-      λ h' => mul_ne_zero (ENNReal.inv_ne_zero.mpr (measure_ne_top _ _)) h'.2⟩
+    exact ⟨fun h' => ⟨h, (mul_ne_zero_iff.mp h').2⟩,
+      fun h' => mul_ne_zero (ENNReal.inv_ne_zero.mpr (measure_ne_top _ _)) h'.2⟩
   · rw [L0, literalListener_apply_singleton_of_notMem μ sem h]
-    exact iff_of_false (λ h' => h' rfl) (λ h' => h h'.1)
+    exact iff_of_false (fun h' => h' rfl) (fun h' => h h'.1)
 
 /-- The probability that the goal's feature has value `b` in a member of category `u`. -/
 noncomputable def featureProb (μ : Measure Meaning) (u : Cat) (g : Goal) (b : Bool) : ℝ≥0∞ :=
@@ -121,7 +121,7 @@ instance (μ : Measure Meaning) (α : ℝ) : IsFiniteKernel (S1 μ α) :=
 the meaning prior and the goal prior; its first marginal is the meaning listener. -/
 noncomputable def L1 (μ : Measure Meaning) [IsProbabilityMeasure μ] (ν : Measure Goal)
     [IsProbabilityMeasure ν] (α : ℝ) : Kernel Cat (Meaning × Goal) :=
-  pragmaticListener (S1 μ α) (μ.prod ν)
+  ((S1 μ α)†(μ.prod ν))
 
 section Speaker
 
@@ -167,7 +167,7 @@ theorem S1_apply_singleton_ne_zero_iff (hα : 0 < α) (g : Goal) (m : Meaning) (
   rw [S1, familySpeaker_apply]
   constructor
   · intro h
-    have hL : projListener project (L0 μ) g u {m} ≠ 0 := λ h' =>
+    have hL : projListener project (L0 μ) g u {m} ≠ 0 := fun h' =>
       h (speaker_dirac_apply_singleton_eq_zero hα h')
     rw [projListener_apply_singleton_ne_zero_iff] at hL
     obtain ⟨m', hm', h0⟩ := hL
@@ -197,10 +197,10 @@ theorem listener_ne_zero_iff (hα : 0 < α) {u : Cat} (hu : (S1 μ α ∘ₘ μ.
     (m : Meaning) :
     (L1 μ ν α u).fst {m} ≠ 0 ↔ μ {m} ≠ 0 ∧
       ∃ g, ν {g} ≠ 0 ∧ ∃ m', g.feature m'.2 = g.feature m.2 ∧ m'.1 = u ∧ μ {m'} ≠ 0 := by
-  rw [L1, pragmaticListener_fst_apply_singleton_ne_zero_iff hu]
+  rw [L1, posterior_fst_apply_singleton_ne_zero_iff _ _ hu]
   simp only [← S1_apply_singleton_ne_zero_iff μ α hα, S1, ← Set.singleton_prod_singleton,
     Measure.prod_prod, mul_ne_zero_iff]
-  exact ⟨λ ⟨g, ⟨hm, hg⟩, hs⟩ => ⟨hm, g, hg, hs⟩, λ ⟨hm, g, hg, hs⟩ => ⟨g, ⟨hm, hg⟩, hs⟩⟩
+  exact ⟨fun ⟨g, ⟨hm, hg⟩, hs⟩ => ⟨hm, g, hg, hs⟩, fun ⟨hm, g, hg, hs⟩ => ⟨g, ⟨hm, hg⟩, hs⟩⟩
 
 /-- A person with the goal's feature value is a possible, nonliteral meaning of the animal's
 name whenever some animal of positive prior shares the value. -/
@@ -216,16 +216,16 @@ posterior odds between the two categories at a feature vector are their prior od
 theorem category_odds {u : Cat} (hu : (S1 μ α ∘ₘ μ.prod ν) {u} ≠ 0) (c c' : Cat)
     (f : Features) :
     (L1 μ ν α u).fst {(c, f)} * μ {(c', f)} = (L1 μ ν α u).fst {(c', f)} * μ {(c, f)} := by
-  have hS : ∀ c g, S1 μ α ((c, f), g) = S1 μ α ((.person, f), g) := λ c g => by
+  have hS : ∀ c g, S1 μ α ((c, f), g) = S1 μ α ((.person, f), g) := fun c g => by
     simp only [S1, familySpeaker_apply, speaker_dirac_eq_ofWeights]
-    exact Kernel.ofWeights_apply_eq_of_mul one_ne_zero ENNReal.one_ne_top λ u => by
+    exact Kernel.ofWeights_apply_eq_of_mul one_ne_zero ENNReal.one_ne_top fun u => by
       simp only [projListener_eq, mul_one]
   have key : ∀ c, (L1 μ ν α u).fst {(c, f)}
       = μ {(c, f)} * ∑ g, ν {g} * (S1 μ α ((.person, f), g) {u} / (S1 μ α ∘ₘ μ.prod ν) {u}) :=
-    λ c => by
+    fun c => by
       rw [L1, Measure.fst_apply_singleton, Finset.mul_sum]
-      refine Finset.sum_congr rfl λ g _ => ?_
-      rw [pragmaticListener_apply_singleton hu, ← Set.singleton_prod_singleton,
+      refine Finset.sum_congr rfl fun g _ => ?_
+      rw [posterior_apply_singleton _ _ hu, ← Set.singleton_prod_singleton,
         Measure.prod_prod, hS c g, mul_div_assoc, mul_assoc]
   rw [key c, key c']
   ring

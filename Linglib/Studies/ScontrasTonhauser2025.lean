@@ -68,7 +68,7 @@ open scoped ENNReal
 namespace ScontrasTonhauser2025
 
 instance : MeasurableSpace (Finset World) := ⊤
-instance : DiscreteMeasurableSpace (Finset World) := ⟨λ _ => trivial⟩
+instance : DiscreteMeasurableSpace (Finset World) := ⟨fun _ => trivial⟩
 
 /-- The utterances of (3) are *Cole knows that C*, *Cole doesn't know that C*, *Cole thinks
 that C*, *Cole doesn't think that C*, *C* and *not C*. -/
@@ -77,12 +77,12 @@ inductive Utt
   deriving DecidableEq, Fintype
 
 instance : MeasurableSpace Utt := ⊤
-instance : DiscreteMeasurableSpace Utt := ⟨λ _ => trivial⟩
+instance : DiscreteMeasurableSpace Utt := ⟨fun _ => trivial⟩
 
 /-- A complex utterance embeds the complement under an attitude verb. -/
 def Utt.Complex (u : Utt) : Prop := u ≠ .cPos ∧ u ≠ .cNeg
 
-instance : DecidablePred Utt.Complex := λ u => inferInstanceAs (Decidable (u ≠ .cPos ∧ u ≠ .cNeg))
+instance : DecidablePred Utt.Complex := fun u => inferInstanceAs (Decidable (u ≠ .cPos ∧ u ≠ .cNeg))
 
 /-! ### Semantics and questions -/
 
@@ -107,7 +107,7 @@ theorem sem_thinkNeg_ssubset_sem_knowNeg : sem .thinkNeg ⊂ sem .knowNeg := by 
 
 /-- The cell of a world under a question holds the worlds giving the same answer. -/
 def cell (q : Question) (w : World) : Finset World :=
-  Finset.univ.filter λ w' => q.answer w' = q.answer w
+  Finset.univ.filter fun w' => q.answer w' = q.answer w
 
 theorem cell_preimage (q : Question) (w : World) : q.answer ⁻¹' {q.answer w} = ↑(cell q w) := by
   ext w'
@@ -151,7 +151,7 @@ theorem L0_knowNeg_eq_thinkNeg {A : Finset World} (hA : A ⊆ sem .cPos) (q : Qu
     constructor <;> rintro ⟨hw, hl⟩ <;> refine ⟨hw, ?_⟩ <;>
       have hc := (Finset.mem_filter.mp (hA hw)).2 <;>
       revert hc hl <;> cases b <;> cases c <;> decide
-  exact Measure.ext_of_singleton λ w => by rw [L0_apply, L0_apply, l0, l0, h]
+  exact Measure.ext_of_singleton fun w => by rw [L0_apply, L0_apply, l0, l0, h]
 
 /-- Under the belief question, a speaker who assumes the complement answers fully with negated
 *know* at a world in which Cole does not believe the complement. -/
@@ -240,7 +240,7 @@ theorem S1_bel_congr (A : Finset World) {w w' : World} (h : w.believes = w'.beli
     S1 α k A .belief w = S1 α k A .belief w' := by
   have hc : cell .belief w = cell .belief w' := by ext; simp [cell, Question.answer, h]
   rw [S1, speaker_dirac_eq_ofWeights]
-  exact Measure.ext_of_singleton λ u => by
+  exact Measure.ext_of_singleton fun u => by
     simp only [Kernel.ofWeights_apply_singleton, L0_apply, l0, hc]
 
 /-! ### The pragmatic listener (7) -/
@@ -270,7 +270,7 @@ instance [IsFiniteMeasure μ] [IsFiniteMeasure ν] : IsFiniteMeasure (pairPrior 
 utterance under a known question. -/
 noncomputable def L1 [IsFiniteMeasure μ] [IsFiniteMeasure ν] (q : Question) :
     Kernel Utt (World × Finset World) :=
-  pragmaticListener (familySpeaker (λ A => L0 A q) α (cost k)) (pairPrior μ ν)
+  ((familySpeaker (fun A => L0 A q) α (cost k))†(pairPrior μ ν))
 
 theorem pairPrior_real [IsFiniteMeasure μ] [IsFiniteMeasure ν] (w : World) (A : Finset World) :
     (pairPrior μ ν).real {(w, A)} = if w ∈ A then μ.real {w} * ν.real {A} else 0 := by
@@ -284,7 +284,7 @@ has a positive marginal. -/
 theorem comp_ne_zero [IsFiniteMeasure μ] [IsFiniteMeasure ν] (hα : 0 ≤ α) (q : Question)
     {u : Utt} {w : World} {A : Finset World} (hw : w ∈ A)
     (hu : w ∈ sem u) (hμ : μ {w} ≠ 0) (hν : ν {A} ≠ 0) :
-    (familySpeaker (λ A => L0 A q) α (cost k) ∘ₘ pairPrior μ ν) {u} ≠ 0 := by
+    (familySpeaker (fun A => L0 A q) α (cost k) ∘ₘ pairPrior μ ν) {u} ≠ 0 := by
   refine comp_familySpeaker_ne_zero (w := w) (l := A) ?_ ?_
   · rw [pairPrior_singleton, ite_eq_left hw]
     exact mul_ne_zero hμ hν
@@ -307,7 +307,7 @@ noncomputable def cWeight (c : Bool) : ℝ :=
   ∑ b, ∑ A, if ⟨b, c⟩ ∈ A then β.real {b} * ν.real {A} * (S1 α k A q ⟨b, c⟩).real {u} else 0
 
 theorem cWeight_nonneg (c : Bool) : 0 ≤ cWeight α k ν β q u c :=
-  Finset.sum_nonneg λ _ _ => Finset.sum_nonneg λ _ _ => by
+  Finset.sum_nonneg fun _ _ => Finset.sum_nonneg fun _ _ => by
     split_ifs
     · exact mul_nonneg (mul_nonneg measureReal_nonneg measureReal_nonneg) measureReal_nonneg
     · exact le_rfl
@@ -317,7 +317,7 @@ private theorem sum_pairs (f : World × Finset World → ℝ) :
   rw [Fintype.sum_prod_type, Fintype.sum_prod_type]
 
 private theorem sum_pairs_c (f : World × Finset World → ℝ) :
-    ∑ p ∈ Finset.univ.filter (λ p : World × Finset World => p.1.complement = true), f p
+    ∑ p ∈ Finset.univ.filter (fun p : World × Finset World => p.1.complement = true), f p
       = ∑ b, ∑ A, f (⟨b, true⟩, A) := by
   rw [Finset.sum_filter, sum_pairs]
   simp
@@ -325,34 +325,34 @@ private theorem sum_pairs_c (f : World × Finset World → ℝ) :
 variable [IsProbabilityMeasure β] [IsProbabilityMeasure γ] [IsProbabilityMeasure ν]
 
 private theorem comp_real :
-    (familySpeaker (λ A => L0 A q) α (cost k) ∘ₘ pairPrior (β.prod γ) ν).real {u}
+    (familySpeaker (fun A => L0 A q) α (cost k) ∘ₘ pairPrior (β.prod γ) ν).real {u}
       = γ.real {true} * cWeight α k ν β q u true + γ.real {false} * cWeight α k ν β q u false := by
   rw [Measure.comp_real_singleton, sum_pairs, Finset.sum_comm, Fintype.sum_bool]
   simp only [pairPrior_real, Measure.prod_real_singleton, familySpeaker_apply, cWeight,
     Finset.mul_sum, mul_ite, mul_zero, ite_mul, zero_mul]
   refine congrArg₂ (· + ·) ?_ ?_ <;>
-    refine Finset.sum_congr rfl λ b _ => Finset.sum_congr rfl λ A _ => ?_ <;>
+    refine Finset.sum_congr rfl fun b _ => Finset.sum_congr rfl fun A _ => ?_ <;>
     split_ifs <;> first | rfl | (simp only [S1]; ring)
 
 /-- The posterior probability of the complement (fn. 11) is its prior probability times the
 evidence for it, over the evidence for either value. -/
-theorem L1_c_real (hu : (familySpeaker (λ A => L0 A q) α (cost k) ∘ₘ pairPrior (β.prod γ) ν)
+theorem L1_c_real (hu : (familySpeaker (fun A => L0 A q) α (cost k) ∘ₘ pairPrior (β.prod γ) ν)
     {u} ≠ 0) :
     (L1 α k (β.prod γ) ν q u).real {p | p.1.complement = true}
       = γ.real {true} * cWeight α k ν β q u true
         / (γ.real {true} * cWeight α k ν β q u true
           + γ.real {false} * cWeight α k ν β q u false) := by
   have hE : ({p : World × Finset World | p.1.complement = true} : Set _)
-      = ↑(Finset.univ.filter λ p : World × Finset World => p.1.complement = true) := by ext; simp
-  rw [measureReal_def, L1, pragmaticListener, hE, posterior_apply_finset _ _ hu, ENNReal.toReal_div,
-    ENNReal.toReal_sum (λ _ _ => ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)),
+      = ↑(Finset.univ.filter fun p : World × Finset World => p.1.complement = true) := by ext; simp
+  rw [measureReal_def, L1, hE, posterior_apply_finset _ _ hu, ENNReal.toReal_div,
+    ENNReal.toReal_sum (fun _ _ => ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)),
     ← measureReal_def, comp_real]
   simp only [ENNReal.toReal_mul, ← measureReal_def]
   rw [sum_pairs_c]
   simp only [pairPrior_real, Measure.prod_real_singleton, familySpeaker_apply, cWeight,
     Finset.mul_sum, mul_ite, mul_zero, ite_mul, zero_mul]
   congr 1
-  refine Finset.sum_congr rfl λ b _ => Finset.sum_congr rfl λ A _ => ?_
+  refine Finset.sum_congr rfl fun b _ => Finset.sum_congr rfl fun A _ => ?_
   split_ifs <;> first | rfl | (simp only [S1]; ring)
 
 private theorem real_false_eq (ρ : Measure Bool) [IsProbabilityMeasure ρ] :
@@ -365,8 +365,8 @@ private theorem real_false_eq (ρ : Measure Bool) [IsProbabilityMeasure ρ] :
 utterance, question, rationality, cost and assumption prior, since the world prior enters the
 model at the pragmatic listener alone. This is the prior effect (2b). -/
 theorem L1_c_mono (γ' : Measure Bool) [IsProbabilityMeasure γ']
-    (hu : (familySpeaker (λ A => L0 A q) α (cost k) ∘ₘ pairPrior (β.prod γ) ν) {u} ≠ 0)
-    (hu' : (familySpeaker (λ A => L0 A q) α (cost k) ∘ₘ pairPrior (β.prod γ') ν) {u} ≠ 0)
+    (hu : (familySpeaker (fun A => L0 A q) α (cost k) ∘ₘ pairPrior (β.prod γ) ν) {u} ≠ 0)
+    (hu' : (familySpeaker (fun A => L0 A q) α (cost k) ∘ₘ pairPrior (β.prod γ') ν) {u} ≠ 0)
     (h : γ.real {true} ≤ γ'.real {true}) :
     (L1 α k (β.prod γ) ν q u).real {p | p.1.complement = true}
       ≤ (L1 α k (β.prod γ') ν q u).real {p | p.1.complement = true} := by

@@ -29,7 +29,7 @@ to the model's predictions.
   positive rationality.
 * The literal listener conditions the counting measure on the extension, the uniform prior over
   the objects.
-* The listener of the paper's first equation is `RSA.pragmaticListener` against a salience prior;
+* The listener of the paper's first equation is the posterior `S†μ` against a salience prior;
   its predictions at the stimulus are not instantiated here.
 
 ## TODO
