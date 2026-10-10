@@ -68,9 +68,9 @@ instance : IsFiniteKernel (L0 sem) := inferInstanceAs (IsFiniteKernel (literalLi
 
 /-- The informative speaker (3) is the best response to `L0` at rationality one and constant
 cost, choosing among the applicable words in proportion to their informativity. -/
-noncomputable def rsaSpeaker : Kernel W U := speaker 1 0 (L0 sem)
+noncomputable def rsaSpeaker : Kernel W U := speaker 1 0 (L0 sem) Measure.dirac
 
-instance : IsFiniteKernel (rsaSpeaker sem) := inferInstanceAs (IsFiniteKernel (speaker _ _ _))
+instance : IsFiniteKernel (rsaSpeaker sem) := inferInstanceAs (IsFiniteKernel (speaker _ _ _ _))
 
 /-- The baseline speaker (4) uses literal meaning alone, choosing uniformly among the words that
 apply to the referent. -/
@@ -96,11 +96,11 @@ theorem L0_ne_zero {w : W} {u : U} (h : w ∈ sem u) : L0 sem u {w} ≠ 0 := by
 /-- A word that does not apply to a referent is never produced for it. -/
 theorem rsaSpeaker_apply_singleton_of_notMem {w : W} {u : U} (h : w ∉ sem u) :
     rsaSpeaker sem w {u} = 0 :=
-  speaker_apply_singleton_eq_zero one_pos (L0_apply_singleton_of_notMem sem h)
+  speaker_dirac_apply_singleton_eq_zero one_pos (L0_apply_singleton_of_notMem sem h)
 
 theorem rsaSpeaker_apply_singleton_ne_zero {w : W} {u : U} (h : w ∈ sem u) :
     rsaSpeaker sem w {u} ≠ 0 :=
-  speaker_apply_singleton_ne_zero zero_le_one (L0_ne_zero sem h)
+  speaker_dirac_apply_singleton_ne_zero zero_le_one (L0_ne_zero sem h)
 
 theorem baselineSpeaker_apply_singleton_of_notMem {w : W} {u : U} (h : w ∉ sem u) :
     baselineSpeaker sem w {u} = 0 :=
@@ -171,7 +171,8 @@ theorem posterior_apply_singleton_eq_one [StandardBorelSpace W] [Nonempty W] {κ
 variable [StandardBorelSpace W] [Nonempty W] (μ : Measure W) [IsFiniteMeasure μ]
 
 /-- RSA's listener (1) inverts the informative speaker against the salience prior. -/
-noncomputable def rsaListener : Kernel U W := pragmaticListener (speaker 1 0 (L0 sem)) μ
+noncomputable def rsaListener : Kernel U W :=
+  pragmaticListener (speaker 1 0 (L0 sem) Measure.dirac) μ
 
 /-- The baseline literal listener model (4) inverts the baseline speaker against the salience
 prior. -/
@@ -306,7 +307,7 @@ variable (d : Display)
 theorem rsaSpeaker_real (i : Fin 3) (u : Word) :
     (rsaSpeaker d.sem i).real {u} =
       (L0 d.sem u {i}).toReal / ∑ u', (L0 d.sem u' {i}).toReal := by
-  rw [rsaSpeaker, speaker_zero_real_singleton zero_le_one]
+  rw [rsaSpeaker, speaker_dirac_zero_real_singleton zero_le_one]
   simp only [ENNReal.rpow_one]
 
 /-- In the pragmatically solvable display of Tables 5 and 9 the blue boot is the pragmatic

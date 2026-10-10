@@ -168,7 +168,7 @@ instance (L : List (List Word)) (scene : Finset Referent) (ctx : List Word) :
 costs, over the literal listener at that context. -/
 noncomputable def stepSpeaker (α : ℝ) (cost : Word → ℝ) (vc vs : ℝ) (L : List (List Word))
     (scene : Finset Referent) (ctx : List Word) : Kernel Referent Word :=
-  speaker α cost (listener vc vs L scene ctx)
+  speaker α cost (listener vc vs L scene ctx) Measure.dirac
 
 /-- The probability of an utterance is the product of its steps, the chain rule. -/
 noncomputable def trajectory (α : ℝ) (cost : Word → ℝ) (vc vs : ℝ) (L : List (List Word))
@@ -273,7 +273,7 @@ theorem stepSpeaker_real_pair (hα : 0 < α) {u u' : Word} (huu' : u ≠ u')
       (listener vc vs L scene ctx u).real {r} ^ α * Real.exp (-(α * cost u)) /
         ((listener vc vs L scene ctx u).real {r} ^ α * Real.exp (-(α * cost u)) +
           (listener vc vs L scene ctx u').real {r} ^ α * Real.exp (-(α * cost u'))) := by
-  rw [stepSpeaker, speaker_eq_ofWeights, Kernel.ofWeights_real_singleton_of_pair r huu'
+  rw [stepSpeaker, speaker_dirac_eq_ofWeights, Kernel.ofWeights_real_singleton_of_pair r huu'
       (λ w => ENNReal.mul_ne_top (ENNReal.rpow_ne_top_of_nonneg hα.le (measure_ne_top _ _))
         ENNReal.ofReal_ne_top)
       (λ w hw => by

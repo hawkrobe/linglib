@@ -207,6 +207,8 @@ variable (θ : Thresholds) (P : Measure State)
 /-- The literal listener of (15) conditions the prior on the expression's extension. -/
 noncomputable def L0 : Kernel SimpleExpr State := literalListener P θ.ext
 
+instance : IsFiniteKernel (L0 θ P) := inferInstanceAs (IsFiniteKernel (literalListener _ _))
+
 theorem L0_apply_singleton_of_notMem {m : SimpleExpr} {s : State} (h : s ∉ θ.ext m) :
     L0 θ P m {s} = 0 :=
   literalListener_apply_singleton_of_notMem P θ.ext h
@@ -262,13 +264,13 @@ theorem speaker_real_lt_iff (hlam : 0 < lam) (x : Obs × Access) (m m' : SimpleE
 /-- The speaker of [goodman-stuhlmuller-2013], with the Kullback–Leibler divergence in place
 of the Hellinger distance (the paper's footnote on utilities). -/
 noncomputable def klSpeaker : Kernel (Obs × Access) SimpleExpr :=
-  beliefSpeaker lam (fun x ↦ belief P x.2 x.1) (L0 θ P)
+  RSA.speaker lam 0 (L0 θ P) fun x ↦ belief P x.2 x.1
 
 /-- In the paper's example, after three red balls of four, *probably* excludes a state of three
 red balls that keeps positive belief, so the Kullback–Leibler speaker never says it. -/
 theorem klSpeaker_probably_eq_zero (hlam : 0 < lam) (hθ : 3 / 10 ≤ θ.probably)
     (hP : P {3} ≠ 0) : klSpeaker lam θ P (3, 4) {.probably} = 0 := by
-  refine beliefSpeaker_apply_singleton_eq_zero hlam (klDiv_of_not_ac λ hac => ?_)
+  refine (speaker_apply_singleton_eq_zero_iff_not_ac hlam).2 λ hac => ?_
   have h0 : L0 θ P .probably {3} = 0 :=
     L0_apply_singleton_of_notMem θ P (not_lt.2 (by simpa [proportion] using hθ))
   exact belief_apply_singleton_ne_zero P hP (a := 4) (o := 3) (s := 3) (by decide +kernel) (hac h0)

@@ -193,9 +193,9 @@ noncomputable def L0 (l : Lex) : Kernel Msg World := uniformListener (sem l)
 instance (l : Lex) : IsFiniteKernel (L0 l) := inferInstanceAs (IsFiniteKernel (uniformListener _))
 
 /-- The speaker (13b). -/
-noncomputable def S1 (l : Lex) : Kernel World Msg := speaker α (cost k) (L0 l)
+noncomputable def S1 (l : Lex) : Kernel World Msg := speaker α (cost k) (L0 l) Measure.dirac
 
-instance (l : Lex) : IsFiniteKernel (S1 α k l) := inferInstanceAs (IsFiniteKernel (speaker _ _ _))
+instance (l : Lex) : IsFiniteKernel (S1 α k l) := inferInstanceAs (IsFiniteKernel (speaker _ _ _ _))
 
 /-- The uncertainty listener (13c) is the joint posterior over states and lexica at flat priors,
 whose state marginal is the paper's listener. -/
@@ -228,7 +228,7 @@ message true there. -/
 theorem L1fixed_ne_zero_iff (m : Msg) (w : World) :
     L1fixed α k m {w} ≠ 0 ↔ w ∈ sem .weak m := by
   obtain ⟨w₀, h₀⟩ := sem_weak_nonempty m
-  have hs := speaker_uniformListener_apply_singleton_ne_zero_iff (sem .weak) hα (cost k)
+  have hs := speaker_uniformListener_dirac_apply_singleton_ne_zero_iff (sem .weak) hα (cost k)
   rw [L1fixed, pragmaticListener_apply_singleton_ne_zero_iff (comp_apply_singleton_ne_zero
     (S1 α k .weak) _ (uniformOn_univ_singleton_ne_zero w₀) ((hs w₀ m).2 h₀)),
     and_iff_right (uniformOn_univ_singleton_ne_zero w)]
@@ -264,7 +264,7 @@ theorem L1_fst_real_lt_iff (m : Msg) (w₁ w₂ : World) :
   obtain ⟨w₀, h₀⟩ := sem_weak_nonempty m
   rw [L1, pragmaticListener_fst_real_lt_iff (p₀ := (w₀, .weak)) uniformOn_univ_singleton_eq
     uniformOn_univ_singleton_ne_zero
-    ((speaker_uniformListener_apply_singleton_ne_zero_iff (sem .weak) hα (cost k) w₀ m).2 h₀)]
+    ((speaker_uniformListener_dirac_apply_singleton_ne_zero_iff (sem .weak) hα (cost k) w₀ m).2 h₀)]
   rfl
 
 /-- State preference of the fixed-lexicon listener is the base-lexicon speaker's preference. -/
@@ -274,7 +274,7 @@ theorem L1fixed_real_lt_iff (m : Msg) (w₁ w₂ : World) :
   let ⟨w₀, h₀⟩ := sem_weak_nonempty m
   pragmaticListener_real_lt_iff
     uniformOn_univ_singleton_eq uniformOn_univ_singleton_ne_zero
-    ((speaker_uniformListener_apply_singleton_ne_zero_iff (sem .weak) hα _ w₀ m).2 h₀)
+    ((speaker_uniformListener_dirac_apply_singleton_ne_zero_iff (sem .weak) hα _ w₀ m).2 h₀)
 
 /-- The speaker's share of a statement is its informativity weight over the weights of the
 statements true at the state plus the null message's weight. -/
@@ -283,7 +283,7 @@ theorem S1_real (l : Lex) (w : World) (s : Stmt) :
       = (if w ∈ stmtSem l s then (((stmtSem l s).card : ℝ))⁻¹ ^ α else 0)
         / ((∑ s', if w ∈ stmtSem l s' then (((stmtSem l s').card : ℝ))⁻¹ ^ α else 0)
             + Real.exp (-(α * k)) * (10 : ℝ)⁻¹ ^ α) := by
-  rw [S1, speaker_real_singleton hα.le, Fintype.sum_option]
+  rw [S1, speaker_dirac_real_singleton hα.le, Fintype.sum_option]
   simp only [L0, uniformListener_apply_singleton, sem, cost, Option.elim_some, Option.elim_none,
     Finset.mem_univ, ↓reduceIte, Finset.card_univ, (by decide : Fintype.card World = 10),
     mul_zero, neg_zero, Real.exp_zero, mul_one, apply_ite (· ^ α),

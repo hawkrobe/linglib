@@ -79,11 +79,11 @@ instance (μ : Measure M) (f : R → U → M → ℝ≥0∞) (r : R) : IsFiniteK
 listener, less the utterance cost. -/
 noncomputable def S1 (μ : Measure M) (f : R → U → M → ℝ≥0∞) (α : ℝ) (κ : U → ℝ) (r : R) :
     Kernel M U :=
-  speaker α κ (L0 μ f r)
+  speaker α κ (L0 μ f r) Measure.dirac
 
 instance (μ : Measure M) (f : R → U → M → ℝ≥0∞) (α : ℝ) (κ : U → ℝ) (r : R) :
     IsFiniteKernel (S1 μ f α κ r) :=
-  inferInstanceAs (IsFiniteKernel (speaker α κ (L0 μ f r)))
+  inferInstanceAs (IsFiniteKernel (speaker α κ (L0 μ f r) Measure.dirac))
 
 /-- The strategy-indexed pragmatic listener (eq. 6). -/
 noncomputable def L1 [Nonempty M] (μ : Measure M) [IsFiniteMeasure μ] (f : R → U → M → ℝ≥0∞)
@@ -109,7 +109,7 @@ theorem S1_eq_ofWeights_prior (hα : α ≠ 0) {π : U → ℝ≥0∞} (hπ0 : �
     (hπ : ∀ u, π u ≠ ∞) (r : R) :
     S1 μ f α (λ u => -Real.log (π u).toReal / α) r =
       Kernel.ofWeights λ m u => L0 μ f r u {m} ^ α * π u := by
-  rw [S1, speaker_eq_ofWeights]
+  rw [S1, speaker_dirac_eq_ofWeights]
   congr 1
   funext m u
   rw [mul_div_cancel₀ _ hα, neg_neg, Real.exp_log (ENNReal.toReal_pos (hπ0 u) (hπ u)),
@@ -131,8 +131,8 @@ theorem S1_apply_singleton_ne_zero_iff (hα : 0 < α) {r : R} (hf : ∀ u m, f r
     (u : U) :
     S1 μ f α κ r m {u} ≠ 0 ↔ f r u m ≠ 0 ∧ μ {m} ≠ 0 := by
   rw [← L0_apply_singleton_ne_zero_iff μ f (hf u)]
-  exact ⟨λ h h' => h (speaker_apply_singleton_eq_zero hα h'),
-    speaker_apply_singleton_ne_zero hα.le⟩
+  exact ⟨λ h h' => h (speaker_dirac_apply_singleton_eq_zero hα h'),
+    speaker_dirac_apply_singleton_ne_zero hα.le⟩
 
 /-- An utterance some meaning of positive prior admits under a strategy has a positive
 marginal. -/

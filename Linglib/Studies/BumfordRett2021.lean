@@ -290,14 +290,14 @@ theorem comp_familySpeaker_ne_zero (hα : 0 ≤ α) (c : Option Comparison) (u :
   obtain ⟨w, σ, h⟩ := exists_holds c u
   exact RSA.comp_familySpeaker_ne_zero (w := w) (l := σ)
     (by rw [prior_prod_count_singleton]; exact prior_singleton_ne_zero w)
-    (RSA.speaker_apply_singleton_ne_zero hα (literal_ne_zero h))
+    (RSA.speaker_dirac_apply_singleton_ne_zero hα (literal_ne_zero h))
 
 /-- The listener's mass on a world pools the speaker's production of the utterance over the
 offsets, weighted by the world's prior. -/
 private theorem listener_fst_real_singleton (hα : 0 ≤ α) (c : Option Comparison) (u : Utterance)
     (w : World) :
     (listener c α cost u).fst.real {w} =
-      (prior {w}).toReal * (∑ σ, (RSA.speaker α cost (literal c σ) w).real {u}) /
+      (prior {w}).toReal * (∑ σ, (RSA.speaker α cost (literal c σ) Measure.dirac w).real {u}) /
         (RSA.familySpeaker (literal c) α cost ∘ₘ prior.prod Measure.count).real {u} := by
   rw [listener, RSA.pragmaticListener_fst_real_singleton prior Measure.count
     (comp_familySpeaker_ne_zero hα c u) w]
@@ -308,13 +308,13 @@ the other does and then verifies only alternatives the other verifies. -/
 private theorem speaker_real_le (hα : 0 < α) {c σ u} {w₁ w₂ : World}
     (hu : Holds c u σ w₁ → Holds c u σ w₂)
     (halt : Holds c u σ w₁ → ∀ u', Holds c u' σ w₂ → Holds c u' σ w₁) :
-    (RSA.speaker α cost (literal c σ) w₁).real {u} ≤
-      (RSA.speaker α cost (literal c σ) w₂).real {u} := by
+    (RSA.speaker α cost (literal c σ) Measure.dirac w₁).real {u} ≤
+      (RSA.speaker α cost (literal c σ) Measure.dirac w₂).real {u} := by
   refine ENNReal.toReal_mono (measure_ne_top _ _) ?_
   by_cases h₁ : Holds c u σ w₁
-  · exact RSA.speaker_literalListener_le_of_subset hα cost prior _
+  · exact RSA.speaker_literalListener_dirac_le_of_subset hα cost prior _
       (prior_singleton_ne_zero w₂) (halt h₁) (hu h₁)
-  · rw [RSA.speaker_apply_singleton_eq_zero hα (literal_eq_zero h₁)]; exact zero_le
+  · rw [RSA.speaker_dirac_apply_singleton_eq_zero hα (literal_eq_zero h₁)]; exact zero_le
 
 /-- Of two worlds of equal prior, the listener weights the second at least as much as the first if,
 under every offset at which the first verifies the utterance, the second verifies it too and
@@ -344,8 +344,8 @@ private theorem listener_fst_real_lt (hα : 0 < α) {c u} {w₁ w₂ : World}
   refine Finset.sum_lt_sum (fun σ _ ↦ speaker_real_le hα (hu σ) (halt σ))
     ⟨σ₀, Finset.mem_univ _, ?_⟩
   rw [measureReal_def, measureReal_def,
-    RSA.speaker_apply_singleton_eq_zero hα (literal_eq_zero h₁), ENNReal.toReal_zero]
-  exact ENNReal.toReal_pos (RSA.speaker_apply_singleton_ne_zero hα.le (literal_ne_zero h₂))
+    RSA.speaker_dirac_apply_singleton_eq_zero hα (literal_eq_zero h₁), ENNReal.toReal_zero]
+  exact ENNReal.toReal_pos (RSA.speaker_dirac_apply_singleton_ne_zero hα.le (literal_ne_zero h₂))
     (measure_ne_top _ _)
 
 /-- An odd statistic has positive expectation under a measure that dominates its reflection
@@ -395,7 +395,7 @@ theorem listener_antonym (hα : 0 ≤ α) (c : Option Comparison) (u : Utterance
       rw [Equiv.prodCongr_apply, Prod.map, prior_prod_count_singleton,
         prior_prod_count_singleton]
       exact prior_reflect p.1)
-    (fun p ↦ RSA.speaker_apply_singleton_of_equiv Utterance.antonym_involutive.toPerm α cost
+    (fun p ↦ RSA.speaker_dirac_apply_singleton_of_equiv Utterance.antonym_involutive.toPerm α cost
       (fun v ↦ literal_antonym c p.2 v p.1) u)
     (comp_familySpeaker_ne_zero hα c u) (w, σ)
 
@@ -537,7 +537,7 @@ private theorem listener_positive_recentre (hα : 0 < α) (m m' : Finset.Icc (5 
     RSA.pragmaticListener_apply_singleton hu, prior_prod_count_singleton,
     prior_prod_count_singleton, prior_singleton_congr (w' := w) (by simp [World.recentre])]
   congr 2
-  exact congrFun (congrArg _ (RSA.speaker_literalListener_congr hα cost prior
+  exact congrFun (congrArg _ (RSA.speaker_literalListener_dirac_congr hα cost prior
     (fun u ↦ {w | Holds none u σ w}) (prior_singleton_ne_zero w) (prior_singleton_ne_zero _)
     fun u ↦ (holds_none_recentre m m' u σ w).symm)) _
 
@@ -580,7 +580,7 @@ theorem isMarkovKernel_familySpeaker (hα : 0 ≤ α) (c : Option Comparison) :
     IsMarkovKernel (RSA.familySpeaker (literal c) α cost) :=
   ⟨fun q ↦ by
     rw [RSA.familySpeaker_apply]
-    exact (RSA.isMarkovKernel_speaker hα cost (literal c q.2)
+    exact (RSA.isMarkovKernel_speaker_dirac hα cost (literal c q.2)
       (fun w ↦ ⟨.silence, literal_ne_zero (c := c) trivial⟩)).isProbabilityMeasure q.1⟩
 
 /-- Weighted by how often the speaker makes each utterance, the listener's expected deviations sum
@@ -669,8 +669,8 @@ variable {α : ℝ} {cost cost' : Utterance → ℝ}
 private theorem speaker_congr_of_antonymsExclusive (hα : 0 < α) {c : Option Comparison}
     (hex : AntonymsExclusive c) {p : Polarity} (hp : cost (.say p) = cost' (.say p))
     (hs : cost .silence = cost' .silence) (σ : Finset.Icc (-4 : ℤ) 4) (w : World) :
-    RSA.speaker α cost (literal c σ) w {.say p} =
-      RSA.speaker α cost' (literal c σ) w {.say p} := by
+    RSA.speaker α cost (literal c σ) Measure.dirac w {.say p} =
+      RSA.speaker α cost' (literal c σ) Measure.dirac w {.say p} := by
   by_cases h : Holds c (.say p) σ w
   · have hw : ∀ u, literal c σ u {w} ^ α * ENNReal.ofReal (Real.exp (-(α * cost u))) =
         literal c σ u {w} ^ α * ENNReal.ofReal (Real.exp (-(α * cost' u))) := by
@@ -682,9 +682,9 @@ private theorem speaker_congr_of_antonymsExclusive (hα : 0 < α) {c : Option Co
             all_goals first | exact hq rfl | exact hex σ w ⟨h, h'⟩ | exact hex σ w ⟨h', h⟩
           rw [literal_eq_zero hq', ENNReal.zero_rpow_of_pos hα, zero_mul, zero_mul]
       · rw [hs]
-    simp only [RSA.speaker_apply_singleton, hw]
-  · rw [RSA.speaker_apply_singleton_eq_zero hα (literal_eq_zero h),
-      RSA.speaker_apply_singleton_eq_zero hα (literal_eq_zero h)]
+    simp only [RSA.speaker_dirac_apply_singleton, hw]
+  · rw [RSA.speaker_dirac_apply_singleton_eq_zero hα (literal_eq_zero h),
+      RSA.speaker_dirac_apply_singleton_eq_zero hα (literal_eq_zero h)]
 
 /-- Where the antonyms exclude each other, an antonym's expected deviation depends on the costs only
 through its own cost and silence's, since the other antonym never competes with it. -/

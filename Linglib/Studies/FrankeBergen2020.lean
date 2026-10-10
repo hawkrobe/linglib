@@ -581,7 +581,7 @@ theorem lu_ss_prefers_wNS {α : ℝ} (hα : 0 < α) :
       (RSA.uniformSpeaker_apply_singleton_ne_zero (ext LULex.lit.toParse) hα.le
         (by decide +kernel : wNS ∈ ext LULex.lit.toParse .ss))]
   simp only [RSA.familySpeaker_apply]
-  calc (∑ l : LULex, (RSA.speaker α 0 (luFam l) wNA).real {.ss})
+  calc (∑ l : LULex, (RSA.speaker α 0 (luFam l) Measure.dirac wNA).real {.ss})
       = (RSA.uniformSpeaker (ext LULex.lit.toParse) α wNA).real {.ss} :=
         Fintype.sum_eq_single LULex.lit fun
           | .lit, hl => absurd rfl hl
@@ -601,9 +601,9 @@ theorem lu_ss_prefers_wNS {α : ℝ} (hα : 0 < α) :
           (by decide +kernel : wNA ∈ ext LULex.lit.toParse .ss)
           (by decide +kernel : wNA ∈ ext LULex.lit.toParse .sa) (by decide +kernel)
         linarith
-    _ ≤ ∑ l : LULex, (RSA.speaker α 0 (luFam l) wNS).real {.ss} :=
+    _ ≤ ∑ l : LULex, (RSA.speaker α 0 (luFam l) Measure.dirac wNS).real {.ss} :=
         Finset.single_le_sum
-          (fun l _ ↦ measureReal_nonneg (μ := RSA.speaker α 0 (luFam l) wNS))
+          (fun l _ ↦ measureReal_nonneg (μ := RSA.speaker α 0 (luFam l) Measure.dirac wNS))
           (Finset.mem_univ LULex.oi)
 
 /-! ### The position of the latent parameter -/

@@ -159,11 +159,11 @@ noncomputable def s1 (cost : U → ℝ) (ctx : List U) : Kernel W U :=
   Kernel.ofFunOfCountable fun r =>
     if g.DeadEnd ctx r then
       uniformOn ↑(Finset.univ.filter fun u : U => 0 < g.viableExts (ctx ++ [u]))
-    else speaker 1 cost (g.l0 ctx) r
+    else speaker 1 cost (g.l0 ctx) Measure.dirac r
 
 omit [Nonempty W] in
 theorem s1_apply {ctx : List U} {r : W} (hnd : ¬ g.DeadEnd ctx r) (cost : U → ℝ) :
-    g.s1 cost ctx r = speaker 1 cost (g.l0 ctx) r := by
+    g.s1 cost ctx r = speaker 1 cost (g.l0 ctx) Measure.dirac r := by
   rw [s1, Kernel.ofFunOfCountable_apply, ite_eq_right hnd]
 
 omit [Nonempty W] in
@@ -205,7 +205,7 @@ theorem s1_real_singleton {ctx : List U} {r : W} (hnd : ¬ g.DeadEnd ctx r) {cos
     (g.s1 cost ctx r).real {u}
       = (g.l0 ctx u {r}).toReal * Real.exp (-cost u)
         / ∑ u', (g.l0 ctx u' {r}).toReal * Real.exp (-cost u') := by
-  rw [s1_apply g hnd, speaker_real_singleton zero_le_one]
+  rw [s1_apply g hnd, speaker_dirac_real_singleton zero_le_one]
   simp only [ENNReal.rpow_one, one_mul]
 
 /-! ### The global model (§2.1) -/
@@ -229,7 +229,7 @@ instance : IsFiniteKernel g.globalL0 := inferInstanceAs (IsFiniteKernel (gradedL
 
 /-- The global pragmatic speaker (eq. 2). -/
 noncomputable def globalS1 (cost : g.Complete → ℝ) : Kernel W g.Complete :=
-  speaker 1 cost g.globalL0
+  speaker 1 cost g.globalL0 Measure.dirac
 
 /-- An utterance costs the sum of its words' costs (§3.1). -/
 def uttCost (cost : U → ℝ) (u : List U) : ℝ := (u.map cost).sum
@@ -279,21 +279,21 @@ theorem s1_real_lt_iff {ctx : List U} {r : W} (hnd : ¬ g.DeadEnd ctx r) {cost :
     (g.s1 cost ctx r).real {u} < (g.s1 cost ctx r).real {u'} ↔
       g.l0 ctx u {r} * ENNReal.ofReal (Real.exp (-cost u))
         < g.l0 ctx u' {r} * ENNReal.ofReal (Real.exp (-cost u')) := by
-  rw [s1_apply g hnd, speaker_real_singleton_lt_iff zero_le_one ⟨u₀, h0⟩]
+  rw [s1_apply g hnd, speaker_dirac_real_singleton_lt_iff zero_le_one ⟨u₀, h0⟩]
   simp only [ENNReal.rpow_one, one_mul]
 
 theorem s1_apply_ne_zero (hw : ∀ r : W, r ∈ g.worlds) {ctx : List U} {r : W} {u : U}
     (hnd : ¬ g.DeadEnd ctx r) {cost : U → ℝ} (ht : g.trueExts (ctx ++ [u]) r ≠ 0) :
     g.s1 cost ctx r {u} ≠ 0 := by
   rw [s1_apply g hnd]
-  exact speaker_apply_singleton_ne_zero zero_le_one (g.l0_apply_ne_zero hw ht)
+  exact speaker_dirac_apply_singleton_ne_zero zero_le_one (g.l0_apply_ne_zero hw ht)
 
 /-- A word with no true continuation is never chosen off a dead end. -/
 theorem s1_apply_eq_zero (hw : ∀ r : W, r ∈ g.worlds) {ctx : List U} {r : W} {u : U}
     (hnd : ¬ g.DeadEnd ctx r) (cost : U → ℝ)
     (ht : g.trueExts (ctx ++ [u]) r = 0) : g.s1 cost ctx r {u} = 0 := by
   rw [s1_apply g hnd]
-  exact speaker_apply_singleton_eq_zero one_pos (g.l0_apply_eq_zero hw ht)
+  exact speaker_dirac_apply_singleton_eq_zero one_pos (g.l0_apply_eq_zero hw ht)
 
 /-- A referent whose only true continuation is `u` is signalled with certainty. -/
 theorem s1_apply_eq_one (hw : ∀ r : W, r ∈ g.worlds) {ctx : List U} {r : W} {u : U}
@@ -301,7 +301,7 @@ theorem s1_apply_eq_one (hw : ∀ r : W, r ∈ g.worlds) {ctx : List U} {r : W} 
     (hother : ∀ u' ≠ u, g.trueExts (ctx ++ [u']) r = 0) :
     g.s1 cost ctx r {u} = 1 := by
   rw [s1_apply g hnd]
-  exact speaker_apply_singleton_eq_one one_pos (g.l0_apply_ne_zero hw ht)
+  exact speaker_dirac_apply_singleton_eq_one one_pos (g.l0_apply_ne_zero hw ht)
     fun u' hu' => g.l0_apply_eq_zero hw (hother u' hu')
 
 /-- Listener preference upon a word compares the speaker's masses, since the uniform prior
@@ -514,7 +514,7 @@ theorem global_prefers_red_dress :
         = (if figureOne.sem u.val .redDress then 1 else 0)
           / ((Finset.univ.filter fun r' => figureOne.sem u.val r').card : ℝ≥0∞) :=
     fun u => figureOne.globalL0_apply u .redDress
-  refine (speaker_real_singleton_lt_iff zero_le_one
+  refine (speaker_dirac_real_singleton_lt_iff zero_le_one
     ⟨⟨[.red, .dress], fig1_mem_redDress⟩, by
       rw [key]
       norm_num [show figureOne.sem [Word.red, Word.dress] .redDress = true from rfl,
@@ -625,7 +625,7 @@ theorem figureThree_global_indifferent :
       figureThree.globalL0 u {AbstractWorld.W1} = 1 / 2 := by
     intro u htrue hcard
     rw [figureThree.globalL0_apply, htrue, hcard, ite_eq_left rfl, Nat.cast_ofNat]
-  rw [ReferenceGame.globalS1, speaker_apply_singleton, speaker_apply_singleton,
+  rw [ReferenceGame.globalS1, speaker_dirac_apply_singleton, speaker_dirac_apply_singleton,
     key ⟨[.A, .A], fig3_mem_AA⟩ (by decide) (by decide),
     key ⟨[.B, .A], fig3_mem_BA⟩ (by decide) (by decide)]
   simp only [Pi.zero_apply]
@@ -760,7 +760,7 @@ theorem global_prefers_bare_noun {c : ℝ} (hc : 0 < c) :
     simp [ReferenceGame.uttCost, cost]
   have hc2 : ReferenceGame.uttCost (cost c) [Word.red, Word.dress, Word.stop] = c + c := by
     simp [ReferenceGame.uttCost, cost]
-  refine (speaker_real_singleton_lt_iff zero_le_one
+  refine (speaker_dirac_real_singleton_lt_iff zero_le_one
     ⟨⟨[.dress, .stop], mem_dress⟩, by rw [hL _ (by decide) (by decide)]; exact one_ne_zero⟩).mpr ?_
   simp only [ENNReal.rpow_one, one_mul]
   rw [hL _ (by decide) (by decide), hL _ (by decide) (by decide), one_mul, one_mul, hc1, hc2,

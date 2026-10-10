@@ -278,7 +278,7 @@ theorem anyNumber_of_prior {α : ℝ} (hα : 0 < α) {w : FCState} (hw : w ≠ .
   have hother : ∀ u' ≠ Utterance.or_, FCState.anyNumber ∉ semSet .exhaustified u' := by
     simp only [ne_eq, mem_semSet]; decide
   have hμ : priorB {.anyNumber} ≠ 0 := by rw [priorB_singleton]; simp [biasedWeight]
-  have hone := speaker_literalListener_eq_one (u := Utterance.or_)
+  have hone := speaker_literalListener_dirac_eq_one (u := Utterance.or_)
     (w := FCState.anyNumber) hα 0 priorB (semSet .exhaustified) hμ
     ((mem_semSet (i := .exhaustified) (u := .or_) (w := .anyNumber)).mpr trivial) hother
   have hlt : (∑ p ∈ ({w} ×ˢ Finset.univ : Finset (FCState × Interp)), jointPriorB.real {p})
@@ -289,7 +289,7 @@ theorem anyNumber_of_prior {α : ℝ} (hα : 0 < α) {w : FCState} (hw : w ≠ .
     cases w <;> first | exact absurd rfl hw | norm_num [biasedWeight]
   rw [Measure.fst_real_singleton, Measure.fst_real_singleton, listenerB]
   exact pragmaticListener_real_lt_of_certain (p₀ := (.anyNumber, .exhaustified))
-    (by simp) (fun p ↦ speaker_real_singleton_le_one α 0 (famB p.2) p.1 _) hone hlt
+    (by simp) (fun p ↦ speaker_real_singleton_le_one α 0 (famB p.2) Measure.dirac p.1 _) hone hlt
 
 /-! ### No free choice under negation (§4, Table 9) -/
 

@@ -111,7 +111,7 @@ variable [DiscreteMeasurableSpace W]
 generalization and silence at no cost. -/
 noncomputable def endorser (lam : ℝ) (μ : Measure W) (ν : Measure ℝ) (prev : W → ℝ) :
     Kernel W Utterance :=
-  speaker lam 0 (listener μ ν prev)
+  speaker lam 0 (listener μ ν prev) Measure.dirac
 
 /-- The generalization is endorsed at a state when the speaker produces it more readily than
 silence. -/
@@ -140,8 +140,8 @@ exceeds the prior expectation of that meaning. This is the comparison of Figure 
 listener's posterior on hearing the generalization against the prior. -/
 theorem endorse_iff (hlam : 0 < lam) (hw : μ {w} ≠ 0) (hZ : expectedMeaning μ ν prev ≠ 0) :
     Endorsed lam μ ν prev w ↔ expectedMeaning μ ν prev < meaning ν prev .generic w := by
-  rw [Endorsed, endorser, speaker_real_singleton_lt_iff (L := listener μ ν prev) (w := w) hlam.le
-    ⟨.silent, by rwa [listener_silent_apply]⟩]
+  rw [Endorsed, endorser, speaker_dirac_real_singleton_lt_iff (L := listener μ ν prev) (w := w)
+    hlam.le ⟨.silent, by rwa [listener_silent_apply]⟩]
   simp only [Pi.zero_apply, mul_zero, neg_zero, Real.exp_zero, ENNReal.ofReal_one, mul_one]
   rw [ENNReal.rpow_lt_rpow_iff hlam, listener_silent_apply, listener_generic_apply,
     ENNReal.lt_div_iff_mul_lt (Or.inl hZ) (Or.inl (expectedMeaning_ne_top μ ν prev)), mul_comm,
@@ -298,7 +298,8 @@ theorem boundary_of_symm (μ : Measure W) [IsProbabilityMeasure μ] (σ : W ≃ 
   have h1 := not_endorse_of_le_expectation prev μ hlam hp hw hZ (by rw [hE, hhalf])
   have h2 : ¬ (endorser lam μ uniformThreshold prev w).real {.generic} <
       (endorser lam μ uniformThreshold prev w).real {.silent} := by
-    rw [endorser, speaker_real_singleton_lt_iff (L := listener μ uniformThreshold prev) (w := w)
+    rw [endorser,
+      speaker_dirac_real_singleton_lt_iff (L := listener μ uniformThreshold prev) (w := w)
       hlam.le ⟨.silent, by rwa [listener_silent_apply]⟩]
     simp only [Pi.zero_apply, mul_zero, neg_zero, Real.exp_zero, ENNReal.ofReal_one, mul_one]
     rw [ENNReal.rpow_lt_rpow_iff hlam, listener_silent_apply, listener_generic_apply,

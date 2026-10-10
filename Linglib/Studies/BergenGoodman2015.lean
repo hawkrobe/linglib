@@ -175,7 +175,7 @@ theorem channelMix_id (L : Kernel U W) (u : U) (w : W) : channelMix Kernel.id L 
     prod_singleton, Kernel.id_apply, Measure.dirac_apply_of_mem (Set.mem_singleton u),
     ENNReal.toReal_one, ENNReal.rpow_one]
 
-variable [Fintype I] [MeasurableSingletonClass I] [Countable W] [MeasurableSingletonClass W]
+variable [Fintype I] [MeasurableSingletonClass I] [Fintype W] [MeasurableSingletonClass W]
 
 /-- The speaker over the channel (eqs. 4 and 7) weights each utterance by the channel-mixed
 listener to the power `α`, scaled by the cost weight `exp (-(α * C u))`. -/
@@ -211,8 +211,8 @@ theorem noisySpeaker_real_singleton_lt_iff {N : Kernel I U} {α : ℝ} (hα : 0 
 
 /-- Without noise the speaker is the noiseless one. -/
 theorem noisySpeaker_id (α : ℝ) (C : U → ℝ) (L : Kernel U W) [IsFiniteKernel L] :
-    noisySpeaker Kernel.id α C L = speaker α C L := by
-  rw [speaker_eq_ofWeights]
+    noisySpeaker Kernel.id α C L = speaker α C L Measure.dirac := by
+  rw [speaker_dirac_eq_ofWeights]
   unfold noisySpeaker
   congr 1
   funext w u
@@ -222,14 +222,14 @@ end Speaker
 
 section Listener
 
-variable [MeasurableSingletonClass U] [Countable W] [MeasurableSingletonClass W]
+variable [MeasurableSingletonClass U] [Fintype W] [MeasurableSingletonClass W]
   [StandardBorelSpace W] [Nonempty W]
 
 /-- Without noise the pragmatic listener over the channel is the noiseless one. -/
 theorem pragmaticListener_id_comp_noisySpeaker (α : ℝ) (C : U → ℝ) (L : Kernel U W)
     [IsFiniteKernel L] (μ : Measure W) [IsFiniteMeasure μ] :
     pragmaticListener (Kernel.id ∘ₖ noisySpeaker Kernel.id α C L) μ =
-      pragmaticListener (speaker α C L) μ := by
+      pragmaticListener (speaker α C L Measure.dirac) μ := by
   simp only [noisySpeaker_id, Kernel.id_comp]
 
 end Listener

@@ -359,9 +359,9 @@ variable (s : Setting)
 
 /-- The speaker is the softmax of the literal listener's log probability less the cost, scaled
 by the rationality (eqs. 2 and 3). -/
-noncomputable def speaker : Kernel World Message := RSA.speaker s.lam s.cost (L0 P m)
+noncomputable def speaker : Kernel World Message := RSA.speaker s.lam s.cost (L0 P m) Measure.dirac
 
-instance : IsFiniteKernel (speaker P m s) := inferInstanceAs (IsFiniteKernel (RSA.speaker _ _ _))
+instance : IsFiniteKernel (speaker P m s) := inferInstanceAs (IsFiniteKernel (RSA.speaker _ _ _ _))
 
 omit [IsFiniteMeasure P] in
 /-- The weight of a message is finite. -/
@@ -380,7 +380,7 @@ omit [IsFiniteMeasure P] in
 /-- A message false at a world is never used there. -/
 theorem speaker_eq_zero {u : Message} {w : World} (h : m.sat u w = false) :
     speaker P m s w {u} = 0 :=
-  RSA.speaker_apply_singleton_eq_zero s.lam_pos (L0_eq_zero P m h)
+  RSA.speaker_dirac_apply_singleton_eq_zero s.lam_pos (L0_eq_zero P m h)
 
 include hP
 
@@ -414,14 +414,14 @@ theorem weight_toReal {u : Message} {w : World} (h : m.sat u w = true) :
 /-- A message true at a world is used there. -/
 theorem speaker_ne_zero {u : Message} {w : World} (h : m.sat u w = true) :
     speaker P m s w {u} ≠ 0 :=
-  RSA.speaker_apply_singleton_ne_zero s.lam_pos.le (L0_ne_zero P hP m h)
+  RSA.speaker_dirac_apply_singleton_ne_zero s.lam_pos.le (L0_ne_zero P hP m h)
 
 /-- Between two messages true at a world, the speaker prefers the one of higher utility. -/
 theorem speaker_real_singleton_lt_iff {u v : Message} {w : World} (hu : m.sat u w = true)
     (hv : m.sat v w = true) :
     (speaker P m s w).real {u} < (speaker P m s w).real {v} ↔
       Real.log (L0 P m u {w}).toReal - s.cost u < Real.log (L0 P m v {w}).toReal - s.cost v := by
-  rw [speaker, RSA.speaker_real_singleton_lt_iff s.lam_pos.le ⟨u, L0_ne_zero P hP m hu⟩,
+  rw [speaker, RSA.speaker_dirac_real_singleton_lt_iff s.lam_pos.le ⟨u, L0_ne_zero P hP m hu⟩,
     ← ENNReal.toReal_lt_toReal (weight_ne_top P m s u w) (weight_ne_top P m s v w),
     weight_toReal P hP m s hu, weight_toReal P hP m s hv, Real.exp_lt_exp,
     mul_lt_mul_iff_of_pos_left s.lam_pos]
@@ -434,7 +434,7 @@ theorem speaker_real_singleton_of_pair {u v : Message} {w : World} (huv : u ≠ 
     (speaker P m s w).real {u} =
       s.logistic ((Real.log (L0 P m u {w}).toReal - s.cost u) -
         (Real.log (L0 P m v {w}).toReal - s.cost v)) := by
-  rw [speaker, RSA.speaker_eq_ofWeights, Kernel.ofWeights_real_singleton_of_pair w huv
+  rw [speaker, RSA.speaker_dirac_eq_ofWeights, Kernel.ofWeights_real_singleton_of_pair w huv
       (λ x => weight_ne_top P m s x w)
       (λ x hx => hsupp x (of_not_not (mt (λ h => weight_eq_zero P m s
         (Bool.eq_false_iff.mpr h)) hx))),
@@ -694,9 +694,9 @@ theorem liL0_apply (x : Message × Interpretation) : liL0 s x = s.L0 x.2.meaning
 
 /-- The speaker over messages and interpretations (item 3 of the §4.4 model). -/
 noncomputable def liSpeaker : Kernel World (Message × Interpretation) :=
-  RSA.speaker s.lam (λ x => s.cost x.1) (liL0 s)
+  RSA.speaker s.lam (λ x => s.cost x.1) (liL0 s) Measure.dirac
 
-instance : IsFiniteKernel (liSpeaker s) := inferInstanceAs (IsFiniteKernel (RSA.speaker _ _ _))
+instance : IsFiniteKernel (liSpeaker s) := inferInstanceAs (IsFiniteKernel (RSA.speaker _ _ _ _))
 
 /-- The speaker's messages, the interpretations marginalised (item 5 of the §4.4 model). -/
 noncomputable def liMessageSpeaker : Kernel World Message := (liSpeaker s).map Prod.fst
@@ -728,7 +728,7 @@ theorem liMessageSpeaker_real_wab_a :
     (liMessageSpeaker s .wab).real {.a} =
       Real.exp (s.lam * Real.log s.p) /
         (Real.exp (s.lam * Real.log s.p) + 2 * Real.exp (-(s.lam * s.cAndB))) := by
-  rw [liMessageSpeaker_real_singleton, liSpeaker, RSA.speaker_eq_ofWeights,
+  rw [liMessageSpeaker_real_singleton, liSpeaker, RSA.speaker_dirac_eq_ofWeights,
     Kernel.ofWeights_real_singleton _ _ (liWeight_ne_top s .wab),
     Kernel.ofWeights_real_singleton _ _ (liWeight_ne_top s .wab), Fintype.sum_prod_type,
     sum_message]
@@ -745,7 +745,7 @@ theorem liMessageSpeaker_real_wa_a :
     (liMessageSpeaker s .wa).real {.a} =
       (Real.exp (s.lam * Real.log (1 - s.p)) + 1) /
         (Real.exp (s.lam * Real.log (1 - s.p)) + 1 + 2 * Real.exp (-(s.lam * s.cAndNotB))) := by
-  rw [liMessageSpeaker_real_singleton, liSpeaker, RSA.speaker_eq_ofWeights,
+  rw [liMessageSpeaker_real_singleton, liSpeaker, RSA.speaker_dirac_eq_ofWeights,
     Kernel.ofWeights_real_singleton _ _ (liWeight_ne_top s .wa),
     Kernel.ofWeights_real_singleton _ _ (liWeight_ne_top s .wa), Fintype.sum_prod_type,
     sum_message]
@@ -759,7 +759,8 @@ theorem liMessageSpeaker_real_wa_a :
 /-- A message true at a world is used there under its literal interpretation. -/
 theorem liSpeaker_ne_zero {w : World} {u : Message} (hw : literal.sat u w = true) :
     liSpeaker s w {(u, .lit)} ≠ 0 :=
-  RSA.speaker_apply_singleton_ne_zero s.lam_pos.le (L0_ne_zero s.prior s.prior_ne_zero literal hw)
+  RSA.speaker_dirac_apply_singleton_ne_zero s.lam_pos.le
+    (L0_ne_zero s.prior s.prior_ne_zero literal hw)
 
 /-- Every message is used somewhere, so is heard with positive probability. -/
 theorem comp_liMessageSpeaker_ne_zero (u : Message) :

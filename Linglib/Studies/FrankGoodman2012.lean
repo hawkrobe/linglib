@@ -87,7 +87,7 @@ instance : IsFiniteKernel literal := inferInstanceAs (IsFiniteKernel (RSA.litera
 
 /-- The speaker at rationality `α` and no cost is `S₁(w | r) ∝ L₀(r | w) ^ α`, the paper's
 second equation at `α = 1`. -/
-noncomputable def speaker (α : ℝ) : Kernel Object Feature := RSA.speaker α 0 literal
+noncomputable def speaker (α : ℝ) : Kernel Object Feature := RSA.speaker α 0 literal Measure.dirac
 
 theorem mem_extension {w : Feature} {r : Object} :
     r ∈ (↑w.extension : Set Object) ↔ w.AppliesTo r := by
@@ -110,7 +110,7 @@ the smaller extension. -/
 theorem size_principle {α : ℝ} (hα : 0 < α) {r : Object} {w₁ w₂ : Feature} (h₁ : w₁.AppliesTo r)
     (h₂ : w₂.AppliesTo r) :
     (speaker α r).real {w₁} < (speaker α r).real {w₂} ↔ w₂.extension.card < w₁.extension.card := by
-  refine (RSA.speaker_literalListener_real_singleton_lt_iff hα 0 Measure.count
+  refine (RSA.speaker_literalListener_dirac_real_singleton_lt_iff hα 0 Measure.count
     (fun w : Feature ↦ (↑w.extension : Set Object)) (by simp) (mem_extension.2 h₁)
     (mem_extension.2 h₂)).trans ?_
   rw [Measure.count_apply_finset, Measure.count_apply_finset, Nat.cast_lt]
@@ -124,7 +124,7 @@ theorem prefers_informative {α : ℝ} (hα : 0 < α) :
 /-- As rationality grows without bound the speaker puts all its mass on *circle*. -/
 theorem fully_rational_picks_circle :
     Filter.Tendsto (fun α ↦ (speaker α .blueCircle).real {.circle}) Filter.atTop (𝓝 1) := by
-  refine RSA.tendsto_speaker_real_singleton_atTop ?_ fun u hu ↦ ?_
+  refine RSA.tendsto_speaker_dirac_real_singleton_atTop ?_ fun u hu ↦ ?_
   · rw [literal_apply_singleton, ite_eq_left (by decide)]
     simp [show Feature.circle.extension.card = 1 from by decide]
   · simp only [Pi.zero_apply, neg_zero, Real.exp_zero, mul_one]
@@ -142,7 +142,7 @@ theorem fully_rational_picks_circle :
 probability raised to the rationality, over its total across the words. -/
 theorem speaker_real_singleton {α : ℝ} (hα : 0 ≤ α) (r : Object) (w : Feature) :
     (speaker α r).real {w} = (literal w {r} ^ α).toReal / ∑ v, (literal v {r} ^ α).toReal :=
-  RSA.speaker_zero_real_singleton hα w
+  RSA.speaker_dirac_zero_real_singleton hα w
 
 private theorem univ_feature : (Finset.univ : Finset Feature) = {.blue, .green, .square, .circle} :=
   by decide
@@ -193,9 +193,10 @@ private theorem unique {α : ℝ} (hα : 0 < α) {w : Feature} {r r' : Object}
     (hr : ¬ w.AppliesTo r) (hr' : w.AppliesTo r') :
     (speaker α r).real {w} < (speaker α r').real {w} := by
   rw [measureReal_def, measureReal_def, speaker,
-    RSA.speaker_apply_singleton_eq_zero hα (by rw [literal_apply_singleton, ite_eq_right hr]),
+    RSA.speaker_dirac_apply_singleton_eq_zero hα (by rw [literal_apply_singleton, ite_eq_right hr]),
     ENNReal.toReal_zero]
-  refine ENNReal.toReal_pos (RSA.speaker_apply_singleton_ne_zero hα.le ?_) (measure_ne_top _ _)
+  refine ENNReal.toReal_pos (RSA.speaker_dirac_apply_singleton_ne_zero hα.le ?_)
+    (measure_ne_top _ _)
   rw [literal_apply_singleton, ite_eq_left hr']
   simp
 

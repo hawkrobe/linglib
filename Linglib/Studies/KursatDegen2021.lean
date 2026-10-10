@@ -104,7 +104,7 @@ instance (xs xr : ℝ) : IsFiniteKernel (L0 xs xr) :=
   inferInstanceAs (IsFiniteKernel (gradedListener _ _))
 
 /-- The speaker with unit informativeness weight and no cost. -/
-noncomputable def S1 (xs xr : ℝ) : Kernel World Utterance := speaker 1 0 (L0 xs xr)
+noncomputable def S1 (xs xr : ℝ) : Kernel World Utterance := speaker 1 0 (L0 xs xr) Measure.dirac
 
 private theorem sum_world (f : World → ℝ) :
     ∑ w, f w = f .target + f .competitor + f .distractor₁ + f .distractor₂ := by
@@ -141,7 +141,7 @@ theorem redundant_preferred_iff (hs0 : 0 < xs) (hs1 : xs < 1) (hr0 : 0 < xr) (hr
   have hm2 : meaning xs xr .redundant .target = xs * xr := by
     simp [meaning, channel, World.hasSufficient, World.hasRedundant]
   rw [S1]
-  refine (speaker_real_singleton_lt_iff (L := L0 xs xr) (w := World.target) zero_le_one
+  refine (speaker_dirac_real_singleton_lt_iff (L := L0 xs xr) (w := World.target) zero_le_one
     ⟨.redundant, ?_⟩).trans ?_
   · rw [L0, h2, row_redundant, hm2]
     exact (ENNReal.ofReal_pos.mpr (div_pos (mul_pos hs0 hr0) hred)).ne'

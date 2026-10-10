@@ -126,12 +126,12 @@ noncomputable abbrev L0 (prior : Measure Persona) : Kernel INGVariant Persona :=
 
 /-- The speaker, the softmax of the literal listener at rationality 6 (p. 435), without costs. -/
 noncomputable abbrev S1 (prior : Measure Persona) : Kernel Persona INGVariant :=
-  speaker 6 (λ _ => 0) (L0 prior)
+  speaker 6 (λ _ => 0) (L0 prior) Measure.dirac
 
 /-- The pragmatic listener inverts the speaker against the prior. -/
 noncomputable abbrev L1 (prior : Measure Persona) [IsFiniteMeasure prior] :
     Kernel INGVariant Persona :=
-  pragmaticListener (speaker 6 (λ _ => 0) (L0 prior)) prior
+  pragmaticListener (speaker 6 (λ _ => 0) (L0 prior) Measure.dirac) prior
 
 /-! ### The extensions differ in one persona each
 
