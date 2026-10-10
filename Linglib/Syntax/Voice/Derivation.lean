@@ -66,7 +66,7 @@ def subjects : List α :=
 is suppressed if none, a fresh participant enters the first slot the voice adds, and a subject
 the voice cumulates is linked to each participant cumulated with it. -/
 def apply (v : Voice) (fresh : Option α) : Stage α where
-  frame := v.target
+  frame := v.derived.toArgumentFrame
   slots := (fresh.bind fun a ↦ v.newSlots.head?.map (a, ·)).toList ++
     s.slots.filterMap fun p ↦ (v.image p.2).map (p.1, ·)
   links := s.links ++ s.slots.flatMap fun p ↦
@@ -79,7 +79,8 @@ def apply (v : Voice) (fresh : Option α) : Stage α where
 /-- Agreement registers the subject. -/
 def agree : Stage α := { s with registered := s.registered ++ s.subjects }
 
-@[simp] theorem frame_apply (v : Voice) (a : Option α) : (s.apply v a).frame = v.target := rfl
+@[simp] theorem frame_apply (v : Voice) (a : Option α) :
+    (s.apply v a).frame = v.derived.toArgumentFrame := rfl
 
 @[simp] theorem registered_apply (v : Voice) (a : Option α) :
     (s.apply v a).registered = s.registered := rfl

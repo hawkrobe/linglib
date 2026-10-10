@@ -63,9 +63,8 @@ def causativeOfIntransitive : Voice := Voice.causative.marked [.suff "aq"]
 /-- The causative *-aq* of a transitive verb. The causer is the ergative A and the causee, the
 initial A, an oblique in the inter-elative. -/
 def causativeOfTransitive : Voice :=
-  { source := .np, target := ⟨some .nominal, [.nominal, .adpositional]⟩,
-    correspondence := [(external, complement 1), (complement 0, complement 0)],
-    marker := [.suff "aq"] }
+  (Voice.of .np ⟨some .nominal, [.nominal, .adpositional]⟩
+    [some (complement 1), some (complement 0), some external]).marked [.suff "aq"]
 
 /-- The inter-elative of the causee of a transitive base, a locative form without a direction
 marker. -/
@@ -90,7 +89,7 @@ derived construction has the valency of the initial one. -/
 theorem causativeOfTransitive_valency :
     causativeOfTransitive.Nucleativizes ∧
       causativeOfTransitive.fateOfRole .A = .denucleativized ∧
-      causativeOfTransitive.target.valency = causativeOfTransitive.source.valency := by
+      causativeOfTransitive.derived.valency = causativeOfTransitive.initial.valency := by
   decide
 
 /-- The causee form is an elative without a direction marker, which no spatial elative is. -/

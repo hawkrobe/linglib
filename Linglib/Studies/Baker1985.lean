@@ -24,7 +24,7 @@ Baker argues (§6) that the principle should not be stipulated but follow from a
 in which the morphological and the syntactic effect of a process are one thing. A
 `Derivation` here is that one thing, a list of processes each with the affix it adds, from
 which the word (`word`, a `Word.Tree` of morphs) and the grammatical functions (`outcomes`, a
-run of `Voice` correspondences) are both read. The word determines the sequence of processes
+run of voices moving the participants) are both read. The word determines the sequence of processes
 (`word_injective`), and the universal restriction on agreement (27) holds by construction
 (`registered_agree_apply`, `registered_apply_agree`).
 
@@ -94,51 +94,44 @@ def demote : Position → Position
 /-- Passive (12) promoting the `j`-th complement, if nominal: it becomes the subject and the old
 subject an oblique after the remaining complements. -/
 def passiveAt (j : ℕ) (fr : ArgumentFrame) : Option Voice :=
-  if fr.complements[j]? = some .nominal then some
-    { source := fr, target := ⟨some .nominal, fr.complements.eraseIdx j ++ [.adpositional]⟩,
-      correspondence := (.external, .complement (fr.complements.length - 1)) ::
-        (.complement j, .external) ::
-        (List.range fr.complements.length).filterMap fun i ↦
-          if i < j then some (.complement i, .complement i)
-          else if j < i then some (.complement i, .complement (i - 1)) else none }
+  if fr.complements[j]? = some .nominal then some <|
+    .of fr ⟨some .nominal, fr.complements.eraseIdx j ++ [.adpositional]⟩ <|
+      some (.complement (fr.complements.length - 1)) ::
+        (List.range fr.complements.length).map fun i ↦
+          some (if i = j then .external else .complement (if i < j then i else i - 1))
   else none
 
 /-- The Chamorro-type causative (18), (50): a causer is the new subject, the old subject becomes
 the object and the old objects become obliques. -/
-def causativeChamorro (fr : ArgumentFrame) : Voice where
-  source := fr
-  target := ⟨some .nominal, .nominal :: fr.complements.map demote⟩
-  correspondence := (.external, .complement 0) ::
-    (List.range fr.complements.length).map fun i ↦ (.complement i, .complement (i + 1))
+def causativeChamorro (fr : ArgumentFrame) : Voice :=
+  .of fr ⟨some .nominal, .nominal :: fr.complements.map demote⟩ <|
+    some (.complement 0) :: (List.range fr.complements.length).map (fun i ↦
+      some (.complement (i + 1))) ++ [some .external]
 
 /-- The Quechua-type causative (42): of a transitive, the objects stay and the old subject
 becomes an oblique; of an intransitive, the Chamorro type. -/
 def causativeQuechua (fr : ArgumentFrame) : Voice :=
   if fr.HasNominal then
-    { source := fr, target := ⟨some .nominal, fr.complements ++ [.adpositional]⟩,
-      correspondence := (.external, .complement fr.complements.length) ::
-        (List.range fr.complements.length).map fun i ↦ (.complement i, .complement i) }
+    .of fr ⟨some .nominal, fr.complements ++ [.adpositional]⟩ <|
+      some (.complement fr.complements.length) ::
+        (List.range fr.complements.length).map (some ∘ .complement) ++ [some .external]
   else causativeChamorro fr
 
 /-- The applicative (53) makes the first oblique the object and the old object a second object
 after it. -/
 def applicativeOf (fr : ArgumentFrame) : Option Voice :=
   (fr.complements.findIdx? fun p ↦ decide p.IsAdpositional).map fun j ↦
-    { source := fr, target := ⟨some .nominal, .nominal :: fr.complements.eraseIdx j⟩,
-      correspondence := (.external, .external) :: (.complement j, .complement 0) ::
-        (List.range fr.complements.length).filterMap fun i ↦
-          if i < j then some (.complement i, .complement (i + 1))
-          else if j < i then some (.complement i, .complement i) else none }
+    .of fr ⟨some .nominal, .nominal :: fr.complements.eraseIdx j⟩ <|
+      some .external :: (List.range fr.complements.length).map fun i ↦
+        some (.complement (if i = j then 0 else if i < j then i + 1 else i))
 
 /-- Reflexive-reciprocal formation (44): the object is bound to the subject and becomes the
 subject. -/
 def reciprocalOf (fr : ArgumentFrame) : Option Voice :=
   (fr.complements.findIdx? fun p ↦ decide p.IsNominal).map fun j ↦
-    { source := fr, target := ⟨some .nominal, fr.complements.eraseIdx j⟩,
-      correspondence := (.external, .external) :: (.complement j, .external) ::
-        (List.range fr.complements.length).filterMap fun i ↦
-          if i < j then some (.complement i, .complement i)
-          else if j < i then some (.complement i, .complement (i - 1)) else none }
+    .of fr ⟨some .nominal, fr.complements.eraseIdx j⟩ <|
+      some .external :: (List.range fr.complements.length).map fun i ↦
+        some (if i = j then .external else .complement (if i < j then i else i - 1))
 
 /-- Both causative types treat an intransitive alike (§4.1), as [creissels-2024]'s causative. -/
 theorem causativeChamorro_intransitive : causativeChamorro .intransitive = Voice.causative := by

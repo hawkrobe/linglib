@@ -281,8 +281,7 @@ theorem linking_derives_incompletive :
 /-- By rule (26), transitivizing an internally-caused base nucleativizes an applied object as P
 while the base's S is maintained, surfacing as the A of the derived transitive clause. This is
 Creissels' P-applicativization over an intransitive base. -/
-def applicativeLinking : Voice :=
-  { source := .intransitive, target := .np, correspondence := [(.external, .external)] }
+def applicativeLinking : Voice := .of .intransitive .np [some .external, some (.complement 0)]
 
 /-- By rule (27), transitivizing an externally-caused base nucleativizes an instigator as A, the
 base's S surfacing as P. This is the causative unchanged. -/
@@ -302,7 +301,7 @@ def addedRole (va : Voice) : Option TermRole := va.newParticipant
 
 /-- The base's S receives the role of the derived slot its participant occupies. -/
 def originalRole (va : Voice) : Option TermRole :=
-  (va.image .external).bind fun t ↦ (va.target.status t).role
+  (va.image .external).bind fun t ↦ (va.derived.status t).role
 
 /-- Under transitivization the participant of an internally-caused base occupies the causing
 process (26), and that of an externally-caused base the caused event (27). -/
@@ -515,7 +514,7 @@ theorem DetransitivizationType.isSome_template_iff (d : DetransitivizationType)
 /-- The initial role of the participant that a voice's derived construction privileges. -/
 def pivotSourceRole (va : Voice) : Option TermRole :=
   (va.pivot.bind fun p ↦ (va.preimages p).head?).bind fun s ↦
-    (va.source.argumentRole s).map TermRole.ofArgumentRole
+    (va.initial.argumentRole s).map TermRole.ofArgumentRole
 
 /-- The sole argument of a detransitivized stem is the participant of the subevent it denotes, in
 the role (33) gives that subevent: the S of an antipassive was the A, that of an anticausative

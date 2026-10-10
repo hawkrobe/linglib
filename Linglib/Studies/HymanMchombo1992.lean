@@ -363,23 +363,23 @@ def Feature.valency (f : Feature) (n : ℕ) : Option ℕ :=
   match f.voice? with
   | none => some n
   | some v =>
-    if v.target.valency < v.source.valency ∧ n < v.source.valency then none
-    else some (n + v.target.valency - v.source.valency)
+    if v.derived.valency < v.initial.valency ∧ n < v.initial.valency then none
+    else some (n + v.derived.valency - v.initial.valency)
 
 /-- The valency an input derives from a root of valency `n`, if every feature applies. -/
 def Input.valency (i : Input) (n : ℕ) : Option ℕ := i.foldlM (fun n f ↦ f.valency n) n
 
 theorem valency_reciprocal (n : ℕ) :
     reciprocal.valency n = if n < 2 then none else some (n - 1) := by
-  have h₁ : Chichewa.reciprocal.source.valency = 2 := by decide
-  have h₂ : Chichewa.reciprocal.target.valency = 1 := by decide
+  have h₁ : Chichewa.reciprocal.initial.valency = 2 := by decide
+  have h₂ : Chichewa.reciprocal.derived.valency = 1 := by decide
   simp only [Feature.valency, Feature.voice?, h₁, h₂]
   split_ifs <;> first | rfl | omega
 
 theorem valency_passive (n : ℕ) :
     passive.valency n = if n < 2 then none else some (n - 1) := by
-  have h₁ : Chichewa.passive.source.valency = 2 := by decide
-  have h₂ : Chichewa.passive.target.valency = 1 := by decide
+  have h₁ : Chichewa.passive.initial.valency = 2 := by decide
+  have h₂ : Chichewa.passive.derived.valency = 1 := by decide
   simp only [Feature.valency, Feature.voice?, h₁, h₂]
   split_ifs <;> first | rfl | omega
 

@@ -65,7 +65,7 @@ def voices : Finset Voice := {active, antipassive, passive, nullPassive, lexical
 
 /-- Every voice but the active derives an intransitive construction, the verb marking one
 argument by Set B ([england-2017]). -/
-theorem not_isTransitive_of_ne_active : ∀ v ∈ voices, v ≠ active → ¬ v.target.IsTransitive := by
+theorem not_isTransitive_of_ne_active : ∀ v ∈ voices, v ≠ active → ¬ v.derived.IsTransitive := by
   decide
 
 end Mam

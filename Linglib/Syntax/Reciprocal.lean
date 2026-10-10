@@ -147,7 +147,7 @@ def Strategy.voice (s : Strategy) : Option Voice :=
 tendency that languages may override ([maslova-2008], [hurst-2012]). -/
 def Strategy.defaultValency (s : Strategy) : Valency :=
   match s.voice with
-  | some a => if a.target.IsTransitive then .bivalent else .monovalent
+  | some a => if a.derived.IsTransitive then .bivalent else .monovalent
   | none => .bivalent
 
 /-- Nominal strategies preserve valency by default. -/
