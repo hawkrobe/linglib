@@ -116,7 +116,8 @@ although *van* denotes a source path.
 namespace BroekhuisCorver2026
 
 open Dutch.Adpositions
-open ArgumentStructure (PerfectAux TransitivityClass)
+open ArgumentStructure (TransitivityClass)
+open Verb (PerfectAuxiliary)
 
 /-! ### The internal structure of an adpositional phrase -/
 
@@ -348,7 +349,7 @@ def verbClass (d : Spatial.Path.Direction) : TransitivityClass :=
 
 /-- Whatever auxiliary reflexives take, the verb takes *zijn* 'be' exactly when its complementive
 denotes a path. -/
-theorem selection_verbClass_eq_be_iff (r : PerfectAux) (d : Spatial.Path.Direction) :
+theorem selection_verbClass_eq_be_iff (r : PerfectAuxiliary) (d : Spatial.Path.Direction) :
     (verbClass d).selection r = .be ↔ d ≠ .place := by
   unfold verbClass; split <;> simp [*, TransitivityClass.selection]
 
@@ -356,14 +357,14 @@ theorem selection_verbClass_eq_be_iff (r : PerfectAux) (d : Spatial.Path.Directi
 phrase of *op* is locational and its verb takes *hebben* 'have', and in *de fietser is de heuvel
 op gereden* 'the cyclist rode up the hill' the postpositional phrase denotes a goal path and its
 verb takes *zijn* 'be'. -/
-theorem perfect_op (r : PerfectAux) :
+theorem perfect_op (r : PerfectAuxiliary) :
     (verbClass (op.direction .pre)).selection r = .have ∧
       (verbClass (op.direction .post)).selection r = .be :=
   ⟨rfl, rfl⟩
 
 /-- A postpositional phrase denotes a path and is the complementive of a verb of traversing, which
 is unaccusative and takes *zijn* 'be'. -/
-theorem postP_selects_zijn (r : PerfectAux) :
+theorem postP_selects_zijn (r : PerfectAuxiliary) :
     ∀ a ∈ inventory, .post ∈ a.linearization → (verbClass (a.direction .post)).selection r = .be :=
   fun a ha h ↦ (selection_verbClass_eq_be_iff r _).2 (direction_post_ne_place a ha h)
 

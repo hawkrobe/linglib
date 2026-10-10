@@ -71,6 +71,10 @@ def ofSlots (fr : ArgumentFrame) (ps : List ℕ) : Diathesis n :=
 def participantAt (d : Diathesis n) (s : Slot) : Option (Fin n) :=
   (List.finRange n).find? fun i ↦ d.links.get i = some s
 
+/-- The argument role of a participant, that of its slot. -/
+def participantRole (d : Diathesis n) (i : Fin n) : Option ArgumentRole :=
+  (d.links.get i).bind d.argumentRole
+
 end Diathesis
 
 open ArgumentStructure (EntailmentProfile)

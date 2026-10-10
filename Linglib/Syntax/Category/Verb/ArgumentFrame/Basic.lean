@@ -27,9 +27,9 @@ ordered by refinement, so a schematic frame lies below every frame instantiating
   records, as a bundle of partial values in the flat order
 * `ArgumentFrame` — external argument and complements, with the refinement order
 * `ArgumentFrame.Slot`, `ArgumentFrame.get?`, `ArgumentFrame.slots`, `ArgumentFrame.coreSlots`,
-  `ArgumentFrame.valency`, `ArgumentFrame.IsTransitive`, `ArgumentFrame.codingRole` — the
+  `ArgumentFrame.valency`, `ArgumentFrame.IsTransitive`, `ArgumentFrame.argumentRole` — the
   argument slots of a frame and their comparative S/A/P/R/T classification
-* `ArgumentFrame.IsIntransitive`, `ArgumentFrame.IsUnaccusative`, `ArgumentFrame.HasNominal`,
+* `ArgumentFrame.IsIntransitive`, `ArgumentFrame.HasNominal`,
   `ArgumentFrame.HasAdpositional`, `ArgumentFrame.HasClausal`, `ArgumentFrame.HasFinite`,
   `ArgumentFrame.HasImplicit` — shape predicates
 * `ArgumentFrame.intransitive`, `ArgumentFrame.np`, `ArgumentFrame.finiteClause`, … — smart
@@ -44,10 +44,12 @@ ordered by refinement, so a schematic frame lies below every frame instantiating
 A position refines another within its kind: `p ≤ q` when the two are of
 one kind and every axis `p` records, `q` records with the same value. A
 frame's order fixes the external argument and refines the complements
-pointwise (`List.Forall₂`). The external argument is an `Option`: `none`
-is the unaccusative and impersonal case. Comrie's role labels S, A, P, R and T are derived
-from the frame (`ArgumentFrame.codingRole`), never stored. The interpretations of an implicit
-argument are Fillmore's and Bruening's, with Levin's understood-object alternations.
+pointwise (`List.Forall₂`). A frame is the surface clause, its external argument the subject
+position, `none` for a predicate that selects no subject, as an impersonal passive and a raising
+predicate; an unaccusative verb's sole argument is its subject, unaccusativity being read off the
+verb's diatheses (`Verb.IsUnaccusative`). The comparative role labels S, A, P, R and T are read
+off the frame's coding (`ArgumentFrame.argumentRole`), never stored. The interpretations of an
+implicit argument are Fillmore's and Bruening's, with Levin's understood-object alternations.
 Complement-taking is cross-categorial, Noonan's complement-taking predicates including
 adjectives and nouns, so `ArgumentFrame` is not under `Verb`. Frame-conditioned readings
 (attitude, opacity, control) live on `Verb.Reading` (`Syntax/Category/Verb/Defs.lean`); the
@@ -336,22 +338,24 @@ def IsTransitive : Prop := 2 ≤ fr.valency
 
 instance : Decidable fr.IsTransitive := inferInstanceAs (Decidable (_ ≤ _))
 
-/-- The comparative classification of a core slot. The sole core argument of a one-place
-    frame is S, a two-place frame has A and P, and a three-place frame A, R and T. -/
-def codingRole (s : Slot) : Option ArgumentRole :=
-  (fr.coreSlots.idxOf? s).bind fun i ↦
-    match fr.valency, i with
-    | 1, 0 => some .S
-    | _, 0 => some .A
-    | 2, 1 => some .P
-    | _, 1 => some .R
-    | _, 2 => some .T
+/-- The core objects are the core complements. -/
+def coreObjects : List Slot := fr.coreSlots.filter (· != .external)
+
+/-- The comparative argument role of a core slot, read off its coding: a nominal subject is S
+    without a core object and A with one, a sole core object is P, and of two core objects the
+    first is R and the second T. -/
+def argumentRole : Slot → Option ArgumentRole
+  | .external => if .external ∈ fr.coreSlots then some (if fr.coreObjects = [] then .S else .A)
+      else none
+  | s => match fr.coreObjects.length, fr.coreObjects.idxOf? s with
+    | 1, some 0 => some .P
+    | 2, some 0 => some .R
+    | 2, some 1 => some .T
     | _, _ => none
 
-/-- The slot object entailments sit on is the last core complement, the sole
-    object of a monotransitive and the second object of a double-object
-    frame. -/
-def objectSlot? : Option Slot := (fr.coreSlots.filter (· != Slot.external)).getLast?
+/-- The slot object entailments sit on is the last core object, the sole object of a
+    monotransitive and the second object of a double-object frame. -/
+def objectSlot? : Option Slot := fr.coreObjects.getLast?
 
 /-! ### Shape predicates -/
 
@@ -385,12 +389,6 @@ def HasImplicit : Prop := ∃ p ∈ fr.complements, p.kind = .implicit
 
 instance : Decidable fr.HasImplicit := inferInstanceAs (Decidable (∃ p ∈ _, _))
 
-/-- A frame is unaccusative when it has no external argument and an expressed
-    complement, the underlying object or clause that surfaces as subject. -/
-def IsUnaccusative : Prop := fr.external = none ∧ ∃ p ∈ fr.complements, p.IsExpressed
-
-instance : Decidable fr.IsUnaccusative := inferInstanceAs (Decidable (_ ∧ ∃ p ∈ _, _))
-
 /-- The [noonan-2007] codings recorded across the frame's complements. -/
 def codings : List Complement.Coding := fr.complements.filterMap (·.coding?)
 
@@ -404,9 +402,6 @@ instance (t : Clause.SentenceType) : Decidable (fr.hasType t) :=
 
 /-- The intransitive frame has an external argument and no complement. -/
 def intransitive : ArgumentFrame := ⟨some .nominal, []⟩
-
-/-- The unaccusative frame has a single nominal argument, internal. -/
-def unaccusative : ArgumentFrame := ⟨none, [.nominal]⟩
 
 /-- The impersonal frame has an expletive subject and no complement. -/
 def impersonal : ArgumentFrame := ⟨some .expletive, []⟩

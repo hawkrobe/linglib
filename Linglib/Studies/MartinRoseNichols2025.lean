@@ -3,6 +3,7 @@ module
 public import Linglib.Pragmatics.Bidirectional
 public import Linglib.Semantics.Root.Defs
 public import Linglib.Fragments.English.Verbs.Inventory
+public import Linglib.Semantics.ArgumentStructure.Unaccusativity
 
 /-!
 # Martin, Rose and Nichols (2025): Burning facts: thick and thin causatives
@@ -55,7 +56,8 @@ rather than through an event predicate.
 * `causativeMannerVerbs_subset_thick`, `thickState_eq`, `strongResultative_sdiff_thick` — the
   correlation between thickness and strong resultatives.
 * `thin_without_omission`, `thick_inter_omissionSubject` — omission subjects in the survey.
-* `alternating_iff_unaccusative` — the alternation column agrees with the fragment's frames.
+* `alternating_iff_hasCausativeAlternation` — the alternation column agrees with the fragment's
+  diatheses.
 
 ## Implementation notes
 
@@ -64,7 +66,8 @@ ten of thirteen thick and twelve of twenty-four thin verbs alternating) are left
 the theorems state the correlations with their named exceptions. Table 3 lists *melt* among
 the thick verbs found with an omission subject, though the discussion names only *burn*,
 *lift* and *lock*; the table is followed. The survey's annotators judged *cool*
-non-alternating, against the fragment, which gives it an unaccusative frame.
+non-alternating, against the fragment, which gives it an intransitive with the patient as
+subject.
 
 ## References
 
@@ -353,9 +356,9 @@ theorem thick_inter_omissionSubject :
     thick ∩ omissionSubject = {.burn, .lift, .lock, .melt} := by
   decide
 
-/-- The alternation column agrees with the fragment's frames except on *cool*. -/
-theorem alternating_iff_unaccusative :
-    ∀ s, s ≠ .cool → (s ∈ alternating ↔ ArgumentFrame.unaccusative ∈ s.entry.valency.frames) := by
+/-- The alternation column agrees with the fragment's diatheses except on *cool*. -/
+theorem alternating_iff_hasCausativeAlternation :
+    ∀ s, s ≠ .cool → (s ∈ alternating ↔ s.entry.valency.HasCausativeAlternation) := by
   decide
 
 /-- The position of a verb's root on the paper's analysis. The root of a causative manner verb

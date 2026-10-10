@@ -13,7 +13,7 @@ public import Linglib.Syntax.Category.Verb.ArgumentFrame.Basic
 
 This file defines valency frames over dependency graphs: slot data,
 standard frame schemas for the basic valences, the valency of a verb's
-lexical `ArgumentFrame`, read off the coding roles of its core
+lexical `ArgumentFrame`, read off the argument roles of its core
 arguments, and satisfaction of a frame by a position's dependents.
 
 ## Main definitions
@@ -21,7 +21,7 @@ arguments, and satisfaction of a frame by a position's dependents.
 * `Valency` is a word's valency as a list of slots: relation, side of
   the head, optionality.
 * `Valency.ofFrame` is the valency of an argument frame, a slot for each
-  core argument by its coding role.
+  core argument by its argument role.
 * `Frames n` is the per-position valency table.
 * `Graph.SatisfiesFrames` is frame satisfaction: every filler on its
   slot's side of the head, required slots filled, and no unlicensed core
@@ -104,23 +104,20 @@ def Valency.passiveTransitive : Valency := [⟨.nsubj, .left, true⟩, ⟨.obl, 
 
 /-! ### Valency of an argument frame -/
 
-/-- The required slot of a core argument by its coding role: S and A are the subject, to the
+/-- The required slot of a core argument by its argument role: S and A are the subject, to the
 left of the head; P and T the object and R the indirect object, to its right. -/
 def Valency.Slot.ofRole : ArgumentRole → Valency.Slot
   | .S | .A => ⟨.nsubj, .left, true⟩
   | .P | .T => ⟨.obj, .right, true⟩
   | .R => ⟨.iobj, .right, true⟩
 
-/-- The valency of an argument frame: a slot for each core argument, by its coding role.
+/-- The valency of an argument frame: a slot for each core argument, by its argument role.
 Clausal and adpositional complements have none, since UD's clausal relations and obliques are
 not core arguments and `Graph.SatisfiesFrames` leaves them unconstrained. -/
 def Valency.ofFrame (fr : ArgumentFrame) : Valency :=
-  fr.coreSlots.filterMap fun s ↦ (fr.codingRole s).map .ofRole
+  fr.coreSlots.filterMap fun s ↦ (fr.argumentRole s).map .ofRole
 
 theorem Valency.ofFrame_intransitive : ofFrame .intransitive = .intransitive := rfl
-
-/-- The sole argument of an unaccusative frame is its subject. -/
-theorem Valency.ofFrame_unaccusative : ofFrame .unaccusative = .intransitive := rfl
 
 theorem Valency.ofFrame_np : ofFrame .np = .transitive := rfl
 

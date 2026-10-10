@@ -89,13 +89,13 @@ inductive ResponsibilityGoal where
 /-- The control level is not derivable from the entailment profile, since the limited-control
 *rougir* and the in-control *refroidir* share one. -/
 theorem control_level_not_from_entailments :
-    rougir.objectEntailments = refroidir.objectEntailments := by decide
+    rougir.subjectEntailments = refroidir.subjectEntailments := by decide
 
 /-- Movement entailments suffice for in-control status, *approcher*, but are not necessary,
 *refroidir* being in-control without them. -/
 theorem movement_sufficient_not_necessary :
-    approcher.objectEntailments = some movingUndergoer ∧
-      refroidir.objectEntailments = some undergoer ∧
+    approcher.subjectEntailments = some movingUndergoer ∧
+      refroidir.subjectEntailments = some undergoer ∧
       movingUndergoer.movement = true ∧ undergoer.movement = false := by
   decide
 

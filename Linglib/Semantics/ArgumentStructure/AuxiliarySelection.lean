@@ -23,7 +23,6 @@ own point. The inflectional typology of auxiliary verb constructions lives in
 
 ## Main definitions
 
-* `PerfectAux`: *be* or *have*.
 * `TransitivityClass` and its `selection`, `canonicalSelection` and `SelectsBe`: the binary
   account.
 * `AuxiliarySelectionHierarchy`: the verb types of the Auxiliary Selection Hierarchy, a bounded
@@ -41,14 +40,6 @@ own point. The inflectional typology of auxiliary verb constructions lives in
 @[expose] public section
 
 namespace ArgumentStructure
-
-/-- Perfect auxiliary choice. -/
-inductive PerfectAux where
-  /-- Italian *essere*, French *être*, German *sein*. -/
-  | be
-  /-- Italian *avere*, French *avoir*, German *haben*. -/
-  | have
-  deriving DecidableEq, Repr, Fintype
 
 /-- Transitivity class relevant to auxiliary selection. -/
 inductive TransitivityClass where
@@ -69,14 +60,14 @@ namespace TransitivityClass
 unaccusatives select *be*, unergatives and transitives *have*, and reflexives are the locus of
 variation, *be* in Romance and *have* in German ([burzio-1986] for the Italian
 generalization). -/
-def selection (refl : PerfectAux) : TransitivityClass → PerfectAux
+def selection (refl : Verb.PerfectAuxiliary) : TransitivityClass → Verb.PerfectAuxiliary
   | unaccusative => .be
   | reflexive    => refl
   | unergative   => .have
   | transitive   => .have
 
 /-- Canonical (Romance) auxiliary selection gives reflexives *be*. -/
-def canonicalSelection : TransitivityClass → PerfectAux := selection .be
+def canonicalSelection : TransitivityClass → Verb.PerfectAuxiliary := selection .be
 
 /-- Does this transitivity class canonically select *be*? -/
 def SelectsBe (c : TransitivityClass) : Prop :=

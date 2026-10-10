@@ -24,7 +24,7 @@ as the lexical reciprocals.
 
 An intransitive verb forms its perfect with *essere* when it expresses a change of location, state
 or condition, the continuation of a state or existence in a state, and with *avere* when an
-activity is in the foreground, whether or not its subject controls it (`Italian.Verbs.perfect`):
+activity is in the foreground, whether or not its subject controls it (`Italian.Verbs.perfectAuxiliary`):
 *Maria è arrivata* 'Maria has arrived' but *Mario ha tossito* 'Mario has coughed'. *Correre*
 'run' takes *essere* with a phrase that brings it to an endpoint, *È corso al campo sportivo in
 un'ora* 'he ran to the sports ground in an hour', and *nuotare* 'swim', which selects no such
@@ -64,6 +64,8 @@ def Verb.withPath (v : Verb) (p : Adposition.SpatialReading) : Verb :=
     (v.withPath p).toVerb = v.toVerb.withPath p := rfl
 
 end Italian
+
+open Verb (PerfectAuxiliary)
 
 namespace Italian.Verbs
 
@@ -210,53 +212,60 @@ def vedere : Verb where
 
 /-! ### Monadic verbs
 
-The monadic verbs of [sorace-2000]'s Italian examples whose auxiliary [maiden-robustelli-2007]
-§14.20 states. -/
+The monadic verbs of [sorace-2000]'s Italian examples, with the auxiliaries of their perfect,
+both for the verbs [maiden-robustelli-2007] §14.20 lists as taking either. -/
 
 /-- *venire* 'come', a verb of change of location. -/
 def venire : Verb where
   form := "venire"
-  valency := .ofFrame ArgumentFrame.unaccusative
+  valency := .ofFrame ArgumentFrame.intransitive
+  perfectAuxiliaries := {.be}
   vendlerClass := some .achievement
   direction := some .goal
 
 /-- *arrivare* 'arrive', a verb of change of location. -/
 def arrivare : Verb where
   form := "arrivare"
-  valency := .ofFrame ArgumentFrame.unaccusative
+  valency := .ofFrame ArgumentFrame.intransitive
+  perfectAuxiliaries := {.be}
   vendlerClass := some .achievement
   direction := some .goal
 
 /-- *cadere* 'fall', a verb of change with a direction ([levin-hovav-1995] p. 147). -/
 def cadere : Verb where
   form := "cadere"
-  valency := .ofFrame ArgumentFrame.unaccusative
+  valency := .ofFrame ArgumentFrame.intransitive
+  perfectAuxiliaries := {.be}
   vendlerClass := some .achievement
   direction := some .goal
 
 /-- *salire* 'go up', a change along a scale of height. -/
 def salire : Verb where
   form := "salire"
-  valency := .ofFrame ArgumentFrame.unaccusative
+  valency := .ofFrame ArgumentFrame.intransitive
+  perfectAuxiliaries := {.be}
   vendlerClass := some .accomplishment
   scaleDimension := some .height
 
 /-- *marcire* 'go off, rot', a verb of change of state. -/
 def marcire : Verb where
   form := "marcire"
-  valency := .ofFrame ArgumentFrame.unaccusative
+  valency := .ofFrame ArgumentFrame.intransitive
+  perfectAuxiliaries := {.be}
   vendlerClass := some .accomplishment
 
 /-- *fiorire* 'bloom', a verb of change of state. -/
 def fiorire : Verb where
   form := "fiorire"
-  valency := .ofFrame ArgumentFrame.unaccusative
+  valency := .ofFrame ArgumentFrame.intransitive
+  perfectAuxiliaries := {.be}
   vendlerClass := some .achievement
 
 /-- *rimanere* 'remain', the persistence of a state. -/
 def rimanere : Verb where
   form := "rimanere"
-  valency := .ofFrame ArgumentFrame.unaccusative
+  valency := .ofFrame ArgumentFrame.intransitive
+  perfectAuxiliaries := {.be}
   vendlerClass := some .state
   phasal := some .continuation
 
@@ -264,50 +273,58 @@ def rimanere : Verb where
 duration is in the foreground. -/
 def durare : Verb where
   form := "durare"
-  valency := .ofFrame ArgumentFrame.unaccusative
+  valency := .ofFrame ArgumentFrame.intransitive
+  perfectAuxiliaries := {.be, .have}
   vendlerClass := some .state
 
 /-- *esistere* 'exist', existence in a state. -/
 def esistere : Verb where
   form := "esistere"
-  valency := .ofFrame ArgumentFrame.unaccusative
+  valency := .ofFrame ArgumentFrame.intransitive
+  perfectAuxiliaries := {.be}
   vendlerClass := some .state
 
 /-- *bastare* 'be enough', existence in a state. -/
 def bastare : Verb where
   form := "bastare"
-  valency := .ofFrame ArgumentFrame.unaccusative
+  valency := .ofFrame ArgumentFrame.intransitive
+  perfectAuxiliaries := {.be}
   vendlerClass := some .state
 
 /-- *sembrare* 'seem', a state predicated of the subject. -/
 def sembrare : Verb where
   form := "sembrare"
-  valency := .ofFrame ArgumentFrame.unaccusative
+  valency := .ofFrame ArgumentFrame.intransitive
+  perfectAuxiliaries := {.be}
   vendlerClass := some .state
 
 /-- *appartenere* 'belong', which takes *essere* for a state, *L'anello era appartenuto alla regina
 Vittoria*, and *avere* where the subject controls it, *Non ho mai appartenuto al PCI*. -/
 def appartenere : Verb where
   form := "appartenere"
-  valency := .ofFrame ArgumentFrame.unaccusative
+  valency := .ofFrame ArgumentFrame.intransitive
+  perfectAuxiliaries := {.be, .have}
   vendlerClass := some .state
 
 /-- *lavorare* 'work', an activity whose subject controls it. -/
 def lavorare : Verb where
   form := "lavorare"
   valency := .ofFrame ArgumentFrame.intransitive [some activitySubjectProfile]
+  perfectAuxiliaries := {.have}
   vendlerClass := some .activity
 
 /-- *chiacchierare* 'chat', an activity whose subject controls it. -/
 def chiacchierare : Verb where
   form := "chiacchierare"
   valency := .ofFrame ArgumentFrame.intransitive [some activitySubjectProfile]
+  perfectAuxiliaries := {.have}
   vendlerClass := some .activity
 
 /-- *correre* 'run', a verb of manner of motion that selects a directional phrase. -/
 def correre : Verb where
   form := "correre"
   valency := .of [(ArgumentFrame.intransitive, [0]), (ArgumentFrame.spatialPP, [0, 1])]
+  perfectAuxiliaries := {.be, .have}
   vendlerClass := some .activity
   direction := some .place
 
@@ -315,6 +332,7 @@ def correre : Verb where
 def saltare : Verb where
   form := "saltare"
   valency := .of [(ArgumentFrame.intransitive, [0]), (ArgumentFrame.spatialPP, [0, 1])]
+  perfectAuxiliaries := {.be, .have}
   vendlerClass := some .activity
   direction := some .place
 
@@ -322,6 +340,7 @@ def saltare : Verb where
 def nuotare : Verb where
   form := "nuotare"
   valency := .ofFrame ArgumentFrame.intransitive
+  perfectAuxiliaries := {.have}
   vendlerClass := some .activity
   direction := some .place
 
@@ -329,41 +348,15 @@ def nuotare : Verb where
 def tossire : Verb where
   form := "tossire"
   valency := .ofFrame ArgumentFrame.intransitive
+  perfectAuxiliaries := {.have}
   vendlerClass := some .semelfactive
 
 /-- *squillare* 'ring', an activity whose subject does not control it. -/
 def squillare : Verb where
   form := "squillare"
   valency := .ofFrame ArgumentFrame.intransitive
+  perfectAuxiliaries := {.have}
   vendlerClass := some .activity
-
-/-! ### The perfect auxiliary -/
-
-/-- The auxiliary of the perfect of `v` on the frame `fr` ([maiden-robustelli-2007] §14.20) is
-*avere* for a transitive verb; for an intransitive one *essere* when it is a state or expresses a
-change, to an endpoint or along a scale, and *avere* when an activity is in the foreground. -/
-def perfect (v : Verb) (fr : ArgumentFrame) : PerfectAux :=
-  if fr.HasNominal ∧ ¬ fr.IsUnaccusative then .have
-  else if v.vendlerClass.any (fun c ↦ c.dynamicity = .stative ∨ c.telicity = .telic) ∨
-      v.scaleDimension.isSome then .be
-  else .have
-
-/-- The auxiliaries of §14.20 are *essere* for the changes of location *venire*, *arrivare* and
-*salire*, the changes of state *cadere*, *marcire* and *fiorire*, the persistence of a state
-*rimanere*, and existence in a state *esistere*, *bastare* and *sembrare*; *avere* for *lavorare*,
-*nuotare*, *tossire* and *squillare*, activities, and for *correre* with *verso* 'towards', but
-*essere* for *correre* with a phrase that brings it to an endpoint, while *nuotare* keeps *avere*.
--/
-example :
-    [venire, arrivare, salire, cadere, marcire, fiorire, rimanere, esistere, bastare,
-      sembrare].map (perfect · .unaccusative) = List.replicate 10 .be ∧
-    [lavorare, nuotare, tossire, squillare, correre].map (perfect · .intransitive) =
-      List.replicate 5 .have ∧
-    perfect (correre.withPath Adposition.into) .intransitive = .be ∧
-    perfect (correre.withPath { Adposition.into with shape := some .approximative })
-      .intransitive = .have ∧
-    perfect (nuotare.withPath Adposition.into) .intransitive = .have := by
-  decide
 
 /-- `allVerbs` lists the entries. -/
 def allVerbs : List Verb :=
@@ -372,5 +365,30 @@ def allVerbs : List Verb :=
    lasciare, sposare, trovare, vedere,
    venire, arrivare, cadere, salire, marcire, fiorire, rimanere, durare, esistere, bastare,
    sembrare, appartenere, lavorare, chiacchierare, correre, saltare, nuotare, tossire, squillare]
+
+/-! ### The perfect auxiliary -/
+
+/-- The auxiliary of the perfect of `v` on the frame `fr` ([maiden-robustelli-2007] §14.20) is
+*avere* for a transitive verb; for an intransitive one *essere* when it is a state or expresses a
+change, to an endpoint or along a scale, and *avere* when an activity is in the foreground. -/
+def perfectAuxiliary (v : Verb) (fr : ArgumentFrame) : PerfectAuxiliary :=
+  if fr.HasNominal then .have
+  else if v.vendlerClass.any (fun c ↦ c.dynamicity = .stative ∨ c.telicity = .telic) ∨
+      v.scaleDimension.isSome then .be
+  else .have
+
+/-- The rule gives every entry on its basic frame an auxiliary its perfect takes. -/
+theorem perfectAuxiliary_mem : ∀ v ∈ allVerbs, v.perfectAuxiliaries.Nonempty →
+    perfectAuxiliary v (v.valency.frames.headD .intransitive) ∈ v.perfectAuxiliaries := by
+  decide
+
+/-- *Correre* takes *essere* with a phrase that brings it to an endpoint and *avere* with *verso*
+'towards', while *nuotare* keeps *avere* (§14.20). -/
+example :
+    perfectAuxiliary (correre.withPath Adposition.into) .intransitive = .be ∧
+    perfectAuxiliary (correre.withPath { Adposition.into with shape := some .approximative })
+      .intransitive = .have ∧
+    perfectAuxiliary (nuotare.withPath Adposition.into) .intransitive = .have := by
+  decide
 
 end Italian.Verbs

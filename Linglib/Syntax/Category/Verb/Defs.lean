@@ -24,7 +24,8 @@ public import Linglib.Semantics.Root.Defs
 
 `Verb` is the framework-neutral verb entry shared by every language's fragment. Its fields are
 grouped into the facets `Verb.ArgStructure`, `Verb.Aspect`, `Verb.Presupposition` and
-`Verb.Attitude`, beside the selectional and inflectional enums `VoiceType` and `SenseTag`.
+`Verb.Attitude`, beside the selectional and inflectional enums `VoiceType`,
+`Verb.PerfectAuxiliary` and `SenseTag`.
 A verb's valency is its participants and their diatheses, and a frame-conditioned attitude,
 opacity or control lives on a `Verb.Reading` row. The classifications of an entry, factive,
 implicative, trigger and so on, are read off these fields in `Syntax/Category/Verb/Basic.lean`.
@@ -80,6 +81,15 @@ def VoiceType.AssignsTheta (vt : VoiceType) : Prop :=
 instance : DecidablePred VoiceType.AssignsTheta :=
   fun _ ↦ inferInstanceAs (Decidable (_ ∨ _ ∨ _))
 
+/-- The auxiliary of the perfect in a language that forms it with *be* or *have*, as Romance and
+Germanic languages do. -/
+inductive Verb.PerfectAuxiliary where
+  /-- Italian *essere*, French *être*, German *sein*, Dutch *zijn*. -/
+  | be
+  /-- Italian *avere*, French *avoir*, German *haben*, Dutch *hebben*. -/
+  | have
+  deriving DecidableEq, Repr, Fintype
+
 /-- The sense that distinguishes polysemous entries sharing a citation form, as *remember* the
 implicative and *remember* the question-embedding factive. -/
 inductive SenseTag where
@@ -104,9 +114,8 @@ so flat access (`v.valency`) is preserved. -/
 
 namespace Verb
 
-/-- The argument structure and realization of a verb are its valency and voice.
-    Unaccusativity and implicit arguments are frame shapes (`ArgumentFrame.unaccusative`,
-    `ArgumentFrame.objectDrop`). -/
+/-- The argument structure and realization of a verb are its valency and voice. An implicit
+    argument is a frame position (`ArgumentFrame.objectDrop`). -/
 structure ArgStructure where
   /-- The verb's participants, with the proto-role entailment profiles the entry records for
       them ([dowty-1991], [grimm-2011], [levin-2019]), and its diatheses, the basic diathesis
@@ -116,7 +125,10 @@ structure ArgStructure where
   voiceType : Option VoiceType := none
   /-- Can the verb passivize? -/
   passivizable : Bool := true
-  deriving Repr, BEq
+  /-- The auxiliaries the verb forms its perfect with, as its grammar gives them, both where it
+      gives both; empty where the language has no choice or the entry records none. -/
+  perfectAuxiliaries : Finset Verb.PerfectAuxiliary := ∅
+  deriving BEq
 
 /-- The aspectual class of a verb is its Vendler class, degree-achievement scale, direction of
     motion, incrementality and phasal class. -/
@@ -241,12 +253,9 @@ Readers over the frames of `Verb.valency` and over `Verb.readings`: the basic di
 control type and the alternate frame's, when present, and the entailment profiles of the basic
 diathesis's subject and object. -/
 
-/-- The entailment profile the entry records for the subject of its basic diathesis, the
-participant whose slot is coded S or A. -/
+/-- The entailment profile the entry records for the subject of its basic diathesis. -/
 def Verb.subjectEntailments (v : Verb) : Option EntailmentProfile :=
-  v.valency.basic?.bind fun d ↦
-    (d.slots.find? fun s ↦ d.codingRole s = some .S || d.codingRole s = some .A).bind
-      (v.valency.profileAt d)
+  v.valency.basic?.bind (v.valency.profileAt · .external)
 
 /-- The entailment profile the entry records for the participant in the object slot of its basic
 diathesis, its last core complement. -/

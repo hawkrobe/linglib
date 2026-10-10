@@ -29,7 +29,8 @@ gesehen gehabt*, which is colloquial and not accepted as standard.
 * `German.PrincipalParts`: the infinitive, third person singular present and past, and past
   participle of a verb, with its perfect auxiliary.
 * `German.haben`, `German.sein`, `German.werden`: the tense auxiliaries.
-* `German.perfect`: the auxiliary of the perfect of a verb on a frame, by the rule of §12.3.2.
+* `German.perfectAuxiliary`: the auxiliary of the perfect of a verb on a frame, by the rule of
+  §12.3.2.
 * `German.periphrasis`, `German.PrincipalParts.tenseForm`: the means by which German builds its
   tense forms, and the words of a tense form of a verb, finite verb first.
 * `German.tenseForms`, `German.southernTenseForms`: the forms of the standard language and of
@@ -41,12 +42,14 @@ gesehen gehabt*, which is colloquial and not accepted as standard.
 `PrincipalParts.tenseForm` gives the third person singular, the finite verb first and the
 nonfinite verbs in their clause-final order, the lexical verb before the auxiliaries it stands
 under. The perfect auxiliary follows from the meaning of the verb on a frame, as Durrell's rule
-has it, not from the verb alone: an accusative object, an unaccusative frame, a path of motion
-and the continuation of a state are what the rule reads. So *rennen* 'run' takes *sein* as a
-verb of motion although it is not unaccusative, and *tanzen* 'dance' takes *sein* only with a
-directional phrase (`German.perfect_withPath_intransitive`). The verbs of happening of §12.3.2a
-take *sein* on an unaccusative frame; the compounds of *gehen* and *werden* that take *sein* with
-an accusative object (*die Strecke abgegangen*) are exceptions the rule does not cover.
+has it, not from the verb alone: an accusative object, a path of motion, the continuation of a
+state and a change the subject undergoes are what the rule reads. So *rennen* 'run' takes *sein*
+as a verb of motion although it is not unaccusative, *tanzen* 'dance' takes *sein* only with a
+directional phrase (`German.perfect_withPath_intransitive`), and impersonal *frieren*, *es hat
+gefroren* 'there was a frost', takes *haben*, its subject an expletive that undergoes nothing. A
+change of state is read off the entry's aspect, telic or along a scale. The compounds of *gehen*
+and *werden* that take *sein* with an accusative object (*die Strecke abgegangen*) are exceptions
+the rule does not cover.
 
 ## References
 
@@ -57,13 +60,13 @@ an accusative object (*die Strecke abgegangen*) are exceptions the rule does not
 
 namespace German
 
-open ArgumentStructure (PerfectAux)
+open _root_.Verb (PerfectAuxiliary)
 
 /-- The principal parts of a verb are its stem, the infinitive, the third person singular present
 and past and the past participle, with the auxiliary of its perfect. -/
 structure PrincipalParts extends Conjugation.Stem where
   /-- The auxiliary of the perfect. -/
-  perfect : PerfectAux
+  perfectAuxiliary : PerfectAuxiliary
   deriving DecidableEq, Repr
 
 /-- The auxiliary *haben* forms the perfect of most verbs, and its own. -/
@@ -78,18 +81,19 @@ def werden : PrincipalParts := ⟨Conjugation.strong "werden" "wird" "wurde" "ge
 
 /-- The auxiliary verb a perfect is formed with. -/
 def PrincipalParts.perfectVerb (v : PrincipalParts) : PrincipalParts :=
-  match v.perfect with
+  match v.perfectAuxiliary with
   | .be => sein
   | .have => haben
 
-/-- The auxiliary of the perfect of `v` on the frame `fr` ([durrell-2011] §12.3.2): *sein* on an
-unaccusative frame, for a change of state or a verb of happening (a.ii, a.iii); *haben* on a frame
-with an accusative object (b.i); *sein* for a verb of motion and for the continuation of a state,
-*bleiben* (a.i, a.iv); and *haben* otherwise (b.iii–v). -/
-def perfect (v : Verb) (fr : ArgumentFrame) : PerfectAux :=
-  if fr.IsUnaccusative then .be
-  else if fr.HasNominal ∧ .acc ∈ v.objects then .have
-  else if v.direction.isSome ∨ v.phasal = some .continuation then .be
+/-- The auxiliary of the perfect of `v` on the frame `fr` ([durrell-2011] §12.3.2): *haben* on a
+frame with an accusative object (b.i); *sein* for a verb of motion and for the continuation of a
+state, *bleiben* (a.i, a.iv), and for an intransitive verb whose subject undergoes a change of
+state or to which something happens, to an endpoint or along a scale (a.ii, a.iii); and *haben*
+otherwise (b.iii–v). -/
+def perfectAuxiliary (v : Verb) (fr : ArgumentFrame) : PerfectAuxiliary :=
+  if fr.HasNominal ∧ .acc ∈ v.objects then .have
+  else if v.direction.isSome ∨ v.phasal = some .continuation ∨ fr.argumentRole .external = some .S ∧
+      (v.vendlerClass.any (·.telicity == .telic) ∨ v.scaleDimension.isSome) then .be
   else .have
 
 /-- A directional phrase gives an intransitive verb *sein*: the verbs of motion that name the
@@ -97,9 +101,9 @@ activity as such, *tanzen* 'dance' and *segeln* 'sail', take *sein* when they ex
 from one place to another (§12.3.2c). -/
 theorem perfect_withPath_intransitive (v : Verb) {p : Adposition.SpatialReading}
     (hv : v.TakesSpatial) (hp : p.direction ≠ .place) :
-    perfect (v.withPath p) .intransitive = .be := by
-  simp [perfect, _root_.Verb.direction_withPath hv hp, ArgumentFrame.intransitive,
-    ArgumentFrame.IsUnaccusative, ArgumentFrame.HasNominal]
+    perfectAuxiliary (v.withPath p) .intransitive = .be := by
+  simp [perfectAuxiliary, _root_.Verb.direction_withPath hv hp, ArgumentFrame.intransitive,
+    ArgumentFrame.HasNominal]
 
 /-- The verbs of manner of motion select a directional phrase: every entry that displaces its
 subject with no direction takes a spatial complement (§12.3.2c). -/
@@ -111,7 +115,7 @@ theorem takesSpatial_of_direction_eq_place :
 with the auxiliary of its perfect there. -/
 def Verb.principalParts (v : Verb) (fr : ArgumentFrame := v.valency.frames.headD .intransitive) :
     PrincipalParts :=
-  ⟨v.stem, perfect v fr⟩
+  ⟨v.stem, perfectAuxiliary v fr⟩
 
 /-- German builds its tense forms with the past participle under the verb's perfect auxiliary and
 the infinitive under *werden*. It has no future inflection and no form with a present
@@ -164,19 +168,22 @@ def register (f : Tense.Form) : SocialMeaning.Register :=
   if f = .simplePast then .formal else if f = .doublePerfect then .informal else .neutral
 
 open Verbs in
-/-- The groups of §12.3.2: *sein* for the verbs of motion *rennen*, *laufen* and *ankommen*, for
-*frieren* as a change of state and for *bleiben*; *haben* for the transitive *bauen*, for
-*arbeiten* and *tanzen*, which denote an activity as such, for the state *liegen* and for
-impersonal *frieren*; and *sein* for *tanzen* with a directional phrase, which it selects, but not
-for *arbeiten*, which selects none. -/
+/-- The rule gives every entry on its basic frame an auxiliary its perfect takes: *sein* for the
+verbs of motion *rennen*, *laufen* and *ankommen*, for *frieren* as a change of state and for
+*bleiben*, and *haben* for *arbeiten* and *tanzen*, which denote an activity as such, and for the
+state *liegen*. -/
+theorem perfectAuxiliary_mem : ∀ v ∈ allVerbs, v.perfectAuxiliaries.Nonempty →
+    perfectAuxiliary v (v.valency.frames.headD .intransitive) ∈ v.perfectAuxiliaries := by
+  decide
+
+open Verbs in
+/-- *Frieren* takes *haben* impersonally, *es hat gefroren*, and *tanzen* takes *sein* with a
+directional phrase, which it selects, while *arbeiten*, which selects none, keeps *haben*
+(§12.3.2). -/
 example :
-    [perfect rennen .intransitive, perfect laufen .intransitive, perfect ankommen .unaccusative,
-      perfect frieren .unaccusative, perfect bleiben .intransitive] = [.be, .be, .be, .be, .be] ∧
-    [perfect bauen .np, perfect arbeiten .intransitive, perfect tanzen .intransitive,
-      perfect liegen .intransitive, perfect frieren .impersonal] =
-      [.have, .have, .have, .have, .have] ∧
-    perfect (tanzen.withPath Adposition.into) .intransitive = .be ∧
-    perfect (arbeiten.withPath Adposition.into) .intransitive = .have := by
+    perfectAuxiliary frieren .impersonal = .have ∧
+    perfectAuxiliary (tanzen.withPath Adposition.into) .intransitive = .be ∧
+    perfectAuxiliary (arbeiten.withPath Adposition.into) .intransitive = .have := by
   decide
 
 open Verbs in

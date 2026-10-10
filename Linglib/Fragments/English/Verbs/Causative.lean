@@ -127,7 +127,7 @@ def break_ : Verb where
   formPresPart := "breaking"
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
-     (ArgumentFrame.unaccusative, [1]),
+     (ArgumentFrame.intransitive, [1]),
      (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 2])]
   vendlerClass := some .accomplishment
   root := { content := {
@@ -157,7 +157,7 @@ def tear_ : Verb where
   formPresPart := "tearing"
   valency := .of
     [(ArgumentFrame.np, [0, 1]),
-     (ArgumentFrame.unaccusative, [1]),
+     (ArgumentFrame.intransitive, [1]),
      (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 2])]
   vendlerClass := some .accomplishment
   incrementality := some .strict
