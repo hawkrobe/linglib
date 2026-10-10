@@ -14,14 +14,14 @@ public import Linglib.Semantics.Quantification.NumberTree
 Goodman and Stuhlmüller model scalar implicature under a speaker with incomplete knowledge. The
 state is how many of `N` objects have a property, and the speaker's access is how many of them
 she looks at. She observes how many of those have the property, a hypergeometric draw, believes
-her posterior over states (`belief`), and softmax-optimizes the expected log-probability the
-literal listener gives the state under that belief (`obsSpeaker`). The listener, who knows her
-access but not her observation, marginalizes the observation (`speaker`) and applies Bayes' rule
-(`listener`).
+her posterior over states, and softmax-optimizes the expected log-probability the literal
+listener gives the state under that belief. The listener, who knows her access but not her
+observation, models her with the observation drawn at the state (`speaker`) and applies Bayes'
+rule (`listener`).
 
 ## Main statements
 
-* `obsSpeaker_real_singleton`: the speaker says only what holds at every state her observation
+* `speaker_real_singleton`: the speaker says only what holds at every state her observation
   leaves possible, and weights such an utterance by the inverse size of its extension to the
   power of the rationality.
 * `listener_full_lt`: with complete access the speaker knows the state, and of two states at
@@ -38,8 +38,9 @@ access but not her observation, marginalizes the observation (`speaker`) and app
 
 ## Implementation notes
 
-* The speaker is `RSA.speaker` at her posterior belief and no cost. The literal listener is
-  uniform on an utterance's extension, so only the support of the belief matters.
+* The speaker is `RSA.speaker` at her posterior belief and no cost, composed with the draw of
+  her observation. The literal listener is uniform on an utterance's extension, so only the
+  support of the belief matters.
 * The model takes any number of objects, and the alternatives and predictions are for three. An
   utterance's extension is a row of the tree of numbers, the numerals on their lower-bounded
   meaning.
@@ -65,9 +66,9 @@ open scoped ENNReal
 
 variable {N : ℕ}
 
-/-! ### Observation and belief -/
+/-! ### The states an observation leaves possible -/
 
-section Belief
+section Compatible
 
 variable {n : ℕ} {k : Fin (N + 1)}
 
@@ -80,28 +81,18 @@ def compatible (n : ℕ) (k : Fin (N + 1)) : Finset (Fin (N + 1)) :=
     s ∈ compatible n k ↔ hypergeometricCount N s n k ≠ 0 := by
   simp [compatible]
 
-/-- The speaker's belief after an observation is her posterior over states under the uniform
-prior. -/
-noncomputable def belief (N n : ℕ) : Kernel (Fin (N + 1)) (Fin (N + 1)) :=
-  (hypergeometric N n)†(uniformOn Set.univ)
-
-instance : IsMarkovKernel (belief N n) :=
-  inferInstanceAs (IsMarkovKernel ((hypergeometric N n)†(uniformOn Set.univ)))
-
-/-- After a possible observation the speaker entertains exactly the states compatible with it. -/
-theorem belief_apply_singleton_ne_zero_iff (hk : (compatible n k).Nonempty) (s : Fin (N + 1)) :
-    belief N n k {s} ≠ 0 ↔ s ∈ compatible n k := by
+/-- After a possible observation the posterior under the uniform prior charges exactly the states
+compatible with it. -/
+theorem posterior_ne_zero_iff_mem_compatible (hk : (compatible n k).Nonempty)
+    (s : Fin (N + 1)) :
+    ((hypergeometric N n)†(uniformOn Set.univ)) k {s} ≠ 0 ↔ s ∈ compatible n k := by
   obtain ⟨s₀, hs₀⟩ := hk
-  rw [belief, posterior_apply_singleton_ne_zero_iff _ _ (comp_apply_singleton_ne_zero _ _
+  rw [posterior_apply_singleton_ne_zero_iff _ _ (comp_apply_singleton_ne_zero _ _
     (uniformOn_univ_singleton_ne_zero s₀) ((hypergeometric_apply_singleton_ne_zero_iff s₀ k).2
       (mem_compatible.1 hs₀))), hypergeometric_apply_singleton_ne_zero_iff, mem_compatible]
   exact and_iff_right (uniformOn_univ_singleton_ne_zero s)
 
-/-- With complete access the speaker's belief is the point mass at her observation. -/
-theorem belief_full (k : Fin (N + 1)) : belief N N k = Measure.dirac k :=
-  posterior_hypergeometric_self k _ (uniformOn_univ_singleton_ne_zero k)
-
-end Belief
+end Compatible
 
 /-! ### The speaker and the listener -/
 
@@ -110,64 +101,42 @@ section Model
 variable {U : Type*} [MeasurableSpace U] [Fintype U] [MeasurableSingletonClass U]
   (sem : U → Finset (Fin (N + 1))) (α : ℝ) (n : ℕ)
 
-/-- The speaker of equations (2) and (3) believes her posterior over states and addresses the
-literal listener `Plex` of section 1, who is uniform on an utterance's extension. -/
-noncomputable def obsSpeaker : Kernel (Fin (N + 1)) U :=
-  RSA.speaker α 0 (RSA.uniformListener sem) (belief N n)
-
-instance : IsFiniteKernel (obsSpeaker sem α n) :=
-  inferInstanceAs (IsFiniteKernel (RSA.speaker _ _ _ _))
-
-/-- The speaker the listener models (equation 4) marginalizes the observation the listener cannot
-see over the observation kernel. -/
+/-- The speaker of equations (2) and (3) sees how many of the `n` objects she looks at have the
+property, believes her posterior over states under the uniform prior, and addresses the literal
+listener `Plex` of section 1, who is uniform on an utterance's extension. The listener cannot see
+her observation, so the speaker he models (equation 4) draws it at the state. -/
 noncomputable def speaker : Kernel (Fin (N + 1)) U :=
-  obsSpeaker sem α n ∘ₖ hypergeometric N n
+  RSA.speaker α 0 (RSA.uniformListener sem) ((hypergeometric N n)†(uniformOn Set.univ)) ∘ₖ
+    hypergeometric N n
 
 instance : IsFiniteKernel (speaker sem α n) :=
-  inferInstanceAs (IsFiniteKernel (obsSpeaker sem α n ∘ₖ hypergeometric N n))
+  inferInstanceAs (IsFiniteKernel (RSA.speaker _ _ _ _ ∘ₖ hypergeometric N n))
 
 /-- The listener (equation 1) is the speaker's Bayesian inverse under a uniform prior. -/
 noncomputable def listener : Kernel U (Fin (N + 1)) :=
   RSA.pragmaticListener (speaker sem α n) (uniformOn Set.univ)
 
-variable {sem α n} {k : Fin (N + 1)} {u : U}
+variable {sem α n} {u : U}
 
-/-- After a possible observation the speaker says only what holds at every state it leaves
-possible, and weights such an utterance by the inverse size of its extension to the power `α`. -/
-theorem obsSpeaker_real_singleton (hα : 0 < α) (hk : (compatible n k).Nonempty) (u : U) :
-    (obsSpeaker sem α n k).real {u} =
-      (if compatible n k ⊆ sem u then ((sem u).card : ℝ)⁻¹ ^ α else 0) /
-        ∑ u', if compatible n k ⊆ sem u' then ((sem u').card : ℝ)⁻¹ ^ α else 0 :=
-  RSA.speaker_uniformListener_real_singleton sem hα (belief_apply_singleton_ne_zero_iff hk) u
-
-/-- When the utterances true at every state an observation leaves possible are those true at one
-state, the speaker speaks as if she knew that state. -/
-theorem obsSpeaker_apply_eq_uniformSpeaker (hα : 0 < α) (hk : (compatible n k).Nonempty)
-    {s : Fin (N + 1)} (h : ∀ u, compatible n k ⊆ sem u ↔ s ∈ sem u) :
-    obsSpeaker sem α n k = RSA.uniformSpeaker sem α s :=
-  RSA.speaker_uniformListener_apply_eq_uniformSpeaker sem hα
-    (belief_apply_singleton_ne_zero_iff hk) h
-
-/-- When every meaning is upward closed, the speaker who has seen `k` objects with the property
-speaks as one who knows there are exactly `k`, her observation being her lower bound. -/
-theorem obsSpeaker_apply_of_isUpperSet (hα : 0 < α)
-    (hsem : ∀ u, IsUpperSet (sem u : Set (Fin (N + 1)))) (hk : (k : ℕ) ≤ n) (hn : n ≤ N) :
-    obsSpeaker sem α n k = RSA.uniformSpeaker sem α k :=
-  have hmem : k ∈ compatible n k :=
-    mem_compatible.2 (hypergeometricCount_ne_zero_iff.2 ⟨hk, le_rfl, by omega⟩)
-  obsSpeaker_apply_eq_uniformSpeaker hα ⟨k, hmem⟩ fun u ↦
-    ⟨fun h ↦ h hmem, fun h s hs ↦ hsem u
-      (Fin.le_def.2 (hypergeometricCount_ne_zero_iff.1 (mem_compatible.1 hs)).2.1) h⟩
-
-theorem speaker_apply_singleton (s : Fin (N + 1)) (u : U) :
-    speaker sem α n s {u} = ∑ k, hypergeometric N n s {k} * obsSpeaker sem α n k {u} :=
-  Kernel.comp_apply_singleton _ _ s u
+/-- The speaker says only what holds at every state her observation leaves possible, and weights
+such an utterance by the inverse size of its extension to the power `α`. -/
+theorem speaker_real_singleton (hα : 0 < α) (s : Fin (N + 1)) (u : U) :
+    (speaker sem α n s).real {u} = ∑ k, (hypergeometric N n s).real {k} *
+      ((if compatible n k ⊆ sem u then ((sem u).card : ℝ)⁻¹ ^ α else 0) /
+        ∑ u', if compatible n k ⊆ sem u' then ((sem u').card : ℝ)⁻¹ ^ α else 0) := by
+  rw [speaker, Kernel.comp_real_singleton]
+  refine Finset.sum_congr rfl fun k _ ↦ ?_
+  rcases eq_or_ne (hypergeometric N n s {k}) 0 with h0 | h0
+  · rw [measureReal_def, h0, ENNReal.toReal_zero, zero_mul, zero_mul]
+  · rw [RSA.speaker_uniformListener_real_singleton sem hα (posterior_ne_zero_iff_mem_compatible
+      ⟨s, mem_compatible.2 ((hypergeometric_apply_singleton_ne_zero_iff s k).1 h0)⟩)]
 
 theorem speaker_real_singleton_le_one (s : Fin (N + 1)) (u : U) :
     (speaker sem α n s).real {u} ≤ 1 := by
   have h : speaker sem α n s {u} ≤ 1 :=
     calc speaker sem α n s {u}
-      _ = ∑ k, hypergeometric N n s {k} * obsSpeaker sem α n k {u} := speaker_apply_singleton s u
+      _ = ∑ k, hypergeometric N n s {k} * RSA.speaker _ _ _ _ k {u} :=
+          Kernel.comp_apply_singleton _ _ s u
       _ ≤ ∑ k, hypergeometric N n s {k} := Finset.sum_le_sum fun k _ ↦ mul_le_of_le_one_right'
           ((measure_mono (Set.subset_univ _)).trans (RSA.speaker_apply_univ_le_one _ _ _ _ k))
       _ = hypergeometric N n s Set.univ := by rw [← Finset.coe_univ, sum_measure_singleton]
@@ -177,25 +146,38 @@ theorem speaker_real_singleton_le_one (s : Fin (N + 1)) (u : U) :
 
 /-- With complete access the speaker knows the state. -/
 theorem speaker_full : speaker sem α N = RSA.uniformSpeaker sem α := by
-  rw [speaker, hypergeometric_self, Kernel.comp_id, obsSpeaker,
-    show ⇑(belief N N) = Measure.dirac from funext belief_full]
+  rw [speaker, show ⇑((hypergeometric N N)†(uniformOn Set.univ)) = Measure.dirac from
+    funext fun k ↦ posterior_hypergeometric_self k _ (uniformOn_univ_singleton_ne_zero k),
+    hypergeometric_self, Kernel.comp_id]
 
-/-- When every object has the property, the speaker sees it of each object she looks at. -/
-theorem speaker_last (hn : n ≤ N) :
-    speaker sem α n (Fin.last N) = obsSpeaker sem α n ⟨n, Nat.lt_succ_of_le hn⟩ := by
+/-- When every object has the property the speaker sees it of each object she looks at. If the
+utterances true at every state this leaves possible are those true at `s`, she speaks as one who
+knows the state is `s`. -/
+theorem speaker_last (hα : 0 < α) (hn : n ≤ N) {s : Fin (N + 1)}
+    (h : ∀ u, compatible n (⟨n, Nat.lt_succ_of_le hn⟩ : Fin (N + 1)) ⊆ sem u ↔ s ∈ sem u) :
+    speaker sem α n (Fin.last N) = RSA.uniformSpeaker sem α s := by
   rw [speaker, Kernel.comp_apply, hypergeometric_last hn, Measure.dirac_bind (Kernel.measurable _)]
+  exact RSA.speaker_uniformListener_apply_eq_uniformSpeaker sem hα
+    (posterior_ne_zero_iff_mem_compatible
+      ⟨Fin.last N, by simp [hypergeometricCount_ne_zero_iff, hn]⟩) h
 
-/-- When every meaning is upward closed, as the lower-bounded numerals are, the speaker the
-listener models draws her observation and speaks as one who knows it to be the state. -/
+/-- When every meaning is upward closed, as the lower-bounded numerals are, the speaker draws her
+observation and speaks as one who knows it to be the state, what she has seen being her lower
+bound. -/
 theorem speaker_of_isUpperSet (hα : 0 < α) (hsem : ∀ u, IsUpperSet (sem u : Set (Fin (N + 1))))
     (hn : n ≤ N) : speaker sem α n = RSA.uniformSpeaker sem α ∘ₖ hypergeometric N n :=
   Kernel.ext fun s ↦ Measure.ext_of_singleton fun u ↦ by
-    rw [speaker_apply_singleton, Kernel.comp_apply_singleton]
+    rw [speaker, Kernel.comp_apply_singleton, Kernel.comp_apply_singleton]
     refine Finset.sum_congr rfl fun k _ ↦ ?_
-    by_cases h0 : hypergeometric N n s {k} = 0
+    rcases eq_or_ne (hypergeometric N n s {k}) 0 with h0 | h0
     · rw [h0, zero_mul, zero_mul]
-    · rw [obsSpeaker_apply_of_isUpperSet hα hsem (hypergeometricCount_ne_zero_iff.1
-        ((hypergeometric_apply_singleton_ne_zero_iff s k).1 h0)).1 hn]
+    · have hkn := (hypergeometricCount_ne_zero_iff.1
+        ((hypergeometric_apply_singleton_ne_zero_iff s k).1 h0)).1
+      have hk : k ∈ compatible n k :=
+        mem_compatible.2 (hypergeometricCount_ne_zero_iff.2 ⟨hkn, le_rfl, by omega⟩)
+      rw [RSA.speaker_uniformListener_apply_eq_uniformSpeaker sem hα
+        (posterior_ne_zero_iff_mem_compatible ⟨k, hk⟩) fun u ↦ ⟨fun h ↦ h hk, fun h t ht ↦
+          hsem u (Fin.le_def.2 (hypergeometricCount_ne_zero_iff.1 (mem_compatible.1 ht)).2.1) h⟩]
 
 /-- With complete access, of two states at which an utterance is true the listener favours the
 one at which fewer alternatives are true, since the speaker's choice is spread over them. -/
@@ -284,11 +266,11 @@ theorem some_partial {n : ℕ} (hn : n = 1 ∨ n = 2) :
     (listener QUtt.extension α n .some_).real {2} ≤
       (listener QUtt.extension α n .some_).real {3} := by
   have h3 : speaker QUtt.extension α n 3 {.some_} = 1 := by
-    rw [show (3 : Fin 4) = Fin.last 3 from rfl, speaker_last (by omega)]
+    rw [show (3 : Fin 4) = Fin.last 3 from rfl]
     rcases hn with rfl | rfl
-    · rw [obsSpeaker_apply_eq_uniformSpeaker hα (by decide) (s := 1) (by decide)]
+    · rw [speaker_last hα (by norm_num) (s := 1) (by decide)]
       exact RSA.uniformSpeaker_apply_singleton_eq_one _ hα (by decide) (by decide)
-    · rw [obsSpeaker_apply_eq_uniformSpeaker hα (by decide) (s := 2) (by decide)]
+    · rw [speaker_last hα (by norm_num) (s := 2) (by decide)]
       exact RSA.uniformSpeaker_apply_singleton_eq_one _ hα (by decide) (by decide)
   rw [listener, RSA.pragmaticListener_uniformOn_real_le_iff (t₀ := 3) (h3 ▸ one_ne_zero),
     measureReal_def (speaker QUtt.extension α n 3), h3, ENNReal.toReal_one]
@@ -319,8 +301,9 @@ private theorem numeral_speaker_real {n : ℕ} (hn : n ≤ 3) (s : Fin 4) (u : N
 she looks at. -/
 private theorem numeral_speaker_three_ne_zero {n : ℕ} (hn : n ≤ 3) {u : NumUtt}
     (hu : u.value ≤ n) : speaker NumUtt.extension α n 3 {u} ≠ 0 := by
-  rw [show (3 : Fin 4) = Fin.last 3 from rfl, speaker_last hn,
-    obsSpeaker_apply_of_isUpperSet (n := n) hα NumUtt.isUpperSet_extension le_rfl hn]
+  rw [speaker_of_isUpperSet hα NumUtt.isUpperSet_extension hn, Kernel.comp_apply,
+    show (3 : Fin 4) = Fin.last 3 from rfl, hypergeometric_last hn,
+    Measure.dirac_bind (Kernel.measurable _)]
   exact RSA.uniformSpeaker_apply_singleton_ne_zero _ hα.le (NumUtt.mem_extension.2 hu)
 
 /-- The fully informed speaker at no objects has no numeral to use. -/
