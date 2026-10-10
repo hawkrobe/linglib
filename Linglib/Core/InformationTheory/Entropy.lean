@@ -244,13 +244,7 @@ theorem toReal_klDiv_ofWeights_add_measureEntropy {ι : Type*} [MeasurableSpace 
     (hw : ∀ s, w i s ≠ ∞) (hμ : μ ≪ Kernel.ofWeights w i) :
     (klDiv μ (Kernel.ofWeights w i)).toReal + Hm[μ] =
       log (∑ s, (w i s).toReal) - ∑ s, μ.real {s} * log (w i s).toReal := by
-  obtain ⟨s₀, hs₀⟩ : ∃ s, μ {s} ≠ 0 := by
-    by_contra! h
-    exact NeZero.ne μ (Measure.ext_iff_singleton.2 fun s ↦ by simp [h s])
-  have : IsProbabilityMeasure (Kernel.ofWeights w i) :=
-    (Kernel.isMarkovKernel_ofWeights (w := fun _ : ι ↦ w i)
-      (fun _ ↦ ⟨s₀, fun h ↦ hs₀ (hμ (Kernel.ofWeights_apply_singleton_eq_zero h))⟩)
-      fun _ ↦ hw).isProbabilityMeasure i
+  have := Kernel.isProbabilityMeasure_ofWeights_of_absolutelyContinuous hw hμ
   have hterm (s : S) : μ.real {s} * log ((Kernel.ofWeights w i).real {s}) =
       μ.real {s} * log (w i s).toReal - μ.real {s} * log (∑ s, (w i s).toReal) := by
     rcases eq_or_ne (μ.real {s}) 0 with h | h
