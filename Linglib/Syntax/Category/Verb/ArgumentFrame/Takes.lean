@@ -278,9 +278,9 @@ variable {v : Verb} {z : Complementizer} {inv : List Complementizer}
 
 /-- The verb takes `z` when some frame does. -/
 def Takes (v : Verb) (z : Complementizer) : Prop :=
-  ∃ fr ∈ v.frames, fr.Takes z
+  ∃ fr ∈ v.valency.frames, fr.Takes z
 
-instance : Decidable (v.Takes z) := inferInstanceAs (Decidable (∃ fr ∈ v.frames, _))
+instance : Decidable (v.Takes z) := inferInstanceAs (Decidable (∃ fr ∈ v.valency.frames, _))
 
 /-- A verb taking a typer takes a clausal complement. -/
 theorem Takes.takesClausal (h : v.Takes z) : v.TakesClausal :=

@@ -78,7 +78,7 @@ def affixed (root : String) (side : Morph.Side) (afx : Morph) : String :=
 /-- *hamup'ay* 'forget' (1). -/
 def hamupay : Verb where
   form := "hamup'ay"
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   predicateClass := some .knowledge
   typer := ge
 
@@ -88,7 +88,7 @@ def hamupayEs : Verb := { hamupay with form := affixed hamupay.form .after es }
 /-- *ašaš-e:s* 'know', negated 'not know'; it also takes a plain DP ((6), (79)). -/
 def ashashEs : Verb where
   form := affixed "ašaš" .after es
-  frames := [ArgumentFrame.finiteClause, ArgumentFrame.np]
+  valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.np, [0, 1])]
   predicateClass := some .knowledge
   typer := ge
 
@@ -96,7 +96,7 @@ def ashashEs : Verb where
 (89)). -/
 def iigi : Verb where
   form := "i:gi"
-  frames := [ArgumentFrame.finiteClause, ArgumentFrame.np]
+  valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.np, [0, 1])]
   predicateClass := some .perception
   typer := ge
 
@@ -104,21 +104,21 @@ def iigi : Verb where
 no FPROP shift ((11), (84)). -/
 def damal : Verb where
   form := "damal"
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   predicateClass := some .perception
   typer := ge
 
 /-- *hamu* 'think', intransitive, questioned with *how* rather than *what* ((2), (49)). -/
 def hamu : Verb where
   form := "hamu"
-  frames := [ArgumentFrame.intransitive]
+  valency := .ofFrame ArgumentFrame.intransitive
   predicateClass := some .propAttitude
   typer := aq
 
 /-- *i:d* 'say', intransitive ((14), (50)). -/
 def iid : Verb where
   form := "i:d"
-  frames := [ArgumentFrame.intransitive]
+  valency := .ofFrame ArgumentFrame.intransitive
   predicateClass := some .utterance
   typer := aq
   speechActVerb := true
@@ -126,7 +126,7 @@ def iid : Verb where
 /-- *mɨtgi:bɨl-e:s* 'believe', negated 'disbelieve' (16). -/
 def metgiibilEs : Verb where
   form := affixed "mɨtgi:bɨl" .after es
-  frames := [ArgumentFrame.intransitive]
+  valency := .ofFrame ArgumentFrame.intransitive
   predicateClass := some .propAttitude
   typer := aq
 
@@ -134,7 +134,7 @@ def metgiibilEs : Verb where
 headed relative ((53), (55)). -/
 def suus : Verb where
   form := "suʔuʔuš"
-  frames := [ArgumentFrame.np, ArgumentFrame.finiteClause]
+  valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.finiteClause, [0, 1])]
   predicateClass := none
   typer := ge
 
@@ -144,7 +144,7 @@ def gumsuus : Verb :=
   { suus with
     form := affixed suus.form .before gum
     voiceType := some .reflexive
-    frames := [ArgumentFrame.intransitive]
+    valency := .ofFrame ArgumentFrame.intransitive
     typer := aq }
 
 /-- The predicates with per-predicate data in the paper. -/

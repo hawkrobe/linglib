@@ -30,7 +30,7 @@ open English.Inflection
 /-- *cause* takes an object and an infinitive, *cause the vase to fall*. -/
 def cause : Verb := .mkRegular {
   form := "cause"
-  frames := [ArgumentFrame.infinitival]
+  valency := .ofFrame ArgumentFrame.infinitival
   readings := [{ frame := ArgumentFrame.infinitival, control := some .objectControl }]
   vendlerClass := some .accomplishment
   implicative := ⟨.some .positive, ⊥⟩
@@ -44,7 +44,7 @@ def make : Verb where
   formPast := "made"
   formPastPart := "made"
   formPresPart := "making"
-  frames := [ArgumentFrame.smallClause]
+  valency := .ofFrame ArgumentFrame.smallClause
   readings := [{ frame := ArgumentFrame.smallClause, control := some .objectControl }]
   vendlerClass := some .accomplishment
   implicative := ⟨.some .positive, ⊥⟩
@@ -57,7 +57,7 @@ def let_ : Verb where
   formPast := "let"
   formPastPart := "let"
   formPresPart := "letting"
-  frames := [ArgumentFrame.smallClause]
+  valency := .ofFrame ArgumentFrame.smallClause
   readings := [{ frame := ArgumentFrame.smallClause, control := some .objectControl }]
   vendlerClass := some .achievement
 
@@ -68,7 +68,7 @@ def have_caus : Verb where
   formPast := "had"
   formPastPart := "had"
   formPresPart := "having"
-  frames := [ArgumentFrame.smallClause]
+  valency := .ofFrame ArgumentFrame.smallClause
   readings := [{ frame := ArgumentFrame.smallClause, control := some .objectControl }]
   vendlerClass := some .achievement
   implicative := ⟨.some .positive, ⊥⟩
@@ -82,7 +82,7 @@ def get_caus : Verb where
   formPast := "got"
   formPastPart := "gotten"
   formPresPart := "getting"
-  frames := [ArgumentFrame.infinitival]
+  valency := .ofFrame ArgumentFrame.infinitival
   readings := [{ frame := ArgumentFrame.infinitival, control := some .objectControl }]
   vendlerClass := some .accomplishment
   senseTag := .causative
@@ -91,7 +91,7 @@ def get_caus : Verb where
 /-- *force* takes an object and an infinitive, *force him to leave*. -/
 def force : Verb := .mkRegular {
   form := "force"
-  frames := [ArgumentFrame.infinitival]
+  valency := .ofFrame ArgumentFrame.infinitival
   readings := [{ frame := ArgumentFrame.infinitival, control := some .objectControl }]
   vendlerClass := some .accomplishment
   implicative := ⟨.some .positive, ⊥⟩ }
@@ -99,7 +99,7 @@ def force : Verb := .mkRegular {
 /-- *prevent* takes an object and a *from*-gerund, *prevent him from leaving*. -/
 def prevent : Verb := .mkRegular {
   form := "prevent"
-  frames := [ArgumentFrame.gerund]
+  valency := .ofFrame ArgumentFrame.gerund
   readings := [{ frame := ArgumentFrame.gerund, control := some .objectControl }]
   vendlerClass := some .accomplishment
   implicative := ⟨.some .negative, ⊥⟩ }
@@ -109,7 +109,7 @@ def prevent : Verb := .mkRegular {
 /-- "kill" — Levin 42.1 murder verbs. -/
 def kill : Verb := .mkRegular {
   form := "kill"
-  frames := [ArgumentFrame.np]
+  valency := .ofFrame ArgumentFrame.np
   vendlerClass := some .accomplishment
   root := { content := {
     resultGeometry := {.totalDestruction}
@@ -125,8 +125,10 @@ def break_ : Verb where
   formPast := "broke"
   formPastPart := "broken"
   formPresPart := "breaking"
-  frames := [ArgumentFrame.np, ArgumentFrame.unaccusative,
-    ArgumentFrame.np_pp (some Adpositions.with_)]
+  valency := .of
+    [(ArgumentFrame.np, [0, 1]),
+     (ArgumentFrame.unaccusative, [1]),
+     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 2])]
   vendlerClass := some .accomplishment
   root := { content := {
     force := {.moderate, .high}
@@ -153,8 +155,10 @@ def tear_ : Verb where
   formPast := "tore"
   formPastPart := "torn"
   formPresPart := "tearing"
-  frames := [ArgumentFrame.np, ArgumentFrame.unaccusative,
-    ArgumentFrame.np_pp (some Adpositions.with_)]
+  valency := .of
+    [(ArgumentFrame.np, [0, 1]),
+     (ArgumentFrame.unaccusative, [1]),
+     (ArgumentFrame.np_pp (some Adpositions.with_), [0, 1, 2])]
   vendlerClass := some .accomplishment
   incrementality := some .strict
   root := { content := {

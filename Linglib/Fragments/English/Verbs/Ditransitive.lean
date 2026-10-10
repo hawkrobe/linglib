@@ -34,23 +34,29 @@ open English.Inflection
 /-- "charge" — DOC-only. Implicit second obj indef, implicit goal def (addressee). -/
 def charge : Verb := .mkRegular {
   form := "charge"
-  frames := [ArgumentFrame.np_np, ⟨some .nominal, [.nominal, .implicit (some .indef)]⟩,
-    ⟨some .nominal, [.implicit (some .def), .nominal]⟩]
+  valency := .of
+    [(ArgumentFrame.np_np, [0, 1, 2]),
+     (⟨some .nominal, [.nominal, .implicit (some .indef)]⟩, [0, 1, 2]),
+     (⟨some .nominal, [.implicit (some .def), .nominal]⟩, [0, 1, 2])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.bill, .equip, .run} }
 
 /-- "cost" — DOC-only. Implicit second obj indef, implicit goal def. -/
 def cost : Verb := .mkRegular {
   form := "cost"
-  frames := [ArgumentFrame.np_np, ⟨some .nominal, [.nominal, .implicit (some .indef)]⟩,
-    ⟨some .nominal, [.implicit (some .def), .nominal]⟩]
+  valency := .of
+    [(ArgumentFrame.np_np, [0, 1, 2]),
+     (⟨some .nominal, [.nominal, .implicit (some .indef)]⟩, [0, 1, 2]),
+     (⟨some .nominal, [.implicit (some .def), .nominal]⟩, [0, 1, 2])]
   vendlerClass := some .state
   levinClasses := {LevinClass.cost} }
 
 /-- "fine" — DOC-only. Implicit second obj indef, implicit goal def. -/
 def fine : Verb := .mkRegular {
   form := "fine"
-  frames := [ArgumentFrame.np_np, ⟨some .nominal, [.nominal, .implicit (some .indef)]⟩]
+  valency := .of
+    [(ArgumentFrame.np_np, [0, 1, 2]),
+     (⟨some .nominal, [.nominal, .implicit (some .indef)]⟩, [0, 1, 2])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.bill, .judgment} }
 
@@ -61,8 +67,10 @@ def tip : Verb where
   formPast := "tipped"
   formPastPart := "tipped"
   formPresPart := "tipping"
-  frames := [ArgumentFrame.np_np, ⟨some .nominal, [.nominal, .implicit (some .indef)]⟩,
-    ⟨some .nominal, [.implicit (some .def), .nominal]⟩]
+  valency := .of
+    [(ArgumentFrame.np_np, [0, 1, 2]),
+     (⟨some .nominal, [.nominal, .implicit (some .indef)]⟩, [0, 1, 2]),
+     (⟨some .nominal, [.implicit (some .def), .nominal]⟩, [0, 1, 2])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.bill, .throw}
 
@@ -73,8 +81,11 @@ def pay : Verb where
   formPast := "paid"
   formPastPart := "paid"
   formPresPart := "paying"
-  frames := [ArgumentFrame.np_np, ⟨some .nominal, [.nominal, .implicit (some .indef)]⟩,
-    ⟨some .nominal, [.implicit (some .def), .nominal]⟩, ArgumentFrame.np_pp (some Adpositions.to_)]
+  valency := .of
+    [(ArgumentFrame.np_np, [0, 1, 2]),
+     (⟨some .nominal, [.nominal, .implicit (some .indef)]⟩, [0, 1, 2]),
+     (⟨some .nominal, [.implicit (some .def), .nominal]⟩, [0, 1, 2]),
+     (ArgumentFrame.np_pp (some Adpositions.to_), [0, 2, 1])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.give}
 
@@ -85,8 +96,10 @@ def strike_ : Verb where
   formPast := "struck"
   formPastPart := "struck"
   formPresPart := "striking"
-  frames := [ArgumentFrame.np_np, ⟨some .nominal, [.nominal, .implicit (some .indef)]⟩,
-    ⟨some .nominal, [.implicit (some .def), .nominal]⟩]
+  valency := .of
+    [(ArgumentFrame.np_np, [0, 1, 2]),
+     (⟨some .nominal, [.nominal, .implicit (some .indef)]⟩, [0, 1, 2]),
+     (⟨some .nominal, [.implicit (some .def), .nominal]⟩, [0, 1, 2])]
   vendlerClass := some .achievement
   senseTag := .default
   levinClasses := {LevinClass.amuse, .hit, .soundEmission}
@@ -98,15 +111,19 @@ def forgive : Verb where
   formPast := "forgave"
   formPastPart := "forgiven"
   formPresPart := "forgiving"
-  frames := [ArgumentFrame.np_np, ⟨some .nominal, [.nominal, .implicit (some .def)]⟩,
-    ⟨some .nominal, [.implicit (some .def), .nominal]⟩]
+  valency := .of
+    [(ArgumentFrame.np_np, [0, 1, 2]),
+     (⟨some .nominal, [.nominal, .implicit (some .def)]⟩, [0, 1, 2]),
+     (⟨some .nominal, [.implicit (some .def), .nominal]⟩, [0, 1, 2])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.judgment}
 
 /-- "spare" — DOC-only. Implicit second obj def, no implicit goal. -/
 def spare : Verb := .mkRegular {
   form := "spare"
-  frames := [ArgumentFrame.np_np, ⟨some .nominal, [.nominal, .implicit (some .def)]⟩]
+  valency := .of
+    [(ArgumentFrame.np_np, [0, 1, 2]),
+     (⟨some .nominal, [.nominal, .implicit (some .def)]⟩, [0, 1, 2])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.bill} }
 
@@ -118,7 +135,9 @@ def deny : Verb where
   formPast := "denied"
   formPastPart := "denied"
   formPresPart := "denying"
-  frames := [ArgumentFrame.np_np, ⟨some .nominal, [.implicit (some .def), .nominal]⟩]
+  valency := .of
+    [(ArgumentFrame.np_np, [0, 1, 2]),
+     (⟨some .nominal, [.implicit (some .def), .nominal]⟩, [0, 1, 2])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.conjecture}
 
@@ -130,15 +149,20 @@ def permit : Verb where
   formPast := "permitted"
   formPastPart := "permitted"
   formPresPart := "permitting"
-  frames := [ArgumentFrame.np_np, ⟨some .nominal, [.implicit (some .def), .nominal]⟩]
+  valency := .of
+    [(ArgumentFrame.np_np, [0, 1, 2]),
+     (⟨some .nominal, [.implicit (some .def), .nominal]⟩, [0, 1, 2])]
   vendlerClass := some .accomplishment
 
 /-- "assign" — alternating (DOC + PP). Implicit goal definite; the second
     object is obligatory, Pesetsky's observation as [bruening-2021] report it. -/
 def assign : Verb := .mkRegular {
   form := "assign"
-  frames := [ArgumentFrame.np_np, ArgumentFrame.np_pp, ArgumentFrame.np_pp (some Adpositions.to_),
-    ⟨some .nominal, [.implicit (some .def), .nominal]⟩]
+  valency := .of
+    [(ArgumentFrame.np_np, [0, 1, 2]),
+     (ArgumentFrame.np_pp, [0, 2, 1]),
+     (ArgumentFrame.np_pp (some Adpositions.to_), [0, 2, 1]),
+     (⟨some .nominal, [.implicit (some .def), .nominal]⟩, [0, 1, 2])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.futureHaving} }
 
@@ -147,7 +171,7 @@ def assign : Verb := .mkRegular {
 /-- "begrudge" — DOC-only. Neither object implicit. -/
 def begrudge : Verb := .mkRegular {
   form := "begrudge"
-  frames := [ArgumentFrame.np_np]
+  valency := .ofFrame ArgumentFrame.np_np
   vendlerClass := some .state }
 
 /-- "bet" — DOC-only. Neither object implicit. -/
@@ -157,7 +181,7 @@ def bet : Verb where
   formPast := "bet"
   formPastPart := "bet"
   formPresPart := "betting"
-  frames := [ArgumentFrame.np_np]
+  valency := .ofFrame ArgumentFrame.np_np
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.bill}
 
@@ -167,9 +191,11 @@ def bet : Verb where
     Implicit goal def (PP). -/
 def serve : Verb := .mkRegular {
   form := "serve"
-  frames := [ArgumentFrame.np_np, ArgumentFrame.np_pp,
-    ⟨some .nominal, [.implicit (some .indef), .adpositional]⟩,
-    ⟨some .nominal, [.nominal, .implicit (some .def)]⟩]
+  valency := .of
+    [(ArgumentFrame.np_np, [0, 1, 2]),
+     (ArgumentFrame.np_pp, [0, 2, 1]),
+     (⟨some .nominal, [.implicit (some .indef), .adpositional]⟩, [0, 2, 1]),
+     (⟨some .nominal, [.nominal, .implicit (some .def)]⟩, [0, 2, 1])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.fit, .fulfilling, .give, .masquerade} }
 
@@ -181,9 +207,11 @@ def teach : Verb where
   formPast := "taught"
   formPastPart := "taught"
   formPresPart := "teaching"
-  frames := [ArgumentFrame.np_np, ArgumentFrame.np_pp,
-    ⟨some .nominal, [.implicit (some .indef), .adpositional]⟩,
-    ⟨some .nominal, [.nominal, .implicit (some .indef)]⟩]
+  valency := .of
+    [(ArgumentFrame.np_np, [0, 1, 2]),
+     (ArgumentFrame.np_pp, [0, 2, 1]),
+     (⟨some .nominal, [.implicit (some .indef), .adpositional]⟩, [0, 2, 1]),
+     (⟨some .nominal, [.nominal, .implicit (some .indef)]⟩, [0, 2, 1])]
   vendlerClass := some .activity
   levinClasses := {LevinClass.transferOfMessage}
 
@@ -195,8 +223,10 @@ def feed : Verb where
   formPast := "fed"
   formPastPart := "fed"
   formPresPart := "feeding"
-  frames := [ArgumentFrame.np_np, ArgumentFrame.np_pp,
-    ⟨some .nominal, [.nominal, .implicit (some .indef)]⟩]
+  valency := .of
+    [(ArgumentFrame.np_np, [0, 1, 2]),
+     (ArgumentFrame.np_pp, [0, 2, 1]),
+     (⟨some .nominal, [.nominal, .implicit (some .indef)]⟩, [0, 1, 2])]
   vendlerClass := some .activity
   levinClasses := {LevinClass.feed, .fit, .give, .gorge}
 
@@ -207,58 +237,76 @@ def show_ : Verb where
   formPast := "showed"
   formPastPart := "shown"
   formPresPart := "showing"
-  frames := [ArgumentFrame.np_np, ArgumentFrame.np_pp,
-    ⟨some .nominal, [.nominal, .implicit (some .def)]⟩]
+  valency := .of
+    [(ArgumentFrame.np_np, [0, 1, 2]),
+     (ArgumentFrame.np_pp, [0, 2, 1]),
+     (⟨some .nominal, [.nominal, .implicit (some .def)]⟩, [0, 2, 1])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.conjecture, .crane, .reflexiveAppearance, .transferOfMessage}
 
 /-- "award" — alternates DOC/PP. Implicit goal def (PP). -/
 def award : Verb := .mkRegular {
   form := "award"
-  frames := [ArgumentFrame.np_np, ArgumentFrame.np_pp, ArgumentFrame.np_pp (some Adpositions.to_),
-    ⟨some .nominal, [.nominal, .implicit (some .def)]⟩]
+  valency := .of
+    [(ArgumentFrame.np_np, [0, 1, 2]),
+     (ArgumentFrame.np_pp, [0, 2, 1]),
+     (ArgumentFrame.np_pp (some Adpositions.to_), [0, 2, 1]),
+     (⟨some .nominal, [.nominal, .implicit (some .def)]⟩, [0, 2, 1])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.futureHaving} }
 
 /-- "forward" — alternates DOC/PP. Implicit goal def (PP). -/
 def forward_ : Verb := .mkRegular {
   form := "forward"
-  frames := [ArgumentFrame.np_np, ArgumentFrame.np_pp, ArgumentFrame.np_pp (some Adpositions.to_),
-    ⟨some .nominal, [.nominal, .implicit (some .def)]⟩]
+  valency := .of
+    [(ArgumentFrame.np_np, [0, 1, 2]),
+     (ArgumentFrame.np_pp, [0, 2, 1]),
+     (ArgumentFrame.np_pp (some Adpositions.to_), [0, 2, 1]),
+     (⟨some .nominal, [.nominal, .implicit (some .def)]⟩, [0, 2, 1])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.send} }
 
 /-- "grant" — alternates DOC/PP. Implicit goal def (PP). -/
 def grant : Verb := .mkRegular {
   form := "grant"
-  frames := [ArgumentFrame.np_np, ArgumentFrame.np_pp,
-    ⟨some .nominal, [.nominal, .implicit (some .def)]⟩]
+  valency := .of
+    [(ArgumentFrame.np_np, [0, 1, 2]),
+     (ArgumentFrame.np_pp, [0, 2, 1]),
+     (⟨some .nominal, [.nominal, .implicit (some .def)]⟩, [0, 2, 1])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.conjecture, .futureHaving} }
 
 /-- "offer" — alternates DOC/PP. Implicit goal def (PP). -/
 def offer : Verb := .mkRegular {
   form := "offer"
-  frames := [ArgumentFrame.np_np, ArgumentFrame.np_pp,
-    ⟨some .nominal, [.nominal, .implicit (some .def)]⟩]
+  valency := .of
+    [(ArgumentFrame.np_np, [0, 1, 2]),
+     (ArgumentFrame.np_pp, [0, 2, 1]),
+     (⟨some .nominal, [.nominal, .implicit (some .def)]⟩, [0, 2, 1])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.characterize, .futureHaving, .reflexiveAppearance} }
 
 /-- "reserve" — alternates DOC/PP. Implicit goal def (PP). -/
 def reserve : Verb := .mkRegular {
   form := "reserve"
-  frames := [ArgumentFrame.np_np, ArgumentFrame.np_pp, ArgumentFrame.np_pp (some Adpositions.for_),
-    ⟨some .nominal, [.nominal, .implicit (some .def)]⟩]
+  valency := .of
+    [(ArgumentFrame.np_np, [0, 1, 2]),
+     (ArgumentFrame.np_pp, [0, 2, 1]),
+     (ArgumentFrame.np_pp (some Adpositions.for_), [0, 2, 1]),
+     (⟨some .nominal, [.nominal, .implicit (some .def)]⟩, [0, 2, 1])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.get} }
 
 /-- "pass" — alternates DOC/PP. Implicit DO def in PP frame only. -/
 def pass : Verb := .mkRegular {
   form := "pass"
-  frames := [ArgumentFrame.np, ArgumentFrame.np_pp,
-    ⟨some .nominal, [.implicit (some .def), .adpositional]⟩,
-    ⟨some .nominal, [.nominal, .implicit (some .indef)]⟩,
-    ArgumentFrame.np_pp (some Adpositions.to_), ArgumentFrame.np_np]
+  valency := .of
+    [(ArgumentFrame.np, [0, 1]),
+     (ArgumentFrame.np_pp, [0, 1, 2]),
+     (⟨some .nominal, [.implicit (some .def), .adpositional]⟩, [0, 1, 2]),
+     (⟨some .nominal, [.nominal, .implicit (some .indef)]⟩, [0, 1, 2]),
+     (ArgumentFrame.np_pp (some Adpositions.to_), [0, 1, 2]),
+     (ArgumentFrame.np_np, [0, 2, 1])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.give, .marry, .send, .throw} }
 
@@ -268,14 +316,20 @@ def pass : Verb := .mkRegular {
     implicit. -/
 def hand : Verb := .mkRegular {
   form := "hand"
-  frames := [ArgumentFrame.np_np, ArgumentFrame.np_pp, ArgumentFrame.np_pp (some Adpositions.to_)]
+  valency := .of
+    [(ArgumentFrame.np_np, [0, 1, 2]),
+     (ArgumentFrame.np_pp, [0, 2, 1]),
+     (ArgumentFrame.np_pp (some Adpositions.to_), [0, 2, 1])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.send} }
 
 /-- "mail" — transitive, ditransitive, or with a *to*-phrase (*Paul mailed a letter*). -/
 def mail : Verb := .mkRegular {
   form := "mail"
-  frames := [ArgumentFrame.np, ArgumentFrame.np_np, ArgumentFrame.np_pp (some Adpositions.to_)]
+  valency := .of
+    [(ArgumentFrame.np, [0, 1]),
+     (ArgumentFrame.np_np, [0, 2, 1]),
+     (ArgumentFrame.np_pp (some Adpositions.to_), [0, 1, 2])]
   levinClasses := {LevinClass.send} }
 
 /-- "lend" — alternates DOC/PP. Neither argument implicit. -/
@@ -285,7 +339,10 @@ def lend : Verb where
   formPast := "lent"
   formPastPart := "lent"
   formPresPart := "lending"
-  frames := [ArgumentFrame.np_np, ArgumentFrame.np_pp, ArgumentFrame.np_pp (some Adpositions.to_)]
+  valency := .of
+    [(ArgumentFrame.np_np, [0, 1, 2]),
+     (ArgumentFrame.np_pp, [0, 2, 1]),
+     (ArgumentFrame.np_pp (some Adpositions.to_), [0, 2, 1])]
   vendlerClass := some .accomplishment
   levinClasses := {LevinClass.give}
 

@@ -93,7 +93,7 @@ subject or object control, and one with *a*, which reports an intention and allo
 control only. -/
 def convincere : Verb where
   form := "convincere"
-  frames := [ArgumentFrame.infinitival]
+  valency := .ofFrame ArgumentFrame.infinitival
   readings := [{ frame := ArgumentFrame.infinitival, control := some .objectControl }]
   opaqueContext := true
   clauseTypers := [di, a]
@@ -102,7 +102,7 @@ def convincere : Verb where
 meaning as *convincere*. -/
 def pensare : Verb where
   form := "pensare"
-  frames := [ArgumentFrame.infinitival]
+  valency := .ofFrame ArgumentFrame.infinitival
   readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   opaqueContext := true
   clauseTypers := [di, a]
@@ -111,7 +111,7 @@ def pensare : Verb where
 some speakers, and a bare infinitive under subject control. -/
 def volere : Verb where
   form := "volere"
-  frames := [ArgumentFrame.subjunctiveClause, ArgumentFrame.infinitival]
+  valency := .of [(ArgumentFrame.subjunctiveClause, [0, 1]), (ArgumentFrame.infinitival, [0, 1])]
   readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   passivizable := false
   opaqueContext := true
@@ -122,7 +122,7 @@ def volere : Verb where
 some speakers. -/
 def sperare : Verb where
   form := "sperare"
-  frames := [ArgumentFrame.subjunctiveClause]
+  valency := .ofFrame ArgumentFrame.subjunctiveClause
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential .positive true)
@@ -132,7 +132,7 @@ def sperare : Verb where
 in either mood; the periphrasis *avere intenzione di* takes the infinitive with *di*. -/
 def intendere : Verb where
   form := "intendere"
-  frames := [ArgumentFrame.infinitival]
+  valency := .ofFrame ArgumentFrame.infinitival
   readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   passivizable := false
   opaqueContext := true
@@ -142,7 +142,7 @@ def intendere : Verb where
 only as *fare sì che* with the subjunctive, never the indicative. -/
 def fare : Verb where
   form := "fare"
-  frames := [ArgumentFrame.infinitival, ArgumentFrame.subjunctiveClause]
+  valency := .of [(ArgumentFrame.infinitival, [0, 1]), (ArgumentFrame.subjunctiveClause, [0, 1])]
   readings := [{ frame := ArgumentFrame.infinitival, control := some .objectControl }]
   clauseTypers := [che]
 
@@ -151,62 +151,62 @@ def fare : Verb where
 /-- *abbracciare* 'hug' is transitive and has a lexical reciprocal use. -/
 def abbracciare : Verb where
   form := "abbracciare"
-  frames := [ArgumentFrame.np]
+  valency := .ofFrame ArgumentFrame.np
 
 /-- *baciare* 'kiss' is transitive and has a lexical reciprocal use. -/
 def baciare : Verb where
   form := "baciare"
-  frames := [ArgumentFrame.np]
+  valency := .ofFrame ArgumentFrame.np
 
 /-- *coccolare* 'cuddle' is transitive and has a lexical reciprocal use. -/
 def coccolare : Verb where
   form := "coccolare"
-  frames := [ArgumentFrame.np]
+  valency := .ofFrame ArgumentFrame.np
 
 /-- *conoscere* 'know (of)' is transitive and has a lexical reciprocal use. -/
 def conoscere : Verb where
   form := "conoscere"
-  frames := [ArgumentFrame.np]
+  valency := .ofFrame ArgumentFrame.np
 
 /-- *consultare* 'consult, confer' is transitive and has a lexical reciprocal use. -/
 def consultare : Verb where
   form := "consultare"
-  frames := [ArgumentFrame.np]
+  valency := .ofFrame ArgumentFrame.np
 
 /-- *frequentare* 'date' is transitive and has a lexical reciprocal use. -/
 def frequentare : Verb where
   form := "frequentare"
-  frames := [ArgumentFrame.np]
+  valency := .ofFrame ArgumentFrame.np
 
 /-- *incontrare* 'meet' is transitive and has a lexical reciprocal use. -/
 def incontrare : Verb where
   form := "incontrare"
-  frames := [ArgumentFrame.np]
+  valency := .ofFrame ArgumentFrame.np
 
 /-- *incrociare* 'cross, run into' is transitive and has a lexical reciprocal use. -/
 def incrociare : Verb where
   form := "incrociare"
-  frames := [ArgumentFrame.np]
+  valency := .ofFrame ArgumentFrame.np
 
 /-- *lasciare* 'leave, break up with' is transitive and has a lexical reciprocal use. -/
 def lasciare : Verb where
   form := "lasciare"
-  frames := [ArgumentFrame.np]
+  valency := .ofFrame ArgumentFrame.np
 
 /-- *sposare* 'marry' is transitive and has a lexical reciprocal use. -/
 def sposare : Verb where
   form := "sposare"
-  frames := [ArgumentFrame.np]
+  valency := .ofFrame ArgumentFrame.np
 
 /-- *trovare* 'find, meet' is transitive and has a lexical reciprocal use. -/
 def trovare : Verb where
   form := "trovare"
-  frames := [ArgumentFrame.np]
+  valency := .ofFrame ArgumentFrame.np
 
 /-- *vedere* 'see, meet' is transitive and has a lexical reciprocal use. -/
 def vedere : Verb where
   form := "vedere"
-  frames := [ArgumentFrame.np]
+  valency := .ofFrame ArgumentFrame.np
 
 /-! ### Monadic verbs
 
@@ -216,47 +216,47 @@ The monadic verbs of [sorace-2000]'s Italian examples whose auxiliary [maiden-ro
 /-- *venire* 'come', a verb of change of location. -/
 def venire : Verb where
   form := "venire"
-  frames := [ArgumentFrame.unaccusative]
+  valency := .ofFrame ArgumentFrame.unaccusative
   vendlerClass := some .achievement
   direction := some .goal
 
 /-- *arrivare* 'arrive', a verb of change of location. -/
 def arrivare : Verb where
   form := "arrivare"
-  frames := [ArgumentFrame.unaccusative]
+  valency := .ofFrame ArgumentFrame.unaccusative
   vendlerClass := some .achievement
   direction := some .goal
 
 /-- *cadere* 'fall', a verb of change with a direction ([levin-hovav-1995] p. 147). -/
 def cadere : Verb where
   form := "cadere"
-  frames := [ArgumentFrame.unaccusative]
+  valency := .ofFrame ArgumentFrame.unaccusative
   vendlerClass := some .achievement
   direction := some .goal
 
 /-- *salire* 'go up', a change along a scale of height. -/
 def salire : Verb where
   form := "salire"
-  frames := [ArgumentFrame.unaccusative]
+  valency := .ofFrame ArgumentFrame.unaccusative
   vendlerClass := some .accomplishment
   scaleDimension := some .height
 
 /-- *marcire* 'go off, rot', a verb of change of state. -/
 def marcire : Verb where
   form := "marcire"
-  frames := [ArgumentFrame.unaccusative]
+  valency := .ofFrame ArgumentFrame.unaccusative
   vendlerClass := some .accomplishment
 
 /-- *fiorire* 'bloom', a verb of change of state. -/
 def fiorire : Verb where
   form := "fiorire"
-  frames := [ArgumentFrame.unaccusative]
+  valency := .ofFrame ArgumentFrame.unaccusative
   vendlerClass := some .achievement
 
 /-- *rimanere* 'remain', the persistence of a state. -/
 def rimanere : Verb where
   form := "rimanere"
-  frames := [ArgumentFrame.unaccusative]
+  valency := .ofFrame ArgumentFrame.unaccusative
   vendlerClass := some .state
   phasal := some .continuation
 
@@ -264,79 +264,77 @@ def rimanere : Verb where
 duration is in the foreground. -/
 def durare : Verb where
   form := "durare"
-  frames := [ArgumentFrame.unaccusative]
+  valency := .ofFrame ArgumentFrame.unaccusative
   vendlerClass := some .state
 
 /-- *esistere* 'exist', existence in a state. -/
 def esistere : Verb where
   form := "esistere"
-  frames := [ArgumentFrame.unaccusative]
+  valency := .ofFrame ArgumentFrame.unaccusative
   vendlerClass := some .state
 
 /-- *bastare* 'be enough', existence in a state. -/
 def bastare : Verb where
   form := "bastare"
-  frames := [ArgumentFrame.unaccusative]
+  valency := .ofFrame ArgumentFrame.unaccusative
   vendlerClass := some .state
 
 /-- *sembrare* 'seem', a state predicated of the subject. -/
 def sembrare : Verb where
   form := "sembrare"
-  frames := [ArgumentFrame.unaccusative]
+  valency := .ofFrame ArgumentFrame.unaccusative
   vendlerClass := some .state
 
 /-- *appartenere* 'belong', which takes *essere* for a state, *L'anello era appartenuto alla regina
 Vittoria*, and *avere* where the subject controls it, *Non ho mai appartenuto al PCI*. -/
 def appartenere : Verb where
   form := "appartenere"
-  frames := [ArgumentFrame.unaccusative]
+  valency := .ofFrame ArgumentFrame.unaccusative
   vendlerClass := some .state
 
 /-- *lavorare* 'work', an activity whose subject controls it. -/
 def lavorare : Verb where
   form := "lavorare"
-  frames := [ArgumentFrame.intransitive]
+  valency := .ofFrame ArgumentFrame.intransitive [some activitySubjectProfile]
   vendlerClass := some .activity
-  subjectEntailments := some activitySubjectProfile
 
 /-- *chiacchierare* 'chat', an activity whose subject controls it. -/
 def chiacchierare : Verb where
   form := "chiacchierare"
-  frames := [ArgumentFrame.intransitive]
+  valency := .ofFrame ArgumentFrame.intransitive [some activitySubjectProfile]
   vendlerClass := some .activity
-  subjectEntailments := some activitySubjectProfile
 
 /-- *correre* 'run', a verb of manner of motion that selects a directional phrase. -/
 def correre : Verb where
   form := "correre"
-  frames := [ArgumentFrame.intransitive, ArgumentFrame.spatialPP]
+  valency := .of [(ArgumentFrame.intransitive, [0]), (ArgumentFrame.spatialPP, [0, 1])]
   vendlerClass := some .activity
   direction := some .place
 
 /-- *saltare* 'jump', a verb of manner of motion that selects a directional phrase. -/
 def saltare : Verb where
   form := "saltare"
-  frames := [ArgumentFrame.intransitive, ArgumentFrame.spatialPP]
+  valency := .of [(ArgumentFrame.intransitive, [0]), (ArgumentFrame.spatialPP, [0, 1])]
   vendlerClass := some .activity
   direction := some .place
 
 /-- *nuotare* 'swim', a verb of manner of motion that selects no directional phrase. -/
 def nuotare : Verb where
   form := "nuotare"
-  frames := [ArgumentFrame.intransitive]
+  valency := .ofFrame ArgumentFrame.intransitive
   vendlerClass := some .activity
   direction := some .place
 
 /-- *tossire* 'cough', an activity whose subject does not control it. -/
 def tossire : Verb where
   form := "tossire"
-  frames := [ArgumentFrame.intransitive]
+  valency := .ofFrame ArgumentFrame.intransitive
   vendlerClass := some .semelfactive
 
 /-- *squillare* 'ring', an activity whose subject does not control it. -/
 def squillare : Verb where
   form := "squillare"
-  frames := [ArgumentFrame.intransitive]
+  valency := .ofFrame ArgumentFrame.intransitive
   vendlerClass := some .activity
 
 /-! ### The perfect auxiliary -/

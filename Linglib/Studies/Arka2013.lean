@@ -177,9 +177,9 @@ not reduced: a full clause anchors its own temporal axis, a reduced complement i
 (17). -/
 def projectsI (c : Complement.Coding) : Bool := !c.isReduced
 
-/-- The coding of the clause a verb's citation frame selects. -/
+/-- The coding of the clause a verb's basic frame selects. -/
 def complementCoding (v : Verb) : Option Complement.Coding :=
-  v.frames.head?.bind fun fr => fr.codings.head?
+  v.valency.frames.head?.bind fun fr => fr.codings.head?
 
 /-- A TAM auxiliary is acceptable in a dependent clause exactly when the clause its selector
 takes projects I; root clauses do, and a nominal predicate projects no verbal structure. -/

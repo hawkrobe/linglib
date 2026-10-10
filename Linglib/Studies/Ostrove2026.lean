@@ -80,7 +80,7 @@ def EmbeddedClauseType.ofFrame (v : Verb) (fr : ArgumentFrame) : EmbeddedClauseT
 
 /-- The fragment's controlled complements are exactly its untensed subjunctives: no finite
 complement is controlled, not even that of *kònì* 'know', which also takes an untensed one. -/
-theorem control_iff_untensed : ∀ v ∈ verbs, ∀ fr ∈ v.frames,
+theorem control_iff_untensed : ∀ v ∈ verbs, ∀ fr ∈ v.valency.frames,
     ((v.reading? fr).bind (·.control)).isSome ↔
       EmbeddedClauseType.ofFrame v fr = .untensedSubjunctive := by
   decide
@@ -102,7 +102,7 @@ def verbOf (row : Datum) : Option Verb :=
 /-- The rows agree with the predicate lists (27): each row's clause type is one its matrix verb
 takes in the fragment. -/
 theorem clauseTypeOf_mem_verbOf : ∀ row ∈ Examples.all, ∀ c ∈ clauseTypeOf row,
-    ∃ v ∈ verbOf row, ∃ fr ∈ v.frames, EmbeddedClauseType.ofFrame v fr = c := by
+    ∃ v ∈ verbOf row, ∃ fr ∈ v.valency.frames, EmbeddedClauseType.ofFrame v fr = c := by
   decide +kernel
 
 /-- A row records reading `r` with judgment `j`. -/

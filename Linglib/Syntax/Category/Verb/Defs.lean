@@ -2,6 +2,7 @@ module
 
 public import Linglib.Syntax.Clause.Complementation
 public import Linglib.Syntax.Category.Verb.ArgumentFrame.Basic
+public import Linglib.Syntax.Category.Verb.Diathesis
 public import Linglib.Semantics.ArgumentStructure.EntailmentProfile
 public import Linglib.Semantics.Presupposition.Basic
 public import Linglib.Semantics.Presupposition.TriggerTypology
@@ -24,13 +25,13 @@ public import Linglib.Semantics.Root.Defs
 `Verb` is the framework-neutral verb entry shared by every language's fragment. Its fields are
 grouped into the facets `Verb.ArgStructure`, `Verb.Aspect`, `Verb.Presupposition` and
 `Verb.Attitude`, beside the selectional and inflectional enums `VoiceType` and `SenseTag`.
-Complement selection is a list of typed frames, and a frame-conditioned attitude, opacity or
-control lives on a `Verb.Reading` row. The classifications of an entry, factive, implicative,
-trigger and so on, are read off these fields in `Syntax/Category/Verb/Basic.lean`.
+A verb's valency is its participants and their diatheses, and a frame-conditioned attitude,
+opacity or control lives on a `Verb.Reading` row. The classifications of an entry, factive,
+implicative, trigger and so on, are read off these fields in `Syntax/Category/Verb/Basic.lean`.
 
 ## Implementation notes
 
-* `Verb` composes its facets by `extends`, so a field is reached flat, as `v.frames`, and a
+* `Verb` composes its facets by `extends`, so a field is reached flat, as `v.valency`, and a
   language fragment extends `Verb` with its inflectional paradigm.
 * The facets share their names with the theory namespaces whose values they hold, so a
   facet field names its type with `_root_`.
@@ -99,25 +100,18 @@ inductive SenseTag where
 /-! ### Field facets
 
 Each facet groups a concern's fields; `Verb` composes them via `extends`,
-so flat access (`v.frames`) is preserved. -/
+so flat access (`v.valency`) is preserved. -/
 
 namespace Verb
 
-/-- The argument structure and realization of a verb are its argument frames, proto-role
-    entailments and voice. Unaccusativity and implicit arguments are frame shapes
-    (`ArgumentFrame.unaccusative`, `ArgumentFrame.objectDrop`). -/
+/-- The argument structure and realization of a verb are its valency and voice.
+    Unaccusativity and implicit arguments are frame shapes (`ArgumentFrame.unaccusative`,
+    `ArgumentFrame.objectDrop`). -/
 structure ArgStructure where
-  /-- The verb's argument frames, citation frame first, such as `ArgumentFrame.intransitive`,
-      `ArgumentFrame.np` and `ArgumentFrame.finiteClause`
-      (`Syntax/Category/Verb/ArgumentFrame/Basic.lean`); `[]` records no frame. -/
-  frames : List ArgumentFrame
-  /-- Proto-role entailment profile for the subject (external argument).
-      The authoritative representation of argument semantics
-      ([dowty-1991], [grimm-2011], [levin-2019]).
-      Convenience role labels can be derived via `EntailmentProfile.toRole`. -/
-  subjectEntailments : Option EntailmentProfile := none
-  /-- Proto-role entailment profile for the first object (internal argument). -/
-  objectEntailments : Option EntailmentProfile := none
+  /-- The verb's participants, with the proto-role entailment profiles the entry records for
+      them ([dowty-1991], [grimm-2011], [levin-2019]), and its diatheses, the basic diathesis
+      first; the default records no participant. -/
+  valency : Verb.Valency := .of []
   /-- The voice type, which fixes whether an external argument is introduced. -/
   voiceType : Option VoiceType := none
   /-- Can the verb passivize? -/
@@ -191,7 +185,7 @@ structure Attitude where
       Theoretical properties (C-distributivity, parasitic, etc.) are DERIVED. -/
   attitude : Option _root_.Attitude := none
   /-- The frame-conditioned readings ([bondarenko-2022] §4.4.3), per-frame attitude and opacity
-      overrides and control keyed to `frames` entries. -/
+      overrides and control keyed to the frames of `valency`. -/
   readings : List Reading := []
   /-- Entailment signature of the complement position.
       Classifies this verb's monotonicity w.r.t. its clausal complement.
@@ -243,30 +237,39 @@ def Verb.changeScale (v : Verb) : Option Degree.Boundedness :=
 
 /-! ### ArgumentFrame accessors
 
-Flat readers over `Verb.frames`/`Verb.readings`, preserving the flat
-enum-based call syntax: the citation frame's complement/control type and
-the alternate frame's, when present. -/
+Readers over the frames of `Verb.valency` and over `Verb.readings`: the basic diathesis's
+control type and the alternate frame's, when present, and the entailment profiles of the basic
+diathesis's subject and object. -/
 
-/-- The citation frame, the first of the entry's frames. -/
-def Verb.citationFrame? (v : Verb) : Option ArgumentFrame := v.frames.head?
+/-- The entailment profile the entry records for the subject of its basic diathesis, the
+participant whose slot is coded S or A. -/
+def Verb.subjectEntailments (v : Verb) : Option EntailmentProfile :=
+  v.valency.basic?.bind fun d ↦
+    (d.slots.find? fun s ↦ d.codingRole s = some .S || d.codingRole s = some .A).bind
+      (v.valency.profileAt d)
+
+/-- The entailment profile the entry records for the participant in the object slot of its basic
+diathesis, its last core complement. -/
+def Verb.objectEntailments (v : Verb) : Option EntailmentProfile :=
+  v.valency.basic?.bind fun d ↦ d.objectSlot?.bind (v.valency.profileAt d)
 
 /-- The reading keyed to frame `fr` is the first whose frame `fr` refines. -/
 def Verb.reading? (v : Verb) (fr : ArgumentFrame) : Option Verb.Reading :=
   v.readings.find? fun r ↦ decide (r.frame ≤ fr)
 
 /-- Every frame of the verb is intransitive. -/
-def Verb.IsIntransitive (v : Verb) : Prop := ∀ fr ∈ v.frames, fr.IsIntransitive
+def Verb.IsIntransitive (v : Verb) : Prop := ∀ fr ∈ v.valency.frames, fr.IsIntransitive
 
 instance (v : Verb) : Decidable v.IsIntransitive :=
-  inferInstanceAs (Decidable (∀ fr ∈ v.frames, _))
+  inferInstanceAs (Decidable (∀ fr ∈ v.valency.frames, _))
 
-/-- The control type of the reading keyed to the citation frame. -/
+/-- The control type of the reading keyed to the basic frame. -/
 def Verb.controlType (v : Verb) : ControlType :=
-  (v.citationFrame?.bind fun fr ↦ (v.reading? fr).bind (·.control)).getD .none
+  (v.valency.basic?.bind fun d ↦ (v.reading? d.toArgumentFrame).bind (·.control)).getD .none
 
 /-- The control type of the reading keyed to the alternate frame. -/
 def Verb.altControlType (v : Verb) : ControlType :=
-  (v.frames[1]?.bind fun fr ↦ (v.reading? fr).bind (·.control)).getD .none
+  (v.valency.frames[1]?.bind fun fr ↦ (v.reading? fr).bind (·.control)).getD .none
 
 /-- The effective attitude on frame `fr` is the reading's override, else the lexeme's
     default. -/
@@ -275,14 +278,14 @@ def Verb.attitudeOn (v : Verb) (fr : ArgumentFrame) : Option _root_.Attitude :=
 
 /-- All [noonan-2007] codings across the verb's frames. -/
 def Verb.codings (v : Verb) : List Complement.Coding :=
-  v.frames.flatMap ArgumentFrame.codings
+  v.valency.frames.flatMap ArgumentFrame.codings
 
 /-- Some frame of the verb selects the sentence type `t`. -/
 def Verb.TakesType (v : Verb) (t : Clause.SentenceType) : Prop :=
-  ∃ fr ∈ v.frames, fr.hasType t
+  ∃ fr ∈ v.valency.frames, fr.hasType t
 
 instance (v : Verb) (t : Clause.SentenceType) : Decidable (v.TakesType t) :=
-  inferInstanceAs (Decidable (∃ fr ∈ v.frames, _))
+  inferInstanceAs (Decidable (∃ fr ∈ v.valency.frames, _))
 
 /-- The verb selects some interrogative sentence type, as the responsives and rogatives
 *know*, *wonder* and *ask* do. -/
@@ -292,21 +295,21 @@ instance (v : Verb) : Decidable v.TakesQuestion := inferInstanceAs (Decidable (�
 
 /-- Some frame of the verb has a clausal position, so the verb selects a CP or
     reduced clause ([schwarzer-2026]'s CP-selecting verbs). -/
-def Verb.TakesClausal (v : Verb) : Prop := ∃ fr ∈ v.frames, fr.HasClausal
+def Verb.TakesClausal (v : Verb) : Prop := ∃ fr ∈ v.valency.frames, fr.HasClausal
 
 instance (v : Verb) : Decidable v.TakesClausal :=
-  inferInstanceAs (Decidable (∃ fr ∈ v.frames, _))
+  inferInstanceAs (Decidable (∃ fr ∈ v.valency.frames, _))
 
 /-- Some frame of the verb has a spatial adpositional position, so the verb selects a locative or
     directional phrase as a complement. -/
 def Verb.TakesSpatial (v : Verb) : Prop :=
-  ∃ fr ∈ v.frames, ∃ p ∈ fr.complements, p.relation? = some .spatial
+  ∃ fr ∈ v.valency.frames, ∃ p ∈ fr.complements, p.relation? = some .spatial
 
 instance (v : Verb) : Decidable v.TakesSpatial :=
-  inferInstanceAs (Decidable (∃ fr ∈ v.frames, _))
+  inferInstanceAs (Decidable (∃ fr ∈ v.valency.frames, _))
 
 /-- Some frame of the verb has a nominal position, so the verb selects a DP. -/
-def Verb.TakesNominal (v : Verb) : Prop := ∃ fr ∈ v.frames, fr.HasNominal
+def Verb.TakesNominal (v : Verb) : Prop := ∃ fr ∈ v.valency.frames, fr.HasNominal
 
 instance (v : Verb) : Decidable v.TakesNominal :=
-  inferInstanceAs (Decidable (∃ fr ∈ v.frames, _))
+  inferInstanceAs (Decidable (∃ fr ∈ v.valency.frames, _))

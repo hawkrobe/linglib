@@ -31,7 +31,7 @@ open English.Inflection
     -/
 def manage : Verb := .mkRegular {
   form := "manage"
-  frames := [ArgumentFrame.infinitival]
+  valency := .ofFrame ArgumentFrame.infinitival
   readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   vendlerClass := some .achievement
   passivizable := false
@@ -40,7 +40,7 @@ def manage : Verb := .mkRegular {
 /-- "fail" — a negative implicative; "failed to VP" entails "not VP". -/
 def fail : Verb := .mkRegular {
   form := "fail"
-  frames := [ArgumentFrame.infinitival]
+  valency := .ofFrame ArgumentFrame.infinitival
   readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   vendlerClass := some .achievement
   passivizable := false
@@ -53,7 +53,7 @@ def try_ : Verb where
   formPast := "tried"
   formPastPart := "tried"
   formPresPart := "trying"
-  frames := [ArgumentFrame.infinitival]
+  valency := .ofFrame ArgumentFrame.infinitival
   readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   vendlerClass := some .activity
   passivizable := false
@@ -64,7 +64,7 @@ def try_ : Verb where
     so control is obligatorily *de se* ([landau-2015] table (36)). -/
 def persuade : Verb := .mkRegular {
   form := "persuade"
-  frames := [ArgumentFrame.infinitival]
+  valency := .ofFrame ArgumentFrame.infinitival
   readings := [{ frame := ArgumentFrame.infinitival, control := some .objectControl }]
   vendlerClass := some .accomplishment
   opaqueContext := true
@@ -75,8 +75,10 @@ def persuade : Verb := .mkRegular {
     desiderative, hence logophoric control. -/
 def promise : Verb := .mkRegular {
   form := "promise"
-  frames := [ArgumentFrame.infinitival,
-    ArgumentFrame.np_np, ArgumentFrame.np_pp (some Adpositions.to_)]
+  valency := .of
+    [(ArgumentFrame.infinitival, [0, 1]),
+     (ArgumentFrame.np_np, [0, 2, 1]),
+     (ArgumentFrame.np_pp (some Adpositions.to_), [0, 1, 2])]
   readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   vendlerClass := some .achievement
   opaqueContext := true
@@ -86,7 +88,7 @@ def promise : Verb := .mkRegular {
 /-- "remember" — implicative with infinitival ("remember to call") -/
 def remember : Verb := .mkRegular {
   form := "remember"
-  frames := [ArgumentFrame.infinitival]
+  valency := .ofFrame ArgumentFrame.infinitival
   readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   vendlerClass := some .achievement
   passivizable := false
@@ -103,7 +105,7 @@ def forget : Verb where
   formPast := "forgot"
   formPastPart := "forgotten"
   formPresPart := "forgetting"
-  frames := [ArgumentFrame.infinitival]
+  valency := .ofFrame ArgumentFrame.infinitival
   readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   vendlerClass := some .achievement
   passivizable := false
@@ -114,7 +116,7 @@ def forget : Verb where
     entails not locking it. -/
 def neglect : Verb := .mkRegular {
   form := "neglect"
-  frames := [ArgumentFrame.infinitival]
+  valency := .ofFrame ArgumentFrame.infinitival
   readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   vendlerClass := some .achievement
   passivizable := false
@@ -125,7 +127,7 @@ def neglect : Verb := .mkRegular {
 /-- "seem" — raising verb (no theta role for subject, unaccusative) -/
 def seem : Verb := .mkRegular {
   form := "seem"
-  frames := [ArgumentFrame.raising]
+  valency := .ofFrame ArgumentFrame.raising
   readings := [{ frame := ArgumentFrame.raising, control := some .raising }]
   vendlerClass := some .state
   passivizable := false }
@@ -143,7 +145,7 @@ occasioning eventuality in a parallel way the authors draw and then set apart. -
     26). -/
 def dare : Verb := .mkRegular {
   form := "dare"
-  frames := [ArgumentFrame.infinitival]
+  valency := .ofFrame ArgumentFrame.infinitival
   readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   vendlerClass := some .achievement
   passivizable := false
@@ -154,7 +156,7 @@ def dare : Verb := .mkRegular {
     ([nadathur-2023-implicatives] §2, ex. 10, 28). -/
 def bother : Verb := .mkRegular {
   form := "bother"
-  frames := [ArgumentFrame.infinitival]
+  valency := .ofFrame ArgumentFrame.infinitival
   readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   vendlerClass := some .achievement
   passivizable := false
@@ -169,7 +171,7 @@ def bother : Verb := .mkRegular {
     ([nadathur-2023-implicatives] §6.4, ex. 45–47). -/
 def hesitate : Verb := .mkRegular {
   form := "hesitate"
-  frames := [ArgumentFrame.infinitival]
+  valency := .ofFrame ArgumentFrame.infinitival
   readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   vendlerClass := some .activity
   passivizable := false
@@ -180,7 +182,7 @@ def hesitate : Verb := .mkRegular {
     predicates: venturing to speak entails speaking. -/
 def venture : Verb := .mkRegular {
   form := "venture"
-  frames := [ArgumentFrame.infinitival]
+  valency := .ofFrame ArgumentFrame.infinitival
   readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   vendlerClass := some .achievement
   passivizable := false
@@ -190,7 +192,7 @@ def venture : Verb := .mkRegular {
     predicates: condescending to help entails helping. -/
 def condescend : Verb := .mkRegular {
   form := "condescend"
-  frames := [ArgumentFrame.infinitival]
+  valency := .ofFrame ArgumentFrame.infinitival
   readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   vendlerClass := some .achievement
   passivizable := false
@@ -201,7 +203,7 @@ def condescend : Verb := .mkRegular {
     Raising: "It happened to rain" — no theta role for matrix subject. -/
 def happen : Verb := .mkRegular {
   form := "happen"
-  frames := [ArgumentFrame.infinitival]
+  valency := .ofFrame ArgumentFrame.infinitival
   readings := [{ frame := ArgumentFrame.infinitival, control := some .raising }]
   passivizable := false
   implicative := ⟨.some .positive, .some .negative⟩

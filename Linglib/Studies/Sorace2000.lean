@@ -72,7 +72,7 @@ the entries placed by `ofVerb`, each grammar cuts the hierarchy exactly where th
 * §5's discussion of the projectionist and constructional models of the lexicon-syntax interface
   is argument, not formalized here.
 * A row names its verb by the infinitive, the form of its entry among the monadic entries of its
-  language's fragment, those whose citation frame, the first, has no complement or is
+  language's fragment, those whose basic frame, the first, has no complement or is
   unaccusative. A monadic entry comes with the auxiliary its grammar gives it on that frame.
   French has lists instead of a rule, and its entries are the verbs of the list of *être* and of
   the list of *avoir* alone; a verb that takes either by meaning ([grevisse-goosse-2008] §813a),
@@ -265,20 +265,20 @@ theorem italian_directional_split :
 
 /-! ### The fragments -/
 
-/-- The monadic entries of a language's fragment, those whose citation frame, the first, has no
+/-- The monadic entries of a language's fragment, those whose basic frame, the first, has no
 complement or is unaccusative, each with the auxiliary its grammar gives it on that frame. -/
 def Language.entries (l : Language) : List (Verb × PerfectAux) :=
   let all : List (Verb × PerfectAux) := match l with
     | .italian => Italian.Verbs.allVerbs.map fun v ↦
-        (v.toVerb, Italian.Verbs.perfect v (v.frames.headD .intransitive))
+        (v.toVerb, Italian.Verbs.perfect v (v.valency.frames.headD .intransitive))
     | .french =>
         French.Verbs.etreVerbs.map (·, .be) ++ French.Verbs.avoirVerbs.map (·, .have)
     | .dutch => Dutch.Verbs.inventory.map fun v ↦
-        (v.toVerb, Dutch.Verbs.perfect v (v.frames.headD .intransitive))
+        (v.toVerb, Dutch.Verbs.perfect v (v.valency.frames.headD .intransitive))
     | .german => German.Verbs.allVerbs.map fun v ↦
-        (v.toVerb, German.perfect v (v.frames.headD .intransitive))
+        (v.toVerb, German.perfect v (v.valency.frames.headD .intransitive))
   all.filter fun e ↦
-    let fr := e.1.frames.headD .intransitive
+    let fr := e.1.valency.frames.headD .intransitive
     fr.IsIntransitive ∨ fr.IsUnaccusative
 
 /-- The entry of a row's verb among the monadic entries of its language, with its auxiliary. -/

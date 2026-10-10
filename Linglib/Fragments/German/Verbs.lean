@@ -57,7 +57,7 @@ structure Verb extends _root_.Verb, _root_.Verb.CaseArray Case where
 
 /-- `Verb.ofStem s` is the entry cited by the infinitive of `s`, with its forms and no further
 lexical information. -/
-def Verb.ofStem (s : Conjugation.Stem) : Verb := { form := s.infinitive, frames := [], stem := s }
+def Verb.ofStem (s : Conjugation.Stem) : Verb := { form := s.infinitive, stem := s }
 
 /-- The predicate the entry `v` forms with a path phrase of reading `p`. -/
 def Verb.withPath (v : Verb) (p : Adposition.SpatialReading) : Verb :=
@@ -76,7 +76,7 @@ open ArgumentStructure Conjugation
 let him go'. -/
 def lassen : Verb :=
   { Verb.ofStem (strong "lassen" "lässt" "ließ" "gelassen") with
-    frames := [ArgumentFrame.smallClause]
+    valency := .ofFrame ArgumentFrame.smallClause
     readings := [{ frame := ArgumentFrame.smallClause, control := some .objectControl }]
     objects := [.acc] }
 
@@ -84,136 +84,137 @@ def lassen : Verb :=
 sad'. -/
 def machen : Verb :=
   { Verb.ofStem (weak "machen") with
-    frames := [ArgumentFrame.smallClause]
+    valency := .ofFrame ArgumentFrame.smallClause
     readings := [{ frame := ArgumentFrame.smallClause, control := some .objectControl }]
     objects := [.acc] }
 
 /-- *töten* 'kill' is a lexical causative formed on the adjective *tot* 'dead'. -/
 def toeten : Verb :=
   { Verb.ofStem (weak "töten") with
-    frames := [ArgumentFrame.np], objects := [.acc] }
+    valency := .ofFrame ArgumentFrame.np, objects := [.acc] }
 
 /-- *bauen* 'build' is a transitive verb of creation, as in *Borromini baute diese Kirche*
 'Borromini built this church'. -/
 def bauen : Verb :=
-  { Verb.ofStem (weak "bauen") with frames := [ArgumentFrame.np], objects := [.acc] }
+  { Verb.ofStem (weak "bauen") with valency := .ofFrame ArgumentFrame.np, objects := [.acc] }
 
 /-! ### Verbs of Benz's resultatives and nominalizations -/
 
 /-- *hämmern* 'hammer' is an activity. -/
 def haemmern : Verb :=
   { Verb.ofStem (weak "hämmern") with
-    frames := [ArgumentFrame.np], vendlerClass := some .activity, objects := [.acc] }
+    valency := .ofFrame ArgumentFrame.np, vendlerClass := some .activity, objects := [.acc] }
 
 /-- *malen* 'paint' is an activity. -/
 def malen : Verb :=
   { Verb.ofStem (weak "malen") with
-    frames := [ArgumentFrame.np], vendlerClass := some .activity, objects := [.acc] }
+    valency := .ofFrame ArgumentFrame.np, vendlerClass := some .activity, objects := [.acc] }
 
 /-- *bemalen* 'paint over' is an accomplishment formed on *malen* with the inseparable *be-*. -/
 def bemalen : Verb :=
   { Verb.ofStem (malen.stem.inseparable "be") with
-    frames := [ArgumentFrame.np], vendlerClass := some .accomplishment, objects := [.acc] }
+    valency := .ofFrame ArgumentFrame.np, vendlerClass := some .accomplishment, objects := [.acc] }
 
 /-- *küssen* 'kiss' is an activity. -/
 def kuessen : Verb :=
   { Verb.ofStem (weak "küssen") with
-    frames := [ArgumentFrame.np], vendlerClass := some .activity, objects := [.acc] }
+    valency := .ofFrame ArgumentFrame.np, vendlerClass := some .activity, objects := [.acc] }
 
 /-- *führen* 'lead' is an activity. -/
 def fuehren : Verb :=
   { Verb.ofStem (weak "führen") with
-    frames := [ArgumentFrame.np], vendlerClass := some .activity, objects := [.acc] }
+    valency := .ofFrame ArgumentFrame.np, vendlerClass := some .activity, objects := [.acc] }
 
 /-- *einführen* 'introduce' is an accomplishment formed on *führen* with the separable *ein-*. -/
 def einfuehren : Verb :=
   { Verb.ofStem (fuehren.stem.separable "ein") with
-    frames := [ArgumentFrame.np], vendlerClass := some .accomplishment, objects := [.acc] }
+    valency := .ofFrame ArgumentFrame.np, vendlerClass := some .accomplishment, objects := [.acc] }
 
 /-- *rauben* 'rob' is an activity. -/
 def rauben : Verb :=
   { Verb.ofStem (weak "rauben") with
-    frames := [ArgumentFrame.np], vendlerClass := some .activity, objects := [.acc] }
+    valency := .ofFrame ArgumentFrame.np, vendlerClass := some .activity, objects := [.acc] }
 
 /-- *verkaufen* 'sell' is formed on *kaufen* with the inseparable *ver-*. -/
 def verkaufen : Verb :=
   { Verb.ofStem ((weak "kaufen").inseparable "ver") with
-    frames := [ArgumentFrame.np], objects := [.acc] }
+    valency := .ofFrame ArgumentFrame.np, objects := [.acc] }
 
 /-- *rennen* 'run' is an irregular weak verb and a verb of manner of motion, which displaces its
 subject with no direction. -/
 def rennen : Verb :=
   { Verb.ofStem (strong "rennen" "rennt" "rannte" "gerannt") with
-    frames := [ArgumentFrame.intransitive, ArgumentFrame.spatialPP], vendlerClass := some .activity,
+    valency := .of [(ArgumentFrame.intransitive, [0]), (ArgumentFrame.spatialPP, [0, 1])],
+      vendlerClass := some .activity,
     direction := some .place }
 
 /-- *brechen* 'break' is an achievement. -/
 def brechen : Verb :=
   { Verb.ofStem (strong "brechen" "bricht" "brach" "gebrochen") with
-    frames := [ArgumentFrame.np], vendlerClass := some .achievement, objects := [.acc] }
+    valency := .ofFrame ArgumentFrame.np, vendlerClass := some .achievement, objects := [.acc] }
 
 /-- *zerbrechen* 'break' is a lexical causative formed on *brechen* with the inseparable *zer-*. -/
 def zerbrechen : Verb :=
   { Verb.ofStem (brechen.stem.inseparable "zer") with
-    frames := [ArgumentFrame.np], objects := [.acc] }
+    valency := .ofFrame ArgumentFrame.np, objects := [.acc] }
 
 /-- *frieren* 'freeze' is an unaccusative achievement, *der See ist gefroren* 'the lake has frozen',
 and an impersonal verb, *es hat in der Nacht gefroren* 'there was a frost in the night'
 ([durrell-2011] §12.3.2c). -/
 def frieren : Verb :=
   { Verb.ofStem (strong "frieren" "friert" "fror" "gefroren") with
-    frames := [ArgumentFrame.unaccusative, ArgumentFrame.impersonal],
+    valency := .of [(ArgumentFrame.unaccusative, [0]), (ArgumentFrame.impersonal, [])],
     vendlerClass := some .achievement }
 
 /-- *schießen* 'shoot' is a transitive verb. -/
 def schiessen : Verb :=
   { Verb.ofStem (strong "schießen" "schießt" "schoss" "geschossen") with
-    frames := [ArgumentFrame.np], objects := [.acc] }
+    valency := .ofFrame ArgumentFrame.np, objects := [.acc] }
 
 /-- *schämen* 'be ashamed' is inherently reflexive, *sich schämen*. -/
 def schaemen : Verb :=
-  { Verb.ofStem (weak "schämen") with frames := [ArgumentFrame.intransitive] }
+  { Verb.ofStem (weak "schämen") with valency := .ofFrame ArgumentFrame.intransitive }
 
 /-- *beobachten* 'observe' is an accomplishment with the inseparable *be-*. -/
 def beobachten : Verb :=
   { Verb.ofStem ((weak "obachten").inseparable "be") with
-    frames := [ArgumentFrame.np], vendlerClass := some .accomplishment, objects := [.acc] }
+    valency := .ofFrame ArgumentFrame.np, vendlerClass := some .accomplishment, objects := [.acc] }
 
 /-- *verbinden* 'connect' is an accomplishment formed on *binden* with the inseparable *ver-*. -/
 def verbinden : Verb :=
   { Verb.ofStem ((strong "binden" "bindet" "band" "gebunden").inseparable "ver") with
-    frames := [ArgumentFrame.np], vendlerClass := some .accomplishment, objects := [.acc] }
+    valency := .ofFrame ArgumentFrame.np, vendlerClass := some .accomplishment, objects := [.acc] }
 
 /-! ### Attitude verbs -/
 
 /-- *hoffen* 'hope' is a positive preferential attitude verb. -/
 def hoffen : Verb :=
   { Verb.ofStem (weak "hoffen") with
-    frames := [ArgumentFrame.finiteClause], passivizable := false, opaqueContext := true
+    valency := .ofFrame ArgumentFrame.finiteClause, passivizable := false, opaqueContext := true
     attitude := some (.preferential .positive true) }
 
 /-- *wünschen* 'wish' is a positive preferential attitude verb. -/
 def wuenschen : Verb :=
   { Verb.ofStem (weak "wünschen") with
-    frames := [ArgumentFrame.finiteClause], passivizable := false, opaqueContext := true
+    valency := .ofFrame ArgumentFrame.finiteClause, passivizable := false, opaqueContext := true
     attitude := some (.preferential .positive true) }
 
 /-- *fürchten* 'fear' is a negative preferential attitude verb. -/
 def fuerchten : Verb :=
   { Verb.ofStem (weak "fürchten") with
-    frames := [ArgumentFrame.finiteClause], passivizable := false, opaqueContext := true
+    valency := .ofFrame ArgumentFrame.finiteClause, passivizable := false, opaqueContext := true
     attitude := some (.preferential .negative true) }
 
 /-- *befürchten* 'be afraid of' is formed on *fürchten* with the inseparable *be-*. -/
 def befuerchten : Verb :=
   { Verb.ofStem (fuerchten.stem.inseparable "be") with
-    frames := [ArgumentFrame.finiteClause], passivizable := false, opaqueContext := true
+    valency := .ofFrame ArgumentFrame.finiteClause, passivizable := false, opaqueContext := true
     attitude := some (.preferential .negative true) }
 
 /-- *sorgen* 'worry' is used reflexively, *sich sorgen*, and is based on uncertainty. -/
 def sorgen : Verb :=
   { Verb.ofStem (weak "sorgen") with
-    frames := [ArgumentFrame.finiteClause], passivizable := false, opaqueContext := true
+    valency := .ofFrame ArgumentFrame.finiteClause, passivizable := false, opaqueContext := true
     attitude := some (.preferential .negative false) }
 
 /-! ### Occasion verbs
@@ -224,75 +225,76 @@ An occasion verb presupposes an earlier eventuality of its object's that occasio
 /-- *bestrafen* 'punish' is formed on *strafen* with the inseparable *be-*. -/
 def bestrafen : Verb :=
   { Verb.ofStem ((weak "strafen").inseparable "be") with
-    frames := [ArgumentFrame.np], senseTag := .occasion, objects := [.acc] }
+    valency := .ofFrame ArgumentFrame.np, senseTag := .occasion, objects := [.acc] }
 
 /-- *belohnen* 'reward' is formed on *lohnen* with the inseparable *be-*. -/
 def belohnen : Verb :=
   { Verb.ofStem ((weak "lohnen").inseparable "be") with
-    frames := [ArgumentFrame.np], senseTag := .occasion, objects := [.acc] }
+    valency := .ofFrame ArgumentFrame.np, senseTag := .occasion, objects := [.acc] }
 
 /-- *loben* 'praise' is a weak verb. -/
 def loben : Verb :=
   { Verb.ofStem (weak "loben") with
-    frames := [ArgumentFrame.np], senseTag := .occasion, objects := [.acc] }
+    valency := .ofFrame ArgumentFrame.np, senseTag := .occasion, objects := [.acc] }
 
 /-- *kritisieren* 'criticize' is a verb in *-ieren*. -/
 def kritisieren : Verb :=
   { Verb.ofStem (weak "kritisieren") with
-    frames := [ArgumentFrame.np], senseTag := .occasion, objects := [.acc] }
+    valency := .ofFrame ArgumentFrame.np, senseTag := .occasion, objects := [.acc] }
 
 /-- *danken* 'thank' takes its object in the dative. -/
 def danken : Verb :=
   { Verb.ofStem (weak "danken") with
-    frames := [ArgumentFrame.np], senseTag := .occasion, objects := [.dat] }
+    valency := .ofFrame ArgumentFrame.np, senseTag := .occasion, objects := [.dat] }
 
 /-- *verklagen* 'sue' is formed on *klagen* with the inseparable *ver-*. -/
 def verklagen : Verb :=
   { Verb.ofStem ((weak "klagen").inseparable "ver") with
-    frames := [ArgumentFrame.np], senseTag := .occasion, objects := [.acc] }
+    valency := .ofFrame ArgumentFrame.np, senseTag := .occasion, objects := [.acc] }
 
 /-- *gratulieren* 'congratulate' takes its object in the dative. -/
 def gratulieren : Verb :=
   { Verb.ofStem (weak "gratulieren") with
-    frames := [ArgumentFrame.np], senseTag := .occasion, objects := [.dat] }
+    valency := .ofFrame ArgumentFrame.np, senseTag := .occasion, objects := [.dat] }
 
 /-- *zurechtweisen* 'reprimand' is formed on *weisen* with the separable *zurecht-*. -/
 def zurechtweisen : Verb :=
   { Verb.ofStem ((strong "weisen" "weist" "wies" "gewiesen").separable "zurecht") with
-    frames := [ArgumentFrame.np], senseTag := .occasion, objects := [.acc] }
+    valency := .ofFrame ArgumentFrame.np, senseTag := .occasion, objects := [.acc] }
 
 /-- *anzeigen* 'report (to the authorities)' is formed on *zeigen* with the separable *an-*. -/
 def anzeigen : Verb :=
   { Verb.ofStem ((weak "zeigen").separable "an") with
-    frames := [ArgumentFrame.np], senseTag := .occasion, objects := [.acc] }
+    valency := .ofFrame ArgumentFrame.np, senseTag := .occasion, objects := [.acc] }
 
 /-- *auszeichnen* 'honour (with an award)' is formed on *zeichnen* with the separable *aus-*. -/
 def auszeichnen : Verb :=
   { Verb.ofStem ((weak "zeichnen").separable "aus") with
-    frames := [ArgumentFrame.np], senseTag := .occasion, objects := [.acc] }
+    valency := .ofFrame ArgumentFrame.np, senseTag := .occasion, objects := [.acc] }
 
 /-- *belangen* 'prosecute' is formed on *langen* with the inseparable *be-*. -/
 def belangen : Verb :=
   { Verb.ofStem ((weak "langen").inseparable "be") with
-    frames := [ArgumentFrame.np], senseTag := .occasion, objects := [.acc] }
+    valency := .ofFrame ArgumentFrame.np, senseTag := .occasion, objects := [.acc] }
 
 /-- *ehren* 'honour' is a weak verb. -/
 def ehren : Verb :=
   { Verb.ofStem (weak "ehren") with
-    frames := [ArgumentFrame.np], senseTag := .occasion, objects := [.acc] }
+    valency := .ofFrame ArgumentFrame.np, senseTag := .occasion, objects := [.acc] }
 
 /-- *entlassen* 'dismiss' is formed on *lassen* with the inseparable *ent-*. -/
 def entlassen : Verb :=
   { Verb.ofStem (lassen.stem.inseparable "ent") with
-    frames := [ArgumentFrame.np], senseTag := .occasion, objects := [.acc] }
+    valency := .ofFrame ArgumentFrame.np, senseTag := .occasion, objects := [.acc] }
 
 /-- *rächen* 'avenge' is used reflexively with *an*, *sich rächen an* 'take revenge on'. -/
 def raechen : Verb :=
-  { Verb.ofStem (weak "rächen") with frames := [ArgumentFrame.np], senseTag := .occasion }
+  { Verb.ofStem (weak "rächen") with valency := .ofFrame ArgumentFrame.np, senseTag := .occasion }
 
 /-- *revanchieren* 'return the favour' is used reflexively with *bei*, *sich revanchieren bei*. -/
 def revanchieren : Verb :=
-  { Verb.ofStem (weak "revanchieren") with frames := [ArgumentFrame.np], senseTag := .occasion }
+  { Verb.ofStem (weak "revanchieren") with
+    valency := .ofFrame ArgumentFrame.np, senseTag := .occasion }
 
 /-- *zur Verantwortung ziehen* 'hold accountable' is a phrase whose noun phrase stands where a
 separable particle would. -/
@@ -301,7 +303,7 @@ def zurVerantwortungZiehen : Verb :=
       { infinitive := "zur Verantwortung ziehen", present := "zieht zur Verantwortung",
         past := "zog zur Verantwortung", participle := "zur Verantwortung gezogen",
         prefixGe := false } with
-    frames := [ArgumentFrame.np], senseTag := .occasion, objects := [.acc] }
+    valency := .ofFrame ArgumentFrame.np, senseTag := .occasion, objects := [.acc] }
 
 /-! ### Predicates of Schwarzer's experiments -/
 
@@ -309,30 +311,31 @@ def zurVerantwortungZiehen : Verb :=
 *dass*-clause. -/
 def beenden : Verb :=
   { Verb.ofStem ((weak "enden").inseparable "be") with
-    frames := [ArgumentFrame.np], vendlerClass := some .accomplishment, objects := [.acc] }
+    valency := .ofFrame ArgumentFrame.np, vendlerClass := some .accomplishment, objects := [.acc] }
 
 /-- *streichen* 'cancel' takes a noun phrase and no *dass*-clause. -/
 def streichen : Verb :=
   { Verb.ofStem (strong "streichen" "streicht" "strich" "gestrichen") with
-    frames := [ArgumentFrame.np], vendlerClass := some .accomplishment, objects := [.acc] }
+    valency := .ofFrame ArgumentFrame.np, vendlerClass := some .accomplishment, objects := [.acc] }
 
 /-- *übereilen* 'rush' is formed on *eilen* with the inseparable *über-*, and takes a noun phrase
 and no *dass*-clause. -/
 def uebereilen : Verb :=
   { Verb.ofStem ((weak "eilen").inseparable "über") with
-    frames := [ArgumentFrame.np], objects := [.acc] }
+    valency := .ofFrame ArgumentFrame.np, objects := [.acc] }
 
 /-- *entwickeln* 'develop' is formed on *wickeln* with the inseparable *ent-*, and takes a noun
 phrase and no *dass*-clause. -/
 def entwickeln : Verb :=
   { Verb.ofStem ((weak "wickeln").inseparable "ent") with
-    frames := [ArgumentFrame.np], vendlerClass := some .accomplishment, objects := [.acc] }
+    valency := .ofFrame ArgumentFrame.np, vendlerClass := some .accomplishment, objects := [.acc] }
 
 /-- *veranlassen* 'induce' is a weak verb formed with *ver-* on the noun *Anlass* 'occasion', and
 takes a noun phrase or a *dass*-clause. -/
 def veranlassen : Verb :=
   { Verb.ofStem ((weak "anlassen").inseparable "ver") with
-    frames := [ArgumentFrame.np, ArgumentFrame.finiteClause], objects := [.acc] }
+    valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.finiteClause, [0, 1])],
+      objects := [.acc] }
 
 /-- *vergessen* 'forget' takes a noun phrase or a *dass*-clause; its *ver-* is not separable from
 a simple verb of today. -/
@@ -340,21 +343,24 @@ def vergessen : Verb :=
   { Verb.ofStem
       { infinitive := "vergessen", present := "vergisst", past := "vergaß",
         participle := "vergessen", prefixGe := false } with
-    frames := [ArgumentFrame.np, ArgumentFrame.finiteClause], opaqueContext := true
+    valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.finiteClause, [0, 1])],
+      opaqueContext := true
     objects := [.acc] }
 
 /-- *erwarten* 'expect' is formed on *warten* with the inseparable *er-*, and takes a noun phrase
 or a *dass*-clause. -/
 def erwarten : Verb :=
   { Verb.ofStem ((weak "warten").inseparable "er") with
-    frames := [ArgumentFrame.np, ArgumentFrame.finiteClause], opaqueContext := true
+    valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.finiteClause, [0, 1])],
+      opaqueContext := true
     objects := [.acc] }
 
 /-- *beschließen* 'decide' is formed on *schließen* with the inseparable *be-*, and takes a noun
 phrase or a *dass*-clause. -/
 def beschliessen : Verb :=
   { Verb.ofStem ((strong "schließen" "schließt" "schloss" "geschlossen").inseparable "be") with
-    frames := [ArgumentFrame.np, ArgumentFrame.finiteClause], objects := [.acc] }
+    valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.finiteClause, [0, 1])],
+      objects := [.acc] }
 
 /-! ### The entries -/
 
@@ -367,14 +373,15 @@ perfect, with the principal parts of Table 12.12. -/
 direction. -/
 def laufen : Verb :=
   { Verb.ofStem (strong "laufen" "läuft" "lief" "gelaufen") with
-    frames := [ArgumentFrame.intransitive, ArgumentFrame.spatialPP], vendlerClass := some .activity,
+    valency := .of [(ArgumentFrame.intransitive, [0]), (ArgumentFrame.spatialPP, [0, 1])],
+      vendlerClass := some .activity,
     direction := some .place }
 
 /-- *ankommen* 'arrive' is formed on *kommen* with the separable *an-*, a verb of motion to a goal:
 *Um die Zeit werden wir schon angekommen sein*. -/
 def ankommen : Verb :=
   { Verb.ofStem ((strong "kommen" "kommt" "kam" "gekommen").separable "an") with
-    frames := [ArgumentFrame.unaccusative], vendlerClass := some .achievement,
+    valency := .ofFrame ArgumentFrame.unaccusative, vendlerClass := some .achievement,
     direction := some .goal }
 
 /-- *tanzen* 'dance' names the activity as such, *Ich habe als junger Mann viel getanzt*, and
@@ -382,26 +389,29 @@ expresses movement from one place to another only with a directional phrase, *Er
 Zimmer getanzt* (§12.3.2c). -/
 def tanzen : Verb :=
   { Verb.ofStem (weak "tanzen") with
-    frames := [ArgumentFrame.intransitive, ArgumentFrame.spatialPP],
-    vendlerClass := some .activity, subjectEntailments := some activitySubjectProfile }
+    valency := .of
+      [(ArgumentFrame.intransitive, [0]),
+       (ArgumentFrame.spatialPP, [0, 1])]
+      [some activitySubjectProfile, none],
+    vendlerClass := some .activity}
 
 /-- *arbeiten* 'work' denotes a continuous action, *Ich habe gestern lange gearbeitet*. -/
 def arbeiten : Verb :=
   { Verb.ofStem (weak "arbeiten") with
-    frames := [ArgumentFrame.intransitive], vendlerClass := some .activity,
-    subjectEntailments := some activitySubjectProfile }
+    valency := .ofFrame ArgumentFrame.intransitive [some activitySubjectProfile],
+      vendlerClass := some .activity }
 
 /-- *bleiben* 'stay, remain' denotes the continuation of a state, *Wir sind in Dessau geblieben*. -/
 def bleiben : Verb :=
   { Verb.ofStem (strong "bleiben" "bleibt" "blieb" "geblieben") with
-    frames := [ArgumentFrame.intransitive], vendlerClass := some .state,
+    valency := .ofFrame ArgumentFrame.intransitive, vendlerClass := some .state,
     phasal := some .continuation }
 
 /-- *liegen* 'lie' denotes a state, *ich habe gelegen* in standard German in Germany, where South
 German commonly has *ich bin gelegen*. -/
 def liegen : Verb :=
   { Verb.ofStem (strong "liegen" "liegt" "lag" "gelegen") with
-    frames := [ArgumentFrame.intransitive], vendlerClass := some .state }
+    valency := .ofFrame ArgumentFrame.intransitive, vendlerClass := some .state }
 
 /-- `allVerbs` lists the entries. -/
 def allVerbs : List Verb :=

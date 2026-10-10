@@ -375,6 +375,6 @@ example : mandarin.intransitiveX = true := rfl
 example : japanese.intransitiveX = false := rfl
 
 /-- *pò* 'break' has no transitive frame (684)–(685), the datum behind Mandarin's parameter. -/
-theorem po_not_alternating : ∀ fr ∈ po.frames, ¬ fr.IsTransitive := by decide
+theorem po_not_alternating : ∀ fr ∈ po.valency.frames, ¬ fr.IsTransitive := by decide
 
 end Tay2024

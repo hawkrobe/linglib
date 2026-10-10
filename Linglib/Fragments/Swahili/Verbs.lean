@@ -35,88 +35,88 @@ namespace Swahili.Verbs
 /-- *achana* 'break up, divorce'. -/
 def achana : Verb where
   form := "achana"
-  frames := [ArgumentFrame.intransitive]
+  valency := .ofFrame ArgumentFrame.intransitive
 
 /-- *gawana* 'share'. -/
 def gawana : Verb where
   form := "gawana"
-  frames := [ArgumentFrame.intransitive]
+  valency := .ofFrame ArgumentFrame.intransitive
 
 /-- *gombana* 'quarrel'. -/
 def gombana : Verb where
   form := "gombana"
-  frames := [ArgumentFrame.intransitive]
+  valency := .ofFrame ArgumentFrame.intransitive
 
 /-- *gongana* 'collide'. -/
 def gongana : Verb where
   form := "gongana"
-  frames := [ArgumentFrame.intransitive]
+  valency := .ofFrame ArgumentFrame.intransitive
 
 /-- *jibizana* 'discuss, talk, dialogue', which has no binary base. -/
 def jibizana : Verb where
   form := "jibizana"
-  frames := [ArgumentFrame.intransitive]
+  valency := .ofFrame ArgumentFrame.intransitive
 
 /-- *pambana* 'fight, be in conflict'. -/
 def pambana : Verb where
   form := "pambana"
-  frames := [ArgumentFrame.intransitive]
+  valency := .ofFrame ArgumentFrame.intransitive
 
 /-- *patana* 'agree'. -/
 def patana : Verb where
   form := "patana"
-  frames := [ArgumentFrame.intransitive]
+  valency := .ofFrame ArgumentFrame.intransitive
 
 /-- *pigana* 'fight'. -/
 def pigana : Verb where
   form := "pigana"
-  frames := [ArgumentFrame.intransitive]
+  valency := .ofFrame ArgumentFrame.intransitive
 
 /-- *shindana* 'compete'. -/
 def shindana : Verb where
   form := "shindana"
-  frames := [ArgumentFrame.intransitive]
+  valency := .ofFrame ArgumentFrame.intransitive
 
 /-! ### Binary bases -/
 
 /-- *acha* 'leave, abandon'. -/
 def acha : Verb where
   form := "acha"
-  frames := [ArgumentFrame.np]
+  valency := .ofFrame ArgumentFrame.np
 
 /-- *gawa* 'distribute'. -/
 def gawa : Verb where
   form := "gawa"
-  frames := [ArgumentFrame.np]
+  valency := .ofFrame ArgumentFrame.np
 
 /-- *gomba* 'argue with'. -/
 def gomba : Verb where
   form := "gomba"
-  frames := [ArgumentFrame.np]
+  valency := .ofFrame ArgumentFrame.np
 
 /-- *gonga* 'crash against'. -/
 def gonga : Verb where
   form := "gonga"
-  frames := [ArgumentFrame.np]
+  valency := .ofFrame ArgumentFrame.np
 
 /-- *pamba* 'decorate'. -/
 def pamba : Verb where
   form := "pamba"
-  frames := [ArgumentFrame.np]
+  valency := .ofFrame ArgumentFrame.np
 
 /-- *pata* 'find'. -/
 def pata : Verb where
   form := "pata"
-  frames := [ArgumentFrame.np]
+  valency := .ofFrame ArgumentFrame.np
 
 /-- *piga* 'hit'. -/
 def piga : Verb where
   form := "piga"
-  frames := [ArgumentFrame.np]
+  valency := .ofFrame ArgumentFrame.np
 
 /-- *shinda* 'defeat'. -/
 def shinda : Verb where
   form := "shinda"
-  frames := [ArgumentFrame.np]
+  valency := .ofFrame ArgumentFrame.np
 
 end Swahili.Verbs

@@ -355,7 +355,7 @@ theorem thick_inter_omissionSubject :
 
 /-- The alternation column agrees with the fragment's frames except on *cool*. -/
 theorem alternating_iff_unaccusative :
-    ∀ s, s ≠ .cool → (s ∈ alternating ↔ ArgumentFrame.unaccusative ∈ s.entry.frames) := by
+    ∀ s, s ≠ .cool → (s ∈ alternating ↔ ArgumentFrame.unaccusative ∈ s.entry.valency.frames) := by
   decide
 
 /-- The position of a verb's root on the paper's analysis. The root of a causative manner verb

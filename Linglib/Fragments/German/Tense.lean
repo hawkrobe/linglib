@@ -107,9 +107,9 @@ theorem takesSpatial_of_direction_eq_place :
     ∀ v ∈ Verbs.allVerbs, v.direction = some .place → v.TakesSpatial := by
   decide
 
-/-- The principal parts of a verb entry on a frame, its citation frame by default, are its stem
+/-- The principal parts of a verb entry on a frame, its basic frame by default, are its stem
 with the auxiliary of its perfect there. -/
-def Verb.principalParts (v : Verb) (fr : ArgumentFrame := v.frames.headD .intransitive) :
+def Verb.principalParts (v : Verb) (fr : ArgumentFrame := v.valency.frames.headD .intransitive) :
     PrincipalParts :=
   ⟨v.stem, perfect v fr⟩
 

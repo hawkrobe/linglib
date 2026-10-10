@@ -503,7 +503,7 @@ def role? (r : Datum) : Option Role :=
 
 /-- A root survives an input when the valency of its frame suffices for each feature. -/
 def Licensed (v : Verb) (i : Input) : Prop :=
-  ∃ fr ∈ v.frames.head?, (i.valency fr.valency).isSome
+  ∃ fr ∈ v.valency.frames.head?, (i.valency fr.valency).isSome
 
 instance (v : Verb) (i : Input) : Decidable (Licensed v i) :=
   inferInstanceAs (Decidable (∃ _ ∈ _, _))

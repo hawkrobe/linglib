@@ -27,7 +27,7 @@ adjectives as verbs.
 /-- A clause-embedding adjective is the `Adjective` core with the clausal-selection facets it
 shares with clause-embedding verbs, and no verbal morphology. -/
 structure ClauseEmbeddingAdjective extends Adjective, Verb.Presupposition, Verb.Attitude where
-  /-- The frames of the adjective's complement, citation frame first. -/
+  /-- The frames of the adjective's complement, basic frame first. -/
   frames : List ArgumentFrame := [.finiteClause]
   deriving Repr, BEq
 
@@ -38,6 +38,6 @@ adjective's clausal-selection facets carried over. -/
 def toVerb (a : ClauseEmbeddingAdjective) (copula : String) : Verb :=
   { a.toPresupposition, a.toAttitude with
     form := copula ++ " " ++ a.form
-    frames := a.frames }
+    valency := .of (a.frames.map fun fr ↦ (fr, List.range fr.slots.length)) }
 
 end ClauseEmbeddingAdjective

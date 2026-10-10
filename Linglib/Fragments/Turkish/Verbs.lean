@@ -73,7 +73,7 @@ def nominalizedQuestion : ArgumentFrame :=
 def kork : Verb where
   form := "kork"
   rootSegments := [k, o, r, k]
-  frames := [ArgumentFrame.gerund, nominalizedQuestion]
+  valency := .of [(ArgumentFrame.gerund, [0, 1]), (nominalizedQuestion, [0, 1])]
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential .negative true)
@@ -82,7 +82,7 @@ def kork : Verb where
 def um : Verb where
   form := "um"
   rootSegments := [u, m]
-  frames := [ArgumentFrame.gerund]
+  valency := .ofFrame ArgumentFrame.gerund
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential .positive true)
@@ -91,7 +91,7 @@ def um : Verb where
 def endişelen : Verb where
   form := "endişelen"
   rootSegments := [e, n, d, i, ş, e, l, e, n]
-  frames := [ArgumentFrame.gerund, nominalizedQuestion]
+  valency := .of [(ArgumentFrame.gerund, [0, 1]), (nominalizedQuestion, [0, 1])]
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential .negative false)
@@ -102,7 +102,7 @@ def endişelen : Verb where
 def dolan : Verb where
   form := "dolan"
   rootSegments := [d, o, l, a, n]
-  frames := [ArgumentFrame.intransitive]
+  valency := .ofFrame ArgumentFrame.intransitive
   passivizable := false
 
 /-! ### Causatives -/
@@ -112,14 +112,14 @@ def öldür : Verb where
   form := "öldür"
   rootSegments := [ö, l]
   voice := [.causative]
-  frames := [ArgumentFrame.np]
+  valency := .ofFrame ArgumentFrame.np
 
 /-- *yaptır-* 'have done, make do', the causative of *yap-* 'do, make'. -/
 def yaptır : Verb where
   form := "yaptır"
   rootSegments := [y, a, p]
   voice := [.causative]
-  frames := [ArgumentFrame.smallClause]
+  valency := .ofFrame ArgumentFrame.smallClause
   readings := [{ frame := ArgumentFrame.smallClause, control := some .objectControl }]
 
 /-- `verbs` lists the entries. -/

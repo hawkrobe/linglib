@@ -5,6 +5,7 @@ public import Mathlib.Logic.Relation
 public import Linglib.Syntax.Voice.System
 public import Linglib.Data.Examples.Creissels2024
 public import Linglib.Data.Experiments.Creissels2024
+public import Linglib.Fragments.English.Verbs.Causative
 
 /-!
 # Creissels (2024): Transitivity, Valency, and Voice
@@ -24,6 +25,8 @@ violate.
   book assigns it.
 * `voices_typed`: the substrate's voices realize the types they are named for.
 * `stacking_tswana`, `stacking_nahuatl`: stacked voice markers compose their alternations.
+* `break_decausativization`: the English fragment's *break* is a decausativization in its own
+  diatheses.
 
 ## Implementation notes
 
@@ -285,6 +288,15 @@ theorem instrumentNucleativization_neutral :
 
 /-- Portative derivation is valency-increasing, like causativization and applicativization. -/
 theorem portative_isValencyIncreasing : portative.IsValencyIncreasing := by decide
+
+/-- English *break* is a decausativization in the fragment's own diatheses: the intransitive
+leaves the breaker out of participant structure and makes the thing broken the S, so it is not a
+passivization. -/
+theorem break_decausativization :
+    ∃ c ∈ English.Verbs.break_.valency.basic?, ∃ d ∈ English.Verbs.break_.valency.diatheses,
+      Decausativization c.construction d.construction ∧
+        ¬ Passivization c.construction d.construction := by
+  decide +kernel
 
 /-! ### Alignment and the Obligatory Coding Principle (§1.3.4) -/
 

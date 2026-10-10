@@ -39,7 +39,7 @@ Verbs of saying / belief / knowledge / understanding
     ex. 1a. Speech-act verb, eventive (activity). -/
 def leo : Verb where
   form := "léo"
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   speechActVerb := true
   vendlerClass := some .activity
 
@@ -47,7 +47,7 @@ def leo : Verb where
     passive *pistévetai oti* is standard. -/
 def pistevo : Verb where
   form := "pistévo"
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   attitude := some (.doxastic .nonVeridical)
   vendlerClass := some .state
   opaqueContext := true
@@ -56,7 +56,7 @@ def pistevo : Verb where
     stative. Rejects manner adverbs ([angelopoulos-2026] ex. 21a). -/
 def ksero : Verb where
   form := "kséro"
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   attitude := some (.doxastic .veridical)
   factivity := some .semi
   vendlerClass := some .state
@@ -66,7 +66,7 @@ def ksero : Verb where
     factive doxastic. -/
 def katalaveno : Verb where
   form := "katalavéno"
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   attitude := some (.doxastic .veridical)
   factivity := some .semi
   vendlerClass := some .achievement
@@ -75,7 +75,7 @@ def katalaveno : Verb where
     factive doxastic ([angelopoulos-2026] ex. 21b). -/
 def sinidhitopio : Verb where
   form := "sinidhitopió"
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   attitude := some (.doxastic .veridical)
   factivity := some .semi
   vendlerClass := some .achievement
@@ -84,7 +84,7 @@ def sinidhitopio : Verb where
     yielding *explanans* reading ([angelopoulos-2026] ex. 4a). -/
 def eksigo : Verb where
   form := "eksigó"
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .accomplishment
 
 /-! ### Matrix verbs selecting *pu*
@@ -96,7 +96,7 @@ stativity restriction. -/
     valence), stative. [angelopoulos-2026] ex. 1b, 20. -/
 def metaniono : Verb where
   form := "metanióno"
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   attitude := some (.preferential .negative true)
   vendlerClass := some .state
 
@@ -104,7 +104,7 @@ def metaniono : Verb where
     stative ([angelopoulos-2026] ex. 13, 14; [landau-2010]). -/
 def areso : Verb where
   form := "aréso"
-  frames := [{ ArgumentFrame.finiteClause with external := none }]
+  valency := .ofFrame ({ ArgumentFrame.finiteClause with external := none })
   attitude := some (.preferential .positive true)
   vendlerClass := some .state
 
@@ -112,7 +112,7 @@ def areso : Verb where
     stative. -/
 def xerome : Verb where
   form := "xérome"
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   attitude := some (.preferential .positive true)
   vendlerClass := some .state
 
@@ -129,7 +129,7 @@ polysemy rides on sense-tagged entry pairs (`SenseTag.stative`, the
     is `thimameStat`. -/
 def thimame : Verb where
   form := "thimáme"
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   attitude := some (.doxastic .veridical)
   factivity := some .semi
   vendlerClass := some .achievement
@@ -140,7 +140,7 @@ def thimame : Verb where
     presupposition). -/
 def thimameStat : Verb where
   form := "thimáme"
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   senseTag := .stative
   attitude := some (.doxastic .veridical)
   factivity := some .semi
@@ -151,7 +151,7 @@ def thimameStat : Verb where
     ([angelopoulos-2026] ex. 19, 23). -/
 def thimono : Verb where
   form := "thimóno"
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   attitude := some (.preferential .negative true)
   vendlerClass := some .achievement
 
@@ -159,7 +159,7 @@ def thimono : Verb where
     ([angelopoulos-2026] ex. 19, 23). -/
 def thimonoStat : Verb where
   form := "thimóno"
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   senseTag := .stative
   attitude := some (.preferential .negative true)
   vendlerClass := some .state
@@ -168,7 +168,7 @@ def thimonoStat : Verb where
     under matrix negation or question ([roussou-2010]). -/
 def nomizo : Verb where
   form := "nomízo"
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   attitude := some (.doxastic .nonVeridical)
   vendlerClass := some .state
   opaqueContext := true
@@ -177,7 +177,7 @@ def nomizo : Verb where
     *pu* ([roussou-2010]). -/
 def paradhexome : Verb where
   form := "paradhéxome"
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   speechActVerb := true
   attitude := some (.doxastic .veridical)
   vendlerClass := some .achievement
@@ -186,7 +186,7 @@ def paradhexome : Verb where
     and not *pu* ([roussou-2010]). -/
 def antilamvanome : Verb where
   form := "antilamvánome"
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   attitude := some (.doxastic .veridical)
   factivity := some .semi
   vendlerClass := some .achievement
@@ -195,7 +195,7 @@ def antilamvanome : Verb where
     stative; takes *pu* on the factive reading and *oti* otherwise ([roussou-2010]). -/
 def anisixo : Verb where
   form := "anisixó"
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   attitude := some (.preferential .negative true)
   vendlerClass := some .state
 
@@ -205,14 +205,14 @@ def anisixo : Verb where
     complementizer *an* ([roussou-2010]). -/
 def anarotjeme : Verb where
   form := "anarotjéme"
-  frames := [ArgumentFrame.question]
+  valency := .ofFrame ArgumentFrame.question
   vendlerClass := some .state
   senseTag := .rogative
 
 /-- *thélo* (θέλω) 'want' — volitional, taking only a *na*-clause ([roussou-2010]). -/
 def thelo : Verb where
   form := "thélo"
-  frames := [{ complements := [.clausal (coding := some .subjunctive)] }]
+  valency := .ofFrame ({ complements := [.clausal (coding := some .subjunctive)] })
   attitude := some (.preferential .positive true)
   vendlerClass := some .state
 
@@ -220,8 +220,9 @@ def thelo : Verb where
     from [giannakidou-mari-2021]). -/
 def elpizo : Verb where
   form := "elpízo"
-  frames :=
-    [{ complements := [.clausal (coding := some .subjunctive)] }, ArgumentFrame.finiteClause]
+  valency := .of
+    [({ complements := [.clausal (coding := some .subjunctive)] }, [0, 1]),
+     (ArgumentFrame.finiteClause, [0, 1])]
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential .positive true)
@@ -231,7 +232,7 @@ def elpizo : Verb where
     [giannakidou-mari-2021], in the third singular *protíthete*). -/
 def protitheme : Verb where
   form := "protítheme"
-  frames := [{ complements := [.clausal (coding := some .subjunctive)] }]
+  valency := .ofFrame ({ complements := [.clausal (coding := some .subjunctive)] })
   passivizable := false
   opaqueContext := true
   attitude := some (.preferential .positive true)
@@ -241,7 +242,7 @@ def protitheme : Verb where
     ([grano-2024]). -/
 def vazo : Verb where
   form := "vázo"
-  frames := [{ complements := [.nominal, .clausal (coding := some .subjunctive)] }]
+  valency := .ofFrame ({ complements := [.nominal, .clausal (coding := some .subjunctive)] })
 
 /-! ### Occurrence verbs -/
 
@@ -251,7 +252,8 @@ def vazo : Verb where
     ([angelopoulos-2026] fn. 14). -/
 def simveni : Verb where
   form := "simvéni"
-  frames := [{ external := none, complements := [.clausal (coding := some .subjunctive)] }]
+  valency := .ofFrame
+    { external := none, complements := [.clausal (coding := some .subjunctive)] }
   vendlerClass := some .achievement
 
 end Greek.StandardModern.Verbs

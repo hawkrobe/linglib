@@ -116,7 +116,7 @@ def strategy (v : NezPerce.Verb) : EmbeddingStrategy :=
 theorem nominal_rows :
     ∀ row ∈ Examples.all, row.feature? "diagnostic" = some "nominalComplement" →
       ∀ v ∈ verbs, row.feature? "verb" = some v.form →
-        (row.judgment = .acceptable ↔ ∃ fr ∈ v.frames, fr.HasNominal) := by
+        (row.judgment = .acceptable ↔ ∃ fr ∈ v.valency.frames, fr.HasNominal) := by
   decide
 
 /-- Every relative embedding is factive (§7). -/
@@ -164,10 +164,10 @@ of a predicate that is an emotive factive, a factive preferential attitude, and 
 phrase. -/
 def DetoComplement (v : Bulgarian.Verb) : Prop :=
   v.toVerb.IsPreferential ∧ v.toVerb.IsFactive ∧
-    ∃ fr ∈ v.frames, fr.HasAdpositional
+    ∃ fr ∈ v.valency.frames, fr.HasAdpositional
 
 instance (v : Bulgarian.Verb) : Decidable (DetoComplement v) :=
-  inferInstanceAs (Decidable (_ ∧ _ ∧ ∃ fr ∈ v.frames, _))
+  inferInstanceAs (Decidable (_ ∧ _ ∧ ∃ fr ∈ v.valency.frames, _))
 
 /-- The double requirement picks out exactly the predicates Krapova lists as *deto*-takers, and
 neither condition suffices: *văzmuštavam se* 'resent' is emotive without a *za* phrase, and
@@ -191,7 +191,7 @@ of the Fragment's emotive factives. -/
 theorem zaPhrase_rows :
     ∀ row ∈ Krapova2010.Examples.all, row.feature? "diagnostic" = some "zaPhrase" →
       ∀ v ∈ Bulgarian.verbs, row.feature? "verb" = some v.form →
-        (row.judgment = .acceptable ↔ ∃ fr ∈ v.frames, fr.HasAdpositional) ∧
+        (row.judgment = .acceptable ↔ ∃ fr ∈ v.valency.frames, fr.HasAdpositional) ∧
           ∀ a ∈ row.alternatives, a.2 = .ungrammatical := by
   decide
 

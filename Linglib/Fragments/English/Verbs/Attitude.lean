@@ -37,7 +37,7 @@ def know : Verb where
   formPast := "knew"
   formPastPart := "known"
   formPresPart := "knowing"
-  frames := [ArgumentFrame.finiteClause, ArgumentFrame.question]
+  valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.question, [0, 1])]
   vendlerClass := some .state
   passivizable := false
   complementSig := some .mono
@@ -52,7 +52,7 @@ def regret : Verb where
   formPast := "regretted"
   formPastPart := "regretted"
   formPresPart := "regretting"
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .state
   passivizable := false
   attitude := some (.preferential .negative true)
@@ -62,7 +62,7 @@ def regret : Verb where
 /-- "realize" — factive, presupposes complement is true -/
 def realize : Verb := .mkRegular {
   form := "realize"
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .achievement
   passivizable := false
   attitude := some (.doxastic .veridical)
@@ -71,7 +71,7 @@ def realize : Verb := .mkRegular {
 /-- "discover" — semi-factive, weaker projection -/
 def discover : Verb := .mkRegular {
   form := "discover"
-  frames := [ArgumentFrame.finiteClause, ArgumentFrame.question]
+  valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.question, [0, 1])]
   vendlerClass := some .achievement
   passivizable := false
   attitude := some (.doxastic .veridical)
@@ -81,7 +81,7 @@ def discover : Verb := .mkRegular {
 /-- "notice" — semi-factive -/
 def notice : Verb := .mkRegular {
   form := "notice"
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .achievement
   passivizable := false
   attitude := some (.doxastic .veridical)
@@ -93,7 +93,7 @@ def notice : Verb := .mkRegular {
 /-- "believe" — doxastic attitude verb, creates opaque context -/
 def believe : Verb := .mkRegular {
   form := "believe"
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .state
   passivizable := false
   opaqueContext := true
@@ -108,7 +108,7 @@ def think : Verb where
   formPast := "thought"
   formPastPart := "thought"
   formPresPart := "thinking"
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .state
   passivizable := false
   opaqueContext := true
@@ -121,7 +121,7 @@ def think : Verb where
 /-- "want" — preferential attitude verb with infinitival complement -/
 def want : Verb := .mkRegular {
   form := "want"
-  frames := [ArgumentFrame.infinitival]
+  valency := .ofFrame ArgumentFrame.infinitival
   readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   vendlerClass := some .state
   passivizable := false
@@ -137,7 +137,7 @@ def want : Verb := .mkRegular {
     the complement's event argument). -/
 def intend : Verb := .mkRegular {
   form := "intend"
-  frames := [ArgumentFrame.infinitival]
+  valency := .ofFrame ArgumentFrame.infinitival
   readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   vendlerClass := some .state
   passivizable := false
@@ -152,7 +152,7 @@ def intend : Verb := .mkRegular {
     ([fusco-sgrizzi-2026]). -/
 def decide_ : Verb := .mkRegular {
   form := "decide"
-  frames := [ArgumentFrame.infinitival, ArgumentFrame.finiteClause]
+  valency := .of [(ArgumentFrame.infinitival, [0, 1]), (ArgumentFrame.finiteClause, [0, 1])]
   readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   vendlerClass := some .achievement
   opaqueContext := true
@@ -163,7 +163,7 @@ def decide_ : Verb := .mkRegular {
     Alternate frame: infinitival with subject control ("hope to leave"). -/
 def hope : Verb := .mkRegular {
   form := "hope"
-  frames := [ArgumentFrame.finiteClause, ArgumentFrame.infinitival]
+  valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.infinitival, [0, 1])]
   readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   vendlerClass := some .state
   passivizable := false
@@ -178,7 +178,7 @@ def hope : Verb := .mkRegular {
     Alternate frame: infinitival with subject control ("pray to be saved"). -/
 def pray : Verb := .mkRegular {
   form := "pray"
-  frames := [ArgumentFrame.finiteClause, ArgumentFrame.infinitival]
+  valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.infinitival, [0, 1])]
   readings := [{ frame := ArgumentFrame.infinitival, control := some .subjectControl }]
   vendlerClass := some .state
   passivizable := false
@@ -189,7 +189,7 @@ def pray : Verb := .mkRegular {
 /-- "expect" — preferential attitude verb -/
 def expect : Verb := .mkRegular {
   form := "expect"
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .state
   passivizable := false
   opaqueContext := true
@@ -202,7 +202,7 @@ def wish : Verb where
   formPast := "wished"
   formPastPart := "wished"
   formPresPart := "wishing"
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .state
   passivizable := false
   opaqueContext := true
@@ -212,7 +212,7 @@ def wish : Verb where
 /-- "fear" — a preferential attitude verb of Class 2, which takes questions. -/
 def fear : Verb := .mkRegular {
   form := "fear"
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .state
   passivizable := false
   opaqueContext := true
@@ -222,7 +222,7 @@ def fear : Verb := .mkRegular {
 /-- "dread" — a preferential attitude verb of Class 2, which takes questions. -/
 def dread : Verb := .mkRegular {
   form := "dread"
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .state
   passivizable := false
   opaqueContext := true
@@ -236,7 +236,7 @@ def worry : Verb where
   formPast := "worried"
   formPastPart := "worried"
   formPresPart := "worrying"
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .state
   passivizable := false
   opaqueContext := true
@@ -252,7 +252,7 @@ def worry : Verb where
 /-- "reveal" — factive communication verb ([degen-tonhauser-2022]: canonically factive) -/
 def reveal : Verb := .mkRegular {
   form := "reveal"
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   speechActVerb := true
   vendlerClass := some .achievement
   attitude := some (.doxastic .veridical)
@@ -263,7 +263,7 @@ def reveal : Verb := .mkRegular {
     Levin lists *acknowledge* only among the appoint verbs (§29.1), a different frame. -/
 def acknowledge : Verb := .mkRegular {
   form := "acknowledge"
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   speechActVerb := true
   vendlerClass := some .achievement
   levinClasses := {LevinClass.appoint} }
@@ -277,7 +277,7 @@ def admit : Verb where
   formPast := "admitted"
   formPastPart := "admitted"
   formPresPart := "admitting"
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   speechActVerb := true
   vendlerClass := some .achievement
   levinClasses := {LevinClass.conjecture}
@@ -285,7 +285,7 @@ def admit : Verb where
 /-- "announce" — communication verb -/
 def announce : Verb := .mkRegular {
   form := "announce"
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   speechActVerb := true
   vendlerClass := some .achievement
   levinClasses := {LevinClass.say} }
@@ -293,7 +293,7 @@ def announce : Verb := .mkRegular {
 /-- "confess" — optionally factive communication verb -/
 def confess : Verb := .mkRegular {
   form := "confess"
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   speechActVerb := true
   vendlerClass := some .achievement
   levinClasses := {LevinClass.declare, .say} }
@@ -301,14 +301,14 @@ def confess : Verb := .mkRegular {
 /-- "inform" — optionally factive communication verb with recipient -/
 def inform : Verb := .mkRegular {
   form := "inform"
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   speechActVerb := true
   vendlerClass := some .achievement }
 
 /-- "suggest" — non-factive communication verb -/
 def suggest : Verb := .mkRegular {
   form := "suggest"
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   speechActVerb := true
   vendlerClass := some .achievement
   levinClasses := {LevinClass.reflexiveAppearance, .say} }
@@ -316,35 +316,35 @@ def suggest : Verb := .mkRegular {
 /-- "pretend" — anti-veridical attitude verb -/
 def pretend : Verb := .mkRegular {
   form := "pretend"
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .activity
   opaqueContext := true }
 
 /-- "confirm" — evidential verb -/
 def confirm : Verb := .mkRegular {
   form := "confirm"
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .achievement
   levinClasses := {LevinClass.characterize} }
 
 /-- "demonstrate" — evidential verb -/
 def demonstrate : Verb := .mkRegular {
   form := "demonstrate"
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .achievement
   levinClasses := {LevinClass.transferOfMessage} }
 
 /-- "establish" — evidential verb -/
 def establish : Verb := .mkRegular {
   form := "establish"
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .achievement
   levinClasses := {LevinClass.characterize} }
 
 /-- "prove" — evidential verb -/
 def prove : Verb := .mkRegular {
   form := "prove"
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   vendlerClass := some .achievement
   levinClasses := {LevinClass.declare} }
 
@@ -353,7 +353,7 @@ def prove : Verb := .mkRegular {
 /-- "wonder" — embeds questions only -/
 def wonder : Verb := .mkRegular {
   form := "wonder"
-  frames := [ArgumentFrame.question]
+  valency := .ofFrame ArgumentFrame.question
   vendlerClass := some .state
   opaqueContext := true
   levinClasses := {LevinClass.marvel} }
@@ -362,14 +362,17 @@ def wonder : Verb := .mkRegular {
 def ask : Verb := .mkRegular {
   form := "ask"
   speechActVerb := true
-  frames := [ArgumentFrame.question]
+  valency := .ofFrame ArgumentFrame.question
   vendlerClass := some .achievement
   levinClasses := {LevinClass.transferOfMessage} }
 
 /-- "investigate" — rogative, embeds interrogatives only -/
 def investigate : Verb := .mkRegular {
   form := "investigate"
-  frames := [ArgumentFrame.question, ArgumentFrame.np, ArgumentFrame.objectDrop (some .indef)]
+  valency := .of
+    [(ArgumentFrame.question, [0, 1]),
+     (ArgumentFrame.np, [0, 1]),
+     (ArgumentFrame.objectDrop (some .indef), [0, 1])]
   vendlerClass := some .activity
   levinClasses := {LevinClass.investigate, .sight} }
 
@@ -380,13 +383,13 @@ def depend_on : Verb where
   formPast := "depended on"
   formPastPart := "depended on"
   formPresPart := "depending on"
-  frames := [ArgumentFrame.question]
+  valency := .ofFrame ArgumentFrame.question
   vendlerClass := some .state
 
 /-- "remember" in factive/question-embedding sense. -/
 def remember_rog : Verb := .mkRegular {
   form := "remember"
-  frames := [ArgumentFrame.finiteClause, ArgumentFrame.question]
+  valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.question, [0, 1])]
   vendlerClass := some .state
   passivizable := false
   attitude := some (.doxastic .veridical)
@@ -402,7 +405,10 @@ def forget_rog : Verb where
   formPast := "forgot"
   formPastPart := "forgotten"
   formPresPart := "forgetting"
-  frames := [ArgumentFrame.finiteClause, ArgumentFrame.gerund, ArgumentFrame.question]
+  valency := .of
+    [(ArgumentFrame.finiteClause, [0, 1]),
+     (ArgumentFrame.gerund, [0, 1]),
+     (ArgumentFrame.question, [0, 1])]
   vendlerClass := some .state
   passivizable := false
   attitude := some (.doxastic .veridical)

@@ -118,7 +118,7 @@ def voices : Finset Voice := {.active, impersonalPassive}
 /-- *avata* 'open', with *avaa* 'opens' and the impersonal *avataan*. -/
 def avata : Verb where
   form := "avata"
-  frames := [ArgumentFrame.np]
+  valency := .ofFrame ArgumentFrame.np
   conjugation := .huomata
   infinitiveStem := [a, v, a, t]
   inflectionalStem := [a, v, a, a]
@@ -126,7 +126,7 @@ def avata : Verb where
 /-- *lukea* 'read'. -/
 def lukea : Verb where
   form := "lukea"
-  frames := [ArgumentFrame.np]
+  valency := .ofFrame ArgumentFrame.np
   conjugation := .antaa
   infinitiveStem := [l, u, k, e]
   inflectionalStem := [l, u, k, e]
@@ -134,7 +134,7 @@ def lukea : Verb where
 /-- *tulla* 'come'. -/
 def tulla : Verb where
   form := "tulla"
-  frames := [ArgumentFrame.intransitive]
+  valency := .ofFrame ArgumentFrame.intransitive
   conjugation := .tulla
   infinitiveStem := [t, u, l]
   inflectionalStem := [t, u, l, e]
@@ -142,7 +142,7 @@ def tulla : Verb where
 /-- *haluta* 'want', with the A infinitive. -/
 def haluta : Verb where
   form := "haluta"
-  frames := [ArgumentFrame.np, ArgumentFrame.infinitival]
+  valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.infinitival, [0, 1])]
   conjugation := .huomata
   infinitiveStem := [h, a, l, u, t]
   inflectionalStem := [h, a, l, u, a]
@@ -157,7 +157,7 @@ ways and *jaksaa* 'have the strength' only when negated. *Laiminlyödä* 'neglec
 /-- *onnistua* 'succeed, manage', with the MA infinitive illative. -/
 def onnistua : Verb where
   form := "onnistua"
-  frames := [ArgumentFrame.infinitival]
+  valency := .ofFrame ArgumentFrame.infinitival
   conjugation := .antaa
   infinitiveStem := [o, n, n, i, s, t, u]
   inflectionalStem := [o, n, n, i, s, t, u]
@@ -167,7 +167,7 @@ def onnistua : Verb where
 /-- *uskaltaa* 'dare'. -/
 def uskaltaa : Verb where
   form := "uskaltaa"
-  frames := [ArgumentFrame.infinitival]
+  valency := .ofFrame ArgumentFrame.infinitival
   conjugation := .antaa
   infinitiveStem := [u, s, k, a, l, t, a]
   inflectionalStem := [u, s, k, a, l, t, a]
@@ -177,7 +177,7 @@ def uskaltaa : Verb where
 /-- *viitsiä* 'bother'. -/
 def viitsiä : Verb where
   form := "viitsiä"
-  frames := [ArgumentFrame.infinitival]
+  valency := .ofFrame ArgumentFrame.infinitival
   conjugation := .antaa
   infinitiveStem := [v, i, i, t, s, i]
   inflectionalStem := [v, i, i, t, s, i]
@@ -187,7 +187,7 @@ def viitsiä : Verb where
 /-- *malttaa* 'have the patience'. -/
 def malttaa : Verb where
   form := "malttaa"
-  frames := [ArgumentFrame.infinitival]
+  valency := .ofFrame ArgumentFrame.infinitival
   conjugation := .antaa
   infinitiveStem := [m, a, l, t, t, a]
   inflectionalStem := [m, a, l, t, t, a]
@@ -197,7 +197,7 @@ def malttaa : Verb where
 /-- *hennoa* 'have the heart'. -/
 def hennoa : Verb where
   form := "hennoa"
-  frames := [ArgumentFrame.infinitival]
+  valency := .ofFrame ArgumentFrame.infinitival
   conjugation := .antaa
   infinitiveStem := [h, e, n, n, o]
   inflectionalStem := [h, e, n, n, o]
@@ -207,7 +207,7 @@ def hennoa : Verb where
 /-- *kehdata* 'be unembarrassed, act without shame'. -/
 def kehdata : Verb where
   form := "kehdata"
-  frames := [ArgumentFrame.infinitival]
+  valency := .ofFrame ArgumentFrame.infinitival
   conjugation := .huomata
   infinitiveStem := [k, e, h, d, a, t]
   inflectionalStem := [k, e, h, t, a, a]
@@ -217,7 +217,7 @@ def kehdata : Verb where
 /-- *ehtiä* 'find time, make time'. -/
 def ehtiä : Verb where
   form := "ehtiä"
-  frames := [ArgumentFrame.infinitival]
+  valency := .ofFrame ArgumentFrame.infinitival
   conjugation := .antaa
   infinitiveStem := [e, h, t, i]
   inflectionalStem := [e, h, t, i]
@@ -227,7 +227,7 @@ def ehtiä : Verb where
 /-- *jaksaa* 'have the strength'. -/
 def jaksaa : Verb where
   form := "jaksaa"
-  frames := [ArgumentFrame.infinitival]
+  valency := .ofFrame ArgumentFrame.infinitival
   conjugation := .antaa
   infinitiveStem := [j, a, k, s, a]
   inflectionalStem := [j, a, k, s, a]
@@ -237,7 +237,7 @@ def jaksaa : Verb where
 /-- *mahtua* 'fit, be small enough', with the MA infinitive illative. -/
 def mahtua : Verb where
   form := "mahtua"
-  frames := [ArgumentFrame.infinitival]
+  valency := .ofFrame ArgumentFrame.infinitival
   conjugation := .antaa
   infinitiveStem := [m, a, h, t, u]
   inflectionalStem := [m, a, h, t, u]
@@ -247,7 +247,7 @@ def mahtua : Verb where
 /-- *pystyä* 'be able', with the MA infinitive illative. -/
 def pystyä : Verb where
   form := "pystyä"
-  frames := [ArgumentFrame.infinitival]
+  valency := .ofFrame ArgumentFrame.infinitival
   conjugation := .antaa
   infinitiveStem := [p, y, s, t, y]
   inflectionalStem := [p, y, s, t, y]
@@ -257,7 +257,7 @@ def pystyä : Verb where
 /-- *laiminlyödä* 'neglect'. -/
 def laiminlyödä : Verb where
   form := "laiminlyödä"
-  frames := [ArgumentFrame.infinitival]
+  valency := .ofFrame ArgumentFrame.infinitival
   conjugation := .saada
   infinitiveStem := [l, a, i, m, i, n, l, y, ö]
   inflectionalStem := [l, a, i, m, i, n, l, y, ö]
@@ -267,7 +267,7 @@ def laiminlyödä : Verb where
 /-- *epäröidä* 'hesitate'. -/
 def epäröidä : Verb where
   form := "epäröidä"
-  frames := [ArgumentFrame.infinitival]
+  valency := .ofFrame ArgumentFrame.infinitival
   conjugation := .saada
   infinitiveStem := [e, p, ä, r, ö, i]
   inflectionalStem := [e, p, ä, r, ö, i]

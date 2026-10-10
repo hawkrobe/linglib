@@ -87,7 +87,7 @@ before the thinking ([bondarenko-2020] (2), (21)). The `readings` rows record th
 nonveridical and opaque on the bare CP, veridical and transparent on the nominalized frame. -/
 def hanaxa : Verb where
   form := "hanaxa"
-  frames := [ArgumentFrame.finiteClause, nominalizedFrame]
+  valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (nominalizedFrame, [0, 1])]
   readings := [
     { frame := ArgumentFrame.finiteClause, attitude := some (.doxastic .nonVeridical),
       opaqueContext := some true },
@@ -98,7 +98,10 @@ def hanaxa : Verb where
 questions (ex. 3). -/
 def medexe : Verb where
   form := "mɘdɘxɘ"
-  frames := [ArgumentFrame.finiteClause, ArgumentFrame.gerund, ArgumentFrame.question]
+  valency := .of
+    [(ArgumentFrame.finiteClause, [0, 1]),
+     (ArgumentFrame.gerund, [0, 1]),
+     (ArgumentFrame.question, [0, 1])]
   attitude := some (.doxastic .veridical)
   factivity := some .semi
 
@@ -106,13 +109,13 @@ def medexe : Verb where
 are existence-entailing (ex. 51; speaker variation per fn. 30). -/
 def xelexe : Verb where
   form := "xɘlɘxɘ"
-  frames := [ArgumentFrame.finiteClause, ArgumentFrame.gerund]
+  valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.gerund, [0, 1])]
   speechActVerb := true
 
 /-- *duːlaxa* 'hear' — non-factive with bare CPs, existence-entailing
 with nominalized complements (ex. 50). -/
 def duulaxa : Verb where
   form := "duːlaxa"
-  frames := [ArgumentFrame.finiteClause, ArgumentFrame.gerund]
+  valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.gerund, [0, 1])]
 
 end Buryat

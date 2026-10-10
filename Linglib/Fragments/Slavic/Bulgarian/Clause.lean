@@ -69,7 +69,7 @@ def emotiveFrames : List ArgumentFrame := [ArgumentFrame.finiteClause, ArgumentF
 /-- *săžaljavam* 'regret', the predicate of the projection trials (57). -/
 def sazhaljavam : Verb where
   form := "săžaljavam"
-  frames := emotiveFrames
+  valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.pp, [0, 1])]
   predicateClass := some .commentative
   attitude := some (.preferential .negative true)
   factivity := some .full
@@ -77,7 +77,7 @@ def sazhaljavam : Verb where
 /-- *vinoven săm* 'be one's fault' ((57b)). -/
 def vinovenSam : Verb where
   form := "vinoven săm"
-  frames := emotiveFrames
+  valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.pp, [0, 1])]
   predicateClass := some .commentative
   attitude := some (.preferential .negative true)
   factivity := some .full
@@ -85,7 +85,7 @@ def vinovenSam : Verb where
 /-- *jad me e* 'be sorry, regret' ((56b)). -/
 def jadMeE : Verb where
   form := "jad me e"
-  frames := emotiveFrames
+  valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.pp, [0, 1])]
   predicateClass := some .commentative
   attitude := some (.preferential .negative true)
   factivity := some .full
@@ -93,7 +93,7 @@ def jadMeE : Verb where
 /-- *radvam se* 'be happy'. -/
 def radvamSe : Verb where
   form := "radvam se"
-  frames := emotiveFrames
+  valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.pp, [0, 1])]
   predicateClass := some .commentative
   attitude := some (.preferential .positive true)
   factivity := some .full
@@ -101,7 +101,7 @@ def radvamSe : Verb where
 /-- *nedovolstvam* 'be dissatisfied'. -/
 def nedovolstvam : Verb where
   form := "nedovolstvam"
-  frames := emotiveFrames
+  valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.pp, [0, 1])]
   predicateClass := some .commentative
   attitude := some (.preferential .negative true)
   factivity := some .full
@@ -109,7 +109,7 @@ def nedovolstvam : Verb where
 /-- *pritesnjavam se* 'worry'. -/
 def pritesnjavamSe : Verb where
   form := "pritesnjavam se"
-  frames := emotiveFrames
+  valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.pp, [0, 1])]
   predicateClass := some .commentative
   attitude := some (.preferential .negative false)
   factivity := some .full
@@ -117,7 +117,7 @@ def pritesnjavamSe : Verb where
 /-- *žal mi e* 'be sorry'. -/
 def zhalMiE : Verb where
   form := "žal mi e"
-  frames := emotiveFrames
+  valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.pp, [0, 1])]
   predicateClass := some .commentative
   attitude := some (.preferential .negative true)
   factivity := some .full
@@ -125,7 +125,7 @@ def zhalMiE : Verb where
 /-- *măčno mi e* 'be sad'. -/
 def machnoMiE : Verb where
   form := "măčno mi e"
-  frames := emotiveFrames
+  valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.pp, [0, 1])]
   predicateClass := some .commentative
   attitude := some (.preferential .negative true)
   factivity := some .full
@@ -133,7 +133,7 @@ def machnoMiE : Verb where
 /-- *sram me e* 'feel ashamed'. -/
 def sramMeE : Verb where
   form := "sram me e"
-  frames := emotiveFrames
+  valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.pp, [0, 1])]
   predicateClass := some .commentative
   attitude := some (.preferential .negative true)
   factivity := some .full
@@ -141,7 +141,7 @@ def sramMeE : Verb where
 /-- *văzmuštavam se* 'resent', emotive and factive but without a *za* phrase ((58a)). -/
 def vazmushtavamSe : Verb where
   form := "văzmuštavam se"
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   predicateClass := some .commentative
   attitude := some (.preferential .negative true)
   factivity := some .full
@@ -149,7 +149,7 @@ def vazmushtavamSe : Verb where
 /-- *razbiram* 'comprehend', a transitive factive on Kiparsky and Kiparsky's list. -/
 def razbiram : Verb where
   form := "razbiram"
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   predicateClass := some .knowledge
   attitude := some (.doxastic .veridical)
   factivity := some .full
@@ -157,7 +157,7 @@ def razbiram : Verb where
 /-- *vzemam predvid* 'take into account', printed *previd* in the paper. -/
 def vzemamPredvid : Verb where
   form := "vzemam predvid"
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   predicateClass := none
   attitude := some (.doxastic .veridical)
   factivity := some .full
@@ -165,7 +165,7 @@ def vzemamPredvid : Verb where
 /-- *imam predvid* 'bear in mind'. -/
 def imamPredvid : Verb where
   form := "imam predvid"
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   predicateClass := none
   attitude := some (.doxastic .veridical)
   factivity := some .full
@@ -173,7 +173,7 @@ def imamPredvid : Verb where
 /-- *prenebregvam* 'ignore'. -/
 def prenebregvam : Verb where
   form := "prenebregvam"
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   predicateClass := none
   attitude := some (.doxastic .veridical)
   factivity := some .full
@@ -181,7 +181,7 @@ def prenebregvam : Verb where
 /-- *griža se* 'take care'. -/
 def grizhaSe : Verb where
   form := "griža se"
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   predicateClass := none
   attitude := some (.doxastic .veridical)
   factivity := some .full
@@ -189,7 +189,7 @@ def grizhaSe : Verb where
 /-- *znaja* 'know', a semi-factive. -/
 def znaja : Verb where
   form := "znaja"
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   predicateClass := some .knowledge
   attitude := some (.doxastic .veridical)
   factivity := some .semi
@@ -197,7 +197,7 @@ def znaja : Verb where
 /-- *pomnja* 'remember'. -/
 def pomnja : Verb where
   form := "pomnja"
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   predicateClass := some .knowledge
   attitude := some (.doxastic .veridical)
   factivity := some .semi
@@ -205,7 +205,7 @@ def pomnja : Verb where
 /-- *otkrivam* 'find out'. -/
 def otkrivam : Verb where
   form := "otkrivam"
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   predicateClass := some .knowledge
   attitude := some (.doxastic .veridical)
   factivity := some .semi
@@ -213,7 +213,7 @@ def otkrivam : Verb where
 /-- *viždam* 'see', on the propositional reading. -/
 def vizhdam : Verb where
   form := "viždam"
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   predicateClass := some .perception
   attitude := some (.doxastic .veridical)
   factivity := some .semi
@@ -221,7 +221,7 @@ def vizhdam : Verb where
 /-- *čuvam* 'hear', on the propositional reading. -/
 def chuvam : Verb where
   form := "čuvam"
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   predicateClass := some .perception
   attitude := some (.doxastic .veridical)
   factivity := some .semi
@@ -229,7 +229,7 @@ def chuvam : Verb where
 /-- *zabeljazvam* 'notice'. -/
 def zabeljazvam : Verb where
   form := "zabeljazvam"
-  frames := [ArgumentFrame.finiteClause]
+  valency := .ofFrame ArgumentFrame.finiteClause
   predicateClass := none
   attitude := some (.doxastic .veridical)
   factivity := some .semi

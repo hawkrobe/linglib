@@ -128,7 +128,7 @@ def entry : Predicate → Verb
 /-- Every predicate takes a finite clause complement, as the polar questions of the stimuli
 require. -/
 theorem all_predicates_take_clause_complement (p : Predicate) :
-    ∃ fr ∈ (entry p).frames, fr.HasFinite := by
+    ∃ fr ∈ (entry p).valency.frames, fr.HasFinite := by
   cases p <;> decide
 
 end Fragment
