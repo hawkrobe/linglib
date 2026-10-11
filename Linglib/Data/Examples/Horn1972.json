@@ -28,7 +28,8 @@
         "suspension of the upper bound"
       ]
     ],
-    "comment": "The upper bound of a cardinal is an implicature and can be suspended."
+    "comment": "The upper bound of a cardinal is an implicature and can be suspended.",
+    "verified": "page-image"
   },
   {
     "id": "horn1972_ex1_58b_fewer",
@@ -42,7 +43,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -59,7 +60,8 @@
         "suspension of the lower bound"
       ]
     ],
-    "comment": "The lower bound is asserted and cannot be suspended."
+    "comment": "The lower bound is asserted and cannot be suspended.",
+    "verified": "page-image"
   },
   {
     "id": "horn1972_ex1_59a",
@@ -94,7 +96,8 @@
         "at most 3"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "horn1972_ex1_59b",
@@ -125,7 +128,8 @@
         "of the lower bound"
       ]
     ],
-    "comment": "Negation contradicts the lower bound, not the putative upper bound: fewer than three."
+    "comment": "Negation contradicts the lower bound, not the putative upper bound: fewer than three.",
+    "verified": "page-image"
   },
   {
     "id": "horn1972_ex1_60a",
@@ -156,7 +160,8 @@
         "cancelling the upper bound"
       ]
     ],
-    "comment": "Logically consistent, so the upper bound is not an entailment."
+    "comment": "Logically consistent, so the upper bound is not an entailment.",
+    "verified": "page-image"
   },
   {
     "id": "horn1972_ex1_60b",
@@ -170,7 +175,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -187,7 +192,8 @@
         "contradicting the assertion of only"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "horn1972_ex1_63b",
@@ -218,7 +224,8 @@
         "at least"
       ]
     ],
-    "comment": "With the upper bound not implicated, the question is answered yes."
+    "comment": "With the upper bound not implicated, the question is answered yes.",
+    "verified": "page-image"
   },
   {
     "id": "horn1972_ex1_63c",
@@ -249,7 +256,8 @@
         "exact"
       ]
     ],
-    "comment": "With the upper bound implicated by the question, the answer is no."
+    "comment": "With the upper bound implicated by the question, the answer is no.",
+    "verified": "page-image"
   },
   {
     "id": "horn1972_ex1_72a_fact",
@@ -280,7 +288,8 @@
         "contradicting the implicature"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "horn1972_ex1_72a_susp",
@@ -311,7 +320,8 @@
         "suspension"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "horn1972_ex1_72b_cold",
@@ -342,7 +352,8 @@
         "suspension"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "horn1972_ex1_72b_warm",
@@ -356,7 +367,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -373,7 +384,8 @@
         "suspension across scales"
       ]
     ],
-    "comment": "Cool and warm are not on one scale: cool asserts the negation of warm."
+    "comment": "Cool and warm are not on one scale: cool asserts the negation of warm.",
+    "verified": "page-image"
   },
   {
     "id": "horn1972_ex1_73c_hot_warm",
@@ -382,12 +394,12 @@
       "paperLabel": "(1.73c)"
     },
     "language": "stan1293",
-    "primaryText": "It's hot, if not warm.",
+    "primaryText": "hot if not warm",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -404,69 +416,8 @@
         "suspension by a weaker member"
       ]
     ],
-    "comment": "No suspension of the asserted lower bound is possible."
-  },
-  {
-    "id": "horn1972_ex1_73a",
-    "source": {
-      "bibkey": "horn-1972",
-      "paperLabel": "(1.73a)"
-    },
-    "language": "stan1293",
-    "primaryText": "Dolores is pretty but not beautiful.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "1.22"
-      ],
-      [
-        "scale",
-        "pretty–beautiful"
-      ],
-      [
-        "construction",
-        "asserting the implicature"
-      ]
-    ],
-    "comment": ""
-  },
-  {
-    "id": "horn1972_ex1_73b",
-    "source": {
-      "bibkey": "horn-1972",
-      "paperLabel": "(1.73b)"
-    },
-    "language": "stan1293",
-    "primaryText": "Dolores is not only pretty, she's beautiful.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "1.22"
-      ],
-      [
-        "scale",
-        "pretty–beautiful"
-      ],
-      [
-        "construction",
-        "contradicting the implicature"
-      ]
-    ],
-    "comment": ""
+    "comment": "Printed inline in the prose after (1.73), not as an example line: *hot if not warm. No suspension of the asserted lower bound is possible.",
+    "verified": "page-image"
   },
   {
     "id": "horn1972_ex1_82a",
@@ -501,7 +452,8 @@
         "rising"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "horn1972_ex1_82b",
@@ -532,7 +484,8 @@
         "falling"
       ]
     ],
-    "comment": "A concessive if-not clause, not a suspension: intelligent is not on the scale of pretty."
+    "comment": "A concessive if-not clause, not a suspension: intelligent is not on the scale of pretty.",
+    "verified": "page-image"
   },
   {
     "id": "horn1972_ex1_85a",
@@ -563,7 +516,8 @@
         "positive"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "horn1972_ex1_85b",
@@ -594,7 +548,8 @@
         "negative"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "horn1972_ex1_93_ok",
@@ -625,7 +580,8 @@
         "suspension"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "horn1972_ex1_93_bad",
@@ -639,7 +595,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -656,7 +612,8 @@
         "suspension by a weaker member"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "horn1972_ex2_1a_some_all",
@@ -687,7 +644,8 @@
         "suspension"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "horn1972_ex2_1a_all_some",
@@ -701,7 +659,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -718,7 +676,8 @@
         "suspension by a weaker member"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "horn1972_ex2_1a_many_most",
@@ -749,7 +708,8 @@
         "suspension"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "horn1972_ex2_1b",
@@ -780,7 +740,8 @@
         "suspension"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "horn1972_ex2_1e_few",
@@ -811,7 +772,8 @@
         "suspension"
       ]
     ],
-    "comment": "Derived by double negation from few and possibly not any."
+    "comment": "Derived by double negation from few and possibly not any.",
+    "verified": "page-image"
   },
   {
     "id": "horn1972_ex2_3c",
@@ -820,12 +782,12 @@
       "paperLabel": "(2.3c)"
     },
     "language": "stan1293",
-    "primaryText": "Desdemona is pretty or even beautiful, or both.",
+    "primaryText": "Desdemona is pretty or (even) beautiful, or both.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -838,7 +800,8 @@
         "or both after a suspender disjunction"
       ]
     ],
-    "comment": "Suspender disjunctions are not true disjunctions, so or both cannot be appended."
+    "comment": "The star is printed before 'or both'. Suspender disjunctions are not true disjunctions, so or both cannot be appended.",
+    "verified": "page-image"
   },
   {
     "id": "horn1972_ex2_3a",
@@ -865,7 +828,8 @@
         "or both after a true disjunction"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "horn1972_ex2_24a_somebody",
@@ -896,7 +860,8 @@
         "cancelling the implicature"
       ]
     ],
-    "comment": "Consistent, against treating some as entailing or presupposing not all."
+    "comment": "Consistent, against treating some as entailing or presupposing not all.",
+    "verified": "page-image"
   },
   {
     "id": "horn1972_ex2_24b_some_not_all",
@@ -927,7 +892,8 @@
         "asserting the implicature"
       ]
     ],
-    "comment": "Non-redundant by the test (2.12), so not all is not entailed by some."
+    "comment": "Non-redundant by the test (2.12), so not all is not entailed by some.",
+    "verified": "page-image"
   },
   {
     "id": "horn1972_ex2_25a",
@@ -958,7 +924,8 @@
         "asserting the implicature"
       ]
     ],
-    "comment": "Against a presupposition of some by few."
+    "comment": "Against a presupposition of some by few.",
+    "verified": "page-image"
   },
   {
     "id": "horn1972_ex2_28a",
@@ -989,7 +956,8 @@
         "of the lower bound"
       ]
     ],
-    "comment": "Fewer than three friends."
+    "comment": "Fewer than three friends.",
+    "verified": "page-image"
   },
   {
     "id": "horn1972_ex2_28b",
@@ -998,7 +966,7 @@
       "paperLabel": "(2.28b)"
     },
     "language": "stan1293",
-    "primaryText": "I don't have three friends... but four.",
+    "primaryText": "I don't have three friends (...but four).",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -1020,7 +988,8 @@
         "external"
       ]
     ],
-    "comment": "With contrastive intonation the exceptional reading: more than three."
+    "comment": "With contrastive intonation the exceptional reading: more than three.",
+    "verified": "page-image"
   },
   {
     "id": "horn1972_ex2_40a",
@@ -1047,7 +1016,8 @@
         "NEG-V vs NEG-Q"
       ]
     ],
-    "comment": "Comma intonation forces the NEG-Q reading not all, which implicates some."
+    "comment": "Comma intonation forces the NEG-Q reading not all, which implicates some.",
+    "verified": "page-image"
   },
   {
     "id": "horn1972_ex2_43a",
@@ -1074,7 +1044,8 @@
         "NEG-V only"
       ]
     ],
-    "comment": "Existentials, like disjunctions, lack the NEG-Q reading."
+    "comment": "Existentials, like disjunctions, lack the NEG-Q reading.",
+    "verified": "page-image"
   },
   {
     "id": "horn1972_ex2_46",
@@ -1109,7 +1080,8 @@
         "or implicates not and"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "horn1972_ex2_47",
@@ -1140,7 +1112,8 @@
         "conditional"
       ]
     ],
-    "comment": "The classical entailment holds: seeing both is no excuse."
+    "comment": "The classical entailment holds: seeing both is no excuse.",
+    "verified": "page-image"
   },
   {
     "id": "horn1972_ex2_49b",
@@ -1171,7 +1144,8 @@
         "suspension of exclusivity"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "horn1972_ex2_51a",
@@ -1202,7 +1176,8 @@
         "understatement"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "horn1972_ex2_51d",
@@ -1216,7 +1191,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1233,7 +1208,8 @@
         "anomaly"
       ]
     ],
-    "comment": "Using some with the knowledge of all is anomalous, not mere understatement."
+    "comment": "Using some with the knowledge of all is anomalous, not mere understatement.",
+    "verified": "page-image"
   },
   {
     "id": "horn1972_ex2_52a",
@@ -1247,7 +1223,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1264,7 +1240,8 @@
         "anomaly"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "horn1972_ex2_55c",
@@ -1278,7 +1255,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1295,7 +1272,8 @@
         "anomaly"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "horn1972_ex2_58a",
@@ -1309,7 +1287,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1326,7 +1304,8 @@
         "anomaly"
       ]
     ],
-    "comment": "Worse than some used with the knowledge of almost all: the violation is not merely quantitative."
+    "comment": "Worse than some used with the knowledge of almost all: the violation is not merely quantitative.",
+    "verified": "page-image"
   },
   {
     "id": "horn1972_ex2_58c",
@@ -1340,7 +1319,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "marginal",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1357,7 +1336,8 @@
         "understatement"
       ]
     ],
-    "comment": ""
+    "comment": "The dissertation prints Germau.",
+    "verified": "page-image"
   },
   {
     "id": "horn1972_ex4_49a",
@@ -1366,7 +1346,7 @@
       "paperLabel": "(4.49a)"
     },
     "language": "stan1293",
-    "primaryText": "John isn't tall, and he isn't handsome. / John isn't tall, nor is he handsome.",
+    "primaryText": "John isn't tall and he isn't handsome. / John isn't tall nor is he handsome.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -1388,7 +1368,8 @@
         "nor = and~"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "horn1972_ex4_49a_prime",
@@ -1402,7 +1383,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1419,7 +1400,8 @@
         "*nand = or~"
       ]
     ],
-    "comment": "No lexical item nand corresponds to or with a lower negation."
+    "comment": "No lexical item nand corresponds to or with a lower negation.",
+    "verified": "page-image"
   },
   {
     "id": "horn1972_ex4_50a",
@@ -1450,7 +1432,8 @@
         "neither = both~"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "horn1972_ex4_50a_prime",
@@ -1464,7 +1447,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1481,7 +1464,8 @@
         "*noth = not both"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "horn1972_ex4_56a",
@@ -1495,7 +1479,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1512,7 +1496,8 @@
         "incompatible with a lower negation"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "horn1972_ex4_56b",
@@ -1526,7 +1511,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1543,7 +1528,8 @@
         "incompatible with a lower negation"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "horn1972_ex4_56c",
@@ -1574,7 +1560,8 @@
         "compatible with a lower negation"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "horn1972_ex4_56e",
@@ -1605,7 +1592,8 @@
         "compatible with a lower negation"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "horn1972_ex4_57a",
@@ -1636,7 +1624,8 @@
         "compatible with a lower negation"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "horn1972_ex4_57a_prime",
@@ -1650,7 +1639,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1667,7 +1656,8 @@
         "incompatible with a lower negation"
       ]
     ],
-    "comment": "The contradictory of a quantifier below the midpoint is above the midpoint of the negative scale."
+    "comment": "The contradictory of a quantifier below the midpoint is above the midpoint of the negative scale.",
+    "verified": "page-image"
   },
   {
     "id": "horn1972_ex4_60a",
@@ -1702,7 +1692,8 @@
         "~some = none; some~ unlexicalized"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "horn1972_ex4_60b",
@@ -1737,7 +1728,8 @@
         "~possible = impossible; possible~ unlexicalized"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "horn1972_ex4_60f",
@@ -1772,7 +1764,8 @@
         "~(either...or) = neither...nor"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "horn1972_ex4_66a",
@@ -1807,7 +1800,8 @@
         "~allow = disallow"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "horn1972_ex4_66b",
@@ -1821,7 +1815,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "questionable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1842,7 +1836,8 @@
         "prove~ = disprove"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "horn1972_ex4_75",
@@ -1856,7 +1851,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1877,6 +1872,7 @@
         "true~ = false; ~true = untrue"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]

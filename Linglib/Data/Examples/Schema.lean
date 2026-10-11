@@ -13,10 +13,10 @@ public import Linglib.Data.Examples.Judgment
 
 This file defines the data a study reads off a paper's examples, and the lookups it makes on
 them. An example is what the paper prints under a number; a `Datum` is one piece of data the paper
-reports with it in the sense of [tonhauser-matthewson-2016]: an expression (the example, or one
+reports with it in the sense of Tonhauser and Matthewson: an expression (the example, or one
 alternant of it), the context it is judged in, and the judgment, less the information about the
 speakers that papers seldom give. A datum is a row of the Examples component of the
-Cross-Linguistic Data Formats [forkel-etal-2018] in version 1.3 [forkel-etal-2024], and the
+Cross-Linguistic Data Formats of Forkel et al., in version 1.3, and the
 sentence-level counterpart of `Data/Forms/`.
 
 ## Main definitions
@@ -28,6 +28,8 @@ sentence-level counterpart of `Data/Forms/`.
   `paperFeatures`.
 * `Datum.parse?`: the first value of a key read through a table.
 * `Datum.digits?`, `Datum.nat?`, `Datum.int?`: numerals.
+* `Datum.judgments`, `Datum.JudgedFelicitous`: every printed mark, and felicity as the mark and
+  the prose give it.
 
 ## Main statements
 
@@ -51,7 +53,7 @@ sentence-level counterpart of `Data/Forms/`.
   table of the data drawn from Glottolog; it is empty for a constructed string that belongs to no
   language, such as a pattern of a formal language.
 * `glossedTokens` pairs each analysed word with its gloss, so the word-by-word alignment of Rule 1
-  of [comrie-haspelmath-bickel-2008] holds by construction. CLDF's `LGR_Conformance` column is not
+  of the Leipzig Glossing Rules holds by construction. CLDF's `LGR_Conformance` column is not
   stored: whether a gloss also aligns morpheme by morpheme (Rule 2) is a property of the pairs.
 * Translations are into English, the default of CLDF's `Meta_Language_ID`, which is therefore not
   stored.
@@ -176,6 +178,13 @@ def decimal? : Option Rat :=
 /-- `e.judgments` is every mark the paper prints on `e`: its judgment, then the further marks
 of a split mark such as `??/*`, recorded as `alsoJudged`. -/
 def judgments : List Judgment := e.judgment :: (e.features "alsoJudged").filterMap Judgment.ofName?
+
+/-- The paper judges `e` felicitous: it prints no mark on `e`, and its prose does not call `e`
+infelicitous, which the row records as `felicity: infelicitous`. -/
+def JudgedFelicitous : Prop :=
+  e.judgment = .acceptable ∧ e.feature? "felicity" ≠ some "infelicitous"
+
+instance : Decidable e.JudgedFelicitous := inferInstanceAs (Decidable (_ ∧ _))
 
 variable {e key} {v : String}
 

@@ -348,10 +348,10 @@ def ex104 : Datum :=
     primaryText := "Fred doesn't have an odd number of books, let alone seventy-five"
     glossedTokens := []
     context := ""
-    judgment := .unacceptable
+    judgment := .acceptable
     alternatives := []
     readings := []
-    paperFeatures := [] }
+    paperFeatures := [("felicity", "infelicitous")] }
 
 def ex106 : Datum :=
   { id := "fillmorekayoconnor1988_ex106"

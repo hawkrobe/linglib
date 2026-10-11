@@ -16,7 +16,8 @@
       ["environment", "root"],
       ["antecedent", "assertedNegation"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "wilder2013_ex11b",
@@ -35,7 +36,8 @@
       ["environment", "root"],
       ["ctConstituent", "vp"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "wilder2013_ex12b",
@@ -54,7 +56,8 @@
       ["environment", "root"],
       ["ctConstituent", "subject"]
     ],
-    "comment": "The source prints *have lot of patients*."
+    "comment": "The source prints *have lot of patients*.",
+    "verified": "page-image"
   },
   {
     "id": "wilder2013_ex51",
@@ -73,7 +76,8 @@
       ["environment", "root"],
       ["antecedent", "assertedNegation"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "wilder2013_ex52",
@@ -92,7 +96,8 @@
       ["environment", "root"],
       ["antecedent", "modal"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "wilder2013_ex53",
@@ -111,7 +116,8 @@
       ["environment", "root"],
       ["antecedent", "presupposedNegation"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "wilder2013_ex74b",
@@ -130,7 +136,8 @@
       ["environment", "root"],
       ["antecedent", "parallelNegation"]
     ],
-    "comment": "The source prints *have lot of patients*."
+    "comment": "The source prints *have lot of patients*.",
+    "verified": "page-image"
   },
   {
     "id": "wilder2013_ex27a",
@@ -148,7 +155,8 @@
       ["pattern", "VF"],
       ["environment", "believeComplement"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "wilder2013_ex27b",
@@ -167,7 +175,8 @@
       ["environment", "believeComplement"],
       ["ctConstituent", "vp"]
     ],
-    "comment": "Continuation in the source: …but he doesn't diagnose very well."
+    "comment": "Continuation in the source: …but he doesn't diagnose very well.",
+    "verified": "page-image"
   },
   {
     "id": "wilder2013_ex27c",
@@ -186,7 +195,8 @@
       ["environment", "believeComplement"],
       ["ctConstituent", "subject"]
     ],
-    "comment": "Continuation in the source: …but I don't know about the others."
+    "comment": "Continuation in the source: …but I don't know about the others.",
+    "verified": "page-image"
   },
   {
     "id": "wilder2013_ex27d",
@@ -204,7 +214,8 @@
       ["pattern", "VF"],
       ["environment", "believeComplement"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "wilder2013_ex27e",
@@ -223,7 +234,8 @@
       ["environment", "believeComplement"],
       ["ctConstituent", "vp"]
     ],
-    "comment": "Continuation in the source: …but they aren't going to beat the Italians."
+    "comment": "Continuation in the source: …but they aren't going to beat the Italians.",
+    "verified": "page-image"
   },
   {
     "id": "wilder2013_ex27f",
@@ -242,7 +254,8 @@
       ["environment", "believeComplement"],
       ["ctConstituent", "subject"]
     ],
-    "comment": "Continuation in the source: …but I don't suppose that the French did."
+    "comment": "Continuation in the source: …but I don't suppose that the French did.",
+    "verified": "page-image"
   },
   {
     "id": "wilder2013_ex28a",
@@ -260,7 +273,8 @@
       ["pattern", "VF"],
       ["environment", "interrogativeComplement"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "wilder2013_ex28b",
@@ -271,7 +285,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "Is he good doctor? …",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -279,7 +293,8 @@
       ["environment", "interrogativeComplement"],
       ["ctConstituent", "vp"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "wilder2013_ex28c",
@@ -289,8 +304,8 @@
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "Do the doctors in this hospital treat their patients politely? …",
-    "judgment": "unacceptable",
+    "context": "Do the doctors in this hospital treat their patients politely?",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -298,7 +313,8 @@
       ["environment", "interrogativeComplement"],
       ["ctConstituent", "subject"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "wilder2013_ex28d",
@@ -316,7 +332,8 @@
       ["pattern", "VF"],
       ["environment", "interrogativeComplement"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "wilder2013_ex28e",
@@ -327,7 +344,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "Is he good doctor? …",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -335,7 +352,8 @@
       ["environment", "interrogativeComplement"],
       ["ctConstituent", "vp"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "wilder2013_ex29a",
@@ -353,7 +371,8 @@
       ["pattern", "VF"],
       ["environment", "factiveComplement"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "wilder2013_ex29b",
@@ -363,8 +382,8 @@
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "Is he good doctor? …",
-    "judgment": "unacceptable",
+    "context": "Is he a good doctor? …",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -372,7 +391,8 @@
       ["environment", "factiveComplement"],
       ["ctConstituent", "vp"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "wilder2013_ex29c",
@@ -383,7 +403,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "Do the doctors in this hospital treat their patients politely? …",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -391,7 +411,8 @@
       ["environment", "factiveComplement"],
       ["ctConstituent", "subject"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "wilder2013_ex30a",
@@ -409,7 +430,8 @@
       ["pattern", "VF"],
       ["environment", "itCleft"]
     ],
-    "comment": "The source parenthesizes *precisely*."
+    "comment": "The source parenthesizes *precisely*.",
+    "verified": "page-image"
   },
   {
     "id": "wilder2013_ex30b",
@@ -420,7 +442,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "Is Dr. Smith a good doctor? …",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -428,7 +450,8 @@
       ["environment", "itCleft"],
       ["ctConstituent", "vp"]
     ],
-    "comment": "The source parenthesizes *precisely*."
+    "comment": "The source parenthesizes *precisely*.",
+    "verified": "page-image"
   },
   {
     "id": "wilder2013_ex30c",
@@ -446,7 +469,8 @@
       ["pattern", "VF"],
       ["environment", "itCleft"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "wilder2013_ex30d",
@@ -457,7 +481,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "Is Dr. Smith a good doctor? …",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -465,7 +489,8 @@
       ["environment", "itCleft"],
       ["ctConstituent", "vp"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "wilder2013_ex31a",
@@ -483,7 +508,8 @@
       ["pattern", "VF"],
       ["environment", "restrictiveRelative"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "wilder2013_ex31b",
@@ -494,7 +520,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "Is Dr. Smith a good doctor? …",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -502,7 +528,8 @@
       ["environment", "restrictiveRelative"],
       ["ctConstituent", "vp"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "wilder2013_ex31c",
@@ -520,7 +547,8 @@
       ["pattern", "VF"],
       ["environment", "restrictiveRelative"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "wilder2013_ex31d",
@@ -531,7 +559,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "Is Dr. Smith a good doctor? …",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -539,7 +567,8 @@
       ["environment", "restrictiveRelative"],
       ["ctConstituent", "vp"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "wilder2013_ex32a",
@@ -557,7 +586,8 @@
       ["pattern", "VF"],
       ["environment", "adverbialClause"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "wilder2013_ex32b",
@@ -567,8 +597,8 @@
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "Is he good doctor? …",
-    "judgment": "unacceptable",
+    "context": "Is he a good doctor? …",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -576,7 +606,8 @@
       ["environment", "adverbialClause"],
       ["ctConstituent", "vp"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "wilder2013_ex33a",
@@ -594,7 +625,8 @@
       ["pattern", "VF"],
       ["environment", "adverbialClause"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "wilder2013_ex33b",
@@ -604,8 +636,8 @@
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "Is he good doctor? …",
-    "judgment": "unacceptable",
+    "context": "Is he a good doctor? …",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -613,7 +645,8 @@
       ["environment", "adverbialClause"],
       ["ctConstituent", "vp"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "wilder2013_ex40b",
@@ -631,7 +664,8 @@
       ["pattern", "VF"],
       ["environment", "whSubjectQuestion"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "wilder2013_ex41b",
@@ -642,7 +676,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "Is he good doctor? …",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -650,7 +684,8 @@
       ["environment", "whSubjectQuestion"],
       ["ctConstituent", "vp"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "wilder2013_ex44b",
@@ -668,7 +703,8 @@
       ["pattern", "VF"],
       ["environment", "objectPreposing"]
     ],
-    "comment": "Continuation in the source: but as for his staff, that's another matter …."
+    "comment": "Continuation in the source: but as for his staff, that's another matter ….",
+    "verified": "page-image"
   },
   {
     "id": "wilder2013_ex45b",
@@ -679,7 +715,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "Is he good doctor? …",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -687,7 +723,8 @@
       ["environment", "objectPreposing"],
       ["ctConstituent", "vp"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "wilder2013_ex113b",
@@ -698,7 +735,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "What about Fred? What did he eat?",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -706,7 +743,8 @@
       ["environment", "root"],
       ["ctConstituent", "subject"]
     ],
-    "comment": "The CT-marked subject answers a constituent question; (113a) *Fred ate the beans* without *do* is fine."
+    "comment": "The CT-marked subject answers a constituent question; (113a) *Fred ate the beans* without *do* is fine.",
+    "verified": "page-image"
   },
   {
     "id": "wilder2013_ex114b",
@@ -717,7 +755,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "What about the beans? Who ate those?",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -725,7 +763,8 @@
       ["environment", "root"],
       ["ctConstituent", "object"]
     ],
-    "comment": "The CT-marked object answers a constituent question; (114a) without *do* is fine."
+    "comment": "The CT-marked object answers a constituent question; (114a) without *do* is fine.",
+    "verified": "page-image"
   },
   {
     "id": "wilder2013_ex126a",
@@ -743,7 +782,8 @@
       ["pattern", "yesAnswer"],
       ["environment", "believeComplement"]
     ],
-    "comment": "The source parenthesizes the VP after *does*."
+    "comment": "The source parenthesizes the VP after *does*.",
+    "verified": "page-image"
   },
   {
     "id": "wilder2013_ex126b",
@@ -761,7 +801,8 @@
       ["pattern", "yesAnswer"],
       ["environment", "believeComplement"]
     ],
-    "comment": "The source parenthesizes the VP after *does*."
+    "comment": "The source parenthesizes the VP after *does*.",
+    "verified": "page-image"
   },
   {
     "id": "wilder2013_ex127a",
@@ -779,7 +820,8 @@
       ["pattern", "yesAnswer"],
       ["environment", "interrogativeComplement"]
     ],
-    "comment": "Marked # in the source: not a direct Yes-answer to the question. The source parenthesizes the VP after *does*."
+    "comment": "Marked # in the source: not a direct Yes-answer to the question. The source parenthesizes the VP after *does*.",
+    "verified": "page-image"
   },
   {
     "id": "wilder2013_ex127b",
@@ -797,7 +839,8 @@
       ["pattern", "yesAnswer"],
       ["environment", "interrogativeComplement"]
     ],
-    "comment": "Marked # in the source: not a direct Yes-answer to the question. The source parenthesizes the VP after *does*."
+    "comment": "Marked # in the source: not a direct Yes-answer to the question. The source parenthesizes the VP after *does*.",
+    "verified": "page-image"
   },
   {
     "id": "wilder2013_ex127c",
@@ -815,7 +858,8 @@
       ["pattern", "yesAnswer"],
       ["environment", "factiveComplement"]
     ],
-    "comment": "Marked # in the source: not a direct Yes-answer to the question. The source parenthesizes the VP after *does*."
+    "comment": "Marked # in the source: not a direct Yes-answer to the question. The source parenthesizes the VP after *does*.",
+    "verified": "page-image"
   },
   {
     "id": "wilder2013_ex127d",
@@ -833,7 +877,8 @@
       ["pattern", "yesAnswer"],
       ["environment", "itCleft"]
     ],
-    "comment": "Marked # in the source: not a direct Yes-answer to the question. The source parenthesizes the VP after *does*. The source parenthesizes *precisely*."
+    "comment": "Marked # in the source: not a direct Yes-answer to the question. The source parenthesizes the VP after *does*. The source parenthesizes *precisely*.",
+    "verified": "page-image"
   },
   {
     "id": "wilder2013_ex127e",
@@ -851,7 +896,8 @@
       ["pattern", "yesAnswer"],
       ["environment", "restrictiveRelative"]
     ],
-    "comment": "Marked # in the source: not a direct Yes-answer to the question. The source parenthesizes the VP after *does*."
+    "comment": "Marked # in the source: not a direct Yes-answer to the question. The source parenthesizes the VP after *does*.",
+    "verified": "page-image"
   },
   {
     "id": "wilder2013_ex127f",
@@ -869,7 +915,8 @@
       ["pattern", "yesAnswer"],
       ["environment", "adverbialClause"]
     ],
-    "comment": "Marked # in the source: not a direct Yes-answer to the question. The source parenthesizes the VP after *does*."
+    "comment": "Marked # in the source: not a direct Yes-answer to the question. The source parenthesizes the VP after *does*.",
+    "verified": "page-image"
   },
   {
     "id": "wilder2013_ex137c",
@@ -887,6 +934,7 @@
       ["pattern", "yesAnswer"],
       ["environment", "root"]
     ],
-    "comment": "The source parenthesizes *Yes*."
+    "comment": "The source parenthesizes *Yes*.",
+    "verified": "page-image"
   }
 ]

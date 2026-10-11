@@ -9,7 +9,7 @@ public import Linglib.Fragments.English.Adjectives
 
 Every English comparative is built on a quantifier phrase, a Det of *as*, *too*, *that*, *so*,
 *-er* or *-est* over a Q drawn from *much*, *many*, *little*, *few* and *enough*, so that *more*
-is *-er much* or *-er many* and *taller* derives from *[[much-er] tall]* ([bresnan-1973]). Three
+is *-er much* or *-er many* and *taller* derives from *[[much-er] tall]* (Bresnan). Three
 ordered rules derive the head: *-er* Encliticizing moves the clitic onto Q and leaves the Det
 empty; Much Deletion then removes an unprotected *much* directly before the adjective of its
 AP, so *as much tall* becomes *as tall* while *much-er tall* survives to become *taller*; and
@@ -371,7 +371,7 @@ def supplyOf (e : Datum) : Option Supply := do
   pure ⟨cat, site⟩
 
 /-- The paper's star. -/
-def Starred (e : Datum) : Prop := e.judgment = .unacceptable
+def Starred (e : Datum) : Prop := e.judgment = .ungrammatical
 
 instance : DecidablePred Starred := λ _ => by unfold Starred; infer_instance
 

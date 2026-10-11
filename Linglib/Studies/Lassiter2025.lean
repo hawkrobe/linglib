@@ -328,13 +328,6 @@ def demand (row : Datum) (ct : Reading) : Prop :=
 instance (row : Datum) (ct : Reading) : Decidable (demand row ct) := by
   unfold demand; infer_instance
 
-/-- The paper judges the row felicitous: it prints no mark of infelicity and its prose does
-not call the row infelicitous. -/
-def JudgedFelicitous (row : Datum) : Prop :=
-  row.judgment = .acceptable ∧ row.feature? "felicity" ≠ some "infelicitous"
-
-instance : DecidablePred JudgedFelicitous := fun _ ↦ inferInstanceAs (Decidable (_ ∧ _))
-
 /-- Every marker and item a row names resolves to a fragment entry. -/
 theorem adapters_total :
     ∀ row ∈ Examples.all,
@@ -352,7 +345,7 @@ antecedent, (37b) with a given one, (38b) and (39b) in a bare left-nested condit
 are hypothetical with an open antecedent. -/
 theorem acceptable_rows :
     ∀ row ∈ Examples.all,
-      (JudgedFelicitous row ↔ Acceptable (shape row) (demand row)) := by
+      (row.JudgedFelicitous ↔ Acceptable (shape row) (demand row)) := by
   decide
 
 /-- The paper's label for a reading. -/
@@ -363,7 +356,7 @@ def label : Reading → String
 /-- On every felicitous row, the reading the paper attributes is the one reading open to its
 shape that meets its demand. -/
 theorem interpretation_rows :
-    ∀ row ∈ Examples.all, JudgedFelicitous row →
+    ∀ row ∈ Examples.all, row.JudgedFelicitous →
       ∀ ct, row.feature? "interpretation" = some (label ct) →
         ∀ ct', ct' ∈ readings (shape row) ∧ demand row ct' ↔ ct' = ct := by
   decide

@@ -12,7 +12,8 @@
     "paperFeatures": [
       ["np", "proper name"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "barwisecooper1981_6b",
@@ -27,7 +28,8 @@
     "paperFeatures": [
       ["determiner", "some"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "barwisecooper1981_6c",
@@ -42,7 +44,8 @@
     "paperFeatures": [
       ["determiner", "every"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "barwisecooper1981_6d",
@@ -57,7 +60,8 @@
     "paperFeatures": [
       ["determiner", "most"]
     ],
-    "comment": "No predicate-calculus representation."
+    "comment": "No predicate-calculus representation.",
+    "verified": "page-image"
   },
   {
     "id": "barwisecooper1981_21",
@@ -73,7 +77,8 @@
       ["determiner", "no"],
       ["class", "weak"]
     ],
-    "comment": "Naturally taken to assume (22); the assumption can be cancelled, (23)."
+    "comment": "Naturally taken to assume (22); the assumption can be cancelled, (23).",
+    "verified": "page-image"
   },
   {
     "id": "barwisecooper1981_22",
@@ -88,7 +93,8 @@
     "paperFeatures": [
       ["construction", "there-sentence"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "barwisecooper1981_23",
@@ -104,7 +110,8 @@
       ["determiner", "no"],
       ["class", "weak"]
     ],
-    "comment": "Cancelling the sieve assumption is easy for a weak determiner."
+    "comment": "Cancelling the sieve assumption is easy for a weak determiner.",
+    "verified": "page-image"
   },
   {
     "id": "barwisecooper1981_24a",
@@ -120,7 +127,8 @@
       ["determiner", "every"],
       ["class", "strong"]
     ],
-    "comment": "Invites (24b)."
+    "comment": "Invites (24b).",
+    "verified": "page-image"
   },
   {
     "id": "barwisecooper1981_24c",
@@ -130,13 +138,14 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "marginal",
     "readings": [],
     "paperFeatures": [
       ["determiner", "every"],
       ["class", "strong"]
     ],
-    "comment": "Denying the sieve assumption is hard for a strong determiner."
+    "comment": "Denying the sieve assumption is hard for a strong determiner.",
+    "verified": "page-image"
   },
   {
     "id": "barwisecooper1981_30",
@@ -152,7 +161,8 @@
       ["determiner", "some"],
       ["monotonicity", "increasing"]
     ],
-    "comment": "Valid; likewise every linguist, John, most peanut farmers, many men."
+    "comment": "Valid; likewise every linguist, John, most peanut farmers, many men.",
+    "verified": "page-image"
   },
   {
     "id": "barwisecooper1981_31",
@@ -168,7 +178,8 @@
       ["determiner", "no"],
       ["monotonicity", "decreasing"]
     ],
-    "comment": "Valid; likewise few linguists, neither Democrat."
+    "comment": "Valid; likewise few linguists, neither Democrat.",
+    "verified": "page-image"
   },
   {
     "id": "barwisecooper1981_32",
@@ -184,7 +195,8 @@
       ["determiner", "most"],
       ["class", "positive strong"]
     ],
-    "comment": "Judged valid; likewise both, the three."
+    "comment": "Judged valid; likewise both, the three.",
+    "verified": "page-image"
   },
   {
     "id": "barwisecooper1981_33",
@@ -200,7 +212,8 @@
       ["determiner", "every"],
       ["class", "positive strong"]
     ],
-    "comment": "Judged valid; likewise the."
+    "comment": "Judged valid; likewise the.",
+    "verified": "page-image"
   },
   {
     "id": "barwisecooper1981_34",
@@ -216,7 +229,8 @@
       ["determiner", "neither"],
       ["class", "negative strong"]
     ],
-    "comment": "Judged contradictory."
+    "comment": "Judged contradictory.",
+    "verified": "page-image"
   },
   {
     "id": "barwisecooper1981_35a",
@@ -226,13 +240,15 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "acceptable",
     "readings": [],
     "paperFeatures": [
       ["determiner", "no"],
-      ["class", "weak"]
+      ["class", "weak"],
+      ["felicity", "infelicitous"]
     ],
-    "comment": "Odd, not universally valid; equivalent to (37a)."
+    "comment": "Odd, not universally valid; equivalent to (37a). The paper prints (35) and (36) unmarked; prose: \"the results are odd and certainly not universally valid\".",
+    "verified": "page-image"
   },
   {
     "id": "barwisecooper1981_35b",
@@ -242,13 +258,15 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "acceptable",
     "readings": [],
     "paperFeatures": [
       ["determiner", "some"],
-      ["class", "weak"]
+      ["class", "weak"],
+      ["felicity", "infelicitous"]
     ],
-    "comment": "Equivalent to (37b)."
+    "comment": "Equivalent to (37b). The paper prints (35) and (36) unmarked; prose: \"the results are odd and certainly not universally valid\".",
+    "verified": "page-image"
   },
   {
     "id": "barwisecooper1981_36b",
@@ -258,13 +276,15 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "acceptable",
     "readings": [],
     "paperFeatures": [
       ["determiner", "few"],
-      ["class", "weak"]
+      ["class", "weak"],
+      ["felicity", "infelicitous"]
     ],
-    "comment": "Whether this is equivalent to (38b) is unclear: the authors disagree on the intersection condition for few and many."
+    "comment": "Whether this is equivalent to (38b) is unclear: the authors disagree on the intersection condition for few and many. The paper prints (35) and (36) unmarked; prose: \"the results are odd and certainly not universally valid\".",
+    "verified": "page-image"
   },
   {
     "id": "barwisecooper1981_37a",
@@ -279,7 +299,8 @@
     "paperFeatures": [
       ["determiner", "no"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "barwisecooper1981_37_prime_a",
@@ -295,7 +316,8 @@
       ["determiner", "no"],
       ["construction", "there-sentence"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "barwisecooper1981_37_prime_prime_a",
@@ -310,7 +332,8 @@
     "paperFeatures": [
       ["determiner", "no"]
     ],
-    "comment": "The symmetric form: restrictor and scope switched."
+    "comment": "The symmetric form: restrictor and scope switched.",
+    "verified": "page-image"
   },
   {
     "id": "barwisecooper1981_4_10-32a",
@@ -325,7 +348,8 @@
     "paperFeatures": [
       ["conjunction", "increasing + increasing"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "barwisecooper1981_4_10-32b",
@@ -340,22 +364,24 @@
     "paperFeatures": [
       ["conjunction", "decreasing + decreasing"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "barwisecooper1981_4_10-32c",
     "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "§4.10 (32c)"},
     "language": "stan1293",
-    "primaryText": "*John and no woman could lift this piano.",
+    "primaryText": "John and no woman could lift this piano.",
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "readings": [],
     "paperFeatures": [
       ["conjunction", "mixed"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "barwisecooper1981_4_10-33a",
@@ -370,22 +396,24 @@
     "paperFeatures": [
       ["conjunction", "sentential"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "barwisecooper1981_4_10-33a_prime",
-    "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "§4.10 (33a')"},
+    "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "§4.10 (33a)"},
     "language": "stan1293",
-    "primaryText": "*John and no woman was invited, so he went home alone again.",
+    "primaryText": "John and no woman was invited, so he went home alone again.",
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "readings": [],
     "paperFeatures": [
       ["conjunction", "mixed"]
     ],
-    "comment": ""
+    "comment": "The starred second line of (33a).",
+    "verified": "page-image"
   },
   {
     "id": "barwisecooper1981_4_10-35a",
@@ -400,22 +428,24 @@
     "paperFeatures": [
       ["conjunction", "but, mixed"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "barwisecooper1981_4_10-36a",
     "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "§4.10 (36a)"},
     "language": "stan1293",
-    "primaryText": "*John but a woman was invited.",
+    "primaryText": "John but a woman was invited.",
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "readings": [],
     "paperFeatures": [
       ["conjunction", "but, increasing + increasing"]
     ],
-    "comment": ""
+    "comment": "The paper prints was/were in braces; this row records was.",
+    "verified": "page-image"
   },
   {
     "id": "barwisecooper1981_4_10-37a",
@@ -430,22 +460,24 @@
     "paperFeatures": [
       ["conjunction", "iterated and"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "barwisecooper1981_4_10-37b",
     "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "§4.10 (37b)"},
     "language": "stan1293",
-    "primaryText": "*John but no woman but three children were invited.",
+    "primaryText": "John but no woman but three children were invited.",
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "readings": [],
     "paperFeatures": [
       ["conjunction", "iterated but"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "barwisecooper1981_40a",
@@ -461,7 +493,8 @@
       ["determiner", "every"],
       ["negation", "NP"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "barwisecooper1981_40b",
@@ -477,7 +510,8 @@
       ["determiner", "all"],
       ["negation", "NP"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "barwisecooper1981_40c",
@@ -493,7 +527,8 @@
       ["determiner", "a"],
       ["negation", "NP"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "barwisecooper1981_40d",
@@ -509,7 +544,8 @@
       ["determiner", "one"],
       ["negation", "NP"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "barwisecooper1981_40e",
@@ -525,121 +561,129 @@
       ["determiner", "many"],
       ["negation", "NP"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "barwisecooper1981_41a",
     "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "(41a)"},
     "language": "stan1293",
-    "primaryText": "*Not each man left.",
+    "primaryText": "Not each man left.",
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "readings": [],
     "paperFeatures": [
       ["determiner", "each"],
       ["negation", "NP"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "barwisecooper1981_41b",
     "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "(41b)"},
     "language": "stan1293",
-    "primaryText": "*Not some man left.",
+    "primaryText": "Not some man left.",
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "readings": [],
     "paperFeatures": [
       ["determiner", "some"],
       ["negation", "NP"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "barwisecooper1981_41c",
     "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "(41c)"},
     "language": "stan1293",
-    "primaryText": "*Not John left.",
+    "primaryText": "Not John left.",
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "readings": [],
     "paperFeatures": [
       ["np", "proper name"],
       ["negation", "NP"]
     ],
-    "comment": "Self-dual."
+    "comment": "Self-dual.",
+    "verified": "page-image"
   },
   {
     "id": "barwisecooper1981_41d",
     "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "(41d)"},
     "language": "stan1293",
-    "primaryText": "*Not the man left.",
+    "primaryText": "Not the man left.",
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "readings": [],
     "paperFeatures": [
       ["determiner", "the"],
       ["negation", "NP"]
     ],
-    "comment": "Self-dual."
+    "comment": "Self-dual.",
+    "verified": "page-image"
   },
   {
     "id": "barwisecooper1981_41e",
     "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "(41e)"},
     "language": "stan1293",
-    "primaryText": "(*) Not few men left.",
+    "primaryText": "Not few men left.",
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "readings": [],
     "paperFeatures": [
       ["determiner", "few"],
       ["negation", "NP"],
       ["monotonicity", "decreasing"]
     ],
-    "comment": ""
+    "comment": "The paper prints the star in parentheses: (*).",
+    "verified": "page-image"
   },
   {
     "id": "barwisecooper1981_41f",
     "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "(41f)"},
     "language": "stan1293",
-    "primaryText": "*Not no man left.",
+    "primaryText": "Not no man left.",
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "readings": [],
     "paperFeatures": [
       ["determiner", "no"],
       ["negation", "NP"],
       ["monotonicity", "decreasing"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "barwisecooper1981_41g",
     "source": {"bibkey": "barwise-cooper-1981", "paperLabel": "(41g)"},
     "language": "stan1293",
-    "primaryText": "?*Not most men left.",
+    "primaryText": "Not most men left.",
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "readings": [],
     "paperFeatures": [
       ["determiner", "most"],
       ["negation", "NP"]
     ],
-    "comment": "Left unexplained by U9."
+    "comment": "Left unexplained by U9. The paper prints the compound mark ?*.",
+    "verified": "page-image"
   },
   {
     "id": "barwisecooper1981_42",
@@ -655,7 +699,8 @@
       ["determiner", "most"],
       ["negation", "sentential"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "barwisecooper1981_43",
@@ -670,7 +715,8 @@
     "paperFeatures": [
       ["determiner", "at least half"]
     ],
-    "comment": "A paraphrase of (42) if most means more than half: the dual of more than half is at least half."
+    "comment": "A paraphrase of (42) if most means more than half: the dual of more than half is at least half.",
+    "verified": "page-image"
   },
   {
     "id": "barwisecooper1981_44a",
@@ -687,7 +733,8 @@
     "paperFeatures": [
       ["determiner", "some"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "barwisecooper1981_44b",
@@ -704,7 +751,8 @@
     "paperFeatures": [
       ["determiner", "every"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "barwisecooper1981_44c",
@@ -719,7 +767,8 @@
     "paperFeatures": [
       ["determiner", "most"]
     ],
-    "comment": "No basic determiner D such that this is D men left."
+    "comment": "No basic determiner D such that this is D men left.",
+    "verified": "page-image"
   },
   {
     "id": "barwisecooper1981_46",
@@ -734,7 +783,8 @@
     "paperFeatures": [
       ["determiner", "many"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "barwisecooper1981_47",
@@ -749,6 +799,7 @@
     "paperFeatures": [
       ["determiner", "quite a few"]
     ],
-    "comment": "Not accepted as a paraphrase of (46): quite a few is not used as the dual of many."
+    "comment": "Not accepted as a paraphrase of (46): quite a few is not used as the dual of many.",
+    "verified": "page-image"
   }
 ]
