@@ -37,10 +37,11 @@ open Reciprocal
 
 /-- The clitic *si*, reciprocal or reflexive, the third-person reflexive clitic of `Pronouns`. -/
 def si : Marker :=
-  { form := Pronouns.si.form, strategy := .recipClitic, readings := {.reciprocal, .reflexive} }
+  { morphs := [.free Pronouns.si.form], strategy := .recipClitic,
+    readings := {.reciprocal, .reflexive} }
 
 /-- *l'un l'altro*, the bipartite reciprocal, which does not carry the reflexive reading. -/
-def lunLaltro : Marker := { form := "l'un l'altro", strategy := .bipartiteNP }
+def lunLaltro : Marker := { morphs := [.free "l'un", .free "l'altro"], strategy := .bipartiteNP }
 
 /-- The reciprocal marker inventory. -/
 def markers : Finset Marker := {si, lunLaltro}

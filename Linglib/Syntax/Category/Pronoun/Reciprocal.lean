@@ -38,7 +38,7 @@ structure ReciprocalPronoun extends Pronoun where
 
 /-- The marker entry of a reciprocal pronoun. -/
 def ReciprocalPronoun.toMarker (p : ReciprocalPronoun) : Reciprocal.Marker :=
-  { form := p.form, script := p.script, strategy := p.strategy, readings := p.readings }
+  { morphs := [.free p.form], script := p.script, strategy := p.strategy, readings := p.readings }
 
 instance : HasPhi ReciprocalPronoun := ⟨fun p ↦ p.toPronoun.phi⟩
 

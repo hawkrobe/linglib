@@ -34,10 +34,11 @@ open Reciprocal
 
 /-- The clitic *se* in its reciprocal use, also the reflexive. -/
 def seClitic : Marker :=
-  { form := "se", strategy := .recipClitic, readings := {.reciprocal, .reflexive} }
+  { morphs := [.free "se"], strategy := .recipClitic, readings := {.reciprocal, .reflexive} }
 
 /-- The bipartite *um o outro* 'one the other'. -/
-def bipartite : Marker := { form := "um o outro", strategy := .bipartiteNP }
+def bipartite : Marker :=
+  { morphs := [.free "um", .free "o", .free "outro"], strategy := .bipartiteNP }
 
 /-- The reciprocal markers. -/
 def markers : Finset Marker := {seClitic, bipartite}

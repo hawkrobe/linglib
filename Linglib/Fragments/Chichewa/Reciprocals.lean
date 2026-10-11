@@ -36,7 +36,7 @@ open Reciprocal
 
 /-- The reciprocal suffix *-an-*, the marker of the reciprocal voice. -/
 def anSuffix : Marker :=
-  { form := Morphology.Morph.surface Chichewa.reciprocal.marker ++ "-", strategy := .verbalAffix }
+  { morphs := Chichewa.reciprocal.marker, strategy := .verbalAffix }
 
 /-- The marker inventory. -/
 def markers : Finset Marker := {anSuffix}

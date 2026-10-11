@@ -64,40 +64,43 @@ inductive Mode
 /-- The performative pair *-ŵela* ~ *-mela*: the speaker performs or has just performed the act.
 Its source lies outside the six parameters, so it covers none. -/
 def performative : Perfectivity → Evidential
-  | .imperfective => { form := "-ŵela", exponent := .verbalAffix, covers := ∅ }
-  | .perfective => { form := "-mela", exponent := .verbalAffix, covers := ∅ }
+  | .imperfective => { morphs := [.suff "ŵela"], exponent := .verbalAffix, covers := ∅ }
+  | .perfective => { morphs := [.suff "mela"], exponent := .verbalAffix, covers := ∅ }
 
 /-- The factual-visual pair: the speaker sees or saw the event. The imperfective factual *-ŵă*
 also states general truths and common knowledge, general knowledge cast in the visual; the
 perfective visual *-yă* does not. -/
 def factualVisual : Perfectivity → Evidential
-  | .imperfective => { form := "-ŵă", exponent := .verbalAffix, covers := {.visual} }
-  | .perfective => { form := "-yă", exponent := .verbalAffix, covers := {.visual} }
+  | .imperfective => { morphs := [.suff "ŵă"], exponent := .verbalAffix, covers := {.visual} }
+  | .perfective => { morphs := [.suff "yă"], exponent := .verbalAffix, covers := {.visual} }
 
 /-- The auditory *-V̂nnă*: the speaker heard the sound of the action but did not see it. -/
-def auditory : Evidential := { form := "-V̂nnă", exponent := .verbalAffix, covers := {.sensory} }
+def auditory : Evidential :=
+  { morphs := [.suff "V̂nnă"], exponent := .verbalAffix, covers := {.sensory} }
 
 /-- Inferential I *-qă*: inference from circumstances or evidence found apart, in space or time,
 from the event. -/
-def inferential : Evidential := { form := "-qă", exponent := .verbalAffix, covers := {.inference} }
+def inferential : Evidential :=
+  { morphs := [.suff "qă"], exponent := .verbalAffix, covers := {.inference} }
 
 /-- The quotative *-do*: information learned from someone else. -/
-def quotative : Evidential := { form := "-do", exponent := .verbalAffix, covers := {.hearsay} }
+def quotative : Evidential :=
+  { morphs := [.suff "do"], exponent := .verbalAffix, covers := {.hearsay} }
 
 /-- Inferential II *-bi-*, which must be followed by another suffix: a subordinator, the
 absolutive in *-biw* 'it turned out', the quotative or inferential I. -/
 def inferentialII : Evidential :=
-  { form := "-bi-", exponent := .verbalAffix, covers := {.inference} }
+  { morphs := [.suff "bi"], exponent := .verbalAffix, covers := {.inference} }
 
 /-- The personal experience *-yowă* of the narrative construction, the factual on an element
 *-yo-*, which replaces every evidential of direct evidence. -/
 def personalExperience : Evidential :=
-  { form := "-yowă", exponent := .verbalAffix, covers := {.visual, .sensory, .inference} }
+  { morphs := [.suff "yowă"], exponent := .verbalAffix, covers := {.visual, .sensory, .inference} }
 
 /-- The archaic remote past *-miyă*, the visual on an element *-mi-*: personal experience in an
 irretrievable past. -/
 def remotePast : Evidential :=
-  { form := "-miyă", exponent := .verbalAffix, covers := {.visual, .sensory, .inference} }
+  { morphs := [.suff "miyă"], exponent := .verbalAffix, covers := {.visual, .sensory, .inference} }
 
 /-- The paradigm of a mode for stems of an aspect: a column of Table 1 read top down, in the
 order of Oswalt's hierarchy. -/

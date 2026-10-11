@@ -40,7 +40,7 @@ open Reciprocal
 def egymas : ReciprocalPronoun := { form := "egymás", person := some .third, number := none }
 
 /-- The reciprocal verbal suffix *-óz-*. -/
-def ozSuffix : Marker := { form := "-óz-", strategy := .verbalAffix }
+def ozSuffix : Marker := { morphs := [.suff "óz"], strategy := .verbalAffix }
 
 /-- The reciprocal markers. -/
 def markers : Finset Marker := {ozSuffix, egymas.toMarker}

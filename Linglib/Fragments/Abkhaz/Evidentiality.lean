@@ -24,9 +24,10 @@ namespace Abkhaz.Evidentiality
 
 open Evidential
 
-/-- The non-firsthand *-zaap'* ~ *-zaarən*: one term with two tense-conditioned allomorphs. -/
+/-- The non-firsthand *-zaap'* ~ *-zaarən* is one term with two tense-conditioned allomorphs,
+cited by the first. -/
 def evidentials : List Evidential :=
-  [ { form := "-zaap'/-zaarən", exponent := .verbalAffix,
+  [ { morphs := [.suff "zaap'"], exponent := .verbalAffix,
       covers := {.inference, .assumption, .hearsay} } ]
 
 end Abkhaz.Evidentiality

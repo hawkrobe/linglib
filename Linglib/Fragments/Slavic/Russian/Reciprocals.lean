@@ -25,13 +25,13 @@ open Pronoun Reciprocal
 /-- друг друга *drug druga* — bipartite reciprocal 'other other-ACC'
     ([nordlinger-2023] ex. 9). -/
 def drugDruga : Marker :=
-  { form := "drug druga", script := some "друг друга"
+  { morphs := [.free "drug", .free "druga"], script := some "друг друга"
   , strategy := .bipartiteNP }
 
 /-- -ся *-sja* — verbal postfix, reflexive-identical reciprocal uses
     ([nordlinger-2023] ex. 31). -/
 def sja : Marker :=
-  { form := "-sja", script := some "-ся", strategy := .verbalAffix
+  { morphs := [.suff "sja"], script := some "-ся", strategy := .verbalAffix
   , readings := {.reciprocal, .reflexive} }
 
 /-- себя *sebja* — the reflexive pronoun (for contrast), one form for every person and

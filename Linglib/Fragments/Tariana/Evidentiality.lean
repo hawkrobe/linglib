@@ -24,10 +24,10 @@ open Evidential
 
 /-- The recent-past forms: visual, non-visual, inferred, assumed and reported. -/
 def evidentials : List Evidential :=
-  [ { form := "-ka", exponent := .verbalAffix, covers := {.visual} },
-    { form := "-mha", exponent := .verbalAffix, covers := {.sensory} },
-    { form := "-nihka", exponent := .verbalAffix, covers := {.inference} },
-    { form := "-sika", exponent := .verbalAffix, covers := {.assumption} },
-    { form := "-pidaka", exponent := .verbalAffix, covers := {.hearsay} } ]
+  [ { morphs := [.suff "ka"], exponent := .verbalAffix, covers := {.visual} },
+    { morphs := [.suff "mha"], exponent := .verbalAffix, covers := {.sensory} },
+    { morphs := [.suff "nihka"], exponent := .verbalAffix, covers := {.inference} },
+    { morphs := [.suff "sika"], exponent := .verbalAffix, covers := {.assumption} },
+    { morphs := [.suff "pidaka"], exponent := .verbalAffix, covers := {.hearsay} } ]
 
 end Tariana.Evidentiality

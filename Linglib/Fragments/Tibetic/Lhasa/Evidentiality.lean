@@ -43,9 +43,10 @@ open Evidential
 /-- The perfective evidentials sensory *-song*, inferential *-bzhag* and factual *-pa red*,
 and the quotative *-za*. -/
 def evidentials : List Evidential :=
-  [ { form := "-song", exponent := .auxiliary, covers := {.visual, .sensory} },
-    { form := "-bzhag", exponent := .auxiliary, covers := {.inference} },
-    { form := "-pa red", exponent := .auxiliary, covers := {.assumption, .hearsay} },
-    { form := "-za", exponent := .verbalAffix, covers := {.quotative} } ]
+  [ { morphs := [.suff "song"], exponent := .auxiliary, covers := {.visual, .sensory} },
+    { morphs := [.suff "bzhag"], exponent := .auxiliary, covers := {.inference} },
+    { morphs := [.suff "pa", .free "red"], exponent := .auxiliary,
+      covers := {.assumption, .hearsay} },
+    { morphs := [.suff "za"], exponent := .verbalAffix, covers := {.quotative} } ]
 
 end LhasaTibetan.Evidentiality

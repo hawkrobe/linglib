@@ -24,14 +24,16 @@ namespace Quechua.SaraguroKichwa.Evidentiality
 open Evidential
 
 /-- The direct past *-rka* marks direct perceptual evidence. -/
-def rka : Evidential := { form := "-rka", exponent := .verbalAffix, covers := {.visual, .sensory} }
+def rka : Evidential :=
+  { morphs := [.suff "rka"], exponent := .verbalAffix, covers := {.visual, .sensory} }
 
 /-- The reportative past *-shka* marks that the speaker was told. -/
-def shka : Evidential := { form := "-shka", exponent := .verbalAffix, covers := {.hearsay} }
+def shka : Evidential :=
+  { morphs := [.suff "shka"], exponent := .verbalAffix, covers := {.hearsay} }
 
 /-- The inferential *-shi* marks inference or assumption. -/
 def shi : Evidential :=
-  { form := "-shi", exponent := .verbalAffix, covers := {.inference, .assumption} }
+  { morphs := [.suff "shi"], exponent := .verbalAffix, covers := {.inference, .assumption} }
 
 /-- The evidentials of matrix declaratives are direct *-rka*, reportative *-shka* and inferential
 *-shi*. -/

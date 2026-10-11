@@ -34,7 +34,8 @@ def einander : Marker := Pronouns.einander.toMarker
 /-- *sich* in its reciprocal use: the clitic *sich* of [gast-haas-2008], which marks the predicate
 rather than filling the object slot and also has the reflexive reading. -/
 def sich : Marker :=
-  { form := Pronouns.sich.form, strategy := .recipClitic, readings := {.reciprocal, .reflexive} }
+  { morphs := [.free Pronouns.sich.form], strategy := .recipClitic,
+    readings := {.reciprocal, .reflexive} }
 
 /-- The reciprocal marker inventory. -/
 def markers : Finset Marker := {einander, sich}

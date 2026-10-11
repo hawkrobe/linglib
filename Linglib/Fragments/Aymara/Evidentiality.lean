@@ -22,8 +22,8 @@ open Evidential
 
 /-- Personal knowledge *-wa*, hearsay *-sa* and non-personal knowledge *-pacha*. -/
 def evidentials : List Evidential :=
-  [ { form := "-wa", exponent := .verbalAffix, covers := {.visual, .sensory} },
-    { form := "-sa", exponent := .verbalAffix, covers := {.hearsay} },
-    { form := "-pacha", exponent := .verbalAffix, covers := {.inference, .assumption} } ]
+  [ { morphs := [.suff "wa"], exponent := .verbalAffix, covers := {.visual, .sensory} },
+    { morphs := [.suff "sa"], exponent := .verbalAffix, covers := {.hearsay} },
+    { morphs := [.suff "pacha"], exponent := .verbalAffix, covers := {.inference, .assumption} } ]
 
 end Aymara.Evidentiality

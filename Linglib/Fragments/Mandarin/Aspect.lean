@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Semantics.Aspect.Defs
+public import Linglib.Semantics.Aspect.Marker
 
 /-!
 # Mandarin aspect markers
@@ -27,16 +27,16 @@ namespace Mandarin.Aspect
 /-- The perfective suffix *le* 了: *Nézha mǎi le yī-píng cù* 'Nezha bought a bottle of
 vinegar'. -/
 def le : Aspect.Marker :=
-  { form := "le", script := some "了", gloss := "PFV", viewpoint := .perfective }
+  { morphs := [.suff "le"], script := some "了", gloss := "PFV", viewpoint := .perfective }
 
 /-- The experiential suffix *guò* 过, an experiential perfect: *Nézha chuī guò chángdí* 'Nezha
 has played the flute before'. -/
 def guo : Aspect.Marker :=
-  { form := "guò", script := some "过", gloss := "EXP", viewpoint := .perfect }
+  { morphs := [.suff "guò"], script := some "过", gloss := "EXP", viewpoint := .perfect }
 
 /-- The progressive *zài* 在: *Nézha zài chàng gē* 'Nezha is singing'. -/
 def zai : Aspect.Marker :=
-  { form := "zài", script := some "在", gloss := "PROG", viewpoint := .imperfective }
+  { morphs := [.free "zài"], script := some "在", gloss := "PROG", viewpoint := .imperfective }
 
 /-- The aspect particles. -/
 def markers : List Aspect.Marker := [le, guo, zai]
