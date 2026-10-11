@@ -8,10 +8,10 @@ public import Linglib.Studies.Haspelmath1997
 # Bubnov (2026): Not all coexpressions are syncretisms
 
 Indefinite pronouns coexpress the specific known, specific unknown and non-specific functions in
-the four patterns AAA, ABB, AAB and ABC, never in the pattern ABA. The nanosyntactic account of
-[dekier-2021] derives that gap from a containment hierarchy whose most complex layer is the
-specific known one. [bubnov-2026] argues that the hierarchy is the wrong explanation and the
-semantic account of [degano-aloni-2025] the right one.
+the four patterns AAA, ABB, AAB and ABC, never in the pattern ABA. Dekier's nanosyntactic
+account derives that gap from a containment hierarchy whose most complex layer is the specific
+known one. Bubnov argues that the hierarchy is the wrong explanation and the semantic account of
+Degano and Aloni the right one.
 
 Two objections are formalized. The first is that a hierarchy spelled out by distinct exponents
 predicts morphological containment — under the spellout the three Russian markers realize properly
@@ -50,13 +50,13 @@ change is a weakening of a restriction, whichever direction it takes along the m
 namespace Bubnov2026
 
 open DeganoAloni2025 Dekier2021 Indefinite Morphology.Containment
-open Haspelmath1997 (Series english german latin yakut kannada)
+open Haspelmath1997 hiding russian
 
 /-! ### The containment the hierarchy predicts -/
 
 /-- Under the nanosyntactic analysis the three Russian markers spell out properly nested
-structures: *-nibud'* the bare non-specific layer, *-to* that layer with the specific-unknown one
-above it, *koe-* all three. Distinct exponents for nested structures are what morphological
+structures, *-nibud'* the bare non-specific layer, *-to* that layer with the specific-unknown one
+above it, and *koe-* all three. Distinct exponents for nested structures are what morphological
 containment consists in, and none is attested in any indefinite paradigm. -/
 theorem russian_spans_properly_nested :
     (spelloutWinner (lexicon russian) 0).map SpanRule.spans = some 0 ∧
@@ -73,11 +73,11 @@ the disjunction is the one requirement that is not convex
 (`DeganoAloni2025.IndefiniteType.not_ordConnected_skPlusNS`). It is also the pattern ABA: its
 profile is the one no connected region of the map covers
 (`DeganoAloni2025.specificityFunctions_ne_skPlusNS_profile`), and the convex requirements are
-exactly the connected profiles (`DeganoAloni2025.contiguous_profile_iff`). -/
+exactly the connected profiles (`DeganoAloni2025.connected_profile_iff`). -/
 
 /-! ### Diachrony -/
 
-/-- The attested changes weaken the restriction, so the form comes to cover more of the map: a
+/-- The attested changes weaken the restriction, so the form comes to cover more of the map. A
 specific unknown form becomes epistemic, a non-specific form becomes epistemic, as German
 *irgend-* did ([aloni-port-2015]), and an epistemic form becomes unmarked. -/
 theorem attested_changes_are_weakenings {V E : Type*} (T : Finset (V → E)) (v x : V) :
@@ -86,8 +86,8 @@ theorem attested_changes_are_weakenings {V E : Type*} (T : Finset (V → E)) (v 
       (IndefiniteType.epistemic.Requires T v x → IndefiniteType.unmarked.Requires T v x) :=
   ⟨And.right, Team.Var.anti (Finset.empty_subset _), fun _ ↦ trivial⟩
 
-/-- The two changes move in opposite directions along the hierarchy: one form gains the
-non-specific function, at the bottom, and the other gains the specific-unknown function above it.
+/-- The two changes move in opposite directions along the hierarchy, one form gaining the
+non-specific function, at the bottom, and the other the specific-unknown function above it.
 No rule that extends coverage in a single direction produces both. -/
 theorem attested_changes_gain_opposite_functions :
     SpecificityFunction.nonSpecific ∈
@@ -111,7 +111,7 @@ theorem entry_loss_example :
       spellout [nonSpecificRule] = ![some "A", none, none] := by decide
 
 /-- Whatever entries a lexicon loses, a surviving entry spells out only layers of the structure
-it stores: the loss of an entry extends coverage downwards and never upwards, so it derives the
+it stores. The loss of an entry extends coverage downwards and never upwards, so it derives the
 change from a specific unknown form to an epistemic one and never the change from a non-specific
 form to an epistemic one, although both are attested. -/
 theorem entry_loss_extends_downward_only {n : ℕ} {v v' : List (SpanRule n String)}
@@ -121,7 +121,7 @@ theorem entry_loss_extends_downward_only {n : ℕ} {v v' : List (SpanRule n Stri
 
 /-! ### Coexpression as underspecification -/
 
-/-- Each form of the four coexpression patterns is a single type: English *some-* imposes no
+/-- Each form of the four coexpression patterns is a single type. English *some-* imposes no
 restriction (AAA), Yakut *-eme* requires variation within an epistemic alternative and *-ere*
 constancy within one (ABB), Latin *ali-* requires variation across the alternatives and *-dam*
 constancy across them (AAB), and Russian *-nibud'*, *-to* and *koe-* require variation within an
@@ -139,7 +139,7 @@ theorem coexpression_is_underspecification :
 
 /-- Russian *-to* is the epistemic type on the region [haspelmath-1997] draws for it, which
 covers the specific-unknown and the non-specific function, while the nanosyntactic lexicon
-leaves it the specific-unknown layer alone: *-nibud'* is the non-specific form of the same
+leaves it the specific-unknown layer alone, since *-nibud'* is the non-specific form of the same
 paradigm and takes that layer by the Elsewhere Principle. What a form may express and what it
 spells out under paradigmatic competition come apart. -/
 theorem to_is_epistemic_under_competition :
