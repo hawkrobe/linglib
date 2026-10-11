@@ -77,12 +77,6 @@ theorem atLeastAsRound_iff_ofCriteria :
     AtLeastAsRound r d e ↔ (Preorder.ofCriteria r Set.univ).le e d :=
   ⟨fun h _ _ hi ↦ h hi, fun h _ hi ↦ h _ trivial hi⟩
 
-/-- The scales a degree is on, the criteria it satisfies, are its intent in the context `r`. -/
-theorem satisfied_univ_eq_upperPolar (d : D) :
-    Preorder.satisfied r Set.univ d = upperPolar r {d} := by
-  ext i
-  simp [Preorder.satisfied, upperPolar]
-
 @[refl] theorem AtLeastAsRound.refl (r : D → ι → Prop) (d : D) : AtLeastAsRound r d d :=
   fun _ h ↦ h
 
@@ -104,6 +98,11 @@ variable [Fintype ι] [∀ d, DecidablePred (r d)]
 def profile (r : D → ι → Prop) [∀ d, DecidablePred (r d)] (d : D) : Finset ι := univ.filter (r d)
 
 @[simp] theorem mem_profile {i : ι} : i ∈ profile r d ↔ r d i := by simp [profile]
+
+/-- The roundness properties of a number are the criteria it satisfies, as a finite set. -/
+theorem coe_profile : (profile r d : Set ι) = Preorder.satisfied r Set.univ d := by
+  ext i
+  simp
 
 theorem profile_subset_profile : profile r d ⊆ profile r e ↔ AtLeastAsRound r d e := by
   simp only [Finset.subset_iff, mem_profile]

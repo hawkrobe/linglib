@@ -2,6 +2,7 @@ module
 
 public import Mathlib.Data.Set.Basic
 public import Mathlib.Order.Defs.PartialOrder
+public import Mathlib.Order.Concept
 
 /-!
 # The criteria-derived preorder
@@ -18,6 +19,8 @@ along the map sending an element to the set of criteria it satisfies
 * `Preorder.ofCriteria_le_of_subset`: fewer criteria give a coarser order.
 * `Preorder.satisfied`, `Preorder.maximalFor_satisfied_iff`: the criteria that an element
   satisfies, and the minimal elements of the order as the elements satisfying a maximal set.
+* `Preorder.satisfied_eq_inter_upperPolar`: the criteria an element satisfies are its intent in
+  the formal context `sat`, restricted to the criteria.
 -/
 
 @[expose] public section
@@ -69,6 +72,25 @@ the map (`maximalFor_satisfied_iff`). The best elements are thus those satisfyin
 criteria, with no order instance on the type. -/
 def satisfied (sat : α → C → Prop) (criteria : Set C) (a : α) : Set C :=
   {c ∈ criteria | sat a c}
+
+@[simp] theorem mem_satisfied {sat : α → C → Prop} {criteria : Set C} {a : α} {c : C} :
+    c ∈ satisfied sat criteria a ↔ c ∈ criteria ∧ sat a c :=
+  Iff.rfl
+
+@[simp] theorem mem_satisfied_univ {sat : α → C → Prop} {a : α} {c : C} :
+    c ∈ satisfied sat Set.univ a ↔ sat a c :=
+  ⟨And.right, fun h ↦ ⟨trivial, h⟩⟩
+
+/-- The criteria an element satisfies are its intent, `upperPolar sat {a}`, within the criteria. -/
+theorem satisfied_eq_inter_upperPolar (sat : α → C → Prop) (criteria : Set C) (a : α) :
+    satisfied sat criteria a = criteria ∩ upperPolar sat {a} := by
+  ext c
+  simp [mem_upperPolar_singleton]
+
+/-- Over every criterion, the criteria an element satisfies are its intent. -/
+theorem satisfied_univ (sat : α → C → Prop) (a : α) :
+    satisfied sat Set.univ a = upperPolar sat {a} := by
+  simp [satisfied_eq_inter_upperPolar]
 
 theorem satisfied_subset_iff (sat : α → C → Prop) (criteria : Set C) (a b : α) :
     satisfied sat criteria a ⊆ satisfied sat criteria b ↔ (ofCriteria sat criteria).le b a :=
