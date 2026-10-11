@@ -1,7 +1,6 @@
 module
 
 public import Linglib.Studies.DegenEtAl2020
-public import Linglib.Pragmatics.RSA.Uniform
 
 /-!
 # Kursat and Degen (2021): Perceptual Difficulty and Redundant Modification

@@ -219,7 +219,8 @@ Every word of the context is true of one object or of two, and the difference in
 reciprocal of the extension's size. -/
 theorem literal_uniform_real (h : t ∈ ⟦u⟧ᴹ) :
     (literal (uniformOn .univ) u).real {t} = (⟦u⟧ᴹ.card : ℝ)⁻¹ := by
-  rw [literal_uniform, FrankGoodman2012.literal, uniformListener_real_singleton, ite_eq_left h]
+  rw [literal_uniform, FrankGoodman2012.literal, listener_uniformOn_truthful_real_singleton,
+    ite_eq_left h]
 
 /-- The informativity gap between a word true of the referent alone and a word true of two
 objects, on the goal's measure. -/

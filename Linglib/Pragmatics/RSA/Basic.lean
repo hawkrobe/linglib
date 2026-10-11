@@ -30,27 +30,27 @@ its form: her prior is then the joint of the world prior and the speaker. A spea
 utility is not an expected log-probability, such as a question- or
 politeness-weighted one, is the softmax kernel `Kernel.softmax` of her score, with `⊥` marking
 the utterances she cannot use. Rationality, cost, meaning, and prior are arguments, so findings
-quantify over them. The uniform-prior Boolean specialization with its decision procedure is
-`Linglib.Pragmatics.RSA.Uniform`.
+quantify over them. Boolean meanings at a uniform prior on finitely many states, where masses
+reduce to counting, are treated in `Linglib.Pragmatics.RSA.Uniform`.
 
 ## Main definitions
 
-* `RSA.listener` — the prior reweighted by the mass each state's measure gives the utterance
+* `RSA.listener`: the prior reweighted by the mass each state's measure gives the utterance
   heard, and normalized. At the channel `RSA.truthful sem` of a speaker who is only truthful it
   is eq. 1, the prior conditioned on the denotation of the utterance.
-* `RSA.speaker` — the softmax of the expected log of the listener's mass under the speaker's
+* `RSA.speaker`: the softmax of the expected log of the listener's mass under the speaker's
   belief, less a cost. Its weights are the geometric mean of the listener's mass over the belief
   to the power `α`, times `exp (-(α * C))`; at the point-mass belief it is the speaker of
   eqs. 2/6–7, with weights `L ^ α * exp (-(α * C))` (`RSA.speaker_dirac_eq_ofWeights`).
 
 ## Main results
 
-* `RSA.speaker_apply_singleton_eq_zero_iff` — the speaker produces exactly the utterances whose
+* `RSA.speaker_apply_singleton_eq_zero_iff`: the speaker produces exactly the utterances whose
   listener rules out no state she entertains.
-* `RSA.speaker_ofDensity_apply_singleton` — against the listener of a graded meaning the prior
+* `RSA.speaker_ofDensity_apply_singleton`: against the listener of a graded meaning the prior
   cancels from the speaker's choice, and she weighs an utterance by the geometric mean of its
   meaning over her belief and the inverse of the meaning's prior mass.
-* `RSA.tendsto_speaker_dirac_real_singleton_atTop` — as rationality grows the speaker puts all
+* `RSA.tendsto_speaker_dirac_real_singleton_atTop`: as rationality grows the speaker puts all
   its mass on the utterance the listener most favors.
 
 ## References
@@ -328,6 +328,16 @@ theorem listener_uniformOn_real_le_iff (u : U) (w₁ w₂ : W) :
     (listener (uniformOn Set.univ) S u).real {w₁} ≤ (listener (uniformOn Set.univ) S u).real {w₂} ↔
       (S w₁).real {u} ≤ (S w₂).real {u} :=
   not_lt.symm.trans ((not_congr (listener_uniformOn_real_lt_iff S u w₂ w₁)).trans not_lt)
+
+/-- Against the uniform prior the listener ranks two events as their states together produce the
+utterance. -/
+theorem listener_uniformOn_real_finset_lt_iff (u : U) (E₁ E₂ : Finset W) :
+    (listener (uniformOn Set.univ) S u).real ↑E₁ < (listener (uniformOn Set.univ) S u).real ↑E₂ ↔
+      ∑ w ∈ E₁, (S w).real {u} < ∑ w ∈ E₂, (S w).real {u} := by
+  rcases isEmpty_or_nonempty W with hW | hW
+  · simp [Finset.eq_empty_of_isEmpty]
+  · simp_rw [listener_real_finset_lt_iff, uniformOn_univ_real_singleton, ← Finset.mul_sum]
+    exact mul_lt_mul_iff_right₀ (inv_pos.2 (Nat.cast_pos.2 Fintype.card_pos))
 
 end Uniform
 
@@ -655,11 +665,28 @@ theorem speaker_real_singleton_le_one (u : U) : (speaker α C L b o).real {u} �
   exact ENNReal.toReal_mono ENNReal.one_ne_top
     ((measure_mono (Set.subset_univ _)).trans (speaker_apply_univ_le_one α C L b o))
 
-theorem speaker_apply_singleton [MeasurableSingletonClass U] (u : U) :
+variable [MeasurableSingletonClass U]
+
+theorem speaker_apply_singleton (u : U) :
     speaker α C L b o {u} =
       (b o).geomMean (fun w ↦ L u {w}) ^ α * ENNReal.ofReal (Real.exp (-(α * C u))) /
         ∑ u', (b o).geomMean (fun w ↦ L u' {w}) ^ α * ENNReal.ofReal (Real.exp (-(α * C u'))) :=
   Kernel.ofWeights_apply_singleton _ o u
+
+/-- Speaker shares over any set of utterances sum to at most one. -/
+theorem sum_speaker_real_singleton_le_one (S : Finset U) :
+    ∑ u ∈ S, (speaker α C L b o).real {u} ≤ 1 := by
+  rw [sum_measureReal_singleton, measureReal_def, ← ENNReal.toReal_one]
+  exact ENNReal.toReal_mono ENNReal.one_ne_top
+    ((measure_mono (Set.subset_univ _)).trans (speaker_apply_univ_le_one α C L b o))
+
+variable {α C L b o} in
+/-- Another utterance of positive mass keeps a share strictly below one. -/
+theorem speaker_real_singleton_lt_one [DecidableEq U] {u u' : U} (hne : u' ≠ u)
+    (h : speaker α C L b o {u'} ≠ 0) : (speaker α C L b o).real {u} < 1 := by
+  have hsum := sum_speaker_real_singleton_le_one α C L b o {u, u'}
+  rw [Finset.sum_pair hne.symm] at hsum
+  linarith [ENNReal.toReal_pos h (measure_ne_top _ _), measureReal_def (speaker α C L b o) {u'}]
 
 end
 
@@ -902,6 +929,18 @@ theorem speaker_listener_truthful_dirac_apply_singleton_ne_zero_iff
   rw [speaker_dirac_apply_singleton_ne_zero_iff hα,
     listener_truthful_apply_singleton_ne_zero_iff μ sem u w]
 
+/-- With Boolean meanings the speaker never produces a false utterance. -/
+theorem speaker_listener_truthful_dirac_apply_singleton_eq_zero [DiscreteMeasurableSpace W]
+    (hα : 0 < α) (C : U → ℝ) (μ : Measure W) (sem : U → Set W) (h : w ∉ sem u) :
+    speaker α C (listener μ (truthful sem)) Measure.dirac w {u} = 0 :=
+  speaker_dirac_apply_singleton_eq_zero hα (listener_truthful_apply_singleton_of_notMem μ sem h)
+
+theorem speaker_listener_truthful_dirac_real_singleton_eq_zero [DiscreteMeasurableSpace W]
+    (hα : 0 < α) (C : U → ℝ) (μ : Measure W) (sem : U → Set W) (h : w ∉ sem u) :
+    (speaker α C (listener μ (truthful sem)) Measure.dirac w).real {u} = 0 := by
+  rw [measureReal_def, speaker_listener_truthful_dirac_apply_singleton_eq_zero hα C μ sem h,
+    ENNReal.toReal_zero]
+
 /-- With Boolean meanings the speaker sees a state only through the utterances true at it, so two
 states of positive prior verifying the same utterances have the same production row. -/
 theorem speaker_listener_truthful_dirac_congr [DiscreteMeasurableSpace W] (hα : 0 < α)
@@ -1069,6 +1108,31 @@ theorem listener_compProd_dirac_snd_real_lt_iff {o : O} {u₁ u₂ : U} (h₁ : 
       ∑ w, μ.real {w} * (κ w).real {u₁} < ∑ w, μ.real {w} * (κ w).real {u₂} := by
   rw [listener_snd_real_lt_iff]
   simp only [compProd_real_mul_dirac_real, ite_eq_left h₁, ite_eq_left h₂]
+
+/-- At a uniform prior the listener of the form prefers the state likelier to produce a choice
+with the form heard. -/
+theorem listener_uniformOn_compProd_dirac_fst_real_lt_iff (o : O) (w₁ w₂ : W) :
+    (listener (uniformOn Set.univ ⊗ₘ κ) (fun p ↦ Measure.dirac (obs p.2)) o).fst.real {w₁} <
+        (listener (uniformOn Set.univ ⊗ₘ κ) (fun p ↦ Measure.dirac (obs p.2)) o).fst.real {w₂} ↔
+      (κ w₁).real ↑(Finset.univ.filter (obs · = o)) <
+        (κ w₂).real ↑(Finset.univ.filter (obs · = o)) := by
+  have : Nonempty W := ⟨w₁⟩
+  simp_rw [listener_compProd_dirac_fst_real_lt_iff, uniformOn_univ_real_singleton,
+    ← Finset.mul_sum, sum_measureReal_singleton]
+  exact mul_lt_mul_iff_right₀ (inv_pos.2 (Nat.cast_pos.2 Fintype.card_pos))
+
+/-- At a uniform prior the listener of the form prefers, of two choices with the form heard, the
+one the states together are likelier to produce. -/
+theorem listener_uniformOn_compProd_dirac_snd_real_lt_iff {o : O} {u₁ u₂ : U} (h₁ : obs u₁ = o)
+    (h₂ : obs u₂ = o) :
+    (listener (uniformOn Set.univ ⊗ₘ κ) (fun p ↦ Measure.dirac (obs p.2)) o).snd.real {u₁} <
+        (listener (uniformOn Set.univ ⊗ₘ κ) (fun p ↦ Measure.dirac (obs p.2)) o).snd.real {u₂} ↔
+      ∑ w, (κ w).real {u₁} < ∑ w, (κ w).real {u₂} := by
+  rcases isEmpty_or_nonempty W with hW | hW
+  · simp [listener_compProd_dirac_snd_real_lt_iff _ κ obs h₁ h₂]
+  · simp_rw [listener_compProd_dirac_snd_real_lt_iff _ κ obs h₁ h₂, uniformOn_univ_real_singleton,
+      ← Finset.mul_sum]
+    exact mul_lt_mul_iff_right₀ (inv_pos.2 (Nat.cast_pos.2 Fintype.card_pos))
 
 end Form
 

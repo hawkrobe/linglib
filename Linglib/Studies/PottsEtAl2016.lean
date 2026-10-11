@@ -183,10 +183,11 @@ variable (α k : ℝ)
 /-- The cost (18d) is `k` for the null message and 0 for every statement. -/
 def cost (m : Msg) : ℝ := m.elim k fun _ ↦ 0
 
-/-- The literal listener (13a) at a flat prior is uniform on the message's extension. -/
-noncomputable def L0 (l : Lex) : Kernel Msg World := uniformListener (sem l)
+/-- The literal listener (13a) conditions a flat prior on the message's extension. -/
+noncomputable def L0 (l : Lex) : Kernel Msg World :=
+  listener (uniformOn Set.univ) (truthful fun m ↦ (sem l m : Set World))
 
-instance (l : Lex) : IsFiniteKernel (L0 l) := inferInstanceAs (IsFiniteKernel (uniformListener _))
+instance (l : Lex) : IsFiniteKernel (L0 l) := inferInstanceAs (IsFiniteKernel (listener _ _))
 
 /-- The speaker (13b). -/
 noncomputable def S1 (l : Lex) : Kernel World Msg := speaker α (cost k) (L0 l) Measure.dirac
@@ -228,8 +229,10 @@ include hα
 /-- The uncertainty listener assigns mass to a state exactly when some lexicon makes the
 message true there. -/
 theorem L1_fst_ne_zero_iff (m : Msg) (w : World) :
-    (L1 α k m).fst {w} ≠ 0 ↔ ∃ l, w ∈ sem l m :=
-  listener_uniformOn_family_fst_apply_singleton_ne_zero_iff sem hα _ m w
+    (L1 α k m).fst {w} ≠ 0 ↔ ∃ l, w ∈ sem l m := by
+  rw [L1, listener_fst_apply_singleton_ne_zero_iff]
+  exact exists_congr fun l ↦ (and_iff_right (uniformOn_univ_singleton_ne_zero _)).trans
+    (speaker_uniformOn_dirac_apply_singleton_ne_zero_iff (sem l) hα (cost k) w m)
 
 /-- The fixed-lexicon listener assigns mass to a state exactly when the base lexicon makes the
 message true there. -/
@@ -237,7 +240,7 @@ theorem L1fixed_ne_zero_iff (m : Msg) (w : World) :
     L1fixed α k m {w} ≠ 0 ↔ w ∈ sem .weak m := by
   rw [L1fixed, listener_apply_singleton_ne_zero_iff,
     and_iff_right (uniformOn_univ_singleton_ne_zero w)]
-  exact speaker_uniformListener_dirac_apply_singleton_ne_zero_iff (sem .weak) hα (cost k) w m
+  exact speaker_uniformOn_dirac_apply_singleton_ne_zero_iff (sem .weak) hα (cost k) w m
 
 /-- Hearing *exactly one player hit some of his shots*, the uncertainty listener gives mass to
 the locally enriched states NSA and SAA, false on the literal construal, and the fixed-lexicon
@@ -270,7 +273,8 @@ theorem S1_real (l : Lex) (w : World) (s : Stmt) :
         / ((∑ s', if w ∈ stmtSem l s' then (((stmtSem l s').card : ℝ))⁻¹ ^ α else 0)
             + Real.exp (-(α * k)) * (10 : ℝ)⁻¹ ^ α) := by
   rw [S1, speaker_dirac_real_singleton hα.le, Fintype.sum_option]
-  simp only [L0, uniformListener_apply_singleton, sem, cost, Option.elim_some, Option.elim_none,
+  simp only [L0, listener_uniformOn_truthful_apply_singleton, sem, cost, Option.elim_some,
+    Option.elim_none,
     Finset.mem_univ, ↓reduceIte, Finset.card_univ, (by decide : Fintype.card World = 10),
     mul_zero, neg_zero, Real.exp_zero, mul_one, apply_ite (· ^ α),
     ENNReal.zero_rpow_of_pos hα, apply_ite ENNReal.toReal, ENNReal.toReal_zero,

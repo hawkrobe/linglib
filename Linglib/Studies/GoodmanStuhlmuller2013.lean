@@ -101,13 +101,21 @@ section Model
 variable {U : Type*} [MeasurableSpace U] [Fintype U] [MeasurableSingletonClass U]
   (sem : U → Finset (Fin (N + 1))) (α : ℝ) (n : ℕ)
 
+/-- The literal listener `Plex` of section 1 conditions the uniform prior on the extension of
+the utterance. -/
+noncomputable abbrev literal : Kernel U (Fin (N + 1)) :=
+  RSA.listener (uniformOn Set.univ) (RSA.truthful fun u ↦ (sem u : Set (Fin (N + 1))))
+
+/-- The informed speaker knows the state and addresses the literal listener. -/
+noncomputable abbrev informed : Kernel (Fin (N + 1)) U :=
+  RSA.speaker α 0 (literal sem) Measure.dirac
+
 /-- The speaker of equations (2) and (3) sees how many of the `n` objects she looks at have the
 property, believes her posterior over states under the uniform prior, and addresses the literal
-listener `Plex` of section 1, who is uniform on an utterance's extension. The listener cannot see
-her observation, so the speaker he models (equation 4) draws it at the state. -/
+listener. The listener cannot see her observation, so the speaker he models (equation 4) draws
+it at the state. -/
 noncomputable def speaker : Kernel (Fin (N + 1)) U :=
-  RSA.speaker α 0 (RSA.uniformListener sem) ((hypergeometric N n)†(uniformOn Set.univ)) ∘ₖ
-    hypergeometric N n
+  RSA.speaker α 0 (literal sem) ((hypergeometric N n)†(uniformOn Set.univ)) ∘ₖ hypergeometric N n
 
 instance : IsFiniteKernel (speaker sem α n) :=
   inferInstanceAs (IsFiniteKernel (RSA.speaker _ _ _ _ ∘ₖ hypergeometric N n))
@@ -128,7 +136,7 @@ theorem speaker_real_singleton (hα : 0 < α) (s : Fin (N + 1)) (u : U) :
   refine Finset.sum_congr rfl fun k _ ↦ ?_
   rcases eq_or_ne (hypergeometric N n s {k}) 0 with h0 | h0
   · rw [measureReal_def, h0, ENNReal.toReal_zero, zero_mul, zero_mul]
-  · rw [RSA.speaker_uniformListener_real_singleton sem hα (posterior_ne_zero_iff_mem_compatible
+  · rw [RSA.speaker_uniformOn_real_singleton sem hα (posterior_ne_zero_iff_mem_compatible
       ⟨s, mem_compatible.2 ((hypergeometric_apply_singleton_ne_zero_iff s k).1 h0)⟩)]
 
 theorem speaker_real_singleton_le_one (s : Fin (N + 1)) (u : U) :
@@ -145,7 +153,7 @@ theorem speaker_real_singleton_le_one (s : Fin (N + 1)) (u : U) :
   exact ENNReal.toReal_mono ENNReal.one_ne_top h
 
 /-- With complete access the speaker knows the state. -/
-theorem speaker_full : speaker sem α N = RSA.uniformSpeaker sem α := by
+theorem speaker_full : speaker sem α N = informed sem α := by
   rw [speaker, show ⇑((hypergeometric N N)†(uniformOn Set.univ)) = Measure.dirac from
     funext fun k ↦ posterior_hypergeometric_self k _ (uniformOn_univ_singleton_ne_zero k),
     hypergeometric_self, Kernel.comp_id]
@@ -155,9 +163,9 @@ utterances true at every state this leaves possible are those true at `s`, she s
 knows the state is `s`. -/
 theorem speaker_last (hα : 0 < α) (hn : n ≤ N) {s : Fin (N + 1)}
     (h : ∀ u, compatible n (⟨n, Nat.lt_succ_of_le hn⟩ : Fin (N + 1)) ⊆ sem u ↔ s ∈ sem u) :
-    speaker sem α n (Fin.last N) = RSA.uniformSpeaker sem α s := by
+    speaker sem α n (Fin.last N) = informed sem α s := by
   rw [speaker, Kernel.comp_apply, hypergeometric_last hn, Measure.dirac_bind (Kernel.measurable _)]
-  exact RSA.speaker_uniformListener_apply_eq_uniformSpeaker sem hα
+  exact RSA.speaker_uniformOn_apply_eq_dirac sem hα
     (posterior_ne_zero_iff_mem_compatible
       ⟨Fin.last N, by simp [hypergeometricCount_ne_zero_iff, hn]⟩) h
 
@@ -165,7 +173,7 @@ theorem speaker_last (hα : 0 < α) (hn : n ≤ N) {s : Fin (N + 1)}
 observation and speaks as one who knows it to be the state, what she has seen being her lower
 bound. -/
 theorem speaker_of_isUpperSet (hα : 0 < α) (hsem : ∀ u, IsUpperSet (sem u : Set (Fin (N + 1))))
-    (hn : n ≤ N) : speaker sem α n = RSA.uniformSpeaker sem α ∘ₖ hypergeometric N n :=
+    (hn : n ≤ N) : speaker sem α n = informed sem α ∘ₖ hypergeometric N n :=
   Kernel.ext fun s ↦ Measure.ext_of_singleton fun u ↦ by
     rw [speaker, Kernel.comp_apply_singleton, Kernel.comp_apply_singleton]
     refine Finset.sum_congr rfl fun k _ ↦ ?_
@@ -175,17 +183,17 @@ theorem speaker_of_isUpperSet (hα : 0 < α) (hsem : ∀ u, IsUpperSet (sem u : 
         ((hypergeometric_apply_singleton_ne_zero_iff s k).1 h0)).1
       have hk : k ∈ compatible n k :=
         mem_compatible.2 (hypergeometricCount_ne_zero_iff.2 ⟨hkn, le_rfl, by omega⟩)
-      rw [RSA.speaker_uniformListener_apply_eq_uniformSpeaker sem hα
+      rw [RSA.speaker_uniformOn_apply_eq_dirac sem hα
         (posterior_ne_zero_iff_mem_compatible ⟨k, hk⟩) fun u ↦ ⟨fun h ↦ h hk, fun h t ht ↦
           hsem u (Fin.le_def.2 (hypergeometricCount_ne_zero_iff.1 (mem_compatible.1 ht)).2.1) h⟩]
 
 /-- With complete access, of two states at which an utterance is true the listener favours the
 one at which fewer alternatives are true, since the speaker's choice is spread over them. -/
 theorem listener_full_lt (hα : 0 < α) {s s' : Fin (N + 1)} (hu : s ∈ sem u)
-    (h : RSA.trueChoices sem s ⊂ RSA.trueChoices sem s') :
+    (h : Finset.univ.filter (s ∈ sem ·) ⊂ Finset.univ.filter (s' ∈ sem ·)) :
     (listener sem α N u).real {s'} < (listener sem α N u).real {s} := by
   rw [listener, RSA.listener_uniformOn_real_lt_iff, speaker_full]
-  exact RSA.uniformSpeaker_real_singleton_lt_of_trueChoices_ssubset sem hα hu h
+  exact RSA.speaker_uniformOn_dirac_real_singleton_lt_of_ssubset sem hα hu h
 
 end Model
 
@@ -243,9 +251,10 @@ variable {α : ℝ}
 
 /-- The fully informed speaker at two objects says *one* or *two*. -/
 private theorem informed_two_add_le :
-    (RSA.uniformSpeaker NumUtt.extension α 2).real {.one} +
-      (RSA.uniformSpeaker NumUtt.extension α 2).real {.two} ≤ 1 := by
-  simpa using RSA.sum_uniformSpeaker_real_singleton_le_one NumUtt.extension α 2 {.one, .two}
+    (informed NumUtt.extension α 2).real {.one} +
+      (informed NumUtt.extension α 2).real {.two} ≤ 1 := by
+  simpa using RSA.sum_speaker_real_singleton_le_one α 0 (literal NumUtt.extension) Measure.dirac
+    (2 : Fin 4) {.one, .two}
 
 variable (hα : 0 < α)
 include hα
@@ -267,9 +276,11 @@ theorem some_partial {n : ℕ} (hn : n = 1 ∨ n = 2) :
     rw [show (3 : Fin 4) = Fin.last 3 from rfl]
     rcases hn with rfl | rfl
     · rw [speaker_last hα (by norm_num) (s := 1) (by decide)]
-      exact RSA.uniformSpeaker_apply_singleton_eq_one _ hα (by decide) (by decide)
+      exact RSA.speaker_listener_truthful_dirac_eq_one hα _ _ _
+        (uniformOn_univ_singleton_ne_zero _) (by decide) (by decide)
     · rw [speaker_last hα (by norm_num) (s := 2) (by decide)]
-      exact RSA.uniformSpeaker_apply_singleton_eq_one _ hα (by decide) (by decide)
+      exact RSA.speaker_listener_truthful_dirac_eq_one hα _ _ _
+        (uniformOn_univ_singleton_ne_zero _) (by decide) (by decide)
   rw [listener, RSA.listener_uniformOn_real_le_iff,
     measureReal_def (speaker QUtt.extension α n 3), h3, ENNReal.toReal_one]
   exact speaker_real_singleton_le_one _ _
@@ -292,28 +303,29 @@ theorem one_full {s : Fin 4} (hs : 1 < s) :
 it to be the state. -/
 private theorem numeral_speaker_real {n : ℕ} (hn : n ≤ 3) (s : Fin 4) (u : NumUtt) :
     (speaker NumUtt.extension α n s).real {u} = ∑ k, (hypergeometric 3 n s).real {k} *
-      (RSA.uniformSpeaker NumUtt.extension α k).real {u} := by
+      (informed NumUtt.extension α k).real {u} := by
   rw [speaker_of_isUpperSet hα NumUtt.isUpperSet_extension hn, Kernel.comp_real_singleton]
 
 /-- The fully informed speaker at no objects has no numeral to use. -/
 private theorem informed_zero (u : NumUtt) :
-    (RSA.uniformSpeaker NumUtt.extension α 0).real {u} = 0 :=
-  RSA.uniformSpeaker_real_singleton_eq_zero _ hα (by cases u <;> decide)
+    (informed NumUtt.extension α 0).real {u} = 0 :=
+  RSA.speaker_listener_truthful_dirac_real_singleton_eq_zero hα _ _ _ (by cases u <;> decide)
 
 /-- The fully informed speaker at one object says *one*. -/
-private theorem informed_one_one : (RSA.uniformSpeaker NumUtt.extension α 1).real {.one} = 1 := by
-  rw [measureReal_def, RSA.uniformSpeaker_apply_singleton_eq_one _ hα (by decide) (by decide),
-    ENNReal.toReal_one]
+private theorem informed_one_one : (informed NumUtt.extension α 1).real {.one} = 1 := by
+  rw [measureReal_def, RSA.speaker_listener_truthful_dirac_eq_one hα _ _ _
+    (uniformOn_univ_singleton_ne_zero _) (by decide) (by decide), ENNReal.toReal_one]
 
-private theorem informed_one_two : (RSA.uniformSpeaker NumUtt.extension α 1).real {.two} = 0 :=
-  RSA.uniformSpeaker_real_singleton_eq_zero _ hα (by decide)
+private theorem informed_one_two : (informed NumUtt.extension α 1).real {.two} = 0 :=
+  RSA.speaker_listener_truthful_dirac_real_singleton_eq_zero hα _ _ _ (by decide)
 
 /-- The fully informed speaker at two objects prefers *two* to *one*, the more informative
 numeral. -/
 private theorem informed_two_lt :
-    (RSA.uniformSpeaker NumUtt.extension α 2).real {.one} <
-      (RSA.uniformSpeaker NumUtt.extension α 2).real {.two} :=
-  RSA.uniformSpeaker_real_singleton_lt_of_card_lt _ hα (by decide) (by decide) (by decide)
+    (informed NumUtt.extension α 2).real {.one} <
+      (informed NumUtt.extension α 2).real {.two} :=
+  RSA.speaker_uniformOn_dirac_real_singleton_lt_of_card_lt _ hα (by decide) (by decide)
+    (by decide)
 
 /-- After one object *one* carries no implicature; a state with more objects with the property is
 at least as probable, since the speaker says *one* exactly when the object she looks at has the
@@ -337,7 +349,7 @@ theorem two_partial :
   rw [listener, RSA.listener_uniformOn_real_le_iff]
   simp [numeral_speaker_real hα, Fin.sum_univ_four, hypergeometric_real_singleton,
     hypergeometricCount, informed_zero hα, informed_one_two hα]
-  linarith [measureReal_nonneg (μ := RSA.uniformSpeaker NumUtt.extension α 2) (s := {.two})]
+  linarith [measureReal_nonneg (μ := informed NumUtt.extension α 2) (s := {.two})]
 
 /-- After two objects *one* keeps its implicature against three; the state with one object is
 more probable than the state with three, where the speaker saw two objects with the property and
