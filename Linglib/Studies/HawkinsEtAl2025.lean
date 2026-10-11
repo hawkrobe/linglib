@@ -23,7 +23,7 @@ problem from the question and trades informativity against relevance to it.
 * `safe_iff_mem_polar`: a response is safe exactly when it resolves the polar question.
 * `questionScore_eq_valueOfInformation`: the questioner scores a question by its value of
   information.
-* `posterior_R0_real_lt_iff`: by the size principle, an answer favours the worlds with fewer true
+* `listener_R0_real_lt_iff`: by the size principle, an answer favours the worlds with fewer true
   and safe alternatives.
 * `goalPosterior_real_lt_iff`: the respondent favours the decision problems under which the
   question was likelier.
@@ -37,8 +37,9 @@ problem from the question and trades informativity against relevance to it.
 
 ## Implementation notes
 
-* Beliefs are probability measures and the base respondents kernels, so Bayesian update is a
-  posterior; the questioner and the pragmatic respondent are `Kernel.softmax` kernels.
+* The questioner hearing a response and the respondent hearing a question are `RSA.listener`s of
+  the base respondent and of the questioner, so a response no world produces leaves the zero
+  measure; the questioner and the pragmatic respondent are `Kernel.softmax` kernels.
 * The paper defines safety as "not knowing the answer to `q` entails not knowing whether `r`",
   under which its safe example "Yes, we take Visa" to "Do you take Visa or Mastercard?" would be
   unsafe. `Safe` takes the reading "not knowing `r`" that the examples force, and applies to a
@@ -136,6 +137,8 @@ instance [Fintype W] [∀ q, DecidablePred (· ∈ m.question q)]
 
 section BaseRespondent
 
+section
+
 variable [Countable W] [MeasurableSingletonClass W]
 
 /-- The base respondent (2.1) answers `q` at `w` uniformly among the true and safe responses. -/
@@ -188,30 +191,34 @@ theorem Model.isMarkovKernel_R0 {q : Q} (h : ∀ w, (m.trueSafe w q).Nonempty) :
     IsMarkovKernel (m.R0 q) :=
   ⟨fun w ↦ isProbabilityMeasure_uniformOn (Set.toFinite _) (h w)⟩
 
-variable [StandardBorelSpace W] [Nonempty W] {d : D} [IsFiniteMeasure (m.prior d)]
+end
 
-/-- Under a prior that gives every world positive mass, a world keeps positive posterior after
-the truth-only update by a response iff the response is true there. -/
-theorem Model.posterior_R0'_apply_ne_zero_iff (hπ : ∀ w, m.prior d {w} ≠ 0) {r : R}
-    (hm : (m.R0' ∘ₘ m.prior d) {r} ≠ 0) {w : W} :
-    (m.R0'†(m.prior d)) r {w} ≠ 0 ↔ w ∈ m.response r := by
-  rw [posterior_apply_singleton_ne_zero_iff _ _ hm, m.R0'_apply_singleton_ne_zero_iff]
+variable [Fintype W] [MeasurableSingletonClass W] [Finite R] [MeasurableSingletonClass R] {d : D}
+  [IsFiniteMeasure (m.prior d)]
+
+/-- Under a prior that gives every world positive mass, a world keeps positive mass after the
+truth-only update by a response iff the response is true there. -/
+theorem Model.listener_R0'_apply_singleton_ne_zero_iff (hπ : ∀ w, m.prior d {w} ≠ 0) {r : R}
+    {w : W} : RSA.listener (m.prior d) m.R0' r {w} ≠ 0 ↔ w ∈ m.response r := by
+  rw [RSA.listener_apply_singleton_ne_zero_iff, m.R0'_apply_singleton_ne_zero_iff]
   exact and_iff_right (hπ w)
 
 /-- By the size principle (§2b), between two worlds of equal prior at which a response is true
-and safe, the posterior favours the world with fewer true and safe alternatives. -/
-theorem Model.posterior_R0_real_lt_iff {q : Q} {r : R} {w₁ w₂ : W}
+and safe, the questioner comes to favour the world with fewer true and safe alternatives. -/
+theorem Model.listener_R0_real_lt_iff {q : Q} {r : R} {w₁ w₂ : W}
     (hp : m.prior d {w₁} = m.prior d {w₂}) (hpos : m.prior d {w₁} ≠ 0)
     (h₁ : r ∈ m.trueSafe w₁ q) (h₂ : r ∈ m.trueSafe w₂ q) :
-    (((m.R0 q)†(m.prior d)) r).real {w₁} < (((m.R0 q)†(m.prior d)) r).real {w₂} ↔
+    (RSA.listener (m.prior d) (m.R0 q) r).real {w₁} <
+        (RSA.listener (m.prior d) (m.R0 q) r).real {w₂} ↔
       (m.trueSafe w₂ q).ncard < (m.trueSafe w₁ q).ncard := by
   classical
   have hc {w} (hw : r ∈ m.trueSafe w q) : (0 : ℝ) < (m.trueSafe w q).ncard :=
     Nat.cast_pos.2 ((Set.ncard_pos (Set.toFinite _)).2 ⟨r, hw⟩)
-  have hm := comp_apply_singleton_ne_zero _ _ hpos (m.R0_apply_singleton_ne_zero_iff.2 h₁)
-  simp only [posterior_real_singleton_lt_iff_of_eq _ _ hm hp hpos, m.R0_real_singleton, h₁, h₂,
-    ↓reduceIte]
-  rw [inv_lt_inv₀ (hc h₁) (hc h₂), Nat.cast_lt]
+  have hμ : (m.prior d).real {w₂} = (m.prior d).real {w₁} := by
+    rw [measureReal_def, measureReal_def, hp]
+  have hμpos : 0 < (m.prior d).real {w₁} := ENNReal.toReal_pos hpos (measure_ne_top _ _)
+  rw [RSA.listener_real_singleton_lt_iff, hμ, mul_lt_mul_iff_right₀ hμpos, m.R0_real_singleton,
+    m.R0_real_singleton, ite_eq_left h₁, ite_eq_left h₂, inv_lt_inv₀ (hc h₁) (hc h₂), Nat.cast_lt]
 
 end BaseRespondent
 
@@ -241,24 +248,27 @@ theorem value_eq_of_ae {π π' : Measure W} [IsProbabilityMeasure π] [IsProbabi
     simp
   simp only [value, policy, h hU, h hU']
 
-variable [Countable W] [MeasurableSingletonClass W] [StandardBorelSpace W] [Nonempty W]
-  [∀ d, IsFiniteMeasure (m.prior d)] (p : Params)
+variable [Fintype W] [MeasurableSingletonClass W] [Finite R] [MeasurableSingletonClass R]
+  (p : Params)
 
 /-- The expected value to the questioner of asking `q` under the decision problem `d` (2.3) is
 the value of `d` updated (2.4) by the base respondent's answer, less the weighted cost. -/
 noncomputable def Model.questionScore (d : D) (q : Q) : ℝ :=
-  ∫ r, (value (m.utility d) p.αℵ (((m.R0 q)†(m.prior d)) r) - p.wc * m.cost r)
+  ∫ r, (value (m.utility d) p.αℵ (RSA.listener (m.prior d) (m.R0 q) r) - p.wc * m.cost r)
     ∂(m.R0 q ∘ₘ m.prior d)
 
 /-- The question score is the value of information of the question under the policy value, plus
 the value of the prior, less the expected cost. -/
-theorem Model.questionScore_eq_valueOfInformation [Finite R] [MeasurableSingletonClass R]
-    (d : D) (q : Q) :
+theorem Model.questionScore_eq_valueOfInformation [StandardBorelSpace W] [Nonempty W] (d : D)
+    [IsFiniteMeasure (m.prior d)] (q : Q) :
     m.questionScore p d q =
       valueOfInformation (value (m.utility d) p.αℵ) (m.R0 q) (m.prior d) +
         value (m.utility d) p.αℵ (m.prior d) - p.wc * ∫ r, m.cost r ∂(m.R0 q ∘ₘ m.prior d) := by
+  have h : ∀ᵐ r ∂(m.R0 q ∘ₘ m.prior d),
+      RSA.listener (m.prior d) (m.R0 q) r = ((m.R0 q)†(m.prior d)) r :=
+    ae_iff_of_countable.2 fun r hr ↦ RSA.listener_apply_eq_posterior _ _ hr
   rw [Model.questionScore, integral_sub .of_finite .of_finite, integral_const_mul,
-    valueOfInformation]
+    valueOfInformation, integral_congr_ae (h.mono fun r hr ↦ congrArg _ hr)]
   ring
 
 variable [MeasurableSpace Q] [Fintype Q] [MeasurableSingletonClass Q] [MeasurableSpace D]
@@ -285,26 +295,27 @@ end Questioner
 
 section Respondent
 
-variable [Fintype A] [Countable W] [MeasurableSingletonClass W] [StandardBorelSpace W]
-  [Nonempty W] [∀ d, IsFiniteMeasure (m.prior d)] (p : Params) [MeasurableSpace Q] [Fintype Q]
-  [MeasurableSpace D] [Countable D] [MeasurableSingletonClass D] [StandardBorelSpace D]
-  [Nonempty D] (πD : Measure D) [IsFiniteMeasure πD]
+variable [Fintype A] [Fintype W] [MeasurableSingletonClass W] [Fintype R]
+  [MeasurableSingletonClass R] (p : Params) [MeasurableSpace Q] [Fintype Q]
+  [MeasurableSingletonClass Q] [MeasurableSpace D] [Fintype D] [MeasurableSingletonClass D]
+  (πD : Measure D)
 
-/-- The respondent's belief about the decision problem after hearing `q` is the posterior of the
-questioner under the prior `πD`, `π(D ∣ q) ∝ Q(q ∣ D) π(D)`. -/
-noncomputable def Model.goalPosterior : Kernel Q D := (m.questioner p)†πD
+/-- The respondent's belief about the decision problem after hearing `q` is that of a listener
+to the questioner at the prior `πD`, `π(D ∣ q) ∝ Q(q ∣ D) π(D)`. -/
+noncomputable def Model.goalPosterior : Kernel Q D := RSA.listener πD (m.questioner p)
 
-instance : IsMarkovKernel (m.goalPosterior p πD) :=
-  inferInstanceAs (IsMarkovKernel ((m.questioner p)†πD))
+instance : IsFiniteKernel (m.goalPosterior p πD) :=
+  inferInstanceAs (IsFiniteKernel (RSA.listener _ _))
 
 /-- Between decision problems of equal prior, the respondent comes to favour the one under which
 the question was the likelier, so a question signals the goal. -/
-theorem Model.goalPosterior_real_lt_iff [MeasurableSingletonClass Q] (q : Q) {d₁ d₂ : D}
+theorem Model.goalPosterior_real_lt_iff [IsFiniteMeasure πD] (q : Q) {d₁ d₂ : D}
     (hp : πD {d₁} = πD {d₂}) (hpos : πD {d₁} ≠ 0) :
     (m.goalPosterior p πD q).real {d₁} < (m.goalPosterior p πD q).real {d₂} ↔
-      (m.questioner p d₁).real {q} < (m.questioner p d₂).real {q} :=
-  posterior_real_singleton_lt_iff_of_eq _ _
-    (comp_apply_singleton_ne_zero _ _ hpos (m.questioner_apply_singleton_ne_zero p d₁ q)) hp hpos
+      (m.questioner p d₁).real {q} < (m.questioner p d₂).real {q} := by
+  have hμ : πD.real {d₂} = πD.real {d₁} := by rw [measureReal_def, measureReal_def, hp]
+  have hμpos : 0 < πD.real {d₁} := ENNReal.toReal_pos hpos (measure_ne_top _ _)
+  rw [Model.goalPosterior, RSA.listener_real_singleton_lt_iff, hμ, mul_lt_mul_iff_right₀ hμpos]
 
 /-- The pragmatic respondent's score for answering `q` with `r` (2.5) is the expectation over the
 inferred decision problem of informativity, weighted by `1 - β`, and action relevance, weighted
@@ -313,18 +324,17 @@ update, and informativity is its negative divergence from the respondent's belie
 expected divergence is a lower integral, so a response at infinite divergence scores `⊥`. -/
 noncomputable def Model.respondentScore (πW : Measure W) (q : Q) (r : R) : EReal :=
   ((1 - p.β : ℝ) : EReal) *
-      -((∫⁻ d, klDiv πW ((m.R0'†(m.prior d)) r) ∂(m.goalPosterior p πD q) : ℝ≥0∞) : EReal) +
-    ((p.β * ∫ d, value (m.utility d) p.αℵ ((m.R0'†(m.prior d)) r) ∂(m.goalPosterior p πD q) -
-      p.wc * m.cost r : ℝ) : EReal)
+      -((∫⁻ d, klDiv πW (RSA.listener (m.prior d) m.R0' r) ∂(m.goalPosterior p πD q) : ℝ≥0∞) :
+        EReal) +
+    ((p.β * ∫ d, value (m.utility d) p.αℵ (RSA.listener (m.prior d) m.R0' r)
+        ∂(m.goalPosterior p πD q) - p.wc * m.cost r : ℝ) : EReal)
 
 /-- At `β = 1` the respondent weighs only action relevance and cost. -/
 theorem Model.respondentScore_of_beta_eq_one (hβ : p.β = 1) (πW : Measure W) (q : Q) (r : R) :
     m.respondentScore p πD πW q r =
-      ((∫ d, value (m.utility d) p.αℵ ((m.R0'†(m.prior d)) r) ∂(m.goalPosterior p πD q) -
-        p.wc * m.cost r : ℝ) : EReal) := by
+      ((∫ d, value (m.utility d) p.αℵ (RSA.listener (m.prior d) m.R0' r)
+          ∂(m.goalPosterior p πD q) - p.wc * m.cost r : ℝ) : EReal) := by
   simp [Model.respondentScore, hβ]
-
-variable [MeasurableSingletonClass Q] [Fintype R] [MeasurableSingletonClass R]
 
 /-- The pragmatic respondent (2.5) soft-maximizes its score with rationality `αR`. -/
 noncomputable def Model.respondent (πW : Measure W) : Kernel Q R :=
@@ -340,22 +350,19 @@ theorem Model.respondent_apply_singleton_ne_zero_of_beta_eq_one (hβ : p.β = 1)
     (by obtain ⟨x, hx⟩ := h r; exact hx ▸ EReal.coe_ne_bot x)
     fun r' ↦ by obtain ⟨x, hx⟩ := h r'; exact hx ▸ EReal.coe_ne_top x
 
-/-- Informativity enforces truthfulness (§2c). When `β < 1`, the respondent never gives a
-response that is false at a world it considers possible, provided the response is possible a
-priori under some decision problem it considers possible. -/
-theorem Model.respondent_truthful (hβ : p.β < 1) (hα : 0 < p.αR) {πW : Measure W} {q : Q}
-    {r : R} {d : D} (hd : πD {d} ≠ 0) (hr : (m.R0' ∘ₘ m.prior d) {r} ≠ 0) {w : W}
-    (hw : πW {w} ≠ 0) (hf : w ∉ m.response r) : m.respondent p πD πW q {r} = 0 := by
-  have hkl : klDiv πW ((m.R0'†(m.prior d)) r) = ∞ := by
-    refine klDiv_of_not_ac fun hac ↦ hw (hac ?_)
-    by_contra h
-    exact hf (m.R0'_apply_singleton_ne_zero_iff.1
-      ((posterior_apply_singleton_ne_zero_iff _ _ hr w).1 h).2)
-  have hq := m.questioner_apply_singleton_ne_zero p d q
+/-- Informativity enforces truthfulness (§2c). When `β < 1`, a respondent who considers some
+decision problem possible never gives a response that is false at a world it considers
+possible. -/
+theorem Model.respondent_truthful [IsFiniteMeasure πD] (hβ : p.β < 1) (hα : 0 < p.αR)
+    {πW : Measure W} {q : Q} {r : R} {d : D} (hd : πD {d} ≠ 0) {w : W} (hw : πW {w} ≠ 0)
+    (hf : w ∉ m.response r) : m.respondent p πD πW q {r} = 0 := by
+  have hkl : klDiv πW (RSA.listener (m.prior d) m.R0' r) = ∞ :=
+    klDiv_of_not_ac fun hac ↦ hw (hac (RSA.listener_apply_singleton_eq_zero
+      (not_not.1 (mt m.R0'_apply_singleton_ne_zero_iff.1 hf))))
   have hgp : m.goalPosterior p πD q {d} ≠ 0 :=
-    (posterior_apply_singleton_ne_zero_iff _ _ (comp_apply_singleton_ne_zero _ _ hd hq) d).2
-      ⟨hd, hq⟩
-  have hint : ∫⁻ d', klDiv πW ((m.R0'†(m.prior d')) r) ∂(m.goalPosterior p πD q) = ∞ := by
+    RSA.listener_apply_singleton_ne_zero hd (m.questioner_apply_singleton_ne_zero p d q)
+  have hint : ∫⁻ d', klDiv πW (RSA.listener (m.prior d') m.R0' r) ∂(m.goalPosterior p πD q) =
+      ∞ := by
     rw [lintegral_countable']
     exact ENNReal.tsum_eq_top_of_eq_top ⟨d, by rw [hkl, ENNReal.top_mul hgp]⟩
   refine Kernel.softmax_apply_singleton_eq_zero ?_
@@ -483,16 +490,17 @@ cost separates the two answers. -/
 theorem yes_value_eq_exhaustive (C w : Finset Card) (hC : .amex ∈ C) (hw : .amex ∈ w)
     (αℵ : ℝ) :
     value (cards.utility (.ownCards C)) αℵ
-        ((cards.R0'†(cards.prior (.ownCards C))) (.polar {.amex} true)) =
+        (RSA.listener (cards.prior (.ownCards C)) cards.R0' (.polar {.amex} true)) =
       value (cards.utility (.ownCards C)) αℵ
-        ((cards.R0'†(cards.prior (.ownCards C))) (.exhaustive w)) := by
+        (RSA.listener (cards.prior (.ownCards C)) cards.R0' (.exhaustive w)) := by
   have hπ := cards_prior_ne_zero (.ownCards C)
   have hyes : w ∈ cards.response (.polar {.amex} true) := by
     show ({Card.amex} ∩ w).Nonempty ↔ true = true
     simp [Finset.singleton_inter_of_mem hw]
-  have hm₁ := comp_apply_singleton_ne_zero _ _ (hπ w) (cards.R0'_apply_singleton_ne_zero_iff.2 hyes)
-  have hm₂ := comp_apply_singleton_ne_zero _ _ (hπ w)
-    ((cards.R0'_apply_singleton_ne_zero_iff (r := .exhaustive w)).2 rfl)
+  have := RSA.isProbabilityMeasure_listener_of_ne_zero (cards.prior (.ownCards C)) cards.R0'
+    (hπ w) (cards.R0'_apply_singleton_ne_zero_iff.2 hyes)
+  have := RSA.isProbabilityMeasure_listener_of_ne_zero (cards.prior (.ownCards C)) cards.R0'
+    (hπ w) ((cards.R0'_apply_singleton_ne_zero_iff (r := .exhaustive w)).2 rfl)
   have hgo (w' : Finset Card) (hw' : Card.amex ∈ w') :
       cards.utility (.ownCards C) w' = fun a ↦ match a with | .go => 5 | .stay => 0 :=
     funext fun a ↦ by
@@ -501,24 +509,23 @@ theorem yes_value_eq_exhaustive (C w : Finset Card) (hC : .amex ∈ C) (hw : .am
   refine value_eq_of_ae αℵ (ae_iff_of_countable.2 fun w' hw' ↦ hgo w' ?_)
     (ae_iff_of_countable.2 fun w' hw' ↦ hgo w' ?_)
   · obtain ⟨x, hx⟩ : ({Card.amex} ∩ w').Nonempty :=
-      ((cards.posterior_R0'_apply_ne_zero_iff hπ hm₁).1 hw').2 rfl
+      ((cards.listener_R0'_apply_singleton_ne_zero_iff hπ).1 hw').2 rfl
     rw [Finset.mem_inter, Finset.mem_singleton] at hx
     exact hx.1 ▸ hx.2
-  · exact (Set.mem_singleton_iff.1 ((cards.posterior_R0'_apply_ne_zero_iff hπ hm₂).1 hw')) ▸ hw
+  · exact (Set.mem_singleton_iff.1 ((cards.listener_R0'_apply_singleton_ne_zero_iff hπ).1 hw')) ▸ hw
 
 /-- In (5) (`Examples.ex5`), after "yes" to the general question, a world accepting only
 MasterCard keeps positive posterior, so a questioner holding American Express remains
 uncertain; after "yes" to the question about American Express it does not. -/
 theorem generalYes_posterior_ne_zero :
-    (cards.R0'†(cards.prior (.ownCards {.amex}))) (.polar univ true) {{.mastercard}} ≠ 0 ∧
-      (cards.R0'†(cards.prior (.ownCards {.amex}))) (.polar {.amex} true) {{.mastercard}} = 0 := by
+    RSA.listener (cards.prior (.ownCards {.amex})) cards.R0' (.polar univ true)
+        {{.mastercard}} ≠ 0 ∧
+      RSA.listener (cards.prior (.ownCards {.amex})) cards.R0' (.polar {.amex} true)
+        {{.mastercard}} = 0 := by
   have hπ := cards_prior_ne_zero (.ownCards {.amex})
-  have hm {w : Finset Card} {r : Resp} (h : w ∈ cards.response r) :=
-    comp_apply_singleton_ne_zero _ _ (hπ w) (cards.R0'_apply_singleton_ne_zero_iff.2 h)
   have h₁ : {.mastercard} ∈ cards.response (.polar univ true) := by decide
   have h₂ : {.mastercard} ∉ cards.response (.polar {.amex} true) := by decide
-  have h₃ : {.amex} ∈ cards.response (.polar {.amex} true) := by decide
-  exact ⟨(cards.posterior_R0'_apply_ne_zero_iff hπ (hm h₁)).2 h₁,
-    not_not.1 fun h ↦ h₂ ((cards.posterior_R0'_apply_ne_zero_iff hπ (hm h₃)).1 h)⟩
+  exact ⟨(cards.listener_R0'_apply_singleton_ne_zero_iff hπ).2 h₁,
+    not_not.1 fun h ↦ h₂ ((cards.listener_R0'_apply_singleton_ne_zero_iff hπ).1 h)⟩
 
 end HawkinsEtAl2025
