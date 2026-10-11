@@ -32,7 +32,8 @@
         "definite"
       ]
     ],
-    "comment": "A verb of creation licenses extraction from a definite result nominal."
+    "comment": "A verb of creation licenses extraction from a definite result nominal.",
+    "verified": "page-image"
   },
   {
     "id": "daviesdubinsky2003_ex52a_read",
@@ -67,7 +68,8 @@
         "definite"
       ]
     ],
-    "comment": "Marked ?? in the paper."
+    "comment": "Marked ?? in the paper.",
+    "verified": "page-image"
   },
   {
     "id": "daviesdubinsky2003_ex52b_write",
@@ -102,7 +104,8 @@
         "indefinite"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "daviesdubinsky2003_ex52b_read",
@@ -137,7 +140,8 @@
         "indefinite"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "daviesdubinsky2003_ex53a_tell",
@@ -172,7 +176,8 @@
         "definite"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "daviesdubinsky2003_ex53a_hear",
@@ -207,7 +212,8 @@
         "definite"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "daviesdubinsky2003_ex53b_tell",
@@ -242,7 +248,8 @@
         "indefinite"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "daviesdubinsky2003_ex53b_hear",
@@ -277,7 +284,8 @@
         "indefinite"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "daviesdubinsky2003_ex54a_paint",
@@ -312,7 +320,8 @@
         "definite"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "daviesdubinsky2003_ex54a_see",
@@ -347,7 +356,8 @@
         "definite"
       ]
     ],
-    "comment": "Marked ?? in the paper."
+    "comment": "Marked ?? in the paper.",
+    "verified": "page-image"
   },
   {
     "id": "daviesdubinsky2003_ex54b_paint",
@@ -382,7 +392,8 @@
         "indefinite"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "daviesdubinsky2003_ex54b_see",
@@ -417,6 +428,7 @@
         "indefinite"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]

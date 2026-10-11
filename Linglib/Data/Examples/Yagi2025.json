@@ -15,7 +15,8 @@
     "paperFeatures": [
       ["presuppositions", "conflicting"]
     ],
-    "comment": "Hausser 1976. The disjunctive presupposition is a tautology; false if the liquid is fermenting."
+    "comment": "Hausser 1976. The disjunctive presupposition is a tautology; false if the liquid is fermenting.",
+    "verified": "page-image"
   },
   {
     "id": "yagi2025_2",
@@ -33,7 +34,8 @@
     "paperFeatures": [
       ["presuppositions", "conflicting"]
     ],
-    "comment": "Landman 1986. False if Suzan did not meet the head of the nation."
+    "comment": "Landman 1986. False if Suzan did not meet the head of the nation.",
+    "verified": "page-image"
   },
   {
     "id": "yagi2025_3",
@@ -54,7 +56,8 @@
     "paperFeatures": [
       ["presuppositions", "conflicting"]
     ],
-    "comment": "Beaver 2001."
+    "comment": "Beaver 2001.",
+    "verified": "page-image"
   },
   {
     "id": "yagi2025_4",
@@ -74,7 +77,8 @@
     "paperFeatures": [
       ["negation", "of conflicting disjunction"]
     ],
-    "comment": "Hausser 1976."
+    "comment": "Hausser 1976.",
+    "verified": "page-image"
   },
   {
     "id": "yagi2025_5",
@@ -94,7 +98,8 @@
     "paperFeatures": [
       ["negation", "of conflicting disjunction"]
     ],
-    "comment": "Beaver 2001."
+    "comment": "Beaver 2001.",
+    "verified": "page-image"
   },
   {
     "id": "yagi2025_6",
@@ -114,7 +119,8 @@
     "paperFeatures": [
       ["presupposition", "projects"]
     ],
-    "comment": "Karttunen 1974. The disjunction-of-presuppositions modification predicts a tautologous presupposition here."
+    "comment": "Karttunen 1974. The disjunction-of-presuppositions modification predicts a tautologous presupposition here.",
+    "verified": "page-image"
   },
   {
     "id": "yagi2025_7",
@@ -132,7 +138,8 @@
     "paperFeatures": [
       ["accommodation", "non-tautological"]
     ],
-    "comment": "The first assertion contradicts the second presupposition, so the default accommodation violates genuineness."
+    "comment": "The first assertion contradicts the second presupposition, so the default accommodation violates genuineness.",
+    "verified": "page-image"
   },
   {
     "id": "yagi2025_8",
@@ -152,11 +159,12 @@
     "paperFeatures": [
       ["presupposition", "filtered"]
     ],
-    "comment": "Beaver 2001. The standard update predicts the lack of projection; the default accommodation does not."
+    "comment": "Beaver 2001. The standard update predicts the lack of projection; the default accommodation does not.",
+    "verified": "page-image"
   },
   {
     "id": "yagi2025_9",
-    "source": {"bibkey": "yagi-2025", "paperLabel": "(ia)"},
+    "source": {"bibkey": "yagi-2025", "paperLabel": "fn. 7 (i)"},
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "It must be here or (else) it must be there.",
@@ -170,13 +178,14 @@
       {"name": "one of the following obtains: it must be here; it must be there", "judgment": "acceptable"}
     ],
     "paperFeatures": [
-      ["reading", "modal split"]
+      ["reading", "salient reading"]
     ],
-    "comment": "Geurts 2005."
+    "comment": "Geurts 2005. The footnote's prose calls this example (ia); it is printed as (i).",
+    "verified": "page-image"
   },
   {
     "id": "yagi2025_10",
-    "source": {"bibkey": "yagi-2025", "paperLabel": "(iiib)"},
+    "source": {"bibkey": "yagi-2025", "paperLabel": "fn. 7 (iiib)"},
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "The doctor can tell you right away what's the matter with you, or the nurse can make an appointment for you.",
@@ -190,11 +199,12 @@
     "paperFeatures": [
       ["reading", "modal split"]
     ],
-    "comment": "Landman 1986. Each disjunct is interpreted against one disjunct of the preceding sentence."
+    "comment": "Landman 1986. Each disjunct is interpreted against one disjunct of the preceding sentence.",
+    "verified": "page-image"
   },
   {
     "id": "yagi2025_11",
-    "source": {"bibkey": "yagi-2025", "paperLabel": "(ii)"},
+    "source": {"bibkey": "yagi-2025", "paperLabel": "fn. 6 (ii)"},
     "reportedIn": null,
     "language": "stan1293",
     "primaryText": "Either John is not a scuba diver, or his wetsuit is blue.",
@@ -210,6 +220,7 @@
     "paperFeatures": [
       ["presupposition", "conditional"]
     ],
-    "comment": "Katzir and Singh 2012."
+    "comment": "Katzir and Singh 2012.",
+    "verified": "page-image"
   }
 ]

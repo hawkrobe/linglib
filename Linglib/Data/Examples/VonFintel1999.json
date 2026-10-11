@@ -15,7 +15,8 @@
       ["licenser", "only John"],
       ["npi", "ever, any"]
     ],
-    "comment": "The §2 licensing datum: 'only John' licenses NPIs in its immediate scope despite not being classically DE (ex. 11); formalized as only_isStrawsonDE / only_not_antitone."
+    "comment": "The §2 licensing datum: 'only John' licenses NPIs in its immediate scope despite not being classically DE (ex. 11); formalized as only_isStrawsonDE / only_not_antitone.",
+    "verified": "page-image"
   },
   {
     "id": "vonfintel1999_ex21",
@@ -33,7 +34,8 @@
       ["licenser", "since"],
       ["npi", "any"]
     ],
-    "comment": "'since' licenses NPIs in its complement while failing classical DE (ex. 20); formalized as since_isStrawsonDE / since_not_antitone."
+    "comment": "'since' licenses NPIs in its complement while failing classical DE (ex. 20); formalized as since_isStrawsonDE / since_not_antitone.",
+    "verified": "page-image"
   },
   {
     "id": "vonfintel1999_ex28a",
@@ -53,7 +55,8 @@
       ["licenser", "amazed/surprised"],
       ["npi", "ever"]
     ],
-    "comment": "Adversative attitude licensing datum; complement position is not classically DE (ex. 29)."
+    "comment": "Adversative attitude licensing datum; complement position is not classically DE (ex. 29).",
+    "verified": "page-image"
   },
   {
     "id": "vonfintel1999_ex28b",
@@ -73,25 +76,8 @@
       ["licenser", "sorry/regret"],
       ["npi", "any"]
     ],
-    "comment": "The explanandum for regret_isStrawsonDE: 'sorry' licenses NPIs despite the complement not being classically DE (ex. 30, regret_not_antitone)."
-  },
-  {
-    "id": "vonfintel1999_glad_any",
-    "source": {"bibkey": "von-fintel-1999", "paperLabel": "§3.3 discussion"},
-    "language": "stan1293",
-    "primaryText": "Sandy is glad that Robin bought any car.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "ungrammatical",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      ["licenser", "glad (non-licenser)"],
-      ["npi", "any"]
-    ],
-    "comment": "The sorry/glad asymmetry datum: 'glad' is UE in its complement on both of the paper's semantics (glad_monotone, gladBetter_monotone), so NPIs are not licensed. Settle-for-less rescues are recorded in KadmonLandman1993 and Lahiri1998."
+    "comment": "The explanandum for regret_isStrawsonDE: 'sorry' licenses NPIs despite the complement not being classically DE (ex. 30, regret_not_antitone).",
+    "verified": "page-image"
   },
   {
     "id": "vonfintel1999_ex70a",
@@ -112,7 +98,8 @@
       ["licenser", "conditional antecedent"],
       ["npi", "any, ever"]
     ],
-    "comment": "Ex. 70a-c bundled: conditional antecedents license NPIs; DE status depends on the conditional analysis (restrictor vs Stalnaker-Lewis) — idle ordering source: would_isStrawsonDE; genuine ordering source: not_antitone_conditionalNecessity."
+    "comment": "Ex. 70a, 70c and 70d bundled (the paper prints no 70b): conditional antecedents license NPIs; DE status depends on the conditional analysis (restrictor vs Stalnaker-Lewis) — idle ordering source: would_isStrawsonDE; genuine ordering source: not_antitone_conditionalNecessity.",
+    "verified": "page-image"
   },
   {
     "id": "vonfintel1999_ex75",
@@ -130,6 +117,7 @@
       ["licenser", "superlative"],
       ["npi", "ever"]
     ],
-    "comment": "Superlative licensing datum; the restriction position fails classical DE (ex. 76) but is Strawson-DE (ex. 77) — formalized as superlative_isStrawsonDE."
+    "comment": "Superlative licensing datum; the restriction position fails classical DE (ex. 76) but is Strawson-DE (ex. 77) — formalized as superlative_isStrawsonDE.",
+    "verified": "page-image"
   }
 ]

@@ -24,7 +24,8 @@
         "reading",
         "UNIVERSAL"
       ]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "pancheva2003_ex1b_EXP",
@@ -51,7 +52,8 @@
         "reading",
         "EXPERIENTIAL"
       ]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "pancheva2003_ex1c_RES",
@@ -78,7 +80,8 @@
         "reading",
         "RESULTATIVE"
       ]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "pancheva2003_ex5a_atelic",
@@ -105,7 +108,8 @@
         "reading",
         "EXP"
       ]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "pancheva2003_ex5b",
@@ -132,7 +136,8 @@
         "reading",
         "EXP"
       ]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "pancheva2003_ex6a_telic",
@@ -159,7 +164,8 @@
         "reading",
         "EXP or RES"
       ]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "pancheva2003_ex6b",
@@ -186,7 +192,8 @@
         "reading",
         "EXP or RES"
       ]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "pancheva2003_ex13a",
@@ -217,7 +224,8 @@
         "aspect",
         "NEUTRAL"
       ]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "pancheva2003_ex16a",
@@ -248,7 +256,8 @@
         "aspect",
         "BOUNDED"
       ]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "pancheva2003_ex30c",
@@ -275,6 +284,7 @@
         "reading",
         "RES"
       ]
-    ]
+    ],
+    "verified": "page-image"
   }
 ]

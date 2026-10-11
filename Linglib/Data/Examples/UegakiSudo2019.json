@@ -16,7 +16,8 @@
       ["predicate", "non-veridical preferential"],
       ["complement", "declarative"]
     ],
-    "comment": "Non-veridical preferentials take declarative complements."
+    "comment": "Non-veridical preferentials take declarative complements.",
+    "verified": "page-image"
   },
   {
     "id": "uegakisudo2019_6c",
@@ -35,7 +36,8 @@
       ["predicate", "veridical preferential"],
       ["complement", "declarative"]
     ],
-    "comment": "Veridical preferentials take declarative complements."
+    "comment": "Veridical preferentials take declarative complements.",
+    "verified": "page-image"
   },
   {
     "id": "uegakisudo2019_7b",
@@ -54,7 +56,8 @@
       ["predicate", "veridical preferential"],
       ["complement", "wh-interrogative"]
     ],
-    "comment": "Veridical preferentials are responsive; the preposition improves some cases, an issue taken up in section 5."
+    "comment": "Veridical preferentials are responsive; the preposition improves some cases, an issue taken up in section 5.",
+    "verified": "page-image"
   },
   {
     "id": "uegakisudo2019_7c",
@@ -73,7 +76,8 @@
       ["predicate", "veridical preferential"],
       ["complement", "wh-interrogative"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "uegakisudo2019_8a",
@@ -92,7 +96,8 @@
       ["predicate", "non-veridical preferential"],
       ["complement", "wh-interrogative"]
     ],
-    "comment": "The hope-wh puzzle: non-veridical preferentials are anti-rogative; the which-NP clause has no free-relative reading."
+    "comment": "The hope-wh puzzle: non-veridical preferentials are anti-rogative; the which-NP clause has no free-relative reading.",
+    "verified": "page-image"
   },
   {
     "id": "uegakisudo2019_8b",
@@ -111,7 +116,8 @@
       ["predicate", "non-veridical preferential"],
       ["complement", "wh-interrogative"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "uegakisudo2019_10b",
@@ -130,7 +136,8 @@
       ["predicate", "veridical preferential"],
       ["complement", "whether-interrogative"]
     ],
-    "comment": "Veridical preferentials reject whether-complements, a pattern the paper leaves to Romero's account."
+    "comment": "Veridical preferentials reject whether-complements, a pattern the paper leaves to Romero's account.",
+    "verified": "page-image"
   },
   {
     "id": "uegakisudo2019_40a",
@@ -151,7 +158,8 @@
       ["predicate", "veridical preferential"],
       ["focus", "subject"]
     ],
-    "comment": "Veridicality does not restrict the comparison class."
+    "comment": "Veridicality does not restrict the comparison class.",
+    "verified": "page-image"
   },
   {
     "id": "uegakisudo2019_40b",
@@ -172,7 +180,8 @@
       ["predicate", "non-veridical preferential"],
       ["focus", "subject"]
     ],
-    "comment": "The doxastic condition of emotive doxastics restricts the comparison class as a whole, (39)."
+    "comment": "The doxastic condition of emotive doxastics restricts the comparison class as a whole, (39).",
+    "verified": "page-image"
   },
   {
     "id": "uegakisudo2019_41",
@@ -192,7 +201,8 @@
       ["complement", "wh-interrogative"],
       ["evidence", "Threshold Significance"]
     ],
-    "comment": "Without Threshold Significance the sentence would be true in the context; instead it presupposes a student John preferred to sing."
+    "comment": "Without Threshold Significance the sentence would be true in the context; instead it presupposes a student John preferred to sing.",
+    "verified": "page-image"
   },
   {
     "id": "uegakisudo2019_42",
@@ -211,7 +221,8 @@
       ["predicate", "be indifferent"],
       ["complement", "wh-interrogative"]
     ],
-    "comment": "Be indifferent compares questions rather than propositions, so Threshold Significance holds of a question, compatibly with the context of (41)."
+    "comment": "Be indifferent compares questions rather than propositions, so Threshold Significance holds of a question, compatibly with the context of (41).",
+    "verified": "page-image"
   },
   {
     "id": "uegakisudo2019_43a",
@@ -223,13 +234,14 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "marginal",
+    "judgment": "questionable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["predicate", "be indifferent"],
       ["complement", "declarative"]
     ],
-    "comment": "Marginal at best with a declarative: be indifferent concerns questions."
+    "comment": "Printed ??; the prose calls be indifferent 'marginal at best' with declarative complements, since it concerns questions.",
+    "verified": "page-image"
   }
 ]

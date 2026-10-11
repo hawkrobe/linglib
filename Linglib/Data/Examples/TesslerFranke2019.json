@@ -1,9 +1,9 @@
 [
   {
     "id": "tesslerfranke2019_happy",
-    "source": {"bibkey": "tessler-franke-2019", "paperLabel": "UNVERIFIED quadruplet, bare positive"},
+    "source": {"bibkey": "tessler-franke-2019", "paperLabel": "Figure 3"},
     "language": "stan1293",
-    "primaryText": "She is happy.",
+    "primaryText": "Jones is happy.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -21,20 +21,19 @@
   },
   {
     "id": "tesslerfranke2019_unhappy",
-    "source": {"bibkey": "tessler-franke-2019", "paperLabel": "UNVERIFIED Experiment 1, morphological negation"},
+    "source": {"bibkey": "tessler-franke-2019", "paperLabel": "Figure 3"},
     "language": "stan1293",
-    "primaryText": "She is unhappy.",
+    "primaryText": "Jones is unhappy.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "Morphological negation prefers the contrary (polar-opposite) interpretation: 'unhappy' means positively unhappy (below a low threshold), not merely 'not happy'.",
+    "context": "Figure 3: 'unhappy' could signal either contradictory negation ¬H ([un- [happy]], x ≤ θ1) or contrary negation H̃ ([unhappy], x ≤ θ2). In isolation (Experiment 1) morphological antonyms and negated positives (unhappy, not happy) receive the same ratings.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["form", "negative"],
       ["inner_neg", "morphological"],
-      ["interpretation", "contrary"],
       ["cost", "2"],
       ["equivalent_to_positive", "false"]
     ],
@@ -42,20 +41,19 @@
   },
   {
     "id": "tesslerfranke2019_not_happy",
-    "source": {"bibkey": "tessler-franke-2019", "paperLabel": "UNVERIFIED Experiment 1, syntactic negation"},
+    "source": {"bibkey": "tessler-franke-2019", "paperLabel": "Figure 3"},
     "language": "stan1293",
-    "primaryText": "She is not happy.",
+    "primaryText": "Jones is not happy.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "Syntactic negation is flexible between contradictory and contrary readings; the costlier two-word form licenses the marked contradictory reading more readily than 'unhappy' (Horn's division of pragmatic labor).",
+    "context": "Figure 3: 'not happy' could signal either contradictory negation ¬H ([not [happy]], x ≤ θ1) or contrary negation H̃ ([not happy], x ≤ θ2). In isolation (Experiment 1) negated positives and morphological antonyms (not happy, unhappy) receive the same ratings.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["form", "notPositive"],
       ["inner_neg", "syntactic"],
-      ["interpretation", "contradictory"],
       ["cost", "3"],
       ["equivalent_to_positive", "false"]
     ],
@@ -63,9 +61,9 @@
   },
   {
     "id": "tesslerfranke2019_not_unhappy",
-    "source": {"bibkey": "tessler-franke-2019", "paperLabel": "UNVERIFIED §1, double negation"},
+    "source": {"bibkey": "tessler-franke-2019", "paperLabel": "Figure 3"},
     "language": "stan1293",
-    "primaryText": "She is not unhappy.",
+    "primaryText": "Jones is not unhappy.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -76,7 +74,6 @@
     "paperFeatures": [
       ["form", "notNegative"],
       ["inner_neg", "morphological"],
-      ["interpretation", "contrary"],
       ["cost", "5"],
       ["equivalent_to_positive", "false"]
     ],

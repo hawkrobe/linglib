@@ -14,7 +14,8 @@
     "paperFeatures": [
       ["ambiguity", "ambiguous"]
     ],
-    "comment": "The temporarily ambiguous instruction of Tanenhaus et al. (1995), on the towel a modifier of the apple or the destination: listeners fixate the empty towel on hearing the prepositional phrase in the one-referent display."
+    "comment": "The temporarily ambiguous instruction of Tanenhaus et al. (1995), on the towel a modifier of the apple or the destination: listeners fixate the empty towel on hearing the prepositional phrase in the one-referent display.",
+    "verified": "page-image"
   },
   {
     "id": "engelhardtetal2006_2",
@@ -31,7 +32,8 @@
     "paperFeatures": [
       ["ambiguity", "unambiguous"]
     ],
-    "comment": "The unambiguous counterpart of (1)."
+    "comment": "The unambiguous counterpart of (1).",
+    "verified": "page-image"
   },
   {
     "id": "engelhardtetal2006_3",
@@ -49,7 +51,8 @@
       ["target", "bare"],
       ["destination", "towel"]
     ],
-    "comment": "Bare target, matching location: the location is under-described, since the apple is already on a towel. Speakers never produced it and listeners rated it lowest of the four."
+    "comment": "Bare target, matching location: the location is under-described, since the apple is already on a towel. Speakers never produced it and listeners rated it lowest of the four.",
+    "verified": "page-image"
   },
   {
     "id": "engelhardtetal2006_4",
@@ -67,7 +70,8 @@
       ["target", "bare"],
       ["destination", "box"]
     ],
-    "comment": "Bare target, different location: concise in the one-referent display, an under-description of the target in the two-referent display."
+    "comment": "Bare target, different location: concise in the one-referent display, an under-description of the target in the two-referent display.",
+    "verified": "page-image"
   },
   {
     "id": "engelhardtetal2006_5",
@@ -85,7 +89,8 @@
       ["target", "modified"],
       ["destination", "otherTowel"]
     ],
-    "comment": "Modified target, matching location: the target is over-described in the one-referent display; the location carries the pre-nominal modifier other."
+    "comment": "Modified target, matching location: the target is over-described in the one-referent display; the location carries the pre-nominal modifier other.",
+    "verified": "page-image"
   },
   {
     "id": "engelhardtetal2006_6",
@@ -103,7 +108,8 @@
       ["target", "modified"],
       ["destination", "box"]
     ],
-    "comment": "Modified target, different location: an over-description in the one-referent display, the modification required in the two-referent display. In Experiment 3 listeners fixated the empty towel on hearing on the towel and were delayed in fixating the box."
+    "comment": "Modified target, different location: an over-description in the one-referent display, the modification required in the two-referent display. In Experiment 3 listeners fixated the empty towel on hearing on the towel and were delayed in fixating the box.",
+    "verified": "page-image"
   },
   {
     "id": "engelhardtetal2006_7",
@@ -118,6 +124,7 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Recorded so that the bare target instruction of the matching condition could be cut from it with the prosody of (6)."
+    "comment": "Recorded so that the bare target instruction of the matching condition could be cut from it with the prosody of (6).",
+    "verified": "page-image"
   }
 ]

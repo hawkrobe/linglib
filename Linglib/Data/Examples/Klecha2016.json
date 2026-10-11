@@ -27,7 +27,7 @@
         "judgment": "ungrammatical"
       }
     ],
-    "comment": "Klecha 2016 ex (1), Semantics & Pragmatics 9(10) p. 9:1. Opening example introducing ULC; both deictic-tense and relative-tense theories are surveyed in his §1 against this datum. The DOX modal base under `think` blocks future-shifted reading, which is Klecha's central explanatory move.",
+    "comment": "Klecha 2016 ex (1), Semantics & Pragmatics 9, article 9, p. 9:2. Opening example introducing ULC; both deictic-tense and relative-tense theories are surveyed in his (unnumbered) introduction against this datum. The DOX modal base under `think` blocks future-shifted reading, which is Klecha's central explanatory move.",
     "paperFeatures": [
       [
         "verb",
@@ -45,7 +45,8 @@
         "future",
         "unavailable"
       ]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "klecha2016_ex2a",
@@ -54,8 +55,9 @@
       "paperLabel": "(2a) — COCA corpus"
     },
     "language": "stan1293",
-    "primaryText": "He said Sorenstam had no business playing the PGA Tour, he hoped she missed the cut and he'd withdraw if paired with her, the AP reported.",
+    "primaryText": "But none of that has put Singh in the headlines like his comments after finishing second at the Wachovia Championship in Charlotte, two weeks before the Colonial. He said Sorenstam had no business playing the PGA Tour, he hoped she missed the cut and he'd withdraw if paired with her, the AP reported.",
     "discourseSegments": [
+      "But none of that has put Singh in the headlines like his comments after finishing second at the Wachovia Championship in Charlotte, two weeks before the Colonial.",
       "He said Sorenstam had no business playing the PGA Tour,",
       "he hoped she missed the cut and he'd withdraw if paired with her,",
       "the AP reported."
@@ -71,7 +73,7 @@
         "judgment": "acceptable"
       }
     ],
-    "comment": "Klecha 2016 ex (2a), p. 9:2-3. Corpus of Contemporary American English (Davies 2008). Cornerstone of Klecha's argument: under `hope` (which permits a CIR modal base), embedded past can have a future-shifted reading — impossible under `think` (DOX-only). Diagnoses the modal-base parameter, not the attitude verb per se.",
+    "comment": "Klecha 2016 ex (2a), p. 9:3. Corpus of Contemporary American English (Davies 2008). Cornerstone of Klecha's argument: under `hope` (which permits a CIR modal base), embedded past can have a future-shifted reading — impossible under `think` (DOX-only). Diagnoses the modal-base parameter, not the attitude verb per se. The paper italicizes 'he hoped she missed the cut'.",
     "paperFeatures": [
       [
         "verb",
@@ -81,7 +83,8 @@
         "future",
         "available"
       ]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "klecha2016_ex2b",
@@ -98,7 +101,7 @@
       "Then he could behead her with a clean conscience."
     ],
     "glossedTokens": [],
-    "translation": "He hoped she tried to kill him first.",
+    "translation": "",
     "context": "Second naturally-occurring example of future-shifted past under `hope`. The kill-attempt is future of the hoping; the embedded past tense morphology doesn't force temporal precedence.",
     "judgment": "acceptable",
     "alternatives": [],
@@ -108,7 +111,7 @@
         "judgment": "acceptable"
       }
     ],
-    "comment": "Klecha 2016 ex (2b), p. 9:3. Second corpus example for the same point.",
+    "comment": "Klecha 2016 ex (2b), p. 9:3. Second corpus example for the same point. The paper italicizes 'He hoped she tried to kill him first.'",
     "paperFeatures": [
       [
         "verb",
@@ -118,7 +121,8 @@
         "future",
         "available"
       ]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "klecha2016_ex3a",
@@ -127,7 +131,7 @@
       "paperLabel": "(3a) — COCA corpus"
     },
     "language": "stan1293",
-    "primaryText": "There were times when I picked one receiver and prayed he got open.",
+    "primaryText": "'There were times when I picked one receiver and prayed he got open,' recalled Collins, who completed 49.4 percent of his passes as a rookie out of Penn State, and finished with a quarterback rating of 61.9. 'If he got open great; If not, I took the sack or threw it away.'",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -140,7 +144,7 @@
         "judgment": "acceptable"
       }
     ],
-    "comment": "Klecha 2016 ex (3a), p. 9:3. `Pray` patterns with `hope`: CIR-base attitude verbs permit future-shifted embedded past. Quarterback Kerry Collins, attributed in the paper.",
+    "comment": "Klecha 2016 ex (3a), p. 9:3. `Pray` patterns with `hope`: CIR-base attitude verbs permit future-shifted embedded past. The passage attributes the quote to Collins, a quarterback; the paper italicizes 'prayed he got open'.",
     "paperFeatures": [
       [
         "verb",
@@ -150,7 +154,8 @@
         "future",
         "available"
       ]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "klecha2016_ex3b",
@@ -159,16 +164,18 @@
       "paperLabel": "(3b) — COCA corpus"
     },
     "language": "stan1293",
-    "primaryText": "Thirteen months and she would legally be able to walk out the door and live on her own. Her trust fund would be hers. She would no longer be dependent on her mother and Victor. Thirteen months. She prayed she survived that long.",
+    "primaryText": "Thirteen months and she would legally be able to walk out the door and live on her own. Her trust fund would be hers. She would no longer be dependent on her mother and Victor. Thirteen months. She prayed she survived that long. It wasn't that she was worried about Victor killing her. She feared her own hand.",
     "discourseSegments": [
       "Thirteen months and she would legally be able to walk out the door and live on her own.",
       "Her trust fund would be hers.",
       "She would no longer be dependent on her mother and Victor.",
       "Thirteen months.",
-      "She prayed she survived that long."
+      "She prayed she survived that long.",
+      "It wasn't that she was worried about Victor killing her.",
+      "She feared her own hand."
     ],
     "glossedTokens": [],
-    "translation": "She prayed she survived that long.",
+    "translation": "",
     "context": "Past morphology `survived` in the embedded clause of `pray`, but the surviving is future-of-the-praying (thirteen months out).",
     "judgment": "acceptable",
     "alternatives": [],
@@ -178,7 +185,7 @@
         "judgment": "acceptable"
       }
     ],
-    "comment": "Klecha 2016 ex (3b), p. 9:3. Fourth corpus example. The (2a-b)/(3a-b) cluster establishes that future-shifted past is systematic across CIR-compatible attitude verbs, not exceptional.",
+    "comment": "Klecha 2016 ex (3b), p. 9:3. Fourth corpus example. The (2a-b)/(3a-b) cluster establishes that future-shifted past is systematic across CIR-compatible attitude verbs, not exceptional. The paper italicizes 'She prayed she survived that long.'",
     "paperFeatures": [
       [
         "verb",
@@ -188,6 +195,7 @@
         "future",
         "available"
       ]
-    ]
+    ],
+    "verified": "page-image"
   }
 ]

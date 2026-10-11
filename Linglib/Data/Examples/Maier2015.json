@@ -3,12 +3,12 @@
     "id": "maier2015_42",
     "source": {
       "bibkey": "maier-2015",
-      "paperLabel": "(42), after Karttunen (1973)"
+      "paperLabel": "(2)"
     },
     "language": "stan1293",
-    "primaryText": "Bill believed Fred had been beating his wife and he hoped Fred would stop.",
+    "primaryText": "Bill believed that Fred had been beating his wife and he hoped that Fred would stop beating her.",
     "discourseSegments": [
-      "Bill believed Fred had been beating his wife and he hoped Fred would stop."
+      "Bill believed that Fred had been beating his wife and he hoped that Fred would stop beating her."
     ],
     "glossedTokens": [],
     "translation": "",
@@ -29,7 +29,9 @@
         "trigger",
         "stop"
       ]
-    ]
+    ],
+    "comment": "Maier's (2), cited from Karttunen (1973), ex. (42), who credits the observation to John Lawler; Karttunen's own (42) reads '... his wife and hoped that Fred would stop beating her' (no 'he').",
+    "verified": "page-image"
   },
   {
     "id": "maier2015_7a",
@@ -62,7 +64,8 @@
         "trigger",
         "too"
       ]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "maier2015_7b",
@@ -79,7 +82,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "The presupposition of too finds no antecedent in the belief and projects.",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -95,7 +98,8 @@
         "trigger",
         "too"
       ]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "maier2015_22a",
@@ -128,7 +132,8 @@
         "trigger",
         "too"
       ]
-    ]
+    ],
+    "verified": "page-image"
   },
   {
     "id": "maier2015_22b",
@@ -145,7 +150,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "The reverse order does not filter.",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -161,6 +166,7 @@
         "trigger",
         "too"
       ]
-    ]
+    ],
+    "verified": "page-image"
   }
 ]

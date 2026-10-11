@@ -67,19 +67,6 @@ def ex28b : Datum :=
     readings := []
     paperFeatures := [("licenser", "sorry/regret"), ("npi", "any")] }
 
-def glad_any : Datum :=
-  { id := "vonfintel1999_glad_any"
-    source := ⟨"von-fintel-1999", "§3.3 discussion"⟩
-    reportedIn := none
-    language := "stan1293"
-    primaryText := "Sandy is glad that Robin bought any car."
-    glossedTokens := []
-    context := ""
-    judgment := .ungrammatical
-    alternatives := []
-    readings := []
-    paperFeatures := [("licenser", "glad (non-licenser)"), ("npi", "any")] }
-
 def ex70a : Datum :=
   { id := "vonfintel1999_ex70a"
     source := ⟨"von-fintel-1999", "ex. 70a, p. 135"⟩
@@ -106,6 +93,6 @@ def ex75 : Datum :=
     readings := []
     paperFeatures := [("licenser", "superlative"), ("npi", "ever")] }
 
-def all : List Datum := [ex10, ex21, ex28a, ex28b, glad_any, ex70a, ex75]
+def all : List Datum := [ex10, ex21, ex28a, ex28b, ex70a, ex75]
 
 end VonFintel1999.Examples

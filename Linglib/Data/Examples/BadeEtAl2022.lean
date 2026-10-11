@@ -56,7 +56,7 @@ def bpcm2022_6_might_london : Datum :=
 
 def bpcm2022_10_miranda : Datum :=
   { id := "bpcm2022_10_miranda"
-    source := ⟨"mascarenhas-picat-2019", "target items"⟩
+    source := ⟨"mascarenhas-picat-2019", "(7)"⟩
     reportedIn := some ⟨"bade-picat-chung-mascarenhas-2022", "(10)"⟩
     language := "stan1293"
     primaryText := "Miranda is afraid of spiders."

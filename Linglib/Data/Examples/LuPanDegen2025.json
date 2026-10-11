@@ -14,7 +14,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "marginal",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -31,7 +31,8 @@
         "mos"
       ]
     ],
-    "comment": "Dialog frame: Hanako's utterance sets the context and Scott's question is rated; capitals mark the focused constituent."
+    "comment": "Dialog frame: Hanako's utterance sets the context and Scott's question is rated; capitals mark the focused constituent.",
+    "verified": "page-image"
   },
   {
     "id": "lupandegen2025_exp1_embeddedfocus",
@@ -65,7 +66,8 @@
         "mos"
       ]
     ],
-    "comment": "Dialog frame: Hanako's utterance sets the context and Scott's question is rated; capitals mark the focused constituent."
+    "comment": "Dialog frame: Hanako's utterance sets the context and Scott's question is rated; capitals mark the focused constituent.",
+    "verified": "page-image"
   },
   {
     "id": "lupandegen2025_exp2a_say_verbfocus",
@@ -82,7 +84,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "marginal",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -99,7 +101,8 @@
         "say"
       ]
     ],
-    "comment": "Dialog frame: Hanako's utterance sets the context and Scott's question is rated; capitals mark the focused constituent. The item alternates whisper and say; this is the say version."
+    "comment": "Dialog frame: Hanako's utterance sets the context and Scott's question is rated; capitals mark the focused constituent. The item alternates whisper and say; this is the say version.",
+    "verified": "page-image"
   },
   {
     "id": "lupandegen2025_exp2a_say_embeddedfocus",
@@ -133,7 +136,8 @@
         "say"
       ]
     ],
-    "comment": "Dialog frame: Hanako's utterance sets the context and Scott's question is rated; capitals mark the focused constituent. The item alternates whisper and say; this is the say version."
+    "comment": "Dialog frame: Hanako's utterance sets the context and Scott's question is rated; capitals mark the focused constituent. The item alternates whisper and say; this is the say version.",
+    "verified": "page-image"
   },
   {
     "id": "lupandegen2025_exp3a_say",
@@ -167,7 +171,8 @@
         "say"
       ]
     ],
-    "comment": "Dialog frame: Hanako's utterance sets the context and Scott's question is rated; capitals mark the focused constituent."
+    "comment": "Dialog frame: Hanako's utterance sets the context and Scott's question is rated; capitals mark the focused constituent.",
+    "verified": "page-image"
   },
   {
     "id": "lupandegen2025_exp3a_sayadverb",
@@ -184,7 +189,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "marginal",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -201,7 +206,8 @@
         "sayAdverb"
       ]
     ],
-    "comment": "Dialog frame: Hanako's utterance sets the context and Scott's question is rated; capitals mark the focused constituent."
+    "comment": "Dialog frame: Hanako's utterance sets the context and Scott's question is rated; capitals mark the focused constituent.",
+    "verified": "page-image"
   },
   {
     "id": "lupandegen2025_exp3b_adverbfocus",
@@ -218,7 +224,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "marginal",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -235,7 +241,8 @@
         "sayAdverb"
       ]
     ],
-    "comment": "Dialog frame: Hanako's utterance sets the context and Scott's question is rated; capitals mark the focused constituent."
+    "comment": "Dialog frame: Hanako's utterance sets the context and Scott's question is rated; capitals mark the focused constituent.",
+    "verified": "page-image"
   },
   {
     "id": "lupandegen2025_exp3b_embeddedfocus",
@@ -269,6 +276,7 @@
         "sayAdverb"
       ]
     ],
-    "comment": "Dialog frame: Hanako's utterance sets the context and Scott's question is rated; capitals mark the focused constituent."
+    "comment": "Dialog frame: Hanako's utterance sets the context and Scott's question is rated; capitals mark the focused constituent.",
+    "verified": "page-image"
   }
 ]

@@ -17,7 +17,7 @@ namespace HawkinsGweonGoodman2021.Examples
 
 def item1 : Datum :=
   { id := "hawkinsgweongoodman2021_item1"
-    source := ⟨"keysar-etal-2003", "Table 1, item 1"⟩
+    source := ⟨"keysar-etal-2003", ""⟩
     reportedIn := some ⟨"hawkins-gweon-goodman-2021", "Table 1, item 1"⟩
     language := "stan1293"
     primaryText := "Glasses"
@@ -30,7 +30,7 @@ def item1 : Datum :=
 
 def item2 : Datum :=
   { id := "hawkinsgweongoodman2021_item2"
-    source := ⟨"keysar-etal-2003", "Table 1, item 2"⟩
+    source := ⟨"keysar-etal-2003", ""⟩
     reportedIn := some ⟨"hawkins-gweon-goodman-2021", "Table 1, item 2"⟩
     language := "stan1293"
     primaryText := "Bottom block"
@@ -43,7 +43,7 @@ def item2 : Datum :=
 
 def item3 : Datum :=
   { id := "hawkinsgweongoodman2021_item3"
-    source := ⟨"keysar-etal-2003", "Table 1, item 3"⟩
+    source := ⟨"keysar-etal-2003", ""⟩
     reportedIn := some ⟨"hawkins-gweon-goodman-2021", "Table 1, item 3"⟩
     language := "stan1293"
     primaryText := "Tape"
@@ -56,7 +56,7 @@ def item3 : Datum :=
 
 def item4 : Datum :=
   { id := "hawkinsgweongoodman2021_item4"
-    source := ⟨"keysar-etal-2003", "Table 1, item 4"⟩
+    source := ⟨"keysar-etal-2003", ""⟩
     reportedIn := some ⟨"hawkins-gweon-goodman-2021", "Table 1, item 4"⟩
     language := "stan1293"
     primaryText := "Large measuring cup"
@@ -69,7 +69,7 @@ def item4 : Datum :=
 
 def item5 : Datum :=
   { id := "hawkinsgweongoodman2021_item5"
-    source := ⟨"keysar-etal-2003", "Table 1, item 5"⟩
+    source := ⟨"keysar-etal-2003", ""⟩
     reportedIn := some ⟨"hawkins-gweon-goodman-2021", "Table 1, item 5"⟩
     language := "stan1293"
     primaryText := "Brush"
@@ -82,7 +82,7 @@ def item5 : Datum :=
 
 def item6 : Datum :=
   { id := "hawkinsgweongoodman2021_item6"
-    source := ⟨"keysar-etal-2003", "Table 1, item 6"⟩
+    source := ⟨"keysar-etal-2003", ""⟩
     reportedIn := some ⟨"hawkins-gweon-goodman-2021", "Table 1, item 6"⟩
     language := "stan1293"
     primaryText := "Eraser"
@@ -95,7 +95,7 @@ def item6 : Datum :=
 
 def item7 : Datum :=
   { id := "hawkinsgweongoodman2021_item7"
-    source := ⟨"keysar-etal-2003", "Table 1, item 7"⟩
+    source := ⟨"keysar-etal-2003", ""⟩
     reportedIn := some ⟨"hawkins-gweon-goodman-2021", "Table 1, item 7"⟩
     language := "stan1293"
     primaryText := "Small candle"
@@ -108,7 +108,7 @@ def item7 : Datum :=
 
 def item8 : Datum :=
   { id := "hawkinsgweongoodman2021_item8"
-    source := ⟨"keysar-etal-2003", "Table 1, item 8"⟩
+    source := ⟨"keysar-etal-2003", ""⟩
     reportedIn := some ⟨"hawkins-gweon-goodman-2021", "Table 1, item 8"⟩
     language := "stan1293"
     primaryText := "Mouse"

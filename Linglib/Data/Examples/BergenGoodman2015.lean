@@ -17,7 +17,7 @@ namespace BergenGoodman2015.Examples
 
 def stressed_subject : Datum :=
   { id := "bergengoodman2015_stressed_subject"
-    source := ⟨"bergen-goodman-2015", "UNVERIFIED (2)"⟩
+    source := ⟨"bergen-goodman-2015", "(2)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "BOB went to the movies."
@@ -30,7 +30,7 @@ def stressed_subject : Datum :=
 
 def unstressed_subject : Datum :=
   { id := "bergengoodman2015_unstressed_subject"
-    source := ⟨"bergen-goodman-2015", "UNVERIFIED section 4"⟩
+    source := ⟨"bergen-goodman-2015", "(2), unstressed"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Bob went to the movies."

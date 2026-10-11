@@ -6,14 +6,15 @@
     "language": "stan1293",
     "primaryText": "Frank opened his presents.",
     "discourseSegments": [],
-    "glossedTokens": [["Frank", "Frank"], ["opened", "open.PST"], ["his", "3SG.M.POSS"], ["presents", "present.PL"]],
+    "glossedTokens": [],
     "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "augurzkyetal2023_3",
@@ -22,14 +23,15 @@
     "language": "stan1293",
     "primaryText": "Frank didn't open his presents.",
     "discourseSegments": [],
-    "glossedTokens": [["Frank", "Frank"], ["didn't", "do.PST.NEG"], ["open", "open"], ["his", "3SG.M.POSS"], ["presents", "present.PL"]],
+    "glossedTokens": [],
     "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "augurzkyetal2023_14",
@@ -38,14 +40,15 @@
     "language": "stan1293",
     "primaryText": "Every boy opened his presents.",
     "discourseSegments": [],
-    "glossedTokens": [["Every", "every"], ["boy", "boy"], ["opened", "open.PST"], ["his", "3SG.M.POSS"], ["presents", "present.PL"]],
+    "glossedTokens": [],
     "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "augurzkyetal2023_15",
@@ -54,14 +57,15 @@
     "language": "stan1293",
     "primaryText": "No boy opened his presents.",
     "discourseSegments": [],
-    "glossedTokens": [["No", "no"], ["boy", "boy"], ["opened", "open.PST"], ["his", "3SG.M.POSS"], ["presents", "present.PL"]],
+    "glossedTokens": [],
     "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "augurzkyetal2023_notEvery",
@@ -70,14 +74,15 @@
     "language": "stan1293",
     "primaryText": "Not every boy opened his presents.",
     "discourseSegments": [],
-    "glossedTokens": [["Not", "not"], ["every", "every"], ["boy", "boy"], ["opened", "open.PST"], ["his", "3SG.M.POSS"], ["presents", "present.PL"]],
+    "glossedTokens": [],
     "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "augurzkyetal2023_20",
@@ -86,13 +91,14 @@
     "language": "stan1293",
     "primaryText": "Exactly two boys opened their presents.",
     "discourseSegments": [],
-    "glossedTokens": [["Exactly", "exactly"], ["two", "two"], ["boys", "boy.PL"], ["opened", "open.PST"], ["their", "3PL.POSS"], ["presents", "present.PL"]],
+    "glossedTokens": [],
     "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]

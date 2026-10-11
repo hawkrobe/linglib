@@ -9,14 +9,14 @@ public import Linglib.Data.Examples.LuPanDegen2025
 # Lu, Pan and Degen (2025): Evidence for a Discourse Account of Manner-of-Speaking Islands
 
 This file formalizes the backgroundedness account of manner-of-speaking islands that
-[lu-pan-degen-2025] support in five acceptability experiments. A constituent is foregrounded
+Lu, Pan and Degen support in five acceptability experiments. A constituent is foregrounded
 when its alternatives are among the answers to the question under discussion, (3), with
-alternative sets and answers after [roberts-1996] and [roberts-2012], and backgrounded otherwise
+alternative sets and answers after Roberts, and backgrounded otherwise
 (`Foregrounded`), which is the question deciding each of the constituent's alternatives
 (`Setoid.le_ker_iff_forall_decides`). A communication event has a manner and a content,
 and the manner question backgrounds the content (`mannerQUD`, `contentQUD`,
 `not_foregrounded_content_mannerQUD`). Movement foregrounds the moved element, so moving it out of
-a backgrounded complement is the information-structural clash of [erteschik-shir-1973]: the
+a backgrounded complement is the information-structural clash of Erteschik-Shir: the
 embedded object is an island exactly when the complement is backgrounded under the question under
 discussion (`Island`).
 
@@ -30,8 +30,7 @@ removes the island of a manner-of-speaking verb, Experiment 1 (`island_whisper_i
 manner-of-speaking verb, by default in Experiment 3a and under focus in 3b
 (`island_sayAdverb_iff_island_whisper`). The manner component is read from the verb's Levin class in
 `Fragments/English` (`MatrixPredicate.hasManner_of_mannerOfSpeaking`,
-`MatrixPredicate.hasManner_say_iff`), and the stimulus rows
-of `Data/Examples/LuPanDegen2025` are classified by the same rule (`rows_classified`).
+`MatrixPredicate.hasManner_say_iff`).
 
 ## Implementation notes
 
@@ -50,6 +49,12 @@ constant. The residual difference between manner-of-speaking verbs and *say* und
 in Experiment 2a, the default backgroundedness contrast of Experiment 2b, and the rating means
 are not represented; the paper notes that the account makes no prediction about the obligatory
 overt complementizer of manner-of-speaking complements (22).
+
+## TODO
+
+The stimuli of `Data/Examples/LuPanDegen2025` are printed unmarked; which member of each contrast
+is degraded is a rating result of the experiments, for `Data/Experiments`, and the island rule
+is not yet checked against those results.
 
 ## References
 
@@ -237,13 +242,6 @@ def rowFocus (e : Datum) : Option FocusCondition :=
 
 /-- Every row has a predicate and a focus condition. -/
 theorem rows_parse : ∀ e ∈ Examples.all, (rowPredicate e).isSome ∧ (rowFocus e).isSome := by
-  decide
-
-/-- The rows' judgments follow the rule: the degraded member of each contrast is the island. -/
-theorem rows_classified :
-    ∀ e ∈ Examples.all, ∀ p ∈ rowPredicate e, ∀ f ∈ rowFocus e,
-      (Island Manner Content p f ↔ e.judgment = .marginal) := by
-  simp only [island_iff]
   decide
 
 end Island

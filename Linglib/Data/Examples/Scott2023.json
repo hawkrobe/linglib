@@ -1,12 +1,12 @@
 [
   {
     "id": "scott2023_78a",
-    "source": {"bibkey": "scott-2023", "paperLabel": "(78a)"},
+    "source": {"bibkey": "scott-2023", "paperLabel": "ch. 4, (78a)"},
     "language": "mamm1241",
-    "primaryText": "Ma qo b'et *qo'=y.",
+    "primaryText": "Ma qo b'et *qo=y.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Ma", "PROX"], ["qo", "B1PL"], ["b'et", "walk"], ["qo'=y", "1PL=DISAGR"]
+      ["Ma", "PROX"], ["qo", "B1PL"], ["b'et", "walk"], ["qo=y", "1PL=DISAGR"]
     ],
     "translation": "We (exclusive) walked.",
     "context": "",
@@ -18,17 +18,18 @@
       ["cell", "1plExcl"],
       ["morphemes", "qo=i"]
     ],
-    "comment": "The full first-person plural pronoun is out as an intransitive subject agreed with by Infl."
+    "comment": "The full first-person plural pronoun is out as an intransitive subject agreed with by Infl.",
+    "verified": "page-image"
   },
   {
     "id": "scott2023_78b",
-    "source": {"bibkey": "scott-2023", "paperLabel": "(78b)"},
+    "source": {"bibkey": "scott-2023", "paperLabel": "ch. 4, (78b)"},
     "language": "mamm1241",
-    "primaryText": "Ma ∅ kub' q-tz'ib'-an *qo'=y.",
+    "primaryText": "Ma ∅ kub' q-tz'ib'-an *qo=y.",
     "discourseSegments": [],
     "glossedTokens": [
       ["Ma", "PROX"], ["∅", "B2/3SG"], ["kub'", "DIR:down"], ["q-tz'ib'-an", "A1PL-write-DS"],
-      ["qo'=y", "1PL=DISAGR"]
+      ["qo=y", "1PL=DISAGR"]
     ],
     "translation": "We (exclusive) wrote it down.",
     "context": "",
@@ -40,16 +41,17 @@
       ["cell", "1plExcl"],
       ["morphemes", "qo=i"]
     ],
-    "comment": "The full first-person plural pronoun is out as a transitive subject agreed with by Voice."
+    "comment": "The full first-person plural pronoun is out as a transitive subject agreed with by Voice.",
+    "verified": "page-image"
   },
   {
     "id": "scott2023_78c",
-    "source": {"bibkey": "scott-2023", "paperLabel": "(78c)"},
+    "source": {"bibkey": "scott-2023", "paperLabel": "ch. 4, (78c)"},
     "language": "mamm1241",
-    "primaryText": "q-lan *qo'=y",
+    "primaryText": "q-lan *qo=y",
     "discourseSegments": [],
     "glossedTokens": [
-      ["q-lan", "A1PL-wool.thread"], ["qo'=y", "1PL=DISAGR"]
+      ["q-lan", "A1PL-wool.thread"], ["qo=y", "1PL=DISAGR"]
     ],
     "translation": "our (exclusive) wool thread",
     "context": "",
@@ -61,11 +63,12 @@
       ["cell", "1plExcl"],
       ["morphemes", "qo=i"]
     ],
-    "comment": "The full first-person plural pronoun is out as a possessor agreed with by Poss."
+    "comment": "The full first-person plural pronoun is out as a possessor agreed with by Poss.",
+    "verified": "page-image"
   },
   {
     "id": "scott2023_79",
-    "source": {"bibkey": "scott-2023", "paperLabel": "(79)"},
+    "source": {"bibkey": "scott-2023", "paperLabel": "ch. 4, (79)"},
     "language": "mamm1241",
     "primaryText": "B'et qo'=y.",
     "discourseSegments": [],
@@ -82,11 +85,12 @@
       ["cell", "1plExcl"],
       ["morphemes", "qo=i"]
     ],
-    "comment": "With no agreement on the predicate the full pronoun is in."
+    "comment": "With no agreement on the predicate the full pronoun is in.",
+    "verified": "page-image"
   },
   {
     "id": "scott2023_68b",
-    "source": {"bibkey": "scott-2023", "paperLabel": "(68b)"},
+    "source": {"bibkey": "scott-2023", "paperLabel": "ch. 4, (68b)"},
     "language": "mamm1241",
     "primaryText": "O qo tan=i.",
     "discourseSegments": [],
@@ -103,11 +107,12 @@
       ["cell", "1plExcl"],
       ["morphemes", "=i"]
     ],
-    "comment": "The reduced first-person plural subject pronoun: the disagreement enclitic alone."
+    "comment": "The reduced first-person plural subject pronoun: the disagreement enclitic alone.",
+    "verified": "page-image"
   },
   {
     "id": "scott2023_85a",
-    "source": {"bibkey": "scott-2023", "paperLabel": "(85a)"},
+    "source": {"bibkey": "scott-2023", "paperLabel": "ch. 4, (85a)"},
     "language": "mamm1241",
     "primaryText": "Ma chin b'et *qin=i.",
     "discourseSegments": [],
@@ -124,11 +129,12 @@
       ["cell", "1sg"],
       ["morphemes", "qin=i"]
     ],
-    "comment": "The full first-person singular pronoun is out as an intransitive subject."
+    "comment": "The full first-person singular pronoun is out as an intransitive subject.",
+    "verified": "page-image"
   },
   {
     "id": "scott2023_85b",
-    "source": {"bibkey": "scott-2023", "paperLabel": "(85b)"},
+    "source": {"bibkey": "scott-2023", "paperLabel": "ch. 4, (85b)"},
     "language": "mamm1241",
     "primaryText": "Ma ∅ kub' n-tz'ib'-an *qin=i.",
     "discourseSegments": [],
@@ -146,11 +152,12 @@
       ["cell", "1sg"],
       ["morphemes", "qin=i"]
     ],
-    "comment": "The full first-person singular pronoun is out as a transitive subject."
+    "comment": "The full first-person singular pronoun is out as a transitive subject.",
+    "verified": "page-image"
   },
   {
     "id": "scott2023_85c",
-    "source": {"bibkey": "scott-2023", "paperLabel": "(85c)"},
+    "source": {"bibkey": "scott-2023", "paperLabel": "ch. 4, (85c)"},
     "language": "mamm1241",
     "primaryText": "n-lan *qin=i",
     "discourseSegments": [],
@@ -167,11 +174,12 @@
       ["cell", "1sg"],
       ["morphemes", "qin=i"]
     ],
-    "comment": "The full first-person singular pronoun is out as a possessor."
+    "comment": "The full first-person singular pronoun is out as a possessor.",
+    "verified": "page-image"
   },
   {
     "id": "scott2023_62",
-    "source": {"bibkey": "scott-2023", "paperLabel": "(62)"},
+    "source": {"bibkey": "scott-2023", "paperLabel": "ch. 3, (62)"},
     "language": "mamm1241",
     "primaryText": "Ma chin b'et=i.",
     "discourseSegments": [],
@@ -188,11 +196,12 @@
       ["cell", "1sg"],
       ["morphemes", "=i"]
     ],
-    "comment": "Agreeing Set B on Infl and the reduced first-person singular subject pronoun."
+    "comment": "Agreeing Set B on Infl and the reduced first-person singular subject pronoun.",
+    "verified": "page-image"
   },
   {
     "id": "scott2023_86a",
-    "source": {"bibkey": "scott-2023", "paperLabel": "(86a)"},
+    "source": {"bibkey": "scott-2023", "paperLabel": "ch. 4, (86a)"},
     "language": "mamm1241",
     "primaryText": "Ma chi b'et q=i.",
     "discourseSegments": [],
@@ -209,11 +218,12 @@
       ["cell", "2pl"],
       ["morphemes", "q=i"]
     ],
-    "comment": "Second-person plural subjects keep their full form."
+    "comment": "Second-person plural subjects keep their full form.",
+    "verified": "page-image"
   },
   {
     "id": "scott2023_86b",
-    "source": {"bibkey": "scott-2023", "paperLabel": "(86b)"},
+    "source": {"bibkey": "scott-2023", "paperLabel": "ch. 4, (86b)"},
     "language": "mamm1241",
     "primaryText": "Ma ∅ kub' ky-tz'ib'-an q=i.",
     "discourseSegments": [],
@@ -231,11 +241,12 @@
       ["cell", "2pl"],
       ["morphemes", "q=i"]
     ],
-    "comment": "Second-person plural transitive subjects keep their full form."
+    "comment": "Second-person plural transitive subjects keep their full form.",
+    "verified": "page-image"
   },
   {
     "id": "scott2023_86c",
-    "source": {"bibkey": "scott-2023", "paperLabel": "(86c)"},
+    "source": {"bibkey": "scott-2023", "paperLabel": "ch. 4, (86c)"},
     "language": "mamm1241",
     "primaryText": "ky-lan q=i",
     "discourseSegments": [],
@@ -252,11 +263,12 @@
       ["cell", "2pl"],
       ["morphemes", "q=i"]
     ],
-    "comment": "Second-person plural possessors keep their full form."
+    "comment": "Second-person plural possessors keep their full form.",
+    "verified": "page-image"
   },
   {
     "id": "scott2023_87a",
-    "source": {"bibkey": "scott-2023", "paperLabel": "(87a)"},
+    "source": {"bibkey": "scott-2023", "paperLabel": "ch. 4, (87a)"},
     "language": "mamm1241",
     "primaryText": "Ma chi b'et qa.",
     "discourseSegments": [],
@@ -273,11 +285,12 @@
       ["cell", "3pl"],
       ["morphemes", "qa"]
     ],
-    "comment": "Third-person plural subjects keep their full form."
+    "comment": "Third-person plural subjects keep their full form.",
+    "verified": "page-image"
   },
   {
     "id": "scott2023_87b",
-    "source": {"bibkey": "scott-2023", "paperLabel": "(87b)"},
+    "source": {"bibkey": "scott-2023", "paperLabel": "ch. 4, (87b)"},
     "language": "mamm1241",
     "primaryText": "Ma ∅ kub' ky-tz'ib'-an qa.",
     "discourseSegments": [],
@@ -295,11 +308,12 @@
       ["cell", "3pl"],
       ["morphemes", "qa"]
     ],
-    "comment": "Third-person plural transitive subjects keep their full form."
+    "comment": "Third-person plural transitive subjects keep their full form.",
+    "verified": "page-image"
   },
   {
     "id": "scott2023_87c",
-    "source": {"bibkey": "scott-2023", "paperLabel": "(87c)"},
+    "source": {"bibkey": "scott-2023", "paperLabel": "ch. 4, (87c)"},
     "language": "mamm1241",
     "primaryText": "ky-lan qa",
     "discourseSegments": [],
@@ -316,11 +330,12 @@
       ["cell", "3pl"],
       ["morphemes", "qa"]
     ],
-    "comment": "Third-person plural possessors keep their full form."
+    "comment": "Third-person plural possessors keep their full form.",
+    "verified": "page-image"
   },
   {
     "id": "scott2023_88b",
-    "source": {"bibkey": "scott-2023", "paperLabel": "(88b)"},
+    "source": {"bibkey": "scott-2023", "paperLabel": "ch. 4, (88b)"},
     "language": "mamm1241",
     "primaryText": "B'et qin=i.",
     "discourseSegments": [],
@@ -337,11 +352,12 @@
       ["cell", "1sg"],
       ["morphemes", "qin=i"]
     ],
-    "comment": "Without agreement the first-person singular pronoun is full."
+    "comment": "Without agreement the first-person singular pronoun is full.",
+    "verified": "page-image"
   },
   {
     "id": "scott2023_88c",
-    "source": {"bibkey": "scott-2023", "paperLabel": "(88c)"},
+    "source": {"bibkey": "scott-2023", "paperLabel": "ch. 4, (88c)"},
     "language": "mamm1241",
     "primaryText": "B'et q=i.",
     "discourseSegments": [],
@@ -358,11 +374,12 @@
       ["cell", "2pl"],
       ["morphemes", "q=i"]
     ],
-    "comment": "Without agreement the second-person plural pronoun is full."
+    "comment": "Without agreement the second-person plural pronoun is full.",
+    "verified": "page-image"
   },
   {
     "id": "scott2023_88d",
-    "source": {"bibkey": "scott-2023", "paperLabel": "(88d)"},
+    "source": {"bibkey": "scott-2023", "paperLabel": "ch. 4, (88d)"},
     "language": "mamm1241",
     "primaryText": "B'et qa.",
     "discourseSegments": [],
@@ -379,11 +396,12 @@
       ["cell", "3pl"],
       ["morphemes", "qa"]
     ],
-    "comment": "Without agreement the third-person plural pronoun is full."
+    "comment": "Without agreement the third-person plural pronoun is full.",
+    "verified": "page-image"
   },
   {
     "id": "scott2023_69a",
-    "source": {"bibkey": "scott-2023", "paperLabel": "(69a)"},
+    "source": {"bibkey": "scott-2023", "paperLabel": "ch. 4, (69a)"},
     "language": "mamm1241",
     "primaryText": "Ma tz'=ok ky-ke'y-an qa qin=i.",
     "discourseSegments": [],
@@ -401,11 +419,12 @@
       ["cell", "1sg"],
       ["morphemes", "qin=i"]
     ],
-    "comment": "A transitive object is a full pronoun, next to default Set B on Infl."
+    "comment": "A transitive object is a full pronoun, next to default Set B on Infl.",
+    "verified": "page-image"
   },
   {
     "id": "scott2023_89a",
-    "source": {"bibkey": "scott-2023", "paperLabel": "(89a)"},
+    "source": {"bibkey": "scott-2023", "paperLabel": "ch. 4, (89a)"},
     "language": "mamm1241",
     "primaryText": "ky-ja q=i",
     "discourseSegments": [],
@@ -422,11 +441,12 @@
       ["cell", "2pl"],
       ["morphemes", "q=i"]
     ],
-    "comment": "The full second-person plural possessor."
+    "comment": "The full second-person plural possessor.",
+    "verified": "page-image"
   },
   {
     "id": "scott2023_89b",
-    "source": {"bibkey": "scott-2023", "paperLabel": "(89b)"},
+    "source": {"bibkey": "scott-2023", "paperLabel": "ch. 4, (89b)"},
     "language": "mamm1241",
     "primaryText": "ky-ja=y",
     "discourseSegments": [],
@@ -444,11 +464,12 @@
       ["morphemes", "=i"],
       ["optionalReduction", "yes"]
     ],
-    "comment": "The optionally reduced second-person plural possessor, a Set A context."
+    "comment": "The optionally reduced second-person plural possessor, a Set A context.",
+    "verified": "page-image"
   },
   {
     "id": "scott2023_90b",
-    "source": {"bibkey": "scott-2023", "paperLabel": "(90b)"},
+    "source": {"bibkey": "scott-2023", "paperLabel": "ch. 4, (90b)"},
     "language": "mamm1241",
     "primaryText": "Ma ∅ tzaj ky-q'ama-'n=i w-i=y.",
     "discourseSegments": [],
@@ -472,7 +493,7 @@
   },
   {
     "id": "scott2023_91a",
-    "source": {"bibkey": "scott-2023", "paperLabel": "(91a)"},
+    "source": {"bibkey": "scott-2023", "paperLabel": "ch. 4, (91a)"},
     "language": "mamm1241",
     "primaryText": "Ma chi b'ix-an q=i.",
     "discourseSegments": [],
@@ -489,13 +510,14 @@
       ["cell", "2pl"],
       ["morphemes", "q=i"]
     ],
-    "comment": "A second-person plural intransitive subject, a Set B context."
+    "comment": "A second-person plural intransitive subject, a Set B context. The paper glosses q=i here as A2PL=DISAGR; it glosses q=i 2PL=DISAGR everywhere else.",
+    "verified": "page-image"
   },
   {
     "id": "scott2023_91b",
-    "source": {"bibkey": "scott-2023", "paperLabel": "(91b)"},
+    "source": {"bibkey": "scott-2023", "paperLabel": "ch. 4, (91b)"},
     "language": "mamm1241",
-    "primaryText": "#Ma chi b'ix-n=i.",
+    "primaryText": "Ma chi b'ix-n=i.",
     "discourseSegments": [],
     "glossedTokens": [
       ["Ma", "PROX"], ["chi", "B2/3PL"], ["b'ix-n", "dance-DS"], ["=i", "=DISAGR"]
@@ -510,11 +532,12 @@
       ["cell", "2pl"],
       ["morphemes", "=i"]
     ],
-    "comment": "Reduction of the second-person plural is not available in a Set B context; the sentence is read as 'I danced'."
+    "comment": "Reduction of the second-person plural is not available in a Set B context; the sentence is read as 'I danced'.",
+    "verified": "page-image"
   },
   {
     "id": "scott2023_57",
-    "source": {"bibkey": "scott-2023", "paperLabel": "(57)"},
+    "source": {"bibkey": "scott-2023", "paperLabel": "ch. 3, (57)"},
     "language": "mamm1241",
     "primaryText": "Ma chn=ok t-ke'y-an Mintz.",
     "discourseSegments": [],
@@ -532,11 +555,12 @@
       ["cell", "1sg"],
       ["setB", "chin"]
     ],
-    "comment": "The agreeing-object pattern of standard Mam, available to some speakers as a formal variant: Infl's probe is satisfied by φ alone."
+    "comment": "The agreeing-object pattern of standard Mam, available to some speakers as a formal variant: Infl's probe is satisfied by φ alone.",
+    "verified": "page-image"
   },
   {
     "id": "scott2023_59",
-    "source": {"bibkey": "scott-2023", "paperLabel": "(59)"},
+    "source": {"bibkey": "scott-2023", "paperLabel": "ch. 3, (59)"},
     "language": "mamm1241",
     "primaryText": "Ma tz'=ok t-ke'y-an Mintz qin=i.",
     "discourseSegments": [],
@@ -554,11 +578,12 @@
       ["cell", "1sg"],
       ["setB", "tz'"]
     ],
-    "comment": "Default Set B: Infl's probe halts at transitive Voice, and the object is a full pronoun."
+    "comment": "Default Set B: Infl's probe halts at transitive Voice, and the object is a full pronoun.",
+    "verified": "page-image"
   },
   {
     "id": "scott2023_73",
-    "source": {"bibkey": "scott-2023", "paperLabel": "(73)"},
+    "source": {"bibkey": "scott-2023", "paperLabel": "ch. 3, (73)"},
     "language": "mamm1241",
     "primaryText": "Taj w-ul=i …",
     "discourseSegments": [],
@@ -571,16 +596,17 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["construction", "superExtendedErgative"],
+      ["construction", "extendedErgative"],
       ["position", "S"],
       ["cell", "1sg"],
       ["setA", "w"]
     ],
-    "comment": "Extended ergativity: the intransitive subject of a when-clause takes Set A."
+    "comment": "Extended ergativity: the intransitive subject of a when-clause takes Set A.",
+    "verified": "page-image"
   },
   {
     "id": "scott2023_77a",
-    "source": {"bibkey": "scott-2023", "paperLabel": "(77a)"},
+    "source": {"bibkey": "scott-2023", "paperLabel": "ch. 3, (77a)"},
     "language": "mamm1241",
     "primaryText": "Taj t-ok t-ke'y-an=i qin=i …",
     "discourseSegments": [],
@@ -599,13 +625,14 @@
       ["cell", "1sg"],
       ["setA", "t"]
     ],
-    "comment": "Super-extended ergativity: the object slot on the directional takes only the default Set A, and the object is a full pronoun."
+    "comment": "Super-extended ergativity: the object slot on the directional takes only the default Set A, and the object is a full pronoun.",
+    "verified": "page-image"
   },
   {
     "id": "scott2023_77b",
-    "source": {"bibkey": "scott-2023", "paperLabel": "(77b)"},
+    "source": {"bibkey": "scott-2023", "paperLabel": "ch. 3, (77b)"},
     "language": "mamm1241",
-    "primaryText": "*Taj w-ok t-ke'y-an=i …",
+    "primaryText": "Taj w-ok t-ke'y-an=i …",
     "discourseSegments": [],
     "glossedTokens": [
       ["Taj", "when"], ["w-ok", "A1SG-DIR:in"], ["t-ke'y-an", "A2/3SG-see-DS"], ["=i", "=DISAGR"]
@@ -621,6 +648,7 @@
       ["cell", "1sg"],
       ["setA", "w"]
     ],
-    "comment": "Agreeing Set A for the object is out in a super-extended ergative clause."
+    "comment": "Agreeing Set A for the object is out in a super-extended ergative clause.",
+    "verified": "page-image"
   }
 ]

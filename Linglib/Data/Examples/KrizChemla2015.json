@@ -6,9 +6,7 @@
     "language": "stan1293",
     "primaryText": "The triangles are green.",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["The", "DEF"], ["triangles", "triangle.PL"], ["are", "COP.PL"], ["green", "green"]
-    ],
+    "glossedTokens": [],
     "translation": "",
     "context": "",
     "judgment": "acceptable",
@@ -17,7 +15,8 @@
     "paperFeatures": [
       ["embedding", "E-∅"]
     ],
-    "comment": "The positive unembedded sentence, the form of the E-∅ targets of Exps. A0–A3 and B1–B3."
+    "comment": "The positive unembedded sentence, the form of the E-∅ targets of Exps. A0–A3 and B1–B3.",
+    "verified": "page-image"
   },
   {
     "id": "krizchemla2015_41b",
@@ -26,10 +25,7 @@
     "language": "stan1293",
     "primaryText": "The triangles are not green.",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["The", "DEF"], ["triangles", "triangle.PL"], ["are", "COP.PL"], ["not", "NEG"],
-      ["green", "green"]
-    ],
+    "glossedTokens": [],
     "translation": "",
     "context": "",
     "judgment": "acceptable",
@@ -38,7 +34,8 @@
     "paperFeatures": [
       ["embedding", "E-∅"]
     ],
-    "comment": "The negative unembedded sentence, the form of the E-neg targets of Exps. A1 and B1."
+    "comment": "The negative unembedded sentence, the form of the E-neg targets of Exps. A1 and B1.",
+    "verified": "page-image"
   },
   {
     "id": "krizchemla2015_14a",
@@ -47,10 +44,7 @@
     "language": "stan1293",
     "primaryText": "In all the cells, the symbols are green.",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["In", "in"], ["all", "all"], ["the", "DEF"], ["cells", "cell.PL"], ["the", "DEF"],
-      ["symbols", "symbol.PL"], ["are", "COP.PL"], ["green", "green"]
-    ],
+    "glossedTokens": [],
     "translation": "",
     "context": "",
     "judgment": "acceptable",
@@ -59,7 +53,8 @@
     "paperFeatures": [
       ["embedding", "E-all"]
     ],
-    "comment": "Target sentence of Exps. A2, A3, B2, B3, the schema (12) with the definite."
+    "comment": "Target sentence of Exps. A2, A3, B2, B3, the schema (12) with the definite.",
+    "verified": "page-image"
   },
   {
     "id": "krizchemla2015_15",
@@ -68,10 +63,7 @@
     "language": "stan1293",
     "primaryText": "In none of the cells, the symbols are green.",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["In", "in"], ["none", "none"], ["of", "of"], ["the", "DEF"], ["cells", "cell.PL"],
-      ["the", "DEF"], ["symbols", "symbol.PL"], ["are", "COP.PL"], ["green", "green"]
-    ],
+    "glossedTokens": [],
     "translation": "",
     "context": "",
     "judgment": "acceptable",
@@ -80,7 +72,8 @@
     "paperFeatures": [
       ["embedding", "E-no"]
     ],
-    "comment": "Target sentence of Exps. A2 and B2, the schema (13); fn 10 calls these sentences ungrammatical for lack of negative inversion."
+    "comment": "Target sentence of Exps. A2 and B2, the schema (13); fn 10 calls these sentences ungrammatical for lack of negative inversion.",
+    "verified": "page-image"
   },
   {
     "id": "krizchemla2015_16b",
@@ -89,11 +82,7 @@
     "language": "stan1293",
     "primaryText": "In none of the cells are all the symbols green.",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["In", "in"], ["none", "none"], ["of", "of"], ["the", "DEF"], ["cells", "cell.PL"],
-      ["are", "COP.PL"], ["all", "all"], ["the", "DEF"], ["symbols", "symbol.PL"],
-      ["green", "green"]
-    ],
+    "glossedTokens": [],
     "translation": "",
     "context": "",
     "judgment": "acceptable",
@@ -102,7 +91,8 @@
     "paperFeatures": [
       ["embedding", "E-no"]
     ],
-    "comment": "The grammatical control with negative inversion, which has the intended bound reading of the definite."
+    "comment": "The grammatical control with negative inversion, which has the intended bound reading of the definite.",
+    "verified": "page-image"
   },
   {
     "id": "krizchemla2015_19",
@@ -111,10 +101,7 @@
     "language": "stan1293",
     "primaryText": "Every boy found his presents.",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["Every", "every"], ["boy", "boy"], ["found", "find.PST"], ["his", "3SG.M.POSS"],
-      ["presents", "present.PL"]
-    ],
+    "glossedTokens": [],
     "translation": "",
     "context": "",
     "judgment": "acceptable",
@@ -123,7 +110,8 @@
     "paperFeatures": [
       ["embedding", "E-all"]
     ],
-    "comment": "Target sentence of Exp. C2, E-every."
+    "comment": "Target sentence of Exp. C2, E-every.",
+    "verified": "page-image"
   },
   {
     "id": "krizchemla2015_20",
@@ -132,10 +120,7 @@
     "language": "stan1293",
     "primaryText": "No boy found his presents.",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["No", "no"], ["boy", "boy"], ["found", "find.PST"], ["his", "3SG.M.POSS"],
-      ["presents", "present.PL"]
-    ],
+    "glossedTokens": [],
     "translation": "",
     "context": "",
     "judgment": "acceptable",
@@ -144,7 +129,8 @@
     "paperFeatures": [
       ["embedding", "E-no"]
     ],
-    "comment": "Target sentence of Exp. C2."
+    "comment": "Target sentence of Exp. C2.",
+    "verified": "page-image"
   },
   {
     "id": "krizchemla2015_23",
@@ -153,10 +139,7 @@
     "language": "stan1293",
     "primaryText": "All the boys found their presents.",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["All", "all"], ["the", "DEF"], ["boys", "boy.PL"], ["found", "find.PST"],
-      ["their", "3PL.POSS"], ["presents", "present.PL"]
-    ],
+    "glossedTokens": [],
     "translation": "",
     "context": "",
     "judgment": "acceptable",
@@ -165,7 +148,8 @@
     "paperFeatures": [
       ["embedding", "E-all"]
     ],
-    "comment": "Target sentence of Exps. C3 and C4."
+    "comment": "Target sentence of Exps. C3 and C4.",
+    "verified": "page-image"
   },
   {
     "id": "krizchemla2015_24",
@@ -174,10 +158,7 @@
     "language": "stan1293",
     "primaryText": "Exactly 2 of the 4 boys found their presents.",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["Exactly", "exactly"], ["2", "two"], ["of", "of"], ["the", "DEF"], ["4", "four"],
-      ["boys", "boy.PL"], ["found", "find.PST"], ["their", "3PL.POSS"], ["presents", "present.PL"]
-    ],
+    "glossedTokens": [],
     "translation": "",
     "context": "",
     "judgment": "acceptable",
@@ -186,6 +167,7 @@
     "paperFeatures": [
       ["embedding", "E-exactly"]
     ],
-    "comment": "Target sentence of Exps. C3 and C4."
+    "comment": "Target sentence of Exps. C3 and C4.",
+    "verified": "page-image"
   }
 ]

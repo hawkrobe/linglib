@@ -3,7 +3,7 @@
     "id": "heine1997_2_pt",
     "source": {
       "bibkey": "heine-1997",
-      "paperLabel": "(2)"
+      "paperLabel": "ch. 2, (2)"
     },
     "reportedIn": null,
     "language": "port1283",
@@ -38,17 +38,18 @@
         "action"
       ]
     ],
-    "comment": "Action Schema: the verb 'take/have' with the possessor as subject."
+    "comment": "Action Schema: the verb 'take/have' with the possessor as subject.",
+    "verified": "page-image"
   },
   {
     "id": "heine1997_73a",
     "source": {
       "bibkey": "heine-1997",
-      "paperLabel": "(73a)"
+      "paperLabel": "ch. 2, (73a)"
     },
     "reportedIn": null,
     "language": "russ1263",
-    "primaryText": "Lampa stoit u okna.",
+    "primaryText": "Lámpa stoít u okná.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "The lamp stands by the window.",
@@ -75,17 +76,18 @@
         "false"
       ]
     ],
-    "comment": "Stage I of the Overlap Model: u is an adessive preposition, the structure expresses 'Y is at X'."
+    "comment": "Stage I of the Overlap Model: u is an adessive preposition, the structure expresses 'Y is at X'.",
+    "verified": "page-image"
   },
   {
     "id": "heine1997_73b",
     "source": {
       "bibkey": "heine-1997",
-      "paperLabel": "(73b)"
+      "paperLabel": "ch. 2, (73b)"
     },
     "reportedIn": null,
     "language": "russ1263",
-    "primaryText": "Mašina u Peti.",
+    "primaryText": "Mašina u Péti.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "The car is with/at Peter.",
@@ -112,17 +114,18 @@
         "false"
       ]
     ],
-    "comment": "Stage I: locative meaning only."
+    "comment": "Stage I: locative meaning only.",
+    "verified": "page-image"
   },
   {
     "id": "heine1997_73c",
     "source": {
       "bibkey": "heine-1997",
-      "paperLabel": "(73c)"
+      "paperLabel": "ch. 2, (73c)"
     },
     "reportedIn": null,
     "language": "russ1263",
-    "primaryText": "Sejčas u Markovyx gripp.",
+    "primaryText": "Sejčás u Márkovyx gripp.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "There is flu at the Markovs. / The Markovs have the flu now.",
@@ -153,17 +156,18 @@
         "true"
       ]
     ],
-    "comment": "Stage II: the construction is ambiguous between the Location Schema and the possessive target."
+    "comment": "Stage II: the construction is ambiguous between the Location Schema and the possessive target.",
+    "verified": "page-image"
   },
   {
     "id": "heine1997_73d",
     "source": {
       "bibkey": "heine-1997",
-      "paperLabel": "(73d)"
+      "paperLabel": "ch. 2, (73d)"
     },
     "reportedIn": null,
     "language": "russ1263",
-    "primaryText": "U Peti est' mašina.",
+    "primaryText": "U Péti est' mašina.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "Peter has a car.",
@@ -190,13 +194,14 @@
         "true"
       ]
     ],
-    "comment": "Stage III: interpreted only with reference to the possessive target schema."
+    "comment": "Stage III: interpreted only with reference to the possessive target schema.",
+    "verified": "page-image"
   },
   {
     "id": "heine1997_84a",
     "source": {
       "bibkey": "heine-1997",
-      "paperLabel": "(84a)"
+      "paperLabel": "ch. 2, (84a)"
     },
     "reportedIn": null,
     "language": "stan1293",
@@ -218,22 +223,23 @@
         "permanent"
       ]
     ],
-    "comment": "The Equation Schema ('Y is X's') expresses permanent possession, like 'I own a car'."
+    "comment": "The Equation Schema ('Y is X's') expresses permanent possession, like 'I own a car'.",
+    "verified": "page-image"
   },
   {
     "id": "heine1997_84b",
     "source": {
       "bibkey": "heine-1997",
-      "paperLabel": "(84b)"
+      "paperLabel": "ch. 2, (84b)"
     },
     "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "?Two sisters are mine.",
+    "primaryText": "Two sisters are mine.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "marginal",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -246,22 +252,23 @@
         "inalienable"
       ]
     ],
-    "comment": "Marginal with inalienable possession, like '?I own two sisters'."
+    "comment": "Marginal with inalienable possession, like '?I own two sisters'.",
+    "verified": "page-image"
   },
   {
     "id": "heine1997_84c",
     "source": {
       "bibkey": "heine-1997",
-      "paperLabel": "(84c)"
+      "paperLabel": "ch. 2, (84c)"
     },
     "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "?The cold is mine.",
+    "primaryText": "The cold is mine.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "marginal",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -274,22 +281,23 @@
         "abstract"
       ]
     ],
-    "comment": "Marginal with abstract possession, like '?I own a cold'."
+    "comment": "Marginal with abstract possession, like '?I own a cold'.",
+    "verified": "page-image"
   },
   {
     "id": "heine1997_84d",
     "source": {
       "bibkey": "heine-1997",
-      "paperLabel": "(84d)"
+      "paperLabel": "ch. 2, (84d)"
     },
     "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "?Two bedrooms are my house's.",
+    "primaryText": "Two bedrooms are my house's.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "marginal",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -302,13 +310,14 @@
         "inanimateInalienable"
       ]
     ],
-    "comment": "Marginal with inanimate inalienable possession, like '?My house owns two bedrooms'."
+    "comment": "Marginal with inanimate inalienable possession, like '?My house owns two bedrooms'.",
+    "verified": "page-image"
   },
   {
     "id": "heine1997_85a",
     "source": {
       "bibkey": "heine-1997",
-      "paperLabel": "(85a)"
+      "paperLabel": "ch. 2, (85a)"
     },
     "reportedIn": null,
     "language": "telu1262",
@@ -328,7 +337,7 @@
         "is"
       ]
     ],
-    "translation": "He has a pen (with him, which may not necessarily belong to him).",
+    "translation": "He has a pen. (=He has a pen with him, which may not necessarily belong to him.)",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -343,13 +352,14 @@
         "physical"
       ]
     ],
-    "comment": "The Location Schema, grammaticalized for physical and temporary possession."
+    "comment": "The Location Schema, grammaticalized for physical and temporary possession.",
+    "verified": "page-image"
   },
   {
     "id": "heine1997_85b",
     "source": {
       "bibkey": "heine-1997",
-      "paperLabel": "(85b)"
+      "paperLabel": "ch. 2, (85b)"
     },
     "reportedIn": null,
     "language": "telu1262",
@@ -384,13 +394,14 @@
         "permanent"
       ]
     ],
-    "comment": "The Goal sub-schema of Existence for permanent possession."
+    "comment": "The Goal sub-schema of Existence for permanent possession.",
+    "verified": "page-image"
   },
   {
     "id": "heine1997_85c",
     "source": {
       "bibkey": "heine-1997",
-      "paperLabel": "(85c)"
+      "paperLabel": "ch. 2, (85c)"
     },
     "reportedIn": null,
     "language": "telu1262",
@@ -429,13 +440,14 @@
         "inalienable"
       ]
     ],
-    "comment": "The Goal sub-schema for inalienable possession."
+    "comment": "The Goal sub-schema for inalienable possession.",
+    "verified": "page-image"
   },
   {
     "id": "heine1997_85d",
     "source": {
       "bibkey": "heine-1997",
-      "paperLabel": "(85d)"
+      "paperLabel": "ch. 2, (85d)"
     },
     "reportedIn": null,
     "language": "telu1262",
@@ -474,13 +486,14 @@
         "inalienable"
       ]
     ],
-    "comment": "The Goal sub-schema for inalienable (kinship) possession."
+    "comment": "The Goal sub-schema for inalienable (kinship) possession. The paper prints iddau for iddaru 'two (persons)'.",
+    "verified": "page-image"
   },
   {
     "id": "heine1997_85e",
     "source": {
       "bibkey": "heine-1997",
-      "paperLabel": "(85e)"
+      "paperLabel": "ch. 2, (85e)"
     },
     "reportedIn": null,
     "language": "telu1262",
@@ -515,17 +528,18 @@
         "inanimateInalienable"
       ]
     ],
-    "comment": "The Goal sub-schema for inanimate inalienable possession."
+    "comment": "The Goal sub-schema for inanimate inalienable possession.",
+    "verified": "page-image"
   },
   {
     "id": "heine1997_86a",
     "source": {
       "bibkey": "heine-1997",
-      "paperLabel": "(86a)"
+      "paperLabel": "ch. 2, (86a)"
     },
     "reportedIn": null,
     "language": "ewee1241",
-    "primaryText": "dɔ li na Kofi",
+    "primaryText": "dɔ lii ná Kofí",
     "discourseSegments": [],
     "glossedTokens": [
       [
@@ -533,15 +547,15 @@
         "work"
       ],
       [
-        "li",
+        "lii",
         "exist"
       ],
       [
-        "na",
+        "ná",
         "to"
       ],
       [
-        "Kofi",
+        "Kofí",
         "Kofi"
       ]
     ],
@@ -564,17 +578,18 @@
         "permanent"
       ]
     ],
-    "comment": "With an indefinite possessee the Goal construction expresses permanent possession."
+    "comment": "With an indefinite possessee the Goal construction expresses permanent possession.",
+    "verified": "page-image"
   },
   {
     "id": "heine1997_86b",
     "source": {
       "bibkey": "heine-1997",
-      "paperLabel": "(86b)"
+      "paperLabel": "ch. 2, (86b)"
     },
     "reportedIn": null,
     "language": "ewee1241",
-    "primaryText": "dɔ la li na Kofi",
+    "primaryText": "dɔ lá lii ná Kofí",
     "discourseSegments": [],
     "glossedTokens": [
       [
@@ -582,23 +597,23 @@
         "work"
       ],
       [
-        "la",
+        "lá",
         "the"
       ],
       [
-        "li",
+        "lii",
         "exist"
       ],
       [
-        "na",
+        "ná",
         "to"
       ],
       [
-        "Kofi",
+        "Kofí",
         "Kofi"
       ]
     ],
-    "translation": "Kofi has work to do (the work is there for Kofi).",
+    "translation": "Kofi has work to do (=the work is there for Kofi).",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -617,17 +632,18 @@
         "physical"
       ]
     ],
-    "comment": "With a definite possessee the same construction denotes physical possession."
+    "comment": "With a definite possessee the same construction denotes physical possession.",
+    "verified": "page-image"
   },
   {
     "id": "heine1997_87a",
     "source": {
       "bibkey": "heine-1997",
-      "paperLabel": "(87a)"
+      "paperLabel": "ch. 2, (87a)"
     },
     "reportedIn": null,
     "language": "ewee1241",
-    "primaryText": "ga le Kofi si",
+    "primaryText": "ga le Kofí sí",
     "discourseSegments": [],
     "glossedTokens": [
       [
@@ -639,11 +655,11 @@
         "be.at"
       ],
       [
-        "Kofi",
+        "Kofí",
         "Kofi"
       ],
       [
-        "si",
+        "sí",
         "hand"
       ]
     ],
@@ -666,17 +682,18 @@
         "permanent"
       ]
     ],
-    "comment": "The Location construction with an indefinite possessee: permanent possession."
+    "comment": "The Location construction with an indefinite possessee: permanent possession.",
+    "verified": "page-image"
   },
   {
     "id": "heine1997_87b",
     "source": {
       "bibkey": "heine-1997",
-      "paperLabel": "(87b)"
+      "paperLabel": "ch. 2, (87b)"
     },
     "reportedIn": null,
     "language": "ewee1241",
-    "primaryText": "ga la le Kofi si",
+    "primaryText": "ga lá le Kofí sí",
     "discourseSegments": [],
     "glossedTokens": [
       [
@@ -684,7 +701,7 @@
         "money"
       ],
       [
-        "la",
+        "lá",
         "the"
       ],
       [
@@ -692,11 +709,11 @@
         "be.at"
       ],
       [
-        "Kofi",
+        "Kofí",
         "Kofi"
       ],
       [
-        "si",
+        "sí",
         "hand"
       ]
     ],
@@ -719,6 +736,7 @@
         "physical"
       ]
     ],
-    "comment": "With a definite possessee, physical possession."
+    "comment": "With a definite possessee, physical possession.",
+    "verified": "page-image"
   }
 ]

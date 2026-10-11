@@ -16,7 +16,8 @@
       {"name": "weak epistemic: speaker uncertain about all (6c)", "judgment": "acceptable"},
       {"name": "base-level: not all (6d)", "judgment": "acceptable"}
     ],
-    "comment": "The four epistemic varieties of a quantity implicature (§2); games SomeAll and SomeAllEpistemic."
+    "comment": "The four epistemic varieties of a quantity implicature (§2); games SomeAll and SomeAllEpistemic.",
+    "verified": "page-image"
   },
   {
     "id": "franke2011_ex8",
@@ -33,7 +34,8 @@
       {"name": "ignorance: speaker uncertain about each disjunct (10)", "judgment": "acceptable"},
       {"name": "exclusivity: not both (11)", "judgment": "acceptable"}
     ],
-    "comment": "Plain disjunction; games TwoDisjuncts, DisjunctionEpistemic, DisjunctionConj."
+    "comment": "Plain disjunction; games TwoDisjuncts, DisjunctionEpistemic, DisjunctionConj.",
+    "verified": "page-image"
   },
   {
     "id": "franke2011_ex12a",
@@ -50,7 +52,8 @@
       {"name": "free choice: may take an apple and may take a pear (12b)", "judgment": "acceptable"},
       {"name": "exclusivity: may not take both (15d)", "judgment": "acceptable"}
     ],
-    "comment": "Free choice permission; games TwoDisjuncts and FreeChoiceConj."
+    "comment": "Free choice permission; games TwoDisjuncts and FreeChoiceConj.",
+    "verified": "page-image"
   },
   {
     "id": "franke2011_ex13",
@@ -66,7 +69,8 @@
     "readings": [
       {"name": "ignorance: speaker uncertain whether the hearer may take an apple (14a)", "judgment": "acceptable"}
     ],
-    "comment": "Free choice gives way to ignorance implicatures in an epistemic game."
+    "comment": "Free choice gives way to ignorance implicatures in an epistemic game.",
+    "verified": "page-image"
   },
   {
     "id": "franke2011_ex18",
@@ -82,7 +86,8 @@
     "readings": [
       {"name": "simplification of disjunctive antecedents (19a) and (19b)", "judgment": "acceptable"}
     ],
-    "comment": "SDA as a quantity implicature parallel to free choice; games TwoDisjuncts and SdaConj."
+    "comment": "SDA as a quantity implicature parallel to free choice; games TwoDisjuncts and SdaConj.",
+    "verified": "page-image"
   },
   {
     "id": "franke2011_ex30",
@@ -98,7 +103,8 @@
     "readings": [
       {"name": "simplification to (30b): if John had taken a pear, he would have taken an apple", "judgment": "unacceptable"}
     ],
-    "comment": "Why SDA is not semantically valid (after McKay and van Inwagen)."
+    "comment": "Why SDA is not semantically valid (after McKay and van Inwagen).",
+    "verified": "page-image"
   },
   {
     "id": "franke2011_ex95a",
@@ -114,7 +120,8 @@
     "readings": [
       {"name": "speaker knows John came and considers it possible that Mary came (95b)", "judgment": "acceptable"}
     ],
-    "comment": "Entailing disjuncts: truth-conditionally equivalent to 'John' (94a) but with a different implicature; game EntailingDisjuncts."
+    "comment": "Entailing disjuncts: truth-conditionally equivalent to 'John' (94a) but with a different implicature; game EntailingDisjuncts.",
+    "verified": "page-image"
   },
   {
     "id": "franke2011_ex99",
@@ -130,6 +137,7 @@
     "readings": [
       {"name": "universal free choice: everybody may take an apple and everybody may take a pear", "judgment": "acceptable"}
     ],
-    "comment": "Chemla's universal free choice, derived by pruning the mixed-group state; game GroupPermission."
+    "comment": "Chemla's universal free choice, derived by pruning the mixed-group state; game GroupPermission.",
+    "verified": "page-image"
   }
 ]

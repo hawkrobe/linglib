@@ -28,7 +28,8 @@
         "three substitutions and two compositions"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "icard2012_squid_t2",
@@ -37,7 +38,7 @@
       "paperLabel": "Section 3.2, t'"
     },
     "language": "stan1293",
-    "primaryText": "Not every job that involves a giant squid is safe.",
+    "primaryText": "Not every job that involves a cephalopod is safe.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -55,61 +56,8 @@
         "⊒ t"
       ]
     ],
-    "comment": ""
-  },
-  {
-    "id": "icard2012_squid_u",
-    "source": {
-      "bibkey": "icard-2012",
-      "paperLabel": "Section 3.2, u"
-    },
-    "language": "stan1293",
-    "primaryText": "Every job that involves a giant squid is safe.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "3.2"
-      ],
-      [
-        "relation",
-        "t | u, by safe | dangerous under ⊞"
-      ]
-    ],
-    "comment": ""
-  },
-  {
-    "id": "icard2012_squid_v",
-    "source": {
-      "bibkey": "icard-2012",
-      "paperLabel": "Section 3.2, v"
-    },
-    "language": "stan1293",
-    "primaryText": "Every job that involves a cephalopod is safe.",
-    "discourseSegments": [],
-    "glossedTokens": [],
-    "translation": "",
-    "context": "",
-    "judgment": "acceptable",
-    "alternatives": [],
-    "readings": [],
-    "paperFeatures": [
-      [
-        "section",
-        "3.2"
-      ],
-      [
-        "relation",
-        "u ⊒ v, by giant squid ⊑ cephalopod under ◇; v ^ t'"
-      ]
-    ],
-    "comment": ""
+    "comment": "Section 3.2 prints t' = Not every job that involves a giant squid is safe; the intended form, printed in the introduction's statement of this inference and derived as t' = v with not every substituted for every (after cephalopod replaced giant squid), has cephalopod.",
+    "verified": "page-image"
   },
   {
     "id": "icard2012_mono",
@@ -136,7 +84,8 @@
         "a monotonicity inference from giant squid ⊑ cephalopod under ◇"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "icard2012_no_notevery",
@@ -163,7 +112,8 @@
         "derived from no | every and every ^ not every, | ⋈ ^ = ⊑"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "icard2012_confluence",
@@ -190,7 +140,8 @@
         "derivable in one substitution; lost after substituting octopus for squid, which yields #"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "icard2012_s4_1",
@@ -221,7 +172,8 @@
         "not every, antitone"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "icard2012_s4_2",
@@ -252,7 +204,8 @@
         "few, antitone"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "icard2012_s4_3",
@@ -266,7 +219,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "ungrammatical",
+    "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -283,7 +236,8 @@
         "few, not anti-additive"
       ]
     ],
-    "comment": ""
+    "comment": "Printed with #; the prose calls 3 ungrammatical.",
+    "verified": "page-image"
   },
   {
     "id": "icard2012_s4_4",
@@ -314,7 +268,8 @@
         "no, anti-additive in its second argument"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "icard2012_s4_5",
@@ -328,7 +283,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "ungrammatical",
+    "judgment": "unacceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -345,7 +300,8 @@
         "no, not anti-multiplicative"
       ]
     ],
-    "comment": ""
+    "comment": "Printed with #; the prose says 5 seems ungrammatical.",
+    "verified": "page-image"
   },
   {
     "id": "icard2012_s4_6",
@@ -376,6 +332,7 @@
         "not, anti-additive and anti-multiplicative"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]

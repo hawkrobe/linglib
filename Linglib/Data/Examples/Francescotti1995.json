@@ -28,7 +28,8 @@
         "no"
       ]
     ],
-    "comment": "Albert's passing surpasses one neighbor, Marie's, in surprise, and no more: Bennett's condition wrongly licenses the sentence. The count of classmates is schematic."
+    "comment": "Albert's passing surpasses one neighbor, Marie's, in surprise, and no more: Bennett's condition wrongly licenses the sentence. The count of classmates is schematic. Judgment from the prose (no marks in the paper): \"it would not be felicitous to say\"; \"(5) would remain infelicitous\".",
+    "verified": "page-image"
   },
   {
     "id": "francescotti1995_ex1",
@@ -59,7 +60,8 @@
         "yes"
       ]
     ],
-    "comment": "Albert's failure surpasses every neighbor but Marie's: the universal condition wrongly blocks the sentence. The count of classmates is schematic."
+    "comment": "Albert's failure surpasses every neighbor but Marie's: the universal condition wrongly blocks the sentence. The count of classmates is schematic. Judgment from the prose (no marks in the paper): \"It would be felicitous, in this case, to say\"; \"(1) would remain felicitous\".",
+    "verified": "page-image"
   },
   {
     "id": "francescotti1995_ex7",
@@ -90,11 +92,12 @@
         "yes"
       ]
     ],
-    "comment": "Felicitous although majors, captains or sergeants making policy would be more extreme still. The counts are schematic.",
+    "comment": "Felicitous although majors, captains or sergeants making policy would be more extreme still. The counts are schematic. Judgment from the prose (no marks in the paper): \"might be perfectly felicitous\".",
     "reportedIn": {
       "bibkey": "francescotti-1995",
       "paperLabel": "(7)"
-    }
+    },
+    "verified": "page-image"
   },
   {
     "id": "francescotti1995_ex21far",
@@ -125,7 +128,8 @@
         "yes"
       ]
     ],
-    "comment": "Surpasses every neighbor by a wide margin: very felicitous. The count of the reference class is schematic."
+    "comment": "Surpasses every neighbor by a wide margin: very felicitous. The count of the reference class is schematic. Judgment from the prose (no marks in the paper): \"it would be both true and very felicitous to say\".",
+    "verified": "page-image"
   },
   {
     "id": "francescotti1995_ex21near",
@@ -156,7 +160,8 @@
         "yes"
       ]
     ],
-    "comment": "Still felicitous, less so: the margin is the paper's first gradient of felicity."
+    "comment": "Still felicitous, less so: the margin is the paper's first gradient of felicity. Judgment from the prose (no marks in the paper): \"the sentence might still be felicitous, but it would not be as felicitous\".",
+    "verified": "page-image"
   },
   {
     "id": "francescotti1995_ex21half",
@@ -187,6 +192,7 @@
         "no"
       ]
     ],
-    "comment": "Andre is not taller than the majority, though far taller than average: not felicitous."
+    "comment": "Andre is not taller than the majority, though far taller than average: not felicitous. Judgment from the prose (no marks in the paper): \"(21) would not be particularly felicitous\"; \"this sentence is infelicitous\".",
+    "verified": "page-image"
   }
 ]

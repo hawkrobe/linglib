@@ -13,7 +13,8 @@
       ["pattern", "cant_possible_contradiction"],
       ["modal", "cant"]
     ],
-    "comment": "Observation 5: can't phi excludes 'it's possible that phi'; the conditional-antecedent variant ('If it's possible the keys are in the drawer but they can't be, then ...') is equally incoherent. If can't were weak necessity over not-phi, the conjunction should be coherent — the Mantra's dilemma. Migrated from Phenomena/Modality/EpistemicEvidentiality.lean cantPossibleContradiction."
+    "comment": "Observation 5: can't phi excludes 'it's possible that phi'; the conditional-antecedent variant ('If it's possible the keys are in the drawer but they can't be, then ...') is equally incoherent. If can't were weak necessity over not-phi, the conjunction should be coherent — the Mantra's dilemma. Migrated from Phenomena/Modality/EpistemicEvidentiality.lean cantPossibleContradiction.",
+    "verified": "page-image"
   },
   {
     "id": "vonfintelgillies2021_phil_dinner",
@@ -24,16 +25,15 @@
     "translation": "",
     "context": "Phil has cooked the dinner, checking all the food himself, and knows it is ready.",
     "judgment": "unacceptable",
-    "alternatives": [
-      {"form": "Dinner is ready.", "judgment": "acceptable"}
-    ],
+    "alternatives": [],
     "paperFeatures": [
       ["kind", "must_pair"],
       ["modal", "must"],
       ["evidence", "direct"],
       ["must_entails_prejacent", "true"]
     ],
-    "comment": "Anti-knowledge: Phil's complete checking counts as direct-enough information and blocks must even though no single perceptual event settles 'dinner is ready' — the indirectness signal is about knowledge, not perception. Migrated from Phenomena/Modality/EpistemicEvidentiality.lean philCooksDinner."
+    "comment": "§4.2 Anti-knowledge: one of the trouble-making examples from Goodhue's defense of the epistemic account, context reproduced verbatim. The authors: the extent to which (24b) is marked is the extent to which Phil has direct enough information about what is for dinner and thus about whether all the to-dos have been accomplished. Footnote 23 calls the '#' 'a little harsh': (24') 'The chicken is done, the peas are ready, and the table is set. So: Dinner must be ready.' Migrated from Phenomena/Modality/EpistemicEvidentiality.lean philCooksDinner.",
+    "verified": "page-image"
   },
   {
     "id": "vonfintelgillies2021_meryl_dinner",
@@ -42,17 +42,16 @@
     "primaryText": "Dinner must be ready.",
     "glossedTokens": [],
     "translation": "",
-    "context": "Meryl followed the recipe's instructions but has not checked everything herself and wonders whether anything more was planned.",
+    "context": "Phil had to step out and instructed Meryl to turn the peas off when they are done and take the chicken out when the temperature is right; she does both and has seen that the table is set, but wonders whether Phil was planning to make anything else, e.g. a salad.",
     "judgment": "acceptable",
-    "alternatives": [
-      {"form": "Dinner is ready.", "judgment": "acceptable"}
-    ],
+    "alternatives": [],
     "paperFeatures": [
       ["kind", "must_pair"],
       ["modal", "must"],
       ["evidence", "indirect"],
       ["must_entails_prejacent", "true"]
     ],
-    "comment": "Meryl's information is indirect: she followed the steps but lacks full direct knowledge of what counts as ready, so must is licensed. Minimal pair with the Phil row. Migrated from Phenomena/Modality/EpistemicEvidentiality.lean merylCooksDinner."
+    "comment": "§4.2: minimal pair with (24). The authors: the extent to which (25b) is felicitous and true tracks the extent to which Meryl's information about what is for dinner is not direct enough. Footnote 23: if she vocalizes her uncertainty about a salad, (25') '??Dinner must be ready.' Migrated from Phenomena/Modality/EpistemicEvidentiality.lean merylCooksDinner.",
+    "verified": "page-image"
   }
 ]

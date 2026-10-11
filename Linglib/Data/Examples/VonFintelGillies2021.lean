@@ -37,7 +37,7 @@ def phil_dinner : Datum :=
     glossedTokens := []
     context := "Phil has cooked the dinner, checking all the food himself, and knows it is ready."
     judgment := .unacceptable
-    alternatives := [("Dinner is ready.", .acceptable)]
+    alternatives := []
     readings := []
     paperFeatures := [("kind", "must_pair"), ("modal", "must"), ("evidence", "direct"), ("must_entails_prejacent", "true")] }
 
@@ -48,9 +48,9 @@ def meryl_dinner : Datum :=
     language := "stan1293"
     primaryText := "Dinner must be ready."
     glossedTokens := []
-    context := "Meryl followed the recipe's instructions but has not checked everything herself and wonders whether anything more was planned."
+    context := "Phil had to step out and instructed Meryl to turn the peas off when they are done and take the chicken out when the temperature is right; she does both and has seen that the table is set, but wonders whether Phil was planning to make anything else, e.g. a salad."
     judgment := .acceptable
-    alternatives := [("Dinner is ready.", .acceptable)]
+    alternatives := []
     readings := []
     paperFeatures := [("kind", "must_pair"), ("modal", "must"), ("evidence", "indirect"), ("must_entails_prejacent", "true")] }
 

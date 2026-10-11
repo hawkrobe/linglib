@@ -121,7 +121,7 @@ def ex_8 : Datum :=
 
 def ex_9 : Datum :=
   { id := "yagi2025_9"
-    source := ⟨"yagi-2025", "(ia)"⟩
+    source := ⟨"yagi-2025", "fn. 7 (i)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "It must be here or (else) it must be there."
@@ -130,11 +130,11 @@ def ex_9 : Datum :=
     judgment := .acceptable
     alternatives := []
     readings := [("one of the following obtains: it must be here; it must be there", .acceptable)]
-    paperFeatures := [("reading", "modal split")] }
+    paperFeatures := [("reading", "salient reading")] }
 
 def ex_10 : Datum :=
   { id := "yagi2025_10"
-    source := ⟨"yagi-2025", "(iiib)"⟩
+    source := ⟨"yagi-2025", "fn. 7 (iiib)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "The doctor can tell you right away what's the matter with you, or the nurse can make an appointment for you."
@@ -147,7 +147,7 @@ def ex_10 : Datum :=
 
 def ex_11 : Datum :=
   { id := "yagi2025_11"
-    source := ⟨"yagi-2025", "(ii)"⟩
+    source := ⟨"yagi-2025", "fn. 6 (ii)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Either John is not a scuba diver, or his wetsuit is blue."

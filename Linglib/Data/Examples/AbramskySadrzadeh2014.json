@@ -1,8 +1,8 @@
 [
   {
     "id": "abramskysadrzadeh2014_donkey",
-    "source": {"bibkey": "geach-1962", "paperLabel": "donkey sentence"},
-    "reportedIn": {"bibkey": "abramsky-sadrzadeh-2014", "paperLabel": "§1"},
+    "source": {"bibkey": "abramsky-sadrzadeh-2014", "paperLabel": "§1"},
+    "reportedIn": null,
     "language": "stan1293",
     "primaryText": "If a farmer owns a donkey, he beats it.",
     "discourseSegments": [],
@@ -15,7 +15,8 @@
     "paperFeatures": [
       ["phenomenon", "donkey anaphora"]
     ],
-    "comment": "Cited as the case where the usual Montague-style translation fails and DRT was first to succeed."
+    "comment": "Cited to Geach (1962), whose conditional donkey sentence is 'If any man owns a donkey, he beats it.' (p. 128); the farmer wording is this paper's. Cited as the case where the usual Montague-style translation fails, with DRT the first widely accepted formal solution.",
+    "verified": "page-image"
   },
   {
     "id": "abramskysadrzadeh2014_drt_resolved",
@@ -37,7 +38,8 @@
       ["resolution", "full"],
       ["unification", "v = x, w = y"]
     ],
-    "comment": "The merge of the two DRS is followed by unification of the accessible, agreeing referents."
+    "comment": "The merge of the two DRS is followed by unification of the accessible, agreeing referents.",
+    "verified": "page-image"
   },
   {
     "id": "abramskysadrzadeh2014_drt_partial",
@@ -61,7 +63,8 @@
       ["resolution", "partial"],
       ["unification", "v = x"]
     ],
-    "comment": "The donkey referent sits in a negated sub-DRS and is inaccessible to `it`."
+    "comment": "The donkey referent sits in a negated sub-DRS and is inaccessible to `it`.",
+    "verified": "page-image"
   },
   {
     "id": "abramskysadrzadeh2014_ex1",
@@ -83,7 +86,8 @@
       ["cover", "x ↦ z ↤ y"],
       ["gluing", "{John(z), sleeps(z), snores(z)}"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "abramskysadrzadeh2014_ex2",
@@ -102,7 +106,8 @@
       ["cover", "x ↦ a, y ↦ b, u ↦ a, v ↦ b"],
       ["gluing", "{John(a), donkey(b), owns(a, b), beats(a, b)}"]
     ],
-    "comment": "Anaphor and antecedent in one sentence; three local sections for John, the donkey, and owning/beating."
+    "comment": "Anaphor and antecedent in one sentence; three local sections for John, the donkey, and owning/beating.",
+    "verified": "page-image"
   },
   {
     "id": "abramskysadrzadeh2014_ex3",
@@ -127,7 +132,8 @@
       ["resolution", "agreement"],
       ["cover", "x ↦ a, y ↦ b, z ↦ b"]
     ],
-    "comment": "Agreement is encoded by the negative literal ¬Man(y); merging `it` with John violates consistency."
+    "comment": "Agreement is encoded by the negative literal ¬Man(y) on the donkey, since 'it' does not refer to men; a cover merging x (John) and y (the donkey) would violate consistency.",
+    "verified": "page-image"
   },
   {
     "id": "abramskysadrzadeh2014_ex4",
@@ -152,7 +158,8 @@
       ["resolution", "ambiguous"],
       ["covers", "v ↦ y; v ↦ z"]
     ],
-    "comment": "Two plausible covers; the paper defers their ranking to the probabilistic setting."
+    "comment": "Two plausible covers; the paper defers their ranking to the probabilistic setting.",
+    "verified": "page-image"
   },
   {
     "id": "abramskysadrzadeh2014_brother_happy",
@@ -177,7 +184,8 @@
       ["resolution", "preferential"],
       ["preferred", "he = John"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "abramskysadrzadeh2014_brother_nice",
@@ -202,7 +210,8 @@
       ["resolution", "preferential"],
       ["preferred", "he = the brother"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "abramskysadrzadeh2014_cd",
@@ -220,7 +229,8 @@
     "paperFeatures": [
       ["resolution", "preferential"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "abramskysadrzadeh2014_jim",
@@ -241,7 +251,8 @@
     "paperFeatures": [
       ["resolution", "preferential"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "abramskysadrzadeh2014_bananas",
@@ -270,6 +281,7 @@
       ["corpus", "British News, 200 million words"],
       ["selected", "ripe bananas, cheeky monkeys"]
     ],
-    "comment": "Four candidate coverings weighted by adjective–noun pattern frequencies (ripe banana 14, ripe monkey 0, cheeky banana 0, cheeky monkey 10); the covering u ↦ y, v ↦ z has probability 1/2."
+    "comment": "Four candidate coverings weighted by adjective–noun pattern frequencies (ripe banana 14, ripe monkey 0, cheeky banana 0, cheeky monkey 10); the covering u ↦ y, v ↦ z has probability 1/2.",
+    "verified": "page-image"
   }
 ]

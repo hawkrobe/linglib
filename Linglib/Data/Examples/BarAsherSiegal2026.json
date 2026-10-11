@@ -13,7 +13,8 @@
       ["construction", "because"],
       ["relation", "grounding"]
     ],
-    "comment": "Dowty 1979, example 132b: dependency without temporal precedence and counterfactuality."
+    "comment": "Dowty 1979, example 132b: dependency without temporal precedence and counterfactuality.",
+    "verified": "page-image"
   },
   {
     "id": "bas2026_1b",
@@ -29,7 +30,8 @@
       ["construction", "cause"],
       ["relation", "grounding"]
     ],
-    "comment": "Dowty 1979, example 132c."
+    "comment": "Dowty 1979, example 132c.",
+    "verified": "page-image"
   },
   {
     "id": "bas2026_1c",
@@ -45,7 +47,8 @@
       ["construction", "because of"],
       ["relation", "grounding"]
     ],
-    "comment": "Adapted from Maienborn and Herdtfelder 2017."
+    "comment": "Adapted from Maienborn and Herdtfelder 2017.",
+    "verified": "page-image"
   },
   {
     "id": "bas2026_2a",
@@ -61,7 +64,8 @@
       ["construction", "lexical causative"],
       ["entails", "(2b)"]
     ],
-    "comment": "Fodor 1970's one-way entailment."
+    "comment": "Fodor 1970's one-way entailment.",
+    "verified": "page-image"
   },
   {
     "id": "bas2026_2b",
@@ -76,10 +80,10 @@
       {"name": "Sam opened a window and a gust blew the door open", "judgment": "acceptable"}
     ],
     "paperFeatures": [
-      ["construction", "periphrastic causative"],
-      ["entails", "(2a)"]
+      ["construction", "periphrastic causative"]
     ],
-    "comment": "Does not entail (2a)."
+    "comment": "Does not entail (2a).",
+    "verified": "page-image"
   },
   {
     "id": "bas2026_i",
@@ -96,7 +100,8 @@
       ["pronoun", "they"],
       ["antecedent", "the demonstrators"]
     ],
-    "comment": "Hobbs 1979, discussed in Wolf et al. 2004."
+    "comment": "Hobbs 1979, discussed in Wolf et al. 2004.",
+    "verified": "page-image"
   },
   {
     "id": "bas2026_ii",
@@ -113,7 +118,8 @@
       ["pronoun", "they"],
       ["antecedent", "the city council"]
     ],
-    "comment": "Hobbs 1979."
+    "comment": "Hobbs 1979.",
+    "verified": "page-image"
   },
   {
     "id": "bas2026_iii",
@@ -129,6 +135,7 @@
       ["construction", "cause"],
       ["enrichment", "John drank enough wine to impair his driving"]
     ],
-    "comment": "Bar-Asher Siegal 2020: the causal context enriches the first clause."
+    "comment": "Bar-Asher Siegal 2020: the causal context enriches the first clause.",
+    "verified": "page-image"
   }
 ]

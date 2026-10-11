@@ -8,7 +8,7 @@
   "discourseSegments": [],
   "glossedTokens": [],
   "translation": "",
-  "context": "A woman says to her boyfriend (close interlocutor): S2. Participant rates speaker commitment (Q1), appropriateness (Q2), grammaticality (Q3), and the speaker's social background + persona. Necessity single-modal (SM), close context.",
+  "context": "A woman says to the boyfriend (close interlocutor): S2. Participant rates speaker commitment (Q1), appropriateness (Q2), grammaticality (Q3), and the speaker's social background + persona. Necessity single-modal (SM), close context.",
   "judgment": "acceptable",
   "alternatives": [],
   "readings": [],
@@ -19,7 +19,8 @@
    ["confidence", "506"], ["friendliness", "514"], ["warmth", "491"], ["coolness", "455"],
    ["rebelliousness", "355"]
   ],
-  "comment": "Exp 2 cell means (x100), Likert 1-7, n=918 total. Tables 2/4/6/9. Data: osf.io/v6sjt."
+  "comment": "Exp 2 cell means (x100), Likert 1-7, n=918 total. Tables 2/4/6/9. Data: osf.io/v6sjt.",
+  "verified": "page-image"
  },
  {
   "id": "rotterliu2025_close_nece_mc",
@@ -30,7 +31,7 @@
   "discourseSegments": [],
   "glossedTokens": [],
   "translation": "",
-  "context": "A woman says to her boyfriend (close interlocutor): S2. Necessity modal-concord (MC), close context.",
+  "context": "A woman says to the boyfriend (close interlocutor): S2. Necessity modal-concord (MC), close context.",
   "judgment": "acceptable",
   "alternatives": [],
   "readings": [],
@@ -41,7 +42,8 @@
    ["confidence", "528"], ["friendliness", "498"], ["warmth", "474"], ["coolness", "430"],
    ["rebelliousness", "350"]
   ],
-  "comment": "Exp 2 cell means (x100), Likert 1-7, n=918 total. Tables 2/4/6/9. Data: osf.io/v6sjt."
+  "comment": "Exp 2 cell means (x100), Likert 1-7, n=918 total. Tables 2/4/6/9. Data: osf.io/v6sjt.",
+  "verified": "page-image"
  },
  {
   "id": "rotterliu2025_close_poss_sm",
@@ -52,7 +54,7 @@
   "discourseSegments": [],
   "glossedTokens": [],
   "translation": "",
-  "context": "A woman says to her boyfriend (close interlocutor): S2. Possibility single-modal (SM), close context.",
+  "context": "A woman says to the boyfriend (close interlocutor): S2. Possibility single-modal (SM), close context.",
   "judgment": "acceptable",
   "alternatives": [],
   "readings": [],
@@ -63,7 +65,8 @@
    ["confidence", "450"], ["friendliness", "519"], ["warmth", "494"], ["coolness", "450"],
    ["rebelliousness", "347"]
   ],
-  "comment": "Exp 2 cell means (x100), Likert 1-7, n=918 total. Tables 2/4/6/9. Data: osf.io/v6sjt."
+  "comment": "Exp 2 cell means (x100), Likert 1-7, n=918 total. Tables 2/4/6/9. Data: osf.io/v6sjt.",
+  "verified": "page-image"
  },
  {
   "id": "rotterliu2025_close_poss_mc",
@@ -74,7 +77,7 @@
   "discourseSegments": [],
   "glossedTokens": [],
   "translation": "",
-  "context": "A woman says to her boyfriend (close interlocutor): S2. Possibility modal-concord (MC), close context.",
+  "context": "A woman says to the boyfriend (close interlocutor): S2. Possibility modal-concord (MC), close context.",
   "judgment": "acceptable",
   "alternatives": [],
   "readings": [],
@@ -85,7 +88,8 @@
    ["confidence", "421"], ["friendliness", "505"], ["warmth", "485"], ["coolness", "443"],
    ["rebelliousness", "351"]
   ],
-  "comment": "Exp 2 cell means (x100), Likert 1-7, n=918 total. Tables 2/4/6/9. Data: osf.io/v6sjt."
+  "comment": "Exp 2 cell means (x100), Likert 1-7, n=918 total. Tables 2/4/6/9. Data: osf.io/v6sjt.",
+  "verified": "page-image"
  },
  {
   "id": "rotterliu2025_distant_nece_sm",
@@ -107,7 +111,8 @@
    ["confidence", "498"], ["friendliness", "498"], ["warmth", "481"], ["coolness", "449"],
    ["rebelliousness", "346"]
   ],
-  "comment": "Exp 2 cell means (x100), Likert 1-7, n=918 total. Tables 2/4/6/9. Data: osf.io/v6sjt."
+  "comment": "Exp 2 cell means (x100), Likert 1-7, n=918 total. Tables 2/4/6/9. Data: osf.io/v6sjt.",
+  "verified": "page-image"
  },
  {
   "id": "rotterliu2025_distant_nece_mc",
@@ -129,7 +134,8 @@
    ["confidence", "524"], ["friendliness", "485"], ["warmth", "465"], ["coolness", "428"],
    ["rebelliousness", "347"]
   ],
-  "comment": "Exp 2 cell means (x100), Likert 1-7, n=918 total. Tables 2/4/6/9. Data: osf.io/v6sjt."
+  "comment": "Exp 2 cell means (x100), Likert 1-7, n=918 total. Tables 2/4/6/9. Data: osf.io/v6sjt.",
+  "verified": "page-image"
  },
  {
   "id": "rotterliu2025_distant_poss_sm",
@@ -151,7 +157,8 @@
    ["confidence", "440"], ["friendliness", "506"], ["warmth", "485"], ["coolness", "451"],
    ["rebelliousness", "341"]
   ],
-  "comment": "Exp 2 cell means (x100), Likert 1-7, n=918 total. Tables 2/4/6/9. Data: osf.io/v6sjt."
+  "comment": "Exp 2 cell means (x100), Likert 1-7, n=918 total. Tables 2/4/6/9. Data: osf.io/v6sjt.",
+  "verified": "page-image"
  },
  {
   "id": "rotterliu2025_distant_poss_mc",
@@ -173,6 +180,7 @@
    ["confidence", "408"], ["friendliness", "499"], ["warmth", "479"], ["coolness", "433"],
    ["rebelliousness", "344"]
   ],
-  "comment": "Exp 2 cell means (x100), Likert 1-7, n=918 total. Tables 2/4/6/9. Data: osf.io/v6sjt."
+  "comment": "Exp 2 cell means (x100), Likert 1-7, n=918 total. Tables 2/4/6/9. Data: osf.io/v6sjt.",
+  "verified": "page-image"
  }
 ]

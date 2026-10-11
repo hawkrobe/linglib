@@ -48,7 +48,8 @@
         "high"
       ]
     ],
-    "comment": "Reference level of the display-type predictor: the sufficient attribute is of low and the redundant attribute of high discriminability."
+    "comment": "Reference level of the display-type predictor: the sufficient attribute is of low and the redundant attribute of high discriminability.",
+    "verified": "page-image"
   },
   {
     "id": "gilesetal2026_exp1_baseline",
@@ -111,7 +112,8 @@
         "-68"
       ]
     ],
-    "comment": "Both attributes of high discriminability; overinformativeness is credibly lower than at the reference level."
+    "comment": "Both attributes of high discriminability; overinformativeness is credibly lower than at the reference level.",
+    "verified": "page-image"
   },
   {
     "id": "gilesetal2026_exp1_sHighRLow",
@@ -174,7 +176,8 @@
         "-83"
       ]
     ],
-    "comment": "The sufficient attribute of high and the redundant attribute of low discriminability; overinformativeness is credibly lower than at the reference level."
+    "comment": "The sufficient attribute of high and the redundant attribute of low discriminability; overinformativeness is credibly lower than at the reference level.",
+    "verified": "page-image"
   },
   {
     "id": "gilesetal2026_exp1_colour",
@@ -229,7 +232,8 @@
         "high"
       ]
     ],
-    "comment": "Reference level of the attribute predictor: colour is the redundant attribute."
+    "comment": "Reference level of the attribute predictor: colour is the redundant attribute.",
+    "verified": "page-image"
   },
   {
     "id": "gilesetal2026_exp1_material",
@@ -296,7 +300,8 @@
         "-120"
       ]
     ],
-    "comment": "Material is the redundant attribute; with discriminability equated by the staircases, overinformativeness is credibly lower than with redundant colour."
+    "comment": "Material is the redundant attribute; with discriminability equated by the staircases, overinformativeness is credibly lower than with redundant colour.",
+    "verified": "page-image"
   },
   {
     "id": "gilesetal2026_exp2_hfColour",
@@ -351,7 +356,8 @@
         "high"
       ]
     ],
-    "comment": "Reference level: colour redundant, named with the high-frequency terms green and blue."
+    "comment": "Reference level: colour redundant, named with the high-frequency terms green and blue.",
+    "verified": "page-image"
   },
   {
     "id": "gilesetal2026_exp2_orientation",
@@ -414,7 +420,8 @@
         "-75"
       ]
     ],
-    "comment": "Orientation redundant; with discriminability, attentional guidance and production effort controlled, overinformativeness is credibly lower than with redundant colour."
+    "comment": "Orientation redundant; with discriminability, attentional guidance and production effort controlled, overinformativeness is credibly lower than with redundant colour.",
+    "verified": "page-image"
   },
   {
     "id": "gilesetal2026_exp2_lfColour",
@@ -481,6 +488,7 @@
         "3"
       ]
     ],
-    "comment": "Colour redundant, named with low-frequency terms; the credible interval includes zero, so term frequency does not account for colour's advantage."
+    "comment": "Colour redundant, named with low-frequency terms; the credible interval includes zero, so term frequency does not account for colour's advantage.",
+    "verified": "page-image"
   }
 ]

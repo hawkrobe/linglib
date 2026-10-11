@@ -25,7 +25,7 @@ def ex_1 : Datum :=
     context := ""
     judgment := .acceptable
     alternatives := []
-    readings := [("answers: John / It was John / The person who kicked Sam was John", .acceptable), ("non-answers: *He / *Sam kicked John / *China is populous", .unacceptable), ("responses but not answers: I don't know / Ask Sam", .acceptable)]
+    readings := [("answers: John / It was John / The person who kicked Sam was John", .acceptable), ("non-answers: *He / *Sam kicked John / *China is populous", .ungrammatical), ("responses but not answers: I don't know / Ask Sam", .marginal)]
     paperFeatures := [("claim", "answerhood is as entrenched as sentencehood")] }
 
 def gas : Datum :=
@@ -114,7 +114,7 @@ def john : Datum :=
     primaryText := "Peter knows that the person who kicked Sam is John but Peter doesn't know who kicked Sam."
     glossedTokens := []
     context := ""
-    judgment := .acceptable
+    judgment := .unacceptable
     alternatives := []
     readings := []
     paperFeatures := [("diagnostic", "Distributivity Test"), ("verdict", "inconsistent — likely an answer, not guaranteed")] }

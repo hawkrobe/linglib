@@ -24,7 +24,8 @@
         "probably"
       ]
     ],
-    "comment": "Suggests (1b): otherwise the speaker would have uttered (1c)."
+    "comment": "Suggests (1b): otherwise the speaker would have uttered (1c).",
+    "verified": "page-image"
   },
   {
     "id": "herbstrittfranke2019_ex1b",
@@ -51,7 +52,8 @@
         "not certain"
       ]
     ],
-    "comment": "The scalar implicature of (1a)."
+    "comment": "The scalar implicature of (1a).",
+    "verified": "page-image"
   },
   {
     "id": "herbstrittfranke2019_ex1c",
@@ -78,7 +80,8 @@
         "certainly"
       ]
     ],
-    "comment": "The stronger alternative to (1a)."
+    "comment": "The stronger alternative to (1a).",
+    "verified": "page-image"
   },
   {
     "id": "herbstrittfranke2019_ex2",
@@ -91,7 +94,7 @@
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "Eric has seen Liem wear green on 5 of 8 days spread over the year.",
+    "context": "Eric has seen Liem wear green on 500 of 800 consecutive days.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
@@ -105,7 +108,8 @@
         "definitely likely"
       ]
     ],
-    "comment": "Moss's example: a complex expression a speaker with much evidence can assert."
+    "comment": "Moss's example: a complex expression a speaker with much evidence can assert.",
+    "verified": "page-image"
   },
   {
     "id": "herbstrittfranke2019_ex3",
@@ -132,7 +136,8 @@
         "might be probable"
       ]
     ],
-    "comment": "Moss's example: the same proportion with less evidence licenses only the hedged complex expression."
+    "comment": "Moss's example: the same proportion with less evidence licenses only the hedged complex expression.",
+    "verified": "page-image"
   },
   {
     "id": "herbstrittfranke2019_ex5a",
@@ -159,7 +164,8 @@
         "probable"
       ]
     ],
-    "comment": "A simple probability expression: true where the speaker's credence in RED exceeds the threshold of *probable*."
+    "comment": "A simple probability expression: true where the speaker's credence in RED exceeds the threshold of *probable*.",
+    "verified": "page-image"
   },
   {
     "id": "herbstrittfranke2019_ex6a",
@@ -186,7 +192,8 @@
         "certainly probable"
       ]
     ],
-    "comment": "A complex probability expression: true where the speaker's credence in *probably RED* exceeds the threshold of *certainly*."
+    "comment": "A complex probability expression: true where the speaker's credence in *probably RED* exceeds the threshold of *certainly*.",
+    "verified": "page-image"
   },
   {
     "id": "herbstrittfranke2019_ex11",
@@ -206,13 +213,14 @@
     "paperFeatures": [
       [
         "section",
-        "3"
+        "4"
       ],
       [
         "expression",
         "frame"
       ]
     ],
-    "comment": "The message frame of the production task; the sender fills in one of certainly, probably, possibly, probably not, certainly not."
+    "comment": "The message frame of the production task; the sender fills in one of certainly, probably, possibly, probably not, certainly not.",
+    "verified": "page-image"
   }
 ]

@@ -18,7 +18,8 @@
       ["verbType", "lexical"],
       ["finitePosition", "T"]
     ],
-    "comment": "Pollock 1989:367."
+    "comment": "Pollock 1989:367.",
+    "verified": "page-image"
   },
   {
     "id": "arregipietraszko2021_7",
@@ -39,7 +40,8 @@
       ["verbType", "lexical"],
       ["finitePosition", "V"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arregipietraszko2021_10a",
@@ -59,7 +61,8 @@
       ["finitePosition", "T"],
       ["doSupport", "false"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arregipietraszko2021_10b",
@@ -81,7 +84,8 @@
       ["finitePosition", "T"],
       ["doSupport", "false"]
     ],
-    "comment": "Pollock 1989:370."
+    "comment": "Pollock 1989:370.",
+    "verified": "page-image"
   },
   {
     "id": "arregipietraszko2021_12",
@@ -100,7 +104,8 @@
     "paperFeatures": [
       ["context", "declarative"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arregipietraszko2021_13",
@@ -119,7 +124,8 @@
     "paperFeatures": [
       ["context", "relative"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arregipietraszko2021_16",
@@ -139,7 +145,8 @@
       ["context", "relative"],
       ["relPrefixPosition", "T"]
     ],
-    "comment": "The whole relative prefix follows the subject in Spec,TP."
+    "comment": "The whole relative prefix follows the subject in Spec,TP.",
+    "verified": "page-image"
   },
   {
     "id": "arregipietraszko2021_19_1",
@@ -160,7 +167,8 @@
       ["agreement", "u"],
       ["rel", "o"]
     ],
-    "comment": "Relative agreement prefix by class, with its linker, augment, and subject-agreement components."
+    "comment": "Relative agreement prefix by class, with its linker, augment, and subject-agreement components.",
+    "verified": "page-image"
   },
   {
     "id": "arregipietraszko2021_19_9",
@@ -181,7 +189,8 @@
       ["agreement", "i"],
       ["rel", "e"]
     ],
-    "comment": "Relative agreement prefix by class, with its linker, augment, and subject-agreement components."
+    "comment": "Relative agreement prefix by class, with its linker, augment, and subject-agreement components.",
+    "verified": "page-image"
   },
   {
     "id": "arregipietraszko2021_19_7",
@@ -202,7 +211,8 @@
       ["agreement", "si"],
       ["rel", "esi"]
     ],
-    "comment": "Relative agreement prefix by class, with its linker, augment, and subject-agreement components."
+    "comment": "Relative agreement prefix by class, with its linker, augment, and subject-agreement components.",
+    "verified": "page-image"
   },
   {
     "id": "arregipietraszko2021_19_11",
@@ -223,7 +233,8 @@
       ["agreement", "lu"],
       ["rel", "olu"]
     ],
-    "comment": "Relative agreement prefix by class, with its linker, augment, and subject-agreement components."
+    "comment": "Relative agreement prefix by class, with its linker, augment, and subject-agreement components.",
+    "verified": "page-image"
   },
   {
     "id": "arregipietraszko2021_26",
@@ -246,7 +257,8 @@
       ["finitePosition", "C"],
       ["doSupport", "false"]
     ],
-    "comment": "Vikner 1995:47."
+    "comment": "Vikner 1995:47.",
+    "verified": "page-image"
   },
   {
     "id": "arregipietraszko2021_27",
@@ -268,7 +280,8 @@
       ["verbType", "lexical"],
       ["finitePosition", "V"]
     ],
-    "comment": "Vikner 1995:47."
+    "comment": "Vikner 1995:47.",
+    "verified": "page-image"
   },
   {
     "id": "arregipietraszko2021_30",
@@ -290,7 +303,8 @@
       ["finitePosition", "C"],
       ["imperativeForm", "true"]
     ],
-    "comment": "Enclisis diagnoses the verb in C."
+    "comment": "Enclisis diagnoses the verb in C.",
+    "verified": "page-image"
   },
   {
     "id": "arregipietraszko2021_31",
@@ -312,16 +326,17 @@
       ["finitePosition", "T"],
       ["imperativeForm", "false"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arregipietraszko2021_33",
     "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(33)"},
     "language": "lowe1386",
-    "primaryText": "ans klɔmai",
+    "primaryText": "ans klɔˈmai",
     "discourseSegments": [],
     "glossedTokens": [
-      ["ans", "us"], ["klɔmai", "call.IMP.2PL"]
+      ["ans", "us"], ["klɔˈmai", "call.IMP.2PL"]
     ],
     "translation": "Call us!",
     "context": "",
@@ -334,16 +349,17 @@
       ["finitePosition", "T"],
       ["imperativeForm", "true"]
     ],
-    "comment": "Scuol variety of Vallader (Manzini and Savoia 2005:424); proclisis with imperative-specific inflection."
+    "comment": "Scuol variety of Vallader (Manzini and Savoia 2005:424); proclisis with imperative-specific inflection.",
+    "verified": "page-image"
   },
   {
     "id": "arregipietraszko2021_34",
     "source": {"bibkey": "arregi-pietraszko-2021", "paperLabel": "(34)"},
     "language": "lowe1386",
-    "primaryText": "nu ns klɔmarai",
+    "primaryText": "nu ns klɔmaˈrai",
     "discourseSegments": [],
     "glossedTokens": [
-      ["nu", "not"], ["ns", "us"], ["klɔmarai", "call.IMP/INF.2PL"]
+      ["nu", "not"], ["ns", "us"], ["klɔmaˈrai", "call.IMP/INF.2PL"]
     ],
     "translation": "Don't call us!",
     "context": "",
@@ -356,7 +372,8 @@
       ["finitePosition", "T"],
       ["imperativeForm", "false"]
     ],
-    "comment": "Manzini and Savoia 2005:424."
+    "comment": "Manzini and Savoia 2005:424.",
+    "verified": "page-image"
   },
   {
     "id": "arregipietraszko2021_36a",
@@ -381,7 +398,8 @@
       ["doSupport", "true"],
       ["verbForm", "bare"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arregipietraszko2021_36b",
@@ -405,7 +423,8 @@
       ["doSupport", "true"],
       ["verbForm", "bare"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arregipietraszko2021_36c",
@@ -429,7 +448,8 @@
       ["doSupport", "true"],
       ["verbForm", "bare"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arregipietraszko2021_37a",
@@ -453,7 +473,8 @@
       ["finitePosition", "T"],
       ["doSupport", "false"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arregipietraszko2021_37b",
@@ -475,7 +496,8 @@
       ["finitePosition", "T"],
       ["doSupport", "false"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arregipietraszko2021_37c",
@@ -497,7 +519,8 @@
       ["finitePosition", "C"],
       ["doSupport", "false"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arregipietraszko2021_fn38",
@@ -517,7 +540,8 @@
       ["finitePosition", "V"],
       ["doSupport", "false"]
     ],
-    "comment": "The subject's copy in Spec,TP is a lower copy and does not intervene."
+    "comment": "The subject's copy in Spec,TP is a lower copy and does not intervene.",
+    "verified": "page-image"
   },
   {
     "id": "arregipietraszko2021_51",
@@ -540,7 +564,8 @@
       ["finitePosition", "V"],
       ["doSupport", "false"]
     ],
-    "comment": "Vikner 1995:144."
+    "comment": "Vikner 1995:144.",
+    "verified": "page-image"
   },
   {
     "id": "arregipietraszko2021_52",
@@ -560,7 +585,8 @@
       ["finitePosition", "C"],
       ["doSupport", "false"]
     ],
-    "comment": "Vikner 1995:47; subject-verb inversion without do-support."
+    "comment": "Vikner 1995:47; subject-verb inversion without do-support.",
+    "verified": "page-image"
   },
   {
     "id": "arregipietraszko2021_53a",
@@ -581,7 +607,8 @@
       ["verbType", "lexical"],
       ["finitePosition", "T"]
     ],
-    "comment": "Monnese (Benincà and Poletto 2004:59–60)."
+    "comment": "Monnese (Benincà and Poletto 2004:59–60).",
+    "verified": "page-image"
   },
   {
     "id": "arregipietraszko2021_53b",
@@ -603,7 +630,8 @@
       ["finitePosition", "T"],
       ["doSupport", "false"]
     ],
-    "comment": "Monnese; negation does not trigger do-support."
+    "comment": "Monnese; negation does not trigger do-support.",
+    "verified": "page-image"
   },
   {
     "id": "arregipietraszko2021_54",
@@ -624,7 +652,8 @@
       ["verbType", "auxiliary"],
       ["finitePosition", "T"]
     ],
-    "comment": "Benincà and Poletto 2004:59."
+    "comment": "Benincà and Poletto 2004:59.",
+    "verified": "page-image"
   },
   {
     "id": "arregipietraszko2021_55",
@@ -646,7 +675,8 @@
       ["finitePosition", "C"],
       ["doSupport", "false"]
     ],
-    "comment": "Benincà and Poletto 2004:52."
+    "comment": "Benincà and Poletto 2004:52.",
+    "verified": "page-image"
   },
   {
     "id": "arregipietraszko2021_56b",
@@ -671,7 +701,8 @@
       ["doSupport", "true"],
       ["verbForm", "infinitive"]
     ],
-    "comment": "Benincà and Poletto 2004:52; (56a) is the starred alternative."
+    "comment": "Benincà and Poletto 2004:52; (56a) is the starred alternative.",
+    "verified": "page-image"
   },
   {
     "id": "arregipietraszko2021_57",
@@ -695,7 +726,8 @@
       ["doSupport", "true"],
       ["verbForm", "infinitive"]
     ],
-    "comment": "Bjorkman 2011:190–191; the infinitive follows the adverbial."
+    "comment": "Bjorkman 2011:190–191; the infinitive follows the adverbial.",
+    "verified": "page-image"
   },
   {
     "id": "arregipietraszko2021_61",
@@ -715,7 +747,8 @@
       ["finitePosition", "T"],
       ["doSupport", "true"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arregipietraszko2021_62",
@@ -740,7 +773,8 @@
       ["finitePosition", "T"],
       ["doSupport", "false"]
     ],
-    "comment": "Verb-stranding VP-ellipsis."
+    "comment": "Verb-stranding VP-ellipsis.",
+    "verified": "page-image"
   },
   {
     "id": "arregipietraszko2021_67",
@@ -766,7 +800,8 @@
       ["finitePosition", "C"],
       ["doSupport", "true"]
     ],
-    "comment": "Sailor 2018:855–856."
+    "comment": "Sailor 2018:855–856.",
+    "verified": "page-image"
   },
   {
     "id": "arregipietraszko2021_70",
@@ -788,7 +823,8 @@
       ["doSupport", "false"],
       ["frontedForm", "infinitive"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arregipietraszko2021_71",
@@ -808,7 +844,8 @@
       ["doSupport", "true"],
       ["frontedForm", "bare"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arregipietraszko2021_74a",
@@ -830,7 +867,8 @@
       ["doSupport", "false"],
       ["frontedForm", "infinitive"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "arregipietraszko2021_74b",
@@ -853,7 +891,8 @@
       ["doSupport", "false"],
       ["frontedForm", "infinitive"]
     ],
-    "comment": "Landau 2006:32."
+    "comment": "Landau 2006:32.",
+    "verified": "page-image"
   },
   {
     "id": "arregipietraszko2021_77",
@@ -878,7 +917,8 @@
       ["doSupport", "true"],
       ["frontedForm", "finite"]
     ],
-    "comment": "Platzack 2012:281; the fronted verb carries the same past inflection as the support verb."
+    "comment": "Platzack 2012:281; the fronted verb carries the same past inflection as the support verb.",
+    "verified": "page-image"
   },
   {
     "id": "arregipietraszko2021_80a",
@@ -900,7 +940,8 @@
       ["doSupport", "false"],
       ["frontedForm", "pseudoInfinitive"]
     ],
-    "comment": "Waletzky 1969, cited in Travis 2003:244; the infinitive is vis-n."
+    "comment": "Waletzky 1969, cited in Travis 2003:244; the infinitive is vis-n.",
+    "verified": "page-image"
   },
   {
     "id": "arregipietraszko2021_80b",
@@ -910,7 +951,7 @@
     "discourseSegments": [],
     "glossedTokens": [
       ["Iz-n", "be.PRS.3SG-INF"], ["iz", "be.PRS.3SG"], ["es", "it"], ["reb", "Mr."],
-      ["yixezkl", "Yikhezkl's"], ["gombiners", "Gombiner's"], ["shtub", "home"]
+      ["yixezkl", "Yikhezkl's"], ["gombiners", ""], ["shtub", "home"]
     ],
     "translation": "It is Mr. Yikhezkl's home.",
     "context": "",
@@ -923,7 +964,8 @@
       ["doSupport", "false"],
       ["frontedForm", "pseudoInfinitive"]
     ],
-    "comment": "Waletzky 1969, cited in Travis 2003:244; the infinitive is zay-n."
+    "comment": "Waletzky 1969, cited in Travis 2003:244; the infinitive is zay-n. The paper's gloss line has six glosses for seven words, none for gombiners.",
+    "verified": "page-image"
   },
   {
     "id": "arregipietraszko2021_80c",
@@ -946,7 +988,8 @@
       ["doSupport", "false"],
       ["frontedForm", "pseudoInfinitive"]
     ],
-    "comment": "Davis and Prince 1986:95."
+    "comment": "Davis and Prince 1986:95.",
+    "verified": "page-image"
   },
   {
     "id": "arregipietraszko2021_82",
@@ -959,7 +1002,7 @@
     ],
     "translation": "As for being at home, we are.",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "marginal",
     "alternatives": [
       {"form": "Jesteć w domu, jesteśmy.", "judgment": "ungrammatical"}
     ],
@@ -970,7 +1013,8 @@
       ["doSupport", "false"],
       ["frontedForm", "infinitive"]
     ],
-    "comment": "The paper marks the true infinitive ? and the pseudo-infinitive *."
+    "comment": "The paper marks the true infinitive ? and the pseudo-infinitive *.",
+    "verified": "page-image"
   },
   {
     "id": "arregipietraszko2021_84",

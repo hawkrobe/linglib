@@ -14,7 +14,8 @@
     "paperFeatures": [
       ["transition", "continue"]
     ],
-    "comment": "BFP's worked example: sixteen candidate resolutions of (1c), filtered and ranked; the continuation wins."
+    "comment": "BFP's worked example: sixteen candidate resolutions of (1c), filtered and ranked; the continuation wins.",
+    "verified": "page-image"
   },
   {
     "id": "beaver2004_2",
@@ -24,14 +25,16 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "marginal",
+    "judgment": "acceptable",
     "readings": [
       {"name": "He = Jim and the two Marys corefer", "judgment": "marginal"}
     ],
     "paperFeatures": [
-      ["phenomenon", "rule 1 violation"]
+      ["phenomenon", "rule 1 violation"],
+      ["felicity", "infelicitous"]
     ],
-    "comment": "BFP filters out the coreferential reading (Rule 1); demoting PRO-TOP below FAM-DEF recovers it, and the production tableau explains the awkwardness: the speaker would have pronominalized Mary."
+    "comment": "BFP filters out the coreferential reading (Rule 1); demoting PRO-TOP below FAM-DEF recovers it, and the production tableau explains the awkwardness: the speaker would have pronominalized Mary. Printed unmarked; the prose calls (2c) 'difficult to process' and 'awkward', and speaks of 'the infelicity of the sentence'.",
+    "verified": "page-image"
   },
   {
     "id": "beaver2004_5",
@@ -48,7 +51,8 @@
     "paperFeatures": [
       ["phenomenon", "definite description resolution"]
     ],
-    "comment": "PRO-TOP fails for every candidate of (5c), so FAM-DEF and COHERE decide: the definite resolves to the topic."
+    "comment": "PRO-TOP fails for every candidate of (5c), so FAM-DEF and COHERE decide: the definite resolves to the topic.",
+    "verified": "page-image"
   },
   {
     "id": "beaver2004_8",
@@ -65,7 +69,8 @@
     "paperFeatures": [
       ["transition", "continue"]
     ],
-    "comment": "The parallel-subject reading wins; the crossed reading violates PRO-TOP and ALIGN."
+    "comment": "The parallel-subject reading wins; the crossed reading violates PRO-TOP and ALIGN.",
+    "verified": "page-image"
   },
   {
     "id": "beaver2004_9",
@@ -82,7 +87,8 @@
     "paperFeatures": [
       ["transition", "continue"]
     ],
-    "comment": "Neither parallelism nor subjecthood of the antecedent decides: COHERE keeps the topic."
+    "comment": "Neither parallelism nor subjecthood of the antecedent decides: COHERE keeps the topic.",
+    "verified": "page-image"
   },
   {
     "id": "beaver2004_12",
@@ -99,7 +105,8 @@
     "paperFeatures": [
       ["transition", "retain"]
     ],
-    "comment": "Jane stays topic but leaves subject position: only ALIGN is violated."
+    "comment": "Jane stays topic but leaves subject position: only ALIGN is violated.",
+    "verified": "page-image"
   },
   {
     "id": "beaver2004_14",
@@ -116,7 +123,8 @@
     "paperFeatures": [
       ["transition", "smooth shift"]
     ],
-    "comment": "Both pronouns force an anaphoric reading whose topic was non-topical subject before: ALIGN decides."
+    "comment": "Both pronouns force an anaphoric reading whose topic was non-topical subject before: ALIGN decides.",
+    "verified": "page-image"
   },
   {
     "id": "beaver2004_16",
@@ -133,7 +141,8 @@
     "paperFeatures": [
       ["transition", "rough shift"]
     ],
-    "comment": "The only agreeing resolution shifts the topic to the present, in non-subject position."
+    "comment": "The only agreeing resolution shifts the topic to the present, in non-subject position.",
+    "verified": "page-image"
   },
   {
     "id": "beaver2004_23",
@@ -148,7 +157,8 @@
     "paperFeatures": [
       ["phenomenon", "rule 1 violation"]
     ],
-    "comment": "The topic continues via a bridging description while a less salient entity is pronominalized; felicitous, supporting defeasible PRO-TOP over an absolute Rule 1."
+    "comment": "The topic continues via a bridging description while a less salient entity is pronominalized; felicitous, supporting defeasible PRO-TOP over an absolute Rule 1.",
+    "verified": "page-image"
   },
   {
     "id": "beaver2004_24",
@@ -163,7 +173,8 @@
     "paperFeatures": [
       ["phenomenon", "text coherence"]
     ],
-    "comment": "The coherent variant of the Grosz-Sidner text pair: one COHERE violation in the whole-text tableau."
+    "comment": "The coherent variant of the Grosz-Sidner text pair: one COHERE violation in the whole-text tableau.",
+    "verified": "page-image"
   },
   {
     "id": "beaver2004_25",
@@ -173,12 +184,14 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "marginal",
+    "judgment": "acceptable",
     "readings": [],
     "paperFeatures": [
-      ["phenomenon", "text coherence"]
+      ["phenomenon", "text coherence"],
+      ["felicity", "infelicitous"]
     ],
-    "comment": "The jerky variant: multiple PRO-TOP, FAM-DEF and ALIGN violations accumulate in the whole-text tableau."
+    "comment": "The jerky variant: PRO-TOP (lines b, c, f), COHERE (c, f) and ALIGN (b, c, e, f) violations accumulate in the whole-text tableau. Printed unmarked; the prose calls (25) 'considerably more awkward than (24)'.",
+    "verified": "page-image"
   },
   {
     "id": "beaver2004_28",
@@ -195,6 +208,7 @@
     "paperFeatures": [
       ["phenomenon", "stressed pronoun"]
     ],
-    "comment": "Unstressed he is bidirectionally optimal for Fred, so BLOCK gives the stressed form the complementary, topic-shifting reading."
+    "comment": "Unstressed he is bidirectionally optimal for Fred, so BLOCK gives the stressed form the complementary, topic-shifting reading.",
+    "verified": "page-image"
   }
 ]

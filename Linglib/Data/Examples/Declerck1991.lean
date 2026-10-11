@@ -56,7 +56,7 @@ def domainShift3a : Datum :=
 
 def modalPastWish : Datum :=
   { id := "declerck1991_modalPastWish"
-    source := ⟨"declerck-1991-grammar", "ch. 2 §3"⟩
+    source := ⟨"declerck-1991-grammar", "ch. 1 §1.9"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "I wish I didn't know his number."
@@ -69,7 +69,7 @@ def modalPastWish : Datum :=
 
 def modalPastIfWas : Datum :=
   { id := "declerck1991_modalPastIfWas"
-    source := ⟨"declerck-1991-grammar", "ch. 2 §3"⟩
+    source := ⟨"declerck-1991-grammar", "ch. 1 §1.9"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "If I was a rich man, I would travel a lot."
@@ -82,7 +82,7 @@ def modalPastIfWas : Datum :=
 
 def futurePerfect : Datum :=
   { id := "declerck1991_futurePerfect"
-    source := ⟨"declerck-1991-grammar", "ch. 2 §2"⟩
+    source := ⟨"declerck-1991-grammar", "ch. 1 §1.9"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "I will have left by then."
@@ -95,7 +95,7 @@ def futurePerfect : Datum :=
 
 def whenPresent : Datum :=
   { id := "declerck1991_whenPresent"
-    source := ⟨"declerck-1991-grammar", "ch. 2 §1"⟩
+    source := ⟨"declerck-1991-grammar", "ch. 1 §1.6"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "You will have to tell him (the news) when he comes home."
@@ -108,10 +108,10 @@ def whenPresent : Datum :=
 
 def perfectHaveCome : Datum :=
   { id := "declerck1991_perfectHaveCome"
-    source := ⟨"declerck-1991-grammar", "ch. 2 §2"⟩
+    source := ⟨"declerck-1991-grammar", "ch. 1 §1.9"⟩
     reportedIn := none
     language := "stan1293"
-    primaryText := "I have come here."
+    primaryText := "I've come here."
     glossedTokens := []
     context := "Declerck's basic present perfect example. The coming event is in the pre-present sector; the reference frame is present (R = P at TU). Contrasts with a past-tense counterpart that would locate the event in the past time-sphere proper."
     judgment := .acceptable
@@ -126,7 +126,7 @@ def perfectOverslept : Datum :=
     language := "stan1293"
     primaryText := "I have overslept this morning."
     glossedTokens := []
-    context := "Declerck's example showing the present-perfect time-sphere effect: `I have overslept this morning` REQUIRES that the morning is not yet over (present time-sphere). Its preterit counterpart `I overslept this morning` does NOT require that — the speaker treats the situation as detached from now."
+    context := "Declerck's example showing the present-perfect time-sphere effect: `I have overslept this morning` REQUIRES that the morning is not yet over (present time-sphere). Its preterit counterpart `I overslept this morning` does not require that the morning is over: it can be used in the morning if the speaker is concerned not with the structure of the world at TU but with the situation itself, which is completely over."
     judgment := .acceptable
     alternatives := [("I overslept this morning.", .acceptable)]
     readings := []

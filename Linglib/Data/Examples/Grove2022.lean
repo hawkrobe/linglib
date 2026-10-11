@@ -43,7 +43,7 @@ def ex_2 : Datum :=
 
 def ex_6 : Datum :=
   { id := "grove2022_6"
-    source := ⟨"heim-1992", "(6)"⟩
+    source := ⟨"heim-1992", "(71)"⟩
     reportedIn := some ⟨"grove-2022", "(6)"⟩
     language := "stan1293"
     primaryText := "John: I am already in bed. Mary: My parents think I am also in bed."

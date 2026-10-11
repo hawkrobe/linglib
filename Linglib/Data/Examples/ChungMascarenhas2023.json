@@ -51,7 +51,7 @@
   },
   {
     "id": "cm2024_15a_minersBlockNeither",
-    "source": {"bibkey": "kolodny-macfarlane-2010", "paperLabel": "Miners (15a)"},
+    "source": {"bibkey": "kolodny-macfarlane-2010", "paperLabel": "Miners puzzle"},
     "reportedIn": {"bibkey": "chung-mascarenhas-2023", "paperLabel": "(15a)"},
     "language": "stan1293",
     "primaryText": "We ought to block neither shaft.",
@@ -66,11 +66,12 @@
       ["puzzle", "miners"],
       ["modalForce", "ought"]
     ],
-    "comment": "First clause of the Kolodny-MacFarlane miners triple. C&M's expected-utility analysis makes this true at any θ ∈ (5, 9)."
+    "comment": "First clause of the Kolodny-MacFarlane miners triple. C&M's expected-utility analysis makes this true at any θ ∈ (5, 9).",
+    "verified": "page-image"
   },
   {
     "id": "cm2024_15b_minersBlockA",
-    "source": {"bibkey": "kolodny-macfarlane-2010", "paperLabel": "Miners (15b)"},
+    "source": {"bibkey": "kolodny-macfarlane-2010", "paperLabel": "Miners puzzle"},
     "reportedIn": {"bibkey": "chung-mascarenhas-2023", "paperLabel": "(15b)"},
     "language": "stan1293",
     "primaryText": "If the miners are in shaft A, we ought to block shaft A.",
@@ -86,7 +87,8 @@
       ["modalForce", "ought"],
       ["conditional", "info-sensitive"]
     ],
-    "comment": "Conditional clause of the miners triple. Together with (15a), it shows the Kratzerian ordering source cannot be information-insensitive."
+    "comment": "Conditional clause of the miners triple. Together with (15a), it shows the Kratzerian ordering source cannot be information-insensitive.",
+    "verified": "page-image"
   },
   {
     "id": "cm2024_25a_minersMust",
