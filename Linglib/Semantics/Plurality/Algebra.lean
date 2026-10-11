@@ -13,8 +13,6 @@ individuals, `*` reduces to distribution over members.
 
 ## Definitions
 
-* `Plurality.Algebra.star P`: the closure of `P` under sum, an abbreviation for
-  `Mereology.AlgClosure P`.
 * `Plurality.Algebra.properPlural P`: the non-atomic elements of `*P`.
 * `Plurality.Algebra.IsDistr P`: `P` holds of atoms only.
 * `Plurality.Algebra.Inv h P`: `P` does not distinguish `h`-equivalent individuals.
@@ -27,23 +25,25 @@ individuals, `*` reduces to distribution over members.
 
 ## Main results
 
-* `Plurality.Algebra.star_iff_of_atom`: on an atom, `*P` and `P` agree.
-* `Plurality.Algebra.IsDistr.of_star_of_atom_le`: Link's distributive inference, for join-prime
-  atoms.
+* `Plurality.Algebra.algClosure_iff_of_atom`: on an atom, `*P` and `P` agree.
+* `Plurality.Algebra.IsDistr.of_algClosure_of_atom_le`: Link's distributive inference, for
+  join-prime atoms.
 * `Plurality.Algebra.IsDistr.properPlural_sup`, `Plurality.Algebra.cum_properPlural`: the sum
   of two distinct atoms of a distributive predicate is a proper plural, and proper plurals are
   closed under sum.
-* `Plurality.Algebra.star_image_singleton`: on finite sets of individuals, taken as singletons,
-  `*` holds of exactly the nonempty subsets, Sternefeld's identification of `*P` with `D P` (15).
+* `Plurality.Algebra.algClosure_image_singleton`: on finite sets of individuals, taken as
+  singletons, `*` holds of exactly the nonempty subsets, Sternefeld's identification of `*P` with
+  `D P` (15).
 
 ## Implementation notes
 
-Link's model is a complete join semilattice with atoms and without a bottom; only
-`SemilatticeSup E` and `Mereology.Atom` are used here. The complete atomic Boolean algebra of
-Landman and Champollion is a stronger assumption, which enters only through `AtomJoinPrime`.
-Schwarzschild's set-based ontology, where an individual is its singleton and sum is union, is
-the `Finset α` instance; Link's own model of nonempty sets of atoms has no bottom (`Individual`).
-On finite sets, `DJR` is `Reciprocal.StrongReciprocity`.
+Link's model is a complete join semilattice with atoms and without a bottom; only `SemilatticeSup E`
+and `Mereology.Atom` are used here. The plural closure `*P` is `Mereology.AlgClosure P`, mathlib's
+`supClosure` of the extension of `P`. The complete atomic Boolean algebra of Landman and Champollion
+is a stronger assumption, which enters only through `AtomJoinPrime`. Schwarzschild's set-based
+ontology, where an individual is its singleton and sum is union, is the `Finset α` instance; Link's
+own model of nonempty sets of atoms has no bottom (`Individual`). On finite sets, `DJR` is
+`Reciprocal.StrongReciprocity`.
 
 ## References
 
@@ -68,12 +68,9 @@ variable {E : Type*} [SemilatticeSup E] {P Q : E → Prop} {x y : E}
 
 /-! ### Predicate operators -/
 
-/-- The plural closure `*P` of `P` is its closure under sum. -/
-abbrev star (P : E → Prop) : E → Prop := AlgClosure P
-
 /-- The proper plural `⊕P` holds of the elements of `*P` that are not atoms (D.12). -/
 def properPlural (P : E → Prop) (x : E) : Prop :=
-  star P x ∧ ¬ Atom x
+  AlgClosure P x ∧ ¬ Atom x
 
 /-- A distributive predicate holds of atoms only (D.19). -/
 def IsDistr (P : E → Prop) : Prop :=
@@ -143,7 +140,7 @@ end Constitution
 /-! ### Link's theorems -/
 
 /-- On an atom, `*P` and `P` agree (T.8). -/
-theorem star_iff_of_atom (hx : Atom x) : star P x ↔ P x :=
+theorem algClosure_iff_of_atom (hx : Atom x) : AlgClosure P x ↔ P x :=
   ⟨(of_algClosure_of_atom · hx), .base⟩
 
 /-- No element of a distributive predicate is a proper plural (T.6). -/
@@ -171,8 +168,8 @@ def AtomJoinPrime (E : Type*) [SemilatticeSup E] : Prop :=
 
 /-- If atoms are join-prime, every atomic part of an element of `*P` satisfies a distributive
 `P`. -/
-theorem IsDistr.of_star_of_atom_le (hP : IsDistr P) (hJP : AtomJoinPrime E) (h : star P x)
-    (hy : Atom y) (hle : y ≤ x) : P y := by
+theorem IsDistr.of_algClosure_of_atom_le (hP : IsDistr P) (hJP : AtomJoinPrime E)
+    (h : AlgClosure P x) (hy : Atom y) (hle : y ≤ x) : P y := by
   induction h with
   | base hp => exact ((hP _ hp).eq hle hy.not_isBot) ▸ hp
   | @sum a b _ _ iha ihb => exact (hJP y hy a b hle).elim iha ihb
@@ -186,8 +183,8 @@ section Finset
 variable {α : Type*} [DecidableEq α]
 
 /-- `*` of a set of individuals, taken as singletons, holds of exactly its nonempty subsets. -/
-theorem star_image_singleton (S : Set α) (x : Finset α) :
-    star (· ∈ ({·} : α → Finset α) '' S) x ↔ x.Nonempty ∧ ↑x ⊆ S := by
+theorem algClosure_image_singleton (S : Set α) (x : Finset α) :
+    AlgClosure (· ∈ ({·} : α → Finset α) '' S) x ↔ x.Nonempty ∧ ↑x ⊆ S := by
   constructor
   · intro h
     induction h with
@@ -206,9 +203,9 @@ theorem star_image_singleton (S : Set α) (x : Finset α) :
 
 /-- `*` of a predicate true of individuals only holds of the nonempty pluralities all of
 whose members satisfy it. -/
-theorem star_iff_of_subset_range_singleton {P : Finset α → Prop}
+theorem algClosure_iff_of_subset_range_singleton {P : Finset α → Prop}
     (hP : {x | P x} ⊆ Set.range ({·} : α → Finset α)) (x : Finset α) :
-    star P x ↔ x.Nonempty ∧ ∀ a ∈ x, P {a} := by
+    AlgClosure P x ↔ x.Nonempty ∧ ∀ a ∈ x, P {a} := by
   have : P = (· ∈ ({·} : α → Finset α) '' {a | P {a}}) := by
     ext s
     constructor
@@ -218,7 +215,7 @@ theorem star_iff_of_subset_range_singleton {P : Finset α → Prop}
     · rintro ⟨a, ha, rfl⟩
       exact ha
   conv_lhs => rw [this]
-  rw [star_image_singleton]
+  rw [algClosure_image_singleton]
   exact Iff.rfl
 
 end Finset

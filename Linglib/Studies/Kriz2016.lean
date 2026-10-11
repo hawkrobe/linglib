@@ -136,12 +136,6 @@ theorem bare_onlyLeeSmiled :
 theorem bare_noneSmiled :
     barePlural smiled profs .noneSmiled = .false := by decide
 
-/-- The bare plural about the professors is homogeneous: `smithNeutral` is in
-    the gap. -/
-theorem bare_profs_homogeneous :
-    isHomogeneous (barePlural smiled profs) :=
-  isHomogeneous_of_gap (barePlural smiled profs) .smithNeutral (by decide)
-
 /-! #### End-to-end predictions -/
 
 /-- The bare plural is usable at `smithNeutral` under the coarse QUD: the

@@ -39,8 +39,8 @@ atoms, and `allPlural` removes its gap, which is the contribution of *all*.
 The readings are indexed by upper sets of the whole order, not by sets of parts of `x`, since only
 the trace of `U` on the parts of `x` matters. Križ and Spector's convex candidate domains,
 Haslinger and colleagues' tolerance relations and Bar-Lev's subdomain alternatives are all
-choices of `U`; the subdomain alternatives are the sub-disjunctions of the atoms, their
-`supClosure` (`Exhaustification.subDisjs_eq_supClosure`). Bottom elements are not parts, so that
+choices of `U`; the subdomain alternatives are the closure of the atoms under disjunction, a
+`supClosure` inside the `latticeClosure` of the readings. Bottom elements are not parts, so that
 the vacuous truth of a distributive predicate at the empty plurality yields no reading.
 
 ## References
@@ -173,10 +173,6 @@ def allPlural : W → Trivalent :=
 /-- *all* eliminates the extension gap. -/
 theorem gapExt_allPlural : Trivalent.gapExt (allPlural P x) = ∅ :=
   Trivalent.gapExt_comp_metaAssert _
-
-/-- An *all*-sentence is never homogeneous. -/
-theorem not_isHomogeneous_allPlural : ¬isHomogeneous (allPlural P x) :=
-  not_isHomogeneous_comp_metaAssert _
 
 /-- The bare plural and the *all*-sentence are true in the same worlds. -/
 theorem posExt_allPlural : Trivalent.posExt (allPlural P x) = Trivalent.posExt (barePlural P x) :=

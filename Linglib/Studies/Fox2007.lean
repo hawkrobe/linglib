@@ -44,7 +44,7 @@ at every layer.
   no free choice reading at any layer.
 * `embedded_scalar_implicature`: for *the reading or some of the homework*, exhaustification
   denies *all of the homework* but not *the reading*.
-* `exhIE_conjClosure`, `sauerland_exclusion_eq_empty`: against the answers to a question,
+* `exhIE_infClosure_range`, `sauerland_exclusion_eq_empty`: against the answers to a question,
   innocent exclusion yields *exactly one*, while denying every answer that passes Sauerland's
   test is contradictory.
 
@@ -422,8 +422,30 @@ private theorem mem_hornAlt (hO' : Monotone O') {c : Set W} (hc : c ∈ hornAlt 
 
 section Horn
 
-variable (hO : Monotone O) (hO' : Monotone O') (hab : O (a ⊔ b) ⊆ O a ∪ O b)
-include hO hO' hab
+variable (hO : Monotone O) (hO' : Monotone O')
+include hO hO'
+
+/-- Exhaustifying the first disjunct under `O` denies everything it does not entail. -/
+theorem exhIE_hornAlt_left (ha : (O a \ (O b ∪ O' (a ⊔ b))).Nonempty) :
+    exhIE (hornAlt O O' a b) (O a) = O a \ (O b ∪ O' (a ⊔ b)) := by
+  obtain ⟨x, hx⟩ := ha
+  have hexh : exh (hornAlt O O' a b) (O a) = O a \ (O b ∪ O' (a ⊔ b)) := by
+    ext u
+    simp only [mem_exh, mem_sdiff]
+    refine and_congr_right fun hu ↦ ⟨fun h hub ↦ ?_, fun hub c hc huc ↦ ?_⟩
+    · rcases hub with hub | hub
+      · exact hx.2 (Or.inl (h _ (by simp [hornAlt]) hub hx.1))
+      · exact hx.2 (Or.inr (h _ (by simp [hornAlt]) hub hx.1))
+    · rcases mem_hornAlt hO' hc with rfl | rfl | rfl | hcK
+      · exact hO le_sup_left
+      · exact subset_rfl
+      · exact (hub (Or.inl huc)).elim
+      · exact ((hcK huc).elim (fun h' ↦ hub (Or.inl (hO inf_le_right h')))
+          fun h' ↦ hub (Or.inr h')).elim
+  rw [exhIE_eq_exh_of_nonempty _ _ (hexh ▸ ⟨x, hx⟩), hexh]
+
+variable (hab : O (a ⊔ b) ⊆ O a ∪ O b)
+include hab
 
 /-- A world where only the first disjunct holds under `O` and the disjunction fails under `O'`,
 and its mirror image, represent the minimal worlds of the disjunction under `O`. -/
@@ -473,25 +495,6 @@ theorem exhIE_hornAlt :
     · exact (hc'.1 hx.1).elim
     · exact (hc'.2 hy.1).elim
     · exact fun huc ↦ huK (hcK huc)
-
-omit hab hb in
-/-- Exhaustifying the first disjunct under `O` denies everything it does not entail. -/
-theorem exhIE_hornAlt_left : exhIE (hornAlt O O' a b) (O a) = O a \ (O b ∪ O' (a ⊔ b)) := by
-  obtain ⟨x, hx⟩ := ha
-  have hexh : exh (hornAlt O O' a b) (O a) = O a \ (O b ∪ O' (a ⊔ b)) := by
-    ext u
-    simp only [mem_exh, mem_sdiff]
-    refine and_congr_right fun hu ↦ ⟨fun h hub ↦ ?_, fun hub c hc huc ↦ ?_⟩
-    · rcases hub with hub | hub
-      · exact hx.2 (Or.inl (h _ (by simp [hornAlt]) hub hx.1))
-      · exact hx.2 (Or.inr (h _ (by simp [hornAlt]) hub hx.1))
-    · rcases mem_hornAlt hO' hc with rfl | rfl | rfl | hcK
-      · exact hO le_sup_left
-      · exact subset_rfl
-      · exact (hub (Or.inl huc)).elim
-      · exact ((hcK huc).elim (fun h' ↦ hub (Or.inl (hO inf_le_right h')))
-          fun h' ↦ hub (Or.inr h')).elim
-  rw [exhIE_eq_exh_of_nonempty _ _ (hexh ▸ ⟨x, hx⟩), hexh]
 
 /-- Against the alternatives of both Horn sets, the second layer asserts each disjunct under `O`
 and denies the conjunction under `O` and the disjunction under `O'`. -/
@@ -824,26 +827,26 @@ include ha
 
 /-- A group of two or more is innocently excludable given the existential answer. -/
 theorem isInnocentlyExcludable_conj {S : Finset ι} {i j : ι} (hi : i ∈ S) (hj : j ∈ S)
-    (hij : i ≠ j) : IsInnocentlyExcludable (conjClosure a) (⋃ i, a i) (conjFamily a S) := by
-  refine .of_forall_maximal (conjFamily_mem_conjClosure ⟨i, hi⟩) fun X hX ↦ ?_
+    (hij : i ≠ j) :
+    IsInnocentlyExcludable (infClosure (range a)) (⋃ i, a i) (⋂ k ∈ S, a k) := by
+  refine .of_forall_maximal (mem_infClosure_range.2 ⟨S, ⟨i, hi⟩, rfl⟩) fun X hX ↦ ?_
   obtain ⟨v, hv, hvX⟩ := hX.1.2
-  by_cases hvS : v ∈ conjFamily a S
+  by_cases hvS : v ∈ ⋂ k ∈ S, a k
   · obtain ⟨u, hui, hu⟩ := ha i
     refine ⟨u, mem_iUnion.2 ⟨i, hui⟩, ?_⟩
     rintro ⟨c, rfl | hc, huc⟩
-    · exact hu j hij.symm (mem_conjFamily.1 huc j hj)
-    · obtain ⟨T, -, rfl⟩ := hX.1.1 hc
-      refine hvX ⟨_, hc, mem_conjFamily.2 fun k hk ↦ ?_⟩
-      obtain rfl : k = i := by_contra fun hki ↦ hu k hki (mem_conjFamily.1 huc k hk)
-      exact mem_conjFamily.1 hvS k hi
+    · exact hu j hij.symm (mem_iInter₂.1 huc j hj)
+    · obtain ⟨T, -, rfl⟩ := mem_infClosure_range.1 (hX.1.1 hc)
+      refine hvX ⟨_, hc, mem_iInter₂.2 fun k hk ↦ ?_⟩
+      obtain rfl : k = i := by_contra fun hki ↦ hu k hki (mem_iInter₂.1 huc k hk)
+      exact mem_iInter₂.1 hvS k hi
   · exact ⟨v, hv, fun ⟨c, hc, hvc⟩ ↦ hc.elim (fun h ↦ hvS (h ▸ hvc)) fun h ↦ hvX ⟨c, h, hvc⟩⟩
 
 /-- A single individual is not innocently excludable given the existential answer. -/
 theorem not_isInnocentlyExcludable_atom (i : ι) :
-    ¬ IsInnocentlyExcludable (conjClosure a) (⋃ i, a i) (a i) := by
+    ¬ IsInnocentlyExcludable (infClosure (range a)) (⋃ i, a i) (a i) := by
   obtain ⟨u, hui, hu⟩ := ha i
-  have hmem : ∀ k, a k ∈ conjClosure a := fun k ↦
-    conjFamily_singleton (a := a) k ▸ conjFamily_mem_conjClosure ⟨k, Finset.mem_singleton_self k⟩
+  have hmem (k : ι) : a k ∈ infClosure (range a) := subset_infClosure (mem_range_self k)
   rw [isInnocentlyExcludable_iff_exhMW_subset_compl _ _ _ (hmem i)]
   refine fun h ↦ h ⟨mem_iUnion.2 ⟨i, hui⟩, ?_⟩ hui
   rintro ⟨v, hv, hvu, hnuv⟩
@@ -851,22 +854,22 @@ theorem not_isInnocentlyExcludable_atom (i : ι) :
   have hki : k = i := by_contra fun hki ↦ hu k hki (hvu _ (hmem k) hkv)
   subst k
   refine hnuv fun c hc huc ↦ ?_
-  obtain ⟨T, -, rfl⟩ := hc
-  refine mem_conjFamily.2 fun m hm ↦ ?_
-  have hmi : m = i := by_contra fun hmi ↦ hu m hmi (mem_conjFamily.1 huc m hm)
+  obtain ⟨T, -, rfl⟩ := mem_infClosure_range.1 hc
+  refine mem_iInter₂.2 fun m hm ↦ ?_
+  have hmi : m = i := by_contra fun hmi ↦ hu m hmi (mem_iInter₂.1 huc m hm)
   rw [hmi]
   exact hkv
 
 /-- Exhaustifying the existential answer against its Hamblin alternatives yields *exactly one*,
 provided each individual can be the sole witness. -/
-theorem exhIE_conjClosure [Fintype ι] [DecidableEq ι] :
-    exhIE (conjClosure a) (⋃ i, a i) = {u | ∃! i, u ∈ a i} := by
+theorem exhIE_infClosure_range [Fintype ι] [DecidableEq ι] :
+    exhIE (infClosure (range a)) (⋃ i, a i) = {u | ∃! i, u ∈ a i} := by
   ext u
   rw [mem_exhIE_iff, mem_iUnion]
   constructor
   · rintro ⟨⟨i, hi⟩, h⟩
     refine ⟨i, hi, fun j hj ↦ by_contra fun hji ↦
-      h (conjFamily a {i, j}) ?_ (mem_conjFamily.2 fun m hm ↦ ?_)⟩
+      h (⋂ k ∈ ({i, j} : Finset ι), a k) ?_ (mem_iInter₂.2 fun m hm ↦ ?_)⟩
     · exact isInnocentlyExcludable_conj ha (S := {i, j}) (Finset.mem_insert_self i _)
         (Finset.mem_insert_of_mem (Finset.mem_singleton_self j)) fun h' ↦ hji h'.symm
     · rcases Finset.mem_insert.1 hm with h1 | h1
@@ -876,49 +879,48 @@ theorem exhIE_conjClosure [Fintype ι] [DecidableEq ι] :
         exact hj
   · rintro ⟨i, hi, huniq⟩
     refine ⟨⟨i, hi⟩, fun c hc huc ↦ ?_⟩
-    obtain ⟨S, hS, rfl⟩ := hc.1
+    obtain ⟨S, hS, rfl⟩ := mem_infClosure_range.1 hc.1
     by_cases hSi : ∀ j ∈ S, j = i
     · obtain ⟨j, hj⟩ := hS
       have : S = {i} := Finset.eq_singleton_iff_unique_mem.2 ⟨hSi j hj ▸ hj, hSi⟩
-      rw [this, conjFamily_singleton] at hc
+      rw [this, Finset.set_biInter_singleton] at hc
       exact not_isInnocentlyExcludable_atom ha i hc
     · obtain ⟨j, hj⟩ := not_forall.1 hSi
       obtain ⟨hjS, hji⟩ := Classical.not_imp.1 hj
-      exact hji (huniq j (mem_conjFamily.1 huc j hjS))
+      exact hji (huniq j (mem_iInter₂.1 huc j hjS))
 
 /-- With two individuals, denying every answer that the existential answer does not entail
 contradicts it. -/
-theorem exh_conjClosure_eq_empty {i j : ι} (hij : i ≠ j) :
-    exh (conjClosure a) (⋃ i, a i) = ∅ := by
+theorem exh_infClosure_range_eq_empty {i j : ι} (hij : i ≠ j) :
+    exh (infClosure (range a)) (⋃ i, a i) = ∅ := by
   refine eq_empty_of_forall_notMem fun u ⟨hu, h⟩ ↦ ?_
   obtain ⟨l, hl⟩ := mem_iUnion.1 hu
   obtain ⟨m, hml⟩ : ∃ m, m ≠ l := (eq_or_ne i l).elim (fun h' ↦ ⟨j, h' ▸ hij.symm⟩) fun h' ↦ ⟨i, h'⟩
   obtain ⟨v, hvm, hv⟩ := ha m
-  have hmem : a l ∈ conjClosure a :=
-    conjFamily_singleton (a := a) l ▸ conjFamily_mem_conjClosure ⟨l, Finset.mem_singleton_self l⟩
-  exact hv l hml.symm (h _ hmem hl (mem_iUnion.2 ⟨m, hvm⟩))
+  exact hv l hml.symm (h _ (subset_infClosure (mem_range_self l)) hl (mem_iUnion.2 ⟨m, hvm⟩))
 
 /-- With three individuals, every answer passes Sauerland's test. -/
-theorem isSauerlandExcludable_conjClosure {i j k : ι} (hij : i ≠ j) (hik : i ≠ k)
-    (hjk : j ≠ k) {q : Set W} (hq : q ∈ conjClosure a) :
-    IsSauerlandExcludable (conjClosure a) (⋃ i, a i) q := by
+theorem isSauerlandExcludable_infClosure_range {i j k : ι} (hij : i ≠ j) (hik : i ≠ k)
+    (hjk : j ≠ k) {q : Set W} (hq : q ∈ infClosure (range a)) :
+    IsSauerlandExcludable (infClosure (range a)) (⋃ i, a i) q := by
   choose u hum hu using ha
   have hin : ∀ m, u m ∈ ⋃ i, a i := fun m ↦ mem_iUnion.2 ⟨m, hum m⟩
   -- the sole witness of `m` verifies a group only if the group is `{m}`
-  have hout : ∀ m (S : Finset ι), S.Nonempty → S ≠ {m} → u m ∉ conjFamily a S := by
+  have hout : ∀ m (S : Finset ι), S.Nonempty → S ≠ {m} → u m ∉ ⋂ k ∈ S, a k := by
     intro m S ⟨l, hl⟩ hSm h
     refine hSm (Finset.eq_singleton_iff_unique_mem.2 ⟨?_, fun l' hl' ↦ ?_⟩)
-    · exact by_contra fun hm ↦ hu m l (fun hlm ↦ hm (hlm ▸ hl)) (mem_conjFamily.1 h l hl)
-    · exact by_contra fun hlm ↦ hu m l' hlm (mem_conjFamily.1 h l' hl')
+    · exact by_contra fun hm ↦ hu m l (fun hlm ↦ hm (hlm ▸ hl)) (mem_iInter₂.1 h l hl)
+    · exact by_contra fun hlm ↦ hu m l' hlm (mem_iInter₂.1 h l' hl')
   have hne : ∀ {m m' : ι}, m ≠ m' → ∀ {S : Finset ι}, S = {m} → S ≠ {m'} :=
     fun hmm' _ hS h ↦ hmm' (Finset.singleton_inj.1 (hS.symm.trans h))
-  obtain ⟨S, hS, rfl⟩ := id hq
+  obtain ⟨S, hS, rfl⟩ := mem_infClosure_range.1 hq
   refine ⟨hq, fun h ↦ ?_, ?_⟩
   · by_cases hSi : S = {i}
     · exact hout j S hS (hne hij hSi) (h (hin j))
     · exact hout i S hS hSi (h (hin i))
-  · rintro _ ⟨T, hT, rfl⟩ -
-    have pick : ∀ m, S ≠ {m} → T ≠ {m} → ¬ (⋃ i, a i) \ conjFamily a S ⊆ conjFamily a T :=
+  · rintro r hr -
+    obtain ⟨T, hT, rfl⟩ := mem_infClosure_range.1 hr
+    have pick : ∀ m, S ≠ {m} → T ≠ {m} → ¬ (⋃ i, a i) \ (⋂ k ∈ S, a k) ⊆ ⋂ k ∈ T, a k :=
       fun m hSm hTm h ↦ hout m T hT hTm (h ⟨hin m, hout m S hS hSm⟩)
     by_cases hSi : S = {i}
     · by_cases hTj : T = {j}
@@ -933,12 +935,11 @@ theorem isSauerlandExcludable_conjClosure {i j k : ι} (hij : i ≠ j) (hik : i 
 /-- With three individuals, denying every answer that passes Sauerland's test contradicts the
 existential answer. -/
 theorem sauerland_exclusion_eq_empty {i j k : ι} (hij : i ≠ j) (hik : i ≠ k) (hjk : j ≠ k) :
-    exh {q | IsSauerlandExcludable (conjClosure a) (⋃ i, a i) q} (⋃ i, a i) = ∅ := by
+    exh {q | IsSauerlandExcludable (infClosure (range a)) (⋃ i, a i) q} (⋃ i, a i) = ∅ := by
   refine eq_empty_of_forall_notMem fun u ⟨hu, h⟩ ↦ ?_
   obtain ⟨l, hl⟩ := mem_iUnion.1 hu
-  have hmem : a l ∈ conjClosure a :=
-    conjFamily_singleton (a := a) l ▸ conjFamily_mem_conjClosure ⟨l, Finset.mem_singleton_self l⟩
-  have hex := isSauerlandExcludable_conjClosure ha hij hik hjk hmem
+  have hex := isSauerlandExcludable_infClosure_range ha hij hik hjk
+    (subset_infClosure (mem_range_self l))
   exact hex.2.1 (h _ hex hl)
 
 end Hamblin

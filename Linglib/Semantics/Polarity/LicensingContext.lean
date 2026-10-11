@@ -488,8 +488,8 @@ theorem licensesFreeChoice_necessityFamily : (Licenser.modal necessityFamily).Li
 theorem licensesFreeChoice_modalPossibility : modalPossibility.licenser.LicensesFreeChoice :=
   ⟨⟨Fin 3, branching⟩, Fin 2, witnessAt, .univ, by decide, 0, by
     show 0 ∈ Exhaustification.oMinus
-      (fun S ↦ branching.preimage (Exhaustification.subDisj witnessAt S)) .univ
-    rw [Exhaustification.oMinus_preimage_subDisj witnessAt branching Finset.univ_nonempty]
+      (fun S ↦ branching.preimage (⋃ d ∈ S, witnessAt d)) .univ
+    rw [Exhaustification.oMinus_preimage_biUnion witnessAt branching Finset.univ_nonempty]
     exact Set.mem_iInter₂.2 fun d _ ↦ ⟨d.succ, rfl, rfl, d.succ_ne_zero⟩⟩
 
 end LicensingContext

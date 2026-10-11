@@ -113,17 +113,20 @@ variable {W E : Type*} (D : Finset E) (P : E → Set W)
 /-- Under an antitone context the existential entails each of its subdomain alternatives, so
 *any* in a downward-entailing position is exhaustified vacuously: a plain existential. -/
 theorem exh_antitone_eq {C : Set W → Set W} (hC : Antitone C) :
-    exh (C '' subDisjs D P) (C (disj D P)) = C (disj D P) :=
-  exh_eq_self (by rintro _ ⟨_, ⟨S, hS, -, rfl⟩, rfl⟩; exact hC (subDisj_mono hS))
+    exh (C '' supClosure (P '' D)) (C (⋃ a ∈ D, P a)) = C (⋃ a ∈ D, P a) :=
+  exh_eq_self <| by
+    rintro _ ⟨_, hq, rfl⟩
+    obtain ⟨S, -, hS, rfl⟩ := Set.mem_supClosure_image.1 hq
+    exact hC (Set.biUnion_subset_biUnion_left hS)
 
 /-- At the existential itself, where no witness is entailed, exhaustifying the obligatory
 alternatives negates every singleton alternative and is a contradiction: the source of the
 deviance of *any* in a positive episodic sentence. -/
-theorem exh_subDisjs_eq_empty (h : ∀ a ∈ D, ¬ disj D P ⊆ P a) :
-    exh (subDisjs D P) (disj D P) = ∅ := by
+theorem exh_supClosure_eq_empty (h : ∀ a ∈ D, ¬ (⋃ b ∈ D, P b) ⊆ P a) :
+    exh (supClosure (P '' D)) (⋃ a ∈ D, P a) = ∅ := by
   refine Set.eq_empty_of_forall_notMem fun w ⟨hw, hall⟩ ↦ ?_
-  obtain ⟨a, ha, hPa⟩ := mem_subDisj.1 hw
-  exact h a ha (by simpa using hall _ ⟨{a}, by simpa, by simp, rfl⟩ (by simpa))
+  obtain ⟨a, ha, hPa⟩ := Set.mem_iUnion₂.1 hw
+  exact h a ha (hall _ (subset_supClosure (Set.mem_image_of_mem P ha)) hPa)
 
 end Exhaustification
 

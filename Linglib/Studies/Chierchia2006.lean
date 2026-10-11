@@ -36,16 +36,16 @@ and Shimoyama.
 * `evenEnrich_eq_or_eq_empty`, `evenEnrich_disj_eq_empty`, `evenEnrich_image_antitone_eq`: `E` is
   vacuous or contradictory; it is contradictory at the existential and vacuous under negation,
   (47)–(53).
-* `oMinus_subDisj`, `oMinus_subDisj_eq_inter_sInter`: `O⁻` gives an existential universal force
+* `oMinus_biUnion`, `oMinus_biUnion_eq_inter_sInter`: `O⁻` gives an existential universal force
   over its domain, (63), and there agrees with the simpler (62).
 * `oMinus_antitone_eq`, `not_oMinus_ssubset_of_antitone`: under negation the
   free-choice implicature vanishes, so *qualunque* has no negative-polarity construal, (65)–(72).
-* `oMinus_subDisj_eq_empty_of_isActualist`: an episodic universal over a widened domain is never
+* `oMinus_biUnion_eq_empty_of_isActualist`: an episodic universal over a widened domain is never
   true, (67).
 * `exh_atLeastTwo_eq_exactlyOne`, `oMinus_exactlyOne_eq_empty`: `O` against the scalar
   alternative yields uniqueness, (81), and an existential free-choice item is then contradictory
   in an episodic sentence, (82).
-* `oMinus_core_subDisj_subset`, `oMinus_core_exactlyOne_subset`,
+* `oMinus_core_biUnion_subset`, `oMinus_core_exactlyOne_subset`,
   `card_le_one_of_forall_mem_core_exactlyOne`: under a necessity modal `O⁻` yields free choice,
   (93d) and (117), while letting the whole domain be an antecedent would leave room for a single
   doctor only, (118).
@@ -166,10 +166,10 @@ theorem evenEnrich_eq_empty_of_not_subset {C : Set (Set W)} {p q : Set W} (hq : 
 member of the domain is a witness but no member of the subdomain `S` is shows that the statement
 does not entail the alternative over `S`, so even-like enrichment is a contradiction. -/
 theorem evenEnrich_disj_eq_empty {D S : Finset E} {P : E → Set W} {C : Set (Set W)}
-    (hS : subDisj P S ∈ C) {a : E} {w : W} (ha : a ∈ D) (hPa : w ∈ P a)
-    (hSw : ∀ x ∈ S, w ∉ P x) : evenEnrich C (disj D P) = ∅ :=
+    (hS : (⋃ x ∈ S, P x) ∈ C) {a : E} {w : W} (ha : a ∈ D) (hPa : w ∈ P a)
+    (hSw : ∀ x ∈ S, w ∉ P x) : evenEnrich C (⋃ x ∈ D, P x) = ∅ :=
   evenEnrich_eq_empty_of_not_subset hS fun h ↦
-    let ⟨x, hx, hPx⟩ := mem_subDisj.1 (h (mem_subDisj.2 ⟨a, ha, hPa⟩))
+    let ⟨x, hx, hPx⟩ := Set.mem_iUnion₂.1 (h (Set.mem_biUnion ha hPa))
     hSw x hx hPx
 
 /-- Under an antitone embedding, alternatives that each entail the prejacent are entailed by the
@@ -204,11 +204,11 @@ def atLeastTwo (S : Finset E) : Set W := {w | ∃ x ∈ S, ∃ y ∈ S, x ≠ y 
 
 /-- Exhaustifying the existential against its scalar alternative yields the exhaustified
 indefinite, (81a)–(81b), provided some world has a witness but not two. -/
-theorem exh_atLeastTwo_eq_exactlyOne (h : ¬ subDisj P S ⊆ atLeastTwo P S) :
-    exh {atLeastTwo P S} (subDisj P S) = exactlyOne P S := by
+theorem exh_atLeastTwo_eq_exactlyOne (h : ¬ (⋃ x ∈ S, P x) ⊆ atLeastTwo P S) :
+    exh {atLeastTwo P S} (⋃ x ∈ S, P x) = exactlyOne P S := by
   ext w
   simp only [mem_exh, Set.mem_singleton_iff, forall_eq, imp_iff_not h]
-  simp only [mem_subDisj, exactlyOne, atLeastTwo, Set.mem_ofPred_eq]
+  simp only [Set.mem_iUnion, exists_prop, exactlyOne, atLeastTwo, Set.mem_ofPred_eq]
   constructor
   · rintro ⟨⟨x, hx, hPx⟩, h2⟩
     exact ⟨x, ⟨hx, hPx⟩, fun y ⟨hy, hPy⟩ ↦ by_contra fun hyx ↦ h2 ⟨y, hy, x, hx, hyx, hPy, hPx⟩⟩
@@ -341,8 +341,8 @@ def DomainAlternatives.enrich : DomainAlternatives → (Finset E → Set W) → 
   | .max, F, D => evenEnrich (F '' {S | S ⊂ D ∧ S.Nonempty}) (F D)
   | .min, F, D => oMinus F D
 
-theorem exactlyOne_subset_subDisj (S : Finset E) : exactlyOne P S ⊆ subDisj P S :=
-  fun _ ⟨x, ⟨hx, hPx⟩, _⟩ ↦ mem_subDisj.2 ⟨x, hx, hPx⟩
+theorem exactlyOne_subset_biUnion (S : Finset E) : exactlyOne P S ⊆ ⋃ x ∈ S, P x :=
+  fun _ ⟨_, ⟨hx, hPx⟩, _⟩ ↦ Set.mem_biUnion hx hPx
 
 open Classical in
 /-- Under the operator `C` an item says that some member of the domain is a witness, and a
@@ -350,17 +350,18 @@ scalar item adds the uniqueness implicature, (81b), where that makes its stateme
 stronger, since (110) selects the strongest enriched meaning. -/
 noncomputable def Profile.statement (p : Profile) (C : Set W → Set W) (P : E → Set W) :
     Finset E → Set W :=
-  if p.scalar ∧ ∀ S, C (exactlyOne P S) ⊆ C (subDisj P S) then exactlyOne P else subDisj P
+  if p.scalar ∧ ∀ S, C (exactlyOne P S) ⊆ C (⋃ x ∈ S, P x) then exactlyOne P
+  else fun S ↦ ⋃ x ∈ S, P x
 
 theorem Profile.statement_of_scalar {C : Set W → Set W} (hs : p.scalar) (hC : Monotone C) :
     p.statement C P = exactlyOne P := by
   unfold Profile.statement
   split_ifs with h
   · rfl
-  · exact absurd ⟨hs, fun S ↦ hC (exactlyOne_subset_subDisj S)⟩ h
+  · exact absurd ⟨hs, fun S ↦ hC (exactlyOne_subset_biUnion S)⟩ h
 
 theorem Profile.statement_of_not_scalar {C : Set W → Set W} (hs : p.scalar = false) :
-    p.statement C P = subDisj P := by
+    p.statement C P = fun S ↦ ⋃ x ∈ S, P x := by
   unfold Profile.statement
   split_ifs with h
   · simp [hs] at h
@@ -369,10 +370,10 @@ theorem Profile.statement_of_not_scalar {C : Set W → Set W} (hs : p.scalar = f
 /-- Under an antitone operator a scalar item's statement is the plain existential, the
 `some_D` of (91). -/
 theorem Profile.statement_antitone {C : Set W → Set W} (hC : Antitone C) (S : Finset E) :
-    C (p.statement C P S) = C (subDisj P S) := by
+    C (p.statement C P S) = C (⋃ x ∈ S, P x) := by
   unfold Profile.statement
   split_ifs with h
-  · exact (h.2 S).antisymm (hC (exactlyOne_subset_subDisj S))
+  · exact (h.2 S).antisymm (hC (exactlyOne_subset_biUnion S))
   · rfl
 
 /-- A logical form places σ among the operators of an item's environment. `freeze outer inner`
@@ -414,7 +415,7 @@ theorem not_felicitous_freeze_of_antitone {outer inner : Set W → Set W}
     (hmin : p.alternatives = .min) (hstrong : p.freezer = .strong) (hC : Antitone inner) :
     ¬ p.Felicitous P D (.freeze outer inner) := by
   rintro ⟨h, -⟩
-  have hpre : p.prejacent P (.freeze outer inner) = fun S ↦ inner (subDisj P S) :=
+  have hpre : p.prejacent P (.freeze outer inner) = fun S ↦ inner (⋃ x ∈ S, P x) :=
     funext (Profile.statement_antitone hC)
   simp only [Profile.frozen, hmin, hstrong, hpre, DomainAlternatives.enrich,
     Freezer.Admits] at h
@@ -441,7 +442,7 @@ theorem not_felicitous_freeze_id_id_of_isActualist {actual : W → Set E}
   rintro ⟨-, h⟩
   simp only [Profile.sentence, Profile.frozen, Profile.prejacent_freeze, hmin,
     DomainAlternatives.enrich, Profile.statement_of_not_scalar hs, id_eq,
-    oMinus_subDisj_eq_empty_of_isActualist P hP hD hwide] at h
+    oMinus_biUnion_eq_empty_of_isActualist P hP hD hwide] at h
   exact Set.not_nonempty_empty h
 
 /-- A model of an item's context supplies an accessibility relation, the scope, the domain of
@@ -607,11 +608,11 @@ theorem Profile.statement_preimage {R : SetRel W W} (hs : p.scalar) :
   p.statement_of_scalar hs SetRel.preimage_mono
 
 theorem Profile.compl_statement_compl (S : Finset E) :
-    (p.statement (·ᶜ) P S)ᶜ = (subDisj P S)ᶜ :=
+    (p.statement (·ᶜ) P S)ᶜ = (⋃ x ∈ S, P x)ᶜ :=
   p.statement_antitone (fun _ _ h ↦ Set.compl_subset_compl.2 h) S
 
 theorem Profile.compl_core_statement {R : SetRel W W} (S : Finset E) :
-    (R.core (p.statement (fun q ↦ (R.core q)ᶜ) P S))ᶜ = (R.core (subDisj P S))ᶜ :=
+    (R.core (p.statement (fun q ↦ (R.core q)ᶜ) P S))ᶜ = (R.core (⋃ x ∈ S, P x))ᶜ :=
   p.statement_antitone (C := fun q ↦ (R.core q)ᶜ)
     (fun _ _ h ↦ Set.compl_subset_compl.2 (SetRel.core_subset_core h)) S
 
@@ -652,7 +653,7 @@ private theorem forall_mem_powerset_univ {q : Finset (Fin 2) → Prop} :
 local macro "model_fact" : tactic => `(tactic| (
   simp only [Profile.statement_of_not_scalar, Profile.statement_id, Profile.statement_core,
     Profile.statement_preimage, Profile.compl_statement_compl, Profile.compl_core_statement,
-    SetRel.mem_core, SetRel.mem_preimage, SetRel.mem_dom, mem_subDisj, exactlyOne,
+    SetRel.mem_core, SetRel.mem_preimage, SetRel.mem_dom, Set.mem_iUnion, exists_prop, exactlyOne,
     forall_mem_powerset_univ,
     ExistsUnique, Set.mem_ofPred_eq, Set.mem_compl_iff, Set.mem_iInter, id_eq, Finset.mem_univ,
     modalModel, widenedModel, anchoredModel]
