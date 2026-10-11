@@ -52,11 +52,11 @@ inductive Value
   deriving DecidableEq, Fintype, Inhabited
 
 instance : MeasurableSpace Value := ⊤
-instance : DiscreteMeasurableSpace Value := ⟨fun _ => trivial⟩
+instance : DiscreteMeasurableSpace Value := ⟨fun _ ↦ trivial⟩
 
 private theorem pair_support (μ : Measure Value) :
     ∀ v, μ {v} ≠ 0 → v = Value.atypical ∨ v = Value.typical :=
-  fun v _ => by cases v <;> simp
+  fun v _ ↦ by cases v <;> simp
 
 /-! ### The Bayesian conceptualization -/
 
@@ -112,7 +112,7 @@ end Bayes
 abbrev Utterance := Option Value
 
 instance : MeasurableSpace Utterance := ⊤
-instance : DiscreteMeasurableSpace Utterance := ⟨fun _ => trivial⟩
+instance : DiscreteMeasurableSpace Utterance := ⟨fun _ ↦ trivial⟩
 
 /-- A report is true of the value it reports; silence is true of both. -/
 def extension : Utterance → Set Value
@@ -142,7 +142,7 @@ instance : IsFiniteKernel (S μ α cs cn) := inferInstanceAs (IsFiniteKernel (sp
 
 /-- When asked, the speaker has no silence option and chooses among the reports. -/
 noncomputable def askedS : Kernel Value Value :=
-  speaker α (fun _ => cs) (listener μ (truthful fun v ↦ ({v} : Set Value))) Measure.dirac
+  speaker α (fun _ ↦ cs) (listener μ (truthful fun v ↦ ({v} : Set Value))) Measure.dirac
 
 instance : IsFiniteKernel (askedS μ α cs) := inferInstanceAs (IsFiniteKernel (speaker _ _ _ _))
 
@@ -188,9 +188,9 @@ theorem S_report (hα : 0 < α) {v : Value} (hv : μ {v} ≠ 0) :
         (Real.exp (-(α * cs)) + Real.exp (-(α * cn)) * (μ {v} ^ α).toReal) := by
   rw [S, speaker_dirac_real_singleton hα.le, Fintype.sum_option,
     Finset.sum_eq_single v
-      (fun w _ hw => by
+      (fun w _ hw ↦ by
         rw [L0_some_of_ne μ hw, ENNReal.zero_rpow_of_pos hα, ENNReal.toReal_zero, zero_mul])
-      (fun h => absurd (Finset.mem_univ v) h),
+      (fun h ↦ absurd (Finset.mem_univ v) h),
     L0_some_self μ hv, L0_none, ENNReal.one_rpow, ENNReal.toReal_one, one_mul,
     Option.elim_some, Option.elim_none, add_comm, mul_comm (μ {v} ^ α).toReal]
 
@@ -237,18 +237,19 @@ and a report carries no information about typicality. The posterior is the prior
 when-asked and think conditions align. -/
 theorem posterior_eq_prior_of_asked (hα : 0 < α) (ht : μ {.typical} ≠ 0)
     (ha : μ {.atypical} ≠ 0) :
-    (listener μ ((askedS μ α cs).map fun _ => true) true).real {.atypical} = μ.real {.atypical} := by
+    (listener μ ((askedS μ α cs).map fun _ ↦ true) true).real {.atypical} =
+      μ.real {.atypical} := by
   have h1 : ∀ v, μ {v} ≠ 0 → ((askedS μ α cs).map (fun _ ↦ true) v).real {true} = 1 :=
       fun v hv ↦ by
     have hv1 : askedS μ α cs v {v} = 1 :=
-      speaker_listener_truthful_dirac_eq_one hα _ μ _ hv rfl fun _ h hv' => h hv'.symm
+      speaker_listener_truthful_dirac_eq_one hα _ μ _ hv rfl fun _ h hv' ↦ h hv'.symm
     rw [measureReal_def, Kernel.map_apply' _ measurable_const _ (MeasurableSet.singleton true),
       askedS,
       Set.preimage_const_of_mem (Set.mem_singleton true),
       le_antisymm (speaker_apply_univ_le_one α _ _ _ v) (hv1 ▸ measure_mono (Set.subset_univ _)),
       ENNReal.toReal_one]
-  have hx : (((askedS μ α cs).map fun _ => true) ∘ₘ μ) {true} ≠ 0 :=
-    comp_apply_singleton_ne_zero _ _ ht fun h => by simpa [measureReal_def, h] using h1 _ ht
+  have hx : (((askedS μ α cs).map fun _ ↦ true) ∘ₘ μ) {true} ≠ 0 :=
+    comp_apply_singleton_ne_zero _ _ ht fun h ↦ by simpa [measureReal_def, h] using h1 _ ht
   rw [listener_apply_eq_posterior _ _ hx, posterior_real_singleton _ _ hx,
     Measure.comp_real_singleton_of_pair _ _ (by decide) (pair_support μ), h1 _ ha, h1 _ ht,
     mul_one, mul_one, measureReal_singleton_add_singleton_of_pair μ (by decide) (pair_support μ),

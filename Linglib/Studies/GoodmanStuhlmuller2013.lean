@@ -9,7 +9,7 @@ public import Linglib.Semantics.Degree.Comparison
 public import Linglib.Semantics.Quantification.NumberTree
 
 /-!
-# Goodman and Stuhlmüller (2013): Knowledge and Implicature: Modeling Language Understanding as Social Cognition
+# Goodman and Stuhlmüller (2013): Knowledge and Implicature
 
 Goodman and Stuhlmüller model scalar implicature under a speaker with incomplete knowledge. The
 state is how many of `N` objects have a property, and the speaker's access is how many of them

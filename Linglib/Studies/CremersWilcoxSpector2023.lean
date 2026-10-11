@@ -332,7 +332,7 @@ theorem wonkyPrior_real_singleton (w : World) : wonkyPrior.real {w} = 2⁻¹ := 
 
 section Speaker
 
-variable (P : Measure World) [IsFiniteMeasure P] (hP : ∀ w, P {w} ≠ 0) (m : Meaning)
+variable (P : Measure World) (hP : ∀ w, P {w} ≠ 0) (m : Meaning)
 
 /-- The literal listener conditions the prior on the message's extension (eq. 1). -/
 noncomputable def L0 : Kernel Message World :=
@@ -341,16 +341,13 @@ noncomputable def L0 : Kernel Message World :=
 instance : IsFiniteKernel (L0 P m) :=
   inferInstanceAs (IsFiniteKernel (RSA.listener _ (RSA.truthful _)))
 
-omit [IsFiniteMeasure P] in
 theorem L0_ne_top (u : Message) (w : World) : L0 P m u {w} ≠ ∞ := measure_ne_top _ _
 
-omit [IsFiniteMeasure P] in
 /-- A message false at a world gets no mass there. -/
 theorem L0_eq_zero {u : Message} {w : World} (h : m.sat u w = false) : L0 P m u {w} = 0 :=
   RSA.listener_truthful_apply_singleton_of_notMem P m.extension
     (by rw [Meaning.mem_extension, h]; exact Bool.false_ne_true)
 
-omit [IsFiniteMeasure P] in
 /-- The tautology *A* leaves the prior unchanged. -/
 theorem L0_literal_a [IsProbabilityMeasure P] (w : World) : L0 P literal .a {w} = P {w} :=
   RSA.listener_truthful_apply_singleton_of_eq_univ P literal.extension
@@ -364,24 +361,23 @@ noncomputable def speaker : Kernel World Message := RSA.speaker s.lam s.cost (L0
 
 instance : IsFiniteKernel (speaker P m s) := inferInstanceAs (IsFiniteKernel (RSA.speaker _ _ _ _))
 
-omit [IsFiniteMeasure P] in
 /-- The weight of a message is finite. -/
 theorem weight_ne_top (u : Message) (w : World) :
     L0 P m u {w} ^ s.lam * s.costFactor u ≠ ∞ :=
   ENNReal.mul_ne_top (ENNReal.rpow_ne_top_of_nonneg s.lam_pos.le (L0_ne_top P m u w))
     (s.costFactor_ne_top u)
 
-omit [IsFiniteMeasure P] in
 /-- A message false at a world has no weight there. -/
 theorem weight_eq_zero {u : Message} {w : World} (h : m.sat u w = false) :
     L0 P m u {w} ^ s.lam * s.costFactor u = 0 := by
   rw [L0_eq_zero P m h, ENNReal.zero_rpow_of_pos s.lam_pos, zero_mul]
 
-omit [IsFiniteMeasure P] in
 /-- A message false at a world is never used there. -/
 theorem speaker_eq_zero {u : Message} {w : World} (h : m.sat u w = false) :
     speaker P m s w {u} = 0 :=
   RSA.speaker_dirac_apply_singleton_eq_zero s.lam_pos (L0_eq_zero P m h)
+
+variable [IsFiniteMeasure P]
 
 include hP
 
@@ -890,21 +886,16 @@ theorem svSpeaker_wab_le_wa (q : QUD) : svSpeaker s (.wab, q) {.a} ≤ svSpeaker
   · rw [svSpeaker_coarse]
   · rw [svSpeaker_wab_fine_a]; exact zero_le
 
-variable (Q : Measure QUD) [IsProbabilityMeasure Q] (hQ : Q {.fine} ≠ 0)
+variable (Q : Measure QUD) (hQ : Q {.fine} ≠ 0)
 
 /-- The joint prior over worlds and questions, independent. -/
 noncomputable def svJoint : Measure (World × QUD) := s.prior.prod Q
 
-instance : IsProbabilityMeasure (svJoint s Q) :=
-  inferInstanceAs (IsProbabilityMeasure (Measure.prod _ _))
-
-omit [IsProbabilityMeasure Q] in
 theorem svJoint_apply_singleton (w : World) (q : QUD) :
     svJoint s Q {(w, q)} = s.prior {w} * Q {q} := by
   show (s.prior.prod Q) {(w, q)} = _
   rw [← Set.singleton_prod_singleton, Measure.prod_prod]
 
-omit [IsProbabilityMeasure Q] in
 theorem svJoint_real_singleton (w : World) (q : QUD) :
     (svJoint s Q).real {(w, q)} = s.prior.real {w} * Q.real {q} :=
   Measure.prod_real_singleton _ _ _ _
@@ -916,7 +907,6 @@ theorem exists_truth_and_exh (u : Message) : ∃ w, truth u w = true ∧ exh u w
   · exact ⟨.wab, rfl, by decide⟩
   · exact ⟨.wa, rfl, by decide⟩
 
-omit [IsProbabilityMeasure Q] in
 include hQ in
 /-- Every message is used somewhere under the fine question, so is heard with positive
 probability. -/
@@ -925,6 +915,11 @@ theorem comp_svSpeaker_ne_zero (u : Message) : (svSpeaker s ∘ₘ svJoint s Q) 
   have hj : svJoint s Q {(w, .fine)} ≠ 0 := by
     rw [svJoint_apply_singleton]; exact mul_ne_zero (s.prior_ne_zero w) hQ
   comp_apply_singleton_ne_zero _ _ hj (svSpeaker_fine_ne_zero s hw.1 hw.2)
+
+variable [IsProbabilityMeasure Q]
+
+instance : IsProbabilityMeasure (svJoint s Q) :=
+  inferInstanceAs (IsProbabilityMeasure (Measure.prod _ _))
 
 /-- The pragmatic listener, jointly over worlds and questions (item 6 of the §4.2 model). -/
 noncomputable def svListener : Kernel Message (World × QUD) :=

@@ -116,10 +116,57 @@ theorem trueExts_le_viableExts (hw : ∀ r : W, r ∈ g.worlds) (pfx : List U) (
 noncomputable def incSem (pfx : List U) (r : W) : ℝ≥0∞ :=
   (g.trueExts pfx r : ℝ≥0∞) / (g.viableExts pfx : ℝ≥0∞)
 
+variable [Fintype W] [MeasurableSpace W] [DiscreteMeasurableSpace W]
+
+/-! ### The global model (§2.1) -/
+
+/-- The complete utterances of the game, as a type. -/
+def Complete : Type := {u : List U // u ∈ g.utterances}
+
+instance : Fintype g.Complete :=
+  Fintype.subtype g.utterances.toFinset fun _ => List.mem_toFinset
+
+instance : MeasurableSpace g.Complete := ⊤
+instance : DiscreteMeasurableSpace g.Complete := ⟨fun _ => trivial⟩
+instance : DecidableEq g.Complete := Subtype.instDecidableEq
+
+/-- The global literal listener (eq. 1) conditions the uniform prior on the utterance's
+truth. -/
+noncomputable def globalL0 : Kernel g.Complete W :=
+  Kernel.ofDensity (uniformOn Set.univ) fun u r => if g.sem u.val r then 1 else 0
+
+instance : IsFiniteKernel g.globalL0 := inferInstanceAs (IsFiniteKernel (Kernel.ofDensity _ _))
+
+/-- The global pragmatic speaker (eq. 2). -/
+noncomputable def globalS1 (cost : g.Complete → ℝ) : Kernel W g.Complete :=
+  speaker 1 cost g.globalL0 Measure.dirac
+
+/-- An utterance costs the sum of its words' costs (§3.1). -/
+def uttCost (cost : U → ℝ) (u : List U) : ℝ := (u.map cost).sum
+
+theorem globalL0_apply (u : g.Complete) (r : W) :
+    g.globalL0 u {r}
+      = (if g.sem u.val r then 1 else 0)
+        / ((Finset.univ.filter fun r' => g.sem u.val r').card : ℝ≥0∞) := by
+  have : Nonempty W := ⟨r⟩
+  rw [globalL0, Kernel.ofDensity_uniformOn_apply_singleton]
+  congr 1
+  rw [Finset.sum_boole]
+
+/-- A complete utterance true of a referent gives the literal listener at least chance
+probability of it, the weak informativity of §2.4. -/
+theorem globalL0_ge_inv_card {u : g.Complete} {r : W} (htrue : g.sem u.val r = true) :
+    ((Fintype.card W : ℝ≥0∞))⁻¹ ≤ g.globalL0 u {r} := by
+  rw [globalL0_apply, ite_eq_left htrue]
+  calc ((Fintype.card W : ℝ≥0∞))⁻¹
+      ≤ (((Finset.univ.filter fun r' => g.sem u.val r').card : ℕ) : ℝ≥0∞)⁻¹ := by
+        refine ENNReal.inv_le_inv' ?_
+        exact_mod_cast (Finset.card_filter_le _ _).trans_eq Finset.card_univ
+    _ = 1 / _ := (one_div _).symm
+
 /-! ### The word-level pipeline (eqs. 4–6) -/
 
 variable [Fintype U] [MeasurableSpace U] [DiscreteMeasurableSpace U]
-  [Fintype W] [MeasurableSpace W] [DiscreteMeasurableSpace W]
 
 /-- The incremental literal listener at context `ctx` (eq. 4) reweights the uniform prior by
 `⟦ctx ++ [u]⟧`. -/
@@ -204,54 +251,6 @@ theorem s1_real_singleton {ctx : List U} {r : W} (hnd : ¬ g.DeadEnd ctx r) {cos
         / ∑ u', (g.l0 ctx u' {r}).toReal * Real.exp (-cost u') := by
   rw [s1_apply g hnd, speaker_dirac_real_singleton zero_le_one]
   simp only [ENNReal.rpow_one, one_mul]
-
-/-! ### The global model (§2.1) -/
-
-/-- The complete utterances of the game, as a type. -/
-def Complete : Type := {u : List U // u ∈ g.utterances}
-
-instance : Fintype g.Complete :=
-  Fintype.subtype g.utterances.toFinset fun _ => List.mem_toFinset
-
-instance : MeasurableSpace g.Complete := ⊤
-instance : DiscreteMeasurableSpace g.Complete := ⟨fun _ => trivial⟩
-instance : DecidableEq g.Complete := Subtype.instDecidableEq
-
-/-- The global literal listener (eq. 1) conditions the uniform prior on the utterance's
-truth. -/
-noncomputable def globalL0 : Kernel g.Complete W :=
-  Kernel.ofDensity (uniformOn Set.univ) fun u r => if g.sem u.val r then 1 else 0
-
-instance : IsFiniteKernel g.globalL0 := inferInstanceAs (IsFiniteKernel (Kernel.ofDensity _ _))
-
-/-- The global pragmatic speaker (eq. 2). -/
-noncomputable def globalS1 (cost : g.Complete → ℝ) : Kernel W g.Complete :=
-  speaker 1 cost g.globalL0 Measure.dirac
-
-/-- An utterance costs the sum of its words' costs (§3.1). -/
-def uttCost (cost : U → ℝ) (u : List U) : ℝ := (u.map cost).sum
-
-omit [Fintype U] [MeasurableSpace U] [DiscreteMeasurableSpace U] in
-theorem globalL0_apply (u : g.Complete) (r : W) :
-    g.globalL0 u {r}
-      = (if g.sem u.val r then 1 else 0)
-        / ((Finset.univ.filter fun r' => g.sem u.val r').card : ℝ≥0∞) := by
-  have : Nonempty W := ⟨r⟩
-  rw [globalL0, Kernel.ofDensity_uniformOn_apply_singleton]
-  congr 1
-  rw [Finset.sum_boole]
-
-omit [Fintype U] [MeasurableSpace U] [DiscreteMeasurableSpace U] in
-/-- A complete utterance true of a referent gives the literal listener at least chance
-probability of it, the weak informativity of §2.4. -/
-theorem globalL0_ge_inv_card {u : g.Complete} {r : W} (htrue : g.sem u.val r = true) :
-    ((Fintype.card W : ℝ≥0∞))⁻¹ ≤ g.globalL0 u {r} := by
-  rw [globalL0_apply, ite_eq_left htrue]
-  calc ((Fintype.card W : ℝ≥0∞))⁻¹
-      ≤ (((Finset.univ.filter fun r' => g.sem u.val r').card : ℕ) : ℝ≥0∞)⁻¹ := by
-        refine ENNReal.inv_le_inv' ?_
-        exact_mod_cast (Finset.card_filter_le _ _).trans_eq Finset.card_univ
-    _ = 1 / _ := (one_div _).symm
 
 /-! ### Evaluation lemmas -/
 

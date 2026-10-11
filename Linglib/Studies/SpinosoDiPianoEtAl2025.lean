@@ -60,12 +60,14 @@ namespace SpinosoDiPianoEtAl2025
 
 universe v
 
-variable {M U R : Type*} [Fintype M] [MeasurableSpace M] [DiscreteMeasurableSpace M]
+variable {M U R : Type*} [Fintype M] [MeasurableSpace M]
   [Fintype U] [MeasurableSpace U] [DiscreteMeasurableSpace U]
 
 /-! ### The framework -/
 
 section Framework
+
+variable [DiscreteMeasurableSpace M]
 
 /-- The strategy-indexed literal listener (eq. 4) reweights the prior by the rhetorical
 function of the strategy. -/
@@ -187,7 +189,9 @@ end Framework
 
 section QUD
 
-variable {G X : Type*} (μ : Measure M) [IsFiniteMeasure μ]
+section
+
+variable [DiscreteMeasurableSpace M] {G X : Type*} (μ : Measure M) [IsFiniteMeasure μ]
 
 /-- The rhetorical function of a question (eq. 19) is the projected literal mass of the
 meaning's cell over the prior, scaled by a constant that keeps it in the unit interval. -/
@@ -218,20 +222,22 @@ theorem kaoGoodman2015_L0 (μ : Measure KaoGoodman2015.Meaning) [IsFiniteMeasure
       (projListener KaoGoodman2015.project (KaoGoodman2015.L0 μ) q u)[|Set.univ] :=
   L0_rhetoricalOfQUD μ hμ _ _ hk0 hk q u
 
+end
+
 /-- The QUD-RSA literal listeners of a literal listener (eq. 13) are its projected listeners
 normalized over meanings, over every question and utterance. -/
 def qudListeners (L : Kernel U M) : Set (Measure M) :=
   {ν | ∃ (X : Type v) (q : M → X) (u : U), ν = (projListener id L q u)[|Set.univ]}
 
-omit [DiscreteMeasurableSpace M] in
 /-- A QUD-RSA literal listener depends on the question only through the cells it induces, so
 the QUD-RSA literal listeners of a finite meaning space are finitely many. -/
-theorem qudListeners_finite [MeasurableSingletonClass M] (L : Kernel U M) :
-    (qudListeners.{v} L).Finite :=
+theorem qudListeners_finite (L : Kernel U M) : (qudListeners.{v} L).Finite :=
   (Set.finite_range fun p : U × (M → Set M) =>
       (∑ m, L p.1 (p.2 m) • Measure.dirac m)[|Set.univ]).subset <| by
     rintro ν ⟨X, q, u, rfl⟩
     exact ⟨(u, fun m => q ⁻¹' {q m}), rfl⟩
+
+variable [DiscreteMeasurableSpace M] (μ : Measure M) [IsFiniteMeasure μ]
 
 /-- Every probability vector over meanings is an (RSA)² literal listener at a prior of positive
 mass everywhere, whose rhetorical function is the vector over the prior. -/

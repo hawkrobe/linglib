@@ -159,6 +159,55 @@ theorem prior_eq_average :
   push_cast
   rw [← sum_div, div_div, pow_succ]
 
+/-- A sum over all tuples weighted by the number of sticks of length `u` is a sum over the other
+sticks with `u` in front, for a weight that does not depend on where `u` is. -/
+private theorem sum_card_filter_mul {u : Fin 9} {G : (Fin (n + 1) → Fin 9) → ℝ}
+    (hG : ∀ i x, G (Fin.insertNth i u x) = G (Fin.cons u x)) :
+    ∑ w, (#{i | w i = u} : ℝ) * G w = (n + 1) * ∑ x : Fin n → Fin 9, G (Fin.cons u x) := by
+  have h (i : Fin (n + 1)) :
+      ∑ w, (if w i = u then G w else 0) = ∑ x : Fin n → Fin 9, G (Fin.cons u x) := by
+    rw [← (Fin.insertNthEquiv (fun _ ↦ Fin 9) i).sum_comp, Fintype.sum_prod_type, sum_comm]
+    simp only [Fin.insertNthEquiv_apply, Fin.insertNth_apply_same, sum_ite_eq', mem_univ,
+      ite_true]
+    exact sum_congr rfl fun x _ ↦ hG i x
+  simp only [card_filter, Nat.cast_sum, Nat.cast_ite, Nat.cast_one, Nat.cast_zero, sum_mul,
+    ite_mul, one_mul, zero_mul]
+  rw [sum_comm]
+  simp only [h, sum_const, card_univ, Fintype.card_fin, nsmul_eq_mul, Nat.cast_succ]
+
+private theorem sum_rpow_insertNth (β : ℝ) (i : Fin (n + 1)) (u : Fin 9) (x : Fin n → Fin 9) :
+    ∑ j, literal n ((Fin.insertNth i u x : Fin (n + 1) → Fin 9) j) ^ β =
+      literal n u ^ β + ∑ j, literal n (x j) ^ β := by
+  rw [Fin.sum_univ_succAbove _ i]
+  simp
+
+private theorem sum_rpow_cons (β : ℝ) (u : Fin 9) (x : Fin n → Fin 9) :
+    ∑ j, literal n ((Fin.cons u x : Fin (n + 1) → Fin 9) j) ^ β =
+      literal n u ^ β + ∑ j, literal n (x j) ^ β := by
+  rw [Fin.sum_univ_succ]
+  simp
+
+private theorem sum_rpow_inf_add_sup (β : ℝ) (x y : Fin n → Fin 9) :
+    ∑ i, literal n ((x ⊓ y) i) ^ β + ∑ i, literal n ((x ⊔ y) i) ^ β =
+      ∑ i, literal n (x i) ^ β + ∑ i, literal n (y i) ^ β := by
+  simp only [← sum_add_distrib, Pi.inf_apply, Pi.sup_apply]
+  refine sum_congr rfl fun i _ ↦ ?_
+  rcases le_total (x i) (y i) with h | h
+  · rw [inf_eq_left.2 h, sup_eq_right.2 h]
+  · rw [inf_eq_right.2 h, sup_eq_left.2 h, add_comm]
+
+private theorem isUpperSet_cons_mem_longer (u : Fin 9) :
+    IsUpperSet (↑(univ.filter fun x : Fin n → Fin 9 ↦ Fin.cons u x ∈ longer n) :
+      Set (Fin n → Fin 9)) := by
+  simp only [coe_filter, mem_univ, true_and]
+  exact (isUpperSet_longer n).preimage fun _ _ hxy ↦ Fin.cons_le_cons.2 ⟨le_rfl, hxy⟩
+
+private theorem card_sup_pos (w : Fin (n + 1) → Fin 9) : 0 < #{j | w j = univ.sup w} := by
+  obtain ⟨j, -, hj⟩ := exists_mem_eq_sup univ univ_nonempty w
+  exact card_pos.2 ⟨j, mem_filter.2 ⟨mem_univ _, hj.symm⟩⟩
+
+section NeZero
+
 variable [NeZero n]
 
 theorem literal_pos (u : Fin 9) : 0 < literal n u := by
@@ -248,37 +297,6 @@ theorem speaker_real_singleton_eq_mul (β : ℝ) (w : Fin (n + 1) → Fin 9) (u 
   rw [speaker_real_singleton, ← nsmul_eq_mul, ← sum_const]
   exact sum_congr rfl fun i hi ↦ by rw [reveal_real_singleton, (mem_filter.1 hi).2]
 
-omit [NeZero n] in
-/-- A sum over all tuples weighted by the number of sticks of length `u` is a sum over the other
-sticks with `u` in front, for a weight that does not depend on where `u` is. -/
-private theorem sum_card_filter_mul {u : Fin 9} {G : (Fin (n + 1) → Fin 9) → ℝ}
-    (hG : ∀ i x, G (Fin.insertNth i u x) = G (Fin.cons u x)) :
-    ∑ w, (#{i | w i = u} : ℝ) * G w = (n + 1) * ∑ x : Fin n → Fin 9, G (Fin.cons u x) := by
-  have h (i : Fin (n + 1)) :
-      ∑ w, (if w i = u then G w else 0) = ∑ x : Fin n → Fin 9, G (Fin.cons u x) := by
-    rw [← (Fin.insertNthEquiv (fun _ ↦ Fin 9) i).sum_comp, Fintype.sum_prod_type, sum_comm]
-    simp only [Fin.insertNthEquiv_apply, Fin.insertNth_apply_same, sum_ite_eq', mem_univ,
-      ite_true]
-    exact sum_congr rfl fun x _ ↦ hG i x
-  simp only [card_filter, Nat.cast_sum, Nat.cast_ite, Nat.cast_one, Nat.cast_zero, sum_mul,
-    ite_mul, one_mul, zero_mul]
-  rw [sum_comm]
-  simp only [h, sum_const, card_univ, Fintype.card_fin, nsmul_eq_mul, Nat.cast_succ]
-
-omit [NeZero n] in
-private theorem sum_rpow_insertNth (β : ℝ) (i : Fin (n + 1)) (u : Fin 9) (x : Fin n → Fin 9) :
-    ∑ j, literal n ((Fin.insertNth i u x : Fin (n + 1) → Fin 9) j) ^ β =
-      literal n u ^ β + ∑ j, literal n (x j) ^ β := by
-  rw [Fin.sum_univ_succAbove _ i]
-  simp
-
-omit [NeZero n] in
-private theorem sum_rpow_cons (β : ℝ) (u : Fin 9) (x : Fin n → Fin 9) :
-    ∑ j, literal n ((Fin.cons u x : Fin (n + 1) → Fin 9) j) ^ β =
-      literal n u ^ β + ∑ j, literal n (x j) ^ β := by
-  rw [Fin.sum_univ_succ]
-  simp
-
 theorem share_pos (β : ℝ) (u : Fin 9) (x : Fin n → Fin 9) : 0 < share n β u x :=
   div_pos (rpow_literal_pos β u)
     (add_pos_of_pos_of_nonneg (rpow_literal_pos β u)
@@ -318,16 +336,6 @@ private theorem sum_rpow_mono {β : ℝ} (hβ : 0 ≤ β) :
     Monotone fun x : Fin n → Fin 9 ↦ ∑ i, literal n (x i) ^ β :=
   fun _ _ hxy ↦ sum_le_sum fun i _ ↦ rpow_literal_mono hβ (hxy i)
 
-omit [NeZero n] in
-private theorem sum_rpow_inf_add_sup (β : ℝ) (x y : Fin n → Fin 9) :
-    ∑ i, literal n ((x ⊓ y) i) ^ β + ∑ i, literal n ((x ⊔ y) i) ^ β =
-      ∑ i, literal n (x i) ^ β + ∑ i, literal n (y i) ^ β := by
-  simp only [← sum_add_distrib, Pi.inf_apply, Pi.sup_apply]
-  refine sum_congr rfl fun i _ ↦ ?_
-  rcases le_total (x i) (y i) with h | h
-  · rw [inf_eq_left.2 h, sup_eq_right.2 h]
-  · rw [inf_eq_right.2 h, sup_eq_left.2 h, add_comm]
-
 private theorem add_sum_rpow_pos (β : ℝ) (u : Fin 9) (x : Fin n → Fin 9) :
     0 < literal n u ^ β + ∑ i, literal n (x i) ^ β :=
   add_pos_of_pos_of_nonneg (rpow_literal_pos β u) (sum_nonneg fun _ _ ↦ (rpow_literal_pos β _).le)
@@ -353,13 +361,6 @@ theorem share_mul_share_le {β : ℝ} (hβ : 0 ≤ β) {u v : Fin 9} (huv : u �
     (mul_pos (add_sum_rpow_pos β u _) (add_sum_rpow_pos β v _))
     (mul_le_mul_of_add_eq (rpow_literal_mono hβ huv) (sum_rpow_mono hβ inf_le_left)
       (sum_rpow_mono hβ inf_le_right) (sum_rpow_inf_add_sup β x y))
-
-omit [NeZero n] in
-private theorem isUpperSet_cons_mem_longer (u : Fin 9) :
-    IsUpperSet (↑(univ.filter fun x : Fin n → Fin 9 ↦ Fin.cons u x ∈ longer n) :
-      Set (Fin n → Fin 9)) := by
-  simp only [coe_filter, mem_univ, true_and]
-  exact (isUpperSet_longer n).preimage fun _ _ hxy ↦ Fin.cons_le_cons.2 ⟨le_rfl, hxy⟩
 
 private theorem sum_share_pos (β : ℝ) (u : Fin 9) : 0 < ∑ x : Fin n → Fin 9, share n β u x :=
   sum_pos (fun x _ ↦ share_pos β u x) univ_nonempty
@@ -426,11 +427,6 @@ theorem ordConnected_backfires {β : ℝ} (hβ : 0 ≤ β) : (backfires n β).Or
       fun _ _ h hu ↦ (pragmaticListener_real_mono hβ h).trans_lt hu
 
 /-! ### A fully persuasive speaker -/
-
-omit [NeZero n] in
-private theorem card_sup_pos (w : Fin (n + 1) → Fin 9) : 0 < #{j | w j = univ.sup w} := by
-  obtain ⟨j, -, hj⟩ := exists_mem_eq_sup univ univ_nonempty w
-  exact card_pos.2 ⟨j, mem_filter.2 ⟨mem_univ _, hj.symm⟩⟩
 
 private theorem tendsto_div_rpow (w : Fin (n + 1) → Fin 9) (j : Fin (n + 1)) :
     Tendsto (fun β : ℝ ↦ (literal n (w j) / literal n (univ.sup w)) ^ β) atTop
@@ -501,7 +497,8 @@ theorem tendsto_pragmaticListener_real_atTop (u : Fin 9) (E : Set (Fin (n + 1) �
   exact (Nat.cast_pos.2 (card_pos.2 ⟨fun _ ↦ u, mem_filter.2 ⟨mem_univ _,
     (sup_const univ_nonempty u).symm⟩⟩)).ne'
 
-omit [NeZero n] in
+end NeZero
+
 /-- A listener who expects the longest stick to be shown conditions the uniform prior on the
 shown stick being the longest. -/
 theorem listener_dirac_sup (u : Fin 9) :
@@ -525,7 +522,6 @@ private def tails (m : ℕ) : ℕ → List ℕ
 private theorem length_tails (m n : ℕ) : (tails m n).length = m * n + 1 := by
   cases n <;> simp [tails]
 
-omit [NeZero n] in
 private theorem card_tails {m : ℕ} (hm : m ≤ 9) (k : ℕ) :
     #{x : Fin n → Fin 9 | (∀ i, (x i : ℕ) < m) ∧ k ≤ ∑ i, length (x i)} =
       (tails m n).getD k 0 := by
@@ -556,7 +552,6 @@ private theorem card_tails {m : ℕ} (hm : m ≤ 9) (k : ℕ) :
       generalize m * n = p at *
       omega
 
-omit [NeZero n] in
 /-- The tuples whose longest stick is `u` are those of sticks at most `u` that are not all
 shorter than `u`. -/
 private theorem card_sup_eq (u : Fin 9) (E : (Fin (n + 1) → Fin 9) → Prop) [DecidablePred E] :
