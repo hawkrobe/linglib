@@ -57,7 +57,6 @@ import Linglib.Core.Computability.NonContextFree.AmBnCmDn
 import Linglib.Core.Computability.NonContextFree.AnBnCn
 import Linglib.Core.Computability.NonRegular.AnBn
 import Linglib.Core.Computability.PiecewiseTestable
-import Linglib.Core.Computability.ScanDirection
 import Linglib.Core.Computability.ShuffleIdeal
 import Linglib.Core.Computability.StarFree
 import Linglib.Core.Computability.Subsequential

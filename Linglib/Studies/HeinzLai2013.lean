@@ -31,7 +31,6 @@ and then right to left.
 
 ## Main results
 
-* `ph_forms`: progressive harmony takes the Turkish genitives of Table 2 to their surface forms
 * `not_isLeftSubsequential_of_isSourGrapes`: Theorem 5
 * `exists_isRightSubsequential_isSourGrapes`, `not_isRightSubsequential_of_isSourGrapes`: the
   right half of Theorem 5 fails for (8) alone and holds once trigger-less words are left alone
@@ -180,7 +179,7 @@ theorem not_isRightSubsequential_of_isSourGrapes {f : List Seg → List Seg}
   have h := (List.forall_dependsOn_ofFn_iff fun u ↦ (f u)[N + 1]?).mp (hN (N + 1))
     (u := .plus :: replicate (N + 1) .minus) (v := .minus :: replicate (N + 1) .minus) (by simp)
     (fun k hk ↦ by
-      simp only [ScanDirection.window_left, Set.mem_Ici] at hk
+      simp only [Edge.window_left, Set.mem_Ici] at hk
       rcases k with _ | k
       · omega
       · rfl)

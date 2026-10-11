@@ -12,7 +12,7 @@ public import Linglib.Phonology.Subregular.OSL
 /-!
 # Search and copy
 
-A search-and-copy rule is the Harmonic Search-and-Copy procedure of [nevins-2010]: a needy
+A search-and-copy rule is the Harmonic Search-and-Copy procedure of Nevins: a needy
 segment, one unspecified for a feature, searches in one direction for the closest segment
 visible to it and copies that segment's value, or the opposite value for dissimilation, and
 takes a last-resort default when the search fails. The procedure is stated by its
@@ -21,21 +21,21 @@ meet a condition of its own, and a visible source failing it halts the search wi
 default, which is defective intervention, since the search gets no second chance. A copied
 value is donated onward, so harmony iterates morpheme by morpheme, and every visible valued
 segment donates whether or not it searches itself. Mailhot and Reiss's SEARCH and COPY rule
-components, as [bale-reiss-2018] present them, are a sibling formulation with simultaneous
-application over the input. [belth-2026]'s learner constructs one, written
+components, as Bale and Reiss present them, are a sibling formulation with simultaneous
+application over the input. Belth's learner constructs one, written
 `Rel(A, F) / C __ ∘ proj(·, T)` with `A` the targets, `C` the sources and `T` the visible
-segments, and [nevins-2010] reads [rose-walker-2011]'s blockers and transparent segments as
+segments, and Nevins reads Rose and Walker's blockers and transparent segments as
 defective interveners and invisible segments.
 
 Run over a word, the rule is a Mealy machine on the visible segments whose state is the
 closest visible segment read so far (`SearchCopy.toMealy`), the memory window of
-[burness-mcmullin-nevins-2024]'s tier-based strictly local reading of the procedure, and
+Burness, McMullin and Nevins's tier-based strictly local reading of the procedure, and
 when the write keeps a segment visible the output tier-based strictly 2-local rule of
-[burness-mcmullin-2019] computes the same function (`SearchCopy.toOSLRule_applyOnTier`). So
+Burness and McMullin computes the same function (`SearchCopy.toOSLRule_applyOnTier`). So
 such a rule for one feature in one direction is a tier-based strictly local function, the
-result of Andersson, Dolatian and Hao that [burness-mcmullin-nevins-2024] report. Every rule is
+result of Andersson, Dolatian and Hao that Burness, McMullin and Nevins report. Every rule is
 subsequential in its direction over a finite alphabet (`SearchCopy.apply_isSubsequential`), as
-Gainor, Lai and Heinz found of [nevins-2010]'s analyses.
+Gainor, Lai and Heinz found of Nevins's analyses.
 
 ## Main definitions
 
@@ -59,18 +59,18 @@ Gainor, Lai and Heinz found of [nevins-2010]'s analyses.
 ## Implementation notes
 
 The window holds the last visible output segment, so a copied value is donated onward, as
-[nevins-2010]'s derivations of stacked Turkish suffixes show; [burness-mcmullin-nevins-2024]
+Nevins's derivations of stacked Turkish suffixes show; Burness, McMullin and Nevins
 instead model the procedure by an input-oriented function with the needy segments off the
 tier, which agrees whenever a needy segment's nearest visible source precedes it in the
-input, and the run is [nevins-2010]'s cyclic derivation only where morphological order runs
-away from the root in the search direction. `IsSource` is more general than [nevins-2010]'s
+input, and the run is Nevins's cyclic derivation only where morphological order runs
+away from the root in the search direction. `IsSource` is more general than Nevins's
 conditions on a source, which are identity for an orthogonal feature or morphological
-affiliation. A source unspecified for the feature yields the default, where [belth-2026]
+affiliation. A source unspecified for the feature yields the default, where Belth
 counts a failed application, and a default of `none`, outside both sources, leaves a
 failed target unspecified for the fixed-point results of `Harmony.System`. The lens laws
 hold on targets only, since only targets are written. Not modelled are search in both
-directions at once, sonority hurdles, the distance parameters of [nevins-2010]'s fifth
-chapter, more than one feature per search, and the patterns [burness-mcmullin-nevins-2024]
+directions at once, sonority hurdles, the distance parameters of Nevins's fifth
+chapter, more than one feature per search, and the patterns Burness, McMullin and Nevins
 place beyond the procedure: icy targets, persistent search and circumambient harmony.
 
 ## References
@@ -129,7 +129,7 @@ structure SearchCopy (α : Type*) where
   /-- The last-resort value a target takes when its search fails. -/
   default : Option Bool := none
   /-- The direction of search, a rightward search scanning right to left. -/
-  direction : ScanDirection := .left
+  direction : Edge := .left
 
 attribute [instance] SearchCopy.decTier SearchCopy.decTarget SearchCopy.decSource
 
@@ -140,7 +140,7 @@ variable {α : Type*} (r : SearchCopy α)
 /-- The value the target `t` finds in the window `w`, the window segment's value when it may
 donate to `t`. -/
 def found (t : α) (w : Option α) : Option Bool :=
-  w.bind fun c => if r.IsSource c t then r.value c else none
+  w.bind fun c ↦ if r.IsSource c t then r.value c else none
 
 /-- The value the search of `t` yields from the window `w`, the default when it finds
 nothing. -/
@@ -308,7 +308,7 @@ a segment visible. -/
 theorem filter_scan (hw : r.TierClosed) (w : List α) :
     (r.scan w).filter (decide <| r.tier ·) = r.toOSLRule.apply (w.filter (decide <| r.tier ·)) := by
   rw [← toOSLRule_applyOnTier r hw]
-  refine r.toOSLRule.filter_applyOnTier (fun _ s y hy => ?_) w
+  refine r.toOSLRule.filter_applyOnTier (fun _ s y hy ↦ ?_) w
   rw [toOSLRule_windowOutput] at hy
   split_ifs at hy with hs <;> rw [List.mem_singleton] at hy <;> subst hy
   · exact iff_of_true (r.tier_emit hw hs _) hs

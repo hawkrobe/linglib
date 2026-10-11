@@ -93,7 +93,7 @@ structure Iteration (α : Type*) where
   contextsR : List α
   left : Summary α
   right : Summary α
-  chosen : ScanDirection
+  chosen : Edge
   default : Option (Option Bool)
   deletion : List α
   deriving DecidableEq, Repr
@@ -147,12 +147,12 @@ def precedingContexts (T : List α) : List α → Option α → List α
 
 /-- The context class `C` of the rule on side `d` over the tier `T`, every segment
 tier-adjacent to a target on that side in some underlying form. -/
-def contexts (T : List α) (d : ScanDirection) : List α :=
+def contexts (T : List α) (d : Edge) : List α :=
   (P.vocabulary.flatMap fun p ↦
     P.precedingContexts T (match d with | .left => p.1 | .right => p.1.reverse) none).dedup
 
 /-- The candidate rule over the tier `T` with the contexts `C`. -/
-def candidate (T C : List α) (rel : SearchCopy.Relation) (d : ScanDirection)
+def candidate (T C : List α) (rel : SearchCopy.Relation) (d : Edge)
     (default : Option Bool := none) : SearchCopy α where
   tier s := s ∈ T
   IsSource s _ := s ∈ C
@@ -188,7 +188,7 @@ def step (rel : SearchCopy.Relation) (T D : List α) : Iteration α :=
   let CR := P.contexts T .right
   let sL := P.summary (P.candidate T CL rel .left)
   let sR := P.summary (P.candidate T CR rel .right)
-  let chosen : ScanDirection := if better sL sR then .left else .right
+  let chosen : Edge := if better sL sR then .left else .right
   { tier := T, contextsL := CL, contextsR := CR, left := sL, right := sR, chosen := chosen
     default := P.inferDefault (match chosen with | .left => sL | .right => sR).untouched
     deletion := (D ++ sL.errors ++ sR.errors).dedup }
@@ -408,7 +408,7 @@ def ofChar : Char → Option LatSeg
 
 end LatSeg
 
-/-- The rule D2L learns under the `[+cons]` tier, rule (54):
+/-- The rule D2L learns under the `[+cons]` tier is rule (54),
 `Disagree([?lat], {lat}) / [+cons] __ ∘ proj(·, [+cons])`, the liquid `L` taking the opposite
 laterality of the tier-adjacent consonant. -/
 def latinDissimRule : SearchCopy LatSeg where

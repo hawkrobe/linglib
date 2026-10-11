@@ -12,14 +12,14 @@ public import Linglib.Phonology.SearchCopy
 /-!
 # Harmony systems
 
-A harmony system is [rose-walker-2011]'s descriptive object: a `Phonology.Harmony.Pattern`,
+A harmony system is Rose and Walker's descriptive object: a `Phonology.Harmony.Pattern`,
 whose participation classes are the triggers, blockers and transparent segments, together
 with the targets and a write of the harmonic value into them. It commits to no mechanism.
-Its search-and-copy reading (`System.searchCopy`) is [nevins-2010]'s procedure with the
+Its search-and-copy reading (`System.searchCopy`) is Nevins's procedure with the
 pattern's tier as the visible segments, its participating segments as the sources and its
-direction as the direction of search; the rival accounts, autosegmental spreading
-([goldsmith-1976]), Agreement by Correspondence ([rose-walker-2004]) and OT alignment, are
-not derived here. Under that reading a harmonic word is a fixed point of the run
+direction as the direction of search; the rival accounts, Goldsmith's autosegmental
+spreading, Rose and Walker's Agreement by Correspondence and OT alignment, are not derived
+here. Under that reading a harmonic word is a fixed point of the run
 (`System.scan_eq_self_of_harmonic`), and on a saturated system the fixed points are exactly
 the harmonic words (`System.harmonic_iff_scan_eq_self`), the TSL₂ language of
 `Pattern.harmonic_iff_mem_tsl`.
@@ -27,7 +27,7 @@ the harmonic words (`System.harmonic_iff_scan_eq_self`), the TSL₂ language of
 ## Main definitions
 
 * `System`: a pattern, its targets and its write; `System.mk'` compiles the
-  [rose-walker-2011] roles over `Phonology.Segment`.
+  Rose and Walker roles over `Phonology.Segment`.
 * `System.searchCopy`: the search-and-copy reading of a system.
 * `System.Saturated`: every visible segment is a participating target with a value.
 
@@ -42,16 +42,16 @@ the harmonic words (`System.harmonic_iff_scan_eq_self`), the TSL₂ language of
 ## Implementation notes
 
 Under the search-and-copy reading a blocker is a visible non-source: the search stops at it
-and the target takes the default, as in [nevins-2010]'s defective intervention and
-[belth-2026]'s Khalkha rule. [ritter-vanderhulst-2024-themes]'s reading, on which a blocker
+and the target takes the default, as in Nevins's defective intervention and
+Belth's Khalkha rule. Ritter and van der Hulst's reading, on which a blocker
 imposes its own value, is the case where the blocker's pattern value is the default;
 `Pattern.Harmonic` follows that reading, so the fixed-point results assume no default and
 blockers that are not targets. Every participating segment donates whether or not it is a
-target, as [nevins-2010] requires. An icy target is a target that is not a source, which the
+target, as Nevins requires. An icy target is a target that is not a source, which the
 reading expresses because participation is stored on the segment; on bare segments
-[burness-mcmullin-nevins-2024] show that search and copy cannot. A bidirectional pattern is
+Burness, McMullin and Nevins show that search and copy cannot. A bidirectional pattern is
 run left to right; the outward-from-root pass is not modelled. A single tier is not always
-enough: Uyghur backness harmony is not TSL ([mayer-major-2018]).
+enough: Uyghur backness harmony is not TSL, as Mayer and Major show.
 
 ## References
 
@@ -70,8 +70,8 @@ enough: Uyghur backness harmony is not TSL ([mayer-major-2018]).
 
 namespace Phonology.Harmony
 
-/-- The scan direction of a pattern, bidirectional patterns being run left to right. -/
-def Direction.toScanDirection : Direction → ScanDirection
+/-- The edge a pattern's scan starts from, bidirectional patterns being run from the left. -/
+def Direction.scanEdge : Direction → Edge
   | .rightward | .bidirectional => .left
   | .leftward => .right
 
@@ -101,8 +101,8 @@ namespace System
 
 variable {α : Type*} (sys : System α)
 
-/-- The search-and-copy reading of a system: the pattern's tier is the visible segments,
-its participating segments are the sources, and its direction is the direction of search. -/
+/-- The search-and-copy reading of a system takes the pattern's tier as the visible segments,
+its participating segments as the sources, and its direction as the direction of search. -/
 def searchCopy : SearchCopy α where
   tier := sys.pattern.OnTier
   IsTarget := sys.IsTarget
@@ -112,7 +112,7 @@ def searchCopy : SearchCopy α where
   value_write := sys.value_write
   write_value := sys.write_value
   default := sys.default
-  direction := sys.pattern.direction.toScanDirection
+  direction := sys.pattern.direction.scanEdge
 
 @[simp] theorem searchCopy_tier : sys.searchCopy.tier = sys.pattern.OnTier := rfl
 
@@ -129,7 +129,7 @@ def searchCopy : SearchCopy α where
 @[simp] theorem searchCopy_default : sys.searchCopy.default = sys.default := rfl
 
 @[simp] theorem searchCopy_direction :
-    sys.searchCopy.direction = sys.pattern.direction.toScanDirection := rfl
+    sys.searchCopy.direction = sys.pattern.direction.scanEdge := rfl
 
 theorem found_some_of_participating {a : α} (h : sys.pattern.participation a = .participating)
     (t : α) : sys.searchCopy.found t (some a) = sys.pattern.value a :=
@@ -151,11 +151,11 @@ the targets, the transparent segments, the direction, the blockers, and the defa
 other segment is a trigger. -/
 def mk' (feature : Feature) (IsTarget IsTransparent : Segment → Prop) [DecidablePred IsTarget]
     [DecidablePred IsTransparent] (direction : Direction := .rightward)
-    (IsBlocker : Segment → Prop := fun _ => False) [DecidablePred IsBlocker]
+    (IsBlocker : Segment → Prop := fun _ ↦ False) [DecidablePred IsBlocker]
     (default : Option Bool := none) : System Segment where
   pattern :=
-    { value := fun s => s feature
-      participation := fun s =>
+    { value := fun s ↦ s feature
+      participation := fun s ↦
         if IsBlocker s then .opaque
         else if IsTransparent s then .transparent
         else .participating
@@ -234,9 +234,9 @@ private theorem harmonic_of_runFrom_eq_self (hs : sys.Saturated) :
       obtain ⟨hemit, hrest⟩ := List.cons.inj h
       rw [hemit] at hrest
       have ih := harmonic_of_runFrom_eq_self hs xs (some x)
-        (fun _ h => Option.mem_some_iff.mp h ▸ hx) hrest
+        (fun _ h ↦ Option.mem_some_iff.mp h ▸ hx) hrest
       rw [sys.pattern.tier_cons_of_onTier hx, isChain_toList_append_cons]
-      refine ⟨fun a ha' => ?_, by simpa using ih⟩
+      refine ⟨fun a ha' ↦ ?_, by simpa using ih⟩
       obtain ⟨_, hpa, hv⟩ := hs a (ha a ha')
       obtain ⟨v, hv⟩ := Option.isSome_iff_exists.mp hv
       rw [Option.mem_def] at ha'
@@ -256,12 +256,12 @@ theorem harmonic_iff_scan_eq_self (hs : sys.Saturated) (hd : sys.default = none)
     (hb : ∀ s, sys.pattern.participation s = .opaque → ¬ sys.IsTarget s) (w : List α) :
     sys.pattern.Harmonic w ↔ sys.searchCopy.scan w = w :=
   ⟨sys.scan_eq_self_of_harmonic hd hb,
-    sys.harmonic_of_runFrom_eq_self hs w none (fun _ h => by cases h)⟩
+    sys.harmonic_of_runFrom_eq_self hs w none (fun _ h ↦ by cases h)⟩
 
 private theorem runFrom_some_eq_map (hs : sys.Saturated) (hw : sys.searchCopy.TierClosed)
     (v : Bool) : ∀ (w : List α) (a : α), sys.pattern.OnTier a → sys.pattern.value a = some v →
       sys.searchCopy.toMealy.runFrom (some a) w =
-        w.map fun s => if sys.pattern.OnTier s then sys.write v s else s
+        w.map fun s ↦ if sys.pattern.OnTier s then sys.write v s else s
   | [], _, _, _ => rfl
   | x :: xs, a, ha, hv => by
     rw [List.map_cons]
@@ -278,7 +278,7 @@ private theorem runFrom_some_eq_map (hs : sys.Saturated) (hw : sys.searchCopy.Ti
 /-- On a saturated system without a default whose writes stay visible, the run writes the
 first visible segment's value into every visible segment. -/
 theorem scan_eq_map (hs : sys.Saturated) (hw : sys.searchCopy.TierClosed)
-    (hd : sys.default = none) (w : List α) : sys.searchCopy.scan w = w.map fun s =>
+    (hd : sys.default = none) (w : List α) : sys.searchCopy.scan w = w.map fun s ↦
       if sys.pattern.OnTier s then
         ((sys.pattern.tier w).head?.bind sys.pattern.value).elim s (sys.write · s)
       else s := by
@@ -310,8 +310,8 @@ private theorem runFrom_harmonic (hs : sys.Saturated) (hw : sys.searchCopy.TierC
       have he : sys.pattern.OnTier (sys.searchCopy.emit a? x) := sys.searchCopy.tier_emit hw hx _
       rw [sys.pattern.tier_cons_of_onTier he, isChain_toList_append_cons]
       have ih := runFrom_harmonic hs hw xs (some (sys.searchCopy.emit a? x))
-        (fun _ h => Option.mem_some_iff.mp h ▸ he)
-      refine ⟨fun a ha' => ?_, by simpa using ih⟩
+        (fun _ h ↦ Option.mem_some_iff.mp h ▸ he)
+      refine ⟨fun a ha' ↦ ?_, by simpa using ih⟩
       obtain ⟨_, hpa, hv⟩ := hs a (ha a ha')
       obtain ⟨v, hv⟩ := Option.isSome_iff_exists.mp hv
       rw [Option.mem_def] at ha'
@@ -326,7 +326,7 @@ private theorem runFrom_harmonic (hs : sys.Saturated) (hw : sys.searchCopy.TierC
 /-- On a saturated system whose writes stay visible, the run's output is harmonic. -/
 theorem harmonic_scan (hs : sys.Saturated) (hw : sys.searchCopy.TierClosed) (w : List α) :
     sys.pattern.Harmonic (sys.searchCopy.scan w) :=
-  sys.runFrom_harmonic hs hw w none (fun _ h => by cases h)
+  sys.runFrom_harmonic hs hw w none (fun _ h ↦ by cases h)
 
 end System
 

@@ -5,41 +5,39 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Computability.Definite
+public import Linglib.Core.Computability.Edge
 public import Linglib.Phonology.Tone.Basic
 
 /-!
 # Grammatical tone
 
 Grammatical tone is a tonological operation restricted to a specific morpheme or construction,
-or a natural class of them, and not attributable to the general tonal phonology
-([lionnet-mcpherson-rolle-2022], [rolle-2018]). This file gives [rolle-2018]'s vocabulary for
-it over strings of tone-bearing units: the **grammatical tune** that covaries with the
-construction, anchored at an edge of its host, and the four **dominance effects** by which a
-trigger's tune interacts with the tones of its target-host. A dominant trigger imposes its
-pattern whatever the target's tones, a recessive one only on an unvalued target, and a neutral
-one leaves the target to the general phonology. Dominance is the neutralisation of the target's
-valued–unvalued contrast, which [rolle-2018] calls transparadigmatic uniformity, and
-`Dominance.isDominant_iff_uniform` derives his classification from it.
+or a natural class of them, and not attributable to the general tonal phonology. This file
+gives Rolle's vocabulary for it over strings of tone-bearing units: the *grammatical tune* that
+covaries with the construction, anchored at an edge of its host, and the four *dominance
+effects* by which a trigger's tune interacts with the tones of its target-host. A dominant
+trigger imposes its pattern whatever the target's tones, a recessive one only on an unvalued
+target, and a neutral one leaves the target to the general phonology. Dominance is the
+neutralisation of the target's valued–unvalued contrast, which Rolle calls transparadigmatic
+uniformity, and `Dominance.isDominant_iff_uniform` derives his classification from it.
 
 ## Main definitions
 
-* `TBU`, `TBU.IsValued` — a tone-bearing unit with its tonal root node, valued when the node
+* `TBU`, `TBU.IsValued`: a tone-bearing unit with its tonal root node, valued when the node
   is specified.
-* `Tune`, `Tune.realize` — a grammatical tune, a melody anchored at an edge of the host, and
+* `Tune`, `Tune.realize`: a grammatical tune, a melody anchored at an edge of the host, and
   its realisation over a number of units: one tone per unit from the anchored edge, the last
   tone reached spreading over the remainder.
-* `overwrite`, `unvalue` — replacement of a host's tones by a tune, and their deletion.
-* `Uniform` — transparadigmatic uniformity of an operation on hosts.
-* `Dominance`, `Dominance.apply` — [rolle-2018]'s replacive-dominant, subtractive-dominant,
+* `overwrite`, `unvalue`: replacement of a host's tones by a tune, and their deletion.
+* `Uniform`: transparadigmatic uniformity of an operation on hosts.
+* `Dominance`, `Dominance.apply`: Rolle's replacive-dominant, subtractive-dominant,
   recessive, and neutral triggers, and the automatic operation each performs on its
   target-host.
 
 ## Main results
 
-* `overwrite_unvalue` — overwriting erases: a host and its unvalued projection are overwritten
-  alike.
-* `Dominance.isDominant_iff_uniform` — a trigger is dominant exactly when its operation is
+* `overwrite_unvalue`: a host and its unvalued projection are overwritten alike.
+* `Dominance.isDominant_iff_uniform`: a trigger is dominant exactly when its operation is
   uniform across targets of the same segments.
 
 ## Implementation notes
@@ -49,7 +47,7 @@ than its host is truncated at the anchored edge. The valuation window is coexten
 host, Rolle's default; local windows are not modelled. The neutral trigger's tune floats and
 its docking is left to the general phonology, so its automatic operation is the identity on
 the host. Which edge a tune anchors at is a property of the construction:
-[akinbo-fwangwar-2026]'s M-H verbaliser anchors right, putting H on the final unit and M on the
+Akinbo and Fwangwar's M-H verbaliser anchors right, putting H on the final unit and M on the
 rest.
 
 ## References
@@ -69,7 +67,7 @@ namespace Tone
 
 /-! ### Tone-bearing units -/
 
-/-- A tone-bearing unit: segmental content of type `S`, a syllable or a mora, carrying one
+/-- A tone-bearing unit is segmental content of type `S`, a syllable or a mora, carrying one
 tonal root node. -/
 structure TBU (S : Type*) where
   seg : S
@@ -90,7 +88,7 @@ end TBU
 
 /-! ### Grammatical tunes -/
 
-/-- A grammatical tune ([rolle-2018] (1a)): the tone sequence that covaries with the
+/-- A grammatical tune ([rolle-2018] (1a)) is the tone sequence that covaries with the
 construction, anchored at an edge of its host. -/
 structure Tune where
   melody : List TRN
@@ -99,16 +97,16 @@ structure Tune where
 
 namespace Tune
 
-/-- A melody over `n` units from the left: one tone per unit, the last tone spreading over the
-remaining units, an empty melody leaving them unvalued. -/
+/-- A melody over `n` units from the left puts one tone on each unit, the last tone spreading
+over the remaining units and an empty melody leaving them unvalued. -/
 def realizeLeft : ℕ → List TRN → List TRN
   | 0, _ => []
   | n + 1, [] => List.replicate (n + 1) .empty
   | n + 1, [t] => t :: realizeLeft n [t]
   | n + 1, t :: t' :: ts => t :: realizeLeft n (t' :: ts)
 
-/-- The tune realised over `n` units: from the anchored edge, one tone per unit, the last tone
-reached spreading over the remainder. -/
+/-- The tune realised over `n` units puts one tone on each unit from the anchored edge, the last
+tone reached spreading over the remainder. -/
 def realize (u : Tune) (n : ℕ) : List TRN :=
   match u.anchor with
   | .left => realizeLeft n u.melody
@@ -179,12 +177,12 @@ theorem map_tone_withTier : ∀ (h : List (TBU S)) (tier : List TRN), tier.lengt
     simp only [withTier, List.zipWith_cons_cons, List.map_cons]
     exact congrArg _ (map_tone_withTier h tier (by simpa using hl))
 
-/-- Replacement of the host's tones by the tune ([rolle-2018] Def 1): the tune realised over
+/-- Replacement of the host's tones by the tune ([rolle-2018] Def 1) is the tune realised over
 the host's units. -/
 def overwrite (host : List (TBU S)) (u : Tune) : List (TBU S) :=
   withTier host (u.realize host.length)
 
-/-- Deletion of the host's tones ([rolle-2018] Def 2): every unit left unvalued. -/
+/-- Deletion of the host's tones ([rolle-2018] Def 2) leaves every unit unvalued. -/
 def unvalue (host : List (TBU S)) : List (TBU S) :=
   host.map fun τ ↦ { τ with tone := .empty }
 
@@ -213,8 +211,8 @@ theorem map_tone_overwrite_singleton (host : List (TBU S)) (t : TRN) (e : Edge) 
     (unvalue host).map TBU.seg = host.map TBU.seg := by
   simp [unvalue]
 
-/-- Transparadigmatic uniformity ([rolle-2018] ch. 5): an operation on target-hosts gives the
-same output for hosts of the same segments, whatever their tones. -/
+/-- An operation on target-hosts is transparadigmatically uniform ([rolle-2018] ch. 5) when it
+gives the same output for hosts of the same segments, whatever their tones. -/
 def Uniform (op : List (TBU S) → List (TBU S)) : Prop :=
   ∀ ⦃h h' : List (TBU S)⦄, h.map TBU.seg = h'.map TBU.seg → op h = op h'
 
@@ -232,8 +230,8 @@ theorem uniform_unvalue : Uniform (unvalue (S := S)) := fun h h' hs ↦ by
     simp [unvalue, List.map_map, Function.comp_def]
   rw [this, this, hs]
 
-/-- Overwriting erases: a host and its unvalued projection are overwritten alike, which is why
-a replacive trigger neutralises the target's tones. -/
+/-- Overwriting erases, in that a host and its unvalued projection are overwritten alike, which
+is why a replacive trigger neutralises the target's tones. -/
 @[simp] theorem overwrite_unvalue (host : List (TBU S)) (u : Tune) :
     overwrite (unvalue host) u = overwrite host u :=
   overwrite_eq_of_map_seg_eq (map_seg_unvalue host) u
@@ -246,20 +244,20 @@ idiosyncrasy of the trigger, predictable neither from its segments and prosody n
 markedness of the tune nor from its position relative to the target ([inkelas-1998]); the
 terms are those of the accentual morphology of [kiparsky-halle-1977]. -/
 inductive Dominance where
-  /-- Replacive-dominant, Def 1: the underlying tones within the valuation window are replaced
-  by the tune, whether by a floating tone or by spreading from the sponsor. Valued and unvalued
-  targets come out alike, an intentional neutralisation in [hyman-2018a]'s sense. -/
+  /-- A replacive-dominant trigger (Def 1) replaces the underlying tones within the valuation
+  window by the tune, whether by a floating tone or by spreading from the sponsor. Valued and
+  unvalued targets come out alike, an intentional neutralisation in [hyman-2018a]'s sense. -/
   | replacive
-  /-- Subtractive-dominant, Def 2: the underlying tones within the valuation window are
-  deleted, with no tune to revalue them; the surface tones are supplied later by default. -/
+  /-- A subtractive-dominant trigger (Def 2) deletes the underlying tones within the valuation
+  window, with no tune to revalue them; the surface tones are supplied later by default. -/
   | subtractive
-  /-- Recessive non-dominant, Def 3: the tune does not apply to a target valued within the
-  valuation window, so it docks only to unvalued targets, as in privative systems with one
-  contrastive tone. -/
+  /-- The tune of a recessive non-dominant trigger (Def 3) does not apply to a target valued
+  within the valuation window, so it docks only to unvalued targets, as in privative systems
+  with one contrastive tone. -/
   | recessive
-  /-- Neutral non-dominant, Def 4: neither automatic replacement or deletion nor automatic
-  non-application; the tune concatenates with the target and the general phonology decides its
-  docking. -/
+  /-- A neutral non-dominant trigger (Def 4) has neither automatic replacement or deletion nor
+  automatic non-application; the tune concatenates with the target and the general phonology
+  decides its docking. -/
   | neutral
   deriving DecidableEq, Repr
 
@@ -271,8 +269,8 @@ def IsDominant (d : Dominance) : Prop := d = .replacive ∨ d = .subtractive
 instance : DecidablePred IsDominant := fun _ ↦ inferInstanceAs (Decidable (_ ∨ _))
 
 /-- The automatic operation a trigger of each type performs on its target-host, the valuation
-window being the whole host: replacement by the tune, deletion, docking of the tune only to a
-wholly unvalued host, and nothing. -/
+window being the whole host. The four are replacement by the tune, deletion, docking of the tune
+only to a wholly unvalued host, and nothing. -/
 def apply (d : Dominance) (u : Tune) (host : List (TBU S)) : List (TBU S) :=
   match d with
   | .replacive => overwrite host u
@@ -308,7 +306,7 @@ theorem uniform_apply_of_isDominant {d : Dominance} (hd : d.IsDominant) (u : Tun
   · exact uniform_overwrite u
   · exact uniform_unvalue
 
-/-- Dominance as transparadigmatic uniformity ([rolle-2018] ch. 5): a trigger is dominant
+/-- Dominance is transparadigmatic uniformity ([rolle-2018] ch. 5), in that a trigger is dominant
 exactly when its operation gives the same output for every target of the same segments. -/
 theorem isDominant_iff_uniform [Inhabited S] (d : Dominance) :
     d.IsDominant ↔ ∀ u : Tune, Uniform (d.apply (S := S) u) := by

@@ -11,7 +11,7 @@ public import Mathlib.Computability.NFA
 public import Mathlib.Data.Fintype.Prod
 public import Mathlib.Data.Finset.Lattice.Fold
 public import Linglib.Core.Computability.Mealy
-public import Linglib.Core.Computability.ScanDirection
+public import Linglib.Core.Computability.Edge
 public import Linglib.Core.Data.Fintype.List
 public import Linglib.Core.Data.Fintype.Transfer
 public import Linglib.Core.Data.List.DropRight
@@ -20,12 +20,12 @@ public import Linglib.Core.Data.List.DependsOn
 /-!
 # Subsequential functions and finite-state transducers
 
-A subsequential transducer is a sequential transducer — a deterministic state machine
-emitting a block of output for each input symbol, which is a `Mealy` machine over the
-output alphabet `List β` — together with a final block determined by the ending state
-[schutzenberger-1977] [mohri-1997]. The functions so computed — *subsequential*, with
-left- and right-scan variants — form a proper subclass of the rational functions
-[filiot-reynier-2016].
+A subsequential transducer, in the sense of Schützenberger and Mohri, is a sequential
+transducer together with a final block of output determined by the ending state. A sequential
+transducer is a deterministic state machine emitting a block of output for each input symbol,
+which is a `Mealy` machine over the output alphabet `List β`. The functions so computed,
+*subsequential* with left- and right-scan variants, form a proper subclass of the rational
+functions.
 
 We show that each class is closed under composition, that the two are isomorphic under
 reverse-conjugation, that both contain the Mealy-computable functions, and that
@@ -47,38 +47,30 @@ classification predicates require a `Fintype` instance.
 
 ## Main theorems
 
-* `isLeftSubsequential_iff`, `isRightSubsequential_iff`: the universe-polymorphic
-  characterizations
 * `IsLeftSubsequential.comp`, `IsRightSubsequential.comp`: closure under composition
 * `IsMealyComputable.isLeftSubsequential`: Mealy-computable functions are
-  left-subsequential
-* `isLeftSubsequential_windowRun`: a window recursion over a finite window alphabet is
   left-subsequential
 * `IsLeftSubsequential.isRegular_preimage`, `IsRightSubsequential.isRegular_preimage`:
   subsequential functions pull back regular languages
 * `IsLeftSubsequential.bounded_delay`, `IsRightSubsequential.bounded_delay`: all but
   boundedly many symbols of `f u` survive extending the input on the far side
-* `IsLeftSubsequential.exists_dependsOn_Iic`, `IsRightSubsequential.exists_dependsOn_Ici`:
-  a length-preserving subsequential function reads each output coordinate off a window
-  bounded on the far side
 
 ## Implementation notes
 
-The name follows [choffrut-1977] and [mohri-1997]: *sequential* without state-final
-output, *subsequential* with. [sakarovitch-2009] calls this class *sequential* (and
-the empty-flush case *pure sequential*), flagging his usage as unconventional (cf.
-[bruyere-reutenauer-1999]); we keep the Choffrut spelling. `Mealy` is the
-letter-to-letter case.
+The name follows Choffrut and Mohri: *sequential* without state-final output,
+*subsequential* with. Sakarovitch calls this class *sequential* (and the empty-flush case
+*pure sequential*), flagging his usage as unconventional (compare Bruyère and Reutenauer); we
+keep the Choffrut spelling. `Mealy` is the letter-to-letter case.
 
-`step` is total, so only the *total* subsequential functions are modelled — a sink
-state does not recover partiality — and the initial-output function of
-[sakarovitch-2009] is omitted. The state run `stateAfter` and its lemmas are those of
-the underlying `Mealy` machine. There are two disjoint sets of simp lemmas, one for
-`run` and another for `runFrom`; switch from the former to the latter via `simp [run]`.
+`step` is total, so only the *total* subsequential functions are modelled, since a sink state
+does not recover partiality, and Sakarovitch's initial-output function is omitted. The state run
+`stateAfter` and its lemmas are those of the underlying `Mealy` machine. There are two disjoint
+sets of simp lemmas, one for `run` and another for `runFrom`; switch from the former to the
+latter via `simp [run]`.
 
 ## TODO
 
-* Choffrut's theorem [choffrut-1977]: a rational function is subsequential iff it has
+* Choffrut's theorem: a rational function is subsequential iff it has
   bounded variation, decidably via twinning; `bounded_delay` is far weaker.
 * Canonical forms and minimization; two-way transducers; p-subsequential functions.
 
@@ -105,7 +97,7 @@ structure SubsequentialTransducer (σ α β : Type*) extends Mealy σ α (List �
   finalOutput : σ → List β
 
 instance [Inhabited σ] : Inhabited (SubsequentialTransducer σ α β) :=
-  ⟨⟨default, fun _ => []⟩⟩
+  ⟨⟨default, fun _ ↦ []⟩⟩
 
 namespace SubsequentialTransducer
 
@@ -267,7 +259,7 @@ variable {γ : Type*}
 
 /-- The transducer whose state is a window of the last `n` accumulated symbols. `out`
 emits from the window and the current symbol, and `upd` chooses what the window accumulates
-(`fun _ x => [x]` for the input, `out` for the output). -/
+(`fun _ x ↦ [x]` for the input, `out` for the output). -/
 @[simps]
 def ofWindow (n : ℕ) (out : List γ → α → List β) (upd : List γ → α → List γ) :
     SubsequentialTransducer {l : List γ // l.length ≤ n} α β where
@@ -292,7 +284,7 @@ theorem runFrom_ofWindow (w : {l : List γ // l.length ≤ n}) (xs : List α) :
   | cons x xs ih => rw [runFrom_cons, windowRun]; exact congrArg _ (ih _)
 
 theorem run_ofWindow : (ofWindow n out upd).run = windowRun n out upd [] :=
-  funext fun xs => runFrom_ofWindow ⟨[], Nat.zero_le _⟩ xs
+  funext fun xs ↦ runFrom_ofWindow ⟨[], Nat.zero_le _⟩ xs
 
 /-- The window after reading `u` is the last `n` symbols of the update stream, so a window
 recursion extends by one block per letter. -/
@@ -332,7 +324,7 @@ def Mealy.toSubsequentialTransducer (T : Mealy σ α β) : SubsequentialTransduc
 
 @[simp] theorem Mealy.toSubsequentialTransducer_run (T : Mealy σ α β) :
     T.toSubsequentialTransducer.run = T.run :=
-  funext fun xs => T.toSubsequentialTransducer_runFrom T.start xs
+  funext fun xs ↦ T.toSubsequentialTransducer_runFrom T.start xs
 
 /-- A witness that every output block of `T` is a singleton, named by `cell`. -/
 structure SubsequentialTransducer.LetterToLetter (T : SubsequentialTransducer σ α β) where
@@ -367,14 +359,14 @@ theorem runFrom_toMealy (w : T.LetterToLetter) (hf : ∀ s, T.finalOutput s = []
 
 theorem run_toMealy (w : T.LetterToLetter) (hf : ∀ s, T.finalOutput s = []) :
     w.toMealy.run = T.run :=
-  funext fun xs => w.runFrom_toMealy hf T.start xs
+  funext fun xs ↦ w.runFrom_toMealy hf T.start xs
 
 /-- A letter-to-letter transducer with no final flush is the block form of its Mealy
 view. -/
 theorem toSubsequentialTransducer_toMealy (w : T.LetterToLetter)
     (hf : ∀ s, T.finalOutput s = []) : w.toMealy.toSubsequentialTransducer = T :=
   SubsequentialTransducer.ext rfl rfl
-    (funext₂ fun s x => (w.output_eq s x).symm) (funext fun s => (hf s).symm)
+    (funext₂ fun s x ↦ (w.output_eq s x).symm) (funext fun s ↦ (hf s).symm)
 
 /-- A finite-state letter-to-letter transducer with no final flush computes a
 Mealy-computable function. -/
@@ -386,7 +378,7 @@ end SubsequentialTransducer.LetterToLetter
 
 /-- The canonical witness that a Mealy machine's block form is letter-to-letter. -/
 def Mealy.letterToLetter (T : Mealy σ α β) : T.toSubsequentialTransducer.LetterToLetter :=
-  ⟨T.output, fun _ _ => rfl⟩
+  ⟨T.output, fun _ _ ↦ rfl⟩
 
 @[simp] theorem Mealy.toMealy_letterToLetter (T : Mealy σ α β) :
     T.letterToLetter.toMealy = T := rfl
@@ -408,9 +400,9 @@ right-to-left scan (`isRightSubsequential_iff`). -/
 def IsRightSubsequential (f : List α → List β) : Prop :=
   IsLeftSubsequential (List.revConj f)
 
-/-- A function `f : List α → List β` is *subsequential in direction `d`* if some
-finite-state transducer computes it via the corresponding scan direction. -/
-def IsSubsequential (d : ScanDirection) (f : List α → List β) : Prop :=
+/-- A function `f : List α → List β` is *subsequential from the edge `d`* if some finite-state
+transducer computes it by a scan starting from that edge. -/
+def IsSubsequential (d : Edge) (f : List α → List β) : Prop :=
   match d with
   | .left => IsLeftSubsequential f
   | .right => IsRightSubsequential f
@@ -427,15 +419,15 @@ theorem isLeftSubsequential_iff.{v} :
     IsLeftSubsequential f
       ↔ ∃ (σ : Type v) (_ : Fintype σ) (T : SubsequentialTransducer σ α β), T.run = f :=
   exists_fintype_congr
-    (fun e ⟨T, hT⟩ => ⟨SubsequentialTransducer.map e T, (T.run_map e).trans hT⟩)
-    (fun e ⟨T, hT⟩ => ⟨SubsequentialTransducer.map e T, (T.run_map e).trans hT⟩)
+    (fun e ⟨T, hT⟩ ↦ ⟨SubsequentialTransducer.map e T, (T.run_map e).trans hT⟩)
+    (fun e ⟨T, hT⟩ ↦ ⟨SubsequentialTransducer.map e T, (T.run_map e).trans hT⟩)
 
 /-- `IsRightSubsequential` holds as soon as a transducer with states in any universe computes
 `f` right to left. -/
 theorem isRightSubsequential_iff.{v} :
     IsRightSubsequential f
       ↔ ∃ (σ : Type v) (_ : Fintype σ) (T : SubsequentialTransducer σ α β), T.runRight = f :=
-  isLeftSubsequential_iff.trans <| exists₃_congr fun _ _ T => by
+  isLeftSubsequential_iff.trans <| exists₃_congr fun _ _ T ↦ by
     rw [T.runRight_eq_revConj_run, List.revConj_eq_iff]
 
 /-- Every finite-state transducer computes a left-subsequential function, whatever the
@@ -469,7 +461,7 @@ theorem isLeftSubsequential_revConj_iff :
 
 @[simp] theorem isRightSubsequential_revConj_iff :
     IsRightSubsequential (List.revConj f) ↔ IsLeftSubsequential f :=
-  ⟨fun h => List.revConj_revConj f ▸ h.revConj, IsLeftSubsequential.revConj⟩
+  ⟨fun h ↦ List.revConj_revConj f ▸ h.revConj, IsLeftSubsequential.revConj⟩
 
 /-! ### Mealy-computable functions -/
 
@@ -503,13 +495,13 @@ theorem isRightSubsequential_map (h : α → β) : IsRightSubsequential (List.ma
 theorem isRightSubsequential_id : IsRightSubsequential (id : List α → List α) :=
   List.revConj_id (α := α) ▸ isLeftSubsequential_id.revConj
 
-theorem isSubsequential_map (d : ScanDirection) (h : α → β) :
+theorem isSubsequential_map (d : Edge) (h : α → β) :
     IsSubsequential d (List.map h) :=
   match d with
   | .left => isLeftSubsequential_map h
   | .right => isRightSubsequential_map h
 
-theorem isSubsequential_id (d : ScanDirection) :
+theorem isSubsequential_id (d : Edge) :
     IsSubsequential d (id : List α → List α) :=
   match d with
   | .left => isLeftSubsequential_id
@@ -534,7 +526,7 @@ the bounded window as the synchronous state. -/
 theorem isMealyComputable_windowRun (hs : ∀ w x, (out w x).length = 1) :
     IsMealyComputable (windowRun n out upd []) :=
   run_ofWindow (n := n) (out := out) (upd := upd) ▸
-    (LetterToLetter.ofLength fun w x => hs w.val x).isMealyComputable fun _ => rfl
+    (LetterToLetter.ofLength fun w x ↦ hs w.val x).isMealyComputable fun _ ↦ rfl
 
 end WindowRun
 
@@ -557,7 +549,7 @@ theorem IsRightSubsequential.comp (hg : IsRightSubsequential g)
   exact IsLeftSubsequential.comp hg hf
 
 /-- Subsequential functions are closed under composition in either scan direction. -/
-theorem IsSubsequential.comp {d : ScanDirection} (hg : IsSubsequential d g)
+theorem IsSubsequential.comp {d : Edge} (hg : IsSubsequential d g)
     (hf : IsSubsequential d f) : IsSubsequential d (g ∘ f) :=
   match d, hg, hf with
   | .left, hg, hf => IsLeftSubsequential.comp hg hf
@@ -580,7 +572,7 @@ theorem IsRightSubsequential.isRegular_preimage (hf : IsRightSubsequential f)
   rwa [← List.preimage_revConj, List.revConj_revConj] at h
 
 /-- Subsequential functions pull back regular languages in either scan direction. -/
-theorem IsSubsequential.isRegular_preimage {d : ScanDirection} (hf : IsSubsequential d f)
+theorem IsSubsequential.isRegular_preimage {d : Edge} (hf : IsSubsequential d f)
     {L : Language β} (hL : L.IsRegular) : Language.IsRegular (f ⁻¹' L) :=
   match d, hf with
   | .left, hf => IsLeftSubsequential.isRegular_preimage hf hL
@@ -595,10 +587,10 @@ extensions. -/
 theorem IsLeftSubsequential.bounded_delay (hf : IsLeftSubsequential f) :
     ∃ N : ℕ, ∀ u v : List α, (f u).rdrop N <+: f (u ++ v) := by
   obtain ⟨σ, _, T, rfl⟩ := hf
-  refine ⟨Finset.univ.sup fun s => (T.finalOutput s).length, fun u v => ?_⟩
+  refine ⟨Finset.univ.sup fun s ↦ (T.finalOutput s).length, fun u v ↦ ?_⟩
   rw [T.run_append, SubsequentialTransducer.run, SubsequentialTransducer.runFrom,
     List.rdrop_append, List.rdrop_of_length_le
-      (Finset.le_sup (f := fun s => (T.finalOutput s).length) (Finset.mem_univ _)),
+      (Finset.le_sup (f := fun s ↦ (T.finalOutput s).length) (Finset.mem_univ _)),
     List.append_nil]
   exact (List.rdrop_prefix _ _).trans (List.prefix_append _ _)
 
@@ -607,7 +599,7 @@ theorem IsLeftSubsequential.bounded_delay (hf : IsLeftSubsequential f) :
 theorem IsRightSubsequential.bounded_delay (hf : IsRightSubsequential f) :
     ∃ N : ℕ, ∀ u v : List α, (f u).drop N <:+ f (v ++ u) := by
   obtain ⟨N, hN⟩ := IsLeftSubsequential.bounded_delay hf
-  refine ⟨N, fun u v => ?_⟩
+  refine ⟨N, fun u v ↦ ?_⟩
   simpa [List.revConj, List.rdrop_eq_reverse_drop_reverse] using
     (hN u.reverse v.reverse).reverse
 
@@ -616,7 +608,7 @@ input, for a left-subsequential `f`. -/
 theorem IsLeftSubsequential.exists_getElem?_append_eq (hf : IsLeftSubsequential f) :
     ∃ N : ℕ, ∀ u v i, i + N < (f u).length → (f u)[i]? = (f (u ++ v))[i]? := by
   obtain ⟨N, hN⟩ := hf.bounded_delay
-  refine ⟨N, fun u v i hi => ?_⟩
+  refine ⟨N, fun u v i hi ↦ ?_⟩
   rw [List.prefix_iff_getElem?.mp (hN u v) i (by simp; omega),
     List.getElem?_eq_getElem (by omega)]
   simp [List.rdrop]
@@ -631,7 +623,7 @@ theorem IsLeftSubsequential.exists_dependsOn_Iic
   obtain ⟨N, hN⟩ := hf.exists_getElem?_append_eq
   refine ⟨N, fun i ↦ (List.forall_dependsOn_ofFn_iff fun u ↦ (f u)[i]?).mpr fun u v _ hag ↦ ?_⟩
   show (f u)[i]? = (f v)[i]?
-  have key : ∀ w : List α, (f (w.take (i + N + 1)))[i]? = (f w)[i]? := fun w => by
+  have key : ∀ w : List α, (f (w.take (i + N + 1)))[i]? = (f w)[i]? := fun w ↦ by
     rcases lt_or_ge w.length (i + N + 1) with h | h
     · rw [List.take_of_length_le h.le]
     · conv_rhs => rw [← List.take_append_drop (i + N + 1) w]
@@ -644,7 +636,7 @@ theorem IsRightSubsequential.exists_getElem?_append_eq (hlen : ∀ w, (f w).leng
     (hf : IsRightSubsequential f) :
     ∃ N : ℕ, ∀ u v i, N ≤ i → (f u)[i]? = (f (v ++ u))[v.length + i]? := by
   obtain ⟨N, hN⟩ := hf.bounded_delay
-  refine ⟨N, fun u v i hi => ?_⟩
+  refine ⟨N, fun u v i hi ↦ ?_⟩
   have h := List.suffix_iff_eq_drop.mp (hN u v)
   rcases le_or_gt N u.length with hNu | hNu
   · have hk : (f (v ++ u)).length - ((f u).drop N).length = v.length + N := by
@@ -666,8 +658,8 @@ theorem IsRightSubsequential.exists_dependsOn_Ici
     fun u v _ hag ↦ ?_⟩
   show (f u)[i]? = (f v)[i]?
   rcases lt_or_ge i N with hiN | hiN
-  · rw [List.ext_getElem? fun k => hag (Set.mem_Ici.mpr (by omega))]
-  have key : ∀ w : List α, (f (w.drop (i - N)))[N]? = (f w)[i]? := fun w => by
+  · rw [List.ext_getElem? fun k ↦ hag (Set.mem_Ici.mpr (by omega))]
+  have key : ∀ w : List α, (f (w.drop (i - N)))[N]? = (f w)[i]? := fun w ↦ by
     rcases le_or_gt (i - N) w.length with h | h
     · rw [hN (w.drop (i - N)) (w.take (i - N)) N le_rfl, List.take_append_drop,
         List.length_take, Nat.min_eq_left h, Nat.sub_add_cancel hiN]

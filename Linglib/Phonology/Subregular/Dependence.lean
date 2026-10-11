@@ -89,26 +89,26 @@ def LeftDetermined (f : List α → List β) (i : ℕ) : Prop :=
 
 /-- An equal-length variant of `base` differing only beyond the `d`-margin of target
 `i` on side `s`. -/
-def IsFarPerturbation (base u : List α) (i d : ℕ) (s : ScanDirection) : Prop :=
+def IsFarPerturbation (base u : List α) (i d : ℕ) (s : Edge) : Prop :=
   u.length = base.length ∧ EqOn (base[·]?) (u[·]?) (s.window i d)
 
 /-- `f` depends boundedly on side `s` when a single margin caps, at every output
 coordinate, how far input on side `s` can matter. -/
-def BoundedDependence (f : List α → List β) (s : ScanDirection) : Prop :=
+def BoundedDependence (f : List α → List β) (s : Edge) : Prop :=
   ∃ N, ∀ i n, DependsOn (fun x : Fin n → α ↦ (f (List.ofFn x))[i]?) (Fin.val ⁻¹' s.window i N)
 
 /-- `f` depends unboundedly on side `s`. -/
-def UnboundedDependence (f : List α → List β) (s : ScanDirection) : Prop :=
+def UnboundedDependence (f : List α → List β) (s : Edge) : Prop :=
   ¬ BoundedDependence f s
 
 /-- `f` fails unbounded dependence on side `s` exactly when its dependence there is
 bounded. -/
-@[simp] theorem not_unboundedDependence_iff {s : ScanDirection} :
+@[simp] theorem not_unboundedDependence_iff {s : Edge} :
     ¬ UnboundedDependence f s ↔ BoundedDependence f s := not_not
 
 /-- Unbounded dependence, coordinate-wise, says that every margin fails at some output
 coordinate. -/
-theorem unboundedDependence_iff {s : ScanDirection} :
+theorem unboundedDependence_iff {s : Edge} :
     UnboundedDependence f s ↔
       ∀ N, ∃ i, ¬ ∀ n, DependsOn (fun x : Fin n → α ↦ (f (List.ofFn x))[i]?)
         (Fin.val ⁻¹' s.window i N) := by
@@ -135,8 +135,8 @@ def TwoSidedUnboundedDependence (f : List α → List β) : Prop :=
 
 /-- Co-located two-sided dependence yields unbounded dependence on either side. -/
 theorem TwoSidedUnboundedDependence.unboundedDependence
-    (h : TwoSidedUnboundedDependence f) (s : ScanDirection) : UnboundedDependence f s :=
-  unboundedDependence_iff.mpr fun N =>
+    (h : TwoSidedUnboundedDependence f) (s : Edge) : UnboundedDependence f s :=
+  unboundedDependence_iff.mpr fun N ↦
     have ⟨_, i, _, hw⟩ := h N
     have ⟨_, ⟨hlen, hag⟩, hne⟩ := hw s
     ⟨i, fun hOD ↦ hne ((List.forall_dependsOn_ofFn_iff fun u ↦ (f u)[i]?).mp hOD hlen.symm hag)⟩
@@ -151,12 +151,12 @@ def RequiresBothSides (f : List α → List α) : Prop :=
 side may vary from cell to cell. -/
 def OneSidedChanges (f : List α → List α) : Prop :=
   ∀ (w : List α) (i : ℕ), (f w)[i]? ≠ w[i]? →
-    ∃ s : ScanDirection, ∀ ⦃u : List α⦄, w.length = u.length →
+    ∃ s : Edge, ∀ ⦃u : List α⦄, w.length = u.length →
       EqOn (w[·]?) (u[·]?) (s.window i 0) → (f w)[i]? = (f u)[i]?
 
 /-- A map that requires both sides has a change no single side determines. -/
 theorem RequiresBothSides.not_oneSidedChanges {f : List α → List α}
-    (hf : RequiresBothSides f) : ¬ OneSidedChanges f := fun hs =>
+    (hf : RequiresBothSides f) : ¬ OneSidedChanges f := fun hs ↦
   have ⟨base, i, _, hchange, hw⟩ := hf 0
   have ⟨s, hdet⟩ := hs base i hchange
   have ⟨_, ⟨hlen, hag⟩, hsym, hrev⟩ := hw s
@@ -164,11 +164,11 @@ theorem RequiresBothSides.not_oneSidedChanges {f : List α → List α}
 
 /-- Requiring both sides strengthens two-sided unbounded dependence. -/
 theorem RequiresBothSides.twoSidedUnboundedDependence {f : List α → List α}
-    (hf : RequiresBothSides f) : TwoSidedUnboundedDependence f := fun d =>
+    (hf : RequiresBothSides f) : TwoSidedUnboundedDependence f := fun d ↦
   have ⟨base, i, hi, hchange, hw⟩ := hf d
-  ⟨base, i, hi, fun s =>
+  ⟨base, i, hi, fun s ↦
     have ⟨u, hp, hsym, hrev⟩ := hw s
-    ⟨u, hp, fun h => hchange (h.trans (hrev.trans hsym))⟩⟩
+    ⟨u, hp, fun h ↦ hchange (h.trans (hrev.trans hsym))⟩⟩
 
 section FlankWitness
 
@@ -254,13 +254,13 @@ theorem any_drop_flankWord (hfill : p fill = false) (hk : k ≤ n) :
 /-- Changing only the left flank perturbs beyond the `d`-margin of a target past it. -/
 theorem IsFarPerturbation.flankWord_left {i d : ℕ} (x' : α) (h : d < i) :
     IsFarPerturbation (flankWord x fill y n) (flankWord x' fill y n) i d .left :=
-  ⟨by simp, fun k hk => by grind [getElem?_flankWord]⟩
+  ⟨by simp, fun k hk ↦ by grind [getElem?_flankWord]⟩
 
 /-- Changing only the right flank perturbs beyond the `d`-margin of a target
 `d`-clear of the last position. -/
 theorem IsFarPerturbation.flankWord_right {i d : ℕ} (y' : α) (h : i + d ≤ n) :
     IsFarPerturbation (flankWord x fill y n) (flankWord x fill y' n) i d .right :=
-  ⟨by simp, fun k hk => by grind [getElem?_flankWord]⟩
+  ⟨by simp, fun k hk ↦ by grind [getElem?_flankWord]⟩
 
 /-- A `d`-indexed family of flank words whose target's image flips under changing
 either flank alone has two-sided unbounded dependence. -/
@@ -273,7 +273,7 @@ theorem TwoSidedUnboundedDependence.of_flanks {fill xOn yOn xOff yOff : α}
     TwoSidedUnboundedDependence f := by
   intro d
   have h₁ := ht d; have h₂ := hn d
-  refine ⟨flankWord xOn fill yOn (n d), t d, by rw [length_flankWord]; omega, fun s => ?_⟩
+  refine ⟨flankWord xOn fill yOn (n d), t d, by rw [length_flankWord]; omega, fun s ↦ ?_⟩
   match s with
   | .left => exact ⟨_, .flankWord_left xOff (ht d), hL d⟩
   | .right => exact ⟨_, .flankWord_right yOff (hn d), hR d⟩
@@ -289,10 +289,10 @@ theorem RequiresBothSides.of_flanks {f : List α → List α}
     RequiresBothSides f := by
   intro d
   have h₁ := ht d; have h₂ := hn d
-  have hmid : ∀ x y : α, (flankWord x fill y (n d))[t d]? = some fill := fun _ _ =>
+  have hmid : ∀ x y : α, (flankWord x fill y (n d))[t d]? = some fill := fun _ _ ↦
     getElem?_flankWord_mid (by omega) (by omega)
   refine ⟨flankWord xOn fill yOn (n d), t d, by rw [length_flankWord]; omega,
-    fun h => hchange d (h.trans (hmid _ _)), fun s => ?_⟩
+    fun h ↦ hchange d (h.trans (hmid _ _)), fun s ↦ ?_⟩
   match s with
   | .left => exact ⟨_, .flankWord_left xOff (ht d),
       (hmid _ _).trans (hmid _ _).symm, (hrevL d).trans (hmid _ _).symm⟩
@@ -367,7 +367,7 @@ variable {L' R' : Type*} {B : Bimachine L R α α} (w : B.NonInteraction) {l : L
 
 /-- A non-interacting decomposition exhibits the bimachine as letter-to-letter. -/
 def NonInteraction.letterToLetter : B.LetterToLetter :=
-  ⟨fun l a r => unite (w.ruleL l a) (w.ruleR r a) a, w.output_eq⟩
+  ⟨fun l a r ↦ unite (w.ruleL l a) (w.ruleR r a) a, w.output_eq⟩
 
 /-- A firing left rule alone determines the output. -/
 theorem NonInteraction.output_eq_ruleL (hL : w.ruleL l a ≠ a) :
@@ -385,16 +385,16 @@ one-sided, the change being the left rule's alone or the right rule's alone. -/
 theorem NonInteraction.oneSidedAt_of_change (w : B.NonInteraction)
     (hne : B.output l a r ≠ [a]) : B.OneSidedAt l a r := by
   by_cases hL : w.ruleL l a = a
-  · have hR : w.ruleR r a ≠ a := fun hR =>
+  · have hR : w.ruleR r a ≠ a := fun hR ↦
       hne ((w.output_eq l a r).trans (by rw [unite_eq_self_iff.mpr ⟨hL, hR⟩]))
-    exact .inr fun l' => (w.output_eq_ruleR hR).trans (w.output_eq_ruleR hR).symm
-  · exact .inl fun r' => (w.output_eq_ruleL hL).trans (w.output_eq_ruleL hL).symm
+    exact .inr fun l' ↦ (w.output_eq_ruleR hR).trans (w.output_eq_ruleR hR).symm
+  · exact .inl fun r' ↦ (w.output_eq_ruleL hL).trans (w.output_eq_ruleL hL).symm
 
 /-- At every cell whose output differs from the input symbol, a non-interacting
 bimachine is one-sided. -/
 theorem IsNonInteracting.oneSidedAt_of_change (h : B.IsNonInteracting)
     (hne : B.output l a r ≠ [a]) : B.OneSidedAt l a r :=
-  h.elim fun w => w.oneSidedAt_of_change hne
+  h.elim fun w ↦ w.oneSidedAt_of_change hne
 
 /-- Transport a decomposition along state equivalences. -/
 def NonInteraction.map (eL : L ≃ L') (eR : R ≃ R') :
@@ -437,9 +437,9 @@ theorem isNonInteractingBimachineComputable_iff.{v, w} {f : List α → List α}
       ↔ ∃ (L : Type v) (_ : Fintype L) (R : Type w) (_ : Fintype R)
           (B : Bimachine L R α α), B.run = f ∧ B.IsNonInteracting :=
   exists_fintype₂_congr
-    (fun eL eR ⟨B, hB, h⟩ =>
+    (fun eL eR ⟨B, hB, h⟩ ↦
       ⟨.map eL eR B, (B.run_map eL eR).trans hB, h.map eL eR⟩)
-    (fun eL eR ⟨B, hB, h⟩ =>
+    (fun eL eR ⟨B, hB, h⟩ ↦
       ⟨.map eL eR B, (B.run_map eL eR).trans hB, h.map eL eR⟩)
 
 /-- A non-interacting finite-state bimachine witnesses
@@ -469,9 +469,9 @@ theorem IsNonInteractingBimachineComputable.of_mealyComputable {f : List α → 
     (h : IsMealyComputable f) : IsNonInteractingBimachineComputable f :=
   have ⟨_, _, T, hT⟩ := h
   hT ▸ T.toBimachine_run ▸ T.toBimachine.isNonInteractingBimachineComputable
-    ⟨⟨T.output, fun _ a => a,
-      fun _ a _ => (Bimachine.unite_right_self _ a).trans (Bimachine.unite_left_self _ a).symm,
-      fun _ a _ => by simp⟩⟩
+    ⟨⟨T.output, fun _ a ↦ a,
+      fun _ a _ ↦ (Bimachine.unite_right_self _ a).trans (Bimachine.unite_left_self _ a).symm,
+      fun _ a _ ↦ by simp⟩⟩
 
 end
 
@@ -555,7 +555,7 @@ it. -/
 
 /-- The conjunctive flag bimachine raises a `false` cell exactly when a `true` occurs on
 both sides. -/
-def conjBM : Bimachine Bool Bool Bool Bool := .ofFlags id id fun l s r => s || (l && r)
+def conjBM : Bimachine Bool Bool Bool Bool := .ofFlags id id fun l s r ↦ s || (l && r)
 
 /-- In the middle of a `d`-margined flank word, `conjBM` computes the conjunction of
 the two flanks. -/
@@ -569,8 +569,8 @@ theorem conjBM.run_flankWord_mid (x y : Bool) (d : ℕ) :
 cell is raised, and demoting either mark alone reverts it, by the three-map template with
 one map per argument. -/
 theorem conjBM.requiresBothSides : RequiresBothSides conjBM.run :=
-  .of_flanks (fun d => by omega) (fun d => by omega)
-    (fun d => by rw [conjBM.run_flankWord_mid]; decide)
+  .of_flanks (fun d ↦ by omega) (fun d ↦ by omega)
+    (fun d ↦ by rw [conjBM.run_flankWord_mid]; decide)
     (conjBM.run_flankWord_mid false true) (conjBM.run_flankWord_mid true false)
 
 /-- Changed cells of a non-interacting bimachine's run are each determined by a
@@ -586,16 +586,16 @@ theorem IsNonInteractingBimachineComputable.oneSidedChanges [DecidableEq α]
   · have ha : xs[i]? = some xs[i] := List.getElem?_eq_getElem hi
     have hcell : w.cell (B.lState (xs.take i)) xs[i] (B.rState (xs.drop (i + 1)))
         ≠ xs[i] :=
-      fun h => hchange (by rw [w.getElem?_run, ha, Option.map_some, h])
+      fun h ↦ hchange (by rw [w.getElem?_run, ha, Option.map_some, h])
     have hout : B.output (B.lState (xs.take i)) xs[i] (B.rState (xs.drop (i + 1)))
         ≠ [xs[i]] := by rw [w.output_eq]; simpa using hcell
     rcases hni.oneSidedAt_of_change hout with hR | hL
-    · refine ⟨.right, fun v hlen hag => ?_⟩
+    · refine ⟨.right, fun v hlen hag ↦ ?_⟩
       have hv : v[i]? = some xs[i] := (hag.getElem?_eq (by simp)).symm.trans ha
       show (B.run xs)[i]? = (B.run v)[i]?
       rw [w.getElem?_run, w.getElem?_run, ha, hv, Option.map_some, Option.map_some,
         ← hag.take_eq (by omega), w.cell_inj.mpr (hR (B.rState (v.drop (i + 1))))]
-    · refine ⟨.left, fun v hlen hag => ?_⟩
+    · refine ⟨.left, fun v hlen hag ↦ ?_⟩
       have hv : v[i]? = some xs[i] := (hag.getElem?_eq (by simp)).symm.trans ha
       show (B.run xs)[i]? = (B.run v)[i]?
       rw [w.getElem?_run, w.getElem?_run, ha, hv, Option.map_some, Option.map_some,
@@ -608,8 +608,8 @@ theorem IsNonInteractingBimachineComputable.oneSidedChanges [DecidableEq α]
 theorem setOf_isNonInteractingBimachineComputable_ssubset :
     {f : List Bool → List Bool | IsNonInteractingBimachineComputable f} ⊂
       {f | IsBimachineComputable f} :=
-  ⟨fun _ h => IsBimachineComputable.of_nonInteracting h,
-   fun h => conjBM.requiresBothSides.not_isNonInteractingBimachineComputable
+  ⟨fun _ h ↦ IsBimachineComputable.of_nonInteracting h,
+   fun h ↦ conjBM.requiresBothSides.not_isNonInteractingBimachineComputable
      (h conjBM.isBimachineComputable)⟩
 
 end Machines
