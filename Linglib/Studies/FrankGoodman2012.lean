@@ -7,31 +7,34 @@ public import Linglib.Semantics.Denotation
 /-!
 # Frank and Goodman (2012): Predicting Pragmatic Reasoning in Language Games
 
-Frank and Goodman's rational speech act model, at the paper's stimulus. Three objects, a blue
-square, a blue circle and a green square, each have a colour and a shape, and a word names a
-colour or a shape, so the words are *blue*, *green*, *square* and *circle*. A word denotes the
-objects that have its value. The literal listener hears a word as the uniform distribution over
-its denotation, and a speaker who wants to refer to an object chooses a word in proportion to the
-literal listener's probability of the object, the reciprocal of the number of objects the word
-denotes. The paper's listener inverts that speaker against a salience prior, and the paper
-reports the fit of speaker and listener bets to the model.
+Frank and Goodman's rational speech act model, at the paper's stimulus. The model `M` has three
+objects in its domain, a blue square, a blue circle and a green square, and gives each its colour
+and its shape. The lexicon has four one-place predicates, *blue*, *green*, *square* and *circle*,
+and the extension `⟦w⟧ᴹ` of a word is the set of objects whose colour or shape is the one the word
+names, so a word is true of an object that lies in its extension. The literal listener hears a
+word as the uniform distribution over its extension, and a speaker who wants to refer to an
+object chooses a word in proportion to the literal listener's probability of the object, the
+reciprocal of the size of the word's extension. The paper's listener inverts that speaker
+against a salience prior, and the paper reports the fit of speaker and listener bets to the
+model.
 
 ## Main statements
 
 * `size_principle`, `prefers_informative`: of two words true of an object the speaker prefers the
-  one that denotes fewer objects, so for the blue circle it prefers *circle* to *blue*.
+  one with the smaller extension, so for the blue circle it prefers *circle* to *blue*.
 * `narrowing_blue`, `narrowing_square`: the speaker uses an ambiguous word less for an object
   that another word identifies.
 * `unique_green`, `unique_circle`: the speaker never uses a word for an object it is false of.
 
 ## Implementation notes
 
-* An object's colour and shape are a feature bundle (`M`), and a word is true of
-  the objects whose bundle carries its value, so no table of words against objects is given.
+* The model records the colour and the shape of each object, and a word is the pair of an
+  attribute and the value it names, so the lexical entries are one clause and no table of words
+  against objects is given.
 * The paper's speaker has rationality one and costless words. The findings are stated at every
   positive rationality.
 * The literal listener conditions the counting measure, the uniform prior over the objects, on
-  the denotation of the word.
+  the extension of the word.
 
 ## TODO
 
@@ -79,12 +82,12 @@ instance (a : Attribute) : DecidableEq a.Value := by cases a <;> exact inferInst
 
 instance (a : Attribute) : Fintype a.Value := by cases a <;> exact inferInstance
 
-/-- The three objects of the context. -/
+/-- The three objects of the context, the domain of the model. -/
 inductive Object
   | blueSquare | blueCircle | greenSquare
   deriving DecidableEq, Fintype, Repr, Inhabited
 
-/-- The model `M` gives each object its colour and its shape. -/
+/-- The model `M` gives each object of its domain its colour and its shape. -/
 def M : Object → Bundle Attribute Attribute.Value
   | .blueSquare, .colour => some Colour.blue
   | .blueSquare, .shape => some Shape.square
@@ -93,7 +96,7 @@ def M : Object → Bundle Attribute Attribute.Value
   | .greenSquare, .colour => some Colour.green
   | .greenSquare, .shape => some Shape.square
 
-/-- A word names a value of an attribute. -/
+/-- A word is a one-place predicate that names a colour or a shape. -/
 abbrev Word := Σ a : Attribute, a.Value
 
 namespace Word
@@ -117,16 +120,16 @@ instance : DiscreteMeasurableSpace Object := ⟨fun _ ↦ trivial⟩
 instance : MeasurableSpace Word := ⊤
 instance : DiscreteMeasurableSpace Word := ⟨fun _ ↦ trivial⟩
 
-/-- A word denotes, in a context that gives each of its members a colour and a shape, the
-members that have the word's value. -/
+/-- The lexical entries. The extension of a word in a model is the set of objects whose colour or
+shape in the model is the one the word names, so `⟦blue⟧ᴹ` is the set of objects that are blue
+in `M`. -/
 instance : Denotes Word ({E : Type u} → (E → Bundle Attribute Attribute.Value) → Set E) where
-  denote w _ features := features ⁻¹' Set.Ici (Bundle.single w.1 w.2)
+  denote w _ M := {x | M x w.1 = some w.2}
 
-instance {E : Type u} (features : E → Bundle Attribute Attribute.Value) (w : Word) :
-    DecidablePred (· ∈ ⟦w⟧ features) := fun x ↦
-  inferInstanceAs (Decidable (Bundle.single w.1 w.2 ≤ features x))
+instance {E : Type u} (M : E → Bundle Attribute Attribute.Value) (w : Word) :
+    DecidablePred (· ∈ ⟦w⟧ M) := fun x ↦ inferInstanceAs (Decidable (M x w.1 = some w.2))
 
-/-- On hearing a word, the literal listener is uniform over its denotation. -/
+/-- On hearing a word, the literal listener is uniform over its extension. -/
 noncomputable def literal : Kernel Word Object :=
   RSA.listener Measure.count (RSA.truthful fun w : Word ↦ ⟦w⟧ᴹ)
 
@@ -141,8 +144,8 @@ theorem count_denote (w : Word) :
     Measure.count ⟦w⟧ᴹ = ⟦w⟧ᴹ.toFinset.card := by
   rw [← Measure.count_apply_finset, Set.coe_toFinset]
 
-/-- The literal listener gives an object the reciprocal of the number of objects the word
-denotes, the paper's `|w|`. -/
+/-- The literal listener gives an object in the extension of a word the reciprocal of the size
+of the extension, the paper's `|w|`. -/
 theorem literal_apply_singleton (w : Word) (r : Object) :
     literal w {r} =
       if r ∈ ⟦w⟧ᴹ then (⟦w⟧ᴹ.toFinset.card : ℝ≥0∞)⁻¹ else 0 := by

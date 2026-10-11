@@ -32,9 +32,10 @@ one (`salience_listener_window`). Acting on the posterior preserves its order
 
 ## Implementation notes
 
-The words are those of `FrankGoodman2012`, each naming a colour or a shape, and the context gives
-each object its colour and its shape, so a word's extension and the cost of an adjective are
-read off the word and no table of words against objects is given. The speakers are score speakers
+The lexicon is that of `FrankGoodman2012`, four one-place predicates that each name a colour or
+a shape, and the model `M` of the context gives each object its colour and its shape, so the
+extension `⟦u⟧ᴹ` of a word and the cost of an adjective are read off the word and no table of
+words against objects is given. The speakers are score speakers
 over the literal listener's real mass, the action-oriented one gated to true words as in the
 paper's fn. 13, and listeners are posteriors of a speaker against a prior. Only the salience
 condition of Table 2 enters the models, as the salience prior; the counts of Tables 1 and 2 are
@@ -66,7 +67,7 @@ instance : MeasurableSpace Object := ⊤
 instance : DiscreteMeasurableSpace Object := ⟨fun _ => trivial⟩
 instance : MeasurableSingletonClass Object := DiscreteMeasurableSpace.toMeasurableSingletonClass
 
-/-- The model `M` gives each object its colour and its shape. -/
+/-- The model `M` of the context gives each object of its domain its colour and its shape. -/
 def M : Object → Bundle Attribute Attribute.Value
   | .greenSquare, .colour => some Colour.green
   | .greenSquare, .shape => some Shape.square
