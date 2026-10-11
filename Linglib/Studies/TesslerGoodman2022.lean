@@ -15,7 +15,7 @@ at the threshold prior of Tessler and Goodman's generics model. The speaker know
 class and chooses among *tall*, *short* and silence to convey the degree (3), `S`, the substrate's
 `RSA.speaker`. The pragmatic listener knows the referent's kind but not the class the speaker
 assumed, and infers the degree and the class jointly at the kind's degree prior and a flat class
-prior (1), `L1`, the posterior of the substrate's `RSA.familySpeaker`. The speaker's
+prior (1), `L1`, the substrate's `RSA.listener` of that speaker. The speaker's
 share of *tall* at a degree depends on the comparison class only through the class's mean
 degree, and falls as that mean rises, `S_tall_real`, `share_lt_share`: *tall* is the more
 informative the lower the class's expectations. Averaged over the kind's plausible
@@ -140,11 +140,14 @@ noncomputable def S (α : ℝ) (classPrior : ComparisonClass → Measure X) (c :
     Kernel X Utterance :=
   speaker α 0 (L0 deg classPrior c) Measure.dirac
 
-/-- The pragmatic listener (1) is the joint posterior over the degree and the comparison class,
-at the kind's degree prior and a flat class prior. -/
-noncomputable def L1 [Nonempty X] (α : ℝ) (classPrior : ComparisonClass → Measure X)
+instance (α : ℝ) (classPrior : ComparisonClass → Measure X) (c : ComparisonClass) :
+    IsFiniteKernel (S deg α classPrior c) := inferInstanceAs (IsFiniteKernel (speaker _ _ _ _))
+
+/-- The pragmatic listener (1) infers the degree and the comparison class jointly, inverting the
+speaker against the kind's degree prior and a flat class prior. -/
+noncomputable def L1 (α : ℝ) (classPrior : ComparisonClass → Measure X)
     (κ : Measure X) [IsFiniteMeasure κ] : Kernel Utterance (X × ComparisonClass) :=
-  ((familySpeaker (L0 deg classPrior) α 0)†(κ.prod (uniformOn Set.univ)))
+  listener (κ.prod (uniformOn Set.univ)) fun p ↦ S deg α classPrior p.2 p.1
 
 /-- The mean degree under a comparison class. -/
 noncomputable def mean (classPrior : ComparisonClass → Measure X) (c : ComparisonClass) : ℝ :=
@@ -165,15 +168,13 @@ variable (classPrior : ComparisonClass → Measure X) {α : ℝ}
 
 /-- Comparison-class preference of the pragmatic listener reduces to the kind-prior-weighted
 speaker shares, since the flat class prior and the observation marginal cancel. -/
-theorem L1_snd_real_lt_iff [Nonempty X] (κ : Measure X) [IsFiniteMeasure κ] {u : Utterance}
-    (hu : (familySpeaker (L0 deg classPrior) α 0 ∘ₘ κ.prod (uniformOn Set.univ)) {u} ≠ 0)
+theorem L1_snd_real_lt_iff (κ : Measure X) [IsFiniteMeasure κ] (u : Utterance)
     (c₁ c₂ : ComparisonClass) :
     (L1 deg α classPrior κ u).snd.real {c₁} < (L1 deg α classPrior κ u).snd.real {c₂} ↔
       ∑ x, κ.real {x} * (S deg α classPrior c₁ x).real {u} <
         ∑ x, κ.real {x} * (S deg α classPrior c₂ x).real {u} := by
-  rw [Measure.snd_real_singleton, Measure.snd_real_singleton, L1,
-    posterior_real_finset_lt_iff _ _ hu, Finset.sum_product, Finset.sum_product]
-  simp only [Finset.sum_singleton, Measure.prod_real_singleton, S]
+  rw [L1, listener_snd_real_lt_iff]
+  simp only [Measure.prod_real_singleton]
   have hc : ∀ c : ComparisonClass,
       (uniformOn (Set.univ : Set ComparisonClass)).real {c} = 1 / 2 := by
     intro c
@@ -341,18 +342,6 @@ theorem L0_apply_ne_zero (hdeg : ∀ x, 0 < deg x ∧ deg x < 1) (hsupp : ∀ c 
     exact (ENNReal.ofReal_pos.2 (by linarith [(hdeg x).2])).ne'
   | silent => rw [meaning_silent]; exact one_ne_zero
 
-/-- Under full-support priors the speaker produces every utterance somewhere, so every
-observation has positive marginal. -/
-theorem comp_ne_zero [Nonempty X] (κ : Measure X) (hα : 0 < α)
-    (hdeg : ∀ x, 0 < deg x ∧ deg x < 1) (hsupp : ∀ c x, classPrior c {x} ≠ 0)
-    (hκ : ∀ x, κ {x} ≠ 0) (u : Utterance) :
-    (familySpeaker (L0 deg classPrior) α 0 ∘ₘ κ.prod (uniformOn Set.univ)) {u} ≠ 0 := by
-  obtain ⟨x⟩ := ‹Nonempty X›
-  refine comp_familySpeaker_ne_zero (w := x) (l := .subordinate) ?_
-    (speaker_dirac_apply_singleton_ne_zero hα.le (L0_apply_ne_zero deg classPrior hdeg hsupp _ u x))
-  rw [← Set.singleton_prod_singleton, Measure.prod_prod]
-  exact mul_ne_zero (hκ x) (uniformOn_univ_singleton_ne_zero _)
-
 variable (κ : Measure X) [IsFiniteMeasure κ]
 
 /-- Hearing *tall*, the listener infers the comparison class with the smaller mean degree,
@@ -362,7 +351,7 @@ theorem tall_infers_smaller_mean [Nonempty X] (hα : 0 < α) (hdeg : ∀ x, 0 < 
     (hsupp : ∀ c x, classPrior c {x} ≠ 0) (hκ : ∀ x, κ {x} ≠ 0) {c₁ c₂ : ComparisonClass}
     (h : mean deg classPrior c₁ < mean deg classPrior c₂) :
     (L1 deg α classPrior κ .tall).snd.real {c₂} < (L1 deg α classPrior κ .tall).snd.real {c₁} := by
-  rw [L1_snd_real_lt_iff deg classPrior κ (comp_ne_zero deg classPrior κ hα hdeg hsupp hκ .tall)]
+  rw [L1_snd_real_lt_iff deg classPrior κ]
   refine Finset.sum_lt_sum_of_nonempty Finset.univ_nonempty fun x _ => ?_
   rw [S_tall_real deg classPrior hα hdeg c₁ (hsupp c₁ x),
     S_tall_real deg classPrior hα hdeg c₂ (hsupp c₂ x)]
@@ -377,7 +366,7 @@ theorem short_infers_larger_mean [Nonempty X] (hα : 0 < α) (hdeg : ∀ x, 0 < 
     (h : mean deg classPrior c₁ < mean deg classPrior c₂) :
     (L1 deg α classPrior κ .short).snd.real {c₁} <
       (L1 deg α classPrior κ .short).snd.real {c₂} := by
-  rw [L1_snd_real_lt_iff deg classPrior κ (comp_ne_zero deg classPrior κ hα hdeg hsupp hκ .short)]
+  rw [L1_snd_real_lt_iff deg classPrior κ]
   refine Finset.sum_lt_sum_of_nonempty Finset.univ_nonempty fun x _ => ?_
   rw [S_short_real deg classPrior hα hdeg c₁ (hsupp c₁ x),
     S_short_real deg classPrior hα hdeg c₂ (hsupp c₂ x)]

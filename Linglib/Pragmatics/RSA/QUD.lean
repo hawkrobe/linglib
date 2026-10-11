@@ -9,8 +9,9 @@ A communicative goal projects the meaning space onto the topic under discussion,
 with that goal is informative about the listener's mass on the cell of the intended meaning
 rather than on the meaning itself. Kao and colleagues use this projected literal listener for
 metaphor, hyperbole and irony. `RSA.projListener` is that listener as a kernel, so that with
-the goal as a state-side latent the goal-indexed speaker is `RSA.familySpeaker` of the projected
-listeners and the listener who marginalizes the goal is the state marginal of its posterior.
+the goal as a coordinate of the state the goal-indexed speaker is `RSA.speaker` against the goal's
+projected listener, and the listener who marginalizes the goal is the state marginal of
+`RSA.listener` over pairs of a meaning and a goal.
 
 A literally false utterance projects positive mass onto a meaning exactly when the meaning's
 cell contains a literally true one (`RSA.projListener_apply_singleton_ne_zero_iff`), the

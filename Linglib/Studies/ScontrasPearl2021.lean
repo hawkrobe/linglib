@@ -323,12 +323,14 @@ variable (α : ℝ)
 at rationality `α` to the literal listener of the interpretation projected by the question. The
 utterances are costless (fn. 8). -/
 noncomputable def S1 : Kernel (World n × (Scope × QUD)) Utt :=
-  familySpeaker (fun l ↦ projListener (project n) (L0 D n l.1) l.2) α 0
+  Kernel.ofFunOfCountable fun p ↦
+    speaker α 0 (projListener (project n) (L0 D n p.2.1) p.2.2) Measure.dirac p.1
 
 theorem S1_apply (w : World n) (l : Scope × QUD) :
     S1 D n α (w, l) = speaker α 0 (projListener (project n) (L0 D n l.1) l.2) Measure.dirac w := rfl
 
-instance : IsFiniteKernel (S1 D n α) := inferInstanceAs (IsFiniteKernel (familySpeaker _ α 0))
+instance : IsFiniteKernel (S1 D n α) :=
+  ⟨⟨1, ENNReal.one_lt_top, fun p ↦ speaker_apply_univ_le_one α 0 _ Measure.dirac p.1⟩⟩
 
 theorem isMarkovKernel_S1 (hα : 0 ≤ α) : IsMarkovKernel (S1 D n α) := by
   refine ⟨fun p ↦ ?_⟩

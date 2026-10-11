@@ -583,11 +583,11 @@ theorem uniformSpeaker_real_singleton_divPowSum {k D : ℕ} [NeZero k] [NeZero D
 
 /-! ### The listener -/
 
-variable [MeasurableSpace O] [MeasurableSingletonClass O] [Nonempty T]
+variable [MeasurableSpace O] [MeasurableSingletonClass O]
 
 section Joint
 
-variable [Nonempty C]
+variable [Nonempty C] [Nonempty T]
 
 /-- The joint listener at a uniform prior (eqs. 18b and 21b) is the pragmatic listener of
 `uniformSpeaker`, hearing the form of the speaker's choice. -/
@@ -741,63 +741,40 @@ end Joint
 
 /-! ### Latent families at the uniform prior -/
 
-/-- A pair whose state the utterance does not describe under its latent receives no
-posterior mass, as soon as some state is described under some latent. -/
-theorem posterior_familySpeaker_uniform_apply_singleton_eq_zero {Λ : Type*} [Fintype Λ]
-    [MeasurableSpace Λ] [DiscreteMeasurableSpace Λ] [Nonempty Λ] (sem : Λ → C → Finset T)
-    {α : ℝ} (hα : 0 < α) {c : C} (hc : ∃ l t, t ∈ sem l c) {p : T × Λ}
-    (hp : p.1 ∉ sem p.2 c) :
-    ((familySpeaker (fun l => uniformListener (sem l)) α 0)†(uniformOn Set.univ)) c
-      {p} = 0 :=
-  let ⟨l, t, h⟩ := hc
-  posterior_apply_singleton_eq_zero _ _
-    (comp_familySpeaker_ne_zero (L := fun l => uniformListener (sem l)) (α := α) (C := 0)
-      (μ := uniformOn Set.univ) (w := t) (l := l) (u := c) (uniformOn_univ_singleton_ne_zero _)
-      (uniformSpeaker_apply_singleton_ne_zero (sem l) hα.le h))
-    (uniformSpeaker_apply_singleton_eq_zero (sem p.2) hα hp)
+/-- A pair whose state the utterance does not describe under its latent receives no mass from
+the listener. -/
+theorem listener_uniformOn_family_apply_singleton_eq_zero {Λ : Type*} [Fintype Λ]
+    [MeasurableSpace Λ] [DiscreteMeasurableSpace Λ] (sem : Λ → C → Finset T) {α : ℝ} (hα : 0 < α)
+    {c : C} {p : T × Λ} (hp : p.1 ∉ sem p.2 c) :
+    listener (uniformOn Set.univ) (fun p : T × Λ ↦ uniformSpeaker (sem p.2) α p.1) c {p} = 0 :=
+  listener_apply_singleton_eq_zero (uniformSpeaker_apply_singleton_eq_zero (sem p.2) hα hp)
 
-/-- The state marginal of the family listener at the uniform prior is positive at a state exactly
-when some latent makes the choice true there. -/
-theorem posterior_familySpeaker_uniform_fst_apply_singleton_ne_zero_iff {Λ : Type*}
-    [Fintype Λ] [MeasurableSpace Λ] [DiscreteMeasurableSpace Λ] [Nonempty Λ]
-    (sem : Λ → C → Finset T) {α : ℝ} (hα : 0 < α) (C' : C → ℝ) {c : C} (hc : ∃ l t, t ∈ sem l c)
-    (t : T) :
-    (((familySpeaker (fun l => uniformListener (sem l)) α C')†(uniformOn Set.univ))
-      c).fst {t} ≠ 0 ↔ ∃ l, t ∈ sem l c := by
-  obtain ⟨l₀, t₀, h₀⟩ := hc
-  rw [posterior_fst_apply_singleton_ne_zero_iff _ _
-    (comp_familySpeaker_ne_zero (L := fun l => uniformListener (sem l))
-      (uniformOn_univ_singleton_ne_zero (t₀, l₀))
-      ((speaker_uniformListener_dirac_apply_singleton_ne_zero_iff (sem l₀) hα C' t₀ c).2 h₀))]
+/-- The state marginal of the listener of a latent family at the uniform prior is positive at a
+state exactly when some latent makes the choice true there. -/
+theorem listener_uniformOn_family_fst_apply_singleton_ne_zero_iff {Λ : Type*} [Fintype Λ]
+    [MeasurableSpace Λ] [DiscreteMeasurableSpace Λ] (sem : Λ → C → Finset T) {α : ℝ}
+    (hα : 0 < α) (C' : C → ℝ) (c : C) (t : T) :
+    (listener (uniformOn Set.univ)
+      (fun p : T × Λ ↦ speaker α C' (uniformListener (sem p.2)) Measure.dirac p.1) c).fst {t} ≠ 0
+        ↔ ∃ l, t ∈ sem l c := by
+  rw [listener_fst_apply_singleton_ne_zero_iff]
   exact exists_congr fun l ↦ by
-    rw [familySpeaker_apply,
-      speaker_uniformListener_dirac_apply_singleton_ne_zero_iff (sem l) hα C']
+    rw [speaker_uniformListener_dirac_apply_singleton_ne_zero_iff (sem l) hα C']
     exact and_iff_right (uniformOn_univ_singleton_ne_zero _)
 
 /-- For a latent family at a natural rationality and the uniform prior on (state, latent)
-pairs, posterior preference between two events of pairs is the ℕ-valued common-denominator
-comparison, which kernel `decide` evaluates. The strict inequality carries its own truth
-witness. -/
-theorem posterior_familySpeaker_uniform_real_lt_of_divPowSum {Λ : Type*} [Fintype Λ]
-    [DecidableEq Λ] [MeasurableSpace Λ] [DiscreteMeasurableSpace Λ] [Nonempty Λ]
+pairs, the listener's preference between two events of pairs is the ℕ-valued common-denominator
+comparison, which kernel `decide` evaluates. -/
+theorem listener_uniformOn_family_real_lt_of_divPowSum {Λ : Type*} [Fintype Λ]
+    [DecidableEq Λ] [MeasurableSpace Λ] [DiscreteMeasurableSpace Λ] [Nonempty Λ] [Nonempty T]
     (sem : Λ → C → Finset T)
     (hsem : ∀ l t, ∃ c, t ∈ sem l c) {k D : ℕ} [NeZero k] [NeZero D]
     (hdvd : ∀ l t, ∀ n ∈ profile (sem l) t, n ∣ D) {c : C} {E₁ E₂ : Finset (T × Λ)}
     (hlt : familyDivPowSum sem D k c E₁ < familyDivPowSum sem D k c E₂) :
-    (((familySpeaker (fun l ↦ uniformListener (sem l)) k 0)†(uniformOn Set.univ)) c).real ↑E₁
-      < (((familySpeaker (fun l ↦ uniformListener (sem l)) k 0)†(uniformOn Set.univ)) c).real
+    (listener (uniformOn Set.univ) (fun p : T × Λ ↦ uniformSpeaker (sem p.2) k p.1) c).real ↑E₁
+      < (listener (uniformOn Set.univ) (fun p : T × Λ ↦ uniformSpeaker (sem p.2) k p.1) c).real
         ↑E₂ := by
   rw [familyDivPowSum_eq_sum, familyDivPowSum_eq_sum] at hlt
-  have hα : (0 : ℝ) < k := Nat.cast_pos.mpr (Nat.pos_of_ne_zero (NeZero.ne k))
-  obtain ⟨p₀, -, hp₀⟩ := Finset.exists_ne_zero_of_sum_ne_zero
-    (Nat.pos_iff_ne_zero.mp (lt_of_le_of_lt (Nat.zero_le _) hlt))
-  have hmem₀ : p₀.1 ∈ sem p₀.2 c := by
-    by_contra h
-    exact hp₀ (by simp [h])
-  have hu : (familySpeaker (fun l => uniformListener (sem l)) k 0 ∘ₘ uniformOn Set.univ) {c}
-      ≠ 0 :=
-    comp_familySpeaker_ne_zero (w := p₀.1) (l := p₀.2) (uniformOn_univ_singleton_ne_zero p₀)
-      (uniformSpeaker_apply_singleton_ne_zero (sem p₀.2) hα.le hmem₀)
   have key : ∀ E : Finset (T × Λ),
       (∑ p ∈ E, (uniformOn (Set.univ : Set (T × Λ))).real {p}
         * (speaker k 0 (uniformListener (sem p.2)) Measure.dirac p.1).real {c})
@@ -810,9 +787,7 @@ theorem posterior_familySpeaker_uniform_real_lt_of_divPowSum {Λ : Type*} [Finty
     refine Finset.sum_congr rfl fun p _ => ?_
     rw [uniformOn_univ_real_singleton, uniformSpeaker_real_singleton_divPowSum (sem p.2)
       (hdvd p.2 p.1), ite_div, zero_div]
-  rw [posterior_real_finset_lt_iff _ _ hu]
-  simp only [familySpeaker_apply]
-  rw [key, key,
+  rw [listener_real_finset_lt_iff, key, key,
     mul_lt_mul_iff_right₀ (inv_pos.mpr (Nat.cast_pos.mpr Fintype.card_pos)),
     sum_div_lt_sum_div_iff fun p => by
     exact_mod_cast Multiset.divPowSum_pos (NeZero.ne D) (hdvd p.2 p.1)

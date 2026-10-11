@@ -83,7 +83,6 @@ def cost (c : ℝ) : Message → ℝ
   | .silent => 0
 
 variable {S Λ : Type*} [Fintype S] [MeasurableSpace S] [DiscreteMeasurableSpace S]
-  [Fintype Λ] [MeasurableSpace Λ] [DiscreteMeasurableSpace Λ]
 
 /-! ### The update with a positive form -/
 
@@ -103,13 +102,16 @@ instance (P : Measure S) (E : Λ → Set S) (l : Λ) : IsFiniteKernel (L0 P E l)
 
 /-- The speaker at a state and a latent parameter soft-maximizes the literal listener's log
 probability of the state minus the cost of the message. -/
-noncomputable def S1 (P : Measure S) (E : Λ → Set S) (α c : ℝ) : Kernel (S × Λ) Message :=
-  familySpeaker (L0 P E) α (cost c)
+noncomputable def S1 (P : Measure S) (E : Λ → Set S) (α c : ℝ) (p : S × Λ) : Measure Message :=
+  speaker α (cost c) (L0 P E p.2) Measure.dirac p.1
 
-instance (P : Measure S) (E : Λ → Set S) (α c : ℝ) : IsFiniteKernel (S1 P E α c) :=
-  inferInstanceAs (IsFiniteKernel (familySpeaker _ _ _))
+instance (P : Measure S) (E : Λ → Set S) (α c : ℝ) (p : S × Λ) :
+    IsFiniteMeasure (S1 P E α c p) :=
+  inferInstanceAs (IsFiniteMeasure (speaker _ _ _ _ _))
 
-variable (P : Measure S) [IsFiniteMeasure P] (ν : Measure Λ) (E : Λ → Set S) (α c : ℝ)
+section Speaker
+
+variable (P : Measure S) [IsFiniteMeasure P] (E : Λ → Set S) (α c : ℝ)
 
 /-- The speaker produces a message at a state and a latent parameter exactly when it is true
 there and the state has positive prior. -/
@@ -117,16 +119,7 @@ theorem S1_apply_singleton_ne_zero_iff (hα : 0 < α) (s : S) (l : Λ) (u : Mess
     S1 P E α c (s, l) {u} ≠ 0 ↔ s ∈ sem E l u ∧ P {s} ≠ 0 :=
   speaker_listener_truthful_dirac_apply_singleton_ne_zero_iff hα (cost c) P (sem E l) u s
 
-/-- The positive form is assertable when some state of positive prior lies in the extension of
-some latent parameter of positive prior. -/
-def Assertable : Prop := ∃ s l, P {s} ≠ 0 ∧ ν {l} ≠ 0 ∧ s ∈ E l
-
-/-- The production weight of a state is the prior-averaged probability that the speaker
-produces the positive form there. -/
-noncomputable def production (s : S) : ℝ :=
-  ∑ l, ν.real {l} * (S1 P E α c (s, l)).real {.positive}
-
-variable {P ν E α}
+variable {P E α}
 
 /-- The speaker treats alike two states of positive prior in the extension of a latent
 parameter. -/
@@ -145,6 +138,43 @@ theorem S1_real_positive_le (hα : 0 < α) {s t : S} (hs : P {s} ≠ 0) (ht : P 
   · rw [measureReal_def, not_not.mp (mt (S1_apply_singleton_ne_zero_iff P E α c hα s l
       .positive).mp fun h' ↦ hl h'.1), ENNReal.toReal_zero]
     exact measureReal_nonneg
+
+end Speaker
+
+variable [MeasurableSpace Λ] (P : Measure S) [IsFiniteMeasure P] (ν : Measure Λ) (E : Λ → Set S)
+  (α c : ℝ)
+
+/-- The positive form is assertable when some state of positive prior lies in the extension of
+some latent parameter of positive prior. -/
+def Assertable : Prop := ∃ s l, P {s} ≠ 0 ∧ ν {l} ≠ 0 ∧ s ∈ E l
+
+/-- The pragmatic listener inverts the speaker against the product of the state prior and the
+prior over latent parameters. -/
+noncomputable def L1 : Kernel Message (S × Λ) :=
+  listener (P.prod ν) (S1 P E α c)
+
+/-- The update of a prior with the positive form is the state marginal of the pragmatic
+listener's posterior. -/
+noncomputable def update : Measure S := (L1 P ν E α c .positive).fst
+
+instance : IsFiniteMeasure (update P ν E α c) := by
+  unfold update L1; infer_instance
+
+variable {P ν E α}
+
+/-- The update depends on the prior only as a measure. -/
+private theorem update_congr {Q : Measure S} [IsFiniteMeasure Q] (h : Q = P) :
+    update Q ν E α c = update P ν E α c := by
+  subst h; rfl
+
+variable [Fintype Λ] (P ν E α)
+
+/-- The production weight of a state is the prior-averaged probability that the speaker
+produces the positive form there. -/
+noncomputable def production (s : S) : ℝ :=
+  ∑ l, ν.real {l} * (S1 P E α c (s, l)).real {.positive}
+
+variable {P ν E α}
 
 /-- A state that lies in no more extensions than another has no greater production weight. -/
 theorem production_le_production (hα : 0 < α) {s t : S} (hs : P {s} ≠ 0) (ht : P {t} ≠ 0)
@@ -166,44 +196,45 @@ theorem production_lt_production [IsFiniteMeasure ν] (hα : 0 < α) {s t : S} (
     (ENNReal.toReal_pos ((S1_apply_singleton_ne_zero_iff P E α c hα t l₀ .positive).mpr ⟨ht₀, ht⟩)
       (measure_ne_top _ _))
 
-/-- An assertable positive form has a positive marginal under the speaker. -/
-theorem Assertable.comp_S1_ne_zero (h : Assertable P ν E) (hα : 0 < α) :
-    (S1 P E α c ∘ₘ P.prod ν) {.positive} ≠ 0 := by
+variable [IsFiniteMeasure ν]
+
+/-- An assertable positive form is produced with positive probability. -/
+theorem Assertable.sum_pos (h : Assertable P ν E) (hα : 0 < α) :
+    0 < ∑ p, (P.prod ν).real {p} * (S1 P E α c p).real {.positive} := by
   obtain ⟨s, l, hs, hl, hsl⟩ := h
-  exact comp_familySpeaker_ne_zero (w := s) (l := l)
-    (by rw [← Set.singleton_prod_singleton, Measure.prod_prod]; exact mul_ne_zero hs hl)
-    ((S1_apply_singleton_ne_zero_iff P E α c hα s l .positive).mpr ⟨hsl, hs⟩)
+  refine Finset.sum_pos' (fun _ _ ↦ mul_nonneg measureReal_nonneg measureReal_nonneg)
+    ⟨(s, l), Finset.mem_univ _, mul_pos ?_ ?_⟩
+  · rw [Measure.prod_real_singleton]
+    exact mul_pos (ENNReal.toReal_pos hs (measure_ne_top _ _))
+      (ENNReal.toReal_pos hl (measure_ne_top _ _))
+  · exact ENNReal.toReal_pos
+      ((S1_apply_singleton_ne_zero_iff P E α c hα s l .positive).mpr ⟨hsl, hs⟩)
+      (measure_ne_top _ _)
 
-variable (P ν E α) [IsFiniteMeasure ν] [Nonempty S] [Nonempty Λ]
+variable [DiscreteMeasurableSpace Λ]
 
-/-- The pragmatic listener inverts the speaker against the product of the state prior and the
-prior over latent parameters. -/
-noncomputable def L1 : Kernel Message (S × Λ) :=
-  ((S1 P E α c)†(P.prod ν))
-
-instance : IsMarkovKernel (L1 P ν E α c) :=
-  inferInstanceAs (IsMarkovKernel ((S1 P E α c)†(P.prod ν)))
-
-/-- The update of a prior with the positive form is the state marginal of the pragmatic
-listener's posterior. -/
-noncomputable def update : Measure S := (L1 P ν E α c .positive).fst
-
-instance : IsProbabilityMeasure (update P ν E α c) := by
-  unfold update; infer_instance
-
-variable {P ν E α}
+/-- The update with an assertable positive form is a probability measure. -/
+theorem Assertable.isProbabilityMeasure_update (h : Assertable P ν E) (hα : 0 < α) :
+    IsProbabilityMeasure (update P ν E α c) := by
+  obtain ⟨s, l, hs, hl, hsl⟩ := h
+  have : IsProbabilityMeasure (L1 P ν E α c .positive) :=
+    isProbabilityMeasure_listener_of_ne_zero _ _
+      (by rw [← Set.singleton_prod_singleton, Measure.prod_prod]; exact mul_ne_zero hs hl)
+      ((S1_apply_singleton_ne_zero_iff P E α c hα s l .positive).mpr ⟨hsl, hs⟩)
+  unfold update
+  infer_instance
 
 /-- The posterior of a state is its prior times its production weight, normalized. -/
-theorem update_real_singleton (hα : 0 < α) (hE : Assertable P ν E) (s : S) :
-    (update P ν E α c).real {s}
-      = P.real {s} * production P ν E α c s / (S1 P E α c ∘ₘ P.prod ν).real {.positive} :=
-  posterior_prod_fst_real_singleton _ P ν (hE.comp_S1_ne_zero c hα) s
+theorem update_real_singleton (s : S) :
+    (update P ν E α c).real {s} = P.real {s} * production P ν E α c s /
+      ∑ p, (P.prod ν).real {p} * (S1 P E α c p).real {.positive} :=
+  listener_prod_fst_real_singleton P ν _ _ s
 
 /-- The update keeps exactly the states of positive prior that lie in the extension of some
 latent parameter of positive prior. -/
-theorem update_apply_singleton_ne_zero_iff (hα : 0 < α) (hE : Assertable P ν E) (s : S) :
+theorem update_apply_singleton_ne_zero_iff (hα : 0 < α) (s : S) :
     update P ν E α c {s} ≠ 0 ↔ P {s} ≠ 0 ∧ ∃ l, ν {l} ≠ 0 ∧ s ∈ E l := by
-  rw [update, L1, posterior_fst_apply_singleton_ne_zero_iff _ _ (hE.comp_S1_ne_zero c hα)]
+  rw [update, L1, listener_fst_apply_singleton_ne_zero_iff]
   have hs := S1_apply_singleton_ne_zero_iff P E α c hα s
   simp_rw [← Set.singleton_prod_singleton, Measure.prod_prod, mul_ne_zero_iff, hs, sem]
   exact ⟨fun ⟨l, ⟨h, hl⟩, hsl, _⟩ ↦ ⟨h, l, hl, hsl⟩, fun ⟨h, l, hl, hsl⟩ ↦ ⟨l, ⟨h, hl⟩, hsl, h⟩⟩
@@ -214,25 +245,25 @@ theorem assertable_update {Λ' : Type*} [MeasurableSpace Λ'] {ν' : Measure Λ'
     {E' : Λ' → Set S} (hα : 0 < α) {s : S} {l : Λ} {l' : Λ'} (hs : P {s} ≠ 0) (hl : ν {l} ≠ 0)
     (hsl : s ∈ E l) (hl' : ν' {l'} ≠ 0) (hsl' : s ∈ E' l') :
     Assertable (update P ν E α c) ν' E' :=
-  ⟨s, l', (update_apply_singleton_ne_zero_iff c hα ⟨s, l, hs, hl, hsl⟩ s).mpr ⟨hs, l, hl, hsl⟩,
+  ⟨s, l', (update_apply_singleton_ne_zero_iff c hα s).mpr ⟨hs, l, hl, hsl⟩,
     hl', hsl'⟩
 
 /-- The update shifts mass toward states that lie in more extensions, in that the ratio of posterior
 to prior is monotone in the set of latent parameters whose extension contains the state. -/
-theorem update_mul_le_mul (hα : 0 < α) (hE : Assertable P ν E) {s t : S}
-    (h : ∀ l, s ∈ E l → t ∈ E l) :
+theorem update_mul_le_mul (hα : 0 < α) {s t : S} (h : ∀ l, s ∈ E l → t ∈ E l) :
     (update P ν E α c).real {s} * P.real {t} ≤ (update P ν E α c).real {t} * P.real {s} := by
-  rw [update_real_singleton c hα hE, update_real_singleton c hα hE]
+  rw [update_real_singleton, update_real_singleton]
   rcases eq_or_ne (P {s}) 0 with hs | hs
   · simp [measureReal_def, hs]
   rcases eq_or_ne (P {t}) 0 with ht | ht
   · simp [measureReal_def, ht]
-  set Z := (S1 P E α c ∘ₘ P.prod ν).real {Message.positive}
+  set Z := ∑ p, (P.prod ν).real {p} * (S1 P E α c p).real {Message.positive}
   calc P.real {s} * production P ν E α c s / Z * P.real {t}
       = P.real {s} * P.real {t} / Z * production P ν E α c s := by ring
     _ ≤ P.real {s} * P.real {t} / Z * production P ν E α c t :=
         mul_le_mul_of_nonneg_left (production_le_production c hα hs ht h)
-          (div_nonneg (mul_nonneg measureReal_nonneg measureReal_nonneg) measureReal_nonneg)
+          (div_nonneg (mul_nonneg measureReal_nonneg measureReal_nonneg)
+            (Finset.sum_nonneg fun _ _ ↦ mul_nonneg measureReal_nonneg measureReal_nonneg))
     _ = P.real {t} * production P ν E α c t / Z * P.real {s} := by ring
 
 /-- The shift is strict between two states of positive prior separated by a latent parameter
@@ -241,12 +272,12 @@ theorem update_mul_lt_mul (hα : 0 < α) {s t : S} (hs : P {s} ≠ 0) (ht : P {t
     (h : ∀ l, s ∈ E l → t ∈ E l) {l₀ : Λ} (hl₀ : ν {l₀} ≠ 0) (hs₀ : s ∉ E l₀) (ht₀ : t ∈ E l₀) :
     (update P ν E α c).real {s} * P.real {t} < (update P ν E α c).real {t} * P.real {s} := by
   have hE : Assertable P ν E := ⟨t, l₀, ht, hl₀, ht₀⟩
-  rw [update_real_singleton c hα hE, update_real_singleton c hα hE]
-  set Z := (S1 P E α c ∘ₘ P.prod ν).real {Message.positive}
+  rw [update_real_singleton, update_real_singleton]
+  set Z := ∑ p, (P.prod ν).real {p} * (S1 P E α c p).real {Message.positive}
   have hpos : 0 < P.real {s} * P.real {t} / Z :=
     div_pos (mul_pos (ENNReal.toReal_pos hs (measure_ne_top _ _))
         (ENNReal.toReal_pos ht (measure_ne_top _ _)))
-      (ENNReal.toReal_pos (hE.comp_S1_ne_zero c hα) (measure_ne_top _ _))
+      (hE.sum_pos c hα)
   calc P.real {s} * production P ν E α c s / Z * P.real {t}
       = P.real {s} * P.real {t} / Z * production P ν E α c s := by ring
     _ < P.real {s} * P.real {t} / Z * production P ν E α c t :=
@@ -257,28 +288,24 @@ theorem update_mul_lt_mul (hα : 0 < α) {s t : S} (hs : P {s} ≠ 0) (ht : P {t
 unchanged. -/
 theorem update_eq_self [IsProbabilityMeasure P] (hα : 0 < α) (hE : Assertable P ν E)
     (h : ∀ l s t, s ∈ E l → t ∈ E l) : update P ν E α c = P := by
+  have := hE.isProbabilityMeasure_update c hα
   refine Measure.ext_of_singleton fun s ↦ ?_
   have key : ∀ t, (update P ν E α c).real {s} * P.real {t}
       = (update P ν E α c).real {t} * P.real {s} := fun t ↦
-    le_antisymm (update_mul_le_mul c hα hE fun l ↦ h l s t)
-      (update_mul_le_mul c hα hE fun l ↦ h l t s)
+    le_antisymm (update_mul_le_mul c hα fun l ↦ h l s t)
+      (update_mul_le_mul c hα fun l ↦ h l t s)
   have hsum := Finset.sum_congr (s₁ := Finset.univ) rfl fun t _ ↦ key t
   rw [← Finset.mul_sum, ← Finset.sum_mul, sum_measureReal_singleton_eq_one,
     sum_measureReal_singleton_eq_one, mul_one, one_mul] at hsum
   exact (ENNReal.toReal_eq_toReal_iff' (measure_ne_top _ _) (measure_ne_top _ _)).mp hsum
-
-/-- The update depends on the prior only as a measure. -/
-private theorem update_congr {Q : Measure S} [IsFiniteMeasure Q] (h : Q = P) :
-    update Q ν E α c = update P ν E α c := by
-  subst h; rfl
 
 /-! ### Positive forms of measure functions -/
 
 section Models
 
 variable {D D' X : Type*} [LinearOrder D] [Fintype D] [MeasurableSpace D]
-  [DiscreteMeasurableSpace D] [Nonempty D] [LinearOrder D'] [Fintype D'] [MeasurableSpace D']
-  [DiscreteMeasurableSpace D'] [Nonempty D'] [Preorder X]
+  [DiscreteMeasurableSpace D] [LinearOrder D'] [Fintype D'] [MeasurableSpace D']
+  [DiscreteMeasurableSpace D'] [Preorder X]
 
 /-- The extension of a positive form at a threshold holds the states whose measure meets the
 threshold. -/
@@ -309,11 +336,10 @@ variable {νA : Measure D} [IsFiniteMeasure νA] {νD : Measure D'} [IsFiniteMea
   {mA : S → D} {mD : S → D'} (c' : ℝ)
 
 /-- A positive form shifts mass toward the states of higher measure. -/
-theorem positiveForm_mul_le_mul (hα : 0 < α) (hE : Assertable P νA (atLeast mA)) {s t : S}
-    (h : mA s ≤ mA t) :
+theorem positiveForm_mul_le_mul (hα : 0 < α) {s t : S} (h : mA s ≤ mA t) :
     (positiveForm P νA mA α c).real {s} * P.real {t}
       ≤ (positiveForm P νA mA α c).real {t} * P.real {s} :=
-  update_mul_le_mul c hα hE fun _ hθ ↦ le_trans hθ h
+  update_mul_le_mul c hα fun _ hθ ↦ le_trans hθ h
 
 /-- The shift is strict between two states of positive prior when the higher measure is a
 threshold of positive prior. -/
@@ -325,30 +351,26 @@ theorem positiveForm_mul_lt_mul (hα : 0 < α) {s t : S} (hs : P {s} ≠ 0) (ht 
 
 /-- The conjunctive model is ordered by the two measures jointly, in that mass shifts toward a state
 only when it is at least as high on the adjective's scale and on the adverb's. -/
-theorem simultaneous_mul_le_mul (hα : 0 < α)
-    (hE : Assertable P (νA.prod νD) fun θ ↦ atLeast mA θ.1 ∩ atLeast mD θ.2) {s t : S}
-    (hA : mA s ≤ mA t) (hD : mD s ≤ mD t) :
+theorem simultaneous_mul_le_mul (hα : 0 < α) {s t : S} (hA : mA s ≤ mA t) (hD : mD s ≤ mD t) :
     (simultaneous P νA νD mA mD α c).real {s} * P.real {t}
       ≤ (simultaneous P νA νD mA mD α c).real {t} * P.real {s} :=
-  update_mul_le_mul c hα hE fun _ hθ ↦ ⟨le_trans hθ.1 hA, le_trans hθ.2 hD⟩
+  update_mul_le_mul c hα fun _ hθ ↦ ⟨le_trans hθ.1 hA, le_trans hθ.2 hD⟩
 
 /-- Relative to the original prior the backgrounded model is also ordered by the two measures
 jointly; relative to the backgrounded posterior its last update is ordered by the adjective's
 measure alone, by `positiveForm_mul_le_mul`. -/
-theorem sequential_mul_le_mul (hα : 0 < α) (hD : Assertable P νD (atLeast mD))
-    (hA : Assertable (positiveForm P νD mD α c') νA (atLeast mA)) {s t : S}
-    (hmA : mA s ≤ mA t) (hmD : mD s ≤ mD t) :
+theorem sequential_mul_le_mul (hα : 0 < α) {s t : S} (hmA : mA s ≤ mA t) (hmD : mD s ≤ mD t) :
     (sequential P νA νD mA mD α c c').real {s} * P.real {t}
       ≤ (sequential P νA νD mA mD α c c').real {t} * P.real {s} := by
-  have h₁ := positiveForm_mul_le_mul c hα hA hmA
-  have h₂ := positiveForm_mul_le_mul c' hα hD hmD
+  have h₁ := positiveForm_mul_le_mul (P := positiveForm P νD mD α c') (νA := νA) c hα hmA
+  have h₂ := positiveForm_mul_le_mul (P := P) (νA := νD) c' hα hmD
   set Q := positiveForm P νD mD α c'
   set ρ := sequential P νA νD mA mD α c c'
   rcases (measureReal_nonneg (μ := Q) (s := {t})).eq_or_lt with hQt | hQt
   · rw [← hQt, zero_mul] at h₂
     rcases mul_eq_zero.mp (le_antisymm h₂ (mul_nonneg measureReal_nonneg measureReal_nonneg))
       with hQs | hPt
-    · rw [show ρ.real {s} = 0 by rw [update_real_singleton c hα hA, hQs, zero_mul, zero_div],
+    · rw [show ρ.real {s} = 0 by rw [update_real_singleton, hQs, zero_mul, zero_div],
         zero_mul]
       exact mul_nonneg measureReal_nonneg measureReal_nonneg
     · rw [hPt, mul_zero]
@@ -380,45 +402,47 @@ variable {a : Degree.GradableAdjective} {excess : S → X}
 higher on the adjective's scale and more excessive, which is intensification to a high
 degree. -/
 theorem sequential_mul_le_mul_of_negative (ha : a.evaluativeValence = some .negative)
-    (hm : Goldilocks a excess mD) (hα : 0 < α) (hD : Assertable P νD (atLeast mD))
-    (hA : Assertable (positiveForm P νD mD α c') νA (atLeast mA)) {s t : S}
-    (hmA : mA s ≤ mA t) (hx : excess s ≤ excess t) :
+    (hm : Goldilocks a excess mD) (hα : 0 < α) {s t : S} (hmA : mA s ≤ mA t)
+    (hx : excess s ≤ excess t) :
     (sequential P νA νD mA mD α c c').real {s} * P.real {t}
       ≤ (sequential P νA νD mA mD α c c').real {t} * P.real {s} := by
   rw [Goldilocks, ha] at hm
-  exact sequential_mul_le_mul c c' hα hD hA hmA (hm s t hx)
+  exact sequential_mul_le_mul c c' hα hmA (hm s t hx)
 
 /-- An intensifier with a positively evaluative base shifts mass toward the states that are
 higher on the adjective's scale and less excessive, which is intensification to a moderate
 degree. -/
 theorem sequential_mul_le_mul_of_positive (ha : a.evaluativeValence = some .positive)
-    (hm : Goldilocks a excess mD) (hα : 0 < α) (hD : Assertable P νD (atLeast mD))
-    (hA : Assertable (positiveForm P νD mD α c') νA (atLeast mA)) {s t : S}
-    (hmA : mA s ≤ mA t) (hx : excess t ≤ excess s) :
+    (hm : Goldilocks a excess mD) (hα : 0 < α) {s t : S} (hmA : mA s ≤ mA t)
+    (hx : excess t ≤ excess s) :
     (sequential P νA νD mA mD α c c').real {s} * P.real {t}
       ≤ (sequential P νA νD mA mD α c c').real {t} * P.real {s} := by
   rw [Goldilocks, ha] at hm
-  exact sequential_mul_le_mul c c' hα hD hA hmA (hm t s hx)
+  exact sequential_mul_le_mul c c' hα hmA (hm t s hx)
 
 /-- The English fragment records *horrible* as negatively evaluative, so *horribly* intensifies
 to a high degree. -/
 theorem horribly_mul_le_mul (hm : Goldilocks English.Adjectives.horrible excess mD)
-    (hα : 0 < α) (hD : Assertable P νD (atLeast mD))
-    (hA : Assertable (positiveForm P νD mD α c') νA (atLeast mA)) {s t : S}
-    (hmA : mA s ≤ mA t) (hx : excess s ≤ excess t) :
+    (hα : 0 < α) {s t : S} (hmA : mA s ≤ mA t) (hx : excess s ≤ excess t) :
     (sequential P νA νD mA mD α c c').real {s} * P.real {t}
       ≤ (sequential P νA νD mA mD α c c').real {t} * P.real {s} :=
-  sequential_mul_le_mul_of_negative c c' rfl hm hα hD hA hmA hx
+  sequential_mul_le_mul_of_negative c c' rfl hm hα hmA hx
 
 /-- The English fragment records *pleasant* as positively evaluative, so *pleasantly*
 intensifies to a moderate degree. -/
 theorem pleasantly_mul_le_mul (hm : Goldilocks English.Adjectives.pleasant excess mD)
-    (hα : 0 < α) (hD : Assertable P νD (atLeast mD))
-    (hA : Assertable (positiveForm P νD mD α c') νA (atLeast mA)) {s t : S}
-    (hmA : mA s ≤ mA t) (hx : excess t ≤ excess s) :
+    (hα : 0 < α) {s t : S} (hmA : mA s ≤ mA t) (hx : excess t ≤ excess s) :
     (sequential P νA νD mA mD α c c').real {s} * P.real {t}
       ≤ (sequential P νA νD mA mD α c c').real {t} * P.real {s} :=
-  sequential_mul_le_mul_of_positive c c' rfl hm hα hD hA hmA hx
+  sequential_mul_le_mul_of_positive c c' rfl hm hα hmA hx
+
+end Models
+
+section Vacuous
+
+variable {D D' : Type*} [LinearOrder D] [MeasurableSpace D] [LinearOrder D'] [Fintype D']
+  [MeasurableSpace D'] [DiscreteMeasurableSpace D'] {νA : Measure D} [IsFiniteMeasure νA]
+  {νD : Measure D'} [IsFiniteMeasure νD] {mA : S → D} {mD : S → D'} (c' : ℝ)
 
 /-- An adverb whose measure function does not distinguish the states, as that of *usual* would
 not if it conveyed the prior, is a vacuous intensifier, and the intensified adjective is
@@ -428,6 +452,6 @@ theorem sequential_eq_positiveForm [IsProbabilityMeasure P] (hα : 0 < α)
     sequential P νA νD mA mD α c c' = positiveForm P νA mA α c :=
   update_congr c (update_eq_self c' hα hD fun θ s t (hs : θ ≤ mD s) ↦ (h s t ▸ hs : θ ≤ mD t))
 
-end Models
+end Vacuous
 
 end Nouwen2024

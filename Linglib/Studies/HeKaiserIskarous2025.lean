@@ -13,8 +13,9 @@ This file formalizes the rational speech act models of He, Kaiser and Iskarous f
 says of a whole that it has a part, that it lacks it, or nothing. `Setting.speaker` is the standard
 speaker of (1)–(4) on the kernel pipeline of `RSA.speaker`, under the Boolean meaning of (2) or the
 fuzzy meaning `fuzzy` of (11)–(13), whose positive sentence holds at its state to a sigmoid degree
-of that state's prior. `Setting.wonkyListener` is the wonky-world listener of (14)–(16), the family
-listener over the measured and the uniform prior, with `Setting.wonkiness` its posterior probability
+of that state's prior. `Setting.wonkyListener` is the wonky-world listener of (14)–(16), who infers
+the state together with the world, normal at the measured prior or wonky at the uniform one, with
+`Setting.wonkiness` its posterior probability
 of the wonky world and the expected typicality of (17) the marginal of the state over the worlds;
 the funky model of (18)–(22) is the same listener under the fuzzy meaning.
 
@@ -590,14 +591,14 @@ theorem worldPrior_real_wonky (st : State) : (s.worldPrior .wonky).real {st} = 1
 
 /-- In each world, the wonky speaker of (14) and (15) is the speaker under that world's prior
 and meaning, the world riding in the state. -/
-noncomputable def wonkySpeaker (m : World → Meaning) : Kernel (State × World) Utterance :=
-  familySpeaker (fun w => L0 (s.worldPrior w) (m w)) s.α s.cost
+noncomputable def wonkySpeaker (m : World → Meaning) (p : State × World) : Measure Utterance :=
+  HeKaiserIskarous2025.speaker (s.worldPrior p.2) (m p.2) s p.1
 
 theorem wonkySpeaker_apply (m : World → Meaning) (st : State) (w : World) :
     s.wonkySpeaker m (st, w) = HeKaiserIskarous2025.speaker (s.worldPrior w) (m w) s st := rfl
 
-instance (m : World → Meaning) : IsFiniteKernel (s.wonkySpeaker m) :=
-  inferInstanceAs (IsFiniteKernel (familySpeaker _ _ _))
+instance (m : World → Meaning) (p : State × World) : IsFiniteMeasure (s.wonkySpeaker m p) :=
+  inferInstanceAs (IsFiniteMeasure (RSA.speaker _ _ _ _ _))
 
 /-- The prior of (16) is the measured prior over states, independent of the wonkiness. -/
 noncomputable def wonkyJoint (ω : ℝ) : Measure (State × World) := s.prior.prod (wonkinessPrior ω)
@@ -619,16 +620,21 @@ theorem wonkyJoint_real_singleton {ω : ℝ} (hω0 : 0 ≤ ω) (hω1 : ω ≤ 1)
   · exact sub_nonneg.2 hω1
   · exact hω0
 
-/-- The wonky listener of (16) is the Bayesian inverse of the wonky speaker over states and
-worlds against the prior of (16). -/
+/-- The wonky listener of (16) inverts the wonky speaker over states and worlds against the
+prior of (16). -/
 noncomputable def wonkyListener (m : World → Meaning) (ω : ℝ) : Kernel Utterance (State × World) :=
-  ((familySpeaker (fun w => L0 (s.worldPrior w) (m w)) s.α s.cost)†(s.wonkyJoint ω))
+  listener (s.wonkyJoint ω) (s.wonkySpeaker m)
 
-theorem wonkyListener_eq (m : World → Meaning) (ω : ℝ) :
-    s.wonkyListener m ω = (s.wonkySpeaker m)†(s.wonkyJoint ω) := rfl
-
-instance (m : World → Meaning) (ω : ℝ) : IsMarkovKernel (s.wonkyListener m ω) :=
-  inferInstanceAs (IsMarkovKernel ((s.wonkySpeaker m)†(s.wonkyJoint ω)))
+/-- The Boolean wonky listener is a probability measure after a state's sentence. -/
+theorem isProbabilityMeasure_wonkyListener_boolean {ω : ℝ} (hω0 : 0 < ω) (st : State) :
+    IsProbabilityMeasure (s.wonkyListener (fun _ => boolean) ω st.utterance) :=
+  isProbabilityMeasure_listener_of_ne_zero (w := (st, World.wonky)) _ _
+    (by
+      rw [wonkyJoint_apply_singleton]
+      exact mul_ne_zero (ENNReal.ofReal_pos.2 (s.statePrior_pos st)).ne'
+        (ENNReal.ofReal_pos.2 hω0).ne')
+    (speaker_ne_zero _ boolean s (by cases st <;> simp [boolean, State.utterance])
+      (s.worldPrior_ne_zero _ st))
 
 /-- The posterior wonkiness after the sentence of a state. -/
 noncomputable def wonkiness (m : World → Meaning) (ω : ℝ) (st : State) : ℝ :=
@@ -640,7 +646,8 @@ noncomputable def expectedTypicality (m : World → Meaning) (ω : ℝ) (st : St
   ∑ w, (s.wonkyListener m ω st.utterance).snd.real {w} * (s.worldPrior w).real {st}
 
 /-- The expected typicality moves the state's prior toward one half by the wonkiness. -/
-theorem expectedTypicality_eq (m : World → Meaning) (ω : ℝ) (st : State) :
+theorem expectedTypicality_eq (m : World → Meaning) (ω : ℝ) (st : State)
+    [IsProbabilityMeasure (s.wonkyListener m ω st.utterance)] :
     s.expectedTypicality m ω st =
       s.statePrior st + s.wonkiness m ω st * (1 / 2 - s.statePrior st) := by
   have h1 : (s.wonkyListener m ω st.utterance).snd.real {.normal} +
@@ -664,17 +671,9 @@ theorem wonkiness_boolean {ω : ℝ} (hω0 : 0 < ω) (hω1 : ω < 1) (st : State
   have hpos : ∀ w, 0 < (HeKaiserIskarous2025.speaker (s.worldPrior w) boolean s st).real
       {st.utterance} := fun w =>
     speaker_real_pos _ boolean s hb (s.worldPrior_ne_zero w st)
-  have hu : (s.wonkySpeaker (fun _ => boolean) ∘ₘ s.wonkyJoint ω) {st.utterance} ≠ 0 :=
-    comp_familySpeaker_ne_zero (w := st) (l := World.wonky)
-      (by
-        rw [wonkyJoint_apply_singleton]
-        exact mul_ne_zero (ENNReal.ofReal_pos.2 (s.statePrior_pos st)).ne'
-          (ENNReal.ofReal_pos.2 hω0).ne')
-      (speaker_ne_zero _ boolean s hb (s.worldPrior_ne_zero _ st))
   have hx := s.statePrior_pos st
   have h1ω := sub_pos.2 hω1
-  rw [wonkiness, wonkyListener_eq, posterior_snd_real_singleton _ _ hu,
-    Measure.comp_real_singleton, Fintype.sum_prod_type]
+  rw [wonkiness, wonkyListener, listener_snd_real_singleton, Fintype.sum_prod_type]
   simp only [sum_state, sum_world, wonkySpeaker_apply, s.wonkyJoint_real_singleton hω0.le hω1.le,
     wonkinessWeight]
   cases st
@@ -732,6 +731,7 @@ exceeds its prior exactly when the prior is below one half, giving typicality an
 inferences in both polarities (§5.3, Figure 5). -/
 theorem statePrior_lt_expectedTypicality_iff {ω : ℝ} (hω0 : 0 < ω) (hω1 : ω < 1) (st : State) :
     s.statePrior st < s.expectedTypicality (fun _ => boolean) ω st ↔ s.statePrior st < 1 / 2 := by
+  have := s.isProbabilityMeasure_wonkyListener_boolean hω0 st
   rw [expectedTypicality_eq, lt_add_iff_pos_right,
     mul_pos_iff_of_pos_left (s.wonkiness_boolean_pos hω0 hω1 st), sub_pos]
 

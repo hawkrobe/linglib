@@ -151,6 +151,9 @@ theorem L0_apply [DiscreteMeasurableSpace W] :
 /-- The speaker within a context set (3b), with no cost. -/
 noncomputable def speaker (α : ℝ) : Kernel W U := RSA.speaker α 0 (L0 P cell sem C q) Measure.dirac
 
+instance (α : ℝ) : IsFiniteKernel (speaker P cell sem C q α) :=
+  inferInstanceAs (IsFiniteKernel (RSA.speaker _ _ _ _))
+
 /-- The share of an utterance at a world within a context set, on reals. -/
 noncomputable def share (α : ℝ) : ℝ := (speaker P cell sem C q α w).real {u}
 
@@ -166,13 +169,12 @@ theorem speaker_apply_singleton_ne_zero [DiscreteMeasurableSpace W] {α : ℝ} (
         hP (hz w (Finset.mem_filter.mpr ⟨Finset.mem_filter.mpr ⟨hC, h⟩, rfl⟩)))
 
 variable [MeasurableSpace (Finset W)] [MeasurableSingletonClass (Finset W)]
-  [StandardBorelSpace W] [Nonempty W] [StandardBorelSpace (Finset W)]
 
-/-- The pragmatic listener (3d) is the Bayesian inverse of the speaker jointly over worlds and
-context sets, given the question. -/
+/-- The pragmatic listener (3d) inverts the speaker jointly over worlds and context sets, given
+the question. -/
 noncomputable def listener (P : W → ℕ) (cell : Q → W → Finset W) (sem : U → Set W) (q : Q)
     (α : ℝ) : Kernel U (W × Finset W) :=
-  ((familySpeaker (fun C => L0 P cell sem C q) α 0)†(pairPrior P))
+  RSA.listener (pairPrior P) fun p ↦ speaker P cell sem p.2 q α p.1
 
 /-- The pairs whose world is `w`. -/
 def worldEvent (w : W) : Finset (W × Finset W) := Finset.univ.image fun C => (w, C)
@@ -180,15 +182,13 @@ def worldEvent (w : W) : Finset (W × Finset W) := Finset.univ.image fun C => (w
 /-- The listener's preference between two worlds, marginalizing the context set, is the
 comparison of prior-weighted speaker shares summed over context sets. -/
 theorem listener_worldEvent_lt_iff (P : W → ℕ) (cell : Q → W → Finset W) (sem : U → Set W)
-    [∀ u, DecidablePred (· ∈ sem u)] (q : Q) {α : ℝ} {u : U}
-    (hu : (familySpeaker (fun C => L0 P cell sem C q) α 0 ∘ₘ pairPrior P) {u} ≠ 0)
-    (w₁ w₂ : W) :
+    [∀ u, DecidablePred (· ∈ sem u)] (q : Q) {α : ℝ} {u : U} (w₁ w₂ : W) :
     (listener P cell sem q α u).real ↑(worldEvent w₁)
         < (listener P cell sem q α u).real ↑(worldEvent w₂)
       ↔ (∑ C, (pairPrior P).real {(w₁, C)} * share P cell sem C q u w₁ α)
         < ∑ C, (pairPrior P).real {(w₂, C)} * share P cell sem C q u w₂ α := by
   unfold listener worldEvent
-  rw [posterior_real_finset_lt_iff _ _ hu,
+  rw [RSA.listener_real_finset_lt_iff,
     Finset.sum_image fun _ _ _ _ h => (Prod.mk.inj h).2,
     Finset.sum_image fun _ _ _ _ h => (Prod.mk.inj h).2]
   rfl
@@ -531,13 +531,6 @@ private theorem card_two {a b : World} (h : a ≠ b) : ({a, b} : Finset World).c
 private theorem card_three : ({.usCitizen, .gcHolder, .nonUS} : Finset World).card = 3 := by
   decide
 
-private theorem comp_ne_zero (q : QUD) {α : ℝ} (hα : 0 < α) :
-    (familySpeaker (fun C => L0 uniform QUD.cell Utterance.sem C q) α 0
-      ∘ₘ pairPrior uniform) {.notGC} ≠ 0 :=
-  comp_familySpeaker_ne_zero (w := .nonUS) (l := {.nonUS})
-    (by rw [pairPrior_singleton, ite_eq_left (by decide)]; simp [uniform])
-    (speaker_apply_singleton_ne_zero hα (by decide) (by decide) one_ne_zero)
-
 private theorem half_rpow_lt_one {α : ℝ} (hα : 0 < α) : (1 / 2 : ℝ) ^ α < 1 :=
   Real.rpow_lt_one (by norm_num) (by norm_num) hα
 
@@ -548,7 +541,7 @@ citizen* always answers it at least as well (Figure 1). -/
 theorem needVisa_nonUS_lt {α : ℝ} (hα : 0 < α) :
     (gcListener .needVisa α .notGC).real ↑(worldEvent World.usCitizen)
       < (gcListener .needVisa α .notGC).real ↑(worldEvent World.nonUS) := by
-  rw [gcListener, listener_worldEvent_lt_iff _ _ _ _ (comp_ne_zero _ hα), sum_ctx, sum_ctx]
+  rw [gcListener, listener_worldEvent_lt_iff, sum_ctx, sum_ctx]
   simp (config := { decide := true }) only [pairPrior_uniform_real, ite_true, ite_false]
   rw [card_two (by decide), card_two (by decide), card_two (by decide), card_three]
   norm_num
@@ -573,7 +566,7 @@ in every context set, yet the listener still favours the non-US world. At the US
 theorem freeDrink_nonUS_lt {α : ℝ} (hα : 0 < α) :
     (gcListener .freeDrink α .notGC).real ↑(worldEvent World.usCitizen)
       < (gcListener .freeDrink α .notGC).real ↑(worldEvent World.nonUS) := by
-  rw [gcListener, listener_worldEvent_lt_iff _ _ _ _ (comp_ne_zero _ hα), sum_ctx, sum_ctx]
+  rw [gcListener, listener_worldEvent_lt_iff, sum_ctx, sum_ctx]
   simp (config := { decide := true }) only [pairPrior_uniform_real, ite_true, ite_false]
   rw [card_two (by decide), card_two (by decide), card_two (by decide), card_three]
   norm_num

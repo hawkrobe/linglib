@@ -197,10 +197,10 @@ noncomputable def S1 (l : Lex) : Kernel World Msg := speaker α (cost k) (L0 l) 
 
 instance (l : Lex) : IsFiniteKernel (S1 α k l) := inferInstanceAs (IsFiniteKernel (speaker _ _ _ _))
 
-/-- The uncertainty listener (13c) is the joint posterior over states and lexica at flat priors,
-whose state marginal is the paper's listener. -/
+/-- The uncertainty listener (13c) inverts the lexicon-indexed speaker against flat priors over
+states and lexica; its state marginal is the paper's listener. -/
 noncomputable def L1 : Kernel Msg (World × Lex) :=
-  ((familySpeaker L0 α (cost k))†(uniformOn Set.univ))
+  listener (uniformOn Set.univ) fun p ↦ S1 α k p.2 p.1
 
 /-- The fixed-lexicon pragmatic listener (19b) inverts the base lexicon's speaker at a flat
 prior. -/
@@ -208,6 +208,13 @@ noncomputable def L1fixed : Kernel Msg World :=
   ((S1 α k .weak)†(uniformOn Set.univ))
 
 end Tower
+
+/-- State preference of the uncertainty listener is the pooled speaker preference. -/
+theorem L1_fst_real_lt_iff {α k : ℝ} (m : Msg) (w₁ w₂ : World) :
+    (L1 α k m).fst.real {w₁} < (L1 α k m).fst.real {w₂} ↔
+      ∑ l, (S1 α k l w₁).real {m} < ∑ l, (S1 α k l w₂).real {m} := by
+  rw [L1, listener_fst_real_lt_iff_of_forall_eq _ _ uniformOn_univ_singleton_eq
+    uniformOn_univ_singleton_ne_zero]
 
 section Model
 
@@ -220,8 +227,7 @@ include hα
 message true there. -/
 theorem L1_fst_ne_zero_iff (m : Msg) (w : World) :
     (L1 α k m).fst {w} ≠ 0 ↔ ∃ l, w ∈ sem l m :=
-  posterior_familySpeaker_uniform_fst_apply_singleton_ne_zero_iff sem hα _
-    (let ⟨w, h⟩ := sem_weak_nonempty m; ⟨.weak, w, h⟩) w
+  listener_uniformOn_family_fst_apply_singleton_ne_zero_iff sem hα _ m w
 
 /-- The fixed-lexicon listener assigns mass to a state exactly when the base lexicon makes the
 message true there. -/
@@ -256,16 +262,6 @@ theorem no_some_local :
   rcases hw with rfl | rfl | rfl <;> decide
 
 /-! ### Preference orderings (§6.2, §6.3) -/
-
-/-- State preference of the uncertainty listener is the pooled speaker preference. -/
-theorem L1_fst_real_lt_iff (m : Msg) (w₁ w₂ : World) :
-    (L1 α k m).fst.real {w₁} < (L1 α k m).fst.real {w₂} ↔
-      ∑ l, (S1 α k l w₁).real {m} < ∑ l, (S1 α k l w₂).real {m} := by
-  obtain ⟨w₀, h₀⟩ := sem_weak_nonempty m
-  rw [L1, posterior_fst_real_lt_iff_of_forall_eq _ _ (p₀ := (w₀, .weak)) uniformOn_univ_singleton_eq
-    uniformOn_univ_singleton_ne_zero
-    ((speaker_uniformListener_dirac_apply_singleton_ne_zero_iff (sem .weak) hα (cost k) w₀ m).2 h₀)]
-  rfl
 
 /-- State preference of the fixed-lexicon listener is the base-lexicon speaker's preference. -/
 theorem L1fixed_real_lt_iff (m : Msg) (w₁ w₂ : World) :
@@ -374,7 +370,7 @@ theorem every_some_ordering :
   obtain ⟨ha, hab, hbc, hc1, ht⟩ := weights hα (k := k)
   have ha1 : (4 : ℝ)⁻¹ ^ α < 1 := hab.trans (hbc.trans hc1)
   obtain ⟨c1, c2, -, -, c5, c6, c7, c8, -, -, -, c12, c13, c14, c15, c16, -, c18⟩ := cards
-  simp +decide only [L1_fst_real_lt_iff hα, Lex.sum_univ, S1_real hα, Fintype.sum_prod_type,
+  simp +decide only [L1_fst_real_lt_iff, Lex.sum_univ, S1_real hα, Fintype.sum_prod_type,
     PlayerQ.sum_univ, ShotQ.sum_univ, c1, c2, c5, c6, c7, c8, c12, c13, c14, c15, c16, c18,
     Nat.cast_ofNat, Nat.cast_one, inv_one, Real.one_rpow, ↓reduceIte, add_zero, zero_add,
     zero_div]
@@ -405,7 +401,7 @@ theorem one_some_literal_first :
     (L1 α k (some oneSome)).fst.real {.SAA} < (L1 α k (some oneSome)).fst.real {.NNS} := by
   obtain ⟨ha, hab, hbc, -, -⟩ := weights hα (k := k)
   obtain ⟨-, -, -, -, c5, -, c7, c8, c9, c10, c11, c12, c13, c14, c15, c16, -, c18⟩ := cards
-  simp +decide only [L1_fst_real_lt_iff hα, Lex.sum_univ, S1_real hα, Fintype.sum_prod_type,
+  simp +decide only [L1_fst_real_lt_iff, Lex.sum_univ, S1_real hα, Fintype.sum_prod_type,
     PlayerQ.sum_univ, ShotQ.sum_univ, c5, c7, c8, c9, c10, c11, c12, c13, c14, c15, c16, c18,
     Nat.cast_ofNat, ↓reduceIte, add_zero, zero_add, zero_div]
   exact ⟨(div_lt_div_of_pos_left (ha.trans (hab.trans hbc)) (by positivity) (by linarith)).trans_le
@@ -422,7 +418,7 @@ theorem no_some_literal_first :
     (L1 α k (some noSome)).fst.real {.AAA} < (L1 α k (some noSome)).fst.real {.NNN} := by
   obtain ⟨ha, hab, -, -, ht⟩ := weights hα (k := k)
   obtain ⟨c1, c2, c3, c4, c5, -, c7, c8, c9, c10, c11, -, c13, c14, c15, c16, c17, c18⟩ := cards
-  simp +decide only [L1_fst_real_lt_iff hα, Lex.sum_univ, S1_real hα, Fintype.sum_prod_type,
+  simp +decide only [L1_fst_real_lt_iff, Lex.sum_univ, S1_real hα, Fintype.sum_prod_type,
     PlayerQ.sum_univ, ShotQ.sum_univ, c1, c2, c3, c4, c5, c7, c8, c9, c10, c11, c13, c14, c15,
     c16, c17, c18, Nat.cast_ofNat, Nat.cast_one, inv_one, Real.one_rpow, ↓reduceIte, add_zero,
     zero_add, zero_div]
