@@ -1,7 +1,6 @@
 module
 
-public import Linglib.Core.Computability.Definite
-public import Linglib.Core.Computability.ScanDirection
+public import Linglib.Core.Computability.Edge
 public import Linglib.Phonology.Prosody.Grid
 public import Mathlib.Data.List.GetD
 
@@ -35,9 +34,10 @@ Garawa, Hawaiian and Winnebago and the quantity-sensitive systems of (98).
   §3.7; without Forward Clash Override it withholds a promotion that would clash.
 * Perfect Grid Construction is a greedy sweep that raises a column when neither neighbour is
   stressed, a trough start behaving as if a stress preceded the edge.
-* The edges and directions of (119) are `Edge` and `ScanDirection`; the End Rule, Perfect Grid
-  Construction and Move x run right to left as the `List.revConj` mirror images of their
-  left-to-right versions. A syllable of two or more moras is bipositional.
+* The edges and directions of (119) are both `Edge`, a direction being named by the edge it
+  starts from; the End Rule, Perfect Grid Construction and Move x run right to left as the
+  `List.revConj` mirror images of their left-to-right versions. A syllable of two or more moras
+  is bipositional.
 
 ## TODO
 
@@ -154,7 +154,7 @@ theorem rppr_iff (t : SWTree) : Rppr t ↔ Everywhere HeadStrong t := by
     exact and_congr_right fun hs ↦ and_congr_right fun hw ↦
       (headStrong_node_iff hs.self hw.self).symm
 
-/-- Under the RPPR the grid is culminative: the head terminal is its unique peak. -/
+/-- Under the RPPR the grid is culminative, the head terminal being its unique peak. -/
 theorem isCulminative_of_rppr {t : SWTree} (h : Rppr t) : IsCulminative (heights t) := by
   have hs := ((rppr_iff t).1 h).self
   have hpeak : peak (heights t) = headHeight t :=
@@ -266,7 +266,7 @@ def moveXL (n : ℕ) (g : Grid) : Grid :=
 
 /-- Move x(D;L) of (119f) moves entries leftward when it runs right to left, and the rightward
 rule is its mirror image. -/
-def moveX : ScanDirection → ℕ → Grid → Grid
+def moveX : Edge → ℕ → Grid → Grid
   | .right, n => moveXL n
   | .left, n => List.revConj (moveXL n)
 
@@ -306,8 +306,8 @@ theorem moveXL_eq_self_of_not_clash {n : ℕ} {g : Grid}
     (h : ∀ i < g.length, ∀ j < g.length, ¬ Clash g n i j) : moveXL n g = g :=
   (moveXL_eq_or n g).resolve_right fun ⟨i, j, _, hi, hj, hc, _⟩ ↦ h i hi j hj hc
 
-/-- Move x at level `n` never touches a column taller than `n`: no entry is slid out from under a
-taller column (32). -/
+/-- Move x at level `n` never touches a column taller than `n`, so no entry is slid out from under
+a taller column (32). -/
 theorem moveXL_getD_of_lt {n c : ℕ} {g : Grid} (hc : n < g.getD c 0) :
     (moveXL n g).getD c 0 = g.getD c 0 := by
   rcases moveXL_eq_or n g with h | ⟨i, -, k, -, -, -, hi, hk, h⟩
@@ -324,8 +324,8 @@ theorem not_clash_of_peak_le {g : Grid} (hc : IsCulminative g) {n i j : ℕ} (hn
   have := le_peak (List.getElem_mem hj)
   exact hij.ne (hc.eq_of_eq_peak hi hj (by omega) (by omega))
 
-/-- The absolute peak never moves (31): below the peak Move x leaves taller columns alone, and at
-or above it a culminative grid has no clash. -/
+/-- The absolute peak never moves (31), since below the peak Move x leaves taller columns alone
+and at or above it a culminative grid has no clash. -/
 theorem moveXL_getD_peak {g : Grid} (hc : IsCulminative g) {i n : ℕ} (hi : i < g.length)
     (hp : g[i] = peak g) : (moveXL n g).getD i 0 = g[i] := by
   rw [← List.getD_eq_getElem g 0 hi]
@@ -480,7 +480,7 @@ end Altitude
 
 /-- Perfect Grid Construction PG(D;A) of (61), (62) and (119b) lays down a clash-free, maximally
 alternating stress level by a sweep in direction `D` starting from a peak or a trough. -/
-def pg (d : ScanDirection) (a : Altitude) : Grid → Grid :=
+def pg (d : Edge) (a : Altitude) : Grid → Grid :=
   match d with
   | .left => sweep a.start
   | .right => List.revConj (sweep a.start)
@@ -518,7 +518,7 @@ theorem sweep_replicate (a : Altitude) (n : ℕ) :
   induction n generalizing a with
   | zero => simp [sweep, alt]
   | succ n ih =>
-    have hd : (List.replicate n 1).head?.getD 0 ≤ 1 := by cases n <;> simp [List.replicate_succ]
+    have hd : (List.replicate n 1).head?.getD 0 < 2 := by cases n <;> simp [List.replicate_succ]
     rw [List.replicate_succ, sweep, alt, ← ih a.flip]
     cases a <;> simp [hd, Altitude.start, Altitude.flip, Altitude.height]
 
@@ -533,14 +533,14 @@ theorem sweep_replicate_append (a : Altitude) (m : ℕ) :
     cases a <;> simp_all [List.replicate_succ, Altitude.start, Altitude.flip, Altitude.height]
 
 /-- The distance of column `i` of `n` from the edge a sweep in direction `d` starts at. -/
-def startDist : ScanDirection → ℕ → ℕ → ℕ
+def startDist : Edge → ℕ → ℕ → ℕ
   | .left, _, i => i
   | .right, n, i => n - 1 - i
 
 /-- A sweep over an unstressed word stresses the columns whose distance from the starting edge has
 the parity of the start, a peak stressing the even distances (62). Weri is (62d), sweeping right
 to left from a peak; Warao, (62c); Maranungku, (62b); Southern Paiute, (62a). -/
-theorem pg_replicate_getD (d : ScanDirection) (a : Altitude) {n i : ℕ} (hi : i < n) :
+theorem pg_replicate_getD (d : Edge) (a : Altitude) {n i : ℕ} (hi : i < n) :
     (pg d a (List.replicate n 1)).getD i 0 =
       if (startDist d n i % 2 = 0 ↔ a = .peak) then 2 else 1 := by
   cases d with
@@ -551,7 +551,7 @@ theorem pg_replicate_getD (d : ScanDirection) (a : Altitude) {n i : ℕ} (hi : i
       simp [startDist, show n - 1 - i < n by omega]
 
 /-- Perfect Grid Construction is clash-free. -/
-theorem noClash_pg_replicate (d : ScanDirection) (a : Altitude) (n : ℕ) :
+theorem noClash_pg_replicate (d : Edge) (a : Altitude) (n : ℕ) :
     NoClash (pg d a (List.replicate n 1)) := by
   have hlen : (pg d a (List.replicate n 1)).length = n := by
     cases d <;> simp [pg, List.revConj, sweep_replicate]
@@ -704,7 +704,7 @@ theorem endRule_right_replicate {n : ℕ} (hn : 0 < n) (fco : Bool) :
 
 /-! #### Main stress -/
 
-/-- Column `i` carries the main stress: it is strictly taller than every other column. -/
+/-- Column `i` carries the main stress when it is strictly taller than every other column. -/
 def MainStressAt (g : Grid) (i : ℕ) : Prop :=
   i < g.length ∧ ∀ j < g.length, j ≠ i → g.getD j 0 < g.getD i 0
 
@@ -819,13 +819,13 @@ theorem winnebago_eq {n : ℕ} (hn : 3 ≤ n) :
 
 /-- Perfect Grid Construction stresses an unstressed word, with or without an extrametrical
 syllable at an edge, in the parameter space of §3.2. -/
-def alternating (d : ScanDirection) (a : Altitude) (x : Option Edge) (n : ℕ) : Grid :=
+def alternating (d : Edge) (a : Altitude) (x : Option Edge) (n : ℕ) : Grid :=
   x.elim (pg d a) (elm · (pg d a)) (List.replicate n 1)
 
 /-- Stress three syllables in, in every word long enough, is the extrametricality variant of a
 trough-first sweep from the left and arises from no other setting of the parameters, so grid
 theory derives postpeninitial stress only as Winnebago has it. -/
-theorem postpeninitial_iff (d : ScanDirection) (a : Altitude) (x : Option Edge) :
+theorem postpeninitial_iff (d : Edge) (a : Altitude) (x : Option Edge) :
     (∀ n, 4 ≤ n → (alternating d a x n).findIdx? (2 ≤ ·) = some 2) ↔
       d = .left ∧ a = .trough ∧ x = some .left := by
   constructor
@@ -842,7 +842,7 @@ theorem postpeninitial_iff (d : ScanDirection) (a : Altitude) (x : Option Edge) 
 
 /-- Antepenultimate stress, the mirror image, is the extrametricality variant of a trough-first
 sweep from the right and arises from no other setting of the parameters. -/
-theorem antepenultimate_iff (d : ScanDirection) (a : Altitude) (x : Option Edge) :
+theorem antepenultimate_iff (d : Edge) (a : Altitude) (x : Option Edge) :
     (∀ n, 4 ≤ n → lastIdx? (2 ≤ ·) (alternating d a x n) = some (n - 3)) ↔
       d = .right ∧ a = .trough ∧ x = some .right := by
   constructor
@@ -924,7 +924,7 @@ theorem hawaiian_mainStressAt {n : ℕ} (hn : 2 ≤ n) : MainStressAt (hawaiian 
 
 /-- No perfect grid gives Hawaiian's initial dactyl, whatever its direction, starting altitude and
 extrametricality, so the End Rule must stress both edges before the sweep. -/
-theorem hawaiian_ne_alternating (d : ScanDirection) (a : Altitude) (x : Option Edge) :
+theorem hawaiian_ne_alternating (d : Edge) (a : Altitude) (x : Option Edge) :
     endRule .right 3 false (alternating d a x 5) ≠ hawaiian 5 := by
   rcases x with _ | _ | _ <;> cases d <;> cases a <;> decide
 
@@ -993,7 +993,7 @@ theorem qs_le_two (w : List Syllable.Weight) : ∀ x ∈ qs w, x ≤ 2 := fun _ 
 
 theorem qs_singleton (m : Syllable.Weight) : qs [m] = mora m := by simp [qs]
 
-/-- Heavy syllables never clash: their nuclei are separated by their second positions (74). -/
+/-- Heavy syllables never clash, since their nuclei are separated by their second positions (74). -/
 theorem qs_isChain (w : List Syllable.Weight) : (qs w).IsChain (fun a b ↦ a < 2 ∨ b < 2) := by
   induction w with
   | nil => simp [qs]
