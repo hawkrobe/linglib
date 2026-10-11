@@ -60,12 +60,14 @@ namespace SpinosoDiPianoEtAl2025
 
 universe v
 
-variable {M U R : Type*} [Fintype M] [MeasurableSpace M] [DiscreteMeasurableSpace M]
+variable {M U R : Type*} [Fintype M] [MeasurableSpace M]
   [Fintype U] [MeasurableSpace U] [DiscreteMeasurableSpace U]
 
 /-! ### The framework -/
 
 section Framework
+
+variable [DiscreteMeasurableSpace M]
 
 /-- The strategy-indexed literal listener (eq. 4) reweights the prior by the rhetorical
 function of the strategy. -/
@@ -86,14 +88,14 @@ instance (μ : Measure M) (f : R → U → M → ℝ≥0∞) (α : ℝ) (κ : U 
   inferInstanceAs (IsFiniteKernel (speaker α κ (L0 μ f r) Measure.dirac))
 
 /-- The strategy-indexed pragmatic listener (eq. 6). -/
-noncomputable def L1 [Nonempty M] (μ : Measure M) [IsFiniteMeasure μ] (f : R → U → M → ℝ≥0∞)
-    (α : ℝ) (κ : U → ℝ) (r : R) : Kernel U M :=
-  ((S1 μ f α κ r)†μ)
+noncomputable def L1 (μ : Measure M) (f : R → U → M → ℝ≥0∞) (α : ℝ) (κ : U → ℝ) (r : R) :
+    Kernel U M :=
+  RSA.listener μ (S1 μ f α κ r)
 
 /-- The pragmatic listener (eq. 7) averages the strategy-indexed listeners under the strategy
 posterior given the utterance. -/
-noncomputable def listener [Nonempty M] [MeasurableSpace R] (μ : Measure M) [IsFiniteMeasure μ]
-    (f : R → U → M → ℝ≥0∞) (α : ℝ) (κ : U → ℝ) (ρ : Kernel U R) : Kernel U M :=
+noncomputable def listener [MeasurableSpace R] (μ : Measure M) (f : R → U → M → ℝ≥0∞) (α : ℝ)
+    (κ : U → ℝ) (ρ : Kernel U R) : Kernel U M :=
   Kernel.ofFunOfCountable fun u => (ρ u).bind fun r => L1 μ f α κ r u
 
 variable (μ : Measure M) (f : R → U → M → ℝ≥0∞) (α : ℝ) (κ : U → ℝ)
@@ -115,6 +117,34 @@ theorem S1_eq_ofWeights_prior (hα : α ≠ 0) {π : U → ℝ≥0∞} (hπ0 : �
   rw [mul_div_cancel₀ _ hα, neg_neg, Real.exp_log (ENNReal.toReal_pos (hπ0 u) (hπ u)),
     ENNReal.ofReal_toReal (hπ u)]
 
+/-- Standard RSA gives no mass to non-literal meanings (Appendix A.2). Under a strategy whose
+rhetorical function is a Boolean meaning, a meaning outside the extension of the utterance has
+no listener mass. -/
+theorem L1_indicator_apply_singleton_of_notMem (hα : 0 < α) (sem : U → Set M) {r : R}
+    (hr : f r = fun u => (sem u).indicator 1) {u : U} {m : M} (hm : m ∉ sem u) :
+    L1 μ f α κ r u {m} = 0 := by
+  simp only [L1, S1, L0, hr, ← listener_truthful_eq_ofDensity]
+  exact listener_speaker_listener_truthful_apply_singleton_of_notMem hα κ μ sem hm
+
+section
+
+variable [Fintype R] [MeasurableSpace R] [DiscreteMeasurableSpace R]
+
+theorem listener_apply_singleton (ρ : Kernel U R) (u : U) (m : M) :
+    listener μ f α κ ρ u {m} = ∑ r, L1 μ f α κ r u {m} * ρ u {r} := by
+  rw [listener, Kernel.ofFunOfCountable_apply,
+    Measure.bind_apply (.singleton m) Measurable.of_discrete.aemeasurable, lintegral_fintype]
+
+/-- The pragmatic listener puts positive mass on a meaning exactly when some strategy of
+positive posterior weight does. -/
+theorem listener_apply_singleton_ne_zero_iff (ρ : Kernel U R) (u : U) (m : M) :
+    listener μ f α κ ρ u {m} ≠ 0 ↔ ∃ r, ρ u {r} ≠ 0 ∧ L1 μ f α κ r u {m} ≠ 0 := by
+  simp only [listener_apply_singleton, ne_eq, Finset.sum_eq_zero_iff, Finset.mem_univ,
+    true_implies, mul_eq_zero, not_forall, not_or]
+  exact exists_congr fun r => and_comm
+
+end
+
 variable [IsFiniteMeasure μ]
 
 /-- A meaning has positive literal mass under a strategy exactly when the prior and the
@@ -134,61 +164,23 @@ theorem S1_apply_singleton_ne_zero_iff (hα : 0 < α) {r : R} (hf : ∀ u m, f r
   exact ⟨fun h h' => h (speaker_dirac_apply_singleton_eq_zero hα h'),
     speaker_dirac_apply_singleton_ne_zero hα.le⟩
 
-/-- An utterance some meaning of positive prior admits under a strategy has a positive
-marginal. -/
-theorem comp_S1_ne_zero (hα : 0 < α) {r : R} (hf : ∀ u m, f r u m ≠ ∞) {u : U}
-    (hu : ∃ m, f r u m ≠ 0 ∧ μ {m} ≠ 0) :
-    (S1 μ f α κ r ∘ₘ μ) {u} ≠ 0 := by
-  obtain ⟨m, hm, hμ⟩ := hu
-  exact comp_apply_singleton_ne_zero _ _ hμ
-    ((S1_apply_singleton_ne_zero_iff μ f α κ hα hf m u).mpr ⟨hm, hμ⟩)
-
-variable [Nonempty M]
-
 /-- A strategy's pragmatic listener puts positive mass on a meaning exactly when the prior does
 and the strategy's rhetorical function admits the meaning at the utterance, so the framework
 escapes the literal extension. -/
-theorem L1_apply_singleton_ne_zero_iff (hα : 0 < α) {r : R} (hf : ∀ u m, f r u m ≠ ∞) {u : U}
-    (hu : ∃ m, f r u m ≠ 0 ∧ μ {m} ≠ 0) (m : M) :
-    L1 μ f α κ r u {m} ≠ 0 ↔ f r u m ≠ 0 ∧ μ {m} ≠ 0 := by
-  have h := posterior_apply_singleton_ne_zero_iff (S1 μ f α κ r) μ
-    (comp_S1_ne_zero μ f α κ hα hf hu) m
-  rw [S1_apply_singleton_ne_zero_iff μ f α κ hα hf] at h
-  exact h.trans ⟨fun h => h.2, fun h => ⟨h.2, h⟩⟩
-
-/-- Standard RSA gives no mass to non-literal meanings (Appendix A.2). Under a strategy whose
-rhetorical function is a Boolean meaning, a meaning outside the extension of the utterance has
-no listener mass once some meaning in the extension has prior mass. -/
-theorem L1_indicator_apply_singleton_of_notMem (hα : 0 < α) (sem : U → Set M) {r : R}
-    (hr : f r = fun u => (sem u).indicator 1)
-    {u : U} {m : M} (hm : m ∉ sem u) {m' : M} (hm' : m' ∈ sem u) (hμ : μ {m'} ≠ 0) :
-    L1 μ f α κ r u {m} = 0 := by
-  simp only [L1, S1, L0, hr, ← listener_truthful_eq_ofDensity]
-  exact posterior_speaker_listener_truthful_apply_singleton_of_notMem α κ μ hα sem hm hm' hμ
+theorem L1_apply_singleton_ne_zero_iff (hα : 0 < α) {r : R} (hf : ∀ u m, f r u m ≠ ∞) (u : U)
+    (m : M) : L1 μ f α κ r u {m} ≠ 0 ↔ f r u m ≠ 0 ∧ μ {m} ≠ 0 := by
+  rw [L1, RSA.listener_apply_singleton_ne_zero_iff, S1_apply_singleton_ne_zero_iff μ f α κ hα hf]
+  exact ⟨fun h => h.2, fun h => ⟨h.2, h⟩⟩
 
 variable [Fintype R] [MeasurableSpace R] [DiscreteMeasurableSpace R]
-
-theorem listener_apply_singleton (ρ : Kernel U R) (u : U) (m : M) :
-    listener μ f α κ ρ u {m} = ∑ r, L1 μ f α κ r u {m} * ρ u {r} := by
-  rw [listener, Kernel.ofFunOfCountable_apply,
-    Measure.bind_apply (.singleton m) Measurable.of_discrete.aemeasurable, lintegral_fintype]
-
-/-- The pragmatic listener puts positive mass on a meaning exactly when some strategy of
-positive posterior weight does. -/
-theorem listener_apply_singleton_ne_zero_iff (ρ : Kernel U R) (u : U) (m : M) :
-    listener μ f α κ ρ u {m} ≠ 0 ↔ ∃ r, ρ u {r} ≠ 0 ∧ L1 μ f α κ r u {m} ≠ 0 := by
-  simp only [listener_apply_singleton, ne_eq, Finset.sum_eq_zero_iff, Finset.mem_univ,
-    true_implies, mul_eq_zero, not_forall, not_or]
-  exact exists_congr fun r => and_comm
 
 /-- The pragmatic listener interprets an utterance as a meaning of positive prior exactly when
 some strategy of positive posterior weight admits the meaning at the utterance. -/
 theorem listener_apply_singleton_ne_zero_iff' (hα : 0 < α) (hf : ∀ r u m, f r u m ≠ ∞)
-    (ρ : Kernel U R) {u : U}
-    (hu : ∀ r, ∃ m, f r u m ≠ 0 ∧ μ {m} ≠ 0) (m : M) :
+    (ρ : Kernel U R) (u : U) (m : M) :
     listener μ f α κ ρ u {m} ≠ 0 ↔ μ {m} ≠ 0 ∧ ∃ r, ρ u {r} ≠ 0 ∧ f r u m ≠ 0 := by
   rw [listener_apply_singleton_ne_zero_iff]
-  simp only [L1_apply_singleton_ne_zero_iff μ f α κ hα (hf _) (hu _)]
+  simp only [L1_apply_singleton_ne_zero_iff μ f α κ hα (hf _)]
   exact ⟨fun ⟨r, hr, hfr, hm⟩ => ⟨hm, r, hr, hfr⟩, fun ⟨hm, r, hr, hfr⟩ => ⟨r, hr, hfr, hm⟩⟩
 
 end Framework
@@ -197,7 +189,9 @@ end Framework
 
 section QUD
 
-variable {G X : Type*} (μ : Measure M) [IsFiniteMeasure μ]
+section
+
+variable [DiscreteMeasurableSpace M] {G X : Type*} (μ : Measure M) [IsFiniteMeasure μ]
 
 /-- The rhetorical function of a question (eq. 19) is the projected literal mass of the
 meaning's cell over the prior, scaled by a constant that keeps it in the unit interval. -/
@@ -228,20 +222,22 @@ theorem kaoGoodman2015_L0 (μ : Measure KaoGoodman2015.Meaning) [IsFiniteMeasure
       (projListener KaoGoodman2015.project (KaoGoodman2015.L0 μ) q u)[|Set.univ] :=
   L0_rhetoricalOfQUD μ hμ _ _ hk0 hk q u
 
+end
+
 /-- The QUD-RSA literal listeners of a literal listener (eq. 13) are its projected listeners
 normalized over meanings, over every question and utterance. -/
 def qudListeners (L : Kernel U M) : Set (Measure M) :=
   {ν | ∃ (X : Type v) (q : M → X) (u : U), ν = (projListener id L q u)[|Set.univ]}
 
-omit [DiscreteMeasurableSpace M] in
 /-- A QUD-RSA literal listener depends on the question only through the cells it induces, so
 the QUD-RSA literal listeners of a finite meaning space are finitely many. -/
-theorem qudListeners_finite [MeasurableSingletonClass M] (L : Kernel U M) :
-    (qudListeners.{v} L).Finite :=
+theorem qudListeners_finite (L : Kernel U M) : (qudListeners.{v} L).Finite :=
   (Set.finite_range fun p : U × (M → Set M) =>
       (∑ m, L p.1 (p.2 m) • Measure.dirac m)[|Set.univ]).subset <| by
     rintro ν ⟨X, q, u, rfl⟩
     exact ⟨(u, fun m => q ⁻¹' {q m}), rfl⟩
+
+variable [DiscreteMeasurableSpace M] (μ : Measure M) [IsFiniteMeasure μ]
 
 /-- Every probability vector over meanings is an (RSA)² literal listener at a prior of positive
 mass everywhere, whose rhetorical function is the vector over the prior. -/
@@ -305,33 +301,31 @@ noncomputable def weatherF : Strategy → Weather → Weather → ℝ≥0∞
 theorem weatherF_ne_top (r : Strategy) (u m : Weather) : weatherF r u m ≠ ∞ := by
   cases r <;> simp only [weatherF, Set.indicator_apply] <;> split_ifs <;> simp
 
-variable (μ : Measure Weather) [IsFiniteMeasure μ] (α : ℝ) (κ : Weather → ℝ)
+variable (μ : Measure Weather) (α : ℝ) (κ : Weather → ℝ)
 
 /-- Under the literal strategy, *the weather is amazing* leaves terrible weather with no
 mass, the standard RSA prediction. -/
-theorem literal_amazing_terrible (hα : 0 < α) (hμ : μ {.amazing} ≠ 0) :
+theorem literal_amazing_terrible (hα : 0 < α) :
     L1 μ weatherF α κ .literal .amazing {.terrible} = 0 :=
   L1_indicator_apply_singleton_of_notMem μ weatherF α κ hα (fun u => {u}) rfl
-    (Set.mem_singleton_iff.not.mpr (by decide)) (Set.mem_singleton _) hμ
+    (Set.mem_singleton_iff.not.mpr (by decide))
+
+variable [IsFiniteMeasure μ]
 
 /-- Under the ironic strategy, *the weather is amazing* gives terrible weather positive mass
 whenever the prior does. -/
 theorem irony_amazing_terrible (hα : 0 < α) (hμ : μ {.terrible} ≠ 0) :
     L1 μ weatherF α κ .irony .amazing {.terrible} ≠ 0 :=
-  (L1_apply_singleton_ne_zero_iff μ weatherF α κ hα (weatherF_ne_top .irony)
-    ⟨.terrible, by simp [weatherF, opposite], hμ⟩ _).mpr ⟨by simp [weatherF, opposite], hμ⟩
+  (L1_apply_singleton_ne_zero_iff μ weatherF α κ hα (weatherF_ne_top .irony) _ _).mpr
+    ⟨by simp [weatherF, opposite], hμ⟩
 
 /-- The pragmatic listener reads *the weather is amazing* as terrible weather exactly when the
 strategy posterior gives irony positive weight, at a prior positive at terrible and amazing
 weather. -/
 theorem listener_amazing_terrible_iff (hα : 0 < α) (ρ : Kernel Weather Strategy)
-    (hμt : μ {.terrible} ≠ 0) (hμa : μ {.amazing} ≠ 0) :
+    (hμt : μ {.terrible} ≠ 0) :
     listener μ weatherF α κ ρ .amazing {.terrible} ≠ 0 ↔ ρ .amazing {.irony} ≠ 0 := by
-  rw [listener_apply_singleton_ne_zero_iff' μ weatherF α κ hα weatherF_ne_top ρ
-    (fun r => by
-      cases r
-      · exact ⟨.amazing, by simp [weatherF], hμa⟩
-      · exact ⟨.terrible, by simp [weatherF, opposite], hμt⟩)]
+  rw [listener_apply_singleton_ne_zero_iff' μ weatherF α κ hα weatherF_ne_top ρ]
   constructor
   · rintro ⟨-, _ | _, hr, hf⟩
     · exact absurd hf (by simp [weatherF])

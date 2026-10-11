@@ -270,16 +270,15 @@ instance (c : Option Comparison) (α : ℝ) (cost : Utterance → ℝ) :
     IsFiniteKernel (speaker c α cost) :=
   ⟨⟨1, ENNReal.one_lt_top, fun q ↦ RSA.speaker_apply_univ_le_one α cost _ Measure.dirac q.1⟩⟩
 
-/-- The pragmatic listener at rationality `α`, with the speaker's costs `cost`, is the
-Bayesian inverse of the speakers indexed by the threshold offsets, against the prior on worlds and
-uniform offsets. -/
+/-- The pragmatic listener at rationality `α`, with the speaker's costs `cost`, inverts the
+speakers indexed by the threshold offsets against the prior on worlds and uniform offsets. -/
 noncomputable def listener (c : Option Comparison) (α : ℝ) (cost : Utterance → ℝ) :
     Kernel Utterance (World × Finset.Icc (-4 : ℤ) 4) :=
-  ((speaker c α cost)†(prior.prod Measure.count))
+  RSA.listener (prior.prod Measure.count) (speaker c α cost)
 
 instance (c : Option Comparison) (α : ℝ) (cost : Utterance → ℝ) :
-    IsMarkovKernel (listener c α cost) :=
-  inferInstanceAs (IsMarkovKernel (_ † _))
+    IsFiniteKernel (listener c α cost) :=
+  inferInstanceAs (IsFiniteKernel (RSA.listener _ _))
 
 /-- The listener's expected deviation of the measured height from the class centre, after the
 antonym of polarity `p`, is the statistic of evaluativity that the paper's Table 1 reports. -/
@@ -309,13 +308,11 @@ theorem comp_speaker_ne_zero (hα : 0 ≤ α) (c : Option Comparison) (u : Utter
 
 /-- The listener's mass on a world pools the speaker's production of the utterance over the
 offsets, weighted by the world's prior. -/
-private theorem listener_fst_real_singleton (hα : 0 ≤ α) (c : Option Comparison) (u : Utterance)
-    (w : World) :
+private theorem listener_fst_real_singleton (c : Option Comparison) (u : Utterance) (w : World) :
     (listener c α cost u).fst.real {w} =
       (prior {w}).toReal * (∑ σ, (RSA.speaker α cost (literal c σ) Measure.dirac w).real {u}) /
         (speaker c α cost ∘ₘ prior.prod Measure.count).real {u} := by
-  rw [listener, posterior_prod_fst_real_singleton _ prior Measure.count
-    (comp_speaker_ne_zero hα c u) w]
+  rw [listener, Measure.comp_real_singleton, RSA.listener_prod_fst_real_singleton]
   simp [measureReal_def]
 
 /-- A world produces an utterance at least as often as another if it verifies the utterance whenever
@@ -339,7 +336,7 @@ private theorem listener_fst_real_le (hα : 0 < α) {c u} {w₁ w₂ : World}
     (hu : ∀ σ, Holds c u σ w₁ → Holds c u σ w₂)
     (halt : ∀ σ, Holds c u σ w₁ → ∀ u', Holds c u' σ w₂ → Holds c u' σ w₁) :
     (listener c α cost u).fst.real {w₁} ≤ (listener c α cost u).fst.real {w₂} := by
-  rw [listener_fst_real_singleton hα.le, listener_fst_real_singleton hα.le, hp]
+  rw [listener_fst_real_singleton, listener_fst_real_singleton, hp]
   exact div_le_div_of_nonneg_right (mul_le_mul_of_nonneg_left
     (Finset.sum_le_sum fun σ _ ↦ speaker_real_le hα (hu σ) (halt σ)) ENNReal.toReal_nonneg)
     measureReal_nonneg
@@ -352,7 +349,7 @@ private theorem listener_fst_real_lt (hα : 0 < α) {c u} {w₁ w₂ : World}
     (halt : ∀ σ, Holds c u σ w₁ → ∀ u', Holds c u' σ w₂ → Holds c u' σ w₁)
     {σ₀ : Finset.Icc (-4 : ℤ) 4} (h₁ : ¬ Holds c u σ₀ w₁) (h₂ : Holds c u σ₀ w₂) :
     (listener c α cost u).fst.real {w₁} < (listener c α cost u).fst.real {w₂} := by
-  rw [listener_fst_real_singleton hα.le, listener_fst_real_singleton hα.le, hp]
+  rw [listener_fst_real_singleton, listener_fst_real_singleton, hp]
   refine div_lt_div_of_pos_right (mul_lt_mul_of_pos_left ?_
     (ENNReal.toReal_pos (prior_singleton_ne_zero _) (measure_ne_top _ _)))
     (ENNReal.toReal_pos (comp_speaker_ne_zero hα.le c u) (measure_ne_top _ _))
@@ -400,11 +397,11 @@ theorem literal_antonym (c : Option Comparison) (σ : Finset.Icc (-4 : ℤ) 4) (
 
 /-- Reversing the height scale carries the listener after an antonym to the listener after the
 other antonym, with the costs of the antonyms exchanged. -/
-theorem listener_antonym (hα : 0 ≤ α) (c : Option Comparison) (u : Utterance) (w : World)
+theorem listener_antonym (c : Option Comparison) (u : Utterance) (w : World)
     (σ : Finset.Icc (-4 : ℤ) 4) :
     listener c α cost u.antonym {(w.reflect, negate σ)} =
       listener c α (cost ∘ Utterance.antonym) u {(w, σ)} :=
-  posterior_apply_singleton_of_equiv _ _
+  RSA.listener_apply_singleton_of_equiv _ _
     (World.reflect_involutive.toPerm.prodCongr negate_involutive.toPerm)
     (fun p ↦ by
       rw [Equiv.prodCongr_apply, Prod.map, prior_prod_count_singleton,
@@ -412,7 +409,7 @@ theorem listener_antonym (hα : 0 ≤ α) (c : Option Comparison) (u : Utterance
       exact prior_reflect p.1)
     (fun p ↦ RSA.speaker_dirac_apply_singleton_of_equiv Utterance.antonym_involutive.toPerm α cost
       (fun v ↦ literal_antonym c p.2 v p.1) u)
-    (comp_speaker_ne_zero hα c u) (w, σ)
+    (w, σ)
 
 theorem measured_reflect (c : Option Comparison) (w : World) :
     measured c w.reflect - w.reflect.centre = -(measured c w - w.centre) := by
@@ -420,7 +417,7 @@ theorem measured_reflect (c : Option Comparison) (w : World) :
 
 /-- The negative antonym's expected deviation is minus the positive antonym's with the costs of
 the antonyms exchanged, so the antonyms of a construction differ only through their costs. -/
-theorem expectedDeviation_antonym (hα : 0 ≤ α) (c : Option Comparison) (p : Polarity) :
+theorem expectedDeviation_antonym (c : Option Comparison) (p : Polarity) :
     expectedDeviation c α cost (Polarity.negative * p) =
       -expectedDeviation c α (cost ∘ Utterance.antonym) p := by
   rw [expectedDeviation, expectedDeviation, Measure.fst, Measure.fst,
@@ -433,18 +430,18 @@ theorem expectedDeviation_antonym (hα : 0 ≤ α) (c : Option Comparison) (p : 
   simp only [Equiv.prodCongr_apply, Prod.map, Function.Involutive.coe_toPerm, smul_eq_mul,
     measureReal_def]
   rw [show Utterance.say (Polarity.negative * p) = (Utterance.say p).antonym from rfl,
-    listener_antonym hα c (.say p) q.1 q.2, measured_reflect]
+    listener_antonym c (.say p) q.1 q.2, measured_reflect]
   push_cast; ring
 
 /-- With equal costs the two antonyms of every construction have opposite expected deviations. The
 paper remarks this of the comparative, whose antonyms do not come out opposite in its simulations
 only because of their costs. -/
-theorem expectedDeviation_negative_of_cost_eq (hα : 0 ≤ α)
+theorem expectedDeviation_negative_of_cost_eq
     (hc : cost (.say .positive) = cost (.say .negative)) (c : Option Comparison) :
     expectedDeviation c α cost .negative = -expectedDeviation c α cost .positive := by
   have hcost : cost ∘ Utterance.antonym = cost := funext fun u ↦ by
     rcases u with ⟨_ | _⟩ | _ <;> simp [Utterance.antonym, hc]
-  simpa [hcost] using expectedDeviation_antonym (cost := cost) hα c .positive
+  simpa [hcost] using expectedDeviation_antonym (cost := cost) c .positive
 
 end Antonym
 
@@ -504,7 +501,7 @@ theorem positive_evaluative (hα : 0 < α) (p : Polarity) :
   cases p
   · simpa using positive_tall hα
   · rw [Polarity.negative_smul, show Polarity.negative = Polarity.negative * .positive from rfl,
-      expectedDeviation_antonym hα.le, neg_neg]
+      expectedDeviation_antonym, neg_neg]
     exact positive_tall hα
 
 /-- The exact equative shifts the listener for both antonyms, at every rationality and every
@@ -516,7 +513,7 @@ theorem exactEquative_evaluative (hα : 0 < α) (p : Polarity) :
   cases p
   · simpa using exactEquative_tall hα
   · rw [Polarity.negative_smul, show Polarity.negative = Polarity.negative * .positive from rfl,
-      expectedDeviation_antonym hα.le, neg_neg]
+      expectedDeviation_antonym, neg_neg]
     exact exactEquative_tall hα
 
 end Evaluative
@@ -545,11 +542,10 @@ private theorem holds_none_recentre (m m' : Finset.Icc (5 : ℤ) 13) (u : Uttera
 private theorem listener_positive_recentre (hα : 0 < α) (m m' : Finset.Icc (5 : ℤ) 13)
     (u : Utterance) (w : World) :
     (listener none α cost u).fst {w.recentre m m'} = (listener none α cost u).fst {w} := by
-  have hu := comp_speaker_ne_zero (cost := cost) hα.le none u
   rw [Measure.fst_apply_singleton, Measure.fst_apply_singleton]
   refine Finset.sum_congr rfl fun σ _ ↦ ?_
-  rw [listener, posterior_apply_singleton _ _ hu,
-    posterior_apply_singleton _ _ hu, prior_prod_count_singleton,
+  rw [listener, RSA.listener_apply_singleton_eq_div,
+    RSA.listener_apply_singleton_eq_div, prior_prod_count_singleton,
     prior_prod_count_singleton, prior_singleton_congr (w' := w) (by simp [World.recentre])]
   congr 2
   exact congrFun (congrArg _ (RSA.speaker_listener_truthful_dirac_congr hα cost prior
@@ -560,6 +556,8 @@ private theorem listener_positive_recentre (hα : 0 < α) (m m' : Finset.Icc (5 
 stays uniformly distributed. -/
 theorem positive_centre_uniform (hα : 0 < α) (u : Utterance) :
     (listener none α cost u).fst.map World.centre = uniformOn Set.univ := by
+  have : IsProbabilityMeasure (listener none α cost u) :=
+    RSA.isProbabilityMeasure_listener _ _ (comp_speaker_ne_zero hα.le none u)
   set P := (listener none α cost u).fst
   have hconst : ∀ m m', P.map World.centre {m'} = P.map World.centre {m} := fun m m' ↦ by
     have hR : P.map (World.recentre m m') = P := Measure.ext_of_singleton fun w ↦ by
@@ -636,7 +634,9 @@ theorem evaluativity_balances (hα : 0 ≤ α) (c : Option Comparison) :
         simp_rw [mul_assoc]
     _ = ∑ q, (prior.prod Measure.count).real {q} * f q := by
         refine Finset.sum_congr rfl fun q _ ↦ ?_
-        rw [listener, ← Measure.comp_real_singleton, posterior_comp_self]
+        rw [listener]
+        simp_rw [RSA.comp_real_mul_listener_real]
+        rw [← Finset.mul_sum, sum_measureReal_singleton_eq_one, mul_one]
     _ = 0 := hsym
 
 end Balance
@@ -714,7 +714,7 @@ theorem expectedDeviation_congr_of_antonymsExclusive (hα : 0 < α) {c : Option 
   rw [expectedDeviation, expectedDeviation, integral_fintype .of_finite,
     integral_fintype .of_finite]
   refine Finset.sum_congr rfl fun w _ ↦ ?_
-  rw [listener_fst_real_singleton hα.le, listener_fst_real_singleton hα.le]
+  rw [listener_fst_real_singleton, listener_fst_real_singleton]
   simp only [measureReal_def, hS, hM]
 
 /-- The marked comparative is the unmarked comparative reflected, at the marked antonym's cost,
@@ -724,7 +724,7 @@ theorem comparative_negative_eq_neg (hα : 0 < α)
     expectedDeviation (some .gt) α cost .negative =
       -expectedDeviation (some .gt) α cost' .positive := by
   rw [show Polarity.negative = Polarity.negative * .positive from rfl,
-    expectedDeviation_antonym hα.le,
+    expectedDeviation_antonym,
     expectedDeviation_congr_of_antonymsExclusive (cost := cost ∘ Utterance.antonym)
       (cost' := cost') (p := .positive) hα antonymsExclusive_comparative hp.symm hs.symm]
 

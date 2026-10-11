@@ -71,17 +71,17 @@ section Framework
 variable {W M A : Type*} [Fintype W] [MeasurableSpace W] [DiscreteMeasurableSpace W]
   [Fintype M] [MeasurableSpace M] [DiscreteMeasurableSpace M] [Fintype A] [MeasurableSpace A]
 
-/-- The score of a message for the speaker: rationality times utility, less cost. -/
+/-- The speaker scores a message by rationality times utility, less cost. -/
 noncomputable def speakerScore (β : ℝ) (cost : M → ℝ) (π : Kernel M A) (R : A → W → ℝ)
     (w : W) (m : M) : EReal :=
   ((β * actionUtility π R m w - cost m : ℝ) : EReal)
 
-/-- (6): the speaker, the softmax of utility less cost at rationality `β`. -/
+/-- The speaker (6) is the softmax of utility less cost at rationality `β`. -/
 noncomputable def speaker (β : ℝ) (cost : M → ℝ) (π : Kernel M A) (R : A → W → ℝ) :
     Kernel W M :=
   Kernel.softmax (speakerScore β cost π R)
 
-/-- (8): the goodness of a message at a world, the listener's expected reward after the
+/-- The goodness (8) of a message at a world is the listener's expected reward after the
 message less what acting on the prior alone would have earned. -/
 noncomputable def goodness (πL πPrior : Kernel M A) (R : A → W → ℝ) (m : M) (w : W) : ℝ :=
   actionUtility πL R m w - actionUtility πPrior R m w
@@ -148,7 +148,7 @@ def actualCause {U V : Type*} [DecidableEq V] (M : CausalModel U V fun _ ↦ Boo
 
 namespace LateMeeting
 
-/-- The endogenous variables: Bob's tardiness, his forgetting the birthday, Charlie's
+/-- The endogenous variables are Bob's tardiness, his forgetting the birthday, and Charlie's
 crossness. -/
 inductive V | T | B | C
   deriving DecidableEq, Fintype, Repr
@@ -183,10 +183,10 @@ instance : semT.IsAcyclic := Finite.wellFounded_of_irrefl_transGen (by decide)
 
 instance : semConj.IsAcyclic := Finite.wellFounded_of_irrefl_transGen (by decide)
 
-/-- The context Bob knows: he was late and forgot the birthday. -/
+/-- In the context Bob knows, he was late and forgot the birthday. -/
 def context : Context := ⟨true, true⟩
 
-/-- "Because T" is true in both worlds and "because B" in the conjunctive world: the
+/-- "Because T" is true in both worlds and "because B" in the conjunctive world. These are the
 interpretation sets of Example 3, derived from actual causation with the empty contingency. -/
 theorem actualCause_T_semT : actualCause semT context .T .C :=
   ⟨by decide, by decide, ⊥, by decide, by decide⟩
@@ -197,27 +197,27 @@ theorem actualCause_T_semConj : actualCause semConj context .T .C :=
 theorem actualCause_B_semConj : actualCause semConj context .B .C :=
   ⟨by decide, by decide, ⊥, by decide, by decide⟩
 
-/-- "Because B" is false in the tardiness-only world, the negative membership of Example 3: no
-path runs from the birthday to crossness, so under no contingency is it but-for crossness. -/
+/-- "Because B" is false in the tardiness-only world, the negative membership of Example 3, since
+no path runs from the birthday to crossness, so under no contingency is it but-for crossness. -/
 theorem not_actualCause_B_semT : ¬ actualCause semT context .B .C := by
   rintro ⟨-, -, I, h1, h2⟩
   have hB : ¬ Relation.ReflTransGen semT.graph.Adj .B .C := by decide
   rw [CausalModel.solve_update_of_not_reflTransGen hB] at h1 h2
   exact h2 h1
 
-/-- The worlds: `0` the tardiness-only model, `1` the conjunctive model. -/
+/-- The worlds are the tardiness-only model `0` and the conjunctive model `1`. -/
 abbrev World := Fin 2
 
-/-- The messages: `0` "because T", `1` "because B". -/
+/-- The messages are "because T", `0`, and "because B", `1`. -/
 abbrev Msg := Fin 2
 
-/-- The actions of Table 3: `0` apologize for the tardiness alone, `1` for both. -/
+/-- The actions of Table 3 are to apologize for the tardiness alone, `0`, or for both, `1`. -/
 abbrev Act := Fin 2
 
 /-- The interpretation sets (Example 3). -/
 def sem : Msg → Finset World := ![{0, 1}, {1}]
 
-/-- Table 3: apologizing for what is the cause earns 1, otherwise −1. -/
+/-- In Table 3, apologizing for what is the cause earns 1, and otherwise −1. -/
 def reward : Act → World → ℝ := fun a w => if a = w then 1 else -1
 
 /-- The literal listener at the uniform prior (2). -/
@@ -263,8 +263,8 @@ theorem policy_prior_half (m : Msg) : (policy βL prior reward m).real {1} = 1 /
     expectedReward_prior, expectedReward_prior]
   simp [Real.sigmoid_zero]
 
-/-- The speaker's utilities (4): "because T" is worth nothing in either world, "because B" less
-than nothing in the tardiness-only world and more in the conjunctive one. -/
+/-- By the speaker's utilities (4), "because T" is worth nothing in either world, and "because
+B" less than nothing in the tardiness-only world and more in the conjunctive one. -/
 theorem utility_L0 :
     actionUtility (policy βL L0 reward) reward 0 0 = 0 ∧
       actionUtility (policy βL L0 reward) reward 0 1 = 0 ∧
@@ -337,21 +337,23 @@ theorem S_real_lt (hβL : 0 < βL) (hβS : 0 < βS) (c : ℝ) :
   exact Real.sigmoid_lt (by nlinarith)
 
 /-- The pragmatic listener (7). -/
-noncomputable def PL (βL βS c : ℝ) : Kernel Msg World := (S βL βS c)†μ
+noncomputable def PL (βL βS c : ℝ) : Kernel Msg World := RSA.listener μ (S βL βS c)
 
 instance (βL βS c : ℝ) : IsMarkovKernel (PL βL βS c) :=
-  inferInstanceAs (IsMarkovKernel ((S βL βS c)†μ))
+  ⟨fun m ↦ RSA.isProbabilityMeasure_listener_of_ne_zero _ _ (μ_singleton 0).1
+    (S_apply_ne_zero βL βS c 0 m)⟩
 
-/-- The pragmatic listener hearing "because T" raises the tardiness-only world above its prior:
-the speaker would have cited the birthday in the conjunctive world. -/
+/-- The pragmatic listener hearing "because T" raises the tardiness-only world above its prior,
+since the speaker would have cited the birthday in the conjunctive world. -/
 theorem pragmatic_T (hβL : 0 < βL) (hβS : 0 < βS) (c : ℝ) :
     μ.real {0} < (PL βL βS c 0).real {0} := by
-  rw [PL, real_lt_posterior_real_singleton_iff_of_pair (S βL βS c) μ (ω := 0) (ω' := 1)
+  rw [PL, RSA.listener_apply_eq_posterior _ _ (comp_S_ne_zero βL βS c),
+    real_lt_posterior_real_singleton_iff_of_pair (S βL βS c) μ (ω := 0) (ω' := 1)
     (by decide) (fun w _ => by fin_cases w <;> simp) (comp_S_ne_zero βL βS c) (μ_singleton 0).1
     (μ_singleton 1).1]
   exact S_real_lt hβL hβS c
 
-/-- Goodness (8): citing the tardiness is worth giving, although Bob already knew it. -/
+/-- By goodness (8), citing the tardiness is worth giving, although Bob already knew it. -/
 theorem goodness_pos (hβL : 0 < βL) (hβS : 0 < βS) (c : ℝ) :
     0 < goodness (policy βL (PL βL βS c) reward) (policy βL prior reward) reward 0 0 := by
   have hpost : μ.real {0} < (PL βL βS c 0).real {0} := pragmatic_T hβL hβS c
@@ -386,26 +388,27 @@ end LateMeeting
 
 namespace RoofReplacement
 
-/-- The worlds: `0` the roof-only model, `1` the drought-only model, `2` conjunctive, `3`
-disjunctive, all at the context where the roof is thatched and there was a drought. -/
+/-- The worlds are the roof-only model `0`, the drought-only model `1`, the conjunctive `2` and
+the disjunctive `3`, all at the context where the roof is thatched and there was a drought. -/
 abbrev World := Fin 4
 
-/-- The messages: `0` "because R", `1` "because D". -/
+/-- The messages are "because R", `0`, and "because D", `1`. -/
 abbrev Msg := Fin 2
 
-/-- The actions of Table 1: `0` replace the roof, `1` do not. -/
+/-- The actions of Table 1 are to replace the roof, `0`, or not, `1`. -/
 abbrev Act := Fin 2
 
 /-- The interpretation sets of Example 2. -/
 def sem : Msg → Finset World := ![{0, 2, 3}, {1, 2, 3}]
 
-/-- Table 1: replacing earns 0 everywhere; not replacing earns 1 in the drought-only world and
-−1 elsewhere. -/
+/-- In Table 1, replacing earns 0 everywhere, and not replacing earns 1 in the drought-only
+world and −1 elsewhere. -/
 def reward : Act → World → ℝ := fun a w => if a = 0 then 0 else if w = 1 then 1 else -1
 
 noncomputable abbrev L0 : Kernel Msg World := uniformListener sem
 
-/-- Equally informative: the conjunctive world is as likely after either message. -/
+/-- The two messages are equally informative, in that the conjunctive world is as likely after
+either. -/
 theorem L0_conj_eq : (L0 0).real {2} = (L0 1).real {2} := by
   simp [uniformListener_apply_singleton, measureReal_def, sem]
 
@@ -416,8 +419,8 @@ theorem expectedReward_L0 :
     simp [expectedReward, Fin.sum_univ_four, uniformListener_apply_singleton, measureReal_def, sem,
       reward] <;> norm_num
 
-/-- Not equally useful: at any rationality the listener replaces the roof more readily after
-"because R" than after "because D". -/
+/-- The two messages are not equally useful, since at any rationality the listener replaces the
+roof more readily after "because R" than after "because D". -/
 theorem policy_replace_lt {βL : ℝ} (hβ : 0 < βL) :
     (policy βL L0 reward 1).real {0} < (policy βL L0 reward 0).real {0} := by
   obtain ⟨h00, h01, h10, h11⟩ := expectedReward_L0
@@ -432,14 +435,14 @@ end RoofReplacement
 
 namespace MilkTheft
 
-/-- The worlds: the contexts in which Charlie alone (`0`), Dana alone (`1`), or both (`2`) drank
-the milk, in the disjunctive model. -/
+/-- The worlds are the contexts in which Charlie alone (`0`), Dana alone (`1`), or both (`2`)
+drank the milk, in the disjunctive model. -/
 abbrev World := Fin 3
 
-/-- The messages: `0` "because C", `1` "because D", `2` "because C and D". -/
+/-- The messages are "because C", `0`, "because D", `1`, and "because C and D", `2`. -/
 abbrev Msg := Fin 3
 
-/-- The actions of Table 5: confront Charlie (`0`), Dana (`1`), or both (`2`). -/
+/-- The actions of Table 5 are to confront Charlie (`0`), Dana (`1`), or both (`2`). -/
 abbrev Act := Fin 3
 
 /-- The interpretation sets of Example 4. -/
@@ -476,7 +479,7 @@ theorem policy_L0 {βL : ℝ} (hβ : 0 < βL) :
     simp
 
 /-- With a sufficient cost difference the speaker prefers the shorter message although it is
-less useful: the redundancy trade-off of section 4.4.1. -/
+less useful, the redundancy trade-off of section 4.4.1. -/
 theorem speaker_prefers_short {βL βS : ℝ} (cost : Msg → ℝ)
     (h : βS * (actionUtility (policy βL L0 reward) reward 2 2 -
         actionUtility (policy βL L0 reward) reward 0 2)

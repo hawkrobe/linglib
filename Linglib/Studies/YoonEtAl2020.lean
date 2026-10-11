@@ -77,7 +77,7 @@ inductive Adjective
 
 instance : MeasurableSpace Adjective := ⊤
 
-/-- An utterance is an adjective, plain or negated: *it was X* or *it wasn't X*. -/
+/-- An utterance is an adjective, plain or negated, as in *it was X* or *it wasn't X*. -/
 abbrev Utterance := Adjective × Bool
 
 /-- The speaker's goal condition in the production experiment. -/
@@ -139,16 +139,15 @@ def acceptance : Adjective → Bool → HeartState → ℕ
   | .amazing, true, .h2 => 38
   | .amazing, true, .h3 => 0
 
-/-- The soft literal meaning `𝓛(s)` of an utterance: its acceptance proportion at the state. -/
+/-- The soft literal meaning `𝓛(s)` of an utterance is its acceptance proportion at the state. -/
 def meaning (u : Utterance) (s : HeartState) : ℚ := acceptance u.1 u.2 s / 49
 
-/-- The lexicon is soft: values in `[0, 1]`. -/
+/-- The lexicon is soft, with values in `[0, 1]`. -/
 theorem meaning_bounded (u : Utterance) (s : HeartState) : 0 ≤ meaning u s ∧ meaning u s ≤ 1 := by
   obtain ⟨a, b⟩ := u
   cases a <;> cases b <;> cases s <;> constructor <;> norm_num [meaning, acceptance]
 
-/-- The cost of an utterance: a plain adjective costs 1, a negated one the cost of negation
-`c`. -/
+/-- A plain adjective costs 1, and a negated one the cost of negation `c`. -/
 def cost (c : ℝ) (u : Utterance) : ℝ := if u.2 then c else 1
 
 /-! ### The literal listener
@@ -217,7 +216,7 @@ theorem util_ne_top (α c : ℝ) (p : HeartState × Phi) (u : Utterance) : util 
   · exact bot_ne_top
   · exact EReal.coe_ne_top _
 
-/-- Every situation has an applicable utterance: the adjective accepted at its state. -/
+/-- Every situation has an applicable utterance, the adjective accepted at its state. -/
 theorem util_exists_ne_bot (α c : ℝ) (p : HeartState × Phi) : ∃ u, util α c p u ≠ ⊥ := by
   obtain ⟨s, φ⟩ := p
   cases s
@@ -234,7 +233,7 @@ theorem util_exists_ne_bot (α c : ℝ) (p : HeartState × Phi) : ∃ u, util α
       rw [util_ungated (by norm_num [meaning, acceptance])]
       exact EReal.coe_ne_bot _⟩
 
-/-- The first-order speaker, (5): the score speaker of `util`. -/
+/-- The first-order speaker (5) is the score speaker of `util`. -/
 noncomputable def speaker (α c : ℝ) : Kernel (HeartState × Phi) Utterance :=
   Kernel.softmax (util α c)
 
@@ -272,8 +271,8 @@ theorem social_prefers_indirect_iff {α : ℝ} (hα : 0 < α) (c : ℝ) (s : Hea
   simp only [cost, Bool.false_eq_true, ite_true, ite_false]
   constructor <;> intro h <;> linarith
 
-/-- The pure-social speaker prefers "amazing" to "not amazing": the direct form is both kinder
-and no costlier. -/
+/-- The pure-social speaker prefers "amazing" to "not amazing", since the direct form is both
+kinder and no costlier. -/
 theorem social_prefers_positive {α c : ℝ} (hα : 0 < α) (hc : 1 ≤ c) (s : HeartState) :
     (speaker α c (s, .p0)).real {(.amazing, true)}
       < (speaker α c (s, .p0)).real {(.amazing, false)} := by
@@ -282,7 +281,7 @@ theorem social_prefers_positive {α c : ℝ} (hα : 0 < α) (hc : 1 ≤ c) (s : 
   norm_num
   linarith
 
-/-- The pure-informative speaker prefers the direct "terrible" at zero hearts: the literal
+/-- The pure-informative speaker prefers the direct "terrible" at zero hearts, since the literal
 listener puts far more of the mass of "terrible" than of "not terrible" on that state, and the
 direct form is no costlier. -/
 theorem informative_prefers_direct {α c : ℝ} (hα : 0 < α) (hc : 1 ≤ c) :
@@ -300,8 +299,8 @@ theorem informative_prefers_direct {α c : ℝ} (hα : 0 < α) (hc : 1 ≤ c) :
   norm_num
   linarith
 
-/-- The pure-informative speaker prefers the direct "amazing" at three hearts: "not amazing" is
-never accepted there, so its score is `⊥`. -/
+/-- The pure-informative speaker prefers the direct "amazing" at three hearts, where "not
+amazing" is never accepted, so its score is `⊥`. -/
 theorem informative_prefers_direct_positive (α c : ℝ) :
     (speaker α c (.h3, .p100)).real {(.amazing, true)}
       < (speaker α c (.h3, .p100)).real {(.amazing, false)} := by
@@ -329,10 +328,10 @@ theorem comp_speaker_ne_zero (α c : ℝ) (u : Utterance) : (speaker α c ∘ₘ
   obtain ⟨a, b⟩ := u
   cases a <;> cases b <;> exact key .h0 (by norm_num [meaning, acceptance])
 
-/-- The pragmatic listener, (4): the posterior over `(s, φ)` given the utterance. Its first
-marginal is `P_L1(s | w)` and its second `P_L1(φ | w)`, the probability inside (3). -/
+/-- The pragmatic listener (4) infers the state and the goal weight `(s, φ)` from the utterance.
+Its first marginal is `P_L1(s | w)` and its second `P_L1(φ | w)`, the probability inside (3). -/
 noncomputable def listener (α c : ℝ) : Kernel Utterance (HeartState × Phi) :=
-  (speaker α c)†prior
+  RSA.listener prior (speaker α c)
 
 /-! ### The second-order polite speaker, (1)–(3) -/
 
@@ -342,20 +341,21 @@ structure S2Weights where
   wSoc : ℚ
   wPres : ℚ
 
-/-- Table 2: the maximum a posteriori goal weights of the full model in each goal condition. -/
+/-- Table 2 gives the maximum a posteriori goal weights of the full model in each goal
+condition. -/
 def tableTwo : GoalCondition → S2Weights
   | .both => ⟨36/100, 11/100, 54/100⟩
   | .informative => ⟨36/100, 2/100, 62/100⟩
   | .kind => ⟨25/100, 31/100, 44/100⟩
 
-/-- Table 2: the maximum a posteriori projected goal weight `φ` of the full model in each goal
-condition. -/
+/-- Table 2 gives the maximum a posteriori projected goal weight `φ` of the full model in each
+goal condition. -/
 def tableTwoPhi : GoalCondition → ℚ
   | .both => 36/100
   | .informative => 49/100
   | .kind => 37/100
 
-/-- The total utility (2) with the presentational utility (3):
+/-- The total utility (2), with the presentational utility (3), is
 `ω_inf · ln P_L1(s | w) + ω_soc · E_{P_L1(· | w)}[V] + ω_pres · ln P_L1(phiHat | w) − C(w)`, for the
 projected goal weight `phiHat`. -/
 noncomputable def s2Utility (α c : ℝ) (W : S2Weights) (phiHat : Phi) (s : HeartState)
@@ -365,7 +365,7 @@ noncomputable def s2Utility (α c : ℝ) (W : S2Weights) (phiHat : Phi) (s : Hea
     + (W.wPres : ℝ) * Real.log ((listener α c u).snd.real {phiHat})
     - cost c u
 
-/-- The second-order speaker, (1): the score speaker of the total utility scaled by `α`. -/
+/-- The second-order speaker (1) is the score speaker of the total utility scaled by `α`. -/
 noncomputable def s2Speaker (α c : ℝ) (W : S2Weights) (phiHat : Phi) :
     Kernel HeartState Utterance :=
   Kernel.softmax fun s u => ((α * s2Utility α c W phiHat s u : ℝ) : EReal)

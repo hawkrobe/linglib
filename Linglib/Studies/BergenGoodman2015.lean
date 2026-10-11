@@ -106,7 +106,7 @@ noiseless counterpart. -/
 
 section NoisyRSA
 
-variable {W I U : Type*} [MeasurableSpace I] [MeasurableSpace U] [Fintype U]
+variable {W I U : Type*} [MeasurableSpace I] [MeasurableSpace U]
 
 section Meaning
 
@@ -118,12 +118,11 @@ noncomputable def noisyMeaning (N : Kernel I U) (ρ : Measure I) (m : I → W �
 
 variable [Fintype I] [MeasurableSingletonClass I]
 
-omit [Fintype U] in
 theorem noisyMeaning_apply (N : Kernel I U) (ρ : Measure I) (m : I → W → ℝ≥0∞) (u_p : U)
     (w : W) : noisyMeaning N ρ m u_p w = ∑ u_i, N u_i {u_p} * m u_i w * ρ {u_i} :=
   lintegral_fintype _
 
-variable [MeasurableSingletonClass U]
+variable [Fintype U] [MeasurableSingletonClass U]
 
 /-- Without noise the perceived utterance is the intended one, weighted by its prior. -/
 theorem noisyMeaning_id (ρ : Measure U) (m : U → W → ℝ≥0∞) (u : U) (w : W) :
@@ -137,7 +136,7 @@ theorem noisyMeaning_id (ρ : Measure U) (m : U → W → ℝ≥0∞) (u : U) (w
 
 end Meaning
 
-variable [MeasurableSpace W]
+variable [MeasurableSpace W] [Fintype U]
 
 section Speaker
 
@@ -159,6 +158,42 @@ theorem channelMix_ne_top (N : Kernel I U) (L : Kernel U W) [IsFiniteKernel L] (
   ENNReal.prod_ne_top fun _ _ => ENNReal.rpow_ne_top_of_nonneg ENNReal.toReal_nonneg
     (measure_ne_top _ _)
 
+section
+
+variable [Fintype I] [MeasurableSingletonClass I] [Fintype W] [MeasurableSingletonClass W]
+
+/-- The speaker over the channel (eqs. 4 and 7) weights each utterance by the channel-mixed
+listener to the power `α`, scaled by the cost weight `exp (-(α * C u))`. -/
+noncomputable def noisySpeaker (N : Kernel I U) (α : ℝ) (C : I → ℝ) (L : Kernel U W) :
+    Kernel W I :=
+  Kernel.ofWeights fun w u => channelMix N L u w ^ α * ENNReal.ofReal (Real.exp (-(α * C u)))
+
+@[simp] theorem noisySpeaker_apply_singleton (N : Kernel I U) (α : ℝ) (C : I → ℝ)
+    (L : Kernel U W) (w : W) (u : I) :
+    noisySpeaker N α C L w {u} =
+      channelMix N L u w ^ α * ENNReal.ofReal (Real.exp (-(α * C u)))
+        / ∑ u', channelMix N L u' w ^ α * ENNReal.ofReal (Real.exp (-(α * C u'))) :=
+  Kernel.ofWeights_apply_singleton _ w u
+
+instance (N : Kernel I U) (α : ℝ) (C : I → ℝ) (L : Kernel U W) :
+    IsFiniteKernel (noisySpeaker N α C L) :=
+  inferInstanceAs (IsFiniteKernel (Kernel.ofWeights _))
+
+/-- Row preference of the speaker reduces to comparing the weighted channel-mixed listener
+values; the normalization cancels. -/
+theorem noisySpeaker_real_singleton_lt_iff {N : Kernel I U} {α : ℝ} (hα : 0 ≤ α) {C : I → ℝ}
+    {L : Kernel U W} [IsFiniteKernel L] {w : W}
+    (h0 : ∃ u, channelMix N L u w ^ α * ENNReal.ofReal (Real.exp (-(α * C u))) ≠ 0) {u u' : I} :
+    (noisySpeaker N α C L w).real {u} < (noisySpeaker N α C L w).real {u'} ↔
+      channelMix N L u w ^ α * ENNReal.ofReal (Real.exp (-(α * C u)))
+        < channelMix N L u' w ^ α * ENNReal.ofReal (Real.exp (-(α * C u'))) :=
+  Kernel.ofWeights_real_singleton_lt_iff w
+    (fun h => let ⟨u₀, hu₀⟩ := h0; hu₀ (sum_eq_zero_iff.mp h u₀ (mem_univ _)))
+    (ENNReal.sum_ne_top.mpr fun u _ => ENNReal.mul_ne_top
+      (ENNReal.rpow_ne_top_of_nonneg hα (channelMix_ne_top N L u w)) ENNReal.ofReal_ne_top)
+
+end
+
 variable [MeasurableSingletonClass U]
 
 /-- Without noise the literal listener is the noiseless one at every utterance of positive
@@ -175,39 +210,7 @@ theorem channelMix_id (L : Kernel U W) (u : U) (w : W) : channelMix Kernel.id L 
     prod_singleton, Kernel.id_apply, Measure.dirac_apply_of_mem (Set.mem_singleton u),
     ENNReal.toReal_one, ENNReal.rpow_one]
 
-variable [Fintype I] [MeasurableSingletonClass I] [Fintype W] [MeasurableSingletonClass W]
-
-/-- The speaker over the channel (eqs. 4 and 7) weights each utterance by the channel-mixed
-listener to the power `α`, scaled by the cost weight `exp (-(α * C u))`. -/
-noncomputable def noisySpeaker (N : Kernel I U) (α : ℝ) (C : I → ℝ) (L : Kernel U W) :
-    Kernel W I :=
-  Kernel.ofWeights fun w u => channelMix N L u w ^ α * ENNReal.ofReal (Real.exp (-(α * C u)))
-
-omit [MeasurableSingletonClass U] in
-@[simp] theorem noisySpeaker_apply_singleton (N : Kernel I U) (α : ℝ) (C : I → ℝ)
-    (L : Kernel U W) (w : W) (u : I) :
-    noisySpeaker N α C L w {u} =
-      channelMix N L u w ^ α * ENNReal.ofReal (Real.exp (-(α * C u)))
-        / ∑ u', channelMix N L u' w ^ α * ENNReal.ofReal (Real.exp (-(α * C u'))) :=
-  Kernel.ofWeights_apply_singleton _ w u
-
-instance (N : Kernel I U) (α : ℝ) (C : I → ℝ) (L : Kernel U W) :
-    IsFiniteKernel (noisySpeaker N α C L) :=
-  inferInstanceAs (IsFiniteKernel (Kernel.ofWeights _))
-
-omit [MeasurableSingletonClass U] in
-/-- Row preference of the speaker reduces to comparing the weighted channel-mixed listener
-values; the normalization cancels. -/
-theorem noisySpeaker_real_singleton_lt_iff {N : Kernel I U} {α : ℝ} (hα : 0 ≤ α) {C : I → ℝ}
-    {L : Kernel U W} [IsFiniteKernel L] {w : W}
-    (h0 : ∃ u, channelMix N L u w ^ α * ENNReal.ofReal (Real.exp (-(α * C u))) ≠ 0) {u u' : I} :
-    (noisySpeaker N α C L w).real {u} < (noisySpeaker N α C L w).real {u'} ↔
-      channelMix N L u w ^ α * ENNReal.ofReal (Real.exp (-(α * C u)))
-        < channelMix N L u' w ^ α * ENNReal.ofReal (Real.exp (-(α * C u'))) :=
-  Kernel.ofWeights_real_singleton_lt_iff w
-    (fun h => let ⟨u₀, hu₀⟩ := h0; hu₀ (sum_eq_zero_iff.mp h u₀ (mem_univ _)))
-    (ENNReal.sum_ne_top.mpr fun u _ => ENNReal.mul_ne_top
-      (ENNReal.rpow_ne_top_of_nonneg hα (channelMix_ne_top N L u w)) ENNReal.ofReal_ne_top)
+variable [Fintype W] [MeasurableSingletonClass W]
 
 /-- Without noise the speaker is the noiseless one. -/
 theorem noisySpeaker_id (α : ℝ) (C : U → ℝ) (L : Kernel U W) [IsFiniteKernel L] :
@@ -223,14 +226,13 @@ end Speaker
 section Listener
 
 variable [MeasurableSingletonClass U] [Fintype W] [MeasurableSingletonClass W]
-  [StandardBorelSpace W] [Nonempty W]
 
 /-- Without noise the pragmatic listener over the channel is the noiseless one. -/
-theorem posterior_id_comp_noisySpeaker (α : ℝ) (C : U → ℝ) (L : Kernel U W)
-    [IsFiniteKernel L] (μ : Measure W) [IsFiniteMeasure μ] :
-    ((Kernel.id ∘ₖ noisySpeaker Kernel.id α C L)†μ) =
-      ((speaker α C L Measure.dirac)†μ) := by
-  simp only [noisySpeaker_id, Kernel.id_comp]
+theorem listener_id_comp_noisySpeaker (α : ℝ) (C : U → ℝ) (L : Kernel U W)
+    [IsFiniteKernel L] (μ : Measure W) :
+    listener μ (Kernel.id ∘ₖ noisySpeaker Kernel.id α C L) =
+      listener μ (speaker α C L Measure.dirac) := by
+  rw [Kernel.id_comp, noisySpeaker_id]
 
 end Listener
 
@@ -300,7 +302,7 @@ noncomputable abbrev S1 (δ : ℝ) : Kernel Meaning Meaning := noisySpeaker (N �
 
 /-- The pragmatic listener (eq. 8). -/
 noncomputable abbrev L1 (δ : ℝ) : Kernel Utterance Meaning :=
-  ((N δ ∘ₖ noisySpeaker (N δ) 1 0 (L0 δ))†μ)
+  listener μ (N δ ∘ₖ S1 δ)
 
 variable {δ : ℝ} (m : Meaning)
 
@@ -396,11 +398,8 @@ theorem L1_subject : L1 δ (.subject m) = Measure.dirac m := by
   have hmarg : ((N δ ∘ₖ S1 δ) ∘ₘ μ) {.subject m} = ENNReal.ofReal δ := by
     rw [Measure.comp_apply_singleton]
     simp [comp_apply_subject m hδ₀ hδ₁]
-  have hx : ((N δ ∘ₖ S1 δ) ∘ₘ μ) {.subject m} ≠ 0 := by
-    rw [hmarg]; exact (ENNReal.ofReal_pos.mpr hδ₀).ne'
   refine Measure.ext_of_singleton fun w => ?_
-  change ((N δ ∘ₖ S1 δ)†μ) (.subject m) {w} = _
-  rw [posterior_apply_singleton _ _ hx, hmarg, comp_apply_subject m hδ₀ hδ₁]
+  rw [listener_apply_singleton_eq_div, hmarg, comp_apply_subject m hδ₀ hδ₁]
   simp only [Measure.dirac_apply' _ (.singleton w), Set.indicator_apply, Set.mem_singleton_iff,
     Pi.one_apply]
   by_cases h : w = m

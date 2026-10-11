@@ -337,11 +337,10 @@ noncomputable def jointSpeaker : Kernel (State × (Obs × Access)) SimpleExpr :=
 instance : IsMarkovKernel (jointSpeaker lam θ P) :=
   ⟨fun x ↦ by rw [jointSpeaker, Kernel.ofFunOfCountable_apply]; infer_instance⟩
 
-/-- The pragmatic listener of (18) is the Bayesian inverse of the speaker against the joint
-prior; its first marginal is the state listener of (19), its second the observation listener
-of (20). -/
+/-- The pragmatic listener of (18) inverts the speaker against the joint prior; its first
+marginal is the state listener of (19), its second the observation listener of (20). -/
 noncomputable def listener : Kernel SimpleExpr (State × (Obs × Access)) :=
-  (jointSpeaker lam θ P)†(joint P A)
+  RSA.listener (joint P A) (jointSpeaker lam θ P)
 
 /-- No message rules out a state. A state of positive prior keeps positive posterior whenever
 drawing nothing has positive prior, since the speaker who drew nothing may send any message. -/
@@ -352,13 +351,7 @@ theorem listener_fst_apply_singleton_ne_zero {s : State} (hP : P {s} ≠ 0) (hA 
     exact mul_ne_zero (mul_ne_zero hP hA)
       ((obs_apply_singleton_ne_zero_iff 0 s 0).2 (by simp))
   have hs : jointSpeaker lam θ P (s, (0, 0)) {m} ≠ 0 := speaker_apply_singleton_ne_zero lam θ P _ m
-  have hu : (jointSpeaker lam θ P ∘ₘ joint P A) {m} ≠ 0 :=
-    comp_apply_singleton_ne_zero _ _ hj hs
-  rw [Measure.fst_apply_singleton]
-  refine ne_of_gt (lt_of_lt_of_le ?_ (Finset.single_le_sum (fun _ _ ↦ zero_le)
-    (Finset.mem_univ (0, 0))))
-  rw [listener, posterior_apply_singleton _ _ hu]
-  exact ENNReal.div_pos_iff.2 ⟨mul_ne_zero hj hs, measure_ne_top _ _⟩
+  exact (RSA.listener_fst_apply_singleton_ne_zero_iff _ _ m s).2 ⟨(0, 0), hj, hs⟩
 
 end PragmaticListener
 

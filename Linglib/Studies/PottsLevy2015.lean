@@ -194,13 +194,11 @@ noncomputable def S1 (l : Lex) : Kernel World Msg := speaker α (cost c · / α)
 
 instance (l : Lex) : IsFiniteKernel (S1 α c l) := inferInstanceAs (IsFiniteKernel (speaker _ _ _ _))
 
-/-- The fixed-lexicon pragmatic listener (12) is the speaker's Bayesian inverse at a flat
-prior. -/
+/-- The fixed-lexicon pragmatic listener (12) inverts the speaker against a flat prior. -/
 noncomputable def l1 (l : Lex) : Kernel Msg World :=
-  ((S1 α c l)†(uniformOn Set.univ))
+  listener (uniformOn Set.univ) (S1 α c l)
 
-instance (l : Lex) : IsMarkovKernel (l1 α c l) :=
-  inferInstanceAs (IsMarkovKernel ((_†_)))
+instance (l : Lex) : IsFiniteKernel (l1 α c l) := inferInstanceAs (IsFiniteKernel (listener _ _))
 
 /-- The lexical-uncertainty listener (14) at k = 1 inverts the lexicon-indexed speaker against a
 flat prior over states and lexica. -/
@@ -218,7 +216,7 @@ noncomputable def S2 : Kernel (World × Lex) Msg :=
 instance : IsFiniteKernel (S2 α β c) := inferInstanceAs (IsFiniteKernel (Kernel.ofWeights _))
 
 /-- The lexical-uncertainty listener (14) at k = 2. -/
-noncomputable def L2 : Kernel Msg (World × Lex) := (S2 α β c)†(uniformOn Set.univ)
+noncomputable def L2 : Kernel Msg (World × Lex) := listener (uniformOn Set.univ) (S2 α β c)
 
 /-- The marginal expertise speaker (17) at a flat lexicon prior. -/
 noncomputable def S2exp : Kernel World Msg :=
@@ -231,6 +229,18 @@ end Tower
 section Listener
 
 variable {α c : ℝ}
+
+/-- State preference of the fixed-lexicon listener is the speaker's preference. -/
+theorem l1_real_lt_iff (l : Lex) (m : Msg) (v v' : World) :
+    (l1 α c l m).real {v} < (l1 α c l m).real {v'} ↔
+      (S1 α c l v).real {m} < (S1 α c l v').real {m} :=
+  listener_uniformOn_real_lt_iff _ m v v'
+
+/-- On reals, the fixed-lexicon listener's mass is the speaker's share of the message at the
+state over its shares at every state. -/
+theorem l1_real (l : Lex) (m : Msg) (w : World) :
+    (l1 α c l m).real {w} = (S1 α c l w).real {m} / ∑ w', (S1 α c l w').real {m} := by
+  simpa [l1] using listener_uniformOn_univ_real_finset (S1 α c l) m {w}
 
 /-- State preference of the joint listener is the pooled speaker preference. -/
 theorem L1_fst_real_lt_iff (m : Msg) (v v' : World) :
@@ -269,10 +279,7 @@ theorem S1_ne_zero_iff (l : Lex) (w : World) (m : Msg) : S1 α c l w {m} ≠ 0 �
 /-- The fixed-lexicon listener assigns mass to a state exactly when the message is true
 there. -/
 theorem l1_ne_zero_iff (l : Lex) (m : Msg) (w : World) : l1 α c l m {w} ≠ 0 ↔ w ∈ sem l m := by
-  obtain ⟨w₀, h₀⟩ := sem_nonempty l m
-  rw [l1, posterior_apply_singleton_ne_zero_iff _ _ (comp_apply_singleton_ne_zero _ _
-      (uniformOn_univ_singleton_ne_zero w₀) ((S1_ne_zero_iff hα l w₀ m).2 h₀)),
-    and_iff_right (uniformOn_univ_singleton_ne_zero w)]
+  rw [l1, listener_apply_singleton_ne_zero_iff, and_iff_right (uniformOn_univ_singleton_ne_zero w)]
   exact S1_ne_zero_iff hα l w m
 
 /-- The joint listener assigns mass to a state–lexicon pair exactly when the message is true
@@ -287,27 +294,6 @@ theorem L1_snd_ne_zero (m : Msg) (l : Lex) : (L1 α c m).snd {l} ≠ 0 := by
   rw [Measure.snd_apply_singleton]
   exact fun h => (L1_ne_zero_iff hα m (w₀, l)).2 h₀
     (Finset.sum_eq_zero_iff.1 h w₀ (Finset.mem_univ _))
-
-/-- State preference of the fixed-lexicon listener is the speaker's preference. -/
-theorem l1_real_lt_iff (l : Lex) (m : Msg) (v v' : World) :
-    (l1 α c l m).real {v} < (l1 α c l m).real {v'} ↔
-      (S1 α c l v).real {m} < (S1 α c l v').real {m} :=
-  let ⟨w₀, h₀⟩ := sem_nonempty l m
-  posterior_real_singleton_lt_iff_of_forall_eq _ _
-    uniformOn_univ_singleton_eq uniformOn_univ_singleton_ne_zero
-    ((S1_ne_zero_iff hα l w₀ m).2 h₀)
-
-/-- On reals, the fixed-lexicon listener's mass is the speaker's share of the message at the
-state over its shares at every state. -/
-theorem l1_real (l : Lex) (m : Msg) (w : World) :
-    (l1 α c l m).real {w} = (S1 α c l w).real {m} / ∑ w', (S1 α c l w').real {m} := by
-  obtain ⟨w₀, h₀⟩ := sem_nonempty l m
-  have hx : ∑ w', S1 α c l w' {m} ≠ 0 := fun h =>
-    (S1_ne_zero_iff hα l w₀ m).2 h₀ (Finset.sum_eq_zero_iff.1 h w₀ (Finset.mem_univ _))
-  simp only [measureReal_def]
-  rw [show l1 α c l = (S1 α c l)†(uniformOn Set.univ) from rfl,
-    posterior_uniformOn_univ_apply_singleton _ hx w, ENNReal.toReal_div,
-    ENNReal.toReal_sum fun _ _ => measure_ne_top _ _]
 
 end Model
 
@@ -336,16 +322,9 @@ theorem S1_real {α : ℝ} (hα : 0 < α) (c : ℝ) (l : Lex) (w : World) (m : M
 
 section Expertise
 
-variable {α β : ℝ} (hα : 0 < α) (hβ : 0 ≤ β) {c : ℝ}
-include hα hβ
+variable {α β : ℝ} (hα : 0 < α) {c : ℝ}
+include hα
 
-private theorem S2_weight_ne_top (p : World × Lex) (m : Msg) :
-    l1 α c p.2 m {p.1} ^ α * (L1 α c m).snd {p.2} ^ β * ENNReal.ofReal (Real.exp (-cost c m)) ≠
-      ∞ :=
-  ENNReal.mul_ne_top (ENNReal.mul_ne_top (ENNReal.rpow_ne_top_of_nonneg hα.le (measure_ne_top _ _))
-    (ENNReal.rpow_ne_top_of_nonneg hβ (measure_ne_top _ _))) ENNReal.ofReal_ne_top
-
-omit hβ in
 private theorem S2_weight_ne_zero {p : World × Lex} {m : Msg} (hm : p.1 ∈ sem p.2 m) :
     l1 α c p.2 m {p.1} ^ α * (L1 α c m).snd {p.2} ^ β * ENNReal.ofReal (Real.exp (-cost c m)) ≠
       0 :=
@@ -354,6 +333,21 @@ private theorem S2_weight_ne_zero {p : World × Lex} {m : Msg} (hm : p.1 ∈ sem
       (measure_ne_top _ _)).ne'
     (ENNReal.rpow_pos (pos_iff_ne_zero.2 (L1_snd_ne_zero hα m p.2)) (measure_ne_top _ _)).ne')
     (ENNReal.ofReal_pos.2 (Real.exp_pos _)).ne'
+
+/-- The expertise speaker gives no mass to a message false at the state under her lexicon. -/
+theorem S2_apply_eq_zero {p : World × Lex} {m : Msg} (hm : p.1 ∉ sem p.2 m) : S2 α β c p {m} = 0 :=
+  Kernel.ofWeights_apply_singleton_eq_zero (by
+    rw [not_ne_iff.1 (mt (l1_ne_zero_iff hα p.2 m p.1).1 hm), ENNReal.zero_rpow_of_pos hα,
+      zero_mul, zero_mul])
+
+variable (hβ : 0 ≤ β)
+include hβ
+
+private theorem S2_weight_ne_top (p : World × Lex) (m : Msg) :
+    l1 α c p.2 m {p.1} ^ α * (L1 α c m).snd {p.2} ^ β * ENNReal.ofReal (Real.exp (-cost c m)) ≠
+      ∞ :=
+  ENNReal.mul_ne_top (ENNReal.mul_ne_top (ENNReal.rpow_ne_top_of_nonneg hα.le (measure_ne_top _ _))
+    (ENNReal.rpow_ne_top_of_nonneg hβ (measure_ne_top _ _))) ENNReal.ofReal_ne_top
 
 /-- Message preference of the expertise speaker is weight preference on reals. -/
 theorem S2_real_lt_iff (p : World × Lex) (m₁ m₂ : Msg) :
@@ -369,13 +363,6 @@ theorem S2_real_lt_iff (p : World × Lex) (m₁ m₂ : Msg) :
     ← ENNReal.toReal_lt_toReal (S2_weight_ne_top hα hβ p m₁) (S2_weight_ne_top hα hβ p m₂)]
   simp only [ENNReal.toReal_mul, ← ENNReal.toReal_rpow, measureReal_def,
     ENNReal.toReal_ofReal (Real.exp_pos _).le, costFactor]
-
-omit hβ in
-/-- The expertise speaker gives no mass to a message false at the state under her lexicon. -/
-theorem S2_apply_eq_zero {p : World × Lex} {m : Msg} (hm : p.1 ∉ sem p.2 m) : S2 α β c p {m} = 0 :=
-  Kernel.ofWeights_apply_singleton_eq_zero (by
-    rw [not_ne_iff.1 (mt (l1_ne_zero_iff hα p.2 m p.1).1 hm), ENNReal.zero_rpow_of_pos hα,
-      zero_mul, zero_mul])
 
 end Expertise
 
@@ -518,7 +505,7 @@ theorem s2_prefers_disjunction (hc0 : 0 ≤ c) (hc10 : c ≤ Real.log 10) (m : M
   cases m
   case AorX => exact absurd rfl hm
   all_goals
-    simp +decide only [l1_real two_pos, L1_snd_real, Fintype.sum_prod_type,
+    simp +decide only [l1_real, L1_snd_real, Fintype.sum_prod_type,
       World.sum_univ, Lex.sum_univ, Real.rpow_one, S1_real two_pos, Msg.sum_univ, l0r,
       costFactor, cost, neg_zero, Real.exp_zero, card_sem, semCard, ↓reduceIte, Real.rpow_two,
       Nat.cast_ofNat, Nat.cast_one, inv_one, one_pow, mul_one, zero_pow, zero_mul, add_zero,
