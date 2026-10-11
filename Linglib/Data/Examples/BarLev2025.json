@@ -1,0 +1,309 @@
+[
+  {
+    "id": "barlev2025_1a",
+    "source": {
+      "bibkey": "bar-lev-2025",
+      "paperLabel": "(1a)"
+    },
+    "language": "stan1293",
+    "primaryText": "The four kids laughed.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Only half of the kids laughed.",
+    "judgment": "acceptable",
+    "readings": [
+      {
+        "name": "true in the context",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "polarity",
+        "positive"
+      ],
+      [
+        "predicate",
+        "laugh"
+      ]
+    ],
+    "verified": "page-image",
+    "comment": "p. 137: if only half of the kids laughed, neither (1a) nor (1b) can be truthfully uttered."
+  },
+  {
+    "id": "barlev2025_1b",
+    "source": {
+      "bibkey": "bar-lev-2025",
+      "paperLabel": "(1b)"
+    },
+    "language": "stan1293",
+    "primaryText": "The four kids didn't laugh.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "Only half of the kids laughed.",
+    "judgment": "acceptable",
+    "readings": [
+      {
+        "name": "true in the context",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "polarity",
+        "negative"
+      ],
+      [
+        "predicate",
+        "laugh"
+      ]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "barlev2025_2a",
+    "source": {
+      "bibkey": "bar-lev-2025",
+      "paperLabel": "(2a)"
+    },
+    "language": "stan1293",
+    "primaryText": "These four people weigh (exactly) 250 lbs.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [
+      {
+        "name": "true if the people together weigh exactly 250 lbs",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "polarity",
+        "positive"
+      ],
+      [
+        "predicate",
+        "weigh 250 lbs"
+      ],
+      [
+        "homogeneity",
+        "distributive"
+      ]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "barlev2025_2b",
+    "source": {
+      "bibkey": "bar-lev-2025",
+      "paperLabel": "(2b)"
+    },
+    "language": "stan1293",
+    "primaryText": "These four people don't weigh (exactly) 250 lbs.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [
+      {
+        "name": "true if the people together do not weigh exactly 250 lbs",
+        "judgment": "acceptable"
+      },
+      {
+        "name": "true if two of them together weigh 250 lbs and the other two each weigh less",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "polarity",
+        "negative"
+      ],
+      [
+        "predicate",
+        "weigh 250 lbs"
+      ],
+      [
+        "homogeneity",
+        "distributive"
+      ]
+    ],
+    "verified": "page-image",
+    "comment": "The second reading is the scenario of p. 144, where saying (2b) is entirely natural."
+  },
+  {
+    "id": "barlev2025_3a",
+    "source": {
+      "bibkey": "bar-lev-2025",
+      "paperLabel": "(3a)"
+    },
+    "language": "stan1293",
+    "primaryText": "The four kids lifted the table.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [
+      {
+        "name": "true if half of the kids lifted the table together and the other half did nothing",
+        "judgment": "unacceptable"
+      },
+      {
+        "name": "true if half of the kids lifted the table together and the other half did too",
+        "judgment": "acceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "polarity",
+        "positive"
+      ],
+      [
+        "predicate",
+        "lift the table"
+      ],
+      [
+        "homogeneity",
+        "total"
+      ]
+    ],
+    "verified": "page-image",
+    "comment": "The second reading is the intermediate situation of p. 145, stated for the kids lifted the table."
+  },
+  {
+    "id": "barlev2025_3b",
+    "source": {
+      "bibkey": "bar-lev-2025",
+      "paperLabel": "(3b)"
+    },
+    "language": "stan1293",
+    "primaryText": "The four kids didn't lift the table.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [
+      {
+        "name": "true if half of the kids lifted the table together and the other half did nothing",
+        "judgment": "unacceptable"
+      }
+    ],
+    "paperFeatures": [
+      [
+        "polarity",
+        "negative"
+      ],
+      [
+        "predicate",
+        "lift the table"
+      ],
+      [
+        "homogeneity",
+        "total"
+      ]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "barlev2025_13_together",
+    "source": {
+      "bibkey": "bar-lev-2025",
+      "paperLabel": "(13)"
+    },
+    "language": "stan1293",
+    "primaryText": "The four kids didn't lift the table but they did together.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "readings": [],
+    "paperFeatures": [
+      [
+        "polarity",
+        "negative"
+      ],
+      [
+        "predicate",
+        "lift the table"
+      ]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "barlev2025_13_individually",
+    "source": {
+      "bibkey": "bar-lev-2025",
+      "paperLabel": "(13)"
+    },
+    "language": "stan1293",
+    "primaryText": "The four kids didn't lift the table but they did individually.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "unacceptable",
+    "readings": [],
+    "paperFeatures": [
+      [
+        "polarity",
+        "negative"
+      ],
+      [
+        "predicate",
+        "lift the table"
+      ]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "barlev2025_17_together",
+    "source": {
+      "bibkey": "bar-lev-2025",
+      "paperLabel": "(17)"
+    },
+    "language": "stan1293",
+    "primaryText": "These two people don't weigh (exactly) 250 lbs but they do together.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      [
+        "polarity",
+        "negative"
+      ],
+      [
+        "predicate",
+        "weigh 250 lbs"
+      ]
+    ],
+    "verified": "page-image"
+  },
+  {
+    "id": "barlev2025_17_individually",
+    "source": {
+      "bibkey": "bar-lev-2025",
+      "paperLabel": "(17)"
+    },
+    "language": "stan1293",
+    "primaryText": "These two people don't weigh (exactly) 250 lbs but they do individually.",
+    "glossedTokens": [],
+    "translation": "",
+    "context": "",
+    "judgment": "acceptable",
+    "readings": [],
+    "paperFeatures": [
+      [
+        "polarity",
+        "negative"
+      ],
+      [
+        "predicate",
+        "weigh 250 lbs"
+      ]
+    ],
+    "verified": "page-image"
+  }
+]
