@@ -5,41 +5,49 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Semantics.Degree.Comparison
 public import Linglib.Semantics.Quantification.Numerals.Basic
-public import Linglib.Semantics.Exhaustification.Chain
+public import Linglib.Semantics.Exhaustification.DomainAlternatives
+public import Linglib.Semantics.Exhaustification.Excluder
 public import Linglib.Semantics.Exhaustification.PreExhaustified
-public import Linglib.Discourse.CommonGround
-public import Mathlib.Data.Fintype.Powerset
+public import Mathlib.Data.Set.Card
 
 /-!
-# Mihoc (2019): Decomposing Logic
+# Mihoc (2019): Decomposing logic: Modified numerals, polarity, and exhaustification
 
-This file formalizes the decomposition of bare, comparative-modified, and
-superlative-modified numerals of Mihoc. The extent indicators *much* and *little*
-denote the positive and negative extents on the cardinality scale, and two operators place
-the maximum of the degree predicate in the complement of the extent or inside it, so
-*more than* and *less than* are the complement operator with the two extents and *at
-least* and *at most* the inside operator with the extents crossed (`Form`); the truth
-conditions reduce to the named meanings of Hackl and Kennedy
-(`Form.tc_iff_rel`), and the strict versus non-strict boundary of the two classes falls out
-(`comp_excludes_boundary`, `atSup_includes_boundary`). Alternatives follow from the truth
-conditions, scalemate alternatives and domain alternatives over the set the maximum is
-asserted to fall in, and exhaustification over scalemates at scale granularity one yields
-an exact reading for every form (`Form.exhSigma`), welcome for bare numerals after
-Horn and unwelcome for the modified ones, while coarser granularities in the sense of
-Sauerland and Stateva avoid it, the grade context of Spector being the
-granularity-four case. Unpruned domain alternatives force total ignorance
-(`Ignorance.parse_sg_total`), and the domain-alternative exhaustifier is vacuous under
-negation, so the superlative forms fail the proper-strengthening requirement
-(`AntiNegativity.negation_fails_PS`).
+Mihoc builds *more than n* and *less than n* from a comparative operator and *at least n* and
+*at most n* from a superlative one, each applied to the extent indicator *much* or *little*; the
+comparative places the maximum of the counted degrees outside the extent and the superlative
+inside it. The truth conditions mention a domain, the set the maximum falls in, so the modified
+numerals have subdomain alternatives besides their scalar ones. Exhaustifying against the
+pre-exhaustified subdomain alternatives across the speaker's epistemic modal yields ignorance as
+epistemic free choice, total for the superlative numerals, which keep every alternative, and
+possibly partial for the comparative ones, which may prune. Under negation that exhaustification
+is vacuous, so the superlative numerals, which require their exhaustification to strengthen the
+prejacent, are deviant there.
+
+## Main statements
+
+* `Mihoc2019.Form.tc_iff_rel`: each form's truth conditions compare the maximum with the
+  numeral, strictly for the comparative operator and non-strictly for the superlative one.
+* `Mihoc2019.Ignorance.domainImplicatures_iff`: the implicatures from the subdomain alternatives
+  of one size hold exactly when the number of values the speaker considers possible is not that
+  size.
+* `Mihoc2019.Ignorance.forall_domainImplicatures_iff`: keeping every subdomain alternative
+  yields total ignorance.
+* `Mihoc2019.AntiNegativity.not_properlyStrengthens_negExh`: under negation the subdomain
+  exhaustification does not strengthen the prejacent.
 
 ## Implementation notes
 
-The scale is discrete, so the two accounts of comparative numerals agree at granularity one
-where Fox and Hackl's dense scale would obliterate the next-stronger alternative; the
-extents and operators factor through the comparison spine of `Semantics/Degree/Comparison`
-and the exhaustifiers through `Semantics/Exhaustification`.
+* The maximum of the counted degrees is abstracted to its value, so a truth condition is a
+  predicate on ℕ and an epistemic state is seen through the values it leaves possible.
+* Scalar alternatives range over a contextual scale of numerals, which is all her granularity
+  is; the full scale of naturals is her scale of granularity one.
+* Ignorance is stated for a finite truth set, which her running examples *less than three* and
+  *at most two* have; the infinite truth sets of *more than n* and *at least n* need a
+  contextual bound for the same argument.
+* Each subdomain alternative is pre-exhaustified against the others of its size, her choice for
+  the parse that keeps alternatives of several sizes.
 
 ## References
 
@@ -52,138 +60,82 @@ and the exhaustifiers through `Semantics/Exhaustification`.
 * [fox-hackl-2006]
 * [spector-2014]
 * [chierchia-2013]
-* [sauerland-stateva-2011]
-* [krifka-2007]
 -/
 
 @[expose] public section
 
 namespace Mihoc2019
 
-open Degree
+open Degree ModalLogic Exhaustification
 
-/-! ### Extent indicators (her §2.5, Ch. 2 (27)–(28)) -/
+/-! ### Extent indicators and the two operators -/
 
-/-- The positive extent of `n` on the cardinality scale is ⟦much⟧(n) = {d | d ≤ n}, the interval
-`Comparison.le.interval n`. -/
+/-- The positive extent ⟦much⟧(n) = {d | d ≤ n} (her (28a)). -/
 def much (n : ℕ) : Set ℕ := Comparison.le.interval n
 
-/-- The negative extent of `n` is ⟦little⟧(n) = {d | d ≥ n}, the interval
-`Comparison.ge.interval n`. -/
+/-- The negative extent ⟦little⟧(n) = {d | d ≥ n} (her (28b)). -/
 def little (n : ℕ) : Set ℕ := Comparison.ge.interval n
 
-@[simp] theorem mem_much {d n : ℕ} : d ∈ much n ↔ d ≤ n := by
-  simp [much]
+@[simp] theorem mem_much {d n : ℕ} : d ∈ much n ↔ d ≤ n := .rfl
 
-@[simp] theorem mem_little {d n : ℕ} : d ∈ little n ↔ n ≤ d := by
-  simp [little]
+@[simp] theorem mem_little {d n : ℕ} : d ∈ little n ↔ n ≤ d := .rfl
 
-/-! ### The modifiers [comp] and [at-sup] (her Ch. 2 (30)–(31))
-
-Both take an extent indicator `f` and the numeral `n`, and locate the maximum
-of the degree predicate — abstracted here as its value `maxD` — relative to
-the extent `f n`: [comp] in its complement, [at-sup] inside it. -/
-
-/-- The [comp] truth condition (Ch. 2 (30)) puts `max(D)` in the complement of `f(n)`. -/
+/-- The comparative operator puts the maximum of the degree predicate in the complement of the
+extent `f n` (her (30)). -/
 def compTC (f : ℕ → Set ℕ) (n maxD : ℕ) : Prop := maxD ∈ (f n)ᶜ
 
-/-- The [at-sup] truth condition (Ch. 2 (31)) puts `max(D)` in `f(n)`. -/
+/-- The superlative operator puts the maximum of the degree predicate in the extent `f n` (her
+(31)). -/
 def atSupTC (f : ℕ → Set ℕ) (n maxD : ℕ) : Prop := maxD ∈ f n
 
-/-! ### Reduction to the Kennedy spine (her Ch. 2 (32)–(33))
+/-! ### Assertion forms -/
 
-The four cross-pairings recover exactly the four modified numeral forms, the
-intervals of `Degree.Comparison`. That *at least* pairs with `little` and *at most* with
-`much` — inverting the pairing of the comparatives — is what captures the
-shared `much`/`little` morphology across CMNs and SMNs. -/
-
-theorem compTC_much_iff (n maxD : ℕ) :
-    compTC much n maxD ↔ maxD ∈ Comparison.gt.interval n := by
-  simp [compTC, much]
-
-theorem compTC_little_iff (n maxD : ℕ) :
-    compTC little n maxD ↔ maxD ∈ Comparison.lt.interval n := by
-  simp [compTC, little]
-
-theorem atSupTC_little_iff (n maxD : ℕ) :
-    atSupTC little n maxD ↔ maxD ∈ Comparison.ge.interval n := by
-  simp [atSupTC, little]
-
-theorem atSupTC_much_iff (n maxD : ℕ) :
-    atSupTC much n maxD ↔ maxD ∈ Comparison.le.interval n := by
-  simp [atSupTC, much]
-
-/-! ### Assertion forms (her §2.6)
-
-Truth conditions of all three classes expose a scalar element (the numeral);
-those of CMNs/SMNs additionally expose a degree-set domain. -/
-
-/-- The two extent indicators as data. -/
+/-- The two extent indicators. -/
 inductive Extent where
-  /-- The positive extent `⟦much⟧(n) = {d | d ≤ n}`. -/
+  /-- The positive extent indicator *much*. -/
   | much
-  /-- The negative extent `⟦little⟧(n) = {d | n ≤ d}`. -/
+  /-- The negative extent indicator *little*. -/
   | little
   deriving DecidableEq, Repr
 
-/-- The extent an `Extent` denotes. -/
+/-- The extent an extent indicator denotes. -/
 def Extent.set : Extent → ℕ → Set ℕ
   | .much => Mihoc2019.much
   | .little => Mihoc2019.little
 
-/-- The [comp]/[at-sup] operators as data. -/
+/-- The two modifier operators. -/
 inductive Op where
-  /-- The maximum lies in the complement of the extent, strict and Class A. -/
+  /-- The comparative operator of *more than* and *less than*. -/
   | comp
-  /-- The maximum lies inside the extent, non-strict and Class B. -/
+  /-- The superlative operator of *at least* and *at most*. -/
   | atSup
   deriving DecidableEq, Repr
 
-/-- BN/CMN/SMN assertion forms. -/
+/-- Bare and modified numerals. -/
 inductive Form where
-  /-- A bare numeral (Hornian lower-bounded basic meaning, her §2.3). -/
+  /-- A bare numeral, with the lower-bounded meaning of [horn-1972]. -/
   | bare (n : ℕ)
-  /-- An extent indicator under [comp] or [at-sup]. -/
+  /-- An extent indicator and a numeral under one of the two operators. -/
   | modified (op : Op) (f : Extent) (n : ℕ)
   deriving DecidableEq, Repr
 
-/-- *more than n* = [comp]+much. -/
+/-- *more than n* is the comparative operator with *much*. -/
 abbrev Form.moreThan (n : ℕ) : Form := .modified .comp .much n
 
-/-- *less than n* = [comp]+little. -/
+/-- *less than n* is the comparative operator with *little*. -/
 abbrev Form.lessThan (n : ℕ) : Form := .modified .comp .little n
 
-/-- *at least n* = [at-sup]+little. -/
+/-- *at least n* is the superlative operator with *little*. -/
 abbrev Form.atLeast (n : ℕ) : Form := .modified .atSup .little n
 
-/-- *at most n* = [at-sup]+much. -/
+/-- *at most n* is the superlative operator with *much*. -/
 abbrev Form.atMost (n : ℕ) : Form := .modified .atSup .much n
 
-/-- Truth conditions of a form, as a predicate on the maximum of the degree
-predicate. Bare numerals get the lower-bounded Horn meaning
-(`Comparison.ge.interval`; her §2.3, following [horn-1972]). -/
+/-- The truth conditions of a form, as a predicate on the maximum of the degree predicate. -/
 def Form.tc : Form → ℕ → Prop
   | .bare n, maxD => maxD ∈ Comparison.ge.interval n
   | .modified .comp f n, maxD => compTC f.set n maxD
   | .modified .atSup f n, maxD => atSupTC f.set n maxD
-
-instance (φ : Form) (maxD : ℕ) : Decidable (φ.tc maxD) := by
-  obtain ⟨n⟩ | ⟨op, f, n⟩ := φ
-  · exact inferInstanceAs (Decidable (maxD ≥ n))
-  · cases op <;> cases f
-    · exact inferInstanceAs (Decidable ¬(maxD ≤ n))
-    · exact inferInstanceAs (Decidable ¬(n ≤ maxD))
-    · exact inferInstanceAs (Decidable (maxD ≤ n))
-    · exact inferInstanceAs (Decidable (n ≤ maxD))
-
-/-! ### The Op × Extent factorization of the `Comparison` spine
-
-The four modified forms are a coordinate system on the four non-`eq`
-`Degree.Comparison`s: the operator carries strictness (Class A/B,
-`Comparison.IsStrict`), the extent and operator jointly fix the bound
-direction. `Form.tc_iff_rel` makes the factorization first-class; the Class
-A/B boundary facts then follow from `Comparison.boundary_mem` rather than
-being re-proved. -/
 
 /-- The comparison a form's truth conditions instantiate. -/
 def Form.toComparison : Form → Comparison
@@ -193,411 +145,358 @@ def Form.toComparison : Form → Comparison
   | .modified .atSup .little _ => .ge
   | .modified .atSup .much _ => .le
 
-/-- The numeral argument of a form. -/
+/-- The numeral of a form. -/
 def Form.arg : Form → ℕ
   | .bare n => n
   | .modified _ _ n => n
 
-/-- Every form's truth conditions are its comparison's relation at its numeral argument. -/
+/-- Every form's truth conditions compare the maximum with its numeral, which recovers the
+truth conditions of [hackl-2000] and [kennedy-2015] (her (32)–(33)). -/
 theorem Form.tc_iff_rel (φ : Form) (maxD : ℕ) :
     φ.tc maxD ↔ φ.toComparison.Rel maxD φ.arg := by
-  obtain ⟨n⟩ | ⟨op, f, n⟩ := φ
-  · exact Iff.rfl
-  · cases op <;> cases f <;>
-      simp only [Form.tc, Form.toComparison, Form.arg, compTC, atSupTC,
-        Set.mem_compl_iff, mem_much, mem_little, Extent.set, Comparison.Rel] <;>
-      omega
+  obtain ⟨n⟩ | ⟨_ | _, _ | _, n⟩ := φ <;>
+    simp [Form.tc, Form.toComparison, Form.arg, compTC, atSupTC, Extent.set]
 
-@[simp] theorem tc_bare (n maxD : ℕ) : (Form.bare n).tc maxD ↔ n ≤ maxD := by
-  simp [Form.tc]
+instance (φ : Form) (maxD : ℕ) : Decidable (φ.tc maxD) :=
+  decidable_of_iff _ (φ.tc_iff_rel maxD).symm
 
-@[simp] theorem tc_moreThan (n maxD : ℕ) :
-    (Form.moreThan n).tc maxD ↔ n < maxD := by
-  simp [Form.tc_iff_rel, Form.toComparison, Form.arg, Comparison.Rel]
+@[simp] theorem tc_bare (n maxD : ℕ) : (Form.bare n).tc maxD ↔ n ≤ maxD := .rfl
 
-@[simp] theorem tc_lessThan (n maxD : ℕ) :
-    (Form.lessThan n).tc maxD ↔ maxD < n := by
-  simp [Form.tc_iff_rel, Form.toComparison, Form.arg, Comparison.Rel]
+@[simp] theorem tc_moreThan (n maxD : ℕ) : (Form.moreThan n).tc maxD ↔ n < maxD := by
+  simp [Form.tc, compTC, Extent.set]
 
-@[simp] theorem tc_atLeast (n maxD : ℕ) :
-    (Form.atLeast n).tc maxD ↔ n ≤ maxD := by
-  simp [Form.tc_iff_rel, Form.toComparison, Form.arg, Comparison.Rel]
+@[simp] theorem tc_lessThan (n maxD : ℕ) : (Form.lessThan n).tc maxD ↔ maxD < n := by
+  simp [Form.tc, compTC, Extent.set]
 
-@[simp] theorem tc_atMost (n maxD : ℕ) :
-    (Form.atMost n).tc maxD ↔ maxD ≤ n := by
-  simp [Form.tc_iff_rel, Form.toComparison, Form.arg, Comparison.Rel]
+@[simp] theorem tc_atLeast (n maxD : ℕ) : (Form.atLeast n).tc maxD ↔ n ≤ maxD := .rfl
 
-/-! ### Class A/B strictness from the decomposition
+@[simp] theorem tc_atMost (n maxD : ℕ) : (Form.atMost n).tc maxD ↔ maxD ≤ n := .rfl
 
-The Class A (strict) / Class B (non-strict) split of [geurts-nouwen-2007]
-and [nouwen-2010] — `Numerals.ModifierClass` — derived from
-complement-vs-extent through `Comparison.boundary_mem`, rather than
-stipulated per modifier. -/
+/-! ### Strictness
 
-theorem comp_excludes_boundary (f : Extent) (n : ℕ) :
-    ¬ (Form.modified .comp f n).tc n := by
-  rw [Form.tc_iff_rel]
-  simp only [Form.arg]
-  rw [← Comparison.mem_interval, Comparison.boundary_mem]
+The comparative forms exclude the numeral and the superlative ones include it, the split of
+[geurts-nouwen-2007] and [nouwen-2010] into Class A and Class B modifiers, here derived from the
+operator through `Comparison.boundary_mem`. -/
+
+theorem comp_excludes_boundary (f : Extent) (n : ℕ) : ¬ (Form.modified .comp f n).tc n := by
+  rw [Form.tc_iff_rel, Form.arg, ← Comparison.mem_interval, Comparison.boundary_mem]
   cases f <;> simp [Form.toComparison, Comparison.IsStrict]
 
-theorem atSup_includes_boundary (f : Extent) (n : ℕ) :
-    (Form.modified .atSup f n).tc n := by
-  rw [Form.tc_iff_rel]
-  simp only [Form.arg]
-  rw [← Comparison.mem_interval, Comparison.boundary_mem]
+theorem atSup_includes_boundary (f : Extent) (n : ℕ) : (Form.modified .atSup f n).tc n := by
+  rw [Form.tc_iff_rel, Form.arg, ← Comparison.mem_interval, Comparison.boundary_mem]
   cases f <;> simp [Form.toComparison, Comparison.IsStrict]
 
-/-! ### Domain alternatives (her Ch. 2 (37)–(39))
+/-! ### Subdomain alternatives
 
-σA replaces the numeral with a scalemate. DA replaces the set the maximum is
-asserted to fall in — the *complement* of the extent for [comp] forms (her
-(38c)), the extent itself for [at-sup] forms (her (39c)) — with its proper
-subsets; uniformly, the proper subsets of the form's truth-condition set.
-Bare numerals reference no degree-set domain and generate no DA (her (37c)):
-the structural asymmetry that drives the ignorance and polarity results of
-her Chs. 4–5. -/
+A modified form's subdomain alternatives replace the set its maximum is asserted to fall in,
+the complement of the extent or the extent itself, by its proper subsets (her (38c), (39c)). A
+bare numeral mentions no such set and has none (her (37c)). -/
 
-/-- The degree-set domains a form makes available for subdomain
-alternatives. -/
+/-- The subdomain alternatives of a form. -/
 def Form.domainAlts : Form → Set (Set ℕ)
   | .bare _ => ∅
   | φ@(.modified _ _ _) => {D' | D' ⊂ {d | φ.tc d}}
 
-/-- Every domain alternative strengthens the assertion, since membership of the maximum in a DA
-entails the form's truth conditions, the premise of the Ch. 4 pre-exhaustification. -/
-theorem Form.tc_of_mem_domainAlt {φ : Form} {D' : Set ℕ}
-    (h : D' ∈ φ.domainAlts) {maxD : ℕ} (hm : maxD ∈ D') : φ.tc maxD := by
+/-- Every subdomain alternative entails the form it is an alternative to. -/
+theorem Form.tc_of_mem_domainAlts {φ : Form} {D' : Set ℕ} (h : D' ∈ φ.domainAlts) {maxD : ℕ}
+    (hm : maxD ∈ D') : φ.tc maxD := by
   obtain ⟨n⟩ | ⟨op, f, n⟩ := φ
   · exact absurd h (Set.notMem_empty _)
   · simp only [Form.domainAlts, Set.mem_ofPred_eq] at h
     exact h.subset hm
 
-/-! ### σA-exhaustification and 'exactly' overgeneration (her Ch. 3)
+/-- The subsets of a modified form's finite truth set smaller than it are its subdomain
+alternatives. -/
+theorem coe_mem_domainAlts {op : Op} {f : Extent} {n k : ℕ} {T S : Finset ℕ}
+    (hT : ∀ d, (Form.modified op f n).tc d ↔ d ∈ T) (hS : S ∈ T.powersetCard k)
+    (hk : k < T.card) : (S : Set ℕ) ∈ (Form.modified op f n).domainAlts := by
+  rw [Finset.mem_powersetCard] at hS
+  have : {d | (Form.modified op f n).tc d} = T := Set.ext hT
+  simp only [Form.domainAlts, this, Set.mem_ofPred_eq, Finset.coe_ssubset]
+  exact Finset.ssubset_iff_subset_ne.2 ⟨hS.1, by rintro rfl; omega⟩
 
-`O_σA` asserts the prejacent and negates its next-stronger scalar alternative
-on a scale of granularity `g` (stronger = larger numeral for lower-bounding
-forms, smaller for upper-bounding). Negating the next-stronger scalemate is
-her own computation shape (Ch. 3 (2), (24)–(27)) and coincides with full
-innocent-exclusion exhaustification for these monotone forms, whose stronger
-alternatives form an entailment chain.
+/-! ### Scalar implicatures
 
-At `g = 1` the result is an 'exactly' meaning for *every* form: welcome for
-bare numerals (her Ch. 3 (2)), the unwelcome overgeneration of her Ch. 3
-(24)–(27) for CMNs/SMNs. Coarser granularity yields a non-singleton interval
-instead (her §3.6–3.7). The scale and its granularity are contextual
-([sauerland-stateva-2011]'s granularity functions; rounder numerals select
-coarser scales, [krifka-2007], her pp. 110–111) rather than universally
-dense (her fn. 8, contra [fox-hackl-2006] — though on discrete ℕ the
-accounts agree: cf. `FoxHackl2006.moreThan_exact_nat`). -/
+A form's scalar alternatives replace its numeral by the other points of a contextual scale `S`
+(her (37b)–(39b)), and exhaustifying denies those the form does not entail, the stronger ones.
+On the full scale of naturals every form comes out 'exactly n', the bare numeral's reading after
+[horn-1972] and an unattested one for the modified forms. A scale with gaps instead leaves an
+interval up to the next point (`mem_exh_moreThan_iff`), and the scale is contextual rather than
+universally dense (her fn. 8, against [fox-hackl-2006]). -/
 
-/-- The next-stronger σA scalemate of a form at granularity `g`. -/
-def Form.strongerAlt (g : ℕ) : Form → Form
-  | .bare n => .bare (n + g)
-  | .modified .comp .much n => .moreThan (n + g)
-  | .modified .comp .little n => .lessThan (n - g)
-  | .modified .atSup .little n => .atLeast (n + g)
-  | .modified .atSup .much n => .atMost (n - g)
+/-- The form with its numeral replaced by `m`. -/
+def Form.withArg : Form → ℕ → Form
+  | .bare _, m => .bare m
+  | .modified op f _, m => .modified op f m
 
-/-- `O_σA` at granularity `g` asserts the prejacent and negates the next-stronger scalemate. -/
-def Form.exhSigma (g : ℕ) (φ : Form) (maxD : ℕ) : Prop :=
-  φ.tc maxD ∧ ¬ (φ.strongerAlt g).tc maxD
+/-- The scalar alternatives of a form on the scale `S`. -/
+def Form.scalarAlts (S : Set ℕ) (φ : Form) : Set (Set ℕ) :=
+  (fun m ↦ {d | (φ.withArg m).tc d}) '' S
 
-instance (g : ℕ) (φ : Form) (maxD : ℕ) : Decidable (φ.exhSigma g maxD) :=
-  inferInstanceAs (Decidable (φ.tc maxD ∧ ¬ (φ.strongerAlt g).tc maxD))
+/-- On a scale whose next point above `n` is `s`, *more than n* is exhaustified to the values up
+to `s`. -/
+theorem mem_exh_moreThan_iff {S : Set ℕ} {n s : ℕ} (hs : s ∈ S) (hns : n < s)
+    (hnext : ∀ m ∈ S, n < m → s ≤ m) (maxD : ℕ) :
+    maxD ∈ exh ((Form.moreThan n).scalarAlts S) {d | (Form.moreThan n).tc d} ↔
+      n < maxD ∧ maxD ≤ s := by
+  simp only [mem_exh, Form.scalarAlts, Set.forall_mem_image, Form.withArg, Set.mem_ofPred_eq,
+    Set.ofPred_subset_ofPred, tc_moreThan]
+  refine ⟨fun ⟨h, hS⟩ ↦ ⟨h, ?_⟩, fun ⟨h, hd⟩ ↦ ⟨h, fun m hm hmd x hx ↦ ?_⟩⟩
+  · by_contra! hsd
+    have := hS hs hsd (n + 1) (by omega)
+    omega
+  · have := hnext m hm
+    omega
 
-/-- At granularity 1 on a bare numeral, her `O_σA` *is* the spine's
-`Numerals.exhNumeral`, chain exhaustification over the numeral scale
-(`Numerals.mem_exhNumeral_iff_exhChain`).
-`exhSigma` is its generalization to arbitrary granularity and to the
-upper-bounding scalemate direction. -/
-theorem exhSigma_bare_eq_exhNumeral (n maxD : ℕ) :
-    (Form.bare n).exhSigma 1 maxD ↔ maxD ∈ Numerals.exhNumeral n :=
-  Iff.rfl
+/-- On the full scale *more than n* comes out 'exactly n + 1' (her Ch. 3 (24)). -/
+theorem mem_exh_moreThan_univ (n maxD : ℕ) :
+    maxD ∈ exh ((Form.moreThan n).scalarAlts .univ) {d | (Form.moreThan n).tc d} ↔
+      maxD = n + 1 := by
+  rw [mem_exh_moreThan_iff (Set.mem_univ _) (Nat.lt_succ_self n) fun _ _ h ↦ h]
+  omega
 
-/-- The *at least* form agrees with the bare form under `O_σA` at
-granularity 1 — both are `exhNumeral`. -/
-theorem exhSigma_atLeast_eq_exhNumeral (n maxD : ℕ) :
-    (Form.atLeast n).exhSigma 1 maxD ↔ maxD ∈ Numerals.exhNumeral n := by
-  simp [Form.exhSigma, Form.strongerAlt, Numerals.exhNumeral]
+/-- In the grading context of [spector-2014] (her Ch. 3 (33)), with *more than nine* the next
+point above *more than five*, *John solved more than five problems* is exhaustified to between
+six and nine. -/
+theorem mem_exh_moreThan_five {S : Set ℕ} (h9 : 9 ∈ S) (hgap : ∀ m ∈ S, 5 < m → 9 ≤ m)
+    (maxD : ℕ) :
+    maxD ∈ exh ((Form.moreThan 5).scalarAlts S) {d | (Form.moreThan 5).tc d} ↔
+      5 < maxD ∧ maxD ≤ 9 :=
+  mem_exh_moreThan_iff h9 (by omega) hgap maxD
 
-/-- `O_σA`(bare n) is 'exactly n' (Ch. 3 (2)), the classical Horn derivation. -/
-theorem exhSigma_bare_g1 (n maxD : ℕ) :
-    (Form.bare n).exhSigma 1 maxD ↔ maxD = n := by
-  rw [exhSigma_bare_eq_exhNumeral, Numerals.exhNumeral_eq]
-  rfl
+/-- On the full scale the bare numeral is the exhaustified numeral `Numerals.exhNumeral`, 'exactly
+n' (her Ch. 3 (2)). -/
+theorem mem_exh_bare_univ (n maxD : ℕ) :
+    maxD ∈ exh ((Form.bare n).scalarAlts .univ) {d | (Form.bare n).tc d} ↔
+      maxD ∈ Numerals.exhNumeral n := by
+  simp only [mem_exh, Form.scalarAlts, Set.forall_mem_image, Form.withArg, Set.mem_ofPred_eq,
+    Set.ofPred_subset_ofPred, tc_bare, Numerals.exhNumeral_eq, Comparison.interval_eq,
+    Set.mem_univ, true_implies, Set.mem_singleton_iff]
+  refine ⟨fun ⟨h, hS⟩ ↦ ?_, by rintro rfl; exact ⟨le_rfl, fun m hm x hx ↦ hm.trans hx⟩⟩
+  have := hS (le_refl maxD) n le_rfl
+  omega
 
-/-- `O_σA`(more than n) is the unwelcome 'exactly n+1' (Ch. 3 (24)). -/
-theorem exhSigma_moreThan_g1 (n maxD : ℕ) :
-    (Form.moreThan n).exhSigma 1 maxD ↔ maxD = n + 1 := by
-  simp only [Form.exhSigma, Form.strongerAlt, tc_moreThan]; omega
+/-- On the full scale *less than n* comes out 'exactly n − 1' (her Ch. 3 (25)). -/
+theorem mem_exh_lessThan_univ {n : ℕ} (hn : 1 ≤ n) (maxD : ℕ) :
+    maxD ∈ exh ((Form.lessThan n).scalarAlts .univ) {d | (Form.lessThan n).tc d} ↔
+      maxD = n - 1 := by
+  simp only [mem_exh, Form.scalarAlts, Set.forall_mem_image, Form.withArg, Set.mem_ofPred_eq,
+    Set.ofPred_subset_ofPred, tc_lessThan, Set.mem_univ, true_implies]
+  refine ⟨fun ⟨h, hS⟩ ↦ ?_, fun h ↦ ⟨by omega, fun m hm x hx ↦ by omega⟩⟩
+  have := hS (Nat.lt_succ_self maxD) (n - 1) (by omega)
+  omega
 
-/-- `O_σA`(less than n) is the unwelcome 'exactly n−1' (Ch. 3 (25)). -/
-theorem exhSigma_lessThan_g1 (n maxD : ℕ) (hn : 1 ≤ n) :
-    (Form.lessThan n).exhSigma 1 maxD ↔ maxD = n - 1 := by
-  simp only [Form.exhSigma, Form.strongerAlt, tc_lessThan]; omega
+/-- On the full scale *at least n* comes out 'exactly n' (her Ch. 3 (26)). -/
+theorem mem_exh_atLeast_univ (n maxD : ℕ) :
+    maxD ∈ exh ((Form.atLeast n).scalarAlts .univ) {d | (Form.atLeast n).tc d} ↔ maxD = n := by
+  simp only [mem_exh, Form.scalarAlts, Set.forall_mem_image, Form.withArg, Set.mem_ofPred_eq,
+    Set.ofPred_subset_ofPred, tc_atLeast, Set.mem_univ, true_implies]
+  refine ⟨fun ⟨h, hS⟩ ↦ ?_, by rintro rfl; exact ⟨le_rfl, fun m hm x hx ↦ hm.trans hx⟩⟩
+  have := hS (le_refl maxD) n le_rfl
+  omega
 
-/-- `O_σA`(at least n) is the unwelcome 'exactly n' (Ch. 3 (26)). -/
-theorem exhSigma_atLeast_g1 (n maxD : ℕ) :
-    (Form.atLeast n).exhSigma 1 maxD ↔ maxD = n := by
-  simp only [Form.exhSigma, Form.strongerAlt, tc_atLeast]; omega
+/-- On the full scale *at most n* comes out 'exactly n' (her Ch. 3 (27)). -/
+theorem mem_exh_atMost_univ (n maxD : ℕ) :
+    maxD ∈ exh ((Form.atMost n).scalarAlts .univ) {d | (Form.atMost n).tc d} ↔ maxD = n := by
+  simp only [mem_exh, Form.scalarAlts, Set.forall_mem_image, Form.withArg, Set.mem_ofPred_eq,
+    Set.ofPred_subset_ofPred, tc_atMost, Set.mem_univ, true_implies]
+  refine ⟨fun ⟨h, hS⟩ ↦ ?_, by rintro rfl; exact ⟨le_rfl, fun m hm x hx ↦ hx.trans hm⟩⟩
+  have := hS (le_refl maxD) n le_rfl
+  omega
 
-/-- `O_σA`(at most n) is the unwelcome 'exactly n' (Ch. 3 (27)). -/
-theorem exhSigma_atMost_g1 (n maxD : ℕ) (hn : 1 ≤ n) :
-    (Form.atMost n).exhSigma 1 maxD ↔ maxD = n := by
-  simp only [Form.exhSigma, Form.strongerAlt, tc_atMost]; omega
+/-! ### Ignorance
 
-/-- The granularity-1 strengthening is non-vacuous, since some worlds verify the CMN's truth
-conditions but not its exhaustification. Mihoc thus derives a scalar implicature for Class A
-forms exactly where Kennedy's neo-Gricean account derives none (`Kennedy2015.stronger_gt`),
-with the same truth conditions and the opposite pragmatic verdict, reconciled only by the
-granularity parameter. -/
-theorem exhSigma_moreThan_proper (n : ℕ) :
-    ∃ maxD, (Form.moreThan n).tc maxD ∧ ¬ (Form.moreThan n).exhSigma 1 maxD :=
-  ⟨n + 2, by simp, by rw [exhSigma_moreThan_g1]; omega⟩
-
-/-- At granularity at least 2 the exhaustified CMN is no longer an 'exactly' meaning, since two
-distinct values survive (§3.7). -/
-theorem exhSigma_moreThan_coarse_not_exactly (n g : ℕ) (hg : 2 ≤ g) :
-    ∃ d₁ d₂, d₁ ≠ d₂ ∧
-      (Form.moreThan n).exhSigma g d₁ ∧ (Form.moreThan n).exhSigma g d₂ := by
-  refine ⟨n + 1, n + 2, by omega, ?_, ?_⟩ <;>
-    · simp only [Form.exhSigma, Form.strongerAlt, tc_moreThan]
-      omega
-
-/-- In Spector's grade context (§3.6 (33)), with the contextually salient scale ⟨…, more than 5,
-more than 9, …⟩ of granularity 4, *John solved more than five problems* implicates *not more than
-nine*, so the surviving meaning is the interval {6, …, 9} glossed as "a B", not an 'exactly'. -/
-theorem spector_grade_context (maxD : ℕ) :
-    (Form.moreThan 5).exhSigma 4 maxD ↔ 5 < maxD ∧ maxD ≤ 9 := by
-  simp only [Form.exhSigma, Form.strongerAlt, tc_moreThan]; omega
-
--- Verification: the five 'exactly' verdicts at granularity 1, on her values
-#guard (Form.bare 3).exhSigma 1 3
-#guard (Form.moreThan 3).exhSigma 1 4 ∧ ¬ (Form.moreThan 3).exhSigma 1 5
-#guard (Form.lessThan 3).exhSigma 1 2 ∧ ¬ (Form.lessThan 3).exhSigma 1 1
-#guard (Form.atLeast 3).exhSigma 1 3 ∧ ¬ (Form.atLeast 3).exhSigma 1 4
-#guard (Form.atMost 3).exhSigma 1 3 ∧ ¬ (Form.atMost 3).exhSigma 1 2
-
-
-/-! ### σA scales as entailment chains
-
-`exhSigma` negates one next-stronger scalemate; the substrate keystone
-`Exhaustification.exhChain_iff_succ` shows this equals exhaustification
-against the *whole* granularity-`g` scale, since the scale is an entailment
-chain. (Dually, `Exhaustification.exhChain_not_of_dense` is the
-[fox-hackl-2006] crash that this file's contextual-granularity scales
-avoid: cf. `FoxHackl2006.moreThan_not_hasMaxInf`.) -/
-
-theorem exhSigma_moreThan_eq_exhChain (n g maxD : ℕ) :
-    (Form.moreThan n).exhSigma g maxD ↔
-      Exhaustification.exhChain (λ k => (Form.moreThan (n + k * g)).tc) 0 maxD := by
-  rw [Exhaustification.exhChain_iff_succ
-      (λ j k hjk d hd => by
-        simp only [tc_moreThan] at hd ⊢
-        have := Nat.mul_le_mul_right g hjk
-        omega)
-      Nat.zero_lt_one λ j hj => hj]
-  simp only [Form.exhSigma, Form.strongerAlt, tc_moreThan, Nat.zero_mul,
-    Nat.add_zero, Nat.one_mul]
-
-theorem exhSigma_atMost_eq_exhChain (n g maxD : ℕ) :
-    (Form.atMost n).exhSigma g maxD ↔
-      Exhaustification.exhChain (λ k => (Form.atMost (n - k * g)).tc) 0 maxD := by
-  rw [Exhaustification.exhChain_iff_succ
-      (λ j k hjk d hd => by
-        simp only [tc_atMost] at hd ⊢
-        have := Nat.mul_le_mul_right g hjk
-        omega)
-      Nat.zero_lt_one λ j hj => hj]
-  simp only [Form.exhSigma, Form.strongerAlt, tc_atMost, Nat.zero_mul,
-    Nat.sub_zero, Nat.one_mul]
-
-/-! ### Ignorance (her Ch. 4)
-
-Assertions carry a null epistemic necessity modal `□_S`; `O` applies above
-it, negating pre-exhaustified domain alternatives
-(`Exhaustification.preExh`) and the stronger σA. Her running model: the CMN
-*less than three* / SMN *at most two*, worlds = candidate maxima 0–3,
-`□_S` = context-set entailment (`⊆`) over a nonempty epistemic state
-(`boxS_iff_entails`). The DA are the value-regions inside the prejacent set
-{0, 1, 2}: singletons and doubletons.
-
-The load-bearing structure: negating the pre-exhaustified singleton DA says
-no region is settled *uniquely* (`Exhaustification.forall_not_preExh_iff`),
-and a nonempty state settles at most one of the disjoint regions
-(`sgDA_subsingleton`) — so none is settled: **total ignorance**, her Tables
-4.1/4.3, derived structurally. The residual table cells (loser/winner
-accommodation and blocking) are checked exhaustively over all epistemic
-states. -/
+An assertion carries a null epistemic necessity modal `□_S`, and exhaustification applies above
+it, negating each pre-exhaustified subdomain alternative `□_S (max ∈ S)` and the stronger scalar
+alternatives. A state settles `□_S (max ∈ S)` just when every value it leaves possible lies in `S`
+(`box_mem_iff`), so of the subdomains of one size exactly one is settled iff the possible values
+number exactly that size, and the implicatures from the subdomain alternatives of a size hold iff
+they do not (`domainImplicatures_iff`). Her three parses of *less than three* follow: keeping the
+singletons rules out settling a value, a 'winner' state (her Table 4.1); keeping the larger
+alternatives rules out excluding a value without settling one, a 'loser' state (her Table 4.2);
+keeping all leaves only total ignorance (her Table 4.3), the only parse open to the superlative
+forms, which cannot prune their subdomain alternatives. -/
 
 namespace Ignorance
 
-/-- A world is the candidate maximum, a value from 0 to 3. -/
-abbrev EWorld := Fin 4
+variable {W : Type*} (R : SetRel W W) (μ : W → ℕ) (w : W)
 
-/-- `□_S` over a finite epistemic state — `⊆` in
-computable clothing (`boxS_iff_entails`). -/
-def boxS (E : Finset EWorld) (p : EWorld → Prop) : Prop := ∀ w ∈ E, p w
+/-- The values of the maximum that the speaker considers possible at `w`. -/
+def possibleValues : Set ℕ := {x | ◇[R] (μ · = x) w}
 
-instance (E : Finset EWorld) (p : EWorld → Prop) [DecidablePred p] :
-    Decidable (boxS E p) :=
-  inferInstanceAs (Decidable (∀ w ∈ E, p w))
+/-- The speaker knows the value of the maximum, a 'winner' state. -/
+def Winner : Prop := ∃ x, □[R] (μ · = x) w
 
-theorem boxS_iff_entails (E : Finset EWorld) (p : EWorld → Prop) :
-    boxS E p ↔ (↑E : Set EWorld) ⊆ {w | p w} := by
-  simp [boxS, Set.subset_def]
+/-- The implicatures from the size-`k` subdomain alternatives of `T` deny each `□_S (max ∈ S)`
+pre-exhaustified against the others of its size. -/
+def DomainImplicatures (T : Finset ℕ) (k : ℕ) : Prop :=
+  ∀ S : T.powersetCard k, ¬ preExh (fun S : T.powersetCard k ↦ □[R] (μ · ∈ (S : Finset ℕ)) w) S
 
-/-- The asserted prejacent is `□_S`(*less than three*). -/
-def prejacent (E : Finset EWorld) : Prop :=
-  boxS E λ w => (Form.lessThan 3).tc w.val
+variable {R μ w} {T : Finset ℕ} {k : ℕ}
 
-instance (E : Finset EWorld) : Decidable (prejacent E) :=
-  inferInstanceAs (Decidable (boxS E λ w => (Form.lessThan 3).tc w.val))
+theorem box_mem_iff {s : Set ℕ} : □[R] (μ · ∈ s) w ↔ possibleValues R μ w ⊆ s :=
+  ⟨fun h _ ⟨v, hv, hx⟩ ↦ hx ▸ h v hv, fun h v hv ↦ h ⟨v, hv, rfl⟩⟩
 
-/-- The singleton domain alternatives are `□_S(max = i)` for `i < 3`. -/
-def sgDA (E : Finset EWorld) (i : Fin 3) : Prop :=
-  boxS E λ w => w.val = i.val
+theorem nonempty_possibleValues [IsSerial R] : (possibleValues R μ w).Nonempty :=
+  let ⟨v, hv⟩ := IsSerial.serial (R := R) w
+  ⟨μ v, v, hv, rfl⟩
 
-/-- The doubleton domain alternatives are `□_S` of the prejacent region minus value `i`. -/
-def dbDA (E : Finset EWorld) (i : Fin 3) : Prop :=
-  boxS E λ w => w.val < 3 ∧ w.val ≠ i.val
+/-- Exactly one subdomain of size `k` contains the possible values iff there are `k` of them. -/
+theorem existsUnique_subset_iff (hT : possibleValues R μ w ⊆ T) (hk : k < T.card) :
+    (∃! S : T.powersetCard k, possibleValues R μ w ⊆ (S : Finset ℕ)) ↔
+      (possibleValues R μ w).ncard = k := by
+  set V := possibleValues R μ w
+  have hV : V.Finite := T.finite_toSet.subset hT
+  constructor
+  · rintro ⟨⟨S, hS⟩, hVS, huniq⟩
+    rw [Finset.mem_powersetCard] at hS
+    by_contra hne
+    have hle : V.ncard ≤ k := by simpa [hS.2] using Set.ncard_le_ncard hVS
+    obtain ⟨a, haS, haV⟩ : ∃ a ∈ S, a ∉ V := by
+      by_contra! h
+      have := Set.ncard_le_ncard (s := (S : Set ℕ)) h hV
+      simp only [Set.ncard_coe_finset] at this
+      omega
+    obtain ⟨b, hbT, hbS⟩ : ∃ b ∈ T, b ∉ S :=
+      Finset.exists_of_ssubset (Finset.ssubset_iff_subset_ne.2 ⟨hS.1, by rintro rfl; omega⟩)
+    have hS' : insert b (S.erase a) ∈ T.powersetCard k := by
+      rw [Finset.mem_powersetCard, Finset.card_insert_of_notMem (fun h ↦ hbS
+        (Finset.mem_of_mem_erase h)), Finset.card_erase_of_mem haS]
+      exact ⟨Finset.insert_subset hbT ((Finset.erase_subset a S).trans hS.1), by omega⟩
+    have := Subtype.mk.inj (huniq ⟨_, hS'⟩ fun x hx ↦ Finset.mem_insert_of_mem
+      (Finset.mem_erase.2 ⟨fun h ↦ haV (h ▸ hx), hVS hx⟩))
+    exact hbS (this ▸ Finset.mem_insert_self b _)
+  · intro hcard
+    refine ⟨⟨hV.toFinset, Finset.mem_powersetCard.2 ⟨fun x hx ↦ hT (hV.mem_toFinset.1 hx),
+      by rw [← Set.ncard_eq_toFinset_card V hV, hcard]⟩⟩, by simp, ?_⟩
+    rintro ⟨S', hS'⟩ hVS'
+    rw [Finset.mem_powersetCard] at hS'
+    refine Subtype.ext (Finset.eq_of_subset_of_card_le (fun x hx ↦ ?_) ?_).symm
+    · exact hVS' (hV.mem_toFinset.1 hx)
+    · rw [hS'.2, ← Set.ncard_eq_toFinset_card V hV, hcard]
 
-instance (E : Finset EWorld) (i : Fin 3) : Decidable (sgDA E i) :=
-  inferInstanceAs (Decidable (boxS E λ w => w.val = i.val))
+/-- The implicatures from the subdomain alternatives of size `k` hold iff the speaker does not
+consider exactly `k` values possible. -/
+theorem domainImplicatures_iff (hT : □[R] (μ · ∈ (T : Set ℕ)) w) (hk : k < T.card) :
+    DomainImplicatures R μ w T k ↔ (possibleValues R μ w).ncard ≠ k := by
+  simp only [DomainImplicatures, forall_not_preExh_iff, Finset.mem_coe.symm, box_mem_iff]
+  rw [existsUnique_subset_iff (box_mem_iff.1 hT) hk]
 
-instance (E : Finset EWorld) (i : Fin 3) : Decidable (dbDA E i) :=
-  inferInstanceAs (Decidable (boxS E λ w => w.val < 3 ∧ w.val ≠ i.val))
+theorem winner_iff [IsSerial R] : Winner R μ w ↔ (possibleValues R μ w).ncard = 1 := by
+  simp only [Winner, Set.ncard_eq_one]
+  refine exists_congr fun x ↦ ?_
+  rw [← Set.subset_singleton_iff_eq.trans (or_iff_right nonempty_possibleValues.ne_empty)]
+  exact box_mem_iff (s := {x})
 
-/-- A nonempty state settles at most one singleton region. -/
-theorem sgDA_subsingleton {E : Finset EWorld} (hE : E.Nonempty) {i j : Fin 3}
-    (hi : sgDA E i) (hj : sgDA E j) : i = j := by
-  obtain ⟨w, hw⟩ := hE
-  have h1 := hi w hw
-  have h2 := hj w hw
-  exact Fin.ext (by omega)
+/-- Total ignorance, free choice over the values of `T`, holds iff as many values are possible as
+`T` has. -/
+theorem freeChoice_iff (hT : □[R] (μ · ∈ (T : Set ℕ)) w) :
+    FreeChoice R w T (μ · = ·) ↔ (possibleValues R μ w).ncard = T.card := by
+  have hVT := box_mem_iff.1 hT
+  refine ⟨fun h ↦ ?_, fun h x hx ↦ ?_⟩
+  · rw [Set.Subset.antisymm hVT fun x hx ↦ h x hx, Set.ncard_coe_finset]
+  · rw [← Set.ncard_coe_finset] at h
+    change x ∈ possibleValues R μ w
+    rw [Set.eq_of_subset_of_ncard_le hVT h.ge]
+    exact hx
 
-/-- Negating every pre-exhaustified singleton DA leaves no settled region at all, the 'total'
-verdicts of Tables 4.1 and 4.3. -/
-theorem total_ignorance_of_not_preExh {E : Finset EWorld} (hE : E.Nonempty)
-    (h : ∀ i, ¬ Exhaustification.preExh (sgDA E) i) (i : Fin 3) :
-    ¬ sgDA E i := by
-  intro hi
-  rw [Exhaustification.forall_not_preExh_iff] at h
-  exact h ⟨i, hi, λ j hj => sgDA_subsingleton hE hj hi⟩
+private theorem ncard_possibleValues_bounds [IsSerial R] (hT : □[R] (μ · ∈ (T : Set ℕ)) w) :
+    0 < (possibleValues R μ w).ncard ∧ (possibleValues R μ w).ncard ≤ T.card :=
+  ⟨(Set.ncard_pos (T.finite_toSet.subset (box_mem_iff.1 hT))).2 nonempty_possibleValues,
+    by simpa using Set.ncard_le_ncard (box_mem_iff.1 hT)⟩
 
-/-- The `O_ExhDA+σA` parse of `□_S`(*less than three*) ((12), (14), (16)) takes the DA-pruning
-parameter, with `sg` and `db` selecting which DA sizes survive pruning. -/
-def parse (sg db : Bool) (E : Finset EWorld) : Prop :=
-  prejacent E ∧
-  (sg = true → ∀ i, ¬ Exhaustification.preExh (sgDA E) i) ∧
-  (db = true → ∀ i, ¬ Exhaustification.preExh (dbDA E) i) ∧
-  ¬ boxS E (λ w => w.val < 2) ∧ ¬ boxS E (λ w => w.val < 1)
+/-- Keeping only the singleton subdomain alternatives rules out a 'winner' state and admits the
+rest, total ignorance and a 'loser' state that excludes some value without settling one (her
+Table 4.1). -/
+theorem domainImplicatures_one_iff [IsSerial R] (hT : □[R] (μ · ∈ (T : Set ℕ)) w)
+    (h : 1 < T.card) : DomainImplicatures R μ w T 1 ↔ ¬ Winner R μ w := by
+  rw [domainImplicatures_iff hT h, winner_iff]
 
-instance (sg db : Bool) (E : Finset EWorld) : Decidable (parse sg db E) :=
-  inferInstanceAs (Decidable (prejacent E ∧ _ ∧ _ ∧ _ ∧ _))
+/-- Keeping only the subdomain alternatives of size at least two admits exactly a 'winner' state
+and total ignorance, ruling out a 'loser' state (her Table 4.2). -/
+theorem forall_two_le_domainImplicatures_iff [IsSerial R] (hT : □[R] (μ · ∈ (T : Set ℕ)) w) :
+    (∀ k, 2 ≤ k → k < T.card → DomainImplicatures R μ w T k) ↔
+      Winner R μ w ∨ FreeChoice R w T (μ · = ·) := by
+  obtain ⟨hpos, hle⟩ := ncard_possibleValues_bounds hT
+  rw [winner_iff, freeChoice_iff hT]
+  refine ⟨fun h ↦ ?_, fun h k hk hkT ↦ (domainImplicatures_iff hT hkT).2 (by omega)⟩
+  by_contra! hne
+  exact (domainImplicatures_iff hT (by omega)).1 (h _ (by omega) (by omega)) rfl
 
-/-- Total ignorance holds when no value-region is settled. -/
-def TotalIgnorance (E : Finset EWorld) : Prop := ∀ i, ¬ sgDA E i
+/-- Keeping every subdomain alternative, as the superlative forms must, leaves only total
+ignorance (her Table 4.3). -/
+theorem forall_domainImplicatures_iff [IsSerial R] (hT : □[R] (μ · ∈ (T : Set ℕ)) w) :
+    (∀ k, 0 < k → k < T.card → DomainImplicatures R μ w T k) ↔
+      FreeChoice R w T (μ · = ·) := by
+  obtain ⟨hpos, hle⟩ := ncard_possibleValues_bounds hT
+  rw [freeChoice_iff hT]
+  refine ⟨fun h ↦ ?_, fun h k hk hkT ↦ (domainImplicatures_iff hT hkT).2 (by omega)⟩
+  by_contra hne
+  exact (domainImplicatures_iff hT (by omega)).1 (h _ hpos (by omega)) rfl
 
-/-- The canonical 'winner' scenario is `□_S 0`. -/
-def winner0 (E : Finset EWorld) : Prop := sgDA E 0
+/-- The scalar implicature of `□_S` *less than n* on the full scale, against *less than n − 1*,
+holds iff the largest value is possible, so it clashes with a 'loser' state excluding that value
+and with a 'winner' state settling another (the mixed cells of her Tables 4.1 and 4.2). -/
+theorem not_box_lessThan_pred_iff {n : ℕ} (hT : possibleValues R μ w ⊆ Finset.range n) :
+    ¬ □[R] (fun v ↦ (Form.lessThan (n - 1)).tc (μ v)) w ↔ n - 1 ∈ possibleValues R μ w := by
+  simp only [tc_lessThan]
+  change ¬ □[R] (μ · ∈ Set.Iio (n - 1)) w ↔ _
+  rw [box_mem_iff, Set.not_subset]
+  refine ⟨fun ⟨x, hx, hxn⟩ ↦ ?_, fun h ↦ ⟨_, h, by simp⟩⟩
+  have := Finset.mem_range.1 (hT hx)
+  grind
 
-/-- The canonical 'loser' scenario `□_S ¬0 ∧ ¬□_S 1 ∧ ¬□_S 2` excludes one region and leaves
-the rest unsettled. -/
-def loser0 (E : Finset EWorld) : Prop :=
-  (boxS E λ w => w.val ≠ 0) ∧ ¬ sgDA E 1 ∧ ¬ sgDA E 2
+/-- Her 'loser' state for *less than three* rules out zero, with each world the value of the
+maximum and the speaker's accessible worlds one and two. -/
+def zeroRuledOut : SetRel ℕ ℕ := {p | p.2 = 1 ∨ p.2 = 2}
 
-instance (E : Finset EWorld) : Decidable (loser0 E) :=
-  inferInstanceAs (Decidable ((boxS E λ w => w.val ≠ 0) ∧ _ ∧ _))
+instance : IsSerial zeroRuledOut := ⟨fun _ ↦ ⟨1, .inl rfl⟩⟩
 
-/-- Any parse that keeps the singleton DA forces total ignorance — her
-Table 4.1 and 4.3 sum-ups, including the SMN (no-pruning) verdict. -/
-theorem parse_sg_total {db : Bool} {E : Finset EWorld} (hE : E.Nonempty)
-    (h : parse true db E) : TotalIgnorance E :=
-  λ i => total_ignorance_of_not_preExh hE (h.2.1 rfl) i
-
-/-- The 'winner' scenario clashes with the σA-implicature, the ✗ cells of Tables 4.1 and 4.2,
-since `□_S 0` entails `□_S`(*less than one*). -/
-theorem winner0_blocked {sg db : Bool} {E : Finset EWorld}
-    (h : parse sg db E) : ¬ winner0 E := by
-  intro hw
-  exact h.2.2.2.2 λ w hwE => by have := hw w hwE; omega
-
-/-- The singleton-DA regime accommodates the 'loser' scenario — Table 4.1's
-✓ cell (CMNs, which may prune, admit partial ignorance). -/
-theorem sg_accommodates_loser :
-    ∃ E : Finset EWorld, E.Nonempty ∧ parse true false E ∧ loser0 E := by
-  exact ⟨{1, 2}, by decide, by decide, by decide⟩
-
-/-- The doubleton-DA regime blocks the 'loser' scenario — Table 4.2's ✗
-cell — checked over every epistemic state. -/
-theorem db_blocks_loser :
-    ∀ E : Finset EWorld, E.Nonempty → parse false true E → ¬ loser0 E := by
-  decide
+/-- The 'loser' state survives the singleton parse open to *less than three* but not the full
+parse forced on *at most two*. -/
+theorem zeroRuledOut_domainImplicatures :
+    DomainImplicatures zeroRuledOut id 0 (Finset.range 3) 1 ∧
+      ¬ DomainImplicatures zeroRuledOut id 0 (Finset.range 3) 2 := by
+  have hV : possibleValues zeroRuledOut id 0 = {1, 2} := by
+    ext x
+    simp [possibleValues, Diamond, zeroRuledOut]
+  have hT : □[zeroRuledOut] (id · ∈ (Finset.range 3 : Set ℕ)) 0 := by
+    rintro v (rfl | rfl) <;> simp
+  rw [domainImplicatures_iff hT (by simp), domainImplicatures_iff hT (by simp), hV]
+  constructor <;> simp
 
 end Ignorance
 
-/-! ### Anti-negativity (her Ch. 5)
+/-! ### Anti-negativity
 
-Under clausemate negation each pre-exhaustified DA is individually
-inconsistent with the prejacent, so `O_ExhDA` is vacuous (her (9)) — and
-the Proper Strengthening requirement
-(`Exhaustification.ProperlyStrengthens`) fails. Her parameter pair: SMNs
-keep all DA (hence episodic total ignorance, `Ignorance.parse_sg_total`)
-and require PS (hence deviance under negation, `negation_fails_PS`); CMNs
-may prune and impose no PS requirement, escaping both. -/
+Under clausemate negation the subdomain alternatives are negated too, and each pre-exhaustified
+negated alternative `¬ (max ∈ D i) ∧ max ∈ D j` contradicts the negated prejacent, so negating
+them adds nothing (her Ch. 5 (9)) and exhaustification fails to strengthen the prejacent
+(`not_properlyStrengthens_negExh`). The superlative forms require their exhaustification to
+strengthen the prejacent, so they are deviant under negation, while the comparative forms, without
+the requirement, are not. -/
 
 namespace AntiNegativity
 
-/-- A world for the negated case is a candidate maximum from 0 to 2. -/
-abbrev NWorld := Fin 3
+variable {ι : Type*} {φ : Form} {D : ι → Set ℕ}
 
-/-- The negated prejacent is *John didn't call less than two people*. -/
-def negPrejacent (w : NWorld) : Prop := ¬ (Form.lessThan 2).tc w.val
+/-- Exhaustifying a negated form against its negated subdomain alternatives `D`, each
+pre-exhaustified against the others (her Ch. 5 (8)–(9)). -/
+def negExh (φ : Form) (D : ι → Set ℕ) (maxD : ℕ) : Prop :=
+  ¬ φ.tc maxD ∧ ∀ i, ¬ preExh (fun j ↦ maxD ∉ D j) i
 
-/-- The embedded numeral's DA at `w` are the propositions `max = i` for `i < 2`. -/
-def negDA (w : NWorld) (i : Fin 2) : Prop := w.val = i.val
+/-- With two or more subdomain alternatives, exhaustifying the negated form says no more than the
+negated form. -/
+theorem negExh_iff [Nontrivial ι] (hD : ∀ i, D i ∈ φ.domainAlts) (maxD : ℕ) :
+    negExh φ D maxD ↔ ¬ φ.tc maxD := by
+  refine ⟨And.left, fun h ↦ ⟨h, fun i hi ↦ ?_⟩⟩
+  obtain ⟨j, hj⟩ := exists_ne i
+  exact h (Form.tc_of_mem_domainAlts (hD j) (not_not.1 (hi.2 j hj)))
 
-/-- The `O_ExhDA` parse of the negated sentence (her (8)–(9)). -/
-def oParse (w : NWorld) : Prop :=
-  negPrejacent w ∧ ∀ i, ¬ Exhaustification.preExh (negDA w) i
-
-/-- Every pre-exhaustified DA contradicts the negated prejacent (9), so negating them adds
-nothing and `O_ExhDA` is vacuous. -/
-theorem oParse_iff_negPrejacent (w : NWorld) : oParse w ↔ negPrejacent w := by
-  constructor
-  · exact And.left
-  · intro h
-    refine ⟨h, λ i hpe => h ((tc_lessThan 2 w.val).mpr ?_)⟩
-    have hi := hpe.1
-    simp only [negDA] at hi
-    omega
-
-/-- Vacuous exhaustification fails Proper Strengthening — the SMN
-anti-negativity verdict (her §5.1); CMNs, lacking the requirement, are
-fine under negation. -/
-theorem negation_fails_PS :
-    ¬ Exhaustification.ProperlyStrengthens oParse negPrejacent :=
-  Exhaustification.not_properlyStrengthens_of_iff oParse_iff_negPrejacent
-
-/-- Her Ch. 4–5 lexical parameter pair for modified numerals. -/
-inductive NumeralClass where
-  /-- A comparative-modified numeral may prune DA and has no PS requirement. -/
-  | cmn
-  /-- A superlative-modified numeral has full DA and requires PS. -/
-  | smn
-  deriving DecidableEq, Repr
-
-/-- Whether the class licenses DA pruning (her Ch. 4). -/
-def NumeralClass.canPruneDA : NumeralClass → Prop
-  | .cmn => True
-  | .smn => False
-
-/-- Whether the class requires Proper Strengthening (her Ch. 5). -/
-def NumeralClass.requiresPS : NumeralClass → Prop
-  | .cmn => False
-  | .smn => True
+/-- Exhaustifying the negated form fails proper strengthening. -/
+theorem not_properlyStrengthens_negExh [Nontrivial ι] (hD : ∀ i, D i ∈ φ.domainAlts) :
+    ¬ ProperlyStrengthens (negExh φ D) (¬ φ.tc ·) :=
+  not_properlyStrengthens_of_iff (negExh_iff hD)
 
 end AntiNegativity
 

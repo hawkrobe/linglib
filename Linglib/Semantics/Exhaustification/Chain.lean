@@ -20,8 +20,7 @@ scale with no next alternative, exhaustification cannot be satisfied at all
 
 The two halves of the case split, whether a next-stronger alternative exists, are instantiated
 across the numeral literature: `Numerals.exhNumeral`, the exact reading as the step-1 instance on
-ℕ ([horn-1972]); granularity-`g` scalar alternatives in both bound directions
-(`Studies/Mihoc2019`); the dense crash (`Studies/FoxHackl2006`); and the grain-size-indexed
+ℕ ([horn-1972]); the dense crash (`Studies/FoxHackl2006`); and the grain-size-indexed
 precisification families of approximative *just* ([thomas-deo-2020]).
 
 ## Main definitions
