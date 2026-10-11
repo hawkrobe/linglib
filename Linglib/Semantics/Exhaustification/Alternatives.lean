@@ -2,13 +2,17 @@ module
 
 public import Mathlib.Data.Set.Finite.Basic
 public import Mathlib.Order.WellFounded
+public import Linglib.Core.Order.OfCriteria
 
 /-!
 # Alternatives and minimal worlds
 
 A set of alternatives `ALT : Set (Set World)` preorders worlds by the alternatives they
-verify: `u ≤[ALT] v` when every alternative true at `u` is true at `v`. The minimal-world
-exhaustifier `exhMW` keeps the prejacent worlds that are minimal in this preorder; for finite
+verify: `u ≤[ALT] v` when every alternative true at `u` is true at `v`. It is the dual of the
+criteria-derived preorder `Preorder.ofCriteria` with the alternatives as criteria, the order a
+Kratzer ordering source induces. The minimal-world exhaustifier `exhMW` keeps the prejacent worlds
+that are minimal in this preorder, those verifying a minimal set of alternatives
+(`mem_exhMW_iff_minimalFor`); for finite
 `ALT` the strict order is well-founded, so a satisfiable prejacent has minimal worlds. A set
 of prejacent worlds is an `IsMinimalCover` when it represents the minimal worlds up to
 equivalence; the exhaustifiers of `InnocentExclusion` and `InnocentInclusion` are computed
@@ -32,15 +36,30 @@ def leALT (u v : World) : Prop := ∀ a ∈ ALT, a u → a v
 /-- `u <[ALT] v` holds when `u` verifies strictly fewer alternatives than `v`. -/
 def ltALT (u v : World) : Prop := leALT ALT u v ∧ ¬ leALT ALT v u
 
-@[inherit_doc] notation:50 u " ≤[" ALT "] " v => leALT ALT u v
-@[inherit_doc] notation:50 u " <[" ALT "] " v => ltALT ALT u v
+/-- The order on worlds is the dual of the criteria-derived preorder with the alternatives as
+criteria, the order a Kratzer ordering source induces. -/
+theorem leALT_eq_ofCriteria : leALT ALT = fun u v ↦ (Preorder.ofCriteria (· ∈ ·) ALT).le v u :=
+  rfl
+
+theorem ltALT_eq_ofCriteria : ltALT ALT = fun u v ↦ (Preorder.ofCriteria (· ∈ ·) ALT).lt v u :=
+  rfl
+
+@[inherit_doc] scoped notation:50 u " ≤[" ALT "] " v => leALT ALT u v
+@[inherit_doc] scoped notation:50 u " <[" ALT "] " v => ltALT ALT u v
 
 theorem leALT_iff {u v : World} : (u ≤[ALT] v) ↔ ∀ a ∈ ALT, u ∈ a → v ∈ a := Iff.rfl
 
-theorem leALT_refl (u : World) : u ≤[ALT] u := fun _ _ h ↦ h
+theorem ltALT_iff {u v : World} : (u <[ALT] v) ↔ (u ≤[ALT] v) ∧ ¬ (v ≤[ALT] u) := Iff.rfl
+
+/-- One world lies below another when it verifies fewer of the alternatives. -/
+theorem leALT_iff_satisfied_subset {u v : World} :
+    (u ≤[ALT] v) ↔ Preorder.satisfied (· ∈ ·) ALT u ⊆ Preorder.satisfied (· ∈ ·) ALT v :=
+  (Preorder.satisfied_subset_iff (· ∈ ·) ALT u v).symm
+
+theorem leALT_refl (u : World) : u ≤[ALT] u := (Preorder.ofCriteria (· ∈ ·) ALT).le_refl u
 
 theorem leALT_trans (u v w : World) (huv : u ≤[ALT] v) (hvw : v ≤[ALT] w) : u ≤[ALT] w :=
-  fun a ha hau ↦ hvw a ha (huv a ha hau)
+  (Preorder.ofCriteria (· ∈ ·) ALT).le_trans w v u hvw huv
 
 variable (φ : Set World)
 
@@ -49,6 +68,13 @@ below them. -/
 def exhMW : Set World := fun u ↦ φ u ∧ ¬ ∃ v, φ v ∧ (v <[ALT] u)
 
 theorem mem_exhMW {u : World} : u ∈ exhMW ALT φ ↔ u ∈ φ ∧ ¬∃ v ∈ φ, v <[ALT] u := Iff.rfl
+
+/-- A minimal world verifies a minimal set of alternatives among the prejacent worlds. -/
+theorem mem_exhMW_iff_minimalFor {u : World} :
+    u ∈ exhMW ALT φ ↔ MinimalFor (· ∈ φ) (Preorder.satisfied (· ∈ ·) ALT) u := by
+  simp only [mem_exhMW, MinimalFor, ← leALT_iff_satisfied_subset]
+  exact and_congr_right fun _ ↦ ⟨fun h v hv hvu ↦ not_not.1 fun hn ↦ h ⟨v, hv, hvu, hn⟩,
+    fun h ⟨v, hv, hvu, hn⟩ ↦ hn (h hv hvu)⟩
 
 /-- A world is minimal when it is a prejacent world with no prejacent world strictly below it. -/
 def IsMinimal (u : World) : Prop := u ∈ exhMW ALT φ

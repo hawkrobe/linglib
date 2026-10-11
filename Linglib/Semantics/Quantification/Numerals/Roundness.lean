@@ -3,6 +3,7 @@ module
 public import Mathlib.Data.Nat.Log
 public import Mathlib.Data.Fintype.Card
 public import Mathlib.Order.Concept
+public import Linglib.Core.Order.OfCriteria
 public import Mathlib.Algebra.Group.Subgroup.ZPowers.Lemmas
 public import Mathlib.Data.Finset.Max
 public import Mathlib.Tactic.Ring
@@ -24,7 +25,9 @@ multiples the closure is again a scale, the multiples of the lcm of the widths t
 
 ## Main definitions
 
-* `Numerals.Roundness.AtLeastAsRound`: having every roundness property of a number.
+* `Numerals.Roundness.AtLeastAsRound`: having every roundness property of a number, the
+  criteria-derived preorder with the roundness properties as criteria
+  (`atLeastAsRound_iff_ofCriteria`).
 * `Numerals.Roundness.score`: the number of roundness properties a number has.
 * `Numerals.Roundness.OnScale`: lying on a scale of multiples.
 * `Numerals.Roundness.HasKness`, `Numerals.Roundness.Kness`: Jansen and Pollmann's `k`-ness and
@@ -68,6 +71,17 @@ variable {D ι : Type*} {r : D → ι → Prop} {d e f : D}
 
 /-- `e` is at least as round as `d` when it has every roundness property that `d` has. -/
 def AtLeastAsRound (r : D → ι → Prop) (d e : D) : Prop := ∀ ⦃i⦄, r d i → r e i
+
+/-- Being at least as round is the criteria-derived preorder with every scale as a criterion. -/
+theorem atLeastAsRound_iff_ofCriteria :
+    AtLeastAsRound r d e ↔ (Preorder.ofCriteria r Set.univ).le e d :=
+  ⟨fun h _ _ hi ↦ h hi, fun h _ hi ↦ h _ trivial hi⟩
+
+/-- The scales a degree is on, the criteria it satisfies, are its intent in the context `r`. -/
+theorem satisfied_univ_eq_upperPolar (d : D) :
+    Preorder.satisfied r Set.univ d = upperPolar r {d} := by
+  ext i
+  simp [Preorder.satisfied, upperPolar]
 
 @[refl] theorem AtLeastAsRound.refl (r : D → ι → Prop) (d : D) : AtLeastAsRound r d d :=
   fun _ h ↦ h
