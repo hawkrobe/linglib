@@ -5,9 +5,8 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Mathlib.Computability.MyhillNerode
 public import Mathlib.Data.Set.Finite.List
-public import Linglib.Core.Logic.Function.FactorsThrough
+public import Linglib.Core.Computability.MyhillNerode
 
 /-!
 # Piecewise testable languages
@@ -81,32 +80,21 @@ of subsequences of length at most `k`. -/
 def IsPiecewiseTestable (L : Language α) (k : ℕ) : Prop :=
   Function.FactorsThrough (· ∈ L) (subseqSet k)
 
-lemma isPiecewiseTestable_iff {L : Language α} {k : ℕ} :
-    L.IsPiecewiseTestable k ↔
-      ∀ w₁ w₂, subseqSet k w₁ = subseqSet k w₂ → (w₁ ∈ L ↔ w₂ ∈ L) :=
-  ⟨fun h _ _ h' ↦ iff_of_eq (h h'), fun h _ _ h' ↦ propext (h _ _ h')⟩
-
 variable {L M : Language α} {k : ℕ}
 
 theorem IsPiecewiseTestable.compl (h : L.IsPiecewiseTestable k) : Lᶜ.IsPiecewiseTestable k :=
-  isPiecewiseTestable_iff.mpr fun w₁ w₂ he ↦ not_congr (isPiecewiseTestable_iff.mp h w₁ w₂ he)
+  fun _ _ e ↦ congrArg Not (h e)
 
 theorem IsPiecewiseTestable.inter (hL : L.IsPiecewiseTestable k)
     (hM : M.IsPiecewiseTestable k) : (L ⊓ M).IsPiecewiseTestable k :=
-  isPiecewiseTestable_iff.mpr fun w₁ w₂ he ↦
-    and_congr (isPiecewiseTestable_iff.mp hL w₁ w₂ he) (isPiecewiseTestable_iff.mp hM w₁ w₂ he)
+  fun _ _ e ↦ congrArg₂ And (hL e) (hM e)
 
 theorem IsPiecewiseTestable.union (hL : L.IsPiecewiseTestable k)
     (hM : M.IsPiecewiseTestable k) : (L ⊔ M).IsPiecewiseTestable k :=
-  isPiecewiseTestable_iff.mpr fun w₁ w₂ he ↦
-    or_congr (isPiecewiseTestable_iff.mp hL w₁ w₂ he) (isPiecewiseTestable_iff.mp hM w₁ w₂ he)
+  fun _ _ e ↦ congrArg₂ Or (hL e) (hM e)
 
-/-- Over a finite alphabet piecewise testable languages are regular, since left quotients factor
-through the finitely many values of `subseqSet k`. -/
+/-- Over a finite alphabet piecewise testable languages are regular. -/
 theorem IsPiecewiseTestable.isRegular [Finite α] (h : L.IsPiecewiseTestable k) : L.IsRegular :=
-  .of_finite_range_leftQuotient <| Function.FactorsThrough.finite_range
-    (fun _ _ hw ↦ Set.ext fun _ ↦
-      isPiecewiseTestable_iff.mp h _ _ (subseqSet_append_congr hw rfl))
-    (finite_range_subseqSet k)
+  .of_factorsThrough h (fun _ _ _ e ↦ subseqSet_append_congr e rfl) (finite_range_subseqSet k)
 
 end Language

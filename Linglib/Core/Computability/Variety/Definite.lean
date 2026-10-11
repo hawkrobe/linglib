@@ -92,25 +92,6 @@ theorem isDefinite_iff_forall_isRightZero_syntacticClass :
       h _ (by rw [List.length_rtake]; omega)]
   · rw [Edge.takeAt_right, List.rtake_of_length_le hw.le]
 
-/-- Words sharing their length-`k` suffix are equivalent for a `k`-definite language. -/
-theorem IsDefinite.syntacticEquiv_of_rtake_eq (h : L.IsDefinite k) {u v : List α}
-    (huv : u.rtake k = v.rtake k) : L.SyntacticEquiv u v := by
-  have hlen : min k u.length = min k v.length := by
-    simpa only [List.length_rtake] using congrArg List.length huv
-  rcases le_or_gt k u.length with hu | hu
-  · have key : ∀ w : List α, k ≤ w.length → L.SyntacticEquiv w (w.rtake k) := fun w hw ↦ by
-      conv_lhs => rw [← List.rdrop_append_rtake k w]
-      exact h.syntacticEquiv_append_left (by rw [List.length_rtake]; omega) _
-    exact ((key u hu).trans (huv ▸ .refl _)).trans (key v (by omega)).symm
-  · rw [List.rtake_of_length_le hu.le, List.rtake_of_length_le (by omega)] at huv
-    exact huv ▸ .refl _
-
-/-- A definite language over a finite alphabet is regular. -/
-theorem IsDefinite.isRegular [Finite α] (h : L.IsDefinite k) : L.IsRegular :=
-  .of_finite_range_leftQuotient <| Function.FactorsThrough.finite_range
-    (fun _ _ e ↦ (h.syntacticEquiv_of_rtake_eq e).leftQuotient_eq)
-    ((List.finite_length_le α k).subset (Set.range_subset_iff.2 fun w ↦ by simp))
-
 /-! #### Reverse definite languages -/
 
 /-- A reverse `k`-definite language is blind to a suffix appended to a word of length at
@@ -136,25 +117,6 @@ theorem isReverseDefinite_iff_forall_isLeftZero_syntacticClass :
     conv_lhs => rw [← List.take_append_drop k w]
     rw [syntacticClass_append, Edge.takeAt_left, h _ (by rw [List.length_take]; omega)]
   · rw [Edge.takeAt_left, List.take_of_length_le hw.le]
-
-/-- Words sharing their length-`k` prefix are equivalent for a reverse `k`-definite language. -/
-theorem IsReverseDefinite.syntacticEquiv_of_take_eq (h : L.IsReverseDefinite k) {u v : List α}
-    (huv : u.take k = v.take k) : L.SyntacticEquiv u v := by
-  have hlen : min k u.length = min k v.length := by
-    simpa only [List.length_take] using congrArg List.length huv
-  rcases le_or_gt k u.length with hu | hu
-  · have key : ∀ w : List α, k ≤ w.length → L.SyntacticEquiv w (w.take k) := fun w hw ↦ by
-      conv_lhs => rw [← List.take_append_drop k w]
-      exact h.syntacticEquiv_append_right (by rw [List.length_take]; omega) _
-    exact ((key u hu).trans (huv ▸ .refl _)).trans (key v (by omega)).symm
-  · rw [List.take_of_length_le hu.le, List.take_of_length_le (by omega)] at huv
-    exact huv ▸ .refl _
-
-/-- A reverse definite language over a finite alphabet is regular. -/
-theorem IsReverseDefinite.isRegular [Finite α] (h : L.IsReverseDefinite k) : L.IsRegular :=
-  .of_finite_range_leftQuotient <| Function.FactorsThrough.finite_range
-    (fun _ _ e ↦ (h.syntacticEquiv_of_take_eq e).leftQuotient_eq)
-    ((List.finite_length_le α k).subset (Set.range_subset_iff.2 fun w ↦ by simp))
 
 /-! #### Generalized definite languages -/
 
@@ -205,35 +167,6 @@ theorem isGeneralizedDefinite_iff_forall_syntacticClass_mul_mul_self :
     exact e₂.symm.trans e₁
   · rw [List.take_of_length_le ha.le, List.take_of_length_le (by omega)] at hpre
     rw [hpre]
-
-/-- Words sharing their length-`k` prefix and suffix are equivalent for a generalized `k`-definite
-language. -/
-theorem IsGeneralizedDefinite.syntacticEquiv_of_take_eq_of_rtake_eq
-    (h : L.IsGeneralizedDefinite k) {u v : List α} (h₁ : u.take k = v.take k)
-    (h₂ : u.rtake k = v.rtake k) : L.SyntacticEquiv u v := fun x y ↦ by
-  have hlen : min k u.length = min k v.length := by
-    simpa only [List.length_take] using congrArg List.length h₁
-  rcases le_or_gt k u.length with hu | hu
-  · have hv : k ≤ v.length := by omega
-    refine isGeneralizedDefinite_iff_edges.1 h ?_ ?_
-    · rw [Edge.takeAt_left, Edge.takeAt_left, ← List.take_append_drop k u,
-        ← List.take_append_drop k v, ← h₁, take_append_middle (by simp [hu]),
-        take_append_middle (by simp [hu])]
-    · rw [Edge.takeAt_right, Edge.takeAt_right, ← List.rdrop_append_rtake k u,
-        ← List.rdrop_append_rtake k v, ← h₂, rtake_append_middle (by simp [hu]),
-        rtake_append_middle (by simp [hu])]
-  · rw [List.take_of_length_le hu.le, List.take_of_length_le (by omega)] at h₁
-    rw [h₁]
-
-/-- A generalized definite language over a finite alphabet is regular. -/
-theorem IsGeneralizedDefinite.isRegular [Finite α] (h : L.IsGeneralizedDefinite k) :
-    L.IsRegular :=
-  .of_finite_range_leftQuotient <| Function.FactorsThrough.finite_range
-    (f := fun w ↦ (w.take k, w.rtake k))
-    (fun _ _ e ↦ (h.syntacticEquiv_of_take_eq_of_rtake_eq (congrArg Prod.fst e)
-      (congrArg Prod.snd e)).leftQuotient_eq)
-    (((List.finite_length_le α k).prod (List.finite_length_le α k)).subset
-      (Set.range_subset_iff.2 fun w ↦ by simp))
 
 /-! ### The syntactic semigroup -/
 
