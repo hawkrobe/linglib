@@ -5,27 +5,27 @@ public import Linglib.Pragmatics.RSA.Basic
 /-!
 # Sikos, Venhuizen, Drenhaus and Crocker (2021): Reevaluating Pragmatic Reasoning in Language Games
 
-This file formalizes the paper's baseline model and its relation to the rational speech act model of
-Frank and Goodman in one-shot reference games. RSA's listener (1) is the Bayesian inverse, against a
-salience prior, of a speaker (3) who chooses among the words that apply to the referent in
-proportion to their informativity, the reciprocal of the number of objects each applies to; that
-speaker is the best response at rationality one to the literal listener with a uniform prior (`L0`,
-`rsaSpeaker`, `rsaListener`). The baseline literal listener model (4) keeps the Bayesian structure
-but replaces the speaker by literal meaning alone, a uniform choice among the applicable words
-(`baselineSpeaker`, `baselineListener`). Since every object of the paper's displays has one color
-and one shape, the baseline is RSA's literal listener with the salience prior
-(`baselineListener_eq_listener_truthful`), and the two models agree wherever a word applies to a
-single object or fails to apply, the predictions of one hundred and of zero percent that dominate
-the original materials (`rsaListener_apply_singleton_of_eq_singleton`,
-`baselineListener_apply_singleton_of_eq_singleton`, `rsaListener_apply_singleton_of_notMem`,
-`baselineListener_apply_singleton_of_notMem`). The models differ only in the pragmatic conditions:
-in a pragmatically solvable context the informative speaker makes RSA prefer the pragmatic referent
-to the color competitor where the baseline is at chance (`solvable_rsa_prefers`,
-`solvable_baseline_indifferent`), and in a pragmatically reducible context it makes RSA prefer the
-two pragmatic referents to the competitor (`reducible_rsa_prefers`). Listener preference is the
-comparison of prior mass times speaker likelihood (`rsaListener_real_lt_iff`), so a salient
-competitor overrides the informative speaker exactly when its prior advantage exceeds the likelihood
-ratio, the way the prior reverses RSA's pragmatic component in the reducible conditions (§7.2).
+Sikos and colleagues compare the rational speech act model of Frank and Goodman with a baseline
+in one-shot reference games. RSA's listener inverts, against a salience prior, a speaker who
+chooses among the words true of the referent in proportion to their informativity, the
+reciprocal of the size of each word's extension. The baseline keeps the Bayesian inversion but
+replaces that speaker by literal meaning alone, a uniform choice among the words true of the
+referent. A display is a model `d` whose three positions each have a colour and a shape, and the
+extension `d.sem u` of a word is the set of positions with the colour or the shape it names.
+
+## Main statements
+
+* `baselineListener_eq_listener_truthful`: when every object has the same number of true words,
+  one colour and one shape in the paper's displays, the baseline is RSA's literal listener at
+  the salience prior.
+* `rsaListener_apply_singleton_of_eq_singleton`, `rsaListener_apply_singleton_of_notMem` and
+  their baseline twins: the two models agree wherever a word is true of a single object or false
+  of an object, the predictions of one hundred and of zero percent.
+* `solvable_rsa_prefers`, `solvable_baseline_indifferent`, `reducible_rsa_prefers`: in the
+  pragmatically solvable and reducible displays RSA prefers the pragmatic referent to the
+  competitor, where the baseline is at chance.
+* `rsaListener_real_lt_iff`: listener preference compares prior mass times speaker likelihood,
+  so a salient competitor wins exactly when its prior advantage exceeds the likelihood ratio.
 
 ## Implementation notes
 
@@ -52,48 +52,43 @@ namespace SikosEtAl2021
 
 section General
 
-variable {W U : Type*} [Fintype W] [MeasurableSpace W] [DiscreteMeasurableSpace W]
-  [Fintype U] [MeasurableSpace U] [DiscreteMeasurableSpace U] (sem : U → Set W)
-
-/-- The uniform prior over the objects of the display. -/
-noncomputable def uniform : Measure W := Measure.count
-
-instance : IsFiniteMeasure (uniform (W := W)) :=
-  inferInstanceAs (IsFiniteMeasure (Measure.count : Measure W))
+variable {W U : Type*} [MeasurableSpace W] [DiscreteMeasurableSpace W] [Fintype U]
+  [MeasurableSpace U] [DiscreteMeasurableSpace U] (sem : U → Set W)
 
 /-- The literal listener with the uniform prior, RSA's `L0`. -/
-noncomputable def L0 : Kernel U W := listener uniform (truthful sem)
+noncomputable def L0 : Kernel U W := listener Measure.count (truthful sem)
 
 instance : IsFiniteKernel (L0 sem) := inferInstanceAs (IsFiniteKernel (listener _ (truthful _)))
 
+theorem L0_apply_singleton_of_notMem {w : W} {u : U} (h : w ∉ sem u) : L0 sem u {w} = 0 :=
+  listener_truthful_apply_singleton_of_notMem Measure.count sem h
+
+variable [Fintype W]
+
 /-- The informative speaker (3) is the best response to `L0` at rationality one and constant
-cost, choosing among the applicable words in proportion to their informativity. -/
+cost, choosing among the words true of the referent in proportion to their informativity. -/
 noncomputable def rsaSpeaker : Kernel W U := speaker 1 0 (L0 sem) Measure.dirac
 
 instance : IsFiniteKernel (rsaSpeaker sem) := inferInstanceAs (IsFiniteKernel (speaker _ _ _ _))
 
-/-- The baseline speaker (4) uses literal meaning alone, choosing uniformly among the words that
-apply to the referent. -/
+/-- The baseline speaker (4) uses literal meaning alone, choosing uniformly among the words true
+of the referent. -/
 noncomputable def baselineSpeaker : Kernel W U :=
-  Kernel.ofWeights fun w u => (sem u).indicator 1 w
+  Kernel.ofWeights fun w u ↦ (sem u).indicator 1 w
 
 instance : IsFiniteKernel (baselineSpeaker sem) :=
   inferInstanceAs (IsFiniteKernel (Kernel.ofWeights _))
 
 theorem L0_apply_singleton {w : W} {u : U} (h : w ∈ sem u) :
-    L0 sem u {w} = (uniform (sem u))⁻¹ := by
-  rw [L0, listener_truthful_apply_singleton uniform sem h, uniform, Measure.count_singleton,
+    L0 sem u {w} = (Measure.count (sem u))⁻¹ := by
+  rw [L0, listener_truthful_apply_singleton Measure.count sem h, Measure.count_singleton,
     mul_one]
-
-omit [Fintype W] in
-theorem L0_apply_singleton_of_notMem {w : W} {u : U} (h : w ∉ sem u) : L0 sem u {w} = 0 :=
-  listener_truthful_apply_singleton_of_notMem uniform sem h
 
 theorem L0_ne_zero {w : W} {u : U} (h : w ∈ sem u) : L0 sem u {w} ≠ 0 := by
   rw [L0_apply_singleton sem h]
   exact ENNReal.inv_ne_zero.mpr (measure_ne_top _ _)
 
-/-- A word that does not apply to a referent is never produced for it. -/
+/-- A word false of a referent is never produced for it. -/
 theorem rsaSpeaker_apply_singleton_of_notMem {w : W} {u : U} (h : w ∉ sem u) :
     rsaSpeaker sem w {u} = 0 :=
   speaker_dirac_apply_singleton_eq_zero one_pos (L0_apply_singleton_of_notMem sem h)
@@ -106,116 +101,98 @@ theorem baselineSpeaker_apply_singleton_of_notMem {w : W} {u : U} (h : w ∉ sem
     baselineSpeaker sem w {u} = 0 :=
   Kernel.ofWeights_apply_singleton_eq_zero (by simp [Set.indicator_of_notMem h])
 
+theorem baselineSpeaker_apply_singleton_ne_zero {w : W} {u : U} (h : w ∈ sem u) :
+    baselineSpeaker sem w {u} ≠ 0 :=
+  Kernel.ofWeights_apply_singleton_ne_zero (by simp [Set.indicator_of_mem h]) fun u' ↦ by
+    by_cases h' : w ∈ sem u' <;> simp [h']
+
+/-! ### The listeners -/
+
+section Listener
+
+variable [StandardBorelSpace W] [Nonempty W] (μ : Measure W) [IsFiniteMeasure μ]
+
+/-- RSA's listener (1) inverts the informative speaker against the salience prior. -/
+noncomputable def rsaListener : Kernel U W := (rsaSpeaker sem)†μ
+
+/-- The baseline literal listener model (4) inverts the baseline speaker against the salience
+prior. -/
+noncomputable def baselineListener : Kernel U W := (baselineSpeaker sem)†μ
+
+/-- In a trivial condition the word is true of one object of positive prior mass, and RSA is
+certain of it, a prediction of one hundred percent. -/
+theorem rsaListener_apply_singleton_of_eq_singleton {u : U} {w₀ : W} (h : sem u = {w₀})
+    (hμ : μ {w₀} ≠ 0) : rsaListener sem μ u {w₀} = 1 :=
+  posterior_apply_singleton_eq_one _ μ
+    (fun w hw ↦ rsaSpeaker_apply_singleton_of_notMem sem (by rw [h]; exact hw))
+    (rsaSpeaker_apply_singleton_ne_zero sem (by rw [h]; exact Set.mem_singleton w₀)) hμ
+
+/-- In a trivial condition the baseline is certain of the same object. -/
+theorem baselineListener_apply_singleton_of_eq_singleton {u : U} {w₀ : W} (h : sem u = {w₀})
+    (hμ : μ {w₀} ≠ 0) : baselineListener sem μ u {w₀} = 1 :=
+  posterior_apply_singleton_eq_one _ μ
+    (fun w hw ↦ baselineSpeaker_apply_singleton_of_notMem sem (by rw [h]; exact hw))
+    (baselineSpeaker_apply_singleton_ne_zero sem (by rw [h]; exact Set.mem_singleton w₀)) hμ
+
+/-- An object the word is false of gets no mass under RSA, a prediction of zero percent. -/
+theorem rsaListener_apply_singleton_of_notMem {u : U} {w w' : W} (hw : w ∉ sem u)
+    (hw' : w' ∈ sem u) (hμ' : μ {w'} ≠ 0) : rsaListener sem μ u {w} = 0 :=
+  posterior_apply_singleton_eq_zero _ μ
+    (comp_apply_singleton_ne_zero _ _ hμ' (rsaSpeaker_apply_singleton_ne_zero sem hw'))
+    (rsaSpeaker_apply_singleton_of_notMem sem hw)
+
+/-- An excluded object gets no mass under the baseline either. -/
+theorem baselineListener_apply_singleton_of_notMem {u : U} {w w' : W} (hw : w ∉ sem u)
+    (hw' : w' ∈ sem u) (hμ' : μ {w'} ≠ 0) : baselineListener sem μ u {w} = 0 :=
+  posterior_apply_singleton_eq_zero _ μ
+    (comp_apply_singleton_ne_zero _ _ hμ' (baselineSpeaker_apply_singleton_ne_zero sem hw'))
+    (baselineSpeaker_apply_singleton_of_notMem sem hw)
+
+/-- Listener preference between two objects compares prior mass times speaker likelihood, so a
+salient competitor wins against the informative speaker's preferred referent exactly when its
+prior advantage exceeds the likelihood ratio. -/
+theorem rsaListener_real_lt_iff {u : U} {w₀ : W} (hw₀ : w₀ ∈ sem u) (hμ₀ : μ {w₀} ≠ 0)
+    (w₁ w₂ : W) :
+    (rsaListener sem μ u).real {w₁} < (rsaListener sem μ u).real {w₂} ↔
+      μ.real {w₁} * (rsaSpeaker sem w₁).real {u} < μ.real {w₂} * (rsaSpeaker sem w₂).real {u} := by
+  have hx := comp_apply_singleton_ne_zero _ _ hμ₀ (rsaSpeaker_apply_singleton_ne_zero sem hw₀)
+  simpa [rsaListener] using posterior_real_finset_lt_iff (rsaSpeaker sem) μ hx {w₁} {w₂}
+
+end Listener
+
+/-! ### The words true of an object -/
+
 variable [∀ u, DecidablePred (· ∈ sem u)]
 
-/-- The words applying to an object, the paper's `W(r)`. -/
-def applicable (w : W) : Finset U := Finset.univ.filter fun u => w ∈ sem u
+/-- The words true of an object, the paper's `W(r)`. -/
+def applicable (w : W) : Finset U := Finset.univ.filter fun u ↦ w ∈ sem u
 
-/-- The baseline speaker's probability of an applicable word is the reciprocal of the number of
-words applying to the referent. -/
+/-- The baseline speaker's probability of a true word is the reciprocal of the number of words
+true of the referent. -/
 theorem baselineSpeaker_apply_singleton {w : W} {u : U} (h : w ∈ sem u) :
     baselineSpeaker sem w {u} = ((applicable sem w).card : ℝ≥0∞)⁻¹ := by
   rw [baselineSpeaker, Kernel.ofWeights_apply_singleton, Set.indicator_of_mem h, Pi.one_apply,
     applicable]
   simp only [Set.indicator_apply, Pi.one_apply, Finset.sum_boole, one_div]
 
-theorem baselineSpeaker_apply_singleton_ne_zero {w : W} {u : U} (h : w ∈ sem u) :
-    baselineSpeaker sem w {u} ≠ 0 := by
-  rw [baselineSpeaker_apply_singleton sem h]
-  exact ENNReal.inv_ne_zero.mpr (ENNReal.natCast_ne_top _)
-
-omit [∀ u, DecidablePred (· ∈ sem u)] in
-/-- The uniform prior counts the objects of a set. -/
-theorem uniform_apply (s : Set W) [DecidablePred (· ∈ s)] :
-    uniform s = ((Finset.univ.filter (· ∈ s)).card : ℝ≥0∞) := by
-  rw [uniform, ← Measure.count_apply_finset]
-  congr 1
-  ext
-  simp
-
 /-- The real value of the literal listener with the uniform prior. -/
 theorem L0_toReal (u : U) (w : W) :
-    (L0 sem u {w}).toReal =
-      if w ∈ sem u then 1 / ((Finset.univ.filter (· ∈ sem u)).card : ℝ) else 0 := by
+    (L0 sem u {w}).toReal = if w ∈ sem u then 1 / ((sem u).toFinset.card : ℝ) else 0 := by
+  have hcount : Measure.count (sem u) = ((sem u).toFinset.card : ℝ≥0∞) := by
+    rw [← Measure.count_apply_finset, Set.coe_toFinset]
   split_ifs with h
-  · rw [L0_apply_singleton sem h, uniform_apply, ENNReal.toReal_inv, ENNReal.toReal_natCast,
-      one_div]
+  · rw [L0_apply_singleton sem h, hcount, ENNReal.toReal_inv, ENNReal.toReal_natCast, one_div]
   · rw [L0_apply_singleton_of_notMem sem h, ENNReal.toReal_zero]
 
-/-! ### The listeners -/
-
-omit [Fintype W] [DiscreteMeasurableSpace W] in
-/-- A kernel whose column at `x` vanishes at a state gives that state no posterior mass, once
-some state has positive prior mass and positive column. -/
-theorem posterior_apply_singleton_eq_zero [StandardBorelSpace W] [Nonempty W] {κ : Kernel W U}
-    [IsFiniteKernel κ] (μ : Measure W) [IsFiniteMeasure μ] {u : U} {w w' : W}
-    (hκ : κ w {u} = 0) (hμ' : μ {w'} ≠ 0) (hκ' : κ w' {u} ≠ 0) : (κ†μ) u {w} = 0 := by
-  rw [posterior_apply_singleton _ _ (comp_apply_singleton_ne_zero _ _ hμ' hκ'), hκ]
-  simp
-
-omit [DiscreteMeasurableSpace W] in
-/-- A kernel whose column at `x` is supported on a single state of positive prior mass inverts
-to certainty about that state. -/
-theorem posterior_apply_singleton_eq_one [StandardBorelSpace W] [Nonempty W] {κ : Kernel W U}
-    [IsFiniteKernel κ] (μ : Measure W) [IsFiniteMeasure μ] {u : U} {w₀ : W}
-    (hsupp : ∀ w ≠ w₀, κ w {u} = 0) (hκ : κ w₀ {u} ≠ 0) (hμ : μ {w₀} ≠ 0) :
-    (κ†μ) u {w₀} = 1 := by
-  have hcomp : (κ ∘ₘ μ) {u} = μ {w₀} * κ w₀ {u} := by
-    rw [Measure.comp_apply_singleton]
-    exact Finset.sum_eq_single w₀ (fun w _ hw => by rw [hsupp w hw, mul_zero])
-      (fun h => absurd (Finset.mem_univ _) h)
-  rw [posterior_apply_singleton _ _ (by rw [hcomp]; exact mul_ne_zero hμ hκ), hcomp]
-  exact ENNReal.div_self (mul_ne_zero hμ hκ)
-    (ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _))
-
-variable [StandardBorelSpace W] [Nonempty W] (μ : Measure W) [IsFiniteMeasure μ]
-
-/-- RSA's listener (1) inverts the informative speaker against the salience prior. -/
-noncomputable def rsaListener : Kernel U W :=
-  ((speaker 1 0 (L0 sem) Measure.dirac)†μ)
-
-/-- The baseline literal listener model (4) inverts the baseline speaker against the salience
-prior. -/
-noncomputable def baselineListener : Kernel U W := (baselineSpeaker sem)†μ
-
-omit [∀ u, DecidablePred (· ∈ sem u)] in
-/-- In a trivial condition the word applies to one object of positive prior mass, and RSA is
-certain of it, a prediction of one hundred percent. -/
-theorem rsaListener_apply_singleton_of_eq_singleton {u : U} {w₀ : W} (h : sem u = {w₀})
-    (hμ : μ {w₀} ≠ 0) : rsaListener sem μ u {w₀} = 1 :=
-  posterior_apply_singleton_eq_one μ
-    (fun w hw => rsaSpeaker_apply_singleton_of_notMem sem (by rw [h]; exact hw))
-    (rsaSpeaker_apply_singleton_ne_zero sem (by rw [h]; exact Set.mem_singleton w₀)) hμ
-
-/-- In a trivial condition the baseline is certain of the same object. -/
-theorem baselineListener_apply_singleton_of_eq_singleton {u : U} {w₀ : W} (h : sem u = {w₀})
-    (hμ : μ {w₀} ≠ 0) : baselineListener sem μ u {w₀} = 1 :=
-  posterior_apply_singleton_eq_one μ
-    (fun w hw => baselineSpeaker_apply_singleton_of_notMem sem (by rw [h]; exact hw))
-    (baselineSpeaker_apply_singleton_ne_zero sem (by rw [h]; exact Set.mem_singleton w₀)) hμ
-
-omit [∀ u, DecidablePred (· ∈ sem u)] in
-/-- An object to which the word does not apply gets no mass under RSA, a prediction of zero
-percent. -/
-theorem rsaListener_apply_singleton_of_notMem {u : U} {w w' : W} (hw : w ∉ sem u)
-    (hw' : w' ∈ sem u) (hμ' : μ {w'} ≠ 0) : rsaListener sem μ u {w} = 0 :=
-  posterior_apply_singleton_eq_zero μ (rsaSpeaker_apply_singleton_of_notMem sem hw) hμ'
-    (rsaSpeaker_apply_singleton_ne_zero sem hw')
-
-/-- An excluded object gets no mass under the baseline either. -/
-theorem baselineListener_apply_singleton_of_notMem {u : U} {w w' : W} (hw : w ∉ sem u)
-    (hw' : w' ∈ sem u) (hμ' : μ {w'} ≠ 0) : baselineListener sem μ u {w} = 0 :=
-  posterior_apply_singleton_eq_zero μ (baselineSpeaker_apply_singleton_of_notMem sem hw) hμ'
-    (baselineSpeaker_apply_singleton_ne_zero sem hw')
-
-/-- When every object has the same number of applicable words, one color and one shape in the
-paper's displays, the baseline listener is RSA's literal listener with the salience prior, that
-is, `L0` itself informed by the prior. -/
-theorem baselineListener_eq_listener_truthful {k : ℕ} (hk : k ≠ 0)
+/-- When every object has the same number of true words, one color and one shape in the paper's
+displays, the baseline listener is RSA's literal listener with the salience prior, that is, `L0`
+itself informed by the prior. -/
+theorem baselineListener_eq_listener_truthful [StandardBorelSpace W] [Nonempty W]
+    (μ : Measure W) [IsFiniteMeasure μ] {k : ℕ} (hk : k ≠ 0)
     (hcard : ∀ w, (applicable sem w).card = k) {u : U} (hμ : μ (sem u) ≠ 0) (w : W) :
-    baselineListener sem μ u {w} = listener μ (truthful (sem)) u {w} := by
-  have hrow : ∀ w', baselineSpeaker sem w' {u} = (sem u).indicator (fun _ => (k : ℝ≥0∞)⁻¹) w' := by
-    intro w'
+    baselineListener sem μ u {w} = listener μ (truthful sem) u {w} := by
+  have hrow (w' : W) :
+      baselineSpeaker sem w' {u} = (sem u).indicator (fun _ ↦ (k : ℝ≥0∞)⁻¹) w' := by
     by_cases h : w' ∈ sem u
     · rw [baselineSpeaker_apply_singleton sem h, hcard, Set.indicator_of_mem h]
     · rw [baselineSpeaker_apply_singleton_of_notMem sem h, Set.indicator_of_notMem h]
@@ -236,18 +213,6 @@ theorem baselineListener_eq_listener_truthful {k : ℕ} (hk : k ≠ 0)
   · rw [baselineListener, posterior_apply_singleton _ _ hx, hrow w, Set.indicator_of_notMem h,
       listener_truthful_apply_singleton_of_notMem μ sem h]
     simp
-
-omit [∀ u, DecidablePred (· ∈ sem u)] in
-/-- Listener preference between two objects compares prior mass times speaker likelihood, so a
-salient competitor wins against the informative speaker's preferred referent exactly when its
-prior advantage exceeds the likelihood ratio. -/
-theorem rsaListener_real_lt_iff {u : U} {w₀ : W} (hw₀ : w₀ ∈ sem u) (hμ₀ : μ {w₀} ≠ 0)
-    (w₁ w₂ : W) :
-    (rsaListener sem μ u).real {w₁} < (rsaListener sem μ u).real {w₂} ↔
-      μ.real {w₁} * (rsaSpeaker sem w₁).real {u} < μ.real {w₂} * (rsaSpeaker sem w₂).real {u} := by
-  have hx := comp_apply_singleton_ne_zero _ _ hμ₀ (rsaSpeaker_apply_singleton_ne_zero sem hw₀)
-  show (((rsaSpeaker sem)†μ) u).real {w₁} < (((rsaSpeaker sem)†μ) u).real {w₂} ↔ _
-  simpa using posterior_real_finset_lt_iff (rsaSpeaker sem) μ hx {w₁} {w₂}
 
 end General
 
@@ -271,14 +236,15 @@ inductive Word
   deriving DecidableEq, Fintype, Repr
 
 instance : MeasurableSpace Word := ⊤
-instance : DiscreteMeasurableSpace Word := ⟨fun _ => trivial⟩
+instance : DiscreteMeasurableSpace Word := ⟨fun _ ↦ trivial⟩
 
-/-- A display has three positions, each with a color and a shape. -/
+/-- A display is a model with three positions, each with a color and a shape. -/
 structure Display where
   color : Fin 3 → Color
   shape : Fin 3 → Shape
 
-/-- The positions of a display a word applies to. -/
+/-- The lexical entries. In a display a color word is true of the positions with that color, and
+a shape word of the positions with that shape. -/
 def Display.sem (d : Display) : Word → Set (Fin 3)
   | .color c => {i | d.color i = c}
   | .shape s => {i | d.shape i = s}
@@ -317,16 +283,16 @@ def solvable : Display := ⟨![.blue, .blue, .green], ![.boot, .mitt, .boot]⟩
 /-- With a uniform prior, RSA prefers the pragmatic referent to the color competitor on hearing
 the color word, since for the blue mitt the speaker had the more informative *mitt*. -/
 theorem solvable_rsa_prefers :
-    (rsaListener solvable.sem uniform (.color .blue)).real {1} <
-      (rsaListener solvable.sem uniform (.color .blue)).real {0} := by
-  have hb : (Finset.univ.filter (· ∈ solvable.sem (.color .blue))).card = 2 := by decide
-  have hg : (Finset.univ.filter (· ∈ solvable.sem (.color .green))).card = 1 := by decide
-  have hbo : (Finset.univ.filter (· ∈ solvable.sem (.shape .boot))).card = 2 := by decide
-  have hmi : (Finset.univ.filter (· ∈ solvable.sem (.shape .mitt))).card = 1 := by decide
+    (rsaListener solvable.sem Measure.count (.color .blue)).real {1} <
+      (rsaListener solvable.sem Measure.count (.color .blue)).real {0} := by
+  have hb : (solvable.sem (.color .blue)).toFinset.card = 2 := by decide
+  have hg : (solvable.sem (.color .green)).toFinset.card = 1 := by decide
+  have hbo : (solvable.sem (.shape .boot)).toFinset.card = 2 := by decide
+  have hmi : (solvable.sem (.shape .mitt)).toFinset.card = 1 := by decide
   rw [rsaListener_real_lt_iff _ _ (w₀ := 0) (by decide)
-      (by simp [uniform]),
+      (by simp),
     rsaSpeaker_real, rsaSpeaker_real]
-  simp only [sum_word, L0_toReal, hb, hg, hbo, hmi, uniform, measureReal_def,
+  simp only [sum_word, L0_toReal, hb, hg, hbo, hmi, measureReal_def,
     Measure.count_singleton]
   rw [ite_eq_left (by decide : (1 : Fin 3) ∈ solvable.sem (.color .blue)),
     ite_eq_right (by decide : (1 : Fin 3) ∉ solvable.sem (.color .green)),
@@ -340,13 +306,13 @@ theorem solvable_rsa_prefers :
 
 /-- The baseline is at chance between the two blue objects. -/
 theorem solvable_baseline_indifferent :
-    baselineListener solvable.sem uniform (.color .blue) {0} =
-      baselineListener solvable.sem uniform (.color .blue) {1} := by
+    baselineListener solvable.sem Measure.count (.color .blue) {0} =
+      baselineListener solvable.sem Measure.count (.color .blue) {1} := by
   have h0 : (0 : Fin 3) ∈ solvable.sem (.color .blue) := by decide
   have h1 : (1 : Fin 3) ∈ solvable.sem (.color .blue) := by decide
   refine posterior_apply_singleton_congr _ _
-    (comp_apply_singleton_ne_zero _ _ (w := 0) (by simp [uniform])
-      (baselineSpeaker_apply_singleton_ne_zero _ h0)) ?_ (by simp [uniform])
+    (comp_apply_singleton_ne_zero _ _ (w := 0) (by simp)
+      (baselineSpeaker_apply_singleton_ne_zero _ h0)) ?_ (by simp)
   simp only [baselineSpeaker_apply_singleton _ h0, baselineSpeaker_apply_singleton _ h1,
     card_applicable]
 
@@ -358,16 +324,16 @@ def reducible : Display := ⟨![.blue, .blue, .blue], ![.boot, .boot, .mitt]⟩
 color word, which applies to all three, so pragmatic reasoning reduces the ambiguity without
 resolving it. -/
 theorem reducible_rsa_prefers :
-    (rsaListener reducible.sem uniform (.color .blue)).real {2} <
-      (rsaListener reducible.sem uniform (.color .blue)).real {0} := by
-  have hb : (Finset.univ.filter (· ∈ reducible.sem (.color .blue))).card = 3 := by decide
-  have hg : (Finset.univ.filter (· ∈ reducible.sem (.color .green))).card = 0 := by decide
-  have hbo : (Finset.univ.filter (· ∈ reducible.sem (.shape .boot))).card = 2 := by decide
-  have hmi : (Finset.univ.filter (· ∈ reducible.sem (.shape .mitt))).card = 1 := by decide
+    (rsaListener reducible.sem Measure.count (.color .blue)).real {2} <
+      (rsaListener reducible.sem Measure.count (.color .blue)).real {0} := by
+  have hb : (reducible.sem (.color .blue)).toFinset.card = 3 := by decide
+  have hg : (reducible.sem (.color .green)).toFinset.card = 0 := by decide
+  have hbo : (reducible.sem (.shape .boot)).toFinset.card = 2 := by decide
+  have hmi : (reducible.sem (.shape .mitt)).toFinset.card = 1 := by decide
   rw [rsaListener_real_lt_iff _ _ (w₀ := 0) (by decide)
-      (by simp [uniform]),
+      (by simp),
     rsaSpeaker_real, rsaSpeaker_real]
-  simp only [sum_word, L0_toReal, hb, hg, hbo, hmi, uniform, measureReal_def,
+  simp only [sum_word, L0_toReal, hb, hg, hbo, hmi, measureReal_def,
     Measure.count_singleton]
   rw [ite_eq_left (by decide : (2 : Fin 3) ∈ reducible.sem (.color .blue)),
     ite_eq_right (by decide : (2 : Fin 3) ∉ reducible.sem (.color .green)),

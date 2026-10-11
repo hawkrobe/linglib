@@ -184,6 +184,19 @@ theorem posterior_apply_singleton_eq_zero {x : 𝓧} (hx : (κ ∘ₘ μ) {x} �
     (h : κ ω {x} = 0) : (κ†μ) x {ω} = 0 := by
   rw [posterior_apply_singleton κ μ hx, h, mul_zero, ENNReal.zero_div]
 
+/-- An observation that only one state produces, a state of positive prior mass, makes the
+posterior certain of that state. -/
+theorem posterior_apply_singleton_eq_one [Fintype Ω] {x : 𝓧} {ω₀ : Ω}
+    (hsupp : ∀ ω ≠ ω₀, κ ω {x} = 0) (hκ : κ ω₀ {x} ≠ 0) (hμ : μ {ω₀} ≠ 0) :
+    (κ†μ) x {ω₀} = 1 := by
+  have hcomp : (κ ∘ₘ μ) {x} = μ {ω₀} * κ ω₀ {x} := by
+    rw [Measure.comp_apply_singleton]
+    exact Finset.sum_eq_single ω₀ (fun ω _ hω ↦ by rw [hsupp ω hω, mul_zero])
+      fun h ↦ absurd (Finset.mem_univ _) h
+  rw [posterior_apply_singleton κ μ (by rw [hcomp]; exact mul_ne_zero hμ hκ), hcomp]
+  exact ENNReal.div_self (mul_ne_zero hμ hκ)
+    (ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _))
+
 /-- Two states with the same likelihood of the observation and the same prior mass have the
 same posterior mass. -/
 theorem posterior_apply_singleton_congr {x : 𝓧} (hx : (κ ∘ₘ μ) {x} ≠ 0) {ω₁ ω₂ : Ω}
