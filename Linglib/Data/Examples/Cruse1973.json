@@ -18,7 +18,8 @@
       ["participant", "John"],
       ["inferred", "true"]
     ],
-    "comment": "The feature attribution follows §4's account of own-energy action; the paper attributes none here."
+    "comment": "The feature attribution follows §4's account of own-energy action; the paper attributes none here.",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_8",
@@ -30,16 +31,18 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["frame", "entails"],
       ["features", ""],
       ["participant", "the vase"],
-      ["animate", "false"]
+      ["animate", "false"],
+      ["entailment", "denied"]
     ],
-    "comment": "A happen-clause: no feature."
+    "comment": "Printed unmarked: the paper states that the entailment fails. A happen-clause: no feature.",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_9",
@@ -60,7 +63,8 @@
       ["participant", "John"],
       ["inferred", "true"]
     ],
-    "comment": "Attribution inferred as for (7)."
+    "comment": "Attribution inferred as for (7).",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_10",
@@ -72,7 +76,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "marginal",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -81,7 +85,8 @@
       ["participant", "the vase"],
       ["animate", "false"]
     ],
-    "comment": ""
+    "comment": "Cruse defines his query mark on p. 13: \"I shall henceforward use a question mark to indicate a form which is clearly and obviously abnormal. A queried sentence is therefore somewhat analogous to an asterisked one, except that I do not wish to indicate that it is necessarily ungrammatical, nor that it would never occur.\"",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_11",
@@ -102,7 +107,8 @@
       ["participant", "the prisoners"],
       ["inferred", "true"]
     ],
-    "comment": "The entailment form detects the agentive object, which the what-X-did form does not; the attribution follows the denial of the object's agentivity in (64)."
+    "comment": "The entailment form detects the agentive object, which the what-X-did form does not; the attribution follows the denial of the object's agentivity in (64).",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_12",
@@ -114,15 +120,17 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["frame", "entails"],
       ["features", ""],
-      ["participant", "the prisoners"]
+      ["participant", "the prisoners"],
+      ["entailment", "denied"]
     ],
-    "comment": ""
+    "comment": "Printed unmarked: the paper states that the entailment fails.",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_13",
@@ -144,7 +152,8 @@
       ["animate", "false"],
       ["inferred", "true"]
     ],
-    "comment": "A natural agent is a doer; the attribution follows §4, where the wind of (56) is a true agentive, while here the paper says only that such nouns are perhaps grammatically animate."
+    "comment": "A natural agent is a doer; the attribution follows §4, where the wind of (56) is a true agentive, while here the paper says only that such nouns are perhaps grammatically animate.",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_14",
@@ -156,7 +165,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "marginal",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -166,7 +175,8 @@
       ["animate", "false"],
       ["inferred", "true"]
     ],
-    "comment": "Attribution inferred as for (13)."
+    "comment": "Attribution inferred as for (13).",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_15",
@@ -188,7 +198,8 @@
       ["animate", "false"],
       ["inferred", "true"]
     ],
-    "comment": "Certain machines use their own energy (§4); the attribution is inferred."
+    "comment": "Certain machines use their own energy (§4); the attribution is inferred.",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_16",
@@ -200,7 +211,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "marginal",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -210,7 +221,8 @@
       ["animate", "false"],
       ["inferred", "true"]
     ],
-    "comment": "Attribution inferred as for (15)."
+    "comment": "Attribution inferred as for (15).",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_17",
@@ -232,7 +244,8 @@
       ["animate", "false"],
       ["inferred", "true"]
     ],
-    "comment": "An indisputably inanimate doer, by its kinetic energy; the attribution follows §2's force from motion, and is inferred."
+    "comment": "An indisputably inanimate doer, by its kinetic energy; the attribution follows §2's force from motion, and is inferred.",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_18",
@@ -254,7 +267,8 @@
       ["animate", "false"],
       ["inferred", "true"]
     ],
-    "comment": "Attribution inferred as for (17)."
+    "comment": "Attribution inferred as for (17).",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_19",
@@ -266,7 +280,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "marginal",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -276,7 +290,8 @@
       ["animate", "false"],
       ["inferred", "true"]
     ],
-    "comment": "Attribution inferred as for (17)."
+    "comment": "Attribution inferred as for (17).",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_20",
@@ -298,7 +313,8 @@
       ["animate", "false"],
       ["neutralized", "true"]
     ],
-    "comment": "The difference between do and happen is neutralized, do being the normal form; the circumstances are left open."
+    "comment": "The difference between do and happen is neutralized, do being the normal form; the circumstances are left open.",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_21",
@@ -320,7 +336,8 @@
       ["animate", "false"],
       ["neutralized", "true"]
     ],
-    "comment": "Neutralization of do and happen."
+    "comment": "Neutralization of do and happen.",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_22",
@@ -332,7 +349,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "marginal",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -342,7 +359,8 @@
       ["animate", "false"],
       ["neutralized", "true"]
     ],
-    "comment": "Not deviant in any radical way, but artificial; entered as marginal."
+    "comment": "Printed unmarked; the paper says that happen in place of do here, although not deviant in any radical way, sounds artificial.",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_23",
@@ -363,7 +381,8 @@
       ["participant", "Christ"],
       ["verbClass", "process"]
     ],
-    "comment": "A process verb with a do-interpretation."
+    "comment": "A process verb with a do-interpretation.",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_24",
@@ -384,7 +403,8 @@
       ["participant", "Christ"],
       ["verbClass", "process"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_25",
@@ -396,7 +416,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "marginal",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -405,7 +425,8 @@
       ["participant", "Christ"],
       ["verbClass", "process"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_26",
@@ -425,7 +446,8 @@
       ["participant", "John"],
       ["verbClass", "stative"]
     ],
-    "comment": "Stand, sit and lie refer to states yet are do-verbs; no feature is attributed in the paper."
+    "comment": "Stand, sit and lie refer to states yet are do-verbs; no feature is attributed in the paper.",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_27",
@@ -445,7 +467,8 @@
       ["participant", "I"],
       ["verbClass", "stative"]
     ],
-    "comment": "A do-interpretation where the progressive is impossible."
+    "comment": "A do-interpretation where the progressive is impossible.",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_28",
@@ -457,7 +480,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "marginal",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -465,7 +488,8 @@
       ["participant", "I"],
       ["verbClass", "stative"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_29",
@@ -485,7 +509,8 @@
       ["participant", "you"],
       ["verbClass", "stative"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_30",
@@ -497,7 +522,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "marginal",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -505,7 +530,8 @@
       ["participant", "you"],
       ["verbClass", "stative"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_31",
@@ -525,7 +551,8 @@
       ["features", "volitive"],
       ["participant", "John"]
     ],
-    "comment": "An act of will without own energy: the do-feature is due entirely to the volitive feature."
+    "comment": "An act of will without own energy: the do-feature is due entirely to the volitive feature.",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_32",
@@ -545,7 +572,8 @@
       ["features", "volitive"],
       ["participant", "John"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_33",
@@ -566,7 +594,8 @@
       ["participant", "John"],
       ["verbClass", "stative"]
     ],
-    "comment": "Willing a state is a kind of doing."
+    "comment": "Willing a state is a kind of doing.",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_34",
@@ -586,7 +615,8 @@
       ["features", "volitive"],
       ["participant", "John"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_35",
@@ -598,7 +628,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "marginal",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -606,7 +636,8 @@
       ["features", "volitive"],
       ["participant", "John"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_36",
@@ -618,7 +649,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "marginal",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -626,7 +657,8 @@
       ["features", ""],
       ["participant", "John"]
     ],
-    "comment": "With volition denied, the clause becomes a happen-clause."
+    "comment": "With volition denied, the clause becomes a happen-clause.",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_37",
@@ -646,7 +678,8 @@
       ["features", ""],
       ["participant", "John"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_38",
@@ -658,7 +691,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "marginal",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -667,7 +700,8 @@
       ["participant", "John"],
       ["verbClass", "process"]
     ],
-    "comment": "Dying without an act of will, unlike (24)."
+    "comment": "Dying without an act of will, unlike (24).",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_39",
@@ -688,7 +722,8 @@
       ["participant", "John"],
       ["verbClass", "process"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_40",
@@ -700,7 +735,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "marginal",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -708,7 +743,8 @@
       ["features", "agentive"],
       ["participant", "John"]
     ],
-    "comment": "The purpose phrase tests volitivity; the agentivity of the noun is irrelevant."
+    "comment": "The purpose phrase tests volitivity; the agentivity of the noun is irrelevant.",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_41",
@@ -729,7 +765,8 @@
       ["participant", "John"],
       ["inferred", "true"]
     ],
-    "comment": "A do-sentence without volition; that the remaining feature is the agentive is inferred."
+    "comment": "A do-sentence without volition; that the remaining feature is the agentive is inferred.",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_42",
@@ -741,7 +778,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "marginal",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -750,7 +787,8 @@
       ["participant", "the addressee"],
       ["inferred", "true"]
     ],
-    "comment": "The imperative tests volitivity, not the do-relation; the attribution is inferred as for (41)."
+    "comment": "The imperative tests volitivity, not the do-relation; the attribution is inferred as for (41).",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_43",
@@ -771,7 +809,8 @@
       ["participant", "John"],
       ["inferred", "true"]
     ],
-    "comment": "A do-sentence Anderson counts as non-ergative, his ergative being volitive plus agentive; the attribution of the agentive alone is inferred."
+    "comment": "A do-sentence Anderson counts as non-ergative, his ergative being volitive plus agentive; the attribution of the agentive alone is inferred.",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_44",
@@ -783,7 +822,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "marginal",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -792,7 +831,8 @@
       ["participant", "John"],
       ["inferred", "true"]
     ],
-    "comment": "Attribution inferred as for (43)."
+    "comment": "Attribution inferred as for (43).",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_45",
@@ -813,7 +853,8 @@
       ["participant", "John"],
       ["inferred", "true"]
     ],
-    "comment": "Attribution inferred as for (43)."
+    "comment": "Attribution inferred as for (43).",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_46",
@@ -825,7 +866,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "marginal",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -834,7 +875,8 @@
       ["participant", "John"],
       ["inferred", "true"]
     ],
-    "comment": "Attribution inferred as for (43)."
+    "comment": "Attribution inferred as for (43).",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_47",
@@ -846,7 +888,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "marginal",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -855,7 +897,8 @@
       ["participant", "John"],
       ["inferred", "true"]
     ],
-    "comment": "Carefully detects volitivity together with agentivity; that falling carries neither is inferred."
+    "comment": "Carefully detects volitivity together with agentivity; that falling carries neither is inferred.",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_48",
@@ -867,7 +910,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "marginal",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -876,7 +919,8 @@
       ["participant", "John"],
       ["inferred", "true"]
     ],
-    "comment": "That accidentally pushing carries the agentive without the volitive is inferred."
+    "comment": "That accidentally pushing carries the agentive without the volitive is inferred.",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_49",
@@ -896,7 +940,8 @@
       ["features", "volitive+agentive"],
       ["participant", "John"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_50",
@@ -917,7 +962,8 @@
       ["participant", "these columns"],
       ["animate", "false"]
     ],
-    "comment": "Force from position: the effective feature."
+    "comment": "Force from position: the effective feature.",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_51",
@@ -938,7 +984,8 @@
       ["participant", "these columns"],
       ["animate", "false"]
     ],
-    "comment": "Printed as 'What these column do'."
+    "comment": "Printed as 'What these column do'.",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_52",
@@ -950,7 +997,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "marginal",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -959,7 +1006,8 @@
       ["participant", "these columns"],
       ["animate", "false"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_53",
@@ -980,7 +1028,8 @@
       ["participant", "the flying stone"],
       ["animate", "false"]
     ],
-    "comment": "Force from motion: the effective feature."
+    "comment": "Force from motion: the effective feature.",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_54",
@@ -1001,7 +1050,8 @@
       ["participant", "the flying stone"],
       ["animate", "false"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_55",
@@ -1013,7 +1063,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "marginal",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1022,7 +1072,8 @@
       ["participant", "the flying stone"],
       ["animate", "false"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_56",
@@ -1043,7 +1094,8 @@
       ["participant", "the wind"],
       ["animate", "false"]
     ],
-    "comment": "Fillmore's instrumental; for Cruse the wind is a true agentive in a do-relationship with opened."
+    "comment": "Fillmore's instrumental; for Cruse the wind is a true agentive in a do-relationship with opened.",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_57",
@@ -1063,7 +1115,8 @@
       ["participant", "the stone"],
       ["animate", "false"]
     ],
-    "comment": "Ambiguous between the instrumental reading of (58) and the effective reading of (60); a do-sentence only under the second."
+    "comment": "Ambiguous between the instrumental reading of (58) and the effective reading of (60); a do-sentence only under the second.",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_58",
@@ -1084,7 +1137,8 @@
       ["participant", "a stone"],
       ["animate", "false"]
     ],
-    "comment": "The stone is an instrumental, not in a do-relationship with broke."
+    "comment": "The stone is an instrumental, not in a do-relationship with broke.",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_59",
@@ -1096,7 +1150,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "marginal",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1105,7 +1159,8 @@
       ["participant", "the stone"],
       ["animate", "false"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_60",
@@ -1126,7 +1181,8 @@
       ["participant", "a stone"],
       ["animate", "false"]
     ],
-    "comment": "The context selecting the effective reading of (57)."
+    "comment": "The context selecting the effective reading of (57).",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_61",
@@ -1147,7 +1203,8 @@
       ["participant", "this key"],
       ["animate", "false"]
     ],
-    "comment": "The instrumental reading is dominant."
+    "comment": "The instrumental reading is dominant.",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_62",
@@ -1167,7 +1224,8 @@
       ["features", "initiative"],
       ["participant", "the warder"]
     ],
-    "comment": "Initiation of an action by giving a command."
+    "comment": "Initiation of an action by giving a command.",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_63",
@@ -1187,7 +1245,8 @@
       ["features", "initiative"],
       ["participant", "John"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_64",
@@ -1199,7 +1258,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "marginal",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1207,7 +1266,8 @@
       ["features", "initiative"],
       ["participant", "John"]
     ],
-    "comment": "The context denies the agentivity of the object."
+    "comment": "The context denies the agentivity of the object.",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_65",
@@ -1219,7 +1279,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "marginal",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1227,7 +1287,8 @@
       ["features", "initiative"],
       ["participant", "John"]
     ],
-    "comment": "The context denies a channel of communication between subject and object."
+    "comment": "The context denies a channel of communication between subject and object.",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_66",
@@ -1239,7 +1300,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "marginal",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1247,7 +1308,8 @@
       ["features", "initiative"],
       ["participant", "the warder"]
     ],
-    "comment": "The context denies the responsiveness of the object to command."
+    "comment": "The context denies the responsiveness of the object to command.",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_67",
@@ -1267,7 +1329,8 @@
       ["features", "agentive"],
       ["participant", "John"]
     ],
-    "comment": "Reflexivization of an ergative verb has minor semantic effects when the agentive feature is present."
+    "comment": "Reflexivization of an ergative verb has minor semantic effects when the agentive feature is present.",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_68",
@@ -1288,7 +1351,8 @@
       ["participant", "the machine"],
       ["animate", "false"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_69",
@@ -1309,7 +1373,8 @@
       ["participant", "the fire"],
       ["animate", "false"]
     ],
-    "comment": "A natural agent as the subject of an intransitive."
+    "comment": "A natural agent as the subject of an intransitive.",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_70",
@@ -1330,7 +1395,8 @@
       ["participant", "the sea"],
       ["animate", "false"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_71",
@@ -1352,7 +1418,8 @@
       ["animate", "false"],
       ["inferred", "true"]
     ],
-    "comment": "The paper says only that the agentive feature is absent; no feature is entered."
+    "comment": "The paper says only that the agentive feature is absent; no feature is entered.",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_72",
@@ -1364,7 +1431,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "marginal",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1374,7 +1441,8 @@
       ["animate", "false"],
       ["inferred", "true"]
     ],
-    "comment": "Reflexivization has considerable effects when the agentive feature is absent; no feature is entered."
+    "comment": "Reflexivization has considerable effects when the agentive feature is absent; no feature is entered.",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_73",
@@ -1396,7 +1464,8 @@
       ["animate", "false"],
       ["inferred", "true"]
     ],
-    "comment": "The paper says only that the agentive feature is absent."
+    "comment": "The paper says only that the agentive feature is absent.",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_74",
@@ -1408,17 +1477,18 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "marginal",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["frame", "reflexive"],
-      ["features", ""],
+      ["features", "agentive"],
       ["participant", "the ball"],
       ["animate", "false"],
       ["inferred", "true"]
     ],
-    "comment": "By no means impossible, but suggests that the ball contained some sort of mechanism; entered as marginal, the binary judgment not expressing acceptability with a meaning change."
+    "comment": "Printed unmarked; the paper says (74) is by no means impossible, but suggests that the ball contained some sort of mechanism.",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_75",
@@ -1438,7 +1508,8 @@
       ["features", "agentive"],
       ["participant", "John"]
     ],
-    "comment": "A kind of reflexivization distinguishing non-ergative verbs carrying the feature."
+    "comment": "A kind of reflexivization distinguishing non-ergative verbs carrying the feature.",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_76",
@@ -1458,7 +1529,8 @@
       ["features", "agentive"],
       ["participant", "John"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_77",
@@ -1470,7 +1542,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "marginal",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1478,7 +1550,8 @@
       ["features", ""],
       ["participant", "John"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_78",
@@ -1490,7 +1563,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "marginal",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1498,7 +1571,8 @@
       ["features", ""],
       ["participant", "John"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_79",
@@ -1520,7 +1594,8 @@
       ["animate", "false"],
       ["inferred", "true"]
     ],
-    "comment": "The paper says only that the stone is not capable of carrying the agentive feature; no feature is entered."
+    "comment": "The paper says only that the stone is not capable of carrying the agentive feature; no feature is entered.",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_80",
@@ -1541,7 +1616,8 @@
       ["participant", "the hawk"],
       ["inferred", "true"]
     ],
-    "comment": "Capable of carrying the agentive feature; the attribution to the sentence is inferred."
+    "comment": "Capable of carrying the agentive feature; the attribution to the sentence is inferred.",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_81",
@@ -1563,7 +1639,8 @@
       ["animate", "false"],
       ["inferred", "true"]
     ],
-    "comment": "Capable of carrying the agentive feature, as a machine; the attribution is inferred."
+    "comment": "Capable of carrying the agentive feature, as a machine; the attribution is inferred.",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_82",
@@ -1575,7 +1652,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "marginal",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1584,7 +1661,8 @@
       ["participant", "the stone"],
       ["animate", "false"]
     ],
-    "comment": "Jump and fly take as object only what is capable of carrying the agentive feature; the locative use, John flew the Atlantic, is excepted."
+    "comment": "Jump and fly take as object only what is capable of carrying the agentive feature; the locative use, John flew the Atlantic, is excepted.",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_83",
@@ -1605,7 +1683,8 @@
       ["participant", "the hawk"],
       ["inferred", "true"]
     ],
-    "comment": "Attribution inferred as for (80)."
+    "comment": "Attribution inferred as for (80).",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_84",
@@ -1627,7 +1706,8 @@
       ["animate", "false"],
       ["inferred", "true"]
     ],
-    "comment": "Attribution inferred as for (81)."
+    "comment": "Attribution inferred as for (81).",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_85a",
@@ -1648,7 +1728,8 @@
       ["participant", "the machine"],
       ["animate", "false"]
     ],
-    "comment": "The modification selects the effective reading."
+    "comment": "The modification selects the effective reading.",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_85b",
@@ -1669,7 +1750,8 @@
       ["participant", "the machine"],
       ["animate", "false"]
     ],
-    "comment": "The modification selects the agentive reading."
+    "comment": "The modification selects the agentive reading.",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_86a",
@@ -1689,7 +1771,8 @@
       ["features", "effective"],
       ["participant", "John"]
     ],
-    "comment": "The modification selects the effective reading."
+    "comment": "The modification selects the effective reading.",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_86b",
@@ -1709,7 +1792,8 @@
       ["features", "agentive"],
       ["participant", "John"]
     ],
-    "comment": "The modification selects the agentive reading."
+    "comment": "The modification selects the agentive reading.",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_87",
@@ -1730,7 +1814,8 @@
       ["participant", "the machine"],
       ["animate", "false"]
     ],
-    "comment": "Manner adverbs of energy output discriminate effective from agentive."
+    "comment": "Manner adverbs of energy output discriminate effective from agentive.",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_88",
@@ -1742,7 +1827,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "marginal",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1751,7 +1836,8 @@
       ["participant", "the machine"],
       ["animate", "false"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_89",
@@ -1771,7 +1857,8 @@
       ["features", "agentive"],
       ["participant", "John"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_90",
@@ -1783,7 +1870,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "marginal",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -1791,7 +1878,8 @@
       ["features", "effective"],
       ["participant", "John"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "cruse1973_91",
@@ -1803,13 +1891,14 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "marginal",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["frame", "manner"],
       ["participant", "John"]
     ],
-    "comment": "The adverbs are less satisfactory where physical action is not prominent; look may be the volitive rather than the agentive counterpart of see, so no feature is attributed."
+    "comment": "The adverbs are less satisfactory where physical action is not prominent; look may be the volitive rather than the agentive counterpart of see, so no feature is attributed.",
+    "verified": "page-image"
   }
 ]

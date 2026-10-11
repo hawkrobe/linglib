@@ -14,20 +14,12 @@
         "we"
       ],
       [
-        "em",
-        "the.DAT"
+        "em Hans",
+        "Hans-DAT"
       ],
       [
-        "Hans",
-        "Hans"
-      ],
-      [
-        "es",
-        "the.ACC"
-      ],
-      [
-        "huus",
-        "house"
+        "es huus",
+        "the house-ACC"
       ],
       [
         "hälfed",
@@ -49,7 +41,8 @@
         "crossSerial"
       ]
     ],
-    "comment": "The cross-serial dependencies: em Hans is the object of hälfed, es huus of aastriiche, and hälfed requires a dative object."
+    "comment": "The cross-serial dependencies: em Hans is the object of hälfed, es huus of aastriiche, and hälfed requires a dative object.",
+    "verified": "page-image"
   },
   {
     "id": "shieber1985_ex2",
@@ -66,20 +59,12 @@
         "we"
       ],
       [
-        "de",
-        "the.ACC"
+        "de Hans",
+        "Hans-ACC"
       ],
       [
-        "Hans",
-        "Hans"
-      ],
-      [
-        "es",
-        "the.ACC"
-      ],
-      [
-        "huus",
-        "house"
+        "es huus",
+        "the house-ACC"
       ],
       [
         "lönd",
@@ -101,7 +86,8 @@
         "crossSerial"
       ]
     ],
-    "comment": "lönd requires an accusative object."
+    "comment": "lönd requires an accusative object.",
+    "verified": "page-image"
   },
   {
     "id": "shieber1985_ex3",
@@ -118,20 +104,12 @@
         "we"
       ],
       [
-        "em",
-        "the.DAT"
+        "em Hans",
+        "Hans-DAT"
       ],
       [
-        "Hans",
-        "Hans"
-      ],
-      [
-        "es",
-        "the.ACC"
-      ],
-      [
-        "huus",
-        "house"
+        "es huus",
+        "the house-ACC"
       ],
       [
         "lönd",
@@ -153,7 +131,8 @@
         "crossSerial"
       ]
     ],
-    "comment": "Informants uniformly reject the clause and identify the case marking on Hans as the culprit."
+    "comment": "Informants uniformly reject the clause and identify the case marking on Hans as the culprit.",
+    "verified": "page-image"
   },
   {
     "id": "shieber1985_ex4",
@@ -170,20 +149,12 @@
         "we"
       ],
       [
-        "de",
-        "the.ACC"
+        "de Hans",
+        "Hans-ACC"
       ],
       [
-        "Hans",
-        "Hans"
-      ],
-      [
-        "em",
-        "the.DAT"
-      ],
-      [
-        "huus",
-        "house"
+        "em huus",
+        "the house-DAT"
       ],
       [
         "lönd",
@@ -205,7 +176,8 @@
         "crossSerial"
       ]
     ],
-    "comment": "aastriiche requires an accusative object."
+    "comment": "aastriiche requires an accusative object.",
+    "verified": "page-image"
   },
   {
     "id": "shieber1985_ex5",
@@ -223,23 +195,15 @@
       ],
       [
         "d'chind",
-        "the.children.ACC"
+        "the children-ACC"
       ],
       [
-        "em",
-        "the.DAT"
+        "em Hans",
+        "Hans-DAT"
       ],
       [
-        "Hans",
-        "Hans"
-      ],
-      [
-        "es",
-        "the.ACC"
-      ],
-      [
-        "huus",
-        "house"
+        "es huus",
+        "the house-ACC"
       ],
       [
         "lönd",
@@ -265,7 +229,8 @@
         "crossSerial"
       ]
     ],
-    "comment": "A triply embedded cross-serial clause, grammatical exactly when the case marking is correct."
+    "comment": "A triply embedded cross-serial clause, grammatical exactly when the case marking is correct.",
+    "verified": "page-image"
   },
   {
     "id": "shieber1985_ex6",
@@ -283,23 +248,15 @@
       ],
       [
         "d'chind",
-        "the.children.ACC"
+        "the children-ACC"
       ],
       [
-        "de",
-        "the.ACC"
+        "de Hans",
+        "Hans-ACC"
       ],
       [
-        "Hans",
-        "Hans"
-      ],
-      [
-        "es",
-        "the.ACC"
-      ],
-      [
-        "huus",
-        "house"
+        "es huus",
+        "the house-ACC"
       ],
       [
         "lönd",
@@ -325,7 +282,8 @@
         "crossSerial"
       ]
     ],
-    "comment": "The triply embedded clause with Hans in the accusative."
+    "comment": "The triply embedded clause with Hans in the accusative.",
+    "verified": "page-image"
   },
   {
     "id": "shieber1985_ex7",
@@ -342,20 +300,12 @@
         "we"
       ],
       [
-        "em",
-        "the.DAT"
+        "em Hans",
+        "Hans-DAT"
       ],
       [
-        "Hans",
-        "Hans"
-      ],
-      [
-        "es",
-        "the.ACC"
-      ],
-      [
-        "huus",
-        "house"
+        "es huus",
+        "the house-ACC"
       ],
       [
         "haend",
@@ -385,7 +335,8 @@
         "crossSerial"
       ]
     ],
-    "comment": "Raising verbs may intervene between the noun phrases and the verbs; an instance of Claims 1 and 2."
+    "comment": "Raising verbs may intervene between the noun phrases and the verbs; an instance of Claims 1 and 2.",
+    "verified": "page-image"
   },
   {
     "id": "shieber1985_ex8",
@@ -403,23 +354,15 @@
       ],
       [
         "d'chind",
-        "the.children.ACC"
+        "the children-ACC"
       ],
       [
-        "em",
-        "the.DAT"
+        "em Hans",
+        "Hans-DAT"
       ],
       [
-        "Hans",
-        "Hans"
-      ],
-      [
-        "es",
-        "the.ACC"
-      ],
-      [
-        "huus",
-        "house"
+        "es huus",
+        "the house-ACC"
       ],
       [
         "haend",
@@ -453,7 +396,8 @@
         "crossSerial"
       ]
     ],
-    "comment": "The schema of Claim 2 with one accusative pair and one dative pair; laa is the infinitive of lönd."
+    "comment": "The schema of Claim 2 with one accusative pair and one dative pair; laa is the infinitive of lönd.",
+    "verified": "page-image"
   },
   {
     "id": "shieber1985_ex9",
@@ -470,24 +414,16 @@
         "we"
       ],
       [
-        "em",
-        "the.DAT"
-      ],
-      [
-        "Hans",
-        "Hans"
+        "em Hans",
+        "Hans-DAT"
       ],
       [
         "hälfed",
         "helped"
       ],
       [
-        "es",
-        "the.ACC"
-      ],
-      [
-        "huus",
-        "house"
+        "es huus",
+        "the house-ACC"
       ],
       [
         "aastriiche",
@@ -505,7 +441,8 @@
         "other"
       ]
     ],
-    "comment": "Another constituent order the language allows (§4.2); the proof removes such orders by the regular filter."
+    "comment": "Another constituent order the language allows (§4.2); the proof removes such orders by the regular filter.",
+    "verified": "page-image"
   },
   {
     "id": "shieber1985_ex10",
@@ -522,20 +459,12 @@
         "we"
       ],
       [
-        "em",
-        "the.DAT"
+        "em Hans",
+        "Hans-DAT"
       ],
       [
-        "Hans",
-        "Hans"
-      ],
-      [
-        "es",
-        "the.ACC"
-      ],
-      [
-        "huus",
-        "house"
+        "es huus",
+        "the house-ACC"
       ],
       [
         "aastriiche",
@@ -557,7 +486,8 @@
         "other"
       ]
     ],
-    "comment": "The nested order of the verbs."
+    "comment": "The nested order of the verbs.",
+    "verified": "page-image"
   },
   {
     "id": "shieber1985_ex11",
@@ -570,11 +500,7 @@
     "discourseSegments": [],
     "glossedTokens": [
       [
-        "em",
-        "the.DAT"
-      ],
-      [
-        "Hans",
+        "em Hans",
         "Hans"
       ],
       [
@@ -582,12 +508,8 @@
         "we"
       ],
       [
-        "es",
-        "the.ACC"
-      ],
-      [
-        "huus",
-        "house"
+        "es huus",
+        "the house"
       ],
       [
         "hälfed",
@@ -609,7 +531,8 @@
         "other"
       ]
     ],
-    "comment": "Accepted depending on dialect and context; the one clause in the paper on which the four informants did not agree."
+    "comment": "Accepted depending on dialect and context; the one clause in the paper on which the four informants did not agree.",
+    "verified": "page-image"
   },
   {
     "id": "shieber1985_ex12",
@@ -626,24 +549,16 @@
         "we"
       ],
       [
-        "de",
-        "the.ACC"
-      ],
-      [
-        "Hans",
-        "Hans"
+        "de Hans",
+        "Hans-ACC"
       ],
       [
         "hälfed",
         "helped"
       ],
       [
-        "es",
-        "the.ACC"
-      ],
-      [
-        "huus",
-        "house"
+        "es huus",
+        "the house-ACC"
       ],
       [
         "aastriiche",
@@ -661,7 +576,8 @@
         "other"
       ]
     ],
-    "comment": "Unmet case requirements are ungrammatical whether the order is cross-serial or not (Claim 3)."
+    "comment": "Unmet case requirements are ungrammatical whether the order is cross-serial or not (Claim 3).",
+    "verified": "page-image"
   },
   {
     "id": "shieber1985_ex13",
@@ -678,24 +594,16 @@
         "we"
       ],
       [
-        "em",
-        "the.DAT"
-      ],
-      [
-        "Hans",
-        "Hans"
+        "em Hans",
+        "Hans-DAT"
       ],
       [
         "hälfed",
         "helped"
       ],
       [
-        "em",
-        "the.DAT"
-      ],
-      [
-        "huus",
-        "house"
+        "em huus",
+        "the house-DAT"
       ],
       [
         "aastriiche",
@@ -713,7 +621,8 @@
         "other"
       ]
     ],
-    "comment": "Starred in the paper: the case requirements of the verbs are not met."
+    "comment": "Starred in the paper: the case requirements of the verbs are not met.",
+    "verified": "page-image"
   },
   {
     "id": "shieber1985_ex14",
@@ -730,24 +639,16 @@
         "we"
       ],
       [
-        "em",
-        "the.DAT"
-      ],
-      [
-        "Hans",
-        "Hans"
+        "em Hans",
+        "Hans-DAT"
       ],
       [
         "lönd",
         "let"
       ],
       [
-        "es",
-        "the.ACC"
-      ],
-      [
-        "huus",
-        "house"
+        "es huus",
+        "the house-ACC"
       ],
       [
         "aastriiche",
@@ -765,7 +666,8 @@
         "other"
       ]
     ],
-    "comment": "Starred in the paper: the case requirements of the verbs are not met."
+    "comment": "Starred in the paper: the case requirements of the verbs are not met.",
+    "verified": "page-image"
   },
   {
     "id": "shieber1985_ex15",
@@ -782,24 +684,16 @@
         "we"
       ],
       [
-        "de",
-        "the.ACC"
-      ],
-      [
-        "Hans",
-        "Hans"
+        "de Hans",
+        "Hans-ACC"
       ],
       [
         "lönd",
         "let"
       ],
       [
-        "em",
-        "the.DAT"
-      ],
-      [
-        "huus",
-        "house"
+        "em huus",
+        "the house-DAT"
       ],
       [
         "aastriiche",
@@ -817,7 +711,8 @@
         "other"
       ]
     ],
-    "comment": "Starred in the paper: the case requirements of the verbs are not met."
+    "comment": "Starred in the paper: the case requirements of the verbs are not met.",
+    "verified": "page-image"
   },
   {
     "id": "shieber1985_ex16",
@@ -834,20 +729,12 @@
         "we"
       ],
       [
-        "de",
-        "the.ACC"
+        "de Hans",
+        "Hans-ACC"
       ],
       [
-        "Hans",
-        "Hans"
-      ],
-      [
-        "es",
-        "the.ACC"
-      ],
-      [
-        "huus",
-        "house"
+        "es huus",
+        "the house-ACC"
       ],
       [
         "aastriiche",
@@ -869,7 +756,8 @@
         "other"
       ]
     ],
-    "comment": "Starred in the paper: the case requirements of the verbs are not met."
+    "comment": "Starred in the paper: the case requirements of the verbs are not met.",
+    "verified": "page-image"
   },
   {
     "id": "shieber1985_ex17",
@@ -886,20 +774,12 @@
         "we"
       ],
       [
-        "em",
-        "the.DAT"
+        "em Hans",
+        "Hans-DAT"
       ],
       [
-        "Hans",
-        "Hans"
-      ],
-      [
-        "em",
-        "the.DAT"
-      ],
-      [
-        "huus",
-        "house"
+        "em huus",
+        "the house-DAT"
       ],
       [
         "aastriiche",
@@ -921,7 +801,8 @@
         "other"
       ]
     ],
-    "comment": "Starred in the paper: the case requirements of the verbs are not met."
+    "comment": "Starred in the paper: the case requirements of the verbs are not met.",
+    "verified": "page-image"
   },
   {
     "id": "shieber1985_ex18",
@@ -938,20 +819,12 @@
         "we"
       ],
       [
-        "em",
-        "the.DAT"
+        "em Hans",
+        "Hans-DAT"
       ],
       [
-        "Hans",
-        "Hans"
-      ],
-      [
-        "es",
-        "the.ACC"
-      ],
-      [
-        "huus",
-        "house"
+        "es huus",
+        "the house-ACC"
       ],
       [
         "aastriiche",
@@ -973,7 +846,8 @@
         "other"
       ]
     ],
-    "comment": "Starred in the paper: the case requirements of the verbs are not met."
+    "comment": "Starred in the paper: the case requirements of the verbs are not met.",
+    "verified": "page-image"
   },
   {
     "id": "shieber1985_ex19",
@@ -990,20 +864,12 @@
         "we"
       ],
       [
-        "de",
-        "the.ACC"
+        "de Hans",
+        "Hans-ACC"
       ],
       [
-        "Hans",
-        "Hans"
-      ],
-      [
-        "em",
-        "the.DAT"
-      ],
-      [
-        "huus",
-        "house"
+        "em huus",
+        "the house-DAT"
       ],
       [
         "aastriiche",
@@ -1025,7 +891,8 @@
         "other"
       ]
     ],
-    "comment": "Starred in the paper: the case requirements of the verbs are not met."
+    "comment": "Starred in the paper: the case requirements of the verbs are not met.",
+    "verified": "page-image"
   },
   {
     "id": "shieber1985_ex20",
@@ -1042,12 +909,8 @@
         "we"
       ],
       [
-        "de",
-        "the.ACC"
-      ],
-      [
-        "Hans",
-        "Hans"
+        "de Hans",
+        "Hans-ACC"
       ],
       [
         "haend",
@@ -1062,12 +925,8 @@
         "help"
       ],
       [
-        "es",
-        "the.ACC"
-      ],
-      [
-        "huus",
-        "house"
+        "es huus",
+        "the house-ACC"
       ],
       [
         "aastriiche",
@@ -1085,7 +944,8 @@
         "other"
       ]
     ],
-    "comment": "Starred in the paper: the case requirements of the verbs are not met."
+    "comment": "Starred in the paper: the case requirements of the verbs are not met.",
+    "verified": "page-image"
   },
   {
     "id": "shieber1985_ex21",
@@ -1103,31 +963,23 @@
       ],
       [
         "d'chind",
-        "the.children.ACC"
+        "the children-ACC"
       ],
       [
         "lönd",
         "let"
       ],
       [
-        "de",
-        "the.ACC"
-      ],
-      [
-        "Hans",
-        "Hans"
+        "de Hans",
+        "Hans-ACC"
       ],
       [
         "hälfe",
         "help"
       ],
       [
-        "es",
-        "the.ACC"
-      ],
-      [
-        "huus",
-        "house"
+        "es huus",
+        "the house-ACC"
       ],
       [
         "aastriiche",
@@ -1145,7 +997,8 @@
         "other"
       ]
     ],
-    "comment": "Starred in the paper: the case requirements of the verbs are not met."
+    "comment": "Starred in the paper: the case requirements of the verbs are not met.",
+    "verified": "page-image"
   },
   {
     "id": "shieber1985_ex22",
@@ -1163,23 +1016,15 @@
       ],
       [
         "d'chind",
-        "the.children.ACC"
+        "the children-ACC"
       ],
       [
-        "de",
-        "the.ACC"
+        "de Hans",
+        "Hans-ACC"
       ],
       [
-        "Hans",
-        "Hans"
-      ],
-      [
-        "es",
-        "the.ACC"
-      ],
-      [
-        "huus",
-        "house"
+        "es huus",
+        "the house-ACC"
       ],
       [
         "lönd",
@@ -1205,6 +1050,7 @@
         "crossSerial"
       ]
     ],
-    "comment": "The triply embedded clause (6) again, listed with the other unmet case requirements."
+    "comment": "The triply embedded clause (6) again, listed with the other unmet case requirements.",
+    "verified": "page-image"
   }
 ]

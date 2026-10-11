@@ -1,7 +1,7 @@
 [
   {
     "id": "scontras2014_ex1",
-    "source": {"bibkey": "scontras-2014", "paperLabel": "(1)"},
+    "source": {"bibkey": "scontras-2014", "paperLabel": "ch. 3 (1)"},
     "language": "stan1293",
     "primaryText": "Four grains of that water",
     "discourseSegments": [],
@@ -16,11 +16,12 @@
       ["nounClass", "atomizer"],
       ["diagnostic", "selection"]
     ],
-    "comment": "Chierchia's (1998) selectional restriction of the atomizer: water lacks the required small cylindrical bodies; likewise 'four grains of those men'."
+    "comment": "Chierchia's (1998) selectional restriction of the atomizer: water lacks the required small cylindrical bodies; likewise 'four grains of those men'.",
+    "verified": "page-image"
   },
   {
     "id": "scontras2014_ex2a",
-    "source": {"bibkey": "scontras-2014", "paperLabel": "(2a)"},
+    "source": {"bibkey": "scontras-2014", "paperLabel": "ch. 3 (2a)"},
     "language": "stan1293",
     "primaryText": "I bought every pound of rice from that store",
     "discourseSegments": [],
@@ -35,11 +36,12 @@
       ["nounClass", "measureTerm"],
       ["diagnostic", "quantifier"]
     ],
-    "comment": "Chierchia (1998): individual-quantifying determiners every, most and no resist measure terms; the judgment is nuanced by the container use of measure terms (fn. 4)."
+    "comment": "Chierchia (1998): individual-quantifying determiners every, most and no resist measure terms; the judgment is nuanced by the container use of measure terms (fn. 4).",
+    "verified": "page-image"
   },
   {
     "id": "scontras2014_ex2b",
-    "source": {"bibkey": "scontras-2014", "paperLabel": "(2b)"},
+    "source": {"bibkey": "scontras-2014", "paperLabel": "ch. 3 (2b)"},
     "language": "stan1293",
     "primaryText": "Most liters of wine in this tank are polluted",
     "discourseSegments": [],
@@ -54,11 +56,12 @@
       ["nounClass", "measureTerm"],
       ["diagnostic", "quantifier"]
     ],
-    "comment": "Chierchia (1998)."
+    "comment": "Chierchia (1998).",
+    "verified": "page-image"
   },
   {
     "id": "scontras2014_ex3",
-    "source": {"bibkey": "scontras-2014", "paperLabel": "(3)"},
+    "source": {"bibkey": "scontras-2014", "paperLabel": "ch. 3 (3)"},
     "language": "stan1293",
     "primaryText": "I bought every grain of rice in that store",
     "discourseSegments": [],
@@ -73,11 +76,12 @@
       ["nounClass", "atomizer"],
       ["diagnostic", "quantifier"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "scontras2014_ex4a",
-    "source": {"bibkey": "scontras-2014", "paperLabel": "(4a)"},
+    "source": {"bibkey": "scontras-2014", "paperLabel": "ch. 3 (4a)"},
     "language": "stan1293",
     "primaryText": "I bought two beautiful slices of pizza",
     "discourseSegments": [],
@@ -92,18 +96,19 @@
       ["nounClass", "atomizer"],
       ["diagnostic", "modifier"]
     ],
-    "comment": "Chierchia (1998): the adjective modifies the slices."
+    "comment": "Chierchia (1998): the adjective modifies the slices.",
+    "verified": "page-image"
   },
   {
     "id": "scontras2014_ex4b",
-    "source": {"bibkey": "scontras-2014", "paperLabel": "(4b)"},
+    "source": {"bibkey": "scontras-2014", "paperLabel": "ch. 3 (4b)"},
     "language": "stan1293",
     "primaryText": "I bought two beautiful pounds of pizza",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "marginal",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -111,11 +116,12 @@
       ["nounClass", "measureTerm"],
       ["diagnostic", "modifier"]
     ],
-    "comment": "Chierchia (1998): beauty is attributed to the pizza, not the pounds."
+    "comment": "Chierchia (1998): beauty is attributed to the pizza, not the pounds.",
+    "verified": "page-image"
   },
   {
     "id": "scontras2014_ex10a",
-    "source": {"bibkey": "scontras-2014", "paperLabel": "(10a)"},
+    "source": {"bibkey": "scontras-2014", "paperLabel": "ch. 3 (10a)"},
     "language": "stan1293",
     "primaryText": "Three bucketfuls of mud were standing in a row against the wall",
     "discourseSegments": [],
@@ -131,11 +137,12 @@
       ["diagnostic", "-ful"],
       ["reading", "container"]
     ],
-    "comment": "Rothstein (2009), Diagnostic 1: the measure suffix is impossible under the container reading; without -ful the sentence is fine."
+    "comment": "Rothstein (2009), Diagnostic 1: the measure suffix is impossible under the container reading; without -ful the sentence is fine.",
+    "verified": "page-image"
   },
   {
     "id": "scontras2014_ex10b",
-    "source": {"bibkey": "scontras-2014", "paperLabel": "(10b)"},
+    "source": {"bibkey": "scontras-2014", "paperLabel": "ch. 3 (10b)"},
     "language": "stan1293",
     "primaryText": "We needed three bucketfuls of cement to build that wall",
     "discourseSegments": [],
@@ -151,11 +158,12 @@
       ["diagnostic", "-ful"],
       ["reading", "measure"]
     ],
-    "comment": "Rothstein (2009), Diagnostic 1: the measure suffix is possible under the measure reading."
+    "comment": "Rothstein (2009), Diagnostic 1: the measure suffix is possible under the measure reading.",
+    "verified": "page-image"
   },
   {
     "id": "scontras2014_ex11a",
-    "source": {"bibkey": "scontras-2014", "paperLabel": "(11a)"},
+    "source": {"bibkey": "scontras-2014", "paperLabel": "ch. 3 (11a)"},
     "language": "stan1293",
     "primaryText": "Three literfuls of mud were standing in a row against the wall",
     "discourseSegments": [],
@@ -171,11 +179,12 @@
       ["diagnostic", "-ful"],
       ["reading", "container"]
     ],
-    "comment": "Measure terms reject measure suffixes altogether (Lehrer 1986)."
+    "comment": "Measure terms reject measure suffixes altogether (Lehrer 1986).",
+    "verified": "page-image"
   },
   {
     "id": "scontras2014_ex11b",
-    "source": {"bibkey": "scontras-2014", "paperLabel": "(11b)"},
+    "source": {"bibkey": "scontras-2014", "paperLabel": "ch. 3 (11b)"},
     "language": "stan1293",
     "primaryText": "We needed three literfuls of cement to build that wall",
     "discourseSegments": [],
@@ -191,11 +200,12 @@
       ["diagnostic", "-ful"],
       ["reading", "measure"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "scontras2014_ex12a",
-    "source": {"bibkey": "scontras-2014", "paperLabel": "(12a)"},
+    "source": {"bibkey": "scontras-2014", "paperLabel": "ch. 3 (12a)"},
     "language": "stan1293",
     "primaryText": "Three grainfuls of rice were standing in a row against the wall",
     "discourseSegments": [],
@@ -211,11 +221,12 @@
       ["diagnostic", "-ful"],
       ["reading", "atomizing"]
     ],
-    "comment": "Atomizers reject measure suffixes because they cannot take the measure reading that would license them."
+    "comment": "Atomizers reject measure suffixes because they cannot take the measure reading that would license them.",
+    "verified": "page-image"
   },
   {
     "id": "scontras2014_ex12b",
-    "source": {"bibkey": "scontras-2014", "paperLabel": "(12b)"},
+    "source": {"bibkey": "scontras-2014", "paperLabel": "ch. 3 (12b)"},
     "language": "stan1293",
     "primaryText": "We needed three grainfuls of rice to build that wall",
     "discourseSegments": [],
@@ -231,11 +242,12 @@
       ["diagnostic", "-ful"],
       ["reading", "atomizing"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "scontras2014_ex13a",
-    "source": {"bibkey": "scontras-2014", "paperLabel": "(13a)"},
+    "source": {"bibkey": "scontras-2014", "paperLabel": "ch. 3 (13a)"},
     "language": "stan1293",
     "primaryText": "There are two cups of wine on this tray. They are blue.",
     "discourseSegments": [],
@@ -251,11 +263,12 @@
       ["diagnostic", "they"],
       ["reading", "container"]
     ],
-    "comment": "Rothstein (2009), Diagnostic 2: a plural pronoun can be anteceded under the container reading."
+    "comment": "Rothstein (2009), Diagnostic 2: a plural pronoun can be anteceded under the container reading.",
+    "verified": "page-image"
   },
   {
     "id": "scontras2014_ex13b",
-    "source": {"bibkey": "scontras-2014", "paperLabel": "(13b)"},
+    "source": {"bibkey": "scontras-2014", "paperLabel": "ch. 3 (13b)"},
     "language": "stan1293",
     "primaryText": "There are two cups of wine in this soup. They are blue.",
     "discourseSegments": [],
@@ -271,11 +284,12 @@
       ["diagnostic", "they"],
       ["reading", "measure"]
     ],
-    "comment": "Rothstein (2009), Diagnostic 2: no plural pronoun antecedent under the measure reading."
+    "comment": "Rothstein (2009), Diagnostic 2: no plural pronoun antecedent under the measure reading.",
+    "verified": "page-image"
   },
   {
     "id": "scontras2014_ex14a",
-    "source": {"bibkey": "scontras-2014", "paperLabel": "(14a)"},
+    "source": {"bibkey": "scontras-2014", "paperLabel": "ch. 3 (14a)"},
     "language": "stan1293",
     "primaryText": "There are two liters of wine on this tray. They are blue.",
     "discourseSegments": [],
@@ -291,11 +305,12 @@
       ["diagnostic", "they"],
       ["reading", "container"]
     ],
-    "comment": "Succeeds to the extent that blueness is attributed to the liters as bottles."
+    "comment": "Succeeds to the extent that blueness is attributed to the liters as bottles.",
+    "verified": "page-image"
   },
   {
     "id": "scontras2014_ex14b",
-    "source": {"bibkey": "scontras-2014", "paperLabel": "(14b)"},
+    "source": {"bibkey": "scontras-2014", "paperLabel": "ch. 3 (14b)"},
     "language": "stan1293",
     "primaryText": "There are two liters of wine in this soup. They are blue.",
     "discourseSegments": [],
@@ -311,11 +326,12 @@
       ["diagnostic", "they"],
       ["reading", "measure"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "scontras2014_ex15a",
-    "source": {"bibkey": "scontras-2014", "paperLabel": "(15a)"},
+    "source": {"bibkey": "scontras-2014", "paperLabel": "ch. 3 (15a)"},
     "language": "stan1293",
     "primaryText": "There are two grains of rice on this tray. They are blue.",
     "discourseSegments": [],
@@ -331,11 +347,12 @@
       ["diagnostic", "they"],
       ["reading", "atomizing"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "scontras2014_ex15b",
-    "source": {"bibkey": "scontras-2014", "paperLabel": "(15b)"},
+    "source": {"bibkey": "scontras-2014", "paperLabel": "ch. 3 (15b)"},
     "language": "stan1293",
     "primaryText": "There are two grains of rice in this soup. They are blue.",
     "discourseSegments": [],
@@ -351,11 +368,12 @@
       ["diagnostic", "they"],
       ["reading", "atomizing"]
     ],
-    "comment": "The attempt to force a measure reading fails; the atomizing reading antecedes the pronoun."
+    "comment": "The attempt to force a measure reading fails; the atomizing reading antecedes the pronoun.",
+    "verified": "page-image"
   },
   {
     "id": "scontras2014_ex16a",
-    "source": {"bibkey": "scontras-2014", "paperLabel": "(16a)"},
+    "source": {"bibkey": "scontras-2014", "paperLabel": "ch. 3 (16a)"},
     "language": "stan1293",
     "primaryText": "There is two cups of wine on this tray",
     "discourseSegments": [],
@@ -371,11 +389,12 @@
       ["diagnostic", "singularAgreement"],
       ["reading", "container"]
     ],
-    "comment": "Rothstein (2009), Diagnostic 3: plural agreement is forced under the container reading."
+    "comment": "Rothstein (2009), Diagnostic 3: plural agreement is forced under the container reading.",
+    "verified": "page-image"
   },
   {
     "id": "scontras2014_ex16b",
-    "source": {"bibkey": "scontras-2014", "paperLabel": "(16b)"},
+    "source": {"bibkey": "scontras-2014", "paperLabel": "ch. 3 (16b)"},
     "language": "stan1293",
     "primaryText": "There is two cups of wine in this soup",
     "discourseSegments": [],
@@ -391,11 +410,12 @@
       ["diagnostic", "singularAgreement"],
       ["reading", "measure"]
     ],
-    "comment": "Rothstein (2009), Diagnostic 3: singular agreement is optional under the measure reading."
+    "comment": "Rothstein (2009), Diagnostic 3: singular agreement is optional under the measure reading.",
+    "verified": "page-image"
   },
   {
     "id": "scontras2014_ex17a",
-    "source": {"bibkey": "scontras-2014", "paperLabel": "(17a)"},
+    "source": {"bibkey": "scontras-2014", "paperLabel": "ch. 3 (17a)"},
     "language": "stan1293",
     "primaryText": "There is two liters of wine on this tray",
     "discourseSegments": [],
@@ -411,11 +431,12 @@
       ["diagnostic", "singularAgreement"],
       ["reading", "container"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "scontras2014_ex17b",
-    "source": {"bibkey": "scontras-2014", "paperLabel": "(17b)"},
+    "source": {"bibkey": "scontras-2014", "paperLabel": "ch. 3 (17b)"},
     "language": "stan1293",
     "primaryText": "There is two liters of wine in this soup",
     "discourseSegments": [],
@@ -431,11 +452,12 @@
       ["diagnostic", "singularAgreement"],
       ["reading", "measure"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "scontras2014_ex18a",
-    "source": {"bibkey": "scontras-2014", "paperLabel": "(18a)"},
+    "source": {"bibkey": "scontras-2014", "paperLabel": "ch. 3 (18a)"},
     "language": "stan1293",
     "primaryText": "There is two grains of rice on this tray",
     "discourseSegments": [],
@@ -451,11 +473,12 @@
       ["diagnostic", "singularAgreement"],
       ["reading", "atomizing"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "scontras2014_ex18b",
-    "source": {"bibkey": "scontras-2014", "paperLabel": "(18b)"},
+    "source": {"bibkey": "scontras-2014", "paperLabel": "ch. 3 (18b)"},
     "language": "stan1293",
     "primaryText": "There is two grains of rice in this soup",
     "discourseSegments": [],
@@ -471,11 +494,12 @@
       ["diagnostic", "singularAgreement"],
       ["reading", "atomizing"]
     ],
-    "comment": "Singular agreement stays unavailable: the atomizer lacks the measure reading the diagnostic tests."
+    "comment": "Singular agreement stays unavailable: the atomizer lacks the measure reading the diagnostic tests.",
+    "verified": "page-image"
   },
   {
     "id": "scontras2014_ex19a",
-    "source": {"bibkey": "scontras-2014", "paperLabel": "(19a)"},
+    "source": {"bibkey": "scontras-2014", "paperLabel": "ch. 3 (19a)"},
     "language": "stan1293",
     "primaryText": "The two cups of wine cost 2 euros each",
     "discourseSegments": [],
@@ -491,11 +515,12 @@
       ["diagnostic", "each"],
       ["reading", "container"]
     ],
-    "comment": "Rothstein (2009), Diagnostic 4: distributive each quantifies over the containers."
+    "comment": "Rothstein (2009), Diagnostic 4: distributive each quantifies over the containers.",
+    "verified": "page-image"
   },
   {
     "id": "scontras2014_ex19b",
-    "source": {"bibkey": "scontras-2014", "paperLabel": "(19b)"},
+    "source": {"bibkey": "scontras-2014", "paperLabel": "ch. 3 (19b)"},
     "language": "stan1293",
     "primaryText": "The two cups of wine in this soup cost 2 euros each",
     "discourseSegments": [],
@@ -511,11 +536,12 @@
       ["diagnostic", "each"],
       ["reading", "measure"]
     ],
-    "comment": "Rothstein (2009), Diagnostic 4: no distribution under the measure reading, which references a single quantity."
+    "comment": "Rothstein (2009), Diagnostic 4: no distribution under the measure reading, which references a single quantity.",
+    "verified": "page-image"
   },
   {
     "id": "scontras2014_ex20a",
-    "source": {"bibkey": "scontras-2014", "paperLabel": "(20a)"},
+    "source": {"bibkey": "scontras-2014", "paperLabel": "ch. 3 (20a)"},
     "language": "stan1293",
     "primaryText": "The two liters of wine cost 2 euros each",
     "discourseSegments": [],
@@ -531,11 +557,12 @@
       ["diagnostic", "each"],
       ["reading", "container"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "scontras2014_ex20b",
-    "source": {"bibkey": "scontras-2014", "paperLabel": "(20b)"},
+    "source": {"bibkey": "scontras-2014", "paperLabel": "ch. 3 (20b)"},
     "language": "stan1293",
     "primaryText": "The two liters of wine in this soup cost 2 euros each",
     "discourseSegments": [],
@@ -551,11 +578,12 @@
       ["diagnostic", "each"],
       ["reading", "measure"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "scontras2014_ex21a",
-    "source": {"bibkey": "scontras-2014", "paperLabel": "(21a)"},
+    "source": {"bibkey": "scontras-2014", "paperLabel": "ch. 3 (21a)"},
     "language": "stan1293",
     "primaryText": "The two grains of rice cost 2 euros each",
     "discourseSegments": [],
@@ -571,11 +599,12 @@
       ["diagnostic", "each"],
       ["reading", "atomizing"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "scontras2014_ex21b",
-    "source": {"bibkey": "scontras-2014", "paperLabel": "(21b)"},
+    "source": {"bibkey": "scontras-2014", "paperLabel": "ch. 3 (21b)"},
     "language": "stan1293",
     "primaryText": "The two grains of rice in this soup cost 2 euros each",
     "discourseSegments": [],
@@ -591,18 +620,19 @@
       ["diagnostic", "each"],
       ["reading", "atomizing"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "scontras2014_ex62",
-    "source": {"bibkey": "scontras-2014", "paperLabel": "(62)"},
+    "source": {"bibkey": "scontras-2014", "paperLabel": "ch. 3 (62)"},
     "language": "stan1293",
     "primaryText": "There were three grains on the floor",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "marginal",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -610,11 +640,12 @@
       ["nounClass", "atomizer"],
       ["diagnostic", "intransitive"]
     ],
-    "comment": "Chierchia (1998): atomizers resist intransitive use; a substance noun is implicitly assumed."
+    "comment": "Chierchia (1998): atomizers resist intransitive use; a substance noun is implicitly assumed.",
+    "verified": "page-image"
   },
   {
     "id": "scontras2014_ex80a",
-    "source": {"bibkey": "scontras-2014", "paperLabel": "(80a)"},
+    "source": {"bibkey": "scontras-2014", "paperLabel": "ch. 3 (80a)"},
     "language": "stan1293",
     "primaryText": "Alan found three quantities of rice on the floor",
     "discourseSegments": [],
@@ -630,11 +661,12 @@
       ["diagnostic", "selection"],
       ["reading", "atomizing"]
     ],
-    "comment": "The atomizer quantity imposes almost no restriction on the kind it partitions."
+    "comment": "The atomizer quantity imposes almost no restriction on the kind it partitions.",
+    "verified": "page-image"
   },
   {
     "id": "scontras2014_ex80b",
-    "source": {"bibkey": "scontras-2014", "paperLabel": "(80b)"},
+    "source": {"bibkey": "scontras-2014", "paperLabel": "ch. 3 (80b)"},
     "language": "stan1293",
     "primaryText": "Bill carried three quantities of water into the other room",
     "discourseSegments": [],
@@ -650,11 +682,12 @@
       ["diagnostic", "selection"],
       ["reading", "atomizing"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "scontras2014_ex80c",
-    "source": {"bibkey": "scontras-2014", "paperLabel": "(80c)"},
+    "source": {"bibkey": "scontras-2014", "paperLabel": "ch. 3 (80c)"},
     "language": "stan1293",
     "primaryText": "Charlie bought three quantities of apples from the farm stand",
     "discourseSegments": [],
@@ -670,6 +703,7 @@
       ["diagnostic", "selection"],
       ["reading", "atomizing"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]

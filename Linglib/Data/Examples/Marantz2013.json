@@ -23,7 +23,8 @@
       ["allomorphy", "attested"],
       ["allosemy", "blocked"]
     ],
-    "comment": "√TEACH realized /tɔ/ and past /t/ in each other's context across the null v(+voice); a past-tense reading needs the event variable, so tense cannot pick a special root meaning over an active v (note 10)."
+    "comment": "√TEACH realized /tɔ/ and past /t/ in each other's context across the null v(+voice); a past-tense reading needs the event variable, so tense cannot pick a special root meaning over an active v (note 10).",
+    "verified": "page-image"
   },
   {
     "id": "marantz2013_quantized",
@@ -46,13 +47,14 @@
       ["trigger", "2"],
       ["allomorphy", "blocked"]
     ],
-    "comment": "*quintized, *quantumized: the overt v blocks root–tense allomorphy in either direction."
+    "comment": "*quintized, *quantumized: the overt v blocks root–tense allomorphy in either direction.",
+    "verified": "page-image"
   },
   {
     "id": "marantz2013_worker",
     "source": {"bibkey": "marantz-2013", "paperLabel": "(2)"},
     "language": "stan1293",
-    "primaryText": "work-Ø-er",
+    "primaryText": "work-Ø-(ø)-er",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "worker",
@@ -69,7 +71,8 @@
       ["trigger", "2"],
       ["allomorphy", "blocked"]
     ],
-    "comment": "Productive -er: n sends root+v(+voice) for spell-out, so neither can condition the other."
+    "comment": "Productive -er: n sends root+v(+voice) for spell-out, so neither can condition the other.",
+    "verified": "page-image"
   },
   {
     "id": "marantz2013_rotor",
@@ -90,7 +93,8 @@
       ["trigger", "1"],
       ["allomorphy", "attested"]
     ],
-    "comment": "Inner -er."
+    "comment": "Inner -er.",
+    "verified": "page-image"
   },
   {
     "id": "marantz2013_rotater",
@@ -113,7 +117,8 @@
       ["trigger", "2"],
       ["allomorphy", "blocked"]
     ],
-    "comment": "Outer -er: phonologically adjacent to the root yet never its context."
+    "comment": "Outer -er: phonologically adjacent to the root yet never its context.",
+    "verified": "page-image"
   },
   {
     "id": "marantz2013_curiosity",
@@ -134,7 +139,8 @@
       ["trigger", "1"],
       ["allomorphy", "attested"]
     ],
-    "comment": "Inner -ity."
+    "comment": "Inner -ity.",
+    "verified": "page-image"
   },
   {
     "id": "marantz2013_gloriousness",
@@ -157,11 +163,12 @@
       ["trigger", "2"],
       ["allomorphy", "blocked"]
     ],
-    "comment": "Outer -ness."
+    "comment": "Outer -ness.",
+    "verified": "page-image"
   },
   {
     "id": "marantz2013_house_v",
-    "source": {"bibkey": "marantz-2013", "paperLabel": "§6.2"},
+    "source": {"bibkey": "marantz-2013", "paperLabel": "§6.3"},
     "language": "stan1293",
     "primaryText": "hou[z]e",
     "discourseSegments": [],
@@ -179,16 +186,17 @@
       ["allomorphy", "attested"],
       ["allosemy", "attested"]
     ],
-    "comment": "Root-derived verb: voiced fricative and no literal house in the meaning."
+    "comment": "Root-derived verb: voiced fricative and no literal house in the meaning.",
+    "verified": "page-image"
   },
   {
     "id": "marantz2013_housed_denominal",
-    "source": {"bibkey": "marantz-2013", "paperLabel": "§6.2"},
+    "source": {"bibkey": "marantz-2013", "paperLabel": "§6.3"},
     "language": "stan1293",
-    "primaryText": "hou[s]ed (the room)",
+    "primaryText": "He took a bunch of plastic models and housed the room in revenge",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "filled with (model) houses",
+    "translation": "filled the room with the houses",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -203,7 +211,8 @@
       ["allomorphy", "blocked"],
       ["allosemy", "blocked"]
     ],
-    "comment": "Verb from the noun house: default /s/ and the literal nominal reading; n blocks both."
+    "comment": "Verb from the noun house: default /s/ and the literal nominal reading; n blocks both.",
+    "verified": "page-image"
   },
   {
     "id": "marantz2013_global",
@@ -224,7 +233,8 @@
       ["trigger", "1"],
       ["allosemy", "attested"]
     ],
-    "comment": "a picks the 'world' reading of the root."
+    "comment": "a picks the 'world' reading of the root.",
+    "verified": "page-image"
   },
   {
     "id": "marantz2013_globalize",
@@ -247,7 +257,8 @@
       ["trigger", "2"],
       ["allosemy", "blocked"]
     ],
-    "comment": "No flip-flopping: v cannot revive the 'sphere' reading over a."
+    "comment": "No flip-flopping: v cannot revive the 'sphere' reading over a.",
+    "verified": "page-image"
   },
   {
     "id": "marantz2013_novelize",
@@ -268,7 +279,8 @@
       ["trigger", "1"],
       ["allosemy", "attested"]
     ],
-    "comment": "v picks the artistic-work reading."
+    "comment": "v picks the artistic-work reading.",
+    "verified": "page-image"
   },
   {
     "id": "marantz2013_novelization",
@@ -291,7 +303,8 @@
       ["trigger", "2"],
       ["allosemy", "blocked"]
     ],
-    "comment": "Cannot mean the creating of a physical book."
+    "comment": "Cannot mean the creating of a physical book.",
+    "verified": "page-image"
   },
   {
     "id": "marantz2013_nationalize",
@@ -315,7 +328,8 @@
       ["allosemy", "blocked"],
       ["idiom", "attested"]
     ],
-    "comment": "'Make government-owned' is idiomatic, not a choice of alloseme: the root's alloseme is that of national."
+    "comment": "'Make government-owned' is idiomatic, not a choice of alloseme: the root's alloseme is that of national.",
+    "verified": "page-image"
   },
   {
     "id": "marantz2013_jp_koe",
@@ -340,7 +354,8 @@
       ["trigger", "2"],
       ["allosemy", "attested"]
     ],
-    "comment": "Continuative nominalization: the overt v contributes no event, and the noncyclic continuative fixes a special root meaning."
+    "comment": "Continuative nominalization: the overt v contributes no event, and the noncyclic continuative fixes a special root meaning.",
+    "verified": "page-image"
   },
   {
     "id": "marantz2013_jp_nagashi",
@@ -365,7 +380,8 @@
       ["trigger", "2"],
       ["allosemy", "attested"]
     ],
-    "comment": "Continuative nominalization: the overt v contributes no event, and the noncyclic continuative fixes a special root meaning."
+    "comment": "Continuative nominalization: the overt v contributes no event, and the noncyclic continuative fixes a special root meaning.",
+    "verified": "page-image"
   },
   {
     "id": "marantz2013_jp_dashi",
@@ -390,7 +406,8 @@
       ["trigger", "2"],
       ["allosemy", "attested"]
     ],
-    "comment": "Continuative nominalization: the overt v contributes no event, and the noncyclic continuative fixes a special root meaning."
+    "comment": "Continuative nominalization: the overt v contributes no event, and the noncyclic continuative fixes a special root meaning.",
+    "verified": "page-image"
   },
   {
     "id": "marantz2013_jp_sagari",
@@ -415,7 +432,8 @@
       ["trigger", "2"],
       ["allosemy", "attested"]
     ],
-    "comment": "Continuative nominalization: the overt v contributes no event, and the noncyclic continuative fixes a special root meaning."
+    "comment": "Continuative nominalization: the overt v contributes no event, and the noncyclic continuative fixes a special root meaning.",
+    "verified": "page-image"
   },
   {
     "id": "marantz2013_jp_mage",
@@ -440,11 +458,12 @@
       ["trigger", "2"],
       ["allosemy", "attested"]
     ],
-    "comment": "Continuative nominalization: the overt v contributes no event, and the noncyclic continuative fixes a special root meaning."
+    "comment": "Continuative nominalization: the overt v contributes no event, and the noncyclic continuative fixes a special root meaning.",
+    "verified": "page-image"
   },
   {
     "id": "marantz2013_gr_axnistos",
-    "source": {"bibkey": "marantz-2013", "paperLabel": "(5)–(6)"},
+    "source": {"bibkey": "marantz-2013", "paperLabel": "(5a)"},
     "language": "mode1248",
     "primaryText": "axn-is-tos",
     "discourseSegments": [],
@@ -465,11 +484,12 @@
       ["trigger", "2"],
       ["allosemy", "attested"]
     ],
-    "comment": "Stative -tos over an overt but semantically null verbalizer: no event implication, special root meaning."
+    "comment": "Stative -tos over an overt but semantically null verbalizer: no event implication, special root meaning.",
+    "verified": "page-image"
   },
   {
     "id": "marantz2013_gr_koudounistos",
-    "source": {"bibkey": "marantz-2013", "paperLabel": "(5)–(6)"},
+    "source": {"bibkey": "marantz-2013", "paperLabel": "(5b)"},
     "language": "mode1248",
     "primaryText": "koudoun-is-tos",
     "discourseSegments": [],
@@ -490,11 +510,12 @@
       ["trigger", "2"],
       ["allosemy", "attested"]
     ],
-    "comment": "Stative -tos over an overt but semantically null verbalizer: no event implication, special root meaning."
+    "comment": "Stative -tos over an overt but semantically null verbalizer: no event implication, special root meaning.",
+    "verified": "page-image"
   },
   {
     "id": "marantz2013_gr_magireftos",
-    "source": {"bibkey": "marantz-2013", "paperLabel": "(5)–(6)"},
+    "source": {"bibkey": "marantz-2013", "paperLabel": "(5c)"},
     "language": "mode1248",
     "primaryText": "magir-ef-tos",
     "discourseSegments": [],
@@ -515,11 +536,12 @@
       ["trigger", "2"],
       ["allosemy", "attested"]
     ],
-    "comment": "Stative -tos over an overt but semantically null verbalizer: no event implication, special root meaning."
+    "comment": "Stative -tos over an overt but semantically null verbalizer: no event implication, special root meaning.",
+    "verified": "page-image"
   },
   {
     "id": "marantz2013_gr_kolitos",
-    "source": {"bibkey": "marantz-2013", "paperLabel": "(5)–(6)"},
+    "source": {"bibkey": "marantz-2013", "paperLabel": "(6a)"},
     "language": "mode1248",
     "primaryText": "kol-i-tos",
     "discourseSegments": [],
@@ -540,11 +562,12 @@
       ["trigger", "2"],
       ["allosemy", "attested"]
     ],
-    "comment": "Stative -tos over an overt but semantically null verbalizer: no event implication, special root meaning."
+    "comment": "Stative -tos over an overt but semantically null verbalizer: no event implication, special root meaning.",
+    "verified": "page-image"
   },
   {
     "id": "marantz2013_gr_xtiplitos",
-    "source": {"bibkey": "marantz-2013", "paperLabel": "(5)–(6)"},
+    "source": {"bibkey": "marantz-2013", "paperLabel": "(6b)"},
     "language": "mode1248",
     "primaryText": "xtipl-i-tos",
     "discourseSegments": [],
@@ -565,11 +588,12 @@
       ["trigger", "2"],
       ["allosemy", "attested"]
     ],
-    "comment": "Stative -tos over an overt but semantically null verbalizer: no event implication, special root meaning."
+    "comment": "Stative -tos over an overt but semantically null verbalizer: no event implication, special root meaning.",
+    "verified": "page-image"
   },
   {
     "id": "marantz2013_gr_xoneftos",
-    "source": {"bibkey": "marantz-2013", "paperLabel": "(5)–(6)"},
+    "source": {"bibkey": "marantz-2013", "paperLabel": "(6c)"},
     "language": "mode1248",
     "primaryText": "xon-ef-tos",
     "discourseSegments": [],
@@ -590,11 +614,12 @@
       ["trigger", "2"],
       ["allosemy", "attested"]
     ],
-    "comment": "Stative -tos over an overt but semantically null verbalizer: no event implication, special root meaning."
+    "comment": "Stative -tos over an overt but semantically null verbalizer: no event implication, special root meaning.",
+    "verified": "page-image"
   },
   {
     "id": "marantz2013_en_quantized_energy",
-    "source": {"bibkey": "marantz-2013", "paperLabel": "(7)"},
+    "source": {"bibkey": "marantz-2013", "paperLabel": "(7a)"},
     "language": "stan1293",
     "primaryText": "quantized energy",
     "discourseSegments": [],
@@ -615,11 +640,12 @@
       ["trigger", "2"],
       ["allosemy", "attested"]
     ],
-    "comment": "Stative passive over a semantically null -ize: no event of creating, crushing, or separating."
+    "comment": "Stative passive over a semantically null -ize: no event of creating, crushing, or separating.",
+    "verified": "page-image"
   },
   {
     "id": "marantz2013_en_pulverized_lime",
-    "source": {"bibkey": "marantz-2013", "paperLabel": "(7)"},
+    "source": {"bibkey": "marantz-2013", "paperLabel": "(7b)"},
     "language": "stan1293",
     "primaryText": "pulverized lime",
     "discourseSegments": [],
@@ -640,11 +666,12 @@
       ["trigger", "2"],
       ["allosemy", "attested"]
     ],
-    "comment": "Stative passive over a semantically null -ize: no event of creating, crushing, or separating."
+    "comment": "Stative passive over a semantically null -ize: no event of creating, crushing, or separating.",
+    "verified": "page-image"
   },
   {
     "id": "marantz2013_en_atomized_individual",
-    "source": {"bibkey": "marantz-2013", "paperLabel": "(7)"},
+    "source": {"bibkey": "marantz-2013", "paperLabel": "(7c)"},
     "language": "stan1293",
     "primaryText": "atomized individual",
     "discourseSegments": [],
@@ -665,11 +692,12 @@
       ["trigger", "2"],
       ["allosemy", "attested"]
     ],
-    "comment": "Stative passive over a semantically null -ize: no event of creating, crushing, or separating."
+    "comment": "Stative passive over a semantically null -ize: no event of creating, crushing, or separating.",
+    "verified": "page-image"
   },
   {
     "id": "marantz2013_en_globalized_universe",
-    "source": {"bibkey": "marantz-2013", "paperLabel": "(7)"},
+    "source": {"bibkey": "marantz-2013", "paperLabel": "(7d)"},
     "language": "stan1293",
     "primaryText": "globalized universe",
     "discourseSegments": [],
@@ -692,11 +720,12 @@
       ["trigger", "3"],
       ["allosemy", "blocked"]
     ],
-    "comment": "The root is typed by overt a before v, so the participle cannot reach it; only the eventive reading survives."
+    "comment": "The root is typed by overt a before v, so the participle cannot reach it; only the eventive reading survives.",
+    "verified": "page-image"
   },
   {
     "id": "marantz2013_en_nationalized_island",
-    "source": {"bibkey": "marantz-2013", "paperLabel": "(7)"},
+    "source": {"bibkey": "marantz-2013", "paperLabel": "(7e)"},
     "language": "stan1293",
     "primaryText": "nationalized island",
     "discourseSegments": [],
@@ -719,11 +748,12 @@
       ["trigger", "3"],
       ["allosemy", "blocked"]
     ],
-    "comment": "The root is typed by overt a before v, so the participle cannot reach it; only the eventive reading survives."
+    "comment": "The root is typed by overt a before v, so the participle cannot reach it; only the eventive reading survives.",
+    "verified": "page-image"
   },
   {
     "id": "marantz2013_en_fictionalized_account",
-    "source": {"bibkey": "marantz-2013", "paperLabel": "(7)"},
+    "source": {"bibkey": "marantz-2013", "paperLabel": "(7f)"},
     "language": "stan1293",
     "primaryText": "fictionalized account",
     "discourseSegments": [],
@@ -746,6 +776,7 @@
       ["trigger", "3"],
       ["allosemy", "blocked"]
     ],
-    "comment": "The root is typed by overt a before v, so the participle cannot reach it; only the eventive reading survives."
+    "comment": "The root is typed by overt a before v, so the participle cannot reach it; only the eventive reading survives.",
+    "verified": "page-image"
   }
 ]

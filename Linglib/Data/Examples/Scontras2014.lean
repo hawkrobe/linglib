@@ -17,7 +17,7 @@ namespace Scontras2014.Examples
 
 def ex1 : Datum :=
   { id := "scontras2014_ex1"
-    source := ⟨"scontras-2014", "(1)"⟩
+    source := ⟨"scontras-2014", "ch. 3 (1)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Four grains of that water"
@@ -30,7 +30,7 @@ def ex1 : Datum :=
 
 def ex2a : Datum :=
   { id := "scontras2014_ex2a"
-    source := ⟨"scontras-2014", "(2a)"⟩
+    source := ⟨"scontras-2014", "ch. 3 (2a)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "I bought every pound of rice from that store"
@@ -43,7 +43,7 @@ def ex2a : Datum :=
 
 def ex2b : Datum :=
   { id := "scontras2014_ex2b"
-    source := ⟨"scontras-2014", "(2b)"⟩
+    source := ⟨"scontras-2014", "ch. 3 (2b)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Most liters of wine in this tank are polluted"
@@ -56,7 +56,7 @@ def ex2b : Datum :=
 
 def ex3 : Datum :=
   { id := "scontras2014_ex3"
-    source := ⟨"scontras-2014", "(3)"⟩
+    source := ⟨"scontras-2014", "ch. 3 (3)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "I bought every grain of rice in that store"
@@ -69,7 +69,7 @@ def ex3 : Datum :=
 
 def ex4a : Datum :=
   { id := "scontras2014_ex4a"
-    source := ⟨"scontras-2014", "(4a)"⟩
+    source := ⟨"scontras-2014", "ch. 3 (4a)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "I bought two beautiful slices of pizza"
@@ -82,20 +82,20 @@ def ex4a : Datum :=
 
 def ex4b : Datum :=
   { id := "scontras2014_ex4b"
-    source := ⟨"scontras-2014", "(4b)"⟩
+    source := ⟨"scontras-2014", "ch. 3 (4b)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "I bought two beautiful pounds of pizza"
     glossedTokens := []
     context := ""
-    judgment := .questionable
+    judgment := .marginal
     alternatives := []
     readings := []
     paperFeatures := [("noun", "pound"), ("nounClass", "measureTerm"), ("diagnostic", "modifier")] }
 
 def ex10a : Datum :=
   { id := "scontras2014_ex10a"
-    source := ⟨"scontras-2014", "(10a)"⟩
+    source := ⟨"scontras-2014", "ch. 3 (10a)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Three bucketfuls of mud were standing in a row against the wall"
@@ -108,7 +108,7 @@ def ex10a : Datum :=
 
 def ex10b : Datum :=
   { id := "scontras2014_ex10b"
-    source := ⟨"scontras-2014", "(10b)"⟩
+    source := ⟨"scontras-2014", "ch. 3 (10b)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "We needed three bucketfuls of cement to build that wall"
@@ -121,7 +121,7 @@ def ex10b : Datum :=
 
 def ex11a : Datum :=
   { id := "scontras2014_ex11a"
-    source := ⟨"scontras-2014", "(11a)"⟩
+    source := ⟨"scontras-2014", "ch. 3 (11a)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Three literfuls of mud were standing in a row against the wall"
@@ -134,7 +134,7 @@ def ex11a : Datum :=
 
 def ex11b : Datum :=
   { id := "scontras2014_ex11b"
-    source := ⟨"scontras-2014", "(11b)"⟩
+    source := ⟨"scontras-2014", "ch. 3 (11b)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "We needed three literfuls of cement to build that wall"
@@ -147,7 +147,7 @@ def ex11b : Datum :=
 
 def ex12a : Datum :=
   { id := "scontras2014_ex12a"
-    source := ⟨"scontras-2014", "(12a)"⟩
+    source := ⟨"scontras-2014", "ch. 3 (12a)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Three grainfuls of rice were standing in a row against the wall"
@@ -160,7 +160,7 @@ def ex12a : Datum :=
 
 def ex12b : Datum :=
   { id := "scontras2014_ex12b"
-    source := ⟨"scontras-2014", "(12b)"⟩
+    source := ⟨"scontras-2014", "ch. 3 (12b)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "We needed three grainfuls of rice to build that wall"
@@ -173,7 +173,7 @@ def ex12b : Datum :=
 
 def ex13a : Datum :=
   { id := "scontras2014_ex13a"
-    source := ⟨"scontras-2014", "(13a)"⟩
+    source := ⟨"scontras-2014", "ch. 3 (13a)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "There are two cups of wine on this tray. They are blue."
@@ -186,7 +186,7 @@ def ex13a : Datum :=
 
 def ex13b : Datum :=
   { id := "scontras2014_ex13b"
-    source := ⟨"scontras-2014", "(13b)"⟩
+    source := ⟨"scontras-2014", "ch. 3 (13b)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "There are two cups of wine in this soup. They are blue."
@@ -199,7 +199,7 @@ def ex13b : Datum :=
 
 def ex14a : Datum :=
   { id := "scontras2014_ex14a"
-    source := ⟨"scontras-2014", "(14a)"⟩
+    source := ⟨"scontras-2014", "ch. 3 (14a)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "There are two liters of wine on this tray. They are blue."
@@ -212,7 +212,7 @@ def ex14a : Datum :=
 
 def ex14b : Datum :=
   { id := "scontras2014_ex14b"
-    source := ⟨"scontras-2014", "(14b)"⟩
+    source := ⟨"scontras-2014", "ch. 3 (14b)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "There are two liters of wine in this soup. They are blue."
@@ -225,7 +225,7 @@ def ex14b : Datum :=
 
 def ex15a : Datum :=
   { id := "scontras2014_ex15a"
-    source := ⟨"scontras-2014", "(15a)"⟩
+    source := ⟨"scontras-2014", "ch. 3 (15a)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "There are two grains of rice on this tray. They are blue."
@@ -238,7 +238,7 @@ def ex15a : Datum :=
 
 def ex15b : Datum :=
   { id := "scontras2014_ex15b"
-    source := ⟨"scontras-2014", "(15b)"⟩
+    source := ⟨"scontras-2014", "ch. 3 (15b)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "There are two grains of rice in this soup. They are blue."
@@ -251,7 +251,7 @@ def ex15b : Datum :=
 
 def ex16a : Datum :=
   { id := "scontras2014_ex16a"
-    source := ⟨"scontras-2014", "(16a)"⟩
+    source := ⟨"scontras-2014", "ch. 3 (16a)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "There is two cups of wine on this tray"
@@ -264,7 +264,7 @@ def ex16a : Datum :=
 
 def ex16b : Datum :=
   { id := "scontras2014_ex16b"
-    source := ⟨"scontras-2014", "(16b)"⟩
+    source := ⟨"scontras-2014", "ch. 3 (16b)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "There is two cups of wine in this soup"
@@ -277,7 +277,7 @@ def ex16b : Datum :=
 
 def ex17a : Datum :=
   { id := "scontras2014_ex17a"
-    source := ⟨"scontras-2014", "(17a)"⟩
+    source := ⟨"scontras-2014", "ch. 3 (17a)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "There is two liters of wine on this tray"
@@ -290,7 +290,7 @@ def ex17a : Datum :=
 
 def ex17b : Datum :=
   { id := "scontras2014_ex17b"
-    source := ⟨"scontras-2014", "(17b)"⟩
+    source := ⟨"scontras-2014", "ch. 3 (17b)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "There is two liters of wine in this soup"
@@ -303,7 +303,7 @@ def ex17b : Datum :=
 
 def ex18a : Datum :=
   { id := "scontras2014_ex18a"
-    source := ⟨"scontras-2014", "(18a)"⟩
+    source := ⟨"scontras-2014", "ch. 3 (18a)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "There is two grains of rice on this tray"
@@ -316,7 +316,7 @@ def ex18a : Datum :=
 
 def ex18b : Datum :=
   { id := "scontras2014_ex18b"
-    source := ⟨"scontras-2014", "(18b)"⟩
+    source := ⟨"scontras-2014", "ch. 3 (18b)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "There is two grains of rice in this soup"
@@ -329,7 +329,7 @@ def ex18b : Datum :=
 
 def ex19a : Datum :=
   { id := "scontras2014_ex19a"
-    source := ⟨"scontras-2014", "(19a)"⟩
+    source := ⟨"scontras-2014", "ch. 3 (19a)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "The two cups of wine cost 2 euros each"
@@ -342,7 +342,7 @@ def ex19a : Datum :=
 
 def ex19b : Datum :=
   { id := "scontras2014_ex19b"
-    source := ⟨"scontras-2014", "(19b)"⟩
+    source := ⟨"scontras-2014", "ch. 3 (19b)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "The two cups of wine in this soup cost 2 euros each"
@@ -355,7 +355,7 @@ def ex19b : Datum :=
 
 def ex20a : Datum :=
   { id := "scontras2014_ex20a"
-    source := ⟨"scontras-2014", "(20a)"⟩
+    source := ⟨"scontras-2014", "ch. 3 (20a)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "The two liters of wine cost 2 euros each"
@@ -368,7 +368,7 @@ def ex20a : Datum :=
 
 def ex20b : Datum :=
   { id := "scontras2014_ex20b"
-    source := ⟨"scontras-2014", "(20b)"⟩
+    source := ⟨"scontras-2014", "ch. 3 (20b)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "The two liters of wine in this soup cost 2 euros each"
@@ -381,7 +381,7 @@ def ex20b : Datum :=
 
 def ex21a : Datum :=
   { id := "scontras2014_ex21a"
-    source := ⟨"scontras-2014", "(21a)"⟩
+    source := ⟨"scontras-2014", "ch. 3 (21a)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "The two grains of rice cost 2 euros each"
@@ -394,7 +394,7 @@ def ex21a : Datum :=
 
 def ex21b : Datum :=
   { id := "scontras2014_ex21b"
-    source := ⟨"scontras-2014", "(21b)"⟩
+    source := ⟨"scontras-2014", "ch. 3 (21b)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "The two grains of rice in this soup cost 2 euros each"
@@ -407,20 +407,20 @@ def ex21b : Datum :=
 
 def ex62 : Datum :=
   { id := "scontras2014_ex62"
-    source := ⟨"scontras-2014", "(62)"⟩
+    source := ⟨"scontras-2014", "ch. 3 (62)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "There were three grains on the floor"
     glossedTokens := []
     context := ""
-    judgment := .questionable
+    judgment := .marginal
     alternatives := []
     readings := []
     paperFeatures := [("noun", "grain"), ("nounClass", "atomizer"), ("diagnostic", "intransitive")] }
 
 def ex80a : Datum :=
   { id := "scontras2014_ex80a"
-    source := ⟨"scontras-2014", "(80a)"⟩
+    source := ⟨"scontras-2014", "ch. 3 (80a)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Alan found three quantities of rice on the floor"
@@ -433,7 +433,7 @@ def ex80a : Datum :=
 
 def ex80b : Datum :=
   { id := "scontras2014_ex80b"
-    source := ⟨"scontras-2014", "(80b)"⟩
+    source := ⟨"scontras-2014", "ch. 3 (80b)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Bill carried three quantities of water into the other room"
@@ -446,7 +446,7 @@ def ex80b : Datum :=
 
 def ex80c : Datum :=
   { id := "scontras2014_ex80c"
-    source := ⟨"scontras-2014", "(80c)"⟩
+    source := ⟨"scontras-2014", "ch. 3 (80c)"⟩
     reportedIn := none
     language := "stan1293"
     primaryText := "Charlie bought three quantities of apples from the farm stand"

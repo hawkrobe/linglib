@@ -1,7 +1,7 @@
 [
   {
     "id": "grubic2015_6_24",
-    "source": {"bibkey": "grubic-2015", "paperLabel": "(24)"},
+    "source": {"bibkey": "grubic-2015", "paperLabel": "ch. 6 (24)"},
     "language": "ngam1282",
     "primaryText": "Ne sakatari yak'i.",
     "discourseSegments": [],
@@ -20,11 +20,12 @@
       ["particle", "yak"],
       ["configuration", "predicate"]
     ],
-    "comment": "Both readings carry a mirative component: more, or something more prestigious, was expected."
+    "comment": "Both readings carry a mirative component: more, or something more prestigious, was expected.",
+    "verified": "page-image"
   },
   {
     "id": "grubic2015_6_25a",
-    "source": {"bibkey": "grubic-2015", "paperLabel": "(25a)"},
+    "source": {"bibkey": "grubic-2015", "paperLabel": "ch. 6 (25a)"},
     "language": "ngam1282",
     "primaryText": "Salko bano=i Dimza yak'i.",
     "discourseSegments": [],
@@ -42,11 +43,12 @@
       ["inference", "Dimza built a house"],
       ["inference", "nobody else built a house"]
     ],
-    "comment": "Consultant: Dimza built a house, and nobody else built a house."
+    "comment": "Consultant: Dimza built a house, and nobody else built a house.",
+    "verified": "page-image"
   },
   {
     "id": "grubic2015_6_25b",
-    "source": {"bibkey": "grubic-2015", "paperLabel": "(25b)"},
+    "source": {"bibkey": "grubic-2015", "paperLabel": "ch. 6 (25b)"},
     "language": "ngam1282",
     "primaryText": "Salko bano=i Dimza yak'i bu.",
     "discourseSegments": [],
@@ -65,11 +67,12 @@
       ["inference", "Dimza built a house"],
       ["inference", "other people also built a house"]
     ],
-    "comment": "The exclusive component is asserted; the prejacent projects through negation."
+    "comment": "The exclusive component is asserted; the prejacent projects through negation.",
+    "verified": "page-image"
   },
   {
     "id": "grubic2015_6_25c",
-    "source": {"bibkey": "grubic-2015", "paperLabel": "(25c)"},
+    "source": {"bibkey": "grubic-2015", "paperLabel": "ch. 6 (25c)"},
     "language": "ngam1282",
     "primaryText": "Salko bano=i Dimza yak'i ɗo?",
     "discourseSegments": [],
@@ -87,11 +90,12 @@
       ["configuration", "markedSubjectFocus"],
       ["inference", "Dimza built a house"]
     ],
-    "comment": "Consultant: Dimza built a house, and you want to confirm: alone or with other people?"
+    "comment": "Consultant: Dimza built a house, and you want to confirm: alone or with other people?",
+    "verified": "page-image"
   },
   {
     "id": "grubic2015_6_26",
-    "source": {"bibkey": "grubic-2015", "paperLabel": "(26)"},
+    "source": {"bibkey": "grubic-2015", "paperLabel": "ch. 6 (26)"},
     "language": "ngam1282",
     "primaryText": "Esha=i Sama yak'i nzono, ke esha Hawwa nzono.",
     "discourseSegments": [],
@@ -108,11 +112,12 @@
       ["particle", "yak"],
       ["configuration", "markedObjectFocus"]
     ],
-    "comment": "The exclusive component is not cancellable."
+    "comment": "The exclusive component is not cancellable.",
+    "verified": "page-image"
   },
   {
     "id": "grubic2015_6_28",
-    "source": {"bibkey": "grubic-2015", "paperLabel": "(28)"},
+    "source": {"bibkey": "grubic-2015", "paperLabel": "ch. 6 (28)"},
     "language": "ngam1282",
     "primaryText": "Ne'e yak ne wa ampani yam ki korino bu.",
     "discourseSegments": [],
@@ -129,11 +134,12 @@
       ["particle", "yak"],
       ["configuration", "predicate"]
     ],
-    "comment": "The mirative component projects: odd because a good harvest is not less than expected."
+    "comment": "The mirative component projects: odd because a good harvest is not less than expected.",
+    "verified": "page-image"
   },
   {
     "id": "grubic2015_6_140",
-    "source": {"bibkey": "grubic-2015", "paperLabel": "(140)"},
+    "source": {"bibkey": "grubic-2015", "paperLabel": "ch. 6 (140)"},
     "language": "ngam1282",
     "primaryText": "Kule yak salko bano mano.",
     "discourseSegments": [],
@@ -150,11 +156,12 @@
       ["particle", "yak"],
       ["configuration", "unmarkedObjectFocus"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grubic2015_6_145a",
-    "source": {"bibkey": "grubic-2015", "paperLabel": "(145a)"},
+    "source": {"bibkey": "grubic-2015", "paperLabel": "ch. 6 (145A)"},
     "language": "ngam1282",
     "primaryText": "O'o, Kule yak onto agoggo.",
     "discourseSegments": [],
@@ -171,11 +178,12 @@
       ["particle", "yak"],
       ["configuration", "dependentPronoun"]
     ],
-    "comment": "Reinterpreted with the exclusive associating with the direct object: Jajei is expecting a watch and other things."
+    "comment": "Reinterpreted with the exclusive associating with the direct object: Jajei is expecting a watch and other things.",
+    "verified": "page-image"
   },
   {
     "id": "grubic2015_6_145b",
-    "source": {"bibkey": "grubic-2015", "paperLabel": "(145b)"},
+    "source": {"bibkey": "grubic-2015", "paperLabel": "ch. 6 (145A')"},
     "language": "ngam1282",
     "primaryText": "O'o, Kule onko agoggo=i ki te yak'i.",
     "discourseSegments": [],
@@ -192,11 +200,12 @@
       ["particle", "yak"],
       ["configuration", "independentPronoun"]
     ],
-    "comment": "Marginal because it is hard to tell who te refers to without intermediate discussion of Jajei."
+    "comment": "Marginal because it is hard to tell who te refers to without intermediate discussion of Jajei.",
+    "verified": "page-image"
   },
   {
     "id": "grubic2015_6_148a",
-    "source": {"bibkey": "grubic-2015", "paperLabel": "(148a)"},
+    "source": {"bibkey": "grubic-2015", "paperLabel": "ch. 6 (148a)"},
     "language": "ngam1282",
     "primaryText": "Hawwa=s, ne moishe Daho a esha=i te yak'i.",
     "discourseSegments": [],
@@ -204,7 +213,7 @@
       ["Hawwa=s,", "Hawwa=DEF.DET.F"], ["ne", "1SG"], ["moishe", "see.HAB"], ["Daho", "Daho"],
       ["a", "3SG.HAB"], ["esha=i", "call.HAB=BM"], ["te", "3SG.F"], ["yak'i.", "only"]
     ],
-    "translation": "Hawwa, I think Daho only calls her.",
+    "translation": "Hawwa, I think Daho only calls her (nobody else).",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -215,11 +224,12 @@
       ["particle", "yak"],
       ["configuration", "resumptivePronoun"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grubic2015_6_148b",
-    "source": {"bibkey": "grubic-2015", "paperLabel": "(148b)"},
+    "source": {"bibkey": "grubic-2015", "paperLabel": "ch. 6 (148b)"},
     "language": "ngam1282",
     "primaryText": "Hawwa=s, ne moishe Daho a esha yak'i.",
     "discourseSegments": [],
@@ -227,7 +237,7 @@
       ["Hawwa=s,", "Hawwa=DEF.DET.F"], ["ne", "1SG"], ["moishe", "see.HAB"], ["Daho", "Daho"],
       ["a", "3SG.HAB"], ["esha", "call.HAB"], ["yak'i.", "only"]
     ],
-    "translation": "Hawwa, I think Daho only calls.",
+    "translation": "Hawwa, I think Daho only calls (she doesn't do anything else).",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -239,19 +249,20 @@
       ["particle", "yak"],
       ["configuration", "topicalizedGap"]
     ],
-    "comment": "The exclusive cannot associate with the moved constituent."
+    "comment": "The exclusive cannot associate with the moved constituent. The paper's gloss line repeats (148a)'s call.HAB=BM 3SG.F for esha.",
+    "verified": "page-image"
   },
   {
     "id": "grubic2015_6_149",
-    "source": {"bibkey": "grubic-2015", "paperLabel": "(149)"},
+    "source": {"bibkey": "grubic-2015", "paperLabel": "ch. 6 (149)"},
     "language": "ngam1282",
     "primaryText": "Hawwa=s, ne moishe Daho lei ki tomiya a esha.",
     "discourseSegments": [],
     "glossedTokens": [
       ["Hawwa=s,", "Hawwa=DEF.DET.F"], ["ne", "1SG"], ["moishe", "see.HAB"], ["Daho", "Daho"],
-      ["lei", "at"], ["ki", "any"], ["tomiya", "time"], ["a", "3SG.HAB"], ["esha.", "call.HAB"]
+      ["lei ki tomiya", "always"], ["a", "3SG.HAB"], ["esha.", "call.HAB"]
     ],
-    "translation": "Hawwa, I think Daho always calls.",
+    "translation": "Hawwa, I think Daho always calls (nobody else).",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -262,11 +273,12 @@
       ["particle", "leiKiTomiya"],
       ["configuration", "topicalizedGap"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grubic2015_6_150a",
-    "source": {"bibkey": "grubic-2015", "paperLabel": "(150a)"},
+    "source": {"bibkey": "grubic-2015", "paperLabel": "ch. 6 (150a)"},
     "language": "ngam1282",
     "primaryText": "Hasha hoti maɗɗi a esha Lakka, Gamba me esha=i te yak'i.",
     "discourseSegments": [],
@@ -284,11 +296,12 @@
       ["particle", "yak"],
       ["configuration", "focusedPronoun"]
     ],
-    "comment": "Consultant: he always calls only her, never anybody else."
+    "comment": "Consultant: he always calls only her, never anybody else.",
+    "verified": "page-image"
   },
   {
     "id": "grubic2015_6_150b",
-    "source": {"bibkey": "grubic-2015", "paperLabel": "(150b)"},
+    "source": {"bibkey": "grubic-2015", "paperLabel": "ch. 6 (150b)"},
     "language": "ngam1282",
     "primaryText": "Hasha hoti maɗɗi a esha Lakka, Gambo me a esha yak'i.",
     "discourseSegments": [],
@@ -306,18 +319,19 @@
       ["particle", "yak"],
       ["configuration", "elidedPronoun"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grubic2015_6_151",
-    "source": {"bibkey": "grubic-2015", "paperLabel": "(151)"},
+    "source": {"bibkey": "grubic-2015", "paperLabel": "ch. 6 (151)"},
     "language": "ngam1282",
     "primaryText": "Hasha hoti maɗɗi a esha Lakka, Gambo me lei ki tomiya a esha.",
     "discourseSegments": [],
     "glossedTokens": [
       ["Hasha", "Hasha"], ["hoti", "day"], ["maɗɗi", "some"], ["a", "3SG.HAB"],
-      ["esha", "call.HAB"], ["Lakka,", "Lakka"], ["Gambo", "Gamba"], ["me", "but"], ["lei", "at"],
-      ["ki", "any"], ["tomiya", "time"], ["a", "3SG.HAB"], ["esha.", "call.HAB"]
+      ["esha", "call.HAB"], ["Lakka,", "Lakka"], ["Gambo", "Gamba"], ["me", "but"],
+      ["lei ki tomiya", "always"], ["a", "3SG.HAB"], ["esha.", "call.HAB"]
     ],
     "translation": "Hasha sometimes calls Lakka, and Gambo always does.",
     "context": "",
@@ -328,11 +342,12 @@
       ["particle", "leiKiTomiya"],
       ["configuration", "elidedPronoun"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grubic2015_6_153",
-    "source": {"bibkey": "grubic-2015", "paperLabel": "(153)"},
+    "source": {"bibkey": "grubic-2015", "paperLabel": "ch. 6 (153)"},
     "language": "ngam1282",
     "primaryText": "Biya ma maranko shinkafa a tishe yak'i.",
     "discourseSegments": [],
@@ -352,11 +367,12 @@
       ["particle", "yak"],
       ["configuration", "elidedObject"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grubic2015_6_158",
-    "source": {"bibkey": "grubic-2015", "paperLabel": "(158)"},
+    "source": {"bibkey": "grubic-2015", "paperLabel": "ch. 6 (158)"},
     "language": "ngam1282",
     "primaryText": "Samaye gitkok tishe=i jarabawa=to yak'i.",
     "discourseSegments": [],
@@ -373,16 +389,17 @@
       ["particle", "yak"],
       ["configuration", "presupposition"]
     ],
-    "comment": "The exclusive does not associate with the presupposition of gitko."
+    "comment": "The exclusive does not associate with the presupposition of gitko.",
+    "verified": "page-image"
   },
   {
     "id": "grubic2015_6_159",
-    "source": {"bibkey": "grubic-2015", "paperLabel": "(159)"},
+    "source": {"bibkey": "grubic-2015", "paperLabel": "ch. 6 (159)"},
     "language": "ngam1282",
     "primaryText": "Samaye lei ki tomiya a gishentik tina=i jarabawa=to.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Samaye", "Samaye"], ["lei", "at"], ["ki", "any"], ["tomiya", "time"], ["a", "3SG.HAB"],
+      ["Samaye", "Samaye"], ["lei ki tomiya", "always"], ["a", "3SG.HAB"],
       ["gishentik", "be.able.HAB.TOT"], ["tina=i", "eat.FUT=BM"],
       ["jarabawa=to.", "exam=3SG.F.POSS"]
     ],
@@ -397,11 +414,12 @@
       ["particle", "leiKiTomiya"],
       ["configuration", "presupposition"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grubic2015_6_160",
-    "source": {"bibkey": "grubic-2015", "paperLabel": "(160)"},
+    "source": {"bibkey": "grubic-2015", "paperLabel": "ch. 6 (160)"},
     "language": "ngam1282",
     "primaryText": "Si onko agoggo=i ki Shuwa, si ke ono.",
     "discourseSegments": [],
@@ -418,11 +436,12 @@
       ["particle", "ke"],
       ["configuration", "dependentPronoun"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grubic2015_6_162a",
-    "source": {"bibkey": "grubic-2015", "paperLabel": "(162a)"},
+    "source": {"bibkey": "grubic-2015", "paperLabel": "ch. 6 (162A)"},
     "language": "ngam1282",
     "primaryText": "Kule esha=i Dimza, ke esha=i ne'e.",
     "discourseSegments": [],
@@ -439,11 +458,12 @@
       ["particle", "ke"],
       ["configuration", "independentPronoun"]
     ],
-    "comment": "Rejected in favour of a dependent pronoun with a totality-extended verb."
+    "comment": "Rejected in favour of a dependent pronoun with a totality-extended verb.",
+    "verified": "page-image"
   },
   {
     "id": "grubic2015_6_162b",
-    "source": {"bibkey": "grubic-2015", "paperLabel": "(162b)"},
+    "source": {"bibkey": "grubic-2015", "paperLabel": "ch. 6 (162A')"},
     "language": "ngam1282",
     "primaryText": "Kule esha=i Dimza ke eshino.",
     "discourseSegments": [],
@@ -460,11 +480,12 @@
       ["particle", "ke"],
       ["configuration", "dependentPronoun"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grubic2015_6_163",
-    "source": {"bibkey": "grubic-2015", "paperLabel": "(163)"},
+    "source": {"bibkey": "grubic-2015", "paperLabel": "ch. 6 (163)"},
     "language": "ngam1282",
     "primaryText": "Ke salko bano.",
     "discourseSegments": [],
@@ -480,11 +501,12 @@
       ["particle", "ke"],
       ["configuration", "elidedTopicalSubject"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grubic2015_6_164",
-    "source": {"bibkey": "grubic-2015", "paperLabel": "(164)"},
+    "source": {"bibkey": "grubic-2015", "paperLabel": "ch. 6 (164)"},
     "language": "ngam1282",
     "primaryText": "Kule onko agoggo=i ki Shuwa, ke har ono.",
     "discourseSegments": [],
@@ -501,11 +523,12 @@
       ["particle", "har"],
       ["configuration", "dependentPronoun"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grubic2015_6_165",
-    "source": {"bibkey": "grubic-2015", "paperLabel": "(165)"},
+    "source": {"bibkey": "grubic-2015", "paperLabel": "ch. 6 (165)"},
     "language": "ngam1282",
     "primaryText": "Hawwa salko bano, Kule ke salko bano.",
     "discourseSegments": [],
@@ -522,11 +545,12 @@
       ["particle", "ke"],
       ["configuration", "preverbalSubject"]
     ],
-    "comment": "Preverbal subjects are out of focus, which the exclusive cannot associate with."
+    "comment": "Preverbal subjects are out of focus, which the exclusive cannot associate with.",
+    "verified": "page-image"
   },
   {
     "id": "grubic2015_6_166",
-    "source": {"bibkey": "grubic-2015", "paperLabel": "(166)"},
+    "source": {"bibkey": "grubic-2015", "paperLabel": "ch. 6 (166)"},
     "language": "ngam1282",
     "primaryText": "Dimza yak salko bano.",
     "discourseSegments": [],
@@ -545,11 +569,12 @@
       ["inference", "he was expected to build more"],
       ["inference", "Dimza built a house"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grubic2015_6_167",
-    "source": {"bibkey": "grubic-2015", "paperLabel": "(167)"},
+    "source": {"bibkey": "grubic-2015", "paperLabel": "ch. 6 (167)"},
     "language": "ngam1282",
     "primaryText": "Dimza ke salko bano.",
     "discourseSegments": [],
@@ -567,11 +592,12 @@
       ["inference", "Dimza built a house"],
       ["inference", "Dimza built something else"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grubic2015_6_168",
-    "source": {"bibkey": "grubic-2015", "paperLabel": "(168)"},
+    "source": {"bibkey": "grubic-2015", "paperLabel": "ch. 6 (168)"},
     "language": "ngam1282",
     "primaryText": "Dimza har salko bano.",
     "discourseSegments": [],
@@ -590,11 +616,12 @@
       ["inference", "he was expected to build less"],
       ["inference", "Dimza built something else"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grubic2015_6_169",
-    "source": {"bibkey": "grubic-2015", "paperLabel": "(169)"},
+    "source": {"bibkey": "grubic-2015", "paperLabel": "ch. 6 (169)"},
     "language": "ngam1282",
     "primaryText": "Ne sakatari yak'i.",
     "discourseSegments": [],
@@ -612,11 +639,12 @@
       ["inference", "the speaker is nothing better than a secretary"],
       ["inference", "the speaker was expected to be something better"]
     ],
-    "comment": "A rank-order scale: the prejacent inference does not survive negation."
+    "comment": "A rank-order scale: the prejacent inference does not survive negation.",
+    "verified": "page-image"
   },
   {
     "id": "grubic2015_6_170",
-    "source": {"bibkey": "grubic-2015", "paperLabel": "(170)"},
+    "source": {"bibkey": "grubic-2015", "paperLabel": "ch. 6 (170)"},
     "language": "ngam1282",
     "primaryText": "Bah malum har'i.",
     "discourseSegments": [],
@@ -634,11 +662,12 @@
       ["inference", "Bah is a teacher"],
       ["inference", "he was expected to be something worse"]
     ],
-    "comment": "A rank-order scale: no additive inference."
+    "comment": "A rank-order scale: no additive inference.",
+    "verified": "page-image"
   },
   {
     "id": "grubic2015_7_41",
-    "source": {"bibkey": "grubic-2015", "paperLabel": "(41)"},
+    "source": {"bibkey": "grubic-2015", "paperLabel": "ch. 7 (41)"},
     "language": "ngam1282",
     "primaryText": "Kaja mato=i Hawwa, salko bano=i ke Kule.",
     "discourseSegments": [],
@@ -655,11 +684,12 @@
       ["particle", "ke"],
       ["configuration", "distinctBackgroundDistinctFocus"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grubic2015_7_42",
-    "source": {"bibkey": "grubic-2015", "paperLabel": "(42)"},
+    "source": {"bibkey": "grubic-2015", "paperLabel": "ch. 7 (42)"},
     "language": "ngam1282",
     "primaryText": "Salko bano=i Kule, kaja mato=i ke Kule.",
     "discourseSegments": [],
@@ -676,11 +706,12 @@
       ["particle", "ke"],
       ["configuration", "distinctBackgroundParallelFocus"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grubic2015_7_43",
-    "source": {"bibkey": "grubic-2015", "paperLabel": "(43)"},
+    "source": {"bibkey": "grubic-2015", "paperLabel": "ch. 7 (43)"},
     "language": "ngam1282",
     "primaryText": "Kule salko makaranta mano, Kule ke salko bano mano.",
     "discourseSegments": [],
@@ -698,11 +729,12 @@
       ["particle", "ke"],
       ["configuration", "parallelUnmarkedBackground"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grubic2015_7_44",
-    "source": {"bibkey": "grubic-2015", "paperLabel": "(44)"},
+    "source": {"bibkey": "grubic-2015", "paperLabel": "ch. 7 (44)"},
     "language": "ngam1282",
     "primaryText": "Salko bano=i Hawwa, salko bano=i ke Kule.",
     "discourseSegments": [],
@@ -719,11 +751,12 @@
       ["particle", "ke"],
       ["configuration", "parallelMarkedBackground"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grubic2015_7_46",
-    "source": {"bibkey": "grubic-2015", "paperLabel": "(46)"},
+    "source": {"bibkey": "grubic-2015", "paperLabel": "ch. 7 (46)"},
     "language": "ngam1282",
     "primaryText": "Bei a ina ham ɗoshi, ke a ina ham tuha ke'e.",
     "discourseSegments": [],
@@ -741,11 +774,12 @@
       ["particle", "ke"],
       ["configuration", "modalizedAntecedent"]
     ],
-    "comment": "The antecedent is merely given, not asserted to be true."
+    "comment": "The antecedent is merely given, not asserted to be true.",
+    "verified": "page-image"
   },
   {
     "id": "grubic2015_7_48",
-    "source": {"bibkey": "grubic-2015", "paperLabel": "(48)"},
+    "source": {"bibkey": "grubic-2015", "paperLabel": "ch. 7 (48)"},
     "language": "ngam1282",
     "primaryText": "Salko bano=i Hawwa, Kule ke salko bano.",
     "discourseSegments": [],
@@ -762,11 +796,12 @@
       ["particle", "ke"],
       ["configuration", "nonParallel"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "grubic2015_7_49",
-    "source": {"bibkey": "grubic-2015", "paperLabel": "(49)"},
+    "source": {"bibkey": "grubic-2015", "paperLabel": "ch. 7 (49)"},
     "language": "ngam1282",
     "primaryText": "Salko bano=i Hawwa, ke salko bano=i ke Kule.",
     "discourseSegments": [],
@@ -776,13 +811,14 @@
     ],
     "translation": "Hawwa built a house, and Kule also built a house.",
     "context": "",
-    "judgment": "marginal",
+    "judgment": "questionable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["particle", "ke"],
       ["configuration", "parallelMarkedBackground"]
     ],
-    "comment": "Possible if a temporal shift is accommodated: it is Hawwa that built the house and then Kule built a house."
+    "comment": "Possible if a temporal shift is accommodated: it is Hawwa that built the house and then Kule built a house.",
+    "verified": "page-image"
   }
 ]

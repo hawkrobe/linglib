@@ -18,7 +18,8 @@
       ["pattern", "nominative"],
       ["clause", "intransitive"]
     ],
-    "comment": "Rude 1982, (19)."
+    "comment": "Rude 1982, (19).",
+    "verified": "page-image"
   },
   {
     "id": "woolford1997_2",
@@ -39,7 +40,8 @@
       ["pattern", "nominative-accusative"],
       ["clause", "transitive"]
     ],
-    "comment": "Rude 1988, (31). Neither case is overt; only the nominative triggers agreement."
+    "comment": "Rude 1988, (31). Neither case is overt; only the nominative triggers agreement.",
+    "verified": "page-image"
   },
   {
     "id": "woolford1997_3",
@@ -60,7 +62,8 @@
       ["pattern", "ergative-objective"],
       ["clause", "transitive"]
     ],
-    "comment": "Rude 1988, (30). The ergative subject triggers subject agreement and the objective object triggers object agreement."
+    "comment": "Rude 1988, (30). The ergative subject triggers subject agreement and the objective object triggers object agreement.",
+    "verified": "page-image"
   },
   {
     "id": "woolford1997_4",
@@ -71,7 +74,7 @@
     "discourseSegments": [],
     "glossedTokens": [
       ["ʔáayat-Ø", "woman-NOM"], ["hi-ʔni-ye", "3-give-PAST"], ["tíim'es-Ø", "book-ACC"],
-      ["háama-Ø", "husband-ACC"]
+      ["háama-Ø", "man/husband-ACC"]
     ],
     "translation": "The woman gave her husband a book.",
     "context": "",
@@ -82,7 +85,8 @@
       ["pattern", "nominative-accusative-accusative"],
       ["clause", "ditransitive"]
     ],
-    "comment": "Rude, personal communication. Neither object triggers agreement."
+    "comment": "Rude, personal communication. Neither object triggers agreement.",
+    "verified": "page-image"
   },
   {
     "id": "woolford1997_5",
@@ -104,7 +108,8 @@
       ["pattern", "ergative-objective-accusative"],
       ["clause", "ditransitive"]
     ],
-    "comment": "Rude, personal communication. The goal is objective and triggers object agreement; the theme is accusative."
+    "comment": "Rude, personal communication. The goal is objective and triggers object agreement; the theme is accusative.",
+    "verified": "page-image"
   },
   {
     "id": "woolford1997_6",
@@ -126,7 +131,8 @@
       ["pattern", "ergative-dative-objective"],
       ["clause", "ditransitive"]
     ],
-    "comment": "Rude, personal communication. With a dative goal the theme gets objective case."
+    "comment": "Rude, personal communication. With a dative goal the theme gets objective case.",
+    "verified": "page-image"
   },
   {
     "id": "woolford1997_7",
@@ -148,6 +154,7 @@
       ["pattern", "ergative-objective-accusative"],
       ["clause", "ditransitive"]
     ],
-    "comment": "Blake 1982, (47). Only the goal triggers object agreement; the case labels on the unmarked forms are Woolford's."
+    "comment": "Blake 1982, (47). Only the goal triggers object agreement; the case labels on the unmarked forms are Woolford's.",
+    "verified": "page-image"
   }
 ]

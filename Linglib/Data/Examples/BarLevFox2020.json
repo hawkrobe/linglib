@@ -16,7 +16,8 @@
       ["form", "◇(a ∨ b)"],
       ["inference", "free choice"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "barlevfox2020_6",
@@ -33,7 +34,8 @@
     "paperFeatures": [
       ["form", "¬◇(a ∨ b)"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "barlevfox2020_7",
@@ -51,7 +53,8 @@
     "paperFeatures": [
       ["construction", "VP-ellipsis"]
     ],
-    "comment": "The antecedent has the free-choice meaning; the elided VP the plain disjunctive one."
+    "comment": "The antecedent has the free-choice meaning; the elided VP the plain disjunctive one.",
+    "verified": "page-image"
   },
   {
     "id": "barlevfox2020_8",
@@ -69,45 +72,52 @@
     "paperFeatures": [
       ["construction", "VP-ellipsis"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "barlevfox2020_9",
     "source": {"bibkey": "bar-lev-fox-2020", "paperLabel": "(9)"},
     "language": "stan1293",
-    "primaryText": "a or b",
+    "primaryText": "Mary ate ice cream or cake.",
     "glossedTokens": [],
     "translation": "",
     "context": "",
     "judgment": "acceptable",
     "readings": [
-      {"name": "a", "judgment": "unacceptable"},
-      {"name": "b", "judgment": "unacceptable"}
+      {
+        "name": "Mary didn't eat both ice cream and cake",
+        "judgment": "acceptable"
+      }
     ],
     "paperFeatures": [
       ["form", "a ∨ b"],
       ["alternatives", "{a ∨ b, a, b, a ∧ b}"]
     ],
-    "comment": "Simple disjunction: schematic."
+    "comment": "Simple disjunction.",
+    "verified": "page-image"
   },
   {
     "id": "barlevfox2020_10",
     "source": {"bibkey": "bar-lev-fox-2020", "paperLabel": "(10)"},
     "language": "stan1293",
-    "primaryText": "◇(a or b)",
+    "primaryText": "Mary is allowed to eat ice cream or cake.",
     "glossedTokens": [],
     "translation": "",
     "context": "",
     "judgment": "acceptable",
     "readings": [
-      {"name": "◇a", "judgment": "acceptable"},
-      {"name": "◇b", "judgment": "acceptable"}
+      {
+        "name": "Mary is allowed to eat ice cream and allowed to eat cake",
+        "judgment": "acceptable"
+      }
     ],
     "paperFeatures": [
       ["form", "◇(a ∨ b)"],
       ["alternatives", "{◇(a ∨ b), ◇a, ◇b, ◇(a ∧ b)}"]
     ],
-    "comment": "Free-choice disjunction: schematic."
+    "comment": "Free-choice disjunction; repeats (1).",
+    "verified": "page-image"
   },
   {
     "id": "barlevfox2020_33",
@@ -126,7 +136,8 @@
       ["construction", "only"],
       ["inference", "presupposition"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "barlevfox2020_34",
@@ -145,7 +156,8 @@
       ["construction", "only"],
       ["construction", "polar question"]
     ],
-    "comment": "The free-choice inferences project out of the question."
+    "comment": "The free-choice inferences project out of the question.",
+    "verified": "page-image"
   },
   {
     "id": "barlevfox2020_35",
@@ -163,7 +175,8 @@
     "paperFeatures": [
       ["construction", "polar question"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "barlevfox2020_36",
@@ -182,7 +195,8 @@
       ["form", "∀x ◇(Px ∨ Qx)"],
       ["inference", "universal free choice"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "barlevfox2020_37",
@@ -201,7 +215,8 @@
       ["form", "¬∃x □(Px ∧ Qx)"],
       ["inference", "universal free choice"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "barlevfox2020_38",
@@ -220,7 +235,8 @@
     "paperFeatures": [
       ["construction", "VP-ellipsis"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "barlevfox2020_48",
@@ -239,7 +255,8 @@
       ["form", "∀x(Px ∨ Qx)"],
       ["inference", "distributive"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "barlevfox2020_49",
@@ -257,7 +274,8 @@
     "paperFeatures": [
       ["form", "□(p ∨ q)"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "barlevfox2020_53",
@@ -275,7 +293,8 @@
     "paperFeatures": [
       ["form", "◇∀x(Px ∨ Qx)"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "barlevfox2020_54",
@@ -293,7 +312,8 @@
     "paperFeatures": [
       ["form", "∀x(Px ∨ Qx)"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "barlevfox2020_59",
@@ -312,7 +332,8 @@
       ["form", "∃p ∀w∈p (Pw ∨ Qw)"],
       ["modal", "ability"]
     ],
-    "comment": "Attributed to Geurts 2010; left open by the paper."
+    "comment": "Attributed to Geurts 2010; left open by the paper.",
+    "verified": "page-image"
   },
   {
     "id": "barlevfox2020_61",
@@ -328,10 +349,11 @@
       {"name": "If you eat cake, you will feel guilty", "judgment": "acceptable"}
     ],
     "paperFeatures": [
-      ["form", "(p ∨ q) → r"],
+      ["form", "(p ∨ q) □→ r"],
       ["inference", "simplification of disjunctive antecedents"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "barlevfox2020_68",
@@ -348,9 +370,10 @@
       {"name": "If you eat a pear you will be healthy", "judgment": "acceptable"}
     ],
     "paperFeatures": [
-      ["form", "(p ∨ q ∨ r) → s"]
+      ["form", "(p ∨ q ∨ r) □→ s"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "barlevfox2020_69",
@@ -366,9 +389,10 @@
       {"name": "Everyone will feel guilty if they eat cake", "judgment": "acceptable"}
     ],
     "paperFeatures": [
-      ["form", "∀x((Px ∨ Qx) → Rx)"]
+      ["form", "∀x((Px ∨ Qx) □→ Rx)"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "barlevfox2020_70",
@@ -384,9 +408,10 @@
       {"name": "It's not true that you will feel guilty if you eat cake", "judgment": "acceptable"}
     ],
     "paperFeatures": [
-      ["form", "¬((p ∨ q) → r)"]
+      ["form", "¬((p ∨ q) □→ r)"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "barlevfox2020_71",
@@ -402,9 +427,10 @@
       {"name": "If Spain had fought with the Allies it would have been with the Axis", "judgment": "unacceptable"}
     ],
     "paperFeatures": [
-      ["form", "(p ∨ q) → p"]
+      ["form", "(p ∨ q) □→ p"]
     ],
-    "comment": "McKay and van Inwagen 1977: simplification fails."
+    "comment": "McKay and van Inwagen 1977: simplification fails.",
+    "verified": "page-image"
   },
   {
     "id": "barlevfox2020_72",
@@ -420,9 +446,10 @@
       {"name": "If Spain had fought with the Allies, Hitler would have been pleased", "judgment": "unacceptable"}
     ],
     "paperFeatures": [
-      ["form", "(p ∨ q) → r"]
+      ["form", "(p ∨ q) □→ r"]
     ],
-    "comment": "Nute 1980: simplification goes through and the second simplification is false by world knowledge."
+    "comment": "Nute 1980: simplification goes through and the second simplification is false by world knowledge.",
+    "verified": "page-image"
   },
   {
     "id": "barlevfox2020_76",
@@ -435,9 +462,10 @@
     "judgment": "acceptable",
     "readings": [],
     "paperFeatures": [
-      ["form", "(p̄ ∨ q̄) → r"]
+      ["form", "(p̄ ∨ q̄) □→ r"]
     ],
-    "comment": "Judged mostly true in Ciardelli et al. 2018's experiment."
+    "comment": "Judged mostly true in Ciardelli et al. 2018's experiment.",
+    "verified": "page-image"
   },
   {
     "id": "barlevfox2020_77",
@@ -447,12 +475,13 @@
     "glossedTokens": [],
     "translation": "",
     "context": "Both switches are up and the light is on; with exactly one switch down the light would be off; with both down it would be on.",
-    "judgment": "questionable",
+    "judgment": "acceptable",
     "readings": [],
     "paperFeatures": [
-      ["form", "(¬(p ∧ q)) → r"]
+      ["form", "(¬(p ∧ q)) □→ r"]
     ],
-    "comment": "Judged mostly false or neither true nor false in Ciardelli et al. 2018's experiment."
+    "comment": "Judged mostly false or neither true nor false in Ciardelli et al. 2018's experiment.",
+    "verified": "page-image"
   },
   {
     "id": "barlevfox2020_78",
@@ -462,12 +491,13 @@
     "glossedTokens": [],
     "translation": "",
     "context": "Both switches are up and the light is on; with exactly one switch down the light would be off; with both down it would be on.",
-    "judgment": "unacceptable",
+    "judgment": "acceptable",
     "readings": [],
     "paperFeatures": [
-      ["form", "(Exh(p̄ ∨ q̄) ∨ (p̄ ∧ q̄)) → r"]
+      ["form", "(Exh(p̄ ∨ q̄) ∨ (p̄ ∧ q̄)) □→ r"]
     ],
-    "comment": "The authors' judgment: clearly false."
+    "comment": "The authors' judgment: clearly false.",
+    "verified": "page-image"
   },
   {
     "id": "barlevfox2020_85",
@@ -477,7 +507,7 @@
     "glossedTokens": [],
     "translation": "",
     "context": "35 of the 40 linguistics students and 2 of the 30 philosophy students took Advanced Syntax; no student is in both.",
-    "judgment": "questionable",
+    "judgment": "acceptable",
     "readings": [
       {"name": "Most students in linguistics took Advanced Syntax", "judgment": "acceptable"},
       {"name": "Most students in philosophy took Advanced Syntax", "judgment": "acceptable"}
@@ -485,7 +515,8 @@
     "paperFeatures": [
       ["form", "Most(P ∪ Q)(R)"]
     ],
-    "comment": "Odd or false in the scenario for the authors; not all speakers share the intuition."
+    "comment": "Odd or false in the scenario for the authors; not all speakers share the intuition.",
+    "verified": "page-image"
   },
   {
     "id": "barlevfox2020_91",
@@ -502,7 +533,8 @@
     "paperFeatures": [
       ["form", "∃x ◇(Px ∨ Qx)"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "barlevfox2020_92",
@@ -521,7 +553,8 @@
     "paperFeatures": [
       ["form", "¬∀x □(Px ∧ Qx)"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "barlevfox2020_93",
@@ -539,6 +572,7 @@
     "paperFeatures": [
       ["construction", "VP-ellipsis"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]

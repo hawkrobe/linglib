@@ -33,7 +33,8 @@
         "the reading (22b), -er over every, is unavailable"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bp2004_23a",
@@ -46,7 +47,7 @@
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "The frostline is 3 and a half feet deep.",
+    "context": "The frostline is 3½ feet deep.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
@@ -65,7 +66,8 @@
         "4.1"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bp2004_23b",
@@ -74,12 +76,12 @@
       "paperLabel": "(23b)"
     },
     "language": "stan1293",
-    "primaryText": "?Mary was less impressed with every candidate than that.",
+    "primaryText": "Mary was less impressed with every candidate than that.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
     "context": "John gave every candidate an A.",
-    "judgment": "acceptable",
+    "judgment": "marginal",
     "alternatives": [],
     "readings": [
       {
@@ -97,7 +99,8 @@
         "4.1"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bp2004_27a",
@@ -133,7 +136,8 @@
         "require"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bp2004_27b",
@@ -169,7 +173,8 @@
         "allow"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bp2004_27c",
@@ -205,7 +210,8 @@
         "require"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bp2004_27d",
@@ -241,7 +247,8 @@
         "allow"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bp2004_30a",
@@ -281,7 +288,8 @@
         "the two scopes are truth-conditionally equivalent"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bp2004_30b",
@@ -321,7 +329,8 @@
         "the two scopes are truth-conditionally equivalent"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bp2004_34a",
@@ -330,7 +339,7 @@
       "paperLabel": "(34a)"
     },
     "language": "stan1293",
-    "primaryText": "??I will tell him a sillier rumor (about Ann) than Mary told John.",
+    "primaryText": "I will tell him a sillier rumor (about Ann) than Mary told John.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -352,7 +361,8 @@
         "string-vacuous high attachment is blocked by minimal attachment"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bp2004_34b",
@@ -383,7 +393,8 @@
         "the degree clause is merged late outside the pronoun's c-command domain"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bp2004_35",
@@ -392,7 +403,7 @@
       "paperLabel": "(35)"
     },
     "language": "stan1293",
-    "primaryText": "*I will tell him a silly rumor tomorrow that Mary likes John.",
+    "primaryText": "I will tell him a silly rumor tomorrow that Mary likes John.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -414,7 +425,8 @@
         "the complement of a nominal cannot be merged late"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bp2004_40",
@@ -446,7 +458,8 @@
         "5.2"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bp2004_41",
@@ -486,7 +499,8 @@
         "DP"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bp2004_42",
@@ -534,7 +548,8 @@
         "available"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bp2004_43",
@@ -582,7 +597,8 @@
         "unavailable"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bp2004_44",
@@ -591,7 +607,7 @@
       "paperLabel": "(44)"
     },
     "language": "stan1293",
-    "primaryText": "*Mary climbed higher before you did than 1,000 feet.",
+    "primaryText": "Mary climbed higher before you did than 1,000 feet.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -617,7 +633,8 @@
         "the position of the degree clause presupposes high scope for -er, which the Heim-Kennedy Constraint excludes"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bp2004_45",
@@ -669,7 +686,8 @@
         "available"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bp2004_46",
@@ -721,7 +739,8 @@
         "available"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bp2004_48a",
@@ -748,7 +767,8 @@
         "the two degree abstractions need not cross"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bp2004_48b",
@@ -757,7 +777,7 @@
       "paperLabel": "(48b)"
     },
     "language": "stan1293",
-    "primaryText": "*So many people ate faster yesterday [that we were all done by 9 p.m.] [than we had expected].",
+    "primaryText": "So many people ate faster yesterday [that we were all done by 9 p.m.] [than we had expected].",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -775,7 +795,8 @@
         "result clauses follow comparative clauses"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bp2004_50a",
@@ -784,12 +805,12 @@
       "paperLabel": "(50a)"
     },
     "language": "stan1293",
-    "primaryText": "???/*More people ate so fast yesterday [than we had expected] [that we were all done by 9 p.m.].",
+    "primaryText": "More people ate so fast yesterday [than we had expected] [that we were all done by 9 p.m.].",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "ungrammatical",
+    "judgment": "questionable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -800,9 +821,14 @@
       [
         "claim",
         "crossing degree abstractions, excluded by the Heim-Kennedy Constraint"
+      ],
+      [
+        "alsoJudged",
+        "ungrammatical"
       ]
     ],
-    "comment": ""
+    "comment": "The paper prints the mark ???/*; ??? is recorded as questionable.",
+    "verified": "page-image"
   },
   {
     "id": "bp2004_50b",
@@ -811,7 +837,7 @@
       "paperLabel": "(50b)"
     },
     "language": "stan1293",
-    "primaryText": "*More people ate so fast yesterday [that we were all done by 9 p.m.] [than we had expected].",
+    "primaryText": "More people ate so fast yesterday [that we were all done by 9 p.m.] [than we had expected].",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -829,7 +855,8 @@
         "result clauses follow comparative clauses"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bp2004_53a",
@@ -877,7 +904,8 @@
         "unavailable"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bp2004_53b",
@@ -925,7 +953,8 @@
         "available"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bp2004_54a",
@@ -973,7 +1002,8 @@
         "unavailable"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bp2004_54b",
@@ -1021,7 +1051,8 @@
         "available"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bp2004_60",
@@ -1061,7 +1092,8 @@
         "6.1"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bp2004_61",
@@ -1093,7 +1125,8 @@
         "6.1"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bp2004_63",
@@ -1137,7 +1170,8 @@
         "her = Mary"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bp2004_64a",
@@ -1173,7 +1207,8 @@
         "her = Mary"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bp2004_64b",
@@ -1209,7 +1244,8 @@
         "her = Mary"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bp2004_85",
@@ -1236,7 +1272,8 @@
         "the set of degrees to which Bill is tall is a proper subset of the set to which John is tall"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bp2004_91a",
@@ -1245,7 +1282,7 @@
       "paperLabel": "(91a)"
     },
     "language": "stan1293",
-    "primaryText": "??Which rumor that John_i liked Mary did he_i later deny?",
+    "primaryText": "Which rumor that John_i liked Mary did he_i later deny?",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -1267,7 +1304,8 @@
         "the complement of rumor cannot be merged late"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bp2004_91b",
@@ -1298,7 +1336,8 @@
         "the complement of -er can be merged late"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bp2004_93a",
@@ -1307,7 +1346,7 @@
       "paperLabel": "(93a)"
     },
     "language": "stan1293",
-    "primaryText": "*John desires that more people than I do take syntax.",
+    "primaryText": "John desires that more people than I do take syntax.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -1321,7 +1360,8 @@
         "8"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bp2004_93b",
@@ -1344,6 +1384,7 @@
         "8"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]

@@ -18,7 +18,8 @@
       ["flavor", "complementExclusion"],
       ["only", "yes"]
     ],
-    "comment": "The complement exclusion reading, the label of Coppock and Beaver 2014."
+    "comment": "The complement exclusion reading, the label of Coppock and Beaver 2014.",
+    "verified": "page-image"
   },
   {
     "id": "deothomas2025_1b",
@@ -39,7 +40,8 @@
       ["flavor", "rankOrder"],
       ["only", "yes"]
     ],
-    "comment": "The rank-order reading: nothing more than the prejacent on a contextual scale that orders propositions by rank."
+    "comment": "The rank-order reading: nothing more than the prejacent on a contextual scale that orders propositions by rank.",
+    "verified": "page-image"
   },
   {
     "id": "deothomas2025_2d",
@@ -60,7 +62,8 @@
       ["flavor", "minimalSufficiency"],
       ["only", "no"]
     ],
-    "comment": "The minimal-sufficiency use, the term of Grosz 2012: something unexpectedly low on the scale is sufficient cause for another eventuality."
+    "comment": "The minimal-sufficiency use, the term of Grosz 2012: something unexpectedly low on the scale is sufficient cause for another eventuality.",
+    "verified": "page-image"
   },
   {
     "id": "deothomas2025_3a",
@@ -82,7 +85,8 @@
       ["only", "yes"],
       ["case", "37a"]
     ],
-    "comment": "Mary did not go to any country other than Spain and Portugal, and was expected to go to more; the mention-all construal is the widest and answerable, §4.1, and the exhaustive interpretation is a mandatory implicature."
+    "comment": "Mary did not go to any country other than Spain and Portugal, and was expected to go to more; the mention-all construal is the widest and answerable, §4.1, and the exhaustive interpretation is a mandatory implicature.",
+    "verified": "page-image"
   },
   {
     "id": "deothomas2025_3b",
@@ -104,7 +108,8 @@
       ["only", "yes"],
       ["case", "37a"]
     ],
-    "comment": "Mary is nothing more senior than an intern, and her seniority was expected to be higher; the speaker may widen the domain of relevant jobs to a finer partition, (40), §4.2.1."
+    "comment": "Mary is nothing more senior than an intern, and her seniority was expected to be higher; the speaker may widen the domain of relevant jobs to a finer partition, (40), §4.2.1.",
+    "verified": "page-image"
   },
   {
     "id": "deothomas2025_4a",
@@ -125,7 +130,8 @@
       ["flavor", "exclusive"],
       ["only", "yes"]
     ],
-    "comment": "Web-attested expectation-lowering with an explicit stronger expectation in the context."
+    "comment": "Web-attested expectation-lowering with an explicit stronger expectation in the context.",
+    "verified": "page-image"
   },
   {
     "id": "deothomas2025_4b",
@@ -146,7 +152,8 @@
       ["flavor", "exclusive"],
       ["only", "yes"]
     ],
-    "comment": "Web-attested expectation-lowering with an explicit stronger expectation in the context."
+    "comment": "Web-attested expectation-lowering with an explicit stronger expectation in the context.",
+    "verified": "page-image"
   },
   {
     "id": "deothomas2025_5a",
@@ -167,7 +174,8 @@
       ["flavor", "emphatic"],
       ["only", "no"]
     ],
-    "comment": "Paraphrase: the food was absolutely amazing; an extreme adjective in the sense of Morzycki 2012."
+    "comment": "Paraphrase: the food was absolutely amazing; an extreme adjective in the sense of Morzycki 2012.",
+    "verified": "page-image"
   },
   {
     "id": "deothomas2025_5b",
@@ -188,7 +196,8 @@
     "paperFeatures": [
       ["flavor", "emphatic"]
     ],
-    "comment": "Paraphrase: the Empire State Building is absolutely gigantic."
+    "comment": "Paraphrase: the Empire State Building is absolutely gigantic.",
+    "verified": "page-image"
   },
   {
     "id": "deothomas2025_6a",
@@ -206,7 +215,8 @@
     "paperFeatures": [
       ["flavor", "emphatic"]
     ],
-    "comment": "Corpus of Contemporary American English; emphatic just with a quantifier, whose domain is taken to be as wide as possible, §4.8.1."
+    "comment": "Corpus of Contemporary American English; emphatic just with a quantifier, whose domain is taken to be as wide as possible, §4.8.1.",
+    "verified": "page-image"
   },
   {
     "id": "deothomas2025_6b",
@@ -224,7 +234,8 @@
     "paperFeatures": [
       ["flavor", "emphatic"]
     ],
-    "comment": "Corpus of Contemporary American English; emphatic just with a superlative, whose comparison class is taken to be as wide as possible, §4.8.1."
+    "comment": "Corpus of Contemporary American English; emphatic just with a superlative, whose comparison class is taken to be as wide as possible, §4.8.1.",
+    "verified": "page-image"
   },
   {
     "id": "deothomas2025_7a",
@@ -242,7 +253,8 @@
     "paperFeatures": [
       ["flavor", "precisifyingEquality"]
     ],
-    "comment": "Corpus of Contemporary American English; just in an equative construction conveys that the prejacent is true at the highest permissible level of precision."
+    "comment": "Corpus of Contemporary American English; just in an equative construction conveys that the prejacent is true at the highest permissible level of precision.",
+    "verified": "page-image"
   },
   {
     "id": "deothomas2025_7b",
@@ -253,21 +265,22 @@
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
-    "context": "Many gardeners are finding the new selections of miniature amaryllis more to their liking. Don't be misled by the word \"miniature.\"",
+    "context": "Many gardeners are finding the new selections of miniature amaryllis more to their liking. ... don't be misled by the word \"miniature.\"",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["flavor", "precisifyingEquality"]
     ],
-    "comment": "Corpus of Contemporary American English."
+    "comment": "Corpus of Contemporary American English.",
+    "verified": "page-image"
   },
   {
     "id": "deothomas2025_8a",
     "source": {"bibkey": "deo-thomas-2025", "paperLabel": "(8a)"},
     "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "The \"shell full\" gallonage, which is stenciled on the ends of the car, is the amount when the horizontal cylinder of the tank is just full, easily observed from the manway during filling.",
+    "primaryText": "They rely on gallonage, and the \"shell full\" gallonage, which is stenciled on the ends of the car, is the amount when the horizontal cylinder of the tank is just full, easily observed from the manway during filling.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -278,7 +291,8 @@
     "paperFeatures": [
       ["flavor", "precisifyingEquality"]
     ],
-    "comment": "Web example; just with a maximum-standard adjective is equivalent to exactly full."
+    "comment": "Web example; just with a maximum-standard adjective is equivalent to exactly full.",
+    "verified": "page-image"
   },
   {
     "id": "deothomas2025_8b",
@@ -296,7 +310,8 @@
     "paperFeatures": [
       ["flavor", "precisifyingEquality"]
     ],
-    "comment": "Corpus of Contemporary American English; the precisifier exactly could be used instead."
+    "comment": "Corpus of Contemporary American English; the precisifier exactly could be used instead.",
+    "verified": "page-image"
   },
   {
     "id": "deothomas2025_9a",
@@ -318,7 +333,8 @@
       ["only", "no"],
       ["case", "37a"]
     ],
-    "comment": "Corpus of Contemporary American English, also (2b); Fafen is older than Siri by an amount relevant only at a high level of precision, the approximative use of Thomas and Deo 2020."
+    "comment": "Corpus of Contemporary American English, also (2b); Fafen is older than Siri by an amount relevant only at a high level of precision, the approximative use of Thomas and Deo 2020.",
+    "verified": "page-image"
   },
   {
     "id": "deothomas2025_9b",
@@ -336,7 +352,8 @@
     "paperFeatures": [
       ["flavor", "precisifyingProximity"]
     ],
-    "comment": "Corpus of Contemporary American English."
+    "comment": "Corpus of Contemporary American English.",
+    "verified": "page-image"
   },
   {
     "id": "deothomas2025_9c",
@@ -354,7 +371,8 @@
     "paperFeatures": [
       ["flavor", "precisifyingProximity"]
     ],
-    "comment": "Corpus of Contemporary American English."
+    "comment": "Corpus of Contemporary American English.",
+    "verified": "page-image"
   },
   {
     "id": "deothomas2025_10a",
@@ -372,7 +390,8 @@
     "paperFeatures": [
       ["flavor", "precisifyingProximity"]
     ],
-    "comment": "Corpus of Contemporary American English; with a minimum-standard adjective, paraphrasable by barely."
+    "comment": "Corpus of Contemporary American English; with a minimum-standard adjective, paraphrasable by barely.",
+    "verified": "page-image"
   },
   {
     "id": "deothomas2025_10b",
@@ -390,7 +409,8 @@
     "paperFeatures": [
       ["flavor", "precisifyingProximity"]
     ],
-    "comment": "Corpus of Contemporary American English; with enough, paraphrasable by barely."
+    "comment": "Corpus of Contemporary American English; with enough, paraphrasable by barely.",
+    "verified": "page-image"
   },
   {
     "id": "deothomas2025_11a",
@@ -409,7 +429,8 @@
       ["flavor", "precisifyingEquality"],
       ["domain", "temporal"]
     ],
-    "comment": "Corpus of Contemporary American English; with a temporal indexical, paraphrasable by exactly."
+    "comment": "Corpus of Contemporary American English; with a temporal indexical, paraphrasable by exactly.",
+    "verified": "page-image"
   },
   {
     "id": "deothomas2025_11b",
@@ -428,7 +449,8 @@
       ["flavor", "precisifyingEquality"],
       ["domain", "temporal"]
     ],
-    "comment": "Corpus of Contemporary American English."
+    "comment": "Corpus of Contemporary American English.",
+    "verified": "page-image"
   },
   {
     "id": "deothomas2025_11c",
@@ -447,7 +469,8 @@
       ["flavor", "precisifyingProximity"],
       ["domain", "temporal"]
     ],
-    "comment": "Corpus of Contemporary American English; the time elapsed since the arrival is relevant only at a high level of precision, §4.7.2."
+    "comment": "Corpus of Contemporary American English; the time elapsed since the arrival is relevant only at a high level of precision, §4.7.2.",
+    "verified": "page-image"
   },
   {
     "id": "deothomas2025_12a",
@@ -466,7 +489,8 @@
       ["flavor", "precisifyingEquality"],
       ["domain", "spatial"]
     ],
-    "comment": "Corpus of Contemporary American English; paraphrasable by exactly."
+    "comment": "Corpus of Contemporary American English; paraphrasable by exactly.",
+    "verified": "page-image"
   },
   {
     "id": "deothomas2025_12b",
@@ -485,7 +509,8 @@
       ["flavor", "precisifyingProximity"],
       ["domain", "spatial"]
     ],
-    "comment": "Corpus of Contemporary American English; paraphrasable by slightly."
+    "comment": "Corpus of Contemporary American English; paraphrasable by slightly.",
+    "verified": "page-image"
   },
   {
     "id": "deothomas2025_13a",
@@ -498,15 +523,14 @@
     "translation": "",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
-      {"form": "Only one cat will make Patrick happy.", "judgment": "unacceptable"}
-    ],
+    "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["flavor", "minimalSufficiency"],
       ["only", "no"]
     ],
-    "comment": "Patrick having one cat is sufficient for him to be happy; having more is not ruled out as sufficient, the non-exclusivity inference."
+    "comment": "Patrick having one cat is sufficient for him to be happy; having more is not ruled out as sufficient, the non-exclusivity inference.",
+    "verified": "page-image"
   },
   {
     "id": "deothomas2025_13b",
@@ -519,15 +543,14 @@
     "translation": "",
     "context": "What GPA is sufficient for Jason to stay in the program?",
     "judgment": "acceptable",
-    "alternatives": [
-      {"form": "Only a 3.5 GPA is sufficient for Jason to stay in the program.", "judgment": "unacceptable"}
-    ],
+    "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["flavor", "minimalSufficiency"],
       ["only", "no"]
     ],
-    "comment": "Also (42): the widest construal distinguishes worlds by the minimal GPA sufficient for staying, §4.3; the enriched reading entails that no higher GPA is necessary and any higher GPA is also sufficient."
+    "comment": "Also (42): the widest construal distinguishes worlds by the minimal GPA sufficient for staying, §4.3; the enriched reading entails that no higher GPA is necessary and any higher GPA is also sufficient.",
+    "verified": "page-image"
   },
   {
     "id": "deothomas2025_14",
@@ -549,7 +572,8 @@
       ["only", "no"],
       ["case", "37b"]
     ],
-    "comment": "Also (45): the speaker can identify no explanation; the current question is the trivial construal, the disjunction of all possible causes, and every wider construal fails Quality, §4.4."
+    "comment": "Also (45): the speaker can identify no explanation; the current question is the trivial construal, the disjunction of all possible causes, and every wider construal fails Quality, §4.4.",
+    "verified": "page-image"
   },
   {
     "id": "deothomas2025_15a",
@@ -567,7 +591,8 @@
     "paperFeatures": [
       ["flavor", "unexplanatory"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "deothomas2025_15b",
@@ -588,7 +613,8 @@
     "paperFeatures": [
       ["flavor", "unexplanatory"]
     ],
-    "comment": "A follow-up explanation of the prejacent is odd after unexplanatory just."
+    "comment": "A follow-up explanation of the prejacent is odd after unexplanatory just.",
+    "verified": "page-image"
   },
   {
     "id": "deothomas2025_16a",
@@ -601,15 +627,14 @@
     "translation": "",
     "context": "A: Why did you make mango-mousse cake?",
     "judgment": "acceptable",
-    "alternatives": [
-      {"form": "I only had extra mangoes.", "judgment": "unacceptable"}
-    ],
+    "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["flavor", "weakExplanation"],
       ["only", "no"]
     ],
-    "comment": "There is no stronger explanation for making the cake; a variant of the rank-order reading over explanations ranked by explanatory power, fn. 32."
+    "comment": "There is no stronger explanation for making the cake; a variant of the rank-order reading over explanations ranked by explanatory power, fn. 32.",
+    "verified": "page-image"
   },
   {
     "id": "deothomas2025_16b",
@@ -622,15 +647,14 @@
     "translation": "",
     "context": "A: How did Mary get into the bar?",
     "judgment": "acceptable",
-    "alternatives": [
-      {"form": "She only lied about her age.", "judgment": "unacceptable"}
-    ],
+    "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["flavor", "weakExplanation"],
       ["only", "no"]
     ],
-    "comment": "There is no stronger, or more ethical, explanation for Mary's entry."
+    "comment": "There is no stronger, or more ethical, explanation for Mary's entry.",
+    "verified": "page-image"
   },
   {
     "id": "deothomas2025_17a",
@@ -643,16 +667,15 @@
     "translation": "",
     "context": "A: What is a proton?",
     "judgment": "acceptable",
-    "alternatives": [
-      {"form": "A proton is only a hydrogen atom without an electron.", "judgment": "unacceptable"}
-    ],
+    "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["flavor", "unelaboratory"],
       ["only", "no"],
       ["case", "37c"]
     ],
-    "comment": "The speaker thinks no more elaboration is needed to define a proton; every wider construal fails Relevance, §4.5."
+    "comment": "The speaker thinks no more elaboration is needed to define a proton; every wider construal fails Relevance, §4.5.",
+    "verified": "page-image"
   },
   {
     "id": "deothomas2025_17b",
@@ -665,16 +688,15 @@
     "translation": "",
     "context": "A: Why are you mad?",
     "judgment": "acceptable",
-    "alternatives": [
-      {"form": "I am only mad.", "judgment": "unacceptable"}
-    ],
+    "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["flavor", "unelaboratory"],
       ["only", "no"],
       ["case", "37c"]
     ],
-    "comment": "The speaker is not mad at anyone in particular; a non-answer that the paper treats together with the unexplanatory use, fn. 6."
+    "comment": "The speaker is not mad at anyone in particular; a non-answer that the paper treats together with the unexplanatory use, fn. 6.",
+    "verified": "page-image"
   },
   {
     "id": "deothomas2025_17c",
@@ -687,16 +709,15 @@
     "translation": "",
     "context": "A: What kind of dog is Fido?",
     "judgment": "acceptable",
-    "alternatives": [
-      {"form": "Fido is only a dog.", "judgment": "unacceptable"}
-    ],
+    "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["flavor", "unelaboratory"],
       ["only", "no"],
       ["case", "37c"]
     ],
-    "comment": "Also (46): Fido is an ordinary dog and the speaker sees no need for further information; the current question is a coarser partition than expected, §4.5."
+    "comment": "Also (46): Fido is an ordinary dog and the speaker sees no need for further information; the current question is a coarser partition than expected, §4.5.",
+    "verified": "page-image"
   },
   {
     "id": "deothomas2025_18a",
@@ -709,20 +730,19 @@
     "translation": "",
     "context": "A: What happened to your relationship?",
     "judgment": "acceptable",
-    "alternatives": [
-      {"form": "He started seeing an ex-girlfriend and only stopped texting me.", "judgment": "unacceptable"}
-    ],
+    "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["flavor", "counterexpectational"],
       ["only", "no"],
       ["case", "37a"]
     ],
-    "comment": "Also (48): the subject referent failed to adhere to norms for relationship closure; the widest construal of an open-ended what-happened question, §4.6."
+    "comment": "Also (48): the subject referent failed to adhere to norms for relationship closure; the widest construal of an open-ended what-happened question, §4.6.",
+    "verified": "page-image"
   },
   {
     "id": "deothomas2025_18b",
-    "source": {"bibkey": "wiegand-2018", "paperLabel": "p. 423"},
+    "source": {"bibkey": "wiegand-2018", "paperLabel": "p. 424"},
     "reportedIn": {"bibkey": "deo-thomas-2025", "paperLabel": "(18b)"},
     "language": "stan1293",
     "primaryText": "The priest gave Charlotte her communion wafer and she just ate it!",
@@ -731,16 +751,15 @@
     "translation": "",
     "context": "A: What happened at the church?",
     "judgment": "acceptable",
-    "alternatives": [
-      {"form": "The priest gave Charlotte her communion wafer and she only ate it!", "judgment": "unacceptable"}
-    ],
+    "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["flavor", "counterexpectational"],
       ["only", "no"],
       ["case", "37a"]
     ],
-    "comment": "Charlotte behaved in a way inconsistent with Catholic norms."
+    "comment": "Charlotte behaved in a way inconsistent with Catholic norms.",
+    "verified": "page-image"
   },
   {
     "id": "deothomas2025_41",
@@ -754,17 +773,33 @@
     "context": "A: How did John do on the exam?",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "He only got a B.", "judgment": "acceptable"},
-      {"form": "He just got an A+.", "judgment": "questionable"},
-      {"form": "He only got an A+.", "judgment": "questionable"},
-      {"form": "He just sailed through.", "judgment": "acceptable"},
-      {"form": "He only sailed through.", "judgment": "unacceptable"}
+      {
+        "form": "He only got a B.",
+        "judgment": "acceptable"
+      },
+      {
+        "form": "He just got an A+.",
+        "judgment": "marginal"
+      },
+      {
+        "form": "He only got an A+.",
+        "judgment": "marginal"
+      },
+      {
+        "form": "He just sailed through.",
+        "judgment": "acceptable"
+      },
+      {
+        "form": "He only sailed through.",
+        "judgment": "unacceptable"
+      }
     ],
     "readings": [],
     "paperFeatures": [
       ["flavor", "rankOrder"]
     ],
-    "comment": "Downtoning mirativity with a B or an A+; uptoning mirativity, with just but not only, when the prejacent has an evaluative component, §4.2.1."
+    "comment": "Downtoning mirativity with a B or an A+; uptoning mirativity, with just but not only, when the prejacent has an evaluative component, §4.2.1.",
+    "verified": "page-image"
   },
   {
     "id": "deothomas2025_47",
@@ -785,7 +820,8 @@
       ["flavor", "unelaboratory"],
       ["case", "37c"]
     ],
-    "comment": "The indifference-marking use discussed in Rawlins 2015: the speaker sees no need for a more fine-grained description of the referent, though a wider construal has a true answer known to the speaker."
+    "comment": "The indifference-marking use discussed in Rawlins 2015: the speaker sees no need for a more fine-grained description of the referent, though a wider construal has a true answer known to the speaker.",
+    "verified": "page-image"
   },
   {
     "id": "deothomas2025_51",
@@ -803,7 +839,8 @@
     "paperFeatures": [
       ["flavor", "precisifyingProximity"]
     ],
-    "comment": "An over-answer to every construal of the polar question, so the hearer accommodates the how-much question of (52), fn. 35."
+    "comment": "An over-answer to every construal of the polar question, so the hearer accommodates the how-much question of (52), fn. 35.",
+    "verified": "page-image"
   },
   {
     "id": "deothomas2025_52",
@@ -823,7 +860,8 @@
       ["focus", "just"],
       ["case", "37a"]
     ],
-    "comment": "Precisifying uses require focus on just, placed there as a last resort; the current question is the construal at the finest permissible granularity, (54), and the upper bound is a mandatory implicature."
+    "comment": "Precisifying uses require focus on just, placed there as a last resort; the current question is the construal at the finest permissible granularity, (54), and the upper bound is a mandatory implicature.",
+    "verified": "page-image"
   },
   {
     "id": "deothomas2025_53a",
@@ -842,7 +880,8 @@
       ["flavor", "precisifyingProximity"],
       ["focus", "just"]
     ],
-    "comment": "Prosodic prominence on just yields the precisifying reading."
+    "comment": "Prosodic prominence on just yields the precisifying reading.",
+    "verified": "page-image"
   },
   {
     "id": "deothomas2025_53b",
@@ -861,7 +900,8 @@
       ["flavor", "unelaboratory"],
       ["focus", "cheaper"]
     ],
-    "comment": "None of your business how much cheaper: by the Focus Principle the only construal whose alternatives are focus alternatives of the prejacent has the single alternative that the purse was cheaper, fn. 36."
+    "comment": "None of your business how much cheaper: by the Focus Principle the only construal whose alternatives are focus alternatives of the prejacent has the single alternative that the purse was cheaper, fn. 36.",
+    "verified": "page-image"
   },
   {
     "id": "deothomas2025_55",
@@ -880,7 +920,8 @@
       ["flavor", "precisifyingEquality"],
       ["case", "37a"]
     ],
-    "comment": "With a maximum-standard adjective the optimal construal is the one at the finest granularity, so the tank is full at the highest level of precision."
+    "comment": "With a maximum-standard adjective the optimal construal is the one at the finest granularity, so the tank is full at the highest level of precision.",
+    "verified": "page-image"
   },
   {
     "id": "deothomas2025_56",
@@ -900,7 +941,8 @@
       ["domain", "temporal"],
       ["case", "37a"]
     ],
-    "comment": "The time elapsed since the arrival is at least, and by mandatory implicature no more than, the grain width of the finest temporal granularity, §4.7.2."
+    "comment": "The time elapsed since the arrival is at least, and by mandatory implicature no more than, the grain width of the finest temporal granularity, §4.7.2.",
+    "verified": "page-image"
   },
   {
     "id": "deothomas2025_58a",
@@ -921,7 +963,8 @@
       ["construction", "roughlySpeaking"],
       ["adjective", "extreme"]
     ],
-    "comment": "Extreme predicates cannot be used imprecisely, so their interpretation is not relativized to a granularity level and emphatic just is not precisification, §4.8."
+    "comment": "Extreme predicates cannot be used imprecisely, so their interpretation is not relativized to a granularity level and emphatic just is not precisification, §4.8.",
+    "verified": "page-image"
   },
   {
     "id": "deothomas2025_58b",
@@ -942,7 +985,8 @@
       ["construction", "roughlySpeaking"],
       ["adjective", "maximumStandard"]
     ],
-    "comment": "Canonical maximum-standard adjectives can be used imprecisely."
+    "comment": "Canonical maximum-standard adjectives can be used imprecisely.",
+    "verified": "page-image"
   },
   {
     "id": "deothomas2025_59",
@@ -960,7 +1004,8 @@
     "paperFeatures": [
       ["flavor", "emphatic"]
     ],
-    "comment": "The construals differ in where the zone of indifference begins, Figure 2; just conveys that the speaker uses the highest conceivable maximum of relevant degrees, §4.8."
+    "comment": "The construals differ in where the zone of indifference begins, Figure 2; just conveys that the speaker uses the highest conceivable maximum of relevant degrees, §4.8.",
+    "verified": "page-image"
   },
   {
     "id": "deothomas2025_60a",
@@ -982,7 +1027,8 @@
       ["flavor", "emphatic"],
       ["adjective", "maximumStandard"]
     ],
-    "comment": "No emphatic reading: the point of total closure has an objective location, so the construals cannot differ by threshold, §4.8."
+    "comment": "No emphatic reading: the point of total closure has an objective location, so the construals cannot differ by threshold, §4.8.",
+    "verified": "page-image"
   },
   {
     "id": "deothomas2025_60b",
@@ -1004,7 +1050,8 @@
       ["flavor", "emphatic"],
       ["adjective", "maximumStandard"]
     ],
-    "comment": "No emphatic reading, the fill line providing an objective point of fullness; with focus on just instead, the precisifying reading of (55) is available."
+    "comment": "No emphatic reading, the fill line providing an objective point of fullness; with focus on just instead, the precisifying reading of (55) is available.",
+    "verified": "page-image"
   },
   {
     "id": "deothomas2025_61",
@@ -1022,7 +1069,8 @@
     "paperFeatures": [
       ["flavor", "emphatic"]
     ],
-    "comment": "Adapted from (6a): the domain of every is as wide as possible, so the widest construal distinguishes the presence or absence of every possible emotion, §4.8.1."
+    "comment": "Adapted from (6a): the domain of every is as wide as possible, so the widest construal distinguishes the presence or absence of every possible emotion, §4.8.1.",
+    "verified": "page-image"
   },
   {
     "id": "deothomas2025_62",
@@ -1040,14 +1088,15 @@
     "paperFeatures": [
       ["flavor", "emphatic"]
     ],
-    "comment": "The comparison class of the superlative includes every possible color, so the widest construal ranks pink against all of them, §4.8.1."
+    "comment": "The comparison class of the superlative includes every possible color, so the widest construal ranks pink against all of them, §4.8.1.",
+    "verified": "page-image"
   },
   {
     "id": "deothomas2025_63a",
     "source": {"bibkey": "deo-thomas-2025", "paperLabel": "(63a)"},
     "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "A: Mary went to just Spain and Portugal (for vacation this year). B: No, that's not true! She also went to Italy.",
+    "primaryText": "A: Mary went to just Spain and Portugal (for vacation this year). B: No/that's not true! She also went to Italy.",
     "discourseSegments": [
       "Mary went to just Spain and Portugal (for vacation this year).",
       "No, that's not true! She also went to Italy."
@@ -1062,7 +1111,8 @@
       ["flavor", "complementExclusion"],
       ["response", "denial"]
     ],
-    "comment": "The exhaustive interpretation of the prejacent, a mandatory implicature, can be targeted by a denial move, §4.9."
+    "comment": "The exhaustive interpretation of the prejacent, a mandatory implicature, can be targeted by a denial move, §4.9.",
+    "verified": "page-image"
   },
   {
     "id": "deothomas2025_63b",
@@ -1081,7 +1131,8 @@
       ["flavor", "complementExclusion"],
       ["response", "negation"]
     ],
-    "comment": "Mary went to countries besides Spain and Portugal: clausal negation cancels the exhaustive interpretation."
+    "comment": "Mary went to countries besides Spain and Portugal: clausal negation cancels the exhaustive interpretation.",
+    "verified": "page-image"
   },
   {
     "id": "deothomas2025_64a",
@@ -1103,7 +1154,8 @@
       ["flavor", "emphatic"],
       ["response", "denial"]
     ],
-    "comment": "The emphatic use generates no upper-bounding inference and rests on a subjective maximum, so denial with that's not true is infelicitous while faultless disagreement, (65), is fine."
+    "comment": "The emphatic use generates no upper-bounding inference and rests on a subjective maximum, so denial with that's not true is infelicitous while faultless disagreement, (65), is fine.",
+    "verified": "page-image"
   },
   {
     "id": "deothomas2025_64b",
@@ -1127,7 +1179,8 @@
       ["flavor", "minimalSufficiency"],
       ["response", "denial"]
     ],
-    "comment": "The denial can target neither the prejacent nor cooperatively the lower bound of the widest relevant construal; C accepts the construal and suggests an even wider one, §4.9."
+    "comment": "The denial can target neither the prejacent nor cooperatively the lower bound of the widest relevant construal; C accepts the construal and suggests an even wider one, §4.9.",
+    "verified": "page-image"
   },
   {
     "id": "deothomas2025_65",
@@ -1152,6 +1205,7 @@
       ["flavor", "emphatic"],
       ["response", "faultlessDisagreement"]
     ],
-    "comment": "Faultless disagreement with the subjective maximum behind an emphatic use is acceptable."
+    "comment": "Faultless disagreement with the subjective maximum behind an emphatic use is acceptable.",
+    "verified": "page-image"
   }
 ]

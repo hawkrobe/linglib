@@ -24,7 +24,8 @@
         "which students called"
       ]
     ],
-    "comment": "Exhaustive and de dicto: false when John is agnostic about a non-caller, or does not know that a caller is a student."
+    "comment": "Exhaustive and de dicto: false when John is agnostic about a non-caller, or does not know that a caller is a student.",
+    "verified": "page-image"
   },
   {
     "id": "heim1994b_ex6",
@@ -51,7 +52,8 @@
         "who called"
       ]
     ],
-    "comment": "Entails (1) only on the de re reading; Karttunen predicts the entailment except when no student called."
+    "comment": "Entails (1) only on the de re reading; Karttunen predicts the entailment except when no student called.",
+    "verified": "page-image"
   },
   {
     "id": "heim1994b_ex17",
@@ -74,7 +76,8 @@
         "6"
       ]
     ],
-    "comment": "Has a weaker reading than (1), on which (18) is valid: 'answer' can mean the answer in the first sense."
+    "comment": "Has a weaker reading than (1), on which (18) is valid: 'answer' can mean the answer in the first sense. The paper prints Johns knows.",
+    "verified": "page-image"
   },
   {
     "id": "heim1994b_ex18",
@@ -97,7 +100,8 @@
         "6"
       ]
     ],
-    "comment": "Valid on the weak reading of (17)."
+    "comment": "Valid on the weak reading of (17).",
+    "verified": "page-image"
   },
   {
     "id": "heim1994b_ex19",
@@ -120,7 +124,8 @@
         "6"
       ]
     ],
-    "comment": "Ambiguous in the same way as (17): Partee's example."
+    "comment": "Ambiguous in the same way as (17): Partee's example.",
+    "verified": "page-image"
   },
   {
     "id": "heim1994b_ex20a",
@@ -143,7 +148,8 @@
         "6"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "heim1994b_ex20b",
@@ -166,7 +172,8 @@
         "6"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "heim1994b_ex21",
@@ -197,7 +204,8 @@
         "John knows whether there are students"
       ]
     ],
-    "comment": "A universally necessary property: the two analyses diverge, and neither captures the trivial knowledge intuitively ascribed."
+    "comment": "A universally necessary property: the two analyses diverge, and neither captures the trivial knowledge intuitively ascribed.",
+    "verified": "page-image"
   },
   {
     "id": "heim1994b_ex24",
@@ -228,6 +236,7 @@
         "true"
       ]
     ],
-    "comment": "Living with is symmetric, so Bill's and Sue's propositions coincide; Groenendijk and Stokhof predict the right falsity."
+    "comment": "Living with is symmetric, so Bill's and Sue's propositions coincide; Groenendijk and Stokhof predict the right falsity.",
+    "verified": "page-image"
   }
 ]

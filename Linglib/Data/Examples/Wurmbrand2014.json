@@ -15,7 +15,8 @@
     "paperFeatures": [
       ["class", "future"]
     ],
-    "comment": "A future irrealis infinitive."
+    "comment": "A future irrealis infinitive.",
+    "verified": "page-image"
   },
   {
     "id": "wurmbrand2014_2",
@@ -33,7 +34,8 @@
     "paperFeatures": [
       ["class", "propositional"]
     ],
-    "comment": "A propositional infinitive."
+    "comment": "A propositional infinitive.",
+    "verified": "page-image"
   },
   {
     "id": "wurmbrand2014_3",
@@ -52,7 +54,8 @@
       ["class", "future"],
       ["episodic", "possible"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "wurmbrand2014_4",
@@ -73,7 +76,8 @@
       ["class", "propositional"],
       ["episodic", "impossible"]
     ],
-    "comment": "A bare episodic verb phrase is out; the progressive rescues it."
+    "comment": "A bare episodic verb phrase is out; the progressive rescues it.",
+    "verified": "page-image"
   },
   {
     "id": "wurmbrand2014_5",
@@ -92,7 +96,8 @@
       ["class", "propositional"],
       ["syntax", "control"]
     ],
-    "comment": "A propositional control infinitive."
+    "comment": "A propositional control infinitive.",
+    "verified": "page-image"
   },
   {
     "id": "wurmbrand2014_6",
@@ -113,7 +118,8 @@
       ["class", "propositional"],
       ["episodic", "impossible"]
     ],
-    "comment": "Without the adverbial the complement is generic."
+    "comment": "Without the adverbial the complement is generic.",
+    "verified": "page-image"
   },
   {
     "id": "wurmbrand2014_7",
@@ -131,7 +137,8 @@
     "paperFeatures": [
       ["class", "future"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "wurmbrand2014_8",
@@ -151,7 +158,8 @@
     "paperFeatures": [
       ["class", "tenseless simultaneous"]
     ],
-    "comment": "No future adverbial in a simultaneous infinitive."
+    "comment": "No future adverbial in a simultaneous infinitive.",
+    "verified": "page-image"
   },
   {
     "id": "wurmbrand2014_9",
@@ -169,7 +177,8 @@
     "paperFeatures": [
       ["class", "propositional"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "wurmbrand2014_10",
@@ -189,7 +198,8 @@
     "paperFeatures": [
       ["class", "propositional"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "wurmbrand2014_11",
@@ -208,7 +218,8 @@
       ["class", "future"],
       ["syntax", "ECM"]
     ],
-    "comment": "A future infinitive under passive expect with an inanimate subject: raising, not control."
+    "comment": "A future infinitive under passive expect with an inanimate subject: raising, not control.",
+    "verified": "page-image"
   },
   {
     "id": "wurmbrand2014_12",
@@ -227,7 +238,8 @@
       ["class", "future"],
       ["future", "relative"]
     ],
-    "comment": "Infinitival future is relative: the party precedes the utterance time."
+    "comment": "Infinitival future is relative: the party precedes the utterance time.",
+    "verified": "page-image"
   },
   {
     "id": "wurmbrand2014_13",
@@ -247,14 +259,15 @@
     "paperFeatures": [
       ["future", "absolute"]
     ],
-    "comment": "Finite will is absolute."
+    "comment": "Finite will is absolute.",
+    "verified": "page-image"
   },
   {
     "id": "wurmbrand2014_14",
     "source": {"bibkey": "wurmbrand-2014", "paperLabel": "(14a)"},
     "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "John will promise me tonight to tell his mother tomorrow that he is sorry.",
+    "primaryText": "John will promise me tonight to tell his mother tomorrow that ...",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -265,14 +278,15 @@
     "paperFeatures": [
       ["class", "future"]
     ],
-    "comment": "The paper leaves the lowest clause open with an ellipsis."
+    "comment": "The paper leaves the lowest clause open with an ellipsis.",
+    "verified": "page-image"
   },
   {
     "id": "wurmbrand2014_15",
     "source": {"bibkey": "wurmbrand-2014", "paperLabel": "(14b)"},
     "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "John will promise me tonight that he would tell his mother tomorrow that he is sorry.",
+    "primaryText": "John will promise me tonight that he would tell his mother tomorrow that ...",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -283,7 +297,8 @@
     "paperFeatures": [
       ["would", "temporal"]
     ],
-    "comment": "Temporal would under will is out; a conditional would is fine."
+    "comment": "Temporal would under will is out; a conditional would is fine.",
+    "verified": "page-image"
   },
   {
     "id": "wurmbrand2014_16",
@@ -301,14 +316,15 @@
     "paperFeatures": [
       ["would", "relative"]
     ],
-    "comment": "would, past plus woll, is relative."
+    "comment": "would, past plus woll, is relative.",
+    "verified": "page-image"
   },
   {
     "id": "wurmbrand2014_17",
     "source": {"bibkey": "wurmbrand-2014", "paperLabel": "(24a)"},
     "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "John promised me yesterday that he will tell his mother tomorrow that they were having their last meal together.",
+    "primaryText": "John promised me yesterday that he will tell his mother tomorrow that they were having their last meal together (when ...).",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -322,7 +338,8 @@
     "paperFeatures": [
       ["SOT", "blocked"]
     ],
-    "comment": "The present of will intervenes between the two pasts."
+    "comment": "The present of will intervenes between the two pasts.",
+    "verified": "page-image"
   },
   {
     "id": "wurmbrand2014_18",
@@ -342,7 +359,8 @@
     "paperFeatures": [
       ["SOT", "applies"]
     ],
-    "comment": "The tenseless infinitive does not intervene."
+    "comment": "The tenseless infinitive does not intervene.",
+    "verified": "page-image"
   },
   {
     "id": "wurmbrand2014_19",
@@ -362,7 +380,8 @@
     "paperFeatures": [
       ["SOT", "applies"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "wurmbrand2014_20",
@@ -383,14 +402,15 @@
     "paperFeatures": [
       ["would", "obligatory SOT"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "wurmbrand2014_21",
     "source": {"bibkey": "wurmbrand-2014", "paperLabel": "(29a)"},
     "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "John will promise me tonight that he would tell his mother tomorrow that he is sorry.",
+    "primaryText": "John will promise me tonight that he would tell his mother tomorrow that ...",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -402,14 +422,15 @@
       ["would", "temporal"],
       ["SOT", "blocked"]
     ],
-    "comment": "would's past must delete, and no past is above it."
+    "comment": "would's past must delete, and no past is above it.",
+    "verified": "page-image"
   },
   {
     "id": "wurmbrand2014_22",
     "source": {"bibkey": "wurmbrand-2014", "paperLabel": "(30a)"},
     "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "John will promise me tonight to tell his mother tomorrow that they were having their last meal together.",
+    "primaryText": "John will promise me tonight to tell his mother tomorrow that they were having their last meal together (when ...).",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -423,7 +444,8 @@
     "paperFeatures": [
       ["SOT", "blocked"]
     ],
-    "comment": "Against a silent would in the infinitive: a past there would license deletion."
+    "comment": "Against a silent would in the infinitive: a past there would license deletion.",
+    "verified": "page-image"
   },
   {
     "id": "wurmbrand2014_23",
@@ -444,7 +466,8 @@
       ["tense", "present"],
       ["episodic", "impossible"]
     ],
-    "comment": "The bare present is only habitual."
+    "comment": "The bare present is only habitual.",
+    "verified": "page-image"
   },
   {
     "id": "wurmbrand2014_24",
@@ -463,7 +486,8 @@
       ["tense", "past"],
       ["episodic", "possible"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "wurmbrand2014_25",
@@ -482,7 +506,8 @@
       ["tense", "future"],
       ["episodic", "possible"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "wurmbrand2014_26",
@@ -502,7 +527,8 @@
     "paperFeatures": [
       ["reference time", "restricted"]
     ],
-    "comment": "Out unless inchoative: the when-clause restricts the reference time to a short interval."
+    "comment": "Out unless inchoative: the when-clause restricts the reference time to a short interval.",
+    "verified": "page-image"
   },
   {
     "id": "wurmbrand2014_27",
@@ -521,7 +547,8 @@
       {"name": "shifted past", "judgment": "acceptable"}
     ],
     "paperFeatures": [],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "wurmbrand2014_28",
@@ -540,7 +567,8 @@
       {"name": "shifted past", "judgment": "acceptable"}
     ],
     "paperFeatures": [],
-    "comment": "A deleted past behaves like the present: no bare episodic reading."
+    "comment": "A deleted past behaves like the present: no bare episodic reading.",
+    "verified": "page-image"
   },
   {
     "id": "wurmbrand2014_29",
@@ -559,7 +587,8 @@
       ["class", "future"],
       ["aspect", "perfective"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "wurmbrand2014_30",
@@ -580,7 +609,8 @@
       ["class", "future"],
       ["reference time", "restricted"]
     ],
-    "comment": "The adverbial restricts the reference time to an instant."
+    "comment": "The adverbial restricts the reference time to an instant.",
+    "verified": "page-image"
   },
   {
     "id": "wurmbrand2014_31",
@@ -599,7 +629,8 @@
       ["class", "propositional"],
       ["aspect", "perfective"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "wurmbrand2014_32",
@@ -618,7 +649,8 @@
       ["class", "propositional"],
       ["aspect", "perfective"]
     ],
-    "comment": "A past matrix does not help: the reference time is the attitude holder's NOW."
+    "comment": "A past matrix does not help: the reference time is the attitude holder's NOW.",
+    "verified": "page-image"
   },
   {
     "id": "wurmbrand2014_33",
@@ -637,7 +669,8 @@
       ["class", "propositional"],
       ["predicate", "stative"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "wurmbrand2014_34",
@@ -656,7 +689,8 @@
       ["class", "propositional"],
       ["aspect", "imperfective"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "wurmbrand2014_35",
@@ -675,7 +709,8 @@
       ["class", "propositional"],
       ["syntax", "control"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "wurmbrand2014_36",
@@ -694,7 +729,8 @@
       ["class", "propositional"],
       ["aspect", "imperfective"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "wurmbrand2014_37",
@@ -713,7 +749,8 @@
       ["class", "tenseless simultaneous"],
       ["matrix tense", "present"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "wurmbrand2014_38",
@@ -732,7 +769,8 @@
       ["class", "tenseless simultaneous"],
       ["aspect", "imperfective"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "wurmbrand2014_39",
@@ -751,7 +789,8 @@
       ["class", "tenseless simultaneous"],
       ["matrix tense", "past"]
     ],
-    "comment": "A past matrix reference time is extended enough to include the event."
+    "comment": "A past matrix reference time is extended enough to include the event.",
+    "verified": "page-image"
   },
   {
     "id": "wurmbrand2014_40",
@@ -769,7 +808,8 @@
     "paperFeatures": [
       ["reading", "double access"]
     ],
-    "comment": "Pragmatically ill-formed under double access."
+    "comment": "Pragmatically ill-formed under double access.",
+    "verified": "page-image"
   },
   {
     "id": "wurmbrand2014_41",
@@ -787,7 +827,8 @@
     "paperFeatures": [
       ["class", "propositional"]
     ],
-    "comment": "No double access reading is forced: no present tense in the infinitive."
+    "comment": "No double access reading is forced: no present tense in the infinitive.",
+    "verified": "page-image"
   },
   {
     "id": "wurmbrand2014_42",
@@ -805,7 +846,8 @@
       {"name": "simultaneous (SOT)", "judgment": "acceptable"}
     ],
     "paperFeatures": [],
-    "comment": "SOT across a propositional infinitive."
+    "comment": "SOT across a propositional infinitive.",
+    "verified": "page-image"
   },
   {
     "id": "wurmbrand2014_43",
@@ -824,7 +866,8 @@
       {"name": "simultaneous", "judgment": "unacceptable"}
     ],
     "paperFeatures": [],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "wurmbrand2014_44",
@@ -842,7 +885,8 @@
       {"name": "simultaneous", "judgment": "acceptable"}
     ],
     "paperFeatures": [],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "wurmbrand2014_45",
@@ -862,7 +906,8 @@
     "paperFeatures": [
       ["class", "tenseless simultaneous"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "wurmbrand2014_46",
@@ -883,7 +928,8 @@
       ["class", "tenseless simultaneous"],
       ["syntax", "raising"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "wurmbrand2014_47",
@@ -904,7 +950,8 @@
       ["class", "tenseless simultaneous"],
       ["matrix tense", "present"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "wurmbrand2014_48",
@@ -923,7 +970,8 @@
       ["class", "tenseless simultaneous"],
       ["matrix tense", "past"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "wurmbrand2014_49",
@@ -943,7 +991,8 @@
     "paperFeatures": [
       ["reference time", "restricted"]
     ],
-    "comment": "Out unless inchoative: the adverbial restricts the matrix reference time."
+    "comment": "Out unless inchoative: the adverbial restricts the matrix reference time.",
+    "verified": "page-image"
   },
   {
     "id": "wurmbrand2014_50",
@@ -962,7 +1011,8 @@
       ["class", "tenseless simultaneous"],
       ["matrix tense", "past"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "wurmbrand2014_51",
@@ -982,7 +1032,8 @@
     "paperFeatures": [
       ["matrix aspect", "perfective"]
     ],
-    "comment": "The matrix verb itself cannot be a bare episodic present."
+    "comment": "The matrix verb itself cannot be a bare episodic present.",
+    "verified": "page-image"
   },
   {
     "id": "wurmbrand2014_52",
@@ -1001,7 +1052,8 @@
       ["attitude holder", "overt"],
       ["aspect", "imperfective"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "wurmbrand2014_53",
@@ -1020,7 +1072,8 @@
       ["attitude holder", "overt"],
       ["aspect", "perfective"]
     ],
-    "comment": "With an attitude holder the reference time is the holder's NOW, not the two-hour matrix time."
+    "comment": "With an attitude holder the reference time is the holder's NOW, not the two-hour matrix time.",
+    "verified": "page-image"
   },
   {
     "id": "wurmbrand2014_54",
@@ -1039,6 +1092,7 @@
       ["attitude holder", "understood"],
       ["aspect", "perfective"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]

@@ -7,9 +7,9 @@
     "discourseSegments": [],
     "glossedTokens": [
       ["Mimi", "1SG"], ["ndi-ye", "COP-1"], ["amba-ye", "AMBA-1"], ["Bahati", "Bahati"],
-      ["a-li-pika", "1-PST-cook"], ["na-mi", "with-PRO"]
+      ["a-li-pika", "1-PST-cook"], ["na-mi", "with-1SG"]
     ],
-    "translation": "It's me/you who Bahati cooked with.",
+    "translation": "It's me who Bahati cooked with.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -20,7 +20,8 @@
       ["antecedentNumber", "sg"],
       ["form", "mi"]
     ],
-    "comment": "Simple cleft: the resumptive may match in person or be the personless animate pronoun; number must match."
+    "comment": "Simple cleft: the resumptive may match in person or be the personless animate pronoun; number must match.",
+    "verified": "page-image"
   },
   {
     "id": "scott2021_cleft_24_ye",
@@ -30,9 +31,9 @@
     "discourseSegments": [],
     "glossedTokens": [
       ["Mimi", "1SG"], ["ndi-ye", "COP-1"], ["amba-ye", "AMBA-1"], ["Bahati", "Bahati"],
-      ["a-li-pika", "1-PST-cook"], ["na-ye", "with-PRO"]
+      ["a-li-pika", "1-PST-cook"], ["na-ye", "with-1"]
     ],
-    "translation": "It's me/you who Bahati cooked with.",
+    "translation": "It's me who Bahati cooked with.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -43,7 +44,8 @@
       ["antecedentNumber", "sg"],
       ["form", "ye"]
     ],
-    "comment": "Simple cleft: the resumptive may match in person or be the personless animate pronoun; number must match."
+    "comment": "Simple cleft: the resumptive may match in person or be the personless animate pronoun; number must match.",
+    "verified": "page-image"
   },
   {
     "id": "scott2021_cleft_25_we",
@@ -53,9 +55,9 @@
     "discourseSegments": [],
     "glossedTokens": [
       ["Wewe", "2SG"], ["ndi-ye", "COP-1"], ["amba-ye", "AMBA-1"], ["Bahati", "Bahati"],
-      ["a-li-pika", "1-PST-cook"], ["na-we", "with-PRO"]
+      ["a-li-pika", "1-PST-cook"], ["na-we", "with-2SG"]
     ],
-    "translation": "It's me/you who Bahati cooked with.",
+    "translation": "It's you who Bahati cooked with.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -66,7 +68,8 @@
       ["antecedentNumber", "sg"],
       ["form", "we"]
     ],
-    "comment": "Simple cleft: the resumptive may match in person or be the personless animate pronoun; number must match."
+    "comment": "Simple cleft: the resumptive may match in person or be the personless animate pronoun; number must match.",
+    "verified": "page-image"
   },
   {
     "id": "scott2021_cleft_25_ye",
@@ -76,9 +79,9 @@
     "discourseSegments": [],
     "glossedTokens": [
       ["Wewe", "2SG"], ["ndi-ye", "COP-1"], ["amba-ye", "AMBA-1"], ["Bahati", "Bahati"],
-      ["a-li-pika", "1-PST-cook"], ["na-ye", "with-PRO"]
+      ["a-li-pika", "1-PST-cook"], ["na-ye", "with-1"]
     ],
-    "translation": "It's me/you who Bahati cooked with.",
+    "translation": "It's you who Bahati cooked with.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -89,19 +92,20 @@
       ["antecedentNumber", "sg"],
       ["form", "ye"]
     ],
-    "comment": "Simple cleft: the resumptive may match in person or be the personless animate pronoun; number must match."
+    "comment": "Simple cleft: the resumptive may match in person or be the personless animate pronoun; number must match.",
+    "verified": "page-image"
   },
   {
     "id": "scott2021_cleft_29a_si",
     "source": {"bibkey": "scott-2021", "paperLabel": "(29a)"},
     "language": "swah1253",
-    "primaryText": "Mimi ndi-ye amba-ye Bahati a-li-pika na-si.",
+    "primaryText": "Mimi ndi-ye amba-ye Hadija a-li-kutana na-si.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Mimi", "1SG"], ["ndi-ye", "COP-1"], ["amba-ye", "AMBA-1"], ["Bahati", "Bahati"],
-      ["a-li-pika", "1-PST-cook"], ["na-si", "with-PRO"]
+      ["Mimi", "1SG"], ["ndi-ye", "COP-1"], ["amba-ye", "AMBA-1"], ["Hadija", "Hadija"],
+      ["a-li-kutana", "1-PST-meet"], ["na-si", "with-1PL"]
     ],
-    "translation": "It's me/you who Bahati cooked with.",
+    "translation": "It's me who Hadija met with.",
     "context": "",
     "judgment": "ungrammatical",
     "alternatives": [],
@@ -112,19 +116,20 @@
       ["antecedentNumber", "sg"],
       ["form", "si"]
     ],
-    "comment": "Simple cleft: the resumptive may match in person or be the personless animate pronoun; number must match."
+    "comment": "Simple cleft: the resumptive may match in person or be the personless animate pronoun; number must match.",
+    "verified": "page-image"
   },
   {
     "id": "scott2021_cleft_29a_o",
     "source": {"bibkey": "scott-2021", "paperLabel": "(29a)"},
     "language": "swah1253",
-    "primaryText": "Mimi ndi-ye amba-ye Bahati a-li-pika na-o.",
+    "primaryText": "Mimi ndi-ye amba-ye Hadija a-li-kutana na-o.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Mimi", "1SG"], ["ndi-ye", "COP-1"], ["amba-ye", "AMBA-1"], ["Bahati", "Bahati"],
-      ["a-li-pika", "1-PST-cook"], ["na-o", "with-PRO"]
+      ["Mimi", "1SG"], ["ndi-ye", "COP-1"], ["amba-ye", "AMBA-1"], ["Hadija", "Hadija"],
+      ["a-li-kutana", "1-PST-meet"], ["na-o", "with-2"]
     ],
-    "translation": "It's me/you who Bahati cooked with.",
+    "translation": "It's me who Hadija met with.",
     "context": "",
     "judgment": "ungrammatical",
     "alternatives": [],
@@ -135,19 +140,20 @@
       ["antecedentNumber", "sg"],
       ["form", "o"]
     ],
-    "comment": "Simple cleft: the resumptive may match in person or be the personless animate pronoun; number must match."
+    "comment": "Simple cleft: the resumptive may match in person or be the personless animate pronoun; number must match.",
+    "verified": "page-image"
   },
   {
     "id": "scott2021_cleft_29b_nyi",
     "source": {"bibkey": "scott-2021", "paperLabel": "(29b)"},
     "language": "swah1253",
-    "primaryText": "Wewe ndi-ye amba-ye Bahati a-li-pika na-nyi.",
+    "primaryText": "Wewe ndi-ye amba-ye Hadija a-li-kutana na-nyi.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Wewe", "2SG"], ["ndi-ye", "COP-1"], ["amba-ye", "AMBA-1"], ["Bahati", "Bahati"],
-      ["a-li-pika", "1-PST-cook"], ["na-nyi", "with-PRO"]
+      ["Wewe", "2SG"], ["ndi-ye", "COP-1"], ["amba-ye", "AMBA-1"], ["Hadija", "Hadija"],
+      ["a-li-kutana", "1-PST-meet"], ["na-nyi", "with-2PL"]
     ],
-    "translation": "It's me/you who Bahati cooked with.",
+    "translation": "It's you who Hadija met with.",
     "context": "",
     "judgment": "ungrammatical",
     "alternatives": [],
@@ -158,19 +164,20 @@
       ["antecedentNumber", "sg"],
       ["form", "nyi"]
     ],
-    "comment": "Simple cleft: the resumptive may match in person or be the personless animate pronoun; number must match."
+    "comment": "Simple cleft: the resumptive may match in person or be the personless animate pronoun; number must match.",
+    "verified": "page-image"
   },
   {
     "id": "scott2021_cleft_29b_o",
     "source": {"bibkey": "scott-2021", "paperLabel": "(29b)"},
     "language": "swah1253",
-    "primaryText": "Wewe ndi-ye amba-ye Bahati a-li-pika na-o.",
+    "primaryText": "Wewe ndi-ye amba-ye Hadija a-li-kutana na-o.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Wewe", "2SG"], ["ndi-ye", "COP-1"], ["amba-ye", "AMBA-1"], ["Bahati", "Bahati"],
-      ["a-li-pika", "1-PST-cook"], ["na-o", "with-PRO"]
+      ["Wewe", "2SG"], ["ndi-ye", "COP-1"], ["amba-ye", "AMBA-1"], ["Hadija", "Hadija"],
+      ["a-li-kutana", "1-PST-meet"], ["na-o", "with-2"]
     ],
-    "translation": "It's me/you who Bahati cooked with.",
+    "translation": "It's you who Hadija met with.",
     "context": "",
     "judgment": "ungrammatical",
     "alternatives": [],
@@ -181,18 +188,21 @@
       ["antecedentNumber", "sg"],
       ["form", "o"]
     ],
-    "comment": "Simple cleft: the resumptive may match in person or be the personless animate pronoun; number must match."
+    "comment": "Simple cleft: the resumptive may match in person or be the personless animate pronoun; number must match.",
+    "verified": "page-image"
   },
   {
     "id": "scott2021_island_31_we",
     "source": {"bibkey": "scott-2021", "paperLabel": "(31)"},
     "language": "swah1253",
-    "primaryText": "… na-we",
+    "primaryText": "Wewe ndi-ye amba-ye ni-li-hama kwa sababu ni-li-ach-ana na-we.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["na-we", "with-PRO"]
+      ["Wewe", "2SG"], ["ndi-ye", "COP-1"], ["amba-ye", "AMBA-1"], ["ni-li-hama", "1SG-PST-move"],
+      ["kwa", "for"], ["sababu", "reason"], ["ni-li-ach-ana", "1SG-PST-leave-RECP"],
+      ["na-we", "with-2SG"]
     ],
-    "translation": "",
+    "translation": "It's you who I moved because I left you.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -203,18 +213,21 @@
       ["antecedentNumber", "sg"],
       ["form", "we"]
     ],
-    "comment": "Adjunct island: movement is blocked, so only the bound, person-matching resumptive survives."
+    "comment": "Adjunct island: movement is blocked, so only the bound, person-matching resumptive survives.",
+    "verified": "page-image"
   },
   {
     "id": "scott2021_island_31_ye",
     "source": {"bibkey": "scott-2021", "paperLabel": "(31)"},
     "language": "swah1253",
-    "primaryText": "… na-ye",
+    "primaryText": "Wewe ndi-ye amba-ye ni-li-hama kwa sababu ni-li-ach-ana na-ye.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["na-ye", "with-PRO"]
+      ["Wewe", "2SG"], ["ndi-ye", "COP-1"], ["amba-ye", "AMBA-1"], ["ni-li-hama", "1SG-PST-move"],
+      ["kwa", "for"], ["sababu", "reason"], ["ni-li-ach-ana", "1SG-PST-leave-RECP"],
+      ["na-ye", "with-1"]
     ],
-    "translation": "",
+    "translation": "It's you who I moved because I left you.",
     "context": "",
     "judgment": "ungrammatical",
     "alternatives": [],
@@ -225,18 +238,20 @@
       ["antecedentNumber", "sg"],
       ["form", "ye"]
     ],
-    "comment": "Adjunct island: movement is blocked, so only the bound, person-matching resumptive survives."
+    "comment": "Adjunct island: movement is blocked, so only the bound, person-matching resumptive survives.",
+    "verified": "page-image"
   },
   {
     "id": "scott2021_island_32_mi",
     "source": {"bibkey": "scott-2021", "paperLabel": "(32)"},
     "language": "swah1253",
-    "primaryText": "… na-mi",
+    "primaryText": "Mimi ndi-ye amba-ye Nadya a-li-anguka a-li-po-cheza na-mi.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["na-mi", "with-PRO"]
+      ["Mimi", "1SG"], ["ndi-ye", "COP-1"], ["amba-ye", "AMBA-1"], ["Nadya", "Nadya"],
+      ["a-li-anguka", "1-PST-fall"], ["a-li-po-cheza", "1-PST-16-play"], ["na-mi", "with-1SG"]
     ],
-    "translation": "",
+    "translation": "It's me who Nadya fell when she played with me.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -247,18 +262,20 @@
       ["antecedentNumber", "sg"],
       ["form", "mi"]
     ],
-    "comment": "Adjunct island: movement is blocked, so only the bound, person-matching resumptive survives."
+    "comment": "Adjunct island: movement is blocked, so only the bound, person-matching resumptive survives.",
+    "verified": "page-image"
   },
   {
     "id": "scott2021_island_32_ye",
     "source": {"bibkey": "scott-2021", "paperLabel": "(32)"},
     "language": "swah1253",
-    "primaryText": "… na-ye",
+    "primaryText": "Mimi ndi-ye amba-ye Nadya a-li-anguka a-li-po-cheza na-ye.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["na-ye", "with-PRO"]
+      ["Mimi", "1SG"], ["ndi-ye", "COP-1"], ["amba-ye", "AMBA-1"], ["Nadya", "Nadya"],
+      ["a-li-anguka", "1-PST-fall"], ["a-li-po-cheza", "1-PST-16-play"], ["na-ye", "with-1"]
     ],
-    "translation": "",
+    "translation": "It's me who Nadya fell when she played with me.",
     "context": "",
     "judgment": "ungrammatical",
     "alternatives": [],
@@ -269,18 +286,21 @@
       ["antecedentNumber", "sg"],
       ["form", "ye"]
     ],
-    "comment": "Adjunct island: movement is blocked, so only the bound, person-matching resumptive survives."
+    "comment": "Adjunct island: movement is blocked, so only the bound, person-matching resumptive survives.",
+    "verified": "page-image"
   },
   {
     "id": "scott2021_island_33_mi",
     "source": {"bibkey": "scott-2021", "paperLabel": "(33)"},
     "language": "swah1253",
-    "primaryText": "… na-mi",
+    "primaryText": "Mimi ndi-ye amba-ye u-li-tabasamu wakati u-na-fanya kazi na-mi.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["na-mi", "with-PRO"]
+      ["Mimi", "1SG"], ["ndi-ye", "COP-1"], ["amba-ye", "AMBA-1"],
+      ["u-li-tabasamu", "2SG-PST-smile"], ["wakati", "while"], ["u-na-fanya", "2SG-PST-do"],
+      ["kazi", "work"], ["na-mi", "with-1SG"]
     ],
-    "translation": "",
+    "translation": "It's me who you smiled while working with me.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -291,18 +311,21 @@
       ["antecedentNumber", "sg"],
       ["form", "mi"]
     ],
-    "comment": "Adjunct island: movement is blocked, so only the bound, person-matching resumptive survives."
+    "comment": "Adjunct island: movement is blocked, so only the bound, person-matching resumptive survives.",
+    "verified": "page-image"
   },
   {
     "id": "scott2021_island_33_ye",
     "source": {"bibkey": "scott-2021", "paperLabel": "(33)"},
     "language": "swah1253",
-    "primaryText": "… na-ye",
+    "primaryText": "Mimi ndi-ye amba-ye u-li-tabasamu wakati u-na-fanya kazi na-ye.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["na-ye", "with-PRO"]
+      ["Mimi", "1SG"], ["ndi-ye", "COP-1"], ["amba-ye", "AMBA-1"],
+      ["u-li-tabasamu", "2SG-PST-smile"], ["wakati", "while"], ["u-na-fanya", "2SG-PST-do"],
+      ["kazi", "work"], ["na-ye", "with-1"]
     ],
-    "translation": "",
+    "translation": "It's me who you smiled while working with me.",
     "context": "",
     "judgment": "ungrammatical",
     "alternatives": [],
@@ -313,7 +336,8 @@
       ["antecedentNumber", "sg"],
       ["form", "ye"]
     ],
-    "comment": "Adjunct island: movement is blocked, so only the bound, person-matching resumptive survives."
+    "comment": "Adjunct island: movement is blocked, so only the bound, person-matching resumptive survives.",
+    "verified": "page-image"
   },
   {
     "id": "scott2021_pg_36",
@@ -322,7 +346,9 @@
     "primaryText": "Mimi ndi-ye amba-ye u-li-pika na-ye kabla ya ku-ondoka na-ye.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["na-ye", "with-1"], ["na-ye", "with-1"]
+      ["Mimi", "1SG"], ["ndi-ye", "COP-1"], ["amba-ye", "AMBA-1"], ["u-li-pika", "2SG-PST-cook"],
+      ["na-ye", "with-1"], ["kabla", "before"], ["ya", "of"], ["ku-ondoka", "15-leave"],
+      ["na-ye", "with-1"]
     ],
     "translation": "It's me who you cooked with before leaving with.",
     "context": "",
@@ -336,7 +362,8 @@
       ["trueGap", "ye"],
       ["parasitic", "ye"]
     ],
-    "comment": "Movement copies in both the true-gap and parasitic positions."
+    "comment": "Movement copies in both the true-gap and parasitic positions.",
+    "verified": "page-image"
   },
   {
     "id": "scott2021_pg_37",
@@ -345,9 +372,11 @@
     "primaryText": "Mimi ndi-ye amba-ye u-li-pika na-mi kabla ya ku-cheza na-ye.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["na-mi", "with-1SG"], ["na-ye", "with-1"]
+      ["Mimi", "1SG"], ["ndi-ye", "COP-1"], ["amba-ye", "AMBA-1"], ["u-li-pika", "2SG-PST-cook"],
+      ["na-mi", "with-1SG"], ["kabla", "before"], ["ya", "of"], ["ku-cheza", "15-dance"],
+      ["na-ye", "with-1"]
     ],
-    "translation": "",
+    "translation": "It's me who you cooked with me before dancing with me.",
     "context": "",
     "judgment": "unacceptable",
     "alternatives": [],
@@ -359,7 +388,8 @@
       ["trueGap", "mi"],
       ["parasitic", "ye"]
     ],
-    "comment": "A personless parasitic pronoun is not licensed by a bound true-gap pronoun; ye must be read as third person."
+    "comment": "A personless parasitic pronoun is not licensed by a bound true-gap pronoun; ye must be read as third person.",
+    "verified": "page-image"
   },
   {
     "id": "scott2021_table4_sp1_ye_ye",
@@ -367,9 +397,7 @@
     "language": "swah1253",
     "primaryText": "… na-ye … na-ye",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["na-ye", "with-PRO"], ["na-ye", "with-PRO"]
-    ],
+    "glossedTokens": [],
     "translation": "",
     "context": "",
     "judgment": "acceptable",
@@ -383,7 +411,8 @@
       ["parasitic", "ye"],
       ["speaker", "1"]
     ],
-    "comment": "Table 4, Speaker 1: true-gap ye, parasitic-gap ye."
+    "comment": "Table 4, Speaker 1: true-gap ye, parasitic-gap ye.",
+    "verified": "page-image"
   },
   {
     "id": "scott2021_table4_sp1_mi_ye",
@@ -391,9 +420,7 @@
     "language": "swah1253",
     "primaryText": "… na-mi … na-ye",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["na-mi", "with-PRO"], ["na-ye", "with-PRO"]
-    ],
+    "glossedTokens": [],
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
@@ -407,7 +434,8 @@
       ["parasitic", "ye"],
       ["speaker", "1"]
     ],
-    "comment": "Table 4, Speaker 1: true-gap mi, parasitic-gap ye."
+    "comment": "Table 4, Speaker 1: true-gap mi, parasitic-gap ye.",
+    "verified": "page-image"
   },
   {
     "id": "scott2021_table4_sp1_mi_mi",
@@ -415,9 +443,7 @@
     "language": "swah1253",
     "primaryText": "… na-mi … na-mi",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["na-mi", "with-PRO"], ["na-mi", "with-PRO"]
-    ],
+    "glossedTokens": [],
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
@@ -431,7 +457,8 @@
       ["parasitic", "mi"],
       ["speaker", "1"]
     ],
-    "comment": "Table 4, Speaker 1: true-gap mi, parasitic-gap mi."
+    "comment": "Table 4, Speaker 1: true-gap mi, parasitic-gap mi.",
+    "verified": "page-image"
   },
   {
     "id": "scott2021_table4_sp1_ye_mi",
@@ -439,9 +466,7 @@
     "language": "swah1253",
     "primaryText": "… na-ye … na-mi",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["na-ye", "with-PRO"], ["na-mi", "with-PRO"]
-    ],
+    "glossedTokens": [],
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
@@ -455,7 +480,8 @@
       ["parasitic", "mi"],
       ["speaker", "1"]
     ],
-    "comment": "Table 4, Speaker 1: true-gap ye, parasitic-gap mi."
+    "comment": "Table 4, Speaker 1: true-gap ye, parasitic-gap mi.",
+    "verified": "page-image"
   },
   {
     "id": "scott2021_table4_sp2_ye_ye",
@@ -463,9 +489,7 @@
     "language": "swah1253",
     "primaryText": "… na-ye … na-ye",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["na-ye", "with-PRO"], ["na-ye", "with-PRO"]
-    ],
+    "glossedTokens": [],
     "translation": "",
     "context": "",
     "judgment": "acceptable",
@@ -479,7 +503,8 @@
       ["parasitic", "ye"],
       ["speaker", "2"]
     ],
-    "comment": "Table 4, Speaker 2: true-gap ye, parasitic-gap ye."
+    "comment": "Table 4, Speaker 2: true-gap ye, parasitic-gap ye.",
+    "verified": "page-image"
   },
   {
     "id": "scott2021_table4_sp2_mi_ye",
@@ -487,9 +512,7 @@
     "language": "swah1253",
     "primaryText": "… na-mi … na-ye",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["na-mi", "with-PRO"], ["na-ye", "with-PRO"]
-    ],
+    "glossedTokens": [],
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
@@ -503,7 +526,8 @@
       ["parasitic", "ye"],
       ["speaker", "2"]
     ],
-    "comment": "Table 4, Speaker 2: true-gap mi, parasitic-gap ye."
+    "comment": "Table 4, Speaker 2: true-gap mi, parasitic-gap ye.",
+    "verified": "page-image"
   },
   {
     "id": "scott2021_table4_sp2_mi_mi",
@@ -511,9 +535,7 @@
     "language": "swah1253",
     "primaryText": "… na-mi … na-mi",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["na-mi", "with-PRO"], ["na-mi", "with-PRO"]
-    ],
+    "glossedTokens": [],
     "translation": "",
     "context": "",
     "judgment": "acceptable",
@@ -527,7 +549,8 @@
       ["parasitic", "mi"],
       ["speaker", "2"]
     ],
-    "comment": "Table 4, Speaker 2: true-gap mi, parasitic-gap mi."
+    "comment": "Table 4, Speaker 2: true-gap mi, parasitic-gap mi.",
+    "verified": "page-image"
   },
   {
     "id": "scott2021_table4_sp2_ye_mi",
@@ -535,9 +558,7 @@
     "language": "swah1253",
     "primaryText": "… na-ye … na-mi",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["na-ye", "with-PRO"], ["na-mi", "with-PRO"]
-    ],
+    "glossedTokens": [],
     "translation": "",
     "context": "",
     "judgment": "acceptable",
@@ -551,7 +572,8 @@
       ["parasitic", "mi"],
       ["speaker", "2"]
     ],
-    "comment": "Table 4, Speaker 2: true-gap ye, parasitic-gap mi."
+    "comment": "Table 4, Speaker 2: true-gap ye, parasitic-gap mi.",
+    "verified": "page-image"
   },
   {
     "id": "scott2021_table4_sp3_ye_ye",
@@ -559,9 +581,7 @@
     "language": "swah1253",
     "primaryText": "… na-ye … na-ye",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["na-ye", "with-PRO"], ["na-ye", "with-PRO"]
-    ],
+    "glossedTokens": [],
     "translation": "",
     "context": "",
     "judgment": "acceptable",
@@ -575,7 +595,8 @@
       ["parasitic", "ye"],
       ["speaker", "3"]
     ],
-    "comment": "Table 4, Speaker 3: true-gap ye, parasitic-gap ye."
+    "comment": "Table 4, Speaker 3: true-gap ye, parasitic-gap ye.",
+    "verified": "page-image"
   },
   {
     "id": "scott2021_table4_sp3_mi_ye",
@@ -583,9 +604,7 @@
     "language": "swah1253",
     "primaryText": "… na-mi … na-ye",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["na-mi", "with-PRO"], ["na-ye", "with-PRO"]
-    ],
+    "glossedTokens": [],
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
@@ -599,7 +618,8 @@
       ["parasitic", "ye"],
       ["speaker", "3"]
     ],
-    "comment": "Table 4, Speaker 3: true-gap mi, parasitic-gap ye."
+    "comment": "Table 4, Speaker 3: true-gap mi, parasitic-gap ye.",
+    "verified": "page-image"
   },
   {
     "id": "scott2021_table4_sp3_mi_mi",
@@ -607,9 +627,7 @@
     "language": "swah1253",
     "primaryText": "… na-mi … na-mi",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["na-mi", "with-PRO"], ["na-mi", "with-PRO"]
-    ],
+    "glossedTokens": [],
     "translation": "",
     "context": "",
     "judgment": "acceptable",
@@ -623,7 +641,8 @@
       ["parasitic", "mi"],
       ["speaker", "3"]
     ],
-    "comment": "Table 4, Speaker 3: true-gap mi, parasitic-gap mi."
+    "comment": "Table 4, Speaker 3: true-gap mi, parasitic-gap mi.",
+    "verified": "page-image"
   },
   {
     "id": "scott2021_table4_sp3_ye_mi",
@@ -631,9 +650,7 @@
     "language": "swah1253",
     "primaryText": "… na-ye … na-mi",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["na-ye", "with-PRO"], ["na-mi", "with-PRO"]
-    ],
+    "glossedTokens": [],
     "translation": "",
     "context": "",
     "judgment": "ungrammatical",
@@ -647,6 +664,7 @@
       ["parasitic", "mi"],
       ["speaker", "3"]
     ],
-    "comment": "Table 4, Speaker 3: true-gap ye, parasitic-gap mi."
+    "comment": "Table 4, Speaker 3: true-gap ye, parasitic-gap mi.",
+    "verified": "page-image"
   }
 ]

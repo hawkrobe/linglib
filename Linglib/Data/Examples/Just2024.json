@@ -38,7 +38,8 @@
         "indefinite"
       ]
     ],
-    "comment": "Eastern Mansi: the subjective paradigm indexes only the A referent; the indefinite P is not indexed (Virtanen 2015)."
+    "comment": "Eastern Mansi: the subjective paradigm indexes only the A referent; the indefinite P is not indexed (Virtanen 2015).",
+    "verified": "page-image"
   },
   {
     "id": "just2024_2b",
@@ -83,7 +84,8 @@
         "topical"
       ]
     ],
-    "comment": "The objective paradigm indexes the number of a P that is the secondary topic."
+    "comment": "The objective paradigm indexes the number of a P that is the secondary topic.",
+    "verified": "page-image"
   },
   {
     "id": "just2024_3",
@@ -109,7 +111,7 @@
         "movie.director-DEF.M"
       ]
     ],
-    "translation": "Jana is looking for the movie director.",
+    "translation": "Jana is looking for the movie-director (namely for X, who happens to be the movie-director).' or: 'Jana is looking for the movie-director (whoever that may be).",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -128,7 +130,8 @@
         "definite"
       ]
     ],
-    "comment": "A definite P must be indexed, whether specific or not (Tomić 2008)."
+    "comment": "A definite P must be indexed, whether specific or not (Tomić 2008).",
+    "verified": "page-image"
   },
   {
     "id": "just2024_4a",
@@ -169,7 +172,8 @@
         "false"
       ]
     ],
-    "comment": "Kagulu: P indexing is optional for animate referents with an overt NP (Petzell 2008); the snake is not indexed."
+    "comment": "Kagulu: P indexing is optional for animate referents with an overt NP (Petzell 2008); the snake is not indexed.",
+    "verified": "page-image"
   },
   {
     "id": "just2024_4b",
@@ -214,7 +218,8 @@
         "animate"
       ]
     ],
-    "comment": "The animate P is indexed beside its NP."
+    "comment": "The animate P is indexed beside its NP.",
+    "verified": "page-image"
   },
   {
     "id": "just2024_4c",
@@ -255,7 +260,8 @@
         "animate"
       ]
     ],
-    "comment": "The animate P is indexed with no NP."
+    "comment": "The animate P is indexed with no NP.",
+    "verified": "page-image"
   },
   {
     "id": "just2024_5a",
@@ -300,7 +306,8 @@
         "animate"
       ]
     ],
-    "comment": "Teiwa: animate P referents are obligatorily indexed (Klamer 2010)."
+    "comment": "Teiwa: animate P referents are obligatorily indexed (Klamer 2010).",
+    "verified": "page-image"
   },
   {
     "id": "just2024_5b",
@@ -349,7 +356,8 @@
         "focus"
       ]
     ],
-    "comment": "The prefix is omitted and a free pronoun used when the animate P is in contrastive focus."
+    "comment": "The prefix is omitted and a free pronoun used when the animate P is in contrastive focus.",
+    "verified": "page-image"
   },
   {
     "id": "just2024_6a",
@@ -394,7 +402,8 @@
         "topical"
       ]
     ],
-    "comment": "Kirundi: canonical AVP order with the A indexed (Ndayiragije 1999)."
+    "comment": "Kirundi: canonical AVP order with the A indexed (Ndayiragije 1999).",
+    "verified": "page-image"
   },
   {
     "id": "just2024_6b",
@@ -420,7 +429,7 @@
         "C2.children"
       ]
     ],
-    "translation": "Children (not parents) drank milk.",
+    "translation": "Children (not parents) drank milk. [Lit.: 'Milk drank children.']",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -439,7 +448,8 @@
         "focus"
       ]
     ],
-    "comment": "A and P swap positions, P is indexed, and the postverbal A is in contrastive focus."
+    "comment": "A and P swap positions, P is indexed, and the postverbal A is in contrastive focus.",
+    "verified": "page-image"
   },
   {
     "id": "just2024_6c",
@@ -465,7 +475,7 @@
         "C2.children"
       ]
     ],
-    "translation": "Children (not parents) drank milk.",
+    "translation": "Children (not parents) drank milk. [Lit.: 'There drank milk children.']",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -484,7 +494,8 @@
         "focus"
       ]
     ],
-    "comment": "Locative inversion: a locative class prefix replaces the A index under A focus."
+    "comment": "Locative inversion: a locative class prefix replaces the A index under A focus.",
+    "verified": "page-image"
   },
   {
     "id": "just2024_7a",
@@ -529,7 +540,8 @@
         "pronominal"
       ]
     ],
-    "comment": "Welsh: only pronominal A referents are indexed for number (Borsley 2009)."
+    "comment": "Welsh: only pronominal A referents are indexed for number (Borsley 2009).",
+    "verified": "page-image"
   },
   {
     "id": "just2024_7b",
@@ -559,7 +571,7 @@
         "dragon"
       ]
     ],
-    "translation": "The boys saw a dragon.",
+    "translation": "The boy/boys saw a dragon.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -578,7 +590,8 @@
         "lexical"
       ]
     ],
-    "comment": "A lexical A takes the default singular form."
+    "comment": "A lexical A takes the default singular form.",
+    "verified": "page-image"
   },
   {
     "id": "just2024_7c",
@@ -588,7 +601,7 @@
     },
     "reportedIn": null,
     "language": "wels1247",
-    "primaryText": "*Gwel-on y bechgyn ddraig",
+    "primaryText": "Gwel-on y bechgyn ddraig",
     "discourseSegments": [],
     "glossedTokens": [
       [
@@ -627,7 +640,8 @@
         "lexical"
       ]
     ],
-    "comment": "A lexical A cannot be indexed for number."
+    "comment": "A lexical A cannot be indexed for number.",
+    "verified": "page-image"
   },
   {
     "id": "just2024_8a",
@@ -672,7 +686,8 @@
         "predicateFocus"
       ]
     ],
-    "comment": "Koorete: the A is indexed only when the verb carries the focus marker -ko (Mendisu 2010)."
+    "comment": "Koorete: the A is indexed only when the verb carries the focus marker -ko (Mendisu 2010).",
+    "verified": "page-image"
   },
   {
     "id": "just2024_8b",
@@ -717,7 +732,8 @@
         "otherFocus"
       ]
     ],
-    "comment": "Focus on the P: no A index."
+    "comment": "Focus on the P: no A index.",
+    "verified": "page-image"
   },
   {
     "id": "just2024_8c",
@@ -762,7 +778,8 @@
         "focus"
       ]
     ],
-    "comment": "Focus on the A: no A index."
+    "comment": "Focus on the A: no A index.",
+    "verified": "page-image"
   },
   {
     "id": "just2024_8d",
@@ -772,7 +789,7 @@
     },
     "reportedIn": null,
     "language": "koor1239",
-    "primaryText": "*nun-i doro-ko woon-d-uu-ns'i",
+    "primaryText": "nun-i doro-ko woon-d-uu-ns'i",
     "discourseSegments": [],
     "glossedTokens": [
       [
@@ -788,7 +805,7 @@
         "buy-PFV-PST-1PL"
       ]
     ],
-    "translation": "We BOUGHT sheep.",
+    "translation": "intended: We BOUGHT sheep.",
     "context": "",
     "judgment": "ungrammatical",
     "alternatives": [],
@@ -807,7 +824,8 @@
         "otherFocus"
       ]
     ],
-    "comment": "An A index without the predicate focus marker is ungrammatical."
+    "comment": "An A index without the predicate focus marker is ungrammatical.",
+    "verified": "page-image"
   },
   {
     "id": "just2024_9a",
@@ -864,7 +882,8 @@
         "inanimate"
       ]
     ],
-    "comment": "Persian: an inanimate plural A takes a singular index (Sedighi 2010)."
+    "comment": "Persian: an inanimate plural A takes a singular index (Sedighi 2010).",
+    "verified": "page-image"
   },
   {
     "id": "just2024_9b",
@@ -921,7 +940,8 @@
         "animate"
       ]
     ],
-    "comment": "An animate plural A is indexed for number."
+    "comment": "An animate plural A is indexed for number.",
+    "verified": "page-image"
   },
   {
     "id": "just2024_10a",
@@ -962,7 +982,8 @@
         "false"
       ]
     ],
-    "comment": "Anuak: with a topical P in initial position the A is not indexed (Reh 1996)."
+    "comment": "Anuak: with a topical P in initial position the A is not indexed (Reh 1996).",
+    "verified": "page-image"
   },
   {
     "id": "just2024_10b",
@@ -972,7 +993,7 @@
     },
     "reportedIn": null,
     "language": "anua1242",
-    "primaryText": "ɲìlàal kwʌ̌n ā-cám-ε",
+    "primaryText": "ɲìlàal kwʌ̌n ā-cám-ε̄",
     "discourseSegments": [],
     "glossedTokens": [
       [
@@ -984,7 +1005,7 @@
         "porridge"
       ],
       [
-        "ā-cám-ε",
+        "ā-cám-ε̄",
         "PST-eat-3SG.A"
       ]
     ],
@@ -1007,7 +1028,8 @@
         "topical"
       ]
     ],
-    "comment": "The pragmatically unmarked order, clause-final verb and topical A, is the only one with an A index."
+    "comment": "The pragmatically unmarked order, clause-final verb and topical A, is the only one with an A index.",
+    "verified": "page-image"
   },
   {
     "id": "just2024_10c",
@@ -1052,7 +1074,8 @@
         "otherFocus"
       ]
     ],
-    "comment": "A focalized P: no A index."
+    "comment": "A focalized P: no A index.",
+    "verified": "page-image"
   },
   {
     "id": "just2024_10d",
@@ -1097,7 +1120,8 @@
         "focus"
       ]
     ],
-    "comment": "A focalized A: no A index."
+    "comment": "A focalized A: no A index.",
+    "verified": "page-image"
   },
   {
     "id": "just2024_12a",
@@ -1146,7 +1170,8 @@
         "predicateFocus"
       ]
     ],
-    "comment": "Sheko: the A is indexed in main clauses (Hellenthal 2010)."
+    "comment": "Sheko: the A is indexed in main clauses (Hellenthal 2010).",
+    "verified": "page-image"
   },
   {
     "id": "just2024_12b",
@@ -1191,7 +1216,8 @@
         "focus"
       ]
     ],
-    "comment": "The A index is omitted when the A NP is in focus."
+    "comment": "The A index is omitted when the A NP is in focus.",
+    "verified": "page-image"
   },
   {
     "id": "just2024_13a_A",
@@ -1240,7 +1266,8 @@
         "topical"
       ]
     ],
-    "comment": "Makasar: in the normal transitive pattern both A (proclitic) and P (enclitic) are indexed (Jukes 2015)."
+    "comment": "Makasar: in the normal transitive pattern both A (proclitic) and P (enclitic) are indexed (Jukes 2015).",
+    "verified": "page-image"
   },
   {
     "id": "just2024_13a_P",
@@ -1289,7 +1316,8 @@
         "definite"
       ]
     ],
-    "comment": "The definite P is indexed by the enclitic."
+    "comment": "The definite P is indexed by the enclitic.",
+    "verified": "page-image"
   },
   {
     "id": "just2024_13b_A",
@@ -1334,7 +1362,8 @@
         "focus"
       ]
     ],
-    "comment": "The fronted, focused A is not indexed."
+    "comment": "The fronted, focused A is not indexed.",
+    "verified": "page-image"
   },
   {
     "id": "just2024_13b_P",
@@ -1379,7 +1408,8 @@
         "definite"
       ]
     ],
-    "comment": "The definite P stays indexed."
+    "comment": "The definite P stays indexed.",
+    "verified": "page-image"
   },
   {
     "id": "just2024_13c_P",
@@ -1424,7 +1454,8 @@
         "focus"
       ]
     ],
-    "comment": "The fronted, focused P is not indexed."
+    "comment": "The fronted, focused P is not indexed.",
+    "verified": "page-image"
   },
   {
     "id": "just2024_13c_A",
@@ -1469,7 +1500,8 @@
         "topical"
       ]
     ],
-    "comment": "The A stays indexed."
+    "comment": "The A stays indexed.",
+    "verified": "page-image"
   },
   {
     "id": "just2024_t1_a1_p2",
@@ -1501,7 +1533,8 @@
         "P"
       ]
     ],
-    "comment": "Reyesano: the arguments indexed in a transitive clause by the persons of A and P (Guillaume 2009); locuphoric referents are indexed, a third-person co-argument only as A."
+    "comment": "Reyesano: the arguments indexed in a transitive clause by the persons of A and P (Guillaume 2009); with a third-person co-argument a locuphoric referent is indexed and a third person only as A; with two locuphoric referents only the second person is indexed.",
+    "verified": "page-image"
   },
   {
     "id": "just2024_t1_a1_p3",
@@ -1533,7 +1566,8 @@
         "A"
       ]
     ],
-    "comment": "Reyesano: the arguments indexed in a transitive clause by the persons of A and P (Guillaume 2009); locuphoric referents are indexed, a third-person co-argument only as A."
+    "comment": "Reyesano: the arguments indexed in a transitive clause by the persons of A and P (Guillaume 2009); with a third-person co-argument a locuphoric referent is indexed and a third person only as A; with two locuphoric referents only the second person is indexed.",
+    "verified": "page-image"
   },
   {
     "id": "just2024_t1_a2_p1",
@@ -1565,7 +1599,8 @@
         "A"
       ]
     ],
-    "comment": "Reyesano: the arguments indexed in a transitive clause by the persons of A and P (Guillaume 2009); locuphoric referents are indexed, a third-person co-argument only as A."
+    "comment": "Reyesano: the arguments indexed in a transitive clause by the persons of A and P (Guillaume 2009); with a third-person co-argument a locuphoric referent is indexed and a third person only as A; with two locuphoric referents only the second person is indexed.",
+    "verified": "page-image"
   },
   {
     "id": "just2024_t1_a2_p3",
@@ -1597,7 +1632,8 @@
         "A"
       ]
     ],
-    "comment": "Reyesano: the arguments indexed in a transitive clause by the persons of A and P (Guillaume 2009); locuphoric referents are indexed, a third-person co-argument only as A."
+    "comment": "Reyesano: the arguments indexed in a transitive clause by the persons of A and P (Guillaume 2009); with a third-person co-argument a locuphoric referent is indexed and a third person only as A; with two locuphoric referents only the second person is indexed.",
+    "verified": "page-image"
   },
   {
     "id": "just2024_t1_a3_p1",
@@ -1629,7 +1665,8 @@
         "AP"
       ]
     ],
-    "comment": "Reyesano: the arguments indexed in a transitive clause by the persons of A and P (Guillaume 2009); locuphoric referents are indexed, a third-person co-argument only as A."
+    "comment": "Reyesano: the arguments indexed in a transitive clause by the persons of A and P (Guillaume 2009); with a third-person co-argument a locuphoric referent is indexed and a third person only as A; with two locuphoric referents only the second person is indexed.",
+    "verified": "page-image"
   },
   {
     "id": "just2024_t1_a3_p2",
@@ -1661,7 +1698,8 @@
         "AP"
       ]
     ],
-    "comment": "Reyesano: the arguments indexed in a transitive clause by the persons of A and P (Guillaume 2009); locuphoric referents are indexed, a third-person co-argument only as A."
+    "comment": "Reyesano: the arguments indexed in a transitive clause by the persons of A and P (Guillaume 2009); with a third-person co-argument a locuphoric referent is indexed and a third person only as A; with two locuphoric referents only the second person is indexed.",
+    "verified": "page-image"
   },
   {
     "id": "just2024_t1_a3_p3",
@@ -1693,6 +1731,7 @@
         "A"
       ]
     ],
-    "comment": "Reyesano: the arguments indexed in a transitive clause by the persons of A and P (Guillaume 2009); locuphoric referents are indexed, a third-person co-argument only as A."
+    "comment": "Reyesano: the arguments indexed in a transitive clause by the persons of A and P (Guillaume 2009); with a third-person co-argument a locuphoric referent is indexed and a third person only as A; with two locuphoric referents only the second person is indexed.",
+    "verified": "page-image"
   }
 ]

@@ -46,7 +46,8 @@
         "yes"
       ]
     ],
-    "comment": "The null adjunct reading is preferred; -mo 'also' imposes parallelism."
+    "comment": "The null adjunct reading is preferred; -mo 'also' imposes parallelism.",
+    "verified": "page-image"
   },
   {
     "id": "funakoshi2016_ex16",
@@ -115,7 +116,8 @@
         "yes"
       ]
     ],
-    "comment": "The connective kedo 'but' sets a contrastive context favoring the null adjunct reading."
+    "comment": "The connective kedo 'but' sets a contrastive context favoring the null adjunct reading.",
+    "verified": "page-image"
   },
   {
     "id": "funakoshi2016_ex17b",
@@ -164,7 +166,8 @@
         "yes"
       ]
     ],
-    "comment": "Follow-up: Hanako-ga arat-ta ato-no kuruma-wa kitanak-atta 'The car that Hanako washed was dirty'. The follow-up sentence forces the null adjunct reading, and the sequence is coherent."
+    "comment": "Follow-up: Hanako-ga arat-ta ato-no kuruma-wa kitanak-atta 'The car that Hanako washed was dirty'. The follow-up sentence forces the null adjunct reading, and the sequence is coherent.",
+    "verified": "page-image"
   },
   {
     "id": "funakoshi2016_ex18b",
@@ -213,7 +216,8 @@
         "yes"
       ]
     ],
-    "comment": "Follow-up: Itumo LaTeX-de kak-u 'She always writes with LaTeX'. The follow-up sentence forces the null adjunct reading, and the sequence is coherent."
+    "comment": "Follow-up: Itumo LaTeX-de kak-u 'She always writes with LaTeX'. The follow-up sentence forces the null adjunct reading, and the sequence is coherent. The paper glosses kak-ana-i as buy-NEG-PRES.",
+    "verified": "page-image"
   },
   {
     "id": "funakoshi2016_ex19b",
@@ -239,7 +243,7 @@
       ]
     ],
     "translation": "Of course, Hanako does not buy comic books with her research fund.",
-    "context": "Taroo and Hanako are faculty of a linguistics department and like comic books. Antecedent: Odoroitakotoni Taroo-wa kenkyuuhi-de manga-o ka-u 'Surprisingly, Taroo buys comic books with his research fund'.",
+    "context": "Taroo and Hanako are faculty of a linguistics department and like comic books. Antecedent: Odoroitakotoni Taroo-wa kenkyuuhi-de manga-o ka-u 'Surprisingly enough, Taroo buys comic books with his research fund'.",
     "judgment": "acceptable",
     "alternatives": [],
     "readings": [
@@ -266,7 +270,8 @@
         "yes"
       ]
     ],
-    "comment": "Follow-up: Manga-wa zibun-no okane-de ka-u 'She buys comic books with her own money'. The follow-up sentence forces the null adjunct reading, and the sequence is coherent."
+    "comment": "Follow-up: Manga-wa zibun-no okane-de ka-u 'She buys comic books with her own money'. The follow-up sentence forces the null adjunct reading, and the sequence is coherent.",
+    "verified": "page-image"
   },
   {
     "id": "funakoshi2016_ex20b",
@@ -291,7 +296,7 @@
         "wash-NEG-PAST"
       ]
     ],
-    "translation": "Hanako did not wash the car (carefully).",
+    "translation": "Hanako did not wash the car.",
     "context": "Taroo and Hanako washed their parents' cars to get allowance. Taroo was thorough in his work while Hanako was not. Antecedent: Taroo-wa teineini kuruma-o arat-ta 'Taroo washed the car carefully'.",
     "judgment": "unacceptable",
     "alternatives": [],
@@ -319,7 +324,8 @@
         "no"
       ]
     ],
-    "comment": "Follow-up: Hanako-ga arat-ta ato-no kuruma-wa kitanak-atta. The follow-up sentence forces the null adjunct reading, and the sequence sounds contradictory."
+    "comment": "Follow-up: Hanako-ga arat-ta ato-no kuruma-wa kitanak-atta. The follow-up sentence forces the null adjunct reading, and the sequence sounds contradictory.",
+    "verified": "page-image"
   },
   {
     "id": "funakoshi2016_ex21b",
@@ -344,7 +350,7 @@
         "write-NEG-PRES"
       ]
     ],
-    "translation": "Hanako does not write papers (with Word).",
+    "translation": "Hanako does not write papers.",
     "context": "Taroo and Hanako are graduate students who often write papers. Taroo likes Microsoft Office while Hanako does not. Antecedent: Taroo-wa Word-de ronbun-o kak-u 'Taroo writes papers with Word'.",
     "judgment": "unacceptable",
     "alternatives": [],
@@ -372,7 +378,8 @@
         "no"
       ]
     ],
-    "comment": "Follow-up: Itumo LaTeX-de kak-u. The follow-up sentence forces the null adjunct reading, and the sequence sounds contradictory."
+    "comment": "Follow-up: Itumo LaTeX-de kak-u. The follow-up sentence forces the null adjunct reading, and the sequence sounds contradictory.",
+    "verified": "page-image"
   },
   {
     "id": "funakoshi2016_ex22b",
@@ -394,15 +401,15 @@
       ],
       [
         "manga-o",
-        "comic.book-ACC"
+        "comic.books-ACC"
       ],
       [
         "kaw-ana-i.",
         "buy-NEG-PRES"
       ]
     ],
-    "translation": "Of course, Hanako does not buy comic books (with her research fund).",
-    "context": "Taroo and Hanako are faculty of a linguistics department and like comic books. Antecedent: Odoroitakotoni Taroo-wa kenkyuuhi-de manga-o ka-u 'Surprisingly, Taroo buys comic books with his research fund'.",
+    "translation": "Of course, Hanako does not buy comic books.",
+    "context": "Taroo and Hanako are faculty of a linguistics department and like comic books. Antecedent: Odoroitakotoni Taroo-wa kenkyuuhi-de manga-o ka-u 'Surprisingly enough, Taroo buys comic books with his research fund'.",
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [
@@ -429,7 +436,8 @@
         "no"
       ]
     ],
-    "comment": "Follow-up: Manga-wa zibun-no okane-de ka-u. The follow-up sentence forces the null adjunct reading, and the sequence sounds contradictory."
+    "comment": "Follow-up: Manga-wa zibun-no okane-de ka-u. The follow-up sentence forces the null adjunct reading, and the sequence sounds contradictory.",
+    "verified": "page-image"
   },
   {
     "id": "funakoshi2016_ex23b",
@@ -454,7 +462,7 @@
         "wash-NEG-PAST"
       ]
     ],
-    "translation": "Hanako did not wash the car (carefully) either.",
+    "translation": "Hanako did not wash the car either.",
     "context": "Taroo and Hanako both did careless work. Antecedent: Taroo-wa teineini kuruma-o araw-anak-atta 'Taroo did not wash the car carefully'.",
     "judgment": "unacceptable",
     "alternatives": [],
@@ -482,7 +490,8 @@
         "no"
       ]
     ],
-    "comment": "Follow-up: Karera-ga arat-ta ato-no kuruma-wa kitanak-atta 'The cars that they washed were dirty'. The follow-up sentence forces the null adjunct reading, and the sequence sounds contradictory."
+    "comment": "Follow-up: Karera-ga arat-ta ato-no kuruma-wa kitanak-atta 'The cars that they washed were dirty'. The follow-up sentence forces the null adjunct reading, and the sequence sounds contradictory.",
+    "verified": "page-image"
   },
   {
     "id": "funakoshi2016_ex24b",
@@ -507,7 +516,7 @@
         "write-NEG-PRES"
       ]
     ],
-    "translation": "Hanako does not write papers (with Word) either.",
+    "translation": "Hanako does not write papers.",
     "context": "Taroo and Hanako do not like Microsoft Office. Antecedent: Taroo-wa Word-de ronbun-o kak-ana-i 'Taroo does not write papers with Word'.",
     "judgment": "unacceptable",
     "alternatives": [],
@@ -535,7 +544,8 @@
         "no"
       ]
     ],
-    "comment": "Follow-up: Karera-wa itumo LaTeX-de kak-u 'They always write with LaTeX'. The follow-up sentence forces the null adjunct reading, and the sequence sounds contradictory."
+    "comment": "Follow-up: Karera-wa itumo LaTeX-de kak-u 'They always write with LaTeX'. The follow-up sentence forces the null adjunct reading, and the sequence sounds contradictory. The paper glosses kak-ana-i as buy-NEG-PRES.",
+    "verified": "page-image"
   },
   {
     "id": "funakoshi2016_ex25b",
@@ -557,14 +567,14 @@
       ],
       [
         "manga-o",
-        "comic.book-ACC"
+        "comic.books-ACC"
       ],
       [
         "kaw-ana-i.",
         "buy-NEG-PRES"
       ]
     ],
-    "translation": "Of course, Hanako does not buy comic books (with her research fund) either.",
+    "translation": "Of course, Hanako does not buy comic books with her research fund either.",
     "context": "Antecedent: Taroo-wa kenkyuuhi-de manga-o kaw-ana-i 'Taroo does not buy comic books with his research fund'.",
     "judgment": "unacceptable",
     "alternatives": [],
@@ -592,7 +602,8 @@
         "no"
       ]
     ],
-    "comment": "Follow-up: Manga-wa zibun-no okane-de ka-u. The follow-up sentence forces the null adjunct reading, and the sequence sounds contradictory."
+    "comment": "Follow-up: Manga-wa zibun-no okane-de ka-u. The follow-up sentence forces the null adjunct reading, and the sequence sounds contradictory.",
+    "verified": "page-image"
   },
   {
     "id": "funakoshi2016_ex26b",
@@ -621,7 +632,7 @@
         "wipe-NEG-PAST"
       ]
     ],
-    "translation": "But Hanako did not wipe the windows (carefully).",
+    "translation": "But Hanako did not wipe the windows.",
     "context": "Taroo and Hanako washed a car together: Taroo the body, then Hanako the windows. Taroo was thorough, Hanako not. Antecedent: Taroo-wa teineini syatai-o arat-ta 'Taroo washed the body of the car carefully'.",
     "judgment": "unacceptable",
     "alternatives": [],
@@ -649,7 +660,8 @@
         "no"
       ]
     ],
-    "comment": "The object differs from the antecedent's, so the adjunct is the only old information; against the functional account. Follow-up: Hanako-ga hui-ta ato-no madogarasu-wa kitanak-atta. The follow-up sentence forces the null adjunct reading, and the sequence sounds contradictory."
+    "comment": "The object differs from the antecedent's, so the adjunct is the only old information; against the functional account. Follow-up: Hanako-ga hui-ta ato-no madogarasu-wa kitanak-atta. The follow-up sentence forces the null adjunct reading, and the sequence sounds contradictory.",
+    "verified": "page-image"
   },
   {
     "id": "funakoshi2016_ex27b",
@@ -678,7 +690,7 @@
         "put-BEN-NEG-PAST"
       ]
     ],
-    "translation": "But his teacher did not write his comments on the paper (with Word).",
+    "translation": "But his teacher did not write his comments on the paper.",
     "context": "Taroo gave his paper to his advisor expecting comments with the Comments feature of Word, but the advisor does not like Microsoft Office. Antecedent: Taroo-wa Word-de ronbun-o kai-ta 'Taroo wrote the paper with Word'.",
     "judgment": "unacceptable",
     "alternatives": [],
@@ -706,7 +718,8 @@
         "no"
       ]
     ],
-    "comment": "Object and predicate differ from the antecedent's. Follow-up: Kare-no komento-wa tegaki dat-ta 'His comments were handwritten'. The follow-up sentence forces the null adjunct reading, and the sequence sounds contradictory."
+    "comment": "Object and predicate differ from the antecedent's. Follow-up: Kare-no komento-wa tegaki dat-ta 'His comments were handwritten'. The follow-up sentence forces the null adjunct reading, and the sequence sounds contradictory.",
+    "verified": "page-image"
   },
   {
     "id": "funakoshi2016_ex32b",
@@ -743,7 +756,7 @@
         "think-NEG-PRES"
       ]
     ],
-    "translation": "On the other hand, I don't think that Hanako quit (because she was a fool).",
+    "translation": "On the other hand, I don't think that Hanako quit.",
     "context": "Antecedent: Boku-wa [Taroo-wa [pro baka-da kara] kaisya-o yame-ta to] omottei-ru 'I think that Taroo quit the company because he was a fool'.",
     "judgment": "unacceptable",
     "alternatives": [],
@@ -771,7 +784,8 @@
         "no"
       ]
     ],
-    "comment": "The embedded object kaisya-o is null too; the reason clause, above NegP, is outside the ellipsis site. Follow-up: Kanozyo-wa kazoku-no tameni yame-tanda to omo-u 'I think she quit for her family'. The follow-up sentence forces the null adjunct reading, and the sequence sounds contradictory."
+    "comment": "The embedded object kaisya-o is null too; the reason clause, above NegP, is outside the ellipsis site. Follow-up: Kanozyo-wa kazoku-no tameni yame-tanda to omo-u 'I think that she quit the company for her family'. The follow-up sentence forces the null adjunct reading, and the sequence sounds contradictory.",
+    "verified": "page-image"
   },
   {
     "id": "funakoshi2016_ex39b",
@@ -820,7 +834,8 @@
         "yes"
       ]
     ],
-    "comment": "Follow-up: 10-punokurede ki-ta 'It was ten minutes late'. The follow-up sentence forces the null adjunct reading, and the sequence is coherent. No null argument could host the adjunct under oblique movement."
+    "comment": "Follow-up: 10-punokurede ki-ta 'It was ten minutes late'. The follow-up sentence forces the null adjunct reading, and the sequence is coherent. No null argument could host the adjunct under oblique movement.",
+    "verified": "page-image"
   },
   {
     "id": "funakoshi2016_ex41b",
@@ -829,7 +844,7 @@
       "paperLabel": "(41b)"
     },
     "language": "nucl1643",
-    "primaryText": "Hanako-wa Δ shukudai-o das-anak-atta.",
+    "primaryText": "Hanako-wa Δ syukudai-o das-anak-atta.",
     "discourseSegments": [],
     "glossedTokens": [
       [
@@ -837,7 +852,7 @@
         "Hanako-TOP"
       ],
       [
-        "shukudai-o",
+        "syukudai-o",
         "homework-ACC"
       ],
       [
@@ -845,8 +860,8 @@
         "submit-NEG-PAST"
       ]
     ],
-    "translation": "Hanako did not submit the homework (on time / late).",
-    "context": "Antecedent: Taroo-wa {zikandoorini / okurete} shukudai-o dasi-ta 'Taroo submitted the homework on time / late'.",
+    "translation": "Hanako did not submit the homework.",
+    "context": "Antecedent: Taroo-wa {zikandoorini / okurete} syukudai-o dasi-ta 'Taroo submitted the homework on time / late'.",
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [
@@ -873,7 +888,8 @@
         "no"
       ]
     ],
-    "comment": "Neither temporal adjunct can be null by itself in a transitive clause. The follow-up sentence forces the null adjunct reading, and the sequence sounds contradictory."
+    "comment": "Neither temporal adjunct can be null by itself in a transitive clause. The follow-up sentence forces the null adjunct reading, and the sequence sounds contradictory.",
+    "verified": "page-image"
   },
   {
     "id": "funakoshi2016_ex43b",
@@ -898,8 +914,8 @@
         "wipe-NEG-PAST"
       ]
     ],
-    "translation": "But he did not wipe the windows (carefully).",
-    "context": "Taroo washed his car, meaning to wipe the windows after the body, but felt tired. Antecedent: Taroo-wa teineini shatai-o arat-ta 'Taroo washed the body of the car carefully'.",
+    "translation": "But he did not wipe the windows.",
+    "context": "Taroo washed his car, meaning to wipe the windows after the body, but felt tired. Antecedent: Taroo-wa teineini syatai-o arat-ta 'Taroo washed the body of the car carefully'.",
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [
@@ -926,7 +942,8 @@
         "no"
       ]
     ],
-    "comment": "Follow-up: Kare-ga hui-ta ato-no madogarasu-wa kitanak-atta. The follow-up sentence forces the null adjunct reading, and the sequence sounds contradictory."
+    "comment": "Follow-up: Kare-ga hui-ta ato-no madogarasu-wa kitanak-atta. The follow-up sentence forces the null adjunct reading, and the sequence sounds contradictory.",
+    "verified": "page-image"
   },
   {
     "id": "funakoshi2016_ex44b",
@@ -955,7 +972,7 @@
         "revise-NEG-PRES"
       ]
     ],
-    "translation": "He does not revise his students' papers (with Word).",
+    "translation": "He does not revise his students' papers.",
     "context": "Taroo writes his own papers and looks at his students' papers every day. Antecedent: Taroo-wa Word-de zibun-no ronbun-o kak-u 'Taroo writes his own papers with Word'.",
     "judgment": "unacceptable",
     "alternatives": [],
@@ -983,7 +1000,8 @@
         "no"
       ]
     ],
-    "comment": "Follow-up: Gakusei-no ronbun-wa tegaki-de naos-u 'He revises the students' papers by hand'. The follow-up sentence forces the null adjunct reading, and the sequence sounds contradictory."
+    "comment": "Follow-up: Gakusei-no ronbun-wa tegaki-de naos-u 'He revises his students' papers by hand'. The follow-up sentence forces the null adjunct reading, and the sequence sounds contradictory.",
+    "verified": "page-image"
   },
   {
     "id": "funakoshi2016_ex51b",
@@ -1008,8 +1026,8 @@
         "wash-NEG-PAST"
       ]
     ],
-    "translation": "Hanako did not wash the car (carefully).",
-    "context": "Antecedent: Kuruma-o Taroo-wa teineini arat-ta 'The car, Taroo washed carefully'. Taroo and Hanako washed their parents' cars to get allowance. Taroo was thorough in his work while Hanako was not. Antecedent: Taroo-wa teineini kuruma-o arat-ta 'Taroo washed the car carefully'.",
+    "translation": "Hanako did not wash the car.",
+    "context": "Taroo and Hanako washed their parents' cars to get an allowance. But Taroo was thorough in his work while Hanako was not. Antecedent: Kuruma-o Taroo-wa teineini arat-ta 'Taroo washed the car carefully'.",
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [
@@ -1036,7 +1054,8 @@
         "no"
       ]
     ],
-    "comment": "The object is scrambled across the subject, so the scrambling is not string-vacuous. The follow-up sentence forces the null adjunct reading, and the sequence sounds contradictory."
+    "comment": "The object is scrambled across the subject, so the scrambling is not string-vacuous. The follow-up sentence forces the null adjunct reading, and the sequence sounds contradictory.",
+    "verified": "page-image"
   },
   {
     "id": "funakoshi2016_ex52b",
@@ -1061,7 +1080,7 @@
         "wash-NEG-PAST"
       ]
     ],
-    "translation": "Hanako did not wash the car (carefully) either.",
+    "translation": "Hanako did not wash the car either.",
     "context": "Both did careless work. Antecedent: Kuruma-o Taroo-wa teineini araw-anak-atta.",
     "judgment": "unacceptable",
     "alternatives": [],
@@ -1089,7 +1108,8 @@
         "no"
       ]
     ],
-    "comment": "Follow-up: Karera-ga arat-ta ato-no kuruma-wa kitanak-atta. The follow-up sentence forces the null adjunct reading, and the sequence sounds contradictory."
+    "comment": "Follow-up: Karera-ga arat-ta ato-no kuruma-wa kitanak-atta. The follow-up sentence forces the null adjunct reading, and the sequence sounds contradictory.",
+    "verified": "page-image"
   },
   {
     "id": "funakoshi2016_ex53b",
@@ -1118,8 +1138,8 @@
         "wipe-NEG-PAST"
       ]
     ],
-    "translation": "But the windows, Hanako did not wipe (carefully).",
-    "context": "Antecedent: Syatai-o Taroo-wa teineini arat-ta 'The body of the car, Taroo washed carefully'.",
+    "translation": "But Hanako did not wipe the windows.",
+    "context": "Antecedent: Syatai-o Taroo-wa teineini arat-ta 'Taroo washed the body of the car carefully'.",
     "judgment": "unacceptable",
     "alternatives": [],
     "readings": [
@@ -1146,7 +1166,8 @@
         "no"
       ]
     ],
-    "comment": "The follow-up sentence forces the null adjunct reading, and the sequence sounds contradictory."
+    "comment": "The follow-up sentence forces the null adjunct reading, and the sequence sounds contradictory.",
+    "verified": "page-image"
   },
   {
     "id": "funakoshi2016_ex55b",
@@ -1155,7 +1176,7 @@
       "paperLabel": "(55b)"
     },
     "language": "nucl1643",
-    "primaryText": "Iya, boku-wa Δ ATTI-no kuruma-o araw-anak-attanda.",
+    "primaryText": "Iya, boku-wa Δ ATTI-NO kuruma-o araw-anak-attanda.",
     "discourseSegments": [],
     "glossedTokens": [
       [
@@ -1167,7 +1188,7 @@
         "I-TOP"
       ],
       [
-        "ATTI-no",
+        "ATTI-NO",
         "that-GEN"
       ],
       [
@@ -1179,7 +1200,7 @@
         "wash-NEG-PAST"
       ]
     ],
-    "translation": "No, I didn't wash THAT car carefully.",
+    "translation": "No, I didn't wash that car carefully.",
     "context": "Taroo ordered Ziroo to wash his two cars clean; Ziroo washed one sloppily and the other carefully. Taroo: Kimi-wa teineini kotti-no kuruma-o araw-anak-atta daro? 'You didn't wash this car carefully, did you?'",
     "judgment": "acceptable",
     "alternatives": [],
@@ -1207,7 +1228,8 @@
         "yes"
       ]
     ],
-    "comment": "Capitals mark stress; the overt object contrasts with the antecedent's. Coherent with a follow-up 'I washed that car in a sloppy manner'."
+    "comment": "Capitals mark stress; the overt object contrasts with the antecedent's. Coherent with a follow-up 'I washed that car in a sloppy manner'.",
+    "verified": "page-image"
   },
   {
     "id": "funakoshi2016_ex55b2",
@@ -1216,7 +1238,7 @@
       "paperLabel": "(55b')"
     },
     "language": "nucl1643",
-    "primaryText": "Iya, ATTI-no kuruma-o boku-wa Δ araw-anak-attanda.",
+    "primaryText": "Iya, ATTI-NO kuruma-o boku-wa Δ araw-anak-attanda.",
     "discourseSegments": [],
     "glossedTokens": [
       [
@@ -1224,7 +1246,7 @@
         "no"
       ],
       [
-        "ATTI-no",
+        "ATTI-NO",
         "that-GEN"
       ],
       [
@@ -1240,7 +1262,7 @@
         "wash-NEG-PAST"
       ]
     ],
-    "translation": "No, THAT car, I didn't wash carefully.",
+    "translation": "No, that car, I didn't wash carefully.",
     "context": "Taroo ordered Ziroo to wash his two cars clean; Ziroo washed one sloppily and the other carefully. Taroo: Kimi-wa teineini kotti-no kuruma-o araw-anak-atta daro? 'You didn't wash this car carefully, did you?'",
     "judgment": "acceptable",
     "alternatives": [],
@@ -1268,7 +1290,8 @@
         "yes"
       ]
     ],
-    "comment": "The focused object scrambled across the subject."
+    "comment": "The focused object scrambled across the subject.",
+    "verified": "page-image"
   },
   {
     "id": "funakoshi2016_ex56b",
@@ -1329,7 +1352,8 @@
         "yes"
       ]
     ],
-    "comment": "The overt object carries the contrastive marker -wa."
+    "comment": "The overt object carries the contrastive marker -wa.",
+    "verified": "page-image"
   },
   {
     "id": "funakoshi2016_ex56b2",
@@ -1390,7 +1414,8 @@
         "yes"
       ]
     ],
-    "comment": "The contrastively marked object scrambled across the subject."
+    "comment": "The contrastively marked object scrambled across the subject.",
+    "verified": "page-image"
   },
   {
     "id": "funakoshi2016_ex57b",
@@ -1423,7 +1448,7 @@
         "wash-NEG-PAST"
       ]
     ],
-    "translation": "Yes, I didn't wash this car (carefully).",
+    "translation": "Yes, I didn't wash this car.",
     "context": "Taroo ordered Ziroo to wash his two cars clean; Ziroo washed one sloppily and the other carefully. Taroo: Kimi-wa teineini kotti-no kuruma-o araw-anak-atta daro? 'You didn't wash this car carefully, did you?'",
     "judgment": "unacceptable",
     "alternatives": [],
@@ -1451,7 +1476,8 @@
         "no"
       ]
     ],
-    "comment": "The overt object repeats the antecedent's without contrastive focus: the near-minimal pair of (55b)."
+    "comment": "The overt object repeats the antecedent's without contrastive focus: the near-minimal pair of (55b).",
+    "verified": "page-image"
   },
   {
     "id": "funakoshi2016_ex57b2",
@@ -1484,7 +1510,7 @@
         "wash-NEG-PAST"
       ]
     ],
-    "translation": "Yes, this car, I didn't wash (carefully).",
+    "translation": "Yes, this car, I didn't wash.",
     "context": "Taroo ordered Ziroo to wash his two cars clean; Ziroo washed one sloppily and the other carefully. Taroo: Kimi-wa teineini kotti-no kuruma-o araw-anak-atta daro? 'You didn't wash this car carefully, did you?'",
     "judgment": "unacceptable",
     "alternatives": [],
@@ -1512,7 +1538,8 @@
         "no"
       ]
     ],
-    "comment": "The unfocused object scrambled across the subject."
+    "comment": "The unfocused object scrambled across the subject.",
+    "verified": "page-image"
   },
   {
     "id": "funakoshi2016_ex58b",
@@ -1545,7 +1572,7 @@
         "wash-NEG-PAST"
       ]
     ],
-    "translation": "No, I didn't wash this car (carefully).",
+    "translation": "No, I didn't wash this car.",
     "context": "Same scenario. Taroo: Kimi-wa teineini kono kuruma-o arat-ta no?",
     "judgment": "unacceptable",
     "alternatives": [],
@@ -1573,7 +1600,8 @@
         "no"
       ]
     ],
-    "comment": "Accusative -o in place of contrastive -wa: the near-minimal pair of (56b)."
+    "comment": "Accusative -o in place of contrastive -wa: the near-minimal pair of (56b).",
+    "verified": "page-image"
   },
   {
     "id": "funakoshi2016_ex58b2",
@@ -1606,7 +1634,7 @@
         "wash-NEG-PAST"
       ]
     ],
-    "translation": "No, this car, I didn't wash (carefully).",
+    "translation": "No, this car, I didn't wash.",
     "context": "Same scenario. Taroo: Kimi-wa teineini kono kuruma-o arat-ta no?",
     "judgment": "unacceptable",
     "alternatives": [],
@@ -1634,6 +1662,7 @@
         "no"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]

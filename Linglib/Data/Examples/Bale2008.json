@@ -16,7 +16,8 @@
       ["comparison", "indirect"],
       ["entails", "(1b)"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bale2008_1b",
@@ -32,7 +33,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bale2008_2a",
@@ -51,7 +53,8 @@
       ["comparison", "direct"],
       ["entails", "none"]
     ],
-    "comment": "Does not entail (2b): true of a short, very wide Seymour whose height still exceeds his width."
+    "comment": "Does not entail (2b): true of a short, very wide Seymour whose height still exceeds his width.",
+    "verified": "page-image"
   },
   {
     "id": "bale2008_2b",
@@ -67,7 +70,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bale2008_3a",
@@ -90,7 +94,8 @@
       ["comparison", "indirect"],
       ["morpheme", "più"]
     ],
-    "comment": ""
+    "comment": "The paper prints piú; standard Italian più.",
+    "verified": "page-image"
   },
   {
     "id": "bale2008_3b",
@@ -112,7 +117,8 @@
       ["comparison", "direct"],
       ["morpheme", "più"]
     ],
-    "comment": ""
+    "comment": "The paper prints piú; standard Italian più.",
+    "verified": "page-image"
   },
   {
     "id": "bale2008_4a",
@@ -122,7 +128,7 @@
     "primaryText": "Eva ist schöner als Einstein intelligent war.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Eva", "Eva"], ["ist", "is"], ["schön-er", "beautiful-CMPR"], ["als", "than"],
+      ["Eva", "Eva"], ["ist", "is"], ["schöner", "more.beautiful"], ["als", "than"],
       ["Einstein", "Einstein"], ["intelligent", "intelligent"], ["war", "was"]
     ],
     "translation": "Eva is more beautiful than Einstein was intelligent.",
@@ -134,7 +140,8 @@
       ["comparison", "indirect"],
       ["morpheme", "-er"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bale2008_4b",
@@ -144,7 +151,7 @@
     "primaryText": "Die Tür ist höher als sie breit ist.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Die", "the"], ["Tür", "door"], ["ist", "is"], ["höh-er", "high-CMPR"], ["als", "than"],
+      ["Die", "the"], ["Tür", "door"], ["ist", "is"], ["höher", "higher"], ["als", "than"],
       ["sie", "it"], ["breit", "wide"], ["ist", "is"]
     ],
     "translation": "The door is higher than it is wide.",
@@ -156,7 +163,8 @@
       ["comparison", "direct"],
       ["morpheme", "-er"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bale2008_5a",
@@ -179,7 +187,8 @@
       ["comparison", "indirect"],
       ["morpheme", "plus"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bale2008_5b",
@@ -201,7 +210,8 @@
       ["comparison", "direct"],
       ["morpheme", "plus"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bale2008_6a",
@@ -224,7 +234,8 @@
       ["comparison", "indirect"],
       ["morpheme", "mai"]
     ],
-    "comment": ""
+    "comment": "The gloss line prints inteligent.",
+    "verified": "page-image"
   },
   {
     "id": "bale2008_6b",
@@ -246,7 +257,8 @@
       ["comparison", "direct"],
       ["morpheme", "mai"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bale2008_7a",
@@ -264,7 +276,8 @@
     "paperFeatures": [
       ["comparison", "metalinguistic"]
     ],
-    "comment": "Implies that Seymour is tall and wide."
+    "comment": "Implies that Seymour is tall and wide.",
+    "verified": "page-image"
   },
   {
     "id": "bale2008_7b",
@@ -282,7 +295,8 @@
     "paperFeatures": [
       ["comparison", "metalinguistic"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bale2008_7c",
@@ -300,7 +314,8 @@
     "paperFeatures": [
       ["comparison", "deviation"]
     ],
-    "comment": "Implies that Seymour is tall now and was short before."
+    "comment": "Implies that Seymour is tall now and was short before.",
+    "verified": "page-image"
   },
   {
     "id": "bale2008_8a",
@@ -310,7 +325,7 @@
     "primaryText": "Let me tell you how pretty Esme is. She's prettier than Einstein was clever.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "She's prettier than Einstein was clever.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -319,7 +334,8 @@
       ["comparison", "indirect"],
       ["affix", "-er"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bale2008_8c",
@@ -329,7 +345,7 @@
     "primaryText": "Although Seymour was both happy and angry, he was still happier than he was angry.",
     "discourseSegments": [],
     "glossedTokens": [],
-    "translation": "He was still happier than he was angry.",
+    "translation": "",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -338,7 +354,8 @@
       ["comparison", "indirect"],
       ["affix", "-er"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bale2008_8d",
@@ -357,7 +374,8 @@
       ["comparison", "indirect"],
       ["affix", "-er"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bale2008_9",
@@ -375,7 +393,8 @@
     "paperFeatures": [
       ["comparison", "indirect"]
     ],
-    "comment": "Felicitous where Mary is quite stupid: no positive implication."
+    "comment": "Felicitous where Mary is quite stupid: no positive implication.",
+    "verified": "page-image"
   },
   {
     "id": "bale2008_11a",
@@ -387,13 +406,14 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "questionable",
+    "judgment": "marginal",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["comparison", "metalinguistic"]
     ],
-    "comment": "Implies that I am pretty, inconsistent with the continuation."
+    "comment": "Implies that I am pretty, inconsistent with the continuation.",
+    "verified": "page-image"
   },
   {
     "id": "bale2008_11b",
@@ -411,7 +431,8 @@
     "paperFeatures": [
       ["comparison", "indirect"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bale2008_14a",
@@ -429,7 +450,8 @@
     "paperFeatures": [
       ["comparison", "direct"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bale2008_14b",
@@ -447,7 +469,8 @@
     "paperFeatures": [
       ["comparison", "indirect"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bale2008_18a",
@@ -465,7 +488,8 @@
     "paperFeatures": [
       ["comparison", "indirect"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bale2008_18c",
@@ -483,7 +507,8 @@
     "paperFeatures": [
       ["comparison", "indirect"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bale2008_18d",
@@ -501,7 +526,8 @@
     "paperFeatures": [
       ["comparison", "indirect"]
     ],
-    "comment": "Paraphrases (18c): the modified nominals restrict the comparison classes."
+    "comment": "Paraphrases (18c): the modified nominals restrict the comparison classes.",
+    "verified": "page-image"
   },
   {
     "id": "bale2008_19a",
@@ -525,7 +551,8 @@
       ["standardScale", "intelligence"],
       ["truth", "true"]
     ],
-    "comment": "Betty is the second most beautiful of ten, Heather the fifth most intelligent."
+    "comment": "Betty is the second most beautiful of ten, Heather the fifth most intelligent.",
+    "verified": "page-image"
   },
   {
     "id": "bale2008_19b",
@@ -549,7 +576,8 @@
       ["standardScale", "beauty"],
       ["truth", "false"]
     ],
-    "comment": "Betty is the third least intelligent of ten, Evelin the fifth most beautiful."
+    "comment": "Betty is the third least intelligent of ten, Evelin the fifth most beautiful.",
+    "verified": "page-image"
   },
   {
     "id": "bale2008_22a",
@@ -567,7 +595,8 @@
     "paperFeatures": [
       ["comparison", "indirect"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bale2008_22b",
@@ -585,7 +614,8 @@
     "paperFeatures": [
       ["comparison", "indirect"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bale2008_25a",
@@ -603,7 +633,8 @@
     "paperFeatures": [
       ["measurePhrase", "subject"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bale2008_25b",
@@ -621,7 +652,8 @@
     "paperFeatures": [
       ["measurePhrase", "subject"]
     ],
-    "comment": "With plural agreement the phrase refers to actual feet."
+    "comment": "With plural agreement the phrase refers to actual feet.",
+    "verified": "page-image"
   },
   {
     "id": "bale2008_25d",
@@ -633,13 +665,14 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["measurePhrase", "subject"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bale2008_26a",
@@ -655,14 +688,15 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "Accepted for heights reported as six feet two inches even if they differ by an eighth of an inch."
+    "comment": "Accepted for heights reported as six feet two inches even if they differ by an eighth of an inch.",
+    "verified": "page-image"
   },
   {
     "id": "bale2008_30a",
     "source": {"bibkey": "bale-2008", "paperLabel": "(30a)"},
     "reportedIn": null,
     "language": "stan1293",
-    "primaryText": "Six feet and four inches is quite tall.",
+    "primaryText": "...I thought Seymour was six feet and five inches tall, but it turns out that he is only six feet and four inches. Still, six feet and four inches is quite tall.",
     "discourseSegments": [],
     "glossedTokens": [],
     "translation": "",
@@ -673,7 +707,8 @@
     "paperFeatures": [
       ["measurePhrase", "subject"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bale2008_31a",
@@ -697,7 +732,8 @@
       ["standardScale", "width"],
       ["truth", "true"]
     ],
-    "comment": "Seymour is five feet two inches tall and three feet wide, measurements to eighty inches."
+    "comment": "Seymour is five feet two inches tall and three feet wide, measurements to eighty inches.",
+    "verified": "page-image"
   },
   {
     "id": "bale2008_31b",
@@ -721,7 +757,8 @@
       ["standardScale", "height"],
       ["truth", "false"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bale2008_34",
@@ -739,7 +776,8 @@
     "paperFeatures": [
       ["comparison", "direct"]
     ],
-    "comment": "True whenever the measurement of his height exceeds that of his width, even for a man shorter and wider than most."
+    "comment": "True whenever the measurement of his height exceeds that of his width, even for a man shorter and wider than most.",
+    "verified": "page-image"
   },
   {
     "id": "bale2008_35",
@@ -763,7 +801,8 @@
       ["standardScale", "width"],
       ["truth", "false"]
     ],
-    "comment": "Seymour, five feet tall and three feet wide, is the shortest of the men and as wide as the widest."
+    "comment": "Seymour, five feet tall and three feet wide, is the shortest of the men and as wide as the widest.",
+    "verified": "page-image"
   },
   {
     "id": "bale2008_37",
@@ -787,7 +826,8 @@
       ["standardScale", "width"],
       ["truth", "false"]
     ],
-    "comment": "The modified nominal restricts both comparison classes to men."
+    "comment": "The modified nominal restricts both comparison classes to men.",
+    "verified": "page-image"
   },
   {
     "id": "bale2008_38a",
@@ -803,7 +843,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "True of a Seymour five feet tall and four feet wide."
+    "comment": "True of a Seymour five feet tall and four feet wide.",
+    "verified": "page-image"
   },
   {
     "id": "bale2008_38b",
@@ -821,7 +862,8 @@
     "paperFeatures": [
       ["comparison", "direct"]
     ],
-    "comment": "Judged false of the same Seymour without contextual priming; an indirect reading is possible but dispreferred."
+    "comment": "Judged false of the same Seymour without contextual priming; an indirect reading is possible but dispreferred.",
+    "verified": "page-image"
   },
   {
     "id": "bale2008_39",
@@ -837,7 +879,8 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [],
-    "comment": "True of the same Seymour."
+    "comment": "True of the same Seymour.",
+    "verified": "page-image"
   },
   {
     "id": "bale2008_40",
@@ -855,7 +898,8 @@
     "paperFeatures": [
       ["comparison", "indirect"]
     ],
-    "comment": "Not true of the same Seymour."
+    "comment": "Not true of the same Seymour.",
+    "verified": "page-image"
   },
   {
     "id": "bale2008_41a",
@@ -867,13 +911,14 @@
     "glossedTokens": [],
     "translation": "",
     "context": "",
-    "judgment": "marginal",
+    "judgment": "acceptable",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["comparison", "indirect"]
     ],
-    "comment": "Awkward out of the blue: no salient comparison class."
+    "comment": "Printed unmarked; the prose says it \"seems a little awkward\" out of the blue: no salient comparison class.",
+    "verified": "page-image"
   },
   {
     "id": "bale2008_41b",
@@ -891,7 +936,8 @@
     "paperFeatures": [
       ["comparison", "direct"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bale2008_42a",
@@ -909,7 +955,8 @@
     "paperFeatures": [
       ["comparison", "indirect"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "bale2008_42b",
@@ -927,6 +974,7 @@
     "paperFeatures": [
       ["comparison", "indirect"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]

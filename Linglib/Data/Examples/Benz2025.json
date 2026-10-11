@@ -20,7 +20,8 @@
       ["plural", "no"],
       ["cp_complement", "no"]
     ],
-    "comment": "The Event member of the three-way ambiguity; the duration predicate diagnoses the complex event reading."
+    "comment": "The Event member of the three-way ambiguity; the duration predicate diagnoses the complex event reading.",
+    "verified": "page-image"
   },
   {
     "id": "benz2025_ex32b",
@@ -48,7 +49,8 @@
       ["plural", "yes"],
       ["cp_complement", "no"]
     ],
-    "comment": "The RN member; in this context the pluralized nominalization can refer to concrete objects, to results, or in principle to contents."
+    "comment": "The RN member; in this context the pluralized nominalization can refer to concrete objects, to results, or in principle to contents.",
+    "verified": "page-image"
   },
   {
     "id": "benz2025_ex32c",
@@ -72,7 +74,8 @@
       ["plural", "no"],
       ["cp_complement", "yes"]
     ],
-    "comment": "The Content member; the CP complement specifies the content the noun refers to."
+    "comment": "The Content member; the CP complement specifies the content the noun refers to.",
+    "verified": "page-image"
   },
   {
     "id": "benz2025_ex89a",
@@ -94,7 +97,8 @@
       ["m_predicate", "hämmern"],
       ["r_predicate", "platt"]
     ],
-    "comment": "V2 order with the RSP in clause-final base position."
+    "comment": "V2 order with the RSP in clause-final base position.",
+    "verified": "page-image"
   },
   {
     "id": "benz2025_ex89b",
@@ -116,7 +120,8 @@
       ["m_predicate", "schießen"],
       ["r_predicate", "tot"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "benz2025_ex115a",
@@ -139,7 +144,8 @@
       ["m_predicate", "brechen"],
       ["r_predicate", "kaputt"]
     ],
-    "comment": "An RSP is in fact obligatory on most uses of brechen ((116))."
+    "comment": "An RSP is in fact obligatory on most uses of brechen ((116)).",
+    "verified": "page-image"
   },
   {
     "id": "benz2025_ex115e",
@@ -161,7 +167,8 @@
       ["m_predicate", "frieren"],
       ["r_predicate", "fest"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "benz2025_ex115f",
@@ -184,7 +191,8 @@
       ["m_predicate", "schämen"],
       ["r_predicate", "krank/tot"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "benz2025_ex87ab",
@@ -211,7 +219,8 @@
       ["outer", "rsp"],
       ["inner", "pfx"]
     ],
-    "comment": "The ge- of the grammatical form is participial, not a prefix in the relevant sense."
+    "comment": "The ge- of the grammatical form is participial, not a prefix in the relevant sense.",
+    "verified": "page-image"
   },
   {
     "id": "benz2025_ex87cd",
@@ -238,7 +247,8 @@
       ["outer", "rsp"],
       ["inner", "pfx"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "benz2025_ex87ef",
@@ -265,7 +275,8 @@
       ["outer", "rsp"],
       ["inner", "pfx"]
     ],
-    "comment": "Same grammatical baseline as (115a)."
+    "comment": "Same grammatical baseline as (115a).",
+    "verified": "page-image"
   },
   {
     "id": "benz2025_ex88ab",
@@ -291,7 +302,8 @@
       ["outer", "rsp"],
       ["inner", "prt"]
     ],
-    "comment": "The starred form is grammatical only under an adverbial reading of trocken, not the intended resultative one."
+    "comment": "The starred form is grammatical only under an adverbial reading of trocken, not the intended resultative one.",
+    "verified": "page-image"
   },
   {
     "id": "benz2025_ex88cd",
@@ -317,7 +329,8 @@
       ["outer", "rsp"],
       ["inner", "prt"]
     ],
-    "comment": "an- is not characterizable as a resultative particle, yet still blocks the RSP."
+    "comment": "an- is less clearly a resultative particle than ab-, yet still blocks the RSP.",
+    "verified": "page-image"
   },
   {
     "id": "benz2025_ex81a",
@@ -335,7 +348,8 @@
       ["outer", "pfx"],
       ["inner", "pfx"]
     ],
-    "comment": "Two inseparable prefixes; cf. ver-trauen 'trust'."
+    "comment": "Two inseparable prefixes; cf. ver-trauen 'trust'.",
+    "verified": "page-image"
   },
   {
     "id": "benz2025_ex82a",
@@ -353,7 +367,8 @@
       ["outer", "prt"],
       ["inner", "prt"]
     ],
-    "comment": "Two separable particles, the outer one nominal; cf. rad-fahren 'ride a bike', ein-fahren 'drive in'."
+    "comment": "Two separable particles, the outer one nominal; cf. rad-fahren 'ride a bike', ein-fahren 'drive in'.",
+    "verified": "page-image"
   },
   {
     "id": "benz2025_ex83a",
@@ -371,7 +386,8 @@
       ["outer", "pfx"],
       ["inner", "prt"]
     ],
-    "comment": "A prefix outside a particle; cf. ab-schneiden 'cut off'."
+    "comment": "A prefix outside a particle; cf. ab-schneiden 'cut off'.",
+    "verified": "page-image"
   },
   {
     "id": "benz2025_ex84a",
@@ -389,7 +405,8 @@
       ["outer", "prt"],
       ["inner", "pfx"]
     ],
-    "comment": "A particle outside a prefix, the one attested order; cf. er-wählen 'pick'."
+    "comment": "A particle outside a prefix, the one attested order; cf. er-wählen 'pick'.",
+    "verified": "page-image"
   },
   {
     "id": "benz2025_ex86b",
@@ -410,7 +427,8 @@
       ["outer", "rsp"],
       ["inner", "rsp"]
     ],
-    "comment": "Two resultative secondary predicates."
+    "comment": "Two resultative secondary predicates.",
+    "verified": "page-image"
   },
   {
     "id": "benz2025_ex193a",
@@ -429,7 +447,8 @@
       ["element", "pfx"],
       ["verb", "verkaufen"]
     ],
-    "comment": "A prefix in a nominalized infinitive."
+    "comment": "A prefix in a nominalized infinitive.",
+    "verified": "page-image"
   },
   {
     "id": "benz2025_ex193b",
@@ -448,7 +467,8 @@
       ["element", "prt"],
       ["verb", "einführen"]
     ],
-    "comment": "A particle in a nominalized infinitive."
+    "comment": "A particle in a nominalized infinitive.",
+    "verified": "page-image"
   },
   {
     "id": "benz2025_ex193c",
@@ -467,7 +487,8 @@
       ["element", "rsp"],
       ["verb", "küssen"]
     ],
-    "comment": "A resultative in a nominalized infinitive."
+    "comment": "A resultative in a nominalized infinitive.",
+    "verified": "page-image"
   },
   {
     "id": "benz2025_ex197a",
@@ -486,7 +507,8 @@
       ["element", "prt"],
       ["verb", "einführen"]
     ],
-    "comment": "-ung from a particle verb with complex change-of-state structure."
+    "comment": "-ung from a particle verb with complex change-of-state structure.",
+    "verified": "page-image"
   },
   {
     "id": "benz2025_ex198c",
@@ -505,7 +527,8 @@
       ["element", "pfx"],
       ["verb", "bemalen"]
     ],
-    "comment": "-ung from the prefixed change-of-state verb."
+    "comment": "-ung from the prefixed change-of-state verb.",
+    "verified": "page-image"
   },
   {
     "id": "benz2025_ex198c_base",
@@ -524,7 +547,8 @@
       ["element", "none"],
       ["verb", "malen"]
     ],
-    "comment": "-ung from the simplex activity verb."
+    "comment": "-ung from the simplex activity verb.",
+    "verified": "page-image"
   },
   {
     "id": "benz2025_ex204a",
@@ -543,7 +567,8 @@
       ["element", "rsp"],
       ["verb", "hämmern"]
     ],
-    "comment": "A resultative inside -ung."
+    "comment": "A resultative inside -ung.",
+    "verified": "page-image"
   },
   {
     "id": "benz2025_ex204c",
@@ -562,7 +587,8 @@
       ["element", "rsp"],
       ["verb", "küssen"]
     ],
-    "comment": "A resultative inside -ung."
+    "comment": "A resultative inside -ung.",
+    "verified": "page-image"
   },
   {
     "id": "benz2025_ex212a",
@@ -581,7 +607,8 @@
       ["element", "prt"],
       ["verb", "rennen"]
     ],
-    "comment": "A particle outside Ge-…-e, in the order PRT-Ge-verb-e."
+    "comment": "A particle outside Ge-…-e, in the order PRT-Ge-verb-e.",
+    "verified": "page-image"
   },
   {
     "id": "benz2025_ex216a",
@@ -600,7 +627,8 @@
       ["element", "rsp"],
       ["verb", "küssen"]
     ],
-    "comment": "A resultative outside Ge-…-e; the base is not obligatorily transitive."
+    "comment": "A resultative outside Ge-…-e; the base is not obligatorily transitive.",
+    "verified": "page-image"
   },
   {
     "id": "benz2025_ex216b",
@@ -619,7 +647,8 @@
       ["element", "rsp"],
       ["verb", "hämmern"]
     ],
-    "comment": "A resultative outside Ge-…-e."
+    "comment": "A resultative outside Ge-…-e.",
+    "verified": "page-image"
   },
   {
     "id": "benz2025_ex218c",
@@ -638,6 +667,7 @@
       ["element", "pfx"],
       ["verb", "bemalen"]
     ],
-    "comment": "A prefixed verb under Ge-…-e, in either affix order (*Be-ge-mal-e)."
+    "comment": "A prefixed verb under Ge-…-e, in either affix order (*Be-ge-mal-e).",
+    "verified": "page-image"
   }
 ]

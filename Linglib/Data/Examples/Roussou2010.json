@@ -12,7 +12,8 @@
       ["verb", "ksero"],
       ["complementizer", "oti"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "roussou2010_ex1a-an",
@@ -27,7 +28,8 @@
       ["verb", "ksero"],
       ["complementizer", "an"]
     ],
-    "comment": "The polar complementizer has no binder."
+    "comment": "The polar complementizer has no binder.",
+    "verified": "page-image"
   },
   {
     "id": "roussou2010_ex1b",
@@ -42,7 +44,8 @@
       ["verb", "anarotjeme"],
       ["complementizer", "an"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "roussou2010_ex1b-oti",
@@ -57,7 +60,8 @@
       ["verb", "anarotjeme"],
       ["complementizer", "oti"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "roussou2010_ex1c",
@@ -65,14 +69,15 @@
     "language": "mode1248",
     "primaryText": "Xerome pu o Janis elise to provlima.",
     "glossedTokens": [],
-    "translation": "I am glad that John solved the problem.",
+    "translation": "I'm glad that John solved the problem.",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
       ["verb", "xerome"],
       ["complementizer", "pu"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "roussou2010_ex1c-oti",
@@ -80,14 +85,15 @@
     "language": "mode1248",
     "primaryText": "Xerome oti o Janis elise to provlima.",
     "glossedTokens": [],
-    "translation": "I am glad that John solved the problem.",
+    "translation": "I'm glad that John solved the problem.",
     "context": "",
     "judgment": "ungrammatical",
     "paperFeatures": [
       ["verb", "xerome"],
       ["complementizer", "oti"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "roussou2010_ex1d",
@@ -102,7 +108,8 @@
       ["verb", "thelo"],
       ["complementizer", "na"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "roussou2010_ex1d-oti",
@@ -117,7 +124,8 @@
       ["verb", "thelo"],
       ["complementizer", "oti"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "roussou2010_ex2a",
@@ -132,7 +140,8 @@
       ["verb", "ksero"],
       ["complementizer", "na"]
     ],
-    "comment": "Dynamic modal reading with control."
+    "comment": "Dynamic modal reading with control.",
+    "verified": "page-image"
   },
   {
     "id": "roussou2010_ex2b-an",
@@ -140,7 +149,7 @@
     "language": "mode1248",
     "primaryText": "Dhen ksero an elise to provlima.",
     "glossedTokens": [],
-    "translation": "I do not know if he solved the problem.",
+    "translation": "I don't know if he solved the problem.",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -148,7 +157,8 @@
       ["complementizer", "an"],
       ["negation", "yes"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "roussou2010_ex2b-oti",
@@ -156,7 +166,7 @@
     "language": "mode1248",
     "primaryText": "Dhen ksero oti elise to provlima.",
     "glossedTokens": [],
-    "translation": "I do not know that he solved the problem.",
+    "translation": "I don't know that he solved the problem.",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -164,7 +174,8 @@
       ["complementizer", "oti"],
       ["negation", "yes"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "roussou2010_ex2c-an",
@@ -180,7 +191,8 @@
       ["complementizer", "an"],
       ["question", "yes"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "roussou2010_ex2c-oti",
@@ -196,7 +208,8 @@
       ["complementizer", "oti"],
       ["question", "yes"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "roussou2010_ex3a-oti",
@@ -211,7 +224,8 @@
       ["verb", "pistevo"],
       ["complementizer", "oti"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "roussou2010_ex3a-na",
@@ -226,7 +240,8 @@
       ["verb", "pistevo"],
       ["complementizer", "na"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "roussou2010_ex3b-oti",
@@ -242,7 +257,8 @@
       ["complementizer", "oti"],
       ["tense", "past"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "roussou2010_ex3b-na",
@@ -258,7 +274,8 @@
       ["complementizer", "na"],
       ["tense", "past"]
     ],
-    "comment": "Past tense on the epistemic verb blocks na."
+    "comment": "Past tense on the epistemic verb blocks na.",
+    "verified": "page-image"
   },
   {
     "id": "roussou2010_ex16a",
@@ -266,7 +283,7 @@
     "language": "mode1248",
     "primaryText": "O Janis dhen pistevi oti i Maria efije.",
     "glossedTokens": [],
-    "translation": "John does not believe that Mary left.",
+    "translation": "John doesn't believe that Mary left.",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -274,7 +291,8 @@
       ["complementizer", "oti"],
       ["negation", "yes"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "roussou2010_ex17-oti",
@@ -289,7 +307,8 @@
       ["verb", "thimame"],
       ["complementizer", "oti"]
     ],
-    "comment": "Weak, deniable presupposition."
+    "comment": "Weak, deniable presupposition.",
+    "verified": "page-image"
   },
   {
     "id": "roussou2010_ex17-pu",
@@ -304,7 +323,8 @@
       ["verb", "thimameStat"],
       ["complementizer", "pu"]
     ],
-    "comment": "Strong presupposition: the content cannot be denied."
+    "comment": "Strong presupposition: the content cannot be denied.",
+    "verified": "page-image"
   },
   {
     "id": "roussou2010_ex19a",
@@ -320,23 +340,8 @@
       ["complementizer", "oti"],
       ["tense", "past"]
     ],
-    "comment": ""
-  },
-  {
-    "id": "roussou2010_ex19a-pu",
-    "source": {"bibkey": "roussou-2010", "paperLabel": "(19a-pu)"},
-    "language": "mode1248",
-    "primaryText": "O Janis paradextike pu eklepse ta lefta.",
-    "glossedTokens": [],
-    "translation": "John admitted that he had stolen the money.",
-    "context": "",
-    "judgment": "ungrammatical",
-    "paperFeatures": [
-      ["verb", "paradhexome"],
-      ["complementizer", "pu"],
-      ["tense", "past"]
-    ],
-    "comment": "A factive non-emotive predicate does not take pu."
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "roussou2010_ex20a",
@@ -344,14 +349,15 @@
     "language": "mode1248",
     "primaryText": "O Janis xerete pu efijes.",
     "glossedTokens": [],
-    "translation": "John is glad that you left.",
+    "translation": "John is glad that you came.",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
       ["verb", "xerome"],
       ["complementizer", "pu"]
     ],
-    "comment": ""
+    "comment": "The gloss line prints left-2s.",
+    "verified": "page-image"
   },
   {
     "id": "roussou2010_ex20a-oti",
@@ -359,14 +365,15 @@
     "language": "mode1248",
     "primaryText": "O Janis xerete oti efijes.",
     "glossedTokens": [],
-    "translation": "John is glad that you left.",
+    "translation": "John is glad that you came.",
     "context": "",
     "judgment": "ungrammatical",
     "paperFeatures": [
       ["verb", "xerome"],
       ["complementizer", "oti"]
     ],
-    "comment": ""
+    "comment": "The gloss line prints left-2s.",
+    "verified": "page-image"
   },
   {
     "id": "roussou2010_ex20b-pu",
@@ -381,7 +388,8 @@
       ["verb", "anisixo"],
       ["complementizer", "pu"]
     ],
-    "comment": "Factive reading."
+    "comment": "Factive reading.",
+    "verified": "page-image"
   },
   {
     "id": "roussou2010_ex20b-oti",
@@ -396,7 +404,8 @@
       ["verb", "anisixo"],
       ["complementizer", "oti"]
     ],
-    "comment": "Non-factive reading."
+    "comment": "Non-factive reading.",
+    "verified": "page-image"
   },
   {
     "id": "roussou2010_ex22a",
@@ -414,7 +423,8 @@
       ["focus", "yes"],
       ["tense", "past"]
     ],
-    "comment": "Focus on the past-tense matrix verb licenses pu."
+    "comment": "Focus on the past-tense matrix verb licenses pu.",
+    "verified": "page-image"
   },
   {
     "id": "roussou2010_ex23c",
@@ -422,7 +432,7 @@
     "language": "mode1248",
     "primaryText": "Dhen nomizo na efije noris.",
     "glossedTokens": [],
-    "translation": "I do not think that he left early.",
+    "translation": "I don't think that he left early.",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -430,7 +440,8 @@
       ["complementizer", "na"],
       ["negation", "yes"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "roussou2010_ex23c-star",
@@ -445,7 +456,8 @@
       ["verb", "nomizo"],
       ["complementizer", "na"]
     ],
-    "comment": "The na-complement of nomizo needs matrix negation or question."
+    "comment": "The na-complement of nomizo needs matrix negation or question.",
+    "verified": "page-image"
   },
   {
     "id": "roussou2010_ex23d",
@@ -461,7 +473,8 @@
       ["complementizer", "na"],
       ["tense", "past"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "roussou2010_ex25a",
@@ -469,14 +482,15 @@
     "language": "mode1248",
     "primaryText": "O Janis kseri oti tha fiji.",
     "glossedTokens": [],
-    "translation": "John knows that he will leave.",
+    "translation": "John knows that he'll leave.",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
       ["verb", "ksero"],
       ["complementizer", "oti"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "roussou2010_ex25b",
@@ -491,7 +505,8 @@
       ["verb", "ksero"],
       ["complementizer", "na"]
     ],
-    "comment": "Control and a dynamic modal reading."
+    "comment": "Control and a dynamic modal reading. The paper prints O Jani kseri/iksere na dhjiavazi; its other examples print Janis and dhjavaz-.",
+    "verified": "page-image"
   },
   {
     "id": "roussou2010_ex26a",
@@ -507,7 +522,8 @@
       ["complementizer", "na"],
       ["tense", "past"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "roussou2010_ex26a-star",
@@ -524,7 +540,8 @@
       ["tense", "past"],
       ["embeddedTense", "past"]
     ],
-    "comment": "The control complement of a verb of knowing must be present tense."
+    "comment": "The control complement of a verb of knowing must be present tense.",
+    "verified": "page-image"
   },
   {
     "id": "roussou2010_ex34",
@@ -532,7 +549,7 @@
     "language": "mode1248",
     "primaryText": "O Janis dhen kseri an perase tis eksetasis.",
     "glossedTokens": [],
-    "translation": "John does not know if he passed the exams.",
+    "translation": "John doesn't know if he passed the exams.",
     "context": "",
     "judgment": "acceptable",
     "paperFeatures": [
@@ -540,7 +557,8 @@
       ["complementizer", "an"],
       ["negation", "yes"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "roussou2010_ex34-star",
@@ -555,6 +573,7 @@
       ["verb", "ksero"],
       ["complementizer", "an"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]

@@ -45,7 +45,8 @@
     "reportedIn": {
       "bibkey": "halpert-hammerly-2026",
       "paperLabel": "(8a)"
-    }
+    },
+    "verified": "page-image"
   },
   {
     "id": "halperthammerly2026_ex8b",
@@ -93,7 +94,8 @@
     "reportedIn": {
       "bibkey": "halpert-hammerly-2026",
       "paperLabel": "(8b)"
-    }
+    },
+    "verified": "page-image"
   },
   {
     "id": "halperthammerly2026_ex8c",
@@ -145,7 +147,8 @@
     "reportedIn": {
       "bibkey": "halpert-hammerly-2026",
       "paperLabel": "(8c)"
-    }
+    },
+    "verified": "page-image"
   },
   {
     "id": "halperthammerly2026_ex9a",
@@ -189,7 +192,8 @@
     "reportedIn": {
       "bibkey": "halpert-hammerly-2026",
       "paperLabel": "(9a)"
-    }
+    },
+    "verified": "page-image"
   },
   {
     "id": "halperthammerly2026_ex9b",
@@ -233,7 +237,8 @@
     "reportedIn": {
       "bibkey": "halpert-hammerly-2026",
       "paperLabel": "(9b)"
-    }
+    },
+    "verified": "page-image"
   },
   {
     "id": "halperthammerly2026_ex10a",
@@ -273,7 +278,8 @@
         "1"
       ]
     ],
-    "comment": "A first-person singular relative-clause subject takes class 1 subject marking."
+    "comment": "A first-person singular relative-clause subject takes class 1 subject marking.",
+    "verified": "page-image"
   },
   {
     "id": "halperthammerly2026_ex10b",
@@ -313,7 +319,8 @@
         "2"
       ]
     ],
-    "comment": "A second-person plural subject of an adjectival predicate takes class 2 marking."
+    "comment": "A second-person plural subject of an adjectival predicate takes class 2 marking.",
+    "verified": "page-image"
   },
   {
     "id": "halperthammerly2026_ex11a",
@@ -361,7 +368,8 @@
     "reportedIn": {
       "bibkey": "halpert-hammerly-2026",
       "paperLabel": "(11a)"
-    }
+    },
+    "verified": "page-image"
   },
   {
     "id": "halperthammerly2026_ex11b",
@@ -384,7 +392,7 @@
     ],
     "translation": "The last initiate did not cry.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -409,7 +417,8 @@
     "reportedIn": {
       "bibkey": "halpert-hammerly-2026",
       "paperLabel": "(11b)"
-    }
+    },
+    "verified": "page-image"
   },
   {
     "id": "halperthammerly2026_ex12a",
@@ -461,7 +470,8 @@
     "reportedIn": {
       "bibkey": "halpert-hammerly-2026",
       "paperLabel": "(12a)"
-    }
+    },
+    "verified": "page-image"
   },
   {
     "id": "halperthammerly2026_ex12b",
@@ -509,7 +519,8 @@
     "reportedIn": {
       "bibkey": "halpert-hammerly-2026",
       "paperLabel": "(12b)"
-    }
+    },
+    "verified": "page-image"
   },
   {
     "id": "halperthammerly2026_ex13a",
@@ -561,7 +572,8 @@
     "reportedIn": {
       "bibkey": "halpert-hammerly-2026",
       "paperLabel": "(13a)"
-    }
+    },
+    "verified": "page-image"
   },
   {
     "id": "halperthammerly2026_ex13b",
@@ -613,7 +625,8 @@
     "reportedIn": {
       "bibkey": "halpert-hammerly-2026",
       "paperLabel": "(13b)"
-    }
+    },
+    "verified": "page-image"
   },
   {
     "id": "halperthammerly2026_ex14a",
@@ -657,7 +670,8 @@
     "reportedIn": {
       "bibkey": "halpert-hammerly-2026",
       "paperLabel": "(14a)"
-    }
+    },
+    "verified": "page-image"
   },
   {
     "id": "halperthammerly2026_ex14b",
@@ -666,21 +680,21 @@
       "paperLabel": "p. 182"
     },
     "language": "nyat1246",
-    "primaryText": "N-a-kI-onaa kItabu",
+    "primaryText": "N-a-kɪ-onaa kɪtabu",
     "discourseSegments": [],
     "glossedTokens": [
       [
-        "N-a-kI-onaa",
+        "N-a-kɪ-onaa",
         "1SM-PAST1-7OM-see"
       ],
       [
-        "kItabu",
+        "kɪtabu",
         "7book"
       ]
     ],
     "translation": "I saw the book.",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -701,7 +715,8 @@
     "reportedIn": {
       "bibkey": "halpert-hammerly-2026",
       "paperLabel": "(14b)"
-    }
+    },
+    "verified": "page-image"
   },
   {
     "id": "halperthammerly2026_ex15",
@@ -753,7 +768,8 @@
     "reportedIn": {
       "bibkey": "halpert-hammerly-2026",
       "paperLabel": "(15)"
-    }
+    },
+    "verified": "page-image"
   },
   {
     "id": "halperthammerly2026_ex16",
@@ -788,7 +804,7 @@
     "alternatives": [
       {
         "form": "U-m-Xhosa no-m-Zulu a-sebenza ndawonye.",
-        "judgment": "unacceptable"
+        "judgment": "ungrammatical"
       }
     ],
     "readings": [],
@@ -814,7 +830,8 @@
     "reportedIn": {
       "bibkey": "halpert-hammerly-2026",
       "paperLabel": "(16)"
-    }
+    },
+    "verified": "page-image"
   },
   {
     "id": "halperthammerly2026_ex17",
@@ -849,7 +866,7 @@
     "alternatives": [
       {
         "form": "I-li-tye ne-qanda a-khataza i-n-taka",
-        "judgment": "unacceptable"
+        "judgment": "ungrammatical"
       }
     ],
     "readings": [],
@@ -875,7 +892,8 @@
     "reportedIn": {
       "bibkey": "halpert-hammerly-2026",
       "paperLabel": "(17)"
-    }
+    },
+    "verified": "page-image"
   },
   {
     "id": "halperthammerly2026_ex20a",
@@ -915,7 +933,8 @@
     "reportedIn": {
       "bibkey": "halpert-hammerly-2026",
       "paperLabel": "(20a)"
-    }
+    },
+    "verified": "page-image"
   },
   {
     "id": "halperthammerly2026_ex20b",
@@ -955,7 +974,8 @@
     "reportedIn": {
       "bibkey": "halpert-hammerly-2026",
       "paperLabel": "(20b)"
-    }
+    },
+    "verified": "page-image"
   },
   {
     "id": "halperthammerly2026_ex21a",
@@ -999,7 +1019,8 @@
     "reportedIn": {
       "bibkey": "halpert-hammerly-2026",
       "paperLabel": "(21a)"
-    }
+    },
+    "verified": "page-image"
   },
   {
     "id": "halperthammerly2026_ex21b",
@@ -1043,7 +1064,8 @@
     "reportedIn": {
       "bibkey": "halpert-hammerly-2026",
       "paperLabel": "(21b)"
-    }
+    },
+    "verified": "page-image"
   },
   {
     "id": "halperthammerly2026_ex23",
@@ -1087,7 +1109,8 @@
     "reportedIn": {
       "bibkey": "halpert-hammerly-2026",
       "paperLabel": "(23)"
-    }
+    },
+    "verified": "page-image"
   },
   {
     "id": "halperthammerly2026_ex24a",
@@ -1127,7 +1150,8 @@
     "reportedIn": {
       "bibkey": "halpert-hammerly-2026",
       "paperLabel": "(24a)"
-    }
+    },
+    "verified": "page-image"
   },
   {
     "id": "halperthammerly2026_ex24b",
@@ -1167,7 +1191,8 @@
     "reportedIn": {
       "bibkey": "halpert-hammerly-2026",
       "paperLabel": "(24b)"
-    }
+    },
+    "verified": "page-image"
   },
   {
     "id": "halperthammerly2026_ex27a",
@@ -1211,7 +1236,8 @@
     "reportedIn": {
       "bibkey": "halpert-hammerly-2026",
       "paperLabel": "(27a)"
-    }
+    },
+    "verified": "page-image"
   },
   {
     "id": "halperthammerly2026_ex27b",
@@ -1255,7 +1281,8 @@
     "reportedIn": {
       "bibkey": "halpert-hammerly-2026",
       "paperLabel": "(27b)"
-    }
+    },
+    "verified": "page-image"
   },
   {
     "id": "halperthammerly2026_ex27c",
@@ -1299,7 +1326,8 @@
     "reportedIn": {
       "bibkey": "halpert-hammerly-2026",
       "paperLabel": "(27c)"
-    }
+    },
+    "verified": "page-image"
   },
   {
     "id": "halperthammerly2026_exfn14i",
@@ -1339,6 +1367,7 @@
     "reportedIn": {
       "bibkey": "halpert-hammerly-2026",
       "paperLabel": "(fn. 14 (i))"
-    }
+    },
+    "verified": "page-image"
   }
 ]

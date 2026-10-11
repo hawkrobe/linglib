@@ -1,7 +1,7 @@
 [
   {
     "id": "hyman2003_2a_cr",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(2a)"},
+    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(2b)"},
     "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(2a)"},
     "language": "nyan1308",
     "primaryText": "mang-its-an-",
@@ -19,11 +19,12 @@
       ["scope", "CR"],
       ["suffixes", "CR"]
     ],
-    "comment": "Reciprocalized causative: the reciprocal has scope over the causative, and the suffix order -its-an- is both compositional and templatic. Hyman credits the data to Hyman & Mchombo 1992."
+    "comment": "Reciprocalized causative: the reciprocal has scope over the causative, and the suffix order -its-an- is both compositional and templatic. Hyman credits the data to Hyman & Mchombo 1992. Hyman & Mchombo 1992 number this form (2b); Hyman numbers it (2a).",
+    "verified": "page-image"
   },
   {
     "id": "hyman2003_2a_rc",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(2a)"},
+    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(35a)"},
     "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(2a)"},
     "language": "nyan1308",
     "primaryText": "mang-its-an-",
@@ -41,11 +42,12 @@
       ["scope", "RC"],
       ["suffixes", "CR"]
     ],
-    "comment": "The templatic order -its-an- also carries the causativized-reciprocal reading, Hyman's asymmetric compositionality."
+    "comment": "The templatic order -its-an- also carries the causativized-reciprocal reading, Hyman's asymmetric compositionality. Hyman & Mchombo 1992 give both readings of mang-its-an- in (35a).",
+    "verified": "page-image"
   },
   {
     "id": "hyman2003_2b_rc",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(2b)"},
+    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(2a)"},
     "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(2b)"},
     "language": "nyan1308",
     "primaryText": "mang-an-its-",
@@ -63,11 +65,12 @@
       ["scope", "RC"],
       ["suffixes", "RC"]
     ],
-    "comment": "Causativized reciprocal: the mirror order -an-its- with the compositional reading."
+    "comment": "Causativized reciprocal: the mirror order -an-its- with the compositional reading. Hyman & Mchombo 1992 number this form (2a); Hyman numbers it (2b).",
+    "verified": "page-image"
   },
   {
     "id": "hyman2003_2b_cr",
-    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(2b)"},
+    "source": {"bibkey": "hyman-mchombo-1992", "paperLabel": "(35b)"},
     "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(2b)"},
     "language": "nyan1308",
     "primaryText": "mang-an-its-",
@@ -77,7 +80,7 @@
     ],
     "translation": "cause each other to tie",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -85,7 +88,8 @@
       ["scope", "CR"],
       ["suffixes", "RC"]
     ],
-    "comment": "The mirror order -an-its- has only the compositional reading: it cannot mean 'cause each other to tie'."
+    "comment": "The mirror order -an-its- has only the compositional reading: it cannot mean 'cause each other to tie'. Hyman & Mchombo 1992 (35b) star the reading: (*'cause each other to tie').",
+    "verified": "page-image"
   },
   {
     "id": "hyman2003_3a",
@@ -107,7 +111,8 @@
       ["scope", "CA"],
       ["suffixes", "CA"]
     ],
-    "comment": "Applicativized causative: the instrument goes with the causation, so -its-il- is compositional."
+    "comment": "Applicativized causative: the instrument goes with the causation, so -its-il- is compositional.",
+    "verified": "page-image"
   },
   {
     "id": "hyman2003_3b",
@@ -129,7 +134,8 @@
       ["scope", "AC"],
       ["suffixes", "CA"]
     ],
-    "comment": "Causativized applicative: the instrument goes with the stirring, yet the order is still -its-il-; the only possible sequence in Chichewa."
+    "comment": "Causativized applicative: the instrument goes with the stirring, yet the order is still -its-il-; the only possible sequence in Chichewa.",
+    "verified": "page-image"
   },
   {
     "id": "hyman2003_7b",
@@ -151,7 +157,8 @@
       ["scope", "AC"],
       ["suffixes", "AC"]
     ],
-    "comment": "The mirror order -il-its- for a causativized applicative loses to the template in tableau (7b)."
+    "comment": "The mirror order -il-its- for a causativized applicative loses to the template in tableau (7b).",
+    "verified": "page-image"
   },
   {
     "id": "hyman2003_8",
@@ -173,7 +180,8 @@
       ["scope", "RAC"],
       ["suffixes", "CAR"]
     ],
-    "comment": "The templatic order realizes a reciprocal inside an applicative inside a causative, with the causative two slots out of its compositional place."
+    "comment": "The templatic order realizes a reciprocal inside an applicative inside a causative, with the causative two slots out of its compositional place.",
+    "verified": "page-image"
   },
   {
     "id": "hyman2003_8_star",
@@ -195,7 +203,8 @@
       ["scope", "RAC"],
       ["suffixes", "RAC"]
     ],
-    "comment": "The compositional order predicted by the Mirror Principle is ungrammatical."
+    "comment": "The compositional order predicted by the Mirror Principle is ungrammatical. The diagram in (8) prints *mang-an-ir-its-; the prose prints *mang-an-il-its-.",
+    "verified": "page-image"
   },
   {
     "id": "hyman2003_13a",
@@ -207,7 +216,7 @@
     "glossedTokens": [
       ["mang-il-an-", "tie-APP-REC"]
     ],
-    "translation": "tie for each other",
+    "translation": "tie for e.o.",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -217,7 +226,8 @@
       ["scope", "AR"],
       ["suffixes", "AR"]
     ],
-    "comment": "Reciprocalized applicative: compositional and templatic."
+    "comment": "Reciprocalized applicative: compositional and templatic.",
+    "verified": "page-image"
   },
   {
     "id": "hyman2003_13b",
@@ -239,7 +249,8 @@
       ["scope", "RA"],
       ["suffixes", "RA"]
     ],
-    "comment": "Applicativized reciprocal: the compositional order -an-il- is ungrammatical even under the compositional reading."
+    "comment": "Applicativized reciprocal: the compositional order -an-il- is ungrammatical even under the compositional reading.",
+    "verified": "page-image"
   },
   {
     "id": "hyman2003_13c",
@@ -261,7 +272,8 @@
       ["scope", "RA"],
       ["suffixes", "AR"]
     ],
-    "comment": "The templatic order carries the applicativized-reciprocal reading."
+    "comment": "The templatic order carries the applicativized-reciprocal reading.",
+    "verified": "page-image"
   },
   {
     "id": "hyman2003_13d",
@@ -283,7 +295,8 @@
       ["scope", "RA"],
       ["suffixes", "RAR"]
     ],
-    "comment": "Suffix doubling: -an-il- licensed by the mirror constraint and -il-an- by the template."
+    "comment": "Suffix doubling: -an-il- licensed by the mirror constraint and -il-an- by the template.",
+    "verified": "page-image"
   },
   {
     "id": "hyman2003_17b",
@@ -305,7 +318,8 @@
       ["scope", "RA"],
       ["suffixes", "ARA"]
     ],
-    "comment": "Doubling of the applicative around the reciprocal is not an appropriate output: a doubled suffix must be a mirror override repaired by a templatic sequence, never the reverse."
+    "comment": "Doubling of the applicative around the reciprocal is not an appropriate output: a doubled suffix must be a mirror override repaired by a templatic sequence, never the reverse.",
+    "verified": "page-image"
   },
   {
     "id": "hyman2003_18a",
@@ -327,7 +341,8 @@
       ["scope", "AA"],
       ["suffixes", "AA"]
     ],
-    "comment": "The Repeated Morph Constraint: the template licenses no more than one applicative."
+    "comment": "The Repeated Morph Constraint: the template licenses no more than one applicative.",
+    "verified": "page-image"
   },
   {
     "id": "hyman2003_18b",
@@ -349,17 +364,19 @@
       ["scope", "CC"],
       ["suffixes", "CC"]
     ],
-    "comment": "No double causative."
+    "comment": "No double causative.",
+    "verified": "page-image"
   },
   {
     "id": "hyman2003_20a",
     "source": {"bibkey": "hyman-2003", "paperLabel": "(20a)"},
     "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(20a)"},
     "language": "chim1312",
-    "primaryText": "luti, Ji mw-andik-ish-iriz-e mwa:na xati",
+    "primaryText": "luti, Ji mw-andik-ish-iɾiz-e mwa:na xati",
     "discourseSegments": [],
     "glossedTokens": [
-      ["luti", "stick"], ["Ji", "Ji"], ["mw-andik-ish-iriz-e", "he-write-CAUS-APP"], ["mwa:na", "child"], ["xati", "letter"]
+      ["luti", "stick"], ["Ji", "Ji"], ["mw-andik-ish-iɾiz-e", "he-write-CAUS-APP"],
+      ["mwa:na", "child"], ["xati", "letter"]
     ],
     "translation": "Ji used a stick to make the child write a letter",
     "context": "",
@@ -371,17 +388,19 @@
       ["scope", "CA"],
       ["suffixes", "CA"]
     ],
-    "comment": "Chimwiini applicativized causative: the instrument acts on the causation, and the templatic order -ish-iriz- is compositional. The paper does not attribute (20) to a source; (19) quotes Abasheikh 1978."
+    "comment": "Chimwiini applicativized causative: the instrument acts on the causation, and the templatic order -ish-iriz- is compositional. The paper does not attribute (20) to a source; (19) quotes Abasheikh 1978.",
+    "verified": "page-image"
   },
   {
     "id": "hyman2003_20b",
     "source": {"bibkey": "hyman-2003", "paperLabel": "(20b)"},
     "reportedIn": {"bibkey": "hyman-2003", "paperLabel": "(20b)"},
     "language": "chim1312",
-    "primaryText": "skuñi, Ari m-pik-ish-iriz-e: muke ṉama",
+    "primaryText": "skuñi, Aɾi m-pik-ish-iɾiz-e: muke n̯ama",
     "discourseSegments": [],
     "glossedTokens": [
-      ["skuñi", "firewood"], ["Ari", "Ali"], ["m-pik-ish-iriz-e:", "he-cook-CAUS-APP"], ["muke", "woman"], ["ṉama", "meat"]
+      ["skuñi", "firewood"], ["Aɾi", "Ali"], ["m-pik-ish-iɾiz-e:", "he-cook-CAUS-APP"],
+      ["muke", "woman"], ["n̯ama", "meat"]
     ],
     "translation": "firewood, Ali made the woman cook meat (with it)",
     "context": "",
@@ -393,7 +412,8 @@
       ["scope", "AC"],
       ["suffixes", "CA"]
     ],
-    "comment": "Chimwiini causativized applicative: the instrument acts on the cooking, within the scope of the causation, yet the order is the templatic -ish-iriz-. Transcription follows the preprint, whose r and the diacritic under n are special symbols."
+    "comment": "Chimwiini causativized applicative: the instrument acts on the cooking, within the scope of the causation, yet the order is the templatic -ish-iɾiz-. The preprint prints the flap ɾ and an arch below n in an SIL IPA font; the arch is recorded as an inverted breve below, since the page does not settle whether a dental bridge is meant.",
+    "verified": "page-image"
   },
   {
     "id": "hyman2003_22a",
@@ -402,9 +422,7 @@
     "language": "nyan1308",
     "primaryText": "Mchómbó a-ná-líl-its-il-a aná ndodo",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["Mchómbó", "Mchombo"], ["a-ná-líl-its-il-a", "SP-PST-cry-CAUS-APP-fv"], ["aná", "children"], ["ndodo", "stick"]
-    ],
+    "glossedTokens": [],
     "translation": "Mchombo made the children cry with a stick",
     "context": "",
     "judgment": "acceptable",
@@ -415,7 +433,8 @@
       ["scope", "CA"],
       ["suffixes", "CA"]
     ],
-    "comment": "Applicativized causative. The paper glosses only CAUS-APP; the other glosses are supplied."
+    "comment": "Applicativized causative. The paper glosses only -its-il-, as CAUS-APP.",
+    "verified": "page-image"
   },
   {
     "id": "hyman2003_22b",
@@ -424,9 +443,7 @@
     "language": "nyan1308",
     "primaryText": "ndodo i-ná-líl-its-il-idw-á ána",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["ndodo", "stick"], ["i-ná-líl-its-il-idw-á", "SP-PST-cry-CAUS-APP-PASS-fv"], ["ána", "children"]
-    ],
+    "glossedTokens": [],
     "translation": "a stick was used to make the children cry",
     "context": "",
     "judgment": "acceptable",
@@ -438,7 +455,8 @@
       ["suffixes", "CAP"],
       ["subject", "instrument"]
     ],
-    "comment": "The applicative instrument, with wider scope, becomes the passive subject. Glosses beyond CAUS-APP are supplied."
+    "comment": "The applicative instrument, with wider scope, becomes the passive subject.",
+    "verified": "page-image"
   },
   {
     "id": "hyman2003_22c",
@@ -447,12 +465,10 @@
     "language": "nyan1308",
     "primaryText": "aná a-ná-líl-its-il-idw-á ndodo",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["aná", "children"], ["a-ná-líl-its-il-idw-á", "SP-PST-cry-CAUS-APP-PASS-fv"], ["ndodo", "stick"]
-    ],
+    "glossedTokens": [],
     "translation": "the children were made to cry with a stick",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -461,7 +477,8 @@
       ["suffixes", "CAP"],
       ["subject", "causee"]
     ],
-    "comment": "Marked ?* by Hyman: the causee is typically rejected as subject of the passive of an applicativized causative."
+    "comment": "Marked ?* by Hyman: the causee is typically rejected as subject of the passive of an applicativized causative.",
+    "verified": "page-image"
   },
   {
     "id": "hyman2003_23a",
@@ -470,9 +487,7 @@
     "language": "nyan1308",
     "primaryText": "Mchómbó a-ná-lím-its-il-a aná makásu",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["Mchómbó", "Mchombo"], ["a-ná-lím-its-il-a", "SP-PST-cultivate-CAUS-APP-fv"], ["aná", "children"], ["makásu", "hoes"]
-    ],
+    "glossedTokens": [],
     "translation": "Mchombo made the children cultivate with hoes",
     "context": "",
     "judgment": "acceptable",
@@ -483,7 +498,8 @@
       ["scope", "AC"],
       ["suffixes", "CA"]
     ],
-    "comment": "Causativized applicative: the causation has scope over the instrument, and the order is still -its-il-. Glosses beyond CAUS-APP are supplied."
+    "comment": "Causativized applicative: the causation has scope over the instrument, and the order is still -its-il-. The paper glosses only -its-il-, as CAUS-APP.",
+    "verified": "page-image"
   },
   {
     "id": "hyman2003_23b",
@@ -492,9 +508,7 @@
     "language": "nyan1308",
     "primaryText": "aná a-ná-lím-its-il-idw-á mákásu",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["aná", "children"], ["a-ná-lím-its-il-idw-á", "SP-PST-cultivate-CAUS-APP-PASS-fv"], ["mákásu", "hoes"]
-    ],
+    "glossedTokens": [],
     "translation": "the children were made to cultivate with hoes",
     "context": "",
     "judgment": "acceptable",
@@ -506,7 +520,8 @@
       ["suffixes", "CAP"],
       ["subject", "causee"]
     ],
-    "comment": "The causee becomes the passive subject of a causativized applicative."
+    "comment": "The causee becomes the passive subject of a causativized applicative.",
+    "verified": "page-image"
   },
   {
     "id": "hyman2003_23c",
@@ -515,12 +530,10 @@
     "language": "nyan1308",
     "primaryText": "makású a-ná-lím-its-il-idw-á ána",
     "discourseSegments": [],
-    "glossedTokens": [
-      ["makású", "hoes"], ["a-ná-lím-its-il-idw-á", "SP-PST-cultivate-CAUS-APP-PASS-fv"], ["ána", "children"]
-    ],
+    "glossedTokens": [],
     "translation": "hoes were used to make the children cultivate",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -529,7 +542,8 @@
       ["suffixes", "CAP"],
       ["subject", "instrument"]
     ],
-    "comment": "Marked ?* by Hyman: the applicative instrument, within the scope of the causation, cannot become the passive subject."
+    "comment": "Marked ?* by Hyman: the applicative instrument, within the scope of the causation, cannot become the passive subject.",
+    "verified": "page-image"
   },
   {
     "id": "hyman2003_32c",
@@ -551,7 +565,8 @@
       ["scope", "AC"],
       ["suffixes", "AC"]
     ],
-    "comment": "The lexicalized applicative uk-il- 'rebel against' cannot be causativized by adding -its- outside its base."
+    "comment": "The lexicalized applicative uk-il- 'rebel against' cannot be causativized by adding -its- outside its base. Hyman & Mchombo 1992 print the form with -ir- and the final vowel: *uk-ir-its-a.",
+    "verified": "page-image"
   },
   {
     "id": "hyman2003_32d",
@@ -573,6 +588,7 @@
       ["scope", "AC"],
       ["suffixes", "CA"]
     ],
-    "comment": "The causative is interfixed into its templatic position inside the lexicalized applicative."
+    "comment": "The causative is interfixed into its templatic position inside the lexicalized applicative. Hyman & Mchombo 1992 print uk-its-ir-a.",
+    "verified": "page-image"
   }
 ]

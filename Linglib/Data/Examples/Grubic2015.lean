@@ -17,7 +17,7 @@ namespace Grubic2015.Examples
 
 def ex_6_24 : Datum :=
   { id := "grubic2015_6_24"
-    source := ⟨"grubic-2015", "(24)"⟩
+    source := ⟨"grubic-2015", "ch. 6 (24)"⟩
     reportedIn := none
     language := "ngam1282"
     primaryText := "Ne sakatari yak'i."
@@ -30,7 +30,7 @@ def ex_6_24 : Datum :=
 
 def ex_6_25a : Datum :=
   { id := "grubic2015_6_25a"
-    source := ⟨"grubic-2015", "(25a)"⟩
+    source := ⟨"grubic-2015", "ch. 6 (25a)"⟩
     reportedIn := none
     language := "ngam1282"
     primaryText := "Salko bano=i Dimza yak'i."
@@ -43,7 +43,7 @@ def ex_6_25a : Datum :=
 
 def ex_6_25b : Datum :=
   { id := "grubic2015_6_25b"
-    source := ⟨"grubic-2015", "(25b)"⟩
+    source := ⟨"grubic-2015", "ch. 6 (25b)"⟩
     reportedIn := none
     language := "ngam1282"
     primaryText := "Salko bano=i Dimza yak'i bu."
@@ -56,7 +56,7 @@ def ex_6_25b : Datum :=
 
 def ex_6_25c : Datum :=
   { id := "grubic2015_6_25c"
-    source := ⟨"grubic-2015", "(25c)"⟩
+    source := ⟨"grubic-2015", "ch. 6 (25c)"⟩
     reportedIn := none
     language := "ngam1282"
     primaryText := "Salko bano=i Dimza yak'i ɗo?"
@@ -69,7 +69,7 @@ def ex_6_25c : Datum :=
 
 def ex_6_26 : Datum :=
   { id := "grubic2015_6_26"
-    source := ⟨"grubic-2015", "(26)"⟩
+    source := ⟨"grubic-2015", "ch. 6 (26)"⟩
     reportedIn := none
     language := "ngam1282"
     primaryText := "Esha=i Sama yak'i nzono, ke esha Hawwa nzono."
@@ -82,7 +82,7 @@ def ex_6_26 : Datum :=
 
 def ex_6_28 : Datum :=
   { id := "grubic2015_6_28"
-    source := ⟨"grubic-2015", "(28)"⟩
+    source := ⟨"grubic-2015", "ch. 6 (28)"⟩
     reportedIn := none
     language := "ngam1282"
     primaryText := "Ne'e yak ne wa ampani yam ki korino bu."
@@ -95,7 +95,7 @@ def ex_6_28 : Datum :=
 
 def ex_6_140 : Datum :=
   { id := "grubic2015_6_140"
-    source := ⟨"grubic-2015", "(140)"⟩
+    source := ⟨"grubic-2015", "ch. 6 (140)"⟩
     reportedIn := none
     language := "ngam1282"
     primaryText := "Kule yak salko bano mano."
@@ -108,7 +108,7 @@ def ex_6_140 : Datum :=
 
 def ex_6_145a : Datum :=
   { id := "grubic2015_6_145a"
-    source := ⟨"grubic-2015", "(145a)"⟩
+    source := ⟨"grubic-2015", "ch. 6 (145A)"⟩
     reportedIn := none
     language := "ngam1282"
     primaryText := "O'o, Kule yak onto agoggo."
@@ -121,7 +121,7 @@ def ex_6_145a : Datum :=
 
 def ex_6_145b : Datum :=
   { id := "grubic2015_6_145b"
-    source := ⟨"grubic-2015", "(145b)"⟩
+    source := ⟨"grubic-2015", "ch. 6 (145A')"⟩
     reportedIn := none
     language := "ngam1282"
     primaryText := "O'o, Kule onko agoggo=i ki te yak'i."
@@ -134,7 +134,7 @@ def ex_6_145b : Datum :=
 
 def ex_6_148a : Datum :=
   { id := "grubic2015_6_148a"
-    source := ⟨"grubic-2015", "(148a)"⟩
+    source := ⟨"grubic-2015", "ch. 6 (148a)"⟩
     reportedIn := none
     language := "ngam1282"
     primaryText := "Hawwa=s, ne moishe Daho a esha=i te yak'i."
@@ -147,7 +147,7 @@ def ex_6_148a : Datum :=
 
 def ex_6_148b : Datum :=
   { id := "grubic2015_6_148b"
-    source := ⟨"grubic-2015", "(148b)"⟩
+    source := ⟨"grubic-2015", "ch. 6 (148b)"⟩
     reportedIn := none
     language := "ngam1282"
     primaryText := "Hawwa=s, ne moishe Daho a esha yak'i."
@@ -160,11 +160,11 @@ def ex_6_148b : Datum :=
 
 def ex_6_149 : Datum :=
   { id := "grubic2015_6_149"
-    source := ⟨"grubic-2015", "(149)"⟩
+    source := ⟨"grubic-2015", "ch. 6 (149)"⟩
     reportedIn := none
     language := "ngam1282"
     primaryText := "Hawwa=s, ne moishe Daho lei ki tomiya a esha."
-    glossedTokens := [("Hawwa=s,", "Hawwa=DEF.DET.F"), ("ne", "1SG"), ("moishe", "see.HAB"), ("Daho", "Daho"), ("lei", "at"), ("ki", "any"), ("tomiya", "time"), ("a", "3SG.HAB"), ("esha.", "call.HAB")]
+    glossedTokens := [("Hawwa=s,", "Hawwa=DEF.DET.F"), ("ne", "1SG"), ("moishe", "see.HAB"), ("Daho", "Daho"), ("lei ki tomiya", "always"), ("a", "3SG.HAB"), ("esha.", "call.HAB")]
     context := ""
     judgment := .acceptable
     alternatives := []
@@ -173,7 +173,7 @@ def ex_6_149 : Datum :=
 
 def ex_6_150a : Datum :=
   { id := "grubic2015_6_150a"
-    source := ⟨"grubic-2015", "(150a)"⟩
+    source := ⟨"grubic-2015", "ch. 6 (150a)"⟩
     reportedIn := none
     language := "ngam1282"
     primaryText := "Hasha hoti maɗɗi a esha Lakka, Gamba me esha=i te yak'i."
@@ -186,7 +186,7 @@ def ex_6_150a : Datum :=
 
 def ex_6_150b : Datum :=
   { id := "grubic2015_6_150b"
-    source := ⟨"grubic-2015", "(150b)"⟩
+    source := ⟨"grubic-2015", "ch. 6 (150b)"⟩
     reportedIn := none
     language := "ngam1282"
     primaryText := "Hasha hoti maɗɗi a esha Lakka, Gambo me a esha yak'i."
@@ -199,11 +199,11 @@ def ex_6_150b : Datum :=
 
 def ex_6_151 : Datum :=
   { id := "grubic2015_6_151"
-    source := ⟨"grubic-2015", "(151)"⟩
+    source := ⟨"grubic-2015", "ch. 6 (151)"⟩
     reportedIn := none
     language := "ngam1282"
     primaryText := "Hasha hoti maɗɗi a esha Lakka, Gambo me lei ki tomiya a esha."
-    glossedTokens := [("Hasha", "Hasha"), ("hoti", "day"), ("maɗɗi", "some"), ("a", "3SG.HAB"), ("esha", "call.HAB"), ("Lakka,", "Lakka"), ("Gambo", "Gamba"), ("me", "but"), ("lei", "at"), ("ki", "any"), ("tomiya", "time"), ("a", "3SG.HAB"), ("esha.", "call.HAB")]
+    glossedTokens := [("Hasha", "Hasha"), ("hoti", "day"), ("maɗɗi", "some"), ("a", "3SG.HAB"), ("esha", "call.HAB"), ("Lakka,", "Lakka"), ("Gambo", "Gamba"), ("me", "but"), ("lei ki tomiya", "always"), ("a", "3SG.HAB"), ("esha.", "call.HAB")]
     context := ""
     judgment := .acceptable
     alternatives := []
@@ -212,7 +212,7 @@ def ex_6_151 : Datum :=
 
 def ex_6_153 : Datum :=
   { id := "grubic2015_6_153"
-    source := ⟨"grubic-2015", "(153)"⟩
+    source := ⟨"grubic-2015", "ch. 6 (153)"⟩
     reportedIn := none
     language := "ngam1282"
     primaryText := "Biya ma maranko shinkafa a tishe yak'i."
@@ -225,7 +225,7 @@ def ex_6_153 : Datum :=
 
 def ex_6_158 : Datum :=
   { id := "grubic2015_6_158"
-    source := ⟨"grubic-2015", "(158)"⟩
+    source := ⟨"grubic-2015", "ch. 6 (158)"⟩
     reportedIn := none
     language := "ngam1282"
     primaryText := "Samaye gitkok tishe=i jarabawa=to yak'i."
@@ -238,11 +238,11 @@ def ex_6_158 : Datum :=
 
 def ex_6_159 : Datum :=
   { id := "grubic2015_6_159"
-    source := ⟨"grubic-2015", "(159)"⟩
+    source := ⟨"grubic-2015", "ch. 6 (159)"⟩
     reportedIn := none
     language := "ngam1282"
     primaryText := "Samaye lei ki tomiya a gishentik tina=i jarabawa=to."
-    glossedTokens := [("Samaye", "Samaye"), ("lei", "at"), ("ki", "any"), ("tomiya", "time"), ("a", "3SG.HAB"), ("gishentik", "be.able.HAB.TOT"), ("tina=i", "eat.FUT=BM"), ("jarabawa=to.", "exam=3SG.F.POSS")]
+    glossedTokens := [("Samaye", "Samaye"), ("lei ki tomiya", "always"), ("a", "3SG.HAB"), ("gishentik", "be.able.HAB.TOT"), ("tina=i", "eat.FUT=BM"), ("jarabawa=to.", "exam=3SG.F.POSS")]
     context := ""
     judgment := .acceptable
     alternatives := []
@@ -251,7 +251,7 @@ def ex_6_159 : Datum :=
 
 def ex_6_160 : Datum :=
   { id := "grubic2015_6_160"
-    source := ⟨"grubic-2015", "(160)"⟩
+    source := ⟨"grubic-2015", "ch. 6 (160)"⟩
     reportedIn := none
     language := "ngam1282"
     primaryText := "Si onko agoggo=i ki Shuwa, si ke ono."
@@ -264,7 +264,7 @@ def ex_6_160 : Datum :=
 
 def ex_6_162a : Datum :=
   { id := "grubic2015_6_162a"
-    source := ⟨"grubic-2015", "(162a)"⟩
+    source := ⟨"grubic-2015", "ch. 6 (162A)"⟩
     reportedIn := none
     language := "ngam1282"
     primaryText := "Kule esha=i Dimza, ke esha=i ne'e."
@@ -277,7 +277,7 @@ def ex_6_162a : Datum :=
 
 def ex_6_162b : Datum :=
   { id := "grubic2015_6_162b"
-    source := ⟨"grubic-2015", "(162b)"⟩
+    source := ⟨"grubic-2015", "ch. 6 (162A')"⟩
     reportedIn := none
     language := "ngam1282"
     primaryText := "Kule esha=i Dimza ke eshino."
@@ -290,7 +290,7 @@ def ex_6_162b : Datum :=
 
 def ex_6_163 : Datum :=
   { id := "grubic2015_6_163"
-    source := ⟨"grubic-2015", "(163)"⟩
+    source := ⟨"grubic-2015", "ch. 6 (163)"⟩
     reportedIn := none
     language := "ngam1282"
     primaryText := "Ke salko bano."
@@ -303,7 +303,7 @@ def ex_6_163 : Datum :=
 
 def ex_6_164 : Datum :=
   { id := "grubic2015_6_164"
-    source := ⟨"grubic-2015", "(164)"⟩
+    source := ⟨"grubic-2015", "ch. 6 (164)"⟩
     reportedIn := none
     language := "ngam1282"
     primaryText := "Kule onko agoggo=i ki Shuwa, ke har ono."
@@ -316,7 +316,7 @@ def ex_6_164 : Datum :=
 
 def ex_6_165 : Datum :=
   { id := "grubic2015_6_165"
-    source := ⟨"grubic-2015", "(165)"⟩
+    source := ⟨"grubic-2015", "ch. 6 (165)"⟩
     reportedIn := none
     language := "ngam1282"
     primaryText := "Hawwa salko bano, Kule ke salko bano."
@@ -329,7 +329,7 @@ def ex_6_165 : Datum :=
 
 def ex_6_166 : Datum :=
   { id := "grubic2015_6_166"
-    source := ⟨"grubic-2015", "(166)"⟩
+    source := ⟨"grubic-2015", "ch. 6 (166)"⟩
     reportedIn := none
     language := "ngam1282"
     primaryText := "Dimza yak salko bano."
@@ -342,7 +342,7 @@ def ex_6_166 : Datum :=
 
 def ex_6_167 : Datum :=
   { id := "grubic2015_6_167"
-    source := ⟨"grubic-2015", "(167)"⟩
+    source := ⟨"grubic-2015", "ch. 6 (167)"⟩
     reportedIn := none
     language := "ngam1282"
     primaryText := "Dimza ke salko bano."
@@ -355,7 +355,7 @@ def ex_6_167 : Datum :=
 
 def ex_6_168 : Datum :=
   { id := "grubic2015_6_168"
-    source := ⟨"grubic-2015", "(168)"⟩
+    source := ⟨"grubic-2015", "ch. 6 (168)"⟩
     reportedIn := none
     language := "ngam1282"
     primaryText := "Dimza har salko bano."
@@ -368,7 +368,7 @@ def ex_6_168 : Datum :=
 
 def ex_6_169 : Datum :=
   { id := "grubic2015_6_169"
-    source := ⟨"grubic-2015", "(169)"⟩
+    source := ⟨"grubic-2015", "ch. 6 (169)"⟩
     reportedIn := none
     language := "ngam1282"
     primaryText := "Ne sakatari yak'i."
@@ -381,7 +381,7 @@ def ex_6_169 : Datum :=
 
 def ex_6_170 : Datum :=
   { id := "grubic2015_6_170"
-    source := ⟨"grubic-2015", "(170)"⟩
+    source := ⟨"grubic-2015", "ch. 6 (170)"⟩
     reportedIn := none
     language := "ngam1282"
     primaryText := "Bah malum har'i."
@@ -394,7 +394,7 @@ def ex_6_170 : Datum :=
 
 def ex_7_41 : Datum :=
   { id := "grubic2015_7_41"
-    source := ⟨"grubic-2015", "(41)"⟩
+    source := ⟨"grubic-2015", "ch. 7 (41)"⟩
     reportedIn := none
     language := "ngam1282"
     primaryText := "Kaja mato=i Hawwa, salko bano=i ke Kule."
@@ -407,7 +407,7 @@ def ex_7_41 : Datum :=
 
 def ex_7_42 : Datum :=
   { id := "grubic2015_7_42"
-    source := ⟨"grubic-2015", "(42)"⟩
+    source := ⟨"grubic-2015", "ch. 7 (42)"⟩
     reportedIn := none
     language := "ngam1282"
     primaryText := "Salko bano=i Kule, kaja mato=i ke Kule."
@@ -420,7 +420,7 @@ def ex_7_42 : Datum :=
 
 def ex_7_43 : Datum :=
   { id := "grubic2015_7_43"
-    source := ⟨"grubic-2015", "(43)"⟩
+    source := ⟨"grubic-2015", "ch. 7 (43)"⟩
     reportedIn := none
     language := "ngam1282"
     primaryText := "Kule salko makaranta mano, Kule ke salko bano mano."
@@ -433,7 +433,7 @@ def ex_7_43 : Datum :=
 
 def ex_7_44 : Datum :=
   { id := "grubic2015_7_44"
-    source := ⟨"grubic-2015", "(44)"⟩
+    source := ⟨"grubic-2015", "ch. 7 (44)"⟩
     reportedIn := none
     language := "ngam1282"
     primaryText := "Salko bano=i Hawwa, salko bano=i ke Kule."
@@ -446,7 +446,7 @@ def ex_7_44 : Datum :=
 
 def ex_7_46 : Datum :=
   { id := "grubic2015_7_46"
-    source := ⟨"grubic-2015", "(46)"⟩
+    source := ⟨"grubic-2015", "ch. 7 (46)"⟩
     reportedIn := none
     language := "ngam1282"
     primaryText := "Bei a ina ham ɗoshi, ke a ina ham tuha ke'e."
@@ -459,7 +459,7 @@ def ex_7_46 : Datum :=
 
 def ex_7_48 : Datum :=
   { id := "grubic2015_7_48"
-    source := ⟨"grubic-2015", "(48)"⟩
+    source := ⟨"grubic-2015", "ch. 7 (48)"⟩
     reportedIn := none
     language := "ngam1282"
     primaryText := "Salko bano=i Hawwa, Kule ke salko bano."
@@ -472,13 +472,13 @@ def ex_7_48 : Datum :=
 
 def ex_7_49 : Datum :=
   { id := "grubic2015_7_49"
-    source := ⟨"grubic-2015", "(49)"⟩
+    source := ⟨"grubic-2015", "ch. 7 (49)"⟩
     reportedIn := none
     language := "ngam1282"
     primaryText := "Salko bano=i Hawwa, ke salko bano=i ke Kule."
     glossedTokens := [("Salko", "build.PFV"), ("bano=i", "house=BM"), ("Hawwa,", "Hawwa"), ("ke", "also"), ("salko", "build.PFV"), ("bano=i", "house=BM"), ("ke", "also"), ("Kule.", "Kule")]
     context := ""
-    judgment := .marginal
+    judgment := .questionable
     alternatives := []
     readings := []
     paperFeatures := [("particle", "ke"), ("configuration", "parallelMarkedBackground")] }

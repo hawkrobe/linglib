@@ -19,7 +19,8 @@
       ["addresseeGender", "m"],
       ["clause", "matrix"]
     ],
-    "comment": "Oyharçabal (1993); said to a male friend."
+    "comment": "Oyharçabal (1993); said to a male friend.",
+    "verified": "page-image"
   },
   {
     "id": "alokbhalla2026_1b",
@@ -41,7 +42,8 @@
       ["addresseeGender", "f"],
       ["clause", "matrix"]
     ],
-    "comment": "Said to a female friend."
+    "comment": "Said to a female friend.",
+    "verified": "page-image"
   },
   {
     "id": "alokbhalla2026_1c",
@@ -62,7 +64,8 @@
       ["addressee", "h"],
       ["clause", "matrix"]
     ],
-    "comment": "Said to someone of higher social status."
+    "comment": "Said to someone of higher social status.",
+    "verified": "page-image"
   },
   {
     "id": "alokbhalla2026_1d",
@@ -81,7 +84,8 @@
     "paperFeatures": [
       ["clause", "matrix"]
     ],
-    "comment": "Said to a group: no allocutive marker."
+    "comment": "Said to a group: no allocutive marker.",
+    "verified": "page-image"
   },
   {
     "id": "alokbhalla2026_2a",
@@ -103,7 +107,8 @@
       ["addressee", "nh"],
       ["clause", "matrix"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alokbhalla2026_2b",
@@ -125,7 +130,8 @@
       ["addressee", "h"],
       ["clause", "matrix"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alokbhalla2026_2c",
@@ -147,7 +153,8 @@
       ["addressee", "hh"],
       ["clause", "matrix"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alokbhalla2026_3",
@@ -169,7 +176,8 @@
       ["addressee", "nh"],
       ["clause", "matrix"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alokbhalla2026_4",
@@ -191,7 +199,8 @@
       ["addressee", "nh"],
       ["clause", "matrix"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alokbhalla2026_5",
@@ -213,7 +222,8 @@
       ["addressee", "hh"],
       ["clause", "matrix"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alokbhalla2026_6",
@@ -235,7 +245,8 @@
       ["addressee", "hh"],
       ["clause", "matrix"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alokbhalla2026_7",
@@ -256,7 +267,8 @@
       ["addressee", "h"],
       ["clause", "matrix"]
     ],
-    "comment": "McFadden (2020); the marker is homophonous with the plural marker."
+    "comment": "McFadden (2020); the marker is homophonous with the plural marker.",
+    "verified": "page-image"
   },
   {
     "id": "alokbhalla2026_8a",
@@ -280,7 +292,8 @@
       ["status", "lt"],
       ["formal", "+"]
     ],
-    "comment": "Portner et al. (2019)."
+    "comment": "Portner et al. (2019).",
+    "verified": "page-image"
   },
   {
     "id": "alokbhalla2026_8b",
@@ -304,7 +317,8 @@
       ["status", "lt"],
       ["formal", "-"]
     ],
-    "comment": "Portner et al. (2019)."
+    "comment": "Portner et al. (2019).",
+    "verified": "page-image"
   },
   {
     "id": "alokbhalla2026_8c",
@@ -326,7 +340,8 @@
       ["speechStyle", "fam"],
       ["clause", "matrix"]
     ],
-    "comment": "Portner et al. (2019)."
+    "comment": "Portner et al. (2019).",
+    "verified": "page-image"
   },
   {
     "id": "alokbhalla2026_8d",
@@ -350,7 +365,8 @@
       ["status", "ge"],
       ["formal", "-"]
     ],
-    "comment": "Portner et al. (2019)."
+    "comment": "Portner et al. (2019).",
+    "verified": "page-image"
   },
   {
     "id": "alokbhalla2026_9a",
@@ -372,7 +388,8 @@
       ["clause", "embedded"],
       ["embedding", "factive"]
     ],
-    "comment": "Alok and Haddican (2022); repeated as (19)."
+    "comment": "Alok and Haddican (2022); repeated as (19).",
+    "verified": "page-image"
   },
   {
     "id": "alokbhalla2026_9b",
@@ -394,7 +411,8 @@
       ["clause", "embedded"],
       ["embedding", "relative"]
     ],
-    "comment": "Repeated as (20)."
+    "comment": "Repeated as (20).",
+    "verified": "page-image"
   },
   {
     "id": "alokbhalla2026_10",
@@ -414,7 +432,8 @@
       ["marker", "che"],
       ["clause", "matrix"]
     ],
-    "comment": "Haddican (2019): the same clitic serves as the thematic dative."
+    "comment": "Haddican (2019): the same clitic serves as the thematic dative.",
+    "verified": "page-image"
   },
   {
     "id": "alokbhalla2026_11",
@@ -437,28 +456,30 @@
       ["argumentAgreement", "2sg"],
       ["clause", "matrix"]
     ],
-    "comment": "The allocutive markers of (1) reappear as ordinary agreement with a second-person subject."
+    "comment": "The allocutive markers of (1) reappear as ordinary agreement with a second-person subject.",
+    "verified": "page-image"
   },
   {
     "id": "alokbhalla2026_12",
     "source": {"bibkey": "alok-bhalla-2026", "paperLabel": "(12)"},
     "language": "soul1243",
-    "primaryText": "Ezdinat nahi gerta diakionan",
+    "primaryText": "Ez dinat nahi gerta diakionan",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Ezdinat", "NEG.AUX.1.ERG.NHA"], ["nahi", "want"], ["gerta", "happen"],
+      ["Ez", "NEG"], ["dinat", "AUX.1.ERG.NHA"], ["nahi", "want"], ["gerta", "happen"],
       ["diakionan", "3.AUX.3NHA.COMP"]
     ],
     "translation": "I don't want it to happen to him",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["clause", "embedded"],
       ["embedding", "complement"]
     ],
-    "comment": "Oyharçabal (1993): allocutive marking inside the complement."
+    "comment": "Oyharçabal (1993): allocutive marking inside the complement.",
+    "verified": "page-image"
   },
   {
     "id": "alokbhalla2026_13",
@@ -473,7 +494,7 @@
     ],
     "translation": "Inho told the teacher that he did his best",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -481,7 +502,8 @@
       ["clause", "embedded"],
       ["embedding", "saying"]
     ],
-    "comment": "Portner et al. (2019)."
+    "comment": "Portner et al. (2019).",
+    "verified": "page-image"
   },
   {
     "id": "alokbhalla2026_14a",
@@ -503,7 +525,8 @@
       ["clause", "embedded"],
       ["embedding", "saying"]
     ],
-    "comment": "Miyagawa (2017)."
+    "comment": "Miyagawa (2017).",
+    "verified": "page-image"
   },
   {
     "id": "alokbhalla2026_14b",
@@ -517,9 +540,12 @@
     ],
     "translation": "Taro believes that Hanako will come",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [
-      {"form": "Taroo-wa Hanako-ga kuru to sinzitei-ru", "judgment": "acceptable"}
+      {
+        "form": "Taroo-wa Hanako-ga ku-ru to sinzitei-ru",
+        "judgment": "acceptable"
+      }
     ],
     "readings": [],
     "paperFeatures": [
@@ -527,7 +553,8 @@
       ["clause", "embedded"],
       ["embedding", "believe"]
     ],
-    "comment": ""
+    "comment": "The paper prints kuru-u for the acceptable variant; (33c) prints the same sentence with ku-ru.",
+    "verified": "page-image"
   },
   {
     "id": "alokbhalla2026_15",
@@ -549,7 +576,8 @@
       ["clause", "embedded"],
       ["embedding", "reason"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alokbhalla2026_16",
@@ -572,7 +600,8 @@
       ["clause", "embedded"],
       ["embedding", "perceptual"]
     ],
-    "comment": "Alok (2021)."
+    "comment": "Alok (2021).",
+    "verified": "page-image"
   },
   {
     "id": "alokbhalla2026_17",
@@ -595,7 +624,8 @@
       ["clause", "embedded"],
       ["embedding", "relative"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alokbhalla2026_18",
@@ -618,7 +648,8 @@
       ["clause", "embedded"],
       ["embedding", "nounComplement"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alokbhalla2026_21",
@@ -640,7 +671,8 @@
       ["clause", "embedded"],
       ["embedding", "wh"]
     ],
-    "comment": "cha < che + a."
+    "comment": "cha < che + a.",
+    "verified": "page-image"
   },
   {
     "id": "alokbhalla2026_30a",
@@ -655,7 +687,10 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "Santee-aa jaayel-au chahl-i-au", "judgment": "unacceptable"}
+      {
+        "form": "Santee-aa jaayel-au chahl-i-au",
+        "judgment": "ungrammatical"
+      }
     ],
     "readings": [],
     "paperFeatures": [
@@ -664,7 +699,8 @@
       ["clause", "embedded"],
       ["embedding", "nonfinite"]
     ],
-    "comment": "No allocutive marker on the nonfinite complement."
+    "comment": "No allocutive marker on the nonfinite complement.",
+    "verified": "page-image"
   },
   {
     "id": "alokbhalla2026_30b",
@@ -680,7 +716,10 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "Ham okaraa dhekhe-se-au bachl-i-au", "judgment": "unacceptable"}
+      {
+        "form": "Ham okaraa dhekhe-se-au bachl-i-au",
+        "judgment": "ungrammatical"
+      }
     ],
     "readings": [],
     "paperFeatures": [
@@ -689,7 +728,8 @@
       ["clause", "embedded"],
       ["embedding", "nonfinite"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alokbhalla2026_31a",
@@ -710,7 +750,8 @@
       ["clause", "matrix"],
       ["positions", "2"]
     ],
-    "comment": "McFadden (2020): the marker appears below and above the question particle."
+    "comment": "McFadden (2020): the marker appears below and above the question particle.",
+    "verified": "page-image"
   },
   {
     "id": "alokbhalla2026_31b",
@@ -733,7 +774,8 @@
       ["embedding", "saying"],
       ["positions", "1"]
     ],
-    "comment": "Only the position below the complementizer is available when embedded."
+    "comment": "Only the position below the complementizer is available when embedded.",
+    "verified": "page-image"
   },
   {
     "id": "alokbhalla2026_32",
@@ -755,7 +797,8 @@
       ["clause", "embedded"],
       ["embedding", "infinitive"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alokbhalla2026_33a",
@@ -778,7 +821,8 @@
       ["clause", "embedded"],
       ["embedding", "koto"]
     ],
-    "comment": "Yamada (2019)."
+    "comment": "Yamada (2019). The paper prints si-masi-ta-kota]-wa; its prose names the complementizer -koto.",
+    "verified": "page-image"
   },
   {
     "id": "alokbhalla2026_33b",
@@ -800,7 +844,8 @@
       ["clause", "embedded"],
       ["embedding", "yooni"]
     ],
-    "comment": "Miyagawa (2022)."
+    "comment": "Miyagawa (2022).",
+    "verified": "page-image"
   },
   {
     "id": "alokbhalla2026_33c",
@@ -814,7 +859,7 @@
     ],
     "translation": "Taroo believes that Hanako will come",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [
       {"form": "Taroo-wa Hanako-ga ku-ru to sinzitei-ru", "judgment": "acceptable"}
     ],
@@ -824,7 +869,8 @@
       ["clause", "embedded"],
       ["embedding", "to"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alokbhalla2026_35",
@@ -845,7 +891,8 @@
       ["pronoun2", "nh"],
       ["tv", "T"]
     ],
-    "comment": "Addressee a friend or relative."
+    "comment": "Addressee a friend or relative.",
+    "verified": "page-image"
   },
   {
     "id": "alokbhalla2026_36",
@@ -866,7 +913,8 @@
       ["pronoun2", "h"],
       ["tv", "V"]
     ],
-    "comment": "Addressee a stranger."
+    "comment": "Addressee a stranger.",
+    "verified": "page-image"
   },
   {
     "id": "alokbhalla2026_39",
@@ -877,7 +925,7 @@
     "glossedTokens": [
       ["Santee-aa", "Santee-FM"], ["toraa", "you.NH.ACC"], ["dekhl-ai", "see.PRF-NHS"]
     ],
-    "translation": "Santee saw you (a friend)",
+    "translation": "Santee saw you (= friend)",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -886,7 +934,8 @@
       ["pronoun2", "nh"],
       ["subject", "nh"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alokbhalla2026_40",
@@ -897,7 +946,7 @@
     "glossedTokens": [
       ["Santee-aa", "Santee-FM"], ["apne-ke", "you.HH-ACC"], ["dekhl-ai", "see.PRF-NHS"]
     ],
-    "translation": "Santee saw you (a teacher)",
+    "translation": "Santee saw you (= teacher)",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -906,7 +955,8 @@
       ["pronoun2", "hh"],
       ["subject", "nh"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alokbhalla2026_41",
@@ -920,7 +970,7 @@
     ],
     "translation": "Ram returned your book to you",
     "context": "",
-    "judgment": "unacceptable",
+    "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
@@ -928,7 +978,8 @@
       ["pronoun2Other", "nh"],
       ["subject", "nh"]
     ],
-    "comment": "Two second-person pronouns of different honorific level in one clause."
+    "comment": "Two second-person pronouns of different honorific level in one clause.",
+    "verified": "page-image"
   },
   {
     "id": "alokbhalla2026_42",
@@ -944,7 +995,10 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "Ram apne-ke kitaab lauTal-au", "judgment": "unacceptable"}
+      {
+        "form": "Ram apne-ke kitaab lauTal-au",
+        "judgment": "ungrammatical"
+      }
     ],
     "readings": [],
     "paperFeatures": [
@@ -953,7 +1007,8 @@
       ["addressee", "hh"],
       ["subject", "nh"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alokbhalla2026_43",
@@ -969,7 +1024,10 @@
     "context": "",
     "judgment": "acceptable",
     "alternatives": [
-      {"form": "Ram toraa kitaab lauTal-ain", "judgment": "unacceptable"}
+      {
+        "form": "Ram toraa kitaab lauTal-ain",
+        "judgment": "ungrammatical"
+      }
     ],
     "readings": [],
     "paperFeatures": [
@@ -978,7 +1036,8 @@
       ["addressee", "nh"],
       ["subject", "nh"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alokbhalla2026_44a",
@@ -989,7 +1048,7 @@
     "glossedTokens": [
       ["Santee-aa", "Santee-FM"], ["okraa", "him.NH.ACC"], ["dekhl-ai", "see.PRF-NHS"]
     ],
-    "translation": "Santee saw him (a friend)",
+    "translation": "Santee saw him (= a friend)",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -998,7 +1057,8 @@
       ["pronoun3", "nh"],
       ["subject", "nh"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alokbhalla2026_44b",
@@ -1009,7 +1069,7 @@
     "glossedTokens": [
       ["Santee-aa", "Santee-FM"], ["unkaa", "him.H.ACC"], ["dekhl-ai", "see.PRF-NHS"]
     ],
-    "translation": "Santee saw him (a teacher)",
+    "translation": "Santee saw him (= a teacher)",
     "context": "",
     "judgment": "acceptable",
     "alternatives": [],
@@ -1018,7 +1078,8 @@
       ["pronoun3", "h"],
       ["subject", "nh"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alokbhalla2026_45",
@@ -1041,7 +1102,8 @@
       ["pronoun3Other", "h"],
       ["subject", "hh"]
     ],
-    "comment": "Each DP sets its referent's relation to the speaker independently."
+    "comment": "Each DP sets its referent's relation to the speaker independently.",
+    "verified": "page-image"
   },
   {
     "id": "alokbhalla2026_48a",
@@ -1062,7 +1124,8 @@
       ["subjectNumber", "sg"],
       ["agreement", "pl"]
     ],
-    "comment": "Bhatt and Davis (2023)."
+    "comment": "Bhatt and Davis (2023).",
+    "verified": "page-image"
   },
   {
     "id": "alokbhalla2026_48b",
@@ -1083,7 +1146,8 @@
       ["subjectNumber", "sg"],
       ["agreement", "sg"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "alokbhalla2026_48c",
@@ -1104,6 +1168,7 @@
       ["subjectNumber", "pl"],
       ["agreement", "pl"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]
