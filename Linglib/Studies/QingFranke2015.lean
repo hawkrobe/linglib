@@ -1,45 +1,50 @@
 module
 
+public import Linglib.Core.Probability.UniformOn
+public import Linglib.Data.Experiments.QingFranke2015
+public import Linglib.Pragmatics.RSA.Decision
 public import Linglib.Studies.FrankGoodman2012
-public import Linglib.Core.Probability.Kernel.Posterior
 public import Mathlib.Analysis.Complex.ExponentialBounds
 
 /-!
 # Qing and Franke (2015): Variations on a Bayesian Theme
 
-This file formalizes Qing and Franke's family of models of the referential game of Frank and
-Goodman, the rational speech act model decomposed along its design choices (§3): the speaker's
-belief about the literal listener, a uniform prior or the empirically measured salience prior; the
-speaker's goal, the belief-oriented log probability of the referent or the action-oriented
-probability itself; a cost on adjectives (11); and for the listener, its own prior and whether it
-acts on its posterior by a further soft maximization (14). The context is the paper's Fig. 3, a
-square and a circle of one colour and a circle of the other. Speaker preference is a threshold on
-the cost: the speakers that ignore salience prefer the unique word at the two objects that have one
-for every cost within `log 2` of zero in the belief-oriented and within `1/2` in the action-oriented
-model, bounds beyond the paper's cost support of `(-0.4, 0.4)`, and prefer the noun at the object
-with both features shared exactly when nouns are cheaper (`belief_blue_lt_iff`,
-`action_blue_lt_iff`, `belief_shared_lt_iff`), the majority directions of Table 1; the
-salience-belief speaker's threshold at the blue circle, `log (169 / 139)`, lies inside the support
-(`salience_blue_lt_iff`, `salience_threshold_lt`). The uniform-prior listener follows pragmatic
-narrowing on both ambiguous words at every rationality (`uniform_listener_circle`,
-`uniform_listener_green`). The salience-prior listener that embeds the original speaker follows
-salience on *circle* below a threshold on the embedded rationality and narrowing on *green* only
-above one (`salience_listener_circle_iff`, `salience_listener_green_iff`), the two directions of
-Table 2; at rationality one it mispredicts *green* (`rsa_listener_green`), the model-side face of
-the paper's rejection of `λ = 1`, and it matches both directions on a window of rationalities above
-one (`salience_listener_window`). Acting on the posterior preserves its order
-(`actionListener_lt_iff`).
+Qing and Franke decompose the rational speech act model of Frank and Goodman's referential game
+along its design choices. The literal listener conditions a prior on the extension of the word,
+and the prior is uniform or the measured salience of the objects. The speaker's goal is
+belief-oriented, the log of the literal listener's probability of the referent, or action-oriented,
+that probability itself, and colour adjectives carry a cost. The listener inverts a speaker against
+its own prior and may act on the result by a further soft maximization. The context has a square
+and a circle of one colour and a circle of the other, and the paper compares the models on the
+choices of speakers and listeners by their Bayes factors.
+
+## Main statements
+
+* `speaker_eq_softmax`, `speaker_belief_uniform`: every speaker of the family soft-maximizes its
+  utility over the true words, and the belief-oriented one at the uniform prior and no cost is
+  Frank and Goodman's.
+* `prefers_unique_colour_iff`, `prefers_noun_iff`: a speaker who ignores salience prefers the word
+  only the referent satisfies exactly when the adjective costs less than the informativity gap,
+  and at the object with both features shared prefers the noun exactly when it is the cheaper.
+* `uniform_listener_narrows_circle`, `salience_listener_window`: a listener with a uniform prior
+  takes both ambiguous words to refer to the object with both features shared, and one with the
+  salience prior does so for *green* and follows salience for *circle*, as the paper's listeners
+  did, on a bounded window of rationalities.
+* `frankGoodman_listener_green`: Frank and Goodman's listener at the measured salience and
+  rationality one takes *green* to refer to the salient green square.
 
 ## Implementation notes
 
-The lexicon is that of `FrankGoodman2012`, four one-place predicates that each name a colour or
-a shape, and the model `M` of the context gives each object its colour and its shape, so the
-extension `⟦u⟧ᴹ` of a word and the cost of an adjective are read off the word and no table of
-words against objects is given. The speakers are score speakers
-over the literal listener's real mass, the action-oriented one gated to true words as in the
-paper's fn. 13, and listeners are posteriors of a speaker against a prior. Only the salience
-condition of Table 2 enters the models, as the salience prior; the counts of Tables 1 and 2 are
-not restated, and the Bayesian model comparison of §5 is not formalized.
+* The lexicon and the model of a context are those of `FrankGoodman2012`, and the belief-oriented
+  speaker is `RSA.speaker` against the literal listener. The action-oriented speaker is the
+  softmax of its utility over the true words, the restriction the paper applies in its model
+  comparison.
+* The salience prior weights each object by its count in the salience condition, without
+  normalizing.
+* The action-oriented listener is `RSA.policy` for the game that rewards choosing the referent. It
+  is not restricted to the objects the word is true of, which does not change their order.
+* The Bayesian model comparison is not formalized. The findings are the directions of preference
+  each model predicts, as conditions on its parameters.
 
 ## References
 
@@ -55,19 +60,13 @@ open scoped ENNReal Semantics.Superscript
 
 namespace QingFranke2015
 
-/-! ### The context (Fig. 3) -/
-
-/-- The three objects are the square and the circle sharing a colour, and the circle of the
-other colour. -/
-inductive Object
-  | greenSquare | greenCircle | blueCircle
-  deriving DecidableEq, Fintype, Repr, Inhabited
+/-! ### The context, the cost and the salience prior -/
 
 instance : MeasurableSpace Object := ⊤
-instance : DiscreteMeasurableSpace Object := ⟨fun _ => trivial⟩
-instance : MeasurableSingletonClass Object := DiscreteMeasurableSpace.toMeasurableSingletonClass
+instance : DiscreteMeasurableSpace Object := ⟨fun _ ↦ trivial⟩
+instance : Nonempty Object := ⟨.greenSquare⟩
 
-/-- The model `M` of the context gives each object of its domain its colour and its shape. -/
+/-- The model `M` of the sample context gives each object its colour and its shape. -/
 def M : Object → (a : Attribute) → a.Value Colour Shape
   | .greenSquare, .colour => Colour.green
   | .greenSquare, .shape => Shape.square
@@ -81,478 +80,390 @@ def cost (c : ℝ) : Word Colour Shape → ℝ
   | ⟨.colour, _⟩ => c
   | ⟨.shape, _⟩ => 0
 
-/-! ### Priors -/
+theorem cost_zero : cost 0 = 0 := funext fun ⟨a, _⟩ ↦ by cases a <;> rfl
 
-/-- The prior determined by a weighting of the objects. -/
-noncomputable def priorOf (w : Object → ℕ) : Measure Object :=
-  ∑ t, (w t : ℝ≥0∞) • Measure.dirac t
+/-- The salience prior `S` weights each object by the number of listeners who chose it when they
+could not understand the speaker. -/
+noncomputable def salience : Measure Object :=
+  Measure.ofWeights fun t ↦ ((listenerChoice .salience t).count : ℝ≥0∞)
 
-@[simp] theorem priorOf_singleton (w : Object → ℕ) (t : Object) : priorOf w {t} = w t :=
-  Measure.sum_smul_dirac_apply_singleton (fun t => (w t : ℝ≥0∞)) t
+instance : IsFiniteMeasure salience :=
+  Measure.isFiniteMeasure_ofWeights fun _ ↦ ENNReal.natCast_ne_top _
 
-theorem priorOf_apply (w : Object → ℕ) (s : Set Object) [DecidablePred (· ∈ s)] :
-    priorOf w s = ∑ t, if t ∈ s then (w t : ℝ≥0∞) else 0 := by
-  simp only [priorOf, Measure.finsetSum_apply, Measure.smul_apply, smul_eq_mul,
-    Measure.dirac_apply' _ MeasurableSet.of_discrete, Set.indicator_apply, Pi.one_apply, mul_ite,
-    mul_one, mul_zero]
+theorem salience_real_singleton (t : Object) :
+    salience.real {t} = (listenerChoice .salience t).count := by
+  rw [measureReal_def, salience, Measure.ofWeights_apply_singleton, ENNReal.toReal_natCast]
 
-instance (w : Object → ℕ) : IsFiniteMeasure (priorOf w) :=
-  ⟨by
-    rw [priorOf_apply w Set.univ]
-    exact ENNReal.sum_lt_top.mpr fun t _ => by simp⟩
-
-/-- The uniform prior `U`. -/
-noncomputable abbrev uniform : Measure Object := priorOf fun _ => 1
-
-/-- The salience condition of Table 2, the paper's estimate of the salience prior `S`. -/
-def salienceCount : Object → ℕ
-  | .greenSquare => 71
-  | .greenCircle => 30
-  | .blueCircle => 139
-
-/-- The salience prior. -/
-noncomputable abbrev salience : Measure Object := priorOf salienceCount
-
-/-! ### The literal listener and the speakers (§3) -/
-
-/-- The literal listener at a prior (1) conditions the prior on the word's extension. -/
-noncomputable def L0 (μ : Measure Object) : Kernel (Word Colour Shape) Object :=
-  RSA.listener μ (truthful fun u : Word Colour Shape ↦ (↑⟦u⟧ᴹ : Set Object))
-
-theorem L0_real_of_mem (w : Object → ℕ) {u : Word Colour Shape} {t : Object} (h : t ∈ ⟦u⟧ᴹ) :
-    (L0 (priorOf w) u).real {t} = (w t : ℝ) / (priorOf w ↑⟦u⟧ᴹ).toReal := by
-  rw [L0, measureReal_def, listener_truthful_apply_singleton _
-    (fun u : Word Colour Shape ↦ (↑⟦u⟧ᴹ : Set Object)) (Finset.mem_coe.2 h), ENNReal.toReal_mul,
-    ENNReal.toReal_inv, priorOf_singleton, ENNReal.toReal_natCast, div_eq_inv_mul]
-
-/-- At the uniform prior the literal listener puts the reciprocal of the extension's size on
-each object of it. -/
-theorem L0_uniform_real_of_mem {u : Word Colour Shape} {t : Object} (h : t ∈ ⟦u⟧ᴹ) :
-    (L0 uniform u).real {t} = 1 / ⟦u⟧ᴹ.card := by
-  rw [L0_real_of_mem _ h, priorOf_apply]
-  simp only [Nat.cast_one, Finset.mem_coe]
-  rw [Finset.sum_ite_mem, Finset.univ_inter, Finset.sum_const, nsmul_eq_mul, mul_one,
-    ENNReal.toReal_natCast]
-
-/-- The literal listener at the salience prior conditions the salience counts. -/
-theorem L0_salience_real_of_mem {u : Word Colour Shape} {t : Object} (h : t ∈ ⟦u⟧ᴹ) :
-    (L0 salience u).real {t} =
-      (salienceCount t : ℝ) / ∑ t' ∈ ⟦u⟧ᴹ, (salienceCount t' : ℝ) := by
-  rw [L0_real_of_mem _ h, priorOf_apply]
-  simp only [Finset.mem_coe]
-  rw [Finset.sum_ite_mem, Finset.univ_inter,
+theorem salience_real_finset (s : Finset Object) :
+    salience.real ↑s = ∑ t ∈ s, ((listenerChoice .salience t).count : ℝ) := by
+  rw [measureReal_def, salience, Measure.ofWeights_apply_finset,
     ENNReal.toReal_sum fun _ _ ↦ ENNReal.natCast_ne_top _]
   simp only [ENNReal.toReal_natCast]
 
-/-- The speaker's goal is the belief-oriented log probability of the referent (10) or the
-action-oriented probability itself (9). -/
+theorem salience_apply_singleton_ne_zero (t : Object) : salience {t} ≠ 0 := by
+  rw [salience, Measure.ofWeights_apply_singleton]
+  cases t <;> simp [listenerChoice]
+
+/-! ### The literal listener and the speakers -/
+
+/-- The literal listener at a prior (1) conditions the prior on the extension of the word. -/
+noncomputable def literal (μ : Measure Object) : Kernel (Word Colour Shape) Object :=
+  listener μ (truthful fun u : Word Colour Shape ↦ (↑⟦u⟧ᴹ : Set Object))
+
+instance (μ : Measure Object) : IsFiniteKernel (literal μ) :=
+  inferInstanceAs (IsFiniteKernel (listener _ _))
+
+/-- The speaker's goal is belief-oriented or action-oriented. -/
 inductive Goal
   | belief | action
   deriving DecidableEq, Repr
 
-/-- The goal's measure of the literal listener's probability of the referent. -/
+/-- The goal's measure of the literal listener's probability of the referent, its logarithm (10)
+or the probability itself (9). -/
 noncomputable def Goal.value : Goal → ℝ → ℝ
   | .belief => log
   | .action => id
 
-/-- The utility of a word at an object is the goal's value of the literal listener's
-probability less the cost, scaled by the rationality; a false word is never used (fn. 13). -/
-noncomputable def score (g : Goal) (μ : Measure Object) (lam c : ℝ) (t : Object)
-    (u : Word Colour Shape) : EReal :=
-  if t ∈ ⟦u⟧ᴹ then ((lam * (g.value ((L0 μ u).real {t}) - cost c u) : ℝ) : EReal)
-  else ⊥
+variable {g : Goal} {μ : Measure Object} {lam c : ℝ} {t : Object} {u u' : Word Colour Shape}
 
-/-- The speaker models `σ_xy` of (9) and (10) are the score speakers at goal `x` and belief
-prior `y`. -/
-noncomputable def speaker (g : Goal) (μ : Measure Object) (lam c : ℝ) :
-    Kernel Object (Word Colour Shape) :=
-  Kernel.softmax (score g μ lam c)
+/-- The utility of a word for a referent (4) is the goal's measure of the literal listener's
+probability of the referent, less the cost of the word. -/
+noncomputable def utility (g : Goal) (μ : Measure Object) (c : ℝ) (t : Object)
+    (u : Word Colour Shape) : ℝ :=
+  g.value ((literal μ u).real {t}) - cost c u
 
-instance (g : Goal) (μ : Measure Object) (lam c : ℝ) : IsFiniteKernel (speaker g μ lam c) :=
-  inferInstanceAs (IsFiniteKernel (Kernel.softmax _))
+/-- The speaker models `σ_xy` with goal `x`, belief `y` about the literal listener's prior,
+rationality `lam` and adjective cost `c`. The belief-oriented speaker is the rational speech act
+speaker against the literal listener, and the action-oriented speaker soft-maximizes its utility
+over the true words. -/
+noncomputable def speaker : Goal → Measure Object → ℝ → ℝ → Kernel Object (Word Colour Shape)
+  | .belief, μ, lam, c => RSA.speaker lam (cost c) (literal μ) Measure.dirac
+  | .action, μ, lam, c => Kernel.softmax fun t u ↦
+      if t ∈ ⟦u⟧ᴹ then ((lam * utility .action μ c t u : ℝ) : EReal) else ⊥
 
-theorem score_ne_top (g : Goal) (μ : Measure Object) (lam c : ℝ) (t : Object)
-    (u : Word Colour Shape) : score g μ lam c t u ≠ ⊤ := by
-  unfold score
-  split
-  · exact EReal.coe_ne_top _
-  · exact bot_ne_top
+instance (g : Goal) (μ : Measure Object) (lam c : ℝ) : IsFiniteKernel (speaker g μ lam c) := by
+  cases g
+  · exact inferInstanceAs (IsFiniteKernel (RSA.speaker _ _ _ _))
+  · exact inferInstanceAs (IsFiniteKernel (Kernel.softmax _))
 
-theorem score_of_mem (g : Goal) (μ : Measure Object) (lam c : ℝ) {t : Object}
-    {u : Word Colour Shape} (h : t ∈ ⟦u⟧ᴹ) :
-    score g μ lam c t u = ((lam * (g.value ((L0 μ u).real {t}) - cost c u) : ℝ) : EReal) := by
-  unfold score
-  rw [ite_eq_left h]
+/-- At the uniform prior the literal listener is Frank and Goodman's. -/
+theorem literal_uniform : literal (uniformOn .univ) = FrankGoodman2012.literal M :=
+  rfl
 
-theorem score_ne_bot (g : Goal) (μ : Measure Object) (lam c : ℝ) {t : Object}
-    {u : Word Colour Shape} (h : t ∈ ⟦u⟧ᴹ) : score g μ lam c t u ≠ ⊥ := by
-  rw [score_of_mem g μ lam c h]
-  exact EReal.coe_ne_bot _
+/-- At the uniform prior and no cost the belief-oriented speaker is Frank and Goodman's. -/
+theorem speaker_belief_uniform (lam : ℝ) :
+    speaker .belief (uniformOn .univ) lam 0 = FrankGoodman2012.speaker M lam := by
+  rw [speaker, cost_zero]
+  rfl
 
-theorem score_of_notMem (g : Goal) (μ : Measure Object) (lam c : ℝ) {t : Object}
-    {u : Word Colour Shape} (h : t ∉ ⟦u⟧ᴹ) : score g μ lam c t u = ⊥ := by
-  unfold score
-  rw [ite_eq_right h]
+section Preference
 
-/-- Every object has a true word. -/
-theorem exists_score_ne_bot (g : Goal) (μ : Measure Object) (lam c : ℝ) (t : Object) :
-    ∃ u, score g μ lam c t u ≠ ⊥ := by
-  cases t
-  · exact ⟨.square, score_ne_bot g μ lam c (by decide)⟩
-  · exact ⟨.circle, score_ne_bot g μ lam c (by decide)⟩
-  · exact ⟨.blue, score_ne_bot g μ lam c (by decide)⟩
+variable [IsFiniteMeasure μ]
 
-/-- Speaker preference at an object is utility comparison. -/
-theorem speaker_lt_iff (g : Goal) (μ : Measure Object) (lam c : ℝ) (t : Object)
-    (u u' : Word Colour Shape) :
+/-- Every speaker of the family soft-maximizes its utility over the true words, (9) and (10). -/
+theorem speaker_eq_softmax (hlam : 0 < lam) (hμ : ∀ t, μ {t} ≠ 0) (g : Goal) :
+    speaker g μ lam c = Kernel.softmax fun t u ↦
+      if t ∈ ⟦u⟧ᴹ then ((lam * utility g μ c t u : ℝ) : EReal) else ⊥ := by
+  cases g
+  swap
+  · rfl
+  rw [speaker, speaker_dirac_eq_softmax]
+  refine congrArg Kernel.softmax (funext fun t ↦ funext fun u ↦ ?_)
+  split_ifs with h
+  · have h0 : literal μ u {t} ≠ 0 :=
+      (listener_truthful_apply_singleton_ne_zero_iff μ _ u t).2 ⟨Finset.mem_coe.2 h, hμ t⟩
+    rw [ENNReal.log_pos_real h0 (measure_ne_top _ _), utility, Goal.value, measureReal_def,
+      mul_sub, EReal.coe_sub, EReal.coe_mul, EReal.coe_mul]
+  · rw [literal, listener_truthful_apply_singleton_of_notMem μ _ (by simpa using h),
+      ENNReal.log_zero, EReal.coe_mul_bot_of_pos hlam, EReal.bot_sub]
+
+/-- Of two words true of an object the speaker prefers the one of greater utility. -/
+theorem speaker_lt_iff (hlam : 0 < lam) (hμ : ∀ t, μ {t} ≠ 0) (g : Goal) (hu : t ∈ ⟦u⟧ᴹ)
+    (hu' : t ∈ ⟦u'⟧ᴹ) :
     (speaker g μ lam c t).real {u} < (speaker g μ lam c t).real {u'} ↔
-      score g μ lam c t u < score g μ lam c t u' :=
-  Kernel.softmax_real_singleton_lt_iff (score_ne_top g μ lam c t)
-    (exists_score_ne_bot g μ lam c t)
+      utility g μ c t u < utility g μ c t u' := by
+  rw [speaker_eq_softmax hlam hμ, Kernel.softmax_real_singleton_lt_iff
+    (fun v ↦ by split_ifs; exacts [EReal.coe_ne_top _, bot_ne_top])
+    ⟨u, by rw [ite_eq_left hu]; exact EReal.coe_ne_bot _⟩, ite_eq_left hu, ite_eq_left hu',
+    EReal.coe_lt_coe_iff, mul_lt_mul_iff_right₀ hlam]
 
-/-- The share of a word at an object with two true words is the logistic function of the utility
-difference. -/
-theorem speaker_real_of_pair (g : Goal) (μ : Measure Object) (lam c : ℝ) {t : Object}
-    {u u' : Word Colour Shape} (huu' : u ≠ u') (hu : t ∈ ⟦u⟧ᴹ) (hu' : t ∈ ⟦u'⟧ᴹ)
-    (hsupp : ∀ v : Word Colour Shape, t ∈ ⟦v⟧ᴹ → v = u ∨ v = u') :
+/-- An object has two true words, the one for its colour and the one for its shape, and the share
+of one is the logistic function of its utility over the other's, scaled by the rationality. -/
+theorem speaker_real_singleton (hlam : 0 < lam) (hμ : ∀ t, μ {t} ≠ 0) (g : Goal) (hu : t ∈ ⟦u⟧ᴹ)
+    (hu' : t ∈ ⟦u'⟧ᴹ) (h : u.1 ≠ u'.1) :
     (speaker g μ lam c t).real {u} =
-      sigmoid ((score g μ lam c t u).toReal - (score g μ lam c t u').toReal) :=
-  Kernel.softmax_real_singleton_of_pair huu' (score_ne_bot g μ lam c hu)
-    (score_ne_bot g μ lam c hu') (score_ne_top g μ lam c t)
-    fun v hv => hsupp v (by
-      by_contra h
-      exact hv (score_of_notMem g μ lam c h))
+      sigmoid (lam * (utility g μ c t u - utility g μ c t u')) := by
+  rw [speaker_eq_softmax hlam hμ, Kernel.softmax_real_singleton_of_pair
+    (fun huu' ↦ h (congrArg Sigma.fst huu')) (by rw [ite_eq_left hu]; exact EReal.coe_ne_bot _)
+    (by rw [ite_eq_left hu']; exact EReal.coe_ne_bot _)
+    (fun v ↦ by split_ifs; exacts [EReal.coe_ne_top _, bot_ne_top]) fun v hv ↦ ?_,
+    ite_eq_left hu, ite_eq_left hu', EReal.toReal_coe, EReal.toReal_coe, mul_sub]
+  have hv' : t ∈ ⟦v⟧ᴹ := by by_contra hn; exact hv (ite_eq_right hn)
+  obtain ⟨a, x⟩ := u
+  obtain ⟨a', x'⟩ := u'
+  obtain ⟨b, y⟩ := v
+  rw [FrankGoodman2012.mem_denote] at hu hu' hv'
+  simp only at hu hu' hv' h
+  subst hu hu' hv'
+  cases a <;> cases a' <;> cases b <;> simp_all
 
-/-! ### Speaker thresholds (Table 1) -/
+end Preference
 
-section Uniform
+/-! ### Speakers who ignore salience
 
-private theorem l0u_half {u : Word Colour Shape} {t : Object} (h : t ∈ ⟦u⟧ᴹ)
-    (hc : ⟦u⟧ᴹ.card = 2) :
-    (L0 uniform u).real {t} = 1 / 2 := by
-  rw [L0_uniform_real_of_mem h, hc, Nat.cast_ofNat]
+At the uniform prior a word is worth the goal's measure of the reciprocal of its extension's size.
+Every word of the context is true of one object or of two, and the difference in their worth is
+`log 2` to the belief-oriented speaker and `1/2` to the action-oriented one. -/
 
-private theorem l0u_one {u : Word Colour Shape} {t : Object} (h : t ∈ ⟦u⟧ᴹ)
-    (hc : ⟦u⟧ᴹ.card = 1) : (L0 uniform u).real {t} = 1 := by
-  rw [L0_uniform_real_of_mem h, hc, Nat.cast_one, div_one]
+/-- At the uniform prior the literal listener gives each object in the extension of a word the
+reciprocal of the extension's size. -/
+theorem literal_uniform_real (h : t ∈ ⟦u⟧ᴹ) :
+    (literal (uniformOn .univ) u).real {t} = (⟦u⟧ᴹ.card : ℝ)⁻¹ := by
+  rw [literal_uniform, FrankGoodman2012.literal, uniformListener_real_singleton, ite_eq_left h]
 
-variable {lam c : ℝ}
+/-- The informativity gap between a word true of the referent alone and a word true of two
+objects, on the goal's measure. -/
+noncomputable def Goal.gap (g : Goal) : ℝ :=
+  g.value 1 - g.value 2⁻¹
 
-/-- The belief-oriented speaker prefers the unique *blue* to the ambiguous *circle* at the blue
-circle exactly when the adjective costs less than `log 2`. -/
-theorem belief_blue_lt_iff (hlam : 0 < lam) :
-    (speaker .belief uniform lam c .blueCircle).real {.circle}
-      < (speaker .belief uniform lam c .blueCircle).real {.blue} ↔ c < log 2 := by
-  rw [speaker_lt_iff, score_of_mem _ _ _ _ (by decide), score_of_mem _ _ _ _ (by decide),
-    l0u_half (by decide) (by decide), l0u_one (by decide) (by decide), EReal.coe_lt_coe_iff]
-  simp only [Goal.value, cost, one_div, log_inv, log_one]
-  constructor <;> intro h <;> nlinarith
+@[simp] theorem Goal.gap_belief : Goal.belief.gap = log 2 := by
+  simp [Goal.gap, Goal.value]
 
-/-- It prefers the unique *square* to *green* at the green square exactly when the adjective
-costs more than `-log 2`. -/
-theorem belief_square_lt_iff (hlam : 0 < lam) :
-    (speaker .belief uniform lam c .greenSquare).real {.green}
-      < (speaker .belief uniform lam c .greenSquare).real {.square} ↔ -log 2 < c := by
-  rw [speaker_lt_iff, score_of_mem _ _ _ _ (by decide), score_of_mem _ _ _ _ (by decide),
-    l0u_half (by decide) (by decide), l0u_one (by decide) (by decide), EReal.coe_lt_coe_iff]
-  simp only [Goal.value, cost, one_div, log_inv, log_one]
-  constructor <;> intro h <;> nlinarith
+@[simp] theorem Goal.gap_action : Goal.action.gap = 2⁻¹ := by
+  norm_num [Goal.gap, Goal.value]
 
-/-- At the object with both features shared the two words are equally informative, and the
-noun wins exactly when it is cheaper. -/
-theorem belief_shared_lt_iff (hlam : 0 < lam) :
-    (speaker .belief uniform lam c .greenCircle).real {.green}
-      < (speaker .belief uniform lam c .greenCircle).real {.circle} ↔ 0 < c := by
-  rw [speaker_lt_iff, score_of_mem _ _ _ _ (by decide), score_of_mem _ _ _ _ (by decide),
-    l0u_half (by decide) (by decide), l0u_half (by decide) (by decide), EReal.coe_lt_coe_iff]
-  simp only [Goal.value, cost]
-  constructor <;> intro h <;> nlinarith
+theorem Goal.gap_pos (g : Goal) : 0 < g.gap := by
+  cases g <;> simp [log_pos]
 
-/-- The action-oriented speaker's threshold at the blue circle is `1/2`. -/
-theorem action_blue_lt_iff (hlam : 0 < lam) :
-    (speaker .action uniform lam c .blueCircle).real {.circle}
-      < (speaker .action uniform lam c .blueCircle).real {.blue} ↔ c < 1 / 2 := by
-  rw [speaker_lt_iff, score_of_mem _ _ _ _ (by decide), score_of_mem _ _ _ _ (by decide),
-    l0u_half (by decide) (by decide), l0u_one (by decide) (by decide), EReal.coe_lt_coe_iff]
-  simp only [Goal.value, cost, id]
-  constructor <;> intro h <;> nlinarith
+/-- The gap exceeds every cost in the paper's support `(-0.4, 0.4)`. -/
+theorem Goal.support_lt_gap (g : Goal) : 0.4 < g.gap := by
+  cases g
+  · linarith [gap_belief, log_two_gt_d9]
+  · norm_num
 
-/-- Its threshold at the green square is `-1/2`. -/
-theorem action_square_lt_iff (hlam : 0 < lam) :
-    (speaker .action uniform lam c .greenSquare).real {.green}
-      < (speaker .action uniform lam c .greenSquare).real {.square} ↔ -(1 / 2) < c := by
-  rw [speaker_lt_iff, score_of_mem _ _ _ _ (by decide), score_of_mem _ _ _ _ (by decide),
-    l0u_half (by decide) (by decide), l0u_one (by decide) (by decide), EReal.coe_lt_coe_iff]
-  simp only [Goal.value, cost, id]
-  constructor <;> intro h <;> nlinarith
+private theorem utility_uniform (g : Goal) (c : ℝ) {n : ℕ} (h : t ∈ ⟦u⟧ᴹ) (hn : ⟦u⟧ᴹ.card = n) :
+    utility g (uniformOn .univ) c t u = g.value (n : ℝ)⁻¹ - cost c u := by
+  rw [utility, literal_uniform_real h, hn]
 
-/-- At the shared object the action-oriented speaker too follows the sign of the cost. -/
-theorem action_shared_lt_iff (hlam : 0 < lam) :
-    (speaker .action uniform lam c .greenCircle).real {.green}
-      < (speaker .action uniform lam c .greenCircle).real {.circle} ↔ 0 < c := by
-  rw [speaker_lt_iff, score_of_mem _ _ _ _ (by decide), score_of_mem _ _ _ _ (by decide),
-    l0u_half (by decide) (by decide), l0u_half (by decide) (by decide), EReal.coe_lt_coe_iff]
-  simp only [Goal.value, cost, id]
-  constructor <;> intro h <;> nlinarith
+/-- At the blue circle the speaker prefers *blue*, which only it satisfies, to *circle* exactly
+when the adjective costs less than the informativity gap. -/
+theorem prefers_unique_colour_iff (hlam : 0 < lam) (g : Goal) :
+    (speaker g (uniformOn .univ) lam c .blueCircle).real {.circle} <
+      (speaker g (uniformOn .univ) lam c .blueCircle).real {.blue} ↔ c < g.gap := by
+  rw [speaker_lt_iff hlam uniformOn_univ_singleton_ne_zero g (by decide) (by decide),
+    utility_uniform g c (n := 2) (by decide) (by decide),
+    utility_uniform g c (n := 1) (by decide) (by decide), Goal.gap]
+  simp only [cost, Nat.cast_one, Nat.cast_ofNat, inv_one]
+  constructor <;> intro h <;> linarith
 
-end Uniform
+/-- At the green square it prefers *square*, which only it satisfies, to *green* exactly when the
+adjective is not cheaper than the noun by the informativity gap. -/
+theorem prefers_unique_shape_iff (hlam : 0 < lam) (g : Goal) :
+    (speaker g (uniformOn .univ) lam c .greenSquare).real {.green} <
+      (speaker g (uniformOn .univ) lam c .greenSquare).real {.square} ↔ -g.gap < c := by
+  rw [speaker_lt_iff hlam uniformOn_univ_singleton_ne_zero g (by decide) (by decide),
+    utility_uniform g c (n := 2) (by decide) (by decide),
+    utility_uniform g c (n := 1) (by decide) (by decide), Goal.gap]
+  simp only [cost, Nat.cast_one, Nat.cast_ofNat, inv_one]
+  constructor <;> intro h <;> linarith
 
-/-- Both thresholds for the unique words lie beyond the paper's cost support `(-0.4, 0.4)`. -/
-theorem support_lt_thresholds : (0.4 : ℝ) < 1 / 2 ∧ (1 / 2 : ℝ) < log 2 :=
-  ⟨by norm_num, by linarith [log_two_gt_d9]⟩
+/-- At the green circle, whose colour and shape are each shared, the two words are equally
+informative and the speaker prefers the noun exactly when it is the cheaper. -/
+theorem prefers_noun_iff (hlam : 0 < lam) (g : Goal) :
+    (speaker g (uniformOn .univ) lam c .greenCircle).real {.green} <
+      (speaker g (uniformOn .univ) lam c .greenCircle).real {.circle} ↔ 0 < c := by
+  rw [speaker_lt_iff hlam uniformOn_univ_singleton_ne_zero g (by decide) (by decide),
+    utility_uniform g c (n := 2) (by decide) (by decide),
+    utility_uniform g c (n := 2) (by decide) (by decide)]
+  simp only [cost]
+  constructor <;> intro h <;> linarith
 
-section Salience
+/-! ### The belief-oriented speaker who heeds salience -/
 
-private theorem l0s_circle_blueCircle :
-    (L0 salience .circle).real {.blueCircle} = (169 / 139)⁻¹ := by
-  rw [L0_salience_real_of_mem (by decide),
-    show ⟦Word.circle⟧ᴹ = {.greenCircle, .blueCircle} by
-      decide,
-    Finset.sum_pair (by decide)]
-  simp only [salienceCount, Nat.cast_ofNat]
-  norm_num
+/-- At the salience prior the literal listener gives each object in the extension of a word its
+share of the extension's salience. -/
+theorem literal_salience_real (h : t ∈ ⟦u⟧ᴹ) :
+    (literal salience u).real {t} = (listenerChoice .salience t).count /
+      ∑ t' ∈ ⟦u⟧ᴹ, ((listenerChoice .salience t').count : ℝ) := by
+  rw [literal, listener_truthful_real_singleton salience
+    (fun u : Word Colour Shape ↦ (↑⟦u⟧ᴹ : Set Object)) (Finset.mem_coe.2 h),
+    salience_real_singleton, salience_real_finset]
 
-private theorem l0s_blue_blueCircle : (L0 salience .blue).real {.blueCircle} = 1 := by
-  rw [L0_salience_real_of_mem (by decide),
-    show ⟦Word.blue⟧ᴹ = {.blueCircle} by decide,
+private theorem literal_salience_blue : (literal salience .blue).real {.blueCircle} = 1 := by
+  rw [literal_salience_real (by decide), show ⟦Word.blue⟧ᴹ = {.blueCircle} by decide,
     Finset.sum_singleton]
-  simp only [salienceCount, Nat.cast_ofNat]
-  norm_num
+  norm_num [listenerChoice]
 
-private theorem l0s_circle_greenCircle :
-    (L0 salience .circle).real {.greenCircle} = 30 / 101 * (169 / 101)⁻¹ := by
-  rw [L0_salience_real_of_mem (by decide),
-    show ⟦Word.circle⟧ᴹ = {.greenCircle, .blueCircle} by
-      decide,
-    Finset.sum_pair (by decide)]
-  simp only [salienceCount, Nat.cast_ofNat]
-  norm_num
+private theorem literal_salience_circle_blueCircle :
+    (literal salience .circle).real {.blueCircle} = 139 / 169 := by
+  rw [literal_salience_real (by decide),
+    show ⟦Word.circle⟧ᴹ = {.greenCircle, .blueCircle} by decide, Finset.sum_pair (by decide)]
+  norm_num [listenerChoice]
 
-private theorem l0s_green_greenCircle : (L0 salience .green).real {.greenCircle} = 30 / 101 := by
-  rw [L0_salience_real_of_mem (by decide),
-    show ⟦Word.green⟧ᴹ = {.greenSquare, .greenCircle} by
-      decide,
-    Finset.sum_pair (by decide)]
-  simp only [salienceCount, Nat.cast_ofNat]
-  norm_num
+private theorem literal_salience_circle_greenCircle :
+    (literal salience .circle).real {.greenCircle} = 30 / 169 := by
+  rw [literal_salience_real (by decide),
+    show ⟦Word.circle⟧ᴹ = {.greenCircle, .blueCircle} by decide, Finset.sum_pair (by decide)]
+  norm_num [listenerChoice]
 
-variable {lam c : ℝ}
+private theorem literal_salience_green :
+    (literal salience .green).real {.greenCircle} = 30 / 101 := by
+  rw [literal_salience_real (by decide),
+    show ⟦Word.green⟧ᴹ = {.greenSquare, .greenCircle} by decide, Finset.sum_pair (by decide)]
+  norm_num [listenerChoice]
 
-/-- The salience-belief speaker (7) prefers *blue* to *circle* at the blue circle exactly when the
-adjective costs less than `log (169 / 139)`. -/
-theorem salience_blue_lt_iff (hlam : 0 < lam) :
-    (speaker .belief salience lam c .blueCircle).real {.circle}
-      < (speaker .belief salience lam c .blueCircle).real {.blue} ↔ c < log (169 / 139) := by
-  rw [speaker_lt_iff, score_of_mem _ _ _ _ (by decide), score_of_mem _ _ _ _ (by decide),
-    l0s_circle_blueCircle, l0s_blue_blueCircle, EReal.coe_lt_coe_iff]
-  simp only [Goal.value, cost, log_inv, log_one]
-  constructor <;> intro h <;> nlinarith
+/-- The belief-oriented speaker who takes the literal listener to hold the salience prior (7)
+prefers *blue* to *circle* at the blue circle exactly when the adjective costs less than
+`log (169 / 139)`, the salient blue circle being the likelier circle. -/
+theorem salience_prefers_unique_colour_iff (hlam : 0 < lam) :
+    (speaker .belief salience lam c .blueCircle).real {.circle} <
+      (speaker .belief salience lam c .blueCircle).real {.blue} ↔ c < log (169 / 139) := by
+  rw [speaker_lt_iff hlam salience_apply_singleton_ne_zero .belief (by decide) (by decide),
+    utility, utility, literal_salience_circle_blueCircle, literal_salience_blue,
+    log_div (by norm_num) (by norm_num)]
+  simp only [Goal.value, cost, log_one, log_div (by norm_num : (139 : ℝ) ≠ 0)
+    (by norm_num : (169 : ℝ) ≠ 0)]
+  constructor <;> intro h <;> linarith
 
-/-- At the shared object it prefers the adjective *green* for every cost below
-`log (169 / 101)`, the whole of the paper's support. -/
-theorem salience_shared_lt_iff (hlam : 0 < lam) :
-    (speaker .belief salience lam c .greenCircle).real {.circle}
-      < (speaker .belief salience lam c .greenCircle).real {.green} ↔ c < log (169 / 101) := by
-  rw [speaker_lt_iff, score_of_mem _ _ _ _ (by decide), score_of_mem _ _ _ _ (by decide),
-    l0s_circle_greenCircle, l0s_green_greenCircle, EReal.coe_lt_coe_iff]
-  simp only [Goal.value, cost]
-  rw [log_mul (by norm_num) (by norm_num), log_inv]
-  constructor <;> intro h <;> nlinarith
+/-- At the green circle it prefers the adjective *green*, which sets the green circle against the
+less salient of its two rivals, to *circle* exactly when the adjective costs less than
+`log (169 / 101)`. -/
+theorem salience_prefers_adjective_iff (hlam : 0 < lam) :
+    (speaker .belief salience lam c .greenCircle).real {.circle} <
+      (speaker .belief salience lam c .greenCircle).real {.green} ↔ c < log (169 / 101) := by
+  rw [speaker_lt_iff hlam salience_apply_singleton_ne_zero .belief (by decide) (by decide),
+    utility, utility, literal_salience_circle_greenCircle, literal_salience_green,
+    log_div (by norm_num) (by norm_num)]
+  simp only [Goal.value, cost, log_div (by norm_num : (30 : ℝ) ≠ 0) (by norm_num : (169 : ℝ) ≠ 0),
+    log_div (by norm_num : (30 : ℝ) ≠ 0) (by norm_num : (101 : ℝ) ≠ 0)]
+  constructor <;> intro h <;> linarith
 
-end Salience
+/-- The first threshold lies inside the paper's cost support `(-0.4, 0.4)` and the second beyond
+it, so at every cost in the support this speaker prefers the adjective at the green circle. -/
+theorem salience_thresholds : log (169 / 139) < 0.4 ∧ (0.4 : ℝ) < log (169 / 101) := by
+  refine ⟨?_, ?_⟩
+  · rw [log_lt_iff_lt_exp (by norm_num)]
+    linarith [add_one_lt_exp (by norm_num : (0.4 : ℝ) ≠ 0)]
+  · rw [lt_log_iff_exp_lt (by norm_num)]
+    exact (exp_bound_div_one_sub_of_interval (by norm_num) (by norm_num)).trans_lt (by norm_num)
 
-/-- The salience-belief speaker's threshold lies inside the paper's cost support. -/
-theorem salience_threshold_lt : log (169 / 139) < (0.4 : ℝ) := by
-  rw [log_lt_iff_lt_exp (by norm_num)]
-  linarith [add_one_lt_exp (by norm_num : (0.4 : ℝ) ≠ 0)]
+/-! ### Listeners
 
-/-! ### Listeners (§3), (12) to (15) -/
+The belief-oriented listener (15) is `RSA.listener` at its prior and a speaker, and the paper's
+listeners take the speaker to ignore salience. The action-oriented listener (14) soft-maximizes
+that belief. -/
 
-/-- The belief-oriented listener (15) is the posterior of a speaker against the listener's
-prior. -/
-noncomputable def listener (ν : Measure Object) [IsFiniteMeasure ν]
-    (σ : Kernel Object (Word Colour Shape)) [IsFiniteKernel σ] :
-    Kernel (Word Colour Shape) Object :=
-  σ†ν
-
-/-- The action-oriented listener (14) soft-maximizes a posterior. -/
-noncomputable def actionListener (lamL : ℝ) (ρ : Kernel (Word Colour Shape) Object) :
-    Kernel (Word Colour Shape) Object :=
-  Kernel.softmax fun u t => ((lamL * (ρ u).real {t} : ℝ) : EReal)
-
-/-- Acting on the posterior preserves its order. -/
-theorem actionListener_lt_iff {lamL : ℝ} (hlamL : 0 < lamL)
-    (ρ : Kernel (Word Colour Shape) Object) (u : Word Colour Shape) (t t' : Object) :
-    (actionListener lamL ρ u).real {t} < (actionListener lamL ρ u).real {t'} ↔
-      (ρ u).real {t} < (ρ u).real {t'} := by
-  rw [actionListener, Kernel.softmax_real_singleton_lt_iff
-    (score := fun u t => ((lamL * (ρ u).real {t} : ℝ) : EReal)) (w := u)
-    (fun _ => EReal.coe_ne_top _) ⟨t, EReal.coe_ne_bot _⟩, EReal.coe_lt_coe_iff]
-  constructor <;> intro h <;> nlinarith
-
-/-- Listener preference between two objects is prior-weighted speaker preference. -/
-theorem listener_lt_iff (ν : Measure Object) [IsFiniteMeasure ν]
-    (σ : Kernel Object (Word Colour Shape)) [IsFiniteKernel σ] {u : Word Colour Shape}
-    (hu : (σ ∘ₘ ν) {u} ≠ 0) (t t' : Object) :
-    (listener ν σ u).real {t} < (listener ν σ u).real {t'} ↔
-      ν.real {t} * (σ t).real {u} < ν.real {t'} * (σ t').real {u} := by
-  have h := posterior_real_finset_lt_iff σ ν hu {t} {t'}
-  simp only [Finset.coe_singleton, Finset.sum_singleton] at h
-  exact h
-
-section BeliefUniform
-
-variable {lam c : ℝ}
-
-private theorem supp_blueCircle (v : Word Colour Shape) (hv : Object.blueCircle ∈ ⟦v⟧ᴹ) :
-    v = .circle ∨ v = .blue := by
-  obtain ⟨a, v⟩ := v
-  cases a <;> cases v <;> revert hv <;> decide
-
-private theorem supp_greenCircle (v : Word Colour Shape) (hv : Object.greenCircle ∈ ⟦v⟧ᴹ) :
-    v = .green ∨ v = .circle := by
-  obtain ⟨a, v⟩ := v
-  cases a <;> cases v <;> revert hv <;> decide
-
-private theorem supp_greenSquare (v : Word Colour Shape) (hv : Object.greenSquare ∈ ⟦v⟧ᴹ) :
-    v = .green ∨ v = .square := by
-  obtain ⟨a, v⟩ := v
-  cases a <;> cases v <;> revert hv <;> decide
-
-/-- The share of *circle* at the blue circle under the original speaker. -/
-theorem circle_at_blueCircle :
-    (speaker .belief uniform lam c .blueCircle).real {.circle} = sigmoid (lam * (c - log 2)) := by
-  rw [speaker_real_of_pair _ _ _ _ (u := .circle) (u' := .blue) (by decide) (by decide) (by decide)
-      supp_blueCircle, score_of_mem _ _ _ _ (by decide), score_of_mem _ _ _ _ (by decide),
-    EReal.toReal_coe, EReal.toReal_coe, l0u_half (by decide) (by decide),
-    l0u_one (by decide) (by decide)]
-  simp only [Goal.value, cost, one_div, log_inv, log_one]
+private theorem circle_blueCircle (hlam : 0 < lam) (g : Goal) :
+    (speaker g (uniformOn .univ) lam c .blueCircle).real {.circle} =
+      sigmoid (lam * (c - g.gap)) := by
+  rw [speaker_real_singleton hlam uniformOn_univ_singleton_ne_zero g (u' := .blue) (by decide)
+      (by decide) (by decide), utility_uniform g c (n := 2) (by decide) (by decide),
+    utility_uniform g c (n := 1) (by decide) (by decide), Goal.gap]
+  simp only [cost, Nat.cast_one, Nat.cast_ofNat, inv_one]
   ring_nf
 
-/-- The share of *circle* at the green circle. -/
-theorem circle_at_greenCircle :
-    (speaker .belief uniform lam c .greenCircle).real {.circle} = sigmoid (lam * c) := by
-  rw [speaker_real_of_pair _ _ _ _ (u := .circle) (u' := .green) (by decide) (by decide)
-      (by decide) (fun v hv => (supp_greenCircle v hv).symm), score_of_mem _ _ _ _ (by decide),
-    score_of_mem _ _ _ _ (by decide), EReal.toReal_coe, EReal.toReal_coe,
-    l0u_half (by decide) (by decide), l0u_half (by decide) (by decide)]
-  simp only [Goal.value, cost]
+private theorem circle_greenCircle (hlam : 0 < lam) (g : Goal) :
+    (speaker g (uniformOn .univ) lam c .greenCircle).real {.circle} = sigmoid (lam * c) := by
+  rw [speaker_real_singleton hlam uniformOn_univ_singleton_ne_zero g (u' := .green) (by decide)
+      (by decide) (by decide), utility_uniform g c (n := 2) (by decide) (by decide),
+    utility_uniform g c (n := 2) (by decide) (by decide)]
+  simp only [cost]
   ring_nf
 
-/-- The share of *green* at the green square. -/
-theorem green_at_greenSquare :
-    (speaker .belief uniform lam c .greenSquare).real {.green} =
-      sigmoid (lam * (-log 2 - c)) := by
-  rw [speaker_real_of_pair _ _ _ _ (u := .green) (u' := .square) (by decide) (by decide)
-      (by decide) supp_greenSquare, score_of_mem _ _ _ _ (by decide),
-    score_of_mem _ _ _ _ (by decide), EReal.toReal_coe, EReal.toReal_coe,
-    l0u_half (by decide) (by decide), l0u_one (by decide) (by decide)]
-  simp only [Goal.value, cost, one_div, log_inv, log_one]
+private theorem green_greenSquare (hlam : 0 < lam) (g : Goal) :
+    (speaker g (uniformOn .univ) lam c .greenSquare).real {.green} =
+      sigmoid (-(lam * (c + g.gap))) := by
+  rw [speaker_real_singleton hlam uniformOn_univ_singleton_ne_zero g (u' := .square) (by decide)
+      (by decide) (by decide), utility_uniform g c (n := 2) (by decide) (by decide),
+    utility_uniform g c (n := 1) (by decide) (by decide), Goal.gap]
+  simp only [cost, Nat.cast_one, Nat.cast_ofNat, inv_one]
   ring_nf
 
-/-- The share of *green* at the green circle. -/
-theorem green_at_greenCircle :
-    (speaker .belief uniform lam c .greenCircle).real {.green} = sigmoid (-(lam * c)) := by
-  rw [speaker_real_of_pair _ _ _ _ (u := .green) (u' := .circle) (by decide) (by decide)
-      (by decide) supp_greenCircle, score_of_mem _ _ _ _ (by decide),
-    score_of_mem _ _ _ _ (by decide), EReal.toReal_coe, EReal.toReal_coe,
-    l0u_half (by decide) (by decide), l0u_half (by decide) (by decide)]
-  simp only [Goal.value, cost]
+private theorem green_greenCircle (hlam : 0 < lam) (g : Goal) :
+    (speaker g (uniformOn .univ) lam c .greenCircle).real {.green} = sigmoid (-(lam * c)) := by
+  rw [speaker_real_singleton hlam uniformOn_univ_singleton_ne_zero g (u' := .circle) (by decide)
+      (by decide) (by decide), utility_uniform g c (n := 2) (by decide) (by decide),
+    utility_uniform g c (n := 2) (by decide) (by decide)]
+  simp only [cost]
   ring_nf
 
-/-- Every word is heard with positive probability under the original speaker at any prior with
-positive mass everywhere. -/
-theorem comp_speaker_ne_zero (w : Object → ℕ) (hw : ∀ t, w t ≠ 0) (u : Word Colour Shape) :
-    (speaker .belief uniform lam c ∘ₘ priorOf w) {u} ≠ 0 := by
-  have key (t : Object) (ht : t ∈ ⟦u⟧ᴹ) :
-      (speaker .belief uniform lam c ∘ₘ priorOf w) {u} ≠ 0 :=
-    comp_apply_singleton_ne_zero _ _ (by rw [priorOf_singleton]; exact_mod_cast hw t)
-      (Kernel.softmax_apply_singleton_ne_zero (score_ne_bot _ _ _ _ ht) (score_ne_top _ _ _ _ t))
-  obtain ⟨a, v⟩ := u
-  cases a <;> cases v
-  · exact key .blueCircle (by decide)
-  · exact key .greenSquare (by decide)
-  · exact key .greenSquare (by decide)
-  · exact key .greenCircle (by decide)
+/-- A listener with a uniform prior who hears *circle* prefers the green circle, since for the
+blue circle the speaker had *blue*. -/
+theorem uniform_listener_narrows_circle (hlam : 0 < lam) (g : Goal) :
+    (listener (uniformOn .univ) (speaker g (uniformOn .univ) lam c) .circle).real {.blueCircle} <
+      (listener (uniformOn .univ) (speaker g (uniformOn .univ) lam c) .circle).real
+        {.greenCircle} := by
+  rw [listener_real_singleton_lt_iff, uniformOn_univ_real_singleton, circle_blueCircle hlam,
+    uniformOn_univ_real_singleton, circle_greenCircle hlam]
+  exact mul_lt_mul_of_pos_left (sigmoid_lt (by nlinarith [g.gap_pos])) (by positivity)
 
-/-- The uniform-prior listener hearing *circle* prefers the green circle, since a blue-circle
-speaker had *blue*. -/
-theorem uniform_listener_circle (hlam : 0 < lam) :
-    (listener uniform (speaker .belief uniform lam c) .circle).real {.blueCircle}
-      < (listener uniform (speaker .belief uniform lam c) .circle).real {.greenCircle} := by
-  rw [listener_lt_iff _ _ (comp_speaker_ne_zero _ (fun _ => one_ne_zero) _), circle_at_blueCircle,
-    circle_at_greenCircle, measureReal_def, measureReal_def, priorOf_singleton, priorOf_singleton]
-  simp only [Nat.cast_one, ENNReal.toReal_one, one_mul]
-  exact sigmoid_lt (by nlinarith [log_pos (by norm_num : (1 : ℝ) < 2)])
+/-- Hearing *green* it prefers the green circle, since for the green square the speaker had
+*square*. -/
+theorem uniform_listener_narrows_green (hlam : 0 < lam) (g : Goal) :
+    (listener (uniformOn .univ) (speaker g (uniformOn .univ) lam c) .green).real {.greenSquare} <
+      (listener (uniformOn .univ) (speaker g (uniformOn .univ) lam c) .green).real
+        {.greenCircle} := by
+  rw [listener_real_singleton_lt_iff, uniformOn_univ_real_singleton, green_greenSquare hlam,
+    uniformOn_univ_real_singleton, green_greenCircle hlam]
+  exact mul_lt_mul_of_pos_left (sigmoid_lt (by nlinarith [g.gap_pos])) (by positivity)
 
-/-- Hearing *green* it prefers the green circle, since a green-square speaker had *square*. -/
-theorem uniform_listener_green (hlam : 0 < lam) :
-    (listener uniform (speaker .belief uniform lam c) .green).real {.greenSquare}
-      < (listener uniform (speaker .belief uniform lam c) .green).real {.greenCircle} := by
-  rw [listener_lt_iff _ _ (comp_speaker_ne_zero _ (fun _ => one_ne_zero) _), green_at_greenSquare,
-    green_at_greenCircle, measureReal_def, measureReal_def, priorOf_singleton, priorOf_singleton]
-  simp only [Nat.cast_one, ENNReal.toReal_one, one_mul]
-  exact sigmoid_lt (by nlinarith [log_pos (by norm_num : (1 : ℝ) < 2)])
+/-- A listener with the salience prior who hears *circle* prefers the salient blue circle exactly
+when its salience outweighs the speaker's preference for *blue* there. -/
+theorem salience_listener_circle_iff (hlam : 0 < lam) (g : Goal) :
+    (listener salience (speaker g (uniformOn .univ) lam c) .circle).real {.greenCircle} <
+      (listener salience (speaker g (uniformOn .univ) lam c) .circle).real {.blueCircle} ↔
+      30 * sigmoid (lam * c) < 139 * sigmoid (lam * (c - g.gap)) := by
+  rw [listener_real_singleton_lt_iff, salience_real_singleton, circle_greenCircle hlam,
+    salience_real_singleton, circle_blueCircle hlam]
+  simp only [listenerChoice, Nat.cast_ofNat]
 
-private theorem exp_shift (lam c : ℝ) :
-    exp (-(lam * (c - log 2))) = exp (-(lam * c)) * (2 : ℝ) ^ lam := by
-  rw [rpow_def_of_pos (by norm_num), ← exp_add]
-  congr 1
-  ring
+/-- Hearing *green* it prefers the green circle to the more salient green square exactly when the
+speaker's preference for *square* there outweighs the salience. -/
+theorem salience_listener_green_iff (hlam : 0 < lam) (g : Goal) :
+    (listener salience (speaker g (uniformOn .univ) lam c) .green).real {.greenSquare} <
+      (listener salience (speaker g (uniformOn .univ) lam c) .green).real {.greenCircle} ↔
+      71 * sigmoid (-(lam * (c + g.gap))) < 30 * sigmoid (-(lam * c)) := by
+  rw [listener_real_singleton_lt_iff, salience_real_singleton, green_greenSquare hlam,
+    salience_real_singleton, green_greenCircle hlam]
+  simp only [listenerChoice, Nat.cast_ofNat]
 
-private theorem exp_shift' (lam c : ℝ) :
-    exp (-(lam * (-log 2 - c))) = exp (lam * c) * (2 : ℝ) ^ lam := by
-  rw [rpow_def_of_pos (by norm_num), ← exp_add]
-  congr 1
-  ring
-
-/-- The salience-prior listener hearing *circle* prefers the salient blue circle, the direction of
-Table 2, exactly when `30 (1 + e^{-λc} 2^λ) < 139 (1 + e^{-λc})`. -/
-theorem salience_listener_circle_iff :
-    (listener salience (speaker .belief uniform lam c) .circle).real {.greenCircle}
-      < (listener salience (speaker .belief uniform lam c) .circle).real {.blueCircle} ↔
-      30 * (1 + exp (-(lam * c)) * (2 : ℝ) ^ lam) < 139 * (1 + exp (-(lam * c))) := by
-  rw [listener_lt_iff _ _ (comp_speaker_ne_zero _ (by decide) _), circle_at_blueCircle,
-    circle_at_greenCircle, measureReal_def, measureReal_def, priorOf_singleton, priorOf_singleton]
-  simp only [salienceCount, Nat.cast_ofNat, ENNReal.toReal_ofNat, sigmoid_def, exp_shift]
-  have hx := exp_pos (-(lam * c))
-  have hy : (0 : ℝ) < (2 : ℝ) ^ lam := rpow_pos_of_pos (by norm_num) _
-  rw [← div_eq_mul_inv, ← div_eq_mul_inv, div_lt_div_iff₀ (by positivity) (by positivity)]
-
-/-- Hearing *green* it prefers the green circle, again the direction of Table 2, exactly when
-`71 (1 + e^{λc}) < 30 (1 + e^{λc} 2^λ)`. -/
-theorem salience_listener_green_iff :
-    (listener salience (speaker .belief uniform lam c) .green).real {.greenSquare}
-      < (listener salience (speaker .belief uniform lam c) .green).real {.greenCircle} ↔
-      71 * (1 + exp (lam * c)) < 30 * (1 + exp (lam * c) * (2 : ℝ) ^ lam) := by
-  rw [listener_lt_iff _ _ (comp_speaker_ne_zero _ (by decide) _), green_at_greenSquare,
-    green_at_greenCircle, measureReal_def, measureReal_def, priorOf_singleton, priorOf_singleton]
-  simp only [salienceCount, Nat.cast_ofNat, ENNReal.toReal_ofNat, sigmoid_def, exp_shift',
-    neg_neg]
-  have hx := exp_pos (lam * c)
-  have hy : (0 : ℝ) < (2 : ℝ) ^ lam := rpow_pos_of_pos (by norm_num) _
-  rw [← div_eq_mul_inv, ← div_eq_mul_inv, div_lt_div_iff₀ (by positivity) (by positivity)]
-
-end BeliefUniform
-
-/-- The original model `ρ_bS(σ_bU)` at rationality one and no cost mispredicts *green*, as the
-salient green square wins. -/
-theorem rsa_listener_green :
-    ¬ (listener salience (speaker .belief uniform 1 0) .green).real {.greenSquare}
-      < (listener salience (speaker .belief uniform 1 0) .green).real {.greenCircle} := by
-  rw [salience_listener_green_iff]
-  norm_num
-
-/-- Without cost, the salience listener matches both directions of Table 2 exactly on the window
-`112/30 < 2^λ < 248/30` of embedded rationalities. -/
-theorem salience_listener_window (lam : ℝ) :
-    ((listener salience (speaker .belief uniform lam 0) .circle).real {.greenCircle}
-        < (listener salience (speaker .belief uniform lam 0) .circle).real {.blueCircle} ∧
-      (listener salience (speaker .belief uniform lam 0) .green).real {.greenSquare}
-        < (listener salience (speaker .belief uniform lam 0) .green).real {.greenCircle}) ↔
-      112 / 30 < (2 : ℝ) ^ lam ∧ (2 : ℝ) ^ lam < 248 / 30 := by
-  rw [salience_listener_circle_iff, salience_listener_green_iff]
-  simp only [mul_zero, neg_zero, exp_zero, one_mul]
+/-- Without cost a listener with the salience prior follows salience on *circle* and narrows on
+*green*, as the paper's listeners did, exactly on a window of rationalities of the speaker. -/
+theorem salience_listener_window (hlam : 0 < lam) (g : Goal) :
+    ((listener salience (speaker g (uniformOn .univ) lam 0) .circle).real {.greenCircle} <
+        (listener salience (speaker g (uniformOn .univ) lam 0) .circle).real {.blueCircle} ∧
+      (listener salience (speaker g (uniformOn .univ) lam 0) .green).real {.greenSquare} <
+        (listener salience (speaker g (uniformOn .univ) lam 0) .green).real {.greenCircle}) ↔
+      56 / 15 < exp (lam * g.gap) ∧ exp (lam * g.gap) < 124 / 15 := by
+  have hE : 0 < 1 + exp (lam * g.gap) := by positivity
+  rw [salience_listener_circle_iff hlam, salience_listener_green_iff hlam, mul_zero, neg_zero,
+    sigmoid_zero, zero_sub, zero_add, mul_neg, sigmoid_def, neg_neg, ← div_eq_mul_inv 139,
+    ← div_eq_mul_inv 71, lt_div_iff₀ hE, div_lt_iff₀ hE]
   constructor <;> rintro ⟨h₁, h₂⟩ <;> constructor <;> linarith
+
+/-- Frank and Goodman's listener at the measured salience and rationality one takes *green* to
+refer to the salient green square. -/
+theorem frankGoodman_listener_green :
+    (FrankGoodman2012.listener M salience 1 .green).real {.greenCircle} <
+      (FrankGoodman2012.listener M salience 1 .green).real {.greenSquare} := by
+  rw [FrankGoodman2012.listener, ← speaker_belief_uniform, listener_real_singleton_lt_iff,
+    salience_real_singleton, green_greenCircle one_pos, salience_real_singleton,
+    green_greenSquare one_pos, Goal.gap_belief, mul_zero, neg_zero, sigmoid_zero, zero_add,
+    one_mul, sigmoid_def, neg_neg, exp_log two_pos]
+  norm_num [listenerChoice]
+
+/-- The action-oriented listener (14) soft-maximizes its belief and so orders the objects as the
+belief does, at every rationality of its own. With the salience prior and the action-oriented
+speaker, the model the paper's comparison favours, it follows salience on *circle* and narrows on
+*green* on the window of its belief. -/
+theorem action_listener_window (hlam : 0 < lam) {lamL : ℝ} (hlamL : 0 < lamL)
+    {ρ : Kernel (Word Colour Shape) Object}
+    (hρ : ρ = policy lamL (listener salience (speaker .action (uniformOn .univ) lam 0))
+      fun t ↦ Pi.single t 1) :
+    ((ρ .circle).real {.greenCircle} < (ρ .circle).real {.blueCircle} ∧
+      (ρ .green).real {.greenSquare} < (ρ .green).real {.greenCircle}) ↔
+      56 / 15 < exp (lam / 2) ∧ exp (lam / 2) < 124 / 15 := by
+  rw [hρ, policy_single_real_lt_iff _ hlamL, policy_single_real_lt_iff _ hlamL,
+    salience_listener_window hlam, Goal.gap_action, ← div_eq_mul_inv]
 
 end QingFranke2015
