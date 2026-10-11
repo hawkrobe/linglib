@@ -533,6 +533,19 @@ theorem _root_.ProbabilityTheory.IndepFun.condEntropy_eq_entropy (h : X ⟂ᵢ[�
   rw [mutualInfo_eq_entropy_sub_condEntropy μ hX hY] at this
   linarith
 
+/-- Conditioning also on a random variable independent of the pair `(X, Y)` leaves the entropy
+of `X` given `Y` unchanged. -/
+theorem condEntropy_prod_eq_of_indepFun {U : Type*} [MeasurableSpace U] [Fintype U]
+    [MeasurableSingletonClass U] {Z : Ω → U} (hX : Measurable X) (hY : Measurable Y)
+    (hZ : Measurable Z) (h : (fun ω ↦ (X ω, Y ω)) ⟂ᵢ[μ] Z) :
+    H[X | fun ω ↦ (Y ω, Z ω) ; μ] = H[X | Y ; μ] := by
+  have e : H[fun ω ↦ ((X ω, Y ω), Z ω) ; μ] = H[fun ω ↦ (X ω, Y ω, Z ω) ; μ] :=
+    entropy_comp_of_injective μ (hX.prodMk (hY.prodMk hZ)) (f := (Equiv.prodAssoc S T U).symm)
+      (measurable_of_finite _) (Equiv.prodAssoc S T U).symm.injective
+  have hYZ : Y ⟂ᵢ[μ] Z := h.comp measurable_snd measurable_id
+  linarith [chain_rule μ hX (hY.prodMk hZ), chain_rule μ hX hY,
+    h.entropy_pair_eq_add (hX.prodMk hY) hZ, hYZ.entropy_pair_eq_add hY hZ]
+
 section comp
 
 variable {U : Type*} [MeasurableSpace U] [Fintype U] [MeasurableSingletonClass U]
