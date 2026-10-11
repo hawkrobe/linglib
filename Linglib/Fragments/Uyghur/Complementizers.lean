@@ -1,109 +1,125 @@
 module
 
 public import Linglib.Syntax.Category.Verb.Basic
-public import Linglib.Syntax.Category.Complementizer.Basic
+public import Linglib.Syntax.Category.Verb.ArgumentFrame.Takes
 
 /-!
-# Uyghur Clause-Linking Morphemes and the Say-Complex
-[major-2024] [major-2021]
+# Uyghur clausal embedding
 
-This file records the morphemes implicated in Uyghur (Southeastern
-Turkic) clausal embedding per [major-2024]: the verb root *de* 'say',
-the converbial suffix -(I)p, and the complementizer *-lik* of the
-nominalized (participial) embedding strategy. The apparent
-complementizer *dep* is deliberately not an entry: [major-2024] (his
-2–3) decomposes it as *de* + -(I)p; the decomposition and its
-consequences (adjunction at VP or TP, the argument-position ban) live
-in `Studies/Major2024.lean`.
+Uyghur (Turkic, ISO 639-3 `uig`) embeds a clause under a verb in two ways. A participial clause,
+`V-PTPL-lik-POSS-CASE`, is a nominalization: its subject is genitive, and it bears possessive
+agreement and case. A finite clause is followed by *dep*, the converb in *-(I)p* of *de-* 'say';
+the same suffix links any clause to the clause it modifies. Main-verb *de-* takes a finite clause
+with no linker, a noun phrase or a participial clause, and cannot go without a complement, where
+*warqira-* 'scream' takes none. The light verbs *qil-* 'do, make' and *bol-* 'become' form a
+transitive and an unaccusative predicate with the same noun or adjective.
 
-## Main definitions
+The verbs are recorded with the complements they take as main verbs. *dep* has no entry: whether
+it is a complementizer or the converb of the verb is the question of `Studies/Major2024.lean`.
+Forms are in the standard Latin orthography, a verb's form is its stem, and `I` is the
+harmonizing high vowel of the converb suffix.
 
-- `Uyghur.de`, `Uyghur.ip`, `Uyghur.lik` — the say-root, the converb,
-  and the nominalized-clause typer, as root `Complementizer` entries;
-  the inventory is `Uyghur.complementizers`
-- `Uyghur.deVerb`, `Uyghur.oyla`, `Uyghur.warqira` — 'say', 'think',
-  'scream': the main verbs whose frames drive [major-2024]'s §3
-  argumentation
+## References
 
-## Implementation notes
-
-Bare `his (N)` references are to [major-2024]'s example numbers; the
-bare -(I)p data of his §2 build on [sugar-2019] and [major-2021].
-Forms use the paper's standard-Uyghur Latin transcription; capital `I`
-in -(I)p marks the harmonizing high vowel. Verb entries are keyed by
-bare stem and their `form` fields carry the stem with a final hyphen
-(*de* surfaces as *dé* before the past-tense suffix, his 1).
+* [major-2024]
+* [major-2021]
+* [sugar-2019]
 -/
 
 @[expose] public section
 
 namespace Uyghur
 
-/-- *de* — the verb root 'say'. A verb root, not an affix: it never
-surfaces bare — inflected as a main verb (*dé-d-i* 'say-PST-3', his 1)
-or converb-suffixed as a clause-linker (*de-p*, his 2) — so it is
-recorded as a bound root. Main-verb argument structure:
-`Uyghur.deVerb`. -/
-def de : Complementizer where
-  morphs := [.root "de"]
+open Morphology (Morph)
 
-/-- -(I)p — the general-purpose converbial suffix (glossed CNV),
-deriving converb clauses that adjoin at VP or TP (his 4; [sugar-2019],
-[major-2021]). Not a clause-typing complementizer under [major-2024]:
-the same suffix links ordinary serial events ('jump', 'fall', his 3)
-and the say-complex *de-p*. -/
+/-! ### Clause-linking suffixes -/
+
+/-- *-(I)p* is the converb suffix, borne by the verb of a clause that modifies another clause. -/
 def ip : Complementizer where
   morphs := [.suff "(I)p"]
   verbForm := some .Conv
 
-/-- *-lik* — complementizer of the nominalized embedding strategy,
-`V-PTPL-lik-POSS-CASE` (his 40a): case-marked, possessive agreement,
-genitive subject — Noonan-nominalized. Participial clauses are
-Uyghur's genuine clausal arguments ([major-2024] §3.2): grammatical
-subjects (his 49a) and factive complements (his 61a). -/
+/-- *-lik* is the suffix of a participial clause, between the participle and the possessive
+agreement. -/
 def lik : Complementizer where
   morphs := [.suff "lik"]
   coding := some .nominalized
 
-/-- The clause-linking morphemes at issue in [major-2024]: the two
-pieces of the say-complex plus the rival argument strategy's typer.
-Not an exhaustive inventory of Uyghur subordination. -/
-def complementizers : List Complementizer := [de, ip, lik]
+/-- A verb that takes a participial clause has this frame, the subject of the clause genitive. -/
+def participialFrame : ArgumentFrame := .typedBy lik (some (.overt (some .gen)))
 
-/-! ### Main verbs
+/-! ### Verbs -/
 
-Vendler class stays unset (`Verb.Aspect.vendlerClass` convention for
-clause-embedding verbs); `voiceType` stays unset on *de-* because the
-paper argues 'say' alternates between an agentive activity and a
-subjectless stative description (his §3.3, 66–72). -/
-
-/-- *de-* 'say' as a main verb: transitive with an obligatory internal
-argument — bare finite CP (his 1), DP (his 39a: *(birnémi-ler-ni)
-dé-d-i*), or participial clause (his 40a). The bare-CP complement must
-stay adjacent to the verb, like a bare object, so it merges as
-complement to V (his 73). Under [major-2024] this same entry,
-converb-suffixed, heads dep clauses (`Studies/Major2024.lean`). -/
-def deVerb : Verb where
-  form := "de-"
-  valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.np, [0, 1])]
+/-- *de-* 'say', which reports an act of speaking or only the source of some content; its
+complement is obligatory. -/
+def de : Verb where
+  form := "de"
+  valency := .of [(ArgumentFrame.finiteClause, [0, 1]), (ArgumentFrame.np, [0, 1]),
+    (participialFrame, [0, 1])]
   speechActVerb := true
 
-/-- *oyla-* 'think' (his 58–59): takes DP objects (*u xewer-ni* 'that
-news-ACC', his 59b) and participial complements (his 59a). No finite
-frame is recorded: the apparent finite-CP frame (his 37a) is
-[major-2024]'s re-analysis target — the dep clause is a VP adjunct
-answering *qandaq* 'how' (his 58b, 60), not a complement. -/
+/-- *oyla-* 'think'. -/
 def oyla : Verb where
-  form := "oyla-"
-  valency := .of [(ArgumentFrame.np, [0, 1]), (ArgumentFrame.gerund, [0, 1])]
+  form := "oyla"
+  valency := .of [(ArgumentFrame.np, [0, 1]), (participialFrame, [0, 1])]
   attitude := some (.doxastic .nonVeridical)
 
-/-- *warqira-* 'scream': unergative, no complement frame — neither DP
-(his 39b) nor participial clause (his 40b). With a dep adjunct it is
-coerced into a verb of speech (his 38; §3.1). -/
+/-- *bil-* 'know'. -/
+def bil : Verb where
+  form := "bil"
+  valency := .of [(ArgumentFrame.np, [0, 1]), (participialFrame, [0, 1])]
+  attitude := some (.doxastic .veridical)
+  factivity := some .semi
+
+/-- *unut-* 'forget'. -/
+def unut : Verb where
+  form := "unut"
+  valency := .of [(ArgumentFrame.np, [0, 1]), (participialFrame, [0, 1])]
+  factivity := some .full
+
+/-- *éyt-* 'tell'. -/
+def eyt : Verb where
+  form := "éyt"
+  valency := .of [(ArgumentFrame.np, [0, 1]), (participialFrame, [0, 1])]
+  voiceType := some .agentive
+  speechActVerb := true
+
+/-- *warqira-* 'scream', unergative. -/
 def warqira : Verb where
-  form := "warqira-"
+  form := "warqira"
   valency := .ofFrame ArgumentFrame.intransitive
   voiceType := some .agentive
+
+/-- *ket-* 'leave', unaccusative. -/
+def ket : Verb where
+  form := "ket"
+  valency := .ofFrame ArgumentFrame.intransitive
+  voiceType := some .nonThematic
+
+/-- *ye-* 'eat'. -/
+def ye : Verb where
+  form := "ye"
+  valency := .ofFrame ArgumentFrame.np
+  voiceType := some .agentive
+
+/-- The light verb *qil-* 'do, make', transitive: *söz qil-* 'speak', *éniq qil-* 'make
+clear'. -/
+def qil : Verb where
+  form := "qil"
+  valency := .ofFrame ArgumentFrame.np
+  voiceType := some .agentive
+
+/-- The light verb *bol-* 'become', unaccusative: *söz bol-* 'there be speaking', *éniq bol-*
+'become clear'. -/
+def bol : Verb where
+  form := "bol"
+  valency := .ofFrame ArgumentFrame.intransitive
+  voiceType := some .nonThematic
+
+/-- `verbs` lists the verbs recorded here. -/
+def verbs : List Verb := [de, oyla, bil, unut, eyt, warqira, ket, ye, qil, bol]
+
+/-- The converb of a verb is its stem under *-(I)p*, as *de-p* 'saying' and *oyla-p* 'thinking'. -/
+def converb (v : Verb) : List Morph := .root v.form :: ip.morphs
 
 end Uyghur

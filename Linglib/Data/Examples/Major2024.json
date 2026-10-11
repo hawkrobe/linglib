@@ -4,10 +4,10 @@
     "source": {"bibkey": "major-2024", "paperLabel": "ex. (2)"},
     "reportedIn": null,
     "language": "uigh1240",
-    "primaryText": "Mahinur Tursun-(ni) göshnan-ni et-t-i de-p oyla-y-du.",
+    "primaryText": "Mahinur Tursun-ni göshnan-ni et-t-i de-p oyla-y-du.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Mahinur", "Mahinur"], ["Tursun-(ni)", "Tursun-ACC"], ["göshnan-ni", "meatbread-ACC"],
+      ["Mahinur", "Mahinur"], ["Tursun-ni", "Tursun-ACC"], ["göshnan-ni", "meatbread-ACC"],
       ["et-t-i", "make-PST-3"], ["de-p", "say-CNV"], ["oyla-y-du", "think-NONPST-3"]
     ],
     "translation": "Mahinur thinks that Tursun made meatbread.",
@@ -16,10 +16,113 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["construction", "dep-clause"],
-      ["matrixVerb", "oyla- 'think'"]
+      ["clause", "dep"],
+      ["matrixVerb", "oyla"]
     ],
-    "comment": "Baseline dep complement. Paper adds the literal translation 'Mahinur thinks (something), saying Tursun made meatbread.' The parenthesized -(ni) marks the optional accusative on the embedded subject.",
+    "comment": "The paper prints Tursun-(ni), the accusative optional, and adds the literal translation 'Mahinur thinks (something), saying Tursun made meatbread.'",
+    "verified": "page-image"
+  },
+  {
+    "id": "major2024_18a",
+    "source": {"bibkey": "major-2024", "paperLabel": "ex. (18a)"},
+    "reportedIn": null,
+    "language": "uigh1240",
+    "primaryText": "Ahmat métal-ni ur-up tüzli-wet-t-i, men=mu shundaq tüzli-wet-t-im.",
+    "discourseSegments": [
+      "Ahmat métal-ni ur-up tüzli-wet-t-i,",
+      "men=mu shundaq tüzli-wet-t-im."
+    ],
+    "glossedTokens": [
+      ["Ahmat", "Ahmat"], ["métal-ni", "metal-ACC"], ["ur-up", "hit-CNV"],
+      ["tüzli-wet-t-i", "flatten-COMPL-PST-3"], ["men=mu", "1SG=ADD"], ["shundaq", "like.this"],
+      ["tüzli-wet-t-im", "flatten-COMPL-PST-1SG"]
+    ],
+    "translation": "Ahmat flattened the metal by pounding it, and I flattened [=metal by pounding] like this, too.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "proform"],
+      ["clause", "converb"],
+      ["height", "VP"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "major2024_18b",
+    "source": {"bibkey": "major-2024", "paperLabel": "ex. (18b)"},
+    "reportedIn": null,
+    "language": "uigh1240",
+    "primaryText": "Tursun polu ét-ip yé-d-i, men=mu shundaq yé-d-im.",
+    "discourseSegments": [
+      "Tursun polu ét-ip yé-d-i,",
+      "men=mu shundaq yé-d-im."
+    ],
+    "glossedTokens": [
+      ["Tursun", "Tursun"], ["polu", "pilaf"], ["ét-ip", "make-CNV"], ["yé-d-i", "eat-PST-3"],
+      ["men=mu", "1SG=ADD"], ["shundaq", "like.this"], ["yé-d-im", "eat-PST-1SG"]
+    ],
+    "translation": "Tursun, having made pilaf, ate it and I ate [pilaf having cooked it] like this too.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "proform"],
+      ["clause", "converb"],
+      ["height", "TP"]
+    ],
+    "comment": "The paper prints # on the second clause.",
+    "verified": "page-image"
+  },
+  {
+    "id": "major2024_23a",
+    "source": {"bibkey": "major-2024", "paperLabel": "ex. (23a)"},
+    "reportedIn": null,
+    "language": "uigh1240",
+    "primaryText": "Mahinur héchnémi-ni ét-ip yérim-i-ni yé-mi-d-i.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mahinur", "Mahinur"], ["héchnémi-ni", "no.what-ACC"], ["ét-ip", "make-CNV"],
+      ["yérim-i-ni", "half-3POSS-ACC"], ["yé-mi-d-i", "eat-NEG-PST-3"]
+    ],
+    "translation": "Mahinur didn't cook anything and eat half of it.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "nci"],
+      ["clause", "converb"],
+      ["height", "TP"]
+    ],
+    "comment": "The paper prints héchnémi-(ni) and yé-*(mi)-d-i; the translation is marked 'Intended'.",
+    "verified": "page-image"
+  },
+  {
+    "id": "major2024_26b",
+    "source": {"bibkey": "major-2024", "paperLabel": "ex. (26b)"},
+    "reportedIn": null,
+    "language": "uigh1240",
+    "primaryText": "Biz héchkim-ge dora bér-ip uxla-t-mi-d-uq.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Biz", "1PL"], ["héchkim-ge", "no.who-DAT"], ["dora", "drug"], ["bér-ip", "give-CNV"],
+      ["uxla-t-mi-d-uq", "sleep-CAUS-NEG-PST-1PL"]
+    ],
+    "translation": "We didn't make anyone sleep by giving them drugs.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "nci"],
+      ["clause", "converb"],
+      ["height", "VP"]
+    ],
+    "comment": "The paper brackets the converb clause and marks its null subject, coindexed with biz.",
     "verified": "page-image"
   },
   {
@@ -39,10 +142,10 @@
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["construction", "dep-clause"],
-      ["matrixVerb", "warqira- 'scream'"]
+      ["clause", "dep"],
+      ["matrixVerb", "warqira"]
     ],
-    "comment": "The dep clause modifies unergative 'scream' and coerces it into a verb of speech: the matrix clause is simply 'Mahinur screamed', the dep clause adds the communicative content. Bracketing dropped from primaryText.",
+    "comment": "",
     "verified": "page-image"
   },
   {
@@ -58,15 +161,39 @@
     "translation": "Mahinur said something.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
-      {"form": "Mahinur dé-d-i.", "judgment": "ungrammatical"}
-    ],
+    "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "subcategorization"],
-      ["verb", "de- 'say'"]
+      ["verb", "de"],
+      ["complement", "dp"],
+      ["verbForm", "finite"]
     ],
-    "comment": "Paper prints '*(birnémi-ler-ni)': omitting the DP is ungrammatical (expanded into alternatives) — main-verb 'say' obligatorily introduces a DP complement.",
+    "comment": "The paper prints *(birnémi-ler-ni): the object is obligatory.",
+    "verified": "page-image"
+  },
+  {
+    "id": "major2024_39a_bare",
+    "source": {"bibkey": "major-2024", "paperLabel": "ex. (39a)"},
+    "reportedIn": null,
+    "language": "uigh1240",
+    "primaryText": "Mahinur dé-d-i.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mahinur", "Mahinur"], ["dé-d-i", "say-PST-3"]
+    ],
+    "translation": "",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "subcategorization"],
+      ["verb", "de"],
+      ["complement", "none"],
+      ["verbForm", "finite"]
+    ],
+    "comment": "The starred variant of *(birnémi-ler-ni), and of *(Tursun-ning ket-ken-lik-i-ni) in (40a); the paper translates only the full sentences.",
     "verified": "page-image"
   },
   {
@@ -79,18 +206,43 @@
     "glossedTokens": [
       ["Mahinur", "Mahinur"], ["warqiri-di", "scream-PST-3"]
     ],
-    "translation": "Mahinur screamed (*something).",
+    "translation": "Mahinur screamed.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
-      {"form": "Mahinur birnémi-ler-ni warqiri-di.", "judgment": "ungrammatical"}
-    ],
+    "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "subcategorization"],
-      ["verb", "warqira- 'scream'"]
+      ["verb", "warqira"],
+      ["complement", "none"],
+      ["verbForm", "finite"]
     ],
-    "comment": "Paper prints '(*birnémi-ler-ni)': adding the DP is ungrammatical (expanded into alternatives) — 'scream' is incompatible with a complement.",
+    "comment": "The paper prints (*birnémi-ler-ni), and (*Tursun-ning ket-ken-lik-i-ni) in (40b).",
+    "verified": "page-image"
+  },
+  {
+    "id": "major2024_39b_dp",
+    "source": {"bibkey": "major-2024", "paperLabel": "ex. (39b)"},
+    "reportedIn": null,
+    "language": "uigh1240",
+    "primaryText": "Mahinur birnémi-ler-ni warqiri-di.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mahinur", "Mahinur"], ["birnémi-ler-ni", "one.what-PL-ACC"],
+      ["warqiri-di", "scream-PST-3"]
+    ],
+    "translation": "Mahinur screamed something.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "subcategorization"],
+      ["verb", "warqira"],
+      ["complement", "dp"],
+      ["verbForm", "finite"]
+    ],
+    "comment": "The starred variant of (*birnémi-ler-ni).",
     "verified": "page-image"
   },
   {
@@ -107,39 +259,40 @@
     "translation": "Mahinur said that Tursun left.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
-      {"form": "Mahinur dé-d-i.", "judgment": "ungrammatical"}
-    ],
+    "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "subcategorization"],
-      ["verb", "de- 'say'"]
+      ["verb", "de"],
+      ["complement", "participial"],
+      ["verbForm", "finite"]
     ],
-    "comment": "Paper prints '*(Tursun-ning ket-ken-lik-i-ni)': omission is ungrammatical (expanded into alternatives) — 'say' obligatorily takes a (here participial) complement.",
+    "comment": "The paper prints *(Tursun-ning ket-ken-lik-i-ni): the complement is obligatory.",
     "verified": "page-image"
   },
   {
-    "id": "major2024_40b",
+    "id": "major2024_40b_participial",
     "source": {"bibkey": "major-2024", "paperLabel": "ex. (40b)"},
     "reportedIn": null,
     "language": "uigh1240",
-    "primaryText": "Mahinur warqiri-di.",
+    "primaryText": "Mahinur Tursun-ning ket-ken-lik-i-ni warqiri-di.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Mahinur", "Mahinur"], ["warqiri-di", "scream-PST-3"]
+      ["Mahinur", "Mahinur"], ["Tursun-ning", "Tursun-GEN"],
+      ["ket-ken-lik-i-ni", "leave-PTPL-COMP-3POSS-ACC"], ["warqiri-di", "scream-PST-3"]
     ],
-    "translation": "Mahinur screamed (*that Tursun left).",
+    "translation": "Mahinur screamed that Tursun left.",
     "context": "",
-    "judgment": "acceptable",
-    "alternatives": [
-      {"form": "Mahinur Tursun-ning ket-ken-lik-i-ni warqiri-di.", "judgment": "ungrammatical"}
-    ],
+    "judgment": "ungrammatical",
+    "alternatives": [],
     "readings": [],
     "paperFeatures": [
       ["diagnostic", "subcategorization"],
-      ["verb", "warqira- 'scream'"]
+      ["verb", "warqira"],
+      ["complement", "participial"],
+      ["verbForm", "finite"]
     ],
-    "comment": "Paper prints '(*Tursun-ning ket-ken-lik-i-ni)': adding the participial clause is ungrammatical (expanded into alternatives) — 'scream' rejects a clausal complement.",
+    "comment": "The starred variant of (*Tursun-ning ket-ken-lik-i-ni).",
     "verified": "page-image"
   },
   {
@@ -153,18 +306,42 @@
       ["Mahinur", "Mahinur"], ["birnémi-ler-ni", "one.what-PL-ACC"], ["de-p", "say-CNV"],
       ["warqiri-di", "scream-PST-3"]
     ],
-    "translation": "Mahinur screamed, saying *(something).",
+    "translation": "Mahinur screamed, saying something.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
-      {"form": "Mahinur de-p warqiri-di.", "judgment": "ungrammatical"}
-    ],
+    "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["diagnostic", "subcategorization-persistence"],
-      ["construction", "dep + scream"]
+      ["diagnostic", "subcategorization"],
+      ["verb", "de"],
+      ["complement", "dp"],
+      ["verbForm", "converb"]
     ],
-    "comment": "Paper prints '*(birnémi-ler-ni)': the subcategorization requirement of de- 'say' persists inside the adjoined dep clause — 'say' obligatorily introduces an internal argument even under 'scream'.",
+    "comment": "The paper prints *(birnémi-ler-ni).",
+    "verified": "page-image"
+  },
+  {
+    "id": "major2024_41a_bare",
+    "source": {"bibkey": "major-2024", "paperLabel": "ex. (41a)"},
+    "reportedIn": null,
+    "language": "uigh1240",
+    "primaryText": "Mahinur de-p warqiri-di.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mahinur", "Mahinur"], ["de-p", "say-CNV"], ["warqiri-di", "scream-PST-3"]
+    ],
+    "translation": "Mahinur screamed, saying.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "subcategorization"],
+      ["verb", "de"],
+      ["complement", "none"],
+      ["verbForm", "converb"]
+    ],
+    "comment": "The starred variant of *(birnémi-ler-ni), and of *(Tursun-ning ket-ken-lik-i-ni) in (41b); the paper stars the object of its translation the same way.",
     "verified": "page-image"
   },
   {
@@ -179,18 +356,93 @@
       ["ket-ken-lik-i-ni", "leave-PTPL-COMP-3POSS-ACC"], ["de-p", "say-CNV"],
       ["warqiri-di", "scream-PST-3"]
     ],
-    "translation": "Mahinur screamed, saying *(that Tursun left).",
+    "translation": "Mahinur screamed, saying that Tursun left.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [
-      {"form": "Mahinur de-p warqiri-di.", "judgment": "ungrammatical"}
-    ],
+    "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["diagnostic", "subcategorization-persistence"],
-      ["construction", "dep + scream"]
+      ["diagnostic", "subcategorization"],
+      ["verb", "de"],
+      ["complement", "participial"],
+      ["verbForm", "converb"]
     ],
-    "comment": "Paper prints '*(Tursun-ning ket-ken-lik-i-ni)': same persistence as (41a) with a clausal DP complement of 'say' inside the dep clause.",
+    "comment": "The paper prints *(Tursun-ning ket-ken-lik-i-ni).",
+    "verified": "page-image"
+  },
+  {
+    "id": "major2024_42a",
+    "source": {"bibkey": "major-2024", "paperLabel": "ex. (42a)"},
+    "reportedIn": null,
+    "language": "uigh1240",
+    "primaryText": "Mahinur birnémi-ler-ni oyla-p warqiri-di.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mahinur", "Mahinur"], ["birnémi-ler-ni", "one.what-PL-ACC"], ["oyla-p", "think-CNV"],
+      ["warqiri-di", "scream-PST-3"]
+    ],
+    "translation": "Mahinur screamed, thinking something.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "subcategorization"],
+      ["verb", "oyla"],
+      ["complement", "dp"],
+      ["verbForm", "converb"]
+    ],
+    "comment": "The paper prints *(birnémi-ler-ni).",
+    "verified": "page-image"
+  },
+  {
+    "id": "major2024_42a_bare",
+    "source": {"bibkey": "major-2024", "paperLabel": "ex. (42a)"},
+    "reportedIn": null,
+    "language": "uigh1240",
+    "primaryText": "Mahinur oyla-p warqiri-di.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mahinur", "Mahinur"], ["oyla-p", "think-CNV"], ["warqiri-di", "scream-PST-3"]
+    ],
+    "translation": "Mahinur screamed, thinking.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "subcategorization"],
+      ["verb", "oyla"],
+      ["complement", "none"],
+      ["verbForm", "converb"]
+    ],
+    "comment": "The starred variant of *(birnémi-ler-ni), and of *(Tursun-ning ket-ken-lik-i-ni) in (42b); the paper stars the object of its translation the same way.",
+    "verified": "page-image"
+  },
+  {
+    "id": "major2024_42b",
+    "source": {"bibkey": "major-2024", "paperLabel": "ex. (42b)"},
+    "reportedIn": null,
+    "language": "uigh1240",
+    "primaryText": "Mahinur Tursun-ning ket-ken-lik-i-ni oyla-p warqiri-di.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mahinur", "Mahinur"], ["Tursun-ning", "Tursun-GEN"],
+      ["ket-ken-lik-i-ni", "leave-PTPL-COMP-3POSS-ACC"], ["oyla-p", "think-CNV"],
+      ["warqiri-di", "scream-PST-3"]
+    ],
+    "translation": "Mahinur screamed, thinking that Tursun left.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "subcategorization"],
+      ["verb", "oyla"],
+      ["complement", "participial"],
+      ["verbForm", "converb"]
+    ],
+    "comment": "The paper prints *(Tursun-ning ket-ken-lik-i-ni).",
     "verified": "page-image"
   },
   {
@@ -198,23 +450,25 @@
     "source": {"bibkey": "major-2024", "paperLabel": "ex. (49a)"},
     "reportedIn": null,
     "language": "uigh1240",
-    "primaryText": "Tursun-ning ket-ken-lik (xewir)-i méni hayran qal-dur-d-i.",
+    "primaryText": "Tursun-ning ket-ken-lik xewir-i méni hayran qal-dur-d-i.",
     "discourseSegments": [],
     "glossedTokens": [
       ["Tursun-ning", "Tursun-GEN"], ["ket-ken-lik", "leave-PTPL.PST-COMP"],
-      ["(xewir)-i", "(news)-3POSS"], ["méni", "1SG.ACC"], ["hayran", "surprise"],
+      ["xewir-i", "news-3POSS"], ["méni", "1SG.ACC"], ["hayran", "surprise"],
       ["qal-dur-d-i", "remain-CAUS-PST-3"]
     ],
-    "translation": "(The news) that Tursun left surprised me.",
+    "translation": "The news that Tursun left surprised me.",
     "context": "",
     "judgment": "acceptable",
-    "alternatives": [],
+    "alternatives": [
+      {"form": "Tursun-ning ket-ken-lik-i méni hayran qal-dur-d-i.", "judgment": "acceptable"}
+    ],
     "readings": [],
     "paperFeatures": [
-      ["diagnostic", "subject-position"],
-      ["clauseType", "participial"]
+      ["diagnostic", "subject"],
+      ["clause", "participial"]
     ],
-    "comment": "The participial clause can serve as the grammatical subject (with nominative case) of the psych predicate 'make surprised', unlike dep clauses (49b).",
+    "comment": "The paper prints (xewir)-i, the noun optional.",
     "verified": "page-image"
   },
   {
@@ -222,23 +476,853 @@
     "source": {"bibkey": "major-2024", "paperLabel": "ex. (49b)"},
     "reportedIn": null,
     "language": "uigh1240",
-    "primaryText": "Tursun-(ni) ket-t-i de-p (xewer) méni hayran qal-dur-d-i.",
+    "primaryText": "Tursun-ni ket-t-i de-p xewer méni hayran qal-dur-d-i.",
     "discourseSegments": [],
     "glossedTokens": [
-      ["Tursun-(ni)", "Tursun-ACC"], ["ket-t-i", "leave-PST-3"], ["de-p", "say-CNV"],
-      ["(xewer)", "news"], ["méni", "1SG.ACC"], ["hayran", "surprise"],
+      ["Tursun-ni", "Tursun-ACC"], ["ket-t-i", "leave-PST-3"], ["de-p", "say-CNV"],
+      ["xewer", "news"], ["méni", "1SG.ACC"], ["hayran", "surprise"],
       ["qal-dur-d-i", "remain-CAUS-PST-3"]
     ],
-    "translation": "(The news) that Tursun left surprised me.",
+    "translation": "The news that Tursun left surprised me.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [
+      {"form": "Tursun-ni ket-t-i de-p méni hayran qal-dur-d-i.", "judgment": "ungrammatical"}
+    ],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "subject"],
+      ["clause", "dep"]
+    ],
+    "comment": "The paper prints Tursun-(ni) and (xewer) and marks the translation 'Intended'. Its fn. 18: the string is grammatical with a dropped subject, 'S/he surprised me, saying that Tursun left.'",
+    "verified": "page-image"
+  },
+  {
+    "id": "major2024_54a",
+    "source": {"bibkey": "major-2024", "paperLabel": "ex. (54a)"},
+    "reportedIn": null,
+    "language": "uigh1240",
+    "primaryText": "Mahinur héchkim-ni ket-t-i de-p warqiri-mi-d-i.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mahinur", "Mahinur"], ["héchkim-ni", "no.who-ACC"], ["ket-t-i", "leave-PST-3"],
+      ["de-p", "say-CNV"], ["warqiri-mi-d-i", "scream-NEG-PST-3"]
+    ],
+    "translation": "Mahinur screamed, saying nobody left.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "nci"],
+      ["clause", "dep"],
+      ["height", "VP"],
+      ["matrixVerb", "warqira"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "major2024_54b",
+    "source": {"bibkey": "major-2024", "paperLabel": "ex. (54b)"},
+    "reportedIn": null,
+    "language": "uigh1240",
+    "primaryText": "Mahinur héchkim-ni kel-i-du de-p ket-mi-d-i.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mahinur", "Mahinur"], ["héchkim-ni", "no.who-ACC"], ["kel-i-du", "come-NONPST-3"],
+      ["de-p", "say-CNV"], ["ket-mi-d-i", "leave-NEG-PST-3"]
+    ],
+    "translation": "Mahinur said nobody will come, and left.",
     "context": "",
     "judgment": "ungrammatical",
     "alternatives": [],
     "readings": [],
     "paperFeatures": [
-      ["diagnostic", "subject-position"],
-      ["clauseType", "dep"]
+      ["diagnostic", "nci"],
+      ["clause", "dep"],
+      ["height", "TP"],
+      ["matrixVerb", "ket"]
     ],
-    "comment": "Translation marked 'Intended:' in the paper — dep clauses cannot function as grammatical subjects. Fn. 18: grammatical only under a pro-dropped-subject parse ('S/he surprised me, saying that Tursun left').",
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "major2024_55a",
+    "source": {"bibkey": "major-2024", "paperLabel": "ex. (55a)"},
+    "reportedIn": null,
+    "language": "uigh1240",
+    "primaryText": "Mahinur Tursun-ni ket-t-i de-p oyli-d-i, biraq men undaq oyli-mi-d-i.",
+    "discourseSegments": [
+      "Mahinur Tursun-ni ket-t-i de-p oyli-d-i,",
+      "biraq men undaq oyli-mi-d-i."
+    ],
+    "glossedTokens": [
+      ["Mahinur", "Mahinur"], ["Tursun-ni", "Tursun-ACC"], ["ket-t-i", "leave-PST-3"],
+      ["de-p", "say-CNV"], ["oyli-d-i", "think-PST-3"], ["biraq", "but"], ["men", "1SG"],
+      ["undaq", "like.that"], ["oyli-mi-d-i", "think-NEG-PST-3"]
+    ],
+    "translation": "Mahinur thought (something), saying Tursun left, but I didn't think like that.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "proform"],
+      ["clause", "dep"],
+      ["height", "VP"],
+      ["matrixVerb", "oyla"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "major2024_55b",
+    "source": {"bibkey": "major-2024", "paperLabel": "ex. (55b)"},
+    "reportedIn": null,
+    "language": "uigh1240",
+    "primaryText": "Mahinur Tursun-ni kel-i-du de-p ket-t-i, biraq men undaq ket-mi-d-i.",
+    "discourseSegments": [
+      "Mahinur Tursun-ni kel-i-du de-p ket-t-i,",
+      "biraq men undaq ket-mi-d-i."
+    ],
+    "glossedTokens": [
+      ["Mahinur", "Mahinur"], ["Tursun-ni", "Tursun-ACC"], ["kel-i-du", "come-NONPST-3"],
+      ["de-p", "say-CNV"], ["ket-t-i", "leave-PST-3"], ["biraq", "but"], ["men", "1SG"],
+      ["undaq", "like.that"], ["ket-mi-d-i", "leave-NEG-PST-3"]
+    ],
+    "translation": "Mahinur left, saying Tursun would come, but I didn't leave like this.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "proform"],
+      ["clause", "dep"],
+      ["height", "TP"],
+      ["matrixVerb", "ket"]
+    ],
+    "comment": "The paper glosses kel-i-du 'come-NONPOST-3', a misprint for NONPST.",
+    "verified": "page-image"
+  },
+  {
+    "id": "major2024_61a",
+    "source": {"bibkey": "major-2024", "paperLabel": "ex. (61a)"},
+    "reportedIn": null,
+    "language": "uigh1240",
+    "primaryText": "Mahinur Tursun-ning ket-ken-lik-i-ni bil-i-du, biraq u ket-mi-d-i.",
+    "discourseSegments": [
+      "Mahinur Tursun-ning ket-ken-lik-i-ni bil-i-du,",
+      "biraq u ket-mi-d-i."
+    ],
+    "glossedTokens": [
+      ["Mahinur", "Mahinur"], ["Tursun-ning", "Tursun-GEN"],
+      ["ket-ken-lik-i-ni", "leave-PTPL-COMP-3POSS-ACC"], ["bil-i-du", "know-NONPST-3"],
+      ["biraq", "but"], ["u", "he"], ["ket-mi-d-i", "leave-NEG-PST-3"]
+    ],
+    "translation": "Mahinur knows that Tursun left, but he didn't leave.",
+    "context": "",
+    "judgment": "unacceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "denial"],
+      ["clause", "participial"],
+      ["matrixVerb", "bil"]
+    ],
+    "comment": "The paper prints # on the second clause.",
+    "verified": "page-image"
+  },
+  {
+    "id": "major2024_61b",
+    "source": {"bibkey": "major-2024", "paperLabel": "ex. (61b)"},
+    "reportedIn": null,
+    "language": "uigh1240",
+    "primaryText": "Mahinur Tursun-ni ket-t-i de-p bil-i-du, biraq u ket-mi-d-i.",
+    "discourseSegments": [
+      "Mahinur Tursun-ni ket-t-i de-p bil-i-du,",
+      "biraq u ket-mi-d-i."
+    ],
+    "glossedTokens": [
+      ["Mahinur", "Mahinur"], ["Tursun-ni", "Tursun-ACC"], ["ket-t-i", "leave-PST-3"],
+      ["de-p", "say-CNV"], ["bil-i-du", "know-NONPST-3"], ["biraq", "but"], ["u", "he"],
+      ["ket-mi-d-i", "leave-NEG-PST-3"]
+    ],
+    "translation": "Mahinur knows (something), saying that Tursun left, but he didn't leave.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "denial"],
+      ["clause", "dep"],
+      ["matrixVerb", "bil"]
+    ],
+    "comment": "The paper prints Tursun-(ni).",
+    "verified": "page-image"
+  },
+  {
+    "id": "major2024_65a",
+    "source": {"bibkey": "major-2024", "paperLabel": "ex. (65a)"},
+    "reportedIn": null,
+    "language": "uigh1240",
+    "primaryText": "Mahinur Tursun-ning ket-ken-lik-i-ni unut-t-i.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mahinur", "Mahinur"], ["Tursun-ning", "Tursun-GEN"],
+      ["ket-ken-lik-i-ni", "leave-PTCP.PST-COMP-3POSS-ACC"], ["unut-t-i", "forget-PST-3"]
+    ],
+    "translation": "Mahinur forgot that Tursun left.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "forgot that", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["clause", "participial"],
+      ["matrixVerb", "unut"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "major2024_65b",
+    "source": {"bibkey": "major-2024", "paperLabel": "ex. (65b)"},
+    "reportedIn": null,
+    "language": "uigh1240",
+    "primaryText": "Mahinur Tursun-ni ket-t-i de-p unut-t-i.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mahinur", "Mahinur"], ["Tursun-ni", "Tursun-ACC"], ["ket-t-i", "leave-PST-3"],
+      ["de-p", "say-CNV"], ["unut-t-i", "forget-PST-3"]
+    ],
+    "translation": "Mahinur forgot something, saying Tursun left.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [
+      {"name": "forgot that", "judgment": "unacceptable"},
+      {"name": "forgot something, saying", "judgment": "acceptable"}
+    ],
+    "paperFeatures": [
+      ["clause", "dep"],
+      ["matrixVerb", "unut"]
+    ],
+    "comment": "The paper prints # before the translation 'Mahinur forgot that Tursun left.'",
+    "verified": "page-image"
+  },
+  {
+    "id": "major2024_84a",
+    "source": {"bibkey": "major-2024", "paperLabel": "ex. (84a)"},
+    "reportedIn": null,
+    "language": "uigh1240",
+    "primaryText": "Mahinur téz polu ye-d-i.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mahinur", "Mahinur"], ["téz", "quickly"], ["polu", "pilaf"], ["ye-d-i", "eat-PST-3"]
+    ],
+    "translation": "Mahinur quickly ate pilaf.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "case"],
+      ["np", "object"],
+      ["verb", "ye"],
+      ["case", "bare"],
+      ["objectPosition", "afterAdverb"]
+    ],
+    "comment": "The paper prints polu-(*ni) and glosses it 'pilaf-ACC'.",
+    "verified": "page-image"
+  },
+  {
+    "id": "major2024_84a_acc",
+    "source": {"bibkey": "major-2024", "paperLabel": "ex. (84a)"},
+    "reportedIn": null,
+    "language": "uigh1240",
+    "primaryText": "Mahinur téz polu-ni ye-d-i.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mahinur", "Mahinur"], ["téz", "quickly"], ["polu-ni", "pilaf-ACC"],
+      ["ye-d-i", "eat-PST-3"]
+    ],
+    "translation": "Mahinur quickly ate pilaf.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "case"],
+      ["np", "object"],
+      ["verb", "ye"],
+      ["case", "ACC"],
+      ["objectPosition", "afterAdverb"]
+    ],
+    "comment": "The starred variant of polu-(*ni).",
+    "verified": "page-image"
+  },
+  {
+    "id": "major2024_84b",
+    "source": {"bibkey": "major-2024", "paperLabel": "ex. (84b)"},
+    "reportedIn": null,
+    "language": "uigh1240",
+    "primaryText": "Mahinur polu-ni téz ye-d-i.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mahinur", "Mahinur"], ["polu-ni", "pilaf-ACC"], ["téz", "quickly"],
+      ["ye-d-i", "eat-PST-3"]
+    ],
+    "translation": "Mahinur quickly ate the pilaf.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "case"],
+      ["np", "object"],
+      ["verb", "ye"],
+      ["case", "ACC"],
+      ["objectPosition", "beforeAdverb"]
+    ],
+    "comment": "The paper prints polu-*(ni).",
+    "verified": "page-image"
+  },
+  {
+    "id": "major2024_84b_bare",
+    "source": {"bibkey": "major-2024", "paperLabel": "ex. (84b)"},
+    "reportedIn": null,
+    "language": "uigh1240",
+    "primaryText": "Mahinur polu téz ye-d-i.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mahinur", "Mahinur"], ["polu", "pilaf"], ["téz", "quickly"], ["ye-d-i", "eat-PST-3"]
+    ],
+    "translation": "Mahinur quickly ate the pilaf.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "case"],
+      ["np", "object"],
+      ["verb", "ye"],
+      ["case", "bare"],
+      ["objectPosition", "beforeAdverb"]
+    ],
+    "comment": "The starred variant of polu-*(ni).",
+    "verified": "page-image"
+  },
+  {
+    "id": "major2024_88a",
+    "source": {"bibkey": "major-2024", "paperLabel": "ex. (88a)"},
+    "reportedIn": null,
+    "language": "uigh1240",
+    "primaryText": "Mahinur Ziba bol-d-i.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mahinur", "Mahinur"], ["Ziba", "Ziba"], ["bol-d-i", "become-PST-3"]
+    ],
+    "translation": "Mahinur became Ziba.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "case"],
+      ["np", "object"],
+      ["verb", "bol"],
+      ["case", "bare"]
+    ],
+    "comment": "The paper prints Ziba(*-ni) and glosses it 'Ziba-ACC'.",
+    "verified": "page-image"
+  },
+  {
+    "id": "major2024_88a_acc",
+    "source": {"bibkey": "major-2024", "paperLabel": "ex. (88a)"},
+    "reportedIn": null,
+    "language": "uigh1240",
+    "primaryText": "Mahinur Ziba-ni bol-d-i.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mahinur", "Mahinur"], ["Ziba-ni", "Ziba-ACC"], ["bol-d-i", "become-PST-3"]
+    ],
+    "translation": "Mahinur became Ziba.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "case"],
+      ["np", "object"],
+      ["verb", "bol"],
+      ["case", "ACC"]
+    ],
+    "comment": "The starred variant of Ziba(*-ni).",
+    "verified": "page-image"
+  },
+  {
+    "id": "major2024_89a",
+    "source": {"bibkey": "major-2024", "paperLabel": "ex. (89a)"},
+    "reportedIn": null,
+    "language": "uigh1240",
+    "primaryText": "Mahinur söz-ni qil-d-i.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mahinur", "Mahinur"], ["söz-ni", "word-ACC"], ["qil-d-i", "make-PST-3"]
+    ],
+    "translation": "Mahinur spoke.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "case"],
+      ["np", "object"],
+      ["verb", "qil"],
+      ["case", "ACC"]
+    ],
+    "comment": "The paper prints söz-(ni), the accusative optional, and adds the literal translation 'said a/(the) word'.",
+    "verified": "page-image"
+  },
+  {
+    "id": "major2024_110a",
+    "source": {"bibkey": "major-2024", "paperLabel": "ex. (110a)"},
+    "reportedIn": null,
+    "language": "uigh1240",
+    "primaryText": "Mahinur siz-ni ket-t-i dé-d-i.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mahinur", "Mahinur"], ["siz-ni", "2SG-ACC"], ["ket-t-i", "leave-PST-3"],
+      ["dé-d-i", "say-PST-3"]
+    ],
+    "translation": "Mahinur said that you left.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "case"],
+      ["np", "embeddedSubject"],
+      ["clause", "finite"],
+      ["case", "ACC"],
+      ["matrixVerb", "de"],
+      ["matrixSubject", "animate"],
+      ["sayer", "animate"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "major2024_110b",
+    "source": {"bibkey": "major-2024", "paperLabel": "ex. (110b)"},
+    "reportedIn": null,
+    "language": "uigh1240",
+    "primaryText": "Mahinur siz-ni ket-t-i de-p warqiri-d-i.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mahinur", "Mahinur"], ["siz-ni", "2SG-ACC"], ["ket-t-i", "leave-PST-3"],
+      ["de-p", "say-CNV"], ["warqiri-d-i", "scream-PST-3"]
+    ],
+    "translation": "Mahinur screamed that you left.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "case"],
+      ["np", "embeddedSubject"],
+      ["clause", "dep"],
+      ["case", "ACC"],
+      ["matrixVerb", "warqira"],
+      ["matrixSubject", "animate"],
+      ["sayer", "animate"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "major2024_110c",
+    "source": {"bibkey": "major-2024", "paperLabel": "ex. (110c)"},
+    "reportedIn": null,
+    "language": "uigh1240",
+    "primaryText": "Mahinur siz-ni ket-t-i de-p ket-t-i.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mahinur", "Mahinur"], ["siz-ni", "2SG-ACC"], ["ket-t-i", "leave-PST-3"],
+      ["de-p", "say-CNV"], ["ket-t-i", "leave-PST-3"]
+    ],
+    "translation": "Mahinur left, saying you left.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "case"],
+      ["np", "embeddedSubject"],
+      ["clause", "dep"],
+      ["case", "ACC"],
+      ["matrixVerb", "ket"],
+      ["matrixSubject", "animate"],
+      ["sayer", "animate"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "major2024_113a",
+    "source": {"bibkey": "major-2024", "paperLabel": "ex. (113a)"},
+    "reportedIn": null,
+    "language": "uigh1240",
+    "primaryText": "Mahinur méning ut-qan-liq-i-ni eyt-t-i.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mahinur", "Mahinur"], ["méning", "1SG.GEN"],
+      ["ut-qan-liq-i-ni", "win-PTPL.PST-COMP-3POSS-ACC"], ["eyt-t-i", "tell-PST-3"]
+    ],
+    "translation": "Mahinur told that I won.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "case"],
+      ["np", "embeddedSubject"],
+      ["clause", "participial"],
+      ["case", "GEN"],
+      ["matrixVerb", "éyt"],
+      ["matrixSubject", "animate"]
+    ],
+    "comment": "The paper prints méning/*méni and marks the translation 'Intended'; the verb is printed eyt-t-i here and éyt-t-i elsewhere.",
+    "verified": "page-image"
+  },
+  {
+    "id": "major2024_113a_acc",
+    "source": {"bibkey": "major-2024", "paperLabel": "ex. (113a)"},
+    "reportedIn": null,
+    "language": "uigh1240",
+    "primaryText": "Mahinur méni ut-qan-liq-i-ni eyt-t-i.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mahinur", "Mahinur"], ["méni", "1SG.ACC"],
+      ["ut-qan-liq-i-ni", "win-PTPL.PST-COMP-3POSS-ACC"], ["eyt-t-i", "tell-PST-3"]
+    ],
+    "translation": "Mahinur told that I won.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "case"],
+      ["np", "embeddedSubject"],
+      ["clause", "participial"],
+      ["case", "ACC"],
+      ["matrixVerb", "éyt"],
+      ["matrixSubject", "animate"]
+    ],
+    "comment": "The starred variant of méning/*méni.",
+    "verified": "page-image"
+  },
+  {
+    "id": "major2024_122",
+    "source": {"bibkey": "major-2024", "paperLabel": "ex. (122)"},
+    "reportedIn": null,
+    "language": "uigh1240",
+    "primaryText": "Siz-ni ket-t-i de-p manga éyt-il-d-i.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Siz-ni", "2SG"], ["ket-t-i", "leave-PST-3"], ["de-p", "say-CNV"], ["manga", "1SG.DAT"],
+      ["éyt-il-d-i", "tell-PASS-PST-3"]
+    ],
+    "translation": "Something was said to me, saying you left.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "case"],
+      ["np", "embeddedSubject"],
+      ["clause", "dep"],
+      ["case", "ACC"],
+      ["matrixVerb", "éyt"],
+      ["matrixVoice", "passive"],
+      ["matrixSubject", "none"],
+      ["impliedAgent", "yes"],
+      ["sayer", "animate"]
+    ],
+    "comment": "The paper glosses Siz-ni '2SG' and braces {manga}. The one responsible for the utterance is unknown: the telling is passive, the saying active.",
+    "verified": "page-image"
+  },
+  {
+    "id": "major2024_123",
+    "source": {"bibkey": "major-2024", "paperLabel": "ex. (123)"},
+    "reportedIn": null,
+    "language": "uigh1240",
+    "primaryText": "Mahinur Tursun-ni ket-t-i de-p ket-t-i.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mahinur", "Mahinur"], ["Tursun-ni", "Tursun-ACC"], ["ket-t-i", "leave-PST-3"],
+      ["de-p", "say-CNV"], ["ket-t-i", "leave-PST-3"]
+    ],
+    "translation": "Mahinur, having said Tursun left, left.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "case"],
+      ["np", "embeddedSubject"],
+      ["clause", "dep"],
+      ["case", "ACC"],
+      ["matrixVerb", "ket"],
+      ["matrixSubject", "animate"],
+      ["sayer", "animate"]
+    ],
+    "comment": "",
+    "verified": "page-image"
+  },
+  {
+    "id": "major2024_124",
+    "source": {"bibkey": "major-2024", "paperLabel": "ex. (124)"},
+    "reportedIn": null,
+    "language": "uigh1240",
+    "primaryText": "Mahinur manga bu xewer-ni Tursun-ni ket-t-i de-p éyt-t-i.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Mahinur", "Mahinur"], ["manga", "1SG.DAT"], ["bu", "this"], ["xewer-ni", "news-ACC"],
+      ["Tursun-ni", "Tursun-ACC"], ["ket-t-i", "leave-PST-3"], ["de-p", "say-CNV"],
+      ["éyt-t-i", "tell-PST-3"]
+    ],
+    "translation": "Mahinur told me this news, saying Tursun left.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "case"],
+      ["np", "embeddedSubject"],
+      ["clause", "dep"],
+      ["case", "ACC"],
+      ["matrixVerb", "éyt"],
+      ["matrixSubject", "animate"],
+      ["matrixObject", "ACC"],
+      ["sayer", "animate"]
+    ],
+    "comment": "The paper prints xewer-*(ni), Tursun-(ni) and *(de-p).",
+    "verified": "page-image"
+  },
+  {
+    "id": "major2024_127",
+    "source": {"bibkey": "major-2024", "paperLabel": "ex. (127)"},
+    "reportedIn": null,
+    "language": "uigh1240",
+    "primaryText": "Bügün yighin-da Mahinur kéler yil-i Qeshqer-ge bar-i-du de-p éniq bol-d-i.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Bügün", "today"], ["yighin-da", "meeting-LOC"], ["Mahinur", "Mahinur"],
+      ["kéler", "coming"], ["yil-i", "year-3POSS"], ["Qeshqer-ge", "Kashgar-DAT"],
+      ["bar-i-du", "go-NONPST-3"], ["de-p", "say-CNV"], ["éniq", "clear"],
+      ["bol-d-i", "become-PST-3"]
+    ],
+    "translation": "It became clear at the meeting that Mahinur would go to Kashgar next year.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "case"],
+      ["np", "embeddedSubject"],
+      ["clause", "dep"],
+      ["case", "bare"],
+      ["matrixVerb", "bol"],
+      ["matrixSubject", "none"],
+      ["sayer", "none"]
+    ],
+    "comment": "The paper prints Mahinur-(*ni) and glosses it 'Mahinur-ACC'.",
+    "verified": "page-image"
+  },
+  {
+    "id": "major2024_127_acc",
+    "source": {"bibkey": "major-2024", "paperLabel": "ex. (127)"},
+    "reportedIn": null,
+    "language": "uigh1240",
+    "primaryText": "Bügün yighin-da Mahinur-ni kéler yil-i Qeshqer-ge bar-i-du de-p éniq bol-d-i.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Bügün", "today"], ["yighin-da", "meeting-LOC"], ["Mahinur-ni", "Mahinur-ACC"],
+      ["kéler", "coming"], ["yil-i", "year-3POSS"], ["Qeshqer-ge", "Kashgar-DAT"],
+      ["bar-i-du", "go-NONPST-3"], ["de-p", "say-CNV"], ["éniq", "clear"],
+      ["bol-d-i", "become-PST-3"]
+    ],
+    "translation": "It became clear at the meeting that Mahinur would go to Kashgar next year.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "case"],
+      ["np", "embeddedSubject"],
+      ["clause", "dep"],
+      ["case", "ACC"],
+      ["matrixVerb", "bol"],
+      ["matrixSubject", "none"],
+      ["sayer", "none"]
+    ],
+    "comment": "The starred variant of Mahinur-(*ni).",
+    "verified": "page-image"
+  },
+  {
+    "id": "major2024_128",
+    "source": {"bibkey": "major-2024", "paperLabel": "ex. (128)"},
+    "reportedIn": null,
+    "language": "uigh1240",
+    "primaryText": "Bu xewer bügün yighin-da Mahinur kéler yil Qeshqer-ge bar-i-du de-p éniq bol-d-i.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Bu", "this"], ["xewer", "news"], ["bügün", "today"], ["yighin-da", "meeting-LOC"],
+      ["Mahinur", "Mahinur"], ["kéler", "coming"], ["yil", "year"], ["Qeshqer-ge", "Kashgar-DAT"],
+      ["bar-i-du", "go-NONPST-3"], ["de-p", "say-CNV"], ["éniq", "clear"],
+      ["bol-d-i", "become-PST-3"]
+    ],
+    "translation": "The news became clear at the meeting today, saying Mahinur would go to Kashgar next year.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "case"],
+      ["np", "embeddedSubject"],
+      ["clause", "dep"],
+      ["case", "bare"],
+      ["matrixVerb", "bol"],
+      ["matrixSubject", "inanimate"],
+      ["sayer", "inanimate"]
+    ],
+    "comment": "The paper prints Mahinur-(*ni), glosses it 'Mahinur-ACC', and coindexes the null subject of the dep clause with xewer.",
+    "verified": "page-image"
+  },
+  {
+    "id": "major2024_128_acc",
+    "source": {"bibkey": "major-2024", "paperLabel": "ex. (128)"},
+    "reportedIn": null,
+    "language": "uigh1240",
+    "primaryText": "Bu xewer bügün yighin-da Mahinur-ni kéler yil Qeshqer-ge bar-i-du de-p éniq bol-d-i.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Bu", "this"], ["xewer", "news"], ["bügün", "today"], ["yighin-da", "meeting-LOC"],
+      ["Mahinur-ni", "Mahinur-ACC"], ["kéler", "coming"], ["yil", "year"],
+      ["Qeshqer-ge", "Kashgar-DAT"], ["bar-i-du", "go-NONPST-3"], ["de-p", "say-CNV"],
+      ["éniq", "clear"], ["bol-d-i", "become-PST-3"]
+    ],
+    "translation": "The news became clear at the meeting today, saying Mahinur would go to Kashgar next year.",
+    "context": "",
+    "judgment": "ungrammatical",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "case"],
+      ["np", "embeddedSubject"],
+      ["clause", "dep"],
+      ["case", "ACC"],
+      ["matrixVerb", "bol"],
+      ["matrixSubject", "inanimate"],
+      ["sayer", "inanimate"]
+    ],
+    "comment": "The starred variant of Mahinur-(*ni).",
+    "verified": "page-image"
+  },
+  {
+    "id": "major2024_129",
+    "source": {"bibkey": "major-2024", "paperLabel": "ex. (129)"},
+    "reportedIn": null,
+    "language": "uigh1240",
+    "primaryText": "Tursun manga éyt-qan xewer-de Mahinur-ni keler yil Qeshqer-ge bar-i-du de-p éniq bol-d-i.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Tursun", "Tursun"], ["manga", "1SG.DAT"], ["éyt-qan", "tell-PTPL.PST"],
+      ["xewer-de", "news-LOC"], ["Mahinur-ni", "Mahinur-ACC"], ["keler", "coming"],
+      ["yil", "year"], ["Qeshqer-ge", "Kashgar-DAT"], ["bar-i-du", "go-NONPST-3"],
+      ["de-p", "say-CNV"], ["éniq", "clear"], ["bol-d-i", "become-PST-3"]
+    ],
+    "translation": "It became clear in the news that Tursun told me, (he) said Mahinur will go to Kashgar next year.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "case"],
+      ["np", "embeddedSubject"],
+      ["clause", "dep"],
+      ["case", "ACC"],
+      ["matrixVerb", "bol"],
+      ["matrixSubject", "none"],
+      ["sayer", "animate"]
+    ],
+    "comment": "The paper prints Mahinur-(ni) and keler without the accent, and coindexes the null subject of the dep clause with Tursun, the source inside the relative clause.",
+    "verified": "page-image"
+  },
+  {
+    "id": "major2024_130",
+    "source": {"bibkey": "major-2024", "paperLabel": "ex. (130)"},
+    "reportedIn": null,
+    "language": "uigh1240",
+    "primaryText": "Bashliq-i bügün yighin-da Mahinur-ni kéler yil Qeshqer-ge bar-i-du de-p bu xewer-ni éniq qil-d-i.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Bashliq-i", "boss-3SG.POSS"], ["bügün", "today"], ["yighin-da", "meeting-LOC"],
+      ["Mahinur-ni", "Mahinur-ACC"], ["kéler", "coming"], ["yil", "year"],
+      ["Qeshqer-ge", "Kashgar-DAT"], ["bar-i-du", "go-NONPST-3"], ["de-p", "say-CNV"],
+      ["bu", "this"], ["xewer-ni", "news-ACC"], ["éniq", "clear"], ["qil-d-i", "make-PST-3"]
+    ],
+    "translation": "Her boss made the news clear at the meeting today that Mahinur would go to Kashgar next year.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "case"],
+      ["np", "embeddedSubject"],
+      ["clause", "dep"],
+      ["case", "ACC"],
+      ["matrixVerb", "qil"],
+      ["matrixSubject", "animate"],
+      ["matrixObject", "ACC"],
+      ["sayer", "animate"]
+    ],
+    "comment": "The paper prints Mahinur-(ni) and xewer-(ni).",
+    "verified": "page-image"
+  },
+  {
+    "id": "major2024_131",
+    "source": {"bibkey": "major-2024", "paperLabel": "ex. (131)"},
+    "reportedIn": null,
+    "language": "uigh1240",
+    "primaryText": "Bu xewer meqsetlik bügün yighin-da Mahinur-ni kéler yil Qeshqer-ge bar-i-du de-p éniq qil-in-d-i.",
+    "discourseSegments": [],
+    "glossedTokens": [
+      ["Bu", "this"], ["xewer", "news"], ["meqsetlik", "intentionally"], ["bügün", "today"],
+      ["yighin-da", "meeting-LOC"], ["Mahinur-ni", "Mahinur-ACC"], ["kéler", "coming"],
+      ["yil", "year"], ["Qeshqer-ge", "Kashgar-DAT"], ["bar-i-du", "go-NONPST-3"],
+      ["de-p", "say-CNV"], ["éniq", "clear"], ["qil-in-d-i", "make-PASS-PST-3"]
+    ],
+    "translation": "The news was intentionally made clear at the meeting today that Mahinur would go to Kashgar next year.",
+    "context": "",
+    "judgment": "acceptable",
+    "alternatives": [],
+    "readings": [],
+    "paperFeatures": [
+      ["diagnostic", "case"],
+      ["np", "embeddedSubject"],
+      ["clause", "dep"],
+      ["case", "ACC"],
+      ["matrixVerb", "qil"],
+      ["matrixVoice", "passive"],
+      ["matrixSubject", "inanimate"],
+      ["impliedAgent", "yes"],
+      ["sayer", "animate"]
+    ],
+    "comment": "The paper prints xewer-(*ni), glossed 'news-ACC', and Mahinur-(ni).",
     "verified": "page-image"
   }
 ]
