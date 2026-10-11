@@ -6,6 +6,13 @@ package linglib where
   description := "A Lean 4 library for formal linguistics: semantics, syntax, pragmatics, morphology, phonology, and processing — formalized across competing frameworks for high interconnection density."
   homepage := "https://linglib.io/"
   keywords := #["linguistics", "formal-semantics", "formal-syntax", "phonology", "pragmatics", "morphology", "lean4", "mathlib"]
+  -- Projects that depend on linglib at a release tag download the compiled files
+  -- attached to that release (by .github/workflows/release-build.yml) instead of
+  -- compiling linglib. If the download fails, Lake builds from source as before.
+  preferReleaseBuild := true
+  -- One archive for all platforms: linglib has no native code, and its .olean files
+  -- do not depend on the operating system. Revisit if linglib adds native code.
+  buildArchive := "linglib.tar.gz"
   leanOptions := #[⟨`autoImplicit, false⟩,
     -- TODO(v4.33.0): remove once mathlib's strict-defeq transition completes
     -- (`DeriveFintype` enum path and simp defeq-matching break without it).

@@ -1,0 +1,53 @@
+# When a release is published, build all of linglib and attach the compiled
+# files to the release. Projects that depend on linglib at that tag then
+# download them instead of compiling linglib from source (see
+# `preferReleaseBuild` in lakefile.lean). One archive serves every platform:
+# linglib's compiled .olean files do not depend on the operating system.
+name: Release build
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing release tag to build and attach the compiled files to
+        required: true
+
+permissions:
+  contents: write
+
+env:
+  ELAN_NO_OVERRIDE_NOTICE: 1
+  TAG: ${{ github.event.release.tag_name || inputs.tag }}
+
+jobs:
+  build-and-upload:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - name: Checkout the release tag
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TAG }}
+
+      - name: Install elan
+        run: |
+          curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> $GITHUB_PATH
+
+      - name: Install the toolchain
+        run: lake --version
+
+      - name: Get Mathlib cache
+        run: lake exe cache get
+
+      - name: Build linglib
+        run: lake build
+
+      - name: Attach the compiled files to the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          lake upload "$TAG"
+          ls -lh .lake/*.tar.gz
