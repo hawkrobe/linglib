@@ -656,7 +656,8 @@ theorem uniformJointListener_fst_real_lt_iff_invPowSum (hsem : ∀ t, ∃ c, t �
             ENNReal.toReal_sum fun c _ => measure_ne_top _ _]
           simp_rw [measureReal_def],
         ENNReal.toReal_mul]
-  rw [uniformJointListener, listener_compProd_dirac_fst_real_lt_iff, key, key, show (uniformOn (Set.univ : Set T)) {t₁} = uniformOn Set.univ {t₂} from by
+  rw [uniformJointListener, listener_compProd_dirac_fst_real_lt_iff, key, key,
+    show (uniformOn (Set.univ : Set T)) {t₁} = uniformOn Set.univ {t₂} from by
       rw [uniformOn_univ, uniformOn_univ, Measure.count_singleton, Measure.count_singleton],
     ENNReal.toReal_lt_toReal
       (ENNReal.mul_ne_top (measure_ne_top _ _) (ENNReal.div_ne_top (hWne t₁) (hZ0 t₁)))
