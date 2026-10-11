@@ -1,0 +1,100 @@
+module
+
+public import Linglib.Syntax.Gender.Basic
+public import Linglib.Morphology.DistributedMorphology.Categorizer.Gender
+
+/-!
+# Kramer (2015): The Morphosyntax of Gender
+
+This file formalizes chapter 10 of the book, on nominals with more than one n. Kramer's Highest
+Gender Hypothesis says that such a nominal agrees in the gender of its highest n, as that n would
+give over a bare root. She derives it from cyclicity: each n is a cyclic head that sends the nPs
+below it to spell-out, so agreement finds the last cycle alone. On a hierarchical alternative,
+agreement searches down for the highest n bearing a gender. The two differ only when a plain n
+tops a gendered one, where cyclicity predicts the default gender, and Amharic *ɨnnat-ɨnnät*
+'motherhood' and German *Städt-chen* 'little town' bear it out, masculine and neuter. A
+diminutive that keeps the gender of its base is not an n.
+
+## Main results
+
+* `highestGender`: a nominal agrees as its highest n would over a bare root.
+* `amharic_innat`, `german_chen`: a plain n over a feminine n gives the default, where a search of
+  every n would give the feminine.
+* `evaluative_transparent`: an evaluative head that is not an n leaves the gender unchanged.
+
+## Implementation notes
+
+* A head is a categorizer or an evaluative head that is not a categorizer; only categorizers are
+  cyclic, and an evaluative head bears no gender.
+* Genders are read off [±FEM], with the language's default for a plain n.
+
+## References
+
+* [kramer-2015]
+-/
+
+@[expose] public section
+
+namespace Kramer2015
+
+open DistributedMorphology
+
+/-- A head of a nominal, a categorizer or an evaluative head that is not one. -/
+inductive Head where
+  | cat (h : Categorizer.Head)
+  | eval
+  deriving DecidableEq
+
+/-- Categorizers are cyclic and evaluative heads are not. -/
+def Head.Cyclic : Head → Prop
+  | .cat _ => True
+  | .eval => False
+
+instance : DecidablePred Head.Cyclic := fun h ↦ by cases h <;> unfold Head.Cyclic <;> infer_instance
+
+/-- The gender a head's [±FEM] feature labels, if it bears one. -/
+def Head.gender : Head → Option Gender
+  | .cat h => h.gender.bind fun gf ↦
+      match gf.val with
+      | ⟨.fem, .pos⟩ => some .feminine
+      | ⟨.fem, .neg⟩ => some .masculine
+      | _ => none
+  | .eval => none
+
+/-- The agreeing gender of a nominal over the root `r` with the heads `hs`, innermost first, in a
+language whose default gender is `default`. -/
+def agreeing (default : Gender) (r : Root) (hs : List Head) : Gender :=
+  agreeingGender Head.gender default ((⟨r, hs⟩ : Spine Head).lastCycle Head.Cyclic)
+
+/-- The Highest Gender Hypothesis (32). A nominal agrees as its highest n would over a bare
+root. -/
+theorem highestGender (default : Gender) (r r' : Root) (hs : List Head) (h : Categorizer.Head) :
+    agreeing default r (hs ++ [.cat h]) = agreeing default r' [.cat h] := by
+  rw [agreeing, agreeing, agreeingGender_lastCycle (above := []) trivial (by simp),
+    show [Head.cat h] = [] ++ [.cat h] from rfl,
+    agreeingGender_lastCycle (above := []) trivial (by simp)]
+
+/-- In (22)–(26) *ɨnnat-ɨnnät* 'motherhood' is the plain n *-ɨnnät* over the female n of *ɨnnat*
+'mother', and takes the masculine default; a search of every n would find the feminine. -/
+theorem amharic_innat (r : Root) :
+    agreeing .masculine r [.cat .n_iFem, .cat .n_plain] = .masculine ∧
+      agreeingGender Head.gender .masculine [.cat .n_plain, .cat .n_iFem] = .feminine :=
+  agreeingGender_lastCycle_plain (hs := []) trivial rfl rfl
+
+/-- In (29) and (31) *Städt-chen* 'little town' is the plain n *-chen* over the arbitrary
+feminine n of *Stadt* 'town', and is neuter; a search of every n would find the feminine. -/
+theorem german_chen (r : Root) :
+    agreeing .neuter r [.cat .n_uFem, .cat .n_plain] = .neuter ∧
+      agreeingGender Head.gender .neuter [.cat .n_plain, .cat .n_uFem] = .feminine :=
+  agreeingGender_lastCycle_plain (hs := []) trivial rfl rfl
+
+/-- By (42) an evaluative head that is not an n leaves the nominal the gender of its highest n, as
+Russian *l'es-ók* 'little forest' stays masculine. -/
+theorem evaluative_transparent (default : Gender) (r : Root) (hs : List Head)
+    (h : Categorizer.Head) :
+    agreeing default r (hs ++ [.cat h, .eval]) = agreeing default r (hs ++ [.cat h]) := by
+  rw [agreeing, agreeing, show hs ++ [.cat h, .eval] = hs ++ .cat h :: [.eval] from rfl,
+    agreeingGender_lastCycle trivial (by simp [Head.Cyclic, Head.gender]),
+    agreeingGender_lastCycle (above := []) trivial (by simp)]
+
+end Kramer2015

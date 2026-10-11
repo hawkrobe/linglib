@@ -51,8 +51,8 @@ and *nanVh* 'face' take the gender of an inalienable possessor on their agreemen
 
 * An inalienable possessor sits in Spec,nP, following Myler; Alexiadou makes it the complement
   of the noun. Both places are within nP, which is all the locality hypothesis uses.
-* A Teop nominal's class is the gender a probe finds on its highest n alone, the cyclic
-  explanation of Kramer's Highest Gender Hypothesis.
+* A Teop nominal's class is the gender a probe finds in the last cycle of its spine, Kramer's
+  derivation of the Highest Gender Hypothesis from cyclicity.
 
 ## References
 
@@ -155,27 +155,31 @@ def headClass (h : Head) : Option NounClass :=
 /-- The n's of a possessed body-part noun, the {D} nominalizer. -/
 def ipossessed : List Head := [relationalN true]
 
-/-- The n's of an unpossessed body-part noun, the alienator over the {D}-less nominalizer, the
-highest first. Alienably possessed and compounded body-part nouns have the same n's. -/
-def free : List Head := [alienatorN, relationalN false]
+/-- The n's of an unpossessed body-part noun, the {D}-less nominalizer under the alienator,
+innermost first. Alienably possessed and compounded body-part nouns have the same n's. -/
+def free : List Head := [relationalN false, alienatorN]
+
+/-- The class of a nominal over the root `r` with the n's `hs`, the gender a probe finds in its
+last cycle, which is the o-class (gender II) by default. Every categorizer is a cyclic head. -/
+def classOf (r : Root) (hs : List Head) : NounClass :=
+  agreeingGender headClass .o ((⟨r, hs⟩ : Spine Head).lastCycle fun _ ↦ True)
 
 /-- *a bina-naa* 'my spleen' is a-class and *o bina* 'the spleen' is o-class, the o-class being
 gender II, the default. -/
-theorem switch :
-    agreeingGender headClass .o (ipossessed.take 1) = .a ∧
-      agreeingGender headClass .o (free.take 1) = .o := by
+theorem switch (r : Root) : classOf r ipossessed = .a ∧ classOf r free = .o := by
+  simp only [classOf, Spine.lastCycle]
   decide
 
-/-- The plain alienator over the gender I nominalizer gives *o bina* the default o-class, as on
-the cyclic explanation of the Highest Gender Hypothesis, where the probe sees the alienator
-alone; on the hierarchical explanation it would find the lower n and give the a-class. -/
-theorem free_cyclic :
-    agreeingGender headClass .o (free.take 1) = .o ∧ agreeingGender headClass .o free = .a :=
-  agreeingGender_plain_cons (hs := []) (by decide) (by decide)
+/-- The plain alienator over the gender I nominalizer gives *o bina* the default o-class, as the
+Highest Gender Hypothesis predicts; a probe searching every n would find the lower one and give
+the a-class. -/
+theorem free_cyclic (r : Root) :
+    classOf r free = .o ∧ agreeingGender headClass .o free.reverse = .a :=
+  agreeingGender_lastCycle_plain (hs := []) trivial (by decide) (by decide)
 
 /-- Every body-part term of the fragment has the class of the unpossessed noun. -/
-theorem bodyPartTerms_free :
-    ∀ n ∈ bodyPartTerms, n.gender = agreeingGender headClass .o (free.take 1) := by
+theorem bodyPartTerms_free (r : Root) : ∀ n ∈ bodyPartTerms, n.gender = classOf r free := by
+  simp only [classOf, Spine.lastCycle]
   decide
 
 /-- The n's of a body-part or kinship noun, by how it is possessed. -/
@@ -184,10 +188,11 @@ def possession : List (String × List Head) :=
 
 /-- The analysis predicts the class of every attested body-part and kinship phrase from how its
 noun is possessed, (39), (40), (44), (45), (48) and (51). -/
-theorem rows_class : ∀ e ∈ Examples.all, e.language = "teop1238" →
+theorem rows_class (r : Root) : ∀ e ∈ Examples.all, e.language = "teop1238" →
     ∀ s ∈ e.parse? "possession" possession,
       ∀ c ∈ e.parse? "gender" [("I", NounClass.a), ("II", .o)],
-        agreeingGender headClass .o (s.take 1) = c := by
+        classOf r s = c := by
+  simp only [classOf, Spine.lastCycle]
   decide
 
 /-- The features of the article, copied from DP by concord. -/
@@ -225,11 +230,10 @@ theorem agreementClasses_targetArticle :
 
 /-- A possessed kinship term takes the proprial article *e*, (50), and one under the alienator
 takes *o*, (51). -/
-theorem kinship :
-    subsetPrinciple articles
-        (.proper :: classFeatures (agreeingGender headClass .o (ipossessed.take 1))) = some .e ∧
-      subsetPrinciple articles
-        (.proper :: classFeatures (agreeingGender headClass .o (free.take 1))) = some .o := by
+theorem kinship (r : Root) :
+    subsetPrinciple articles (.proper :: classFeatures (classOf r ipossessed)) = some .e ∧
+      subsetPrinciple articles (.proper :: classFeatures (classOf r free)) = some .o := by
+  simp only [classOf, Spine.lastCycle]
   decide
 
 section Denotation

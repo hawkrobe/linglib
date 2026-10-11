@@ -38,6 +38,7 @@ other.
   insertion, and of the root.
 * `Spine.Sees`, `Spine.SeesRoot`: presence plus adjacency across heads null at
   an interface.
+* `Spine.lastCycle`: the heads a probe merged above the word can find.
 * `Spine.IdiomLocal`: the heads below an agentive Voice.
 
 ## Main results
@@ -84,7 +85,7 @@ variable {H : Type*} (s : Spine H)
 
 /-! ### The word-structure tree -/
 
-/-- The word structure the spine builds: each head categorizes what lies below it. -/
+/-- The word structure the spine builds, each head categorizing what lies below it. -/
 noncomputable def toWordStructure : WordStructure H :=
   s.heads.foldl (fun T h => categorize h T) (ofRoot s.root)
 
@@ -113,27 +114,26 @@ theorem roots_foldl_categorize (T : WordStructure H) : ∀ hs : List H,
 
 /-! ### Merger and the surface -/
 
-/-- The complex head after `k` steps of Merger: the root with the first `k`
-heads. The remaining heads are realized periphrastically. -/
+/-- The complex head after `k` steps of Merger, the root with the first `k` heads. The remaining
+heads are realized periphrastically. -/
 def word (k : ℕ) : Spine H := ⟨s.root, s.heads.take k⟩
 
 theorem heads_word_isPrefix (k : ℕ) : (s.word k).heads <+: s.heads := List.take_prefix k s.heads
 
-/-- Merger skips no head: a head in the word brings every head below it. -/
+/-- Merger skips no head, so a head in the word brings every head below it. -/
 theorem mem_word_of_le {k : ℕ} {i j : Fin s.heads.length} (hji : j ≤ i)
     (hi : (i : ℕ) < k) : (j : ℕ) < k := lt_of_le_of_lt hji hi
 
-/-- The word tree: each head attached on the side its exponent takes,
-innermost first. -/
+/-- The word tree, each head attached on the side its exponent takes, innermost first. -/
 def toTree (side : H → Morphology.Morph.Side) : Morphology.Word.Tree (Root ⊕ H) :=
   Morphology.Word.Tree.attachAll (.inl s.root) (s.heads.map fun h => (side h, .inr h))
 
 /-- The surface order of root and heads. -/
 def surface (side : H → Morphology.Morph.Side) : List (Root ⊕ H) := (s.toTree side).toList
 
-/-- **The Mirror Principle**: the surface is the prefixal heads outermost first,
-the root, and the suffixal heads innermost first — on each side, surface order
-outward from the root is the order of merger. -/
+/-- **The Mirror Principle.** The surface is the prefixal heads outermost first, the root, and the
+suffixal heads innermost first, so on each side the surface order outward from the root is the
+order of merger. -/
 theorem surface_eq (side : H → Morphology.Morph.Side) :
     s.surface side =
       ((s.heads.filter fun h => side h = .before).map Sum.inr).reverse ++
@@ -145,22 +145,22 @@ theorem surface_eq (side : H → Morphology.Morph.Side) :
 
 variable (cyclic : H → Prop) [DecidablePred cyclic]
 
-/-- The cycle of a head: the number of cyclic heads at or below it. The root
-counts as cycle zero. -/
+/-- The cycle of a head, the number of cyclic heads at or below it. The root counts as cycle
+zero. -/
 def cycle (i : Fin s.heads.length) : ℕ :=
   (Finset.univ.filter fun j : Fin s.heads.length => j ≤ i ∧ cyclic s.heads[j]).card
 
-/-- The cycle in which a head undergoes Vocabulary Insertion: its own, or the
-first for the material below the first cyclic head. -/
+/-- The cycle in which a head undergoes Vocabulary Insertion, its own, or the first for the
+material below the first cyclic head. -/
 def insertionCycle (i : Fin s.heads.length) : ℕ := max 1 (s.cycle cyclic i)
 
-/-- Head `j` is present when head `i` is spelled out: it belongs to that cycle
-or to the one before, whose heads remain present though already realized. -/
+/-- Head `j` is present when head `i` is spelled out if it belongs to that cycle or to the one
+before, whose heads remain present though already realized. -/
 def Coactive (i j : Fin s.heads.length) : Prop :=
   s.cycle cyclic j ≤ s.insertionCycle cyclic i ∧ s.insertionCycle cyclic i ≤ s.cycle cyclic j + 1
 
-/-- The root is present for the heads of the first cycle only: the first
-category head and the noncyclic heads up to the next. -/
+/-- The root is present for the heads of the first cycle only, the first category head and the
+noncyclic heads up to the next. -/
 def RootLocal (i : Fin s.heads.length) : Prop := s.cycle cyclic i ≤ 1
 
 instance (i j : Fin s.heads.length) : Decidable (s.Coactive cyclic i j) :=
@@ -208,8 +208,8 @@ theorem two_le_cycle_of_cyclic_of_cyclic (hjk : j < k) (hki : k ≤ i) (hj : cyc
 theorem RootLocal.of_le (h : s.RootLocal cyclic i) (hji : j ≤ i) : s.RootLocal cyclic j :=
   (cycle_mono hji).trans h
 
-/-- A cyclic head above a cyclic head is not local to the root: category
-change closes the root's domain. -/
+/-- A cyclic head above a cyclic head is not local to the root, since category change closes the
+root's domain. -/
 theorem not_rootLocal_of_cyclic_of_cyclic (hji : j < i) (hj : cyclic s.heads[j])
     (hi : cyclic s.heads[i]) : ¬ s.RootLocal cyclic i :=
   fun h => absurd (two_le_cycle_of_cyclic_of_cyclic hji le_rfl hj hi)
@@ -229,37 +229,66 @@ theorem coactive_self (i : Fin s.heads.length) : s.Coactive cyclic i i := by
 theorem coactive_of_cycle_eq (h : s.cycle cyclic i = s.cycle cyclic j) : s.Coactive cyclic i j := by
   unfold Coactive insertionCycle; omega
 
-/-- Nothing already in a cycle sees a later cyclic head: no outward
-sensitivity to a further category head. -/
+/-- Nothing already in a cycle sees a later cyclic head, so there is no outward sensitivity to a
+further category head. -/
 theorem not_coactive_of_lt_of_cyclic (hij : i < j) (hi : 1 ≤ s.cycle cyclic i)
     (hj : cyclic s.heads[j]) : ¬ s.Coactive cyclic i j := by
   have := cycle_add_one_le_of_lt_of_cyclic hij hj
   unfold Coactive insertionCycle; omega
 
-/-- Two cyclic heads are never realized in one cycle: no fusion of
-category-defining heads. -/
+/-- Two cyclic heads are never realized in one cycle, so category-defining heads do not fuse. -/
 theorem not_coactive_of_cyclic_of_cyclic (hij : i < j) (hi : cyclic s.heads[i])
     (hj : cyclic s.heads[j]) : ¬ s.Coactive cyclic i j :=
   not_coactive_of_lt_of_cyclic hij (one_le_cycle_of_cyclic hi) hj
 
-/-- Material two cycles down is inactive: the complement of an inner cyclic
-head is closed off once the next cyclic head is spelled out. -/
+/-- Material two cycles down is inactive, the complement of an inner cyclic head being closed off
+once the next cyclic head is spelled out. -/
 theorem not_coactive_of_add_two_le (h : s.cycle cyclic j + 2 ≤ s.cycle cyclic i) :
     ¬ s.Coactive cyclic i j := by
   unfold Coactive insertionCycle; omega
+
+/-! ### The last cycle
+
+Merging a cyclic head spells out the cyclic domains below it, so a probe merged above a word
+finds only the heads of its last cycle: the highest cyclic head and the noncyclic heads above
+it. -/
+
+variable (s cyclic) in
+/-- The heads of the last cycle, outermost first, which are the noncyclic heads above the highest
+cyclic head and that head. -/
+def lastCycle : List H :=
+  s.heads.reverse.takeWhile (fun h ↦ !decide (cyclic h)) ++
+    (s.heads.reverse.dropWhile (fun h ↦ !decide (cyclic h))).take 1
+
+/-- The last cycle of a word whose highest cyclic head is `h`, with the noncyclic heads `above`
+over it. -/
+theorem lastCycle_mk_append {r : Root} {hs above : List H} {h : H} (hc : cyclic h)
+    (ha : ∀ a ∈ above, ¬ cyclic a) :
+    (⟨r, hs ++ h :: above⟩ : Spine H).lastCycle cyclic = above.reverse ++ [h] := by
+  have key : ∀ l : List H, (∀ a ∈ l, ¬ cyclic a) →
+      (l ++ h :: hs.reverse).takeWhile (fun x ↦ !decide (cyclic x)) ++
+        ((l ++ h :: hs.reverse).dropWhile (fun x ↦ !decide (cyclic x))).take 1 = l ++ [h] := by
+    intro l hl
+    induction l with
+    | nil => simp [hc]
+    | cons a l ih =>
+      have ha' : ¬ cyclic a := hl a (by simp)
+      simp only [List.cons_append, List.takeWhile_cons, List.dropWhile_cons, ha', decide_false,
+        Bool.not_false, ↓reduceIte] at ih ⊢
+      rw [ih fun b hb ↦ hl b (by simp [hb])]
+  simpa [lastCycle, List.reverse_append] using key above.reverse (by simpa using ha)
 
 /-! ### Interface adjacency -/
 
 variable (s cyclic) (null : H → Prop)
 
-/-- Head `i` sees head `j` at an interface: `j` is present at `i`'s insertion
-and every head between them is null there — pruned for allomorphy,
-semantically null for allosemy. -/
+/-- Head `i` sees head `j` at an interface when `j` is present at `i`'s insertion and every head
+between them is null there, pruned for allomorphy and semantically null for allosemy. -/
 def Sees (i j : Fin s.heads.length) : Prop :=
   s.Coactive cyclic i j ∧ ∀ k, min i j < k → k < max i j → null s.heads[k]
 
-/-- Head `i` sees the root: it is in the first cycle and every head below it
-is null at the interface. -/
+/-- Head `i` sees the root when it is in the first cycle and every head below it is null at the
+interface. -/
 def SeesRoot (i : Fin s.heads.length) : Prop :=
   s.RootLocal cyclic i ∧ ∀ k < i, null s.heads[k]
 
@@ -284,8 +313,8 @@ theorem not_seesRoot_of_not_null (hki : k < i) (hk : ¬ null s.heads[k]) :
     ¬ s.SeesRoot cyclic null i :=
   fun h => hk (h.2 k hki)
 
-/-- The interface domains agree wherever the two kinds of nullness agree
-between the heads: one cycle bounds both. -/
+/-- The interface domains agree wherever the two kinds of nullness agree between the heads, one
+cycle bounding both. -/
 theorem sees_congr {null' : H → Prop}
     (h : ∀ k, min i j < k → k < max i j → (null s.heads[k] ↔ null' s.heads[k])) :
     s.Sees cyclic null i j ↔ s.Sees cyclic null' i j :=
@@ -299,9 +328,8 @@ theorem seesRoot_congr {null' : H → Prop} (h : ∀ k < i, null s.heads[k] ↔ 
 
 variable (s) (agentive : H → Prop)
 
-/-- The heads below an agentive Voice: special meaning may be assigned to any
-structure not containing an external-argument-introducing head, across cyclic
-heads. -/
+/-- The heads below an agentive Voice, to whose structure special meaning may be assigned across
+cyclic heads. -/
 def IdiomLocal (i : Fin s.heads.length) : Prop :=
   ∀ j ≤ i, ¬ agentive s.heads[j]
 
