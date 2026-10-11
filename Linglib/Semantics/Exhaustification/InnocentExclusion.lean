@@ -28,8 +28,8 @@ alternative set selected by innocent excludability.
 
 ## Main results
 
-* `maximal_falsifiedAt_iff`, `Maximal.exists_eq_falsifiedAt`: the maximal consistent exclusions
-  are the sets of alternatives false at a minimal world.
+* `maximal_sdiff_satisfied_iff`, `Maximal.exists_eq_sdiff_satisfied`: the maximal consistent
+  exclusions are the sets of alternatives false at a minimal world.
 * `isInnocentlyExcludable_iff_exhMW_subset_compl`
 * `exhIE_eq_exh`, `exhIE_eq_exh_of_nonempty`, `exhIE_eq_sdiff_of_maximal_unique`
 * `exh_nonempty_iff`, `mem_exhIE_iff_subset_sUnion`: `exh` is consistent iff some prejacent world
@@ -127,57 +127,63 @@ theorem IsInnocentlyExcludable.exhIE_subset_compl_exhIE {a : Set World}
 
 /-! ### Maximal consistent exclusions and minimal worlds -/
 
-variable (ALT) in
-/-- The alternatives false at `u`. -/
-def falsifiedAt (u : World) : Set (Set World) := {a ∈ ALT | u ∉ a}
+/-- The alternatives a world does not verify are those false there. -/
+theorem mem_sdiff_satisfied {u : World} {b : Set World} :
+    b ∈ ALT \ Preorder.satisfied (· ∈ ·) ALT u ↔ b ∈ ALT ∧ u ∉ b := by
+  simp only [Set.mem_sdiff, Preorder.mem_satisfied, not_and]
+  exact and_congr_right fun hb ↦ ⟨fun h ↦ h hb, fun h _ ↦ h⟩
 
-theorem isConsistentExclusion_falsifiedAt {u : World} (hu : u ∈ φ) :
-    IsConsistentExclusion ALT φ (falsifiedAt ALT u) :=
-  ⟨fun _ h ↦ h.1, u, hu, fun ⟨_, hb, hub⟩ ↦ hb.2 hub⟩
+theorem isConsistentExclusion_sdiff_satisfied {u : World} (hu : u ∈ φ) :
+    IsConsistentExclusion ALT φ (ALT \ Preorder.satisfied (· ∈ ·) ALT u) :=
+  ⟨Set.sdiff_subset, u, hu, fun ⟨_, hb, hub⟩ ↦ (mem_sdiff_satisfied.1 hb).2 hub⟩
 
 /-- A consistent exclusion lies among the alternatives false at any prejacent world witnessing
 it. -/
-theorem IsConsistentExclusion.subset_falsifiedAt {X : Set (Set World)}
-    (hX : IsConsistentExclusion ALT φ X) {u : World} (hu : u ∉ ⋃₀ X) : X ⊆ falsifiedAt ALT u :=
-  fun b hb ↦ ⟨hX.1 hb, fun hub ↦ hu ⟨b, hb, hub⟩⟩
+theorem IsConsistentExclusion.subset_sdiff_satisfied {X : Set (Set World)}
+    (hX : IsConsistentExclusion ALT φ X) {u : World} (hu : u ∉ ⋃₀ X) :
+    X ⊆ ALT \ Preorder.satisfied (· ∈ ·) ALT u :=
+  fun b hb ↦ mem_sdiff_satisfied.2 ⟨hX.1 hb, fun hub ↦ hu ⟨b, hb, hub⟩⟩
 
 /-- The alternatives false at a prejacent world form a maximal consistent exclusion iff the world
 is minimal. -/
-theorem maximal_falsifiedAt_iff {u : World} (hu : u ∈ φ) :
-    Maximal (IsConsistentExclusion ALT φ) (falsifiedAt ALT u) ↔ IsMinimal ALT φ u := by
+theorem maximal_sdiff_satisfied_iff {u : World} (hu : u ∈ φ) :
+    Maximal (IsConsistentExclusion ALT φ) (ALT \ Preorder.satisfied (· ∈ ·) ALT u) ↔
+      IsMinimal ALT φ u := by
   refine ⟨fun hmax ↦ ⟨hu, fun ⟨v, hv, hvu, huv⟩ ↦ huv fun c hc huc ↦ by_contra fun hvc ↦ ?_⟩,
-    fun ⟨_, hmin⟩ ↦ maximal_subset_iff'.2 ⟨isConsistentExclusion_falsifiedAt hu,
-      fun Y ⟨hY, v, hv, hvY⟩ hXY b hb ↦ ⟨hY hb, fun hub ↦ ?_⟩⟩⟩
-  · have hle := hmax.2 (isConsistentExclusion_falsifiedAt hv)
-      fun b hb ↦ ⟨hb.1, fun hvb ↦ hb.2 (hvu b hb.1 hvb)⟩
-    exact (hle ⟨hc, hvc⟩).2 huc
-  · exact hmin ⟨v, hv, fun c hc hvc ↦ by_contra fun huc ↦ hvY ⟨c, hXY ⟨hc, huc⟩, hvc⟩,
-      fun huv ↦ hvY ⟨b, hb, huv b (hY hb) hub⟩⟩
+    fun ⟨_, hmin⟩ ↦ maximal_subset_iff'.2 ⟨isConsistentExclusion_sdiff_satisfied hu,
+      fun Y ⟨hY, v, hv, hvY⟩ hXY b hb ↦ mem_sdiff_satisfied.2 ⟨hY hb, fun hub ↦ ?_⟩⟩⟩
+  · have hle := hmax.2 (isConsistentExclusion_sdiff_satisfied hv) fun b hb ↦
+      let ⟨hbA, hub⟩ := mem_sdiff_satisfied.1 hb
+      mem_sdiff_satisfied.2 ⟨hbA, fun hvb ↦ hub (hvu b hbA hvb)⟩
+    exact (mem_sdiff_satisfied.1 (hle (mem_sdiff_satisfied.2 ⟨hc, hvc⟩))).2 huc
+  · exact hmin ⟨v, hv, fun c hc hvc ↦ by_contra fun huc ↦
+      hvY ⟨c, hXY (mem_sdiff_satisfied.2 ⟨hc, huc⟩), hvc⟩, fun huv ↦ hvY ⟨b, hb, huv b (hY hb) hub⟩⟩
 
 /-- Every maximal consistent exclusion is the set of alternatives false at a minimal world. -/
-theorem Maximal.exists_eq_falsifiedAt {X : Set (Set World)}
+theorem Maximal.exists_eq_sdiff_satisfied {X : Set (Set World)}
     (hX : Maximal (IsConsistentExclusion ALT φ) X) :
-    ∃ u, IsMinimal ALT φ u ∧ X = falsifiedAt ALT u := by
+    ∃ u, IsMinimal ALT φ u ∧ X = ALT \ Preorder.satisfied (· ∈ ·) ALT u := by
   obtain ⟨u, hu, huX⟩ := hX.1.2
-  have hXu := hX.1.subset_falsifiedAt huX
-  have heq := hXu.antisymm (hX.2 (isConsistentExclusion_falsifiedAt hu) hXu)
-  exact ⟨u, (maximal_falsifiedAt_iff hu).1 (heq ▸ hX), heq⟩
+  have hXu := hX.1.subset_sdiff_satisfied huX
+  have heq := hXu.antisymm (hX.2 (isConsistentExclusion_sdiff_satisfied hu) hXu)
+  exact ⟨u, (maximal_sdiff_satisfied_iff hu).1 (heq ▸ hX), heq⟩
 
 variable (ALT φ)
 
 /-- An alternative is innocently excludable iff it fails at every minimal world. -/
 theorem isInnocentlyExcludable_iff_exhMW_subset_compl (a : Set World) (ha : a ∈ ALT) :
     IsInnocentlyExcludable ALT φ a ↔ exhMW ALT φ ⊆ aᶜ := by
-  refine ⟨fun h u hu ↦ (h.2 _ ((maximal_falsifiedAt_iff hu.1).2 hu)).2, fun h ↦ ⟨ha, fun X hX ↦ ?_⟩⟩
-  obtain ⟨u, hu, rfl⟩ := Maximal.exists_eq_falsifiedAt hX
-  exact ⟨ha, h hu⟩
+  refine ⟨fun h u hu ↦ (mem_sdiff_satisfied.1 (h.2 _ ((maximal_sdiff_satisfied_iff hu.1).2 hu))).2,
+    fun h ↦ ⟨ha, fun X hX ↦ ?_⟩⟩
+  obtain ⟨u, hu, rfl⟩ := Maximal.exists_eq_sdiff_satisfied hX
+  exact mem_sdiff_satisfied.2 ⟨ha, h hu⟩
 
 /-- A satisfiable prejacent over finitely many alternatives has a maximal consistent
 exclusion. -/
 theorem exists_maximal_isConsistentExclusion (hfin : ALT.Finite) (hsat : φ.Nonempty) :
     ∃ X, Maximal (IsConsistentExclusion ALT φ) X :=
   let ⟨_, hu⟩ := exists_minimal_of_finite ALT φ hfin hsat
-  ⟨_, (maximal_falsifiedAt_iff hu.1).2 hu⟩
+  ⟨_, (maximal_sdiff_satisfied_iff hu.1).2 hu⟩
 
 /-- An alternative entailed by a satisfiable prejacent is never innocently excludable. -/
 theorem not_isInnocentlyExcludable_of_phi_subset {ALT : Set (Set World)} {φ : Set World}

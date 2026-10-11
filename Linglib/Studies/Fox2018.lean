@@ -25,10 +25,10 @@ singleton for the former but not for the latter: mention-all against mention-som
 ## Implementation notes
 
 Questions are Hamblin sets `Set (Set W)` rather than `Question` lower sets, since the paper's sets
-are not antichains. The three-location model is a family of atoms `a : ι → Set W` with every
-profile realized (`Rich`); `Question.conjClosure` and `Question.disjClosure` are the paper's two
-denotations; their innocently excludable sets are characterized and the cells read off. Sections 5–7
-on the distribution of mention-some enter only through the rows on singular wh-phrases.
+are not antichains. The three-location model is a family of atoms `a : ι → Set W` with every set of
+atoms true at some world (`Rich`); `Question.conjClosure` and `Question.disjClosure` are the paper's
+two denotations; their innocently excludable sets are characterized and the cells read off. Sections
+5–7 on the distribution of mention-some enter only through the rows on singular wh-phrases.
 
 ## References
 
@@ -270,45 +270,53 @@ section Closures
 
 variable {ι : Type*} {a : ι → Set W}
 
-/-- Every profile is realized by some world. -/
-def Rich (a : ι → Set W) : Prop := ∀ T : Finset ι, ∃ w, profile a w = ↑T
+-- The atoms true at a world, the criteria it satisfies.
+set_option hygiene false in
+local notation "atoms " w:max => Preorder.satisfied (fun v i ↦ v ∈ a i) Set.univ w
 
-/-- The worlds with a given profile form a cell of the logical partition of either closure. -/
-def profileCell (a : ι → Set W) (T : Finset ι) : Set W := {v | profile a v = ↑T}
+/-- Every set of atoms is the set true at some world. -/
+def Rich (a : ι → Set W) : Prop :=
+  ∀ T : Finset ι, ∃ w, Preorder.satisfied (fun v i ↦ v ∈ a i) Set.univ w = ↑T
 
-theorem mem_profileCell {T : Finset ι} {v : W} : v ∈ profileCell a T ↔ profile a v = ↑T := Iff.rfl
+/-- The worlds at which exactly the atoms of `T` are true form a cell of the logical partition of
+either closure. -/
+def atomCell (a : ι → Set W) (T : Finset ι) : Set W :=
+  {v | Preorder.satisfied (fun v i ↦ v ∈ a i) Set.univ v = ↑T}
 
-/-- Both closures induce the profile cells. -/
-theorem strongAnswer_conjClosure_eq {T : Finset ι} {w : W} (hw : profile a w = ↑T) :
-    strongAnswer (conjClosure a) w = profileCell a T := by
+theorem mem_atomCell {T : Finset ι} {v : W} : v ∈ atomCell a T ↔ atoms v = ↑T := Iff.rfl
+
+/-- Both closures induce the atom cells. -/
+theorem strongAnswer_conjClosure_eq {T : Finset ι} {w : W} (hw : atoms w = ↑T) :
+    strongAnswer (conjClosure a) w = atomCell a T := by
   ext v
   rw [strongAnswer_eq_cell, partition_conjClosure, Setoid.mem_cell, Setoid.ker_def, hw,
-    mem_profileCell]
+    mem_atomCell]
 
-theorem strongAnswer_disjClosure_eq {T : Finset ι} {w : W} (hw : profile a w = ↑T) :
-    strongAnswer (disjClosure a) w = profileCell a T := by
+theorem strongAnswer_disjClosure_eq {T : Finset ι} {w : W} (hw : atoms w = ↑T) :
+    strongAnswer (disjClosure a) w = atomCell a T := by
   ext v
   rw [strongAnswer_eq_cell, partition_disjClosure, Setoid.mem_cell, Setoid.ker_def, hw,
-    mem_profileCell]
+    mem_atomCell]
 
-/-- Under either closure, a world lies below another iff its profile is included. -/
+/-- Under either closure, a world lies below another iff its true atoms are among the other's. -/
 theorem leALT_conjClosure_iff {u v : W} :
-    (u ≤[conjClosure a] v) ↔ profile a u ⊆ profile a v := by
+    (u ≤[conjClosure a] v) ↔ atoms u ⊆ atoms v := by
   constructor
   · intro h i hi
-    exact h _ (conjFamily_singleton (a := a) i ▸
-      conjFamily_mem_conjClosure ⟨i, Finset.mem_singleton_self i⟩) hi
+    exact mem_satisfied_iff.2 (h _ (conjFamily_singleton (a := a) i ▸
+      conjFamily_mem_conjClosure ⟨i, Finset.mem_singleton_self i⟩) (mem_satisfied_iff.1 hi))
   · rintro h _ ⟨S, -, rfl⟩ hu
     exact mem_conjFamily_iff_subset.2 ((mem_conjFamily_iff_subset.1 hu).trans h)
 
 theorem leALT_disjClosure_iff {u v : W} :
-    (u ≤[disjClosure a] v) ↔ profile a u ⊆ profile a v := by
+    (u ≤[disjClosure a] v) ↔ atoms u ⊆ atoms v := by
   constructor
   · intro h i hi
-    exact h _ (disj_singleton (a := a) i ▸ disj_mem_disjClosure ⟨i, Finset.mem_singleton_self i⟩) hi
+    exact mem_satisfied_iff.2 (h _ (disj_singleton (a := a) i ▸
+      disj_mem_disjClosure ⟨i, Finset.mem_singleton_self i⟩) (mem_satisfied_iff.1 hi))
   · rintro h _ ⟨S, -, rfl⟩ hu
     obtain ⟨i, hi, hui⟩ := mem_disj.1 hu
-    exact mem_disj.2 ⟨i, hi, h hui⟩
+    exact mem_disj.2 ⟨i, hi, mem_satisfied_iff.1 (h (mem_satisfied_iff.2 hui))⟩
 
 variable (hrich : Rich a)
 include hrich
@@ -329,11 +337,11 @@ theorem disj_subset_disj_iff {S T : Finset ι} : disj a S ⊆ disj a T ↔ S ⊆
   · intro h i hi
     obtain ⟨w, hw⟩ := hrich ({i} : Finset ι)
     have hwi : w ∈ a i := by
-      change i ∈ profile a w
+      refine mem_satisfied_iff.1 ?_
       rw [hw]
       exact Finset.mem_coe.2 (Finset.mem_singleton_self i)
     obtain ⟨j, hj, hwj⟩ := mem_disj.1 (h (mem_disj.2 ⟨i, hi, hwi⟩))
-    have : j ∈ profile a w := hwj
+    have : j ∈ atoms w := mem_satisfied_iff.2 hwj
     rw [hw, Finset.coe_singleton, mem_singleton_iff] at this
     exact this ▸ hj
   · rintro h _ hv
@@ -363,9 +371,9 @@ theorem isInnocentlyExcludable_conj_iff [Fintype ι] {S T : Finset ι} (hS : S.N
 /-- The minimal worlds given the disjunction over a group are the sole witnesses of its
 members. -/
 theorem mem_exhMW_disjClosure_iff {T : Finset ι} {u : W} :
-    u ∈ exhMW (disjClosure a) (disj a T) ↔ ∃ i ∈ T, profile a u = ↑({i} : Finset ι) := by
-  have hsing : ∀ {i : ι} {v : W}, profile a v = ↑({i} : Finset ι) → v ∈ a i := fun {i v} hv ↦ by
-    change i ∈ profile a v
+    u ∈ exhMW (disjClosure a) (disj a T) ↔ ∃ i ∈ T, atoms u = ↑({i} : Finset ι) := by
+  have hsing : ∀ {i : ι} {v : W}, atoms v = ↑({i} : Finset ι) → v ∈ a i := fun {i v} hv ↦ by
+    refine mem_satisfied_iff.1 ?_
     rw [hv]
     exact Finset.mem_coe.2 (Finset.mem_singleton_self i)
   constructor
@@ -374,20 +382,20 @@ theorem mem_exhMW_disjClosure_iff {T : Finset ι} {u : W} :
     obtain ⟨v, hv⟩ := hrich ({i} : Finset ι)
     have hvu : v ≤[disjClosure a] u := leALT_disjClosure_iff.2 (by
       rw [hv, Finset.coe_singleton]
-      exact singleton_subset_iff.2 hui)
+      exact singleton_subset_iff.2 (mem_satisfied_iff.2 hui))
     have huv : u ≤[disjClosure a] v :=
       by_contra fun h ↦ hmin ⟨v, mem_disj.2 ⟨i, hi, hsing hv⟩, hvu, h⟩
     refine ⟨i, hi, subset_antisymm ?_ ?_⟩
     · rw [← hv]
       exact leALT_disjClosure_iff.1 huv
     · rw [Finset.coe_singleton]
-      exact singleton_subset_iff.2 hui
+      exact singleton_subset_iff.2 (mem_satisfied_iff.2 hui)
   · rintro ⟨i, hi, hu⟩
     refine ⟨mem_disj.2 ⟨i, hi, hsing hu⟩, ?_⟩
     rintro ⟨v, hv, hvu, hnuv⟩
     obtain ⟨j, -, hvj⟩ := mem_disj.1 hv
-    have hj : j ∈ profile a v := hvj
-    have hji : j ∈ profile a u := leALT_disjClosure_iff.1 hvu hj
+    have hj : j ∈ atoms v := mem_satisfied_iff.2 hvj
+    have hji : j ∈ atoms u := leALT_disjClosure_iff.1 hvu hj
     rw [hu, Finset.coe_singleton, mem_singleton_iff] at hji
     subst hji
     refine hnuv (leALT_disjClosure_iff.2 ?_)
@@ -404,22 +412,22 @@ theorem isInnocentlyExcludable_disj_iff {S T : Finset ι} (hS : S.Nonempty) :
   · intro h i hiS hiT
     obtain ⟨v, hv⟩ := hrich ({i} : Finset ι)
     refine h ((mem_exhMW_disjClosure_iff hrich).2 ⟨i, hiT, hv⟩) (mem_disj.2 ⟨i, hiS, ?_⟩)
-    change i ∈ profile a v
+    refine mem_satisfied_iff.1 ?_
     rw [hv]
     exact Finset.mem_coe.2 (Finset.mem_singleton_self i)
   · intro h u hu huS
     obtain ⟨i, hiT, hui⟩ := (mem_exhMW_disjClosure_iff hrich).1 hu
     obtain ⟨j, hjS, huj⟩ := mem_disj.1 huS
-    have : j ∈ profile a u := huj
+    have : j ∈ atoms u := mem_satisfied_iff.2 huj
     rw [hui, Finset.coe_singleton, mem_singleton_iff] at this
     exact h hjS (this ▸ hiT)
 
-/-- For the conjunctive question, the member for a group identifies the cell of that profile. -/
+/-- For the conjunctive question, the member for a group identifies the cell of those atoms. -/
 theorem cell_conjFamily [Fintype ι] (T : Finset ι) :
-    cell (conjClosure a) (conjFamily a T) = profileCell a T := by
+    cell (conjClosure a) (conjFamily a T) = atomCell a T := by
   rw [conjClosure, cell_image_eq _ fun S hS ↦ isInnocentlyExcludable_conj_iff hrich hS]
   ext x
-  simp only [mem_ofPred_eq, mem_conjFamily_iff_subset, not_not, mem_profileCell]
+  simp only [mem_ofPred_eq, mem_conjFamily_iff_subset, not_not, mem_atomCell]
   constructor
   · rintro ⟨-, h⟩
     ext i
@@ -431,21 +439,20 @@ theorem cell_conjFamily [Fintype ι] (T : Finset ι) :
 
 /-- For the disjunctive question, the member for a group identifies the same cell. -/
 theorem cell_disj {T : Finset ι} (hT : T.Nonempty) :
-    cell (disjClosure a) (disj a T) = profileCell a T := by
+    cell (disjClosure a) (disj a T) = atomCell a T := by
   rw [disjClosure, cell_image_eq _ fun S hS ↦ isInnocentlyExcludable_disj_iff hrich hS]
   ext x
-  simp only [mem_ofPred_eq, mem_disj, Finset.not_disjoint_iff, mem_profileCell]
+  simp only [mem_ofPred_eq, mem_disj, Finset.not_disjoint_iff, mem_atomCell]
   constructor
   · rintro ⟨-, h⟩
     ext i
     have := h {i} ⟨i, Finset.mem_singleton_self i⟩
     simp only [Finset.mem_singleton, exists_eq_left] at this
-    exact this.trans Finset.mem_coe.symm
+    exact mem_satisfied_iff.trans (this.trans Finset.mem_coe.symm)
   · intro hx
     obtain ⟨i, hi⟩ := hT
     have hmem : ∀ j, x ∈ a j ↔ j ∈ T := fun j ↦ by
-      change j ∈ profile a x ↔ j ∈ T
-      rw [hx, Finset.mem_coe]
+      rw [← mem_satisfied_iff, hx, Finset.mem_coe]
     refine ⟨⟨i, hi, (hmem i).2 hi⟩, fun S _ ↦ ?_⟩
     simp only [hmem]
 
@@ -453,10 +460,10 @@ theorem cell_disj {T : Finset ι} (hT : T.Nonempty) :
 def ans (Exh : Set W → Set W) (H : Set (Set W)) (w : W) : Set (Set W) :=
   {q ∈ H | w ∈ q ∧ ∀ p ∈ H, w ∈ Exh p → q ⊆ p}
 
-/-- The conjunctive question's answer set is the conjunction over the profile, the mention-all
+/-- The conjunctive question's answer set is the conjunction over the true atoms, the mention-all
 reading. -/
 theorem ans_conjClosure [Fintype ι] {T : Finset ι} (hT : T.Nonempty) {w : W}
-    (hw : profile a w = ↑T) :
+    (hw : atoms w = ↑T) :
     ans (cell (conjClosure a)) (conjClosure a) w = {conjFamily a T} := by
   ext q
   rw [mem_singleton_iff]
@@ -473,14 +480,14 @@ theorem ans_conjClosure [Fintype ι] {T : Finset ι} (hT : T.Nonempty) {w : W}
     refine ⟨conjFamily_mem_conjClosure hT, mem_conjFamily_iff_subset.2 (by rw [hw]), ?_⟩
     rintro _ ⟨U, hU, rfl⟩ hwU
     rw [cell_conjFamily hrich U] at hwU
-    have hwU' : profile a w = ↑U := hwU
+    have hwU' : atoms w = ↑U := hwU
     rw [hw, Finset.coe_inj] at hwU'
     subst hwU'
     exact subset_rfl
 
 /-- The disjunctive question's answer set consists of the disjunctions over the non-empty
-sub-groups of the profile, the mention-some reading. -/
-theorem ans_disjClosure {T : Finset ι} (hT : T.Nonempty) {w : W} (hw : profile a w = ↑T) :
+sub-groups of the true atoms, the mention-some reading. -/
+theorem ans_disjClosure {T : Finset ι} (hT : T.Nonempty) {w : W} (hw : atoms w = ↑T) :
     ans (cell (disjClosure a)) (disjClosure a) w = disj a '' {S | S.Nonempty ∧ S ⊆ T} := by
   ext q
   constructor
@@ -489,12 +496,12 @@ theorem ans_disjClosure {T : Finset ι} (hT : T.Nonempty) {w : W} (hw : profile 
       (h _ (disj_mem_disjClosure hT) (by rw [cell_disj hrich hT]; exact hw))⟩, rfl⟩
   · rintro ⟨S, ⟨⟨i, hi⟩, hST⟩, rfl⟩
     refine ⟨disj_mem_disjClosure ⟨i, hi⟩, mem_disj.2 ⟨i, hi, ?_⟩, ?_⟩
-    · change i ∈ profile a w
+    · refine mem_satisfied_iff.1 ?_
       rw [hw]
       exact Finset.mem_coe.2 (hST hi)
     · rintro _ ⟨U, hU, rfl⟩ hwU
       rw [cell_disj hrich hU] at hwU
-      have hwU' : profile a w = ↑U := hwU
+      have hwU' : atoms w = ↑U := hwU
       rw [hw, Finset.coe_inj] at hwU'
       subst hwU'
       exact (disj_subset_disj_iff hrich).2 hST
@@ -502,7 +509,7 @@ theorem ans_disjClosure {T : Finset ι} (hT : T.Nonempty) {w : W} (hw : profile 
 /-- With two or more true atoms, the disjunctive question's answer set has more than one
 member, which is the mention-some reading. -/
 theorem not_subsingleton_ans_disjClosure {T : Finset ι} (hT : 1 < T.card) {w : W}
-    (hw : profile a w = ↑T) : ¬ (ans (cell (disjClosure a)) (disjClosure a) w).Subsingleton := by
+    (hw : atoms w = ↑T) : ¬ (ans (cell (disjClosure a)) (disjClosure a) w).Subsingleton := by
   obtain ⟨i, hi, j, hj, hij⟩ := Finset.one_lt_card.1 hT
   rw [ans_disjClosure hrich ⟨i, hi⟩ hw]
   intro h
