@@ -1,6 +1,5 @@
 module
 
-public import Linglib.Morphology.DistributedMorphology.Categorizer.Gender
 public import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic
 
 /-!
@@ -18,8 +17,8 @@ Stage 1, [masc] and [fem] are contrastive and a noun referring to a person of kn
 obligatorily bears one, so *they* needs an antecedent of unknown gender or a quantifier, (5).
 At Stage 2 the features are still contrastive but the insertion rule is optional, so an
 ungendered name like *Kelly* antecedes *they*, (6), while a lexically gendered noun does not,
-(15) and (21). At Stage 3 the features are the non-contrastive modifiers of [wiltschko-2008],
-the substrate's `Contrastivity`, so *they* is the default for any singular animate antecedent,
+(15) and (21). At Stage 3 the features are the non-contrastive modifiers of [wiltschko-2008]
+(`Contrastivity`), so *they* is the default for any singular animate antecedent,
 (7) and (25), with *he* and *she* still available, (8), and *it* still forced for inanimates,
 (10) (`Stage.genders`, `forms`, `stage3_they`, `it_of_inanimate`). Against
 [bjorkman-2017]'s dynamic condition, which asks a pronoun's features to include its
@@ -47,7 +46,7 @@ namespace KonnellyCowper2020
 open DistributedMorphology
 open scoped DistributedMorphology
 
-/-- The privative features of the third-person pronoun, (11): [sg] and [inanim] on Num,
+/-- The third-person pronoun has the privative features of (11), [sg] and [inanim] on Num and
 [masc] and [fem] on n, (14). -/
 inductive Feature
   | sg
@@ -66,8 +65,7 @@ def Gender.feature : Gender → Feature
   | .masc => .masc
   | .fem => .fem
 
-/-- The class feature a nominal bears lexically: a gender on n, or [inanim] on Num, which
-contrast with each other and with the absence of any, §4.1. -/
+/-- The class feature a nominal bears lexically, a gender on n or [inanim] on Num, §4.1. -/
 inductive Class
   | gender (g : Gender)
   | inanim
@@ -85,6 +83,13 @@ theorem spellout_items :
       spellout [.sg, .inanim] = some "it" ∧ spellout [.sg] = some "they" ∧
       spellout [] = some "they" := by
   decide
+
+/-- A feature is contrastive when its absence conveys its negation, and a non-contrastive
+modifier when its absence conveys nothing ([wiltschko-2008]). -/
+inductive Contrastivity
+  | contrastive
+  | nonContrastive
+  deriving DecidableEq, Repr
 
 /-- The three stages of the change, §4. -/
 inductive Stage
@@ -138,9 +143,8 @@ def numFeatures : List Feature :=
 
 end Antecedent
 
-/-- The gender feature n may bear at a stage: a lexical feature, or, when the noun has none,
-the referent's known gender, obligatorily at Stage 1 and optionally at Stage 2; at Stage 3 an
-optional modifier for the referent's gender. -/
+/-- The gender features n may bear at a stage. Without a lexical gender, n bears the referent's
+known gender obligatorily at Stage 1, optionally at Stage 2, and as a modifier at Stage 3. -/
 def Stage.genders (s : Stage) (a : Antecedent) : List (Option Gender) :=
   if a.inanimate then [none] else
   match s.genderContrastivity, a.lexicalGender with
@@ -148,11 +152,10 @@ def Stage.genders (s : Stage) (a : Antecedent) : List (Option Gender) :=
   | .contrastive, some g => [some g]
   | .contrastive, none => (if s.insertionObligatory then [] else [none]) ++ [a.known]
 
-/-- The bundles a pronoun with antecedent `a` may spell out at stage `s`: the Num features
-with a gender feature of n, or without one under a quantifier. -/
+/-- The bundles a pronoun with antecedent `a` may spell out at stage `s`. -/
 def bundles (s : Stage) (a : Antecedent) : List (List Feature) :=
   ((if a.quantified then [none] else []) ++ s.genders a).map
-    λ g : Option Gender => a.numFeatures ++ (g.map Gender.feature).toList
+    fun g : Option Gender ↦ a.numFeatures ++ (g.map Gender.feature).toList
 
 /-- The pronoun forms available for an antecedent at a stage. -/
 def forms (s : Stage) (a : Antecedent) : List String := (bundles s a).filterMap spellout
@@ -177,12 +180,12 @@ theorem they_mem_forms {s : Stage} {a : Antecedent}
     · simp [h]
   · cases hs : a.singular <;> simp [Antecedent.numFeatures, hs, hi] <;> decide
 
-/-- Stage 3: *they* is the default for every animate antecedent, (7) and (25). -/
+/-- At Stage 3 *they* is the default for every animate antecedent, (7) and (25). -/
 theorem stage3_they {a : Antecedent} (hi : a.inanimate = false) : "they" ∈ forms .three a :=
   they_mem_forms (Or.inl (by simp [Stage.genders, Stage.genderContrastivity, hi])) hi
 
-/-- A singular inanimate antecedent is *it* at every stage, (10) and (13): [inanim] sits on
-Num and is always copied. -/
+/-- A singular inanimate antecedent is *it* at every stage, (10) and (13), since [inanim] sits
+on Num and is always copied. -/
 theorem it_of_inanimate {s : Stage} {a : Antecedent} (hs : a.singular = true)
     (hi : a.inanimate = true) : ∀ f ∈ forms s a, f = "it" := by
   intro f hf
@@ -201,53 +204,53 @@ theorem it_of_inanimate {s : Stage} {a : Antecedent} (hs : a.singular = true)
 
 /-! ### The paper's antecedents -/
 
-/-- (5a) *anyone*: quantified, gender unknown. -/
+/-- (5a) *anyone*, a quantified antecedent of unknown gender. -/
 def anyone : Antecedent := ⟨true, none, none, true⟩
 
-/-- (5b) *the person at the door*: referential, gender unknown. -/
+/-- (5b) *the person at the door*, a referential antecedent of unknown gender. -/
 def thePerson : Antecedent := ⟨true, none, none, false⟩
 
-/-- (6a) *Kelly*: an ungendered name for a referent of known gender. -/
+/-- (6a) *Kelly*, an ungendered name for a referent of known gender. -/
 def kelly : Antecedent := ⟨true, none, some .fem, false⟩
 
-/-- (7a) *Maria*: a lexically gendered name. -/
+/-- (7a) *Maria*, a lexically gendered name. -/
 def maria : Antecedent := ⟨true, some (.gender .fem), some .fem, false⟩
 
-/-- (7d) *your brother*: a lexically gendered noun. -/
+/-- (7d) *your brother*, a lexically gendered noun. -/
 def yourBrother : Antecedent := ⟨true, some (.gender .masc), some .masc, false⟩
 
-/-- (10) *my favourite watch*: inanimate. -/
+/-- (10) *my favourite watch*, an inanimate antecedent. -/
 def theWatch : Antecedent := ⟨true, some .inanim, none, false⟩
 
-/-- (12b) *every girl*: quantified and lexically gendered. -/
+/-- (12b) *every girl*, a quantified and lexically gendered antecedent. -/
 def everyGirl : Antecedent := ⟨true, some (.gender .fem), none, true⟩
 
-/-- (13) *every book*: quantified and inanimate. -/
+/-- (13) *every book*, a quantified inanimate antecedent. -/
 def everyBook : Antecedent := ⟨true, some .inanim, none, true⟩
 
-/-- (23) and (24) *the women*: plural and lexically gendered. -/
+/-- *the women* of (23) and (24), a plural and lexically gendered antecedent. -/
 def theWomen : Antecedent := ⟨false, some (.gender .fem), some .fem, false⟩
 
-/-- Stage 1, (5) against (6) and (7): *they* with a quantified or gender-unknown antecedent
-only. -/
+/-- At Stage 1, (5) against (6) and (7), *they* takes only a quantified or gender-unknown
+antecedent. -/
 theorem stage1 :
     "they" ∈ forms .one anyone ∧ "they" ∈ forms .one thePerson ∧ "they" ∉ forms .one kelly ∧
       "they" ∉ forms .one maria := by
   decide +kernel
 
-/-- Stage 2, (6) against (15) and (21): an ungendered name antecedes *they*, a lexically
+/-- At Stage 2, (6) against (15) and (21), an ungendered name antecedes *they* and a lexically
 gendered one does not. -/
 theorem stage2 : "they" ∈ forms .two kelly ∧ "they" ∉ forms .two maria := by decide +kernel
 
-/-- Stage 3, (7), (8) and (10): *they* for every animate antecedent, *she* still available,
-*it* alone for the watch. -/
+/-- At Stage 3, (7), (8) and (10), every animate antecedent takes *they*, *she* is still
+available, and the watch takes *it* alone. -/
 theorem stage3 :
     (∀ a ∈ [anyone, thePerson, kelly, maria, yourBrother], "they" ∈ forms .three a) ∧
       "she" ∈ forms .three kelly ∧ forms .three theWatch = ["it"] := by
   decide +kernel
 
-/-- Quantified antecedents, (12) and (13): the gender feature on n is optional under a
-quantifier while [inanim] on Num is not. -/
+/-- Under a quantifier, (12) and (13), the gender feature on n is optional while [inanim] on Num
+is not. -/
 theorem quantified :
     "they" ∈ forms .one everyGirl ∧ "she" ∈ forms .one everyGirl ∧
       forms .one everyBook = ["it", "it"] := by
@@ -255,16 +258,16 @@ theorem quantified :
 
 /-! ### Bjorkman's dynamic condition, §5 -/
 
-/-- [bjorkman-2017]'s condition: a referential pronoun's features include those already
-associated with its referent. -/
+/-- [bjorkman-2017]'s condition requires a referential pronoun's features to include those
+already associated with its referent. -/
 abbrev BjorkmanCondition (pronoun antecedent : List Feature) : Prop := antecedent ⊆ pronoun
 
-/-- (23): the pronoun of *the women* bears <fem> without [sg], and no item spells that out but
+/-- In (23) the pronoun of *the women* bears <fem> without [sg], and no item spells that out but
 *they*. -/
 theorem bjorkman_women_they : BjorkmanCondition [.fem] [.fem] ∧ spellout [.fem] = some "they" := by
   decide
 
-/-- (24): a pronoun bearing <fem> and [sg] satisfies the condition for *the women* and spells
+/-- In (24) a pronoun bearing <fem> and [sg] satisfies the condition for *the women* and spells
 out as *she*, which the condition therefore wrongly licenses. -/
 theorem bjorkman_overgenerates :
     BjorkmanCondition [.sg, .fem] [.fem] ∧ spellout [.sg, .fem] = some "she" := by

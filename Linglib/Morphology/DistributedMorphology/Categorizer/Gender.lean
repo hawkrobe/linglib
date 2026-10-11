@@ -1,86 +1,47 @@
 module
 
-public import Linglib.Syntax.Gender.Decomposition
 public import Linglib.Morphology.DistributedMorphology.Categorizer.Basic
 
 /-!
 # Gender on the nominal categorizer
 
-The nominal categorizer is the locus of grammatical gender: an n may
-carry a valued gender feature (`GenderValue`, a signed `GenderDimension`),
-interpretable (natural)
-or uninterpretable (arbitrary), and Vocabulary Insertion realizes the
-result in the language's own carrier of genders, falling
-back to the system's morphosyntactic default. The attested realization
-patterns — Set 1, Set 2, three-gender, animacy-based — differ only in
-their system, and PF is blind to interpretability. DM features are the
-non-hybrid fragment of `Gender.SplitFeature`, and the FEM slice of the
-head inventory is `KramerN`, whose three-gender bound for one dimension is a theorem.
+This file defines the gender features of the nominal categorizer n in Distributed Morphology. A
+gender feature is a binary dimension such as [±FEM] with a sign, and it is interpretable for
+natural gender and uninterpretable for arbitrary gender. A categorizing head may also bear the
+selectional feature {D}, which licenses an inalienable possessor.
 
 ## Main definitions
 
-* `GenderFeature`, `Interpretability`, `Contrastivity` — gender features
-  on n and their LF status
-* `Categorizer.Head` — a categorizer with phi-features and the
-  selectional feature {D}; `Categorizer.Head.gendered` builds the
-  canonical inventory `n_iFem` … `n_uMasc`
-* `Categorizer.Head.realizeGender` — Vocabulary Insertion into a
-  the carrier; `IsSet1` … `IsAnimacyBased` — the attested patterns
-
-## Main statements
-
-* `toSplitFeature_not_isHybrid` — the DM calculus generates no hybrid
-  features
-* `realizeGender_congr` — PF is blind to interpretability
-* `not_isSet1_and_isSet2` — the Set 1 vs Set 2 parameter is exclusive
+* `GenderValue`: a binary gender dimension with a sign.
+* `GenderFeature`: a gender value with its interpretability.
+* `Categorizer.Head`: a categorizer with its gender feature and {D}.
 
 ## References
 
-* [R. Kramer, *The morphosyntax of gender*][kramer-2015]
-* [L. J. Adamson, *Gender assignment is local*][adamson-2024]
-* [L. Konnelly and E. Cowper, *Gender diversity and morphosyntax*][konnelly-cowper-2020]
-* [P. W. Smith, *Feature mismatches*][smith-2015]
+* [kramer-2015]
+* [adamson-2024]
+* [myler-2016]
 -/
 
 @[expose] public section
 
 namespace DistributedMorphology
 
-open Minimalist Minimalist.Voice
+open Minimalist
 
-/-! ### Gender dimensions and valued gender features
+/-! ### Gender features -/
 
-Kramer's calculus ranges over language-particular binary dimensions, [±FEM] in Amharic,
-Spanish and Maa, [±ANIM] in Lealao Chinantec, Algonquian and Teop, and Adamson's [±MASC]
-in Jarawara. A valued gender feature is a dimension with a sign, and its surface is the
-comparative label of the pole the sign picks; the interpretability-annotated FEM slice of
-the head inventory is `KramerN`. -/
-
-/-- A binary gender dimension, the contrast a language's gender features are drawn over
-([kramer-2015]; [adamson-2024] for MASC). -/
+/-- A binary gender dimension. -/
 inductive GenderDimension where
-  /-- [±FEM]: Amharic, Spanish, Maa. -/
+  /-- [±FEM], as in Amharic, Spanish and Maa. -/
   | fem
-  /-- [±MASC]: Jarawara. -/
+  /-- [±MASC], as in Jarawara. -/
   | masc
-  /-- [±ANIM]: Lealao Chinantec, Algonquian, Teop. -/
+  /-- [±ANIM], as in Lealao Chinantec, Algonquian and Teop. -/
   | anim
   deriving DecidableEq, Repr, Fintype
 
-/-- The comparative label at a dimension's positive pole. -/
-def GenderDimension.positive : GenderDimension → Gender
-  | .fem => .feminine
-  | .masc => .masculine
-  | .anim => .animate
-
-/-- The comparative label at a dimension's negative pole. -/
-def GenderDimension.negative : GenderDimension → Gender
-  | .fem => .masculine
-  | .masc => .feminine
-  | .anim => .inanimate
-
-/-- A pole is the sign of a valued binary feature. Neither sign is inherently marked: which one a
-language's arbitrary gender carries is the Set 1 versus Set 2 parameter ([kramer-2015]). -/
+/-- The sign of a binary feature. -/
 inductive GenderValue.Pole where
   | pos
   | neg
@@ -88,488 +49,56 @@ inductive GenderValue.Pole where
 
 /-- A valued gender feature is a dimension with a sign, as in [+FEM], [−FEM] and [+ANIM]. -/
 structure GenderValue where
-  /-- The dimension the feature is drawn over. -/
+  /-- The dimension. -/
   dim : GenderDimension
   /-- The sign. -/
   pole : GenderValue.Pole
   deriving DecidableEq, Repr, Fintype
 
-/-- The comparative label a valued feature denotes, the pole its sign picks. Surface labels
-underdetermine features: Maa's [−FEM] and Jarawara's [+MASC] both surface masculine. -/
-def GenderValue.surface (v : GenderValue) : Gender :=
-  match v.pole with
-  | .pos => v.dim.positive
-  | .neg => v.dim.negative
-
-/-- A gender-relevant nominalizing head in [kramer-2015]'s calculus: plain n, or n bearing
-an interpretable or uninterpretable [±FEM]. -/
-inductive KramerN where
-  /-- n with no gender features, Romanian's default-gender nouns. -/
-  | plain
-  /-- n i[+FEM], interpretable feminine, natural gender. -/
-  | iFem
-  /-- n i[−FEM], interpretable masculine, natural gender. -/
-  | iMasc
-  /-- n u[+FEM], uninterpretable feminine, arbitrary gender. -/
-  | uFem
-  /-- n u[−FEM], uninterpretable masculine, arbitrary gender. -/
-  | uMasc
-  deriving DecidableEq, Repr, Fintype
-
-namespace KramerN
-
-/-- Agreement exponence sees the sign of the feature, not its interpretability, since natural and
-arbitrary gender receive the same Vocabulary Item, and `none` for no feature. -/
-def exponence : KramerN → Option GenderValue.Pole
-  | .plain => none
-  | .iFem => some .pos
-  | .uFem => some .pos
-  | .iMasc => some .neg
-  | .uMasc => some .neg
-
-/-- Each head is a split feature: interpretable heads value both halves, uninterpretable heads only
-the morphological half. -/
-def toSplitFeature : KramerN → Gender.SplitFeature GenderValue
-  | .plain => ⟨none, none⟩
-  | .iFem => ⟨some ⟨.fem, .pos⟩, some ⟨.fem, .pos⟩⟩
-  | .iMasc => ⟨some ⟨.fem, .neg⟩, some ⟨.fem, .neg⟩⟩
-  | .uFem => ⟨some ⟨.fem, .pos⟩, none⟩
-  | .uMasc => ⟨some ⟨.fem, .neg⟩, none⟩
-
-/-- The calculus generates no hybrids: every head is natural, arbitrary or absent in
-split-feature terms, the gap [smith-2015]'s architecture closes. -/
-theorem toSplitFeature_not_isHybrid (n : KramerN) : ¬ n.toSplitFeature.IsHybrid := by
-  cases n <;> rintro ⟨u, i, hu, hi, hne⟩ <;> simp_all [toSplitFeature]
-
-/-- [kramer-2015]'s three-gender bound for a single binary dimension: an inventory of heads
-over [±FEM] distinguishes at most three agreement classes, [+FEM], [−FEM] and bare, so a
-system with more genders needs a further dimension or a language-particular carrier. -/
-theorem card_image_exponence_le_three (inv : Finset KramerN) :
-    (inv.image exponence).card ≤ 3 :=
-  le_trans (Finset.card_le_univ _) (by decide)
-
-end KramerN
-
-/-! ### Phi-features on categorizing heads
-
-Grammatical gender lives on n, as an interpretable (natural) or
-uninterpretable (arbitrary) feature over a language-particular dimension
-([kramer-2015]; [adamson-2024] for MASC and Teop). -/
-
-/-- Whether a gender feature is legible at LF ([kramer-2015] §3.4.2).
-Interpretable gender is natural gender, restricting the denotation and
-licensed through the Encyclopedia, while uninterpretable gender is
-arbitrary, visible only at PF through Vocabulary Insertion. -/
-inductive Interpretability where
-  | i  -- interpretable: natural gender (List 3)
-  | u  -- uninterpretable: arbitrary gender (List 2)
-  deriving DecidableEq, Repr
-
-/-- Whether the absence of a feature is itself meaningful
-([wiltschko-2008]; applied to gender by [konnelly-cowper-2020] §4). A
-contrastive feature's absence conveys ¬F, while a non-contrastive feature
-is a modifier whose absence is vacuous. Orthogonal to
-`Interpretability` — an interpretable feature can be non-contrastive. -/
-inductive Contrastivity where
-  | contrastive     -- absence = ¬F (K&C Stage 1 gender)
-  | nonContrastive  -- absence = vacuous (K&C Stage 3 gender)
-  deriving DecidableEq, Repr
-
-/-- A contrastive feature must be present when the referent's value is
-known, since its absence would wrongly convey ¬F — a non-contrastive
-feature need not be. -/
-def Contrastivity.obligatory : Contrastivity → Bool
-  | .contrastive => true
-  | .nonContrastive => false
-
-/-- A valued gender feature (`GenderValue`) annotated for
-interpretability. Per dimension this yields the four attested gendered
-ns of [kramer-2015] Ch 3 — i[+VAL], i[−VAL], u[+VAL], u[−VAL] — beside
-plain n with no feature. -/
+/-- A gender value together with its interpretability. -/
 structure GenderFeature where
+  /-- Whether the feature is legible at LF. -/
   interp : Interpretability
+  /-- The value. -/
   val : GenderValue
   deriving DecidableEq, Repr
 
-/-- Whether a gender feature is interpretable (natural). -/
-def GenderFeature.IsNatural (g : GenderFeature) : Prop :=
-  g.interp = .i
+/-! ### Categorizing heads -/
 
-instance : DecidablePred GenderFeature.IsNatural :=
-  fun _ => inferInstanceAs (Decidable (_ = _))
-
-/-- Whether a gender feature is uninterpretable (arbitrary). -/
-def GenderFeature.IsArbitrary (g : GenderFeature) : Prop :=
-  g.interp = .u
-
-instance : DecidablePred GenderFeature.IsArbitrary :=
-  fun _ => inferInstanceAs (Decidable (_ = _))
-
-/-- Number on the n head. Irregular plurals such as Amharic broken plurals
-are marked on n inside the categorization domain, while the regular plural
-*-otʃtʃ* realizes Num outside nP ([kramer-2015] §3.3, Ch 8). -/
-inductive NumberOnN where
-  | sg   -- singular (default/unmarked)
-  | pl   -- irregular plural (e.g., Amharic broken plurals)
-  deriving DecidableEq, Repr
-
-/-- The phi-features a categorizing head hosts — gender and, for
-irregular nouns, number on n, while v and a carry none
-([kramer-2015] Ch 3). -/
-structure PhiBundle where
-  gender : Option GenderFeature := none
-  number : Option NumberOnN := none
-  deriving DecidableEq, Repr
-
-instance : Inhabited PhiBundle := ⟨{}⟩
-
-/-- A categorizing head with its phi-features and the selectional feature
-{D}, which creates a specifier position for an iPossessor DP in Spec,nP
-([adamson-2024], following [myler-2016]'s convention). A functional
-morpheme is a feature bundle: `Categorizer.Head` is the head-leaf label of
-`WordStructure Categorizer.Head`, the φ-enriched instance of word-internal
-structure. -/
+/-- A categorizing head with its gender feature and the selectional feature {D}. These are the
+head leaves of `WordStructure Categorizer.Head`. -/
 structure Categorizer.Head where
-  /-- The categorizer n, v, or a. -/
+  /-- The categorizer n, v or a. -/
   categorizer : Categorizer
-  /-- The gender and number content ([kramer-2015]). -/
-  phi : PhiBundle := {}
-  /-- The selectional feature {D} licensing an iPossessor. -/
+  /-- The gender feature, if any. -/
+  gender : Option GenderFeature := none
+  /-- The selectional feature {D}. -/
   selectsD : Bool := false
   deriving DecidableEq, Repr
 
-/-- The syntactic category of a phi-enriched categorizer head. -/
-def Categorizer.Head.toCategory (ch : Categorizer.Head) : Cat :=
-  ch.categorizer.toCategory
+namespace Categorizer.Head
 
-/-- An iPossessable n head — {D} by construction, with the phi-bundle
-supplying any gender (Teop's body-part n carries u[+ANIM], Jarawara's is
-bare). -/
-def Categorizer.Head.iPoss (phi : PhiBundle := {}) : Categorizer.Head where
+/-- The n bearing the gender feature of interpretability `interp` and value `v`. -/
+def gendered (interp : Interpretability) (v : GenderValue) : Categorizer.Head where
   categorizer := .n
-  phi := phi
-  selectsD := true
+  gender := some ⟨interp, v⟩
 
-/-- iPossessable n-heads always have selectsD = true, by construction. -/
-theorem Categorizer.Head.iPoss_selectsD (phi : PhiBundle) :
-    (Categorizer.Head.iPoss phi).selectsD = true := rfl
-
-/-! ### The canonical head inventory ([kramer-2015] Ch 3)
-
-FEM dimension: Amharic, Spanish, Romance ([kramer-2015] Chs 3, 6). ANIM:
-Teop, Algonquian, Lealao Chinantec (Chs 5–6; [adamson-2024] §3.1). MASC:
-Jarawara only ([adamson-2024] §3.2) — Maa's arbitrary masculine is
-negative-polarity FEM, not MASC. -/
-
-/-- The gendered nominal categorizer is n bearing the valued feature `v` with interpretability
-`interp`. -/
-def Categorizer.Head.gendered (interp : Interpretability)
-    (v : GenderValue) : Categorizer.Head where
-  categorizer := .n
-  phi := { gender := some ⟨interp, v⟩ }
-
-/-- Distinct feature content gives distinct heads — every pairwise
-contrast in the inventory below, in one statement. -/
-theorem Categorizer.Head.gendered_inj {i₁ i₂ : Interpretability}
-    {v₁ v₂ : GenderValue} :
-    gendered i₁ v₁ = gendered i₂ v₂ ↔ i₁ = i₂ ∧ v₁ = v₂ := by
-  simp [Categorizer.Head.gendered, PhiBundle.mk.injEq]
-
-/-- The n bearing interpretable [+FEM] — female natural gender. In
-Amharic the female member of a same-root pair can carry the suffix *-it*
-([kramer-2015] (10)). -/
-def Categorizer.Head.n_iFem : Categorizer.Head := .gendered .i ⟨.fem, .pos⟩
-
-/-- The n bearing interpretable [−FEM] — male natural gender. The name
-gives the resulting gender: the feature is negative-polarity FEM, not the
-MASC dimension of Jarawara (`n_uMasc`). -/
-def Categorizer.Head.n_iMasc : Categorizer.Head := .gendered .i ⟨.fem, .neg⟩
-
-/-- The plain n with no gender feature — the default nominal
-categorizer. -/
-def Categorizer.Head.n_plain : Categorizer.Head where
+/-- The n with no gender feature. -/
+def n_plain : Categorizer.Head where
   categorizer := .n
 
-/-- A gendered head is never the plain n. -/
-theorem Categorizer.Head.gendered_ne_n_plain (interp : Interpretability)
-    (v : GenderValue) : gendered interp v ≠ n_plain := by
-  simp [Categorizer.Head.gendered, Categorizer.Head.n_plain]
+/-- The n bearing interpretable [+FEM], the natural feminine. -/
+def n_iFem : Categorizer.Head := gendered .interpretable ⟨.fem, .pos⟩
 
-/-- The n bearing uninterpretable [+FEM] — the arbitrary feminine of
-Set 1 languages (Amharic, Spanish), leaving masculine as the default.
-Amharic assigns it to a handful of inanimates such as *car*, *earth*,
-*sun*, and *church* ([kramer-2015] (9), Ch 6). -/
-def Categorizer.Head.n_uFem : Categorizer.Head := .gendered .u ⟨.fem, .pos⟩
+/-- The n bearing interpretable [−FEM], the natural masculine. -/
+def n_iMasc : Categorizer.Head := gendered .interpretable ⟨.fem, .neg⟩
 
-/-- The n bearing uninterpretable [−FEM] — the arbitrary masculine of
-Set 2, leaving feminine as the default (Maa, [kramer-2015] §6.3). -/
-def Categorizer.Head.n_uNegFem : Categorizer.Head := .gendered .u ⟨.fem, .neg⟩
+/-- The n bearing uninterpretable [+FEM], the arbitrary feminine. -/
+def n_uFem : Categorizer.Head := gendered .uninterpretable ⟨.fem, .pos⟩
 
-/-- The n bearing interpretable [+ANIM] — Teop gender I nouns, taking
-the article *a*. -/
-def Categorizer.Head.n_iAnim : Categorizer.Head := .gendered .i ⟨.anim, .pos⟩
+/-- The n bearing uninterpretable [+ANIM], the nominalizer of Teop body-part roots. -/
+def n_uAnim : Categorizer.Head := gendered .uninterpretable ⟨.anim, .pos⟩
 
-/-- The n bearing interpretable [−ANIM] — Teop gender II nouns, taking
-the article *o*. -/
-def Categorizer.Head.n_iInanim : Categorizer.Head := .gendered .i ⟨.anim, .neg⟩
-
-/-- The n bearing uninterpretable [+ANIM] — Teop's body-part n when
-iPossessed ([adamson-2024] §3.1). -/
-def Categorizer.Head.n_uAnim : Categorizer.Head := .gendered .u ⟨.anim, .pos⟩
-
-/-- The n bearing uninterpretable [+MASC] — Jarawara's marked masculine,
-with feminine as the unmarked plain n. [adamson-2024] (58) also allows the
-interpretable variant, not modeled here. -/
-def Categorizer.Head.n_uMasc : Categorizer.Head := .gendered .u ⟨.masc, .pos⟩
-
-/-- The verbal categorizer, with no phi-features. -/
-def Categorizer.Head.v_plain : Categorizer.Head where
-  categorizer := .v
-
-/-- The adjectival categorizer, with no phi-features. -/
-def Categorizer.Head.a_plain : Categorizer.Head where
-  categorizer := .a
-
-/-- In the categorization configuration [n √], all φ-content sits on the
-single head leaf and the single root leaf carries none: gender enters
-nominal structure only through n ([kramer-2015]). -/
-theorem heads_roots_categorize_ofRoot (ch : Categorizer.Head) (r : Root) :
-    heads (categorize ch (ofRoot r)) = {ch}
-      ∧ roots (categorize ch (ofRoot r)) = {r} := by
-  constructor
-  · rw [heads_categorize, heads_ofRoot, Multiset.cons_zero]
-  · rw [roots_categorize, roots_ofRoot]
-
-/-! ### Licensing Conditions ([kramer-2015] §3.4) -/
-
-/-- How a root–n combination is licensed ([kramer-2015] §3.4.1). Semantic
-licensing restricts interpretation — the Encyclopedia entry is defined
-only under the matching n — while arbitrary licensing lists the root in a
-Vocabulary Item's context at PF. -/
-inductive LicensingType where
-  | semantic   -- Encyclopedia / List 3
-  | arbitrary  -- PF / List 2
-  deriving DecidableEq, Repr
-
-/-- Arbitrary gender is exactly the failure of natural gender: the two
-interpretability classes partition the features. -/
-theorem GenderFeature.isArbitrary_iff_not_isNatural (gf : GenderFeature) :
-    gf.IsArbitrary ↔ ¬ gf.IsNatural := by
-  cases gf with | mk interp val =>
-  cases interp <;> simp [GenderFeature.IsNatural, GenderFeature.IsArbitrary]
-
-/-- Interpretable gender is semantically licensed and uninterpretable
-gender arbitrarily ([kramer-2015] §3.4.1). -/
-def GenderFeature.licensingType : GenderFeature → LicensingType
-  | ⟨.i, _⟩ => .semantic
-  | ⟨.u, _⟩ => .arbitrary
-
-@[simp] theorem GenderFeature.licensingType_i (v : GenderValue) :
-    (GenderFeature.mk .i v).licensingType = .semantic := rfl
-
-@[simp] theorem GenderFeature.licensingType_u (v : GenderValue) :
-    (GenderFeature.mk .u v).licensingType = .arbitrary := rfl
-
-/-! ### The split-feature reading
-
-DM's gender features are the non-hybrid fragment of the split-feature
-architecture of `Syntax/Gender/Decomposition.lean`: interpretable gender
-values both halves of a `Gender.SplitFeature`, uninterpretable gender only
-the morphological one. The FEM slice of the head inventory is
-[kramer-2015]'s calculus `KramerN`. -/
-
-/-- A DM gender feature as a split feature ([smith-2015] via
-`Gender.SplitFeature`) — interpretable gender values both halves,
-uninterpretable gender only the morphological one. -/
-def GenderFeature.toSplitFeature (gf : GenderFeature) :
-    Gender.SplitFeature GenderValue :=
-  match gf.interp with
-  | .i => ⟨some gf.val, some gf.val⟩
-  | .u => ⟨some gf.val, none⟩
-
-/-- The gender half of a phi-bundle as a split feature, absent for plain
-heads. -/
-def PhiBundle.genderSplit (phi : PhiBundle) : Gender.SplitFeature GenderValue :=
-  (phi.gender.map GenderFeature.toSplitFeature).getD ⟨none, none⟩
-
-/-- Natural gender in the DM sense is natural gender in the split-feature
-sense. -/
-theorem toSplitFeature_isNatural_iff (gf : GenderFeature) :
-    gf.toSplitFeature.IsNatural ↔ gf.IsNatural := by
-  cases gf with | mk interp val =>
-  cases interp <;>
-    simp [GenderFeature.toSplitFeature, Gender.SplitFeature.IsNatural,
-      GenderFeature.IsNatural]
-
-/-- Arbitrary gender in the DM sense is arbitrary gender in the
-split-feature sense. -/
-theorem toSplitFeature_isArbitrary_iff (gf : GenderFeature) :
-    gf.toSplitFeature.IsArbitrary ↔ gf.IsArbitrary := by
-  cases gf with | mk interp val =>
-  cases interp <;>
-    simp [GenderFeature.toSplitFeature, Gender.SplitFeature.IsArbitrary,
-      GenderFeature.IsArbitrary]
-
-/-- The DM calculus generates no hybrids — the mismatch zoo of
-[smith-2015] lies outside it (cf.
-`KramerN.toSplitFeature_not_isHybrid` for the FEM slice). -/
-theorem toSplitFeature_not_isHybrid (gf : GenderFeature) :
-    ¬ gf.toSplitFeature.IsHybrid := by
-  cases gf with | mk interp val =>
-  cases interp <;> rintro ⟨u, i, hu, hi, hne⟩ <;>
-    simp_all [GenderFeature.toSplitFeature]
-
-/-- A phi-bundle's split feature is absent exactly when the head is
-plain. -/
-theorem genderSplit_isAbsent_iff (phi : PhiBundle) :
-    phi.genderSplit.IsAbsent ↔ phi.gender = none := by
-  cases h : phi.gender with
-  | none => simp [PhiBundle.genderSplit, h, Gender.SplitFeature.IsAbsent]
-  | some gf =>
-    cases gf with | mk interp val =>
-    cases interp <;>
-      simp [PhiBundle.genderSplit, h, GenderFeature.toSplitFeature,
-        Gender.SplitFeature.IsAbsent]
-
-/-- [kramer-2015]'s FEM-dimension calculus embeds into the head
-inventory. -/
-def Categorizer.Head.ofKramerN : KramerN → Categorizer.Head
-  | .plain => .n_plain
-  | .iFem  => .n_iFem
-  | .iMasc => .n_iMasc
-  | .uFem  => .n_uFem
-  | .uMasc => .n_uNegFem
-
-/-! ### Vocabulary Insertion into a gender system
-
-The bridge from features on n to a language's genders is Vocabulary
-Insertion into that language's own carrier of controller genders, the
-carrier discipline of `Syntax/Gender/Basic.lean`. One map covers the
-attested patterns of [kramer-2015] Chs 5–7, which differ only in their
-carrier: the valued feature is realized by `value`, and a bare n falls
-back to the morphosyntactic default, per-language data that feminine
-defaults show is not derivable ([kramer-2015]). The attested patterns are
-constraints on the comparative labels of the carrier, `label`. -/
-
-variable {G : Type*}
-
-/-- Vocabulary Insertion of gender realizes the head's valued feature in the language's own
-carrier, falling back to the morphosyntactic default. -/
-def Categorizer.Head.realizeGender (default : G) (value : GenderValue → G)
-    (ch : Categorizer.Head) : G :=
-  (ch.phi.gender.map fun gf => value gf.val).getD default
-
-@[simp] theorem realizeGender_gendered (default : G)
-    (value : GenderValue → G) (interp : Interpretability)
-    (v : GenderValue) :
-    (Categorizer.Head.gendered interp v).realizeGender default value = value v :=
-  rfl
-
-@[simp] theorem realizeGender_n_plain (default : G)
-    (value : GenderValue → G) :
-    Categorizer.Head.n_plain.realizeGender default value = default := rfl
-
-/-- PF is blind to interpretability: heads carrying the same valued
-feature realize alike, whatever their LF status — natural and arbitrary
-gender receive the same Vocabulary Item ([kramer-2015]). -/
-theorem realizeGender_congr (default : G)
-    (value : GenderValue → G) {ch₁ ch₂ : Categorizer.Head}
-    (h : ch₁.phi.gender.map (·.val) = ch₂.phi.gender.map (·.val)) :
-    ch₁.realizeGender default value = ch₂.realizeGender default value := by
-  have e : ∀ o : Option GenderFeature,
-      o.map (fun gf => value gf.val) = (o.map (·.val)).map value := by
-    intro o; cases o <;> rfl
-  rw [Categorizer.Head.realizeGender, Categorizer.Head.realizeGender, e, e, h]
-
-/-- Realization sees only what `KramerN.exponence` sees. -/
-theorem realizeGender_ofKramerN (default : G)
-    (value : GenderValue → G) (k₁ k₂ : KramerN)
-    (h : k₁.exponence = k₂.exponence) :
-    (Categorizer.Head.ofKramerN k₁).realizeGender default value =
-      (Categorizer.Head.ofKramerN k₂).realizeGender default value := by
-  refine realizeGender_congr default value ?_
-  cases k₁ <;> cases k₂ <;> first | rfl | exact absurd h (by decide)
-
-/-! ### The attested realization patterns ([kramer-2015] Chs 5–7)
-
-Each pattern is a constraint on the system's comparative labels: which
-label the valued feature realizes and which label the default carries.
-Set 1 and Set 2 share a feature inventory and differ only here. -/
-
-/-- In a Set 1 system [+FEM] realizes the feminine-labeled gender and the default is
-masculine-labeled (Amharic, Spanish; [kramer-2015] Ch 6). -/
-def IsSet1 (label : G → Option Gender) (default : G) (value : GenderValue → G) : Prop :=
-  label (value ⟨.fem, .pos⟩) = some .feminine
-    ∧ label default = some .masculine
-
-/-- In a Set 2 system [−FEM] realizes the masculine-labeled gender and the default is
-feminine-labeled (Maa; [kramer-2015] §6.3). -/
-def IsSet2 (label : G → Option Gender) (default : G) (value : GenderValue → G) : Prop :=
-  label (value ⟨.fem, .neg⟩) = some .masculine
-    ∧ label default = some .feminine
-
-/-- A three-gender system: both FEM poles are realized and the default
-is neuter-labeled (Mangarayi; [kramer-2015] §7.2 — the other Ch 7 case
-studies add uninterpretable features to this inventory). -/
-def IsThreeGender (label : G → Option Gender) (default : G) (value : GenderValue → G) : Prop :=
-  label (value ⟨.fem, .pos⟩) = some .feminine
-    ∧ label (value ⟨.fem, .neg⟩) = some .masculine
-    ∧ label default = some .neuter
-
-/-- In an animacy system [+ANIM] realizes the animate-labeled gender and the default is
-inanimate-labeled (Lealao Chinantec, [kramer-2015] §5.3; Algonquian, §6.4; Teop, [adamson-2024]). -/
-def IsAnimacyBased (label : G → Option Gender) (default : G) (value : GenderValue → G) : Prop :=
-  label (value ⟨.anim, .pos⟩) = some .animate
-    ∧ label default = some .inanimate
-
-/-- The Set 1 vs Set 2 parameter is exclusive: their defaults carry
-different labels. -/
-theorem not_isSet1_and_isSet2 (label : G → Option Gender) (default : G)
-    (value : GenderValue → G) :
-    ¬ (IsSet1 label default value ∧ IsSet2 label default value) :=
-  fun ⟨h₁, h₂⟩ => by have := h₁.2.symm.trans h₂.2; simp at this
-
-/-- In a Set 1 system, arbitrary-feminine n realizes the
-feminine-labeled gender and plain n the masculine-labeled default. -/
-theorem IsSet1.realize_labels {label : G → Option Gender} {default : G}
-    {value : GenderValue → G} (h : IsSet1 label default value) :
-    label (Categorizer.Head.n_uFem.realizeGender default value)
-        = some .feminine
-      ∧ label (Categorizer.Head.n_plain.realizeGender default value)
-        = some .masculine :=
-  ⟨h.1, h.2⟩
-
-/-- In a Set 2 system, arbitrary-masculine n realizes the
-masculine-labeled gender and plain n the feminine-labeled default. -/
-theorem IsSet2.realize_labels {label : G → Option Gender} {default : G}
-    {value : GenderValue → G} (h : IsSet2 label default value) :
-    label (Categorizer.Head.n_uNegFem.realizeGender default value)
-        = some .masculine
-      ∧ label (Categorizer.Head.n_plain.realizeGender default value)
-        = some .feminine :=
-  ⟨h.1, h.2⟩
-
-/-- Set 1 is realizable: the two-gender system over `Bool` with `true`
-the feminine-labeled class. -/
-example : IsSet1 (G := Bool) (fun b => some (if b then .feminine else .masculine)) false
-    (fun v => v == ⟨.fem, .pos⟩) := by
-  constructor <;> rfl
-
-/-! ### Discourse-level gender -/
-
-/-- The discourse-level gender information a head determines: the
-comparative label of its realized gender, unspecified where the system
-leaves the class unlabeled. -/
-def Categorizer.Head.genderInfo (label : G → Option Gender) (default : G)
-    (value : GenderValue → G) (ch : Categorizer.Head) : Option Gender :=
-  label (ch.realizeGender default value)
-
-/-- In a fully labeled system the grammar always determines a concrete
-discourse gender: underspecification ([arnold-2026]) arises from the
-discourse, not from a resolved morphosyntax. -/
-theorem genderInfo_isSome (label : G → Option Gender) (default : G)
-    (value : GenderValue → G) (hlab : ∀ g, (label g).isSome)
-    (ch : Categorizer.Head) : (ch.genderInfo label default value).isSome :=
-  hlab _
+end Categorizer.Head
 
 end DistributedMorphology
