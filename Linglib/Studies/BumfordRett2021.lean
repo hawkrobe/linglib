@@ -256,12 +256,26 @@ noncomputable def literal (c : Option Comparison) (σ : Finset.Icc (-4 : ℤ) 4)
 instance (c : Option Comparison) (σ : Finset.Icc (-4 : ℤ) 4) : IsFiniteKernel (literal c σ) :=
   inferInstanceAs (IsFiniteKernel (RSA.listener _ (RSA.truthful _)))
 
+/-- The speaker at a world and a threshold offset addresses the literal listener under that
+offset, at rationality `α` with costs `cost`. -/
+noncomputable def speaker (c : Option Comparison) (α : ℝ) (cost : Utterance → ℝ) :
+    Kernel (World × Finset.Icc (-4 : ℤ) 4) Utterance :=
+  Kernel.ofFunOfCountable fun q ↦ RSA.speaker α cost (literal c q.2) Measure.dirac q.1
+
+@[simp] theorem speaker_apply (c : Option Comparison) (α : ℝ) (cost : Utterance → ℝ)
+    (q : World × Finset.Icc (-4 : ℤ) 4) :
+    speaker c α cost q = RSA.speaker α cost (literal c q.2) Measure.dirac q.1 := rfl
+
+instance (c : Option Comparison) (α : ℝ) (cost : Utterance → ℝ) :
+    IsFiniteKernel (speaker c α cost) :=
+  ⟨⟨1, ENNReal.one_lt_top, fun q ↦ RSA.speaker_apply_univ_le_one α cost _ Measure.dirac q.1⟩⟩
+
 /-- The pragmatic listener at rationality `α`, with the speaker's costs `cost`, is the
 Bayesian inverse of the speakers indexed by the threshold offsets, against the prior on worlds and
 uniform offsets. -/
 noncomputable def listener (c : Option Comparison) (α : ℝ) (cost : Utterance → ℝ) :
     Kernel Utterance (World × Finset.Icc (-4 : ℤ) 4) :=
-  ((RSA.familySpeaker (literal c) α cost)†(prior.prod Measure.count))
+  ((speaker c α cost)†(prior.prod Measure.count))
 
 instance (c : Option Comparison) (α : ℝ) (cost : Utterance → ℝ) :
     IsMarkovKernel (listener c α cost) :=
@@ -285,12 +299,13 @@ private theorem literal_eq_zero {c σ u w} (h : ¬ Holds c u σ w) : literal c �
   RSA.listener_truthful_apply_singleton_of_notMem prior (fun u ↦ {w | Holds c u σ w}) h
 
 /-- Every utterance of every construction has positive probability of being produced. -/
-theorem comp_familySpeaker_ne_zero (hα : 0 ≤ α) (c : Option Comparison) (u : Utterance) :
-    (RSA.familySpeaker (literal c) α cost ∘ₘ prior.prod Measure.count) {u} ≠ 0 := by
+theorem comp_speaker_ne_zero (hα : 0 ≤ α) (c : Option Comparison) (u : Utterance) :
+    (speaker c α cost ∘ₘ prior.prod Measure.count) {u} ≠ 0 := by
   obtain ⟨w, σ, h⟩ := exists_holds c u
-  exact RSA.comp_familySpeaker_ne_zero (w := w) (l := σ)
-    (by rw [prior_prod_count_singleton]; exact prior_singleton_ne_zero w)
-    (RSA.speaker_dirac_apply_singleton_ne_zero hα (literal_ne_zero h))
+  refine comp_apply_singleton_ne_zero _ _ (w := (w, σ))
+    (by rw [prior_prod_count_singleton]; exact prior_singleton_ne_zero w) ?_
+  rw [speaker_apply]
+  exact RSA.speaker_dirac_apply_singleton_ne_zero hα (literal_ne_zero h)
 
 /-- The listener's mass on a world pools the speaker's production of the utterance over the
 offsets, weighted by the world's prior. -/
@@ -298,9 +313,9 @@ private theorem listener_fst_real_singleton (hα : 0 ≤ α) (c : Option Compari
     (w : World) :
     (listener c α cost u).fst.real {w} =
       (prior {w}).toReal * (∑ σ, (RSA.speaker α cost (literal c σ) Measure.dirac w).real {u}) /
-        (RSA.familySpeaker (literal c) α cost ∘ₘ prior.prod Measure.count).real {u} := by
+        (speaker c α cost ∘ₘ prior.prod Measure.count).real {u} := by
   rw [listener, posterior_prod_fst_real_singleton _ prior Measure.count
-    (comp_familySpeaker_ne_zero hα c u) w]
+    (comp_speaker_ne_zero hα c u) w]
   simp [measureReal_def]
 
 /-- A world produces an utterance at least as often as another if it verifies the utterance whenever
@@ -340,7 +355,7 @@ private theorem listener_fst_real_lt (hα : 0 < α) {c u} {w₁ w₂ : World}
   rw [listener_fst_real_singleton hα.le, listener_fst_real_singleton hα.le, hp]
   refine div_lt_div_of_pos_right (mul_lt_mul_of_pos_left ?_
     (ENNReal.toReal_pos (prior_singleton_ne_zero _) (measure_ne_top _ _)))
-    (ENNReal.toReal_pos (comp_familySpeaker_ne_zero hα.le c u) (measure_ne_top _ _))
+    (ENNReal.toReal_pos (comp_speaker_ne_zero hα.le c u) (measure_ne_top _ _))
   refine Finset.sum_lt_sum (fun σ _ ↦ speaker_real_le hα (hu σ) (halt σ))
     ⟨σ₀, Finset.mem_univ _, ?_⟩
   rw [measureReal_def, measureReal_def,
@@ -397,7 +412,7 @@ theorem listener_antonym (hα : 0 ≤ α) (c : Option Comparison) (u : Utterance
       exact prior_reflect p.1)
     (fun p ↦ RSA.speaker_dirac_apply_singleton_of_equiv Utterance.antonym_involutive.toPerm α cost
       (fun v ↦ literal_antonym c p.2 v p.1) u)
-    (comp_familySpeaker_ne_zero hα c u) (w, σ)
+    (comp_speaker_ne_zero hα c u) (w, σ)
 
 theorem measured_reflect (c : Option Comparison) (w : World) :
     measured c w.reflect - w.reflect.centre = -(measured c w - w.centre) := by
@@ -530,7 +545,7 @@ private theorem holds_none_recentre (m m' : Finset.Icc (5 : ℤ) 13) (u : Uttera
 private theorem listener_positive_recentre (hα : 0 < α) (m m' : Finset.Icc (5 : ℤ) 13)
     (u : Utterance) (w : World) :
     (listener none α cost u).fst {w.recentre m m'} = (listener none α cost u).fst {w} := by
-  have hu := comp_familySpeaker_ne_zero (cost := cost) hα.le none u
+  have hu := comp_speaker_ne_zero (cost := cost) hα.le none u
   rw [Measure.fst_apply_singleton, Measure.fst_apply_singleton]
   refine Finset.sum_congr rfl fun σ _ ↦ ?_
   rw [listener, posterior_apply_singleton _ _ hu,
@@ -576,10 +591,10 @@ variable {α : ℝ} {cost : Utterance → ℝ}
 
 /-- The speakers produce a probability distribution over the utterances at every world and
 offset, since silence is true everywhere. -/
-theorem isMarkovKernel_familySpeaker (hα : 0 ≤ α) (c : Option Comparison) :
-    IsMarkovKernel (RSA.familySpeaker (literal c) α cost) :=
+theorem isMarkovKernel_speaker (hα : 0 ≤ α) (c : Option Comparison) :
+    IsMarkovKernel (speaker c α cost) :=
   ⟨fun q ↦ by
-    rw [RSA.familySpeaker_apply]
+    rw [speaker_apply]
     exact (RSA.isMarkovKernel_speaker_dirac hα cost (literal c q.2)
       (fun w ↦ ⟨.silence, literal_ne_zero (c := c) trivial⟩)).isProbabilityMeasure q.1⟩
 
@@ -587,9 +602,9 @@ theorem isMarkovKernel_familySpeaker (hα : 0 ≤ α) (c : Option Comparison) :
 to the prior's, which is zero. The listener's beliefs average back to the prior, so an antonym the
 speaker says rarely carries a more extreme inference. -/
 theorem evaluativity_balances (hα : 0 ≤ α) (c : Option Comparison) :
-    ∑ u, (RSA.familySpeaker (literal c) α cost ∘ₘ prior.prod Measure.count).real {u} *
+    ∑ u, (speaker c α cost ∘ₘ prior.prod Measure.count).real {u} *
       ∫ w, ((measured c w - w.centre : ℤ) : ℝ) ∂(listener c α cost u).fst = 0 := by
-  have := isMarkovKernel_familySpeaker (cost := cost) hα c
+  have := isMarkovKernel_speaker (cost := cost) hα c
   set f : World × Finset.Icc (-4 : ℤ) 4 → ℝ := fun q ↦ ((measured c q.1 - q.1.centre : ℤ) : ℝ)
   have hint : ∀ u, ∫ w, ((measured c w - w.centre : ℤ) : ℝ) ∂(listener c α cost u).fst =
       ∑ q, (listener c α cost u).real {q} * f q := fun u ↦ by
@@ -612,9 +627,9 @@ theorem evaluativity_balances (hα : 0 ≤ α) (c : Option Comparison) :
       rw [hm, hf]; ring
     rw [e.sum_comp (fun q ↦ (prior.prod Measure.count).real {q} * f q)] at hneg
     linarith
-  calc ∑ u, (RSA.familySpeaker (literal c) α cost ∘ₘ prior.prod Measure.count).real {u} *
+  calc ∑ u, (speaker c α cost ∘ₘ prior.prod Measure.count).real {u} *
         ∫ w, ((measured c w - w.centre : ℤ) : ℝ) ∂(listener c α cost u).fst
-      = ∑ q, (∑ u, (RSA.familySpeaker (literal c) α cost ∘ₘ prior.prod Measure.count).real {u} *
+      = ∑ q, (∑ u, (speaker c α cost ∘ₘ prior.prod Measure.count).real {u} *
           (listener c α cost u).real {q}) * f q := by
         simp_rw [hint, Finset.mul_sum, Finset.sum_mul]
         rw [Finset.sum_comm]
@@ -693,9 +708,9 @@ theorem expectedDeviation_congr_of_antonymsExclusive (hα : 0 < α) {c : Option 
     (hs : cost .silence = cost' .silence) :
     expectedDeviation c α cost p = expectedDeviation c α cost' p := by
   have hS := speaker_congr_of_antonymsExclusive hα hex hp hs
-  have hM : (RSA.familySpeaker (literal c) α cost ∘ₘ prior.prod Measure.count) {.say p} =
-      (RSA.familySpeaker (literal c) α cost' ∘ₘ prior.prod Measure.count) {.say p} := by
-    simp only [Measure.comp_apply_singleton, RSA.familySpeaker_apply, hS]
+  have hM : (speaker c α cost ∘ₘ prior.prod Measure.count) {.say p} =
+      (speaker c α cost' ∘ₘ prior.prod Measure.count) {.say p} := by
+    simp only [Measure.comp_apply_singleton, speaker_apply, hS]
   rw [expectedDeviation, expectedDeviation, integral_fintype .of_finite,
     integral_fintype .of_finite]
   refine Finset.sum_congr rfl fun w _ ↦ ?_

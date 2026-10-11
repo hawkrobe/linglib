@@ -152,17 +152,17 @@ def cost (c : ℝ) (u : Price) : ℝ := if u.IsRound then 1 else c
 
 /-- The goal-indexed speaker, eqs. 5 to 8, is the best response to the projected literal listener of
 the goal, at unit rationality, less the cost. -/
-noncomputable def S1 (μ : Measure Meaning) (c : ℝ) : Kernel (Meaning × Goal) Price :=
-  familySpeaker (projListener project (L0 μ)) 1 (cost c)
+noncomputable def S1 (μ : Measure Meaning) (c : ℝ) (p : Meaning × Goal) : Measure Price :=
+  speaker 1 (cost c) (projListener project (L0 μ) p.2) Measure.dirac p.1
 
-instance (μ : Measure Meaning) (c : ℝ) : IsFiniteKernel (S1 μ c) :=
-  inferInstanceAs (IsFiniteKernel (familySpeaker _ _ _))
+instance (μ : Measure Meaning) (c : ℝ) (p : Meaning × Goal) : IsFiniteMeasure (S1 μ c p) :=
+  inferInstanceAs (IsFiniteMeasure (speaker _ _ _ _ _))
 
-/-- The pragmatic listener over meaning and goal, eq. 10, is the family listener over the product of
-the meaning prior and the goal prior; its first marginal is the meaning listener. -/
+/-- The pragmatic listener over meaning and goal, eq. 10, inverts the speaker against the product
+of the meaning prior and the goal prior; its first marginal is the meaning listener. -/
 noncomputable def L1 (μ : Measure Meaning) [IsProbabilityMeasure μ] (ν : Measure Goal)
     [IsProbabilityMeasure ν] (c : ℝ) : Kernel Price (Meaning × Goal) :=
-  ((S1 μ c)†(μ.prod ν))
+  listener (μ.prod ν) (S1 μ c)
 
 section Support
 
@@ -173,7 +173,7 @@ variable (μ : Measure Meaning) [IsProbabilityMeasure μ] (ν : Measure Goal)
 a meaning of positive prior at which the utterance is literally true. -/
 theorem S1_apply_singleton_ne_zero_iff (g : Goal) (m : Meaning) (u : Price) :
     S1 μ c (m, g) {u} ≠ 0 ↔ ∃ m', project g m' = project g m ∧ m'.1 = u ∧ μ {m'} ≠ 0 := by
-  rw [S1, familySpeaker_apply]
+  rw [S1]
   constructor
   · intro h
     have hL : projListener project (L0 μ) g u {m} ≠ 0 := fun h' ↦
@@ -186,27 +186,14 @@ theorem S1_apply_singleton_ne_zero_iff (g : Goal) (m : Meaning) (u : Price) :
       ((projListener_apply_singleton_ne_zero_iff _ _ _ _ _).mpr
         ⟨m', hm', (L0_apply_singleton_ne_zero_iff μ u m').mpr ⟨hu, hμ⟩⟩)
 
-/-- An utterance naming a price of positive prior has a positive marginal. -/
-theorem comp_S1_ne_zero {u : Price} (h : ∃ m : Meaning, m.1 = u ∧ μ {m} ≠ 0) :
-    (S1 μ c ∘ₘ μ.prod ν) {u} ≠ 0 := by
-  obtain ⟨m, hm, hμ⟩ := h
-  obtain ⟨g, -, hg⟩ : ∃ g ∈ (Finset.univ : Finset Goal), ν {g} ≠ 0 := by
-    refine Finset.exists_ne_zero_of_sum_ne_zero ?_
-    rw [sum_measure_singleton, Finset.coe_univ, measure_univ]
-    exact one_ne_zero
-  refine comp_familySpeaker_ne_zero (w := m) (l := g) ?_ ?_
-  · rw [← Set.singleton_prod_singleton, Measure.prod_prod]
-    exact mul_ne_zero hμ hg
-  · exact (S1_apply_singleton_ne_zero_iff μ c g m u).mpr ⟨m, rfl, hm, hμ⟩
-
 /-- A meaning is in the support of the meaning listener at an utterance exactly when it has positive
 prior and some goal of positive prior projects it into the cell of a meaning of positive prior at
 which the utterance is literally true. -/
-theorem listener_ne_zero_iff {u : Price} (hu : (S1 μ c ∘ₘ μ.prod ν) {u} ≠ 0) (m : Meaning) :
+theorem listener_ne_zero_iff (u : Price) (m : Meaning) :
     (L1 μ ν c u).fst {m} ≠ 0
       ↔ μ {m} ≠ 0 ∧ ∃ g, ν {g} ≠ 0 ∧ ∃ m', project g m' = project g m ∧ m'.1 = u ∧ μ {m'} ≠ 0 := by
-  rw [L1, posterior_fst_apply_singleton_ne_zero_iff _ _ hu]
-  simp only [← S1_apply_singleton_ne_zero_iff μ c, S1, ← Set.singleton_prod_singleton,
+  rw [L1, listener_fst_apply_singleton_ne_zero_iff]
+  simp only [← S1_apply_singleton_ne_zero_iff μ c, ← Set.singleton_prod_singleton,
     Measure.prod_prod, mul_ne_zero_iff]
   exact ⟨fun ⟨g, ⟨hm, hg⟩, hs⟩ ↦ ⟨hm, g, hg, hs⟩, fun ⟨hm, g, hg, hs⟩ ↦ ⟨g, ⟨hm, hg⟩, hs⟩⟩
 
@@ -214,15 +201,14 @@ theorem listener_ne_zero_iff {u : Price} (hu : (S1 μ c ∘ₘ μ.prod ν) {u} �
 prior gives mass to both meanings with affect, which is hyperbole. -/
 theorem hyperbole (hν : ν {(.exact, .affect)} ≠ 0) (h50 : μ {(.p50, true)} ≠ 0)
     (h10k : μ {(.p10000, true)} ≠ 0) : (L1 μ ν c .p10000).fst {(.p50, true)} ≠ 0 := by
-  rw [listener_ne_zero_iff μ ν c (comp_S1_ne_zero μ ν c ⟨_, rfl, h10k⟩)]
+  rw [listener_ne_zero_iff μ ν c]
   exact ⟨h50, (.exact, .affect), hν, (.p10000, true), rfl, rfl, h10k⟩
 
 /-- A listener entertaining only the exact price goal, the first comparison model of Fig. 2B,
 interprets every utterance literally. -/
 theorem literal_of_price_goals (hν : ∀ g, ν {g} ≠ 0 → g = (.exact, .price)) {u : Price}
-    (hu : (S1 μ c ∘ₘ μ.prod ν) {u} ≠ 0) {m : Meaning} (h : (L1 μ ν c u).fst {m} ≠ 0) :
-    m.1 = u := by
-  obtain ⟨-, g, hg, m', hm', hu', -⟩ := (listener_ne_zero_iff μ ν c hu m).mp h
+    {m : Meaning} (h : (L1 μ ν c u).fst {m} ≠ 0) : m.1 = u := by
+  obtain ⟨-, g, hg, m', hm', hu', -⟩ := (listener_ne_zero_iff μ ν c u m).mp h
   obtain rfl := hν g hg
   subst hu'
   have : m'.1 = m.1 := by simpa [project, Price.project] using hm'
@@ -231,9 +217,8 @@ theorem literal_of_price_goals (hν : ∀ g, ν {g} ≠ 0 → g = (.exact, .pric
 /-- A listener entertaining the price goals, exact or approximate, the second comparison model
 of Fig. 2B, reaches only the prices rounding to the utterance. -/
 theorem halo_of_price_goals (hν : ∀ g, ν {g} ≠ 0 → g.2 = .price) {u : Price}
-    (hu : (S1 μ c ∘ₘ μ.prod ν) {u} ≠ 0) {m : Meaning} (h : (L1 μ ν c u).fst {m} ≠ 0) :
-    m.1.round = u.round := by
-  obtain ⟨-, ⟨f, r⟩, hg, m', hm', hu', -⟩ := (listener_ne_zero_iff μ ν c hu m).mp h
+    {m : Meaning} (h : (L1 μ ν c u).fst {m} ≠ 0) : m.1.round = u.round := by
+  obtain ⟨-, ⟨f, r⟩, hg, m', hm', hu', -⟩ := (listener_ne_zero_iff μ ν c u m).mp h
   obtain rfl : r = .price := hν _ hg
   subst hu'
   cases f
@@ -265,7 +250,7 @@ theorem approximate_prefers_round {p : Price} (hp : ¬ p.IsRound) (h₁ : μ (se
     (h₂ : μ (sem p.round) ≠ 0) (a : Bool) :
     (S1 μ c ((p, a), (.approximate, .price))).real {p}
         < (S1 μ c ((p, a), (.approximate, .price))).real {p.round} ↔ 1 < c := by
-  rw [S1, familySpeaker_apply, speaker_dirac_real_singleton_lt_iff zero_le_one
+  rw [S1, speaker_dirac_real_singleton_lt_iff zero_le_one
     ⟨p, by rw [projListener_approximate μ h₁ rfl]; simp⟩,
     projListener_approximate μ h₁ rfl, projListener_approximate μ h₂ (Price.round_round p),
     ENNReal.one_rpow, cost, cost, ite_eq_right hp, ite_eq_left (Price.isRound_round p)]

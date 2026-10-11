@@ -82,22 +82,23 @@ section Model
 
 variable [Fintype D]
 
-/-- The speaker at an assignment (eq. 28) is the family speaker over degrees and assignments at
-rationality `α` with costs `cost`. -/
-noncomputable def S1 (μ : Measure D) (α : ℝ) (cost : Utterance → ℝ) :
-    Kernel (D × (D × D)) Utterance :=
-  familySpeaker (L0 μ) α cost
+/-- The speaker at a degree and an assignment (eq. 28) addresses the literal listener at the
+assignment, at rationality `α` with costs `cost`. -/
+noncomputable def S1 (μ : Measure D) (α : ℝ) (cost : Utterance → ℝ) (p : D × (D × D)) :
+    Measure Utterance :=
+  speaker α cost (L0 μ p.2) Measure.dirac p.1
 
-instance (μ : Measure D) (α : ℝ) (cost : Utterance → ℝ) : IsFiniteKernel (S1 μ α cost) :=
-  inferInstanceAs (IsFiniteKernel (familySpeaker _ _ _))
+instance (μ : Measure D) (α : ℝ) (cost : Utterance → ℝ) (p : D × (D × D)) :
+    IsFiniteMeasure (S1 μ α cost p) :=
+  inferInstanceAs (IsFiniteMeasure (speaker _ _ _ _ _))
 
-/-- The pragmatic listener (eq. 29) is the family listener against the product of the degree prior
+/-- The pragmatic listener (eq. 29) inverts the speaker against the product of the degree prior
 and the threshold prior. Its first marginal is the degree posterior (eq. 31), its second the
 posterior over assignments (eq. 30). -/
-noncomputable def L1 [Nonempty D] (μ : Measure D) [IsProbabilityMeasure μ]
+noncomputable def L1 (μ : Measure D) [IsProbabilityMeasure μ]
     (ν : Measure (D × D)) [IsProbabilityMeasure ν] (α : ℝ) (cost : Utterance → ℝ) :
     Kernel Utterance (D × (D × D)) :=
-  ((S1 μ α cost)†(μ.prod ν))
+  listener (μ.prod ν) (S1 μ α cost)
 
 variable (μ : Measure D) [IsProbabilityMeasure μ] (ν : Measure (D × D)) (α : ℝ)
   (cost : Utterance → ℝ)
@@ -108,40 +109,37 @@ theorem S1_apply_singleton_ne_zero_iff (hα : 0 < α) (d : D) (θ : D × D) (u :
     S1 μ α cost (d, θ) {u} ≠ 0 ↔ d ∈ sem θ u ∧ μ {d} ≠ 0 :=
   speaker_listener_truthful_dirac_apply_singleton_ne_zero_iff hα cost μ (sem θ) u d
 
-/-- An utterance true at a degree of positive prior under an assignment of positive prior has
-a positive marginal. -/
-theorem comp_S1_ne_zero (hα : 0 < α) {u : Utterance} {d : D} {θ : D × D} (hd : μ {d} ≠ 0)
-    (hθ : ν {θ} ≠ 0) (hu : d ∈ sem θ u) :
-    (S1 μ α cost ∘ₘ μ.prod ν) {u} ≠ 0 :=
-  comp_familySpeaker_ne_zero (w := d) (l := θ)
-    (by rw [← Set.singleton_prod_singleton, Measure.prod_prod]; exact mul_ne_zero hd hθ)
-    ((S1_apply_singleton_ne_zero_iff μ α cost hα d θ u).mpr ⟨hu, hd⟩)
-
-variable [Nonempty D] [IsProbabilityMeasure ν]
-
-instance : IsMarkovKernel (L1 μ ν α cost) :=
-  inferInstanceAs (IsMarkovKernel ((familySpeaker (L0 μ) α cost)†(μ.prod ν)))
+variable [IsProbabilityMeasure ν]
 
 /-- The pragmatic listener is truthful, putting positive mass on a degree and assignment exactly
 when both have positive prior and the utterance is true at the degree under the assignment. -/
-theorem L1_apply_singleton_ne_zero_iff (hα : 0 < α) {u : Utterance}
-    (hu : (S1 μ α cost ∘ₘ μ.prod ν) {u} ≠ 0) (d : D) (θ : D × D) :
+theorem L1_apply_singleton_ne_zero_iff (hα : 0 < α) (u : Utterance) (d : D) (θ : D × D) :
     L1 μ ν α cost u {(d, θ)} ≠ 0 ↔ μ {d} ≠ 0 ∧ ν {θ} ≠ 0 ∧ d ∈ sem θ u := by
-  have hs := S1_apply_singleton_ne_zero_iff μ α cost hα d θ u
-  rw [L1, posterior_apply_singleton _ _ hu, ← Set.singleton_prod_singleton,
-    Measure.prod_prod]
-  simp only [ne_eq, ENNReal.div_eq_zero_iff, mul_eq_zero, not_or, measure_ne_top,
-    not_false_eq_true, and_true] at hs ⊢
-  rw [hs]
+  rw [L1, listener_apply_singleton_ne_zero_iff, ← Set.singleton_prod_singleton,
+    Measure.prod_prod, mul_ne_zero_iff, S1_apply_singleton_ne_zero_iff μ α cost hα d θ u]
   tauto
+
+/-- The pragmatic listener is a probability measure at an utterance true at a degree of positive
+prior under an assignment of positive prior. -/
+theorem isProbabilityMeasure_L1 (hα : 0 < α) {u : Utterance} {d : D} {θ : D × D}
+    (hd : μ {d} ≠ 0) (hθ : ν {θ} ≠ 0) (hu : d ∈ sem θ u) :
+    IsProbabilityMeasure (L1 μ ν α cost u) :=
+  isProbabilityMeasure_listener_of_ne_zero _ _
+    (by rw [← Set.singleton_prod_singleton, Measure.prod_prod]; exact mul_ne_zero hd hθ)
+    ((S1_apply_singleton_ne_zero_iff μ α cost hα d θ u).mpr ⟨hu, hd⟩)
 
 /-- The posterior over the adjective's threshold (eq. 30) is the marginal of the listener on the
 first coordinate of the assignment. -/
 noncomputable def thresholdPosterior (u : Utterance) : Measure D :=
   (L1 μ ν α cost u).snd.fst
 
-instance (u : Utterance) : IsProbabilityMeasure (thresholdPosterior μ ν α cost u) := by
-  unfold thresholdPosterior; infer_instance
+/-- The threshold posterior is a probability measure wherever the listener is. -/
+theorem isProbabilityMeasure_thresholdPosterior (hα : 0 < α) {u : Utterance} {d : D} {θ : D × D}
+    (hd : μ {d} ≠ 0) (hθ : ν {θ} ≠ 0) (hu : d ∈ sem θ u) :
+    IsProbabilityMeasure (thresholdPosterior μ ν α cost u) := by
+  have := isProbabilityMeasure_L1 μ ν α cost hα hd hθ hu
+  unfold thresholdPosterior
+  infer_instance
 
 /-- The metalinguistic probability that a degree counts as tall under a threshold measure
 (eq. 32) is the mass of thresholds below it. -/

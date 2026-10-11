@@ -209,6 +209,9 @@ literal listener projected by the question, less the cost. -/
 noncomputable def S1 (α k : ℝ) (A : Finset World) (q : Question) : Kernel World Utt :=
   speaker α (cost k) (L0 A q) Measure.dirac
 
+instance (α k : ℝ) (A : Finset World) (q : Question) : IsFiniteKernel (S1 α k A q) :=
+  inferInstanceAs (IsFiniteKernel (speaker _ _ _ _))
+
 variable (α k : ℝ)
 
 /-- A speaker who assumes the complement produces negated *know* and negated *think* alike
@@ -266,33 +269,15 @@ theorem pairPrior_singleton [SFinite ν] (w : World) (A : Finset World) :
 instance [IsFiniteMeasure μ] [IsFiniteMeasure ν] : IsFiniteMeasure (pairPrior μ ν) :=
   inferInstanceAs (IsFiniteMeasure ((μ.prod ν).restrict _))
 
-/-- The pragmatic listener (7) is the family listener over assumption sets, hearing the
-utterance under a known question. -/
-noncomputable def L1 [IsFiniteMeasure μ] [IsFiniteMeasure ν] (q : Question) :
-    Kernel Utt (World × Finset World) :=
-  ((familySpeaker (fun A => L0 A q) α (cost k))†(pairPrior μ ν))
+/-- The pragmatic listener (7) hears the utterance under a known question and inverts the
+speaker within each assumption set, over pairs of a world and an assumption set. -/
+noncomputable def L1 (q : Question) : Kernel Utt (World × Finset World) :=
+  listener (pairPrior μ ν) fun p ↦ S1 α k p.2 q p.1
 
 theorem pairPrior_real [IsFiniteMeasure μ] [IsFiniteMeasure ν] (w : World) (A : Finset World) :
     (pairPrior μ ν).real {(w, A)} = if w ∈ A then μ.real {w} * ν.real {A} else 0 := by
   rw [measureReal_def, pairPrior_singleton]
   split_ifs <;> simp [measureReal_def, ENNReal.toReal_mul]
-
-/-! ### The prior effect (2b) -/
-
-/-- An utterance true at a world of positive prior lying in an assumption set of positive prior
-has a positive marginal. -/
-theorem comp_ne_zero [IsFiniteMeasure μ] [IsFiniteMeasure ν] (hα : 0 ≤ α) (q : Question)
-    {u : Utt} {w : World} {A : Finset World} (hw : w ∈ A)
-    (hu : w ∈ sem u) (hμ : μ {w} ≠ 0) (hν : ν {A} ≠ 0) :
-    (familySpeaker (fun A => L0 A q) α (cost k) ∘ₘ pairPrior μ ν) {u} ≠ 0 := by
-  refine comp_familySpeaker_ne_zero (w := w) (l := A) ?_ ?_
-  · rw [pairPrior_singleton, ite_eq_left hw]
-    exact mul_ne_zero hμ hν
-  · refine speaker_dirac_apply_singleton_ne_zero hα ?_
-    rw [L0_apply, ne_eq, ENNReal.div_eq_zero_iff, not_or]
-    refine ⟨Nat.cast_ne_zero.mpr (Finset.card_pos.mpr ⟨w, Finset.mem_filter.mpr
-      ⟨Finset.mem_inter.mpr ⟨hw, hu⟩, ?_⟩⟩).ne', ENNReal.natCast_ne_top _⟩
-    simp [cell]
 
 /-! ### The prior effect (2b) -/
 
@@ -324,36 +309,31 @@ private theorem sum_pairs_c (f : World × Finset World → ℝ) :
 
 variable [IsProbabilityMeasure β] [IsProbabilityMeasure γ] [IsProbabilityMeasure ν]
 
-private theorem comp_real :
-    (familySpeaker (fun A => L0 A q) α (cost k) ∘ₘ pairPrior (β.prod γ) ν).real {u}
+private theorem sum_real :
+    ∑ p, (pairPrior (β.prod γ) ν).real {p} * (S1 α k p.2 q p.1).real {u}
       = γ.real {true} * cWeight α k ν β q u true + γ.real {false} * cWeight α k ν β q u false := by
-  rw [Measure.comp_real_singleton, sum_pairs, Finset.sum_comm, Fintype.sum_bool]
-  simp only [pairPrior_real, Measure.prod_real_singleton, familySpeaker_apply, cWeight,
+  rw [sum_pairs, Finset.sum_comm, Fintype.sum_bool]
+  simp only [pairPrior_real, Measure.prod_real_singleton, cWeight,
     Finset.mul_sum, mul_ite, mul_zero, ite_mul, zero_mul]
   refine congrArg₂ (· + ·) ?_ ?_ <;>
     refine Finset.sum_congr rfl fun b _ => Finset.sum_congr rfl fun A _ => ?_ <;>
-    split_ifs <;> first | rfl | (simp only [S1]; ring)
+    split_ifs <;> first | rfl | ring
 
 /-- The posterior probability of the complement (fn. 11) is its prior probability times the
 evidence for it, over the evidence for either value. -/
-theorem L1_c_real (hu : (familySpeaker (fun A => L0 A q) α (cost k) ∘ₘ pairPrior (β.prod γ) ν)
-    {u} ≠ 0) :
+theorem L1_c_real :
     (L1 α k (β.prod γ) ν q u).real {p | p.1.complement = true}
       = γ.real {true} * cWeight α k ν β q u true
         / (γ.real {true} * cWeight α k ν β q u true
           + γ.real {false} * cWeight α k ν β q u false) := by
   have hE : ({p : World × Finset World | p.1.complement = true} : Set _)
       = ↑(Finset.univ.filter fun p : World × Finset World => p.1.complement = true) := by ext; simp
-  rw [measureReal_def, L1, hE, posterior_apply_finset _ _ hu, ENNReal.toReal_div,
-    ENNReal.toReal_sum (fun _ _ => ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)),
-    ← measureReal_def, comp_real]
-  simp only [ENNReal.toReal_mul, ← measureReal_def]
-  rw [sum_pairs_c]
-  simp only [pairPrior_real, Measure.prod_real_singleton, familySpeaker_apply, cWeight,
+  rw [L1, hE, listener_real_finset, sum_real, sum_pairs_c]
+  simp only [pairPrior_real, Measure.prod_real_singleton, cWeight,
     Finset.mul_sum, mul_ite, mul_zero, ite_mul, zero_mul]
   congr 1
   refine Finset.sum_congr rfl fun b _ => Finset.sum_congr rfl fun A _ => ?_
-  split_ifs <;> first | rfl | (simp only [S1]; ring)
+  split_ifs <;> first | rfl | ring
 
 private theorem real_false_eq (ρ : Measure Bool) [IsProbabilityMeasure ρ] :
     ρ.real {false} = 1 - ρ.real {true} := by
@@ -365,23 +345,28 @@ private theorem real_false_eq (ρ : Measure Bool) [IsProbabilityMeasure ρ] :
 utterance, question, rationality, cost and assumption prior, since the world prior enters the
 model at the pragmatic listener alone. This is the prior effect (2b). -/
 theorem L1_c_mono (γ' : Measure Bool) [IsProbabilityMeasure γ']
-    (hu : (familySpeaker (fun A => L0 A q) α (cost k) ∘ₘ pairPrior (β.prod γ) ν) {u} ≠ 0)
-    (hu' : (familySpeaker (fun A => L0 A q) α (cost k) ∘ₘ pairPrior (β.prod γ') ν) {u} ≠ 0)
     (h : γ.real {true} ≤ γ'.real {true}) :
     (L1 α k (β.prod γ) ν q u).real {p | p.1.complement = true}
       ≤ (L1 α k (β.prod γ') ν q u).real {p | p.1.complement = true} := by
-  have hd : 0 < γ.real {true} * cWeight α k ν β q u true
-      + γ.real {false} * cWeight α k ν β q u false := by
-    rw [← comp_real]
-    exact ENNReal.toReal_pos hu (measure_ne_top _ _)
-  have hd' : 0 < γ'.real {true} * cWeight α k ν β q u true
-      + γ'.real {false} * cWeight α k ν β q u false := by
-    rw [← comp_real]
-    exact ENNReal.toReal_pos hu' (measure_ne_top _ _)
-  rw [L1_c_real _ _ _ _ _ _ _ hu, L1_c_real _ _ _ _ _ _ _ hu', div_le_div_iff₀ hd hd']
-  rw [real_false_eq γ, real_false_eq γ'] at *
-  nlinarith [mul_nonneg (mul_nonneg (cWeight_nonneg α k ν β q u true)
-    (cWeight_nonneg α k ν β q u false)) (sub_nonneg.2 h)]
+  have ha := cWeight_nonneg α k ν β q u true
+  have hb := cWeight_nonneg α k ν β q u false
+  have hx : 0 ≤ γ.real {true} := measureReal_nonneg
+  have hx' : γ'.real {true} ≤ 1 := measureReal_le_one
+  rw [L1_c_real, L1_c_real, real_false_eq γ, real_false_eq γ']
+  set x := γ.real {true}
+  set x' := γ'.real {true}
+  set a := cWeight α k ν β q u true
+  set b := cWeight α k ν β q u false
+  have hd : 0 ≤ x * a + (1 - x) * b := by nlinarith
+  have hd' : 0 ≤ x' * a + (1 - x') * b := by nlinarith
+  rcases hd.eq_or_lt with hd | hd
+  · rw [← hd, div_zero]
+    exact div_nonneg (mul_nonneg (hx.trans h) ha) hd'
+  rcases hd'.eq_or_lt with hd' | hd'
+  · rw [show x * a = 0 by nlinarith, zero_div]
+    exact div_nonneg (mul_nonneg (hx.trans h) ha) hd'.le
+  · rw [div_le_div_iff₀ hd hd']
+    nlinarith [mul_nonneg (mul_nonneg ha hb) (sub_nonneg.2 h)]
 
 end PriorEffect
 

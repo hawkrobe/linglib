@@ -202,12 +202,12 @@ noncomputable def l1 (l : Lex) : Kernel Msg World :=
 instance (l : Lex) : IsMarkovKernel (l1 α c l) :=
   inferInstanceAs (IsMarkovKernel ((_†_)))
 
-/-- The lexical-uncertainty listener (14) at k = 1 is the joint posterior over states and lexica
-against a flat prior, the substrate's family listener. -/
+/-- The lexical-uncertainty listener (14) at k = 1 inverts the lexicon-indexed speaker against a
+flat prior over states and lexica. -/
 noncomputable def L1 : Kernel Msg (World × Lex) :=
-  ((familySpeaker L0 α (cost c · / α))†(uniformOn Set.univ))
+  listener (uniformOn Set.univ) fun p ↦ S1 α c p.2 p.1
 
-instance : IsMarkovKernel (L1 α c) := inferInstanceAs (IsMarkovKernel ((_†_)))
+instance : IsFiniteKernel (L1 α c) := inferInstanceAs (IsFiniteKernel (listener _ _))
 
 /-- The expertise speaker (15) at k = 2 weighs the fixed-lexicon listener's mass at the state
 to the rationality, the lexicon posterior to the lexicon weight, and the cost. -/
@@ -227,6 +227,35 @@ noncomputable def S2exp : Kernel World Msg :=
 end Tower
 
 /-! ### Support and preference reductions -/
+
+section Listener
+
+variable {α c : ℝ}
+
+/-- State preference of the joint listener is the pooled speaker preference. -/
+theorem L1_fst_real_lt_iff (m : Msg) (v v' : World) :
+    (L1 α c m).fst.real {v} < (L1 α c m).fst.real {v'} ↔
+      ∑ l, (S1 α c l v).real {m} < ∑ l, (S1 α c l v').real {m} := by
+  rw [L1, listener_fst_real_lt_iff_of_forall_eq _ _ uniformOn_univ_singleton_eq
+    uniformOn_univ_singleton_ne_zero]
+
+/-- Lexicon preference of the joint listener is the speaker preference pooled over states. -/
+theorem L1_snd_real_lt_iff (m : Msg) (l₁ l₂ : Lex) :
+    (L1 α c m).snd.real {l₁} < (L1 α c m).snd.real {l₂} ↔
+      ∑ w, (S1 α c l₁ w).real {m} < ∑ w, (S1 α c l₂ w).real {m} := by
+  rw [L1, listener_snd_real_lt_iff_of_forall_eq _ _ uniformOn_univ_singleton_eq
+    uniformOn_univ_singleton_ne_zero]
+
+/-- On reals, the lexicon posterior is the lexicon's speakers' shares of the message pooled over
+states, over the shares of every state–lexicon pair. -/
+theorem L1_snd_real (m : Msg) (l : Lex) :
+    (L1 α c m).snd.real {l}
+      = (∑ w, (S1 α c l w).real {m}) / ∑ p : World × Lex, (S1 α c p.2 p.1).real {m} := by
+  rw [L1, listener_snd_real_singleton]
+  simp only [uniformOn_univ_real_singleton]
+  rw [← Finset.mul_sum, ← Finset.mul_sum, mul_div_mul_left _ _ (by positivity)]
+
+end Listener
 
 section Model
 
@@ -249,11 +278,7 @@ theorem l1_ne_zero_iff (l : Lex) (m : Msg) (w : World) : l1 α c l m {w} ≠ 0 �
 /-- The joint listener assigns mass to a state–lexicon pair exactly when the message is true
 at the state under the lexicon. -/
 theorem L1_ne_zero_iff (m : Msg) (p : World × Lex) : L1 α c m {p} ≠ 0 ↔ p.1 ∈ sem p.2 m := by
-  obtain ⟨w₀, h₀⟩ := sem_nonempty p.2 m
-  rw [L1, posterior_apply_singleton_ne_zero_iff _ _
-    (comp_familySpeaker_ne_zero (uniformOn_univ_singleton_ne_zero (w₀, p.2))
-      ((S1_ne_zero_iff hα p.2 w₀ m).2 h₀)),
-    and_iff_right (uniformOn_univ_singleton_ne_zero p), familySpeaker_apply]
+  rw [L1, listener_apply_singleton_ne_zero_iff, and_iff_right (uniformOn_univ_singleton_ne_zero p)]
   exact S1_ne_zero_iff hα p.2 p.1 m
 
 /-- Every lexicon keeps positive posterior mass under every message. -/
@@ -272,24 +297,6 @@ theorem l1_real_lt_iff (l : Lex) (m : Msg) (v v' : World) :
     uniformOn_univ_singleton_eq uniformOn_univ_singleton_ne_zero
     ((S1_ne_zero_iff hα l w₀ m).2 h₀)
 
-/-- State preference of the joint listener is the pooled speaker preference. -/
-theorem L1_fst_real_lt_iff (m : Msg) (v v' : World) :
-    (L1 α c m).fst.real {v} < (L1 α c m).fst.real {v'} ↔
-      ∑ l, (S1 α c l v).real {m} < ∑ l, (S1 α c l v').real {m} := by
-  obtain ⟨w₀, h₀⟩ := sem_nonempty .base m
-  rw [L1, posterior_fst_real_lt_iff_of_forall_eq _ _ (p₀ := (w₀, .base)) uniformOn_univ_singleton_eq
-    uniformOn_univ_singleton_ne_zero ((S1_ne_zero_iff (c := c) hα .base w₀ m).2 h₀)]
-  rfl
-
-/-- Lexicon preference of the joint listener is the speaker preference pooled over states. -/
-theorem L1_snd_real_lt_iff (m : Msg) (l₁ l₂ : Lex) :
-    (L1 α c m).snd.real {l₁} < (L1 α c m).snd.real {l₂} ↔
-      ∑ w, (S1 α c l₁ w).real {m} < ∑ w, (S1 α c l₂ w).real {m} := by
-  obtain ⟨w₀, h₀⟩ := sem_nonempty .base m
-  rw [L1, posterior_snd_real_lt_iff_of_forall_eq _ _ (p₀ := (w₀, .base)) uniformOn_univ_singleton_eq
-    uniformOn_univ_singleton_ne_zero ((S1_ne_zero_iff (c := c) hα .base w₀ m).2 h₀)]
-  rfl
-
 /-- On reals, the fixed-lexicon listener's mass is the speaker's share of the message at the
 state over its shares at every state. -/
 theorem l1_real (l : Lex) (m : Msg) (w : World) :
@@ -301,21 +308,6 @@ theorem l1_real (l : Lex) (m : Msg) (w : World) :
   rw [show l1 α c l = (S1 α c l)†(uniformOn Set.univ) from rfl,
     posterior_uniformOn_univ_apply_singleton _ hx w, ENNReal.toReal_div,
     ENNReal.toReal_sum fun _ _ => measure_ne_top _ _]
-
-/-- On reals, the lexicon posterior is the lexicon's speakers' shares of the message pooled over
-states, over the shares of every state–lexicon pair. -/
-theorem L1_snd_real (m : Msg) (l : Lex) :
-    (L1 α c m).snd.real {l}
-      = (∑ w, (S1 α c l w).real {m}) / ∑ p : World × Lex, (S1 α c p.2 p.1).real {m} := by
-  obtain ⟨w₀, h₀⟩ := sem_nonempty l m
-  have hx :
-      (familySpeaker L0 α (cost c · / α) ∘ₘ uniformOn (Set.univ : Set (World × Lex))) {m} ≠ 0 :=
-    comp_familySpeaker_ne_zero (uniformOn_univ_singleton_ne_zero (w₀, l))
-      ((S1_ne_zero_iff hα l w₀ m).2 h₀)
-  rw [L1, posterior_snd_real_singleton _ _ hx l, Measure.comp_real_singleton]
-  simp only [uniformOn_univ_real_singleton, familySpeaker_apply]
-  rw [← Finset.mul_sum, ← Finset.mul_sum, mul_div_mul_left _ _ (by positivity)]
-  rfl
 
 end Model
 
@@ -450,7 +442,7 @@ theorem l1_uncertainty (hc : 0 ≤ c) :
       (L1 2 c .AorX).fst.real {.w₁} < (L1 2 c .AorX).fst.real {.w₁₂} := by
   have hκ' := Real.exp_pos (-c)
   have hκ1' : Real.exp (-c) ≤ 1 := Real.exp_le_one_iff.2 (neg_nonpos.2 hc)
-  simp +decide only [L1_fst_real_lt_iff two_pos, Lex.sum_univ, S1_real two_pos,
+  simp +decide only [L1_fst_real_lt_iff, Lex.sum_univ, S1_real two_pos,
     Msg.sum_univ, l0r, costFactor, cost, neg_zero, Real.exp_zero, card_sem, semCard, ↓reduceIte,
     Real.rpow_two, Nat.cast_ofNat, Nat.cast_one, inv_one, one_pow, mul_one, zero_pow, zero_mul,
     add_zero, zero_add, zero_div]
@@ -467,7 +459,7 @@ theorem l1_lexicon (hc : 0 ≤ c) :
       (L1 2 c .AorX).snd.real {.base} < (L1 2 c .AorX).snd.real {.excl} := by
   have hκ' := Real.exp_pos (-c)
   have hκ1' : Real.exp (-c) ≤ 1 := Real.exp_le_one_iff.2 (neg_nonpos.2 hc)
-  simp +decide only [L1_snd_real_lt_iff two_pos, World.sum_univ, S1_real two_pos,
+  simp +decide only [L1_snd_real_lt_iff, World.sum_univ, S1_real two_pos,
     Msg.sum_univ, l0r, costFactor, cost, neg_zero, Real.exp_zero, card_sem, semCard, ↓reduceIte,
     Real.rpow_two, Nat.cast_ofNat, Nat.cast_one, inv_one, one_pow, mul_one, zero_pow, zero_mul,
     add_zero, zero_add, zero_div]
@@ -502,7 +494,7 @@ theorem AorX_signals_excl (hc : Real.log 2 ≤ c) :
   have hκ2' : Real.exp (-c) ≤ 1 / 2 :=
     (Real.exp_le_exp.2 (neg_le_neg hc)).trans_eq
       (by rw [Real.exp_neg, Real.exp_log two_pos, one_div])
-  simp +decide only [L1_snd_real two_pos, Fintype.sum_prod_type, World.sum_univ,
+  simp +decide only [L1_snd_real, Fintype.sum_prod_type, World.sum_univ,
     Lex.sum_univ, S1_real two_pos, Msg.sum_univ, l0r, costFactor, cost, neg_zero, Real.exp_zero,
     card_sem, semCard, ↓reduceIte, Real.rpow_two, Nat.cast_ofNat, Nat.cast_one, inv_one, one_pow,
     mul_one, zero_pow, zero_mul, add_zero, zero_add, zero_div]
@@ -526,7 +518,7 @@ theorem s2_prefers_disjunction (hc0 : 0 ≤ c) (hc10 : c ≤ Real.log 10) (m : M
   cases m
   case AorX => exact absurd rfl hm
   all_goals
-    simp +decide only [l1_real two_pos, L1_snd_real two_pos, Fintype.sum_prod_type,
+    simp +decide only [l1_real two_pos, L1_snd_real, Fintype.sum_prod_type,
       World.sum_univ, Lex.sum_univ, Real.rpow_one, S1_real two_pos, Msg.sum_univ, l0r,
       costFactor, cost, neg_zero, Real.exp_zero, card_sem, semCard, ↓reduceIte, Real.rpow_two,
       Nat.cast_ofNat, Nat.cast_one, inv_one, one_pow, mul_one, zero_pow, zero_mul, add_zero,

@@ -35,9 +35,9 @@ matrix-free or arbitrary parse, one softmax over pairs per world.
 
 * One reading family, `ext`, generates every model: the vanilla model is its literal member, the
   pooled models run `RSA.uniformJointListener` over utterance–parse pairs, and lexical
-  uncertainty, like the rejected per-parse architecture, fixes the latent as a speaker argument
-  through `RSA.familySpeaker`. Sentential alternatives range over a fourth quantifier, *not all*,
-  that is never uttered. This is the paper's distinction between grammatical and utterance
+  uncertainty, like the rejected per-parse architecture, fixes the latent as an argument of the
+  speaker. Sentential alternatives range over a fourth quantifier, *not all*, that is never
+  uttered. This is the paper's distinction between grammatical and utterance
   alternatives, which its model comparison favors over the alternative set of Gotzner and Romoli.
 * Findings that hold at every rationality are closed by strict stochastic dominance of
   informativity profiles (`Multiset.StrictDominates`); the rationality-dependent ones are pinned
@@ -369,8 +369,8 @@ Each parse yields an extension per utterance (`ext`); the paper's models are
 the uniform-prior pipeline applied to this single family. Vanilla (§3.1) is the
 literal member. GI (eq. 21a) and LI (eq. 18a) pool (utterance, parse) pairs
 into one choice space heard as the utterance — the speaker *chooses* the
-parse — while LU (eq. 11) fixes the lexicon as a speaker argument
-(`RSA.familySpeaker`). The weights agree (`RSA.familySpeaker_apply`), so the
+parse — while LU (eq. 11) fixes the lexicon as a speaker argument, the speaker
+addressing that lexicon's literal listener. The weights agree, so the
 models differ *only* in the position of the latent parameter (p. e86);
 `ss_m_parse_pref` against `perParse_ss_prefers_o` below turns that
 difference into diverging predictions. Rationality is a parameter of the
@@ -466,9 +466,9 @@ noncomputable def luPrior : Measure (World × LULex) := uniformOn Set.univ
 instance : IsProbabilityMeasure luPrior :=
   inferInstanceAs (IsProbabilityMeasure (uniformOn _))
 
-/-- The LU listener (eqs. 12–13) is the Bayesian inverse over the joint state. -/
+/-- The LU listener (eqs. 12–13) inverts the lexicon-indexed speaker over the joint state. -/
 noncomputable def luListener (α : ℝ) : Kernel Utterance (World × LULex) :=
-  ((RSA.familySpeaker luFam α 0)†luPrior)
+  RSA.listener luPrior fun p ↦ RSA.speaker α 0 (luFam p.2) Measure.dirac p.1
 
 theorem luPrior_singleton_eq (p q : World × LULex) : luPrior {p} = luPrior {q} := by
   simp [luPrior, uniformOn_univ]
@@ -502,7 +502,7 @@ noncomputable abbrev perParseFam (p : Parse) : Kernel Utterance World :=
   RSA.uniformListener (ext p)
 
 noncomputable def perParseListener (α : ℝ) : Kernel Utterance (World × Parse) :=
-  ((RSA.familySpeaker perParseFam α 0)†perParsePrior)
+  RSA.listener perParsePrior fun p ↦ RSA.speaker α 0 (perParseFam p.2) Measure.dirac p.1
 
 /-! ## The findings -/
 
@@ -576,11 +576,8 @@ lexical-uncertainty listener favors some-but-not-all drinkers over
 all-drinkers. -/
 theorem lu_ss_prefers_wNS {α : ℝ} (hα : 0 < α) :
     (luListener α .ss).fst.real {wNA} < (luListener α .ss).fst.real {wNS} := by
-  rw [luListener, posterior_fst_real_lt_iff_of_forall_eq (RSA.familySpeaker luFam α 0) _
-      (p₀ := (wNS, .lit)) luPrior_singleton_eq luPrior_singleton_ne_zero
-      (RSA.uniformSpeaker_apply_singleton_ne_zero (ext LULex.lit.toParse) hα.le
-        (by decide +kernel : wNS ∈ ext LULex.lit.toParse .ss))]
-  simp only [RSA.familySpeaker_apply]
+  rw [luListener, RSA.listener_fst_real_lt_iff_of_forall_eq _ _ luPrior_singleton_eq
+    luPrior_singleton_ne_zero]
   calc (∑ l : LULex, (RSA.speaker α 0 (luFam l) Measure.dirac wNA).real {.ss})
       = (RSA.uniformSpeaker (ext LULex.lit.toParse) α wNA).real {.ss} :=
         Fintype.sum_eq_single LULex.lit fun
@@ -625,11 +622,8 @@ theorem perParse_ss_prefers_o {α : ℝ} (hα : 0 < α) :
   have hOprof : ∀ w ∈ ({wNS, wNA, wNSA} : Finset World),
       RSA.profile (ext pO) w = Multiset.replicate 3 3 := by decide +kernel
   have hOmem : ∀ w ∈ ({wNS, wNA, wNSA} : Finset World), w ∈ ext pO .ss := by decide +kernel
-  rw [perParseListener, posterior_snd_real_lt_iff_of_forall_eq
-      (RSA.familySpeaker perParseFam α 0) _ (p₀ := (wNS, pM)) perParsePrior_singleton_eq
-      perParsePrior_singleton_ne_zero (RSA.uniformSpeaker_apply_singleton_ne_zero (ext pM) hα.le
-        (mem_ext.mpr ((m_ss_singleton wNS).mpr rfl)))]
-  simp only [RSA.familySpeaker_apply]
+  rw [perParseListener, RSA.listener_snd_real_lt_iff_of_forall_eq _ _ perParsePrior_singleton_eq
+    perParsePrior_singleton_ne_zero]
   calc (∑ w : World, (RSA.uniformSpeaker (ext pM) α w).real {.ss})
       = (RSA.uniformSpeaker (ext pM) α wNS).real {.ss} :=
         Fintype.sum_eq_single wNS fun w hw ↦
