@@ -56,18 +56,18 @@ theorem map_singleton_singleton (R : α → β → Prop) (a : α) (b : β) :
 
 /-- `*` of a relation between individuals, in its second argument, holds of the nonempty
 pluralities all of whose members are related to the first. -/
-theorem star_map_iff [DecidableEq β] (R : α → β → Prop) (a : α) (B : Finset β) :
-    star (Relation.Map R ({·}) ({·}) ({a} : Finset α)) B ↔ B.Nonempty ∧ ∀ b ∈ B, R a b := by
-  rw [star_iff_of_subset_range_singleton]
+theorem algClosure_map_iff [DecidableEq β] (R : α → β → Prop) (a : α) (B : Finset β) :
+    AlgClosure (Relation.Map R ({·}) ({·}) ({a} : Finset α)) B ↔ B.Nonempty ∧ ∀ b ∈ B, R a b := by
+  rw [algClosure_iff_of_subset_range_singleton]
   · simp only [map_singleton_singleton]
   · rintro _ ⟨_, b, _, _, rfl⟩
     exact ⟨b, rfl⟩
 
-private theorem star_map_subset_range [DecidableEq β] (R : α → β → Prop)
+private theorem algClosure_map_subset_range [DecidableEq β] (R : α → β → Prop)
     (B : Finset α → Finset β) :
-    {x : Finset α | star (Relation.Map R ({·}) ({·}) x) (B x)} ⊆
+    {x : Finset α | AlgClosure (Relation.Map R ({·}) ({·}) x) (B x)} ⊆
       Set.range ({·} : α → Finset α) :=
-  λ _ h =>
+  fun _ h ↦
     let ⟨_, hy, _⟩ := algClosure_has_base h
     let ⟨a, _, _, ha, _⟩ := hy
     ⟨a, ha⟩
@@ -84,13 +84,13 @@ theorem cumulation_map_iff (R : α → β → Prop) {A : Finset α} (hA : A.None
 /-- Weak reciprocity (6), (26b): the reciprocal NP denotes the others, and non-identity is
 conjoined into the relation before cumulation. -/
 def WR (R : Finset α → Finset α → Prop) (A : Finset α) : Prop :=
-  Cumulation (λ x y => R x y ∧ x ≠ y) A A
+  Cumulation (fun x y ↦ R x y ∧ x ≠ y) A A
 
 /-- Langendoen's weak reciprocity (25b) between individuals entails (26b), for any relation
 over pluralities. -/
 theorem wr_of_weakReciprocity {R : Finset α → Finset α → Prop} {A : Finset α}
-    (hA : A.Nonempty) (h : WeakReciprocity (λ a b => R {a} {b}) A) : WR R A := by
-  have := (cumulation_map_singleton (λ a b => R {a} {b} ∧ a ≠ b) A A).2
+    (hA : A.Nonempty) (h : WeakReciprocity (fun a b ↦ R {a} {b}) A) : WR R A := by
+  have := (cumulation_map_singleton (fun a b ↦ R {a} {b} ∧ a ≠ b) A A).2
     ⟨hA, (weakReciprocity_iff_liftRel _ _).1 h⟩
   refine this.mono ?_
   rintro x y ⟨a, b, ⟨hab, hne⟩, rfl, rfl⟩
@@ -99,8 +99,8 @@ theorem wr_of_weakReciprocity {R : Finset α → Finset α → Prop} {A : Finset
 /-- For a relation between individuals, (26b) is Langendoen's (25b). -/
 theorem wr_map_iff (R : α → α → Prop) {A : Finset α} (hA : A.Nonempty) :
     WR (Relation.Map R ({·}) ({·})) A ↔ WeakReciprocity R A := by
-  have : (λ x y : Finset α => Relation.Map R ({·}) ({·}) x y ∧ x ≠ y) =
-      Relation.Map (λ a b => R a b ∧ a ≠ b) ({·}) ({·}) := by
+  have : (fun x y : Finset α ↦ Relation.Map R ({·}) ({·}) x y ∧ x ≠ y) =
+      Relation.Map (fun a b ↦ R a b ∧ a ≠ b) ({·}) ({·}) := by
     ext x y
     constructor
     · rintro ⟨⟨a, b, hab, rfl, rfl⟩, hne⟩
@@ -119,7 +119,7 @@ but no individual relates to `c` on its own, so (25b) fails while (26b) holds. -
 def langendoenModel (x y : Finset (Fin 3)) : Prop :=
   (x = {0, 1} ∧ y = {2}) ∨ (x = {2} ∧ y = {0}) ∨ (x = {2} ∧ y = {1})
 
-instance : DecidableRel langendoenModel := λ _ _ => by
+instance : DecidableRel langendoenModel := fun _ _ ↦ by
   unfold langendoenModel; infer_instance
 
 /-- Langendoen's relation is not a relation between individuals. -/
@@ -136,7 +136,7 @@ theorem langendoenModel_ne_map (R : Fin 3 → Fin 3 → Prop) :
 theorem wr_langendoenModel : WR langendoenModel Finset.univ := by
   have h₁ : ({0, 1} : Finset (Fin 3)) ⊔ ({2} ⊔ {2}) = Finset.univ := by decide
   have h₂ : ({2} : Finset (Fin 3)) ⊔ ({0} ⊔ {1}) = Finset.univ := by decide
-  have h := (Cumulation.of_rel (R := λ x y => langendoenModel x y ∧ x ≠ y)
+  have h := (Cumulation.of_rel (R := fun x y ↦ langendoenModel x y ∧ x ≠ y)
       (x := {0, 1}) (y := {2}) (by decide)).sup
     ((Cumulation.of_rel (x := {2}) (y := {0}) (by decide)).sup
       (Cumulation.of_rel (x := {2}) (y := {1}) (by decide)))
@@ -144,41 +144,41 @@ theorem wr_langendoenModel : WR langendoenModel Finset.univ := by
 
 /-- (25b) fails in Langendoen's model. -/
 theorem not_weakReciprocity_langendoenModel :
-    ¬ WeakReciprocity (λ a b => langendoenModel {a} {b}) Finset.univ := by
+    ¬ WeakReciprocity (fun a b ↦ langendoenModel {a} {b}) Finset.univ := by
   decide
 
 /-! ### Strong distributivity and strong reciprocity by iterated `*` -/
 
 /-- Strong distributivity by iterated `*` (7): `A ∈ *{x : B ∈ *{y : R(x, y)}}`. -/
 def SD (R : α → β → Prop) (A : Finset α) (B : Finset β) : Prop :=
-  star (λ x : Finset α => star (Relation.Map R ({·}) ({·}) x) B) A
+  AlgClosure (fun x : Finset α ↦ AlgClosure (Relation.Map R ({·}) ({·}) x) B) A
 
 /-- Strong reciprocity by iterated `*` (48b): `A ∈ *λx[{y : y ∈ A ∧ y ≠ x} ∈ *λy.R(x, y)]`,
 the reciprocal interpreted in situ as one NP. -/
 def SR (R : α → α → Prop) (A : Finset α) : Prop :=
-  star (λ x : Finset α =>
-    star (Relation.Map R ({·}) ({·}) x) (A.filter λ b => ({b} : Finset α) ≠ x)) A
+  AlgClosure (fun x : Finset α ↦
+    AlgClosure (Relation.Map R ({·}) ({·}) x) (A.filter fun b ↦ ({b} : Finset α) ≠ x)) A
 
 /-- (7) is Langendoen's strong distributivity (2a) between nonempty pluralities. -/
 theorem sd_iff (R : α → β → Prop) {A : Finset α} {B : Finset β} (hA : A.Nonempty)
     (hB : B.Nonempty) : SD R A B ↔ ∀ a ∈ A, ∀ b ∈ B, R a b := by
-  rw [SD, star_iff_of_subset_range_singleton (star_map_subset_range R λ _ => B),
+  rw [SD, algClosure_iff_of_subset_range_singleton (algClosure_map_subset_range R fun _ ↦ B),
     and_iff_right hA]
-  exact forall₂_congr λ a _ => (star_map_iff R a B).trans (and_iff_right hB)
+  exact forall₂_congr fun a _ ↦ (algClosure_map_iff R a B).trans (and_iff_right hB)
 
 /-- (48b) is Langendoen's strong reciprocity (3a) on a plurality of two or more. -/
 theorem sr_iff (R : α → α → Prop) {A : Finset α} :
     SR R A ↔ 2 ≤ A.card ∧ StrongReciprocity R A := by
-  rw [SR, star_iff_of_subset_range_singleton (star_map_subset_range R _)]
-  simp only [star_map_iff, Finset.mem_filter, ne_eq, Finset.singleton_inj,
+  rw [SR, algClosure_iff_of_subset_range_singleton (algClosure_map_subset_range R _)]
+  simp only [algClosure_map_iff, Finset.mem_filter, ne_eq, Finset.singleton_inj,
     Finset.filter_nonempty_iff, StrongReciprocity]
   constructor
   · rintro ⟨⟨a, ha⟩, h⟩
     obtain ⟨⟨b, hb, hba⟩, -⟩ := h a ha
     exact ⟨Finset.one_lt_card.2 ⟨a, ha, b, hb, Ne.symm hba⟩,
-      λ x hx y hy hyx => (h x hx).2 y ⟨hy, hyx⟩⟩
+      fun x hx y hy hyx ↦ (h x hx).2 y ⟨hy, hyx⟩⟩
   · rintro ⟨hcard, h⟩
-    refine ⟨Finset.card_pos.1 (by omega), λ a ha => ⟨?_, λ b ⟨hb, hba⟩ => h a ha b hb hba⟩⟩
+    refine ⟨Finset.card_pos.1 (by omega), fun a ha ↦ ⟨?_, fun b ⟨hb, hba⟩ ↦ h a ha b hb hba⟩⟩
     obtain ⟨b, hb, hba⟩ := A.exists_mem_ne hcard a
     exact ⟨b, hb, hba⟩
 

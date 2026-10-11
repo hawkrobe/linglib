@@ -12,7 +12,7 @@ public import Linglib.Data.Examples.BarLev2021
 Bar-Lev derives homogeneity as an implicature. A plural definite means existential
 pluralization, that some atom of the plurality in a domain has the property, and its alternatives
 replace the domain by its subsets; each alternative is one of the readings of the plural
-predication (`subDisjs_subset_readings`). Exhaustifying over them gives the universal
+predication (`supClosure_subset_readings`). Exhaustifying over them gives the universal
 reading, while under negation exhaustification is vacuous. Pruning the alternatives to subdomains
 of a fixed size gives the threshold readings of non-maximality, which are readings of the plural
 predication as well (`readings_subset_readings`); the question the context raises selects among
@@ -21,7 +21,7 @@ another's.
 
 ## Main results
 
-* `exhIEII_eq_universal`, `exhIEII_compl_disj`: the maximality implicature, and its absence
+* `exhIEII_eq_universal`, `exhIEII_compl_biUnion`: the maximality implicature, and its absence
   under negation.
 * `exhIEII_pruned_eq_atLeast`, `isReading_polar_atLeast`: pruning yields the threshold
   readings, and a polar question on a threshold selects it.
@@ -77,9 +77,9 @@ variable {Atom W : Type*} {D x : Finset Atom} {P : Atom → W → Prop} [Decidab
 
 /-! ### Existential pluralization and its subdomain alternatives
 
-The existential pluralization `∃-PL_D` of `P` over `x` is the disjunction `disj (x ∩ D) (atom P)`
-of the atoms of `x` in the domain `D`. A subdomain `D' ⊆ D` leaves the atoms of `x ∩ D'`, so the
-subdomain alternatives are the sub-disjunctions `subDisjs (x ∩ D) (atom P)`. -/
+The existential pluralization `∃-PL_D` of `P` over `x` is the disjunction of the atoms of `x` in
+the domain `D`. A subdomain `D' ⊆ D` leaves the atoms of `x ∩ D'`, so the subdomain alternatives
+are the closure of the atoms under disjunction, `supClosure (atom P '' ↑(x ∩ D))`. -/
 
 variable (P) in
 /-- The proposition `a` satisfies `P`. -/
@@ -90,12 +90,11 @@ instance [∀ a w, Decidable (P a w)] (w : W) (a : Atom) : Decidable (w ∈ atom
 
 /-- The subdomain alternatives are readings of the distributive plural predication, since the
 sub-disjunctions of the atoms lie in the lattice they generate. -/
-theorem subDisjs_subset_readings :
-    subDisjs (x ∩ D) (atom P) ⊆ Homogeneity.readings (fun z ↦ {w | ∀ a ∈ z, P a w}) x := by
+theorem supClosure_subset_readings :
+    supClosure (atom P '' ↑(x ∩ D)) ⊆ Homogeneity.readings (fun z ↦ {w | ∀ a ∈ z, P a w}) x := by
   intro q hq
-  obtain ⟨S, hS, ⟨a, ha⟩, -⟩ := id hq
+  obtain ⟨S, ⟨a, ha⟩, hS, -⟩ := Set.mem_supClosure_image.1 hq
   rw [Homogeneity.readings_eq_latticeClosure ⟨a, (Finset.mem_inter.1 (hS ha)).1⟩]
-  rw [subDisjs_eq_supClosure] at hq
   exact supClosure_min ((Set.image_mono (Finset.coe_subset.2 Finset.inter_subset_left)).trans
     subset_latticeClosure) isSublattice_latticeClosure.supClosed hq
 
@@ -112,38 +111,39 @@ structure Separating : Prop where
 /-- Exhaustifying `∃-PL` over its subdomain alternatives gives the universal reading, the
 maximality implicature. -/
 theorem exhIEII_eq_universal (h : Separating D x P) (hne : (x ∩ D).Nonempty) :
-    exhIEII (subDisjs (x ∩ D) (atom P)) (disj (x ∩ D) (atom P)) =
+    exhIEII (supClosure (atom P '' ↑(x ∩ D))) (⋃ b ∈ x ∩ D, atom P b) =
       {w | ∀ a ∈ x, a ∈ D → P a w} := by
-  rw [exhIEII_subDisjs (p := atom P) h.single hne h.all]
+  rw [exhIEII_supClosure (p := atom P) h.single hne h.all]
   ext w; simp [atom, Finset.mem_inter]
 
 /-- With negation over `∃-PL` every negated subdomain alternative is entailed by the negated
 prejacent, so exhaustification over any of them is vacuous and no pruning yields a non-maximal
 reading. -/
-theorem exhIEII_compl_disj {C : Set (Set W)} (hC : C ⊆ compl '' subDisjs (x ∩ D) (atom P))
-    (hsat : (disj (x ∩ D) (atom P))ᶜ.Nonempty) :
-    exhIEII C (disj (x ∩ D) (atom P))ᶜ = (disj (x ∩ D) (atom P))ᶜ := by
+theorem exhIEII_compl_biUnion {C : Set (Set W)} (hC : C ⊆ compl '' supClosure (atom P '' ↑(x ∩ D)))
+    (hsat : (⋃ b ∈ x ∩ D, atom P b)ᶜ.Nonempty) :
+    exhIEII C (⋃ b ∈ x ∩ D, atom P b)ᶜ = (⋃ b ∈ x ∩ D, atom P b)ᶜ := by
   refine exhIEII_eq_self_of_forall_subset (fun q hq ↦ ?_) hsat
-  obtain ⟨_, ⟨S, hS, -, rfl⟩, rfl⟩ := hC hq
-  exact Set.compl_subset_compl.2 (subDisj_mono hS)
+  obtain ⟨_, hq', rfl⟩ := hC hq
+  obtain ⟨S, -, hS, rfl⟩ := Set.mem_supClosure_image.1 hq'
+  exact Set.compl_subset_compl.2 (Set.biUnion_subset_biUnion_left hS)
 
 /-- The existential basic meaning does not entail that a given kid laughed, (6a). -/
-theorem exists_mem_disj_and_not (h : Separating D x P) {a : Atom} (ha : a ∈ x ∩ D)
-    (h2 : 2 ≤ (x ∩ D).card) : ∃ w ∈ disj (x ∩ D) (atom P), ¬ P a w := by
+theorem exists_mem_biUnion_and_not (h : Separating D x P) {a : Atom} (ha : a ∈ x ∩ D)
+    (h2 : 2 ≤ (x ∩ D).card) : ∃ w ∈ (⋃ b ∈ x ∩ D, atom P b), ¬ P a w := by
   obtain ⟨b, hb, hba⟩ := Finset.exists_mem_ne (by omega : 1 < (x ∩ D).card) a
   obtain ⟨w, hw⟩ := h.single b hb
-  exact ⟨w, mem_subDisj.2 ⟨b, hb, (hw b hb).2 rfl⟩, fun hPa ↦ hba ((hw a ha).1 hPa).symm⟩
+  exact ⟨w, Set.mem_biUnion hb ((hw b hb).2 rfl), fun hPa ↦ hba ((hw a ha).1 hPa).symm⟩
 
 /-- Its negation entails that no given kid laughed, (6b). -/
-theorem not_of_notMem_disj {w : W} (hw : w ∉ disj (x ∩ D) (atom P)) {a : Atom}
+theorem not_of_notMem_biUnion {w : W} (hw : w ∉ ⋃ b ∈ x ∩ D, atom P b) {a : Atom}
     (ha : a ∈ x ∩ D) : ¬ P a w :=
-  fun hPa ↦ hw (mem_subDisj.2 ⟨a, ha, hPa⟩)
+  fun hPa ↦ hw (Set.mem_biUnion ha hPa)
 
 /-- Simple disjunction, whose alternatives include the conjunction, is strengthened the other
 way, the conjunction being denied. -/
 theorem not_forall_of_mem_exhIEII_insert_iInter (h : Separating D x P) (h2 : 2 ≤ (x ∩ D).card)
-    {w : W} (hw : w ∈ exhIEII (insert (⋂ a ∈ x ∩ D, atom P a) (subDisjs (x ∩ D) (atom P)))
-      (disj (x ∩ D) (atom P))) : ¬ ∀ a ∈ x ∩ D, P a w :=
+    {w : W} (hw : w ∈ exhIEII (insert (⋂ a ∈ x ∩ D, atom P a) (supClosure (atom P '' ↑(x ∩ D))))
+      (⋃ b ∈ x ∩ D, atom P b)) : ¬ ∀ a ∈ x ∩ D, P a w :=
   fun hall ↦ hw.2.1 _ (isInnocentlyExcludable_iInter_of_insert (p := atom P) h.single h2)
     (Set.mem_iInter₂.2 fun a ha ↦ hall a ha)
 
@@ -153,7 +153,7 @@ variable (D x P) in
 /-- The readings of *the kids laughed* are the maximal one and the pruned ones. -/
 def readings : Set (Set W) :=
   {q | ∃ m, 0 < m ∧ m ≤ (x ∩ D).card ∧
-    q = exhIEII (subDisjsOfCard (x ∩ D) (atom P) m) (disj (x ∩ D) (atom P))}
+    q = exhIEII (subDisjsOfCard (x ∩ D) (atom P) m) (⋃ b ∈ x ∩ D, atom P b)}
 
 variable (D x P) in
 /-- The reading a partition selects is the strongest reading it decides. -/
@@ -199,7 +199,7 @@ theorem atLeast_card : atLeast D x P (x ∩ D).card = {w | ∀ a ∈ x, a ∈ D 
 laughed". -/
 theorem exhIEII_pruned_eq_atLeast (h : Separating D x P) {m : ℕ} (hm : 0 < m)
     (hmn : m ≤ (x ∩ D).card) :
-    exhIEII (subDisjsOfCard (x ∩ D) (atom P) m) (disj (x ∩ D) (atom P)) =
+    exhIEII (subDisjsOfCard (x ∩ D) (atom P) m) (⋃ b ∈ x ∩ D, atom P b) =
       atLeast D x P ((x ∩ D).card + 1 - m) := by
   rw [exhIEII_subDisjsOfCard (p := atom P) h.single h.all hm hmn]
   ext w
@@ -238,10 +238,10 @@ theorem readings_subset_readings (h : Separating D x P) :
     exact Finset.mem_filter.2 ⟨Finset.mem_inter.2 ⟨hzx ha.1, ha.2⟩, hP a ha.1⟩
 
 /-- Pruning only weakens, the maximal reading entailing every pruned one. -/
-theorem exhIEII_subDisjs_subset_exhIEII_subDisjsOfCard (h : Separating D x P)
+theorem exhIEII_supClosure_subset_exhIEII_subDisjsOfCard (h : Separating D x P)
     (hne : (x ∩ D).Nonempty) {m : ℕ} (hm : 0 < m) (hmn : m ≤ (x ∩ D).card) :
-    exhIEII (subDisjs (x ∩ D) (atom P)) (disj (x ∩ D) (atom P)) ⊆
-      exhIEII (subDisjsOfCard (x ∩ D) (atom P) m) (disj (x ∩ D) (atom P)) := by
+    exhIEII (supClosure (atom P '' ↑(x ∩ D))) (⋃ b ∈ x ∩ D, atom P b) ⊆
+      exhIEII (subDisjsOfCard (x ∩ D) (atom P) m) (⋃ b ∈ x ∩ D, atom P b) := by
   rw [exhIEII_eq_universal h hne, exhIEII_pruned_eq_atLeast h hm hmn, ← atLeast_card]
   exact atLeast_antitone (by omega)
 
@@ -300,11 +300,11 @@ theorem neg_barePlural_eq_indet_and_notMem_exhIEII_compl (h : Separating D x P)
     (hcount : ∀ k ≤ (x ∩ D).card, ∃ w, count D x P w = k) {w : W} (hw : Gappy D x P w)
     (C : Set (Set W)) :
     (Homogeneity.barePlural P (x ∩ D) w).neg = .indet ∧
-      w ∉ exhIEII C (disj (x ∩ D) (atom P))ᶜ := by
+      w ∉ exhIEII C (⋃ b ∈ x ∩ D, atom P b)ᶜ := by
   refine ⟨Trivalent.neg_eq_indet_iff.2 ((gappy_iff_barePlural_eq_indet h hcount w).1 hw), ?_⟩
   obtain ⟨a, ha⟩ := Finset.card_pos.1 ((gappy_iff h hcount w).1 hw).1
   obtain ⟨ha, hPa⟩ := Finset.mem_filter.1 ha
-  exact fun hmem ↦ hmem.1 (mem_subDisj.2 ⟨a, ha, hPa⟩)
+  exact fun hmem ↦ hmem.1 (Set.mem_biUnion ha hPa)
 
 end Pruning
 
@@ -367,7 +367,7 @@ theorem disjunction_not_both :
 /-- *The kids laughed*, (41b), whose alternatives are the subdomain alternatives alone, is
 strengthened to "both". -/
 theorem plural_both :
-    exhIEII (subDisjs pair (atom holds)) (disj pair (atom holds)) = {w | pair ⊆ w} := by
+    exhIEII (supClosure (atom holds '' pair)) (⋃ b ∈ pair, atom holds b) = {w | pair ⊆ w} := by
   have := exhIEII_eq_universal (separating_holds pair pair) (by decide)
   rw [Finset.inter_self] at this
   exact this.trans (Set.ext fun w ↦ ⟨fun h _ ha ↦ h _ ha ha, fun h a ha _ ↦ h ha⟩)
@@ -433,7 +433,7 @@ whatever is pruned, while Table 2 found a gap there in Experiments A1 and B1, th
 paper attributes to the LF with `∃-PL` over negation. -/
 theorem krizChemla_negation_residue :
     (∀ i ∈ items, i.embedding = .unembedded → i.condition = .gap → ∀ w : Finset Symbol,
-      i.cells = [w.card] → ∀ C, w ∉ exhIEII C (disj Finset.univ (atom holds))ᶜ) ∧
+      i.cells = [w.card] → ∀ C, w ∉ exhIEII C (⋃ b ∈ Finset.univ, atom holds b)ᶜ) ∧
     ∀ t ∈ gapTests, t.embedding = .negation → t.found = .yes := by
   refine ⟨fun i hi he hc w hw C ↦ ?_, by decide⟩
   have hg := (gappy_iff_krizChemla_gap.1 i hi he w hw).2 hc

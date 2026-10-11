@@ -170,8 +170,8 @@ theorem homogeneity_gap_neg :
   ext w
   simp
 
-/-- `pex^{IE+II}[◇(a ∨ b)]` is homogeneous, since a world permitting only `a` lies in its gap. -/
-theorem isHomogeneous_pexPossOr : isHomogeneous (pexPossOr R a b).eval := by
+/-- A world permitting only `a` lies in the gap of `pex^{IE+II}[◇(a ∨ b)]`. -/
+theorem gapExt_pexPossOr_nonempty : (Trivalent.gapExt (pexPossOr R a b).eval).Nonempty := by
   obtain ⟨w, hwa, hwb⟩ := hF.only_left
   exact ⟨w, by rw [homogeneity_gap hF]; exact .inl ⟨hwa, hwb⟩⟩
 
@@ -189,19 +189,23 @@ theorem pex_and_exh_agree :
   rw [hII, homogeneous_pair]
   grind [isInnocentlyExcludable_fcAlts_iff hF, preimage_union]
 
-omit hF in
+end FreeChoice
+
+section NegatedFreeChoice
+
+variable {R : SetRel W W} {w : W}
+
 /-- The alternatives of `◇(¬T ∨ ¬B)` are those of `¬□(T ∧ B)` in (18b). -/
 theorem fcAlts_compl (R : SetRel W W) (T B : Set W) :
     fcAlts R Tᶜ Bᶜ = {(R.core (T ∩ B))ᶜ, (R.core T)ᶜ, (R.core B)ᶜ, (R.core (T ∪ B))ᶜ} := by
   simp only [fcAlts, preimage_compl, ← Set.compl_inter, ← Set.compl_union]
 
-omit hF in
 /-- `pex^{IE+II}[¬□(T ∧ B)]` holds exactly where negative free choice does, (18) and (19a). -/
 theorem negative_free_choice {T B : Set W} (hF : FreeChoiceWitnesses R Tᶜ Bᶜ) :
     (pexPossOr R Tᶜ Bᶜ).holds w ↔ w ∉ R.core T ∧ w ∉ R.core B := by
   simpa only [preimage_compl, Set.mem_compl_iff] using free_choice hF
 
-end FreeChoice
+end NegatedFreeChoice
 
 /-- Where world `4` permits both `0` and `1`, world `2` only `0`, world `3` only `1`, and world
 `0` neither, `pex^{IE+II}[◇(p ∨ q)]` holds at `4`, suffers presupposition failure at `2` as fn. 2

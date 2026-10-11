@@ -83,15 +83,15 @@ variable {W : Type*}
 
 /-! ### Weak and strong necessity (§2.1) -/
 
-/-- (6), (8): a strong necessity conjoined with the denial of a strong necessity over one domain
-is contradictory; a weak necessity conjoined with it is consistent. -/
+/-- A strong necessity conjoined with the denial of a strong necessity over one domain is
+contradictory, and a weak necessity conjoined with it is consistent, (6) and (8). -/
 theorem contradiction_tests :
     Pattern.Contradictory ⟨⟨.necessity, false, false⟩, ⟨.necessity, true, false⟩⟩ ∧
       Pattern.Consistent ⟨⟨.weakNecessity, false, false⟩, ⟨.necessity, true, false⟩⟩ := by
   decide
 
-/-- (11), (12): a strong necessity after a strong necessity is trivial, after a weak necessity
-informative. -/
+/-- A strong necessity after a strong necessity is trivial, and after a weak necessity
+informative, (11) and (12). -/
 theorem triviality_tests :
     Conjunct.Entails ⟨.necessity, false, false⟩ ⟨.necessity, false, false⟩ ∧
       ¬ Conjunct.Entails ⟨.weakNecessity, false, false⟩ ⟨.necessity, false, false⟩ := by
@@ -120,8 +120,8 @@ theorem tests_predicted :
           Conjunct.Entails ⟨f₁, false, false⟩ ⟨f₂, false, false⟩)) := by
   decide
 
-/-- (15)–(17), (26), (28): across languages, a necessity modal survives the denial of strong
-necessity exactly when its force is weak. -/
+/-- Across languages, a necessity modal survives the denial of strong necessity exactly when its
+force is weak, (15)–(17), (26) and (28). -/
 theorem crosslinguistic_tests :
     ∀ e ∈ Examples.all, e.feature? "test" = some "contradiction" →
       ∀ φ ∈ e.parse? "force" forceTable,
@@ -256,20 +256,20 @@ theorem readings_licensed :
 
 /-! ### Exhaustification of subdomain alternatives (§3.2) -/
 
-/-- (50): over a nonempty domain, exhaustifying the possibility modal, the disjunction of the
+/-- Over a nonempty domain, exhaustifying the possibility modal, the disjunction of the
 prejacent over the domain, against its subdomain alternatives yields necessity, the prejacent at
-every world of the domain. Worlds are the states recording where the prejacent holds. -/
+every world of the domain, (50). Worlds are the states recording where the prejacent holds. -/
 theorem exh_subdomain {ι : Type*} [DecidableEq ι] (M : Finset ι) (hM : M.Nonempty) :
-    exhIEII (subDisjs M fun i ↦ {s : ι → Bool | s i = true})
-        (subDisj (fun i ↦ {s : ι → Bool | s i = true}) M) =
+    exhIEII (supClosure ((fun i ↦ {s : ι → Bool | s i = true}) '' M))
+        (⋃ i ∈ M, {s : ι → Bool | s i = true}) =
       ⋂ i ∈ M, {s : ι → Bool | s i = true} :=
-  exhIEII_subDisjs (fun i _ ↦ ⟨fun j ↦ decide (j = i), fun j _ ↦ by simp⟩) hM
+  exhIEII_supClosure (fun i _ ↦ ⟨fun j ↦ decide (j = i), fun j _ ↦ by simp⟩) hM
     ⟨fun _ ↦ true, fun _ _ ↦ rfl⟩
 
 /-! ### Covert modality (§4) -/
 
-/-- (90)–(92): in infinitival relatives a strong determiner forces the *should* reading and
-excludes the *could* reading, where a weak determiner allows both. -/
+/-- In infinitival relatives a strong determiner forces the *should* reading and excludes the
+*could* reading, where a weak determiner allows both, (90)–(92). -/
 theorem strong_determiner_should :
     ∀ e ∈ Examples.all, e.feature? "construction" = some "infinitival relative" →
       e.readings.lookup "should" = some .acceptable ∧

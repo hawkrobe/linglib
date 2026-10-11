@@ -70,7 +70,7 @@ variable {W E : Type*} [SemilatticeSup E]
 /-! ### Numerals and classifiers -/
 
 /-- A numeral denotes a singular term of type `n`, the constant intension of the paper's (2). -/
-def numeral (n : ℕ) : W → ℕ := λ _ => n
+def numeral (n : ℕ) : W → ℕ := fun _ ↦ n
 
 theorem numeral_isRigid (n : ℕ) : Reference.IsRigid (numeral (W := W) n) :=
   Reference.isRigid_const n
@@ -86,12 +86,12 @@ abbrev Sortal (W E : Type*) := W → E → Prop
 partial property presupposing the plural closure of the sortal and asserting that the
 argument has the numeral's number of sortal atoms. -/
 def Sortal.apply (c : Sortal W E) (n : W → ℕ) (w : W) : PartialProp E where
-  presup := star (c w)
+  presup := AlgClosure (c w)
   assertion x := atomCount c w x = n w
 
 /-- The ∪-operator, the paper's (10): the property correlate of a numeral, having that many
 atomic parts. -/
-def up (atomic : Sortal W E) (n : W → ℕ) : W → E → Prop := λ w x => atomCount atomic w x = n w
+def up (atomic : Sortal W E) (n : W → ℕ) : W → E → Prop := fun w x ↦ atomCount atomic w x = n w
 
 /-- The classifier's assertion is the ∪-correlate of the numeral counted over the sortal. -/
 theorem apply_assertion (c : Sortal W E) (n : W → ℕ) (w : W) :
@@ -106,19 +106,19 @@ def modify (P : PartialProp E) (N : E → Prop) : PartialProp E where
 /-- Modifying the noun whose denotation is the plural closure of the classifier's own
 sortal, the paper's (7c): the presupposition is then entailed by the noun. -/
 theorem modify_sortal_presup (c : Sortal W E) (n : W → ℕ) (w : W) (x : E)
-    (h : (modify (c.apply n w) (star (c w))).assertion x) :
-    (modify (c.apply n w) (star (c w))).presup x :=
+    (h : (modify (c.apply n w) (AlgClosure (c w))).assertion x) :
+    (modify (c.apply n w) (AlgClosure (c w))).presup x :=
   h.2
 
 /-! ### The ∩-operator -/
 
-/-- `IsDown atomic P n`: the property `P` is the ∪-correlate of the numeral `n`, so that ∩
-maps it back to `n`, the paper's (24). -/
+/-- The property `P` is the ∪-correlate of the numeral `n`, so that ∩ maps it back to `n`, the
+paper's (24). -/
 def IsDown (atomic : Sortal W E) (P : W → E → Prop) (n : W → ℕ) : Prop :=
   ∀ w x, P w x ↔ atomCount atomic w x = n w
 
 theorem isDown_up (atomic : Sortal W E) (n : W → ℕ) : IsDown atomic (up atomic n) n :=
-  λ _ _ => Iff.rfl
+  fun _ _ ↦ Iff.rfl
 
 /-- ∩ is a partial inverse: a property with a type-`n` correlate has only one, provided every
 count is instantiated. -/
@@ -132,8 +132,8 @@ theorem IsDown.unique {atomic : Sortal W E} {P : W → E → Prop} {n m : W → 
 /-- A numeral-plus-classifier phrase has a type-`n` correlate relative to the classifier's
 sortal, the paper's (25): ∩ applies in Japanese to *juu-ni-nin* and returns twelve. -/
 theorem isDown_sortal (c : Sortal W E) (n : W → ℕ) :
-    IsDown c (λ w x => (c.apply n w).assertion x) n :=
-  λ _ _ => Iff.rfl
+    IsDown c (fun w x ↦ (c.apply n w).assertion x) n :=
+  fun _ _ ↦ Iff.rfl
 
 /-! ### Blocking -/
 
@@ -145,14 +145,14 @@ inductive PredicateOf (hasClassifiers : Prop) (atomic : Sortal W E) (n : W → �
   | up (h : ¬ hasClassifiers) : PredicateOf hasClassifiers atomic n (up atomic n)
   | classifier (c : Sortal W E) :
       PredicateOf hasClassifiers atomic n
-        λ w x => (c.apply n w).presup x ∧ (c.apply n w).assertion x
+        fun w x ↦ (c.apply n w).presup x ∧ (c.apply n w).assertion x
 
 /-- With classifiers in the lexicon every predicate use of a numeral goes through a
 classifier and carries its sortal presupposition: the paper's (15) against (16). -/
 theorem predicateOf_iff_of_hasClassifiers {hasClassifiers : Prop} (h : hasClassifiers)
     (atomic : Sortal W E) (n : W → ℕ) (P : W → E → Prop) :
     PredicateOf hasClassifiers atomic n P ↔
-      ∃ c : Sortal W E, P = λ w x => (c.apply n w).presup x ∧ (c.apply n w).assertion x := by
+      ∃ c : Sortal W E, P = fun w x ↦ (c.apply n w).presup x ∧ (c.apply n w).assertion x := by
   constructor
   · rintro (⟨hno⟩ | ⟨c⟩)
     · exact absurd h hno
@@ -189,7 +189,7 @@ variable {α : Type*} [DecidableEq α]
 
 /-- An individual as its singleton: the sortal predicate `P` of atoms lifted to pluralities. -/
 def singletonSortal (P : α → Prop) : Sortal Unit (Finset α) :=
-  λ _ y => ∃ a, y = {a} ∧ P a
+  fun _ y ↦ ∃ a, y = {a} ∧ P a
 
 /-- The atom count of a plurality is the number of its members satisfying the sortal. -/
 theorem atomCount_finset (P : α → Prop) [DecidablePred P] (x : Finset α) :
@@ -211,8 +211,9 @@ theorem atomCount_finset (P : α → Prop) [DecidablePred P] (x : Finset α) :
 plurality of sortal individuals. -/
 theorem presup_finset (P : α → Prop) (n : Unit → ℕ) (x : Finset α) :
     ((singletonSortal P).apply n ()).presup x ↔ x.Nonempty ∧ ∀ a ∈ x, P a := by
-  show star (singletonSortal P ()) x ↔ _
-  rw [star_iff_of_subset_range_singleton λ y hy => by obtain ⟨a, hy, _⟩ := hy; exact ⟨a, hy.symm⟩]
+  show AlgClosure (singletonSortal P ()) x ↔ _
+  rw [algClosure_iff_of_subset_range_singleton fun y hy ↦ by
+    obtain ⟨a, hy, _⟩ := hy; exact ⟨a, hy.symm⟩]
   simp [singletonSortal]
 
 /-- A non-atomic classifier counting groups of `k` atoms, the paper's (9): the argument is
@@ -226,7 +227,7 @@ theorem groupApply_card {k n : ℕ} {x : Finset α} (h : groupApply k n x) : x.c
   obtain ⟨s, hs, rfl, hk, hd⟩ := h
   rw [Finset.card_biUnion (t := id) hd]
   simp only [id_eq]
-  rw [Finset.sum_congr rfl λ y hy => hk y hy, Finset.sum_const, hs]
+  rw [Finset.sum_congr rfl fun y hy ↦ hk y hy, Finset.sum_const, hs]
   rfl
 
 /-- The individuals of the witnesses: three flowers, two humans, four books. -/
@@ -238,7 +239,7 @@ def Ind.flower : Ind → Prop
   | .f1 | .f2 | .f3 => True
   | _ => False
 
-instance : DecidablePred Ind.flower := λ a => by cases a <;> unfold Ind.flower <;> infer_instance
+instance : DecidablePred Ind.flower := fun a ↦ by cases a <;> unfold Ind.flower <;> infer_instance
 
 /-- *-rin* counts flowers. -/
 def rin : Sortal Unit (Finset Ind) := singletonSortal Ind.flower
@@ -261,7 +262,7 @@ theorem four_books_two_pairs : groupApply 2 2 ({.b1, .b2, .b3, .b4} : Finset Ind
 
 /-- Four books never form six pairs: overlapping pairs are not counted. -/
 theorem four_books_not_six_pairs (x : Finset Ind) (hx : x.card = 4) : ¬ groupApply 2 6 x :=
-  λ h => by have := groupApply_card h; omega
+  fun h ↦ by have := groupApply_card h; omega
 
 end Model
 

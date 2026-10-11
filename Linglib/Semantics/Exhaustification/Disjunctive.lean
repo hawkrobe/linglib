@@ -2,22 +2,21 @@ module
 
 public import Linglib.Semantics.Exhaustification.InnocentInclusion
 public import Mathlib.Data.Finset.Card
-public import Mathlib.Order.SupClosed
+public import Linglib.Core.Order.SupClosed
 
 /-!
-# Exhaustifying a disjunction whose alternatives are its sub-disjunctions
+# Exhaustifying a disjunction against its closure under disjunction
 
-A disjunction `⋃ i ∈ I, p i` whose alternatives are disjunctions over subsets of `I` — sub-
-disjunctions but no conjunctions — strengthens under `exhIEII` to their conjunction, provided
-some world verifies each disjunct alone and some world verifies all of them: nothing is
-innocently excludable, since a single-disjunct world is minimal, and everything is innocently
-includable, since the cell is consistent. With all sub-disjunctions present the result is the
-conjunction of the disjuncts; with only the disjunctions over subsets of size `m` it is that
-at least `|I| + 1 - m` disjuncts hold. This is the generalization behind free choice without
-a conjunctive alternative and behind the implicature account of homogeneity, where the
-disjuncts are the atoms of a plurality and pruning to the size-`m` alternatives gives the
-non-maximal readings. The sub-disjunctions are the `supClosure` of the disjuncts, and all of
-them are innocently includable.
+A disjunction `⋃ i ∈ I, p i` whose alternatives lie in its closure under disjunction,
+`supClosure (p '' I)`, the disjunctions over the nonempty subsets of `I` with no conjunctions,
+strengthens under `exhIEII` to their conjunction, provided some world verifies each disjunct
+alone and some world verifies all of them: nothing is innocently excludable, since a
+single-disjunct world is minimal, and everything is innocently includable, since the cell is
+consistent. With the whole closure the result is the conjunction of the disjuncts; with only the
+disjunctions over subsets of size `m` it is that at least `|I| + 1 - m` disjuncts hold. This is
+the generalization behind free choice without a conjunctive alternative and behind the
+implicature account of homogeneity, where the disjuncts are the atoms of a plurality and pruning
+to the size-`m` alternatives gives the non-maximal readings.
 
 ## References
 
@@ -31,153 +30,115 @@ namespace Exhaustification
 
 variable {World ι : Type*} (I : Finset ι) (p : ι → Set World)
 
-/-- `subDisj p S` is the disjunction of `p` over the subset `S`. -/
-def subDisj (S : Finset ι) : Set World := ⋃ i ∈ S, p i
-
-/-- `disj I p` is the disjunction of `p` over all of `I`. -/
-abbrev disj : Set World := subDisj p I
-
-/-- `subDisjs I p` collects the disjunctions over the nonempty subsets of `I`. -/
-def subDisjs : Set (Set World) := {q | ∃ S ⊆ I, S.Nonempty ∧ q = subDisj p S}
-
 /-- `subDisjsOfCard I p m` collects the disjunction over `I` and the disjunctions over its
 subsets of size `m`. -/
 def subDisjsOfCard (m : ℕ) : Set (Set World) :=
-  insert (disj I p) {q | ∃ S ⊆ I, S.card = m ∧ q = subDisj p S}
+  insert (⋃ i ∈ I, p i) {q | ∃ S ⊆ I, S.card = m ∧ q = ⋃ i ∈ S, p i}
 
-variable {I p} {S T : Finset ι}
+variable {I p}
 
-@[simp] theorem mem_subDisj {w : World} : w ∈ subDisj p S ↔ ∃ i ∈ S, w ∈ p i := by
-  simp [subDisj]
-
-@[simp] theorem subDisj_singleton (i : ι) : subDisj p {i} = p i := by simp [subDisj]
-
-@[gcongr] theorem subDisj_mono (h : S ⊆ T) : subDisj p S ⊆ subDisj p T :=
-  Set.biUnion_subset_biUnion_left (Finset.coe_subset.2 h)
-
-theorem mem_subDisjs_of_mem {i : ι} (hi : i ∈ I) : p i ∈ subDisjs I p :=
-  ⟨{i}, by simpa, by simp, by simp⟩
-
-/-- The sub-disjunctions hold together exactly where every disjunct holds. -/
-theorem sInter_subDisjs : ⋂₀ subDisjs I p = ⋂ i ∈ I, p i := by
-  refine Set.Subset.antisymm (Set.subset_iInter₂ fun i hi ↦ ?_) ?_
-  · simpa using Set.sInter_subset_of_mem
-      (show subDisj p {i} ∈ subDisjs I p from ⟨{i}, by simpa, by simp, rfl⟩)
-  · rintro w hw _ ⟨S, hS, ⟨j, hj⟩, rfl⟩
-    exact mem_subDisj.2 ⟨j, hj, Set.mem_iInter₂.1 hw j (hS hj)⟩
-
-theorem biInter_subset_disj (hI : I.Nonempty) : ⋂ i ∈ I, p i ⊆ disj I p :=
-  let ⟨i, hi⟩ := hI
-  fun _ hw ↦ mem_subDisj.2 ⟨i, hi, Set.mem_iInter₂.1 hw i hi⟩
-
-theorem subDisjsOfCard_subset_subDisjs (hI : I.Nonempty) {m : ℕ} (hm : 0 < m) :
-    subDisjsOfCard I p m ⊆ subDisjs I p := by
+theorem subDisjsOfCard_subset_supClosure (hI : I.Nonempty) {m : ℕ} (hm : 0 < m) :
+    subDisjsOfCard I p m ⊆ supClosure (p '' I) := by
   rintro q (rfl | ⟨S, hS, hcard, rfl⟩)
-  · exact ⟨I, le_rfl, hI, rfl⟩
-  · exact ⟨S, hS, Finset.card_pos.1 (hcard ▸ hm), rfl⟩
-
-theorem supClosed_subDisjs : SupClosed (subDisjs I p) := by
-  classical
-  rintro _ ⟨S, hS, hSne, rfl⟩ _ ⟨T, hT, -, rfl⟩
-  exact ⟨S ∪ T, Finset.union_subset hS hT, hSne.mono Finset.subset_union_left, by
-    ext; simp [subDisj, or_and_right, exists_or]⟩
-
-/-- The sub-disjunctions are the joins of nonempty sets of disjuncts. -/
-theorem subDisjs_eq_supClosure : subDisjs I p = supClosure (p '' I) := by
-  refine Set.Subset.antisymm ?_ (supClosure_min ?_ supClosed_subDisjs)
-  · rintro _ ⟨S, hS, hne, rfl⟩
-    rw [subDisj, ← Finset.sup_set_eq_biUnion, ← Finset.sup'_eq_sup hne]
-    exact finsetSup'_mem_supClosure hne fun i hi ↦ Set.mem_image_of_mem _ (hS hi)
-  · rintro _ ⟨i, hi, rfl⟩
-    exact ⟨{i}, by simpa, by simp, by simp⟩
+  · exact Set.mem_supClosure_image.2 ⟨I, hI, subset_rfl, rfl⟩
+  · exact Set.mem_supClosure_image.2 ⟨S, Finset.card_pos.1 (hcard ▸ hm), hS, rfl⟩
 
 section Family
 
 variable {A : Set (Set World)}
 
 /-- A world verifying exactly the disjunct `i` is minimal among the disjunction's worlds,
-relative to a family whose alternatives true at that world are sub-disjunctions and which
-separates every other index from `i`. -/
+relative to a family whose alternatives true at that world are disjunctions over subsets and
+which separates every other index from `i`. -/
 theorem isMinimal_of_single {i : ι} (hi : i ∈ I) {w : World}
-    (hA : ∀ q ∈ A, w ∈ q → ∃ S ⊆ I, q = subDisj p S)
-    (hsplit : ∀ j ∈ I, j ≠ i → ∃ S ⊆ I, subDisj p S ∈ A ∧ j ∈ S ∧ i ∉ S)
-    (hw : ∀ j ∈ I, w ∈ p j ↔ j = i) : IsMinimal A (disj I p) w := by
-  refine ⟨mem_subDisj.2 ⟨i, hi, (hw i hi).2 rfl⟩, ?_⟩
+    (hA : ∀ q ∈ A, w ∈ q → ∃ S ⊆ I, q = ⋃ j ∈ S, p j)
+    (hsplit : ∀ j ∈ I, j ≠ i → ∃ S ⊆ I, (⋃ k ∈ S, p k) ∈ A ∧ j ∈ S ∧ i ∉ S)
+    (hw : ∀ j ∈ I, w ∈ p j ↔ j = i) : IsMinimal A (⋃ j ∈ I, p j) w := by
+  refine ⟨Set.mem_biUnion hi ((hw i hi).2 rfl), ?_⟩
   rintro ⟨v, hv, hle, hnle⟩
-  obtain ⟨j, hj, hvj⟩ := mem_subDisj.1 hv
+  obtain ⟨j, hj, hvj⟩ := Set.mem_iUnion₂.1 hv
   by_cases hji : j = i
   · subst hji
     refine hnle fun q hq hwq ↦ ?_
     obtain ⟨S, hS, rfl⟩ := hA q hq hwq
-    obtain ⟨k, hk, hwk⟩ := mem_subDisj.1 hwq
-    exact mem_subDisj.2 ⟨k, hk, ((hw k (hS hk)).1 hwk) ▸ hvj⟩
+    obtain ⟨k, hk, hwk⟩ := Set.mem_iUnion₂.1 hwq
+    exact Set.mem_biUnion hk (((hw k (hS hk)).1 hwk) ▸ hvj)
   · obtain ⟨S, hS, hSA, hjS, hiS⟩ := hsplit j hj hji
-    obtain ⟨k, hk, hwk⟩ := mem_subDisj.1 (hle _ hSA (mem_subDisj.2 ⟨j, hjS, hvj⟩))
+    obtain ⟨k, hk, hwk⟩ := Set.mem_iUnion₂.1 (hle _ hSA (Set.mem_biUnion hjS hvj))
     exact hiS (((hw k (hS hk)).1 hwk) ▸ hk)
 
-variable (hA : A ⊆ subDisjs I p)
-  (hsplit : ∀ i ∈ I, ∀ j ∈ I, j ≠ i → ∃ S ⊆ I, subDisj p S ∈ A ∧ j ∈ S ∧ i ∉ S)
+variable (hA : A ⊆ supClosure (p '' I))
+  (hsplit : ∀ i ∈ I, ∀ j ∈ I, j ≠ i → ∃ S ⊆ I, (⋃ k ∈ S, p k) ∈ A ∧ j ∈ S ∧ i ∉ S)
   (hsep : ∀ i ∈ I, ∃ w, ∀ j ∈ I, w ∈ p j ↔ j = i)
 include hA hsplit hsep
 
-/-- Nothing is innocently excludable, since each sub-disjunction holds at the minimal world of
-one of its disjuncts. -/
-theorem not_isInnocentlyExcludable_of_subDisjs (q : Set World) :
-    ¬ IsInnocentlyExcludable A (disj I p) q := by
+/-- Nothing is innocently excludable, since each alternative holds at the minimal world of one
+of its disjuncts. -/
+theorem not_isInnocentlyExcludable_of_subset_supClosure (q : Set World) :
+    ¬ IsInnocentlyExcludable A (⋃ i ∈ I, p i) q := by
   intro hq
-  obtain ⟨S, hS, ⟨i, hi⟩, rfl⟩ := hA hq.1
+  obtain ⟨S, ⟨i, hi⟩, hS, rfl⟩ := Set.mem_supClosure_image.1 (hA hq.1)
   obtain ⟨w, hw⟩ := hsep i (hS hi)
   exact (isInnocentlyExcludable_iff_exhMW_subset_compl A _ _ hq.1).1 hq
-    (isMinimal_of_single (hS hi) (fun q hq _ ↦ let ⟨S, hS, _, h⟩ := hA hq; ⟨S, hS, h⟩)
+    (isMinimal_of_single (hS hi) (fun q hq _ ↦
+      let ⟨S, _, hS, h⟩ := Set.mem_supClosure_image.1 (hA hq); ⟨S, hS, h.symm⟩)
       (hsplit i (hS hi)) hw)
-    (mem_subDisj.2 ⟨i, hi, (hw i (hS hi)).2 rfl⟩)
+    (Set.mem_biUnion hi ((hw i (hS hi)).2 rfl))
 
 /-- With a world verifying every disjunct, the cell is consistent. -/
-theorem cell_nonempty_of_subDisjs (hI : I.Nonempty) (hall : ∃ w, ∀ i ∈ I, w ∈ p i) :
-    (cell A (disj I p)).Nonempty := by
+theorem cell_nonempty_of_subset_supClosure (hI : I.Nonempty) (hall : ∃ w, ∀ i ∈ I, w ∈ p i) :
+    (cell A (⋃ i ∈ I, p i)).Nonempty := by
   obtain ⟨w, hw⟩ := hall
   obtain ⟨i, hi⟩ := hI
-  refine ⟨w, mem_subDisj.2 ⟨i, hi, hw i hi⟩,
-    fun q hq ↦ absurd hq (not_isInnocentlyExcludable_of_subDisjs hA hsplit hsep q),
+  refine ⟨w, Set.mem_biUnion hi (hw i hi),
+    fun q hq ↦ absurd hq (not_isInnocentlyExcludable_of_subset_supClosure hA hsplit hsep q),
     fun r ⟨hr, _⟩ ↦ ?_⟩
-  obtain ⟨S, hS, ⟨j, hj⟩, rfl⟩ := hA hr
-  exact mem_subDisj.2 ⟨j, hj, hw j (hS hj)⟩
+  obtain ⟨S, ⟨j, hj⟩, hS, rfl⟩ := Set.mem_supClosure_image.1 (hA hr)
+  exact Set.mem_biUnion hj (hw j (hS hj))
 
 /-- Every alternative is innocently includable. -/
-theorem II_eq_self_of_subDisjs (hI : I.Nonempty) (hall : ∃ w, ∀ i ∈ I, w ∈ p i) :
-    II A (disj I p) = A := by
-  rw [II_eq_nonExcludable_of_cell_nonempty _ _ (cell_nonempty_of_subDisjs hA hsplit hsep hI hall)]
+theorem II_eq_self_of_subset_supClosure (hI : I.Nonempty) (hall : ∃ w, ∀ i ∈ I, w ∈ p i) :
+    II A (⋃ i ∈ I, p i) = A := by
+  rw [II_eq_nonExcludable_of_cell_nonempty _ _
+    (cell_nonempty_of_subset_supClosure hA hsplit hsep hI hall)]
   ext q
-  exact and_iff_left (not_isInnocentlyExcludable_of_subDisjs hA hsplit hsep q)
+  exact and_iff_left (not_isInnocentlyExcludable_of_subset_supClosure hA hsplit hsep q)
 
 /-- Exhaustification asserts the disjunction and every alternative. -/
-theorem exhIEII_eq_sInter_of_subDisjs (hI : I.Nonempty) (hall : ∃ w, ∀ i ∈ I, w ∈ p i) :
-    exhIEII A (disj I p) = disj I p ∩ ⋂₀ A := by
-  rw [exhIEII_eq_cell_of_cell_nonempty _ _ (cell_nonempty_of_subDisjs hA hsplit hsep hI hall)]
+theorem exhIEII_eq_inter_sInter (hI : I.Nonempty) (hall : ∃ w, ∀ i ∈ I, w ∈ p i) :
+    exhIEII A (⋃ i ∈ I, p i) = (⋃ i ∈ I, p i) ∩ ⋂₀ A := by
+  rw [exhIEII_eq_cell_of_cell_nonempty _ _
+    (cell_nonempty_of_subset_supClosure hA hsplit hsep hI hall)]
   ext w
   constructor
   · rintro ⟨hφ, _, hne⟩
     exact ⟨hφ, Set.mem_sInter.2 fun r hr ↦
-      hne r ⟨hr, not_isInnocentlyExcludable_of_subDisjs hA hsplit hsep r⟩⟩
+      hne r ⟨hr, not_isInnocentlyExcludable_of_subset_supClosure hA hsplit hsep r⟩⟩
   · rintro ⟨hφ, hall'⟩
-    exact ⟨hφ, fun q hq ↦ absurd hq (not_isInnocentlyExcludable_of_subDisjs hA hsplit hsep q),
+    exact ⟨hφ, fun q hq ↦
+      absurd hq (not_isInnocentlyExcludable_of_subset_supClosure hA hsplit hsep q),
       fun r ⟨hr, _⟩ ↦ Set.mem_sInter.1 hall' r hr⟩
 
 end Family
 
-theorem hsplit_subDisjs :
-    ∀ i ∈ I, ∀ j ∈ I, j ≠ i → ∃ S ⊆ I, subDisj p S ∈ subDisjs I p ∧ j ∈ S ∧ i ∉ S :=
-  fun _ _ j hj hji ↦
-    ⟨{j}, by simpa, ⟨{j}, by simpa, by simp, rfl⟩, by simp, by simpa using hji.symm⟩
+theorem hsplit_supClosure :
+    ∀ i ∈ I, ∀ j ∈ I, j ≠ i → ∃ S ⊆ I, (⋃ k ∈ S, p k) ∈ supClosure (p '' I) ∧ j ∈ S ∧ i ∉ S :=
+  fun _ _ j hj hji ↦ ⟨{j}, by simpa, Set.mem_supClosure_image.2 ⟨{j}, by simp, by simpa, rfl⟩,
+    by simp, by simpa using hji.symm⟩
 
-/-- All the sub-disjunctions strengthen the disjunction to the conjunction. -/
-theorem exhIEII_subDisjs (hsep : ∀ i ∈ I, ∃ w, ∀ j ∈ I, w ∈ p j ↔ j = i) (hI : I.Nonempty)
-    (hall : ∃ w, ∀ i ∈ I, w ∈ p i) : exhIEII (subDisjs I p) (disj I p) = ⋂ i ∈ I, p i := by
-  rw [exhIEII_eq_sInter_of_subDisjs le_rfl hsplit_subDisjs hsep hI hall, sInter_subDisjs,
-    Set.inter_eq_right.2 (biInter_subset_disj hI)]
+/-- The closure under disjunction strengthens the disjunction to the conjunction. -/
+theorem exhIEII_supClosure (hsep : ∀ i ∈ I, ∃ w, ∀ j ∈ I, w ∈ p j ↔ j = i) (hI : I.Nonempty)
+    (hall : ∃ w, ∀ i ∈ I, w ∈ p i) :
+    exhIEII (supClosure (p '' I)) (⋃ i ∈ I, p i) = ⋂ i ∈ I, p i := by
+  obtain ⟨i, hi⟩ := hI
+  rw [exhIEII_eq_inter_sInter le_rfl hsplit_supClosure hsep ⟨i, hi⟩ hall, Set.sInter_supClosure,
+    Set.sInter_image]
+  simp only [Finset.mem_coe]
+  exact Set.inter_eq_right.2 fun w hw ↦ Set.mem_biUnion hi (Set.mem_iInter₂.1 hw i hi)
 
 theorem hsplit_subDisjsOfCard [DecidableEq ι] {m : ℕ} (hm : 0 < m) (hmI : m < I.card) :
-    ∀ i ∈ I, ∀ j ∈ I, j ≠ i → ∃ S ⊆ I, subDisj p S ∈ subDisjsOfCard I p m ∧ j ∈ S ∧ i ∉ S := by
+    ∀ i ∈ I, ∀ j ∈ I, j ≠ i →
+      ∃ S ⊆ I, (⋃ k ∈ S, p k) ∈ subDisjsOfCard I p m ∧ j ∈ S ∧ i ∉ S := by
   intro i hi j hj hji
   obtain ⟨S', hS', hcard⟩ := Finset.exists_subset_card_eq (s := (I.erase i).erase j) (n := m - 1)
     (by rw [Finset.card_erase_of_mem (Finset.mem_erase.2 ⟨hji, hj⟩), Finset.card_erase_of_mem hi]
@@ -214,7 +175,7 @@ theorem forall_card_eq_exists_mem_iff [DecidableEq ι] {T : Finset ι} (hT : T �
     omega
 
 /-- The size-`|I|` alternatives are the disjunction itself. -/
-theorem subDisjsOfCard_card : subDisjsOfCard I p I.card = {disj I p} := by
+theorem subDisjsOfCard_card : subDisjsOfCard I p I.card = {⋃ i ∈ I, p i} := by
   ext q
   simp only [subDisjsOfCard, Set.mem_insert_iff, Set.mem_ofPred_eq, Set.mem_singleton_iff,
     or_iff_left_iff_imp]
@@ -226,18 +187,18 @@ theorem subDisjsOfCard_card : subDisjsOfCard I p I.card = {disj I p} := by
 theorem exhIEII_subDisjsOfCard [DecidableEq ι] [∀ w i, Decidable (w ∈ p i)]
     (hsep : ∀ i ∈ I, ∃ w, ∀ j ∈ I, w ∈ p j ↔ j = i) (hall : ∃ w, ∀ i ∈ I, w ∈ p i) {m : ℕ}
     (hm : 0 < m) (hmI : m ≤ I.card) :
-    exhIEII (subDisjsOfCard I p m) (disj I p) =
+    exhIEII (subDisjsOfCard I p m) (⋃ i ∈ I, p i) =
       {w | I.card < m + (I.filter fun i ↦ w ∈ p i).card} := by
   have hI : I.Nonempty := Finset.card_pos.1 (by omega)
   rcases hmI.lt_or_eq with hmI | rfl
   swap
-  · have hsat : (disj I p).Nonempty :=
-      hall.imp fun w hw ↦ mem_subDisj.2 (hI.imp fun i hi ↦ ⟨hi, hw i hi⟩)
+  · have hsat : (⋃ i ∈ I, p i).Nonempty :=
+      let ⟨w, hw⟩ := hall; let ⟨i, hi⟩ := hI; ⟨w, Set.mem_biUnion hi (hw i hi)⟩
     rw [subDisjsOfCard_card, exhIEII_singleton hsat]
     ext w
     constructor
     · intro h
-      obtain ⟨i, hi, hw⟩ := mem_subDisj.1 h
+      obtain ⟨i, hi, hw⟩ := Set.mem_iUnion₂.1 h
       have := Finset.card_pos.2
         (⟨i, Finset.mem_filter.2 ⟨hi, hw⟩⟩ : (I.filter fun i ↦ w ∈ p i).Nonempty)
       show I.card < I.card + _
@@ -246,8 +207,8 @@ theorem exhIEII_subDisjsOfCard [DecidableEq ι] [∀ w i, Decidable (w ∈ p i)]
       have h' : I.card < I.card + (I.filter fun i ↦ w ∈ p i).card := h
       have hpos : 0 < (I.filter fun i ↦ w ∈ p i).card := by omega
       obtain ⟨i, hi⟩ := Finset.card_pos.1 hpos
-      exact mem_subDisj.2 ⟨i, (Finset.mem_filter.1 hi).1, (Finset.mem_filter.1 hi).2⟩
-  rw [exhIEII_eq_sInter_of_subDisjs (subDisjsOfCard_subset_subDisjs hI hm)
+      exact Set.mem_biUnion (Finset.mem_filter.1 hi).1 (Finset.mem_filter.1 hi).2
+  rw [exhIEII_eq_inter_sInter (subDisjsOfCard_subset_supClosure hI hm)
     (hsplit_subDisjsOfCard hm hmI) hsep hI hall]
   ext w
   simp only [Set.mem_inter_iff, Set.mem_sInter, Set.mem_ofPred_eq]
@@ -255,41 +216,38 @@ theorem exhIEII_subDisjsOfCard [DecidableEq ι] [∀ w i, Decidable (w ∈ p i)]
   simp only [Finset.mem_filter]
   constructor
   · rintro ⟨_, h⟩ S hS hcard
-    obtain ⟨i, hi, hwi⟩ := mem_subDisj.1 (h _ (Or.inr ⟨S, hS, hcard, rfl⟩))
+    obtain ⟨i, hi, hwi⟩ := Set.mem_iUnion₂.1 (h _ (Or.inr ⟨S, hS, hcard, rfl⟩))
     exact ⟨i, hi, hS hi, hwi⟩
   · intro h
     obtain ⟨S, hS, hcard⟩ := Finset.exists_subset_card_eq (s := I) (n := m) hmI.le
     obtain ⟨i, hi, hiI, hwi⟩ := h S hS hcard
-    refine ⟨mem_subDisj.2 ⟨i, hiI, hwi⟩, ?_⟩
+    refine ⟨Set.mem_biUnion hiI hwi, ?_⟩
     rintro r (rfl | ⟨S', hS', hcard', rfl⟩)
-    · exact mem_subDisj.2 ⟨i, hiI, hwi⟩
+    · exact Set.mem_biUnion hiI hwi
     · obtain ⟨j, hj, _, hwj⟩ := h S' hS' hcard'
-      exact mem_subDisj.2 ⟨j, hj, hwj⟩
+      exact Set.mem_biUnion hj hwj
 
 /-- With the conjunction of the disjuncts among the alternatives, it is innocently excludable
 whenever there are two disjuncts, and exhaustification then denies it. -/
 theorem isInnocentlyExcludable_iInter_of_insert (hsep : ∀ i ∈ I, ∃ w, ∀ j ∈ I, w ∈ p j ↔ j = i)
     (h2 : 2 ≤ I.card) :
-    IsInnocentlyExcludable (insert (⋂ i ∈ I, p i) (subDisjs I p)) (disj I p) (⋂ i ∈ I, p i) := by
+    IsInnocentlyExcludable (insert (⋂ i ∈ I, p i) (supClosure (p '' I))) (⋃ i ∈ I, p i)
+      (⋂ i ∈ I, p i) := by
   refine (isInnocentlyExcludable_iff_exhMW_subset_compl _ _ _ (Set.mem_insert _ _)).2 ?_
   intro w ⟨hw, hmin⟩
-  obtain ⟨i, hi, hwi⟩ := mem_subDisj.1 hw
+  obtain ⟨i, hi, hwi⟩ := Set.mem_iUnion₂.1 hw
   obtain ⟨j, hj, hji⟩ := Finset.exists_mem_ne (by omega : 1 < I.card) i
   intro hall
   simp only [Set.mem_iInter] at hall
   obtain ⟨v, hv⟩ := hsep i hi
-  refine hmin ⟨v, mem_subDisj.2 ⟨i, hi, (hv i hi).2 rfl⟩, ?_, ?_⟩
-  · rintro q (rfl | ⟨S, hS, _, rfl⟩) hvq
+  refine hmin ⟨v, Set.mem_biUnion hi ((hv i hi).2 rfl), ?_, fun hle ↦ ?_⟩
+  · rintro q (rfl | hq) hvq
     · exact absurd (Set.mem_iInter₂.1 hvq j hj) (by rw [hv j hj]; exact hji)
-    · obtain ⟨k, hk, hvk⟩ := mem_subDisj.1 hvq
-      exact mem_subDisj.2 ⟨k, hk, ((hv k (hS hk)).1 hvk) ▸ hwi⟩
-  · intro hle
-    obtain ⟨k, hk, hvk⟩ := mem_subDisj.1
-      (hle _ (Or.inr ⟨{j}, by simpa, by simp, rfl⟩) (mem_subDisj.2 ⟨j, by simp, hall j hj⟩))
-    rw [Finset.mem_singleton] at hk
-    subst hk
-    exact hji ((hv k hj).1 hvk)
-
+    · obtain ⟨S, -, hS, rfl⟩ := Set.mem_supClosure_image.1 hq
+      obtain ⟨k, hk, hvk⟩ := Set.mem_iUnion₂.1 hvq
+      exact Set.mem_biUnion hk (((hv k (hS hk)).1 hvk) ▸ hwi)
+  · exact hji ((hv j hj).1
+      (hle _ (Or.inr (subset_supClosure (Set.mem_image_of_mem p hj))) (hall j hj)))
 
 section Pair
 

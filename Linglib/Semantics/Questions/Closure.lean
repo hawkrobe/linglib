@@ -4,16 +4,17 @@ public import Linglib.Semantics.Questions.Exhaustivity
 public import Linglib.Core.Order.OfCriteria
 public import Mathlib.Data.Fintype.Powerset
 public import Mathlib.Order.CompleteLattice.Finset
+public import Linglib.Core.Order.SupClosed
 
 /-!
 # Hamblin sets closed under conjunction or disjunction
 
-A wh-question over atomic answers `a i` denotes, under [dayal-1996]'s sum-closed restrictor,
-the family of conjunctions `conjFamily a S` over non-empty groups `S`; under [spector-2008]'s
-higher-order quantification (pruned to disjunctions of atoms, as in [fox-2018]) it denotes the
-family of disjunctions `disj a S`. Both families are read off the atoms true at a world,
-`Preorder.satisfied` with the atoms as criteria, and both induce the same partition, the kernel of
-that map.
+A wh-question over atomic answers `a i` denotes, under Dayal's sum-closed restrictor, the closure
+of the atoms under conjunction, `infClosure (Set.range a)`, the conjunctions over nonempty groups
+of atoms; under Spector's higher-order quantification, pruned to disjunctions of atoms as in Fox,
+it denotes their closure under disjunction, `supClosure (Set.range a)`. Both families are read
+off the atoms true at a world, `Preorder.satisfied` with the atoms as criteria, and both induce
+the same partition, the kernel of that map.
 
 ## References
 
@@ -27,85 +28,54 @@ that map.
 
 namespace Question
 
-variable {W ι : Type*} (a : ι → Set W)
-
-/-- The conjunction of the atoms in a group. -/
-def conjFamily (S : Finset ι) : Set W := ⋂ i ∈ S, a i
-
-/-- The disjunction of the atoms in a group. -/
-def disj (S : Finset ι) : Set W := ⋃ i ∈ S, a i
-
-/-- The Hamblin set closed under conjunction has one member per non-empty group. -/
-def conjClosure : Set (Set W) := conjFamily a '' {S | S.Nonempty}
-
-/-- The Hamblin set closed under disjunction has one member per non-empty group. -/
-def disjClosure : Set (Set W) := disj a '' {S | S.Nonempty}
-
-variable {a}
+variable {W ι : Type*} {a : ι → Set W}
 
 /-- An atom is among those true at a world iff it is true there. -/
 @[simp] theorem mem_satisfied_iff {w : W} {i : ι} :
     i ∈ Preorder.satisfied (fun v i ↦ v ∈ a i) Set.univ w ↔ w ∈ a i :=
   Preorder.mem_satisfied_univ
 
-theorem mem_conjFamily {S : Finset ι} {w : W} : w ∈ conjFamily a S ↔ ∀ i ∈ S, w ∈ a i :=
-  Set.mem_iInter₂
-
-theorem mem_disj {S : Finset ι} {w : W} : w ∈ disj a S ↔ ∃ i ∈ S, w ∈ a i := by simp [disj]
-
-theorem mem_conjFamily_iff_subset {S : Finset ι} {w : W} :
-    w ∈ conjFamily a S ↔ ↑S ⊆ Preorder.satisfied (fun v i ↦ v ∈ a i) Set.univ w :=
-  mem_conjFamily.trans ⟨fun h _ hi ↦ ⟨trivial, h _ hi⟩, fun h _ hi ↦ (h hi).2⟩
-
-theorem conjFamily_singleton (i : ι) : conjFamily a {i} = a i := Finset.set_biInter_singleton i a
-
-theorem disj_singleton (i : ι) : disj a {i} = a i := Finset.set_biUnion_singleton i a
-
-theorem conjFamily_mem_conjClosure {S : Finset ι} (hS : S.Nonempty) :
-    conjFamily a S ∈ conjClosure a :=
-  ⟨S, hS, rfl⟩
-
-theorem disj_mem_disjClosure {S : Finset ι} (hS : S.Nonempty) : disj a S ∈ disjClosure a :=
-  ⟨S, hS, rfl⟩
-
-theorem conjClosure_finite [Fintype ι] : (conjClosure a).Finite :=
-  (Set.toFinite {S : Finset ι | S.Nonempty}).image _
-
-theorem disjClosure_finite [Fintype ι] : (disjClosure a).Finite :=
-  (Set.toFinite {S : Finset ι | S.Nonempty}).image _
+/-- A world verifies the conjunction of a group iff the group's atoms are true there. -/
+theorem mem_biInter_iff_subset {S : Finset ι} {w : W} :
+    w ∈ ⋂ i ∈ S, a i ↔ ↑S ⊆ Preorder.satisfied (fun v i ↦ v ∈ a i) Set.univ w :=
+  Set.mem_iInter₂.trans ⟨fun h _ hi ↦ ⟨trivial, h _ hi⟩, fun h _ hi ↦ (h hi).2⟩
 
 /-- Under conjunctive closure, two worlds are in the same cell iff the same atoms are true at
 them. -/
-theorem partition_conjClosure :
-    partition (conjClosure a) = Setoid.ker (Preorder.satisfied (fun v i ↦ v ∈ a i) Set.univ) := by
+theorem partition_infClosure_range :
+    partition (infClosure (Set.range a)) =
+      Setoid.ker (Preorder.satisfied (fun v i ↦ v ∈ a i) Set.univ) := by
   ext v w
   rw [partition_iff, Setoid.ker_def]
   constructor
   · intro h
     ext i
-    simpa only [conjFamily_singleton, Preorder.mem_satisfied, Set.mem_univ, true_and] using
-      h _ (conjFamily_mem_conjClosure (Finset.singleton_nonempty i))
-  · rintro h _ ⟨S, -, rfl⟩
-    rw [mem_conjFamily_iff_subset, mem_conjFamily_iff_subset, h]
+    simpa only [Preorder.mem_satisfied, Set.mem_univ, true_and] using
+      h _ (subset_infClosure (Set.mem_range_self i))
+  · intro h q hq
+    obtain ⟨S, -, rfl⟩ := Set.mem_infClosure_range.1 hq
+    rw [mem_biInter_iff_subset, mem_biInter_iff_subset, h]
 
 /-- Under disjunctive closure, two worlds are in the same cell iff the same atoms are true at
 them. -/
-theorem partition_disjClosure :
-    partition (disjClosure a) = Setoid.ker (Preorder.satisfied (fun v i ↦ v ∈ a i) Set.univ) := by
+theorem partition_supClosure_range :
+    partition (supClosure (Set.range a)) =
+      Setoid.ker (Preorder.satisfied (fun v i ↦ v ∈ a i) Set.univ) := by
   ext v w
   rw [partition_iff, Setoid.ker_def]
   constructor
   · intro h
     ext i
-    simpa only [disj_singleton, Preorder.mem_satisfied, Set.mem_univ, true_and] using
-      h _ (disj_mem_disjClosure (Finset.singleton_nonempty i))
-  · rintro h _ ⟨S, -, rfl⟩
+    simpa only [Preorder.mem_satisfied, Set.mem_univ, true_and] using
+      h _ (subset_supClosure (Set.mem_range_self i))
+  · intro h q hq
+    obtain ⟨S, -, rfl⟩ := Set.mem_supClosure_range.1 hq
     simp only [Set.ext_iff, Preorder.mem_satisfied, Set.mem_univ, true_and] at h
-    simp only [mem_disj, h]
+    simp only [Set.mem_iUnion, exists_prop, h]
 
 /-- Both closures induce the same partition. -/
-theorem partition_conjClosure_eq_disjClosure :
-    partition (conjClosure a) = partition (disjClosure a) :=
-  partition_conjClosure.trans partition_disjClosure.symm
+theorem partition_infClosure_range_eq_supClosure_range :
+    partition (infClosure (Set.range a)) = partition (supClosure (Set.range a)) :=
+  partition_infClosure_range.trans partition_supClosure_range.symm
 
 end Question

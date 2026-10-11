@@ -97,7 +97,7 @@ theorem mem_ansP_iff {P : α → Set W} {w : W} {p : Set W} :
     rintro _ ⟨⟨b, rfl⟩, hb⟩ hle
     exact hmin hb hle
   · rintro ⟨⟨⟨a, rfl⟩, ha⟩, hmin⟩
-    exact ⟨a, ⟨ha, λ b hb hle => hmin (y := P b) ⟨⟨b, rfl⟩, hb⟩ hle⟩, rfl⟩
+    exact ⟨a, ⟨ha, fun b hb hle ↦ hmin (y := P b) ⟨⟨b, rfl⟩, hb⟩ hle⟩, rfl⟩
 
 /-- Under Dayal's presupposition the operator returns the strongest true answer alone. -/
 theorem ansP_eq_singleton {P : α → Set W} {w : W} {p : Set W}
@@ -118,7 +118,7 @@ Exhaustivity exactly when the non-modalized question satisfies Dayal's presuppos
 accessible world where some short answer is true. -/
 theorem relExh_poss_iff (R : SetRel W W) (P : α → Set W) (w : W) :
     RelExh R.preimage R P w ↔ ∀ v, w ~[R] v → (trueShort P v).Nonempty → DEP P v :=
-  forall₂_congr λ v hv => imp_congr_left
+  forall₂_congr fun v hv ↦ imp_congr_left
     ⟨fun ⟨a, _, ha⟩ ↦ ⟨a, ha⟩, fun ⟨a, ha⟩ ↦ ⟨a, ⟨v, ha, hv⟩, ha⟩⟩
 
 /-- For a non-modalized question, over the identity relation on which both modals are the
@@ -143,14 +143,14 @@ theorem eq_of_mem_localExh {P : α → Set W} {w : W} {a b : α} (ha : w ∈ loc
 theorem dep_localExh {P : α → Set W} {w : W} (h : (trueShort (localExh P) w).Nonempty) :
     DEP (localExh P) w :=
   let ⟨a, ha⟩ := h
-  (dep_iff _ _).2 ⟨a, ha, λ b hb => by
+  (dep_iff _ _).2 ⟨a, ha, fun b hb ↦ by
     simp only [localExh, Function.comp_apply, eq_of_mem_localExh ha hb, subset_rfl]⟩
 
 /-- The exhaustified mention-some reading of a *can*-question satisfies Relativized
 Exhaustivity over any accessibility relation: the uniqueness it presupposes is existential. -/
 theorem relExh_poss_localExh (R : SetRel W W) (P : α → Set W) (w : W) :
     RelExh R.preimage R (localExh P) w :=
-  (relExh_poss_iff R _ w).2 λ _ _ h => dep_localExh h
+  (relExh_poss_iff R _ w).2 fun _ _ h ↦ dep_localExh h
 
 /-! ### The committee scenario -/
 
@@ -178,7 +178,7 @@ theorem chair_scenario :
     ansS (chairR.preimage ∘ localExh chair) 0 = univ ∧
       RelExh chairR.preimage chairR (localExh chair) 0 ∧
         ¬ DEP (chairR.preimage ∘ localExh chair) 0 := by
-  refine ⟨eq_univ_of_forall λ a => ⟨by simp [poss_localExh_chair], λ b _ hle => ?_⟩,
+  refine ⟨eq_univ_of_forall fun a ↦ ⟨by simp [poss_localExh_chair], fun b _ hle ↦ ?_⟩,
     relExh_poss_localExh _ _ _, ?_⟩
   · fin_cases a <;> fin_cases b <;> simp [poss_localExh_chair, subset_def] at hle ⊢
   · rw [dep_iff]
@@ -206,21 +206,22 @@ def assign : Fin 3 → Set AW
   | 2 => assigned 0 ∪ assigned 1
 
 /-- The higher-order answer space is the disjunctive closure of the first-order one. -/
-theorem range_assign : range assign = disjClosure assigned := by
+theorem range_assign : range assign = supClosure (range assigned) := by
+  rw [Set.supClosure_range_eq_image]
   ext q
-  simp only [mem_range, disjClosure, mem_image, mem_ofPred_eq]
+  simp only [mem_range, mem_image, mem_ofPred_eq]
   constructor
   · rintro ⟨i, rfl⟩
     fin_cases i
-    · exact ⟨{0}, by simp, by simp [disj, assign]⟩
-    · exact ⟨{1}, by simp, by simp [disj, assign]⟩
-    · exact ⟨{0, 1}, by simp, by simp [disj, assign]⟩
+    · exact ⟨{0}, by simp, by simp [assign]⟩
+    · exact ⟨{1}, by simp, by simp [assign]⟩
+    · exact ⟨{0, 1}, by simp, by simp [assign]⟩
   · rintro ⟨S, hS, rfl⟩
     fin_cases S
     · exact absurd hS (by simp)
-    · exact ⟨0, by simp [disj, assign]⟩
-    · exact ⟨1, by simp [disj, assign]⟩
-    · exact ⟨2, by simp [disj, assign]⟩
+    · exact ⟨0, by simp [assign]⟩
+    · exact ⟨1, by simp [assign]⟩
+    · exact ⟨2, by simp [assign]⟩
 
 /-- The modal base: world `0` accesses the uniqueness-violating world `3`, world `4` does
 not. -/
@@ -251,8 +252,8 @@ theorem assign_scenario :
     ext w; fin_cases w <;> simp [assignR, assign, assigned]
   have h2 : assignR.core (assign 2) = univ := by
     ext w; fin_cases w <;> simp [assignR, assign, assigned]
-  refine ⟨(dep_iff _ _).2 ⟨2, by simp [h2], λ b hb => by
-    fin_cases b <;> simp [h0, h1, h2] at hb ⊢⟩, λ h => ?_, λ v hv _ => ?_⟩
+  refine ⟨(dep_iff _ _).2 ⟨2, by simp [h2], fun b hb ↦ by
+    fin_cases b <;> simp [h0, h1, h2] at hb ⊢⟩, fun h ↦ ?_, fun v hv _ ↦ ?_⟩
   · simpa [dep_assign_iff] using
       h 3 (by simp [assignR]) ⟨2, by simp [h2], by simp [assign, assigned]⟩
   · exact (dep_assign_iff v).2 (by simpa [assignR] using hv)
@@ -263,7 +264,7 @@ and holds at world 4, the universal local-uniqueness inference. -/
 theorem assign_can_scenario :
     ¬ RelExh assignR.preimage assignR assigned 0 ∧ RelExh assignR.preimage assignR assigned 4 := by
   simp only [relExh_poss_iff, dep_assigned_iff]
-  exact ⟨λ h => by simpa using h 3 (by simp [assignR]) ⟨0, by simp [assigned]⟩,
-    λ v hv _ => by simpa [assignR] using hv⟩
+  exact ⟨fun h ↦ by simpa using h 3 (by simp [assignR]) ⟨0, by simp [assigned]⟩,
+    fun v hv _ ↦ by simpa [assignR] using hv⟩
 
 end Xiang2022

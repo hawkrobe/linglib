@@ -19,16 +19,17 @@ contains the disjunction of two incomparable members, the negative island of hig
 questions (`not_nonVacuity_exhCell_of_union`), unless a necessity modal intervenes
 (`nonVacuity_box`). With exhaustification as [bar-lev-fox-2020]'s cell operator, a question closed
 under conjunction and its disjunctive counterpart identify the same cells by different members
-(`cell_conjFamily`, `cell_disj`), and the answer set of the paper's revised answer operator is a
+(`cell_biInter`, `cell_biUnion`), and the answer set of the paper's revised answer operator is a
 singleton for the former but not for the latter: mention-all against mention-some.
 
 ## Implementation notes
 
 Questions are Hamblin sets `Set (Set W)` rather than `Question` lower sets, since the paper's sets
 are not antichains. The three-location model is a family of atoms `a : ι → Set W` with every set of
-atoms true at some world (`Rich`); `Question.conjClosure` and `Question.disjClosure` are the paper's
-two denotations; their innocently excludable sets are characterized and the cells read off. Sections
-5–7 on the distribution of mention-some enter only through the rows on singular wh-phrases.
+atoms true at some world (`Rich`); the closures of the atoms under conjunction and under
+disjunction, `infClosure (range a)` and `supClosure (range a)`, are the paper's two denotations;
+their innocently excludable sets are characterized and the cells read off. Sections 5–7 on the
+distribution of mention-some enter only through the rows on singular wh-phrases.
 
 ## References
 
@@ -154,16 +155,17 @@ theorem isExhaustivelyResolvable_range_iff_existsUnique {ι : Type*} {a : ι →
 
 /-- A plural which-question, closed under conjunction, is resolvable wherever some member is
 true. -/
-theorem isExhaustivelyResolvable_conjClosure {ι : Type*} [Fintype ι] {a : ι → Set W} {w : W}
-    (hw : ∃ i, w ∈ a i) : IsExhaustivelyResolvable (conjClosure a) w := by
+theorem isExhaustivelyResolvable_infClosure_range {ι : Type*} [Fintype ι] {a : ι → Set W} {w : W}
+    (hw : ∃ i, w ∈ a i) : IsExhaustivelyResolvable (infClosure (range a)) w := by
   classical
   obtain ⟨i, hi⟩ := hw
   let T : Finset ι := Finset.univ.filter (fun i ↦ w ∈ a i)
   have hT : ∀ i, i ∈ T ↔ w ∈ a i := fun i ↦ by simp [T]
-  refine ⟨conjFamily a T, ⟨conjFamily_mem_conjClosure ⟨i, (hT i).2 hi⟩,
-    mem_conjFamily.2 fun i hi ↦ (hT i).1 hi⟩, ?_⟩
-  rintro _ ⟨⟨S, -, rfl⟩, hwS⟩ v hv
-  exact mem_conjFamily.2 fun j hj ↦ mem_conjFamily.1 hv j ((hT j).2 (mem_conjFamily.1 hwS j hj))
+  refine ⟨(⋂ i ∈ T, a i), ⟨mem_infClosure_range.2 ⟨T, ⟨i, (hT i).2 hi⟩, rfl⟩,
+    mem_iInter₂.2 fun i hi ↦ (hT i).1 hi⟩, ?_⟩
+  rintro _ ⟨hq, hwS⟩ v hv
+  obtain ⟨S, -, rfl⟩ := mem_infClosure_range.1 hq
+  exact mem_iInter₂.2 fun j hj ↦ mem_iInter₂.1 hv j ((hT j).2 (mem_iInter₂.1 hwS j hj))
 
 /-! ### Negative islands -/
 
@@ -286,53 +288,53 @@ def atomCell (a : ι → Set W) (T : Finset ι) : Set W :=
 theorem mem_atomCell {T : Finset ι} {v : W} : v ∈ atomCell a T ↔ atoms v = ↑T := Iff.rfl
 
 /-- Both closures induce the atom cells. -/
-theorem strongAnswer_conjClosure_eq {T : Finset ι} {w : W} (hw : atoms w = ↑T) :
-    strongAnswer (conjClosure a) w = atomCell a T := by
+theorem strongAnswer_infClosure_range_eq {T : Finset ι} {w : W} (hw : atoms w = ↑T) :
+    strongAnswer (infClosure (range a)) w = atomCell a T := by
   ext v
-  rw [strongAnswer_eq_cell, partition_conjClosure, Setoid.mem_cell, Setoid.ker_def, hw,
+  rw [strongAnswer_eq_cell, partition_infClosure_range, Setoid.mem_cell, Setoid.ker_def, hw,
     mem_atomCell]
 
-theorem strongAnswer_disjClosure_eq {T : Finset ι} {w : W} (hw : atoms w = ↑T) :
-    strongAnswer (disjClosure a) w = atomCell a T := by
+theorem strongAnswer_supClosure_range_eq {T : Finset ι} {w : W} (hw : atoms w = ↑T) :
+    strongAnswer (supClosure (range a)) w = atomCell a T := by
   ext v
-  rw [strongAnswer_eq_cell, partition_disjClosure, Setoid.mem_cell, Setoid.ker_def, hw,
+  rw [strongAnswer_eq_cell, partition_supClosure_range, Setoid.mem_cell, Setoid.ker_def, hw,
     mem_atomCell]
 
 /-- Under either closure, a world lies below another iff its true atoms are among the other's. -/
-theorem leALT_conjClosure_iff {u v : W} :
-    (u ≤[conjClosure a] v) ↔ atoms u ⊆ atoms v := by
+theorem leALT_infClosure_range_iff {u v : W} :
+    (u ≤[infClosure (range a)] v) ↔ atoms u ⊆ atoms v := by
   constructor
   · intro h i hi
-    exact mem_satisfied_iff.2 (h _ (conjFamily_singleton (a := a) i ▸
-      conjFamily_mem_conjClosure ⟨i, Finset.mem_singleton_self i⟩) (mem_satisfied_iff.1 hi))
-  · rintro h _ ⟨S, -, rfl⟩ hu
-    exact mem_conjFamily_iff_subset.2 ((mem_conjFamily_iff_subset.1 hu).trans h)
+    exact mem_satisfied_iff.2 (h _ (subset_infClosure (mem_range_self i)) (mem_satisfied_iff.1 hi))
+  · rintro h _ hq hu
+    obtain ⟨S, -, rfl⟩ := mem_infClosure_range.1 hq
+    exact mem_biInter_iff_subset.2 ((mem_biInter_iff_subset.1 hu).trans h)
 
-theorem leALT_disjClosure_iff {u v : W} :
-    (u ≤[disjClosure a] v) ↔ atoms u ⊆ atoms v := by
+theorem leALT_supClosure_range_iff {u v : W} :
+    (u ≤[supClosure (range a)] v) ↔ atoms u ⊆ atoms v := by
   constructor
   · intro h i hi
-    exact mem_satisfied_iff.2 (h _ (disj_singleton (a := a) i ▸
-      disj_mem_disjClosure ⟨i, Finset.mem_singleton_self i⟩) (mem_satisfied_iff.1 hi))
-  · rintro h _ ⟨S, -, rfl⟩ hu
-    obtain ⟨i, hi, hui⟩ := mem_disj.1 hu
-    exact mem_disj.2 ⟨i, hi, mem_satisfied_iff.1 (h (mem_satisfied_iff.2 hui))⟩
+    exact mem_satisfied_iff.2 (h _ (subset_supClosure (mem_range_self i)) (mem_satisfied_iff.1 hi))
+  · rintro h _ hq hu
+    obtain ⟨S, -, rfl⟩ := mem_supClosure_range.1 hq
+    obtain ⟨i, hi, hui⟩ := mem_iUnion₂.1 hu
+    exact mem_biUnion hi (mem_satisfied_iff.1 (h (mem_satisfied_iff.2 hui)))
 
 variable (hrich : Rich a)
 include hrich
 
-theorem conjFamily_subset_conjFamily_iff {S T : Finset ι} :
-    conjFamily a T ⊆ conjFamily a S ↔ S ⊆ T := by
+theorem biInter_subset_biInter_iff {S T : Finset ι} :
+    (⋂ i ∈ T, a i) ⊆ (⋂ i ∈ S, a i) ↔ S ⊆ T := by
   constructor
   · intro h i hi
     obtain ⟨w, hw⟩ := hrich T
-    have := mem_conjFamily_iff_subset.1 (h (mem_conjFamily_iff_subset.2 (by rw [hw])))
+    have := mem_biInter_iff_subset.1 (h (mem_biInter_iff_subset.2 (by rw [hw])))
       (Finset.mem_coe.2 hi)
     rw [hw] at this
     exact Finset.mem_coe.1 this
-  · exact fun h _ hv ↦ mem_conjFamily.2 fun i hi ↦ mem_conjFamily.1 hv i (h hi)
+  · exact fun h _ hv ↦ mem_iInter₂.2 fun i hi ↦ mem_iInter₂.1 hv i (h hi)
 
-theorem disj_subset_disj_iff {S T : Finset ι} : disj a S ⊆ disj a T ↔ S ⊆ T := by
+theorem biUnion_subset_biUnion_iff {S T : Finset ι} : (⋃ i ∈ S, a i) ⊆ (⋃ i ∈ T, a i) ↔ S ⊆ T := by
   constructor
   · intro h i hi
     obtain ⟨w, hw⟩ := hrich ({i} : Finset ι)
@@ -340,94 +342,97 @@ theorem disj_subset_disj_iff {S T : Finset ι} : disj a S ⊆ disj a T ↔ S ⊆
       refine mem_satisfied_iff.1 ?_
       rw [hw]
       exact Finset.mem_coe.2 (Finset.mem_singleton_self i)
-    obtain ⟨j, hj, hwj⟩ := mem_disj.1 (h (mem_disj.2 ⟨i, hi, hwi⟩))
+    obtain ⟨j, hj, hwj⟩ := mem_iUnion₂.1 (h (mem_biUnion hi hwi))
     have : j ∈ atoms w := mem_satisfied_iff.2 hwj
     rw [hw, Finset.coe_singleton, mem_singleton_iff] at this
     exact this ▸ hj
   · rintro h _ hv
-    obtain ⟨i, hi, hvi⟩ := mem_disj.1 hv
-    exact mem_disj.2 ⟨i, h hi, hvi⟩
+    obtain ⟨i, hi, hvi⟩ := mem_iUnion₂.1 hv
+    exact mem_biUnion (h hi) hvi
 
 /-- Given the conjunction over a group, a member is innocently excludable iff its group is not
 included, as the paper computes for the low-type question. -/
 theorem isInnocentlyExcludable_conj_iff [Fintype ι] {S T : Finset ι} (hS : S.Nonempty) :
-    IsInnocentlyExcludable (conjClosure a) (conjFamily a T) (conjFamily a S) ↔ ¬ S ⊆ T := by
+    IsInnocentlyExcludable (infClosure (range a)) (⋂ i ∈ T, a i) (⋂ i ∈ S, a i) ↔ ¬ S ⊆ T := by
   obtain ⟨w₀, hw₀⟩ := hrich T
-  have hw₀T : w₀ ∈ conjFamily a T := mem_conjFamily_iff_subset.2 (by rw [hw₀])
+  have hw₀T : w₀ ∈ (⋂ i ∈ T, a i) := mem_biInter_iff_subset.2 (by rw [hw₀])
   constructor
-  · exact fun hIE hST ↦ not_isInnocentlyExcludable_of_phi_subset conjClosure_finite ⟨w₀, hw₀T⟩
-      ((conjFamily_subset_conjFamily_iff hrich).2 hST) hIE
+  · exact fun hIE hST ↦ not_isInnocentlyExcludable_of_phi_subset (finite_range a).infClosure
+      ⟨w₀, hw₀T⟩
+      ((biInter_subset_biInter_iff hrich).2 hST) hIE
   · intro hST
-    refine .of_forall_subset_or_notMem (conjFamily_mem_conjClosure hS) hw₀T ?_ ?_
-    · rw [mem_conjFamily_iff_subset, hw₀]
+    refine .of_forall_subset_or_notMem (mem_infClosure_range.2 ⟨_, hS, rfl⟩) hw₀T ?_ ?_
+    · rw [mem_biInter_iff_subset, hw₀]
       exact fun h ↦ hST (Finset.coe_subset.1 h)
-    · rintro _ ⟨U, -, rfl⟩
+    · rintro _ hq
+      obtain ⟨U, -, rfl⟩ := mem_infClosure_range.1 hq
       by_cases hUT : U ⊆ T
-      · exact Or.inl ((conjFamily_subset_conjFamily_iff hrich).2 hUT)
+      · exact Or.inl ((biInter_subset_biInter_iff hrich).2 hUT)
       · right
-        rw [mem_conjFamily_iff_subset, hw₀]
+        rw [mem_biInter_iff_subset, hw₀]
         exact fun h ↦ hUT (Finset.coe_subset.1 h)
 
 /-- The minimal worlds given the disjunction over a group are the sole witnesses of its
 members. -/
-theorem mem_exhMW_disjClosure_iff {T : Finset ι} {u : W} :
-    u ∈ exhMW (disjClosure a) (disj a T) ↔ ∃ i ∈ T, atoms u = ↑({i} : Finset ι) := by
+theorem mem_exhMW_supClosure_range_iff {T : Finset ι} {u : W} :
+    u ∈ exhMW (supClosure (range a)) (⋃ i ∈ T, a i) ↔ ∃ i ∈ T, atoms u = ↑({i} : Finset ι) := by
   have hsing : ∀ {i : ι} {v : W}, atoms v = ↑({i} : Finset ι) → v ∈ a i := fun {i v} hv ↦ by
     refine mem_satisfied_iff.1 ?_
     rw [hv]
     exact Finset.mem_coe.2 (Finset.mem_singleton_self i)
   constructor
   · rintro ⟨hu, hmin⟩
-    obtain ⟨i, hi, hui⟩ := mem_disj.1 hu
+    obtain ⟨i, hi, hui⟩ := mem_iUnion₂.1 hu
     obtain ⟨v, hv⟩ := hrich ({i} : Finset ι)
-    have hvu : v ≤[disjClosure a] u := leALT_disjClosure_iff.2 (by
+    have hvu : v ≤[supClosure (range a)] u := leALT_supClosure_range_iff.2 (by
       rw [hv, Finset.coe_singleton]
       exact singleton_subset_iff.2 (mem_satisfied_iff.2 hui))
-    have huv : u ≤[disjClosure a] v :=
-      by_contra fun h ↦ hmin ⟨v, mem_disj.2 ⟨i, hi, hsing hv⟩, hvu, h⟩
+    have huv : u ≤[supClosure (range a)] v :=
+      by_contra fun h ↦ hmin ⟨v, mem_biUnion hi (hsing hv), hvu, h⟩
     refine ⟨i, hi, subset_antisymm ?_ ?_⟩
     · rw [← hv]
-      exact leALT_disjClosure_iff.1 huv
+      exact leALT_supClosure_range_iff.1 huv
     · rw [Finset.coe_singleton]
       exact singleton_subset_iff.2 (mem_satisfied_iff.2 hui)
   · rintro ⟨i, hi, hu⟩
-    refine ⟨mem_disj.2 ⟨i, hi, hsing hu⟩, ?_⟩
+    refine ⟨mem_biUnion hi (hsing hu), ?_⟩
     rintro ⟨v, hv, hvu, hnuv⟩
-    obtain ⟨j, -, hvj⟩ := mem_disj.1 hv
+    obtain ⟨j, -, hvj⟩ := mem_iUnion₂.1 hv
     have hj : j ∈ atoms v := mem_satisfied_iff.2 hvj
-    have hji : j ∈ atoms u := leALT_disjClosure_iff.1 hvu hj
+    have hji : j ∈ atoms u := leALT_supClosure_range_iff.1 hvu hj
     rw [hu, Finset.coe_singleton, mem_singleton_iff] at hji
     subst hji
-    refine hnuv (leALT_disjClosure_iff.2 ?_)
+    refine hnuv (leALT_supClosure_range_iff.2 ?_)
     rw [hu, Finset.coe_singleton]
     exact singleton_subset_iff.2 hj
 
 /-- Given the disjunction over a group, a member is innocently excludable iff its group is
 disjoint from it, as the paper computes for the high-type question. -/
 theorem isInnocentlyExcludable_disj_iff {S T : Finset ι} (hS : S.Nonempty) :
-    IsInnocentlyExcludable (disjClosure a) (disj a T) (disj a S) ↔ Disjoint S T := by
-  rw [isInnocentlyExcludable_iff_exhMW_subset_compl _ _ _ (disj_mem_disjClosure hS),
+    IsInnocentlyExcludable (supClosure (range a)) (⋃ i ∈ T, a i) (⋃ i ∈ S, a i) ↔ Disjoint S T := by
+  rw [isInnocentlyExcludable_iff_exhMW_subset_compl _ _ _ (mem_supClosure_range.2 ⟨_, hS, rfl⟩),
     Finset.disjoint_left]
   constructor
   · intro h i hiS hiT
     obtain ⟨v, hv⟩ := hrich ({i} : Finset ι)
-    refine h ((mem_exhMW_disjClosure_iff hrich).2 ⟨i, hiT, hv⟩) (mem_disj.2 ⟨i, hiS, ?_⟩)
+    refine h ((mem_exhMW_supClosure_range_iff hrich).2 ⟨i, hiT, hv⟩) (mem_biUnion hiS ?_)
     refine mem_satisfied_iff.1 ?_
     rw [hv]
     exact Finset.mem_coe.2 (Finset.mem_singleton_self i)
   · intro h u hu huS
-    obtain ⟨i, hiT, hui⟩ := (mem_exhMW_disjClosure_iff hrich).1 hu
-    obtain ⟨j, hjS, huj⟩ := mem_disj.1 huS
+    obtain ⟨i, hiT, hui⟩ := (mem_exhMW_supClosure_range_iff hrich).1 hu
+    obtain ⟨j, hjS, huj⟩ := mem_iUnion₂.1 huS
     have : j ∈ atoms u := mem_satisfied_iff.2 huj
     rw [hui, Finset.coe_singleton, mem_singleton_iff] at this
     exact h hjS (this ▸ hiT)
 
 /-- For the conjunctive question, the member for a group identifies the cell of those atoms. -/
-theorem cell_conjFamily [Fintype ι] (T : Finset ι) :
-    cell (conjClosure a) (conjFamily a T) = atomCell a T := by
-  rw [conjClosure, cell_image_eq _ fun S hS ↦ isInnocentlyExcludable_conj_iff hrich hS]
+theorem cell_biInter [Fintype ι] (T : Finset ι) :
+    cell (infClosure (range a)) (⋂ i ∈ T, a i) = atomCell a T := by
+  rw [infClosure_range_eq_image, cell_image_eq (P := fun S ↦ ¬ S ⊆ T) _ fun S hS ↦ by
+    rw [← infClosure_range_eq_image]; exact isInnocentlyExcludable_conj_iff hrich hS]
   ext x
-  simp only [mem_ofPred_eq, mem_conjFamily_iff_subset, not_not, mem_atomCell]
+  simp only [mem_ofPred_eq, mem_biInter_iff_subset, not_not, mem_atomCell]
   constructor
   · rintro ⟨-, h⟩
     ext i
@@ -438,11 +443,12 @@ theorem cell_conjFamily [Fintype ι] (T : Finset ι) :
     exact ⟨by rw [hx], fun S _ ↦ by rw [hx, Finset.coe_subset]⟩
 
 /-- For the disjunctive question, the member for a group identifies the same cell. -/
-theorem cell_disj {T : Finset ι} (hT : T.Nonempty) :
-    cell (disjClosure a) (disj a T) = atomCell a T := by
-  rw [disjClosure, cell_image_eq _ fun S hS ↦ isInnocentlyExcludable_disj_iff hrich hS]
+theorem cell_biUnion {T : Finset ι} (hT : T.Nonempty) :
+    cell (supClosure (range a)) (⋃ i ∈ T, a i) = atomCell a T := by
+  rw [supClosure_range_eq_image, cell_image_eq (P := fun S ↦ Disjoint S T) _ fun S hS ↦ by
+    rw [← supClosure_range_eq_image]; exact isInnocentlyExcludable_disj_iff hrich hS]
   ext x
-  simp only [mem_ofPred_eq, mem_disj, Finset.not_disjoint_iff, mem_atomCell]
+  simp only [mem_ofPred_eq, mem_iUnion, exists_prop, Finset.not_disjoint_iff, mem_atomCell]
   constructor
   · rintro ⟨-, h⟩
     ext i
@@ -462,24 +468,26 @@ def ans (Exh : Set W → Set W) (H : Set (Set W)) (w : W) : Set (Set W) :=
 
 /-- The conjunctive question's answer set is the conjunction over the true atoms, the mention-all
 reading. -/
-theorem ans_conjClosure [Fintype ι] {T : Finset ι} (hT : T.Nonempty) {w : W}
+theorem ans_infClosure_range [Fintype ι] {T : Finset ι} (hT : T.Nonempty) {w : W}
     (hw : atoms w = ↑T) :
-    ans (cell (conjClosure a)) (conjClosure a) w = {conjFamily a T} := by
+    ans (cell (infClosure (range a))) (infClosure (range a)) w = {(⋂ i ∈ T, a i)} := by
   ext q
   rw [mem_singleton_iff]
   constructor
-  · rintro ⟨⟨S, -, rfl⟩, hwS, h⟩
+  · rintro ⟨hq, hwS, h⟩
+    obtain ⟨S, -, rfl⟩ := mem_infClosure_range.1 hq
     have h1 : S ⊆ T := by
-      have := mem_conjFamily_iff_subset.1 hwS
+      have := mem_biInter_iff_subset.1 hwS
       rw [hw] at this
       exact Finset.coe_subset.1 this
-    have h2 : T ⊆ S := (conjFamily_subset_conjFamily_iff hrich).1
-      (h _ (conjFamily_mem_conjClosure hT) (by rw [cell_conjFamily hrich T]; exact hw))
+    have h2 : T ⊆ S := (biInter_subset_biInter_iff hrich).1
+      (h _ (mem_infClosure_range.2 ⟨_, hT, rfl⟩) (by rw [cell_biInter hrich T]; exact hw))
     rw [Finset.Subset.antisymm h1 h2]
   · rintro rfl
-    refine ⟨conjFamily_mem_conjClosure hT, mem_conjFamily_iff_subset.2 (by rw [hw]), ?_⟩
-    rintro _ ⟨U, hU, rfl⟩ hwU
-    rw [cell_conjFamily hrich U] at hwU
+    refine ⟨mem_infClosure_range.2 ⟨_, hT, rfl⟩, mem_biInter_iff_subset.2 (by rw [hw]), ?_⟩
+    rintro _ hq hwU
+    obtain ⟨U, hU, rfl⟩ := mem_infClosure_range.1 hq
+    rw [cell_biInter hrich U] at hwU
     have hwU' : atoms w = ↑U := hwU
     rw [hw, Finset.coe_inj] at hwU'
     subst hwU'
@@ -487,35 +495,39 @@ theorem ans_conjClosure [Fintype ι] {T : Finset ι} (hT : T.Nonempty) {w : W}
 
 /-- The disjunctive question's answer set consists of the disjunctions over the non-empty
 sub-groups of the true atoms, the mention-some reading. -/
-theorem ans_disjClosure {T : Finset ι} (hT : T.Nonempty) {w : W} (hw : atoms w = ↑T) :
-    ans (cell (disjClosure a)) (disjClosure a) w = disj a '' {S | S.Nonempty ∧ S ⊆ T} := by
+theorem ans_supClosure_range {T : Finset ι} (hT : T.Nonempty) {w : W} (hw : atoms w = ↑T) :
+    ans (cell (supClosure (range a))) (supClosure (range a)) w =
+      (fun S ↦ ⋃ i ∈ S, a i) '' {S | S.Nonempty ∧ S ⊆ T} := by
   ext q
   constructor
-  · rintro ⟨⟨S, hS, rfl⟩, -, h⟩
-    exact ⟨S, ⟨hS, (disj_subset_disj_iff hrich).1
-      (h _ (disj_mem_disjClosure hT) (by rw [cell_disj hrich hT]; exact hw))⟩, rfl⟩
+  · rintro ⟨hq, -, h⟩
+    obtain ⟨S, hS, rfl⟩ := mem_supClosure_range.1 hq
+    exact ⟨S, ⟨hS, (biUnion_subset_biUnion_iff hrich).1
+      (h _ (mem_supClosure_range.2 ⟨_, hT, rfl⟩) (by rw [cell_biUnion hrich hT]; exact hw))⟩, rfl⟩
   · rintro ⟨S, ⟨⟨i, hi⟩, hST⟩, rfl⟩
-    refine ⟨disj_mem_disjClosure ⟨i, hi⟩, mem_disj.2 ⟨i, hi, ?_⟩, ?_⟩
+    refine ⟨mem_supClosure_range.2 ⟨_, ⟨i, hi⟩, rfl⟩, mem_biUnion hi ?_, ?_⟩
     · refine mem_satisfied_iff.1 ?_
       rw [hw]
       exact Finset.mem_coe.2 (hST hi)
-    · rintro _ ⟨U, hU, rfl⟩ hwU
-      rw [cell_disj hrich hU] at hwU
+    · rintro _ hq hwU
+      obtain ⟨U, hU, rfl⟩ := mem_supClosure_range.1 hq
+      rw [cell_biUnion hrich hU] at hwU
       have hwU' : atoms w = ↑U := hwU
       rw [hw, Finset.coe_inj] at hwU'
       subst hwU'
-      exact (disj_subset_disj_iff hrich).2 hST
+      exact (biUnion_subset_biUnion_iff hrich).2 hST
 
 /-- With two or more true atoms, the disjunctive question's answer set has more than one
 member, which is the mention-some reading. -/
-theorem not_subsingleton_ans_disjClosure {T : Finset ι} (hT : 1 < T.card) {w : W}
-    (hw : atoms w = ↑T) : ¬ (ans (cell (disjClosure a)) (disjClosure a) w).Subsingleton := by
+theorem not_subsingleton_ans_supClosure_range {T : Finset ι} (hT : 1 < T.card) {w : W}
+    (hw : atoms w = ↑T) :
+    ¬ (ans (cell (supClosure (range a))) (supClosure (range a)) w).Subsingleton := by
   obtain ⟨i, hi, j, hj, hij⟩ := Finset.one_lt_card.1 hT
-  rw [ans_disjClosure hrich ⟨i, hi⟩ hw]
+  rw [ans_supClosure_range hrich ⟨i, hi⟩ hw]
   intro h
   have := h ⟨{i}, ⟨⟨i, Finset.mem_singleton_self i⟩, Finset.singleton_subset_iff.2 hi⟩, rfl⟩
     ⟨T, ⟨⟨i, hi⟩, subset_rfl⟩, rfl⟩
-  have := (disj_subset_disj_iff hrich).1 this.ge
+  have := (biUnion_subset_biUnion_iff hrich).1 this.ge
   exact hij (Finset.mem_singleton.1 (this hj)).symm
 
 end Closures

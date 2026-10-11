@@ -72,7 +72,7 @@ variable [DecidableEq α]
 /-- Plural predication relative to a cover `C`, (25) and (30), holds of a plurality that is a sum
 of pluralities in `C` that satisfy `P`. -/
 def coverStar (C : Set (Finset α)) (P : Finset α → W → Prop) (z : Finset α) : Set W :=
-  {w | star (fun y ↦ y ∈ C ∧ P y w) z}
+  {w | AlgClosure (fun y ↦ y ∈ C ∧ P y w) z}
 
 variable {C : Set (Finset α)} {P : Finset α → W → Prop} {x : Finset α}
 
@@ -91,13 +91,13 @@ theorem sUnion_readings_coverStar (hC : ∀ z ∈ C, z.Nonempty) :
 
 /-- A minimal cover containing the atoms of `x`, (24b-i), consists of the atoms of `x`. -/
 theorem eq_atoms_of_minimal (hx : x.Nonempty)
-    (hmin : Minimal (fun C : Set (Finset α) ↦ star (· ∈ C) x) C) (hat : ∀ a ∈ x, {a} ∈ C) :
+    (hmin : Minimal (fun C : Set (Finset α) ↦ AlgClosure (· ∈ C) x) C) (hat : ∀ a ∈ x, {a} ∈ C) :
     C = (fun a ↦ {a}) '' ↑x :=
-  (hmin.eq_of_le ((star_image_singleton _ x).2 ⟨hx, subset_rfl⟩)
+  (hmin.eq_of_le ((algClosure_image_singleton _ x).2 ⟨hx, subset_rfl⟩)
     (by rintro _ ⟨a, ha, rfl⟩; exact hat a ha)).symm
 
 /-- A minimal cover containing `x`, (24b-ii), is `{x}`. -/
-theorem eq_singleton_of_minimal (hmin : Minimal (fun C : Set (Finset α) ↦ star (· ∈ C) x) C)
+theorem eq_singleton_of_minimal (hmin : Minimal (fun C : Set (Finset α) ↦ AlgClosure (· ∈ C) x) C)
     (hxC : x ∈ C) : C = {x} :=
   (hmin.eq_of_le (y := {x}) (.base (Set.mem_singleton x)) (Set.singleton_subset_iff.2 hxC)).symm
 
@@ -105,14 +105,14 @@ theorem eq_singleton_of_minimal (hmin : Minimal (fun C : Set (Finset α) ↦ sta
 homogeneity is total: the sentence is false only where no part of `x` satisfies `P`. -/
 theorem power_cover (hx : x.Nonempty) (hC : ∀ z ∈ C, z.Nonempty)
     (hpow : ∀ y ⊆ x, y.Nonempty → y ∈ C) (hP : ∀ w, ¬ P ∅ w) :
-    ⋂₀ readings (coverStar C P) x = {w | star (P · w) x} ∧
+    ⋂₀ readings (coverStar C P) x = {w | AlgClosure (P · w) x} ∧
       ⋃₀ readings (coverStar C P) x = {w | ∃ z ⊆ x, z.Nonempty ∧ P z w} := by
   refine ⟨?_, ?_⟩
   · rw [sInter_readings (not_isBot_iff.2 hx)]
     ext w
     simp only [coverStar, Set.mem_ofPred_eq]
     refine ⟨fun h ↦ algClosure_mono (fun y (hy : y ∈ C ∧ P y w) ↦ hy.2) x h, fun h ↦ ?_⟩
-    suffices ∀ z, star (P · w) z → z ⊆ x → star (fun y ↦ y ∈ C ∧ P y w) z from
+    suffices ∀ z, AlgClosure (P · w) z → z ⊆ x → AlgClosure (fun y ↦ y ∈ C ∧ P y w) z from
       this x h subset_rfl
     intro z hz
     induction hz with
@@ -134,7 +134,7 @@ theorem atomic_cover (hx : x.Nonempty) :
   refine ⟨?_, ?_⟩
   · rw [sInter_readings (not_isBot_iff.2 hx)]
     ext w
-    rw [coverStar, Set.mem_ofPred_eq, Set.mem_ofPred_eq, star_iff_of_subset_range_singleton
+    rw [coverStar, Set.mem_ofPred_eq, Set.mem_ofPred_eq, algClosure_iff_of_subset_range_singleton
       (by rintro _ ⟨⟨a, -, rfl⟩, -⟩; exact ⟨a, rfl⟩)]
     simp only [hx, true_and, Set.mem_image, Finset.mem_coe, Finset.singleton_inj, exists_eq_right]
     exact forall₂_congr fun _ ha ↦ and_iff_right ha
@@ -212,7 +212,7 @@ theorem lift_true :
   rw [(power_cover Finset.univ_nonempty hC (fun y _ hy ↦ hpow y hy) lifted_empty).1]
   simp only [List.mem_cons, List.not_mem_nil, or_false, Set.mem_ofPred_eq]
   rintro w (rfl | rfl | rfl)
-  · rw [star_iff_of_subset_range_singleton (P := (lifted · .individually))
+  · rw [algClosure_iff_of_subset_range_singleton (P := (lifted · .individually))
       fun z hz ↦ (Finset.card_eq_one.1 hz).imp fun _ h ↦ h.symm]
     simp [lifted]
   · exact .base rfl
