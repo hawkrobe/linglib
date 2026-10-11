@@ -25,9 +25,9 @@ state's measure gives the utterance heard. At the channel of a speaker who is on
 the literal listener, who conditions the prior on the extension of the utterance, and at a speaker
 she is the pragmatic listener, mathlib's posterior kernel wherever the utterance is heard; the
 listener of a graded meaning is the density kernel `Kernel.ofDensity`. A latent the speaker also
-knows is a coordinate of the state, and when the listener hears only the form of the speaker's
-choice she inverts the deterministic observation kernel over the joint of prior and speaker. A
-speaker whose utility is not an expected log-probability, such as a question- or
+knows is a coordinate of the state, and so is the speaker's choice when the listener hears only
+its form: her prior is then the joint of the world prior and the speaker. A speaker whose
+utility is not an expected log-probability, such as a question- or
 politeness-weighted one, is the softmax kernel `Kernel.softmax` of her score, with `⊥` marking
 the utterances she cannot use. Rationality, cost, meaning, and prior are arguments, so findings
 quantify over them. The uniform-prior Boolean specialization with its decision procedure is
@@ -42,8 +42,6 @@ quantify over them. The uniform-prior Boolean specialization with its decision p
   belief, less a cost. Its weights are the geometric mean of the listener's mass over the belief
   to the power `α`, times `exp (-(α * C))`; at the point-mass belief it is the speaker of
   eqs. 2/6–7, with weights `L ^ α * exp (-(α * C))` (`RSA.speaker_dirac_eq_ofWeights`).
-* `RSA.jointListener` — eqs. 18b/21b: the posterior over (state, choice) given the heard
-  form; `.fst` is the state listener, `.snd` the choice posterior.
 
 ## Main results
 
@@ -955,40 +953,58 @@ end Dirac
 
 /-! #### The heard form
 
-When the listener hears only the form `obs u` of the speaker's choice, the form is distributed as
-the image of the production marginal. -/
+When the listener hears only the form `obs u` of the speaker's choice `u` (eqs. 18b/21b), her
+state is the pair of the world and the choice, her prior the joint of the world prior and the
+speaker, and her channel the point mass at the form. Her first marginal is her belief about the
+world and her second her belief about the choice. -/
 
-section Observation
+private theorem compProd_real_mul_dirac_real [MeasurableSingletonClass W]
+    [MeasurableSingletonClass U] [MeasurableSingletonClass O] [DecidableEq O] (μ : Measure W)
+    [SFinite μ] (κ : Kernel W U) [IsSFiniteKernel κ] (obs : U → O) (o : O) (w : W) (u : U) :
+    (μ ⊗ₘ κ).real {(w, u)} * (Measure.dirac (obs u)).real {o} =
+      if obs u = o then μ.real {w} * (κ w).real {u} else 0 := by
+  rw [measureReal_def, measureReal_def, Measure.compProd_apply_singleton, ENNReal.toReal_mul,
+    Measure.dirac_apply' _ (measurableSet_singleton o), ← measureReal_def, ← measureReal_def]
+  split_ifs with h <;> simp [h]
 
-variable [DiscreteMeasurableSpace U] (α : ℝ) (C : U → ℝ) (L : Kernel U W) (μ : Measure W)
-  (obs : U → O)
+section Form
 
-theorem measurable_obs_snd : Measurable fun p : W × U ↦ obs p.2 :=
-  Measurable.of_discrete.comp measurable_snd
+variable [Fintype W] [MeasurableSingletonClass W] [Fintype U] [MeasurableSingletonClass U]
+  [Countable O] [MeasurableSingletonClass O] (μ : Measure W) [IsFiniteMeasure μ] (κ : Kernel W U)
+  [IsFiniteKernel κ] (obs : U → O)
 
-variable [Fintype W] [MeasurableSingletonClass W] [Fintype U]
+/-- The listener of the form gives mass to a pair of a state and a choice exactly when the choice
+has the form heard, the state has positive prior and it produces the choice. -/
+theorem listener_compProd_dirac_apply_singleton_ne_zero_iff (o : O) (w : W) (u : U) :
+    listener (μ ⊗ₘ κ) (fun p ↦ Measure.dirac (obs p.2)) o {(w, u)} ≠ 0 ↔
+      obs u = o ∧ μ {w} ≠ 0 ∧ κ w {u} ≠ 0 := by
+  rw [listener_apply_singleton_ne_zero_iff, Measure.compProd_apply_singleton, mul_ne_zero_iff,
+    Measure.dirac_apply' _ (measurableSet_singleton o)]
+  by_cases h : obs u = o <;> simp [h]
 
-/-- The heard form is distributed as the production marginal. -/
-theorem deterministic_comp_compProd_speaker :
-    Kernel.deterministic (fun p : W × U ↦ obs p.2) (measurable_obs_snd obs)
-        ∘ₘ (μ ⊗ₘ speaker α C L Measure.dirac)
-      = (speaker α C L Measure.dirac ∘ₘ μ).map obs := by
-  rw [Measure.deterministic_comp_eq_map, show (fun p : W × U ↦ obs p.2) = obs ∘ Prod.snd from rfl,
-    ← Measure.map_map Measurable.of_discrete measurable_snd, ← Measure.snd, Measure.snd_compProd]
+variable [DecidableEq O]
 
-variable [MeasurableSingletonClass O]
+/-- The listener of the form prefers the state with the greater prior-weighted production
+probability pooled over the choices with the form heard. -/
+theorem listener_compProd_dirac_fst_real_lt_iff (o : O) (w₁ w₂ : W) :
+    (listener (μ ⊗ₘ κ) (fun p ↦ Measure.dirac (obs p.2)) o).fst.real {w₁} <
+        (listener (μ ⊗ₘ κ) (fun p ↦ Measure.dirac (obs p.2)) o).fst.real {w₂} ↔
+      ∑ u ∈ Finset.univ.filter (obs · = o), μ.real {w₁} * (κ w₁).real {u} <
+        ∑ u ∈ Finset.univ.filter (obs · = o), μ.real {w₂} * (κ w₂).real {u} := by
+  rw [listener_fst_real_lt_iff]
+  simp only [compProd_real_mul_dirac_real, Finset.sum_filter]
 
-/-- A positive-prior state with a positively produced `o`-shaped utterance witnesses a
-positive observation marginal. -/
-theorem map_comp_speaker_ne_zero {w : W} {u : U} {o : O}
-    (hμ : μ {w} ≠ 0) (hu : obs u = o) (hs : speaker α C L Measure.dirac w {u} ≠ 0) :
-    ((speaker α C L Measure.dirac ∘ₘ μ).map obs) {o} ≠ 0 := by
-  rw [Measure.map_apply Measurable.of_discrete (.singleton o)]
-  intro h
-  exact comp_apply_singleton_ne_zero _ _ hμ hs
-    (measure_mono_null (Set.singleton_subset_iff.mpr (by simp [hu])) h)
+/-- Between two choices with the form heard, the listener of the form prefers the one with the
+greater prior-weighted production probability pooled over the states. -/
+theorem listener_compProd_dirac_snd_real_lt_iff {o : O} {u₁ u₂ : U} (h₁ : obs u₁ = o)
+    (h₂ : obs u₂ = o) :
+    (listener (μ ⊗ₘ κ) (fun p ↦ Measure.dirac (obs p.2)) o).snd.real {u₁} <
+        (listener (μ ⊗ₘ κ) (fun p ↦ Measure.dirac (obs p.2)) o).snd.real {u₂} ↔
+      ∑ w, μ.real {w} * (κ w).real {u₁} < ∑ w, μ.real {w} * (κ w).real {u₂} := by
+  rw [listener_snd_real_lt_iff]
+  simp only [compProd_real_mul_dirac_real, ite_eq_left h₁, ite_eq_left h₂]
 
-end Observation
+end Form
 
 /-! #### Pragmatic listeners
 
@@ -1015,94 +1031,6 @@ theorem posterior_speaker_listener_truthful_apply_singleton_of_notMem
   exact posterior_apply_singleton_eq_zero _ _ (comp_apply_singleton_ne_zero _ _ hμ hS)
     (speaker_dirac_apply_singleton_eq_zero hα
       (listener_truthful_apply_singleton_of_notMem μ sem hw))
-
-variable (α : ℝ) (C : U → ℝ) (L : Kernel U W) (μ : Measure W) [IsFiniteMeasure μ]
-  [DiscreteMeasurableSpace U] [StandardBorelSpace U] [Nonempty U] (obs : U → O)
-
-/-- The joint pragmatic listener (eqs. 18b/21b) applies when the listener hears only the form `obs
-u` of the speaker's choice. The posterior over (state, choice) is then the Bayesian inverse of the
-deterministic observation kernel against the joint of prior and speaker. Its `fst` is the state
-listener, its `snd` the choice posterior. -/
-noncomputable def jointListener : Kernel O (W × U) :=
-  (Kernel.deterministic (fun p : W × U ↦ obs p.2) (measurable_obs_snd obs))†(μ ⊗ₘ
-    speaker α C L Measure.dirac)
-
-variable [DecidableEq O] [MeasurableSingletonClass O]
-
-/-- Exact Bayes for the joint listener at a positive-mass observation. -/
-theorem jointListener_apply_singleton {o : O}
-    (ho : ((speaker α C L Measure.dirac ∘ₘ μ).map obs) {o} ≠ 0) (w : W) (u : U) :
-    jointListener α C L μ obs o {(w, u)}
-      = (if obs u = o then μ {w} * speaker α C L Measure.dirac w {u} else 0)
-        / ((speaker α C L Measure.dirac ∘ₘ μ).map obs) {o} := by
-  rw [jointListener, posterior_apply_singleton _ _
-      (by rwa [deterministic_comp_compProd_speaker]),
-    deterministic_comp_compProd_speaker, ← Set.singleton_prod_singleton,
-    Measure.compProd_apply_prod (.singleton w) (.singleton u), lintegral_singleton,
-    Kernel.deterministic_apply' _ _ (.singleton o)]
-  simp only [Set.indicator_apply, Set.mem_singleton_iff]
-  split_ifs <;> simp [mul_comm]
-
-/-- The joint listener prefers the state with the greater prior-weighted speaker mass pooled
-over the observation's fibre, since the observation's marginal cancels. -/
-theorem jointListener_fst_real_lt_iff {o : O}
-    (ho : ((speaker α C L Measure.dirac ∘ₘ μ).map obs) {o} ≠ 0) (w₁ w₂ : W) :
-    (jointListener α C L μ obs o).fst.real {w₁}
-        < (jointListener α C L μ obs o).fst.real {w₂}
-      ↔ (∑ u ∈ Finset.univ.filter (obs · = o),
-            μ.real {w₁} * (speaker α C L Measure.dirac w₁).real {u})
-        < ∑ u ∈ Finset.univ.filter (obs · = o),
-            μ.real {w₂} * (speaker α C L Measure.dirac w₂).real {u} := by
-  have key : ∀ w : W, (jointListener α C L μ obs o).fst {w}
-      = (∑ u ∈ Finset.univ.filter (obs · = o), μ {w} * speaker α C L Measure.dirac w {u})
-        / ((speaker α C L Measure.dirac ∘ₘ μ).map obs) {o} := fun w ↦ by
-    rw [Measure.fst_apply_singleton]
-    simp_rw [jointListener_apply_singleton α C L μ obs ho, div_eq_mul_inv, ← Finset.sum_mul,
-      ← Finset.sum_filter]
-  have hne : ∀ w : W,
-      (∑ u ∈ Finset.univ.filter (obs · = o), μ {w} * speaker α C L Measure.dirac w {u}) ≠ ∞ :=
-    fun w ↦ ENNReal.sum_ne_top.mpr fun u _ ↦
-      ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)
-  rw [measureReal_def, measureReal_def, key, key,
-    ENNReal.toReal_lt_toReal (ENNReal.div_ne_top (hne w₁) ho) (ENNReal.div_ne_top (hne w₂) ho),
-    ENNReal.div_lt_div_iff_left ho (measure_ne_top _ _),
-    ← ENNReal.toReal_lt_toReal (hne w₁) (hne w₂),
-    ENNReal.toReal_sum (fun u _ ↦
-      ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)),
-    ENNReal.toReal_sum (fun u _ ↦
-      ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _))]
-  simp_rw [ENNReal.toReal_mul]
-  exact Iff.rfl
-
-/-- Choice-posterior preference among `o`-shaped choices reduces to comparing prior-weighted
-speaker masses across states. -/
-theorem jointListener_snd_real_lt_iff {o : O}
-    (ho : ((speaker α C L Measure.dirac ∘ₘ μ).map obs) {o} ≠ 0) {u₁ u₂ : U}
-    (h₁ : obs u₁ = o) (h₂ : obs u₂ = o) :
-    (jointListener α C L μ obs o).snd.real {u₁}
-        < (jointListener α C L μ obs o).snd.real {u₂}
-      ↔ (∑ w, μ.real {w} * (speaker α C L Measure.dirac w).real {u₁})
-        < ∑ w, μ.real {w} * (speaker α C L Measure.dirac w).real {u₂} := by
-  have key : ∀ u, obs u = o → (jointListener α C L μ obs o).snd {u}
-      = (∑ w, μ {w} * speaker α C L Measure.dirac w {u})
-        / ((speaker α C L Measure.dirac ∘ₘ μ).map obs) {o} :=
-    fun u hu ↦ by
-      rw [Measure.snd_apply_singleton]
-      simp_rw [jointListener_apply_singleton α C L μ obs ho, ite_eq_left hu, div_eq_mul_inv,
-        ← Finset.sum_mul]
-  have hne : ∀ u : U, (∑ w, μ {w} * speaker α C L Measure.dirac w {u}) ≠ ∞ := fun u ↦
-    ENNReal.sum_ne_top.mpr fun w _ ↦
-      ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)
-  rw [measureReal_def, measureReal_def, key u₁ h₁, key u₂ h₂,
-    ENNReal.toReal_lt_toReal (ENNReal.div_ne_top (hne u₁) ho) (ENNReal.div_ne_top (hne u₂) ho),
-    ENNReal.div_lt_div_iff_left ho (measure_ne_top _ _),
-    ← ENNReal.toReal_lt_toReal (hne u₁) (hne u₂),
-    ENNReal.toReal_sum (fun w _ ↦
-      ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)),
-    ENNReal.toReal_sum (fun w _ ↦
-      ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _))]
-  simp_rw [ENNReal.toReal_mul]
-  exact Iff.rfl
 
 end Listener
 

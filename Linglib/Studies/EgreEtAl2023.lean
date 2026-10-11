@@ -46,10 +46,10 @@ interpretation rule (`wir`).
   model the belief is the joint prior conditioned on the observation and marginalized to the
   value; in the lexical uncertainty model, whose speaker addresses the listener's joint state,
   it is that conditioned prior itself.
-* Pragmatic listeners are graded listeners at the joint prior whose meaning is the speaker's
-  probability of the message. A message no observation produces gets the zero measure, the
-  `0 / 0` convention of footnote 28, and on messages heard with positive probability the
-  listener is the posterior kernel (`jointListener_apply_eq_posterior`).
+* Pragmatic listeners are `RSA.listener` at the joint prior of the speaker read at the
+  observation. A message no observation produces gets the zero measure, the `0 / 0` convention
+  of footnote 28, and on messages heard with positive probability the listener is the posterior
+  kernel (`RSA.listener_apply_eq_posterior`).
 * The lexical uncertainty model is stated over arbitrary finite types of worlds, observations,
   interpretations and messages. Appendix A's two steps are general:
   `RSA.speaker_cond_listener_truthful_apply_eq`, that against a literal listener the speaker
@@ -512,28 +512,13 @@ matters. -/
 noncomputable def jointSpeaker (L : Kernel M (X × O)) : Kernel O M :=
   RSA.speaker lam 0 (L.map Prod.fst) (belief P)
 
-/-- The pragmatic listener answering a speaker, (15) and (17), reweights the joint prior by the
-speaker's probability of the message given the observation. -/
-noncomputable def jointListener (S : Kernel O M) : Kernel M (X × O) :=
-  Kernel.ofDensity P fun m p ↦ S p.2 {m}
-
 /-- In the recursion (16)–(17), `listener n` is the paper's `Lⁿ`, and
-`jointSpeaker P lam (listener n)` its `Sⁿ⁺¹`. -/
+`jointSpeaker P lam (listener n)` its `Sⁿ⁺¹`. The pragmatic listener answering a speaker, (15) and
+(17), reweights the joint prior by the speaker's probability of the message given the
+observation. -/
 noncomputable def listener : ℕ → Kernel M (X × O)
   | 0 => jointL0 P meaning
-  | n + 1 => jointListener P (jointSpeaker P lam (listener n))
-
-/-- On a message heard with positive probability the pragmatic listener is the posterior kernel
-of the speaker against the joint prior. -/
-theorem jointListener_apply_eq_posterior [StandardBorelSpace (X × O)] [Nonempty (X × O)]
-    (S : Kernel O M) [IsFiniteKernel S] {m : M}
-    (hm : ((S.comap Prod.snd (measurable_snd : Measurable (Prod.snd : X × O → O))) ∘ₘ P) {m} ≠ 0) :
-    jointListener P S m =
-      ((S.comap Prod.snd (measurable_snd : Measurable (Prod.snd : X × O → O)))†P) m :=
-  Measure.ext_of_singleton fun p ↦ by
-    rw [jointListener, Kernel.ofDensity_apply_singleton, posterior_apply_singleton _ _ hm,
-      Measure.comp_apply_singleton]
-    simp only [Kernel.comap_apply, mul_comm]
+  | n + 1 => RSA.listener P fun p ↦ jointSpeaker P lam (listener n) p.2
 
 end Recursion
 
@@ -617,8 +602,8 @@ speaker's use of the message, averaged over interpretations, and each later one 
 previous speaker's. -/
 noncomputable def luListener : ℕ → Kernel M (W × O)
   | 0 => Kernel.ofDensity P fun m p ↦ ∑ i, PI {i} * luS1 P sem cost lam i p.2 {m}
-  | n + 1 => jointListener P
-      (RSA.speaker lam cost (luListener n) fun o ↦ P[|Prod.snd ⁻¹' {o}])
+  | n + 1 => RSA.listener P fun p ↦
+      RSA.speaker lam cost (luListener n) (fun o ↦ P[|Prod.snd ⁻¹' {o}]) p.2
 
 /-- The speaker `Sⁿ⁺²` (eq. 6), answering `luListener n`. -/
 noncomputable def luSpeaker (n : ℕ) : Kernel O M :=

@@ -136,7 +136,9 @@ noncomputable abbrev listener (α : ℝ) : Kernel Utterance (State × Parse) :=
 pragmatic listener (40) alike — the setting of Tables 5–9. -/
 noncomputable def listenerWith (μ : Measure State) [IsFiniteMeasure μ] (α : ℝ) :
     Kernel Utterance (State × Parse) :=
-  jointListener α 0 (RSA.listener μ (truthful fun p ↦ (↑(sem p) : Set State))) μ Parse.utt
+  RSA.listener
+    (μ ⊗ₘ RSA.speaker α 0 (RSA.listener μ (truthful fun p ↦ (↑(sem p) : Set State))) Measure.dirac)
+    fun p ↦ Measure.dirac p.2.utt
 
 /-- At the uniform prior, `listenerWith` is `listener`. -/
 theorem listenerWith_uniformOn (α : ℝ) : listenerWith (uniformOn Set.univ) α = listener α := rfl
@@ -154,24 +156,16 @@ theorem speaker_prefers_strong_parse {α : ℝ} (hα : 0 < α) {s : State} (hs :
 /-- Hearing *may any*, the listener assigns no posterior to Only S under any parse. -/
 theorem mayAny_rules_out_onlyS {α : ℝ} (hα : 0 < α) (p : Parse) :
     listener α .mayAny {(.onlyS, p)} = 0 := by
-  rw [listener, uniformJointListener, jointListener_apply_singleton _ _ _ _ _
-    (map_comp_uniformSpeaker_ne_zero sem Parse.utt hα.le (o := .mayAny) (c := .anyB) rfl
-      (mem_sem.mpr (Or.inl rfl : meaning .anyB .only1)))]
-  split_ifs with h
-  · rw [uniformSpeaker_apply_singleton_eq_zero sem hα (by revert h; cases p <;> decide),
-      mul_zero, ENNReal.zero_div]
-  · exact ENNReal.zero_div
+  by_contra h
+  obtain ⟨hp, -, hs⟩ := (listener_compProd_dirac_apply_singleton_ne_zero_iff _ _ _ _ _ _).1 h
+  exact hs (uniformSpeaker_apply_singleton_eq_zero sem hα (by revert hp; cases p <;> decide))
 
 /-- Hearing *may every*, the listener assigns no posterior to Only S under any parse. -/
 theorem mayEvery_rules_out_onlyS {α : ℝ} (hα : 0 < α) (p : Parse) :
     listener α .mayEvery {(.onlyS, p)} = 0 := by
-  rw [listener, uniformJointListener, jointListener_apply_singleton _ _ _ _ _
-    (map_comp_uniformSpeaker_ne_zero sem Parse.utt hα.le (o := .mayEvery) (c := .evD) rfl
-      (mem_sem.mpr (rfl : meaning .evD .only2)))]
-  split_ifs with h
-  · rw [uniformSpeaker_apply_singleton_eq_zero sem hα (by revert h; cases p <;> decide),
-      mul_zero, ENNReal.zero_div]
-  · exact ENNReal.zero_div
+  by_contra h
+  obtain ⟨hp, -, hs⟩ := (listener_compProd_dirac_apply_singleton_ne_zero_iff _ _ _ _ _ _).1 h
+  exact hs (uniformSpeaker_apply_singleton_eq_zero sem hα (by revert hp; cases p <;> decide))
 
 /-- Hearing *may any* at a uniform prior, the listener prefers each exclusiveness state, Only 1
 and Any #, where each class may be taken on its own (the paper's 0.50 + 0.50), to each of
