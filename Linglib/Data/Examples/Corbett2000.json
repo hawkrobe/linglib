@@ -220,7 +220,7 @@
     },
     "reportedIn": null,
     "language": "pula1262",
-    "primaryText": "nyaari peay",
+    "primaryText": "nyaari peďay",
     "discourseSegments": [],
     "glossedTokens": [
       [
@@ -228,7 +228,7 @@
         "cat(s)"
       ],
       [
-        "peay",
+        "peďay",
         "scratch"
       ]
     ],
@@ -243,7 +243,8 @@
         "general"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_2_10",
@@ -2147,7 +2148,8 @@
         "yes"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_4_27",
@@ -2575,11 +2577,11 @@
     },
     "reportedIn": null,
     "language": "zuni1245",
-    "primaryText": "ʔa:i ʔa:-kya",
+    "primaryText": "ʔa:či ʔa:-kya",
     "discourseSegments": [],
     "glossedTokens": [
       [
-        "ʔa:i",
+        "ʔa:či",
         "DUAL"
       ],
       [
@@ -2598,7 +2600,8 @@
         "dual"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_5_44",
@@ -2608,7 +2611,7 @@
     },
     "reportedIn": null,
     "language": "zuni1245",
-    "primaryText": "hon ʔa:i ʔa:-kya",
+    "primaryText": "hon ʔa:či ʔa:-kya",
     "discourseSegments": [],
     "glossedTokens": [
       [
@@ -2616,7 +2619,7 @@
         "1.PL.NOM"
       ],
       [
-        "ʔa:i",
+        "ʔa:či",
         "DUAL"
       ],
       [
@@ -2635,7 +2638,8 @@
         "dual"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_5_45",
@@ -2772,7 +2776,7 @@
     },
     "reportedIn": null,
     "language": "zuni1245",
-    "primaryText": "ʔa:w-akcek(ʔi) ʔa:i ʔa:-kya",
+    "primaryText": "ʔa:w-akcek(ʔi) ʔa:či ʔa:-kya",
     "discourseSegments": [],
     "glossedTokens": [
       [
@@ -2780,7 +2784,7 @@
         "PL-boy"
       ],
       [
-        "ʔa:i",
+        "ʔa:či",
         "DUAL"
       ],
       [
@@ -2799,7 +2803,8 @@
         "dual"
       ]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   },
   {
     "id": "corbett2000_6_1",

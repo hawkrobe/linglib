@@ -992,6 +992,7 @@
       ["doSupport", "true"],
       ["frontedForm", "bare"]
     ],
-    "comment": ""
+    "comment": "",
+    "verified": "page-image"
   }
 ]
