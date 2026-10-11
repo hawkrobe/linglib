@@ -8,6 +8,7 @@ public import Linglib.Fragments.Hebrew.ConsonantalRoots
 public import Linglib.Data.Forms.Arad2005
 public import Mathlib.Data.List.Destutter
 public import Mathlib.Data.Sym.Sym2
+public import Mathlib.Data.Fintype.Option
 
 /-!
 # Arad (2005): Roots and Patterns: Hebrew Morpho-Syntax

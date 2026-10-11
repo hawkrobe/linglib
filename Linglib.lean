@@ -710,7 +710,6 @@ import Linglib.Morphology.DistributedMorphology.Locality
 import Linglib.Morphology.DistributedMorphology.ComplexHead
 import Linglib.Morphology.DistributedMorphology.Merger
 import Linglib.Morphology.DistributedMorphology.Neighborhood
-import Linglib.Morphology.DistributedMorphology.NominalProjection
 import Linglib.Morphology.DistributedMorphology.Root
 import Linglib.Morphology.DistributedMorphology.Spellout
 import Linglib.Morphology.DistributedMorphology.VocabularyInsertion.Basic

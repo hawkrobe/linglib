@@ -4,6 +4,7 @@ public import Linglib.Data.Examples.Carstens2026
 public import Linglib.Fragments.Xhosa.Nouns
 public import Linglib.Fragments.Shona.Nouns
 public import Linglib.Syntax.Minimalist.Agree.Coordination
+public import Linglib.Morphology.DistributedMorphology.Categorizer.Gender
 public import Linglib.Studies.TaraldsenEtAl2018
 
 /-!
@@ -60,7 +61,7 @@ def interpretability : GenderStatus → Minimalist.Interpretability
 
 section Mechanism
 
-variable {G C : Type*} [DecidableEq G]
+variable {G C : Type*}
 
 /-- A Bantu nominal is a core nP of the gender that carries the semantic flavor of what it
 denotes, wrapped, when its visible class belongs to another gender, in an outer nP of that
@@ -79,6 +80,17 @@ variable (n : Nominal G)
 /-- The visible gender, the outer layer's or the core's. -/
 def visible : G := n.outer.getD n.core
 
+/-- The genders of the nominal's n's, the highest first. -/
+def genders : List G := n.outer.toList ++ [n.core]
+
+/-- The visible gender is the gender a gender probe agrees in on either explanation of the
+Highest Gender Hypothesis, since every n of a nominal bears a gender. -/
+theorem visible_eq_agreeingGender (d : G) :
+    n.visible = DistributedMorphology.agreeingGender some d n.genders ∧
+      n.visible = DistributedMorphology.agreeingGender some d (n.genders.take 1) := by
+  cases h : n.outer <;>
+    simp [visible, genders, DistributedMorphology.agreeingGender_cons_of_eq_some, h]
+
 /-- The visible gender's feature as percolation sees it, annotated with the interpretability of
 the gender's n. -/
 def visibleBundle : Bundle G := .single n.visible (interpretability (status n.visible))
@@ -88,7 +100,7 @@ def coreBundle : Bundle G := .single n.core .interpretable
 
 end Nominal
 
-variable (a b : Nominal G)
+variable [DecidableEq G] (a b : Nominal G)
 
 /-- Highest Wins (79), where the visible genders percolate and intersect, the shared gender
 valuing its plural class. -/
@@ -215,7 +227,7 @@ abbrev XhosaValues (a b : Nominal Xhosa.Gender) (c : Xhosa.NounClass) : Prop :=
 
 /-! ### Shona (§3.5, §5.2) -/
 
-/-- §5.2: Shona's two cores, gender A i[human] and gender D i[non-human]. -/
+/-- Shona's two cores in §5.2, gender A i[human] and gender D i[non-human]. -/
 def shonaCore : AnimacyLevel → Shona.Gender
   | .human => .genderA
   | _ => .genderD
