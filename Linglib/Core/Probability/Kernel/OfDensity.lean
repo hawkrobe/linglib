@@ -23,6 +23,8 @@ the kernel is always finite.
   its base mass, over the total.
 * `ProbabilityTheory.Kernel.ofDensity_indicator_one_apply`: at an indicator density the row is the
   base measure conditioned on the set.
+* `ProbabilityTheory.Kernel.ofDensity_div_iSup`: a bounded density may be taken in the unit
+  interval, since dividing each row by its supremum leaves the kernel unchanged.
 * `ProbabilityTheory.Kernel.ofDensity_count`: against the counting measure the density kernel is
   the weight kernel `Kernel.ofWeights`.
 * `ProbabilityTheory.Kernel.ofDensity_apply_eq_posterior`: with a kernel's likelihood as density
@@ -79,6 +81,18 @@ theorem ofDensity_const_mul (μ : Measure β) (f : α → β → ℝ≥0∞) {c 
     (hc : c ≠ ∞) : ofDensity μ (fun a b ↦ c * f a b) = ofDensity μ f :=
   Kernel.ext fun _ ↦ ofDensity_apply_eq_of_eq_mul μ hc0 hc fun _ ↦ rfl
 
+/-- Dividing each row's density by its supremum, which puts the density in the unit interval,
+leaves the kernel unchanged. -/
+theorem ofDensity_div_iSup (μ : Measure β) (f : α → β → ℝ≥0∞) (hf : ∀ a, ⨆ b, f a b ≠ ∞) :
+    ofDensity μ (fun a b ↦ f a b / ⨆ b', f a b') = ofDensity μ f := by
+  ext a : 1
+  rcases eq_or_ne (⨆ b, f a b) 0 with h0 | h0
+  · have hfa : f a = 0 := funext fun b ↦ le_antisymm ((le_iSup (f a) b).trans h0.le) zero_le
+    simp only [ofDensity_apply, hfa, Pi.zero_apply, ENNReal.zero_div]
+    rfl
+  · exact ofDensity_apply_eq_of_eq_mul μ (ENNReal.inv_ne_zero.mpr (hf a))
+      (ENNReal.inv_ne_top.mpr h0) fun b ↦ by rw [div_eq_mul_inv, mul_comm]
+
 /-- Every finite measure on a countable discrete space is a row of the density kernel at a base
 of positive mass everywhere, with the measure's density against the base as the density. -/
 theorem ofDensity_div [Countable β] [MeasurableSingletonClass β] (μ : Measure β)
@@ -101,6 +115,15 @@ theorem ofDensity_apply_singleton [Fintype β] [MeasurableSingletonClass β] (μ
     (f : α → β → ℝ≥0∞) (a : α) (b : β) :
     ofDensity μ f a {b} = f a b * μ {b} / ∑ b', f a b' * μ {b'} := by
   rw [ofDensity_apply_singleton', lintegral_fintype]
+
+/-- An atom has positive mass in a row of finite density exactly when its density and its base
+mass are positive. -/
+theorem ofDensity_apply_singleton_ne_zero_iff [Fintype β] [MeasurableSingletonClass β]
+    (μ : Measure β) [IsFiniteMeasure μ] {f : α → β → ℝ≥0∞} {a : α} (hf : ∀ b, f a b ≠ ∞) (b : β) :
+    ofDensity μ f a {b} ≠ 0 ↔ f a b ≠ 0 ∧ μ {b} ≠ 0 := by
+  rw [ofDensity_apply_singleton, ne_eq, ENNReal.div_eq_zero_iff, mul_eq_zero, not_or, not_or]
+  exact and_iff_left (ENNReal.sum_ne_top.mpr fun b' _ ↦
+    ENNReal.mul_ne_top (hf b') (measure_ne_top _ _))
 
 /-- A relabelling of the target that carries one base and density to another carries the density
 kernel along. -/
