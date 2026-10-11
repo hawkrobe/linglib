@@ -1,6 +1,6 @@
 module
 
-public import Linglib.Core.InformationTheory.Entropy
+public import Linglib.Core.InformationTheory.EntropyRate
 public import Linglib.Syntax.DependencyGrammar.Reordering
 public import Linglib.Fragments.Japanese.Morph
 public import Linglib.Fragments.Sesotho.Morph
@@ -10,43 +10,23 @@ public import Linglib.Data.Examples.HahnDegenFutrell2021
 /-!
 # Hahn, Degen, and Futrell (2021): Modeling Word and Morpheme Order in Natural Language as an Efficient Trade-Off of Memory and Surprisal
 
-This file formalizes the theory behind Hahn, Degen and Futrell's studies of word and morpheme
-order. A listener predicts each word from a memory state updated word by word, and the paper's
+Hahn, Degen and Futrell explain word and morpheme order by the tradeoff of memory and surprisal.
+A listener predicts each word from a memory state updated word by word, and the paper's
 information locality bound says that a listener whose memory cannot hold the dependencies up to
-some distance pays at least the entropy rate plus the information carried at longer distances.
-We prove the bound, compare two orders of a sentence by dependency length, and check the
-paper's morpheme templates against Bybee's relevance hierarchy.
-
-## Main definitions
-
-* `memoryState M m₀ w t`: the listener's memory state at time `t`, reached from the initial
-  state `m₀` by the memory encoding function `M`.
-* `IsStationary X μ`: the law of a block of the process `X` does not depend on where it starts.
-* `distanceInfo w μ t`: the mutual information between words at distance `t` given the words
-  between them.
+some distance pays at least the entropy rate plus the information carried at longer distances,
+the quantities of `Core/InformationTheory/EntropyRate.lean`. We prove the bound, compare two
+orders of a sentence by dependency length, and check the paper's morpheme templates against
+Bybee's relevance hierarchy.
 
 ## Main statements
 
 * `information_locality_bound`: if words and memory states are jointly stationary, `0 < T`, and
   the memory entropy is at most `∑ t ∈ Icc 1 T, t * distanceInfo w μ t`, then the average
   surprisal is at least the entropy rate plus `∑' t, distanceInfo w μ (T + t + 1)`.
-* `pastCondEntropy_le_condEntropy`: under the same hypotheses, the average surprisal is at least
-  the conditional entropy of a word given the `T` words before it.
 * `heavyNPShift_shorter`: heavy NP shift in the paper's example (2) lowers total dependency
   length.
-* `japanese_forms_licensed`, `sesotho_forms_licensed`: the affixes of the paper's Japanese and
-  Sesotho forms are licensed by the Fragments' templates.
-* `japanese_valence_voice_inside`: the paper's claim that the Japanese valence and voice suffixes
-  lie inside the tense, aspect and mood suffixes.
-* `japanese_violates_surveyed_relevance`: Bybee's survey ranks tense closer to the stem than
-  mood, and the Japanese suffix order is not sorted by the relevance hierarchy.
-* `paper_sesotho_suffixes_respect_relevance`, `sesotho_suffixes_violate_relevance`: the paper's
-  Sesotho suffix order is sorted by the hierarchy; Demuth's, with the perfect before the passive,
-  is not.
-* `demuth_perfect_passive`: Demuth's *pheh-ets-w-e* is licensed by the Fragment and not by the
-  paper's order.
-* `sesotho_prefixes_violate_relevance`: the Sesotho prefix order is not sorted by the hierarchy,
-  the object marker lying inside the tense prefixes.
+* `japanese_violates_surveyed_relevance`, `sesotho_suffixes_violate_relevance`: neither the
+  Japanese suffix order nor Demuth's Sesotho order is sorted by Bybee's relevance hierarchy.
 
 ## Implementation notes
 
@@ -135,23 +115,9 @@ theorem heavyNPShift_shorter : shifted.totalLength < longObjectFirst.totalLength
 
 section InformationLocality
 
-open MeasureTheory ProbabilityTheory InformationTheory Finset Filter Topology
+open MeasureTheory ProbabilityTheory InformationTheory Finset
 
-variable {Ω α W Mem : Type*}
-
-/-- `block X a n` is the block of `n` consecutive values of `X` starting at time `a`. -/
-def block (X : ℕ → Ω → α) (a n : ℕ) (ω : Ω) : Fin n → α := fun i ↦ X (i + a) ω
-
-/-- A process is stationary when the law of a block does not depend on where it starts. -/
-def IsStationary [MeasurableSpace Ω] [MeasurableSpace α] (X : ℕ → Ω → α) (μ : Measure Ω) :
-    Prop :=
-  ∀ a n, IdentDistrib (block X a n) (block X 0 n) μ μ
-
-theorem IsStationary.fst {β : Type*} [MeasurableSpace Ω] [MeasurableSpace α] [MeasurableSpace β]
-    {X : ℕ → Ω → α} {Y : ℕ → Ω → β} {μ : Measure Ω}
-    (hs : IsStationary (fun t ω ↦ (X t ω, Y t ω)) μ) : IsStationary X μ :=
-  fun a n ↦ (hs a n).comp (u := fun (v : Fin n → α × β) i ↦ (v i).1)
-    (measurable_pi_iff.mpr fun i ↦ measurable_fst.comp (measurable_pi_apply i))
+variable {Ω W Mem : Type*}
 
 /-- `memoryState M m₀ w t` is the listener's memory state when the word at time `t` arrives. It
 is reached from the initial state `m₀` by the memory encoding function `M`, which updates a state
@@ -172,56 +138,15 @@ theorem exists_memoryState_eq_comp (t : ℕ) : ∃ g : (Fin t → W) × Mem → 
     exact ⟨fun p ↦ M (g (Fin.init p.1, p.2)) (p.1 (Fin.last t)), by
       funext ω; simp only [memoryState, hg]; rfl⟩
 
-private theorem block_succ (t : ℕ) :
-    block w 0 (t + 1) = (Fin.snocEquiv fun _ ↦ W) ∘ fun ω ↦ (w t ω, block w 0 t ω) :=
-  funext fun _ ↦ (Fin.snoc_init_self _).symm
-
 variable [MeasurableSpace Ω] [MeasurableSpace W] [MeasurableSingletonClass W] [Fintype W]
   [MeasurableSpace Mem] [MeasurableSingletonClass Mem] [Fintype Mem] {μ : Measure Ω}
   [IsProbabilityMeasure μ]
-
-/-- `pastCondEntropy w μ n` is the conditional entropy of the word at time `n` given the `n`
-words before it. -/
-noncomputable def pastCondEntropy (w : ℕ → Ω → W) (μ : Measure Ω) (n : ℕ) : ℝ :=
-  H[w n | block w 0 n ; μ]
-
-/-- `distanceInfo w μ t` is the paper's `I t`, the mutual information
-`I[w t : w 0 | w 1, …, w (t - 1)]` between words at distance `t` given the words between them,
-which is the entropy of `w t` that `w 0` removes. -/
-noncomputable def distanceInfo (w : ℕ → Ω → W) (μ : Measure Ω) (t : ℕ) : ℝ :=
-  H[w t | block w 1 (t - 1) ; μ] - H[w t | block w 0 t ; μ]
-
-/-- The entropy rate `S∞` is the infimum of the conditional entropies of a word given its past,
-which is their limit when the process is stationary. -/
-noncomputable def entropyRate (w : ℕ → Ω → W) (μ : Measure Ω) : ℝ :=
-  ⨅ n, pastCondEntropy w μ n
-
-theorem measurable_block [MeasurableSpace α] {X : ℕ → Ω → α} (hX : ∀ t, Measurable (X t))
-    (a n : ℕ) : Measurable (block X a n) :=
-  measurable_pi_iff.mpr fun i ↦ hX (i + a)
 
 theorem measurable_memoryState (hw : ∀ t, Measurable (w t)) (hm₀ : Measurable m₀) :
     ∀ t, Measurable (memoryState M m₀ w t)
   | 0 => hm₀
   | t + 1 => (measurable_of_finite (Function.uncurry M)).comp
       ((measurable_memoryState hw hm₀ t).prodMk (hw t))
-
-/-- Conditioning on a further word of the past never adds entropy, so `I (t + 1)` is
-nonnegative. -/
-theorem distanceInfo_succ_nonneg (hw : ∀ t, Measurable (w t)) (t : ℕ) :
-    0 ≤ distanceInfo w μ (t + 1) :=
-  sub_nonneg.mpr <| condEntropy_le_condEntropy_comp μ (hw _) (measurable_block hw 0 _) Fin.tail
-
-/-- The entropy of a block is the sum of the conditional entropies of its words given their
-predecessors. -/
-theorem entropy_block (hw : ∀ t, Measurable (w t)) (T : ℕ) :
-    H[block w 0 T ; μ] = ∑ t ∈ range T, pastCondEntropy w μ t := by
-  induction T with
-  | zero => simp [entropy_of_subsingleton]
-  | succ T ih =>
-    rw [sum_range_succ, ← ih, pastCondEntropy, ← chain_rule μ (hw T) (measurable_block hw 0 T),
-      block_succ, entropy_comp_of_injective μ ((hw T).prodMk (measurable_block hw 0 T))
-        (measurable_of_finite _) (Fin.snocEquiv _).injective]
 
 /-- Over a block of `T` words, a listener's summed surprisal is at least the entropy of the
 block given the initial memory state. -/
@@ -242,7 +167,7 @@ theorem condEntropy_block_le_sum (hw : ∀ t, Measurable (w t)) (hm₀ : Measura
     let e := (Equiv.prodAssoc W (Fin T → W) Mem).symm.trans
       ((Fin.snocEquiv fun _ ↦ W).prodCongr (Equiv.refl Mem))
     have hrec : (fun ω ↦ (block w 0 (T + 1) ω, m₀ ω)) = e ∘ fun ω ↦ (w T ω, block w 0 T ω, m₀ ω) :=
-      funext fun ω ↦ Prod.ext (congrFun (block_succ T) ω) rfl
+      funext fun ω ↦ Prod.ext (congrFun (block_zero_succ T) ω) rfl
     rw [hrec, entropy_comp_of_injective μ ((hw T).prodMk hZ) (measurable_of_finite _) e.injective,
       chain_rule μ (hw T) hZ, sum_range_succ, hg]
     linarith [condEntropy_le_condEntropy_comp μ (hw T) hZ g]
@@ -255,57 +180,6 @@ theorem condEntropy_memoryState_eq (hw : ∀ t, Measurable (w t)) (hm₀ : Measu
   simp only [block, Function.comp_def, Fin.val_zero, zero_add] at h
   exact h.condEntropy_eq (hw t) (measurable_memoryState hw hm₀ t) (hw 0) hm₀
 
-section Stationary
-
-variable (hw : ∀ t, Measurable (w t)) (hs : IsStationary w μ)
-include hw hs
-
-/-- Under stationarity, `I (t + 1)` is the drop in conditional entropy as the past grows from
-`t` words to `t + 1`. -/
-theorem distanceInfo_succ (t : ℕ) :
-    distanceInfo w μ (t + 1) = pastCondEntropy w μ t - pastCondEntropy w μ (t + 1) :=
-  congrArg (· - _) <| ((hs 1 (t + 1)).comp
-    (u := fun (v : Fin (t + 1) → W) ↦ (v (Fin.last t), fun i : Fin t ↦ v i.castSucc))
-    (measurable_of_finite _)).condEntropy_eq (hw _) (measurable_block hw 1 t) (hw _)
-    (measurable_block hw 0 t)
-
-theorem pastCondEntropy_antitone : Antitone (pastCondEntropy w μ) :=
-  antitone_nat_of_succ_le fun t ↦ by
-    linarith [distanceInfo_succ hw hs t, distanceInfo_succ_nonneg (μ := μ) hw t]
-
-/-- The memory allowance of the bound at `T`, by summation by parts. -/
-theorem sum_Icc_mul_distanceInfo (T : ℕ) :
-    ∑ t ∈ Icc 1 T, t * distanceInfo w μ t
-      = ∑ t ∈ range T, pastCondEntropy w μ t - T * pastCondEntropy w μ T := by
-  induction T with
-  | zero => simp
-  | succ T ih =>
-    rw [sum_Icc_succ_top (by omega), ih, distanceInfo_succ hw hs, sum_range_succ]
-    push_cast
-    ring
-
-/-- The entropy rate plus the information at distances beyond `T` is the conditional entropy of
-a word given the `T` words before it. -/
-theorem entropyRate_add_tsum (T : ℕ) :
-    entropyRate w μ + ∑' t, distanceInfo w μ (T + t + 1) = pastCondEntropy w μ T := by
-  have hlim : Tendsto (pastCondEntropy w μ) atTop (𝓝 (entropyRate w μ)) :=
-    tendsto_atTop_ciInf (pastCondEntropy_antitone hw hs)
-      ⟨0, Set.forall_mem_range.mpr fun _ ↦ condEntropy_nonneg _ _ _⟩
-  have htel (n : ℕ) :
-      ∑ t ∈ range n, (pastCondEntropy w μ (T + t) - pastCondEntropy w μ (T + t + 1))
-        = pastCondEntropy w μ T - pastCondEntropy w μ (T + n) :=
-    sum_range_sub' (fun t ↦ pastCondEntropy w μ (T + t)) n
-  have hsum : HasSum (fun t ↦ distanceInfo w μ (T + t + 1))
-      (pastCondEntropy w μ T - entropyRate w μ) := by
-    refine (hasSum_iff_tendsto_nat_of_nonneg (fun t ↦ distanceInfo_succ_nonneg hw _) _).mpr ?_
-    simp_rw [distanceInfo_succ hw hs, htel]
-    exact tendsto_const_nhds.sub
-      (hlim.comp (tendsto_atTop_mono (fun n ↦ Nat.le_add_left n T) tendsto_id))
-  rw [hsum.tsum_eq]
-  ring
-
-end Stationary
-
 variable (hw : ∀ t, Measurable (w t)) (hm₀ : Measurable m₀)
   (hs : IsStationary (fun t ω ↦ (w t ω, memoryState M m₀ w t ω)) μ) {T : ℕ} (hT : 0 < T)
   (hmem : H[m₀ ; μ] ≤ ∑ t ∈ Icc 1 T, t * distanceInfo w μ t)
@@ -317,7 +191,7 @@ theorem pastCondEntropy_le_condEntropy : pastCondEntropy w μ T ≤ H[w 0 | m₀
   have hblock := condEntropy_block_le_sum (μ := μ) (M := M) hw hm₀ T
   simp_rw [condEntropy_memoryState_eq hw hm₀ hs, sum_const, card_range, nsmul_eq_mul] at hblock
   have hb := measurable_block hw 0 T
-  rw [sum_Icc_mul_distanceInfo hw hs.fst, ← entropy_block hw] at hmem
+  rw [sum_Icc_mul_distanceInfo hw (hs.comp measurable_fst), ← entropy_block hw] at hmem
   refine le_of_mul_le_mul_left ?_ (by exact_mod_cast hT : (0 : ℝ) < T)
   linarith [chain_rule μ hb hm₀, chain_rule μ hm₀ hb, entropy_comm μ hb hm₀,
     condEntropy_nonneg m₀ (block w 0 T) μ]
@@ -327,7 +201,8 @@ is at most `∑ t ∈ Icc 1 T, t * I t` incurs average surprisal at least the en
 information at distances beyond `T`. -/
 theorem information_locality_bound :
     entropyRate w μ + ∑' t, distanceInfo w μ (T + t + 1) ≤ H[w 0 | m₀ ; μ] :=
-  entropyRate_add_tsum hw hs.fst T ▸ pastCondEntropy_le_condEntropy hw hm₀ hs hT hmem
+  entropyRate_add_tsum hw (hs.comp measurable_fst) T ▸
+    pastCondEntropy_le_condEntropy hw hm₀ hs hT hmem
 
 end InformationLocality
 
