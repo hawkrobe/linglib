@@ -59,7 +59,19 @@ instance : MeasurableSpace Utterance := ⊤
 instance : DiscreteMeasurableSpace Utterance := ⟨fun _ ↦ trivial⟩
 instance : Nonempty Utterance := ⟨.silent⟩
 
-variable {D : Type*} [LinearOrder D] [MeasurableSpace D] [DiscreteMeasurableSpace D]
+variable {D : Type*} [LinearOrder D]
+
+/-- The material sorites is valid, in that the bottom member is tall if the top member is tall and
+no gap holds the threshold. -/
+theorem sorites_valid (x : ℕ → D) (n : ℕ) {θ : D} (hθ : θ < x n)
+    (hgap : ∀ i ∈ Finset.range n, θ ∉ Set.Ico (x i) (x (i + 1))) : θ < x 0 := by
+  induction n with
+  | zero => exact hθ
+  | succ n ih =>
+    exact ih (lt_of_not_ge fun h ↦ hgap n (Finset.mem_range.mpr n.lt_succ_self) ⟨h, hθ⟩)
+      fun i hi ↦ hgap i (Finset.range_mono n.le_succ hi)
+
+variable [MeasurableSpace D] [DiscreteMeasurableSpace D]
 
 /-- The meaning of an utterance at a degree under an assignment of thresholds to the adjective
 and its antonym (eqs. 22–23). *Tall* holds above the first threshold, *short* below the second,
@@ -191,17 +203,6 @@ theorem adams {Ω ι : Type*} [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabil
     _ ≤ ∑ i ∈ s, μ (A i)ᶜ := measure_biUnion_finset_le s _
     _ = ∑ i ∈ s, (1 - μ (A i)) :=
       Finset.sum_congr rfl fun i hi ↦ prob_compl_eq_one_sub (hA i hi)
-
-omit [MeasurableSpace D] [DiscreteMeasurableSpace D] in
-/-- The material sorites is valid, in that the bottom member is tall if the top member is tall and
-no gap holds the threshold. -/
-theorem sorites_valid (x : ℕ → D) (n : ℕ) {θ : D} (hθ : θ < x n)
-    (hgap : ∀ i ∈ Finset.range n, θ ∉ Set.Ico (x i) (x (i + 1))) : θ < x 0 := by
-  induction n with
-  | zero => exact hθ
-  | succ n ih =>
-    exact ih (lt_of_not_ge fun h ↦ hgap n (Finset.mem_range.mpr n.lt_succ_self) ⟨h, hθ⟩)
-      fun i hi ↦ hgap i (Finset.range_mono n.le_succ hi)
 
 variable [IsProbabilityMeasure ρ]
 
