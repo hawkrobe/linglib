@@ -7,14 +7,14 @@ module
 
 public import Linglib.Data.Forms.Audring2019
 public import Linglib.Morphology.ConstructionMorphology.Schema
-public import Linglib.Core.Relation.FactorsThroughOn
+public import Linglib.Core.Logic.Function.FactorsThrough
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Tactic.FinCases
 
 /-!
 # Audring (2019): Mothers or sisters? The encoding of morphological knowledge
 
-This file formalizes [audring-2019]'s division of labour between mother schemas and sister links
+This file formalizes Audring's division of labour between mother schemas and sister links
 in a full-entry lexicon. A generalization over stored words can be encoded by a mother schema
 dominating them or by sister links, coindices between the words themselves. A sister link is a
 subscripting through which the pair of words factors, so it captures relations of sameness:
@@ -58,7 +58,7 @@ def word (b a : String) : Fin 2 → Flat String := ![↑b, ↑a]
 
 /-! ### The *-ish* family: sister links and their mother -/
 
-/-- The mother schema `[N -ish]A` of (8): the affix pinned, the base an open variable. -/
+/-- The mother schema `[N -ish]A` of (8) has its affix pinned and its base an open variable. -/
 def ishSchema : Schema (Fin 2) (Flat String) := Schema.productive ![⊥, ↑"ish"]
 
 /-- The stored family of (8). -/
@@ -80,7 +80,8 @@ inductive AffixLink
   | affix
   deriving DecidableEq
 
-/-- The sister link at the affix: the two affix slots share a variable, the bases do not. -/
+/-- The sister link at the affix makes the two affix slots share a variable and leaves the bases
+apart. -/
 def affixLink : Fin 2 ⊕ Fin 2 → AffixLink := Sum.elim ![.base₁, .affix] ![.base₂, .affix]
 
 /-- The variables of a sister link coindexing the bases of two words. -/
@@ -90,15 +91,16 @@ inductive BaseLink
   | affix₂
   deriving DecidableEq
 
-/-- The sister link at the base: the two base slots share a variable, the affixes do not. -/
+/-- The sister link at the base makes the two base slots share a variable and leaves the affixes
+apart. -/
 def baseLink : Fin 2 ⊕ Fin 2 → BaseLink := Sum.elim ![.base, .affix₁] ![.base, .affix₂]
 
-/-- *boyish* and *childish* are sisters at the affix: the pair factors through the link. -/
+/-- *boyish* and *childish* are sisters at the affix, since the pair factors through the link. -/
 theorem ish_affix_sisters :
     (Sum.elim Forms.boyish.slots Forms.childish.slots).FactorsThrough affixLink := by
   decide
 
-/-- *boyish* and *childish* cannot be coindexed at the base: the relation between *boy* and
+/-- *boyish* and *childish* cannot be coindexed at the base. The relation between *boy* and
 *child* is equivalence of function, not sameness, and no sister link states it. -/
 theorem not_base_sisters :
     ¬ (Sum.elim Forms.boyish.slots Forms.childish.slots).FactorsThrough baseLink := by
@@ -111,35 +113,37 @@ theorem ishSchema_relates {w : Fin 2 → Flat String} (hw : w ∈ ishFamily) :
   simp only [ishFamily, Set.mem_insert_iff, Set.mem_singleton_iff] at hw
   rcases hw with rfl | rfl | rfl <;> exact ishSchema_instantiates (by decide)
 
-/-- The mother is productive: its one variable is open. -/
+/-- The mother is productive, since its one variable is open. -/
 theorem ishSchema_isProductive : ishSchema.IsProductive := Schema.isProductive_productive _
 
 /-- The mother generates the novel *Trumpish* with nothing stored. -/
 theorem ishSchema_generates_trumpish : ishSchema.Generates ∅ Forms.trumpish.slots :=
   ishSchema_isProductive.generates_iff.2 (ishSchema_instantiates (by decide))
 
-/-- A fully specified word, taken as a schema, generates nothing but itself: a sister link
-between stored words licenses no novel word, and productivity needs a mother's variable. -/
+/-- A fully specified word, taken as a schema, generates nothing but itself. A sister link
+between stored words therefore licenses no novel word, and productivity needs a mother's
+variable. -/
 theorem word_generates_iff (b a : String) {Λ : Set (Fin 2 → Flat String)}
     {w : Fin 2 → Flat String} :
     (⟨word b a, ∅⟩ : Schema (Fin 2) (Flat String)).Generates Λ w ↔ w = word b a := by
-  have hmax : ∀ v, IsMax (word b a v) := λ v => by fin_cases v <;> exact Flat.isMax_coe _
-  refine ⟨λ h => (Schema.instantiates_iff_eq_of_forall_isMax hmax).1 h.instantiates, ?_⟩
+  have hmax : ∀ v, IsMax (word b a v) := fun v ↦ by fin_cases v <;> exact Flat.isMax_coe _
+  refine ⟨fun h ↦ (Schema.instantiates_iff_eq_of_forall_isMax hmax).1 h.instantiates, ?_⟩
   rintro rfl
-  exact ⟨le_rfl, λ v hv _ => by fin_cases v <;> exact absurd hv Flat.coe_ne_bot⟩
+  exact ⟨le_rfl, fun v hv _ ↦ by fin_cases v <;> exact absurd hv Flat.coe_ne_bot⟩
 
 /-! ### The second-order schema `[N -ful]A ≈ [N -less]A` -/
 
-/-- The variables of (14): the base shared by the two schemas and the two affixes. -/
+/-- The variables of (14) are the base shared by the two schemas and the two affixes. -/
 inductive FulLessVar
   | base
   | ful
   | less
   deriving DecidableEq
 
-/-- (14): the two schemas with their coindexed base as one description. -/
+/-- The second-order schema (14) is the two schemas with their coindexed base as one
+description. -/
 def fulLess : Schema FulLessVar (Flat String) :=
-  ⟨λ | .base => ⊥ | .ful => ↑"ful" | .less => ↑"less", {.base}⟩
+  ⟨fun | .base => ⊥ | .ful => ↑"ful" | .less => ↑"less", {.base}⟩
 
 /-- The subscripting of the slots of `[N -ful]A` by the variables of (14). -/
 def fulSub : Fin 2 → FulLessVar := ![.base, .ful]
@@ -147,10 +151,10 @@ def fulSub : Fin 2 → FulLessVar := ![.base, .ful]
 /-- The subscripting of the slots of `[N -less]A` by the variables of (14). -/
 def lessSub : Fin 2 → FulLessVar := ![.base, .less]
 
-/-- `[N -ful]A`: the description of (14) read at its own slots. -/
+/-- The schema `[N -ful]A` is the description of (14) read at its own slots. -/
 def fulSchema : Schema (Fin 2) (Flat String) := fulLess.comap fulSub
 
-/-- `[N -less]A`: the description of (14) read at its own slots. -/
+/-- The schema `[N -less]A` is the description of (14) read at its own slots. -/
 def lessSchema : Schema (Fin 2) (Flat String) := fulLess.comap lessSub
 
 /-- The variables of (14) filled by base `b`. -/
@@ -159,26 +163,28 @@ def fulLessWord (b : String) : FulLessVar → Flat String
   | .ful => ↑"ful"
   | .less => ↑"less"
 
-/-- *careful* and *careless* are a paired instantiation of (14): same base, sister affixes. -/
+/-- *careful* and *careless* are a paired instantiation of (14), with the same base and sister
+affixes. -/
 theorem careful_careless_pairs :
     fulLess.InstantiatesAt (Sum.elim fulSub lessSub)
       (Sum.elim Forms.careful.slots Forms.careless.slots) :=
-  ⟨fulLessWord "care", λ v => by cases v <;> first | exact bot_le | exact le_rfl,
-    funext λ p => by rcases p with p | p <;> fin_cases p <;> decide⟩
+  ⟨fulLessWord "care", fun v ↦ by cases v <;> first | exact bot_le | exact le_rfl,
+    funext fun p ↦ by rcases p with p | p <;> fin_cases p <;> decide⟩
 
-/-- *careful* and *clueless* are not: the coindexed base is filled differently. -/
+/-- *careful* and *clueless* are not a paired instantiation, since the coindexed base is filled
+differently. -/
 theorem not_careful_clueless_pairs :
     ¬ fulLess.InstantiatesAt (Sum.elim fulSub lessSub)
       (Sum.elim Forms.careful.slots Forms.clueless.slots) :=
-  λ h => absurd ((Schema.instantiatesAt_elim_iff.1 h).2.2.2.2 0 0 rfl) (by decide)
+  fun h ↦ absurd ((Schema.instantiatesAt_elim_iff.1 h).2.2.2.2 0 0 rfl) (by decide)
 
 /-- A mother of the two schemas would be the meet of their descriptions, which over these slots
-is empty: nothing but the categories, which the slots do not record. -/
+is empty. It holds nothing but the categories, which the slots do not record. -/
 theorem fulLess_mother_eq_bot : fulSchema.body ⊓ lessSchema.body = ⊥ := by
   funext v
   fin_cases v <;> decide
 
-/-- The mother is instantiated by every word: it states nothing the sisters do not. -/
+/-- The mother is instantiated by every word, so it states nothing the sisters do not. -/
 theorem fulLess_mother_instantiates (w : Fin 2 → Flat String) :
     (⟨fulSchema.body ⊓ lessSchema.body, ∅⟩ : Schema (Fin 2) (Flat String)).Instantiates
       w := by

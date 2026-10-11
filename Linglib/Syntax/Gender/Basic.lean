@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Tactic.DeriveFintype
 public import Mathlib.Data.Fintype.BigOperators
-public import Linglib.Core.Relation.FactorsThroughOn
+public import Linglib.Core.Logic.Function.FactorsThrough
 
 /-!
 # Gender systems
@@ -65,17 +65,20 @@ assignment systems of `Syntax/Gender/Assignment.lean`.
     language's actual genders are its own carrier, which a fragment's `toLabel`
     maps into this vocabulary. -/
 inductive Gender where
-  /-- Masculine: male humans/higher animates; default in many sex-based systems. -/
+  /-- The masculine holds male humans and higher animates, and is the default in many sex-based
+  systems. -/
   | masculine
-  /-- Feminine: female humans/higher animates; marked in many sex-based systems. -/
+  /-- The feminine holds female humans and higher animates, and is marked in many sex-based
+  systems. -/
   | feminine
-  /-- Neuter: neither masculine nor feminine; inanimate default in 3-gender systems. -/
+  /-- The neuter is neither masculine nor feminine, and is the inanimate default in three-gender
+  systems. -/
   | neuter
-  /-- Common: merged masculine + feminine (Swedish, Danish). -/
+  /-- The common gender merges masculine and feminine (Swedish, Danish). -/
   | common
-  /-- Animate: animate referents in animacy-based systems (Algonquian). -/
+  /-- The animate holds animate referents in animacy-based systems (Algonquian). -/
   | animate
-  /-- Inanimate: inanimate referents in animacy-based systems. -/
+  /-- The inanimate holds inanimate referents in animacy-based systems. -/
   | inanimate
   deriving DecidableEq, Repr, Fintype
 
@@ -104,12 +107,12 @@ section Faithful
 
 variable {T F : Type*}
 
-/-- A carrier `G` of controller genders is faithful to agreement evidence
-    `agr` when distinct genders are distinguished by some target's form.
+/-- A carrier `G` of controller genders is faithful to agreement evidence `agr` when distinct
+genders are distinguished by some target's form.
 
-    An `abbrev` so that `Function.Injective`'s decidability instance (under
-    `[Fintype G]`, `[DecidableEq T]`, `[DecidableEq F]`) applies: concrete
-    fragments discharge faithfulness by `decide`. -/
+It is an `abbrev` so that `Function.Injective`'s decidability instance (under `[Fintype G]`,
+`[DecidableEq T]`, `[DecidableEq F]`) applies and concrete fragments discharge faithfulness by
+`decide`. -/
 abbrev Faithful (agr : G → T → F) : Prop :=
   Function.Injective agr
 
@@ -137,13 +140,13 @@ section Assignment
 
 variable {N T F : Type*}
 
-/-- Genders as agreement classes, derived rather than stipulated: if noun-level agreement
+/-- Genders are agreement classes by derivation, not stipulation. If noun-level agreement
 `nounAgr` is the per-gender behaviour `agr` of the assigned gender and the carrier is
 faithful, then gender assignment factors through observable agreement behaviour. -/
 theorem factorsThrough_of_faithful {assign : N → G} {nounAgr : N → T → F} {agr : G → T → F}
     (med : nounAgr = agr ∘ assign) (faith : Faithful agr) :
     Function.FactorsThrough assign nounAgr :=
-  λ _ _ hab => faith (by simpa [med] using hab)
+  fun _ _ hab ↦ faith (by simpa [med] using hab)
 
 end Assignment
 

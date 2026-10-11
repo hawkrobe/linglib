@@ -2,7 +2,7 @@ module
 
 public import Linglib.Fragments.Hausa.Focus
 public import Linglib.Fragments.Hausa.TAM
-public import Linglib.Core.Relation.FactorsThroughOn
+public import Linglib.Core.Logic.Function.FactorsThrough
 public import Linglib.Semantics.Exhaustification.Excluder
 public import Linglib.Semantics.Focus.Control
 public import Linglib.Syntax.Reflex
@@ -17,12 +17,12 @@ interpretation. Focus is realized in situ or ex situ, and the paper's §3.2 matr
 strategies with four pragmatic uses, new-information, corrective, contrastive and selective,
 every cell of which is licensed (`hzMatrix`); `strategy_does_not_determine_pragType` refutes the
 Meaning-Structure Mapping Hypothesis of (21), the label following Vallduví and Vilkuna, stated
-as a failure of `Function.FactorsThroughOn`, so that the Hungarian and Hausa verdicts differ on
-one set-theoretic predicate. In-situ new-information focus carries no morphosyntactic reflex, and
-the §5 pilot finds no prosodic one either, so `hausa_falsifies_UniversalBFR` refutes the Basic
-Focus Rule of Selkirk; focused subjects, by contrast, always front (§2.2.2). Exhaustivity
-is not structural: the particle *kawài* 'only' exhaustifies over the resolved contrast set in
-either position.
+as a failure of `Function.FactorsThrough` on the licensed utterances, so that the Hungarian and
+Hausa verdicts differ on one predicate. In-situ new-information focus carries no morphosyntactic
+reflex, and the §5 pilot finds no prosodic one either, so `hausa_falsifies_UniversalBFR` refutes
+the Basic Focus Rule of Selkirk; focused subjects, by contrast, always front (§2.2.2).
+Exhaustivity is not structural: the particle *kawài* 'only' exhaustifies over the resolved
+contrast set in either position.
 
 ## Implementation notes
 
@@ -86,9 +86,10 @@ structure FocusUtterance where
   focused  : Focused
   deriving Repr
 
-/-- Morphosyntactic licensing (`FocusConfig.Licensed`) plus the §2.2.2
-ban on in-situ subject focus. The ban is unconditional: in TAMs without
-a Relative form the fronting is merely invisible (p. 4), not absent. -/
+/-- An utterance is Hausa-licensed when it is morphosyntactically licensed
+(`FocusConfig.Licensed`) and respects the §2.2.2 ban on in-situ subject focus. The ban is
+unconditional, since in TAMs without a Relative form the fronting is merely invisible (p. 4),
+not absent. -/
 def FocusUtterance.IsHausaLicensed (u : FocusUtterance) : Prop :=
   u.cfg.Licensed ∧ (u.focused = .subject → u.cfg.strategy = .exSitu)
 
@@ -137,10 +138,9 @@ contrast set. -/
 def exhAnswer (u : Use) : Set Alt :=
   excludes (ctx u).contrastSet answer.ordinary
 
-/-- The exhaustified answer computes to the bare true answer, uniformly
-across the four uses: exhaustification consumes the resolved contrast
-set and prejacent, never the strategy — the §3.2 point that
-exhaustive readings are available in both positions. -/
+/-- The exhaustified answer computes to the bare true answer, uniformly across the four uses.
+Exhaustification consumes the resolved contrast set and prejacent, never the strategy, which is
+the §3.2 point that exhaustive readings are available in both positions. -/
 theorem exhAnswer_eq (u : Use) : exhAnswer u = {Alt.ans} := by
   have key : excludes ({{Alt.ans}, {Alt.alt}} : Set (Set Alt))
       {Alt.ans} = {Alt.ans} := by
@@ -217,8 +217,7 @@ def inSitu_selective : FocusUtterance := mkInSituUtt .future s1 .masculine (ctx 
 /-- In-situ contrastive focus ((26), `Examples.ex26`). -/
 def inSitu_contrastive : FocusUtterance := mkInSituUtt .future s1 .masculine (ctx .contrastive)
 
-/-- The 8-cell matrix of §3.2: both strategies × all four pragmatic
-types. -/
+/-- The 8-cell matrix of §3.2 crosses both strategies with all four pragmatic types. -/
 def hzMatrix : List FocusUtterance :=
   [exSitu_newInfo, exSitu_corrective, exSitu_selective, exSitu_contrastive,
    inSitu_newInfo, inSitu_corrective, inSitu_selective, inSitu_contrastive]
@@ -229,28 +228,21 @@ theorem all_hzMatrix_IsHausaLicensed :
 
 /-! ## Strategy does not determine pragmatic type (§3.2) -/
 
-/-- On Hausa-licensed utterances `pragType` does not factor through
-strategy: (22) and (24) are both ex-situ with distinct pragmatic
-types. -/
+/-- On Hausa-licensed utterances `pragType` does not factor through strategy, since (22) and
+(24) are both ex-situ with distinct pragmatic types. -/
 theorem strategy_does_not_determine_pragType :
-    ¬ Function.FactorsThroughOn
-        FocusUtterance.pragType
-        (fun u : FocusUtterance ↦ u.cfg.strategy)
-        {u | u.IsHausaLicensed} := by
-  rw [Function.not_factorsThroughOn_iff_exists_witness]
-  exact ⟨exSitu_newInfo, exSitu_corrective,
-    by decide, by decide, rfl, by decide⟩
+    ¬ Function.FactorsThrough
+        (fun u : {u : FocusUtterance // u.IsHausaLicensed} ↦ u.1.pragType)
+        (fun u ↦ u.1.cfg.strategy) :=
+  fun h ↦ absurd (@h ⟨exSitu_newInfo, by decide⟩ ⟨exSitu_corrective, by decide⟩ rfl) (by decide)
 
-/-- The refutation persists restricted to in-situ utterances: (23) vs
-(25). -/
+/-- The refutation persists when restricted to in-situ utterances, by (23) against (25). -/
 theorem strategy_underdetermines_pragType_inSitu :
-    ¬ Function.FactorsThroughOn
-        FocusUtterance.pragType
-        (fun u : FocusUtterance ↦ u.cfg.strategy)
-        {u | u.IsHausaLicensed ∧ u.cfg.strategy = .inSitu} := by
-  rw [Function.not_factorsThroughOn_iff_exists_witness]
-  exact ⟨inSitu_newInfo, inSitu_corrective,
-    by decide, by decide, rfl, by decide⟩
+    ¬ Function.FactorsThrough
+        (fun u : {u : FocusUtterance // u.IsHausaLicensed ∧ u.cfg.strategy = .inSitu} ↦
+          u.1.pragType)
+        (fun u ↦ u.1.cfg.strategy) :=
+  fun h ↦ absurd (@h ⟨inSitu_newInfo, by decide⟩ ⟨inSitu_corrective, by decide⟩ rfl) (by decide)
 
 /-! ## Subject-focus generalization (§2.2.2) -/
 
@@ -275,15 +267,15 @@ theorem licensed_exSitu_subject_IsHausaLicensed :
     licensed_exSitu_subject.IsHausaLicensed := by decide
 
 /-- Subject focus in the future, which occurs in Rel environments unchanged ((8),
-`Examples.ex8`): string-vacuous fronting with no overt reflex, see
-`exSitu_subject_future_no_reflex`. -/
+`Examples.ex8`), is string-vacuous fronting with no overt reflex
+(`exSitu_subject_future_no_reflex`). -/
 def exSitu_subject_future : FocusUtterance :=
   mkExSituUtt .future .future s3m .masculine false (ctx .newInfo) .subject
 
 theorem exSitu_subject_future_IsHausaLicensed :
     exSitu_subject_future.IsHausaLicensed := by decide
 
-/-- No fronted subjunctive is licensed: the subjunctive has no Rel counterpart. -/
+/-- No fronted subjunctive is licensed, since the subjunctive has no Rel counterpart. -/
 theorem not_licensed_exSitu_subjunctive (t : TAM) (c : Agreement.Bundle) (g : Option Gender)
     (hs : Bool) : ¬ (mkExSitu .subjunctive t c g hs).Licensed :=
   fun h ↦ by simpa [mkExSitu, TAM.relCounterparts] using h.2 rfl
@@ -349,8 +341,8 @@ theorem hausa_refutes_perceptibility :
 /-- The rows' tone labels. -/
 def toneTable : List (String × Tone.TRN) := [("H", .H), ("L", .L)]
 
-/-- In (3a) and (3b) the stabilizer's tone is polar to the host's final tone: high after
-*Kandè*, low after *Kiifii*. -/
+/-- In (3a) and (3b) the stabilizer's tone is polar to the host's final tone, high after
+*Kandè* and low after *Kiifii*. -/
 theorem stab_tone_polar :
     ∀ e ∈ [Examples.ex3a, Examples.ex3b],
       e.parse? "stab_tone" toneTable = (e.parse? "host_tone" toneTable).map polarOf := by
@@ -417,7 +409,7 @@ def tamLabel : TAM → String
   | .habitual => "habitual"
   | .subjunctive => "subjunctive"
 
-/-- The rows that tag a TAM tag the clause's TAM, not its PAC's: (17 A1) is continuous with a
+/-- The rows that tag a TAM tag the clause's TAM, not its PAC's, as (17 A1) is continuous with a
 Rel-continuous PAC. -/
 theorem tam_matches_rows :
     ∀ p ∈ [(exSitu_subject_future, Examples.ex8), (licensed_exSitu_subject, Examples.ex17a1),

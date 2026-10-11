@@ -5,14 +5,14 @@ Authors: Robert Hawkins
 -/
 module
 
-public import Linglib.Core.Relation.FactorsThroughOn
+public import Linglib.Core.Logic.Function.FactorsThrough
 public import Linglib.Fragments.Tangale.Phonology
 
 /-!
 # Kenstowicz (1987): The Phonology and Syntax of Wh-Expressions in Tangale
 
-This file formalizes the argument of [kenstowicz-1987] that the blocking of phrasal
-phonological rules reveals surface syntax "that we did not already know". Tangale elision and
+This file formalizes Kenstowicz's argument that the blocking of phrasal phonological rules
+reveals surface syntax "that we did not already know". Tangale elision and
 tonal delinking apply obligatorily between a verb and its object ((15b), (15e)) but are blocked
 before a wh-object ((15c), (15f)); a sandhi rule sensitive to the [wh] feature is rejected both
 on interface grounds and by the minimal pair (16), where a wh-possessor inside NP triggers
@@ -43,7 +43,7 @@ inductive Juncture where
   | headWhPossessor
   deriving DecidableEq, Repr
 
-/-- Observed: elision (and delinking) applies at the juncture
+/-- Whether elision (and delinking) is observed to apply at the juncture
 ((4a, b), (5a–c), (15c, f), (16a, b)). -/
 def elides : Juncture → Bool
   | .headComplementNP => true
@@ -58,12 +58,11 @@ def secondIsWh : Juncture → Bool
   | .verbWhObject | .headWhPossessor => true
   | _ => false
 
-/-- The juncture is a government configuration under the Focus-position
-analysis: head–complement and verb–object are; adjuncts and subjects
-are not; a wh-object sits in the postverbal Focus position across a
-constituent boundary (string-vacuous postposing, as with the
-obligatorily postposed wh-subjects of (18)); a wh-possessor has no
-NP-internal Focus position and stays in situ. -/
+/-- Whether the juncture is a government configuration under the Focus-position analysis.
+Head–complement and verb–object are, and adjuncts and subjects are not. A wh-object sits in the
+postverbal Focus position across a constituent boundary (string-vacuous postposing, as with the
+obligatorily postposed wh-subjects of (18)), and a wh-possessor has no NP-internal Focus
+position and stays in situ. -/
 def governed : Juncture → Bool
   | .headComplementNP => true
   | .verbObject       => true
@@ -72,24 +71,20 @@ def governed : Juncture → Bool
   | .verbWhObject     => false
   | .headWhPossessor  => true
 
-/-- The rejected account: elision does not factor through the [wh]
-feature of the second word — wh-objects block it while wh-possessors
-trigger it ((15c, f) vs (16a, b)). -/
-theorem elision_not_factor_through_wh :
-    ¬ Function.FactorsThroughOn elides secondIsWh Set.univ := by
-  rw [Function.not_factorsThroughOn_iff_exists_witness]
-  exact ⟨.verbWhObject, .headWhPossessor, trivial, trivial, rfl, by decide⟩
+/-- The rejected account makes elision a function of the [wh] feature of the second word. It is
+not one, since wh-objects block elision while wh-possessors trigger it ((15c, f) vs (16a, b)). -/
+theorem elision_not_factor_through_wh : ¬ Function.FactorsThrough elides secondIsWh :=
+  fun h ↦ absurd (@h .verbWhObject .headWhPossessor rfl) (by decide)
 
-/-- His solution: elision tracks government exactly, once apparently
-in-situ wh-objects are placed in the postverbal Focus position. The
-blockage is a syntactic discovery made by phonology. -/
+/-- On Kenstowicz's solution elision tracks government exactly, once apparently in-situ
+wh-objects are placed in the postverbal Focus position. The blockage is a syntactic discovery
+made by phonology. -/
 theorem elision_tracks_government : ∀ j, elides j = governed j := by
   intro j; cases j <;> rfl
 
-/-- (15d–f): before a wh-object the verb surfaces in the blocked
-(faithful) form (*dobgo noŋ*), before a plain object in the
-elided–repaired form (*dobug Malay*) — audibly distinct by
-[kidda-1985]'s cascade. -/
+/-- In (15d–f) the verb surfaces before a wh-object in the blocked (faithful) form
+(*dobgo noŋ*) and before a plain object in the elided–repaired form (*dobug Malay*), audibly
+distinct by [kidda-1985]'s cascade. -/
 theorem wh_object_cell_audible :
     Tangale.blockedForm ≠ Tangale.elidedForm :=
   Tangale.boundary_audible.1
